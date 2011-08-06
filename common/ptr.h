@@ -185,12 +185,12 @@ public:
 	}
 
 	template<class T2>
-	bool operator==(const Common::SharedPtr<T2> &r) const {
+	bool operator==(const SharedPtr<T2> &r) const {
 		return _pointer == r.get();
 	}
 
 	template<class T2>
-	bool operator!=(const Common::SharedPtr<T2> &r) const {
+	bool operator!=(const SharedPtr<T2> &r) const {
 		return _pointer != r.get();
 	}
 

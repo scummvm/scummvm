@@ -54,7 +54,7 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
  * other SeekableReadStream and will then provide on-the-fly decompression support.
  * Assumes the compressed data to be in gzip format.
  */
-class GZipReadStream : public Common::SeekableReadStream {
+class GZipReadStream : public SeekableReadStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
@@ -71,7 +71,7 @@ protected:
 
 public:
 
-	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
 
 		// Verify file header is correct
@@ -197,7 +197,7 @@ public:
  * other WriteStream and will then provide on-the-fly compression support.
  * The compressed data is written in the gzip format.
  */
-class GZipWriteStream : public Common::WriteStream {
+class GZipWriteStream : public WriteStream {
 protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
@@ -224,7 +224,7 @@ protected:
 	}
 
 public:
-	GZipWriteStream(Common::WriteStream *w) : _wrapped(w), _stream() {
+	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
@@ -300,7 +300,7 @@ public:
 
 #endif	// USE_ZLIB
 
-Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream *toBeWrapped) {
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
@@ -315,7 +315,7 @@ Common::SeekableReadStream *wrapCompressedReadStream(Common::SeekableReadStream 
 	return toBeWrapped;
 }
 
-Common::WriteStream *wrapCompressedWriteStream(Common::WriteStream *toBeWrapped) {
+WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped)
 		return new GZipWriteStream(toBeWrapped);

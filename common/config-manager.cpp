@@ -112,7 +112,7 @@ void ConfigManager::loadConfigFile(const String &filename) {
  * Add a ready-made domain based on its name and contents
  * The domain name should not already exist in the ConfigManager.
  **/
-void ConfigManager::addDomain(const Common::String &domainName, const ConfigManager::Domain &domain) {
+void ConfigManager::addDomain(const String &domainName, const ConfigManager::Domain &domain) {
 	if (domainName.empty())
 		return;
 	if (domainName == kApplicationDomain) {
@@ -492,7 +492,7 @@ int ConfigManager::getInt(const String &key, const String &domName) const {
 bool ConfigManager::getBool(const String &key, const String &domName) const {
 	String value(get(key, domName));
 	bool val;
-	if (Common::parseBool(value, val))
+	if (parseBool(value, val))
 		return val;
 
 	error("ConfigManager::getBool(%s,%s): '%s' is not a valid bool",

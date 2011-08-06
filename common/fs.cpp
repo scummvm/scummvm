@@ -33,7 +33,7 @@ FSNode::FSNode(AbstractFSNode *realNode)
 	: _realNode(realNode) {
 }
 
-FSNode::FSNode(const Common::String &p) {
+FSNode::FSNode(const String &p) {
 	assert(g_system);
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = 0;
@@ -42,7 +42,7 @@ FSNode::FSNode(const Common::String &p) {
 		tmp = factory->makeCurrentDirectoryFileNode();
 	else
 		tmp = factory->makeFileNodePath(p);
-	_realNode = Common::SharedPtr<AbstractFSNode>(tmp);
+	_realNode = SharedPtr<AbstractFSNode>(tmp);
 }
 
 bool FSNode::operator<(const FSNode& node) const {
@@ -59,7 +59,7 @@ bool FSNode::exists() const {
 	return _realNode && _realNode->exists();
 }
 
-FSNode FSNode::getChild(const Common::String &n) const {
+FSNode FSNode::getChild(const String &n) const {
 	// If this node is invalid or not a directory, return an invalid node
 	if (_realNode == 0 || !_realNode->isDirectory())
 		return FSNode();
@@ -85,12 +85,12 @@ bool FSNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	return true;
 }
 
-Common::String FSNode::getDisplayName() const {
+String FSNode::getDisplayName() const {
 	assert(_realNode);
 	return _realNode->getDisplayName();
 }
 
-Common::String FSNode::getName() const {
+String FSNode::getName() const {
 	assert(_realNode);
 	return _realNode->getName();
 }
@@ -107,7 +107,7 @@ FSNode FSNode::getParent() const {
 	}
 }
 
-Common::String FSNode::getPath() const {
+String FSNode::getPath() const {
 	assert(_realNode);
 	return _realNode->getPath();
 }
@@ -124,7 +124,7 @@ bool FSNode::isWritable() const {
 	return _realNode && _realNode->isWritable();
 }
 
-Common::SeekableReadStream *FSNode::createReadStream() const {
+SeekableReadStream *FSNode::createReadStream() const {
 	if (_realNode == 0)
 		return 0;
 
@@ -139,7 +139,7 @@ Common::SeekableReadStream *FSNode::createReadStream() const {
 	return _realNode->createReadStream();
 }
 
-Common::WriteStream *FSNode::createWriteStream() const {
+WriteStream *FSNode::createWriteStream() const {
 	if (_realNode == 0)
 		return 0;
 

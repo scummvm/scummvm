@@ -97,7 +97,7 @@ struct Event {
 	 * Virtual screen coordinates means: the coordinate system of the
 	 * screen area as defined by the most recent call to initSize().
 	 */
-	Common::Point mouse;
+	Point mouse;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
@@ -139,13 +139,13 @@ public:
  */
 class ArtificialEventSource : public EventSource {
 protected:
-	Common::Queue<Common::Event> _artificialEventQueue;
+	Queue<Event> _artificialEventQueue;
 public:
-	void addEvent(const Common::Event &ev) {
+	void addEvent(const Event &ev) {
 		_artificialEventQueue.push(ev);
 	}
 
-	bool pollEvent(Common::Event &ev) {
+	bool pollEvent(Event &ev) {
 	if (!_artificialEventQueue.empty()) {
 			ev = _artificialEventQueue.pop();
 			return true;
@@ -275,14 +275,14 @@ private:
 		EventSource *source;
 	};
 
-	Common::List<SourceEntry> _sources;
+	List<SourceEntry> _sources;
 
 	struct ObserverEntry : public Entry {
 		uint priority;
 		EventObserver *observer;
 	};
 
-	Common::List<ObserverEntry> _observers;
+	List<ObserverEntry> _observers;
 
 	void dispatchEvent(const Event &event);
 };
@@ -315,15 +315,15 @@ public:
 	 * @param event	point to an Event struct, which will be filled with the event data.
 	 * @return true if an event was retrieved.
 	 */
-	virtual bool pollEvent(Common::Event &event) = 0;
+	virtual bool pollEvent(Event &event) = 0;
 
 	/**
 	 * Pushes a "fake" event into the event queue
 	 */
-	virtual void pushEvent(const Common::Event &event) = 0;
+	virtual void pushEvent(const Event &event) = 0;
 
 	/** Return the current mouse position */
-	virtual Common::Point getMousePos() const = 0;
+	virtual Point getMousePos() const = 0;
 
 	/**
 	 * Return a bitmask with the button states:
@@ -362,7 +362,7 @@ public:
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
 #ifdef ENABLE_KEYMAPPER
-	virtual Common::Keymapper *getKeymapper() = 0;
+	virtual Keymapper *getKeymapper() = 0;
 #endif
 
 	enum {

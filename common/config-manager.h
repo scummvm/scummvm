@@ -153,7 +153,7 @@ private:
 	ConfigManager();
 
 	void			loadFromStream(SeekableReadStream &stream);
-	void			addDomain(const Common::String &domainName, const Domain &domain);
+	void			addDomain(const String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
 	void			renameDomain(const String &oldName, const String &newName, DomainMap &map);
 

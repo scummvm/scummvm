@@ -56,14 +56,14 @@ public:
 	 * Load a QuickTime file
 	 * @param filename	the filename to load
 	 */
-	bool parseFile(const Common::String &filename);
+	bool parseFile(const String &filename);
 
 	/**
 	 * Load a QuickTime file from a SeekableReadStream
 	 * @param stream	the stream to load
 	 * @param disposeFileHandle whether to delete the stream after use
 	 */
-	bool parseStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
+	bool parseStream(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle = DisposeAfterUse::YES);
 
 	/**
 	 * Close a QuickTime file
@@ -81,7 +81,7 @@ public:
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
-	Common::SeekableReadStream *_fd;
+	SeekableReadStream *_fd;
 
 	DisposeAfterUse::Flag _disposeFileHandle;
 
@@ -110,7 +110,7 @@ protected:
 	struct EditListEntry {
 		uint32 trackDuration;
 		int32 mediaTime;
-		Common::Rational mediaRate;
+		Rational mediaRate;
 	};
 
 	struct Track;
@@ -154,18 +154,18 @@ protected:
 		uint16 height;
 		CodecType codecType;
 
-		Common::Array<SampleDesc *> sampleDescs;
+		Array<SampleDesc*> sampleDescs;
 
 		uint32 editCount;
 		EditListEntry *editList;
 
-		Common::SeekableReadStream *extraData;
+		SeekableReadStream *extraData;
 
 		uint32 frameCount;
 		uint32 duration;
 		uint32 startTime;
-		Common::Rational scaleFactorX;
-		Common::Rational scaleFactorY;
+		Rational scaleFactorX;
+		Rational scaleFactorY;
 
 		byte objectTypeMP4;
 	};
@@ -176,11 +176,11 @@ protected:
 	bool _foundMOOV;
 	uint32 _timeScale;
 	uint32 _duration;
-	Common::Rational _scaleFactorX;
-	Common::Rational _scaleFactorY;
-	Common::Array<Track *> _tracks;
+	Rational _scaleFactorX;
+	Rational _scaleFactorY;
+	Array<Track*> _tracks;
 	uint32 _beginOffset;
-	Common::MacResManager *_resFork;
+	MacResManager *_resFork;
 
 	void initParseTable();
 	void init();
