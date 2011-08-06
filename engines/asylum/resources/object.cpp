@@ -541,7 +541,7 @@ ResourceId Object::getRandomResourceId() {
 }
 
 bool Object::checkFlags() const {
-	return (flags & kObjectFlagEnabled) && (flags & kObjectFlag8 || flags & kObjectFlag10000);
+	return (flags & kObjectFlagEnabled) && ((flags & kObjectFlag8) || (flags & kObjectFlag10000));
 }
 
 Common::String Object::toString(bool shortString) {

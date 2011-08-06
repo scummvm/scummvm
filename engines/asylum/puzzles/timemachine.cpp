@@ -225,7 +225,7 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 		return true;
 
 	getSound()->playSound(getWorld()->soundResourceIds[14]);
-	if ((uint32)(_index2 / 2) != index / 2) {
+	if ((_index2 / 2) != (uint32)index / 2) {
 		getSound()->playSound(getWorld()->soundResourceIds[16]);
 		_newPoint = puzzleTimeMachinePoints[index / 2];
 	}

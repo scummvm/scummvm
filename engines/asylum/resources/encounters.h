@@ -48,6 +48,8 @@ struct EncounterItem : public Common::Serializable {
 		value = 0;
 	}
 
+	virtual ~EncounterItem() {}
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(keywordIndex);
@@ -63,6 +65,8 @@ struct EncounterItem : public Common::Serializable {
 
 class EncounterVariables : public Common::Array<int16>, public Common::Serializable {
 public:
+	virtual ~EncounterVariables() {}
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
 		for (uint i = 0; i < _size; i++)
@@ -72,6 +76,8 @@ public:
 
 class EncounterItems : public Common::Array<EncounterItem>, public Common::Serializable {
 public:
+	virtual ~EncounterItems() {}
+
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
 		for (uint i = 0; i < _size; i++)
