@@ -304,6 +304,10 @@ void EventRecorder::processMillis(uint32 &millis) {
 	g_system->unlockMutex(_timeMutex);
 }
 
+bool EventRecorder::processDelayMillis(uint32 &msecs) {
+	return false;
+}
+
 bool EventRecorder::notifyEvent(const Event &ev) {
 	if (_recordMode != kRecorderRecord)
 		return false;

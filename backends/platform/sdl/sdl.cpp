@@ -472,7 +472,8 @@ uint32 OSystem_SDL::getMillis() {
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
+	if (!g_eventRec.processDelayMillis(msecs))
+		SDL_Delay(msecs);
 }
 
 void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
