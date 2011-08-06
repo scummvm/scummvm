@@ -45,6 +45,12 @@ struct ActorData : public Common::Serializable {
 	Common::Point points[120];
 	ActorDirection directions[120];
 
+	ActorData() {
+		count = 0;
+		current = 0;
+		memset(&directions, 0, sizeof(directions));
+	}
+
 	void load(Common::SeekableReadStream *stream) {
 		count = stream->readUint32LE();
 
@@ -236,7 +242,7 @@ public:
 	 * @param newDirection The new direction.
 	 * @param frame 	   The frame.
 	 */
-	void setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame);
+	void setPosition(int16 newX, int16 newY, ActorDirection newDirection, uint32 frame);
 
 	/**
 	 * Query if the passed direction is default direction.
@@ -279,14 +285,14 @@ public:
 
 	// Unknown methods
 	bool process(const Common::Point &point);
-	void processStatus(int32 actorX, int32 actorY, bool doSpeech);
+	void processStatus(int16 actorX, int16 actorY, bool doSpeech);
 	void processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset);
 	bool canInteract(Common::Point *point, int32* param);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
 	void addReactionHive(int32 reactionIndex, int32 numberValue01Add);
 	void removeReactionHive(int32 reactionIndex, int32 numberValue01Substract);
-	bool hasMoreReactions(int32 reactionIndex, int32 testNumberValue01);
+	bool hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const;
 	bool canMoveCheckActors(Common::Point *point, ActorDirection direction);
 	void updateAndDraw();
 	void update_409230();
@@ -319,7 +325,7 @@ public:
 	 *
 	 * @return The direction
 	 */
-	static ActorDirection directionFromAngle(Common::Point vec1, Common::Point vec2);
+	static ActorDirection directionFromAngle(const Common::Point &vec1, const Common::Point &vec2);
 
 	/**
 	 * Get the euclidean distance between the two vectors
@@ -329,7 +335,7 @@ public:
 	 *
 	 * @return the distance.
 	 */
-	static uint32 euclidianDistance(Common::Point vec1, Common::Point vec2);
+	static uint32 euclidianDistance(const Common::Point &vec1, const Common::Point &vec2);
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
@@ -390,9 +396,8 @@ private:
 	int32  _field_948;
 	int32  _field_94C;
 	int32  _numberFlag01;
-	int32  _numberStringWidth;
-	int32  _numberStringX;
-	int32  _numberStringY;
+	int16  _numberStringWidth;
+	Common::Point _numberPoint;
 	char   _numberString01[8];
 	int32  _field_968;
 	int32  _transparency;
@@ -425,7 +430,7 @@ private:
 	void updatePumpkin(GameFlag flagToCheck, GameFlag flagToSet, ObjectId objectToUpdate, ObjectId objectToDisable);
 
 	void updateStatusEnabled();
-	void updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 counter, int32 setX, int32 setY);
+	void updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 counter, int16 setX, int16 setY);
 
 	void updateStatus9();
 
@@ -469,7 +474,7 @@ private:
 	bool processActionTop(Common::Point source,  const Common::Point &destination, Common::Array<int> *actions);
 	bool processActionDown(Common::Point source, const Common::Point &destination, Common::Array<int> *actions);
 	bool processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag);
-	bool checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, uint32 loopcount);
+	bool checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, int16 loopcount);
 	bool checkAllActions(const Common::Point &pt, Common::Array<int> *actions);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -494,7 +499,7 @@ private:
 	 * @param vec1 The first vector.
 	 * @param vec2 The second vector.
 	 */
-	void updateCoordinates(Common::Point vec1, Common::Point vec2);
+	void updateCoordinates(const Common::Point &vec1, Common::Point vec2);
 
 	/**
 	 * Hide Actor 0 and reset Actor 1 frame index
@@ -564,7 +569,7 @@ private:
 	 * @param delta 		 The delta.
 	 * @param [in,out] point If non-null, the point.
 	 */
-	static void updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point);
+	static void updateCoordinatesForDirection(ActorDirection direction, int16 delta, Common::Point *point);
 
 	/**
 	 * Get the angle between the two vectors
@@ -574,7 +579,7 @@ private:
 	 *
 	 * @return the angle
 	 */
-	static uint32 angleFromVectors(Common::Point vec1, Common::Point vec2);
+	static int32 angleFromVectors(const Common::Point &vec1, const Common::Point &vec2);
 
 	/**
 	 * Create a new rect using the point, depending on the actor direction
@@ -583,7 +588,7 @@ private:
 	 * @param direction 	The direction.
 	 * @param point 		The point.
 	 */
-	static void rectFromDirection(Common::Rect *rect, ActorDirection direction, Common::Point point);
+	static void rectFromDirection(Common::Rect *rect, ActorDirection direction, const Common::Point &point);
 
 	/**
 	 * Compares the angle between two vectors
@@ -593,7 +598,7 @@ private:
 	 *
 	 * @return true if ...
 	 */
-	static bool compareAngles(Common::Point vec1, Common::Point vec2);
+	static bool compareAngles(const Common::Point &vec1, const Common::Point &vec2);
 
 	/**
 	 * Compares vector vec to two other vectors.
@@ -604,7 +609,7 @@ private:
 	 *
 	 * @return true if vec is between vec1 and vec2.
 	 */
-	static bool compare(Common::Point vec1, Common::Point vec2, Common::Point vec);
+	static bool compare(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec);
 
 	/**
 	 * Compare vectors
@@ -615,7 +620,7 @@ private:
 	 *
 	 * @return value depending on whether vec.x is superior or inferior to each vector x coordinate
 	 */
-	static int32 compareX(Common::Point vec1, Common::Point vec2, Common::Point vec);
+	static int16 compareX(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec);
 
 	/**
 	 * Compare vectors
@@ -626,7 +631,7 @@ private:
 	 *
 	 * @return value depending on whether vec.y is superior or inferior to each vector y coordinate
 	 */
-	static int32 compareY(Common::Point vec1, Common::Point vec2, Common::Point vec);
+	static int16 compareY(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec);
 
 }; // end of class MainActor
 

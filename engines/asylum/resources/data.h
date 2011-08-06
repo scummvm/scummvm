@@ -203,7 +203,7 @@ public:
 	int32 getChapter2Data(uint32 index, int32 offset);
 	void setChapter2Counter(uint32 index, int32 val);
 	int32 getChapter2Counter(uint32 index) const;
-	ActorIndex getChapter2FrameIndexOffset() const { return _chapter2FrameIndexOffset; }
+	int32 getChapter2FrameIndexOffset() const { return _chapter2FrameIndexOffset; }
 	void setChapter2FrameIndexOffset(int32 val) { _chapter2FrameIndexOffset = val; }
 	ActorIndex getChapter2ActorIndex() const { return _chapter2ActorIndex; }
 	void setChapter2ActorIndex(ActorIndex val) { _chapter2ActorIndex = val; }

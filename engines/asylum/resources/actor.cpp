@@ -92,8 +92,6 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_94C = 0;
  	_numberFlag01 = 0;
  	_numberStringWidth = 0;
- 	_numberStringX = 0;
- 	_numberStringY = 0;
  	memset(&_numberString01, 0, 8);
  	_field_968 = 0;
  	_transparency = 0;
@@ -129,16 +127,16 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	if (!stream)
 		error("[Actor::load] invalid stream");
 
-	_point.x              = stream->readSint32LE();
-	_point.y              = stream->readSint32LE();
-	_resourceId          = (ResourceId)stream->readSint32LE();
-	_objectIndex         = stream->readSint32LE();
-	_frameIndex          = stream->readUint32LE();
-	_frameCount          = stream->readUint32LE();
-	_point1.x             = stream->readSint32LE();
-	_point1.y             = stream->readSint32LE();
-	_point2.x             = stream->readSint32LE();
-	_point2.y             = stream->readSint32LE();
+	_point.x              = (int16)stream->readSint32LE();
+	_point.y              = (int16)stream->readSint32LE();
+	_resourceId           = (ResourceId)stream->readSint32LE();
+	_objectIndex          = stream->readSint32LE();
+	_frameIndex           = stream->readUint32LE();
+	_frameCount           = stream->readUint32LE();
+	_point1.x             = (int16)stream->readSint32LE();
+	_point1.y             = (int16)stream->readSint32LE();
+	_point2.x             = (int16)stream->readSint32LE();
+	_point2.y             = (int16)stream->readSint32LE();
 
 	_boundingRect.left   = (int16)(stream->readSint32LE() & 0xFFFF);
 	_boundingRect.top    = (int16)(stream->readSint32LE() & 0xFFFF);
@@ -199,9 +197,9 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	_field_948            = stream->readSint32LE();
 	_field_94C            = stream->readSint32LE();
 	_numberFlag01         = stream->readSint32LE();
-	_numberStringWidth    = stream->readSint32LE();
-	_numberStringX        = stream->readSint32LE();
-	_numberStringY        = stream->readSint32LE();
+	_numberStringWidth    = (int16)stream->readSint32LE();
+	_numberPoint.x        = (int16)stream->readSint32LE();
+	_numberPoint.y        = (int16)stream->readSint32LE();
 	stream->read(_numberString01, sizeof(_numberString01));
 	_field_968            = stream->readSint32LE();
 	_transparency         = stream->readSint32LE();
@@ -292,8 +290,8 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_field_94C);
 	s.syncAsSint32LE(_numberFlag01);
 	s.syncAsSint32LE(_numberStringWidth);
-	s.syncAsSint32LE(_numberStringX);
-	s.syncAsSint32LE(_numberStringY);
+	s.syncAsSint32LE(_numberPoint.x);
+	s.syncAsSint32LE(_numberPoint.y);
 	s.syncBytes((byte *)&_numberString01, sizeof(_numberString01));
 	s.syncAsSint32LE(_field_968);
 	s.syncAsSint32LE(_transparency);
@@ -349,7 +347,7 @@ void Actor::drawNumber() {
 		return;
 
 	getText()->loadFont(getWorld()->font1);
-	getText()->drawCentered(Common::Point(_numberStringX, _numberStringY), _numberStringWidth, (char *)&_numberString01);
+	getText()->drawCentered(_numberPoint, _numberStringWidth, (char *)&_numberString01);
 }
 
 void Actor::update() {
@@ -385,7 +383,7 @@ void Actor::update() {
 			if (_index == 11) {
 				if (_frameIndex <= _frameCount - 1) {
 					// Looks like a simple check using the counter, since it doesn't seem to be used anywhere else
-					if (_updateCounter <= 0) {
+					if (_updateCounter == 0) {
 						++_updateCounter;
 					} else {
 						_updateCounter = 0;
@@ -549,7 +547,7 @@ void Actor::update() {
 	case kActorStatus1: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
+		uint32 dist = (uint32)abs((double)getDistanceForFrame(_direction, index));
 		Common::Point point = _point1 + _point2;
 
 		if (canMove(&point, _direction, dist, false)) {
@@ -583,7 +581,7 @@ void Actor::update() {
 	case kActorStatus13: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dist = abs((double)getDistanceForFrame(_direction, index));
+		int32 dist = (int32)abs((double)getDistanceForFrame(_direction, index));
 
 		Common::Point point = _point1 + _point2;
 		Common::Point current = _data.points[_data.current];
@@ -592,8 +590,8 @@ void Actor::update() {
 		 || point.x > (int16)(current.x + (dist - 1))
 		 || point.y < (int16)(current.y - (dist - 1))
 		 || point.y > (int16)(current.y + (dist - 1))) {
-			if (canMove(&point, _direction, dist, false)) {
-				move(_direction, dist);
+			if (canMove(&point, _direction, (uint32)dist, false)) {
+				move(_direction, (uint32)dist);
 			} else {
 				update_409230();
 			}
@@ -608,7 +606,7 @@ void Actor::update() {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
 				if (canMoveCheckActors(&current, _direction)) {
-					_point1.x = dist - _point2.x;
+					_point1.x = (int16)dist - _point2.x;
 					_point1.y = current.y - _point2.y;
 
 					if (_data.current < (int32)(_data.count - 1)) {
@@ -827,7 +825,7 @@ void Actor::updateDirection() {
 
 	ActorDirection direction = kDirectionN;
 	Common::Point position = sum;
-	ResourceId resourceId = kResourceNone;
+	ResourceId resourceId;
 	switch (_nextDirection) {
 	default:
 		// position is unchanged
@@ -837,7 +835,7 @@ void Actor::updateDirection() {
 	case kDirectionS:
 		position.x = _nextPosition.x + sum.x;
 		position.y = _nextPosition.y + sum.y;
-		position.y += (_nextDirection == kDirectionN ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y);
+		position.y += (int16)((_nextDirection == kDirectionN ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
 
 		switch (direction) {
 		default:
@@ -872,7 +870,7 @@ void Actor::updateDirection() {
 	case kDirectionO:
 	case kDirectionE:
 		position.x = _nextPosition.x + sum.x;
-		position.x += (_nextDirection == kDirectionO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x);
+		position.x += (int16)((_nextDirection == kDirectionO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
 		position.y = _nextPosition.y + sum.y;
 
 		switch (direction) {
@@ -909,8 +907,8 @@ void Actor::updateDirection() {
 	case kDirectionSE:
 		position.x = _nextPosition.x + sum.x;
 		position.y = _nextPosition.y + sum.y;
-		position.x += (_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y);
-		position.y += (_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x);
+		position.x += (int16)((_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
+		position.y += (int16)((_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
 
 		switch (direction) {
 		default:
@@ -953,13 +951,13 @@ void Actor::updateDirection() {
 	case kDirectionSO:
 	case kDirectionNE:
 		if (_nextDirection == kDirectionSO) {
-			position.x = _nextPosition.x + sum.x - 2 * abs(sum.y - _nextPositionOffset.y);
-			position.y = _nextPosition.y + sum.y + 2 * abs(sum.x - _nextPositionOffset.x);
+			position.x = (int16)(_nextPosition.x + sum.x - 2 * abs(sum.y - _nextPositionOffset.y));
+			position.y = (int16)(_nextPosition.y + sum.y + 2 * abs(sum.x - _nextPositionOffset.x));
 		} else {
 			double deltaX = sum.x * -0.56666666;
-			double deltaY = (419 - sum.y + deltaX) * 0.87613291;
-			position.x = sum.x + 2 * (_nextPositionOffset.x - deltaY);
-			position.y = sum.y + 2 * (_nextPosition.x - (sum.y + deltaX) - (deltaY * -0.56666666));
+			double deltaY = ((419 - sum.y) + deltaX) * 0.87613291;
+			position.x = (int16)(sum.x + 2 * (_nextPositionOffset.x - deltaY));
+			position.y = (int16)(sum.y + 2 * (_nextPosition.x - (sum.y + deltaX + (deltaY * -0.56666666))));
 		}
 
 		switch (direction) {
@@ -1017,7 +1015,7 @@ void Actor::updateDirection() {
 	// Compute resource id and adjust frame count
 	Actor *nextActor = getScene()->getActor(_nextActorIndex);
 
-	resourceId = nextActor->getResourcesId(index - index % 5 + (direction > kDirectionS ? 8 - direction : direction));
+	resourceId = nextActor->getResourcesId((index - index % 5) + (direction > kDirectionS ? 8 - direction : direction));
 	nextActor->setFrameCount(GraphicResource::getFrameCount(_vm, resourceId));
 
 	// Adjust graphic resource and position
@@ -1080,8 +1078,8 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 
 		Common::Rect frameRect = GraphicResource::getFrameRect(_vm, object->getResourceId(), object->getFrameIndex());
 
-		point.x = Common::Rational(frameRect.width(), 2).toInt()  + object->x;
-		point.y = Common::Rational(frameRect.height(), 2).toInt() + object->y;
+		point.x = (int16)Common::Rational(frameRect.width(), 2).toInt()  + object->x;
+		point.y = (int16)Common::Rational(frameRect.height(), 2).toInt() + object->y;
 		}
 		break;
 
@@ -1105,7 +1103,7 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 		break;
 
 	case kDirectionFromParameters:
-		point.x = point.y = target;
+		point.x = point.y = (int16)target;
 		break;
 	}
 
@@ -1113,7 +1111,7 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 	updateFromDirection(directionFromAngle(mid, point));
 }
 
-void Actor::setPosition(int32 newX, int32 newY, ActorDirection newDirection, uint32 frame) {
+void Actor::setPosition(int16 newX, int16 newY, ActorDirection newDirection, uint32 frame) {
 	_point1.x = newX - _point2.x;
 	_point1.y = newY - _point2.y;
 
@@ -1194,9 +1192,9 @@ bool Actor::process(const Common::Point &point) {
 	Common::Point delta = point - sum;
 
 	// Compute modifiers
-	int a1 = 0;
-	int a2 = 0;
-	int a3 = 0;
+	int16 a1 = 0;
+	int16 a2 = 0;
+	int16 a3 = 0;
 
 	if (delta.x <= 0) {
 		if (delta.y >= 0) {
@@ -1221,7 +1219,7 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point == sum) {
-		if (canMove(&sum, a3 >= 2 ? kDirectionS : kDirectionN, abs(delta.y), false)) {
+		if (canMove(&sum, a3 >= 2 ? kDirectionS : kDirectionN, (uint32)abs(delta.y), false)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -1232,7 +1230,7 @@ bool Actor::process(const Common::Point &point) {
 
 	if (point.x == sum.x) {
 		ActorDirection actorDir = a3 >= 2 ? kDirectionS : kDirectionN;
-		if (canMove(&sum, actorDir, abs(delta.y), false)) {
+		if (canMove(&sum, actorDir, (uint32)abs(delta.y), false)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -1248,7 +1246,7 @@ bool Actor::process(const Common::Point &point) {
 	if (point.y == sum.y) {
 		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
 
-		if (canMove(&sum, actorDir, abs(delta.x), true)) {
+		if (canMove(&sum, actorDir, (uint32)abs(delta.x), true)) {
 			_data.points[0] = point;
 			_data.current   = 0;
 			_data.count     = 1;
@@ -1272,10 +1270,10 @@ bool Actor::process(const Common::Point &point) {
 
 		// Compute coordinates, directions and counts
 		if (abs(delta.x) < abs(delta.y)) {
-			point1 = Common::Point(sum.x + abs(delta.x) * a1, sum.y + abs(delta.x) * a2);
-			point2 = Common::Point(sum.x                    , sum.y + abs(abs(delta.x) - abs(delta.y)) * a2);
-			count1 = abs(point1.x - sum.x);
-			count2 = abs(point1.y - point.y);
+			point1 = Common::Point((int16)(sum.x + abs(delta.x) * a1), (int16)(sum.y + abs(delta.x) * a2));
+			point2 = Common::Point(sum.x                             , (int16)(sum.y + abs(abs(delta.x) - abs(delta.y)) * a2));
+			count1 = (uint32)abs(point1.x - sum.x);
+			count2 = (uint32)abs(point1.y - point.y);
 
 			switch (a3) {
 			default:
@@ -1303,10 +1301,10 @@ bool Actor::process(const Common::Point &point) {
 				break;
 			}
 		} else {
-			point1 = Common::Point(sum.x + abs(delta.y) * a1,                      sum.y + abs(delta.y) * a2);
-			point2 = Common::Point(sum.x + abs(abs(delta.y) - abs(delta.x)) * a1 , sum.y);
-			count1 = abs(abs(delta.y) * a2);
-			count2 = abs(point1.y - point.x);
+			point1 = Common::Point((int16)(sum.x + abs(delta.y) * a1),                     (int16)(sum.y + abs(delta.y) * a2));
+			point2 = Common::Point((int16)(sum.x + abs(abs(delta.y) - abs(delta.x)) * a1), sum.y);
+			count1 = (uint32)abs(abs(delta.y) * a2);
+			count2 = (uint32)abs(point1.y - point.x);
 
 			switch (a3) {
 			default:
@@ -1454,7 +1452,7 @@ bool Actor::process(const Common::Point &point) {
 		break;
 	}
 
-	if (!canMove(&sum, actorDir, abs(delta.y), true))
+	if (!canMove(&sum, actorDir, (uint32)abs(delta.y), true))
 		return false;
 
 	// Update actor data
@@ -1468,7 +1466,7 @@ bool Actor::process(const Common::Point &point) {
 	return true;
 }
 
-void Actor::processStatus(int32 actorX, int32 actorY, bool doSpeech) {
+void Actor::processStatus(int16 actorX, int16 actorY, bool doSpeech) {
 	if (process(Common::Point(actorX, actorY))) {
 		if (_status <= kActorStatus11)
 			updateStatus(kActorStatus2);
@@ -1491,7 +1489,7 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 		if (nextPositionOffset.x) {
 			offset = nextPositionOffset;
 		} else {
-			Polygon polygon = getScene()->polygons()->get(_nextActionIndex);
+			Polygon polygon = getScene()->polygons()->get((uint32)_nextActionIndex);
 
 			offset = polygon.points[0];
 
@@ -1567,8 +1565,8 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 
 	_nextPositionOffset = offset;
 
-	double cosValue = cos(0.523598775) * 1000.0;
-	double sinValue = sin(0.523598775) * 1000.0;
+	int16 cosValue = (int16)(cos(0.523598775) * 1000.0);
+	int16 sinValue = (int16)(sin(0.523598775) * 1000.0);
 
 	_field_994 = offset.x - cosValue;
 	_field_998 = offset.y + sinValue;
@@ -1583,7 +1581,7 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 bool Actor::canInteract(Common::Point *point, int32* param) {
 	Actor *player = getScene()->getActor();
 
-	uint32 offset = 65;
+	int16 offset = 65;
 	if (getWorld()->chapter != kChapter2 || _index != 8)
 		offset = 40;
 
@@ -1733,6 +1731,9 @@ bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 dista
 }
 
 void Actor::move(ActorDirection actorDir, uint32 dist) {
+	if (_frameCount == 0)
+		error("[Actor::move] Invalid frame count (cannot be 0)");
+
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
 	Common::Point sum(_point1.x + _point2.x, _point1.x + _point2.x);
@@ -1746,16 +1747,16 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	case kActorStatus2:
 	case kActorStatus12:
 	case kActorStatus13:
-		updateCoordinatesForDirection(actorDir, dist, &_point1);
+		updateCoordinatesForDirection(actorDir, (int16)dist, &_point1);
 
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
 		if (_walkingSound1 != kResourceNone) {
 
 			// Compute volume
-			int32 vol = sqrt((double)-Config.sfxVolume);
+			int32 vol = (int32)sqrt((double)-Config.sfxVolume);
 			if (_index != getSharedData()->getPlayerIndex())
-				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
+				vol += (int32)sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
 			if (volume > 10000)
@@ -1766,14 +1767,14 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 				ResourceId resourceId = kResourceNone;
 				if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + rnd(1));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(1));
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + rnd(1));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(1));
 				} else {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(_walkingSound1 + rnd(1));
+						resourceId = (ResourceId)(_walkingSound1 + (int)rnd(1));
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(_walkingSound3 + rnd(1));
+						resourceId = (ResourceId)(_walkingSound3 + (int)rnd(1));
 				}
 
 				// Play sound
@@ -1784,7 +1785,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 	case kActorStatus18:
 		if (getWorld()->chapter == kChapter2) {
-			updateCoordinatesForDirection(actorDir, dist, &_point1);
+			updateCoordinatesForDirection(actorDir, (int16)dist, &_point1);
 
 			if (_walkingSound1 == kResourceNone)
 				break;
@@ -1792,7 +1793,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 			// Compute volume
 			int32 vol = getWorld()->actions[_actionIdx3]->volume;
 			if (_index != getSharedData()->getPlayerIndex())
-				vol += sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
+				vol += (int32)sqrt((double)abs(getSound()->calculateVolumeAdjustement(sum, 10, 0)));
 
 			int32 volume = (Config.sfxVolume + vol) * (Config.sfxVolume + vol);
 			if (volume > 10000)
@@ -1802,14 +1803,14 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 			ResourceId resourceId = kResourceNone;
 			if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + rnd(1));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(1));
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + rnd(1));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(1));
 			} else {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(_walkingSound1 + rnd(1));
+					resourceId = (ResourceId)(_walkingSound1 + (int)rnd(1));
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(_walkingSound3 + rnd(1));
+					resourceId = (ResourceId)(_walkingSound3 + (int)rnd(1));
 			}
 
 			// Play sound
@@ -1869,7 +1870,7 @@ void Actor::removeReactionHive(int32 reactionIndex, int32 numberValue01Substract
 	}
 }
 
-bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) {
+bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const {
 	if (reactionIndex > 16)
 		return false;
 
@@ -1890,8 +1891,8 @@ bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) {
 bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 	int32 dist = getAbsoluteDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
-	int32 x = point->x + deltaPointsArray[dir].x * dist - _field_948 - 10;
-	int32 y = point->y + deltaPointsArray[dir].y * dist - _field_94C - 10;
+	int32 x = point->x + deltaPointsArray[dir].x * dist - (_field_948 + 10);
+	int32 y = point->y + deltaPointsArray[dir].y * dist - (_field_94C + 10);
 	int32 x1 = x + 2 * _field_948 + 20;
 	int32 y1 = y + 2 * _field_94C + 20;
 
@@ -1904,8 +1905,8 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 		if (!actor->isOnScreen())
 			continue;
 
-		int32 x2 = actor->getPoint1()->x + actor->getPoint2()->x - actor->getField948() - 15;
-		int32 y2 = actor->getPoint1()->y + actor->getPoint2()->y - actor->getField94C() - 10;
+		int32 x2 = actor->getPoint1()->x + actor->getPoint2()->x -    (actor->getField948() + 15);
+		int32 y2 = actor->getPoint1()->y + actor->getPoint2()->y -    (actor->getField94C() + 10);
 		int32 x3 = actor->getPoint1()->x + actor->getPoint2()->x + 2 * actor->getField948() + 15;
 		int32 y3 = actor->getPoint1()->y + actor->getPoint2()->y + 2 * actor->getField94C() + 10;
 
@@ -2264,7 +2265,7 @@ void Actor::updateStatusEnabled() {
 	if (getWorld()->chapter != kChapter2 || _index != 8) {
 		if (_field_944 == 4) {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, getWorld()->backgroundImage, 0);
-			processStatus(rnd(frameRect.width() + 200) - 100, rnd(frameRect.height() + 200) - 100, false);
+			processStatus((int16)rnd(frameRect.width() + 200) - 100, (int16)rnd(frameRect.height() + 200) - 100, false);
 		} else {
 			// Actor: Crow
 			if (rnd(1000) < 5 || !strcmp(_name, "Crow")) {
@@ -2277,8 +2278,8 @@ void Actor::updateStatusEnabled() {
 						ActionArea *area = getWorld()->actions[areaIndex];
 						Polygon poly = getScene()->polygons()->get(area->polygonIndex);
 
-						Common::Point pt(poly.boundingRect.left + rnd(poly.boundingRect.width()),
-						                 poly.boundingRect.top  + rnd(poly.boundingRect.height()));
+						Common::Point pt(poly.boundingRect.left + (int16)rnd((uint16)poly.boundingRect.width()),
+						                 poly.boundingRect.top  + (int16)rnd((uint16)poly.boundingRect.height()));
 
 						if (!getSharedData()->getFlag(kFlagActorUpdateEnabledCheck)) {
 							if (!isInActionArea(pt, area)) {
@@ -2324,7 +2325,7 @@ void Actor::updateStatusEnabled() {
 	}
 }
 
-void Actor::updateStatusEnabledProcessStatus(int32 testX, int32 testY, uint32 counter, int32 setX, int32 setY) {
+void Actor::updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 counter, int16 setX, int16 setY) {
 	int32 xsum = _point1.x + _point2.x;
 	int32 ysum = _point1.y + _point2.y;
 
@@ -2360,12 +2361,12 @@ void Actor::updateStatus12_Chapter2() {
 	// Compute distance
 	uint32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
-		frameIndex = 2 * _frameCount - _frameIndex - 1;
+		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
-	uint32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
+	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, frameIndex));
 
 	// Face actor
-	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	int32 data = getSharedData()->getChapter2Data(3, _index + 1);
 	if (data > 0) {
@@ -2378,8 +2379,8 @@ void Actor::updateStatus12_Chapter2() {
 	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
 	Common::Point sum = _point1 + _point2;
 
-	uint32 absX = abs(sum.x - sumPlayer.x);
-	uint32 absY = abs(sum.y - sumPlayer.y);
+	uint32 absX = (uint32)abs(sum.x - sumPlayer.x);
+	uint32 absY = (uint32)abs(sum.y - sumPlayer.y);
 
 	// Adjust distance
 	if (absX <= absY)
@@ -2406,9 +2407,9 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	// Compute distance
 	uint32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
-		frameIndex = 2 * _frameCount - _frameIndex - 1;
+		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
-	uint32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
+	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, frameIndex));
 
 	// Update status
 	if (player->getStatus() == kActorStatus17 || !getScene()->getActor(10)->isVisible()) {
@@ -2417,7 +2418,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	}
 
 	// Face player
-	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	// Compute coordinates
 	Common::Point delta  = Common::Point((sumPlayer.x + sum.x) / 2,       (sumPlayer.y + sum.y) / 2);
@@ -2466,7 +2467,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 		if (player->getStatus() != kActorStatus17 && player->getStatus() != kActorStatus16) {
 			if (sqrt((double)((sum.y - sumPlayer.y) * (sum.y - sumPlayer.y) + (sum.x - sumPlayer.x) * (sum.x - sumPlayer.x))) < 80.0) {
 				_frameIndex = 0;
-				faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
+				faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 				updateStatus(kActorStatus15);
 			}
 		}
@@ -2519,6 +2520,9 @@ void Actor::updateStatus12_Chapter11() {
 }
 
 void Actor::updateStatus14() {
+	if (_frameCount == 0)
+		error("[Actor::updateStatus14] Invalid frame count (cannot be 0)");
+
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 	_lastScreenUpdate = _vm->screenUpdateCount;
 
@@ -2549,8 +2553,8 @@ void Actor::updateStatus14_Chapter2() {
 	}
 
 	if (_status != kActorStatus16) {
-		_point1.x -= getSharedData()->getChapter2Data(3, 2 * _index + 6);
-		_point1.y -= getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
+		_point1.x -= (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
+		_point1.y -= (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
 	}
 
 	if (_frameIndex == _frameCount - 1) {
@@ -2667,9 +2671,9 @@ void Actor::updateStatus15_Chapter2() {
 		updateStatus(kActorStatusEnabled);
 
 	uint32 dist = euclidianDistance(sumPlayer, sum);
-	uint32 offset = (dist <= 10) ? 7 : 12;
+	int16 offset = (dist <= 10) ? 7 : 12;
 	if (dist > 20) {
-		faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
+		faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 		getScene()->getActor(_index + 9)->setDirection(_direction);
 	}
 
@@ -2686,7 +2690,7 @@ void Actor::updateStatus15_Chapter2() {
 	else if (sumPlayer.y < sum.y)
 		_point1.y -= offset;
 
-	if (dist < (offset + 1)) {
+	if ((int32)dist < (offset + 1)) {
 		if (player->getStatus() != kActorStatus16 && player->getStatus() != kActorStatus17 && player->getFrameIndex() < 6) {
 			_point1 = sumPlayer - _point2;
 
@@ -3019,10 +3023,10 @@ bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, Actor
 	int16 actor2_x = actor2->getPoint1()->x + actor2->getPoint2()->x;
 	int16 actor2_y = actor2->getPoint1()->y + actor2->getPoint2()->y;
 
-	Common::Point pt1(actor2_x -     actor1->getField948() - 10, actor2_y -     actor1->getField94C() - 10);
-	Common::Point pt2(actor2_x + 2 * actor1->getField948() + 10, actor2_y + 2 * actor1->getField94C() + 10);
-	Common::Point pt3(actor2_x -     actor2->getField948() - 25, actor2_y -     actor2->getField94C() - 20);
-	Common::Point pt4(actor2_x + 2 * actor2->getField948() + 25, actor2_y + 2 * actor2->getField94C() + 20);
+	Common::Point pt1((int16)(actor2_x -    (actor1->getField948() + 10)), (int16)(actor2_y -    (actor1->getField94C() + 10)));
+	Common::Point pt2((int16)(actor2_x + 2 * actor1->getField948() + 10),  (int16)(actor2_y + 2 * actor1->getField94C() + 10));
+	Common::Point pt3((int16)(actor2_x -    (actor2->getField948() + 25)), (int16)(actor2_y -    (actor2->getField94C() + 20)));
+	Common::Point pt4((int16)(actor2_x + 2 * actor2->getField948() + 25),  (int16)(actor2_y + 2 * actor2->getField94C() + 20));
 
 	return getScene()->rectIntersect(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y, pt4.x, pt4.y);
 }
@@ -3197,8 +3201,8 @@ void Actor::updateStatus17_Chapter2() {
 void Actor::updateStatus18_Chapter2() {
 	Actor *player = getScene()->getActor();
 
-	_point1.x = player->getPoint1()->x - getSharedData()->getChapter2Data(3, 2 * _index + 6);
-	_point1.y = player->getPoint1()->y - getSharedData()->getChapter2Data(3, 2 * _index + 7);
+	_point1.x = player->getPoint1()->x - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
+	_point1.y = player->getPoint1()->y - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7);
 
 	_frameIndex++;
 
@@ -3214,8 +3218,8 @@ void Actor::updateStatus18_Chapter2() {
 }
 
 void Actor::updateStatus18_Chapter2_Actor11() {
-	uint32 frameIndex = (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - _frameIndex - 1;
-	int32 distance = abs((double)getDistanceForFrame(_direction, frameIndex));
+	int32 frameIndex = (int32)_frameIndex;
+	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - (_frameIndex + 1)));
 
 	getSharedData()->setChapter2Counter(7, getSharedData()->getChapter2Counter(7) + 1);
 	if (getSharedData()->getChapter2Counter(7) > 14) {
@@ -3223,28 +3227,30 @@ void Actor::updateStatus18_Chapter2_Actor11() {
 		updateStatus(kActorStatus12);
 	}
 
-	faceTarget(getSharedData()->getPlayerIndex(), kDirectionFromActor);
+	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
 	Common::Point sum = _point1 + _point2;
 	if (canMove(&sum, DIR(_direction + 4), distance, false)) {
 		move(DIR(_direction + 4), distance);
-		--_frameIndex;
+		--frameIndex;
 	} else if (canMove(&sum, DIR(_direction + 5), distance, false)) {
 		move(DIR(_direction + 5), distance);
-		--_frameIndex;
+		--frameIndex;
 	} else if (canMove(&sum, DIR(_direction + 3), distance, false)) {
 		move(DIR(_direction + 3), distance);
-		--_frameIndex;
+		--frameIndex;
 	} else if (canMove(&sum, DIR(_direction + 6), distance, false)) {
 		move(DIR(_direction + 6), distance);
-		--_frameIndex;
+		--frameIndex;
 	} else if (canMove(&sum, DIR(_direction + 2), distance, false)) {
 		move(DIR(_direction + 2), distance);
-		--_frameIndex;
+		--frameIndex;
 	}
 
-	if (_frameIndex < 0)
+	if (frameIndex < 0)
 		_frameIndex = _frameCount - 1;
+	else
+		_frameIndex = (uint32)frameIndex;
 }
 
 void Actor::updateStatus21() {
@@ -3304,11 +3310,11 @@ void Actor::updateFinish() {
 	}
 }
 
-void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
+void Actor::updateCoordinates(const Common::Point &vec1, Common::Point vec2) {
 	if (getScene()->getActor(1)->isVisible())
 		return;
 
-	uint32 diffY = abs(vec2.y - vec1.y);
+	uint32 diffY = (uint32)abs(vec2.y - vec1.y);
 	if (diffY > 5)
 		diffY = 5;
 
@@ -3318,7 +3324,7 @@ void Actor::updateCoordinates(Common::Point vec1, Common::Point vec2) {
 	ActorDirection dir = (diffY > 0) ? kDirectionS : kDirectionN;
 
 	if (canMove(&vec2, dir, diffY + 3, false))
-		updateCoordinatesForDirection(dir, diffY - 1, &_point);
+		updateCoordinatesForDirection(dir, (int16)(diffY - 1), &_point);
 }
 
 void Actor::resetActors() {
@@ -3333,8 +3339,8 @@ void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
 	if (reaction != 1)
 		return;
 
-	_numberStringX = point.x;
-	_numberStringY = point.y + 8;
+	_numberPoint.x = point.x;
+	_numberPoint.y = point.y + 8;
 	_numberStringWidth = 40;
 	sprintf(_numberString01, "%d", _numberValue01);
 
@@ -3524,8 +3530,8 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 			break;
 
 		int32 dist = getAbsoluteDistanceForFrame(direction, frameNumber);
-		src.x += sign.x * dist;
-		src.y += sign.y * dist;
+		src.x += (int16)(sign.x * dist);
+		src.y += (int16)(sign.y * dist);
 
 		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionO, frameNumber)) {
 			if (abs(src.y - destination.y) >= getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
@@ -3614,13 +3620,13 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	// Update frame and setup pathfinding
 	_frameNumber = frameNumber;
 
-	if (_frameNumber <= 0)
+	if (_frameNumber == 0)
 		distance = getAbsoluteDistanceForFrame(direction, _frameCount - 1);
 	else
 		distance = getAbsoluteDistanceForFrame(direction, _frameNumber - 1);
 
-	src.x -= sign.x * distance;
-	src.y -= sign.y * distance;
+	src.x -= (int16)(sign.x * distance);
+	src.y -= (int16)(sign.y * distance);
 
 	*point = src;
 	_data.points[_data.count]     = src;
@@ -3630,7 +3636,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	return true;
 }
 
-bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, uint32 loopcount) {
+bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, int16 loopcount) {
 	if (loopcount <= 1)
 		return true;
 
@@ -3638,7 +3644,7 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 	Common::Point basePoint = deltaPointsArray[direction] + point;
 	Common::Rect  rect      = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
-	for (uint32 i = 1; i < loopcount; i++) {
+	for (int16 i = 1; i < loopcount; i++) {
 		if (!checkAllActions(basePoint, actions))
 			break;
 
@@ -3732,7 +3738,7 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::directionFromAngle(Common::Point vec1, Common::Point vec2) {
+ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common::Point &vec2) {
 	int32 diffX = (vec2.x - vec1.x) * 2^16;
 	int32 diffY = (vec1.y - vec2.y) * 2^16;
 	int32 adjust = 0;
@@ -3750,7 +3756,7 @@ ActorDirection Actor::directionFromAngle(Common::Point vec1, Common::Point vec2)
 	int32 dirAngle = -1;
 
 	if (diffX) {
-		uint32 index = (diffY * 256) / diffX;
+		uint32 index = (uint32)((diffY * 256) / diffX);
 
 		if (index < 256)
 			dirAngle = angleTable01[index];
@@ -3855,6 +3861,9 @@ DrawFlags Actor::getGraphicsFlags() {
 }
 
 int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+	if (frameIndex >= ARRAYSIZE(_distancesNS))
+		error("[Actor::getAbsoluteDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+
 	switch (dir) {
 	default:
 		error("[Actor::getDistanceForFrame] Invalid direction");
@@ -3876,6 +3885,9 @@ int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) 
 }
 
 int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+	if (frameIndex >= ARRAYSIZE(_distancesNS))
+		error("[Actor::getDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+
 	switch (dir) {
 	default:
 		error("[Actor::getDistanceForFrame] Invalid direction");
@@ -3906,7 +3918,7 @@ int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	}
 }
 
-void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta, Common::Point *point) {
+void Actor::updateCoordinatesForDirection(ActorDirection direction, int16 delta, Common::Point *point) {
 	if (!point)
 		error("[Actor::updateCoordinatesForDirection] Invalid point (NULL)!");
 
@@ -3952,12 +3964,12 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int32 delta,
 	}
 }
 
-uint32 Actor::euclidianDistance(Common::Point vec1, Common::Point vec2) {
-	return sqrt(pow((double)(vec2.y - vec1.y), 2) + pow((double)(vec2.x - vec1.x), 2));
+uint32 Actor::euclidianDistance(const Common::Point &vec1, const Common::Point &vec2) {
+	return (uint32)sqrt(pow((double)(vec2.y - vec1.y), 2) + pow((double)(vec2.x - vec1.x), 2));
 }
 
-uint32 Actor::angleFromVectors(Common::Point vec1, Common::Point vec2) {
-	int32 result = ((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / M_PI)) % 360;
+int32 Actor::angleFromVectors(const Common::Point &vec1, const Common::Point &vec2) {
+	uint32 result = (uint32)(((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / M_PI)) % 360);
 
 	if (vec1.x < vec2.x)
 		return 360 - result;
@@ -3965,7 +3977,7 @@ uint32 Actor::angleFromVectors(Common::Point vec1, Common::Point vec2) {
 	return result;
 }
 
-void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, Common::Point point) {
+void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, const Common::Point &point) {
 	if (!rect)
 		error("[Actor::rect] Invalid rect (NULL)!");
 
@@ -4022,7 +4034,7 @@ void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, Comm
 	rect->setHeight(40);
 }
 
-bool Actor::compareAngles(Common::Point vec1, Common::Point vec2) {
+bool Actor::compareAngles(const Common::Point &vec1, const Common::Point &vec2) {
 	Common::Point vec3(2289, 171);
 
 	int32 diff = angleFromVectors(vec1, vec3) - angleFromVectors(vec1, vec2);
@@ -4033,14 +4045,14 @@ bool Actor::compareAngles(Common::Point vec1, Common::Point vec2) {
 	return (diff != 180);
 }
 
-bool Actor::compare(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+bool Actor::compare(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
 	if (vec.y >= vec1.y && vec.y <= vec2.y && vec.x >= vec1.x && vec.x <= vec2.x)
 		return true;
 
 	return false;
 }
 
-int32 Actor::compareX(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+int16 Actor::compareX(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
 	if (vec.y > vec2.y)
 		return 3;
 
@@ -4050,7 +4062,7 @@ int32 Actor::compareX(Common::Point vec1, Common::Point vec2, Common::Point vec)
 	return 0;
 }
 
-int32 Actor::compareY(Common::Point vec1, Common::Point vec2, Common::Point vec) {
+int16 Actor::compareY(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
 	if (vec.y > vec2.y)
 		return 3;
 
