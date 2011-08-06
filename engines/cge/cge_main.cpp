@@ -1525,22 +1525,18 @@ void CGEEngine::runGame() {
 	if (!_music)
 		killMidi();
 
-	if (_mini && INI_FILE::exist("MINI.SPR")) {
+	if (INI_FILE::exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
 		_miniShp[0] = _miniShp[1] = NULL;
 
-		uint8 *ptr = (uint8 *) &*_mini;
-		if (ptr != NULL) {
-			loadSprite("MINI", -1, 0, kMiniX, kMiniY);
-			expandSprite(_miniCave = _sprite);  // NULL is ok
-			if (_miniCave) {
-				_miniCave->_flags._kill = false;
-				_miniCave->_flags._hide = true;
-				_miniCave->moveShapes(ptr);
-				_miniShp[0] = new Bitmap(*_miniCave->shp());
-				_miniShpList = _miniCave->setShapeList(_miniShp);
-				postMiniStep(-1);
-			}
+		loadSprite("MINI", -1, 0, kMiniX, kMiniY);
+		expandSprite(_miniCave = _sprite);  // NULL is ok
+		if (_miniCave) {
+			_miniCave->_flags._kill = false;
+			_miniCave->_flags._hide = true;
+			_miniShp[0] = new Bitmap(*_miniCave->shp());
+			_miniShpList = _miniCave->setShapeList(_miniShp);
+			postMiniStep(-1);
 		}
 	}
 

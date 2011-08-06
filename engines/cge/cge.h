@@ -142,7 +142,6 @@ public:
 	Bar *_barriers;
 
 	Common::RandomSource _randomSource;
-	byte      *_mini;
 	BitmapPtr *_miniShp;
 	BitmapPtr *_miniShpList;
 	int        _startGameSlot;
