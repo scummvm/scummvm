@@ -105,10 +105,10 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
-	enum EncounterArray {
-		kEncounterArray2000 = 0x2000,
-		kEncounterArray4000 = 0x4000,
-		kEncounterArray8000 = 0x8000
+	enum KeywordOptions {
+		kKeywordOptionsDisabled = 0x20,
+		kKeywordOptionsUnknown  = 0x40,
+		kKeywordOptionsVisible  = 0x80
 	};
 
 	struct EncounterGraphic {
@@ -261,6 +261,9 @@ private:
 	void updatePalette1();
 	void updatePalette2();
 
+	bool isKeywordVisible(int16 keyword) const  { return (bool)(BYTE1(keyword) & kKeywordOptionsVisible); }
+	bool isKeywordDisabled(int16 keyword) const { return (bool)(BYTE1(keyword) & kKeywordOptionsDisabled); }
+
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts
 	enum EncounterOpcode {
@@ -283,25 +286,21 @@ private:
 		kOpcodeIncrementScriptVariable      = 16,
 		kOpcode17                           = 17,
 		kOpcodeAddRemoveReactionHive        = 18,
-		kOpcode19                           = 19,
-		kOpcode20                           = 20,
 		kOpcodeSetCounterFromActorReactions = 21,
-		kOpcode22                           = 22,
 		kOpcode23                           = 23,
 		kOpcodeSetClearFlag                 = 24,
 		kOpcodeSetCounterFromFlag           = 25
 	};
 
 	struct ScriptEntry {
-		union {
-			byte opcode;
-			byte param1;
-			uint16 param2;
-			uint32 data;
-		};
+		byte opcode;
+		byte param1;
+		uint16 param2;
 
-		ScriptEntry(uint32 val) {
-			data = val;
+		ScriptEntry(byte *data) {
+			opcode = *data;
+			param1 = *(data + 1);
+			param2 = READ_LE_UINT16(data + 2);
 		}
 
 		Common::String toString();
