@@ -187,7 +187,7 @@ public:
 	Sprite *expand();
 	Sprite *contract();
 	Sprite *backShow(bool fast = false);
-	void setName(char *name);
+	void setName(char *newName);
 	inline char *name() {
 		return (_ext) ? _ext->_name : NULL;
 	}
