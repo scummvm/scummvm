@@ -137,14 +137,7 @@ private:
 	int op_1016(int32 *args);
 	int op_1017(int32 *args);
 	int op_1019(int32 *args);
-	int op_1020();
 	int op_1021(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7);
-
-	// Two integer arrays are used between some functions
-	// Originally, these pointers were in _userData, but we keep them separate
-	// Also, doing it that would break things on non 32-bit systems...
-	bool _intArraysAllocated;
-	uint32 *_intArray1, *_intArray2;
 
 	// op_1007 allocates some arrays
 	// they're then filled by op_1019

@@ -821,16 +821,12 @@ int LogicHEsoccer::versionID() {
 
 LogicHEsoccer::LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {
 	_userDataD = (double *)calloc(1732, sizeof(double));
-	_intArray1 = 0;
-	_intArray2 = 0;
-	_intArraysAllocated = false;
 	_array1013 = 0;
 	_array1013Allocated = false;
 }
 
 LogicHEsoccer::~LogicHEsoccer() {
 	free(_userDataD);
-	op_1020(); // clear int arrays
 	delete[] _array1013;
 }
 
@@ -902,10 +898,6 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1019(args);
 		break;
 
-	case 1020:
-		res = op_1020();
-		break;
-
 	case 1021:
 		res = op_1021(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
@@ -915,7 +907,7 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = getFromArray(args[0], args[1], args[2]);
 		break;
 
-	case 1010: case 1015: case 1018:
+	case 1010: case 1015: case 1018: case 1020:
 		// Used only by the in-game editor (so, fall through)
 	default:
 		LogicHE::dispatch(op, numArgs, args);
@@ -925,9 +917,6 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 }
 
 void LogicHEsoccer::beforeBootScript() {
-	if (_intArraysAllocated)
-		op_1020();
-
 	_userDataD[530] = 0;
 }
 
@@ -1025,8 +1014,6 @@ int LogicHEsoccer::op_1006(int32 a1, int32 a2, int32 a3, int32 a4) {
 int LogicHEsoccer::op_1007(int32 *args) {
 	// Used when the HE logo is shown
 	// This initializes the _userDataD fields that are used in op_1006/op_1011
-
-	_intArraysAllocated = false;
 
 	float y1 = (double)args[0] / 100.0;
 	float x1 = (double)args[1] / 100.0;
@@ -1374,7 +1361,7 @@ int LogicHEsoccer::op_sub5(int a1, int a2, int a3) {
 
 int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
 	// Creates _array1013 for *some* purpose
-	// Seems to be used in op_1015
+	// Seems to be used in op_1014 and op_1015
 
 	_array1013 = new uint32[585 * 11];
 	_array1013Allocated = true;
@@ -2250,40 +2237,9 @@ int LogicHEsoccer::op_1019(int32 *args) {
 	for (int i = 0; i < 585; i++)
 		_byteArray2[i] = getFromArray(args[0], 0, i);
 
-	// The remaining code of this function is used for the
-	// built-in editor. 
-
-	// Deallocate the two integer arrays
-	if (_intArraysAllocated)
-		op_1020();
-
-	// Reallocate them
-	_intArray1 = new uint32[1008];
-	_intArray2 = new uint32[168];
-	_intArraysAllocated = true;
-
-	memset(_intArray1, 0, 4 * 4);
-	memset(_intArray2, 0, 24 * 4);
-
-	// These two arrays are used in op_1015
-	for (int i = 0; i < 42; i++) {
-		for (int j = 0; j < 24; j++)
-			_intArray1[j + 24 * i] = getFromArray(args[3], 0, j + 24 * i);
-
-		for (int j = 0; j < 4; j++)
-			_intArray2[j + 4 * i] = getFromArray(args[2], 0, j + 4 * i);
-	}
-
-	return 1;
-}
-
-int LogicHEsoccer::op_1020() {
-	// Deallocate in-game editor integer arrays
-	// The arrays can be allocated in op_1015 or op_1019
-
-	delete[] _intArray1; _intArray1 = 0;
-	delete[] _intArray2; _intArray2 = 0;
-	_intArraysAllocated = false;
+	// The remaining code of this function was used for the
+	// built-in editor. However, it is incomplete in the
+	// final product, so we do not need to have it.
 
 	return 1;
 }
