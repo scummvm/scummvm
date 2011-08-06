@@ -293,6 +293,7 @@ void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &he
 	Graphics::Surface *s = _vga->_page[0];
 	::createThumbnail(thumb, (const byte *)s->pixels, kScrWidth, kScrHeight, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
 	delete thumb;
 
 	// Write out the save date/time
