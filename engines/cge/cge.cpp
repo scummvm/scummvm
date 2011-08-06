@@ -110,6 +110,7 @@ void CGEEngine::setup() {
 	_miniCave = NULL;
 	_miniShp = NULL;
 	_miniShpList = NULL;
+	_sprite = NULL;
 
 	// Create debugger console
 	_console = new CGEConsole(this);
@@ -130,8 +131,6 @@ void CGEEngine::setup() {
 		_pocket[i] = new Sprite(this, NULL);
 		_pocket[i]->_flags._kill = false;
 	}
-	_sprite = new Sprite(this, NULL);
-	_sprite->_flags._kill = false;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_cavLight = new CavLight(this);
