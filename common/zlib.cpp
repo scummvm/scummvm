@@ -70,14 +70,8 @@ protected:
 
 public:
 
-	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w) {
+	GZipReadStream(Common::SeekableReadStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
-
-		_stream.zalloc = Z_NULL;
-		_stream.zfree = Z_NULL;
-		_stream.opaque = Z_NULL;
-		_stream.avail_in = 0;
-		_stream.next_in = Z_NULL;
 
 		// Verify file header is correct
 		w->seek(0, SEEK_SET);
@@ -230,11 +224,8 @@ protected:
 	}
 
 public:
-	GZipWriteStream(Common::WriteStream *w) : _wrapped(w) {
+	GZipWriteStream(Common::WriteStream *w) : _wrapped(w), _stream() {
 		assert(w != 0);
-		_stream.zalloc = Z_NULL;
-		_stream.zfree = Z_NULL;
-		_stream.opaque = Z_NULL;
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
 		// write gzip headers. This feature was added in zlib 1.2.0.4,
