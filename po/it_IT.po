@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-04-24 14:46+0100\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -376,7 +376,7 @@ msgstr "~C~arica..."
 msgid "Load savegame for selected game"
 msgstr "Carica un salvataggio del gioco selezionato"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "~A~ggiungi gioco..."
 
@@ -400,7 +400,7 @@ msgstr "~R~imuovi gioco"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Rimuove il gioco dalla lista. I file del gioco rimarranno intatti"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~A~gg. gioco..."
@@ -499,15 +499,6 @@ msgstr "Agg. massa..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Agg. in massa..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Agg. gioco..."
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Aggiungi gioco..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2638,6 +2629,13 @@ msgstr "Volume"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr ""
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Agg. gioco..."
+
+#~ msgid "Add Game..."
+#~ msgstr "Aggiungi gioco..."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Rilevati %d nuovi giochi."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-08-06 22:38+0200\n"
 "Last-Translator: Eugene Sandulenko\n"
 "Language-Team: Ukrainian\n"
@@ -379,7 +379,7 @@ msgstr "~З~аван..."
 msgid "Load savegame for selected game"
 msgstr "Завантажити збереження для вибраної гри"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "~Д~од. гру..."
 
@@ -403,7 +403,7 @@ msgstr "~В~идалити гру"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Видалити гру зі списку. Не видаляє гру з жорсткого диску"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~одати гру..."
@@ -498,15 +498,6 @@ msgstr "Дод. багато..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Дод. багато..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Додати гру..."
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Додати гру..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2155,27 +2146,25 @@ msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:67
-#, fuzzy
 msgid "Hide ScummVM"
-msgstr "Вихід зі ScummVM"
+msgstr "Сховати ScummVM"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:70
 msgid "Hide Others"
-msgstr ""
+msgstr "Сховати Інші"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:74
 msgid "Show All"
-msgstr ""
+msgstr "Показати все"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:92
 #: backends/platform/sdl/macosx/appMenu_osx.mm:99
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr "Вікно"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:95
 msgid "Minimize"
-msgstr ""
+msgstr "Мінімізувати"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
@@ -2597,6 +2586,13 @@ msgstr "Мінімальна Гучність"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr ""
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Додати гру..."
+
+#~ msgid "Add Game..."
+#~ msgstr "Додати гру..."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Знайдено %d нових ігор."

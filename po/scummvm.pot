@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -373,7 +373,7 @@ msgstr ""
 msgid "Load savegame for selected game"
 msgstr ""
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr ""
 
@@ -397,7 +397,7 @@ msgstr ""
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr ""
@@ -489,15 +489,6 @@ msgstr ""
 
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
-msgstr ""
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr ""
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
 msgstr ""
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81

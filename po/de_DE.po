@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-06-20 09:45+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
@@ -379,7 +379,7 @@ msgstr "~L~aden..."
 msgid "Load savegame for selected game"
 msgstr "Spielstand für ausgewähltes Spiel laden"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "Spiel ~h~inzufügen"
 
@@ -405,7 +405,7 @@ msgstr "Spiel ~e~ntfernen"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Spiel aus der Liste entfernen. Die Spieldateien bleiben erhalten."
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~H~inzufügen"
@@ -501,15 +501,6 @@ msgstr "Durchsuchen"
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Durchsuchen"
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Hinzufügen"
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Spiel hinzufügen"
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2680,6 +2671,13 @@ msgstr "Niedrigste Lautstärke"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Lautstärke niedriger"
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Hinzufügen"
+
+#~ msgid "Add Game..."
+#~ msgstr "Spiel hinzufügen"
 
 #~ msgid ""
 #~ "Your game version has been detected using filename matching as a variant "

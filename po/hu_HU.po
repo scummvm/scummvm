@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-06-21 09:54+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -379,7 +379,7 @@ msgstr "Betöltés"
 msgid "Load savegame for selected game"
 msgstr "Kimentett játékállás betöltése"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "Játék hozzáadás"
 
@@ -403,7 +403,7 @@ msgstr "Játék törlése"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Törli a játék nevét a listáról. A játékfájlok megmaradnak"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "Játék hozzáadás"
@@ -499,15 +499,6 @@ msgstr "Masszív mód..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Masszív mód..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Játék hozzáadás"
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Játék hozzáadás"
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2645,6 +2636,13 @@ msgstr "Minimum Hangerõ"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Hangerõ csökkentése"
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Játék hozzáadás"
+
+#~ msgid "Add Game..."
+#~ msgstr "Játék hozzáadás"
 
 #~ msgid ""
 #~ "Your game version has been detected using filename matching as a variant "

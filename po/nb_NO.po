@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-04-25 22:56+0100\n"
 "Last-Translator: Einar Johan T. Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
@@ -381,7 +381,7 @@ msgstr "~Å~pne..."
 msgid "Load savegame for selected game"
 msgstr "Åpne lagret spill for det valgte spillet"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "~L~egg til spill..."
 
@@ -405,7 +405,7 @@ msgstr "~F~jern spill"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Fjern spill fra listen. Spilldataene forblir intakte"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~L~egg til spill..."
@@ -501,15 +501,6 @@ msgstr "Legg til flere..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Legg til flere..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Legg til spill..."
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Legg til spill..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2634,6 +2625,13 @@ msgstr "Volum"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr ""
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Legg til spill..."
+
+#~ msgid "Add Game..."
+#~ msgstr "Legg til spill..."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Oppdaget %d nye spill."

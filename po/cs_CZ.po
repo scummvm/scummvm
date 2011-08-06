@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-06-24 06:44+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
@@ -379,7 +379,7 @@ msgstr "~N~ahrát..."
 msgid "Load savegame for selected game"
 msgstr "Nahrát ulo¾enou pozici pro zvolenou hru"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
 msgstr "~P~øidat hru..."
 
@@ -403,7 +403,7 @@ msgstr "~O~dstranit Hru"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Odstranit hru ze seznamu. Herní data zùstanou zachována"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~P~øidat hru..."
@@ -498,15 +498,6 @@ msgstr "Hromadné Pøidání..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Hromadné Pøidání..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Pøidat Hru..."
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Pøidat Hru..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2651,6 +2642,13 @@ msgstr "Minimální Hlasitost"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Sni¾uji Hlasitost"
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Pøidat Hru..."
+
+#~ msgid "Add Game..."
+#~ msgstr "Pøidat Hru..."
 
 #~ msgid ""
 #~ "Your game version has been detected using filename matching as a variant "

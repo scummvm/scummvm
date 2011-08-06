@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"POT-Creation-Date: 2011-08-06 10:05+0100\n"
 "PO-Revision-Date: 2011-06-26 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -378,9 +378,9 @@ msgstr "~З~агрузить..."
 msgid "Load savegame for selected game"
 msgstr "Загрузить сохрнение для выбранной игры"
 
-#: gui/launcher.cpp:567
+#: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
-msgstr "~Д~об. игру..."
+msgstr "~Д~обавить игру..."
 
 #: gui/launcher.cpp:567 gui/launcher.cpp:574
 msgid "Hold Shift for Mass Add"
@@ -402,7 +402,7 @@ msgstr "~У~далить игру"
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Удалить игру из списка. Не удаляет игру с жесткого диска"
 
-#: gui/launcher.cpp:574
+#: gui/launcher.cpp:574 gui/launcher.cpp:1055
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~Д~об. игру..."
@@ -410,7 +410,7 @@ msgstr "~Д~об. игру..."
 #: gui/launcher.cpp:576
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "Н~а~стр. игры..."
+msgstr "Н~а~с. игры..."
 
 #: gui/launcher.cpp:578
 msgctxt "lowres"
@@ -497,15 +497,6 @@ msgstr "Много игр..."
 #: gui/launcher.cpp:1054
 msgid "Mass Add..."
 msgstr "Много игр..."
-
-#: gui/launcher.cpp:1055
-msgctxt "lowres"
-msgid "Add Game..."
-msgstr "Доб. игру"
-
-#: gui/launcher.cpp:1055
-msgid "Add Game..."
-msgstr "Доб. игру..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
@@ -2658,6 +2649,13 @@ msgstr "Минимальная громкость"
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
 msgstr "Уменьшение громкости"
+
+#~ msgctxt "lowres"
+#~ msgid "Add Game..."
+#~ msgstr "Доб. игру"
+
+#~ msgid "Add Game..."
+#~ msgstr "Добавить игру..."
 
 #~ msgid "Discovered %d new games."
 #~ msgstr "Найдено %d новых игр."
