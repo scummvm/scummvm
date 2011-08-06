@@ -240,8 +240,8 @@ enum ResourcePackId {
 typedef int ResourceId;
 
 enum ResourcesId {
-	kResourceNone         = 0,
-	kResourceInvalid      = 0xFFFFFFFF
+	kResourceInvalid      = -1,
+	kResourceNone         = 0
 };
 
 #define kMusicStopped -666
