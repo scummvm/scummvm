@@ -99,6 +99,12 @@ void CGEEngine::initCaveValues() {
 	}
 }
 
+void CGEEngine::freeCaveValues() {
+	delete[] _mini;
+	free(_heroXY);
+	free(_barriers);
+}
+
 void CGEEngine::setup() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
 
@@ -209,10 +215,8 @@ CGEEngine::~CGEEngine() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
-	delete[] _mini;
 
-	free(_heroXY);
-	free(_barriers);
+	freeCaveValues();
 }
 
 Common::Error CGEEngine::run() {
