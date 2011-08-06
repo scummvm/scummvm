@@ -41,7 +41,7 @@ namespace Asylum {
 
 int g_debugDrawRects;
 
-#define TRANSPARENCY_TABLE_SIZE 256 * 256
+#define TRANSPARENCY_TABLE_SIZE (256 * 256)
 
 Screen::Screen(AsylumEngine *vm) : _vm(vm) ,
 	_useColorKey(false), _transTableCount(0), _transTable(NULL), _transTableBuffer(NULL) {
@@ -68,6 +68,9 @@ Screen::~Screen() {
 
 	clearTransTables();
 
+	_transTableBuffer = NULL;
+	_transTable = NULL;
+
 	// Zero-out passed pointers
 	_vm = NULL;
 }
@@ -83,7 +86,7 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 	draw(resourceId, frameIndex, source, flags, kResourceNone, Common::Point(0, 0), colorKey);
 }
 
-void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum) {
+void Screen::drawTransparent(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum) {
 	byte *index = _transTable;
 	selectTransTable(transTableNum);
 
@@ -105,7 +108,7 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 	draw(resource, frameIndex, source, flags, kResourceNone, Common::Point(0, 0), colorKey);
 }
 
-void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum) {
+void Screen::drawTransparent(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum) {
 	byte *index = _transTable;
 	selectTransTable(transTableNum);
 
@@ -128,16 +131,16 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 	if (flags & kDrawFlagMirrorLeftRight) {
 		if (_flag == -1) {
 			if ((resource->getData().flags & 15) >= 2) {
-				dest.left = source.x + resource->getData().maxWidth - frame->getWidth() - frame->x;
+				dest.left = source.x + (int16)resource->getData().maxWidth - ((int16)frame->getWidth() + frame->x);
 			}
 		} else {
-			dest.left += 2 * (_flag - (frame->getHeight() * 2 - frame->x));
+			dest.left += (int16)(2 * (_flag - (frame->getHeight() * 2 - frame->x)));
 		}
 	}
 
 	dest.top = source.y + frame->y;
-	dest.right = dest.left + frame->getWidth();
-	dest.bottom = dest.top + frame->getHeight();
+	dest.right  = dest.left + (int16)frame->getWidth();
+	dest.bottom = dest.top  + (int16)frame->getHeight();
 
 	src.left = 0;
 	src.top = 0;
@@ -154,12 +157,12 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 		resourceMask = getResource()->get(resourceIdDestination);
 
 		// Adjust masked rectangles
-		srcMask = Common::Rect(0, 0, resourceMask->getData(4), resourceMask->getData(0));
+		srcMask = Common::Rect(0, 0, (int16)resourceMask->getData(4), (int16)resourceMask->getData(0));
 
 		destMask = Common::Rect(destination.x,
 		                        destination.y,
-		                        destination.x + resourceMask->getData(4),
-		                        destination.y + resourceMask->getData(0));
+		                        destination.x + (int16)resourceMask->getData(4),
+		                        destination.y + (int16)resourceMask->getData(0));
 
 		clip(&srcMask, &destMask, 0);
 
@@ -177,10 +180,14 @@ void Screen::draw(GraphicResource *resource, uint32 frameIndex, const Common::Po
 	// Set the color key (always 0 if set)
 	_useColorKey = colorKey;
 
-	if (masked)
-		blitMasked(frame, &src, resourceMask->data + 8, &srcMask, &destMask, resourceMask->getData(4), &dest, flags);
-	else
+	if (masked) {
+		if (!resourceMask)
+			error("[Screen::draw] Trying to draw masked with an invalid resource mask");
+
+		blitMasked(frame, &src, resourceMask->data + 8, &srcMask, &destMask, (uint16)resourceMask->getData(4), &dest, flags);
+	} else {
 		blit(frame, &src, &dest, flags);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -200,7 +207,7 @@ void Screen::drawWideScreenBars(int16 barSize) const {
 	}
 }
 
-void Screen::fillRect(int32 x, int32 y, int32 width, int32 height, int32 color) {
+void Screen::fillRect(int16 x, int16 y, int16 width, int16 height, uint32 color) {
 	_backBuffer.fillRect(Common::Rect(x, y, x + width, y + height), color);
 }
 
@@ -208,8 +215,8 @@ void Screen::copyBackBufferToScreen() {
 	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
-void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) {
-	int32 diffLeft = _clipRect.left - destination->left;
+void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) const {
+	int16 diffLeft = _clipRect.left - destination->left;
 	if (diffLeft > 0) {
 		destination->left = _clipRect.left;
 
@@ -219,7 +226,7 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 			source->left  += diffLeft;
 	}
 
-	int32 diffRight = destination->right - _clipRect.right;
+	int16 diffRight = destination->right - _clipRect.right;
 	if (diffRight > 0) {
 		destination->right -= diffRight;
 
@@ -229,13 +236,13 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 			source->right -= diffRight;
 	}
 
-	int32 diffTop = _clipRect.top - destination->top;
+	int16 diffTop = _clipRect.top - destination->top;
 	if (diffTop > 0) {
 		destination->top = _clipRect.top;
 		source->top += diffTop;
 	}
 
-	int32 diffBottom = destination->bottom - _clipRect.bottom;
+	int16 diffBottom = destination->bottom - _clipRect.bottom;
 	if (diffBottom > 0) {
 		source->bottom -= diffBottom;
 		destination->bottom -= diffBottom;
@@ -276,7 +283,7 @@ void Screen::loadPalette() {
 void Screen::setPalette(ResourceId id) {
 	byte *data = getPaletteData(id);
 
-	setupPalette(data + 4, data[2], *(uint16 *)data);
+	setupPalette(data + 4, data[2], READ_LE_UINT16(data));
 }
 
 void Screen::setMainPalette(const byte *data) {
@@ -299,9 +306,9 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 		palette += 4 * start;
 
 		for (int32 i = 0; i < count; i++) {
-			palette[0] = buffer[0] * 4;
-			palette[1] = buffer[1] * 4;
-			palette[2] = buffer[2] * 4;
+			palette[0] = (byte )(buffer[0] * 4);
+			palette[1] = (byte )(buffer[1] * 4);
+			palette[2] = (byte )(buffer[2] * 4);
 
 			buffer  += 3;
 			palette += 3;
@@ -339,9 +346,9 @@ void Screen::updatePalette(int32 param) {
 		paletteData += 4;
 
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
-			_mainPalette[j]     = 4 * paletteData[j]     + param * (4 * paletteData[j]     - _currentPalette[j]);
-			_mainPalette[j + 1] = 4 * paletteData[j + 1] + param * (4 * paletteData[j + 1] - _currentPalette[j + 1]);
-			_mainPalette[j + 2] = 4 * paletteData[j + 2] + param * (4 * paletteData[j + 2] - _currentPalette[j + 2]);
+			_mainPalette[j]     = (byte)(4 * paletteData[j]     + param * (4 * paletteData[j]     - _currentPalette[j]));
+			_mainPalette[j + 1] = (byte)(4 * paletteData[j + 1] + param * (4 * paletteData[j + 1] - _currentPalette[j + 1]));
+			_mainPalette[j + 2] = (byte)(4 * paletteData[j + 2] + param * (4 * paletteData[j + 2] - _currentPalette[j + 2]));
 		}
 	}
 }
@@ -387,9 +394,9 @@ void Screen::stopPaletteFade(char red, char green, char blue) {
 	palette += 4;
 
 	for (uint32 i = 0; i < ARRAYSIZE(_mainPalette) - 3; i += 3) {
-		palette[0] = red;
-		palette[1] = green;
-		palette[2] = blue;
+		palette[0] = (byte)red;
+		palette[1] = (byte)green;
+		palette[2] = (byte)blue;
 
 		palette += 3;
 	}
@@ -418,14 +425,14 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 
 	for (int32 i = 1; i < colorDelta; i++) {
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette); j += 3) {
-			_mainPalette[j]     = palette[j]     + i * (red   - palette[j])     / colorDelta;
-			_mainPalette[j + 1] = palette[j + 1] + i * (green - palette[j + 1]) / colorDelta;
-			_mainPalette[j + 2] = palette[j + 2] + i * (blue  - palette[j + 2]) / colorDelta;
+			_mainPalette[j]     = (byte)(palette[j]     + i * (red   - palette[j])     / colorDelta);
+			_mainPalette[j + 1] = (byte)(palette[j + 1] + i * (green - palette[j + 1]) / colorDelta);
+			_mainPalette[j + 2] = (byte)(palette[j + 2] + i * (blue  - palette[j + 2]) / colorDelta);
 		}
 
 		setupPalette(NULL, 0, 0);
 
-		g_system->delayMillis(ticksWait);
+		g_system->delayMillis((uint32)ticksWait);
 
 		// Poll events (this ensure we don't freeze the screen)
 		Common::Event ev;
@@ -450,15 +457,15 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 	memcpy(&palette,  &_mainPalette, sizeof(palette));
 
 	// Adjust palette using the target palette data
-	uint32 count = *(int16 *)data;
-	uint32 start = data[2];
+	int16 count = READ_LE_UINT16(data);
+	byte start = data[2];
 	if (count > 0) {
 		byte *pData = data + 4;
 
-		for (uint32 i = 0; i < count; i++) {
-			palette[i + start]     = 4 * pData[0];
-			palette[i + start + 1] = 4 * pData[1];
-			palette[i + start + 2] = 4 * pData[2];
+		for (int16 i = 0; i < count; i++) {
+			palette[i + start]     = (byte)(4 * pData[0]);
+			palette[i + start + 1] = (byte)(4 * pData[1]);
+			palette[i + start + 2] = (byte)(4 * pData[2]);
 
 			pData += 3;
 		}
@@ -471,15 +478,15 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 	int32 colorDelta = delta + 1;
 	for (int32 i = 1; i < colorDelta; i++) {
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette); j += 3) {
-			_mainPalette[j]     = original[j]     + i * (palette[j]     - original[j])     / colorDelta;
-			_mainPalette[j + 1] = original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta;
-			_mainPalette[j + 2] = original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta;
+			_mainPalette[j]     = (byte)(original[j]     + i * (palette[j]     - original[j])     / colorDelta);
+			_mainPalette[j + 1] = (byte)(original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta);
+			_mainPalette[j + 2] = (byte)(original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta);
 		}
 
 		setupPalette(NULL, 0, 0);
 
 		// Original waits for event and so can be interrupted in the middle of the wait
-		g_system->delayMillis(ticksWait);
+		g_system->delayMillis((uint32)ticksWait);
 		if (_fadeStop)
 			break;
 
@@ -516,7 +523,7 @@ void Screen::setPaletteGamma(byte *data, byte *target) {
 	data += 4;
 
 	for (int32 i = 1; i < 256; i++) {
-		int color = 0;
+		byte color = 0;
 		if (data[i * 3 + 0] > 0)
 			color = data[i * 3 + 0];
 		if (data[i * 3 + 1] > color)
@@ -524,15 +531,18 @@ void Screen::setPaletteGamma(byte *data, byte *target) {
 		if (data[i * 3 + 2] > color)
 			color = data[i * 3 + 2];
 
+		/*if (color == 0)
+			error("[Screen::setPaletteGamma] Invalid color");*/
+
 		int gamma = color + (Config.gammaLevel * (63 - color) + 31) / 63;
 
 		if (gamma) {
 			if (data[i * 3 + 0])
-				target[i * 3 + 0] = 4 * ((color >> 1) + data[i * 3 + 0] * gamma) / color;
+				target[i * 3 + 0] = (byte)(4 * ((color >> 1) + data[i * 3 + 0] * gamma) / color);
 			if (data[i * 3 + 1])
-				target[i * 3 + 1] = 4 * ((color >> 1) + data[i * 3 + 1] * gamma) / color;
+				target[i * 3 + 1] = (byte)(4 * ((color >> 1) + data[i * 3 + 1] * gamma) / color);
 			if (data[i * 3 + 2])
-				target[i * 3 + 2] = 4 * ((color >> 1) + data[i * 3 + 2] * gamma) / color;
+				target[i * 3 + 2] = (byte)(4 * ((color >> 1) + data[i * 3 + 2] * gamma) / color);
 		}
 	}
 }
@@ -575,6 +585,9 @@ void Screen::setupTransTables(uint32 count, ...) {
 
 	if (!_transTableBuffer) {
 		_transTableBuffer = (byte *)malloc(count * TRANSPARENCY_TABLE_SIZE);
+		if (!_transTableBuffer)
+			error("[Screen::setupTransTables] Cannot allocate memory for transparency table buffer");
+
 		_transTable = _transTableBuffer;
 	}
 
@@ -595,6 +608,9 @@ void Screen::clearTransTables() {
 }
 
 void Screen::selectTransTable(uint32 index) {
+	if (!_transTableBuffer)
+			error("[Screen::selectTransTable] Transparency table buffer not initialized");
+
 	if (index >= _transTableCount)
 		return;
 
@@ -633,7 +649,7 @@ void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, c
 	_queueItems.push_back(item);
 }
 
-void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point point, int32 objectResourceId, Common::Point objectPoint, int32 transTableNum) {
+void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, int32 objectResourceId, const Common::Point &destination, uint32 transTableNum) {
 	// Save current transparency index
 	byte *transparencyIndex= _transTable;
 	selectTransTable(transTableNum);
@@ -656,13 +672,13 @@ void Screen::addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex
 		_useColorKey = true;
 
 		blitCrossfade((byte *)_backBuffer.pixels          + dst.top                   * _backBuffer.pitch          + dst.left,
-		              (byte *)frame->surface.pixels       + src.top                    * frame->surface.pitch       + src.left,
-		              (byte *)frameObject->surface.pixels + (objectPoint.y + dst.top) * frameObject->surface.pitch + (dst.left + objectPoint.x),
+		              (byte *)frame->surface.pixels       + src.top                   * frame->surface.pitch       + src.left,
+		              (byte *)frameObject->surface.pixels + (destination.y + dst.top) * frameObject->surface.pitch + (dst.left + destination.x),
 		              dst.height(),
 		              dst.width(),
-		              frame->surface.pitch       - dst.width(),
-		              _backBuffer.pitch          - dst.width(),
-		              frameObject->surface.pitch - dst.width());
+		              (uint16)(frame->surface.pitch       - dst.width()),
+		              (uint16)(_backBuffer.pitch          - dst.width()),
+		              (uint16)(frameObject->surface.pitch - dst.width()));
 	}
 
 	// Restore transparency table
@@ -687,7 +703,7 @@ void Screen::drawGraphicsInQueue() {
 			if (item->transTableNum <= 0 || Config.performance <= 1)
 				draw(item->resourceId, item->frameIndex, item->source, item->flags);
 			else
-				draw(item->resourceId, item->frameIndex, item->source, item->flags, item->transTableNum - 1);
+				drawTransparent(item->resourceId, item->frameIndex, item->source, item->flags, (uint32)(item->transTableNum - 1));
 		} else if (item->type == kGraphicItemMasked) {
 			draw(item->resourceId, item->frameIndex, item->source, item->flags, item->resourceIdDestination, item->destination);
 		}
@@ -733,7 +749,10 @@ void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
 // Graphic Data
 //////////////////////////////////////////////////////////////////////////
 void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags) {
-	if (flags & 0x80000000) {
+	if (!_transTable)
+			error("[Screen::blit] Transparency table buffer not initialized");
+
+	if ((uint32)flags & 0x80000000) {
 		// Used in the menu (and more?)
 
 		int32 flagSet = flags & 0x7FFFFFFF;
@@ -752,15 +771,15 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 				                       (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right - 1,
 				                       destination->height(),
 				                       destination->width(),
-				                       destination->width() + frame->surface.pitch,
-				                       frame->surface.pitch - destination->width());
+				                       (uint16)destination->width() + frame->surface.pitch,
+				                       (uint16)(frame->surface.pitch - destination->width()));
 			} else {
 				blitTranstable((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
 				               (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
 				               destination->height(),
 				               destination->width(),
-				               frame->surface.pitch - destination->width(),
-				               _backBuffer.pitch    - destination->width());
+				               frame->surface.pitch - (uint16)destination->width(),
+				               _backBuffer.pitch    - (uint16)destination->width());
 			}
 		} else if (flagSet) {
 			if (isMirrored) {
@@ -769,15 +788,15 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 					                     (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right,
 					                     destination->height(),
 					                     destination->width(),
-					                     frame->surface.pitch + destination->width(),
-					                     _backBuffer.pitch    - destination->width());
+					                     frame->surface.pitch + (uint16)destination->width(),
+					                     _backBuffer.pitch    - (uint16)destination->width());
 				} else {
 					blitMirrored((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
 					             (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->right,
 					             destination->height(),
 					             destination->width(),
-					             frame->surface.pitch + destination->width(),
-					             _backBuffer.pitch    - destination->width());
+					             frame->surface.pitch + (uint16)destination->width(),
+					             _backBuffer.pitch    - (uint16)destination->width());
 				}
 			}
 		} else {
@@ -786,15 +805,15 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 				                (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
 				                destination->height(),
 				                destination->width(),
-				                frame->surface.pitch - destination->width(),
-				                _backBuffer.pitch    - destination->width());
+				                frame->surface.pitch - (uint16)destination->width(),
+				                _backBuffer.pitch    - (uint16)destination->width());
 			} else {
 				blitRaw((byte *)_backBuffer.pixels    + destination->top * _backBuffer.pitch    + destination->left,
 				        (byte *)frame->surface.pixels + source->top      * frame->surface.pitch + source->left,
 				        destination->height(),
 				        destination->width(),
-				        frame->surface.pitch - destination->width(),
-				        _backBuffer.pitch    - destination->width());
+				        frame->surface.pitch - (uint16)destination->width(),
+				        _backBuffer.pitch    - (uint16)destination->width());
 			}
 		}
 	} else if (flags) {
@@ -807,7 +826,10 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 		_backBuffer.frameRect(*destination, 0x220);
 }
 
-void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
+	if (!_transTable)
+			error("[Screen::blitTranstable] Transparency table buffer not initialized");
+
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
@@ -822,7 +844,10 @@ void Screen::blitTranstable(byte *dstBuffer, byte *srcBuffer, int16 height, int1
 	}
 }
 
-void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
+	if (!_transTable)
+			error("[Screen::blitTranstableMirrored] Transparency table buffer not initialized");
+
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
@@ -837,7 +862,10 @@ void Screen::blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 heig
 	}
 }
 
-void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch, uint16 objectPitch) {
+void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch, uint16 objectPitch) const {
+	if (!_transTable)
+			error("[Screen::blitCrossfade] Transparency table buffer not initialized");
+
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer)
@@ -854,7 +882,7 @@ void Screen::blitCrossfade(byte *dstBuffer, byte *srcBuffer, byte *objectBuffer,
 	}
 }
 
-void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			*dstBuffer = *srcBuffer;
@@ -868,7 +896,7 @@ void Screen::blitMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 
 	}
 }
 
-void Screen::blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer != 0)
@@ -883,15 +911,15 @@ void Screen::blitMirroredColorKey(byte *dstBuffer, byte *srcBuffer, int16 height
 	}
 }
 
-void Screen::blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitRaw(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
 	while (height--) {
-		memcpy(dstBuffer, srcBuffer, width);
+		memcpy(dstBuffer, srcBuffer, (uint16)width);
 		dstBuffer += dstPitch;
 		srcBuffer += srcPitch;
 	}
 }
 
-void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) {
+void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const {
 	while (height--) {
 		for (int16 i = width; i; --i) {
 			if (*srcBuffer != 0)
@@ -906,21 +934,24 @@ void Screen::blitRawColorKey(byte *dstBuffer, byte *srcBuffer, int16 height, int
 	}
 }
 
-void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskWidth, Common::Rect *destination, int32 flags) {
+void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, uint16 maskWidth, Common::Rect *destination, int32 flags) {
 	byte *frameBuffer = (byte *)frame->surface.pixels;
 	byte *mirroredBuffer = NULL;
 	int16 frameRight = frame->surface.pitch;
-	int16 maskHeight = sourceMask->height(); // for debugging only
+	uint16 maskHeight = (uint16)sourceMask->height(); // for debugging only
 	byte zoom = abs(sourceMask->left) & 7;
 
 	// Prepare temporary source buffer if needed
 	if (flags & kDrawFlagMirrorLeftRight) {
-		mirroredBuffer = (byte *)malloc(source->right * source->bottom);
+		mirroredBuffer = (byte *)malloc((size_t)(source->right * source->bottom));
+		if (!mirroredBuffer)
+			error("[Screen::blitMasked] Cannot allocate buffer for mirrored surface");
+
 		blitMirrored(mirroredBuffer,
 		             frameBuffer + source->right - 1,
 		             source->bottom,
 		             source->right,
-		             source->right + frame->surface.pitch,
+		             (uint16)(source->right + frame->surface.pitch),
 		             0);
 
 		frameBuffer = mirroredBuffer;
@@ -944,8 +975,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		                frameBufferPtr,
 		                source->height(),
 		                source->width(),
-		                frameRight        - source->width(),
-		                _backBuffer.pitch - source->width());
+		                (uint16)(frameRight        - source->width()),
+		                (uint16)(_backBuffer.pitch - source->width()));
 
 		// cleanup
 		free(mirroredBuffer);
@@ -959,7 +990,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 
 	if (destination->left > destMask->left) {
 		zoom += abs(destination->left - destMask->left) & 7;
-		maskBufferPtr += (destination->left - destMask->left + zoom) / 8;
+		maskBufferPtr += ((destination->left - destMask->left) + zoom) / 8;
 		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
 		destMask->left = destination->left;
 	}
@@ -977,8 +1008,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		                frameBufferPtr,
 		                source->height(),
 		                destMask->left - destination->left,
-		                frameRight        + destination->left - destMask->left,
-		                _backBuffer.pitch + destination->left - destMask->left);
+		                (uint16)(frameRight        + destination->left - destMask->left),
+		                (uint16)(_backBuffer.pitch + destination->left - destMask->left));
 
 		if (g_debugDrawRects)
 			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destMask->left, destination->top + source->height()), 0x10);
@@ -994,9 +1025,9 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		blitRawColorKey((byte *)_backBuffer.pixels + destination->top * _backBuffer.pitch + destMask->left + sourceMask->width(),
 		                frameBufferPtr + destMask->left + sourceMask->width() - destination->left,
 		                source->height(),
-		                source->width() + destination->left - destMask->left - sourceMask->width(),
-		                frameRight        + destMask->left + sourceMask->width() - destination->left - source->width(),
-		                _backBuffer.pitch + destMask->left + sourceMask->width() - destination->left - source->width());
+		                source->width() + destination->left - (destMask->left + sourceMask->width()),
+		                (uint16)(frameRight        + destMask->left + sourceMask->width() - (destination->left + source->width())),
+		                (uint16)(_backBuffer.pitch + destMask->left + sourceMask->width() - (destination->left + source->width())));
 
 		if (g_debugDrawRects)
 			_backBuffer.frameRect(Common::Rect(destMask->left, destination->top, destMask->left + source->width(), destination->top + source->height()), 0x36);
@@ -1011,8 +1042,8 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 		                frameBufferPtr,
 		                destMask->top - destination->top,
 		                source->width(),
-		                frameRight - source->width(),
-		                _backBuffer.pitch - source->width());
+		                (uint16)(frameRight - source->width()),
+		                (uint16)(_backBuffer.pitch - source->width()));
 
 		if (g_debugDrawRects)
 			_backBuffer.frameRect(Common::Rect(destination->left, destination->top, destination->left + source->width(), destMask->top), 0x23);
@@ -1027,10 +1058,10 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	if ((source->height() + destination->top) > (destMask->top + sourceMask->height())) {
 		blitRawColorKey((byte *)_backBuffer.pixels + (destMask->top + sourceMask->height()) * _backBuffer.pitch + destination->left,
 		                frameBufferPtr + (destMask->top + sourceMask->height() - destination->top) * frameRight,
-		                destination->top + source->height() - sourceMask->height() - destMask->top,
+		                destination->top + source->height() - (sourceMask->height() + destMask->top),
 		                source->width(),
-		                frameRight - source->width(),
-		                _backBuffer.pitch - source->width());
+		                (uint16)(frameRight - source->width()),
+		                (uint16)(_backBuffer.pitch - source->width()));
 
 		source->setHeight(destMask->top + sourceMask->height() - destination->top);
 	}
@@ -1041,11 +1072,11 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	          maskBufferPtr,
 	          source->height(),
 	          source->width(),
-	          frameRight - source->width(),
-	          (maskWidth - zoom - source->width()) / 8,
+	          (uint16)(frameRight - source->width()),
+	          (uint16)(maskWidth - (zoom + source->width())) / 8,
 	          zoom,
 	          (byte *)_backBuffer.pixels + _backBuffer.pitch * destination->top + destination->left,
-	          _backBuffer.pitch - source->width());
+	          (uint16)(_backBuffer.pitch - source->width()));
 
 	// Draw debug rects
 	if (g_debugDrawRects) {
@@ -1058,11 +1089,11 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 }
 
 // DEBUG: Draw the mask (zoomed)
-void Screen::drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPitch) {
-	int zoom = 7;
+void Screen::drawZoomedMask(byte *mask, uint16 height, uint16 width, uint16 maskPitch) {
+	uint16 zoom = 7;
 
 	byte *dstBuffer = (byte *)_backBuffer.pixels;
-	uint16 dstPitch = _backBuffer.pitch - (width * zoom);
+	uint16 dstPitch = (uint16)(_backBuffer.pitch - (width * zoom));
 	uint16 srcPitch = maskPitch;
 	byte *srcBuffer = mask;
 
@@ -1083,7 +1114,7 @@ void Screen::drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPi
 	}
 }
 
-void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch) {
+void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch) const {
 	if (zoom > 7)
 		error("[Screen::bltMasked] Invalid zoom value (was: %d, max: 7)", zoom);
 
@@ -1091,7 +1122,7 @@ void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 wi
 
 		// Calculate current zoom and run length
 		int run = (7 - zoom);
-		int skip = (*maskBuffer >> zoom);
+		uint skip = (*maskBuffer >> zoom);
 
 		for (int16 i = 0; i < width; i++) {
 			// Set destination value
@@ -1126,41 +1157,39 @@ void Screen::blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, 
 		                                 frame->surface.w,
 		                                 dest->left,
 		                                 dest->top,
-		                                 source->width(),
-		                                 source->height(),
-		                                 flags & kDrawFlagMirrorLeftRight);
+		                                 (uint16)source->width(),
+		                                 (uint16)source->height(),
+		                                 (bool)(flags & kDrawFlagMirrorLeftRight));
 	} else {
 		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dest->left,
 		                 dest->top,
-		                 source->width(),
-		                 source->height(),
-		                 flags & kDrawFlagMirrorLeftRight);
+		                 (uint16)source->width(),
+		                 (uint16)source->height(),
+		                 (bool)(flags & kDrawFlagMirrorLeftRight));
 	}
 }
 
-void Screen::bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source) {
+void Screen::bltFast(int16 dX, int16 dY, GraphicFrame* frame, Common::Rect *source) {
 	if (_useColorKey) {
 		copyToBackBufferWithTransparency((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                                 frame->surface.w,
 		                                 dX,
 		                                 dY,
-		                                 source->width(),
-		                                 source->height(),
-		                                 kDrawFlagNone);
+		                                 (uint16)source->width(),
+		                                 (uint16)source->height());
 	} else {
 		copyToBackBuffer((byte *)frame->surface.pixels + (source->top * frame->surface.w + source->left),
 		                 frame->surface.w,
 		                 dX,
 		                 dY,
-		                 source->width(),
-		                 source->height(),
-		                 kDrawFlagNone);
+		                 (uint16)source->width(),
+		                 (uint16)source->height());
 	}
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored) {
+void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored) {
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	if (!mirrored) {
@@ -1174,7 +1203,7 @@ void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint3
 	}
 }
 
-void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height, bool mirrored) {
+void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored) {
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	int32 left = (x < 0) ? -x : 0;
@@ -1184,7 +1213,7 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x
 
 	for (int32 curY = top; curY < bottom; curY++) {
 		for (int32 curX = left; curX < right; curX++) {
-			uint32 offset = (mirrored ? right - curX - 1 : curX) + curY * pitch;
+			uint32 offset = (uint32)((mirrored ? right - (curX + 1) : curX) + curY * pitch);
 
 			if (buffer[offset] != 0 )
 				dest[x + curX + (y + curY) * 640] = buffer[offset];
@@ -1203,9 +1232,9 @@ void Screen::drawRect(const Common::Rect &rect, uint32 color) {
 	_backBuffer.frameRect(rect, color);
 }
 
-void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
+void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y) {
 	Common::Rect screenRect(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
-	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
+	Common::Rect animRect(x, y, x + (int16)surface->w, y + (int16)surface->h);
 	animRect.clip(screenRect);
 
 	if (!animRect.isEmpty()) {
@@ -1227,8 +1256,8 @@ void Screen::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 			surface->pitch,
 			animRect.left,
 			animRect.top,
-			animRect.width(),
-			animRect.height());
+			(uint16)animRect.width(),
+			(uint16)animRect.height());
 	}
 }
 

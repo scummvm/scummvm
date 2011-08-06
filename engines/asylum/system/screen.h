@@ -79,14 +79,14 @@ public:
 	void draw(ResourceId resourceId);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
 	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags= kDrawFlagNone, bool colorKey = true);
-	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum);
-	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, int32 transTableNum);
+	void drawTransparent(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
+	void drawTransparent(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceId2, const Common::Point &destination, bool colorKey = true);
 
 	// Misc
 	void clear();
 	void drawWideScreenBars(int16 barSize) const;
-	void fillRect(int32 x, int32 y, int32 x2, int32 y2, int32 color);
+	void fillRect(int16 x, int16 y, int16 x2, int16 y2, uint32 color);
 	void copyBackBufferToScreen();
 	void setFlag(int16 val) { _flag = (val < -1) ? -1 : val; }
 	int16 getFlag() { return _flag; }
@@ -116,7 +116,7 @@ public:
 
 	// Graphic queue
 	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, DrawFlags flags, int32 transTableNum, int32 priority);
-	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, Common::Point source, int32 objectResourceId, Common::Point destination, int32 transTableNum);
+	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 objectResourceId, const Common::Point &destination, uint32 transTableNum);
 	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 objectResourceId, const Common::Point &destination, DrawFlags flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
 	void drawGraphicsInQueue();
@@ -124,12 +124,12 @@ public:
 	void deleteGraphicFromQueue(ResourceId resourceId);
 
 	// Used by Video
-	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, uint32 width, uint32 height, bool mirrored = false);
+	void copyToBackBuffer(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
 
 	// Debug
 	void drawLine(const Common::Point &origin, const Common::Point &destination, uint32 color = 0xFF);
 	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
-	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
+	void copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y);
 
 protected:
 	// Palette fading Timer
@@ -173,30 +173,30 @@ private:
 	void swapGraphicItem(int32 item1, int32 item2);
 
 	// Misc
-	void clip(Common::Rect *source, Common::Rect *destination, int32 flags);
+	void clip(Common::Rect *source, Common::Rect *destination, int32 flags) const;
 
 	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, ResourceId resourceId2, const Common::Point &destination, bool colorKey = true);
 
 	// Screen blitting
 	void blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *destination, int32 flags);
-	void blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, int maskWidth, Common::Rect *destination, int32 flags);
-	void blitTranstable        (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitMirrored          (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitMirroredColorKey  (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitRaw               (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitRawColorKey       (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch);
-	void blitCrossfade         (byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch, uint16 objectPitch);
-	void bltMasked             (byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch);
+	void blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskData, Common::Rect *sourceMask, Common::Rect *destMask, uint16 maskWidth, Common::Rect *destination, int32 flags);
+	void blitTranstable        (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitTranstableMirrored(byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitMirrored          (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitMirroredColorKey  (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitRaw               (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitRawColorKey       (byte *dstBuffer, byte *srcBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch) const;
+	void blitCrossfade         (byte *dstBuffer, byte *srcBuffer, byte *objectBuffer, int16 height, int16 width, uint16 srcPitch, uint16 dstPitch, uint16 objectPitch) const;
+	void bltMasked             (byte *srcBuffer, byte *maskBuffer, int16 height, int16 width, uint16 srcPitch, uint16 maskPitch, byte zoom, byte *dstBuffer, uint16 dstPitch) const;
 
 	// DirectDraw-equivalent functions
 	void blt(Common::Rect *dest, GraphicFrame* frame, Common::Rect *source, int32 flags);
-	void bltFast(int32 dX, int32 dY, GraphicFrame* frame, Common::Rect *source);
+	void bltFast(int16 dX, int16 dY, GraphicFrame* frame, Common::Rect *source);
 
-	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height, bool mirrored = false);
+	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
 
 	// Debug
-	void drawZoomedMask(byte *mask, int16 height, int16 width, uint16 maskPitch);
+	void drawZoomedMask(byte *mask, uint16 height, uint16 width, uint16 maskPitch);
 };
 
 } // end of namespace Asylum

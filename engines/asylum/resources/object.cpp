@@ -268,7 +268,7 @@ void Object::draw() {
 	if (_transparency <= 0 || _transparency >= 4 || Config.performance <= 1) {
 		getScreen()->addGraphicToQueue(_resourceId, _frameIndex, point, (DrawFlags)((flags >> 11) & kDrawFlagMirrorLeftRight), _transparency - 3, _priority);
 	} else {
-		getScreen()->addGraphicToQueueCrossfade(_resourceId, _frameIndex, point, getWorld()->backgroundImage, Common::Point(getWorld()->xLeft, getWorld()->yTop), _transparency - 1);
+		getScreen()->addGraphicToQueueCrossfade(_resourceId, _frameIndex, point, getWorld()->backgroundImage, Common::Point(getWorld()->xLeft, getWorld()->yTop), (uint32)(_transparency - 1));
 	}
 }
 
