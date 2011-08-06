@@ -23,7 +23,7 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
-#include "common/string.h"
+#include "common/str.h"
 #include "common/noncopyable.h"
 
 namespace Common {
