@@ -72,7 +72,7 @@ private:
 class ResourceManager {
 public:
 	ResourceManager();
-	virtual ~ResourceManager() {};
+	~ResourceManager();
 
 	/**
 	 * Get a resource entry

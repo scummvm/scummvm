@@ -31,6 +31,13 @@ namespace Asylum {
 ResourceManager::ResourceManager() : _cdNumber(-1), _musicPackId(kResourcePackInvalid) {
 }
 
+ResourceManager::~ResourceManager() {
+	for (ResourceCache::const_iterator it = _resources.begin(); it != _resources.end(); it++)
+		delete it->_value;
+	for (ResourceCache::const_iterator it = _music.begin(); it != _music.end(); it++)
+		delete it->_value;
+}
+
 ResourceEntry *ResourceManager::get(ResourceId id) {
 	ResourcePackId packId = RESOURCE_PACK(id);
 	uint16 index = RESOURCE_INDEX(id);
@@ -68,11 +75,15 @@ ResourceEntry *ResourceManager::get(ResourceId id) {
 }
 
 void ResourceManager::unload(ResourcePackId id) {
-	if (_resources.contains(id))
+	if (_resources.contains(id)) {
+		delete _resources.getVal(id);
 		_resources.erase(id);
+	}
 
-	if (_music.contains(id))
+	if (_music.contains(id)) {
+		delete _music.getVal(id);
 		_music.erase(id);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
