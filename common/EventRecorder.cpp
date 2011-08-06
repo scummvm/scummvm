@@ -304,7 +304,7 @@ void EventRecorder::processMillis(uint32 &millis) {
 	g_system->unlockMutex(_timeMutex);
 }
 
-bool EventRecorder::processDelayMillis(uint32 &msecs) {
+bool EventRecorder::processDelayMillis(uint &msecs) {
 	return false;
 }
 

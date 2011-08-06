@@ -57,7 +57,7 @@ public:
 	void processMillis(uint32 &millis);
 
 	/** TODO: Add documentation, this is only used by the backend */
-	bool processDelayMillis(uint32 &msecs);
+	bool processDelayMillis(uint &msecs);
 
 private:
 	bool notifyEvent(const Event &ev);
