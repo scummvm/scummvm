@@ -130,10 +130,8 @@ void CGEEngine::setup() {
 	_vga = new Vga(M13H);
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
-	for (int i = 0; i < kPocketNX; i++) {
-		_pocket[i] = new Sprite(this, NULL);
-		_pocket[i]->_flags._kill = false;
-	}
+	for (int i = 0; i < kPocketNX; i++)
+		_pocket[i] = NULL;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_cavLight = new CavLight(this);
@@ -207,12 +205,12 @@ CGEEngine::~CGEEngine() {
 	delete _eventManager;
 	delete _fx;
 	delete _sound;
-	for (int i = 0; i < kPocketNX; i++)
-		delete _pocket[i];
 	delete _snail;
 	delete _snail_;
 	delete _hero;
 
+	for (int i = 0; _miniShpList[i]; ++i)
+		delete _miniShpList[i];
 	delete[] _miniShpList;
 
 	freeCaveValues();
