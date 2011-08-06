@@ -146,10 +146,12 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
 	memset(_cmsVoicesBase, 0, sizeof(Voice)*16);
 	memset(_cmsVoices, 0, sizeof(Voice2)*8);
 	memset(_cmsChips, 0, sizeof(MusicChip)*2);
-	_midiDelay = _octaveMask = _looping = _tempo = 0;
+	_midiDelay = _octaveMask = _looping = _tempo = _tempoSum = 0;
 	_midiData = _midiSongBegin = 0;
 	_musicTimer = _musicTimerTicks = 0;
+	_clkFrequenz = 0;
 	_loadedMidiSong = 0;
+	_outputTableReady = 0;
 	memset(_midiChannel, 0, sizeof(Voice2*)*16);
 	memset(_midiChannelUse, 0, sizeof(byte)*16);
 
