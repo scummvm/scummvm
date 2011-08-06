@@ -734,7 +734,7 @@ IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 || (actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
-		_processNextEntry = (bool)cmd->param4;
+		_currentQueueEntry->currentLine = cmd->param4;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
