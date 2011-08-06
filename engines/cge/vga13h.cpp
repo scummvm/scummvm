@@ -337,16 +337,16 @@ Snail::Com *Sprite::snList(SnList type) {
 }
 
 
-void Sprite::setName(char *name) {
+void Sprite::setName(char *newName) {
 	if (_ext) {
 		if (_ext->_name) {
 			delete[] _ext->_name;
 			_ext->_name = NULL;
 		}
-		if (name) {
-			_ext->_name = new char[strlen(name) + 1];
+		if (newName) {
+			_ext->_name = new char[strlen(newName) + 1];
 			assert(_ext->_name != NULL);
-			strcpy(_ext->_name, name);
+			strcpy(_ext->_name, newName);
 		}
 	}
 }
