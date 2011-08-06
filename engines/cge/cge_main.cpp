@@ -311,8 +311,8 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 	if (s.isSaving()) {
 		for (i = 0; i < kPocketNX; i++) {
-			register Sprite *spr = _pocket[i];
-			_pocref[i] = (spr) ? spr->_ref : -1;
+			register Sprite *pocSpr = _pocket[i];
+			_pocref[i] = (pocSpr) ? pocSpr->_ref : -1;
 		}
 
 		warning("STUB: CGEEngine::syncGame Digital and Midi volume");
