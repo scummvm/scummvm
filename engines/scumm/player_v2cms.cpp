@@ -291,7 +291,8 @@ void Player_V2CMS::startSound(int nr) {
 }
 
 void Player_V2CMS::loadMidiData(byte *data, int sound) {
-	memset(_midiChannelUse, 0, sizeof(byte)*16);
+	memset(_midiChannelUse, 0, sizeof(_midiChannelUse));
+	memset(_midiChannel, 0, sizeof(_midiChannel));
 
 	_tempo = data[7];
 	_looping = data[8];
@@ -340,12 +341,10 @@ void Player_V2CMS::loadMidiData(byte *data, int sound) {
 		}
 	}
 
-	for (int i = 0, channel = 0; i < 8; ++i, channel += 2) {
+	for (int i = 0; i < 8; ++i) {
 		_cmsVoices[i].chanNumber = 0xFF;
 		_cmsVoices[i].curVolume = 0;
 		_cmsVoices[i].nextVoice = 0;
-
-		_midiChannel[channel] = 0;
 	}
 
 	_midiDelay = 0;
