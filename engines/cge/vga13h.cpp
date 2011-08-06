@@ -382,6 +382,7 @@ Sprite *Sprite::expand() {
 					if (len == 0 || *line == '.')
 						continue;
 
+					assert(shpcnt <= _shpCnt);
 					switch (takeEnum(Comd, strtok(line, " =\t"))) {
 					case 0 : { // Name
 						setName(strtok(NULL, ""));
