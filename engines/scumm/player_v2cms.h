@@ -128,7 +128,7 @@ protected:
 
 	byte _lastMidiCommand;
 	uint _outputTableReady;
-	byte _clkFrequenz;
+	byte _voiceTimer;
 	byte _restart;
 	byte _curSno;
 

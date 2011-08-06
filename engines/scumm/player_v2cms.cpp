@@ -149,7 +149,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
 	_midiDelay = _octaveMask = _looping = _tempo = _tempoSum = 0;
 	_midiData = _midiSongBegin = 0;
 	_musicTimer = _musicTimerTicks = 0;
-	_clkFrequenz = 0;
+	_voiceTimer = 0;
 	_loadedMidiSong = 0;
 	_outputTableReady = 0;
 	memset(_midiChannel, 0, sizeof(Voice2*)*16);
@@ -434,8 +434,8 @@ int Player_V2CMS::readBuffer(int16 *buffer, const int numSamples) {
 	do {
 		if (!(_next_tick >> FIXP_SHIFT)) {
 			if (_midiData) {
-				--_clkFrequenz;
-				if (!(_clkFrequenz & 0x01))
+				--_voiceTimer;
+				if (!(_voiceTimer & 0x01))
 					playVoice();
 
 				int newTempoSum = _tempo + _tempoSum;
