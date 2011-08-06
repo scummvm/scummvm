@@ -38,21 +38,23 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
-	bool _leftButtonClicked;
+	bool   _leftButtonClicked;
 	uint32 _counter;
-	uint32 _counter2;
-	uint32 _currentFrameIndex;
-	int32 _frameIndexes[6];
+	int32  _frameIndexes[6];
 	uint32 _frameCounts[6];
-	int32 _frameIncrements[6];
-	int8 _state[5];
+	int32  _frameIncrements[5];
+	int32  _index;
+	uint32 _index2;
 	Common::Point _point;
+	Common::Point _newPoint;
 
-	bool _data_4572BC;
-	bool _data_4572CC;
-
+	// Unused puzzle variables
+	int8   _state[5];
+	bool   _data_4572BC;
+	bool   _data_4572CC;
 	uint32 _data_45AAA8;
 	uint32 _data_45AAAC;
+	uint32 _currentFrameIndex;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -61,13 +63,13 @@ private:
 	bool update(const AsylumEvent &evt);
 	bool key(const AsylumEvent &evt) { return keyExit(evt); }
 	bool mouseLeftDown(const AsylumEvent &evt);
-	bool mouseLeftUp(const AsylumEvent &evt);
 	bool mouseRightDown(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
 	void updateCursor();
+	void reset();
 };
 
 } // End of namespace Asylum

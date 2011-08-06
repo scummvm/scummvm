@@ -47,30 +47,22 @@ const Common::Rect puzzleTimeMachineRects[10] = {
 	Common::Rect(475, 290, 495, 325)
 };
 
-const Common::Point puzzleTimeMachinePoints[6] = {
+const Common::Point puzzleTimeMachinePoints[5] = {
 	Common::Point(-65,  -30),
 	Common::Point(-20,  -68),
 	Common::Point( 25, -106),
 	Common::Point( 70, -144),
-	Common::Point(115, -182),
-	Common::Point(-65,  -30)
+	Common::Point(115, -182)
 };
 
 PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
-	_leftButtonClicked = false;
-	_counter = 0;
-	_counter2 = 0;
-	_currentFrameIndex = 0;
-	memset(&_frameIndexes, 0, sizeof(_frameIndexes));
-	memset(&_frameCounts, 0, sizeof(_frameCounts));
-	memset(&_frameIncrements, 0, sizeof(_frameIncrements));
-	memset(&_state, 0, sizeof(_state));
+	_leftButtonClicked = true;
 
-	_data_4572BC = false;
-	_data_4572CC = false;
+	memset(&_frameIndexes,		0, sizeof(_frameIndexes));
+	memset(&_frameCounts,		0, sizeof(_frameCounts));
+	memset(&_frameIncrements,	0, sizeof(_frameIncrements));
 
-	_data_45AAA8 = 0;
-	_data_45AAAC = 0;
+	reset();
 }
 
 PuzzleTimeMachine::~PuzzleTimeMachine() {
@@ -104,11 +96,22 @@ void PuzzleTimeMachine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_frameIndexes[5]);
 }
 
+void PuzzleTimeMachine::reset() {
+	_frameIndexes[0] =  0;
+	_frameIndexes[1] =  4;
+	_frameIndexes[2] = 20;
+	_frameIndexes[3] = 16;
+	_frameIndexes[4] = 20;
+
+	_index  = -1;
+	_index2 = 0;
+	_point  = _newPoint = puzzleTimeMachinePoints[0];
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
-bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
-	_counter = 0;
+bool PuzzleTimeMachine::init(const AsylumEvent &evt) {
 	getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 
 	_frameCounts[0] = GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[35]);
@@ -121,8 +124,6 @@ bool PuzzleTimeMachine::init(const AsylumEvent &evt)  {
 	getScreen()->setPalette(getWorld()->graphicResourceIds[41]);
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[41]);
 
-	mouseLeftDown(evt);
-
 	return true;
 }
 
@@ -132,15 +133,20 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[34]);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], (uint32)_frameIndexes[0], Common::Point(23, 215),  kDrawFlagNone, 0, 1);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], (uint32)_frameIndexes[1], Common::Point(70, 217),  kDrawFlagNone, 0, 2);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], (uint32)_frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], (uint32)_frameIndexes[3], Common::Point(309, 218), kDrawFlagNone, 0, 4);
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], (uint32)_frameIndexes[4], Common::Point(429, 212), kDrawFlagNone, 0, 5);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], _frameIndexes[0], Common::Point( 23, 215), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], _frameIndexes[1], Common::Point( 70, 217), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], _frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[38], _frameIndexes[3], Common::Point(309, 218), kDrawFlagNone, 0, 3);
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[39], _frameIndexes[4], Common::Point(429, 212), kDrawFlagNone, 0, 3);
+
+	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], _frameIndexes[5], _point, kDrawFlagNone, 0, 1);
+	if (_point.x < _newPoint.x)
+		_point += Common::Point(15, -12 - (abs((double)(_point.x - _newPoint.x)) > 15 ? 1 : 0));
+	else if (_point.x > _newPoint.x)
+		_point -= Common::Point(15, -12 - (abs((double)(_point.x - _newPoint.x)) > 15 ? 1 : 0));
 
 	if (_frameIndexes[0] != 28 || _frameIndexes[1] || _frameIndexes[2] || _frameIndexes[3] || _frameIndexes[4]) {
-		_leftButtonClicked = true;
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], 0, Common::Point(599, 220), kDrawFlagNone, 0, 5);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[43], 0, Common::Point(599, 220), kDrawFlagNone, 0, 2);
 	} else {
 		getSound()->stop(getWorld()->soundResourceIds[17]);
 		getSound()->stop(getWorld()->soundResourceIds[16]);
@@ -153,19 +159,19 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 		++_counter;
 	}
 
-	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40], (uint32)_frameIndexes[5], _point, kDrawFlagNone, 0, 1);
-
 	//////////////////////////////////////////////////////////////////////////
 	// Show all buttons
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
-		if (_state[i / 2] != -1)
+		if ((uint32)_index != i || _leftButtonClicked)
 			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
 	}
 
 	for (uint32 i = 1; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
-		if (_state[i / 2] != 1)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[45 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
+		if ((uint32)_index != i || _leftButtonClicked)
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
 	}
+
+	_leftButtonClicked = true;
 
 	// Draw to screen
 	getScreen()->drawGraphicsInQueue();
@@ -180,41 +186,21 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 		_vm->switchEventHandler(getScene());
 	}
 
-	// Update frame indexes
-	if (_currentFrameIndex == 0 && _frameIncrements[0] != 0) {
-		_data_4572BC = false;
-		_data_4572CC = false;
-
-		_frameIndexes[5] += _frameIncrements[0];
-
-		if (_counter2 > 4) {
-			_counter2 = 0;
-
-			if (!getSound()->isPlaying(getWorld()->soundResourceIds[14]))
-				getSound()->playSound(getWorld()->soundResourceIds[14]);
-
-			_frameIndexes[0] += _frameIncrements[0];
-		} else {
-			++_counter2;
-		}
-	} else {
-		warning("[PuzzleTimeMachine::update] Not implemented!");
-	}
-
-	// Reset frame increments & state
-	if (_counter2 == 0 && _data_4572CC == 0 && _leftButtonClicked && _data_45AAA8 == 0 && _currentFrameIndex == _data_45AAAC) {
-		for (uint32 i = 0; i < 5; i++) {
-			if (!(_frameIndexes[i] % ~3))
-				_frameIncrements[i] = 0;
+	// Update frame indexes & increments
+	if (_index != -1) {
+		_frameIndexes[_index / 2] += _frameIncrements[_index / 2];
+		if (_frameIndexes[_index / 2] < 0) {
+			_frameIndexes[_index / 2]	= _frameCounts[_index / 2] - 1;
+		} else if (_frameIndexes[_index / 2] > (int32)_frameCounts[_index / 2] - 1) {
+			_frameIndexes[_index / 2]	= 0;
+			_frameIncrements[_index / 2]	= 0;
+		} else if (!(_frameIndexes[_index / 2] % 4)) {
+			getSound()->playSound(getWorld()->soundResourceIds[15]);
+			_frameIncrements[_index / 2]	= 0;
+			_index				= -1;
 		}
 
-		memset(&_state, 0, sizeof(_state));
-	}
-
-	// Adjust frame indexes
-	for (uint32 i = 0; i < ARRAYSIZE(_frameIndexes); i++) {
-		if (_frameIndexes[i] >= (int32)_frameCounts[i])
-			_frameIndexes[i] = 0;
+		_frameIndexes[5] = (_frameIndexes[5] + 1) % _frameCounts[5];
 	}
 
 	return true;
@@ -229,7 +215,7 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	int32 index = -1;
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
 		if (puzzleTimeMachineRects[i].contains(evt.mouse)) {
-			index =  i;
+			index = i;
 
 			break;
 		}
@@ -238,24 +224,18 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	if (index == -1)
 		return true;
 
-	getSound()->playSound(getWorld()->soundResourceIds[15]);
-
-	_data_4572CC = true;
-	_data_4572BC = true;
-
-	if (index % ~1 == 1) {
-		_frameIncrements[index] = 1;
-		_state[index] = 1;
-	} else {
-		_frameIncrements[index] = -1;
-		_state[index] = -1;
+	getSound()->playSound(getWorld()->soundResourceIds[14]);
+	if ((uint32)(_index2 / 2) != index / 2) {
+		getSound()->playSound(getWorld()->soundResourceIds[16]);
+		_newPoint = puzzleTimeMachinePoints[index / 2];
 	}
 
-	return true;
-}
+	if (index % 2)
+		_frameIncrements[index / 2] = 1;
+	else
+		_frameIncrements[index / 2] = -1;
 
-bool PuzzleTimeMachine::mouseLeftUp(const AsylumEvent &) {
-	_leftButtonClicked = true;
+	_index = _index2 = index;
 
 	return true;
 }
