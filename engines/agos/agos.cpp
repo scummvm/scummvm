@@ -642,14 +642,12 @@ Common::Error AGOSEngine::init() {
 
 	// TODO: Use special debug levels instead of the following hack.
 	_debugMode = (gDebugLevel >= 0);
-	if (gDebugLevel == 2)
-		_dumpOpcodes = true;
-	if (gDebugLevel == 3)
-		_dumpVgaOpcodes = true;
-	if (gDebugLevel == 4)
-		_dumpScripts = true;
-	if (gDebugLevel == 5)
-		_dumpVgaScripts = true;
+	switch (gDebugLevel) {
+	case 2: _dumpOpcodes    = true; break;
+	case 3: _dumpVgaOpcodes = true; break;
+	case 4: _dumpScripts    = true; break;
+	case 5: _dumpVgaScripts = true; break;
+	}
 
 	return Common::kNoError;
 }
