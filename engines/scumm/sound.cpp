@@ -2106,7 +2106,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
-	} else if (_musicType == MDT_CMS) {
+	} else if (_sound->_musicType == MDT_CMS) {
 		if (_game.features & GF_OLD_BUNDLE) {
 			bool hasAdLibMusicTrack = false;
 

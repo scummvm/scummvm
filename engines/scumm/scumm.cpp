@@ -1754,7 +1754,7 @@ void ScummEngine::setupMusic(int midi) {
 		_sound->_musicType = MDT_PCJR;
 		break;
 	case MT_CMS:
-		_musicType = MDT_CMS;
+		_sound->_musicType = MDT_CMS;
 		break;
 	case MT_TOWNS:
 		_sound->_musicType = MDT_TOWNS;
