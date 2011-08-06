@@ -450,7 +450,7 @@ bool Menu::update() {
 				_dword_455C74 = 0;
 			}
 		} else {
-			getScreen()->draw(kEye, frameIndex, Common::Point(0, 0), kDrawFlagNone, 3);
+			getScreen()->drawTransparent(kEye, frameIndex, Common::Point(0, 0), kDrawFlagNone, 3);
 
 			// Draw icon
 			getScreen()->draw(MAKE_RESOURCE(kResourcePackShared, _activeScreen + 4), _iconFrames[_activeScreen], Common::Point(0, 0));
@@ -1539,10 +1539,10 @@ void Menu::updateShowCredits() {
 			int32 maxBound = _startIndex + step;
 
 			if (minBound >= 0 && minBound < 32)
-				getText()->setTransTableNum(3 - minBound / 8);
+				getText()->setTransTableNum((uint32)(3 - minBound / 8));
 
 			if (maxBound < 480 && maxBound > 448)
-				getText()->setTransTableNum(3 - (479 - maxBound) / 8);
+				getText()->setTransTableNum((uint32)(3 - (479 - maxBound) / 8));
 
 			getText()->setPosition(Common::Point(320, (int16)(step + _startIndex)));
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 1447 + index));

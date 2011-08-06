@@ -68,14 +68,14 @@ public:
 	void drawCentered(const Common::Point &point, int16 width, ResourceId resourceId);
 	void drawCentered(const Common::Point &point, int16 width, int16 length, const char *text);
 
-	void setTransTableNum(int32 val) { _transTableNum = val; }
+	void setTransTableNum(uint32 val) { _transTableNum = val; }
 
 private:
 	AsylumEngine *_vm;
 
 	GraphicResource *_fontResource;
 
-	int32 _transTableNum;
+	uint32 _transTableNum;
 
 	Common::Point _position;
 	uint8 _curFontFlags;

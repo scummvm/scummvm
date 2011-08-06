@@ -611,7 +611,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(SetActorPosition)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setPosition(cmd->param2, cmd->param3, (ActorDirection)cmd->param4, (uint32)cmd->param5);
+	actor->setPosition((int16)cmd->param2, (int16)cmd->param3, (ActorDirection)cmd->param4, (uint32)cmd->param5);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -708,7 +708,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 			} else if ((actor->getPoint1()->x + actor->getPoint2()->x) == cmd->param2 && (actor->getPoint1()->y + actor->getPoint2()->y) == cmd->param3) {
 				actor->updateFromDirection((ActorDirection)cmd->param4);
 			} else {
-				actor->processStatus(cmd->param2, cmd->param3, (bool)cmd->param4);
+				actor->processStatus((int16)cmd->param2, (int16)cmd->param3, (bool)cmd->param4);
 
 				if (cmd->param5 == 1) {
 					cmd->param5 = 2;

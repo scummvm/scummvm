@@ -134,8 +134,8 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	if (!_smkDecoder->loadFile(filename))
 		error("[Video::playVideo] Invalid video index (%d)", _currentMovie);
 
-	int32 x = Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
-	int32 y = Common::Rational(g_system->getHeight() - _smkDecoder->getHeight(), 2).toInt();
+	int16 x = (int16)Common::Rational(g_system->getWidth()  - _smkDecoder->getWidth(),  2).toInt();
+	int16 y = (int16)Common::Rational(g_system->getHeight() - _smkDecoder->getHeight(), 2).toInt();
 
 	getScreen()->clear();
 

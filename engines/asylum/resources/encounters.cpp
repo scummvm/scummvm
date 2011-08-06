@@ -828,7 +828,7 @@ bool Encounter::drawBackground() {
 			                                        _point,
 			                                        getWorld()->getObjectById(kObjectCave)->getResourceId(),
 			                                        origin,
-			                                        _background.transTableNum);
+			                                        (uint32)_background.transTableNum);
 		} else {
 			Common::Point origin(getWorld()->xLeft, getWorld()->yTop);
 
@@ -837,7 +837,7 @@ bool Encounter::drawBackground() {
 			                                        _point,
 			                                        getWorld()->backgroundImage,
 			                                        origin,
-			                                        _background.transTableNum);
+			                                        (uint32)_background.transTableNum);
 		}
 	} else {
 		getScreen()->draw(_background.resourceId, _background.frameIndex, _point);
@@ -875,11 +875,11 @@ bool Encounter::drawPortraits() {
 		                  _portrait1.frameIndex,
 		                  _point + Common::Point(5, 5));
 	else
-		getScreen()->draw(_portrait1.resourceId,
-		                  _portrait1.frameIndex,
-		                  _point + Common::Point(5, 5),
-		                  kDrawFlagNone,
-		                  _portrait1.transTableNum);
+		getScreen()->drawTransparent(_portrait1.resourceId,
+		                             _portrait1.frameIndex,
+		                             _point + Common::Point(5, 5),
+		                             kDrawFlagNone,
+		                             (uint32)_portrait1.transTableNum);
 
 	if (_portrait1.transTableNum != _portrait1.transTableMax) {
 		if (_portrait1.transTableNum <= _portrait1.transTableMax)
@@ -907,11 +907,11 @@ bool Encounter::drawPortraits() {
 		                  _portrait2.frameIndex,
 		                  Common::Point(_point.x + _background.rect.width() - (frameRect.width() + 6), _point.y + 5));
 	else
-		getScreen()->draw(_portrait2.resourceId,
-		                  _portrait2.frameIndex,
-		                  Common::Point(_point.x + _background.rect.width() - (frameRect.width() + 6), _point.y + 5),
-		                  kDrawFlagNone,
-		                  _portrait2.transTableNum);
+		getScreen()->drawTransparent(_portrait2.resourceId,
+		                             _portrait2.frameIndex,
+		                             Common::Point(_point.x + _background.rect.width() - (frameRect.width() + 6), _point.y + 5),
+		                             kDrawFlagNone,
+		                             (uint32)_portrait2.transTableNum);
 
 	if (_portrait2.transTableNum != _portrait2.transTableMax) {
 		if (_portrait2.transTableNum <= _portrait2.transTableMax)
@@ -960,11 +960,11 @@ void Encounter::drawStructs() {
 			break;
 
 		case -1:
-			getScreen()->draw(_drawingStructs[0].resourceId,
-			                  _drawingStructs[0].frameIndex,
-			                  _drawingStructs[0].point2,
-			                  kDrawFlagNone,
-			                  0);
+			getScreen()->drawTransparent(_drawingStructs[0].resourceId,
+			                             _drawingStructs[0].frameIndex,
+			                             _drawingStructs[0].point2,
+			                             kDrawFlagNone,
+			                             0);
 
 			_drawingStructs[0].status = 0;
 			break;
@@ -972,11 +972,11 @@ void Encounter::drawStructs() {
 		case 0:
 		case 1:
 		case 2:
-			getScreen()->draw(_drawingStructs[0].resourceId,
-			                  _drawingStructs[0].frameIndex,
-			                  _drawingStructs[0].point2,
-			                  kDrawFlagNone,
-			                  val);
+			getScreen()->drawTransparent(_drawingStructs[0].resourceId,
+			                             _drawingStructs[0].frameIndex,
+			                             _drawingStructs[0].point2,
+			                             kDrawFlagNone,
+			                             (uint32)val);
 
 			if (_drawingStructs[0].status == 1)
 				++_drawingStructs[0].transTableNum;
@@ -1015,11 +1015,11 @@ void Encounter::drawStructs() {
 			break;
 
 		case -1:
-			getScreen()->draw(_drawingStructs[1].resourceId,
-			                  _drawingStructs[1].frameIndex,
-			                  _drawingStructs[1].point2,
-			                  kDrawFlagNone,
-			                  0);
+			getScreen()->drawTransparent(_drawingStructs[1].resourceId,
+			                             _drawingStructs[1].frameIndex,
+			                             _drawingStructs[1].point2,
+			                             kDrawFlagNone,
+			                             0);
 
 			_drawingStructs[1].status = 0;
 			break;
@@ -1027,11 +1027,11 @@ void Encounter::drawStructs() {
 		case 0:
 		case 1:
 		case 2:
-			getScreen()->draw(_drawingStructs[1].resourceId,
-			                  _drawingStructs[1].frameIndex,
-			                  _drawingStructs[1].point2,
-			                  kDrawFlagNone,
-			                  val);
+			getScreen()->drawTransparent(_drawingStructs[1].resourceId,
+			                             _drawingStructs[1].frameIndex,
+			                             _drawingStructs[1].point2,
+			                             kDrawFlagNone,
+			                             (uint32)val);
 
 			if (_drawingStructs[1].status == 1)
 				++_drawingStructs[1].transTableNum;
