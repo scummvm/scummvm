@@ -42,6 +42,7 @@
 #include <tremor/ivorbisfile.h>
 #endif
 #else
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #endif
 
