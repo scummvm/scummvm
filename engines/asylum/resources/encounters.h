@@ -96,8 +96,8 @@ public:
 
 	void drawScreen();
 
-	void setFlag1(bool state) { _flag1 = state; }
-	bool getFlag1() { return _flag1; }
+	void setShouldEnablePlayer(bool state) { _shouldEnablePlayer = state; }
+	bool shouldEnablePlayer() { return _shouldEnablePlayer; }
 	void setFlag3(bool state) { _flag3 = state; }
 	bool getFlag3() { return _flag3; }
 
@@ -187,20 +187,20 @@ private:
 	int16 _data_455B3C;
 	int16 _data_455B70;
 	bool _data_455BCC;
-	bool _data_455BD0;
-	bool _data_455BD4;
+	bool _isDialogOpen;
+	bool _shouldCloseDialog;
 	bool _data_455BD8;
 	bool _data_455BDC;
 	bool _data_455BE0;
-	bool _data_455BE4;
+	bool _shouldCloseBackground;
 	bool _data_455BE8;
 	int16 _data_455BF0;
 	uint32 _data_455BF4;
 	uint32 _keywordStartIndex;
 
 	// Internal flags
-	bool _flag1;
-	bool _flag2;
+	bool _shouldEnablePlayer;
+	bool _wasPlayerDisabled;
 	bool _flag3;
 	bool _flag4;
 

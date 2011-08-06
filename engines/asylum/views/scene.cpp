@@ -371,8 +371,8 @@ bool Scene::init() {
 }
 
 bool Scene::update() {
-	if (getEncounter()->getFlag1()) {
-		getEncounter()->setFlag1(false);
+	if (getEncounter()->shouldEnablePlayer()) {
+		getEncounter()->setShouldEnablePlayer(false);
 
 		// Enable player
 		getActor()->updateStatus(kActorStatusEnabled);
