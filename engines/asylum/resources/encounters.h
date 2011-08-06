@@ -34,15 +34,13 @@ namespace Asylum {
 class AsylumEngine;
 
 struct EncounterItem : public Common::Serializable {
-	int16 keywordIndex;
-	int16 field2;
+	uint32 speechResourceId;
 	ResourceId scriptResourceId;
 	int16 keywords[50];
 	byte value;
 
 	EncounterItem() {
-		keywordIndex = 0;
-		field2 = 0;
+		speechResourceId = 0;
 		scriptResourceId = kResourceNone;
 		memset(&keywords, 0, sizeof(keywords));
 		value = 0;
@@ -52,8 +50,7 @@ struct EncounterItem : public Common::Serializable {
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s) {
-		s.syncAsSint16LE(keywordIndex);
-		s.syncAsSint16LE(field2);
+		s.syncAsSint32LE(speechResourceId);
 		s.syncAsSint32LE(scriptResourceId);
 
 		for (int32 i = 0; i < ARRAYSIZE(keywords); i++)
@@ -170,7 +167,7 @@ private:
 
 	// Running encounter data
 	int32 _index;
-	int32 _keywordIndex;
+	int32 _speechResourceId;
 	EncounterItem *_item;
 	ObjectId _objectId1;
 	ObjectId _objectId2;
@@ -195,6 +192,8 @@ private:
 	int16 _data_455BF0;
 	uint32 _data_455BF4;
 	uint32 _keywordStartIndex;
+
+	EventHandler *_previousEventHandler;
 
 	// Internal flags
 	bool _shouldEnablePlayer;
@@ -247,8 +246,8 @@ private:
 	bool drawBackground();
 	bool drawPortraits();
 	void drawStructs();
-	void drawDialog();
-	void drawText(char *text, ResourceId font, int16 y);
+	void drawDialogOptions();
+	void drawSubtitle(char *text, ResourceId font, int16 y);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
