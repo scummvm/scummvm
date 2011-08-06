@@ -1377,6 +1377,7 @@ int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
 int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7, int32 a8, int32 a9, int32 a10, int32 a11, int32 a12, int32 a13, int32 a14) {
 	// Used many times during a match
 	// And called from op_1008!
+	// This seems to be doing collision handling
 
 	double v31 = (double)a1;
 	double v29 = (double)a2;
@@ -2228,7 +2229,7 @@ int LogicHEsoccer::op_1017(int32 *args) {
 
 int LogicHEsoccer::op_1019(int32 *args) {
 	// Used at the beginning of a match
-	// Initializes some arrays. Field parameters?
+	// Initializes some arrays with field collision data
 
 	// These two arrays are used in op_1014 and op_1015
 	for (int i = 0; i < 4096; i++)
