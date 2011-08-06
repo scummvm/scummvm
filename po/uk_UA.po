@@ -357,7 +357,7 @@ msgstr "Про ScummVM"
 
 #: gui/launcher.cpp:557
 msgid "~O~ptions..."
-msgstr "~О~пції..."
+msgstr "~Н~алаштування"
 
 #: gui/launcher.cpp:557
 msgid "Change global ScummVM options"
@@ -373,7 +373,7 @@ msgstr "Запустити вибрану гру"
 
 #: gui/launcher.cpp:562
 msgid "~L~oad..."
-msgstr "~З~аван..."
+msgstr "~З~авантажити..."
 
 #: gui/launcher.cpp:562
 msgid "Load savegame for selected game"
@@ -381,7 +381,7 @@ msgstr "Завантажити збереження для вибраної гри"
 
 #: gui/launcher.cpp:567 gui/launcher.cpp:1055
 msgid "~A~dd Game..."
-msgstr "~Д~од. гру..."
+msgstr "~Д~одати гру..."
 
 #: gui/launcher.cpp:567 gui/launcher.cpp:574
 msgid "Hold Shift for Mass Add"
@@ -389,7 +389,7 @@ msgstr "Утримуйте клавішу Shift для того, щоб додати декілька ігор"
 
 #: gui/launcher.cpp:569
 msgid "~E~dit Game..."
-msgstr "Реда~г~. гру..."
+msgstr "Реда~г~увати гру"
 
 #: gui/launcher.cpp:569 gui/launcher.cpp:576
 msgid "Change game options"
@@ -620,7 +620,7 @@ msgstr "Вімкнути растрування в EGA іграх які це підтримують"
 
 #: gui/options.cpp:738
 msgid "Preferred Device:"
-msgstr "Головн. пристрій:"
+msgstr "Уподобаний пристрій:"
 
 #: gui/options.cpp:738
 msgid "Music Device:"
@@ -628,7 +628,7 @@ msgstr "Музич. пристрій:"
 
 #: gui/options.cpp:738 gui/options.cpp:740
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Вказує вихідний звуковий пристрій або емулятор звукової карти"
+msgstr "Вказує уподобаний звуковий пристрій або емулятор звукової карти"
 
 #: gui/options.cpp:738 gui/options.cpp:740 gui/options.cpp:741
 msgid "Specifies output sound device or sound card emulator"
@@ -637,7 +637,7 @@ msgstr "Вказує вихідний звуковий пристрій або емулятор звукової карти"
 #: gui/options.cpp:740
 msgctxt "lowres"
 msgid "Preferred Dev.:"
-msgstr "Реком. пристрій:"
+msgstr "Уподоб. пристрій:"
 
 #: gui/options.cpp:740
 msgctxt "lowres"
@@ -1168,6 +1168,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
+"Вибачте, цей движок не підтримує довідку по іграм. Будь-ласка, дивіться "
+"файл README для основної інормації, а також інструкцій, як отримати "
+"подальшу допомогу."
 
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
@@ -1185,7 +1188,7 @@ msgstr "~К~лавіші"
 
 #: engines/engine.cpp:227
 msgid "Could not initialize color format."
-msgstr ""
+msgstr "Не можу налаштувати формат кольору."
 
 #: engines/engine.cpp:235
 msgid "Could not switch to video mode: '"
@@ -1197,7 +1200,7 @@ msgstr "Не вдалося застосувати корекцію співвідношення сторін."
 
 #: engines/engine.cpp:249
 msgid "Could not apply fullscreen setting."
-msgstr ""
+msgstr "Не вдалося застосувати повноекранний режим."
 
 #: engines/engine.cpp:349
 msgid ""
@@ -1207,6 +1210,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
+"Ви намагаєтесь грати гру безпосередньо з CD\n"
+"Відомо, що це призводить до проблем, і тому\n"
+"рекомендовано, щоби Ви скопіювали файли даних\n"
+"гри на жорсткий диск.\n"
+"Дивіться файл README для подальших інструкцій."
 
 #: engines/engine.cpp:360
 msgid ""
@@ -1216,6 +1224,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
+"Ця гра має аудіодоріжки на диску. Їх потрібно\n"
+"переписати з диску з допомогою відповідної\n"
+"програми для копіювання аудіо з CD дисків, для\n"
+"того, щоб можна було слухати музику у грі.\n"
+"Дивіться файл README для подальших інструкцій."
 
 #: engines/engine.cpp:427
 msgid ""
@@ -1223,10 +1236,13 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
+"ПОПЕРЕДЖЕННЯ: Гра, яку ви хочете запустити, ще не підтримується повністю "
+"ScummVM. Скорше за все вона не буде працювати стабільно, і збереження ігор, "
+"які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
 #: engines/engine.cpp:430
 msgid "Start anyway"
-msgstr ""
+msgstr "Все одно запустити"
 
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
@@ -1247,7 +1263,7 @@ msgstr "Основні команди клавіатури:"
 
 #: engines/scumm/help.cpp:74
 msgid "Save / Load dialog"
-msgstr "Діалог збереження/завантаження"
+msgstr "Діалог збереження / завантаження"
 
 #: engines/scumm/help.cpp:76
 msgid "Skip line of text"
@@ -1309,11 +1325,11 @@ msgstr "Увімкнути повноекранний режим"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
-msgstr "Гучність музики вище/нижче"
+msgstr "Гучність музики вище / нижче"
 
 #: engines/scumm/help.cpp:88
 msgid "Text speed slower / faster"
-msgstr "Швидкість тексту повільніше/швидше"
+msgstr "Швидкість тексту повільніше / швидше"
 
 #: engines/scumm/help.cpp:89
 msgid "Simulate left mouse button"
@@ -1333,7 +1349,7 @@ msgstr "Спеціальні команди клавіатури:"
 
 #: engines/scumm/help.cpp:94
 msgid "Show / Hide console"
-msgstr "Показати/cховати консоль"
+msgstr "Показати / cховати консоль"
 
 #: engines/scumm/help.cpp:95
 msgid "Start the debugger"
@@ -1349,7 +1365,7 @@ msgstr "Виконати в швидкому режимі (*)"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in really fast mode (*)"
-msgstr "Виконати в дійсно швидкому режимі (*)"
+msgstr "Виконати в дуже швидкому режимі (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Toggle mouse capture"
@@ -1361,7 +1377,7 @@ msgstr "Переключення між графічними фільтрами"
 
 #: engines/scumm/help.cpp:101
 msgid "Increase / Decrease scale factor"
-msgstr "Збільшення/зменшення масштабу"
+msgstr "Збільшення / Зменшення масштабу"
 
 #: engines/scumm/help.cpp:102
 msgid "Toggle aspect-ratio correction"
@@ -1585,7 +1601,7 @@ msgstr "Об'єкт"
 
 #: engines/scumm/help.cpp:228
 msgid "Black and White / Color"
-msgstr "Чорнобілий/Кольоровий"
+msgstr "Чорнобілий / Кольоровий"
 
 #: engines/scumm/help.cpp:231
 msgid "Eyes"
@@ -1593,7 +1609,7 @@ msgstr "Очі"
 
 #: engines/scumm/help.cpp:232
 msgid "Tongue"
-msgstr "Розмовляти"
+msgstr "Язик"
 
 #: engines/scumm/help.cpp:234
 msgid "Punch"
@@ -1613,7 +1629,7 @@ msgstr "Звичайний курсор"
 
 #: engines/scumm/help.cpp:241
 msgid "Comm"
-msgstr "Comm"
+msgstr "Комм"
 
 #: engines/scumm/help.cpp:244
 msgid "Save / Load / Options"
@@ -1621,7 +1637,7 @@ msgstr "Збереження / Завантаження / Налаштування"
 
 #: engines/scumm/help.cpp:253
 msgid "Other game controls:"
-msgstr "Інші опції керування:"
+msgstr "Інше керування грою:"
 
 #: engines/scumm/help.cpp:255 engines/scumm/help.cpp:265
 msgid "Inventory:"
@@ -1661,7 +1677,7 @@ msgstr "Середня справа річ"
 
 #: engines/scumm/help.cpp:277 engines/scumm/help.cpp:282
 msgid "Switching characters:"
-msgstr "Переключення героїв"
+msgstr "Переключення героїв:"
 
 #: engines/scumm/help.cpp:279
 msgid "Second kid"
@@ -1682,7 +1698,7 @@ msgstr "Крок назад"
 
 #: engines/scumm/help.cpp:296
 msgid "Block high"
-msgstr "Блокувати вище"
+msgstr "Блокувати зверху"
 
 #: engines/scumm/help.cpp:297
 msgid "Block middle"
@@ -1690,11 +1706,11 @@ msgstr "Блокувати посередині"
 
 #: engines/scumm/help.cpp:298
 msgid "Block low"
-msgstr "Блокувати нижче"
+msgstr "Блокувати знизу"
 
 #: engines/scumm/help.cpp:299
 msgid "Punch high"
-msgstr "Бити вище"
+msgstr "Бити зверху"
 
 #: engines/scumm/help.cpp:300
 msgid "Punch middle"
@@ -1702,7 +1718,7 @@ msgstr "Бити посередині"
 
 #: engines/scumm/help.cpp:301
 msgid "Punch low"
-msgstr "Бити нижче"
+msgstr "Бити знизу"
 
 #: engines/scumm/help.cpp:304
 msgid "These are for Indy on left."
@@ -1734,7 +1750,7 @@ msgstr "Летіти наліво"
 
 #: engines/scumm/help.cpp:317
 msgid "Fly to lower left"
-msgstr "Летіти нижче вліво"
+msgstr "Летіти нижче наліво"
 
 #: engines/scumm/help.cpp:318
 msgid "Fly upwards"
@@ -1766,6 +1782,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
+"Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
+"LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
 #: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:189
 #, c-format
@@ -1820,11 +1838,11 @@ msgstr "Переходи активовано"
 
 #: engines/mohawk/dialogs.cpp:92
 msgid "~D~rop Page"
-msgstr ""
+msgstr "Викинути сторінку"
 
 #: engines/mohawk/dialogs.cpp:96
 msgid "~S~how Map"
-msgstr ""
+msgstr "Показати мапу"
 
 #: engines/mohawk/dialogs.cpp:150
 msgid "~W~ater Effect Enabled"
@@ -1832,7 +1850,7 @@ msgstr "Ефекти води увімкнено"
 
 #: engines/sci/engine/kfile.cpp:678
 msgid "Restore game:"
-msgstr "Відновити гру: "
+msgstr "Відновити гру:"
 
 #: engines/sci/engine/kfile.cpp:678
 msgid "Restore"
@@ -1841,7 +1859,7 @@ msgstr "Відновити"
 #: engines/agos/animation.cpp:544
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "Файл заставки '%s' не знайдено!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
 #: engines/tinsel/saveload.cpp:468
@@ -1868,6 +1886,11 @@ msgid ""
 "General MIDI ones. After all it might happen\n"
 "that a few tracks will not be correctly played."
 msgstr ""
+"Здається, що Ви використовуєте пристрій General\n"
+"MIDI, але Ваша гра підтримує тільки Roland MT32\n"
+"MIDI. Ми спробуємо замапити інструменти Roland\n"
+"MT32 на General MIDI. Але в результаті може\n"
+"статися, що деякі треки будуть грати неправильно."
 
 #: engines/m4/m4_menus.cpp:138
 msgid "Save game failed!"
@@ -1878,25 +1901,29 @@ msgid ""
 "Unable to find \"sky.cpt\" file!\n"
 "Please download it from www.scummvm.org"
 msgstr ""
+"Не вдалося знайти файл sky.cpt!\n"
+"Будь ласка, завантажте його з www.scummvm.org"
 
 #: engines/sky/compact.cpp:141
 msgid ""
 "The \"sky.cpt\" file has an incorrect size.\n"
 "Please (re)download it from www.scummvm.org"
 msgstr ""
+"Файл sky.cpt має невірний розмір.\n"
+"Будь ласка, (пере)завантажте його з www.scummvm.org"
 
 #: engines/sword1/animation.cpp:344 engines/sword2/animation.cpp:379
 msgid "DXA cutscenes found but ScummVM has been built without zlib support"
-msgstr ""
+msgstr "Знайдено заставки DXA, але ScummVM був побудований без підтримки zlib"
 
 #: engines/sword1/animation.cpp:354 engines/sword2/animation.cpp:389
 msgid "MPEG2 cutscenes are no longer supported"
-msgstr ""
+msgstr "Заставки MPEG2 більше не підтримуються"
 
 #: engines/sword1/animation.cpp:359 engines/sword2/animation.cpp:397
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "Заставку '%s' не знайдено"
 
 #: engines/sword1/control.cpp:863
 msgid ""
@@ -1908,6 +1935,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
+"ScummVM знайшов, що Ви маєте старі збереження ігор для Broken Sword 1.\n"
+"Збереження у старому форматі не підтримуються, і Ви не зможете їх завантажити, "
+"якщо не переведете у новий формат.\n"
+"\n"
+"Натисніть ОК, щоб перевести їх зараз, інакше уе повідомлення з'явиться при "
+"наступному запуску гри.\n"
 
 #: engines/sword1/control.cpp:1232
 #, c-format
@@ -1915,18 +1948,20 @@ msgid ""
 "Target new save game already exists!\n"
 "Would you like to keep the old save game (%s) or the new one (%s)?\n"
 msgstr ""
+"Збереження гри з такою назвою вже існує!\n"
+"Чи ви хочете лишити старе збереження (%s) або нове (%s)?\n"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
-msgstr ""
+msgstr "Лишити старе"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the new one"
-msgstr ""
+msgstr "Взяти нове"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr ""
+msgstr "На цьому закінчується демо Broken Sword 1"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -1934,6 +1969,8 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"Не можу зберегти гру у слот %i\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:211
 msgid "Loading game..."
@@ -1952,10 +1989,16 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
+"ScummVM знайшов, що Ви маєте старі збереження ігор для Nippon Safes.\n"
+"Збереження у старому форматі не підтримуються, і Ви не зможете їх завантажити, "
+"якщо не переведете у новий формат.\n"
+"\n"
+"Натисніть ОК, щоб перевести їх зараз, інакше уе повідомлення з'явиться при "
+"наступному запуску гри.\n"
 
 #: engines/parallaction/saveload.cpp:326
 msgid "ScummVM successfully converted all your savefiles."
-msgstr ""
+msgstr "ScummVM успішно перевів усі Ваші збереження."
 
 #: engines/parallaction/saveload.cpp:328
 msgid ""
@@ -1964,6 +2007,10 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM надрукував деякі попередження у вікні консолі, і немає гарантії, що "
+"усі Ваші файли було переведено.\n"
+"\n"
+"Будь ласка, повідомте про це команді."
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -1979,6 +2026,8 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
+"Вибраний звуковий пристрій %s не було знайдено (тобто, його може бути вимкнено "
+"або не підключено). Намагаюся використати наступний доступний пристрій..."
 
 #: audio/mididrv.cpp:217
 #, c-format
@@ -1986,6 +2035,9 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
+"Вибраний звуковий пристрій %s не може бути використаний. Дивіться файл "
+"логу для додаткової інформації. Намагаюся використати наступний доступний "
+"пристрій..."
 
 #: audio/mididrv.cpp:253
 #, c-format
@@ -1993,6 +2045,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
+"Уподобаний звуковий пристрій %s не було знайдено (тобто, його може бути вимкнено "
+"або не підключено). Намагаюся використати наступний доступний пристрій..."
 
 #: audio/mididrv.cpp:268
 #, c-format
@@ -2000,6 +2054,9 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
+"Уподобаний звуковий пристрій %s не може бути використаний. Дивіться файл "
+"логу для додаткової інформації. Намагаюся використати наступний доступний "
+"пристрій..."
 
 #: audio/null.h:43
 msgid "No music"
@@ -2023,7 +2080,7 @@ msgstr "C64 Аудіо Емулятор"
 
 #: audio/softsynth/mt32.cpp:329
 msgid "Initializing MT-32 Emulator"
-msgstr "Настроюю емулятор MT-32"
+msgstr "Налаштовую емулятор MT-32"
 
 #: audio/softsynth/mt32.cpp:543
 msgid "MT-32 Emulator"
@@ -2039,7 +2096,7 @@ msgstr "Емулятор IBM PCjr"
 
 #: backends/keymapper/remap-dialog.cpp:47
 msgid "Keymap:"
-msgstr "Таблиця клавіш:"
+msgstr "Мапа клавіш:"
 
 #: backends/keymapper/remap-dialog.cpp:64
 msgid " (Active)"
@@ -2155,7 +2212,7 @@ msgstr "Сховати Інші"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:74
 msgid "Show All"
-msgstr "Показати все"
+msgstr "Показати Все"
 
 #: backends/platform/sdl/macosx/appMenu_osx.mm:92
 #: backends/platform/sdl/macosx/appMenu_osx.mm:99
@@ -2200,11 +2257,11 @@ msgstr "OpenGL нормальний"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:140
 msgid "OpenGL Conserve"
-msgstr "OpenGL збережений"
+msgstr "OpenGL Збережений"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:141
 msgid "OpenGL Original"
-msgstr "OpenGL оригінальний"
+msgstr "OpenGL Оригінальний"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
 msgid "Current display mode"
@@ -2212,15 +2269,15 @@ msgstr "Поточний відеорежим"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
 msgid "Current scale"
-msgstr ""
+msgstr "Поточний масштаб"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:546
 msgid "Active filter mode: Linear"
-msgstr ""
+msgstr "Активний режим фільтрації: Лінійний"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:548
 msgid "Active filter mode: Nearest"
-msgstr ""
+msgstr "Активний режим фільтрації: Найближче"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -2294,7 +2351,7 @@ msgstr "Призначення клавіш"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 msgid "Do you want to quit ?"
-msgstr "Ви хочете вийти?"
+msgstr "Ви дійсно хочете вийти?"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -2370,7 +2427,7 @@ msgstr "Пароль:"
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr "Ініціалізація мережі"
+msgstr "Налаштування мережі"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
@@ -2423,7 +2480,7 @@ msgstr "Час підключення до мережі вийшов"
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "Мережу не налагоджено (%d)"
+msgstr "Мережу не налаштовано (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
@@ -2557,19 +2614,19 @@ msgstr "Ви дійсно хочете вийти?"
 #: backends/events/gph/gph-events.cpp:409
 #: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr ""
+msgstr "Режим дотику у тачскріні - Лівий клік"
 
 #: backends/events/gph/gph-events.cpp:368
 #: backends/events/gph/gph-events.cpp:411
 #: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr ""
+msgstr "Режим дотику у тачскріні - Правий клік"
 
 #: backends/events/gph/gph-events.cpp:370
 #: backends/events/gph/gph-events.cpp:413
 #: backends/events/openpandora/op-events.cpp:145
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr ""
+msgstr "Режим дотику у тачскріні - Проліт (без кліку)"
 
 #: backends/events/gph/gph-events.cpp:390
 msgid "Maximum Volume"
@@ -2577,7 +2634,7 @@ msgstr "Максимальна Гучність"
 
 #: backends/events/gph/gph-events.cpp:392
 msgid "Increasing Volume"
-msgstr ""
+msgstr "Підвищення гучності"
 
 #: backends/events/gph/gph-events.cpp:398
 msgid "Minimal Volume"
@@ -2585,7 +2642,7 @@ msgstr "Мінімальна Гучність"
 
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "Пониження гучності"
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."
