@@ -1538,13 +1538,13 @@ static inline int floatToInt16One(float src) {
 void BinkDecoder::floatToInt16Interleave(int16 *dst, const float **src, uint32 length, uint8 channels) {
 	if (channels == 2) {
 		for (uint32 i = 0; i < length; i++) {
-			dst[2 * i    ] = TO_LE_16(floatToInt16One(src[0][i]));
-			dst[2 * i + 1] = TO_LE_16(floatToInt16One(src[1][i]));
+			dst[2 * i    ] = floatToInt16One(src[0][i]);
+			dst[2 * i + 1] = floatToInt16One(src[1][i]);
 		}
 	} else {
 		for(uint8 c = 0; c < channels; c++)
 			for(uint32 i = 0, j = c; i < length; i++, j += channels)
-				dst[j] = TO_LE_16(floatToInt16One(src[c][i]));
+				dst[j] = floatToInt16One(src[c][i]);
 	}
 }
 
