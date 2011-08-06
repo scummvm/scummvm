@@ -524,26 +524,27 @@ void Screen::setPaletteGamma(byte *data, byte *target) {
 
 	for (int32 i = 1; i < 256; i++) {
 		byte color = 0;
-		if (data[i * 3 + 0] > 0)
-			color = data[i * 3 + 0];
-		if (data[i * 3 + 1] > color)
-			color = data[i * 3 + 1];
-		if (data[i * 3 + 2] > color)
-			color = data[i * 3 + 2];
-
-		/*if (color == 0)
-			error("[Screen::setPaletteGamma] Invalid color");*/
+		if (data[0] > 0)
+			color = data[0];
+		if (data[1] > color)
+			color = data[1];
+		if (data[2] > color)
+			color = data[2];
 
 		int gamma = color + (Config.gammaLevel * (63 - color) + 31) / 63;
 
-		if (gamma) {
-			if (data[i * 3 + 0])
-				target[i * 3 + 0] = (byte)(4 * ((color >> 1) + data[i * 3 + 0] * gamma) / color);
-			if (data[i * 3 + 1])
-				target[i * 3 + 1] = (byte)(4 * ((color >> 1) + data[i * 3 + 1] * gamma) / color);
-			if (data[i * 3 + 2])
-				target[i * 3 + 2] = (byte)(4 * ((color >> 1) + data[i * 3 + 2] * gamma) / color);
+		if (gamma && color != 0) {
+			if (data[0])
+				target[0] = (byte)(4 * ((color >> 1) + data[0] * gamma) / color);
+			if (data[1])
+				target[1] = (byte)(4 * ((color >> 1) + data[1] * gamma) / color);
+			if (data[2])
+				target[2] = (byte)(4 * ((color >> 1) + data[2] * gamma) / color);
 		}
+
+		// Advance palette data
+		target += 3;
+		data   += 3;
 	}
 }
 
