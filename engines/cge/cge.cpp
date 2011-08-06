@@ -58,13 +58,11 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 void CGEEngine::initCaveValues() {
 	if (_isDemo) {
-		_mini = new byte[16384];
 		_caveDx = 23;
 		_caveDy = 29;
 		_caveNx = 3;
 		_caveNy = 1;
 	} else {
-		_mini = new byte[65536];
 		_caveDx = 9;
 		_caveDy = 10;
 		_caveNx = 8;
@@ -100,7 +98,6 @@ void CGEEngine::initCaveValues() {
 }
 
 void CGEEngine::freeCaveValues() {
-	delete[] _mini;
 	free(_heroXY);
 	free(_barriers);
 }
@@ -215,6 +212,8 @@ CGEEngine::~CGEEngine() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
+
+	delete[] _miniShpList;
 
 	freeCaveValues();
 }
