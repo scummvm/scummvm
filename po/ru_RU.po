@@ -1330,11 +1330,11 @@ msgstr "Переключить на весь экран"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
-msgstr "Громкость музыки увеличить/уменьшить"
+msgstr "Громкость музыки увеличить / уменьшить"
 
 #: engines/scumm/help.cpp:88
 msgid "Text speed slower / faster"
-msgstr "Скорость текста быстрее/медленнее"
+msgstr "Скорость текста быстрее / медленнее"
 
 #: engines/scumm/help.cpp:89
 msgid "Simulate left mouse button"
@@ -1354,7 +1354,7 @@ msgstr "Специальнве клавиатурные команды:"
 
 #: engines/scumm/help.cpp:94
 msgid "Show / Hide console"
-msgstr "Показать/Убрать консоль"
+msgstr "Показать / Убрать консоль"
 
 #: engines/scumm/help.cpp:95
 msgid "Start the debugger"
@@ -1606,7 +1606,7 @@ msgstr "Объект"
 
 #: engines/scumm/help.cpp:228
 msgid "Black and White / Color"
-msgstr "Черно-белый/Цветной"
+msgstr "Черно-белый / Цветной"
 
 #: engines/scumm/help.cpp:231
 msgid "Eyes"
@@ -1855,7 +1855,7 @@ msgstr "Эффекты воды включены"
 
 #: engines/sci/engine/kfile.cpp:678
 msgid "Restore game:"
-msgstr "Восстановить игру: "
+msgstr "Восстановить игру:"
 
 #: engines/sci/engine/kfile.cpp:678
 msgid "Restore"
@@ -2359,7 +2359,7 @@ msgstr "Назначение клавиш"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 msgid "Do you want to quit ?"
-msgstr "Вы хотите выйти?"
+msgstr "Вы действительно хотите выйти?"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
