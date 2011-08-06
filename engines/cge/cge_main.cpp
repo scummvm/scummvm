@@ -356,7 +356,6 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 			for (i = 0; i < kPocketNX; i++) {
 				register int r = _pocref[i];
-				delete _pocket[i];
 				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
 			}
 		}
