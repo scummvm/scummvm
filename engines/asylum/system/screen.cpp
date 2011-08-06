@@ -385,7 +385,7 @@ void Screen::startPaletteFade(ResourceId resourceId, int32 ticksWait, int32 delt
 	_fadeDelta = delta;
 
 	// Inverval == 1: we want to execute directly, since we are only going to be called back once
-	_vm->getTimerManager()->installTimerProc(&paletteFadeTimer, 1, this);
+	_vm->getTimerManager()->installTimerProc(&paletteFadeTimer, 1, this, "Palette fade timer");
 }
 
 void Screen::stopPaletteFade(char red, char green, char blue) {
