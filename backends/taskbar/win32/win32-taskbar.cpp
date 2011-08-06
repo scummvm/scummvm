@@ -317,6 +317,15 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 	}
 }
 
+void Win32TaskbarManager::notifyError() {
+	setProgressState(Common::TaskbarManager::kTaskbarError);
+	setProgressValue(1, 1);
+}
+
+void Win32TaskbarManager::clearError() {
+	setProgressState(kTaskbarNoProgress);
+}
+
 Common::String Win32TaskbarManager::getIconPath(Common::String target) {
 	// We first try to look for a iconspath configuration variable then
 	// fallback to the extra path

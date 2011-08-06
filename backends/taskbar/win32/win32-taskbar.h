@@ -40,6 +40,8 @@ public:
 	virtual void setProgressState(TaskbarProgressState state);
 	virtual void setCount(int count);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
+	virtual void notifyError();
+	virtual void clearError();
 
 private:
 	ITaskbarList3 *_taskbar;
