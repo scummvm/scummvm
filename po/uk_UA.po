@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-06-20 23:09+0100\n"
-"PO-Revision-Date: 2011-03-26 22:38+0200\n"
-"Last-Translator: Lubomyr Lisen\n"
+"POT-Creation-Date: 2011-08-06 08:43+0100\n"
+"PO-Revision-Date: 2011-08-06 22:38+0200\n"
+"Last-Translator: Eugene Sandulenko\n"
 "Language-Team: Ukrainian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
@@ -33,7 +33,7 @@ msgstr "Доступні движки:"
 
 #: gui/browser.cpp:66
 msgid "Go up"
-msgstr "Вверх"
+msgstr "Вгору"
 
 #: gui/browser.cpp:66 gui/browser.cpp:68
 msgid "Go to previous directory level"
@@ -42,12 +42,12 @@ msgstr "Перейти на папку рівнем вище"
 #: gui/browser.cpp:68
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Вверх"
+msgstr "Вгору"
 
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
-#: gui/launcher.cpp:312 gui/massadd.cpp:92 gui/options.cpp:1178
+#: gui/launcher.cpp:312 gui/massadd.cpp:94 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/engine.cpp:408 engines/sword1/control.cpp:865
+#: engines/engine.cpp:430 engines/sword1/control.cpp:865
 #: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
@@ -58,22 +58,22 @@ msgstr "Відміна"
 msgid "Choose"
 msgstr "Вибрати"
 
-#: gui/gui-manager.cpp:114 engines/scumm/help.cpp:125
+#: gui/gui-manager.cpp:116 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:190 engines/scumm/help.cpp:208
 #: backends/keymapper/remap-dialog.cpp:52
 msgid "Close"
 msgstr "Закрити"
 
-#: gui/gui-manager.cpp:117
+#: gui/gui-manager.cpp:119
 msgid "Mouse click"
 msgstr "Клік мишкою"
 
-#: gui/gui-manager.cpp:120 base/main.cpp:280
+#: gui/gui-manager.cpp:122 base/main.cpp:280
 msgid "Display keyboard"
 msgstr "Показати клавіатуру"
 
-#: gui/gui-manager.cpp:123 base/main.cpp:283
+#: gui/gui-manager.cpp:125 base/main.cpp:283
 msgid "Remap keys"
 msgstr "Перепризначити клавіші"
 
@@ -86,16 +86,16 @@ msgid "Map"
 msgstr "Призначити"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
-#: gui/launcher.cpp:940 gui/massadd.cpp:89 gui/options.cpp:1179
-#: engines/engine.cpp:346 engines/engine.cpp:357 engines/scumm/scumm.cpp:1796
-#: engines/agos/animation.cpp:545 engines/groovie/script.cpp:417
+#: gui/launcher.cpp:940 gui/massadd.cpp:91 gui/options.cpp:1179
+#: engines/engine.cpp:353 engines/engine.cpp:364 engines/scumm/scumm.cpp:1809
+#: engines/agos/animation.cpp:545 engines/groovie/script.cpp:420
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
 #: engines/sword1/animation.cpp:360 engines/sword1/control.cpp:865
 #: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:379
 #: engines/sword2/animation.cpp:389 engines/sword2/animation.cpp:398
 #: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:47
-#: backends/platform/wince/CELauncherDialog.cpp:52
+#: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "OK"
 msgstr "OK"
 
@@ -164,7 +164,8 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Мова гри. Зміна цього параметру не перетворить гру англійською в українську"
+"Мова гри. Зміна цього налаштування не перетворить гру англійською на "
+"українську"
 
 #: gui/launcher.cpp:184 gui/launcher.cpp:198 gui/options.cpp:74
 #: gui/options.cpp:708 gui/options.cpp:718 gui/options.cpp:1149
@@ -178,7 +179,7 @@ msgstr "Платформа:"
 
 #: gui/launcher.cpp:194 gui/launcher.cpp:196 gui/launcher.cpp:197
 msgid "Platform the game was originally designed for"
-msgstr "Платформа, для якої гра була спочатку розроблена"
+msgstr "Платформа, для якої гру було розроблено початково"
 
 #: gui/launcher.cpp:196
 msgctxt "lowres"
@@ -222,7 +223,7 @@ msgstr "Гучність"
 #: gui/launcher.cpp:236 gui/options.cpp:1048
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Гучн-ть"
+msgstr "Гучн."
 
 #: gui/launcher.cpp:239
 msgid "Override global volume settings"
@@ -270,12 +271,12 @@ msgstr "Шляхи"
 
 #: gui/launcher.cpp:288
 msgid "Game Path:"
-msgstr "Шлях до гри: "
+msgstr "Шлях до гри:"
 
 #: gui/launcher.cpp:290
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Шлях до гри: "
+msgstr "Шлях до гри:"
 
 #: gui/launcher.cpp:295 gui/options.cpp:1091
 msgid "Extra Path:"
@@ -292,7 +293,7 @@ msgstr "Дод. шлях:"
 
 #: gui/launcher.cpp:302 gui/options.cpp:1079
 msgid "Save Path:"
-msgstr "Шлях збер.: "
+msgstr "Шлях збер.:"
 
 #: gui/launcher.cpp:302 gui/launcher.cpp:304 gui/launcher.cpp:305
 #: gui/options.cpp:1079 gui/options.cpp:1081 gui/options.cpp:1082
@@ -302,7 +303,7 @@ msgstr "Вказує шлях до збережень гри"
 #: gui/launcher.cpp:304 gui/options.cpp:1081
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Шлях збер.: "
+msgstr "Шлях збер.:"
 
 #: gui/launcher.cpp:321 gui/launcher.cpp:404 gui/launcher.cpp:453
 #: gui/options.cpp:1088 gui/options.cpp:1094 gui/options.cpp:1101
@@ -342,15 +343,15 @@ msgstr "Цей ID гри вже використовується. Будь ласка, виберіть інший."
 msgid "~Q~uit"
 msgstr "~В~ихід"
 
-#: gui/launcher.cpp:555
+#: gui/launcher.cpp:555 backends/platform/sdl/macosx/appMenu_osx.mm:80
 msgid "Quit ScummVM"
-msgstr "Вихід з ScummVM"
+msgstr "Вихід зі ScummVM"
 
 #: gui/launcher.cpp:556
 msgid "A~b~out..."
 msgstr "Про п~р~ограму..."
 
-#: gui/launcher.cpp:556
+#: gui/launcher.cpp:556 backends/platform/sdl/macosx/appMenu_osx.mm:61
 msgid "About ScummVM"
 msgstr "Про ScummVM"
 
@@ -360,7 +361,7 @@ msgstr "~О~пції..."
 
 #: gui/launcher.cpp:557
 msgid "Change global ScummVM options"
-msgstr "Змінити глобальні опції ScummVM"
+msgstr "Змінити глобальні налаштування ScummVM"
 
 #: gui/launcher.cpp:559
 msgid "~S~tart"
@@ -392,7 +393,7 @@ msgstr "Реда~г~. гру..."
 
 #: gui/launcher.cpp:569 gui/launcher.cpp:576
 msgid "Change game options"
-msgstr "Змінити опції гри"
+msgstr "Змінити налаштування гри"
 
 #: gui/launcher.cpp:571
 msgid "~R~emove Game"
@@ -436,8 +437,8 @@ msgstr "Завантажити гру:"
 
 #: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
 #: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
-#: backends/platform/wince/CEActionsPocket.cpp:264
-#: backends/platform/wince/CEActionsSmartphone.cpp:228
+#: backends/platform/wince/CEActionsPocket.cpp:267
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Завантажити"
 
@@ -446,22 +447,22 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Чи ви дійсно хочете запустити детектор усіх ігор? Це потенційно може додати "
+"Чи ви дійсно хочете запустити пошук усіх ігор? Це потенційно може додати "
 "велику кількість ігор."
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:314
-#: backends/platform/wince/CEActionsSmartphone.cpp:275
-#: backends/platform/wince/CELauncherDialog.cpp:77
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Yes"
 msgstr "Так"
 
 #: gui/launcher.cpp:724 gui/launcher.cpp:872
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
-#: backends/platform/wince/CEActionsPocket.cpp:314
-#: backends/platform/wince/CEActionsSmartphone.cpp:275
-#: backends/platform/wince/CELauncherDialog.cpp:77
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
+#: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "No"
 msgstr "Ні"
 
@@ -507,28 +508,28 @@ msgstr "Додати гру..."
 msgid "Add Game..."
 msgstr "Додати гру..."
 
-#: gui/massadd.cpp:76 gui/massadd.cpp:79
+#: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
 msgstr "... пошук ..."
 
-#: gui/massadd.cpp:243
+#: gui/massadd.cpp:258
 msgid "Scan complete!"
 msgstr "Пошук закінчено!"
 
-#: gui/massadd.cpp:246
+#: gui/massadd.cpp:261
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
+msgstr "Знайдено %d нових ігор, пропущено %d попередньо доданих ігор."
 
-#: gui/massadd.cpp:250
+#: gui/massadd.cpp:265
 #, c-format
 msgid "Scanned %d directories ..."
 msgstr "Проглянуто %d папок ..."
 
-#: gui/massadd.cpp:253
-#, fuzzy, c-format
+#: gui/massadd.cpp:268
+#, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Знайдено %d нових ігор ..."
+msgstr "Знайдено %d нових ігор, пропущено %d попередньо доданих ігор ..."
 
 #: gui/options.cpp:72
 msgid "Never"
@@ -578,19 +579,19 @@ msgstr "Не заданий"
 
 #: gui/options.cpp:372
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "Не вдалося застосувати деякі зі змін графічних налаштувань:"
 
 #: gui/options.cpp:384
 msgid "the video mode could not be changed."
-msgstr ""
+msgstr "не вдалося змінити графічний режим."
 
 #: gui/options.cpp:390
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "не вдалося змінити режим повного екрану"
 
 #: gui/options.cpp:396
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "не вдалося змінити режим корекції співвідношення сторін"
 
 #: gui/options.cpp:705
 msgid "Graphics mode:"
@@ -605,7 +606,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Спеціальні режими растрування, які підтримують деякі ігри"
 
 #: gui/options.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2252
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:460
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
@@ -624,7 +625,7 @@ msgstr "EGA без растрування"
 
 #: gui/options.cpp:730
 msgid "Enable undithering in EGA games that support it"
-msgstr "Вімкнути без растрування в EGA іграх які підтримують це"
+msgstr "Вімкнути растрування в EGA іграх які це підтримують"
 
 #: gui/options.cpp:738
 msgid "Preferred Device:"
@@ -678,11 +679,11 @@ msgstr "Пристрій GM:"
 
 #: gui/options.cpp:788
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Вказує вихідний звуковий пристрій для MIDI"
+msgstr "Вказує вихідний звуковий пристрій для General MIDI"
 
 #: gui/options.cpp:799
 msgid "Don't use General MIDI music"
-msgstr "Не використовувати General MIDI музику"
+msgstr "Не використовувати музику General MIDI"
 
 #: gui/options.cpp:810 gui/options.cpp:871
 msgid "Use first available device"
@@ -695,7 +696,7 @@ msgstr "SoundFont:"
 #: gui/options.cpp:822 gui/options.cpp:824 gui/options.cpp:825
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
-"SoundFont підтримується деякими звуковими картами, Fluidsynth і Timidity"
+"SoundFont підтримується деякими звуковими картами, Fluidsynth та Timidity"
 
 #: gui/options.cpp:824
 msgctxt "lowres"
@@ -721,8 +722,8 @@ msgstr "Пристрій MT-32:"
 #: gui/options.cpp:842
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Вказує звуковий пристрій по умовчанню для виводу на Roland MT-32/LAPC1/CM32l/"
-"CM64"
+"Вказує звуковий пристрій за умовчанням для виводу на Roland MT-32/LAPC1/"
+"CM32l/CM64"
 
 #: gui/options.cpp:847
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -733,8 +734,8 @@ msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Відмітьте, якщо у вас підключений Roland-сумісний звуковий пристрій і ви "
-"хочете його використати"
+"Відмітьте, якщо у вас підключено Roland-сумісний звуковий пристрій і ви "
+"хочете його використовувати"
 
 #: gui/options.cpp:849
 msgctxt "lowres"
@@ -748,7 +749,7 @@ msgstr "Увімкнути режим Roland GS"
 #: gui/options.cpp:852
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
-"Вимикає мапінг General MIDI для ігор із звуковою доріжкою для Roland MT-32"
+"Вимикає мапінг General MIDI для ігор зі звуковою доріжкою для Roland MT-32"
 
 #: gui/options.cpp:861
 msgid "Don't use Roland MT-32 music"
@@ -825,7 +826,7 @@ msgstr "Гучність спеціальних звукових ефектів"
 #: gui/options.cpp:936
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Гучніс. ефектів:"
+msgstr "Гучн. ефектів:"
 
 #: gui/options.cpp:944
 msgid "Speech volume:"
@@ -834,7 +835,7 @@ msgstr "Гучність озвучки:"
 #: gui/options.cpp:946
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Гучніс. озвучки:"
+msgstr "Гучн. озвучки:"
 
 #: gui/options.cpp:1085
 msgid "Theme Path:"
@@ -848,8 +849,8 @@ msgstr "Шлях до тем:"
 #: gui/options.cpp:1091 gui/options.cpp:1093 gui/options.cpp:1094
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Вказує шлях до додаткових файлів даних, використовуваних усіма іграми або "
-"ScummVM"
+"Вказує шлях до додаткових файлів даних, які використовуються усіма іграми "
+"або ScummVM"
 
 #: gui/options.cpp:1098
 msgid "Plugins Path:"
@@ -899,7 +900,6 @@ msgid "Language of ScummVM GUI"
 msgstr "Мова графічного інтерфейсу ScummVM"
 
 #: gui/options.cpp:1295
-#, fuzzy
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Ви повинні перезапустити ScummVM щоб застосувати зміни."
 
@@ -933,11 +933,11 @@ msgstr ""
 
 #: gui/saveload.cpp:58 gui/saveload.cpp:239
 msgid "No date saved"
-msgstr "Дата не записана"
+msgstr "Дату не записано"
 
 #: gui/saveload.cpp:59 gui/saveload.cpp:240
 msgid "No time saved"
-msgstr "Час не записаний"
+msgstr "Час не записано"
 
 #: gui/saveload.cpp:60 gui/saveload.cpp:241
 msgid "No playtime saved"
@@ -951,19 +951,19 @@ msgstr "Видалити"
 msgid "Do you really want to delete this savegame?"
 msgstr "Ви дійсно хочете видалити це збереження?"
 
-#: gui/saveload.cpp:263
+#: gui/saveload.cpp:264
 msgid "Date: "
 msgstr "Дата: "
 
-#: gui/saveload.cpp:266
+#: gui/saveload.cpp:268
 msgid "Time: "
 msgstr "Час: "
 
-#: gui/saveload.cpp:271
+#: gui/saveload.cpp:274
 msgid "Playtime: "
 msgstr "Час гри: "
 
-#: gui/saveload.cpp:284 gui/saveload.cpp:351
+#: gui/saveload.cpp:287 gui/saveload.cpp:354
 msgid "Untitled savestate"
 msgstr "Збереження без імені"
 
@@ -971,28 +971,28 @@ msgstr "Збереження без імені"
 msgid "Select a Theme"
 msgstr "Виберіть тему"
 
-#: gui/ThemeEngine.cpp:327
+#: gui/ThemeEngine.cpp:328
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:327
+#: gui/ThemeEngine.cpp:328
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:328
+#: gui/ThemeEngine.cpp:329
 msgid "Standard Renderer (16bpp)"
 msgstr "Стандартний растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:328
+#: gui/ThemeEngine.cpp:329
 msgid "Standard (16bpp)"
 msgstr "Стандартний растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:331
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор зі згладжуванням (16bpp)"
 
-#: gui/ThemeEngine.cpp:330
+#: gui/ThemeEngine.cpp:331
 msgid "Antialiased (16bpp)"
 msgstr "Растеризатор зі згладжуванням (16bpp)"
 
@@ -1038,7 +1038,7 @@ msgstr "Немає файлів гри"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "Game Id не підтримується"
+msgstr "Game id не підтримується"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
@@ -1078,15 +1078,15 @@ msgstr "Помилка запису даних"
 
 #: common/error.cpp:66
 msgid "Could not find suitable engine plugin"
-msgstr "Не можу знайти необхідеого втулка для движка."
+msgstr "Не можу знайти необхідного втулка для движка"
 
 #: common/error.cpp:68
 msgid "Engine plugin does not support save states"
-msgstr "Движок не підтримує рівень відладки '%s'"
+msgstr "Втулок движка не підтримує збереження ігор"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr ""
+msgstr "Відмінено користувачем"
 
 #: common/error.cpp:75
 msgid "Unknown error"
@@ -1098,7 +1098,7 @@ msgstr "Hercules Зелений"
 
 #: common/util.cpp:275
 msgid "Hercules Amber"
-msgstr "Hercules Янтарний"
+msgstr "Hercules Бурштинний"
 
 #: common/util.cpp:282
 msgctxt "lowres"
@@ -1108,20 +1108,20 @@ msgstr "Hercules Зелений"
 #: common/util.cpp:283
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules Янтарний"
+msgstr "Hercules Бурштинний"
 
 #: engines/advancedDetector.cpp:296
 #, c-format
 msgid "The game in '%s' seems to be unknown."
-msgstr ""
+msgstr "Гра у '%s' невідома."
 
 #: engines/advancedDetector.cpp:297
 msgid "Please, report the following data to the ScummVM team along with name"
-msgstr ""
+msgstr "Будь ласка, передайте нижченаведену інформацію команді ScummVM разом з"
 
 #: engines/advancedDetector.cpp:299
 msgid "of the game you tried to add and its version/language/etc.:"
-msgstr ""
+msgstr "назвою гри, яку ви намагаєтесь додати, а також її версію/мову/та інше:"
 
 #: engines/dialogs.cpp:84
 msgid "~R~esume"
@@ -1137,7 +1137,7 @@ msgstr "~З~аписати"
 
 #: engines/dialogs.cpp:94
 msgid "~O~ptions"
-msgstr "~О~пції"
+msgstr "~Н~алаштування"
 
 #: engines/dialogs.cpp:99
 msgid "~H~elp"
@@ -1165,9 +1165,9 @@ msgstr "Зберегти гру: "
 #: engines/sci/engine/kfile.cpp:575
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
-#: backends/platform/wince/CEActionsPocket.cpp:264
+#: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:45
-#: backends/platform/wince/CEActionsSmartphone.cpp:228
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Save"
 msgstr "Записати"
 
@@ -1178,39 +1178,37 @@ msgid ""
 "further assistance."
 msgstr ""
 
-#: engines/dialogs.cpp:312 engines/mohawk/dialogs.cpp:100
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
 #: engines/mohawk/dialogs.cpp:152
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:313 engines/mohawk/dialogs.cpp:101
+#: engines/dialogs.cpp:309 engines/mohawk/dialogs.cpp:101
 #: engines/mohawk/dialogs.cpp:153
 msgid "~C~ancel"
 msgstr "Ві~д~міна"
 
-#: engines/dialogs.cpp:316
+#: engines/dialogs.cpp:312
 msgid "~K~eys"
 msgstr "~К~лавіші"
 
-#: engines/engine.cpp:220
+#: engines/engine.cpp:227
 msgid "Could not initialize color format."
 msgstr ""
 
-#: engines/engine.cpp:228
-#, fuzzy
+#: engines/engine.cpp:235
 msgid "Could not switch to video mode: '"
-msgstr "Поточний відеорежим:"
+msgstr "Не вдалося переключити відеорежим: '"
 
-#: engines/engine.cpp:237
-#, fuzzy
+#: engines/engine.cpp:244
 msgid "Could not apply aspect ratio setting."
-msgstr "Корекція співвідношення сторін"
+msgstr "Не вдалося застосувати корекцію співвідношення сторін."
 
-#: engines/engine.cpp:242
+#: engines/engine.cpp:249
 msgid "Could not apply fullscreen setting."
 msgstr ""
 
-#: engines/engine.cpp:342
+#: engines/engine.cpp:349
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1219,7 +1217,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:353
+#: engines/engine.cpp:360
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1228,14 +1226,14 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:405
+#: engines/engine.cpp:427
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:408
+#: engines/engine.cpp:430
 msgid "Start anyway"
 msgstr ""
 
@@ -1391,7 +1389,6 @@ msgid "  since they may cause crashes"
 msgstr "  оскільки вони можуть викликати збої"
 
 #: engines/scumm/help.cpp:110
-#, fuzzy
 msgid "  or incorrect game behavior."
 msgstr "  або неправильну поведінку гри."
 
@@ -1629,7 +1626,7 @@ msgstr "Comm"
 
 #: engines/scumm/help.cpp:244
 msgid "Save / Load / Options"
-msgstr "Збереження / Завантаження / Опції"
+msgstr "Збереження / Завантаження / Налаштування"
 
 #: engines/scumm/help.cpp:253
 msgid "Other game controls:"
@@ -1772,14 +1769,14 @@ msgstr "Летіти направо"
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
-#: engines/scumm/scumm.cpp:1794
+#: engines/scumm/scumm.cpp:1807
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2280 engines/agos/saveload.cpp:190
+#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1790,7 +1787,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2287 engines/agos/saveload.cpp:155
+#: engines/scumm/scumm.cpp:2304 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1801,7 +1798,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2299 engines/agos/saveload.cpp:198
+#: engines/scumm/scumm.cpp:2316 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1812,7 +1809,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2514
+#: engines/scumm/scumm.cpp:2531
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1840,7 +1837,7 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:150
 msgid "~W~ater Effect Enabled"
-msgstr "Ефекти води включено"
+msgstr "Ефекти води увімкнено"
 
 #: engines/sci/engine/kfile.cpp:678
 msgid "Restore game:"
@@ -1857,36 +1854,20 @@ msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
 #: engines/tinsel/saveload.cpp:468
-#, fuzzy
 msgid "Failed to load game state from file."
-msgstr ""
-"Не вдалося завантажити стан гри з файлу:\n"
-"\n"
-"%s"
+msgstr "Не вдалося завантажити стан гри з файлу."
 
 #: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
-#, fuzzy
 msgid "Failed to save game state to file."
-msgstr ""
-"Не вдалося зберегти стан гри у файл:\n"
-"\n"
-"%s"
+msgstr "Не вдалося зберегти стан гри у файл."
 
 #: engines/gob/inter_v5.cpp:107
-#, fuzzy
 msgid "Failed to delete file."
-msgstr ""
-"Не вдалося зберегти стан гри у файл:\n"
-"\n"
-"%s"
+msgstr "Не вдалося видалити файл."
 
-#: engines/groovie/script.cpp:417
-#, fuzzy
+#: engines/groovie/script.cpp:420
 msgid "Failed to save game"
-msgstr ""
-"Не вдалося зберегти стан гри у файл:\n"
-"\n"
-"%s"
+msgstr "Не вдалося записати гру"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
@@ -1898,9 +1879,8 @@ msgid ""
 msgstr ""
 
 #: engines/m4/m4_menus.cpp:138
-#, fuzzy
 msgid "Save game failed!"
-msgstr "Зберегти гру: "
+msgstr "Не вдалося зберегти гру!"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -1965,14 +1945,12 @@ msgid ""
 msgstr ""
 
 #: engines/parallaction/saveload.cpp:211
-#, fuzzy
 msgid "Loading game..."
-msgstr "Завантажити гру:"
+msgstr "Завантажую гру..."
 
 #: engines/parallaction/saveload.cpp:226
-#, fuzzy
 msgid "Saving game..."
-msgstr "Зберегти гру: "
+msgstr "Збережую гру..."
 
 #: engines/parallaction/saveload.cpp:279
 msgid ""
@@ -2004,28 +1982,28 @@ msgstr "Емулятор MAME OPL:"
 msgid "DOSBox OPL emulator"
 msgstr "Емулятор DOSBox OPL"
 
-#: audio/mididrv.cpp:204
+#: audio/mididrv.cpp:205
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
 
-#: audio/mididrv.cpp:216
+#: audio/mididrv.cpp:217
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information. Attempting to fall back to the next available device..."
 msgstr ""
 
-#: audio/mididrv.cpp:250
+#: audio/mididrv.cpp:253
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected). Attempting to fall back to the next available device..."
 msgstr ""
 
-#: audio/mididrv.cpp:265
+#: audio/mididrv.cpp:268
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -2053,7 +2031,6 @@ msgid "C64 Audio Emulator"
 msgstr "C64 Аудіо Емулятор"
 
 #: audio/softsynth/mt32.cpp:329
-#, fuzzy
 msgid "Initializing MT-32 Emulator"
 msgstr "Настроюю емулятор MT-32"
 
@@ -2162,14 +2139,12 @@ msgid "Disable power off"
 msgstr "Заборонити вимкнення"
 
 #: backends/platform/iphone/osys_events.cpp:338
-#, fuzzy
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Режим тачпаду увімкнено."
+msgstr "Режим миші клікнути-та-тягнути увімкнено."
 
 #: backends/platform/iphone/osys_events.cpp:340
-#, fuzzy
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Режим тачпаду вимкнено."
+msgstr "Режим миші клікнути-та-тягнути вимкнено."
 
 #: backends/platform/iphone/osys_events.cpp:351
 msgid "Touchpad mode enabled."
@@ -2178,6 +2153,29 @@ msgstr "Режим тачпаду увімкнено."
 #: backends/platform/iphone/osys_events.cpp:353
 msgid "Touchpad mode disabled."
 msgstr "Режим тачпаду вимкнено."
+
+#: backends/platform/sdl/macosx/appMenu_osx.mm:67
+#, fuzzy
+msgid "Hide ScummVM"
+msgstr "Вихід зі ScummVM"
+
+#: backends/platform/sdl/macosx/appMenu_osx.mm:70
+msgid "Hide Others"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appMenu_osx.mm:74
+msgid "Show All"
+msgstr ""
+
+#: backends/platform/sdl/macosx/appMenu_osx.mm:92
+#: backends/platform/sdl/macosx/appMenu_osx.mm:99
+#, fuzzy
+msgid "Window"
+msgstr "Windows MIDI"
+
+#: backends/platform/sdl/macosx/appMenu_osx.mm:95
+msgid "Minimize"
+msgstr ""
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
@@ -2188,28 +2186,24 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2137
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
-#, fuzzy
-msgid "Enabled aspect ratio correction"
-msgstr "Корекція співвідношення сторін"
-
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2143
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
+msgid "Enabled aspect ratio correction"
+msgstr "Корекцію співвідношення сторін увімкнено"
+
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2149
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:526
-#, fuzzy
 msgid "Disabled aspect ratio correction"
-msgstr "Корекція співвідношення сторін"
+msgstr "Корекцію співвідношення сторін вимкнено"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2198
-#, fuzzy
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2204
 msgid "Active graphics filter:"
-msgstr "Переключення між графічними фільтрами"
+msgstr "Поточний графічний фільтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2254
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2260
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:465
-#, fuzzy
 msgid "Windowed mode"
-msgstr "Режим раструв.:"
+msgstr "Віконний режим"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:139
 msgid "OpenGL Normal"
@@ -2224,9 +2218,8 @@ msgid "OpenGL Original"
 msgstr "OpenGL оригінальний"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
-#, fuzzy
 msgid "Current display mode"
-msgstr "Поточний відеорежим:"
+msgstr "Поточний відеорежим"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
 msgid "Current scale"
@@ -2431,17 +2424,15 @@ msgid "Network down"
 msgstr "Мережу вимкнено"
 
 #: backends/platform/wii/options.cpp:178
-#, fuzzy
 msgid "Initializing network"
 msgstr "Налаштовую мережу"
 
 #: backends/platform/wii/options.cpp:182
-#, fuzzy
 msgid "Timeout while initializing network"
 msgstr "Час підключення до мережі вийшов"
 
 #: backends/platform/wii/options.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Network not initialized (%d)"
 msgstr "Мережу не налагоджено (%d)"
 
@@ -2498,13 +2489,13 @@ msgstr "Курсор наліво"
 msgid "Cursor Right"
 msgstr "Курсор направо"
 
-#: backends/platform/wince/CEActionsPocket.cpp:264
-#: backends/platform/wince/CEActionsSmartphone.cpp:228
+#: backends/platform/wince/CEActionsPocket.cpp:267
+#: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
 msgstr "Ви хочете завантажити або зберегти гру?"
 
-#: backends/platform/wince/CEActionsPocket.cpp:314
-#: backends/platform/wince/CEActionsSmartphone.cpp:275
+#: backends/platform/wince/CEActionsPocket.cpp:326
+#: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
 msgstr "   Ви упевнені, що хочете вийти?   "
 
@@ -2516,45 +2507,45 @@ msgstr "Клавіатура"
 msgid "Rotate"
 msgstr "Повернути"
 
-#: backends/platform/wince/CELauncherDialog.cpp:54
+#: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
 msgstr "Використовую драйвер SDL "
 
-#: backends/platform/wince/CELauncherDialog.cpp:58
+#: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
 msgstr "Показати "
 
-#: backends/platform/wince/CELauncherDialog.cpp:77
+#: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Ви хочете здійснити автоматичний пошук?"
 
-#: backends/platform/wince/wince-sdl.cpp:487
+#: backends/platform/wince/wince-sdl.cpp:471
 msgid "Map right click action"
 msgstr "Перепризначення правого кліку"
 
-#: backends/platform/wince/wince-sdl.cpp:491
+#: backends/platform/wince/wince-sdl.cpp:475
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr "Ви повинні призначити кнопку до дії 'Правий клік', щоб грати у цю гру"
 
-#: backends/platform/wince/wince-sdl.cpp:500
+#: backends/platform/wince/wince-sdl.cpp:484
 msgid "Map hide toolbar action"
 msgstr "Перепризначити дію 'Сховати Панель інстр.'"
 
-#: backends/platform/wince/wince-sdl.cpp:504
+#: backends/platform/wince/wince-sdl.cpp:488
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Ви повинні перепризначити кнопку для дії 'Сховати Панель інстр.', щоб грати "
 "в цю гру"
 
-#: backends/platform/wince/wince-sdl.cpp:513
+#: backends/platform/wince/wince-sdl.cpp:497
 msgid "Map Zoom Up action (optional)"
-msgstr "Перепризначити дію Збільшення (необовязково)"
+msgstr "Перепризначити дію Збільшення (необов'язково)"
 
-#: backends/platform/wince/wince-sdl.cpp:516
+#: backends/platform/wince/wince-sdl.cpp:500
 msgid "Map Zoom Down action (optional)"
-msgstr "Перепризначити дію Зменшення (необовязково)"
+msgstr "Перепризначити дію Зменшення (необов'язково)"
 
-#: backends/platform/wince/wince-sdl.cpp:524
+#: backends/platform/wince/wince-sdl.cpp:508
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
@@ -2562,19 +2553,16 @@ msgstr ""
 "побачити весь інвентар"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Do you really want to return to the Launcher?"
-msgstr "Ви дійсно хочете видалити це збереження?"
+msgstr "Ви дійсно хочете повернутися до головного меню?"
 
 #: backends/events/default/default-events.cpp:222
-#, fuzzy
 msgid "Launcher"
-msgstr "Вдарити кулаком"
+msgstr "Головне меню"
 
 #: backends/events/default/default-events.cpp:244
-#, fuzzy
 msgid "Do you really want to quit?"
-msgstr "Ви хочете вийти?"
+msgstr "Ви дійсно хочете вийти?"
 
 #: backends/events/gph/gph-events.cpp:366
 #: backends/events/gph/gph-events.cpp:409
@@ -2595,18 +2583,16 @@ msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:390
-#, fuzzy
 msgid "Maximum Volume"
-msgstr "Гучність"
+msgstr "Максимальна Гучність"
 
 #: backends/events/gph/gph-events.cpp:392
 msgid "Increasing Volume"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:398
-#, fuzzy
 msgid "Minimal Volume"
-msgstr "Гучність"
+msgstr "Мінімальна Гучність"
 
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
