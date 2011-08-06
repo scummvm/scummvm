@@ -1219,8 +1219,8 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 		double v13 = _userDataD[523];
 
 		// x/y position of shadows
-		putInArray(a2, i + 22, 0, (int32)(atan2(v29, v31) * v13 + 640.0));
-		putInArray(a2, i + 22, 1, v12);
+		putInArray(a2, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 0, (int32)(atan2(v29, v31) * v13 + 640.0));
+		putInArray(a2, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 1, v12);
 	}
 
 	// soccer only uses one array here
@@ -1293,10 +1293,10 @@ void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
 	if (_vm->_game.id == GID_SOCCER) {
 		// soccer gets to be different
 		for (int i = 0; i < 13; i++)
-			v20[i] = distance(v13, v7[i], v14, v8[i]);
+			v20[i] = distance(v15, v7[i], v16, v8[i]);
 
 		for (int i = 0; i < 13; i++)
-			v19[i] = distance(v15, v7[i], v16, v8[i]);
+			v19[i] = distance(v13, v7[i], v14, v8[i]);
 	} else {
 		// soccermls and soccer2004 use two other arrays here
 		int v9 = getFromArray(a1, 20, 0);
