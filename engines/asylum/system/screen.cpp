@@ -303,7 +303,7 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 	// Setup our main palette
 	if (count > 0) {
 		byte *palette = (byte *)_mainPalette;
-		palette += 4 * start;
+		palette += start;
 
 		for (int32 i = 0; i < count; i++) {
 			palette[0] = (byte )(buffer[0] * 4);
@@ -424,7 +424,7 @@ void Screen::paletteFade(uint32 start, int32 ticksWait, int32 delta) {
 	byte blue  = palette[3 * start + 2];
 
 	for (int32 i = 1; i < colorDelta; i++) {
-		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette); j += 3) {
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
 			_mainPalette[j]     = (byte)(palette[j]     + i * (red   - palette[j])     / colorDelta);
 			_mainPalette[j + 1] = (byte)(palette[j + 1] + i * (green - palette[j + 1]) / colorDelta);
 			_mainPalette[j + 2] = (byte)(palette[j + 2] + i * (blue  - palette[j + 2]) / colorDelta);
@@ -477,7 +477,7 @@ void Screen::paletteFadeWorker(ResourceId id, int32 ticksWait, int32 delta) {
 	// Prepare for palette fading loop
 	int32 colorDelta = delta + 1;
 	for (int32 i = 1; i < colorDelta; i++) {
-		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette); j += 3) {
+		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
 			_mainPalette[j]     = (byte)(original[j]     + i * (palette[j]     - original[j])     / colorDelta);
 			_mainPalette[j + 1] = (byte)(original[j + 1] + i * (palette[j + 1] - original[j + 1]) / colorDelta);
 			_mainPalette[j + 2] = (byte)(original[j + 2] + i * (palette[j + 2] - original[j + 2]) / colorDelta);
