@@ -79,7 +79,7 @@ Common::String Encounter::ScriptEntry::toString() {
 }
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
-	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
+	_index(0), _speechResourceId(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
 	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _flag3(false), _isScriptRunning(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
@@ -136,9 +136,8 @@ void Encounter::load() {
 	for (uint8 i = 0; i < dataCount; i++) {
 		EncounterItem item;
 
-		item.keywordIndex = file.readSint16LE();
-		item.field2       = file.readSint16LE();
-		item.scriptResourceId  = (ResourceId)file.readSint32LE();
+		item.speechResourceId = file.readSint32LE();
+		item.scriptResourceId = (ResourceId)file.readSint32LE();
 
 		for (uint j = 0; j < ARRAYSIZE(item.keywords); j++)
 			item.keywords[j] = file.readSint16LE();
@@ -253,9 +252,9 @@ void Encounter::initDrawStructs() {
 void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
 	debugC(kDebugLevelEncounter, "[Encounter] Running Encounter %d", encounterIndex);
 
-	if (!_keywordIndex) {
+	if (!_speechResourceId) {
 		_item = &_items[0];
-		_keywordIndex = _item->keywordIndex;
+		_speechResourceId = _item->speechResourceId;
 	}
 
 	if (encounterIndex < 0)
@@ -809,7 +808,7 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	}
 
 	_data_455BE0 = true;
-	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _keywordIndex));
+	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId));
 }
 
 bool Encounter::setupSpeech(ResourceId id) {
@@ -1093,7 +1092,7 @@ void Encounter::drawStructs() {
 	}
 }
 
-void Encounter::drawDialog() {
+void Encounter::drawDialogOptions() {
 	getText()->loadFont(getWorld()->font1);
 
 	if (_keywordStartIndex >= 50)
@@ -1132,7 +1131,7 @@ void Encounter::drawDialog() {
 	}
 }
 
-void Encounter::drawText(char *text, ResourceId font, int16 y) {
+void Encounter::drawSubtitle(char *text, ResourceId font, int16 y) {
 	if (!text)
 		return;
 
@@ -1404,7 +1403,7 @@ bool Encounter::updateScreen() {
 
 		if (!getSpeech()->getTextDataPos() && !getSpeech()->getTextData()) {
 
-			drawDialog();
+			drawDialogOptions();
 			updateDrawingStatus();
 			drawStructs();
 
@@ -1415,8 +1414,8 @@ bool Encounter::updateScreen() {
 		}
 
 		if (Config.showEncounterSubtitles) {
-			drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y);
-			drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
+			drawSubtitle(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y);
+			drawSubtitle(getSpeech()->getTextData(), getWorld()->font1, _point.y);
 		}
 
 		if (_data_455BE0) {
@@ -1567,7 +1566,7 @@ void Encounter::runScript() {
 			break;
 
 		case kOpcode14:
-			resetSpeech(_item->keywordIndex, getVariableInv(entry.param2));
+			resetSpeech(_item->speechResourceId, getVariableInv(entry.param2));
 
 			done = true;
 			break;
