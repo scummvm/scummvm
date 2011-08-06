@@ -48,28 +48,28 @@ namespace Asylum {
 const char *opcodeNames[] = {
 	"Return",
 	"SetScriptVariable",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
+	"2"
+	"3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8",
+	"9",
+	"10",
+	"11",
+	"12",
+	"13",
 	"ResetSpeech",
 	"SetVariable",
 	"IncrementScriptVariable",
-	"",
+	"17",
 	"AddRemoveReactionHive",
-	"",
-	"",
+	"UNUSED(19)",
+	"UNUSED(20)",
 	"SetCounterFromActorReactions",
-	"",
-	"",
+	"UNUSED(22)",
+	"23",
 	"SetClearFlag",
 	"SetCounterFromFlag"
 };
@@ -157,7 +157,7 @@ void Encounter::initData() {
 
 	for (uint i = 0; i < 50; i++) {
 		if (_item->keywords[i] & KEYWORD_MASK) {
-			if (!(BYTE1(_item->keywords[i]) & 0x20)) {
+			if (!isKeywordDisabled(_item->keywords[i])) {
 				_keywordIndexes[currentIndex] = i;
 				currentIndex++;
 			}
@@ -166,7 +166,7 @@ void Encounter::initData() {
 
 	for (uint i = 0; i < 50; i++) {
 		if (_item->keywords[i] & KEYWORD_MASK) {
-			if (BYTE1(_item->keywords[i]) & 0x20) {
+			if (isKeywordDisabled(_item->keywords[i])) {
 				_keywordIndexes[currentIndex] = i;
 				currentIndex++;
 			}
@@ -592,7 +592,7 @@ int32 Encounter::getKeywordIndex() {
 		if (counter / 3 >= 8)
 			break;
 
-		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && isKeywordVisible(_item->keywords[index])) {
 			int32 x = _drawingStructs[0].point1.x + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
 			int32 y = 16 * counter / 3 + _point.y + 5;
 
@@ -611,14 +611,14 @@ void Encounter::choose(int32 index) {
 	if (_isScriptRunning || index == -1)
 		return;
 
-	if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+	if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index])) {
 
 		_value1 = (_item->keywords[index] & KEYWORD_MASK);
 		setVariable(1, _value1);
 
 		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, 3681 + index))))
 			if (_index != 79)
-				BYTE1(_item->keywords[index]) |= 0x20;
+				BYTE1(_item->keywords[index]) |= kKeywordOptionsDisabled;
 
 		initScript(_item->scriptResourceId);
 		runScript();
@@ -635,7 +635,7 @@ bool Encounter::checkKeywords() const {
 		if (index < 0)
 			continue;
 
-		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80))
+		if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index]))
 			return true;
 	}
 
@@ -649,7 +649,7 @@ bool Encounter::checkKeywords2() const {
 		if (index < 0)
 			continue;
 
-		if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80))
+		if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index]))
 			return true;
 	}
 
@@ -667,7 +667,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 				if (index < 0)
 					continue;
 
-				if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+				if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index])) {
 					cont = true;
 					break;
 				}
@@ -686,7 +686,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 				if (index < 0)
 					continue;
 
-				if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+				if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index])) {
 					_keywordStartIndex = i;
 					++counter;
 				}
@@ -703,7 +703,7 @@ void Encounter::updateFromRect(int32 rectIndex)  {
 			if (index < 0)
 				continue;
 
-			if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
+			if ((_item->keywords[index] & KEYWORD_MASK) && isKeywordVisible(_item->keywords[index])) {
 				_keywordStartIndex = (uint32)i;
 				++counter;
 			}
@@ -1109,9 +1109,9 @@ void Encounter::drawDialogOptions() {
 			continue;
 
 		int16 keyword = _item->keywords[keywordIndex];
-		if ((keyword & KEYWORD_MASK) > 0 && (BYTE1(keyword) & 0x80)) {
+		if ((keyword & KEYWORD_MASK) > 0 && isKeywordVisible(keyword)) {
 
-			if (BYTE1(keyword) & 0x20)
+			if (isKeywordDisabled(keyword))
 				getText()->loadFont(getWorld()->font2);
 			else
 				getText()->loadFont(getWorld()->font1);
@@ -1460,8 +1460,7 @@ void Encounter::initScript(ResourceId resourceId) {
 
 Encounter::ScriptEntry Encounter::getScriptEntry(ResourceId resourceId, uint32 offset) {
 	ResourceEntry *entry = getResource()->get(resourceId);
-
-	return ScriptEntry(entry->getData(offset));
+	return ScriptEntry(entry->data + offset * 4);
 }
 
 void Encounter::runScript() {
@@ -1539,21 +1538,21 @@ void Encounter::runScript() {
 
 		case kOpcode10:
 			if (entry.param1)
-				_item->keywords[findKeyword(_item, entry.param2)] &= ~kEncounterArray2000;
+				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsDisabled << 8);
 			else
-				_item->keywords[findKeyword(_item, entry.param2)] |= kEncounterArray8000;
+				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsVisible << 8);
 			break;
 
 		case kOpcode11:
 			if (entry.param1)
-				_item->keywords[findKeyword(_item, entry.param2)] |= kEncounterArray2000;
+				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsDisabled << 8);
 			else
-				_item->keywords[findKeyword(_item, entry.param2)] &= ~kEncounterArray8000;
+				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsVisible << 8);
 			break;
 
 		case kOpcode12:
-			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray4000;
-			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray8000;
+			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= (kKeywordOptionsUnknown << 8);
+			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= (kKeywordOptionsVisible << 8);
 
 			// Original saves the item back here
 			break;
