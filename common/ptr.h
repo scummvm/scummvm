@@ -231,7 +231,6 @@ public:
 
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
-	operator PointerType() const { return _pointer; }
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
