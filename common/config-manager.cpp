@@ -38,11 +38,11 @@ namespace Common {
 
 DECLARE_SINGLETON(ConfigManager);
 
-const char *ConfigManager::kApplicationDomain = "scummvm";
-const char *ConfigManager::kTransientDomain = "__TRANSIENT";
+char const *const ConfigManager::kApplicationDomain = "scummvm";
+char const *const ConfigManager::kTransientDomain = "__TRANSIENT";
 
 #ifdef ENABLE_KEYMAPPER
-const char *ConfigManager::kKeymapperDomain = "keymapper";
+char const *const ConfigManager::kKeymapperDomain = "keymapper";
 #endif
 
 #pragma mark -
