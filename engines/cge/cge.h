@@ -219,6 +219,7 @@ public:
 	void postMiniStep(int stp);
 	void showBak(int ref);
 	void initCaveValues();
+	void freeCaveValues();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);
