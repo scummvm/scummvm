@@ -98,8 +98,6 @@ public:
 
 	void setShouldEnablePlayer(bool state) { _shouldEnablePlayer = state; }
 	bool shouldEnablePlayer() { return _shouldEnablePlayer; }
-	void setFlag3(bool state) { _flag3 = state; }
-	bool getFlag3() { return _flag3; }
 
 	// Accessors (for saving game)
 	EncounterItems *items() { return &_items; }
@@ -202,7 +200,7 @@ private:
 	bool _shouldEnablePlayer;
 	bool _wasPlayerDisabled;
 	bool _flag3;
-	bool _flag4;
+	bool _isScriptRunning;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data
@@ -266,6 +264,35 @@ private:
 
 	//////////////////////////////////////////////////////////////////////////
 	// Scripts
+	enum EncounterOpcode {
+		kOpcodeReturn        = 0,
+		kOpcodeSetScriptVar  = 1,
+		kOpcode2             = 2,
+		kOpcode3             = 3,
+		kOpcode4             = 4,
+		kOpcode5             = 5,
+		kOpcode6             = 6,
+		kOpcode7             = 7,
+		kOpcode8             = 8,
+		kOpcode9             = 9,
+		kOpcode10            = 10,
+		kOpcode11            = 11,
+		kOpcode12            = 12,
+		kOpcode13            = 13,
+		kOpcode14            = 14,
+		kOpcode15            = 15,
+		kOpcode16            = 16,
+		kOpcode17            = 17,
+		kOpcode18            = 18,
+		kOpcode19            = 19,
+		kOpcode20            = 20,
+		kOpcode21            = 21,
+		kOpcode22            = 22,
+		kOpcode23            = 23,
+		kOpcode24            = 24,
+		kOpcode25            = 25
+	};
+
 	struct ScriptEntry {
 		union {
 			byte opcode;
@@ -278,9 +305,7 @@ private:
 			data = val;
 		}
 
-		Common::String toString() {
-			return Common::String::format("[0x%02X] %d %d", opcode, param1, param2);
-		}
+		Common::String toString();
 	};
 
 	struct ScriptData {

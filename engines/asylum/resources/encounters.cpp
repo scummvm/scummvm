@@ -44,9 +44,43 @@ namespace Asylum {
 
 #define KEYWORD_MASK 0xFFF
 
+#define OPCODE_NAME(index) (index > 25 ? "INVALID" : opcodeNames[index])
+const char *opcodeNames[] = {
+	"Return",     // 0
+	"SetScriptVar",
+	"",
+	"",
+	"",
+	"",           // 5
+	"",
+	"",
+	"",
+	"",
+	"",           // 10
+	"",
+	"",
+	"",
+	"",
+	"",           // 15
+	"",
+	"",
+	"",
+	"",
+	"",           // 20
+	"",
+	"",
+	"",
+	"",
+	""            // 25
+};
+
+Common::String Encounter::ScriptEntry::toString() {
+	return Common::String::format("0x%02X: %s (%d, %d)", opcode, OPCODE_NAME(opcode), param1, param2);
+}
+
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _keywordIndex(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
-	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _flag3(false), _flag4(false) {
+	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _flag3(false), _isScriptRunning(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -106,9 +140,8 @@ void Encounter::load() {
 		item.field2       = file.readSint16LE();
 		item.scriptResourceId  = (ResourceId)file.readSint32LE();
 
-		for (uint j = 0; j < 50; j++) {
+		for (uint j = 0; j < ARRAYSIZE(item.keywords); j++)
 			item.keywords[j] = file.readSint16LE();
-		}
 
 		item.value = file.readByte();
 
@@ -132,9 +165,9 @@ void Encounter::initData() {
 		}
 	}
 
-	for (uint i = currentIndex; i < 50; i++) {
+	for (uint i = 0; i < 50; i++) {
 		if (_item->keywords[i] & KEYWORD_MASK) {
-			if (!(BYTE1(_item->keywords[i]) & 0x20)) {
+			if (BYTE1(_item->keywords[i]) & 0x20) {
 				_keywordIndexes[currentIndex] = i;
 				currentIndex++;
 			}
@@ -424,7 +457,7 @@ bool Encounter::update() {
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
 
-		if (!getSharedData()->getMatteBarHeight() && doScript && _flag4) {
+		if (!getSharedData()->getMatteBarHeight() && doScript && _isScriptRunning) {
 			if (!setupSpeech(id))
 				runScript();
 		}
@@ -576,7 +609,7 @@ int32 Encounter::getKeywordIndex() {
 }
 
 void Encounter::choose(int32 index) {
-	if (_flag4 || index == -1)
+	if (_isScriptRunning || index == -1)
 		return;
 
 	if ((_item->keywords[index] & KEYWORD_MASK) && (BYTE1(_item->keywords[index]) & 0x80)) {
@@ -807,7 +840,7 @@ bool Encounter::setupSpeech(ResourceId id) {
 }
 
 bool Encounter::isSpeaking() {
-	if (!_flag4)
+	if (!_isScriptRunning)
 		return false;
 
 	if (getSpeech()->getSoundResourceId() != kResourceNone && getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
@@ -1076,9 +1109,10 @@ void Encounter::drawDialog() {
 		if (keywordIndex < 0)
 			continue;
 
-		if ((_item->keywords[keywordIndex] & KEYWORD_MASK) > 0 && (BYTE1(_keywordIndexes[i]) & 0x80)) {
+		int16 keyword = _item->keywords[keywordIndex];
+		if ((keyword & KEYWORD_MASK) > 0 && (BYTE1(keyword) & 0x80)) {
 
-			if (BYTE1(_keywordIndexes[i]) & 0x20)
+			if (BYTE1(keyword) & 0x20)
 				getText()->loadFont(getWorld()->font2);
 			else
 				getText()->loadFont(getWorld()->font1);
@@ -1087,10 +1121,10 @@ void Encounter::drawDialog() {
 			                     _point.y + (int16)(16 * counter / 3));
 
 			if (getKeywordIndex() == keywordIndex)
-				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + keywordIndex)), 18, 0);
+				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK))), 18, 0);
 
 			getText()->setPosition(coords);
-			getText()->draw(MAKE_RESOURCE(kResourcePackText, 3681 + keywordIndex));
+			getText()->draw(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK)));
 
 			++counter;
 			_data_455B14 = i;
@@ -1380,8 +1414,10 @@ bool Encounter::updateScreen() {
 			return false;
 		}
 
-		drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y);
-		drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
+		if (Config.showEncounterSubtitles) {
+			drawText(getSpeech()->getTextDataPos(), getWorld()->font3, _point.y);
+			drawText(getSpeech()->getTextData(), getWorld()->font1, _point.y);
+		}
 
 		if (_data_455BE0) {
 			_data_455BE0 = false;
@@ -1399,7 +1435,7 @@ bool Encounter::updateScreen() {
 	if (_objectId3 || _data_455BE8)
 		return false;
 
-	if (_data_455BF4)
+	if (!_data_455BF4)
 		_data_455BF4 = 1;
 
 	_isDialogOpen = true;
@@ -1426,125 +1462,125 @@ void Encounter::initScript(ResourceId resourceId) {
 Encounter::ScriptEntry Encounter::getScriptEntry(ResourceId resourceId, uint32 offset) {
 	ResourceEntry *entry = getResource()->get(resourceId);
 
-	return (ScriptEntry)entry->getData(offset);
+	return ScriptEntry(entry->getData(offset));
 }
 
 void Encounter::runScript() {
-	_flag4 = true;
+	_isScriptRunning = true;
 	bool done = false;
 
 	do {
 		ScriptEntry entry = getScriptEntry(_scriptData.resourceId, _scriptData.offset);
 
-		debugC(kDebugLevelEncounter, "[Encounter] Script %s", entry.toString().c_str());
+		debugC(kDebugLevelEncounter, "[Encounter] %s", entry.toString().c_str());
 
 		switch (entry.opcode) {
 		default:
 			break;
 
-		case 0:
-			_flag4 = false;
+		case kOpcodeReturn:
+			_isScriptRunning = false;
 			done = true;
 			_value1 = 0;
 			break;
 
-		case 1:
+		case kOpcodeSetScriptVar:
 			_scriptData.vars[entry.param1] = getVariableInv(entry.param2);
 			break;
 
-		case 2:
+		case kOpcode2:
 			_scriptData.counter = _scriptData.vars[entry.param1] - getVariableInv(entry.param2);
 			break;
 
-		case 3:
+		case kOpcode3:
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case 4:
+		case kOpcode4:
 			if (_scriptData.counter >= 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case 5:
+		case kOpcode5:
 			if (_scriptData.counter > 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case 6:
+		case kOpcode6:
 			if (_scriptData.counter)
 				break;
 
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case 7:
+		case kOpcode7:
 			if (!_scriptData.counter)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case 8:
+		case kOpcode8:
 			if (_scriptData.counter < 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case 9:
+		case kOpcode9:
 			if (_scriptData.counter <= 0)
 				break;
 
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case 10:
+		case kOpcode10:
 			if (entry.param1)
 				_item->keywords[findKeyword(_item, entry.param2)] &= ~kEncounterArray2000;
 			else
 				_item->keywords[findKeyword(_item, entry.param2)] |= kEncounterArray8000;
 			break;
 
-		case 11:
+		case kOpcode11:
 			if (entry.param1)
 				_item->keywords[findKeyword(_item, entry.param2)] |= kEncounterArray2000;
 			else
 				_item->keywords[findKeyword(_item, entry.param2)] &= ~kEncounterArray8000;
 			break;
 
-		case 12:
+		case kOpcode12:
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray4000;
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= kEncounterArray8000;
 
 			// Original saves the item back here
 			break;
 
-		case 13:
+		case kOpcode13:
 			if (!_flag3)
 				_shouldCloseDialog = true;
 
 			done = true;
 			break;
 
-		case 14:
+		case kOpcode14:
 			resetSpeech(_item->keywordIndex, getVariableInv(entry.param2));
 
 			done = true;
 			break;
 
-		case 15:
+		case kOpcode15:
 			setVariable(entry.param2, (int16)_scriptData.vars[entry.param1]);
 			break;
 
-		case 16:
+		case kOpcode16:
 			_scriptData.vars[entry.param1] += entry.param2;
 			break;
 
-		case 17:
+		case kOpcode17:
 			switch (getVariable(3)) {
 			default:
 				break;
@@ -1595,18 +1631,18 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case 18:
+		case kOpcode18:
 			if (entry.param1)
 				getScene()->getActor()->removeReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			else
 				getScene()->getActor()->addReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
 			break;
 
-		case 21:
+		case kOpcode21:
 			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
-		case 23:
+		case kOpcode23:
 			if (!getSharedData()->getMatteBarHeight()) {
 				getScreen()->loadPalette();
 				getSharedData()->setMatteBarHeight(1);
@@ -1624,14 +1660,14 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case 24:
+		case kOpcode24:
 			if (entry.param1)
 				_vm->setGameFlag((GameFlag)getVariableInv(entry.param2));
 			else
 				_vm->clearGameFlag((GameFlag)getVariableInv(entry.param2));
 			break;
 
-		case 25:
+		case kOpcode25:
 			_scriptData.counter = _vm->isGameFlagSet((GameFlag)getVariableInv(entry.param2)) ?  1 : 0;
 			break;
 		}
