@@ -274,7 +274,7 @@ protected:
 		if (capacity) {
 			_storage = new T[capacity];
 			if (!_storage)
-				::error("Common::Array: failure to allocate %u bytes", capacity);
+				::error("Common::Array: failure to allocate %u bytes", capacity * (uint)sizeof(T));
 		} else {
 			_storage = 0;
 		}
