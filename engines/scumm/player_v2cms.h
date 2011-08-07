@@ -46,8 +46,8 @@ public:
 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return true; }
 
 private:
 #include "common/pack-start.h"	// START STRUCT PACKING
