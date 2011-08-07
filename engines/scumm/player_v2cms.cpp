@@ -28,14 +28,6 @@
 
 namespace Scumm {
 
-#define PROCESS_ATTACK 1
-#define PROCESS_RELEASE 2
-#define PROCESS_SUSTAIN 3
-#define PROCESS_DECAY 4
-#define PROCESS_VIBRATO 5
-
-#define CMS_RATE 22050
-
 static const byte freqTable[] = {
 	  3,  10,  17,  24,  31,  38,  45,  51,
 	 58,  65,  71,  77,  83,  90,  96, 102,
@@ -492,27 +484,20 @@ void Player_V2CMS::playVoice() {
 void Player_V2CMS::processChannel(Voice2 *channel) {
 	++_outputTableReady;
 	switch (channel->nextProcessState) {
-	case PROCESS_RELEASE:
-		processRelease(channel);
-		break;
-
-	case PROCESS_ATTACK:
+	case Voice2::kEnvelopeAttack:
 		processAttack(channel);
 		break;
 
-	case PROCESS_DECAY:
+	case Voice2::kEnvelopeDecay:
 		processDecay(channel);
 		break;
 
-	case PROCESS_SUSTAIN:
+	case Voice2::kEnvelopeSustain:
 		processSustain(channel);
 		break;
 
-	case PROCESS_VIBRATO:
-		processVibrato(channel);
-		break;
-
-	default:
+	case Voice2::kEnvelopeRelease:
+		processRelease(channel);
 		break;
 	}
 }
@@ -530,7 +515,7 @@ void Player_V2CMS::processAttack(Voice2 *channel) {
 	int newVolume = channel->curVolume + channel->attackRate;
 	if (newVolume > channel->maxAmpl) {
 		channel->curVolume = channel->maxAmpl;
-		channel->nextProcessState = PROCESS_DECAY;
+		channel->nextProcessState = Voice2::kEnvelopeDecay;
 	} else {
 		channel->curVolume = newVolume;
 	}
@@ -542,7 +527,7 @@ void Player_V2CMS::processDecay(Voice2 *channel) {
 	int newVolume = channel->curVolume - channel->decayRate;
 	if (newVolume <= channel->sustainRate) {
 		channel->curVolume = channel->sustainRate;
-		channel->nextProcessState = PROCESS_SUSTAIN;
+		channel->nextProcessState = Voice2::kEnvelopeSustain;
 	} else {
 		channel->curVolume = newVolume;
 	}
@@ -670,7 +655,7 @@ void Player_V2CMS::playNote(byte *&data) {
 			freeVoice->curOctave = octave;
 			freeVoice->curFreq = freqTable[(note >> 8) << 2];
 			freeVoice->curVolume = 0;
-			freeVoice->nextProcessState = PROCESS_ATTACK;
+			freeVoice->nextProcessState = Voice2::kEnvelopeAttack;
 			if (!(_lastMidiCommand & 1))
 				freeVoice->channel = 0xF0;
 			else
@@ -710,7 +695,7 @@ void Player_V2CMS::clearNote(byte *&data) {
 	if (voice) {
 		voice->chanNumber = 0xFF;
 		voice->nextVoice = 0;
-		voice->nextProcessState = PROCESS_RELEASE;
+		voice->nextProcessState = Voice2::kEnvelopeRelease;
 	}
 	data += 2;
 }

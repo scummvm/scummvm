@@ -48,11 +48,8 @@ public:
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
 
-protected:
-
+private:
 #include "common/pack-start.h"	// START STRUCT PACKING
 	struct Voice {
 		byte attack;
@@ -90,7 +87,14 @@ protected:
 		int8 unkRate;
 		int8 unkCount;
 
-		int nextProcessState;
+		enum EnvelopeState {
+			kEnvelopeAttack,
+			kEnvelopeDecay,
+			kEnvelopeSustain,
+			kEnvelopeRelease
+		};
+
+		EnvelopeState nextProcessState;
 		uint8 curVolume;
 		uint8 curOctave;
 		uint8 curFreq;
