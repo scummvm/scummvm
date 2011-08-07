@@ -48,30 +48,30 @@ namespace Asylum {
 const char *opcodeNames[] = {
 	"Return",
 	"SetScriptVariable",
-	"2"
-	"3",
-	"4",
-	"5",
-	"6",
-	"7",
-	"8",
-	"9",
-	"10",
-	"11",
-	"12",
-	"13",
+	"SetCounterFromVars"
+	"SetOffset",
+	"SetOffsetIfCounterNegative",
+	"SetOffsetIfCounterNegativeOrNull",
+	"SetOffsetIfCounterIsNull",
+	"SetOffsetIfCounterIsNotNull",
+	"SetOffsetIfCounterPositiveOrNull",
+	"SetOffsetIfCounterPositive",
+	"SetCurrentItemOptions",
+	"ClearCurrentItemOptions",
+	"SetItemOptions",
+	"CloseDialog",
 	"ResetSpeech",
 	"SetVariable",
 	"IncrementScriptVariable",
-	"17",
+	"ProcessVariable3",
 	"AddRemoveReactionHive",
-	"UNUSED(19)",
-	"UNUSED(20)",
+	"UNUSED (19)",
+	"UNUSED (20)",
 	"SetCounterFromActorReactions",
-	"UNUSED(22)",
-	"23",
-	"SetClearFlag",
-	"SetCounterFromFlag"
+	"UNUSED (22)",
+	"PrepareMovie",
+	"SetClearGameFlag",
+	"SetCounterFromGameFlag"
 };
 
 Common::String Encounter::ScriptEntry::toString() {
@@ -1486,78 +1486,78 @@ void Encounter::runScript() {
 			_scriptData.vars[entry.param1] = getVariableInv(entry.param2);
 			break;
 
-		case kOpcode2:
+		case kOpcodeSetCounterFromVars:
 			_scriptData.counter = _scriptData.vars[entry.param1] - getVariableInv(entry.param2);
 			break;
 
-		case kOpcode3:
+		case kOpcodeSetOffset:
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case kOpcode4:
+		case kOpcodeSetOffsetIfCounterNegative:
 			if (_scriptData.counter >= 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case kOpcode5:
+		case kOpcodeSetOffsetIfCounterNegativeOrNull:
 			if (_scriptData.counter > 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case kOpcode6:
+		case kOpcodeSetOffsetIfCounterIsNull:
 			if (_scriptData.counter)
 				break;
 
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case kOpcode7:
+		case kOpcodeSetOffsetIfCounterIsNotNull:
 			if (!_scriptData.counter)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case kOpcode8:
+		case kOpcodeSetOffsetIfCounterPositiveOrNull:
 			if (_scriptData.counter < 0)
 				break;
 
 			_scriptData.offset = entry.param2;
 			break;
 
-		case kOpcode9:
+		case kOpcodeSetOffsetIfCounterPositive:
 			if (_scriptData.counter <= 0)
 				break;
 
 			_scriptData.offset = entry.param2 - 1;
 			break;
 
-		case kOpcode10:
+		case kOpcodeSetCurrentItemOptions:
 			if (entry.param1)
 				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsDisabled << 8);
 			else
 				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsVisible << 8);
 			break;
 
-		case kOpcode11:
+		case kOpcodeClearCurrentItemOptions:
 			if (entry.param1)
 				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsDisabled << 8);
 			else
 				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsVisible << 8);
 			break;
 
-		case kOpcode12:
+		case kOpcodeSetItemOptions:
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= (kKeywordOptionsUnknown << 8);
 			_items[entry.param1].keywords[findKeyword(&_items[entry.param1], entry.param2)] |= (kKeywordOptionsVisible << 8);
 
 			// Original saves the item back here
 			break;
 
-		case kOpcode13:
+		case kOpcodeCloseDialog:
 			if (!_flag3)
 				_shouldCloseDialog = true;
 
@@ -1578,7 +1578,7 @@ void Encounter::runScript() {
 			_scriptData.vars[entry.param1] += entry.param2;
 			break;
 
-		case kOpcode17:
+		case kOpcodeProcessVariable3:
 			switch (getVariable(3)) {
 			default:
 				break;
@@ -1640,7 +1640,7 @@ void Encounter::runScript() {
 			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
-		case kOpcode23:
+		case kOpcodePrepareMovie:
 			if (!getSharedData()->getMatteBarHeight()) {
 				getScreen()->loadPalette();
 				getSharedData()->setMatteBarHeight(1);
@@ -1658,14 +1658,14 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case kOpcodeSetClearFlag:
+		case kOpcodeSetClearGameFlag:
 			if (entry.param1)
 				_vm->setGameFlag((GameFlag)getVariableInv(entry.param2));
 			else
 				_vm->clearGameFlag((GameFlag)getVariableInv(entry.param2));
 			break;
 
-		case kOpcodeSetCounterFromFlag:
+		case kOpcodeSetCounterFromGameFlag:
 			_scriptData.counter = _vm->isGameFlagSet((GameFlag)getVariableInv(entry.param2)) ?  1 : 0;
 			break;
 		}
