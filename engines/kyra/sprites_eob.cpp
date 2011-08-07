@@ -55,7 +55,7 @@ namespace Kyra {
 
 void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
 	Common::String s = filename;
-	if (GI_EOB1 && !scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn"))
+	if (GI_EOB1 && !scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn") || !scumm_stricmp(filename, "xanath"))
 		s += "1";
 
 	_screen->loadShapeSetBitmap(s.c_str(), 3, 3);
@@ -971,8 +971,8 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 				}
 				snd_processEnvironmentalSoundEffect(108, m->block);
 			} else {
-				launchMagicObject(-1, _monsterDistAttType17[m->numRemoteAttacks], m->block, m->pos, m->dir);
-				snd_processEnvironmentalSoundEffect(_monsterDistAttSfx17[m->numRemoteAttacks], m->block);
+				launchMagicObject(-1, _beholderSpellList[d], m->block, m->pos, m->dir);
+				snd_processEnvironmentalSoundEffect(_beholderSfx[d], m->block);
 			}
 			break;
 		default:

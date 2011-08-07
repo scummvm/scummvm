@@ -803,7 +803,7 @@ void EobCoreEngine::initSpells() {
 	mp(2);	// Vampiric Touch
 	mpn;	// Fear
 	mpn;	// Ice Storm
-	mp1n;	// Stone Skin		/// --- para required?
+	mp1n;	// Stone Skin
 	mp1n;	// Cloud Kill		///
 	mp2(4);	// Improved Invisibility	///
 	mp2n;	// remove Curse		///
@@ -881,7 +881,8 @@ void EobCoreEngine::initSpells() {
 	sc(vampiricTouch);
 	sc(fear);
 	sc(iceStorm);
-	sc(empty);	// EOB1: stone skin, EOB2: imp invisibility
+	sc1(stoneSkin);	// stone skin
+	sc2(empty); // imp invisibility
 	sc1(empty); // Cloudkill
 	sc2(removeCurse);
 	sc(coneOfCold);
@@ -1004,7 +1005,7 @@ void EobCoreEngine::initSpells() {
 	ec2(empty);
 	ec(empty);
 	ec2(empty);
-	ec1(kuotoaAttack);
+	ec1(lightningBoltPassive);
 	ec2(unk1Passive);
 	ec2(empty);
 	ec2(unk2Passive);
@@ -1072,8 +1073,8 @@ void EobEngine::initStaticResource() {
 
 	_enemyMageSpellList = _staticres->loadRawData(kEob1EnemyMageSpellList, temp);
 	_enemyMageSfx = _staticres->loadRawData(kEob1EnemyMageSfx, temp);
-	_monsterDistAttType17 = _staticres->loadRawData(kEob1MonsterDistAttType17, temp);
-	_monsterDistAttSfx17 = _staticres->loadRawData(kEob1MonsterDistAttSfx17, temp);
+	_beholderSpellList = _staticres->loadRawData(kEob1BeholderSpellList, temp);
+	_beholderSfx = _staticres->loadRawData(kEob1BeholderSfx, temp);
 
 	_turnUndeadString = _staticres->loadStrings(kEob1TurnUndeadString, temp);
 
@@ -1162,7 +1163,7 @@ void EobEngine::initSpells() {
 		{ 0x0488, 0x000000, 0x01 },	// vampiric touch
 		{ 0x0100, 0x000000, 0x00 },	// fear
 		{ 0x0100, 0x000000, 0x41 },	// ice storm
-		{ 0x0000, 0x000000, 0x00 },	// STONE SKIN
+		{ 0x0033, 0x000001, 0x00 },	// STONE SKIN
 		{ 0x0000, 0x000000, 0x00 },	// CLOUD KILL
 		{ 0x0100, 0x000000, 0x41 },	// cone of cold
 		{ 0x0100, 0x000000, 0x00 },	// hold monster

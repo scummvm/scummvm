@@ -78,7 +78,7 @@ Common::Error EobEngine::init() {
 
 	_scriptTimersCount = 1;
 
-	//_wllWallFlags[132] = 0x1f;
+	_wllWallFlags[132] = 1;
 	_wllWallFlags[133] = 1;
 
 	return Common::kNoError;
@@ -222,7 +222,9 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 
 		if (!checkScriptFlag(0x100000)) {
 			if (deletePartyItems(6, -1)) {
-				TXT(28);
+				//_npcSequenceSub = 0;
+				//drawNpcScene(npcIndex);
+				TXT(28);				
 				createItemOnCurrentBlock(32);
 				setScriptFlag(0x100000);
 				r = 1;
@@ -423,7 +425,7 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		case 7:
 		case 8:
 		case 9:
-			y = _dscDoorY7[mDim] - _doorShapes[shapeIndex + 3][1];
+			y = _dscDoorY3[mDim] - _doorShapes[shapeIndex + 3][1];
 			d1 = x - (_doorShapes[shapeIndex + 3][2] << 2);
 			x -= (shp[2] << 2);
 			drawBlockObject(0, 2, _doorShapes[shapeIndex + 3], d1, y, 5);

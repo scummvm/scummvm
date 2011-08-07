@@ -208,7 +208,7 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	int itm = _characters[charIndex].inventory[slot];
 	int ex = _itemTypes[_items[itm].type].extraProperties & 0x7f;
 
-	if (slot < 2 && _items[itm].flags & 0x20 && ex > 0 && ex < 4) {
+	if (slot < 2 && (_items[itm].flags & 0x20) && ex > 0 && ex < 4) {
 		if (_flags.gameID == GI_EOB2)
 			_txt->printMessage(_validateCursedString[0], -1, _characters[charIndex].name);
 		return 0;
@@ -474,8 +474,8 @@ void EobCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	}
 }
 
-bool EobCoreEngine::isMagicWeapon(Item itemIndex) {
-	return (_items[itemIndex].type > 10 && _items[itemIndex].type < 18);
+bool EobCoreEngine::isMagicEffectItem(Item itemIndex) {
+	return (itemIndex > 10 && itemIndex < 18);
 }
 
 bool EobCoreEngine::checkInventoryForRings(int charIndex, int itemValue) {

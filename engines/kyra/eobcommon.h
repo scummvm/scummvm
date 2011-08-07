@@ -367,8 +367,9 @@ protected:
 
 	void recalcArmorClass(int index);
 	int validateWeaponSlotItem(int index, int slot);
-	int getCharacterClericPaladinLevel(int index);
-	int getCharacterMageLevel(int index);
+
+	int getClericPaladinLevel(int index);
+	int getMageLevel(int index);
 	int getCharacterLevelIndex(int type, int cClass);
 
 	int countCharactersWithSpecificItems(int16 itemType, int16 itemValue);
@@ -429,7 +430,7 @@ protected:
 	void printFullItemName(Item item);
 	void identifyQueuedItems(Item itemQueue);
 	void drawItemIconShape(int pageNum, Item itemId, int x, int y);
-	bool isMagicWeapon(Item itemIndex);
+	bool isMagicEffectItem(Item itemIndex);
 	bool checkInventoryForRings(int charIndex, int itemValue);
 	void eatItemInHand(int charIndex);
 
@@ -549,8 +550,8 @@ protected:
 	
 	const uint8 *_enemyMageSpellList;
 	const uint8 *_enemyMageSfx;
-	const uint8 *_monsterDistAttType17;
-	const uint8 *_monsterDistAttSfx17;
+	const uint8 *_beholderSpellList;
+	const uint8 *_beholderSfx;
 	const char *const *_monsterSpecAttStrings;
 
 	const int8 *_monsterFrmOffsTable1;
@@ -912,57 +913,63 @@ protected:
 	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
 	bool turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel);
 
+	int getMagicWeaponSlot(int charIndex);
+	int createMagicWeaponType(int invFlags, int handFlags, int armorClass, int allowedClasses, int dmgNum, int dmgPips, int dmgInc, int extraProps);
+	Item createMagicWeaponItem(int flags, int icon, int value, int type);
+	void removeMagicWeaponItem(Item item);
+
 	int findSingleSpellTarget(int dist);
 
 	void printWarning(const char *str);
 	void printNoEffectWarning();
 
 	void spellCallback_start_empty() {}
-	bool spellCallback_end_empty(EobFlyingObject *fo) { return true; }
+	bool spellCallback_end_empty(void*) { return true; }
 	void spellCallback_start_armor();
 	void spellCallback_start_burningHands();
 	void spellCallback_start_detectMagic();
-	bool spellCallback_end_detectMagic(EobFlyingObject *fo);
+	bool spellCallback_end_detectMagic(void*);
 	void spellCallback_start_magicMissile();
-	bool spellCallback_end_magicMissile(EobFlyingObject *fo);
+	bool spellCallback_end_magicMissile(void *obj);
 	void spellCallback_start_shockingGrasp();
-	bool spellCallback_end_shockingGraspFlameBlade(EobFlyingObject *fo);
+	bool spellCallback_end_shockingGraspFlameBlade(void *obj);
 	void spellCallback_start_improvedIdentify();
 	void spellCallback_start_melfsAcidArrow();
-	bool spellCallback_end_melfsAcidArrow(EobFlyingObject *fo);
+	bool spellCallback_end_melfsAcidArrow(void *obj);
 	void spellCallback_start_dispelMagic();
 	void spellCallback_start_fireball();
-	bool spellCallback_end_fireball(EobFlyingObject *fo);
+	bool spellCallback_end_fireball(void *obj);
 	void spellCallback_start_flameArrow();
-	bool spellCallback_end_flameArrow(EobFlyingObject *fo);
+	bool spellCallback_end_flameArrow(void *obj);
 	void spellCallback_start_holdPerson();
-	bool spellCallback_end_holdPerson(EobFlyingObject *fo);
+	bool spellCallback_end_holdPerson(void *obj);
 	void spellCallback_start_lightningBolt();
-	bool spellCallback_end_lightningBolt(EobFlyingObject *fo);
+	bool spellCallback_end_lightningBolt(void *obj);
 	void spellCallback_start_vampiricTouch();
-	bool spellCallback_end_vampiricTouch(EobFlyingObject *fo);
+	bool spellCallback_end_vampiricTouch(void *obj);
 	void spellCallback_start_fear();
 	void spellCallback_start_iceStorm();
-	bool spellCallback_end_iceStorm(EobFlyingObject *fo);
+	bool spellCallback_end_iceStorm(void *obj);
+	void spellCallback_start_stoneSkin();
 	void spellCallback_start_removeCurse();
 	void spellCallback_start_coneOfCold();
 	void spellCallback_start_holdMonster();
-	bool spellCallback_end_holdMonster(EobFlyingObject *fo);
+	bool spellCallback_end_holdMonster(void *obj);
 	void spellCallback_start_wallOfForce();
 	void spellCallback_start_disintegrate();
 	void spellCallback_start_fleshToStone();
 	void spellCallback_start_stoneToFlesh();
 	void spellCallback_start_trueSeeing();
-	bool spellCallback_end_trueSeeing(EobFlyingObject *fo);
+	bool spellCallback_end_trueSeeing(void*);
 	void spellCallback_start_slayLiving();
 	void spellCallback_start_powerWordStun();
 	void spellCallback_start_causeLightWounds();
 	void spellCallback_start_cureLightWounds();
 	void spellCallback_start_aid();
-	bool spellCallback_end_aid(EobFlyingObject *fo);
+	bool spellCallback_end_aid(void *obj);
 	void spellCallback_start_flameBlade();
 	void spellCallback_start_slowPoison();
-	bool spellCallback_end_slowPoison(EobFlyingObject *fo);
+	bool spellCallback_end_slowPoison(void *obj);
 	void spellCallback_start_createFood();
 	void spellCallback_start_removeParalysis();
 	void spellCallback_start_causeSeriousWounds();
@@ -971,19 +978,19 @@ protected:
 	void spellCallback_start_causeCriticalWounds();
 	void spellCallback_start_cureCriticalWounds();
 	void spellCallback_start_flameStrike();
-	bool spellCallback_end_flameStrike(EobFlyingObject *fo);
+	bool spellCallback_end_flameStrike(void *obj);
 	void spellCallback_start_raiseDead();
 	void spellCallback_start_harm();
 	void spellCallback_start_heal();
 	void spellCallback_start_layOnHands();
 	void spellCallback_start_turnUndead();
-	bool spellCallback_end_kuotoaAttack(EobFlyingObject *fo);
-	bool spellCallback_end_unk1Passive(EobFlyingObject *fo);
-	bool spellCallback_end_unk2Passive(EobFlyingObject *fo);
-	bool spellCallback_end_deathSpellPassive(EobFlyingObject *fo);
-	bool spellCallback_end_disintegratePassive(EobFlyingObject *fo);
-	bool spellCallback_end_causeCriticalWoundsPassive(EobFlyingObject *fo);
-	bool spellCallback_end_fleshToStonePassive(EobFlyingObject *fo);
+	bool spellCallback_end_lightningBoltPassive(void *obj);
+	bool spellCallback_end_unk1Passive(void *obj);
+	bool spellCallback_end_unk2Passive(void *obj);
+	bool spellCallback_end_deathSpellPassive(void*);
+	bool spellCallback_end_disintegratePassive(void*);
+	bool spellCallback_end_causeCriticalWoundsPassive(void*);
+	bool spellCallback_end_fleshToStonePassive(void*);
 
 	int8 _openBookSpellLevel;
 	int8 _openBookSpellSelectedItem;
@@ -997,11 +1004,11 @@ protected:
 	int8 *_openBookAvailableSpells;
 	uint8 _activeSpellCharId;
 	uint8 _activeSpellCharacterPos;
-	uint8 _activeSpell;
+	int _activeSpell;
 	bool _returnAfterSpellCallback;
 
 	typedef void (EobCoreEngine::*SpellStartCallback)();
-	typedef bool (EobCoreEngine::*SpellEndCallback)(EobFlyingObject *fo);
+	typedef bool (EobCoreEngine::*SpellEndCallback)(void *obj);
 
 	struct EobSpell {
 		const char *name;
