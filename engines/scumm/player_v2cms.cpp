@@ -702,15 +702,11 @@ void Player_V2CMS::clearNote(byte *&data) {
 
 void Player_V2CMS::play() {
 	_octaveMask = 0xF0;
-	channel_data *chan = &(_channels[0].d);
+	channel_data *chan = &_channels[0].d;
 
-	static byte volumeReg[4] = { 0x00, 0x00, 0x00, 0x00 };
-	static byte octaveReg[4] = { 0x66, 0x66, 0x66, 0x66 };
-	static byte freqReg[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
+	MusicChip &cms = _cmsChips[0];
+	byte noiseGen = 3;
 
-	static byte freqEnable = 0x3E;
-	static byte noiseEnable = 0x01;
-	static byte noiseGen = 0x02;
 	for (int i = 1; i <= 4; ++i) {
 		if (chan->time_left) {
 			uint16 freq = chan->freq;
@@ -720,8 +716,8 @@ void Player_V2CMS::play() {
 					noiseGen = freq & 0xFF;
 				} else {
 					noiseGen = 3;
-					freqReg[0] = freqReg[3];
-					octaveReg[0] = (octaveReg[0] & 0xF0) | ((octaveReg[1] & 0xF0) >> 4);
+					cms.freq[0] = cms.freq[3];
+					cms.octave[0] = (cms.octave[0] & 0xF0) | ((cms.octave[1] & 0xF0) >> 4);
 				}
 			} else {
 				if (freq == 0) {
@@ -747,17 +743,18 @@ void Player_V2CMS::play() {
 				oct |= cmsOct;
 
 				oct &= _octaveMask;
-				oct |= ((~_octaveMask) & octaveReg[((i & 3) >> 1)]);
-				octaveReg[((i & 3) >> 1)] = oct;
+				oct |= (~_octaveMask) & cms.octave[(i & 3) >> 1];
+				cms.octave[(i & 3) >> 1] = oct;
 
-				freq >>= -(cmsOct-9);
-				freqReg[(i&3)] = (-(freq-511)) & 0xFF;
+				freq >>= -(cmsOct - 9);
+				cms.freq[i & 3] = (-(freq - 511)) & 0xFF;
 			}
-			volumeReg[i & 3] = volumeTable[chan->volume >> 12];
+			cms.ampl[i & 3] = volumeTable[chan->volume >> 12];
 		} else {
-			volumeReg[i & 3] = 0;
+			cms.ampl[i & 3] = 0;
 		}
-		chan = &(_channels[i].d);
+
+		chan = &_channels[i].d;
 		_octaveMask ^= 0xFF;
 	}
 
@@ -765,29 +762,29 @@ void Player_V2CMS::play() {
 	// the right channels amplitude is set
 	// with the low value the left channels amplitude
 	_cmsEmu->portWrite(0x221, 0);
-	_cmsEmu->portWrite(0x220, volumeReg[0]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[0]);
 	_cmsEmu->portWrite(0x221, 1);
-	_cmsEmu->portWrite(0x220, volumeReg[1]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[1]);
 	_cmsEmu->portWrite(0x221, 2);
-	_cmsEmu->portWrite(0x220, volumeReg[2]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[2]);
 	_cmsEmu->portWrite(0x221, 3);
-	_cmsEmu->portWrite(0x220, volumeReg[3]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[3]);
 	_cmsEmu->portWrite(0x221, 8);
-	_cmsEmu->portWrite(0x220, freqReg[0]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[0]);
 	_cmsEmu->portWrite(0x221, 9);
-	_cmsEmu->portWrite(0x220, freqReg[1]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[1]);
 	_cmsEmu->portWrite(0x221, 10);
-	_cmsEmu->portWrite(0x220, freqReg[2]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[2]);
 	_cmsEmu->portWrite(0x221, 11);
-	_cmsEmu->portWrite(0x220, freqReg[3]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[3]);
 	_cmsEmu->portWrite(0x221, 0x10);
-	_cmsEmu->portWrite(0x220, octaveReg[0]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].octave[0]);
 	_cmsEmu->portWrite(0x221, 0x11);
-	_cmsEmu->portWrite(0x220, octaveReg[1]);
+	_cmsEmu->portWrite(0x220, _cmsChips[0].octave[1]);
 	_cmsEmu->portWrite(0x221, 0x14);
-	_cmsEmu->portWrite(0x220, freqEnable);
+	_cmsEmu->portWrite(0x220, 0x3E);
 	_cmsEmu->portWrite(0x221, 0x15);
-	_cmsEmu->portWrite(0x220, noiseEnable);
+	_cmsEmu->portWrite(0x220, 0x01);
 	_cmsEmu->portWrite(0x221, 0x16);
 	_cmsEmu->portWrite(0x220, noiseGen);
 }
