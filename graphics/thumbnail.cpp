@@ -94,7 +94,7 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	return true;
 }
 
-Graphics::Surface* loadThumbnail(Common::SeekableReadStream &in) {
+Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	ThumbnailHeader header;
 
 	if (!loadHeader(in, header, true))
