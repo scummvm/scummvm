@@ -51,7 +51,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_startupMode = 1;
 	_demoText    = kDemo;
 	_oldLev      = 0;
-	_jbw         = false;
 	_pocPtr      = 0;
 
 }
