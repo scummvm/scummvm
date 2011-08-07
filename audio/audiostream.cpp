@@ -61,15 +61,13 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
 	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
-
-	{ NULL, NULL, NULL } // Terminator
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
 	SeekableAudioStream *stream = NULL;
 	Common::File *fileHandle = new Common::File();
 
-	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
+	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS); ++i) {
 		Common::String filename = basename + STREAM_FILEFORMATS[i].fileExtension;
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
