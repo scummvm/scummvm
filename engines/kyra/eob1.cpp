@@ -438,9 +438,9 @@ void EobEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 		case 11:
 			v = ((wall < 30) ? (wall - _dscDoorScaleOffs[wall]) * _dscDoorScaleMult5[mDim] : _dscDoorScaleMult6[mDim]) * -1;
 			x -= (shp[2] << 2);
-			y = _dscDoorY3[mDim] + v;
+			y = _dscDoorY4[mDim] + v;
 			drawBlockObject(0, 2, shp, x, y + v, 5);
-			v >>= 4;
+			v = (v >> 3) + (v >> 2);
 			y = _dscDoorY5[mDim];
 			drawBlockObject(0, 2, _doorShapes[shapeIndex + 3], x, y - v, 5);
 			if (_wllShapeMap[wall] == -1)
@@ -505,6 +505,7 @@ void EobEngine::turnUndeadAutoHit() {
 
 bool EobEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
+	int cd = _screen->curDimIndex();
 	gui_drawBox(0, 121, 320, 80, _color1_1, _color2_1, _bkgColor_1);
 	_txt->setupField(9, false);
 	_txt->printMessage(_menuStringsDefeat[0]);
@@ -515,6 +516,8 @@ bool EobEngine::checkPartyStatusExtra() {
 	}
 	_screen->copyPage(10, 0);
 	_eventList.clear();
+	_screen->setScreenDim(cd);
+	_txt->removePageBreakFlag();
 	return true;
 }
 

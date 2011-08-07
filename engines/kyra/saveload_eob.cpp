@@ -241,8 +241,8 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_openBookType = in.readByte();
 	_openBookCharBackup = in.readByte();
 	_openBookTypeBackup = in.readByte();
-	_activeSpellCaster = in.readByte();
-	_activeSpellCasterPos = in.readByte();
+	_activeSpellCharId = in.readByte();
+	_activeSpellCharacterPos = in.readByte();
 	_activeSpell = in.readByte();
 	_returnAfterSpellCallback = in.readByte() ? true : false;
 
@@ -465,8 +465,8 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	out->writeByte(_openBookType);
 	out->writeByte(_openBookCharBackup);
 	out->writeByte(_openBookTypeBackup);
-	out->writeByte(_activeSpellCaster);
-	out->writeByte(_activeSpellCasterPos);
+	out->writeByte(_activeSpellCharId);
+	out->writeByte(_activeSpellCharacterPos);
 	out->writeByte(_activeSpell);
 	out->writeByte(_returnAfterSpellCallback ? 1 : 0);
 

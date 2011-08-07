@@ -54,8 +54,8 @@ int LolEobBaseEngine::getBlockDistance(uint16 block1, uint16 block2) {
 namespace Kyra {
 
 void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	Common::String s = _flags.gameID == GI_EOB1 && !scumm_stricmp(filename, "spider") ? "spider1" : filename;
-	if (GI_EOB1 && !scumm_stricmp(filename, "rust"))
+	Common::String s = filename;
+	if (GI_EOB1 && !scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn"))
 		s += "1";
 
 	_screen->loadShapeSetBitmap(s.c_str(), 3, 3);
@@ -147,7 +147,7 @@ const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 	uint32 ct = _system->getMillis();
 	for (int i = 0x20; i < 0x24; i++) {
 		int32 del = _timer->getDelay(i);
-		_timer->setNextRun(i, (i & 1) ? ct + (del >> 1) : ct + del);
+		_timer->setNextRun(i, (i & 1) ? ct + (del >> 1) * _tickLength : ct + del * _tickLength);
 	}
 
 	if (_hasTempDataFlags & (1 << (level - 1)))
@@ -178,7 +178,7 @@ void EobCoreEngine::initMonster(int index, int unit, uint16 block, int pos, int 
 	if (index & 1)
 		unit++;
 
-	m->stepsTillRemoteAttack = _flags.gameID == GI_EOB2 ? rollDice(1, 3, 0) : 0;
+	m->stepsTillRemoteAttack = _flags.gameID == GI_EOB2 ? rollDice(1, 3, 0) : 5;
 	m->type = type;
 	m->numRemoteAttacks = p->numRemoteAttacks;
 	m->curRemoteWeapon = 0;
@@ -278,7 +278,7 @@ void EobCoreEngine::updateAttackingMonsterFlags() {
 		_inf->setFlag(0x800);
 }
 
-const int8 *EobCoreEngine::getMonsterBlockPositions(uint16 block) {
+const int8 *EobCoreEngine::getMonstersOnBlockPositions(uint16 block) {
 	memset(_monsterBlockPosArray, -1, sizeof(_monsterBlockPosArray));
 	for (int8 i = 0; i < 30; i++) {
 		if (_monsters[i].block != block)
@@ -289,8 +289,8 @@ const int8 *EobCoreEngine::getMonsterBlockPositions(uint16 block) {
 	return _monsterBlockPosArray;
 }
 
-int EobCoreEngine::getClosestMonsterPos(int charIndex, int block) {
-	const int8 *pos = getMonsterBlockPositions(block);
+int EobCoreEngine::getClosestMonster(int charIndex, int block) {
+	const int8 *pos = getMonstersOnBlockPositions(block);
 	if (pos[4] != -1)
 		return pos[4];
 
@@ -915,7 +915,7 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 	if (!m->numRemoteAttacks || ((_flags.gameID == GI_EOB1) && !(p->capsFlags & 0x40)))
 		return false;
 
-	if ((_flags.gameID == GI_EOB1 && m->stepsTillRemoteAttack == 5) || (_flags.gameID == GI_EOB2 && rollDice(1, 3) > m->stepsTillRemoteAttack)) {
+	if ((_flags.gameID == GI_EOB1 && m->stepsTillRemoteAttack < 5) || (_flags.gameID == GI_EOB2 && (rollDice(1, 3) > m->stepsTillRemoteAttack))) {
 		m->stepsTillRemoteAttack++;
 		return false;
 	}
@@ -940,8 +940,8 @@ bool EobCoreEngine::updateMonsterTryDistanceAttack(EobMonsterInPlay *m) {
 			snd_processEnvironmentalSoundEffect(31, m->block);
 			break;
 		case 10:
-			launchMagicObject(-1, _monsterDistAttType10[m->numRemoteAttacks], m->block, m->pos, m->dir);
-			snd_processEnvironmentalSoundEffect(_monsterDistAttSfx10[m->numRemoteAttacks], m->block);
+			launchMagicObject(-1, _enemyMageSpellList[m->numRemoteAttacks], m->block, m->pos, m->dir);
+			snd_processEnvironmentalSoundEffect(_enemyMageSfx[m->numRemoteAttacks], m->block);
 			break;
 		case 11:
 			itm = duplicateItem(60);

@@ -485,8 +485,8 @@ enum KyraResources {
 	kEob1DoorSwitchCoords,
 	kEob1MonsterProperties,
 
-	kEob1MonsterDistAttType10,
-	kEob1MonsterDistAttSfx10,
+	kEob1EnemyMageSpellList,
+	kEob1EnemyMageSfx,
 	kEob1MonsterDistAttType17,
 	kEob1MonsterDistAttSfx17,
 

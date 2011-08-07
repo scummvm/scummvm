@@ -524,7 +524,7 @@ void EobCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	EobCharacter *c = &_characters[index];
 
 	bool redGreen = ((c->effectFlags & 0x4818) || (_partyEffectFlags & 0x20000) || c->effectsRemainder[0] || c->effectsRemainder[1]) ? true : false;
-	bool yellow = ((c->effectFlags & 0x13000) || (_partyEffectFlags & 0x8420) || c->effectsRemainder[0] || c->effectsRemainder[1]) ? true : false;
+	bool yellow = ((c->effectFlags & 0x13000) || (_partyEffectFlags & 0x8420)) ? true : false;
 
 	if (redGreen || yellow) {
 		if (redGreen && !yellow) {
@@ -1108,9 +1108,9 @@ int EobCoreEngine::clickedSpellbookList(Button *button) {
 }
 
 int EobCoreEngine::clickedCastSpellOnCharacter(Button *button) {
-	_activeSpellCaster = button->arg & 0xff;
+	_activeSpellCharId = button->arg & 0xff;
 
-	if (_activeSpellCaster == 0xff) {
+	if (_activeSpellCharId == 0xff) {
 		printWarning(_magicStrings3[_flags.gameID == GI_EOB1 ? 2 : 1]);
 		if (_castScrollSlot) {
 			gui_updateSlotAfterScrollUse();
@@ -1119,7 +1119,7 @@ int EobCoreEngine::clickedCastSpellOnCharacter(Button *button) {
 			gui_drawSpellbook();
 		}
 	} else {
-		if (_characters[_activeSpellCaster].flags & 1)
+		if (_characters[_activeSpellCharId].flags & 1)
 			startSpell(_activeSpell);
 	}
 

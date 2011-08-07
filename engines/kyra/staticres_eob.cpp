@@ -1070,8 +1070,8 @@ void EobEngine::initStaticResource() {
 	_dscDoorY7 = _staticres->loadRawData(kEobBaseDscDoorY7, temp);
 	_dscDoorCoordsExt = (const int16*)_staticres->loadRawDataBe16(kEobBaseDscDoorCoordsExt, temp);
 
-	_monsterDistAttType10 = _staticres->loadRawData(kEob1MonsterDistAttType10, temp);
-	_monsterDistAttSfx10 = _staticres->loadRawData(kEob1MonsterDistAttSfx10, temp);
+	_enemyMageSpellList = _staticres->loadRawData(kEob1EnemyMageSpellList, temp);
+	_enemyMageSfx = _staticres->loadRawData(kEob1EnemyMageSfx, temp);
 	_monsterDistAttType17 = _staticres->loadRawData(kEob1MonsterDistAttType17, temp);
 	_monsterDistAttSfx17 = _staticres->loadRawData(kEob1MonsterDistAttSfx17, temp);
 

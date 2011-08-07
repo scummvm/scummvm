@@ -256,22 +256,19 @@ bool EobCoreEngine::deletePartyItems(int16 itemType, int16 itemValue) {
 			continue;
 
 		EobCharacter *c = &_characters[i];
-		int slot = checkInventoryForItem(i, itemType, itemValue);
+		for (int slot = checkInventoryForItem(i, itemType, itemValue); slot != -1; slot = checkInventoryForItem(i, itemType, itemValue)) {
+			int itm = c->inventory[slot];
+			_items[itm].block = -1;
+			c->inventory[slot] = 0;
+			res = true;
 
-		if (slot == -1)
-			continue;
+			if (!_dialogueField) {
+				if (_currentControlMode == 0 && slot < 2 && i < 5)
+					gui_drawWeaponSlot(i, slot);
 
-		int itm = c->inventory[slot];
-		_items[itm].block = -1;
-		c->inventory[slot] = 0;
-		res = true;
-
-		if (!_dialogueField) {
-			if (_currentControlMode == 0 && slot < 2 && i < 5)
-				gui_drawWeaponSlot(i, slot);
-
-			if (_currentControlMode == 1 && i == _updateCharNum)
-				gui_drawInventoryItem(slot, 1, 0);
+				if (_currentControlMode == 1 && i == _updateCharNum)
+					gui_drawInventoryItem(slot, 1, 0);
+			}
 		}
 	}
 
@@ -379,9 +376,9 @@ void EobCoreEngine::printFullItemName(Item item) {
 				if (v == 0)
 					tmpString = nameUnid;
 				else if (v < 0)
-					tmpString = Common::String::format(_cursedString[0], v, nameUnid);
+					tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_cursedString[0], nameUnid, v) : Common::String::format(_cursedString[0], v, nameUnid);
 				else
-					tmpString = Common::String::format(_enchantedString[0], v, nameUnid);
+					tmpString = _flags.gameID == GI_EOB1 ? Common::String::format(_enchantedString[0], nameUnid, v) : Common::String::format(_enchantedString[0], v, nameUnid);
 				break;
 
 			case 9:
