@@ -318,7 +318,8 @@ PuzzlePipes::PuzzlePipes(AsylumEngine *engine) : Puzzle(engine) {
 PuzzlePipes::~PuzzlePipes() {
 	for (uint32 i = 0; i < _spiders.size(); ++i)
 		delete _spiders[i];
-	delete [] _frameIndexSpider;
+	if (_frameIndexSpider)
+		delete[] _frameIndexSpider;
 }
 
 void PuzzlePipes::saveLoadWithSerializer(Common::Serializer &s) {
@@ -348,9 +349,6 @@ bool PuzzlePipes::init(const AsylumEvent &) {
 }
 
 bool PuzzlePipes::update(const AsylumEvent &) {
-	if (!_frameIndexSpider)
-		error("[PuzzlePipes::update] Puzzle not initialized properly");
-
 	getScreen()->clear();
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[1], 0, Common::Point(0, 0), kDrawFlagNone, 0, 4);
@@ -449,9 +447,6 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 }
 
 bool PuzzlePipes::mouseLeftDown(const AsylumEvent &) {
-	if (!_frameIndexSpider)
-		error("[PuzzlePipes::update] Puzzle not initialized properly");
-
 	Common::Point mousePos = getCursor()->position();
 
 	if (Common::Rect(540, 90, 590, 250).contains(mousePos)) {
@@ -549,16 +544,18 @@ void PuzzlePipes::setup() {
 	_connectors[10].initGroup();
 	_connectors[11].initGroup();
 
-	uint32 i = rnd(7);
+	uint32 i = rnd(kBinNum0111);
 	if (i & kBinNum0001)
-		_spiders.push_back(new Spider(Common::Rect(-10, 45, 92, 315), "1"));
+		_spiders.push_back(new Spider(Common::Rect(-10,  45,  92, 315), "1"));
 	if (i & kBinNum0010)
 		_spiders.push_back(new Spider(Common::Rect(-10, 389, 149, 476), "2"));
 	if (i & kBinNum0100)
 		_spiders.push_back(new Spider(Common::Rect(544, 225, 650, 490), "3"));
 
-	_frameIndexSpider = new uint32[_spiders.size()];
-	memset(_frameIndexSpider, 0, sizeof(_frameIndexSpider));
+	if (i) {
+		_frameIndexSpider = new uint32[_spiders.size()];
+		memset(_frameIndexSpider, 0, sizeof(_frameIndexSpider));
+	}
 
 	startUpWater();
 }
