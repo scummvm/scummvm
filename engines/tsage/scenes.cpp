@@ -28,6 +28,9 @@
 
 namespace tSage {
 
+// TODO: Doesn't seem to be ever set
+const bool _v52C9F = false;
+
 SceneManager::SceneManager() {
 	_scene = NULL;
 	_hasPalette = false;
@@ -499,6 +502,11 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 
 	while (yEnd < 256)
 		_zoomPercents[yEnd++] = minPercent;
+}
+
+byte *Scene::preloadVisage(int resNum) {
+	assert(!_v52C9F);
+	return _resourceManager->getResource(RES_VISAGE, resNum, 9999, false);
 }
 
 /*--------------------------------------------------------------------------*/

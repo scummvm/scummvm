@@ -2455,6 +2455,27 @@ void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFade
 	_sound.fade(fadeDest, fadeSteps, fadeTicks, stopAfterFadeFlag);
 }
 
+void ASound::fadeSound(int soundNum) {
+	play(soundNum, NULL, 0);
+	fade(127, 5, 1, false, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ASoundExt::ASoundExt(): ASound() {
+	_soundNum = 0;
+}
+
+void ASoundExt::synchronize(Serializer &s) {
+	ASound::synchronize(s);
+	s.syncAsSint16LE(_soundNum);
+}
+
+void ASoundExt::signal() {
+	if (_soundNum != 0) {
+		fadeSound(_soundNum);
+	}
+}
 
 /*--------------------------------------------------------------------------*/
 

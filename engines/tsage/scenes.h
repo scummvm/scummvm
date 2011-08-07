@@ -67,6 +67,7 @@ public:
 	void loadBackground(int xAmount, int yAmount);
 	void refreshBackground(int xAmount, int yAmount);
 	void loadSceneData(int sceneNum);
+	byte *preloadVisage(int resNum);
 };
 
 class SceneManager : public GameHandler, public SaveListener {
