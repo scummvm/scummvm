@@ -27,7 +27,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English CD and First Wave versions
 	{
 		{
-			"ring",
+			"ringworld",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
@@ -41,7 +41,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld Spanish CD
 	{
 		{
-			"ring",
+			"ringworld",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
 			Common::ES_ESP,
@@ -55,7 +55,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy",
 			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
 			Common::EN_ANY,
@@ -69,7 +69,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy Demo #1 version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy Demo",
 			AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
 			Common::EN_ANY,
@@ -84,7 +84,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy Demo #2 version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy Demo",
 			AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
 			Common::EN_ANY,
