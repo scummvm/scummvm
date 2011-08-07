@@ -80,7 +80,7 @@ Common::String Encounter::ScriptEntry::toString() {
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
 	_index(0), _speechResourceId(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
-	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _flag3(false), _isScriptRunning(false) {
+	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _isClosing(false), _isScriptRunning(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));
 	_rectIndex = -1;
@@ -142,7 +142,7 @@ void Encounter::load() {
 		for (uint j = 0; j < ARRAYSIZE(item.keywords); j++)
 			item.keywords[j] = file.readSint16LE();
 
-		item.value = file.readByte();
+		item.variable2 = file.readByte();
 
 		_items.push_back(item);
 	}
@@ -260,7 +260,9 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 	if (encounterIndex < 0)
 		return;
 
-	// Original engine saves the main event handler (to be restored later)
+	// Original engine saves the event handler passed as first parameter (to be restored later)
+	// Since it always passes the current scene instance, we restore it at the end and skip
+	// saving it here
 	_index = encounterIndex;
 	_item = &_items[_index];
 	_objectId1 = objectId1;
@@ -273,8 +275,9 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 	getScene()->getActor(actorIndex)->stopSound();
 
 	setVariable(1, 0);
-	setVariable(2, _item->value);
+	setVariable(2, _item->variable2);
 
+	// Disable the player and store the previous state as a flag
 	Actor *player = getScene()->getActor();
 	if (player->getStatus() == kActorStatusDisabled) {
 		_wasPlayerDisabled = true;
@@ -292,13 +295,13 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 void Encounter::exitEncounter() {
 	setVariable(1, 32767);
 	initScript(_item->scriptResourceId);
-	_flag3 = true;
+	_isClosing = true;
 	runScript();
 
 	setupEntities(true);
 
-	++_item->value;
-	// Original saves the item back here
+	++_item->variable2;
+	// Original saves the modified item back here (we are using a reference to it all along)
 
 	// Update flags
 	getSharedData()->setFlag(kFlagIsEncounterRunning, false);
@@ -318,6 +321,7 @@ void Encounter::exitEncounter() {
 	if (getSound()->getMusicVolume() != Config.musicVolume)
 		getSound()->setMusicVolume(Config.musicVolume);
 
+	// Restore scene event handler
 	_vm->switchEventHandler(getScene());
 }
 
@@ -349,6 +353,7 @@ bool Encounter::handleEvent(const AsylumEvent &evt) {
 }
 
 bool Encounter::init() {
+	// Lower music volume while we are in the encounter
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
@@ -388,6 +393,7 @@ bool Encounter::init() {
 }
 
 bool Encounter::update() {
+	// Check that the music volume is lowered
 	if (getSound()->getMusicVolume() != Config.musicVolume - 500)
 		getSound()->setMusicVolume(Config.musicVolume - 500);
 
@@ -450,16 +456,15 @@ bool Encounter::update() {
 		}
 
 		bool doScript = false;
-		if ((getSpeech()->getSoundResourceId()
-		 && !getSound()->isPlaying(getSpeech()->getSoundResourceId())
-		 && !_data_455BE0)
+		if ((getSpeech()->getSoundResourceId() && !getSound()->isPlaying(getSpeech()->getSoundResourceId()) && !_data_455BE0)
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
 
-		if (!getSharedData()->getMatteBarHeight() && doScript && _isScriptRunning) {
-			if (!setupSpeech(id))
-				runScript();
-		}
+		if (doScript
+		 && !getSharedData()->getMatteBarHeight()
+		 && _isScriptRunning
+		 && !setupSpeech(id))
+			runScript();
 	}
 
 	// Redraw screen
@@ -471,7 +476,7 @@ bool Encounter::update() {
 	}
 
 	if (tick >= getSharedData()->getNextScreenUpdate() && getSharedData()->getFlag(kFlagRedraw)) {
-		if (getSharedData()->getMatteBarHeight() == 0) {
+		if (getSharedData()->getMatteBarHeight() <= 0) {
 			getScreen()->copyBackBufferToScreen();
 		} else {
 			drawScreen();
@@ -593,12 +598,12 @@ int32 Encounter::getKeywordIndex() {
 			break;
 
 		if ((_item->keywords[index] & KEYWORD_MASK) > 0 && isKeywordVisible(_item->keywords[index])) {
-			int32 x = _drawingStructs[0].point1.x + 144 * (counter % 3) + _point.x + (counter % 3) + _portrait1.rect.width() + 15;
+			int32 x = _drawingStructs[0].point1.y + 145 * (counter % 3) + _point.x + _portrait1.rect.width() + 15;
 			int32 y = 16 * counter / 3 + _point.y + 5;
 
-			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + index)))
+			if (mousePos.x >= x && mousePos.x <= (x + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (_item->keywords[index] & KEYWORD_MASK))))
 			 && mousePos.y >= y && mousePos.y <= (y + 16))
-				return i;
+				return index;
 
 			++counter;
 		}
@@ -1095,9 +1100,6 @@ void Encounter::drawStructs() {
 void Encounter::drawDialogOptions() {
 	getText()->loadFont(getWorld()->font1);
 
-	if (_keywordStartIndex >= 50)
-		return;
-
 	int16 counter = 0;
 
 	for (uint32 i = _keywordStartIndex; i < ARRAYSIZE(_keywordIndexes); i++) {
@@ -1455,7 +1457,7 @@ void Encounter::updatePalette2() {
 //////////////////////////////////////////////////////////////////////////
 void Encounter::initScript(ResourceId resourceId) {
 	_scriptData.reset(resourceId);
-	_flag3 = false;
+	_isClosing = false;
 }
 
 Encounter::ScriptEntry Encounter::getScriptEntry(ResourceId resourceId, uint32 offset) {
@@ -1558,7 +1560,7 @@ void Encounter::runScript() {
 			break;
 
 		case kOpcodeCloseDialog:
-			if (!_flag3)
+			if (!_isClosing)
 				_shouldCloseDialog = true;
 
 			done = true;
