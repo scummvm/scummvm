@@ -37,13 +37,13 @@ struct EncounterItem : public Common::Serializable {
 	uint32 speechResourceId;
 	ResourceId scriptResourceId;
 	int16 keywords[50];
-	byte value;
+	byte variable2;
 
 	EncounterItem() {
 		speechResourceId = 0;
 		scriptResourceId = kResourceNone;
 		memset(&keywords, 0, sizeof(keywords));
-		value = 0;
+		variable2 = 0;
 	}
 
 	virtual ~EncounterItem() {}
@@ -56,7 +56,7 @@ struct EncounterItem : public Common::Serializable {
 		for (int32 i = 0; i < ARRAYSIZE(keywords); i++)
 			s.syncAsSint16LE(keywords[i]);
 
-		s.syncAsByte(value);
+		s.syncAsByte(variable2);
 	}
 };
 
@@ -198,7 +198,7 @@ private:
 	// Internal flags
 	bool _shouldEnablePlayer;
 	bool _wasPlayerDisabled;
-	bool _flag3;
+	bool _isClosing;
 	bool _isScriptRunning;
 
 	//////////////////////////////////////////////////////////////////////////
