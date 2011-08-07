@@ -1084,7 +1084,7 @@ void KyraEngine_HoF::loadNPCScript() {
 #pragma mark -
 
 void KyraEngine_HoF::resetScaleTable() {
-	Common::set_to(_scaleTable, _scaleTable + ARRAYSIZE(_scaleTable), 0x100);
+	Common::set_to(_scaleTable, ARRAYEND(_scaleTable), 0x100);
 }
 
 void KyraEngine_HoF::setScaleTableItem(int item, int data) {
@@ -1674,7 +1674,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 }
 
 void KyraEngine_HoF::clearCauldronTable() {
-	Common::set_to(_cauldronTable, _cauldronTable+ARRAYSIZE(_cauldronTable), -1);
+	Common::set_to(_cauldronTable, ARRAYEND(_cauldronTable), -1);
 }
 
 void KyraEngine_HoF::addFrontCauldronTable(int item) {

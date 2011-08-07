@@ -707,7 +707,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	if ((channel.flags & ChannelContext::kFlagMono) == 0) {
 		voiceNum = pickvoice((channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
 	} else {
-		VoiceContext *voice = _voiceCtx + ARRAYSIZE(_voiceCtx) - 1;
+		VoiceContext *voice = ARRAYEND(_voiceCtx) - 1;
 		for (voiceNum = ARRAYSIZE(_voiceCtx) - 1; voiceNum >= 0 && voice->channel != &channel; --voiceNum, --voice)
 			;
 		if (voiceNum < 0)

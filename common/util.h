@@ -58,6 +58,11 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
+/**
+ * Compute a pointer to one past the last element of an array.
+ */
+#define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
+
 
 /**
  * @def SCUMMVM_CURRENT_FUNCTION

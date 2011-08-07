@@ -123,7 +123,7 @@ protected:
 VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream, dispose),
 	_length(0, 1000),
-	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
+	_bufferEnd(ARRAYEND(_buffer)) {
 
 	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
 	if (res < 0) {
