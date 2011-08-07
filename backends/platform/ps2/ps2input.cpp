@@ -545,5 +545,3 @@ const Common::KeyCode Ps2Input::_padFlags[16] = {
 	Common::KEYCODE_INVALID,			 //	Cross
 	Common::KEYCODE_INVALID				 //	Square
 };
-
-

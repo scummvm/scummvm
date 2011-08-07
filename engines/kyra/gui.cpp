@@ -671,4 +671,3 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 }
 
 } // End of namespace Kyra
-

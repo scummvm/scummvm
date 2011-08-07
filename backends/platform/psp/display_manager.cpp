@@ -479,4 +479,3 @@ Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() c
 
 	return list;
 }
-

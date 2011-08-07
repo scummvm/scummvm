@@ -63,4 +63,3 @@ private:
 };
 
 #endif //__PS2PAD_H__
-

@@ -165,4 +165,3 @@ AbstractFSNode *OSystem_Dreamcast::makeFileNodePath(const Common::String &path) 
 	AbstractFSNode *node = RoninCDFileNode::makeFileNodePath(path);
 	return (node? node : new RoninCDNonexistingNode(path));
 }
-

@@ -654,4 +654,3 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 	_videoLockOut &= ~0x8000;
 }
 } // End of namespace AGOS
-

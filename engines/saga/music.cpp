@@ -386,4 +386,3 @@ void Music::stop() {
 }
 
 } // End of namespace Saga
-

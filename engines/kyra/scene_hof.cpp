@@ -735,4 +735,3 @@ bool KyraEngine_HoF::lineIsPassable(int x, int y) {
 }
 
 } // End of namespace Kyra
-

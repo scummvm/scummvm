@@ -104,4 +104,3 @@ public:
 #endif // !DISABLE_DOSBOX_OPL
 
 #endif
-

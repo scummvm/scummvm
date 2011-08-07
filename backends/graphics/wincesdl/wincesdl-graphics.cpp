@@ -1657,4 +1657,3 @@ WINCESdlGraphicsManager::zoneDesc WINCESdlGraphicsManager::_zones[TOTAL_ZONES] =
 };
 
 #endif /* _WIN32_WCE */
-

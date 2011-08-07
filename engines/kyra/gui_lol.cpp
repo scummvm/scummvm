@@ -3007,4 +3007,3 @@ const char *GUI_LoL::getMenuItemLabel(const MenuItem &menuItem) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

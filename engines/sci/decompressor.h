@@ -197,4 +197,3 @@ protected:
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_DECOMPRESSOR_H
-

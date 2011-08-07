@@ -34,4 +34,3 @@ int cd_dread(iop_file_t *handle, fio_dirent_t *buf);
 int cd_dclose(iop_file_t *handle);
 
 #endif // __FIOFS_H__
-

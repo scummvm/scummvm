@@ -69,4 +69,3 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb);
 } // End of namespace Graphics
 
 #endif
-

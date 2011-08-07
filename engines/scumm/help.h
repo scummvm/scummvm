@@ -42,4 +42,3 @@ public:
 } // End of namespace Scumm
 
 #endif
-

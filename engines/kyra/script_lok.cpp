@@ -1959,4 +1959,3 @@ void KyraEngine_LoK::setupOpcodeTable() {
 #undef Opcode
 
 } // End of namespace Kyra
-

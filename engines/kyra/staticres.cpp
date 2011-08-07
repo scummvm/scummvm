@@ -2142,4 +2142,3 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 };
 
 } // End of namespace Kyra
-

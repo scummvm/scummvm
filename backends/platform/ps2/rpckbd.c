@@ -175,4 +175,3 @@ int PS2KbdResetKeymap(void)
 	} else
 		return -1;
 }
-

@@ -898,4 +898,3 @@ void KyraEngine_MR::doDialog(int dlgIndex, int funcNum) {
 }
 
 } // End of namespace Kyra
-

@@ -1998,4 +1998,3 @@ void KyraEngine_HoF::readSettings() {
 }
 
 } // End of namespace Kyra
-

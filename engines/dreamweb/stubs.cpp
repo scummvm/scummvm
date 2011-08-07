@@ -1655,4 +1655,3 @@ void DreamGenContext::cancelch1() {
 }
 
 } /*namespace dreamgen */
-

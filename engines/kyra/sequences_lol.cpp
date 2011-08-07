@@ -1519,4 +1519,3 @@ void LoLEngine::loadOutroShapes(int file, uint8 **storage) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

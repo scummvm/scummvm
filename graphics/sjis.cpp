@@ -655,4 +655,3 @@ void FontSjisSVM::mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &i
 } // End of namespace Graphics
 
 #endif // defined(GRAPHICS_SJIS_H)
-

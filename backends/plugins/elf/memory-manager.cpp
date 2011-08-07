@@ -172,4 +172,3 @@ void ELFMemoryManager::deallocateFromHeap(void *ptr) {
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
-

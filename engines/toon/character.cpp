@@ -1109,4 +1109,3 @@ void Character::updateIdle() {
 	}
 }
 } // End of namespace Toon
-

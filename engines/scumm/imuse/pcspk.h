@@ -158,4 +158,3 @@ private:
 } // End of namespace Scumm
 
 #endif
-

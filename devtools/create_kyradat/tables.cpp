@@ -2026,4 +2026,3 @@ ExtractEntryList getProvidersForId(int id) {
 
 	return list;
 }
-

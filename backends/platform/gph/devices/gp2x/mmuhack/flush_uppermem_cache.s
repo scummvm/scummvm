@@ -3,4 +3,3 @@
 flush_uppermem_cache:
     swi #0x9f0002
     bx lr
-

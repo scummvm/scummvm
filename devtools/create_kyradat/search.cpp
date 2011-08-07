@@ -213,4 +213,3 @@ bool Search::search(ResultList &res) {
 
 	return !res.empty();
 }
-

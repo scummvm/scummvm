@@ -190,4 +190,3 @@ void KyraEngine_LoK::setWalkspeed(uint8 newSpeed) {
 }
 
 } // End of namespace Kyra
-

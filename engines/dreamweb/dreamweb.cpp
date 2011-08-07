@@ -644,5 +644,3 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 }
 
 } // End of namespace DreamWeb
-
-

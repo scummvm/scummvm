@@ -80,4 +80,3 @@ public:
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 	}
 };
-

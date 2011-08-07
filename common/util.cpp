@@ -402,4 +402,3 @@ void updateGameGUIOptions(const uint32 options, const String &langOption) {
 }
 
 } // End of namespace Common
-

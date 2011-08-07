@@ -541,4 +541,3 @@ Audio::AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 } // End of namespace Audio
 
 #endif // defined(SOUND_SHORTEN_H)
-

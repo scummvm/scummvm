@@ -364,4 +364,3 @@ bool EventRecorder::pollEvent(Event &ev) {
 }
 
 } // End of namespace Common
-

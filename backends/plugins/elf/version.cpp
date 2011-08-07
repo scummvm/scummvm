@@ -26,4 +26,3 @@
 const char *gScummVMPluginBuildDate __attribute__((visibility("hidden"))) =
 	__DATE__ " " __TIME__ ;
 #endif
-

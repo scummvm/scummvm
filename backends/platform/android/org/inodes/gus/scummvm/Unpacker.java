@@ -370,4 +370,3 @@ public class Unpacker extends Activity {
 		}
 	}
 }
-

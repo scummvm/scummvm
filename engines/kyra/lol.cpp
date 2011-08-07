@@ -4598,4 +4598,3 @@ void LoLEngine::generateTempData() {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

@@ -39,4 +39,3 @@ typedef std::list<ExtractEntrySearchData> ExtractEntryList;
 ExtractEntryList getProvidersForId(int id);
 
 #endif
-

@@ -793,4 +793,3 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 }
 
 } // End of namespace Graphics
-

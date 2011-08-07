@@ -268,4 +268,3 @@ void KyraEngine_v1::loadGameStateCheck(int slot) {
 }
 
 } // End of namespace Kyra
-

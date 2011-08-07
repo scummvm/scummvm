@@ -538,4 +538,3 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 }	// End of namespace Common
 
 #endif
-

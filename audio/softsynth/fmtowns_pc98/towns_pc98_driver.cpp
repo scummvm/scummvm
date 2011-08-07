@@ -1449,4 +1449,3 @@ const uint8 TownsPC98_AudioDriver::_drvTables[] = {
 };
 
 #undef EUPHONY_FADEOUT_TICKS
-

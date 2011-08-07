@@ -1075,4 +1075,3 @@ bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const 
 }
 
 } // end of anonymous namespace
-

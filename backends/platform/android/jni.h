@@ -145,4 +145,3 @@ inline int JNI::writeAudio(JNIEnv *env, jbyteArray &data, int offset, int size) 
 
 #endif
 #endif
-

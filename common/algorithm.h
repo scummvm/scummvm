@@ -269,4 +269,3 @@ T gcd(T a, T b) {
 
 } // End of namespace Common
 #endif
-

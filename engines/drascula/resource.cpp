@@ -101,4 +101,3 @@ void TextResourceParser::parseString(char* result) {
 
 
 } // End of namespace Drascula
-

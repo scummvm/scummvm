@@ -563,21 +563,3 @@ doredes:	call	delpointer
 	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

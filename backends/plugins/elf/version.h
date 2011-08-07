@@ -29,4 +29,3 @@ extern const char *gScummVMPluginBuildDate;
 #endif
 
 #endif
-

@@ -1901,4 +1901,3 @@ FuncTable2:
 %ifidn __OUTPUT_FORMAT__,elf
 section .note.GNU-stack noalloc noexec nowrite progbits
 %endif
-

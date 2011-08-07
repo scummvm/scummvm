@@ -577,8 +577,3 @@ Readcitypic	proc	near
 	ret
 
 	endp
-
-
-
-
-

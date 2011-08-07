@@ -1438,4 +1438,3 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 
 	return result;
 }
-

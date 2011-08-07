@@ -131,4 +131,3 @@ void OSystem_Wii::deinitSfx() {
 			free(sound_buffer[i]);
 	}
 }
-

@@ -1137,4 +1137,3 @@ void KyraEngine_LoK::drawAmulet() {
 }
 
 } // End of namespace Kyra
-

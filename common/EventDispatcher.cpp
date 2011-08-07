@@ -131,4 +131,3 @@ void EventDispatcher::dispatchEvent(const Event &event) {
 }
 
 } // End of namespace Common
-
