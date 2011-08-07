@@ -1052,8 +1052,7 @@ void KyraEngine_HoF::runStartScript(int script, int unk1) {
 void KyraEngine_HoF::loadNPCScript() {
 	_emc->unload(&_npcScriptData);
 
-	char filename[12];
-	strcpy(filename, "_NPC.EMC");
+	char filename[] = "_NPC.EMC";
 
 	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie) {
 		switch (_lang) {
