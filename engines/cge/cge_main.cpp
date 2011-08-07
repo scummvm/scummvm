@@ -724,19 +724,15 @@ void System::funTouch() {
 }
 
 void System::touch(uint16 mask, int x, int y) {
-	static int pp = 0;
-
 	funTouch();
 
 	if (mask & kEventKeyb) {
-		int pp0;
 		_vm->keyClick();
 		killText();
 		if (_vm->_startupMode == 1) {
 			_snail->addCom(kSnClear, -1, 0, NULL);
 			return;
 		}
-		pp0 = pp;
 		switch (x) {
 		case Del:
 			if (_keyboard->_key[kKeyAlt] && _keyboard->_key[kKeyCtrl])
@@ -817,21 +813,7 @@ void System::touch(uint16 mask, int x, int y) {
 			if (_snail->idle() && !_hero->_flags._hide)
 				_vm->startCountDown();
 			break;
-		case 'J':
-			if (pp == 0)
-				pp++;
-			break;
-		case 'B':
-			if (pp == 1)
-				pp++;
-			break;
-		case 'W':
-			if (pp == 2)
-				_vm->_jbw = !_vm->_jbw;
-			break;
 		}
-		if (pp == pp0)
-			pp = 0;
 	} else {
 		if (_vm->_startupMode)
 			return;

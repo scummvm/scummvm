@@ -111,7 +111,6 @@ public:
 	int    _startupMode;
 	int    _demoText;
 	int    _oldLev;
-	bool   _jbw;
 	int    _pocPtr;
 	bool   _music;
 	int    _pocref[kPocketNX];
