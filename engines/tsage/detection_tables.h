@@ -120,7 +120,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
@@ -134,7 +134,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSTABLE,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
