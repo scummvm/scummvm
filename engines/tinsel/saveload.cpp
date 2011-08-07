@@ -155,7 +155,15 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 
 	int tmp = hdr.size - s.bytesSynced();
 	// Perform sanity check
-	if (tmp < 0 || hdr.id != SAVEGAME_ID || hdr.ver > CURRENT_VER || hdr.size > 1024)
+	if (tmp < 0 ||
+		// NOTE: We can't use SAVEGAME_ID here, as this function is called by the launcher
+		// when deleting saved games. SAVEGAME_ID calls TinselEngine::getVersion(), and
+		// TinselEngine isn't initialized then. Therefore, we use the two DW savegame
+		// IDs instead, which means that this sanity check won't detect badly named DW1/DW2
+		// saved games (i.e. a DW2 saved game named "dw.xxx"). Refer to bug #3387551.
+		/*hdr.id != SAVEGAME_ID ||*/ 
+		(hdr.id != DW1_SAVEGAME_ID && hdr.id != DW2_SAVEGAME_ID) ||
+		hdr.ver > CURRENT_VER || hdr.size > 1024)
 		return false;
 	// Skip over any extra bytes
 	s.skip(tmp);
