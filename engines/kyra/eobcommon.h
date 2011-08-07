@@ -486,8 +486,8 @@ protected:
 	int countSpecificMonsters(int type);
 	void updateAttackingMonsterFlags();
 
-	const int8 *getMonsterBlockPositions(uint16 block);
-	int getClosestMonsterPos(int charIndex, int block);
+	const int8 *getMonstersOnBlockPositions(uint16 block);
+	int getClosestMonster(int charIndex, int block);
 
 	bool blockHasMonsters(uint16 block);
 	bool isMonsterOnPos(EobMonsterInPlay *m, uint16 block, int pos, int checkPos4);
@@ -547,8 +547,8 @@ protected:
 	const uint8 *_findBlockMonstersTable;
 	const char *const *_monsterDustStrings;
 	
-	const uint8 *_monsterDistAttType10;
-	const uint8 *_monsterDistAttSfx10;
+	const uint8 *_enemyMageSpellList;
+	const uint8 *_enemyMageSfx;
 	const uint8 *_monsterDistAttType17;
 	const uint8 *_monsterDistAttSfx17;
 	const char *const *_monsterSpecAttStrings;
@@ -912,7 +912,9 @@ protected:
 	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
 	bool turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel);
 
-	void printWarning(const char* str);
+	int findSingleSpellTarget(int dist);
+
+	void printWarning(const char *str);
 	void printNoEffectWarning();
 
 	void spellCallback_start_empty() {}
@@ -993,8 +995,8 @@ protected:
 	uint8 _openBookCasterLevel;
 	const char *const *_openBookSpellList;
 	int8 *_openBookAvailableSpells;
-	uint8 _activeSpellCaster;
-	uint8 _activeSpellCasterPos;
+	uint8 _activeSpellCharId;
+	uint8 _activeSpellCharacterPos;
 	uint8 _activeSpell;
 	bool _returnAfterSpellCallback;
 
@@ -1046,6 +1048,11 @@ protected:
 	const uint8 *_magicFlightObjectProperties;
 	const uint8 *_turnUndeadEffect;
 	const uint8 *_burningHandsDest;
+	const int8 *_coneOfColdDest1;
+	const int8 *_coneOfColdDest2;
+	const int8 *_coneOfColdDest3;
+	const int8 *_coneOfColdDest4;
+	const int8 *_coneOfColdGfxTbl;
 
 	// Menu
 	EobMenuDef *_menuDefs;

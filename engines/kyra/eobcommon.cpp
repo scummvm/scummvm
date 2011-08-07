@@ -55,8 +55,8 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_tempIconShape = 0;
 
 	_monsterDustStrings = 0;
-	_monsterDistAttType10 = 0;
-	_monsterDistAttSfx10 = 0;
+	_enemyMageSpellList = 0;
+	_enemyMageSfx = 0;
 	_monsterDistAttType17 = 0;
 	_monsterDistAttSfx17 = 0;
 
@@ -130,8 +130,8 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_openBookType = _openBookTypeBackup = 0;
 	_openBookSpellList = 0;
 	_openBookAvailableSpells = 0;
-	_activeSpellCaster = 0;
-	_activeSpellCasterPos = 0;
+	_activeSpellCharId = 0;
+	_activeSpellCharacterPos = 0;
 	_activeSpell = 0;
 	_returnAfterSpellCallback = false;
 	_spells = 0;
@@ -473,7 +473,7 @@ bool EobCoreEngine::checkPartyStatus(bool handleDeath) {
 
 	if (!handleDeath)
 		return true;
-
+	
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
@@ -1550,13 +1550,14 @@ void EobCoreEngine::seq_portal() {
 		} else {
 			s--;
 			_screen->copyRegion((s % 5) << 6, s / 5 * 77, 56, 27, 64, 77, 2, 0, Screen::CR_NO_P_CHECK);
-			if (s == 0)
-				snd_playSoundEffect(31);
-			else if (s == 3) {
-				if (*(pos - 2) == 3)
-					snd_playSoundEffect(90);
-			}
-		}		
+		}
+
+		if (s == 1)
+			snd_playSoundEffect(31);
+		else if (s == 3) {
+			if (*(pos - 2) == 3)
+				snd_playSoundEffect(90);
+		}
 		
 		_screen->updateScreen();
 		delay(2 * _tickLength);
@@ -1646,7 +1647,7 @@ int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 		return -3;
 
 	uint16 d = calcNewBlockPosition(_currentBlock, _currentDirection);
-	int r = getClosestMonsterPos(charIndex, d);
+	int r = getClosestMonster(charIndex, d);
 
 	if (r == -1) {
 		uint8 w = _specialWallTypes[_levelBlockProperties[d].walls[_sceneDrawVarDown]];

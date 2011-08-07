@@ -203,7 +203,7 @@ void EobCoreEngine::advanceTimers(uint32 millis) {
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] > ct) {
 				uint32 chrt = c->timers[ii] - ct;
-				c->timers[ii] = chrt > millis ? chrt - millis : ct;
+				c->timers[ii] = chrt > millis ? ct + chrt - millis : ct;
 			}
 		}
 	}
@@ -214,7 +214,7 @@ void EobCoreEngine::advanceTimers(uint32 millis) {
 		for (int i = 0; i < _scriptTimersCount; i++) {
 			if (_scriptTimers[i].next > ct) {
 				uint32 chrt = _scriptTimers[i].next - ct;
-				_scriptTimers[i].next = chrt > millis ? chrt - millis : ct;
+				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : ct;
 			}
 		}
 	}
@@ -331,7 +331,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		case 9:
 			if (c->flags & 4) {
 				_txt->printMessage(_characterStatusStrings9[0], -1, c->name);
-				c->flags &= 0xfb;
+				c->flags &= ~4;
 				gui_drawCharPortraitWithStats(charIndex);
 			}
 			break;

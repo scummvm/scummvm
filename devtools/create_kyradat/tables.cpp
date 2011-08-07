@@ -2388,12 +2388,12 @@ const ExtractEntrySearchData kEob1MonsterPropertiesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob1MonsterDistAttType10Provider[] = {
+const ExtractEntrySearchData kEob1EnemyMageSpellListProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000000A, 0x0000000F, { { 0x01, 0x1B, 0x9C, 0x51, 0xC9, 0xA2, 0x10, 0xBB, 0xA7, 0x82, 0xD4, 0x91, 0x7E, 0x84, 0x54, 0x93 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob1MonsterDistAttSfx10Provider[] = {
+const ExtractEntrySearchData kEob1EnemyMageSfxProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000000A, 0x0000029B, { { 0xA2, 0x9F, 0x2E, 0xDE, 0x15, 0x23, 0x78, 0xDD, 0x26, 0x98, 0x6E, 0xA3, 0x77, 0xEA, 0xB5, 0x80 } } } },
 	EXTRACT_END_ENTRY
 };
@@ -3870,8 +3870,8 @@ const ExtractEntry extractProviders[] = {
 	{ kEob1DoorSwitchCoords, kEob1DoorSwitchCoordsProvider },
 	{ kEob1MonsterProperties, kEob1MonsterPropertiesProvider },
 
-	{ kEob1MonsterDistAttType10, kEob1MonsterDistAttType10Provider },
-	{ kEob1MonsterDistAttSfx10, kEob1MonsterDistAttSfx10Provider },
+	{ kEob1EnemyMageSpellList, kEob1EnemyMageSpellListProvider },
+	{ kEob1EnemyMageSfx, kEob1EnemyMageSfxProvider },
 	{ kEob1MonsterDistAttType17, kEob1MonsterDistAttType17Provider },
 	{ kEob1MonsterDistAttSfx17, kEob1MonsterDistAttSfx17Provider },
 	{ kEob1TurnUndeadString, kEob1TurnUndeadStringProvider },

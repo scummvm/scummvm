@@ -411,8 +411,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob1DoorSwitchShapeDefs, kTypeRawData, false },
 	{ kEob1DoorSwitchCoords, kTypeRawData, false },
 	{ kEob1MonsterProperties, kTypeRawData, false },
-	{ kEob1MonsterDistAttType10, kTypeRawData, false },
-	{ kEob1MonsterDistAttSfx10, kTypeRawData, false },
+	{ kEob1EnemyMageSpellList, kTypeRawData, false },
+	{ kEob1EnemyMageSfx, kTypeRawData, false },
 	{ kEob1MonsterDistAttType17, kTypeRawData, false },
 	{ kEob1MonsterDistAttSfx17, kTypeRawData, false },
 	{ kEob1TurnUndeadString, kTypeStringList, true },
@@ -1652,10 +1652,10 @@ const char *getIdString(const int id) {
 		return "kEob1DoorSwitchCoords";
 	case kEob1MonsterProperties:
 		return "kEob1MonsterProperties";
-	case kEob1MonsterDistAttType10:
-		return "kEob1MonsterDistAttType10";
-	case kEob1MonsterDistAttSfx10:
-		return "kEob1MonsterDistAttSfx10";
+	case kEob1EnemyMageSpellList:
+		return "kEob1EnemyMageSpellList";
+	case kEob1EnemyMageSfx:
+		return "kEob1EnemyMageSfx";
 	case kEob1MonsterDistAttType17:
 		return "kEob1MonsterDistAttType17";
 	case kEob1MonsterDistAttSfx17:
