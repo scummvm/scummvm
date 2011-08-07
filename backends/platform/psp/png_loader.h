@@ -34,7 +34,7 @@ private:
 	static void warningFn(png_structp png_ptr, png_const_charp warning_msg);
 	static void libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length);
 
-	Common::SeekableReadStream *_file;
+	Common::SeekableReadStream &_file;
 	Buffer *_buffer;
 	Palette *_palette;
 
@@ -57,7 +57,7 @@ public:
 		BAD_FILE
 	};
 
-	PngLoader(Common::SeekableReadStream *file, Buffer &buffer, Palette &palette,
+	PngLoader(Common::SeekableReadStream &file, Buffer &buffer, Palette &palette,
 		Buffer::HowToSize sizeBy = Buffer::kSizeByTextureSize) :
 			_file(file), _buffer(&buffer), _palette(&palette),
 			_width(0), _height(0), _paletteSize(0),
