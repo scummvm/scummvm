@@ -413,8 +413,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob1MonsterProperties, kTypeRawData, false },
 	{ kEob1EnemyMageSpellList, kTypeRawData, false },
 	{ kEob1EnemyMageSfx, kTypeRawData, false },
-	{ kEob1MonsterDistAttType17, kTypeRawData, false },
-	{ kEob1MonsterDistAttSfx17, kTypeRawData, false },
+	{ kEob1BeholderSpellList, kTypeRawData, false },
+	{ kEob1BeholderSfx, kTypeRawData, false },
 	{ kEob1TurnUndeadString, kTypeStringList, true },
 
 	{ kEob1NpcShpData, kTypeRawData, false },
@@ -1656,10 +1656,10 @@ const char *getIdString(const int id) {
 		return "kEob1EnemyMageSpellList";
 	case kEob1EnemyMageSfx:
 		return "kEob1EnemyMageSfx";
-	case kEob1MonsterDistAttType17:
-		return "kEob1MonsterDistAttType17";
-	case kEob1MonsterDistAttSfx17:
-		return "kEob1MonsterDistAttSfx17";
+	case kEob1BeholderSpellList:
+		return "kEob1BeholderSpellList";
+	case kEob1BeholderSfx:
+		return "kEob1BeholderSfx";
 	case kEob1TurnUndeadString:
 		return "kEob1TurnUndeadString";
 	case kEob1NpcShpData:

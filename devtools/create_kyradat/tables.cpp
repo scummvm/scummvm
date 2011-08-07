@@ -2398,12 +2398,12 @@ const ExtractEntrySearchData kEob1EnemyMageSfxProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob1MonsterDistAttType17Provider[] = {
+const ExtractEntrySearchData kEob1BeholderSpellListProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x00000079, { { 0x8E, 0x13, 0x54, 0x9D, 0x54, 0xF6, 0xC9, 0x6E, 0x10, 0xF1, 0xC0, 0xE9, 0x66, 0xDD, 0x95, 0xED } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob1MonsterDistAttSfx17Provider[] = {
+const ExtractEntrySearchData kEob1BeholderSfxProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x000000F5, { { 0xA9, 0x90, 0x41, 0x0D, 0xB5, 0xE0, 0x28, 0xFD, 0x0A, 0xC3, 0xF9, 0xEC, 0xC8, 0x47, 0xC1, 0x57 } } } },
 	EXTRACT_END_ENTRY
 };
@@ -3872,8 +3872,8 @@ const ExtractEntry extractProviders[] = {
 
 	{ kEob1EnemyMageSpellList, kEob1EnemyMageSpellListProvider },
 	{ kEob1EnemyMageSfx, kEob1EnemyMageSfxProvider },
-	{ kEob1MonsterDistAttType17, kEob1MonsterDistAttType17Provider },
-	{ kEob1MonsterDistAttSfx17, kEob1MonsterDistAttSfx17Provider },
+	{ kEob1BeholderSpellList, kEob1BeholderSpellListProvider },
+	{ kEob1BeholderSfx, kEob1BeholderSfxProvider },
 	{ kEob1TurnUndeadString, kEob1TurnUndeadStringProvider },
 
 	{ kEob1NpcShpData, kEob1NpcShpDataProvider },

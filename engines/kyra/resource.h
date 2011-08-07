@@ -487,8 +487,8 @@ enum KyraResources {
 
 	kEob1EnemyMageSpellList,
 	kEob1EnemyMageSfx,
-	kEob1MonsterDistAttType17,
-	kEob1MonsterDistAttSfx17,
+	kEob1BeholderSpellList,
+	kEob1BeholderSfx,
 
 	kEob1TurnUndeadString,
 

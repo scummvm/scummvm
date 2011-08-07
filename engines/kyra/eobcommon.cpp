@@ -57,8 +57,8 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_monsterDustStrings = 0;
 	_enemyMageSpellList = 0;
 	_enemyMageSfx = 0;
-	_monsterDistAttType17 = 0;
-	_monsterDistAttSfx17 = 0;
+	_beholderSpellList = 0;
+	_beholderSfx = 0;
 
 	_faceShapes = 0;
 	_characters = 0;
@@ -853,8 +853,8 @@ void EobCoreEngine::recalcArmorClass(int index) {
 	if (c->effectFlags & 0x4000) {
 		int8 m1 = 5;
 
-		if (getCharacterClericPaladinLevel(index) > 5)
-			m1 += ((getCharacterClericPaladinLevel(index) - 5) / 3);
+		if (getClericPaladinLevel(index) > 5)
+			m1 += ((getClericPaladinLevel(index) - 5) / 3);
 
 		if (c->armorClass > m1)
 			c->armorClass = m1;
@@ -893,7 +893,7 @@ int EobCoreEngine::validateWeaponSlotItem(int index, int slot) {
 	return r;
 }
 
-int EobCoreEngine::getCharacterClericPaladinLevel(int index) {
+int EobCoreEngine::getClericPaladinLevel(int index) {
 	if (_castScrollSlot)
 		return 9;
 
@@ -913,7 +913,7 @@ int EobCoreEngine::getCharacterClericPaladinLevel(int index) {
 	return 1;
 }
 
-int EobCoreEngine::getCharacterMageLevel(int index) {
+int EobCoreEngine::getMageLevel(int index) {
 	if (_castScrollSlot)
 		return 9;
 
@@ -1682,7 +1682,7 @@ int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 
 		uint16 flg = 0x100;
 
-		if ((_flags.gameID == GI_EOB1 && _items[item].type > 51 && _items[item].type < 57) || (_flags.gameID == GI_EOB2 && isMagicWeapon(item)))
+		if (isMagicEffectItem(item))
 			flg |= 1;
 
 		_dstMonsterIndex = r;
@@ -1966,6 +1966,10 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 			if (!monsterAttackHitTest(m, c))
 				continue;
 			dmg += rollDice(_monsterProps[m->type].dmgDc[ii].times, _monsterProps[m->type].dmgDc[ii].pips, _monsterProps[m->type].dmgDc[ii].base);
+			if (_characters[c].effectsRemainder[1]) {
+				if (--_characters[c].effectsRemainder[1])
+					dmg = 0;
+			}
 		}
 
 		if (dmg > 0) {
