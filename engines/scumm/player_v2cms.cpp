@@ -28,157 +28,45 @@
 
 namespace Scumm {
 
-static const byte freqTable[] = {
-	  3,  10,  17,  24,  31,  38,  45,  51,
-	 58,  65,  71,  77,  83,  90,  96, 102,
-	107, 113, 119, 125, 130, 136, 141, 146,
-	151, 157, 162, 167, 172, 177, 181, 186,
-	191, 195, 200, 204, 209, 213, 217, 221,
-	226, 230, 234, 238, 242, 246, 249, 253
-};
-
-/*static const byte amplTable[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	// 0 %
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	// 10 %
-	0x00, 0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10,	// 20 %
-	0x10, 0x10, 0x20, 0x20, 0x20, 0x20, 0x20, 0x30,
-	0x00, 0x00, 0x00, 0x00, 0x10, 0x10, 0x10, 0x20,	// 30%
-	0x20, 0x20, 0x30, 0x30, 0x30, 0x30, 0x40, 0x40,
-	0x00, 0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x20,	// 40 %
-	0x30, 0x30, 0x40, 0x40, 0x40, 0x50, 0x50, 0x60,
-	0x00, 0x00, 0x10, 0x10, 0x20, 0x20, 0x30, 0x30,	// 50%
-	0x40, 0x40, 0x50, 0x50, 0x60, 0x60, 0x70, 0x70,
-	0x00, 0x00, 0x10, 0x10, 0x20, 0x30, 0x30, 0x40,	// 60 %
-	0x40, 0x50, 0x60, 0x60, 0x70, 0x70, 0x80, 0x90,
-	0x00, 0x00, 0x10, 0x20, 0x20, 0x30, 0x40, 0x40,	// 70 %
-	0x50, 0x60, 0x70, 0x70, 0x80, 0x90, 0x90, 0xA0,
-	0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x40, 0x50,	// 80 %
-	0x60, 0x70, 0x80, 0x80, 0x90, 0xA0, 0xB0, 0xC0,
-	0x00, 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60,	// 90 %
-	0x70, 0x80, 0x90, 0x90, 0xA0, 0xB0, 0xC0, 0xD0,
-	0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70,	// 100 %
-	0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0
-};*/
-
-static const uint16 noteTable[] = {
-	0x000, 0x100, 0x200, 0x300,
-	0x400, 0x500, 0x600, 0x700,
-	0x800, 0x900, 0xA00, 0xB00,
-	0x001, 0x101, 0x201, 0x301,
-	0x401, 0x501, 0x601, 0x701,
-	0x801, 0x901, 0xA01, 0xB01,
-	0x002, 0x102, 0x202, 0x302,
-	0x402, 0x502, 0x602, 0x702,
-	0x802, 0x902, 0xA02, 0xB02,
-	0x003, 0x103, 0x203, 0x303,
-	0x403, 0x503, 0x603, 0x703,
-	0x803, 0x903, 0xA03, 0xB03,
-	0x004, 0x104, 0x204, 0x304,
-	0x404, 0x504, 0x604, 0x704,
-	0x804, 0x904, 0xA04, 0xB04,
-	0x005, 0x105, 0x205, 0x305,
-	0x405, 0x505, 0x605, 0x705,
-	0x805, 0x905, 0xA05, 0xB05,
-	0x006, 0x106, 0x206, 0x306,
-	0x406, 0x506, 0x606, 0x706,
-	0x806, 0x906, 0xA06, 0xB06,
-	0x007, 0x107, 0x207, 0x307,
-	0x407, 0x507, 0x607, 0x707,
-	0x807, 0x907, 0xA07, 0xB07,
-	0x008, 0x108, 0x208, 0x308,
-	0x408, 0x508, 0x608, 0x708,
-	0x808, 0x908, 0xA08, 0xB08,
-	0x009, 0x109, 0x209, 0x309,
-	0x409, 0x509, 0x609, 0x709,
-	0x809, 0x909, 0xA09, 0xB09,
-	0x00A, 0x10A, 0x20A, 0x30A,
-	0x40A, 0x50A, 0x60A, 0x70A,
-	0x80A, 0x90A, 0xA0A, 0xB0A
-};
-
-static const byte attackRate[] = {
-	  0,   2,   4,   7,  14,  26,  48,  82,
-	128, 144, 160, 176, 192, 208, 224, 255
-};
-
-static const byte decayRate[] = {
-	  0,   1,   2,   3,   4,   6,  12,  24,
-	 48,  96, 192, 215, 255, 255, 255, 255
-};
-
-static const byte sustainRate[] = {
-	255, 180, 128,  96,  80,  64,  56,  48,
-	 42,  36,  32,  28,  24,  20,  16,   0
-};
-
-static const byte releaseRate[] = {
-	  0,   1,   2,   4,   6,   9,  14,  22,
-	 36,  56,  80, 100, 120, 140, 160, 255
-};
-
-static const byte volumeTable[] = {
-	0x00, 0x10, 0x10, 0x11, 0x11, 0x21, 0x22, 0x22,
-	0x33, 0x44, 0x55, 0x66, 0x88, 0xAA, 0xCC, 0xFF
-};
-
-static const byte cmsInitData[13*2] = {
-	0x1C, 0x02,
-	0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,
-	0x14, 0x3F, 0x15, 0x00, 0x16, 0x00, 0x18, 0x00, 0x19, 0x00, 0x1C, 0x01
-};
-
 Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
-	: Player_V2Base(scumm, mixer, true) {
-	int i;
-
+	: Player_V2Base(scumm, mixer, true), _cmsVoicesBase(), _cmsVoices(),
+	  _cmsChips(), _midiDelay(0), _octaveMask(0), _looping(0), _tempo(0),
+	  _tempoSum(0), _midiData(0), _midiSongBegin(0), _musicTimer(0),
+	  _musicTimerTicks(0), _voiceTimer(0), _loadedMidiSong(0),
+	  _outputTableReady(0), _midiChannel(), _midiChannelUse() {
 	setMusicVolume(255);
 
-	memset(_cmsVoicesBase, 0, sizeof(Voice)*16);
-	memset(_cmsVoices, 0, sizeof(Voice2)*8);
-	memset(_cmsChips, 0, sizeof(MusicChip)*2);
-	_midiDelay = _octaveMask = _looping = _tempo = _tempoSum = 0;
-	_midiData = _midiSongBegin = 0;
-	_musicTimer = _musicTimerTicks = 0;
-	_voiceTimer = 0;
-	_loadedMidiSong = 0;
-	_outputTableReady = 0;
-	memset(_midiChannel, 0, sizeof(Voice2*)*16);
-	memset(_midiChannelUse, 0, sizeof(byte)*16);
-
-	_cmsVoices[0].amplitudeOutput = &(_cmsChips[0].ampl[0]);
-	_cmsVoices[0].freqOutput = &(_cmsChips[0].freq[0]);
-	_cmsVoices[0].octaveOutput = &(_cmsChips[0].octave[0]);
-	_cmsVoices[1].amplitudeOutput = &(_cmsChips[0].ampl[1]);
-	_cmsVoices[1].freqOutput = &(_cmsChips[0].freq[1]);
-	_cmsVoices[1].octaveOutput = &(_cmsChips[0].octave[0]);
-	_cmsVoices[2].amplitudeOutput = &(_cmsChips[0].ampl[2]);
-	_cmsVoices[2].freqOutput = &(_cmsChips[0].freq[2]);
-	_cmsVoices[2].octaveOutput = &(_cmsChips[0].octave[1]);
-	_cmsVoices[3].amplitudeOutput = &(_cmsChips[0].ampl[3]);
-	_cmsVoices[3].freqOutput = &(_cmsChips[0].freq[3]);
-	_cmsVoices[3].octaveOutput = &(_cmsChips[0].octave[1]);
-	_cmsVoices[4].amplitudeOutput = &(_cmsChips[1].ampl[0]);
-	_cmsVoices[4].freqOutput = &(_cmsChips[1].freq[0]);
-	_cmsVoices[4].octaveOutput = &(_cmsChips[1].octave[0]);
-	_cmsVoices[5].amplitudeOutput = &(_cmsChips[1].ampl[1]);
-	_cmsVoices[5].freqOutput = &(_cmsChips[1].freq[1]);
-	_cmsVoices[5].octaveOutput = &(_cmsChips[1].octave[0]);
-	_cmsVoices[6].amplitudeOutput = &(_cmsChips[1].ampl[2]);
-	_cmsVoices[6].freqOutput = &(_cmsChips[1].freq[2]);
-	_cmsVoices[6].octaveOutput = &(_cmsChips[1].octave[1]);
-	_cmsVoices[7].amplitudeOutput = &(_cmsChips[1].ampl[3]);
-	_cmsVoices[7].freqOutput = &(_cmsChips[1].freq[3]);
-	_cmsVoices[7].octaveOutput = &(_cmsChips[1].octave[1]);
+	_cmsVoices[0].amplitudeOutput = &_cmsChips[0].ampl[0];
+	_cmsVoices[0].freqOutput = &_cmsChips[0].freq[0];
+	_cmsVoices[0].octaveOutput = &_cmsChips[0].octave[0];
+	_cmsVoices[1].amplitudeOutput = &_cmsChips[0].ampl[1];
+	_cmsVoices[1].freqOutput = &_cmsChips[0].freq[1];
+	_cmsVoices[1].octaveOutput = &_cmsChips[0].octave[0];
+	_cmsVoices[2].amplitudeOutput = &_cmsChips[0].ampl[2];
+	_cmsVoices[2].freqOutput = &_cmsChips[0].freq[2];
+	_cmsVoices[2].octaveOutput = &_cmsChips[0].octave[1];
+	_cmsVoices[3].amplitudeOutput = &_cmsChips[0].ampl[3];
+	_cmsVoices[3].freqOutput = &_cmsChips[0].freq[3];
+	_cmsVoices[3].octaveOutput = &_cmsChips[0].octave[1];
+	_cmsVoices[4].amplitudeOutput = &_cmsChips[1].ampl[0];
+	_cmsVoices[4].freqOutput = &_cmsChips[1].freq[0];
+	_cmsVoices[4].octaveOutput = &_cmsChips[1].octave[0];
+	_cmsVoices[5].amplitudeOutput = &_cmsChips[1].ampl[1];
+	_cmsVoices[5].freqOutput = &_cmsChips[1].freq[1];
+	_cmsVoices[5].octaveOutput = &_cmsChips[1].octave[0];
+	_cmsVoices[6].amplitudeOutput = &_cmsChips[1].ampl[2];
+	_cmsVoices[6].freqOutput = &_cmsChips[1].freq[2];
+	_cmsVoices[6].octaveOutput = &_cmsChips[1].octave[1];
+	_cmsVoices[7].amplitudeOutput = &_cmsChips[1].ampl[3];
+	_cmsVoices[7].freqOutput = &_cmsChips[1].freq[3];
+	_cmsVoices[7].octaveOutput = &_cmsChips[1].octave[1];
 
 	// inits the CMS Emulator like in the original
 	_cmsEmu = new CMSEmulator(_sampleRate);
-	i = 0;
-	for (int cmsPort = 0x220; i < 2; cmsPort += 2, ++i) {
+	for (int i = 0, cmsPort = 0x220; i < 2; cmsPort += 2, ++i) {
 		for (int off = 0; off < 13; ++off) {
-			_cmsEmu->portWrite(cmsPort+1, cmsInitData[off*2]);
-			_cmsEmu->portWrite(cmsPort, cmsInitData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort+1, _cmsInitData[off*2]);
+			_cmsEmu->portWrite(cmsPort, _cmsInitData[off*2+1]);
 		}
 	}
 
@@ -301,11 +189,11 @@ void Player_V2CMS::loadMidiData(byte *data, int sound) {
 			Voice *voiceDef = &_cmsVoicesBase[channel];
 
 			byte attackDecay = voice2[10];
-			voiceDef->attack = attackRate[attackDecay >> 4];
-			voiceDef->decay = decayRate[attackDecay & 0x0F];
+			voiceDef->attack = _attackRate[attackDecay >> 4];
+			voiceDef->decay = _decayRate[attackDecay & 0x0F];
 			byte sustainRelease = voice2[11];
-			voiceDef->sustain = sustainRate[sustainRelease >> 4];
-			voiceDef->release = releaseRate[sustainRelease & 0x0F];
+			voiceDef->sustain = _sustainRate[sustainRelease >> 4];
+			voiceDef->release = _releaseRate[sustainRelease & 0x0F];
 
 			if (voice2[3] & 0x40) {
 				voiceDef->vibrato = 0x0301;
@@ -571,14 +459,14 @@ void Player_V2CMS::processVibrato(Voice2 *channel) {
 	output = channel->freqOutput;
 	*output = channel->curFreq;
 	output = channel->octaveOutput;
-	*output = ((((channel->curOctave << 4) | (channel->curOctave & 0x0F)) & _octaveMask) | ((~_octaveMask) & *output));
+	*output = (((channel->curOctave << 4) | (channel->curOctave & 0x0F)) & _octaveMask) | ((~_octaveMask) & *output);
 }
 
 void Player_V2CMS::offAllChannels() {
 	for (int cmsPort = 0x220, i = 0; i < 2; cmsPort += 2, ++i) {
 		for (int off = 1; off <= 10; ++off) {
-			_cmsEmu->portWrite(cmsPort+1, cmsInitData[off*2]);
-			_cmsEmu->portWrite(cmsPort, cmsInitData[off*2+1]);
+			_cmsEmu->portWrite(cmsPort+1, _cmsInitData[off*2]);
+			_cmsEmu->portWrite(cmsPort, _cmsInitData[off*2+1]);
 		}
 	}
 }
@@ -643,9 +531,13 @@ void Player_V2CMS::playNote(byte *&data) {
 			freeVoice->curVolume = rate;
 			freeVoice->playingNote = *data;
 
-			uint16 note = noteTable[*data + 3];
+			int effectiveNote = freeVoice->playingNote + 3;
+			if (effectiveNote < 0 || effectiveNote >= ARRAYSIZE(_midiNotes)) {
+				warning("Player_V2CMS::playNote: Note %d out of bounds", effectiveNote);
+				effectiveNote = CLIP<int>(effectiveNote, 0, ARRAYSIZE(_midiNotes) - 1);
+			}
 
-			int octave = int8(note & 0xFF) + freeVoice->octaveAdd - 3;
+			int octave = _midiNotes[effectiveNote].baseOctave + freeVoice->octaveAdd - 3;
 			if (octave < 0)
 				octave = 0;
 			if (octave > 7)
@@ -653,7 +545,7 @@ void Player_V2CMS::playNote(byte *&data) {
 			if (!octave)
 				++octave;
 			freeVoice->curOctave = octave;
-			freeVoice->curFreq = freqTable[(note >> 8) << 2];
+			freeVoice->curFreq = _midiNotes[effectiveNote].frequency;
 			freeVoice->curVolume = 0;
 			freeVoice->nextProcessState = Voice2::kEnvelopeAttack;
 			if (!(_lastMidiCommand & 1))
@@ -749,7 +641,7 @@ void Player_V2CMS::play() {
 				freq >>= -(cmsOct - 9);
 				cms.freq[i & 3] = (-(freq - 511)) & 0xFF;
 			}
-			cms.ampl[i & 3] = volumeTable[chan->volume >> 12];
+			cms.ampl[i & 3] = _volumeTable[chan->volume >> 12];
 		} else {
 			cms.ampl[i & 3] = 0;
 		}
@@ -762,25 +654,25 @@ void Player_V2CMS::play() {
 	// the right channels amplitude is set
 	// with the low value the left channels amplitude
 	_cmsEmu->portWrite(0x221, 0);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[0]);
+	_cmsEmu->portWrite(0x220, cms.ampl[0]);
 	_cmsEmu->portWrite(0x221, 1);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[1]);
+	_cmsEmu->portWrite(0x220, cms.ampl[1]);
 	_cmsEmu->portWrite(0x221, 2);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[2]);
+	_cmsEmu->portWrite(0x220, cms.ampl[2]);
 	_cmsEmu->portWrite(0x221, 3);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].ampl[3]);
+	_cmsEmu->portWrite(0x220, cms.ampl[3]);
 	_cmsEmu->portWrite(0x221, 8);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[0]);
+	_cmsEmu->portWrite(0x220, cms.freq[0]);
 	_cmsEmu->portWrite(0x221, 9);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[1]);
+	_cmsEmu->portWrite(0x220, cms.freq[1]);
 	_cmsEmu->portWrite(0x221, 10);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[2]);
+	_cmsEmu->portWrite(0x220, cms.freq[2]);
 	_cmsEmu->portWrite(0x221, 11);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].freq[3]);
+	_cmsEmu->portWrite(0x220, cms.freq[3]);
 	_cmsEmu->portWrite(0x221, 0x10);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].octave[0]);
+	_cmsEmu->portWrite(0x220, cms.octave[0]);
 	_cmsEmu->portWrite(0x221, 0x11);
-	_cmsEmu->portWrite(0x220, _cmsChips[0].octave[1]);
+	_cmsEmu->portWrite(0x220, cms.octave[1]);
 	_cmsEmu->portWrite(0x221, 0x14);
 	_cmsEmu->portWrite(0x220, 0x3E);
 	_cmsEmu->portWrite(0x221, 0x15);
@@ -821,5 +713,72 @@ void Player_V2CMS::playMusicChips(const MusicChip *table) {
 		++table;
 	} while ((cmsPort & 2) == 0);
 }
+
+const Player_V2CMS::MidiNote Player_V2CMS::_midiNotes[132] = {
+	{   3,  0 }, {  31,  0 }, {  58,  0 }, {  83,  0 },  
+	{ 107,  0 }, { 130,  0 }, { 151,  0 }, { 172,  0 },  
+	{ 191,  0 }, { 209,  0 }, { 226,  0 }, { 242,  0 },  
+	{   3,  1 }, {  31,  1 }, {  58,  1 }, {  83,  1 },  
+	{ 107,  1 }, { 130,  1 }, { 151,  1 }, { 172,  1 },  
+	{ 191,  1 }, { 209,  1 }, { 226,  1 }, { 242,  1 },  
+	{   3,  2 }, {  31,  2 }, {  58,  2 }, {  83,  2 },  
+	{ 107,  2 }, { 130,  2 }, { 151,  2 }, { 172,  2 },  
+	{ 191,  2 }, { 209,  2 }, { 226,  2 }, { 242,  2 },  
+	{   3,  3 }, {  31,  3 }, {  58,  3 }, {  83,  3 },  
+	{ 107,  3 }, { 130,  3 }, { 151,  3 }, { 172,  3 },  
+	{ 191,  3 }, { 209,  3 }, { 226,  3 }, { 242,  3 },  
+	{   3,  4 }, {  31,  4 }, {  58,  4 }, {  83,  4 },  
+	{ 107,  4 }, { 130,  4 }, { 151,  4 }, { 172,  4 },  
+	{ 191,  4 }, { 209,  4 }, { 226,  4 }, { 242,  4 },  
+	{   3,  5 }, {  31,  5 }, {  58,  5 }, {  83,  5 },  
+	{ 107,  5 }, { 130,  5 }, { 151,  5 }, { 172,  5 },  
+	{ 191,  5 }, { 209,  5 }, { 226,  5 }, { 242,  5 },  
+	{   3,  6 }, {  31,  6 }, {  58,  6 }, {  83,  6 },  
+	{ 107,  6 }, { 130,  6 }, { 151,  6 }, { 172,  6 },  
+	{ 191,  6 }, { 209,  6 }, { 226,  6 }, { 242,  6 },  
+	{   3,  7 }, {  31,  7 }, {  58,  7 }, {  83,  7 },  
+	{ 107,  7 }, { 130,  7 }, { 151,  7 }, { 172,  7 },  
+	{ 191,  7 }, { 209,  7 }, { 226,  7 }, { 242,  7 },  
+	{   3,  8 }, {  31,  8 }, {  58,  8 }, {  83,  8 },  
+	{ 107,  8 }, { 130,  8 }, { 151,  8 }, { 172,  8 },  
+	{ 191,  8 }, { 209,  8 }, { 226,  8 }, { 242,  8 },  
+	{   3,  9 }, {  31,  9 }, {  58,  9 }, {  83,  9 },  
+	{ 107,  9 }, { 130,  9 }, { 151,  9 }, { 172,  9 },  
+	{ 191,  9 }, { 209,  9 }, { 226,  9 }, { 242,  9 },  
+	{   3, 10 }, {  31, 10 }, {  58, 10 }, {  83, 10 },  
+	{ 107, 10 }, { 130, 10 }, { 151, 10 }, { 172, 10 },  
+	{ 191, 10 }, { 209, 10 }, { 226, 10 }, { 242, 10 }
+};
+
+const byte Player_V2CMS::_attackRate[16] = {
+	  0,   2,   4,   7,  14,  26,  48,  82,
+	128, 144, 160, 176, 192, 208, 224, 255
+};
+
+const byte Player_V2CMS::_decayRate[16] = {
+	  0,   1,   2,   3,   4,   6,  12,  24,
+	 48,  96, 192, 215, 255, 255, 255, 255
+};
+
+const byte Player_V2CMS::_sustainRate[16] = {
+	255, 180, 128,  96,  80,  64,  56,  48,
+	 42,  36,  32,  28,  24,  20,  16,   0
+};
+
+const byte Player_V2CMS::_releaseRate[16] = {
+	  0,   1,   2,   4,   6,   9,  14,  22,
+	 36,  56,  80, 100, 120, 140, 160, 255
+};
+
+const byte Player_V2CMS::_volumeTable[16] = {
+	0x00, 0x10, 0x10, 0x11, 0x11, 0x21, 0x22, 0x22,
+	0x33, 0x44, 0x55, 0x66, 0x88, 0xAA, 0xCC, 0xFF
+};
+
+const byte Player_V2CMS::_cmsInitData[26] = {
+	0x1C, 0x02,
+	0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,
+	0x14, 0x3F, 0x15, 0x00, 0x16, 0x00, 0x18, 0x00, 0x19, 0x00, 0x1C, 0x01
+};
 
 } // End of namespace Scumm

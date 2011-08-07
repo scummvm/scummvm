@@ -156,10 +156,20 @@ private:
 	Voice2 *getFreeVoice();
 	Voice2 *getPlayVoice(byte param);
 
-	// from Player_V2
-protected:
-	CMSEmulator *_cmsEmu;
+	struct MidiNote {
+		byte frequency;
+		byte baseOctave;
+	};
 
+	static const MidiNote _midiNotes[132];
+	static const byte _attackRate[16];
+	static const byte _decayRate[16];
+	static const byte _sustainRate[16];
+	static const byte _releaseRate[16];
+	static const byte _volumeTable[16];
+	static const byte _cmsInitData[26];
+
+	CMSEmulator *_cmsEmu;
 };
 
 } // End of namespace Scumm
