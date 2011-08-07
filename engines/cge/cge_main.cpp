@@ -91,7 +91,7 @@ const char *savegameStr = "SCUMMVM_CGE";
 
 static  bool      _finis       = false;
 int	_offUseCount;
-uint16 *_intStackPtr = false;
+uint16 *_intStackPtr = NULL;
 
 extern Dac _stdPal[58];
 

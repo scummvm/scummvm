@@ -49,7 +49,6 @@ protected:
 	signed char _a;
 	signed char _b;
 public:
-	Couple() { }
 	Couple(const signed char a, const signed char b) : _a(a), _b(b) { }
 	Couple operator + (Couple c) {
 		return Couple(_a + c._a, _b + c._b);
@@ -91,8 +90,8 @@ public:
 	static void init(CGEEngine *vm);
 public:
 	uint8 &cell();
-	Cluster() : Couple() { }
 	Cluster(int a, int b) : Couple(a, b) { }
+	Cluster() : Couple (-1, -1) { }
 	bool chkBar() const;
 	bool isValid() const;
 

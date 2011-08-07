@@ -154,7 +154,7 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	int slotNum = 0;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
+	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(filename->c_str() + filename->size() - 3);
 
