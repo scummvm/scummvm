@@ -71,7 +71,7 @@ void VFile::deinit() {
 }
 
 VFile::VFile(const char *name, IOMode mode)
-	: IoBuf(mode) {
+	: IoBuf(mode, NULL) {
 	debugC(3, kCGEDebugFile, "VFile::VFile(%s, %d)", name, mode);
 
 	if (mode == kModeRead) {

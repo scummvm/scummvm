@@ -41,13 +41,11 @@ protected:
 	uint16 _ptr;
 	uint16 _lim;
 	long _bufMark;
-	uint16 _seed;
-	Crypt *_crypt;
 	virtual void readBuf();
 	virtual void writeBuf();
 public:
-	IoBuf(IOMode mode, Crypt *crpt = NULL);
-	IoBuf(const char *name, IOMode mode, Crypt *crpt = NULL);
+	IoBuf(IOMode mode, Crypt *crpt);
+	IoBuf(const char *name, IOMode mode, Crypt *crpt);
 	virtual ~IoBuf();
 	uint16 read(void *buf, uint16 len);
 	uint16 read(uint8 *buf);
@@ -61,7 +59,7 @@ public:
 class CFile : public IoBuf {
 public:
 	static uint16 _maxLineLen;
-	CFile(const char *name, IOMode mode = kModeRead, Crypt *crpt = NULL);
+	CFile(const char *name, IOMode mode, Crypt *crpt);
 	virtual ~CFile();
 	void flush();
 	long mark();
