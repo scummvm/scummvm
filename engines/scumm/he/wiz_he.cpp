@@ -1755,7 +1755,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 		uint8 *tmpPtr = imageBuffer;
 		for (i = 0; i < dsth; i++) {
 			for (j = 0; j < dstw; j++)
-				WRITE_UINT16(tmpPtr + j * 2, transColor);
+				WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
 			tmpPtr += dstpitch;
 		}
 	} else {
