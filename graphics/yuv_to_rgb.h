@@ -35,8 +35,6 @@
 
 namespace Graphics {
 
-struct Surface;
-
 /**
  * Convert a YUV420 image to an RGB surface
  *

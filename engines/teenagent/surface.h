@@ -31,7 +31,6 @@ class SeekableReadStream;
 
 namespace TeenAgent {
 
-class Pack;
 class Surface : public Graphics::Surface {
 public:
 	enum Type {kTypeOns, kTypeLan};

@@ -31,10 +31,6 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace Video {
 
 /**

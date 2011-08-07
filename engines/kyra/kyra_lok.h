@@ -29,10 +29,6 @@
 #include "kyra/gui_lok.h"
 #include "kyra/item.h"
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace Kyra {
 
 class Movie;

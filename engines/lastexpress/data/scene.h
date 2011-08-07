@@ -76,10 +76,6 @@ class SeekableReadStream;
 class String;
 }
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace LastExpress {
 
 class Scene;

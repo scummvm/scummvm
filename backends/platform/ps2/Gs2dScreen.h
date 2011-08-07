@@ -42,10 +42,6 @@ enum GsInterlace {
 };
 
 
-namespace Graphics {
-struct Surface;
-}
-
 class Gs2dScreen {
 public:
 	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
