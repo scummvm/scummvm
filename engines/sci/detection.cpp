@@ -676,13 +676,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor desc(slot, meta.name);
 
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		if (!Graphics::loadThumbnail(*in, *thumbnail)) {
-			delete thumbnail;
-			thumbnail = 0;
-		}
-
+		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 		desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);

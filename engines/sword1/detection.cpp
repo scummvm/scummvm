@@ -274,13 +274,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 			in->skip(1);
 
 		if (Graphics::checkThumbnailHeader(*in)) {
-			Graphics::Surface *thumbnail = new Graphics::Surface();
-			assert(thumbnail);
-			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
-				delete thumbnail;
-				thumbnail = 0;
-			}
-
+			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 			desc.setThumbnail(thumbnail);
 		}
 
