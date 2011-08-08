@@ -1237,7 +1237,7 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 		// This retains v28 from (i == 17)?
 		float v16 = _userDataD[524] - v28;
 		float v17 = v16 / tan((_userDataD[528] + v15 - _userDataD[526]) / _userDataD[522] + _userDataD[521]);
-		double v18 = tan((double)(v14 - 640) / _userDataD[523]) * v17;
+		double v18 = tan((double)(v14 - ((_vm->_game.id == GID_SOCCER) ? 0 : 640)) / _userDataD[523]) * v17;
 		putInArray(a1, i, 0, (int)(v18 * 100.0));
 		putInArray(a1, i, 2, (int)(v17 * 100.0));
 	}
