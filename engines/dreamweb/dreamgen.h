@@ -120,7 +120,6 @@ public:
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_checkdest = 0xca4c;
-	static const uint16 addr_autosetwalk = 0xca48;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_getflagunderp = 0xca40;
 	static const uint16 addr_walktotext = 0xca3c;
@@ -1360,6 +1359,7 @@ public:
 	void fadedos();
 	//void fillspace();
 	//void multiget();
+	//void autosetwalk();
 	void fadeupmonfirst();
 	void drawfloor();
 	void loadkeypad();
@@ -1385,7 +1385,7 @@ public:
 	void additionaltext();
 	//void kernchars();
 	void othersmoker();
-	void autosetwalk();
+	void dofade();
 	void setuptimedtemp();
 	void blocknametext();
 	void useelevator5();
@@ -1431,7 +1431,6 @@ public:
 	void addtopeoplelist();
 	void hangoncurs();
 	void sparkydrip();
-	//void modifychar();
 	void compare();
 	void printcurs();
 	//void convertkey();
@@ -1759,7 +1758,7 @@ public:
 	void readfromfile();
 	void initialinv();
 	void showslots();
-	void dofade();
+	//void modifychar();
 	void hangon();
 	void settopright();
 	void findsetobject();

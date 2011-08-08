@@ -882,5 +882,25 @@ void DreamGenContext::deltextline() {
 	multiput(ds.ptr(si, 0), x, y, kUndertextsizex, kUndertextsizey);
 }
 
+void DreamGenContext::autosetwalk() {
+	al = data.byte(kManspath);
+	if (data.byte(kFinaldest) == al)
+		return;
+	getroomspaths();
+	uint8 *roomsPaths = getroomspathsCPP();
+	checkdest();
+	data.word(kLinestartx) = roomsPaths[data.byte(kManspath) * 8 + 0] - 12;
+	data.word(kLinestarty) = roomsPaths[data.byte(kManspath) * 8 + 1] - 12;
+	data.word(kLineendx) = roomsPaths[data.byte(kDestination) * 8 + 0] - 12;
+	data.word(kLineendy) = roomsPaths[data.byte(kDestination) * 8 + 1] - 12;
+	bresenhams();
+	if (data.byte(kLinedirection) != 0) {
+		data.byte(kLinepointer) = data.byte(kLinelength) - 1;
+		data.byte(kLinedirection) = 1;
+		return;
+	}
+	data.byte(kLinepointer) = 0;
+}
+
 } /*namespace dreamgen */
 

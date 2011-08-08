@@ -82,6 +82,7 @@
 	void facerightway();
 	void walking();
 	void walking(Sprite *sprite);
+	void autosetwalk();
 	void aboutturn(Sprite *sprite);
 	void backobject(Sprite *sprite);
 	void constant(Sprite *sprite, ObjData *objData);

@@ -17359,59 +17359,6 @@ holdingreel:
 	data.byte(kWatchmode) = 2;
 }
 
-void DreamGenContext::autosetwalk() {
-	STACK_CHECK;
-	al = data.byte(kManspath);
-	_cmp(data.byte(kFinaldest), al);
-	if (!flags.z())
-		goto notsamealready;
-	return;
-notsamealready:
-	getroomspaths();
-	checkdest();
-	push(bx);
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLinestartx) = ax;
-	al = es.byte(bx+1);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLinestarty) = ax;
-	bx = pop();
-	al = data.byte(kDestination);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLineendx) = ax;
-	al = es.byte(bx+1);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLineendy) = ax;
-	bresenhams();
-	_cmp(data.byte(kLinedirection), 0);
-	if (flags.z())
-		goto normalline;
-	al = data.byte(kLinelength);
-	_dec(al);
-	data.byte(kLinepointer) = al;
-	data.byte(kLinedirection) = 1;
-	return;
-normalline:
-	data.byte(kLinepointer) = 0;
-}
-
 void DreamGenContext::checkdest() {
 	STACK_CHECK;
 	push(bx);
@@ -20190,7 +20137,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_walktotext: walktotext(); break;
 		case addr_getflagunderp: getflagunderp(); break;
 		case addr_setwalk: setwalk(); break;
-		case addr_autosetwalk: autosetwalk(); break;
 		case addr_checkdest: checkdest(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
