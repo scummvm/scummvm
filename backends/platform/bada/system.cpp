@@ -289,8 +289,9 @@ void BadaSystem::initBackend() {
 	// use the mobile device theme
 	ConfMan.set("gui_theme", "/Res/scummmobile");
 
-	// allow virtual keypad pack to be found
-	ConfMan.set("vkeybdpath", "/Res/vkeybd_default");
+	// allow bada virtual keypad pack to be found
+	ConfMan.set("vkeybdpath", "/Res/vkeybd_bada");
+	ConfMan.set("vkeybd_pack_name", "vkeybd_bada");
 
 	// set default save path to writable area
 	if (!ConfMan.hasKey("savepath")) {
