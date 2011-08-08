@@ -23,19 +23,20 @@
 #ifndef BACKENDS_GRAPHICS_OPENGLSDL_H
 #define BACKENDS_GRAPHICS_OPENGLSDL_H
 
-#include "backends/platform/sdl/sdl-sys.h"
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
+#include "backends/platform/sdl/sdl-sys.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 
 /**
  * SDL OpenGL graphics manager
  */
-class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager {
+class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager, public SdlGraphicsManager {
 public:
-	OpenGLSdlGraphicsManager();
+	OpenGLSdlGraphicsManager(SdlEventSource *eventSource);
 	virtual ~OpenGLSdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
@@ -48,6 +49,12 @@ public:
 	virtual bool notifyEvent(const Common::Event &event);
 
 	virtual void updateScreen();
+
+	// SdlGraphicsManager interface
+	virtual void notifyVideoExpose();
+	virtual void notifyResize(const uint width, const uint height);
+	virtual void transformMouseCoordinates(Common::Point &point);
+	virtual void notifyMousePos(Common::Point mouse);
 
 protected:
 	virtual void internUpdateScreen();

@@ -122,7 +122,7 @@ static AspectRatio getDesiredAspectRatio() {
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
-	_sdlEventSource(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource), _sdlEventSource(sdlEventSource),
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
@@ -2322,6 +2322,24 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 
 	return false;
+}
+
+void SurfaceSdlGraphicsManager::notifyVideoExpose() {
+	_forceFull = true;
+}
+
+void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	if (!_overlayVisible) {
+		point.x /= _videoMode.scaleFactor;
+		point.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			point.y = aspect2Real(point.y);
+	}
+}
+
+void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+	transformMouseCoordinates(mouse);
+	setMousePos(mouse.x, mouse.y);
 }
 
 #endif

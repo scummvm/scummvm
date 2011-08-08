@@ -58,6 +58,7 @@ public:
 	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
 
 	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void transformMouseCoordinates(Common::Point &point);
 };
 
 #endif /* BACKENDS_GRAPHICS_SDL_DINGUX_H */

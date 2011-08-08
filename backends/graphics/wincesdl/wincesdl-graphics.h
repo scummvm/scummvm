@@ -158,6 +158,8 @@ public:
 
 	static zoneDesc _zones[TOTAL_ZONES];
 
+	virtual void transformMouseCoordinates(Common::Point &point);
+
 protected:
 	virtual void adjustMouseEvent(const Common::Event &event);
 

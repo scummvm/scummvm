@@ -30,8 +30,9 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource)
 	:
+	SdlGraphicsManager(eventSource),
 	_hwscreen(0),
 	_screenResized(false),
 	_activeFullscreenMode(-2),
@@ -653,6 +654,52 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 
 	return OpenGLGraphicsManager::notifyEvent(event);
+}
+
+void OpenGLSdlGraphicsManager::notifyVideoExpose() {
+}
+
+void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+	// Do not resize if ignoring resize events.
+	if (!_ignoreResizeFrames && !getFullscreenMode()) {
+		bool scaleChanged = false;
+		beginGFXTransaction();
+			_videoMode.hardwareWidth = width;
+			_videoMode.hardwareHeight = height;
+
+			if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
+				_screenResized = true;
+				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+			}
+
+			int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
+			                _videoMode.hardwareHeight / _videoMode.screenHeight);
+
+			if (getScale() != scale) {
+				scaleChanged = true;
+				setScale(MAX(MIN(scale, 3), 1));
+			}
+
+			if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
+				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
+			}
+
+			_transactionDetails.sizeChanged = true;
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (scaleChanged)
+			displayScaleChangedMsg();
+#endif
+	}
+}
+
+void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	adjustMousePosition(point.x, point.y);
+}
+ 
+void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+	_cursorState.x = mouse.x;
+	_cursorState.y = mouse.y;
 }
 
 #endif
