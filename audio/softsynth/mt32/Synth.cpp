@@ -34,6 +34,7 @@
 #include "FreeverbModel.h"
 #endif
 #include "DelayReverb.h"
+#include "ScummVMFile.h"
 
 namespace MT32Emu {
 
@@ -255,7 +256,7 @@ File *Synth::openFile(const char *filename, File::OpenMode mode) {
 		strcat(&pathBuf[0], filename);
 		filename = pathBuf;
 	}
-	ANSIFile *file = new ANSIFile();
+	ScummVMFile *file = new ScummVMFile();
 	if (!file->open(filename, mode)) {
 		delete file;
 		return NULL;

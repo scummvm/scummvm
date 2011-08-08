@@ -1,7 +1,6 @@
 MODULE := audio/softsynth/mt32
 
 MODULE_OBJS := \
-	ANSIFile.o \
 	AReverbModel.o \
 	DelayReverb.o \
 	File.o \
@@ -11,6 +10,7 @@ MODULE_OBJS := \
 	Partial.o \
 	PartialManager.o \
 	Poly.o \
+	ScummVMFile.o \
 	Synth.o \
 	Tables.o \
 	TVA.o \
