@@ -57,7 +57,7 @@ class TVA {
 private:
 	const Partial * const partial;
 	LA32Ramp *ampRamp;
-	const MemParams::System * const system;
+	const MemParams::System * const system_;
 
 	const Part *part;
 	const TimbreParam::PartialParam *partialParam;

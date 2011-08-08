@@ -46,7 +46,7 @@ static Bit16u keyToPitchTable[] = {
 };
 
 TVP::TVP(const Partial *usePartial) :
-	partial(usePartial), system(&usePartial->getSynth()->mt32ram.system) {
+	partial(usePartial), system_(&usePartial->getSynth()->mt32ram.system) {
 	unsigned int sampleRate = usePartial->getSynth()->myProp.sampleRate;
 	// We want to do processing 4000 times per second. FIXME: This is pretty arbitrary.
 	maxCounter = sampleRate / 4000;
@@ -163,7 +163,7 @@ void TVP::updatePitch() {
 	if (!partial->isPCM() || (partial->getControlROMPCMStruct()->len & 0x01) == 0) { // FIXME: Use !partial->pcmWaveEntry->unaffectedByMasterTune instead
 		// FIXME: masterTune recalculation doesn't really happen here, and there are various bugs not yet emulated
 		// 171 is ~half a semitone.
-		newPitch += ((system->masterTune - 64) * 171) >> 6; // PORTABILITY NOTE: Assumes arithmetic shift.
+		newPitch += ((system_->masterTune - 64) * 171) >> 6; // PORTABILITY NOTE: Assumes arithmetic shift.
 	}
 	if ((partialParam->wg.pitchBenderEnabled & 1) != 0) {
 		newPitch += part->getPitchBend();

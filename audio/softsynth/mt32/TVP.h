@@ -23,7 +23,7 @@ namespace MT32Emu {
 class TVP {
 private:
 	const Partial * const partial;
-	const MemParams::System * const system; // FIXME: Only necessary because masterTune calculation is done in the wrong place atm.
+	const MemParams::System * const system_; // FIXME: Only necessary because masterTune calculation is done in the wrong place atm.
 
 	const Part *part;
 	const TimbreParam::PartialParam *partialParam;
