@@ -74,12 +74,6 @@ public:
 	virtual void getTimeAndDate(TimeDate &td) const;
 	virtual Audio::Mixer *getMixer();
 
-	// HACK: Special SDL events types
-	enum SdlEvent {
-		kSdlEventExpose = 100,
-		kSdlEventResize = 101
-	};
-
 protected:
 	bool _inited;
 	bool _initedSDL;

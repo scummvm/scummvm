@@ -81,7 +81,7 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	else
 		return false;
 
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -108,7 +108,7 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	else
 		return false;
 
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -123,12 +123,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONDOWN;
-			fillMouseEvent(event, _km.x, _km.y);
+			processMouseEvent(event, _km.x, _km.y);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONDOWN;
-			fillMouseEvent(event, _km.x, _km.y);
+			processMouseEvent(event, _km.x, _km.y);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:
@@ -159,12 +159,12 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		switch (ev.key.keysym.sym) {
 		case SDLK_HOME:
 			event.type = Common::EVENT_LBUTTONUP;
-			fillMouseEvent(event, _km.x, _km.y);
+			processMouseEvent(event, _km.x, _km.y);
 			return true;
 			break;
 		case SDLK_END:
 			event.type = Common::EVENT_RBUTTONUP;
-			fillMouseEvent(event, _km.x, _km.y);
+			processMouseEvent(event, _km.x, _km.y);
 			return true;
 			break;
 		case SDLK_PAGEDOWN:

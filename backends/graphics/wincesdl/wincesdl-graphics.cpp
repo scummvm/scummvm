@@ -1158,15 +1158,6 @@ void WINCESdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, in
 	}
 }
 
-void WINCESdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		transformMouseCoordinates(newEvent.mouse);
-		g_system->getEventManager()->pushEvent(newEvent);
-	}
-}
-
 void WINCESdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	/*
 	if (!_overlayVisible) {

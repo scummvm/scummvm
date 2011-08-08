@@ -67,21 +67,12 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
-	// Unregister the event observer
-	if (g_system->getEventManager()->getEventDispatcher() != NULL)
-		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
-
 	free(_gamePalette);
 	free(_cursorPalette);
 
 	delete _gameTexture;
 	delete _overlayTexture;
 	delete _cursorTexture;
-}
-
-void OpenGLGraphicsManager::initEventObserver() {
-	// Register the graphics manager as a event observer
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 //
@@ -1280,36 +1271,6 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 		if (_displayHeight != _videoMode.screenHeight)
 			y = y * _videoMode.screenHeight / _displayHeight;
 	}
-}
-
-bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch (event.type) {
-	case Common::EVENT_MOUSEMOVE:
-		if (!event.synthetic) {
-			_cursorState.x = event.mouse.x;
-			_cursorState.y = event.mouse.y;
-		}
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MBUTTONUP:
-		if (!event.synthetic) {
-			Common::Event newEvent(event);
-			newEvent.synthetic = true;
-			adjustMousePosition(newEvent.mouse.x, newEvent.mouse.y);
-			g_system->getEventManager()->pushEvent(newEvent);
-		}
-		return !event.synthetic;
-
-	default:
-		break;
-	}
-
-	return false;
 }
 
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {

@@ -43,8 +43,6 @@ public:
 	virtual void warpMouse(int x, int y);
 
 	virtual void transformMouseCoordinates(Common::Point &point);
-protected:
-	virtual void adjustMouseEvent(const Common::Event &event);
 };
 
 #endif

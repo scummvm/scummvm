@@ -2235,20 +2235,6 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void SurfaceSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		if (!_overlayVisible) {
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			if (_videoMode.aspectRatioCorrection)
-				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
-		}
-		g_system->getEventManager()->pushEvent(newEvent);
-	}
-}
-
 void SurfaceSdlGraphicsManager::toggleFullScreen() {
 	beginGFXTransaction();
 		setFullscreenMode(!_videoMode.fullscreen);
@@ -2297,26 +2283,10 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			if (handleScalerHotkeys(event.kbd.keycode))
 				return true;
 		}
+
 	case Common::EVENT_KEYUP:
 		return isScalerHotkey(event);
-	case Common::EVENT_MOUSEMOVE:
-		if (event.synthetic)
-			setMousePos(event.mouse.x, event.mouse.y);
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MBUTTONUP:
-		adjustMouseEvent(event);
-		return !event.synthetic;
 
-	// HACK: Handle special SDL event
-	case OSystem_SDL::kSdlEventExpose:
-		_forceFull = true;
-		return false;
 	default:
 		break;
 	}

@@ -335,7 +335,6 @@ protected:
 
 	virtual bool handleScalerHotkeys(Common::KeyCode key);
 	virtual bool isScalerHotkey(const Common::Event &event);
-	virtual void adjustMouseEvent(const Common::Event &event);
 	virtual void setMousePos(int x, int y);
 	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename);

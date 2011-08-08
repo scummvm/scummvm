@@ -579,15 +579,6 @@ void GPHGraphicsManager::warpMouse(int x, int y) {
 	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
-void GPHGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		transformMouseCoordinates(newEvent.mouse);
-		g_system->getEventManager()->pushEvent(newEvent);
-	}
-}
-
 void GPHGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	if (!_overlayVisible) {
 		if (_videoMode.mode == GFX_HALF) {

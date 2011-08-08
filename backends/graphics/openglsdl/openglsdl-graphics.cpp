@@ -72,6 +72,14 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource)
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher() != NULL)
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+}
+
+void OpenGLSdlGraphicsManager::initEventObserver() {
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -610,50 +618,15 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			}
 		}
 		break;
+
 	case Common::EVENT_KEYUP:
 		return isHotkey(event);
-	// HACK: Handle special SDL event
-	// The new screen size is saved on the mouse event as part of HACK,
-	// there is no common resize event.
-	case OSystem_SDL::kSdlEventResize:
-		// Do not resize if ignoring resize events.
-		if (!_ignoreResizeFrames && !getFullscreenMode()) {
-			bool scaleChanged = false;
-			beginGFXTransaction();
-				_videoMode.hardwareWidth = event.mouse.x;
-				_videoMode.hardwareHeight = event.mouse.y;
-
-				if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
-					_screenResized = true;
-					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-				}
-
-				int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
-				                _videoMode.hardwareHeight / _videoMode.screenHeight);
-
-				if (getScale() != scale) {
-					scaleChanged = true;
-					setScale(MAX(MIN(scale, 3), 1));
-				}
-
-				if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
-					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-				}
-
-				_transactionDetails.sizeChanged = true;
-			endGFXTransaction();
-#ifdef USE_OSD
-			if (scaleChanged)
-				displayScaleChangedMsg();
-#endif
-		}
-		return true;
 
 	default:
 		break;
 	}
 
-	return OpenGLGraphicsManager::notifyEvent(event);
+	return false;
 }
 
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {

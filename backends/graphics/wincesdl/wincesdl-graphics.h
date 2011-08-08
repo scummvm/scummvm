@@ -160,8 +160,7 @@ public:
 
 	virtual void transformMouseCoordinates(Common::Point &point);
 
-protected:
-	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void transformMouseCoordinates(Common::Point &point);
 
 private:
 	bool update_scalers();

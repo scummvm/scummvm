@@ -23,18 +23,19 @@
 #ifndef BACKENDS_GRAPHICS_OPENGLSDL_H
 #define BACKENDS_GRAPHICS_OPENGLSDL_H
 
+#include "backends/platform/sdl/sdl-sys.h"
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
-#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
-
 #include "backends/graphics/opengl/opengl-graphics.h"
+
+#include "common/events.h"
 
 /**
  * SDL OpenGL graphics manager
  */
-class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager, public SdlGraphicsManager {
+class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
 	OpenGLSdlGraphicsManager(SdlEventSource *eventSource);
 	virtual ~OpenGLSdlGraphicsManager();
@@ -46,6 +47,7 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
+	virtual void initEventObserver();
 	virtual bool notifyEvent(const Common::Event &event);
 
 	virtual void updateScreen();
