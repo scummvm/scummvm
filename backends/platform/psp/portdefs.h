@@ -53,5 +53,3 @@
 //#define printf  pspDebugScreenPrintf
 
 #endif /* PORTDEFS_H */
-
-

@@ -100,6 +100,7 @@ public:
 	void delay(int numFrames);
 
 	virtual void listenerSynchronize(Serializer &s);
+	static void loadNotifierProc(bool postFlag);
 };
 
 } // End of namespace tSage

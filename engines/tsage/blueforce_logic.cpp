@@ -21,6 +21,7 @@
  */
 
 #include "tsage/blueforce_logic.h"
+#include "tsage/blueforce_scenes0.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -37,6 +38,8 @@ void BlueForceGame::start() {
 Scene *BlueForceGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	case 20:
+		// Tsunami Title Screen
+		return new BF_Scene20();
 	case 50:
 	case 60:
 		error("Scene group 0 not implemented");

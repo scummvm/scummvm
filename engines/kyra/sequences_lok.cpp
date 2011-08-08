@@ -2112,4 +2112,3 @@ void KyraEngine_LoK::drawJewelsFadeOutEnd(int jewel) {
 }
 
 } // End of namespace Kyra
-

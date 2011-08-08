@@ -10,4 +10,3 @@ public:
 };
 
 #endif // __DICE_H
-

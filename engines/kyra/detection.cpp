@@ -221,4 +221,3 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 #else
 	REGISTER_PLUGIN_STATIC(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);
 #endif
-

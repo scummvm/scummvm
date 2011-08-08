@@ -1513,7 +1513,3 @@ alreadyloadold:	mov	ax,mousebutton
 noloadold:	ret
 
 	endp
-
-
-
-

@@ -108,7 +108,15 @@ public:
 
 	Common::RandomSource _rnd;
 
-	Common::List<byte *> _memList;
+	struct MemInfo {
+		int32  lineNum;
+		char   fname[64];
+		uint32 magic;
+
+		static uint32 const cookie = 0x41424344;
+	};
+
+	Common::List<MemInfo*> _memList;
 
 	typedef Common::List<Common::Rect> RectList;
 

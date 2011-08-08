@@ -20,4 +20,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__GlobalFixture_cpp__
-

@@ -20,6 +20,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -35,6 +36,7 @@ namespace MystStacks {
 
 Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
 	setupOpcodes();
+	_vm->_cursor->hideCursor();
 }
 
 Preview::~Preview() {

@@ -87,7 +87,8 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
-	midi/coremidi.o
+	midi/coremidi.o \
+	updates/macosx/macosx-updates.o
 endif
 
 ifdef WIN32

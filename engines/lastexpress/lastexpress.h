@@ -27,7 +27,6 @@
 #include "lastexpress/eventhandler.h"
 
 #include "common/random.h"
-#include "common/timer.h"
 
 #include "engines/engine.h"
 

@@ -40,8 +40,6 @@
 #include "scumm/detection.h"
 #include "scumm/script.h"
 
-#include "audio/mididrv.h"
-
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
  * of SCUMM games and which emulates the behavior of the original code.
@@ -235,7 +233,8 @@ enum ScummGameId {
 	GID_PUTTMOON,
 	GID_FUNPACK,
 	GID_FREDDI3,
-	GID_BIRTHDAY,
+	GID_BIRTHDAYRED,
+	GID_BIRTHDAYYELLOW,
 	GID_TREASUREHUNT,
 	GID_PUTTRACE,
 	GID_FUNSHOP,	// Used for all three funshops
@@ -1084,7 +1083,6 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	bool _enable_gs;
-	MidiDriverFlags _musicType;
 	bool _copyProtection;
 
 public:

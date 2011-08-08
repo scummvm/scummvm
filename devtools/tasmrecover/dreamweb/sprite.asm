@@ -5017,17 +5017,3 @@ dumpevery2:	mov	ax,[es:bx]
 finishevery2:	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-
-
-
-

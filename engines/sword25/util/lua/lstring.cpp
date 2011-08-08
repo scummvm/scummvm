@@ -108,4 +108,3 @@ Udata *luaS_newudata (lua_State *L, size_t s, Table *e) {
   G(L)->mainthread->next = obj2gco(u);
   return u;
 }
-

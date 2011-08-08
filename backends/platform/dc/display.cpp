@@ -732,4 +732,3 @@ int16 OSystem_Dreamcast::getOverlayWidth()
 {
   return OVL_W;
 }
-

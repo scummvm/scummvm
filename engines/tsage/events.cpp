@@ -40,6 +40,7 @@ EventsClass::EventsClass() {
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
 	_saver->addListener(this);
+	_saver->addLoadNotifier(&EventsClass::loadNotifierProc);
 }
 
 bool EventsClass::pollEvent() {
@@ -312,6 +313,15 @@ void EventsClass::listenerSynchronize(Serializer &s) {
 	if (s.getVersion() >= 5) {
 		s.syncAsSint16LE(_currentCursor);
 		s.syncAsSint16LE(_lastCursor);
+	}
+}
+
+void EventsClass::loadNotifierProc(bool postFlag) {
+	if (postFlag) {
+		if (_globals->_events._lastCursor == CURSOR_NONE)
+			_globals->_events._lastCursor = _globals->_events._currentCursor;
+		else
+			_globals->_events._lastCursor = CURSOR_NONE;
 	}
 }
 

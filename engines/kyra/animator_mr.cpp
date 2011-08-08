@@ -459,4 +459,3 @@ void KyraEngine_MR::showIdleAnim() {
 }
 
 } // End of namespace Kyra
-

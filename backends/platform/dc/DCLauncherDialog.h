@@ -25,4 +25,3 @@ class DCLauncherDialog {
   DCLauncherDialog() {}
   int runModal();
 };
-

@@ -78,7 +78,7 @@ PngLoader::Status PngLoader::allocate() {
 bool PngLoader::load() {
 	DEBUG_ENTER_FUNC();
 	// Try to load the image
-	_file->seek(0);	// Go back to start
+	_file.seek(0);	// Go back to start
 
 	if (!loadImageIntoBuffer()) {
 		PSP_DEBUG_PRINT("failed to load image\n");
@@ -99,11 +99,9 @@ void PngLoader::warningFn(png_structp png_ptr, png_const_charp warning_msg) {
 // Read function for png library to be able to read from our SeekableReadStream
 //
 void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length) {
-	Common::SeekableReadStream *file;
+	Common::SeekableReadStream &file = *(Common::SeekableReadStream *)pngPtr->io_ptr;
 
-	file = (Common::SeekableReadStream *)pngPtr->io_ptr;
-
-	file->read(data, length);
+	file.read(data, length);
 }
 
 bool PngLoader::basicImageLoad() {
@@ -120,7 +118,7 @@ bool PngLoader::basicImageLoad() {
 		return false;
 	}
 	// Set the png lib to use our read function
-	png_set_read_fn(_pngPtr, (void *)_file, libReadFunc);
+	png_set_read_fn(_pngPtr, &_file, libReadFunc);
 
 	unsigned int sig_read = 0;
 

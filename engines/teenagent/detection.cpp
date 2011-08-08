@@ -177,9 +177,8 @@ public:
 		ssd.setDeletableFlag(true);
 
 		//checking for the thumbnail
-		Common::ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
-		if (Graphics::loadThumbnail(*in, *thumb))
-			ssd.setThumbnail(thumb.release());
+		if (Graphics::Surface *const thumb = Graphics::loadThumbnail(*in))
+			ssd.setThumbnail(thumb);
 
 		return ssd;
 	}

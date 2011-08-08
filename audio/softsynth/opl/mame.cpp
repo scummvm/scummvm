@@ -1245,4 +1245,3 @@ FM_OPL *makeAdLibOPL(int rate) {
 
 } // End of namespace MAME
 } // End of namespace OPL
-

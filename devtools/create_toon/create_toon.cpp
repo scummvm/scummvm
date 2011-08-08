@@ -160,4 +160,3 @@ void writeTextArray(FILE *outFile, const char *textArray[], int nbrText) {
 		fwrite(padBuf, pad, 1, outFile);
 	}
 }
-

@@ -169,6 +169,3 @@ private:
 } // End of namespace Sword1
 
 #endif //BSSCREEN_H
-
-
-

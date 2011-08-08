@@ -3071,4 +3071,3 @@ void LoLEngine::setupOpcodeTable() {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

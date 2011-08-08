@@ -832,4 +832,3 @@ const uint16 PcSpkDriver::_frequencyTable[] = {
 };
 
 } // End of namespace Scumm
-

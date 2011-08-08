@@ -195,4 +195,3 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 }
 
 #endif
-

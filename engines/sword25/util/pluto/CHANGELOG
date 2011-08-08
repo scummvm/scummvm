@@ -35,4 +35,3 @@ Earlier versions are changelogged on the LuaForge site.
 * Fixed all outstanding 5.0->5.1 conversion issues
 * Made heavier use of size_t in preference to int
 * Fixed GC/Upval issue (thanks to Eric Jacobs)
-

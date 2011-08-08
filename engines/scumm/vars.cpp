@@ -25,8 +25,11 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
+#include "scumm/sound.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
+
+#include "audio/mididrv.h"
 
 namespace Scumm {
 
@@ -722,7 +725,7 @@ void ScummEngine::resetScummVars() {
 		// 2 CMS
 		// 3 AdLib
 		// 4 Roland
-		switch (_musicType) {
+		switch (_sound->_musicType) {
 		case MDT_NONE:
 		case MDT_PCSPK:
 			VAR(VAR_SOUNDCARD) = 0;

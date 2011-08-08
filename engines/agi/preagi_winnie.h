@@ -355,5 +355,3 @@ private:
 }  // End of namespace Agi
 
 #endif
-
-

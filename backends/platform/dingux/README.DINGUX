@@ -65,4 +65,3 @@ I still raccomand the use of opendingux kernel + rootfs, but if you don't, this 
 image plus another kernel (eg. SiENcE's one) should be do the job.
 
 Enjoy
-

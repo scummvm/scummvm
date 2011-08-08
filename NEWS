@@ -4,14 +4,22 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.4.0 (????-??-??)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
+   - Added support for Blue's Birthday Adventure
+   - Added support for Ringworld: Revenge Of The Patriarch
 
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
    - Fixed priority bug in iMuse. As a result the AdLib music should sound
      better, since important notes are not interrupted anymore.
+   - Implemented CMS support for Loom, The Secret of Monkey Island and
+     Indiana Jones and the Last Crusade.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
+
+ TINSEL:
+   - Fixed deleting saved games from the list of saved games (from the launcher
+     and the in-game ScummVM menu)
 
 1.3.1 (2011-07-12)
  General:

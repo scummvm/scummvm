@@ -187,4 +187,3 @@ const char *FileManager_v2d::fetchString(const int index) {
 	return _fetchStringBuf;
 }
 } // End of namespace Hugo
-

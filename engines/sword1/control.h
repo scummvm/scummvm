@@ -162,4 +162,3 @@ private:
 } // End of namespace Sword1
 
 #endif //BSCONTROL_H
-

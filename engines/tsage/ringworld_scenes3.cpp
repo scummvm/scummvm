@@ -324,7 +324,7 @@ void Scene2000::Action14::signal() {
 		scene->_stripManager.start(2001, this, scene);
 		break;
 	case 6:
-		_globals->_soundHandler.fadeOut(0/* was false */);
+		_globals->_soundHandler.fadeOut(NULL);
 		scene->_object8.setStrip(1);
 		scene->_object8.setFrame(scene->_object8.getFrameCount());
 		scene->_object8.animate(ANIM_MODE_6, this);
@@ -786,7 +786,7 @@ void Scene2100::Action9::signal() {
 		scene->_stripManager.start(6051, this, scene);
 		break;
 	case 4:
-		scene->_soundHandler.fadeOut(0/* was false */);
+		scene->_soundHandler.fadeOut(NULL);
 		scene->_object4.setStrip(1);
 		scene->_object4.setFrame(scene->_object4.getFrameCount());
 		scene->_object4.animate(ANIM_MODE_6, this);
@@ -1105,7 +1105,7 @@ void Scene2100::Action14::signal() {
 		scene->_stripManager.start(6009, this, scene);
 		break;
 	case 6:
-		scene->_soundHandler.fadeOut(0/* was false */);
+		scene->_soundHandler.fadeOut(NULL);
 		scene->_object4.setStrip(1);
 		scene->_object4.setFrame(scene->_object4.getFrameCount());
 		scene->_object4.animate(ANIM_MODE_6, this);

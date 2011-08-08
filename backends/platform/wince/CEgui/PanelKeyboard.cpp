@@ -96,4 +96,3 @@ bool PanelKeyboard::action(int x, int y, bool pushed) {
 }
 
 } // End of namespace CEGUI
-

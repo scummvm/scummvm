@@ -224,12 +224,7 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		if (!Graphics::loadThumbnail(*file, *thumbnail)) {
-			delete thumbnail;
-			thumbnail = 0;
-		}
+		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
 		desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);

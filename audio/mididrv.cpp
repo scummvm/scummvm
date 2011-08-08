@@ -412,4 +412,3 @@ void MidiDriver::sendGMReset() {
 	sysEx(resetSysEx, sizeof(resetSysEx));
 	g_system->delayMillis(100);
 }
-

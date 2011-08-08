@@ -44,4 +44,3 @@ void sioprintf(const char *zFormat, ...) {
 		pos++;
 	}
 }
-

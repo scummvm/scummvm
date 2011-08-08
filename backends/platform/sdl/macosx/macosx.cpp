@@ -30,6 +30,7 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
+#include "backends/updates/macosx/macosx-updates.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -62,6 +63,11 @@ void OSystem_MacOSX::initBackend() {
 
 	// Replace the SDL generated menu items with our own translated ones on Mac OS X
 	replaceApplicationMenuItems();
+
+#ifdef USE_SPARKLE
+	// Initialize updates manager
+	_updateManager = new MacOSXUpdateManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();

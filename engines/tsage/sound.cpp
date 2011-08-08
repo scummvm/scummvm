@@ -85,7 +85,7 @@ void SoundManager::postInit() {
 //  it handles updates for both music and Fx. However, since Adlib updates also get done in a
 //	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to 
 //	call the update method, rather than having it be called separately
-//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL);
+//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL, "tsageSoundUpdate");
 		__sndmgrReady = true;
 	}
 }
@@ -360,9 +360,6 @@ void SoundManager::rethinkVoiceTypes() {
 }
 
 void SoundManager::_sfSoundServer() {
-	Common::StackLock slock1(sfManager()._serverDisabledMutex);
-	Common::StackLock slock2(sfManager()._serverSuspendedMutex);
-
 	if (sfManager()._needToRethink) {
 		_sfRethinkVoiceTypes();
 		sfManager()._needToRethink = false;
@@ -452,6 +449,22 @@ void SoundManager::_sfProcessFading() {
 			}
 		}
 	}
+}
+
+bool SoundManager::isFading() {
+	Common::StackLock slock(sfManager()._serverSuspendedMutex);
+
+	// Loop through any active sounds to see if any are being actively faded
+	Common::List<Sound *>::iterator i = sfManager()._playList.begin();
+	while (i != sfManager()._playList.end()) {
+		Sound *s = *i;
+		++i;
+
+		if (s->_fadeDest != -1)
+			return true;
+	}
+
+	return false;
 }
 
 void SoundManager::_sfUpdateVoiceStructs() {
@@ -1344,7 +1357,7 @@ bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 	
 	sfManager()._installedDrivers.push_back(driver);
 	driver->_groupOffset = driver->getGroupData();
-	driver->_groupMask =  READ_LE_UINT32(driver->_groupOffset);
+	driver->_groupMask = driver->_groupOffset->groupMask;
 
 	_sfExtractGroupMask();
 	_sfRethinkSoundDrivers();
@@ -2163,13 +2176,14 @@ void Sound::_soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, in
 			if (entryIndex != -1) {
 				SoundDriver *driver = vtStruct->_entries[entryIndex]._driver;
 				assert(driver);
+				byte *trackData = _channelData[trackCtr];
 
 				vtStruct->_entries[entryIndex]._type1._field6 = 0;
 				vtStruct->_entries[entryIndex]._type1._field4 = v0;
 				vtStruct->_entries[entryIndex]._type1._field5 = 0;
 
 				int v1, v2;
-				driver->playSound(channelData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
+				driver->playSound(trackData, 14, -1, vtStruct->_entries[entryIndex]._voiceNum, v0, 0x7F);
 				driver->proc42(vtStruct->_entries[entryIndex]._voiceNum, voiceType, 0, &v1, &v2);
 			}
 			break;
@@ -2441,6 +2455,27 @@ void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFade
 	_sound.fade(fadeDest, fadeSteps, fadeTicks, stopAfterFadeFlag);
 }
 
+void ASound::fadeSound(int soundNum) {
+	play(soundNum, NULL, 0);
+	fade(127, 5, 1, false, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+ASoundExt::ASoundExt(): ASound() {
+	_soundNum = 0;
+}
+
+void ASoundExt::synchronize(Serializer &s) {
+	ASound::synchronize(s);
+	s.syncAsSint16LE(_soundNum);
+}
+
+void ASoundExt::signal() {
+	if (_soundNum != 0) {
+		fadeSound(_soundNum);
+	}
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -2760,6 +2795,9 @@ void AdlibSoundDriver::setFrequency(int channel) {
 }
 
 int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
+	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
+
 	int32 samplesLeft = numSamples;
 	memset(buffer, 0, sizeof(int16) * numSamples);
 	while (samplesLeft) {
@@ -2775,7 +2813,7 @@ int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 			}
 		}
 
-		int32 render = MIN(samplesLeft, _samplesTillCallback);
+		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
 		samplesLeft -= render;
 		_samplesTillCallback -= render;
 
@@ -2787,8 +2825,6 @@ int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 
 /*--------------------------------------------------------------------------*/
 
-const byte soundBlaster_group_data[] = { 3, 1, 1, 0, 0xff };
-
 
 SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_minVersion = 0x102;
@@ -2798,7 +2834,8 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_groupData.groupMask = 1;
 	_groupData.v1 = 0x3E;
 	_groupData.v2 = 0;
-	_groupData.pData = &soundBlaster_group_data[0];
+	static byte const group_data[] = { 3, 1, 1, 0, 0xff };
+	_groupData.pData = group_data;
 
 	_mixer = _vm->_mixer;
 	_sampleRate = _mixer->getOutputRate();
@@ -2871,6 +2908,7 @@ void SoundBlasterDriver::proc38(int channel, int cmd, int value) {
 	if (cmd == 7) {
 		// Set channel volume
 		_channelVolume = value;
+		_mixer->setChannelVolume(_soundHandle, (byte)MIN(255, value * 2));
 	}
 }
 

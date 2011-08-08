@@ -206,4 +206,3 @@ private:
 };
 
 #endif /* BACKENDS_GRAPHICS_WINCE_SDL_H */
-

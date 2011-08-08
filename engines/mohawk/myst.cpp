@@ -441,6 +441,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::Credits(this);
 		break;
 	case kDemoStack:
+		_gameState->_globals.currentAge = 0;
 		_scriptParser = new MystStacks::Demo(this);
 		break;
 	case kDniStack:
@@ -469,6 +470,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::Selenitic(this);
 		break;
 	case kDemoSlidesStack:
+		_gameState->_globals.currentAge = 1;
 		_scriptParser = new MystStacks::Slides(this);
 		break;
 	case kStoneshipStack:
@@ -645,7 +647,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	for (uint16 i = 0; i < _resources.size(); i++)
 		_resources[i]->handleCardChange();
 
-	// TODO: Handle Script Resources
+	// The demo resets the cursor at each card change except when in the library
+	if (getFeatures() & GF_DEMO
+			&& _gameState->_globals.currentAge != 2) {
+		_cursor->setDefaultCursor();
+	}
 
 	// Make sure the screen is updated
 	if (updateScreen) {

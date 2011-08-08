@@ -51,4 +51,3 @@ public class PluginProvider extends BroadcastReceiver {
 		setResultExtras(extras);
 	}
 }
-

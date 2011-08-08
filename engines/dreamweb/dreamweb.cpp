@@ -224,7 +224,7 @@ Common::Error DreamWebEngine::run() {
 		_loadSavefile = -1;
 	}
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
 
@@ -237,7 +237,7 @@ void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {
@@ -644,5 +644,3 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 }
 
 } // End of namespace DreamWeb
-
-

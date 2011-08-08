@@ -15,4 +15,3 @@ RESOURCE APP_REGISTRATION_INFO
 	// Specify the location of the localisable icon/caption definition file
 	localisable_resource_file = "\\Resource\\Apps\\ScummVM_loc";
 	}
-

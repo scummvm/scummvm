@@ -1831,6 +1831,15 @@ void ScummEngine_v72he::o72_readINI() {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
+		} else if (!strcmp((char *)option, "Disk") && (_game.id == GID_BIRTHDAYRED || _game.id == GID_BIRTHDAYYELLOW)) {
+			// WORKAROUND: Override the disk detection
+			// This removes the reliance on having the binary file around (which is
+			// very bad for the Mac version) just for the scripts to figure out if
+			// we're running Yellow or Red
+			if (_game.id == GID_BIRTHDAYRED)
+				push(4);
+			else
+				push(2);
 		} else {
 			push(ConfMan.getInt((char *)option));
 		}

@@ -59,7 +59,7 @@ Common::String TSageEngine::getPrimaryFilename() const {
 
 static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "tsage", "Unknown Tsunami TSAGE-based Game" },
-	{ "ring", "Ringworld: Revenge of the Patriarch" },
+	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
 	{ 0, 0 }
 };

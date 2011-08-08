@@ -87,4 +87,3 @@ void FileManager_v1w::readOverlay(const int screenNum, image_pt image, ovl_t ove
 }
 
 } // End of namespace Hugo
-

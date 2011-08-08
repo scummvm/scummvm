@@ -24,13 +24,13 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
-#include "common/system.h"
 
 #include "engines/util.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/midi.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -541,16 +541,18 @@ Common::Error AGOSEngine::init() {
 
 	initGraphics(_screenWidth, _screenHeight, getGameType() == GType_FF || getGameType() == GType_PP);
 
+	_midi = new MidiPlayer();
+
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 		(getPlatform() == Common::kPlatformPC)) {
 
-		int ret = _midi.open(getGameType());
+		int ret = _midi->open(getGameType());
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
-		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+		_midi->setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 
 		_midiEnabled = true;
 	}
@@ -597,14 +599,14 @@ Common::Error AGOSEngine::init() {
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
 		_musicPaused = true;
 		if (_midiEnabled) {
-			_midi.pause(_musicPaused);
+			_midi->pause(_musicPaused);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 0);
 	}
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
-			_midi._enable_sfx = !_midi._enable_sfx;
+			_midi->_enable_sfx = !_midi->_enable_sfx;
 		else {
 			_effectsPaused = !_effectsPaused;
 			_sound->effectsPause(_effectsPaused);
@@ -640,14 +642,12 @@ Common::Error AGOSEngine::init() {
 
 	// TODO: Use special debug levels instead of the following hack.
 	_debugMode = (gDebugLevel >= 0);
-	if (gDebugLevel == 2)
-		_dumpOpcodes = true;
-	if (gDebugLevel == 3)
-		_dumpVgaOpcodes = true;
-	if (gDebugLevel == 4)
-		_dumpScripts = true;
-	if (gDebugLevel == 5)
-		_dumpVgaScripts = true;
+	switch (gDebugLevel) {
+	case 2: _dumpOpcodes    = true; break;
+	case 3: _dumpVgaOpcodes = true; break;
+	case 4: _dumpScripts    = true; break;
+	case 5: _dumpVgaScripts = true; break;
+	}
 
 	return Common::kNoError;
 }
@@ -708,7 +708,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if (getGameType() == GType_SIMON2 && _midi.hasNativeMT32())
+	if (getGameType() == GType_SIMON2 && _midi->hasNativeMT32())
 		_musicIndexBase = (1128 + 612) / 4;
 	else
 		_musicIndexBase = 1128 / 4;
@@ -911,6 +911,8 @@ AGOSEngine::~AGOSEngine() {
 		_window6BackScn->free();
 	delete _window6BackScn;
 
+	free(_midi);
+
 	free(_firstTimeStruct);
 	free(_pendingDeleteTimeEvent);
 
@@ -938,12 +940,12 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 		_keyPressed.reset();
 		_pause = true;
 
-		_midi.pause(true);
+		_midi->pause(true);
 		_mixer->pauseAll(true);
 	} else {
 		_pause = false;
 
-		_midi.pause(_musicPaused);
+		_midi->pause(_musicPaused);
 		_mixer->pauseAll(false);
 	}
 }
@@ -1027,7 +1029,7 @@ void AGOSEngine::syncSoundSettings() {
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
 
 	if (_midiEnabled)
-		_midi.setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
+		_midi->setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
 }
 
 } // End of namespace AGOS

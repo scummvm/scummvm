@@ -338,4 +338,3 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
-

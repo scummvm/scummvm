@@ -58,4 +58,3 @@ void SaveStateDescriptor::setPlayTime(uint32 msecs) {
 	uint minutes = msecs / 60000;
 	setPlayTime(minutes / 60, minutes % 60);
 }
-

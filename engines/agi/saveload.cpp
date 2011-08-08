@@ -290,11 +290,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 
 	if (saveVersion >= 4) {
 		// We don't need the thumbnail here, so just read it and discard it
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		Graphics::loadThumbnail(*in, *thumbnail);
-		delete thumbnail;
-		thumbnail = 0;
+		Graphics::skipThumbnail(*in);
 
 		in->readUint32BE();	// save date
 		in->readUint16BE(); // save time

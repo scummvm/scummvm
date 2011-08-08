@@ -56,6 +56,8 @@ static const PlainGameDescriptor composerGames[] = {
 	{"darby", "Darby the Dragon"},
 	{"gregory", "Gregory and the Hot Air Balloon"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
+	{"princess", "The Princess and the Crab"},
+	{"sleepingcub", "Sleeping Cub's Test of Courage"},
 	{0, 0}
 };
 
@@ -123,6 +125,32 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			AD_ENTRY1("install.inf", "b7e9d6f7949d412dad0a183375069844"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	{
+		{
+			"princess",
+			0,
+			AD_ENTRY1s("install.inf", "f1cf45db3c4c54a0d2d89d359af8f334", 244),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	{
+		{
+			"sleepingcub",
+			0,
+			AD_ENTRY1s("install.inf", "1092e753b8692463f41b8c0b1931398e", 251),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

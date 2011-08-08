@@ -28,6 +28,9 @@
 
 namespace tSage {
 
+// TODO: Doesn't seem to be ever set
+const bool _v52C9F = false;
+
 SceneManager::SceneManager() {
 	_scene = NULL;
 	_hasPalette = false;
@@ -45,7 +48,7 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::setNewScene(int sceneNumber) {
-	warning("SetNewScene(%d)", sceneNumber);
+	debug(1, "SetNewScene(%d)", sceneNumber);
 	_nextSceneNumber = sceneNumber;
 }
 
@@ -146,7 +149,7 @@ void SceneManager::fadeInIfNecessary() {
 }
 
 void SceneManager::changeScene(int newSceneNumber) {
-	warning("changeScene(%d)", newSceneNumber);
+	debug(1, "changeScene(%d)", newSceneNumber);
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
@@ -172,6 +175,11 @@ void SceneManager::changeScene(int newSceneNumber) {
 
 	// Blank out the screen
 	_globals->_screenSurface.fillRect(_globals->_screenSurface.getBounds(), 0);
+
+	// If there are any fading sounds, wait until fading is complete
+	while (_globals->_soundManager.isFading()) {
+		g_system->delayMillis(10);
+	}
 
 	// Set the new scene to be loaded
 	setNewScene(newSceneNumber);
@@ -296,7 +304,7 @@ void Scene::dispatch() {
 }
 
 void Scene::loadScene(int sceneNum) {
-	warning("loadScene(%d)", sceneNum);
+	debug(1, "loadScene(%d)", sceneNum);
 	_screenNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
@@ -494,6 +502,11 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 
 	while (yEnd < 256)
 		_zoomPercents[yEnd++] = minPercent;
+}
+
+byte *Scene::preloadVisage(int resNum) {
+	assert(!_v52C9F);
+	return _resourceManager->getResource(RES_VISAGE, resNum, 9999, false);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -113,6 +113,10 @@ void MystOptionsDialog::open() {
 		_showMapButton->setEnabled(_vm->_scriptParser &&
 				_vm->_scriptParser->getMap());
 
+	// Zip mode is disabled in the demo
+	if (_vm->getFeatures() & GF_DEMO)
+		_zipModeCheckbox->setEnabled(false);
+
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
 }

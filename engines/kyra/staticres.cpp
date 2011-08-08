@@ -80,7 +80,7 @@ const IndexTable iGameTable[] = {
 };
 
 byte getGameID(const GameFlags &flags) {
-	return Common::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, flags.gameID)->value;
+	return Common::find(iGameTable, ARRAYEND(iGameTable) - 1, flags.gameID)->value;
 }
 
 const IndexTable iLanguageTable[] = {
@@ -95,7 +95,7 @@ const IndexTable iLanguageTable[] = {
 };
 
 byte getLanguageID(const GameFlags &flags) {
-	return Common::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, flags.lang)->value;
+	return Common::find(iLanguageTable, ARRAYEND(iLanguageTable) - 1, flags.lang)->value;
 }
 
 const IndexTable iPlatformTable[] = {
@@ -108,7 +108,7 @@ const IndexTable iPlatformTable[] = {
 };
 
 byte getPlatformID(const GameFlags &flags) {
-	return Common::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, flags.platform)->value;
+	return Common::find(iPlatformTable, ARRAYEND(iPlatformTable) - 1, flags.platform)->value;
 }
 
 byte getSpecialID(const GameFlags &flags) {
@@ -2142,4 +2142,3 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 };
 
 } // End of namespace Kyra
-

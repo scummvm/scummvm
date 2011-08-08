@@ -127,7 +127,7 @@ const ExtractType *findExtractType(const int type) {
 }
 
 byte getTypeID(int type) {
-	return std::find(typeTable, typeTable + ARRAYSIZE(typeTable) - 1, type)->value;
+	return std::find(typeTable, ARRAYEND(typeTable) - 1, type)->value;
 }
 // Extractor implementation
 
@@ -1075,4 +1075,3 @@ bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const 
 }
 
 } // end of anonymous namespace
-

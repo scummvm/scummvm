@@ -602,4 +602,3 @@ void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 #endif
 
 #endif
-

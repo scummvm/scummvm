@@ -30,4 +30,3 @@ void drawThickLine(int x0, int y0, int x1, int y1, int thickness, int color, voi
 }	// End of namespace Graphics
 
 #endif
-

@@ -49,4 +49,3 @@ void FileManager_v2w::instructions() const {
 }
 
 } // End of namespace Hugo
-

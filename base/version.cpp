@@ -122,4 +122,3 @@ const char *gScummVMFeatures = ""
 	"AAC "
 #endif
 	;
-

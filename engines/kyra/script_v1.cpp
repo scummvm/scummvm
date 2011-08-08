@@ -123,4 +123,3 @@ int KyraEngine_v1::o1_playSoundEffect(EMCState *script) {
 }
 
 } // End of namespace Kyra
-

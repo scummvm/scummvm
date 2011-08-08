@@ -111,5 +111,3 @@ void *rpcServer(int func, void *data, int size) {
 	}
 	return NULL;
 }
-
-

@@ -489,4 +489,3 @@ void *DLObject::symbol(const char *name) {
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
-

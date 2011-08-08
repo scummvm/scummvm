@@ -1052,7 +1052,7 @@ void LauncherDialog::updateButtons() {
 
 	const char *newAddButtonLabel = massAdd
 		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
-		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));
+		: (lowRes ? _c("~A~dd Game...", "lowres") : _("~A~dd Game..."));
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);

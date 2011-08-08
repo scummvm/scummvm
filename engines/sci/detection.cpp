@@ -285,7 +285,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
  * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
  * @return					The equivalent ScummVM game id
  */
-Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, ResourceManager *resMan) {
+Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, ResourceManager &resMan) {
 	// Convert the id to lower case, so that we match all upper/lower case variants.
 	sierraId.toLowercase();
 
@@ -301,7 +301,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
-	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan->listResources(kResourceTypeScript, -1));
+	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan.listResources(kResourceTypeScript, -1));
 	if (resources->size() < demoThreshold) {
 		*gameFlags |= ADGF_DEMO;
 
@@ -337,7 +337,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		// This could either be qfg1 VGA, qfg3 or qfg4 demo (all SCI1.1),
 		// or qfg4 full (SCI2)
 		// qfg1 VGA doesn't have view 1
-		if (!resMan->testResource(ResourceId(kResourceTypeView, 1)))
+		if (!resMan.testResource(ResourceId(kResourceTypeView, 1)))
 			return "qfg1vga";
 
 		// qfg4 full is SCI2
@@ -480,10 +480,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 		return 0;
 	}
 
-	Common::ScopedPtr<ResourceManager> resMan(new ResourceManager());
-	assert(resMan);
-	resMan->addAppropriateSources(fslist);
-	resMan->init(true);
+	ResourceManager resMan;
+	resMan.addAppropriateSources(fslist);
+	resMan.init(true);
 	// TODO: Add error handling.
 
 #ifndef ENABLE_SCI32
@@ -494,7 +493,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	}
 #endif
 
-	ViewType gameViews = resMan->getViewType();
+	ViewType gameViews = resMan.getViewType();
 
 	// Have we identified the game views? If not, stop here
 	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
@@ -508,7 +507,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String sierraGameId = resMan->findSierraGameId();
+	Common::String sierraGameId = resMan.findSierraGameId();
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty()) {
@@ -530,7 +529,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// As far as we know, these games store the messages of each language in separate
 	// resources, and it's not possible to detect that easily
 	// Also look for "%J" which is used in japanese games
-	Resource *text = resMan->findResource(ResourceId(kResourceTypeText, 0), 0);
+	Resource *text = resMan.findResource(ResourceId(kResourceTypeText, 0), 0);
 	uint seeker = 0;
 	if (text) {
 		while (seeker < text->size) {
@@ -588,7 +587,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 			s_fallbackDesc.extra = "CD";
 	}
 
-	return (const ADGameDescription *)&s_fallbackDesc;
+	return &s_fallbackDesc;
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -677,13 +676,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor desc(slot, meta.name);
 
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		if (!Graphics::loadThumbnail(*in, *thumbnail)) {
-			delete thumbnail;
-			thumbnail = 0;
-		}
-
+		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 		desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);

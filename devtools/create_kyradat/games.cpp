@@ -1077,4 +1077,3 @@ const int *getNeedList(const Game *g) {
 
 	return 0;
 }
-

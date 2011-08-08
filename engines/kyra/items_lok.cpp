@@ -976,4 +976,3 @@ int KyraEngine_LoK::getItemListIndex(Item item) {
 }
 
 } // End of namespace Kyra
-

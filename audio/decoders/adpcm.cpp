@@ -41,8 +41,7 @@ namespace Audio {
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
 ADPCMStream::ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-	: _stream(stream),
-		_disposeAfterUse(disposeAfterUse),
+	: _stream(stream, disposeAfterUse),
 		_startpos(stream->pos()),
 		_endpos(_startpos + size),
 		_channels(channels),
@@ -50,11 +49,6 @@ ADPCMStream::ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Fl
 		_rate(rate) {
 
 	reset();
-}
-
-ADPCMStream::~ADPCMStream() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _stream;
 }
 
 void ADPCMStream::reset() {

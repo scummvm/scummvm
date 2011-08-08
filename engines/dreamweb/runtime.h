@@ -580,4 +580,3 @@ public:
 }
 
 #endif
-

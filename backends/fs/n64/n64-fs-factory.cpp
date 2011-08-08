@@ -42,4 +42,3 @@ AbstractFSNode *N64FilesystemFactory::makeFileNodePath(const Common::String &pat
 }
 
 #endif
-

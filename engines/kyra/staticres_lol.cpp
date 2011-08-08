@@ -891,4 +891,3 @@ const int LoLEngine::_outroMonsterScaleTableY[] = {
 } // End of namespace Kyra
 
 #endif
-

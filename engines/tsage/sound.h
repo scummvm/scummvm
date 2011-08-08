@@ -225,6 +225,7 @@ public:
 	int getMasterVol() const;
 	void loadSound(int soundNum, bool showErrors);
 	void unloadSound(int soundNum);
+	bool isFading();
 
 	// _sf methods
 	static SoundManager &sfManager();
@@ -397,7 +398,19 @@ public:
 	int getVol() const { return _sound.getVol(); }
 	void holdAt(int v) { _sound.holdAt(v); }
 	void release() { _sound.release(); }
+	void fadeSound(int soundNum);
 };
+
+class ASoundExt: public ASound {
+public:
+	int _soundNum;
+
+	ASoundExt();
+	virtual Common::String getClassName() { return "ASoundExt"; }
+	virtual void synchronize(Serializer &s);
+	virtual void signal();
+};
+
 
 #define ADLIB_CHANNEL_COUNT 9
 

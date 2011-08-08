@@ -234,4 +234,3 @@ private:
 } // End of namespace Queen
 
 #endif
-

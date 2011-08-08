@@ -251,6 +251,7 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 Pipe::Pipe(Common::SeekableReadStream *stream) {
 	_offset = 0;
 	_stream = stream;
+	_anim = NULL;
 
 	nextFrame();
 }
