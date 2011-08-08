@@ -31,11 +31,27 @@ namespace Audio {
 
 class AudioStream;
 
+// FIXME: Why is this class called "Codec" -- it is not meant to encode,
+// only to decode, isn't it? So "Decoder" seems like a better name. 
+// Or "StreamDecoder"
+// But if people insist on using Codecs, then this diretory should
+// be renamed from "audio/decoders" to "audio/codecs".
 class Codec {
 public:
+// WTF: A "generic" interface without any documentation or explanation
+// is almost worse than useless. 
+// This class should at least say
+// - what uses it (apparently right now only by QuickTimeAudioDecoder)
+// - pointer to 1-2 example implementations
+// - what is the only method in it supposed to do?
+//   e.g. who owns the input stream, who the output stream, how much
+//   data is supposed to be decoded etc.
+
 	Codec() {}
 	virtual ~Codec() {}
 
+// FIXME: The corresponding method Video::Codec::decodeImage takes a pointer
+// to a stream, this takes a reference. Unify!
 	virtual AudioStream *decodeFrame(Common::SeekableReadStream &data) = 0;
 };
 

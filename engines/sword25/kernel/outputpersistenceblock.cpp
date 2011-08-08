@@ -57,6 +57,7 @@ void OutputPersistenceBlock::write(float value) {
 	writeMarker(FLOAT_MARKER);
 	uint32 tmp[1];
 
+	// FIXME: This is not portable, the encoding of floats is not standardized
 	((float *)tmp)[0] = value;
 	tmp[0] = TO_LE_32(tmp[0]);
 

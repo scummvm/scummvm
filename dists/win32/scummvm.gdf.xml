@@ -4,6 +4,10 @@
         <Name>ScummVM</Name>
         <Description>ScummVM is a program which allows you to run certain classic graphical point-and-click adventure games, provided you already have their data files. The clever part about this: ScummVM just replaces the executables shipped with the games, allowing you to play them on systems for which they were never designed!</Description>
         <ReleaseDate>2011-09-30</ReleaseDate>
+really?? shouldn't this be a placeholder date, and this file be generated
+from a FOO.in file by some script which inserts the right date?
+Also, does this date have to be adjusted for each release? If so, it should
+be mentioned in the wiki.
         <Genres>
             <Genre>Adventure</Genre>
         </Genres>

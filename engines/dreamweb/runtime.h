@@ -46,7 +46,7 @@ struct Register {
 		uint8 _part[2];
 	};
 	inline Register(): _value() {}
-	inline Register& operator=(uint16 v) { _value = v; return *this; }
+	inline Register& operator=(int v) { _value = (uint16)v; return *this; }
 	inline operator uint16&() { return _value; }
 	inline void cbw() {
 		if (_value & 0x80)
@@ -71,8 +71,8 @@ struct RegisterPart {
 		return *this;
 	}
 
-	inline RegisterPart& operator=(uint8 v) {
-		_value = v;
+	inline RegisterPart& operator=(int v) {
+		_value = (uint8)v;
 		return *this;
 	}
 };
@@ -101,8 +101,8 @@ public:
 		return *this;
 	}
 
-	inline WordRef& operator=(uint16 v) {
-		_value = v;
+	inline WordRef& operator=(int v) {
+		_value = (uint16)v;
 		return *this;
 	}
 
@@ -287,12 +287,12 @@ public:
 		_freeSegments.push_back(id);
 	}
 
-	inline void _cmp(uint8 a, uint8 b) {
-		_sub(a, b);
+	inline void _cmp(uint8 a, int b) {
+		_sub(a, (uint8)b);
 	}
 
-	inline void _cmp(uint16 a, uint16 b) {
-		_sub(a, b);
+	inline void _cmp(uint16 a, int b) {
+		_sub(a, (uint16)b);
 	}
 
 	inline void _test(uint8 a, uint8 b) {

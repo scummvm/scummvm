@@ -286,6 +286,13 @@ private:
 };
 
 // Fix compilation for non C99-compliant compilers, like MSVC
+// FIXME: Yuck, and what about compilation on systems that
+// don't have "long long", or where 64 bit arithmetic has to be
+// slowly emulated?
+// If using int64 here is desired, then configure must be extended
+// accordingly, period.
+// And fallback code be provided for systems where no long long
+// is available, or where it is slow.
 #ifndef int64_t
 typedef signed long long int int64_t;
 #endif
@@ -930,6 +937,12 @@ static inline uint16 round_sample(int *sum) {
 
 static inline int MULH(int a, int b) {
 	return ((int64_t)(a) * (int64_t)(b))>>32;
+	// This could use code like that one:
+	// http://www.hackersdelight.org/HDcode/mulhs.c.txt
+	// http://www.hackersdelight.org/HDcode/mulhu.c.txt
+	// Note: the only call to this function is
+	//	tab[b] = MULH(tmp1<<(s), c);\ 
+	// in the BF (butterfly) macro, where s is a value from 1 to 5.
 }
 
 // signed 16x16 -> 32 multiply add accumulate
@@ -2188,8 +2201,6 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
 	int ch, sb, j;
 	int tmp, acc, esp_40, comp;
 	int add1, add2, add3, add4;
-	// TODO : Remove multres 64 bit variable necessity...
-	int64_t multres;
 
 	// This should never happen
 	if (nb_channels <= 0)
@@ -2231,6 +2242,19 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
 					for (j = 0; j < 64; j++)
 						acc += tone_level_idx_temp[ch][sb][j];
 
+			// TODO : Remove multres 64 bit variable necessity...
+			// This could be done by using code for 32x32 -> 64 bit
+			// multiplication; and since we need to combine the hi and lo
+			// words as a sum, we can even merge these operations.
+			// See
+			// http://www.hackersdelight.org/HDcode/muldws.c.txt
+			// But looking closer at esp_40,
+			// this seems weird... they take the top 32 bit, divide by 8
+			// so they shift by 3 more,
+			// then add the lower 32 bit, shifted by 31 -- so it's really
+			// only the top bit of the lower 32bit that is added. Huh
+			// And why the multiplication by 0x66666667 ?
+			int64_t multres;
 			multres = 0x66666667 * (acc * 10);
 			esp_40 = (multres >> 32) / 8 + ((multres & 0xffffffff) >> 31);
 			for (ch = 0;  ch < nb_channels; ch++)

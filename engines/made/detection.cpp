@@ -576,6 +576,7 @@ const ADGameDescription *MadeMetaEngine::fallbackDetect(const FileMap &allFiles,
 	Made::g_fallbackDesc.version = 3;
 
 	//return (const ADGameDescription *)&Made::g_fallbackDesc;
+// WTF??? remove this method, or implement it properly???
 	return NULL;
 }
 

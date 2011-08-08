@@ -278,6 +278,11 @@ QuickTimeAudioDecoder::AudioSampleDesc::~AudioSampleDesc() {
 }
 
 bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
+// TODO: How about having a CodecRegistry, which could simultaneously provide 
+// the functionality of this method, *and* also be used in / instead of initCodec().
+// This would decouple this class from the decoders. It would also ensure
+// that isAudioCodecSupported & initCodec behave consistently.
+
 	// Check if the codec is a supported codec
 	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ') || _codecTag == MKTAG('i', 'm', 'a', '4'))
 		return true;
@@ -326,8 +331,12 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 		// If we've loaded a codec, make sure we use first
 		AudioStream *audioStream = _codec->decodeFrame(*stream);
 		delete stream;
+// FIXME: Instead of deleting the stream here, it would be better to just transfer ownership of the
+// stream to decodeFrame. This way, it becomes possible to wrap e.g. makeADPCMStream into
+// its own Audio::Codec subclass
 		return audioStream;
 	} else if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ')) {
+// FIXME: The code below should be moved into an Audio::Codec subclass
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
 		if (_codecTag == MKTAG('r', 'a', 'w', ' '))
@@ -343,6 +352,7 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 		return makeRawStream(data, dataSize, _sampleRate, flags);
 	} else if (_codecTag == MKTAG('i', 'm', 'a', '4')) {
 		// Riven uses this codec (as do some Myst ME videos)
+// FIXME: This should be be moved into an Audio::Codec subclass
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, _sampleRate, _channels, 34);
 	}
 
@@ -351,7 +361,8 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 }
 
 void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
-	delete _codec; _codec = 0;
+	delete _codec;
+	_codec = 0;
 
 	switch (_codecTag) {
 	case MKTAG('Q', 'D', 'M', '2'):

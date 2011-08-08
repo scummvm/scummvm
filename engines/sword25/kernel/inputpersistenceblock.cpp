@@ -74,6 +74,7 @@ void InputPersistenceBlock::read(uint &value) {
 void InputPersistenceBlock::read(float &value) {
 	if (checkMarker(FLOAT_MARKER)) {
 		uint32 tmp[1];
+		// FIXME: This is not portable, the encoding of floats is not standardized
 		tmp[0] = READ_LE_UINT32(_iter);
 		value = ((float *)tmp)[0];
 		_iter += 4;

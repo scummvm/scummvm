@@ -39,6 +39,16 @@ namespace Common {
 bool ConfigFile::isValidName(const String &name) {
 	const char *p = name.c_str();
 	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
+// FIXME: this static_cast is annoying to read and overly verbose.
+// But the real problem with it is that new code will most certainly
+// again "forget" to include the cast..
+// 
+// A better solution is needed. Maybe forbid isalnum etc., and replace
+// them with custom macros / inline functions that are safe to use everywhere.
+// (whether these use the real isalnum etc. internally or not is
+// a different question).
+// 
+
 		p++;
 	return *p == 0;
 }
