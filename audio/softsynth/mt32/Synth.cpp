@@ -15,6 +15,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Allow the usage of printf/vprintf
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_vprintf
+
 #include <cerrno>
 #include <cmath>
 #include <cstdlib>
@@ -22,7 +26,6 @@
 
 #include "mt32emu.h"
 #include "mmath.h"
-#include "ANSIFile.h"
 #include "PartialManager.h"
 
 #if MT32EMU_USE_AREVERBMODEL == 1
