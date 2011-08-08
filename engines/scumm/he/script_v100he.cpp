@@ -542,7 +542,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 	int dim1end, dim1start, dim2end, dim2start;
 	int id, len, b, c, list[128];
 	int offs, tmp, tmp2;
-	uint tmp3;
+	uint tmp3, type;
 
 	byte subOp = fetchScriptByte();
 	int array = fetchScriptWord();
@@ -625,11 +625,10 @@ void ScummEngine_v100he::o100_arrayOps() {
 		}
 		break;
 	case 132:
-		debug(0, "o100_arrayOps: case 132");
-		// TODO: Used by Moonbase Commander
+		// TODO: Used by room 2 script 2180 in Moonbase Commander
 		fetchScriptWord();
 		fetchScriptWord();
-		pop();
+		type = pop();
 		pop();
 		pop();
 		pop();
@@ -646,6 +645,21 @@ void ScummEngine_v100he::o100_arrayOps() {
 		if (id == 0) {
 			defineArray(array, kDwordArray, dim2start, dim2end, dim1start, dim1end);
 		}
+		switch (type) {
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		default:
+			error("o100_arrayOps: case 132 unknown type %d)", type);
+		}
+		debug(0, "o100_arrayOps: case 132 type %d", type);
 		break;
 	case 133:
 		b = pop();
