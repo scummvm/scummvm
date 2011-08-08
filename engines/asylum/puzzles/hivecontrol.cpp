@@ -378,7 +378,7 @@ void PuzzleHiveControl::updateScreen() {
 	if (_resetFlag) {
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[kElementResetDynamic], _frameIndexes[kElementResetDynamic], Common::Point(211, 77), kDrawFlagNone, 0, 2);
 		_frameIndexes[kElementResetDynamic] = (_frameIndexes[kElementResetDynamic] + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementResetDynamic]);
-		if (_frameIndexes[kElementResetDynamic] == GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[kElementResetDynamic]) - 1) {
+		if (_frameIndexes[kElementResetDynamic] == 0) {
 			_resetFlag = false;
 			getCursor()->show();
 			if (!(_wingsState[0] || _wingsState[1] || _wingsState[2])) {
