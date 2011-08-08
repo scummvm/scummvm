@@ -23,6 +23,8 @@
 #ifndef GRIM_MPEG_PLAYER_H
 #define GRIM_MPEG_PLAYER_H
 
+#ifdef USE_MPEG2
+
 #include "common/scummsys.h"
 #include "common/file.h"
 
@@ -60,5 +62,6 @@ private:
 
 } // end of namespace Grim
 
+#endif // USE_MPEG2
 
 #endif

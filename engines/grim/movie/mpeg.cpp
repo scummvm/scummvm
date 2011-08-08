@@ -27,6 +27,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
+#ifdef USE_MPEG2
+
 #include "common/endian.h"
 #include "common/timer.h"
 #include "common/file.h"
@@ -160,3 +162,5 @@ void MpegPlayer::restoreState(SaveGame *state) {
 }
 
 } // end of namespace Grim
+
+#endif // USE_MPEG2

@@ -26,4 +26,31 @@ namespace Grim {
 
 MoviePlayer *g_movie;
 
+// Fallback for when USE_MPEG2 isnt defined, might want to do something similar
+// for USE_BINK if that comes over from ScummVM
+
+#ifndef USE_MPEG2
+class NullPlayer : public MoviePlayer {
+public:
+	NullPlayer() {
+		warning("MPEG2-playback not compiled in, but needed");
+		_videoFinished = true; // Rigs all movies to be completed.
+	} 
+	~NullPlayer() {}
+	bool play(const char* filename, bool looping, int x, int y) {return true;}
+	void stop() {}
+	void saveState(SaveGame *state) {}
+	void restoreState(SaveGame *state) {}
+private:
+	static void timerCallback(void *ptr) {}
+	void handleFrame() {}
+	void init() {}
+	void deinit() {}
+};
+
+MoviePlayer *CreateMpegPlayer() {
+	return new NullPlayer();
+}
+#endif
+
 } // end of namespace Grim
