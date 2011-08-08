@@ -3454,6 +3454,15 @@ _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
 
+# Show a message if looping over engines takes longer than 5 secs
+sh -c "
+	touch config.gnomes
+	sleep 5
+	if test -f config.gnomes; then 
+		printf 'Employing little gnomes...'
+		rm -f config.gnomes
+	fi" 2>/dev/null &
+
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
@@ -3517,6 +3526,14 @@ for engine in $_engines; do
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
+
+# Complete the message on slow systems
+if test -f config.gnomes ; then
+	# Kill does not work well here as it produces nasty 'Killed' message
+	rm -rf config.gnomes
+else
+	echo " work is done"
+fi
 
 #
 # Show which engines ("frontends") are to be built
