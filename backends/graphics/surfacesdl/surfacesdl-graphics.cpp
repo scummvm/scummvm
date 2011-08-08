@@ -122,7 +122,7 @@ static AspectRatio getDesiredAspectRatio() {
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
-	SdlGraphicsManager(sdlEventSource), _sdlEventSource(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource),
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
@@ -846,7 +846,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
-	_sdlEventSource->resetKeyboadEmulation(
+	_eventSource->resetKeyboadEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
 

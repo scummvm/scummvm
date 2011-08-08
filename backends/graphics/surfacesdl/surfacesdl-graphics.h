@@ -147,8 +147,6 @@ public:
 	virtual void notifyMousePos(Common::Point mouse);
 
 protected:
-	SdlEventSource *_sdlEventSource;
-
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
 	SDL_Surface *_osdSurface;
