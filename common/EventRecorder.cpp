@@ -74,6 +74,8 @@ void readRecord(SeekableReadStream *inFile, uint32 &diff, Event &event, uint32 &
 	case EVENT_RBUTTONUP:
 	case EVENT_WHEELUP:
 	case EVENT_WHEELDOWN:
+	case EVENT_MBUTTONDOWN:
+	case EVENT_MBUTTONUP:
 		event.mouse.x = inFile->readSint16LE();
 		event.mouse.y = inFile->readSint16LE();
 		break;
@@ -103,6 +105,8 @@ void writeRecord(WriteStream *outFile, uint32 diff, const Event &event, uint32 m
 	case EVENT_RBUTTONUP:
 	case EVENT_WHEELUP:
 	case EVENT_WHEELDOWN:
+	case EVENT_MBUTTONDOWN:
+	case EVENT_MBUTTONUP:
 		outFile->writeSint16LE(event.mouse.x);
 		outFile->writeSint16LE(event.mouse.y);
 		break;
@@ -219,7 +223,7 @@ void EventRecorder::init() {
 	}
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false, true);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, EventManager::kEventRecorderPriority, false, true);
 }
 
 void EventRecorder::deinit() {
