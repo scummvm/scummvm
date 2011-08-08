@@ -699,6 +699,10 @@ begin_credits("Credits");
 		  add_person("Angus Lees", "Gus", "");
 	  end_section();
 
+	  begin_section("BADA");
+		  add_person("Chris Warren-Smith", "", "");
+	  end_section();
+
 	  begin_section("Dreamcast");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
