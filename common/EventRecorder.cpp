@@ -111,11 +111,15 @@ void EventRecorder::init() {
 	String recordModeString = ConfMan.get("record_mode");
 	if (recordModeString.compareToIgnoreCase("record") == 0) {
 		_recordMode = kRecorderRecord;
+
+		debug(3, "EventRecorder: record");
 	} else {
 		if (recordModeString.compareToIgnoreCase("playback") == 0) {
 			_recordMode = kRecorderPlayback;
+			debug(3, "EventRecorder: playback");
 		} else {
 			_recordMode = kPassthrough;
+			debug(3, "EventRecorder: passthrough");
 		}
 	}
 
@@ -194,6 +198,8 @@ void EventRecorder::init() {
 }
 
 void EventRecorder::deinit() {
+	debug(3, "EventRecorder: deinit");
+
 	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
