@@ -61,6 +61,7 @@ public:
 
 private:
 	bool notifyEvent(const Event &ev);
+	bool notifyPoll();
 	bool pollEvent(Event &ev);
 	bool allowMapping() const { return false; }
 
@@ -75,6 +76,7 @@ private:
 	volatile uint32 _recordCount;
 	volatile uint32 _lastRecordEvent;
 	volatile uint32 _recordTimeCount;
+	volatile uint32 _lastEventMillis;
 	WriteStream *_recordFile;
 	WriteStream *_recordTimeFile;
 	MutexRef _timeMutex;

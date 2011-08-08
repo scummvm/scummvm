@@ -184,6 +184,14 @@ public:
 	 *          false otherwise.
 	 */
 	virtual bool notifyEvent(const Event &event) = 0;
+
+	/**
+	 * Notifies the observer of pollEvent() query.
+	 *
+	 * @return  true if the event should not be passed to other observers,
+	 *          false otherwise.
+	 */
+	virtual bool notifyPoll() { return false; }
 };
 
 /**
@@ -255,8 +263,11 @@ public:
 
 	/**
 	 * Registers a new EventObserver with the Dispatcher.
+	 *
+	 * @param listenPools if set, then all pollEvent() calls are passed to observer
+	 *                    currently it is used by keyMapper
 	 */
-	void registerObserver(EventObserver *obs, uint priority, bool autoFree);
+	void registerObserver(EventObserver *obs, uint priority, bool autoFree, bool listenPolls = false);
 
 	/**
 	 * Unregisters a EventObserver.
@@ -280,11 +291,13 @@ private:
 	struct ObserverEntry : public Entry {
 		uint priority;
 		EventObserver *observer;
+		bool poll;
 	};
 
 	List<ObserverEntry> _observers;
 
 	void dispatchEvent(const Event &event);
+	void dispatchPoll();
 };
 
 class Keymapper;

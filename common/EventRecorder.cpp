@@ -34,7 +34,28 @@ DECLARE_SINGLETON(EventRecorder);
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
 
-void readRecord(SeekableReadStream *inFile, uint32 &diff, Event &event) {
+uint32 readTime(ReadStream *inFile) {
+	uint32 d = inFile->readByte();
+	if (d == 0xff) {
+		d = inFile->readUint32LE();
+	}
+
+	return d;
+}
+
+void writeTime(WriteStream *outFile, uint32 d) {
+		//Simple RLE compression
+	if (d >= 0xff) {
+		outFile->writeByte(0xff);
+		outFile->writeUint32LE(d);
+	} else {
+		outFile->writeByte(d);
+	}
+}
+
+void readRecord(SeekableReadStream *inFile, uint32 &diff, Event &event, uint32 &millis) {
+	millis = readTime(inFile);
+
 	diff = inFile->readUint32LE();
 
 	event.type = (EventType)inFile->readUint32LE();
@@ -61,7 +82,9 @@ void readRecord(SeekableReadStream *inFile, uint32 &diff, Event &event) {
 	}
 }
 
-void writeRecord(WriteStream *outFile, uint32 diff, const Event &event) {
+void writeRecord(WriteStream *outFile, uint32 diff, const Event &event, uint32 millis) {
+	writeTime(outFile, millis);
+
 	outFile->writeUint32LE(diff);
 
 	outFile->writeUint32LE((uint32)event.type);
@@ -99,6 +122,7 @@ EventRecorder::EventRecorder() {
 	_eventCount = 0;
 	_lastEventCount = 0;
 	_lastMillis = 0;
+	_lastEventMillis = 0;
 
 	_recordMode = kPassthrough;
 }
@@ -177,6 +201,7 @@ void EventRecorder::init() {
 
 		_recordCount = _playbackFile->readUint32LE();
 		_recordTimeCount = _playbackFile->readUint32LE();
+
 		randomSourceCount = _playbackFile->readUint32LE();
 		for (uint i = 0; i < randomSourceCount; ++i) {
 			RandomSourceRecord rec;
@@ -194,7 +219,7 @@ void EventRecorder::init() {
 	}
 
 	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
-	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false);
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 1, false, true);
 }
 
 void EventRecorder::deinit() {
@@ -242,8 +267,9 @@ void EventRecorder::deinit() {
 		for (uint i = 0; i < _recordCount; ++i) {
 			uint32 tempDiff;
 			Event tempEvent;
-			readRecord(_playbackFile, tempDiff, tempEvent);
-			writeRecord(_recordFile, tempDiff, tempEvent);
+			uint32 millis;
+			readRecord(_playbackFile, tempDiff, tempEvent, millis);
+			writeRecord(_recordFile, tempDiff, tempEvent, millis);
 		}
 
 		_recordFile->finalize();
@@ -284,23 +310,16 @@ void EventRecorder::processMillis(uint32 &millis) {
 
 	g_system->lockMutex(_timeMutex);
 	if (_recordMode == kRecorderRecord) {
-		//Simple RLE compression
 		d = millis - _lastMillis;
-		if (d >= 0xff) {
-			_recordTimeFile->writeByte(0xff);
-			_recordTimeFile->writeUint32LE(d);
-		} else {
-			_recordTimeFile->writeByte(d);
-		}
+		writeTime(_recordTimeFile, d);
+
 		_recordTimeCount++;
 	}
 
 	if (_recordMode == kRecorderPlayback) {
 		if (_recordTimeCount > _playbackTimeCount) {
-			d = _playbackTimeFile->readByte();
-			if (d == 0xff) {
-				d = _playbackTimeFile->readUint32LE();
-			}
+			d = readTime(_playbackTimeFile);
+
 			millis = _lastMillis + d;
 			_playbackTimeCount++;
 		}
@@ -321,15 +340,27 @@ bool EventRecorder::notifyEvent(const Event &ev) {
 	StackLock lock(_recorderMutex);
 	++_eventCount;
 
-	writeRecord(_recordFile, _eventCount - _lastEventCount, ev);
+	writeRecord(_recordFile, _eventCount - _lastEventCount, ev, _lastMillis - _lastEventMillis);
 
 	_recordCount++;
 	_lastEventCount = _eventCount;
+	_lastEventMillis = _lastMillis;
+
+	return false;
+}
+
+bool EventRecorder::notifyPoll() {
+	if (_recordMode != kRecorderRecord)
+		return false;
+
+	++_eventCount;
 
 	return false;
 }
 
 bool EventRecorder::pollEvent(Event &ev) {
+	uint32 millis;
+
 	if (_recordMode != kRecorderPlayback)
 		return false;
 
@@ -338,7 +369,7 @@ bool EventRecorder::pollEvent(Event &ev) {
 
 	if (!_hasPlaybackEvent) {
 		if (_recordCount > _playbackCount) {
-			readRecord(_playbackFile, const_cast<uint32&>(_playbackDiff), _playbackEvent);
+			readRecord(_playbackFile, const_cast<uint32&>(_playbackDiff), _playbackEvent, millis);
 			_playbackCount++;
 			_hasPlaybackEvent = true;
 		}
