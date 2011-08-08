@@ -24,6 +24,7 @@ namespace MT32Emu {
 
 class PartialManager;
 class Synth;
+typedef std::list<Poly *> PolyList;
 
 class Part {
 private:
@@ -37,8 +38,8 @@ private:
 
 	unsigned int activePartialCount;
 	PatchCache patchCache[4];
-	std::list<Poly*> freePolys;
-	std::list<Poly*> activePolys;
+	PolyList freePolys;
+	PolyList activePolys;
 
 	void setPatch(const PatchParam *patch);
 	unsigned int midiKeyToKey(unsigned int midiKey);
