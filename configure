@@ -1156,12 +1156,12 @@ ps3)
 	_host_os=ps3
 	_host_cpu=ppc
 	_host_alias=powerpc64-ps3-elf
-	
+
 	# The prefix is always the same on PS3 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
-	# PS3 apps are installed into app-specific directories. The 
+	# PS3 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PS3 specific directories here.
 	datarootdir='${prefix}/data'
@@ -1186,7 +1186,7 @@ webos)
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
-	# WebOS apps are installed into app-specific directories. The 
+	# WebOS apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
@@ -1902,7 +1902,7 @@ case $_host_os in
 	ps3)
 		# Force use of SDL from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
-	
+
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
@@ -2098,7 +2098,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"	
+			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
@@ -3440,7 +3440,7 @@ case $_backend in
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
+		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		LIBS="$LIBS -lc -lgcc -lnosys"
 		;;
@@ -3458,7 +3458,7 @@ _engines_skipped=""
 sh -c "
 	touch config.gnomes
 	sleep 5
-	if test -f config.gnomes; then 
+	if test -f config.gnomes; then
 		printf 'Employing little gnomes...'
 		rm -f config.gnomes
 	fi" 2>/dev/null &
