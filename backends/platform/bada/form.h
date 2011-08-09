@@ -91,6 +91,7 @@ private:
 	void pushEvent(Common::EventType type,
 								 const Osp::Graphics::Point &currentPosition);
 	void terminate();
+	void setShortcut();
 	void setVolume(bool up, bool minMax);
 	int getShortcutIndex();
 
@@ -99,7 +100,7 @@ private:
 	Osp::Base::Runtime::Mutex *_eventQueueLock;
 	Common::Queue<Common::Event> _eventQueue;
 	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
-	enum {LeftButton, RightButtonOnce, RightButton} _buttonState;
+	enum {LeftButton, RightButtonOnce, RightButton, MoveOnly} _buttonState;
 	uint32 _shortcutTimer;
 	int _shortcutIndex;
 	int _touchCount;
