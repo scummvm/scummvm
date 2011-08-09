@@ -284,6 +284,26 @@ void BadaAppForm::setVolume(bool up, bool minMax) {
 	}
 }
 
+void BadaAppForm::setShortcut() {
+	int index = getShortcutIndex();
+	_shortcutIndex = (index == -1 ? 0 : index + 1);
+	_shortcutTimer = g_system->getMillis();
+	
+	switch (_shortcutIndex) {
+	case SHORTCUT_F5:
+		g_system->displayMessageOnOSD(_("Game Menu"));
+		break;
+		
+	case SHORTCUT_ESCAPE:
+		g_system->displayMessageOnOSD(_("Escape"));
+		break;
+		
+	default:
+		g_system->displayMessageOnOSD(_("Set Buttons"));
+		_shortcutIndex = SHORTCUT_SWAP_MOUSE;
+	}
+}
+
 void BadaAppForm::OnTouchDoublePressed(const Control &source, 
 																			 const Point &currentPosition, 
 																			 const TouchEventInfo &touchInfo) {
@@ -327,24 +347,8 @@ void BadaAppForm::OnTouchPressed(const Control &source,
 	Touch touch;
 	_touchCount = touch.GetPointCount();
 	if (_touchCount > 1) {
-		int index = getShortcutIndex();
-		_shortcutIndex = (index == -1 ? 0 : index + 1);
-		_shortcutTimer = g_system->getMillis();
-		
-		switch (_shortcutIndex) {
-		case SHORTCUT_F5:
-			g_system->displayMessageOnOSD(_("Game Menu"));
-			break;
-			
-		case SHORTCUT_ESCAPE:
-			g_system->displayMessageOnOSD(_("Escape"));
-			break;
-			
-		default:
-			g_system->displayMessageOnOSD(_("Swap Buttons"));
-			_shortcutIndex = SHORTCUT_SWAP_MOUSE;
-		}
-	}	else if (getShortcutIndex() == -1) {
+		setShortcut();
+	}	else if (getShortcutIndex() == -1 && _buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 	}
@@ -369,14 +373,18 @@ void BadaAppForm::OnTouchReleased(const Control &source,
 		case SHORTCUT_SWAP_MOUSE:
 			switch (_buttonState) {
 			case LeftButton:
-				_buttonState = RightButtonOnce;
 				g_system->displayMessageOnOSD(_("Right Once"));
+				_buttonState = RightButtonOnce;
 				break;
 			case RightButtonOnce:
 				g_system->displayMessageOnOSD(_("Right Active"));
 				_buttonState = RightButton;
 				break;
 			case RightButton:
+				g_system->displayMessageOnOSD(_("Move Active"));
+				_buttonState = MoveOnly;
+				break;
+			case MoveOnly:
 				g_system->displayMessageOnOSD(_("Left Active"));
 				_buttonState = LeftButton;
 				break;
@@ -409,6 +417,13 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 		setVolume(false, true);
 		return;
 
+	case KEY_CAMERA:
+		// display the soft keyboard
+		_buttonState = LeftButton;
+		_shortcutTimer = -1;
+		pushKey(Common::KEYCODE_F7);
+		return;
+
 	default:
 		break;
 	}
@@ -425,8 +440,8 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 		return;
 
 	case KEY_CAMERA:
-		// display the soft keyboard
-		pushKey(Common::KEYCODE_F7);
+		_touchCount = 1;
+		setShortcut();
 		return;
 
 	default:
