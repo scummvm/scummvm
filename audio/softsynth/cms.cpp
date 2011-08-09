@@ -244,8 +244,8 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			}
 		}
 		/* write sound data to the buffer */
-		buffer[j*2] += output_l / 6;
-		buffer[j*2+1] += output_r / 6;
+		buffer[j*2+0] = CLIP<int>(buffer[j*2+0] + output_l / 6, -32768, 32767);
+		buffer[j*2+1] = CLIP<int>(buffer[j*2+1] + output_r / 6, -32768, 32767);
 	}
 }
 
