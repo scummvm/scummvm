@@ -133,6 +133,9 @@ EventRecorder::EventRecorder() {
 
 EventRecorder::~EventRecorder() {
 	deinit();
+
+	g_system->deleteMutex(_timeMutex);
+	g_system->deleteMutex(_recorderMutex);
 }
 
 void EventRecorder::init() {
@@ -282,9 +285,6 @@ void EventRecorder::deinit() {
 
 		//TODO: remove recordTempFileName'ed file
 	}
-
-	g_system->deleteMutex(_timeMutex);
-	g_system->deleteMutex(_recorderMutex);
 }
 
 void EventRecorder::registerRandomSource(RandomSource &rnd, const String &name) {
