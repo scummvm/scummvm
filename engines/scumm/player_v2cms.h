@@ -128,6 +128,8 @@ private:
 
 	int _loadedMidiSong;
 
+	byte _sfxFreq[4], _sfxAmpl[4], _sfxOctave[2];
+
 	byte _lastMidiCommand;
 	uint _outputTableReady;
 	byte _voiceTimer;
