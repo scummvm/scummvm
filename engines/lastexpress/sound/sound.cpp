@@ -304,7 +304,7 @@ void SoundManager::playSoundEvent(EntityIndex entity, byte action, byte a3) {
 
 void SoundManager::playSteam(CityIndex index) {
 	if (index >= ARRAYSIZE(cities))
-		error("[SoundManager::playSteam] Invalid city index (was %d, max %d)", index, ARRAYSIZE(cities));
+		error("[SoundManager::playSteam] Invalid city index (was %d, max %lu)", index, ARRAYSIZE(cities));
 
 	_queue->resetState(kSoundState2);
 

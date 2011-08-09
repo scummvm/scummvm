@@ -184,7 +184,7 @@ bool DrasculaEngine::saveLoadScreen() {
 }
 
 bool DrasculaEngine::loadGame(const char *gameName) {
-	int l, savedChapter, roomNum = 0;
+	int savedChapter, roomNum = 0;
 	Common::InSaveFile *sav;
 
 	previousMusic = roomMusic;
@@ -208,11 +208,11 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	curY = sav->readSint32LE();
 	trackProtagonist = sav->readSint32LE();
 
-	for (l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
+	for (size_t l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
 		inventoryObjects[l] = sav->readSint32LE();
 	}
 
-	for (l = 0; l < NUM_FLAGS; l++) {
+	for (int l = 0; l < NUM_FLAGS; l++) {
 		flags[l] = sav->readSint32LE();
 	}
 
@@ -230,7 +230,6 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 
 void DrasculaEngine::saveGame(const char *gameName) {
 	Common::OutSaveFile *out;
-	int l;
 
 	if (!(out = _saveFileMan->openForSaving(gameName))) {
 		error("Unable to open the file");
@@ -241,11 +240,11 @@ void DrasculaEngine::saveGame(const char *gameName) {
 	out->writeSint32LE(curY);
 	out->writeSint32LE(trackProtagonist);
 
-	for (l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
+	for (size_t l = 1; l < ARRAYSIZE(inventoryObjects); l++) {
 		out->writeSint32LE(inventoryObjects[l]);
 	}
 
-	for (l = 0; l < NUM_FLAGS; l++) {
+	for (int l = 0; l < NUM_FLAGS; l++) {
 		out->writeSint32LE(flags[l]);
 	}
 

@@ -1422,7 +1422,7 @@ void ToucheEngine::setDefaultCursor(int num) {
 
 void ToucheEngine::handleLeftMouseButtonClickOnInventory() {
 	Common::Point mousePos = getMousePos();
-	for (int area = 0; area < ARRAYSIZE(_inventoryAreasTable); ++area) {
+	for (size_t area = 0; area < ARRAYSIZE(_inventoryAreasTable); ++area) {
 		if (_inventoryAreasTable[area].contains(mousePos)) {
 			if (area >= kInventoryObject1 && area <= kInventoryObject6) {
 				int item = _inventoryVar1[area - 6 + *_inventoryVar2];

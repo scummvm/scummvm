@@ -313,7 +313,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	char prefix = getStackName(_curStack)[0];
 
 	// Load any file that fits the patterns
-	for (int i = 0; i < ARRAYSIZE(endings); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(endings); i++) {
 		Common::String filename = Common::String(prefix) + endings[i];
 
 		MohawkArchive *mhk = new MohawkArchive();

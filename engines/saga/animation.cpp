@@ -143,7 +143,7 @@ int Anim::playCutaway(int cut, bool fade) {
 
 	int cutawaySlot = -1;
 
-	for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
 		if (!_cutawayAnimations[i]) {
 			cutawaySlot = i;
 		} else if (_cutawayAnimations[i]->state == ANIM_PAUSE) {
@@ -303,7 +303,7 @@ void Anim::clearCutaway() {
 	if (_cutawayActive) {
 		_cutawayActive = false;
 
-		for (int i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
+		for (size_t i = 0; i < ARRAYSIZE(_cutawayAnimations); i++) {
 			delete _cutawayAnimations[i];
 			_cutawayAnimations[i] = NULL;
 		}

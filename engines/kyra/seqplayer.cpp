@@ -41,16 +41,16 @@ SeqPlayer::SeqPlayer(KyraEngine_LoK *vm, OSystem *system) {
 	_copyViewOffs = false;
 	_specialBuffer = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_handShapes); ++i)
 		_handShapes[i] = 0;
-	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_seqMovies); ++i)
 		_seqMovies[i].movie = 0;
 }
 
 SeqPlayer::~SeqPlayer() {
 	freeHandShapes();
 
-	for (int i = 0; i < ARRAYSIZE(_seqMovies); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_seqMovies); ++i) {
 		if (!_seqMovies[i].movie)
 			continue;
 		_seqMovies[i].movie->close();
@@ -96,7 +96,7 @@ void SeqPlayer::makeHandShapes() {
 		assert(_handShapes[2]);
 		_screen->_curPage = pageBackUp;
 	} else {
-		for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
+		for (size_t i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 			if (_handShapes[i])
 				delete[] _handShapes[i];
 			_handShapes[i] = setPanPages(3, i);
@@ -106,7 +106,7 @@ void SeqPlayer::makeHandShapes() {
 }
 
 void SeqPlayer::freeHandShapes() {
-	for (int i = 0; i < ARRAYSIZE(_handShapes); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_handShapes); ++i) {
 		delete[] _handShapes[i];
 		_handShapes[i] = 0;
 	}

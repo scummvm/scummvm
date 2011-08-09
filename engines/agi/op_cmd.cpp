@@ -1754,7 +1754,7 @@ void AgiEngine::setupOpcodes() {
 		&AgiEngine::cmd_adj_ego_move_to_x_y
 	};
 	assert(ARRAYSIZE(_agiCommands) == ARRAYSIZE(tmp));
-	for (int i = 0; i < ARRAYSIZE(tmp); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(tmp); ++i)
 		_agiCommands[i] = tmp[i];
 }
 

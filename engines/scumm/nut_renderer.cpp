@@ -110,7 +110,7 @@ void NutRenderer::loadFont(const char *filename) {
 	// whole of the undecoded font file.
 
 	_numChars = READ_LE_UINT16(dataSrc + 10);
-	assert(_numChars <= ARRAYSIZE(_chars));
+	assert((size_t)_numChars <= ARRAYSIZE(_chars));
 
 	uint32 offset = 0;
 	uint32 decodedLength = 0;
@@ -187,7 +187,7 @@ void NutRenderer::loadFont(const char *filename) {
 	// We have decoded the font. Now let's see if we can re-compress it to
 	// a more compact format. Start by counting the number of colors.
 
-	int numColors = 0;
+	size_t numColors = 0;
 	for (l = 0; l < 256; l++) {
 		if (_paletteMap[l]) {
 			if (numColors < ARRAYSIZE(_palette)) {

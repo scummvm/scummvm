@@ -630,7 +630,7 @@ void Animator_LoK::setCharacterDefaultFrame(int character) {
 	static const uint16 initFrameTable[] = {
 		7, 41, 77, 0, 0
 	};
-	assert(character < ARRAYSIZE(initFrameTable));
+	assert((size_t)character < ARRAYSIZE(initFrameTable));
 	Character *edit = &_vm->characterList()[character];
 	edit->sceneId = 0xFFFF;
 	edit->facing = 0;

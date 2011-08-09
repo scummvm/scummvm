@@ -248,7 +248,7 @@ void Insane::chooseEnemy() {
 		}
 
 		++_metEnemiesListTail;
-		assert(_metEnemiesListTail < ARRAYSIZE(_metEnemiesList));
+		assert((size_t)_metEnemiesListTail < ARRAYSIZE(_metEnemiesList));
 		_metEnemiesList[_metEnemiesListTail] = en2;
 
 		if (_metEnemiesListTail >= en) {
@@ -277,7 +277,7 @@ void Insane::removeEnemyFromMetList(int32 enemy1) {
 	int en = enemy1;
 	do {
 		++en;
-		assert(en + 1 < ARRAYSIZE(_metEnemiesList));
+		assert((size_t)en + 1 < ARRAYSIZE(_metEnemiesList));
 		_metEnemiesList[en] = _metEnemiesList[en + 1];
 	} while (en < _metEnemiesListTail);
 	_metEnemiesListTail--;

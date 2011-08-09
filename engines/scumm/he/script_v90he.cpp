@@ -204,7 +204,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		if (_wizParams.remapNum == 0) {
 			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
 		}
-		assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
+		assert((size_t)_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
 		_wizParams.remapIndex[_wizParams.remapNum] = a;
 		_wizParams.remapColor[a] = b;
 		_wizParams.remapNum++;
@@ -1627,7 +1627,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				WizPolygon wp;
 				memset(&wp, 0, sizeof(wp));
 				wp.numVerts = n1;
-				assert(n1 < ARRAYSIZE(wp.vert));
+				assert((size_t)n1 < ARRAYSIZE(wp.vert));
 				for (int i = 0; i < n1; ++i) {
 					wp.vert[i].x = args1[i * 2 + 0];
 					wp.vert[i].y = args1[i * 2 + 1];

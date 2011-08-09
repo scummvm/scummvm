@@ -91,7 +91,6 @@ Player::~Player() {
 
 bool Player::startSound(int sound, MidiDriver *midi) {
 	byte *ptr;
-	int i;
 
 	// Not sure what the old code was doing,
 	// but we'll go ahead and do a similar check.
@@ -111,7 +110,7 @@ bool Player::startSound(int sound, MidiDriver *midi) {
 
 	loadStartParameters(sound);
 
-	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_parameterFaders); ++i)
 		_parameterFaders[i].init();
 	hook_clear();
 
@@ -130,8 +129,7 @@ int Player::getMusicTimer() const {
 }
 
 bool Player::isFadingOut() const {
-	int i;
-	for (i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_parameterFaders); ++i) {
 		if (_parameterFaders[i].param == ParameterFader::pfVolume &&
 		        _parameterFaders[i].end == 0) {
 			return true;

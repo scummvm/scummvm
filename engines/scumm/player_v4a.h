@@ -70,7 +70,7 @@ private:
 	int8 _initState; // < 0: failed, 0: uninitialized, > 0: initialized
 
 	int getSfxChan(int id) const {
-		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i)
+		for (size_t i = 0; i < ARRAYSIZE(_sfxSlots); ++i)
 			if (_sfxSlots[i].id == id)
 				return i;
 		return -1;
@@ -82,7 +82,7 @@ private:
 	}
 
 	void clearSfxSlots() {
-		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i){
+		for (size_t i = 0; i < ARRAYSIZE(_sfxSlots); ++i){
 			_sfxSlots[i].id = 0;
 //			_sfxSlots[i].type = 0;
 		}

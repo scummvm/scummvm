@@ -475,7 +475,7 @@ bool CineEngine::loadSaveDirectory() {
 	delete fHandle;
 
 	// Make sure all savegames' descriptions end with a trailing zero.
-	for (int i = 0; i < ARRAYSIZE(currentSaveName); i++)
+	for (size_t i = 0; i < ARRAYSIZE(currentSaveName); i++)
 		currentSaveName[i][sizeof(CommandeType) - 1] = 0;
 
 	return true;

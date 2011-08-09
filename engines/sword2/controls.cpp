@@ -989,7 +989,7 @@ void OptionsDialog::paint() {
 		TEXT_REVERSE_STEREO
 	};
 
-	for (int i = 0; i < ARRAYSIZE(alignTextIds); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(alignTextIds); i++) {
 		width = _fr->getTextWidth(alignTextIds[i]);
 		if (width > maxWidth)
 			maxWidth = width;

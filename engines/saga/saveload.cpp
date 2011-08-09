@@ -226,7 +226,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 #ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		out->writeUint32LE(_globalFlags);
-		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
+		for (size_t i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			out->writeSint16LE(_ethicsPoints[i]);
 	}
 #endif
@@ -333,7 +333,7 @@ void SagaEngine::load(const char *fileName) {
 #ifdef ENABLE_IHNM
 	if (getGameId() == GID_IHNM) {
 		_globalFlags = in->readUint32LE();
-		for (int i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
+		for (size_t i = 0; i < ARRAYSIZE(_ethicsPoints); i++)
 			_ethicsPoints[i] = in->readSint16LE();
 	}
 #endif

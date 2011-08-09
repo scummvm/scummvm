@@ -263,8 +263,6 @@ static int feedback2;		/* connect for SLOT 2 */
 #define SC_SL(db) (int)(db * ((3 / EG_STEP) * (1 << ENV_BITS))) + EG_DST
 
 void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
-	int i;
-
 	ENV_BITS = ENV_BITS_PARAM;
 	EG_ENT = EG_ENT_PARAM;
 	EG_OFF = ((2 * EG_ENT)<<ENV_BITS);  /* OFF          */
@@ -273,10 +271,10 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 	EG_AED = EG_DST;
 	//EG_STEP = (96.0/EG_ENT);
 
-	for (i = 0; i < ARRAYSIZE(KSL_TABLE_SEED); i++)
+	for (size_t i = 0; i < ARRAYSIZE(KSL_TABLE_SEED); i++)
 		KSL_TABLE[i] = SC_KSL(KSL_TABLE_SEED[i]);
 
-	for (i = 0; i < ARRAYSIZE(SL_TABLE_SEED); i++)
+	for (size_t i = 0; i < ARRAYSIZE(SL_TABLE_SEED); i++)
 		SL_TABLE[i] = SC_SL(SL_TABLE_SEED[i]);
 }
 

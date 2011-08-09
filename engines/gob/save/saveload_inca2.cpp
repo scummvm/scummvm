@@ -402,7 +402,7 @@ SaveLoad_Inca2::~SaveLoad_Inca2() {
 const SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName) const {
 	fileName = stripPath(fileName);
 
-	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
@@ -412,7 +412,7 @@ const SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName
 SaveLoad_Inca2::SaveFile *SaveLoad_Inca2::getSaveFile(const char *fileName) {
 	fileName = stripPath(fileName);
 
-	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 

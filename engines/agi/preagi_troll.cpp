@@ -741,7 +741,7 @@ void Troll::init() {
 	byte *ptr = _gameData;
 	int diff;
 
-	for (int i = 0; i < ARRAYSIZE(gaps) - 1; i++) {
+	for (size_t i = 0; i < ARRAYSIZE(gaps) - 1; i++) {
 		diff = gaps[i + 1] - gaps[i];
 
 		if (flip) {

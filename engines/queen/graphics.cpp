@@ -388,7 +388,7 @@ void Graphics::sortBobs() {
 	_sortedBobsCount = 0;
 
 	// animate/move the bobs
-	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		BobSlot *pbs = &_bobs[i];
 		if (pbs->active) {
 			_sortedBobs[_sortedBobsCount] = pbs;
@@ -444,13 +444,13 @@ void Graphics::drawBobs() {
 }
 
 void Graphics::clearBobs() {
-	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].clear(&_defaultBox);
 	}
 }
 
 void Graphics::stopBobs() {
-	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_bobs); ++i) {
 		_bobs[i].moving = false;
 	}
 }

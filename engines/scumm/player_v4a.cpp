@@ -121,8 +121,8 @@ void Player_V4A::startSound(int nr) {
 	const byte *ptr = _vm->getResourceAddress(rtSound, nr);
 	assert(ptr);
 
-	const int val = ptr[9];
-	if (val < 0 || val >= ARRAYSIZE(monkeyCommands)) {
+	const byte val = ptr[9];
+	if (val >= ARRAYSIZE(monkeyCommands)) {
 		warning("player_v4a: illegal Songnumber %i", val);
 		return;
 	}
@@ -144,7 +144,7 @@ void Player_V4A::startSound(int nr) {
 			_tfmxSfx.doSong(0x18);
 
 		const int chan = _tfmxSfx.doSfx((uint16)index);
-		if (chan >= 0 && chan < ARRAYSIZE(_sfxSlots))
+		if (chan >= 0 && (size_t)chan < ARRAYSIZE(_sfxSlots))
 			setSfxSlot(chan, nr, type);
 		else
 			warning("player_v4a: custom %i is not of required type", index);

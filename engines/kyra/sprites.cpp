@@ -498,7 +498,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 }
 
 void Sprites::freeSceneShapes() {
-	for (int i = 0; i < ARRAYSIZE(_sceneShapes); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_sceneShapes); i++) {
 		delete[] _sceneShapes[i];
 		_sceneShapes[i] = 0;
 	}
@@ -506,7 +506,8 @@ void Sprites::freeSceneShapes() {
 
 void Sprites::loadSceneShapes() {
 	uint8 *data = _spriteDefStart;
-	int spriteNum, x, y, width, height;
+	int x, y, width, height;
+	uint spriteNum;
 
 	freeSceneShapes();
 	memset( _sceneShapes, 0, sizeof(_sceneShapes));
@@ -557,7 +558,7 @@ void Sprites::refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, ui
 
 int Sprites::getDrawLayer(int y) {
 	uint8 returnValue = 0;
-	for (int i = 0; i < ARRAYSIZE(_drawLayerTable); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_drawLayerTable); ++i) {
 		uint8 temp = _drawLayerTable[i];
 		if (temp) {
 			if (temp <= y)

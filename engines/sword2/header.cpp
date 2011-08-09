@@ -319,18 +319,16 @@ void ObjectWalkdata::read(byte *addr) {
 	usingSlowInFrames = readS.readUint32LE();
 	usingSlowOutFrames = readS.readUint32LE();
 
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
+	for (size_t i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
 		nSlowInFrames[i] = readS.readUint32LE();
 
-	for (i = 0; i < ARRAYSIZE(leadingLeg); i++)
+	for (size_t i = 0; i < ARRAYSIZE(leadingLeg); i++)
 		leadingLeg[i] = readS.readUint32LE();
 
-	for (i = 0; i < ARRAYSIZE(dx); i++)
+	for (size_t i = 0; i < ARRAYSIZE(dx); i++)
 		dx[i] = readS.readUint32LE();
 
-	for (i = 0; i < ARRAYSIZE(dy); i++)
+	for (size_t i = 0; i < ARRAYSIZE(dy); i++)
 		dy[i] = readS.readUint32LE();
 }
 
@@ -343,18 +341,16 @@ void ObjectWalkdata::write(byte *addr) {
 	writeS.writeUint32LE(usingSlowInFrames);
 	writeS.writeUint32LE(usingSlowOutFrames);
 
-	int i;
-
-	for (i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
+	for (size_t i = 0; i < ARRAYSIZE(nSlowInFrames); i++)
 		writeS.writeUint32LE(nSlowInFrames[i]);
 
-	for (i = 0; i < ARRAYSIZE(leadingLeg); i++)
+	for (size_t i = 0; i < ARRAYSIZE(leadingLeg); i++)
 		writeS.writeUint32LE(leadingLeg[i]);
 
-	for (i = 0; i < ARRAYSIZE(dx); i++)
+	for (size_t i = 0; i < ARRAYSIZE(dx); i++)
 		writeS.writeUint32LE(dx[i]);
 
-	for (i = 0; i < ARRAYSIZE(dy); i++)
+	for (size_t i = 0; i < ARRAYSIZE(dy); i++)
 		writeS.writeUint32LE(dy[i]);
 }
 

@@ -191,7 +191,7 @@ void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vo
 		3, 4, 5
 	};
 
-	assert(_mainCharacter.facing * 3 + chatType < ARRAYSIZE(talkScriptTable));
+	assert(size_t(_mainCharacter.facing * 3 + chatType) < ARRAYSIZE(talkScriptTable));
 	int script = talkScriptTable[_mainCharacter.facing * 3 + chatType];
 
 	static const char *chatScriptFilenames[] = {

@@ -134,7 +134,7 @@ byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 	size = 48; // Arbitrary; we should find our tag within the first 48 bytes of the resource
 	pos = 0;
 	while (pos < size) {
-		for (int i = 0; i < ARRAYSIZE(id); ++i) {
+		for (size_t i = 0; i < ARRAYSIZE(id); ++i) {
 			if ((ct & (1 << i)) && (READ_BE_UINT32(ptr + pos) == id[i]))
 				return ptr + pos;
 		}
@@ -275,7 +275,7 @@ void IMuseInternal::init_players() {
 
 void IMuseInternal::init_parts() {
 	Part *part;
-	int i;
+	size_t i;
 
 	for (i = 0, part = _parts; i != ARRAYSIZE(_parts); i++, part++) {
 		part->init();
@@ -368,29 +368,27 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 		MKEND()
 	};
 
-	int i;
-
 	ser->saveLoadEntries(this, mainEntries);
 	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
 	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries);
 
 	// The players
-	for (i = 0; i < ARRAYSIZE(_players); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_players); ++i)
 		_players[i].saveLoadWithSerializer(ser);
 
 	// The parts
-	for (i = 0; i < ARRAYSIZE(_parts); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_parts); ++i)
 		_parts[i].saveLoadWithSerializer(ser);
 
 	{
 		// Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
 		if (ser->getVersion() >= VER(11)) {
-			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
+			for (size_t i = ARRAYSIZE(_parts); i; --i, ++part) {
 				part->_instrument.saveOrLoad(ser);
 			}
 		} else {
-			for (i = ARRAYSIZE(_parts); i; --i, ++part)
+			for (size_t i = ARRAYSIZE(_parts); i; --i, ++part)
 				part->_instrument.clear();
 		}
 	}
@@ -398,7 +396,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	// VolumeFader has been replaced with the more generic ParameterFader.
 	// FIXME: replace this loop by something like
 	// if (loading && version <= 16)  ser->skip(XXX bytes);
-	for (i = 0; i < 8; ++i)
+	for (size_t i = 0; i < 8; ++i)
 		ser->saveLoadEntries(0, volumeFaderEntries);
 
 	if (ser->isLoading()) {
@@ -686,7 +684,6 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 	if (numargs < 1)
 		return -1;
 
-	int i;
 	byte cmd = a[0] & 0xFF;
 	byte param = a[0] >> 8;
 	Player *player = NULL;
@@ -697,7 +694,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 	{
 		Common::String string = "doCommand - ";
 		string += Common::String::format("%d (%d/%d)", a[0], (int)param, (int)cmd);
-		for (i = 1; i < numargs; ++i)
+		for (int i = 1; i < numargs; ++i)
 			string += Common::String::format(", %d", a[i]);
 		debugC(DEBUG_IMUSE, "%s", string.c_str());
 	}
@@ -764,7 +761,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 				if (a[4]) {
 					int b[16];
 					memset(b, 0, sizeof(b));
-					for (i = 0; i < numargs; ++i)
+					for (int i = 0; i < numargs; ++i)
 						b[i] = a[i];
 					return ImSetTrigger(b[1], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11]);
 				} else {
@@ -781,7 +778,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 				// associated with a particular player ID and
 				// trigger ID.
 				a[0] = 0;
-				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
+				for (size_t i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
 					        (a[3] == -1 || _snm_triggers[i].id == a[3])) {
 						++a[0];
@@ -993,7 +990,7 @@ Part *IMuseInternal::allocate_part(byte pri, MidiDriver *midi) {
 
 int IMuseInternal::get_queue_sound_status(int sound) const {
 	const uint16 *a;
-	int i, j;
+	size_t i, j;
 
 	j = _queue_pos;
 	i = _queue_end;
@@ -1238,8 +1235,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	if (!sound)
 		return 0;
 	int count = 0;
-	int i;
-	for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 		if (_snm_triggers[i].sound == sound) {
 			_snm_triggers[i].sound = _snm_triggers[i].id = 0;
 			doCommand_internal(8, _snm_triggers[i].command);

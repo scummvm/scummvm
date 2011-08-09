@@ -369,7 +369,7 @@ bool KyraEngine_HoF::isDropable(int x, int y) {
 
 int KyraEngine_HoF::getItemCommandStringDrop(Item item) {
 	assert(item >= 0 && item < _itemStringMapSize);
-	int stringId = _itemStringMap[item];
+	byte stringId = _itemStringMap[item];
 
 	static const int dropStringIds[] = {
 		0x2D, 0x103, 0x003, 0x106
@@ -381,7 +381,7 @@ int KyraEngine_HoF::getItemCommandStringDrop(Item item) {
 
 int KyraEngine_HoF::getItemCommandStringPickUp(Item item) {
 	assert(item >= 0 && item < _itemStringMapSize);
-	int stringId = _itemStringMap[item];
+	byte stringId = _itemStringMap[item];
 
 	static const int pickUpStringIds[] = {
 		0x02B, 0x102, 0x007, 0x105
@@ -393,7 +393,7 @@ int KyraEngine_HoF::getItemCommandStringPickUp(Item item) {
 
 int KyraEngine_HoF::getItemCommandStringInv(Item item) {
 	assert(item >= 0 && item < _itemStringMapSize);
-	int stringId = _itemStringMap[item];
+	byte stringId = _itemStringMap[item];
 
 	static const int pickUpStringIds[] = {
 		0x02C, 0x104, 0x008, 0x107

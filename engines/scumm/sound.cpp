@@ -107,7 +107,7 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 }
 
 void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
-	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
+	assert((size_t)_soundQue2Pos < ARRAYSIZE(_soundQue2));
 	_soundQue2[_soundQue2Pos].sound = sound;
 	_soundQue2[_soundQue2Pos].offset = heOffset;
 	_soundQue2[_soundQue2Pos].channel = heChannel;
@@ -763,8 +763,6 @@ bool Sound::isSoundInQueue(int sound) const {
 }
 
 void Sound::stopSound(int sound) {
-	int i;
-
 	if (sound != 0 && sound == _currentCDSound) {
 		_currentCDSound = 0;
 		stopCD();
@@ -777,7 +775,7 @@ void Sound::stopSound(int sound) {
 	if (_vm->_musicEngine)
 		_vm->_musicEngine->stopSound(sound);
 
-	for (i = 0; i < ARRAYSIZE(_soundQue2); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_soundQue2); i++) {
 		if (_soundQue2[i].sound == sound) {
 			_soundQue2[i].sound = 0;
 			_soundQue2[i].offset = 0;

@@ -416,7 +416,7 @@ static byte getAnimTransparentColor(const char *animName) {
 
 	removeExtention(name, animName);
 
-	for (int i = 0; i < ARRAYSIZE(transparencyData); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(transparencyData); i++) {
 		if (!strcmp(name, transparencyData[i].name)) {
 			return transparencyData[i].color;
 		}

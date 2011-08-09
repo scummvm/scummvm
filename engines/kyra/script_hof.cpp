@@ -978,7 +978,7 @@ int KyraEngine_HoF::o2_objectChat(EMCState *script) {
 
 int KyraEngine_HoF::o2_changeChapter(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_changeChapter(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	const int chapter = stackPos(0);
+	const uint chapter = stackPos(0);
 	const int scene = stackPos(1);
 
 	resetItemList();

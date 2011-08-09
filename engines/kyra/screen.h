@@ -166,7 +166,8 @@ private:
 		} graphics;
 	};
 
-	Character _chars[255];
+	static const size_t _characterCount = 255;
+	Character _chars[_characterCount];
 };
 
 /**

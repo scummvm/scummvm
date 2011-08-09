@@ -515,7 +515,7 @@ SaveLoad_v4::~SaveLoad_v4() {
 const SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) const {
 	fileName = stripPath(fileName);
 
-	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 
@@ -525,7 +525,7 @@ const SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) cons
 SaveLoad_v4::SaveFile *SaveLoad_v4::getSaveFile(const char *fileName) {
 	fileName = stripPath(fileName);
 
-	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_saveFiles); i++)
 		if (!scumm_stricmp(fileName, _saveFiles[i].sourceName))
 			return &_saveFiles[i];
 

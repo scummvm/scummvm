@@ -258,11 +258,9 @@ void MidiParser::allNotesOff() {
 	if (!_driver)
 		return;
 
-	int i, j;
-
 	// Turn off all active notes
-	for (i = 0; i < 128; ++i) {
-		for (j = 0; j < 16; ++j) {
+	for (int i = 0; i < 128; ++i) {
+		for (int j = 0; j < 16; ++j) {
 			if (_active_notes[i] & (1 << j)) {
 				sendToDriver(0x80 | j, i, 0);
 			}
@@ -270,7 +268,7 @@ void MidiParser::allNotesOff() {
 	}
 
 	// Turn off all hanging notes
-	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
 		if (_hanging_notes[i].time_left) {
 			sendToDriver(0x80 | _hanging_notes[i].channel, _hanging_notes[i].note, 0);
 			_hanging_notes[i].time_left = 0;
@@ -281,7 +279,7 @@ void MidiParser::allNotesOff() {
 	// To be sure, send an "All Note Off" event (but not all MIDI devices
 	// support this...).
 
-	for (i = 0; i < 16; ++i) {
+	for (int i = 0; i < 16; ++i) {
 		sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
 		if (_sendSustainOffOnNotesOff)
 			sendToDriver(0xB0 | i, 0x40, 0); // Also send a sustain off event (bug #3116608)

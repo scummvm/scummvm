@@ -110,10 +110,10 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 		// Simplified XMIDI looping.
 		case 0x74: {	// XMIDI_CONTROLLER_FOR_LOOP
 				byte *pos = _position._play_pos;
-				if (_loopCount < ARRAYSIZE(_loop) - 1)
+				if (_loopCount < (int)ARRAYSIZE(_loop) - 1)
 					_loopCount++;
 				else
-					warning("XMIDI: Exceeding maximum loop count %d", ARRAYSIZE(_loop));
+					warning("XMIDI: Exceeding maximum loop count %lu", ARRAYSIZE(_loop));
 
 				_loop[_loopCount].pos = pos;
 				_loop[_loopCount].repeat = info.basic.param2;

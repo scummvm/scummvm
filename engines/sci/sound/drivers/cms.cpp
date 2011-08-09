@@ -406,7 +406,7 @@ int MidiDriver_CMS::findVoiceBasic(int channel) {
 	int oldestAge = -1;
 
 	// Try to find a voice assigned to this channel that is free (round-robin)
-	for (int i = 0; i < ARRAYSIZE(_voice); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_voice); i++) {
 		int v = (_channel[channel].lastVoiceUsed + i + 1) % ARRAYSIZE(_voice);
 
 		if (_voice[v].note == 0xFF) {

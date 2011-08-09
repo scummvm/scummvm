@@ -270,7 +270,7 @@ int ScummEngine::getScale(int box, int x, int y) {
 
 
 int ScummEngine::getScaleFromSlot(int slot, int x, int y) {
-	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+	assert(1 <= slot && (size_t)slot <= ARRAYSIZE(_scaleSlots));
   int scale;
 	int scaleX = 0, scaleY = 0;
 	ScaleSlot &s = _scaleSlots[slot-1];
@@ -332,7 +332,7 @@ int ScummEngine::getBoxScale(int box) {
  * resources to scale slots.
  */
 void ScummEngine::convertScaleTableToScaleSlot(int slot) {
-	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+	assert(1 <= slot && (size_t)slot <= ARRAYSIZE(_scaleSlots));
 
 	byte *resptr = getResourceAddress(rtScaleTable, slot);
 	int lowerIdx, upperIdx;
@@ -428,7 +428,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 }
 
 void ScummEngine::setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2) {
-	assert(1 <= slot && slot <= ARRAYSIZE(_scaleSlots));
+	assert(1 <= slot && (size_t)slot <= ARRAYSIZE(_scaleSlots));
 	ScaleSlot &s = _scaleSlots[slot-1];
 	s.x2 = x2;
 	s.y2 = y2;

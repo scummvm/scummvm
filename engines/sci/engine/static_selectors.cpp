@@ -252,7 +252,7 @@ void Kernel::findSpecificSelectors(Common::StringArray &selectorNames) {
 
 	// Find selectors from specific classes
 
-	for (int i = 0; i < ARRAYSIZE(classReferences); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(classReferences); i++) {
 		if (!_resMan->testResource(ResourceId(kResourceTypeScript, classReferences[i].script)))
 			continue;
 

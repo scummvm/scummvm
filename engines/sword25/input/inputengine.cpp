@@ -178,7 +178,7 @@ void InputEngine::testForLeftDoubleClick() {
 }
 
 void InputEngine::alterKeyboardState(int keycode, byte newState) {
-	assert(keycode < ARRAYSIZE(_keyboardState[_currentState]));
+	assert((size_t)keycode < ARRAYSIZE(_keyboardState[_currentState]));
 	_keyboardState[_currentState][keycode] = newState;
 }
 

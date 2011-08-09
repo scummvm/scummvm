@@ -144,24 +144,24 @@ int16 MadeEngine::getTicks() {
 }
 
 int16 MadeEngine::getTimer(int16 timerNum) {
-	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
+	if (timerNum > 0 && (size_t)timerNum <= ARRAYSIZE(_timers) && _timers[timerNum - 1] != -1)
 		return (getTicks() - _timers[timerNum - 1]);
 	else
 		return 32000;
 }
 
 void MadeEngine::setTimer(int16 timerNum, int16 value) {
-	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+	if (timerNum > 0 && (size_t)timerNum <= ARRAYSIZE(_timers))
 		_timers[timerNum - 1] = value;
 }
 
 void MadeEngine::resetTimer(int16 timerNum) {
-	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+	if (timerNum > 0 && (size_t)timerNum <= ARRAYSIZE(_timers))
 		_timers[timerNum - 1] = getTicks();
 }
 
 int16 MadeEngine::allocTimer() {
-	for (int i = 0; i < ARRAYSIZE(_timers); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_timers); i++) {
 		if (_timers[i] == -1) {
 			_timers[i] = getTicks();
 			return i + 1;
@@ -171,12 +171,12 @@ int16 MadeEngine::allocTimer() {
 }
 
 void MadeEngine::freeTimer(int16 timerNum) {
-	if (timerNum > 0 && timerNum <= ARRAYSIZE(_timers))
+	if (timerNum > 0 && (size_t)timerNum <= ARRAYSIZE(_timers))
 		_timers[timerNum - 1] = -1;
 }
 
 void MadeEngine::resetAllTimers() {
-	for (int i = 0; i < ARRAYSIZE(_timers); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_timers); i++)
 		_timers[i] = -1;
 }
 

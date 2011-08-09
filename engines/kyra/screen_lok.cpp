@@ -37,12 +37,12 @@ Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 }
 
 Screen_LoK::~Screen_LoK() {
-	for (int i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_saveLoadPage); ++i) {
 		delete[] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
 		delete[] _saveLoadPageOvl[i];
 		_saveLoadPageOvl[i] = 0;
 	}

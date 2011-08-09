@@ -152,7 +152,7 @@ void SoundHE::stopSound(int sound) {
 
 	Sound::stopSound(sound);
 
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_heChannel); i++) {
 		if (_heChannel[i].sound == sound) {
 			_heChannel[i].sound = 0;
 			_heChannel[i].priority = 0;
@@ -201,7 +201,7 @@ void SoundHE::stopSoundChannel(int chan) {
 	_heChannel[chan].codeOffs = 0;
 	memset(_heChannel[chan].soundVars, 0, sizeof(_heChannel[chan].soundVars));
 
-	for (int i = 0; i < ARRAYSIZE(_soundQue2); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_soundQue2); i++) {
 		if (_soundQue2[i].channel == chan) {
 			_soundQue2[i].sound = 0;
 			_soundQue2[i].offset = 0;
@@ -212,7 +212,7 @@ void SoundHE::stopSoundChannel(int chan) {
 }
 
 int SoundHE::findFreeSoundChannel() {
-	int chan, min;
+	int min;
 
 	min = _vm->VAR(_vm->VAR_RESERVED_SOUND_CHANNELS);
 	if (min == 0) {
@@ -221,7 +221,7 @@ int SoundHE::findFreeSoundChannel() {
 	}
 
 	if (min < 8) {
-		for (chan = min; chan < ARRAYSIZE(_heChannel); chan++) {
+		for (size_t chan = min; chan < ARRAYSIZE(_heChannel); chan++) {
 			if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) == 0)
 				return chan;
 		}
@@ -234,7 +234,7 @@ int SoundHE::findFreeSoundChannel() {
 
 int SoundHE::isSoundCodeUsed(int sound) {
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (size_t i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -248,7 +248,7 @@ int SoundHE::isSoundCodeUsed(int sound) {
 
 int SoundHE::getSoundPos(int sound) {
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (size_t i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -269,7 +269,7 @@ int SoundHE::getSoundVar(int sound, int var) {
 	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (size_t i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -286,7 +286,7 @@ void SoundHE::setSoundVar(int sound, int var, int val) {
 	assertRange(0, var, 25, "sound variable");
 
 	int chan = -1;
-	for (int i = 0; i < ARRAYSIZE(_heChannel); i ++) {
+	for (size_t i = 0; i < ARRAYSIZE(_heChannel); i ++) {
 		if (_heChannel[i].sound == sound)
 			chan = i;
 	}
@@ -349,9 +349,9 @@ bool SoundHE::getHEMusicDetails(int id, int &musicOffs, int &musicSize) {
 
 void SoundHE::processSoundCode() {
 	byte *codePtr;
-	int chan, tmr, size, time;
+	int tmr, size, time;
 
-	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
+	for (size_t chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
 		if (_heChannel[chan].sound == 0) {
 			continue;
 		}
@@ -382,7 +382,7 @@ void SoundHE::processSoundCode() {
 				break;
 			}
 
-			debug(5, "Channel %d Timer %d Time %d", chan, tmr, time);
+			debug(5, "Channel %lu Timer %d Time %d", chan, tmr, time);
 			if (time >= tmr)
 				break;
 
@@ -393,7 +393,7 @@ void SoundHE::processSoundCode() {
 		}
 	}
 
-	for (chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
+	for (size_t chan = 0; chan < ARRAYSIZE(_heChannel); chan++) {
 		if (_heChannel[chan].sound == 0)
 			continue;
 
@@ -824,9 +824,8 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 	snd2Ptr = getResourceAddress(rtSound, snd2id);
 	assert(snd2Ptr);
 
-	int i;
 	int chan = -1;
-	for (i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(((SoundHE *)_sound)->_heChannel); i++) {
 		if (((SoundHE *)_sound)->_heChannel[i].sound == snd1id)
 			chan =  i;
 	}

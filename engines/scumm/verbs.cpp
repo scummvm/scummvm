@@ -298,7 +298,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	VirtScreen *vs = &_virtscr[kVerbVirtScreen];
 	Common::Rect rect;
 	byte *ptr, *dst;
-	int i, x, y, new_box = -1;
+	int x, y, new_box = -1;
 
 	// Don't do anything unless the inventory is active
 	if (!(_userState & 64)) {
@@ -307,7 +307,7 @@ void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
 	}
 
 	if (_cursor.state > 0) {
-		for (i = 0; i < ARRAYSIZE(_mouseOverBoxesV2); i++) {
+		for (size_t i = 0; i < ARRAYSIZE(_mouseOverBoxesV2); i++) {
 			if (_mouseOverBoxesV2[i].rect.contains(pos.x, pos.y - vs->topline)) {
 				new_box = i;
 				break;

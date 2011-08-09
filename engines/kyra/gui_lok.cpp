@@ -698,7 +698,7 @@ void GUI_LoK::redrawTextfield() {
 }
 
 void GUI_LoK::updateSavegameString() {
-	int length;
+	size_t length;
 
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);

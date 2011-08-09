@@ -707,7 +707,7 @@ void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeR
 	x *= 2;
 	y = _upscaledMapping[y];
 
-	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
 		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
 				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
 			y = (y * s_upscaledAdjustTable[i].numerator) / s_upscaledAdjustTable[i].denominator;
@@ -717,7 +717,7 @@ void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeR
 }
 
 void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewNativeRes) {
-	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
 		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
 				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
 			y = (y * s_upscaledAdjustTable[i].denominator) / s_upscaledAdjustTable[i].numerator;

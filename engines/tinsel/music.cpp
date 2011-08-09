@@ -110,7 +110,7 @@ static const int enhancedAudioSCNVersion[] = {
 };
 
 int GetTrackNumber(SCNHANDLE hMidi) {
-	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
+	for (size_t i = 0; i < ARRAYSIZE(midiOffsets); i++)
 		if (midiOffsets[i] == hMidi)
 			return i;
 
@@ -118,7 +118,7 @@ int GetTrackNumber(SCNHANDLE hMidi) {
 }
 
 SCNHANDLE GetTrackOffset(int trackNumber) {
-	assert(trackNumber < ARRAYSIZE(midiOffsets));
+	assert((size_t)trackNumber < ARRAYSIZE(midiOffsets));
 	return midiOffsets[trackNumber];
 }
 
@@ -352,7 +352,7 @@ void OpenMidiFiles() {
 	uint32 songLength = 0;
 
 	// Init
-	for (int i = 0; i < ARRAYSIZE(midiOffsets); i++)
+	for (size_t i = 0; i < ARRAYSIZE(midiOffsets); i++)
 		midiOffsets[i] = 0;
 
 	while (!midiStream.eos() && !midiStream.err()) {

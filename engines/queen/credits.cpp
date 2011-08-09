@@ -115,7 +115,7 @@ void Credits::update() {
 				break;
 			}
 		} else {
-			assert(_count < ARRAYSIZE(_list));
+			assert((size_t)_count < ARRAYSIZE(_list));
 			_list[_count].text = line;
 			_list[_count].color = _color;
 			_list[_count].fontSize = _fontSize;

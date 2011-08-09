@@ -464,10 +464,9 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	}
 
 	// TODO: prioritize matching alpha masks
-	int i;
 
 	// Push some RGB formats
-	for (i = 0; i < ARRAYSIZE(RGBList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(RGBList); i++) {
 		if (_hwscreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
 		if (RGBList[i] != format)
@@ -475,7 +474,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	}
 
 	// Push some BGR formats
-	for (i = 0; i < ARRAYSIZE(BGRList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(BGRList); i++) {
 		if (_hwscreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
 		if (BGRList[i] != format)
@@ -611,7 +610,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	_scalerProc = newScalerProc;
 
 	if (_videoMode.mode != GFX_NORMAL) {
-		for (int i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
+		for (size_t i = 0; i < ARRAYSIZE(s_gfxModeSwitchTable); i++) {
 			if (s_gfxModeSwitchTable[i][1] == _videoMode.mode || s_gfxModeSwitchTable[i][2] == _videoMode.mode) {
 				_scalerType = i;
 				break;
@@ -2173,7 +2172,7 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 	const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP9);
 	if (isNormalNumber || isKeypadNumber) {
 		_scalerType = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
-		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
+		if ((size_t)_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 			return false;
 
 		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
@@ -2226,7 +2225,7 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
 
 		if (isNormalNumber || isKeypadNumber) {
-			int keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
+			size_t keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
 			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
 				return false;
 		}

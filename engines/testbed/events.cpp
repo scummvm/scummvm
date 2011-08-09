@@ -99,7 +99,7 @@ char EventTests::keystrokeToChar() {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					return 0;
 				}
-				for (int i = 0; i < ARRAYSIZE(keyCodeLUT); i++) {
+				for (size_t i = 0; i < ARRAYSIZE(keyCodeLUT); i++) {
 					if (event.kbd.keycode == keyCodeLUT[i].code) {
 						return keyCodeLUT[i].value;
 					}

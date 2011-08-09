@@ -900,7 +900,7 @@ void LoLEngine::startupNew() {
 
 	static const int selectIds[] = { -9, -1, -8, -5 };
 	assert(_charSelection >= 0);
-	assert(_charSelection < ARRAYSIZE(selectIds));
+	assert((size_t)_charSelection < ARRAYSIZE(selectIds));
 	addCharacter(selectIds[_charSelection]);
 
 	gui_enableDefaultPlayfieldButtons();

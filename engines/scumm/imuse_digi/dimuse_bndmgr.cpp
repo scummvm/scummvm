@@ -30,7 +30,7 @@
 namespace Scumm {
 
 BundleDirCache::BundleDirCache() {
-	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
+	for (size_t fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
 		_budleDirCache[fileId].bundleTable = NULL;
 		_budleDirCache[fileId].fileName[0] = 0;
 		_budleDirCache[fileId].numFiles = 0;
@@ -40,7 +40,7 @@ BundleDirCache::BundleDirCache() {
 }
 
 BundleDirCache::~BundleDirCache() {
-	for (int fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
+	for (size_t fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
 		free(_budleDirCache[fileId].bundleTable);
 		free(_budleDirCache[fileId].indexTable);
 	}
@@ -66,7 +66,7 @@ int BundleDirCache::matchFile(const char *filename) {
 	int32 tag, offset;
 	bool found = false;
 	int freeSlot = -1;
-	int fileId;
+	size_t fileId;
 
 	for (fileId = 0; fileId < ARRAYSIZE(_budleDirCache); fileId++) {
 		if ((_budleDirCache[fileId].bundleTable == NULL) && (freeSlot == -1)) {

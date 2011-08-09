@@ -62,14 +62,14 @@ VQAMovie::~VQAMovie() {
 }
 
 void VQAMovie::initBuffers() {
-	for (int i = 0; i < ARRAYSIZE(_buffers); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_buffers); i++) {
 		_buffers[i].data = 0;
 		_buffers[i].size = 0;
 	}
 }
 
-void *VQAMovie::allocBuffer(int num, uint32 size) {
-	assert(num >= 0 && num < ARRAYSIZE(_buffers));
+void *VQAMovie::allocBuffer(uint num, uint32 size) {
+	assert(num < ARRAYSIZE(_buffers));
 	assert(size > 0);
 
 	if (size > _buffers[num].size) {
@@ -88,7 +88,7 @@ void *VQAMovie::allocBuffer(int num, uint32 size) {
 }
 
 void VQAMovie::freeBuffers() {
-	for (int i = 0; i < ARRAYSIZE(_buffers); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_buffers); i++) {
 		delete[] _buffers[i].data;
 		_buffers[i].data = NULL;
 		_buffers[i].size = 0;
