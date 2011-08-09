@@ -796,7 +796,7 @@ void AdLibPart::sysEx_customInstrument(uint32 type, const byte *instr) {
 // MidiChannel method implementations for percussion
 
 AdLibPercussionChannel::~AdLibPercussionChannel() {
-	for (int i = 0; i < ARRAYSIZE(_customInstruments); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_customInstruments); ++i) {
 		delete _customInstruments[i];
 	}
 }
@@ -905,7 +905,7 @@ int MidiDriver_ADLIB::open() {
 
 	MidiDriver_Emulated::open();
 
-	int i;
+	size_t i;
 	AdLibVoice *voice;
 
 	for (i = 0, voice = _voices; i != ARRAYSIZE(_voices); i++, voice++) {
@@ -1061,7 +1061,6 @@ void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
 
 void MidiDriver_ADLIB::onTimer() {
 	AdLibVoice *voice;
-	int i;
 
 	_adlib_timer_counter += _timer_p;
 	while (_adlib_timer_counter >= _timer_q) {
@@ -1070,7 +1069,7 @@ void MidiDriver_ADLIB::onTimer() {
 		tick++;
 #endif
 		voice = _voices;
-		for (i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
+		for (size_t i = 0; i != ARRAYSIZE(_voices); i++, voice++) {
 			if (!voice->_part)
 				continue;
 			if (voice->_duration && (voice->_duration -= 0x11) <= 0) {

@@ -240,7 +240,7 @@ Music::~Music() {
 void Music::mixer(int16 *buf, uint32 len) {
 	Common::StackLock lock(_mutex);
 	memset(buf, 0, 2 * len * sizeof(int16));
-	for (int i = 0; i < ARRAYSIZE(_handles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming() && _converter[i])
 			_converter[i]->flow(_handles[i], buf, len, _volumeL, _volumeR);
 }
@@ -322,7 +322,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 
 void Music::fadeDown() {
 	Common::StackLock lock(_mutex);
-	for (int i = 0; i < ARRAYSIZE(_handles); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_handles); i++)
 		if (_handles[i].streaming())
 			_handles[i].fadeDown();
 }

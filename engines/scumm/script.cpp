@@ -707,12 +707,12 @@ void ScummEngine::writeVar(uint var, int value) {
 }
 
 void ScummEngine::push(int a) {
-	assert(_scummStackPos >= 0 && _scummStackPos < ARRAYSIZE(_vmStack));
+	assert(_scummStackPos >= 0 && (size_t)_scummStackPos < ARRAYSIZE(_vmStack));
 	_vmStack[_scummStackPos++] = a;
 }
 
 int ScummEngine::pop() {
-	assert(_scummStackPos >= 1 && _scummStackPos <= ARRAYSIZE(_vmStack));
+	assert(_scummStackPos >= 1 && (size_t)_scummStackPos <= ARRAYSIZE(_vmStack));
 	return _vmStack[--_scummStackPos];
 }
 

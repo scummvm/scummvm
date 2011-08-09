@@ -484,7 +484,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 	case kActionNone:
 		params->param5 = getSoundQueue()->getEntryTime(kEntityKronos)* 2;
 
-		if (params->param6 < ARRAYSIZE(concertData) && params->param5 > concertData[params->param6].time) {
+		if (params->param6 < ARRAYSIZE_UNSAFE(concertData) && params->param5 > concertData[params->param6].time) {
 
 			getEntities()->drawSequenceLeft(kEntityKronos, concertData[params->param6].sequence);
 

@@ -394,22 +394,22 @@ bool AUDStream::seek(const Audio::Timestamp &where) {
 #pragma mark -
 
 SoundDigital::SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
-	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_sounds); ++i)
 		_sounds[i].stream = 0;
 }
 
 SoundDigital::~SoundDigital() {
-	for (int i = 0; i < ARRAYSIZE(_sounds); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_sounds); ++i)
 		stopSound(i);
 }
 
 int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume, bool loop, int channel) {
 	Sound *use = 0;
-	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
+	if (channel != -1 && (size_t)channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
 		use = &_sounds[channel];
 	} else {
-		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
+		for (channel = 0; !use && (size_t)channel < ARRAYSIZE(_sounds); ++channel) {
 			if (!isPlaying(channel)) {
 				stopSound(channel);
 				use = &_sounds[channel];
@@ -417,7 +417,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 			}
 		}
 
-		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
+		for (channel = 0; !use && (size_t)channel < ARRAYSIZE(_sounds); ++channel) {
 			if (strcmp(_sounds[channel].filename, filename) == 0) {
 				stopSound(channel);
 				use = &_sounds[channel];
@@ -425,7 +425,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 			}
 		}
 
-		for (channel = 0; !use && channel < ARRAYSIZE(_sounds); ++channel) {
+		for (channel = 0; !use && (size_t)channel < ARRAYSIZE(_sounds); ++channel) {
 			if (_sounds[channel].priority <= priority) {
 				stopSound(channel);
 				use = &_sounds[channel];
@@ -489,7 +489,7 @@ bool SoundDigital::isPlaying(int channel) {
 	if (channel == -1)
 		return false;
 
-	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
+	assert(channel >= 0 && (size_t)channel < ARRAYSIZE(_sounds));
 
 	if (!_sounds[channel].stream)
 		return false;
@@ -501,13 +501,13 @@ void SoundDigital::stopSound(int channel) {
 	if (channel == -1)
 		return;
 
-	assert(channel >= 0 && channel < ARRAYSIZE(_sounds));
+	assert(channel >= 0 && (size_t)channel < ARRAYSIZE(_sounds));
 	_mixer->stopHandle(_sounds[channel].handle);
 	_sounds[channel].stream = 0;
 }
 
 void SoundDigital::stopAllSounds() {
-	for (int i = 0; i < ARRAYSIZE(_sounds); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_sounds); ++i) {
 		if (isPlaying(i))
 			stopSound(i);
 	}

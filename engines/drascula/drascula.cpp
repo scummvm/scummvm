@@ -319,24 +319,22 @@ void DrasculaEngine::endChapter() {
 }
 
 bool DrasculaEngine::runCurrentChapter() {
-	int n;
-
 	rightMouseButton = 0;
 
 	previousMusic = -1;
 
 	if (currentChapter != 2) {
 		int soc = 0;
-		for (n = 0; n < 6; n++) {
+		for (int n = 0; n < 6; n++) {
 			soc = soc + CHARACTER_WIDTH;
 			_frameX[n] = soc;
 		}
 	}
 
-	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++)
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++)
 		inventoryObjects[n] = 0;
 
-	for (n = 0; n < NUM_FLAGS; n++)
+	for (int n = 0; n < NUM_FLAGS; n++)
 		flags[n] = 0;
 
 	if (currentChapter == 2) {
@@ -345,7 +343,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		flags[27] = 1;
 	}
 
-	for (n = 1; n < 7; n++)
+	for (int n = 1; n < 7; n++)
 		inventoryObjects[n] = n;
 
 	if (currentChapter == 1) {

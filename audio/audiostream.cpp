@@ -67,7 +67,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 	SeekableAudioStream *stream = NULL;
 	Common::File *fileHandle = new Common::File();
 
-	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS); ++i) {
 		Common::String filename = basename + STREAM_FILEFORMATS[i].fileExtension;
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {

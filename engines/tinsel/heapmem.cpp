@@ -140,7 +140,7 @@ void MemoryDeinit() {
 	MEM_NODE *pCur;
 
 	pCur = s_fixedMnodesList;
-	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pCur) {
+	for (size_t i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pCur) {
 		free(pCur->pBaseAddr);
 		pCur->pBaseAddr = 0;
 	}
@@ -316,7 +316,7 @@ MEM_NODE *MemoryAllocFixed(long size) {
 
 	// Search for a free entry in s_fixedMnodesList
 	MEM_NODE *pNode = s_fixedMnodesList;
-	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
+	for (size_t i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
 		if (!pNode->pBaseAddr) {
 			pNode->pNext = 0;
 			pNode->pPrev = 0;

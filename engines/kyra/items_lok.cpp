@@ -45,7 +45,7 @@ int KyraEngine_LoK::findDuplicateItemShape(int shape) {
 }
 
 void KyraEngine_LoK::addToNoDropRects(int x, int y, int w, int h) {
-	for (int rect = 0; rect < ARRAYSIZE(_noDropRects); ++rect) {
+	for (size_t rect = 0; rect < ARRAYSIZE(_noDropRects); ++rect) {
 		if (_noDropRects[rect].top == -1) {
 			_noDropRects[rect].left = x;
 			_noDropRects[rect].top = y;
@@ -451,7 +451,7 @@ int KyraEngine_LoK::checkNoDropRects(int x, int y) {
 	if (_noDropRects[0].left == -1)
 		return 0;
 
-	for (int i = 0; i < ARRAYSIZE(_noDropRects); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_noDropRects); ++i) {
 		if (_noDropRects[i].left == -1)
 			break;
 

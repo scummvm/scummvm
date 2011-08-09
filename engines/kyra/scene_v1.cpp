@@ -211,7 +211,7 @@ int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
 	};
 
-	int facingEntry = 0;
+	uint facingEntry = 0;
 	int ydiff = y - toY;
 	if (ydiff < 0) {
 		++facingEntry;

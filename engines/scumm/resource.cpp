@@ -408,7 +408,6 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 }
 
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
-	int i;
 	switch (blocktype) {
 	case MKTAG('D','C','H','R'):
 	case MKTAG('D','I','R','F'):
@@ -424,7 +423,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		if (_game.heversion >= 80) {
 			for (int room; (room = _fileHandle->readUint16LE()); ) {
 				char buf[100];
-				i = 0;
+				size_t i = 0;
 				for (byte s; (s = _fileHandle->readByte()) && i < ARRAYSIZE(buf) - 1; ) {
 					buf[i++] = s;
 				}
@@ -436,7 +435,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 				char buf[10];
 				_fileHandle->read(buf, 9);
 				buf[9] = 0;
-				for (i = 0; i < 9; i++)
+				for (int i = 0; i < 9; i++)
 					buf[i] ^= 0xFF;
 				debug(5, "Room %d: '%s'", room, buf);
 			}

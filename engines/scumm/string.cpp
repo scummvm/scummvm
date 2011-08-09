@@ -124,7 +124,7 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 
 void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byte charset, bool center) {
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
-	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
+	assert((size_t)_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
 	convertMessageToString(text, bt.text, sizeof(bt.text));
 	bt.xpos = x;
@@ -231,7 +231,7 @@ void ScummEngine_v7::processSubtitleQueue() {
 
 void ScummEngine_v7::addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset) {
 	if (text[0] && strcmp((const char *)text, " ") != 0) {
-		assert(_subtitleQueuePos < ARRAYSIZE(_subtitleQueue));
+		assert((size_t)_subtitleQueuePos < ARRAYSIZE(_subtitleQueue));
 		SubtitleText *st = &_subtitleQueue[_subtitleQueuePos];
 		int i = 0;
 		while (1) {

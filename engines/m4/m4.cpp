@@ -344,7 +344,7 @@ Common::Error M4Engine::run() {
 	//_interfaceView->inventoryAdd("Money", "", 55);	// Sample item
 
 	if (getGameType() == GType_Burger) {
-		for (int i = 0; i < ARRAYSIZE(burger_inventory); i++) {
+		for (size_t i = 0; i < ARRAYSIZE(burger_inventory); i++) {
 			char* itemName = strdup(burger_inventory[i].name);
 			_inventory->registerObject(itemName, burger_inventory[i].scene,
 									   burger_inventory[i].icon);

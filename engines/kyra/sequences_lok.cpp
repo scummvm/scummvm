@@ -110,7 +110,7 @@ void KyraEngine_LoK::seq_intro() {
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
-	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i) {
 		if ((this->*introProcTable[i])() && !shouldQuit()) {
 			resetSkipFlag();
 			_screen->fadeToBlack();
@@ -828,10 +828,10 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 		assert(_flaskFull);
 		characterSays(8006, _flaskFull[0], 0, -2);
 	} else if (item == 78) {
-		assert(type >= 0 && type < ARRAYSIZE(flaskTable1));
+		assert(type >= 0 && (size_t)type < ARRAYSIZE(flaskTable1));
 		newItem = flaskTable1[type];
 	} else if (item == 79) {
-		assert(type >= 0 && type < ARRAYSIZE(flaskTable2));
+		assert(type >= 0 && (size_t)type < ARRAYSIZE(flaskTable2));
 		newItem = flaskTable2[type];
 	}
 
@@ -849,7 +849,7 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	static const uint16 voiceEntries[] = {
 		0x1F40, 0x1F41, 0x1F42, 0x1F45
 	};
-	assert(type < ARRAYSIZE(voiceEntries));
+	assert((size_t)type < ARRAYSIZE(voiceEntries));
 
 	characterSays(voiceEntries[type], _fullFlask[type], 0, -2);
 }

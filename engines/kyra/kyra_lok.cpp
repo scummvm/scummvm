@@ -103,7 +103,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 }
 
 KyraEngine_LoK::~KyraEngine_LoK() {
-	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_movieObjects); ++i) {
 		if (_movieObjects[i])
 			_movieObjects[i]->close();
 		delete _movieObjects[i];
@@ -150,10 +150,10 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 	delete[] _itemBkgBackUp[0];
 	delete[] _itemBkgBackUp[1];
 
-	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
 			delete[] _shapes[i];
-			for (int i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
+			for (size_t i2 = 0; i2 < ARRAYSIZE(_shapes); i2++) {
 				if (_shapes[i2] == _shapes[i] && i2 != i) {
 					_shapes[i2] = 0;
 				}
@@ -162,7 +162,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 		}
 	}
 
-	for (int i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_sceneAnimTable); ++i)
 		delete[] _sceneAnimTable[i];
 }
 
@@ -233,7 +233,7 @@ Common::Error KyraEngine_LoK::init() {
 	assert(_debugger);
 	memset(_shapes, 0, sizeof(_shapes));
 
-	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_movieObjects); ++i)
 		_movieObjects[i] = createWSAMovie();
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));

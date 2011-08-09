@@ -1989,7 +1989,7 @@ void DrasculaEngine::updateDoor(int doorNum) {
 	if (currentChapter != 2 && currentChapter != 4)
 		return;
 
-	for (int i = 0; i < ARRAYSIZE(doors); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(doors); i++) {
 		if (doors[i].chapter == currentChapter &&
 			objectNum[doorNum] == doors[i].doorNum) {
 			isDoor[doorNum] = flags[doors[i].flag];

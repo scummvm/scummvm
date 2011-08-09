@@ -146,7 +146,7 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 	sig = st.readUint32BE();
 
 	bool foundSig = false;
-	for (int i = 0; i < ARRAYSIZE(signatures); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(signatures); i++) {
 		if (sig == signatures[i]) {
 			foundSig = true;
 			break;

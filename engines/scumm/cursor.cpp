@@ -355,7 +355,6 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 //	const int oldID = _charset->getCurID();
 
 	uint16 *ptr = _cursorImages[index];
-	int h;
 
 	if (index == 1 && _game.platform == Common::kPlatformPCEngine) {
 		uint16 cursorPCE[] = {
@@ -363,7 +362,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 			0xF180, 0xF800, 0x8C00, 0x0C00, 0x0600, 0x0600, 0x0300, 0x0000
 		};
 
-		for (h = 0; h < ARRAYSIZE(cursorPCE); h++) {
+		for (size_t h = 0; h < ARRAYSIZE(cursorPCE); h++) {
 			*ptr++ = cursorPCE[h];
 		}
 	} else {
@@ -387,7 +386,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 		_charset->drawChar(chr, s, 0, 0);
 
 		memset(ptr, 0, 17 * sizeof(uint16));
-		for (h = 0; h < s.h; h++) {
+		for (int h = 0; h < s.h; h++) {
 			for (int w = 0; w < s.w; w++) {
 				if (buf[s.pitch * h + w] != 123)
 					*ptr |= 1 << (15 - w);

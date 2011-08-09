@@ -47,7 +47,7 @@ void Wiz::clearWizBuffer() {
 }
 
 void Wiz::polygonClear() {
-	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].flag == 1)
 			memset(&_polygons[i], 0, sizeof(WizPolygon));
 	}
@@ -80,14 +80,14 @@ void Wiz::polygonLoad(const uint8 *polData) {
 
 void Wiz::polygonStore(int id, bool flag, int vert1x, int vert1y, int vert2x, int vert2y, int vert3x, int vert3y, int vert4x, int vert4y) {
 	WizPolygon *wp = NULL;
-	for (int i = 0; i < ARRAYSIZE(_polygons); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == 0) {
 			wp = &_polygons[i];
 			break;
 		}
 	}
 	if (!wp) {
-		error("Wiz::polygonStore: out of polygon slot, max = %d", ARRAYSIZE(_polygons));
+		error("Wiz::polygonStore: out of polygon slot, max = %lu", ARRAYSIZE(_polygons));
 	}
 
 	wp->vert[0].x = vert1x;
@@ -170,14 +170,14 @@ void Wiz::polygonCalcBoundBox(Common::Point *vert, int numVerts, Common::Rect &b
 }
 
 void Wiz::polygonErase(int fromId, int toId) {
-	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if (_polygons[i].id >= fromId && _polygons[i].id <= toId)
 			memset(&_polygons[i], 0, sizeof(WizPolygon));
 	}
 }
 
 int Wiz::polygonHit(int id, int x, int y) {
-	for (int i = 0; i < ARRAYSIZE(_polygons); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); i++) {
 		if ((id == 0 || _polygons[i].id == id) && _polygons[i].bound.contains(x, y)) {
 			if (polygonContains(_polygons[i], x, y)) {
 				return _polygons[i].id;
@@ -188,7 +188,7 @@ int Wiz::polygonHit(int id, int x, int y) {
 }
 
 bool Wiz::polygonDefined(int id) {
-	for (int i = 0; i < ARRAYSIZE(_polygons); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); i++)
 		if (_polygons[i].id == id)
 			return true;
 	return false;
@@ -1250,7 +1250,7 @@ static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common
 					}
 					runCountSame = 0;
 				}
-				assert(runCountDiff < ARRAYSIZE(diffBuffer));
+				assert((size_t)runCountDiff < ARRAYSIZE(diffBuffer));
 				diffBuffer[runCountDiff++] = color;
 				if (runCountDiff == 0x40) {
 					if (dst) {
@@ -1704,11 +1704,11 @@ struct PolygonDrawData {
 void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType) {
 	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
 
-	int i, j;
+	int j;
 	WizPolygon *wp;
 
 	wp = NULL;
-	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == id1) {
 			wp = &_polygons[i];
 			break;
@@ -1722,7 +1722,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 	}
 
 	wp = NULL;
-	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == id2) {
 			wp = &_polygons[i];
 			break;
@@ -1753,7 +1753,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 	if (_vm->_bytesPerPixel == 2) {
 		uint8 *tmpPtr = imageBuffer;
-		for (i = 0; i < dsth; i++) {
+		for (int i = 0; i < dsth; i++) {
 			for (j = 0; j < dstw; j++)
 				WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
 			tmpPtr += dstpitch;
@@ -1777,9 +1777,8 @@ void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int s
 }
 
 void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette) {
-	int i;
 	WizPolygon *wp = NULL;
-	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == id) {
 			wp = &_polygons[i];
 			break;

@@ -732,7 +732,7 @@ int TIMInterpreter::cmd_unloadVocFile(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
-	const int index = param[0];
+	const uint index = param[0];
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())

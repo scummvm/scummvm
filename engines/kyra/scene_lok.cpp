@@ -121,7 +121,7 @@ void KyraEngine_LoK::enterNewScene(int sceneId, int facing, int unk1, int unk2, 
 		moveCharacterToPos(0, facing, xpos, ypos);
 	}
 
-	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_movieObjects); ++i)
 		_movieObjects[i]->close();
 
 	if (!brandonAlive) {
@@ -1115,7 +1115,7 @@ void KyraEngine_LoK::setCharactersPositions(int character) {
 		0x76
 	};
 
-	assert(character < ARRAYSIZE(initXPosTable));
+	assert((size_t)character < ARRAYSIZE(initXPosTable));
 	Character *edit = &_characterList[character];
 	edit->x1 = edit->x2 = initXPosTable[character];
 	edit->y1 = edit->y2 = initYPosTable[character];

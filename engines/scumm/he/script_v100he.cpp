@@ -1216,7 +1216,7 @@ void ScummEngine_v100he::o100_wizImageOps() {
 		if (_wizParams.remapNum == 0) {
 			memset(_wizParams.remapIndex, 0, sizeof(_wizParams.remapIndex));
 		} else {
-			assert(_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
+			assert((size_t)_wizParams.remapNum < ARRAYSIZE(_wizParams.remapIndex));
 			_wizParams.remapIndex[_wizParams.remapNum] = a;
 			_wizParams.remapColor[a] = b;
 			++_wizParams.remapNum;

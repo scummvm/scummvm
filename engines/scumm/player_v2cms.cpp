@@ -536,7 +536,7 @@ void Player_V2CMS::playNote(byte *&data) {
 			freeVoice->playingNote = *data;
 
 			int effectiveNote = freeVoice->playingNote + 3;
-			if (effectiveNote < 0 || effectiveNote >= ARRAYSIZE(_midiNotes)) {
+			if (effectiveNote < 0 || (size_t)effectiveNote >= ARRAYSIZE(_midiNotes)) {
 				warning("Player_V2CMS::playNote: Note %d out of bounds", effectiveNote);
 				effectiveNote = CLIP<int>(effectiveNote, 0, ARRAYSIZE(_midiNotes) - 1);
 			}

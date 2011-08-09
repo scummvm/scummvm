@@ -354,7 +354,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 	int missCnt = 0, missNum = 0;
 
 	if (SwordEngine::isMac()) {
-		for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
+		for (size_t i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 			if (!fileExists[i]) {
 				missCnt++;
 				missNum = i;
@@ -369,14 +369,14 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		} else {
 			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
-			for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
+			for (size_t i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 					pos += sprintf(pos, "\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
 	} else if (SwordEngine::isPsx()) {
-		for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
+		for (size_t i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
 			if (!fileExists[i]) {
 				missCnt++;
 				missNum = i;
@@ -390,14 +390,14 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		} else {
 			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
-			for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
+			for (size_t i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\"", _macCdFileList[i].name);
 					pos += sprintf(pos, "\"%s\"\n", _macCdFileList[i].name);
 				}
 		}
 	} else {
-		for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
+		for (size_t i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 			if (!fileExists[i]) {
 				missCnt++;
 				missNum = i;
@@ -412,7 +412,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		} else {
 			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
-			for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
+			for (size_t i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 					pos += sprintf(pos, "\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
@@ -436,7 +436,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 
 	// check all files and look out if we can find a file that wouldn't exist if this was the demo version
 	if (SwordEngine::isMac()) {
-		for (int fcnt = 0; fcnt < ARRAYSIZE(_macCdFileList); fcnt++) {
+		for (size_t fcnt = 0; fcnt < ARRAYSIZE(_macCdFileList); fcnt++) {
 			if (Common::File::exists(_macCdFileList[fcnt].name)) {
 				fileExists[fcnt] = true;
 				flagsToBool(foundTypes, _macCdFileList[fcnt].flags);
@@ -450,7 +450,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 			}
 		}
 	} else if (SwordEngine::isPsx()) {
-		for (int fcnt = 0; fcnt < ARRAYSIZE(_psxCdFileList); fcnt++) {
+		for (size_t fcnt = 0; fcnt < ARRAYSIZE(_psxCdFileList); fcnt++) {
 			if (Common::File::exists(_psxCdFileList[fcnt].name)) {
 				fileExists[fcnt] = true;
 				flagsToBool(foundTypes, _psxCdFileList[fcnt].flags);
@@ -463,7 +463,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 			}
 		}
 	} else {
-		for (int fcnt = 0; fcnt < ARRAYSIZE(_pcCdFileList); fcnt++) {
+		for (size_t fcnt = 0; fcnt < ARRAYSIZE(_pcCdFileList); fcnt++) {
 			if (Common::File::exists(_pcCdFileList[fcnt].name)) {
 				fileExists[fcnt] = true;
 				flagsToBool(foundTypes, _pcCdFileList[fcnt].flags);
@@ -497,7 +497,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 	if (somethingMissing) { // okay, there *are* files missing
 		// first, update the fileExists[] array depending on our changed missingTypes
 		if (SwordEngine::isMac()) {
-			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_macCdFileList); fileCnt++)
+			for (size_t fileCnt = 0; fileCnt < ARRAYSIZE(_macCdFileList); fileCnt++)
 				if (!fileExists[fileCnt]) {
 					fileExists[fileCnt] = true;
 					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
@@ -505,7 +505,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 							fileExists[fileCnt] = false; // this is one of the files we were looking for
 				}
 		} else if (SwordEngine::isPsx()) {
-			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_psxCdFileList); fileCnt++)
+			for (size_t fileCnt = 0; fileCnt < ARRAYSIZE(_psxCdFileList); fileCnt++)
 				if (!fileExists[fileCnt]) {
 					fileExists[fileCnt] = true;
 					for (int flagCnt = 0; flagCnt < 8; flagCnt++)
@@ -513,7 +513,7 @@ void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or wha
 							fileExists[fileCnt] = false; // this is one of the files we were looking for
 				}
 		} else {
-			for (int fileCnt = 0; fileCnt < ARRAYSIZE(_pcCdFileList); fileCnt++)
+			for (size_t fileCnt = 0; fileCnt < ARRAYSIZE(_pcCdFileList); fileCnt++)
 				if (!fileExists[fileCnt]) {
 					fileExists[fileCnt] = true;
 					for (int flagCnt = 0; flagCnt < 8; flagCnt++)

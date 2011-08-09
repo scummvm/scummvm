@@ -112,7 +112,7 @@ void Icon::setPosition(int16 x, int16 y) {
 }
 
 void Icon::setBrightness(int16 brightnessIndex) {
-	assert(brightnessIndex < ARRAYSIZE(brigthnessData));
+	assert((size_t)brightnessIndex < ARRAYSIZE(brigthnessData));
 
 	_brightnessIndex = brightnessIndex;
 }

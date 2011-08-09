@@ -941,7 +941,7 @@ SmushFont *SmushPlayer::getFont(int font) {
 				"specfnt.nut"
 			};
 
-			assert(font >= 0 && font < ARRAYSIZE(ft_fonts));
+			assert(font >= 0 && (size_t)font < ARRAYSIZE(ft_fonts));
 
 			_sf[font] = new SmushFont(_vm, ft_fonts[font], true, false);
 		}

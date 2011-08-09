@@ -1982,12 +1982,9 @@ opcodeFunction opcodeTablePtr[] = {
 };
 
 int32 opcodeType8() {
-	int opcode = getByteFromScript();
+	byte opcode = getByteFromScript();
 
 	if (!opcode)
-		return (-21);
-
-	if (opcode > 0x100)
 		return (-21);
 
 	if (opcode < ARRAYSIZE(opcodeTablePtr) && opcodeTablePtr[opcode]) {

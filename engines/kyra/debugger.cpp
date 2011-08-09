@@ -273,7 +273,7 @@ bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
 
 bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
 	DebugPrintf("Needed birthstone gems:\n");
-	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
 		DebugPrintf("%-3d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
 	return true;
 }

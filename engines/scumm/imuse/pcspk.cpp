@@ -517,7 +517,7 @@ void PcSpkDriver::updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope 
 			break;
 
 		case 4:
-			if ((chan._instrument[4] + (def.phase & 0xFF)) * 256 < ARRAYSIZE(_outInstrumentData))
+			if (size_t((chan._instrument[4] + (def.phase & 0xFF)) * 256) < ARRAYSIZE(_outInstrumentData))
 				chan._out.instrument = _outInstrumentData + (chan._instrument[4] + (def.phase & 0xFF)) * 256;
 			else
 				chan._out.instrument = 0;

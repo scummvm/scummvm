@@ -180,7 +180,7 @@ void ThemeLayoutMain::reflowLayout() {
 void ThemeLayoutStacked::reflowLayoutVertical() {
 	int curX, curY;
 	int resize[8];
-	int rescount = 0;
+	size_t rescount = 0;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -228,7 +228,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 	if (rescount) {
 		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
 
-		for (int i = 0; i < rescount; ++i) {
+		for (size_t i = 0; i < rescount; ++i) {
 			// Set the height of the item.
 			_children[resize[i]]->setHeight(newh);
 			// Increase the height of this ThemeLayoutStacked accordingly, and
@@ -243,7 +243,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 void ThemeLayoutStacked::reflowLayoutHorizontal() {
 	int curX, curY;
 	int resize[8];
-	int rescount = 0;
+	size_t rescount = 0;
 
 	curX = _padding.left;
 	curY = _padding.top;
@@ -291,7 +291,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 	if (rescount) {
 		int neww = (getParentWidth() - _w - _padding.right) / rescount;
 
-		for (int i = 0; i < rescount; ++i) {
+		for (size_t i = 0; i < rescount; ++i) {
 			// Set the width of the item.
 			_children[resize[i]]->setWidth(neww);
 			// Increase the width of this ThemeLayoutStacked accordingly, and

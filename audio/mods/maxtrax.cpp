@@ -126,7 +126,7 @@ MaxTrax::MaxTrax(int rate, bool stereo, uint16 vBlankFreq, uint16 maxScores)
 	_playerCtx.syncCallBack = &nullFunc;
 
 	resetPlayer();
-	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_channelCtx); ++i)
 		_channelCtx[i].regParamNumber = 0;
 }
 
@@ -146,7 +146,7 @@ void MaxTrax::interrupt() {
 	_playerCtx.ticks += _playerCtx.tickUnit;
 	const int32 millis = _playerCtx.ticks >> 8; // d4
 
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 		VoiceContext &voice = _voiceCtx[i];
 		if (voice.stopEventTime >= 0) {
 			assert(voice.channel);
@@ -217,7 +217,7 @@ void MaxTrax::interrupt() {
 						break;
 					case 0x02:	// SPECIAL_BEGINREP
 						// we allow a depth of 4 loops
-						for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i) {
+						for (size_t i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i) {
 							if (!_playerCtx.repeatPoint[i]) {
 								_playerCtx.repeatPoint[i] = curEvent;
 								_playerCtx.repeatCount[i] = curEvent->stopTime & 0xFF;
@@ -268,7 +268,7 @@ endOfEventLoop:
 	}
 
 	// Handling of Envelopes and Portamento
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 		VoiceContext &voice = _voiceCtx[i];
 		if (!voice.channel)
 			continue;
@@ -446,7 +446,7 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		else {
 			channel.flags &= ~ChannelContext::kFlagDamper;
 			// release all dampered voices on this channel
-			for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+			for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 				if (_voiceCtx[i].channel == &channel && _voiceCtx[i].hasDamper) {
 					_voiceCtx[i].hasDamper = false;
 					_voiceCtx[i].status = VoiceContext::kStatusRelease;
@@ -486,7 +486,7 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		// Fallthrough
 	case 0x7B:	// All Notes Off
 allNotesOff:
-		for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+		for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 			if (_voiceCtx[i].channel == &channel) {
 				if ((channel.flags & ChannelContext::kFlagDamper) != 0)
 					_voiceCtx[i].hasDamper = true;
@@ -496,7 +496,7 @@ allNotesOff:
 		}
 		break;
 	case 0x78:	// All Sounds Off
-		for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+		for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 			if (_voiceCtx[i].channel == &channel)
 				killVoice((byte)i);
 		}
@@ -510,10 +510,10 @@ void MaxTrax::setTempo(const uint16 tempo) {
 }
 
 void MaxTrax::resetPlayer() {
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
 		killVoice((byte)i);
 
-	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_channelCtx); ++i) {
 		_channelCtx[i].flags = 0;
 		_channelCtx[i].lastNote = (uint8)-1;
 		resetChannel(_channelCtx[i], (i & 1) != 0);
@@ -529,7 +529,7 @@ void MaxTrax::resetPlayer() {
 void MaxTrax::stopMusic() {
 	Common::StackLock lock(_mutex);
 	_playerCtx.scoreIndex = -1;
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 		if (_voiceCtx[i].channel < &_channelCtx[kNumChannels])
 			killVoice((byte)i);
 	}
@@ -541,7 +541,7 @@ bool MaxTrax::playSong(int songIndex, bool loop) {
 	Common::StackLock lock(_mutex);
 	_playerCtx.scoreIndex = -1;
 	resetPlayer();
-	for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i)
 		_playerCtx.repeatPoint[i] = 0;
 
 	setTempo(_playerCtx.tempoInitial << 4);
@@ -825,7 +825,7 @@ void MaxTrax::freeScores() {
 }
 
 void MaxTrax::freePatches() {
-	for (int i = 0; i < ARRAYSIZE(_patch); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_patch); ++i) {
 		delete[] _patch[i].samplePtr;
 		delete[] _patch[i].attackPtr;
 	}

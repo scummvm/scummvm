@@ -202,7 +202,7 @@ uint32 ToucheEngine::res_getDataOffset(ResourceType type, int num, uint32 *size)
 	};
 
 	const ResourceData *rd = NULL;
-	for (unsigned int i = 0; i < ARRAYSIZE(dataTypesTable); ++i) {
+	for (unsigned int i = 0; i < ARRAYSIZE_UNSAFE(dataTypesTable); ++i) {
 		if (dataTypesTable[i].type == type) {
 			rd = &dataTypesTable[i];
 			break;

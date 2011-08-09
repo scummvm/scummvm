@@ -216,7 +216,7 @@ void Mouse::buildSystemMenu() {
 	// Build them all high in full color - when one is clicked on all the
 	// rest will grey out.
 
-	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(icon_list); i++) {
 		byte *icon = _vm->_resman->openResource(icon_list[i]) + ResHeader::size();
 
 		// The only case when an icon is grayed is when the player

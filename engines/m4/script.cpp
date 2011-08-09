@@ -275,7 +275,7 @@ void ScriptInterpreter::open(const char *filename) {
 	_scriptFile->seek(stringOfs);
 	_constStrings.load(_scriptFile);
 
-	for (int i = 0; i < ARRAYSIZE(_globalVars); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_globalVars); i++) {
 		_globalVars[i].type = kInteger;
 		_globalVars[i].value = 0;
 	}
@@ -361,7 +361,7 @@ int ScriptInterpreter::runFunction(ScriptFunction *scriptFunction) {
 }
 
 void ScriptInterpreter::push(const ScriptValue &value) {
-	if (_stackPtr == ARRAYSIZE(_stack))
+	if ((size_t)_stackPtr == ARRAYSIZE(_stack))
 		error("ScriptInterpreter::push() Stack overflow");
 	_stack[_stackPtr++] = value;
 }
@@ -381,16 +381,16 @@ void ScriptInterpreter::dumpStack() {
 
 void ScriptInterpreter::dumpRegisters() {
 	debugCN(kDebugScript, "ScriptInterpreter::dumpRegisters()\n");
-	for (int i = 0; i < ARRAYSIZE(_registers); i++) {
-		debugCN(kDebugScript, "%03d. type = %02d; value = %d\n", i, _registers[i].type, _registers[i].value);
+	for (size_t i = 0; i < ARRAYSIZE(_registers); i++) {
+		debugCN(kDebugScript, "%03lu. type = %02d; value = %d\n", i, _registers[i].type, _registers[i].value);
 	}
 }
 
 void ScriptInterpreter::dumpGlobalVars() {
 	debugCN(kDebugScript, "ScriptInterpreter::dumpGlobalVars()\n");
-	for (int i = 0; i < ARRAYSIZE(_globalVars); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_globalVars); i++) {
 		if (_globalVars[i].type != -1)
-			debugCN(kDebugScript, "%03d. type = %02d; value = %d\n", i, _globalVars[i].type, _globalVars[i].value);
+			debugCN(kDebugScript, "%03lu. type = %02d; value = %d\n", i, _globalVars[i].type, _globalVars[i].value);
 	}
 }
 

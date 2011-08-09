@@ -702,7 +702,7 @@ static const IIgsExeInfo IIgsExeInfos[] = {
  * @return A non-null IIgsExeInfo pointer if successful, otherwise NULL.
  */
 const IIgsExeInfo *SoundGen2GS::getIIgsExeInfo(enum AgiGameID gameid) const {
-	for (int i = 0; i < ARRAYSIZE(IIgsExeInfos); i++)
+	for (size_t i = 0; i < ARRAYSIZE(IIgsExeInfos); i++)
 		if (IIgsExeInfos[i].gameid == gameid)
 			return &IIgsExeInfos[i];
 	return NULL;

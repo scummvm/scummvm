@@ -59,7 +59,7 @@ Screen::~Screen() {
 
 	delete[] _pagePtrs[0];
 
-	for (int f = 0; f < ARRAYSIZE(_fonts); ++f)
+	for (size_t f = 0; f < ARRAYSIZE(_fonts); ++f)
 		delete _fonts[f];
 
 	delete _screenPalette;
@@ -148,7 +148,7 @@ bool Screen::init() {
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
-	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
 		_textColorsMap[i] = i;
 	_decodeShapeBuffer = NULL;
 	_decodeShapeBufferSize = 0;
@@ -3209,14 +3209,14 @@ bool AMIGAFont::load(Common::SeekableReadStream &file) {
 	_height = file.readByte();
 
 	// Read the character definition offset table
-	uint16 offsets[ARRAYSIZE(_chars)];
-	for (int i = 0; i < ARRAYSIZE(_chars); ++i)
+	uint16 offsets[_characterCount];
+	for (size_t i = 0; i < ARRAYSIZE(_chars); ++i)
 		offsets[i] = file.readUint16BE() + 4;
 
 	if (file.err())
 		return false;
 
-	for (int i = 0; i < ARRAYSIZE(_chars); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_chars); ++i) {
 		file.seek(offsets[i], SEEK_SET);
 
 		_chars[i].yOffset = file.readByte();
@@ -3299,7 +3299,7 @@ void AMIGAFont::drawChar(uint16 c, byte *dst, int pitch) const {
 
 void AMIGAFont::unload() {
 	_width = _height = 0;
-	for (int i = 0; i < ARRAYSIZE(_chars); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_chars); ++i)
 		delete[] _chars[i].graphics.bitmap;
 	memset(_chars, 0, sizeof(_chars));
 }

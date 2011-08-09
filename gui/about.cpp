@@ -79,9 +79,7 @@ AboutDialog::AboutDialog()
 
 	reflowLayout();
 
-	int i;
-
-	for (i = 0; i < 1; i++)
+	for (int i = 0; i < 1; i++)
 		_lines.push_back("");
 
 	Common::String version("C0""ScummVM ");
@@ -91,7 +89,7 @@ AboutDialog::AboutDialog()
 	Common::String date = Common::String::format(_("(built on %s)"), gScummVMBuildDate);
 	_lines.push_back("C2" + date);
 
-	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
+	for (size_t i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(copyright_text[i]);
 
 	Common::String features("C1");
@@ -122,12 +120,12 @@ AboutDialog::AboutDialog()
 	  //addLine("");
 	}
 
-	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
+	for (size_t i = 0; i < ARRAYSIZE(gpl_text); i++)
 		addLine(gpl_text[i]);
 
 	_lines.push_back("");
 
-	for (i = 0; i < ARRAYSIZE(credits); i++)
+	for (size_t i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(credits[i]);
 }
 
@@ -268,7 +266,6 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
-	int i;
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
@@ -284,7 +281,7 @@ void AboutDialog::reflowLayout() {
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*_xOff;
 	_w = 0;
-	for (i = 0; i < ARRAYSIZE(credits); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
 		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;

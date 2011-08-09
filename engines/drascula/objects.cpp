@@ -150,7 +150,7 @@ void DrasculaEngine::removeObject() {
  * Returns 0 if was in the inventory, 1 otherwise.
  */
 int DrasculaEngine::removeObject(int obj) {
-	for (int n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (inventoryObjects[n] == obj) {
 			inventoryObjects[n] = 0;
 			return 0;
@@ -194,17 +194,15 @@ bool DrasculaEngine::pickupObject() {
  * Add the object with the given id to the inventory.
  */
 void DrasculaEngine::addObject(int obj) {
-	int n;
-
 	// Check whether obj is already in the inventory.
 	// If it is, just do nothing and return.
-	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (inventoryObjects[n] == obj)
 			return;
 	}
 
 	// Otherwise, look for a free slot and add the object there.
-	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (inventoryObjects[n] == 0) {
 			inventoryObjects[n] = obj;
 			return;
@@ -220,9 +218,7 @@ void DrasculaEngine::addObject(int obj) {
  * If no inventory slot is under the mouse cursor, return 0.
  */
 int DrasculaEngine::whichObject() {
-	int n;
-
-	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		if (mouseX > _itemLocations[n].x && mouseY > _itemLocations[n].y &&
 			mouseX < _itemLocations[n].x + OBJWIDTH &&
 			mouseY < _itemLocations[n].y + OBJHEIGHT) {

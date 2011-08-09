@@ -1130,7 +1130,7 @@ AdjustBoxResult Actor::adjustXYToBeInBox(int dstX, int dstY) {
 	if (_ignoreBoxes)
 		return abr;
 
-	for (int tIdx = 0; tIdx < ARRAYSIZE(thresholdTable); tIdx++) {
+	for (size_t tIdx = 0; tIdx < ARRAYSIZE(thresholdTable); tIdx++) {
 		threshold = thresholdTable[tIdx];
 
 		numBoxes = _vm->getNumBoxes() - 1;

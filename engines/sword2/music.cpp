@@ -78,7 +78,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		int soundMode = 0;
 		char filename[20];
 
-		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
+		for (int i = 0; i < ARRAYSIZE_UNSAFE(file_types); i++) {
 			sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
 			if (Common::File::exists(filename)) {
 				soundMode = file_types[i].mode;

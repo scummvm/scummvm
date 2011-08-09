@@ -350,8 +350,8 @@ void Mouse::systemMenuMouse() {
 
 	// Gray out all he icons, except the one that was clicked
 
-	for (int i = 0; i < ARRAYSIZE(icon_list); i++) {
-		if (i != hit) {
+	for (size_t i = 0; i < ARRAYSIZE(icon_list); i++) {
+		if (i != (size_t)hit) {
 			icon = _vm->_resman->openResource(icon_list[i]) + ResHeader::size();
 			setMenuIcon(RDMENU_TOP, i, icon);
 			_vm->_resman->closeResource(icon_list[i]);

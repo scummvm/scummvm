@@ -111,13 +111,13 @@ bool DrasculaEngine::confirmExit() {
 }
 
 void DrasculaEngine::showMenu() {
-	int h, n, x;
+	int h, x;
 	char textIcon[13];
 	byte *srcSurface = (currentChapter == 6) ? tableSurface : frontSurface;
 	x = whichObject();
 	strcpy(textIcon, iconName[x]);
 
-	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
+	for (size_t n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		h = inventoryObjects[n];
 
 		if (h != 0) {

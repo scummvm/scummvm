@@ -692,7 +692,7 @@ void Inventory::open() {
 
 	// Draw at most 11 items in the inventory
 	_itemsShown = 0;
-	for (int i = 1; i < ARRAYSIZE(_entries); i++) {
+	for (size_t i = 1; i < ARRAYSIZE(_entries); i++) {
 		if (!_entries[i].isPresent)
 			continue;
 

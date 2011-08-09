@@ -67,7 +67,7 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	if (!_buffer)
 		error("Could not initialize display");
 
-	for (int i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_blockSurfaces); i++)
 		_blockSurfaces[i] = NULL;
 
 	_lightMask = NULL;

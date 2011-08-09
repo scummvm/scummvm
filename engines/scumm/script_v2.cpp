@@ -839,7 +839,7 @@ void ScummEngine_v2::o2_verbOps() {
 					'a','s','d','f',
 					'z','x','c','v'
 				};
-			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
+			if (1 <= slot && (size_t)slot <= ARRAYSIZE(keyboard))
 				vs->key = keyboard[slot - 1];
 		} else {
 			static const char keyboard[] = {
@@ -847,7 +847,7 @@ void ScummEngine_v2::o2_verbOps() {
 					'a','s','d','f','g',
 					'z','x','c','v','b'
 				};
-			if (1 <= slot && slot <= ARRAYSIZE(keyboard))
+			if (1 <= slot && (size_t)slot <= ARRAYSIZE(keyboard))
 				vs->key = keyboard[slot - 1];
 		}
 

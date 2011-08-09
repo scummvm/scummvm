@@ -387,7 +387,7 @@ void KyraEngine_v1::setupKeyMap() {
 
 	_keyMap.clear();
 
-	for (int i = 0; i < ARRAYSIZE(keys); i++)
+	for (int i = 0; i < ARRAYSIZE_UNSAFE(keys); i++)
 		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : keys[i].kcDOS;
 }
 

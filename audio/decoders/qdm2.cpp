@@ -1697,7 +1697,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	uint32 tmp;
 	int32 tmp_s;
 	int tmp_val;
-	int i;
+	size_t i;
 
 	debug(1, "QDM2Stream::QDM2Stream() Call");
 

@@ -380,10 +380,10 @@ void KyraEngine_HoF::startup() {
 	_mainCharacter.animFrame = 0x12;
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
-	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
 		_sceneAnimMovie[i] = new WSAMovie_v2(this);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
-	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
+	for (size_t i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
 		_wsaSlots[i] = new WSAMovie_v2(this);
 
 	_screen->_curPage = 0;
@@ -818,15 +818,15 @@ void KyraEngine_HoF::cleanup() {
 
 	delete[] _gfxBackUpRect; _gfxBackUpRect = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
 		_sceneAnimMovie[i] = 0;
 	}
-	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_wsaSlots); ++i) {
 		delete _wsaSlots[i];
 		_wsaSlots[i] = 0;
 	}
-	for (int i = 0; i < ARRAYSIZE(_buttonShapes); ++i) {
+	for (size_t i = 0; i < ARRAYSIZE(_buttonShapes); ++i) {
 		delete[] _buttonShapes[i];
 		_buttonShapes[i] = 0;
 	}
@@ -861,7 +861,7 @@ void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 		"CH1.XXX", "CH2.XXX", "CH3.XXX", "CH4.XXX", "CH5.XXX"
 	};
 
-	assert(chapter >= 1 && chapter <= ARRAYSIZE(chapterFilenames));
+	assert(chapter >= 1 && (size_t)chapter <= ARRAYSIZE(chapterFilenames));
 	strcpy(tempString, chapterFilenames[chapter-1]);
 	changeFileExtension(tempString);
 

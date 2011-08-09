@@ -336,9 +336,9 @@ void Script::sfVsetTrack(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfGetPoints(SCRIPTFUNC_PARAMS) {
-	int16 index = thread->pop();
+	uint16 index = thread->pop();
 
-	if (index >= 0 && index < ARRAYSIZE(_vm->_ethicsPoints))
+	if (index < ARRAYSIZE(_vm->_ethicsPoints))
 		thread->_returnValue = _vm->_ethicsPoints[index];
 	else
 		thread->_returnValue = 0;
@@ -368,10 +368,10 @@ void Script::sfTestGlobalFlag(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfSetPoints(SCRIPTFUNC_PARAMS) {
-	int16 index = thread->pop();
+	uint16 index = thread->pop();
 	int16 points = thread->pop();
 
-	if (index >= 0 && index < ARRAYSIZE(_vm->_ethicsPoints))
+	if (index < ARRAYSIZE(_vm->_ethicsPoints))
 		_vm->_ethicsPoints[index] = points;
 }
 

@@ -99,7 +99,7 @@ protected:
 	Buffer _buffers[2];
 
 	void initBuffers();
-	void *allocBuffer(int num, uint32 size);
+	void *allocBuffer(uint num, uint32 size);
 	void freeBuffers();
 
 	void decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsize);

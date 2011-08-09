@@ -85,7 +85,7 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 
 	memset(_objectList, 0, 30 * sizeof(uint32));
 
-	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_moduleList); i++)
 		_moduleList[i] = 0;
 	_stackPtr = 0;
 
@@ -97,9 +97,8 @@ Logic::~Logic() {
 	delete _skyGrid;
 	delete _skyAutoRoute;
 
-	for (int i = 0; i < ARRAYSIZE(_moduleList); i++)
-		if (_moduleList[i])
-			free(_moduleList[i]);
+	for (size_t i = 0; i < ARRAYSIZE(_moduleList); i++)
+		free(_moduleList[i]);
 }
 
 void Logic::initScreen0() {
@@ -538,7 +537,7 @@ void Logic::talk() {
 	// Are we allowed to click
 
 	if (_skyMouse->wasClicked())
-		for (int i = 0; i < ARRAYSIZE(clickTable); i++)
+		for (size_t i = 0; i < ARRAYSIZE(clickTable); i++)
 			if (clickTable[i] == (uint16)_scriptVariables[CUR_ID]) {
 				if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_SPEECH) && (!_skySound->speechFinished()))
 					_skySound->stopSpeech();
@@ -1161,7 +1160,7 @@ void Logic::fnExec(uint16 num, uint32 a, uint32 b, uint32 c) {
 }
 
 void Logic::initScriptVariables() {
-	for (int i = 0; i < ARRAYSIZE(_scriptVariables); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_scriptVariables); i++)
 		_scriptVariables[i] = 0;
 
 	_scriptVariables[LOGIC_LIST_NO] = 141;

@@ -777,7 +777,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celHeight) {
 		scaledPixelNo = scaledPixel >> 7;
-		assert(scaledPixelNo < ARRAYSIZE(scalingY));
+		assert((size_t)scaledPixelNo < ARRAYSIZE(scalingY));
 		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
 			scalingY[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
@@ -793,7 +793,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celWidth) {
 		scaledPixelNo = scaledPixel >> 7;
-		assert(scaledPixelNo < ARRAYSIZE(scalingX));
+		assert((size_t)scaledPixelNo < ARRAYSIZE(scalingX));
 		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
 			scalingX[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
@@ -814,8 +814,8 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	if (offsetX < 0 || offsetY < 0)
 		return;
 
-	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
-	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
+	assert(size_t(scaledHeight + offsetY) <= ARRAYSIZE(scalingY));
+	assert(size_t(scaledWidth + offsetX) <= ARRAYSIZE(scalingX));
 	for (int y = 0; y < scaledHeight; y++) {
 		for (int x = 0; x < scaledWidth; x++) {
 			const byte color = bitmap[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];

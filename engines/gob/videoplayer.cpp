@@ -774,7 +774,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 	}
 
 	if (hasExtension) {
-		int i;
+		size_t i;
 		for (i = 0; i < ARRAYSIZE(_extensions); i++) {
 			if (!scumm_stricmp(posDot, _extensions[i])) {
 				if ((properties.type != kVideoTypeTry) && (properties.type == ((Type) i))) {
@@ -792,7 +792,7 @@ Common::String VideoPlayer::findFile(const Common::String &file, Properties &pro
 	if (!hasExtension) {
 		// No or unrecognized extension. Probing.
 
-		int i;
+		size_t i;
 		for (i = 0; i < ARRAYSIZE(_extensions); i++) {
 			if ((properties.type == kVideoTypeTry) || (properties.type == ((Type) i))) {
 				fileName = base + "." + _extensions[i];

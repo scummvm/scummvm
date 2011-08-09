@@ -842,7 +842,7 @@ void AnimationSequencePlayer::drawPicPart4() {
 	if (_updateScreenCounter == 0) {
 		static const uint8 counter[] = { 1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1 };
 		++_updateScreenIndex;
-		assert(_updateScreenIndex < ARRAYSIZE(counter));
+		assert((size_t)_updateScreenIndex < ARRAYSIZE(counter));
 		_updateScreenCounter = counter[_updateScreenIndex];
 	}
 	--_updateScreenCounter;

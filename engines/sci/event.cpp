@@ -114,10 +114,9 @@ EventManager::~EventManager() {
 
 static int altify(int ch) {
 	// Calculates a PC keyboard scancode from a character */
-	int row;
 	int c = toupper((char)ch);
 
-	for (row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
+	for (size_t row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
 		const char *keys = s_scancodeRows[row].keys;
 		int offset = s_scancodeRows[row].offset;
 
@@ -169,7 +168,7 @@ SciEvent EventManager::getScummVMEvent() {
 	}
 
 	// Handle mouse events
-	for (int i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(mouseEventMappings); i++) {
 		if (mouseEventMappings[i].commonType == ev.type) {
 			input.type = mouseEventMappings[i].sciType;
 			input.data = mouseEventMappings[i].data;
@@ -239,7 +238,7 @@ SciEvent EventManager::getScummVMEvent() {
 			input.character = input.data + 0x1900;
 	} else {
 		// Special keys that need conversion
-		for (int i = 0; i < ARRAYSIZE(keyMappings); i++) {
+		for (size_t i = 0; i < ARRAYSIZE(keyMappings); i++) {
 			if (keyMappings[i].scummVMKey == ev.kbd.keycode) {
 				input.character = input.data = numlockOn ? keyMappings[i].sciKeyNumlockOn : keyMappings[i].sciKeyNumlockOff;
 				break;

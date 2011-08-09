@@ -1247,7 +1247,7 @@ void Logic::handlePinnacleRoom() {
 		{ 0x2B,  3 },
 		{ 0x30,  3 }
 	};
-	for (int i = 0; i < ARRAYSIZE(cmds); ++i) {
+	for (int i = 0; i < ARRAYSIZE_UNSAFE(cmds); ++i) {
 		if (cmds[i].obj == prevObj) {
 			_vm->sound()->playSong(cmds[i].song);
 			break;

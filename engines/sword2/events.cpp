@@ -33,7 +33,7 @@
 namespace Sword2 {
 
 void Logic::sendEvent(uint32 id, uint32 interact_id) {
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id == id || !_eventList[i].id) {
 			_eventList[i].id = id;
 			_eventList[i].interact_id = interact_id;
@@ -50,7 +50,7 @@ void Logic::setPlayerActionEvent(uint32 id, uint32 interact_id) {
 }
 
 int Logic::checkEventWaiting() {
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id == readVar(ID))
 			return 1;
 	}
@@ -62,7 +62,7 @@ void Logic::startEvent() {
 	// call this from stuff like fnWalk
 	// you must follow with a return IR_TERMINATE
 
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id == readVar(ID)) {
 			logicOne(_eventList[i].interact_id);
 			_eventList[i].id = 0;
@@ -74,7 +74,7 @@ void Logic::startEvent() {
 }
 
 void Logic::clearEvent(uint32 id) {
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id == id) {
 			_eventList[i].id = 0;
 			return;
@@ -83,7 +83,7 @@ void Logic::clearEvent(uint32 id) {
 }
 
 void Logic::killAllIdsEvents(uint32 id) {
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id == id)
 			_eventList[i].id = 0;
 	}
@@ -94,7 +94,7 @@ void Logic::killAllIdsEvents(uint32 id) {
 uint32 Logic::countEvents() {
 	uint32 count = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_eventList); i++) {
+	for (size_t i = 0; i < ARRAYSIZE(_eventList); i++) {
 		if (_eventList[i].id)
 			count++;
 	}

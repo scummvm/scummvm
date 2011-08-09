@@ -87,7 +87,7 @@ void Objects::updateLocation2(ObjectIndex index, ObjectLocation location2) {
 // Serializable
 //////////////////////////////////////////////////////////////////////////
 void Objects::saveLoadWithSerializer(Common::Serializer &s) {
-	for (int i = 0; i < ARRAYSIZE(_objects); i++)
+	for (size_t i = 0; i < ARRAYSIZE(_objects); i++)
 		_objects[i].saveLoadWithSerializer(s);
 }
 
@@ -97,8 +97,8 @@ void Objects::saveLoadWithSerializer(Common::Serializer &s) {
 Common::String Objects::toString() {
 	Common::String ret = "";
 
-	for (int i = 0; i < ARRAYSIZE(_objects); i++)
-		ret += Common::String::format("%d : %s\n", i, _objects[i].toString().c_str());
+	for (size_t i = 0; i < ARRAYSIZE(_objects); i++)
+		ret += Common::String::format("%lu : %s\n", i, _objects[i].toString().c_str());
 
 	return ret;
 }

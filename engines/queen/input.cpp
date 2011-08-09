@@ -193,7 +193,7 @@ void Input::checkKeys() {
 		_quickLoad = true;
 		break;
 	default:
-		for (int i = 0; i < ARRAYSIZE(_verbKeys); ++i) {
+		for (size_t i = 0; i < ARRAYSIZE(_verbKeys); ++i) {
 			if (_inKey == _currentCommandKeys[i]) {
 				_keyVerb = _verbKeys[i];
 				break;
