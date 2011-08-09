@@ -352,7 +352,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 		{ "CHIEF2.DOG", Common::FR_FRA },
 		{ "BUD1.DOG",   Common::IT_ITA }
 	};
-	for (int i = 0; i < ARRAYSIZE(dogFiles); ++i) {
+	for (int i = 0; i < ARRAYSIZE_UNSAFE(dogFiles); ++i) {
 		if (!scumm_stricmp(filename, dogFiles[i].filename) &&
 			_vm->resource()->getLanguage() == dogFiles[i].language) {
 			Common::File fdog;

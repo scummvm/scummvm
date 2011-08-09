@@ -54,9 +54,26 @@ template<typename T> inline T CLIP (T v, T amin, T amax)
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
 /**
- * Macro which determines the number of entries in a fixed size array.
+ * Template function which determines the number of entries in a fixed size array.
+ *
+ * This will result in a compilation error when being used on non fixed size
+ * arrays.
+ *
+ * Since templates are not allowed be used on local and/or unnamed types, it
+ * will furthermore not work with these either.
  */
-#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+template<class T, size_t n> FORCEINLINE size_t ARRAYSIZE(T (&)[n]) { return n; }
+
+/**
+ * Macro which determines the number of entries in a fixed size array.
+ *
+ * Unlike ARRAYSIZE this can also be used on non fixed size array by accident,
+ * but of course not resulting in the array size then.
+ *
+ * It is possible to use this on local and/or unnamed type arrays and in fact
+ * it should only be used for those. And even then be cautious.
+ */
+#define ARRAYSIZE_UNSAFE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
 /**
  * Compute a pointer to one past the last element of an array.

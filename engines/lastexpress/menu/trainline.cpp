@@ -104,7 +104,7 @@ void TrainLine::draw(uint32 time) {
 
 	// Get the index of the last city the train has visited
 	uint index = 0;
-	for (uint i = 0; i < ARRAYSIZE(_trainCities); i++)
+	for (uint i = 0; i < ARRAYSIZE_UNSAFE(_trainCities); i++)
 		if ((uint32)_trainCities[i].time <= time)
 			index = i;
 

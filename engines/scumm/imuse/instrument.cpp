@@ -493,7 +493,7 @@ void Instrument_Roland::send(MidiChannel *mc) {
 
 uint8 Instrument_Roland::getEquivalentGM() {
 	byte i;
-	for (i = 0; i != ARRAYSIZE(roland_to_gm_map); ++i) {
+	for (i = 0; i != ARRAYSIZE_UNSAFE(roland_to_gm_map); ++i) {
 		if (!memcmp(roland_to_gm_map[i].name, _instrument.common.name, 10))
 			return roland_to_gm_map[i].program;
 	}

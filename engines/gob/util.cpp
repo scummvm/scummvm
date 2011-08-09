@@ -212,7 +212,7 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		{Common::KEYCODE_F10,       kKeyF10      }
 	};
 
-	for (int i = 0; i < ARRAYSIZE(keys); i++)
+	for (int i = 0; i < ARRAYSIZE_UNSAFE(keys); i++)
 		if (key.keycode == keys[i].from)
 			return keys[i].to;
 
