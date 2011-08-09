@@ -427,6 +427,7 @@ void DINGUXSdlGraphicsManager::hideOverlay() {
 }
 
 bool DINGUXSdlGraphicsManager::loadGFXMode() {
+	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 
 	// Forcefully disable aspect ratio correction for games
 	// which starts with a native 240px height resolution.
@@ -435,7 +436,6 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
-	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
@@ -473,9 +473,13 @@ bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
+	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+	case OSystem::kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		blitCursor();
+		break;	
 	default:
 		break;
 	}
@@ -485,8 +489,10 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureAspectRatioCorrection:
+			return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}
