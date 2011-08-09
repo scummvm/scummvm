@@ -2168,9 +2168,9 @@ int LogicHEsoccer::op_1014_sub3(float *a1, int a2, int a3, int a4, int a5, int a
 	a12[0] = a9;
 	a12[1] = a10;
 	a12[2] = a11;
-	a12[3] = (int)(a1[5] * (double)a11 / 100.0);
-	a12[4] = (int)(a1[6] * (double)a11 / 100.0 * a8); // Note: a8 should always be 1
-	a12[5] = (int)(a1[7] * (double)a11 / 100.0);
+	a12[3] = (int)(a1[5] * (double)a10 / 100.0);
+	a12[4] = (int)(a1[6] * (double)a10 / 100.0 * a8); // Note: a8 should always be 1
+	a12[5] = (int)(a1[7] * (double)a10 / 100.0);
 	a12[6] = (int)a1[2];
 	a12[7] = (int)a1[3];
 	a12[8] = (int)a1[4];
