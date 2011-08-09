@@ -2072,17 +2072,10 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
       respectively
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
-  Microsoft Visual C++ 6.0:
-    * Open the workspace file "scummvm.dsw" in the "dists\msvc6" directory.
-    * Enter the path to the needed libraries and includes in
-      "Tools|Options|Directories".
-    * Now it should compile successfully.
-    * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
-
-  Microsoft Visual C++ 7.0/8.0:
-    * Open the solution file "scummwm.sln"  in the "dists\msvc7"
-      respectively "dists\msvc8" directory.
+  Microsoft Visual C++ 8/9/10:
+    * Read up on how to create the project files in "dists\msvc8",
+      "dists\msvc9" respectively "dists\msvc10".
+    * Open the resulting solution file.
     * Enter the path to the needed libraries and includes in
       Tools|Options|Projects and Solutions|VC++ Directories".
     * Now it should compile successfully.
