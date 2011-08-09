@@ -324,6 +324,13 @@ void EventRecorder::processMillis(uint32 &millis) {
 		if (_recordTimeCount > _playbackTimeCount) {
 			d = readTime(_playbackTimeFile);
 
+			while ((_lastMillis + d > millis) && (_lastMillis + d - millis > 50)) {
+				_recordMode = kPassthrough;
+				g_system->delayMillis(50);
+				millis = g_system->getMillis();
+				_recordMode = kRecorderPlayback;
+			}
+
 			millis = _lastMillis + d;
 			_playbackTimeCount++;
 		}
@@ -334,6 +341,19 @@ void EventRecorder::processMillis(uint32 &millis) {
 }
 
 bool EventRecorder::processDelayMillis(uint &msecs) {
+	if (_recordMode == kRecorderPlayback) {
+		_recordMode = kPassthrough;
+
+		uint32 millis = g_system->getMillis();
+
+		_recordMode = kRecorderPlayback;
+
+		if (_lastMillis > millis) {
+			// Skip delay if we're getting late
+			return true;
+		}
+	}
+
 	return false;
 }
 
