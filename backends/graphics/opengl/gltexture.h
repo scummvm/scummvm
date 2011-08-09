@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BACKENDS_GRAPHICS_OPENGL_GLTEXTURE_H
+#define BACKENDS_GRAPHICS_OPENGL_GLTEXTURE_H
+
 #include "common/scummsys.h"
 
 #ifdef WIN32
@@ -116,3 +119,5 @@ protected:
 	GLint _filter;
 	bool _refresh;
 };
+
+#endif
