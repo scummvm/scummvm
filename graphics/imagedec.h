@@ -36,7 +36,6 @@ struct Surface;
 
 class ImageDecoder {
 public:
-	ImageDecoder() {}
 	virtual ~ImageDecoder() {}
 
 	static Surface *loadFile(const Common::String &name, const PixelFormat &format);

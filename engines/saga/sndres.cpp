@@ -104,9 +104,6 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 	}
 }
 
-SndRes::~SndRes() {
-}
-
 void SndRes::setVoiceBank(int serial) {
 	Common::File *file;
 	if (_voiceSerial == serial)
