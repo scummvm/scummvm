@@ -159,7 +159,7 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 		if (getMillis() - dragStartTime < 250) {
 			dragging = true;
 			event.type = Common::EVENT_LBUTTONDOWN;
-			fillMouseEvent(event, curX, curY);
+			processMouseEvent(event, curX, curY);
 		}
 	}
 	return true;
@@ -180,7 +180,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 		if (dragging)
 		{
 			event.type = Common::EVENT_LBUTTONUP;
-			fillMouseEvent(event, curX, curY);
+			processMouseEvent(event, curX, curY);
 			dragging = false;
 			return true;
 		}
@@ -195,7 +195,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			// left mouse click.
 			if (duration < 500) {
 				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, curX, curY);
+				processMouseEvent(event, curX, curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_LBUTTONDOWN;
 				dragStartTime = getMillis();
@@ -205,7 +205,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			// right mouse click.
 			else if (duration < 1000) {
 				event.type = Common::EVENT_RBUTTONUP;
-				fillMouseEvent(event, curX, curY);
+				processMouseEvent(event, curX, curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_RBUTTONDOWN;
 			}
@@ -214,7 +214,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			// middle mouse click.
 			else {
 				event.type = Common::EVENT_MBUTTONUP;
-				fillMouseEvent(event, curX, curY);
+				processMouseEvent(event, curX, curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_MBUTTONDOWN;
 			}
@@ -240,7 +240,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		dragDiffX += ev.motion.xrel;
 		dragDiffY += ev.motion.yrel;
 		event.type = Common::EVENT_MOUSEMOVE;
-		fillMouseEvent(event, curX, curY);
+		processMouseEvent(event, curX, curY);
 	}
 	return true;
 }

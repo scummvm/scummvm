@@ -24,6 +24,7 @@
 #define BACKEND_EVENTS_SDL_H
 
 #include "backends/platform/sdl/sdl-sys.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
 #include "common/events.h"
 
@@ -35,6 +36,8 @@ class SdlEventSource : public Common::EventSource {
 public:
 	SdlEventSource();
 	virtual ~SdlEventSource();
+
+	void setGraphicsManager(SdlGraphicsManager *gMan) { _graphicsManager = gMan; }
 
 	/**
 	 * Gets and processes SDL events.
@@ -77,6 +80,11 @@ protected:
 	int _lastScreenID;
 
 	/**
+	 * The associated graphics manager.
+	 */
+	SdlGraphicsManager *_graphicsManager;
+
+	/**
 	 * Pre process an event before it is dispatched.
 	 */
 	virtual void preprocessEvents(SDL_Event *event) {}
@@ -108,9 +116,10 @@ protected:
 	//@}
 
 	/**
-	 * Assigns the mouse coords to the mouse event
+	 * Assigns the mouse coords to the mouse event. Furthermore notify the 
+	 * graphics manager about the position change.
 	 */
-	virtual void fillMouseEvent(Common::Event &event, int x, int y);
+	virtual void processMouseEvent(Common::Event &event, int x, int y);
 
 	/**
 	 * Remaps key events. This allows platforms to configure

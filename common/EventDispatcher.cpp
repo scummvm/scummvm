@@ -45,6 +45,8 @@ EventDispatcher::~EventDispatcher() {
 void EventDispatcher::dispatch() {
 	Event event;
 
+	dispatchPoll();
+
 	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
 		const bool allowMapping = i->source->allowMapping();
 
@@ -94,12 +96,13 @@ void EventDispatcher::unregisterSource(EventSource *source) {
 	}
 }
 
-void EventDispatcher::registerObserver(EventObserver *obs, uint priority, bool autoFree) {
+void EventDispatcher::registerObserver(EventObserver *obs, uint priority, bool autoFree, bool notifyPoll) {
 	ObserverEntry newEntry;
 
 	newEntry.observer = obs;
 	newEntry.priority = priority;
 	newEntry.autoFree = autoFree;
+	newEntry.poll = notifyPoll;
 
 	for (List<ObserverEntry>::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		if (i->priority < priority) {
@@ -127,6 +130,14 @@ void EventDispatcher::dispatchEvent(const Event &event) {
 	for (List<ObserverEntry>::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		if (i->observer->notifyEvent(event))
 			break;
+	}
+}
+
+void EventDispatcher::dispatchPoll() {
+	for (List<ObserverEntry>::iterator i = _observers.begin(); i != _observers.end(); ++i) {
+		if (i->poll == true)
+			if (i->observer->notifyPoll())
+				break;
 	}
 }
 

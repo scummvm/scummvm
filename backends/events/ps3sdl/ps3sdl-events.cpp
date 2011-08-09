@@ -60,11 +60,11 @@ bool PS3SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event)
 	switch (ev.jbutton.button) {
 	case BTN_CROSS: // Left mouse button
 		event.type = Common::EVENT_LBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 		break;
 	case BTN_CIRCLE: // Right mouse button
 		event.type = Common::EVENT_RBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 		break;
 	case BTN_TRIANGLE: // Game menu
 		event.type = Common::EVENT_KEYDOWN;
@@ -98,11 +98,11 @@ bool PS3SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	switch (ev.jbutton.button) {
 	case BTN_CROSS: // Left mouse button
 		event.type = Common::EVENT_LBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 		break;
 	case BTN_CIRCLE: // Right mouse button
 		event.type = Common::EVENT_RBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 		break;
 	case BTN_TRIANGLE: // Game menu
 		event.type = Common::EVENT_KEYUP;

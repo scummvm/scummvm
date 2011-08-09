@@ -50,7 +50,7 @@
 #define JOY_BUT_F5 5
 
 SdlEventSource::SdlEventSource()
-    : _scrollLock(false), _joystick(0), _lastScreenID(0), EventSource() {
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0) {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
 
@@ -91,9 +91,14 @@ int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void SdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
+
+	if (_graphicsManager) {
+		_graphicsManager->notifyMousePos(Common::Point(x, y));
+		_graphicsManager->transformMouseCoordinates(event.mouse);
+	}
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
@@ -377,16 +382,14 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		// HACK: Send a fake event, handled by SdlGraphicsManager
-		event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
-		return true;
+		if (_graphicsManager)
+			_graphicsManager->notifyVideoExpose();
+		return false;
 
 	case SDL_VIDEORESIZE:
-		// HACK: Send a fake event, handled by OpenGLSdlGraphicsManager
-		event.type = (Common::EventType)OSystem_SDL::kSdlEventResize;
-		event.mouse.x = ev.resize.w;
-		event.mouse.y = ev.resize.h;
-		return true;
+		if (_graphicsManager)
+			_graphicsManager->notifyResize(ev.resize.w, ev.resize.h);
+		return false;
 
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
@@ -504,7 +507,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	fillMouseEvent(event, ev.motion.x, ev.motion.y);
+	processMouseEvent(event, ev.motion.x, ev.motion.y);
 
 	return true;
 }
@@ -527,7 +530,7 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else
 		return false;
 
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -543,7 +546,7 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #endif
 	else
 		return false;
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -551,10 +554,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
@@ -582,10 +585,10 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
@@ -653,7 +656,7 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 #endif
 	}
 
-	fillMouseEvent(event, _km.x, _km.y);
+	processMouseEvent(event, _km.x, _km.y);
 
 	return true;
 }

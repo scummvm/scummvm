@@ -193,7 +193,6 @@ _posix=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
-_arm_asm=no
 
 
 
@@ -1157,12 +1156,12 @@ ps3)
 	_host_os=ps3
 	_host_cpu=ppc
 	_host_alias=powerpc64-ps3-elf
-	
+
 	# The prefix is always the same on PS3 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
-	# PS3 apps are installed into app-specific directories. The 
+	# PS3 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PS3 specific directories here.
 	datarootdir='${prefix}/data'
@@ -1187,7 +1186,7 @@ webos)
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
-	# WebOS apps are installed into app-specific directories. The 
+	# WebOS apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
@@ -1686,38 +1685,40 @@ echo "$_need_memalign"
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 #
-# Check whether we can use x86 asm routines
+# Check the CPU architecture
 #
-echo_n "Compiling for x86... "
-case $_host_cpu in
-	i386|i486|i586|i686)
-		_have_x86=yes
-		;;
-	*)
-		_have_x86=no
-		;;
-esac
-echo "$_have_x86"
-define_in_config_h_if_yes $_have_x86 'HAVE_X86'
-
-#
-# Check whether to use optimized ARM asm
-#
-echo_n "Compiling for ARM... "
+echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
-		_arm_asm=yes
+		echo "ARM"
+		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+
+		DEFINES="$DEFINES -DARM_TARGET"
+		;;
+	i[3-6]86)
+		echo "x86"
+		_have_x86=yes
+		define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+		;;
+	mips*)
+		echo "MIPS"
+		DEFINES="$DEFINES -DMIPS_TARGET"
+		;;
+	ppc*)
+		echo "PowerPC"
+		DEFINES="$DEFINES -DPPC_TARGET"
+		;;
+	x86_64)
+		echo "x86_64"
 		;;
 	*)
-		_arm_asm=no
+		echo "unknown ($_host_cpu)"
 		;;
 esac
-echo "$_arm_asm"
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
 
 
 #
@@ -1901,7 +1902,7 @@ case $_host_os in
 	ps3)
 		# Force use of SDL from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
-	
+
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
@@ -2097,7 +2098,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"	
+			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
@@ -2580,7 +2581,9 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		;;
 	ds)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS -DELF_NO_MEM_MANAGER"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
 '
@@ -2598,7 +2601,8 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		;;
 	gamecube | wii)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
@@ -2651,7 +2655,6 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		;;
 	ps2)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
 LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
 PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
@@ -2659,7 +2662,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		;;
 	psp)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
@@ -3437,7 +3440,7 @@ case $_backend in
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
+		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		LIBS="$LIBS -lc -lgcc -lnosys"
 		;;
@@ -3450,6 +3453,15 @@ esac
 _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
+
+# Show a message if looping over engines takes longer than 5 secs
+sh -c "
+	touch config.gnomes
+	sleep 5
+	if test -f config.gnomes; then
+		printf 'Employing little gnomes...'
+		rm -f config.gnomes
+	fi" 2>/dev/null &
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
@@ -3514,6 +3526,14 @@ for engine in $_engines; do
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
+
+# Complete the message on slow systems
+if test -f config.gnomes ; then
+	# Kill does not work well here as it produces nasty 'Killed' message
+	rm -rf config.gnomes
+else
+	echo " work is done"
+fi
 
 #
 # Show which engines ("frontends") are to be built

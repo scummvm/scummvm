@@ -20,47 +20,16 @@
  *
  */
 
-#ifndef BACKENDS_EVENTS_SDL_WINCE_H
-#define BACKENDS_EVENTS_SDL_WINCE_H
-
-#include "common/scummsys.h"
-
-#ifdef _WIN32_WCE
+#include "backends/graphics/sdl/sdl-graphics.h"
 
 #include "backends/events/sdl/sdl-events.h"
-#include "backends/graphics/wincesdl/wincesdl-graphics.h"
 
-extern bool _isSmartphone;
+SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source)
+	: _eventSource(source) {
+	_eventSource->setGraphicsManager(this);
+}
 
-class WINCESdlEventSource : public SdlEventSource {
-public:
-	WINCESdlEventSource();
+SdlGraphicsManager::~SdlGraphicsManager() {
+	_eventSource->setGraphicsManager(0);
+}
 
-	void init(WINCESdlGraphicsManager *graphicsMan);
-
-	void loadDeviceConfiguration();
-
-	// Overloaded from SDL backend (toolbar handling)
-	bool pollEvent(Common::Event &event);
-	// Overloaded from SDL backend (mouse and new scaler handling)
-	void processMouseEvent(Common::Event &event, int x, int y);
-
-protected:
-
-private:
-	int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter);
-
-	WINCESdlGraphicsManager *_graphicsMan;
-
-	// Keyboard tap
-	int _tapX;
-	int _tapY;
-	long _tapTime;
-
-	bool _closeClick;           // flag when taps are spatially close together
-	bool _rbutton;              // double tap -> right button simulation
-};
-
-#endif
-
-#endif /* BACKENDS_EVENTS_SDL_WINCE_H */

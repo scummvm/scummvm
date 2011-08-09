@@ -174,7 +174,7 @@ void OSystem_SDL::initBackend() {
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			if (use_opengl) {
-				_graphicsManager = new OpenGLSdlGraphicsManager();
+				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
 				graphicsManagerType = 1;
 			}
 		}
@@ -538,7 +538,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				debug(1, "switching to OpenGL graphics");
 				delete _graphicsManager;
-				_graphicsManager = new OpenGLSdlGraphicsManager();
+				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
 				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
 			}

@@ -1144,10 +1144,10 @@ int ScummEngine::readSoundResource(ResId idx) {
 				break;
 			}
 
-			// We only allow SPK resources for PC Speaker, PCJr and CMS here
+			// We only allow SPK resources for PC Speaker and PCJr here
 			// since other resource would sound horribly with their output
 			// drivers.
-			if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR || _sound->_musicType == MDT_CMS) && pri != 11)
+			if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && pri != 11)
 				pri = -1;
 
 			// We only allow ADL resources when AdLib or FM-Towns is used as

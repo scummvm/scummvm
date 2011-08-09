@@ -510,21 +510,17 @@ void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
-void DINGUXSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		if (!_overlayVisible) {
-			if (_videoMode.mode == GFX_HALF) {
-				newEvent.mouse.x *= 2;
-				newEvent.mouse.y *= 2;
-			}
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			if (_videoMode.aspectRatioCorrection)
-				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+void DINGUXSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	if (!_overlayVisible) {
+		if (_videoMode.mode == GFX_HALF) {
+			point.x *= 2;
+			point.y *= 2;
 		}
 		g_system->getEventManager()->pushEvent(newEvent);
+		point.x /= _videoMode.scaleFactor;
+		point.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			point.y = aspect2Real(point.y);
 	}
 }
 
