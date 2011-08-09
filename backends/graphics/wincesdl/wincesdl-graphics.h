@@ -160,8 +160,6 @@ public:
 
 	virtual void transformMouseCoordinates(Common::Point &point);
 
-	virtual void transformMouseCoordinates(Common::Point &point);
-
 private:
 	bool update_scalers();
 	void drawToolbarMouse(SDL_Surface *surf, bool draw);

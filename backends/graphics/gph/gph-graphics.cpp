@@ -141,7 +141,7 @@ void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *f
 	if (w > 320 || h > 240){
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_sdlEventSource->toggleMouseGrab();
+		_eventSource->toggleMouseGrab();
 	}
 
 	_videoMode.overlayWidth = 320;
@@ -585,7 +585,6 @@ void GPHGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 			point.x *= 2;
 			point.y *= 2;
 		}
-		g_system->getEventManager()->pushEvent(newEvent);
 		point.x /= _videoMode.scaleFactor;
 		point.y /= _videoMode.scaleFactor;
 		if (_videoMode.aspectRatioCorrection)
