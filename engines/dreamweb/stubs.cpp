@@ -886,9 +886,8 @@ void DreamGenContext::autosetwalk() {
 	al = data.byte(kManspath);
 	if (data.byte(kFinaldest) == al)
 		return;
-	getroomspaths();
-	uint8 *roomsPaths = getroomspathsCPP();
-	checkdest();
+	const uint8 *roomsPaths = getroomspathsCPP();
+	checkdest(roomsPaths);
 	data.word(kLinestartx) = roomsPaths[data.byte(kManspath) * 8 + 0] - 12;
 	data.word(kLinestarty) = roomsPaths[data.byte(kManspath) * 8 + 1] - 12;
 	data.word(kLineendx) = roomsPaths[data.byte(kDestination) * 8 + 0] - 12;
@@ -900,6 +899,28 @@ void DreamGenContext::autosetwalk() {
 		return;
 	}
 	data.byte(kLinepointer) = 0;
+}
+
+void DreamGenContext::checkdest(const uint8 *roomsPaths) {
+	const uint8 *p = roomsPaths + 12 * 8;
+	ah = data.byte(kManspath) << 4;
+	al = data.byte(kDestination);
+	uint8 destination = data.byte(kDestination);
+	for (size_t i = 0; i < 24; ++i) {
+		dh = p[0] & 0xf0;
+		dl = p[0] & 0x0f;
+		if (ax == dx) {
+			data.byte(kDestination) = p[1] & 0x0f;
+			return;
+		}
+		dl = (p[0] & 0xf0) >> 4;
+		dh = (p[0] & 0x0f) << 4;
+		if (ax == dx) {
+			destination = p[1] & 0x0f;
+		}
+		p += 2;
+	}
+	data.byte(kDestination) = destination;
 }
 
 } /*namespace dreamgen */

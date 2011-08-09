@@ -17359,56 +17359,6 @@ holdingreel:
 	data.byte(kWatchmode) = 2;
 }
 
-void DreamGenContext::checkdest() {
-	STACK_CHECK;
-	push(bx);
-	_add(bx, 12*8);
-	ah = data.byte(kManspath);
-	cl = 4;
-	_shl(ah, cl);
-	al = data.byte(kDestination);
-	cl = 24;
-	ch = data.byte(kDestination);
-checkdestloop:
-	dh = es.byte(bx);
-	_and(dh, 0xf0);
-	dl = es.byte(bx);
-	_and(dl, 0xf);
-	_cmp(ax, dx);
-	if (!flags.z())
-		goto nextcheck;
-	al = es.byte(bx+1);
-	_and(al, 15);
-	data.byte(kDestination) = al;
-	bx = pop();
-	return;
-nextcheck:
-	dl = es.byte(bx);
-	_and(dl, 0xf0);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	dh = es.byte(bx);
-	_and(dh, 0xf);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_cmp(ax, dx);
-	if (!flags.z())
-		goto nextcheck2;
-	ch = es.byte(bx+1);
-	_and(ch, 15);
-nextcheck2:
-	_add(bx, 2);
-	_dec(cl);
-	if (!flags.z())
-		goto checkdestloop;
-	data.byte(kDestination) = ch;
-	bx = pop();
-}
-
 void DreamGenContext::bresenhams() {
 	STACK_CHECK;
 	workoutframes();
@@ -20137,7 +20087,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_walktotext: walktotext(); break;
 		case addr_getflagunderp: getflagunderp(); break;
 		case addr_setwalk: setwalk(); break;
-		case addr_checkdest: checkdest(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
 		case addr_copyname: copyname(); break;

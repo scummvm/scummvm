@@ -83,6 +83,7 @@
 	void walking();
 	void walking(Sprite *sprite);
 	void autosetwalk();
+	void checkdest(const uint8 *roomsPaths);
 	void aboutturn(Sprite *sprite);
 	void backobject(Sprite *sprite);
 	void constant(Sprite *sprite, ObjData *objData);

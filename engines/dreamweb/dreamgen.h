@@ -119,7 +119,6 @@ public:
 	static const uint16 addr_copyname = 0xca5c;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
-	static const uint16 addr_checkdest = 0xca4c;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_getflagunderp = 0xca40;
 	static const uint16 addr_walktotext = 0xca3c;
@@ -1875,7 +1874,7 @@ public:
 	void makecaps();
 	void read();
 	void fadescreenups();
-	void checkdest();
+	//void checkdest();
 	//void initman();
 	void loadpalfromiff();
 	//void facerightway();

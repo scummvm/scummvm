@@ -75,6 +75,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'findsource',
 	'walking',
 	'autosetwalk',
+	'checkdest',
 	'spriteupdate',
 	'dodoor',
 	'lockeddoorway',
