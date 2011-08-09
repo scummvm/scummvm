@@ -163,17 +163,13 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 	struct SAA1099 *saa = &_saa1099[chip];
 	int j, ch;
 
-	/* if the channels are disabled we're done */
-	if (!saa->all_ch_enable) {
-		/* init output data */
-		if (chip == 0) {
-			memset(buffer, 0, sizeof(int16)*length*2);
-		}
-		return;
-	}
-
 	if (chip == 0) {
 		memset(buffer, 0, sizeof(int16)*length*2);
+	}
+
+	/* if the channels are disabled we're done */
+	if (!saa->all_ch_enable) {
+		return;
 	}
 
 	for (ch = 0; ch < 2; ch++) {
