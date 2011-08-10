@@ -27,8 +27,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
-#ifdef USE_MPEG2
-
 #include "common/endian.h"
 #include "common/timer.h"
 #include "common/file.h"
@@ -47,6 +45,8 @@
 
 #define MWIDTH 640
 #define MHEIGHT 400
+
+#ifdef USE_MPEG2
 
 namespace Grim {
 
