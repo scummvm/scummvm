@@ -117,12 +117,8 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 			uint8 c0 = es.byte(si);
 			uint8 c1 = es.byte(si+1);
 			uint8 c2 = es.byte(si+2);
-			push(es);
-			push(ds);
 			c0 = engine->modifyChar(c0);
 			printboth(src, &offset, y, c0, c1);
-			ds = pop();
-			es = pop();
 			++si;
 			if ((c1 == 0) || (c1 == ':')) {
 				es = pop();
@@ -130,15 +126,11 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 				return 0;
 			}
 			if (charCount != 1) {
-				push(ds);
-				push(es);
 				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
 				uint16 offset2 = offset;
 				printboth(src, &offset2, y, c1, c2);
 				data.word(kCharshift) = 0;
-				es = pop();
-				ds = pop();
 				for (int i=0; i<2; ++i) {
 					waitframes();
 					if (ax == 0)
