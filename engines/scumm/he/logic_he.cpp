@@ -834,30 +834,6 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 	int res = 0;
 
 	switch (op) {
-	case 1001:
-		res = op_1001(args);
-		break;
-
-	case 1002:
-		res = op_1002(args);
-		break;
-
-	case 1004:
-		res = op_1004(args);
-		break;
-
-	case 1005: {
-		// NOTE: This seems to be *completely* useless to call from dispatch
-		// op_1005 is only useful from op_1014
-		// However, the original does do this crazy setup to call it...
-		float v11 = (float)args[6];
-		float v12 = (float)args[7];
-		float v13 = (float)args[8];
-		float v14 = (float)args[9];
-		res = op_1005(args[0], args[1], args[2], args[3], args[4], args[5], &v11, &v12, &v13, &v14);
-		break;
-	}
-
 	case 1006:
 		res = op_1006(args[0], args[1], args[2], args[3]);
 		break;
@@ -902,13 +878,16 @@ int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 		res = op_1021(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 
-	case 8221968:
-		// Someone had a fun and used his birthday as opcode number
-		res = getFromArray(args[0], args[1], args[2]);
-		break;
+	case 1001: case 1002: case 1003: case 1005:
+	case 1009: case 8221968:
+		// In the u32, but unused by any of the soccer scripts
+		// 1005 is called from another opcode, however
+		error("Unused soccer u32 opcode %d called", op);
 
-	case 1010: case 1015: case 1018: case 1020:
-		// Used only by the in-game editor (so, fall through)
+	case 1004: case 1010: case 1015: case 1018:
+	case 1020:
+		// Used only by the unaccessible in-game editor (so, fall through)
+
 	default:
 		LogicHE::dispatch(op, numArgs, args);
 	}
@@ -934,52 +913,6 @@ int LogicHEsoccer::startOfFrame() {
 		res = op_1011((int)_userDataD[531], (int)_userDataD[532], (int)_userDataD[533], (int)_userDataD[534], (int)_userDataD[535], (int)_userDataD[536]);
 
 	return res;
-}
-
-int LogicHEsoccer::op_1001(int32 *args) {
-	return (int)(args[0] * sin((float)args[1]));
-}
-
-int LogicHEsoccer::op_1002(int32 *args) {
-	return _vm->VAR(2) * args[0];
-}
-
-int LogicHEsoccer::op_1003(int32 *args) {
-	// NOTE: This function is never called, so it's here for reference only
-	double data[6], out[3];
-	int i;
-
-	for (i = 0; i < 6; i++) {
-		data[i] = getFromArray(args[0], 0, i);
-	}
-
-	out[0] = data[1] * data[5] - data[4] * data[2];
-	out[1] = data[5] * data[0] - data[3] * data[2];
-	out[2] = data[4] * data[0] - data[3] * data[1];
-
-	for (i = 0; i < 3; i++) {
-		putInArray(args[0], 0, i, scumm_round(out[i]));
-	}
-
-	return 1;
-}
-
-int LogicHEsoccer::op_1004(int32 *args) {
-	// Identical to LogicHEfootball::op_1004
-	double res, a2, a4, a5;
-
-	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
-	a4 = ((double)args[3] - (double)args[0]) / ((double)args[5] - (double)args[2]);
-	a2 = (double)args[2] - (double)args[0] * a4 - args[1] * a5;
-
-	res = (double)args[6] * a4 + (double)args[7] * a5 + a2;
-	writeScummVar(108, (int32)res);
-
-	writeScummVar(109, (int32)a2);
-	writeScummVar(110, (int32)a5);
-	writeScummVar(111, (int32)a4);
-
-	return 1;
 }
 
 int LogicHEsoccer::op_1005(float a1, float a2, float a3, float a4, float a5, float a6, float *a7, float *a8, float *a9, float *a10) {

@@ -122,10 +122,6 @@ public:
 	int startOfFrame();
 
 private:
-	int op_1001(int32 *args);
-	int op_1002(int32 *args);
-	int op_1003(int32 *args);
-	int op_1004(int32 *args);
 	int op_1005(float a1, float a2, float a3, float a4, float a5, float a6, float *a7, float *a8, float *a9, float *a10);
 	int op_1006(int32 a1, int32 a2, int32 a3, int32 a4);
 	int op_1007(int32 *args);
