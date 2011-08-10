@@ -1568,6 +1568,10 @@ void CGEEngine::runGame() {
 		mainLoop();
 	}
 
+	// If finishing game due to closing ScummVM window, explicitly save the game
+	if (!_finis)
+		qGame();
+
 	_keyboard->setClient(NULL);
 	_snail->addCom(kSnClear, -1, 0, NULL);
 	_snail_->addCom(kSnClear, -1, 0, NULL);
