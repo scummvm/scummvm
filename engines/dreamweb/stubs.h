@@ -44,7 +44,7 @@
 	void getnextword();
 	uint8 getnextword(const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printboth();
-	void printboth(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
+	void printboth(const void *src, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
 	void printchar();
 	void printchar(const void *src, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printdirect();

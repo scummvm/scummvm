@@ -28,14 +28,14 @@ namespace DreamGen {
 
 void DreamGenContext::printboth() {
 	uint16 x = di;
-	printboth(ds, &x, bx, al, ah);
+	printboth(ds.ptr(0, 0), &x, bx, al, ah);
 	di = x;
 }
 
-void DreamGenContext::printboth(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
+void DreamGenContext::printboth(const void* src, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
-	printchar(segRef(src).ptr(0, 0), &newX, y, c, nextChar, &width, &height);
+	printchar(src, &newX, y, c, nextChar, &width, &height);
 	multidump(*x, y, width, height);
 	*x = newX;
 }
@@ -107,6 +107,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
 	ds = data.word(kCharset1);
+	const void* src = ds.ptr(0, 0);
 	do {
 		uint16 offset = x;
 		uint16 charCount = getnumber(es.ptr(si, 0), maxWidth, centered, &offset);
@@ -119,7 +120,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 			push(es);
 			push(ds);
 			c0 = engine->modifyChar(c0);
-			printboth(ds, &offset, y, c0, c1);
+			printboth(src, &offset, y, c0, c1);
 			ds = pop();
 			es = pop();
 			++si;
@@ -134,7 +135,7 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 				c1 = engine->modifyChar(c1);
 				data.word(kCharshift) = 91;
 				uint16 offset2 = offset;
-				printboth(ds, &offset2, y, c1, c2);
+				printboth(src, &offset2, y, c1, c2);
 				data.word(kCharshift) = 0;
 				es = pop();
 				ds = pop();
