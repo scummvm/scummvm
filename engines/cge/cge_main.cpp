@@ -192,6 +192,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		}
 
 		// Delete the thumbnail
+		saveHeader.thumbnail->free();
 		delete saveHeader.thumbnail;
 
 		// If we're loading the auto-save slot, load the name
@@ -229,13 +230,17 @@ Common::String CGEEngine::generateSaveName(int slot) {
 Common::Error CGEEngine::loadGameState(int slot) {
 	// Clear current game activity
 	caveDown();
+	resetGame();
 
 	// Load the game
-	loadGame(slot, NULL, true);
-	caveUp();
 	loadGame(slot, NULL);
+	caveUp();
 
 	return Common::kNoError;
+}
+
+void CGEEngine::resetGame() {
+	_vga->_spareQ->clear();
 }
 
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
@@ -1578,7 +1583,7 @@ void CGEEngine::runGame() {
 	}
 
 	// If finishing game due to closing ScummVM window, explicitly save the game
-	if (!_finis)
+	if (!_finis && canSaveGameStateCurrently())
 		qGame();
 
 	_keyboard->setClient(NULL);
