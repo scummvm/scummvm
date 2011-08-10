@@ -320,8 +320,9 @@ void DreamGenContext::usetimedtext() {
 
 	es = data.word(kTimedseg);
 	si = data.word(kTimedoffset);
+	const uint8 *string = es.ptr(si, 0);
 	uint16 y = data.byte(kTimedy);
-	printdirect(data.byte(kTimedx), &y, 237, true);
+	printdirect(&string, data.byte(kTimedx), &y, 237, true);
 	data.byte(kNeedtodumptimed) = 1;
 }
 

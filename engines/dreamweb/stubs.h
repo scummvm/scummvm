@@ -48,7 +48,7 @@
 	void printchar();
 	void printchar(const void *src, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printdirect();
-	void printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	void printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
 	void usetimedtext();
 	void getundertimed();
 	void putundertimed();

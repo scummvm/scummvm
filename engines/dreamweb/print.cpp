@@ -161,22 +161,26 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 
 void DreamGenContext::printdirect() {
 	uint16 y = bx;
-	printdirect(di, &y, dl, (bool)(dl & 1));
+	uint16 initialSi = si;
+	const uint8 *initialString = es.ptr(si, 0);
+	const uint8 *string = initialString;
+	printdirect(&string, di, &y, dl, (bool)(dl & 1));
+	si = initialSi + (string - initialString);
 	bx = y;
 }
 
-void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+void DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
 	ds = data.word(kCurrentset);
 	const void *src = ds.ptr(0, 0);
 	while (true) {
 		uint16 offset = x;
-		uint8 charCount = getnumber(es.ptr(si, 0), maxWidth, centered, &offset);
+		uint8 charCount = getnumber(*string, maxWidth, centered, &offset);
 		uint16 i = offset;
 		do {
-			uint8 c = es.byte(si);
-			uint8 nextChar = es.byte(si+1);
-			++si;
+			uint8 c = (*string)[0];
+			uint8 nextChar = (*string)[1];
+			++(*string);
 			if ((c == 0) || (c == ':')) {
 				return;
 			}
