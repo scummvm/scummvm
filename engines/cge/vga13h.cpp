@@ -897,7 +897,7 @@ void Vga::setStatAdr() {
 void Vga::waitVR(bool on) {
 	// Since some of the game parts rely on using vertical sync as a delay mechanism,
 	// we're introducing a short delay to simulate it
-	g_system->delayMillis(10);
+	g_system->delayMillis(5);
 }
 
 
