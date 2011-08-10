@@ -239,7 +239,16 @@ Common::Error CGEEngine::loadGameState(int slot) {
 }
 
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
+	caveDown();
+	_oldLev = _lev;
+	saveSound();
+
+	// Write out the user's progress
 	saveGame(slot, desc);
+
+	// Reload the scene
+	caveUp();
+
 	return Common::kNoError;
 }
 
