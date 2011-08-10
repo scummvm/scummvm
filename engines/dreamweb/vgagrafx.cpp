@@ -80,10 +80,9 @@ void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, ui
 }
 
 void DreamGenContext::multidump(uint16 x, uint16 y, uint8 width, uint8 height) {
-	ds = data.word(kWorkspace);
 	unsigned offset = x + y * kScreenwidth;
 	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
-	engine->blit(ds.ptr(offset, width * height), kScreenwidth, x, y, width, height);
+	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
 void DreamGenContext::multidump() {
