@@ -58,7 +58,9 @@ Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: RE
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists
 
 [Run]
-Filename: {app}\scummvm.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent; Description: Launch ScummVM
+Filename: {app}\scummvm.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent; Description: Launch ScummVM; Languages: en eu br ca cz da nl fi he hu it ja nb pl pt ru sk sl es
+Filename: {app}\scummvm.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent; Description: ScummVM starten; Languages: de
+Filename: {app}\scummvm.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent; Description: Démarrer ScummVM; Languages: fr
 
 [UninstallDelete]
 Type: files; Name: {app}\ISTool.url
@@ -69,7 +71,11 @@ Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
-Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme
+Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: en eu br ca cz da nl fi fr he hu it ja nb pl pt ru sk sl es
+Source: README.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
+Source: doc/de/Liesmich.txt; DestDir: {app}/doc/de; Flags: ignoreversion skipifsourcedoesntexist; Languages: en eu br ca cz da nl fi fr he hu it ja nb pl pt ru sk sl es
+Source: doc/de/Liesmich.txt; DestDir: {app}/doc/de; Flags: ignoreversion isreadme skipifsourcedoesntexist; Languages: de
+Source: doc/fr/Quickstart_fr.txt; DestDir: {app}/doc/fr; Flags: ignoreversion skipifsourcedoesntexist
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 Source: SDL.dll; DestDir: {app}
