@@ -163,9 +163,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	}
 
 	for (TimerSlotMap::iterator i = _callbacks.begin(), end = _callbacks.end(); i != end; ++i) {
-		if (i->_value == callback) {
+		if (i->_value == callback)
 			_callbacks.erase(i);
-			break;
-		}
 	}
 }
