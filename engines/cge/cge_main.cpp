@@ -1423,7 +1423,7 @@ void CGEEngine::handleFrame() {
 		}
 
 		// Slight delay
-		g_system->delayMillis(10);
+		g_system->delayMillis(5);
 		millis = g_system->getMillis();
 	}
 	_lastFrame = millis;
