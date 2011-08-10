@@ -35,7 +35,7 @@ void DreamGenContext::printboth() {
 void DreamGenContext::printboth(uint16 src, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
-	printchar(src, &newX, y, c, nextChar, &width, &height);
+	printchar(segRef(src).ptr(0, 0), &newX, y, c, nextChar, &width, &height);
 	multidump(*x, y, width, height);
 	*x = newX;
 }
@@ -76,13 +76,13 @@ void DreamGenContext::getnextword() {
 void DreamGenContext::printchar() {
 	uint16 x = di;
 	uint8 width, height;
-	printchar(ds, &x, bx, al, ah, &width, &height);
+	printchar(ds.ptr(0, 0), &x, bx, al, ah, &width, &height);
 	di = x;
 	cl = width;
 	ch = height;
 }
 
-void DreamGenContext::printchar(uint16 src, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamGenContext::printchar(const void *src, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
 	push(si);
@@ -90,8 +90,7 @@ void DreamGenContext::printchar(uint16 src, uint16* x, uint16 y, uint8 c, uint8 
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
 	uint16 tmp = c - 32 + data.word(kCharshift);
-	ds = src;
-	showframe(ds.ptr(0, 0), *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);
+	showframe(src, *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);
 	di = pop();
 	si = pop();
 	_cmp(data.byte(kKerning), 0);
@@ -169,6 +168,7 @@ void DreamGenContext::printdirect() {
 void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
 	ds = data.word(kCurrentset);
+	const void *src = ds.ptr(0, 0);
 	while (true) {
 		uint16 offset = x;
 		uint8 charCount = getnumber(si, maxWidth, centered, &offset);
@@ -182,7 +182,7 @@ void DreamGenContext::printdirect(uint16 x, uint16 *y, uint8 maxWidth, bool cent
 			}
 			c = engine->modifyChar(c);
 			uint8 width, height;
-			printchar(ds, &i, *y, c, nextChar, &width, &height);
+			printchar(src, &i, *y, c, nextChar, &width, &height);
 			data.word(kLastxpos) = i;
 			--charCount;
 		} while(charCount);
