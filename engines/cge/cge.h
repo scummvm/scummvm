@@ -156,6 +156,7 @@ public:
 	void quit();
 	void resetQSwitch();
 	void optionTouch(int opt, uint16 mask);
+	void resetGame();
 	bool loadGame(int slotNumber, SavegameHeader *header = NULL, bool tiny = false);
 	void setMapBrick(int x, int z);
 	void switchMapping();
