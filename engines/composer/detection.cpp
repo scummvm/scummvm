@@ -120,11 +120,37 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
+		{
+			"darby",
+			0,
+			AD_ENTRY1("book.ini", "285308372f7dddff2ca5a25c9192cf5c"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
 	{
 		{
 			"gregory",
 			0,
 			AD_ENTRY1("install.inf", "b7e9d6f7949d412dad0a183375069844"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
+		{
+			"gregory",
+			0,
+			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
