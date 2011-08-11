@@ -623,10 +623,7 @@ void DreamGenContext::getroomspaths() {
 }
 
 uint8 *DreamGenContext::getroomspathsCPP() {
-	push(es);
-	es = data.word(kReels);
-	void *result = es.ptr(data.byte(kRoomnum) * 144, 144);
-	es = pop();
+	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
 	return (uint8 *)result;
 }
 
@@ -845,13 +842,12 @@ void DreamGenContext::plotreel() {
 		if (al == 255)
 			break;
 		dealwithspecial();
-		_inc(data.word(kReelpointer));
+		++data.word(kReelpointer);
 		reel += 8;
 	}
 
 	for (size_t i = 0; i < 8; ++i) {
-		ax = reel->frame();
-		if (ax != 0xffff)
+		if (reel->frame() != 0xffff)
 			showreelframe(reel);
 		++reel;
 	}
@@ -865,10 +861,7 @@ void DreamGenContext::crosshair() {
 	} else {
 		frame = 29;
 	}
-	push(ds);
-	ds = data.word(kIcons1);
-	Frame *src = (Frame *)ds.ptr(0, 0);
-	ds = pop();
+	const Frame *src = (const Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
 	uint8 width, height;
 	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0, &width, &height);
 }
@@ -878,9 +871,7 @@ void DreamGenContext::deltextline() {
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
-	ds = data.word(kBuffers);
-	si = kTextunder;
-	multiput(ds.ptr(si, 0), x, y, kUndertextsizex, kUndertextsizey);
+	multiput(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, kUndertextsizex, kUndertextsizey);
 }
 
 void DreamGenContext::autosetwalk() {
