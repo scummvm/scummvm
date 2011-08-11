@@ -2747,6 +2747,7 @@ void RivenExternal::xtatboundary(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xflies(uint16 argc, uint16 *argv) {
 	// TODO: Activate the "flies" effect
+	debug(1, "STUB: xflies(): create %d %s fl%s", argv[1], (argv[0] == 0) ? "black" : "glowing", (argv[1] == 1) ? "y" : "ies");
 }
 
 } // End of namespace Mohawk
