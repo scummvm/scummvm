@@ -49,7 +49,7 @@
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
-#include "graphics/cursorman.cpp"
+#include "graphics/cursorman.h"
 #endif
 
 #include "icons/scummvm.xpm"
