@@ -98,6 +98,7 @@
 	void liftsprite(Sprite *sprite, ObjData *objData);
 	void findsource();
 	Frame *findsourceCPP();
+	void showgamereel();
 	void showreelframe();
 	void showreelframe(Reel *reel);
 	void turnpathonCPP(uint8 param);
