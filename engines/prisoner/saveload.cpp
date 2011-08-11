@@ -598,12 +598,7 @@ PrisonerEngine::kReadSaveHeaderError PrisonerEngine::readSaveHeader(Common::Seek
 		header.description += (char)in->readByte();
 
 	if (loadThumbnail) {
-		header.thumbnail = new Graphics::Surface();
-		assert(header.thumbnail);
-		if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
-			delete header.thumbnail;
-			header.thumbnail = 0;
-		}
+		header.thumbnail = Graphics::loadThumbnail(*in);
 	} else {
 		Graphics::skipThumbnail(*in);
 	}
