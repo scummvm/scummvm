@@ -12084,28 +12084,6 @@ notonsartroof:
 	placesetobject();
 }
 
-void DreamGenContext::dumptimedtext() {
-	STACK_CHECK;
-	_cmp(data.byte(kNeedtodumptimed), 1);
-	if (!flags.z())
-		return /* (nodumptimed) */;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	cl = 240;
-	ch = (30);
-	multidump();
-	data.byte(kNeedtodumptimed) = 0;
-}
-
 void DreamGenContext::setuptimeduse() {
 	STACK_CHECK;
 	_cmp(data.word(kTimecount), 0);
@@ -19892,7 +19870,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setallchanges: setallchanges(); break;
 		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
-		case addr_dumptimedtext: dumptimedtext(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
 		case addr_setuptimedtemp: setuptimedtemp(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;

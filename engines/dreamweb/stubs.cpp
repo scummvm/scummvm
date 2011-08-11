@@ -326,6 +326,17 @@ void DreamGenContext::usetimedtext() {
 	data.byte(kNeedtodumptimed) = 1;
 }
 
+void DreamGenContext::dumptimedtext() {
+	if (data.byte(kNeedtodumptimed) != 1)
+		return;
+	uint8 y = data.byte(kTimedy);
+	if (data.byte(kForeignrelease) != 0)
+		y -= 3;
+
+	multidump(data.byte(kTimedx), y, 240, kUndertimedysize);
+	data.byte(kNeedtodumptimed) = 0;
+}
+
 void DreamGenContext::gettime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);

@@ -315,7 +315,6 @@ public:
 	static const uint16 addr_edenscdplayer = 0xc728;
 	static const uint16 addr_setuptimedtemp = 0xc720;
 	static const uint16 addr_setuptimeduse = 0xc71c;
-	static const uint16 addr_dumptimedtext = 0xc718;
 	static const uint16 addr_autoappear = 0xc70c;
 	static const uint16 addr_dochange = 0xc708;
 	static const uint16 addr_setallchanges = 0xc704;
@@ -1500,7 +1499,7 @@ public:
 	void loadspeech();
 	//void cls();
 	//void printsprites();
-	void checkifperson();
+	//void dumptimedtext();
 	void showallobs();
 	//void getnumber();
 	void adjustleft();
@@ -1568,7 +1567,7 @@ public:
 	void folderhints();
 	void openhoteldoor();
 	void removesetobject();
-	void dumptimedtext();
+	void checkifperson();
 	//void frameoutfx();
 	void blank();
 	void drinker();

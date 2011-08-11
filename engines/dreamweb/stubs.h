@@ -48,6 +48,7 @@
 	void printdirect();
 	void printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
 	void usetimedtext();
+	void dumptimedtext();
 	void getundertimed();
 	void putundertimed();
 	uint8 printslow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
