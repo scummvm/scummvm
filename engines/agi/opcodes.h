@@ -81,6 +81,7 @@ void cmdPositionF(AgiGame *state, uint8 *p);
 void cmdPositionFV1(AgiGame *state, uint8 *p);
 void cmdGetPosn(AgiGame *state, uint8 *p);
 void cmdReposition(AgiGame *state, uint8 *p);	// 0x28
+void cmdRepositionV1(AgiGame *state, uint8 *p);	// 0x28
 void cmdSetView(AgiGame *state, uint8 *p);
 void cmdSetViewF(AgiGame *state, uint8 *p);
 void cmdSetLoop(AgiGame *state, uint8 *p);
@@ -120,7 +121,9 @@ void cmdReverseLoop(AgiGame *state, uint8 *p);
 void cmdReverseLoopV1(AgiGame *state, uint8 *p);
 void cmdCycleTime(AgiGame *state, uint8 *p);
 void cmdStopMotion(AgiGame *state, uint8 *p);
+void cmdStopMotionV1(AgiGame *state, uint8 *p);
 void cmdStartMotion(AgiGame *state, uint8 *p);
+void cmdStartMotionV1(AgiGame *state, uint8 *p);
 void cmdStepSize(AgiGame *state, uint8 *p);
 void cmdStepTime(AgiGame *state, uint8 *p);	// 0x50
 void cmdMoveObj(AgiGame *state, uint8 *p);

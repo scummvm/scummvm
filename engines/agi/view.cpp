@@ -299,6 +299,12 @@ void AgiEngine::setView(VtEntry *v, int n) {
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;
 	v->viewReplaced = true;
+
+	if (getVersion() < 0x2000) {
+		v->stepSize = v->viewData->rdata[0];
+		v->cycleTime = v->viewData->rdata[1];
+		v->cycleTimeCount = 0;
+	}
 	setLoop(v, v->currentLoop >= v->numLoops ? 0 : v->currentLoop);
 }
 

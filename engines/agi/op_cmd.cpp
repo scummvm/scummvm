@@ -999,6 +999,15 @@ void cmdReposition(AgiGame *state, uint8 *p) {
 	state->_vm->fixPosition(p0);
 }
 
+void cmdRepositionV1(AgiGame *state, uint8 *p) {
+	vt.xPos2 = vt.xPos;
+	vt.yPos2 = vt.yPos;
+	vt.flags |= UPDATE_POS;
+
+	vt.xPos = (vt.xPos + p1) & 0xff;
+	vt.yPos = (vt.yPos + p2) & 0xff;
+}
+
 void cmdRepositionTo(AgiGame *state, uint8 *p) {
 	vt.xPos = p1;
 	vt.yPos = p2;
@@ -1087,12 +1096,20 @@ void cmdStopMotion(AgiGame *state, uint8 *p) {
 	}
 }
 
+void cmdStopMotionV1(AgiGame *state, uint8 *p) {
+	vt.flags &= ~ANIMATED;
+}
+
 void cmdStartMotion(AgiGame *state, uint8 *p) {
 	vt.motion = MOTION_NORMAL;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
 		state->playerControl = true;
 	}
+}
+
+void cmdStartMotionV1(AgiGame *state, uint8 *p) {
+	vt.flags |= ANIMATED;
 }
 
 void cmdPlayerControl(AgiGame *state, uint8 *p) {
@@ -1173,7 +1190,11 @@ void cmdWander(AgiGame *state, uint8 *p) {
 		state->playerControl = false;
 
 	vt.motion = MOTION_WANDER;
-	vt.flags |= UPDATE;
+	if (getVersion() < 0x2000) {
+		vt.flags |= UPDATE | ANIMATED;
+	} else {
+		vt.flags |= UPDATE;
+	}
 }
 
 void cmdSetGameID(AgiGame *state, uint8 *p) {

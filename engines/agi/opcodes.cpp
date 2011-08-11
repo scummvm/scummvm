@@ -83,14 +83,14 @@ AgiInstruction insV1[] = {
 	{ "move.obj",			"nnnnn",	&cmdMoveObj },			// 1F
 	{ "set.view",			"nn",		&cmdSetView },			// 20
 	{ "follow.ego",			"nnn",		&cmdFollowEgo },		// 21
-	{ "...",				"",			&cmdUnknown },			// 22 # block
-	{ "...",				"",			&cmdUnknown },			// 23 # unblock
+	{ "block",				"",			&cmdBlock },			// 22
+	{ "unblock",			"",			&cmdUnblock },			// 23
 	{ "ignore.blocks",		"n",		&cmdIgnoreBlocks },		// 24
 	{ "observe.blocks",		"n",		&cmdObserveBlocks },	// 25
 	{ "wander",				"n",		&cmdWander },			// 26
-	{ "reposition",			"nvv",		&cmdReposition },		// 27
-	{ "stop.motion",		"n",		&cmdStopMotion },		// 28
-	{ "start.motion",		"n",		&cmdStartMotion },		// 29
+	{ "reposition",			"nvv",		&cmdRepositionV1 },		// 27
+	{ "stop.motion",		"n",		&cmdStopMotionV1 },		// 28
+	{ "start.motion",		"n",		&cmdStartMotionV1 },	// 29
 	{ "stop.cycling",		"n",		&cmdStopCycling },		// 2A
 	{ "start.cycling",		"n",		&cmdStartCycling },		// 2B
 	{ "stop.update",		"n",		&cmdStopUpdate },		// 2C
