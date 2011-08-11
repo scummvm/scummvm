@@ -16339,69 +16339,6 @@ nothingund:
 	blank();
 }
 
-void DreamGenContext::checkifperson() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	cx = 12;
-identifyreel:
-	push(cx);
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notareelid;
-	push(es);
-	push(bx);
-	push(ax);
-	ax = es.word(bx+0);
-	data.word(kReelpointer) = ax;
-	getreelstart();
-	_cmp(es.word(si+2), 0x0ffff);
-	if (!flags.z())
-		goto notblankpers;
-	_add(si, 5);
-notblankpers:
-	cx = es.word(si+2);
-	ax = es.word(si+0);
-	push(cx);
-	getreelframeax();
-	cx = pop();
-	_add(cl, es.byte(bx+4));
-	_add(ch, es.byte(bx+5));
-	dx = cx;
-	_add(dl, es.byte(bx+0));
-	_add(dh, es.byte(bx+1));
-	ax = pop();
-	bx = pop();
-	es = pop();
-	_cmp(al, cl);
-	if (flags.c())
-		goto notareelid;
-	_cmp(ah, ch);
-	if (flags.c())
-		goto notareelid;
-	_cmp(al, dl);
-	if (!flags.c())
-		goto notareelid;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto notareelid;
-	cx = pop();
-	ax = es.word(bx+2);
-	data.word(kPersondata) = ax;
-	al = es.byte(bx+4);
-	ah = 5;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notareelid:
-	cx = pop();
-	_add(bx, 5);
-	_dec(cx);
-	if (!flags.z())
-		goto identifyreel;
-}
-
 void DreamGenContext::checkifset() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -19949,7 +19886,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_madmanrun: madmanrun(); break;
 		case addr_checkcoords: checkcoords(); break;
 		case addr_identifyob: identifyob(); break;
-		case addr_checkifperson: checkifperson(); break;
 		case addr_checkifset: checkifset(); break;
 		case addr_checkifex: checkifex(); break;
 		case addr_checkiffree: checkiffree(); break;

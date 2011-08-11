@@ -964,4 +964,40 @@ void DreamGenContext::checkdest(const uint8 *roomsPaths) {
 	data.byte(kDestination) = destination;
 }
 
+void DreamGenContext::checkifperson() {
+	flags._z = not checkifperson(al, ah);
+}
+
+bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
+	People *people = (People *)segRef(data.word(kBuffers)).ptr(kPeoplelist, 0);
+
+	for (size_t i = 0; i < 12; ++i, ++people) {
+		if (people->b4 == 255)
+			continue;
+		data.word(kReelpointer) = people->w0();
+		Reel *reel = getreelstartCPP();
+		if (reel->frame() == 0xffff)
+			++reel;
+		const Frame *frame = getreelframeax(reel->frame());
+		uint8 xmin = reel->x + frame->x;
+		uint8 ymin = reel->y + frame->y;
+		uint8 xmax = xmin + frame->width;
+		uint8 ymax = ymin + frame->height;
+		if (x < xmin)
+			continue;
+		if (y < ymin)
+			continue;
+		if (x >= xmax)
+			continue;
+		if (y >= ymax)
+			continue;
+		data.word(kPersondata) = people->w2();
+		al = people->b4;
+		ah = 5;
+		obname();
+		return true;
+	}
+	return false;
+}
+
 } /*namespace dreamgen */

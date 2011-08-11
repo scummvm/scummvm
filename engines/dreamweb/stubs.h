@@ -101,7 +101,7 @@
 	void showgamereel();
 	void showreelframe();
 	void showreelframe(Reel *reel);
-	void getreelframeax();
+	const Frame *getreelframeax(uint16 frame);
 	void turnpathonCPP(uint8 param);
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();
@@ -119,4 +119,6 @@
 	void showrain();
 	void deltextline();
 	void doblocks();
+	void checkifperson();
+	bool checkifperson(uint8 x, uint8 y);
 
