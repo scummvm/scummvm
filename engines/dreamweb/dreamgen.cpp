@@ -12106,58 +12106,6 @@ void DreamGenContext::setuptimeduse() {
 	data.word(kTimedoffset) = bx;
 }
 
-void DreamGenContext::setuptimedtemp() {
-	STACK_CHECK;
-	_cmp(ah, 0);
-	if (flags.z())
-		goto notloadspeech3;
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	dl = 'T';
-	dh = ah;
-	cl = 'T';
-	ah = 0;
-	loadspeech();
-	_cmp(data.byte(kSpeechloaded), 1);
-	if (!flags.z())
-		goto _tmp1;
-	al = 50+12;
-	playchannel1();
-_tmp1:
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	_cmp(data.byte(kSpeechloaded), 1);
-	if (!flags.z())
-		goto notloadspeech3;
-	_cmp(data.byte(kSubtitles),  1);
-	if (flags.z())
-		goto notloadspeech3;
-	return;
-notloadspeech3:
-	_cmp(data.word(kTimecount), 0);
-	if (!flags.z())
-		return /* (cantsetup2) */;
-	data.byte(kTimedy) = bh;
-	data.byte(kTimedx) = bl;
-	data.word(kCounttotimed) = cx;
-	_add(dx, cx);
-	data.word(kTimecount) = dx;
-	bl = al;
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kTextfile1);
-	cx = (66*2);
-	ax = es.word(bx);
-	_add(ax, cx);
-	bx = ax;
-	data.word(kTimedseg) = es;
-	data.word(kTimedoffset) = bx;
-}
-
 void DreamGenContext::edenscdplayer() {
 	STACK_CHECK;
 	showfirstuse();
@@ -19871,7 +19819,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
-		case addr_setuptimedtemp: setuptimedtemp(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;
 		case addr_usewall: usewall(); break;
 		case addr_usechurchgate: usechurchgate(); break;

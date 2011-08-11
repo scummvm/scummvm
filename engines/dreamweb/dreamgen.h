@@ -313,7 +313,6 @@ public:
 	static const uint16 addr_usechurchgate = 0xc730;
 	static const uint16 addr_usewall = 0xc72c;
 	static const uint16 addr_edenscdplayer = 0xc728;
-	static const uint16 addr_setuptimedtemp = 0xc720;
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_autoappear = 0xc70c;
 	static const uint16 addr_dochange = 0xc708;
@@ -1384,7 +1383,7 @@ public:
 	//void kernchars();
 	void othersmoker();
 	void dofade();
-	void setuptimedtemp();
+	//void setuptimedtemp();
 	void blocknametext();
 	void useelevator5();
 	void useelevator4();

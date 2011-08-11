@@ -326,6 +326,47 @@ void DreamGenContext::usetimedtext() {
 	data.byte(kNeedtodumptimed) = 1;
 }
 
+void DreamGenContext::setuptimedtemp() {
+	setuptimedtemp(al, ah, bl, bh, cx, dx);
+}
+
+void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+#if 1 // if cd
+	if (voiceIndex != 0) {
+		push(ax);
+		push(bx);
+		push(cx);
+		push(dx);
+		dl = 'T';
+		dh = voiceIndex;
+		cl = 'T';
+		ah = 0;
+		loadspeech();
+		if (data.byte(kSpeechloaded) == 1) {
+			al = 50+12;
+			playchannel1();
+		}
+		dx = pop();
+		cx = pop();
+		bx = pop();
+		ax = pop();
+		if ((data.byte(kSpeechloaded) == 1) && (data.byte(kSubtitles) != 1))
+			return;
+	}
+#endif
+
+	if (data.word(kTimecount) != 0)
+		return;
+	data.byte(kTimedy) = y;
+	data.byte(kTimedx) = x;
+	data.word(kCounttotimed) = countToTimed;
+	data.word(kTimecount) = timeCount + countToTimed;
+	data.word(kTimedseg) = data.word(kTextfile1);
+	data.word(kTimedoffset) = kTextstart + segRef(data.word(kTextfile1)).word(textIndex * 2);
+	const uint8 *string = segRef(data.word(kTextfile1)).ptr(data.word(kTimedoffset), 0);
+	debug(1, "setuptimedtemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
+}
+
 void DreamGenContext::dumptimedtext() {
 	if (data.byte(kNeedtodumptimed) != 1)
 		return;
