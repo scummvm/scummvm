@@ -146,7 +146,6 @@ public:
 	static const uint16 addr_checkiffree = 0xc9e4;
 	static const uint16 addr_checkifex = 0xc9e0;
 	static const uint16 addr_checkifset = 0xc9dc;
-	static const uint16 addr_checkifperson = 0xc9d8;
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_checkcoords = 0xc9d0;
 	static const uint16 addr_madmanrun = 0xc9cc;
@@ -1362,7 +1361,7 @@ public:
 	void clearendpal();
 	void findtext1();
 	void isryanholding();
-	void interupttest();
+	void showslots();
 	void usecashcard();
 	void usewall();
 	void opentomb();
@@ -1494,9 +1493,10 @@ public:
 	void isitdescribed();
 	void hotelbell();
 	void loadspeech();
+	void interupttest();
 	//void cls();
 	//void printsprites();
-	//void dumptimedtext();
+	//void checkifperson();
 	void showallobs();
 	//void getnumber();
 	void adjustleft();
@@ -1564,7 +1564,7 @@ public:
 	void folderhints();
 	void openhoteldoor();
 	void removesetobject();
-	void checkifperson();
+	//void dumptimedtext();
 	//void frameoutfx();
 	void blank();
 	void drinker();
@@ -1749,10 +1749,9 @@ public:
 	void loadintotemp2();
 	void gamer();
 	void personnametext();
-	void quitsymbol();
 	void readfromfile();
 	void initialinv();
-	void showslots();
+	void quitsymbol();
 	//void modifychar();
 	void hangon();
 	void settopright();

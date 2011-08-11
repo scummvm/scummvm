@@ -570,14 +570,10 @@ void DreamGenContext::showgamereel() {
 	es.word(bx+3) = data.word(kReelpointer);
 }
 
-void DreamGenContext::getreelframeax() {
-	push(ds);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	es = ds;
-	ds = pop();
-	cx = (data.word(kCurrentframe) - data.word(kTakeoff)) * 2;
-	bx = (data.word(kCurrentframe) - data.word(kTakeoff)) * 6;
+const Frame *DreamGenContext::getreelframeax(uint16 frame) {
+	data.word(kCurrentframe) = frame;
+	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
+	return findsourceCPP() + offset;
 }
 
 void DreamGenContext::showrain() {
