@@ -557,6 +557,19 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	showframe(source, x, y, frame, 8, &width, &height);
 }
 
+void DreamGenContext::showgamereel() {
+	uint16 reelpointer = es.word(bx+3);
+	if (reelpointer >= 512)
+		return;
+	data.word(kReelpointer) = reelpointer;
+	push(es);
+	push(bx);
+	plotreel();
+	bx = pop();
+	es = pop();
+	es.word(bx+3) = data.word(kReelpointer);
+}
+
 void DreamGenContext::showrain() {
 	ds = data.word(kMainsprites);
 	si = 6*58;

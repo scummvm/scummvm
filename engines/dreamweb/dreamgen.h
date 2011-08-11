@@ -653,7 +653,6 @@ public:
 	static const uint16 addr_checkone = 0xc12c;
 	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
-	static const uint16 addr_showgamereel = 0xc10c;
 	static const uint16 addr_addtopeoplelist = 0xc108;
 	static const uint16 addr_train = 0xc104;
 	static const uint16 addr_sparky = 0xc100;
@@ -1297,7 +1296,7 @@ public:
 	void loadtemptext();
 	void clearstartpal();
 	void femalefan();
-	void showgamereel();
+	//void showgamereel();
 	void identifyob();
 	void trysoundalloc();
 	void uselighter();
