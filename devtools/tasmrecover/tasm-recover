@@ -75,6 +75,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'startloading',
 	'showreelframe',
 	'showgamereel',
+	'getreelframeax',
 	'findsource',
 	'walking',
 	'autosetwalk',

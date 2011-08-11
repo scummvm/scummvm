@@ -570,6 +570,16 @@ void DreamGenContext::showgamereel() {
 	es.word(bx+3) = data.word(kReelpointer);
 }
 
+void DreamGenContext::getreelframeax() {
+	push(ds);
+	data.word(kCurrentframe) = ax;
+	findsource();
+	es = ds;
+	ds = pop();
+	cx = (data.word(kCurrentframe) - data.word(kTakeoff)) * 2;
+	bx = (data.word(kCurrentframe) - data.word(kTakeoff)) * 6;
+}
+
 void DreamGenContext::showrain() {
 	ds = data.word(kMainsprites);
 	si = 6*58;

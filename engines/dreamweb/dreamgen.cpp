@@ -2688,22 +2688,6 @@ notinthisroom:
 	goto updateloop;
 }
 
-void DreamGenContext::getreelframeax() {
-	STACK_CHECK;
-	push(ds);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	es = ds;
-	ds = pop();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	_add(ax, ax);
-	cx = ax;
-	_add(ax, ax);
-	_add(ax, cx);
-	bx = ax;
-}
-
 void DreamGenContext::reelsonscreen() {
 	STACK_CHECK;
 	reconstruct();
@@ -19483,7 +19467,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_doorway: doorway(); break;
 		case addr_widedoor: widedoor(); break;
 		case addr_updatepeople: updatepeople(); break;
-		case addr_getreelframeax: getreelframeax(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;

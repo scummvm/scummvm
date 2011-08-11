@@ -631,7 +631,6 @@ public:
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_reelsonscreen = 0xc1a0;
-	static const uint16 addr_getreelframeax = 0xc19c;
 	static const uint16 addr_updatepeople = 0xc198;
 	static const uint16 addr_widedoor = 0xc18c;
 	static const uint16 addr_doorway = 0xc188;
@@ -1928,7 +1927,7 @@ public:
 	void fadecalculation();
 	void waitframes();
 	void clearrest();
-	void getreelframeax();
+	//void getreelframeax();
 	void barwoman();
 	void roomname();
 	void credits();
