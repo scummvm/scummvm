@@ -537,6 +537,11 @@ Frame *DreamGenContext::findsourceCPP() {
 	return result;
 }
 
+Reel *DreamGenContext::getreelstartCPP() {
+	Reel *reel = (Reel *)segRef(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
+	return reel;
+}
+
 void DreamGenContext::showreelframe() {
 	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
 	showreelframe(reel);

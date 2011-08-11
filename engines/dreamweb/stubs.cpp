@@ -832,8 +832,7 @@ void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 }
 
 void DreamGenContext::plotreel() {
-	getreelstart();
-	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
+	Reel *reel = getreelstartCPP();
 	while (true) {
 		if (reel->x < 220)
 			break;
