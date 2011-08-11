@@ -59,14 +59,6 @@ uint8 DreamGenContext::getnextword(const Frame *charSet, const uint8 *string, ui
 	}
 }
 
-void DreamGenContext::getnextword() {
-	uint8 totalWidth, charCount;
-	al = getnextword((Frame *)ds.ptr(0, 0), es.ptr(di, 0), &totalWidth, &charCount);
-	bl = totalWidth;
-	bh = charCount;
-	di += charCount;
-}
-
 void DreamGenContext::printchar() {
 	uint16 x = di;
 	uint8 width, height;

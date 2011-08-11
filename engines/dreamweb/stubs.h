@@ -41,7 +41,6 @@
 	void seecommandtail();
 	void randomnumber();
 	void quickquit2();
-	void getnextword();
 	uint8 getnextword(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
 	void printboth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
 	void printchar();
