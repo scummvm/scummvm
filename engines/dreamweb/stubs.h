@@ -101,6 +101,7 @@
 	void showgamereel();
 	void showreelframe();
 	void showreelframe(Reel *reel);
+	void getreelframeax();
 	void turnpathonCPP(uint8 param);
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();
