@@ -270,6 +270,11 @@ void AgiEngine::clipViewCoordinates(VtEntry *v) {
 		v->flags |= UPDATE_POS;
 		v->yPos = _game.horizon + 1;
 	}
+
+	if (getVersion() < 0x2000) {
+		v->flags |= DONTUPDATE;
+	}
+
 }
 
 /**

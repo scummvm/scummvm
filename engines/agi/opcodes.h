@@ -114,8 +114,10 @@ void cmdStopCycling(AgiGame *state, uint8 *p);
 void cmdStartCycling(AgiGame *state, uint8 *p);
 void cmdNormalCycle(AgiGame *state, uint8 *p);	// 0x48
 void cmdEndOfLoop(AgiGame *state, uint8 *p);
+void cmdEndOfLoopV1(AgiGame *state, uint8 *p);
 void cmdReverseCycle(AgiGame *state, uint8 *p);
 void cmdReverseLoop(AgiGame *state, uint8 *p);
+void cmdReverseLoopV1(AgiGame *state, uint8 *p);
 void cmdCycleTime(AgiGame *state, uint8 *p);
 void cmdStopMotion(AgiGame *state, uint8 *p);
 void cmdStartMotion(AgiGame *state, uint8 *p);

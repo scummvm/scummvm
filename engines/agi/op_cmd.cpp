@@ -314,7 +314,10 @@ void cmdLastCel(AgiGame *state, uint8 *p) {
 
 void cmdSetCel(AgiGame *state, uint8 *p) {
 	state->_vm->setCel(&vt, p1);
-	vt.flags &= ~DONTUPDATE;
+
+	if (getVersion() >= 0x2000) {
+		vt.flags &= ~DONTUPDATE;
+	}
 }
 
 void cmdSetCelF(AgiGame *state, uint8 *p) {
@@ -1032,12 +1035,30 @@ void cmdReverseLoop(AgiGame *state, uint8 *p) {
 	setflag(p1, false);
 }
 
+void cmdReverseLoopV1(AgiGame *state, uint8 *p) {
+	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
+	vt.cycle = CYCLE_REV_LOOP;
+	state->_vm->setCel(&vt, 0);
+	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.parm1 = p1;
+	vt.parm3 = 0;
+}
+
 void cmdEndOfLoop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
 	vt.cycle = CYCLE_END_OF_LOOP;
 	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
 	vt.parm1 = p1;
 	setflag(p1, false);
+}
+
+void cmdEndOfLoopV1(AgiGame *state, uint8 *p) {
+	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
+	vt.cycle = CYCLE_END_OF_LOOP;
+	state->_vm->setCel(&vt, 0);
+	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.parm1 = p1;
+	vt.parm3 = 0;
 }
 
 void cmdBlock(AgiGame *state, uint8 *p) {

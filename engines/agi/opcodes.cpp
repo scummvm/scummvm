@@ -78,8 +78,8 @@ AgiInstruction insV1[] = {
 	{ "get.posn",			"nvv",		&cmdGetPosn },			// 1A
 	{ "set.cel",			"nn",		&cmdSetCel },			// 1B
 	{ "set.loop",			"nn",		&cmdSetLoop },			// 1C
-	{ "end.of.loop",		"nn",		&cmdEndOfLoop },		// 1D
-	{ "reverse.loop",		"nn",		&cmdReverseLoop },		// 1E
+	{ "end.of.loop",		"nn",		&cmdEndOfLoopV1 },		// 1D
+	{ "reverse.loop",		"nn",		&cmdReverseLoopV1 },	// 1E
 	{ "move.obj",			"nnnnn",	&cmdMoveObj },			// 1F
 	{ "set.view",			"nn",		&cmdSetView },			// 20
 	{ "follow.ego",			"nnn",		&cmdFollowEgo },		// 21
