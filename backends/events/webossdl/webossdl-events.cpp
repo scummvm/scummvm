@@ -120,6 +120,16 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	    gestureDown = false;
 	}
 
+        // handle virtual keyboard dismiss key
+        if (ev.key.keysym.sym == 24) {
+                int gblPDKVersion = PDL_GetPDKVersion();
+                // check for correct PDK Version
+                if (gblPDKVersion >= 300) {
+                        PDL_SetKeyboardState(PDL_FALSE);
+                        return true;
+                }
+        }
+
 	// Call original SDL key handler.
 	return SdlEventSource::handleKeyDown(ev, event);
 }
