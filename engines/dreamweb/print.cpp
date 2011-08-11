@@ -26,12 +26,6 @@
 
 namespace DreamGen {
 
-void DreamGenContext::printboth() {
-	uint16 x = di;
-	printboth((const Frame *)ds.ptr(0, 0), &x, bx, al, ah);
-	di = x;
-}
-
 void DreamGenContext::printboth(const Frame *charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar) {
 	uint16 newX = *x;
 	uint8 width, height;
@@ -100,28 +94,23 @@ void DreamGenContext::printchar(const Frame *charSet, uint16* x, uint16 y, uint8
 }
 
 void DreamGenContext::printslow() {
-	al = printslow(di, bx, dl, (bool)(dl & 1));
+	al = printslow(es.ptr(si, 0), di, bx, dl, (bool)(dl & 1));
 }
 
-uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+uint8 DreamGenContext::printslow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
 	const Frame* charSet = (const Frame *)segRef(data.word(kCharset1)).ptr(0, 0);
 	do {
 		uint16 offset = x;
-		uint16 charCount = getnumber(charSet, es.ptr(si, 0), maxWidth, centered, &offset);
+		uint16 charCount = getnumber(charSet, string, maxWidth, centered, &offset);
 		do {
-			push(si);
-			push(es);
-			uint8 c0 = es.byte(si);
-			uint8 c1 = es.byte(si+1);
-			uint8 c2 = es.byte(si+2);
+			uint8 c0 = string[0];
+			uint8 c1 = string[1];
+			uint8 c2 = string[2];
 			c0 = engine->modifyChar(c0);
 			printboth(charSet, &offset, y, c0, c1);
-			++si;
 			if ((c1 == 0) || (c1 == ':')) {
-				es = pop();
-				si = pop();
 				return 0;
 			}
 			if (charCount != 1) {
@@ -135,16 +124,12 @@ uint8 DreamGenContext::printslow(uint16 x, uint16 y, uint8 maxWidth, bool center
 					if (ax == 0)
 						continue;
 					if (ax != data.word(kOldbutton)) {
-						es = pop();
-						si = pop();
 						return 1;
 					}
 				}
 			}
 
-			es = pop();
-			si = pop();
-			++si;
+			++string;
 			--charCount;
 		} while (charCount);
 		y += 10;

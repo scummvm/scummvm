@@ -43,7 +43,6 @@
 	void quickquit2();
 	void getnextword();
 	uint8 getnextword(const Frame *charSet, const uint8 *string, uint8 *totalWidth, uint8 *charCount);
-	void printboth();
 	void printboth(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar);
 	void printchar();
 	void printchar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
@@ -52,7 +51,7 @@
 	void usetimedtext();
 	void getundertimed();
 	void putundertimed();
-	uint8 printslow(uint16 x, uint16 y, uint8 maxWidth, bool centered);
+	uint8 printslow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void printslow();
 	void dumptextline();
 	void getnumber();
