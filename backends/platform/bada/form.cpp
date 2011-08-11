@@ -35,10 +35,13 @@ using namespace Osp::Graphics;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
-#define SHORTCUT_TIMEOUT 3000
 #define SHORTCUT_SWAP_MOUSE 0
 #define SHORTCUT_ESCAPE 1
-#define SHORTCUT_F5 2
+#define SHORTCUT_MENU   2
+#define SHORTCUT_KEYPAD 3
+#define SHORTCUT_VOLUME 4
+#define SHORTCUT_BEGIN  SHORTCUT_SWAP_MOUSE
+#define SHORTCUT_END    SHORTCUT_KEYPAD
 #define LEVEL_RANGE 5
 
 //
@@ -48,9 +51,7 @@ BadaAppForm::BadaAppForm() :
 	_gameThread(0), 
 	_state(InitState),
 	_buttonState(LeftButton),
-	_shortcutTimer(0),
-	_shortcutIndex(-1),
-	_touchCount(0) {
+	_shortcutIndex(SHORTCUT_VOLUME) {
 	_eventQueueLock = new Mutex();
 	_eventQueueLock->Create();
 }
@@ -156,9 +157,6 @@ result BadaAppForm::OnInitializing(void) {
 	AddTouchEventListener(*this);
 	AddKeyEventListener(*this);
 
-	Touch touch;
-	touch.SetMultipointEnabled(*this, true);
-
 	// set focus to enable receiving key events
 	SetFocusable(true);
 	SetFocus();
@@ -257,16 +255,49 @@ Object *BadaAppForm::Run(void) {
 	return null;
 }
 
-int BadaAppForm::getShortcutIndex() {
-	if (_shortcutTimer) {
-		uint32 nextTimer = g_system->getMillis();
-		if (_shortcutTimer + SHORTCUT_TIMEOUT < nextTimer) {
-			// double tap has expired
-			_shortcutTimer = 0;
-			_shortcutIndex = -1;
-		}
+void BadaAppForm::setButtonShortcut() {
+	switch (_buttonState) {
+	case LeftButton:
+		g_system->displayMessageOnOSD(_("Right Click Once"));
+		_buttonState = RightButtonOnce;
+		break;
+	case RightButtonOnce:
+		g_system->displayMessageOnOSD(_("Right Click"));
+		_buttonState = RightButton;
+		break;
+	case RightButton:
+		g_system->displayMessageOnOSD(_("Move Only"));
+		_buttonState = MoveOnly;
+		break;
+	case MoveOnly:
+		g_system->displayMessageOnOSD(_("Left Click"));
+		_buttonState = LeftButton;
+		break;
 	}
-	return _shortcutIndex;
+}
+
+void BadaAppForm::setShortcut() {
+	// cycle to the next shortcut
+	_shortcutIndex = (_shortcutIndex >= SHORTCUT_END ? SHORTCUT_BEGIN : 
+										_shortcutIndex + 1);
+	
+	switch (_shortcutIndex) {
+	case SHORTCUT_SWAP_MOUSE:
+		g_system->displayMessageOnOSD(_("Control Mouse"));
+		break;
+
+	case SHORTCUT_ESCAPE:
+		g_system->displayMessageOnOSD(_("Escape Key"));
+		break;
+
+	case SHORTCUT_MENU:
+		g_system->displayMessageOnOSD(_("Game Menu"));
+		break;
+
+	case SHORTCUT_KEYPAD:
+		g_system->displayMessageOnOSD(_("Show Keypad"));
+		break;
+	}
 }
 
 void BadaAppForm::setVolume(bool up, bool minMax) {
@@ -284,30 +315,16 @@ void BadaAppForm::setVolume(bool up, bool minMax) {
 	}
 }
 
-void BadaAppForm::setShortcut() {
-	int index = getShortcutIndex();
-	_shortcutIndex = (index == -1 ? 0 : index + 1);
-	_shortcutTimer = g_system->getMillis();
-	
-	switch (_shortcutIndex) {
-	case SHORTCUT_F5:
-		g_system->displayMessageOnOSD(_("Game Menu"));
-		break;
-		
-	case SHORTCUT_ESCAPE:
-		g_system->displayMessageOnOSD(_("Escape"));
-		break;
-		
-	default:
-		g_system->displayMessageOnOSD(_("Set Buttons"));
-		_shortcutIndex = SHORTCUT_SWAP_MOUSE;
-	}
+void BadaAppForm::showKeypad() {
+	// display the soft keyboard
+	_buttonState = LeftButton;
+	pushKey(Common::KEYCODE_F7);
 }
 
 void BadaAppForm::OnTouchDoublePressed(const Control &source, 
 																			 const Point &currentPosition, 
 																			 const TouchEventInfo &touchInfo) {
-	if (getShortcutIndex() == -1) {
+	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
@@ -328,7 +345,7 @@ void BadaAppForm::OnTouchFocusOut(const Control &source,
 void BadaAppForm::OnTouchLongPressed(const Control &source, 
 																		 const Point &currentPosition, 
 																		 const TouchEventInfo &touchInfo) {
-	if (getShortcutIndex() == -1 && _buttonState != LeftButton) {
+	if (_buttonState != LeftButton) {
 		pushKey(Common::KEYCODE_RETURN);
 	}
 }
@@ -336,19 +353,13 @@ void BadaAppForm::OnTouchLongPressed(const Control &source,
 void BadaAppForm::OnTouchMoved(const Control &source, 
 															 const Point &currentPosition, 
 															 const TouchEventInfo &touchInfo) {
-	if (getShortcutIndex() == -1) {
-		pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
-	}
+	pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
 }
 
 void BadaAppForm::OnTouchPressed(const Control &source, 
 																 const Point &currentPosition, 
 																 const TouchEventInfo &touchInfo) {
-	Touch touch;
-	_touchCount = touch.GetPointCount();
-	if (_touchCount > 1) {
-		setShortcut();
-	}	else if (getShortcutIndex() == -1 && _buttonState != MoveOnly) {
+	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 	}
@@ -357,7 +368,7 @@ void BadaAppForm::OnTouchPressed(const Control &source,
 void BadaAppForm::OnTouchReleased(const Control &source, 
 																	const Point &currentPosition, 
 																	const TouchEventInfo &touchInfo) {
-	if (getShortcutIndex() == -1) {
+	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
 							currentPosition);
 		if (_buttonState == RightButtonOnce) {
@@ -367,42 +378,6 @@ void BadaAppForm::OnTouchReleased(const Control &source,
 		if (touchInfo.IsFlicked()) {
 			pushKey(Common::KEYCODE_PERIOD);
 		}
-	}	else if (_touchCount == 1) {
-		bool repeat = false;
-		switch (_shortcutIndex) {
-		case SHORTCUT_SWAP_MOUSE:
-			switch (_buttonState) {
-			case LeftButton:
-				g_system->displayMessageOnOSD(_("Right Once"));
-				_buttonState = RightButtonOnce;
-				break;
-			case RightButtonOnce:
-				g_system->displayMessageOnOSD(_("Right Active"));
-				_buttonState = RightButton;
-				break;
-			case RightButton:
-				g_system->displayMessageOnOSD(_("Move Active"));
-				_buttonState = MoveOnly;
-				break;
-			case MoveOnly:
-				g_system->displayMessageOnOSD(_("Left Active"));
-				_buttonState = LeftButton;
-				break;
-			}
-			break;
-
-		case SHORTCUT_F5:
-			pushKey(Common::KEYCODE_F5);
-			break;
-
-		case SHORTCUT_ESCAPE:
-			pushKey(Common::KEYCODE_ESCAPE);
-			repeat = true;
-			break;
-		}
-
-		// allow key repeat or terminate setup mode
-		_shortcutTimer = repeat ? g_system->getMillis() : -1;
 	}
 }
 
@@ -410,18 +385,18 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 	logEntered();
 	switch (keyCode) {
 	case KEY_SIDE_UP:
+		_shortcutIndex = SHORTCUT_VOLUME;
 		setVolume(true, true);
 		return;
 
 	case KEY_SIDE_DOWN:
+		_shortcutIndex = SHORTCUT_VOLUME;
 		setVolume(false, true);
 		return;
 
 	case KEY_CAMERA:
-		// display the soft keyboard
-		_buttonState = LeftButton;
-		_shortcutTimer = -1;
-		pushKey(Common::KEYCODE_F7);
+		_shortcutIndex = SHORTCUT_KEYPAD;
+		showKeypad();
 		return;
 
 	default:
@@ -432,17 +407,40 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 	switch (keyCode) {
 	case KEY_SIDE_UP:
-		setVolume(true, false);
+		if (_shortcutIndex != SHORTCUT_VOLUME) {
+			_shortcutIndex = SHORTCUT_VOLUME;
+		}	else {
+			setVolume(true, false);
+		}
 		return;
 
 	case KEY_SIDE_DOWN:
-		setVolume(false, false);
-		return;
+		switch (_shortcutIndex) {
+		case SHORTCUT_SWAP_MOUSE:
+			setButtonShortcut();
+			break;
+
+		case SHORTCUT_ESCAPE:
+			pushKey(Common::KEYCODE_ESCAPE);			
+			break;
+
+		case SHORTCUT_MENU:
+			pushKey(Common::KEYCODE_F5);
+			break;
+
+		case SHORTCUT_KEYPAD:
+			showKeypad();
+			break;
+
+		default:
+			setVolume(false, false);			
+			break;
+		}
+		break;
 
 	case KEY_CAMERA:
-		_touchCount = 1;
 		setShortcut();
-		return;
+		break;
 
 	default:
 		break;
