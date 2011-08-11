@@ -164,6 +164,7 @@ private:
 	// Miscellaneous
 	bool _gameOver;
 	bool _ignoreNextMouseUp;
+	void checkSunnerAlertClick();
 
 public:
 	// Stack/card/script funtions
