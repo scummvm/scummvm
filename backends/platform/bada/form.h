@@ -91,9 +91,10 @@ private:
 	void pushEvent(Common::EventType type,
 								 const Osp::Graphics::Point &currentPosition);
 	void terminate();
+	void setButtonShortcut();
 	void setShortcut();
 	void setVolume(bool up, bool minMax);
-	int getShortcutIndex();
+	void showKeypad();
 
 	// event handling
 	Osp::Base::Runtime::Thread *_gameThread;
@@ -101,9 +102,7 @@ private:
 	Common::Queue<Common::Event> _eventQueue;
 	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
 	enum {LeftButton, RightButtonOnce, RightButton, MoveOnly} _buttonState;
-	uint32 _shortcutTimer;
 	int _shortcutIndex;
-	int _touchCount;
 };
 
 #endif
