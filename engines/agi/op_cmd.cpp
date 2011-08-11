@@ -56,8 +56,13 @@ namespace Agi {
 #define getflag(a) state->_vm->getflag(a)
 
 void cmdIncrement(AgiGame *state, uint8 *p) {
-	if (_v[p0] != 0xff)
-		++_v[p0];
+	if (getVersion() < 0x2000) {
+		if (_v[p0] < 0xf0)
+			++_v[p0];
+	} else {
+		if (_v[p0] != 0xff)
+			++_v[p0];
+	}
 }
 
 void cmdDecrement(AgiGame *state, uint8 *p) {
@@ -113,6 +118,10 @@ void cmdDivN(AgiGame *state, uint8 *p) {
 
 void cmdDivV(AgiGame *state, uint8 *p) {
 	_v[p0] /= _v[p1];
+}
+
+void cmdRandomV1(AgiGame *state, uint8 *p) {
+	_v[p0] = state->_vm->_rnd->getRandomNumber(250);
 }
 
 void cmdRandom(AgiGame *state, uint8 *p) {
@@ -397,6 +406,10 @@ void cmdDrop(AgiGame *state, uint8 *p) {
 
 void cmdGet(AgiGame *state, uint8 *p) {
 	state->_vm->objectSetLocation(p0, EGO_OWNED);
+}
+
+void cmdGetV1(AgiGame *state, uint8 *p) {
+	state->_vm->objectSetLocation(p0, EGO_OWNED_V1);
 }
 
 void cmdGetF(AgiGame *state, uint8 *p) {
@@ -732,6 +745,16 @@ void cmdCallF(AgiGame *state, uint8 *p) {
 	cmdCall(state, &_v[p0]);
 }
 
+void cmdDrawPicV1(AgiGame *state, uint8 *p) {
+	debugC(6, kDebugLevelScripts, "=== draw pic V1 %d ===", _v[p0]);
+	state->_vm->_picture->decodePicture(_v[p0], true);
+
+	state->_vm->clearPrompt();
+
+	// Simulate slowww computer. Many effects rely on this
+	state->_vm->pause(kPausePicture);
+}
+
 void cmdDrawPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "=== draw pic %d ===", _v[p0]);
 	state->_vm->_sprites->eraseBoth();
@@ -811,11 +834,21 @@ void cmdShowPriScreen(AgiGame *state, uint8 *p) {
 }
 
 void cmdAnimateObj(AgiGame *state, uint8 *p) {
-	if (vt.flags & ANIMATED)
-		return;
+	if (getVersion() < 0x2000) {
+		if (vt.flags & DIDNT_MOVE)
+			return;
+	} else {
+		if (vt.flags & ANIMATED)
+			return;
+	}
 
 	debugC(4, kDebugLevelScripts, "animate vt entry #%d", p0);
 	vt.flags = ANIMATED | UPDATE | CYCLING;
+
+	if (getVersion() < 0x2000) {
+		vt.flags |= DIDNT_MOVE;
+	}
+
 	vt.motion = MOTION_NORMAL;
 	vt.cycle = CYCLE_NORMAL;
 	vt.direction = 0;
@@ -918,6 +951,11 @@ void cmdPosition(AgiGame *state, uint8 *p) {
 		state->_vm->clipViewCoordinates(&vt);
 }
 
+void cmdPositionV1(AgiGame *state, uint8 *p) {
+	vt.xPos = p1;
+	vt.yPos = p2;
+}
+
 void cmdPositionF(AgiGame *state, uint8 *p) {
 	vt.xPos = vt.xPos2 = _v[p1];
 	vt.yPos = vt.yPos2 = _v[p2];
@@ -927,6 +965,11 @@ void cmdPositionF(AgiGame *state, uint8 *p) {
 	// See that workaround's comment for more in-depth information.
 	if (getFeatures() & GF_CLIPCOORDS)
 		state->_vm->clipViewCoordinates(&vt);
+}
+
+void cmdPositionFV1(AgiGame *state, uint8 *p) {
+	vt.xPos = _v[p1];
+	vt.yPos = _v[p2];
 }
 
 void cmdGetPosn(AgiGame *state, uint8 *p) {
@@ -1045,8 +1088,14 @@ void cmdFollowEgo(AgiGame *state, uint8 *p) {
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
 	vt.parm3 = 0xff;
-	setflag(p2, false);
-	vt.flags |= UPDATE;
+	
+	if (getVersion() < 0x2000) {
+		_v[p2] = 0;
+		vt.flags |= UPDATE | ANIMATED;
+	} else {
+		setflag(p2, false);
+		vt.flags |= UPDATE;
+	}
 }
 
 void cmdMoveObj(AgiGame *state, uint8 *p) {
@@ -1061,8 +1110,13 @@ void cmdMoveObj(AgiGame *state, uint8 *p) {
 	if (p3 != 0)
 		vt.stepSize = p3;
 
-	setflag(p4, false);
-	vt.flags |= UPDATE;
+	if (getVersion() < 0x2000) {
+		_v[p4] = 0;
+		vt.flags |= UPDATE | ANIMATED;
+	} else {
+		setflag(p4, false);
+		vt.flags |= UPDATE;
+	}
 
 	if (p0 == 0)
 		state->playerControl = false;

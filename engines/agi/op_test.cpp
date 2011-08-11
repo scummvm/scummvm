@@ -38,6 +38,7 @@ namespace Agi {
 #define testGreater(v1, v2)	(getvar(v1) > (v2))
 #define testIsSet(flag)		(getflag(flag))
 #define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
+#define testHasV1(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED_V1)
 #define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
 
 void condEqual(AgiGame *state, uint8 *p) {
@@ -90,6 +91,10 @@ void condIsSetV1(AgiGame *state, uint8 *p) {
 
 void condHas(AgiGame *state, uint8 *p) {
 	state->testResult = testHas(p[0]);
+}
+
+void condHasV1(AgiGame *state, uint8 *p) {
+	state->testResult = testHasV1(p[0]);
 }
 
 void condObjInRoom(AgiGame *state, uint8 *p) {

@@ -88,6 +88,7 @@ typedef signed int Err;
 
 #define	_EMPTY		0xfffff
 #define	EGO_OWNED	0xff
+#define	EGO_OWNED_V1	0xf9
 
 #define	CRYPT_KEY_SIERRA	"Avis Durgan"
 #define CRYPT_KEY_AGDS		"Alex Simkin"

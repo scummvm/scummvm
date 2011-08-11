@@ -37,7 +37,7 @@ AgiInstruction insV1Test[] = {
 	{ "greatern",			"vn",		&condGreater },		// 05
 	{ "greaterv",			"vv",		&condGreaterV },	// 06
 	{ "isset",				"v",		&condIsSetV1 },		// 07
-	{ "has",				"n",		&condHas },			// 08
+	{ "has",				"n",		&condHasV1 },		// 08
 	{ "said",				"nnnn",		&condSaid2 },		// 09
 	{ "posn",				"nnnnn",	&condPosn },		// 0A
 	{ "controller",			"n",		&condController },	// 0B
@@ -61,20 +61,20 @@ AgiInstruction insV1[] = {
 	{ "load.view",			"n",		&cmdLoadView },			// 09
 	{ "animate.obj",		"n",		&cmdAnimateObj },		// 0A
 	{ "new.room",			"n",		&cmdNewRoomV1 },		// 0B
-	{ "draw.pic",			"v",		&cmdDrawPic },			// 0C
-	{ "print",				"s",		&cmdPrint },			// 0D
-	{ "status",				"",			&cmdStatus },			// 0E
-	{ "save.game",			"",			&cmdSaveGame },			// 0F
-	{ "restore.game",		"",			&cmdLoadGame },			// 10
-	{ "...",				"",			&cmdInitDisk },			// 11 TODO
-	{ "restart.game",		"",			&cmdRestartGame },		// 12
-	{ "random",				"v",		&cmdRandom },			// 13 TODO: 1 vs 3 vars
-	{ "get",				"n",		&cmdGet },				// 14
+	{ "draw.pic",			"v",		&cmdDrawPicV1 },		// 0C
+	{ "print",				"s",		&cmdPrint },			// 0D TODO
+	{ "status",				"",			&cmdStatus },			// 0E TODO
+	{ "save.game",			"",			&cmdSaveGame },			// 0F TODO
+	{ "restore.game",		"",			&cmdLoadGame },			// 10 TODO
+	{ "init.disk",			"",			&cmdInitDisk },			// 11 TODO
+	{ "restart.game",		"",			&cmdRestartGame },		// 12 TODO
+	{ "random",				"v",		&cmdRandomV1 },			// 13
+	{ "get",				"n",		&cmdGetV1 },			// 14
 	{ "drop",				"n",		&cmdDrop },				// 15
-	{ "draw",				"n",		&cmdDraw },				// 16
-	{ "erase",				"n",		&cmdErase },			// 17
-	{ "position",			"nnn",		&cmdPosition },			// 18
-	{ "position.v",			"nvv",		&cmdPositionF },		// 19
+	{ "draw",				"n",		&cmdDraw },				// 16 TODO
+	{ "erase",				"n",		&cmdErase },			// 17 TODO
+	{ "position",			"nnn",		&cmdPositionV1 },		// 18
+	{ "position.v",			"nvv",		&cmdPositionFV1 },		// 19
 	{ "get.posn",			"nvv",		&cmdGetPosn },			// 1A
 	{ "set.cel",			"nn",		&cmdSetCel },			// 1B
 	{ "set.loop",			"nn",		&cmdSetLoop },			// 1C
@@ -83,8 +83,8 @@ AgiInstruction insV1[] = {
 	{ "move.obj",			"nnnnn",	&cmdMoveObj },			// 1F
 	{ "set.view",			"nn",		&cmdSetView },			// 20
 	{ "follow.ego",			"nnn",		&cmdFollowEgo },		// 21
-	{ "...",				"",			&cmdUnknown },			// 22
-	{ "...",				"",			&cmdUnknown },			// 23
+	{ "...",				"",			&cmdUnknown },			// 22 # block
+	{ "...",				"",			&cmdUnknown },			// 23 # unblock
 	{ "ignore.blocks",		"n",		&cmdIgnoreBlocks },		// 24
 	{ "observe.blocks",		"n",		&cmdObserveBlocks },	// 25
 	{ "wander",				"n",		&cmdWander },			// 26
@@ -120,32 +120,33 @@ AgiInstruction insV1[] = {
 	{ "...",				"nn",		&cmdUnknown },			// 44
 	{ "get.v",				"v",		&cmdUnknown },			// 45
 	{ "assign.v",			"vv",		&cmdUnknown },			// 46
-	{ "...",				"n",		&cmdUnknown },			// 47
+	{ "...",				"n",		&cmdUnknown },			// 47 # printvar.v
 	{ "get.priority",		"nv",		&cmdGetPriority },		// 48
 	{ "ignore.objs",		"n",		&cmdIgnoreObjs },		// 49
 	{ "observe.objs",		"n",		&cmdObserveObjs },		// 4A
 	{ "distance",			"nnv",		&cmdDistance },			// 4B
 	{ "object.on.land",		"n",		&cmdObjectOnLand },		// 4C
-	{ "...",				"nv",		&cmdUnknown },			// 4D set.priority.v???
-	{ "...",				"",			&cmdUnknown },			// 4E
-	{ "load.logics",		"n",		&cmdLoadLogic },		// 4F TODO: what is the other load.logics then?
+	{ "...",				"nv",		&cmdUnknown },			// 4D # set.priority.f
+	{ "...",				"",			&cmdUnknown },			// 4E  # show.obj
+	{ "load.logics",		"n",		&cmdLoadLogic },		// 4F # load.global.logics
 	{ "display",			"nnns",		&cmdDisplay },			// 50 TODO: 4 vs 3 args
-	{ "prevent.input???",	"",			&cmdUnknown },			// 51
-	{ "...",				"",			&cmdUnknown },			// 52
-	{ "...",				"n",		&cmdUnknown },			// 53 ???
+	{ "prevent.input???",	"",			&cmdUnknown },			// 51 
+	{ "...",				"",			&cmdUnknown },			// 52 # nop
+	{ "...",				"n",		&cmdUnknown },			// 53 # text.screen
 	{ "...",				"",			&cmdUnknown },			// 54 ???
 	{ "stop.motion",		"",			&cmdStopMotion },		// 55 or force.update??
 	{ "discard.view",		"n",		&cmdDiscardView },		// 56
 	{ "discard.pic",		"v",		&cmdDiscardPic },		// 57
 	{ "set.item.view",		"nn",		&cmdSetItemView },		// 58
-	{ "...",				"",			&cmdUnknown },			// 59
+	{ "...",				"",			&cmdUnknown },			// 59 # reverse.cycle
 	{ "last.cel",			"nv",		&cmdLastCel },			// 5A
 	{ "set.cel.v",			"nv",		&cmdSetCelF },			// 5B
-	{ "...",				"",			&cmdUnknown },			// 5C
+	{ "...",				"",			&cmdUnknown },			// 5C # normal.cycle
 	{ "load.view",			"n",		&cmdLoadView },			// 5D
 	{ "...",				"",			&cmdUnknown },			// 5E
 	{ "...",				"",			&cmdUnknown },			// 5F
 	{ "setbit",				"nv",		&cmdUnknown },			// 60
+	{ "...",				"nv",		&cmdUnknown },			// 61 # clearbit
 };
 
 AgiInstruction insV2Test[] = {
