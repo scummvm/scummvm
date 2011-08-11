@@ -314,8 +314,8 @@ void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint
 	}
 }
 
-void DreamGenContext::showframe(const void *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
-	const Frame *frame = ((const Frame *)frameData) + frameNumber;
+void DreamGenContext::showframe(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+	const Frame *frame = frameData + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
 		*height = 0;
@@ -371,7 +371,7 @@ void DreamGenContext::showframe(const void *frameData, uint16 x, uint16 y, uint1
 
 void DreamGenContext::showframe() {
 	uint8 width, height;
-	showframe(ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
+	showframe((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
 	cl = width;
 	ch = height;
 }

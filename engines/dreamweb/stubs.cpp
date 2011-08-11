@@ -867,7 +867,7 @@ void DreamGenContext::crosshair() {
 	}
 	push(ds);
 	ds = data.word(kIcons1);
-	uint8 *src = ds.ptr(0, 0);
+	Frame *src = (Frame *)ds.ptr(0, 0);
 	ds = pop();
 	uint8 width, height;
 	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0, &width, &height);

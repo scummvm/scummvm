@@ -67,7 +67,7 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 	else
 		c = 0;
 	uint8 width, height;
-	showframe(segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c, &width, &height);
+	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c, &width, &height);
 }
 
 void DreamGenContext::clearsprites() {
@@ -529,10 +529,10 @@ void DreamGenContext::findsource() {
 	}
 }
 
-void *DreamGenContext::findsourceCPP() {
+Frame *DreamGenContext::findsourceCPP() {
 	push(ds);
 	findsource();
-	void *result = ds.ptr(0, 0);
+	Frame *result = (Frame *)ds.ptr(0, 0);
 	ds = pop();
 	return result;
 }
@@ -546,7 +546,7 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
 	data.word(kCurrentframe) = reel->frame();
-	void *source = findsourceCPP();
+	Frame *source = findsourceCPP();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
 	uint8 width, height;
 	showframe(source, x, y, frame, 8, &width, &height);
