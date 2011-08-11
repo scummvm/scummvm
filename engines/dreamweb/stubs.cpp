@@ -800,32 +800,32 @@ void DreamGenContext::fillspace() {
 	memset(ds.ptr(dx, cx), al, cx);
 }
 
-void DreamGenContext::dealwithspecial() {
-	uint8 type = al - 220;
+void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
+	uint8 type = firstParam - 220;
 	if (type == 0) {
-		al = ah;
+		al = secondParam;
 		placesetobject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 1) {
-		al = ah;
+		al = secondParam;
 		removesetobject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 2) {
-		al = ah;
+		al = secondParam;
 		placefreeobject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 3) {
-		al = ah;
+		al = secondParam;
 		removefreeobject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 4) {
 		switchryanoff();
 	} else if (type == 5) {
-		data.byte(kTurntoface) = ah;
-		data.byte(kFacing) = ah;
+		data.byte(kTurntoface) = secondParam;
+		data.byte(kFacing) = secondParam;
 		switchryanon();
 	} else if (type == 6) {
-		data.byte(kNewlocation) = ah;
+		data.byte(kNewlocation) = secondParam;
 	} else {
 		movemap();
 	}
@@ -835,13 +835,11 @@ void DreamGenContext::plotreel() {
 	getreelstart();
 	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
 	while (true) {
-		al = reel->x;
-		ah = reel->y;
-		if (al < 220)
+		if (reel->x < 220)
 			break;
-		if (al == 255)
+		if (reel->x == 255)
 			break;
-		dealwithspecial();
+		dealwithspecial(reel->x, reel->y);
 		++data.word(kReelpointer);
 		reel += 8;
 	}

@@ -107,7 +107,7 @@
 	void cancelch0();
 	void cancelch1();
 	void plotreel();
-	void dealwithspecial();
+	void dealwithspecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void crosshair();
 	void showrain();
