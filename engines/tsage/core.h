@@ -287,7 +287,7 @@ public:
 
 	PaletteModifierCached();
 
-	void setPalette(ScenePalette *palette, int step);
+	virtual void setPalette(ScenePalette *palette, int step);
 	virtual Common::String getClassName() { return "PaletteModifierCached"; }
 	virtual void synchronize(Serializer &s);
 };
@@ -323,6 +323,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void remove();
+	virtual void setPalette(ScenePalette *palette, int step);
 };
 
 /*--------------------------------------------------------------------------*/
@@ -356,7 +357,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
-	PaletteFader *addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action);
+	PaletteFader *addFader(const byte *arrBufferRGB, int palSize, int step, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 
@@ -568,6 +569,16 @@ public:
 	}
 	virtual Common::String getClassName() { return "SceneObjectExt"; }
 };
+
+class SceneObjectExt2: public SceneObject {
+public:
+	int _v88, _v8A, _v8C, _v8E;
+
+	virtual Common::String getClassName() { return "BF100Object"; }
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 
 class SceneText : public SceneObject {
 public:
