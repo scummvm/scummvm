@@ -155,7 +155,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		_globals->setFlag(122);
 
-		if (_vm->getFeatures() & GF_DEMO) {
+		if ((_vm->getFeatures() & GF_DEMO) || (_vm->getGameID() == GType_BlueForce))  {
 			CursorMan.showMouse(false);
 			return;
 		}

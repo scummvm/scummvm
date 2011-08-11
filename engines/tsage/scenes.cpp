@@ -28,9 +28,6 @@
 
 namespace tSage {
 
-// TODO: Doesn't seem to be ever set
-const bool _v52C9F = false;
-
 SceneManager::SceneManager() {
 	_scene = NULL;
 	_hasPalette = false;
@@ -505,8 +502,13 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 }
 
 byte *Scene::preloadVisage(int resNum) {
+	// This isn't being used, since modern systems can load the data much quicker, and in any case
+	// visage data is specially loaded into the Visage class, and the resources discarded from memory.
+	return NULL;
+/*
 	assert(!_v52C9F);
 	return _resourceManager->getResource(RES_VISAGE, resNum, 9999, false);
+*/
 }
 
 /*--------------------------------------------------------------------------*/

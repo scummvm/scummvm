@@ -96,7 +96,22 @@ public:
 	void dispatchSounds();
 };
 
+class BlueForceGlobals: public Globals {
+public:
+	ASound _sound1, _sound2, _sound3;
+	int _v4CEA2;
+	int _v51C44;
+	int _v51C24;
+
+	BlueForceGlobals();
+	virtual Common::String getClassName() { return "BFGlobals"; }
+	virtual void synchronize(Serializer &s);
+};
+
 extern Globals *_globals;
+
+#define GLOBALS (*_globals)
+#define BF_GLOBALS (*((BlueForceGlobals *)_globals))
 
 // Note: Currently this can't be part of the _globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors

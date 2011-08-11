@@ -118,4 +118,15 @@ const char *EXIT_BTN_STRING = "Exit";
 const char *DEMO_BTN_STRING = "Demo";
 const char *DEMO_RESUME_BTN_STRING = "Resume";
 
+// Blue Force general messages
+const char *BF_NAME = "Blue Force";
+const char *BF_COPYRIGHT = " Copyright, 1993 Tsunami Media, Inc.";
+const char *BF_ALL_RIGHTS_RESERVED = "All Rights Reserved";
+const char *BF_19840518 = "May 18, 1984";
+const char *BF_19840515 = "May 15, 1984";
+const char *BF_3_DAYS = "Three days later";
+const char *BF_11_YEARS = "Eleven years later.";
+const char *BF_NEXT_DAY = "The Next Day";
+const char *BF_ACADEMY = "Here we are at the Academy";
+
 } // End of namespace tSage

@@ -166,5 +166,17 @@ void Globals::dispatchSounds() {
 	Common::for_each(_sounds.begin(), _sounds.end(), Globals::dispatchSound);
 }
 
+/*--------------------------------------------------------------------------*/
+
+BlueForceGlobals::BlueForceGlobals(): Globals() {
+	_v51C24 = 0;
+	_v51C44 = 1;
+	_v4CEA2 = 0;
+}
+
+void BlueForceGlobals::synchronize(Serializer &s) {
+	Globals::synchronize(s);
+	error("Sync variables");
+}
 
 } // end of namespace tSage

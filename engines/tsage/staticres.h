@@ -86,6 +86,18 @@ extern const char *EXIT_BTN_STRING;
 extern const char *DEMO_BTN_STRING;
 extern const char *DEMO_RESUME_BTN_STRING;
 
+// Blue Force messages
+extern const char *BF_NAME;
+extern const char *BF_COPYRIGHT;
+extern const char *BF_ALL_RIGHTS_RESERVED;
+extern const char *BF_19840518;
+extern const char *BF_19840515;
+extern const char *BF_3_DAYS;
+extern const char *BF_11_YEARS;
+extern const char *BF_NEXT_DAY;
+extern const char *BF_ACADEMY;
+
+
 } // End of namespace tSage
 
 #endif
