@@ -328,7 +328,7 @@ protected:
   /**
    * Returns the font used for on screen display
    */
-  virtual const Graphics::Font* getFontOSD();
+  virtual const Graphics::Font *getFontOSD();
 
 	/**
 	 * Update the OSD texture / surface.
