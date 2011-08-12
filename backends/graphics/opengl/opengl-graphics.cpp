@@ -1348,7 +1348,7 @@ const char *OpenGLGraphicsManager::getCurrentModeName() {
 }
 
 #ifdef USE_OSD
-const Graphics::Font* getFontOSD() {
+const Graphics::Font *OpenGLGraphicsManager::getFontOSD() {
   return FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont);
 }
 
