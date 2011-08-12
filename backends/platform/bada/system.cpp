@@ -361,8 +361,6 @@ void BadaSystem::destroyBackend() {
 
 	delete _mutexManager;
 	_mutexManager = 0;
-
-	delete g_engine;
 }
 
 bool BadaSystem::pollEvent(Common::Event &event) {
@@ -413,8 +411,12 @@ void BadaSystem::exitSystem() {
 	}
 }
 
-void BadaSystem::logMessage(LogMessageType::Type /*type*/, const char *message) {
-	AppLog(message);
+void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
+	if (type == LogMessageType::kError) {
+		systemError(message);
+	}	else {
+		AppLog(message);
+	}
 }
 
 Common::SeekableReadStream *BadaSystem::createConfigReadStream() {
