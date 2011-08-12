@@ -31,6 +31,7 @@
 #include "cge/cfile.h"
 #include "cge/vol.h"
 #include "cge/cge_main.h"
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "audio/decoders/raw.h"
 
@@ -199,31 +200,36 @@ void *Patch(int pat) {
 }
 
 MusicPlayer::MusicPlayer() {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
-	_driver = MidiDriver::createMidi(dev);
-	_driver->open();
-	_midiParser = NULL;
 	_data = NULL;
+	_isGM = false;
+
+	MidiPlayer::createDriver();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+
+		// TODO: Load cmf.ins with the instrument table.  It seems that an
+		// interface for such an operation is supported for AdLib.  Maybe for
+		// this card, setting instruments is necessary.
+
+		_driver->setTimerCallback(this, &timerCallback);
+	}
 }
 
 MusicPlayer::~MusicPlayer() {
 	killMidi();
-	_driver->close();
-	delete _driver;
 }
 
 void MusicPlayer::killMidi() {
-	if (_midiParser) {
-		// Stop MIDI playback
-		_midiParser->unloadMusic();
-		_driver->setTimerCallback(NULL, NULL);
-		_driver->close();
-		delete _midiParser;
-		delete _data;
+	Audio::MidiPlayer::stop();
 
-		// Reset playback objects
+	if (_data != NULL) {
+		delete _data;
 		_data = NULL;
-		_midiParser = NULL;
 	}
 }
 
@@ -247,16 +253,42 @@ void MusicPlayer::loadMidi(int ref) {
 }
 
 void MusicPlayer::sndMidiStart() {
-	_midiParser = MidiParser::createParser_SMF();
+	_isGM = true;
 
-	if (_midiParser->loadMusic(_data, _dataSize)) {
-		_midiParser->setTrack(0);
-		_midiParser->setMidiDriver(_driver);
-		_midiParser->setTimerRate(_driver->getBaseTempo());
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(_data, _dataSize)) {
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(_driver->getBaseTempo());
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
-		_midiParser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-		_driver->setTimerCallback(_midiParser, MidiParser::timerCallback);
-	}	
+		_parser = parser;
+
+		syncVolume();
+
+		_isPlaying = true;
+	}
+}
+
+void MusicPlayer::send(uint32 b) {
+	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	}
+
+	Audio::MidiPlayer::send(b);
+}
+
+void MusicPlayer::sendToChannel(byte channel, uint32 b) {
+	if (!_channelsTable[channel]) {
+		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
+		if (_channelsTable[channel])
+			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
+	}
+
+	if (_channelsTable[channel])
+		_channelsTable[channel]->send(b);
 }
 
 } // End of namespace CGE

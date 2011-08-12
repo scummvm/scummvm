@@ -79,12 +79,11 @@ public:
 	DataCk *operator[](int ref);
 };
 
-class MusicPlayer {
+class MusicPlayer: public Audio::MidiPlayer {
 private:
-	MidiDriver *_driver;
-	MidiParser *_midiParser;
 	byte *_data;
 	int _dataSize;
+	bool _isGM;
 
 	// Start MIDI File
 	void sndMidiStart();
@@ -97,6 +96,9 @@ public:
 
 	void loadMidi(int ref);
 	void killMidi();
+
+	virtual void send(uint32 b);
+	virtual void sendToChannel(byte channel, uint32 b);
 };
 
 } // End of namespace CGE
