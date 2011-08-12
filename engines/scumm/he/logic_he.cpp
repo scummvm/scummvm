@@ -1386,6 +1386,7 @@ int32 LogicHEbasketball::dispatch(int op, int numArgs, int32 *args) {
 		break;
 
 	case 1012:
+		res = op_1012();
 		break;
 
 	case 1035:
@@ -1447,6 +1448,15 @@ int32 LogicHEbasketball::dispatch(int op, int numArgs, int32 *args) {
 	}
 
 	return res;
+}
+
+int LogicHEbasketball::op_1012() {
+	writeScummVar(108, 12000);
+	writeScummVar(109, 8000);
+	writeScummVar(110, 760);
+	writeScummVar(111, 4000);
+	writeScummVar(112, 1600);
+	return 1;
 }
 
 /***********************

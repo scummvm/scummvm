@@ -174,6 +174,9 @@ public:
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	int op_1012();
 };
 
 class LogicHEmoonbase : public LogicHE {
