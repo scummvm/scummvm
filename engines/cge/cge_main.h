@@ -28,7 +28,6 @@
 #ifndef __CGE_CGE__
 #define __CGE_CGE__
 
-#include "cge/wav.h"
 #include "cge/vga13h.h"
 #include "cge/events.h"
 #include "cge/sound.h"
