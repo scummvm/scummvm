@@ -270,24 +270,8 @@ bool IoHand::exist(const char *name) {
 	return f.exists(name);
 }
 
-void sndInit() {
-	warning("STUB: SNDInit");
-}
-
-void sndDone() {
-	// FIXME: STUB: SNDDone
-}
-
 void sndSetVolume() {
 	warning("STUB: SNDSetVolume");
-}
-
-void sndMidiStart(uint8 *MIDFile) {
-	warning("STUB: SNDMIDIStart");
-}
-
-void sndMidiStop() {
-	// FIXME: STUB: sndMIDIStop
 }
 
 DataCk *loadWave(XFile *file) {

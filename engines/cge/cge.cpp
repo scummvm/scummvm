@@ -165,7 +165,7 @@ void CGEEngine::setup() {
 		_flag[i] = false;
 
 	_mode = 0;
-	_soundOk = 0;
+	_soundOk = 1;
 	_sprTv = NULL;
 	_gameCase2Cpt = 0;
 
@@ -186,6 +186,7 @@ CGEEngine::~CGEEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _console;
+	_midiPlayer.killMidi();
 
 	// Delete engine objects
 	delete _vga;
@@ -208,9 +209,11 @@ CGEEngine::~CGEEngine() {
 	delete _snail_;
 	delete _hero;
 
-	for (int i = 0; _miniShpList[i]; ++i)
-		delete _miniShpList[i];
-	delete[] _miniShpList;
+	if (_miniShpList) {
+		for (int i = 0; _miniShpList[i]; ++i)
+			delete _miniShpList[i];
+		delete[] _miniShpList;
+	}
 
 	freeCaveValues();
 }

@@ -34,6 +34,7 @@
 #include "engines/advancedDetector.h"
 #include "cge/console.h"
 #include "cge/bitmap.h"
+#include "cge/sound.h"
 
 namespace CGE {
 
@@ -141,6 +142,7 @@ public:
 	Bar *_barriers;
 
 	Common::RandomSource _randomSource;
+	MusicPlayer _midiPlayer;
 	BitmapPtr *_miniShp;
 	BitmapPtr *_miniShpList;
 	int        _startGameSlot;

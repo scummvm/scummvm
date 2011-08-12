@@ -64,24 +64,8 @@ extern uint16 _midiEndFlag;
 // ******************************************************
 // *  Driver Code                                       *
 // ******************************************************
-// Init Digi Device
-void sndInit();
-
-// Close Digi Device
-void sndDone();
-
 // Set Volume
 void sndSetVolume();
-
-// Start MIDI File
-void sndMidiStart(uint8 *MIDFile);
-
-// Stop MIDI File
-void sndMidiStop();
-
-// Play MIDI File (to be called while interrupting)
-// WARNING: Uses ALL registers!
-void sndMidiPlay();
 
 } // End of namespace CGE
 
