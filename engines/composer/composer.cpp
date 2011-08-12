@@ -253,16 +253,15 @@ void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
 }
 
 void ComposerEngine::setCursorVisible(bool visible) {
-	if (!_mouseSpriteId)
-		return;
-
 	if (visible && !_mouseVisible) {
 		_mouseVisible = true;
-		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+		if (_mouseSpriteId)
+			addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
 		onMouseMove(_lastMousePos);
 	} else if (!visible && _mouseVisible) {
 		_mouseVisible = false;
-		removeSprite(_mouseSpriteId, 0);
+		if (_mouseSpriteId)
+			removeSprite(_mouseSpriteId, 0);
 	}
 }
 
