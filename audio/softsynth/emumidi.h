@@ -26,8 +26,6 @@
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 
-#define FIXP_SHIFT 16
-
 class MidiDriver_Emulated : public Audio::AudioStream, public MidiDriver {
 protected:
 	bool _isOpen;
@@ -37,6 +35,10 @@ protected:
 private:
 	Common::TimerManager::TimerProc _timerProc;
 	void *_timerParam;
+
+	enum {
+		FIXP_SHIFT = 16
+	};
 
 	int _nextTick;
 	int _samplesPerTick;
