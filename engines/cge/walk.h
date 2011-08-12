@@ -28,7 +28,6 @@
 #ifndef __CGE_WALK__
 #define __CGE_WALK__
 
-#include "cge/wav.h"
 #include "cge/vga13h.h"
 #include "cge/events.h"
 
