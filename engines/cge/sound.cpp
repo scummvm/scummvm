@@ -48,13 +48,11 @@ Sound::~Sound() {
 
 
 void Sound::close() {
-	killMidi();
-	sndDone();
+	_vm->_midiPlayer.killMidi();
 }
 
 
 void Sound::open() {
-	sndInit();
 	play((*_fx)[30000], 8);
 }
 
@@ -180,40 +178,6 @@ DataCk *Fx::operator [](int ref) {
 	return _current;
 }
 
-
-static uint8 *midi = NULL;
-
-
-void killMidi() {
-	sndMidiStop();
-	if (midi) {
-		delete[] midi;
-		midi = NULL;
-	}
-}
-
-
-void loadMidi(int ref) {
-	static char fn[] = "00.MID";
-	wtom(ref, fn, 10, 2);
-	if (INI_FILE::exist(fn)) {
-		killMidi();
-		INI_FILE mid = fn;
-		if (mid._error == 0) {
-			uint16 siz = (uint16) mid.size();
-			midi = new uint8[siz];
-			if (midi) {
-				mid.read(midi, siz);
-				if (mid._error)
-					killMidi();
-				else
-					sndMidiStart(midi);
-			}
-		}
-	}
-}
-
-
 void *Patch(int pat) {
 	void *p = NULL;
 	static char fn[] = "PATCH000.SND";
@@ -232,6 +196,67 @@ void *Patch(int pat) {
 		}
 	}
 	return p;
+}
+
+MusicPlayer::MusicPlayer() {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
+	_driver = MidiDriver::createMidi(dev);
+	_driver->open();
+	_midiParser = NULL;
+	_data = NULL;
+}
+
+MusicPlayer::~MusicPlayer() {
+	killMidi();
+	_driver->close();
+	delete _driver;
+}
+
+void MusicPlayer::killMidi() {
+	if (_midiParser) {
+		// Stop MIDI playback
+		_midiParser->unloadMusic();
+		_driver->setTimerCallback(NULL, NULL);
+		_driver->close();
+		delete _midiParser;
+		delete _data;
+
+		// Reset playback objects
+		_data = NULL;
+		_midiParser = NULL;
+	}
+}
+
+void MusicPlayer::loadMidi(int ref) {
+	// Work out the filename and check the given MIDI file exists
+	Common::String filename = Common::String::format("%.2d.MID", ref);
+	if (!INI_FILE::exist(filename.c_str()))
+		return;
+
+	// Stop any currently playing MIDI file
+	killMidi();
+
+	// Read in the data for the file
+	INI_FILE mid(filename.c_str());
+	_dataSize = mid.size();
+	_data = (byte *)malloc(_dataSize);
+	mid.read(_data, _dataSize);
+
+	// Start playing the music
+	sndMidiStart();
+}
+
+void MusicPlayer::sndMidiStart() {
+	_midiParser = MidiParser::createParser_SMF();
+
+	if (_midiParser->loadMusic(_data, _dataSize)) {
+		_midiParser->setTrack(0);
+		_midiParser->setMidiDriver(_driver);
+		_midiParser->setTimerRate(_driver->getBaseTempo());
+
+		_midiParser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+		_driver->setTimerCallback(_midiParser, MidiParser::timerCallback);
+	}	
 }
 
 } // End of namespace CGE
