@@ -23,7 +23,7 @@
 #include "backends/platform/bada/system.h"
 #include "backends/platform/bada/fs.h"
 
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 1024
 
 //
 // BadaFileStream
