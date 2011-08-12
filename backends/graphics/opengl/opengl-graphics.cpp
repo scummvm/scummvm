@@ -1245,12 +1245,16 @@ void OpenGLGraphicsManager::toggleAntialiasing() {
 	_transactionDetails.filterChanged = true;
 }
 
-uint OpenGLGraphicsManager::getAspectRatio() {
+uint OpenGLGraphicsManager::getAspectRatio() const {
 	// In case we enable aspect ratio correction we force a 4/3 ratio.
+	// But just for 320x200 and 640x400 games, since other games do not need
+	// this.
 	// TODO: This makes OpenGL Normal behave like OpenGL Conserve, when aspect
 	// ratio correction is enabled, but it's better than the previous 4/3 mode
 	// mess at least...
-	if (_videoMode.aspectRatioCorrection)
+	if (_videoMode.aspectRatioCorrection
+	    && ((_videoMode.screenWidth == 320 && _videoMode.screenHeight == 200)
+	    || (_videoMode.screenWidth == 640 && _videoMode.screenHeight == 400)))
 		return 13333;
 	else if (_videoMode.mode == OpenGL::GFX_NORMAL)
 		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
