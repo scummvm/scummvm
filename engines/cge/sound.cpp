@@ -31,11 +31,13 @@
 #include "cge/cfile.h"
 #include "cge/vol.h"
 #include "cge/cge_main.h"
-
+#include "common/memstream.h"
+#include "audio/decoders/raw.h"
 
 namespace CGE {
 
 Sound::Sound(CGEEngine *vm) : _vm(vm) {
+	_audioStream = NULL;
 	open();
 }
 
@@ -68,11 +70,25 @@ void Sound::play(DataCk *wav, int pan, int cnt) {
 	}
 }
 
+void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
+	// Create an audio stream wrapper for sound
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(PSmpInfo->_saddr, 
+		PSmpInfo->_slen, DisposeAfterUse::NO);
+	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+
+	// Start the new sound
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+}
 
 void Sound::stop() {
 	sndDigiStop(&_smpinf);
 }
 
+void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->stopHandle(_soundHandle);
+	_audioStream = NULL;
+}
 
 Fx::Fx(int size) : _current(NULL) {
 	_cache = new Han[size];
