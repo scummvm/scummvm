@@ -28,7 +28,7 @@
 #ifndef __CGE_SOUND__
 #define __CGE_SOUND__
 
-#include "cge/wav.h"
+#include "cge/general.h"
 #include "cge/snddrv.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
@@ -42,6 +42,22 @@
 namespace CGE {
 
 class CGEEngine;
+
+class DataCk {
+	byte *_buf;
+	int _ckSize;
+public:
+	DataCk(byte *buf, int size);
+	~DataCk();
+	inline const byte *addr() {
+		return _buf;
+	}
+	inline int size() {
+		return _ckSize;
+	}
+};
+
+DataCk *loadWave(XFile *file);
 
 class Sound {
 public:

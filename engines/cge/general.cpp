@@ -28,7 +28,6 @@
 #include "cge/cge.h"
 #include "cge/general.h"
 #include "cge/snddrv.h"
-#include "cge/wav.h"
 
 namespace CGE {
 
