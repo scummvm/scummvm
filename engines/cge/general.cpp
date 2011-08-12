@@ -282,14 +282,6 @@ void sndSetVolume() {
 	warning("STUB: SNDSetVolume");
 }
 
-void sndDigiStart(SmpInfo *PSmpInfo) {
-	warning("STUB: SNDDigitStart");
-}
-
-void sndDigiStop(SmpInfo *PSmpInfo) {
-	warning("STUB: SNDDigiStop");
-}
-
 void sndMidiStart(uint8 *MIDFile) {
 	warning("STUB: SNDMIDIStart");
 }
@@ -299,8 +291,10 @@ void sndMidiStop() {
 }
 
 DataCk *loadWave(XFile *file) {
-	warning("STUB: LoadWave");
-	return NULL;
+	byte *data = (byte *)malloc(file->size());
+	file->read(data, file->size());
+
+	return new DataCk(data, file->size());
 }
 
 int takeEnum(const char **tab, const char *text) {
@@ -331,9 +325,15 @@ int newRandom(int range) {
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
+DataCk::DataCk(byte *buf, int size) {
+	_buf = buf;
+	_ckSize = size;
+}
+
 DataCk::~DataCk() {
   if (_buf)
 	  free(_buf);
 }
+
 } // End of namespace CGE
 

@@ -115,15 +115,18 @@ public:
 };
 
 
-class DataCk : public CkHea {
+class DataCk {
 	bool _ef;
-	uint8 *_buf;
+	byte *_buf;
+	int _ckSize;
 public:
-	DataCk(CkHea &hea);
-	DataCk(int first, int last);
+	DataCk(byte *buf, int size);
 	~DataCk();
-	inline uint8 *addr() {
+	inline const byte *addr() {
 		return _buf;
+	}
+	inline int size() {
+		return _ckSize;
 	}
 };
 

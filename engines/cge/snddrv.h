@@ -73,12 +73,6 @@ void sndDone();
 // Set Volume
 void sndSetVolume();
 
-// Start Digi
-void sndDigiStart(SmpInfo *PSmpInfo);
-
-// Stop Digi
-void sndDigiStop(SmpInfo *PSmpInfo);
-
 // Start MIDI File
 void sndMidiStart(uint8 *MIDFile);
 

@@ -31,6 +31,10 @@
 #include "cge/wav.h"
 #include "cge/snddrv.h"
 #include "cge/cge.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+#include "audio/fmopl.h"
+#include "audio/mixer.h"
 
 namespace CGE {
 
@@ -45,6 +49,11 @@ public:
 	void stop();
 private:
 	CGEEngine *_vm;
+	Audio::SoundHandle _soundHandle;
+	Audio::RewindableAudioStream *_audioStream;
+
+	void sndDigiStart(SmpInfo *PSmpInfo);
+	void sndDigiStop(SmpInfo *PSmpInfo);
 };
 
 
