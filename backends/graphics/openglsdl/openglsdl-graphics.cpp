@@ -640,10 +640,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 			_videoMode.hardwareWidth = width;
 			_videoMode.hardwareHeight = height;
 
-			if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
-				_screenResized = true;
-				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-			}
+			_screenResized = true;
 
 			int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
 			                _videoMode.hardwareHeight / _videoMode.screenHeight);
@@ -651,10 +648,6 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 			if (getScale() != scale) {
 				scaleChanged = true;
 				setScale(MAX(MIN(scale, 3), 1));
-			}
-
-			if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
-				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
 			}
 
 			_transactionDetails.sizeChanged = true;
