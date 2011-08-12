@@ -99,7 +99,7 @@ result BadaAppForm::Construct() {
 BadaAppForm::~BadaAppForm() {
 	logEntered();
 
-	if (_gameThread) {
+	if (_gameThread && _state != ErrorState) {
 		terminate();
 		_gameThread->Stop();
 		_gameThread->Join();
