@@ -125,9 +125,9 @@ Common::Error ComposerEngine::run() {
 		}
 
 		if (lastDrawTime + frameTime <= thisTime) {
-			// catch up if we're more than 5 frames behind
-			if (lastDrawTime + (frameTime * 5) <= thisTime)
-				lastDrawTime = thisTime - (frameTime * 5);
+			// catch up if we're more than 2 frames behind
+			if (lastDrawTime + (frameTime * 2) <= thisTime)
+				lastDrawTime = thisTime;
 			else
 				lastDrawTime += frameTime;
 
