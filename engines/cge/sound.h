@@ -30,13 +30,18 @@
 
 #include "cge/wav.h"
 #include "cge/snddrv.h"
-#include "cge/cge.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/fmopl.h"
+#include "audio/mididrv.h"
+#include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "audio/mixer.h"
+#include "common/memstream.h"
 
 namespace CGE {
+
+class CGEEngine;
 
 class Sound {
 public:
@@ -74,8 +79,25 @@ public:
 	DataCk *operator[](int ref);
 };
 
-void loadMidi(int ref);
-void killMidi();
+class MusicPlayer {
+private:
+	MidiDriver *_driver;
+	MidiParser *_midiParser;
+	byte *_data;
+	int _dataSize;
+
+	// Start MIDI File
+	void sndMidiStart();
+
+	// Stop MIDI File
+	void sndMidiStop();
+public:
+	MusicPlayer();
+	~MusicPlayer();
+
+	void loadMidi(int ref);
+	void killMidi();
+};
 
 } // End of namespace CGE
 

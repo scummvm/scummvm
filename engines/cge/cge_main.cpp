@@ -591,7 +591,7 @@ void CGEEngine::caveUp() {
 
 	int BakRef = 1000 * _now;
 	if (_music)
-		loadMidi(_now);
+		_midiPlayer.loadMidi(_now);
 
 	showBak(BakRef);
 	loadMapping();
@@ -927,9 +927,9 @@ void CGEEngine::switchMusic() {
 		keyClick();
 	}
 	if (_music)
-		loadMidi(_now);
+		_midiPlayer.loadMidi(_now);
 	else
-		killMidi();
+		_midiPlayer.killMidi();
 }
 
 void CGEEngine::startCountDown() {
@@ -1518,7 +1518,7 @@ void CGEEngine::runGame() {
 		_sprite->step(_music);
 	_snail_->addCom(kSnSeq, -1, _music, _sprite);
 	if (!_music)
-		killMidi();
+		_midiPlayer.killMidi();
 
 	if (INI_FILE::exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
@@ -1664,7 +1664,7 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->copyPage(0, 2);
 		_soundOk = 2;
 		if (_music)
-			loadMidi(0);
+			_midiPlayer.loadMidi(0);
 	}
 
 	if (_mode < 2) {
@@ -1742,7 +1742,7 @@ void CGEEngine::cge_main() {
 	_horzLine->_flags._hide = true;
 
 	if (_music && _soundOk)
-		loadMidi(0);
+		_midiPlayer.loadMidi(0);
 
 	if (_startGameSlot != -1) {
 		// Starting up a savegame from the launcher
