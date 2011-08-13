@@ -89,7 +89,7 @@ result BadaAppForm::Construct() {
 			delete _gameThread;
 			_gameThread = null;
 		}
-	}	else {
+	} else {
 		g_system = badaSystem;
 	}
 
@@ -418,7 +418,7 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 	case KEY_SIDE_UP:
 		if (_shortcutIndex != SHORTCUT_VOLUME) {
 			_shortcutIndex = SHORTCUT_VOLUME;
-		}	else {
+		} else {
 			setVolume(true, false);
 		}
 		return;

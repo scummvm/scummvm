@@ -91,7 +91,7 @@ int AudioThread::setVolume(bool up, bool minMax) {
 		if (minMax) {
 			level = up ? numLevels - 1 : 0;
 			volume = levels[level];
-		}	else {
+		} else {
 			// adjust volume to be one of the preset values
 			for (int i = 0; i < numLevels && level == -1; i++) {
 				if (volume == levels[i]) {
@@ -100,7 +100,7 @@ int AudioThread::setVolume(bool up, bool minMax) {
 						if (i + 1 < numLevels) {
 							level = i + 1;
 						}
-					}	else if (i > 0) {
+					} else if (i > 0) {
 						level = i - 1;
 					}
 				}
@@ -170,7 +170,7 @@ bool AudioThread::OnStart(void) {
 		if (E_KEY_NOT_FOUND == registry->Get(CONFIG_KEY, volume)) {
 			registry->Add(CONFIG_KEY, volume);
 			volume = levels[INIT_LEVEL];
-		}	else {
+		} else {
 			AppLog("Setting volume: %d", volume);
 		}
 	}
@@ -218,7 +218,7 @@ void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut &src) {
 		_audioOut->WriteBuffer(_audioBuffer[_tail]);
 		_tail = (_tail + 1 == NUM_AUDIO_BUFFERS ? 0 : _tail + 1);
 		_ready--;
-	}	else {
+	} else {
 		// audio buffer empty: decrease timer inverval
 		_playing = -1;
 		_interval -= TIMER_INCREMENT;
@@ -236,7 +236,7 @@ void AudioThread::OnTimerExpired(Timer &timer) {
 			_head = (_head + 1 == NUM_AUDIO_BUFFERS ? 0 : _head + 1);
 			_ready++;
 		}
-	}	else {
+	} else {
 		// audio buffer full: increase timer inverval
 		_interval += TIMER_INCREMENT;
 		if (_interval > MAX_TIMER_INTERVAL) {
