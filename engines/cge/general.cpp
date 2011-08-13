@@ -92,10 +92,6 @@ Dac _stdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
-void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *)) {
-	warning("STUB: _fqsort");
-}
-
 const char *progName(const char *ext) {
 	static char buf[kMaxFile];
 	strcpy(buf, "CGE");
@@ -290,18 +286,6 @@ int takeEnum(const char **tab, const char *text) {
 		}
 	}
 	return -1;
-}
-
-long timer() {
-/*
-  asm	mov	ax,0x40
-  asm	mov	es,ax
-  asm	mov	cx,es:[0x6C]
-  asm	mov	dx,es:[0x6E]
-  return  ((long) _DX << 16) | _CX;
-*/
-	warning("STUB: timer");
-	return 0;
 }
 
 int newRandom(int range) {
