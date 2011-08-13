@@ -995,7 +995,7 @@ void Snail::runCom() {
 				if (spr && _talkEnable) {
 					if (spr == _hero && spr->seqTest(-1))
 						spr->step(kSeqHTalk);
-					sayTime(spr);
+					_text->sayTime(spr);
 				}
 				break;
 			case kSnCave:
