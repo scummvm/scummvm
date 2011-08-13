@@ -137,6 +137,11 @@ enum AgiGameType {
 	GType_V3 = 3
 };
 
+ enum BooterDisks {
+	 BooterDisk1 = 0,
+	 BooterDisk2 = 1
+ };
+
 //
 // GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
 // uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
@@ -647,24 +652,6 @@ struct AgiGame {
 	int logic_list[256];
 };
 
-/**
- * Check if a disk image with the given MD5 sum exists in the search path.
- *
- * @param  md5       MD5 sum of the disk image to be searched
- * @param  filename  Filled with a filename in case the image is found
- * @return True if found, otherwise false.
- */
-bool diskImageExists(Common::String md5, Common::String &filename);
-
-/**
- * Get MD5 sums for a given game from the booter game description table.
- *
- * @param gid       Game ID of the game
- * @param md5Disk0  Filled with the MD5 sum of disk 0
- * @param md5Disk1  Filled with the MD5 sum of disk 1 if there are two disks
- */
-bool getBooterMD5Sums(AgiGameID gid, Common::String &md5Disk0, Common::String &md5Disk1);
-
 class AgiLoader {
 public:
 
@@ -845,6 +832,8 @@ public:
 	void setFeature(uint32 feature);
 	void initVersion();
 	void setVersion(uint16 version);
+
+	const char *getDiskName(uint16 id);
 
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();

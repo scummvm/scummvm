@@ -56,11 +56,8 @@ AgiLoader_v1::AgiLoader_v1(AgiEngine *vm) {
 
 int AgiLoader_v1::detectGame() {
 	// Find filenames for the disk images
-	Common::String md5Disk0, md5Disk1;
-	getBooterMD5Sums((AgiGameID)_vm->getGameID(), md5Disk0, md5Disk1);
-	diskImageExists(md5Disk0, _filenameDisk0);
-	if (!md5Disk1.empty())
-		diskImageExists(md5Disk1, _filenameDisk1);
+	_filenameDisk0 = _vm->getDiskName(BooterDisk1);
+	_filenameDisk1 = _vm->getDiskName(BooterDisk2);
 
 	return _vm->setupV2Game(_vm->getVersion());
 }

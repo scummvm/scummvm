@@ -94,19 +94,13 @@ void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }
 
-struct AGIBooterDescription {
-	Common::String md5Disk0;
-	Common::String md5Disk1;
-	Common::String id;
-	Common::String extra;
-	int gameID;
-	int gameType;
-	uint32 features;
-	uint16 version;
-};
+const char *AgiBase::getDiskName(uint16 id) {
+	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName != NULL; i++)
+		if (_gameDescription->desc.filesDescriptions[i].fileType == id)
+			return _gameDescription->desc.filesDescriptions[i].fileName;
 
-bool isDiskImage(Common::SeekableReadStream *stream, Common::String filename, Common::String md5);
-bool diskImageExistsInFSList(const Common::FSList &fslist, Common::String md5, Common::String &filename);
+	return "";
+}
 
 }
 
@@ -436,30 +430,6 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		warning("More than one (%d) *.wag files found. WAG files ignored", wagFileCount);
 	}
 
-	// Try to detect disk images of AGI v1 and AGI v2.001 booter games
-	if (!matchedUsingFilenames && !matchedUsingWag) {
-		for (int i = 0; !booterDescription[i].md5Disk0.empty(); i++) {
-			Common::String filenameDisk0;
-			Common::String filenameDisk1;
-
-			if (!diskImageExistsInFSList(fslist, booterDescription[i].md5Disk0, filenameDisk0))
-				continue;
-			if (!booterDescription[i].md5Disk1.empty())
-				if (!diskImageExistsInFSList(fslist, booterDescription[i].md5Disk1, filenameDisk1))
-					continue;
-
-			g_fallbackDesc.gameID = booterDescription[i].gameID;
-			g_fallbackDesc.gameType = booterDescription[i].gameType;
-			g_fallbackDesc.features = booterDescription[i].features;
-			g_fallbackDesc.version = booterDescription[i].version;
-
-			g_fallbackDesc.desc.gameid = booterDescription[i].id.c_str();
-			g_fallbackDesc.desc.extra = booterDescription[i].extra.c_str();
-
-			return (const ADGameDescription *)&g_fallbackDesc;
-		}
-	}
-
 	// Check that the AGI interpreter version is a supported one
 	if (!(g_fallbackDesc.version >= 0x2000 && g_fallbackDesc.version < 0x4000)) {
 		warning("Unsupported AGI interpreter version 0x%x in AGI's fallback detection. Using default 0x2917", g_fallbackDesc.version);
@@ -500,66 +470,6 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 #endif
 
 namespace Agi {
-
-bool isDiskImage(Common::SeekableReadStream *stream, Common::String filename, Common::String md5) {
-	if (!(filename.hasSuffix(".dsk") || filename.hasSuffix(".img")))
-		return false;
-
-	if (stream->size() == 368640 && computeStreamMD5AsString(*stream, 5000) == md5)
-		return true;
-
-	return false;
-}
-
-bool diskImageExistsInFSList(const Common::FSList &fslist, Common::String md5, Common::String &filename) {
-	for (Common::FSList::const_iterator x = fslist.begin(); x != fslist.end(); x++) {
-		if (x->isDirectory()) continue;
-		
-		Common::SeekableReadStream *stream = x->createReadStream();
-		if (isDiskImage(stream, x->getName(), md5)) {
-			filename = x->getName();
-			delete stream;
-			return true;
-		}
-		delete stream;
-	}
-
-	return false;
-}
-
-bool diskImageExists(Common::String md5, Common::String &filename) {
-	Common::ArchiveMemberList files;
-	SearchMan.listMembers(files);
-	
-	Common::File file;
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
-		file.open((*x)->getName());
-		if (isDiskImage(&file, (*x)->getName(), md5)) {
-			filename = (*x)->getName();
-			file.close();
-			return true;
-		}
-		file.close();
-	}
-	
-	return false;
-}
-
-bool getBooterMD5Sums(AgiGameID gid, Common::String &md5Disk0, Common::String &md5Disk1) {
-	AGIBooterDescription *booter = NULL;
-	int i = 0;
-	while (!booterDescription[i].md5Disk0.empty()) {
-		if (booterDescription[i].gameID == gid)
-			booter = &booterDescription[i];
-		i++;
-	}
-	if (booter == NULL)
-		return false;
-	
-	md5Disk0 = booter->md5Disk0;
-	md5Disk1 = booter->md5Disk1;
-	return true;
-}
 
 bool AgiBase::canLoadGameStateCurrently() {
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed);
