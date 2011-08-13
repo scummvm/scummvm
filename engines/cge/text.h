@@ -60,6 +60,7 @@ public:
 	void preload(int from = 1, int upto = 0x7FFF);
 	char *getText(int ref);
 	void say(const char *text, Sprite *spr);
+	void sayTime(Sprite *spr);
 private:
 	CGEEngine *_vm;
 };
@@ -67,9 +68,6 @@ private:
 extern Talk *_talk;
 extern Text *_text;
 
-void say(const char *text, Sprite *spr);
-void sayTime(Sprite *spr);
-void inf(const char *text);
 void killText();
 
 } // End of namespace CGE
