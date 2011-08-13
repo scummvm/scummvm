@@ -322,7 +322,7 @@ void ComposerEngine::loadLibrary(uint id) {
 	for (uint i = 0; i < buttonResources.size(); i++) {
 		uint16 buttonId = buttonResources[i];
 		Common::SeekableReadStream *stream = library._archive->getResource(ID_BUTN, buttonId);
-		Button button(stream, buttonId);
+		Button button(stream, buttonId, getGameType());
 
 		bool inserted = false;
 		for (Common::List<Button>::iterator b = newLib._buttons.begin(); b != newLib._buttons.end(); b++) {
@@ -409,22 +409,32 @@ Common::SeekableReadStream *ComposerEngine::getResource(uint32 tag, uint16 id) {
 	error("No loaded library contains '%s' %04x", tag2str(tag), id);
 }
 
-Button::Button(Common::SeekableReadStream *stream, uint16 id) {
+Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 	_id = id;
 
 	_type = stream->readUint16LE();
 	_active = (_type & 0x8000) ? true : false;
 	_type &= 0xfff;
-	debug(9, "button: type %d, active %d", _type, _active);
+	debug(9, "button %d: type %d, active %d", id, _type, _active);
 
-	_zorder = stream->readUint16LE();
-	_scriptId = stream->readUint16LE();
-	_scriptIdRollOn = stream->readUint16LE();
-	_scriptIdRollOff = stream->readUint16LE();
+	uint16 flags = 0;
+	uint16 size = 4;
+	if (gameType == GType_ComposerV1) {
+		flags = stream->readUint16LE();
+		_zorder = 0;
+		_scriptId = stream->readUint16LE();
+		_scriptIdRollOn = 0;
+		_scriptIdRollOff = 0;
+	} else {
+		_zorder = stream->readUint16LE();
+		_scriptId = stream->readUint16LE();
+		_scriptIdRollOn = stream->readUint16LE();
+		_scriptIdRollOff = stream->readUint16LE();
 
-	stream->skip(4);
+		stream->skip(4);
 
-	uint16 size = stream->readUint16LE();
+		size = stream->readUint16LE();
+	}
 
 	switch (_type) {
 	case kButtonRect:
@@ -435,15 +445,21 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id) {
 		_rect.top = stream->readSint16LE();
 		_rect.right = stream->readSint16LE();
 		_rect.bottom = stream->readSint16LE();
-		debug(9, "button: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 		break;
 	case kButtonSprites:
+		if (gameType == GType_ComposerV1)
+			error("encountered kButtonSprites in V1 data");
 		for (uint i = 0; i < size; i++) {
-			_spriteIds.push_back(stream->readSint16LE());
+			_spriteIds.push_back(stream->readUint16LE());
 		}
 		break;
 	default:
 		error("unknown button type %d", _type);
+	}
+
+	if (flags & 0x40) {
+		_scriptIdRollOn = stream->readUint16LE();
+		_scriptIdRollOff = stream->readUint16LE();
 	}
 
 	delete stream;

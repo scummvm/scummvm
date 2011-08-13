@@ -68,7 +68,7 @@ enum {
 class Button {
 public:
 	Button() { }
-	Button(Common::SeekableReadStream *stream, uint16 id);
+	Button(Common::SeekableReadStream *stream, uint16 id, uint gameType);
 
 	bool contains(const Common::Point &pos) const;
 
