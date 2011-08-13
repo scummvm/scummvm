@@ -75,7 +75,8 @@ BadaFileStream::~BadaFileStream() {
 }
 
 bool BadaFileStream::err() const {
-	return (GetLastResult() != E_SUCCESS);
+	result r = GetLastResult();
+	return (r != E_SUCCESS && r != E_END_OF_FILE);
 }
 
 void BadaFileStream::clearErr() {
