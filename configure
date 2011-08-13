@@ -110,6 +110,8 @@ _mt32emu=no
 _enable_prof=no
 _global_constructors=no
 _bink=yes
+_smush=yes
+_monkey4=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -2797,24 +2799,29 @@ echo "$_timidity"
 # Check for ZLib
 #
 echocheck "zlib"
-_zlib=no
-cat > $TMPC << EOF
+if test "$_zlib" = auto ; then
+	_zlib=no
+	cat > $TMPC << EOF
 #include <string.h>
 #include <zlib.h>
 int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
 EOF
-cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
-
+	cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+fi
 if test "$_zlib" = yes ; then
 	LIBS="$LIBS $ZLIB_LIBS -lz"
 	INCLUDES="$INCLUDES $ZLIB_CFLAGS"
-else
-	echo
-	echo "zlib library support required"
-	exit 1
 fi
 define_in_config_if_yes "$_zlib" 'USE_ZLIB'
 echo "$_zlib"
+
+#
+# Check whether to activate SMUSH & Monkey4, based on zlib
+#
+if test "$_zlib" = no; then 
+	_smush=no
+	_monkey4=no	
+fi
 
 #
 # Check for LibMPEG2
@@ -3159,6 +3166,20 @@ fi
 echo_n "Building Bink video support... "
 define_in_config_if_yes $_bink 'USE_BINK'
 echo "$_bink"
+
+#
+# Check whether to build SMUSH video support
+#
+echo_n "Building SMUSH video support... "
+define_in_config_if_yes $_smush 'USE_SMUSH'
+echo "$_smush"
+
+#
+# Check whether to build Monkey4-support
+#
+echo_n "Building Escape from Monkey Island support... "
+define_in_config_if_yes $_monkey4 'ENABLE_MONKEY4'
+echo "$_monkey4"
 
 #
 # Figure out installation directories
