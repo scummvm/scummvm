@@ -34,6 +34,8 @@
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
+#ifdef USE_SMUSH
+
 namespace Grim {
 
 class SaveGame;
@@ -101,5 +103,7 @@ private:
 };
 
 } // end of namespace Grim
+
+#endif // USE_SMUSH
 
 #endif

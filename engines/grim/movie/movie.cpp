@@ -22,6 +22,10 @@
 
 #include "engines/grim/movie/movie.h"
 
+#if !defined(USE_MPEG2) || !defined(USE_SMUSH)
+#define NEED_NULLPLAYER
+#endif
+
 namespace Grim {
 
 MoviePlayer *g_movie;
@@ -29,7 +33,7 @@ MoviePlayer *g_movie;
 // Fallback for when USE_MPEG2 isnt defined, might want to do something similar
 // for USE_BINK if that comes over from ScummVM
 
-#ifndef USE_MPEG2
+#ifdef NEED_NULLPLAYER
 class NullPlayer : public MoviePlayer {
 public:
 	NullPlayer() {
@@ -47,8 +51,16 @@ private:
 	void init() {}
 	void deinit() {}
 };
+#endif
 
+#ifndef USE_MPEG2
 MoviePlayer *CreateMpegPlayer() {
+	return new NullPlayer();
+}
+#endif
+
+#ifndef USE_SMUSH
+MoviePlayer *CreateSmushPlayer() {
 	return new NullPlayer();
 }
 #endif

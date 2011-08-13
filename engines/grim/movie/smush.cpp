@@ -44,6 +44,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 
+#ifdef USE_SMUSH
+
 namespace Grim {
 
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)
@@ -787,3 +789,6 @@ uint32 zlibFile::readUint32BE() {
 }
 
 } // end of namespace Grim
+
+
+#endif // USE_SMUSH
