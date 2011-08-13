@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef TSAGE_BLUEFORCE_SCENES1_H
-#define TSAGE_BLUEFORCE_SCENES1_H
+#ifndef TSAGE_BLUEFORCE_SCENES0_H
+#define TSAGE_BLUEFORCE_SCENES0_H
 
 #include "common/scummsys.h"
-#include "tsage/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
@@ -34,38 +34,21 @@
 
 namespace tSage {
 
-class BF_Scene100: public Scene {
+class BF_Scene20 : public Scene {
 	/* Actions */
-	class Action1: public ActionExt {
+	class Action1 : public Action {
 	private:
-		void setTextStrings(const Common::String &msg1, const Common::String &msg2, Action *action);
+		ASoundExt _sound;
 	public:
-		SceneText _sceneText1, _sceneText2;
-		int _textHeight;
-
-		virtual Common::String getClassName() { return "BF100Action1"; }
-		virtual void synchronize(Serializer &s) {
-			ActionExt::synchronize(s);
-			s.syncAsSint16LE(_textHeight);
-		}
-		virtual void signal();
-	};
-	class Action2: public ActionExt {
-	public:
-		virtual Common::String getClassName() { return "BF100Action2"; }
 		virtual void signal();
 	};
 public:
-	SequenceManager _sequenceManager;
 	Action1 _action1;
-	Action2 _action2;
 	ScenePalette _scenePalette;
-	SceneObjectExt2 _object1, _object2, _object3, _object4, _object5;
-	int _index;
+	SceneObject _object1, _object2, _object3, _object4;
+	SceneObject _object5, _object6, _object7, _object8;
 
-	BF_Scene100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
 };
 
 } // End of namespace tSage

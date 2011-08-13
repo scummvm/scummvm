@@ -21,7 +21,7 @@
  */
 
 #include "common/config-manager.h"
-#include "tsage/ringworld_scenes4.h"
+#include "tsage/ringworld/ringworld_scenes4.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"

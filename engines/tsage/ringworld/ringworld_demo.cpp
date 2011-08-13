@@ -20,7 +20,7 @@
  *
  */
 
-#include "tsage/ringworld_demo.h"
+#include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"

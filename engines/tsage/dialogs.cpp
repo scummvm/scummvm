@@ -30,7 +30,7 @@
 #include "tsage/dialogs.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
 namespace tSage {
 

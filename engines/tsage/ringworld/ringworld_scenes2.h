@@ -24,7 +24,7 @@
 #define TSAGE_RINGWORLD_SCENES2_H
 
 #include "common/scummsys.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"

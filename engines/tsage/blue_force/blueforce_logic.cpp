@@ -20,9 +20,9 @@
  *
  */
 
-#include "tsage/blueforce_logic.h"
-#include "tsage/blueforce_scenes0.h"
-#include "tsage/blueforce_scenes1.h"
+#include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_scenes0.h"
+#include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"

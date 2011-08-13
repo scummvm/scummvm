@@ -23,7 +23,7 @@
 #include "tsage/debugger.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
 namespace tSage {
 

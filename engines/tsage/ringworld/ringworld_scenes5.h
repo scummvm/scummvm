@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "tsage/core.h"
 #include "tsage/converse.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
 namespace tSage {
 

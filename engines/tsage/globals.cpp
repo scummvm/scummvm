@@ -22,9 +22,9 @@
 
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
-#include "tsage/blueforce_logic.h"
-#include "tsage/ringworld_demo.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/ringworld/ringworld_demo.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
 namespace tSage {
 
