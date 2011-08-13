@@ -234,16 +234,12 @@ void CGEEngine::inf(const char *text) {
 	}
 }
 
-void sayTime(Sprite *spr) {
-	/*
-	  static char t[] = "00:00";
-	  struct time ti;
-	  gettime(&ti);
-	  wtom(ti.ti_hour, t+0, 10, 2);
-	  wtom(ti.ti_min,  t+3, 10, 2);
-	  Say((*t == '0') ? (t+1) : t, spr);
-	  */
-	warning("STUB: sayTime");
+void Text::sayTime(Sprite *spr) {
+	TimeDate curTime;
+	char t[6];
+	_vm->_system->getTimeAndDate(curTime);
+	sprintf(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
+	say(t, spr);
 }
 
 void killText() {
