@@ -23,9 +23,7 @@
 #ifndef GRIM_SMUSH_PLAYER_H
 #define GRIM_SMUSH_PLAYER_H
 
-//#include <zlib.h>
 #include "common/zlib.h"
-
 #include "common/file.h"
 
 #include "engines/grim/movie/movie.h"
