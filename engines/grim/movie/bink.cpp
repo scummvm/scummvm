@@ -130,7 +130,7 @@ void BinkPlayer::handleFrame() {
 	// will be dropped, and the sound will continue, in synch.
 	if (!_updateNeeded) {
 		_externalSurface->copyFrom(*_surface);
-		_externalBuffer = (byte *)_surface->pixels; 
+		_externalBuffer = (byte *)_externalSurface->pixels; 
 		_updateNeeded = true;
 	}
 		
