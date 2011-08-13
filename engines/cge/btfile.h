@@ -87,7 +87,6 @@ public:
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
 	BtKeypack *next();
-	void make(BtKeypack *keypack, uint16 count);
 };
 
 } // End of namespace CGE

@@ -36,16 +36,9 @@ namespace CGE {
 #define CAT_NAME    "VOL.CAT"
 #define DAT_NAME    "VOL.DAT"
 
-#define CRP     XCrypt
-
+#define CRP         XCrypt
 #define XMASK       0xA5
-
-#ifdef  VOL_UPD
-#define VOLBASE     IOHAND
-#else
 #define VOLBASE     CFile
-#endif
-
 
 class Dat {
 	friend class VFile;
@@ -58,7 +51,6 @@ public:
 	bool read(long org, uint16 len, uint8 *buf);
 };
 
-
 class VFile : public IoBuf {
 private:
 	static Dat *_dat;
@@ -70,7 +62,6 @@ private:
 
 	void readBuf();
 	void writeBuf() { }
-	void make(const char *fspec);
 public:
 	VFile(const char *name, IOMode mode = kModeRead);
 	~VFile();

@@ -135,32 +135,6 @@ int keycomp(const void *k1, const void *k2) {
 	return scumm_strnicmp((const char *) k1, (const char*) k2, kBtKeySize);
 }
 
-
-void BtFile::make(BtKeypack *keypack, uint16 count) {
-	debugC(1, kCGEDebugFile, "BtFile::make(keypack, %d)", count);
-
-#if kBtLevel != 2
-#error This tiny BTREE implementation works with exactly 2 levels!
-#endif
-	_fqsort(keypack, count, sizeof(*keypack), keycomp);
-	uint16 n = 0;
-	BtPage *Root = getPage(0, n++);
-	BtPage *Leaf = getPage(1, n);
-	Root->_hea._down = n;
-	putPage(0, true);
-	while (count--) {
-		if (Leaf->_hea._count >= ArrayCount(Leaf->_lea)) {
-			putPage(1, true);     // save filled page
-			Leaf = getPage(1, ++n);   // take empty page
-			memcpy(Root->_inn[Root->_hea._count]._key, keypack->_key, kBtKeySize);
-			Root->_inn[Root->_hea._count++]._down = n;
-			_buff[0]._updt = true;
-		}
-		Leaf->_lea[Leaf->_hea._count++] = *(keypack++);
-		_buff[1]._updt = true;
-	}
-}
-
 void BtPage::read(Common::ReadStream &s) {
 	_hea._count = s.readUint16LE();
 	_hea._down = s.readUint16LE();

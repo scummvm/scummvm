@@ -113,22 +113,14 @@ char     *wtom(uint16 val, char *str, int radix, int len);
 char     *dwtom(uint32 val, char *str, int radix, int len);
 int       takeEnum(const char **tab, const char *text);
 uint16    chkSum(void *m, uint16 n);
-long      timer();
 char     *mergeExt(char *buf, const char *name, const char *ext);
 char     *forceExt(char *buf, const char *name, const char *ext);
 
 // MISSING FUNCTIONS
-void _fqsort(void *base, uint16 nelem, uint16 width, int (*fcmp)(const void *, const void *));
 const char *progName(const char *ext = NULL);
 unsigned fastRand();
 unsigned fastRand(unsigned s);
 uint16 rCrypt(void *buf, uint16 siz, uint16 seed);
-uint16 atow(const char *a);
-uint16 xtow(const char *x);
-char *wtom(uint16 val, char *str, int radix, int len);
-char *dwtom(uint32 val, char * str, int radix, int len);
-int takeEnum(const char **tab, const char *text);
-long timer();
 int newRandom(int range);
 } // End of namespace CGE
 
