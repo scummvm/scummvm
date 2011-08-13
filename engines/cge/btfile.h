@@ -29,17 +29,18 @@
 #define __CGE_BTFILE__
 
 #include "cge/general.h"
+#include "common/stream.h"
 
 namespace CGE {
 
 #define kBtSize      1024
 #define kBtKeySize   13
 #define kBtLevel     2
+#define kBtInnerCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 2 /*sizeof(Inner) */))
+#define kBtLeafCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 4 + 2 /*sizeof(BtKeypack) */))
 
 #define kBtValNone   0xFFFF
 #define kBtValRoot   0
-
-#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct BtKeypack {
 	char _key[kBtKeySize];
@@ -61,16 +62,15 @@ struct BtPage {
 	Hea _hea;
 	union {
 		// dummy filler to make proper size of union
-		uint8 _data[kBtSize - sizeof(Hea)];
+		uint8 _data[kBtSize - 4 /*sizeof(Hea) */];
 		// inner version of data: key + word-sized page link
-		Inner _inn[(kBtSize - sizeof(Hea)) / sizeof(Inner)];
+		Inner _inn[kBtInnerCount];
 		// leaf version of data: key + all user data
-		BtKeypack _lea[(kBtSize - sizeof(Hea)) / sizeof(BtKeypack)];
+		BtKeypack _lea[kBtLeafCount];
 	};
+
+	void read(Common::ReadStream &s);
 };
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 
 class BtFile : public IoHand {
 	struct {
