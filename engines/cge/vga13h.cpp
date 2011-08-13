@@ -100,92 +100,13 @@ static void Video() {
 
 
 uint16 *SaveScreen() {
-	/*
-	  uint16 cxy, cur, siz, * scr = NULL, * sav;
-
-	  // horizontal size of text mode screen
-	  asm   mov ah,0x0F     // get current video mode
-	  Video();          // BIOS video service
-	  asm   xchg    ah,al       // answer in ah
-	  asm   push    ax      // preserve width
-
-	  // vertical size of text mode screen
-	  asm   mov dl,24       // last row on std screen
-	  asm   xor bx,bx       // valid request in BH
-	  asm   mov ax,0x1130   // get EGA's last row #
-	  Video();          // BIOS video service
-	  asm   inc dl      // # of rows = last+1
-
-	  // compute screen size in words
-	  asm   pop ax      // restore width
-	  asm   mul dl      // width * height
-
-	  siz = _AX;
-
-	  asm   mov ax,0x40     // system data segment
-	  asm   mov es,ax
-	  asm   mov ax,0B000H   // Mono
-	  asm   cmp byte ptr es:[0x49],0x07
-	  asm   je  sto
-	  asm   mov ax,0B800H   // Color
-	  sto:              // store screen address
-	  asm   mov word ptr scr+2,ax
-
-	  _AH = 0x0F; Video();      // active page
-
-	  // take cursor shape
-	  _AH = 0x03; Video();      // get cursor size
-	  cur = _CX;
-
-	  // take cursor position
-	  _DH = 0;
-	  _AH = 0x03; Video();      // get cursor
-	  cxy = _DX;
-
-	  sav = farnew(uint16, siz+3);  // +3 extra uint16s for size and cursor
-	  if (sav)
-	    {
-	      sav[0] = siz;
-	      sav[1] = cur;
-	      sav[2] = cxy;
-	      memcpy(sav+3, scr, siz * 2);
-	    }
-	  return sav;
-	  */
-	warning("STUB: SaveScreen");
+	// In ScummVM, we don't need to worry about saving the original screen mode
 	return 0;
 }
 
 
 void RestoreScreen(uint16 * &sav) {
-	/*
-	  uint16 * scr = NULL;
-
-	  asm   mov ax,0x40     // system data segment
-	  asm   mov es,ax
-	  asm   mov ax,0B000H   // Mono
-	  asm   cmp byte ptr es:[0x49],0x07
-	  asm   je  sto
-	  asm   mov ax,0B800H   // Color
-	  sto:              // store screen address
-	  asm   mov word ptr scr+2,ax
-
-	  memcpy(scr, sav+3, sav[0] * 2);
-
-	  _AH = 0x0F; Video();      // active page
-
-	  // set cursor shape
-	  _CX = sav[1];
-	  _AH = 0x01; Video();      // set cursor size
-
-	  // set cursor position
-	  _DX = sav[2];
-	  _AH = 0x02; Video();      // set cursor
-
-	  free(sav);
-	  sav = NULL;
-	  */
-	warning("STUB: RestoreScreen");
+	// In ScummVM, we don't need to restore the original text screen when the game exits
 }
 
 
@@ -830,7 +751,7 @@ Vga::Vga(int mode)
 	for (int i = 10; i < 20; i++) {
 		char *text = _text->getText(i);
 		if (text) {
-			debugN("%s\n", text);
+			debugN(1, "%s\n", text);
 			std = false;
 		}
 	}
@@ -879,17 +800,7 @@ Vga::~Vga() {
 
 
 void Vga::setStatAdr() {
-	/*
-	asm    mov dx,VGAMIr_
-	asm    in  al,dx
-	asm    test    al,1        // CGA addressing mode flag
-	asm    mov ax,VGAST1_  // CGA addressing
-	asm    jnz set_mode_adr
-	asm    xor al,0x60     // MDA addressing
-	set_mode_adr:
-	StatAdr = _AX;
-	*/
-	warning("STUB: VGA::setStatADR");
+	// No implementation needed for ScummVM
 }
 
 
@@ -902,45 +813,7 @@ void Vga::waitVR(bool on) {
 
 
 void Vga::setup(VgaRegBlk *vrb) {
-	/*
-	  waitVR();         // *--LOOK!--* resets VGAATR logic
-	  asm   cld
-	  asm   mov si, vrb     // take address of parameter table
-	  asm   mov dh,0x03     // higher byte of I/O address is always 3
-
-	  s:
-	  asm   lodsw           // take lower byte of I/O address and index
-	  asm   or  ah,ah       // 0 = end of table
-	  asm   jz  xit     // no more: exit
-	  asm   or  al,al       // indexed register?
-	  asm   js  single      // 7th bit set means single register
-	  asm   mov dl,ah       // complete I/O address
-	  asm   out dx,al       // put index into control register
-	  asm   inc dx      // data register is next to control
-	  asm   in  al,dx       // take old data
-
-	  write:
-	  asm   mov cl,al       // preserve old data
-	  asm   lodsw           // take 2 masks from table
-	  asm   xor al,0xFF     // invert mask bits
-	  asm   and al,cl       // clear bits with "clr" mask
-	  asm   or  al,ah       // set bits with "set" mask
-	  asm   cmp dl,0xC1     // special case?
-	  asm   jne std2        // no: standard job, otherwise...
-	  asm   dec dx      // data out reg shares address with index
-	  std2:
-	  asm   out dx,al       // write new value to register
-	  asm   jmp s
-
-	  single:           // read address in al, write address in ah
-	  asm   mov dl,al       // complete I/O read address
-	  asm   in  al,dx       // take old data
-	  asm   mov dl,ah       // complete I/O write address
-	  asm   jmp write       // continue standard routine
-
-	  xit:
-	  */
-	warning("STUB: VGA::setup");
+	// No direct VGA setup required, since ScummVM provides it's own graphics interface
 }
 
 
