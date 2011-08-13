@@ -321,7 +321,7 @@ void ComposerEngine::loadLibrary(uint id) {
 
 		bool inserted = false;
 		for (Common::List<Button>::iterator b = newLib._buttons.begin(); b != newLib._buttons.end(); b++) {
-			if (button._zorder <= b->_zorder)
+			if (button._zorder < b->_zorder)
 				continue;
 			newLib._buttons.insert(b, button);
 			inserted = true;
