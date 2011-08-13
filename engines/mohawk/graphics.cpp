@@ -672,6 +672,14 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
 }
 
+void MystGraphics::fadeToBlack() {
+	// TODO: Implement
+}
+
+void MystGraphics::fadeFromBlack() {
+	// TODO: Implement
+}
+
 #endif // ENABLE_MYST
 
 #ifdef ENABLE_RIVEN

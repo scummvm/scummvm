@@ -129,6 +129,8 @@ public:
 	void drawRect(Common::Rect rect, RectState state);
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
 	void enableDrawingTimeSimulation(bool enable);
+	void fadeToBlack();
+	void fadeFromBlack();
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
