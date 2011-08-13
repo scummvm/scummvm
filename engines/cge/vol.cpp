@@ -40,13 +40,7 @@ VFile *VFile::_recent = NULL;
 
 /*-----------------------------------------------------------------------*/
 
-Dat::Dat():
-#ifdef VOL_UPD
-	_file(DAT_NAME, UPD, CRP)
-#else
-	_file(DAT_NAME, kModeRead, CRP)
-#endif
-{
+Dat::Dat(): _file(DAT_NAME, kModeRead, CRP) {
 	debugC(1, kCGEDebugFile, "Dat::Dat()");
 }
 
@@ -56,12 +50,7 @@ void VFile::init() {
 	debugC(1, kCGEDebugFile, "VFile::init()");
 
 	_dat = new Dat();
-#ifdef VOL_UPD
-	_cat = new BtFile(CAT_NAME, UPD, CRP);
-#else
 	_cat = new BtFile(CAT_NAME, kModeRead, CRP);
-#endif
-
 	_recent = NULL;
 }
 
@@ -82,10 +71,6 @@ VFile::VFile(const char *name, IOMode mode)
 			_error = 1;
 		_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
 	}
-#ifdef VOL_UPD
-	else
-		Make(name);
-#endif
 }
 
 
