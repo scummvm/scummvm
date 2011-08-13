@@ -26,25 +26,23 @@
 #include "compress_cge.h"
 
 #define BUFFER_SIZE 8192
+#define SEED 0xA5
 
 static void crypt(const char *src, const char *dest) {
-/*
-	FILE *fIn, *fOut;
-	fIn.open(src);
-	fOut.open(dest);
+	FILE *fIn = fopen(src, "rb");
+	FILE *fOut = fopen(dest, "wb");
 	byte buffer[BUFFER_SIZE];
-	int bytesRead;
+	size_t bytesRead;
 	
-	while ((bytesRead = fIn.read(&buffer[0], BUFFER_SIZE)) > 0) {
+	while ((bytesRead = fread(&buffer[0], 1, BUFFER_SIZE, fIn)) > 0) {
 		for (int i = 0; i < bytesRead; ++i)
-			buffer[i] ^= 0xA5;
+			buffer[i] ^= SEED;
 
-		fOut.write(&buffer[0], bytesRead);
+		fwrite(&buffer[0], 1, bytesRead, fOut);
 	}
 
-	fIn.close();
-	fOut.close();
-*/
+	fclose(fIn);
+	fclose(fOut);
 }
 
 static void decrypt() {
@@ -58,12 +56,12 @@ static void encrypt() {
 static void readData(FILE *f, byte *buff, int size) {
 	int bytesRead = fread(buff, 1, size, f);
 	for (int i = 0; i < bytesRead; ++i)
-		buff[i] ^= 0xA5;
+		buff[i] ^= SEED;
 }
 
 static void writeData(FILE *f, byte *buff, int size) {
 	for (int i = 0; i < size; ++i)
-		buff[i] ^= 0xA5;
+		buff[i] ^= SEED;
 	fwrite(buff, 1, size, f);
 }
 
