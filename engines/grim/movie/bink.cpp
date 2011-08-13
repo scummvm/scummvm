@@ -80,8 +80,7 @@ void BinkPlayer::init() {
 
 	assert(!_externalBuffer);
 	
-	timerCallback(0); // Get a valid frame to draw
-  	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
+	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void BinkPlayer::deinit() {
