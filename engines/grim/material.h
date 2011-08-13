@@ -49,6 +49,9 @@ public:
 	int _numImages;
 	Texture *_textures;
 	int _refCount;
+private:
+	void initGrim(const Common::String &filename, const char *data, int len, CMap *cmap);
+	void initEMI(const Common::String &filename, const char *data, int len);
 };
 
 class Material : public Object {

@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
@@ -35,8 +36,16 @@ Common::List<MaterialData *> *MaterialData::_materials = NULL;
 MaterialData::MaterialData(const Common::String &filename, const char *data, int len, CMap *cmap) :
 	_fname(filename), _cmap(cmap), _refCount(1) {
 
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		initEMI(filename, data, len);
+	} else {
+		initGrim(filename, data, len, cmap);
+	}
+}
+
+void MaterialData::initGrim(const Common::String &filename, const char *data, int len, CMap *cmap) {
 	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
-		error("invalid magic loading texture");
+			error("invalid magic loading texture");
 
 	_numImages = READ_LE_UINT32(data + 12);
 	_textures = new Texture[_numImages];
@@ -65,6 +74,28 @@ MaterialData::MaterialData(const Common::String &filename, const char *data, int
 		g_driver->createMaterial(t, data + 24, cmap);
 		data += 24 + t->_width * t->_height;
 	}
+}
+
+void MaterialData::initEMI(const Common::String &filename, const char *data, int len) {
+	if (filename.hasSuffix(".sur")) {
+		warning("SUR-materials not implemented");
+		return;
+	} if(!filename.hasSuffix(".tga")) {
+		warning("Unknown material-format: %s", filename.c_str());
+		return;
+	}
+	int format = data[1];
+	assert(format == 2);	// Verify that we have uncompressed TGA (2)
+	data += 12;
+	_numImages = 1;
+	_textures = new Texture();
+	_textures->_width = READ_LE_UINT16(data);
+	_textures->_height = READ_LE_UINT16(data + 2);
+	_textures->_hasAlpha = false;
+	int bpp = data[4];
+	assert(bpp == 24); // Assure we have 24 bpp
+	data += 6;
+	g_driver->createMaterial(_textures, data, 0);
 }
 
 MaterialData::~MaterialData() {
