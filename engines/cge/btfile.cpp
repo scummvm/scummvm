@@ -31,6 +31,7 @@
 #include "cge/cge.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/memstream.h"
 
 namespace CGE {
 
@@ -61,8 +62,8 @@ void BtFile::putPage(int lev, bool hard) {
 	debugC(1, kCGEDebugFile, "BtFile::putPage(%d, %s)", lev, hard ? "true" : "false");
 
 	if (hard || _buff[lev]._updt) {
-		seek(_buff[lev]._pgNo * sizeof(BtPage));
-		write((uint8 *) _buff[lev]._page, sizeof(BtPage));
+		seek(_buff[lev]._pgNo * kBtSize);
+		write((uint8 *) _buff[lev]._page, kBtSize);
 		_buff[lev]._updt = false;
 	}
 }
@@ -72,17 +73,25 @@ BtPage *BtFile::getPage(int lev, uint16 pgn) {
 	debugC(1, kCGEDebugFile, "BtFile::getPage(%d, %d)", lev, pgn);
 
 	if (_buff[lev]._pgNo != pgn) {
-		int32 pos = pgn * sizeof(BtPage);
+		int32 pos = pgn * kBtSize;
 		putPage(lev, false);
 		_buff[lev]._pgNo = pgn;
 		if (size() > pos) {
-			seek((uint32) pgn * sizeof(BtPage));
-			read((uint8 *) _buff[lev]._page, sizeof(BtPage));
+			seek((uint32) pgn * kBtSize);
+
+			// Read in the page
+			byte buffer[kBtSize];
+			int bytesRead = read(buffer, kBtSize);
+
+			// Unpack it into the page structure
+			Common::MemoryReadStream stream(buffer, bytesRead, DisposeAfterUse::NO);
+			_buff[lev]._page->read(stream);
+
 			_buff[lev]._updt = false;
 		} else {
+			memset(&_buff[lev]._page, 0, kBtSize);
 			_buff[lev]._page->_hea._count = 0;
 			_buff[lev]._page->_hea._down = kBtValNone;
-			memset(_buff[lev]._page->_data, '\0', sizeof(_buff[lev]._page->_data));
 			_buff[lev]._updt = true;
 		}
 		_buff[lev]._indx = -1;
@@ -149,6 +158,26 @@ void BtFile::make(BtKeypack *keypack, uint16 count) {
 		}
 		Leaf->_lea[Leaf->_hea._count++] = *(keypack++);
 		_buff[1]._updt = true;
+	}
+}
+
+void BtPage::read(Common::ReadStream &s) {
+	_hea._count = s.readUint16LE();
+	_hea._down = s.readUint16LE();
+
+	if (_hea._down == kBtValNone) {
+		// Leaf list
+		for (int i = 0; i < kBtLeafCount; ++i) {
+			s.read(_lea[i]._key, kBtKeySize);
+			_lea[i]._mark = s.readUint32LE();
+			_lea[i]._size = s.readUint16LE();
+		}
+	} else {
+		// Root index
+		for (int i = 0; i < kBtInnerCount; ++i) {
+			s.read(_inn[i]._key, kBtKeySize);
+			_inn[i]._down = s.readUint16LE();
+		}
 	}
 }
 
