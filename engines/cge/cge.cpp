@@ -131,7 +131,7 @@ void CGEEngine::setup() {
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++)
 		_pocket[i] = NULL;
-	_horzLine = new HorizLine(this);
+	_horzLine = isDemo() ? NULL : new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_cavLight = new CavLight(this);
 	_debugLine = new InfoLine(this, kScrWidth);
@@ -245,6 +245,10 @@ bool CGEEngine::canLoadGameStateCurrently() {
 
 bool CGEEngine::canSaveGameStateCurrently() {
 	return (_startupMode == 0) && _mouse->_active;
+}
+
+bool CGEEngine::isDemo() const {
+	return _gameDescription->flags & ADGF_DEMO;
 }
 
 } // End of namespace CGE
