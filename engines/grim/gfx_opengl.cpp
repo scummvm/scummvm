@@ -1307,18 +1307,11 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2)
 		0.0f, y1,
 		x1, y1
 	};
-#ifndef USE_VERTEX_ARRAYS
-	glBegin(GL_TRIANGLE_STRIP);
-	for (int i = 0; i < 10; i++) {
-		glVertex2fv(points + 2 * i);
-	}
-	glEnd();
-#else
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(2, GL_FLOAT, 0, points);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
 	glDisableClientState(GL_VERTEX_ARRAY);
-#endif
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
