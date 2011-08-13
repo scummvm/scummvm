@@ -651,7 +651,7 @@ void CGEEngine::caveDown() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::caveDown()");
 
 	Sprite *spr;
-	if (!_horzLine->_flags._hide)
+	if (_horzLine && !_horzLine->_flags._hide)
 		switchMapping();
 
 	for (spr = _vga->_showQ->first(); spr;) {
@@ -858,7 +858,7 @@ void System::touch(uint16 mask, int x, int y) {
 			if (cav && _snail->idle() && _hero->_tracePtr < 0)
 				_vm->switchCave(cav);
 
-			if (!_horzLine->_flags._hide) {
+			if (_horzLine && !_horzLine->_flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
 					int8 x1, z1;
 					XZ(x, y).split(x1, z1);
@@ -958,9 +958,10 @@ void CGEEngine::takeName() {
 }
 
 void CGEEngine::switchMapping() {
+	assert(_horzLine);
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMapping()");
 
-	if (_horzLine->_flags._hide) {
+	if (_horzLine && _horzLine->_flags._hide) {
 		int i;
 		for (i = 0; i < kMapZCnt; i++) {
 			int j;
@@ -1559,9 +1560,11 @@ void CGEEngine::runGame() {
 	_debugLine->_z = 126;
 	_vga->_showQ->insert(_debugLine);
 
-	_horzLine->_y = kMapTop - (kMapTop > 0);
-	_horzLine->_z = 126;
-	_vga->_showQ->insert(_horzLine);
+	if (_horzLine) {
+		_horzLine->_y = kMapTop - (kMapTop > 0);
+		_horzLine->_z = 126;
+		_vga->_showQ->insert(_horzLine);
+	}
 
 	_mouse->_busy = _vga->_spareQ->locate(kBusyRef);
 	if (_mouse->_busy)
@@ -1739,7 +1742,8 @@ void CGEEngine::cge_main() {
 		_mode = 2;
 
 	_debugLine->_flags._hide = true;
-	_horzLine->_flags._hide = true;
+	if (_horzLine)
+		_horzLine->_flags._hide = true;
 
 	if (_music && _soundOk)
 		_midiPlayer.loadMidi(0);
