@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "common/file.h"
+#include "common/substream.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lab.h"
@@ -164,6 +165,17 @@ Common::File *Lab::openNewStreamFile(const Common::String &filename) const {
 	file->seek(_entries[filename].offset, SEEK_SET);
 
 	return file;
+}
+// SubStream, for usage with GZipReadStream
+Common::SeekableReadStream *Lab::openNewSubStreamFile(const Common::String &filename) const {
+	if (!getFileExists(filename))
+		return 0;
+
+	Common::File *file = new Common::File();
+	file->open(_labFileName);
+	Common::SeekableSubReadStream *substream;
+	substream = new Common::SeekableSubReadStream(file, _entries[filename].offset, _entries[filename].len, DisposeAfterUse::YES );
+	return substream;
 }
 
 int Lab::getFileLength(const Common::String &filename) const {

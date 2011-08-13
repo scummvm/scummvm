@@ -23,7 +23,8 @@
 #ifndef GRIM_SMUSH_PLAYER_H
 #define GRIM_SMUSH_PLAYER_H
 
-#include <zlib.h>
+//#include <zlib.h>
+#include "common/zlib.h"
 
 #include "common/file.h"
 
@@ -40,36 +41,12 @@ namespace Grim {
 
 class SaveGame;
 
-class zlibFile {
-private:
-	Common::File *_handle;
-	z_stream _stream;	// Zlib stream
-	byte *_inBuf;		// Buffer for decompression
-	bool _fileDone;
-
-public:
-	zlibFile();
-	~zlibFile();
-	bool setPos(struct SavePos *pos);
-	bool open(const char *filename);
-	struct SavePos *getPos();
-	void close();
-	bool isOpen();
-
-	uint32 read(void *ptr, uint32 size);
-	uint8 readByte();
-	uint16 readUint16LE();
-	uint32 readUint32LE();
-	uint16 readUint16BE();
-	uint32 readUint32BE();
-};
-
 class SmushPlayer : public MoviePlayer {
 private:
 	int32 _nbframes;
 	Blocky8 _blocky8;
 	Blocky16 _blocky16;
-	zlibFile _file;
+	Common::SeekableReadStream *_file;
 
 	byte _pal[0x300];
 	int16 _deltaPal[0x300];

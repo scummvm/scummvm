@@ -187,6 +187,15 @@ Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
 		return l->openNewStreamFile(filename);
 }
 
+Common::SeekableReadStream *ResourceLoader::openNewSubStreamFile(const char *filename) const {
+	const Lab *l = getLab(filename);
+
+	if (!l)
+		return NULL;
+	else
+		return l->openNewSubStreamFile(filename);
+}
+
 int ResourceLoader::getFileLength(const char *filename) const {
 	const Lab *l = getLab(filename);
 	if (l)
