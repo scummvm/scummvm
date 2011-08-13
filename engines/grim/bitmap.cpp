@@ -42,6 +42,8 @@ char *getLine(int lineNum, char *data, unsigned int width, int bpp) {
 	return data + (lineNum *(width * bpp));
 }
 
+#ifdef ENABLE_MONKEY4
+
 char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 	bpp = bpp / 8;
 	char *fullImage = new char[width * height * bpp];
@@ -87,6 +89,8 @@ char *makeBitmapFromTile(char **bits, int width, int height, int bpp) {
 
 	return fullImage;
 }
+
+#endif
 
 BitmapData *BitmapData::getBitmapData(const Common::String &fname, const char *data, int len) {
 	Common::String str(fname);
@@ -208,6 +212,7 @@ BitmapData::~BitmapData() {
 }
 
 bool BitmapData::loadTile(const char *data, int len) {
+#ifdef ENABLE_MONKEY4
 	_x = 0;
 	_y = 0;
 	_format = 1;
@@ -260,6 +265,7 @@ bool BitmapData::loadTile(const char *data, int len) {
 
 	g_driver->createBitmap(this);
 	return true;
+#endif // ENABLE_MONKEY4
 }
 
 char *BitmapData::getImageData(int num) const {
