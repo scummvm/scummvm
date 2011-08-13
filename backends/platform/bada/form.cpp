@@ -101,8 +101,12 @@ BadaAppForm::~BadaAppForm() {
 
 	if (_gameThread && _state != ErrorState) {
 		terminate();
+
 		_gameThread->Stop();
-		_gameThread->Join();
+		if (_state != ErrorState) {
+			_gameThread->Join();
+		}		
+
 		delete _gameThread;
 		_gameThread = null;
 	}
@@ -135,6 +139,11 @@ void BadaAppForm::terminate() {
 		AppLog("waiting for shutdown");
 		for (int i = 0; i < 10 && _state == ClosingState; i++) {
 			Thread::Sleep(250);
+		}
+
+		if (_state = ClosingState) {
+			// failed to terminate - Join() will freeze
+			_state = ErrorState;
 		}
 	}
 }
