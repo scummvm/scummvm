@@ -117,6 +117,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 }
 
 Globals::~Globals() {
+	_scenePalette.clearListeners();
 	delete _inventory;
 	delete _game;
 	_globals = NULL;
