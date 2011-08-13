@@ -165,7 +165,7 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	_h = bmp._h;
 	_m = NULL;
 	_map = 0;
-	free(_v);
+	delete[] _v;
 	if (v0 == NULL)
 		_v = NULL;
 	else {

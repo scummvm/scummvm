@@ -228,7 +228,7 @@ void MusicPlayer::killMidi() {
 	Audio::MidiPlayer::stop();
 
 	if (_data != NULL) {
-		delete _data;
+		free(_data);
 		_data = NULL;
 	}
 }
