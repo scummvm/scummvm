@@ -44,6 +44,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 
+#ifdef USE_SMUSH
+
 namespace Grim {
 
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)
@@ -68,6 +70,7 @@ SmushPlayer::SmushPlayer() {
 	g_movie = this;
 	_IACTpos = 0;
 	_nbframes = 0;
+	_file = 0;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -122,8 +125,10 @@ void SmushPlayer::deinit() {
 	_videoPause = true;
 	if (g_grim->getGameFlags() & ADGF_DEMO)
 		_f.close();
-	else
-		_file.close();
+	else if (_file) {
+		delete _file;
+		_file = NULL;
+	}
 }
 
 void SmushPlayer::handleWave(const byte *src, uint32 size) {
@@ -167,14 +172,14 @@ void SmushPlayer::handleFrame() {
 		_movieTime = 0;
 	}
 
-	tag = _file.readUint32BE();
+	tag = _file->readUint32BE();
 	if (tag == MKTAG('A','N','N','O')) {
 		char *anno;
 		byte *data;
 
-		size = _file.readUint32BE();
+		size = _file->readUint32BE();
 		data = new byte[size];
-		_file.read(data, size);
+		_file->read(data, size);
 		anno = (char *)data;
 		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER) - 1) == 0) {
 			//char *annoData = anno + sizeof(ANNO_HEADER);
@@ -197,13 +202,13 @@ void SmushPlayer::handleFrame() {
 				debug("Announcement header not understood: %s\n", anno);
 		}
 		delete[] anno;
-		tag = _file.readUint32BE();
+		tag = _file->readUint32BE();
 	}
 
 	assert(tag == MKTAG('F','R','M','E'));
-	size = _file.readUint32BE();
+	size = _file->readUint32BE();
 	byte *frame = new byte[size];
-	_file.read(frame, size);
+	_file->read(frame, size);
 
 	do {
 		if (READ_BE_UINT32(frame + pos) == MKTAG('B','l','1','6')) {
@@ -229,7 +234,7 @@ void SmushPlayer::handleFrame() {
 	_movieTime += _speed / 1000.f;
 	if (_frame == _nbframes) {
 		// If we're not supposed to loop (or looping fails) then end the video
-		if (!_videoLooping || !_file.setPos(_startPos)) {
+		if (!_videoLooping || !_file->seek(_startPos->filePos, SEEK_SET)) {
 			_videoFinished = true;
 			g_grim->setMode(ENGINE_MODE_NORMAL);
 			return;
@@ -395,11 +400,11 @@ void SmushPlayer::handleFramesHeader() {
 	int32 size;
 	int pos = 0;
 
-	tag = _file.readUint32BE();
+	tag = _file->readUint32BE();
 	assert(tag == MKTAG('F','L','H','D'));
-	size = _file.readUint32BE();
+	size = _file->readUint32BE();
 	byte *f_header = new byte[size];
-	_file.read(f_header, size);
+	_file->read(f_header, size);
 
 	do {
 		if (READ_BE_UINT32(f_header + pos) == MKTAG('B','l','1','6')) {
@@ -459,18 +464,19 @@ bool SmushPlayer::setupAnim(const char *file, bool looping, int x, int y) {
 	int32 size;
 	int16 flags;
 
-	if (!_file.open(file))
+	_file = wrapCompressedReadStream(g_resourceloader->openNewSubStreamFile(file));
+	if (!_file)
 		return false;
 
-	tag = _file.readUint32BE();
+	tag = _file->readUint32BE();
 	assert(tag == MKTAG('S','A','N','M'));
-	size = _file.readUint32BE();
+	size = _file->readUint32BE();
 
-	tag = _file.readUint32BE();
+	tag = _file->readUint32BE();
 	assert(tag == MKTAG('S','H','D','R'));
-	size = _file.readUint32BE();
+	size = _file->readUint32BE();
 	byte *s_header = new byte[size];
-	_file.read(s_header, size);
+	_file->read(s_header, size);
 	_nbframes = READ_LE_UINT32(s_header + 2);
 	int width = READ_LE_UINT16(s_header + 8);
 	int height = READ_LE_UINT16(s_header + 10);
@@ -532,7 +538,7 @@ bool SmushPlayer::play(const char *filename, bool looping, int x, int y) {
 	}
 
 	if (_videoLooping)
-		_startPos = _file.getPos();
+		_startPos->filePos = _file->pos();
 
 	init();
 
@@ -577,213 +583,7 @@ void SmushPlayer::restoreState(SaveGame *state) {
 	state->endSection();
 }
 
-zlibFile::zlibFile() {
-	_handle = NULL;
-	_inBuf = NULL;
-}
-
-zlibFile::~zlibFile() {
-	close();
-}
-
-struct SavePos *zlibFile::getPos() {
-	struct SavePos *pos;
-	uint32 position = _handle->pos();
-
-	if (position == ((uint32)  -1)) {
-		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("zlibFile::open() unable to find start position");
-		return NULL;
-	}
-	pos = new SavePos;
-	pos->filePos = position;
-	inflateCopy(&pos->streamBuf, &_stream);
-	pos->tmpBuf = new byte[BUFFER_SIZE];
-	memcpy(pos->tmpBuf, _inBuf, BUFFER_SIZE);
-	return pos;
-}
-
-bool zlibFile::setPos(struct SavePos *pos) {
-	if (!pos) {
-		warning("Unable to rewind SMUSH movie (no position passed)");
-		return false;
-	}
-	if (!_handle || !_handle->isOpen()) {
-		warning("Unable to rewind SMUSH movie (invalid handle)");
-		return false;
-	}
-	_handle->seek(pos->filePos, SEEK_SET);
-	if (_handle->err()) {
-		warning("Unable to rewind SMUSH movie (seek failed)");
-		return false;
-	}
-	memcpy(_inBuf, pos->tmpBuf, BUFFER_SIZE);
-	if (inflateCopy(&_stream, &pos->streamBuf) != Z_OK) {
-		warning("Unable to rewind SMUSH movie (z-lib copy handle failed)");
-		return false;
-	}
-	_fileDone = false;
-	return true;
-}
-
-bool zlibFile::open(const char *filename) {
-	char flags = 0;
-	_inBuf = new byte[BUFFER_SIZE];
-	memset(_inBuf, 0, BUFFER_SIZE);
-
-	if (_handle) {
-		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("zlibFile::open() File %s already opened", filename);
-		return false;
-	}
-
-	if (!filename || *filename == 0)
-		return false;
-
-	_handle = g_resourceloader->openNewStreamFile(filename);
-	if (!_handle || !_handle->isOpen()) {
-		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("zlibFile::open() zlibFile %s not found", filename);
-		return false;
-	}
-
-	// Read in the GZ header
-	_handle->read(_inBuf, 2); // Header
-	_handle->read(_inBuf, 1); // Method
-	_handle->read(_inBuf, 1); // Flags
-	flags = _inBuf[0];
-	_handle->read(_inBuf, 6); // XFlags
-
-	// Xtra & Comment
-	if (flags & 0x04 || flags & 0x10) {
-		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
-			error("zlibFile::open() Unsupported header flag");
-		}
-		return false;
-	}
-
-	if (flags & 0x08) { // Orig. Name
-		do {
-			_handle->read(_inBuf, 1);
-		} while(_inBuf[0]);
-	}
-
-	if (flags & 0x02) // CRC
-		_handle->read(_inBuf, 2);
-
-	memset(_inBuf, 0, BUFFER_SIZE - 1); // Zero buffer (debug)
-	_stream.zalloc = NULL;
-	_stream.zfree = NULL;
-	_stream.opaque = Z_NULL;
-
-	if (inflateInit2(&_stream, -15) != Z_OK && (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL))
-		error("zlibFile::open() inflateInit2 failed");
-
-	_stream.next_in = NULL;
-	_stream.next_out = NULL;
-	_stream.avail_in = 0;
-	_stream.avail_out = BUFFER_SIZE - 1;
-
-	return true;
-}
-
-void zlibFile::close() {
-	if (_handle) {
-		_handle->close();
-		delete _handle;
-		_handle = NULL;
-	}
-
-	delete[] _inBuf;
-	_inBuf = NULL;
-}
-
-bool zlibFile::isOpen() {
-	return _handle->isOpen();
-}
-
-uint32 zlibFile::read(void *ptr, uint32 len) {
-	int result = Z_OK;
-	bool fileEOF = false;
-
-	if (!_handle->isOpen()) {
-		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			error("zlibFile::read() File is not open");
-		return 0;
-	}
-
-	if (len == 0)
-		return 0;
-
-	_stream.next_out = (Bytef *)ptr;
-	_stream.avail_out = len;
-
-	_fileDone = false;
-	while (_stream.avail_out) {
-		if (_stream.avail_in == 0) { // !EOF
-			_stream.avail_in = _handle->read(_inBuf, BUFFER_SIZE - 1);
-			if (_stream.avail_in == 0) {
-				fileEOF = true;
-				break;
-			}
-			_stream.next_in = (Byte *)_inBuf;
-		}
-
-		result = inflate(&_stream, Z_NO_FLUSH);
-		if (result == Z_STREAM_END) { // EOF
-			// "Stream end" is zlib's way of saying that it's done after the current call,
-			// so as long as no calls are made after we've received this message we're OK
-			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				printf("zlibFile::read() Stream ended\n");
-			_fileDone = true;
-			break;
-		}
-		if (result == Z_DATA_ERROR) {
-			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("zlibFile::read() Decompression error");
-			_fileDone = true;
-			break;
-		}
-		if (result != Z_OK || fileEOF) {
-			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("zlibFile::read() Unknown decomp result: %d/%d", result, fileEOF);
-			_fileDone = true;
-			break;
-		}
-	}
-
-	return (uint32)(len - _stream.avail_out);
-}
-
-byte zlibFile::readByte() {
-	unsigned char c;
-
-	read(&c, 1);
-	return c;
-}
-
-uint16 zlibFile::readUint16LE() {
-	uint16 a = readByte();
-	uint16 b = readByte();
-	return a | (b << 8);
-}
-
-uint32 zlibFile::readUint32LE() {
-	uint32 a = readUint16LE();
-	uint32 b = readUint16LE();
-	return (b << 16) | a;
-}
-
-uint16 zlibFile::readUint16BE() {
-	uint16 b = readByte();
-	uint16 a = readByte();
-	return a | (b << 8);
-}
-
-uint32 zlibFile::readUint32BE() {
-	uint32 b = readUint16BE();
-	uint32 a = readUint16BE();
-	return (b << 16) | a;
-}
-
 } // end of namespace Grim
+
+
+#endif // USE_SMUSH

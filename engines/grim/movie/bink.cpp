@@ -46,6 +46,8 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 
+#ifdef USE_BINK
+
 namespace Grim {
 
 MoviePlayer *CreateBinkPlayer() {
@@ -169,3 +171,5 @@ void BinkPlayer::restoreState(SaveGame *state) {
 }
 
 } // end of namespace Grim
+
+#endif // USE_BINK

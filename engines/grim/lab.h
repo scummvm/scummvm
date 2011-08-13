@@ -59,6 +59,7 @@ public:
 	bool getFileExists(const Common::String &filename) const;
 	Block *getFileBlock(const Common::String &filename) const;
 	Common::File *openNewStreamFile(const Common::String &filename) const;
+	Common::SeekableReadStream *openNewSubStreamFile(const Common::String &filename) const;
 	LuaFile *openNewStreamLua(const Common::String &filename) const;
 	int getFileLength(const Common::String &filename) const;
 
