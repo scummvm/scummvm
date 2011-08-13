@@ -174,7 +174,7 @@ Common::SeekableReadStream *Lab::openNewSubStreamFile(const Common::String &file
 	Common::File *file = new Common::File();
 	file->open(_labFileName);
 	Common::SeekableSubReadStream *substream;
-	substream = new Common::SeekableSubReadStream(file, _entries[filename].offset, _entries[filename].len, DisposeAfterUse::YES );
+	substream = new Common::SeekableSubReadStream(file, _entries[filename].offset, _entries[filename].offset + _entries[filename].len, DisposeAfterUse::YES );
 	return substream;
 }
 
