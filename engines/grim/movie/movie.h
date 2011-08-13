@@ -78,6 +78,8 @@ public:
 		_stream = NULL;
 		_movieTime = 0;
 		_frame = 0;
+		_x = 0;
+		_y = 0;
 	};
 	virtual ~MoviePlayer() {}
 
