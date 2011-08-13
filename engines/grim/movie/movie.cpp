@@ -22,7 +22,7 @@
 
 #include "engines/grim/movie/movie.h"
 
-#if !defined(USE_MPEG2) || !defined(USE_SMUSH)
+#if !defined(USE_MPEG2) || !defined(USE_SMUSH) || !defined(USE_BINK)
 #define NEED_NULLPLAYER
 #endif
 
@@ -61,6 +61,12 @@ MoviePlayer *CreateMpegPlayer() {
 
 #ifndef USE_SMUSH
 MoviePlayer *CreateSmushPlayer() {
+	return new NullPlayer();
+}
+#endif
+
+#ifndef USE_BINK
+MoviePlayer *CreateBinkPlayer() {
 	return new NullPlayer();
 }
 #endif

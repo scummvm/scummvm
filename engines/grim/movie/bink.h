@@ -33,6 +33,8 @@
 
 #include "engines/grim/movie/movie.h"
 
+#ifdef USE_BINK
+
 namespace Video{
 	class BinkDecoder;
 }
@@ -66,5 +68,6 @@ private:
 
 } // end of namespace Grim
 
+#endif // USE_BINK
 
 #endif
