@@ -35,6 +35,8 @@
 
 #include "engines/grim/movie/movie.h"
 
+#ifdef USE_MPEG2
+
 namespace Grim {
 
 class MpegPlayer : public MoviePlayer {
@@ -60,5 +62,6 @@ private:
 
 } // end of namespace Grim
 
+#endif // USE_MPEG2
 
 #endif

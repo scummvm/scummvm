@@ -46,6 +46,8 @@
 #define MWIDTH 640
 #define MHEIGHT 400
 
+#ifdef USE_MPEG2
+
 namespace Grim {
 
 MoviePlayer *CreateMpegPlayer() {
@@ -160,3 +162,5 @@ void MpegPlayer::restoreState(SaveGame *state) {
 }
 
 } // end of namespace Grim
+
+#endif // USE_MPEG2
