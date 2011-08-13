@@ -275,6 +275,11 @@ Common::String ComposerEngine::getStringFromConfig(const Common::String &section
 Common::String ComposerEngine::getFilename(const Common::String &section, uint id) {
 	Common::String key = Common::String::format("%d", id);
 	Common::String filename = getStringFromConfig(section, key);
+
+	return mangleFilename(filename);
+}
+
+Common::String ComposerEngine::mangleFilename(Common::String filename) {
 	while (filename.size() && (filename[0] == '~' || filename[0] == ':' || filename[0] == '\\'))
 		filename = filename.c_str() + 1;
 
