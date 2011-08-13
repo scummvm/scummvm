@@ -1332,40 +1332,43 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
 	// some have an exclimation mark, this could mean something.
 	// for now, return 0 otherwise it will just crash in some other part.
-	return 0;
+	//return 0;
 
 	assert(name[0] == '!');
 	++name;
 
 	char type[5];
-	memcpy(type, name, 4);
+	tag32 tag = 0;
+	memcpy(&tag, name, 4);
+	memcpy(&type, name, 4);
 	type[4] = 0;
 
 	name += 4;
 
-	if (strcmp(type, "mesh") == 0)
-		return new MainModelComponent(0, parentID, name, 0, 0);
-	/*if (FROM_BE_32(tag) == MKTAG('M','M','D','L'))
-	return new MainModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','O','D','L'))
-	return new ModelComponent(parent, parentID, name, prevComponent, tag);
-	else if (FROM_BE_32(tag) == MKTAG('C','M','A','P'))
-	return new ColormapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('K','E','Y','F'))
-	return new KeyframeComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','E','S','H'))
-	return new MeshComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('L','U','A','V'))
-	return new LuaVarComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('I','M','L','S'))
-	return new SoundComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('B','K','N','D'))
-	return new BitmapComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('M','A','T',' '))
-	return new MaterialComponent(parent, parentID, name, tag);
-	else if (FROM_BE_32(tag) == MKTAG('S','P','R','T'))
-	return NULL;// new SpriteComponent(parent, parentID, name);
-
+	if (FROM_BE_32(tag) == MKTAG('m','e','s','h')) {
+		warning("Actor::loadComponentEMI Implement MESH-handling: %s" , name);
+		//return new MainModelComponent(parent, parentID, name, prevComponent, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('s','k','e','l')) {
+		warning("Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
+		//return new ModelComponent(parent, parentID, name, prevComponent, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('t','e','x','i')) {
+		warning("Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
+		//return new MaterialComponent(parent, parentID, name, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('a','n','i','m')) {
+		warning("Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
+		//return new KeyframeComponent(parent, parentID, name, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','c')) {
+		warning("Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
+	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','v')) {
+		warning("Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
+		//return new LuaVarComponent(parent, parentID, name, tag);
+	} else if (FROM_BE_32(tag) == MKTAG('s','p','r','t')) {
+		warning("Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
+		//return new SpriteComponent(parent, parentID, name, tag);
+	} else {
+		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
+	}
+	/*
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
 	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);*/
