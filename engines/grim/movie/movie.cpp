@@ -36,8 +36,8 @@ MoviePlayer *g_movie;
 #ifdef NEED_NULLPLAYER
 class NullPlayer : public MoviePlayer {
 public:
-	NullPlayer() {
-		warning("MPEG2-playback not compiled in, but needed");
+	NullPlayer(const char* codecID) {
+		warning("%s-playback not compiled in, but needed", codecID);
 		_videoFinished = true; // Rigs all movies to be completed.
 	} 
 	~NullPlayer() {}
@@ -55,19 +55,19 @@ private:
 
 #ifndef USE_MPEG2
 MoviePlayer *CreateMpegPlayer() {
-	return new NullPlayer();
+	return new NullPlayer("MPEG2");
 }
 #endif
 
 #ifndef USE_SMUSH
 MoviePlayer *CreateSmushPlayer() {
-	return new NullPlayer();
+	return new NullPlayer("SMUSH");
 }
 #endif
 
 #ifndef USE_BINK
 MoviePlayer *CreateBinkPlayer() {
-	return new NullPlayer();
+	return new NullPlayer("BINK");
 }
 #endif
 
