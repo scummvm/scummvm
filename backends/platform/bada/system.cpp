@@ -311,7 +311,7 @@ void BadaSystem::initBackend() {
 
 	if (E_SUCCESS != initModules()) {
 		AppLog("initModules failed");
-	}	else {
+	} else {
 		OSystem::initBackend();
 	}
 
@@ -414,7 +414,7 @@ void BadaSystem::exitSystem() {
 void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
 	if (type == LogMessageType::kError) {
 		systemError(message);
-	}	else {
+	} else {
 		AppLog(message);
 	}
 }

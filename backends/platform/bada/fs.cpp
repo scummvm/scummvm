@@ -117,7 +117,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
 			SetLastResult(E_SUCCESS);
 			bufferIndex += offs;
 			return true;
-		}	else {
+		} else {
 			offs -= (bufferLength - bufferIndex);
 			if (offs < 0 && file->Tell() + offs < 0) {
 				// avoid negative positioning
@@ -126,7 +126,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
 			if (offs != 0) {
 				SetLastResult(file->Seek(FILESEEKPOSITION_CURRENT, offs));
 				result = (E_SUCCESS == GetLastResult());
-			}	else {
+			} else {
 				result = true;
 			}
 		}
@@ -162,7 +162,7 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				memcpy((byte*) ptr, &buffer[bufferIndex], len);
 				bufferIndex += len;
 				result = len;
-			}	else {
+			} else {
 				// use remaining allocation
 				memcpy((byte*) ptr, &buffer[bufferIndex], available);
 				uint32 remaining = len - available;
@@ -173,7 +173,7 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				}
 				bufferIndex = bufferLength = 0;
 			}
-		}	else if (len < BUFFER_SIZE) {
+		} else if (len < BUFFER_SIZE) {
 			// allocate and use buffer
 			bufferIndex = 0;
 			bufferLength = file->Read(buffer, BUFFER_SIZE);
@@ -184,11 +184,11 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				memcpy((byte*) ptr, buffer, len);
 				result = bufferIndex = len;
 			}
-		}	else {
+		} else {
 			result = file->Read((byte*) ptr, len);
 			bufferIndex = bufferLength = 0;
 		}
-	}	else {
+	} else {
 		AppLog("Attempted to read past EOS");
 	}
 	return result;
@@ -318,10 +318,10 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 			myList.push_back(new BadaFilesystemNode("/Media"));
 			myList.push_back(new BadaFilesystemNode("/Storagecard"));
 			result = true; // no more entries
-		}	else if (_path == "/Storagecard") {
+		} else if (_path == "/Storagecard") {
 			myList.push_back(new BadaFilesystemNode("/Storagecard/Media"));
 			result = true; // no more entries
-		}	else if (_path == "/Home") {
+		} else if (_path == "/Home") {
 			// ensure share path is always included
 			myList.push_back(new BadaFilesystemNode("/Home/Share"));
 			myList.push_back(new BadaFilesystemNode("/Home/Share2"));
@@ -335,7 +335,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 		// open directory
 		if (IsFailed(pDir->Construct(_unicodePath))) {
 			AppLog("Failed to open directory");
-		}	else {
+		} else {
 			// read all directory entries
 			pDirEnum = pDir->ReadN();
 			if (pDirEnum) {
