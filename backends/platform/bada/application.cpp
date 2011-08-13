@@ -71,7 +71,7 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 	if (requestId == USER_MESSAGE_EXIT) {
 		// normal program termination
 		Terminate();
-	}	else if (requestId == USER_MESSAGE_EXIT_ERR) {
+	} else if (requestId == USER_MESSAGE_EXIT_ERR) {
 		// assertion failure termination
 		String *message = null;
 		if (args) {

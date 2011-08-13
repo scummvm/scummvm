@@ -42,7 +42,7 @@ bool scanInt(const char **in, va_list *ap, int max) {
 	bool err = false;
 	if (end == *in || (max > 0 && (end - *in) > max)) {
 		err = true;
-	}	else {
+	} else {
 		*arg = (int)n;
 		*in = end;
 	}
@@ -130,12 +130,12 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 				// assume %[^c]
 				if ('^' != *format) {
 					err = true;
-				}	else {
+				} else {
 					format++;
 					if (*format && *(format+1) == ']') {
 						err = scanStringUntil(&next, &ap, *format);
 						format += 2;
-					}	else {
+					} else {
 						err = true;
 					}
 				}
@@ -147,10 +147,10 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 
 			if (err) {
 				break;
-			}	else {
+			} else {
 				result++;
 			}
-		}	else if (*format++ != *next++) {
+		} else if (*format++ != *next++) {
 			// match input
 			break;
 		}
@@ -174,7 +174,7 @@ int main(int argc, char *pArgv[]) {
 										"CAT %dx%d %x FONT %[^\n] %06u.AUD %c", 
 										&x, &y, &h, b, &u, &c) != 6) {
 		printf("Failed\n");
-	}	else {
+	} else {
 		printf("Success %d %d %d %s %d '%c'\n", x, y, h, buffer, u, c);
 	}
 	return 0;
