@@ -104,6 +104,7 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
+	bool isDemo() const;
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
