@@ -124,7 +124,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
-		GF_FLOPPY
+		GF_FLOPPY | GF_ALT_REGIONS
 	},
 	// Blue Force CD and First Wave use the same files
 	{
@@ -138,7 +138,7 @@ static const tSageGameDescription gameDescriptions[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
-		GF_CD
+		GF_CD | GF_ALT_REGIONS
 	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
