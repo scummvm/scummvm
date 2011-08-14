@@ -28,6 +28,7 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/textsplit.h"
 
 namespace Grim {
 
@@ -77,13 +78,31 @@ void MaterialData::initGrim(const Common::String &filename, const char *data, in
 }
 
 void MaterialData::initEMI(const Common::String &filename, const char *data, int len) {
-	if (filename.hasSuffix(".sur")) {
-		warning("SUR-materials not implemented");
-		return;
+	Common::Array<Common::String> texFileNames;
+	char *readFileName = new char[64];
+
+	if (filename.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
+		TextSplitter *ts = new TextSplitter(data, len);
+		ts->setLineNumber(1); // Skip copyright-line
+		ts->expectString("VERSION 1.0");
+		while(!ts->checkString("END_OF_SECTION")) {
+			ts->scanString("TEX:\t\t\t%s", 1, readFileName);
+			Common::String mFileName(readFileName);
+			texFileNames.push_back(mFileName);
+		}
+		for (uint i = 0; i < texFileNames.size(); i++) {
+			warning("SUR-file texture: %s", texFileNames[i].c_str());
+			// TODO: Add the necessary loading here.
+		}
+		_numImages = texFileNames.size();
 	} if(!filename.hasSuffix(".tga")) {
+		_numImages = 1;
+		texFileNames.push_back(filename);
+	} else {
 		warning("Unknown material-format: %s", filename.c_str());
-		return;
 	}
+	return; // Leave the rest till we have models to put materials on.
+
 	int format = data[1];
 	assert(format == 2);	// Verify that we have uncompressed TGA (2)
 	data += 12;
