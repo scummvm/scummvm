@@ -136,7 +136,12 @@ void SoundMgr::startSound(int resnum, int flag) {
 
 	// Reset the flag
 	_endflag = flag;
-	_vm->setflag(_endflag, false);
+
+	if (_vm->getVersion() < 0x2000) {
+		_vm->_game.vars[_endflag] = 0;
+	} else {
+		_vm->setflag(_endflag, false);
+	}
 }
 
 void SoundMgr::stopSound() {
@@ -151,8 +156,13 @@ void SoundMgr::stopSound() {
 
 	// This is probably not needed most of the time, but there also should
 	// not be any harm doing it, so do it anyway.
-	if (_endflag != -1)
-		_vm->setflag(_endflag, true);
+	if (_endflag != -1) {
+		if (_vm->getVersion() < 0x2000) {
+			_vm->_game.vars[_endflag] = 1;
+		} else {
+			_vm->setflag(_endflag, true);
+		}
+	}
 
 	_endflag = -1;
 }

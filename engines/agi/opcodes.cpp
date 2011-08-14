@@ -99,22 +99,22 @@ AgiInstruction insV1[] = {
 	{ "player.control",		"",			&cmdPlayerControl },	// 2F
 	{ "set.priority",		"nn",		&cmdSetPriority },		// 30
 	{ "release.priority",	"n",		&cmdReleasePriority },	// 31
-	{ "add.to.pic",			"nnnnnn",	&cmdAddToPic },			// 32 TODO: 7 vs 8 args
+	{ "add.to.pic",			"nnnnnn",	&cmdAddToPicV1 },		// 32
 	{ "set.horizon",		"n",		&cmdSetHorizon },		// 33
 	{ "ignore.horizon",		"n",		&cmdIgnoreHorizon },	// 34
 	{ "observe.horizon",	"n",		&cmdObserveHorizon },	// 35
-	{ "load.logics",		"n",		&cmdLoadLogic },		// 36
+	{ "load.logics",		"n",		&cmdLoadLogic },		// 36 TODO
 	{ "object.on.water",	"n",		&cmdObjectOnWater },	// 37
-	{ "load.pic",			"v",		&cmdLoadPic },			// 38
+	{ "load.pic",			"v",		&cmdLoadPicV1 },		// 38
 	{ "load.sound",			"n",		&cmdLoadSound },		// 39
 	{ "sound",				"nn",		&cmdSound },			// 3A
 	{ "stop.sound",			"",			&cmdStopSound },		// 3B
 	{ "set.v",				"v",		&cmdSetV },				// 3C
 	{ "reset.v",			"v",		&cmdResetV },			// 3D
 	{ "toggle.v",			"v",		&cmdToggleV },			// 3E
-	{ "new.room.v",			"v",		&cmdNewRoomVV1 },		// 3F
-	{ "call",				"n",		&cmdCallV1 },			// 40
-	{ "...",				"",			&cmdUnknown },			// 41
+	{ "new.room.v",			"v",		&cmdNewRoomVV1 },		// 3F TODO
+	{ "call",				"n",		&cmdCallV1 },			// 40 TODO
+	{ "quit",				"",			&cmdQuitV1 },			// 41
 	{ "set.speed",			"v",		&cmdSetSpeed },			// 42
 	{ "move.obj.v",			"nvvvv",	&cmdMoveObjF },			// 43
 	{ "...",				"nn",		&cmdUnknown },			// 44

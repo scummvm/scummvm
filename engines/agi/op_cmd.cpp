@@ -153,15 +153,27 @@ void cmdToggle(AgiGame *state, uint8 *p) {
 }
 
 void cmdSetV(AgiGame *state, uint8 *p) {
-	setflag(_v[p0], true);
+	if (getVersion() < 0x2000) {
+		_v[p0] = 1;
+	} else {
+		setflag(_v[p0], true);
+	}
 }
 
 void cmdResetV(AgiGame *state, uint8 *p) {
-	setflag(_v[p0], false);
+	if (getVersion() < 0x2000) {
+		_v[p0] = 0;
+	} else {
+		setflag(_v[p0], false);
+	}
 }
 
 void cmdToggleV(AgiGame *state, uint8 *p) {
-	setflag(_v[p0], !getflag(_v[p0]));
+	if (getVersion() < 0x2000) {
+		_v[p0] ^= 1;
+	} else {
+		setflag(_v[p0], !getflag(_v[p0]));
+	}
 }
 
 void cmdNewRoom(AgiGame *state, uint8 *p) {
@@ -804,6 +816,10 @@ void cmdLoadPic(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->commitBoth();
 }
 
+void cmdLoadPicV1(AgiGame *state, uint8 *p) {
+	state->_vm->agiLoadResource(rPICTURE, _v[p0]);
+}
+
 void cmdDiscardPic(AgiGame *state, uint8 *p) {
 	debugC(6, kDebugLevelScripts, "--- discard pic ---");
 	// do nothing
@@ -1024,6 +1040,10 @@ void cmdRepositionToF(AgiGame *state, uint8 *p) {
 
 void cmdAddToPic(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->addToPic(p0, p1, p2, p3, p4, p5, p6);
+}
+
+void cmdAddToPicV1(AgiGame *state, uint8 *p) {
+	state->_vm->_sprites->addToPic(p0, p1, p2, p3, p4, p5, -1);
 }
 
 void cmdAddToPicF(AgiGame *state, uint8 *p) {
@@ -1335,6 +1355,11 @@ void cmdQuit(AgiGame *state, uint8 *p) {
 			state->_vm->quitGame();
 		}
 	}
+}
+
+void cmdQuitV1(AgiGame *state, uint8 *p) {
+	state->_vm->_sound->stopSound();
+	state->_vm->quitGame();
 }
 
 void cmdRestartGame(AgiGame *state, uint8 *p) {
@@ -1677,6 +1702,7 @@ void cmdSetSpeed(AgiGame *state, uint8 *p) {
 	// V1 command
 	(void)state;
 	(void)p;
+	// speed = _v[p0];
 }
 
 void cmdSetItemView(AgiGame *state, uint8 *p) {

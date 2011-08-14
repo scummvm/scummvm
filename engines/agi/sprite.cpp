@@ -604,7 +604,9 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 	// If margin is 0, 1, 2, or 3, the base of the cel is
 	// surrounded with a rectangle of the corresponding priority.
 	// If margin >= 4, this extra margin is not shown.
-	if (mar < 4) {
+	//
+	// -1 indicates ignore and is set for V1
+	if (mar < 4 && mar != -1) {
 		// add rectangle around object, don't clobber control
 		// info in priority data. The box extends to the end of
 		// its priority band!

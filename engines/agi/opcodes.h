@@ -62,6 +62,7 @@ void cmdLoadLogicF(AgiGame *state, uint8 *p);
 void cmdCall(AgiGame *state, uint8 *p);
 void cmdCallF(AgiGame *state, uint8 *p);
 void cmdLoadPic(AgiGame *state, uint8 *p);	// 0x18
+void cmdLoadPicV1(AgiGame *state, uint8 *p);
 void cmdDrawPic(AgiGame *state, uint8 *p);
 void cmdDrawPicV1(AgiGame *state, uint8 *p);
 void cmdShowPic(AgiGame *state, uint8 *p);
@@ -169,6 +170,7 @@ void cmdPreventInput(AgiGame *state, uint8 *p);
 void cmdAcceptInput(AgiGame *state, uint8 *p);	// 0x78
 void cmdSetKey(AgiGame *state, uint8 *p);
 void cmdAddToPic(AgiGame *state, uint8 *p);
+void cmdAddToPicV1(AgiGame *state, uint8 *p);
 void cmdAddToPicF(AgiGame *state, uint8 *p);
 void cmdStatus(AgiGame *state, uint8 *p);
 void cmdSaveGame(AgiGame *state, uint8 *p);
@@ -182,6 +184,7 @@ void cmdProgramControl(AgiGame *state, uint8 *p);
 void cmdPlayerControl(AgiGame *state, uint8 *p);
 void cmdObjStatusF(AgiGame *state, uint8 *p);
 void cmdQuit(AgiGame *state, uint8 *p);
+void cmdQuitV1(AgiGame *state, uint8 *p);
 void cmdShowMem(AgiGame *state, uint8 *p);
 void cmdPause(AgiGame *state, uint8 *p);	// 0x88
 void cmdEchoLine(AgiGame *state, uint8 *p);
