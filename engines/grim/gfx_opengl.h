@@ -112,9 +112,9 @@ public:
 	void drawLine(PrimitiveObject *primitive);
 	void drawPolygon(PrimitiveObject *primitive);
 
-	void prepareSmushFrame(int width, int height, byte *bitmap);
-	void drawSmushFrame(int offsetX, int offsetY);
-	void releaseSmushFrame();
+	void prepareMovieFrame(int width, int height, byte *bitmap);
+	void drawMovieFrame(int offsetX, int offsetY);
+	void releaseMovieFrame();
 
 protected:
 	void drawDepthBitmap(int x, int y, int w, int h, char *data);

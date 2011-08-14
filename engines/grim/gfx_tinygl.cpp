@@ -855,13 +855,13 @@ void GfxTinyGL::destroyMaterial(Texture *material) {
 	delete[] (TGLuint *)material->_texture;
 }
 
-void GfxTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {
+void GfxTinyGL::prepareMovieFrame(int width, int height, byte *bitmap) {
 	_smushWidth = width;
 	_smushHeight = height;
 	_smushBitmap = bitmap;
 }
 
-void GfxTinyGL::drawSmushFrame(int offsetX, int offsetY) {
+void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {
 	if (_smushWidth == 640 && _smushHeight == 480) {
 		memcpy(_zb->pbuf, _smushBitmap, 640 * 480 * 2);
 	} else {
@@ -869,7 +869,7 @@ void GfxTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 	}
 }
 
-void GfxTinyGL::releaseSmushFrame() {
+void GfxTinyGL::releaseMovieFrame() {
 }
 
 void GfxTinyGL::loadEmergFont() {

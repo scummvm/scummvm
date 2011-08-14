@@ -1038,7 +1038,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::prepareSmushFrame(int width, int height, byte *bitmap) {
+void GfxOpenGL::prepareMovieFrame(int width, int height, byte *bitmap) {
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
@@ -1079,7 +1079,7 @@ void GfxOpenGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	_smushHeight = height;
 }
 
-void GfxOpenGL::drawSmushFrame(int offsetX, int offsetY) {
+void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1125,7 +1125,7 @@ void GfxOpenGL::drawSmushFrame(int offsetX, int offsetY) {
 	glEnable(GL_LIGHTING);
 }
 
-void GfxOpenGL::releaseSmushFrame() {
+void GfxOpenGL::releaseMovieFrame() {
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
 		delete[] _smushTexIds;

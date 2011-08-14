@@ -180,22 +180,22 @@ public:
 	virtual void drawPolygon(PrimitiveObject *primitive) = 0;
 
 	/**
-	 * Prepare a SMUSH-frame for drawing
+	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
 	 *
-	 * @see drawSmushFrame
-	 * @see releaseSmushFrame
+	 * @see drawMovieFrame
+	 * @see releaseMovieFrame
 	 */
-	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
-	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
+	virtual void prepareMovieFrame(int width, int height, byte *bitmap) = 0;
+	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**
-	 * Release the currently prepared SMUSH-frame, if one exists.
+	 * Release the currently prepared movie-frame, if one exists.
 	 *
-	 * @see drawSmushFrame
-	 * @see prepareSmushFrame
+	 * @see drawMovieFrame
+	 * @see prepareMovieFrame
 	 */
-	virtual void releaseSmushFrame() = 0;
+	virtual void releaseMovieFrame() = 0;
 
 	virtual const char *getVideoDeviceName() = 0;
 

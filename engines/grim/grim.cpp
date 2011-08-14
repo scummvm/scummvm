@@ -934,20 +934,20 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareSmushFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
 				g_movie->clearUpdateNeeded();
 			}
 			int frame = g_movie->getFrame();
 			if (frame > 0) {
 				if (frame != _prevSmushFrame) {
 					_prevSmushFrame = g_movie->getFrame();
-					g_driver->drawSmushFrame(g_movie->getX(), g_movie->getY());
+					g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
 					if (_showFps)
 						g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 				} else
 					_doFlip = false;
 			} else
-				g_driver->releaseSmushFrame();
+				g_driver->releaseMovieFrame();
 		}
 		// Draw Primitives
 		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
@@ -988,13 +988,13 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareSmushFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
 				g_movie->clearUpdateNeeded();
 			}
 			if (g_movie->getFrame() > 0)
-				g_driver->drawSmushFrame(g_movie->getX(), g_movie->getY());
+				g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
 			else
-				g_driver->releaseSmushFrame();
+				g_driver->releaseMovieFrame();
 		}
 
 		// Draw Primitives
