@@ -627,6 +627,12 @@ enum KyraResources {
 	kEob2HornStrings,
 	kEob2HornSounds,
 
+	kEob2WallOfForceDsX,
+	kEob2WallOfForceDsY,
+	kEob2WallOfForceNumW,
+	kEob2WallOfForceNumH,
+	kEob2WallOfForceShpId,
+
 	kLolIngamePakFiles,
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,

@@ -587,7 +587,24 @@ void EobCoreEngine::drawMonsters(int index) {
 }
 
 void EobCoreEngine::drawWallOfForce(int index) {
+	int d = _dscDimMap[index];
+	assert(d < 3);
+	int dH = _wallOfForceDsNumH[d];
+	int dW = _wallOfForceDsNumW[d];
+	int y = _wallOfForceDsY[d];
+	int shpId = _wallOfForceShpId[d] + _teleporterPulse;
+	int h = _wallOfForceShapes[shpId][1];
+	int w = _wallOfForceShapes[shpId][2] << 3;
 
+	for (int i = 0; i < dH; i++) {
+		int x = _wallOfForceDsX[index];
+		for (int ii = 0; ii < dW; ii++) {
+			drawBlockObject(0, 2, _wallOfForceShapes[shpId], x, y, 5);
+			x += w;
+		}
+		y += h;
+		shpId ^= 1;
+	}
 }
 
 void EobCoreEngine::drawFlyingObjects(int index) {

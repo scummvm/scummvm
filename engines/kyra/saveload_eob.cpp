@@ -72,6 +72,7 @@ void LolEobBaseEngine::generateTempData() {
 
 	_lvlTempData[l]->monsters = generateMonsterTempData(_lvlTempData[l]);
 	_lvlTempData[l]->flyingObjects = generateFlyingObjectTempData(_lvlTempData[l]);
+	_lvlTempData[l]->wallsOfForce = generateWallOfForceTempData(_lvlTempData[l]);
 
 	_hasTempDataFlags |= (1 << l);
 	delete[] p2;
@@ -104,6 +105,7 @@ void LolEobBaseEngine::restoreBlockTempData(int levelIndex) {
 
 	restoreMonsterTempData(_lvlTempData[l]);
 	restoreFlyingObjectTempData(_lvlTempData[l]);
+	restoreWallOfForceTempData(_lvlTempData[l]);
 
 	delete[] p2;
 }
@@ -115,6 +117,7 @@ void LolEobBaseEngine::releaseTempData() {
 			delete[] _lvlTempData[i]->flags;
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
+			releaseWallOfForceTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 			_lvlTempData[i] = 0;
 		}
@@ -293,13 +296,15 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		}
 
 		_lvlTempData[i] = new LevelTempData;
-		_lvlTempData[i]->wallsXorData = new uint8[4096];
-		_lvlTempData[i]->flags = new uint16[1024];
-		EobMonsterInPlay *lm = new EobMonsterInPlay[30];
-		 _lvlTempData[i]->monsters = lm;
-		EobFlyingObject *lf = new EobFlyingObject[_numFlyingObjects];
-		_lvlTempData[i]->flyingObjects = lf;
 		LevelTempData *l = _lvlTempData[i];
+		l->wallsXorData = new uint8[4096];
+		l->flags = new uint16[1024];
+		EobMonsterInPlay *lm = new EobMonsterInPlay[30];
+		l->monsters = lm;
+		EobFlyingObject *lf = new EobFlyingObject[_numFlyingObjects];
+		l->flyingObjects = lf;
+		WallOfForce *lw = new WallOfForce[5];
+		l->wallsOfForce = lw;		
 
 		in.read(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
@@ -349,10 +354,14 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 			m->flags = in.readByte();
 			m->unused = in.readByte();
 		}
+
+		for (int ii = 0; ii < 5; ii++) {
+			WallOfForce *w = &lw[ii];
+			w->block = in.readUint16BE();
+			w->duration = in.readUint32BE();
+		}
 	}
 
-	if (_flags.gameID == GI_EOB1)
-		_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
 	loadLevel(_currentLevel, _currentSub);
 	_sceneUpdateRequired = true;
 	_screen->setFont(Screen::FID_6_FNT);
@@ -515,6 +524,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 		EobMonsterInPlay *lm = (EobMonsterInPlay*)_lvlTempData[i]->monsters;
 		EobFlyingObject *lf = (EobFlyingObject*)_lvlTempData[i]->flyingObjects;
+		WallOfForce *lw = (WallOfForce*)_lvlTempData[i]->wallsOfForce;
 
 		for (int ii = 0; ii < 30; ii++) {
 			EobMonsterInPlay *m = &lm[ii];
@@ -560,6 +570,12 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeByte(m->flags);
 			out->writeByte(m->unused);
 		}
+
+		for (int ii = 0; ii < 5; ii++) {
+			WallOfForce *w = &lw[ii];
+			out->writeUint16BE(w->block);
+			out->writeUint32BE(w->duration);
+		}
 	}
 
 	out->finalize();
@@ -588,6 +604,27 @@ void EobCoreEngine::restoreMonsterTempData(LevelTempData *tmp) {
 
 void EobCoreEngine::releaseMonsterTempData(LevelTempData *tmp) {
 	EobMonsterInPlay *p = (EobMonsterInPlay*)tmp->monsters;
+	delete[] p;
+}
+
+void *EobCoreEngine::generateWallOfForceTempData(LevelTempData *tmp) {
+	WallOfForce *w = new WallOfForce[5];
+	memcpy(w, _wallsOfForce,  sizeof(WallOfForce) * 5);
+	uint32 ct = _system->getMillis();
+	for (int i = 0; i < 5; i++)
+		w[i].duration = (w[i].duration > ct) ? w[i].duration - ct : _tickLength;
+	return w;
+}
+
+void EobCoreEngine::restoreWallOfForceTempData(LevelTempData *tmp) {
+	memcpy(_wallsOfForce, tmp->wallsOfForce,  sizeof(WallOfForce) * 5);
+	uint32 ct = _system->getMillis();
+	for (int i = 0; i < 5; i++)
+		_wallsOfForce[i].duration += ct;
+}
+
+void EobCoreEngine::releaseWallOfForceTempData(LevelTempData *tmp) {
+	WallOfForce *p = (WallOfForce*)tmp->wallsOfForce;
 	delete[] p;
 }
 

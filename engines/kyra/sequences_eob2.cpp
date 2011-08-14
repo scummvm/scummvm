@@ -239,7 +239,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.loadScene(1, 2);
 	sq.waitForSongNotifier(4);
 
-	//intro scroll
+	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
 		for (int i = 0; i < 280; i += 3) {
 			uint32 endtime = _system->getMillis() + _tickLength;
@@ -978,7 +978,7 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum) {
 		}
 
 		if (!s)
-			error("DarkmoonSequenceHelper::loadScene(): Sequence CPS file loading failed.");
+			error("DarkmoonSequenceHelper::loadScene(): CPS file loading failure in scene %d", index);
 
 		if (_mode == kFinale)
 			s->read(_palettes[0]->getData(), 768);
@@ -1026,7 +1026,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			if (s->pal)
 				setPaletteWithoutTextColor(palIndex);
 			delay(s->delay);
-			if (_mode == DarkmoonSequenceHelper::kIntro && s->pal)
+			if (_mode == kIntro && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
@@ -1035,7 +1035,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 			shapeW = _shapes[s->obj][2];
 			shapeH = _shapes[s->obj][3];
 
-			if (_mode == DarkmoonSequenceHelper::kFinale) {
+			if (_mode == kFinale) {
 				_screen->setScreenDim(18);
 				x -= (_screen->_curDim->sx << 3);
 				y -= _screen->_curDim->sy;
@@ -1045,7 +1045,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 					x2 = x;
 			}
 
-			_screen->drawShape(0, _shapes[s->obj], x, y, _mode == DarkmoonSequenceHelper::kIntro ? 0 : 18);
+			_screen->drawShape(0, _shapes[s->obj], x, y, _mode == kIntro ? 0 : 18);
 
 			if (s->pal)
 				setPaletteWithoutTextColor(palIndex);
@@ -1054,7 +1054,7 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 
 			delay(s->delay);
 
-			if (_mode == DarkmoonSequenceHelper::kIntro) {
+			if (_mode == kIntro) {
 				if (s->pal)
 					setPaletteWithoutTextColor(0);
 				_screen->copyRegion(x - 8, y - 8, x, y, (shapeW + 1) << 3, shapeH, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1076,14 +1076,14 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 
 			delay(s->delay);
 
-			if (_mode == DarkmoonSequenceHelper::kIntro && s->pal)
+			if (_mode == kIntro && s->pal)
 				setPaletteWithoutTextColor(0);
 			break;
 
 		case 3:
 		case 4:
 			// fade shape in or out or restore background
-			if (_mode == DarkmoonSequenceHelper::kFinale)
+			if (_mode == kFinale)
 				break;
 
 			_screen->setShapeFadeMode(0, true);
@@ -1109,10 +1109,10 @@ void DarkmoonSequenceHelper::runSequence(int index, int del) {
 
 		case 5:
 			// copy region
-			if (_mode == DarkmoonSequenceHelper::kFinale && s->pal)
+			if (_mode == kFinale && s->pal)
 				setPaletteWithoutTextColor(palIndex);
 
-			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, (s->obj && _mode == DarkmoonSequenceHelper::kFinale) ? 6 : 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(s->x2 << 3, s->y2, s->x1, s->y1, s->w << 3, s->h, (s->obj && _mode == kFinale) ? 6 : 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 			delay(s->delay);
 			break;

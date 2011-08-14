@@ -24,6 +24,7 @@
 
 #include "kyra/eobcommon.h"
 #include "kyra/resource.h"
+#include "common/system.h"
 
 namespace Kyra {
 
@@ -490,11 +491,11 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 	int blockDamage = fo->flags & 2;
 	int hitTest = fo->flags & 4;
 
-	int s = 5;
-	int dmgType = 3;
+	int savingThrowType = 5;
+	int savingThrowEffect = 3;
 	if (fo->flags & 8) {
-		s = 4;
-		dmgType = 0;
+		savingThrowType = 4;
+		savingThrowEffect = 0;
 	}
 
 	int dmgFlag = _spells[fo->callBackIndex].damageFlags;
@@ -516,7 +517,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 					continue;
 			}
 
-			calcAndInflictMonsterDamage(&_monsters[*m], 0, 0, dmg, dmgFlag, s, dmgType);
+			calcAndInflictMonsterDamage(&_monsters[*m], 0, 0, dmg, dmgFlag, savingThrowType, savingThrowEffect);
 			res = true;
 		}
 		updateAllMonsterShapes();
@@ -532,7 +533,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 				int dmg = rollDice(dcTimes, dcPips, dcOffs) * level;
 				res = true;
 
-				calcAndInflictCharacterDamage(i, 0, 0, dmg, dmgFlag, s, dmgType);
+				calcAndInflictCharacterDamage(i, 0, 0, dmg, dmgFlag, savingThrowType, savingThrowEffect);
 			}
 		} else {
 			int c = _dscItemPosIndex[(_currentDirection << 2) + (fo->curPos & 3)];
@@ -545,7 +546,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 				if ((_characters[c].flags & 1) && (!hitTest || monsterAttackHitTest(&_monsters[0], c))) {
 					int dmg = rollDice(dcTimes, dcPips, dcOffs) * level;
 					res = true;
-					calcAndInflictCharacterDamage(c, 0, 0, dmg, dmgFlag, s, dmgType);
+					calcAndInflictCharacterDamage(c, 0, 0, dmg, dmgFlag, savingThrowType, savingThrowEffect);
 				}
 			}
 		}
@@ -706,6 +707,22 @@ void EobCoreEngine::removeMagicWeaponItem(Item item) {
 	_itemTypes[_items[item].type].armorClass = -30;
 	_items[item].block = -2;
 	_items[item].level = -1;
+}
+
+void EobCoreEngine::updateWallOfForceTimers() {
+	uint32 ct = _system->getMillis();
+	for (int i = 0; i < 5; i++) {
+		if (!_wallsOfForce[i].block)
+			continue;
+		if (_wallsOfForce[i].duration < ct)
+			destroyWallOfForce(i);
+	}
+}
+
+void EobCoreEngine::destroyWallOfForce(int index) {
+	memset(_levelBlockProperties[_wallsOfForce[index].block].walls, 0, 4);
+	_wallsOfForce[index].block = 0;
+	_sceneUpdateRequired = true;
 }
 
 int EobCoreEngine::findSingleSpellTarget(int dist) {
@@ -924,7 +941,7 @@ void EobCoreEngine::spellCallback_start_vampiricTouch() {
 	Item i = (t != -1) ? createMagicWeaponItem(0x18, 83, 0, t) : -1;
 	if (t == -1 || i == -1) {
 		if (_flags.gameID == GI_EOB2)
-			printWarning(_magicStrings8[0]);
+			printWarning(_magicStrings8[2]);
 		removeCharacterEffect(_activeSpell, _activeSpellCharId, 0);
 		deleteCharEventTimer(_activeSpellCharId, -_activeSpell);
 		_returnAfterSpellCallback = true;
@@ -1019,7 +1036,33 @@ bool EobCoreEngine::spellCallback_end_holdMonster(void *obj) {
 }
 
 void EobCoreEngine::spellCallback_start_wallOfForce() {
+	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+	LevelBlockProperty *l = &_levelBlockProperties[bl];
+	if (l->walls[0] || l->walls[1] || l->walls[2] || l->walls[3] || (l->flags & 7)) {
+		printWarning(_magicStrings8[3]);
+		return;
+	}
 
+	uint32 dur = 0xffffffff;
+	int s = 0;
+	int i = 0;
+
+	for (; i < 5; i++) {
+		if (!_wallsOfForce[i].block)
+			break;
+		if (_wallsOfForce[i].duration < dur) {
+			dur = _wallsOfForce[i].duration;
+			s = i;
+		}
+	}
+
+	if (i == 5)
+		destroyWallOfForce(s);
+
+	memset(_levelBlockProperties[bl].walls, 74, 4);
+	_wallsOfForce[s].block = bl;
+	_wallsOfForce[s].duration = _system->getMillis() + (((getMageLevel(_openBookChar) * 546) >> 1) + 546) * _tickLength;
+	_sceneUpdateRequired = true;
 }
 
 void EobCoreEngine::spellCallback_start_disintegrate() {
