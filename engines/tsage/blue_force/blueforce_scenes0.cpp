@@ -33,7 +33,7 @@ namespace tSage {
  *--------------------------------------------------------------------------*/
 
 void BF_Scene20::Action1::signal() {
-	BF_Scene20 *scene = (BF_Scene20 *)_globals->_sceneManager._scene;
+	BF_Scene20 *scene = (BF_Scene20 *)BF_GLOBALS._sceneManager._scene;
 	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
@@ -42,7 +42,7 @@ void BF_Scene20::Action1::signal() {
 		break;
 	case 1:
 		_sound.play(1);
-		_globals->_scenePalette.addRotation(64, 127, -1, 1, this);
+		BF_GLOBALS._scenePalette.addRotation(64, 127, -1, 1, this);
 		break;
 	case 2:
 		scene->_object1.setVisage(22);
@@ -88,7 +88,7 @@ void BF_Scene20::Action1::signal() {
 		setDelay(1);
 		break;
 	case 3:
-		_globals->_scenePalette.addFader(scene->_scenePalette._palette, 256, 8, this);
+		BF_GLOBALS._scenePalette.addFader(scene->_scenePalette._palette, 256, 8, this);
 		break;
 	case 4:
 		setDelay(60);
@@ -105,10 +105,10 @@ void BF_Scene20::Action1::signal() {
 		setDelay(120);
 		break;
 	case 7:
-		_globals->_scenePalette.addFader(black, 1, 5, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 5, this);
 		break;
 	case 8:
-		_globals->_sceneManager.changeScene(100);
+		BF_GLOBALS._sceneManager.changeScene(100);
 		remove();
 		break;
 	}
@@ -121,8 +121,6 @@ void BF_Scene20::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(60, 85, 200, 100);
 
-	preloadVisage(21);
-	preloadVisage(22);
 	_scenePalette.loadPalette(1);
 	_scenePalette.loadPalette(22);
 

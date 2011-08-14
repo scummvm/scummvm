@@ -52,7 +52,6 @@ class BF_Scene100: public Scene {
 	};
 	class Action2: public ActionExt {
 	public:
-		virtual Common::String getClassName() { return "BF100Action2"; }
 		virtual void signal();
 	};
 public:
@@ -64,6 +63,52 @@ public:
 	int _index;
 
 	BF_Scene100();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
+class BF_Scene109: public GameScene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Texts */
+	class Text: public SceneText {
+	public:
+		Action *_action;
+		uint32 _frameNumber;
+		int _diff;
+	public:
+		Text();
+		void setup(const Common::String &msg, Action *action);
+
+		virtual Common::String getClassName() { return "BF109Text"; }
+		virtual void synchronize(Serializer &s);
+		virtual void dispatch();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	SequenceManager _sequenceManager4, _sequenceManager5, _sequenceManager6;
+	SequenceManager _sequenceManager7, _sequenceManager8;
+	SceneObject _object1, _object2, _protaginist2, _protaginist1, _object5;
+	SceneObject _object6, _object7, _bartender, _object9, _object10;
+	Text _text;
+	BlueAnimatedSpeaker _speaker;
+	Action1 _action1;
+	Action _action2, _action3;
+public:
+	BF_Scene109();
+
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };

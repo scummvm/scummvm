@@ -34,7 +34,7 @@
 
 namespace tSage {
 
-class BF_Scene20 : public Scene {
+class BF_Scene20 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
 	private:
