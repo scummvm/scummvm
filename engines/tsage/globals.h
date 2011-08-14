@@ -100,6 +100,10 @@ class BlueForceGlobals: public Globals {
 public:
 	ASound _sound1, _sound2, _sound3;
 	int _v4CEA2;
+	int _v4CF9E;
+	int _v4E238;
+	int _v501FC;
+	int _v51C42;
 	int _v51C44;
 	int _v51C24;
 
