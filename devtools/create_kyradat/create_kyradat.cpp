@@ -571,6 +571,11 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob2DranFoolsStrings, kTypeStringList, true },
 	{ kEob2HornStrings, kTypeStringList, true },
 	{ kEob2HornSounds, kTypeRawData, false },
+	{ kEob2WallOfForceDsX, kLolTypeRaw16, false },
+	{ kEob2WallOfForceDsY, kTypeRawData, false },
+	{ kEob2WallOfForceNumW, kTypeRawData, false },
+	{ kEob2WallOfForceNumH, kTypeRawData, false },
+	{ kEob2WallOfForceShpId, kTypeRawData, false },
 	
 	// LANDS OF LORE
 
@@ -1986,6 +1991,16 @@ const char *getIdString(const int id) {
 		return "kEob2HornStrings";
 	case kEob2HornSounds:
 		return "kEob2HornSounds";
+	case kEob2WallOfForceDsX:
+		return "kEob2WallOfForceDsX";
+	case kEob2WallOfForceDsY:
+		return "kEob2WallOfForceDsY";
+	case kEob2WallOfForceNumW:
+		return "kEob2WallOfForceNumW";
+	case kEob2WallOfForceNumH:
+		return "kEob2WallOfForceNumH";
+	case kEob2WallOfForceShpId:
+		return "kEob2WallOfForceShpId";
 	case kLolIngamePakFiles:
 		return "kLolIngamePakFiles";
 	case kLolCharacterDefs:

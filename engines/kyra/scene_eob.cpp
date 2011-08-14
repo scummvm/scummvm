@@ -1144,9 +1144,12 @@ int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 	if (!f)
 		assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
 
-	if (w == 74 && _currentBlock == curBlock) {
+	if (_flags.gameID == GI_EOB2 && w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {
-
+			if (_wallsOfForce[i].block == b) {
+				destroyWallOfForce(i);
+				f = _wllWallFlags[0];
+			}
 		}
 	}
 

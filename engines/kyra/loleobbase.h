@@ -60,6 +60,7 @@ struct LevelTempData {
 	uint16 *flags;
 	void *monsters;
 	void *flyingObjects;
+	void *wallsOfForce;
 	uint8 monsterDifficulty;
 };
 
@@ -315,6 +316,9 @@ protected:
 	void restoreFlyingObjectTempData(LevelTempData *tmp);
 	void *generateFlyingObjectTempData(LevelTempData *tmp);
 	void releaseFlyingObjectTempData(LevelTempData *tmp);
+	virtual void *generateWallOfForceTempData(LevelTempData *tmp) { return 0; }
+	virtual void restoreWallOfForceTempData(LevelTempData *tmp) {}
+	virtual void releaseWallOfForceTempData(LevelTempData *tmp) {}
 
 	LevelTempData *_lvlTempData[29];
 	const int _numFlyingObjects;

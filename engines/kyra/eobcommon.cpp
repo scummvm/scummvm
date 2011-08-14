@@ -141,6 +141,8 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_restPartyElapsedTime = 0;
 	_allowSkip = false;
 
+	_wallsOfForce = 0;
+
 	_rrCount = 0;
 	memset(_rrNames, 0, 10 * sizeof(const char*));
 	memset(_rrId, 0, 10 * sizeof(int8));
@@ -205,6 +207,7 @@ EobCoreEngine::~EobCoreEngine() {
 
 	delete[] _spells;
 	delete[] _spellAnimBuffer;
+	delete[] _wallsOfForce;
 
 	delete _gui;
 	_gui = 0;
@@ -318,6 +321,9 @@ Common::Error EobCoreEngine::init() {
 	_spellAnimBuffer = new uint8[4096];
 	memset(_spellAnimBuffer, 0, 4096);
 
+	_wallsOfForce = new WallOfForce[5];
+	memset(_wallsOfForce, 0, 5 * sizeof(WallOfForce));
+
 	memset(_doorType, 0, sizeof(_doorType));
 	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
 
@@ -349,7 +355,6 @@ Common::Error EobCoreEngine::go() {
 
 	loadItemsAndDecorationsShapes();
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
-	_screen->showMouse();
 
 	loadItemDefs();
 	int action = 0;
@@ -363,6 +368,7 @@ Common::Error EobCoreEngine::go() {
 			startupLoad();
 			_gameToLoad = -1;
 		} else {
+			_screen->showMouse();
 			action = mainMenu();
 		}
 
@@ -453,6 +459,7 @@ void EobCoreEngine::runLoop() {
 
 		_timer->update();
 		updateScriptTimers();
+		updateWallOfForceTimers();
 
 		if (_sceneUpdateRequired)
 			drawScene(1);

@@ -638,13 +638,13 @@ int EobInfProcessor::oeob_calcAndInflictCharacterDamage(int8 *data) {
 	int useStrModifierOrBase = *pos++;
 
 	int flg = (charIndex == -1) ? 4 : 0;
-	int a = 5;
-	int damageType = 1;
+	int savingThrowType = 5;
+	int savingThrowEffect = 1;
 
 	if (_vm->game() == GI_EOB2) {
 		flg = *pos++;
-		a = *pos++;
-		damageType = *pos++;
+		savingThrowType = *pos++;
+		savingThrowEffect = *pos++;
 	} else if (!itemOrPips) {
 		useStrModifierOrBase = times;
 		times = 0;
@@ -652,9 +652,9 @@ int EobInfProcessor::oeob_calcAndInflictCharacterDamage(int8 *data) {
 
 	if (charIndex == -1) {
 		for (int i = 0; i < 6; i++)
-			_vm->calcAndInflictCharacterDamage(i, times, itemOrPips, useStrModifierOrBase, flg, a, damageType);
+			_vm->calcAndInflictCharacterDamage(i, times, itemOrPips, useStrModifierOrBase, flg, savingThrowType, savingThrowEffect);
 	} else {
-		_vm->calcAndInflictCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flg, a, damageType);
+		_vm->calcAndInflictCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flg, savingThrowType, savingThrowEffect);
 	}
 	return pos - data;
 }

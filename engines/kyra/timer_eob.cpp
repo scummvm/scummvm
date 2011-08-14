@@ -371,7 +371,7 @@ void EobCoreEngine::timerUpdateTeleporters(int timerNum) {
 	_teleporterPulse ^= 1;
 	for (int i = 0; i < 18; i++) {
 		uint8 w = _visibleBlocks[i]->walls[_sceneDrawVarDown];
-		if ((_flags.gameID == GI_EOB1 && w == 52) || (_flags.gameID == GI_EOB2 && (w == 44 || w == 74))) {
+		if ((w == _teleporterWallId) || (_flags.gameID == GI_EOB2 && w == 74)) {
 			_sceneUpdateRequired = true;
 			return;
 		}

@@ -561,6 +561,12 @@ protected:
 	const uint16 *_encodeMonsterShpTable;
 	const uint8 _teleporterWallId;
 
+	const int16 *_wallOfForceDsX;
+	const uint8 *_wallOfForceDsY;
+	const uint8 *_wallOfForceDsNumW;
+	const uint8 *_wallOfForceDsNumH;
+	const uint8 *_wallOfForceShpId;
+
 	const int8 *_monsterDirChangeTable;
 
 	// Level
@@ -833,6 +839,9 @@ protected:
 	void *generateMonsterTempData(LevelTempData *tmp);
 	void restoreMonsterTempData(LevelTempData *tmp);
 	void releaseMonsterTempData(LevelTempData *tmp);
+	void *generateWallOfForceTempData(LevelTempData *tmp);
+	void restoreWallOfForceTempData(LevelTempData *tmp);
+	void releaseWallOfForceTempData(LevelTempData *tmp);
 
 	const char * const *_saveLoadStrings;
 
@@ -919,6 +928,9 @@ protected:
 	int createMagicWeaponType(int invFlags, int handFlags, int armorClass, int allowedClasses, int dmgNum, int dmgPips, int dmgInc, int extraProps);
 	Item createMagicWeaponItem(int flags, int icon, int value, int type);
 	void removeMagicWeaponItem(Item item);
+
+	void updateWallOfForceTimers();
+	void destroyWallOfForce(int index);
 
 	int findSingleSpellTarget(int dist);
 	
@@ -1030,6 +1042,13 @@ protected:
 
 	EobSpell *_spells;
 	int _numSpells;
+
+	struct WallOfForce {
+		uint16 block;
+		uint32 duration;
+	};
+
+	WallOfForce *_wallsOfForce;
 
 	const char *const *_bookNumbers;
 	const char *const *_mageSpellList;

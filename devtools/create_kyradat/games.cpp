@@ -1595,6 +1595,11 @@ const int eob2FloppyNeed[] = {
 	kEob2DranFoolsStrings,
 	kEob2HornStrings,
 	kEob2HornSounds,
+	kEob2WallOfForceDsX,
+	kEob2WallOfForceDsY,
+	kEob2WallOfForceNumW,
+	kEob2WallOfForceNumH,
+	kEob2WallOfForceShpId,
 
 	kLolEobCommonDscShapeIndex,
 	kLolEobCommonDscX,

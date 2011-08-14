@@ -1280,6 +1280,12 @@ void DarkMoonEngine::initStaticResource() {
 	_dranFoolsStrings = _staticres->loadStrings(kEob2DranFoolsStrings, temp);
 	_hornStrings = _staticres->loadStrings(kEob2HornStrings, temp);
 	_hornSounds = _staticres->loadRawData(kEob2HornSounds, temp);
+
+	_wallOfForceDsX = (const int16*)_staticres->loadRawDataBe16(kEob2WallOfForceDsX, temp);
+	_wallOfForceDsY = _staticres->loadRawData(kEob2WallOfForceDsY, temp);
+	_wallOfForceDsNumW = _staticres->loadRawData(kEob2WallOfForceNumW, temp);
+	_wallOfForceDsNumH = _staticres->loadRawData(kEob2WallOfForceNumH, temp);
+	_wallOfForceShpId = _staticres->loadRawData(kEob2WallOfForceShpId, temp);
 }
 
 void DarkMoonEngine::initSpells() {
