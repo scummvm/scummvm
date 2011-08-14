@@ -54,10 +54,10 @@ Preview::~Preview() {
 
 void Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(196, opcode_196);
-	OVERRIDE_OPCODE(197, opcode_197);
-	OVERRIDE_OPCODE(198, opcode_198);
-	OVERRIDE_OPCODE(199, opcode_199);
+	OVERRIDE_OPCODE(196, o_fadeToBlack);
+	OVERRIDE_OPCODE(197, o_fadeFromBlack);
+	OVERRIDE_OPCODE(198, o_stayHere);
+	OVERRIDE_OPCODE(199, o_speechStop);
 
 	// "Init" Opcodes
 	OPCODE(298, o_speech_init);
@@ -78,40 +78,29 @@ void Preview::runPersistentScripts() {
 		speech_run();
 }
 
-void Preview::opcode_196(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+	_vm->_gfx->fadeToBlack();
 }
 
-void Preview::opcode_197(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade from black", op);
+	_vm->_gfx->fadeFromBlack();
 }
 
-// TODO: Merge with Opcode 42?
-void Preview::opcode_198(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Stay here dialog", op);
 
-	if (argc == 0) {
-		// Nuh-uh! No leaving the library in the demo!
-		GUI::MessageDialog dialog("You can't leave the library in the demo.");
-		dialog.runModal();
-	} else
-		unknown(op, var, argc, argv);
+	// Nuh-uh! No leaving the library in the demo!
+	GUI::MessageDialog dialog("You can't leave the library in the demo.");
+	dialog.runModal();
 }
 
-void Preview::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Speech stop", op);
 
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+	_speechRunning = false;
+	_globals.currentAge = 2;
 }
 
 void Preview::speechUpdateCue() {

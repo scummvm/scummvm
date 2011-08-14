@@ -46,10 +46,10 @@ public:
 private:
 	void setupOpcodes();
 
-	DECLARE_OPCODE(opcode_196);
-	DECLARE_OPCODE(opcode_197);
-	DECLARE_OPCODE(opcode_198);
-	DECLARE_OPCODE(opcode_199);
+	DECLARE_OPCODE(o_fadeToBlack);
+	DECLARE_OPCODE(o_fadeFromBlack);
+	DECLARE_OPCODE(o_stayHere);
+	DECLARE_OPCODE(o_speechStop);
 
 	DECLARE_OPCODE(o_speech_init);
 	DECLARE_OPCODE(o_library_init);
