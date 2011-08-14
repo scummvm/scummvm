@@ -260,6 +260,7 @@ protected:
 
 	// Main Menu, Intro, Finale
 	virtual int mainMenu() = 0;
+	virtual void seq_xdeath() {};
 	virtual void seq_playFinale() = 0;
 	bool _playFinale;
 
@@ -630,9 +631,9 @@ protected:
 
 	// Script
 	void runLevelScript(int block, int flags);
-	void setScriptFlag(int flag);
-	void clearScriptFlag(int flag);
-	bool checkScriptFlag(int flag);
+	void setScriptFlags(uint32 flags);
+	void clearScriptFlags(uint32 flags);
+	bool checkScriptFlags(uint32 flags);
 
 	const uint8 *initScriptTimers(const uint8 *pos);
 	void updateScriptTimers();
@@ -856,9 +857,9 @@ protected:
 	int projectileWeaponAttack(int charIndex, Item item);
 
 	void inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool giveExperience);
-	void calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType);
-	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flg, int a, int damageType);
-	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flg, int a, int damageType) ;
+	void calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
+	void calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect);
+	int calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int damageType) ;
 	void inflictCharacterDamage(int charIndex, int damage);
 
 	bool characterAttackHitTest(int charIndex, int monsterIndex, int item, int attackType);
@@ -868,15 +869,15 @@ protected:
 
 	void monsterCloseAttack(EobMonsterInPlay *m);
 	void monsterSpellCast(EobMonsterInPlay *m, int type);
-	void statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int a, uint32 effectDuration, int restoreEvent, int noRefresh);
+	void statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh);
 
-	int calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType);
+	int calcMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect);
 	int calcDamageModifers(int charIndex, EobMonsterInPlay *m, int item, int itemType, int useStrModifier);
-	bool checkMonsterLevelConstModifiers(void *target, int hpModifier, int level, int b, int race);
-	bool specialAttackConstTest(int charIndex, int b);
+	bool trySavingThrow(void *target, int hpModifier, int level, int type, int race);
+	bool specialAttackSavingThrow(int charIndex, int type);
 	int getConstModifierTableValue(int hpModifier, int level, int b);
 	bool calcDamageCheckItemType(int itemType);
-	int recalcDamageModifier(int damageType, int dmgModifier);
+	int savingThrowReduceDamage(int savingThrowEffect, int damage);
 	bool tryMonsterAttackEvasion(EobMonsterInPlay *m);
 	int getStrHitChanceModifier(int charIndex);
 	int getStrDamageModifier(int charIndex);
@@ -912,6 +913,7 @@ protected:
 	bool magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int dcPips, int dcOffs, int level);
 	bool magicObjectStatusHit(EobMonsterInPlay *m, int type, bool tryEvade, int mod);
 	bool turnUndeadHit(EobMonsterInPlay *m, int hitChance, int casterLevel);
+	void causeWounds(int dcTimes, int dcPips, int dcOffs);
 
 	int getMagicWeaponSlot(int charIndex);
 	int createMagicWeaponType(int invFlags, int handFlags, int armorClass, int allowedClasses, int dmgNum, int dmgPips, int dmgInc, int extraProps);
@@ -919,6 +921,10 @@ protected:
 	void removeMagicWeaponItem(Item item);
 
 	int findSingleSpellTarget(int dist);
+	
+	int findFirstCharacterSpellTarget();
+	int findNextCharacterSpellTarget(int curCharIndex);
+	int charDeathSavingThrow(int charIndex, int div);
 
 	void printWarning(const char *str);
 	void printNoEffectWarning();
@@ -987,10 +993,10 @@ protected:
 	bool spellCallback_end_lightningBoltPassive(void *obj);
 	bool spellCallback_end_unk1Passive(void *obj);
 	bool spellCallback_end_unk2Passive(void *obj);
-	bool spellCallback_end_deathSpellPassive(void*);
-	bool spellCallback_end_disintegratePassive(void*);
-	bool spellCallback_end_causeCriticalWoundsPassive(void*);
-	bool spellCallback_end_fleshToStonePassive(void*);
+	bool spellCallback_end_deathSpellPassive(void *obj);
+	bool spellCallback_end_disintegratePassive(void *obj);
+	bool spellCallback_end_causeCriticalWoundsPassive(void *obj);
+	bool spellCallback_end_fleshToStonePassive(void *obj);
 
 	int8 _openBookSpellLevel;
 	int8 _openBookSpellSelectedItem;
@@ -1005,6 +1011,7 @@ protected:
 	uint8 _activeSpellCharId;
 	uint8 _activeSpellCharacterPos;
 	int _activeSpell;
+	int _characterSpellTarget;
 	bool _returnAfterSpellCallback;
 
 	typedef void (EobCoreEngine::*SpellStartCallback)();
@@ -1059,7 +1066,8 @@ protected:
 	const int8 *_coneOfColdDest2;
 	const int8 *_coneOfColdDest3;
 	const int8 *_coneOfColdDest4;
-	const int8 *_coneOfColdGfxTbl;
+	const uint8 *_coneOfColdGfxTbl;
+	int _coneOfColdGfxTblSize;
 
 	// Menu
 	EobMenuDef *_menuDefs;

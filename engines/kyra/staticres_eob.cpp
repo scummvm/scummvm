@@ -535,6 +535,11 @@ void EobCoreEngine::initStaticResource() {
 	_magicFlightObjectProperties = _staticres->loadRawData(kEobBaseMagicFlightProps, temp);
 	_turnUndeadEffect = _staticres->loadRawData(kEobBaseTurnUndeadEffect, temp);
 	_burningHandsDest = _staticres->loadRawData(kEobBaseBurningHandsDest, temp);
+	_coneOfColdDest1 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest1, temp);
+	_coneOfColdDest2 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest2, temp);
+	_coneOfColdDest3 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest3, temp);
+	_coneOfColdDest4 = (const int8*)_staticres->loadRawData(kEobBaseConeOfColdDest4, temp);
+	_coneOfColdGfxTbl = _staticres->loadRawData(kEobBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -1056,6 +1061,28 @@ void EobCoreEngine::initSpells() {
 void EobEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEob1MainMenuStrings, temp);
+	_finBonusStrings = _staticres->loadStrings(kEob1BonusStrings, temp);
+		
+	_introFilesOpening = _staticres->loadStrings(kEob1IntroFilesOpening, temp);
+	_introFilesTower = _staticres->loadStrings(kEob1IntroFilesTower, temp);
+	_introFilesOrb = _staticres->loadStrings(kEob1IntroFilesOrb, temp);
+	_introFilesWdEntry = _staticres->loadStrings(kEob1IntroFilesWdEntry, temp);
+	_introFilesKing = _staticres->loadStrings(kEob1IntroFilesKing, temp);
+	_introFilesHands = _staticres->loadStrings(kEob1IntroFilesHands, temp);
+	_introFilesWdExit = _staticres->loadStrings(kEob1IntroFilesWdExit, temp);
+	_introFilesTunnel = _staticres->loadStrings(kEob1IntroFilesTunnel, temp);
+	_introOpeningFrmDelay = _staticres->loadRawData(kEob1IntroOpeningFrmDelay, temp);
+	_introWdEncodeX = _staticres->loadRawData(kEob1IntroWdEncodeX, temp);
+	_introWdEncodeY = _staticres->loadRawData(kEob1IntroWdEncodeY, temp);
+	_introWdEncodeWH = _staticres->loadRawData(kEob1IntroWdEncodeWH, temp);
+	_introWdDsX = _staticres->loadRawDataBe16(kEob1IntroWdDsX, temp);
+	_introWdDsY = _staticres->loadRawData(kEob1IntroWdDsY, temp);
+	_introTvlX1 = _staticres->loadRawData(kEob1IntroTvlX1, temp);
+	_introTvlY1 = _staticres->loadRawData(kEob1IntroTvlY1, temp);
+	_introTvlX2 = _staticres->loadRawData(kEob1IntroTvlX2, temp);
+	_introTvlY2 = _staticres->loadRawData(kEob1IntroTvlY2, temp);
+	_introTvlW = _staticres->loadRawData(kEob1IntroTvlW, temp);
+	_introTvlH = _staticres->loadRawData(kEob1IntroTvlH, temp);
 
 	_doorShapeEncodeDefs = _staticres->loadRawData(kEob1DoorShapeDefs, temp);
 	_doorSwitchShapeEncodeDefs = _staticres->loadRawData(kEob1DoorSwitchShapeDefs, temp);

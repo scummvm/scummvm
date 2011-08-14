@@ -404,9 +404,37 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseMagicFlightProps, kTypeRawData, false },
 	{ kEobBaseTurnUndeadEffect, kTypeRawData, false },
 	{ kEobBaseBurningHandsDest, kTypeRawData, false },
+	{ kEobBaseConeOfColdDest1, kTypeRawData, false },
+	{ kEobBaseConeOfColdDest2, kTypeRawData, false },
+	{ kEobBaseConeOfColdDest3, kTypeRawData, false },
+	{ kEobBaseConeOfColdDest4, kTypeRawData, false },
+	{ kEobBaseConeOfColdGfxTbl, k3TypeRaw16to8, false },
 
 	// EYE OF THE BEHOLDER I
 	{ kEob1MainMenuStrings, kTypeStringList, true },
+	{ kEob1BonusStrings, kTypeStringList, true },
+
+	{ kEob1IntroFilesOpening, kTypeStringList, false },
+	{ kEob1IntroFilesTower, kTypeStringList, false },
+	{ kEob1IntroFilesOrb, kTypeStringList, false },
+	{ kEob1IntroFilesWdEntry, kTypeStringList, false },
+	{ kEob1IntroFilesKing, kTypeStringList, false },
+	{ kEob1IntroFilesHands, kTypeStringList, false },
+	{ kEob1IntroFilesWdExit, kTypeStringList, false },
+	{ kEob1IntroFilesTunnel, kTypeStringList, false },
+	{ kEob1IntroOpeningFrmDelay, k3TypeRaw16to8, false },
+	{ kEob1IntroWdEncodeX, kTypeRawData, false },
+	{ kEob1IntroWdEncodeY, kTypeRawData, false },
+	{ kEob1IntroWdEncodeWH, kTypeRawData, false },
+	{ kEob1IntroWdDsX, kLolTypeRaw16, false },
+	{ kEob1IntroWdDsY, kTypeRawData, false },
+	{ kEob1IntroTvlX1, kTypeRawData, false },
+	{ kEob1IntroTvlY1, kTypeRawData, false },
+	{ kEob1IntroTvlX2, kTypeRawData, false },
+	{ kEob1IntroTvlY2, kTypeRawData, false },
+	{ kEob1IntroTvlW, kTypeRawData, false },
+	{ kEob1IntroTvlH, kTypeRawData, false },
+
 	{ kEob1DoorShapeDefs, kTypeRawData, false },
 	{ kEob1DoorSwitchShapeDefs, kTypeRawData, false },
 	{ kEob1DoorSwitchCoords, kTypeRawData, false },
@@ -1644,8 +1672,60 @@ const char *getIdString(const int id) {
 		return "kEobBaseTurnUndeadEffect";
 	case kEobBaseBurningHandsDest:
 		return "kEobBaseBurningHandsDest";
+	case kEobBaseConeOfColdDest1:
+		return "kEobBaseConeOfColdDest1";
+	case kEobBaseConeOfColdDest2:
+		return "kEobBaseConeOfColdDest2";
+	case kEobBaseConeOfColdDest3:
+		return "kEobBaseConeOfColdDest3";
+	case kEobBaseConeOfColdDest4:
+		return "kEobBaseConeOfColdDest4";
+	case kEobBaseConeOfColdGfxTbl:
+		return "kEobBaseConeOfColdGfxTbl";
 	case kEob1MainMenuStrings:
 		return "kEob1MainMenuStrings";
+	case kEob1BonusStrings:
+		return "kEob1BonusStrings";
+	case kEob1IntroFilesOpening:
+		return "kEob1IntroFilesOpening";
+	case kEob1IntroFilesTower:
+		return "kEob1IntroFilesTower";
+	case kEob1IntroFilesOrb:
+		return "kEob1IntroFilesOrb";
+	case kEob1IntroFilesWdEntry:
+		return "kEob1IntroFilesWdEntry";
+	case kEob1IntroFilesKing:
+		return "kEob1IntroFilesKing";
+	case kEob1IntroFilesHands:
+		return "kEob1IntroFilesHands";
+	case kEob1IntroFilesWdExit:
+		return "kEob1IntroFilesWdExit";
+	case kEob1IntroFilesTunnel:
+		return "kEob1IntroFilesTunnel";
+	case kEob1IntroOpeningFrmDelay:
+		return "kEob1IntroOpeningFrmDelay";
+	case kEob1IntroWdEncodeX:
+		return "kEob1IntroWdEncodeX";
+	case kEob1IntroWdEncodeY:
+		return "kEob1IntroWdEncodeY";
+	case kEob1IntroWdEncodeWH:
+		return "kEob1IntroWdEncodeWH";
+	case kEob1IntroWdDsX:
+		return "kEob1IntroWdDsX";
+	case kEob1IntroWdDsY:
+		return "kEob1IntroWdDsY";
+	case kEob1IntroTvlX1:
+		return "kEob1IntroTvlX1";
+	case kEob1IntroTvlY1:
+		return "kEob1IntroTvlY1";
+	case kEob1IntroTvlX2:
+		return "kEob1IntroTvlX2";
+	case kEob1IntroTvlY2:
+		return "kEob1IntroTvlY2";
+	case kEob1IntroTvlW:
+		return "kEob1IntroTvlW";
+	case kEob1IntroTvlH:
+		return "kEob1IntroTvlH";
 	case kEob1DoorShapeDefs:
 		return "kEob1DoorShapeDefs";
 	case kEob1DoorSwitchCoords:

@@ -54,7 +54,7 @@ public:
 	void loadEobBitmap(const char *file, const uint8 *ditheringData, int tempPage, int destPage, int copyToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
-	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool flag = false);
+	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding = false);
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
@@ -65,7 +65,8 @@ public:
 	void setShapeFadeMode (uint8 i, bool b);
 
 	void setGfxParameters(int x, int y, int col);
-	void drawExplosion(int scale, int radius, int numSteps, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
+	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
+	void drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize);
 
 	void fadeTextColor(Palette *pal, int color1, int fadeTextColor);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);

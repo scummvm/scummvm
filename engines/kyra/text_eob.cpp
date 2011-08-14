@@ -646,7 +646,7 @@ void TextDisplayer_Eob::displayWaitButton() {
 	vm()->_dialogueButtonW = vm()->_waitButtonPresW[_waitButtonMode];
 	vm()->_dialogueButtonYoffs = 0;
 
-	SWAP(_vm->_dialogueButtonLabelCol1, _vm->_dialogueButtonLabelCol2);
+	SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
 	vm()->drawDialogueButtons();
 
 	if (!vm()->shouldQuit())
@@ -654,8 +654,9 @@ void TextDisplayer_Eob::displayWaitButton() {
 
 	while (!vm()->processDialogue() && !vm()->shouldQuit()) {}
 	
+	_screen->fillRect(vm()->_dialogueButtonPosX[0], vm()->_dialogueButtonPosY[0], vm()->_dialogueButtonPosX[0] + vm()->_dialogueButtonW - 1, vm()->_dialogueButtonPosY[0] + vm()->_dialogueButtonH - 1, vm()->_bkgColor_1);
 	vm()->_dialogueButtonW = 95;
-	SWAP(_vm->_dialogueButtonLabelCol1, _vm->_dialogueButtonLabelCol2);
+	SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
 	clearCurDim();
 }
 
