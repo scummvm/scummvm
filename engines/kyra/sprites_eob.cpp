@@ -55,7 +55,7 @@ namespace Kyra {
 
 void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
 	Common::String s = filename;
-	if (GI_EOB1 && !scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn") || !scumm_stricmp(filename, "xanath"))
+	if ((_flags.gameID == GI_EOB1) && (!scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn") || !scumm_stricmp(filename, "xanath")))
 		s += "1";
 
 	_screen->loadShapeSetBitmap(s.c_str(), 3, 3);
@@ -272,10 +272,10 @@ void EobCoreEngine::updateAttackingMonsterFlags() {
 	}
 
 	if (m2->type == 7)
-		_inf->setFlag(4);
+		setScriptFlags(4);
 
 	if (m2->type == 12)
-		_inf->setFlag(0x800);
+		setScriptFlags(0x800);
 }
 
 const int8 *EobCoreEngine::getMonstersOnBlockPositions(uint16 block) {
@@ -791,9 +791,9 @@ void EobCoreEngine::turnFriendlyMonstersHostile() {
 
 	if (m) {
 		if (m->type == 7)
-			_inf->setFlag(0x40000);
+			setScriptFlags(0x40000);
 		else if (m->type == 12)
-			_inf->setFlag(0x8000000);
+			setScriptFlags(0x8000000);
 	}
 }
 

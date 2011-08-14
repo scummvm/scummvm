@@ -97,8 +97,8 @@ const Game kyra3Games[] = {
 };
 
 const Game eob1Games[] = {
-	{ kEob1, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "1bde1dd37b40ab6de8ad11be33a44c5a", 0 } },
-	{ kEob1, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "0fa3c6e00a81171b9f2adb3fdeb8eea3", 0 } },
+	{ kEob1, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "1bde1dd37b40ab6de8ad11be33a44c5a", "d760a605d1a1302d06975a1f209fdd72" } },
+	{ kEob1, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "0fa3c6e00a81171b9f2adb3fdeb8eea3", "756f300c62aabf1dbd3c26b3b04f8c00" } },
 	GAME_DUMMY_ENTRY
 };
 
@@ -1055,6 +1055,29 @@ const int eob1FloppyNeed[] = {
 	kEobBaseConstModExt,
 
 	kEob1MainMenuStrings,
+	kEob1BonusStrings,
+
+	kEob1IntroFilesOpening,
+	kEob1IntroFilesTower,
+	kEob1IntroFilesOrb,
+	kEob1IntroFilesWdEntry,
+	kEob1IntroFilesKing,
+	kEob1IntroFilesHands,
+	kEob1IntroFilesWdExit,
+	kEob1IntroFilesTunnel,
+	kEob1IntroOpeningFrmDelay,
+	kEob1IntroWdEncodeX,
+	kEob1IntroWdEncodeY,
+	kEob1IntroWdEncodeWH,
+	kEob1IntroWdDsX,
+	kEob1IntroWdDsY,
+	kEob1IntroTvlX1,
+	kEob1IntroTvlY1,
+	kEob1IntroTvlX2,
+	kEob1IntroTvlY2,
+	kEob1IntroTvlW,
+	kEob1IntroTvlH,
+
 	kEob1DoorShapeDefs,
 	kEob1DoorSwitchShapeDefs,
 	kEob1DoorSwitchCoords,
@@ -1190,6 +1213,11 @@ const int eob1FloppyNeed[] = {
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
 	kEobBaseBurningHandsDest,
+	kEobBaseConeOfColdDest1,
+	kEobBaseConeOfColdDest2,
+	kEobBaseConeOfColdDest3,
+	kEobBaseConeOfColdDest4,
+	kEobBaseConeOfColdGfxTbl,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,
@@ -1411,6 +1439,11 @@ const int eob2FloppyNeed[] = {
 	kEobBaseMagicFlightProps,
 	kEobBaseTurnUndeadEffect,
 	kEobBaseBurningHandsDest,
+	kEobBaseConeOfColdDest1,
+	kEobBaseConeOfColdDest2,
+	kEobBaseConeOfColdDest3,
+	kEobBaseConeOfColdDest4,
+	kEobBaseConeOfColdGfxTbl,
 
 	kLolEobCommonDscDoorShapeIndex,
 	kEobBaseWllFlagPreset,

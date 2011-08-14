@@ -36,16 +36,16 @@ void EobCoreEngine::runLevelScript(int block, int flags) {
 	_inf->run(block, flags);
 }
 
-void EobCoreEngine::setScriptFlag(int flag) {
-	_inf->setFlag(flag);
+void EobCoreEngine::setScriptFlags(uint32 flags) {
+	_inf->setFlags(flags);
 }
 
-void EobCoreEngine::clearScriptFlag(int flag) {
-	_inf->clearFlag(flag);
+void EobCoreEngine::clearScriptFlags(uint32 flags) {
+	_inf->clearFlags(flags);
 }
 
-bool EobCoreEngine::checkScriptFlag(int flag) {
-	return _inf->checkFlag(flag);
+bool EobCoreEngine::checkScriptFlags(uint32 flags) {
+	return _inf->checkFlags(flags);
 }
 
 const uint8 *EobCoreEngine::initScriptTimers(const uint8 *pos) {
@@ -198,16 +198,16 @@ void EobInfProcessor::run(int func, int sub) {
 	} while (!_abortScript && !_abortAfterSubroutine);
 }
 
-void EobInfProcessor::setFlag(int flag) {
-	_flagTable[17] |= flag;
+void EobInfProcessor::setFlags(uint32 flags) {
+	_flagTable[17] |= flags;
 }
 
-void EobInfProcessor::clearFlag(int flag) {
-	_flagTable[17] &= ~flag;
+void EobInfProcessor::clearFlags(uint32 flags) {
+	_flagTable[17] &= ~flags;
 }
 
-bool EobInfProcessor::checkFlag(int flag) const {
-	return (_flagTable[17] & flag) ? true : false;
+bool EobInfProcessor::checkFlags(uint32 flags) const {
+	return ((_flagTable[17] & flags) == flags) ? true : false;
 }
 
 bool EobInfProcessor::preventRest() const {
@@ -709,13 +709,13 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 	while (cmd != -18) {
 		switch (cmd + 38) {
 		case 0:
-			a = 0;
+			a = 1;
 			for (i = 0; i < 6; i++) {
 				if (!(_vm->_characters[i].flags & 1))
 					continue;
-				if (_vm->_characters[i].effectFlags & 4)
+				if (_vm->_characters[i].effectFlags & 0x40)
 					continue;
-				a = 1;
+				a = 0;
 				break;
 			}
 			_stack[_stackIndex++] = a;
@@ -806,7 +806,7 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			break;
 
 		case 25:
-			_stack[_stackIndex++] = _vm->_levelBlockProperties[READ_LE_UINT16(pos)].flags ? 1 : 0;
+			_stack[_stackIndex++] = (_vm->_levelBlockProperties[READ_LE_UINT16(pos)].flags & 1) ? 1 : 0;
 			pos += 2;
 			break;
 
@@ -944,13 +944,13 @@ int EobInfProcessor::oeob_eval_v2(int8 *data) {
 			break;
 
 		case 12:
-			a = 0;
+			a = 1;
 			for (i = 0; i < 6; i++) {
 				if (!(_vm->_characters[i].flags & 1))
 					continue;
 				if (_vm->_characters[i].effectFlags & 0x40)
 					continue;
-				a = 1;
+				a = 0;
 				break;
 			}
 			_stack[_stackIndex++] = a;
@@ -1415,7 +1415,7 @@ int EobInfProcessor::oeob_sequence(int8 *data) {
 
 	switch (cmd) {
 	case -3:
-		// eob1 outro
+		_vm->seq_xdeath();
 		_vm->_runFlag = false;
 		_vm->_playFinale = true;
 		_abortScript = 1;

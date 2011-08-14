@@ -1139,10 +1139,10 @@ void EobCoreEngine::drawDecorations(int index) {
 int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction) {
 	uint16 b = calcNewBlockPosition(curBlock, direction);
 	int w = _levelBlockProperties[b].walls[direction ^ 2];
-	
 	int f = _wllWallFlags[w];
+
 	if (!f)
-		assert (w < (_flags.gameID == GI_EOB1 ? 70 : 80));
+		assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
 
 	if (w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {

@@ -385,7 +385,7 @@ void EobCoreEngine::gui_drawWeaponSlot(int charIndex, int slot) {
 
 	if (itm)
 		drawItemIconShape(_screen->_curPage, itm, x + 8, y);
-	else if (!slot && _flags.gameID == GI_EOB2 && checkScriptFlag(0x80000000))
+	else if (!slot && _flags.gameID == GI_EOB2 && checkScriptFlags(0x80000000))
 		_screen->drawShape(_screen->_curPage, _itemIconShapes[103], x + 8, y, 0);
 	else
 		_screen->drawShape(_screen->_curPage, _itemIconShapes[85], x + 8, y, 0);

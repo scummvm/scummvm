@@ -120,7 +120,6 @@ int DarkMoonEngine::mainMenu() {
 
 			case 1:
 				// load game in progress
-				//
 				menuChoice = -1;
 				break;
 

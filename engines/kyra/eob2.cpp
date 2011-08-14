@@ -106,7 +106,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 	if (npcIndex == 0) {
 		snd_playSoundEffect(57);
 		if (npcJoinDialogue(0, 1, 3, 2))
-			setScriptFlag(0x40);
+			setScriptFlags(0x40);
 	} else if (npcIndex == 1) {
 		snd_playSoundEffect(53);
 		gui_drawDialogueBox();
@@ -120,7 +120,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 			snd_playSoundEffect(91);
 			npcJoinDialogue(1, 5, 6, 7);
 		} else if (r == 1) {
-			setScriptFlag(0x20);
+			setScriptFlags(0x20);
 		}
 
 	} else if (npcIndex == 2) {
@@ -135,7 +135,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 				_txt->printDialogueText(9, _okStrings[0]);
 			else
 				npcJoinDialogue(2, 102, 103, 104);
-			setScriptFlag(8);
+			setScriptFlags(8);
 		} else if (r == 1) {
 			_currentDirection = 0;
 		}
@@ -357,7 +357,7 @@ void DarkMoonEngine::restParty_npc() {
 	if (insalId < 4)
 		exchangeCharacters(insalId, testCharacter(5, 1) ? 5 : 4);
 
-	clearScriptFlag(6);
+	clearScriptFlags(6);
 
 	if (!stripPartyItems(1, 1, 1, 1))
 		stripPartyItems(2, 1, 1, 1);
@@ -391,7 +391,7 @@ void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {
 }
 
 bool DarkMoonEngine::checkPartyStatusExtra() {
-	if (checkScriptFlag(0x100000))
+	if (checkScriptFlags(0x100000))
 		seq_dranFools();
 	return _gui->confirmDialogue2(14, 67, 1);
 }

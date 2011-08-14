@@ -172,23 +172,23 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 	case 0:
 		for (r = 1; r == 1; ) {
 			gui_drawDialogueBox();
-			r = DLG2A3(checkScriptFlag(0x2000), 8, 12, 11);
+			r = DLG2A3(checkScriptFlags(0x2000), 8, 12, 11);
 			if (r == 1) {
 				TXT(1);
-				setScriptFlag(0x2000);
+				setScriptFlags(0x2000);
 			} else if (r == 0) {
 				npcJoinDialogue(6, 12, 23, 2);
-				setScriptFlag(0x4000);
+				setScriptFlags(0x4000);
 			}
 		}
 		break;
 
 	case 1:
-		if (!checkScriptFlag(0x10000)) {
-			if (checkScriptFlag(0x8000)) {
+		if (!checkScriptFlags(0x10000)) {
+			if (checkScriptFlags(0x8000)) {
 				a = 1;
 			} else {
-				setScriptFlag(0x8000);
+				setScriptFlags(0x8000);
 				r = DLG2(3, 21);
 			}
 			if (!r)
@@ -198,7 +198,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 				for (a = 0; a < 6; a++)
 					createItemOnCurrentBlock(55);
 				createItemOnCurrentBlock(62);
-				setScriptFlag(0x10000);
+				setScriptFlags(0x10000);
 				TXT(6);
 				npcJoinDialogue(7, 7, 29, 30);
 			} else {
@@ -207,7 +207,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 			r = 1;
 		}
 
-		if (!checkScriptFlag(0x80000)) {
+		if (!checkScriptFlags(0x80000)) {
 			for (a = 0; a < 6; a++) {
 				if (testCharacter(a, 1) && _characters[a].portrait == -9)
 					break;
@@ -215,18 +215,18 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 			if (a != 6) {
 				TXT(25);
 				TXT(26);
-				setScriptFlag(0x80000);
+				setScriptFlags(0x80000);
 				r = 1;
 			}
 		}
 
-		if (!checkScriptFlag(0x100000)) {
+		if (!checkScriptFlags(0x100000)) {
 			if (deletePartyItems(6, -1)) {
 				//_npcSequenceSub = 0;
 				//drawNpcScene(npcIndex);
 				TXT(28);				
 				createItemOnCurrentBlock(32);
-				setScriptFlag(0x100000);
+				setScriptFlags(0x100000);
 				r = 1;
 			}
 		}
@@ -237,8 +237,8 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 2:
-		if (checkScriptFlag(0x10000)) {
-			if (checkScriptFlag(0x20000)) {
+		if (checkScriptFlags(0x10000)) {
+			if (checkScriptFlags(0x20000)) {
 				TXT(11);
 			} else {
 				r = DLG2A3(!countResurrectionCandidates(), 9, 31, 32);
@@ -247,7 +247,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 						healParty();
 					else
 						resurrectionSelectDialogue();
-					setScriptFlag(0x20000);
+					setScriptFlags(0x20000);
 				}				
 			}
 		} else {
@@ -257,14 +257,14 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 
 	case 3:
 		if (!DLG2(18, 4)) {
-			setScriptFlag(0x8400000);
+			setScriptFlags(0x8400000);
 			for (a = 0; a < 30; a++) {
 				if (_monsters[a].mode == 8)
 					_monsters[a].mode = 5;
 			}
 		} else if (deletePartyItems(49, -1)) {
 			TXT(20);
-			setScriptFlag(0x400000);
+			setScriptFlags(0x400000);
 		} else {
 			TXT(19);
 		}
@@ -273,10 +273,10 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 	case 4:
 		r = DLG3(14, 5);
 		if (r == 0)
-			setScriptFlag(0x200000);
+			setScriptFlags(0x200000);
 		else if (r == 1)
 			TXT(15);
-		setScriptFlag(0x800000);
+		setScriptFlags(0x800000);
 		break;
 
 	case 5:
@@ -292,12 +292,12 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 				}
 			}
 		}
-		setScriptFlag(0x2000000);
+		setScriptFlags(0x2000000);
 		break;
 
 	case 6:
 		TXT(21);
-		setScriptFlag(0x1000000);
+		setScriptFlags(0x1000000);
 		break;
 
 	case 7:
@@ -307,7 +307,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 				npcJoinDialogue(8, 27, 44, 45);
 			else
 				TXT(31);
-			setScriptFlag(0x4000000);
+			setScriptFlags(0x4000000);
 		}
 		break;
 

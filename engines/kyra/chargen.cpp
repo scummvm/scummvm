@@ -144,7 +144,7 @@ CharacterGenerator::~CharacterGenerator() {
 	}
 
 	if (_chargenButtonLabels) {
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 17; i++)
 			delete[] _chargenButtonLabels[i];
 		delete[] _chargenButtonLabels;
 	}
@@ -516,7 +516,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 
 	toggleSpecialButton(5, 0, 0);
 
-	itemsMask &=_classMenuMasks[raceSex / 2];
+	itemsMask &= _classMenuMasks[raceSex / 2];
 	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0);
 
 	_vm->_mouseX = _vm->_mouseY = 0;
@@ -565,7 +565,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 
 	toggleSpecialButton(5, 0, 0);
 
-	itemsMask &=_alignmentMenuMasks[cClass];
+	itemsMask &= _alignmentMenuMasks[cClass];
 	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0);
 
 	_vm->_mouseX = _vm->_mouseY = 0;

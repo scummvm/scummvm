@@ -189,14 +189,14 @@ void Screen_Eob::loadEobBitmap(const char *file, const uint8 *ditheringData, int
 	}
 }
 
-uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool flag) {
+uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4bitEncoding) {
 	uint8 *shp = 0;
 	uint16 shapesize = 0;
 
 	uint8 *srcPage = getPagePtr(_curPage) + y * 320 + (x << 3);
 	uint8 *src = srcPage;
 
-	if (flag) {
+	if (no4bitEncoding) {
 		uint16 h1 = h;
 		while (h1--) {
 			uint8 *lineEnd = src + (w << 3);
@@ -237,19 +237,20 @@ uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool flag
 			uint8 *lineEnd = src + (w << 3);
 			do {
 				uint8 val = *src++;
-				if (!val) {
-					*dst++ = val;
+				if (!val) {				
+					*dst++ = 0;
 					uint8 *startZeroPos = src;
+
 					while (src != lineEnd && *src == 0)
 						src++;
 
 					uint16 numZero = src - startZeroPos + 1;
 					if (numZero >> 8) {
-						numZero -= 0xff;
-						*dst++ = 0xff;
+						*dst++ = 255;
 						*dst++ = 0;
+						numZero -= 255;
 					}
-					val = (numZero & 0xff);
+					val = numZero & 0xff;
 				}
 				*dst++ = val;
 			} while (src != lineEnd);
@@ -384,7 +385,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		if (dX < 0) {
 			width += dX;
 			d = -dX;
-			if ((flags & 1))
+			if (flags & 1)
 				src -= (d >> 1);
 			else
 				src += (d >> 1);
@@ -415,7 +416,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 		dY = 320 - width;
 		width >>= 1;
 		w2 >>= 1;
-		if ((flags & 1))
+		if (flags & 1)
 			src += (w2 - 1);
 
 		int16 w1shr = width;
@@ -431,7 +432,7 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			w1shr++;
 
 		int lineSrcStep = (w2 - w1shr);
-		if ((flags & 1))
+		if (flags & 1)
 			lineSrcStep = w3 - lineSrcStep;
 
 		while (dH--) {
@@ -503,20 +504,12 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 				return;
 			d = -d;
 
-			for (int ii = 0; ii < d; ii++) {
+			for (int i = 0; i < d; i++) {
 				marginLeft = width;
-				int i = 0;
-				do {
-					for (i = 0; i < marginLeft; i++)
-						if (!*src++)
-							break;
-
-					if (!*(src-1) || i < marginLeft)
+				for (int ii = 0; ii < marginLeft; ii++) {
+					if (!*src++)
 						marginLeft = marginLeft + 1 - *src++;
-					else
-						marginLeft = 0;
-
-				} while (marginLeft);
+				}
 			}
             dY = _dsY1;
 		}
@@ -552,25 +545,40 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			marginRight = w2 - marginLeft - width;
 		}
 
-		dst += (y * 320 + dX);
+		dst += (dY * 320 + dX);
 		uint8 * dstL = dst;
 
 		if (pageNum == 0 || pageNum == 1)
 			addDirtyRect(rX, rY, rW, rH);
 
 		while (dH--) {
-			int16 xpos = (int16) marginLeft;
+			int16 xpos = (int16) marginLeft;			
+
+			if (flags & 1) {				
+				for (int i = 0; i < w2; i++) {
+					if (*src++ == 0) {
+						i += (*src - 1);
+						src += (*src - 1);
+					}
+				}
+				src--;
+			}
+			const uint8 *src2 = src;
 
 			if (xpos) {
 				do {
-					while (*src && xpos) {
-						src++;
+					uint8 val = (flags & 1) ? *(src - 1) : *src;
+					while (val && xpos) {
+						src += pixelStep;
 						xpos--;
+						val = (flags & 1) ? *(src - 1) : *src;
 					}
 
-					if (!*src) {
-						uint8 bt = *++src;
-						src++;
+					val = (flags & 1) ? *(src - 1) : *src;
+					if (!val) {
+						src += pixelStep;
+						uint8 bt = (flags & 1) ? src[1] : src[0];
+						src += pixelStep;
 						xpos = xpos - bt;
 					}
 				} while (xpos > 0);
@@ -580,28 +588,36 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 			xpos += width;
 
 			while (xpos > 0) {
-				uint8 c = *src++;
+				uint8 c = *src;
+				uint8 m = (flags & 1) ? *(src - 1) : c;
+				src += pixelStep;
 
-				if (c) {
+				if (m) {
 					drawShapeSetPixel(dst++, c);
 					xpos--;
 				} else {
-					dst += *src;
-					xpos -= *src++;
+					uint8 len = (flags & 1) ? src[1] : src[0];
+					dst += len;
+					xpos -= len;
+					src += pixelStep;
 				}
 			}
 			xpos += marginRight;
 
 			if (xpos) {
 				do {
-					while (*src && xpos) {
-						src++;
+					uint8 val = (flags & 1) ? *(src - 1) : *src;
+					while (val && xpos) {
+						src += pixelStep;
 						xpos--;
+						val = (flags & 1) ? *(src - 1) : *src;
 					}
 
-					if (!*src) {
-						uint8 bt = *++src;
-						src++;
+					val = (flags & 1) ? *(src - 1) : *src;
+					if (!val) {
+						src += pixelStep;
+						uint8 bt = (flags & 1) ? src[1] : src[0];
+						src += pixelStep;
 						xpos = xpos - bt;
 					}
 				} while (xpos > 0);
@@ -609,6 +625,8 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 
 			dstL += 320;
 			dst = dstL;
+			if (flags & 1)			
+				src = src2 + 1;
 		}
 	}
 }
@@ -707,7 +725,7 @@ void Screen_Eob::setGfxParameters(int x, int y, int col) {
 	_gfxCol = col;
 }
 
-void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize) {
+void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize) {
 	int ymin = 0;
 	int ymax = _gfxMaxY[scale];
 	int xmin = -100;
@@ -735,20 +753,20 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 	int16 *ptr7 = (int16*)&_dsTempPage[1500];
 	int16 *ptr8 = (int16*)&_dsTempPage[1800];
 
-	if (numSteps > 150)
-		numSteps = 150;
+	if (numElements > 150)
+		numElements = 150;
 
-	for (int i = 0; i < numSteps; i++) {
+	for (int i = 0; i < numElements; i++) {
 		ptr2[i] = ptr3[i] = 0;
 		ptr4[i] = _vm->_rnd.getRandomNumberRng(0, radius) - (radius >> 1);
 		ptr5[i] = _vm->_rnd.getRandomNumberRng(0, radius) - (radius >> 1) - (radius >> (8 - aspectRatio));
-		ptr7[i] = _vm->_rnd.getRandomNumberRng(1024/stepSize, 2048/stepSize);
+		ptr7[i] = _vm->_rnd.getRandomNumberRng(1024 / stepSize, 2048 / stepSize);
 		ptr8[i] = scale << 8;
 	}
 
 	for (int l = 2; l;) {
 		if (l != 2) {
-			for (int i = numSteps - 1; i >= 0; i--) {
+			for (int i = numElements - 1; i >= 0; i--) {
 				uint32 end = _system->getMillis() + 1;
 				int16 px = ((ptr2[i] >> 6) >> scale) + gx2;
 				int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
@@ -760,7 +778,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 						updateScreen();
 						uint32 cur = _system->getMillis();
 						if (end > cur)
-						_system->delayMillis(end - cur);
+							_system->delayMillis(end - cur);
 					}
 				}
 			}			
@@ -768,7 +786,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 
 		l = 0;
 
-		for (int i = 0; i < numSteps; i++) {
+		for (int i = 0; i < numElements; i++) {
 			uint32 end = _system->getMillis() + 1;
 			if (ptr4[i] <= 0)
 				ptr4[i]++;
@@ -805,7 +823,7 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 						updateScreen();
 						uint32 cur = _system->getMillis();
 						if (end > cur)
-						_system->delayMillis(end - cur);
+							_system->delayMillis(end - cur);
 					}
 				}
 			} else {
@@ -817,12 +835,157 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize
 	showMouse();
 }
 
+void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize) {
+	int16 *xCoords = (int16*)_dsTempPage;
+	int16 *yCoords = (int16*)&_dsTempPage[300];
+	int16 *xMod = (int16*)&_dsTempPage[600];
+	int16 *yMod = (int16*)&_dsTempPage[900];
+	int16 *pixBackup = (int16*)&_dsTempPage[1200];
+	int16 *colTableStep = (int16*)&_dsTempPage[1500];
+	int16 *colTableIndex = (int16*)&_dsTempPage[1800];
+	int16 *pixDelay = (int16*)&_dsTempPage[2100];
+
+	hideMouse();
+	int cp = _curPage;
+
+	if (numElements > 150)
+		numElements = 150;
+
+	int cx = 88;
+	int cy = 48;
+	radius <<= 6;
+
+	for (int i = 0; i < numElements; i++) {
+		int16 v38 = _vm->_rnd.getRandomNumberRng(radius >> 2, radius);
+		int16 stepSum = 0;
+		int16 sqsum = 0;
+		while (sqsum < v38) {
+			stepSum += stepSize;
+			sqsum += stepSum;
+		}
+
+		switch (_vm->_rnd.getRandomNumber(255) & 3) {
+		case 0:
+			xCoords[i] = 32;
+			yCoords[i] = sqsum;
+			xMod[i] = stepSum;
+			yMod[i] = 0;
+			break;
+
+		case 1:
+			xCoords[i] = sqsum;
+			yCoords[i] = 32;
+			xMod[i] = 0;
+			yMod[i] = stepSum;
+			break;
+
+		case 2:
+			xCoords[i] = 32;
+			yCoords[i] = -sqsum;
+			xMod[i] = stepSum;
+			yMod[i] = 0;
+			break;
+
+		default:
+			xCoords[i] = -sqsum;
+			yCoords[i] = 32;
+			xMod[i] = 0;
+			yMod[i] = stepSum;
+			break;
+		}
+
+		if (_vm->_rnd.getRandomBit()) {
+			xMod[i] *= -1;
+			yMod[i] *= -1;
+		}
+
+		colTableStep[i] = _vm->_rnd.getRandomNumberRng(1024 / disorder, 2048 / disorder);
+		colTableIndex[i] = 0;
+		pixDelay[i] = _vm->_rnd.getRandomNumberRng(0, disorder >> 2);
+	}
+
+	int d = 0;
+	for (int i = 2; i; ) {
+		if (i != 2) {
+			uint32 nextDelay = _system->getMillis() + 1;
+			for (int ii = numElements - 1; ii >= 0; ii--) {
+				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
+				int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
+				setPagePixel(0, px, py, pixBackup[ii]);
+		
+				if (ii % 15 == 0)  {
+					updateScreen();
+					uint32 cur = _system->getMillis();
+					if (nextDelay > cur)
+						_system->delayMillis(nextDelay - cur);
+					nextDelay += 1;
+				}
+			}
+		}
+
+		i = 0;
+		int r = (stepSize >> 1) + (stepSize >> 2) + (stepSize >> 3);
+		uint32 nextDelay2 = _system->getMillis() + 1;
+
+		for (int ii = 0; ii < numElements; ii++) {
+			if (pixDelay[ii] == 0) {
+				if (xCoords[ii] > 0) {
+					xMod[ii] -= ((xMod[ii] > 0) ? stepSize : r);
+				} else {
+					xMod[ii] += ((xMod[ii] < 0) ? stepSize : r);
+				}
+
+				if (yCoords[ii] > 0) {
+					yMod[ii] -= ((yMod[ii] > 0) ? stepSize : r);
+				} else {
+					yMod[ii] += ((yMod[ii] < 0) ? stepSize : r);
+				}
+
+				xCoords[ii] += xMod[ii];
+				yCoords[ii] += yMod[ii];
+				colTableIndex[ii] += colTableStep[ii];
+
+			} else {
+				pixDelay[ii]--;
+			}
+
+			int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
+			int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
+
+			uint8 tc1 =  ((disorder >> 2) <= d) ? getPagePixel(2, px, py) : 0;
+			pixBackup[ii] = getPagePixel(0, px, py);
+			uint8 tblIndex = CLIP(colTableIndex[ii] >> 8, 0, colorTableSize - 1);
+			uint8 tc2 = colorTable[tblIndex];
+
+			if (tc2) {
+				i = 1;
+				if (tc1 == _gfxCol && !pixDelay[ii]) {
+					setPagePixel(0, px, py, tc2);
+					if (ii % 15 == 0)  {
+						updateScreen();
+						uint32 cur = _system->getMillis();
+						if (nextDelay2 > cur)
+							_system->delayMillis(nextDelay2 - cur);
+						nextDelay2 += 1;
+					}
+				}
+			} else {
+				colTableStep[ii] = 0;
+			}
+		}
+		d++;
+	}
+
+	_curPage = cp;
+	showMouse();
+}
+
 void Screen_Eob::fadeTextColor(Palette *pal, int color1, int rate) {
 	uint8 *col = pal->getData();
 
 	for (bool loop = true; loop; ) {
 		loop = true;
-		uint32 end = _system->getMillis() + 16;
+		uint32 end = _system->getMillis() + 1;
 
 		loop = false;
 		for (int ii = 0; ii < 3; ii++) {

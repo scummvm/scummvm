@@ -133,6 +133,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_activeSpellCharId = 0;
 	_activeSpellCharacterPos = 0;
 	_activeSpell = 0;
+	_characterSpellTarget = 0;
 	_returnAfterSpellCallback = false;
 	_spells = 0;
 	_spellAnimBuffer = 0;
@@ -446,6 +447,9 @@ void EobCoreEngine::runLoop() {
 		checkPartyStatus(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
+
+		if (!_runFlag)
+			break;
 
 		_timer->update();
 		updateScriptTimers();
@@ -1499,10 +1503,6 @@ int EobCoreEngine::countResurrectionCandidates() {
 }
 
 void EobCoreEngine::seq_portal() {
-	releaseDoorShapes();
-	releaseMonsterShapes(0, 36);
-	releaseDecorations();
-
 	uint8 *shapes1[5];
 	uint8 *shapes2[5];
 	uint8 *shapes3[5];
@@ -1686,7 +1686,7 @@ int EobCoreEngine::closeDistanceAttack(int charIndex, Item item) {
 			flg |= 1;
 
 		_dstMonsterIndex = r;
-		return calcCloseDistanceMonsterDamage(&_monsters[r], charIndex, item, 1, flg, 5, 3);
+		return calcMonsterDamage(&_monsters[r], charIndex, item, 1, flg, 5, 3);
 	}
 
 	return 0;
@@ -1770,38 +1770,38 @@ void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool g
 		m->dest = _currentBlock;
 }
 
-void EobCoreEngine::calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType) {
-	int dmg = calcCloseDistanceMonsterDamage(m, times, pips, offs, flags, b, damageType);
+void EobCoreEngine::calcAndInflictMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
+	int dmg = calcMonsterDamage(m, times, pips, offs, flags, savingThrowType, savingThrowEffect);
 	if (dmg > 0)
 		inflictMonsterDamage(m, dmg, flags & 0x800 ? true : false);
 }
 
-void EobCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flg, int a, int damageType) {
-	int dmg = calcCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flg, a, damageType);
+void EobCoreEngine::calcAndInflictCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
+	int dmg = calcCharacterDamage(charIndex, times, itemOrPips, useStrModifierOrBase, flags, savingThrowType, savingThrowEffect);
 	if (dmg)
 		inflictCharacterDamage(charIndex, dmg);
 }
 
-int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flg, int a, int damageType) {
-	int s = (flg & 0x100) ? calcDamageModifers(times, 0, itemOrPips, _items[itemOrPips].type, useStrModifierOrBase) : rollDice(times, itemOrPips, useStrModifierOrBase);
+int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips, int useStrModifierOrBase, int flags, int savingThrowType, int savingThrowEffect) {
+	int s = (flags & 0x100) ? calcDamageModifers(times, 0, itemOrPips, _items[itemOrPips].type, useStrModifierOrBase) : rollDice(times, itemOrPips, useStrModifierOrBase);
 	EobCharacter *c = &_characters[charIndex];
 
-	if (a != 5) {
-		if (checkMonsterLevelConstModifiers(c, _charClassModUnk[c->cClass], c->level[0], a, c->raceSex))
-			s = recalcDamageModifier(damageType, s);
+	if (savingThrowType != 5) {
+		if (trySavingThrow(c, _charClassModUnk[c->cClass], c->level[0], savingThrowType, c->raceSex))
+			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
-	if ((flg & 0x110) == 0x110) {
+	if ((flags & 0x110) == 0x110) {
 		if (!calcDamageCheckItemType(_items[itemOrPips].type))
 			s = 1;
 	}
 
-	if (flg & 4) {
+	if (flags & 4) {
 		if (checkInventoryForRings(charIndex, 3))
 			s = 0;
 	}
 
-	if (flg & 0x400) {
+	if (flags & 0x400) {
 		if (c->effectFlags & 0x2000)
 			s = 0;
 		else
@@ -2016,14 +2016,14 @@ void EobCoreEngine::monsterSpellCast(EobMonsterInPlay *m, int type) {
 	snd_processEnvironmentalSoundEffect(_spells[_magicFlightObjectProperties[type << 2]].sound, m->block);
 }
 
-void EobCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int a, uint32 effectDuration, int restoreEvent, int noRefresh) {
+void EobCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const char *attackStatusString, int savingThrowType, uint32 effectDuration, int restoreEvent, int noRefresh) {
 	EobCharacter *c = &_characters[charIndex];
 	if ((c->flags & attackStatusFlags) && noRefresh)
 		return;
 	if (!testCharacter(charIndex, 3))
 		return;
 
-	if (a != 5 && specialAttackConstTest(charIndex, a))
+	if (savingThrowType != 5 && specialAttackSavingThrow(charIndex, savingThrowType))
 		return;
 
 	if (attackStatusFlags & 8) {
@@ -2045,13 +2045,13 @@ void EobCoreEngine::statusAttack(int charIndex, int attackStatusFlags, const cha
 	_txt->printMessage(_characterStatusStrings13[0], -1, c->name, attackStatusString);
 }
 
-int EobCoreEngine::calcCloseDistanceMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int b, int damageType) {
+int EobCoreEngine::calcMonsterDamage(EobMonsterInPlay *m, int times, int pips, int offs, int flags, int savingThrowType, int savingThrowEffect) {
 	int s = flags & 0x100 ? calcDamageModifers(times, m, pips, _items[pips].type, offs) : rollDice(times, pips, offs);
 	EobMonsterProperty *p = &_monsterProps[m->type];
 
-	if (b == 5) {
-		if (checkMonsterLevelConstModifiers(m, 0, p->level, b, 6))
-			s = recalcDamageModifier(damageType, s);
+	if (savingThrowType != 5) {
+		if (trySavingThrow(m, 0, p->level, savingThrowType, 6))
+			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
 	if ((flags & 0x110) == 0x110) {
@@ -2110,14 +2110,14 @@ int EobCoreEngine::calcDamageModifers(int charIndex, EobMonsterInPlay *m, int it
 	return (s < 0) ? 0 : s;
 }
 
-bool EobCoreEngine::checkMonsterLevelConstModifiers(void *target, int hpModifier, int level, int b, int race) {
+bool EobCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int type, int race) {
 	static const int8 constMod[] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5 };
 
-	if (b == 5)
+	if (type == 5)
 		return false;
 
-	int s = getConstModifierTableValue(hpModifier, level, b);
-	if (((race == 3 || race == 5) && (b == 4 || b == 1 || b == 0)) || (race == 4 && (b == 4 || b == 1))) {
+	int s = getConstModifierTableValue(hpModifier, level, type);
+	if (((race == 3 || race == 5) && (type == 4 || type == 1 || type == 0)) || (race == 4 && (type == 4 || type == 1))) {
 		EobCharacter *c = (EobCharacter*)target;
 		s -= constMod[c->constitutionCur];
 	}
@@ -2125,8 +2125,8 @@ bool EobCoreEngine::checkMonsterLevelConstModifiers(void *target, int hpModifier
 	return rollDice(1, 20) < s ? false : true;
 }
 
-bool EobCoreEngine::specialAttackConstTest(int charIndex, int b) {
-	return checkMonsterLevelConstModifiers(&_characters[charIndex], _charClassModUnk[_characters[charIndex].cClass], _characters[charIndex].level[0], b, _characters[charIndex].raceSex >> 1);
+bool EobCoreEngine::specialAttackSavingThrow(int charIndex, int type) {
+	return trySavingThrow(&_characters[charIndex], _charClassModUnk[_characters[charIndex].cClass], _characters[charIndex].level[0], type, _characters[charIndex].raceSex >> 1);
 }
 
 int EobCoreEngine::getConstModifierTableValue(int hpModifier, int level, int b) {
@@ -2144,14 +2144,14 @@ bool EobCoreEngine::calcDamageCheckItemType(int itemType) {
 	return (itemType == 2 || itemType == 3) ? true : false;
 }
 
-int EobCoreEngine::recalcDamageModifier(int damageType, int dmgModifier) {
-	if (damageType == 3)
+int EobCoreEngine::savingThrowReduceDamage(int savingThrowEffect, int damage) {
+	if (savingThrowEffect == 3)
 		return 0;
 
-	if (damageType == 0 || damageType == 1)
-		return dmgModifier >> 1;
+	if (savingThrowEffect == 0 || savingThrowEffect == 1)
+		return damage >> 1;
 
-	return dmgModifier;
+	return damage;
 }
 
 bool EobCoreEngine::tryMonsterAttackEvasion(EobMonsterInPlay *m) {

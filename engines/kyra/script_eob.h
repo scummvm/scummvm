@@ -42,9 +42,9 @@ public:
 	void loadData(const uint8 *data, uint32 dataSize);
 	void run(int func, int sub);
 
-	void setFlag(int flag);
-	void clearFlag(int flag);
-	bool checkFlag(int flag) const;
+	void setFlags(uint32 flags);
+	void clearFlags(uint32 flags);
+	bool checkFlags(uint32 flags) const;
 	bool preventRest() const;
 
 	void loadState(Common::SeekableSubReadStreamEndian &in);
