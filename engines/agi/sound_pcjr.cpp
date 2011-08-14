@@ -102,7 +102,7 @@ const int8 dissolveDataV3[] = {
 };
 
 
-SoundGenPCJr::SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
+SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 	_chanAllocated = 10240; // preallocate something which will most likely fit
 	_chanData = (int16 *)malloc(_chanAllocated << 1);
 
@@ -207,7 +207,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				attenuation += _vm->getvar(vVolume);
+				attenuation += _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 17;
 				if (attenuation > 0x0F)
 					attenuation = 0x0F;
 			}

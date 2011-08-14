@@ -49,7 +49,6 @@ public:
 		return _gameId;
 	}
 
-	//SoundMgr *_sound;
 	PictureMgr *_picture;
 	PreAGI_Console *_console;
 	GUI::Debugger *getDebugger() { return _console; }

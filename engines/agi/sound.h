@@ -71,7 +71,7 @@ class SoundMgr;
 
 class SoundGen {
 public:
-	SoundGen(AgiEngine *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
+	SoundGen(AgiBase *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
 		_sampleRate = pMixer->getOutputRate();
 	}
 
@@ -80,7 +80,7 @@ public:
 	virtual void play(int resnum) = 0;
 	virtual void stop(void) = 0;
 
-	AgiEngine *_vm;
+	AgiBase *_vm;
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -133,7 +133,7 @@ protected:
 class SoundMgr {
 
 public:
-	SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer);
+	SoundMgr(AgiBase *agi, Audio::Mixer *pMixer);
 	~SoundMgr();
 
 	void setVolume(uint8 volume);
@@ -149,7 +149,7 @@ public:
 
 private:
 	int _endflag;
-	AgiEngine *_vm;
+	AgiBase *_vm;
 
 	SoundGen *_soundGen;
 

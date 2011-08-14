@@ -789,6 +789,8 @@ public:
 	AgiGame _game;
 	Common::RandomSource *_rnd;
 
+	SoundMgr *_sound;
+
 	Mouse _mouse;
 
 	bool _noSaveLoadAllowed;
@@ -899,7 +901,6 @@ public:
 	char _lastSentence[40];
 
 	SpritesMgr *_sprites;
-	SoundMgr *_sound;
 	PictureMgr *_picture;
 	AgiLoader *_loader;	// loader
 

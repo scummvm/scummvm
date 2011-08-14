@@ -177,7 +177,7 @@ void SoundMgr::soundIsFinished() {
 	_endflag = -1;
 }
 
-SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_vm = agi;
 	_endflag = -1;
 	_playingSound = -1;

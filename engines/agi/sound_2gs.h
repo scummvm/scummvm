@@ -215,7 +215,7 @@ private:
 
 class SoundGen2GS : public SoundGen, public Audio::AudioStream {
 public:
-	SoundGen2GS(AgiEngine *vm, Audio::Mixer *pMixer);
+	SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer);
 	~SoundGen2GS();
 
 	void play(int resnum);
