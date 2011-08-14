@@ -186,9 +186,15 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	// If a second extrapath is specified on the app domain level, add that as well.
+	// However, since the default hasKey() and get() check the app domain level,
+	// verify that it's not already there before adding it. The search manager will
+	// check for that too, so this check is mostly to avoid a warning message.
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
-		dir = Common::FSNode(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
-		SearchMan.addDirectory(dir.getPath(), dir);
+		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
+		if (!SearchMan.hasArchive(extraPath)) {
+			dir = Common::FSNode(extraPath);
+			SearchMan.addDirectory(dir.getPath(), dir);
+		}
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
