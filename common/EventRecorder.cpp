@@ -22,6 +22,7 @@
 
 #include "common/EventRecorder.h"
 
+#include "common/bufferedstream.h"
 #include "common/config-manager.h"
 #include "common/random.h"
 #include "common/savefile.h"
@@ -171,8 +172,8 @@ void EventRecorder::init() {
 	if (_recordMode == kRecorderRecord) {
 		_recordCount = 0;
 		_recordTimeCount = 0;
-		_recordFile = g_system->getSavefileManager()->openForSaving(_recordTempFileName);
-		_recordTimeFile = g_system->getSavefileManager()->openForSaving(_recordTimeFileName);
+		_recordFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(_recordTempFileName), 128 * 1024);
+		_recordTimeFile = wrapBufferedWriteStream(g_system->getSavefileManager()->openForSaving(_recordTimeFileName), 128 * 1024);
 		_recordSubtitles = ConfMan.getBool("subtitles");
 	}
 
@@ -181,8 +182,8 @@ void EventRecorder::init() {
 	if (_recordMode == kRecorderPlayback) {
 		_playbackCount = 0;
 		_playbackTimeCount = 0;
-		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordFileName);
-		_playbackTimeFile = g_system->getSavefileManager()->openForLoading(_recordTimeFileName);
+		_playbackFile = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(_recordFileName), 128 * 1024, DisposeAfterUse::YES);
+		_playbackTimeFile = wrapBufferedSeekableReadStream(g_system->getSavefileManager()->openForLoading(_recordTimeFileName), 128 * 1024, DisposeAfterUse::YES);
 
 		if (!_playbackFile) {
 			warning("Cannot open playback file %s. Playback was switched off", _recordFileName.c_str());
