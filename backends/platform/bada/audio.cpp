@@ -51,7 +51,9 @@ AudioThread::AudioThread() :
 Audio::MixerImpl *AudioThread::Construct(OSystem *system) {
 	logEntered();
 
-	if (IsFailed(Thread::Construct(THREAD_TYPE_EVENT_DRIVEN))) {
+	if (IsFailed(Thread::Construct(THREAD_TYPE_EVENT_DRIVEN,
+																 DEFAULT_STACK_SIZE,
+																 THREAD_PRIORITY_HIGH))) {
 		AppLog("Failed to create AudioThread");
 		return null;
 	}
@@ -135,6 +137,12 @@ bool AudioThread::OnStart(void) {
 	}
 
 	int sampleRate = _mixer->getOutputRate();
+
+	// ideally we would update _mixer with GetOptimizedSampleRate here
+	if (_audioOut->GetOptimizedSampleRate() != sampleRate) {
+		AppLog("Non optimal sample rate %d", _audioOut->GetOptimizedSampleRate());
+	}
+
 	if (IsFailed(_audioOut->Prepare(AUDIO_TYPE_PCM_S16_LE,
 																 AUDIO_CHANNEL_TYPE_STEREO,
 																 sampleRate))) {
