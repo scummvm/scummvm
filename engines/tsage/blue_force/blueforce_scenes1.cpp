@@ -78,7 +78,7 @@ void BF_Scene100::Action1::setTextStrings(const Common::String &msg1, const Comm
 	_sceneText1._color2 = _globals->_fontColors.foreground;
 	_sceneText1._color3 = _globals->_fontColors.background;
 	_sceneText1.setup(msg1);
-	_sceneText1.setFrame2(-1);
+	_sceneText1.fixPriority(-1);
 	_sceneText1.setPosition(Common::Point(
 		(SCREEN_WIDTH - _sceneText1.getFrame().getBounds().width()) / 2, 202));
 	_sceneText1._moveRate = 30;
@@ -92,7 +92,7 @@ void BF_Scene100::Action1::setTextStrings(const Common::String &msg1, const Comm
 	_sceneText2._color2 = _globals->_fontColors.foreground;
 	_sceneText2._color3 = _globals->_fontColors.background;
 	_sceneText2.setup(msg1);
-	_sceneText2.setFrame2(-1);
+	_sceneText2.fixPriority(-1);
 	GfxSurface textSurface = _sceneText2.getFrame();
 	_sceneText2.setPosition(Common::Point((SCREEN_WIDTH - textSurface.getBounds().width()) / 2, 202));
 	_sceneText2._moveRate = 30;
@@ -223,8 +223,8 @@ void BF_Scene109::Action1::signal() {
 		scene->_protaginist1.show();
 		scene->_bartender.show();
 		scene->_object1.show();
-		scene->_object6.show();
-		scene->_object6.setAction(&scene->_action3);
+		scene->_drunk.show();
+		scene->_drunk.setAction(&scene->_action3);
 		scene->_object2.show();
 		scene->_object9.show();
 		scene->_object9.setAction(&scene->_action2);
@@ -233,30 +233,37 @@ void BF_Scene109::Action1::signal() {
 		setDelay(60);
 		break;
 	case 4:
+		// Start drinking
 		scene->_bartender.setAction(&scene->_sequenceManager4, NULL, 109, &scene->_bartender, &scene->_object2, NULL);
 		scene->_protaginist1.setAction(&scene->_sequenceManager5, NULL, 107, &scene->_protaginist1, NULL);
 		scene->_protaginist2.setAction(&scene->_sequenceManager6, this, 106, &scene->_protaginist2, NULL);
 		break;
 	case 5:
-		scene->setAction(&scene->_sequenceManager6, this, 105, &scene->_object10, NULL);
+		// Open briefcase and pass over disk
+		setAction(&scene->_sequenceManager6, this, 105, &scene->_object10, NULL);
 		break;
 	case 6:
+		// Protaginist 2 walk to the bar
 		scene->_object10.remove();
-		scene->setAction(&scene->_sequenceManager6, this, 100, &scene->_object10, NULL);
+		setAction(&scene->_sequenceManager6, this, 100, &scene->_protaginist2, NULL);
 		break;
 	case 7:
+		// Two thugs enter and walk to table
 		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 103, &scene->_object7, NULL);
 		scene->_object5.setAction(&scene->_sequenceManager8, this, 102, &scene->_object5, NULL);
 		scene->_protaginist2.setAction(&scene->_sequenceManager6, NULL, 104, &scene->_protaginist2, &scene->_bartender, NULL);
 		break;
 	case 8:
-		scene->setAction(&scene->_sequenceManager8, this, 101, &scene->_object5, &scene->_protaginist1, NULL);
+		// Protaginist 1 leaves, protaginist 2 stands up
+		setAction(&scene->_sequenceManager8, this, 101, &scene->_object5, &scene->_protaginist1, NULL);
 		break;
 	case 9:
+		// Shots fired!
 		scene->_protaginist1.setAction(&scene->_sequenceManager5, this, 98, &scene->_protaginist1, NULL);
 		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 99, &scene->_object7, NULL);
 		break;
 	case 10:
+		// End scene
 		scene->_sceneMode = 1;
 		remove();
 		break;
@@ -270,7 +277,7 @@ void BF_Scene109::Action2::signal() {
 
 void BF_Scene109::Action3::signal() {
 	BF_Scene109 *scene = (BF_Scene109 *)BF_GLOBALS._sceneManager._scene;
-	scene->setAction(&scene->_sequenceManager3, this, 108, &scene->_object6, NULL);
+	scene->setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -338,7 +345,7 @@ void BF_Scene109::postInit(SceneObjectList *OwnerList) {
 	_protaginist2.postInit();
 	_protaginist2.setVisage(119);
 	_protaginist2.setFrame(11);
-	_protaginist2.setFrame2(133);
+	_protaginist2.fixPriority(133);
 	_protaginist2.setPosition(Common::Point(165, 124));
 	_protaginist2.hide();
 
@@ -346,7 +353,7 @@ void BF_Scene109::postInit(SceneObjectList *OwnerList) {
 	_protaginist1.setVisage(118);
 	_protaginist1.setStrip(1);
 	_protaginist1.setFrame(8);
-	_protaginist1.setFrame2(132);
+	_protaginist1.fixPriority(132);
 	_protaginist1.setPosition(Common::Point(143, 125));
 	_protaginist1.hide();
 
@@ -366,13 +373,13 @@ void BF_Scene109::postInit(SceneObjectList *OwnerList) {
 	_object1.setPosition(Common::Point(110, 64));
 	_object1.hide();
 
-	_object6.postInit();
-	_object6.setVisage(120);
-	_object6.setStrip(2);
-	_object6.setFrame(5);
-	_object6.setPriority(-1);
-	_object6.setPosition(Common::Point(127, 97));
-	_object6.hide();
+	_drunk.postInit();
+	_drunk.setVisage(120);
+	_drunk.setStrip(2);
+	_drunk.setFrame(5);
+	_drunk.setPriority(-1);
+	_drunk.setPosition(Common::Point(127, 97));
+	_drunk.hide();
 
 	_object2.postInit();
 	_object2.setVisage(121);
@@ -399,7 +406,7 @@ void BF_Scene109::postInit(SceneObjectList *OwnerList) {
 	_object10.hide();
 
 	BF_GLOBALS._player.disableControl();
-	setAction(&_action1);
+	setAction(&_action1, this);
 }
 
 void BF_Scene109::signal() {

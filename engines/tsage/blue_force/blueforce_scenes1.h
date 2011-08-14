@@ -101,7 +101,7 @@ public:
 	SequenceManager _sequenceManager4, _sequenceManager5, _sequenceManager6;
 	SequenceManager _sequenceManager7, _sequenceManager8;
 	SceneObject _object1, _object2, _protaginist2, _protaginist1, _object5;
-	SceneObject _object6, _object7, _bartender, _object9, _object10;
+	SceneObject _drunk, _object7, _bartender, _object9, _object10;
 	Text _text;
 	BlueAnimatedSpeaker _speaker;
 	Action1 _action1;
