@@ -54,14 +54,30 @@ public:
 	GfxBase();
 	virtual ~GfxBase() { ; }
 
+	/**
+	 * Creates a render-context.
+	 *
+	 * @param screenW		the width of the context
+	 * @param screenH		the height of the context
+	 * @param fullscreen	true if fullscreen is desired, false otherwise.
+	 */
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
+	/**
+	 *	Query whether the current context is hardware-accelerated
+	 *
+	 * @return true if hw-accelerated, false otherwise
+	 */
 	virtual bool isHardwareAccelerated() = 0;
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
 	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
 
 	virtual void clearScreen() = 0;
+
+	/**
+	 *	Swap the buffers, making the drawn screen visible
+	 */
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
@@ -91,8 +107,40 @@ public:
 	virtual void selectMaterial(const Texture *material) = 0;
 	virtual void destroyMaterial(Texture *material) = 0;
 
+	/**
+	 * Prepares a bitmap for drawing
+	 * performs any format conversions needed for the renderer,
+	 * and might create an internal representation of the bitmap
+	 * external changes to the bitmap may not be visible after this
+	 * is called. Must be called before drawBitmap can be used.
+	 *
+	 * the external bitmap might have its data changed by this function,
+	 *
+	 * @param bitmap	the bitmap to be prepared
+	 * @see destroyBitmap
+	 * @see drawBitmap
+	 */
 	virtual void createBitmap(BitmapData *bitmap) = 0;
+
+	/**
+	 * Draws a bitmap
+	 * before this is safe to use, createBitmap MUST have been called
+	 *
+	 * @param bitmap	the bitmap to be drawn
+	 * @see createBitmap
+	 * @see destroyBitmap
+	 */
 	virtual void drawBitmap(const Bitmap *bitmap) = 0;
+
+	/**
+	 * Deletes any internal references and representations of a bitmap
+	 * after this is called, it is safe to dispose of or change the external
+	 * bitmapdata.
+	 *
+	 * @param bitmap	the bitmap to be destroyed
+	 * @see createBitmap
+	 * @see drawBitmap
+	 */
 	virtual void destroyBitmap(BitmapData *bitmap) = 0;
 
 	virtual void createFont(Font *font) = 0;
@@ -105,8 +153,15 @@ public:
 	virtual Bitmap *getScreenshot(int w, int h) = 0;
 	virtual void storeDisplay() = 0;
 	virtual void copyStoredToDisplay() = 0;
+
+	/**
+	 * Dims the entire screen
+	 * Sets the entire screen to 10% of its current brightness,
+	 * and converts it to grayscale.
+	 */
 	virtual void dimScreen() = 0;
 	virtual void dimRegion(int x, int y, int w, int h, float level) = 0;
+
 	/**
 	 * Draw a completely opaque Iris around the specified rectangle.
 	 * the arguments specify the distance from the screen-edge to the first
@@ -124,8 +179,22 @@ public:
 	virtual void drawLine(PrimitiveObject *primitive) = 0;
 	virtual void drawPolygon(PrimitiveObject *primitive) = 0;
 
+	/**
+	 * Prepare a SMUSH-frame for drawing
+	 * performing any necessary conversion
+	 *
+	 * @see drawSmushFrame
+	 * @see releaseSmushFrame
+	 */
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
+
+	/**
+	 * Release the currently prepared SMUSH-frame, if one exists.
+	 *
+	 * @see drawSmushFrame
+	 * @see prepareSmushFrame
+	 */
 	virtual void releaseSmushFrame() = 0;
 
 	virtual const char *getVideoDeviceName() = 0;
