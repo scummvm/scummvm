@@ -63,9 +63,12 @@ void PreAgiEngine::initialize() {
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
-	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK))) {
+	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_PCJR))) {
 	case MT_PCSPK:
 		_soundemu = SOUND_EMU_PC;
+		break;
+	case MT_PCJR:
+		_soundemu = SOUND_EMU_PCJR;
 		break;
 	default:
 		_soundemu = SOUND_EMU_NONE;
@@ -89,9 +92,8 @@ void PreAgiEngine::initialize() {
 	}
 
 	_gfx = new GfxMgr(this);
-	//_sound = new SoundMgr(this, _mixer);
+	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
-	//_sprites = new SpritesMgr(this, _gfx);
 
 	_gfx->initMachine();
 
@@ -111,7 +113,7 @@ void PreAgiEngine::initialize() {
 	_game.lineMinPrint = 0; // hardcoded
 
 	_gfx->initVideo();
-	//_sound->initSound();
+	_sound->initSound();
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,

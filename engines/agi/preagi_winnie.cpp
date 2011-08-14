@@ -1110,9 +1110,56 @@ void Winnie::drawRoomPic() {
 }
 
 bool Winnie::playSound(ENUM_WTP_SOUND iSound) {
-	//TODO
-	warning ("STUB: playSound(%d)", iSound);
-	return 1;
+	// TODO: Only DOS sound is supported, currently
+	if (_vm->getPlatform() != Common::kPlatformPC) {
+		warning("STUB: playSound(%d)", iSound);
+		return false;
+	}
+
+	Common::String fileName = Common::String::format(IDS_WTP_SND_DOS, iSound);
+
+	Common::File file;
+	if (!file.open(fileName))
+		return false;
+
+	uint32 size = file.size();
+	byte *data = new byte[size];
+	file.read(data, size);
+	file.close();
+
+	_vm->_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, *_vm->_sound, _vm->_soundemu);
+	_vm->_sound->startSound(0, 0);
+
+	bool cursorShowing = CursorMan.showMouse(false);
+	_vm->_system->updateScreen();
+
+	// Loop until the sound is done
+	bool skippedSound = false;
+	while (!_vm->shouldQuit() && _vm->_game.sounds[0]->isPlaying()) {
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				_vm->_sound->stopSound();
+				skippedSound = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_vm->_system->delayMillis(10);
+	}
+
+	if (cursorShowing) {
+		CursorMan.showMouse(true);
+		_vm->_system->updateScreen();
+	}
+
+	delete _vm->_game.sounds[0];
+	_vm->_game.sounds[0] = 0;
+
+	return !_vm->shouldQuit() && !skippedSound;
 }
 
 void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
