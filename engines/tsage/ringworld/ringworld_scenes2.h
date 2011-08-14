@@ -30,7 +30,9 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
+
+using namespace tSage;
 
 class Scene1000 : public Scene {
 	/* Actions */
@@ -144,6 +146,6 @@ public:
 
 
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld
 
 #endif

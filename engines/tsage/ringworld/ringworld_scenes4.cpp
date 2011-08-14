@@ -26,7 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 3500 - Ringworld Scan
@@ -247,4 +247,4 @@ void Scene3700::postInit(tSage::SceneObjectList *OwnerList) {
 	_globals->_soundHandler.play(195);
 }
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld

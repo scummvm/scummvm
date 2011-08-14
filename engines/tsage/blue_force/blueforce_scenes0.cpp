@@ -25,15 +25,15 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace tSage_BlueForce {
 
 /*--------------------------------------------------------------------------
  * Scene 20 - Tsunami Title Screen
  *
  *--------------------------------------------------------------------------*/
 
-void BF_Scene20::Action1::signal() {
-	BF_Scene20 *scene = (BF_Scene20 *)BF_GLOBALS._sceneManager._scene;
+void Scene20::Action1::signal() {
+	Scene20 *scene = (Scene20 *)BF_GLOBALS._sceneManager._scene;
 	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
@@ -116,7 +116,7 @@ void BF_Scene20::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void BF_Scene20::postInit(SceneObjectList *OwnerList) {
+void Scene20::postInit(SceneObjectList *OwnerList) {
 	loadScene(20);
 	Scene::postInit();
 	setZoomPercents(60, 85, 200, 100);
@@ -191,4 +191,4 @@ void BF_Scene20::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1);
 }
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce

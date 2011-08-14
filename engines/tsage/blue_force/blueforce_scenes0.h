@@ -32,9 +32,11 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace tSage_BlueForce {
 
-class BF_Scene20 : public SceneExt {
+using namespace tSage;
+
+class Scene20 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
 	private:
@@ -51,6 +53,6 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce
 
 #endif

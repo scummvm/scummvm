@@ -32,9 +32,11 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace tSage_BlueForce {
 
-class BF_Scene100: public Scene {
+using namespace tSage;
+
+class Scene100: public Scene {
 	/* Actions */
 	class Action1: public ActionExt {
 	private:
@@ -62,12 +64,12 @@ public:
 	SceneObjectExt2 _object1, _object2, _object3, _object4, _object5;
 	int _index;
 
-	BF_Scene100();
+	Scene100();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
 
-class BF_Scene109: public GameScene {
+class Scene109: public GameScene {
 	/* Actions */
 	class Action1: public Action {
 	public:
@@ -107,12 +109,12 @@ public:
 	Action1 _action1;
 	Action _action2, _action3;
 public:
-	BF_Scene109();
+	Scene109();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 };
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce
 
 #endif

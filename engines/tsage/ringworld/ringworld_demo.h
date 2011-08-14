@@ -30,7 +30,9 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
+
+using namespace tSage;
 
 class RingworldDemoGame: public Game {
 private:
@@ -54,6 +56,6 @@ public:
 	virtual void signal();
 };
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld
 
 #endif

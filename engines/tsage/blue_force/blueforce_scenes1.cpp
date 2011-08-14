@@ -27,14 +27,14 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace tSage_BlueForce {
 
 /*--------------------------------------------------------------------------
  * Scene 100 - Tsunami Title Screen #2
  *
  *--------------------------------------------------------------------------*/
 
-void BF_Scene100::Action1::signal() {
+void Scene100::Action1::signal() {
 	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
@@ -69,7 +69,7 @@ void BF_Scene100::Action1::signal() {
 	}
 }
 
-void BF_Scene100::Action1::setTextStrings(const Common::String &msg1, const Common::String &msg2, Action *action) {
+void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common::String &msg2, Action *action) {
 	// Set data for first text control
 	_sceneText1._fontNumber = 10;
 	_sceneText1._width = 160;
@@ -106,8 +106,8 @@ void BF_Scene100::Action1::setTextStrings(const Common::String &msg1, const Comm
 	_sceneText1.addMover(mover, &pt, action); 
 }
 
-void BF_Scene100::Action2::signal() {
-	BF_Scene100 *scene = (BF_Scene100 *)_globals->_sceneManager._scene;
+void Scene100::Action2::signal() {
+	Scene100 *scene = (Scene100 *)_globals->_sceneManager._scene;
 	static byte black[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
@@ -147,11 +147,11 @@ void BF_Scene100::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-BF_Scene100::BF_Scene100(): Scene() {
+Scene100::Scene100(): Scene() {
 	_index = 0;
 }
 
-void BF_Scene100::postInit(SceneObjectList *OwnerList) {
+void Scene100::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._scenePalette.loadPalette(2);
 	BF_GLOBALS._v51C44 = 1;
 	Scene::postInit();
@@ -178,7 +178,7 @@ void BF_Scene100::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(60, 85, 200, 100);
 }
 
-void BF_Scene100::signal() {
+void Scene100::signal() {
 	++_sceneMode;
 	if (BF_GLOBALS._v4CEA2 < 6) {
 		BF_GLOBALS._scenePalette.clearListeners();
@@ -197,8 +197,8 @@ void BF_Scene100::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void BF_Scene109::Action1::signal() {
-	BF_Scene109 *scene = (BF_Scene109 *)BF_GLOBALS._sceneManager._scene;
+void Scene109::Action1::signal() {
+	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -270,25 +270,25 @@ void BF_Scene109::Action1::signal() {
 	}
 }
 
-void BF_Scene109::Action2::signal() {
-	BF_Scene109 *scene = (BF_Scene109 *)BF_GLOBALS._sceneManager._scene;
+void Scene109::Action2::signal() {
+	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
 	scene->setAction(&scene->_sequenceManager2, this, 3117, &scene->_object9, NULL);
 }
 
-void BF_Scene109::Action3::signal() {
-	BF_Scene109 *scene = (BF_Scene109 *)BF_GLOBALS._sceneManager._scene;
+void Scene109::Action3::signal() {
+	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
 	scene->setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
 
-BF_Scene109::Text::Text(): SceneText() {
+Scene109::Text::Text(): SceneText() {
 	_action = NULL;
 	_frameNumber = 0;
 	_diff = 0;
 }
 
-void BF_Scene109::Text::setup(const Common::String &msg, Action *action) {
+void Scene109::Text::setup(const Common::String &msg, Action *action) {
 	_frameNumber = BF_GLOBALS._events.getFrameNumber();
 	_diff = 180;
 	_action = action;
@@ -309,14 +309,14 @@ void BF_Scene109::Text::setup(const Common::String &msg, Action *action) {
 	_position.y = _bounds.top;
 }
 
-void BF_Scene109::Text::synchronize(Serializer &s) {
+void Scene109::Text::synchronize(Serializer &s) {
 	SceneText::synchronize(s);
 	SYNC_POINTER(_action);
 	s.syncAsUint32LE(_frameNumber);
 	s.syncAsSint16LE(_diff);
 }
 
-void BF_Scene109::Text::dispatch() {
+void Scene109::Text::dispatch() {
 	if (_diff) {
 		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
 		if (_frameNumber < frameNumber) {
@@ -335,10 +335,10 @@ void BF_Scene109::Text::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
-BF_Scene109::BF_Scene109(): GameScene() {
+Scene109::Scene109(): GameScene() {
 }
 
-void BF_Scene109::postInit(SceneObjectList *OwnerList) {
+void Scene109::postInit(SceneObjectList *OwnerList) {
 	GameScene::postInit(OwnerList);
 	loadScene(999);
 
@@ -409,11 +409,11 @@ void BF_Scene109::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1, this);
 }
 
-void BF_Scene109::signal() {
+void Scene109::signal() {
 	if (_sceneMode == 1) {
 		BF_GLOBALS._scenePalette.clearListeners();
 		BF_GLOBALS._sceneManager.changeScene(110);
 	}
 }
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce

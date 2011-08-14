@@ -26,7 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 2000 - Cockpit cutscenes
@@ -6130,4 +6130,4 @@ void Scene2400::postInit(SceneObjectList *OwnerList) {
 	_globals->_soundHandler.play(153);
 }
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld

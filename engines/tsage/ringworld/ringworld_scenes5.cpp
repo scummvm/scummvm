@@ -26,7 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 4000 - Village
@@ -4438,4 +4438,4 @@ void Scene4301::dispatch() {
 	}
 }
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld

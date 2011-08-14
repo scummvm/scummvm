@@ -27,7 +27,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace tSage_BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
@@ -41,17 +41,17 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	/* Scene Group #0 */
 	case 20:
 		// Tsunami Title Screen
-		return new BF_Scene20();
+		return new Scene20();
 	case 50:
 	case 60:
 		error("Scene group 0 not implemented");
 	/* Scene Group #1 */
 	case 100:
 		// Tsnunami Title Screen #2
-		return new BF_Scene100();
+		return new Scene100();
 	case 109:
 		// Introduction Bar Room
-		return new BF_Scene109();
+		return new Scene109();
 	case 110:
 	case 114:
 	case 115:
@@ -247,4 +247,4 @@ void GameScene::remove() {
 }
 
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce

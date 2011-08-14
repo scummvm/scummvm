@@ -31,7 +31,9 @@
 
 #define BF_INTERFACE_Y 168
 
-namespace tSage {
+namespace tSage_BlueForce {
+
+using namespace tSage;
 
 class BlueForceGame: public Game {
 public:
@@ -87,6 +89,6 @@ public:
 };
 
 
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce
 
 #endif

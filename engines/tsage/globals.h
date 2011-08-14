@@ -96,6 +96,21 @@ public:
 	void dispatchSounds();
 };
 
+extern Globals *_globals;
+
+#define GLOBALS (*_globals)
+#define BF_GLOBALS (*((BlueForceGlobals *)_globals))
+
+// Note: Currently this can't be part of the _globals structure, since it needs to be constructed
+// prior to many of the fields in Globals execute their constructors
+extern ResourceManager *_resourceManager;
+
+} // end of namespace tSage
+
+namespace tSage_BlueForce {
+
+using namespace tSage;
+
 class BlueForceGlobals: public Globals {
 public:
 	ASound _sound1, _sound2, _sound3;
@@ -112,15 +127,6 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-extern Globals *_globals;
-
-#define GLOBALS (*_globals)
-#define BF_GLOBALS (*((BlueForceGlobals *)_globals))
-
-// Note: Currently this can't be part of the _globals structure, since it needs to be constructed
-// prior to many of the fields in Globals execute their constructors
-extern ResourceManager *_resourceManager;
-
-} // End of namespace tSage
+} // End of namespace tSage_BlueForce
 
 #endif

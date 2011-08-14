@@ -28,7 +28,9 @@
 #include "tsage/converse.h"
 #include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace tSage_Ringworld {
+
+using namespace tSage;
 
 class Scene4000 : public Scene {
 	/* Actions */
@@ -688,6 +690,6 @@ public:
 };
 
 
-} // End of namespace tSage
+} // End of namespace tSage_Ringworld
 
 #endif
