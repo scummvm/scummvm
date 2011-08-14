@@ -31,7 +31,7 @@ int AgiEngine::checkPosition(VtEntry *v) {
 			v->xPos + v->xSize > _WIDTH ||
 			v->yPos - v->ySize + 1 < 0 ||
 			v->yPos >= _HEIGHT ||
-			((~v->flags & IGNORE_HORIZON) && v->yPos <= _game.horizon)) {
+			((~v->flags & fIgnoreHorizon) && v->yPos <= _game.horizon)) {
 		debugC(4, kDebugLevelSprites, "check position failed: x=%d, y=%d, h=%d, w=%d",
 				v->xPos, v->yPos, v->xSize, v->ySize);
 		return 0;
@@ -52,14 +52,14 @@ int AgiEngine::checkPosition(VtEntry *v) {
 int AgiEngine::checkCollision(VtEntry *v) {
 	VtEntry *u;
 
-	if (v->flags & IGNORE_OBJECTS)
+	if (v->flags & fIgnoreObjects)
 		return 0;
 
 	for (u = _game.viewTable; u < &_game.viewTable[MAX_VIEWTABLE]; u++) {
-		if ((u->flags & (ANIMATED | DRAWN)) != (ANIMATED | DRAWN))
+		if ((u->flags & (fAnimated | fDrawn)) != (fAnimated | fDrawn))
 			continue;
 
-		if (u->flags & IGNORE_OBJECTS)
+		if (u->flags & fIgnoreObjects)
 			continue;
 
 		// Same object, check next
@@ -92,7 +92,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 	int i, trigger, water, pass, pri;
 	uint8 *p0;
 
-	if (~v->flags & FIXED_PRIORITY) {
+	if (~v->flags & fFixedPriority) {
 		// Priority bands
 		v->priority = _game.priTable[v->yPos];
 	}
@@ -129,7 +129,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 		water = 0;
 
 		if (pri == 1) {	// conditional blue
-			if (v->flags & IGNORE_BLOCKS)
+			if (v->flags & fIgnoreBlocks)
 				continue;
 
 			debugC(4, kDebugLevelSprites, "Blocks observed!");
@@ -145,9 +145,9 @@ int AgiEngine::checkPriority(VtEntry *v) {
 	}
 
 	if (pass) {
-		if (!water && v->flags & ON_WATER)
+		if (!water && v->flags & fOnWater)
 			pass = 0;
-		if (water && v->flags & ON_LAND)
+		if (water && v->flags & fOnLand)
 			pass = 0;
 	}
 
@@ -180,7 +180,7 @@ void AgiEngine::updatePosition() {
 	_game.vars[vBorderTouchObj] = 0;
 
 	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
-		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) != (ANIMATED | UPDATE | DRAWN)) {
+		if ((v->flags & (fAnimated | fUpdate | fDrawn)) != (fAnimated | fUpdate | fDrawn)) {
 			continue;
 		}
 
@@ -195,7 +195,7 @@ void AgiEngine::updatePosition() {
 		y = oldY = v->yPos;
 
 		// If object has moved, update its position
-		if (~v->flags & UPDATE_POS) {
+		if (~v->flags & fUpdatePos) {
 			int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 			int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 			x += v->stepSize * dx[v->direction];
@@ -212,7 +212,7 @@ void AgiEngine::updatePosition() {
 		} else if (x <= 0 && getVersion() == 0x3086) {	// KQ4
 			x = 0;	// See Sarien bug #590462
 			border = 4;
-		} else if (v->entry == 0 && x == 0 && v->flags & ADJ_EGO_XY) {
+		} else if (v->entry == 0 && x == 0 && v->flags & fAdjEgoXY) {
 			// Extra test to walk west clicking the mouse
 			x = 0;
 			border = 4;
@@ -228,7 +228,7 @@ void AgiEngine::updatePosition() {
 		} else if (y > _HEIGHT - 1) {
 			y = _HEIGHT - 1;
 			border = 3;
-		} else if ((~v->flags & IGNORE_HORIZON) && y <= _game.horizon) {
+		} else if ((~v->flags & fIgnoreHorizon) && y <= _game.horizon) {
 			debugC(4, kDebugLevelSprites, "y = %d, horizon = %d", y, _game.horizon);
 			y = _game.horizon + 1;
 			border = 1;
@@ -251,12 +251,12 @@ void AgiEngine::updatePosition() {
 				_game.vars[vBorderCode] = v->entry;
 				_game.vars[vBorderTouchObj] = border;
 			}
-			if (v->motion == MOTION_MOVE_OBJ) {
+			if (v->motion == kMotionMoveObj) {
 				inDestination(v);
 			}
 		}
 
-		v->flags &= ~UPDATE_POS;
+		v->flags &= ~fUpdatePos;
 	}
 }
 
@@ -276,7 +276,7 @@ void AgiEngine::fixPosition(int n) {
 	debugC(4, kDebugLevelSprites, "adjusting view table entry #%d (%d,%d)", n, v->xPos, v->yPos);
 
 	// test horizon
-	if ((~v->flags & IGNORE_HORIZON) && v->yPos <= _game.horizon)
+	if ((~v->flags & fIgnoreHorizon) && v->yPos <= _game.horizon)
 		v->yPos = _game.horizon + 1;
 
 	dir = 0;

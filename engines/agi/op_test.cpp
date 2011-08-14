@@ -188,7 +188,7 @@ void condUnknown13(AgiGame *state, uint8 *p) {
 	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 	// TODO: Check this command's implementation using disassembly just to be sure.
-	int ec = state->viewTable[0].flags & ADJ_EGO_XY;
+	int ec = state->viewTable[0].flags & fAdjEgoXY;
 	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
 	state->testResult = ec;
 }

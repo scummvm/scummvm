@@ -257,7 +257,7 @@ bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
 	if (~agi->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
-	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN);
+	return (v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn);
 }
 
 /**
@@ -268,7 +268,7 @@ bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
 	if (~vm->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
-	return (v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | DRAWN);
+	return (v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fDrawn);
 }
 
 /**
@@ -332,7 +332,7 @@ void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) 
 	for (v = _vm->_game.viewTable; v < &_vm->_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((*test)(v, _vm)) {
 			entry[i] = v;
-			yVal[i] = v->flags & FIXED_PRIORITY ? prioToY(v->priority) : v->yPos;
+			yVal[i] = v->flags & fFixedPriority ? prioToY(v->priority) : v->yPos;
 			i++;
 		}
 	}
@@ -407,13 +407,13 @@ void SpritesMgr::commitSprites(SpriteList &l, bool immediate) {
 			continue;
 
 		if (s->v->xPos == s->v->xPos2 && s->v->yPos == s->v->yPos2) {
-			s->v->flags |= DIDNT_MOVE;
+			s->v->flags |= fDidntMove;
 			continue;
 		}
 
 		s->v->xPos2 = s->v->xPos;
 		s->v->yPos2 = s->v->yPos;
-		s->v->flags &= ~DIDNT_MOVE;
+		s->v->flags &= ~fDidntMove;
 	}
 }
 

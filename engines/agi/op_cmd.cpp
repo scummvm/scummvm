@@ -209,39 +209,39 @@ void cmdDiscardView(AgiGame *state, uint8 *p) {
 }
 
 void cmdObjectOnAnything(AgiGame *state, uint8 *p) {
-	vt.flags &= ~(ON_WATER | ON_LAND);
+	vt.flags &= ~(fOnWater | fOnLand);
 }
 
 void cmdObjectOnLand(AgiGame *state, uint8 *p) {
-	vt.flags |= ON_LAND;
+	vt.flags |= fOnLand;
 }
 
 void cmdObjectOnWater(AgiGame *state, uint8 *p) {
-	vt.flags |= ON_WATER;
+	vt.flags |= fOnWater;
 }
 
 void cmdObserveHorizon(AgiGame *state, uint8 *p) {
-	vt.flags &= ~IGNORE_HORIZON;
+	vt.flags &= ~fIgnoreHorizon;
 }
 
 void cmdIgnoreHorizon(AgiGame *state, uint8 *p) {
-	vt.flags |= IGNORE_HORIZON;
+	vt.flags |= fIgnoreHorizon;
 }
 
 void cmdObserveObjs(AgiGame *state, uint8 *p) {
-	vt.flags &= ~IGNORE_OBJECTS;
+	vt.flags &= ~fIgnoreObjects;
 }
 
 void cmdIgnoreObjs(AgiGame *state, uint8 *p) {
-	vt.flags |= IGNORE_OBJECTS;
+	vt.flags |= fIgnoreObjects;
 }
 
 void cmdObserveBlocks(AgiGame *state, uint8 *p) {
-	vt.flags &= ~IGNORE_BLOCKS;
+	vt.flags &= ~fIgnoreBlocks;
 }
 
 void cmdIgnoreBlocks(AgiGame *state, uint8 *p) {
-	vt.flags |= IGNORE_BLOCKS;
+	vt.flags |= fIgnoreBlocks;
 }
 
 void cmdSetHorizon(AgiGame *state, uint8 *p) {
@@ -253,7 +253,7 @@ void cmdGetPriority(AgiGame *state, uint8 *p) {
 }
 
 void cmdSetPriority(AgiGame *state, uint8 *p) {
-	vt.flags |= FIXED_PRIORITY;
+	vt.flags |= fFixedPriority;
 	vt.priority = p1;
 
 	// WORKAROUND: this fixes bug #1712585 in KQ4 (dwarf sprite priority)
@@ -270,18 +270,18 @@ void cmdSetPriority(AgiGame *state, uint8 *p) {
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
 	if (getGameID() == GID_KQ4 && vt.currentView == 152) {
-		state->viewTable[19].flags |= FIXED_PRIORITY;
+		state->viewTable[19].flags |= fFixedPriority;
 		state->viewTable[19].priority = 7;
 	}
 }
 
 void cmdSetPriorityF(AgiGame *state, uint8 *p) {
-	vt.flags |= FIXED_PRIORITY;
+	vt.flags |= fFixedPriority;
 	vt.priority = _v[p1];
 }
 
 void cmdReleasePriority(AgiGame *state, uint8 *p) {
-	vt.flags &= ~FIXED_PRIORITY;
+	vt.flags &= ~fFixedPriority;
 }
 
 void cmdSetUpperLeft(AgiGame *state, uint8 *p) {				// do nothing (AGI 2.917)
@@ -316,13 +316,13 @@ void cmdSetCel(AgiGame *state, uint8 *p) {
 	state->_vm->setCel(&vt, p1);
 
 	if (getVersion() >= 0x2000) {
-		vt.flags &= ~DONTUPDATE;
+		vt.flags &= ~fDontupdate;
 	}
 }
 
 void cmdSetCelF(AgiGame *state, uint8 *p) {
 	state->_vm->setCel(&vt, _v[p1]);
-	vt.flags &= ~DONTUPDATE;
+	vt.flags &= ~fDontupdate;
 }
 
 void cmdSetView(AgiGame *state, uint8 *p) {
@@ -346,11 +346,11 @@ void cmdNumberOfLoops(AgiGame *state, uint8 *p) {
 }
 
 void cmdFixLoop(AgiGame *state, uint8 *p) {
-	vt.flags |= FIX_LOOP;
+	vt.flags |= fFixLoop;
 }
 
 void cmdReleaseLoop(AgiGame *state, uint8 *p) {
-	vt.flags &= ~FIX_LOOP;
+	vt.flags &= ~fFixLoop;
 }
 
 void cmdStepSize(AgiGame *state, uint8 *p) {
@@ -366,21 +366,21 @@ void cmdCycleTime(AgiGame *state, uint8 *p) {
 }
 
 void cmdStopCycling(AgiGame *state, uint8 *p) {
-	vt.flags &= ~CYCLING;
+	vt.flags &= ~fCycling;
 }
 
 void cmdStartCycling(AgiGame *state, uint8 *p) {
-	vt.flags |= CYCLING;
+	vt.flags |= fCycling;
 }
 
 void cmdNormalCycle(AgiGame *state, uint8 *p) {
-	vt.cycle = CYCLE_NORMAL;
-	vt.flags |= CYCLING;
+	vt.cycle = kCycleNormal;
+	vt.flags |= fCycling;
 }
 
 void cmdReverseCycle(AgiGame *state, uint8 *p) {
-	vt.cycle = CYCLE_REVERSE;
-	vt.flags |= CYCLING;
+	vt.cycle = kCycleReverse;
+	vt.flags |= fCycling;
 }
 
 void cmdSetDir(AgiGame *state, uint8 *p) {
@@ -540,16 +540,16 @@ void cmdObjStatusF(AgiGame *state, uint8 *p) {
 
 	// Generate cycle description line
 	switch (vt_v.cycle) {
-	case CYCLE_NORMAL:
+	case kCycleNormal:
 		cycleDesc = "normal cycle";
 		break;
-	case CYCLE_END_OF_LOOP:
+	case kCycleEndOfLoop:
 		cycleDesc = "end of loop";
 		break;
-	case CYCLE_REV_LOOP:
+	case kCycleRevLoop:
 		cycleDesc = "reverse loop";
 		break;
-	case CYCLE_REVERSE:
+	case kCycleReverse:
 		cycleDesc = "reverse cycle";
 		break;
 	default:
@@ -559,16 +559,16 @@ void cmdObjStatusF(AgiGame *state, uint8 *p) {
 
 	// Generate motion description line
 	switch (vt_v.motion) {
-	case MOTION_NORMAL:
+	case kMotionNormal:
 		motionDesc = "normal motion";
 		break;
-	case MOTION_WANDER:
+	case kMotionWander:
 		motionDesc = "wandering";
 		break;
-	case MOTION_FOLLOW_EGO:
+	case kMotionFollowEgo:
 		motionDesc = "following ego";
 		break;
-	case MOTION_MOVE_OBJ:
+	case kMotionMoveObj:
 		// Amiga's Gold Rush! most probably uses "move to (x, y)"
 		// here with real values for x and y. The same output
 		// is used when moving the ego around using the mouse.
@@ -655,7 +655,7 @@ void cmdHideMouse(AgiGame *state, uint8 *p) {
 	// to walk somewhere else than to the right using the mouse.
 	// FIXME: Write a proper implementation using disassembly and
 	//        apply it to other games as well if applicable.
-	state->viewTable[0].flags &= ~ADJ_EGO_XY;
+	state->viewTable[0].flags &= ~fAdjEgoXY;
 
 	g_system->showMouse(false);
 }
@@ -705,7 +705,7 @@ void cmdAdjEgoMoveToXY(AgiGame *state, uint8 *p) {
 		// by something else because this command doesn't do any flag manipulations
 		// in the Amiga version - checked it with disassembly).
 		if (x != state->adjMouseX || y != state->adjMouseY)
-			state->viewTable[EGO_VIEW_TABLE].flags &= ~ADJ_EGO_XY;
+			state->viewTable[EGO_VIEW_TABLE].flags &= ~fAdjEgoXY;
 
 		state->adjMouseX = x;
 		state->adjMouseY = y;
@@ -715,7 +715,7 @@ void cmdAdjEgoMoveToXY(AgiGame *state, uint8 *p) {
 	// TODO: Check where (if anywhere) the 0 arguments version is used
 	case 0:
 	default:
-		state->viewTable[0].flags |= ADJ_EGO_XY;
+		state->viewTable[0].flags |= fAdjEgoXY;
 		break;
 	}
 }
@@ -838,22 +838,22 @@ void cmdShowPriScreen(AgiGame *state, uint8 *p) {
 
 void cmdAnimateObj(AgiGame *state, uint8 *p) {
 	if (getVersion() < 0x2000) {
-		if (vt.flags & DIDNT_MOVE)
+		if (vt.flags & fDidntMove)
 			return;
 	} else {
-		if (vt.flags & ANIMATED)
+		if (vt.flags & fAnimated)
 			return;
 	}
 
 	debugC(4, kDebugLevelScripts, "animate vt entry #%d", p0);
-	vt.flags = ANIMATED | UPDATE | CYCLING;
+	vt.flags = fAnimated | fUpdate | fCycling;
 
 	if (getVersion() < 0x2000) {
-		vt.flags |= DIDNT_MOVE;
+		vt.flags |= fDidntMove;
 	}
 
-	vt.motion = MOTION_NORMAL;
-	vt.cycle = CYCLE_NORMAL;
+	vt.motion = kMotionNormal;
+	vt.cycle = kCycleNormal;
 	vt.direction = 0;
 }
 
@@ -861,11 +861,11 @@ void cmdUnanimateAll(AgiGame *state, uint8 *p) {
 	int i;
 
 	for (i = 0; i < MAX_VIEWTABLE; i++)
-		state->viewTable[i].flags &= ~(ANIMATED | DRAWN);
+		state->viewTable[i].flags &= ~(fAnimated | fDrawn);
 }
 
 void cmdDraw(AgiGame *state, uint8 *p) {
-	if (vt.flags & DRAWN)
+	if (vt.flags & fDrawn)
 		return;
 
 	if (vt.ySize <= 0 || vt.xSize <= 0)
@@ -873,7 +873,7 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 
 	debugC(4, kDebugLevelScripts, "draw entry %d", vt.entry);
 
-	vt.flags |= UPDATE;
+	vt.flags |= fUpdate;
 	if (getVersion() >= 0x3000) {
 		state->_vm->setLoop(&vt, vt.currentLoop);
 		state->_vm->setCel(&vt, vt.currentCel);
@@ -884,7 +884,7 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 	vt.yPos2 = vt.yPos;
 	vt.celData2 = vt.celData;
 	state->_vm->_sprites->eraseUpdSprites();
-	vt.flags |= DRAWN;
+	vt.flags |= fDrawn;
 
 	// WORKAROUND: This fixes a bug with AGI Fanmade _game Space Trek.
 	// The original workaround checked if AGI version was <= 2.440, which could
@@ -898,10 +898,10 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 	// games are affected. If yes, then it'd be best to set this for Space
 	// Trek only
 	if (getFeatures() & GF_FANMADE)	// See Sarien bug #546562
-		vt.flags |= ANIMATED;
+		vt.flags |= fAnimated;
 
 	state->_vm->_sprites->blitUpdSprites();
-	vt.flags &= ~DONTUPDATE;
+	vt.flags &= ~fDontupdate;
 
 	state->_vm->_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos, true);
 
@@ -909,16 +909,16 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 }
 
 void cmdErase(AgiGame *state, uint8 *p) {
-	if (~vt.flags & DRAWN)
+	if (~vt.flags & fDrawn)
 		return;
 
 	state->_vm->_sprites->eraseUpdSprites();
 
-	if (vt.flags & UPDATE) {
-		vt.flags &= ~DRAWN;
+	if (vt.flags & fUpdate) {
+		vt.flags &= ~fDrawn;
 	} else {
 		state->_vm->_sprites->eraseNonupdSprites();
-		vt.flags &= ~DRAWN;
+		vt.flags &= ~fDrawn;
 		state->_vm->_sprites->blitNonupdSprites();
 	}
 	state->_vm->_sprites->blitUpdSprites();
@@ -984,7 +984,7 @@ void cmdReposition(AgiGame *state, uint8 *p) {
 	int dx = (int8) _v[p1], dy = (int8) _v[p2];
 
 	debugC(4, kDebugLevelScripts, "dx=%d, dy=%d", dx, dy);
-	vt.flags |= UPDATE_POS;
+	vt.flags |= fUpdatePos;
 
 	if (dx < 0 && vt.xPos < -dx)
 		vt.xPos = 0;
@@ -1002,7 +1002,7 @@ void cmdReposition(AgiGame *state, uint8 *p) {
 void cmdRepositionV1(AgiGame *state, uint8 *p) {
 	vt.xPos2 = vt.xPos;
 	vt.yPos2 = vt.yPos;
-	vt.flags |= UPDATE_POS;
+	vt.flags |= fUpdatePos;
 
 	vt.xPos = (vt.xPos + p1) & 0xff;
 	vt.yPos = (vt.yPos + p2) & 0xff;
@@ -1011,14 +1011,14 @@ void cmdRepositionV1(AgiGame *state, uint8 *p) {
 void cmdRepositionTo(AgiGame *state, uint8 *p) {
 	vt.xPos = p1;
 	vt.yPos = p2;
-	vt.flags |= UPDATE_POS;
+	vt.flags |= fUpdatePos;
 	state->_vm->fixPosition(p0);
 }
 
 void cmdRepositionToF(AgiGame *state, uint8 *p) {
 	vt.xPos = _v[p1];
 	vt.yPos = _v[p2];
-	vt.flags |= UPDATE_POS;
+	vt.flags |= fUpdatePos;
 	state->_vm->fixPosition(p0);
 }
 
@@ -1038,34 +1038,34 @@ void cmdForceUpdate(AgiGame *state, uint8 *p) {
 
 void cmdReverseLoop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
-	vt.cycle = CYCLE_REV_LOOP;
-	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.cycle = kCycleRevLoop;
+	vt.flags |= (fDontupdate | fUpdate | fCycling);
 	vt.parm1 = p1;
 	setflag(p1, false);
 }
 
 void cmdReverseLoopV1(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
-	vt.cycle = CYCLE_REV_LOOP;
+	vt.cycle = kCycleRevLoop;
 	state->_vm->setCel(&vt, 0);
-	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.flags |= (fDontupdate | fUpdate | fCycling);
 	vt.parm1 = p1;
 	vt.parm3 = 0;
 }
 
 void cmdEndOfLoop(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
-	vt.cycle = CYCLE_END_OF_LOOP;
-	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.cycle = kCycleEndOfLoop;
+	vt.flags |= (fDontupdate | fUpdate | fCycling);
 	vt.parm1 = p1;
 	setflag(p1, false);
 }
 
 void cmdEndOfLoopV1(AgiGame *state, uint8 *p) {
 	debugC(4, kDebugLevelScripts, "o%d, f%d", p0, p1);
-	vt.cycle = CYCLE_END_OF_LOOP;
+	vt.cycle = kCycleEndOfLoop;
 	state->_vm->setCel(&vt, 0);
-	vt.flags |= (DONTUPDATE | UPDATE | CYCLING);
+	vt.flags |= (fDontupdate | fUpdate | fCycling);
 	vt.parm1 = p1;
 	vt.parm3 = 0;
 }
@@ -1084,12 +1084,12 @@ void cmdUnblock(AgiGame *state, uint8 *p) {
 }
 
 void cmdNormalMotion(AgiGame *state, uint8 *p) {
-	vt.motion = MOTION_NORMAL;
+	vt.motion = kMotionNormal;
 }
 
 void cmdStopMotion(AgiGame *state, uint8 *p) {
 	vt.direction = 0;
-	vt.motion = MOTION_NORMAL;
+	vt.motion = kMotionNormal;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
 		state->playerControl = false;
@@ -1097,11 +1097,11 @@ void cmdStopMotion(AgiGame *state, uint8 *p) {
 }
 
 void cmdStopMotionV1(AgiGame *state, uint8 *p) {
-	vt.flags &= ~ANIMATED;
+	vt.flags &= ~fAnimated;
 }
 
 void cmdStartMotion(AgiGame *state, uint8 *p) {
-	vt.motion = MOTION_NORMAL;
+	vt.motion = kMotionNormal;
 	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
 		state->playerControl = true;
@@ -1109,12 +1109,12 @@ void cmdStartMotion(AgiGame *state, uint8 *p) {
 }
 
 void cmdStartMotionV1(AgiGame *state, uint8 *p) {
-	vt.flags |= ANIMATED;
+	vt.flags |= fAnimated;
 }
 
 void cmdPlayerControl(AgiGame *state, uint8 *p) {
 	state->playerControl = true;
-	state->viewTable[0].motion = MOTION_NORMAL;
+	state->viewTable[0].motion = kMotionNormal;
 }
 
 void cmdProgramControl(AgiGame *state, uint8 *p) {
@@ -1122,24 +1122,24 @@ void cmdProgramControl(AgiGame *state, uint8 *p) {
 }
 
 void cmdFollowEgo(AgiGame *state, uint8 *p) {
-	vt.motion = MOTION_FOLLOW_EGO;
+	vt.motion = kMotionFollowEgo;
 	vt.parm1 = p1 > vt.stepSize ? p1 : vt.stepSize;
 	vt.parm2 = p2;
 	vt.parm3 = 0xff;
 	
 	if (getVersion() < 0x2000) {
 		_v[p2] = 0;
-		vt.flags |= UPDATE | ANIMATED;
+		vt.flags |= fUpdate | fAnimated;
 	} else {
 		setflag(p2, false);
-		vt.flags |= UPDATE;
+		vt.flags |= fUpdate;
 	}
 }
 
 void cmdMoveObj(AgiGame *state, uint8 *p) {
 	// _D (_D_WARN "o=%d, x=%d, y=%d, s=%d, f=%d", p0, p1, p2, p3, p4);
 
-	vt.motion = MOTION_MOVE_OBJ;
+	vt.motion = kMotionMoveObj;
 	vt.parm1 = p1;
 	vt.parm2 = p2;
 	vt.parm3 = vt.stepSize;
@@ -1150,10 +1150,10 @@ void cmdMoveObj(AgiGame *state, uint8 *p) {
 
 	if (getVersion() < 0x2000) {
 		_v[p4] = 0;
-		vt.flags |= UPDATE | ANIMATED;
+		vt.flags |= fUpdate | fAnimated;
 	} else {
 		setflag(p4, false);
-		vt.flags |= UPDATE;
+		vt.flags |= fUpdate;
 	}
 
 	if (p0 == 0)
@@ -1165,7 +1165,7 @@ void cmdMoveObj(AgiGame *state, uint8 *p) {
 }
 
 void cmdMoveObjF(AgiGame *state, uint8 *p) {
-	vt.motion = MOTION_MOVE_OBJ;
+	vt.motion = kMotionMoveObj;
 	vt.parm1 = _v[p1];
 	vt.parm2 = _v[p2];
 	vt.parm3 = vt.stepSize;
@@ -1175,7 +1175,7 @@ void cmdMoveObjF(AgiGame *state, uint8 *p) {
 		vt.stepSize = _v[p3];
 
 	setflag(p4, false);
-	vt.flags |= UPDATE;
+	vt.flags |= fUpdate;
 
 	if (p0 == 0)
 		state->playerControl = false;
@@ -1189,11 +1189,11 @@ void cmdWander(AgiGame *state, uint8 *p) {
 	if (p0 == 0)
 		state->playerControl = false;
 
-	vt.motion = MOTION_WANDER;
+	vt.motion = kMotionWander;
 	if (getVersion() < 0x2000) {
-		vt.flags |= UPDATE | ANIMATED;
+		vt.flags |= fUpdate | fAnimated;
 	} else {
-		vt.flags |= UPDATE;
+		vt.flags |= fUpdate;
 	}
 }
 
@@ -1357,7 +1357,7 @@ void cmdDistance(AgiGame *state, uint8 *p) {
 	VtEntry *v0 = &state->viewTable[p0];
 	VtEntry *v1 = &state->viewTable[p1];
 
-	if (v0->flags & DRAWN && v1->flags & DRAWN) {
+	if (v0->flags & fDrawn && v1->flags & fDrawn) {
 		x1 = v0->xPos + v0->xSize / 2;
 		y1 = v0->yPos;
 		x2 = v1->xPos + v1->xSize / 2;

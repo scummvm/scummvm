@@ -52,9 +52,9 @@ void AgiEngine::changePos(VtEntry *v) {
 	y += v->stepSize * dy[v->direction];
 
 	if (checkBlock(x, y) == b) {
-		v->flags &= ~MOTION;
+		v->flags &= ~fMotion;
 	} else {
-		v->flags |= MOTION;
+		v->flags |= fMotion;
 		v->direction = 0;
 		if (isEgoView(v))
 			_game.vars[vEgoDir] = 0;
@@ -63,7 +63,7 @@ void AgiEngine::changePos(VtEntry *v) {
 
 void AgiEngine::motionWander(VtEntry *v) {
 	if (v->parm1--) {
-		if (~v->flags & DIDNT_MOVE)
+		if (~v->flags & fDidntMove)
 			return;
 	}
 
@@ -94,14 +94,14 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 	// Already at ego coordinates
 	if (dir == 0) {
 		v->direction = 0;
-		v->motion = MOTION_NORMAL;
+		v->motion = kMotionNormal;
 		setflag(v->parm2, true);
 		return;
 	}
 
 	if (v->parm3 == 0xff) {
 		v->parm3 = 0;
-	} else if (v->flags & DIDNT_MOVE) {
+	} else if (v->flags & fDidntMove) {
 		int d;
 
 		while ((v->direction = _rnd->getRandomNumber(8)) == 0) {
@@ -152,18 +152,20 @@ void AgiEngine::motionMoveObj(VtEntry *v) {
 
 void AgiEngine::checkMotion(VtEntry *v) {
 	switch (v->motion) {
-	case MOTION_WANDER:
+	case kMotionNormal:
+		break;
+	case kMotionWander:
 		motionWander(v);
 		break;
-	case MOTION_FOLLOW_EGO:
+	case kMotionFollowEgo:
 		motionFollowEgo(v);
 		break;
-	case MOTION_MOVE_OBJ:
+	case kMotionMoveObj:
 		motionMoveObj(v);
 		break;
 	}
 
-	if ((_game.block.active && (~v->flags & IGNORE_BLOCKS)) && v->direction)
+	if ((_game.block.active && (~v->flags & fIgnoreBlocks)) && v->direction)
 		changePos(v);
 }
 
@@ -178,7 +180,7 @@ void AgiEngine::checkAllMotions() {
 	VtEntry *v;
 
 	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
-		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) == (ANIMATED | UPDATE | DRAWN)
+		if ((v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)
 				&& v->stepTimeCount == 1) {
 			checkMotion(v);
 		}
@@ -192,11 +194,11 @@ void AgiEngine::checkAllMotions() {
  * @param  v  Pointer to view table entry
  */
 void AgiEngine::inDestination(VtEntry *v) {
-	if (v->motion == MOTION_MOVE_OBJ) {
+	if (v->motion == kMotionMoveObj) {
 		v->stepSize = v->parm3;
 		setflag(v->parm4, true);
 	}
-	v->motion = MOTION_NORMAL;
+	v->motion = kMotionNormal;
 	if (isEgoView(v))
 		_game.playerControl = true;
 }
@@ -204,7 +206,7 @@ void AgiEngine::inDestination(VtEntry *v) {
 /**
  * Wrapper for static function motion_moveobj().
  * This function is used by cmd_move_object() in the first motion cycle
- * after setting the motion mode to MOTION_MOVE_OBJ.
+ * after setting the motion mode to kMotionMoveObj.
  * @param  v  Pointer to view table entry
  */
 void AgiEngine::moveObj(VtEntry *v) {
