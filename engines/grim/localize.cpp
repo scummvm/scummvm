@@ -40,6 +40,8 @@ Localizer::Localizer() {
 	Common::File f;
 	const char *namesToTry[] = { "GRIM.TAB", "Grim.tab", "grim.tab" };
 
+	_data = 0;
+
 	if (g_grim->getGameFlags() & ADGF_DEMO || g_grim->getGameType() == GType_MONKEY4)
 		return;
 
@@ -115,7 +117,8 @@ Common::String Localizer::localize(const char *str) const {
 }
 
 Localizer::~Localizer() {
-	delete[] _data;
+	if (_data)
+		delete[] _data;
 }
 
 } // end of namespace Grim
