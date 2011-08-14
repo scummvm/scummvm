@@ -83,6 +83,7 @@ private:
 	GUI::CheckboxWidget *_transitionsCheckbox;
 	GUI::ButtonWidget *_dropPageButton;
 	GUI::ButtonWidget *_showMapButton;
+	GUI::ButtonWidget *_returnToMenuButton;
 };
 
 #endif

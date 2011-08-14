@@ -343,6 +343,7 @@ Common::Error MohawkEngine_Myst::run() {
 				case Common::KEYCODE_F5:
 					_needsPageDrop = false;
 					_needsShowMap = false;
+					_needsShowDemoMenu = false;
 
 					runDialog(*_optionsDialog);
 
@@ -354,6 +355,11 @@ Common::Error MohawkEngine_Myst::run() {
 					if (_needsShowMap) {
 						_scriptParser->showMap();
 						_needsShowMap = false;
+					}
+
+					if (_needsShowDemoMenu) {
+						changeToStack(kDemoStack, 2002, 0, 0);
+						_needsShowDemoMenu = false;
 					}
 					break;
 				default:
