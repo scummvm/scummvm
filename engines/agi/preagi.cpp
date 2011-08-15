@@ -142,7 +142,7 @@ Common::Error PreAgiEngine::go() {
 	setflag(fSoundOn, true);	// enable sound
 
 //
-// FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
+// FIXME (Fingolfin asks): Why are Mickey and Troll standalone classes
 // instead of being subclasses of PreAgiEngine ?
 //
 
@@ -154,14 +154,6 @@ Common::Error PreAgiEngine::go() {
 			mickey->init();
 			mickey->run();
 			delete mickey;
-		}
-		break;
-	case GID_WINNIE:
-		{
-			Winnie *winnie = new Winnie(this);
-			winnie->init();
-			winnie->run();
-			delete winnie;
 		}
 		break;
 	case GID_TROLL:

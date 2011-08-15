@@ -27,7 +27,7 @@ namespace Agi {
 
 class AgiEngine;
 class PreAgiEngine;
-class Winnie;
+class WinnieEngine;
 class Mickey;
 
 struct AgiDebug {
@@ -93,11 +93,11 @@ private:
 
 class Winnie_Console : public PreAGI_Console {
 public:
-	Winnie_Console(PreAgiEngine *vm, Winnie *winnie);
+	Winnie_Console(WinnieEngine *winnie);
 	virtual ~Winnie_Console() {}
 
 private:
-	Winnie *_winnie;
+	WinnieEngine *_winnie;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
 };

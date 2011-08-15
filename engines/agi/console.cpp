@@ -317,7 +317,7 @@ bool Mickey_Console::Cmd_DrawObj(int argc, const char **argv) {
 	return true;
 }
 
-Winnie_Console::Winnie_Console(PreAgiEngine *vm, Winnie *winnie) : PreAGI_Console(vm) {
+Winnie_Console::Winnie_Console(WinnieEngine *winnie) : PreAGI_Console(winnie) {
 	_winnie = winnie;
 
 	DCmd_Register("curRoom", WRAP_METHOD(Winnie_Console, Cmd_CurRoom));

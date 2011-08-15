@@ -36,6 +36,7 @@
 
 #include "agi/agi.h"
 #include "agi/preagi.h"
+#include "agi/preagi_winnie.h"
 #include "agi/wagparser.h"
 
 
@@ -191,7 +192,10 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
-		*engine = new Agi::PreAgiEngine(syst, gd);
+		if (gd->gameID == GID_WINNIE)
+			*engine = new Agi::WinnieEngine(syst, gd);
+		else
+			*engine = new Agi::PreAgiEngine(syst, gd);
 		break;
 	case Agi::GType_V1:
 	case Agi::GType_V2:

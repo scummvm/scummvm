@@ -281,19 +281,18 @@ struct WTP_SAVE_GAME {
 
 class PreAgiEngine;
 
-class Winnie {
+class WinnieEngine : public PreAgiEngine {
 public:
-	Winnie(PreAgiEngine *vm);
+	WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc);
+	~WinnieEngine();
 
 	void init();
-	void run();
+	Common::Error go();
 
 	void debugCurRoom();
 
 private:
-	PreAgiEngine *_vm;
-
-	WTP_SAVE_GAME _game;
+	WTP_SAVE_GAME _gameStateWinnie;
 	int _room;
 	int	_mist;
 	bool _doWind;
