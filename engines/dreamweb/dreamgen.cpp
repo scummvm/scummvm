@@ -17395,33 +17395,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::copyname() {
-	STACK_CHECK;
-	push(di);
-	findobname();
-	di = pop();
-	es = cs;
-	cx = 28;
-make:
-	_lodsb();
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishmakename;
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishmakename;
-	_stosb();
-	if (--cx)
-		goto make;
-finishmakename:
-	_inc(cx);
-	al = 0;
-	_stosb();
-	return;
-	al = 255;
-	_stosb(cx, true);
-}
-
 void DreamGenContext::showicon() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 50);
@@ -19842,7 +19815,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setwalk: setwalk(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
-		case addr_copyname: copyname(); break;
 		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;

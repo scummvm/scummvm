@@ -1000,28 +1000,42 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamGenContext::findobname() {
-	findobname(ah, al);
+const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
+	if (type == 5) {
+		uint16 i = 64 * 2 * (index & 127);
+		uint16 offset = segRef(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
+		return segRef(data.word(kPeople)).ptr(offset, 0);
+	} else if (type == 4) {
+		uint16 offset = segRef(data.word(kExtras)).word(kExtextdat + index * 2) + kExtext;
+		return segRef(data.word(kExtras)).ptr(offset, 0);
+	} else if (type == 2) {
+		uint16 offset = segRef(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
+		return segRef(data.word(kFreedesc)).ptr(offset, 0);
+	} else if (type == 1) {
+		uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + index * 2) + kSettext;
+		return segRef(data.word(kSetdesc)).ptr(offset, 0);
+	} else {
+		uint16 offset = segRef(data.word(kBlockdesc)).word(kBlocktextdat + index * 2) + kBlocktext;
+		return segRef(data.word(kBlockdesc)).ptr(offset, 0);
+	}
 }
 
-void DreamGenContext::findobname(uint8 type, uint8 index) {
-	if (type == 5) {
-		uint16 offset = 64 * 2 * (index & 127);
-		ds = data.word(kPeople);
-		si = ds.word(kPersontxtdat + offset) + kPersontext;
-	} else if (type == 4) {
-		ds = data.word(kExtras);
-		si = ds.word(kExtextdat + index * 2) + kExtext;
-	} else if (type == 2) {
-		ds = data.word(kFreedesc);
-		si = ds.word(kFreetextdat + index * 2) + kFreetext;
-	} else if (type == 1) {
-		ds = data.word(kSetdesc);
-		si = ds.word(kSettextdat + index * 2) + kSettext;
-	} else {
-		ds = data.word(kBlockdesc);
-		si = ds.word(kBlocktextdat + index * 2) + kBlocktext;
+void DreamGenContext::copyname() {
+	copyname(ah, al, cs.ptr(di, 0));
+}
+
+void DreamGenContext::copyname(uint8 type, uint8 index, uint8 *dst) {
+	const uint8 *src = findobname(type, index);
+	size_t i;
+	for (i = 0; i < 28; ++i) { 
+		char c = src[i];
+		if (c == ':')
+			break;
+		if (c == 0)
+			break;
+		dst[i] = c;
 	}
+	dst[i] = 0;
 }
 
 } /*namespace dreamgen */

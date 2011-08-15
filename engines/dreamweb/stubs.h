@@ -121,6 +121,7 @@
 	void doblocks();
 	void checkifperson();
 	bool checkifperson(uint8 x, uint8 y);
-	void findobname();
-	void findobname(uint8 type, uint8 index);
+	const uint8 *findobname(uint8 type, uint8 index);
+	void copyname();
+	void copyname(uint8 type, uint8 index, uint8 *dst);
 
