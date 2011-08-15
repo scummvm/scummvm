@@ -17422,68 +17422,6 @@ finishmakename:
 	_stosb(cx, true);
 }
 
-void DreamGenContext::findobname() {
-	STACK_CHECK;
-	push(ax);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	ax = pop();
-	_cmp(ah, 5);
-	if (!flags.z())
-		goto notpersonname;
-	push(ax);
-	_and(al, 127);
-	ah = 0;
-	bx = 64*2;
-	_mul(bx);
-	si = ax;
-	ds = data.word(kPeople);
-	_add(si, (0+24));
-	cx = (0+24+(1026*2));
-	ax = ds.word(si);
-	_add(ax, cx);
-	si = ax;
-	ax = pop();
-	return;
-notpersonname:
-	_cmp(ah, 4);
-	if (!flags.z())
-		goto notextraname;
-	ds = data.word(kExtras);
-	_add(bx, (0+2080+30000+(16*114)));
-	ax = ds.word(bx);
-	_add(ax, (0+2080+30000+(16*114)+((114+2)*2)));
-	si = ax;
-	return;
-notextraname:
-	_cmp(ah, 2);
-	if (!flags.z())
-		goto notfreename;
-	ds = data.word(kFreedesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(82*2)));
-	si = ax;
-	return;
-notfreename:
-	_cmp(ah, 1);
-	if (!flags.z())
-		goto notsetname;
-	ds = data.word(kSetdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(130*2)));
-	si = ax;
-	return;
-notsetname:
-	ds = data.word(kBlockdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(98*2)));
-	si = ax;
-}
-
 void DreamGenContext::showicon() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 50);
@@ -19905,7 +19843,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
 		case addr_copyname: copyname(); break;
-		case addr_findobname: findobname(); break;
 		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;

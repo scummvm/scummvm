@@ -1000,4 +1000,28 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 	return false;
 }
 
+void DreamGenContext::findobname() {
+	findobname(ah, al);
+}
+
+void DreamGenContext::findobname(uint8 type, uint8 index) {
+	if (type == 5) {
+		uint16 offset = 64 * 2 * (index & 127);
+		ds = data.word(kPeople);
+		si = ds.word(kPersontxtdat + offset) + kPersontext;
+	} else if (type == 4) {
+		ds = data.word(kExtras);
+		si = ds.word(kExtextdat + index * 2) + kExtext;
+	} else if (type == 2) {
+		ds = data.word(kFreedesc);
+		si = ds.word(kFreetextdat + index * 2) + kFreetext;
+	} else if (type == 1) {
+		ds = data.word(kSetdesc);
+		si = ds.word(kSettextdat + index * 2) + kSettext;
+	} else {
+		ds = data.word(kBlockdesc);
+		si = ds.word(kBlocktextdat + index * 2) + kBlocktext;
+	}
+}
+
 } /*namespace dreamgen */
