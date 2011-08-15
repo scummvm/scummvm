@@ -37,7 +37,9 @@
 #include "tsage/ringworld/ringworld_scenes8.h"
 #include "tsage/ringworld/ringworld_scenes10.h"
 
-namespace tSage_Ringworld {
+namespace tSage {
+
+namespace Ringworld {
 
 Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
@@ -1487,4 +1489,6 @@ void RingworldGame::processEvent(Event &event) {
 	}
 }
 
-} // End of namespace tSage_Ringworld
+} // End of namespace Ringworld
+
+} // End of namespace tSage

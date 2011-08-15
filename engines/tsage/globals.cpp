@@ -103,15 +103,15 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	switch (_vm->getGameID()) {
 	case GType_Ringworld:
 		if (!(_vm->getFeatures() & GF_DEMO)) {
-			_inventory = new tSage_Ringworld::RingworldInvObjectList();
-			_game = new tSage_Ringworld::RingworldGame();
+			_inventory = new Ringworld::RingworldInvObjectList();
+			_game = new Ringworld::RingworldGame();
 		} else {
-			_game = new tSage_Ringworld::RingworldDemoGame();
+			_game = new Ringworld::RingworldDemoGame();
 		}
 		break;
 
 	case GType_BlueForce:
-		_game = new tSage_BlueForce::BlueForceGame();
+		_game = new BlueForce::BlueForceGame();
 		break;
 	}
 }
@@ -167,11 +167,9 @@ void Globals::dispatchSounds() {
 	Common::for_each(_sounds.begin(), _sounds.end(), Globals::dispatchSound);
 }
 
-} // end of namespace tSage
-
 /*--------------------------------------------------------------------------*/
 
-namespace tSage_BlueForce {
+namespace BlueForce {
 
 BlueForceGlobals::BlueForceGlobals(): Globals() {
 	_v51C24 = 0;
@@ -184,4 +182,6 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	error("Sync variables");
 }
 
-} // end of namespace tSage_BlueForce
+} // end of namespace BlueForce
+
+} // end of namespace tSage

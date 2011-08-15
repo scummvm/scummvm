@@ -25,7 +25,9 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage_Ringworld {
+namespace tSage {
+
+namespace Ringworld {
 
 void RingworldDemoGame::start() {
 	// Start the demo's single scene
@@ -117,4 +119,6 @@ void RingworldDemoScene::process(Event &event) {
 
 }
 
-} // End of namespace tSage_Ringworld
+} // End of namespace Ringworld
+
+} // End of namespace tSage

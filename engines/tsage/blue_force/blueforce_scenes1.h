@@ -32,7 +32,9 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage_BlueForce {
+namespace tSage {
+
+namespace BlueForce {
 
 using namespace tSage;
 
@@ -115,6 +117,8 @@ public:
 	virtual void signal();
 };
 
-} // End of namespace tSage_BlueForce
+} // End of namespace BlueForce
+
+} // End of namespace tSage
 
 #endif

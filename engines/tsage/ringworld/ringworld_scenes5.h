@@ -28,7 +28,9 @@
 #include "tsage/converse.h"
 #include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage_Ringworld {
+namespace tSage {
+
+namespace Ringworld {
 
 using namespace tSage;
 
@@ -689,7 +691,8 @@ public:
 	}
 };
 
+} // End of namespace Ringworld
 
-} // End of namespace tSage_Ringworld
+} // End of namespace tSage
 
 #endif

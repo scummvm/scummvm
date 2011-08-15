@@ -30,7 +30,9 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage_Ringworld {
+namespace tSage {
+
+namespace Ringworld {
 
 using namespace tSage;
 
@@ -487,6 +489,8 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-} // End of namespace tSage_Ringworld
+} // End of namespace Ringworld
+
+} // End of namespace tSage
 
 #endif

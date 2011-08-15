@@ -27,7 +27,9 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 
-namespace tSage_BlueForce {
+namespace tSage {
+
+namespace BlueForce {
 
 /*--------------------------------------------------------------------------
  * Scene 100 - Tsunami Title Screen #2
@@ -416,4 +418,6 @@ void Scene109::signal() {
 	}
 }
 
-} // End of namespace tSage_BlueForce
+} // End of namespace BlueForce
+
+} // End of namespace tSage

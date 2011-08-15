@@ -81,7 +81,7 @@ void TSageEngine::initialize() {
 			_resourceManager->addLib("FILES.RLB");
 			_resourceManager->addLib("TSAGE.RLB");
 		}
-		_globals = new tSage_BlueForce::BlueForceGlobals();
+		_globals = new BlueForce::BlueForceGlobals();
 	}
 
 	_globals->gfxManager().setDefaults();

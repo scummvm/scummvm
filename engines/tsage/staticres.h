@@ -62,6 +62,8 @@ extern const char *INV_EMPTY_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
 
+namespace Ringworld {
+
 // Scene specific resources
 extern const char *EXIT_MSG;
 extern const char *SCENE6100_CAREFUL;
@@ -86,6 +88,10 @@ extern const char *EXIT_BTN_STRING;
 extern const char *DEMO_BTN_STRING;
 extern const char *DEMO_RESUME_BTN_STRING;
 
+} // End of namespace Ringworld
+
+namespace BlueForce {
+
 // Blue Force messages
 extern const char *BF_NAME;
 extern const char *BF_COPYRIGHT;
@@ -97,6 +103,7 @@ extern const char *BF_11_YEARS;
 extern const char *BF_NEXT_DAY;
 extern const char *BF_ACADEMY;
 
+} // End of namespace BlueForce
 
 } // End of namespace tSage
 

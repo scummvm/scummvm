@@ -27,7 +27,9 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage_BlueForce {
+namespace tSage {
+
+namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
@@ -246,5 +248,6 @@ void GameScene::remove() {
 	BF_GLOBALS._scenePalette._field412 = 1;
 }
 
+} // End of namespace BlueForce
 
-} // End of namespace tSage_BlueForce
+} // End of namespace tSage

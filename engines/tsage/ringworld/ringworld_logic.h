@@ -29,7 +29,9 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage_Ringworld {
+namespace tSage {
+
+namespace Ringworld {
 
 using namespace tSage;
 
@@ -440,7 +442,7 @@ public:
 	virtual Common::String getClassName() { return "RingworldInvObjectList"; }
 };
 
-#define RING_INVENTORY (*((tSage_Ringworld::RingworldInvObjectList *)_globals->_inventory))
+#define RING_INVENTORY (*((::tSage::Ringworld::RingworldInvObjectList *)_globals->_inventory))
 
 class RingworldGame: public Game {
 protected:
@@ -458,6 +460,8 @@ public:
 	virtual void processEvent(Event &event);
 };
 
-} // End of namespace tSage_Ringworld
+} // End of namespace Ringworld
+
+} // End of namespace tSage
 
 #endif

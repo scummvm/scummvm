@@ -105,9 +105,8 @@ extern Globals *_globals;
 // prior to many of the fields in Globals execute their constructors
 extern ResourceManager *_resourceManager;
 
-} // end of namespace tSage
 
-namespace tSage_BlueForce {
+namespace BlueForce {
 
 using namespace tSage;
 
@@ -127,6 +126,8 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-} // End of namespace tSage_BlueForce
+} // End of namespace BlueForce
+
+} // End of namespace tSage
 
 #endif

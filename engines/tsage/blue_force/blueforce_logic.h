@@ -31,7 +31,9 @@
 
 #define BF_INTERFACE_Y 168
 
-namespace tSage_BlueForce {
+namespace tSage {
+
+namespace BlueForce {
 
 using namespace tSage;
 
@@ -88,7 +90,8 @@ class BlueAnimatedSpeaker: public Speaker {
 public:
 };
 
+} // End of namespace BlueForce
 
-} // End of namespace tSage_BlueForce
+} // End of namespace tSage
 
 #endif
