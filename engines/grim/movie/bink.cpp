@@ -88,7 +88,6 @@ void BinkPlayer::init() {
 void BinkPlayer::deinit() {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 	_binkDecoder->close();
-	_f.close();
 	_surface->free();
 	
 	if (_externalBuffer) {
@@ -153,9 +152,10 @@ bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
 	_y = y;
 	_fname = filename;
 	_fname += ".bik";
-	_f.open(_fname);
-	
-	_binkDecoder->loadStream(&_f);
+
+	if (!_binkDecoder->loadFile(_fname))
+		return false;
+
 	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
 
