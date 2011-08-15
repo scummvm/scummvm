@@ -24,11 +24,29 @@
 #define AGI_PREAGI_H
 
 #include "agi/agi.h"
-#include "agi/preagi_common.h"
 
 #include "audio/softsynth/pcspk.h"
 
 namespace Agi {
+
+// default attributes
+#define IDA_DEFAULT		0x0F
+#define IDA_DEFAULT_REV	0xF0
+
+#define IDI_SND_OSCILLATOR_FREQUENCY	1193180
+#define IDI_SND_TIMER_RESOLUTION		0.0182
+
+#define kColorDefault 0x1337
+
+#define IDI_MAX_ROW_PIC	20
+
+enum SelectionTypes {
+	kSelYesNo,
+	kSelNumber,
+	kSelSpace,
+	kSelAnyKey,
+	kSelBackspace
+};
 
 class PreAgiEngine : public AgiBase {
 	int _gameId;
@@ -36,7 +54,6 @@ class PreAgiEngine : public AgiBase {
 protected:
 	void initialize();
 
-public:
 	void pollTimer() {}
 	int getKeypress() { return 0; }
 	bool isKeypress() { return false; }

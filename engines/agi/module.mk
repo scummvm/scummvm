@@ -25,7 +25,6 @@ MODULE_OBJS := \
 	op_test.o \
 	picture.o \
 	preagi.o \
-	preagi_common.o \
 	preagi_mickey.o \
 	preagi_troll.o \
 	preagi_winnie.o \

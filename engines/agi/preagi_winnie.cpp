@@ -31,6 +31,8 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
+#include "audio/mididrv.h"
+
 namespace Agi {
 
 void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
@@ -1312,6 +1314,22 @@ WinnieEngine::~WinnieEngine() {
 }
 
 void WinnieEngine::init() {
+	// Initialize sound
+
+	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_PCJR))) {
+	case MT_PCSPK:
+		_soundemu = SOUND_EMU_PC;
+		break;
+	case MT_PCJR:
+		_soundemu = SOUND_EMU_PCJR;
+		break;
+	default:
+		_soundemu = SOUND_EMU_NONE;
+		break;
+	}
+
+	_sound = new SoundMgr(this, _mixer);
+	_sound->initSound();
 	setflag(fSoundOn, true); // enable sound
 
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));
