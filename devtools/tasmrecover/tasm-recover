@@ -109,6 +109,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getreelstart',
 	'findobname',
 	'copyname',
+	'commandwithob',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
