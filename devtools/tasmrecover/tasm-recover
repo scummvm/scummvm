@@ -107,6 +107,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'doblocks',
 	'checkifperson',
 	'getreelstart',
+	'findobname',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

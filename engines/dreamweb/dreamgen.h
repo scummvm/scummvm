@@ -115,7 +115,6 @@ public:
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_showicon = 0xca64;
-	static const uint16 addr_findobname = 0xca60;
 	static const uint16 addr_copyname = 0xca5c;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
@@ -1330,7 +1329,7 @@ public:
 	void bresenhams();
 	void getbackfromops();
 	//void frameoutv();
-	void restoreall();
+	void opensarters();
 	void screenupdate();
 	void addlength();
 	void wornerror();
@@ -1339,7 +1338,7 @@ public:
 	void commandonly();
 	void adjustlen();
 	void deallocatemem();
-	void mainscreen();
+	void checkforemm();
 	void watchreel();
 	void showfolder();
 	void turnanypathoff();
@@ -1364,6 +1363,7 @@ public:
 	void usecashcard();
 	void usewall();
 	void opentomb();
+	//void findobname();
 	void buttonfour();
 	void animpointer();
 	//void lockmon();
@@ -1443,7 +1443,6 @@ public:
 	void loadtempcharset();
 	void showbyte();
 	void useslab();
-	//void aboutturn();
 	void usealtar();
 	void createpanel2();
 	void turnonpower();
@@ -1548,7 +1547,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	//void doblocks();
-	void opensarters();
+	void restoreall();
 	void allpalette();
 	void findormake();
 	void nextsymbol();
@@ -1605,7 +1604,7 @@ public:
 	void showpointer();
 	void usecooker();
 	void loadmenu();
-	void checkforemm();
+	//void aboutturn();
 	void checkifpathison();
 	void smallcandle();
 	void receptionist();
@@ -1626,7 +1625,7 @@ public:
 	void putundermenu();
 	void checkifex();
 	void intromagic2();
-	void findobname();
+	void mainscreen();
 	void edeninbath();
 	void intromagic1();
 	void showdiarypage();
