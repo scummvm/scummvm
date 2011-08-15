@@ -619,5 +619,150 @@ void DreamGenContext::showrain() {
 	}
 }
 
+void DreamGenContext::updatepeople() {
+	data.word(kListpos) = kPeoplelist;
+	memset(segRef(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
+	++data.word(kMaintimer);
+	es = cs;
+	bx = kReelroutines;
+	const ReelRoutine *reelRoutine = (const ReelRoutine *)cs.ptr(bx, 0);
+	const uint16 *callbacks = (const uint16 *)cs.ptr(kReelcalls, 0);
+	while (true) {
+		uint8 realLocation = reelRoutine->reallocation;
+		if (realLocation == 255)
+			return;
+		if ((realLocation == data.byte(kReallocation)) &&
+		    (reelRoutine->mapX == data.byte(kMapx)) &&
+		    (reelRoutine->mapY == data.byte(kMapy))) {
+			uint16 callback = READ_LE_UINT16(callbacks);
+			//dw	gamer,sparkydrip,eden,edeninbath,sparky,smokebloke
+			if (callback == addr_gamer)
+				gamer();
+			else if (callback == addr_sparkydrip)
+				sparkydrip();
+			else if (callback == addr_eden)
+				eden();
+			else if (callback == addr_edeninbath)
+				edeninbath();
+			else if (callback == addr_sparky)
+				sparky();
+			else if (callback == addr_smokebloke)
+				smokebloke();
+			//dw	manasleep,drunk,receptionist,malefan,femalefan
+			else if (callback == addr_manasleep)
+				manasleep();
+			else if (callback == addr_drunk)
+				drunk();
+			else if (callback == addr_receptionist)
+				receptionist();
+			else if (callback == addr_malefan)
+				malefan();
+			else if (callback == addr_femalefan)
+				femalefan();
+			//dw	louis,louischair,soldier1,bossman,interviewer
+			else if (callback == addr_louis)
+				louis();
+			else if (callback == addr_louischair)
+				louischair();
+			else if (callback == addr_soldier1)
+				soldier1();
+			else if (callback == addr_bossman)
+				bossman();
+			else if (callback == addr_interviewer)
+				interviewer();
+			//dw	heavy,manasleep2,mansatstill,drinker,bartender
+			else if (callback == addr_heavy)
+				heavy();
+			else if (callback == addr_manasleep2)
+				manasleep2();
+			else if (callback == addr_mansatstill)
+				mansatstill();
+			else if (callback == addr_drinker)
+				drinker();
+			else if (callback == addr_bartender)
+				bartender();
+			//dw	othersmoker,tattooman,attendant,keeper,candles1
+			else if (callback == addr_othersmoker)
+				othersmoker();
+			else if (callback == addr_tattooman)
+				tattooman();
+			else if (callback == addr_attendant)
+				attendant();
+			else if (callback == addr_keeper)
+				keeper();
+			else if (callback == addr_candles1)
+				candles1();
+			//dw	smallcandle,security,copper,poolguard,rockstar
+			else if (callback == addr_smallcandle)
+				smallcandle();
+			else if (callback == addr_security)
+				security();
+			else if (callback == addr_copper)
+				copper();
+			else if (callback == addr_poolguard)
+				poolguard();
+			else if (callback == addr_rockstar)
+				rockstar();
+			//dw	businessman,train,aide,mugger,helicopter
+			else if (callback == addr_businessman)
+				businessman();
+			else if (callback == addr_train)
+				train();
+			else if (callback == addr_aide)
+				aide();
+			else if (callback == addr_mugger)
+				mugger();
+			else if (callback == addr_helicopter)
+				helicopter();
+			//dw	intromagic1,intromusic,intromagic2,candles2,gates
+			else if (callback == addr_intromagic1)
+				intromagic1();
+			else if (callback == addr_intromusic)
+				intromusic();
+			else if (callback == addr_intromagic2)
+				intromagic2();
+			else if (callback == addr_candles2)
+				candles2();
+			else if (callback == addr_gates)
+				gates();
+			//dw	intromagic3,intromonks1,candles,intromonks2
+			else if (callback == addr_intromagic3)
+				intromagic3();
+			else if (callback == addr_intromonks1)
+				intromonks1();
+			else if (callback == addr_candles)
+				candles();
+			else if (callback == addr_intromonks2)
+				intromonks2();
+			//dw	handclap,monkandryan,endgameseq,priest,madman
+			else if (callback == addr_handclap)
+				handclap();
+			else if (callback == addr_monkandryan)
+				monkandryan();
+			else if (callback == addr_endgameseq)
+				endgameseq();
+			else if (callback == addr_priest)
+				priest();
+			else if (callback == addr_madman)
+				madman();
+			//dw	madmanstelly,alleybarksound,foghornsound
+			else if (callback == addr_madmanstelly)
+				madmanstelly();
+			else if (callback == addr_alleybarksound)
+				alleybarksound();
+			else if (callback == addr_foghornsound)
+				foghornsound();
+			//dw	carparkdrip,carparkdrip,carparkdrip,carparkdrip
+			else if (callback == addr_carparkdrip)
+				carparkdrip();
+			else
+				assert(false); // Oops I forgot something in the dispatch table
+		}
+		bx += 8;
+		++reelRoutine;
+		++callbacks;
+	}
+}
+
 } /*namespace dreamgen */
 

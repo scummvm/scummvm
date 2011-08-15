@@ -2651,43 +2651,6 @@ void DreamGenContext::widedoor() {
 	dodoor();
 }
 
-void DreamGenContext::updatepeople() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	data.word(kListpos) = di;
-	cx = 12*5;
-	al = 255;
-	_stosb(cx, true);
-	_inc(data.word(kMaintimer));
-	es = cs;
-	bx = 534;
-	di = 991;
-updateloop:
-	al = es.byte(bx);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (endupdate) */;
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto notinthisroom;
-	cx = es.word(bx+1);
-	_cmp(cl, data.byte(kMapx));
-	if (!flags.z())
-		goto notinthisroom;
-	_cmp(ch, data.byte(kMapy));
-	if (!flags.z())
-		goto notinthisroom;
-	push(di);
-	ax = cs.word(di);
-	__dispatch_call(ax);
-	di = pop();
-notinthisroom:
-	_add(bx, 8);
-	_add(di, 2);
-	goto updateloop;
-}
-
 void DreamGenContext::reelsonscreen() {
 	STACK_CHECK;
 	reconstruct();
@@ -19234,7 +19197,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_constant: constant(); break;
 		case addr_doorway: doorway(); break;
 		case addr_widedoor: widedoor(); break;
-		case addr_updatepeople: updatepeople(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;

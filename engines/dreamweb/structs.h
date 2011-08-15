@@ -96,6 +96,17 @@ struct Reel {
 	uint8 b4;
 };
 
+struct ReelRoutine {
+	uint8 reallocation;
+	uint8 mapX;
+	uint8 mapY;
+	uint8 b3;
+	uint8 b4;
+	uint8 b5;
+	uint8 b6;
+	uint8 b7;
+};
+
 struct People {
 	uint8 b0;
 	uint8 b1;
