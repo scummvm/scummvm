@@ -279,7 +279,7 @@ PreAGI_Console::PreAGI_Console(PreAgiEngine *vm) {
 	_vm = vm;
 }
 
-Mickey_Console::Mickey_Console(PreAgiEngine *vm, Mickey *mickey) : PreAGI_Console(vm) {
+Mickey_Console::Mickey_Console(MickeyEngine *mickey) : PreAGI_Console(mickey) {
 	_mickey = mickey;
 
 	DCmd_Register("curRoom",     WRAP_METHOD(Mickey_Console, Cmd_CurRoom));

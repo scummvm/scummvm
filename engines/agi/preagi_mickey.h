@@ -676,13 +676,13 @@ struct MSA_GAME {
 
 class PreAgiEngine;
 
-class Mickey {
+class MickeyEngine : public PreAgiEngine {
 public:
-	Mickey(PreAgiEngine *vm);
-	~Mickey();
+	MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc);
+	~MickeyEngine();
 
 	void init();
-	void run();
+	Common::Error go();
 
 	void debugCurRoom();
 	void debugGotoRoom(int);
@@ -690,9 +690,7 @@ public:
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
 protected:
-	PreAgiEngine *_vm;
-
-	MSA_GAME _game;
+	MSA_GAME _gameStateMickey;
 	bool _clickToMove;
 
 	int getDat(int);
@@ -741,14 +739,14 @@ protected:
 
 	bool planetIsAlreadyAssigned(int planet) {
 		for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
-			if (_game.iPlanetXtal[j] == planet)
+			if (_gameStateMickey.iPlanetXtal[j] == planet)
 				return true;
 		}
 		return false;
 	}
 
 	bool mickeyHasItem(int item) {
-		if (_game.fItem[item]) {
+		if (_gameStateMickey.fItem[item]) {
 			printDatMessage(90);	// Mickey already has item
 			return true;
 		} else {

@@ -148,14 +148,6 @@ Common::Error PreAgiEngine::go() {
 
 	// run preagi engine main loop
 	switch (getGameID()) {
-	case GID_MICKEY:
-		{
-			Mickey *mickey = new Mickey(this);
-			mickey->init();
-			mickey->run();
-			delete mickey;
-		}
-		break;
 	case GID_TROLL:
 		{
 			Troll *troll = new Troll(this);

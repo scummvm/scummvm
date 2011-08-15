@@ -27,8 +27,8 @@ namespace Agi {
 
 class AgiEngine;
 class PreAgiEngine;
+class MickeyEngine;
 class WinnieEngine;
-class Mickey;
 
 struct AgiDebug {
 	int enabled;
@@ -79,11 +79,11 @@ private:
 
 class Mickey_Console : public PreAGI_Console {
 public:
-	Mickey_Console(PreAgiEngine *vm, Mickey *mickey);
+	Mickey_Console(MickeyEngine *mickey);
 	virtual ~Mickey_Console() {}
 
 private:
-	Mickey *_mickey;
+	MickeyEngine *_mickey;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
 	bool Cmd_GotoRoom(int argc, const char **argv);
