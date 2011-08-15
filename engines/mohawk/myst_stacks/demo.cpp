@@ -84,7 +84,10 @@ void Demo::o_stopIntro(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 void Demo::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Fade from black", op);
-	_vm->_gfx->fadeFromBlack();
+
+	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
+	// and then the fading occurs, causing the background to appear for one frame.
+	// _vm->_gfx->fadeFromBlack();
 }
 
 void Demo::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -101,14 +104,14 @@ void Demo::returnToMenu_run() {
 	switch (_returnToMenuStep){
 	case 0:
 		_vm->_gfx->fadeToBlack();
-		_vm->changeToCard(2003, true);
+		_vm->changeToCard(2003, false);
 		_vm->_gfx->fadeFromBlack();
 
 		_returnToMenuStep++;
 		break;
 	case 1:
 		_vm->_gfx->fadeToBlack();
-		_vm->changeToCard(2001, true);
+		_vm->changeToCard(2001, false);
 		_vm->_gfx->fadeFromBlack();
 		_vm->_cursor->showCursor();
 

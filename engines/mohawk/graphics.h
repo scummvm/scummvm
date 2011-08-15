@@ -136,6 +136,7 @@ protected:
 	MohawkSurface *decodeImage(uint16 id);
 	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
 	void simulatePreviousDrawDelay(const Common::Rect &dest);
+	void copyBackBufferToScreenWithSaturation(int16 saturation);
 
 private:
 	MohawkEngine_Myst *_vm;

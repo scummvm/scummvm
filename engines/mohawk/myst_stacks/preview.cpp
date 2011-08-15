@@ -85,7 +85,10 @@ void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Fade from black", op);
-	_vm->_gfx->fadeFromBlack();
+
+	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
+	// and then the fading occurs, causing the background to appear for one frame.
+	// _vm->_gfx->fadeFromBlack();
 }
 
 void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -99,6 +102,7 @@ void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Speech stop", op);
 
+	_vm->_sound->stopSound(3001);
 	_speechRunning = false;
 	_globals.currentAge = 2;
 }
@@ -143,7 +147,7 @@ void Preview::speech_run() {
 	case 2: // Go to Myst
 		if (_currentCue >= 2) {
 			_vm->_gfx->fadeToBlack();
-			_vm->changeToCard(3002, true);
+			_vm->changeToCard(3002, false);
 			_vm->_gfx->fadeFromBlack();
 
 			_speechStep++;
@@ -186,7 +190,7 @@ void Preview::speech_run() {
 			break;
 
 		_vm->_gfx->fadeToBlack();
-		_vm->changeToCard(3005, true);
+		_vm->changeToCard(3005, false);
 		_vm->_gfx->fadeFromBlack();
 		_speechNextTime = time + 1000;
 		_speechStep++;
