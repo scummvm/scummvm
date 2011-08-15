@@ -117,8 +117,7 @@ Common::String Localizer::localize(const char *str) const {
 }
 
 Localizer::~Localizer() {
-	if (_data)
-		delete[] _data;
+	delete[] _data;
 }
 
 } // end of namespace Grim
