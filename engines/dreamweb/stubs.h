@@ -128,4 +128,6 @@
 	void commandwithob(uint8 command, uint8 type, uint8 index);
 	void showpanel();
 	void updatepeople();
+	void madmantext();
+
 

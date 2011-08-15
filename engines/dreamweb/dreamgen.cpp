@@ -1772,25 +1772,6 @@ ryansded:
 	showgamereel();
 }
 
-void DreamGenContext::madmantext() {
-	STACK_CHECK;
-	_cmp(data.byte(kSpeechcount), 63);
-	if (!flags.c())
-		return /* (nomadtext) */;
-	_cmp(data.byte(kCh1playing), 255);
-	if (!flags.z())
-		return /* (nomadtext) */;
-	al = data.byte(kSpeechcount);
-	_inc(data.byte(kSpeechcount));
-	_add(al, 47);
-	bl = 72;
-	bh = 80;
-	cx = 90;
-	dx = 1;
-	ah = 82;
-	setuptimedtemp();
-}
-
 void DreamGenContext::madmode() {
 	STACK_CHECK;
 	data.word(kWatchingtime) = 2;
@@ -19166,7 +19147,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_priest: priest(); break;
 		case addr_madmanstelly: madmanstelly(); break;
 		case addr_madman: madman(); break;
-		case addr_madmantext: madmantext(); break;
 		case addr_madmode: madmode(); break;
 		case addr_priesttext: priesttext(); break;
 		case addr_textforend: textforend(); break;

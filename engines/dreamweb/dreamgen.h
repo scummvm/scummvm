@@ -655,7 +655,6 @@ public:
 	static const uint16 addr_textforend = 0xc0ec;
 	static const uint16 addr_priesttext = 0xc0e8;
 	static const uint16 addr_madmode = 0xc0e4;
-	static const uint16 addr_madmantext = 0xc0e0;
 	static const uint16 addr_madman = 0xc0dc;
 	static const uint16 addr_madmanstelly = 0xc0d8;
 	static const uint16 addr_priest = 0xc0d4;
@@ -1802,7 +1801,7 @@ public:
 	void dmaend();
 	//void quickquit2();
 	void twodigitnum();
-	void madmantext();
+	//void madmantext();
 	void dumpcurrent();
 	void textforend();
 	void showdiarykeys();

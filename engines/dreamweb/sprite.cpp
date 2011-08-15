@@ -764,5 +764,29 @@ void DreamGenContext::updatepeople() {
 	}
 }
 
+void DreamGenContext::madmantext() {
+	// The original sources has two codepaths depending if the game is 'if cd' or not
+	// This is a hack to guess which version to use with the assumption that if we have a cd version
+	// we managed to load the speech.
+	if (data.byte(kSpeechloaded)) {
+		if (data.byte(kSpeechcount) >= 63)
+			return;
+		_cmp(data.byte(kCh1playing), 255);
+		if (!flags.z())
+			return /* (nomadtext) */;
+		al = data.byte(kSpeechcount);
+		++data.byte(kSpeechcount);
+	} else {
+		if (data.byte(kCombatcount) >= 61)
+			return;
+		al = data.byte(kCombatcount);
+		_and(al, 3);
+		if (!flags.z())
+			return /* (nomadtext) */;
+		al = data.byte(kCombatcount) / 4;
+	}
+	setuptimedtemp(47 + al, 82, 72, 80, 90, 1);
+}
+
 } /*namespace dreamgen */
 
