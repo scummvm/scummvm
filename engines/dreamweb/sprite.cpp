@@ -537,7 +537,7 @@ Frame *DreamGenContext::findsourceCPP() {
 	return result;
 }
 
-Reel *DreamGenContext::getreelstartCPP() {
+Reel *DreamGenContext::getreelstart() {
 	Reel *reel = (Reel *)segRef(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
@@ -555,6 +555,25 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
 	uint8 width, height;
 	showframe(source, x, y, frame, 8, &width, &height);
+}
+
+void DreamGenContext::showgamereel() {
+	uint16 reelpointer = es.word(bx+3);
+	if (reelpointer >= 512)
+		return;
+	data.word(kReelpointer) = reelpointer;
+	push(es);
+	push(bx);
+	plotreel();
+	bx = pop();
+	es = pop();
+	es.word(bx+3) = data.word(kReelpointer);
+}
+
+const Frame *DreamGenContext::getreelframeax(uint16 frame) {
+	data.word(kCurrentframe) = frame;
+	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
+	return findsourceCPP() + offset;
 }
 
 void DreamGenContext::showrain() {

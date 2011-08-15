@@ -2160,22 +2160,6 @@ void DreamGenContext::addtopeoplelist() {
 	_add(data.word(kListpos), 5);
 }
 
-void DreamGenContext::showgamereel() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_cmp(ax, 512);
-	if (!flags.c())
-		return /* (noshow) */;
-	data.word(kReelpointer) = ax;
-	push(es);
-	push(bx);
-	plotreel();
-	bx = pop();
-	es = pop();
-	ax = data.word(kReelpointer);
-	es.word(bx+3) = ax;
-}
-
 void DreamGenContext::checkspeed() {
 	STACK_CHECK;
 	_cmp(data.byte(kLastweapon), -1);
@@ -2704,22 +2688,6 @@ notinthisroom:
 	goto updateloop;
 }
 
-void DreamGenContext::getreelframeax() {
-	STACK_CHECK;
-	push(ds);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	es = ds;
-	ds = pop();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	_add(ax, ax);
-	cx = ax;
-	_add(ax, ax);
-	_add(ax, cx);
-	bx = ax;
-}
-
 void DreamGenContext::reelsonscreen() {
 	STACK_CHECK;
 	reconstruct();
@@ -2826,16 +2794,6 @@ notmapdownspec:
 notmaprightspec:
 	_sub(data.byte(kMapx), 11);
 	data.byte(kNowinnewroom) = 1;
-}
-
-void DreamGenContext::getreelstart() {
-	STACK_CHECK;
-	ax = data.word(kReelpointer);
-	cx = 40;
-	_mul(cx);
-	es = data.word(kReels);
-	si = ax;
-	_add(si, (0+(36*144)));
 }
 
 void DreamGenContext::deleverything() {
@@ -16371,69 +16329,6 @@ nothingund:
 	blank();
 }
 
-void DreamGenContext::checkifperson() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	cx = 12;
-identifyreel:
-	push(cx);
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notareelid;
-	push(es);
-	push(bx);
-	push(ax);
-	ax = es.word(bx+0);
-	data.word(kReelpointer) = ax;
-	getreelstart();
-	_cmp(es.word(si+2), 0x0ffff);
-	if (!flags.z())
-		goto notblankpers;
-	_add(si, 5);
-notblankpers:
-	cx = es.word(si+2);
-	ax = es.word(si+0);
-	push(cx);
-	getreelframeax();
-	cx = pop();
-	_add(cl, es.byte(bx+4));
-	_add(ch, es.byte(bx+5));
-	dx = cx;
-	_add(dl, es.byte(bx+0));
-	_add(dh, es.byte(bx+1));
-	ax = pop();
-	bx = pop();
-	es = pop();
-	_cmp(al, cl);
-	if (flags.c())
-		goto notareelid;
-	_cmp(ah, ch);
-	if (flags.c())
-		goto notareelid;
-	_cmp(al, dl);
-	if (!flags.c())
-		goto notareelid;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto notareelid;
-	cx = pop();
-	ax = es.word(bx+2);
-	data.word(kPersondata) = ax;
-	al = es.byte(bx+4);
-	ah = 5;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notareelid:
-	cx = pop();
-	_add(bx, 5);
-	_dec(cx);
-	if (!flags.z())
-		goto identifyreel;
-}
-
 void DreamGenContext::checkifset() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -17067,60 +16962,6 @@ void DreamGenContext::examineobtext() {
 	commandwithob();
 }
 
-void DreamGenContext::commandwithob() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(es);
-	push(ds);
-	push(si);
-	push(di);
-	deltextline();
-	di = pop();
-	si = pop();
-	ds = pop();
-	es = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	push(bx);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	ax = pop();
-	di = 5847;
-	copyname();
-	ax = pop();
-	di = data.word(kLastxpos);
-	_cmp(al, 0);
-	if (flags.z())
-		goto noadd;
-	_add(di, 5);
-noadd:
-	bx = data.word(kTextaddressy);
-	es = cs;
-	si = 5847;
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	data.byte(kNewtextline) = 1;
-}
-
 void DreamGenContext::commandonly() {
 	STACK_CHECK;
 	push(ax);
@@ -17500,95 +17341,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::copyname() {
-	STACK_CHECK;
-	push(di);
-	findobname();
-	di = pop();
-	es = cs;
-	cx = 28;
-make:
-	_lodsb();
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishmakename;
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishmakename;
-	_stosb();
-	if (--cx)
-		goto make;
-finishmakename:
-	_inc(cx);
-	al = 0;
-	_stosb();
-	return;
-	al = 255;
-	_stosb(cx, true);
-}
-
-void DreamGenContext::findobname() {
-	STACK_CHECK;
-	push(ax);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	ax = pop();
-	_cmp(ah, 5);
-	if (!flags.z())
-		goto notpersonname;
-	push(ax);
-	_and(al, 127);
-	ah = 0;
-	bx = 64*2;
-	_mul(bx);
-	si = ax;
-	ds = data.word(kPeople);
-	_add(si, (0+24));
-	cx = (0+24+(1026*2));
-	ax = ds.word(si);
-	_add(ax, cx);
-	si = ax;
-	ax = pop();
-	return;
-notpersonname:
-	_cmp(ah, 4);
-	if (!flags.z())
-		goto notextraname;
-	ds = data.word(kExtras);
-	_add(bx, (0+2080+30000+(16*114)));
-	ax = ds.word(bx);
-	_add(ax, (0+2080+30000+(16*114)+((114+2)*2)));
-	si = ax;
-	return;
-notextraname:
-	_cmp(ah, 2);
-	if (!flags.z())
-		goto notfreename;
-	ds = data.word(kFreedesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(82*2)));
-	si = ax;
-	return;
-notfreename:
-	_cmp(ah, 1);
-	if (!flags.z())
-		goto notsetname;
-	ds = data.word(kSetdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(130*2)));
-	si = ax;
-	return;
-notsetname:
-	ds = data.word(kBlockdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(98*2)));
-	si = ax;
-}
-
 void DreamGenContext::showicon() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 50);
@@ -17689,22 +17441,6 @@ void DreamGenContext::showman() {
 	di = 28;
 	bx = 25;
 	al = 2;
-	ah = 0;
-	showframe();
-}
-
-void DreamGenContext::showpanel() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = 72;
-	bx = 0;
-	al = 19;
-	ah = 0;
-	showframe();
-	ds = data.word(kIcons1);
-	di = 192;
-	bx = 0;
-	al = 19;
 	ah = 0;
 	showframe();
 }
@@ -19478,7 +19214,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_sparky: sparky(); break;
 		case addr_train: train(); break;
 		case addr_addtopeoplelist: addtopeoplelist(); break;
-		case addr_showgamereel: showgamereel(); break;
 		case addr_checkspeed: checkspeed(); break;
 		case addr_delsprite: delsprite(); break;
 		case addr_checkone: checkone(); break;
@@ -19500,12 +19235,10 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_doorway: doorway(); break;
 		case addr_widedoor: widedoor(); break;
 		case addr_updatepeople: updatepeople(); break;
-		case addr_getreelframeax: getreelframeax(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
 		case addr_movemap: movemap(); break;
-		case addr_getreelstart: getreelstart(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_dumpeverything: dumpeverything(); break;
 		case addr_showpcx: showpcx(); break;
@@ -19983,7 +19716,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_madmanrun: madmanrun(); break;
 		case addr_checkcoords: checkcoords(); break;
 		case addr_identifyob: identifyob(); break;
-		case addr_checkifperson: checkifperson(); break;
 		case addr_checkifset: checkifset(); break;
 		case addr_checkifex: checkifex(); break;
 		case addr_checkiffree: checkiffree(); break;
@@ -20002,7 +19734,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_obname: obname(); break;
 		case addr_finishedwalking: finishedwalking(); break;
 		case addr_examineobtext: examineobtext(); break;
-		case addr_commandwithob: commandwithob(); break;
 		case addr_commandonly: commandonly(); break;
 		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
@@ -20013,12 +19744,9 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setwalk: setwalk(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
-		case addr_copyname: copyname(); break;
-		case addr_findobname: findobname(); break;
 		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;
-		case addr_showpanel: showpanel(); break;
 		case addr_roomname: roomname(); break;
 		case addr_usecharset1: usecharset1(); break;
 		case addr_usetempcharset: usetempcharset(); break;

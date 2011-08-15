@@ -98,8 +98,10 @@
 	void liftsprite(Sprite *sprite, ObjData *objData);
 	void findsource();
 	Frame *findsourceCPP();
+	void showgamereel();
 	void showreelframe();
 	void showreelframe(Reel *reel);
+	const Frame *getreelframeax(uint16 frame);
 	void turnpathonCPP(uint8 param);
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();
@@ -110,11 +112,20 @@
 	void cancelch0();
 	void cancelch1();
 	void plotreel();
-	Reel *getreelstartCPP();
+	Reel *getreelstart();
 	void dealwithspecial(uint8 firstParam, uint8 secondParam);
 	void zoom();
 	void crosshair();
 	void showrain();
 	void deltextline();
 	void doblocks();
+	void checkifperson();
+	bool checkifperson(uint8 x, uint8 y);
+	const uint8 *findobname(uint8 type, uint8 index);
+	void copyname();
+	void copyname(uint8 type, uint8 index, uint8 *dst);
+	void commandwithob();
+	void commandwithob(uint8 command, uint8 type, uint8 index);
+	void showpanel();
+
 

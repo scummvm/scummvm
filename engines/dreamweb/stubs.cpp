@@ -884,7 +884,7 @@ void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 }
 
 void DreamGenContext::plotreel() {
-	Reel *reel = getreelstartCPP();
+	Reel *reel = getreelstart();
 	while (true) {
 		if (reel->x < 220)
 			break;
@@ -964,4 +964,112 @@ void DreamGenContext::checkdest(const uint8 *roomsPaths) {
 	data.byte(kDestination) = destination;
 }
 
+void DreamGenContext::checkifperson() {
+	flags._z = not checkifperson(al, ah);
+}
+
+bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
+	People *people = (People *)segRef(data.word(kBuffers)).ptr(kPeoplelist, 0);
+
+	for (size_t i = 0; i < 12; ++i, ++people) {
+		if (people->b4 == 255)
+			continue;
+		data.word(kReelpointer) = people->w0();
+		Reel *reel = getreelstart();
+		if (reel->frame() == 0xffff)
+			++reel;
+		const Frame *frame = getreelframeax(reel->frame());
+		uint8 xmin = reel->x + frame->x;
+		uint8 ymin = reel->y + frame->y;
+		uint8 xmax = xmin + frame->width;
+		uint8 ymax = ymin + frame->height;
+		if (x < xmin)
+			continue;
+		if (y < ymin)
+			continue;
+		if (x >= xmax)
+			continue;
+		if (y >= ymax)
+			continue;
+		data.word(kPersondata) = people->w2();
+		al = people->b4;
+		ah = 5;
+		obname();
+		return true;
+	}
+	return false;
+}
+
+const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
+	if (type == 5) {
+		uint16 i = 64 * 2 * (index & 127);
+		uint16 offset = segRef(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
+		return segRef(data.word(kPeople)).ptr(offset, 0);
+	} else if (type == 4) {
+		uint16 offset = segRef(data.word(kExtras)).word(kExtextdat + index * 2) + kExtext;
+		return segRef(data.word(kExtras)).ptr(offset, 0);
+	} else if (type == 2) {
+		uint16 offset = segRef(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
+		return segRef(data.word(kFreedesc)).ptr(offset, 0);
+	} else if (type == 1) {
+		uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + index * 2) + kSettext;
+		return segRef(data.word(kSetdesc)).ptr(offset, 0);
+	} else {
+		uint16 offset = segRef(data.word(kBlockdesc)).word(kBlocktextdat + index * 2) + kBlocktext;
+		return segRef(data.word(kBlockdesc)).ptr(offset, 0);
+	}
+}
+
+void DreamGenContext::copyname() {
+	copyname(ah, al, cs.ptr(di, 0));
+}
+
+void DreamGenContext::copyname(uint8 type, uint8 index, uint8 *dst) {
+	const uint8 *src = findobname(type, index);
+	size_t i;
+	for (i = 0; i < 28; ++i) { 
+		char c = src[i];
+		if (c == ':')
+			break;
+		if (c == 0)
+			break;
+		dst[i] = c;
+	}
+	dst[i] = 0;
+}
+
+void DreamGenContext::commandwithob() {
+	commandwithob(al, bh, bl); 
+}
+
+void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
+	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
+	deltextline();
+	uint16 commandText = kTextstart + segRef(data.word(kCommandtext)).word(command * 2);
+	uint8 textLen = data.byte(kTextlen);
+{
+	uint16 y = data.word(kTextaddressy);
+	const uint8 *string = segRef(data.word(kCommandtext)).ptr(commandText, 0);
+	printdirect(&string, data.word(kTextaddressx), &y, textLen, (bool)(textLen & 1));
+}
+	copyname(type, index, commandLine);
+	uint16 x = data.word(kLastxpos);
+	if (command != 0)
+		x += 5;
+{
+	uint16 y = data.word(kTextaddressy);
+	const uint8 *string = commandLine;
+	printdirect(&string, x, &y, textLen, (bool)(textLen & 1));
+}
+	data.byte(kNewtextline) = 1;
+}
+
+void DreamGenContext::showpanel() {
+	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
+	uint8 width, height;
+	showframe(frame, 72, 0, 19, 0, &width, &height);
+	showframe(frame, 192, 0, 19, 0, &width, &height);
+}
+
 } /*namespace dreamgen */
+

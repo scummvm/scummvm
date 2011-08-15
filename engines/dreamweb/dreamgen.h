@@ -111,12 +111,9 @@ public:
 	static const uint16 addr_usetempcharset = 0xca7c;
 	static const uint16 addr_usecharset1 = 0xca78;
 	static const uint16 addr_roomname = 0xca74;
-	static const uint16 addr_showpanel = 0xca70;
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_showicon = 0xca64;
-	static const uint16 addr_findobname = 0xca60;
-	static const uint16 addr_copyname = 0xca5c;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_setwalk = 0xca44;
@@ -127,7 +124,6 @@ public:
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_commandonly = 0xca28;
-	static const uint16 addr_commandwithob = 0xca24;
 	static const uint16 addr_examineobtext = 0xca20;
 	static const uint16 addr_finishedwalking = 0xca1c;
 	static const uint16 addr_obname = 0xca18;
@@ -146,7 +142,6 @@ public:
 	static const uint16 addr_checkiffree = 0xc9e4;
 	static const uint16 addr_checkifex = 0xc9e0;
 	static const uint16 addr_checkifset = 0xc9dc;
-	static const uint16 addr_checkifperson = 0xc9d8;
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_checkcoords = 0xc9d0;
 	static const uint16 addr_madmanrun = 0xc9cc;
@@ -626,12 +621,10 @@ public:
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_dumpeverything = 0xc1c4;
 	static const uint16 addr_deleverything = 0xc1c0;
-	static const uint16 addr_getreelstart = 0xc1b8;
 	static const uint16 addr_movemap = 0xc1b4;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_reelsonscreen = 0xc1a0;
-	static const uint16 addr_getreelframeax = 0xc19c;
 	static const uint16 addr_updatepeople = 0xc198;
 	static const uint16 addr_widedoor = 0xc18c;
 	static const uint16 addr_doorway = 0xc188;
@@ -653,7 +646,6 @@ public:
 	static const uint16 addr_checkone = 0xc12c;
 	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
-	static const uint16 addr_showgamereel = 0xc10c;
 	static const uint16 addr_addtopeoplelist = 0xc108;
 	static const uint16 addr_train = 0xc104;
 	static const uint16 addr_sparky = 0xc100;
@@ -1297,7 +1289,7 @@ public:
 	void loadtemptext();
 	void clearstartpal();
 	void femalefan();
-	void showgamereel();
+	//void showgamereel();
 	void identifyob();
 	void trysoundalloc();
 	void uselighter();
@@ -1327,14 +1319,14 @@ public:
 	void readkey();
 	void louis();
 	void entrytexts();
-	void getreelstart();
+	//void getreelstart();
 	void buttonenter();
 	void checkinput();
 	//void crosshair();
 	void bresenhams();
 	void getbackfromops();
 	//void frameoutv();
-	void restoreall();
+	void opensarters();
 	void screenupdate();
 	void addlength();
 	void wornerror();
@@ -1343,7 +1335,7 @@ public:
 	void commandonly();
 	void adjustlen();
 	void deallocatemem();
-	void mainscreen();
+	void checkforemm();
 	void watchreel();
 	void showfolder();
 	void turnanypathoff();
@@ -1364,10 +1356,11 @@ public:
 	void clearendpal();
 	void findtext1();
 	void isryanholding();
-	void interupttest();
+	void showslots();
 	void usecashcard();
 	void usewall();
 	void opentomb();
+	//void findobname();
 	void buttonfour();
 	void animpointer();
 	//void lockmon();
@@ -1399,7 +1392,7 @@ public:
 	void getpersframe();
 	void doshake();
 	void resetkeyboard();
-	void showpanel();
+	//void showpanel();
 	void soundstartup();
 	void slabdoora();
 	void fadeupyellows();
@@ -1447,7 +1440,6 @@ public:
 	void loadtempcharset();
 	void showbyte();
 	void useslab();
-	//void aboutturn();
 	void usealtar();
 	void createpanel2();
 	void turnonpower();
@@ -1496,9 +1488,10 @@ public:
 	void isitdescribed();
 	void hotelbell();
 	void loadspeech();
+	void interupttest();
 	//void cls();
 	//void printsprites();
-	//void dumptimedtext();
+	//void checkifperson();
 	void showallobs();
 	//void getnumber();
 	void adjustleft();
@@ -1551,7 +1544,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	//void doblocks();
-	void opensarters();
+	void restoreall();
 	void allpalette();
 	void findormake();
 	void nextsymbol();
@@ -1566,7 +1559,7 @@ public:
 	void folderhints();
 	void openhoteldoor();
 	void removesetobject();
-	void checkifperson();
+	//void dumptimedtext();
 	//void frameoutfx();
 	void blank();
 	void drinker();
@@ -1608,7 +1601,7 @@ public:
 	void showpointer();
 	void usecooker();
 	void loadmenu();
-	void checkforemm();
+	//void aboutturn();
 	void checkifpathison();
 	void smallcandle();
 	void receptionist();
@@ -1629,7 +1622,7 @@ public:
 	void putundermenu();
 	void checkifex();
 	void intromagic2();
-	void findobname();
+	void mainscreen();
 	void edeninbath();
 	void intromagic1();
 	void showdiarypage();
@@ -1751,10 +1744,9 @@ public:
 	void loadintotemp2();
 	void gamer();
 	void personnametext();
-	void quitsymbol();
 	void readfromfile();
 	void initialinv();
-	void showslots();
+	void quitsymbol();
 	//void modifychar();
 	void hangon();
 	void settopright();
@@ -1789,7 +1781,7 @@ public:
 	void drawitall();
 	void usestereo();
 	void showcurrentfile();
-	void copyname();
+	//void copyname();
 	void look();
 	void setmouse();
 	void checkone();
@@ -1929,7 +1921,7 @@ public:
 	void fadecalculation();
 	void waitframes();
 	void clearrest();
-	void getreelframeax();
+	//void getreelframeax();
 	void barwoman();
 	void roomname();
 	void credits();
@@ -2034,7 +2026,7 @@ public:
 	void isitright();
 	void businessman();
 	void switchryanoff();
-	void commandwithob();
+	//void commandwithob();
 	void panelicons1();
 	void adjustdown();
 	void withwhat();

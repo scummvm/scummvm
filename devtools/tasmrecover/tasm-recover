@@ -74,6 +74,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getroomdata',
 	'startloading',
 	'showreelframe',
+	'showgamereel',
+	'getreelframeax',
 	'findsource',
 	'walking',
 	'autosetwalk',
@@ -103,6 +105,12 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'parseblaster',
 	'deltextline',
 	'doblocks',
+	'checkifperson',
+	'getreelstart',
+	'findobname',
+	'copyname',
+	'commandwithob',
+	'showpanel',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
