@@ -27,7 +27,7 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace BlueForce {
 
@@ -149,7 +149,7 @@ void Scene100::Action2::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene100::Scene100(): Scene() {
+Scene100::Scene100(): SceneExt() {
 	_index = 0;
 }
 
@@ -168,12 +168,12 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		// Title
 		loadScene(100);
 		BF_GLOBALS._sound1.play(2);
-		setAction(&_action2, this);
+//		setAction(&_action2, this);
 	} else {
 		// Credits
 		loadScene(101);
 		BF_GLOBALS._sound1.play(118);
-		setAction(&_action1, this);
+//		setAction(&_action1, this);
 	}
 
 	loadScene(20);
@@ -420,4 +420,4 @@ void Scene109::signal() {
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE

@@ -33,7 +33,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 // The engine uses ScumMVM screen buffering, so all logic is hardcoded to use pane buffer 0
 #define CURRENT_PANENUM 0
@@ -3620,4 +3620,4 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 void SceneHandler::saveListener(Serializer &ser) {
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

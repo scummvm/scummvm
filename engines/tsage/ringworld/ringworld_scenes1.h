@@ -32,11 +32,11 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace tSage;
+using namespace TsAGE;
 
 class Scene10 : public Scene {
 	/* Actions */
@@ -539,6 +539,6 @@ public:
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

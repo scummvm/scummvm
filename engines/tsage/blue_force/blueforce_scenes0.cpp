@@ -25,7 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace BlueForce {
 
@@ -241,4 +241,4 @@ void Scene50::Tooltip2::dispatch() {
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE

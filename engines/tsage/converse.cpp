@@ -26,7 +26,7 @@
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 #define STRIP_WORD_DELAY 30
 
@@ -985,4 +985,4 @@ void AnimatedSpeaker::removeText() {
 	_objectList.draw();
 }
 
-} // end of namespace tSage
+} // end of namespace TsAGE

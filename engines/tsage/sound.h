@@ -33,7 +33,7 @@
 #include "tsage/saveload.h"
 #include "tsage/core.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Sound;
 
@@ -499,6 +499,6 @@ public:
 };
 
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

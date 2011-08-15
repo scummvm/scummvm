@@ -20,7 +20,7 @@
  *
  */
 
-namespace tSage {
+namespace TsAGE {
 
 static const tSageGameDescription gameDescriptions[] = {
 
@@ -143,4 +143,4 @@ static const tSageGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE

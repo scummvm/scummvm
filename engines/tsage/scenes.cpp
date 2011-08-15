@@ -26,7 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 SceneManager::SceneManager() {
 	_scene = NULL;
@@ -519,4 +519,4 @@ void Game::execute() {
 	} while (activeFlag && !_vm->shouldQuit());
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

@@ -25,7 +25,7 @@
 #include "tsage/graphics.h"
 #include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
@@ -449,4 +449,4 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 	return false;
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

@@ -31,7 +31,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
@@ -325,4 +325,4 @@ void EventsClass::loadNotifierProc(bool postFlag) {
 	}
 }
 
-} // end of namespace tSage
+} // end of namespace TsAGE

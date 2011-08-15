@@ -34,7 +34,7 @@
 #include "tsage/resources.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 #define MAX_FLAGS 256
 
@@ -714,7 +714,7 @@ public:
 	SynchronizedList<SceneObject *>::iterator begin() { return _objList.begin(); }
 	SynchronizedList<SceneObject *>::iterator end() { return _objList.end(); }
 	int size() const { return _objList.size(); }
-	bool contains(SceneObject *sceneObj) { return tSage::contains(_objList, sceneObj); }
+	bool contains(SceneObject *sceneObj) { return TsAGE::contains(_objList, sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
 	void push_front(SceneObject *sceneObj) { _objList.push_front(sceneObj); }
 	void remove(SceneObject *sceneObj) {
@@ -859,6 +859,6 @@ public:
 	static void saveListener(Serializer &ser);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

@@ -32,13 +32,13 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace BlueForce {
 
-using namespace tSage;
+using namespace TsAGE;
 
-class Scene100: public Scene {
+class Scene100: public SceneExt {
 	/* Actions */
 	class Action1: public ActionExt {
 	private:
@@ -119,6 +119,6 @@ public:
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

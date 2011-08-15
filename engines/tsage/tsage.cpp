@@ -30,7 +30,7 @@
 #include "tsage/resources.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 TSageEngine *_vm = NULL;
 
@@ -155,4 +155,4 @@ bool TSageEngine::shouldQuit() {
 	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

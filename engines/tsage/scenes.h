@@ -29,7 +29,7 @@
 #include "tsage/core.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Scene : public StripCallback {
 private:
@@ -134,6 +134,6 @@ public:
 	virtual void processEvent(Event &event) {}
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

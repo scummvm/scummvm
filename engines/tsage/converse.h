@@ -27,7 +27,7 @@
 #include "tsage/dialogs.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class StripCallback : public Action {
 public:
@@ -224,6 +224,6 @@ public:
 	void addSpeaker(Speaker *speaker);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

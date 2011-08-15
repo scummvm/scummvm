@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-namespace tSage {
+namespace TsAGE {
 
 extern const byte CURSOR_ARROW_DATA[];
 
@@ -105,6 +105,6 @@ extern const char *BF_ACADEMY;
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

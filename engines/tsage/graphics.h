@@ -30,7 +30,7 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class GfxSurface;
 class Region;
@@ -343,6 +343,6 @@ GfxSurface *Surface_getArea(GfxSurface &src, const Rect &bounds);
 GfxSurface surfaceFromRes(const byte *imgData);
 GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum);
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

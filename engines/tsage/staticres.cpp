@@ -22,7 +22,7 @@
 
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 const byte CURSOR_ARROW_DATA[] = {
 	15, 0, 15, 0, 0, 0, 0, 0, 9, 0,
@@ -138,4 +138,4 @@ const char *BF_ACADEMY = "Here we are at the Academy";
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE

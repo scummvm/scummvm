@@ -30,11 +30,11 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace tSage;
+using namespace TsAGE;
 
 class RingworldDemoGame: public Game {
 private:
@@ -60,6 +60,6 @@ public:
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

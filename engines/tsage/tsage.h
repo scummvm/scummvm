@@ -36,7 +36,7 @@
 #include "tsage/resources.h"
 
 
-namespace tSage {
+namespace TsAGE {
 
 enum {
 	GType_Ringworld = 0,
@@ -99,6 +99,6 @@ extern TSageEngine *_vm;
 #define ALLOCATE(x) _vm->_memoryManager.allocate2(x)
 #define DEALLOCATE(x) _vm->_memoryManager.deallocate(x)
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

@@ -31,7 +31,7 @@
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Globals : public SavedObject {
 private:
@@ -108,7 +108,7 @@ extern ResourceManager *_resourceManager;
 
 namespace BlueForce {
 
-using namespace tSage;
+using namespace TsAGE;
 
 class BlueForceGlobals: public Globals {
 public:
@@ -128,6 +128,6 @@ public:
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

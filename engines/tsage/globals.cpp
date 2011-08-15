@@ -26,7 +26,7 @@
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
 
 Globals *_globals = NULL;
 ResourceManager *_resourceManager = NULL;
@@ -184,4 +184,4 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 
 } // end of namespace BlueForce
 
-} // end of namespace tSage
+} // end of namespace TsAGE

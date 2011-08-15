@@ -32,7 +32,7 @@
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
 
 /*--------------------------------------------------------------------------*/
 
@@ -595,4 +595,4 @@ OptionsDialog::OptionsDialog() {
 }
 
 
-} // End of namespace tSage
+} // End of namespace TsAGE

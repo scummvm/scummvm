@@ -25,7 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
@@ -3346,4 +3346,4 @@ void Scene6100::showMessage(const Common::String &msg, int color, Action *action
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE

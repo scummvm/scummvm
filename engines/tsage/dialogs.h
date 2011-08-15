@@ -30,7 +30,7 @@
 #include "common/rect.h"
 #include "common/system.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class MessageDialog : public GfxDialog {
 public:
@@ -128,6 +128,6 @@ public:
 	static void show();
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

@@ -30,11 +30,11 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
-using namespace tSage;
+using namespace TsAGE;
 
 class SceneObject9150 : public SceneObject {
 public:
@@ -532,6 +532,6 @@ public:
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

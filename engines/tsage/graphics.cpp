@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 /**
  * Creates a new graphics surface with the specified area of another surface
@@ -1512,4 +1512,4 @@ GfxFontBackup::~GfxFontBackup() {
 }
 
 
-} // End of namespace tSage
+} // End of namespace TsAGE

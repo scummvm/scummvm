@@ -37,7 +37,7 @@
 #include "tsage/ringworld/ringworld_scenes8.h"
 #include "tsage/ringworld/ringworld_scenes10.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
@@ -1491,4 +1491,4 @@ void RingworldGame::processEvent(Event &event) {
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE

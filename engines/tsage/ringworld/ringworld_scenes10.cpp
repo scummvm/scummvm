@@ -26,7 +26,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace Ringworld {
 
@@ -2090,4 +2090,4 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 
 } // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE

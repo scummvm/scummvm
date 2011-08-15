@@ -27,13 +27,13 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
-	_globals->_sceneManager.changeScene(109);
+	_globals->_sceneManager.changeScene(100);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 }
@@ -217,7 +217,9 @@ void SceneExt::dispatch() {
 
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
-	warning("TODO: word_51C38/word_51C3C");
+	
+	_v51C34.top = 0;
+	_v51C34.bottom = 300;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -250,4 +252,4 @@ void GameScene::remove() {
 
 } // End of namespace BlueForce
 
-} // End of namespace tSage
+} // End of namespace TsAGE
