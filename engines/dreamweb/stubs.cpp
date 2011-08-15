@@ -1064,5 +1064,12 @@ void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
 	data.byte(kNewtextline) = 1;
 }
 
+void DreamGenContext::showpanel() {
+	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
+	uint8 width, height;
+	showframe(frame, 72, 0, 19, 0, &width, &height);
+	showframe(frame, 192, 0, 19, 0, &width, &height);
+}
+
 } /*namespace dreamgen */
 

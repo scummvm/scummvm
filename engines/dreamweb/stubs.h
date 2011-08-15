@@ -126,4 +126,6 @@
 	void copyname(uint8 type, uint8 index, uint8 *dst);
 	void commandwithob();
 	void commandwithob(uint8 command, uint8 type, uint8 index);
+	void showpanel();
+
 

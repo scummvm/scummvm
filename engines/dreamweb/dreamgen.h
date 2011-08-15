@@ -111,7 +111,6 @@ public:
 	static const uint16 addr_usetempcharset = 0xca7c;
 	static const uint16 addr_usecharset1 = 0xca78;
 	static const uint16 addr_roomname = 0xca74;
-	static const uint16 addr_showpanel = 0xca70;
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_showicon = 0xca64;
@@ -1393,7 +1392,7 @@ public:
 	void getpersframe();
 	void doshake();
 	void resetkeyboard();
-	void showpanel();
+	//void showpanel();
 	void soundstartup();
 	void slabdoora();
 	void fadeupyellows();
