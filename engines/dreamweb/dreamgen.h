@@ -625,7 +625,6 @@ public:
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_dumpeverything = 0xc1c4;
 	static const uint16 addr_deleverything = 0xc1c0;
-	static const uint16 addr_getreelstart = 0xc1b8;
 	static const uint16 addr_movemap = 0xc1b4;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
@@ -1324,7 +1323,7 @@ public:
 	void readkey();
 	void louis();
 	void entrytexts();
-	void getreelstart();
+	//void getreelstart();
 	void buttonenter();
 	void checkinput();
 	//void crosshair();
