@@ -2796,16 +2796,6 @@ notmaprightspec:
 	data.byte(kNowinnewroom) = 1;
 }
 
-void DreamGenContext::getreelstart() {
-	STACK_CHECK;
-	ax = data.word(kReelpointer);
-	cx = 40;
-	_mul(cx);
-	es = data.word(kReels);
-	si = ax;
-	_add(si, (0+(36*144)));
-}
-
 void DreamGenContext::deleverything() {
 	STACK_CHECK;
 	al = data.byte(kMapysize);
@@ -19408,7 +19398,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
 		case addr_movemap: movemap(); break;
-		case addr_getreelstart: getreelstart(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_dumpeverything: dumpeverything(); break;
 		case addr_showpcx: showpcx(); break;

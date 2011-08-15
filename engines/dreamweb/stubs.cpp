@@ -884,7 +884,7 @@ void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 }
 
 void DreamGenContext::plotreel() {
-	Reel *reel = getreelstartCPP();
+	Reel *reel = getreelstart();
 	while (true) {
 		if (reel->x < 220)
 			break;
@@ -975,7 +975,7 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 		if (people->b4 == 255)
 			continue;
 		data.word(kReelpointer) = people->w0();
-		Reel *reel = getreelstartCPP();
+		Reel *reel = getreelstart();
 		if (reel->frame() == 0xffff)
 			++reel;
 		const Frame *frame = getreelframeax(reel->frame());
