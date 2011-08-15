@@ -30,11 +30,6 @@
 #include "agi/preagi.h"
 #include "agi/graphics.h"
 
-// preagi engines
-#include "agi/preagi_mickey.h"
-#include "agi/preagi_troll.h"
-#include "agi/preagi_winnie.h"
-
 namespace Agi {
 
 PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -135,32 +130,6 @@ void PreAgiEngine::initialize() {
 PreAgiEngine::~PreAgiEngine() {
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
-}
-
-
-Common::Error PreAgiEngine::go() {
-	setflag(fSoundOn, true);	// enable sound
-
-//
-// FIXME (Fingolfin asks): Why are Mickey and Troll standalone classes
-// instead of being subclasses of PreAgiEngine ?
-//
-
-	// run preagi engine main loop
-	switch (getGameID()) {
-	case GID_TROLL:
-		{
-			Troll *troll = new Troll(this);
-			troll->init();
-			troll->run();
-			delete troll;
-		}
-		break;
-	default:
-		error("Unknown preagi engine");
-		break;
-	}
-	return Common::kNoError;
 }
 
 int PreAgiEngine::rnd(int hi) {

@@ -37,6 +37,7 @@
 #include "agi/agi.h"
 #include "agi/preagi.h"
 #include "agi/preagi_mickey.h"
+#include "agi/preagi_troll.h"
 #include "agi/preagi_winnie.h"
 #include "agi/wagparser.h"
 
@@ -197,11 +198,11 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		case GID_MICKEY:
 			*engine = new Agi::MickeyEngine(syst, gd);
 			break;
+		case GID_TROLL:
+			*engine = new Agi::TrollEngine(syst, gd);
+			break;
 		case GID_WINNIE:
 			*engine = new Agi::WinnieEngine(syst, gd);
-			break;
-		default:
-			*engine = new Agi::PreAgiEngine(syst, gd);
 			break;
 		}
 		break;

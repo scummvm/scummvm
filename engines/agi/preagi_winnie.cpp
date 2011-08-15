@@ -1312,6 +1312,8 @@ WinnieEngine::~WinnieEngine() {
 }
 
 void WinnieEngine::init() {
+	setflag(fSoundOn, true); // enable sound
+
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));
 	_gameStateWinnie.fSound = 1;
 	_gameStateWinnie.nObjMiss = IDI_WTP_MAX_OBJ_MISSING;
