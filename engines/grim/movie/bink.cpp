@@ -151,7 +151,9 @@ bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
 	_x = x;
 	_y = y;
 	_fname = filename;
-	_fname += ".bik";
+
+	// The demo uses a weird .lab suffix instead of the normal .bik
+	_fname += (g_grim->getGameFlags() & ADGF_DEMO) ? ".lab" : ".bik";
 
 	if (!_binkDecoder->loadFile(_fname))
 		return false;
