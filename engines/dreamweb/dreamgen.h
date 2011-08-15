@@ -125,7 +125,6 @@ public:
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_commandonly = 0xca28;
-	static const uint16 addr_commandwithob = 0xca24;
 	static const uint16 addr_examineobtext = 0xca20;
 	static const uint16 addr_finishedwalking = 0xca1c;
 	static const uint16 addr_obname = 0xca18;
@@ -2028,7 +2027,7 @@ public:
 	void isitright();
 	void businessman();
 	void switchryanoff();
-	void commandwithob();
+	//void commandwithob();
 	void panelicons1();
 	void adjustdown();
 	void withwhat();

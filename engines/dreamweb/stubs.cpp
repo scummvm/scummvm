@@ -1038,4 +1038,31 @@ void DreamGenContext::copyname(uint8 type, uint8 index, uint8 *dst) {
 	dst[i] = 0;
 }
 
+void DreamGenContext::commandwithob() {
+	commandwithob(al, bh, bl); 
+}
+
+void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
+	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
+	deltextline();
+	uint16 commandText = kTextstart + segRef(data.word(kCommandtext)).word(command * 2);
+	uint8 textLen = data.byte(kTextlen);
+	{
+		uint16 y = data.word(kTextaddressy);
+		const uint8 *string = segRef(data.word(kCommandtext)).ptr(commandText, 0);
+		printdirect(&string, data.word(kTextaddressx), &y, textLen, (bool)(textLen & 1));
+	}
+	copyname(type, index, commandLine);
+	uint16 x = data.word(kLastxpos);
+	if (command != 0)
+		x += 5;
+	{
+		uint16 y = data.word(kTextaddressy);
+		const uint8 *string = commandLine;
+		printdirect(&string, x, &y, textLen, (bool)(textLen & 1));
+	}
+	data.byte(kNewtextline) = 1;
+}
+
 } /*namespace dreamgen */
+
