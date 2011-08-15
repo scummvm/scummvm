@@ -115,7 +115,6 @@ public:
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_showicon = 0xca64;
-	static const uint16 addr_copyname = 0xca5c;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_setwalk = 0xca44;
@@ -1784,7 +1783,7 @@ public:
 	void drawitall();
 	void usestereo();
 	void showcurrentfile();
-	void copyname();
+	//void copyname();
 	void look();
 	void setmouse();
 	void checkone();
