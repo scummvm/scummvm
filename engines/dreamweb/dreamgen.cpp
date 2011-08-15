@@ -17445,22 +17445,6 @@ void DreamGenContext::showman() {
 	showframe();
 }
 
-void DreamGenContext::showpanel() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = 72;
-	bx = 0;
-	al = 19;
-	ah = 0;
-	showframe();
-	ds = data.word(kIcons1);
-	di = 192;
-	bx = 0;
-	al = 19;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::roomname() {
 	STACK_CHECK;
 	di = 88;
@@ -19763,7 +19747,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;
-		case addr_showpanel: showpanel(); break;
 		case addr_roomname: roomname(); break;
 		case addr_usecharset1: usecharset1(); break;
 		case addr_usetempcharset: usetempcharset(); break;
