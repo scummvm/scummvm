@@ -53,6 +53,31 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene50: public SceneExt {
+	class Tooltip: public SavedObject {
+	public:
+		Rect _bounds;
+		char _msg[80];
+		int _field60;
+		int _field62;
+	public:
+		Tooltip();
+
+		virtual Common::String getClassName() { return "Scene50_Tooltip"; }
+		virtual void synchronize(Serializer &s);
+	};
+	class Tooltip2: public Action {
+	public:
+		Tooltip2(): Action() {}
+
+		virtual Common::String getClassName() { return "Scene50_Tooltip2"; }
+		virtual void signal();
+		virtual void dispatch();
+	};
+public:
+
+};
+
 } // End of namespace tSage_BlueForce
 
 #endif

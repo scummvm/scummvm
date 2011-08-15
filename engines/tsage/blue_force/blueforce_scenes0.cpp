@@ -191,4 +191,51 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 50 - Map Screen
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene50::Tooltip::Tooltip(): SavedObject() {
+	strcpy(_msg, "");
+	_field60 = _field62 = 0;
+}
+
+void Scene50::Tooltip::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
+	_bounds.synchronize(s);
+	s.syncBytes((byte *)&_msg[0], 84);
+}
+
+void Scene50::Tooltip2::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(60);
+		break;
+	case 1: {
+		Common::Point pt(410, 181);
+		NpcMover *mover = new NpcMover();
+		((SceneObject *)_owner)->addMover(mover, &pt, this);
+		break;
+	}
+	case 2:
+		_owner->remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene50::Tooltip2::dispatch() {
+	Action::dispatch();
+	SceneObject *owner = (SceneObject *)_owner;
+
+	if ((_actionIndex == 2) && (owner->_percent < 100)) {
+		owner->changeZoom(owner->_percent + 1);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+
 } // End of namespace tSage_BlueForce
