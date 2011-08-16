@@ -765,10 +765,7 @@ void DreamGenContext::updatepeople() {
 }
 
 void DreamGenContext::madmantext() {
-	// The original sources has two codepaths depending if the game is 'if cd' or not
-	// This is a hack to guess which version to use with the assumption that if we have a cd version
-	// we managed to load the speech.
-	if (data.byte(kSpeechloaded)) {
+	if (isCD()) {
 		if (data.byte(kSpeechcount) >= 63)
 			return;
 		_cmp(data.byte(kCh1playing), 255);

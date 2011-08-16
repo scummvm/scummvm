@@ -1071,5 +1071,12 @@ void DreamGenContext::showpanel() {
 	showframe(frame, 192, 0, 19, 0, &width, &height);
 }
 
+bool DreamGenContext::isCD() {
+	// The original sources has two codepaths depending if the game is 'if cd' or not
+	// This is a hack to guess which version to use with the assumption that if we have a cd version
+	// we managed to load the speech. At least it is isolated in this function and can be changed.
+	// Maybe detect the version during game id?
+	return (data.byte(kSpeechloaded) == 1);
+}
 } /*namespace dreamgen */
 
