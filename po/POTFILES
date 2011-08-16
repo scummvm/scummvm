@@ -79,3 +79,4 @@ backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/updates/macosx/macosx-updates.mm
+backends/platform/bada/form.cpp
