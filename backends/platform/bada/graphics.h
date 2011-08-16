@@ -48,13 +48,14 @@ public:
 	void updateScreen();
 	void setFeatureState(OSystem::Feature f, bool enable);
 	void setReady();
-	bool isReady() {return !_initState;}
+	bool isReady() { return !_initState; }
 	const Graphics::Font *getFontOSD();
 	bool moveMouse(int16 &x, int16 &y);
 
 private:
 	void internUpdateScreen();
 	bool loadGFXMode();
+	void loadTextures();
 	void unloadGFXMode();
 	void refreshGameScreen();
 	void setInternalMousePosition(int x, int y) {}
