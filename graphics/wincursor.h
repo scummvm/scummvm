@@ -102,6 +102,13 @@ struct WinCursorGroup {
 	static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
 };
 
+/**
+ * Create a Cursor for the default Windows cursor.
+ *
+ * @note The calling code is responsible for deleting the returned pointer.
+ */
+Cursor *makeDefaultWinCursor();
+
 } // End of namespace Graphics
 
 #endif
