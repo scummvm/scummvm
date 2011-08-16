@@ -203,6 +203,7 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 
 int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
+	GUI::Debugger *console = getDebugger();
 
 	while (!shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
@@ -216,9 +217,9 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				if (type == kSelYesNo || type == kSelAnyKey)
 					return 1;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _console) {
-					_console->attach();
-					_console->onFrame();
+				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && console) {
+					console->attach();
+					console->onFrame();
 					//FIXME: If not cleared, clicking again will start the console
 					event.kbd.keycode = Common::KEYCODE_INVALID;
 					event.kbd.flags = 0;

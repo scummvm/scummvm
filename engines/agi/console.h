@@ -67,20 +67,10 @@ private:
 	AgiEngine *_vm;
 };
 
-class PreAGI_Console : public GUI::Debugger {
+class MickeyConsole : public GUI::Debugger {
 public:
-	PreAGI_Console(PreAgiEngine *vm);
-	virtual ~PreAGI_Console() {}
-
-private:
-	PreAgiEngine *_vm;
-};
-
-
-class Mickey_Console : public PreAGI_Console {
-public:
-	Mickey_Console(MickeyEngine *mickey);
-	virtual ~Mickey_Console() {}
+	MickeyConsole(MickeyEngine *mickey);
+	virtual ~MickeyConsole() {}
 
 private:
 	MickeyEngine *_mickey;
@@ -91,10 +81,10 @@ private:
 	bool Cmd_DrawObj(int argc, const char **argv);
 };
 
-class Winnie_Console : public PreAGI_Console {
+class WinnieConsole : public GUI::Debugger {
 public:
-	Winnie_Console(WinnieEngine *winnie);
-	virtual ~Winnie_Console() {}
+	WinnieConsole(WinnieEngine *winnie);
+	virtual ~WinnieConsole() {}
 
 private:
 	WinnieEngine *_winnie;
@@ -102,6 +92,6 @@ private:
 	bool Cmd_CurRoom(int argc, const char **argv);
 };
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #endif /* AGI_CONSOLE_H */

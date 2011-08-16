@@ -1306,7 +1306,7 @@ void WinnieEngine::debugCurRoom() {
 }
 
 WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
-	_console = new Winnie_Console(this);
+	_console = new WinnieConsole(this);
 }
 
 WinnieEngine::~WinnieEngine() {

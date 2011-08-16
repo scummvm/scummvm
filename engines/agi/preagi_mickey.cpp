@@ -2247,10 +2247,11 @@ void MickeyEngine::debugGotoRoom(int room) {
 }
 
 MickeyEngine::MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
-	_console = new Mickey_Console(this);
+	_console = new MickeyConsole(this);
 }
 
 MickeyEngine::~MickeyEngine() {
+	delete _console;
 }
 
 void MickeyEngine::init() {

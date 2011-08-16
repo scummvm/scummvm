@@ -689,7 +689,11 @@ public:
 	void drawPic(int);
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
+	GUI::Debugger *getDebugger() { return _console; }
+
 protected:
+	MickeyConsole *_console;
+
 	MSA_GAME _gameStateMickey;
 	bool _clickToMove;
 

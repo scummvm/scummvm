@@ -275,25 +275,21 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 	return true;
 }
 
-PreAGI_Console::PreAGI_Console(PreAgiEngine *vm) {
-	_vm = vm;
-}
-
-Mickey_Console::Mickey_Console(MickeyEngine *mickey) : PreAGI_Console(mickey) {
+MickeyConsole::MickeyConsole(MickeyEngine *mickey) : GUI::Debugger() {
 	_mickey = mickey;
 
-	DCmd_Register("curRoom",     WRAP_METHOD(Mickey_Console, Cmd_CurRoom));
-	DCmd_Register("gotoRoom",    WRAP_METHOD(Mickey_Console, Cmd_GotoRoom));
-	DCmd_Register("drawPic",     WRAP_METHOD(Mickey_Console, Cmd_DrawPic));
-	DCmd_Register("drawObj",     WRAP_METHOD(Mickey_Console, Cmd_DrawObj));
+	DCmd_Register("curRoom",     WRAP_METHOD(MickeyConsole, Cmd_CurRoom));
+	DCmd_Register("gotoRoom",    WRAP_METHOD(MickeyConsole, Cmd_GotoRoom));
+	DCmd_Register("drawPic",     WRAP_METHOD(MickeyConsole, Cmd_DrawPic));
+	DCmd_Register("drawObj",     WRAP_METHOD(MickeyConsole, Cmd_DrawObj));
 }
 
-bool Mickey_Console::Cmd_CurRoom(int argc, const char **argv) {
+bool MickeyConsole::Cmd_CurRoom(int argc, const char **argv) {
 	_mickey->debugCurRoom();
 	return true;
 }
 
-bool Mickey_Console::Cmd_GotoRoom(int argc, const char **argv) {
+bool MickeyConsole::Cmd_GotoRoom(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Room number>\n", argv[0]);
 	else
@@ -301,7 +297,7 @@ bool Mickey_Console::Cmd_GotoRoom(int argc, const char **argv) {
 	return true;
 }
 
-bool Mickey_Console::Cmd_DrawPic(int argc, const char **argv) {
+bool MickeyConsole::Cmd_DrawPic(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Picture number>\n", argv[0]);
 	else
@@ -309,7 +305,7 @@ bool Mickey_Console::Cmd_DrawPic(int argc, const char **argv) {
 	return true;
 }
 
-bool Mickey_Console::Cmd_DrawObj(int argc, const char **argv) {
+bool MickeyConsole::Cmd_DrawObj(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Object number>\n", argv[0]);
 	else
@@ -317,13 +313,13 @@ bool Mickey_Console::Cmd_DrawObj(int argc, const char **argv) {
 	return true;
 }
 
-Winnie_Console::Winnie_Console(WinnieEngine *winnie) : PreAGI_Console(winnie) {
+WinnieConsole::WinnieConsole(WinnieEngine *winnie) : GUI::Debugger() {
 	_winnie = winnie;
 
-	DCmd_Register("curRoom", WRAP_METHOD(Winnie_Console, Cmd_CurRoom));
+	DCmd_Register("curRoom", WRAP_METHOD(WinnieConsole, Cmd_CurRoom));
 }
 
-bool Winnie_Console::Cmd_CurRoom(int argc, const char **argv) {
+bool WinnieConsole::Cmd_CurRoom(int argc, const char **argv) {
 	_winnie->debugCurRoom();
 
 	return true;
