@@ -35,14 +35,17 @@ using namespace Osp::Graphics;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
-#define SHORTCUT_SWAP_MOUSE 0
-#define SHORTCUT_ESCAPE 1
-#define SHORTCUT_MENU   2
-#define SHORTCUT_KEYPAD 3
-#define SHORTCUT_VOLUME 4
-#define SHORTCUT_BEGIN  SHORTCUT_SWAP_MOUSE
-#define SHORTCUT_END    SHORTCUT_KEYPAD
+// number of volume levels
 #define LEVEL_RANGE 5
+
+// round down small Y touch values to 1 to allow the
+// cursor to be positioned at the top of the screen
+#define MIN_TOUCH_Y 10
+
+// block for up to 2.5 seconds during shutdown to 
+// allow the game thread to exit gracefully.
+#define EXIT_SLEEP_STEP 10
+#define EXIT_SLEEP 250
 
 //
 // BadaAppForm
@@ -51,7 +54,7 @@ BadaAppForm::BadaAppForm() :
 	_gameThread(0), 
 	_state(InitState),
 	_buttonState(LeftButton),
-	_shortcutIndex(SHORTCUT_VOLUME) {
+	_shortcut(SetVolume) {
 	_eventQueueLock = new Mutex();
 	_eventQueueLock->Create();
 }
@@ -62,11 +65,11 @@ result BadaAppForm::Construct() {
 		return r;
 	}
 
-	BadaSystem *badaSystem = null;
-	_gameThread = null;
+	BadaSystem *badaSystem = NULL;
+	_gameThread = NULL;
 
 	badaSystem = new BadaSystem(this);
-	r = badaSystem != null ? E_SUCCESS : E_OUT_OF_MEMORY;
+	r = badaSystem != NULL ? E_SUCCESS : E_OUT_OF_MEMORY;
 	
 	if (!IsFailed(r)) {
 		r = badaSystem->Construct();
@@ -74,7 +77,7 @@ result BadaAppForm::Construct() {
 
 	if (!IsFailed(r)) {
 		_gameThread = new Thread();
-		r = _gameThread != null ? E_SUCCESS : E_OUT_OF_MEMORY;
+		r = _gameThread != NULL ? E_SUCCESS : E_OUT_OF_MEMORY;
 	}
 
 	if (!IsFailed(r)) {
@@ -82,12 +85,12 @@ result BadaAppForm::Construct() {
 	}
 
 	if (IsFailed(r)) {
-		if (badaSystem != null) {
+		if (badaSystem != NULL) {
 			delete badaSystem;
 		}
-		if (_gameThread != null) {
+		if (_gameThread != NULL) {
 			delete _gameThread;
-			_gameThread = null;
+			_gameThread = NULL;
 		}
 	} else {
 		g_system = badaSystem;
@@ -108,12 +111,12 @@ BadaAppForm::~BadaAppForm() {
 		}		
 
 		delete _gameThread;
-		_gameThread = null;
+		_gameThread = NULL;
 	}
 
 	if (_eventQueueLock) {
 		delete _eventQueueLock;
-		_eventQueueLock = null;
+		_eventQueueLock = NULL;
 	}
 
 	logLeaving();
@@ -124,7 +127,7 @@ BadaAppForm::~BadaAppForm() {
 //
 void BadaAppForm::terminate() {
 	if (_state == ActiveState) {
-		((BadaSystem*) g_system)->setMute(true);
+		((BadaSystem *) g_system)->setMute(true);
 
 		_eventQueueLock->Acquire();
 
@@ -137,11 +140,11 @@ void BadaAppForm::terminate() {
 
 		// block while thread ends
 		AppLog("waiting for shutdown");
-		for (int i = 0; i < 10 && _state == ClosingState; i++) {
-			Thread::Sleep(250);
+		for (int i = 0; i < EXIT_SLEEP_STEP && _state == ClosingState; i++) {
+			Thread::Sleep(EXIT_SLEEP);
 		}
 
-		if (_state = ClosingState) {
+		if (_state == ClosingState) {
 			// failed to terminate - Join() will freeze
 			_state = ErrorState;
 		}
@@ -154,7 +157,7 @@ void BadaAppForm::exitSystem() {
 	if (_gameThread) {
 		_gameThread->Stop();
 		delete _gameThread;
-		_gameThread = null;
+		_gameThread = NULL;
 	}
 }
 
@@ -177,7 +180,7 @@ result BadaAppForm::OnDraw(void) {
 	logEntered();
 
 	if (g_system) {
-		BadaSystem *system = (BadaSystem*)g_system;
+		BadaSystem *system = (BadaSystem *)g_system;
 		BadaGraphicsManager *graphics = system->getGraphics();
 		if (graphics && graphics->isReady()) {
 			g_system->updateScreen();
@@ -202,13 +205,15 @@ bool BadaAppForm::pollEvent(Common::Event &event) {
 
 void BadaAppForm::pushEvent(Common::EventType type,
 														const Point &currentPosition) {
-	BadaSystem *system = (BadaSystem*)g_system;
+	BadaSystem *system = (BadaSystem *)g_system;
 	BadaGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
+		// graphics could be NULL at startup or when 
+		// displaying the system error screen
 		Common::Event e;
 		e.type = type;
 		e.mouse.x = currentPosition.x;
-		e.mouse.y = currentPosition.y;
+		e.mouse.y = currentPosition.y > MIN_TOUCH_Y ? currentPosition.y : 1;
 		
 		bool moved = graphics->moveMouse(e.mouse.x, e.mouse.y);
 
@@ -255,13 +260,11 @@ void BadaAppForm::OnOrientationChanged(const Control &source,
 Object *BadaAppForm::Run(void) {
 	scummvm_main(0, 0);
 
-	AppLog("scummvm_main completed");
-
 	if (_state == ActiveState) {
-		Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, null);
+		Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, NULL);
 	}
 	_state = DoneState;
-	return null;
+	return NULL;
 }
 
 void BadaAppForm::setButtonShortcut() {
@@ -287,30 +290,34 @@ void BadaAppForm::setButtonShortcut() {
 
 void BadaAppForm::setShortcut() {
 	// cycle to the next shortcut
-	_shortcutIndex = (_shortcutIndex >= SHORTCUT_END ? SHORTCUT_BEGIN : 
-										_shortcutIndex + 1);
-	
-	switch (_shortcutIndex) {
-	case SHORTCUT_SWAP_MOUSE:
-		g_system->displayMessageOnOSD(_("Control Mouse"));
-		break;
-
-	case SHORTCUT_ESCAPE:
+	switch (_shortcut) {
+	case ControlMouse:
 		g_system->displayMessageOnOSD(_("Escape Key"));
+		_shortcut = EscapeKey;
 		break;
 
-	case SHORTCUT_MENU:
+	case EscapeKey:
 		g_system->displayMessageOnOSD(_("Game Menu"));
+		_shortcut = GameMenu;
 		break;
 
-	case SHORTCUT_KEYPAD:
+	case GameMenu:
 		g_system->displayMessageOnOSD(_("Show Keypad"));
+		_shortcut = ShowKeypad;
+		break;
+
+	case SetVolume:
+		// fallthru
+
+	case ShowKeypad:
+		g_system->displayMessageOnOSD(_("Control Mouse"));
+		_shortcut = ControlMouse;
 		break;
 	}
 }
 
 void BadaAppForm::setVolume(bool up, bool minMax) {
-	int level = ((BadaSystem*)g_system)->setVolume(up, minMax);
+	int level = ((BadaSystem *)g_system)->setVolume(up, minMax);
 	if (level != -1) {
 		char message[32];
 		char ind[LEVEL_RANGE]; // 1..5 (0=off)
@@ -394,17 +401,17 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 	logEntered();
 	switch (keyCode) {
 	case KEY_SIDE_UP:
-		_shortcutIndex = SHORTCUT_VOLUME;
+		_shortcut = SetVolume;
 		setVolume(true, true);
 		return;
 
 	case KEY_SIDE_DOWN:
-		_shortcutIndex = SHORTCUT_VOLUME;
+		_shortcut = SetVolume;
 		setVolume(false, true);
 		return;
 
 	case KEY_CAMERA:
-		_shortcutIndex = SHORTCUT_KEYPAD;
+		_shortcut = ShowKeypad;
 		showKeypad();
 		return;
 
@@ -416,28 +423,28 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 	switch (keyCode) {
 	case KEY_SIDE_UP:
-		if (_shortcutIndex != SHORTCUT_VOLUME) {
-			_shortcutIndex = SHORTCUT_VOLUME;
+		if (_shortcut != SetVolume) {
+			_shortcut = SetVolume;
 		} else {
 			setVolume(true, false);
 		}
 		return;
 
 	case KEY_SIDE_DOWN:
-		switch (_shortcutIndex) {
-		case SHORTCUT_SWAP_MOUSE:
+		switch (_shortcut) {
+		case ControlMouse:
 			setButtonShortcut();
 			break;
 
-		case SHORTCUT_ESCAPE:
+		case EscapeKey:
 			pushKey(Common::KEYCODE_ESCAPE);			
 			break;
 
-		case SHORTCUT_MENU:
+		case GameMenu:
 			pushKey(Common::KEYCODE_F5);
 			break;
 
-		case SHORTCUT_KEYPAD:
+		case ShowKeypad:
 			showKeypad();
 			break;
 
@@ -458,7 +465,3 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 
 void BadaAppForm::OnKeyReleased(const Control &source, KeyCode keyCode) {
 }
-
-//
-// end of form.cpp 
-//
