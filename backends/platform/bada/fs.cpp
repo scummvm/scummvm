@@ -112,7 +112,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
 
 	case SEEK_CUR:
 		// set relative to offs
-		if (bufferIndex < bufferLength && bufferIndex > (uint32) -offs) {
+		if (bufferIndex < bufferLength && bufferIndex > (uint32)-offs) {
 			// re-position within the buffer
 			SetLastResult(E_SUCCESS);
 			bufferIndex += offs;
@@ -159,17 +159,17 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 			uint32 available = bufferLength - bufferIndex;
 			if (len <= available) {
 				// use allocation
-				memcpy((byte*) ptr, &buffer[bufferIndex], len);
+				memcpy((byte*)ptr, &buffer[bufferIndex], len);
 				bufferIndex += len;
 				result = len;
 			} else {
 				// use remaining allocation
-				memcpy((byte*) ptr, &buffer[bufferIndex], available);
+				memcpy((byte*)ptr, &buffer[bufferIndex], available);
 				uint32 remaining = len - available;
 				result = available;
 				
 				if (remaining) {
-					result += file->Read(((byte*) ptr) + available, remaining);
+					result += file->Read(((byte*)ptr) + available, remaining);
 				}
 				bufferIndex = bufferLength = 0;
 			}
@@ -181,11 +181,11 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				if (bufferLength < len) {
 					len = bufferLength;
 				}
-				memcpy((byte*) ptr, buffer, len);
+				memcpy((byte*)ptr, buffer, len);
 				result = bufferIndex = len;
 			}
 		} else {
-			result = file->Read((byte*) ptr, len);
+			result = file->Read((byte*)ptr, len);
 			bufferIndex = bufferLength = 0;
 		}
 	} else {
@@ -231,7 +231,7 @@ BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode)
 //
 Common::String fromString(const Osp::Base::String &in) {
 	ByteBuffer *buf = StringUtil::StringToUtf8N(in);
-	Common::String result((const char*) buf->GetPointer());
+	Common::String result((const char*)buf->GetPointer());
 	delete buf;
 	
 	return result;
@@ -410,7 +410,7 @@ AbstractFSNode *BadaFilesystemNode::getParent() const {
 
 Common::SeekableReadStream *BadaFilesystemNode::createReadStream() {
 	Common::SeekableReadStream *result = BadaFileStream::makeFromPath(_unicodePath, false);
-	if (result != null) {
+	if (result != NULL) {
 		_isValid = !IsFailed(File::GetAttributes(_unicodePath, _attr));
 	}
 	return result;
@@ -418,12 +418,8 @@ Common::SeekableReadStream *BadaFilesystemNode::createReadStream() {
 
 Common::WriteStream *BadaFilesystemNode::createWriteStream() {
 	Common::WriteStream *result = BadaFileStream::makeFromPath(_unicodePath, true);
-	if (result != null) {
+	if (result != NULL) {
 		_isValid = !IsFailed(File::GetAttributes(_unicodePath, _attr));
 	}
 	return result;
 }
-
-//
-// end of fs.cpp
-//

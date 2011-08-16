@@ -125,13 +125,13 @@ private:
 
 BadaMutexManager::BadaMutexManager() {
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		buffer[i] = null;
+		buffer[i] = NULL;
 	}
 }
 
 BadaMutexManager::~BadaMutexManager() {
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		if (buffer[i] != null) {
+		if (buffer[i] != NULL) {
 			delete buffer[i];
 		}
 	}
@@ -142,7 +142,7 @@ OSystem::MutexRef BadaMutexManager::createMutex() {
 	mutex->Create();
 
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		if (buffer[i] == null) {
+		if (buffer[i] == NULL) {
 			buffer[i] = mutex;
 			break;
 		}
@@ -166,7 +166,7 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
 		if (buffer[i] == m) {
-			buffer[i] = null;
+			buffer[i] = NULL;
 		}
 	}
 
@@ -190,7 +190,7 @@ void BadaEventManager::init() {
 	DefaultEventManager::init();
 
 	// theme and vkbd should have now loaded - clear the splash screen
-	BadaSystem *system = (BadaSystem*)g_system;
+	BadaSystem *system = (BadaSystem *)g_system;
 	BadaGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
 		graphics->setReady();
@@ -199,7 +199,7 @@ void BadaEventManager::init() {
 }
 
 int BadaEventManager::shouldQuit() const {
-	BadaSystem *system = (BadaSystem*)g_system;
+	BadaSystem *system = (BadaSystem *)g_system;
 	return system->isClosing();
 }
 
@@ -283,8 +283,8 @@ result BadaSystem::initModules() {
 void BadaSystem::initBackend() {
 	logEntered();
 
-	// allow translations to be found
-	ConfMan.set("themepath", "/Res");
+	// allow translations and game .DAT files to be found
+	ConfMan.set("extrapath", "/Res");
 
 	// use the mobile device theme
 	ConfMan.set("gui_theme", "/Res/scummmobile");
@@ -326,7 +326,7 @@ void BadaSystem::initBackend() {
 				Graphics::BdfFont *font = Graphics::BdfFont::loadFromCache(fontFile);
 				if (font) {
 					// use this font for the vkbd and on-screen messages
-					FontMan.assignFontToUsage(Graphics::FontManager::kBigGUIFont, font);
+					FontMan.setFont(Graphics::FontManager::kBigGUIFont, font);
 				}
 			}
 		}
@@ -381,7 +381,7 @@ void BadaSystem::delayMillis(uint msecs) {
 }
 
 void BadaSystem::updateScreen() {
-	if (_graphicsManager != null) {
+	if (_graphicsManager != NULL) {
 		_graphicsManager->updateScreen();
 	}
 }
@@ -460,7 +460,7 @@ int BadaSystem::setVolume(bool up, bool minMax) {
 }
 
 //
-// create the scummVM system
+// create the ScummVM system
 //
 BadaAppForm *systemStart(Osp::App::Application *app) {
 	logEntered();
@@ -468,14 +468,14 @@ BadaAppForm *systemStart(Osp::App::Application *app) {
 	BadaAppForm *appForm = new BadaAppForm();
 	if (!appForm) {
 		AppLog("Failed to create appForm");
-		return null;
+		return NULL;
 	}
 
 	if (E_SUCCESS != appForm->Construct() ||
 			E_SUCCESS != app->GetAppFrame()->GetFrame()->AddControl(*appForm)) {
 		delete appForm;
 		AppLog("Failed to construct appForm");
-		return null;
+		return NULL;
 	}
 
 	return appForm;
@@ -493,11 +493,7 @@ void systemError(const char *message) {
 	Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT_ERR, args);
 
 	if (g_system) {
-		BadaSystem *system = (BadaSystem*)g_system;
+		BadaSystem *system = (BadaSystem *)g_system;
 		system->exitSystem();
 	}
 }
-
-//
-// end of system.cpp 
-//

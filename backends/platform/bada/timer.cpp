@@ -62,7 +62,7 @@ void TimerSlot::OnStop() {
 	if (_timer) {
 		_timer->Cancel();		 
 		delete _timer;
-		_timer = null;
+		_timer = NULL;
 	}
 }
 
@@ -118,7 +118,3 @@ void BadaTimerManager::removeTimerProc(TimerProc proc) {
 		}
 	}
 }
-
-//
-// end of timer.cpp 
-//

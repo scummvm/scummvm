@@ -46,7 +46,7 @@ BadaScummVM::BadaScummVM() : _appForm(0) {
 BadaScummVM::~BadaScummVM() {
 	logEntered();
 	if (g_system) {
-		BadaSystem *system = (BadaSystem*)g_system;
+		BadaSystem *system = (BadaSystem *)g_system;
 		system->destroyBackend();
 		delete system;
 		g_system = 0;
@@ -55,7 +55,7 @@ BadaScummVM::~BadaScummVM() {
 
 bool BadaScummVM::OnAppInitializing(AppRegistry &appRegistry) {
 	_appForm = systemStart(this);
-	return (_appForm != null);
+	return (_appForm != NULL);
 }
 
 bool BadaScummVM::OnAppTerminating(AppRegistry &appRegistry, 
@@ -73,9 +73,9 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 		Terminate();
 	} else if (requestId == USER_MESSAGE_EXIT_ERR) {
 		// assertion failure termination
-		String *message = null;
+		String *message = NULL;
 		if (args) {
-			message = (String*) args->GetAt(0);
+			message = (String*)args->GetAt(0);
 		}
 		if (!message) {
 			message = new String("Unknown error");
@@ -119,10 +119,6 @@ void BadaScummVM::pauseGame(bool pause) {
 	}
 
 	if (g_system) {
-		((BadaSystem*)g_system)->setMute(pause);
+		((BadaSystem *)g_system)->setMute(pause);
 	}
 }
-
-//
-// end of application.cpp 
-//
