@@ -526,6 +526,7 @@ begin_credits("Credits");
 	  begin_section("DreamWeb");
 		  add_person("Vladimir Menshakov", "whoozle", "");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Bertrand Augereau", "Tramb", "");
 	  end_section();
 
 	  begin_section("Gob");
@@ -709,6 +710,7 @@ begin_credits("Credits");
 
 	  begin_section("Nintendo DS");
 		  add_person("Neil Millstone", "agent-q", "");
+		  add_person("Bertrand Augereau", "Tramb", "HQ software scaler");
 	  end_section();
 
 	  begin_section("OpenPandora");
