@@ -570,6 +570,8 @@ protected:
 
 	virtual void decodeParseString(int a, int b);
 
+	virtual void setDefaultCursor();
+
 	/* HE version 100 script opcodes */
 	void o100_actorOps();
 	void o100_arrayOps();

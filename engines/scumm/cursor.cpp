@@ -22,6 +22,9 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
+#ifdef ENABLE_HE
+#include "graphics/wincursor.h"
+#endif
 #include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
@@ -225,6 +228,45 @@ void ScummEngine_v70he::setDefaultCursor() {
 
 	updateCursor();
 }
+
+#ifdef ENABLE_HE
+void ScummEngine_v100he::setDefaultCursor() {
+	if (_game.id == GID_MOONBASE) {
+		// Moonbase uses the default Windows cursor instead of the usual
+		// default HE cursor.
+		Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+
+		// Clear the cursor
+		for (int i = 0; i < 1024; i++)
+			WRITE_UINT16(_grabbedCursor + i * 2, 5);
+
+		_cursor.width = cursor->getWidth();
+		_cursor.height = cursor->getHeight();
+		_cursor.hotspotX = cursor->getHotspotX();
+		_cursor.hotspotY = cursor->getHotspotY();
+
+		const byte *surface = cursor->getSurface();
+		const byte *palette = cursor->getPalette();
+
+		for (uint16 y = 0; y < _cursor.height; y++) {
+			for (uint16 x = 0; x < _cursor.width; x++) {
+				byte pixel = *surface++;
+				if (pixel != cursor->getKeyColor()) {
+					pixel -= cursor->getPaletteStartIndex();
+					WRITE_UINT16(_grabbedCursor + (y * _cursor.width + x) * 2, get16BitColor(palette[pixel * 3], palette[pixel * 3 + 1], palette[pixel * 3 + 2]));
+				}
+
+			}
+		}
+
+		delete cursor;
+
+		updateCursor();
+	} else {
+		ScummEngine_v70he::setDefaultCursor();
+	}
+}
+#endif
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	int w, h;
