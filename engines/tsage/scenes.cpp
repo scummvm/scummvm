@@ -424,6 +424,11 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
+						if (_vm->getGameID() == GType_BlueForce) {
+							// For Blue Force, if the scene has an interface area, exclude it from the copy
+							srcBounds.bottom = MIN<int16>(srcBounds.bottom, BF_GLOBALS._interfaceY);
+							destBounds.bottom = MIN<int16>(destBounds.bottom, BF_GLOBALS._interfaceY);
+						}
 
 						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);
 					}

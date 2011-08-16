@@ -186,7 +186,7 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit(OwnerList);
 	if (BF_GLOBALS._v4CEA2) {
 		// Blank out the bottom portion of the screen
-		BF_GLOBALS._v51C24 = BF_INTERFACE_Y;
+		BF_GLOBALS._interfaceY = BF_INTERFACE_Y;
 
 		Rect r(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
 		BF_GLOBALS.gfxManager().getSurface().fillRect(r, 0);

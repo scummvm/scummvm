@@ -626,9 +626,9 @@ void GfxElement::setDefaults() {
 	_fontNumber = _globals->_gfxFontNumber;
 	_colors = _globals->_gfxColors;
 	_fontColors = _globals->_fontColors;
-	_unkColor1 = _globals->_unkColor1;
-	_unkColor2 = _globals->_unkColor2;
-	_unkColor3 = _globals->_unkColor3;
+	_color1 = _globals->_color1;
+	_color2 = _globals->_color2;
+	_color3 = _globals->_color3;
 }
 
 /**
@@ -824,9 +824,9 @@ void GfxMessage::draw() {
 	gfxManager.setFillFlag(false);
 	gfxManager._font.setFontNumber(_fontNumber);
 
-	gfxManager._font._colors.foreground = this->_unkColor1;
-	gfxManager._font._colors2.background = this->_unkColor2;
-	gfxManager._font._colors2.foreground = this->_unkColor3;
+	gfxManager._font._colors.foreground = this->_color1;
+	gfxManager._font._colors2.background = this->_color2;
+	gfxManager._font._colors2.foreground = this->_color3;
 
 	// Display the text
 	gfxManager._font.writeLines(_message.c_str(), _bounds, _textAlign);
@@ -867,9 +867,9 @@ void GfxButton::draw() {
 	gfxManager._font.setFontNumber(_fontNumber);
 
 	//
-	gfxManager._font._colors.foreground = this->_unkColor1;
-	gfxManager._font._colors2.background = this->_unkColor2;
-	gfxManager._font._colors2.foreground = this->_unkColor3;
+	gfxManager._font._colors.foreground = this->_color1;
+	gfxManager._font._colors2.background = this->_color2;
+	gfxManager._font._colors2.foreground = this->_color3;
 
 	// Display the button's text
 	Rect tempRect(_bounds);

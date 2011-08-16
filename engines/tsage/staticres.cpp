@@ -73,7 +73,6 @@ const char *SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to r
 const char *SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
 const char *RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
 const char *RESTART_CONFIRM_MSG = "Do you want to restart your game?";
-const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 
 const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
@@ -93,12 +92,16 @@ const char *SOUND_BTN_STRING = "Sound";
 const char *RESUME_BTN_STRING = " Resume \rplay";
 const char *LOOK_BTN_STRING = "Look";
 const char *PICK_BTN_STRING = "Pick";
-const char *START_PLAY_BTN_STRING = " Start Play ";
-const char *INTRODUCTION_BTN_STRING = "Introduction";
 
 
 namespace Ringworld {
 
+// Dialog resources
+const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
+const char *START_PLAY_BTN_STRING = " Start Play ";
+const char *INTRODUCTION_BTN_STRING = "Introduction";
+
+// Scene specific resources
 const char *EXIT_MSG = "   EXIT   ";
 const char *SCENE6100_CAREFUL = "Be careful! The probe cannot handle too much of that.";
 const char *SCENE6100_TOUGHER = "Hey! This is tougher than it looks!";
@@ -124,6 +127,11 @@ const char *DEMO_RESUME_BTN_STRING = "Resume";
 } // End of namespace Ringworld
 
 namespace BlueForce {
+
+// Dialog resources
+const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
+const char *START_PLAY_BTN_STRING = " Play ";
+const char *INTRODUCTION_BTN_STRING = " Watch ";
 
 // Blue Force general messages
 const char *BF_NAME = "Blue Force";

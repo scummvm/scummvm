@@ -177,7 +177,7 @@ public:
 	uint16 _fontNumber;
 	GfxColors _colors;
 	GfxColors _fontColors;
-	byte _unkColor1, _unkColor2, _unkColor3;
+	byte _color1, _color2, _color3;
 	uint16 _keycode;
 public:
 	GfxElement();

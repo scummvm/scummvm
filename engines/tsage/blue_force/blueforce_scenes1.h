@@ -39,12 +39,20 @@ namespace BlueForce {
 using namespace TsAGE;
 
 class Scene100: public SceneExt {
+	/* Support classes */
+	class Text: public SceneText {
+	public:
+		virtual Common::String getClassName() { return "BF100Text"; }
+		virtual void dispatch();
+	};
+
 	/* Actions */
 	class Action1: public ActionExt {
 	private:
 		void setTextStrings(const Common::String &msg1, const Common::String &msg2, Action *action);
 	public:
-		SceneText _sceneText1, _sceneText2;
+		Text _sceneText1;
+		SceneText _sceneText2;
 		int _textHeight;
 
 		virtual Common::String getClassName() { return "BF100Action1"; }

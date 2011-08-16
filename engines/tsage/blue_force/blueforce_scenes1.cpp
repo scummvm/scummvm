@@ -36,6 +36,17 @@ namespace BlueForce {
  *
  *--------------------------------------------------------------------------*/
 
+void Scene100::Text::dispatch() {
+	SceneText::dispatch();
+
+	// Keep the second text string below the first one
+	Scene100 *scene = (Scene100 *)BF_GLOBALS._sceneManager._scene;
+	Common::Point &pt = scene->_action1._sceneText1._position;
+	scene->_action1._sceneText2.setPosition(Common::Point(pt.x, 
+		pt.y + scene->_action1._textHeight));
+}
+
+
 void Scene100::Action1::signal() {
 	static byte black[3] = { 0, 0, 0 };
 
@@ -46,9 +57,10 @@ void Scene100::Action1::signal() {
 		break;
 	case 1: {
 		Common::String msg1 = _resourceManager->getMessage(100, _state++);
-		if (!msg1.compareTo("LASTCREDIT")) {
+		if (msg1.compareTo("LASTCREDIT")) {
 			Common::String msg2 = _resourceManager->getMessage(100, _state++);
 			setTextStrings(msg1, msg2, this);
+			--_actionIndex;
 		} else {
 			setTextStrings(BF_NAME, BF_ALL_RIGHTS_RESERVED, this);
 			
@@ -76,11 +88,11 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 	_sceneText1._fontNumber = 10;
 	_sceneText1._width = 160;
 	_sceneText1._textMode = ALIGN_RIGHT;
-	_sceneText1._color1 = _globals->_fontColors.background;
-	_sceneText1._color2 = _globals->_fontColors.foreground;
-	_sceneText1._color3 = _globals->_fontColors.background;
+	_sceneText1._color1 = BF_GLOBALS._scenePalette._colors.foreground;
+	_sceneText1._color2 = BF_GLOBALS._scenePalette._colors.background;
+	_sceneText1._color3 = BF_GLOBALS._scenePalette._colors.foreground;
 	_sceneText1.setup(msg1);
-	_sceneText1.fixPriority(-1);
+	_sceneText1.fixPriority(255);
 	_sceneText1.setPosition(Common::Point(
 		(SCREEN_WIDTH - _sceneText1.getFrame().getBounds().width()) / 2, 202));
 	_sceneText1._moveRate = 30;
@@ -90,11 +102,11 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 	_sceneText2._fontNumber = 10;
 	_sceneText2._width = _sceneText1._width;
 	_sceneText2._textMode = _sceneText1._textMode;
-	_sceneText2._color1 = _globals->_fontColors.background;
-	_sceneText2._color2 = _globals->_fontColors.foreground;
-	_sceneText2._color3 = _globals->_fontColors.background;
-	_sceneText2.setup(msg1);
-	_sceneText2.fixPriority(-1);
+	_sceneText2._color1 = _sceneText1._color1;
+	_sceneText2._color2 = 31;
+	_sceneText2._color3 = _sceneText1._color3;
+	_sceneText2.setup(msg2);
+	_sceneText2.fixPriority(255);
 	GfxSurface textSurface = _sceneText2.getFrame();
 	_sceneText2.setPosition(Common::Point((SCREEN_WIDTH - textSurface.getBounds().width()) / 2, 202));
 	_sceneText2._moveRate = 30;
@@ -157,7 +169,7 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._scenePalette.loadPalette(2);
 	BF_GLOBALS._v51C44 = 1;
 	Scene::postInit();
-	BF_GLOBALS._v51C24 = 200;
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
 	_globals->_player.enableControl();
 	_globals->_player.hide();
@@ -168,16 +180,13 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		// Title
 		loadScene(100);
 		BF_GLOBALS._sound1.play(2);
-//		setAction(&_action2, this);
+		setAction(&_action2, this);
 	} else {
 		// Credits
 		loadScene(101);
 		BF_GLOBALS._sound1.play(118);
-//		setAction(&_action1, this);
+		setAction(&_action1, this);
 	}
-
-	loadScene(20);
-	setZoomPercents(60, 85, 200, 100);
 }
 
 void Scene100::signal() {

@@ -51,7 +51,7 @@ static SavedObject *classFactoryProc(const Common::String &className) {
 /*--------------------------------------------------------------------------*/
 
 Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface),
-		_randomSource("tsage"), _unkColor1(0), _unkColor2(255), _unkColor3(255) {
+		_randomSource("tsage"), _color1(0), _color2(255), _color3(255) {
 	reset();
 	_stripNum = 0;
 	_gfxEdgeAdjust = 3;
@@ -64,18 +64,26 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_fontColors.foreground = 6;
 		_dialogCenter.y = 80;
 		// Workaround in order to use later version of the engine
-		_unkColor1 = _gfxColors.foreground;
-		_unkColor2 = _gfxColors.foreground;
-		_unkColor3 = _gfxColors.foreground;
+		_color1 = _gfxColors.foreground;
+		_color2 = _gfxColors.foreground;
+		_color3 = _gfxColors.foreground;
+	} else if (_vm->getGameID() == GType_BlueForce) {
+		// Blue Force
+		_gfxFontNumber = 0;
+		_gfxColors.background = 89;
+		_gfxColors.foreground = 83;
+		_fontColors.background = 88;
+		_fontColors.foreground = 92;
+		_dialogCenter.y = 165;
 	} else if ((_vm->getGameID() == GType_Ringworld) &&  (_vm->getFeatures() & GF_CD)) {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
 		_gfxColors.foreground = 0;
 		_fontColors.background = 51;
 		_fontColors.foreground = 54;
-		_unkColor1 = 18;
-		_unkColor2 = 18;
-		_unkColor3 = 18;
+		_color1 = 18;
+		_color2 = 18;
+		_color3 = 18;
 	} else {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
@@ -83,9 +91,9 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_fontColors.background = 51;
 		_fontColors.foreground = 54;
 		// Workaround in order to use later version of the engine
-		_unkColor1 = _gfxColors.foreground;
-		_unkColor2 = _gfxColors.foreground;
-		_unkColor3 = _gfxColors.foreground;
+		_color1 = _gfxColors.foreground;
+		_color2 = _gfxColors.foreground;
+		_color3 = _gfxColors.foreground;
 	}
 	_screenSurface.setScreenSurface();
 	_gfxManagers.push_back(&_gfxManagerInstance);
@@ -143,9 +151,9 @@ void Globals::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_fontColors.foreground);
 
 	if (s.getVersion() >= 4) {
-		s.syncAsByte(_unkColor1);
-		s.syncAsByte(_unkColor2);
-		s.syncAsByte(_unkColor3);
+		s.syncAsByte(_color1);
+		s.syncAsByte(_color2);
+		s.syncAsByte(_color3);
 	}
 
 	s.syncAsSint16LE(_dialogCenter.x); s.syncAsSint16LE(_dialogCenter.y);
@@ -172,7 +180,7 @@ void Globals::dispatchSounds() {
 namespace BlueForce {
 
 BlueForceGlobals::BlueForceGlobals(): Globals() {
-	_v51C24 = 0;
+	_interfaceY = 0;
 	_v51C44 = 1;
 	_v4CEA2 = 0;
 }

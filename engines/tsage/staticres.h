@@ -40,7 +40,6 @@ extern const char *SAVE_ERROR_MSG;
 extern const char *SAVING_NOT_ALLOWED_MSG;
 extern const char *RESTORING_NOT_ALLOWED_MSG;
 extern const char *RESTART_CONFIRM_MSG;
-extern const char *WATCH_INTRO_MSG;
 
 // Dialogs
 extern const char *HELP_MSG;
@@ -59,10 +58,13 @@ extern const char *RESUME_BTN_STRING;
 extern const char *LOOK_BTN_STRING;
 extern const char *PICK_BTN_STRING;
 extern const char *INV_EMPTY_MSG;
-extern const char *START_PLAY_BTN_STRING;
-extern const char *INTRODUCTION_BTN_STRING;
 
 namespace Ringworld {
+
+// Dialog resources
+extern const char *WATCH_INTRO_MSG;
+extern const char *START_PLAY_BTN_STRING;
+extern const char *INTRODUCTION_BTN_STRING;
 
 // Scene specific resources
 extern const char *EXIT_MSG;
@@ -91,6 +93,11 @@ extern const char *DEMO_RESUME_BTN_STRING;
 } // End of namespace Ringworld
 
 namespace BlueForce {
+
+// Dialog resources
+extern const char *WATCH_INTRO_MSG;
+extern const char *START_PLAY_BTN_STRING;
+extern const char *INTRODUCTION_BTN_STRING;
 
 // Blue Force messages
 extern const char *BF_NAME;

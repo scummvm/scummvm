@@ -54,7 +54,7 @@ public:
 	int _gfxFontNumber;
 	GfxColors _gfxColors;
 	GfxColors _fontColors;
-	byte _unkColor1, _unkColor2, _unkColor3;
+	byte _color1, _color2, _color3;
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
@@ -99,7 +99,7 @@ public:
 extern Globals *_globals;
 
 #define GLOBALS (*_globals)
-#define BF_GLOBALS (*((BlueForceGlobals *)_globals))
+#define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)_globals))
 
 // Note: Currently this can't be part of the _globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
@@ -119,7 +119,7 @@ public:
 	int _v501FC;
 	int _v51C42;
 	int _v51C44;
-	int _v51C24;
+	int _interfaceY;
 
 	BlueForceGlobals();
 	virtual Common::String getClassName() { return "BFGlobals"; }
