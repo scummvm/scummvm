@@ -36,7 +36,7 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm *appForm) :
 	_eglConfig(0),
 	_eglContext(EGL_NO_CONTEXT),
 	_initState(true) {
-	assert(appForm != null);
+	assert(appForm != NULL);
 	_videoMode.fullscreen = true;
 	_videoMode.antialiasing = true;
 }
@@ -95,7 +95,6 @@ void BadaGraphicsManager::updateScreen() {
 	}
 }
 
-// see: http://forums.badadev.com/viewtopic.php?f=7&t=208
 bool BadaGraphicsManager::loadEgl() {
 	logEntered();
 
@@ -128,7 +127,7 @@ bool BadaGraphicsManager::loadEgl() {
 		return false;
 	}
 	
-	if (EGL_FALSE == eglInitialize(_eglDisplay, null, null) || 
+	if (EGL_FALSE == eglInitialize(_eglDisplay, NULL, NULL) || 
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglInitialize() failed");
 		return false;
@@ -147,7 +146,7 @@ bool BadaGraphicsManager::loadEgl() {
 	}
 
 	_eglSurface = eglCreateWindowSurface(_eglDisplay, _eglConfig, 
-																			(EGLNativeWindowType)_appForm, null);
+																			(EGLNativeWindowType)_appForm, NULL);
 	if (EGL_NO_SURFACE == _eglSurface || EGL_SUCCESS != eglGetError()) {
 		systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE");
 		return false;
@@ -189,6 +188,17 @@ bool BadaGraphicsManager::loadGFXMode() {
 	return OpenGLGraphicsManager::loadGFXMode();
 }
 
+void BadaGraphicsManager::loadTextures() {
+	logEntered();
+
+	OpenGLGraphicsManager::loadTextures();
+
+	// prevent image skew in some games, see:
+	// http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall
+	// note: this did not solve the pixel border problem in refreshGameScreen()
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+}
+
 void BadaGraphicsManager::internUpdateScreen() {
 	if (!_initState) {
 		OpenGLGraphicsManager::internUpdateScreen();
@@ -202,7 +212,7 @@ void BadaGraphicsManager::unloadGFXMode() {
 	logEntered();
 
 	if (EGL_NO_DISPLAY != _eglDisplay) {
-		eglMakeCurrent(_eglDisplay, null, null, null);
+		eglMakeCurrent(_eglDisplay, NULL, NULL, NULL);
 
 		if (_eglContext != EGL_NO_CONTEXT) {
 			eglDestroyContext(_eglDisplay, _eglContext);
@@ -218,7 +228,7 @@ void BadaGraphicsManager::unloadGFXMode() {
 		_eglDisplay = EGL_NO_DISPLAY;
 	}
 	
-	_eglConfig = null;
+	_eglConfig = NULL;
 
 	OpenGLGraphicsManager::unloadGFXMode();
 	logLeaving();
@@ -303,7 +313,3 @@ void BadaGraphicsManager::showSplash() {
 	canvas.Show();
 
 }
-
-//
-// end of graphics.cpp 
-//
