@@ -102,7 +102,7 @@ private:
 	Common::Queue<Common::Event> _eventQueue;
 	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
 	enum {LeftButton, RightButtonOnce, RightButton, MoveOnly} _buttonState;
-	int _shortcutIndex;
+	enum {ControlMouse, EscapeKey, GameMenu, ShowKeypad, SetVolume} _shortcut;
 };
 
 #endif
