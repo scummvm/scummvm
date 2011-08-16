@@ -150,6 +150,9 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	// Set the transition speed
+	_gfx->setTransitionSpeed(_vars["transitionmode"]);
+
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
 	_cursor->showCursor();

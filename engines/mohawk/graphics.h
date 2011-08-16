@@ -196,6 +196,7 @@ public:
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
 	void fadeToBlack();
+	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
 
 	// Inventory
 	void showInventory();
@@ -231,6 +232,7 @@ private:
 	// Transitions
 	int16 _scheduledTransition;
 	Common::Rect _transitionRect;
+	uint32 _transitionSpeed;
 
 	// Inventory
 	void clearInventoryArea();

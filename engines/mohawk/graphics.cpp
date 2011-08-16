@@ -921,7 +921,8 @@ void RivenGraphics::clearMainScreen() {
 }
 
 void RivenGraphics::fadeToBlack() {
-	// Self-explanatory
+	// The transition speed is forced to best here
+	setTransitionSpeed(kRivenTransitionSpeedBest);
 	scheduleTransition(16);
 	clearMainScreen();
 	runScheduledTransition();
