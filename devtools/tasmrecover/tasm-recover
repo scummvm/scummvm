@@ -118,5 +118,6 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'dreamweb',
 	'backobject',
 	'mainman',
+	'madman',
 	])
 generator.generate('dreamweb') #start routine

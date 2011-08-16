@@ -768,9 +768,8 @@ void DreamGenContext::madmantext() {
 	if (isCD()) {
 		if (data.byte(kSpeechcount) >= 63)
 			return;
-		_cmp(data.byte(kCh1playing), 255);
-		if (!flags.z())
-			return /* (nomadtext) */;
+		if (data.byte(kCh1playing) != 255)
+			return;
 		al = data.byte(kSpeechcount);
 		++data.byte(kSpeechcount);
 	} else {
@@ -779,10 +778,72 @@ void DreamGenContext::madmantext() {
 		al = data.byte(kCombatcount);
 		_and(al, 3);
 		if (!flags.z())
-			return /* (nomadtext) */;
+			return;
 		al = data.byte(kCombatcount) / 4;
 	}
 	setuptimedtemp(47 + al, 82, 72, 80, 90, 1);
+}
+
+void DreamGenContext::madman() {
+	data.word(kWatchingtime) = 2;
+	checkspeed();
+	if (flags.z()) {
+		ax = es.word(bx+3);
+		if (ax >= 364) {
+			data.byte(kMandead) = 2;
+			showgamereel();
+			return;
+		}
+		if (ax == 10) {
+			push(es);
+			push(bx);
+			push(ax);
+			dx = kIntrotextname;
+			loadtemptext();
+			ax = pop();
+			bx = pop();
+			es = pop();
+			data.byte(kCombatcount) = -1;
+			data.byte(kSpeechcount) = 0;
+		}
+		++ax;
+		if (ax == 294) {
+			if (data.byte(kWongame) == 1)
+				return;
+			data.byte(kWongame) = 1;
+			push(es);
+			push(bx);
+			getridoftemptext();
+			bx = pop();
+			es = pop();
+			return;
+		}
+		if (ax == 66) {
+			++data.byte(kCombatcount);
+			push(es);
+			push(bx);
+			madmantext();
+			bx = pop();
+			es = pop();
+			ax = 53;
+			if (data.byte(kCombatcount) >= (isCD() ? 64 : 62)) {
+				if (data.byte(kCombatcount) == (isCD() ? 70 : 68))
+					ax = 310;
+				else {
+					if (data.byte(kLastweapon) == 8) {
+						data.byte(kCombatcount) = isCD() ? 72 : 70;
+						data.byte(kLastweapon) = -1;
+						data.byte(kMadmanflag) = 1;
+						ax = 67;
+					}
+				}
+			}
+		}
+		es.word(bx+3) = ax;
+	}
+	showgamereel();
+	es.byte(bx+1) = data.byte(kMapx);
+	madmode();
 }
 
 } /*namespace dreamgen */
