@@ -26,6 +26,8 @@
 #include "common/array.h"
 #include "common/winexe.h"
 
+#include "graphics/cursor.h"
+
 namespace Common {
 class NEResources;
 class PEResources;
@@ -35,7 +37,7 @@ class SeekableReadStream;
 namespace Graphics {
 
 /** A Windows cursor. */
-class WinCursor {
+class WinCursor : public Cursor {
 public:
 	WinCursor();
 	~WinCursor();

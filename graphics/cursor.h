@@ -20,60 +20,37 @@
  *
  */
 
-/**
- * @file
- * Macintosh cursor decoding used in engines:
- * - mohawk
- * - sci
- * - scumm
- */
+#ifndef GRAPHICS_CURSOR_H
+#define GRAPHICS_CURSOR_H
 
-#ifndef GRAPHICS_MACCURSOR_H
-#define GRAPHICS_MACCURSOR_H
-
-#include "common/stream.h"
-
-#include "graphics/cursor.h"
+#include "common/scummsys.h"
 
 namespace Graphics {
 
 /**
- * A Mac crsr or CURS cursor
+ * A simple cursor representation
+ * TODO: Switch to using Graphics::Surface instead of a byte*
  */
-class MacCursor : public Cursor {
+class Cursor {
 public:
-	MacCursor();
-	~MacCursor();
+	Cursor() {}
+	virtual ~Cursor() {}
 
 	/** Return the cursor's width. */
-	uint16 getWidth() const { return 16; }
+	virtual uint16 getWidth() const = 0;
 	/** Return the cursor's height. */
-	uint16 getHeight() const { return 16; }
+	virtual uint16 getHeight() const = 0;
 	/** Return the cursor's hotspot's x coordinate. */
-	uint16 getHotspotX() const { return _hotspotX; }
+	virtual uint16 getHotspotX() const = 0;
 	/** Return the cursor's hotspot's y coordinate. */
-	uint16 getHotspotY() const { return _hotspotY; }
+	virtual uint16 getHotspotY() const = 0;
 	/** Return the cursor's transparent key. */
-	byte getKeyColor() const { return 0xFF; }
+	virtual byte getKeyColor() const = 0;
 
-	const byte *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-
-	/** Read the cursor's data out of a stream. */
-	bool readFromStream(Common::SeekableReadStream &stream, bool forceMonochrome = false);
-
-private:
-	bool readFromCURS(Common::SeekableReadStream &stream);
-	bool readFromCRSR(Common::SeekableReadStream &stream, bool forceMonochrome);
-
-	byte *_surface;
-	byte _palette[256 * 3];
-
-	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
-	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.
-
-	/** Clear the cursor. */
-	void clear();
+	/** Return the cursor's surface. */
+	virtual const byte *getSurface() const = 0;
+	/** Return the cursor's palette in RGB format. */
+	virtual const byte *getPalette() const = 0;
 };
 
 } // End of namespace Graphics
