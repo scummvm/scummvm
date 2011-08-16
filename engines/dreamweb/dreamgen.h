@@ -621,7 +621,6 @@ public:
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_dumpeverything = 0xc1c4;
 	static const uint16 addr_deleverything = 0xc1c0;
-	static const uint16 addr_movemap = 0xc1b4;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_reelsonscreen = 0xc1a0;
@@ -1892,7 +1891,7 @@ public:
 	void showman();
 	void readmouse2();
 	void newplace();
-	void movemap();
+	//void movemap();
 	void loadsample();
 	void usecardreader1();
 	void usecardreader2();

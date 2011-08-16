@@ -879,8 +879,7 @@ void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 	} else if (type == 6) {
 		data.byte(kNewlocation) = secondParam;
 	} else {
-		ah = secondParam;
-		movemap();
+		movemap(secondParam);
 	}
 }
 

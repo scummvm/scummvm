@@ -2615,40 +2615,6 @@ notfudge:
 	data.byte(kHavedoneobs) = 0;
 }
 
-void DreamGenContext::movemap() {
-	STACK_CHECK;
-	_cmp(ah, 32);
-	if (!flags.z())
-		goto notmapup2;
-	_sub(data.byte(kMapy), 20);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapup2:
-	_cmp(ah, 16);
-	if (!flags.z())
-		goto notmapupspec;
-	_sub(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapupspec:
-	_cmp(ah, 8);
-	if (!flags.z())
-		goto notmapdownspec;
-	_add(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapdownspec:
-	_cmp(ah, 2);
-	if (!flags.z())
-		goto notmaprightspec;
-	_add(data.byte(kMapx), 11);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmaprightspec:
-	_sub(data.byte(kMapx), 11);
-	data.byte(kNowinnewroom) = 1;
-}
-
 void DreamGenContext::deleverything() {
 	STACK_CHECK;
 	al = data.byte(kMapysize);
@@ -19088,7 +19054,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_reelsonscreen: reelsonscreen(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
-		case addr_movemap: movemap(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_dumpeverything: dumpeverything(); break;
 		case addr_showpcx: showpcx(); break;

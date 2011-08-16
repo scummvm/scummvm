@@ -856,5 +856,26 @@ void DreamGenContext::madmode() {
 	data.byte(kPointermode) = 2;
 }
 
+void DreamGenContext::movemap(uint8 param) {
+	switch (param) {
+	case 32:
+		data.byte(kMapy) -= 20;
+		break;
+	case 16:
+		data.byte(kMapy) -= 10;
+		break;
+	case 8:
+		data.byte(kMapy) += 10;
+		break;
+	case 2:
+		data.byte(kMapx) += 11;
+		break;
+	default:
+		data.byte(kMapx) -= 11;
+		break;
+	}
+	data.byte(kNowinnewroom) = 1;
+}
+
 } /*namespace dreamgen */
 

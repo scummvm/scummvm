@@ -130,5 +130,6 @@
 	void updatepeople();
 	void madmantext();
 	void madmode();
+	void movemap(uint8 param);
 	bool isCD();
 
