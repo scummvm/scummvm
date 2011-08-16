@@ -25,6 +25,17 @@
 
 #define BUFFER_SIZE 1024
 
+// internal BADA paths
+#define PATH_ROOT        "/"
+#define PATH_HOME        "/Home"
+#define PATH_HOME_SHARE  "/Home/Share"
+#define PATH_HOME_SHARE2 "/Home/Share2"
+#define PATH_HOME_X      "/Home/"
+#define PATH_HOME_EXT    "/HomeExt"
+#define PATH_MEDIA       "/Media"
+#define PATH_CARD        "/Storagecard"
+#define PATH_CARD_MEDIA  "/Storagecard/Media"
+ 
 //
 // BadaFileStream
 //
@@ -211,7 +222,7 @@ BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode)
 
 	String filePath = path;
 	if (writeMode && (path[0] != '.' && path[0] != '/')) {
-		filePath.Insert("/Home/", 0);
+		filePath.Insert(PATH_HOME_X, 0);
 	}
 
 	AppLog("Open file %S", filePath.GetPointer());
@@ -267,11 +278,11 @@ void BadaFilesystemNode::init(const Common::String &nodePath) {
 	_displayName = Common::lastPathComponent(_path, '/');
 
 	StringUtil::Utf8ToString(_path.c_str(), _unicodePath);
-	_isVirtualDir = (_path == "/" ||
-									_path == "/Home" ||
-									_path == "/Home/Share" ||
-									_path == "/Home/Share2" ||
-									_path == "/Storagecard");
+	_isVirtualDir = (_path == PATH_ROOT ||
+									 _path == PATH_HOME ||
+									 _path == PATH_HOME_SHARE ||
+									 _path == PATH_HOME_SHARE2 ||
+									 _path == PATH_CARD);
 	_isValid = _isVirtualDir || !IsFailed(File::GetAttributes(_unicodePath, _attr));
 }
 
@@ -289,10 +300,10 @@ bool BadaFilesystemNode::isDirectory() const {
 
 bool BadaFilesystemNode::isWritable() const {
 	bool result = (_isValid && !_isVirtualDir && !_attr.IsDirectory() && !_attr.IsReadOnly());
-	if (_path == "/Home" || 
-			_path == "/HomeExt" || 
-			_path == "/Home/Share" ||
-			_path == "/Home/Share2") {
+	if (_path == PATH_HOME || 
+			_path == PATH_HOME_EXT || 
+			_path == PATH_HOME_SHARE ||
+			_path == PATH_HOME_SHARE2) {
 		result = true;
 	}
 	return result;
@@ -312,19 +323,19 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 
 	if (_isVirtualDir && mode != Common::FSNode::kListFilesOnly) {
 		// present well known BADA file system areas
-		if (_path == "/") {
-			myList.push_back(new BadaFilesystemNode("/Home"));
-			myList.push_back(new BadaFilesystemNode("/HomeExt"));
-			myList.push_back(new BadaFilesystemNode("/Media"));
-			myList.push_back(new BadaFilesystemNode("/Storagecard"));
+		if (_path == PATH_ROOT) {
+			myList.push_back(new BadaFilesystemNode(PATH_HOME));
+			myList.push_back(new BadaFilesystemNode(PATH_HOME_EXT));
+			myList.push_back(new BadaFilesystemNode(PATH_MEDIA));
+			myList.push_back(new BadaFilesystemNode(PATH_CARD));
 			result = true; // no more entries
-		} else if (_path == "/Storagecard") {
-			myList.push_back(new BadaFilesystemNode("/Storagecard/Media"));
+		} else if (_path == PATH_CARD) {
+			myList.push_back(new BadaFilesystemNode(PATH_CARD_MEDIA));
 			result = true; // no more entries
-		} else if (_path == "/Home") {
+		} else if (_path == PATH_HOME) {
 			// ensure share path is always included
-			myList.push_back(new BadaFilesystemNode("/Home/Share"));
-			myList.push_back(new BadaFilesystemNode("/Home/Share2"));
+			myList.push_back(new BadaFilesystemNode(PATH_HOME_SHARE));
+			myList.push_back(new BadaFilesystemNode(PATH_HOME_SHARE2));
 		}
 	}
 	
@@ -384,7 +395,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 
 AbstractFSNode *BadaFilesystemNode::getParent() const {
 	logEntered();
-	if (_path == "/") {
+	if (_path == PATH_ROOT) {
 		return 0; // The filesystem root has no parent
 	}
 
