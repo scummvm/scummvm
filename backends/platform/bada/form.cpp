@@ -127,7 +127,7 @@ BadaAppForm::~BadaAppForm() {
 //
 void BadaAppForm::terminate() {
 	if (_state == ActiveState) {
-		((BadaSystem *) g_system)->setMute(true);
+		((BadaSystem *)g_system)->setMute(true);
 
 		_eventQueueLock->Acquire();
 
