@@ -54,7 +54,10 @@ public:
 	byte getKeyColor() const;
 
 	const byte *getSurface() const { return _surface; }
+
 	const byte *getPalette() const { return _palette; }
+	byte getPaletteStartIndex() const { return 0; }
+	uint16 getPaletteCount() const { return 256; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream);

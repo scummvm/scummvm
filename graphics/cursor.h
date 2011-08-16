@@ -49,8 +49,13 @@ public:
 
 	/** Return the cursor's surface. */
 	virtual const byte *getSurface() const = 0;
+
 	/** Return the cursor's palette in RGB format. */
 	virtual const byte *getPalette() const = 0;
+	/** Return the starting index of the palette. */
+	virtual byte getPaletteStartIndex() const = 0;
+	/** Return the number of colors in the palette. */
+	virtual uint16 getPaletteCount() const = 0;
 };
 
 } // End of namespace Graphics
