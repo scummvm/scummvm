@@ -26,14 +26,7 @@
 #include "backends/platform/bada/system.h"
 #include "backends/platform/bada/application.h"
 
-using namespace Osp::Base;
-using namespace Osp::Base::Runtime;
-using namespace Osp::Graphics;
-using namespace Osp::Locales;
 using namespace Osp::System;
-using namespace Osp::App;
-using namespace Osp::System;
-using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
 Application *BadaScummVM::createInstance() {

@@ -28,10 +28,7 @@
 #include "backends/platform/bada/form.h"
 #include "backends/platform/bada/system.h"
 
-using namespace Osp::App;
-using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
-using namespace Osp::Graphics;
 using namespace Osp::Ui;
 using namespace Osp::Ui::Controls;
 
