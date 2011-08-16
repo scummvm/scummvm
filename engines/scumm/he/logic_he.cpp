@@ -821,13 +821,13 @@ int LogicHEsoccer::versionID() {
 
 LogicHEsoccer::LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {
 	_userDataD = (double *)calloc(1732, sizeof(double));
-	_array1013 = 0;
-	_array1013Allocated = false;
+	_collisionTree = 0;
+	_collisionTreeAllocated = false;
 }
 
 LogicHEsoccer::~LogicHEsoccer() {
 	free(_userDataD);
-	delete[] _array1013;
+	delete[] _collisionTree;
 }
 
 int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
@@ -901,7 +901,7 @@ void LogicHEsoccer::beforeBootScript() {
 
 void LogicHEsoccer::initOnce() {
 	// The original sets some paths here that we don't need to worry about
-	_array1013Allocated = false;
+	_collisionTreeAllocated = false;
 	_userDataD[530] = 0;
 }
 
@@ -915,13 +915,13 @@ int LogicHEsoccer::startOfFrame() {
 	return res;
 }
 
-int LogicHEsoccer::op_1005(float a1, float a2, float a3, float a4, float a5, float a6, float *a7, float *a8, float *a9, float *a10) {
+int LogicHEsoccer::op_1005(float x1, float y1, float z1, float x2, float y2, float z2, float *nextVelX, float *nextVelY, float *nextVelZ, float *a10) {
 	// Called from op_1014
 
-	double v11 = a1 * a4 + a2 * a5 + a3 * a6;
-	*a7 = a4 - (v11 + v11) * a1;
-	*a8 = a5 - (v11 + v11) * a2;
-	*a9 = a6 - (v11 + v11) * a3;
+	double dot = x1 * x2 + y1 * y2 + z1 * z2;
+	*nextVelX = x2 - 2 * dot * x1;
+	*nextVelY = y2 - 2 * dot * y1;
+	*nextVelZ = z2 - 2 * dot * z1;
 	*a10 = 1.0f; // It always does this. How curious!
 
 	return 1;
@@ -967,193 +967,177 @@ int LogicHEsoccer::op_1007(int32 *args) {
 	_userDataD[523] = _userDataD[527] / _userDataD[519];
 
 	// Clear both byte arrays
-	memset(_byteArray1, 0, 4096);
-	memset(_byteArray2, 0, 585);
+	memset(_collisionObjIds, 0, 4096);
+	memset(_collisionNodeEnabled, 0, 585);
 
-	if (!_array1013Allocated)
+	if (!_collisionTreeAllocated)
 		op_1013(4, args[8], args[9]);
 
 	return 1;
 }
 
-// This looks like 3-dimensional distance where each argument the change in dimension?
-static inline double sqrtSquare(double a1, double a2, double a3) {
-	return sqrt(a1 * a1 + a2 * a2 + a3 * a3);
+static inline double vectorLength(double x, double y, double z) {
+	return sqrt(x * x + y * y + z * z);
 }
 
-int LogicHEsoccer::op_1008(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17, int a18, int a19) {
-	// Used during a match (kicking?)
+int LogicHEsoccer::op_1008(int outArray, int srcX, int srcY, int srcZ, int vecX, int vecY, int vecZ, int airResX, int airResY, int airResZ, int vecNumerator, int vecDenom, int gravityMult, int requiredSegments, int a15, int a16, int a17, int a18, int fieldType) {
+	// Calculate requiredSegments consecutive movement segments, and place
+	// the associated data (positions, vectors, etc) into outArray.
 
-	int v29 = 0;
-	int v27 = 1;
-	int v33 = 500;
-	int v28 = a2;
-	int v32 = a4;
-	int v26 = 0;
+	int loopsSoFar = 0;
+	int segmentsSoFar = 1;
+	int prevVecY = 500;
+	int inX = srcX;
+	int inZ = srcZ;
+	int checkForCollisions = 0;
 
-	while (v27 <= a14) {
-		if (a19 == 1 && a4 > 8819)
-			v26 = 1;
-		else if (a19 == 2 && (a2 < -2350 || a2 > 2350))
-			v26 = 1;
-		else if (a19 == 3 && (a2 < -2350 || a2 > 2350 || a4 < 6119 || a4 > 8819))
-			v26 = 1;
+	while (segmentsSoFar <= requiredSegments) {
+		if (fieldType == 1 && srcZ > 8819)
+			checkForCollisions = 1;
+		else if (fieldType == 2 && (srcX < -2350 || srcX > 2350))
+			checkForCollisions = 1;
+		else if (fieldType == 3 && (srcX < -2350 || srcX > 2350 || srcZ < 6119 || srcZ > 8819))
+			checkForCollisions = 1;
 
-		if (a3 > 0)
-			a6 -= a11 * a13 / a12;
+		if (srcY > 0)
+			vecY -= vecNumerator * gravityMult / vecDenom;
 
-		int v30 = a2;
-		int v31_1 = a3;
-		int v31_2 = a4;
-		a2 += a11 * a5 / a12;
-		a3 += a11 * a6 / a12;
-		a4 += a11 * a7 / a12;
+		int prevX = srcX;
+		int prevY = srcY;
+		int prevZ = srcZ;
+		srcX += vecNumerator * vecX / vecDenom;
+		srcY += vecNumerator * vecY / vecDenom;
+		srcZ += vecNumerator * vecZ / vecDenom;
 
-		if (a3 > 0) {
-			if (v26 && op_1014(v30, v31_1, v31_2, a5, a6, a7, 0, a17, a18, 3, a11, a12, a15, a16)) {
-				a2 = _array1014[6];
-				a3 = _array1014[7];
-				a4 = _array1014[8];
-				a5 = _array1014[3];
-				a6 = _array1014[4];
-				a7 = _array1014[5];
-				putInArray(a1, v27, 0, v29);
-				putInArray(a1, v27, 1, (int)sqrtSquare((double)(_array1014[6] - v28), 0.0, (double)(_array1014[8] - v32)));
-				putInArray(a1, v27, 2, _array1014[6]);
-				putInArray(a1, v27, 3, _array1014[7]);
-				putInArray(a1, v27, 4, _array1014[8]);
-				putInArray(a1, v27, 5, a5);
-				putInArray(a1, v27, 6, a6);
-				putInArray(a1, v27++, 7, a7);
+		if (srcY > 0) {
+			if (checkForCollisions && op_1014(prevX, prevY, prevZ, vecX, vecY, vecZ, 0, a17, a18, 3, vecNumerator, vecDenom, a15, a16)) {
+				srcX = _internalCollisionOutData[6];
+				srcY = _internalCollisionOutData[7];
+				srcZ = _internalCollisionOutData[8];
+				vecX = _internalCollisionOutData[3];
+				vecY = _internalCollisionOutData[4];
+				vecZ = _internalCollisionOutData[5];
+				putInArray(outArray, segmentsSoFar, 0, loopsSoFar);
+				putInArray(outArray, segmentsSoFar, 1, (int)vectorLength((double)(_internalCollisionOutData[6] - inX), 0.0, (double)(_internalCollisionOutData[8] - inZ)));
+				putInArray(outArray, segmentsSoFar, 2, _internalCollisionOutData[6]);
+				putInArray(outArray, segmentsSoFar, 3, _internalCollisionOutData[7]);
+				putInArray(outArray, segmentsSoFar, 4, _internalCollisionOutData[8]);
+				putInArray(outArray, segmentsSoFar, 5, vecX);
+				putInArray(outArray, segmentsSoFar, 6, vecY);
+				putInArray(outArray, segmentsSoFar++, 7, vecZ);
 			} 
 		} else {
-			a3 = 0;
-			int v34 = a5;
-			int v35 = a7;
-			a5 = a5 * a8 / 100;
+			srcY = 0;
+			int thisVecX = vecX;
+			int thisVecZ = vecZ;
+			vecX = vecX * airResX / 100;
 
-			if (a6) {
-				int v18 = ABS(a6);
-				if (v18 > ABS(v33))
-					a6 = ABS(v33);
-				a6 = ABS(a9 * a6) / 100;
+			if (vecY) {
+				int v18 = ABS(vecY);
+				if (v18 > ABS(prevVecY))
+					vecY = ABS(prevVecY);
+				vecY = ABS(airResY * vecY) / 100;
 			}
 
-			a7 = a10 * a7 / 100;
+			vecZ = airResZ * vecZ / 100;
 
-			if (v33 >= 0) {
-				if (op_1014(v30, v31_1, v31_2, v34, v33, v35, 0, a17, a18, 3, a11, a12, a15, a16)) {
-					a2 = _array1014[6];
-					a3 = _array1014[7];
-					a4 = _array1014[8];
-					a5 = _array1014[3];
-					a6 = _array1014[4];
-					a7 = _array1014[5];
+			if (prevVecY >= 0) {
+				if (op_1014(prevX, prevY, prevZ, thisVecX, prevVecY, thisVecZ, 0, a17, a18, 3, vecNumerator, vecDenom, a15, a16)) {
+					srcX = _internalCollisionOutData[6];
+					srcY = _internalCollisionOutData[7];
+					srcZ = _internalCollisionOutData[8];
+					vecX = _internalCollisionOutData[3];
+					vecY = _internalCollisionOutData[4];
+					vecZ = _internalCollisionOutData[5];
 				}
 			} else {
-				if (v26) {
-					op_1021(a2, 0, a4, v34 ,v33, v35, 1);
+				if (checkForCollisions) {
+					op_1021(srcX, 0, srcZ, thisVecX, prevVecY, thisVecZ, 1);
 
-					if (op_1014(v30, v31_1, v31_2, v34, v33, v35, 0, a17, a18, 3, a11, a12, a15, a16)) {
-						a2 = _array1014[6];
-						a3 = _array1014[7];
-						a4 = _array1014[8];
-						a5 = _array1014[3];
-						a6 = _array1014[4];
-						a7 = _array1014[5];
+					if (op_1014(prevX, prevY, prevZ, thisVecX, prevVecY, thisVecZ, 0, a17, a18, 3, vecNumerator, vecDenom, a15, a16)) {
+						srcX = _internalCollisionOutData[6];
+						srcY = _internalCollisionOutData[7];
+						srcZ = _internalCollisionOutData[8];
+						vecX = _internalCollisionOutData[3];
+						vecY = _internalCollisionOutData[4];
+						vecZ = _internalCollisionOutData[5];
 					} else {
-						int v19 = a7 + v31_2 - _var1021[1];
-						int v20 = ABS(v33);
+						// try it with the output of op_1021 instead
+						int tmpVecZ = vecZ + prevZ - _var1021[1];
+						int v20 = ABS(prevVecY);
 
-						if (op_1014(_var1021[0], 0, _var1021[1], a5 + v30 - _var1021[0], v20 - v31_1, v19, 0, a17, a18, 3, a11, a12, a15, a16)) {
-							a2 = _array1014[6];
-							a3 = _array1014[7];
-							a4 = _array1014[8];
-							a5 = _array1014[3];
-							a6 = _array1014[4];
-							a7 = _array1014[5];
+						if (op_1014(_var1021[0], 0, _var1021[1], vecX + prevX - _var1021[0], v20 - prevY, tmpVecZ, 0, a17, a18, 3, vecNumerator, vecDenom, a15, a16)) {
+							srcX = _internalCollisionOutData[6];
+							srcY = _internalCollisionOutData[7];
+							srcZ = _internalCollisionOutData[8];
+							vecX = _internalCollisionOutData[3];
+							vecY = _internalCollisionOutData[4];
+							vecZ = _internalCollisionOutData[5];
 						}
 					}
 				}
 			}
 
-			v33 = a6;
-			putInArray(a1, v27, 0, v29);
-			putInArray(a1, v27, 1, (int32)sqrtSquare(a2 - v28, 0.0, a4 - v32));
-			putInArray(a1, v27, 2, a2);
-			putInArray(a1, v27, 3, a3);
-			putInArray(a1, v27, 4, a4);
-			putInArray(a1, v27, 5, a5);
-			putInArray(a1, v27, 6, a6);
-			putInArray(a1, v27++, 7, a7);
+			prevVecY = vecY;
+			putInArray(outArray, segmentsSoFar, 0, loopsSoFar);
+			putInArray(outArray, segmentsSoFar, 1, (int32)vectorLength(srcX - inX, 0.0, srcZ - inZ));
+			putInArray(outArray, segmentsSoFar, 2, srcX);
+			putInArray(outArray, segmentsSoFar, 3, srcY);
+			putInArray(outArray, segmentsSoFar, 4, srcZ);
+			putInArray(outArray, segmentsSoFar, 5, vecX);
+			putInArray(outArray, segmentsSoFar, 6, vecY);
+			putInArray(outArray, segmentsSoFar++, 7, vecZ);
 		}
 
-		v29++;
+		loopsSoFar++;
 	}
 
 	return 1;
 }
 
-int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6) {
+int LogicHEsoccer::op_1011(int32 worldPosArray, int32 screenPosArray, int32 a3, int32 closestActorArray, int32 maxDistance, int32 fieldAreaArray) {
 	// This is called on each frame by startOfFrame() if activated by op_1012.
-	// This seems to do player placement!
-	// It also seems to be doing camera panning
 
-	float v28 = 0.0;
+	float objY = 0.0;
 
+	// First, iterate over the field objects and project them onto the screen.
 	for (int i = 0; i < 18; i++) {
-		// These seem to be some sort of percent? of angles?
-		int v32 = getFromArray(a1, i, 0);
-		int v6 = getFromArray(a1, i, 1);
-		int v30 = getFromArray(a1, i, 2);
+		int rawX = getFromArray(worldPosArray, i, 0);
+		int rawY = getFromArray(worldPosArray, i, 1);
+		int rawZ = getFromArray(worldPosArray, i, 2);
 
-		float v29 = (double)v32 / 100.0;
-		v28 = (double)v6 / 100.0;
-		float v31 = (double)v30 / 100.0;
+		float objX = (double)rawX / 100.0;
+		objY = (double)rawY / 100.0;
+		float objZ = (double)rawZ / 100.0;
 
 		if (i < 13) {
-			int v25 = ((v32 + 2750) / 500 >= 0) ? ((v32 + 2750) / 500) : 0;
-			int v24 = 10;
+			// For the players and the ball: work out the area of the field
+			// this object is in, storing it in an array if provided.
+			int areaX = (rawX + 2750) / 500;
+			areaX = CLIP(areaX, 0, 10);
 
-			if (v25 <= 10) {
-				int v23 = 0;
-				if ((v32 + 2750) / 500 >= 0)
-					v23 = (v32 + 2750) / 500;
+			int areaZ = (9219 - rawZ) / 500;
+			areaZ = CLIP(areaZ, 0, 6);
 
-				v24 = v23;
-			}
-
-			int v22 = 0;
-			if ((9219 - v30) / 500 >= 0)
-				v22 = (9219 - v30) / 500;
-
-			int v21 = 6;
-			if (v22 <= 6) {
-				int v20 = 0;
-				if ((9219 - v30) / 500 >= 0)
-					v20 = (9219 - v30) / 500;
-				v21 = v20;
-			}
-
-			if (a6)
-				putInArray(a6, 0, i, v24 + 11 * v21);
+			if (fieldAreaArray)
+				putInArray(fieldAreaArray, 0, i, areaX + 11 * areaZ);
 		}
 
-		float v7 = atan2(_userDataD[524] - v28, (double)v31);
-		int v8 = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] - 300.0);
+		float v7 = atan2(_userDataD[524] - objY, (double)objZ);
+		int screenY = (int)(_userDataD[526] - (_userDataD[521] - v7) * _userDataD[522] - 300.0);
 		double v9 = _userDataD[523];
 
 		// x/y position of objects
-		putInArray(a2, i, 0, (int32)(atan2(v29, v31) * v9 + 640.0));
-		putInArray(a2, i, 1, v8);
+		putInArray(screenPosArray, i, 0, (int32)(atan2(objX, objZ) * v9 + 640.0));
+		putInArray(screenPosArray, i, 1, screenY);
 
-		double v10 = atan2(_userDataD[524], (double)v31);
-		int v12 = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] - 300.0);
+		double v10 = atan2(_userDataD[524], (double)objZ);
+		int shadowScreenY = (int)(_userDataD[526] - (_userDataD[521] - (float)v10) * _userDataD[522] - 300.0);
 		double v13 = _userDataD[523];
 
 		// x/y position of shadows
-		putInArray(a2, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 0, (int32)(atan2(v29, v31) * v13 + 640.0));
-		putInArray(a2, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 1, v12);
+		putInArray(screenPosArray, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 0, (int32)(atan2(objX, objZ) * v13 + 640.0));
+		putInArray(screenPosArray, i + ((_vm->_game.id == GID_SOCCER) ? 20 : 22), 1, shadowScreenY);
 	}
 
 	// soccer only uses one array here
@@ -1164,18 +1148,18 @@ int LogicHEsoccer::op_1011(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int
 	// The following loop is doing cursor scaling
 	// The further up on the screen, the smaller the cursor is
 	for (int i = start; i <= end; i++) {
-		int v14 = getFromArray(a2, i, 0);
-		int v15 = getFromArray(a2, i, 1);
+		int x = getFromArray(screenPosArray, i, 0);
+		int y = getFromArray(screenPosArray, i, 1);
 
-		// This retains v28 from (i == 17)?
-		float v16 = _userDataD[524] - v28;
-		float v17 = v16 / tan((_userDataD[528] + v15 - _userDataD[526]) / _userDataD[522] + _userDataD[521]);
-		double v18 = tan((double)(v14 - ((_vm->_game.id == GID_SOCCER) ? 0 : 640)) / _userDataD[523]) * v17;
-		putInArray(a1, i, 0, (int)(v18 * 100.0));
-		putInArray(a1, i, 2, (int)(v17 * 100.0));
+		// This retains objY from (i == 17)?
+		float v16 = _userDataD[524] - objY;
+		float scaledZ = v16 / tan((_userDataD[528] + y - _userDataD[526]) / _userDataD[522] + _userDataD[521]);
+		double scaledX = tan((double)(x - ((_vm->_game.id == GID_SOCCER) ? 0 : 640)) / _userDataD[523]) * scaledZ;
+		putInArray(worldPosArray, i, 0, (int)(scaledX * 100.0));
+		putInArray(worldPosArray, i, 2, (int)(scaledZ * 100.0));
 	}
 
-	op_1011_sub(a1, a3, a4, a5);
+	calculateDistances(worldPosArray, a3, closestActorArray, maxDistance);
 
 	return 1;
 }
@@ -1184,67 +1168,67 @@ static inline int distance(int a1, int a2, int a3, int a4) {
 	return (int)sqrt((double)((a4 - a3) * (a4 - a3) + (a2 - a1) * (a2 - a1)));
 }
 
-void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
+void LogicHEsoccer::calculateDistances(int32 worldPosArray, int32 a2, int32 closestActorArray, int32 maxDistance) {
 	// As you can guess, this is called from op_1011
 	// This seems to be checking distances between the players and the ball
 	// and which distance is the shortest.
 
-	int v6[13];
-	int v7[13];
-	int v8[13];
-	int v18[195];
+	int closestActor[13];
+	int objectX[13];
+	int objectZ[13];
+	int closestDistance[195];
 
 	for (int i = 0; i < 13; i++) {
-		v6[i] = 0;
-		v7[i] = getFromArray(a1, i, 0);
-		v8[i] = getFromArray(a1, i, 2);
+		closestActor[i] = 0;
+		objectX[i] = getFromArray(worldPosArray, i, 0);
+		objectZ[i] = getFromArray(worldPosArray, i, 2);
 	}
 
 	// 12 here, 13 up there
 	// Probably 12 for players, 13 for players+ball
 	for (int i = 0; i < 12; i++) {
-		int v22 = a4;
+		int bestDistance = maxDistance;
 		for (int j = i + 1; j < 13; j++) {
-			v18[i * 15 + j] = distance(v7[i], v7[j], v8[i], v8[j]);
-			putInArray(a2, i, j, v18[i * 15 + j]);
-			putInArray(a2, j, i, v18[i * 15 + j]);
-			if (v18[i * 15 + j] < v22) {
-				v22 = v18[i * 15 + j];
-				v6[i] = j + 1;
-				v6[j] = i + 1;
+			closestDistance[i * 15 + j] = distance(objectX[i], objectX[j], objectZ[i], objectZ[j]);
+			putInArray(a2, i, j, closestDistance[i * 15 + j]);
+			putInArray(a2, j, i, closestDistance[i * 15 + j]);
+			if (closestDistance[i * 15 + j] < bestDistance) {
+				bestDistance = closestDistance[i * 15 + j];
+				closestActor[i] = j + 1;
+				closestActor[j] = i + 1;
 			}
 		}
 	}
 
-	int v13 = getFromArray(a1, 18, 0);
-	int v14 = getFromArray(a1, 18, 2);
-	int v15 = getFromArray(a1, 19, 0);
-	int v16 = getFromArray(a1, 19, 2);
+	int v13 = getFromArray(worldPosArray, 18, 0);
+	int v14 = getFromArray(worldPosArray, 18, 2);
+	int v15 = getFromArray(worldPosArray, 19, 0);
+	int v16 = getFromArray(worldPosArray, 19, 2);
 	int v19[15];
 	int v20[15];
 
 	if (_vm->_game.id == GID_SOCCER) {
 		// soccer gets to be different
 		for (int i = 0; i < 13; i++)
-			v20[i] = distance(v15, v7[i], v16, v8[i]);
+			v20[i] = distance(v15, objectX[i], v16, objectZ[i]);
 
 		for (int i = 0; i < 13; i++)
-			v19[i] = distance(v13, v7[i], v14, v8[i]);
+			v19[i] = distance(v13, objectX[i], v14, objectZ[i]);
 	} else {
 		// soccermls and soccer2004 use two other arrays here
-		int v9 = getFromArray(a1, 20, 0);
-		int v10 = getFromArray(a1, 20, 2);
-		int v11 = getFromArray(a1, 21, 0);
-		int v12 = getFromArray(a1, 21, 2);
+		int v9 = getFromArray(worldPosArray, 20, 0);
+		int v10 = getFromArray(worldPosArray, 20, 2);
+		int v11 = getFromArray(worldPosArray, 21, 0);
+		int v12 = getFromArray(worldPosArray, 21, 2);
 
 		for (int i = 0; i < 6; i++) {
-			v20[i] = distance(v9, v7[i], v10, v8[i]);
-			v19[i] = distance(v13, v7[i], v14, v8[i]);
+			v20[i] = distance(v9, objectX[i], v10, objectZ[i]);
+			v19[i] = distance(v13, objectX[i], v14, objectZ[i]);
 		}
 
 		for (int i = 6; i < 13; i++) {
-			v20[i] = distance(v11, v7[i], v12, v8[i]);
-			v19[i] = distance(v15, v7[i], v16, v8[i]);
+			v20[i] = distance(v11, objectX[i], v12, objectZ[i]);
+			v19[i] = distance(v15, objectX[i], v16, objectZ[i]);
 		}
 	}
 
@@ -1253,7 +1237,7 @@ void LogicHEsoccer::op_1011_sub(int32 a1, int32 a2, int32 a3, int32 a4) {
 		putInArray(a2, i, 14, v20[i]);
 		putInArray(a2, 13, i, v19[i]);
 		putInArray(a2, i, 13, v19[i]);
-		putInArray(a3, 0, i, v6[i]);
+		putInArray(closestActorArray, 0, i, closestActor[i]);
 	}
 }
 
@@ -1273,163 +1257,188 @@ int LogicHEsoccer::op_1012(int32 *args) {
 	return 1;
 }
 
-int LogicHEsoccer::op_sub5(int a1, int a2, int a3) {
-	uint32 *v9 = _array1013 + 11 * a2;
+int LogicHEsoccer::addCollisionTreeChild(int depth, int index, int parent) {
+	uint32 *dataPtr = _collisionTree + 11 * index;
 
-	v9[0] = a2;
-	v9[1] = a3;
+	/*
+	 * This sets up a node of the tree stored in _collisionTree. There are
+	 * two sets of parents (at depth 1 and 2), then child nodes at depth
+	 * 3 which represent a single collision object.
+	 *
+	 * 0 = this index, 1 = parent index,
+	 * 2-9 = child indices (or all -1 if leaf),
+	 * 10 = _collisionObjIds index (if leaf)
+	 */
+	dataPtr[0] = index;
+	dataPtr[1] = parent;
 
-	if (a1 > 2) {
-		// Casual observation: 585 is also the size of _byteArray2
-		v9[10] = 8 * a2 - 585;
+	if (depth > 2) {
+		// store the offset into _collisionObjIds (which holds collision object ids),
+		// but subtract 585 first because there are already (8 + 8*8 + 8*8*8 = 584)
+		// indexes at higher levels of the tree, and we want to start at 0
+		dataPtr[10] = 8 * index - 585;
 		for (int i = 0; i < 8; i++)
-			v9[i + 2] = 0xffffffff;
+			dataPtr[i + 2] = 0xffffffff;
 	} else {
 		for (int i = 0; i < 8; i++)
-			v9[i + 2] = op_sub5(a1 + 1, i + 8 * a2 + 1, a2);
+			dataPtr[i + 2] = addCollisionTreeChild(depth + 1, i + 8 * index + 1, index);
 	}
 
-	return a2;
+	return index;
 }
 
 int LogicHEsoccer::op_1013(int32 a1, int32 a2, int32 a3) {
-	// Creates _array1013 for *some* purpose
-	// Seems to be used in op_1014 and op_1015
+	// Initialises _collisionTree, a tree used for collision detection.
+	// It is used by op_1014 to work out which objects to check.
 
-	_array1013 = new uint32[585 * 11];
-	_array1013Allocated = true;
+	_collisionTree = new uint32[585 * 11];
+	_collisionTreeAllocated = true;
 	for (int i = 0; i < 585 * 11; i++)
-		_array1013[i] = 0;
+		_collisionTree[i] = 0;
 
 	for (int i = 0; i < 8; i++)
-		_array1013[i + 2] = op_sub5(1, i + 1, 0);
+		_collisionTree[i + 2] = addCollisionTreeChild(1, i + 1, 0);
 
 	return 1;
 }
 
-int LogicHEsoccer::op_1014(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7, int32 a8, int32 a9, int32 a10, int32 a11, int32 a12, int32 a13, int32 a14) {
+int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32 velY, int32 velZ, int32 outArray, int32 dataArrayId, int32 indexArrayId, int32 requestType, int32 vecNumerator, int32 vecDenom, int32 a13, int32 a14) {
 	// Used many times during a match
 	// And called from op_1008!
 	// This seems to be doing collision handling
 
-	double v31 = (double)a1;
-	double v29 = (double)a2;
-	double v27 = (double)a3;
-	double v15, v28 = 0.0, v30 = 0.0, v32 = 0.0;
+	double startX = (double)srcX;
+	double startY = (double)srcY;
+	double startZ = (double)srcZ;
+	double adjustedVelZ = 0.0, adjustedVelY = 0.0, adjustedVelX = 0.0;
 
 	writeScummVar(108, 0);
 	writeScummVar(109, 0);
 
-	switch (a10) {
+	switch (requestType) {
 	case 1:
 	case 3:
-		v32 = (double)a4 * (double)a11 / (double)a12 / 100.0;
-		v30 = (double)a5 * (double)a11 / (double)a12 / 100.0;
-		v28 = (double)a6 * (double)a11 / (double)a12 / 100.0;
+		adjustedVelX = (double)velX * (double)vecNumerator / (double)vecDenom / 100.0;
+		adjustedVelY = (double)velY * (double)vecNumerator / (double)vecDenom / 100.0;
+		adjustedVelZ = (double)velZ * (double)vecNumerator / (double)vecDenom / 100.0;
 		break;
 	case 2:
-		v15 = sqrtSquare((double)a4 * (double)a11 / (double)a12, (double)a5 * (double)a11 / (double)a12, (double)a6 * (double)a11 / (double)a12);
+		// length of movement vector
+		double v15 = vectorLength((double)velX * (double)vecNumerator / (double)vecDenom, (double)velY * (double)vecNumerator / (double)vecDenom, (double)velZ * (double)vecNumerator / (double)vecDenom);
 
 		if (v15 != 0.0) {
-			double v26 = (double)ABS(a4) * (double)a11 / (double)a12 * 50.0 / v15;
-			a1 = (int)((double)a1 + v26);
-			double v25 = (double)ABS(a5) * (double)a11 / (double)a12 * 50.0 / v15;
-			a2 = (int)((double)a2 + v25);
-			double v24 = (double)ABS(a6) * (double)a11 / (double)a12 * 50.0 / v15;
-			a3 = (int)((double)a3 + v24);
+			// add the (scaled) movement vector to the input
+			double v26 = (double)ABS(velX) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcX = (int)((double)srcX + v26);
+			double v25 = (double)ABS(velY) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcY = (int)((double)srcY + v25);
+			double v24 = (double)ABS(velZ) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+			srcZ = (int)((double)srcZ + v24);
 		}
 
-		v31 = (double)a1 / (double)a3 * 3869.0;
-		v29 = ((double)a2 - _userDataD[524] * 100.0) / (double)a3 * 3869.0 + _userDataD[524] * 100.0;
-		v27 = 3869.0;
-		v32 = ((double)a1 - v31) / 100.0;
-		v30 = ((double)a2 - v29) / 100.0;
-		v28 = ((double)a3 - 3869.0) / 100.0;
+		// srcX = (newX / newZ) * 3869
+		startX = (double)srcX / (double)srcZ * 3869.0;
+		// srcY = (newY - (+524 * 100)) / (newZ * 3869 + (+524 * 100)
+		startY = ((double)srcY - _userDataD[524] * 100.0) / (double)srcZ * 3869.0 + _userDataD[524] * 100.0;
+		// srcZ = 3869
+		startZ = 3869.0;
+		// vectorX = (newX - srcX) / 100
+		adjustedVelX = ((double)srcX - startX) / 100.0;
+		// vectorY = (newY - srcY) / 100
+		adjustedVelY = ((double)srcY - startY) / 100.0;
+		// vectorZ = (newZ - 3869 = srcZ) / 100
+		adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
 		break;
 	}
 	
-	int v41 = 0;
-	float v55[336];
-	memset(v55, 0, 336 * sizeof(float));
+	int foundCollision = 0;
 
-	if (op_1014_sub0(v31, v29, v27, v32, v30, v28)) {
-		int v45 = 0;
-		float v46;
+	// work out which collision objects we might collide with (if any)
+	if (generateCollisionObjectList(startX, startY, startZ, adjustedVelX, adjustedVelY, adjustedVelZ)) {
+		int collisionId = 0;
+		float v46; // always 1.0 after a collision due to op_1005
 
-		for (Common::List<byte>::const_iterator it = _list1014.begin(); it != _list1014.end(); it++) {
-			float v18[2] = { v30 * 100.0, v28 * 100.0 };
-			float v19 = v32 * 100.0;
-			float v56, v58, v67;
-			float v35, v33, v57;
+		float collisionInfo[42 * 8];
+		memset(collisionInfo, 0, 42 * 8 * sizeof(float));
 
-			if (op_1014_sub1(*it, v31, v29, v27, v19, v18, v67, v58, v56, a9, a8, &v35, &v33, &v57, &v46)) {
-				v55[v45 * 8] = *it;
-				v55[v45 * 8 + 1] = sqrtSquare(v67 - v31, v58 - v29, v56 - v27);
-				v55[v45 * 8 + 2] = v67;
-				v55[v45 * 8 + 3] = v58;
-				v55[v45 * 8 + 4] = v56;
-				v55[v45 * 8 + 5] = a12 * v35 / a11;
-				v55[v45 * 8 + 6] = a12 * v33 / a11;
-				v55[v45 * 8 + 7] = a12 * v57 / a11;
-				v41 = 1;
-				v45++;
+		// check each potential collision object for an actual collision,
+		// add it to collisionInfo if there is one
+		for (Common::List<byte>::const_iterator it = _collisionObjs.begin(); it != _collisionObjs.end(); it++) {
+			float collideZ, collideY, collideX;
+			float nextVelX, nextVelY, nextVelZ;
+
+			if (findCollisionWith(*it, startX, startY, startZ, adjustedVelX * 100.0, adjustedVelY * 100.0, adjustedVelZ * 100.0, collideX, collideY, collideZ, indexArrayId, dataArrayId, &nextVelX, &nextVelY, &nextVelZ, &v46)) {
+				collisionInfo[collisionId * 8] = *it;
+				collisionInfo[collisionId * 8 + 1] = vectorLength(collideX - startX, collideY - startY, collideZ - startZ);
+				collisionInfo[collisionId * 8 + 2] = collideX;
+				collisionInfo[collisionId * 8 + 3] = collideY;
+				collisionInfo[collisionId * 8 + 4] = collideZ;
+				collisionInfo[collisionId * 8 + 5] = vecDenom * nextVelX / vecNumerator;
+				collisionInfo[collisionId * 8 + 6] = vecDenom * nextVelY / vecNumerator;
+				collisionInfo[collisionId * 8 + 7] = vecDenom * nextVelZ / vecNumerator;
+				foundCollision = 1;
+				collisionId++;
 			}
 		}
 
-		if (v41) {
-			if (v45 != 1)
-				op_1014_sub2(v55, 42, 8, 1);
+		if (foundCollision) {
+			// if we have more than one collision, sort them by distance
+			// to find the closest one
+			if (collisionId != 1)
+				sortCollisionList(collisionInfo, 42, 8, 1);
 
 			int v22, v39, v42;
-			float v59[8];
-			int v47[10];
+			float tmpData[8];
+			int outData[10];
 
-			switch (a10) {
+			// output the collision we found
+			switch (requestType) {
 				case 1:
 					for (int i = 0; i < 8; i++)
-						v59[i] = v55[i];
-					v22 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0));
-					v42 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 1.0));
-					v39 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 2.0));
-					op_1014_sub3(v59, 8, a8, a9, (int)v31, (int)v29, (int)v27, v46, v22, v42, v39, v47);
+						tmpData[i] = collisionInfo[i];
+					v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
+					v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 1.0));
+					v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 2.0));
+					setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
 					for (int i = 0; i < 10; i++)
-						putInArray(a7, 0, i, v47[i]);
+						putInArray(outArray, 0, i, outData[i]);
 					break;
 				case 2:
-					if (v45)
-						writeScummVar(109, (int)v55[(v45 - 1) * 8]);
+					// write the object id if collision happened (note that other case can't happen)
+					if (collisionId)
+						writeScummVar(109, (int)collisionInfo[(collisionId - 1) * 8]);
 					else
 						writeScummVar(109, 0);
 					break;
 				case 3:
 					for (int i = 0; i < 8; i++)
-						v59[i] = v55[i];
-					v22 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0));
-					v42 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 1.0));
-					v39 = getFromArray(a9, 0, (int)((v59[0] - 1.0) * 4.0  + 2.0));
-					op_1014_sub3(v59, 8, a8, a9, (int)v31, (int)v29, (int)v27, v46, v22, v42, v39, v47);
+						tmpData[i] = collisionInfo[i];
+					v22 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0));
+					v42 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 1.0));
+					v39 = getFromArray(indexArrayId, 0, (int)((tmpData[0] - 1.0) * 4.0  + 2.0));
+					setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
 					for (int i = 0; i < 10; i++)
-						_array1014[i] = v47[i];
+						_internalCollisionOutData[i] = outData[i];
 					break;
 			}
 		}
 	}
 
-	writeScummVar(108, v41);
+	writeScummVar(108, foundCollision);
 
-	_list1014.clear();
+	_collisionObjs.clear();
 
-	return v41;
+	return foundCollision;
 }
 
-int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5, float a6) {
-	float v36 = a1 / 100.0;
+int LogicHEsoccer::generateCollisionObjectList(float srcX, float srcY, float srcZ, float velX, float velY, float velZ) {
+	float v36 = srcX / 100.0;
 	float v37 = v36 + 52.0;
-	float v28 = v37 + a4;
+	float destX = v37 + velX;
 
 	int v33, v29;
 
-	if (((int)v28 / 52) ^ ((int)v37 / 52)) {
+	if (((int)destX / 52) ^ ((int)v37 / 52)) {
 		v33 = 1;
 		v29 = 1;
 	} else if ((int)v37 / 52) {
@@ -1440,16 +1449,16 @@ int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5
 		v29 = 1;
 	}
 
-	uint32 v20[8];
+	uint32 areaEnabled[8];
 	for (int i = 0; i < 4; i++) {
-		v20[i] = v29;
-		v20[i + 4] = v33;
+		areaEnabled[i] = v29;
+		areaEnabled[i + 4] = v33;
 	}
 
-	float v38 = a2 / 100.0;
-	float v17 = v38 + a5;
+	float v38 = srcY / 100.0;
+	float destY = v38 + velY;
 
-	if (((int)v17 / 20) ^ ((int)v38 / 20)) {
+	if (((int)destY / 20) ^ ((int)v38 / 20)) {
 		v33 = 1;
 		v29 = 1;
 	} else if ((int)v38 / 20) {
@@ -1461,21 +1470,21 @@ int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5
 	}
 
 	for (int i = 0; i < 2; i++) {
-		if (v20[i * 4 + 0])
-			v20[i * 4 + 0] = v29;
-		if (v20[i * 4 + 1])
-			v20[i * 4 + 1] = v29;
-		if (v20[i * 4 + 2])
-			v20[i * 4 + 2] = v33;
-		if (v20[i * 4 + 3])
-			v20[i * 4 + 3] = v33;
+		if (areaEnabled[i * 4 + 0])
+			areaEnabled[i * 4 + 0] = v29;
+		if (areaEnabled[i * 4 + 1])
+			areaEnabled[i * 4 + 1] = v29;
+		if (areaEnabled[i * 4 + 2])
+			areaEnabled[i * 4 + 2] = v33;
+		if (areaEnabled[i * 4 + 3])
+			areaEnabled[i * 4 + 3] = v33;
 	}
 
-	float v39 = a3 / 100.0;
+	float v39 = srcZ / 100.0;
 	float v40 = v39 - 38.69;
-	float v31 = v40 + a6;
+	float destZ = v40 + velZ;
 
-	if (((int)v31 / 36) ^ ((int)v40 / 36)) {
+	if (((int)destZ / 36) ^ ((int)v40 / 36)) {
 		v33 = 1;
 		v29 = 1;
 	} else if ((int)v40 / 36) {
@@ -1487,628 +1496,330 @@ int LogicHEsoccer::op_1014_sub0(float a1, float a2, float a3, float a4, float a5
 	}
 
 	for (int i = 0; i <= 6; i += 2) {
-		if (v20[i])
-			v20[i] = v29;
-		if (v20[i + 1])
-			v20[i + 1] = v33;
+		if (areaEnabled[i])
+			areaEnabled[i] = v29;
+		if (areaEnabled[i + 1])
+			areaEnabled[i + 1] = v33;
 	}
 
-	int v19 = 0;
+	int objCount = 0;
 
 	for (int i = 0; i < 8; i++) {
-		if (v20[i]) {
-			uint32 *ptr = _array1013 +  _array1013[i + 2] * 11;
-			v19 += op_1014_sub0_0(ptr[0], ptr[1], &ptr[2], ptr[10]);
+		if (areaEnabled[i]) {
+			uint32 *ptr = _collisionTree +  _collisionTree[i + 2] * 11;
+			objCount += addFromCollisionTreeNode(ptr[0], ptr[1], &ptr[2], ptr[10]);
 		}
 	}
 
-	writeScummVar(109, v19);
-	return v19;
+	writeScummVar(109, objCount);
+	return objCount;
 }
 
-int LogicHEsoccer::op_1014_sub0_0(int a1, int a2, uint32 *a3, int a4) {
-	int v20 = 0;
+int LogicHEsoccer::addFromCollisionTreeNode(int index, int parent, uint32 *indices, int objIndexBase) {
+	int objCount = 0;
 
-	if (a3[0] == 0xffffffff) {
+	if (indices[0] == 0xffffffff) {
 		for (int i = 0; i < 8; i++) {
-			if (_byteArray1[i + a4]) {
-				op_1014_sub0_0_0(_byteArray1[i + a4]);
-				v20 = 1;
+			if (_collisionObjIds[i + objIndexBase]) {
+				addCollisionObj(_collisionObjIds[i + objIndexBase]);
+				objCount = 1;
 			}
 		}
 	} else {
-		if (_byteArray2[a1]) {
+		if (_collisionNodeEnabled[index]) {
 			for (int i = 0; i < 8; i++) {
-				uint32 *ptr = _array1013 + a3[i] * 11;
-				v20 += op_1014_sub0_0(ptr[0], ptr[1], &ptr[2], ptr[10]);
+				uint32 *ptr = _collisionTree + indices[i] * 11;
+				objCount += addFromCollisionTreeNode(ptr[0], ptr[1], &ptr[2], ptr[10]);
 			}
 		}
 	}
 
-	return v20;
+	return objCount;
 }
 
-void LogicHEsoccer::op_1014_sub0_0_0(byte a1) {
-	// Add a1 to the list if not found
-	for (Common::List<byte>::const_iterator it = _list1014.begin(); it != _list1014.end(); it++)
-		if (*it == a1)
+void LogicHEsoccer::addCollisionObj(byte objId) {
+	// Add objId to the list if not found
+	for (Common::List<byte>::const_iterator it = _collisionObjs.begin(); it != _collisionObjs.end(); it++)
+		if (*it == objId)
 			return;
 
-	_list1014.push_back(a1);
+	_collisionObjs.push_back(objId);
 }
 
-int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, float *a6, float &a7, float &a8, float &a9, int a10, int a11, float *a12, float *a13, float *a14, float *a15) {
-	// TODO: This can easily be optimized, but I'd rather hold off on that
-	// until it's confirmed that the code actually works
+int LogicHEsoccer::findCollisionWith(int objId, float inX, float inY, float inZ, float inXVec, float inYVec, float inZVec, float &collideX, float &collideY, float &collideZ, int indexArrayId, int dataArrayId, float *nextVelX, float *nextVelY, float *nextVelZ, float *a15) {
+	int foundCollision = 0;
+	float inY_plus1 = inY + 1.0;
+	float destX = inX + inXVec;
+	float destY = inY_plus1 + inYVec;
+	float destZ = inZ + inZVec;
 
-	int v248 = 0;
-	float v274 = a3 + 1.0;
-	float v254 = a2 + a5;
-	float v250 = v274 + a6[0];
-	float v246 = a4 + a6[1];
-
-	if (v274 <= 1.0001 && v250 < 0.0) {
-		v250 = 0.0;
-		a6[0] = ABS((int)a6[0]);
+	// don't go below the ground!
+	if (inY_plus1 <= 1.0001 && destY < 0.0) {
+		destY = 0.0;
+		inYVec = ABS((int)inYVec);
 	}
 
-	int v261 = getFromArray(a10, 0, 4 * a1 - 1);
-	int v256[24];
+	// get the 8 points which define the 6 faces of this object
+	int objIndex = getFromArray(indexArrayId, 0, 4 * objId - 1);
+	int objPoints[24];
 	for (int i = 0; i < 24; i++)
-		v256[i] = getFromArray(a11, 0, v261 + i);
+		objPoints[i] = getFromArray(dataArrayId, 0, objIndex + i);
 
-	for (int i = 0; i < 6; i++) {
-		// This assigns variables from v256 based on i
-		// TODO: We probably can merge sub1_0 and sub1_1 at one point
-		float v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240;
-		float v265, v260, v255;
-		op_1014_sub1_0(i, v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240, v256);
-		op_1014_sub1_1(v233, v267, v264, v238, v273, v259, v233, v267, v264, v237, v271, v242, v265, v260, v255);
+	for (int faceId = 0; faceId < 6; faceId++) {
+		// This assigns variables from objPoints based on faceId
+		float x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4;
+		float faceCrossX, faceCrossY, faceCrossZ;
+		getPointsForFace(faceId, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, objPoints);
+		crossProduct(x1, y1, z1, x2, y2, z2, x1, y1, z1, x3, y3, z3, faceCrossX, faceCrossY, faceCrossZ);
 
-		double v14 = sqrt(v265 * v265 + v260 * v260 + v255 * v255);
-		float v243 = v14;
+		float faceArea = sqrt(faceCrossX * faceCrossX + faceCrossY * faceCrossY + faceCrossZ * faceCrossZ);
 
 		// The original did not initialize these variables and would
-		// use them uninitialized if v14 == 0.0
-		float v234 = 0.0, v247 = 0.0, v245 = 0.0;
+		// use them uninitialized if faceArea == 0.0
+		float xMult = 0.0, yMult = 0.0, zMult = 0.0;
 
-		if (v14 != 0.0) {
-			v234 = v265 / v243;
-			v247 = v260 / v243;
-			v245 = v255 / v243;
+		if (faceArea != 0.0) {
+			// UnitCross = Cross/||Cross||
+			xMult = faceCrossX / faceArea;
+			yMult = faceCrossY / faceArea;
+			zMult = faceCrossZ / faceArea;
 		}
-		double v263 = 5.0;
+		double scalingMult = 5.0;
 
-		float v15 = v264 - a4;
-		float v16 = v267 - v274;
-		float v17 = v233 - a2;
-		double v239 = op_1014_sub1_2(v234, v247, v245, v17, v16, v15);
+		float ZToFacePoint1 = z1 - inZ;
+		float YToFacePoint1 = y1 - inY_plus1;
+		float XToFacePoint1 = x1 - inX;
+		// scalar component of UnitCross in direction of (start -> P1)
+		double ToFacePoint1 = dotProduct(xMult, yMult, zMult, XToFacePoint1, YToFacePoint1, ZToFacePoint1);
 
-		float v18 = v246 - a4;
-		float v19 = v250 - v274;
-		float v20 = v254 - a2;
-		double v258 = op_1014_sub1_2(v234, v247, v245, v20, v19, v18);
+		float ZToDest = destZ - inZ;
+		float YToDest = destY - inY_plus1;
+		float XToDest = destX - inX;
+		// scalar component of UnitCross in direction of (start -> dest)
+		double ToDest = dotProduct(xMult, yMult, zMult, XToDest, YToDest, ZToDest);
 
-		if (fabs(v258) > 0.00000001)
-			v263 = v239 / v258;
+		if (fabs(ToDest) > 0.00000001)
+			scalingMult = ToFacePoint1 / ToDest;
 
-		if (v263 >= 0.0 && fabs(v263) <= 1.0 && v258 != 0.0) {
-			double v272 = a2 + (v254 - a2) * v263;
-			double v270 = v274 + (v250 - v274) * v263 + 5.0;
-			double v268 = a4 + (v246 - a4) * v263;
+		if (scalingMult >= 0.0 && fabs(scalingMult) <= 1.0 && ToDest != 0.0) {
+			// calculate where the collision would be, in the plane containing this face
+			double collisionX = inX + (destX - inX) * scalingMult;
+			double collisionY = inY_plus1 + (destY - inY_plus1) * scalingMult + 5.0;
+			double collisionZ = inZ + (destZ - inZ) * scalingMult;
 
-			float v21 = v242 - v264;
-			float v22 = v271 - v267;
-			float v23 = v237 - v233;
-			float v24 = v259 - v264;
-			float v25 = v273 - v267;
-			float v26 = v238 - v233;
-			double v27 = op_1014_sub1_2(v26, v25, v24, v23, v22, v21);
-			double v28 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+			// now we need to work out whether this point is actually inside the face
+			double dot1 = dotProduct(x2 - x1, y2 - y1, z2 - z1, x3 - x1, y3 - y1, z3 - z1);
+			double sqrt1 = vectorLength(x2 - x1, y2 - y1, z2 - z1);
+			double num1 = dot1 / (vectorLength(x3 - x1, y3 - y1, z3 - z1) * sqrt1);
+			num1 = CLIP(num1, -1.0, 1.0);
+			double faceAngle = acos(num1);
 
-			double v232;
-			if (v27 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v28) >= -1.0) {
-				float v29 = v242 - v264;
-				float v30 = v271 - v267;
-				float v31 = v237 - v233;
-				float v32 = v259 - v264;
-				float v33 = v273 - v267;
-				float v34 = v238 - v233;
-				double v35 = op_1014_sub1_2(v34, v33, v32, v31, v30, v29);
-				double v36 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-				v232 = v35 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v36);
-			} else {
-				v232 = -1.0;
-			}
+			double dot2 = dotProduct(x2 - x1, y2 - y1, z2 - z1, collisionX - x1, collisionY - y1, collisionZ - z1);
+			double sqrt2 = vectorLength(x2 - x1, y2 - y1, z2 - z1);
+			double num2 = dot2 / (vectorLength(collisionX - x1, collisionY - y1, collisionZ - z1) * sqrt2);
+			num2 = CLIP(num2, -1.0, 1.0);
+			double angle1 = acos(num2);
 
-			double v231;
-			if (v232 <= 1.0) {
-				float v37 = v242 - v264;
-				float v38 = v271 - v267;
-				float v39 = v237 - v233;
-				float v40 = v259 - v264;
-				float v41 = v273 - v267;
-				float v42 = v238 - v233;
-				double v43 = op_1014_sub1_2(v42, v41, v40, v39, v38, v37);
-				double v44 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
+			double dot3 = dotProduct(x3 - x1, y3 - y1, z3 - z1, collisionX - x1, collisionY - y1, collisionZ - z1);
+			double sqrt3 = vectorLength(x3 - x1, y3 - y1, z3 - z1);
+			double num3 = dot3 / (vectorLength(collisionX - x1, collisionY - y1, collisionZ - z1) * sqrt3);
+			num3 = CLIP(num3, -1.0, 1.0);
+			double angle2 = acos(num3);
 
-				double v230;
-				if (v43 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v44) >= -1.0) {
-					float v45 = v242 - v264;
-					float v46 = v271 - v267;
-					float v47 = v237 - v233;
-					float v48 = v259 - v264;
-					float v49 = v273 - v267;
-					float v50 = v238 - v233;
-					double v51 = op_1014_sub1_2(v50, v49, v48, v47, v46, v45);
-					double v52 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-					v230 = v51 / (sqrtSquare(v237 - v233, v271 - v267, v242 - v264) * v52);
-				} else {
-					v230 = -1.0;
-				}
+			if (angle1 + angle2 - 0.001 <= faceAngle) {
+				double dot4 = dotProduct(x2 - x4, y2 - y4, z2 - z4, x3 - x4, y3 - y4, z3 - z4);
+				double sqrt4 = vectorLength(x2 - x4, y2 - y4, z2 - z4);
+				double num4 = dot4 / (vectorLength(x3 - x4, y3 - y4, z3 - z4) * sqrt4);
+				num4 = CLIP(num4, -1.0, 1.0);
+				faceAngle = acos(num4);
 
-				v231 = v230;
-			} else {
-				v231 = 1.0;
-			}
+				double dot5 = dotProduct(x2 - x4, y2 - y4, z2 - z4, collisionX - x4, collisionY - y4, collisionZ - z4);
+				double sqrt5 = vectorLength(x2 - x4, y2 - y4, z2 - z4);
+				double num5 = dot5 / (vectorLength(collisionX - x4, collisionY - y4, collisionZ - z4) * sqrt5);
+				num5 = CLIP(num5, -1.0, 1.0);
+				double angle3 = acos(num5);
 
-			double v235 = acos(v231);
+				double dot6 = dotProduct(x3 - x4, y3 - y4, z3 - z4, collisionX - x4, collisionY - y4, collisionZ - z4);
+				double sqrt6 = vectorLength(x3 - x4, y3 - y4, z3 - z4);
+				double num6 = dot6 / (vectorLength(collisionX - x4, collisionY - y4, collisionZ - z4) * sqrt6);
+				num6 = CLIP(num6, -1.0, 1.0);
+				double angle4 = acos(num6);
 
-			float v53 = v268 - v264;
-			float v54 = v270 - v267;
-			float v55 = v272 - v233;
-			float v56 = v259 - v264;
-			float v57 = v273 - v267;
-			float v58 = v238 - v233;
-			double v59 = op_1014_sub1_2(v58, v57, v56, v55, v54, v53);
-			double v60 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-
-			double v229;
-			if (v59 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v60) >= -1.0) {
-				float v61 = v268 - v264;
-				float v62 = v270 - v267;
-				float v63 = v272 - v233;
-				float v64 = v259 - v264;
-				float v65 = v273 - v267;
-				float v66 = v238 - v233;
-				double v67 = op_1014_sub1_2(v66, v65, v64, v63, v62, v61);
-				double v68 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-				v229 = v67 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v68);
-			} else {
-				v229 = -1.0;
-			}
-
-			double v228;
-			if (v229 <= 1.0) {
-				float v69 = v268 - v264;
-				float v70 = v270 - v267;
-				float v71 = v272 - v233;
-				float v72 = v259 - v264;
-				float v73 = v273 - v267;
-				float v74 = v238 - v233;
-				double v75 = op_1014_sub1_2(v74, v73, v72, v71, v70, v69);
-				double v76 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-
-				double v227;
-				if (v75 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v76) >= -1.0) {
-					float v77 = v268 - v264;
-					float v78 = v270 - v267;
-					float v79 = v272 - v233;
-					float v80 = v259 - v264;
-					float v81 = v273 - v267;
-					float v82 = v238 - v233;
-					double v83 = op_1014_sub1_2(v82, v81, v80, v79, v78, v77);
-					double v84 = sqrtSquare(v238 - v233, v273 - v267, v259 - v264);
-					v227 = v83 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v84);
-				} else {
-					v227 = -1.0;
-				}
-
-				v228 = v227;
-			} else {
-				v228 = 1.0;
-			}
-
-			double v249 = acos(v228);
-
-			float v85 = v268 - v264;
-			float v86 = v270 - v267;
-			float v87 = v272 - v233;
-			float v88 = v242 - v264;
-			float v89 = v271 - v267;
-			float v90 = v237 - v233;
-			double v91 = op_1014_sub1_2(v90, v89, v88, v87, v86, v85);
-			double v92 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
-
-			double v226;
-			if (v91 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v92) >= -1.0) {
-				float v93 = v268 - v264;
-				float v94 = v270 - v267;
-				float v95 = v272 - v233;
-				float v96 = v242 - v264;
-				float v97 = v271 - v267;
-				float v98 = v237 - v233;
-				double v99 = op_1014_sub1_2(v98, v97, v96, v95, v94, v93);
-				double v100 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
-				v226 = v99 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v100);
-			} else {
-				v226 = -1.0;
-			}
-
-			double v225;
-			if (v226 <= 1.0) {
-				float v101 = v268 - v264;
-				float v102 = v270 - v267;
-				float v103 = v272 - v233;
-				float v104 = v242 - v264;
-				float v105 = v271 - v267;
-				float v106 = v237 - v233;
-				double v107 = op_1014_sub1_2(v106, v105, v104, v103, v102, v101);
-				double v108 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
-
-				double v224;
-				if (v107 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v108) >= -1.0) {
-					float v109 = v268 - v264;
-					float v110 = v270 - v267;
-					float v111 = v272 - v233;
-					float v112 = v242 - v264;
-					float v113 = v271 - v267;
-					float v114 = v237 - v233;
-					double v115 = op_1014_sub1_2(v114, v113, v112, v111, v110, v109);
-					double v116 = sqrtSquare(v237 - v233, v271 - v267, v242 - v264);
-					v224 = v115 / (sqrtSquare(v272 - v233, v270 - v267, v268 - v264) * v116);
-				} else {
-					v224 = -1.0;
-				}
-
-				v225 = v224;
-			} else {
-				v225 = 1.0;
-			}
-
-			double v252 = acos(v225);
-
-			if (v249 + v252 - 0.001 <= v235) {
-				float v117 = v242 - v240;
-				float v118 = v271 - v253;
-				float v119 = v237 - v269;
-				float v120 = v259 - v240;
-				float v121 = v273 - v253;
-				float v122 = v238 - v269;
-				double v123 = op_1014_sub1_2(v122, v121, v120, v119, v118, v117);
-				double v124 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-
-				double v223;
-				if (v123 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v124) >= -1.0) {
-					float v125 = v242 - v240;
-					float v126 = v271 - v253;
-					float v127 = v237 - v269;
-					float v128 = v259 - v240;
-					float v129 = v273 - v253;
-					float v130 = v238 - v269;
-					double v131 = op_1014_sub1_2(v130, v129, v128, v127, v126, v125);
-					double v132 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-					v223 = v131 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v132);
-				} else {
-					v223 = -1.0;
-				}
-
-				double v222;
-				if (v223 <= 1.0) {
-					float v133 = v242 - v240;
-					float v134 = v271 - v253;
-					float v135 = v237 - v269;
-					float v136 = v259 - v240;
-					float v137 = v273 - v253;
-					float v138 = v238 - v269;
-					double v139 = op_1014_sub1_2(v138, v137, v136, v135, v134, v133);
-					double v140 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-
-					double v221;
-					if (v139 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v140) >= -1.0) {
-						float v141 = v242 - v240;
-						float v142 = v271 - v253;
-						float v143 = v237 - v269;
-						float v144 = v259 - v240;
-						float v145 = v273 - v253;
-						float v146 = v238 - v269;
-						double v147 = op_1014_sub1_2(v146, v145, v144, v143, v142, v141);
-						double v148 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-						v221 = v147 / (sqrtSquare(v237 - v269, v271 - v253, v242 - v240) * v148);
-					} else {
-						v221 = -1.0;
-					}
-
-					v222 = v221;
-				} else {
-					v222 = 1.0;
-				}
-
-				v235 = acos(v222);
-
-				float v149 = v268 - v240;
-				float v150 = v270 - v253;
-				float v151 = v272 - v269;
-				float v152 = v259 - v240;
-				float v153 = v273 - v253;
-				float v154 = v238 - v269;
-				double v155 = op_1014_sub1_2(v154, v153, v152, v151, v150, v149);
-				double v156 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-
-				double v220;
-				if (v155 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v156) >= -1.0) {
-					float v157 = v268 - v240;
-					float v158 = v270 - v253;
-					float v159 = v272 - v269;
-					float v160 = v259 - v240;
-					float v161 = v273 - v253;
-					float v162 = v238 - v269;
-					double v163 = op_1014_sub1_2(v162, v161, v160, v159, v158, v157);
-					double v164 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-					v220 = v163 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v164);
-				} else {
-					v220 = -1.0;
-				}
-
-				double v219;
-				if (v220 <= 1.0) {
-					float v165 = v268 - v240;
-					float v166 = v270 - v253;
-					float v167 = v272 - v269;
-					float v168 = v259 - v240;
-					float v169 = v273 - v253;
-					float v170 = v238 - v269;
-					double v171 = op_1014_sub1_2(v170, v169, v168, v167, v166, v165);
-					double v172 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-
-					double v218;
-					if (v171 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v172) >= -1.0) {
-						float v173 = v268 - v240;
-						float v174 = v270 - v253;
-						float v175 = v272 - v269;
-						float v176 = v259 - v240;
-						float v177 = v273 - v253;
-						float v178 = v238 - v269;
-						double v179 = op_1014_sub1_2(v178, v177, v176, v175, v174, v173);
-						double v180 = sqrtSquare(v238 - v269, v273 - v253, v259 - v240);
-						v218 = v179 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v180);
-					} else {
-						v218 = -1.0;
-					}
-
-					v219 = v218;
-				} else {
-					v219 = 1.0;
-				}
-
-				double v257 = acos(v219);
-
-				float v181 = v268 - v240;
-				float v182 = v270 - v253;
-				float v183 = v272 - v269;
-				float v184 = v242 - v240;
-				float v185 = v271 - v253;
-				float v186 = v237 - v269;
-				double v187 = op_1014_sub1_2(v186, v185, v184, v183, v182, v181);
-				double v188 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
-
-				double v217;
-				if (v187 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v188) >= -1.0) {
-					float v189 = v268 - v240;
-					float v190 = v270 - v253;
-					float v191 = v272 - v269;
-					float v192 = v242 - v240;
-					float v193 = v271 - v253;
-					float v194 = v237 - v269;
-					double v195 = op_1014_sub1_2(v194, v193, v192, v191, v190, v189);
-					double v196 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
-					v217 = v195 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v196);
-				} else {
-					v217 = -1.0;
-				}
-
-				double v216;
-				if (v217 <= 1.0) {
-					float v197 = v268 - v240;
-					float v198 = v270 - v253;
-					float v199 = v272 - v269;
-					float v200 = v242 - v240;
-					float v201 = v271 - v253;
-					float v202 = v237 - v269;
-					double v203 = op_1014_sub1_2(v202, v201, v200, v199, v198, v197);
-					double v204 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
-
-					double v215;
-					if (v203 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v204) >= -1.0) {
-						float v205 = v268 - v240;
-						float v206 = v270 - v253;
-						float v207 = v272 - v269;
-						float v208 = v242 - v240;
-						float v209 = v271 - v253;
-						float v210 = v237 - v269;
-						double v211 = op_1014_sub1_2(v210, v209, v208, v207, v206, v205);
-						double v212 = sqrtSquare(v237 - v269, v271 - v253, v242 - v240);
-						v215 = v211 / (sqrtSquare(v272 - v269, v270 - v253, v268 - v240) * v212);
-					} else {
-						v215 = -1.0;
-					}
-
-					v216 = v215;
-				} else {
-					v216 = 1.0;
-				}
-
-				double v262 = acos(v216);
-
-				if (v257 + v262 - 0.001 <= v235) {
-					if (v248) {
-						double v213 = sqrtSquare(a2 - v272, v274 - v270, a4 - v268);
-						if (sqrtSquare(a2 - a7, v274 - a8, a4 - a9) > v213) {
-							a7 = v272 - v234 * 3.0;
-							a8 = v270 - v247 * 3.0;
-							a9 = v268 - v245 * 3.0;
-							op_1005(v234, v247, v245, a5, a6[0], a6[1], a12, a13, a14, a15);
+				if (angle3 + angle4 - 0.001 <= faceAngle) {
+					// found a collision with this face
+					if (foundCollision) {
+						// if we already found one, is the new one closer?
+						// (except this don't adjust for the modification of collideX/Y/Z..)
+						double ToCollide = vectorLength(inX - collisionX, inY_plus1 - collisionY, inZ - collisionZ);
+						if (vectorLength(inX - collideX, inY_plus1 - collideY, inZ - collideZ) > ToCollide) {
+							collideX = collisionX - xMult * 3.0;
+							collideY = collisionY - yMult * 3.0;
+							collideZ = collisionZ - zMult * 3.0;
+							op_1005(xMult, yMult, zMult, inXVec, inYVec, inZVec, nextVelX, nextVelY, nextVelZ, a15);
 						}
 					} else {
-						a7 = v272 - v234 * 3.0;
-						a8 = v270 - v247 * 3.0;
-						a9 = v268 - v245 * 3.0;
-						op_1005(v234, v247, v245, a5, a6[0], a6[1], a12, a13, a14, a15);
+						collideX = collisionX - xMult * 3.0;
+						collideY = collisionY - yMult * 3.0;
+						collideZ = collisionZ - zMult * 3.0;
+						op_1005(xMult, yMult, zMult, inXVec, inYVec, inZVec, nextVelX, nextVelY, nextVelZ, a15);
 					}
 
-					v248 = 1;
+					foundCollision = 1;
 				}
 			}
 		}
 	}
 
-	return v248;
+	return foundCollision;
 }
 
-void LogicHEsoccer::op_1014_sub1_0(int a1, float &a2, float &a3, float &a4, float &a5, float &a6, float &a7, float &a8, float &a9, float &a10, float &a11, float &a12, float &a13, int a14[24]) {
-	// sub_1000176B
+void LogicHEsoccer::getPointsForFace(int faceId, float &x1, float &y1, float &z1, float &x2, float &y2, float &z2, float &x3, float &y3, float &z3, float &x4, float &y4, float &z4, const int *objPoints) {
 	// Note that this originally returned a value, but said value was never used
 	// TODO: This can probably be shortened using a few tables...
 
-	switch (a1) {
+	switch (faceId) {
 	case 0:
-		a2 = a14[0];
-		a3 = a14[1];
-		a4 = a14[2];
-		a5 = a14[3];
-		a6 = a14[4];
-		a7 = a14[5];
-		a8 = a14[6];
-		a9 = a14[7];
-		a10 = a14[8];
-		a11 = a14[9];
-		a12 = a14[10];
-		a13 = a14[11];
+		x1 = objPoints[0];
+		y1 = objPoints[1];
+		z1 = objPoints[2];
+		x2 = objPoints[3];
+		y2 = objPoints[4];
+		z2 = objPoints[5];
+		x3 = objPoints[6];
+		y3 = objPoints[7];
+		z3 = objPoints[8];
+		x4 = objPoints[9];
+		y4 = objPoints[10];
+		z4 = objPoints[11];
 		break;
 	case 1:
-		a2 = a14[0];
-		a3 = a14[1];
-		a4 = a14[2];
-		a5 = a14[6];
-		a6 = a14[7];
-		a7 = a14[8];
-		a8 = a14[12];
-		a9 = a14[13];
-		a10 = a14[14];
-		a11 = a14[18];
-		a12 = a14[19];
-		a13 = a14[20];
+		x1 = objPoints[0];
+		y1 = objPoints[1];
+		z1 = objPoints[2];
+		x2 = objPoints[6];
+		y2 = objPoints[7];
+		z2 = objPoints[8];
+		x3 = objPoints[12];
+		y3 = objPoints[13];
+		z3 = objPoints[14];
+		x4 = objPoints[18];
+		y4 = objPoints[19];
+		z4 = objPoints[20];
 		break;
 	case 2:
-		a2 = a14[3];
-		a3 = a14[4];
-		a4 = a14[5];
-		a5 = a14[15];
-		a6 = a14[16];
-		a7 = a14[17];
-		a8 = a14[9];
-		a9 = a14[10];
-		a10 = a14[11];
-		a11 = a14[21];
-		a12 = a14[22];
-		a13 = a14[23];
+		x1 = objPoints[3];
+		y1 = objPoints[4];
+		z1 = objPoints[5];
+		x2 = objPoints[15];
+		y2 = objPoints[16];
+		z2 = objPoints[17];
+		x3 = objPoints[9];
+		y3 = objPoints[10];
+		z3 = objPoints[11];
+		x4 = objPoints[21];
+		y4 = objPoints[22];
+		z4 = objPoints[23];
 		break;
 	case 3:
-		a2 = a14[0];
-		a3 = a14[1];
-		a4 = a14[2];
-		a5 = a14[12];
-		a6 = a14[13];
-		a7 = a14[14];
-		a8 = a14[3];
-		a9 = a14[4];
-		a10 = a14[5];
-		a11 = a14[15];
-		a12 = a14[16];
-		a13 = a14[17];
+		x1 = objPoints[0];
+		y1 = objPoints[1];
+		z1 = objPoints[2];
+		x2 = objPoints[12];
+		y2 = objPoints[13];
+		z2 = objPoints[14];
+		x3 = objPoints[3];
+		y3 = objPoints[4];
+		z3 = objPoints[5];
+		x4 = objPoints[15];
+		y4 = objPoints[16];
+		z4 = objPoints[17];
 		break;
 	case 4:
-		a2 = a14[6];
-		a3 = a14[7];
-		a4 = a14[8];
-		a5 = a14[9];
-		a6 = a14[10];
-		a7 = a14[11];
-		a8 = a14[18];
-		a9 = a14[19];
-		a10 = a14[20];
-		a11 = a14[21];
-		a12 = a14[22];
-		a13 = a14[23];
+		x1 = objPoints[6];
+		y1 = objPoints[7];
+		z1 = objPoints[8];
+		x2 = objPoints[9];
+		y2 = objPoints[10];
+		z2 = objPoints[11];
+		x3 = objPoints[18];
+		y3 = objPoints[19];
+		z3 = objPoints[20];
+		x4 = objPoints[21];
+		y4 = objPoints[22];
+		z4 = objPoints[23];
 		break;
 	case 5:
-		a2 = a14[15];
-		a3 = a14[16];
-		a4 = a14[17];
-		a5 = a14[12];
-		a6 = a14[13];
-		a7 = a14[14];
-		a8 = a14[21];
-		a9 = a14[22];
-		a10 = a14[23];
-		a11 = a14[18];
-		a12 = a14[19];
-		a13 = a14[20];
+		x1 = objPoints[15];
+		y1 = objPoints[16];
+		z1 = objPoints[17];
+		x2 = objPoints[12];
+		y2 = objPoints[13];
+		z2 = objPoints[14];
+		x3 = objPoints[21];
+		y3 = objPoints[22];
+		z3 = objPoints[23];
+		x4 = objPoints[18];
+		y4 = objPoints[19];
+		z4 = objPoints[20];
 		break;
 	}
 }
 
-void LogicHEsoccer::op_1014_sub1_1(float a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8, float a9, float a10, float a11, float a12, float &a13, float &a14, float &a15) {
-	// sub_100016AD
-	// Note that this originally returned a value, but said value was never used
-
-	a13 = (a5 - a2) * (a12 - a9) - (a11 - a8) * (a6 - a3);
-	a14 = ((a4 - a1) * (a12 - a9) - (a10 - a7) * (a6 - a3)) * -1.0;
-	a15 = (a4 - a1) * (a11 - a8) - (a10 - a7) * (a5 - a2);
+void LogicHEsoccer::crossProduct(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float &outX, float &outY, float &outZ) {
+	outX = (y2 - y1) * (z4 - z3) - (y4 - y3) * (z2 - z1);
+	outY = ((x2 - x1) * (z4 - z3) - (x4 - x3) * (z2 - z1)) * -1.0;
+	outZ = (x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1);
 }
 
-double LogicHEsoccer::op_1014_sub1_2(float a1, float a2, float a3, float a4, float a5, float a6) {
+double LogicHEsoccer::dotProduct(float a1, float a2, float a3, float a4, float a5, float a6) {
 	return a1 * a4 + a2 * a5 + a3 * a6;
 }
 
-void LogicHEsoccer::op_1014_sub2(float *a1, int a2, int a3, int a4) {
-	// This seems to do some kind of sorting...
-	// And then copies in groups of a3 (which, btw, is always 8)
+void LogicHEsoccer::sortCollisionList(float *data, int numEntries, int entrySize, int compareOn) {
+	// This takes an input array of collisions, and tries to sort it based on the distance
+	// (index of compareOn, always 1), copying in groups of entrySize, which is always 8
 
-	int v6 = 1;
-	int v8 = 0;
+	bool found = true;
+	int entry = 0;
 
-	while (v6) {
-		v6 = 0;
+	while (found) {
+		found = false;
 
-		while (v8 <= a2 - 2 && a1[(v8 + 1) * 8] != 0.0) {
-			if (a1[a4 + v8 * 8] == 0 || a1[a4 + v8 * 8] > a1[a4 + (v8 + 1) * 8]) {
-				v6 = 1;
+		// while we still have entries, and there is an obj id set for the next entry
+		while (entry <= numEntries - 2 && data[(entry + 1) * 8] != 0.0) {
+			// if the current entry has distance 0, or the next entry is closer (distance is less)
+			if (data[compareOn + entry * 8] == 0 || data[compareOn + entry * 8] > data[compareOn + (entry + 1) * 8]) {
+				found = true;
 
-				for (int i = 0; i < a3; i++) {
-					float v5 = a1[i + v8 * 8];
-					a1[i + v8 * 8] = a1[i + (v8 + 1) * 8];
-					a1[i + (v8 + 1) * 8] = v5;
+				// swap all data with the next entry
+				for (int i = 0; i < entrySize; i++) {
+					float tmp = data[i + entry * 8];
+					data[i + entry * 8] = data[i + (entry + 1) * 8];
+					data[i + (entry + 1) * 8] = tmp;
 				}
 			}
 
-			v8++;
+			entry++;
 		}
 	}
 }
 
-int LogicHEsoccer::op_1014_sub3(float *a1, int a2, int a3, int a4, int a5, int a6, int a7, float a8, int a9, int a10, int a11, int *a12) {
-	a12[0] = a9;
-	a12[1] = a10;
-	a12[2] = a11;
-	a12[3] = (int)(a1[5] * (double)a10 / 100.0);
-	a12[4] = (int)(a1[6] * (double)a10 / 100.0 * a8); // Note: a8 should always be 1
-	a12[5] = (int)(a1[7] * (double)a10 / 100.0);
-	a12[6] = (int)a1[2];
-	a12[7] = (int)a1[3];
-	a12[8] = (int)a1[4];
-	a12[9] = (int)a1[0];
-	return a12[9];
+int LogicHEsoccer::setCollisionOutputData(float *collisionData, int entrySize, int dataArrayId, int indexArrayId, int startX, int startY, int startZ, float a8, int a9, int a10, int a11, int *out) {
+	// area-provided data
+	out[0] = a9;
+	out[1] = a10;
+	out[2] = a11;
+	// new velocity, slowed by area-provided value
+	out[3] = (int)(collisionData[5] * (double)a10 / 100.0);
+	out[4] = (int)(collisionData[6] * (double)a10 / 100.0 * a8); // Note: a8 should always be 1
+	out[5] = (int)(collisionData[7] * (double)a10 / 100.0);
+	// new position
+	out[6] = (int)collisionData[2];
+	out[7] = (int)collisionData[3];
+	out[8] = (int)collisionData[4];
+	// collision object id
+	out[9] = (int)collisionData[0];
+	return out[9];
 }
 
 int LogicHEsoccer::op_1016(int32 *args) {
@@ -2164,12 +1875,15 @@ int LogicHEsoccer::op_1019(int32 *args) {
 	// Used at the beginning of a match
 	// Initializes some arrays with field collision data
 
-	// These two arrays are used in op_1014 and op_1015
+	// _collisionObjIds provides object ids for leaf nodes
+	// of the collision tree (_collisionTree).
 	for (int i = 0; i < 4096; i++)
-		_byteArray1[i] = getFromArray(args[1], 0, i);
+		_collisionObjIds[i] = getFromArray(args[1], 0, i);
 
+	// _collisionNodeEnabled enables or disables non-leaf nodes
+	// of the collision tree (_collisionTree).
 	for (int i = 0; i < 585; i++)
-		_byteArray2[i] = getFromArray(args[0], 0, i);
+		_collisionNodeEnabled[i] = getFromArray(args[0], 0, i);
 
 	// The remaining code of this function was used for the
 	// built-in editor. However, it is incomplete in the
@@ -2178,30 +1892,30 @@ int LogicHEsoccer::op_1019(int32 *args) {
 	return 1;
 }
 
-int LogicHEsoccer::op_1021(int32 a1, int32 a2, int32 a3, int32 a4, int32 a5, int32 a6, int32 a7) {
+int LogicHEsoccer::op_1021(int32 inX, int32 inY, int32 inZ, int32 velX, int32 velY, int32 velZ, int32 internalUse) {
 	// Used during a match (ball movement?)
 	// Also called from op_1008
 
-	int v10;
-	if (a4 && a5)
-		v10 = (int)(((double)a2 - (double)a5 * (double)a1 / (double)a4) * -1.0 * (double)a4 / (double)a5);
+	int outX;
+	if (velX && velY)
+		outX = (int)(((double)inY - (double)velY * (double)inX / (double)velX) * -1.0 * (double)velX / (double)velY);
 	else
-		v10 = a1;
+		outX = inX;
 
-	int v9;
-	if (a6 && a5)
-		v9 = (int)(((double)a2 - (double)a5 * (double)a3 / (double)a6) * -1.0 * (double)a6 / (double)a5);
+	int outZ;
+	if (velZ && velY)
+		outZ = (int)(((double)inY - (double)velY * (double)inZ / (double)velZ) * -1.0 * (double)velZ / (double)velY);
 	else
-		v9 = a3;
+		outZ = inZ;
 
 	// The final argument chooses whether to store the results for op_1008 or
 	// store them in SCUMM variables.
-	if (a7) {
-		_var1021[0] = v10;
-		_var1021[1] = v9;
+	if (internalUse) {
+		_var1021[0] = outX;
+		_var1021[1] = outZ;
 	} else {
-		writeScummVar(108, v10);
-		writeScummVar(109, v9);
+		writeScummVar(108, outX);
+		writeScummVar(109, outZ);
 	}
 
 	return 1;
