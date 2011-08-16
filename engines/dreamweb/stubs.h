@@ -129,5 +129,6 @@
 	void showpanel();
 	void updatepeople();
 	void madmantext();
+	void madmode();
 	bool isCD();
 

@@ -654,7 +654,6 @@ public:
 	static const uint16 addr_textformonk = 0xc0f0;
 	static const uint16 addr_textforend = 0xc0ec;
 	static const uint16 addr_priesttext = 0xc0e8;
-	static const uint16 addr_madmode = 0xc0e4;
 	static const uint16 addr_madman = 0xc0dc;
 	static const uint16 addr_madmanstelly = 0xc0d8;
 	static const uint16 addr_priest = 0xc0d4;
@@ -1806,7 +1805,7 @@ public:
 	void textforend();
 	void showdiarykeys();
 	void dontloadseg();
-	void madmode();
+	//void madmode();
 	void intro3text();
 	void allocatemem();
 	void sortoutmap();

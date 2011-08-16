@@ -1694,19 +1694,6 @@ notendtelly:
 	showgamereel();
 }
 
-void DreamGenContext::madmode() {
-	STACK_CHECK;
-	data.word(kWatchingtime) = 2;
-	data.byte(kPointermode) = 0;
-	_cmp(data.byte(kCombatcount), 65);
-	if (flags.c())
-		return /* (iswatchmad) */;
-	_cmp(data.byte(kCombatcount), 70);
-	if (!flags.c())
-		return /* (iswatchmad) */;
-	data.byte(kPointermode) = 2;
-}
-
 void DreamGenContext::priesttext() {
 	STACK_CHECK;
 	_cmp(es.word(bx+3), 2);
@@ -19069,7 +19056,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_priest: priest(); break;
 		case addr_madmanstelly: madmanstelly(); break;
 		case addr_madman: madman(); break;
-		case addr_madmode: madmode(); break;
 		case addr_priesttext: priesttext(); break;
 		case addr_textforend: textforend(); break;
 		case addr_textformonk: textformonk(); break;

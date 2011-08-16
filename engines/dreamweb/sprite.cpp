@@ -846,5 +846,15 @@ void DreamGenContext::madman() {
 	madmode();
 }
 
+void DreamGenContext::madmode() {
+	data.word(kWatchingtime) = 2;
+	data.byte(kPointermode) = 0;
+	if (data.byte(kCombatcount) < (isCD() ? 65 : 63))
+		return;
+	if (data.byte(kCombatcount) >= (isCD() ? 70 : 68))
+		return;
+	data.byte(kPointermode) = 2;
+}
+
 } /*namespace dreamgen */
 
