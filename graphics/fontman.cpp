@@ -79,7 +79,7 @@ bool FontManager::assignFontToName(const Common::String &name, const Font *font)
 	return true;
 }
 
-bool FontManager::assignFontToUsage(FontUsage usage, const Font *font) {
+bool FontManager::setFont(FontUsage usage, const Font *font) {
 	switch (usage) {
 	case kConsoleFont:
 		delete g_consolefont;

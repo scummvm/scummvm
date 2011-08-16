@@ -67,7 +67,7 @@ public:
 	 * @param font	the font object
 	 * @return true on success, false on failure
 	 */
-  bool assignFontToUsage(FontUsage usage, const Font *font);
+  bool setFont(FontUsage usage, const Font *font);
 
 	/**
 	 * Removes binding from name to font

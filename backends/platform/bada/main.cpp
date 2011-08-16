@@ -64,7 +64,4 @@ int OspMain(int argc, char *pArgv[]) {
 
 C_LINKAGE_END
 
-//
-// end of main.cpp 
-//
 

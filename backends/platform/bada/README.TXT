@@ -77,3 +77,9 @@ Build instructions:
  outside of the scummvm package. Start the BADA IDE then 
  choose this folder as the eclipse workspace. Click
  Project / Build.
+
+Links:
+
+A short turorial on implementing OpenGL ES 1.1 in BADA:
+  http://forums.badadev.com/viewtopic.php?f=7&t=208 
+

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(WIN32) && !defined(BADA)
+#if defined(WIN32)
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
