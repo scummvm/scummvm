@@ -1563,7 +1563,7 @@ int LogicHEsoccer::op_1014_sub1(int a1, float a2, float a3, float a4, float a5, 
 		float v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240;
 		float v265, v260, v255;
 		op_1014_sub1_0(i, v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240, v256);
-		op_1014_sub1_1(v233, v267, v264, v238, v273, v259, v237, v271, v242, v269, v253, v240, v265, v260, v255);
+		op_1014_sub1_1(v233, v267, v264, v238, v273, v259, v233, v267, v264, v237, v271, v242, v265, v260, v255);
 
 		double v14 = sqrt(v265 * v265 + v260 * v260 + v255 * v255);
 		float v243 = v14;
