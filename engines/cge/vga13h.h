@@ -65,20 +65,6 @@ namespace CGE {
 
 #define SPR_EXT     ".SPR"
 
-struct Rgb {
-	uint16 _r : 2;
-	uint16 _R : 6;
-	uint16 _g : 2;
-	uint16 _G : 6;
-	uint16 _b : 2;
-	uint16 _B : 6;
-};
-
-typedef union {
-	Dac _dac;
-	Rgb _rgb;
-} Trgb;
-
 struct VgaRegBlk {
 	uint8 _idx;
 	uint8 _adr;
@@ -299,7 +285,6 @@ public:
 
 
 Dac mkDac(uint8 r, uint8 g, uint8 b);
-Rgb mkRgb(uint8 r, uint8 g, uint8 b);
 
 
 template <class CBLK>
