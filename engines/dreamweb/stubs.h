@@ -105,7 +105,7 @@
 	void turnpathoffCPP(uint8 param);
 	void getroomspaths();
 	uint8 *getroomspathsCPP();
-	void makebackob();
+	void makebackob(ObjData *objData);
 	void modifychar();
 	void lockmon();
 	void cancelch0();
@@ -130,5 +130,13 @@
 	void madmantext();
 	void madmode();
 	void movemap(uint8 param);
+	void getmapad();
+	uint8 getmapad(const uint8 *setData);
+	uint8 getxad(const uint8 *setData, uint8 *result);
+	uint8 getyad(const uint8 *setData, uint8 *result);
+	void calcfrframe();
+	void finalframe();
+	void finalframe(uint16 *x, uint16 *y);
+	void showallobs();
 	bool isCD();
 

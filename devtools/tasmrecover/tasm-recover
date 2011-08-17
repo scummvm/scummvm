@@ -117,6 +117,12 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'movemap',
 	'doorway',
 	'widedoor',
+	'showallobs',
+	'getxad',
+	'getyad',
+	'getmapad',
+	'calcfrframe',
+	'finalframe',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

@@ -477,15 +477,9 @@ public:
 	static const uint16 addr_dolook = 0xc474;
 	static const uint16 addr_look = 0xc470;
 	static const uint16 addr_autolook = 0xc46c;
-	static const uint16 addr_getyad = 0xc468;
-	static const uint16 addr_getxad = 0xc464;
-	static const uint16 addr_getmapad = 0xc460;
 	static const uint16 addr_adjustlen = 0xc45c;
-	static const uint16 addr_finalframe = 0xc458;
-	static const uint16 addr_calcfrframe = 0xc454;
 	static const uint16 addr_showallex = 0xc450;
 	static const uint16 addr_showallfree = 0xc44c;
-	static const uint16 addr_showallobs = 0xc444;
 	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_addlength = 0xc438;
 	static const uint16 addr_addalong = 0xc434;
@@ -1293,6 +1287,7 @@ public:
 	void startdmablock();
 	void useopenbox();
 	void clearbuffers();
+	//void getyad();
 	void neterror();
 	void storeit();
 	//void lockeddoorway();
@@ -1405,7 +1400,7 @@ public:
 	void watchcount();
 	void fadedownmon();
 	void loadcart();
-	void splitintolines();
+	//void calcfrframe();
 	void bartender();
 	void eden();
 	void showdiary();
@@ -1485,7 +1480,7 @@ public:
 	//void cls();
 	//void printsprites();
 	//void checkifperson();
-	void showallobs();
+	//void showallobs();
 	//void getnumber();
 	void adjustleft();
 	void calledenslift();
@@ -1596,7 +1591,7 @@ public:
 	void loadmenu();
 	//void aboutturn();
 	void checkifpathison();
-	void smallcandle();
+	//void finalframe();
 	void receptionist();
 	void selectslot();
 	void edenscdplayer();
@@ -1604,7 +1599,6 @@ public:
 	void fadeupmon();
 	void paltoendpal();
 	void fadetowhite();
-	void textformonk();
 	void loadsavebox();
 	void soundend();
 	void redes();
@@ -1623,7 +1617,7 @@ public:
 	void getbacktoops();
 	void rollendcredits();
 	void intro1text();
-	void getmapad();
+	void transfertoex();
 	void playchannel1();
 	void playchannel0();
 	void usemon();
@@ -1672,7 +1666,7 @@ public:
 	void nothelderror();
 	//void readheader();
 	void getsetad();
-	void getyad();
+	void textformonk();
 	void reconstruct();
 	void soldier1();
 	void getundercentre();
@@ -1717,7 +1711,7 @@ public:
 	void fadescreendown();
 	void findxyfrompath();
 	void namestoold();
-	void getxad();
+	//void getxad();
 	void openinv();
 	void lookatplace();
 	void useaxe();
@@ -1827,7 +1821,7 @@ public:
 	void dolook();
 	void opentvdoor();
 	void triggermessage();
-	void finalframe();
+	void smallcandle();
 	//void plotreel();
 	void swapwithopen();
 	//void makesprite();
@@ -1929,7 +1923,7 @@ public:
 	void closefile();
 	void delcurs();
 	void randomaccess();
-	void calcfrframe();
+	void splitintolines();
 	void intromagic3();
 	void initialmoncols();
 	void checkforshake();
@@ -1967,7 +1961,7 @@ public:
 	void showfirstuse();
 	void setupemm();
 	void usefullcart();
-	void transfertoex();
+	//void getmapad();
 	void getlocation();
 	void geteitherad();
 	void placesetobject();

@@ -1,6 +1,7 @@
 MODULE := engines/dreamweb
 
 MODULE_OBJS := \
+	backdrop.o \
 	console.o \
 	detection.o \
 	dreamweb.o \

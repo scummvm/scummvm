@@ -60,7 +60,7 @@ struct ObjData {
 	uint8 b2;
 	uint8 b3;
 	uint8 b4;
-	uint8 b5;
+	uint8 priority;
 	uint8 b6;
 	uint8 delay;
 	uint8 type;
@@ -73,7 +73,44 @@ struct ObjData {
 	uint8 b15;
 	uint8 b16;
 	uint8 b17;
-	uint8 b18[256]; // NB: Don't know the size yet
+	uint8 b18[13]; // NB: Don't know the size yet
+	uint8 b31;
+	uint8 b32;
+	uint8 b33;
+	uint8 b34;
+	uint8 b35;
+	uint8 b36;
+	uint8 b37;
+	uint8 b38;
+	uint8 b39;
+	uint8 b40;
+	uint8 b41;
+	uint8 b42;
+	uint8 b43;
+	uint8 b44;
+	uint8 b45;
+	uint8 b46;
+	uint8 b47;
+	uint8 b48;
+	uint8 b49;
+	uint8 b50;
+	uint8 b51;
+	uint8 b52;
+	uint8 b53;
+	uint8 b54;
+	uint8 b55;
+	uint8 b56;
+	uint8 b57;
+	uint8 b58[5];
+	uint8 b63;
+};
+
+struct ObjPos {
+	uint8 xMin;
+	uint8 yMin;
+	uint8 xMax;
+	uint8 yMax;
+	uint8 index;
 };
 
 struct Frame {

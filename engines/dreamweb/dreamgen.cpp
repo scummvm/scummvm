@@ -6585,93 +6585,6 @@ _tmp28a:
 		goto _tmp28;
 }
 
-void DreamGenContext::showallobs() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
-	data.word(kListpos) = bx;
-	di = bx;
-	cx = 128*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kSetframes);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	data.byte(kCurrentob) = 0;
-	ds = data.word(kSetdat);
-	si = 0;
-	cx = 128;
-showobsloop:
-	push(cx);
-	push(si);
-	push(si);
-	_add(si, 58);
-	es = data.word(kSetdat);
-	getmapad();
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto blankframe;
-	al = es.byte(si+18);
-	ah = 0;
-	data.word(kCurrentframe) = ax;
-	_cmp(al, 255);
-	if (flags.z())
-		goto blankframe;
-	push(es);
-	push(si);
-	calcfrframe();
-	finalframe();
-	si = pop();
-	es = pop();
-	al = es.byte(si+18);
-	es.byte(si+17) = al;
-	_cmp(es.byte(si+8), 0);
-	if (!flags.z())
-		goto animating;
-	_cmp(es.byte(si+5), 5);
-	if (flags.z())
-		goto animating;
-	_cmp(es.byte(si+5), 6);
-	if (flags.z())
-		goto animating;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	goto drawnsetob;
-animating:
-	makebackob();
-drawnsetob:
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	al = data.byte(kCurrentob);
-	es.byte(si+4) = al;
-	_add(si, 5);
-	data.word(kListpos) = si;
-blankframe:
-	_inc(data.byte(kCurrentob));
-	si = pop();
-	cx = pop();
-	_add(si, 64);
-	_dec(cx);
-	if (flags.z())
-		return /* (finishedsetobs) */;
-	goto showobsloop;
-}
-
 void DreamGenContext::showallfree() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -6841,52 +6754,6 @@ blankex:
 	goto exloop;
 }
 
-void DreamGenContext::calcfrframe() {
-	STACK_CHECK;
-	dx = data.word(kFrsegment);
-	ax = data.word(kFramesad);
-	push(ax);
-	cx = data.word(kDataad);
-	ax = data.word(kCurrentframe);
-	ds = dx;
-	bx = 6;
-	_mul(bx);
-	_add(ax, cx);
-	bx = ax;
-	cx = ds.word(bx);
-	ax = ds.word(bx+2);
-	dx = ds.word(bx+4);
-	bx = pop();
-	push(dx);
-	_add(ax, bx);
-	data.word(kSavesource) = ax;
-	data.word(kSavesize) = cx;
-	ax = pop();
-	push(ax);
-	ah = 0;
-	data.word(kOffsetx) = ax;
-	ax = pop();
-	al = ah;
-	ah = 0;
-	data.word(kOffsety) = ax;
-	return;
-	ax = pop();
-	cx = 0;
-	data.word(kSavesize) = cx;
-}
-
-void DreamGenContext::finalframe() {
-	STACK_CHECK;
-	ax = data.word(kObjecty);
-	_add(ax, data.word(kOffsety));
-	bx = data.word(kObjectx);
-	_add(bx, data.word(kOffsetx));
-	data.byte(kSavex) = bl;
-	data.byte(kSavey) = al;
-	di = data.word(kObjectx);
-	bx = data.word(kObjecty);
-}
-
 void DreamGenContext::adjustlen() {
 	STACK_CHECK;
 	ah = al;
@@ -6897,70 +6764,6 @@ void DreamGenContext::adjustlen() {
 	al = 224;
 	_sub(al, ch);
 	ch = al;
-}
-
-void DreamGenContext::getmapad() {
-	STACK_CHECK;
-	getxad();
-	_cmp(ch, 0);
-	if (flags.z())
-		return /* (over146) */;
-	data.word(kObjectx) = ax;
-	getyad();
-	_cmp(ch, 0);
-	if (flags.z())
-		return /* (over146) */;
-	data.word(kObjecty) = ax;
-	ch = 1;
-}
-
-void DreamGenContext::getxad() {
-	STACK_CHECK;
-	cl = es.byte(si);
-	_inc(si);
-	al = es.byte(si);
-	_inc(si);
-	ah = es.byte(si);
-	_inc(si);
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto over148;
-	_sub(al, data.byte(kMapx));
-	if (flags.c())
-		goto over148;
-	_cmp(al, 11);
-	if (!flags.c())
-		goto over148;
-	cl = 4;
-	_shl(al, cl);
-	_or(al, ah);
-	ah = 0;
-	ch = 1;
-	return;
-over148:
-	ch = 0;
-}
-
-void DreamGenContext::getyad() {
-	STACK_CHECK;
-	al = es.byte(si);
-	_inc(si);
-	ah = es.byte(si);
-	_inc(si);
-	_sub(al, data.byte(kMapy));
-	if (flags.c())
-		goto over147;
-	_cmp(al, 10);
-	if (!flags.c())
-		goto over147;
-	cl = 4;
-	_shl(al, cl);
-	_or(al, ah);
-	ah = 0;
-	ch = 1;
-	return;
-over147:
-	ch = 0;
 }
 
 void DreamGenContext::autolook() {
@@ -19169,15 +18972,9 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_addalong: addalong(); break;
 		case addr_addlength: addlength(); break;
 		case addr_drawflags: drawflags(); break;
-		case addr_showallobs: showallobs(); break;
 		case addr_showallfree: showallfree(); break;
 		case addr_showallex: showallex(); break;
-		case addr_calcfrframe: calcfrframe(); break;
-		case addr_finalframe: finalframe(); break;
 		case addr_adjustlen: adjustlen(); break;
-		case addr_getmapad: getmapad(); break;
-		case addr_getxad: getxad(); break;
-		case addr_getyad: getyad(); break;
 		case addr_autolook: autolook(); break;
 		case addr_look: look(); break;
 		case addr_dolook: dolook(); break;
