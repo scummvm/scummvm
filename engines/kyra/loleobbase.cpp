@@ -164,14 +164,14 @@ Common::Error LolEobBaseEngine::init() {
 	_levelBlockProperties = new LevelBlockProperty[1025];
 	memset(_levelBlockProperties, 0, 1025 * sizeof(LevelBlockProperty));
 
-	_wllVmpMap = new uint8[255];
-	memset(_wllVmpMap, 0, 255);
-	_wllShapeMap = new int8[255];
-	memset(_wllShapeMap, 0, 255);
-	_specialWallTypes = new uint8[255];
-	memset(_specialWallTypes, 0, 255);
-	_wllWallFlags = new uint8[255];
-	memset(_wllWallFlags, 0, 255);
+	_wllVmpMap = new uint8[256];
+	memset(_wllVmpMap, 0, 256);
+	_wllShapeMap = new int8[256];
+	memset(_wllShapeMap, 0, 256);
+	_specialWallTypes = new uint8[256];
+	memset(_specialWallTypes, 0, 256);
+	_wllWallFlags = new uint8[256];
+	memset(_wllWallFlags, 0, 256);
 
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));

@@ -115,6 +115,7 @@ void EobCoreEngine::setupTimers() {
 	_timer->addTimer(5, TimerV2(timerUpdateTeleporters), 10, true);
 	_timer->addTimer(6, TimerV2(timerUpdateFoodStatus), 1080, true);
 	_timer->addTimer(7, TimerV2(timerUpdateMonsterIdleAnim), 25, true);
+	_timer->resetNextRun();
 }
 
 void EobCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer) {
@@ -132,6 +133,7 @@ void EobCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt,
 
 	if (ntime < _timer->getNextRun(timerId))
 		_timer->setNextRun(timerId, ntime);
+	_timer->resetNextRun();
 
 	if (updateExistingTimer) {
 		bool updated = false;
@@ -194,6 +196,7 @@ void EobCoreEngine::setupCharacterTimers() {
 			_timer->setCountdown(0x30 | i, (nextTimer - ctime) / _tickLength);
 		}
 	}
+	_timer->resetNextRun();
 }
 
 void EobCoreEngine::advanceTimers(uint32 millis) {

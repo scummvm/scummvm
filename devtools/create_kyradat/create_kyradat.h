@@ -463,6 +463,9 @@ enum kExtractID {
 	kEob1Npc7Strings,
 
 	kEob2MainMenuStrings,
+	kEob2TransferConvertTable,
+	kEob2TransferExpTable,
+
 	kEob2IntroStrings,
 	kEob2IntroCPSFiles,
 	kEob2IntroSeqData00,

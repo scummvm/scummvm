@@ -1485,6 +1485,8 @@ const int eob2FloppyNeed[] = {
 	kEobBaseFlightObjSclIndex,
 
 	kEob2MainMenuStrings,
+	kEob2TransferConvertTable,
+	kEob2TransferExpTable,
 
 	kEob2IntroStrings,
 	kEob2IntroCPSFiles,

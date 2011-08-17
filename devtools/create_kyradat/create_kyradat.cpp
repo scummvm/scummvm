@@ -463,6 +463,8 @@ const ExtractFilename extractFilenames[] = {
 
 	// EYE OF THE BEHOLDER II
 	{ kEob2MainMenuStrings, kTypeStringList, true },
+	{ kEob2TransferConvertTable, kTypeRawData, false },
+	{ kEob2TransferExpTable, kLolTypeRaw32, false },
 
 	{ kEob2IntroStrings, k2TypeSfxList, true },
 	{ kEob2IntroCPSFiles, kTypeStringList, true },
@@ -1779,6 +1781,10 @@ const char *getIdString(const int id) {
 		return "kEob1Npc7Strings";
 	case kEob2MainMenuStrings:
 		return "kEob2MainMenuStrings";
+	case kEob2TransferConvertTable:
+		return "kEob2TransferConvertTable";
+	case kEob2TransferExpTable:
+		return "kEob2TransferExpTable";
 	case kEob2IntroStrings:
 		return "kEob2IntroStrings";
 	case kEob2IntroCPSFiles:

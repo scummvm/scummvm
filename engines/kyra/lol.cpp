@@ -1163,6 +1163,7 @@ void LoLEngine::setCharacterUpdateEvent(int charNum, int updateType, int updateD
 		l->characterUpdateEvents[i] = updateType;
 		l->characterUpdateDelay[i] = updateDelay;
 		_timer->setNextRun(3, _system->getMillis());
+		_timer->resetNextRun();
 		_timer->enable(3);
 		break;
 	}

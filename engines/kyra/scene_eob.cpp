@@ -1012,8 +1012,8 @@ void EobCoreEngine::drawScene(int refresh) {
 	}
 
 	if (_sceneDefaultUpdate) {
-		resetSkipFlag();
 		delayUntil(_drawSceneTimer);
+		removeInputTop();
 	}
 
 	if (refresh && !_partyResting)
@@ -1029,7 +1029,7 @@ void EobCoreEngine::drawScene(int refresh) {
 
 	if (_sceneDefaultUpdate) {
 		_sceneDefaultUpdate = false;
-		_drawSceneTimer = _system->getMillis() /*+ 4 * _tickLength*/;
+		_drawSceneTimer = _system->getMillis() + 4 * _tickLength;
 	}
 
 	_sceneUpdateRequired = false;
@@ -1141,8 +1141,8 @@ int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 	int w = _levelBlockProperties[b].walls[direction ^ 2];
 	int f = _wllWallFlags[w];
 
-	if (!f)
-		assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
+	//if (!f)
+	assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
 
 	if (_flags.gameID == GI_EOB2 && w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {

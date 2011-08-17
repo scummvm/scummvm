@@ -78,8 +78,8 @@ Common::Error EobEngine::init() {
 
 	_scriptTimersCount = 1;
 
-	_wllWallFlags[132] = 1;
-	_wllWallFlags[133] = 1;
+	//_wllWallFlags[132] = 1;
+	//_wllWallFlags[133] = 1;
 
 	return Common::kNoError;
 }

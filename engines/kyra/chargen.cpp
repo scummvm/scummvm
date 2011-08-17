@@ -108,10 +108,6 @@ private:
 	Screen_Eob *_screen;
 };
 
-bool EobCoreEngine::startCharacterGeneration() {
-	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
-}
-
 CharacterGenerator::CharacterGenerator(EobCoreEngine *vm, Screen_Eob *screen) : _vm(vm), _screen(screen),
 	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenButtonLabels(0), _chargenMagicShapeTimer(0),
 	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
@@ -1444,6 +1440,15 @@ const int16 CharacterGenerator::_raceModifiers[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0,	1, -1, 0, 1, -1, 0, 0, 0, -1, 0, 0, 1, 0, 0
 };
+
+bool EobCoreEngine::startCharacterGeneration() {
+	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
+}
+
+bool EobCoreEngine::transferParty() {
+
+	return false;
+}
 
 }	// End of namespace Kyra
 

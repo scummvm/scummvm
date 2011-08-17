@@ -45,6 +45,7 @@ void LoLEngine::setupTimers() {
 	_timer->addTimer(9, TimerV2(timerUpdatePortraitAnimations), 10, true);
 	_timer->addTimer(10, TimerV2(timerUpdateLampState), 360, true);
 	_timer->addTimer(11, TimerV2(timerFadeMessageText), 360, false);
+	_timer->resetNextRun();
 }
 
 void LoLEngine::timerProcessMonsters(int timerNum) {

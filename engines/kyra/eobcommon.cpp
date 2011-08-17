@@ -40,13 +40,15 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
 	_gui = 0;
-	//_processingButtons=false;
-	//_runLoopUnk2 = 0;
-	//_runLoopTimerUnk = 0;
+
 	_playFinale = false;
 	_runFlag = true;
 	_configMouse = true;
 	_loading = false;
+
+	_envAudioTimer = 0;
+	_flashShapeTimer = 0;
+	_drawSceneTimer = 0;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
 		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
@@ -59,6 +61,9 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_enemyMageSfx = 0;
 	_beholderSpellList = 0;
 	_beholderSfx = 0;
+
+	_transferConvertTable = 0;
+	_transferExpTable = 0;
 
 	_faceShapes = 0;
 	_characters = 0;
@@ -297,6 +302,13 @@ Common::Error EobCoreEngine::init() {
 	memset(&_wllShapeMap[3], -1, 5);
 	memset(&_wllShapeMap[13], -1, 5);
 
+	/*int clen = _flags.gameID == GI_EOB2 ? 80 : 70;
+	memcpy(&_wllShapeMap[256 - clen], _wllVmpMap, clen);
+	memcpy(&_specialWallTypes[256 - 2 * clen], _wllVmpMap, clen);
+	memcpy(&_specialWallTypes[256 - clen], _wllShapeMap, clen);
+	memcpy(&_wllWallFlags[256 - 2 * clen], _wllShapeMap, clen);
+	memcpy(&_wllWallFlags[256 - clen], _specialWallTypes, clen);*/
+
 	_wllVcnOffset = 16;
 
 	_monsters = new EobMonsterInPlay[30];
@@ -384,7 +396,9 @@ Common::Error EobCoreEngine::go() {
 				startupNew();
 		} else if (action == -3) {
 			// transfer party
-			repeatLoop = false;
+			repeatLoop = transferParty();
+			if (repeatLoop && !shouldQuit())
+				startupNew();
 		}
 	}
 
@@ -441,15 +455,13 @@ void EobCoreEngine::runLoop() {
 	_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);	
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
-	//__unkB__ = 1;
+
 	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setScreenDim(7);
 
-	//_runLoopUnk2 = _currentBlock;
 	_runFlag = true;
 
 	while (!shouldQuit() && _runFlag) {
-		//_runLoopUnk2 = _currentBlock;
 		checkPartyStatus(true);
 		checkInput(_activeButtons, true, 0);
 		removeInputTop();
@@ -723,7 +735,7 @@ int EobCoreEngine::generateCharacterHitpointsByLevel(int charIndex, int levelInd
 
 int EobCoreEngine::getClassAndConstHitpointsModifier(int cclass, int constitution) {
 	int res = _hpConstModifiers[constitution];
-
+	// This also applies to EOB1 despite being coded differently there
 	if (res <= 2 || (_classModifierFlags[cclass] & 0x31))
 		return res;
 
@@ -1176,7 +1188,7 @@ uint32 EobCoreEngine::getRequiredExperience(int cClass, int levelIndex, int leve
 
 void EobCoreEngine::increaseCharacterLevel(int charIndex, int levelIndex) {
 	_characters[charIndex].level[levelIndex]++;
-	int hpInc = generateCharacterHitpointsByLevel(charIndex, levelIndex);
+	int hpInc = generateCharacterHitpointsByLevel(charIndex, 1 << levelIndex);
 	_characters[charIndex].hitPointsCur += hpInc;
 	_characters[charIndex].hitPointsMax += hpInc;
 
