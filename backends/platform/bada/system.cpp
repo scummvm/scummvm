@@ -200,7 +200,7 @@ void BadaEventManager::init() {
 
 int BadaEventManager::shouldQuit() const {
 	BadaSystem *system = (BadaSystem *)g_system;
-	return system->isClosing();
+	return DefaultEventManager::shouldQuit() || system->isClosing();
 }
 
 //
