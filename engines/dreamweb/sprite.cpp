@@ -338,20 +338,18 @@ void DreamGenContext::dodoor() {
 void DreamGenContext::dodoor(Sprite *sprite, ObjData *objData) {
 	uint8 ryanx = data.byte(kRyanx);
 	uint8 ryany = data.byte(kRyany);
-	int8 deltax = ryanx - sprite->x;
-	int8 deltay = ryany - sprite->y;
 	if (ryanx < sprite->x) {
-		if (deltax < (int8)data.byte(kDoorcheck1))
+		if (ryanx < sprite->x + (int8)data.byte(kDoorcheck1))
 			goto shutdoor;
 	} else {
-		if (deltax >= data.byte(kDoorcheck2))
+		if (ryanx >= sprite->x + data.byte(kDoorcheck2))
 			goto shutdoor;
 	}
 	if (ryany < sprite->y) {
-		if (deltay < (int8)data.byte(kDoorcheck3))
+		if (ryany < sprite->y + (int8)data.byte(kDoorcheck3))
 			goto shutdoor;
 	} else {
-		if (deltay >= data.byte(kDoorcheck4))
+		if (ryany >= sprite->y + data.byte(kDoorcheck4))
 			goto shutdoor;
 	}
 //opendoor:
