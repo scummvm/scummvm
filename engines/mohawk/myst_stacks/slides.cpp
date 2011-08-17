@@ -61,18 +61,26 @@ void Slides::disablePersistentScripts() {
 void Slides::runPersistentScripts() {
 	if (_cardSwapEnabled) {
 		// Used on Cards...
-		if (_vm->_system->getMillis() > _nextCardTime)
+		if (_vm->_system->getMillis() > _nextCardTime) {
+			_vm->_gfx->fadeToBlack();
 			_vm->changeToCard(_nextCardID, true);
+			_vm->_gfx->fadeFromBlack();
+		}
 	}
 }
 
 void Slides::o_returnToMenu(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Return to menu", op);
+
 	// Go to the information screens of the menu
 	_vm->changeToStack(kDemoStack, 2002, 0, 0);
 }
 
 void Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	_nextCardID = argv[0];
+
+	debugC(kDebugScript, "Opcode %d: Set next card %d", op, _nextCardID);
+
 	_nextCardTime = _vm->_system->getMillis() + 5000;
 	_cardSwapEnabled = true;
 }

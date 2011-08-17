@@ -56,7 +56,7 @@ Table of Contents:
  * 7.7 TiMidity++ MIDI server support
  * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
  * 7.9 Output sample rate
-8.0) Configuration Files
+8.0) Configuration file
 9.0) Compiling
 
 
@@ -533,8 +533,8 @@ and follow the instructions in its readme.txt file. (Broken Sword II
 already has subtitles; no extra work is needed for them.)
 
 
-3.7.2) Broken Sword games cutscenes, in retrospect
------- -------------------------------------------
+3.7.2) Broken Sword games cutscenes, in retrospect:
+------ --------------------------------------------
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
 versions of this format to us, and had requested we not reverse engineer
@@ -1108,8 +1108,8 @@ They are:
     tv2x       - Interlace filter, tries to emulate a TV. Factor 2x.
     dotmatrix  - Dot matrix effect. Factor 2x.
 
-To select a graphics filter, pass its name via the '-g' option to
-scummvm, for example:
+To select a graphics filter, select it in the Launcher, or pass its name
+via the '-g' option to scummvm, for example:
 
     scummvm -gadvmame2x monkey2
 
@@ -1163,8 +1163,8 @@ Engines which currently support returning to the Launcher are:
     TUCKER
 
 
-5.5) Hot Keys:
----- ---------
+5.5) Hotkeys:
+---- --------
 ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
@@ -1443,14 +1443,14 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 7.0) Music and Sound:
 ---- ----------------
 On most operating systems and for most games, ScummVM will by default
-use AdLib emulation for music playback. MIDI may not be available on all
-operating systems or may need manual configuration. If you want to use
-MIDI, you have several different choices of output, depending on your
-operating system and configuration.
+use MT-32 or AdLib emulation for music playback. MIDI may not be
+available on all operating systems or may need manual configuration. If
+you want to use MIDI, you have several different choices of output,
+depending on your operating system and configuration.
 
     null       - Null output. Don't play any music.
 
-    adlib      - Internal AdLib emulation (default)
+    adlib      - Internal AdLib emulation
     fluidsynth - FluidSynth MIDI emulation
     mt32       - Internal MT-32 emulation
     pcjr       - Internal PCjr emulation (only usable in SCUMM games)
@@ -1475,7 +1475,7 @@ via the '-e' option to scummvm, for example:
 7.1) Playing sound with AdLib emulation:
 ---- -----------------------------------
 By default an AdLib card will be emulated and ScummVM will output the
-music as sampled waves. This is the default mode for most games, and
+music as sampled waves. This is the default mode for several games, and
 offers the best compatibility between machines and games.
 
 
@@ -1646,7 +1646,7 @@ command as described earlier in this section.
 
 
 7.6.2) Playing sound with IRIX dmedia sequencer:                 [UNIX ONLY]
----- ------------------------------------------
+---- -------------------------------------------
 If you are using IRIX and the dmedia driver with sequencer support, you
 can set the environment variable "SCUMMVM_MIDIPORT" or the config file
 variable "dmedia_port" to specify your sequencer port. The default is to
@@ -1670,7 +1670,7 @@ SCUMMVM_PORT=Software Synth in your environment.
 
 7.7) Using TiMidity++ MIDI server:
 ---- -----------------------------
-If you system lacks any MIDI sequencer, but you still want better MIDI
+If your system lacks any MIDI sequencer, but you still want better MIDI
 quality than default AdLib emulation can offer, you can try the
 TiMidity++ MIDI server. See http://timidity.sourceforge.net/ for
 download and install instructions.
@@ -1712,9 +1712,9 @@ q specifying the desired quality from 0 to 10:
 
 
 7.8.2) Using Flac files for CD audio:
------- ------------------------------------
+------ ------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
-Name the files track1.flac track2.flac etc. In your filesystem only
+Name the files track1.flac track2.flac etc. If your filesystem only
 allows three letter extensions, name the files track1.fla track2.fla
 etc. ScummVM must be compiled with flac support to use this option. You
 will need to rip the files from the CD as a WAV file, then encode the
@@ -1750,7 +1750,7 @@ of time than MP3, so have a good book handy.
 
 
 7.8.5) Compressing MONSTER.SOU with Flac:
------- ----------------------------------------
+------ ----------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
   compress_scumm_sou --flac monster.sou
@@ -1764,8 +1764,8 @@ those kind of soundfiles. Be sure to read the encoder documentation
 before you use other values.
 
 
-7.8.6) Compressing music/sfx/speech in AGOS games
------- -----------------------------------------------------------------
+7.8.6) Compressing music/sfx/speech in AGOS games:
+------ -------------------------------------------
 Use our 'compress_agos' utility from the scummvm-tools package to
 perform this task. You can choose between multiple target formats, but
 note that you can only use each if ScummVM was compiled with the
@@ -1799,14 +1799,14 @@ Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy
 this file to your game directory. You can safely remove the old file.
 
 
-7.8.7) Compressing speech/music in Broken Sword
------- ----------------------------------------
+7.8.7) Compressing speech/music in Broken Sword:
+------ -----------------------------------------
 The 'compress_sword1' tool from the scummvm-tools package can encode
-music and speech to MP3 as well as Ogg Vorbis. The easiest way to encode
-the files is simply copying the executable into your BS1 directory
-(together with the lame encoder) and run it from there. This way, it
-will automatically encode everything to MP3. Afterwards, you can
-manually remove the SPEECH?.CLU files and the wave music files.
+music and speech to MP3, Ogg Vorbis as well as Flac. The easiest way
+to encode the files is simply copying the executable into your
+BS1 directory (together with the lame encoder) and run it from there.
+This way, it will automatically encode everything to MP3. Afterwards,
+you can manually remove the SPEECH?.CLU files and the wave music files.
 
 Running "compress_sword1 --vorbis" will compress the files using Ogg
 Vorbis instead of MP3.
@@ -1817,8 +1817,8 @@ instead of MP3.
 Use "compress_sword1 --help" to get a full list of the options.
 
 
-7.8.8) Compressing speech/music in Broken Sword II
------- -------------------------------------------
+7.8.8) Compressing speech/music in Broken Sword II:
+------ --------------------------------------------
 Use our 'compress_sword2' utility from the scummvm-tools package to
 perform this task. You can choose between multiple target formats, but
 note  that you can only use each if ScummVM was compiled with the
@@ -2021,7 +2021,7 @@ Flight of the Amazon Queen adds the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
-King's Quest VI Windows adds the following non-standard keywords:
+King's Quest VI Windows adds the following non-standard keyword:
 
     windows_cursors    bool     If true, the original unscaled black and white
                                 Windows cursors are used instead of the DOS
@@ -2055,7 +2055,7 @@ compressed sound. For compressed save states, zlib is required.
 
 Some parts of ScummVM, particularly scalers, have highly optimized
 versions written in assembler. If you wish to use this option, you will
-need to install nasm assembler (see http://nasm.sf.net). Note, that
+need to install nasm assembler (see http://nasm.sf.net). Note that
 currently we have only x86 MMX optimized versions, and they will not
 compile on other processors.
 
@@ -2072,19 +2072,12 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
       respectively
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
 
-  Microsoft Visual C++ 6.0:
-    * Open the workspace file "scummwm.dsw" in the "dists\msvc6" directory.
+  Microsoft Visual C++ 8/9/10:
+    * Read up on how to create the project files in "dists\msvc8",
+      "dists\msvc9" respectively "dists\msvc10".
+    * Open the resulting solution file.
     * Enter the path to the needed libraries and includes in
-      "Tools|Options|Directories".
-    * Now it should compile successfully.
-    * For more information refer to:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
-
-  Microsoft Visual C++ 7.0/8.0:
-    * Open the solution file "scummwm.sln"  in the "dists\msvc7"
-      respectively "dists\msvc8" directory.
-    * Enter the path to the needed libraries and includes in
-      Tools|Options|Projects|VC++ Directories".
+      Tools|Options|Projects and Solutions|VC++ Directories".
     * Now it should compile successfully.
     * For more information refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/VS2005
@@ -2136,7 +2129,7 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
   Maemo:
     * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
     * Install libmad, Tremor, FLAC from source
-    * patch scummvm source (some stuff is currently too dirty to be in git directly)
+    * patch scummvm source (some stuff is currently too dirty to be in git directly):
       patch -p1 < backends/platform/maemo/scummvm-[currentversion]-maemo.patch
     * update debian/changelog
     * run 'fakeroot dpkg-buildpackage -b -d'

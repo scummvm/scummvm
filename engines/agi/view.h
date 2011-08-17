@@ -50,6 +50,39 @@ struct AgiView {
 	uint8 *rdata;
 };
 
+enum MotionType {
+	kMotionNormal = 0,
+	kMotionWander = 1,
+	kMotionFollowEgo = 2,
+	kMotionMoveObj = 3
+};
+
+enum CycleType {
+	kCycleNormal = 0,
+	kCycleEndOfLoop = 1,
+	kCycleRevLoop = 2,
+	kCycleReverse = 3
+ };
+
+enum ViewFlags {
+	fDrawn 			= (1 << 0),
+	fIgnoreBlocks 	= (1 << 1),
+	fFixedPriority	= (1 << 2),
+	fIgnoreHorizon	= (1 << 3),
+	fUpdate			= (1 << 4),
+	fCycling		= (1 << 5),
+	fAnimated		= (1 << 6),
+	fMotion			= (1 << 7),
+	fOnWater		= (1 << 8),
+	fIgnoreObjects	= (1 << 9),
+	fUpdatePos		= (1 << 10),
+	fOnLand			= (1 << 11),
+	fDontupdate		= (1 << 12),
+	fFixLoop		= (1 << 13),
+	fDidntMove		= (1 << 14),
+	fAdjEgoXY		= (1 << 15)
+};
+
 /**
  * AGI view table entry
  */
@@ -78,39 +111,10 @@ struct VtEntry {
 	uint8 cycleTime;
 	uint8 cycleTimeCount;
 	uint8 direction;
-
-#define MOTION_NORMAL		0
-#define MOTION_WANDER		1
-#define	MOTION_FOLLOW_EGO	2
-#define	MOTION_MOVE_OBJ		3
-	uint8 motion;
-
-#define	CYCLE_NORMAL		0
-#define CYCLE_END_OF_LOOP	1
-#define	CYCLE_REV_LOOP		2
-#define	CYCLE_REVERSE		3
-	uint8 cycle;
-
+	MotionType motion;
+	CycleType cycle;
 	uint8 priority;
-
-#define DRAWN		0x0001
-#define IGNORE_BLOCKS	0x0002
-#define FIXED_PRIORITY	0x0004
-#define IGNORE_HORIZON	0x0008
-#define UPDATE		0x0010
-#define CYCLING		0x0020
-#define ANIMATED	0x0040
-#define MOTION		0x0080
-#define ON_WATER	0x0100
-#define IGNORE_OBJECTS	0x0200
-#define UPDATE_POS	0x0400
-#define ON_LAND		0x0800
-#define DONTUPDATE	0x1000
-#define FIX_LOOP	0x2000
-#define DIDNT_MOVE	0x4000
-#define	ADJ_EGO_XY	0x8000
 	uint16 flags;
-
 	uint8 parm1;
 	uint8 parm2;
 	uint8 parm3;

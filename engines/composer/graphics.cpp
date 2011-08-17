@@ -598,10 +598,16 @@ enum {
 };
 
 void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *stream, byte *buffer, uint32 size, uint width, uint height) {
+	uint outSize = width * height;
+
 	switch (type) {
 	case kBitmapUncompressed:
-		assert(stream->size() - (uint)stream->pos() == size);
-		assert(size == width * height);
+		if (stream->size() - (uint)stream->pos() != size)
+			error("kBitmapUncompressed stream had %d bytes left, supposed to be %d",
+				stream->size() - (uint)stream->pos(), size);
+		if (size != outSize)
+			error("kBitmapUncompressed size %d doesn't match required size %d",
+				size, outSize);
 		stream->read(buffer, size);
 		break;
 	case kBitmapSpp32:
@@ -615,12 +621,22 @@ void ComposerEngine::decompressBitmap(uint16 type, Common::SeekableReadStream *s
 				// run of a single color
 				uint count = (uint)stream->readByte() + 3;
 				size--;
+				if (outSize < count)
+					error("kBitmapSpp32 only needed %d bytes, but got run of %d",
+						outSize, count);
+				outSize -= count;
 				memset(buffer, lookup[lowBits], count);
 				buffer += count;
 			} else {
 				// two pixels
+				if (!outSize)
+					error("kBitmapSpp32 had too many pixels");
 				*buffer++ = lookup[highBits];
-				*buffer++ = lookup[lowBits];
+				outSize--;
+				if (outSize) {
+					*buffer++ = lookup[lowBits];
+					outSize--;
+				}
 			}
 		}
 		break;

@@ -21,12 +21,14 @@
  */
 
 #include "common/config-manager.h"
-#include "tsage/ringworld_scenes3.h"
+#include "tsage/ringworld/ringworld_scenes3.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 2000 - Cockpit cutscenes
@@ -6130,4 +6132,6 @@ void Scene2400::postInit(SceneObjectList *OwnerList) {
 	_globals->_soundHandler.play(153);
 }
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE

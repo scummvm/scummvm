@@ -30,7 +30,7 @@
 #include "tsage/sound.h"
 #include "tsage/tsage.h"
 
-namespace tSage {
+namespace TsAGE {
 
 Saver *_saver;
 
@@ -410,4 +410,4 @@ void Saver::resolveLoadPointers() {
 		error("Could not resolve savegame block pointers");
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

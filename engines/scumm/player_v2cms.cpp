@@ -36,6 +36,10 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer)
 	  _outputTableReady(0), _midiChannel(), _midiChannelUse() {
 	setMusicVolume(255);
 
+	memset(_sfxFreq, 0xFF, sizeof(_sfxFreq));
+	memset(_sfxAmpl, 0x00, sizeof(_sfxAmpl));
+	memset(_sfxOctave, 0x66, sizeof(_sfxOctave));
+
 	_cmsVoices[0].amplitudeOutput = &_cmsChips[0].ampl[0];
 	_cmsVoices[0].freqOutput = &_cmsChips[0].freq[0];
 	_cmsVoices[0].octaveOutput = &_cmsChips[0].octave[0];
@@ -596,7 +600,6 @@ void Player_V2CMS::play() {
 	_octaveMask = 0xF0;
 	channel_data *chan = &_channels[0].d;
 
-	MusicChip &cms = _cmsChips[0];
 	byte noiseGen = 3;
 
 	for (int i = 1; i <= 4; ++i) {
@@ -608,8 +611,8 @@ void Player_V2CMS::play() {
 					noiseGen = freq & 0xFF;
 				} else {
 					noiseGen = 3;
-					cms.freq[0] = cms.freq[3];
-					cms.octave[0] = (cms.octave[0] & 0xF0) | ((cms.octave[1] & 0xF0) >> 4);
+					_sfxFreq[0] = _sfxFreq[3];
+					_sfxOctave[0] = (_sfxOctave[0] & 0xF0) | ((_sfxOctave[1] & 0xF0) >> 4);
 				}
 			} else {
 				if (freq == 0) {
@@ -635,15 +638,15 @@ void Player_V2CMS::play() {
 				oct |= cmsOct;
 
 				oct &= _octaveMask;
-				oct |= (~_octaveMask) & cms.octave[(i & 3) >> 1];
-				cms.octave[(i & 3) >> 1] = oct;
+				oct |= (~_octaveMask) & _sfxOctave[(i & 3) >> 1];
+				_sfxOctave[(i & 3) >> 1] = oct;
 
 				freq >>= -(cmsOct - 9);
-				cms.freq[i & 3] = (-(freq - 511)) & 0xFF;
+				_sfxFreq[i & 3] = (-(freq - 511)) & 0xFF;
 			}
-			cms.ampl[i & 3] = _volumeTable[chan->volume >> 12];
+			_sfxAmpl[i & 3] = _volumeTable[chan->volume >> 12];
 		} else {
-			cms.ampl[i & 3] = 0;
+			_sfxAmpl[i & 3] = 0;
 		}
 
 		chan = &_channels[i].d;
@@ -654,25 +657,25 @@ void Player_V2CMS::play() {
 	// the right channels amplitude is set
 	// with the low value the left channels amplitude
 	_cmsEmu->portWrite(0x221, 0);
-	_cmsEmu->portWrite(0x220, cms.ampl[0]);
+	_cmsEmu->portWrite(0x220, _sfxAmpl[0]);
 	_cmsEmu->portWrite(0x221, 1);
-	_cmsEmu->portWrite(0x220, cms.ampl[1]);
+	_cmsEmu->portWrite(0x220, _sfxAmpl[1]);
 	_cmsEmu->portWrite(0x221, 2);
-	_cmsEmu->portWrite(0x220, cms.ampl[2]);
+	_cmsEmu->portWrite(0x220, _sfxAmpl[2]);
 	_cmsEmu->portWrite(0x221, 3);
-	_cmsEmu->portWrite(0x220, cms.ampl[3]);
+	_cmsEmu->portWrite(0x220, _sfxAmpl[3]);
 	_cmsEmu->portWrite(0x221, 8);
-	_cmsEmu->portWrite(0x220, cms.freq[0]);
+	_cmsEmu->portWrite(0x220, _sfxFreq[0]);
 	_cmsEmu->portWrite(0x221, 9);
-	_cmsEmu->portWrite(0x220, cms.freq[1]);
+	_cmsEmu->portWrite(0x220, _sfxFreq[1]);
 	_cmsEmu->portWrite(0x221, 10);
-	_cmsEmu->portWrite(0x220, cms.freq[2]);
+	_cmsEmu->portWrite(0x220, _sfxFreq[2]);
 	_cmsEmu->portWrite(0x221, 11);
-	_cmsEmu->portWrite(0x220, cms.freq[3]);
+	_cmsEmu->portWrite(0x220, _sfxFreq[3]);
 	_cmsEmu->portWrite(0x221, 0x10);
-	_cmsEmu->portWrite(0x220, cms.octave[0]);
+	_cmsEmu->portWrite(0x220, _sfxOctave[0]);
 	_cmsEmu->portWrite(0x221, 0x11);
-	_cmsEmu->portWrite(0x220, cms.octave[1]);
+	_cmsEmu->portWrite(0x220, _sfxOctave[1]);
 	_cmsEmu->portWrite(0x221, 0x14);
 	_cmsEmu->portWrite(0x220, 0x3E);
 	_cmsEmu->portWrite(0x221, 0x15);

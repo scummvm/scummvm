@@ -474,8 +474,8 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		v->cycleTimeCount = in->readByte();
 		v->direction = in->readByte();
 
-		v->motion = in->readByte();
-		v->cycle = in->readByte();
+		v->motion = (MotionType)in->readByte();
+		v->cycle = (CycleType)in->readByte();
 		v->priority = in->readByte();
 
 		v->flags = in->readUint16BE();

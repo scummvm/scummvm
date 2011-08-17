@@ -20,37 +20,46 @@
  *
  */
 
-#ifndef TSAGE_BLUEFORCE_SCENES0_H
-#define TSAGE_BLUEFORCE_SCENES0_H
+#ifndef TSAGE_RINGWORLD_DEMO_H
+#define TSAGE_RINGWORLD_DEMO_H
 
 #include "common/scummsys.h"
-#include "tsage/blueforce_logic.h"
-#include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
-class BF_Scene20 : public Scene {
-	/* Actions */
-	class Action1 : public Action {
-	private:
-		ASoundExt _sound;
-	public:
-		virtual void signal();
-	};
+namespace Ringworld {
+
+using namespace TsAGE;
+
+class RingworldDemoGame: public Game {
+private:
+	void pauseGame();
 public:
-	Action1 _action1;
-	ScenePalette _scenePalette;
-	SceneObject _object1, _object2, _object3, _object4;
-	SceneObject _object5, _object6, _object7, _object8;
-
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void start();
+	virtual Scene *createScene(int sceneNumber);
+	virtual void quitGame();
+	virtual void processEvent(Event &event);
 };
 
-} // End of namespace tSage
+class RingworldDemoScene: public Scene {
+public:
+	SequenceManager _sequenceManager;
+	SceneObject _actor1, _actor2, _actor3;
+	SceneObject _actor4, _actor5, _actor6;
+	ASound _soundHandler;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void process(Event &event);
+	virtual void signal();
+};
+
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE
 
 #endif

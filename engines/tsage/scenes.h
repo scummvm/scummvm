@@ -29,7 +29,7 @@
 #include "tsage/core.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Scene : public StripCallback {
 private:
@@ -67,7 +67,6 @@ public:
 	void loadBackground(int xAmount, int yAmount);
 	void refreshBackground(int xAmount, int yAmount);
 	void loadSceneData(int sceneNum);
-	byte *preloadVisage(int resNum);
 };
 
 class SceneManager : public GameHandler, public SaveListener {
@@ -135,6 +134,6 @@ public:
 	virtual void processEvent(Event &event) {}
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

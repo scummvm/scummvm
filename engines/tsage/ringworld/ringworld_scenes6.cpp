@@ -20,12 +20,14 @@
  *
  */
 
-#include "tsage/ringworld_scenes6.h"
+#include "tsage/ringworld/ringworld_scenes6.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 5000 - Caverns - Entrance
@@ -2196,5 +2198,6 @@ void Scene5300::signal() {
 	}
 }
 
+} // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE

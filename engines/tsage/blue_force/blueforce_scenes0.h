@@ -20,73 +20,68 @@
  *
  */
 
-#ifndef TSAGE_RINGWORLD_SCENES4_H
-#define TSAGE_RINGWORLD_SCENES4_H
+#ifndef TSAGE_BLUEFORCE_SCENES0_H
+#define TSAGE_BLUEFORCE_SCENES0_H
 
 #include "common/scummsys.h"
-#include "tsage/core.h"
+#include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/converse.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/events.h"
+#include "tsage/core.h"
+#include "tsage/scenes.h"
+#include "tsage/globals.h"
+#include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
-class Scene3500 : public Scene {
+namespace BlueForce {
+
+using namespace TsAGE;
+
+class Scene20 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {
-	public:
-		virtual void signal();
-	};
-	class Action2 : public Action {
+	private:
+		ASoundExt _sound;
 	public:
 		virtual void signal();
 	};
 public:
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerQText _speakerQText;
 	Action1 _action1;
-	Action2 _action2;
+	ScenePalette _scenePalette;
+	SceneObject _object1, _object2, _object3, _object4;
+	SceneObject _object5, _object6, _object7, _object8;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-class Scene3700 : public Scene {
-	/* Custom classes */
-	class Viewer : public SceneObject {
+class Scene50: public SceneExt {
+	class Tooltip: public SavedObject {
 	public:
-		Visage _images1;
-		Visage _images2;
+		Rect _bounds;
+		char _msg[80];
+		int _field60;
+		int _field62;
+	public:
+		Tooltip();
 
-		int _frameList[4];
-		int _percentList[4];
-		bool _active;
-		int _countdownCtr;
-
-		Viewer();
-		virtual Common::String getClassName() { return "Viewer"; }
+		virtual Common::String getClassName() { return "Scene50_Tooltip"; }
 		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-		virtual void reposition();
-		virtual void draw();
 	};
-
-	/* Actions */
-	class Action1 : public Action {
+	class Tooltip2: public Action {
 	public:
+		Tooltip2(): Action() {}
+
+		virtual Common::String getClassName() { return "Scene50_Tooltip2"; }
 		virtual void signal();
+		virtual void dispatch();
 	};
 public:
-	Viewer _viewer;
-	Action1 _action1;
-	SceneObject _hotspot1, _hotspot2;
-	SpeakerSText _speakerSText;
-	SpeakerMText _speakerMText;
-	SpeakerMR _speakerMR;
-	ASound _soundHandler;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
-} // End of namespace tSage
+} // End of namespace BlueForce
+
+} // End of namespace TsAGE
 
 #endif

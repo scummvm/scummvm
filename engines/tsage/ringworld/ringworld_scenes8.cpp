@@ -21,12 +21,14 @@
  */
 
 #include "graphics/cursorman.h"
-#include "tsage/ringworld_scenes8.h"
+#include "tsage/ringworld/ringworld_scenes8.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 void NamedHotspotMult::synchronize(Serializer &s) {
 	SceneHotspot::synchronize(s);
@@ -2542,4 +2544,6 @@ void Scene7700::synchronize(Serializer &s) {
 	}
 }
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE

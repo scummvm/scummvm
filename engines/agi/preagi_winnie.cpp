@@ -31,9 +31,11 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 
+#include "audio/mididrv.h"
+
 namespace Agi {
 
-void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
+void WinnieEngine::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
@@ -68,7 +70,7 @@ void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 			roomHdr->opt[i].ofsOpt[j] = readS.readUint16();
 }
 
-void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
+void WinnieEngine::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
@@ -85,16 +87,16 @@ void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
 	objHdr->ofsPic = readS.readUint16();
 }
 
-uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
+uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	Common::String fileName;
 
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC)
 		fileName = Common::String::format(IDS_WTP_ROOM_DOS, iRoom);
-	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+	else if (getPlatform() == Common::kPlatformAmiga)
 		fileName = Common::String::format(IDS_WTP_ROOM_AMIGA, iRoom);
-	else if (_vm->getPlatform() == Common::kPlatformC64)
+	else if (getPlatform() == Common::kPlatformC64)
 		fileName = Common::String::format(IDS_WTP_ROOM_C64, iRoom);
-	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
+	else if (getPlatform() == Common::kPlatformApple2GS)
 		fileName = Common::String::format(IDS_WTP_ROOM_APPLE, iRoom);
 
 	Common::File file;
@@ -104,7 +106,7 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	}
 
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
+	if (getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
@@ -118,16 +120,16 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	return filelen;
 }
 
-uint32 Winnie::readObj(int iObj, uint8 *buffer) {
+uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 	Common::String fileName;
 
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC)
 		fileName = Common::String::format(IDS_WTP_OBJ_DOS, iObj);
-	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+	else if (getPlatform() == Common::kPlatformAmiga)
 		fileName = Common::String::format(IDS_WTP_OBJ_AMIGA, iObj);
-	else if (_vm->getPlatform() == Common::kPlatformC64)
+	else if (getPlatform() == Common::kPlatformC64)
 		fileName = Common::String::format(IDS_WTP_OBJ_C64, iObj);
-	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
+	else if (getPlatform() == Common::kPlatformApple2GS)
 		fileName = Common::String::format(IDS_WTP_OBJ_APPLE, iObj);
 
 	Common::File file;
@@ -137,7 +139,7 @@ uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 	}
 
 	uint32 filelen = file.size();
-	if (_vm->getPlatform() == Common::kPlatformC64) { // Skip the loading address
+	if (getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
 		file.seek(2, SEEK_CUR);
 	}
@@ -148,7 +150,7 @@ uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 	return filelen;
 }
 
-void Winnie::randomize() {
+void WinnieEngine::randomize() {
 	int iObj = 0;
 	int iRoom = 0;
 	bool done;
@@ -157,52 +159,52 @@ void Winnie::randomize() {
 		done = false;
 
 		while (!done) {
-			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1);
+			iObj = rnd(IDI_WTP_MAX_OBJ - 1);
 			done = true;
 
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
-				if (_game.iUsedObj[j] == iObj) {
+				if (_gameStateWinnie.iUsedObj[j] == iObj) {
 					done = false;
 					break;
 				}
 			}
 		}
 
-		_game.iUsedObj[i] = iObj;
+		_gameStateWinnie.iUsedObj[i] = iObj;
 
 		done = false;
 		while (!done) {
-			iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
+			iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
 			done = true;
 
 			for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
-				if (_game.iObjRoom[j] == iRoom) {
+				if (_gameStateWinnie.iObjRoom[j] == iRoom) {
 					done = false;
 					break;
 				}
 			}
 		}
 
-		_game.iObjRoom[iObj] = iRoom;
+		_gameStateWinnie.iObjRoom[iObj] = iRoom;
 	}
 }
 
-void Winnie::intro() {
+void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
-	_vm->printStr(IDS_WTP_INTRO_0);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(0x640);
+	printStr(IDS_WTP_INTRO_0);
+	_gfx->doUpdate();
+	_system->updateScreen();
+	_system->delayMillis(0x640);
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		_vm->_gfx->clearScreen(0);
+	if (getPlatform() == Common::kPlatformAmiga)
+		_gfx->clearScreen(0);
 
 	drawPic(IDS_WTP_FILE_TITLE);
 
-	_vm->printStr(IDS_WTP_INTRO_1);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(0x640);
+	printStr(IDS_WTP_INTRO_1);
+	_gfx->doUpdate();
+	_system->updateScreen();
+	_system->delayMillis(0x640);
 
 	if (!playSound(IDI_WTP_SND_POOH_0))
 		return;
@@ -214,27 +216,27 @@ void Winnie::intro() {
 		return;
 }
 
-int Winnie::getObjInRoom(int iRoom) {
+int WinnieEngine::getObjInRoom(int iRoom) {
 	for (int iObj = 1; iObj < IDI_WTP_MAX_ROOM_OBJ; iObj++)
-		if (_game.iObjRoom[iObj] == iRoom)
+		if (_gameStateWinnie.iObjRoom[iObj] == iRoom)
 			return iObj;
 	return 0;
 }
 
-void Winnie::setTakeDrop(int fCanSel[]) {
+void WinnieEngine::setTakeDrop(int fCanSel[]) {
 	fCanSel[IDI_WTP_SEL_TAKE] = getObjInRoom(_room);
-	fCanSel[IDI_WTP_SEL_DROP] = _game.iObjHave;
+	fCanSel[IDI_WTP_SEL_DROP] = _gameStateWinnie.iObjHave;
 }
 
-void Winnie::setFlag(int iFlag) {
-	_game.fGame[iFlag] = 1;
+void WinnieEngine::setFlag(int iFlag) {
+	_gameStateWinnie.fGame[iFlag] = 1;
 }
 
-void Winnie::clearFlag(int iFlag) {
-	_game.fGame[iFlag] = 0;
+void WinnieEngine::clearFlag(int iFlag) {
+	_gameStateWinnie.fGame[iFlag] = 0;
 }
 
-int Winnie::parser(int pc, int index, uint8 *buffer) {
+int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 	WTP_ROOM_HDR hdr;
 	int startpc = pc;
 	int8 opcode;
@@ -249,7 +251,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	// extract header from buffer
 	parseRoomHeader(&hdr, buffer, sizeof(WTP_ROOM_HDR));
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldQuit()) {
 		pc = startpc;
 
 		// check if block is to be run
@@ -259,7 +261,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			return IDI_WTP_PAR_OK;
 
 		fBlock = *(buffer + pc++);
-		if (_game.fGame[iBlock] != fBlock)
+		if (_gameStateWinnie.fGame[iBlock] != fBlock)
 			return IDI_WTP_PAR_OK;
 
 		// extract text from block
@@ -292,12 +294,12 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 
 			// extract menu string
 			strcpy(szMenu, (char *)(buffer + pc));
-			_vm->XOR80(szMenu);
+			XOR80(szMenu);
 			break;
 		default:
 			// print description
 			printStrWinnie((char *)(buffer + pc));
-			if (_vm->getSelection(kSelBackspace) == 1)
+			if (getSelection(kSelBackspace) == 1)
 				return IDI_WTP_PAR_OK;
 			else
 				return IDI_WTP_PAR_BACK;
@@ -314,7 +316,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			// get menu selection
 			getMenuSel(szMenu, &iSel, fCanSel);
 
-			if (++_game.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
+			if (++_gameStateWinnie.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
 				_doWind = true;
 
 			if (_winnieEvent && (_room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
@@ -356,8 +358,8 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				iDir = iSel - IDI_WTP_SEL_NORTH;
 
 				if (hdr.roomNew[iDir] == IDI_WTP_ROOM_NONE) {
-					_vm->printStr(IDS_WTP_CANT_GO);
-					_vm->getSelection(kSelAnyKey);
+					printStr(IDS_WTP_CANT_GO);
+					getSelection(kSelAnyKey);
 				} else {
 					_room = hdr.roomNew[iDir];
 					return IDI_WTP_PAR_GOTO;
@@ -391,7 +393,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_PRINT_MSG:
 				opcode = *(buffer + pc++);
 				printRoomStr(_room, opcode);
-				_vm->getSelection(kSelAnyKey);
+				getSelection(kSelAnyKey);
 				break;
 			case IDO_WTP_PRINT_STR:
 				opcode = *(buffer + pc++);
@@ -416,7 +418,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_WALK_MIST:
 				_mist--;
 				if (!_mist) {
-					_room = _vm->rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
+					_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 					return IDI_WTP_PAR_GOTO;
 				}
 				break;
@@ -437,13 +439,13 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				showOwlHelp();
 				break;
 			case IDO_WTP_GOTO_RND:
-				_room = _vm->rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
+				_room = rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 				return IDI_WTP_PAR_GOTO;
 			default:
 				opcode = 0;
 				break;
 			}
-		} while (opcode && !_vm->shouldQuit());
+		} while (opcode && !shouldQuit());
 
 		if (iNewRoom) {
 			_room = iNewRoom;
@@ -452,38 +454,38 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 
 		if (iBlock == 1)
 			return IDI_WTP_PAR_OK;
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();
+		_gfx->doUpdate();
+		_system->updateScreen();
 	}
 
 	return IDI_WTP_PAR_OK;
 }
 
-void Winnie::keyHelp() {
+void WinnieEngine::keyHelp() {
 	playSound(IDI_WTP_SND_KEYHELP);
-	_vm->printStr(IDS_WTP_HELP_0);
-	_vm->getSelection(kSelAnyKey);
-	_vm->printStr(IDS_WTP_HELP_1);
-	_vm->getSelection(kSelAnyKey);
+	printStr(IDS_WTP_HELP_0);
+	getSelection(kSelAnyKey);
+	printStr(IDS_WTP_HELP_1);
+	getSelection(kSelAnyKey);
 }
 
-void Winnie::inventory() {
-	if (_game.iObjHave)
-		printObjStr(_game.iObjHave, IDI_WTP_OBJ_TAKE);
+void WinnieEngine::inventory() {
+	if (_gameStateWinnie.iObjHave)
+		printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_TAKE);
 	else {
-		_vm->clearTextArea();
-		_vm->drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, IDS_WTP_INVENTORY_0);
+		clearTextArea();
+		drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, IDS_WTP_INVENTORY_0);
 	}
 
-	Common::String missing = Common::String::format(IDS_WTP_INVENTORY_1, _game.nObjMiss);
+	Common::String missing = Common::String::format(IDS_WTP_INVENTORY_1, _gameStateWinnie.nObjMiss);
 
-	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen(); //TODO: Move to game's main loop
-	_vm->getSelection(kSelAnyKey);
+	drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
+	_gfx->doUpdate();
+	_system->updateScreen(); //TODO: Move to game's main loop
+	getSelection(kSelAnyKey);
 }
 
-void Winnie::printObjStr(int iObj, int iStr) {
+void WinnieEngine::printObjStr(int iObj, int iStr) {
 	WTP_OBJ_HDR hdr;
 	uint8 *buffer = (uint8 *)malloc(2048);
 
@@ -494,7 +496,7 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	free(buffer);
 }
 
-bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
+bool WinnieEngine::isRightObj(int iRoom, int iObj, int *iCode) {
 	WTP_ROOM_HDR roomhdr;
 	WTP_OBJ_HDR	objhdr;
 	uint8 *roomdata = (uint8 *)malloc(4096);
@@ -517,212 +519,212 @@ bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
 		return false;
 }
 
-void Winnie::takeObj(int iRoom) {
-	if (_game.iObjHave) {
+void WinnieEngine::takeObj(int iRoom) {
+	if (_gameStateWinnie.iObjHave) {
 		// player is already carrying an object, can't take
-		_vm->printStr(IDS_WTP_CANT_TAKE);
-		_vm->getSelection(kSelAnyKey);
+		printStr(IDS_WTP_CANT_TAKE);
+		getSelection(kSelAnyKey);
 	} else {
 		// take object
 		int iObj = getObjInRoom(iRoom);
 
-		_game.iObjHave = iObj;
-		_game.iObjRoom[iObj] = 0;
+		_gameStateWinnie.iObjHave = iObj;
+		_gameStateWinnie.iObjRoom[iObj] = 0;
 
-		_vm->printStr(IDS_WTP_OK);
+		printStr(IDS_WTP_OK);
 		playSound(IDI_WTP_SND_TAKE);
 
 		drawRoomPic();
 
 		// print object "take" string
-		printObjStr(_game.iObjHave, IDI_WTP_OBJ_TAKE);
-		_vm->getSelection(kSelAnyKey);
+		printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_TAKE);
+		getSelection(kSelAnyKey);
 
 		// HACK WARNING
 		if (iObj == 18) {
-			_game.fGame[0x0d] = 1;
+			_gameStateWinnie.fGame[0x0d] = 1;
 		}
 	}
 }
 
-void Winnie::dropObj(int iRoom) {
+void WinnieEngine::dropObj(int iRoom) {
 	int iCode;
 
 	if (getObjInRoom(iRoom)) {
 		// there already is an object in the room, can't drop
-		_vm->printStr(IDS_WTP_CANT_DROP);
-		_vm->getSelection(kSelAnyKey);
+		printStr(IDS_WTP_CANT_DROP);
+		getSelection(kSelAnyKey);
 	} else {
 		// HACK WARNING
-		if (_game.iObjHave == 18) {
-			_game.fGame[0x0d] = 0;
+		if (_gameStateWinnie.iObjHave == 18) {
+			_gameStateWinnie.fGame[0x0d] = 0;
 		}
 
-		if (isRightObj(iRoom, _game.iObjHave, &iCode)) {
+		if (isRightObj(iRoom, _gameStateWinnie.iObjHave, &iCode)) {
 			// object has been dropped in the right place
-			_vm->printStr(IDS_WTP_OK);
-			_vm->getSelection(kSelAnyKey);
+			printStr(IDS_WTP_OK);
+			getSelection(kSelAnyKey);
 			playSound(IDI_WTP_SND_DROP_OK);
-			printObjStr(_game.iObjHave, IDI_WTP_OBJ_DROP);
-			_vm->getSelection(kSelAnyKey);
+			printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_DROP);
+			getSelection(kSelAnyKey);
 
 			// increase amount of objects returned, decrease amount of objects missing
-			_game.nObjMiss--;
-			_game.nObjRet++;
+			_gameStateWinnie.nObjMiss--;
+			_gameStateWinnie.nObjRet++;
 
 			// xor the dropped object with 0x80 to signify it has been dropped in the right place
 			for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
-				if (_game.iUsedObj[i] == _game.iObjHave) {
-					_game.iUsedObj[i] ^= 0x80;
+				if (_gameStateWinnie.iUsedObj[i] == _gameStateWinnie.iObjHave) {
+					_gameStateWinnie.iUsedObj[i] ^= 0x80;
 					break;
 				}
 			}
 
 			// set flag according to dropped object's id
-			_game.fGame[iCode] = 1;
+			_gameStateWinnie.fGame[iCode] = 1;
 
 			// player is carrying nothing
-			_game.iObjHave = 0;
+			_gameStateWinnie.iObjHave = 0;
 
-			if (!_game.nObjMiss) {
+			if (!_gameStateWinnie.nObjMiss) {
 				// all objects returned, tell player to find party
 				playSound(IDI_WTP_SND_FANFARE);
-				_vm->printStr(IDS_WTP_GAME_OVER_0);
-				_vm->getSelection(kSelAnyKey);
-				_vm->printStr(IDS_WTP_GAME_OVER_1);
-				_vm->getSelection(kSelAnyKey);
+				printStr(IDS_WTP_GAME_OVER_0);
+				getSelection(kSelAnyKey);
+				printStr(IDS_WTP_GAME_OVER_1);
+				getSelection(kSelAnyKey);
 			}
 		} else {
 			// drop object in the given room
-			_game.iObjRoom[_game.iObjHave] = iRoom;
+			_gameStateWinnie.iObjRoom[_gameStateWinnie.iObjHave] = iRoom;
 
 			// object has been dropped in the wrong place
-			_vm->printStr(IDS_WTP_WRONG_PLACE);
-			_vm->getSelection(kSelAnyKey);
+			printStr(IDS_WTP_WRONG_PLACE);
+			getSelection(kSelAnyKey);
 
 			playSound(IDI_WTP_SND_DROP);
 			drawRoomPic();
 
-			_vm->printStr(IDS_WTP_WRONG_PLACE);
-			_vm->getSelection(kSelAnyKey);
+			printStr(IDS_WTP_WRONG_PLACE);
+			getSelection(kSelAnyKey);
 
 			// print object description
-			printObjStr(_game.iObjHave, IDI_WTP_OBJ_DESC);
-			_vm->getSelection(kSelAnyKey);
+			printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_DESC);
+			getSelection(kSelAnyKey);
 
-			_game.iObjHave = 0;
+			_gameStateWinnie.iObjHave = 0;
 		}
 	}
 }
 
-void Winnie::dropObjRnd() {
-	if (!_game.iObjHave)
+void WinnieEngine::dropObjRnd() {
+	if (!_gameStateWinnie.iObjHave)
 		return;
 
 	int iRoom = 0;
 	bool done = false;
 
 	while (!done) {
-		iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
+		iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
 		done = true;
 		if (iRoom == _room)
 			done = false;
 		for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
-			if (_game.iObjRoom[j] == iRoom) {
+			if (_gameStateWinnie.iObjRoom[j] == iRoom) {
 				done = false;
 			}
 		}
 	}
 
-	_game.iObjRoom[_game.iObjHave] = iRoom;
-	_game.iObjHave = 0;
+	_gameStateWinnie.iObjRoom[_gameStateWinnie.iObjHave] = iRoom;
+	_gameStateWinnie.iObjHave = 0;
 }
 
-void Winnie::wind() {
+void WinnieEngine::wind() {
 	int iRoom = 0;
 	bool done;
 
 	_doWind = 0;
-	_game.nMoves = 0;
-	if (!_game.nObjMiss)
+	_gameStateWinnie.nMoves = 0;
+	if (!_gameStateWinnie.nObjMiss)
 		return;
 
-	_vm->printStr(IDS_WTP_WIND_0);
+	printStr(IDS_WTP_WIND_0);
 	playSound(IDI_WTP_SND_WIND_0);
-	_vm->getSelection(kSelAnyKey);
+	getSelection(kSelAnyKey);
 
-	_vm->printStr(IDS_WTP_WIND_1);
+	printStr(IDS_WTP_WIND_1);
 	playSound(IDI_WTP_SND_WIND_0);
-	_vm->getSelection(kSelAnyKey);
+	getSelection(kSelAnyKey);
 
 	dropObjRnd();
 
 	// randomize positions of objects at large
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
-		if (!(_game.iUsedObj[i] & IDI_XOR_KEY)) {
+		if (!(_gameStateWinnie.iUsedObj[i] & IDI_XOR_KEY)) {
 			done = false;
 			while (!done) {
-				iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
+				iRoom = rnd(IDI_WTP_MAX_ROOM_NORMAL);
 				done = true;
 
 				for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
-					if (_game.iObjRoom[j] == iRoom) {
+					if (_gameStateWinnie.iObjRoom[j] == iRoom) {
 						done = false;
 					}
 				}
 			}
-			_game.iObjRoom[_game.iUsedObj[i]] = iRoom;
+			_gameStateWinnie.iObjRoom[_gameStateWinnie.iUsedObj[i]] = iRoom;
 		}
 	}
 }
 
-void Winnie::mist() {
+void WinnieEngine::mist() {
 	// mist length in turns is (2-5)
-	_mist = _vm->rnd(4) + 2;
+	_mist = rnd(4) + 2;
 
 	_room = IDI_WTP_ROOM_MIST;
 	drawRoomPic();
 
-	_vm->printStr(IDS_WTP_MIST);
+	printStr(IDS_WTP_MIST);
 }
 
-void Winnie::tigger() {
+void WinnieEngine::tigger() {
 	_room = IDI_WTP_ROOM_TIGGER;
 
 	drawRoomPic();
-	_vm->printStr(IDS_WTP_TIGGER);
+	printStr(IDS_WTP_TIGGER);
 
 	dropObjRnd();
 }
 
-void Winnie::showOwlHelp() {
-	if (_game.iObjHave) {
-		_vm->printStr(IDS_WTP_OWL_0);
-		_vm->getSelection(kSelAnyKey);
-		printObjStr(_game.iObjHave, IDI_WTP_OBJ_HELP);
-		_vm->getSelection(kSelAnyKey);
+void WinnieEngine::showOwlHelp() {
+	if (_gameStateWinnie.iObjHave) {
+		printStr(IDS_WTP_OWL_0);
+		getSelection(kSelAnyKey);
+		printObjStr(_gameStateWinnie.iObjHave, IDI_WTP_OBJ_HELP);
+		getSelection(kSelAnyKey);
 	}
 	if (getObjInRoom(_room)) {
-		_vm->printStr(IDS_WTP_OWL_0);
-		_vm->getSelection(kSelAnyKey);
+		printStr(IDS_WTP_OWL_0);
+		getSelection(kSelAnyKey);
 		printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_HELP);
-		_vm->getSelection(kSelAnyKey);
+		getSelection(kSelAnyKey);
 	}
 }
 
 
-void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
+void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	int iRow = 0, iCol = 0;
 
-	_vm->clearTextArea();
-	_vm->drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, szMenu);
+	clearTextArea();
+	drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, szMenu);
 
 	if (fCanSel[IDI_WTP_SEL_NORTH])
-		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_NSEW, IDA_DEFAULT, IDS_WTP_NSEW);
+		drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_NSEW, IDA_DEFAULT, IDS_WTP_NSEW);
 	if (fCanSel[IDI_WTP_SEL_TAKE])
-		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_TAKE, IDA_DEFAULT, IDS_WTP_TAKE);
+		drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_TAKE, IDA_DEFAULT, IDS_WTP_TAKE);
 	if (fCanSel[IDI_WTP_SEL_DROP])
-		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_DROP, IDA_DEFAULT, IDS_WTP_DROP);
+		drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_DROP, IDA_DEFAULT, IDS_WTP_DROP);
 
 	switch (iSel) {
 	case IDI_WTP_SEL_OPT_1:
@@ -756,26 +758,26 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		iCol = IDI_WTP_COL_DROP;
 		break;
 	}
-	_vm->drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen(); //TODO: Move to game's main loop
+	drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
+	_gfx->doUpdate();
+	_system->updateScreen(); //TODO: Move to game's main loop
 }
 
-void Winnie::incMenuSel(int *iSel, int fCanSel[]) {
+void WinnieEngine::incMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel += 1;
 		if (*iSel > IDI_WTP_SEL_DROP) *iSel = IDI_WTP_SEL_OPT_1;
 	} while (!fCanSel[*iSel]);
 }
 
-void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
+void WinnieEngine::decMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel -= 1;
 		if (*iSel < IDI_WTP_SEL_OPT_1) *iSel = IDI_WTP_SEL_DROP;
 	} while (!fCanSel[*iSel]);
 }
 
-void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
+void WinnieEngine::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	switch (y) {
 	case IDI_WTP_ROW_OPTION_1:
 	case IDI_WTP_ROW_OPTION_2:
@@ -793,7 +795,7 @@ void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	}
 }
 
-void Winnie::makeSel(int *iSel, int fCanSel[]) {
+void WinnieEngine::makeSel(int *iSel, int fCanSel[]) {
 	if (fCanSel[*iSel])
 		return;
 
@@ -801,7 +803,7 @@ void Winnie::makeSel(int *iSel, int fCanSel[]) {
 	clrMenuSel(iSel, fCanSel);
 }
 
-void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
+void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	Common::Event event;
 	int x, y;
 
@@ -811,8 +813,8 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	// Show the mouse cursor for the menu
 	CursorMan.showMouse(true);
 
-	while (!_vm->shouldQuit()) {
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
+	while (!shouldQuit()) {
+		while (_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
@@ -824,15 +826,15 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 
 				// Change cursor
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
-					_vm->_gfx->setCursorPalette(true);
+					_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
-					_vm->_gfx->setCursorPalette(true);
+					_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
-					_vm->_gfx->setCursorPalette(true);
+					_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
-					_vm->_gfx->setCursorPalette(true);
+					_gfx->setCursorPalette(true);
 				} else {
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 				}
 
 				break;
@@ -841,25 +843,25 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_NORTH;
 					makeSel(iSel, fCanSel);
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_SOUTH;
 					makeSel(iSel, fCanSel);
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_WEST;
 					makeSel(iSel, fCanSel);
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 					return;
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_EAST;
 					makeSel(iSel, fCanSel);
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 					return;
 				} else {
-					_vm->_gfx->setCursorPalette(false);
+					_gfx->setCursorPalette(false);
 				}
 
 				switch (*iSel) {
@@ -896,9 +898,9 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				incMenuSel(iSel, fCanSel);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _vm->_console) {
-					_vm->_console->attach();
-					_vm->_console->onFrame();
+				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _console) {
+					_console->attach();
+					_console->onFrame();
 					continue;
 				}
 
@@ -944,7 +946,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
-						_vm->flipflag(fSoundOn);
+						flipflag(fSoundOn);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
 						makeSel(iSel, fCanSel);
@@ -1005,24 +1007,24 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	}
 }
 
-void Winnie::gameLoop() {
+void WinnieEngine::gameLoop() {
 	WTP_ROOM_HDR hdr;
 	uint8 *roomdata = (uint8 *)malloc(4096);
 	int iBlock;
 
 phase0:
-	if (!_game.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC))
+	if (!_gameStateWinnie.nObjMiss && (_room == IDI_WTP_ROOM_PICNIC))
 		_room = IDI_WTP_ROOM_PARTY;
 
 	readRoom(_room, roomdata, hdr);
 	drawRoomPic();
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();
+	_gfx->doUpdate();
+	_system->updateScreen();
 
 phase1:
 	if (getObjInRoom(_room)) {
 		printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_DESC);
-		_vm->getSelection(kSelAnyKey);
+		getSelection(kSelAnyKey);
 	}
 
 phase2:
@@ -1031,7 +1033,7 @@ phase2:
 			goto phase1;
 	}
 
-	while (!_vm->shouldQuit()) {
+	while (!shouldQuit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 			switch (parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
 			case IDI_WTP_PAR_GOTO:
@@ -1047,10 +1049,10 @@ phase2:
 	free(roomdata);
 }
 
-void Winnie::drawPic(const char *szName) {
+void WinnieEngine::drawPic(const char *szName) {
 	Common::String fileName = szName;
 
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
+	if (getPlatform() != Common::kPlatformAmiga)
 		fileName += ".pic";
 
 	Common::File file;
@@ -1065,13 +1067,13 @@ void Winnie::drawPic(const char *szName) {
 	file.read(buffer, size);
 	file.close();
 
-	_vm->_picture->decodePicture(buffer, size, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->decodePicture(buffer, size, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	free(buffer);
 }
 
-void Winnie::drawObjPic(int iObj, int x0, int y0) {
+void WinnieEngine::drawObjPic(int iObj, int x0, int y0) {
 	if (!iObj)
 		return;
 
@@ -1080,28 +1082,28 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 
-	_vm->_picture->setOffset(x0, y0);
-	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - _objOffset, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_picture->setOffset(0, 0);
-	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->setOffset(x0, y0);
+	_picture->decodePicture(buffer + objhdr.ofsPic - _objOffset, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->setOffset(0, 0);
+	_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	free(buffer);
 }
 
-void Winnie::drawRoomPic() {
+void WinnieEngine::drawRoomPic() {
 	WTP_ROOM_HDR roomhdr;
 	uint8 *buffer = (uint8 *)malloc(4096);
 	int iObj = getObjInRoom(_room);
 
 	// clear gfx screen
-	_vm->_gfx->clearScreen(0);
+	_gfx->clearScreen(0);
 
 	// read room picture
 	readRoom(_room, buffer, roomhdr);
 
 	// draw room picture
-	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic - _roomOffset, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->decodePicture(buffer + roomhdr.ofsPic - _roomOffset, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
 	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
@@ -1109,21 +1111,68 @@ void Winnie::drawRoomPic() {
 	free(buffer);
 }
 
-bool Winnie::playSound(ENUM_WTP_SOUND iSound) {
-	//TODO
-	warning ("STUB: playSound(%d)", iSound);
-	return 1;
+bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
+	// TODO: Only DOS sound is supported, currently
+	if (getPlatform() != Common::kPlatformPC) {
+		warning("STUB: playSound(%d)", iSound);
+		return false;
+	}
+
+	Common::String fileName = Common::String::format(IDS_WTP_SND_DOS, iSound);
+
+	Common::File file;
+	if (!file.open(fileName))
+		return false;
+
+	uint32 size = file.size();
+	byte *data = new byte[size];
+	file.read(data, size);
+	file.close();
+
+	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, *_sound, _soundemu);
+	_sound->startSound(0, 0);
+
+	bool cursorShowing = CursorMan.showMouse(false);
+	_system->updateScreen();
+
+	// Loop until the sound is done
+	bool skippedSound = false;
+	while (!shouldQuit() && _game.sounds[0]->isPlaying()) {
+		Common::Event event;
+		while (_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				_sound->stopSound();
+				skippedSound = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(10);
+	}
+
+	if (cursorShowing) {
+		CursorMan.showMouse(true);
+		_system->updateScreen();
+	}
+
+	delete _game.sounds[0];
+	_game.sounds[0] = 0;
+
+	return !shouldQuit() && !skippedSound;
 }
 
-void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
+void WinnieEngine::clrMenuSel(int *iSel, int fCanSel[]) {
 	*iSel = IDI_WTP_SEL_OPT_1;
 	while (!fCanSel[*iSel]) {
 		*iSel += 1;
 	}
-	_vm->_gfx->setCursorPalette(false);
+	_gfx->setCursorPalette(false);
 }
 
-void Winnie::printRoomStr(int iRoom, int iStr) {
+void WinnieEngine::printRoomStr(int iRoom, int iStr) {
 	WTP_ROOM_HDR hdr;
 	uint8 *buffer = (uint8 *)malloc(4096);
 
@@ -1133,23 +1182,23 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	free(buffer);
 }
 
-void Winnie::gameOver() {
+void WinnieEngine::gameOver() {
 	// sing the Pooh song forever
-	while (!_vm->shouldQuit()) {
-		_vm->printStr(IDS_WTP_SONG_0);
+	while (!shouldQuit()) {
+		printStr(IDS_WTP_SONG_0);
 		playSound(IDI_WTP_SND_POOH_0);
-		_vm->printStr(IDS_WTP_SONG_1);
+		printStr(IDS_WTP_SONG_1);
 		playSound(IDI_WTP_SND_POOH_1);
-		_vm->printStr(IDS_WTP_SONG_2);
+		printStr(IDS_WTP_SONG_2);
 		playSound(IDI_WTP_SND_POOH_2);
-		_vm->getSelection(kSelAnyKey);
+		getSelection(kSelAnyKey);
 	}
 }
 
-void Winnie::saveGame() {
+void WinnieEngine::saveGame() {
 	int i = 0;
 
-	Common::OutSaveFile *outfile = _vm->getSaveFileMan()->openForSaving(IDS_WTP_FILE_SAVEGAME);
+	Common::OutSaveFile *outfile = getSaveFileMan()->openForSaving(IDS_WTP_FILE_SAVEGAME);
 
 	if (!outfile)
 		return;
@@ -1157,20 +1206,20 @@ void Winnie::saveGame() {
 	outfile->writeUint32BE(MKTAG('W','I','N','N'));	// header
 	outfile->writeByte(WTP_SAVEGAME_VERSION);
 
-	outfile->writeByte(_game.fSound);
-	outfile->writeByte(_game.nMoves);
-	outfile->writeByte(_game.nObjMiss);
-	outfile->writeByte(_game.nObjRet);
-	outfile->writeByte(_game.iObjHave);
+	outfile->writeByte(_gameStateWinnie.fSound);
+	outfile->writeByte(_gameStateWinnie.nMoves);
+	outfile->writeByte(_gameStateWinnie.nObjMiss);
+	outfile->writeByte(_gameStateWinnie.nObjRet);
+	outfile->writeByte(_gameStateWinnie.iObjHave);
 
 	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
-		outfile->writeByte(_game.fGame[i]);
+		outfile->writeByte(_gameStateWinnie.fGame[i]);
 
 	for (i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
-		outfile->writeByte(_game.iUsedObj[i]);
+		outfile->writeByte(_gameStateWinnie.iUsedObj[i]);
 
 	for (i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
-		outfile->writeByte(_game.iObjRoom[i]);
+		outfile->writeByte(_gameStateWinnie.iObjRoom[i]);
 
 	outfile->finalize();
 
@@ -1180,11 +1229,11 @@ void Winnie::saveGame() {
 	delete outfile;
 }
 
-void Winnie::loadGame() {
+void WinnieEngine::loadGame() {
 	int saveVersion = 0;
 	int i = 0;
 
-	Common::InSaveFile *infile = _vm->getSaveFileMan()->openForLoading(IDS_WTP_FILE_SAVEGAME);
+	Common::InSaveFile *infile = getSaveFileMan()->openForLoading(IDS_WTP_FILE_SAVEGAME);
 
 	if (!infile)
 		return;
@@ -1194,11 +1243,11 @@ void Winnie::loadGame() {
 		if (saveVersion != WTP_SAVEGAME_VERSION)
 			warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
 
-		_game.fSound = infile->readByte();
-		_game.nMoves = infile->readByte();
-		_game.nObjMiss = infile->readByte();
-		_game.nObjRet = infile->readByte();
-		_game.iObjHave = infile->readByte();
+		_gameStateWinnie.fSound = infile->readByte();
+		_gameStateWinnie.nMoves = infile->readByte();
+		_gameStateWinnie.nObjMiss = infile->readByte();
+		_gameStateWinnie.nObjRet = infile->readByte();
+		_gameStateWinnie.iObjHave = infile->readByte();
 	} else {
 		// This is probably a save from the original interpreter, throw a warning and attempt
 		// to read it as LE
@@ -1211,31 +1260,31 @@ void Winnie::loadGame() {
 
 		infile->readUint16LE();				// skip unused field
 		infile->readByte();					// first 8 bits of fSound
-		_game.fSound = infile->readByte();
+		_gameStateWinnie.fSound = infile->readByte();
 		infile->readByte();					// first 8 bits of nMoves
-		_game.nMoves = infile->readByte();
+		_gameStateWinnie.nMoves = infile->readByte();
 		infile->readByte();					// first 8 bits of nObjMiss
-		_game.nObjMiss = infile->readByte();
+		_gameStateWinnie.nObjMiss = infile->readByte();
 		infile->readByte();					// first 8 bits of nObjRet
-		_game.nObjRet = infile->readByte();
+		_gameStateWinnie.nObjRet = infile->readByte();
 		infile->readUint16LE();				// skip unused field
 		infile->readUint16LE();				// skip unused field
 		infile->readUint16LE();				// skip unused field
 		infile->readByte();					// first 8 bits of iObjHave
-		_game.iObjHave = infile->readByte();
+		_gameStateWinnie.iObjHave = infile->readByte();
 		infile->readUint16LE();				// skip unused field
 		infile->readUint16LE();				// skip unused field
 		infile->readUint16LE();				// skip unused field
 	}
 
 	for (i = 0; i < IDI_WTP_MAX_FLAG; i++)
-		_game.fGame[i] = infile->readByte();
+		_gameStateWinnie.fGame[i] = infile->readByte();
 
 	for (i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
-		_game.iUsedObj[i] = infile->readByte();
+		_gameStateWinnie.iUsedObj[i] = infile->readByte();
 
 	for (i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
-		_game.iObjRoom[i] = infile->readByte();
+		_gameStateWinnie.iObjRoom[i] = infile->readByte();
 
 	// Note that saved games from the original interpreter have 2 more 16-bit fields here
 	// which are ignored
@@ -1243,37 +1292,59 @@ void Winnie::loadGame() {
 	delete infile;
 }
 
-void Winnie::printStrWinnie(char *szMsg) {
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		_vm->printStrXOR(szMsg);
+void WinnieEngine::printStrWinnie(char *szMsg) {
+	if (getPlatform() != Common::kPlatformAmiga)
+		printStrXOR(szMsg);
 	else
-		_vm->printStr(szMsg);
+		printStr(szMsg);
 }
 
 // Console-related functions
 
-void Winnie::debugCurRoom() {
-	_vm->_console->DebugPrintf("Current Room = %d\n", _room);
+void WinnieEngine::debugCurRoom() {
+	_console->DebugPrintf("Current Room = %d\n", _room);
 }
 
-Winnie::Winnie(PreAgiEngine* vm) : _vm(vm) {
-	_vm->_console = new Winnie_Console(_vm, this);
+WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
+	_console = new WinnieConsole(this);
 }
 
-void Winnie::init() {
-	memset(&_game, 0, sizeof(_game));
-	_game.fSound = 1;
-	_game.nObjMiss = IDI_WTP_MAX_OBJ_MISSING;
-	_game.nObjRet = 0;
-	_game.fGame[0] = 1;
-	_game.fGame[1] = 1;
+WinnieEngine::~WinnieEngine() {
+	delete _console;
+}
+
+void WinnieEngine::init() {
+	// Initialize sound
+
+	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_PCJR))) {
+	case MT_PCSPK:
+		_soundemu = SOUND_EMU_PC;
+		break;
+	case MT_PCJR:
+		_soundemu = SOUND_EMU_PCJR;
+		break;
+	default:
+		_soundemu = SOUND_EMU_NONE;
+		break;
+	}
+
+	_sound = new SoundMgr(this, _mixer);
+	_sound->initSound();
+	setflag(fSoundOn, true); // enable sound
+
+	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));
+	_gameStateWinnie.fSound = 1;
+	_gameStateWinnie.nObjMiss = IDI_WTP_MAX_OBJ_MISSING;
+	_gameStateWinnie.nObjRet = 0;
+	_gameStateWinnie.fGame[0] = 1;
+	_gameStateWinnie.fGame[1] = 1;
 	_room = IDI_WTP_ROOM_HOME;
 
 	_mist = -1;
 	_doWind = false;
 	_winnieEvent = false;
 
-	if (_vm->getPlatform() != Common::kPlatformAmiga) {
+	if (getPlatform() != Common::kPlatformAmiga) {
 		_isBigEndian = false;
 		_roomOffset = IDI_WTP_OFS_ROOM;
 		_objOffset = IDI_WTP_OFS_OBJ;
@@ -1283,8 +1354,8 @@ void Winnie::init() {
 		_objOffset = 0;
 	}
 
-	if (_vm->getPlatform() == Common::kPlatformC64 || _vm->getPlatform() == Common::kPlatformApple2GS)
-		_vm->_picture->setPictureVersion(AGIPIC_C64);
+	if (getPlatform() == Common::kPlatformC64 || getPlatform() == Common::kPlatformApple2GS)
+		_picture->setPictureVersion(AGIPIC_C64);
 
 	hotspotNorth = Common::Rect(20, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, 10);
 	hotspotSouth = Common::Rect(20, IDI_WTP_PIC_HEIGHT - 10, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
@@ -1292,11 +1363,17 @@ void Winnie::init() {
 	hotspotWest  = Common::Rect(20, 0, 30, IDI_WTP_PIC_HEIGHT);
 }
 
-void Winnie::run() {
+Common::Error WinnieEngine::go() {
+	init();
 	randomize();
-	if (_vm->getPlatform() != Common::kPlatformC64 && _vm->getPlatform() != Common::kPlatformApple2GS)
+
+	// The intro is not supported on these platforms yet
+	if (getPlatform() != Common::kPlatformC64 && getPlatform() != Common::kPlatformApple2GS)
 		intro();
+
 	gameLoop();
+
+	return Common::kNoError;
 }
 
-}
+} // End of namespace AGI

@@ -24,13 +24,17 @@
 #define TSAGE_RINGWORLD_SCENES8_H
 
 #include "common/scummsys.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
+
+using namespace TsAGE;
 
 class NamedHotspotMult : public SceneHotspot {
 public:
@@ -485,6 +489,8 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE
 
 #endif

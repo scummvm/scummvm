@@ -28,6 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/thumbnail.h"
@@ -35,6 +36,9 @@
 
 #include "agi/agi.h"
 #include "agi/preagi.h"
+#include "agi/preagi_mickey.h"
+#include "agi/preagi_troll.h"
+#include "agi/preagi_winnie.h"
 #include "agi/wagparser.h"
 
 
@@ -91,6 +95,14 @@ void AgiBase::setVersion(uint16 version) {
 
 void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
+}
+
+const char *AgiBase::getDiskName(uint16 id) {
+	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName != NULL; i++)
+		if (_gameDescription->desc.filesDescriptions[i].fileType == id)
+			return _gameDescription->desc.filesDescriptions[i].fileName;
+
+	return "";
 }
 
 }
@@ -182,8 +194,19 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
-		*engine = new Agi::PreAgiEngine(syst, gd);
+		switch (gd->gameID) {
+		case GID_MICKEY:
+			*engine = new Agi::MickeyEngine(syst, gd);
+			break;
+		case GID_TROLL:
+			*engine = new Agi::TrollEngine(syst, gd);
+			break;
+		case GID_WINNIE:
+			*engine = new Agi::WinnieEngine(syst, gd);
+			break;
+		}
 		break;
+	case Agi::GType_V1:
 	case Agi::GType_V2:
 	case Agi::GType_V3:
 		*engine = new Agi::AgiEngine(syst, gd);
@@ -477,7 +500,9 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	if (getVersion() <= 0x2999) {
+	if (getVersion() <= 0x2001) {
+		_loader = new AgiLoader_v1(this);
+	} else if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);

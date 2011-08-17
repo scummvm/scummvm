@@ -23,21 +23,23 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "gui/saveload.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
-#include "tsage/ringworld_demo.h"
-#include "tsage/ringworld_scenes1.h"
-#include "tsage/ringworld_scenes2.h"
-#include "tsage/ringworld_scenes3.h"
-#include "tsage/ringworld_scenes4.h"
-#include "tsage/ringworld_scenes5.h"
-#include "tsage/ringworld_scenes6.h"
-#include "tsage/ringworld_scenes8.h"
-#include "tsage/ringworld_scenes10.h"
+#include "tsage/ringworld/ringworld_demo.h"
+#include "tsage/ringworld/ringworld_scenes1.h"
+#include "tsage/ringworld/ringworld_scenes2.h"
+#include "tsage/ringworld/ringworld_scenes3.h"
+#include "tsage/ringworld/ringworld_scenes4.h"
+#include "tsage/ringworld/ringworld_scenes5.h"
+#include "tsage/ringworld/ringworld_scenes6.h"
+#include "tsage/ringworld/ringworld_scenes8.h"
+#include "tsage/ringworld/ringworld_scenes10.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 Scene *RingworldGame::createScene(int sceneNumber) {
 	switch (sceneNumber) {
@@ -1487,4 +1489,6 @@ void RingworldGame::processEvent(Event &event) {
 	}
 }
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE

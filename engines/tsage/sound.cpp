@@ -28,7 +28,7 @@
 #include "tsage/graphics.h"
 #include "tsage/tsage.h"
 
-namespace tSage {
+namespace TsAGE {
 
 static SoundManager *_soundManager = NULL;
 
@@ -2929,4 +2929,4 @@ void SoundBlasterDriver::proc42(int channel, int cmd, int value, int *v1, int *v
 		*v1 = 1;
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

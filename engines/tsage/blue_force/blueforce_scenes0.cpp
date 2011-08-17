@@ -20,20 +20,22 @@
  *
  */
 
-#include "tsage/blueforce_scenes0.h"
+#include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace BlueForce {
 
 /*--------------------------------------------------------------------------
  * Scene 20 - Tsunami Title Screen
  *
  *--------------------------------------------------------------------------*/
 
-void BF_Scene20::Action1::signal() {
-	BF_Scene20 *scene = (BF_Scene20 *)_globals->_sceneManager._scene;
+void Scene20::Action1::signal() {
+	Scene20 *scene = (Scene20 *)BF_GLOBALS._sceneManager._scene;
 	static byte black[3] = { 0, 0, 0 };
 
 	switch (_actionIndex++) {
@@ -42,7 +44,7 @@ void BF_Scene20::Action1::signal() {
 		break;
 	case 1:
 		_sound.play(1);
-		_globals->_scenePalette.addRotation(64, 127, -1, 1, this);
+		BF_GLOBALS._scenePalette.addRotation(64, 127, -1, 1, this);
 		break;
 	case 2:
 		scene->_object1.setVisage(22);
@@ -88,7 +90,7 @@ void BF_Scene20::Action1::signal() {
 		setDelay(1);
 		break;
 	case 3:
-		_globals->_scenePalette.addFader(scene->_scenePalette._palette, 256, 8, this);
+		BF_GLOBALS._scenePalette.addFader(scene->_scenePalette._palette, 256, 8, this);
 		break;
 	case 4:
 		setDelay(60);
@@ -105,10 +107,10 @@ void BF_Scene20::Action1::signal() {
 		setDelay(120);
 		break;
 	case 7:
-		_globals->_scenePalette.addFader(black, 1, 5, this);
+		BF_GLOBALS._scenePalette.addFader(black, 1, 5, this);
 		break;
 	case 8:
-		_globals->_sceneManager.changeScene(100);
+		BF_GLOBALS._sceneManager.changeScene(100);
 		remove();
 		break;
 	}
@@ -116,13 +118,11 @@ void BF_Scene20::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void BF_Scene20::postInit(SceneObjectList *OwnerList) {
+void Scene20::postInit(SceneObjectList *OwnerList) {
 	loadScene(20);
 	Scene::postInit();
 	setZoomPercents(60, 85, 200, 100);
 
-	preloadVisage(21);
-	preloadVisage(22);
 	_scenePalette.loadPalette(1);
 	_scenePalette.loadPalette(22);
 
@@ -193,4 +193,52 @@ void BF_Scene20::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1);
 }
 
-} // End of namespace tSage
+/*--------------------------------------------------------------------------
+ * Scene 50 - Map Screen
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene50::Tooltip::Tooltip(): SavedObject() {
+	strcpy(_msg, "");
+	_field60 = _field62 = 0;
+}
+
+void Scene50::Tooltip::synchronize(Serializer &s) {
+	SavedObject::synchronize(s);
+	_bounds.synchronize(s);
+	s.syncBytes((byte *)&_msg[0], 84);
+}
+
+void Scene50::Tooltip2::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(60);
+		break;
+	case 1: {
+		Common::Point pt(410, 181);
+		NpcMover *mover = new NpcMover();
+		((SceneObject *)_owner)->addMover(mover, &pt, this);
+		break;
+	}
+	case 2:
+		_owner->remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene50::Tooltip2::dispatch() {
+	Action::dispatch();
+	SceneObject *owner = (SceneObject *)_owner;
+
+	if ((_actionIndex == 2) && (owner->_percent < 100)) {
+		owner->changeZoom(owner->_percent + 1);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+} // End of namespace BlueForce
+
+} // End of namespace TsAGE

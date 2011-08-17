@@ -161,4 +161,21 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 			slot = slot->next;
 		}
 	}
+
+	// We need to remove all names referencing the timer proc here.
+	// 
+	// Else we run into troubles, when the client code removes and readds timer
+	// callbacks.
+	//
+	// Another issues occurs when one plays a game with ALSA as music driver,
+	// does RTL and starts a different engine game with ALSA as music driver.
+	// In this case the MPU401 code will add different timer procs with the
+	// same name, resulting in two different callbacks added with the same
+	// name and causing installTimerProc to error out.
+	// A good test case is running a SCUMM with ALSA output and then a KYRA
+	// game for example.
+	for (TimerSlotMap::iterator i = _callbacks.begin(), end = _callbacks.end(); i != end; ++i) {
+		if (i->_value == callback)
+			_callbacks.erase(i);
+	}
 }

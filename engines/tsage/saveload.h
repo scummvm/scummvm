@@ -29,7 +29,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 
-namespace tSage {
+namespace TsAGE {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
@@ -222,6 +222,6 @@ public:
 
 extern Saver *_saver;
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

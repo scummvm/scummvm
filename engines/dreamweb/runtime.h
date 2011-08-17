@@ -287,6 +287,12 @@ public:
 		_freeSegments.push_back(id);
 	}
 
+	SegmentRef segRef(uint16 seg) {
+		SegmentRef result(this);
+		result = seg;
+		return result;
+	}
+
 	inline void _cmp(uint8 a, uint8 b) {
 		_sub(a, b);
 	}

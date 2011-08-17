@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "gui/debugger.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Debugger : public GUI::Debugger {
 public:
@@ -46,6 +46,6 @@ protected:
 	bool Cmd_Sound(int argc, const char **argv);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

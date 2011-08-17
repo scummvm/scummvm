@@ -24,7 +24,7 @@
 #define TSAGE_RINGWORLD_SCENES1_H
 
 #include "common/scummsys.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
@@ -32,7 +32,11 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
+
+using namespace TsAGE;
 
 class Scene10 : public Scene {
 	/* Actions */
@@ -533,6 +537,8 @@ public:
 
 };
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE
 
 #endif

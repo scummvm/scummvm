@@ -50,7 +50,6 @@ public:
 	virtual bool isStereo() const { return true; }
 
 private:
-#include "common/pack-start.h"	// START STRUCT PACKING
 	struct Voice {
 		byte attack;
 		byte decay;
@@ -60,7 +59,7 @@ private:
 		int16 vibrato;
 		int16 vibrato2;
 		int16 noise;
-	} PACKED_STRUCT;
+	};
 
 	struct Voice2 {
 		byte *amplitudeOutput;
@@ -105,14 +104,13 @@ private:
 		Voice2 *nextVoice;
 
 		byte chanNumber;
-	} PACKED_STRUCT;
+	};
 
 	struct MusicChip {
 		byte ampl[4];
 		byte freq[4];
 		byte octave[2];
-	} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+	};
 
 	Voice _cmsVoicesBase[16];
 	Voice2 _cmsVoices[8];
@@ -129,6 +127,8 @@ private:
 	byte *_midiSongBegin;
 
 	int _loadedMidiSong;
+
+	byte _sfxFreq[4], _sfxAmpl[4], _sfxOctave[2];
 
 	byte _lastMidiCommand;
 	uint _outputTableReady;

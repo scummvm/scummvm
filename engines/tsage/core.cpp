@@ -33,7 +33,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 // The engine uses ScumMVM screen buffering, so all logic is hardcoded to use pane buffer 0
 #define CURRENT_PANENUM 0
@@ -1161,6 +1161,20 @@ void PaletteFader::remove() {
 		action->signal();
 }
 
+void PaletteFader::setPalette(ScenePalette *palette, int step) {
+	if (step < 0) {
+		// Reverse step means moving from dest palette to source, so swap the two palettes
+		byte tempPal[256 * 3];
+		Common::copy(&palette->_palette[0], &palette->_palette[256 * 3], &tempPal[0]);
+		Common::copy(&this->_palette[0], &this->_palette[256 * 3], &palette->_palette[0]);
+		Common::copy(&tempPal[0], &tempPal[256 * 3], &this->_palette[0]);
+
+		step = -step;
+	}
+
+	PaletteModifierCached::setPalette(palette, step);
+}
+
 /*--------------------------------------------------------------------------*/
 
 ScenePalette::ScenePalette() {
@@ -1314,7 +1328,7 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action) {
+PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int step, Action *action) {
 	PaletteFader *fader = new PaletteFader();
 	fader->_action = action;
 	for (int i = 0; i < 256 * 3; i += 3) {
@@ -1326,7 +1340,7 @@ PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int 
 			arrBufferRGB += 3;
 	}
 
-	fader->setPalette(this, percent);
+	fader->setPalette(this, step);
 	_globals->_scenePalette._listeners.push_back(fader);
 	return fader;
 }
@@ -1641,6 +1655,11 @@ void SceneObjectWrapper::remove() {
 }
 
 void SceneObjectWrapper::dispatch() {
+	if (_vm->getGameID() == GType_Ringworld)
+		check();
+}
+
+void SceneObjectWrapper::check() {
 	_visageImages.setVisage(_sceneObject->_visage);
 	int frameCount = _visageImages.getFrameCount();
 	int angle = _sceneObject->_angle;
@@ -2263,6 +2282,18 @@ void SceneObject::updateScreen() {
 	}
 }
 
+void SceneObject::updateAngle(SceneObject *sceneObj) {
+	checkAngle(sceneObj);
+	if (_objectWrapper)
+		_objectWrapper->check();
+}
+
+void SceneObject::changeAngle(int angle) {
+	_angle = angle;
+	if (_objectWrapper)
+		_objectWrapper->check();
+}
+
 void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
 	postInit();
 	setVisage(visage);
@@ -2270,6 +2301,22 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY), 0);
 	fixPriority(priority);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneObjectExt2::postInit(SceneObjectList *OwnerList) {
+	_v8A = -1;
+	_v8C = -1;
+	_v8E = -1;
+	SceneObject::postInit();
+}
+
+void SceneObjectExt2::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	s.syncAsSint16LE(_v8A);
+	s.syncAsSint16LE(_v8C);
+	s.syncAsSint16LE(_v8E);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3573,4 +3620,4 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 void SceneHandler::saveListener(Serializer &ser) {
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

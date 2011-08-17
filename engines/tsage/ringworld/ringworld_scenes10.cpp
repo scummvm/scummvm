@@ -21,12 +21,14 @@
  */
 
 #include "graphics/cursorman.h"
-#include "tsage/ringworld_scenes10.h"
+#include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 Scene2::Scene2() : Scene() {
 	_sceneState = 0;
@@ -2086,4 +2088,6 @@ void Scene9999::postInit(SceneObjectList *OwnerList) {
 
 }
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE

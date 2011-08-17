@@ -45,7 +45,7 @@ protected:
 
 class SoundGenMIDI : public SoundGen, public Audio::MidiPlayer {
 public:
-	SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer);
+	SoundGenMIDI(AgiBase *vm, Audio::Mixer *pMixer);
 
 	void play(int resnum);
 	// We must overload stop() here to implement the pure virtual

@@ -7,6 +7,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Blue's Birthday Adventure
    - Added support for Ringworld: Revenge Of The Patriarch
 
+ AGI:
+   - Implemented sound support for the DOS version of Winnie the Pooh in the Hundred Acre Wood.
+
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
    - Fixed priority bug in iMuse. As a result the AdLib music should sound

@@ -21,12 +21,14 @@
  */
 
 #include "common/config-manager.h"
-#include "tsage/ringworld_scenes4.h"
+#include "tsage/ringworld/ringworld_scenes4.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
 
 /*--------------------------------------------------------------------------
  * Scene 3500 - Ringworld Scan
@@ -227,7 +229,7 @@ void Scene3700::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene3700::postInit(tSage::SceneObjectList *OwnerList) {
+void Scene3700::postInit(TsAGE::SceneObjectList *OwnerList) {
 	Scene::postInit();
 	loadScene(3700);
 
@@ -247,4 +249,6 @@ void Scene3700::postInit(tSage::SceneObjectList *OwnerList) {
 	_globals->_soundHandler.play(195);
 }
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE

@@ -268,7 +268,12 @@ static const char *variableNames[] = {
 };
 
 uint32 &MohawkEngine_Riven::getStackVar(uint32 index) {
-	return _vars[getName(VariableNames, index)];
+	Common::String name = getName(VariableNames, index);
+
+	if (!_vars.contains(name))
+		error("Could not find variable '%s' (stack variable %d)", name.c_str(), index);
+
+	return _vars[name];
 }
 
 void MohawkEngine_Riven::initVars() {
@@ -299,6 +304,7 @@ void MohawkEngine_Riven::initVars() {
 	_vars["bmagcar"] = 1;
 	_vars["gnmagcar"] = 1;
 	_vars["omusicplayer"] = 1;
+	_vars["transitionmode"] = kRivenTransitionSpeedFastest;
 
 	// Randomize the telescope combination
 	uint32 &teleCombo = _vars["tcorrectorder"];

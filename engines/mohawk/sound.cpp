@@ -85,7 +85,7 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 		if (_vm->getFeatures() & GF_ME)
 			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
 		else
-			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
+			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
 		break;
 	case GType_ZOOMBINI:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));

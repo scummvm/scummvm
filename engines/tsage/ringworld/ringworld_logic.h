@@ -29,7 +29,11 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
+
+using namespace TsAGE;
 
 #define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
 	_globals->_player.addMover(mover, &pt, this); }
@@ -438,7 +442,7 @@ public:
 	virtual Common::String getClassName() { return "RingworldInvObjectList"; }
 };
 
-#define RING_INVENTORY (*((RingworldInvObjectList *)_globals->_inventory))
+#define RING_INVENTORY (*((::TsAGE::Ringworld::RingworldInvObjectList *)_globals->_inventory))
 
 class RingworldGame: public Game {
 protected:
@@ -456,6 +460,8 @@ public:
 	virtual void processEvent(Event &event);
 };
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+} // End of namespace TsAGE
 
 #endif

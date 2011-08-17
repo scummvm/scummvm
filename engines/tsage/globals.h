@@ -31,7 +31,7 @@
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Globals : public SavedObject {
 private:
@@ -54,7 +54,7 @@ public:
 	int _gfxFontNumber;
 	GfxColors _gfxColors;
 	GfxColors _fontColors;
-	byte _unkColor1, _unkColor2, _unkColor3;
+	byte _color1, _color2, _color3;
 	SoundManager _soundManager;
 	Common::Point _dialogCenter;
 	WalkRegions _walkRegions;
@@ -98,10 +98,36 @@ public:
 
 extern Globals *_globals;
 
+#define GLOBALS (*_globals)
+#define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)_globals))
+
 // Note: Currently this can't be part of the _globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
 extern ResourceManager *_resourceManager;
 
-} // End of namespace tSage
+
+namespace BlueForce {
+
+using namespace TsAGE;
+
+class BlueForceGlobals: public Globals {
+public:
+	ASound _sound1, _sound2, _sound3;
+	int _v4CEA2;
+	int _v4CF9E;
+	int _v4E238;
+	int _v501FC;
+	int _v51C42;
+	int _v51C44;
+	int _interfaceY;
+
+	BlueForceGlobals();
+	virtual Common::String getClassName() { return "BFGlobals"; }
+	virtual void synchronize(Serializer &s);
+};
+
+} // End of namespace BlueForce
+
+} // End of namespace TsAGE
 
 #endif

@@ -214,10 +214,7 @@ protected:
 	virtual void calculateDisplaySize(int &width, int &height);
 	virtual void refreshDisplaySize();
 
-	/**
-	 * Returns the current target aspect ratio x 10000
-	 */
-	virtual uint getAspectRatio();
+	uint getAspectRatio() const;
 
 	bool _formatBGR;
 

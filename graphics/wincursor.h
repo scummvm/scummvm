@@ -26,6 +26,8 @@
 #include "common/array.h"
 #include "common/winexe.h"
 
+#include "graphics/cursor.h"
+
 namespace Common {
 class NEResources;
 class PEResources;
@@ -35,7 +37,7 @@ class SeekableReadStream;
 namespace Graphics {
 
 /** A Windows cursor. */
-class WinCursor {
+class WinCursor : public Cursor {
 public:
 	WinCursor();
 	~WinCursor();
@@ -52,7 +54,10 @@ public:
 	byte getKeyColor() const;
 
 	const byte *getSurface() const { return _surface; }
+
 	const byte *getPalette() const { return _palette; }
+	byte getPaletteStartIndex() const { return 0; }
+	uint16 getPaletteCount() const { return 256; }
 
 	/** Read the cursor's data out of a stream. */
 	bool readFromStream(Common::SeekableReadStream &stream);
@@ -96,6 +101,13 @@ struct WinCursorGroup {
 	/** Create a cursor group from an PE EXE, returns 0 on failure */
 	static WinCursorGroup *createCursorGroup(Common::PEResources &exe, const Common::WinResourceID &id);
 };
+
+/**
+ * Create a Cursor for the default Windows cursor.
+ *
+ * @note The calling code is responsible for deleting the returned pointer.
+ */
+Cursor *makeDefaultWinCursor();
 
 } // End of namespace Graphics
 

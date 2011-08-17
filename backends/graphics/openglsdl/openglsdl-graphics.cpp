@@ -313,14 +313,17 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * scaleFactor;
 		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 
-		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
-		int desiredAspectRatio = getAspectRatio();
-
-		// Do not downscale dimensions, only enlarge them if needed
-		if (screenAspectRatio > desiredAspectRatio)
-			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
-		else if (screenAspectRatio < desiredAspectRatio)
-			_videoMode.hardwareWidth = (_videoMode.overlayHeight * desiredAspectRatio + 5000) / 10000;
+		// The only modes where we need to adapt the aspect ratio are 320x200
+		// and 640x400. That is since our aspect ratio correction in fact is
+		// only used to ensure that the original pixel size aspect for these
+		// modes is used.
+		// (Non-square pixels on old monitors vs square pixel on new ones).
+		if (_videoMode.aspectRatioCorrection
+		    && ((_videoMode.screenWidth == 320 && _videoMode.screenHeight == 200)
+		    || (_videoMode.screenWidth == 640 && _videoMode.screenHeight == 400)))
+			_videoMode.overlayHeight = _videoMode.hardwareHeight = 240 * scaleFactor;
+		else
+			_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 	}
 
 	_screenResized = false;
@@ -640,10 +643,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 			_videoMode.hardwareWidth = width;
 			_videoMode.hardwareHeight = height;
 
-			if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
-				_screenResized = true;
-				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-			}
+			_screenResized = true;
 
 			int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
 			                _videoMode.hardwareHeight / _videoMode.screenHeight);
@@ -651,10 +651,6 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 			if (getScale() != scale) {
 				scaleChanged = true;
 				setScale(MAX(MIN(scale, 3), 1));
-			}
-
-			if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
-				calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
 			}
 
 			_transactionDetails.sizeChanged = true;

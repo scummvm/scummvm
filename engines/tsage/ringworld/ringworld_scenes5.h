@@ -26,9 +26,13 @@
 #include "common/scummsys.h"
 #include "tsage/core.h"
 #include "tsage/converse.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
+
+using namespace TsAGE;
 
 class Scene4000 : public Scene {
 	/* Actions */
@@ -687,7 +691,8 @@ public:
 	}
 };
 
+} // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

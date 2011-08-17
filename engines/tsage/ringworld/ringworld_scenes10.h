@@ -24,13 +24,17 @@
 #define TSAGE_RINGWORLD_SCENES10_H
 
 #include "common/scummsys.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
+
+namespace Ringworld {
+
+using namespace TsAGE;
 
 class SceneObject9150 : public SceneObject {
 public:
@@ -526,7 +530,8 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+} // End of namespace Ringworld
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif
