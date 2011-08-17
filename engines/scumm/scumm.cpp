@@ -1668,43 +1668,8 @@ void ScummEngine_v90he::resetScumm() {
 	_sprite->resetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 
-	if (_game.heversion >= 98) {
-		switch (_game.id) {
-		case GID_PUTTRACE:
-			_logicHE = new LogicHErace(this);
-			break;
-
-		case GID_FUNSHOP:
-			_logicHE = new LogicHEfunshop(this);
-			break;
-
-		case GID_FOOTBALL:
-			_logicHE = new LogicHEfootball(this);
-			break;
-
-		case GID_SOCCER:
-		case GID_SOCCERMLS:
-		case GID_SOCCER2004:
-			_logicHE = new LogicHEsoccer(this);
-			break;
-
-		case GID_BASEBALL2001:
-			_logicHE = new LogicHEbaseball2001(this);
-			break;
-
-		case GID_BASKETBALL:
-			_logicHE = new LogicHEbasketball(this);
-			break;
-
-		case GID_MOONBASE:
-			_logicHE = new LogicHEmoonbase(this);
-			break;
-
-		default:
-			_logicHE = new LogicHE(this);
-			break;
-		}
-	}
+	if (_game.heversion >= 98)
+		_logicHE = LogicHE::makeLogicHE(this);
 }
 
 void ScummEngine_v99he::resetScumm() {
