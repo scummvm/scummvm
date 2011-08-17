@@ -118,16 +118,6 @@ Dac mkDac(uint8 r, uint8 g, uint8 b) {
 	return x;
 }
 
-
-Rgb mkRgb(uint8 r, uint8 g, uint8 b) {
-	static Trgb x;
-	x._dac._r = r;
-	x._dac._g = g;
-	x._dac._b = b;
-	return x._rgb;
-}
-
-
 Sprite *locate(int ref) {
 	Sprite *spr = _vga->_showQ->locate(ref);
 	return (spr) ? spr : _vga->_spareQ->locate(ref);
