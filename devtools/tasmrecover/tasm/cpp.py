@@ -620,7 +620,7 @@ public:
 		
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
-			self.hd.write("\tconst static uint16 k%s = %s;\n" %o)
+			self.hd.write("\tstatic const uint16 k%s = %s;\n" %o)
 		self.hd.write("\n")
 		for p in set(self.methods):
 			if p in self.blacklist:
