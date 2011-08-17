@@ -624,46 +624,46 @@
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' center = 'true'>
 			<widget name = 'Logo'
-					width = '210'
+					width = '240'
 					height = '40'
 			/>
 			<widget name = 'Version'
-					width = '210'
+					width = '240'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'Resume'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '10'/>
 			<widget name = 'Load'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Save'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '10'/>
 			<widget name = 'Options'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Help'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'About'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<space size = '10'/>
 			<widget name = 'RTL'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 			<widget name = 'Quit'
-					width = '150'
+					width = '190'
 					height = 'Globals.Button.Height'
 			/>
 		</layout>
