@@ -47,7 +47,7 @@ class DataCk {
 	byte *_buf;
 	int _ckSize;
 public:
-	DataCk(byte *buf, int size);
+	DataCk(byte *buf, int bufSize);
 	~DataCk();
 	inline const byte *addr() {
 		return _buf;
