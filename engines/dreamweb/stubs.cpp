@@ -920,6 +920,20 @@ void DreamGenContext::deltextline() {
 	multiput(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, kUndertextsizex, kUndertextsizey);
 }
 
+void DreamGenContext::commandonly() {
+	commandonly(al);	
+}
+
+void DreamGenContext::commandonly(uint8 command) {
+	deltextline();
+	uint16 index = command * 2;
+	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index);
+	uint16 y = data.word(kTextaddressy);
+	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
+	printdirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
+	data.byte(kNewtextline) = 1;
+}
+
 void DreamGenContext::autosetwalk() {
 	al = data.byte(kManspath);
 	if (data.byte(kFinaldest) == al)

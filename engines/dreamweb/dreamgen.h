@@ -123,7 +123,6 @@ public:
 	static const uint16 addr_blocknametext = 0xca34;
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
-	static const uint16 addr_commandonly = 0xca28;
 	static const uint16 addr_examineobtext = 0xca20;
 	static const uint16 addr_finishedwalking = 0xca1c;
 	static const uint16 addr_obname = 0xca18;
@@ -1321,7 +1320,7 @@ public:
 	void wornerror();
 	void putundercentre();
 	void checkobjectsize();
-	void commandonly();
+	//void commandonly();
 	void adjustlen();
 	void deallocatemem();
 	void checkforemm();
@@ -1594,7 +1593,7 @@ public:
 	//void finalframe();
 	void receptionist();
 	void selectslot();
-	void edenscdplayer();
+	void openfilenocheck();
 	//void readoneblock();
 	void fadeupmon();
 	void paltoendpal();
@@ -1827,7 +1826,7 @@ public:
 	//void makesprite();
 	void dreamweb();
 	void droperror();
-	void openfilenocheck();
+	void edenscdplayer();
 	void calledensdlift();
 	void checkinside();
 	void gates();

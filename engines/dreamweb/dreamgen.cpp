@@ -16566,41 +16566,6 @@ void DreamGenContext::examineobtext() {
 	commandwithob();
 }
 
-void DreamGenContext::commandonly() {
-	STACK_CHECK;
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(es);
-	push(ds);
-	push(si);
-	push(di);
-	deltextline();
-	di = pop();
-	si = pop();
-	ds = pop();
-	es = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	data.byte(kNewtextline) = 1;
-}
-
 void DreamGenContext::printmessage() {
 	STACK_CHECK;
 	push(dx);
@@ -19326,7 +19291,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_obname: obname(); break;
 		case addr_finishedwalking: finishedwalking(); break;
 		case addr_examineobtext: examineobtext(); break;
-		case addr_commandonly: commandonly(); break;
 		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
 		case addr_blocknametext: blocknametext(); break;

@@ -117,6 +117,8 @@
 	void crosshair();
 	void showrain();
 	void deltextline();
+	void commandonly();
+	void commandonly(uint8 command);
 	void doblocks();
 	void checkifperson();
 	bool checkifperson(uint8 x, uint8 y);
