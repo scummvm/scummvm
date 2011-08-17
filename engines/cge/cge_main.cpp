@@ -91,7 +91,6 @@ const char *savegameStr = "SCUMMVM_CGE";
 
 static  bool      _finis       = false;
 int	_offUseCount;
-uint16 *_intStackPtr = NULL;
 
 extern Dac _stdPal[58];
 
@@ -1730,9 +1729,6 @@ bool CGEEngine::showTitle(const char *name) {
 }
 
 void CGEEngine::cge_main() {
-	uint16 intStack[kStackSize / 2];
-	_intStackPtr = intStack;
-
 	memset(_barriers, 0xFF, sizeof(_barriers));
 
 	if (!_mouse->_exist)
