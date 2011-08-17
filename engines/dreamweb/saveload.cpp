@@ -301,7 +301,7 @@ void DreamGenContext::savegame() {
 			ds = data;
 			dx = kSavenames;
 			_add(dx, ax);
-			mempcpy(data.ptr(dx,17), descbuf, 17);
+			memcpy(data.ptr(dx,17), descbuf, 17);
 			saveseg();
 		} else {
 			// savenames only has room for descriptions for 7 slots
