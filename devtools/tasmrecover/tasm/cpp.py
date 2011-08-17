@@ -82,6 +82,7 @@ class cpp:
 		self.skip_output = skip_output
 		self.translated = []
 		self.proc_addr = []
+		self.used_data_offsets = set()
 		self.methods = []
 		self.fd.write("""%s
 
@@ -99,11 +100,13 @@ namespace %s {
 		if self.indirection == -1:
 			try:
 				offset,p,p = self.context.get_offset(name)
-				print "OFFSET = %d" %offset
-				self.indirection = 0
-				return str(offset)
 			except:
 				pass
+			else:
+				print "OFFSET = %d" %offset
+				self.indirection = 0
+				self.used_data_offsets.add((name,offset))
+				return "offset_%s" % (name,)
 		
 		g = self.context.get_global(name)
 		if isinstance(g, op.const):
@@ -603,6 +606,10 @@ public:
 
 		for name,addr in self.proc_addr:
 			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+
+
+		for name,addr in self.used_data_offsets:
+			self.hd.write("\tstatic const uint16 offset_%s = 0x%04x;\n" %(name, addr))
 
 		offsets = []
 		for k, v in self.context.get_globals().items():
