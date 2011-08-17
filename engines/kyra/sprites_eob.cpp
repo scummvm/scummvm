@@ -53,12 +53,8 @@ int LolEobBaseEngine::getBlockDistance(uint16 block1, uint16 block2) {
 
 namespace Kyra {
 
-void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {
-	Common::String s = filename;
-	if ((_flags.gameID == GI_EOB1) && (!scumm_stricmp(filename, "rust") || !scumm_stricmp(filename, "drider") || !scumm_stricmp(filename, "spider") || !scumm_stricmp(filename, "mantis") || !scumm_stricmp(filename, "xorn") || !scumm_stricmp(filename, "xanath")))
-		s += "1";
-
-	_screen->loadShapeSetBitmap(s.c_str(), 3, 3);
+void EobCoreEngine::loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex) {	
+	_screen->loadShapeSetBitmap(filename, 3, 3);
 	const uint16 *enc = &_encodeMonsterShpTable[encodeTableIndex << 2];
 
 	for (int i = 0; i < 6; i++, enc += 4)
@@ -149,6 +145,7 @@ const uint8 *EobCoreEngine::loadActiveMonsterData(const uint8 *data, int level) 
 		int32 del = _timer->getDelay(i);
 		_timer->setNextRun(i, (i & 1) ? ct + (del >> 1) * _tickLength : ct + del * _tickLength);
 	}
+	_timer->resetNextRun();
 
 	if (_hasTempDataFlags & (1 << (level - 1)))
 		return data + 420;
@@ -470,6 +467,12 @@ void EobCoreEngine::drawBlockItems(int index) {
 
 void EobCoreEngine::drawDoor(int index) {
 	int s = _visibleBlocks[index]->walls[_sceneDrawVarDown];
+
+	if (_flags.gameID == GI_EOB1 && s == 0x85)
+		s = 0;
+
+	assert((_flags.gameID == GI_EOB1 && s < 32) || (_flags.gameID == GI_EOB2 && s < 53));
+
 	int type = _dscDoorShpIndex[s];
 	int d = _dscDimMap[index];
 	int w = _dscShapeCoords[(index * 5 + 4) << 1];
@@ -722,7 +725,7 @@ void EobCoreEngine::updateMonsters(int unit) {
 			updateMonsterDest(m);
 
 			if (m->mode > 0)
-				updateMonsterDest2(m);
+				updateMonsterAttackMode(m);
 
 			switch (m->mode) {
 			case 0:
@@ -780,7 +783,7 @@ void EobCoreEngine::updateMonsterDest(EobMonsterInPlay *m) {
 	m->dest = _currentBlock;
 }
 
-void EobCoreEngine::updateMonsterDest2(EobMonsterInPlay *m) {
+void EobCoreEngine::updateMonsterAttackMode(EobMonsterInPlay *m) {
 	if (!(m->flags & 1) || m->mode == 10)
 		return;
 	if (m->mode == 8) {
@@ -902,7 +905,7 @@ void EobCoreEngine::updateMoveMonster(EobMonsterInPlay *m) {
 	EobMonsterProperty *p = &_monsterProps[m->type];
 	int d = getNextMonsterDirection(m->block, _currentBlock);
 
-	if ((p->capsFlags & 0x800) && !(d & 1))
+	if ((_flags.gameID == GI_EOB2) && (p->capsFlags & 0x800) && !(d & 1))
 		d >>= 1;
 	else
 		d = m->dir;
@@ -1102,31 +1105,34 @@ void EobCoreEngine::walkMonster(EobMonsterInPlay *m, int destBlock) {
 		return;
 
 	if (m->flags & 8) {
+		// Interestingly, the fear spell in EOB 1 does not expire.
+		// I don't know whether this is intended or not.
 		if (_flags.gameID == GI_EOB1 ) {
 			d ^= 4;
-		} else if (--m->spellStatusLeft <= 0) {
-			m->spellStatusLeft = 0;
-			m->flags &= ~8;
-		} else {
-			d ^= 4;
+		} else if (m->spellStatusLeft > 0) {
+			if (--m->spellStatusLeft == 0)
+				m->flags &= ~8;
+			else
+				d ^= 4;
 		}
 	}
 
 	int d2 = (d - s) & 7;
 
-	if (b + _monsterStepTable0[_flags.gameID == GI_EOB1 ? (d >> 1) : d] == destBlock) {
-		if (_flags.gameID == GI_EOB1 && !(d & 1)) {
-			if (d2 >= 5) {
+	if (_flags.gameID == GI_EOB1) {
+		if ((b + _monsterStepTable0[d >> 1] == _currentBlock) && !(d & 1)) {
+			if (d2 >= 5)
 				s = m->dir - 1;
-			} else if (d2 != 0) {
+			else if (d2 != 0)
 				s = m->dir + 1;
-			}
 			walkMonsterNextStep(m, -1, s & 3);
 			return;
-		} else if (_flags.gameID == GI_EOB2) {
+		}
+	} else if (_flags.gameID == GI_EOB2) {
+		if (b + _monsterStepTable0[d] == destBlock) {
 			if (d & 1) {
 				int e = _monsterStepTable1[((d - 1) << 1) + m->dir];
-				if (e && !((_monsterProps[m->type].capsFlags & 0x200) && (rollDice(1, 4) == 4))) {
+				if (e && (!(_monsterProps[m->type].capsFlags & 0x200) || (rollDice(1, 4) < 4))) {
 					if (walkMonsterNextStep(m, b + e, -1))
 						return;
 				}

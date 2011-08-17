@@ -1241,6 +1241,9 @@ void EobEngine::initSpells() {
 void DarkMoonEngine::initStaticResource() {
 	int temp;
 	_mainMenuStrings = _staticres->loadStrings(kEob2MainMenuStrings, temp);
+	_transferConvertTable = _staticres->loadRawData(kEob2TransferConvertTable, temp);
+	_transferExpTable = _staticres->loadRawDataBe32(kEob2TransferExpTable, temp);
+
 	_introStrings = _staticres->loadStrings(kEob2IntroStrings, temp);
 	_cpsFilesIntro = _staticres->loadStrings(kEob2IntroCPSFiles, temp);
 

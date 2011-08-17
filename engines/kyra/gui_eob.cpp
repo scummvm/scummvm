@@ -1978,8 +1978,6 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	if (!result)
 		result = inputFlags;
 	
-	//_vm->_processingButtons=false;
-
 	return result;
 }
 
@@ -2773,7 +2771,6 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 			
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
 			_screen->setFont(Screen::FID_6_FNT);
-			_screen->fillRect(_saveSlotX + 5, _saveSlotY + 135, _saveSlotX + 46, _saveSlotY + 140, _vm->_bkgColor_1);
 			int sli = (newHighlight == 6) ?  _savegameOffset : (_savegameOffset + newHighlight);
 			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->_color2_1, _vm->_bkgColor_1);
 			_screen->setFont(Screen::FID_8_FNT);
@@ -3980,6 +3977,7 @@ void GUI_Eob::releaseButtons(Button *list) {
 		delete list;
 		list = n;
 	}
+	_vm->gui_notifyButtonListChanged();
 }
 
 void GUI_Eob::setupSaveMenuSlots() {

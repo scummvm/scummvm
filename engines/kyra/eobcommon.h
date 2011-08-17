@@ -317,8 +317,9 @@ protected:
 	bool _runFlag;
 	//int _runLoopUnk2;
 
-	// Create Party
+	// Character generation / party transfer
 	bool startCharacterGeneration();
+	bool transferParty();
 
 	uint8 **_faceShapes;
 
@@ -329,6 +330,9 @@ protected:
 	static const uint8 _charClassModUnk[];
 
 	const uint8 *_classModifierFlags;
+	
+	const uint8 *_transferConvertTable;
+	const uint32 *_transferExpTable;
 
 	// timers
 	void setupTimers();
@@ -509,7 +513,7 @@ protected:
 
 	void updateMonsters(int unit);
 	void updateMonsterDest(EobMonsterInPlay *m);
-	void updateMonsterDest2(EobMonsterInPlay *m);
+	void updateMonsterAttackMode(EobMonsterInPlay *m);
 	void updateAllMonsterDests();
 	void turnFriendlyMonstersHostile();
 	int getNextMonsterDirection(int curBlock, int destBlock);
