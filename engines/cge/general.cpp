@@ -292,9 +292,9 @@ int newRandom(int range) {
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
-DataCk::DataCk(byte *buf, int size) {
+DataCk::DataCk(byte *buf, int bufSize) {
 	_buf = buf;
-	_ckSize = size;
+	_ckSize = bufSize;
 }
 
 DataCk::~DataCk() {
