@@ -565,8 +565,9 @@ void DreamGenContext::showgamereel() {
 
 const Frame *DreamGenContext::getreelframeax(uint16 frame) {
 	data.word(kCurrentframe) = frame;
+	Frame* source = findsourceCPP();
 	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
-	return findsourceCPP() + offset;
+	return source + offset;
 }
 
 void DreamGenContext::showrain() {
