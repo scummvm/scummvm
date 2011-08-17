@@ -61,7 +61,7 @@ void Sound::open() {
 void Sound::play(DataCk *wav, int pan, int cnt) {
 	if (wav) {
 		stop();
-		_smpinf._saddr = (uint8 *) &*(wav->addr());
+		_smpinf._saddr = &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;
 		_smpinf._sflag = cnt;
