@@ -624,8 +624,6 @@ public:
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_reelsonscreen = 0xc1a0;
-	static const uint16 addr_widedoor = 0xc18c;
-	static const uint16 addr_doorway = 0xc188;
 	static const uint16 addr_constant = 0xc184;
 	static const uint16 addr_steady = 0xc180;
 	static const uint16 addr_random = 0xc17c;
@@ -1469,7 +1467,6 @@ public:
 	void disablesoundint();
 	void checkifset();
 	void showallex();
-	//void showrain();
 	void openpoolboss();
 	void buttontwo();
 	//void usetimedtext();
@@ -1770,6 +1767,7 @@ public:
 	void scrollmonitor();
 	void setsoundoff();
 	void setpickup();
+	//void doorway();
 	void dropobject();
 	void printmessage();
 	void reexfromopen();
@@ -1808,7 +1806,7 @@ public:
 	void intro3text();
 	void allocatemem();
 	void sortoutmap();
-	void doorway();
+	//void showrain();
 	void useopened();
 	void inventory();
 	void powerlightoff();
@@ -1877,7 +1875,7 @@ public:
 	//void clearsprites();
 	void obpicture();
 	void selectopenob();
-	void widedoor();
+	//void widedoor();
 	void security();
 	//void printasprite();
 	void buttonfive();

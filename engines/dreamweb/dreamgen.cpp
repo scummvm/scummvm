@@ -2523,24 +2523,6 @@ gotconst:
 	ds.byte(di+17) = al;
 }
 
-void DreamGenContext::doorway() {
-	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
-	data.byte(kDoorcheck2) = 10;
-	data.byte(kDoorcheck3) = -30;
-	data.byte(kDoorcheck4) = 10;
-	dodoor();
-}
-
-void DreamGenContext::widedoor() {
-	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
-	data.byte(kDoorcheck2) = 24;
-	data.byte(kDoorcheck3) = -30;
-	data.byte(kDoorcheck4) = 24;
-	dodoor();
-}
-
 void DreamGenContext::reelsonscreen() {
 	STACK_CHECK;
 	reconstruct();
@@ -19049,8 +19031,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_random: random(); break;
 		case addr_steady: steady(); break;
 		case addr_constant: constant(); break;
-		case addr_doorway: doorway(); break;
-		case addr_widedoor: widedoor(); break;
 		case addr_reelsonscreen: reelsonscreen(); break;
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;

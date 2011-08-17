@@ -81,7 +81,6 @@
 	void initman();
 	void mainman(Sprite *sprite);
 	void facerightway();
-	void walking();
 	void walking(Sprite *sprite);
 	void autosetwalk();
 	void checkdest(const uint8 *roomsPaths);

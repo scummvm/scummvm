@@ -200,11 +200,6 @@ void DreamGenContext::mainman(Sprite *sprite) {
 	es = pop();
 }
 
-void DreamGenContext::walking() {
-	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
-	walking(sprite);
-}
-
 void DreamGenContext::walking(Sprite *sprite) {
 	uint8 comp;
 	if (data.byte(kLinedirection) != 0) {
