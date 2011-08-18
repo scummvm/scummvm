@@ -228,5 +228,13 @@ void DreamGenContext::getdimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *ma
 	data.byte(kMapysize) = *mapYsize << 4;
 }
 
+void DreamGenContext::calcmapad() {
+	uint8 mapXstart, mapYstart;
+	uint8 mapXsize, mapYsize;
+	getdimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
+	data.word(kMapadx) = data.word(kMapoffsetx) - 8 * (mapXsize + 2 * mapXstart - 11);
+	data.word(kMapady) = data.word(kMapoffsety) - 8 * (mapYsize + 2 * mapYstart - 10);
+}
+
 } /*namespace dreamgen */
 

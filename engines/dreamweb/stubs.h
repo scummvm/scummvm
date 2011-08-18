@@ -137,6 +137,7 @@
 	void getdimension();
 	void getdimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
 	void getmapad();
+	void calcmapad();
 	uint8 getmapad(const uint8 *setData);
 	uint8 getxad(const uint8 *setData, uint8 *result);
 	uint8 getyad(const uint8 *setData, uint8 *result);

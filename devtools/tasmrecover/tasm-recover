@@ -124,6 +124,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getxad',
 	'getyad',
 	'getmapad',
+	'calcmapad',
 	'calcfrframe',
 	'finalframe',
 	'commandonly',

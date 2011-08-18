@@ -480,7 +480,6 @@ public:
 	static const uint16 addr_showallex = 0xc450;
 	static const uint16 addr_showallfree = 0xc44c;
 	static const uint16 addr_drawflags = 0xc43c;
-	static const uint16 addr_calcmapad = 0xc42c;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_blockget = 0xc424;
 	static const uint16 addr_deleteextext = 0xc420;
@@ -1586,7 +1585,7 @@ public:
 	void clearpalette();
 	void cantdrop();
 	void maptopanel();
-	void calcmapad();
+	//void calcmapad();
 	void getridofall();
 	void copper();
 	void folderhints();

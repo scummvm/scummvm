@@ -6401,33 +6401,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::calcmapad() {
-	STACK_CHECK;
-	getdimension();
-	push(cx);
-	push(dx);
-	al = 11;
-	_sub(al, dl);
-	_sub(al, cl);
-	_sub(al, cl);
-	ax.cbw();
-	bx = 8;
-	_mul(bx);
-	_add(ax, data.word(kMapoffsetx));
-	data.word(kMapadx) = ax;
-	dx = pop();
-	cx = pop();
-	al = 10;
-	_sub(al, dh);
-	_sub(al, ch);
-	_sub(al, ch);
-	ax.cbw();
-	bx = 8;
-	_mul(bx);
-	_add(ax, data.word(kMapoffsety));
-	data.word(kMapady) = ax;
-}
-
 void DreamGenContext::drawflags() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -18651,7 +18624,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_deleteextext: deleteextext(); break;
 		case addr_blockget: blockget(); break;
 		case addr_drawfloor: drawfloor(); break;
-		case addr_calcmapad: calcmapad(); break;
 		case addr_drawflags: drawflags(); break;
 		case addr_showallfree: showallfree(); break;
 		case addr_showallex: showallex(); break;
