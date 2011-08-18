@@ -14214,21 +14214,6 @@ isntblank:
 	_stosw();
 }
 
-void DreamGenContext::findlen() {
-	STACK_CHECK;
-	_dec(bx);
-	_add(bx, ax);
-nextone:
-	_cmp(cl, ds.byte(bx));
-	if (!flags.z())
-		return /* (foundlen) */;
-	_dec(bx);
-	_dec(ax);
-	_cmp(ax, 0);
-	if (!flags.z())
-		goto nextone;
-}
-
 void DreamGenContext::scanfornames() {
 	STACK_CHECK;
 	dx = data;
@@ -18880,7 +18865,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_makeheader: makeheader(); break;
 		case addr_storeit: storeit(); break;
 		case addr_saveseg: saveseg(); break;
-		case addr_findlen: findlen(); break;
 		case addr_scanfornames: scanfornames(); break;
 		case addr_decide: decide(); break;
 		case addr_showdecisions: showdecisions(); break;

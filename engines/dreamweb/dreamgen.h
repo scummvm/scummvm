@@ -206,7 +206,6 @@ public:
 	static const uint16 addr_showdecisions = 0xc8bc;
 	static const uint16 addr_decide = 0xc8b8;
 	static const uint16 addr_scanfornames = 0xc8b4;
-	static const uint16 addr_findlen = 0xc8b0;
 	static const uint16 addr_saveseg = 0xc8ac;
 	static const uint16 addr_storeit = 0xc8a8;
 	static const uint16 addr_makeheader = 0xc8a4;
@@ -1880,7 +1879,7 @@ public:
 	void setwalk();
 	void useroutine();
 	void zoomicon();
-	void hotelcontrol();
+	//void findlen();
 	void findpathofpoint();
 	void issetobonmap();
 	void getdestinfo();
@@ -1899,7 +1898,7 @@ public:
 	void loadpalfromiff();
 	//void facerightway();
 	void startup1();
-	void findlen();
+	void hotelcontrol();
 	void showsymbol();
 	void mugger();
 	void atmospheres();
