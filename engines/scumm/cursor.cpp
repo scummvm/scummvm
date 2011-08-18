@@ -254,12 +254,14 @@ void ScummEngine_v80he::setDefaultCursor() {
 		}
 	}
 
-	delete cursor;
+	if (_bytesPerPixel == 1) {
+		// Since white color position is not guaranteed
+		// we setup our own palette if supported by backend
+		CursorMan.disableCursorPalette(false);
+		CursorMan.replaceCursorPalette(palette, 0xfd, cursor->getPaletteCount());
+	}
 
-	// Since white color position is not guaranteed
-	// we setup our own palette if supported by backend
-	CursorMan.disableCursorPalette(false);
-	CursorMan.replaceCursorPalette(palette, 0xfd, cursor->getPaletteCount() * 3);
+	delete cursor;
 
 	updateCursor();
 }
