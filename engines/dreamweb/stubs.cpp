@@ -624,24 +624,6 @@ void DreamGenContext::eraseoldobs() {
 	}
 }
 
-void DreamGenContext::turnpathonCPP(uint8 param) {
-	al = param;
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
-}
-
-void DreamGenContext::turnpathoffCPP(uint8 param) {
-	al = param;
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::modifychar() {
 	al = engine->modifyChar(al);
 }
@@ -683,16 +665,6 @@ void DreamGenContext::cancelch1() {
 	data.word(kCh1blockstocopy) = 0;
 	data.byte(kCh1playing) = 255;
 	engine->stopSound(1);
-}
-
-void DreamGenContext::getroomspaths() {
-	es = data.word(kReels);
-	bx = data.byte(kRoomnum) * 144;
-}
-
-uint8 *DreamGenContext::getroomspathsCPP() {
-	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
-	return (uint8 *)result;
 }
 
 void DreamGenContext::makebackob(ObjData *objData) {
@@ -950,47 +922,6 @@ void DreamGenContext::commandonly(uint8 command) {
 	data.byte(kNewtextline) = 1;
 }
 
-void DreamGenContext::autosetwalk() {
-	al = data.byte(kManspath);
-	if (data.byte(kFinaldest) == al)
-		return;
-	const uint8 *roomsPaths = getroomspathsCPP();
-	checkdest(roomsPaths);
-	data.word(kLinestartx) = roomsPaths[data.byte(kManspath) * 8 + 0] - 12;
-	data.word(kLinestarty) = roomsPaths[data.byte(kManspath) * 8 + 1] - 12;
-	data.word(kLineendx) = roomsPaths[data.byte(kDestination) * 8 + 0] - 12;
-	data.word(kLineendy) = roomsPaths[data.byte(kDestination) * 8 + 1] - 12;
-	bresenhams();
-	if (data.byte(kLinedirection) != 0) {
-		data.byte(kLinepointer) = data.byte(kLinelength) - 1;
-		data.byte(kLinedirection) = 1;
-		return;
-	}
-	data.byte(kLinepointer) = 0;
-}
-
-void DreamGenContext::checkdest(const uint8 *roomsPaths) {
-	const uint8 *p = roomsPaths + 12 * 8;
-	ah = data.byte(kManspath) << 4;
-	al = data.byte(kDestination);
-	uint8 destination = data.byte(kDestination);
-	for (size_t i = 0; i < 24; ++i) {
-		dh = p[0] & 0xf0;
-		dl = p[0] & 0x0f;
-		if (ax == dx) {
-			data.byte(kDestination) = p[1] & 0x0f;
-			return;
-		}
-		dl = (p[0] & 0xf0) >> 4;
-		dh = (p[0] & 0x0f) << 4;
-		if (ax == dx) {
-			destination = p[1] & 0x0f;
-		}
-		p += 2;
-	}
-	data.byte(kDestination) = destination;
-}
-
 void DreamGenContext::checkifperson() {
 	flags._z = not checkifperson(al, ah);
 }
@@ -1108,12 +1039,6 @@ void DreamGenContext::personnametext() {
 
 void DreamGenContext::walktotext() {
 	commandwithob(3, data.byte(kCommandtype), data.byte(kCommand));
-}
-
-void DreamGenContext::findxyfrompath() {
-	const uint8 *roomsPaths = getroomspathsCPP();
-	data.byte(kRyanx) = roomsPaths[data.byte(kManspath) * 8 + 0] - 12;
-	data.byte(kRyany) = roomsPaths[data.byte(kManspath) * 8 + 1] - 12;
 }
 
 bool DreamGenContext::isCD() {
