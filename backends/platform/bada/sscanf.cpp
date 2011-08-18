@@ -31,7 +31,7 @@
 //
 
 bool scanInt(const char **in, va_list *ap, int max) {
-	while (**in && **in == ' ') {
+	while (**in && (**in == ' ' || **in == '0')) {
 		(*in)++;
 	}
 
