@@ -48,7 +48,6 @@
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
-#include "common/math.h"
 
 #include "gui/gui-manager.h"
 #include "gui/error.h"
