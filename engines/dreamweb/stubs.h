@@ -148,5 +148,6 @@
 	void blocknametext();
 	void walktotext();
 	void personnametext();
+	void findxyfrompath();
 	bool isCD();
 

@@ -17659,22 +17659,6 @@ lookx2:
 	es.byte(bx+6) = al;
 }
 
-void DreamGenContext::findxyfrompath() {
-	STACK_CHECK;
-	getroomspaths();
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	ax = es.word(bx);
-	_sub(al, 12);
-	_sub(ah, 12);
-	data.byte(kRyanx) = al;
-	data.byte(kRyany) = ah;
-}
-
 void DreamGenContext::findroominloc() {
 	STACK_CHECK;
 	al = data.byte(kMapy);
@@ -18982,7 +18966,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_restoreall: restoreall(); break;
 		case addr_sortoutmap: sortoutmap(); break;
 		case addr_disablepath: disablepath(); break;
-		case addr_findxyfrompath: findxyfrompath(); break;
 		case addr_findroominloc: findroominloc(); break;
 		case addr_dontloadseg: dontloadseg(); break;
 		case addr_allocateload: allocateload(); break;

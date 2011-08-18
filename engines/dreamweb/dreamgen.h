@@ -59,7 +59,6 @@ public:
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_findroominloc = 0xcb58;
-	static const uint16 addr_findxyfrompath = 0xcb54;
 	static const uint16 addr_disablepath = 0xcb50;
 	static const uint16 addr_sortoutmap = 0xcb48;
 	static const uint16 addr_restoreall = 0xcb44;
@@ -1746,7 +1745,7 @@ public:
 	void pitinterupt();
 	void deleverything();
 	void fadescreendown();
-	void findxyfrompath();
+	//void findxyfrompath();
 	void namestoold();
 	//void getxad();
 	void openinv();

@@ -1110,6 +1110,12 @@ void DreamGenContext::walktotext() {
 	commandwithob(3, data.byte(kCommandtype), data.byte(kCommand));
 }
 
+void DreamGenContext::findxyfrompath() {
+	const uint8 *roomsPaths = getroomspathsCPP();
+	data.byte(kRyanx) = roomsPaths[data.byte(kManspath) * 8 + 0] - 12;
+	data.byte(kRyany) = roomsPaths[data.byte(kManspath) * 8 + 1] - 12;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
