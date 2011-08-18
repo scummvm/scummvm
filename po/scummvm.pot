@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-06 10:05+0100\n"
+"POT-Creation-Date: 2011-08-18 11:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -45,7 +46,7 @@ msgstr ""
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:94 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/engine.cpp:430 engines/sword1/control.cpp:865
+#: engines/engine.cpp:436 engines/sword1/control.cpp:865
 #: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
@@ -67,11 +68,11 @@ msgstr ""
 msgid "Mouse click"
 msgstr ""
 
-#: gui/gui-manager.cpp:122 base/main.cpp:280
+#: gui/gui-manager.cpp:122 base/main.cpp:286
 msgid "Display keyboard"
 msgstr ""
 
-#: gui/gui-manager.cpp:125 base/main.cpp:283
+#: gui/gui-manager.cpp:125 base/main.cpp:289
 msgid "Remap keys"
 msgstr ""
 
@@ -85,7 +86,7 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:91 gui/options.cpp:1179
-#: engines/engine.cpp:353 engines/engine.cpp:364 engines/scumm/scumm.cpp:1809
+#: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/scumm.cpp:1770
 #: engines/agos/animation.cpp:545 engines/groovie/script.cpp:420
 #: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
@@ -337,7 +338,7 @@ msgstr ""
 msgid "~Q~uit"
 msgstr ""
 
-#: gui/launcher.cpp:555 backends/platform/sdl/macosx/appMenu_osx.mm:80
+#: gui/launcher.cpp:555 backends/platform/sdl/macosx/appmenu_osx.mm:80
 msgid "Quit ScummVM"
 msgstr ""
 
@@ -345,7 +346,7 @@ msgstr ""
 msgid "A~b~out..."
 msgstr ""
 
-#: gui/launcher.cpp:556 backends/platform/sdl/macosx/appMenu_osx.mm:61
+#: gui/launcher.cpp:556 backends/platform/sdl/macosx/appmenu_osx.mm:61
 msgid "About ScummVM"
 msgstr ""
 
@@ -425,12 +426,12 @@ msgid "Clear value"
 msgstr ""
 
 #: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
+#: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:216
 msgid "Load game:"
 msgstr ""
 
 #: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:711 engines/cruise/menu.cpp:216
+#: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:216
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
@@ -589,8 +590,8 @@ msgid "Special dithering modes supported by some games"
 msgstr ""
 
 #: gui/options.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2258
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2247
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
 msgid "Fullscreen mode"
 msgstr ""
 
@@ -967,35 +968,35 @@ msgstr ""
 msgid "Antialiased (16bpp)"
 msgstr ""
 
-#: base/main.cpp:200
+#: base/main.cpp:206
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr ""
 
-#: base/main.cpp:268
+#: base/main.cpp:274
 msgid "Menu"
 msgstr ""
 
-#: base/main.cpp:271 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr ""
 
-#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr ""
 
-#: base/main.cpp:277
+#: base/main.cpp:283
 msgid "Skip line"
 msgstr ""
 
-#: base/main.cpp:432
+#: base/main.cpp:442
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:456
+#: base/main.cpp:466
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
@@ -1149,13 +1150,13 @@ msgid ""
 "further assistance."
 msgstr ""
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:100
-#: engines/mohawk/dialogs.cpp:152
+#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:107
+#: engines/mohawk/dialogs.cpp:172
 msgid "~O~K"
 msgstr ""
 
-#: engines/dialogs.cpp:309 engines/mohawk/dialogs.cpp:101
-#: engines/mohawk/dialogs.cpp:153
+#: engines/dialogs.cpp:309 engines/mohawk/dialogs.cpp:108
+#: engines/mohawk/dialogs.cpp:173
 msgid "~C~ancel"
 msgstr ""
 
@@ -1163,23 +1164,23 @@ msgstr ""
 msgid "~K~eys"
 msgstr ""
 
-#: engines/engine.cpp:227
+#: engines/engine.cpp:233
 msgid "Could not initialize color format."
 msgstr ""
 
-#: engines/engine.cpp:235
+#: engines/engine.cpp:241
 msgid "Could not switch to video mode: '"
 msgstr ""
 
-#: engines/engine.cpp:244
+#: engines/engine.cpp:250
 msgid "Could not apply aspect ratio setting."
 msgstr ""
 
-#: engines/engine.cpp:249
+#: engines/engine.cpp:255
 msgid "Could not apply fullscreen setting."
 msgstr ""
 
-#: engines/engine.cpp:349
+#: engines/engine.cpp:355
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -1188,7 +1189,7 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:360
+#: engines/engine.cpp:366
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -1197,14 +1198,14 @@ msgid ""
 "See the README file for details."
 msgstr ""
 
-#: engines/engine.cpp:427
+#: engines/engine.cpp:433
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:430
+#: engines/engine.cpp:436
 msgid "Start anyway"
 msgstr ""
 
@@ -1740,14 +1741,14 @@ msgstr ""
 msgid "Fly to lower right"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1807
+#: engines/scumm/scumm.cpp:1768
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2297 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2258 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1755,7 +1756,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2304 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2265 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1763,7 +1764,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2316 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2277 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1771,30 +1772,34 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2531
+#: engines/scumm/scumm.cpp:2492
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
 "directory inside the Tentacle game directory."
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:90 engines/mohawk/dialogs.cpp:149
+#: engines/mohawk/dialogs.cpp:91 engines/mohawk/dialogs.cpp:169
 msgid "~Z~ip Mode Activated"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:91
+#: engines/mohawk/dialogs.cpp:92
 msgid "~T~ransitions Enabled"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:92
+#: engines/mohawk/dialogs.cpp:93
 msgid "~D~rop Page"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:96
+#: engines/mohawk/dialogs.cpp:97
 msgid "~S~how Map"
 msgstr ""
 
-#: engines/mohawk/dialogs.cpp:150
+#: engines/mohawk/dialogs.cpp:103
+msgid "~M~ain Menu"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:170
 msgid "~W~ater Effect Enabled"
 msgstr ""
 
@@ -1812,11 +1817,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:468
+#: engines/tinsel/saveload.cpp:475
 msgid "Failed to load game state from file."
 msgstr ""
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:546
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:553
 msgid "Failed to save game state to file."
 msgstr ""
 
@@ -1945,28 +1950,33 @@ msgstr ""
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
-"disconnected). Attempting to fall back to the next available device..."
+"disconnected)."
+msgstr ""
+
+#: audio/mididrv.cpp:205 audio/mididrv.cpp:217 audio/mididrv.cpp:253
+#: audio/mididrv.cpp:268
+msgid "Attempting to fall back to the next available device..."
 msgstr ""
 
 #: audio/mididrv.cpp:217
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
-"information. Attempting to fall back to the next available device..."
+"information."
 msgstr ""
 
 #: audio/mididrv.cpp:253
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
-"disconnected). Attempting to fall back to the next available device..."
+"disconnected)."
 msgstr ""
 
 #: audio/mididrv.cpp:268
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
-"information. Attempting to fall back to the next available device..."
+"information."
 msgstr ""
 
 #: audio/null.h:43
@@ -2113,24 +2123,24 @@ msgstr ""
 msgid "Touchpad mode disabled."
 msgstr ""
 
-#: backends/platform/sdl/macosx/appMenu_osx.mm:67
+#: backends/platform/sdl/macosx/appmenu_osx.mm:67
 msgid "Hide ScummVM"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appMenu_osx.mm:70
+#: backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "Hide Others"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appMenu_osx.mm:74
+#: backends/platform/sdl/macosx/appmenu_osx.mm:74
 msgid "Show All"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appMenu_osx.mm:92
-#: backends/platform/sdl/macosx/appMenu_osx.mm:99
+#: backends/platform/sdl/macosx/appmenu_osx.mm:92
+#: backends/platform/sdl/macosx/appmenu_osx.mm:99
 msgid "Window"
 msgstr ""
 
-#: backends/platform/sdl/macosx/appMenu_osx.mm:95
+#: backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Minimize"
 msgstr ""
 
@@ -2143,50 +2153,50 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2143
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:521
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2146
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2149
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:526
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2152
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2204
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2207
 msgid "Active graphics filter:"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2260
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:465
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2249
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
 msgid "Windowed mode"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:139
+#: backends/graphics/opengl/opengl-graphics.cpp:130
 msgid "OpenGL Normal"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:140
+#: backends/graphics/opengl/opengl-graphics.cpp:131
 msgid "OpenGL Conserve"
 msgstr ""
 
-#: backends/graphics/opengl/opengl-graphics.cpp:141
+#: backends/graphics/opengl/opengl-graphics.cpp:132
 msgid "OpenGL Original"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:403
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:415
 msgid "Current display mode"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:416
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:428
 msgid "Current scale"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:546
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
 msgid "Active filter mode: Linear"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:548
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
 msgid "Active filter mode: Nearest"
 msgstr ""
 
@@ -2549,4 +2559,8 @@ msgstr ""
 
 #: backends/events/gph/gph-events.cpp:400
 msgid "Decreasing Volume"
+msgstr ""
+
+#: backends/updates/macosx/macosx-updates.mm:65
+msgid "Check for Updates..."
 msgstr ""
