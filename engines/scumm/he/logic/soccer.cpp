@@ -889,38 +889,38 @@ int LogicHEsoccer::findCollisionWith(int objId, float inX, float inY, float inZ,
 			double dot1 = dotProduct(x2 - x1, y2 - y1, z2 - z1, x3 - x1, y3 - y1, z3 - z1);
 			double sqrt1 = vectorLength(x2 - x1, y2 - y1, z2 - z1);
 			double num1 = dot1 / (vectorLength(x3 - x1, y3 - y1, z3 - z1) * sqrt1);
-			num1 = CLIP(num1, -1.0, 1.0);
+			num1 = CLIP<double>(num1, -1.0, 1.0);
 			double faceAngle = acos(num1);
 
 			double dot2 = dotProduct(x2 - x1, y2 - y1, z2 - z1, collisionX - x1, collisionY - y1, collisionZ - z1);
 			double sqrt2 = vectorLength(x2 - x1, y2 - y1, z2 - z1);
 			double num2 = dot2 / (vectorLength(collisionX - x1, collisionY - y1, collisionZ - z1) * sqrt2);
-			num2 = CLIP(num2, -1.0, 1.0);
+			num2 = CLIP<double>(num2, -1.0, 1.0);
 			double angle1 = acos(num2);
 
 			double dot3 = dotProduct(x3 - x1, y3 - y1, z3 - z1, collisionX - x1, collisionY - y1, collisionZ - z1);
 			double sqrt3 = vectorLength(x3 - x1, y3 - y1, z3 - z1);
 			double num3 = dot3 / (vectorLength(collisionX - x1, collisionY - y1, collisionZ - z1) * sqrt3);
-			num3 = CLIP(num3, -1.0, 1.0);
+			num3 = CLIP<double>(num3, -1.0, 1.0);
 			double angle2 = acos(num3);
 
 			if (angle1 + angle2 - 0.001 <= faceAngle) {
 				double dot4 = dotProduct(x2 - x4, y2 - y4, z2 - z4, x3 - x4, y3 - y4, z3 - z4);
 				double sqrt4 = vectorLength(x2 - x4, y2 - y4, z2 - z4);
 				double num4 = dot4 / (vectorLength(x3 - x4, y3 - y4, z3 - z4) * sqrt4);
-				num4 = CLIP(num4, -1.0, 1.0);
+				num4 = CLIP<double>(num4, -1.0, 1.0);
 				faceAngle = acos(num4);
 
 				double dot5 = dotProduct(x2 - x4, y2 - y4, z2 - z4, collisionX - x4, collisionY - y4, collisionZ - z4);
 				double sqrt5 = vectorLength(x2 - x4, y2 - y4, z2 - z4);
 				double num5 = dot5 / (vectorLength(collisionX - x4, collisionY - y4, collisionZ - z4) * sqrt5);
-				num5 = CLIP(num5, -1.0, 1.0);
+				num5 = CLIP<double>(num5, -1.0, 1.0);
 				double angle3 = acos(num5);
 
 				double dot6 = dotProduct(x3 - x4, y3 - y4, z3 - z4, collisionX - x4, collisionY - y4, collisionZ - z4);
 				double sqrt6 = vectorLength(x3 - x4, y3 - y4, z3 - z4);
 				double num6 = dot6 / (vectorLength(collisionX - x4, collisionY - y4, collisionZ - z4) * sqrt6);
-				num6 = CLIP(num6, -1.0, 1.0);
+				num6 = CLIP<double>(num6, -1.0, 1.0);
 				double angle4 = acos(num6);
 
 				if (angle3 + angle4 - 0.001 <= faceAngle) {
