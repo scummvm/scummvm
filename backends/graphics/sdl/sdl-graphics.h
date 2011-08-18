@@ -32,7 +32,7 @@ class SdlEventSource;
  *
  * It features a few extra a few extra features required by SdlEventSource.
  * FIXME/HACK:
- * Note it does not inherit from GraphicsManager to avoid a diamon inheritance
+ * Note it does not inherit from GraphicsManager to avoid a diamond inheritance
  * in the current OpenGLSdlGraphicsManager.
  */
 class SdlGraphicsManager {
