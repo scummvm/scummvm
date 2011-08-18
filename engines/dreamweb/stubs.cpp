@@ -1098,6 +1098,18 @@ void DreamGenContext::showpanel() {
 	showframe(frame, 192, 0, 19, 0, &width, &height);
 }
 
+void DreamGenContext::blocknametext() {
+	commandwithob(0, data.byte(kCommandtype), data.byte(kCommand));
+}
+
+void DreamGenContext::personnametext() {
+	commandwithob(2, data.byte(kCommandtype), data.byte(kCommand) & 127);
+}
+
+void DreamGenContext::walktotext() {
+	commandwithob(3, data.byte(kCommandtype), data.byte(kCommand));
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

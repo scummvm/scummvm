@@ -145,5 +145,8 @@
 	void finalframe();
 	void finalframe(uint16 *x, uint16 *y);
 	void showallobs();
+	void blocknametext();
+	void walktotext();
+	void personnametext();
 	bool isCD();
 

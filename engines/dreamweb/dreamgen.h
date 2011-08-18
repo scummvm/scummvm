@@ -117,9 +117,6 @@ public:
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_getflagunderp = 0xca40;
-	static const uint16 addr_walktotext = 0xca3c;
-	static const uint16 addr_personnametext = 0xca38;
-	static const uint16 addr_blocknametext = 0xca34;
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_examineobtext = 0xca20;
@@ -1407,7 +1404,7 @@ public:
 	void othersmoker();
 	void dofade();
 	//void setuptimedtemp();
-	void blocknametext();
+	//void blocknametext();
 	void useelevator5();
 	void useelevator4();
 	void useelevator1();
@@ -1567,7 +1564,7 @@ public:
 	void showword();
 	void dirfile();
 	void setmode();
-	void walktotext();
+	//void walktotext();
 	void pickupconts();
 	void locklightoff();
 	void wearwatch();
@@ -1578,7 +1575,6 @@ public:
 	void findormake();
 	void nextsymbol();
 	void monks2text();
-	void poolguard();
 	void clearpalette();
 	void cantdrop();
 	void maptopanel();
@@ -1764,14 +1760,14 @@ public:
 	void realcredits();
 	void handclap();
 	void smokebloke();
-	void showexit();
+	void afterintroroom();
 	//void printundermon();
 	void buttonnine();
 	void findallopen();
 	void loadintotemp3();
 	void loadintotemp2();
 	void gamer();
-	void personnametext();
+	void poolguard();
 	void readfromfile();
 	void initialinv();
 	void quitsymbol();
@@ -1804,7 +1800,7 @@ public:
 	void setpickup();
 	//void doorway();
 	void dropobject();
-	void printmessage();
+	void isitright();
 	void reexfromopen();
 	void fillryan();
 	void drawitall();
@@ -1823,7 +1819,7 @@ public:
 	void clearbeforeload();
 	void biblequote();
 	void doload();
-	void afterintroroom();
+	void showexit();
 	void blockget();
 	void usetrainer();
 	//void allocatework();
@@ -1855,6 +1851,7 @@ public:
 	void examicon();
 	void showgun();
 	void switchryanon();
+	//void personnametext();
 	void louischair();
 	void saveems();
 	void locationpic();
@@ -2051,7 +2048,7 @@ public:
 	void loadsecondsample();
 	void transfercontoex();
 	//void multiput();
-	void isitright();
+	void printmessage();
 	void businessman();
 	void switchryanoff();
 	//void commandwithob();

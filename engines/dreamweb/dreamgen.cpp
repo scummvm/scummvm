@@ -16292,31 +16292,6 @@ searchmess:
 	printdirect();
 }
 
-void DreamGenContext::blocknametext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 0;
-	commandwithob();
-}
-
-void DreamGenContext::personnametext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	_and(bl, 127);
-	bh = data.byte(kCommandtype);
-	al = 2;
-	commandwithob();
-}
-
-void DreamGenContext::walktotext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 3;
-	commandwithob();
-}
-
 void DreamGenContext::getflagunderp() {
 	STACK_CHECK;
 	cx = data.word(kMousex);
@@ -18950,9 +18925,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_examineobtext: examineobtext(); break;
 		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
-		case addr_blocknametext: blocknametext(); break;
-		case addr_personnametext: personnametext(); break;
-		case addr_walktotext: walktotext(); break;
 		case addr_getflagunderp: getflagunderp(); break;
 		case addr_setwalk: setwalk(); break;
 		case addr_bresenhams: bresenhams(); break;
