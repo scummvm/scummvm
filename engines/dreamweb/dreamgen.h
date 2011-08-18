@@ -480,9 +480,6 @@ public:
 	static const uint16 addr_showallex = 0xc450;
 	static const uint16 addr_showallfree = 0xc44c;
 	static const uint16 addr_drawflags = 0xc43c;
-	static const uint16 addr_addlength = 0xc438;
-	static const uint16 addr_addalong = 0xc434;
-	static const uint16 addr_getdimension = 0xc430;
 	static const uint16 addr_calcmapad = 0xc42c;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_blockget = 0xc424;
@@ -1365,7 +1362,7 @@ public:
 	//void frameoutv();
 	void opensarters();
 	void screenupdate();
-	void addlength();
+	//void addlength();
 	void wornerror();
 	void putundercentre();
 	void checkobjectsize();
@@ -1820,7 +1817,7 @@ public:
 	//void copyname();
 	void look();
 	void setmouse();
-	void checkone();
+	//void getdimension();
 	void transferinv();
 	void candles2();
 	void pickupob();
@@ -1896,7 +1893,7 @@ public:
 	void grafittidoor();
 	void input();
 	void nextdest();
-	void getdimension();
+	void checkone();
 	void makecaps();
 	void read();
 	void fadescreenups();
@@ -1943,7 +1940,7 @@ public:
 	void usecharset1();
 	//void makenextblock();
 	void showpuztext();
-	void addalong();
+	//void addalong();
 	//void width160();
 	void incryanpage();
 	//void dodoor();

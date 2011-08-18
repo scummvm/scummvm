@@ -172,5 +172,61 @@ void DreamGenContext::showallobs() {
 	}
 }
 
+void DreamGenContext::getdimension()
+{
+	uint8 mapXstart, mapYstart;
+	uint8 mapXsize, mapYsize;
+	getdimension(&mapXstart, &mapYstart, &mapXsize, &mapYsize);
+	cl = mapXstart;
+	ch = mapYstart;
+	dl = mapXsize;
+	dh = mapYsize;
+}
+
+bool DreamGenContext::addalong(const uint8 *mapFlags) {
+	for (size_t i = 0; i < 11; ++i) {
+		if (mapFlags[3 * i] != 0)
+			return true;
+	}
+	return false;
+}
+
+bool DreamGenContext::addlength(const uint8 *mapFlags) {
+	for (size_t i = 0; i < 10; ++i) {
+		if (mapFlags[3 * 11 * i] != 0)
+			return true;
+	}
+	return false;
+}
+
+void DreamGenContext::getdimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize) {
+	const uint8 *mapFlags = segRef(data.word(kBuffers)).ptr(kMapflags, 0);
+
+	uint8 yStart = 0;
+	while (! addalong(mapFlags + 3 * 11 * yStart))
+		++yStart;
+
+	uint8 xStart = 0;
+	while (! addlength(mapFlags + 3 * xStart))
+		++xStart;
+
+	uint8 yEnd = 10;
+	while (! addalong(mapFlags + 3 * 11 * (yEnd - 1)))
+		--yEnd;
+
+	uint8 xEnd = 11;
+	while (! addlength(mapFlags + 3 * (xEnd - 1)))
+		--xEnd;
+
+	*mapXstart = xStart;
+	*mapYstart = yStart;
+	*mapXsize = xEnd - xStart;
+	*mapYsize = yEnd - yStart;
+	data.word(kMapxstart) = xStart << 4;
+	data.word(kMapystart) = yStart << 4;
+	data.byte(kMapxsize) = *mapXsize << 4;
+	data.byte(kMapysize) = *mapYsize << 4;
+}
+
 } /*namespace dreamgen */
 

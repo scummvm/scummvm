@@ -6428,124 +6428,6 @@ void DreamGenContext::calcmapad() {
 	data.word(kMapady) = ax;
 }
 
-void DreamGenContext::getdimension() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32));
-	ch = 0;
-dimloop1:
-	addalong();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim1;
-	_inc(ch);
-	goto dimloop1;
-finishdim1:
-	bx = (0+(228*13)+32+60+(32*32));
-	cl = 0;
-dimloop2:
-	push(bx);
-	addlength();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim2;
-	_inc(cl);
-	_add(bx, 3);
-	goto dimloop2;
-finishdim2:
-	bx = (0+(228*13)+32+60+(32*32))+(11*3*9);
-	dh = 10;
-dimloop3:
-	push(bx);
-	addalong();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim3;
-	_dec(dh);
-	_sub(bx, 11*3);
-	goto dimloop3;
-finishdim3:
-	bx = (0+(228*13)+32+60+(32*32))+(3*10);
-	dl = 11;
-dimloop4:
-	push(bx);
-	addlength();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim4;
-	_dec(dl);
-	_sub(bx, 3);
-	goto dimloop4;
-finishdim4:
-	al = cl;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.word(kMapxstart) = ax;
-	al = ch;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.word(kMapystart) = ax;
-	_sub(dl, cl);
-	_sub(dh, ch);
-	al = dl;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.byte(kMapxsize) = al;
-	al = dh;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.byte(kMapysize) = al;
-}
-
-void DreamGenContext::addalong() {
-	STACK_CHECK;
-	ah = 11;
-addloop:
-	_cmp(es.byte(bx), 0);
-	if (!flags.z())
-		goto gotalong;
-	_add(bx, 3);
-	_dec(ah);
-	if (!flags.z())
-		goto addloop;
-	al = 0;
-	return;
-gotalong:
-	al = 1;
-}
-
-void DreamGenContext::addlength() {
-	STACK_CHECK;
-	ah = 10;
-addloop2:
-	_cmp(es.byte(bx), 0);
-	if (!flags.z())
-		goto gotlength;
-	_add(bx, 3*11);
-	_dec(ah);
-	if (!flags.z())
-		goto addloop2;
-	al = 0;
-	return;
-gotlength:
-	al = 1;
-}
-
 void DreamGenContext::drawflags() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -18770,9 +18652,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_blockget: blockget(); break;
 		case addr_drawfloor: drawfloor(); break;
 		case addr_calcmapad: calcmapad(); break;
-		case addr_getdimension: getdimension(); break;
-		case addr_addalong: addalong(); break;
-		case addr_addlength: addlength(); break;
 		case addr_drawflags: drawflags(); break;
 		case addr_showallfree: showallfree(); break;
 		case addr_showallex: showallex(); break;

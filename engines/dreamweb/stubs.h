@@ -132,6 +132,10 @@
 	void madmantext();
 	void madmode();
 	void movemap(uint8 param);
+	bool addalong(const uint8 *mapFlags);
+	bool addlength(const uint8 *mapFlags);
+	void getdimension();
+	void getdimension(uint8 *mapXstart, uint8 *mapYstart, uint8 *mapXsize, uint8 *mapYsize);
 	void getmapad();
 	uint8 getmapad(const uint8 *setData);
 	uint8 getxad(const uint8 *setData, uint8 *result);
