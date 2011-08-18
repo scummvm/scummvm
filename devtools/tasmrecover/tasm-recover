@@ -128,6 +128,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'calcfrframe',
 	'finalframe',
 	'commandonly',
+	'makename',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

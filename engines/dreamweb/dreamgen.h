@@ -46,7 +46,6 @@ public:
 	static const uint16 addr_closefile = 0xcba4;
 	static const uint16 addr_openforsave = 0xcba0;
 	static const uint16 addr_openfilenocheck = 0xcb9c;
-	static const uint16 addr_makename = 0xcb98;
 	static const uint16 addr_openfilefromc = 0xcb94;
 	static const uint16 addr_openfile = 0xcb90;
 	static const uint16 addr_createfile = 0xcb8c;
@@ -696,20 +695,18 @@ public:
 	static const uint16 addr_foghornsound = 0xc008;
 	static const uint16 addr_intromusic = 0xc004;
 	static const uint16 addr_alleybarksound = 0xc000;
-	static const uint16 offset_place = 0x17ad;
 	static const uint16 offset_quitlist = 0x0a84;
 	static const uint16 offset_savelist = 0x0f44;
 	static const uint16 offset_mainlist = 0x1402;
 	static const uint16 offset_gameerror8 = 0x113f;
-	static const uint16 offset_keys = 0x0b14;
 	static const uint16 offset_blinktab = 0x1700;
 	static const uint16 offset_error2patch = 0x0ff6;
 	static const uint16 offset_openchangesize = 0x0a1c;
-	static const uint16 offset_loadlist = 0x0ef0;
+	static const uint16 offset_keys = 0x0b14;
 	static const uint16 offset_mainlist2 = 0x1440;
 	static const uint16 offset_uselist = 0x0ba8;
 	static const uint16 offset_gameerror2 = 0x0fb2;
-	static const uint16 offset_id = 0x17ab;
+	static const uint16 offset_loadlist = 0x0ef0;
 	static const uint16 offset_gameerror6 = 0x10be;
 	static const uint16 offset_flashmousetab = 0x1707;
 	static const uint16 offset_speechfile = 0x13f1;
@@ -1394,6 +1391,7 @@ public:
 	void usewall();
 	void opentomb();
 	//void findobname();
+	//void makename();
 	void buttonfour();
 	void animpointer();
 	//void lockmon();
@@ -1698,7 +1696,7 @@ public:
 	void madman();
 	void createpanel();
 	void turnpathon();
-	void showmainops();
+	void enablesoundint();
 	void madmanstelly();
 	void constant();
 	void loadroomssample();
@@ -1742,7 +1740,7 @@ public:
 	void checkbasemem();
 	void transfertext();
 	void searchforsame();
-	void enablesoundint();
+	void showmainops();
 	void getback1();
 	void setlocation();
 	void fadefromwhite();
@@ -1924,7 +1922,7 @@ public:
 	void readmouse4();
 	void openryan();
 	void readmouse1();
-	void showman();
+	void readmouse3();
 	void readmouse2();
 	void newplace();
 	//void movemap();
@@ -1934,7 +1932,6 @@ public:
 	void usecardreader3();
 	void tattooman();
 	void usehandle();
-	void quitkey();
 	void openfile();
 	void usecharset1();
 	//void makenextblock();
@@ -2001,7 +1998,7 @@ public:
 	void intromonks2();
 	void usewinch();
 	void setbotright();
-	void readmouse3();
+	void showman();
 	void showfirstuse();
 	void setupemm();
 	void usefullcart();
@@ -2047,7 +2044,7 @@ public:
 	void dosometalk();
 	void usecart();
 	void intromusic();
-	void makename();
+	void quitkey();
 	void processtrigger();
 	void monmessage();
 	void readdesticon();

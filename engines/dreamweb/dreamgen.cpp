@@ -17816,21 +17816,6 @@ void DreamGenContext::readsetdata() {
 	closefile();
 }
 
-void DreamGenContext::makename() {
-	STACK_CHECK;
-	si = dx;
-	di = offset_place;
-transfer:
-	al = cs.byte(si);
-	cs.byte(di) = al;
-	_inc(si);
-	_inc(di);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto transfer;
-	dx = offset_id;
-}
-
 
 
 void DreamGenContext::__start() { 
@@ -19055,7 +19040,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_createfile: createfile(); break;
 		case addr_openfile: openfile(); break;
 		case addr_openfilefromc: openfilefromc(); break;
-		case addr_makename: makename(); break;
 		case addr_openfilenocheck: openfilenocheck(); break;
 		case addr_openforsave: openforsave(); break;
 		case addr_closefile: closefile(); break;
