@@ -124,7 +124,14 @@ MODULE_OBJS += \
 	he/script_v90he.o \
 	he/script_v100he.o \
 	he/sprite_he.o \
-	he/wiz_he.o
+	he/wiz_he.o \
+	he/logic/baseball2001.o \
+	he/logic/basketball.o \
+	he/logic/football.o \
+	he/logic/funshop.o \
+	he/logic/moonbase.o \
+	he/logic/puttrace.o \
+	he/logic/soccer.o
 endif
 
 # This module can be built as a plugin
