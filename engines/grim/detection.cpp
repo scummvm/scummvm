@@ -51,7 +51,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"",
-			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362164),
+			AD_ENTRY1s("VOX0001.LAB", "444f05f2af689c1bffd179b8b6a632bd", 57993159),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -59,7 +59,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
-	{
+/*	{
 		// Grim Fandango English version (patched)
 		{
 			"grim",
@@ -189,7 +189,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
-	{
+*/	{
 		// Grim Fandango English demo version
 		{
 			"grim",
