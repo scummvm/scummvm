@@ -1157,13 +1157,15 @@ int ScummEngine::readSoundResource(ResId idx) {
 			// only contains a ROL resource for sound id 60. Formerly we tried
 			// to play that via the AdLib or FM-Towns audio driver resulting
 			// in strange noises. Now we behave like the original did.
-			// We make an exception for priority 2 for the Mac output since
-			// we're doing GM -> AdLib conversion.
-			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 10 && pri != 2)
+			// We make an exception for Macintosh, which uses priority 2 for
+			// its sound resources, and Amiga games, which feature only ROL
+			// resources, since we are a doing Midi -> AdLib conversion for
+			// these.
+			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 10
+				&& pri != 2 && _game.platform != Common::kPlatformAmiga)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
-
 
 			if (pri > best_pri) {
 				best_pri = pri;
