@@ -179,26 +179,6 @@ DataCk *Fx::operator [](int ref) {
 	return _current;
 }
 
-void *Patch(int pat) {
-	void *p = NULL;
-	static char fn[] = "PATCH000.SND";
-
-	wtom(pat, fn + 5, 10, 3);
-	INI_FILE snd = fn;
-	if (!snd._error) {
-		uint16 siz = (uint16) snd.size();
-		p = (uint8 *) malloc(siz);
-		if (p) {
-			snd.read(p, siz);
-			if (snd._error) {
-				free(p);
-				p = NULL;
-			}
-		}
-	}
-	return p;
-}
-
 MusicPlayer::MusicPlayer() {
 	_data = NULL;
 	_isGM = false;

@@ -77,28 +77,6 @@ Seq *getConstantSeq(bool seqFlag) {
 
 extern "C"  void    SNDMIDIPlay();
 
-/*
-static void Video() {
-  static uint16 SP_S;
-
-  asm   push    bx
-  asm   push    bp
-  asm   push    si
-  asm   push    di
-  asm   push    es
-  asm   xor bx,bx       // video page #0
-  SP_S = _SP;
-  asm   int VIDEO
-  _SP = SP_S;
-  asm   pop es
-  asm   pop di
-  asm   pop si
-  asm   pop bp
-  asm   pop bx
-}
-*/
-
-
 uint16 *SaveScreen() {
 	// In ScummVM, we don't need to worry about saving the original screen mode
 	return 0;
@@ -125,7 +103,7 @@ Sprite *locate(int ref) {
 
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0), //Delay(0),
+	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	*((uint16 *)&_flags) = 0;
