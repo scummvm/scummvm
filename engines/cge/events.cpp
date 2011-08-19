@@ -158,7 +158,7 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	_buttons = 0;
 	_busy = NULL;
 	_active = false;
-	_flags._kill = false;
+	_flags.flags._kill = false;
 
 	const Seq ms[] = {
 		{ 0, 0, 0, 0, 1 },
@@ -301,9 +301,9 @@ void EventManager::handleEvents() {
 			if (e._mask & kMouseLeftDown) {
 				_mouse->_hold = e._spritePtr;
 				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = true;
+					_mouse->_hold->_flags.flags._hold = true;
 
-					if (_mouse->_hold->_flags._drag) {
+					if (_mouse->_hold->_flags.flags._drag) {
 						_mouse->_hx = e._x - _mouse->_hold->_x;
 						_mouse->_hy = e._y - _mouse->_hold->_y;
 					}
@@ -312,7 +312,7 @@ void EventManager::handleEvents() {
 
 			if (e._mask & kMouseLeftUp) {
 				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = false;
+					_mouse->_hold->_flags.flags._hold = false;
 					_mouse->_hold = NULL;
 				}
 			}
@@ -325,7 +325,7 @@ void EventManager::handleEvents() {
 		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
 	}
 	if (_mouse->_hold) {
-		if (_mouse->_hold->_flags._drag)
+		if (_mouse->_hold->_flags.flags._drag)
 			_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
 	}
 }

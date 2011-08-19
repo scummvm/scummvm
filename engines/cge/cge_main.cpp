@@ -470,8 +470,8 @@ void CGEEngine::loadMapping() {
 }
 
 Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
-	_flags._kill = true;
-	_flags._bDel = false;
+	_flags.flags._kill = true;
+	_flags.flags._bDel = false;
 
 	BitmapPtr *MB = new BitmapPtr[2];
 	MB[0] = new Bitmap("BRICK", true);
@@ -528,7 +528,7 @@ void CGEEngine::quit() {
 		{ NULL, &CGEEngine::dummy          }
 	};
 
-	if (_snail->idle() && !_hero->_flags._hide) {
+	if (_snail->idle() && !_hero->_flags.flags._hide) {
 		if (Vmenu::_addr) {
 			_snail_->addCom(kSnKill, -1, 0, Vmenu::_addr);
 			resetQSwitch();
@@ -553,13 +553,13 @@ void CGEEngine::miniStep(int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::miniStep(%d)", stp);
 
 	if (stp < 0)
-		_miniCave->_flags._hide = true;
+		_miniCave->_flags.flags._hide = true;
 	else {
 		*_miniShp[0] = *_miniShpList[stp];
 		if (_fx->_current)
 			&*(_fx->_current->addr());
 
-		_miniCave->_flags._hide = false;
+		_miniCave->_flags.flags._hide = false;
 	}
 }
 
@@ -600,7 +600,7 @@ void CGEEngine::caveUp() {
 		Sprite *n = spr->_next;
 		if (spr->_cave == _now || spr->_cave == 0)
 			if (spr->_ref != BakRef) {
-				if (spr->_flags._back)
+				if (spr->_flags.flags._back)
 					spr->backShow();
 				else
 					expandSprite(spr);
@@ -618,7 +618,7 @@ void CGEEngine::caveUp() {
 		// following 2 lines trims Hero's Z position!
 		_hero->tick();
 		_hero->_time = 1;
-		_hero->_flags._hide = false;
+		_hero->_flags.flags._hide = false;
 	}
 
 	if (!_dark)
@@ -650,7 +650,7 @@ void CGEEngine::caveDown() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::caveDown()");
 
 	Sprite *spr;
-	if (_horzLine && !_horzLine->_flags._hide)
+	if (_horzLine && !_horzLine->_flags.flags._hide)
 		switchMapping();
 
 	for (spr = _vga->_showQ->first(); spr;) {
@@ -823,7 +823,7 @@ void System::touch(uint16 mask, int x, int y) {
 				_sprite->step(x - '0');
 			break;
 		case F10          :
-			if (_snail->idle() && !_hero->_flags._hide)
+			if (_snail->idle() && !_hero->_flags.flags._hide)
 				_vm->startCountDown();
 			break;
 		}
@@ -857,7 +857,7 @@ void System::touch(uint16 mask, int x, int y) {
 			if (cav && _snail->idle() && _hero->_tracePtr < 0)
 				_vm->switchCave(cav);
 
-			if (_horzLine && !_horzLine->_flags._hide) {
+			if (_horzLine && !_horzLine->_flags.flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
 					int8 x1, z1;
 					XZ(x, y).split(x1, z1);
@@ -960,7 +960,7 @@ void CGEEngine::switchMapping() {
 	assert(_horzLine);
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMapping()");
 
-	if (_horzLine && _horzLine->_flags._hide) {
+	if (_horzLine && _horzLine->_flags.flags._hide) {
 		int i;
 		for (i = 0; i < kMapZCnt; i++) {
 			int j;
@@ -975,14 +975,14 @@ void CGEEngine::switchMapping() {
 			if (s->_w == kMapGridX && s->_h == kMapGridZ)
 				_snail_->addCom(kSnKill, -1, 0, s);
 	}
-	_horzLine->_flags._hide = !_horzLine->_flags._hide;
+	_horzLine->_flags.flags._hide = !_horzLine->_flags.flags._hide;
 }
 
 void CGEEngine::killSprite() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::killSprite()");
 
-	_sprite->_flags._kill = true;
-	_sprite->_flags._bDel = true;
+	_sprite->_flags.flags._kill = true;
+	_sprite->_flags.flags._bDel = true;
 	_snail_->addCom(kSnKill, -1, 0, _sprite);
 	_sprite = NULL;
 }
@@ -1007,7 +1007,7 @@ void CGEEngine::pullSprite() {
 	if (spr) {
 		spr = spr->_next;
 		if (spr)
-			ok = (!spr->_flags._slav);
+			ok = (!spr->_flags.flags._slav);
 	}
 	if (ok) {
 		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
@@ -1058,7 +1058,7 @@ void CGEEngine::sayDebug() {
 	char *spH  = DebugText + 37;
 	char *spF  = DebugText + 41;
 
-	if (!_debugLine->_flags._hide) {
+	if (!_debugLine->_flags.flags._hide) {
 		dwtom(_mouse->_x, absX, 10, 3);
 		dwtom(_mouse->_y, absY, 10, 3);
 
@@ -1083,7 +1083,7 @@ void CGEEngine::sayDebug() {
 
 
 void CGEEngine::switchDebug() {
-	_debugLine->_flags._hide = !_debugLine->_flags._hide;
+	_debugLine->_flags.flags._hide = !_debugLine->_flags.flags._hide;
 }
 
 
@@ -1121,7 +1121,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			_vm->optionTouch(_ref % 10, mask);
 			return;
 		}
-		if (_flags._syst)
+		if (_flags.flags._syst)
 			return;       // cannot access system sprites
 		if (_vm->_game) if (mask & kMouseLeftUp) {
 				mask &= ~kMouseLeftUp;
@@ -1130,7 +1130,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		if ((mask & kMouseRightUp) && _snail->idle()) {
 			Sprite *ps = (_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
 			if (ps) {
-				if (_flags._kept || _hero->distance(this) < kDistMax) {
+				if (_flags.flags._kept || _hero->distance(this) < kDistMax) {
 					if (works(ps)) {
 						_vm->feedSnail(ps, kTake);
 					} else
@@ -1139,18 +1139,18 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				} else
 					_vm->tooFar();
 			} else {
-				if (_flags._kept)
+				if (_flags.flags._kept)
 					mask |= kMouseLeftUp;
 				else {
 					if (_hero->distance(this) < kDistMax) {
 						///
-						if (_flags._port) {
+						if (_flags.flags._port) {
 							if (_vm->findPocket(NULL) < 0)
 								_vm->pocFul();
 							else {
 								_snail->addCom(kSnReach, -1, -1, this);
 								_snail->addCom(kSnKeep, -1, -1, this);
-								_flags._port = false;
+								_flags.flags._port = false;
 							}
 						} else {
 							if (_takePtr != NO_PTR) {
@@ -1168,7 +1168,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			}
 		}
 		if ((mask & kMouseLeftUp) && _snail->idle()) {
-			if (_flags._kept) {
+			if (_flags.flags._kept) {
 				int n;
 				for (n = 0; n < kPocketNX; n++) {
 					if (_pocket[n] == this) {
@@ -1319,11 +1319,11 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 		_sprite->_ref = ref;
 		_sprite->_cave = cav;
 		_sprite->_z = pos;
-		_sprite->_flags._east = east;
-		_sprite->_flags._port = port;
-		_sprite->_flags._tran = tran;
-		_sprite->_flags._kill = true;
-		_sprite->_flags._bDel = true;
+		_sprite->_flags.flags._east = east;
+		_sprite->_flags.flags._port = port;
+		_sprite->_flags.flags._tran = tran;
+		_sprite->_flags.flags._kill = true;
+		_sprite->_flags.flags._bDel = true;
 
 		// Extract the filename, without the extension
 		strcpy(_sprite->_file, fname);
@@ -1390,7 +1390,7 @@ void CGEEngine::loadScript(const char *fname) {
 		_sprite = NULL;
 		loadSprite(SpN, SpI, SpA, SpX, SpY, SpZ);
 		if (_sprite && BkG)
-			_sprite->_flags._back = true;
+			_sprite->_flags.flags._back = true;
 	}
 	if (! ok)
 		error("Bad INI line %d [%s]", lcnt, fname);
@@ -1452,7 +1452,7 @@ void CGEEngine::handleFrame() {
 void CGEEngine::tick() {
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time) {
-			if (!spr->_flags._hide) {
+			if (!spr->_flags.flags._hide) {
 				if (--spr->_time == 0)
 					spr->tick();
 			}
@@ -1483,9 +1483,9 @@ void CGEEngine::runGame() {
 	_text->preload(100, 1000);
 	loadHeroXY();
 
-	_cavLight->_flags._tran = true;
+	_cavLight->_flags.flags._tran = true;
 	_vga->_showQ->append(_cavLight);
-	_cavLight->_flags._hide = true;
+	_cavLight->_flags.flags._hide = true;
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
@@ -1500,7 +1500,7 @@ void CGEEngine::runGame() {
 	Common::copy(pocSeq, pocSeq + 7, seq);
 	_pocLight->setSeq(seq);
 
-	_pocLight->_flags._tran = true;
+	_pocLight->_flags.flags._tran = true;
 	_pocLight->_time = 1;
 	_pocLight->_z = 120;
 	_vga->_showQ->append(_pocLight);
@@ -1527,8 +1527,8 @@ void CGEEngine::runGame() {
 		loadSprite("MINI", -1, 0, kMiniX, kMiniY);
 		expandSprite(_miniCave = _sprite);  // NULL is ok
 		if (_miniCave) {
-			_miniCave->_flags._kill = false;
-			_miniCave->_flags._hide = true;
+			_miniCave->_flags.flags._kill = false;
+			_miniCave->_flags.flags._hide = true;
 			_miniShp[0] = new Bitmap(*_miniCave->shp());
 			_miniShpList = _miniCave->setShapeList(_miniShp);
 			postMiniStep(-1);
@@ -1543,16 +1543,16 @@ void CGEEngine::runGame() {
 			delete _shadow;
 			if ((_shadow = _sprite) != NULL) {
 				_shadow->_ref = 2;
-				_shadow->_flags._tran = true;
-				_shadow->_flags._kill = false;
-				_hero->_flags._shad = true;
+				_shadow->_flags.flags._tran = true;
+				_shadow->_flags.flags._kill = false;
+				_hero->_flags.flags._shad = true;
 				_vga->_showQ->insert(_vga->_spareQ->remove(_shadow), _hero);
 			}
 		}
 	}
 
 	_infoLine->gotoxy(kInfoX, kInfoY);
-	_infoLine->_flags._tran = true;
+	_infoLine->_flags.flags._tran = true;
 	_infoLine->update(NULL);
 	_vga->_showQ->insert(_infoLine);
 
@@ -1634,8 +1634,8 @@ bool CGEEngine::showTitle(const char *name) {
 	bool userOk = false;
 
 	Sprite D(this, LB);
-	D._flags._kill = true;
-	D._flags._bDel = true;
+	D._flags.flags._kill = true;
+	D._flags.flags._bDel = true;
 	D.center();
 	D.show(2);
 
@@ -1737,9 +1737,9 @@ void CGEEngine::cge_main() {
 	if (!kSavegame0File::exist(kSavegame0Name))
 		_mode = 2;
 
-	_debugLine->_flags._hide = true;
+	_debugLine->_flags.flags._hide = true;
 	if (_horzLine)
-		_horzLine->_flags._hide = true;
+		_horzLine->_flags.flags._hide = true;
 
 	if (_music && _soundOk)
 		_midiPlayer.loadMidi(0);

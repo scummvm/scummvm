@@ -53,10 +53,10 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	_ts[1] = NULL;
 	setShapeList(_ts);
 
-	_flags._slav = true;
-	_flags._tran = true;
-	_flags._kill = true;
-	_flags._bDel = true;
+	_flags.flags._slav = true;
+	_flags.flags._tran = true;
+	_flags.flags._kill = true;
+	_flags.flags._bDel = true;
 }
 
 
@@ -98,8 +98,8 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	_items = 0;
 	for (cp = list; cp->_text; cp++)
 		_items++;
-	_flags._bDel = true;
-	_flags._kill = true;
+	_flags.flags._bDel = true;
+	_flags.flags._kill = true;
 	if (x < 0 || y < 0)
 		center();
 	else

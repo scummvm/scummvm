@@ -164,7 +164,7 @@ BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 		}
 		expand();
 		_ext->_shpList = shpP;
-		_flags._bDel = true;
+		_flags.flags._bDel = true;
 		if (!_ext->_seq)
 			setSeq(getConstantSeq(_shpCnt < 2));
 	}
@@ -382,7 +382,7 @@ Sprite *Sprite::contract() {
 	if (e) {
 		if (e->_name)
 			delete[] e->_name;
-		if (_flags._bDel && e->_shpList) {
+		if (_flags.flags._bDel && e->_shpList) {
 			int i;
 			for (i = 0; e->_shpList[i]; i++)
 				delete e->_shpList[i];
@@ -436,24 +436,24 @@ void Sprite::makeXlat(uint8 *x) {
 	if (_ext) {
 		BitmapPtr *b;
 
-		if (_flags._xlat)
+		if (_flags.flags._xlat)
 			killXlat();
 		for (b = _ext->_shpList; *b; b++)
 			(*b)->_m = x;
-		_flags._xlat = true;
+		_flags.flags._xlat = true;
 	}
 }
 
 
 void Sprite::killXlat() {
-	if (_flags._xlat && _ext) {
+	if (_flags.flags._xlat && _ext) {
 		BitmapPtr *b;
 		uint8 *m = (*_ext->_shpList)->_m;
 		free(m);
 
 		for (b = _ext->_shpList; *b; b++)
 			(*b)->_m = NULL;
-		_flags._xlat = false;
+		_flags.flags._xlat = false;
 	}
 }
 
@@ -475,9 +475,9 @@ void Sprite::gotoxy(int x, int y) {
 		_y = y;
 	}
 	if (_next)
-		if (_next->_flags._slav)
+		if (_next->_flags.flags._slav)
 			_next->gotoxy(_next->_x - xo + _x, _next->_y - yo + _y);
-	if (_flags._shad)
+	if (_flags.flags._shad)
 		_prev->gotoxy(_prev->_x - xo + _x, _prev->_y - yo + _y);
 }
 
@@ -498,8 +498,8 @@ void Sprite::show() {
 	e->_y1 = _y;
 	e->_b1 = shp();
 //  asm sti     // ...done!
-	if (!_flags._hide) {
-		if (_flags._xlat)
+	if (!_flags.flags._hide) {
+		if (_flags.flags._xlat)
 			e->_b1->xShow(e->_x1, e->_y1);
 		else
 			e->_b1->show(e->_x1, e->_y1);
@@ -545,7 +545,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(unused);	// _ext
 	s.syncAsUint16LE(_ref);
 	s.syncAsByte(_cave);
-	s.syncBytes((byte *)&_flags, 2);
+	s.syncAsUint16LE(_flags.flagsWord);
 	s.syncAsUint16LE(_x);
 	s.syncAsUint16LE(_y);
 	s.syncAsByte(_z);
@@ -567,7 +567,7 @@ Sprite *spriteAt(int x, int y) {
 	Sprite *spr = NULL, * tail = _vga->_showQ->last();
 	if (tail) {
 		for (spr = tail->_prev; spr; spr = spr->_prev) {
-			if (! spr->_flags._hide && ! spr->_flags._tran) {
+			if (! spr->_flags.flags._hide && ! spr->_flags.flags._tran) {
 				if (spr->shp()->solidAt(x - spr->_x, y - spr->_y))
 					break;
 			}
@@ -589,7 +589,7 @@ Queue::~Queue() {
 void Queue::clear() {
 	while (_head) {
 		Sprite *s = remove(_head);
-		if (s->_flags._kill)
+		if (s->_flags.flags._kill)
 			delete s;
 	}
 }
@@ -1077,7 +1077,7 @@ PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
 
 	setShapeList(LI);
 
-	_flags._kill = false;
+	_flags.flags._kill = false;
 }
 
 } // End of namespace CGE
