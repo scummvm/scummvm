@@ -45,9 +45,9 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _
 	_mb[1] = NULL;
 	setShapeList(_mb);
 	setName(_text->getText(kMixName));
-	_flags._syst = true;
-	_flags._kill = true;
-	_flags._bDel = true;
+	_flags.flags._syst = true;
+	_flags.flags._kill = true;
+	_flags.flags._bDel = true;
 	gotoxy(x, y);
 	_z = kMixZ;
 
@@ -73,13 +73,13 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _
 		spr->setSeq(seq);
 
 		spr->gotoxy(x + 2 + 12 * i, y + 8);
-		spr->_flags._tran = true;
-		spr->_flags._kill = true;
-		spr->_flags._bDel = false;
+		spr->_flags.flags._tran = true;
+		spr->_flags.flags._kill = true;
+		spr->_flags.flags._bDel = false;
 		spr->_z = kMixZ;
 		_led[i] = spr;
 	}
-	_led[ArrayCount(_led) - 1]->_flags._bDel = true;
+	_led[ArrayCount(_led) - 1]->_flags.flags._bDel = true;
 
 	_vga->_showQ->insert(this);
 	for (i = 0; i < ArrayCount(_led); i++)
@@ -128,7 +128,7 @@ void Mixer::tick() {
 	int y = _mouse->_y;
 	if (spriteAt(x, y) == this) {
 		_fall = kMixFall;
-		if (_flags._hold)
+		if (_flags.flags._hold)
 			touch(kMouseLeftUp, x - _x, y - _y);
 	} else {
 		if (_fall)
