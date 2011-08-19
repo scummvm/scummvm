@@ -75,7 +75,7 @@ Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
 
 
 void Walk::tick() {
-	if (_flags._hide)
+	if (_flags.flags._hide)
 		return;
 
 	_here = XZ(_x + _w / 2, _y + _h);
@@ -85,17 +85,17 @@ void Walk::tick() {
 		_sys->funTouch();
 		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
-				if (!spr->_flags._near) {
+				if (!spr->_flags.flags._near) {
 					_vm->feedSnail(spr, kNear);
-					spr->_flags._near = true;
+					spr->_flags.flags._near = true;
 				}
 			} else {
-				spr->_flags._near = false;
+				spr->_flags.flags._near = false;
 			}
 		}
 	}
 
-	if (_flags._hold || _tracePtr < 0)
+	if (_flags.flags._hold || _tracePtr < 0)
 		park();
 	else {
 		if (_here == _trace[_tracePtr]) {
@@ -187,7 +187,7 @@ void Walk::findWay(Sprite *spr) {
 	if (spr && spr != this) {
 		int x = spr->_x;
 		int z = spr->_z;
-		if (spr->_flags._east)
+		if (spr->_flags.flags._east)
 			x += spr->_w + _w / 2 - kWalkSide;
 		else
 			x -= _w / 2 - kWalkSide;
@@ -207,7 +207,7 @@ void Walk::reach(Sprite *spr, int mode) {
 	if (spr) {
 		_hero->findWay(spr);
 		if (mode < 0) {
-			mode = spr->_flags._east;
+			mode = spr->_flags.flags._east;
 			if (lower(spr))
 				mode += 2;
 		}

@@ -493,7 +493,7 @@ void CGEEngine::snZTrim(Sprite *spr) {
 	if (spr)
 		if (spr->active()) {
 			Sprite *s;
-			s = (spr->_flags._shad) ? spr->_prev : NULL;
+			s = (spr->_flags.flags._shad) ? spr->_prev : NULL;
 			_vga->_showQ->insert(_vga->_showQ->remove(spr));
 			if (s) {
 				s->_z = spr->_z;
@@ -506,9 +506,9 @@ void CGEEngine::snHide(Sprite *spr, int val) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snHide(spr, %d)", val);
 
 	if (spr) {
-		spr->_flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags._hide);
-		if (spr->_flags._shad)
-			spr->_prev->_flags._hide = spr->_flags._hide;
+		spr->_flags.flags._hide = (val >= 0) ? (val != 0) : (!spr->_flags.flags._hide);
+		if (spr->_flags.flags._shad)
+			spr->_prev->_flags.flags._hide = spr->_flags.flags._hide;
 	}
 }
 
@@ -554,18 +554,18 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 		spr->_cave = val;
 		if (val1 != was1) {
 			if (was1) {
-				if (spr->_flags._kept) {
+				if (spr->_flags.flags._kept) {
 					int n = findPocket(spr);
 					if (n >= 0)
 						_pocket[n] = NULL;
 				}
 				hide1(spr);
 				contractSprite(spr);
-				spr->_flags._slav = false;
+				spr->_flags.flags._slav = false;
 			} else {
 				if (spr->_ref % 1000 == 0)
 					Bitmap::_pal = Vga::_sysPal;
-				if (spr->_flags._back)
+				if (spr->_flags.flags._back)
 					spr->backShow(true);
 				else
 					expandSprite(spr);
@@ -589,12 +589,12 @@ void CGEEngine::snSwap(Sprite *spr, int xref) {
 		swap(spr->_x, xspr->_x);
 		swap(spr->_y, xspr->_y);
 		swap(spr->_z, xspr->_z);
-		if (spr->_flags._kept) {
+		if (spr->_flags.flags._kept) {
 			int n = findPocket(spr);
 			if (n >= 0)
 				_pocket[n] = xspr;
-			xspr->_flags._kept = true;
-			xspr->_flags._port = false;
+			xspr->_flags.flags._kept = true;
+			xspr->_flags.flags._port = false;
 		}
 		if (xwas1 != was1) {
 			if (was1) {
@@ -617,14 +617,14 @@ void CGEEngine::snCover(Sprite *spr, int xref) {
 
 	Sprite *xspr = locate(xref);
 	if (spr && xspr) {
-		spr->_flags._hide = true;
+		spr->_flags.flags._hide = true;
 		xspr->_z = spr->_z;
 		xspr->_cave = spr->_cave;
 		xspr->gotoxy(spr->_x, spr->_y);
 		expandSprite(xspr);
-		if ((xspr->_flags._shad = spr->_flags._shad) == 1) {
+		if ((xspr->_flags.flags._shad = spr->_flags.flags._shad) == 1) {
 			_vga->_showQ->insert(_vga->_showQ->remove(spr->_prev), xspr);
-			spr->_flags._shad = false;
+			spr->_flags.flags._shad = false;
 		}
 		feedSnail(xspr, kNear);
 	}
@@ -635,12 +635,12 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snUncover(spr, xspr)");
 
 	if (spr && xspr) {
-		spr->_flags._hide = false;
+		spr->_flags.flags._hide = false;
 		spr->_cave = xspr->_cave;
 		spr->gotoxy(xspr->_x, xspr->_y);
-		if ((spr->_flags._shad = xspr->_flags._shad) == 1) {
+		if ((spr->_flags.flags._shad = xspr->_flags.flags._shad) == 1) {
 			_vga->_showQ->insert(_vga->_showQ->remove(xspr->_prev), spr);
-			xspr->_flags._shad = false;
+			xspr->_flags.flags._shad = false;
 		}
 		spr->_z = xspr->_z;
 		snSend(xspr, -1);
@@ -728,7 +728,7 @@ void CGEEngine::snSlave(Sprite *spr, int ref) {
 	if (spr && slv) {
 		if (spr->active()) {
 			snSend(slv, spr->_cave);
-			slv->_flags._slav = true;
+			slv->_flags.flags._slav = true;
 			slv->_z = spr->_z;
 			_vga->_showQ->insert(_vga->_showQ->remove(slv), spr->_next);
 		}
@@ -740,21 +740,21 @@ void CGEEngine::snTrans(Sprite *spr, int trans) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snTrans(spr, %d)", trans);
 
 	if (spr)
-		spr->_flags._tran = (trans < 0) ? !spr->_flags._tran : (trans != 0);
+		spr->_flags.flags._tran = (trans < 0) ? !spr->_flags.flags._tran : (trans != 0);
 }
 
 void CGEEngine::snPort(Sprite *spr, int port) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snPort(spr, %d)", port);
 
 	if (spr)
-		spr->_flags._port = (port < 0) ? !spr->_flags._port : (port != 0);
+		spr->_flags.flags._port = (port < 0) ? !spr->_flags.flags._port : (port != 0);
 }
 
 void CGEEngine::snKill(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snKill(spr)");
 
 	if (spr) {
-		if (spr->_flags._kept) {
+		if (spr->_flags.flags._kept) {
 			int n = findPocket(spr);
 			if (n >= 0)
 				_pocket[n] = NULL;
@@ -763,14 +763,14 @@ void CGEEngine::snKill(Sprite *spr) {
 		hide1(spr);
 		_vga->_showQ->remove(spr);
 		_eventManager->clearEvent(spr);
-		if (spr->_flags._kill)
+		if (spr->_flags.flags._kill)
 			delete spr;
 		else {
 			spr->_cave = -1;
 			_vga->_spareQ->append(spr);
 		}
 		if (nx) {
-			if (nx->_flags._slav)
+			if (nx->_flags.flags._slav)
 				snKill(nx);
 		}
 	}
@@ -791,11 +791,11 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snKeep(spr, %d)", stp);
 
 	selectPocket(-1);
-	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
+	if (spr && ! spr->_flags.flags._kept && _pocket[_pocPtr] == NULL) {
 		snSound(spr, 3, 1);
 		_pocket[_pocPtr] = spr;
 		spr->_cave = 0;
-		spr->_flags._kept = true;
+		spr->_flags.flags._kept = true;
 		spr->gotoxy(kPocketX + kPocketDX * _pocPtr + kPocketDX / 2 - spr->_w / 2,
 		          kPocketY + kPocketDY / 2 - spr->_h / 2);
 		if (stp >= 0)
@@ -812,7 +812,7 @@ void CGEEngine::snGive(Sprite *spr, int stp) {
 		if (p >= 0) {
 			_pocket[p] = NULL;
 			spr->_cave = _now;
-			spr->_flags._kept = false;
+			spr->_flags.flags._kept = false;
 			if (stp >= 0)
 				spr->step(stp);
 		}
@@ -843,7 +843,7 @@ void CGEEngine::snLevel(Sprite *spr, int lev) {
 	}
 	_maxCave = _maxCaveArr[_lev];
 	if (spr)
-		spr->_flags._hide = false;
+		spr->_flags.flags._hide = false;
 }
 
 

@@ -46,8 +46,8 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	_ts[1] = NULL;
 	setShapeList(_ts);
 
-	_flags._bDel = true;
-	_flags._kill = true;
+	_flags.flags._bDel = true;
+	_flags.flags._kill = true;
 	memcpy(_buff, text, _len);
 	_buff[_len] = ' ';
 	_buff[_len + 1] = '\0';
