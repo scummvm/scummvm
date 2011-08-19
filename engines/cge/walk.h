@@ -35,6 +35,7 @@ namespace CGE {
 
 #define kMapXCnt       40
 #define kMapZCnt       20
+#define kMapArrSize    (kMapZCnt * kMapXCnt)
 #define kMapTop        80
 #define kMapHig        80
 #define kMapGridX      (kScrWidth / kMapXCnt)
@@ -93,7 +94,6 @@ public:
 	Cluster() : Couple (-1, -1) { }
 	bool chkBar() const;
 	bool isValid() const;
-
 };
 
 
