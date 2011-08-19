@@ -47,12 +47,6 @@ bool Cluster::isValid() const {
 	return (_a >= 0) && (_a < kMapXCnt) && (_b >= 0) && (_b < kMapZCnt);
 }
 
-bool Cluster::chkBar() const {
-	assert(_vm->_now <= _vm->_caveMax);
-	return (_a < 0) || (_b < 0) || (_a >= _vm->_barriers[_vm->_now]._horz) || 
-		(_b >= _vm->_barriers[_vm->_now]._vert);
-}
-
 Cluster XZ(int x, int y) {
 	if (y < kMapTop)
 		y = kMapTop;
@@ -230,6 +224,11 @@ void Walk::noWay() {
 	_vm->trouble(kSeqNoWay, kNoWay);
 }
 
+bool Cluster::chkBar() const {
+	assert(_vm->_now <= _vm->_caveMax);
+	return (_a == _vm->_barriers[_vm->_now]._horz) || (_b == _vm->_barriers[_vm->_now]._vert);
+}
+
 bool Walk::find1Way(Cluster c) {
 	Cluster start = c;
 	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
@@ -250,7 +249,6 @@ bool Walk::find1Way(Cluster c) {
 	if (c.cell())
 		// Location is occupied
 		return false;
-
 
 	// Loop through each direction
 	for (int i = 0; i < tabLen; i++) {
