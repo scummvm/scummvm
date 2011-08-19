@@ -41,7 +41,7 @@ bool Mixer::_appear = false;
 
 Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _vm(vm) {
 	_appear = true;
-	_mb[0] = new Bitmap("VOLUME", true);
+	_mb[0] = new Bitmap("VOLUME");
 	_mb[1] = NULL;
 	setShapeList(_mb);
 	setName(_text->getText(kMixName));
@@ -59,7 +59,7 @@ Mixer::Mixer(CGEEngine *vm, int x, int y) : Sprite(vm, NULL), _fall(kMixFall), _
 	for (i = 0; i < kMixMax; i++) {
 		static char fn[] = "V00";
 		wtom(i, fn + 1, 10, 2);
-		_lb[i] = new Bitmap(fn, true);
+		_lb[i] = new Bitmap(fn);
 		ls[i]._now = ls[i]._next = i;
 		ls[i]._dx = ls[i]._dy = ls[i]._dly = 0;
 	}
