@@ -77,7 +77,6 @@ namespace CGE {
 #define kNoWay         671
 #define kTooFar        681
 #define kPocketFull    691
-#define kAltCtrlDel    777
 #define kPanHeight     40
 #define kScrWidth      320
 #define kScrHeight     200
