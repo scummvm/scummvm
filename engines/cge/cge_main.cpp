@@ -535,12 +535,6 @@ void CGEEngine::quit() {
 	}
 }
 
-void CGEEngine::AltCtrlDel() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::AltCtrlDel()");
-
-	_snail_->addCom(kSnSay,  -1, kAltCtrlDel, _hero);
-}
-
 void CGEEngine::miniStep(int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::miniStep(%d)", stp);
 
@@ -738,12 +732,6 @@ void System::touch(uint16 mask, int x, int y) {
 			return;
 		}
 		switch (x) {
-		case Del:
-			if (_keyboard->_key[kKeyAlt] && _keyboard->_key[kKeyCtrl])
-				_vm->AltCtrlDel();
-			else
-				_vm->killSprite();
-			break;
 		case 'F':
 			if (_keyboard->_key[kKeyAlt]) {
 				Sprite *m = _vga->_showQ->locate(17001);
@@ -752,45 +740,6 @@ void System::touch(uint16 mask, int x, int y) {
 					m->_time = 216; // 3s
 				}
 			}
-			break;
-		case PgUp:
-			_vm->pushSprite();
-			break;
-		case PgDn:
-			_vm->pullSprite();
-			break;
-		case '+':
-			_vm->nextStep();
-			break;
-		case '`':
-			if (_keyboard->_key[kKeyAlt])
-				_vm->saveMapping();
-			else
-				_vm->switchMapping();
-			break;
-		case F1:
-			_vm->switchDebug();
-			break;
-		case F3:
-			_hero->step(kTSeq + 4);
-			break;
-		case F4:
-			_hero->step(kTSeq + 5);
-			break;
-		case F5:
-			_hero->step(kTSeq + 0);
-			break;
-		case F6:
-			_hero->step(kTSeq + 1);
-			break;
-		case F7:
-			_hero->step(kTSeq + 2);
-			break;
-		case F8:
-			_hero->step(kTSeq + 3);
-			break;
-		case F9:
-			_sys->_funDel = 1;
 			break;
 		case 'X':
 			if (_keyboard->_key[kKeyAlt])
@@ -805,18 +754,6 @@ void System::touch(uint16 mask, int x, int y) {
 				_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-			if (_sprite)
-				_sprite->step(x - '0');
-			break;
-		case F10          :
-			if (_snail->idle() && !_hero->_flags._hide)
-				_vm->startCountDown();
-			break;
 		}
 	} else {
 		if (_vm->_startupMode)
@@ -876,16 +813,12 @@ void System::tick() {
 					int n = newRandom(100);
 					if (n > 96)
 						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
-					else {
-						if (n > 90)
-							_vm->heroCover(5);
-						else {
-							if (n > 60)
-								_vm->heroCover(4);
-							else
-								_vm->heroCover(3);
-						}
-					}
+					else if (n > 90)
+						_vm->heroCover(5);
+					else if (n > 60)
+						_vm->heroCover(4);
+					else
+						_vm->heroCover(3);
 				}
 			}
 			funTouch();
@@ -972,103 +905,6 @@ void CGEEngine::killSprite() {
 	_sprite->_flags._bDel = true;
 	_snail_->addCom(kSnKill, -1, 0, _sprite);
 	_sprite = NULL;
-}
-
-void CGEEngine::pushSprite() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::pushSprite()");
-
-	Sprite *spr = _sprite->_prev;
-	if (spr) {
-		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
-		while (_sprite->_z > _sprite->_next->_z)
-			_sprite->_z--;
-	} else
-		_snail_->addCom(kSnSound, -1, 2, NULL);
-}
-
-void CGEEngine::pullSprite() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::pullSprite()");
-
-	bool ok = false;
-	Sprite *spr = _sprite->_next;
-	if (spr) {
-		spr = spr->_next;
-		if (spr)
-			ok = (!spr->_flags._slav);
-	}
-	if (ok) {
-		_vga->_showQ->insert(_vga->_showQ->remove(_sprite), spr);
-		if (_sprite->_prev)
-			while (_sprite->_z < _sprite->_prev->_z)
-				_sprite->_z++;
-	} else
-		_snail_->addCom(kSnSound, -1, 2, NULL);
-}
-
-void CGEEngine::nextStep() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::nextStep()");
-
-	_snail_->addCom(kSnStep, 0, 0, _sprite);
-}
-
-void CGEEngine::saveMapping() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::saveMapping()");
-
-	IoHand cfTab(progName(".TAB"), kModeUpdate);
-	if (!cfTab._error) {
-		cfTab.seek((_now - 1) * sizeof(Cluster::_map));
-		cfTab.write((uint8 *) Cluster::_map, sizeof(Cluster::_map));
-	}
-
-	IoHand cfHxy(progName(".HXY"), kModeWrite);
-	if (!cfHxy._error) {
-		_heroXY[_now - 1]._x = _hero->_x;
-		_heroXY[_now - 1]._y = _hero->_y;
-		cfHxy.write((uint8 *) _heroXY, sizeof(_heroXY));
-	}
-}
-
-void CGEEngine::sayDebug() {
-//                                       1111111111222222222233333333334444444444555555555566666666667777777777
-//                             01234567890123456789012345678901234567890123456789012345678901234567890123456789
-	static char DebugText[] = " X=000 Y=000 S=00:00 000:000:000 000:000 00";
-
-	char *absX = DebugText + 3;
-	char *absY = DebugText + 9;
-	char *spN  = DebugText + 15;
-	char *spS  = DebugText + 18;
-	char *spX  = DebugText + 21;
-	char *spY  = DebugText + 25;
-	char *spZ  = DebugText + 29;
-	char *spW  = DebugText + 33;
-	char *spH  = DebugText + 37;
-	char *spF  = DebugText + 41;
-
-	if (!_debugLine->_flags._hide) {
-		dwtom(_mouse->_x, absX, 10, 3);
-		dwtom(_mouse->_y, absY, 10, 3);
-
-		// sprite queue size
-		uint16 n = 0;
-		for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
-			n++;
-			if (spr == _sprite) {
-				dwtom(n, spN, 10, 2);
-				dwtom(_sprite->_x, spX, 10, 3);
-				dwtom(_sprite->_y, spY, 10, 3);
-				dwtom(_sprite->_z, spZ, 10, 3);
-				dwtom(_sprite->_w, spW, 10, 3);
-				dwtom(_sprite->_h, spH, 10, 3);
-				dwtom(*(uint16 *)(&_sprite->_flags), spF, 16, 2);
-			}
-		}
-		dwtom(n, spS, 10, 2);
-		_debugLine->update(DebugText);
-	}
-}
-
-void CGEEngine::switchDebug() {
-	_debugLine->_flags._hide = !_debugLine->_flags._hide;
 }
 
 void CGEEngine::optionTouch(int opt, uint16 mask) {
@@ -1397,8 +1233,6 @@ void CGEEngine::loadScript(const char *fname) {
 }
 
 void CGEEngine::mainLoop() {
-	sayDebug();
-
 	if (_isDemo) {
 //		static uint32 tc = 0;
 		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ _talk == NULL && _snail->idle()) {
