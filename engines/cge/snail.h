@@ -80,7 +80,6 @@ private:
 	CGEEngine *_vm;
 };
 
-
 } // End of namespace CGE
 
 #endif
