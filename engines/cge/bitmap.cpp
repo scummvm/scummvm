@@ -223,7 +223,7 @@ BitmapPtr Bitmap::code() {
 						skip = (pix == kPixelTransp);
 						cnt = 0;
 					}
-					if (! skip) {
+					if (!skip) {
 						if (_v)
 							*im = pix;
 						im++;
