@@ -48,7 +48,6 @@ BtFile::BtFile(const char *name, IOMode mode, Crypt *crpt)
 	}
 }
 
-
 BtFile::~BtFile() {
 	debugC(1, kCGEDebugFile, "BtFile::~BtFile()");
 	for (int i = 0; i < kBtLevel; i++) {
@@ -56,7 +55,6 @@ BtFile::~BtFile() {
 		delete _buff[i]._page;
 	}
 }
-
 
 void BtFile::putPage(int lev, bool hard) {
 	debugC(1, kCGEDebugFile, "BtFile::putPage(%d, %s)", lev, hard ? "true" : "false");
@@ -67,7 +65,6 @@ void BtFile::putPage(int lev, bool hard) {
 		_buff[lev]._updt = false;
 	}
 }
-
 
 BtPage *BtFile::getPage(int lev, uint16 pgn) {
 	debugC(1, kCGEDebugFile, "BtFile::getPage(%d, %d)", lev, pgn);
@@ -129,7 +126,6 @@ BtKeypack *BtFile::find(const char *key) {
 	}
 	return NULL;
 }
-
 
 int keycomp(const void *k1, const void *k2) {
 	return scumm_strnicmp((const char *) k1, (const char*) k2, kBtKeySize);

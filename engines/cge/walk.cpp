@@ -57,7 +57,6 @@ Cluster XZ(int x, int y) {
 	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
 }
 
-
 Cluster XZ(Couple xy) {
 	signed char x, y;
 	xy.split(x, y);
@@ -68,7 +67,6 @@ Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
 	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _target(-1, -1), _findLevel(-1), _vm(vm) {
 }
 
-
 void Walk::tick() {
 	if (_flags._hide)
 		return;
@@ -76,9 +74,8 @@ void Walk::tick() {
 	_here = XZ(_x + _w / 2, _y + _h);
 
 	if (_dir != kDirNone) {
-		Sprite *spr;
 		_sys->funTouch();
-		for (spr = _vga->_showQ->first(); spr; spr = spr->_next) {
+		for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {
 					_vm->feedSnail(spr, kNear);
@@ -103,8 +100,10 @@ void Walk::tick() {
 			turn(d);
 		}
 	}
+
 	step();
-	if ((_dir == kDirWest  && _x      <= 0)         ||
+
+	if ((_dir == kDirWest  && _x <= 0) ||
 	    (_dir == kDirEast  && _x + _w >= kScrWidth) ||
 	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2)) {
 		park();
@@ -114,7 +113,6 @@ void Walk::tick() {
 		_snail_->addCom(kSnZTrim, -1, 0, this);    // update Hero's pos in show queue
 	}
 }
-
 
 int Walk::distance(Sprite *spr) {
 	int dx = spr->_x - (_x + _w - kWalkSide);
@@ -136,7 +134,6 @@ int Walk::distance(Sprite *spr) {
 	return dz - 1;
 }
 
-
 void Walk::turn(Dir d) {
 	Dir dir = (_dir == kDirNone) ? kDirSouth : _dir;
 	if (d != _dir) {
@@ -144,7 +141,6 @@ void Walk::turn(Dir d) {
 		_dir = d;
 	}
 }
-
 
 void Walk::park() {
 	if (_time == 0)
@@ -156,7 +152,6 @@ void Walk::park() {
 		_tracePtr = -1;
 	}
 }
-
 
 void Walk::findWay(Cluster c) {
 	if (c == _here)
@@ -171,12 +166,12 @@ void Walk::findWay(Cluster c) {
 		if (find1Way(Cluster(x, z)))
 			break;
 	}
+
 	_tracePtr = (_findLevel > kMaxFindLevel) ? -1 : (_findLevel - 1);
 	if (_tracePtr < 0)
 		noWay();
 	_time = 1;
 }
-
 
 void Walk::findWay(Sprite *spr) {
 	if (!spr || spr == this)
@@ -194,11 +189,9 @@ void Walk::findWay(Sprite *spr) {
 	                 : (z - 1))));
 }
 
-
 bool Walk::lower(Sprite *spr) {
 	return (spr->_y > _y + (_h * 3) / 5);
 }
-
 
 void Walk::reach(Sprite *spr, int mode) {
 	if (spr) {
@@ -230,7 +223,6 @@ bool Cluster::chkBar() const {
 }
 
 bool Walk::find1Way(Cluster c) {
-	Cluster start = c;
 	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
 	const int tabLen = 4;
 
@@ -251,6 +243,7 @@ bool Walk::find1Way(Cluster c) {
 		return false;
 
 	// Loop through each direction
+	Cluster start = c;
 	for (int i = 0; i < tabLen; i++) {
 		// Reset to starting position
 		c = start;
