@@ -124,7 +124,7 @@ char *forceExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-static  unsigned    Seed = 0xA5;
+static unsigned Seed = 0xA5;
 
 unsigned fastRand() {
 	return Seed = 257 * Seed + 817;
@@ -157,22 +157,25 @@ uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
 }
 
 uint16 atow(const char *a) {
+	if (!a)
+		return 0;
+
 	uint16 w = 0;
-	if (a)
-		while (IsDigit(*a))
-			w = (10 * w) + (*(a++) & 0xF);
+	while (IsDigit(*a))
+		w = (10 * w) + (*(a++) & 0xF);
 	return w;
 }
 
 uint16 xtow(const char *x) {
+	if (!x)
+		return 0;
+
 	uint16 w = 0;
-	if (x) {
-		while (IsHxDig(*x)) {
-			register uint16 d = *(x++);
-			if (d > '9')
-				d -= 'A' - ('9' + 1);
-			w = (w << 4) | (d & 0xF);
-		}
+	while (IsHxDig(*x)) {
+		register uint16 d = *(x++);
+		if (d > '9')
+			d -= 'A' - ('9' + 1);
+		w = (w << 4) | (d & 0xF);
 	}
 	return w;
 }
@@ -261,8 +264,7 @@ long IoHand::size() {
 }
 
 bool IoHand::exist(const char *name) {
-	Common::File f;
-	return f.exists(name);
+	return Common::File::exists(name);
 }
 
 void sndSetVolume() {
@@ -298,8 +300,8 @@ DataCk::DataCk(byte *buf, int bufSize) {
 }
 
 DataCk::~DataCk() {
-  if (_buf)
-	  free(_buf);
+	if (_buf)
+		free(_buf);
 }
 
 } // End of namespace CGE

@@ -33,15 +33,14 @@ namespace CGE {
 
 GetText *GetText::_ptr = NULL;
 
-
 GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	: Talk(vm), _text(text), _size(min<int>(size, kGetTextMax)), _len(min<int>(_size, strlen(text))),
 	_cntr(kGetTextBlink), _oldKeybClient(_keyboard->setClient(this)), _vm(vm) {
-	int i = 2 * kTextHMargin + _font->width(info);
 	_ptr = this;
 	_mode = kTBRect;
 
 	_ts = new BitmapPtr[2];
+	const int i = 2 * kTextHMargin + _font->width(info);
 	_ts[0] = box((i + 3) & ~3, 2 * kTextVMargin + 2 * kFontHigh + kTextLineSpace);
 	_ts[1] = NULL;
 	setShapeList(_ts);
@@ -55,12 +54,10 @@ GetText::GetText(CGEEngine *vm, const char *info, char *text, int size)
 	tick();
 }
 
-
 GetText::~GetText() {
 	_keyboard->setClient(_oldKeybClient);
 	_ptr = NULL;
 }
-
 
 void GetText::tick() {
 	if (++_cntr >= kGetTextBlink) {
@@ -71,7 +68,6 @@ void GetText::tick() {
 	_time = kGetTextTime;
 }
 
-
 void GetText::touch(uint16 mask, int x, int y) {
 	static char ogon[] = "•œ¥£˜ ¡";
 	static char bezo[] = "ACELNOSXZ";
@@ -80,7 +76,7 @@ void GetText::touch(uint16 mask, int x, int y) {
 	if (mask & kEventKeyb) {
 		_vm->keyClick();
 		switch (x) {
-		case Enter :
+		case Enter:
 			_buff[_len] = '\0';
 			strcpy(_text, _buff);
 			for (p = _text; *p; p++) {
@@ -88,17 +84,17 @@ void GetText::touch(uint16 mask, int x, int y) {
 				if (q)
 					*p = bezo[q - ogon];
 			}
-		case Esc   :
+		case Esc:
 			_snail_->addCom(kSnKill, -1, 0, this);
 			break;
-		case BSp   :
+		case BSp:
 			if (_len) {
 				_len--;
 				_buff[_len] = _buff[_len + 1];
 				_buff[_len + 1] = _buff[_len + 2];
 			}
 			break;
-		default    :
+		default:
 			if (x < 'A' || x > 'Z') {
 				if (_oldKeybClient)
 					_oldKeybClient->touch(mask, x, y);
