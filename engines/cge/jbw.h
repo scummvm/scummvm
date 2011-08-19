@@ -35,7 +35,6 @@ namespace CGE {
 // Defines found in cge.mak
 #define INI_FILE VFile // Or is it CFile?
 #define PIC_FILE VFile
-#define BMP_MODE 0
 //
 
 #define kMaxFile      128

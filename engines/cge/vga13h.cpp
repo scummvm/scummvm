@@ -289,7 +289,7 @@ Sprite *Sprite::expand() {
 							++_shpCnt;
 						}
 
-						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"), true);
+						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"));
 						break;
 					}
 					case 2 : { // Seq
@@ -344,7 +344,7 @@ Sprite *Sprite::expand() {
 					}
 				}
 			} else { // no sprite description: try to read immediately from .BMP
-				shplist[shpcnt++] = new Bitmap(_file, true);
+				shplist[shpcnt++] = new Bitmap(_file);
 			}
 			shplist[shpcnt] = NULL;
 			if (seq) {
@@ -1041,7 +1041,7 @@ void Bitmap::hide(int16 x, int16 y) {
 HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
 	BitmapPtr *HL = new BitmapPtr[2];
-	HL[0] = new Bitmap("HLINE", true);
+	HL[0] = new Bitmap("HLINE");
 	HL[1] = NULL;
 
 	setShapeList(HL);
@@ -1050,7 +1050,7 @@ HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
 	BitmapPtr *PR = new BitmapPtr[2];
-	PR[0] = new Bitmap("PRESS", true);
+	PR[0] = new Bitmap("PRESS");
 	PR[1] = NULL;
 
 	setShapeList(PR);
@@ -1059,8 +1059,8 @@ CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
 Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
 	BitmapPtr *SP = new BitmapPtr[3];
-	SP[0] = new Bitmap("SPK_L", true);
-	SP[1] = new Bitmap("SPK_R", true);
+	SP[0] = new Bitmap("SPK_L");
+	SP[1] = new Bitmap("SPK_R");
 	SP[2] = NULL;
 
 	setShapeList(SP);
@@ -1069,10 +1069,10 @@ Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
 PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
 	BitmapPtr *LI = new BitmapPtr[5];
-	LI[0] = new Bitmap("LITE0", true);
-	LI[1] = new Bitmap("LITE1", true);
-	LI[2] = new Bitmap("LITE2", true);
-	LI[3] = new Bitmap("LITE3", true);
+	LI[0] = new Bitmap("LITE0");
+	LI[1] = new Bitmap("LITE1");
+	LI[2] = new Bitmap("LITE2");
+	LI[3] = new Bitmap("LITE3");
 	LI[4] = NULL;
 
 	setShapeList(LI);
