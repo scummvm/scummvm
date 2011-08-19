@@ -38,7 +38,7 @@
 
 namespace CGE {
 
-static  VgaRegBlk VideoMode[] = {
+static VgaRegBlk VideoMode[] = {
 	{ 0x04, VGASEQ, 0x08, 0x04 },   // memory mode
 	{ 0x03, VGAGRA, 0xFF, 0x00 },   // data rotate = 0
 	{ 0x05, VGAGRA, 0x03, 0x00 },   // R/W mode = 0
@@ -55,7 +55,7 @@ static  VgaRegBlk VideoMode[] = {
 	{ 0x00,   0x00, 0x00, 0x00 }
 };
 
-bool SpeedTest   = false;
+bool SpeedTest = false;
 
 Seq *getConstantSeq(bool seqFlag) {
 	const Seq seq1[] = { { 0, 0, 0, 0, 0 } };
@@ -74,19 +74,16 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
-
-extern "C"  void    SNDMIDIPlay();
+extern "C" void SNDMIDIPlay();
 
 uint16 *SaveScreen() {
 	// In ScummVM, we don't need to worry about saving the original screen mode
 	return 0;
 }
 
-
 void RestoreScreen(uint16 * &sav) {
 	// In ScummVM, we don't need to restore the original text screen when the game exits
 }
-
 
 Dac mkDac(uint8 r, uint8 g, uint8 b) {
 	static Dac x;
@@ -118,7 +115,6 @@ Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	setShapeList(shpP);
 }
 
-
 Sprite::~Sprite() {
 	if (_sprite == this)
 		_sprite = NULL;
@@ -126,24 +122,21 @@ Sprite::~Sprite() {
 	contract();
 }
 
-
 BitmapPtr Sprite::shp() {
-	register SprExt *e = _ext;
-	if (e)
-		if (e->_seq) {
-			int i = e->_seq[_seqPtr]._now;
-			if (i >= _shpCnt) {
-				//char s[256];
-				//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
-				//      Seq, ShpCnt, SeqPtr, Seq[SeqPtr].Now, Seq[SeqPtr].Next);
-				//VGA::Exit(s, File);
-				error("Invalid PHASE in SPRITE::Shp() %s", _file);
-			}
-			return e->_shpList[i];
-		}
-	return NULL;
-}
+	SprExt *e = _ext;
+	if (!e || !e->_seq)
+		return NULL;
 
+	int i = e->_seq[_seqPtr]._now;
+	if (i >= _shpCnt) {
+		//char s[256];
+		//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
+		//      Seq, ShpCnt, SeqPtr, Seq[SeqPtr].Now, Seq[SeqPtr].Next);
+		//VGA::Exit(s, File);
+		error("Invalid PHASE in SPRITE::Shp() %s", _file);
+	}
+	return e->_shpList[i];
+}
 
 BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 	BitmapPtr *r = (_ext) ? _ext->_shpList : NULL;
@@ -171,7 +164,6 @@ BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 	return r;
 }
 
-
 void Sprite::moveShapes(uint8 *buf) {
 	BitmapPtr *p;
 	for (p = _ext->_shpList; *p; p++) {
@@ -179,21 +171,20 @@ void Sprite::moveShapes(uint8 *buf) {
 	}
 }
 
-
 bool Sprite::works(Sprite *spr) {
-	if (spr)
-		if (spr->_ext) {
-			Snail::Com *c = spr->_ext->_take;
-			if (c != NULL) {
-				c += spr->_takePtr;
-				if (c->_ref == _ref)
-					if (c->_com != kSnLabel || (c->_val == 0 || c->_val == _vm->_now))
-						return true;
-			}
-		}
+	if (!spr || !spr->_ext)
+		return false;
+
+	Snail::Com *c = spr->_ext->_take;
+	if (c != NULL) {
+		c += spr->_takePtr;
+		if (c->_ref == _ref)
+			if (c->_com != kSnLabel || (c->_val == 0 || c->_val == _vm->_now))
+				return true;
+	}
+
 	return false;
 }
-
 
 Seq *Sprite::setSeq(Seq *seq) {
 	if (_ext) {
@@ -202,7 +193,8 @@ Seq *Sprite::setSeq(Seq *seq) {
 	}
 
 	expand();
-	register Seq *s = _ext->_seq;
+
+	Seq *s = _ext->_seq;
 	_ext->_seq = seq;
 	if (_seqPtr == NO_SEQ)
 		step(0);
@@ -210,7 +202,6 @@ Seq *Sprite::setSeq(Seq *seq) {
 		step(_seqPtr);
 	return s;
 }
-
 
 bool Sprite::seqTest(int n) {
 	if (n >= 0)
@@ -220,185 +211,188 @@ bool Sprite::seqTest(int n) {
 	return true;
 }
 
-
 Snail::Com *Sprite::snList(SnList type) {
-	register SprExt *e = _ext;
+	SprExt *e = _ext;
 	if (e)
 		return (type == kNear) ? e->_near : e->_take;
 	return NULL;
 }
 
-
 void Sprite::setName(char *newName) {
-	if (_ext) {
-		if (_ext->_name) {
-			delete[] _ext->_name;
-			_ext->_name = NULL;
-		}
-		if (newName) {
-			_ext->_name = new char[strlen(newName) + 1];
-			assert(_ext->_name != NULL);
-			strcpy(_ext->_name, newName);
-		}
+	if (!_ext)
+		return;
+
+	if (_ext->_name) {
+		delete[] _ext->_name;
+		_ext->_name = NULL;
+	}
+	if (newName) {
+		_ext->_name = new char[strlen(newName) + 1];
+		assert(_ext->_name != NULL);
+		strcpy(_ext->_name, newName);
 	}
 }
-
 
 Sprite *Sprite::expand() {
-	if (!_ext) {
-		_ext = new SprExt;
-		assert(_ext != NULL);
-		if (*_file) {
-			static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
-			char line[kLineMax], fname[kPathMax];
+	if (_ext)
+		return this;
 
-			Common::Array<BitmapPtr> shplist;
-			for (int i = 0; i < _shpCnt + 1; ++i) shplist.push_back(NULL);
-			Seq *seq = NULL;
-			int shpcnt = 0,
-			    seqcnt = 0,
-			    neacnt = 0,
-			    takcnt = 0,
-			    maxnow = 0,
-			    maxnxt = 0;
+	_ext = new SprExt;
+	assert(_ext != NULL);
+	if (!*_file)
+		return this;
 
-			Snail::Com *nea = NULL;
-			Snail::Com *tak = NULL;
-			mergeExt(fname, _file, SPR_EXT);
-			if (INI_FILE::exist(fname)) { // sprite description file exist
-				INI_FILE sprf(fname);
-				if (!(sprf._error==0))
-					error("Bad SPR [%s]", fname);
-				int len = 0, lcnt = 0;
-				while ((len = sprf.read((uint8 *)line)) != 0) {
-					lcnt++;
-					if (len && line[len - 1] == '\n')
-						line[--len] = '\0';
-					if (len == 0 || *line == '.')
-						continue;
+	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
+	char line[kLineMax], fname[kPathMax];
 
-					switch (takeEnum(Comd, strtok(line, " =\t"))) {
-					case 0 : { // Name
-						setName(strtok(NULL, ""));
-						break;
-					}
-					case 1 : { // Phase
-						// In case the shape index gets too high, increase the array size
-						while ((shpcnt + 1) >= (int)shplist.size()) {
-							shplist.push_back(NULL);
-							++_shpCnt;
-						}
+	Common::Array<BitmapPtr> shplist;
+	for (int i = 0; i < _shpCnt + 1; ++i) shplist.push_back(NULL);
+	Seq *seq = NULL;
+	int shpcnt = 0,
+	    seqcnt = 0,
+	    neacnt = 0,
+	    takcnt = 0,
+	    maxnow = 0,
+	    maxnxt = 0;
 
-						shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"));
-						break;
-					}
-					case 2 : { // Seq
-						seq = (Seq *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
-						assert(seq != NULL);
-						Seq *s = &seq[seqcnt++];
-						s->_now  = atoi(strtok(NULL, " \t,;/"));
-						if (s->_now > maxnow)
-							maxnow = s->_now;
-						s->_next = atoi(strtok(NULL, " \t,;/"));
-						switch (s->_next) {
-						case 0xFF :
-							s->_next = seqcnt;
-							break;
-						case 0xFE :
-							s->_next = seqcnt - 1;
-							break;
-						}
-						if (s->_next > maxnxt)
-							maxnxt = s->_next;
-						s->_dx   = atoi(strtok(NULL, " \t,;/"));
-						s->_dy   = atoi(strtok(NULL, " \t,;/"));
-						s->_dly  = atoi(strtok(NULL, " \t,;/"));
-						break;
-					}
-					case 3 : { // Near
-						if (_nearPtr != NO_PTR) {
-							nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
-							assert(nea != NULL);
-							Snail::Com *c = &nea[neacnt++];
-							if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
-								error("Bad NEAR in %d [%s]", lcnt, fname);
-							c->_ref = atoi(strtok(NULL, " \t,;/"));
-							c->_val = atoi(strtok(NULL, " \t,;/"));
-							c->_ptr = NULL;
-						}
-					}
-					break;
-					case 4 : { // Take
-						if (_takePtr != NO_PTR) {
-							tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
-							assert(tak != NULL);
-							Snail::Com *c = &tak[takcnt++];
-							if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
-								error("Bad NEAR in %d [%s]", lcnt, fname);
-							c->_ref = atoi(strtok(NULL, " \t,;/"));
-							c->_val = atoi(strtok(NULL, " \t,;/"));
-							c->_ptr = NULL;
-						}
-						break;
-					}
-					}
+	Snail::Com *nea = NULL;
+	Snail::Com *tak = NULL;
+	mergeExt(fname, _file, SPR_EXT);
+	if (INI_FILE::exist(fname)) { // sprite description file exist
+		INI_FILE sprf(fname);
+		if (!(sprf._error==0))
+			error("Bad SPR [%s]", fname);
+		int len = 0, lcnt = 0;
+		while ((len = sprf.read((uint8 *)line)) != 0) {
+			lcnt++;
+			if (len && line[len - 1] == '\n')
+				line[--len] = '\0';
+			if (len == 0 || *line == '.')
+				continue;
+
+			Snail::Com *c;
+			switch (takeEnum(Comd, strtok(line, " =\t"))) {
+			case 0:
+				// Name
+				setName(strtok(NULL, ""));
+				break;
+			case 1:
+				// Phase
+				// In case the shape index gets too high, increase the array size
+				while ((shpcnt + 1) >= (int)shplist.size()) {
+					shplist.push_back(NULL);
+					++_shpCnt;
 				}
-			} else { // no sprite description: try to read immediately from .BMP
-				shplist[shpcnt++] = new Bitmap(_file);
+				shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"));
+				break;
+			case 2:
+				// Seq
+				seq = (Seq *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
+				assert(seq != NULL);
+				Seq *s;
+				s = &seq[seqcnt++];
+				s->_now = atoi(strtok(NULL, " \t,;/"));
+				if (s->_now > maxnow)
+					maxnow = s->_now;
+				s->_next = atoi(strtok(NULL, " \t,;/"));
+				switch (s->_next) {
+				case 0xFF:
+					s->_next = seqcnt;
+					break;
+				case 0xFE:
+					s->_next = seqcnt - 1;
+					break;
+				}
+				if (s->_next > maxnxt)
+					maxnxt = s->_next;
+				s->_dx = atoi(strtok(NULL, " \t,;/"));
+				s->_dy = atoi(strtok(NULL, " \t,;/"));
+				s->_dly = atoi(strtok(NULL, " \t,;/"));
+				break;
+			case 3:
+				// Near
+				if (_nearPtr == NO_PTR)
+					break;
+				nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
+				assert(nea != NULL);
+				c = &nea[neacnt++];
+				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+					error("Bad NEAR in %d [%s]", lcnt, fname);
+				c->_ref = atoi(strtok(NULL, " \t,;/"));
+				c->_val = atoi(strtok(NULL, " \t,;/"));
+				c->_ptr = NULL;
+			break;
+			case 4:
+				// Take
+				if (_takePtr == NO_PTR)
+					break;
+				tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
+				assert(tak != NULL);
+				c = &tak[takcnt++];
+				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+					error("Bad NEAR in %d [%s]", lcnt, fname);
+				c->_ref = atoi(strtok(NULL, " \t,;/"));
+				c->_val = atoi(strtok(NULL, " \t,;/"));
+				c->_ptr = NULL;
+				break;
 			}
-			shplist[shpcnt] = NULL;
-			if (seq) {
-				if (maxnow >= shpcnt)
-					error("Bad PHASE in SEQ [%s]", fname);
-				if (maxnxt >= seqcnt)
-					error("Bad JUMP in SEQ [%s]", fname);
-				setSeq(seq);
-			} else
-				setSeq(getConstantSeq(_shpCnt == 1));
-
-			// Set the shape list
-			BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
-			for (uint i = 0; i < shplist.size(); ++i)
-				shapeList[i] = shplist[i];
-
-			setShapeList(shapeList);
-
-			if (nea)
-				nea[neacnt - 1]._ptr = _ext->_near = nea;
-			else
-				_nearPtr = NO_PTR;
-			if (tak)
-				tak[takcnt - 1]._ptr = _ext->_take = tak;
-			else
-				_takePtr = NO_PTR;
 		}
+	} else {
+		// no sprite description: try to read immediately from .BMP
+		shplist[shpcnt++] = new Bitmap(_file);
 	}
+
+	shplist[shpcnt] = NULL;
+	if (seq) {
+		if (maxnow >= shpcnt)
+			error("Bad PHASE in SEQ [%s]", fname);
+		if (maxnxt >= seqcnt)
+			error("Bad JUMP in SEQ [%s]", fname);
+		setSeq(seq);
+	} else
+		setSeq(getConstantSeq(_shpCnt == 1));
+
+	// Set the shape list
+	BitmapPtr *shapeList = new BitmapPtr[shplist.size()];
+	for (uint i = 0; i < shplist.size(); ++i)
+		shapeList[i] = shplist[i];
+
+	setShapeList(shapeList);
+
+	if (nea)
+		nea[neacnt - 1]._ptr = _ext->_near = nea;
+	else
+		_nearPtr = NO_PTR;
+	if (tak)
+		tak[takcnt - 1]._ptr = _ext->_take = tak;
+	else
+		_takePtr = NO_PTR;
+
 	return this;
 }
-
 
 Sprite *Sprite::contract() {
-	register SprExt *e = _ext;
-	if (e) {
-		if (e->_name)
-			delete[] e->_name;
-		if (_flags._bDel && e->_shpList) {
-			int i;
-			for (i = 0; e->_shpList[i]; i++)
-				delete e->_shpList[i];
-			delete[] e->_shpList;
-		}
+	SprExt *e = _ext;
+	if (!e)
+		return this;
 
-		free(e->_seq);
-		free(e->_near);
-		free(e->_take);
-
-		delete e;
-		_ext = NULL;
+	if (e->_name)
+		delete[] e->_name;
+	if (_flags._bDel && e->_shpList) {
+		for (int i = 0; e->_shpList[i]; i++)
+			delete e->_shpList[i];
+		delete[] e->_shpList;
 	}
+
+	free(e->_seq);
+	free(e->_near);
+	free(e->_take);
+
+	delete e;
+	_ext = NULL;
+
 	return this;
 }
-
 
 Sprite *Sprite::backShow(bool fast) {
 	expand();
@@ -409,7 +403,6 @@ Sprite *Sprite::backShow(bool fast) {
 	contract();
 	return this;
 }
-
 
 void Sprite::step(int nr) {
 	if (nr >= 0)
@@ -426,37 +419,32 @@ void Sprite::step(int nr) {
 	}
 }
 
-
 void Sprite::tick() {
 	step();
 }
 
-
 void Sprite::makeXlat(uint8 *x) {
-	if (_ext) {
-		BitmapPtr *b;
+	if (!_ext)
+		return;
 
-		if (_flags._xlat)
-			killXlat();
-		for (b = _ext->_shpList; *b; b++)
-			(*b)->_m = x;
-		_flags._xlat = true;
-	}
+	if (_flags._xlat)
+		killXlat();
+	for (BitmapPtr *b = _ext->_shpList; *b; b++)
+		(*b)->_m = x;
+	_flags._xlat = true;
 }
-
 
 void Sprite::killXlat() {
-	if (_flags._xlat && _ext) {
-		BitmapPtr *b;
-		uint8 *m = (*_ext->_shpList)->_m;
-		free(m);
+	if (!_flags._xlat || !_ext)
+		return;
 
-		for (b = _ext->_shpList; *b; b++)
-			(*b)->_m = NULL;
-		_flags._xlat = false;
-	}
+	uint8 *m = (*_ext->_shpList)->_m;
+	free(m);
+
+	for (BitmapPtr *b = _ext->_shpList; *b; b++)
+		(*b)->_m = NULL;
+	_flags._xlat = false;
 }
-
 
 void Sprite::gotoxy(int x, int y) {
 	int xo = _x, yo = _y;
@@ -481,14 +469,12 @@ void Sprite::gotoxy(int x, int y) {
 		_prev->gotoxy(_prev->_x - xo + _x, _prev->_y - yo + _y);
 }
 
-
 void Sprite::center() {
 	gotoxy((kScrWidth - _w) / 2, (kScrHeight - _h) / 2);
 }
 
-
 void Sprite::show() {
-	register SprExt *e;
+	SprExt *e;
 // asm cli     // critic section...
 	e = _ext;
 	e->_x0 = e->_x1;
@@ -506,7 +492,6 @@ void Sprite::show() {
 	}
 }
 
-
 void Sprite::show(uint16 pg) {
 	Graphics::Surface *a = Vga::_page[1];
 	Vga::_page[1] = Vga::_page[pg & 3];
@@ -514,28 +499,26 @@ void Sprite::show(uint16 pg) {
 	Vga::_page[1] = a;
 }
 
-
 void Sprite::hide() {
-	register SprExt *e = _ext;
+	SprExt *e = _ext;
 	if (e->_b0)
 		e->_b0->hide(e->_x0, e->_y0);
 }
 
-
 BitmapPtr Sprite::ghost() {
-	register SprExt *e = _ext;
-	if (e->_b1) {
-		BitmapPtr bmp = new Bitmap(0, 0, (uint8 *)NULL);
-		assert(bmp != NULL);
-		bmp->_w = e->_b1->_w;
-		bmp->_h = e->_b1->_h;
-		bmp->_b = new HideDesc[bmp->_h];
-		assert(bmp->_b != NULL);
-		bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
-		bmp->_map = (e->_y1 << 16) + e->_x1;
-		return bmp;
-	}
-	return NULL;
+	SprExt *e = _ext;
+	if (!e->_b1)
+		return NULL;
+
+	BitmapPtr bmp = new Bitmap(0, 0, (uint8 *)NULL);
+	assert(bmp != NULL);
+	bmp->_w = e->_b1->_w;
+	bmp->_h = e->_b1->_h;
+	bmp->_b = new HideDesc[bmp->_h];
+	assert(bmp->_b != NULL);
+	bmp->_v = (uint8 *) memcpy(bmp->_b, e->_b1->_b, sizeof(HideDesc) * bmp->_h);
+	bmp->_map = (e->_y1 << 16) + e->_x1;
+	return bmp;
 }
 
 void Sprite::sync(Common::Serializer &s) {
@@ -617,15 +600,12 @@ Sprite *spriteAt(int x, int y) {
 	return spr;
 }
 
-
 Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {
 }
-
 
 Queue::~Queue() {
 	clear();
 }
-
 
 void Queue::clear() {
 	while (_head) {
@@ -635,7 +615,6 @@ void Queue::clear() {
 	}
 }
 
-
 void Queue::forAll(void (*fun)(Sprite *)) {
 	Sprite *s = _head;
 	while (s) {
@@ -644,7 +623,6 @@ void Queue::forAll(void (*fun)(Sprite *)) {
 		s = n;
 	}
 }
-
 
 void Queue::append(Sprite *spr) {
 	if (_tail) {
@@ -658,7 +636,6 @@ void Queue::append(Sprite *spr) {
 	else
 		spr->contract();
 }
-
 
 void Queue::insert(Sprite *spr, Sprite *nxt) {
 	if (nxt == _head) {
@@ -680,7 +657,6 @@ void Queue::insert(Sprite *spr, Sprite *nxt) {
 	else
 		spr->contract();
 }
-
 
 void Queue::insert(Sprite *spr) {
 	Sprite *s;
@@ -716,16 +692,13 @@ Sprite *Queue::remove(Sprite *spr) {
 	return spr;
 }
 
-
 Sprite *Queue::locate(int ref) {
-	Sprite *spr;
-	for (spr = _head; spr; spr = spr->_next) {
+	for (Sprite *spr = _head; spr; spr = spr->_next) {
 		if (spr->_ref == ref)
 			return spr;
 	}
 	return NULL;
 }
-
 
 //extern const char Copr[];
 Graphics::Surface *Vga::_page[4];
@@ -782,7 +755,6 @@ Vga::Vga(int mode)
 	clear(0);
 }
 
-
 Vga::~Vga() {
 	_mono = 0;
 
@@ -807,11 +779,9 @@ Vga::~Vga() {
 	delete _spareQ;
 }
 
-
 void Vga::setStatAdr() {
 	// No implementation needed for ScummVM
 }
-
 
 #pragma argsused
 void Vga::waitVR(bool on) {
@@ -820,17 +790,14 @@ void Vga::waitVR(bool on) {
 	g_system->delayMillis(5);
 }
 
-
 void Vga::setup(VgaRegBlk *vrb) {
 	// No direct VGA setup required, since ScummVM provides it's own graphics interface
 }
-
 
 int Vga::setMode(int mode) {
 	// ScummVM provides it's own vieo services
 	return 0;
 }
-
 
 void Vga::getColors(Dac *tab) {
 	byte palData[kPalSize];
@@ -877,12 +844,10 @@ void Vga::setColors(Dac *tab, int lum) {
 	_setPal = true;
 }
 
-
 void Vga::setColors() {
 	memset(_newColors, 0, kPalSize);
 	updateColors();
 }
-
 
 void Vga::sunrise(Dac *tab) {
 	for (int i = 0; i <= 64; i += FADE_STEP) {
@@ -891,7 +856,6 @@ void Vga::sunrise(Dac *tab) {
 		updateColors();
 	}
 }
-
 
 void Vga::sunset() {
 	Dac tab[256];
@@ -903,26 +867,21 @@ void Vga::sunset() {
 	}
 }
 
-
 void Vga::show() {
-	Sprite *spr = _showQ->first();
-
-	for (spr = _showQ->first(); spr; spr = spr->_next)
+	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next)
 		spr->show();
 	update();
-	for (spr = _showQ->first(); spr; spr = spr->_next)
+	for (Sprite *spr = _showQ->first(); spr; spr = spr->_next)
 		spr->hide();
 
 	_frmCnt++;
 }
-
 
 void Vga::updateColors() {
 	byte palData[kPalSize];
 	dacToPal(_newColors, palData);
 	g_system->getPaletteManager()->setPalette(palData, 0, 256);
 }
-
 
 void Vga::update() {
 	SWAP(Vga::_page[0], Vga::_page[1]);
@@ -936,12 +895,10 @@ void Vga::update() {
 	g_system->updateScreen();
 }
 
-
 void Vga::clear(uint8 color) {
 	for (int paneNum = 0; paneNum < 4; paneNum++)
 		_page[paneNum]->fillRect(Common::Rect(0, 0, kScrWidth, kScrHeight), color);
 }
-
 
 void Vga::copyPage(uint16 d, uint16 s) {
 	_page[d]->copyFrom(*_page[s]);
