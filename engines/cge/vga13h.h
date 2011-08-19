@@ -194,7 +194,6 @@ private:
 	CGEEngine *_vm;
 };
 
-
 class Queue {
 	Sprite *_head;
 	Sprite *_tail;
@@ -218,7 +217,6 @@ public:
 	Sprite *locate(int ref);
 	void clear();
 };
-
 
 class Vga {
 	uint16 _oldMode;
@@ -282,9 +280,7 @@ public:
 	PocLight(CGEEngine *vm);
 };
 
-
 Dac mkDac(uint8 r, uint8 g, uint8 b);
-
 
 template <class CBLK>
 uint8 closest(CBLK *pal, CBLK x) {
@@ -316,7 +312,7 @@ uint8 closest(CBLK *pal, CBLK x) {
 }
 
 uint16 *saveScreen();
-void    restoreScreen(uint16 * &sav);
+void restoreScreen(uint16 * &sav);
 Sprite *spriteAt(int x, int y);
 Sprite *locate(int ref);
 
