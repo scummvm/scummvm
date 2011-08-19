@@ -71,7 +71,7 @@ Cluster XZ(Couple xy) {
 }
 
 Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
-	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _target(-1, -1), _vm(vm) {
+	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _target(-1, -1), _findLevel(-1), _vm(vm) {
 }
 
 
