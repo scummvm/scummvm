@@ -276,7 +276,7 @@ void InfoLine::update(const char *text) {
 		for (pDest = v + lsiz; pDest < (v + psiz); pDest += lsiz) {
 			Common::copy(v, v + lsiz, pDest);
 		}
-		*(uint16 *)(v + psiz - 2) = kBmpEOI;              // plane trailer uint16
+		*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);              // plane trailer uint16
 		for (pDest = v + psiz; pDest < (v + 4 * psiz); pDest += psiz) {
 			Common::copy(v, v + psiz, pDest);
 		}
