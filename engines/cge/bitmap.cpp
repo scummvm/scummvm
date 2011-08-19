@@ -81,13 +81,11 @@ Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
 	}
 }
 
-
 Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, map)", w, h);
 	if (map)
 		code();
 }
-
 
 // following routine creates filled rectangle
 // immediately as VGA video chunks, in near memory as fast as possible,
@@ -134,20 +132,19 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	_b = b;
 }
 
-
 Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(bmp)");
 	uint8 *v0 = bmp._v;
-	if (v0) {
-		uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
-		uint16 siz = vsiz + _h * sizeof(HideDesc);
-		uint8 *v1 = new uint8[siz];
-		assert(v1 != NULL);
-		memcpy(v1, v0, siz);
-		_b = (HideDesc *)((_v = v1) + vsiz);
-	}
-}
+	if (!v0)
+		return;
 
+	uint16 vsiz = (uint8 *)(bmp._b) - (uint8 *)(v0);
+	uint16 siz = vsiz + _h * sizeof(HideDesc);
+	uint8 *v1 = new uint8[siz];
+	assert(v1 != NULL);
+	memcpy(v1, v0, siz);
+	_b = (HideDesc *)((_v = v1) + vsiz);
+}
 
 Bitmap::~Bitmap() {
 	debugC(6, kCGEDebugBitmap, "Bitmap::~Bitmap()");
@@ -155,7 +152,6 @@ Bitmap::~Bitmap() {
 	free(_m);
 	delete[] _v;
 }
-
 
 Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	debugC(1, kCGEDebugBitmap, "&Bitmap::operator =");
@@ -166,9 +162,10 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	_m = NULL;
 	_map = 0;
 	delete[] _v;
-	if (v0 == NULL)
+
+	if (v0 == NULL) {
 		_v = NULL;
-	else {
+	} else {
 		uint16 vsiz = (uint8 *)bmp._b - (uint8 *)v0;
 		uint16 siz = vsiz + _h * sizeof(HideDesc);
 		uint8 *v1 = (uint8 *) malloc(sizeof(uint8) * siz);
@@ -179,21 +176,19 @@ Bitmap &Bitmap::operator = (const Bitmap &bmp) {
 	return *this;
 }
 
-
 uint16 Bitmap::moveVmap(uint8 *buf) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::moveVmap(buf)");
 
-	if (_v) {
-		uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
-		uint16 siz = vsiz + _h * sizeof(HideDesc);
-		memcpy(buf, _v, siz);
-		delete[] _v;
-		_b = (HideDesc *)((_v = buf) + vsiz);
-		return siz;
-	}
-	return 0;
-}
+	if (!_v)
+		return 0;
 
+	uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
+	uint16 siz = vsiz + _h * sizeof(HideDesc);
+	memcpy(buf, _v, siz);
+	delete[] _v;
+	_b = (HideDesc *)((_v = buf) + vsiz);
+	return siz;
+}
 
 BitmapPtr Bitmap::code() {
 	debugC(1, kCGEDebugBitmap, "Bitmap::code()");
@@ -201,7 +196,7 @@ BitmapPtr Bitmap::code() {
 	if (!_m)
 		return false;
 
-	uint16 i, cnt;
+	uint16 cnt;
 
 	if (_v) {                                        // old X-map exists, so remove it
 		delete[] _v;
@@ -214,7 +209,7 @@ BitmapPtr Bitmap::code() {
 		int bpl;
 
 		if (_v) {                                      // 2nd pass - fill the hide table
-			for (i = 0; i < _h; i++) {
+			for (uint16 i = 0; i < _h; i++) {
 				_b[i]._skip = 0xFFFF;
 				_b[i]._hide = 0x0000;
 			}
@@ -225,7 +220,7 @@ BitmapPtr Bitmap::code() {
 			uint16 j;
 
 			cnt = 0;
-			for (i = 0; i < _h; i++) {                  // once per each line
+			for (uint16 i = 0; i < _h; i++) {                  // once per each line
 				uint8 pix;
 				for (j = bpl; j < _w; j += 4) {
 					pix = bm[j];
@@ -293,7 +288,7 @@ BitmapPtr Bitmap::code() {
 		_b = (HideDesc *)(_v + sizV);
 	}
 	cnt = 0;
-	for (i = 0; i < _h; i++) {
+	for (uint16 i = 0; i < _h; i++) {
 		if (_b[i]._skip == 0xFFFF) {                    // whole line is skipped
 			_b[i]._skip = (cnt + kScrWidth) >> 2;
 			cnt = 0;
@@ -309,19 +304,16 @@ BitmapPtr Bitmap::code() {
 	return this;
 }
 
-
 bool Bitmap::solidAt(int16 x, int16 y) {
 	debugC(6, kCGEDebugBitmap, "Bitmap::solidAt(%d, %d)", x, y);
-
-	uint8 *m;
-	uint16 r, n, n0;
 
 	if ((x >= _w) || (y >= _h))
 		return false;
 
-	m = _v;
-	r = static_cast<uint16>(x) % 4;
-	n0 = (kScrWidth * y + x) / 4, n = 0;
+	uint8 *m = _v;
+	uint16 r = static_cast<uint16>(x) % 4;
+	uint16 n0 = (kScrWidth * y + x) / 4;
+	uint16 n = 0;
 
 	while (r) {
 		uint16 w, t;
@@ -372,7 +364,6 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	}
 }
 
-
 bool Bitmap::saveVBM(XFile *f) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::saveVBM(f)");
 
@@ -399,7 +390,6 @@ bool Bitmap::saveVBM(XFile *f) {
 
 	return (f->_error == 0);
 }
-
 
 bool Bitmap::loadVBM(XFile *f) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::loadVBM(f)");

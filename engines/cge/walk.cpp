@@ -96,9 +96,9 @@ void Walk::tick() {
 		}
 	}
 
-	if (_flags._hold || _tracePtr < 0)
+	if (_flags._hold || _tracePtr < 0) {
 		park();
-	else {
+	} else {
 		if (_here == _trace[_tracePtr]) {
 			if (--_tracePtr < 0)
 				park();
@@ -112,9 +112,9 @@ void Walk::tick() {
 	step();
 	if ((_dir == kDirWest  && _x      <= 0)         ||
 	    (_dir == kDirEast  && _x + _w >= kScrWidth) ||
-	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2))
+	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2)) {
 		park();
-	else {
+	} else {
 		signed char x;            // dummy var
 		_here.split(x, _z);         // take current Z position
 		_snail_->addCom(kSnZTrim, -1, 0, this);    // update Hero's pos in show queue
@@ -123,8 +123,7 @@ void Walk::tick() {
 
 
 int Walk::distance(Sprite *spr) {
-	int dx, dz;
-	dx = spr->_x - (_x + _w - kWalkSide);
+	int dx = spr->_x - (_x + _w - kWalkSide);
 	if (dx < 0)
 		dx = (_x + kWalkSide) - (spr->_x + spr->_w);
 
@@ -132,7 +131,7 @@ int Walk::distance(Sprite *spr) {
 		dx = 0;
 
 	dx /= kMapGridX;
-	dz = spr->_z - _z;
+	int dz = spr->_z - _z;
 	if (dz < 0)
 		dz = - dz;
 
@@ -166,36 +165,39 @@ void Walk::park() {
 
 
 void Walk::findWay(Cluster c) {
-	if (c != _here) {
-		for (_findLevel = 1; _findLevel <= kMaxFindLevel; _findLevel++) {
-			signed char x, z;
-			_here.split(x, z);
-			_target = Couple(x, z);
-			c.split(x, z);
+	if (c == _here)
+		return;
 
-			if (find1Way(Cluster(x, z)))
-				break;
-		}
-		_tracePtr = (_findLevel > kMaxFindLevel) ? -1 : (_findLevel - 1);
-		if (_tracePtr < 0)
-			noWay();
-		_time = 1;
+	for (_findLevel = 1; _findLevel <= kMaxFindLevel; _findLevel++) {
+		signed char x, z;
+		_here.split(x, z);
+		_target = Couple(x, z);
+		c.split(x, z);
+
+		if (find1Way(Cluster(x, z)))
+			break;
 	}
+	_tracePtr = (_findLevel > kMaxFindLevel) ? -1 : (_findLevel - 1);
+	if (_tracePtr < 0)
+		noWay();
+	_time = 1;
 }
 
 
 void Walk::findWay(Sprite *spr) {
-	if (spr && spr != this) {
-		int x = spr->_x;
-		int z = spr->_z;
-		if (spr->_flags._east)
-			x += spr->_w + _w / 2 - kWalkSide;
-		else
-			x -= _w / 2 - kWalkSide;
-		findWay(Cluster((x / kMapGridX),
-		                ((z < kMapZCnt - kDistMax) ? (z + 1)
-		                 : (z - 1))));
-	}
+	if (!spr || spr == this)
+		return;
+
+	int x = spr->_x;
+	int z = spr->_z;
+	if (spr->_flags._east)
+		x += spr->_w + _w / 2 - kWalkSide;
+	else
+		x -= _w / 2 - kWalkSide;
+
+	findWay(Cluster((x / kMapGridX),
+	                ((z < kMapZCnt - kDistMax) ? (z + 1)
+	                 : (z - 1))));
 }
 
 

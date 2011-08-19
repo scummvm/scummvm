@@ -32,14 +32,13 @@
 
 namespace CGE {
 
-
 uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b);
 
 class Fly : public Sprite {
-	static int _l;
-	static int _t;
-	static int _r;
-	static int _b;
+	static const int _l;
+	static const int _t;
+	static const int _r;
+	static const int _b;
 public:
 	int _tx, _ty;
 	Fly(CGEEngine *vm, Bitmap **shpl);

@@ -59,9 +59,7 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	_flags._bDel = true;
 }
 
-
-static  char   *vmgt;
-
+static char *g_vmgt;
 
 char *VMGather(Choice *list) {
 	Choice *cp;
@@ -71,30 +69,28 @@ char *VMGather(Choice *list) {
 		len += strlen(cp->_text);
 		h++;
 	}
-	vmgt = new char[len + h];
-	if (vmgt) {
-		*vmgt = '\0';
+	g_vmgt = new char[len + h];
+	if (g_vmgt) {
+		*g_vmgt = '\0';
 		for (cp = list; cp->_text; cp++) {
-			if (*vmgt)
-				strcat(vmgt, "|");
-			strcat(vmgt, cp->_text);
+			if (*g_vmgt)
+				strcat(g_vmgt, "|");
+			strcat(g_vmgt, cp->_text);
 			h++;
 		}
 	}
-	return vmgt;
+	return g_vmgt;
 }
 
-
 Vmenu *Vmenu::_addr = NULL;
-int    Vmenu::_recent   = -1;
-
+int Vmenu::_recent = -1;
 
 Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vm(vm) {
 	Choice *cp;
 
 	_addr = this;
-	delete[] vmgt;
+	delete[] g_vmgt;
 	_items = 0;
 	for (cp = list; cp->_text; cp++)
 		_items++;
@@ -110,7 +106,6 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	_vga->_showQ->insert(_bar, _vga->_showQ->last());
 }
 
-
 Vmenu::~Vmenu() {
 	_addr = NULL;
 }
@@ -118,31 +113,32 @@ Vmenu::~Vmenu() {
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
 void Vmenu::touch(uint16 mask, int x, int y) {
-	if (_items) {
-		Sprite::touch(mask, x, y);
+	if (!_items)
+		return;
 
-		y -= kTextVMargin - 1;
-		int n = 0;
-		bool ok = false;
-		uint16 h = kFontHigh + kTextLineSpace;
+	Sprite::touch(mask, x, y);
 
-		if (y >= 0) {
-			n = y / h;
-			if (n < _items)
-				ok = (x >= kTextHMargin && x < _w - kTextHMargin/* && y % h < FONT_HIG*/);
-			else
-				n = _items - 1;
-		}
+	y -= kTextVMargin - 1;
+	int n = 0;
+	bool ok = false;
+	uint16 h = kFontHigh + kTextLineSpace;
 
-		_bar->gotoxy(_x + kTextHMargin - kMenuBarHM, _y + kTextVMargin + n * h - kMenuBarVM);
+	if (y >= 0) {
+		n = y / h;
+		if (n < _items)
+			ok = (x >= kTextHMargin && x < _w - kTextHMargin/* && y % h < FONT_HIG*/);
+		else
+			n = _items - 1;
+	}
 
-		if (ok && (mask & kMouseLeftUp)) {
-			_items = 0;
-			_snail_->addCom(kSnKill, -1, 0, this);
-			_recent = n;
-			assert(_menu[n].Proc);
-			CALL_MEMBER_FN(*_vm, _menu[n].Proc)();
-		}
+	_bar->gotoxy(_x + kTextHMargin - kMenuBarHM, _y + kTextVMargin + n * h - kMenuBarVM);
+
+	if (ok && (mask & kMouseLeftUp)) {
+		_items = 0;
+		_snail_->addCom(kSnKill, -1, 0, this);
+		_recent = n;
+		assert(_menu[n].Proc);
+		CALL_MEMBER_FN(*_vm, _menu[n].Proc)();
 	}
 }
 

@@ -96,7 +96,6 @@ public:
 	bool isValid() const;
 };
 
-
 class Walk : public Sprite {
 private:
 	CGEEngine *_vm;

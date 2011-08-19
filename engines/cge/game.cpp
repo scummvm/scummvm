@@ -43,7 +43,7 @@ uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
 	return x;
 }
 
-int Fly::_l = 20,
+const int Fly::_l = 20,
     Fly::_t = 40,
     Fly::_r = 110,
     Fly::_b = 100;
@@ -56,17 +56,17 @@ Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 
 void Fly::tick() {
 	step();
-	if (!_flags._kept) {
-		if (newRandom(10) < 1) {
-			_tx = newRandom(3) - 1;
-			_ty = newRandom(3) - 1;
-		}
-		if (_x + _tx < _l || _x + _tx + _w > _r)
-			_tx = -_tx;
-		if (_y + _ty < _t || _y + _ty + _h > _b)
-			_ty = -_ty;
-		gotoxy(_x + _tx, _y + _ty);
+	if (_flags._kept)
+		return;
+	if (newRandom(10) < 1) {
+		_tx = newRandom(3) - 1;
+		_ty = newRandom(3) - 1;
 	}
+	if (_x + _tx < _l || _x + _tx + _w > _r)
+		_tx = -_tx;
+	if (_y + _ty < _t || _y + _ty + _h > _b)
+		_ty = -_ty;
+	gotoxy(_x + _tx, _y + _ty);
 }
 
 } // End of namespace CGE
