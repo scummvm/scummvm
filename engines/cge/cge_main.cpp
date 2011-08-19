@@ -36,7 +36,6 @@
 #include "graphics/thumbnail.h"
 #include "cge/general.h"
 #include "cge/sound.h"
-#include "cge/config.h"
 #include "cge/vga13h.h"
 #include "cge/snail.h"
 #include "cge/text.h"
