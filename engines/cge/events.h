@@ -82,7 +82,6 @@ struct CGEEvent {
 	Sprite *_spritePtr;
 };
 
-
 class Mouse : public Sprite {
 public:
 	Sprite *_hold;

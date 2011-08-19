@@ -44,7 +44,6 @@ IoBuf::IoBuf(IOMode mode, Crypt *crypt)
 	assert(_buff != NULL);
 }
 
-
 IoBuf::IoBuf(const char *name, IOMode mode, Crypt *crypt)
 	: IoHand(name, mode, crypt),
 	  _bufMark(0),
@@ -64,7 +63,6 @@ IoBuf::~IoBuf() {
 	free(_buff);
 }
 
-
 void IoBuf::readBuf() {
 	debugC(4, kCGEDebugFile, "IoBuf::readBuf()");
 
@@ -72,7 +70,6 @@ void IoBuf::readBuf() {
 	_lim = IoHand::read(_buff, kBufferSize);
 	_ptr = 0;
 }
-
 
 void IoBuf::writeBuf() {
 	debugC(4, kCGEDebugFile, "IoBuf::writeBuf()");
@@ -83,7 +80,6 @@ void IoBuf::writeBuf() {
 		_lim = 0;
 	}
 }
-
 
 uint16 IoBuf::read(void *buf, uint16 len) {
 	debugC(4, kCGEDebugFile, "IoBuf::read(buf, %d)", len);
@@ -106,7 +102,6 @@ uint16 IoBuf::read(void *buf, uint16 len) {
 	}
 	return total;
 }
-
 
 uint16 IoBuf::read(uint8 *buf) {
 	debugC(3, kCGEDebugFile, "IoBuf::read(buf)");
@@ -154,7 +149,6 @@ uint16 IoBuf::read(uint8 *buf) {
 	return total;
 }
 
-
 uint16 IoBuf::write(void *buf, uint16 len) {
 	debugC(1, kCGEDebugFile, "IoBuf::write(buf, %d)", len);
 
@@ -175,7 +169,6 @@ uint16 IoBuf::write(void *buf, uint16 len) {
 	return tot;
 }
 
-
 uint16 IoBuf::write(uint8 *buf) {
 	debugC(1, kCGEDebugFile, "IoBuf::write(buf)");
 
@@ -195,7 +188,6 @@ uint16 IoBuf::write(uint8 *buf) {
 	return len;
 }
 
-
 int IoBuf::read() {
 	debugC(1, kCGEDebugFile, "IoBuf::read()");
 
@@ -207,7 +199,6 @@ int IoBuf::read() {
 	return _buff[_ptr++];
 }
 
-
 void IoBuf::write(uint8 b) {
 	debugC(1, kCGEDebugFile, "IoBuf::write(%d)", b);
 
@@ -216,19 +207,15 @@ void IoBuf::write(uint8 b) {
 	_buff[_lim++] = b;
 }
 
-
-uint16  CFile::_maxLineLen   = kLineMaxSize;
-
+uint16 CFile::_maxLineLen = kLineMaxSize;
 
 CFile::CFile(const char *name, IOMode mode, Crypt *crypt)
 	: IoBuf(name, mode, crypt) {
 	debugC(1, kCGEDebugFile, "CFile::CFile(%s, %d, crypt)", name, mode);
 }
 
-
 CFile::~CFile() {
 }
-
 
 void CFile::flush() {
 	debugC(1, kCGEDebugFile, "CFile::flush()");
@@ -246,13 +233,11 @@ void CFile::flush() {
 	warning("FIXME: CFILE::Flush");
 }
 
-
 long CFile::mark() {
 	debugC(5, kCGEDebugFile, "CFile::mark()");
 
 	return _bufMark + ((_mode != kModeRead) ? _lim : _ptr);
 }
-
 
 long CFile::seek(long pos) {
 	debugC(1, kCGEDebugFile, "CFile::seek(%ld)", pos);
@@ -270,7 +255,6 @@ long CFile::seek(long pos) {
 		return _bufMark = IoHand::seek(pos);
 	}
 }
-
 
 void CFile::append(CFile &f) {
 	debugC(1, kCGEDebugFile, "CFile::append(f)");

@@ -184,7 +184,6 @@ Mouse::~Mouse() {
 	off();
 }
 
-
 void Mouse::on() {
 	if (_seqPtr && _exist) {
 		_active = true;
@@ -193,7 +192,6 @@ void Mouse::on() {
 			_busy->step(0);
     }
 }
-
 
 void Mouse::off() {
 	if (_seqPtr == 0) {
@@ -332,8 +330,7 @@ void EventManager::handleEvents() {
 
 void EventManager::clearEvent(Sprite *spr) {
 	if (spr) {
-		uint16 e;
-		for (e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % kEventMax)
+		for (uint16 e = _eventQueueTail; e != _eventQueueHead; e = (e + 1) % kEventMax)
 			if (_eventQueue[e]._spritePtr == spr)
 				_eventQueue[e]._mask = 0;
 	} else
@@ -346,4 +343,5 @@ CGEEvent &EventManager::getNextEvent() {
 
 	return evt;
 }
+
 } // End of namespace CGE

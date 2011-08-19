@@ -73,19 +73,16 @@ VFile::VFile(const char *name, IOMode mode)
 	}
 }
 
-
 VFile::~VFile() {
 	if (_recent == this)
 		_recent = NULL;
 }
-
 
 bool VFile::exist(const char *name) {
 	debugC(1, kCGEDebugFile, "VFile::exist(%s)", name);
 
 	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
-
 
 void VFile::readBuf() {
 	debugC(3, kCGEDebugFile, "VFile::readBuf()");
