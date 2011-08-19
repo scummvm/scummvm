@@ -369,7 +369,6 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 		}
 	}
 	debugC(1, kCGEDebugEngine, "CGEEngine::saveSound()");
-
 }
 
 bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
@@ -401,7 +400,6 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 	header.saveMinutes = in->readSint16LE();
 
 	return true;
-
 }
 
 void CGEEngine::heroCover(int cvr) {
@@ -546,9 +544,9 @@ void CGEEngine::AltCtrlDel() {
 void CGEEngine::miniStep(int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::miniStep(%d)", stp);
 
-	if (stp < 0)
+	if (stp < 0) {
 		_miniCave->_flags._hide = true;
-	else {
+	} else {
 		*_miniShp[0] = *_miniShpList[stp];
 		if (_fx->_current)
 			&*(_fx->_current->addr());
@@ -640,7 +638,6 @@ void CGEEngine::caveUp() {
 		_mouse->on();
 }
 
-
 void CGEEngine::caveDown() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::caveDown()");
 
@@ -656,6 +653,7 @@ void CGEEngine::caveDown() {
 		}
 		spr = n;
 	}
+
 	_text->clear(1000);
 }
 
@@ -867,7 +865,6 @@ void System::touch(uint16 mask, int x, int y) {
 	}
 }
 
-
 void System::tick() {
 	if (!_vm->_startupMode)
 		if (--_funDel == 0) {
@@ -1031,7 +1028,6 @@ void CGEEngine::saveMapping() {
 	}
 }
 
-
 void CGEEngine::sayDebug() {
 //                                       1111111111222222222233333333334444444444555555555566666666667777777777
 //                             01234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -1176,7 +1172,6 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			_snail->addCom(kSnWalk, -1, -1, this); // Hero->FindWay(this);
 	}
 }
-
 
 void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
 	static const char *Comd[] = { "Name", "Type", "Phase", "East",
