@@ -79,44 +79,44 @@ int Text::find(int ref) {
 
 void Text::preload(int from, int upto) {
 	INI_FILE tf = _fileName;
-	if (!tf._error) {
-		Han *CacheLim = _cache + _size;
-		char line[kLineMax + 1];
-		int n;
+	if (tf._error)
+		return;
 
-		while ((n = tf.read((uint8 *)line)) != 0) {
-			char *s;
+	Han *CacheLim = _cache + _size;
+	char line[kLineMax + 1];
+	int n;
 
-			if (line[n - 1] == '\n')
-				line[--n] = '\0';
+	while ((n = tf.read((uint8 *)line)) != 0) {
+		if (line[n - 1] == '\n')
+			line[--n] = '\0';
 
-			if ((s = strtok(line, " =,;/\t\n")) == NULL)
-				continue;
-			if (!IsDigit(*s))
-				continue;
+		char *s;
+		if ((s = strtok(line, " =,;/\t\n")) == NULL)
+			continue;
+		if (!IsDigit(*s))
+			continue;
 
-			int ref = atoi(s);
-			if (ref && ref >= from && ref < upto) {
-				Han *p = &_cache[find(ref)];
+		int ref = atoi(s);
+		if (ref && ref >= from && ref < upto) {
+			Han *p = &_cache[find(ref)];
 
-				if (p < CacheLim) {
-					delete[] p->_text;
-					p->_text = NULL;
-				} else
-					p = &_cache[find(0)];
+			if (p < CacheLim) {
+				delete[] p->_text;
+				p->_text = NULL;
+			} else
+				p = &_cache[find(0)];
 
-				if (p >= CacheLim)
-					break;
+			if (p >= CacheLim)
+				break;
 
-				s += strlen(s);
-				if (s < line + n)
-					++s;
-				if ((p->_text = new char[strlen(s) + 1]) == NULL)
-					break;
+			s += strlen(s);
+			if (s < line + n)
+				++s;
+			if ((p->_text = new char[strlen(s) + 1]) == NULL)
+				break;
 
-				p->_ref = ref;
-				strcpy(p->_text, s);
-			}
+			p->_ref = ref;
+			strcpy(p->_text, s);
 		}
 	}
 }
@@ -161,7 +161,6 @@ char *Text::load(int idx, int ref) {
 	return NULL;
 }
 
-
 char *Text::getText(int ref) {
 	int i;
 	if ((i = find(ref)) < _size)
@@ -176,7 +175,6 @@ char *Text::getText(int ref) {
 	}
 	return load(i, ref);
 }
-
 
 void Text::say(const char *text, Sprite *spr) {
 	killText();
