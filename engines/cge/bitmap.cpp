@@ -106,16 +106,16 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	                                                // + room for wash table
 	assert(v != NULL);
 
-	*(uint16 *) v = kBmpCPY | dsiz;                 // data chunk hader
+	*(uint16 *) v = TO_LE_16(kBmpCPY | dsiz);                 // data chunk hader
 	memset(v + 2, fill, dsiz);                      // data bytes
-	*(uint16 *)(v + lsiz - 2) = kBmpSKP | ((kScrWidth / 4) - dsiz);  // gap
+	*(uint16 *)(v + lsiz - 2) = TO_LE_16(kBmpSKP | ((kScrWidth / 4) - dsiz));  // gap
 
 	// Replicate lines
 	byte *destP;
 	for (destP = v + lsiz; destP < (v + psiz); destP += lsiz)
 		Common::copy(v, v + lsiz, destP);
 
-	*(uint16 *)(v + psiz - 2) = kBmpEOI;            // plane trailer uint16
+	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);            // plane trailer uint16
 
 	// Repliccate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
@@ -239,7 +239,7 @@ BitmapPtr Bitmap::code() {
 					if ((pix == kPixelTransp) != skip || cnt >= 0x3FF0) { // end of block
 						cnt |= (skip) ? kBmpSKP : kBmpCPY;
 						if (_v)
-							*cp = cnt;                          // store block description uint16
+							*cp = TO_LE_16(cnt);                          // store block description uint16
 
 						cp = (uint16 *) im;
 						im += 2;
@@ -261,7 +261,7 @@ BitmapPtr Bitmap::code() {
 					} else {
 						cnt |= kBmpCPY;
 						if (_v)
-							*cp = cnt;
+							*cp = TO_LE_16(cnt);
 
 						cp = (uint16 *) im;
 						im += 2;
@@ -273,13 +273,13 @@ BitmapPtr Bitmap::code() {
 			if (cnt && ! skip) {
 				cnt |= kBmpCPY;
 				if (_v)
-					*cp = cnt;
+					*cp = TO_LE_16(cnt);
 
 				cp = (uint16 *) im;
 				im += 2;
 			}
 			if (_v)
-				*cp = kBmpEOI;
+				*cp = TO_LE_16(kBmpEOI);
 			cp = (uint16 *) im;
 			im += 2;
 		}
@@ -326,7 +326,7 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	while (r) {
 		uint16 w, t;
 
-		w = *(uint16 *) m;
+		w = READ_LE_UINT16(m);
 		m += 2;
 		t = w & 0xC000;
 		w &= 0x3FFF;
@@ -347,7 +347,7 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	while (true) {
 		uint16 w, t;
 
-		w = *(uint16 *) m;
+		w = READ_LE_UINT16(m);
 		m += 2;
 		t = w & 0xC000;
 		w &= 0x3FFF;
