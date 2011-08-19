@@ -473,7 +473,7 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	_flags._bDel = false;
 
 	BitmapPtr *MB = new BitmapPtr[2];
-	MB[0] = new Bitmap("BRICK", true);
+	MB[0] = new Bitmap("BRICK");
 	MB[1] = NULL;
 	setShapeList(MB);
 }
@@ -1630,7 +1630,7 @@ bool CGEEngine::showTitle(const char *name) {
 
 	Bitmap::_pal = Vga::_sysPal;
 	BitmapPtr *LB = new BitmapPtr[2];
-	LB[0] = new Bitmap(name, true);
+	LB[0] = new Bitmap(name);
 	LB[1] = NULL;
 	Bitmap::_pal = NULL;
 

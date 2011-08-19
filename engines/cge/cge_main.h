@@ -93,7 +93,6 @@ namespace CGE {
 
 
 class System : public Sprite {
-	int _lum;
 public:
 	int _funDel;
 

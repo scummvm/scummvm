@@ -48,36 +48,18 @@ void Bitmap::deinit() {
 }
 
 #pragma argsused
-Bitmap::Bitmap(const char *fname, bool rem) : _m(NULL), _v(NULL), _map(0) {
-	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s, %s)", fname, rem ? "true" : "false");
+Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
+	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
-#if (BMP_MODE < 2)
-	if (rem && PIC_FILE::exist(pat)) {
+	if (PIC_FILE::exist(pat)) {
 		PIC_FILE file(pat);
 		if ((file._error == 0) && (!loadVBM(&file)))
 			error("Bad VBM [%s]", fname);
-	} else
-#endif
-	{
-#if (BMP_MODE)
-		forceExt(pat, fname, ".BMP");
-		PIC_FILE file(pat);
-		if (file._error == 0) {
-			if (loadBMP(&file)) {
-				code();
-				if (rem) {
-					free(_m);
-					_m = NULL;
-				}
-			} else
-				error("Bad BMP [%s]", fname);
-		}
-#else
+	} else {
 		error("Bad VBM [%s]", fname);
-#endif
 	}
 }
 
@@ -115,7 +97,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 
 	*(uint16 *)(v + psiz - 2) = TO_LE_16(kBmpEOI);            // plane trailer uint16
 
-	// Repliccate planes
+	// Replicate planes
 	for (destP = v + psiz; destP < (v + 4 * psiz); destP += psiz)
 		Common::copy(v, v + psiz, destP);
 
@@ -364,33 +346,6 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	}
 }
 
-bool Bitmap::saveVBM(XFile *f) {
-	debugC(1, kCGEDebugBitmap, "Bitmap::saveVBM(f)");
-
-	uint16 p = (_pal != NULL),
-	       n = ((uint16)(((uint8 *)_b) - _v)) + _h * sizeof(HideDesc);
-	if (f->_error == 0)
-		f->write((uint8 *)&p, sizeof(p));
-
-	if (f->_error == 0)
-		f->write((uint8 *)&n, sizeof(n));
-
-	if (f->_error == 0)
-		f->write((uint8 *)&_w, sizeof(_w));
-
-	if (f->_error == 0)
-		f->write((uint8 *)&_h, sizeof(_h));
-
-	if (f->_error == 0)
-		if (p)
-			f->write((uint8 *)_pal, 256 * 3);
-
-	if (f->_error == 0)
-		f->write(_v, n);
-
-	return (f->_error == 0);
-}
-
 bool Bitmap::loadVBM(XFile *f) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::loadVBM(f)");
 
@@ -436,63 +391,6 @@ bool Bitmap::loadVBM(XFile *f) {
 
 	_b = (HideDesc *)(_v + n - _h * sizeof(HideDesc));
 	return (f->_error == 0);
-}
-
-bool Bitmap::loadBMP(XFile *f) {
-	debugC(1, kCGEDebugBitmap, "Bitmap::loadBMP(f)");
-
-	struct {
-		char BM[2];
-		union { int16 len; int32 len_; };
-		union { int16 _06; int32 _06_; };
-		union { int16 hdr; int32 hdr_; };
-		union { int16 _0E; int32 _0E_; };
-		union { int16 wid; int32 wid_; };
-		union { int16 hig; int32 hig_; };
-		union { int16 _1A; int32 _1A_; };
-		union { int16 _1E; int32 _1E_; };
-		union { int16 _22; int32 _22_; };
-		union { int16 _26; int32 _26_; };
-		union { int16 _2A; int32 _2A_; };
-		union { int16 _2E; int32 _2E_; };
-		union { int16 _32; int32 _32_; };
-	} hea;
-
-	Bgr4 bpal[256];
-
-	f->read((byte *)&hea, sizeof(hea));
-	if (f->_error == 0) {
-		if (hea.hdr == 0x436L) {
-			int16 i = (hea.hdr - sizeof(hea)) / sizeof(Bgr4);
-			f->read((byte *)&bpal, sizeof(bpal));
-			if (f->_error == 0) {
-				if (_pal) {
-					for (i = 0; i < 256; i++) {
-						_pal[i]._r = bpal[i]._R;
-						_pal[i]._g = bpal[i]._G;
-						_pal[i]._b = bpal[i]._B;
-					}
-					_pal = NULL;
-				}
-				_h = hea.hig;
-				_w = hea.wid;
-				if ((_m = (byte *) malloc(sizeof(byte) * (_h * _w))) != NULL) {
-					int16 r = (4 - (hea.wid & 3)) % 4;
-					byte buf[3];
-					for (i = _h - 1; i >= 0; i--) {
-						f->read(_m + (_w * i), _w);
-						if (r && f->_error == 0)
-							f->read(buf, r);
-						if (f->_error)
-							break;
-					}
-					if (i < 0)
-						return true;
-				}
-			}
-		}
-	}
-	return false;
 }
 
 } // End of namespace CGE
