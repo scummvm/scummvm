@@ -245,6 +245,7 @@ EventManager::EventManager() {
 	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
+	memset(&_eventQueue, 0, kEventMax * sizeof(CGEEvent));
 	memset(&_event, 0, sizeof(Common::Event));
 }
 
