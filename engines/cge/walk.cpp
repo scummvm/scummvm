@@ -49,7 +49,8 @@ bool Cluster::isValid() const {
 
 bool Cluster::chkBar() const {
 	assert(_vm->_now <= _vm->_caveMax);
-	return (_a == _vm->_barriers[_vm->_now]._horz) && (_b == _vm->_barriers[_vm->_now]._vert);
+	return (_a < 0) || (_b < 0) || (_a >= _vm->_barriers[_vm->_now]._horz) || 
+		(_b >= _vm->_barriers[_vm->_now]._vert);
 }
 
 Cluster XZ(int x, int y) {
