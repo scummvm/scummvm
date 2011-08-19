@@ -304,7 +304,6 @@ public:
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_autoappear = 0xc70c;
 	static const uint16 addr_dochange = 0xc708;
-	static const uint16 addr_setallchanges = 0xc704;
 	static const uint16 addr_switchryanoff = 0xc700;
 	static const uint16 addr_switchryanon = 0xc6fc;
 	static const uint16 addr_removefreeobject = 0xc6f4;
@@ -2023,7 +2022,7 @@ public:
 	void openhoteldoor2();
 	void getridoftempsp();
 	void scanfornames();
-	void setallchanges();
+	//void setallchanges();
 	void readsetdata();
 	//void printboth();
 	void standardload();

@@ -1066,6 +1066,20 @@ void DreamGenContext::findormake(uint8 b0, uint8 b2, uint8 b3) {
 	}
 }
 
+void DreamGenContext::setallchanges() {
+	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	while (change->b0 != 0xff) {
+		if (change->location == data.byte(kReallocation)) {
+			al = change->b0;
+			ah = change->location;
+			cl = change->b2;
+			ch = change->b3;
+			dochange();
+		}
+		++change;
+	}
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

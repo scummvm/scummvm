@@ -11338,28 +11338,6 @@ void DreamGenContext::switchryanoff() {
 	data.byte(kRyanon) = 1;
 }
 
-void DreamGenContext::setallchanges() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-setallloop:
-	ax = es.word(bx);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (endsetloop) */;
-	cx = es.word(bx+2);
-	_add(bx, 4);
-	_cmp(ah, data.byte(kReallocation));
-	if (!flags.z())
-		goto setallloop;
-	push(es);
-	push(bx);
-	dochange();
-	bx = pop();
-	es = pop();
-	goto setallloop;
-}
-
 void DreamGenContext::dochange() {
 	STACK_CHECK;
 	_cmp(ch, 0);
@@ -18692,7 +18670,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_removefreeobject: removefreeobject(); break;
 		case addr_switchryanon: switchryanon(); break;
 		case addr_switchryanoff: switchryanoff(); break;
-		case addr_setallchanges: setallchanges(); break;
 		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;

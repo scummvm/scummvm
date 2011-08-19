@@ -151,5 +151,6 @@
 	void findxyfrompath();
 	void findormake();
 	void findormake(uint8 b0, uint8 b2, uint8 b3);
+	void setallchanges();
 	bool isCD();
 
