@@ -407,15 +407,19 @@ bool Bitmap::loadVBM(XFile *f) {
 	uint16 p = 0, n = 0;
 	if (f->_error == 0)
 		f->read((uint8 *)&p, sizeof(p));
+	p = FROM_LE_16(p);
 
 	if (f->_error == 0)
 		f->read((uint8 *)&n, sizeof(n));
+	n = FROM_LE_16(n);
 
 	if (f->_error == 0)
 		f->read((uint8 *)&_w, sizeof(_w));
+	_w = FROM_LE_16(_w);
 
 	if (f->_error == 0)
 		f->read((uint8 *)&_h, sizeof(_h));
+	_h = FROM_LE_16(_h);
 
 	if (f->_error == 0) {
 		if (p) {
