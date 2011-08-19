@@ -42,21 +42,17 @@ Sound::Sound(CGEEngine *vm) : _vm(vm) {
 	open();
 }
 
-
 Sound::~Sound() {
 	close();
 }
-
 
 void Sound::close() {
 	_vm->_midiPlayer.killMidi();
 }
 
-
 void Sound::open() {
 	play((*_fx)[30000], 8);
 }
-
 
 void Sound::play(DataCk *wav, int pan, int cnt) {
 	if (wav) {
@@ -97,16 +93,13 @@ Fx::Fx(int size) : _current(NULL) {
 	}
 }
 
-
 Fx::~Fx() {
 	clear();
 	delete[] _cache;
 }
 
-
 void Fx::clear() {
-	Han *p, * q;
-	for (p = _cache, q = p + _size; p < q; p++) {
+	for (Han *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref) {
 			p->_ref = 0;
 			delete p->_wav;
@@ -116,11 +109,9 @@ void Fx::clear() {
 	_current = NULL;
 }
 
-
 int Fx::find(int ref) {
-	Han *p, * q;
 	int i = 0;
-	for (p = _cache, q = p + _size; p < q; p++) {
+	for (Han *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref == ref)
 			break;
 		else
@@ -129,12 +120,10 @@ int Fx::find(int ref) {
 	return i;
 }
 
-
 void Fx::preload(int ref0) {
 	Han *cacheLim = _cache + _size;
-	int ref;
 
-	for (ref = ref0; ref < ref0 + 10; ref++) {
+	for (int ref = ref0; ref < ref0 + 10; ref++) {
 		static char fname[] = "FX00000.WAV";
 		wtom(ref, fname + 2, 10, 5);
 		INI_FILE file = INI_FILE(fname);
@@ -149,7 +138,6 @@ void Fx::preload(int ref0) {
 	}
 }
 
-
 DataCk *Fx::load(int idx, int ref) {
 	static char fname[] = "FX00000.WAV";
 	wtom(ref, fname + 2, 10, 5);
@@ -163,7 +151,6 @@ DataCk *Fx::load(int idx, int ref) {
 	}
 	return wav;
 }
-
 
 DataCk *Fx::operator [](int ref) {
 	int i;

@@ -179,7 +179,6 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	step(1);
 }
 
-
 Mouse::~Mouse() {
 	off();
 }
