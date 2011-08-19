@@ -201,7 +201,6 @@ public:
 	void pocFul();
 	void hide1(Sprite *spr);
 	void loadMapping();
-	void saveMapping();
 	void saveSound();
 	void heroCover(int cvr);
 	void trouble(int seq, int text);
@@ -211,13 +210,8 @@ public:
 	void keyClick();
 	void switchColorMode();
 	void killSprite();
-	void pushSprite();
-	void pullSprite();
-	void sayDebug();
-	void nextStep();
 	void switchDebug();
 	void miniStep(int stp);
-	void AltCtrlDel();
 	void postMiniStep(int stp);
 	void showBak(int ref);
 	void initCaveValues();
