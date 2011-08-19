@@ -56,7 +56,7 @@ Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 
 void Fly::tick() {
 	step();
-	if (!_flags.flags._kept) {
+	if (!_flags._kept) {
 		if (newRandom(10) < 1) {
 			_tx = newRandom(3) - 1;
 			_ty = newRandom(3) - 1;

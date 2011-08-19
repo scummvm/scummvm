@@ -120,8 +120,13 @@ public:
 	{}
 };
 
-union Flags {
-	struct FlagsBits {
+class Sprite {
+protected:
+	SprExt *_ext;
+public:
+	int _ref;
+	signed char _cave;
+	struct Flags {
 		uint16 _hide : 1;       // general visibility switch
 		uint16 _near : 1;       // Near action lock
 		uint16 _drag : 1;       // sprite is moveable
@@ -138,17 +143,7 @@ union Flags {
 		uint16 _back : 1;       // 'send to background' request
 		uint16 _bDel : 1;       // delete bitmaps in ~SPRITE
 		uint16 _tran : 1;       // transparent (untouchable)
-	} flags;
-	uint16 flagsWord;
-};
-
-class Sprite {
-protected:
-	SprExt *_ext;
-public:
-	int _ref;
-	signed char _cave;
-	Flags _flags;
+	} _flags;
 	int _x;
 	int _y;
 	signed char _z;
