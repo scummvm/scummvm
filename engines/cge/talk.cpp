@@ -77,7 +77,7 @@ Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode)
 	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
 	
 	_ts = NULL;
-	_flags.flags._syst = true;
+	_flags._syst = true;
 	update(text);
 }
 
@@ -85,7 +85,7 @@ Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode)
 Talk::Talk(CGEEngine *vm)
 	: Sprite(vm, NULL), _mode(kTBPure), _vm(vm) {
 	_ts = NULL;
-	_flags.flags._syst = true;
+	_flags._syst = true;
 }
 
 Font *Talk::_font;

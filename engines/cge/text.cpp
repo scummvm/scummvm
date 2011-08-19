@@ -180,7 +180,7 @@ void Text::say(const char *text, Sprite *spr) {
 	killText();
 	_talk = new Talk(_vm, text, kTBRound);
 	if (_talk) {
-		bool east = spr->_flags.flags._east;
+		bool east = spr->_flags._east;
 		int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
 		int y = spr->_y + 2;
 		Sprite *spike = new Spike(_vm);
@@ -197,8 +197,8 @@ void Text::say(const char *text, Sprite *spr) {
 		if (spr->_ref == 1)
 			x += ((east) ? -10 : 10); // Hero
 
-		_talk->_flags.flags._kill = true;
-		_talk->_flags.flags._bDel = true;
+		_talk->_flags._kill = true;
+		_talk->_flags._bDel = true;
 		_talk->setName(_text->getText(kSayName));
 		_talk->gotoxy(x - (_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _talk->_h + 1);
 		_talk->_z = 125;
@@ -206,8 +206,8 @@ void Text::say(const char *text, Sprite *spr) {
 
 		spike->gotoxy(x, _talk->_y + _talk->_h - 1);
 		spike->_z = 126;
-		spike->_flags.flags._slav = true;
-		spike->_flags.flags._kill = true;
+		spike->_flags._slav = true;
+		spike->_flags._kill = true;
 		spike->setName(_text->getText(kSayName));
 		spike->step(east);
 		spike->_ref = kSayRef;
@@ -223,8 +223,8 @@ void CGEEngine::inf(const char *text) {
 	killText();
 	_talk = new Talk(this, text, kTBRect);
 	if (_talk) {
-		_talk->_flags.flags._kill = true;
-		_talk->_flags.flags._bDel = true;
+		_talk->_flags._kill = true;
+		_talk->_flags._bDel = true;
 		_talk->setName(_text->getText(kInfName));
 		_talk->center();
 		_talk->gotoxy(_talk->_x, _talk->_y - 20);
