@@ -307,7 +307,6 @@ public:
 	static const uint16 addr_setallchanges = 0xc704;
 	static const uint16 addr_switchryanoff = 0xc700;
 	static const uint16 addr_switchryanon = 0xc6fc;
-	static const uint16 addr_findormake = 0xc6f8;
 	static const uint16 addr_removefreeobject = 0xc6f4;
 	static const uint16 addr_placefreeobject = 0xc6f0;
 	static const uint16 addr_issetobonmap = 0xc6ec;
@@ -1372,6 +1371,7 @@ public:
 	void getexpos();
 	void fadedos();
 	//void fillspace();
+	void selectlocation();
 	//void multiget();
 	//void autosetwalk();
 	void fadeupmonfirst();
@@ -1407,7 +1407,7 @@ public:
 	void useelevator5();
 	void useelevator4();
 	void useelevator1();
-	void attendant();
+	//void findormake();
 	void useelevator3();
 	void useelevator2();
 	void buttonone();
@@ -1427,7 +1427,7 @@ public:
 	void slabdoore();
 	void slabdoord();
 	void adjustup();
-	void readsetdata();
+	void slabdoorf();
 	void loadintotemp();
 	void loadintroroom();
 	void saveseg();
@@ -1443,7 +1443,6 @@ public:
 	void showdiary();
 	void purgealocation();
 	//void updatepeople();
-	void slabdoorf();
 	void addtopeoplelist();
 	void hangoncurs();
 	void sparkydrip();
@@ -1571,7 +1570,7 @@ public:
 	//void doblocks();
 	void restoreall();
 	void allpalette();
-	void findormake();
+	void attendant();
 	void nextsymbol();
 	void monks2text();
 	void clearpalette();
@@ -1868,7 +1867,7 @@ public:
 	void calledensdlift();
 	void checkinside();
 	void gates();
-	void selectlocation();
+	void newgame();
 	void showwatch();
 	void turnanypathon();
 	void restorereels();
@@ -2025,7 +2024,7 @@ public:
 	void getridoftempsp();
 	void scanfornames();
 	void setallchanges();
-	void newgame();
+	void readsetdata();
 	//void printboth();
 	void standardload();
 	void undertextline();

@@ -1041,6 +1041,31 @@ void DreamGenContext::walktotext() {
 	commandwithob(3, data.byte(kCommandtype), data.byte(kCommand));
 }
 
+void DreamGenContext::findormake() {
+	uint8 b0 = al;
+	uint8 b2 = cl;
+	uint8 b3 = ch;
+	findormake(b0, b2, b3);
+}
+
+void DreamGenContext::findormake(uint8 b0, uint8 b2, uint8 b3) {
+	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	while (true) {
+		if (change->b0 == 0xff) {
+			change->b0 = b0;
+			change->location = data.byte(kReallocation);
+			change->b2 = b2;
+			change->b3 = b3;
+			return;
+		}
+		if ((b0 == change->b0) && (data.byte(kReallocation) == change->location) && (b3 == change->b3)) {
+			change->b2 = b2;
+			return;
+		}
+		++change;
+	}
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

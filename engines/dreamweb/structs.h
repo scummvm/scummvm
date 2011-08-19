@@ -194,3 +194,11 @@ struct Rain {
 	uint8 b5;
 };
 
+struct Change {
+	uint8 b0;
+	uint8 location;
+	uint8 b2;
+	uint8 b3;
+};
+
+

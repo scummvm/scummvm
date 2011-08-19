@@ -11328,35 +11328,6 @@ void DreamGenContext::removefreeobject() {
 	es = pop();
 }
 
-void DreamGenContext::findormake() {
-	STACK_CHECK;
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	push(ax);
-	es = data.word(kBuffers);
-	ah = data.byte(kReallocation);
-changeloop:
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		goto haventfound;
-	_cmp(ax, es.word(bx));
-	if (!flags.z())
-		goto nofoundchange;
-	_cmp(ch, es.byte(bx+3));
-	if (flags.z())
-		goto foundchange;
-nofoundchange:
-	_add(bx, 4);
-	goto changeloop;
-foundchange:
-	ax = pop();
-	es.byte(bx+2) = cl;
-	return;
-haventfound:
-	es.word(bx) = ax;
-	es.word(bx+2) = cx;
-	ax = pop();
-}
-
 void DreamGenContext::switchryanon() {
 	STACK_CHECK;
 	data.byte(kRyanon) = 255;
@@ -18719,7 +18690,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_issetobonmap: issetobonmap(); break;
 		case addr_placefreeobject: placefreeobject(); break;
 		case addr_removefreeobject: removefreeobject(); break;
-		case addr_findormake: findormake(); break;
 		case addr_switchryanon: switchryanon(); break;
 		case addr_switchryanoff: switchryanoff(); break;
 		case addr_setallchanges: setallchanges(); break;
