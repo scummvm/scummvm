@@ -1141,7 +1141,7 @@ void Snail::runCom() {
 					warning("TODO: Select sound card");
 					break;
 				case kSnSelect:
-					_vm->snSelect();
+					warning("TODO: Sound card selection");
 					break;
 				case kSndSetVolume:
 					sndSetVolume();

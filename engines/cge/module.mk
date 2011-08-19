@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	cfile.o \
 	cge.o \
 	cge_main.o \
-	config.o \
 	console.o \
 	detection.o \
 	events.o \

@@ -243,7 +243,6 @@ public:
 	void snRelZ(Sprite *spr, int z);
 	void snRNNext(Sprite *spr, int p);
 	void snRTNext(Sprite *spr, int p);
-	void snSelect();
 	void snSend(Sprite *spr, int val);
 	void snRelX(Sprite *spr, int x);
 	void snRelY(Sprite *spr, int y);
