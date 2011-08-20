@@ -45,9 +45,6 @@ class Dat {
 	VOLBASE _file;
 public:
 	Dat();
-
-	bool append(uint8 *buf, uint16 len);
-	bool write(CFile &f);
 	bool read(long org, uint16 len, uint8 *buf);
 };
 
@@ -61,7 +58,6 @@ private:
 	long _endMark;
 
 	void readBuf();
-	void writeBuf() { }
 public:
 	VFile(const char *name, IOMode mode = kModeRead);
 	~VFile();

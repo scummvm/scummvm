@@ -233,23 +233,6 @@ uint16 IoHand::read(void *buf, uint16 len) {
 	return bytesRead;
 }
 
-uint16 IoHand::write(void *buf, uint16 len) {
-	warning("IOHAND::Write not supported");
-	return 0;
-/*
-	if (len) {
-		if (Mode == kModeRead || Handle < 0)
-			return 0;
-		if (Crypt)
-			Seed = Crypt(buf, len, Seed);
-		Error = _dos_write(Handle, buf, len, &len);
-		if (Crypt)
-			Seed = Crypt(buf, len, Seed); //------$$$$$$$
-	}
-	return len;
-*/
-}
-
 long IoHand::mark() {
 	return _file->pos();
 }

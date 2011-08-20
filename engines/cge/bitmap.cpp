@@ -47,7 +47,6 @@ void Bitmap::init() {
 void Bitmap::deinit() {
 }
 
-#pragma argsused
 Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
