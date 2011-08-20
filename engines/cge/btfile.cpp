@@ -43,27 +43,14 @@ BtFile::BtFile(const char *name, IOMode mode, Crypt *crpt)
 		_buff[i]._page = new BtPage;
 		_buff[i]._pgNo = kBtValNone;
 		_buff[i]._indx = -1;
-		_buff[i]._updt = false;
 		assert(_buff[i]._page != NULL);
 	}
 }
 
 BtFile::~BtFile() {
 	debugC(1, kCGEDebugFile, "BtFile::~BtFile()");
-	for (int i = 0; i < kBtLevel; i++) {
-		putPage(i, false);
+	for (int i = 0; i < kBtLevel; i++)
 		delete _buff[i]._page;
-	}
-}
-
-void BtFile::putPage(int lev, bool hard) {
-	debugC(1, kCGEDebugFile, "BtFile::putPage(%d, %s)", lev, hard ? "true" : "false");
-
-	if (hard || _buff[lev]._updt) {
-		seek(_buff[lev]._pgNo * kBtSize);
-		write((uint8 *) _buff[lev]._page, kBtSize);
-		_buff[lev]._updt = false;
-	}
 }
 
 BtPage *BtFile::getPage(int lev, uint16 pgn) {
@@ -71,26 +58,21 @@ BtPage *BtFile::getPage(int lev, uint16 pgn) {
 
 	if (_buff[lev]._pgNo != pgn) {
 		int32 pos = pgn * kBtSize;
-		putPage(lev, false);
 		_buff[lev]._pgNo = pgn;
-		if (size() > pos) {
-			seek((uint32) pgn * kBtSize);
+		assert(size() > pos);
+		// In the original, there was a check verifying if the
+		// purpose was to write a new file. This should only be
+		// to create a new file, thus it was removed.
+		seek((uint32) pgn * kBtSize);
 
-			// Read in the page
-			byte buffer[kBtSize];
-			int bytesRead = read(buffer, kBtSize);
+		// Read in the page
+		byte buffer[kBtSize];
+		int bytesRead = read(buffer, kBtSize);
 
-			// Unpack it into the page structure
-			Common::MemoryReadStream stream(buffer, bytesRead, DisposeAfterUse::NO);
-			_buff[lev]._page->read(stream);
+		// Unpack it into the page structure
+		Common::MemoryReadStream stream(buffer, bytesRead, DisposeAfterUse::NO);
+		_buff[lev]._page->read(stream);
 
-			_buff[lev]._updt = false;
-		} else {
-			memset(&_buff[lev]._page, 0, kBtSize);
-			_buff[lev]._page->_hea._count = 0;
-			_buff[lev]._page->_hea._down = kBtValNone;
-			_buff[lev]._updt = true;
-		}
 		_buff[lev]._indx = -1;
 	}
 	return _buff[lev]._page;

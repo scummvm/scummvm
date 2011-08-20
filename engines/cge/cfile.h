@@ -42,7 +42,6 @@ protected:
 	uint16 _lim;
 	long _bufMark;
 	virtual void readBuf();
-	virtual void writeBuf();
 public:
 	IoBuf(IOMode mode, Crypt *crpt);
 	IoBuf(const char *name, IOMode mode, Crypt *crpt);
@@ -50,9 +49,6 @@ public:
 	uint16 read(void *buf, uint16 len);
 	uint16 read(uint8 *buf);
 	int read();
-	uint16 write(void *buf, uint16 len);
-	uint16 write(uint8 *buf);
-	void write(uint8 b);
 };
 
 
@@ -61,10 +57,8 @@ public:
 	static uint16 _maxLineLen;
 	CFile(const char *name, IOMode mode, Crypt *crpt);
 	virtual ~CFile();
-	void flush();
 	long mark();
 	long seek(long pos);
-	void append(CFile &f);
 };
 
 } // End of namespace CGE

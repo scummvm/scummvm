@@ -77,10 +77,8 @@ class BtFile : public IoHand {
 		BtPage *_page;
 		uint16 _pgNo;
 		int _indx;
-		bool _updt;
 	} _buff[kBtLevel];
 
-	void putPage(int lev, bool hard);
 	BtPage *getPage(int lev, uint16 pgn);
 public:
 	BtFile(const char *name, IOMode mode, Crypt *crpt);
