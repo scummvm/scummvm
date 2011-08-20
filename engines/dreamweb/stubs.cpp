@@ -1101,6 +1101,20 @@ void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 	}
 }
 
+void DreamGenContext::deletetaken() {
+	ds = data.word(kExtras);
+	si = kExdata;
+	FreeObject *freeObjects = (FreeObject *)segRef(data.word(kFreedat)).ptr(0, 0);
+	for(size_t i = 0; i < kNumexobjects; ++i) {
+		uint8 location = ds.byte(si+11);
+		if (location == data.byte(kReallocation)) {
+			uint8 index = ds.byte(si+1);
+			freeObjects[index].b2 = 254;
+		}
+		si += 16;
+	}
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

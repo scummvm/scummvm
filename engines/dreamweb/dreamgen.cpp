@@ -5255,31 +5255,6 @@ doplace:
 	delpointer();
 }
 
-void DreamGenContext::deletetaken() {
-	STACK_CHECK;
-	es = data.word(kFreedat);
-	ah = data.byte(kReallocation);
-	ds = data.word(kExtras);
-	si = (0+2080+30000);
-	cx = (114);
-takenloop:
-	al = ds.byte(si+11);
-	_cmp(al, ah);
-	if (!flags.z())
-		goto notinhere;
-	bl = ds.byte(si+1);
-	bh = 0;
-	_add(bx, bx);
-	_add(bx, bx);
-	_add(bx, bx);
-	_add(bx, bx);
-	es.byte(bx+2) = 254;
-notinhere:
-	_add(si, 16);
-	if (--cx)
-		goto takenloop;
-}
-
 void DreamGenContext::outofinv() {
 	STACK_CHECK;
 	findinvpos();
@@ -18424,7 +18399,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_swapwithinv: swapwithinv(); break;
 		case addr_swapwithopen: swapwithopen(); break;
 		case addr_intoinv: intoinv(); break;
-		case addr_deletetaken: deletetaken(); break;
 		case addr_outofinv: outofinv(); break;
 		case addr_getfreead: getfreead(); break;
 		case addr_getexad: getexad(); break;

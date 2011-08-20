@@ -506,7 +506,6 @@ public:
 	static const uint16 addr_getexad = 0xc3a8;
 	static const uint16 addr_getfreead = 0xc3a4;
 	static const uint16 addr_outofinv = 0xc3a0;
-	static const uint16 addr_deletetaken = 0xc39c;
 	static const uint16 addr_intoinv = 0xc398;
 	static const uint16 addr_swapwithopen = 0xc394;
 	static const uint16 addr_swapwithinv = 0xc390;
@@ -1638,7 +1637,7 @@ public:
 	void errormessage1();
 	void clearchanges();
 	void errormessage3();
-	void deletetaken();
+	//void deletetaken();
 	void putundermenu();
 	void checkifex();
 	void intromagic2();

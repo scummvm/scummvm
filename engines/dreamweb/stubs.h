@@ -156,5 +156,6 @@
 	void setallchanges();
 	void dochange();
 	void dochange(uint8 index, uint8 value, uint8 type);
+	void deletetaken();
 	bool isCD();
 
