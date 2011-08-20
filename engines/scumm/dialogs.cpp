@@ -583,9 +583,9 @@ void SubtitleSettingsDialog::open() {
 
 void SubtitleSettingsDialog::cycleValue() {
 	static const char* subtitleDesc[] = {
-		"Speech Only",
-		"Speech and Subtitles",
-		"Subtitles Only"
+		_s("Speech Only"),
+		_s("Speech and Subtitles"),
+		_s("Subtitles Only")
 	};
 
 	_value += 1;
@@ -593,9 +593,9 @@ void SubtitleSettingsDialog::cycleValue() {
 		_value = 0;
 
 	if (_value == 1 && g_system->getOverlayWidth() <= 320)
-		setInfoText("Speech & Subs");
+		setInfoText(_sc("Speech & Subs", "lowres"));
 	else
-		setInfoText(subtitleDesc[_value]);
+		setInfoText(_(subtitleDesc[_value]));
 
 	_timer = g_system->getMillis() + 1500;
 }
