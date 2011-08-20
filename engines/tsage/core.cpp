@@ -1718,6 +1718,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_sceneRegionId = 0;
 	_percent = 100;
 	_flags |= OBJFLAG_PANES;
+	_priority = 0;
 
 	_frameChange = 0;
 	_visage = 0;

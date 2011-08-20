@@ -404,13 +404,13 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
-	loadBackground(xp - 160, 0);
-	tooltip->update();
-
 	_timer.set(240, this);
 	_sceneBounds.center(xp, SCREEN_HEIGHT / 2);
 	loadScene(55);
 	_sceneMode = 2;
+
+	loadBackground(xp - 160, 0);
+	tooltip->update();
 }
 
 void Scene50::remove() {
