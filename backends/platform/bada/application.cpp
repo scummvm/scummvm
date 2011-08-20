@@ -98,14 +98,6 @@ void BadaScummVM::OnBatteryLevelChanged(BatteryLevel batteryLevel) {
 void BadaScummVM::OnLowMemory(void) {
 }
 
-void BadaScummVM::OnScreenOn(void) {
-	logEntered();
-}
-
-void BadaScummVM::OnScreenOff(void) {
-	logEntered();
-}
-
 void BadaScummVM::pauseGame(bool pause) {
 	if (pause && _appForm && g_engine && !g_engine->isPaused()) {
 		_appForm->pushKey(Common::KEYCODE_SPACE);

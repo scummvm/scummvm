@@ -31,9 +31,7 @@
 
 #include "backends/platform/bada/system.h"
 
-class BadaScummVM : public Osp::App::Application,
-										public Osp::System::IScreenEventListener {
-
+class BadaScummVM : public Osp::App::Application {
 public:
 	BadaScummVM();
 	~BadaScummVM();
@@ -46,8 +44,6 @@ public:
 	void OnBackground(void);
 	void OnLowMemory(void);
 	void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
-	void OnScreenOn(void);
-	void OnScreenOff(void);
 	void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList *pArgs);
 
 private:
