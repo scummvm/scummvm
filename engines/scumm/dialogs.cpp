@@ -171,29 +171,29 @@ static const ResString string_map_table_v6[] = {
 };
 
 static const ResString string_map_table_v345[] = {
-	{1, "Insert Disk %c and Press Button to Continue."},
-	{2, "Unable to Find %s, (%c%d) Press Button."},
-	{3, "Error reading disk %c, (%c%d) Press Button."},
-	{4, "Game Paused.  Press SPACE to Continue."},
-	{5, "Are you sure you want to restart?  (Y/N)"},
-	{6, "Are you sure you want to quit?  (Y/N)"},
+	{1, _s("Insert Disk %c and Press Button to Continue.")},
+	{2, _s("Unable to Find %s, (%c%d) Press Button.")},
+	{3, _s("Error reading disk %c, (%c%d) Press Button.")},
+	{4, _s("Game Paused.  Press SPACE to Continue.")},
+	{5, _s("Are you sure you want to restart?  (Y/N)")},
+	{6, _s("Are you sure you want to quit?  (Y/N)")},
 
 	// Added in SCUMM4
-	{7, "Save"},
-	{8, "Load"},
-	{9, "Play"},
-	{10, "Cancel"},
-	{11, "Quit"},
-	{12, "OK"},
-	{13, "Insert save/load game disk"},
-	{14, "You must enter a name"},
-	{15, "The game was NOT saved (disk full?)"},
-	{16, "The game was NOT loaded"},
-	{17, "Saving '%s'"},
-	{18, "Loading '%s'"},
-	{19, "Name your SAVE game"},
-	{20, "Select a game to LOAD"},
-	{28, "Game title"}
+	{7, _s("Save")},
+	{8, _s("Load")},
+	{9, _s("Play")},
+	{10, _s("Cancel")},
+	{11, _s("Quit")},
+	{12, _s("OK")},
+	{13, _s("Insert save/load game disk")},
+	{14, _s("You must enter a name")},
+	{15, _s("The game was NOT saved (disk full?)")},
+	{16, _s("The game was NOT loaded")},
+	{17, _s("Saving '%s'")},
+	{18, _s("Loading '%s'")},
+	{19, _s("Name your SAVE game")},
+	{20, _s("Select a game to LOAD")},
+	{28, _s("Game title)")}
 };
 
 #pragma mark -
@@ -429,7 +429,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	else if (_vm->_game.version >= 3)
 		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
 	else
-		return string_map_table_v345[stringno - 1].string;
+		return _(string_map_table_v345[stringno - 1].string);
 
 	if (result && *result == '/') {
 		_vm->translateText(result, buf);
@@ -437,7 +437,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	}
 
 	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
-		return string_map_table_v345[stringno - 1].string;
+		return _(string_map_table_v345[stringno - 1].string);
 	}
 
 	// Convert to a proper string (take care of FF codes)
