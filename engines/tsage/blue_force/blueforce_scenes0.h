@@ -59,11 +59,14 @@ class Scene50: public SceneExt {
 	class Tooltip: public SavedObject {
 	public:
 		Rect _bounds;
-		char _msg[80];
-		int _field60;
-		int _field62;
+		Common::String _msg;
+		int _newSceneNumber;
+		int _locationId;
 	public:
 		Tooltip();
+		void set(const Rect &bounds, int v60, const Common::String &msg, int v62);
+		void update();
+		void highlight(bool btnDown);
 
 		virtual Common::String getClassName() { return "Scene50_Tooltip"; }
 		virtual void synchronize(Serializer &s);
@@ -77,7 +80,20 @@ class Scene50: public SceneExt {
 		virtual void dispatch();
 	};
 public:
-
+	int _field380, _field382;
+	int _sceneNumber;
+	SceneText _text;
+	SceneItemType2 _item;
+	Tooltip _location1, _location2, _location3, _location4, _location5;
+	Tooltip _location6, _location7, _location8, _location9;
+	Timer _timer;
+public:
+	Scene50();
+	virtual Common::String getClassName() { return "Scene50"; }
+	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
 };
 
 } // End of namespace BlueForce

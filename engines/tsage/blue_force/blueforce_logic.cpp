@@ -33,7 +33,7 @@ namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
-	_globals->_sceneManager.changeScene(100);
+	_globals->_sceneManager.changeScene(50);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 }
@@ -45,6 +45,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Tsunami Title Screen
 		return new Scene20();
 	case 50:
+		return new Scene50();
 	case 60:
 		error("Scene group 0 not implemented");
 	/* Scene Group #1 */
@@ -55,6 +56,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Introduction Bar Room
 		return new Scene109();
 	case 110:
+
 	case 114:
 	case 115:
 	case 125:
@@ -131,23 +133,23 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 
 /*--------------------------------------------------------------------------*/
 
-ObjArray::ObjArray(): EventHandler() {
+AObjectArray::AObjectArray(): EventHandler() {
 	_inUse = false;
 	clear();
 }
 
-void ObjArray::clear() {
+void AObjectArray::clear() {
 	for (int i = 0; i < OBJ_ARRAY_SIZE; ++i)
 		_objList[i] = NULL;
 }
 
-void ObjArray::synchronize(Serializer &s) {
+void AObjectArray::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 	for (int i = 0; i < OBJ_ARRAY_SIZE; ++i)
 		SYNC_POINTER(_objList[i]);	
 }
 
-void ObjArray::process(Event &event) {
+void AObjectArray::process(Event &event) {
 	if (_inUse)
 		error("Array error");
 	_inUse = true;
@@ -160,7 +162,7 @@ void ObjArray::process(Event &event) {
 	_inUse = false;
 }
 
-void ObjArray::dispatch() {
+void AObjectArray::dispatch() {
 	if (_inUse)
 		error("Array error");
 	_inUse = true;
@@ -173,12 +175,94 @@ void ObjArray::dispatch() {
 	_inUse = false;
 }
 
+int AObjectArray::getNewIndex() {
+	for (int i = 0; i < OBJ_ARRAY_SIZE; ++i) {
+		if (!_objList[i])
+			return i;
+	}
+	error("AObjectArray too full.");
+}
+
+void AObjectArray::add(EventHandler *obj) {
+	int idx = getNewIndex();
+	_objList[idx] = obj;
+}
+
+void AObjectArray::remove(EventHandler *obj) {
+	for (int i = 0; i < OBJ_ARRAY_SIZE; ++i) {
+		if (_objList[i] == obj) {
+			_objList[i] = NULL;
+			return;
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Timer::Timer() {
+	_endFrame = 0;
+	_endAction = NULL;
+	_tickAction = NULL;
+}
+
+void Timer::remove() {
+	_endFrame = 0;
+	_endAction = NULL;
+
+	((Scene100 *)BF_GLOBALS._sceneManager._scene)->removeTimer(this);
+}
+
+void Timer::signal() {
+	assert(_endAction);
+	Action *action = _endAction;
+	remove();
+	action->signal();
+}
+
+void Timer::dispatch() {
+	if (_tickAction)
+		_tickAction->dispatch();
+
+	if (_endFrame) {
+		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
+		if (frameNumber > _endFrame)
+			// Timer has expired
+			signal();
+	}
+}
+
+void Timer::set(uint32 delay, Action *action) {
+	assert(delay != 0);
+
+	_endFrame = BF_GLOBALS._sceneHandler->getFrameDifference() + delay;
+	_endAction = action;
+
+	((SceneExt *)BF_GLOBALS._sceneManager._scene)->addTimer(this);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneItemType1::process(Event &event) {
+	if (_action)
+		_action->process(event);
+}
+
+void SceneItemType1::startMove(SceneObject *sceneObj, va_list va) {
+	warning("TODO: sub_1621C");
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneItemType2::startMove(SceneObject *sceneObj, va_list va) {
+}
+
 /*--------------------------------------------------------------------------*/
 
 SceneExt::SceneExt(): Scene() {
 	warning("TODO: dword_503AA/dword_503AE/dword_53030");
 
 	_field372 = 0;
+	_field37A = 0;
 	_field37C = NULL;
 }
 
@@ -200,7 +284,7 @@ void SceneExt::process(Event &event) {
 }
 
 void SceneExt::dispatch() {
-	_objArray1.dispatch();
+	_timerList.dispatch();
 
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._v4CEA2) {
@@ -248,6 +332,22 @@ void GameScene::remove() {
 	}
 
 	BF_GLOBALS._scenePalette._field412 = 1;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
+	SceneHandler::postInit(OwnerList);
+
+	// Load the low end palette data
+	GLOBALS._scenePalette.loadPalette(2);
+	GLOBALS._scenePalette.refresh();
+}
+
+void SceneHandlerExt::process(Event &event) {
+	SceneHandler::process(event);
+
+	// TODO: All the new stuff from Blue Force
 }
 
 } // End of namespace BlueForce

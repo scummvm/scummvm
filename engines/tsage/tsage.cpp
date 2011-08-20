@@ -102,7 +102,7 @@ Common::Error TSageEngine::run() {
 	// Basic initialisation
 	initialize();
 
-	_globals->_sceneHandler.registerHandler();
+	_globals->_sceneHandler->registerHandler();
 	_globals->_game->execute();
 
 	deinitialize();

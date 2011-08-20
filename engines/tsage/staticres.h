@@ -110,6 +110,17 @@ extern const char *BF_11_YEARS;
 extern const char *BF_NEXT_DAY;
 extern const char *BF_ACADEMY;
 
+// Scene 50 tooltips
+extern const char *GRANDMA_FRANNIE;
+extern const char *MARINA;
+extern const char *POLICE_DEPARTMENT;
+extern const char *TONYS_BAR;
+extern const char *CHILD_PROTECTIVE_SERVICES;
+extern const char *ALLEY_CAT;
+extern const char *CITY_HALL_JAIL;
+extern const char *JAMISON_RYAN;
+extern const char *BIKINI_HUT;
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

@@ -3473,11 +3473,16 @@ void GameHandler::synchronize(Serializer &s) {
 SceneHandler::SceneHandler() {
 	_saveGameSlot = -1;
 	_loadGameSlot = -1;
+	_prevFrameNumber = 0;
 }
 
 void SceneHandler::registerHandler() {
 	postInit();
 	_globals->_game->addHandler(this);
+}
+
+uint32 SceneHandler::getFrameDifference() {
+	return GLOBALS._events.getFrameNumber() - _prevFrameNumber;
 }
 
 void SceneHandler::postInit(SceneObjectList *OwnerList) {
@@ -3594,10 +3599,19 @@ void SceneHandler::dispatch() {
 	// Not actually used
 	//_eventListeners.forEach(SceneHandler::handleListener);
 
-	// Handle pending eents
+	// Handle pending events
 	Event event;
-	while (_globals->_events.getEvent(event))
+	if (_globals->_events.getEvent(event)) {
+		// Process pending events
+		do {
+			process(event);
+		} while (_globals->_events.getEvent(event));
+	} else if (_vm->getGameID() == GType_BlueForce) {
+		// For Blue Force, 'none' events need to be generated in the absence of any
+		event.eventType = EVENT_NONE;
+		event.mousePos = _globals->_events._mousePos;
 		process(event);
+	}
 
 	// Handle drawing the contents of the scene
 	if (_globals->_sceneManager._scene)

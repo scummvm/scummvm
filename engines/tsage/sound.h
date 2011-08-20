@@ -406,6 +406,8 @@ public:
 	int _soundNum;
 
 	ASoundExt();
+	void fadeOut2(Action *action);
+
 	virtual Common::String getClassName() { return "ASoundExt"; }
 	virtual void synchronize(Serializer &s);
 	virtual void signal();

@@ -2477,6 +2477,10 @@ void ASoundExt::signal() {
 	}
 }
 
+void ASoundExt::fadeOut2(Action *action) {
+	fade(0, 10, 10, true, action);
+}
+
 /*--------------------------------------------------------------------------*/
 
 SoundDriver::SoundDriver() {

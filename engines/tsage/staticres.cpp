@@ -144,6 +144,17 @@ const char *BF_11_YEARS = "Eleven years later.";
 const char *BF_NEXT_DAY = "The Next Day";
 const char *BF_ACADEMY = "Here we are at the Academy";
 
+// Scene 50 hotspots
+const char *GRANDMA_FRANNIE = "Grandma Frannie";
+const char *MARINA = "Marina";
+const char *POLICE_DEPARTMENT = "Police Department";
+const char *TONYS_BAR = "Tony's Bar";
+const char *CHILD_PROTECTIVE_SERVICES = "Child Protective Services";
+const char *ALLEY_CAT = "Alley Cat";
+const char *CITY_HALL_JAIL = "City Hall & Jail";
+const char *JAMISON_RYAN = "Jamison & Ryan";
+const char *BIKINI_HUT = "Bikini Hut";
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

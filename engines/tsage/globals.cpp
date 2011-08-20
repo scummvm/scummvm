@@ -116,10 +116,12 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		} else {
 			_game = new Ringworld::RingworldDemoGame();
 		}
+		_sceneHandler = new SceneHandler();
 		break;
 
 	case GType_BlueForce:
 		_game = new BlueForce::BlueForceGame();
+		_sceneHandler = new BlueForce::SceneHandlerExt();
 		break;
 	}
 }
@@ -127,6 +129,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 Globals::~Globals() {
 	_scenePalette.clearListeners();
 	delete _inventory;
+	delete _sceneHandler;
 	delete _game;
 	_globals = NULL;
 }
@@ -183,11 +186,29 @@ BlueForceGlobals::BlueForceGlobals(): Globals() {
 	_interfaceY = 0;
 	_v51C44 = 1;
 	_v4CEA2 = 0;
+	_v4CEA8 = 0;
+	_v4CEF2 = 0;
+	_v4CEF4 = 0;
+	_v4CF9E = 0;
+	_v4E238 = 0;
+	_v501FC = 0;
+	_v51C42 = 0;
+	_bikiniHutState = 0;
+	_mapLocationId = 1;
+	Common::set_to(&_globalFlags[0], &_globalFlags[12], 0);
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
 	Globals::synchronize(s);
 	error("Sync variables");
+}
+
+bool BlueForceGlobals::getFlag(int v) {
+	return _globalFlags[v / 16] & (1 << (v % 8));
+}
+
+void BlueForceGlobals::setFlag(int v) {
+	_globalFlags[v / 16] |= 1 << (v % 8);
 }
 
 } // end of namespace BlueForce

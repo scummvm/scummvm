@@ -846,9 +846,11 @@ public:
 	int _loadGameSlot;
 	int _delayTicks;
 	Common::String _saveName;
+	uint32 _prevFrameNumber;
 public:
 	SceneHandler();
 	void registerHandler();
+	uint32 getFrameDifference();
 
 	virtual Common::String getClassName() { return "SceneHandler"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

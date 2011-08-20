@@ -113,7 +113,7 @@ void SceneManager::sceneChange() {
 		assert(_objectCount == _saver->getObjectCount());
 	}
 	_objectCount = _saver->getObjectCount();
-	_globals->_sceneHandler._delayTicks = 2;
+	_globals->_sceneHandler->_delayTicks = 2;
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();

@@ -3168,7 +3168,7 @@ Scene6100::Scene6100(): Scene() {
 	_angle = 0;
 	_msgActive = false;
 
-	_globals->_sceneHandler._delayTicks = 8;
+	_globals->_sceneHandler->_delayTicks = 8;
 
 	_globals->_player.disableControl();
 	_globals->_events.setCursor(CURSOR_WALK);

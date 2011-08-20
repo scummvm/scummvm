@@ -40,7 +40,7 @@ public:
 	GfxSurface _screenSurface;
 	GfxManager _gfxManagerInstance;
 	Common::List<GfxManager *> _gfxManagers;
-	SceneHandler _sceneHandler;
+	SceneHandler *_sceneHandler;
 	Game *_game;
 	EventsClass _events;
 	SceneManager _sceneManager;
@@ -112,18 +112,27 @@ using namespace TsAGE;
 
 class BlueForceGlobals: public Globals {
 public:
-	ASound _sound1, _sound2, _sound3;
+	ASoundExt _sound1, _sound2, _sound3;
 	int _v4CEA2;
+	int _v4CEA8;
+	int _v4CEF2;
+	int _v4CEF4;
 	int _v4CF9E;
 	int _v4E238;
 	int _v501FC;
 	int _v51C42;
 	int _v51C44;
 	int _interfaceY;
+	int _bikiniHutState;
+	int _mapLocationId;
+	uint8 _globalFlags[12];
 
 	BlueForceGlobals();
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
+
+	void setFlag(int v);
+	bool getFlag(int v);
 };
 
 } // End of namespace BlueForce

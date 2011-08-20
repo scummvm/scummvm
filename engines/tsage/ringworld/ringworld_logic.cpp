@@ -1287,7 +1287,7 @@ void RingworldGame::saveGame() {
 		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 	else {
 		// Show the save dialog
-		handleSaveLoad(true, _globals->_sceneHandler._saveGameSlot, _globals->_sceneHandler._saveName);
+		handleSaveLoad(true, _globals->_sceneHandler->_saveGameSlot, _globals->_sceneHandler->_saveName);
 	}
 }
 
@@ -1296,7 +1296,7 @@ void RingworldGame::restoreGame() {
 		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
 	else {
 		// Show the load dialog
-		handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
+		handleSaveLoad(false, _globals->_sceneHandler->_loadGameSlot, _globals->_sceneHandler->_saveName);
 	}
 }
 
@@ -1348,7 +1348,7 @@ void RingworldGame::start() {
 	}
 
 	if (slot >= 0)
-		_globals->_sceneHandler._loadGameSlot = slot;
+		_globals->_sceneHandler->_loadGameSlot = slot;
 	else
 		// Switch to the title screen
 		_globals->_sceneManager.setNewScene(1000);
@@ -1365,8 +1365,8 @@ void RingworldGame::restart() {
 	_globals->setFlag(34);
 
 	// Clear save/load slots
-	_globals->_sceneHandler._saveGameSlot = -1;
-	_globals->_sceneHandler._loadGameSlot = -1;
+	_globals->_sceneHandler->_saveGameSlot = -1;
+	_globals->_sceneHandler->_loadGameSlot = -1;
 
 	_globals->_stripNum = 0;
 	_globals->_events.setCursor(CURSOR_WALK);
@@ -1431,8 +1431,8 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 				restart();
 				breakFlag = true;
 			} else {
-				handleSaveLoad(false, _globals->_sceneHandler._loadGameSlot, _globals->_sceneHandler._saveName);
-				breakFlag = _globals->_sceneHandler._loadGameSlot >= 0;
+				handleSaveLoad(false, _globals->_sceneHandler->_loadGameSlot, _globals->_sceneHandler->_saveName);
+				breakFlag = _globals->_sceneHandler->_loadGameSlot >= 0;
 			}
 		} while (!breakFlag);
 	}

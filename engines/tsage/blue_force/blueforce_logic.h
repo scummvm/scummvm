@@ -44,23 +44,52 @@ public:
 };
 
 #define OBJ_ARRAY_SIZE 10
-class ObjArray: public EventHandler {
+class AObjectArray: public EventHandler {
 public:
 	EventHandler *_objList[OBJ_ARRAY_SIZE];
 	bool _inUse;
+	int getNewIndex();
 public:
-	ObjArray();
+	AObjectArray();
 	void clear();
 
-	virtual Common::String getClassName() { return "ObjArray"; }
+	virtual Common::String getClassName() { return "AObjectArray"; }
 	virtual void synchronize(Serializer &s);
 	virtual void process(Event &event);
 	virtual void dispatch();
+
+	void add(EventHandler *obj);
+	void remove(EventHandler *obj);
+};
+
+class Timer: public EventHandler {
+public:
+	Action *_tickAction;
+	Action *_endAction;
+	uint32 _endFrame;
+public:
+	Timer();
+	void set(uint32 delay, Action *action);
+
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};
+
+class SceneItemType1: public SceneItem {
+public:
+	virtual void process(Event &event);
+	virtual void startMove(SceneObject *sceneObj, va_list va);
+};
+
+class SceneItemType2: public SceneItemType1 {
+public:
+	virtual void startMove(SceneObject *sceneObj, va_list va);
 };
 
 class SceneExt: public Scene {
 public:
-	ObjArray _objArray1, _objArray2;
+	AObjectArray _timerList, _objArray2;
 	int _field372;
 	int _field37A;
 	EventHandler *_field37C;
@@ -75,6 +104,9 @@ public:
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);
 	virtual void proc13() { warning("TODO: SceneExt::proc13"); }
+
+	void addTimer(Timer *timer) { _timerList.add(timer); }
+	void removeTimer(Timer *timer) { _timerList.remove(timer); }
 };
 
 class GameScene: public SceneExt {
@@ -86,6 +118,12 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
+};
+
+class SceneHandlerExt: public SceneHandler {
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void process(Event &event);
 };
 
 class BlueAnimatedSpeaker: public Speaker {
