@@ -1,7 +1,7 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>, 2010.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <Lothar@Windowsbase.de>, 2011.
 #
 msgid ""
 msgstr ""
@@ -10,8 +10,8 @@ msgstr ""
 "POT-Creation-Date: 2011-08-20 15:12+0100\n"
 "PO-Revision-Date: 2011-06-20 09:45+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
-"Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
-"<SimSaw@gmx.de>\n"
+"Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead)\n"
+"Lothar Serra Mari <Lothar@Windowsbase.de> (Contributor)"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1090,7 +1090,7 @@ msgstr "Engine-Plugin unterstützt keine Speicherstände."
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr ""
+msgstr "Abbruch durch Benutzer"
 
 #: common/error.cpp:75
 msgid "Unknown error"
@@ -1123,8 +1123,8 @@ msgstr "Das Spiel im Verzeichnis \"%s\" scheint nicht bekannt zu sein."
 #: engines/advancedDetector.cpp:297
 msgid "Please, report the following data to the ScummVM team along with name"
 msgstr ""
-"Bitte berichten Sie die folgenden Daten auf Englisch an das ScummVM-Team "
-"sowie"
+"Bitte geben Sie die folgenden Daten auf Englisch an das ScummVM-Team "
+"weiter sowie"
 
 #: engines/advancedDetector.cpp:299
 msgid "of the game you tried to add and its version/language/etc.:"
@@ -1186,7 +1186,7 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Leider bietet diese Engine keine Spielhilfe. Bitte lesen Sie die LIESMICH-"
+"Leider bietet diese Engine keine Spielhilfe. Bitte lesen Sie die Liesmich-"
 "Datei für grundlegende Informationen und Anweisungen dazu, wie man an "
 "weitere Hilfe gelangt."
 
@@ -1233,7 +1233,7 @@ msgstr ""
 "führen und es wird deshalb empfohlen, die\n"
 "Dateien des Spiels auf die Festplatte zu\n"
 "kopieren und von dort aus zu spielen.\n"
-"Lesen Sie die LIESMICH-Datei für\n"
+"Lesen Sie die Liesmich-Datei für\n"
 "weitere Informationen."
 
 #: engines/engine.cpp:366
@@ -1249,7 +1249,7 @@ msgstr ""
 "geeigneten Extrahierungsprogramms für\n"
 "Audio-CDs beschafft werden, um diese im\n"
 "Spiel hören zu können. Lesen Sie die\n"
-"LIESMICH-Datei für weitere Informationen."
+"Liesmich-Datei für weitere Informationen."
 
 #: engines/engine.cpp:433
 msgid ""
@@ -1257,47 +1257,49 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
+"WARNUNG: Das Spiel, welches Sie starten wollen, wird noch nicht vollständig "
+"von ScummVM unterstützt. Somit ist es wahrscheinlich, dass es instabil ist "
+"und jegliche Spielstände, die Sie erstellen, könnten in zukünftigen "
+"Versionen von ScummVM nicht mehr funktionieren."
 
 #: engines/engine.cpp:436
 msgid "Start anyway"
-msgstr ""
+msgstr "Trotzdem starten"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr ""
+msgstr "Bitte Disk %c einlegen und Taste drücken"
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr ""
+msgstr "Kann %s (%c%d) nicht finden, bitte Taste drücken."
 
 #: engines/scumm/dialogs.cpp:177
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr ""
+msgstr "Fehler beim Lesen von Disk %c (%c%d), bitte Taste drücken."
 
 #: engines/scumm/dialogs.cpp:178
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr ""
+msgstr "Spielpause.  Zum Weiterspielen Leertaste drücken."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:182
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)"
-msgstr "   Möchten Sie wirklich beenden?    "
+msgstr "Möchten Sie wirklich neu starten?  (J/N)J"
 
 #. I18N: you may specify 'Yes' symbol at the endo fo the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)"
-msgstr "   Möchten Sie wirklich beenden?    "
+msgstr "Möchten Sie wirklich beenden?  (J/N)J"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "Play"
-msgstr ""
+msgstr "Spielen"
 
 #: engines/scumm/dialogs.cpp:191 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:84
@@ -1310,42 +1312,41 @@ msgstr "Beenden"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "Insert save/load game disk"
-msgstr ""
+msgstr "Legen Sie eine Spielstand-Disk ein."
 
 #: engines/scumm/dialogs.cpp:194
 msgid "You must enter a name"
-msgstr ""
+msgstr "Sie müssen eine Bezeichnung eingeben."
 
 #: engines/scumm/dialogs.cpp:195
 msgid "The game was NOT saved (disk full?)"
-msgstr ""
+msgstr "Spiel wurde NICHT gespeichert. (Datenträger voll?)"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "The game was NOT loaded"
-msgstr ""
+msgstr "Spiel wurde NICHT geladen."
 
 #: engines/scumm/dialogs.cpp:197
 #, c-format
 msgid "Saving '%s'"
-msgstr ""
+msgstr "Speichere \"%s\""
 
 #: engines/scumm/dialogs.cpp:198
 #, c-format
 msgid "Loading '%s'"
-msgstr ""
+msgstr "Lade \"%s\""
 
 #: engines/scumm/dialogs.cpp:199
 msgid "Name your SAVE game"
-msgstr ""
+msgstr "Name für Spielstand eingeben"
 
 #: engines/scumm/dialogs.cpp:200
-#, fuzzy
 msgid "Select a game to LOAD"
-msgstr "Thema auswählen"
+msgstr "Spielstand zum LADEN auswählen"
 
 #: engines/scumm/dialogs.cpp:201
 msgid "Game title)"
-msgstr ""
+msgstr "Spieltitel)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:287
@@ -1363,25 +1364,21 @@ msgid "~C~lose"
 msgstr "~S~chließen"
 
 #: engines/scumm/dialogs.cpp:597
-#, fuzzy
 msgid "Speech Only"
-msgstr "Sprache"
+msgstr "Nur Sprachausgabe"
 
 #: engines/scumm/dialogs.cpp:598
-#, fuzzy
 msgid "Speech and Subtitles"
-msgstr "Untertitel"
+msgstr "Sprachausgabe und Untertitel"
 
 #: engines/scumm/dialogs.cpp:599
-#, fuzzy
 msgid "Subtitles Only"
-msgstr "Untertitel"
+msgstr "Nur Untertitel"
 
 #: engines/scumm/dialogs.cpp:607
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Sprache"
+msgstr "Sprache & Text"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -1952,7 +1949,7 @@ msgstr ""
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:171
 msgid "~Z~ip Mode Activated"
-msgstr "~Z~ip-Modus aktiviert"
+msgstr "Schneller ~R~aumwechsel aktiviert"
 
 #: engines/mohawk/dialogs.cpp:93
 msgid "~T~ransitions Enabled"
@@ -1961,16 +1958,15 @@ msgstr "Über~g~änge aktiviert"
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:95
 msgid "~D~rop Page"
-msgstr ""
+msgstr "Seite ~w~egwerfen"
 
 #: engines/mohawk/dialogs.cpp:99
 msgid "~S~how Map"
-msgstr ""
+msgstr "~K~arte anzeigen"
 
 #: engines/mohawk/dialogs.cpp:105
-#, fuzzy
 msgid "~M~ain Menu"
-msgstr "ScummVM-Hauptmenü"
+msgstr "Haupt~m~enü"
 
 #: engines/mohawk/dialogs.cpp:172
 msgid "~W~ater Effect Enabled"
@@ -2136,7 +2132,6 @@ msgid "ScummVM successfully converted all your savefiles."
 msgstr "ScummVM hat alle Speicherstände erfolgreich umgewandelt."
 
 #: engines/parallaction/saveload.cpp:328
-#, fuzzy
 msgid ""
 "ScummVM printed some warnings in your console window and can't guarantee all "
 "your files have been converted.\n"
@@ -2146,7 +2141,7 @@ msgstr ""
 "ScummVM hat ein paar Warnungen im Konsolenfenster ausgegeben und kann nicht "
 "gewährleisten, dass alle Speicherstände umgewandelt wurden.\n"
 "\n"
-"Bitte."
+"Bitte berichten Sie dies dem Team auf Englisch."
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -2157,49 +2152,45 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox-OPL-Emulator"
 
 #: audio/mididrv.cpp:205
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
 "Das ausgewählte Audiogerät \"%s\" wurde nicht gefunden (könnte "
-"beispielsweise ausgeschaltet oder nicht angeschlossen sein). Es wird "
-"versucht, auf das nächste verfügbare Gerät zurückzugreifen."
+"beispielsweise ausgeschaltet oder nicht angeschlossen sein)."
 
 #: audio/mididrv.cpp:205 audio/mididrv.cpp:217 audio/mididrv.cpp:253
 #: audio/mididrv.cpp:268
 msgid "Attempting to fall back to the next available device..."
-msgstr ""
+msgstr "Es wird versucht, auf das nächste verfügbare Gerät zurückzugreifen."
 
 #: audio/mididrv.cpp:217
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
 "Das ausgewählte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
-"für weitere Informationen in der Log-Datei nach. Es wird versucht, auf das "
-"nächste verfügbare Gerät zurückzugreifen."
+"für weitere Informationen in der Log-Datei nach."
 
 #: audio/mididrv.cpp:253
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
 "Das bevorzugte Audiogerät \"%s\" wurde nicht gefunden (könnte beispielsweise "
-"ausgeschaltet oder nicht angeschlossen sein). Es wird versucht, auf das "
-"nächste verfügbare Gerät zurückzugreifen."
+"ausgeschaltet oder nicht angeschlossen sein)."
 
 #: audio/mididrv.cpp:268
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
 "Das bevorzugte Audiogerät \"%s\" kann nicht verwendet werden. Schauen Sie "
-"für weitere Informationen in der Log-Datei nach. Es wird versucht, auf das "
-"nächste verfügbare Gerät zurückzugreifen."
+"für weitere Informationen in der Log-Datei nach."
 
 #: audio/null.h:43
 msgid "No music"
@@ -2346,27 +2337,25 @@ msgid "Touchpad mode disabled."
 msgstr "Touchpad-Modus ausgeschaltet."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:67
-#, fuzzy
 msgid "Hide ScummVM"
-msgstr "ScummVM beenden"
+msgstr "ScummVM verbergen"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "Hide Others"
-msgstr ""
+msgstr "Andere verbergen"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:74
 msgid "Show All"
-msgstr ""
+msgstr "Alles zeigen"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:92
 #: backends/platform/sdl/macosx/appmenu_osx.mm:99
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr "Fenster"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Minimize"
-msgstr ""
+msgstr "Minimieren"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
@@ -2398,15 +2387,15 @@ msgstr "Fenstermodus"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:130
 msgid "OpenGL Normal"
-msgstr ""
+msgstr "OpenGL: normal"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:131
 msgid "OpenGL Conserve"
-msgstr ""
+msgstr "OpenGL: beibehalten"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:132
 msgid "OpenGL Original"
-msgstr ""
+msgstr "OpenGL: original"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:415
 msgid "Current display mode"
@@ -2793,14 +2782,7 @@ msgstr "Lautstärke niedriger"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
-msgstr ""
-
-#~ msgctxt "lowres"
-#~ msgid "Add Game..."
-#~ msgstr "Hinzufügen"
-
-#~ msgid "Add Game..."
-#~ msgstr "Spiel hinzufügen"
+msgstr "Suche nach Aktualisierungen..."
 
 #~ msgid ""
 #~ "Your game version has been detected using filename matching as a variant "
@@ -2809,20 +2791,5 @@ msgstr ""
 #~ "Ihre Spielversion wurde durch Dateinamen-Übereinstimmung als Variante von "
 #~ "%s erkannt."
 
-#~ msgid "If this is an original and unmodified version, please report any"
-#~ msgstr ""
-#~ "Sollte es sich hierbei um eine unmodifizierte Originalversion handeln,"
-
-#~ msgid "information previously printed by ScummVM to the team."
-#~ msgstr ""
-#~ "so teilen Sie bitte dem Team die von ScummVM zuvor ausgegebenen Daten auf "
-#~ "Englisch mit."
-
 #~ msgid "Command line argument not processed"
 #~ msgstr "Argument in Kommandozeile nicht verarbeitet"
-
-#~ msgid "FM Towns Emulator"
-#~ msgstr "FM-Towns-Emulator"
-
-#~ msgid "Invalid Path"
-#~ msgstr "Ungültiges Verzeichnis"
