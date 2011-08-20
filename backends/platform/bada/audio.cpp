@@ -216,6 +216,7 @@ void AudioThread::OnAudioOutInterrupted(Osp::Media::AudioOut &src) {
 
 void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut &src) {
 	logEntered();
+	_audioOut->Start();
 }
 
 void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut &src) {
