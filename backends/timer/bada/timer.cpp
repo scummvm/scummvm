@@ -20,8 +20,9 @@
  *
  */
 
-#include "backends/platform/bada/timer.h"
-#include "backends/platform/bada/system.h"
+#if defined (BADA)
+
+#include "backends/timer/bada/timer.h"
 
 //
 // TimerSlot
@@ -32,16 +33,12 @@ TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback,
 	_callback(callback),
 	_interval(interval),
 	_refCon(refCon) {
-	logEntered();
 }
 
 TimerSlot::~TimerSlot() {
-	logEntered();
 }
 
 bool TimerSlot::OnStart() {
-	logEntered();
-
 	_timer = new Osp::Base::Runtime::Timer();
 	if (!_timer || IsFailed(_timer->Construct(*this))) {
 		AppLog("Failed to create timer");
@@ -58,7 +55,7 @@ bool TimerSlot::OnStart() {
 }
 
 void TimerSlot::OnStop() {
-	logEntered();
+	AppLog("timer stopped");
 	if (_timer) {
 		_timer->Cancel();		 
 		delete _timer;
@@ -75,11 +72,9 @@ void TimerSlot::OnTimerExpired(Timer &timer) {
 // BadaTimerManager
 //
 BadaTimerManager::BadaTimerManager() {
-	logEntered();
 }
 
 BadaTimerManager::~BadaTimerManager() {
-	logEntered();
 	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
 			 slot != _timers.end(); ++slot) {
 		slot->Stop();
@@ -89,7 +84,6 @@ BadaTimerManager::~BadaTimerManager() {
 
 bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *refCon,
 																				const Common::String &id) {
-	logEntered();
 	TimerSlot *slot = new TimerSlot(proc, interval / 1000, refCon);
 
 	if (IsFailed(slot->Construct(THREAD_TYPE_EVENT_DRIVEN))) {
@@ -109,7 +103,6 @@ bool BadaTimerManager::installTimerProc(TimerProc proc, int32 interval, void *re
 }
 
 void BadaTimerManager::removeTimerProc(TimerProc proc) {
-	logEntered();
 	for (Common::List<TimerSlot>::iterator slot = _timers.begin();
 			 slot != _timers.end(); ++slot) {
 		if (slot->_callback == proc) {
@@ -118,3 +111,5 @@ void BadaTimerManager::removeTimerProc(TimerProc proc) {
 		}
 	}
 }
+
+#endif

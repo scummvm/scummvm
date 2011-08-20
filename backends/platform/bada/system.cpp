@@ -33,12 +33,12 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/mutex/mutex.h"
 #include "backends/fs/fs-factory.h"
+#include "backends/timer/bada/timer.h"
 
 #include "backends/platform/bada/form.h"
 #include "backends/platform/bada/system.h"
 #include "backends/platform/bada/graphics.h"
 #include "backends/platform/bada/audio.h"
-#include "backends/platform/bada/timer.h"
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
