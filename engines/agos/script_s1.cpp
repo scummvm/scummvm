@@ -310,7 +310,7 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 
 	Common::KeyCode keyYes, keyNo;
 
-	Common::getLanguageYesNo((Common::Language)_language, keyYes, keyNo);
+	Common::getLanguageYesNo(_language, keyYes, keyNo);
 
 	while (!shouldQuit()) {
 		delay(1);

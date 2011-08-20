@@ -324,7 +324,7 @@ protected:
 	bool _backFlag;
 
 	uint16 _debugMode;
-	uint16 _language;
+	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
 	bool _dumpScripts;
