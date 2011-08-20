@@ -176,7 +176,11 @@ static const ResString string_map_table_v345[] = {
 	{2, _s("Unable to Find %s, (%c%d) Press Button.")},
 	{3, _s("Error reading disk %c, (%c%d) Press Button.")},
 	{4, _s("Game Paused.  Press SPACE to Continue.")},
+	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
+	// "Moechten Sie wirklich neu starten?  (J/N)J"
+	// Will react to J as 'Yes'
 	{5, _s("Are you sure you want to restart?  (Y/N)")},
+	// I18N: you may specify 'Yes' symbol at the endo fo the line. See previous comment 
 	{6, _s("Are you sure you want to quit?  (Y/N)")},
 
 	// Added in SCUMM4
@@ -279,7 +283,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	_numPages = ScummHelp::numPages(_game.id);
 
+	// I18N: Previous page button
 	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", _("~P~revious"), 0, kPrevCmd);
+	// I18N: Next page button
 	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), 0, kNextCmd);
 	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), 0, GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);

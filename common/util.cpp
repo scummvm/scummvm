@@ -271,6 +271,7 @@ const char *getPlatformDescription(Platform id) {
 
 
 const RenderModeDescription g_renderModes[] = {
+	// I18N: Hercules is graphics card name
 	{ "hercGreen", _s("Hercules Green"), kRenderHercG },
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
