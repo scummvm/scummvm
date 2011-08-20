@@ -71,6 +71,14 @@ SoundManager::~SoundManager() {
 //		g_system->getTimerManager()->removeTimerProc(_sfUpdateCallback);
 	}
 
+	// Free any allocated voice type structures
+	for (int idx = 0; idx < SOUND_ARR_SIZE; ++idx) {
+		if (sfManager()._voiceTypeStructPtrs[idx]) {
+			delete sfManager()._voiceTypeStructPtrs[idx];
+			sfManager()._voiceTypeStructPtrs[idx] = NULL;
+		}
+	}
+
 	_soundManager = NULL;
 }
 
