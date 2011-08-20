@@ -8,11 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-18 11:02+0200\n"
+"POT-Creation-Date: 2011-08-20 11:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -46,8 +45,9 @@ msgstr ""
 #: gui/browser.cpp:69 gui/chooser.cpp:45 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:312 gui/massadd.cpp:94 gui/options.cpp:1178
 #: gui/saveload.cpp:63 gui/saveload.cpp:155 gui/themebrowser.cpp:54
-#: engines/engine.cpp:436 engines/sword1/control.cpp:865
-#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:48
+#: engines/engine.cpp:436 engines/scumm/dialogs.cpp:185
+#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:281
+#: backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:222
 #: backends/events/default/default-events.cpp:244
 msgid "Cancel"
@@ -86,14 +86,15 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:91 gui/options.cpp:1179
-#: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/scumm.cpp:1770
-#: engines/agos/animation.cpp:545 engines/groovie/script.cpp:420
-#: engines/sky/compact.cpp:131 engines/sky/compact.cpp:141
-#: engines/sword1/animation.cpp:344 engines/sword1/animation.cpp:354
-#: engines/sword1/animation.cpp:360 engines/sword1/control.cpp:865
-#: engines/sword1/logic.cpp:1633 engines/sword2/animation.cpp:379
-#: engines/sword2/animation.cpp:389 engines/sword2/animation.cpp:398
-#: engines/parallaction/saveload.cpp:281 backends/platform/wii/options.cpp:47
+#: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:187
+#: engines/scumm/scumm.cpp:1770 engines/agos/animation.cpp:545
+#: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
+#: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:344
+#: engines/sword1/animation.cpp:354 engines/sword1/animation.cpp:360
+#: engines/sword1/control.cpp:865 engines/sword1/logic.cpp:1633
+#: engines/sword2/animation.cpp:379 engines/sword2/animation.cpp:389
+#: engines/sword2/animation.cpp:398 engines/parallaction/saveload.cpp:281
+#: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 msgid "OK"
 msgstr ""
@@ -430,9 +431,9 @@ msgstr ""
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:255
-#: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:216
-#: backends/platform/wince/CEActionsPocket.cpp:267
+#: gui/launcher.cpp:615 engines/dialogs.cpp:114 engines/scumm/dialogs.cpp:183
+#: engines/mohawk/myst.cpp:255 engines/mohawk/riven.cpp:716
+#: engines/cruise/menu.cpp:216 backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr ""
@@ -1133,8 +1134,8 @@ msgstr ""
 msgid "Save game:"
 msgstr ""
 
-#: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
-#: engines/sci/engine/kfile.cpp:575
+#: engines/dialogs.cpp:116 engines/scumm/dialogs.cpp:182
+#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:575
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1209,6 +1210,84 @@ msgstr ""
 msgid "Start anyway"
 msgstr ""
 
+#: engines/scumm/dialogs.cpp:174
+#, c-format
+msgid "Insert Disk %c and Press Button to Continue."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:175
+#, c-format
+msgid "Unable to Find %s, (%c%d) Press Button."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:176
+#, c-format
+msgid "Error reading disk %c, (%c%d) Press Button."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:177
+msgid "Game Paused.  Press SPACE to Continue."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:178
+msgid "Are you sure you want to restart?  (Y/N)"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:179
+msgid "Are you sure you want to quit?  (Y/N)"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:184
+msgid "Play"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:186 engines/scumm/help.cpp:82
+#: engines/scumm/help.cpp:84
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+#: backends/platform/wince/CEActionsPocket.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:52
+#: backends/events/default/default-events.cpp:244
+msgid "Quit"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:188
+msgid "Insert save/load game disk"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:189
+msgid "You must enter a name"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:190
+msgid "The game was NOT saved (disk full?)"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:191
+msgid "The game was NOT loaded"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:192
+#, c-format
+msgid "Saving '%s'"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:193
+#, c-format
+msgid "Loading '%s'"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:194
+msgid "Name your SAVE game"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:195
+msgid "Select a game to LOAD"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:196
+msgid "Game title)"
+msgstr ""
+
 #: engines/scumm/dialogs.cpp:281
 msgid "~P~revious"
 msgstr ""
@@ -1220,6 +1299,23 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:283
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 msgid "~C~lose"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:586
+msgid "Speech Only"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:587
+msgid "Speech and Subtitles"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:588
+msgid "Subtitles Only"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:596
+msgctxt "lowres"
+msgid "Speech & Subs"
 msgstr ""
 
 #: engines/scumm/help.cpp:73
@@ -1270,14 +1366,6 @@ msgstr ""
 
 #: engines/scumm/help.cpp:80
 msgid "Save game state 1-10"
-msgstr ""
-
-#: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
-#: backends/platform/symbian/src/SymbianActions.cpp:52
-#: backends/platform/wince/CEActionsPocket.cpp:44
-#: backends/platform/wince/CEActionsSmartphone.cpp:52
-#: backends/events/default/default-events.cpp:244
-msgid "Quit"
 msgstr ""
 
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
