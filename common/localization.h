@@ -27,9 +27,26 @@
 
 namespace Common {
 
-/** Get localized equivalents for Y/N buttons */
+/**
+ * Get localized equivalents for Y/N buttons of the specified language. In
+ * case there is no specialized keys for the given language it will fall back
+ * to the English keys.
+ *
+ * @param id Language id
+ * @param keyYes Key code for yes
+ * @param keyYes Key code for no
+ */
 void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo);
 
-}	// End of namespace Common
+/**
+ * Get localized equivalents for Y/N buttons of the current translation
+ * language of the ScummVM GUI.
+ *
+ * @param keyYes Key code for yes
+ * @param keyYes Key code for no
+ */
+void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo);
+
+} // End of namespace Common
 
 #endif

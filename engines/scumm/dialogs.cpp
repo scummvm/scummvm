@@ -491,7 +491,7 @@ ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 	Common::KeyCode keyYes, keyNo;
 
-	Common::getLanguageYesNo(Common::parseLanguageFromLocale(TransMan.getCurrentLanguage().c_str()), keyYes, keyNo);
+	Common::getLanguageYesNo(keyYes, keyNo);
 
 	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey || state.ascii == keyNo) {
 		setResult(0);

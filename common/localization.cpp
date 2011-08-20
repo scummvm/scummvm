@@ -20,6 +20,7 @@
  */
 
 #include "common/localization.h"
+#include "common/translation.h"
 
 namespace Common {
 
@@ -52,6 +53,14 @@ void getLanguageYesNo(Language id, KeyCode &keyYes, KeyCode &keyNo) {
 	default:
 		break;
 	}
+}
+
+void getLanguageYesNo(KeyCode &keyYes, KeyCode &keyNo) {
+#ifdef USE_TRANSLATION
+	getLanguageYesNo(Common::parseLanguageFromLocale(TransMan.getCurrentLanguage().c_str()), keyYes, keyNo);
+#else
+	getLanguageYesNo(Common::EN_ANY, keyYes, keyNo);
+#endif
 }
 
 } // End of namespace Common
