@@ -75,7 +75,6 @@ public:
 	XFile(IOMode mode) : _mode(mode), _error(0) { }
 	virtual ~XFile() { }
 	virtual uint16 read(void *buf, uint16 len) = 0;
-	virtual uint16 write(void *buf, uint16 len) = 0;
 	virtual long mark() = 0;
 	virtual long size() = 0;
 	virtual long seek(long pos) = 0;
@@ -99,7 +98,6 @@ public:
 	virtual ~IoHand();
 	static bool exist(const char *name);
 	uint16 read(void *buf, uint16 len);
-	uint16 write(void *buf, uint16 len);
 	long mark();
 	long size();
 	long seek(long pos);
