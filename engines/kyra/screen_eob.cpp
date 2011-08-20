@@ -774,15 +774,8 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 				int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
 				if (py > ymax)
 					py = ymax;
-				if (posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
+				if (posWithinRect(px, py, rX1, rY1, rX2, rY2))
 					setPagePixel(0, px, py, ptr6[i]);
-					if (i % 5 == 0)  {
-						updateScreen();
-						uint32 cur = _system->getMillis();
-						if (end > cur)
-							_system->delayMillis(end - cur);
-					}
-				}
 			}			
 		}
 
@@ -914,14 +907,6 @@ void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int 
 				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
 				int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
 				setPagePixel(0, px, py, pixBackup[ii]);
-		
-				if (ii % 15 == 0)  {
-					updateScreen();
-					uint32 cur = _system->getMillis();
-					if (nextDelay > cur)
-						_system->delayMillis(nextDelay - cur);
-					nextDelay += 1;
-				}
 			}
 		}
 

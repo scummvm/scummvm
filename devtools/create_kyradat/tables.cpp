@@ -3187,7 +3187,12 @@ const ExtractEntrySearchData kEob2MonsterDustStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEob2DranFoolsStringsProvider[] = {
+const ExtractEntrySearchData kEob2DreamStepsProvider[] = {
+	{ UNK_LANG, kPlatformUnknown, { 0x0000000E, 0x00000114, { { 0x27, 0x32, 0xCB, 0x89, 0x27, 0xC5, 0xDD, 0x91, 0xBE, 0x97, 0x62, 0xF5, 0x76, 0xF7, 0xCD, 0x25 } } } },
+	EXTRACT_END_ENTRY
+};
+
+const ExtractEntrySearchData kEob2KheldranStringsProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x0000001A, 0x00000887, { { 0xA6, 0xB4, 0x45, 0x1B, 0x33, 0x54, 0x36, 0xAD, 0x1D, 0xB1, 0xDA, 0xC3, 0x12, 0x85, 0x3C, 0x58 } } } },
 	{ DE_DEU, kPlatformUnknown, { 0x00000012, 0x00000511, { { 0xEE, 0x21, 0xA8, 0x6E, 0xF7, 0xEC, 0x9A, 0x8D, 0xBA, 0x8D, 0xE3, 0x4A, 0x17, 0x15, 0xCA, 0x8C } } } },
 	EXTRACT_END_ENTRY
@@ -4198,7 +4203,8 @@ const ExtractEntry extractProviders[] = {
 	{ kEob2Npc1Strings, kEob2Npc1StringsProvider },
 	{ kEob2Npc2Strings, kEob2Npc2StringsProvider },
 	{ kEob2MonsterDustStrings, kEob2MonsterDustStringsProvider },
-	{ kEob2DranFoolsStrings, kEob2DranFoolsStringsProvider },
+	{ kEob2DreamSteps, kEob2DreamStepsProvider },
+	{ kEob2KheldranStrings, kEob2KheldranStringsProvider },
 	{ kEob2HornStrings, kEob2HornStringsProvider },
 	{ kEob2HornSounds, kEob2HornSoundsProvider },
 	{ kEob2WallOfForceDsX, kEob2WallOfForceDsXProvider },

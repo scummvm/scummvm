@@ -570,7 +570,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kEob2Npc1Strings, kTypeStringList, true },
 	{ kEob2Npc2Strings, kTypeStringList, true },
 	{ kEob2MonsterDustStrings, kTypeStringList, true },
-	{ kEob2DranFoolsStrings, kTypeStringList, true },
+	{ kEob2DreamSteps, kTypeRawData, false },
+	{ kEob2KheldranStrings, kTypeStringList, true },
 	{ kEob2HornStrings, kTypeStringList, true },
 	{ kEob2HornSounds, kTypeRawData, false },
 	{ kEob2WallOfForceDsX, kLolTypeRaw16, false },
@@ -1991,8 +1992,10 @@ const char *getIdString(const int id) {
 		return "kEob2Npc2Strings";
 	case kEob2MonsterDustStrings:
 		return "kEob2MonsterDustStrings";
-	case kEob2DranFoolsStrings:
-		return "kEob2DranFoolsStrings";
+	case kEob2DreamSteps:
+		return "kEob2DreamSteps";
+	case kEob2KheldranStrings:
+		return "kEob2KheldranStrings";
 	case kEob2HornStrings:
 		return "kEob2HornStrings";
 	case kEob2HornSounds:

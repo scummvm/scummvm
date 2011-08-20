@@ -106,8 +106,8 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	Opcode(oeob_calcAndInflictCharacterDamage);
 	Opcode(oeob_jump);
 	Opcode(oeob_end);
-	Opcode(oeob_popPosAndReturn);
-	Opcode(oeob_pushPosAndJump);
+	Opcode(oeob_returnFromSubroutine);
+	Opcode(oeob_callSubroutine);
 	OpcodeAlt(oeob_eval);
 	Opcode(oeob_deleteItem);
 	Opcode(oeob_loadNewLevelOrMonsters);
@@ -125,6 +125,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 #undef OpcodeAlt
 
 	_scriptData = 0;
+	_scriptSize = 0;
 
 	_abortScript = 0;
 	_abortAfterSubroutine = 0;
@@ -134,9 +135,9 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_lastScriptFunc = 0;
 	_lastScriptSub = 0;
 
-	_scriptPosStack = new int8*[10];
-	memset(_scriptPosStack, 0, 10 * sizeof(int8*));
-	_scriptPosStackIndex = 0;
+	_subroutineStack = new int8*[10];
+	memset(_subroutineStack, 0, 10 * sizeof(int8*));
+	_subroutineStackPos = 0;
 
 	_flagTable = new uint32[18];
 	memset(_flagTable, 0, 18 * sizeof(uint32));
@@ -145,14 +146,14 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	memset(_stack, 0, 30 * sizeof(int16));
 	_stackIndex = 0;
 
-	memset(_scriptPosStack, 0, sizeof(_scriptPosStack));
-	_scriptPosStackIndex = 0;
+	memset(_subroutineStack, 0, sizeof(_subroutineStack));
+	_subroutineStackPos = 0;
 
 	_activeCharacter = -1;
 }
 
 EobInfProcessor::~EobInfProcessor() {
-	delete[] _scriptPosStack;
+	delete[] _subroutineStack;
 	delete[] _flagTable;
 	delete[] _stack;
 	delete[] _scriptData;
@@ -163,8 +164,9 @@ EobInfProcessor::~EobInfProcessor() {
 
 void EobInfProcessor::loadData(const uint8 *data, uint32 dataSize) {
 	delete[] _scriptData;
-	_scriptData = new int8[dataSize];
-	memcpy(_scriptData, data, dataSize);
+	_scriptSize = dataSize;
+	_scriptData = new int8[_scriptSize];
+	memcpy(_scriptData, data, _scriptSize);
 }
 
 void EobInfProcessor::run(int func, int sub) {
@@ -382,7 +384,7 @@ int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
 		int bc = _lastScriptSub;
 		int bd = _abortScript;
 		int be = _activeCharacter;
-		int bf = _scriptPosStackIndex;
+		int bf = _subroutineStackPos;
 
 		_vm->moveParty(d);
 
@@ -392,7 +394,7 @@ int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
 		_abortScript = bd;
 		_activeCharacter = be;
 		if (!_abortAfterSubroutine)
-			_scriptPosStackIndex = bf;
+			_subroutineStackPos = bf;
 		_vm->_sceneDefaultUpdate = 0;
 
 	} else if ((a == -31 && _vm->game() == GI_EOB2) || a == -11) {
@@ -589,7 +591,6 @@ int EobInfProcessor::oeob_playSoundEffect(int8 *data) {
 int EobInfProcessor::oeob_removeFlags(int8 *data) {
 	int8 *pos = data;
 	int8 a = *pos++;
-	int8 b = *pos++;
 
 	switch (a) {
 	case -47:
@@ -601,11 +602,11 @@ int EobInfProcessor::oeob_removeFlags(int8 *data) {
 		break;
 
 	case -17:
-		_flagTable[_vm->_currentLevel] &= ~(1 << b);
+		_flagTable[_vm->_currentLevel] &= ~(1 << (*pos++));
 		break;
 
 	case -16:
-		_flagTable[17] &= ~(1 << b);
+		_flagTable[17] &= ~(1 << (*pos++));
 		break;
 
 	default:
@@ -667,28 +668,29 @@ int EobInfProcessor::oeob_jump(int8 *data) {
 
 int EobInfProcessor::oeob_end(int8 *data) {
 	_abortScript = 1;
-	_scriptPosStackIndex = 0;
+	_subroutineStackPos = 0;
 	return 0;
 }
 
-int EobInfProcessor::oeob_popPosAndReturn(int8 *data) {
+int EobInfProcessor::oeob_returnFromSubroutine(int8 *data) {
 	int8 *pos = data;
 
-	if (_scriptPosStackIndex)
-		pos = _scriptPosStack[--_scriptPosStackIndex];
+	if (_subroutineStackPos)
+		pos = _subroutineStack[--_subroutineStackPos];
 	else
 		_abortScript = 1;
 
 	return pos - data;
 }
 
-int EobInfProcessor::oeob_pushPosAndJump(int8 *data) {
+int EobInfProcessor::oeob_callSubroutine(int8 *data) {
 	int8 *pos = data;
 	uint16 offs = READ_LE_UINT16(pos);
+	assert(offs < _scriptSize);
 	pos += 2;
 
-	if (_scriptPosStackIndex < 10) {
-		_scriptPosStack[_scriptPosStackIndex++] = pos;
+	if (_subroutineStackPos < 10) {
+		_subroutineStack[_subroutineStackPos++] = pos;
 		pos = _scriptData + offs;
 	}
 
@@ -1245,7 +1247,7 @@ int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_vm->_sceneUpdateRequired = true;
 
 		_vm->gui_drawAllCharPortraitsWithStats();
-		_scriptPosStackIndex = 0;
+		_subroutineStackPos = 0;
 
 	} else {
 		cmd = *pos++;

@@ -88,10 +88,11 @@ private:
 
 	// Ingame sequence
 	void seq_nightmare();
-	void seq_dranFools();
+	void seq_kheldran();
 	void seq_dranDragonTransformation();
 
-	const char *const *_dranFoolsStrings;
+	const int8 *_dreamSteps;
+	const char *const *_kheldranStrings;
 
 	// characters
 	void drawNpcScene(int npcIndex);

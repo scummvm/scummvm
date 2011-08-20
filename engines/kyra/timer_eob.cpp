@@ -221,6 +221,13 @@ void EobCoreEngine::advanceTimers(uint32 millis) {
 			}
 		}
 	}
+
+	for (int i = 0; i < 5; i++) {
+		if (_wallsOfForce[i].duration > ct) {
+			uint32 chrt = _wallsOfForce[i].duration - ct;
+			_wallsOfForce[i].duration = chrt > millis ? ct + chrt - millis : ct;
+		}
+	}
 }
 
 void EobCoreEngine::timerProcessCharacterExchange(int timerNum) {

@@ -1282,12 +1282,11 @@ void DarkMoonEngine::seq_nightmare() {
 	_txt->printDialogueText(99, 0);
 	snd_playSoundEffect(54);
 
-	static const int8 dreamSteps[] = { 0, 1, 2, 3, 2, 1, 0, 1, 2, 3, 3, 2, 1, 0, -1 };
 	static const uint8 seqX[] = { 0, 20, 0, 20 };
 	static const uint8 seqY[] = { 0, 0, 96, 96 };
 	static const uint8 seqDelay[] = { 12, 7, 7, 12 };
 
-	for (const int8 *i = dreamSteps; *i != -1; ++i) {
+	for (const int8 *i = _dreamSteps; *i != -1; ++i) {
 		drawSequenceBitmap("DREAM", 0, seqX[*i], seqY[*i], 0);
 		delay(seqDelay[*i] * _tickLength);
 	}
@@ -1299,14 +1298,14 @@ void DarkMoonEngine::seq_nightmare() {
 	_screen->setFont(of);
 }
 
-void DarkMoonEngine::seq_dranFools() {
+void DarkMoonEngine::seq_kheldran() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
 
 	initDialogueSequence();
 	gui_drawDialogueBox();
 	
 	static const char file[] = "KHELDRAN";
-	_txt->printDialogueText(_dranFoolsStrings[0]);
+	_txt->printDialogueText(_kheldranStrings[0]);
 	drawSequenceBitmap(file, 0, 0, 0, 0);
 	_txt->printDialogueText(20, _moreStrings[0]);
 	snd_playSoundEffect(56);

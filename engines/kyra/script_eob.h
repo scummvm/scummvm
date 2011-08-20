@@ -69,8 +69,8 @@ private:
 	int oeob_calcAndInflictCharacterDamage(int8 *data);
 	int oeob_jump(int8 *data);
 	int oeob_end(int8 *data);
-	int oeob_popPosAndReturn(int8 *data);
-	int oeob_pushPosAndJump(int8 *data);
+	int oeob_returnFromSubroutine(int8 *data);
+	int oeob_callSubroutine(int8 *data);
 	int oeob_eval_v1(int8 *data);
 	int oeob_eval_v2(int8 *data);
 	int oeob_deleteItem(int8 *data);
@@ -94,6 +94,7 @@ private:
 	Common::Array<const InfProc*> _opcodes;
 
 	int8 *_scriptData;
+	uint16 _scriptSize;
 
 	uint8 _abortScript;
 	uint16 _abortAfterSubroutine;
@@ -103,8 +104,8 @@ private:
 	uint16 _lastScriptFunc;
 	uint16 _lastScriptSub;
 
-	int8 **_scriptPosStack;
-	int _scriptPosStackIndex;
+	int8 **_subroutineStack;
+	int _subroutineStackPos;
 
 	uint32 *_flagTable;
 

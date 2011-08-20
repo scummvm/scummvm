@@ -647,8 +647,12 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 		delete s;
 	}
 
-	Common::String gfxFile = initLevelData(sub);
-
+	Common::String gfxFile;
+	// Work around for issue with corrupt (incomplete) monster property data 
+	// when loading a savegame saved in a sub level
+	for (int i = 0; i <= sub; i++)
+		gfxFile = initLevelData(i);
+	
 	const uint8 *data = _screen->getCPagePtr(5);
 	const uint8 *pos = data + READ_LE_UINT16(data);
 	uint16 len = READ_LE_UINT16(pos);
@@ -1142,7 +1146,7 @@ int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 	int f = _wllWallFlags[w];
 
 	//if (!f)
-	assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
+		assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
 
 	if (_flags.gameID == GI_EOB2 && w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {

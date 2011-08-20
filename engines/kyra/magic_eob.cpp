@@ -360,7 +360,7 @@ void EobCoreEngine::startSpell(int spell) {
 	if (_castScrollSlot) {
 		gui_updateSlotAfterScrollUse();
 	} else {
-		c->disabledSlots |= 4;
+		_characters[_openBookChar].disabledSlots |= 4;
 		setCharEventTimer(_openBookChar, 72, 11, 1);
 		gui_toggleButtons();
 		gui_drawSpellbook();
@@ -405,7 +405,6 @@ void EobCoreEngine::sparkEffectDefensive(int charIndex) {
 				_screen->updateScreen();
 			}
 		}
-		resetSkipFlag();
 		delay(2 * _tickLength);
 	}
 
@@ -430,7 +429,6 @@ void EobCoreEngine::sparkEffectOffensive() {
 			if (shpIndex)
 				_screen->drawShape(2, _sparkShapes[shpIndex - 1], _sparkEffectOfX[ii], _sparkEffectOfY[ii], 0);
 		}
-		resetSkipFlag();
 		delay(2 * _tickLength);
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -444,6 +442,7 @@ void EobCoreEngine::sparkEffectOffensive() {
 }
 
 void EobCoreEngine::setSpellEventTimer(int spell, int timerBaseFactor, int timerLength, int timerLevelFactor, int updateExistingTimer) {
+	assert (spell >= 0);
 	int l = _openBookType == 1 ? getClericPaladinLevel(_openBookChar) : getMageLevel(_openBookChar);
 	uint32 countdown = timerLength * timerBaseFactor + timerLength * l * timerLevelFactor;
 	setCharEventTimer(_activeSpellCharId, countdown, -spell, updateExistingTimer);
@@ -753,7 +752,7 @@ int EobCoreEngine::findFirstCharacterSpellTarget() {
 }
 
 int EobCoreEngine::findNextCharacterSpellTarget(int curCharIndex) {
-	for (; _characterSpellTarget < 6; _characterSpellTarget++) {
+	for (_characterSpellTarget++; _characterSpellTarget < 6; ) {
 		if (++curCharIndex == 6)
 			curCharIndex = 0;
 		if (testCharacter(curCharIndex, 3))
@@ -763,8 +762,14 @@ int EobCoreEngine::findNextCharacterSpellTarget(int curCharIndex) {
 }
 
 int EobCoreEngine::charDeathSavingThrow(int charIndex, int div) {
-	if (specialAttackSavingThrow(charIndex, 4))
+	bool _beholderOrgBhv = true;
+	// Due to a bug in the original code the saving throw result is completely ignored
+	// here. The Beholders' disintegrate spell will alway succeed while their flesh to
+	// stone spell will always fail.
+	if (_beholderOrgBhv)
 		div >>= 1;
+	else
+		div = specialAttackSavingThrow(charIndex, 4) ? 1 : 0;
 	return div;
 }
 
@@ -1226,7 +1231,7 @@ bool EobCoreEngine::spellCallback_end_flameStrike(void *obj) {
 }
 
 void EobCoreEngine::spellCallback_start_raiseDead() {
-	if (_characters[_activeSpellCharId].hitPointsCur == -10 || ((_characters[_activeSpellCharId].raceSex >> 1) == 1)) {
+	if (_characters[_activeSpellCharId].hitPointsCur == -10 && ((_characters[_activeSpellCharId].raceSex >> 1) != 1)) {
 		_characters[_activeSpellCharId].hitPointsCur = 1;
 		gui_drawCharPortraitWithStats(_activeSpellCharId);
 	} else {

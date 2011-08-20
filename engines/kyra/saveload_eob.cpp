@@ -366,6 +366,13 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	_sceneUpdateRequired = true;
 	_screen->setFont(Screen::FID_6_FNT);
 
+	for (int i = 0; i < 6; i++) {
+		for (int ii = 0; ii < 10; ii++) {
+			if (_characters[i].events[ii] == -57)
+				spellCallback_start_trueSeeing();
+		}
+	}
+
 	_screen->setCurPage(0);
 	gui_drawPlayField(false);	
 

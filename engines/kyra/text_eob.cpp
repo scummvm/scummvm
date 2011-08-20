@@ -29,16 +29,18 @@
 
 #include "common/system.h"
 
-#define EOBTEXTBUFFERSIZE 2048
-
 namespace Kyra {
+
+enum {
+	kEobTextBufferSize = 2048
+};
 
 TextDisplayer_Eob::TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen) : _vm(engine), _screen(sScreen),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
 	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false), _waitButtonMode(1) {
 
-	_dialogueBuffer = new char[EOBTEXTBUFFERSIZE];
-	memset(_dialogueBuffer, 0, EOBTEXTBUFFERSIZE);
+	_dialogueBuffer = new char[kEobTextBufferSize];
+	memset(_dialogueBuffer, 0, kEobTextBufferSize);
 
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
@@ -221,12 +223,14 @@ void TextDisplayer_Eob::displayText(char *str, ...) {
 			break;
 
 		default:
-			_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth((uint8)c));
-			_currentLine[_numCharsLeft++] = c;
-			_currentLine[_numCharsLeft] = 0;
+			if (_vm->game() == GI_LOL || c > 30) {
+				_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth((uint8)c));
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft] = 0;
 
-			if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
-				printLine(_currentLine);
+				if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
+					printLine(_currentLine);
+			}
 		}
 
 		c = parseCommand();
@@ -269,6 +273,10 @@ void TextDisplayer_Eob::readNextPara() {
 			d = *_tempString1++;
 		else
 			_tempString1 = 0;
+	}
+
+	if (d & 0x80) {
+		warning("TextDisplayer_Eob::readNextPara():");
 	}
 
 	_ctrl[1] = d;
@@ -442,8 +450,8 @@ void TextDisplayer_Eob::printLine(char *str) {
 
 void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakString) {
 	const char * str = (const char *)(screen()->getCPagePtr(5) + READ_LE_UINT16(&screen()->getCPagePtr(5)[(stringId - 1) << 1]));
-	assert (strlen(str) < EOBTEXTBUFFERSIZE);
-	Common::strlcpy(_dialogueBuffer, str, EOBTEXTBUFFERSIZE);
+	assert (strlen(str) < kEobTextBufferSize);
+	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
 	
 	displayText(_dialogueBuffer);
 
@@ -457,8 +465,8 @@ void TextDisplayer_Eob::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_Eob::printDialogueText(const char *str, bool wait) {
-	assert (strlen(str) < EOBTEXTBUFFERSIZE);
-	Common::strlcpy(_dialogueBuffer, str, EOBTEXTBUFFERSIZE);
+	assert (strlen(str) < kEobTextBufferSize);
+	Common::strlcpy(_dialogueBuffer, str, kEobTextBufferSize);
 
 	strcpy(_dialogueBuffer, str);
 	displayText(_dialogueBuffer);
@@ -474,7 +482,7 @@ void TextDisplayer_Eob::printMessage(const char *str, int textColor, ...) {
 
 	va_list args;
 	va_start(args, textColor);
-	vsnprintf(_dialogueBuffer, 240, str, args);
+	vsnprintf(_dialogueBuffer, kEobTextBufferSize - 1, str, args);
 	va_end(args);
 
 	displayText(_dialogueBuffer);
@@ -655,6 +663,7 @@ void TextDisplayer_Eob::displayWaitButton() {
 	while (!vm()->processDialogue() && !vm()->shouldQuit()) {}
 	
 	_screen->fillRect(vm()->_dialogueButtonPosX[0], vm()->_dialogueButtonPosY[0], vm()->_dialogueButtonPosX[0] + vm()->_dialogueButtonW - 1, vm()->_dialogueButtonPosY[0] + vm()->_dialogueButtonH - 1, vm()->_bkgColor_1);
+	_screen->updateScreen();
 	vm()->_dialogueButtonW = 95;
 	SWAP(vm()->_dialogueButtonLabelCol1, vm()->_dialogueButtonLabelCol2);
 	clearCurDim();
