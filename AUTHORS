@@ -1,8 +1,19 @@
 ScummVM Team
 ************
-  Project Leaders
-  ---------------
+  Project Leader
+  --------------
      Eugene Sandulenko
+
+  PR Office
+  ---------
+     Arnaud Boutonne       - Public Relations Officer, Project Administrator
+     Eugene Sandulenko     - Project Leader
+
+  Core Team
+  ---------
+     Willem Jan Palenstijn
+     Eugene Sandulenko
+     Johannes Schickel
 
   Retired Project Leaders
   -----------------------
@@ -71,6 +82,7 @@ ScummVM Team
     DreamWeb:
        Vladimir Menshakov
        Torbjorn Andersson
+       Bertrand Augereau
 
     Gob:
        Torbjorn Andersson
@@ -220,6 +232,7 @@ ScummVM Team
 
     Nintendo DS:
        Neil Millstone
+       Bertrand Augereau     - HQ software scaler
 
     OpenPandora:
        John Willis
@@ -568,3 +581,4 @@ Special thanks to
 
    Broken Sword 2.5 team for providing sources of their engine and their
    great support.
+

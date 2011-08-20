@@ -445,9 +445,24 @@ sub add_paragraph {
 
 begin_credits("Credits");
   begin_section("ScummVM Team");
-    begin_section("Project Leaders");
+    begin_section("Project Leader");
 	  begin_persons();
 		add_person("Eugene Sandulenko", "sev", "");
+	  end_persons();
+    end_section();
+
+    begin_section("PR Office");
+	  begin_persons();
+		add_person("Arnaud Boutonn&eacute;", "Strangerke", "Public Relations Officer, Project Administrator");
+		add_person("Eugene Sandulenko", "sev", "Project Leader");
+	  end_persons();
+    end_section();
+
+    begin_section("Core Team");
+	  begin_persons();
+		add_person("Willem Jan Palenstijn", "wjp", "");
+		add_person("Eugene Sandulenko", "sev", "");
+		add_person("Johannes Schickel", "LordHoto", "");
 	  end_persons();
     end_section();
 
