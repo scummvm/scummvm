@@ -77,6 +77,10 @@ Common::Error DarkMoonEngine::init() {
 	_color13 = 177;
 	_color14 = 182;
 
+	// Necessary wall hacks (where the original code makes out of bounds accesses)
+	_wllWallFlags[183] = 0x50;
+	_wllVmpMap[183] = 1;
+
 	return Common::kNoError;
 }
 
@@ -312,6 +316,8 @@ const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex,
 void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16) {
 	int shapeIndex = type * 3 + 2 - mDim;
 	uint8 *shp = _doorShapes[shapeIndex];
+	if (!shp)
+		return;
 
 	if ((_doorType[type] == 0) || (_doorType[type] == 1)) {
 		y = _dscDoorY1[mDim] - shp[1];
@@ -392,7 +398,7 @@ void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {
 
 bool DarkMoonEngine::checkPartyStatusExtra() {
 	if (checkScriptFlags(0x100000))
-		seq_dranFools();
+		seq_kheldran();
 	return _gui->confirmDialogue2(14, 67, 1);
 }
 
@@ -462,7 +468,7 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 		if (er == 0xffffffff)
 			continue;
 
-		increaseCharacterExperience(charIndex, er - c->experience[i]);
+		increaseCharacterExperience(charIndex, er - c->experience[i] + 1);
 	}
 }
 

@@ -302,13 +302,6 @@ Common::Error EobCoreEngine::init() {
 	memset(&_wllShapeMap[3], -1, 5);
 	memset(&_wllShapeMap[13], -1, 5);
 
-	/*int clen = _flags.gameID == GI_EOB2 ? 80 : 70;
-	memcpy(&_wllShapeMap[256 - clen], _wllVmpMap, clen);
-	memcpy(&_specialWallTypes[256 - 2 * clen], _wllVmpMap, clen);
-	memcpy(&_specialWallTypes[256 - clen], _wllShapeMap, clen);
-	memcpy(&_wllWallFlags[256 - 2 * clen], _wllShapeMap, clen);
-	memcpy(&_wllWallFlags[256 - clen], _specialWallTypes, clen);*/
-
 	_wllVcnOffset = 16;
 
 	_monsters = new EobMonsterInPlay[30];
@@ -1248,6 +1241,7 @@ void EobCoreEngine::initDialogueSequence() {
 
 	_txt->resetPageBreakString();
 	gui_updateControls();
+	//_allowSkip = true;
 
 	_sound->playTrack(0);
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
@@ -1263,6 +1257,7 @@ void EobCoreEngine::restoreAfterDialogueSequence() {
 	_dialogueLastBitmap[0] = 0;
 
 	gui_restorePlayField();
+	//_allowSkip = false;
 	_screen->setScreenDim(7);
 
 	if (_flags.gameID == GI_EOB2)
@@ -1603,14 +1598,18 @@ bool EobCoreEngine::checkPassword() {
 	for (int i = 0; i < 3; i++) {
 		_screen->fillRect(_screen->_curDim->sx << 3, _screen->_curDim->sy, ((_screen->_curDim->sx + _screen->_curDim->w) << 3) - 1, (_screen->_curDim->sy + _screen->_curDim->h) - 1, _bkgColor_1);
 		int c = rollDice(1, _mnNumWord - 1, -1);
-		_screen->drawShape(0, _largeItemShapes[_mnDef[c << 2]], 100, 2, 13);
+		const uint8 *shp = (_mnDef[c << 2] < _numLargeItemShapes) ? _largeItemShapes[_mnDef[c << 2]] : (_mnDef[c << 2] < 15 ? 0 : _smallItemShapes[_mnDef[c << 2] - 15]);
+		assert(shp);
+		_screen->drawShape(0, shp, 100, 2, 13);
 		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, _bkgColor_1);
 		memset(answ, 0, 20);
 		gui_drawBox(76, 100, 133, 14, _color2_1, _color1_1, -1);
 		gui_drawBox(77, 101, 131, 12, _color2_1, _color1_1, -1);	
 		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, _bkgColor_1, 8) < 0)
 			i = 3;
-		if (scumm_stricmp(_mnWord[c], answ) && i == 2)
+		if (!scumm_stricmp(_mnWord[c], answ))
+			break;
+		else if (i == 2)
 			return false;
 	}
 
@@ -1806,7 +1805,7 @@ int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 	EobCharacter *c = &_characters[charIndex];
 
 	if (savingThrowType != 5) {
-		if (trySavingThrow(c, _charClassModUnk[c->cClass], c->level[0], savingThrowType, c->raceSex))
+		if (trySavingThrow(c, _charClassModUnk[c->cClass], c->level[0], savingThrowType, c->raceSex >> 1 /*fix bug in original code by adding a right shift*/))
 			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
@@ -2006,6 +2005,7 @@ void EobCoreEngine::monsterCloseAttack(EobMonsterInPlay *m) {
 					_txt->printMessage(_ripItemStrings[(_characters[c].raceSex & 1) ^ 1], -1, _characters[c].name);
 					printFullItemName(itm);
 					_txt->printMessage(_ripItemStrings[2]);
+					break;
 				}
 				gui_drawCharPortraitWithStats(c);
 			}

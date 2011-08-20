@@ -1280,7 +1280,8 @@ void DarkMoonEngine::initStaticResource() {
 	_npc1Strings = _staticres->loadStrings(kEob2Npc1Strings, temp);
 	_npc2Strings = _staticres->loadStrings(kEob2Npc2Strings, temp);
 	_monsterDustStrings = _staticres->loadStrings(kEob2MonsterDustStrings, temp);
-	_dranFoolsStrings = _staticres->loadStrings(kEob2DranFoolsStrings, temp);
+	_dreamSteps = (const int8*)_staticres->loadRawData(kEob2DreamSteps, temp);
+	_kheldranStrings = _staticres->loadStrings(kEob2KheldranStrings, temp);
 	_hornStrings = _staticres->loadStrings(kEob2HornStrings, temp);
 	_hornSounds = _staticres->loadRawData(kEob2HornSounds, temp);
 

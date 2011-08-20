@@ -552,7 +552,8 @@ enum kExtractID {
 	kEob2Npc2Strings,
 	kEob2MonsterDustStrings,
 
-	kEob2DranFoolsStrings,
+	kEob2DreamSteps,
+	kEob2KheldranStrings,
 	kEob2HornStrings,
 	kEob2HornSounds,
 
