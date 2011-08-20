@@ -134,7 +134,7 @@ enum Language {
 
 struct LanguageDescription {
 	const char *code;
-	//const char *unixLocale;
+	const char *unixLocale;
 	const char *description;
 	Language id;
 };
@@ -144,12 +144,10 @@ extern const LanguageDescription g_languages[];
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
+extern Language parseLanguageFromLocale(const char *locale);
 extern const char *getLanguageCode(Language id);
+extern const char *getLanguageLocale(Language id);
 extern const char *getLanguageDescription(Language id);
-
-// locale <-> Language conversion is disabled, since it is not used currently
-/*extern const char *getLanguageLocale(Language id);
-extern Language parseLanguageFromLocale(const char *locale);*/
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
