@@ -136,6 +136,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'findxyfrompath',
 	'findormake',
 	'setallchanges',
+	'dochange',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

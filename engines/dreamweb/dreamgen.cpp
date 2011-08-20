@@ -11338,48 +11338,6 @@ void DreamGenContext::switchryanoff() {
 	data.byte(kRyanon) = 1;
 }
 
-void DreamGenContext::dochange() {
-	STACK_CHECK;
-	_cmp(ch, 0);
-	if (flags.z())
-		goto object;
-	_cmp(ch, 1);
-	if (flags.z())
-		goto freeobject;
-	push(cx);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	push(ax);
-	al = ch;
-	_sub(al, 100);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	bx = pop();
-	_add(bx, ax);
-	_add(bx, (0));
-	es = data.word(kReels);
-	cx = pop();
-	es.byte(bx+6) = cl;
-	return;
-object:
-	push(cx);
-	getsetad();
-	cx = pop();
-	es.byte(bx+58) = cl;
-	return;
-freeobject:
-	push(cx);
-	getfreead();
-	cx = pop();
-	_cmp(es.byte(bx+2), 255);
-	if (!flags.z())
-		return /* (beenpickedup) */;
-	es.byte(bx+2) = cl;
-}
-
 void DreamGenContext::autoappear() {
 	STACK_CHECK;
 	_cmp(data.byte(kLocation), 32);
@@ -18670,7 +18628,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_removefreeobject: removefreeobject(); break;
 		case addr_switchryanon: switchryanon(); break;
 		case addr_switchryanoff: switchryanoff(); break;
-		case addr_dochange: dochange(); break;
 		case addr_autoappear: autoappear(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;

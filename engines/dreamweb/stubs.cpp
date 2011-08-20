@@ -1048,18 +1048,18 @@ void DreamGenContext::findormake() {
 	findormake(b0, b2, b3);
 }
 
-void DreamGenContext::findormake(uint8 b0, uint8 b2, uint8 b3) {
+void DreamGenContext::findormake(uint8 index, uint8 value, uint8 type) {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	while (true) {
-		if (change->b0 == 0xff) {
-			change->b0 = b0;
+		if (change->index == 0xff) {
+			change->index = index;
 			change->location = data.byte(kReallocation);
-			change->b2 = b2;
-			change->b3 = b3;
+			change->value = value;
+			change->type = type;
 			return;
 		}
-		if ((b0 == change->b0) && (data.byte(kReallocation) == change->location) && (b3 == change->b3)) {
-			change->b2 = b2;
+		if ((index == change->index) && (data.byte(kReallocation) == change->location) && (type == change->type)) {
+			change->value = value;
 			return;
 		}
 		++change;
@@ -1068,15 +1068,36 @@ void DreamGenContext::findormake(uint8 b0, uint8 b2, uint8 b3) {
 
 void DreamGenContext::setallchanges() {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
-	while (change->b0 != 0xff) {
-		if (change->location == data.byte(kReallocation)) {
-			al = change->b0;
-			ah = change->location;
-			cl = change->b2;
-			ch = change->b3;
-			dochange();
-		}
+	while (change->index != 0xff) {
+		if (change->location == data.byte(kReallocation))
+			dochange(change->index, change->value, change->type);
 		++change;
+	}
+}
+
+FreeObject *DreamGenContext::getfreead(uint8 index) {
+	return (FreeObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
+}
+
+ObjData *DreamGenContext::getsetad(uint8 index) {
+	return (ObjData *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
+}
+
+void DreamGenContext::dochange() {
+	dochange(al, cl, ch);
+}
+
+void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
+	if (type == 0) { //object
+		getsetad(index)->b58[0] = value;
+	} else if (type == 1) { //freeobject
+		FreeObject *freeObject = getfreead(index);
+		if (freeObject->b2 == 0xff)
+			freeObject->b2 = value;
+	} else { //path
+		bx = kPathdata + (type - 100) * 144 + index * 8;
+		es = data.word(kReels);
+		es.byte(bx+6) = value;
 	}
 }
 

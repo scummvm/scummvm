@@ -150,7 +150,11 @@
 	void personnametext();
 	void findxyfrompath();
 	void findormake();
-	void findormake(uint8 b0, uint8 b2, uint8 b3);
+	void findormake(uint8 index, uint8 value, uint8 type);
+	FreeObject *getfreead(uint8 index);
+	ObjData *getsetad(uint8 index);
 	void setallchanges();
+	void dochange();
+	void dochange(uint8 index, uint8 value, uint8 type);
 	bool isCD();
 

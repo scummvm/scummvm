@@ -303,7 +303,6 @@ public:
 	static const uint16 addr_edenscdplayer = 0xc728;
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_autoappear = 0xc70c;
-	static const uint16 addr_dochange = 0xc708;
 	static const uint16 addr_switchryanoff = 0xc700;
 	static const uint16 addr_switchryanon = 0xc6fc;
 	static const uint16 addr_removefreeobject = 0xc6f4;
@@ -1389,7 +1388,7 @@ public:
 	void buttonfour();
 	void animpointer();
 	//void lockmon();
-	void dochange();
+	//void dochange();
 	void getanyaddir();
 	void showsaveops();
 	void intromonks1();
