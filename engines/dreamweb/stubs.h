@@ -158,4 +158,8 @@
 	void dochange(uint8 index, uint8 value, uint8 type);
 	void deletetaken();
 	bool isCD();
+	void placesetobject();
+	void placesetobject(uint8 index);
+	void removesetobject();
+	void removesetobject(uint8 index);
 

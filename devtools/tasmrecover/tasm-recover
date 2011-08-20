@@ -138,6 +138,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'setallchanges',
 	'dochange',
 	'deletetaken',
+	'placesetobject',
+	'removesetobject',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

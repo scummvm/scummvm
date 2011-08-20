@@ -840,12 +840,10 @@ void DreamGenContext::fillspace() {
 void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 	uint8 type = firstParam - 220;
 	if (type == 0) {
-		al = secondParam;
-		placesetobject();
+		placesetobject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 1) {
-		al = secondParam;
-		removesetobject();
+		removesetobject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 2) {
 		al = secondParam;
@@ -1113,6 +1111,24 @@ void DreamGenContext::deletetaken() {
 		}
 		si += 16;
 	}
+}
+
+void DreamGenContext::placesetobject() {
+	placesetobject(al);
+}
+
+void DreamGenContext::placesetobject(uint8 index) {
+	findormake(index, 0, 0);
+	getsetad(index)->b58[0] = 0;
+}
+
+void DreamGenContext::removesetobject() {
+	removesetobject(al);
+}
+
+void DreamGenContext::removesetobject(uint8 index) {
+	findormake(index, 0xff, 0);
+	getsetad(index)->b58[0] = 0xff;
 }
 
 bool DreamGenContext::isCD() {

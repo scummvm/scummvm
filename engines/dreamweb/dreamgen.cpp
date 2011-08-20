@@ -11243,32 +11243,6 @@ void DreamGenContext::findpuztext() {
 	si = ax;
 }
 
-void DreamGenContext::placesetobject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	cl = 0;
-	ch = 0;
-	findormake();
-	getsetad();
-	es.byte(bx+58) = 0;
-	bx = pop();
-	es = pop();
-}
-
-void DreamGenContext::removesetobject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	cl = 255;
-	ch = 0;
-	findormake();
-	getsetad();
-	es.byte(bx+58) = 255;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::issetobonmap() {
 	STACK_CHECK;
 	push(es);
@@ -18595,8 +18569,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_putbackobstuff: putbackobstuff(); break;
 		case addr_showpuztext: showpuztext(); break;
 		case addr_findpuztext: findpuztext(); break;
-		case addr_placesetobject: placesetobject(); break;
-		case addr_removesetobject: removesetobject(); break;
 		case addr_issetobonmap: issetobonmap(); break;
 		case addr_placefreeobject: placefreeobject(); break;
 		case addr_removefreeobject: removefreeobject(); break;

@@ -308,8 +308,6 @@ public:
 	static const uint16 addr_removefreeobject = 0xc6f4;
 	static const uint16 addr_placefreeobject = 0xc6f0;
 	static const uint16 addr_issetobonmap = 0xc6ec;
-	static const uint16 addr_removesetobject = 0xc6e8;
-	static const uint16 addr_placesetobject = 0xc6e4;
 	static const uint16 addr_findpuztext = 0xc6e0;
 	static const uint16 addr_showpuztext = 0xc6dc;
 	static const uint16 addr_putbackobstuff = 0xc6d8;
@@ -1578,7 +1576,7 @@ public:
 	void copper();
 	void folderhints();
 	void openhoteldoor();
-	void removesetobject();
+	//void removesetobject();
 	//void dumptimedtext();
 	//void frameoutfx();
 	void blank();
@@ -1996,7 +1994,7 @@ public:
 	//void getmapad();
 	void getlocation();
 	void geteitherad();
-	void placesetobject();
+	//void placesetobject();
 	void drawflags();
 	void zoomonoff();
 	void updatesymboltop();
