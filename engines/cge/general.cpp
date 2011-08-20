@@ -202,16 +202,13 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 	return str;
 }
 
-IoHand::IoHand(IOMode mode, Crypt *crypt)
-	: XFile(mode), _crypt(crypt), _seed(kCryptSeed) {
+IoHand::IoHand(Crypt *crypt)
+	: XFile(), _crypt(crypt), _seed(kCryptSeed) {
 	_file = new Common::File();
 }
 
-IoHand::IoHand(const char *name, IOMode mode, Crypt *crypt)
-		: XFile(mode), _crypt(crypt), _seed(kCryptSeed) {
-	// TODO: Check if WRI and/or UPD modes are needed, and map to a save file
-	assert(mode == kModeRead);
-
+IoHand::IoHand(const char *name, Crypt *crypt)
+		: XFile(), _crypt(crypt), _seed(kCryptSeed) {
 	_file = new Common::File();
 	_file->open(name);
 }
@@ -222,7 +219,7 @@ IoHand::~IoHand() {
 }
 
 uint16 IoHand::read(void *buf, uint16 len) {
-	if (_mode == kModeWrite || !_file->isOpen())
+	if (!_file->isOpen())
 		return 0;
 
 	uint16 bytesRead = _file->read(buf, len);

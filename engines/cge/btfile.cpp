@@ -35,9 +35,9 @@
 
 namespace CGE {
 
-BtFile::BtFile(const char *name, IOMode mode, Crypt *crpt)
-	: IoHand(name, mode, crpt) {
-	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s, %d, crpt)", name, mode);
+BtFile::BtFile(const char *name, Crypt *crpt)
+	: IoHand(name, crpt) {
+	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s, crpt)", name);
 
 	for (int i = 0; i < kBtLevel; i++) {
 		_buff[i]._page = new BtPage;
