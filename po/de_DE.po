@@ -2125,6 +2125,7 @@ msgid "ScummVM successfully converted all your savefiles."
 msgstr "ScummVM hat alle Speicherstände erfolgreich umgewandelt."
 
 #: engines/parallaction/saveload.cpp:328
+#, fuzzy
 msgid ""
 "ScummVM printed some warnings in your console window and can't guarantee all "
 "your files have been converted.\n"
@@ -2134,6 +2135,7 @@ msgstr ""
 "ScummVM hat ein paar Warnungen im Konsolenfenster ausgegeben und kann nicht "
 "gewährleisten, dass alle Speicherstände umgewandelt wurden.\n"
 "\n"
+"Bitte."
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
