@@ -23,6 +23,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/localization.h"
 #include "common/translation.h"
 
 #include "graphics/scaler.h"
@@ -482,10 +483,14 @@ ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 }
 
 void ConfirmDialog::handleKeyDown(Common::KeyState state) {
-	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey) {
+	Common::KeyCode keyYes, keyNo;
+
+	Common::getLanguageYesNo(Common::parseLanguageFromLocale(TransMan.getCurrentLanguage().c_str()), keyYes, keyNo);
+
+	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey || state.ascii == keyNo) {
 		setResult(0);
 		close();
-	} else if (state.keycode == Common::KEYCODE_y || state.ascii == _yesKey) {
+	} else if (state.keycode == Common::KEYCODE_y || state.ascii == _yesKey || state.ascii == keyYes) {
 		setResult(1);
 		close();
 	} else
