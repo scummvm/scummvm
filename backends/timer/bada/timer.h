@@ -55,7 +55,7 @@ public:
 												const Common::String &id);
 	void removeTimerProc(TimerProc proc);
 
- private:
+private:
 	Common::List<TimerSlot> _timers;
 };
 
