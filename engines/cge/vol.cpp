@@ -40,7 +40,7 @@ VFile *VFile::_recent = NULL;
 
 /*-----------------------------------------------------------------------*/
 
-Dat::Dat(): _file(DAT_NAME, kModeRead, CRP) {
+Dat::Dat(): _file(DAT_NAME, CRP) {
 	debugC(1, kCGEDebugFile, "Dat::Dat()");
 }
 
@@ -50,7 +50,7 @@ void VFile::init() {
 	debugC(1, kCGEDebugFile, "VFile::init()");
 
 	_dat = new Dat();
-	_cat = new BtFile(CAT_NAME, kModeRead, CRP);
+	_cat = new BtFile(CAT_NAME, CRP);
 	_recent = NULL;
 }
 
@@ -59,18 +59,16 @@ void VFile::deinit() {
 	delete _cat;
 }
 
-VFile::VFile(const char *name, IOMode mode)
-	: IoBuf(mode, NULL) {
-	debugC(3, kCGEDebugFile, "VFile::VFile(%s, %d)", name, mode);
+VFile::VFile(const char *name)
+	: IoBuf(NULL) {
+	debugC(3, kCGEDebugFile, "VFile::VFile(%s)", name);
 
-	if (mode == kModeRead) {
-		if (_dat->_file._error || _cat->_error)
-			error("Bad volume data");
-		BtKeypack *kp = _cat->find(name);
-		if (scumm_stricmp(kp->_key, name) != 0)
-			_error = 1;
-		_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
-	}
+	if (_dat->_file._error || _cat->_error)
+		error("Bad volume data");
+	BtKeypack *kp = _cat->find(name);
+	if (scumm_stricmp(kp->_key, name) != 0)
+		_error = 1;
+	_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
 }
 
 VFile::~VFile() {

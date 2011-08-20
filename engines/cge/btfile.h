@@ -81,7 +81,7 @@ class BtFile : public IoHand {
 
 	BtPage *getPage(int lev, uint16 pgn);
 public:
-	BtFile(const char *name, IOMode mode, Crypt *crpt);
+	BtFile(const char *name, Crypt *crpt);
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
 	BtKeypack *next();
