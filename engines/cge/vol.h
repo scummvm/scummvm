@@ -59,7 +59,7 @@ private:
 
 	void readBuf();
 public:
-	VFile(const char *name, IOMode mode = kModeRead);
+	VFile(const char *name);
 	~VFile();
 
 	static void init();

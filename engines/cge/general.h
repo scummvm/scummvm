@@ -39,8 +39,6 @@ namespace CGE {
 
 #define kCryptSeed  0xA5
 
-enum IOMode { kModeRead, kModeWrite, kModeUpdate };
-
 struct Dac {
 	uint8 _r;
 	uint8 _g;
@@ -68,11 +66,9 @@ T min(T A, T B) {
 
 class XFile {
 public:
-	IOMode _mode;
 	uint16 _error;
 
-	XFile() : _mode(kModeRead), _error(0) { }
-	XFile(IOMode mode) : _mode(mode), _error(0) { }
+	XFile() : _error(0) { }
 	virtual ~XFile() { }
 	virtual uint16 read(void *buf, uint16 len) = 0;
 	virtual long mark() = 0;
@@ -93,8 +89,8 @@ protected:
 	uint16 _seed;
 	Crypt *_crypt;
 public:
-	IoHand(const char *name, IOMode mode = kModeRead, Crypt crypt = NULL);
-	IoHand(IOMode mode = kModeRead, Crypt *crypt = NULL);
+	IoHand(const char *name, Crypt crypt = NULL);
+	IoHand(Crypt *crypt = NULL);
 	virtual ~IoHand();
 	static bool exist(const char *name);
 	uint16 read(void *buf, uint16 len);
