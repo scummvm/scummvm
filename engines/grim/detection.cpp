@@ -47,7 +47,7 @@ using Common::GUIO_NONE;
 
 static const GrimGameDescription gameDescriptions[] = {
 	{
-		// Grim Fandango English version
+		// Grim Fandango English version (patched)
 		{
 			"grim",
 			"",
@@ -60,7 +60,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
-		// Grim Fandango French version
+		// Grim Fandango English version (unpatched)
+		{
+			"grim",
+			"",
+			AD_ENTRY1s("VOX0001.LAB", "8b12ed530195c6c577436df27df62ecb", 58011176),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_GRIM
+	},
+	{
+		// Grim Fandango French version (un/patched ???)
 		{
 			"grim",
 			"",
@@ -73,19 +86,6 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 /*	{
-		// Grim Fandango English version (patched)
-		{
-			"grim",
-			"",
-			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		GType_GRIM
-	},
-	{
 		// Grim Fandango German version
 		{
 			"grim",
