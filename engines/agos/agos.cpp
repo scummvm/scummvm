@@ -911,7 +911,7 @@ AGOSEngine::~AGOSEngine() {
 		_window6BackScn->free();
 	delete _window6BackScn;
 
-	free(_midi);
+	delete _midi;
 
 	free(_firstTimeStruct);
 	free(_pendingDeleteTimeEvent);
