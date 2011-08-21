@@ -480,7 +480,7 @@ begin_credits("Credits");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
 		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "Various code fixes and improvements");
 		add_person("", "vpelletier", "Various code fixes and improvements");
-		add_person("", "usineur ", "Few code improvements");
+		add_person("Matthieu Milan", "usineur ", "Few code improvements");
 	    end_section();
 
 	end_section();
