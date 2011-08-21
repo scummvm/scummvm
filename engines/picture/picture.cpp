@@ -86,11 +86,7 @@ void PictureEngine::syncSoundSettings() {
 }
 
 Common::Error PictureEngine::run() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(true);
-	_system->initSize(640, 400);
-	_system->endGFXTransaction();
+	initGraphics(640, 400, true);
 
 	_isSaveAllowed = true;
 
