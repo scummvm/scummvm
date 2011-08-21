@@ -142,6 +142,7 @@
 	uint8 getxad(const uint8 *setData, uint8 *result);
 	uint8 getyad(const uint8 *setData, uint8 *result);
 	void calcfrframe();
+	void calcfrframe(uint8* width, uint8* height);
 	void finalframe();
 	void finalframe(uint16 *x, uint16 *y);
 	void showallobs();

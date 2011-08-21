@@ -111,12 +111,21 @@ uint8 DreamGenContext::getmapad(const uint8 *setData) {
 }
 
 void DreamGenContext::calcfrframe() {
+	uint8 width, height;
+	calcfrframe(&width, &height);
+	cl = width;
+	ch = height;
+}
+
+void DreamGenContext::calcfrframe(uint8* width, uint8* height) {
 	const Frame *frame = (const Frame *)segRef(data.word(kFrsegment)).ptr(data.word(kCurrentframe) * sizeof(Frame), sizeof(Frame));
 	data.word(kSavesource) = data.word(kFramesad) + frame->ptr();
 	data.byte(kSavesize+0) = frame->width;
 	data.byte(kSavesize+1) = frame->height;
 	data.word(kOffsetx) = frame->x;
 	data.word(kOffsety) = frame->y;
+	*width = frame->width;
+	*height = frame->height;
 }
 
 void DreamGenContext::finalframe() {
