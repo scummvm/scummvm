@@ -71,11 +71,7 @@ PrisonerEngine::~PrisonerEngine() {
 }
 
 Common::Error PrisonerEngine::run() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-	_system->initSize(640, 480);
-	_system->endGFXTransaction();
+	initGraphics(640, 480, false);
 
 	_languageChar = 'E';
 	_currModuleIndex = 2;
