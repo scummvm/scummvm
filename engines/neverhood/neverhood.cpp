@@ -57,11 +57,7 @@ NeverhoodEngine::~NeverhoodEngine() {
 }
 
 Common::Error NeverhoodEngine::run() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-		initCommonGFX(false);
-	_system->initSize(640, 480);
-	_system->endGFXTransaction();
+	initGraphics(640, 480, true);
 
 	_isSaveAllowed = false;
 
