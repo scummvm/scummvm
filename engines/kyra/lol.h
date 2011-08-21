@@ -917,6 +917,7 @@ private:
 	uint8 *getLevelDecorationShapes(int index);
 	void restoreTempDataAdjustMonsterStrength(int index);
 	void loadBlockProperties(const char *cmzFile);
+	const uint8 *getBlockFileData(int levelIndex);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 

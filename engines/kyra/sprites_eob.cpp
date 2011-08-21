@@ -471,7 +471,8 @@ void EobCoreEngine::drawDoor(int index) {
 	if (_flags.gameID == GI_EOB1 && s == 0x85)
 		s = 0;
 
-	assert((_flags.gameID == GI_EOB1 && s < 32) || (_flags.gameID == GI_EOB2 && s < 53));
+	if (s >= _dscDoorShpIndexSize)
+		return;
 
 	int type = _dscDoorShpIndex[s];
 	int d = _dscDimMap[index];

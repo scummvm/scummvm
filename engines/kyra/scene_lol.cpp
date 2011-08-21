@@ -252,6 +252,11 @@ void LoLEngine::loadBlockProperties(const char *cmzFile) {
 	}
 }
 
+const uint8 *LoLEngine::getBlockFileData(int levelIndex) {
+	_screen->loadBitmap(Common::String::format("LEVEL%d.CMZ", levelIndex).c_str(), 15, 15, 0);
+	return screen()->getCPagePtr(14);
+}
+
 void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool flag) {
 	memset(_tempBuffer5120, 0, 5120);
 

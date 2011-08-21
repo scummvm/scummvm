@@ -47,15 +47,7 @@ void LolEobBaseEngine::generateTempData() {
 	_lvlTempData[l]->wallsXorData = new uint8[4096];
 	_lvlTempData[l]->flags = new uint16[1024];
 
-	const uint8 *p = 0;
-	const uint8 *p2 = 0;
-	if (_flags.gameID == GI_LOL) {
-		screen()->loadBitmap(Common::String::format("LEVEL%d.CMZ", _currentLevel).c_str(), 15, 15, 0);
-		p = screen()->getCPagePtr(14);
-	} else {
-		p2 = p = _res->fileData(Common::String::format("LEVEL%d.MAZ", _currentLevel).c_str(), 0);
-	}
-
+	const uint8 *p = getBlockFileData(_currentLevel);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;
 
@@ -75,20 +67,11 @@ void LolEobBaseEngine::generateTempData() {
 	_lvlTempData[l]->wallsOfForce = generateWallOfForceTempData(_lvlTempData[l]);
 
 	_hasTempDataFlags |= (1 << l);
-	delete[] p2;
 }
 
 void LolEobBaseEngine::restoreBlockTempData(int levelIndex) {
 	int l = levelIndex - 1;
-	const uint8 *p = 0;
-	const uint8 *p2 = 0;
-	if (_flags.gameID == GI_LOL) {
-		screen()->loadBitmap(Common::String::format("LEVEL%d.CMZ", levelIndex).c_str(), 3, 3, 0);
-		p = screen()->getCPagePtr(2);
-	} else {
-		p2 = p = _res->fileData(Common::String::format("LEVEL%d.MAZ", levelIndex).c_str(), 0);
-	}
-
+	const uint8 *p = getBlockFileData(levelIndex);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;
 
@@ -106,8 +89,6 @@ void LolEobBaseEngine::restoreBlockTempData(int levelIndex) {
 	restoreMonsterTempData(_lvlTempData[l]);
 	restoreFlyingObjectTempData(_lvlTempData[l]);
 	restoreWallOfForceTempData(_lvlTempData[l]);
-
-	delete[] p2;
 }
 
 void LolEobBaseEngine::releaseTempData() {
@@ -144,7 +125,14 @@ void LolEobBaseEngine::releaseFlyingObjectTempData(LevelTempData *tmp) {
 #ifdef ENABLE_EOB
 
 Common::Error EobCoreEngine::loadGameState(int slot) {
-	const char *fileName = getSavegameFilename(slot);
+	const char *fileName = 0;
+
+	if (slot == -1) {
+		_savegameFilename = /*_targetName + */Common::String("eob.fin");
+		fileName = _savegameFilename.c_str();
+	} else {
+		fileName = getSavegameFilename(slot);
+	}
 
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
@@ -388,7 +376,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 		useMagicBookOrSymbol(_openBookChar, _openBookType);
 	}
 
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 
 	gui_toggleButtons();
 	setHandItem(_itemInHand);
@@ -404,8 +392,18 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 }
 
 Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
-	const Common::String finSuffix(".FIN");
-	const char *fileName = (slot != -1) ? getSavegameFilename(slot) : (_targetName + finSuffix).c_str();
+	Common::String saveNameTmp;
+	const char *fileName = 0;
+
+	if (slot == -1) {
+		_savegameFilename = _targetName + Common::String(".fin");
+		fileName = _savegameFilename.c_str();
+		saveNameTmp = _targetName + Common::String(" final");
+		saveNameTmp.toUppercase();
+		saveName = saveNameTmp.c_str();
+	} else {
+		fileName = getSavegameFilename(slot);
+	}
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumbnail);
 	if (!out)
@@ -525,7 +523,7 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		LevelTempData *l = _lvlTempData[i];
 		if (!l || !(_hasTempDataFlags & (1 << i)))
 			continue;
-
+	
 		out->write(l->wallsXorData, 4096);
 		for (int ii = 0; ii < 1024; ii++)
 			out->writeByte(l->flags[ii] & 0xff);

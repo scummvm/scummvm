@@ -769,7 +769,6 @@ void Screen_Eob::drawExplosion(int scale, int radius, int numElements, int stepS
 	for (int l = 2; l;) {
 		if (l != 2) {
 			for (int i = numElements - 1; i >= 0; i--) {
-				uint32 end = _system->getMillis() + 1;
 				int16 px = ((ptr2[i] >> 6) >> scale) + gx2;
 				int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
 				if (py > ymax)
@@ -902,7 +901,6 @@ void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int 
 	int d = 0;
 	for (int i = 2; i; ) {
 		if (i != 2) {
-			uint32 nextDelay = _system->getMillis() + 1;
 			for (int ii = numElements - 1; ii >= 0; ii--) {
 				int16 px = CLIP((xCoords[ii] >> 6) + cx, 0, SCREEN_W - 1);
 				int16 py = CLIP((yCoords[ii] >> 6) + cy, 0, SCREEN_H - 1);
@@ -912,7 +910,7 @@ void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int 
 
 		i = 0;
 		int r = (stepSize >> 1) + (stepSize >> 2) + (stepSize >> 3);
-		uint32 nextDelay2 = _system->getMillis() + 1;
+		uint32 nextDelay = _system->getMillis() + 1;
 
 		for (int ii = 0; ii < numElements; ii++) {
 			if (pixDelay[ii] == 0) {
@@ -951,9 +949,9 @@ void Screen_Eob::drawVortex(int numElements, int radius, int stepSize, int, int 
 					if (ii % 15 == 0)  {
 						updateScreen();
 						uint32 cur = _system->getMillis();
-						if (nextDelay2 > cur)
-							_system->delayMillis(nextDelay2 - cur);
-						nextDelay2 += 1;
+						if (nextDelay > cur)
+							_system->delayMillis(nextDelay - cur);
+						nextDelay += 1;
 					}
 				}
 			} else {

@@ -853,12 +853,12 @@ int EobCoreEngine::clickedCamp(Button *button) {
 		gui_drawCharPortraitWithStats(i);
 	}
 
-	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
 	_screen->copyPage(0, 7);
+	_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 	
 	_gui->runCampMenu();
 
-	_screen->copyRegion(0, 0, 0, 120, 176, 24, 14, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 	_screen->setScreenDim(cd);
 	drawScene(0);
 
@@ -2250,7 +2250,7 @@ void GUI_Eob::runCampMenu() {
 					_vm->dropCharacter(selectCharacterDialogue(53));
 					_vm->gui_drawPlayField(false);
 					res = true;
-					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 14, Screen::CR_NO_P_CHECK);
+					_screen->copyRegion(0, 120, 0, 0, 176, 24, 0, 12, Screen::CR_NO_P_CHECK);
 					_screen->setFont(Screen::FID_6_FNT);
 					_vm->gui_drawAllCharPortraitsWithStats();
 					_screen->setFont(Screen::FID_8_FNT);
@@ -2282,6 +2282,8 @@ void GUI_Eob::runCampMenu() {
 			default:
 				break;
 			}
+
+			lastMenu = -1;
 			
 		} else {
 			Common::Point p = _vm->getMousePos();

@@ -236,8 +236,14 @@ void EobCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarn
 	EobCharacter *c = &_characters[charIndex];
 	EobSpell *s = &_spells[spell];
 
-	if (showWarning)
+	if (showWarning) {
+		int od = _screen->curDimIndex();
+		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		_screen->setScreenDim(7);
 		printWarning(Common::String::format(_magicStrings3[_flags.gameID == GI_EOB1 ? 3 : 2], c->name, s->name).c_str());
+		_screen->setScreenDim(od);
+		_screen->setFont(of);
+	}
 
 	if (s->endCallback)
 		(this->*s->endCallback)(c);
@@ -1281,12 +1287,12 @@ void EobCoreEngine::spellCallback_start_turnUndead() {
 	_preventMonsterFlash = false;
 }
 
-bool EobCoreEngine::spellCallback_end_lightningBoltPassive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_lightningBolt(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	return magicObjectDamageHit(fo, 0, 0, 12, 1);
 }
 
-bool EobCoreEngine::spellCallback_end_unk1Passive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_fireball1(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	bool res = false;
 	if (_partyEffectFlags & 0x20000) {
@@ -1301,12 +1307,12 @@ bool EobCoreEngine::spellCallback_end_unk1Passive(void *obj) {
 	return res;
 }
 
-bool EobCoreEngine::spellCallback_end_unk2Passive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_fireball2(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	return magicObjectDamageHit(fo, 0, 0, 18, 0);
 }
 
-bool EobCoreEngine::spellCallback_end_deathSpellPassive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_deathSpell(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;
@@ -1323,7 +1329,7 @@ bool EobCoreEngine::spellCallback_end_deathSpellPassive(void *obj) {
 	return true;
 }
 
-bool EobCoreEngine::spellCallback_end_disintegratePassive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_disintegrate(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;
@@ -1339,7 +1345,7 @@ bool EobCoreEngine::spellCallback_end_disintegratePassive(void *obj) {
 	return true;
 }
 
-bool EobCoreEngine::spellCallback_end_causeCriticalWoundsPassive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_causeCriticalWounds(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;
@@ -1353,7 +1359,7 @@ bool EobCoreEngine::spellCallback_end_causeCriticalWoundsPassive(void *obj) {
 	return true;
 }
 
-bool EobCoreEngine::spellCallback_end_fleshToStonePassive(void *obj) {
+bool EobCoreEngine::spellCallback_end_monster_fleshToStone(void *obj) {
 	EobFlyingObject *fo = (EobFlyingObject*)obj;
 	if (fo->curBlock != _currentBlock)
 		return false;

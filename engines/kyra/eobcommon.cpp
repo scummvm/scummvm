@@ -398,8 +398,11 @@ Common::Error EobCoreEngine::go() {
 	if (!shouldQuit() && action > -3) {
 		runLoop();
 
-		if (_playFinale)
+		if (_playFinale) {
+			// make final save for party transfer
+			saveGameStateIntern(-1, 0, 0);
 			seq_playFinale();
+		}
 	}
 
 	return Common::kNoError;

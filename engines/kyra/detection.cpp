@@ -160,6 +160,10 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Skip automatic final saves made by EOB for the purpose of party transfer
+		if (!scumm_stricmp(file->c_str() + file->size() - 3, "fin"))
+			continue;
+		
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 

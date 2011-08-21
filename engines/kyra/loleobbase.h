@@ -147,6 +147,7 @@ protected:
 	virtual void drawSceneShapes(int start) = 0;
 	virtual void drawDecorations(int index) = 0;
 
+	virtual const uint8 *getBlockFileData(int levelIndex) = 0;
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);
 	void scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim);
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
@@ -233,6 +234,7 @@ protected:
 	const uint8 *_dscTileIndex;
 
 	const uint8 *_dscDoorShpIndex;
+	int _dscDoorShpIndexSize;
 	const uint8 *_dscDoorY2;
 
 	// Script
@@ -308,7 +310,7 @@ protected:
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	void generateTempData();
-	void restoreBlockTempData(int levelIndex);
+	virtual void restoreBlockTempData(int levelIndex);
 	void releaseTempData();
 	virtual void *generateMonsterTempData(LevelTempData *tmp) = 0;
 	virtual void restoreMonsterTempData(LevelTempData *tmp) = 0;
