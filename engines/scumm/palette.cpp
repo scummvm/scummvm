@@ -650,12 +650,6 @@ void ScummEngine::setShadowPalette(int slot, int redScale, int greenScale, int b
 	int i;
 	byte *curpal;
 
-	// This function is actually a nullsub in Indy4 Amiga.
-	// It might very well be a nullsub in other Amiga games, but for now I
-	// limit this to Indy4 Amiga, since that is the only game I can check.
-	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
-		return;
-
 	if (slot < 0 || slot >= NUM_SHADOW_PALETTE)
 		error("setShadowPalette: invalid slot %d", slot);
 
@@ -682,6 +676,12 @@ static inline uint colorWeight(int red, int green, int blue) {
 }
 
 void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
+	// This function is actually a nullsub in Indy4 Amiga.
+	// It might very well be a nullsub in other Amiga games, but for now I
+	// limit this to Indy4 Amiga, since that is the only game I can check.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+		return;
+
 	const byte *basepal = getPalettePtr(_curPalIndex, _roomResource);
 	const byte *compareptr;
 	const byte *pal = basepal + start * 3;
