@@ -390,6 +390,7 @@ void EobCoreEngine::timerUpdateTeleporters(int timerNum) {
 
 void EobCoreEngine::timerUpdateFoodStatus(int timerNum) {
 	for (int i = 0; i < 6; i++) {
+		// Ring of Sustenance check
 		if (checkInventoryForRings(i, 2))
 			continue;
 		EobCharacter *c = &_characters[i];

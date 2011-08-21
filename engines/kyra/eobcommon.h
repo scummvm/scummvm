@@ -151,8 +151,8 @@ struct EobItemType {
 
 struct SpriteDecoration {
 	uint8 *shp;
-	uint8 x;
-	uint8 y;
+	int16 x;
+	int16 y;
 };
 
 struct EobMonsterProperty {
@@ -574,11 +574,13 @@ protected:
 	const int8 *_monsterDirChangeTable;
 
 	// Level
-	void loadLevel(int level, int func);
-	Common::String initLevelData(int func);
+	void loadLevel(int level, int sub);
+	Common::String initLevelData(int sub);
 	void addLevelItems();
 	void loadVcnData(const char *file, const char */*nextFile*/);
 	void loadBlockProperties(const char *mazFile);
+	const uint8 *getBlockFileData(int levelIndex);
+	const uint8 *getBlockFileData(const char *mazFile);
 	void loadDecorations(const char *cpsFile, const char *decFile);
 	void assignWallsAndDecorations(int wallIndex, int vmpIndex, int decDataIndex, int specialType, int flags);
 	void releaseDecorations();
@@ -613,6 +615,7 @@ protected:
 
 	int8 _currentSub;
 	Common::String _curGfxFile;
+	Common::String _curBlockFile;
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
@@ -1006,13 +1009,13 @@ protected:
 	void spellCallback_start_heal();
 	void spellCallback_start_layOnHands();
 	void spellCallback_start_turnUndead();
-	bool spellCallback_end_lightningBoltPassive(void *obj);
-	bool spellCallback_end_unk1Passive(void *obj);
-	bool spellCallback_end_unk2Passive(void *obj);
-	bool spellCallback_end_deathSpellPassive(void *obj);
-	bool spellCallback_end_disintegratePassive(void *obj);
-	bool spellCallback_end_causeCriticalWoundsPassive(void *obj);
-	bool spellCallback_end_fleshToStonePassive(void *obj);
+	bool spellCallback_end_monster_lightningBolt(void *obj);
+	bool spellCallback_end_monster_fireball1(void *obj);
+	bool spellCallback_end_monster_fireball2(void *obj);
+	bool spellCallback_end_monster_deathSpell(void *obj);
+	bool spellCallback_end_monster_disintegrate(void *obj);
+	bool spellCallback_end_monster_causeCriticalWounds(void *obj);
+	bool spellCallback_end_monster_fleshToStone(void *obj);
 
 	int8 _openBookSpellLevel;
 	int8 _openBookSpellSelectedItem;

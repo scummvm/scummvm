@@ -466,6 +466,7 @@ void DarkMoonEngine::seq_playFinale() {
 	DarkmoonSequenceHelper sq(_system, this, _screen, DarkmoonSequenceHelper::kFinale, _finaleStrings, _cpsFilesFinale, _palFilesFinale, _shapesFinale, _seqFinale);
 
 	_screen->setCurPage(0);
+	_screen->setFont(Screen::FID_8_FNT);
 
 	_sound->loadSoundFile("FINALE1");
 	_sound->playTrack(0);
@@ -936,10 +937,11 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 	_fadePalRate = 0;
 
 	_screen->setScreenPalette(*_palettes[0]);
+	_screen->setFont(Screen::FID_8_FNT);
 	_screen->hideMouse();
 
-	_system->delayMillis(150);
-	_vm->resetSkipFlag(true);
+	_vm->delay(150);
+	_vm->_eventList.clear();
 	_vm->_allowSkip = true;
 }
 
@@ -1274,7 +1276,7 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 
 void DarkMoonEngine::seq_nightmare() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-	_screen->copyRegion(0, 0, 0, 120, 176, 24, 14, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
 
 	initDialogueSequence();
 	gui_drawDialogueBox();

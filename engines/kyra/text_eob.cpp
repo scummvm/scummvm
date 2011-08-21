@@ -619,6 +619,7 @@ void TextDisplayer_Eob::textPageBreak() {
 		screen()->fillRect(x, y, x + w - 1, y + 8, _textDimData[screen()->curDimIndex()].color2);
 
 	clearCurDim();
+	_screen->updateScreen();
 
 	if (vm()->game() == GI_LOL)
 		vm()->_timer->pauseSingleTimer(11, false);

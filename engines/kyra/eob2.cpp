@@ -77,10 +77,6 @@ Common::Error DarkMoonEngine::init() {
 	_color13 = 177;
 	_color14 = 182;
 
-	// Necessary wall hacks (where the original code makes out of bounds accesses)
-	_wllWallFlags[183] = 0x50;
-	_wllVmpMap[183] = 1;
-
 	return Common::kNoError;
 }
 
@@ -226,8 +222,8 @@ void DarkMoonEngine::loadMonsterDecoration(const char *file, int16 monsterIndex)
 			SpriteDecoration *m = &_monsterDecorations[i * 6 + ii + monsterIndex];
 
 			m->shp = _screen->encodeShape(dc[0], dc[1], dc[2], dc[3]);
-			m->x = dc[4];
-			m->y = dc[5];
+			m->x = (int8)dc[4];
+			m->y = (int8)dc[5];
 		}
 	}
 
@@ -281,6 +277,7 @@ bool DarkMoonEngine::killMonsterExtra(EobMonsterInPlay *m) {
 		if (m->type) {
 			_playFinale = true;
 			_runFlag = false;
+			delay(850);
 		} else {
 			m->hitPointsCur = 150;
 			m->curRemoteWeapon = 0;
@@ -306,7 +303,7 @@ const uint8 *DarkMoonEngine::loadDoorShapes(const char *filename, int doorIndex,
 		shapeDefs += 8;
 		_doorSwitches[doorIndex * 3 + i].x = *shapeDefs;
 		shapeDefs += 2;
-		_doorSwitches[doorIndex * 3 + i]. y= *shapeDefs;
+		_doorSwitches[doorIndex * 3 + i].y= *shapeDefs;
 		shapeDefs += 2;
 	}
 	_screen->_curPage = 0;

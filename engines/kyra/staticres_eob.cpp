@@ -254,7 +254,7 @@ void LolEobBaseEngine::initStaticResource() {
 	_dscBlockMap = _staticres->loadRawData(kLolEobCommonDscBlockMap, temp);
 	_dscBlockIndex = (const int8 *)_staticres->loadRawData(kLolEobCommonDscBlockIndex, temp);
 	_dscDimMap = _staticres->loadRawData(kLolEobCommonDscDimMap, temp);
-	_dscDoorShpIndex = _staticres->loadRawData(kLolEobCommonDscDoorShapeIndex, temp);
+	_dscDoorShpIndex = _staticres->loadRawData(kLolEobCommonDscDoorShapeIndex, _dscDoorShpIndexSize);
 	_dscDoorY2 = _staticres->loadRawData(kLolEobCommonDscDoorY2, temp);
 	_moreStrings = _staticres->loadStrings(kLolEobCommonMoreStrings, temp);
 }
@@ -1010,14 +1010,14 @@ void EobCoreEngine::initSpells() {
 	ec2(empty);
 	ec(empty);
 	ec2(empty);
-	ec1(lightningBoltPassive);
-	ec2(unk1Passive);
+	ec1(monster_lightningBolt);
+	ec2(monster_fireball1);
 	ec2(empty);
-	ec2(unk2Passive);
-	ec(deathSpellPassive);
-	ec(disintegratePassive);
-	ec2(causeCriticalWoundsPassive);
-	ec2(fleshToStonePassive);
+	ec2(monster_fireball2);
+	ec(monster_deathSpell);
+	ec(monster_disintegrate);
+	ec2(monster_causeCriticalWounds);
+	ec2(monster_fleshToStone);
 
 	_spells = new EobSpell[_numSpells];
 	memset(_spells, 0, _numSpells * sizeof(EobSpell));	

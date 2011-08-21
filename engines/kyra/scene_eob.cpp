@@ -863,21 +863,29 @@ void EobCoreEngine::loadVcnData(const char *file, const char*/*nextFile*/) {
 
 void EobCoreEngine::loadBlockProperties(const char *mazFile) {
 	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
-	Common::SeekableReadStream *s = _res->createReadStream(mazFile);
-	_screen->loadFileDataToPage(s, 2, 4096);
-	delete s;
+	const uint8 *p = getBlockFileData(mazFile) + 6;
 
 	if (_hasTempDataFlags & (1 << (_currentLevel - 1))) {
 		restoreBlockTempData(_currentLevel);
 		return;
 	}
 
-	const uint8 *p = _screen->getCPagePtr(2) + 6;
-
 	for (int i = 0; i < 1024; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_levelBlockProperties[i].walls[ii] = *p++;
 	}
+}
+
+const uint8 *EobCoreEngine::getBlockFileData(int) {
+	Common::SeekableReadStream *s = _res->createReadStream(_curBlockFile);
+	_screen->loadFileDataToPage(s, 15, s->size());
+	delete s;
+	return _screen->getCPagePtr(14);
+}
+
+const uint8 *EobCoreEngine::getBlockFileData(const char *mazFile) {
+	_curBlockFile = mazFile;
+	return getBlockFileData(0);
 }
 
 void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
@@ -919,6 +927,12 @@ void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 
 void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int decIndex, int specialType, int flags) {
 	_wllVmpMap[wallIndex] = vmpIndex;
+	for (int i = 0; i < 6; i++) {
+		for (int ii = 0; ii < 10; ii++) {
+			if (_characters[i].events[ii] == -57)
+				spellCallback_start_trueSeeing();
+		}
+	}
 	_wllShapeMap[wallIndex] = _mappedDecorationsCount + 1;
 	_specialWallTypes[wallIndex] = specialType;
 	_wllWallFlags[wallIndex] = flags ^ 4;
@@ -1145,8 +1159,7 @@ int EobCoreEngine::calcNewBlockPositionAndTestPassability(uint16 curBlock, uint1
 	int w = _levelBlockProperties[b].walls[direction ^ 2];
 	int f = _wllWallFlags[w];
 
-	//if (!f)
-		assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
+	assert((_flags.gameID == GI_EOB1 && w < 70) || (_flags.gameID == GI_EOB2 && w < 80));
 
 	if (_flags.gameID == GI_EOB2 && w == 74 && _currentBlock == curBlock) {
 		for (int i = 0; i < 5; i++) {

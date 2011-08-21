@@ -208,8 +208,8 @@ int EobCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	int itm = _characters[charIndex].inventory[slot];
 	int ex = _itemTypes[_items[itm].type].extraProperties & 0x7f;
 
-	if (slot < 2 && (_items[itm].flags & 0x20) && ex > 0 && ex < 4) {
-		if (_flags.gameID == GI_EOB2)
+	if (_items[itm].flags & 0x20 && (_flags.gameID == GI_EOB1 || slot < 2)) {
+		if (_flags.gameID == GI_EOB2 && ex > 0 && ex < 4)
 			_txt->printMessage(_validateCursedString[0], -1, _characters[charIndex].name);
 		return 0;
 	}
@@ -692,6 +692,9 @@ void EobCoreEngine::endObjectFlight(EobFlyingObject *fo) {
 }
 
 void EobCoreEngine::checkFlyingObjects() {
+	if (!_runFlag)
+		return;
+
 	for (int i = 0; i < 10; i++) {
 		EobFlyingObject *fo = &_flyingObjects[i];
 		if (!fo->enable)

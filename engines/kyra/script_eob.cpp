@@ -89,8 +89,8 @@ void EobCoreEngine::updateScriptTimers() {
 EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _vm(engine), _screen(screen),
 	_commandMin(engine->game() == GI_EOB1 ? -27 : -31) {
 
-#define Opcode(x) _opcodes.push_back(new InfProc(this, &EobInfProcessor::x))
-#define OpcodeAlt(x) if (_vm->game() == GI_EOB1) Opcode(x##_v1); else Opcode(x##_v2);
+#define Opcode(x) _opcodes.push_back(new InfOpcode(new InfProc(this, &EobInfProcessor::x), #x))
+#define OpcodeAlt(x) if (_vm->game() == GI_EOB1) { Opcode(x##_v1); } else { Opcode(x##_v2); }
 	Opcode(oeob_setWallType);
 	Opcode(oeob_toggleWallState);
 	Opcode(oeob_openDoor);
@@ -157,8 +157,10 @@ EobInfProcessor::~EobInfProcessor() {
 	delete[] _flagTable;
 	delete[] _stack;
 	delete[] _scriptData;
-	for (Common::Array<const InfProc*>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a)
+	for (Common::Array<const InfOpcode*>::const_iterator a = _opcodes.begin(); a != _opcodes.end(); ++a) {
+		delete (*a)->proc;
 		delete *a;
+	}
 	_opcodes.clear();
 }
 
@@ -196,7 +198,8 @@ void EobInfProcessor::run(int func, int sub) {
 		int8 cmd = *pos++;
 		if (cmd <= _commandMin || cmd >= 0)
 			continue;
-		pos += (*_opcodes[-(cmd + 1)])(pos);
+		debugC(5, kDebugLevelScript, "[0x%.08X] EobInfProcessor::%s()", (uint32)(pos - _scriptData), _opcodes[-(cmd + 1)]->desc.c_str());
+		pos += (*_opcodes[-(cmd + 1)]->proc)(pos);
 	} while (!_abortScript && !_abortAfterSubroutine);
 }
 

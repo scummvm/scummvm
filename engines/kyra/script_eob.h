@@ -91,7 +91,12 @@ private:
 	Screen_Eob *_screen;
 
 	typedef Common::Functor1Mem<int8*, int, EobInfProcessor> InfProc;
-	Common::Array<const InfProc*> _opcodes;
+	struct InfOpcode {
+		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
+		InfProc *proc;
+		Common::String desc;
+	};
+	Common::Array<const InfOpcode*> _opcodes;
 
 	int8 *_scriptData;
 	uint16 _scriptSize;
