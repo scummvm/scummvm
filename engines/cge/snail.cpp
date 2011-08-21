@@ -314,7 +314,7 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 
 	uint8 ptr = (snq == kTake) ? spr->_takePtr : spr->_nearPtr;
 
-	if (ptr == NO_PTR)
+	if (ptr == kNoPtr)
 		return;
 
 	Snail::Com *comtab = spr->snList(snq);
@@ -340,7 +340,7 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 			Sprite *s = (c->_ref < 0) ? spr : locate(c->_ref);
 			if (s) {
 				uint8 *idx = (snq == kTake) ? &s->_takePtr : &s->_nearPtr;
-				if (*idx != NO_PTR) {
+				if (*idx != kNoPtr) {
 					int v;
 					switch (c->_val) {
 					case -1 :
@@ -458,7 +458,7 @@ void CGEEngine::snNNext(Sprite *spr, int p) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snNNext(spr, %d)", p);
 
 	if (spr)
-		if (spr->_nearPtr != NO_PTR)
+		if (spr->_nearPtr != kNoPtr)
 			spr->_nearPtr = p;
 }
 
@@ -466,7 +466,7 @@ void CGEEngine::snTNext(Sprite *spr, int p) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snTNext(spr, %d)", p);
 
 	if (spr)
-		if (spr->_takePtr != NO_PTR)
+		if (spr->_takePtr != kNoPtr)
 			spr->_takePtr = p;
 }
 
@@ -474,7 +474,7 @@ void CGEEngine::snRNNext(Sprite *spr, int p) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snRNNext(spr, %d)", p);
 
 	if (spr)
-		if (spr->_nearPtr != NO_PTR)
+		if (spr->_nearPtr != kNoPtr)
 			spr->_nearPtr += p;
 }
 
@@ -483,7 +483,7 @@ void CGEEngine::snRTNext(Sprite *spr, int p) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snRTNext(spr, %d)", p);
 
 	if (spr)
-		if (spr->_takePtr != NO_PTR)
+		if (spr->_takePtr != kNoPtr)
 			spr->_takePtr += p;
 }
 
@@ -515,14 +515,14 @@ void CGEEngine::snRmNear(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snRmNear(spr)");
 
 	if (spr)
-		spr->_nearPtr = NO_PTR;
+		spr->_nearPtr = kNoPtr;
 }
 
 void CGEEngine::snRmTake(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snRmTake(spr)");
 
 	if (spr)
-		spr->_takePtr = NO_PTR;
+		spr->_takePtr = kNoPtr;
 }
 
 void CGEEngine::snSeq(Sprite *spr, int val) {

@@ -38,25 +38,6 @@
 
 namespace CGE {
 
-static VgaRegBlk VideoMode[] = {
-	{ 0x04, VGASEQ, 0x08, 0x04 },   // memory mode
-	{ 0x03, VGAGRA, 0xFF, 0x00 },   // data rotate = 0
-	{ 0x05, VGAGRA, 0x03, 0x00 },   // R/W mode = 0
-	{ 0x06, VGAGRA, 0x02, 0x00 },   // misc
-	{ 0x14, VGACRT, 0x40, 0x00 },   // underline
-	{ 0x13, VGACRT, 0xFF, 0x28 },   // screen width
-	{ 0x17, VGACRT, 0xFF, 0xC3 },   // mode control
-	{ 0x11, VGACRT, 0x80, 0x00 },   // vert retrace end
-	{ 0x09, VGACRT, 0xEF, 0x01 },   // max scan line
-	{ 0x30, VGAATR, 0x00, 0x20 },   // 256 color mode
-//		    { 0x12, VGACRT, 0xFF, 0x6E },   // vert display end
-//		    { 0x15, VGACRT, 0xFF, 0x7F },   // start vb
-//		    { 0x10, VGACRT, 0xFF, 0x94 },   // start vr
-	{ 0x00,   0x00, 0x00, 0x00 }
-};
-
-bool SpeedTest = false;
-
 Seq *getConstantSeq(bool seqFlag) {
 	const Seq seq1[] = { { 0, 0, 0, 0, 0 } };
 	const Seq seq2[] = { { 0, 1, 0, 0, 0 }, { 1, 0, 0, 0, 0 } };
@@ -76,15 +57,6 @@ Seq *getConstantSeq(bool seqFlag) {
 
 extern "C" void SNDMIDIPlay();
 
-uint16 *SaveScreen() {
-	// In ScummVM, we don't need to worry about saving the original screen mode
-	return 0;
-}
-
-void RestoreScreen(uint16 * &sav) {
-	// In ScummVM, we don't need to restore the original text screen when the game exits
-}
-
 Dac mkDac(uint8 r, uint8 g, uint8 b) {
 	static Dac x;
 	x._r = r;
@@ -100,7 +72,7 @@ Sprite *locate(int ref) {
 
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
-	  _next(NULL), _prev(NULL), _seqPtr(NO_SEQ), _time(0),
+	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	*((uint16 *)&_flags) = 0;
@@ -196,7 +168,7 @@ Seq *Sprite::setSeq(Seq *seq) {
 
 	Seq *s = _ext->_seq;
 	_ext->_seq = seq;
-	if (_seqPtr == NO_SEQ)
+	if (_seqPtr == kNoSeq)
 		step(0);
 	else if (_time == 0)
 		step(_seqPtr);
@@ -246,7 +218,9 @@ Sprite *Sprite::expand() {
 	char line[kLineMax], fname[kPathMax];
 
 	Common::Array<BitmapPtr> shplist;
-	for (int i = 0; i < _shpCnt + 1; ++i) shplist.push_back(NULL);
+	for (int i = 0; i < _shpCnt + 1; ++i)
+		shplist.push_back(NULL);
+
 	Seq *seq = NULL;
 	int shpcnt = 0,
 	    seqcnt = 0,
@@ -257,7 +231,7 @@ Sprite *Sprite::expand() {
 
 	Snail::Com *nea = NULL;
 	Snail::Com *tak = NULL;
-	mergeExt(fname, _file, SPR_EXT);
+	mergeExt(fname, _file, kSprExt);
 	if (INI_FILE::exist(fname)) { // sprite description file exist
 		INI_FILE sprf(fname);
 		if (!(sprf._error==0))
@@ -311,7 +285,7 @@ Sprite *Sprite::expand() {
 				break;
 			case 3:
 				// Near
-				if (_nearPtr == NO_PTR)
+				if (_nearPtr == kNoPtr)
 					break;
 				nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
 				assert(nea != NULL);
@@ -324,7 +298,7 @@ Sprite *Sprite::expand() {
 			break;
 			case 4:
 				// Take
-				if (_takePtr == NO_PTR)
+				if (_takePtr == kNoPtr)
 					break;
 				tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
 				assert(tak != NULL);
@@ -362,11 +336,11 @@ Sprite *Sprite::expand() {
 	if (nea)
 		nea[neacnt - 1]._ptr = _ext->_near = nea;
 	else
-		_nearPtr = NO_PTR;
+		_nearPtr = kNoPtr;
 	if (tak)
 		tak[takcnt - 1]._ptr = _ext->_take = tak;
 	else
-		_takePtr = NO_PTR;
+		_takePtr = kNoPtr;
 
 	return this;
 }
@@ -721,9 +695,8 @@ void Vga::deinit() {
 	delete[] _sysPal;
 }
 
-Vga::Vga(int mode)
-	: _frmCnt(0), _oldMode(0), _oldScreen(NULL), _statAdr(VGAST1_),
-	  _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
+Vga::Vga()
+	: _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
 	_oldColors = NULL;
 	_newColors = NULL;
 	_showQ = new Queue(true);
@@ -741,17 +714,11 @@ Vga::Vga(int mode)
 //		warning(Copr);
 		warning("TODO: Fix Copr");
 
-	setStatAdr();
-	if (_statAdr != VGAST1_)
-		_mono++;
 	_oldColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
-	_oldScreen = SaveScreen();
 	getColors(_oldColors);
 	sunset();
-	_oldMode = setMode(mode);
 	setColors();
-	setup(VideoMode);
 	clear(0);
 }
 
@@ -779,24 +746,10 @@ Vga::~Vga() {
 	delete _spareQ;
 }
 
-void Vga::setStatAdr() {
-	// No implementation needed for ScummVM
-}
-
-#pragma argsused
-void Vga::waitVR(bool on) {
+void Vga::waitVR() {
 	// Since some of the game parts rely on using vertical sync as a delay mechanism,
 	// we're introducing a short delay to simulate it
 	g_system->delayMillis(5);
-}
-
-void Vga::setup(VgaRegBlk *vrb) {
-	// No direct VGA setup required, since ScummVM provides it's own graphics interface
-}
-
-int Vga::setMode(int mode) {
-	// ScummVM provides it's own vieo services
-	return 0;
 }
 
 void Vga::getColors(Dac *tab) {
@@ -850,9 +803,9 @@ void Vga::setColors() {
 }
 
 void Vga::sunrise(Dac *tab) {
-	for (int i = 0; i <= 64; i += FADE_STEP) {
+	for (int i = 0; i <= 64; i += kFadeStep) {
 		setColors(tab, i);
-		waitVR(true);
+		waitVR();
 		updateColors();
 	}
 }
@@ -860,9 +813,9 @@ void Vga::sunrise(Dac *tab) {
 void Vga::sunset() {
 	Dac tab[256];
 	getColors(tab);
-	for (int i = 64; i >= 0; i -= FADE_STEP) {
+	for (int i = 64; i >= 0; i -= kFadeStep) {
 		setColors(tab, i);
-		waitVR(true);
+		waitVR();
 		updateColors();
 	}
 }

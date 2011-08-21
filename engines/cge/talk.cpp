@@ -166,12 +166,12 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 	if (_mode) {
 		uint8 *p = b;
 		uint8 *q = b + n - w;
-		memset(p, LGRAY, w);
-		memset(q, DGRAY, w);
+		memset(p, kVgaColLightGray, w);
+		memset(q, kVgaColDarkGray, w);
 		while (p < q) {
 			p += w;
-			*(p - 1) = DGRAY;
-			*p = LGRAY;
+			*(p - 1) = kVgaColDarkGray;
+			*p = kVgaColLightGray;
 		}
 		p = b;
 		const uint16 r = (_mode == kTBRound) ? kTextRoundCorner : 0;
@@ -183,10 +183,10 @@ Bitmap *Talk::box(uint16 w, uint16 h) {
 				q[j] = kPixelTransp;
 				q[w - j - 1] = kPixelTransp;
 			}
-			p[j] = LGRAY;
-			p[w - j - 1] = DGRAY;
-			q[j] = LGRAY;
-			q[w - j - 1] = DGRAY;
+			p[j] = kVgaColLightGray;
+			p[w - j - 1] = kVgaColDarkGray;
+			q[j] = kVgaColLightGray;
+			q[w - j - 1] = kVgaColDarkGray;
 			p += w;
 			q -= w;
 		}

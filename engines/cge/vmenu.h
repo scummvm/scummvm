@@ -34,8 +34,8 @@ namespace CGE {
 
 #define kMenuBarVM       1
 #define kMenuBarHM       3
-#define kMenuBarLT       LGRAY
-#define kMenuBarRB       DGRAY
+#define kMenuBarLT       kVgaColLightGray
+#define kMenuBarRB       kVgaColDarkGray
 
 
 struct Choice {

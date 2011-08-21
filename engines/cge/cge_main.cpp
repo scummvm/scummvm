@@ -961,27 +961,27 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				mask |= kMouseLeftUp;
 			} else {
 				if (_hero->distance(this) < kDistMax) {
-					///
 					if (_flags._port) {
-						if (_vm->findPocket(NULL) < 0)
+						if (_vm->findPocket(NULL) < 0) {
 							_vm->pocFul();
-						else {
+						} else {
 							_snail->addCom(kSnReach, -1, -1, this);
 							_snail->addCom(kSnKeep, -1, -1, this);
 							_flags._port = false;
 						}
 					} else {
-						if (_takePtr != NO_PTR) {
+						if (_takePtr != kNoPtr) {
 							if (snList(kTake)[_takePtr]._com == kSnNext)
 								_vm->offUse();
 							else
 								_vm->feedSnail(this, kTake);
-						} else
+						} else {
 							_vm->offUse();
+						}
 					}
-				}///
-				else
+				} else {
 					_vm->tooFar();
+				}
 			}
 		}
 	}
@@ -994,8 +994,9 @@ void Sprite::touch(uint16 mask, int x, int y) {
 					break;
 				}
 			}
-		} else
+		} else {
 			_snail->addCom(kSnWalk, -1, -1, this); // Hero->FindWay(this);
+		}
 	}
 }
 
@@ -1018,7 +1019,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 	int i, lcnt = 0;
 
 	char line[kLineMax];
-	mergeExt(line, fname, SPR_EXT);
+	mergeExt(line, fname, kSprExt);
 
 	if (INI_FILE::exist(line)) {      // sprite description file exist
 		INI_FILE sprf(line);
