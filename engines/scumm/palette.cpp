@@ -544,6 +544,12 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 		return;
 #endif
 
+	// This function is actually a nullsub in Indy4 Amiga.
+	// It might very well be a nullsub in other Amiga games, but for now I
+	// limit this to Indy4 Amiga, since that is the only game I can check.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+		return;
+
 	byte *string1 = getStringAddress(resID);
 	byte *string2 = getStringAddress(resID + 1);
 	byte *string3 = getStringAddress(resID + 2);
