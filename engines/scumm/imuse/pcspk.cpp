@@ -380,7 +380,7 @@ int16 PcSpkDriver::getEffectModLevel(int16 level, int8 mod) {
 	}
 }
 
-int16 PcSpkDriver::getRandMultipy(int16 input) {
+int16 PcSpkDriver::getRandScale(int16 input) {
 	if (_randBase & 1)
 		_randBase = (_randBase >> 1) ^ 0xB8;
 	else
@@ -470,7 +470,7 @@ void PcSpkDriver::initNextEnvelopeState(EffectEnvelope &env) {
 
 	uint16 stepCount = _effectEnvStepTable[getEffectModifier(((env.stateTargetLevels[lastState] & 0x7F) << 5) + env.modWheelSensitivity)];
 	if (env.stateTargetLevels[lastState] & 0x80)
-		stepCount = getRandMultipy(stepCount);
+		stepCount = getRandScale(stepCount);
 	if (!stepCount)
 		stepCount = 1;
 
@@ -480,7 +480,7 @@ void PcSpkDriver::initNextEnvelopeState(EffectEnvelope &env) {
 	if (lastState != 2) {
 		totalChange = getEffectModLevel(env.maxLevel, (env.stateModWheelLevels[lastState] & 0x7F) - 31);
 		if (env.stateModWheelLevels[lastState] & 0x80)
-			totalChange = getRandMultipy(totalChange);
+			totalChange = getRandScale(totalChange);
 
 		if (totalChange + env.startLevel > env.maxLevel)
 			totalChange = env.maxLevel - env.startLevel;

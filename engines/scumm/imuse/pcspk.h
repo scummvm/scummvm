@@ -57,7 +57,7 @@ private:
 
 	static uint8 getEffectModifier(uint16 level);
 	int16 getEffectModLevel(int16 level, int8 mod);
-	int16 getRandMultipy(int16 input);
+	int16 getRandScale(int16 input);
 
 	struct EffectEnvelope {
 		uint8 state;
