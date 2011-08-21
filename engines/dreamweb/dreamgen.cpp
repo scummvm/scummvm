@@ -6415,87 +6415,6 @@ _tmp28a:
 		goto _tmp28;
 }
 
-void DreamGenContext::showallfree() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	data.word(kListpos) = bx;
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	cx = 80*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kFreeframes);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	al = 0;
-	data.byte(kCurrentfree) = al;
-	ds = data.word(kFreedat);
-	si = 2;
-	cx = 0;
-loop127:
-	push(cx);
-	push(si);
-	push(si);
-	es = data.word(kFreedat);
-	getmapad();
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto over138;
-	al = data.byte(kCurrentfree);
-	ah = 0;
-	dx = ax;
-	_add(ax, ax);
-	_add(ax, dx);
-	data.word(kCurrentframe) = ax;
-	push(es);
-	push(si);
-	calcfrframe();
-	es = data.word(kMapstore);
-	ds = data.word(kFrsegment);
-	finalframe();
-	si = pop();
-	es = pop();
-	_cmp(cx, 0);
-	if (flags.z())
-		goto over138;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	ax = pop();
-	cx = pop();
-	push(cx);
-	push(ax);
-	es.byte(si+4) = cl;
-	_add(si, 5);
-	data.word(kListpos) = si;
-over138:
-	_inc(data.byte(kCurrentfree));
-	si = pop();
-	cx = pop();
-	_add(si, 16);
-	_inc(cx);
-	_cmp(cx, 80);
-	if (flags.z())
-		return /* (finfree) */;
-	goto loop127;
-}
-
 void DreamGenContext::showallex() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -18409,7 +18328,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_blockget: blockget(); break;
 		case addr_drawfloor: drawfloor(); break;
 		case addr_drawflags: drawflags(); break;
-		case addr_showallfree: showallfree(); break;
 		case addr_showallex: showallex(); break;
 		case addr_adjustlen: adjustlen(); break;
 		case addr_autolook: autolook(); break;

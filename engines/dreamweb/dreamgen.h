@@ -467,7 +467,6 @@ public:
 	static const uint16 addr_autolook = 0xc46c;
 	static const uint16 addr_adjustlen = 0xc45c;
 	static const uint16 addr_showallex = 0xc450;
-	static const uint16 addr_showallfree = 0xc44c;
 	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_blockget = 0xc424;
@@ -1455,7 +1454,7 @@ public:
 	//void cancelch0();
 	void setbotleft();
 	void findfirstpath();
-	void fadescreenup();
+	//void cancelch1();
 	void loadold();
 	void loadtempcharset();
 	void showbyte();
@@ -1709,6 +1708,7 @@ public:
 	void powerlighton();
 	void savefilewrite();
 	void printmessage2();
+	//void showallfree();
 	void loadnews();
 	void rollem();
 	void makeworn();
@@ -1808,7 +1808,6 @@ public:
 	void pickupob();
 	void error();
 	void showopbox();
-	//void cancelch1();
 	void clearbeforeload();
 	void biblequote();
 	void doload();
@@ -1958,7 +1957,7 @@ public:
 	void initialmoncols();
 	void checkforshake();
 	void usebuttona();
-	void showallfree();
+	void fadescreenup();
 	//void getnextword();
 	void generalerror();
 	void actualload();

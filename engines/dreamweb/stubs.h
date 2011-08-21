@@ -163,4 +163,5 @@
 	void placesetobject(uint8 index);
 	void removesetobject();
 	void removesetobject(uint8 index);
+	void showallfree();
 
