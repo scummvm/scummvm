@@ -69,6 +69,7 @@
 	Sprite *spritetable();
 	void showframe();
 	void showframe(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
+	void showframe(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag);
 	void printasprite(const Sprite *sprite);
 	void width160();
 	void multiput(const uint8 *src, uint16 x, uint16 y, uint8 width, uint8 height);

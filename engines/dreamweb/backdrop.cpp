@@ -166,8 +166,7 @@ void DreamGenContext::showallobs() {
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);
-			uint8 width, height;
-			showframe(frames, x, y, data.word(kCurrentframe), 0, &width, &height);
+			showframe(frames, x, y, data.word(kCurrentframe), 0);
 		} else
 			makebackob(setEntry);
 
@@ -266,7 +265,7 @@ void DreamGenContext::showallfree() {
 			if ((width != 0) || (height != 0)) {
 				x += data.word(kMapadx);
 				y += data.word(kMapady);
-				showframe((Frame *)segRef(data.word(kFrsegment)).ptr(0, 0), x, y, data.word(kCurrentframe) & 0xff, 0, &width, &height);
+				showframe((Frame *)segRef(data.word(kFrsegment)).ptr(0, 0), x, y, data.word(kCurrentframe) & 0xff, 0);
 				ObjPos *objPos = (ObjPos *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
 				objPos->xMin = data.byte(kSavex);
 				objPos->yMin = data.byte(kSavey);

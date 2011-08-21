@@ -66,8 +66,7 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 		c = 8;
 	else
 		c = 0;
-	uint8 width, height;
-	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c, &width, &height);
+	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c);
 }
 
 void DreamGenContext::clearsprites() {
@@ -546,8 +545,7 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	data.word(kCurrentframe) = reel->frame();
 	Frame *source = findsourceCPP();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
-	uint8 width, height;
-	showframe(source, x, y, frame, 8, &width, &height);
+	showframe(source, x, y, frame, 8);
 }
 
 void DreamGenContext::showgamereel() {

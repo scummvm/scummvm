@@ -894,8 +894,7 @@ void DreamGenContext::crosshair() {
 		frame = 29;
 	}
 	const Frame *src = (const Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
-	uint8 width, height;
-	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0, &width, &height);
+	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
 void DreamGenContext::deltextline() {
@@ -1022,9 +1021,8 @@ void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
 
 void DreamGenContext::showpanel() {
 	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
-	uint8 width, height;
-	showframe(frame, 72, 0, 19, 0, &width, &height);
-	showframe(frame, 192, 0, 19, 0, &width, &height);
+	showframe(frame, 72, 0, 19, 0);
+	showframe(frame, 192, 0, 19, 0);
 }
 
 void DreamGenContext::blocknametext() {
