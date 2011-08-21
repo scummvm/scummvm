@@ -53,7 +53,7 @@ static const char *credits[] = {
 "C2""Various code fixes and improvements",
 "C0""vpelletier",
 "C2""Various code fixes and improvements",
-"C0""usineur ",
+"C0""Matthieu Milan",
 "C2""Few code improvements",
 "",
 "",
