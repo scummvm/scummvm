@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	game.o \
 	general.o \
 	gettext.o \
-	mixer.o \
 	snail.o \
 	sound.o \
 	talk.o \

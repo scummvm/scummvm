@@ -46,7 +46,6 @@
 #include "cge/talk.h"
 #include "cge/vmenu.h"
 #include "cge/gettext.h"
-#include "cge/mixer.h"
 #include "cge/cge_main.h"
 #include "cge/cge.h"
 #include "cge/walk.h"
@@ -257,12 +256,6 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 
 void CGEEngine::saveSound() {
 	warning("STUB: CGEEngine::saveSound");
-	/*  Convert to saving any such needed data in ScummVM configuration file
-
-	CFile cfg(usrPath(progName(CFG_EXT)), WRI);
-	if (!cfg._error)
-		cfg.write(&_sndDrvInfo, sizeof(_sndDrvInfo) - sizeof(_sndDrvInfo.Vol2));
-	*/
 }
 
 void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
@@ -914,13 +907,10 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 			switchColorMode();
 		break;
 	case 2:
-		if (mask & kMouseLeftUp) {
+		if (mask & kMouseLeftUp)
 			switchMusic();
-		} else if (mask & kMouseRightUp)
-			if (!Mixer::_appear) {
-				Mixer::_appear = true;
-				new Mixer(this, kButtonX, kButtonY);
-			}
+		else if (mask & kMouseRightUp)
+			warning("TODO: Use ScummVM sound dialog");
 		break;
 	case 3:
 		if (mask & kMouseLeftUp)
