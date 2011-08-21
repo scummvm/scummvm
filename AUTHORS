@@ -25,16 +25,17 @@ Residual Team
                                improvements
        Travis Howell         - Various code fixes, Windows port
        Joost Peters          - Various code fixes
+       Matthieu Milan        - Few code improvements
        Christian Neumair     - Various optimisation patches
        Daniel Schepler       - Initial engine codebase, LUA support
-       Einar Johan T. Somaen - Initial EMI support, a lot of play-testing
+       Einar Johan T. Somaae - Initial EMI support, various code fixes and
+                               improvements
        Yaron Tausky          - Fixes to subtitles
        Joel Teichroeb        - Initial EMI support, various code fixes
        Pino Toscano          - Debian GNU/Linux package files
        Lionel Ulmer          - OpenGL optimisations
        Joni Vahamaki         - Various code fixes and improvements
        vpelletier            - Various code fixes and improvements
-       Matthieu Milan        - Few code improvements
 
 ScummVM code
 ************

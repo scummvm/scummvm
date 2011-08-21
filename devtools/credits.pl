@@ -471,16 +471,16 @@ begin_credits("Credits");
 		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various code fixes and improvements");
 		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
 		add_person("Joost Peters", "joostp", "Various code fixes");
+		add_person("Matthieu Milan", "usineur", "Few code improvements");
 		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
 		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
-		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Initial EMI support, a lot of play-testing");
+		add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "Initial EMI support, various code fixes and improvements");
 		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
 		add_person("Joel Teichroeb ", "klusark", "Initial EMI support, various code fixes");
 		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
 		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "Various code fixes and improvements");
 		add_person("", "vpelletier", "Various code fixes and improvements");
-		add_person("Matthieu Milan", "usineur ", "Few code improvements");
 	    end_section();
 
 	end_section();
