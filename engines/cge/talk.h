@@ -34,8 +34,8 @@
 
 namespace CGE {
 
-#define kTextColFG         DARK                     // foreground color
-#define kTextColBG         GRAY                     // background color
+#define kTextColFG         kVgaColDark              // foreground color
+#define kTextColBG         kVgaColGray              // background color
 #define kTextHMargin      (6&~1)                    // EVEN horizontal margins!
 #define kTextVMargin       5                        // vertical margins
 #define kTextLineSpace     2                        // line spacing

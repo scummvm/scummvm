@@ -126,7 +126,7 @@ void CGEEngine::setup() {
 
 	// Initialise engine objects
 	_text = new Text(this, progName(), 128);
-	_vga = new Vga(M13H);
+	_vga = new Vga();
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++)

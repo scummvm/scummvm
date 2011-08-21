@@ -37,40 +37,18 @@
 
 namespace CGE {
 
-#define FADE_STEP   2
-#define TMR_DIV     ((0x8000/TMR_RATE)*2)
-#define NREP         9
-#define FREP        24
+#define kFadeStep        2
+#define kVgaColDark      207
+#define kVgaColDarkGray  225 /*219*/
+#define kVgaColGray      231
+#define kVgaColLightGray 237
+#define kPixelTransp     0xFE
+#define kNoSeq           (-1)
+#define kNoPtr           ((uint8)-1)
+#define kSprExt          ".SPR"
+#define kPalCount        256
+#define kPalSize         (kPalCount * 3)
 
-#define TMR_RATE1   16
-#define TMR_RATE2   4
-#define TMR_RATE   (TMR_RATE1 * TMR_RATE2)
-
-#define MAX_NAME    20
-#define VIDEO       0x10
-
-#define NO_CLEAR    0x80
-#define TEXT_MODE   0x03
-#define M13H        0x13
-
-#define LIGHT       0xFF
-#define DARK        207
-#define DGRAY       225 /*219*/
-#define GRAY        231
-#define LGRAY       237
-#define kPixelTransp 0xFE
-
-#define NO_SEQ      (-1)
-#define NO_PTR      ((uint8)-1)
-
-#define SPR_EXT     ".SPR"
-
-struct VgaRegBlk {
-	uint8 _idx;
-	uint8 _adr;
-	uint8 _clr;
-	uint8 _set;
-};
 
 struct Seq {
 	uint8 _now;
@@ -82,21 +60,6 @@ struct Seq {
 
 extern Seq _seq1[];
 extern Seq _seq2[];
-//extern    SEQ *   Compass[];
-//extern    SEQ TurnToS[];
-
-#define kPalCount  256
-#define kPalSize  (kPalCount * 3)
-
-#define VGAATR_ 0x3C0
-#define VGASEQ_ 0x3C4
-#define VGAGRA_ 0x3CE
-#define VGACRT_ 0x3D4
-#define VGAST1_ 0x3DA
-#define VGAATR  (VGAATR_ & 0xFF)
-#define VGASEQ  (VGASEQ_ & 0xFF)
-#define VGAGRA  (VGAGRA_ & 0xFF)
-#define VGACRT  (VGACRT_ & 0xFF)
 
 class SprExt {
 public:
@@ -219,20 +182,15 @@ public:
 };
 
 class Vga {
-	uint16 _oldMode;
-	uint16 *_oldScreen;
-	uint16 _statAdr;
 	bool _setPal;
 	Dac *_oldColors;
 	Dac *_newColors;
 	const char *_msg;
 	const char *_name;
 
-	int setMode(int mode);
 	void updateColors();
 	void setColors();
-	void setStatAdr();
-	void waitVR(bool on);
+	void waitVR();
 public:
 	uint32 _frmCnt;
 	Queue *_showQ;
@@ -241,12 +199,11 @@ public:
 	static Graphics::Surface *_page[4];
 	static Dac *_sysPal;
 
-	Vga(int mode);
+	Vga();
 	~Vga();
 	static void init();
 	static void deinit();
 
-	void setup(VgaRegBlk *vrb);
 	void getColors(Dac *tab);
 	void setColors(Dac *tab, int lum);
 	void clear(uint8 color);
@@ -288,12 +245,12 @@ uint8 closest(CBLK *pal, CBLK x) {
 	uint16 i, dif = 0xFFFF, found = 0;
 	uint16 L = x._r + x._g + x._b;
 	if (!L)
-		++L;
+		L++;
 	uint16 R = f(x._r, L), G = f(x._g, L), B = f(x._b, L);
 	for (i = 0; i < 256; i++) {
 		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
-		if (! l)
-			++l;
+		if (!l)
+			l++;
 		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
 		uint16 D = ((r > R) ? (r - R) : (R - r)) +
 		           ((g > G) ? (g - G) : (G - g)) +
@@ -311,12 +268,8 @@ uint8 closest(CBLK *pal, CBLK x) {
 #undef f
 }
 
-uint16 *saveScreen();
-void restoreScreen(uint16 * &sav);
 Sprite *spriteAt(int x, int y);
 Sprite *locate(int ref);
-
-extern bool _speedTest;
 
 } // End of namespace CGE
 
