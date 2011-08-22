@@ -160,6 +160,8 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/fr
 	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
