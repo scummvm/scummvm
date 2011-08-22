@@ -378,8 +378,8 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = new Graphics::Surface();
-	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail) {
 		delete header.thumbnail;
 		header.thumbnail = NULL;
 		return false;
