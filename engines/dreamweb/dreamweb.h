@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.h $
- * $Id: dreamweb.h 77 2011-05-18 14:26:43Z digitall $
- *
  */
 
 #ifndef DREAMWEB_H
@@ -114,6 +111,8 @@ public:
 	Common::Language getLanguage() const { return _language; }
 	uint8 modifyChar(uint8 c) const;
 
+	void stopSound(uint8 channel);
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -130,7 +129,6 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
-	int _loadSavefile;
 	bool _enableSavingOrLoading;
 	Common::Language _language;
 

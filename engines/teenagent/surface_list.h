@@ -33,7 +33,7 @@ public:
 
 	SurfaceList();
 	~SurfaceList();
-	void load(Common::SeekableReadStream *stream, Type type, int sub_hack = 0);
+	void load(Common::SeekableReadStream&, Type type, int sub_hack = 0);
 	void free();
 	void render(Graphics::Surface *surface, const Common::Rect & clip) const;
 
@@ -45,4 +45,3 @@ protected:
 }
 
 #endif
-

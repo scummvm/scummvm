@@ -27,13 +27,14 @@
 #include "common/str.h"
 
 #include "audio/audiostream.h"
-#include "audio/decoders/adpcm.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
 #include "audio/mixer.h"
+#include "audio/decoders/adpcm.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/resource.h"
+
+class MidiDriver;
+class MidiParser;
 
 namespace Mohawk {
 

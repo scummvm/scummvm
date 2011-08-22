@@ -28,6 +28,10 @@
 #include "agos/intern.h"
 #include "common/str.h"
 
+namespace Common {
+class File;
+}
+
 namespace AGOS {
 
 class BaseSound;

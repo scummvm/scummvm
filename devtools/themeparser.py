@@ -616,4 +616,3 @@ class STXBinaryFile(object):
 if __name__ == '__main__':
 	bin = STXBinaryFile('../gui/themes/scummclassic', True, True)
 	bin.parse()
-

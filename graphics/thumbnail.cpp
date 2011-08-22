@@ -94,23 +94,24 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	return true;
 }
 
-bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
+Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	ThumbnailHeader header;
 
 	if (!loadHeader(in, header, true))
-		return false;
+		return 0;
 
 	if (header.bpp != 2) {
 		warning("trying to load thumbnail with unsupported bit depth %d", header.bpp);
-		return false;
+		return 0;
 	}
 
 	Graphics::PixelFormat format = g_system->getOverlayFormat();
-	to.create(header.width, header.height, format);
+	Graphics::Surface *const to = new Graphics::Surface();
+	to->create(header.width, header.height, format);
 
-	OverlayColor *pixels = (OverlayColor *)to.pixels;
-	for (int y = 0; y < to.h; ++y) {
-		for (int x = 0; x < to.w; ++x) {
+	OverlayColor *pixels = (OverlayColor *)to->pixels;
+	for (int y = 0; y < to->h; ++y) {
+		for (int x = 0; x < to->w; ++x) {
 			uint8 r, g, b;
 			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
 
@@ -119,7 +120,7 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface &to) {
 		}
 	}
 
-	return true;
+	return to;
 }
 
 bool saveThumbnail(Common::WriteStream &out) {
@@ -166,4 +167,3 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 }
 
 } // End of namespace Graphics
-

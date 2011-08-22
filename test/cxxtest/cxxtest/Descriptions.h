@@ -71,4 +71,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__Descriptions_h__
-

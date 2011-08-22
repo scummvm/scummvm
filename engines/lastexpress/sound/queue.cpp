@@ -102,80 +102,41 @@ void SoundQueue::removeFromQueue(Common::String filename) {
 }
 
 void SoundQueue::updateQueue() {
-	//Common::StackLock locker(_mutex);
+	Common::StackLock locker(_mutex);
 
-	//warning("[Sound::updateQueue] Not implemented");
+	++_flag;
 
-	int maxPriority = 0;
-	Common::List<SoundEntry *>::iterator lsnd;
-	SoundEntry *msnd;
-
-	bool loopedPlaying;
-
-	loopedPlaying = 0;
-	//++g_sound_flag;
-
-	for (lsnd = _soundList.begin(); lsnd != _soundList.end(); ++lsnd) {
-		if ((*lsnd)->getType() == kSoundType1)
-			break;
-	}
-
-	if (getSoundState() & 1) {
-		if (!(*lsnd) || getFlags()->flag_3 || (*lsnd && (*lsnd)->getTime() > getSound()->getLoopingSoundDuration())) {
+	if (getSoundState() & kSoundState1) {
+		SoundEntry *entry = getEntry(kSoundType1);
+		if (!entry || getFlags()->flag_3 || (entry && entry->getTime() > getSound()->getLoopingSoundDuration())) {
 			getSound()->playLoopingSound(0x45);
 		} else {
 			if (getSound()->getData1() && getSound()->getData2() >= getSound()->getData1()) {
-				(*lsnd)->update(getSound()->getData0());
+				entry->update(getSound()->getData0());
 				getSound()->setData1(0);
 			}
 		}
 	}
 
-	msnd = NULL;
+	for (Common::List<SoundEntry *>::iterator it = _soundList.begin(); it != _soundList.end(); ++it) {
+		SoundEntry *entry = *it;
 
-	for (lsnd = _soundList.begin(); lsnd != _soundList.end(); ++lsnd) {
-		if ((*lsnd)->getStatus().status2 & 0x1) { // Sound is stopped
-			// original code
-			//if ((*lsnd)->soundBuffer)
-			//	Sound_RemoveSoundDataFromCache(*lsnd);
-			//if ((*lsnd)->archive) {
-			//	Archive_SetStatusNotLoaded((*lsnd)->archive);
-			//	(*lsnd)->archive = 0;
-			//	(*lsnd)->field_28 = 3;
-			//}
+		// Original removes the entry data from the cache and sets the archive as not loaded
+		// and if the sound data buffer is not full, loads a new entry to be played based on
+		// its priority and filter id
 
-			if (_soundList.size() < 6) {
-				if ((*lsnd)->getStatus().status1 & 0x1F) {
-					int pri = (*lsnd)->getPriority() + ((*lsnd)->getStatus().status1 & 0x1F);
-
-					if (pri > maxPriority) {
-						msnd = *lsnd;
-						maxPriority = pri;
-					}
-				}
-			}
-		}
-
-		if (!(*lsnd)->updateSound() && !((*lsnd)->getStatus().status3 & 0x8)) {
-			if (msnd == *lsnd) {
-				maxPriority = 0;
-				msnd = 0;
-			}
-			if (*lsnd) {
-				(*lsnd)->close();
-				SAFE_DELETE(*lsnd);
-				lsnd = _soundList.reverse_erase(lsnd);
-			}
+		if (!entry->updateSound() && !(entry->getStatus().status3 & 0x8)) {
+			entry->close();
+			SAFE_DELETE(entry);
+			it = _soundList.reverse_erase(it);
 		}
 	}
 
-	
-	// We don't need this
-	//if (msnd)
-	//	msnd->updateEntryInternal();
+	// Original update the current entry, loading another set of samples to be decoded
 
 	getFlags()->flag_3 = 0;
-	//--g_sound_flag;
+
+	--_flag;
 }
 
 void SoundQueue::resetQueue() {
@@ -209,16 +170,9 @@ void SoundQueue::resetQueue(SoundType type1, SoundType type2) {
 }
 
 void SoundQueue::clearQueue() {
-	_flag |= 4;
-
-	// FIXME: Wait a while for a flag to be set
-	//for (int i = 0; i < 3000000; i++)
-	//	if (_flag & 8)
-	//		break;
+	Common::StackLock locker(_mutex);
 
 	_flag |= 8;
-
-	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i) {
 		SoundEntry *entry = (*i);
@@ -240,7 +194,7 @@ void SoundQueue::clearStatus() {
 	Common::StackLock locker(_mutex);
 
 	for (Common::List<SoundEntry *>::iterator i = _soundList.begin(); i != _soundList.end(); ++i)
-		(*i)->setStatus((*i)->getStatus().status | kSoundStatusClear3);
+		(*i)->setStatus((*i)->getStatus().status | kSoundStatusClosed);
 }
 
 //////////////////////////////////////////////////////////////////////////

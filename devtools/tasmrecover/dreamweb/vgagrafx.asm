@@ -1758,5 +1758,3 @@ Title6graphics	db	"DREAMWEB.I06",0
 Title7graphics	db	"DREAMWEB.I07",0
 
 Palettescreen	db	"DREAMWEB.PAL",0
-
-

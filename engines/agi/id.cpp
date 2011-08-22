@@ -48,14 +48,17 @@ int AgiEngine::setupV2Game(int ver) {
 
 	// 'quit' takes 0 args for 2.089
 	if (ver == 0x2089)
-		logicNamesCmd[0x86].numArgs = 0;
+//		logicNamesCmd[0x86].numArgs = 0;
+		logicNamesCmd[0x86].args = "";
 
 	// 'print.at' and 'print.at.v' take 3 args before 2.272
 	// This is documented in the specs as only < 2.440, but it seems
 	// that KQ3 (2.272) needs a 'print.at' taking 4 args.
 	if (ver < 0x2272) {
-		logicNamesCmd[0x97].numArgs = 3;
-		logicNamesCmd[0x98].numArgs = 3;
+//		logicNamesCmd[0x97].numArgs = 3;
+//		logicNamesCmd[0x98].numArgs = 3;
+		logicNamesCmd[0x97].args = "vvv";
+		logicNamesCmd[0x98].args = "vvv";
 	}
 
 	return ec;
@@ -73,8 +76,10 @@ int AgiEngine::setupV3Game(int ver) {
 	// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
 	// Is this actually used anywhere? -- dsymonds
 	if (ver == 0x3086) {
-		logicNamesCmd[0xb0].numArgs = 1;
-		logicNamesCmd[0xad].numArgs = 1;
+//		logicNamesCmd[0xb0].numArgs = 1;
+//		logicNamesCmd[0xad].numArgs = 1;
+		logicNamesCmd[0xb0].args = "n";
+		logicNamesCmd[0xad].args = "n";
 	}
 
 	// FIXME: Apply this fix to other games also that use 2 arguments for command 182.
@@ -83,7 +88,8 @@ int AgiEngine::setupV3Game(int ver) {
 	// has been set to use AGI 3.149 in ScummVM so that's why this initialization is
 	// here and not in setupV2Game.
 	if (getGameID() == GID_GOLDRUSH && getPlatform() == Common::kPlatformAmiga)
-		logicNamesCmd[182].numArgs = 2;
+//		logicNamesCmd[182].numArgs = 2;
+		logicNamesCmd[182].args = "vv";
 
 	return ec;
 }

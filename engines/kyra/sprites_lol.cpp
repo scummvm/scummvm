@@ -1632,4 +1632,3 @@ void LoLEngine::killMonster(MonsterInPlay *monster) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

@@ -235,4 +235,3 @@ void KyraEngine_MR::uninitAnimationShapes(int count, uint8 *filedata) {
 }
 
 } // End of namespace Kyra
-

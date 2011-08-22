@@ -36,7 +36,7 @@ namespace Common {
  * underscores. In particular, white space and "#", "=", "[", "]"
  * are not valid!
  */
-bool ConfigFile::isValidName(const Common::String &name) {
+bool ConfigFile::isValidName(const String &name) {
 	const char *p = name.c_str();
 	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
 		p++;

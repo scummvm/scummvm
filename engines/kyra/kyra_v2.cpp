@@ -243,4 +243,3 @@ int KyraEngine_v2::updateCharPos(int *table, int force) {
 }
 
 } // End of namespace Kyra
-

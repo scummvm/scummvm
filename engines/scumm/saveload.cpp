@@ -686,12 +686,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 
 	Graphics::Surface *thumb = 0;
 	if (Graphics::checkThumbnailHeader(*in)) {
-		thumb = new Graphics::Surface();
-		assert(thumb);
-		if (!Graphics::loadThumbnail(*in, *thumb)) {
-			delete thumb;
-			thumb = 0;
-		}
+		thumb = Graphics::loadThumbnail(*in);
 	}
 
 	delete in;

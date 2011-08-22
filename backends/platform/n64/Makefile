@@ -90,4 +90,3 @@ spotless : distclean
 
 send: $(TARGET).v64
 	sudo ucon64 --xv64  $(TARGET).v64
-

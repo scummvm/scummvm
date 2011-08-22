@@ -934,7 +934,7 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 		_toolbarHigh = NULL;
 
 	// keyboard cursor control, some other better place for it?
-	_sdlEventSource->resetKeyboadEmulation(_videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd - 1, _videoMode.screenHeight * _scaleFactorXm / _scaleFactorXd - 1);
+	_eventSource->resetKeyboadEmulation(_videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd - 1, _videoMode.screenHeight * _scaleFactorXm / _scaleFactorXd - 1);
 
 	return true;
 }
@@ -1158,22 +1158,17 @@ void WINCESdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, in
 	}
 }
 
-void WINCESdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		/*
-		if (!_overlayVisible) {
-			newEvent.mouse.x = newEvent.mouse.x * _scaleFactorXd / _scaleFactorXm;
-			newEvent.mouse.y = newEvent.mouse.y * _scaleFactorYd / _scaleFactorYm;
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			if (_videoMode.aspectRatioCorrection)
-				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
-		}
-		*/
-		g_system->getEventManager()->pushEvent(newEvent);
+void WINCESdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	/*
+	if (!_overlayVisible) {
+		point.x = point.x * _scaleFactorXd / _scaleFactorXm;
+		point.y = point.y * _scaleFactorYd / _scaleFactorYm;
+		point.x /= _videoMode.scaleFactor;
+		point.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			point.y = aspect2Real(point.y);
 	}
+	*/
 }
 
 void WINCESdlGraphicsManager::setMousePos(int x, int y) {
@@ -1657,4 +1652,3 @@ WINCESdlGraphicsManager::zoneDesc WINCESdlGraphicsManager::_zones[TOTAL_ZONES] =
 };
 
 #endif /* _WIN32_WCE */
-

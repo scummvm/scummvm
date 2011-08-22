@@ -94,7 +94,7 @@ void Movie::play(Common::String video, int32 flags) {
 		_vm->getAudioManager()->setMusicVolume(0);
 	_decoder->loadFile(video.c_str());
 	playVideo(isFirstIntroVideo);
-	_vm->flushPalette(false);
+	_vm->flushPalette(true);
 	if (flags & 1)
 		_vm->getAudioManager()->setMusicVolume(_vm->getAudioManager()->isMusicMuted() ? 0 : 255);
 	_decoder->close();
@@ -103,7 +103,6 @@ void Movie::play(Common::String video, int32 flags) {
 
 bool Movie::playVideo(bool isFirstIntroVideo) {
 	debugC(1, kDebugMovie, "playVideo(isFirstIntroVideo: %d)", isFirstIntroVideo);
-
 	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
 		if (_decoder->needsUpdate()) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();

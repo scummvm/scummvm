@@ -33,7 +33,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 // The engine uses ScumMVM screen buffering, so all logic is hardcoded to use pane buffer 0
 #define CURRENT_PANENUM 0
@@ -1161,6 +1161,20 @@ void PaletteFader::remove() {
 		action->signal();
 }
 
+void PaletteFader::setPalette(ScenePalette *palette, int step) {
+	if (step < 0) {
+		// Reverse step means moving from dest palette to source, so swap the two palettes
+		byte tempPal[256 * 3];
+		Common::copy(&palette->_palette[0], &palette->_palette[256 * 3], &tempPal[0]);
+		Common::copy(&this->_palette[0], &this->_palette[256 * 3], &palette->_palette[0]);
+		Common::copy(&tempPal[0], &tempPal[256 * 3], &this->_palette[0]);
+
+		step = -step;
+	}
+
+	PaletteModifierCached::setPalette(palette, step);
+}
+
 /*--------------------------------------------------------------------------*/
 
 ScenePalette::ScenePalette() {
@@ -1314,7 +1328,7 @@ PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode,
 	return obj;
 }
 
-PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action) {
+PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int step, Action *action) {
 	PaletteFader *fader = new PaletteFader();
 	fader->_action = action;
 	for (int i = 0; i < 256 * 3; i += 3) {
@@ -1326,7 +1340,7 @@ PaletteFader *ScenePalette::addFader(const byte *arrBufferRGB, int palSize, int 
 			arrBufferRGB += 3;
 	}
 
-	fader->setPalette(this, percent);
+	fader->setPalette(this, step);
 	_globals->_scenePalette._listeners.push_back(fader);
 	return fader;
 }
@@ -1552,7 +1566,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		Event event;
 
 		// Keep event on-screen until a mouse or keypress
-		while (!_vm->getEventManager()->shouldQuit() && !_globals->_events.getEvent(event,
+		while (!_vm->shouldQuit() && !_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
@@ -1641,6 +1655,11 @@ void SceneObjectWrapper::remove() {
 }
 
 void SceneObjectWrapper::dispatch() {
+	if (_vm->getGameID() == GType_Ringworld)
+		check();
+}
+
+void SceneObjectWrapper::check() {
 	_visageImages.setVisage(_sceneObject->_visage);
 	int frameCount = _visageImages.getFrameCount();
 	int angle = _sceneObject->_angle;
@@ -1699,6 +1718,7 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_sceneRegionId = 0;
 	_percent = 100;
 	_flags |= OBJFLAG_PANES;
+	_priority = 0;
 
 	_frameChange = 0;
 	_visage = 0;
@@ -2263,6 +2283,18 @@ void SceneObject::updateScreen() {
 	}
 }
 
+void SceneObject::updateAngle(SceneObject *sceneObj) {
+	checkAngle(sceneObj);
+	if (_objectWrapper)
+		_objectWrapper->check();
+}
+
+void SceneObject::changeAngle(int angle) {
+	_angle = angle;
+	if (_objectWrapper)
+		_objectWrapper->check();
+}
+
 void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority) {
 	postInit();
 	setVisage(visage);
@@ -2270,6 +2302,22 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	setFrame(frameNum);
 	setPosition(Common::Point(posX, posY), 0);
 	fixPriority(priority);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void SceneObjectExt2::postInit(SceneObjectList *OwnerList) {
+	_v8A = -1;
+	_v8C = -1;
+	_v8E = -1;
+	SceneObject::postInit();
+}
+
+void SceneObjectExt2::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	s.syncAsSint16LE(_v8A);
+	s.syncAsSint16LE(_v8C);
+	s.syncAsSint16LE(_v8E);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3426,11 +3474,16 @@ void GameHandler::synchronize(Serializer &s) {
 SceneHandler::SceneHandler() {
 	_saveGameSlot = -1;
 	_loadGameSlot = -1;
+	_prevFrameNumber = 0;
 }
 
 void SceneHandler::registerHandler() {
 	postInit();
 	_globals->_game->addHandler(this);
+}
+
+uint32 SceneHandler::getFrameDifference() {
+	return GLOBALS._events.getFrameNumber() - _prevFrameNumber;
 }
 
 void SceneHandler::postInit(SceneObjectList *OwnerList) {
@@ -3547,10 +3600,19 @@ void SceneHandler::dispatch() {
 	// Not actually used
 	//_eventListeners.forEach(SceneHandler::handleListener);
 
-	// Handle pending eents
+	// Handle pending events
 	Event event;
-	while (_globals->_events.getEvent(event))
+	if (_globals->_events.getEvent(event)) {
+		// Process pending events
+		do {
+			process(event);
+		} while (_globals->_events.getEvent(event));
+	} else if (_vm->getGameID() == GType_BlueForce) {
+		// For Blue Force, 'none' events need to be generated in the absence of any
+		event.eventType = EVENT_NONE;
+		event.mousePos = _globals->_events._mousePos;
 		process(event);
+	}
 
 	// Handle drawing the contents of the scene
 	if (_globals->_sceneManager._scene)
@@ -3573,4 +3635,4 @@ void SceneHandler::dispatchObject(EventHandler *obj) {
 void SceneHandler::saveListener(Serializer &ser) {
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

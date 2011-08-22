@@ -19,5 +19,10 @@ MODULE_OBJS := \
 	codecs/smc.o \
 	codecs/truemotion1.o
 
+ifdef USE_BINK
+MODULE_OBJS += \
+	bink_decoder.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

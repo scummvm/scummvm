@@ -1426,4 +1426,3 @@ void KyraEngine_MR::readSettings() {
 }
 
 } // End of namespace Kyra
-

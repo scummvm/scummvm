@@ -377,4 +377,3 @@ int DCLauncherDialog::runModal()
 
   return 0;
 }
-

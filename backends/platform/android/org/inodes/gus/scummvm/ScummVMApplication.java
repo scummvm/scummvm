@@ -28,4 +28,3 @@ public class ScummVMApplication extends Application {
 		return _cache_dir;
 	}
 }
-

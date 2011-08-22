@@ -131,15 +131,20 @@ uint32 WINCESdlMixerManager::compute_sample_rate() {
 			ConfMan.setBool("FM_medium_quality", true);
 			ConfMan.flushToDisk();
 		}
+	} else {
+		if (!ConfMan.hasKey("FM_high_quality") && !ConfMan.hasKey("FM_medium_quality")) {
+			ConfMan.setBool("FM_high_quality", true);
+			ConfMan.flushToDisk();
+		}
 	}
 	// See if the output frequency is forced by the game
 	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword" || gameid == "agi")
 			sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
-		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
-			sampleRate = SAMPLES_PER_SEC_NEW;
-		else
+		if (ConfMan.hasKey("high_sample_rate") && !ConfMan.getBool("high_sample_rate"))
 			sampleRate = SAMPLES_PER_SEC_OLD;
+		else
+			sampleRate = SAMPLES_PER_SEC_NEW;
 	}
 
 #ifdef USE_VORBIS
@@ -182,4 +187,3 @@ bool WINCESdlMixerManager::checkOggHighSampleRate() {
 #endif
 
 #endif
-

@@ -85,6 +85,7 @@ add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
 add_engine cge "CGE" no
 add_engine cine "Cinematique evo 1" yes
+add_engine composer "Magic Composer" no
 add_engine cruise "Cinematique evo 2" yes
 add_engine draci "Dragon History" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
@@ -119,9 +120,8 @@ add_engine testbed "TestBed: the Testing framework" no
 add_engine tinsel "Tinsel" yes
 add_engine toon "Toonstruck" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
-add_engine tsage "Ringworld: Revenge Of The Patriarch" no
+add_engine tsage "Ringworld: Revenge Of The Patriarch" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
-
 
 #
 # Default settings
@@ -136,6 +136,7 @@ _alsa=auto
 _seq_midi=auto
 _timidity=auto
 _zlib=auto
+_sparkle=auto
 _png=auto
 _theoradec=auto
 _faad=auto
@@ -144,6 +145,7 @@ _opengl=auto
 _opengles=auto
 _readline=auto
 _taskbar=yes
+_updates=no
 _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -155,6 +157,7 @@ _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
+_bink=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -191,7 +194,6 @@ _posix=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
-_arm_asm=no
 
 
 
@@ -704,7 +706,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, dc, dingux, ds, gp2x, gph,
+  --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gp2x, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
                           psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
@@ -733,6 +735,7 @@ Fine tuning of the installation directories:
 Special configuration feature:
   --host=HOST             cross-compile to target HOST (arm-linux, ...)
                           special targets: android for Android
+                                           bada for Samsung BADA
                                            caanoo for Caanoo
                                            dingux for Dingux
                                            dreamcast for Sega Dreamcast
@@ -773,9 +776,11 @@ Optional Features:
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
+  --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
                            process
+  --disable-bink           don't build with Bink video support
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -812,6 +817,9 @@ Optional Libraries:
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
+
+  --with-sparkle-prefix=DIR   Prefix where sparkle is installed (MacOSX only - optional)
+  --disable-sparkle        disable sparkle automatic update support [MacOSX only - autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is
                            installed (optional)
@@ -861,6 +869,8 @@ for ac_option in $@; do
 	--disable-mad)            _mad=no         ;;
 	--enable-zlib)            _zlib=yes       ;;
 	--disable-zlib)           _zlib=no        ;;
+	--enable-sparkle)         _sparkle=yes    ;;
+	--disable-sparkle)        _sparkle=no     ;;
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--disable-png)            _png=no         ;;
@@ -874,10 +884,14 @@ for ac_option in $@; do
 	--disable-readline)       _readline=no    ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-updates)         _updates=yes    ;;
+	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-bink)            _bink=yes       ;;
+	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -945,6 +959,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ZLIB_CFLAGS="-I$arg/include"
 		ZLIB_LIBS="-L$arg/lib"
+		;;
+	--with-sparkle-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		SPARKLE_CFLAGS="-F$arg"
+		SPARKLE_LIBS="-F$arg"
 		;;
 	--with-readline-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1052,6 +1071,16 @@ arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
 	;;
+bada)
+	_host_os=bada
+  if test "$_debug_build" = yes; then
+    _host_cpu=i686
+	  _host_alias=i686-mingw32
+  else
+    _host_cpu=arm
+	  _host_alias=arm-samsung-nucleuseabi
+	fi
+	;;
 caanoo)
 	_host_os=gph-linux
 	_host_cpu=arm
@@ -1139,12 +1168,12 @@ ps3)
 	_host_os=ps3
 	_host_cpu=ppc
 	_host_alias=powerpc64-ps3-elf
-	
+
 	# The prefix is always the same on PS3 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/dev_hdd0/game/SCUM12000/USRDIR
-	# PS3 apps are installed into app-specific directories. The 
+	# PS3 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PS3 specific directories here.
 	datarootdir='${prefix}/data'
@@ -1169,7 +1198,7 @@ webos)
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
 	test "x$prefix" = xNONE && prefix=/media/cryptofs/apps/usr/palm/applications/org.scummvm.scummvm
-	# WebOS apps are installed into app-specific directories. The 
+	# WebOS apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode WebOS specific directories here.
 	datarootdir='${prefix}/data'
@@ -1271,6 +1300,12 @@ android)
 	fi
 	if test -z "$ANDROID_NDK"; then
 		echo "Please set ANDROID_NDK in your environment. export ANDROID_NDK=<path to Android NDK>"
+		exit 1
+	fi
+	;;
+bada)
+	if test -z "$BADA_SDK"; then
+		echo "Please set BADA_SDK in your environment. export BADA_SDK=<path to Bada SDK>"
 		exit 1
 	fi
 	;;
@@ -1490,7 +1525,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		amigaos* | android | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
+		amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
 			;;
 		*)
 			CXXFLAGS="$CXXFLAGS -ansi"
@@ -1668,38 +1703,40 @@ echo "$_need_memalign"
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
 
 #
-# Check whether we can use x86 asm routines
+# Check the CPU architecture
 #
-echo_n "Compiling for x86... "
-case $_host_cpu in
-	i386|i486|i586|i686)
-		_have_x86=yes
-		;;
-	*)
-		_have_x86=no
-		;;
-esac
-echo "$_have_x86"
-define_in_config_h_if_yes $_have_x86 'HAVE_X86'
-
-#
-# Check whether to use optimized ARM asm
-#
-echo_n "Compiling for ARM... "
+echo_n "Checking host CPU architecture... "
 case $_host_cpu in
 	arm*)
-		_arm_asm=yes
+		echo "ARM"
+		define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SOUND_ASM'
+		define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
+		define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
+		define_in_config_if_yes yes 'USE_ARM_COSTUME_ASM'
+
+		DEFINES="$DEFINES -DARM_TARGET"
+		;;
+	i[3-6]86)
+		echo "x86"
+		_have_x86=yes
+		define_in_config_h_if_yes $_have_x86 'HAVE_X86'
+		;;
+	mips*)
+		echo "MIPS"
+		DEFINES="$DEFINES -DMIPS_TARGET"
+		;;
+	ppc*)
+		echo "PowerPC"
+		DEFINES="$DEFINES -DPPC_TARGET"
+		;;
+	x86_64)
+		echo "x86_64"
 		;;
 	*)
-		_arm_asm=no
+		echo "unknown ($_host_cpu)"
 		;;
 esac
-echo "$_arm_asm"
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SCALER_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SOUND_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_SMUSH_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_GFX_ASM'
-define_in_config_if_yes "$_arm_asm" 'USE_ARM_COSTUME_ASM'
 
 
 #
@@ -1755,6 +1792,16 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -mthumb-interwork"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
 		_seq_midi=no
+		;;
+	bada)
+    BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"
+    add_line_to_config_mk "BADA_SDK = $BADA_SDK"
+    add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
+
+    # assume dependencies have been installed in cygwin's /usr/local
+    CYGWIN_USR_LOCAL="`cygpath -m /usr/local`"
+		LDFLAGS="$LDFLAGS -L${CYGWIN_USR_LOCAL}/lib"
+		CXXFLAGS="$CXXFLAGS -I${CYGWIN_USR_LOCAL}/include"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1883,7 +1930,7 @@ case $_host_os in
 	ps3)
 		# Force use of SDL from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
-	
+
 		DEFINES="$DEFINES -DPLAYSTATION3"
 		CXXFLAGS="$CXXFLAGS -mcpu=cell -mminimal-toc -I$PS3DEV/psl1ght/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		LDFLAGS="$LDFLAGS -L$PS3DEV/psl1ght/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
@@ -1982,6 +2029,22 @@ if test -n "$_host"; then
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DLINUPY"
 			;;
+		bada)
+      _unix=yes
+      _backend="bada"
+      _port_mk="backends/platform/bada/bada.mk"
+      if test "$_debug_build" = yes; then
+        _arm_asm=no
+      else
+        _arm_asm=yes
+      fi
+      _taskbar=no
+      _build_scalers=no
+      _seq_midi=no
+      _mt32emu=no
+      _timidity=no
+			_vkeybd=yes
+      ;;
 		bfin*)
 			;;
 		caanoo)
@@ -2066,6 +2129,7 @@ if test -n "$_host"; then
 		gamecube)
 			_backend="wii"
 			_build_scalers=no
+			_vkeybd=yes
 			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
@@ -2078,7 +2142,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			# This uses the GPH backend.
-			DEFINES="$DEFINES -DGPH_DEVICE"	
+			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_debug_build" = yes; then
@@ -2280,6 +2344,7 @@ if test -n "$_host"; then
 		wii)
 			_backend="wii"
 			_build_scalers=no
+			_vkeybd=yes
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h '#define AUDIO_REVERSE_STEREO'
@@ -2313,6 +2378,34 @@ case $_backend in
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		;;
+  bada)
+    # dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
+    DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
+    DEFINES="$DEFINES -DNO_STDERR_STDOUT"
+		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
+    INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
+    INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
+    INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
+    if test "$_debug_build" = yes; then
+      # debug using with the simulator
+      CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
+    else
+      # created a shared library for inclusion via the eclipse build
+      CXXFLAGS="$CXXFLAGS -DSHP"
+      CXXFLAGS="$CXXFLAGS -fpic"
+      CXXFLAGS="$CXXFLAGS -fshort-wchar"
+      CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
+      CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
+      CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
+      CXXFLAGS="$CXXFLAGS -mlittle-endian"
+      CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+      CXXFLAGS="$CXXFLAGS -Wno-psabi"
+		  CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
+		  CXXFLAGS="$CXXFLAGS -fno-short-enums"
+    fi
+    HOSTEXEPRE=lib
+    HOSTEXEEXT=.a
+    ;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
 		INCLUDES="$INCLUDES "'-isystem $(ronindir)/include'
@@ -2452,7 +2545,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2560,7 +2653,9 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		;;
 	ds)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DARM_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS -DELF_NO_MEM_MANAGER"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwork -mno-fpu
 '
@@ -2578,7 +2673,8 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		;;
 	gamecube | wii)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DPPC_TARGET -DELF_LOADER_CXA_ATEXIT -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DELF_LOADER_CXA_ATEXIT"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/wii/plugin.ld
 '
@@ -2631,7 +2727,6 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		;;
 	ps2)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET"
 _mak_plugins='
 LDFLAGS				+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/main_prog.ld
 PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backends/plugins/ps2/plugin.ld -lstdc++ -lc
@@ -2639,7 +2734,7 @@ PLUGIN_LDFLAGS		+= -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-T$(srcdir)/backend
 		;;
 	psp)
 		_elf_loader=yes
-		DEFINES="$DEFINES -DMIPS_TARGET -DUNCACHED_PLUGINS"
+		DEFINES="$DEFINES -DUNCACHED_PLUGINS"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
@@ -2967,6 +3062,30 @@ if test `get_engine_build sword25` = yes && test ! "$_zlib" = yes ; then
 fi
 
 #
+# Check for Sparkle if updates support is enabled
+#
+echocheck "Sparkle"
+if test "$_updates" = no; then
+	_sparkle=no
+else
+if test "$_sparkle" = auto ; then
+	_sparkle=no
+	cat > $TMPC << EOF
+#include <Cocoa/Cocoa.h>
+#include <Sparkle/Sparkle.h>
+int main(void) { SUUpdater *updater = [SUUpdater sharedUpdater]; return 0; }
+EOF
+	cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+fi
+if test "$_sparkle" = yes ; then
+	LIBS="$LIBS $SPARKLE_LIBS -framework Sparkle"
+	INCLUDES="$INCLUDES $SPARKLE_CFLAGS"
+fi
+define_in_config_if_yes "$_sparkle" 'USE_SPARKLE'
+fi
+echo "$_sparkle"
+
+#
 # Check for libfluidsynth
 #
 echocheck "libfluidsynth"
@@ -3142,6 +3261,14 @@ EOF
 	fi
 fi
 
+case $_host_os in
+	bada)
+   # components live in non-standard locations so just assume sane SDK
+   _opengl=yes
+   _opengles=yes
+  ;;
+esac
+
 if test "$_opengles" = "yes" ; then
 	echo "yes (OpenGL ES)"
 else
@@ -3266,6 +3393,28 @@ else
 fi
 
 #
+# Check whether to build Bink video support
+#
+echo_n "Building Bink video support... "
+define_in_config_if_yes $_bink 'USE_BINK'
+echo "$_bink"
+
+#
+# Check whether to build updates support
+#
+echo_n "Building updates support... "
+define_in_config_if_yes $_updates 'USE_UPDATES'
+if test "$_updates" = yes; then
+	if test "$_sparkle" = yes; then
+		echo "Sparkle"
+	else
+		echo "$_updates"
+	fi
+else
+	echo "$_updates"
+fi
+
+#
 # Figure out installation directories
 #
 test "x$prefix" = xNONE && prefix=/usr/local
@@ -3371,7 +3520,7 @@ case $_backend in
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -lGLESv1_CM"
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found 
+		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
 		# during linking stage
 		LIBS="$LIBS -lc -lgcc -lnosys"
 		;;
@@ -3384,6 +3533,15 @@ esac
 _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
+
+# Show a message if looping over engines takes longer than 5 secs
+sh -c "
+	touch config.gnomes
+	sleep 5
+	if test -f config.gnomes; then
+		printf 'Employing little gnomes...'
+		rm -f config.gnomes
+	fi" 2>/dev/null &
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
@@ -3448,6 +3606,14 @@ for engine in $_engines; do
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
+
+# Complete the message on slow systems
+if test -f config.gnomes ; then
+	# Kill does not work well here as it produces nasty 'Killed' message
+	rm -rf config.gnomes
+else
+	echo " work is done"
+fi
 
 #
 # Show which engines ("frontends") are to be built

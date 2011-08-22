@@ -477,9 +477,14 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void o3_getTotTextItemPart(OpFuncParams &params);
+	void o3_speakerOn(OpFuncParams &params);
+	void o3_speakerOff(OpFuncParams &params);
 	void o3_copySprite(OpFuncParams &params);
 
 	void o3_wobble(OpGobParams &params);
+
+private:
+	bool _ignoreSpeakerOff;
 };
 
 class Inter_Inca2 : public Inter_v3 {

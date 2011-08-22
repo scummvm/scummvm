@@ -22,11 +22,11 @@
 
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/tsage.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 SceneManager::SceneManager() {
 	_scene = NULL;
@@ -38,6 +38,7 @@ SceneManager::SceneManager() {
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	_saver->addListener(this);
 	_objectCount = 0;
+	_loadMode = 0;
 }
 
 SceneManager::~SceneManager() {
@@ -45,7 +46,7 @@ SceneManager::~SceneManager() {
 }
 
 void SceneManager::setNewScene(int sceneNumber) {
-	warning("SetNewScene(%d)", sceneNumber);
+	debug(1, "SetNewScene(%d)", sceneNumber);
 	_nextSceneNumber = sceneNumber;
 }
 
@@ -113,7 +114,7 @@ void SceneManager::sceneChange() {
 		assert(_objectCount == _saver->getObjectCount());
 	}
 	_objectCount = _saver->getObjectCount();
-	_globals->_sceneHandler._delayTicks = 2;
+	_globals->_sceneHandler->_delayTicks = 2;
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();
@@ -146,7 +147,7 @@ void SceneManager::fadeInIfNecessary() {
 }
 
 void SceneManager::changeScene(int newSceneNumber) {
-	warning("changeScene(%d)", newSceneNumber);
+	debug(1, "changeScene(%d)", newSceneNumber);
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
@@ -172,6 +173,11 @@ void SceneManager::changeScene(int newSceneNumber) {
 
 	// Blank out the screen
 	_globals->_screenSurface.fillRect(_globals->_screenSurface.getBounds(), 0);
+
+	// If there are any fading sounds, wait until fading is complete
+	while (_globals->_soundManager.isFading()) {
+		g_system->delayMillis(10);
+	}
 
 	// Set the new scene to be loaded
 	setNewScene(newSceneNumber);
@@ -252,6 +258,7 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 			_backgroundBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
 	_sceneMode = 0;
+	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
 	Common::set_to(&_zoomPercents[0], &_zoomPercents[256], 0);
 }
@@ -296,7 +303,7 @@ void Scene::dispatch() {
 }
 
 void Scene::loadScene(int sceneNum) {
-	warning("loadScene(%d)", sceneNum);
+	debug(1, "loadScene(%d)", sceneNum);
 	_screenNumber = sceneNum;
 	if (_globals->_scenePalette.loadPalette(sceneNum))
 		_globals->_sceneManager._hasPalette = true;
@@ -419,6 +426,11 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
+						if (_vm->getGameID() == GType_BlueForce) {
+							// For Blue Force, if the scene has an interface area, exclude it from the copy
+							srcBounds.bottom = MIN<int16>(srcBounds.bottom, BF_GLOBALS._interfaceY);
+							destBounds.bottom = MIN<int16>(destBounds.bottom, BF_GLOBALS._interfaceY);
+						}
 
 						_backSurface.copyFrom(_backSurface, srcBounds, destBounds);
 					}
@@ -511,7 +523,7 @@ void Game::execute() {
 				activeFlag = true;
 			}
 		}
-	} while (activeFlag && !_vm->getEventManager()->shouldQuit());
+	} while (activeFlag && !_vm->shouldQuit());
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

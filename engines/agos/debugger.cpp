@@ -20,12 +20,11 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 
 #include "agos/debugger.h"
 #include "agos/agos.h"
+#include "agos/midi.h"
 
 namespace AGOS {
 
@@ -58,7 +57,7 @@ bool Debugger::Cmd_DebugLevel(int argc, const char **argv) {
 			DebugPrintf("Debugging is currently set at level %d\n", gDebugLevel);
 	} else { // set level
 		gDebugLevel = atoi(argv[1]);
-		if (gDebugLevel >= 0 && gDebugLevel < 10) {
+		if (0 <= gDebugLevel && gDebugLevel < 11) {
 			_vm->_debugMode = true;
 			DebugPrintf("Debug level set to level %d\n", gDebugLevel);
 		} else if (gDebugLevel < 0) {
@@ -79,7 +78,7 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 				// TODO
 			} else if (_vm->getGameType() == GType_SIMON2) {
 				_vm->loadMusic(music);
-				_vm->_midi.startTrack(0);
+				_vm->_midi->startTrack(0);
 			} else {
 				_vm->playMusic(music, 0);
 			}
@@ -287,4 +286,3 @@ bool Debugger::Cmd_dumpScript(int argc, const char **argv) {
 }
 
 } // End of namespace AGOS
-

@@ -22,7 +22,6 @@
 
 // AGOS debug functions
 
-
 #include "common/file.h"
 #include "common/textconsole.h"
 

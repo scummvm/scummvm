@@ -207,4 +207,3 @@ bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
-

@@ -236,4 +236,3 @@ bool Script::runThread(ScriptThread &thread) {
 }
 
 } // End of namespace Saga
-

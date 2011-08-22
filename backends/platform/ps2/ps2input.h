@@ -61,4 +61,3 @@ private:
 };
 
 #endif // __PS2INPUT_H__
-

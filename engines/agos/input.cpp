@@ -20,13 +20,12 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/midi.h"
 #include "agos/vga.h"
 
 namespace AGOS {
@@ -582,14 +581,14 @@ bool AGOSEngine::processSpecialKeys() {
 		break;
 	case '+':
 		if (_midiEnabled) {
-			_midi.setVolume(_midi.getMusicVolume() + 16, _midi.getSFXVolume() + 16);
+			_midi->setVolume(_midi->getMusicVolume() + 16, _midi->getSFXVolume() + 16);
 		}
 		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 16);
 		syncSoundSettings();
 		break;
 	case '-':
 		if (_midiEnabled) {
-			_midi.setVolume(_midi.getMusicVolume() - 16, _midi.getSFXVolume() - 16);
+			_midi->setVolume(_midi->getMusicVolume() - 16, _midi->getSFXVolume() - 16);
 		}
 		ConfMan.setInt("music_volume", _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) - 16);
 		syncSoundSettings();
@@ -597,13 +596,13 @@ bool AGOSEngine::processSpecialKeys() {
 	case 'm':
 		_musicPaused = !_musicPaused;
 		if (_midiEnabled) {
-			_midi.pause(_musicPaused);
+			_midi->pause(_musicPaused);
 		}
 		syncSoundSettings();
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS) {
-			_midi._enable_sfx = !_midi._enable_sfx;
+			_midi->_enable_sfx = !_midi->_enable_sfx;
 		} else {
 			_effectsPaused = !_effectsPaused;
 			_sound->effectsPause(_effectsPaused);

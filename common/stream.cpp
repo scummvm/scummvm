@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/substream.h"
@@ -258,8 +259,7 @@ namespace {
  */
 class BufferedReadStream : virtual public ReadStream {
 protected:
-	ReadStream *_parentStream;
-	DisposeAfterUse::Flag _disposeParentStream;
+	DisposablePtr<ReadStream> _parentStream;
 	byte *_buf;
 	uint32 _pos;
 	bool _eos; // end of stream
@@ -278,8 +278,7 @@ public:
 };
 
 BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
-	: _parentStream(parentStream),
-	_disposeParentStream(disposeParentStream),
+	: _parentStream(parentStream, disposeParentStream),
 	_pos(0),
 	_eos(false),
 	_bufSize(0),
@@ -291,8 +290,6 @@ BufferedReadStream::BufferedReadStream(ReadStream *parentStream, uint32 bufSize,
 }
 
 BufferedReadStream::~BufferedReadStream() {
-	if (_disposeParentStream)
-		delete _parentStream;
 	delete[] _buf;
 }
 

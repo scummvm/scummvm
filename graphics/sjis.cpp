@@ -40,10 +40,27 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	// Try the font ROM of the specified platform
 	if (platform == Common::kPlatformFMTowns) {
 		ret = new FontTowns();
-		if (ret && ret->loadData())
-			return ret;
+		if (ret) {
+			if (ret->loadData())
+				return ret;
+		}
 		delete ret;
-	}
+	} else if (platform == Common::kPlatformPCEngine) {
+		ret = new FontPCEngine();
+		if (ret) {
+			if (ret->loadData())
+				return ret;
+		}
+		delete ret;
+	} // TODO: PC98 font rom support
+	  /* else if (platform == Common::kPlatformPC98) {		
+		ret = new FontPC98();
+		if (ret) {
+			if (ret->loadData())
+				return ret;
+		}
+		delete ret;
+	}*/
 
 	// Try ScummVM's font.
 	ret = new FontSjisSVM(platform);
@@ -59,15 +76,21 @@ void FontSJIS::drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 
 }
 
 FontSJISBase::FontSJISBase()
-	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16) {
+	: _drawMode(kDefaultMode), _flippedMode(false), _fontWidth(16), _fontHeight(16), _bitPosNewLineMask(0) {
 }
 
 void FontSJISBase::setDrawingMode(DrawingMode mode) {
-	_drawMode = mode;
+	if (hasFeature(1 << mode))
+		_drawMode = mode;
+	else
+		warning("Unsupported drawing mode selected");
 }
 
 void FontSJISBase::toggleFlippedMode(bool enable) {
-	_flippedMode = enable;
+	if (hasFeature(kFeatFlipped))
+		_flippedMode = enable;
+	else
+		warning("Flipped mode unsupported by this font");	
 }
 
 uint FontSJISBase::getFontHeight() const {
@@ -98,26 +121,30 @@ uint FontSJISBase::getMaxFontWidth() const {
 
 uint FontSJISBase::getCharWidth(uint16 ch) const {
 	if (isASCII(ch))
-		return (_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9);
+		return ((_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9));
 	else
 		return getMaxFontWidth();
 }
 
 template<typename Color>
 void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const {
+	uint8 bitPos = 0;
+	uint8 mask = 0;
+
 	for (int y = 0; y < h; ++y) {
 		Color *d = (Color *)dst;
 		dst += pitch;
 
-		uint8 mask = 0;
+		bitPos &= _bitPosNewLineMask;
 		for (int x = 0; x < w; ++x) {
-			if (!(x % 8))
+			if (!(bitPos % 8))
 				mask = *glyph++;
 
 			if (mask & 0x80)
 				*d = c;
 
 			++d;
+			++bitPos;
 			mask <<= 1;
 		}
 	}
@@ -176,9 +203,6 @@ const uint8 *FontSJISBase::flipCharacter(const uint8 *glyph, const int w) const 
 		0x0F, 0x8F, 0x4F, 0xC7, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x97, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 	};
 
-	// TODO: This code looks like it will only work with 16 pixel wide
-	// characters we should really take care that we only call it on these
-	// or we fix this to support a generic width.
 	for (int i = 0; i < w; i++) {
 		_tempGlyph[i] = flipData[glyph[(w * 2 - 1) - i]];
 		_tempGlyph[(w * 2 - 1) - i] = flipData[glyph[i]];
@@ -225,9 +249,6 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 	}
 
 #ifndef DISABLE_FLIPPED_MODE
-	// TODO: This code inside flopCharater looks like it will only work with
-	// 16 pixel wide characters we should really take care that we only call
-	// it on these or we fix it to support a generic width.
 	if (_flippedMode)
 		glyphSource = flipCharacter(glyphSource, width);
 #endif
@@ -303,7 +324,7 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 		uint8 f = ch & 0xFF;
 		uint8 s = ch >> 8;
 
-		// copied from scumm\charset.cpp
+		// moved from scumm\charset.cpp
 		enum {
 			KANA = 0,
 			KANJI = 1,
@@ -392,6 +413,98 @@ const uint8 *FontTowns::getCharData(uint16 ch) const {
 	}
 }
 
+bool FontTowns::hasFeature(int feat) const {
+	static const int features = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped;
+	return (features & feat) ? true : false;
+}
+
+// PC-Engine ROM font
+
+bool FontPCEngine::loadData() {
+	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("pce.cdbios");
+	if (!data)
+		return false;
+	
+	data->seek((data->size() & 0x200) ? 0x30200 : 0x30000);
+	data->read(_fontData12x12, kFont12x12Chars * 18);
+	
+	_fontWidth = _fontHeight = 12;
+	_bitPosNewLineMask = _fontWidth & 7;
+
+	bool retValue = !data->err();
+	delete data;
+	return retValue;
+}
+
+const uint8 *FontPCEngine::getCharData(uint16 ch) const {
+	// Converts sjis code to pce font offset
+	// (moved from scumm\charset.cpp).
+	// rangeTbl maps SJIS char-codes to the PCE System Card font rom.
+	// Each pair {<upperBound>,<lowerBound>} in the array represents a SJIS range.
+	const int rangeCnt = 45;
+	static const uint16 rangeTbl[rangeCnt][2] = {
+		// Symbols
+		{0x8140,0x817E},{0x8180,0x81AC},
+		// 0-9
+		{0x824F,0x8258},
+		// Latin upper
+		{0x8260,0x8279},
+		// Latin lower
+		{0x8281,0x829A},
+		// Kana
+		{0x829F,0x82F1},{0x8340,0x837E},{0x8380,0x8396},
+		// Greek upper
+		{0x839F,0x83B6},
+		// Greek lower
+		{0x83BF,0x83D6},
+		// Cyrillic upper
+		{0x8440,0x8460},
+		// Cyrillic lower
+		{0x8470,0x847E},{0x8480,0x8491},
+		// Kanji
+		{0x889F,0x88FC},
+		{0x8940,0x897E},{0x8980,0x89FC},
+		{0x8A40,0x8A7E},{0x8A80,0x8AFC},
+		{0x8B40,0x8B7E},{0x8B80,0x8BFC},
+		{0x8C40,0x8C7E},{0x8C80,0x8CFC},
+		{0x8D40,0x8D7E},{0x8D80,0x8DFC},
+		{0x8E40,0x8E7E},{0x8E80,0x8EFC},
+		{0x8F40,0x8F7E},{0x8F80,0x8FFC},
+		{0x9040,0x907E},{0x9080,0x90FC},
+		{0x9140,0x917E},{0x9180,0x91FC},
+		{0x9240,0x927E},{0x9280,0x92FC},
+		{0x9340,0x937E},{0x9380,0x93FC},
+		{0x9440,0x947E},{0x9480,0x94FC},
+		{0x9540,0x957E},{0x9580,0x95FC},
+		{0x9640,0x967E},{0x9680,0x96FC},
+		{0x9740,0x977E},{0x9780,0x97FC},
+		{0x9840,0x9872}
+	};
+
+	ch = (ch << 8) | (ch >> 8);
+	int offset = 0;
+	for (int i = 0; i < rangeCnt; ++i) {
+		if (ch >= rangeTbl[i][0] && ch <= rangeTbl[i][1]) {
+			return _fontData12x12 + 18 * (offset + ch - rangeTbl[i][0]);
+			break;
+		}
+		offset += rangeTbl[i][1] - rangeTbl[i][0] + 1;
+	}
+	
+	debug(4, "Invalid Char: 0x%x", ch);
+	return 0;
+}
+
+bool FontPCEngine::hasFeature(int feat) const {
+	// Outline mode not supported due to use of _bitPosNewLineMask. This could be implemented,
+	// but is not needed for any particular target at the moment.
+	// Flipped mode is also not supported since the hard coded table (taken from SCUMM 5 FM-TOWNS)
+	// is set up for font sizes of 8/16. This mode is also not required at the moment, since
+	// there aren't any SCUMM 5 PC-Engine games.
+	static const int features = kFeatDefault | kFeatShadow | kFeatFMTownsShadow;
+	return (features & feat) ? true : false;
+}
+
 // ScummVM SJIS font
 
 FontSjisSVM::FontSjisSVM(const Common::Platform platform)
@@ -464,6 +577,15 @@ const uint8 *FontSjisSVM::getCharData(uint16 c) const {
 		return getCharDataDefault(c);
 }
 
+bool FontSjisSVM::hasFeature(int feat) const {
+	// Flipped mode is not supported since the hard coded table (taken from SCUMM 5 FM-TOWNS)
+	// is set up for font sizes of 8/16. This mode is also not required at the moment, since
+	// there aren't any SCUMM 5 PC-Engine games.
+	static const int features16 = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow | kFeatFlipped;
+	static const int features12 = kFeatDefault | kFeatOutline | kFeatShadow | kFeatFMTownsShadow;
+	return (((_fontWidth == 12) ? features12 : features16) & feat) ? true : false;
+}
+
 const uint8 *FontSjisSVM::getCharDataPCE(uint16 c) const {
 	if (isASCII(c))
 		return 0;
@@ -533,4 +655,3 @@ void FontSjisSVM::mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &i
 } // End of namespace Graphics
 
 #endif // defined(GRAPHICS_SJIS_H)
-

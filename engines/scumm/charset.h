@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "graphics/sjis.h"
+#include "scumm/scumm.h"
 #include "scumm/gfx.h"
 #include "scumm/saveload.h"
 
@@ -78,10 +79,6 @@ public:
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	void processTownsCharsetColors(uint8 bytesPerPixel);
-#endif
-
 	virtual void setCurID(int32 id) = 0;
 	int getCurID() { return _curId; }
 
@@ -101,31 +98,26 @@ protected:
 	int _fontHeight;
 	int _numChars;
 
-	enum ShadowMode {
-		kNoShadowMode,
-		kFMTOWNSShadowMode,
-		kNormalShadowMode
-	};
 	byte _shadowColor;
-	ShadowMode _shadowMode;
-
-	void enableShadow(bool enable);
-	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
-
+	bool _shadowMode;
 
 public:
 	CharsetRendererCommon(ScummEngine *vm);
 
 	void setCurID(int32 id);
 
-	int getFontHeight();
+	virtual int getFontHeight();
 };
 
 class CharsetRendererClassic : public CharsetRendererCommon {
 protected:
-	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height, bool scale2x = false);
+	virtual void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
+	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);	
+	virtual bool prepareDraw(uint16 chr);
 
-	void printCharIntern(bool is2byte, const byte *charPtr, int origWidth, int origHeight, int width, int height, VirtScreen *vs, bool ignoreCharsetMask);
+	int _width, _height, _origWidth, _origHeight;
+	int _offsX, _offsY;
+	const byte *_charPtr;
 
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
@@ -134,18 +126,34 @@ public:
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
 
 	int getCharWidth(uint16 chr);
-
-	// Some SCUMM 5 games contain hard coded logic to determine whether to use
-	// the SCUMM fonts or the FM-Towns font rom to draw a character. For the other
-	// games we will simply check for a character greater 127.
-	bool useTownsFontRomCharacter(uint16 chr);
 };
+
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+class CharsetRendererTownsClassic : public CharsetRendererClassic {
+public:
+	CharsetRendererTownsClassic(ScummEngine *vm);
+
+	int getCharWidth(uint16 chr);
+	int getFontHeight();
+
+private:
+	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
+	bool prepareDraw(uint16 chr);
+	void setupShadowMode();
+	bool useFontRomCharacter(uint16 chr);
+	void processCharsetColors();
+
+	uint16 _sjisCurChar;
+};
+#endif
+#endif
 
 class CharsetRendererNES : public CharsetRendererCommon {
 protected:
 	byte *_trTable;
 
-	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
 
 public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
@@ -160,6 +168,12 @@ public:
 
 class CharsetRendererV3 : public CharsetRendererCommon {
 protected:
+	virtual void enableShadow(bool enable);
+	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+	virtual int getDrawWidthIntern(uint16 chr);
+	virtual int getDrawHeightIntern(uint16 chr);
+	virtual void setDrawCharIntern(uint16 chr) {}
+
 	const byte *_widthTable;
 
 public:
@@ -169,16 +183,40 @@ public:
 	void drawChar(int chr, Graphics::Surface &s, int x, int y);
 	void setCurID(int32 id);
 	void setColor(byte color);
+	virtual int getCharWidth(uint16 chr);
+};
+
+class CharsetRendererTownsV3 : public CharsetRendererV3 {
+public:
+	CharsetRendererTownsV3(ScummEngine *vm);
+
 	int getCharWidth(uint16 chr);
+	int getFontHeight();
+	
+private:
+	void enableShadow(bool enable);
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	int getDrawWidthIntern(uint16 chr);
+	int getDrawHeightIntern(uint16 chr);
+	void setDrawCharIntern(uint16 chr);
+#endif
+	uint16 _sjisCurChar;
 };
 
 #ifdef USE_RGB_COLOR
 class CharsetRendererPCE : public CharsetRendererV3 {
-protected:
-	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth, bool scale2x = false);
+private:
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+
+	int getDrawWidthIntern(uint16 chr);
+	int getDrawHeightIntern(uint16 chr);
+	void setDrawCharIntern(uint16 chr);
+
+	uint16 _sjisCurChar;
 
 public:
-	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm) {}
+	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm), _sjisCurChar(0) {}
 
 	void setColor(byte color);
 };

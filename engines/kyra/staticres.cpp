@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 74
+#define RESFILE_VERSION 78
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -80,7 +80,7 @@ const IndexTable iGameTable[] = {
 };
 
 byte getGameID(const GameFlags &flags) {
-	return Common::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, flags.gameID)->value;
+	return Common::find(iGameTable, ARRAYEND(iGameTable) - 1, flags.gameID)->value;
 }
 
 const IndexTable iLanguageTable[] = {
@@ -90,11 +90,12 @@ const IndexTable iLanguageTable[] = {
 	{ Common::ES_ESP, 4 },
 	{ Common::IT_ITA, 5 },
 	{ Common::JA_JPN, 6 },
+	{ Common::RU_RUS, 7 },
 	{ -1, -1 }
 };
 
 byte getLanguageID(const GameFlags &flags) {
-	return Common::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, flags.lang)->value;
+	return Common::find(iLanguageTable, ARRAYEND(iLanguageTable) - 1, flags.lang)->value;
 }
 
 const IndexTable iPlatformTable[] = {
@@ -107,11 +108,13 @@ const IndexTable iPlatformTable[] = {
 };
 
 byte getPlatformID(const GameFlags &flags) {
-	return Common::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, flags.platform)->value;
+	return Common::find(iPlatformTable, ARRAYEND(iPlatformTable) - 1, flags.platform)->value;
 }
 
 byte getSpecialID(const GameFlags &flags) {
-	if (flags.isDemo && flags.isTalkie)
+	if (flags.isOldFloppy)
+		return 4;
+	else if (flags.isDemo && flags.isTalkie)
 		return 3;
 	else if (flags.isDemo)
 		return 2;
@@ -748,7 +751,17 @@ void KyraEngine_LoK::initStaticResource() {
 
 	_storyStrings = _staticres->loadStrings(k1PC98StoryStrings, _storyStringsSize);
 
-	_soundFiles = _staticres->loadStrings(k1AudioTracks, _soundFilesSize);
+	int size1, size2;
+	const char *const *soundfiles1 = _staticres->loadStrings(k1AudioTracks, size1);
+	const char *const *soundfiles2 = _staticres->loadStrings(k1AudioTracks2, size2);
+	_soundFilesSize = size1 + size2;
+	if (_soundFilesSize) {
+		delete[] _soundFiles;
+		const char **soundfiles = new const char*[_soundFilesSize];
+		for (int i = 0; i < _soundFilesSize; i++)
+			soundfiles[i] = (i < size1) ? soundfiles1[i] : soundfiles2[i - size1];
+		_soundFiles = soundfiles;
+	}
 	_soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, _soundFilesIntroSize);
 	_cdaTrackTable = (const int32 *)_staticres->loadRawData(k1TownsCDATable, _cdaTrackTableSize);
 
@@ -926,7 +939,7 @@ void KyraEngine_LoK::loadButtonShapes() {
 void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if ((_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
+	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("MAIN15.CPS", page, page, &_screen->getPalette(0));
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
@@ -2129,4 +2142,3 @@ const int8 KyraEngine_MR::_albumWSAY[] = {
 };
 
 } // End of namespace Kyra
-

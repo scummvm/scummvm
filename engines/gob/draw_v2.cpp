@@ -916,4 +916,3 @@ void Draw_v2::spriteOperation(int16 operation) {
 }
 
 } // End of namespace Gob
-

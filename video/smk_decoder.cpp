@@ -372,17 +372,11 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_fileStream = stream;
 
-	// Seek to the first frame
+	// Read in the Smacker header
 	_header.signature = _fileStream->readUint32BE();
 
-	// No BINK support available
-	if (_header.signature == MKTAG('B','I','K','i')) {
-		delete _fileStream;
-		_fileStream = 0;
+	if (_header.signature != MKTAG('S', 'M', 'K', '2') && _header.signature != MKTAG('S', 'M', 'K', '4'))
 		return false;
-	}
-
-	assert(_header.signature == MKTAG('S','M','K','2') || _header.signature == MKTAG('S','M','K','4'));
 
 	uint32 width = _fileStream->readUint32LE();
 	uint32 height = _fileStream->readUint32LE();

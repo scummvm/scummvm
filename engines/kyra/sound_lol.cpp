@@ -312,4 +312,3 @@ int LoLEngine::convertVolumeFromMixer(int value) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

@@ -29,15 +29,13 @@
 
 namespace Toon {
 
-bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
-	debugC(1, kDebugPicture, "loadPicture(%s, %d)", file.c_str(), (totalPalette) ? 1 : 0);
+bool Picture::loadPicture(Common::String file) {
+	debugC(1, kDebugPicture, "loadPicture(%s)", file.c_str());
 
 	uint32 size = 0;
 	uint8 *fileData = _vm->resources()->getFileData(file, &size);
 	if (!fileData)
 		return false;
-
-	_useFullPalette = totalPalette;
 
 	uint32 compId = READ_BE_UINT32(fileData);
 
@@ -57,6 +55,8 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 
 		// do we have a palette ?
 		_paletteEntries = (dstsize & 0x7ff) / 3;
+		_useFullPalette = (_paletteEntries == 256);
+		//	_useFullPalette = true;
 		if (_paletteEntries) {
 			_palette = new uint8[_paletteEntries * 3];
 			memcpy(_palette, _data + dstsize - (dstsize & 0x7ff), _paletteEntries * 3);
@@ -70,7 +70,8 @@ bool Picture::loadPicture(Common::String file, bool totalPalette /*= false*/) {
 		uint32 decSize = READ_LE_UINT32(fileData + 10);
 		_data = new uint8[decSize + 100];
 		_paletteEntries = READ_LE_UINT16(fileData + 14) / 3;
-
+		_useFullPalette = (_paletteEntries == 256);
+		
 		if (_paletteEntries) {
 			_palette = new uint8[_paletteEntries * 3];
 			memcpy(_palette, fileData + 16, _paletteEntries * 3);

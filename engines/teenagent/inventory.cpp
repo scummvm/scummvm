@@ -43,7 +43,7 @@ Inventory::Inventory(TeenAgentEngine *engine) {
 		if (!s)
 			error("no inventory background");
 		debug(0, "loading inventory background...");
-		_background.load(s, Surface::kTypeOns);
+		_background.load(*s, Surface::kTypeOns);
 	}
 
 	uint32 items_size = varia.getSize(4);
@@ -300,13 +300,13 @@ void Inventory::Item::load(Inventory *inventory, uint item_id) {
 		if (_animation.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
 			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
-			_animation.load(&s, Animation::kTypeInventory);
+			_animation.load(s, Animation::kTypeInventory);
 		}
 	} else {
 		if (_surface.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->_offset[obj->id - 1]);
 			Common::MemoryReadStream s(inventory->_items + inventory->_offset[obj->id - 1], inventory->_offset[obj->id] - inventory->_offset[obj->id - 1]);
-			_surface.load(&s, Surface::kTypeOns);
+			_surface.load(s, Surface::kTypeOns);
 		}
 	}
 }

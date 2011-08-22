@@ -64,4 +64,3 @@ Index: engines/sky/logic.cpp
 +	_skyControl->doLoadSavePanel();
  	return true;
  }
- 

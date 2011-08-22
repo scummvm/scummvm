@@ -70,4 +70,3 @@ Common::StringArray PAKSaveManager::listSavefiles(const Common::String &pattern)
 
 	return list;
 }
-

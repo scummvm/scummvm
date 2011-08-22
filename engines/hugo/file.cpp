@@ -695,4 +695,3 @@ void FileManager::readUIFImages() {
 }
 
 } // End of namespace Hugo
-

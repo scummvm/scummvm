@@ -1,5 +1,29 @@
 /* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
 
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+
+
 #include "dreamgen.h"
 
 namespace DreamGen {
@@ -1670,116 +1694,6 @@ notendtelly:
 	showgamereel();
 }
 
-void DreamGenContext::madman() {
-	STACK_CHECK;
-	data.word(kWatchingtime) = 2;
-	checkspeed();
-	if (!flags.z())
-		goto nomadspeed;
-	ax = es.word(bx+3);
-	_cmp(ax, 364);
-	if (!flags.c())
-		goto ryansded;
-	_cmp(ax, 10);
-	if (!flags.z())
-		goto notfirstmad;
-	push(es);
-	push(bx);
-	push(ax);
-	dx = 2247;
-	loadtemptext();
-	ax = pop();
-	bx = pop();
-	es = pop();
-	data.byte(kCombatcount) = -1;
-	data.byte(kSpeechcount) = 0;
-notfirstmad:
-	_inc(ax);
-	_cmp(ax, 294);
-	if (flags.z())
-		goto madmanspoken;
-	_cmp(ax, 66);
-	if (!flags.z())
-		goto nomadspeak;
-	_inc(data.byte(kCombatcount));
-	push(es);
-	push(bx);
-	madmantext();
-	bx = pop();
-	es = pop();
-	ax = 53;
-	_cmp(data.byte(kCombatcount), 64);
-	if (flags.c())
-		goto nomadspeak;
-	_cmp(data.byte(kCombatcount), 70);
-	if (flags.z())
-		goto killryan;
-	_cmp(data.byte(kLastweapon), 8);
-	if (!flags.z())
-		goto nomadspeak;
-	data.byte(kCombatcount) = 72;
-	data.byte(kLastweapon) = -1;
-	data.byte(kMadmanflag) = 1;
-	ax = 67;
-	goto nomadspeak;
-killryan:
-	ax = 310;
-nomadspeak:
-	es.word(bx+3) = ax;
-nomadspeed:
-	showgamereel();
-	al = data.byte(kMapx);
-	es.byte(bx+1) = al;
-	madmode();
-	return;
-madmanspoken:
-	_cmp(data.byte(kWongame), 1);
-	if (flags.z())
-		return /* (alreadywon) */;
-	data.byte(kWongame) = 1;
-	push(es);
-	push(bx);
-	getridoftemptext();
-	bx = pop();
-	es = pop();
-	return;
-ryansded:
-	data.byte(kMandead) = 2;
-	showgamereel();
-}
-
-void DreamGenContext::madmantext() {
-	STACK_CHECK;
-	_cmp(data.byte(kSpeechcount), 63);
-	if (!flags.c())
-		return /* (nomadtext) */;
-	_cmp(data.byte(kCh1playing), 255);
-	if (!flags.z())
-		return /* (nomadtext) */;
-	al = data.byte(kSpeechcount);
-	_inc(data.byte(kSpeechcount));
-	_add(al, 47);
-	bl = 72;
-	bh = 80;
-	cx = 90;
-	dx = 1;
-	ah = 82;
-	setuptimedtemp();
-}
-
-void DreamGenContext::madmode() {
-	STACK_CHECK;
-	data.word(kWatchingtime) = 2;
-	data.byte(kPointermode) = 0;
-	_cmp(data.byte(kCombatcount), 65);
-	if (flags.c())
-		return /* (iswatchmad) */;
-	_cmp(data.byte(kCombatcount), 70);
-	if (!flags.c())
-		return /* (iswatchmad) */;
-	data.byte(kPointermode) = 2;
-}
-
 void DreamGenContext::priesttext() {
 	STACK_CHECK;
 	_cmp(es.word(bx+3), 2);
@@ -2136,22 +2050,6 @@ void DreamGenContext::addtopeoplelist() {
 	_add(data.word(kListpos), 5);
 }
 
-void DreamGenContext::showgamereel() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_cmp(ax, 512);
-	if (!flags.c())
-		return /* (noshow) */;
-	data.word(kReelpointer) = ax;
-	push(es);
-	push(bx);
-	plotreel();
-	bx = pop();
-	es = pop();
-	ax = data.word(kReelpointer);
-	es.word(bx+3) = ax;
-}
-
 void DreamGenContext::checkspeed() {
 	STACK_CHECK;
 	_cmp(data.byte(kLastweapon), -1);
@@ -2170,429 +2068,12 @@ forcenext:
 	_cmp(al, al);
 }
 
-void DreamGenContext::clearsprites() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	al = 255;
-	cx = (32)*16;
-	_stosb(cx, true);
-}
-
-void DreamGenContext::makesprite() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-_tmp17:
-	_cmp(es.byte(bx+15), 255);
-	if (flags.z())
-		goto _tmp17a;
-	_add(bx, (32));
-	goto _tmp17;
-_tmp17a:
-	es.word(bx) = cx;
-	es.word(bx+10) = si;
-	es.word(bx+6) = dx;
-	es.word(bx+8) = di;
-	es.word(bx+2) = 0x0ffff;
-	es.byte(bx+15) = 0;
-	es.byte(bx+18) = 0;
-}
-
 void DreamGenContext::delsprite() {
 	STACK_CHECK;
 	di = bx;
 	cx = (32);
 	al = 255;
 	_stosb(cx, true);
-}
-
-void DreamGenContext::spriteupdate() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	al = data.byte(kRyanon);
-	es.byte(bx+31) = al;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-_tmp18:
-	push(cx);
-	push(bx);
-	ax = es.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto _tmp18a;
-	push(es);
-	push(ds);
-	cx = es.word(bx+2);
-	es.word(bx+24) = cx;
-	__dispatch_call(ax);
-	ds = pop();
-	es = pop();
-_tmp18a:
-	bx = pop();
-	cx = pop();
-	_cmp(data.byte(kNowinnewroom), 1);
-	if (flags.z())
-		return /* ($18b) */;
-	_add(bx, (32));
-	if (--cx)
-		goto _tmp18;
-}
-
-void DreamGenContext::printsprites() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	cx = 0;
-priorityloop:
-	push(cx);
-	data.byte(kPriority) = cl;
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-prtspriteloop:
-	push(cx);
-	push(bx);
-	ax = es.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto skipsprite;
-	al = data.byte(kPriority);
-	_cmp(al, es.byte(bx+23));
-	if (!flags.z())
-		goto skipsprite;
-	_cmp(es.byte(bx+31), 1);
-	if (flags.z())
-		goto skipsprite;
-	printasprite();
-skipsprite:
-	bx = pop();
-	cx = pop();
-	_add(bx, (32));
-	if (--cx)
-		goto prtspriteloop;
-	cx = pop();
-	_inc(cx);
-	_cmp(cx, 7);
-	if (!flags.z())
-		goto priorityloop;
-}
-
-void DreamGenContext::printasprite() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	si = bx;
-	ds = es.word(si+6);
-	al = es.byte(si+11);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative1;
-	ah = 255;
-notnegative1:
-	bx = ax;
-	_add(bx, data.word(kMapady));
-	al = es.byte(si+10);
-	ah = 0;
-	_cmp(al, 220);
-	if (flags.c())
-		goto notnegative2;
-	ah = 255;
-notnegative2:
-	di = ax;
-	_add(di, data.word(kMapadx));
-	al = es.byte(si+15);
-	ah = 0;
-	_cmp(es.byte(si+30), 0);
-	if (flags.z())
-		goto steadyframe;
-	ah = 8;
-steadyframe:
-	_cmp(data.byte(kPriority), 6);
-	if (!flags.z())
-		goto notquickp;
-notquickp:
-	showframe();
-	bx = pop();
-	es = pop();
-}
-
-void DreamGenContext::checkone() {
-	STACK_CHECK;
-	push(cx);
-	al = ch;
-	ah = 0;
-	cl = 4;
-	_shr(ax, cl);
-	dl = al;
-	cx = pop();
-	al = cl;
-	ah = 0;
-	cl = 4;
-	_shr(ax, cl);
-	ah = dl;
-	push(ax);
-	ch = 0;
-	cl = al;
-	push(cx);
-	al = ah;
-	ah = 0;
-	cx = 11;
-	_mul(cx);
-	cx = pop();
-	_add(ax, cx);
-	cx = 3;
-	_mul(cx);
-	si = ax;
-	ds = data.word(kBuffers);
-	_add(si, (0+(228*13)+32+60+(32*32)));
-	_lodsw();
-	cx = ax;
-	_lodsb();
-	dx = pop();
-}
-
-void DreamGenContext::findsource() {
-	STACK_CHECK;
-	ax = data.word(kCurrentframe);
-	_cmp(ax, 160);
-	if (!flags.c())
-		goto over1000;
-	ds = data.word(kReel1);
-	data.word(kTakeoff) = 0;
-	return;
-over1000:
-	_cmp(ax, 320);
-	if (!flags.c())
-		goto over1001;
-	ds = data.word(kReel2);
-	data.word(kTakeoff) = 160;
-	return;
-over1001:
-	ds = data.word(kReel3);
-	data.word(kTakeoff) = 320;
-}
-
-void DreamGenContext::initman() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	si = ax;
-	cx = 49464;
-	dx = data.word(kMainsprites);
-	di = 0;
-	makesprite();
-	es.byte(bx+23) = 4;
-	es.byte(bx+22) = 0;
-	es.byte(bx+29) = 0;
-}
-
-void DreamGenContext::mainman() {
-	STACK_CHECK;
-	_cmp(data.byte(kResetmanxy), 1);
-	if (!flags.z())
-		goto notinnewroom;
-	data.byte(kResetmanxy) = 0;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	es.word(bx+10) = ax;
-	es.byte(bx+29) = 0;
-	goto executewalk;
-notinnewroom:
-	_dec(es.byte(bx+22));
-	_cmp(es.byte(bx+22), -1);
-	if (flags.z())
-		goto executewalk;
-	return;
-executewalk:
-	es.byte(bx+22) = 0;
-	al = data.byte(kTurntoface);
-	_cmp(al, data.byte(kFacing));
-	if (flags.z())
-		goto facingok;
-	aboutturn();
-	goto notwalk;
-facingok:
-	_cmp(data.byte(kTurndirection), 0);
-	if (flags.z())
-		goto alreadyturned;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto alreadyturned;
-	data.byte(kReasseschanges) = 1;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kLeavedirection));
-	if (!flags.z())
-		goto alreadyturned;
-	checkforexit();
-alreadyturned:
-	data.byte(kTurndirection) = 0;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto walkman;
-	es.byte(bx+29) = 0;
-	goto notwalk;
-walkman:
-	al = es.byte(bx+29);
-	_inc(al);
-	_cmp(al, 11);
-	if (!flags.z())
-		goto notanimend1;
-	al = 1;
-notanimend1:
-	es.byte(bx+29) = al;
-	walking();
-	_cmp(data.byte(kLinepointer), 254);
-	if (flags.z())
-		goto afterwalk;
-	al = data.byte(kFacing);
-	_and(al, 1);
-	if (flags.z())
-		goto isdouble;
-	al = es.byte(bx+29);
-	_cmp(al, 2);
-	if (flags.z())
-		goto afterwalk;
-	_cmp(al, 7);
-	if (flags.z())
-		goto afterwalk;
-isdouble:
-	walking();
-afterwalk:
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto notwalk;
-	al = data.byte(kTurntoface);
-	_cmp(al, data.byte(kFacing));
-	if (!flags.z())
-		goto notwalk;
-	data.byte(kReasseschanges) = 1;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kLeavedirection));
-	if (!flags.z())
-		goto notwalk;
-	checkforexit();
-notwalk:
-	al = data.byte(kFacing);
-	ah = 0;
-	di = 1105;
-	_add(di, ax);
-	al = cs.byte(di);
-	_add(al, es.byte(bx+29));
-	es.byte(bx+15) = al;
-	ax = es.word(bx+10);
-	data.byte(kRyanx) = al;
-	data.byte(kRyany) = ah;
-}
-
-void DreamGenContext::aboutturn() {
-	STACK_CHECK;
-	_cmp(data.byte(kTurndirection), 1);
-	if (flags.z())
-		goto incdir;
-	_cmp(data.byte(kTurndirection), -1);
-	if (flags.z())
-		goto decdir;
-	al = data.byte(kFacing);
-	_sub(al, data.byte(kTurntoface));
-	if (!flags.c())
-		goto higher;
-	_neg(al);
-	_cmp(al, 4);
-	if (!flags.c())
-		goto decdir;
-	goto incdir;
-higher:
-	_cmp(al, 4);
-	if (!flags.c())
-		goto incdir;
-	goto decdir;
-incdir:
-	data.byte(kTurndirection) = 1;
-	al = data.byte(kFacing);
-	_inc(al);
-	_and(al, 7);
-	data.byte(kFacing) = al;
-	es.byte(bx+29) = 0;
-	return;
-decdir:
-	data.byte(kTurndirection) = -1;
-	al = data.byte(kFacing);
-	_dec(al);
-	_and(al, 7);
-	data.byte(kFacing) = al;
-	es.byte(bx+29) = 0;
-}
-
-void DreamGenContext::walking() {
-	STACK_CHECK;
-	_cmp(data.byte(kLinedirection), 0);
-	if (flags.z())
-		goto normalwalk;
-	al = data.byte(kLinepointer);
-	_dec(al);
-	data.byte(kLinepointer) = al;
-	_cmp(al, 200);
-	if (!flags.c())
-		goto endofline;
-	goto continuewalk;
-normalwalk:
-	al = data.byte(kLinepointer);
-	_inc(al);
-	data.byte(kLinepointer) = al;
-	_cmp(al, data.byte(kLinelength));
-	if (!flags.c())
-		goto endofline;
-continuewalk:
-	ah = 0;
-	_add(ax, ax);
-	push(es);
-	push(bx);
-	dx = data;
-	es = dx;
-	bx = 8173;
-	_add(bx, ax);
-	ax = es.word(bx);
-	bx = pop();
-	es = pop();
-	es.word(bx+10) = ax;
-	return;
-endofline:
-	data.byte(kLinepointer) = 254;
-	al = data.byte(kDestination);
-	data.byte(kManspath) = al;
-	_cmp(al, data.byte(kFinaldest));
-	if (flags.z())
-		goto finishedwalk;
-	al = data.byte(kFinaldest);
-	data.byte(kDestination) = al;
-	push(es);
-	push(bx);
-	autosetwalk();
-	bx = pop();
-	es = pop();
-	return;
-finishedwalk:
-	facerightway();
-}
-
-void DreamGenContext::facerightway() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	getroomspaths();
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx+7);
-	data.byte(kTurntoface) = al;
-	data.byte(kLeavedirection) = al;
-	bx = pop();
-	es = pop();
 }
 
 void DreamGenContext::checkforexit() {
@@ -2811,7 +2292,7 @@ void DreamGenContext::initrain() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
 	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
-	bx = 1113;
+	bx = offset_rainlocations;
 checkmorerain:
 	al = cs.byte(bx);
 	_cmp(al, 255);
@@ -2954,239 +2435,6 @@ failrain:
 	al = 0;
 }
 
-void DreamGenContext::showrain() {
-	STACK_CHECK;
-	ds = data.word(kMainsprites);
-	si = 6*58;
-	ax = ds.word(si+2);
-	si = ax;
-	_add(si, 2080);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30));
-	es = data.word(kBuffers);
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		return /* (nothunder) */;
-morerain:
-	es = data.word(kBuffers);
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		goto finishrain;
-	al = es.byte(bx+1);
-	ah = 0;
-	_add(ax, data.word(kMapady));
-	_add(ax, data.word(kMapystart));
-	cx = 320;
-	_mul(cx);
-	cl = es.byte(bx);
-	ch = 0;
-	_add(ax, cx);
-	_add(ax, data.word(kMapadx));
-	_add(ax, data.word(kMapxstart));
-	di = ax;
-	cl = es.byte(bx+2);
-	ch = 0;
-	ax = es.word(bx+3);
-	dl = es.byte(bx+5);
-	dh = 0;
-	_sub(ax, dx);
-	_and(ax, 511);
-	es.word(bx+3) = ax;
-	_add(bx, 6);
-	push(si);
-	_add(si, ax);
-	es = data.word(kWorkspace);
-	ah = 0;
-	dx = 320-2;
-rainloop:
-	_lodsb();
-	_cmp(al, ah);
-	if (flags.z())
-		goto noplot;
-	_stosb();
-	_add(di, dx);
-	if (--cx)
-		goto rainloop;
-	si = pop();
-	goto morerain;
-noplot:
-	_add(di, 320-1);
-	if (--cx)
-		goto rainloop;
-	si = pop();
-	goto morerain;
-finishrain:
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (!flags.z())
-		return /* (nothunder) */;
-	_cmp(data.byte(kReallocation), 2);
-	if (!flags.z())
-		goto notlouisthund;
-	_cmp(data.byte(kBeenmugged), 1);
-	if (!flags.z())
-		return /* (nothunder) */;
-notlouisthund:
-	_cmp(data.byte(kReallocation), 55);
-	if (flags.z())
-		return /* (nothunder) */;
-	randomnum1();
-	_cmp(al, 1);
-	if (!flags.c())
-		return /* (nothunder) */;
-	al = 7;
-	_cmp(data.byte(kCh0playing), 6);
-	if (flags.z())
-		goto isthunder1;
-	al = 4;
-isthunder1:
-	playchannel1();
-}
-
-void DreamGenContext::backobject() {
-	STACK_CHECK;
-	ds = data.word(kSetdat);
-	di = es.word(bx+20);
-	al = es.byte(bx+18);
-	_cmp(al, 0);
-	if (flags.z())
-		goto _tmp48z;
-	_dec(al);
-	es.byte(bx+18) = al;
-	return /* (finishback) */;
-_tmp48z:
-	al = ds.byte(di+7);
-	es.byte(bx+18) = al;
-	al = ds.byte(di+8);
-	_cmp(al, 6);
-	if (!flags.z())
-		goto notwidedoor;
-	widedoor();
-	return /* (finishback) */;
-notwidedoor:
-	_cmp(al, 5);
-	if (!flags.z())
-		goto notrandom;
-	random();
-	return /* (finishback) */;
-notrandom:
-	_cmp(al, 4);
-	if (!flags.z())
-		goto notlockdoor;
-	lockeddoorway();
-	return /* (finishback) */;
-notlockdoor:
-	_cmp(al, 3);
-	if (!flags.z())
-		goto notlift;
-	liftsprite();
-	return /* (finishback) */;
-notlift:
-	_cmp(al, 2);
-	if (!flags.z())
-		goto notdoor;
-	doorway();
-	return /* (finishback) */;
-notdoor:
-	_cmp(al, 1);
-	if (!flags.z())
-		goto steadyob;
-	constant();
-	return /* (finishback) */;
-steadyob:
-	steady();
-}
-
-void DreamGenContext::liftsprite() {
-	STACK_CHECK;
-	al = data.byte(kLiftflag);
-	_cmp(al, 0);
-	if (flags.z())
-		goto liftclosed;
-	_cmp(al, 1);
-	if (flags.z())
-		goto liftopen;
-	_cmp(al, 3);
-	if (flags.z())
-		goto openlift;
-	al = es.byte(bx+19);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishclose;
-	_dec(al);
-	_cmp(al, 11);
-	if (!flags.z())
-		goto pokelift;
-	push(ax);
-	al = 3;
-	liftnoise();
-	ax = pop();
-	goto pokelift;
-finishclose:
-	data.byte(kLiftflag) = 0;
-	return;
-openlift:
-	al = es.byte(bx+19);
-	_cmp(al, 12);
-	if (flags.z())
-		goto endoflist;
-	_inc(al);
-	_cmp(al, 1);
-	if (!flags.z())
-		goto pokelift;
-	push(ax);
-	al = 2;
-	liftnoise();
-	ax = pop();
-pokelift:
-	es.byte(bx+19) = al;
-	ah = 0;
-	push(di);
-	_add(di, ax);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	return;
-endoflist:
-	data.byte(kLiftflag) = 1;
-	return;
-liftopen:
-	al = data.byte(kLiftpath);
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kCounttoclose), 0);
-	if (flags.z())
-		goto nocountclose;
-	_dec(data.byte(kCounttoclose));
-	_cmp(data.byte(kCounttoclose), 0);
-	if (!flags.z())
-		goto nocountclose;
-	data.byte(kLiftflag) = 2;
-nocountclose:
-	al = 12;
-	goto pokelift;
-liftclosed:
-	al = data.byte(kLiftpath);
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
-	_cmp(data.byte(kCounttoopen), 0);
-	if (flags.z())
-		goto nocountopen;
-	_dec(data.byte(kCounttoopen));
-	_cmp(data.byte(kCounttoopen), 0);
-	if (!flags.z())
-		goto nocountopen;
-	data.byte(kLiftflag) = 3;
-nocountopen:
-	al = 0;
-	goto pokelift;
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -3240,335 +2488,6 @@ gotconst:
 	ds.byte(di+17) = al;
 }
 
-void DreamGenContext::doorway() {
-	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
-	data.byte(kDoorcheck2) = 10;
-	data.byte(kDoorcheck3) = -30;
-	data.byte(kDoorcheck4) = 10;
-	dodoor();
-}
-
-void DreamGenContext::widedoor() {
-	STACK_CHECK;
-	data.byte(kDoorcheck1) = -24;
-	data.byte(kDoorcheck2) = 24;
-	data.byte(kDoorcheck3) = -30;
-	data.byte(kDoorcheck4) = 24;
-	dodoor();
-}
-
-void DreamGenContext::dodoor() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	cl = es.byte(bx+10);
-	ch = es.byte(bx+11);
-	_cmp(al, cl);
-	if (!flags.c())
-		goto rtofdoor;
-	_sub(al, cl);
-	_cmp(al, data.byte(kDoorcheck1));
-	if (!flags.c())
-		goto upordown;
-	goto shutdoor;
-rtofdoor:
-	_sub(al, cl);
-	_cmp(al, data.byte(kDoorcheck2));
-	if (!flags.c())
-		goto shutdoor;
-upordown:
-	_cmp(ah, ch);
-	if (!flags.c())
-		goto botofdoor;
-	_sub(ah, ch);
-	_cmp(ah, data.byte(kDoorcheck3));
-	if (flags.c())
-		goto shutdoor;
-	goto opendoor;
-botofdoor:
-	_sub(ah, ch);
-	_cmp(ah, data.byte(kDoorcheck4));
-	if (!flags.c())
-		goto shutdoor;
-opendoor:
-	cl = es.byte(bx+19);
-	_cmp(data.byte(kThroughdoor), 1);
-	if (!flags.z())
-		goto notthrough;
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto notthrough;
-	cl = 6;
-notthrough:
-	_inc(cl);
-	_cmp(cl, 1);
-	if (!flags.z())
-		goto notdoorsound2;
-	al = 0;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor2;
-	al = 13;
-nothoteldoor2:
-	playchannel1();
-notdoorsound2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto atlast1;
-	_dec(di);
-	_dec(cl);
-atlast1:
-	es.byte(bx+19) = cl;
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	data.byte(kThroughdoor) = 1;
-	return;
-shutdoor:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound1;
-	al = 1;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor1;
-	al = 13;
-nothoteldoor1:
-	playchannel1();
-notdoorsound1:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast2;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (notnearly) */;
-	data.byte(kThroughdoor) = 0;
-}
-
-void DreamGenContext::lockeddoorway() {
-	STACK_CHECK;
-	al = data.byte(kRyanx);
-	ah = data.byte(kRyany);
-	cl = es.byte(bx+10);
-	ch = es.byte(bx+11);
-	_cmp(al, cl);
-	if (!flags.c())
-		goto rtofdoor2;
-	_sub(al, cl);
-	_cmp(al, -24);
-	if (!flags.c())
-		goto upordown2;
-	goto shutdoor2;
-rtofdoor2:
-	_sub(al, cl);
-	_cmp(al, 10);
-	if (!flags.c())
-		goto shutdoor2;
-upordown2:
-	_cmp(ah, ch);
-	if (!flags.c())
-		goto botofdoor2;
-	_sub(ah, ch);
-	_cmp(ah, -30);
-	if (flags.c())
-		goto shutdoor2;
-	goto opendoor2;
-botofdoor2:
-	_sub(ah, ch);
-	_cmp(ah, 12);
-	if (!flags.c())
-		goto shutdoor2;
-opendoor2:
-	_cmp(data.byte(kThroughdoor), 1);
-	if (flags.z())
-		goto mustbeopen;
-	_cmp(data.byte(kLockstatus), 1);
-	if (flags.z())
-		goto shutdoor;
-mustbeopen:
-	cl = es.byte(bx+19);
-	_cmp(cl, 1);
-	if (!flags.z())
-		goto notdoorsound4;
-	al = 0;
-	playchannel1();
-notdoorsound4:
-	_cmp(cl, 6);
-	if (!flags.z())
-		goto noturnonyet;
-	al = data.byte(kDoorpath);
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
-noturnonyet:
-	cl = es.byte(bx+19);
-	_cmp(data.byte(kThroughdoor), 1);
-	if (!flags.z())
-		goto notthrough2;
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto notthrough2;
-	cl = 6;
-notthrough2:
-	_inc(cl);
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	_cmp(al, 255);
-	if (!flags.z())
-		goto atlast3;
-	_dec(di);
-	_dec(cl);
-atlast3:
-	es.byte(bx+19) = cl;
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (justshutting) */;
-	data.byte(kThroughdoor) = 1;
-	return;
-shutdoor2:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound3;
-	al = 1;
-	playchannel1();
-notdoorsound3:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast4;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast4:
-	ch = 0;
-	data.byte(kThroughdoor) = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 0);
-	if (!flags.z())
-		return /* (notlocky) */;
-	al = data.byte(kDoorpath);
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
-	data.byte(kLockstatus) = 1;
-	return;
-/*continuing to unbounded code: shutdoor from dodoor:60-87*/
-shutdoor:
-	cl = es.byte(bx+19);
-	_cmp(cl, 5);
-	if (!flags.z())
-		goto notdoorsound1;
-	al = 1;
-	_cmp(data.byte(kReallocation), 5);
-	if (!flags.z())
-		goto nothoteldoor1;
-	al = 13;
-nothoteldoor1:
-	playchannel1();
-notdoorsound1:
-	_cmp(cl, 0);
-	if (flags.z())
-		goto atlast2;
-	_dec(cl);
-	es.byte(bx+19) = cl;
-atlast2:
-	ch = 0;
-	push(di);
-	_add(di, cx);
-	al = ds.byte(di+18);
-	di = pop();
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-	_cmp(cl, 5);
-	if (!flags.z())
-		return /* (notnearly) */;
-	data.byte(kThroughdoor) = 0;
-}
-
-void DreamGenContext::updatepeople() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	data.word(kListpos) = di;
-	cx = 12*5;
-	al = 255;
-	_stosb(cx, true);
-	_inc(data.word(kMaintimer));
-	es = cs;
-	bx = 534;
-	di = 991;
-updateloop:
-	al = es.byte(bx);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (endupdate) */;
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto notinthisroom;
-	cx = es.word(bx+1);
-	_cmp(cl, data.byte(kMapx));
-	if (!flags.z())
-		goto notinthisroom;
-	_cmp(ch, data.byte(kMapy));
-	if (!flags.z())
-		goto notinthisroom;
-	push(di);
-	ax = cs.word(di);
-	__dispatch_call(ax);
-	di = pop();
-notinthisroom:
-	_add(bx, 8);
-	_add(di, 2);
-	goto updateloop;
-}
-
-void DreamGenContext::getreelframeax() {
-	STACK_CHECK;
-	push(ds);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	es = ds;
-	ds = pop();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	_add(ax, ax);
-	cx = ax;
-	_add(ax, ax);
-	_add(ax, cx);
-	bx = ax;
-}
-
 void DreamGenContext::reelsonscreen() {
 	STACK_CHECK;
 	reconstruct();
@@ -3576,48 +2495,6 @@ void DreamGenContext::reelsonscreen() {
 	watchreel();
 	showrain();
 	usetimedtext();
-}
-
-void DreamGenContext::plotreel() {
-	STACK_CHECK;
-	getreelstart();
-retryreel:
-	push(es);
-	push(si);
-	ax = es.word(si+2);
-	_cmp(al, 220);
-	if (flags.c())
-		goto normalreel;
-	_cmp(al, 255);
-	if (flags.z())
-		goto normalreel;
-	dealwithspecial();
-	_inc(data.word(kReelpointer));
-	si = pop();
-	es = pop();
-	_add(si, 40);
-	goto retryreel;
-normalreel:
-	cx = 8;
-plotloop:
-	push(cx);
-	push(es);
-	push(si);
-	ax = es.word(si);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto notplot;
-	showreelframe();
-notplot:
-	si = pop();
-	es = pop();
-	cx = pop();
-	_add(si, 5);
-	if (--cx)
-		goto plotloop;
-	soundonreels();
-	bx = pop();
-	es = pop();
 }
 
 void DreamGenContext::soundonreels() {
@@ -3683,126 +2560,6 @@ void DreamGenContext::reconstruct() {
 	undertextline();
 notfudge:
 	data.byte(kHavedoneobs) = 0;
-}
-
-void DreamGenContext::dealwithspecial() {
-	STACK_CHECK;
-	_sub(al, 220);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto notplset;
-	al = ah;
-	placesetobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notplset:
-	_cmp(al, 1);
-	if (!flags.z())
-		goto notremset;
-	al = ah;
-	removesetobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notremset:
-	_cmp(al, 2);
-	if (!flags.z())
-		goto notplfree;
-	al = ah;
-	placefreeobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notplfree:
-	_cmp(al, 3);
-	if (!flags.z())
-		goto notremfree;
-	al = ah;
-	removefreeobject();
-	data.byte(kHavedoneobs) = 1;
-	return;
-notremfree:
-	_cmp(al, 4);
-	if (!flags.z())
-		goto notryanoff;
-	switchryanoff();
-	return;
-notryanoff:
-	_cmp(al, 5);
-	if (!flags.z())
-		goto notryanon;
-	data.byte(kTurntoface) = ah;
-	data.byte(kFacing) = ah;
-	switchryanon();
-	return;
-notryanon:
-	_cmp(al, 6);
-	if (!flags.z())
-		goto notchangeloc;
-	data.byte(kNewlocation) = ah;
-	return;
-notchangeloc:
-	movemap();
-}
-
-void DreamGenContext::movemap() {
-	STACK_CHECK;
-	_cmp(ah, 32);
-	if (!flags.z())
-		goto notmapup2;
-	_sub(data.byte(kMapy), 20);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapup2:
-	_cmp(ah, 16);
-	if (!flags.z())
-		goto notmapupspec;
-	_sub(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapupspec:
-	_cmp(ah, 8);
-	if (!flags.z())
-		goto notmapdownspec;
-	_add(data.byte(kMapy), 10);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmapdownspec:
-	_cmp(ah, 2);
-	if (!flags.z())
-		goto notmaprightspec;
-	_add(data.byte(kMapx), 11);
-	data.byte(kNowinnewroom) = 1;
-	return;
-notmaprightspec:
-	_sub(data.byte(kMapx), 11);
-	data.byte(kNowinnewroom) = 1;
-}
-
-void DreamGenContext::getreelstart() {
-	STACK_CHECK;
-	ax = data.word(kReelpointer);
-	cx = 40;
-	_mul(cx);
-	es = data.word(kReels);
-	si = ax;
-	_add(si, (0+(36*144)));
-}
-
-void DreamGenContext::showreelframe() {
-	STACK_CHECK;
-	al = es.byte(si+2);
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	al = es.byte(si+3);
-	bx = ax;
-	_add(bx, data.word(kMapady));
-	ax = es.word(si);
-	data.word(kCurrentframe) = ax;
-	findsource();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	ah = 8;
-	showframe();
 }
 
 void DreamGenContext::deleverything() {
@@ -3877,13 +2634,6 @@ dumpevery2:
 	bx = pop();
 	_add(bx, 5);
 	goto dumpevery2;
-}
-
-void DreamGenContext::allocatework() {
-	STACK_CHECK;
-	bx = 0x1000;
-	allocatemem();
-	data.word(kWorkspace) = ax;
 }
 
 void DreamGenContext::loadpalfromiff() {
@@ -4047,68 +2797,6 @@ void DreamGenContext::createpanel2() {
 	showframe();
 }
 
-void DreamGenContext::clearwork() {
-	STACK_CHECK;
-	ax = 0x0;
-	es = data.word(kWorkspace);
-	di = 0;
-	cx = (200*320)/64;
-clearloop:
-	_stosw(32);
-	if (--cx)
-		goto clearloop;
-}
-
-void DreamGenContext::zoom() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		return /* (inwatching) */;
-	_cmp(data.byte(kZoomon), 1);
-	if (flags.z())
-		goto zoomswitch;
-	return;
-zoomswitch:
-	_cmp(data.byte(kCommandtype), 199);
-	if (flags.c())
-		goto zoomit;
-	putunderzoom();
-	return;
-zoomit:
-	ax = data.word(kOldpointery);
-	_sub(ax, 9);
-	cx = (320);
-	_mul(cx);
-	_add(ax, data.word(kOldpointerx));
-	_sub(ax, 11);
-	si = ax;
-	ax = (132)+4;
-	cx = (320);
-	_mul(cx);
-	_add(ax, (8)+5);
-	di = ax;
-	es = data.word(kWorkspace);
-	ds = data.word(kWorkspace);
-	cx = 20;
-zoomloop:
-	push(cx);
-	cx = 23;
-zoomloop2:
-	_lodsb();
-	ah = al;
-	_stosw();
-	es.word(di+(320)-2) = ax;
-	if (--cx)
-		goto zoomloop2;
-	_add(si, (320)-23);
-	_add(di, (320)-46+(320));
-	cx = pop();
-	if (--cx)
-		goto zoomloop;
-	crosshair();
-	data.byte(kDidzoom) = 1;
-}
-
 void DreamGenContext::delthisone() {
 	STACK_CHECK;
 	push(ax);
@@ -4151,275 +2839,6 @@ deloneloop:
 	_dec(ch);
 	if (!flags.z())
 		goto deloneloop;
-}
-
-void DreamGenContext::doblocks() {
-	STACK_CHECK;
-	es = data.word(kWorkspace);
-	ax = data.word(kMapady);
-	cx = (320);
-	_mul(cx);
-	di = data.word(kMapadx);
-	_add(di, ax);
-	al = data.byte(kMapy);
-	ah = 0;
-	bx = (66);
-	_mul(bx);
-	bl = data.byte(kMapx);
-	bh = 0;
-	_add(ax, bx);
-	si = (0);
-	_add(si, ax);
-	cx = 10;
-loop120:
-	push(di);
-	push(cx);
-	cx = 11;
-loop124:
-	push(cx);
-	push(di);
-	ds = data.word(kMapdata);
-	_lodsb();
-	ds = data.word(kBackdrop);
-	push(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto zeroblock;
-	ah = al;
-	al = 0;
-	si = (0+192);
-	_add(si, ax);
-	bh = 14;
-	bh = 4;
-firstbitofblock:
-	_movsw(8);
-	_add(di, (320)-16);
-	_dec(bh);
-	if (!flags.z())
-		goto firstbitofblock;
-	bh = 12;
-loop125:
-	_movsw(8);
-	ax = 0x0dfdf;
-	_stosw(2);
-	_add(di, (320)-20);
-	_dec(bh);
-	if (!flags.z())
-		goto loop125;
-	_add(di, 4);
-	ax = 0x0dfdf;
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-	_add(di, (320)-16);
-	_stosw(8);
-zeroblock:
-	si = pop();
-	di = pop();
-	cx = pop();
-	_add(di, 16);
-	if (--cx)
-		goto loop124;
-	_add(si, (66)-11);
-	cx = pop();
-	di = pop();
-	_add(di, (320)*16);
-	if (--cx)
-		goto loop120;
-}
-
-void DreamGenContext::showframe() {
-	STACK_CHECK;
-	push(dx);
-	push(ax);
-	cx = ax;
-	_and(cx, 511);
-	_add(cx, cx);
-	si = cx;
-	_add(cx, cx);
-	_add(si, cx);
-	_cmp(ds.word(si), 0);
-	if (!flags.z())
-		goto notblankshow;
-	ax = pop();
-	dx = pop();
-	cx = 0;
-	return;
-notblankshow:
-	_test(ah, 128);
-	if (!flags.z())
-		goto skipoffsets;
-	al = ds.byte(si+4);
-	ah = 0;
-	_add(di, ax);
-	al = ds.byte(si+5);
-	ah = 0;
-	_add(bx, ax);
-skipoffsets:
-	cx = ds.word(si+0);
-	ax = ds.word(si+2);
-	_add(ax, 2080);
-	si = ax;
-	ax = pop();
-	dx = pop();
-	_cmp(ah, 0);
-	if (flags.z())
-		goto noeffects;
-	_test(ah, 128);
-	if (flags.z())
-		goto notcentred;
-	push(ax);
-	al = cl;
-	ah = 0;
-	_shr(ax, 1);
-	_sub(di, ax);
-	al = ch;
-	ah = 0;
-	_shr(ax, 1);
-	_sub(bx, ax);
-	ax = pop();
-notcentred:
-	_test(ah, 64);
-	if (flags.z())
-		goto notdiffdest;
-	push(cx);
-	frameoutfx();
-	cx = pop();
-	return;
-notdiffdest:
-	_test(ah, 8);
-	if (flags.z())
-		goto notprintlist;
-	push(ax);
-	ax = di;
-	_sub(ax, data.word(kMapadx));
-	push(bx);
-	_sub(bx, data.word(kMapady));
-	ah = bl;
-	bx = pop();
-	ax = pop();
-notprintlist:
-	_test(ah, 4);
-	if (flags.z())
-		goto notflippedx;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutfx();
-	cx = pop();
-	return;
-notflippedx:
-	_test(ah, 2);
-	if (flags.z())
-		goto notnomask;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutnm();
-	cx = pop();
-	return;
-notnomask:
-	_test(ah, 32);
-	if (flags.z())
-		goto noeffects;
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutbh();
-	cx = pop();
-	return;
-noeffects:
-	dx = (320);
-	es = data.word(kWorkspace);
-	push(cx);
-	frameoutv();
-	cx = pop();
-}
-
-void DreamGenContext::frameoutbh() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_sub(dx, cx);
-	cx = pop();
-bhloop2:
-	push(cx);
-	ch = 0;
-	ah = 255;
-bhloop1:
-	_cmp(es.byte(di), ah);
-	if (!flags.z())
-		goto nofill;
-	_movsb();
-	if (--cx)
-		goto bhloop1;
-	goto nextline;
-nofill:
-	_inc(di);
-	_inc(si);
-	if (--cx)
-		goto bhloop1;
-nextline:
-	_add(di, dx);
-	cx = pop();
-	_dec(ch);
-	if (!flags.z())
-		goto bhloop2;
-}
-
-void DreamGenContext::frameoutfx() {
-	STACK_CHECK;
-	push(dx);
-	ax = bx;
-	bx = dx;
-	_mul(bx);
-	_add(di, ax);
-	dx = pop();
-	push(cx);
-	ch = 0;
-	_add(dx, cx);
-	cx = pop();
-frameloopfx1:
-	push(cx);
-	ch = 0;
-frameloopfx2:
-	_lodsb();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto backtosolidfx;
-backtootherfx:
-	_dec(di);
-	if (--cx)
-		goto frameloopfx2;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloopfx1;
-	return;
-frameloopfx3:
-	_lodsb();
-	_cmp(al, 0);
-	if (flags.z())
-		goto backtootherfx;
-backtosolidfx:
-	es.byte(di) = al;
-	_dec(di);
-	if (--cx)
-		goto frameloopfx3;
-	cx = pop();
-	_add(di, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto frameloopfx1;
 }
 
 void DreamGenContext::transferinv() {
@@ -5507,170 +3926,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::printchar() {
-	STACK_CHECK;
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (ignoreit) */;
-	push(si);
-	push(bx);
-	push(di);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	push(ax);
-	_sub(al, 32);
-	ah = 0;
-	_add(ax, data.word(kCharshift));
-	showframe();
-	ax = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_cmp(data.byte(kKerning), 0);
-	if (!flags.z())
-		goto nokern;
-	kernchars();
-nokern:
-	push(cx);
-	ch = 0;
-	_add(di, cx);
-	cx = pop();
-}
-
-void DreamGenContext::kernchars() {
-	STACK_CHECK;
-	_cmp(al, 'a');
-	if (flags.z())
-		goto iskern;
-	_cmp(al, 'u');
-	if (flags.z())
-		goto iskern;
-	return;
-iskern:
-	_cmp(ah, 'n');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 't');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'r');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'i');
-	if (flags.z())
-		goto kernit;
-	_cmp(ah, 'l');
-	if (flags.z())
-		goto kernit;
-	return;
-kernit:
-	_dec(cl);
-}
-
-void DreamGenContext::printslow() {
-	STACK_CHECK;
-	data.byte(kPointerframe) = 1;
-	data.byte(kPointermode) = 3;
-	ds = data.word(kCharset1);
-printloopslow6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloopslow5:
-	push(cx);
-	push(si);
-	push(es);
-	ax = es.word(si);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	push(ds);
-	modifychar();
-	printboth();
-	ds = pop();
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ax = es.word(si+1);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishslow;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishslow;
-	_cmp(cl, 1);
-	if (flags.z())
-		goto afterslow;
-	push(di);
-	push(ds);
-	push(bx);
-	push(cx);
-	push(es);
-	push(si);
-	modifychar();
-	data.word(kCharshift) = 91;
-	printboth();
-	data.word(kCharshift) = 0;
-	si = pop();
-	es = pop();
-	cx = pop();
-	bx = pop();
-	ds = pop();
-	di = pop();
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto keepgoing;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-keepgoing:
-	waitframes();
-	_cmp(ax, 0);
-	if (flags.z())
-		goto afterslow;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto finishslow2;
-afterslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	_inc(si);
-	if (--cx)
-		goto printloopslow5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, 10);
-	goto printloopslow6;
-finishslow:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 0;
-	return;
-finishslow2:
-	es = pop();
-	si = pop();
-	cx = pop();
-	dx = pop();
-	di = pop();
-	bx = pop();
-	al = 1;
-}
-
 void DreamGenContext::waitframes() {
 	STACK_CHECK;
 	push(di);
@@ -5689,62 +3944,6 @@ void DreamGenContext::waitframes() {
 	es = pop();
 	bx = pop();
 	di = pop();
-}
-
-void DreamGenContext::printboth() {
-	STACK_CHECK;
-	push(ax);
-	push(cx);
-	push(bx);
-	push(di);
-	printchar();
-	ax = pop();
-	push(di);
-	di = ax;
-	multidump();
-	di = pop();
-	bx = pop();
-	cx = pop();
-	ax = pop();
-}
-
-void DreamGenContext::printdirect() {
-	STACK_CHECK;
-	data.word(kLastxpos) = di;
-	ds = data.word(kCurrentset);
-printloop6:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloop5:
-	ax = es.word(si);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishdirct;
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishdirct;
-	push(cx);
-	push(es);
-	modifychar();
-	printchar();
-	data.word(kLastxpos) = di;
-	es = pop();
-	cx = pop();
-	if (--cx)
-		goto printloop5;
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_add(bx, data.word(kLinespacing));
-	goto printloop6;
-finishdirct:
-	dx = pop();
-	di = pop();
-	bx = pop();
 }
 
 void DreamGenContext::monprint() {
@@ -5831,156 +4030,6 @@ nottrigger2:
 	scrollmonitor();
 	bx = si;
 	data.byte(kKerning) = 0;
-}
-
-void DreamGenContext::getnumber() {
-	STACK_CHECK;
-	cx = 0;
-	push(si);
-	push(bx);
-	push(di);
-	push(ds);
-	push(es);
-	di = si;
-wordloop:
-	push(cx);
-	push(dx);
-	getnextword();
-	dx = pop();
-	cx = pop();
-	_cmp(al, 1);
-	if (flags.z())
-		goto endoftext;
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend;
-	_add(cl, bl);
-	_add(ch, bh);
-	goto wordloop;
-gotoverend:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcentre;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	ah = 0;
-	ch = 0;
-	_sub(ax, cx);
-	_add(ax, 20);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcentre:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
-	return;
-endoftext:
-	al = cl;
-	ah = 0;
-	push(bx);
-	bh = 0;
-	_add(ax, bx);
-	bx = pop();
-	_sub(ax, 10);
-	dh = 0;
-	_cmp(ax, dx);
-	if (!flags.c())
-		goto gotoverend2;
-	_add(cl, bl);
-	_add(ch, bh);
-gotoverend2:
-	al = dl;
-	_and(al, 1);
-	if (flags.z())
-		goto notcent2;
-	push(cx);
-	al = dl;
-	_and(al, 0xfe);
-	_add(al, 2);
-	ah = 0;
-	ch = 0;
-	_add(ax, 20);
-	_sub(ax, cx);
-	_shr(ax, 1);
-	cx = pop();
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	_add(di, ax);
-	cl = ch;
-	return;
-notcent2:
-	es = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	si = pop();
-	cl = ch;
-}
-
-void DreamGenContext::getnextword() {
-	STACK_CHECK;
-	bx = 0;
-getloop:
-	ax = es.word(di);
-	_inc(di);
-	_inc(bh);
-	_cmp(al, ':');
-	if (flags.z())
-		goto endall;
-	_cmp(al, 0);
-	if (flags.z())
-		goto endall;
-	_cmp(al, 32);
-	if (flags.z())
-		goto endword;
-	modifychar();
-	_cmp(al, 255);
-	if (flags.z())
-		goto getloop;
-	push(ax);
-	_sub(al, 32);
-	ah = 0;
-	_add(ax, data.word(kCharshift));
-	_add(ax, ax);
-	si = ax;
-	_add(ax, ax);
-	_add(si, ax);
-	cl = ds.byte(si+0);
-	ax = pop();
-	kernchars();
-	_add(bl, cl);
-	goto getloop;
-endword:
-	_add(bl, 6);
-	al = 0;
-	return;
-endall:
-	_add(bl, 6);
-	al = 1;
 }
 
 void DreamGenContext::fillryan() {
@@ -6291,15 +4340,15 @@ waitexam:
 	dumptextline();
 	delpointer();
 	data.byte(kGetback) = 0;
-	bx = 2494;
+	bx = offset_examlist;
 	_cmp(data.byte(kInvopen), 0);
 	if (flags.z())
 		goto notuseinv;
-	bx = 2556;
+	bx = offset_invlist1;
 	_cmp(data.byte(kInvopen), 1);
 	if (flags.z())
 		goto notuseinv;
-	bx = 2618;
+	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
 	_cmp(data.byte(kExamagain), 0);
@@ -6430,7 +4479,7 @@ void DreamGenContext::openob() {
 	STACK_CHECK;
 	al = data.byte(kOpenedob);
 	ah = data.byte(kOpenedtype);
-	di = 5847;
+	di = offset_commandline;
 	copyname();
 	di = (80);
 	bx = (58)+86;
@@ -6441,7 +4490,7 @@ void DreamGenContext::openob() {
 	_add(di, 5);
 	bx = (58)+86;
 	es = cs;
-	si = 5847;
+	si = offset_commandline;
 	dl = 220;
 	al = 0;
 	ah = 0;
@@ -6453,7 +4502,7 @@ void DreamGenContext::openob() {
 	cx = (44);
 	_mul(cx);
 	_add(ax, (80));
-	bx = 2588;
+	bx = offset_openchangesize;
 	cs.word(bx) = ax;
 }
 
@@ -6805,15 +4854,15 @@ waitexam:
 	dumptextline();
 	delpointer();
 	data.byte(kGetback) = 0;
-	bx = 2494;
+	bx = offset_examlist;
 	_cmp(data.byte(kInvopen), 0);
 	if (flags.z())
 		goto notuseinv;
-	bx = 2556;
+	bx = offset_invlist1;
 	_cmp(data.byte(kInvopen), 1);
 	if (flags.z())
 		goto notuseinv;
-	bx = 2618;
+	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
 	_cmp(data.byte(kExamagain), 0);
@@ -7169,31 +5218,6 @@ doplace:
 	outofinv();
 	worktoscreen();
 	delpointer();
-}
-
-void DreamGenContext::deletetaken() {
-	STACK_CHECK;
-	es = data.word(kFreedat);
-	ah = data.byte(kReallocation);
-	ds = data.word(kExtras);
-	si = (0+2080+30000);
-	cx = (114);
-takenloop:
-	al = ds.byte(si+11);
-	_cmp(al, ah);
-	if (!flags.z())
-		goto notinhere;
-	bl = ds.byte(si+1);
-	bh = 0;
-	_add(bx, bx);
-	_add(bx, bx);
-	_add(bx, bx);
-	_add(bx, bx);
-	es.byte(bx+2) = 254;
-notinhere:
-	_add(si, 16);
-	if (--cx)
-		goto takenloop;
 }
 
 void DreamGenContext::outofinv() {
@@ -8317,151 +6341,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::calcmapad() {
-	STACK_CHECK;
-	getdimension();
-	push(cx);
-	push(dx);
-	al = 11;
-	_sub(al, dl);
-	_sub(al, cl);
-	_sub(al, cl);
-	ax.cbw();
-	bx = 8;
-	_mul(bx);
-	_add(ax, data.word(kMapoffsetx));
-	data.word(kMapadx) = ax;
-	dx = pop();
-	cx = pop();
-	al = 10;
-	_sub(al, dh);
-	_sub(al, ch);
-	_sub(al, ch);
-	ax.cbw();
-	bx = 8;
-	_mul(bx);
-	_add(ax, data.word(kMapoffsety));
-	data.word(kMapady) = ax;
-}
-
-void DreamGenContext::getdimension() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32));
-	ch = 0;
-dimloop1:
-	addalong();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim1;
-	_inc(ch);
-	goto dimloop1;
-finishdim1:
-	bx = (0+(228*13)+32+60+(32*32));
-	cl = 0;
-dimloop2:
-	push(bx);
-	addlength();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim2;
-	_inc(cl);
-	_add(bx, 3);
-	goto dimloop2;
-finishdim2:
-	bx = (0+(228*13)+32+60+(32*32))+(11*3*9);
-	dh = 10;
-dimloop3:
-	push(bx);
-	addalong();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim3;
-	_dec(dh);
-	_sub(bx, 11*3);
-	goto dimloop3;
-finishdim3:
-	bx = (0+(228*13)+32+60+(32*32))+(3*10);
-	dl = 11;
-dimloop4:
-	push(bx);
-	addlength();
-	bx = pop();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto finishdim4;
-	_dec(dl);
-	_sub(bx, 3);
-	goto dimloop4;
-finishdim4:
-	al = cl;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.word(kMapxstart) = ax;
-	al = ch;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.word(kMapystart) = ax;
-	_sub(dl, cl);
-	_sub(dh, ch);
-	al = dl;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.byte(kMapxsize) = al;
-	al = dh;
-	ah = 0;
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	_shl(ax, 1);
-	data.byte(kMapysize) = al;
-}
-
-void DreamGenContext::addalong() {
-	STACK_CHECK;
-	ah = 11;
-addloop:
-	_cmp(es.byte(bx), 0);
-	if (!flags.z())
-		goto gotalong;
-	_add(bx, 3);
-	_dec(ah);
-	if (!flags.z())
-		goto addloop;
-	al = 0;
-	return;
-gotalong:
-	al = 1;
-}
-
-void DreamGenContext::addlength() {
-	STACK_CHECK;
-	ah = 10;
-addloop2:
-	_cmp(es.byte(bx), 0);
-	if (!flags.z())
-		goto gotlength;
-	_add(bx, 3*11);
-	_dec(ah);
-	if (!flags.z())
-		goto addloop2;
-	al = 0;
-	return;
-gotlength:
-	al = 1;
-}
-
 void DreamGenContext::drawflags() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -8499,235 +6378,6 @@ _tmp28a:
 	cx = pop();
 	if (--cx)
 		goto _tmp28;
-}
-
-void DreamGenContext::eraseoldobs() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewobs), 0);
-	if (flags.z())
-		return /* (donterase) */;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768);
-	cx = 16;
-oberase:
-	push(cx);
-	push(bx);
-	ax = es.word(bx+20);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto notthisob;
-	di = bx;
-	al = 255;
-	cx = (32);
-	_stosb(cx, true);
-notthisob:
-	bx = pop();
-	cx = pop();
-	_add(bx, (32));
-	if (--cx)
-		goto oberase;
-}
-
-void DreamGenContext::showallobs() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32));
-	data.word(kListpos) = bx;
-	di = bx;
-	cx = 128*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kSetframes);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	data.byte(kCurrentob) = 0;
-	ds = data.word(kSetdat);
-	si = 0;
-	cx = 128;
-showobsloop:
-	push(cx);
-	push(si);
-	push(si);
-	_add(si, 58);
-	es = data.word(kSetdat);
-	getmapad();
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto blankframe;
-	al = es.byte(si+18);
-	ah = 0;
-	data.word(kCurrentframe) = ax;
-	_cmp(al, 255);
-	if (flags.z())
-		goto blankframe;
-	push(es);
-	push(si);
-	calcfrframe();
-	finalframe();
-	si = pop();
-	es = pop();
-	al = es.byte(si+18);
-	es.byte(si+17) = al;
-	_cmp(es.byte(si+8), 0);
-	if (!flags.z())
-		goto animating;
-	_cmp(es.byte(si+5), 5);
-	if (flags.z())
-		goto animating;
-	_cmp(es.byte(si+5), 6);
-	if (flags.z())
-		goto animating;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	goto drawnsetob;
-animating:
-	makebackob();
-drawnsetob:
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	al = data.byte(kCurrentob);
-	es.byte(si+4) = al;
-	_add(si, 5);
-	data.word(kListpos) = si;
-blankframe:
-	_inc(data.byte(kCurrentob));
-	si = pop();
-	cx = pop();
-	_add(si, 64);
-	_dec(cx);
-	if (flags.z())
-		return /* (finishedsetobs) */;
-	goto showobsloop;
-}
-
-void DreamGenContext::makebackob() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewobs), 0);
-	if (flags.z())
-		return /* (nomake) */;
-	al = es.byte(si+5);
-	ah = es.byte(si+8);
-	push(si);
-	push(ax);
-	push(si);
-	ax = data.word(kObjectx);
-	bx = data.word(kObjecty);
-	ah = bl;
-	si = ax;
-	cx = 49520;
-	dx = data.word(kSetframes);
-	di = (0);
-	makesprite();
-	ax = pop();
-	es.word(bx+20) = ax;
-	ax = pop();
-	_cmp(al, 255);
-	if (!flags.z())
-		goto usedpriority;
-	al = 0;
-usedpriority:
-	es.byte(bx+23) = al;
-	es.byte(bx+30) = ah;
-	es.byte(bx+16) = 0;
-	es.byte(bx+18) = 0;
-	es.byte(bx+19) = 0;
-	si = pop();
-}
-
-void DreamGenContext::showallfree() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	data.word(kListpos) = bx;
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5));
-	cx = 80*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kFreeframes);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	al = 0;
-	data.byte(kCurrentfree) = al;
-	ds = data.word(kFreedat);
-	si = 2;
-	cx = 0;
-loop127:
-	push(cx);
-	push(si);
-	push(si);
-	es = data.word(kFreedat);
-	getmapad();
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto over138;
-	al = data.byte(kCurrentfree);
-	ah = 0;
-	dx = ax;
-	_add(ax, ax);
-	_add(ax, dx);
-	data.word(kCurrentframe) = ax;
-	push(es);
-	push(si);
-	calcfrframe();
-	es = data.word(kMapstore);
-	ds = data.word(kFrsegment);
-	finalframe();
-	si = pop();
-	es = pop();
-	_cmp(cx, 0);
-	if (flags.z())
-		goto over138;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	ax = pop();
-	cx = pop();
-	push(cx);
-	push(ax);
-	es.byte(si+4) = cl;
-	_add(si, 5);
-	data.word(kListpos) = si;
-over138:
-	_inc(data.byte(kCurrentfree));
-	si = pop();
-	cx = pop();
-	_add(si, 16);
-	_inc(cx);
-	_cmp(cx, 80);
-	if (flags.z())
-		return /* (finfree) */;
-	goto loop127;
 }
 
 void DreamGenContext::showallex() {
@@ -8816,128 +6466,6 @@ blankex:
 	if (flags.z())
 		return /* (finex) */;
 	goto exloop;
-}
-
-void DreamGenContext::calcfrframe() {
-	STACK_CHECK;
-	dx = data.word(kFrsegment);
-	ax = data.word(kFramesad);
-	push(ax);
-	cx = data.word(kDataad);
-	ax = data.word(kCurrentframe);
-	ds = dx;
-	bx = 6;
-	_mul(bx);
-	_add(ax, cx);
-	bx = ax;
-	cx = ds.word(bx);
-	ax = ds.word(bx+2);
-	dx = ds.word(bx+4);
-	bx = pop();
-	push(dx);
-	_add(ax, bx);
-	data.word(kSavesource) = ax;
-	data.word(kSavesize) = cx;
-	ax = pop();
-	push(ax);
-	ah = 0;
-	data.word(kOffsetx) = ax;
-	ax = pop();
-	al = ah;
-	ah = 0;
-	data.word(kOffsety) = ax;
-	return;
-	ax = pop();
-	cx = 0;
-	data.word(kSavesize) = cx;
-}
-
-void DreamGenContext::finalframe() {
-	STACK_CHECK;
-	ax = data.word(kObjecty);
-	_add(ax, data.word(kOffsety));
-	bx = data.word(kObjectx);
-	_add(bx, data.word(kOffsetx));
-	data.byte(kSavex) = bl;
-	data.byte(kSavey) = al;
-	di = data.word(kObjectx);
-	bx = data.word(kObjecty);
-}
-
-void DreamGenContext::adjustlen() {
-	STACK_CHECK;
-	ah = al;
-	_add(al, ch);
-	_cmp(al, 100);
-	if (flags.c())
-		return /* (over242) */;
-	al = 224;
-	_sub(al, ch);
-	ch = al;
-}
-
-void DreamGenContext::getmapad() {
-	STACK_CHECK;
-	getxad();
-	_cmp(ch, 0);
-	if (flags.z())
-		return /* (over146) */;
-	data.word(kObjectx) = ax;
-	getyad();
-	_cmp(ch, 0);
-	if (flags.z())
-		return /* (over146) */;
-	data.word(kObjecty) = ax;
-	ch = 1;
-}
-
-void DreamGenContext::getxad() {
-	STACK_CHECK;
-	cl = es.byte(si);
-	_inc(si);
-	al = es.byte(si);
-	_inc(si);
-	ah = es.byte(si);
-	_inc(si);
-	_cmp(cl, 0);
-	if (!flags.z())
-		goto over148;
-	_sub(al, data.byte(kMapx));
-	if (flags.c())
-		goto over148;
-	_cmp(al, 11);
-	if (!flags.c())
-		goto over148;
-	cl = 4;
-	_shl(al, cl);
-	_or(al, ah);
-	ah = 0;
-	ch = 1;
-	return;
-over148:
-	ch = 0;
-}
-
-void DreamGenContext::getyad() {
-	STACK_CHECK;
-	al = es.byte(si);
-	_inc(si);
-	ah = es.byte(si);
-	_inc(si);
-	_sub(al, data.byte(kMapy));
-	if (flags.c())
-		goto over147;
-	_cmp(al, 10);
-	if (!flags.c())
-		goto over147;
-	cl = 4;
-	_shl(al, cl);
-	_or(al, ah);
-	ah = 0;
-	ch = 1;
-	return;
-over147:
-	ch = 0;
 }
 
 void DreamGenContext::autolook() {
@@ -9095,7 +6623,7 @@ waittalk:
 	dumppointer();
 	dumptextline();
 	data.byte(kGetback) = 0;
-	bx = 2660;
+	bx = offset_talklist;
 	checkcoords();
 	_cmp(data.byte(kQuitrequested),  0);
 	if (!flags.z())
@@ -9389,7 +6917,7 @@ hangloopq:
 	vsync();
 	dumppointer();
 	dumptextline();
-	bx = 2692;
+	bx = offset_quitlist;
 	checkcoords();
 	bx = pop();
 	cx = pop();
@@ -9524,7 +7052,7 @@ select:
 	_cmp(data.byte(kGetback), 1);
 	if (flags.z())
 		goto quittravel;
-	bx = 2714;
+	bx = offset_destlist;
 	checkcoords();
 	_cmp(data.byte(kNewlocation), 255);
 	if (flags.z())
@@ -9948,12 +7476,12 @@ void DreamGenContext::usemon() {
 	al = 32;
 	_stosb(cx, true);
 	es = cs;
-	di = 2942+1;
+	di = offset_operand1+1;
 	cx = 12;
 	al = 32;
 	_stosb(cx, true);
 	es = cs;
-	di = 2836;
+	di = offset_keys;
 	es.byte(di) = 1;
 	_add(di, 26);
 	cx = 3;
@@ -10451,7 +7979,7 @@ void DreamGenContext::delchar() {
 void DreamGenContext::execcommand() {
 	STACK_CHECK;
 	es = cs;
-	bx = 2776;
+	bx = offset_comlist;
 	ds = cs;
 	si = 8045;
 	al = ds.byte(si);
@@ -10550,7 +8078,7 @@ void DreamGenContext::dircom() {
 dirroot:
 	data.byte(kLogonum) = 0;
 	ds = cs;
-	si = 2956;
+	si = offset_rootdir;
 	_inc(si);
 	es = cs;
 	di = 2970;
@@ -10591,7 +8119,7 @@ void DreamGenContext::signon() {
 	parser();
 	_inc(di);
 	ds = cs;
-	si = 2836;
+	si = offset_keys;
 	cx = 4;
 signonloop:
 	push(cx);
@@ -10695,7 +8223,7 @@ void DreamGenContext::showkeys() {
 	al = 18;
 	monmessage();
 	es = cs;
-	bx = 2836;
+	bx = offset_keys;
 	cx = 4;
 keysloop:
 	push(cx);
@@ -10762,7 +8290,7 @@ foundfile2:
 	return;
 keyok1:
 	es = cs;
-	di = 2942;
+	di = offset_operand1;
 	ds = data.word(kMonsource);
 	searchforstring();
 	_cmp(al, 0);
@@ -10854,7 +8382,7 @@ keyok2:
 	push(es);
 	push(bx);
 	ds = cs;
-	si = 2942+1;
+	si = offset_operand1+1;
 	es = cs;
 	di = 2970+1;
 	cx = 12;
@@ -10901,7 +8429,7 @@ void DreamGenContext::getkeyandlogo() {
 	cx = 26;
 	_mul(cx);
 	es = cs;
-	bx = 2836;
+	bx = offset_keys;
 	_add(bx, ax);
 	al = es.byte(bx);
 	_cmp(al, 1);
@@ -10975,11 +8503,11 @@ notfound:
 void DreamGenContext::parser() {
 	STACK_CHECK;
 	es = cs;
-	di = 2942;
+	di = offset_operand1;
 	cx = 13;
 	al = 0;
 	_stosb(cx, true);
-	di = 2942;
+	di = offset_operand1;
 	al = '=';
 	_stosb();
 	ds = cs;
@@ -11008,7 +8536,7 @@ copyin1:
 	if (!flags.z())
 		goto copyin1;
 finishpars:
-	di = 2942;
+	di = offset_operand1;
 }
 
 void DreamGenContext::scrollmonitor() {
@@ -11037,19 +8565,6 @@ void DreamGenContext::scrollmonitor() {
 	cx = pop();
 	bx = pop();
 	ax = pop();
-}
-
-void DreamGenContext::lockmon() {
-	STACK_CHECK;
-	_cmp(data.byte(kLasthardkey), 57);
-	if (!flags.z())
-		return /* (notlock) */;
-	locklighton();
-lockloop:
-	_cmp(data.byte(kLasthardkey), 57);
-	if (flags.z())
-		goto lockloop;
-	locklightoff();
 }
 
 void DreamGenContext::monitorlogo() {
@@ -11315,7 +8830,7 @@ nodream7:
 	getanyad();
 	dx = data;
 	ds = dx;
-	si = 2984;
+	si = offset_uselist;
 checkuselist:
 	push(si);
 	_lodsb();
@@ -12739,7 +10254,7 @@ _tmp1:
 	di = 160;
 	bx = 155;
 	es = cs;
-	si = 3474;
+	si = offset_money1poke;
 	data.word(kCharshift) = 91*2+75;
 	al = 0;
 	ah = 0;
@@ -12748,7 +10263,7 @@ _tmp1:
 	di = 187;
 	bx = 155;
 	es = cs;
-	si = 3479;
+	si = offset_money2poke;
 	data.word(kCharshift) = 91*2+85;
 	al = 0;
 	ah = 0;
@@ -12816,7 +10331,7 @@ void DreamGenContext::lookatcard() {
 
 void DreamGenContext::moneypoke() {
 	STACK_CHECK;
-	bx = 3474;
+	bx = offset_money1poke;
 	cl = 48-1;
 numberpoke0:
 	_inc(cl);
@@ -12852,7 +10367,7 @@ numberpoke3:
 		goto numberpoke3;
 	_add(ax, 10);
 	cs.byte(bx) = cl;
-	bx = 3479;
+	bx = offset_money2poke;
 	_add(al, 48);
 	cs.byte(bx) = al;
 }
@@ -13315,7 +10830,7 @@ void DreamGenContext::withwhat() {
 	al = data.byte(kCommand);
 	ah = data.byte(kObjecttype);
 	es = cs;
-	di = 5847;
+	di = offset_commandline;
 	copyname();
 	di = 100;
 	bx = 21;
@@ -13327,7 +10842,7 @@ void DreamGenContext::withwhat() {
 	_add(di, 5);
 	bx = 21;
 	es = cs;
-	si = 5847;
+	si = offset_commandline;
 	dl = 220;
 	al = 0;
 	ah = 0;
@@ -13600,32 +11115,6 @@ void DreamGenContext::findpuztext() {
 	si = ax;
 }
 
-void DreamGenContext::placesetobject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	cl = 0;
-	ch = 0;
-	findormake();
-	getsetad();
-	es.byte(bx+58) = 0;
-	bx = pop();
-	es = pop();
-}
-
-void DreamGenContext::removesetobject() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	cl = 255;
-	ch = 0;
-	findormake();
-	getsetad();
-	es.byte(bx+58) = 255;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::issetobonmap() {
 	STACK_CHECK;
 	push(es);
@@ -13660,35 +11149,6 @@ void DreamGenContext::removefreeobject() {
 	es = pop();
 }
 
-void DreamGenContext::findormake() {
-	STACK_CHECK;
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	push(ax);
-	es = data.word(kBuffers);
-	ah = data.byte(kReallocation);
-changeloop:
-	_cmp(es.byte(bx), 255);
-	if (flags.z())
-		goto haventfound;
-	_cmp(ax, es.word(bx));
-	if (!flags.z())
-		goto nofoundchange;
-	_cmp(ch, es.byte(bx+3));
-	if (flags.z())
-		goto foundchange;
-nofoundchange:
-	_add(bx, 4);
-	goto changeloop;
-foundchange:
-	ax = pop();
-	es.byte(bx+2) = cl;
-	return;
-haventfound:
-	es.word(bx) = ax;
-	es.word(bx+2) = cx;
-	ax = pop();
-}
-
 void DreamGenContext::switchryanon() {
 	STACK_CHECK;
 	data.byte(kRyanon) = 255;
@@ -13697,70 +11157,6 @@ void DreamGenContext::switchryanon() {
 void DreamGenContext::switchryanoff() {
 	STACK_CHECK;
 	data.byte(kRyanon) = 1;
-}
-
-void DreamGenContext::setallchanges() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-setallloop:
-	ax = es.word(bx);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (endsetloop) */;
-	cx = es.word(bx+2);
-	_add(bx, 4);
-	_cmp(ah, data.byte(kReallocation));
-	if (!flags.z())
-		goto setallloop;
-	push(es);
-	push(bx);
-	dochange();
-	bx = pop();
-	es = pop();
-	goto setallloop;
-}
-
-void DreamGenContext::dochange() {
-	STACK_CHECK;
-	_cmp(ch, 0);
-	if (flags.z())
-		goto object;
-	_cmp(ch, 1);
-	if (flags.z())
-		goto freeobject;
-	push(cx);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	push(ax);
-	al = ch;
-	_sub(al, 100);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	bx = pop();
-	_add(bx, ax);
-	_add(bx, (0));
-	es = data.word(kReels);
-	cx = pop();
-	es.byte(bx+6) = cl;
-	return;
-object:
-	push(cx);
-	getsetad();
-	cx = pop();
-	es.byte(bx+58) = cl;
-	return;
-freeobject:
-	push(cx);
-	getfreead();
-	cx = pop();
-	_cmp(es.byte(bx+2), 255);
-	if (!flags.z())
-		return /* (beenpickedup) */;
-	es.byte(bx+2) = cl;
 }
 
 void DreamGenContext::autoappear() {
@@ -13833,68 +11229,6 @@ notonsartroof:
 	placesetobject();
 }
 
-void DreamGenContext::getundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget();
-}
-
-void DreamGenContext::putundertimed() {
-	STACK_CHECK;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	ch = (30);
-	cl = 240;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput();
-}
-
-void DreamGenContext::dumptimedtext() {
-	STACK_CHECK;
-	_cmp(data.byte(kNeedtodumptimed), 1);
-	if (!flags.z())
-		return /* (nodumptimed) */;
-	al = data.byte(kTimedy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(al, 3);
-_tmp1:
-	ah = 0;
-	bx = ax;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	cl = 240;
-	ch = (30);
-	multidump();
-	data.byte(kNeedtodumptimed) = 0;
-}
-
 void DreamGenContext::setuptimeduse() {
 	STACK_CHECK;
 	_cmp(data.word(kTimecount), 0);
@@ -13915,94 +11249,6 @@ void DreamGenContext::setuptimeduse() {
 	bx = ax;
 	data.word(kTimedseg) = es;
 	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::setuptimedtemp() {
-	STACK_CHECK;
-	_cmp(ah, 0);
-	if (flags.z())
-		goto notloadspeech3;
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	dl = 'T';
-	dh = ah;
-	cl = 'T';
-	ah = 0;
-	loadspeech();
-	_cmp(data.byte(kSpeechloaded), 1);
-	if (!flags.z())
-		goto _tmp1;
-	al = 50+12;
-	playchannel1();
-_tmp1:
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	_cmp(data.byte(kSpeechloaded), 1);
-	if (!flags.z())
-		goto notloadspeech3;
-	_cmp(data.byte(kSubtitles),  1);
-	if (flags.z())
-		goto notloadspeech3;
-	return;
-notloadspeech3:
-	_cmp(data.word(kTimecount), 0);
-	if (!flags.z())
-		return /* (cantsetup2) */;
-	data.byte(kTimedy) = bh;
-	data.byte(kTimedx) = bl;
-	data.word(kCounttotimed) = cx;
-	_add(dx, cx);
-	data.word(kTimecount) = dx;
-	bl = al;
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kTextfile1);
-	cx = (66*2);
-	ax = es.word(bx);
-	_add(ax, cx);
-	bx = ax;
-	data.word(kTimedseg) = es;
-	data.word(kTimedoffset) = bx;
-}
-
-void DreamGenContext::usetimedtext() {
-	STACK_CHECK;
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		return /* (notext) */;
-	_dec(data.word(kTimecount));
-	_cmp(data.word(kTimecount), 0);
-	if (flags.z())
-		goto deltimedtext;
-	ax = data.word(kTimecount);
-	_cmp(ax, data.word(kCounttotimed));
-	if (flags.z())
-		goto firsttimed;
-	if (!flags.c())
-		return /* (notext) */;
-	goto notfirsttimed;
-firsttimed:
-	getundertimed();
-notfirsttimed:
-	bl = data.byte(kTimedy);
-	bh = 0;
-	al = data.byte(kTimedx);
-	ah = 0;
-	di = ax;
-	es = data.word(kTimedseg);
-	si = data.word(kTimedoffset);
-	dl = 237;
-	ah = 0;
-	printdirect();
-	data.byte(kNeedtodumptimed) = 1;
-	return;
-deltimedtext:
-	putundertimed();
-	data.byte(kNeedtodumptimed) = 1;
 }
 
 void DreamGenContext::edenscdplayer() {
@@ -14463,7 +11709,7 @@ afterpress:
 	dumppointer();
 	dumpkeypad();
 	dumptextline();
-	bx = 3482;
+	bx = offset_keypadlist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 1);
 	if (flags.z())
@@ -14803,7 +12049,7 @@ menuloop:
 	dumppointer();
 	dumpmenu();
 	dumptextline();
-	bx = 3614;
+	bx = offset_menulist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 1);
 	if (!flags.z())
@@ -14916,7 +12162,7 @@ folderloop:
 	vsync();
 	dumppointer();
 	dumptextline();
-	bx = 3636;
+	bx = offset_folderlist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
@@ -14960,7 +12206,7 @@ donextf:
 	delpointer();
 	showfolder();
 	data.word(kMousebutton) = 0;
-	bx = 3636;
+	bx = offset_folderlist;
 	checkcoords();
 	worktoscreenm();
 }
@@ -15047,7 +12293,7 @@ dolastf:
 	delpointer();
 	showfolder();
 	data.word(kMousebutton) = 0;
-	bx = 3636;
+	bx = offset_folderlist;
 	checkcoords();
 	worktoscreenm();
 }
@@ -15309,7 +12555,7 @@ symbolloop:
 	dumppointer();
 	dumptextline();
 	dumpsymbol();
-	bx = 3678;
+	bx = offset_symbollist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
@@ -15680,7 +12926,7 @@ diaryloop:
 	dumppointer();
 	dumpdiarykeys();
 	dumptextline();
-	bx = 3740;
+	bx = offset_diarylist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
@@ -16016,7 +13262,7 @@ waitops:
 	dumppointer();
 	dumptextline();
 	delpointer();
-	bx = 3782;
+	bx = offset_opslist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
@@ -16106,71 +13352,6 @@ void DreamGenContext::loadsavebox() {
 	loadintotemp();
 }
 
-void DreamGenContext::loadgame() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 246);
-	if (flags.z())
-		goto alreadyload;
-	data.byte(kCommandtype) = 246;
-	al = 41;
-	commandonly();
-alreadyload:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (noload) */;
-	_cmp(ax, 1);
-	if (flags.z())
-		goto doload;
-	return;
-doload:
-	data.byte(kLoadingorsave) = 1;
-	showopbox();
-	showloadops();
-	data.byte(kCurrentslot) = 0;
-	showslots();
-	shownames();
-	data.byte(kPointerframe) = 0;
-	worktoscreenm();
-	namestoold();
-	data.byte(kGetback) = 0;
-loadops:
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (quitloaded) */;
-	delpointer();
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	dumptextline();
-	bx = 3824;
-	checkcoords();
-	_cmp(data.byte(kGetback), 0);
-	if (flags.z())
-		goto loadops;
-	_cmp(data.byte(kGetback), 2);
-	if (flags.z())
-		return /* (quitloaded) */;
-	getridoftemp();
-	dx = data;
-	es = dx;
-	bx = 7979;
-	startloading();
-	loadroomssample();
-	data.byte(kRoomloaded) = 1;
-	data.byte(kNewlocation) = 255;
-	clearsprites();
-	initman();
-	initrain();
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
-	startup();
-	worktoscreen();
-	data.byte(kGetback) = 4;
-}
-
 void DreamGenContext::getbacktoops() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 201);
@@ -16228,61 +13409,11 @@ discopsloop:
 	vsync();
 	dumppointer();
 	dumptextline();
-	bx = 3866;
+	bx = offset_discopslist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto discopsloop;
-}
-
-void DreamGenContext::savegame() {
-	STACK_CHECK;
-	_cmp(data.byte(kMandead), 2);
-	if (!flags.z())
-		goto cansaveok;
-	blank();
-	return;
-cansaveok:
-	_cmp(data.byte(kCommandtype), 247);
-	if (flags.z())
-		goto alreadysave;
-	data.byte(kCommandtype) = 247;
-	al = 44;
-	commandonly();
-alreadysave:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (!flags.z())
-		goto dosave;
-	return;
-dosave:
-	data.byte(kLoadingorsave) = 2;
-	showopbox();
-	showsaveops();
-	data.byte(kCurrentslot) = 0;
-	showslots();
-	shownames();
-	worktoscreenm();
-	namestoold();
-	data.word(kBufferin) = 0;
-	data.word(kBufferout) = 0;
-	data.byte(kGetback) = 0;
-saveops:
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (quitsavegame) */;
-	delpointer();
-	checkinput();
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	dumptextline();
-	bx = 3908;
-	checkcoords();
-	_cmp(data.byte(kGetback), 0);
-	if (flags.z())
-		goto saveops;
 }
 
 void DreamGenContext::actualsave() {
@@ -16811,21 +13942,6 @@ isntblank:
 	_stosw();
 }
 
-void DreamGenContext::findlen() {
-	STACK_CHECK;
-	_dec(bx);
-	_add(bx, ax);
-nextone:
-	_cmp(cl, ds.byte(bx));
-	if (!flags.z())
-		return /* (foundlen) */;
-	_dec(bx);
-	_dec(ax);
-	_cmp(ax, 0);
-	if (!flags.z())
-		goto nextone;
-}
-
 void DreamGenContext::scanfornames() {
 	STACK_CHECK;
 	dx = data;
@@ -16905,7 +14021,7 @@ _tmp1:
 	dumppointer();
 	dumptextline();
 	delpointer();
-	bx = 5057;
+	bx = offset_decidelist;
 	checkcoords();
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
@@ -16949,55 +14065,6 @@ alreadynewgame:
 	data.byte(kGetback) = 3;
 }
 
-void DreamGenContext::doload() {
-	STACK_CHECK;
-	data.byte(kLoadingorsave) = 1;
-	showopbox();
-	showloadops();
-	data.byte(kCurrentslot) = 0;
-	showslots();
-	shownames();
-	data.byte(kPointerframe) = 0;
-	worktoscreenm();
-	namestoold();
-	data.byte(kGetback) = 0;
-loadops:
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (quitloaded) */;
-	delpointer();
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	dumptextline();
-	bx = 3824;
-	checkcoords();
-	_cmp(data.byte(kGetback), 0);
-	if (flags.z())
-		goto loadops;
-	_cmp(data.byte(kGetback), 2);
-	if (flags.z())
-		return /* (quitloaded) */;
-	getridoftemp();
-	dx = data;
-	es = dx;
-	bx = 7979;
-	startloading();
-	loadroomssample();
-	data.byte(kRoomloaded) = 1;
-	data.byte(kNewlocation) = 255;
-	clearsprites();
-	initman();
-	initrain();
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
-	startup();
-	worktoscreen();
-	data.byte(kGetback) = 4;
-}
-
 void DreamGenContext::loadold() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 252);
@@ -17011,6 +14078,7 @@ alreadyloadold:
 	_and(ax, 1);
 	if (flags.z())
 		return /* (noloadold) */;
+	ax = 0x0ffff;
 	doload();
 	_cmp(data.byte(kGetback), 4);
 	if (flags.z())
@@ -17026,7 +14094,7 @@ alreadyloadold:
 void DreamGenContext::createname() {
 	STACK_CHECK;
 	push(ax);
-	di = 5105;
+	di = offset_speechfile;
 	cs.byte(di+0) = dl;
 	cs.byte(di+3) = cl;
 	al = dh;
@@ -17193,46 +14261,6 @@ notsecondbank1:
 	es = pop();
 }
 
-void DreamGenContext::makenextblock() {
-	STACK_CHECK;
-	volumeadjust();
-	loopchannel0();
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (flags.z())
-		goto mightbeonlych0;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (flags.z())
-		goto mightbeonlych1;
-	_dec(data.word(kCh0blockstocopy));
-	_dec(data.word(kCh1blockstocopy));
-	bothchannels();
-	return;
-mightbeonlych1:
-	data.byte(kCh0playing) = 255;
-	_cmp(data.word(kCh1blockstocopy), 0);
-	if (flags.z())
-		return /* (notch1only) */;
-	_dec(data.word(kCh1blockstocopy));
-	channel1only();
-	return;
-mightbeonlych0:
-	data.byte(kCh1playing) = 255;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (flags.z())
-		goto notch0only;
-	_dec(data.word(kCh0blockstocopy));
-	channel0only();
-	return;
-notch0only:
-	es = data.word(kSoundbuffer);
-	di = data.word(kSoundbufferwrite);
-	cx = 1024;
-	ax = 0x7f7f;
-	_stosw(cx, true);
-	_and(di, 16384-1);
-	data.word(kSoundbufferwrite) = di;
-}
-
 void DreamGenContext::volumeadjust() {
 	STACK_CHECK;
 	al = data.byte(kVolumedirection);
@@ -17252,175 +14280,6 @@ void DreamGenContext::volumeadjust() {
 	return;
 volfinish:
 	data.byte(kVolumedirection) = 0;
-}
-
-void DreamGenContext::loopchannel0() {
-	STACK_CHECK;
-	_cmp(data.word(kCh0blockstocopy), 0);
-	if (!flags.z())
-		return /* (notloop) */;
-	_cmp(data.byte(kCh0repeat), 0);
-	if (flags.z())
-		return /* (notloop) */;
-	_cmp(data.byte(kCh0repeat), 255);
-	if (flags.z())
-		goto endlessloop;
-	_dec(data.byte(kCh0repeat));
-endlessloop:
-	ax = data.word(kCh0oldemmpage);
-	data.word(kCh0emmpage) = ax;
-	ax = data.word(kCh0oldoffset);
-	data.word(kCh0offset) = ax;
-	ax = data.word(kCh0blockstocopy);
-	_add(ax, data.word(kCh0oldblockstocopy));
-	data.word(kCh0blockstocopy) = ax;
-}
-
-void DreamGenContext::cancelch0() {
-	STACK_CHECK;
-	data.byte(kCh0repeat) = 0;
-	data.word(kCh0blockstocopy) = 0;
-	data.byte(kCh0playing) = 255;
-}
-
-void DreamGenContext::cancelch1() {
-	STACK_CHECK;
-	data.word(kCh1blockstocopy) = 0;
-	data.byte(kCh1playing) = 255;
-}
-
-void DreamGenContext::channel0tran() {
-	STACK_CHECK;
-	_cmp(data.byte(kVolume), 0);
-	if (!flags.z())
-		goto lowvolumetran;
-	cx = 1024;
-	_movsw(cx, true);
-	return;
-lowvolumetran:
-	cx = 1024;
-	bh = data.byte(kVolume);
-	bl = 0;
-	_add(bx, 16384-256);
-volloop:
-	_lodsw();
-	bl = al;
-	al = es.byte(bx);
-	bl = ah;
-	ah = es.byte(bx);
-	_stosw();
-	if (--cx)
-		goto volloop;
-}
-
-void DreamGenContext::domix() {
-	STACK_CHECK;
-	_cmp(data.byte(kVolume), 0);
-	if (!flags.z())
-		goto lowvolumemix;
-slow:
-	_lodsb();
-	ah = ds.byte(bx);
-	_inc(bx);
-	_cmp(al, dh);
-	if (!flags.c())
-		goto toplot;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto nodistort;
-	_add(al, ah);
-	if (flags.s())
-		goto botok;
-	_xor(al, al);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-botok:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-toplot:
-	_cmp(ah, dh);
-	if (flags.c())
-		goto nodistort;
-	_add(al, ah);
-	if (!flags.s())
-		goto topok;
-	al = dl;
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-topok:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-nodistort:
-	_add(al, ah);
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto slow;
-	return /* (doneit) */;
-lowvolumemix:
-	_lodsb();
-	push(bx);
-	bh = data.byte(kVolume);
-	_add(bh, 63);
-	bl = al;
-	al = es.byte(bx);
-	bx = pop();
-	ah = ds.byte(bx);
-	_inc(bx);
-	_cmp(al, dh);
-	if (!flags.c())
-		goto toplotv;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto nodistortv;
-	_add(al, ah);
-	if (flags.s())
-		goto botokv;
-	_xor(al, al);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-botokv:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-toplotv:
-	_cmp(ah, dh);
-	if (flags.c())
-		goto nodistortv;
-	_add(al, ah);
-	if (!flags.s())
-		goto topokv;
-	al = dl;
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-topokv:
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
-	return /* (doneit) */;
-nodistortv:
-	_add(al, ah);
-	_xor(al, dh);
-	_stosb();
-	if (--cx)
-		goto lowvolumemix;
 }
 
 void DreamGenContext::entrytexts() {
@@ -17843,84 +14702,6 @@ void DreamGenContext::clearrest() {
 	deallocatemem();
 	es = data.word(kFreedesc);
 	deallocatemem();
-}
-
-void DreamGenContext::parseblaster() {
-	STACK_CHECK;
-lookattail:
-	al = es.byte(bx);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (endtail) */;
-	_cmp(al, 13);
-	if (flags.z())
-		return /* (endtail) */;
-	_cmp(al, 'i');
-	if (flags.z())
-		goto issoundint;
-	_cmp(al, 'I');
-	if (flags.z())
-		goto issoundint;
-	_cmp(al, 'b');
-	if (flags.z())
-		goto isbright;
-	_cmp(al, 'B');
-	if (flags.z())
-		goto isbright;
-	_cmp(al, 'a');
-	if (flags.z())
-		goto isbaseadd;
-	_cmp(al, 'A');
-	if (flags.z())
-		goto isbaseadd;
-	_cmp(al, 'n');
-	if (flags.z())
-		goto isnosound;
-	_cmp(al, 'N');
-	if (flags.z())
-		goto isnosound;
-	_cmp(al, 'd');
-	if (flags.z())
-		goto isdma;
-	_cmp(al, 'D');
-	if (flags.z())
-		goto isdma;
-	_inc(bx);
-	if (--cx)
-		goto lookattail;
-	return;
-issoundint:
-	al = es.byte(bx+1);
-	_sub(al, '0');
-	data.byte(kSoundint) = al;
-	_inc(bx);
-	goto lookattail;
-isdma:
-	al = es.byte(bx+1);
-	_sub(al, '0');
-	data.byte(kSounddmachannel) = al;
-	_inc(bx);
-	goto lookattail;
-isbaseadd:
-	push(cx);
-	al = es.byte(bx+2);
-	_sub(al, '0');
-	ah = 0;
-	cl = 4;
-	_shl(ax, cl);
-	_add(ax, 0x200);
-	data.word(kSoundbaseadd) = ax;
-	cx = pop();
-	_inc(bx);
-	goto lookattail;
-isbright:
-	data.byte(kBrightness) = 1;
-	_inc(bx);
-	goto lookattail;
-isnosound:
-	data.byte(kSoundint) = 255;
-	_inc(bx);
-	goto lookattail;
 }
 
 void DreamGenContext::startup() {
@@ -18413,11 +15194,11 @@ toofaraway:
 void DreamGenContext::mainscreen() {
 	STACK_CHECK;
 	data.byte(kInmaparea) = 0;
-	bx = 5122;
+	bx = offset_mainlist;
 	_cmp(data.byte(kWatchon), 1);
 	if (flags.z())
 		goto checkmain;
-	bx = 5184;
+	bx = offset_mainlist2;
 checkmain:
 	checkcoords();
 	_cmp(data.byte(kWalkandexam), 0);
@@ -18557,69 +15338,6 @@ nothingund:
 	blank();
 }
 
-void DreamGenContext::checkifperson() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5));
-	cx = 12;
-identifyreel:
-	push(cx);
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notareelid;
-	push(es);
-	push(bx);
-	push(ax);
-	ax = es.word(bx+0);
-	data.word(kReelpointer) = ax;
-	getreelstart();
-	_cmp(es.word(si+2), 0x0ffff);
-	if (!flags.z())
-		goto notblankpers;
-	_add(si, 5);
-notblankpers:
-	cx = es.word(si+2);
-	ax = es.word(si+0);
-	push(cx);
-	getreelframeax();
-	cx = pop();
-	_add(cl, es.byte(bx+4));
-	_add(ch, es.byte(bx+5));
-	dx = cx;
-	_add(dl, es.byte(bx+0));
-	_add(dh, es.byte(bx+1));
-	ax = pop();
-	bx = pop();
-	es = pop();
-	_cmp(al, cl);
-	if (flags.c())
-		goto notareelid;
-	_cmp(ah, ch);
-	if (flags.c())
-		goto notareelid;
-	_cmp(al, dl);
-	if (!flags.c())
-		goto notareelid;
-	_cmp(ah, dh);
-	if (!flags.c())
-		goto notareelid;
-	cx = pop();
-	ax = es.word(bx+2);
-	data.word(kPersondata) = ax;
-	al = es.byte(bx+4);
-	ah = 5;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notareelid:
-	cx = pop();
-	_add(bx, 5);
-	_dec(cx);
-	if (!flags.z())
-		goto identifyreel;
-}
-
 void DreamGenContext::checkifset() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -18694,41 +15412,6 @@ notanexid:
 	_cmp(cx, -1);
 	if (!flags.z())
 		goto identifyex;
-}
-
-void DreamGenContext::checkiffree() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
-	cx = 79;
-identifyfree:
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notafreeid;
-	_cmp(al, es.byte(bx));
-	if (flags.c())
-		goto notafreeid;
-	_cmp(al, es.byte(bx+2));
-	if (!flags.c())
-		goto notafreeid;
-	_cmp(ah, es.byte(bx+1));
-	if (flags.c())
-		goto notafreeid;
-	_cmp(ah, es.byte(bx+3));
-	if (!flags.c())
-		goto notafreeid;
-	al = es.byte(bx+4);
-	ah = 2;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notafreeid:
-	_sub(bx, 5);
-	_dec(cx);
-	_cmp(cx, -1);
-	if (!flags.z())
-		goto identifyfree;
 }
 
 void DreamGenContext::isitdescribed() {
@@ -18996,7 +15679,7 @@ void DreamGenContext::atmospheres() {
 	STACK_CHECK;
 	cl = data.byte(kMapx);
 	ch = data.byte(kMapy);
-	bx = 5246;
+	bx = offset_atmospherelist;
 nextatmos:
 	al = cs.byte(bx);
 	_cmp(al, 255);
@@ -19236,110 +15919,12 @@ toofaraway:
 	walktotext();
 }
 
-void DreamGenContext::finishedwalking() {
-	STACK_CHECK;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		return /* (iswalking) */;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kTurntoface));
-}
-
 void DreamGenContext::examineobtext() {
 	STACK_CHECK;
 	bl = data.byte(kCommand);
 	bh = data.byte(kCommandtype);
 	al = 1;
 	commandwithob();
-}
-
-void DreamGenContext::commandwithob() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(es);
-	push(ds);
-	push(si);
-	push(di);
-	deltextline();
-	di = pop();
-	si = pop();
-	ds = pop();
-	es = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	push(bx);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	ax = pop();
-	di = 5847;
-	copyname();
-	ax = pop();
-	di = data.word(kLastxpos);
-	_cmp(al, 0);
-	if (flags.z())
-		goto noadd;
-	_add(di, 5);
-noadd:
-	bx = data.word(kTextaddressy);
-	es = cs;
-	si = 5847;
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	data.byte(kNewtextline) = 1;
-}
-
-void DreamGenContext::commandonly() {
-	STACK_CHECK;
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(es);
-	push(ds);
-	push(si);
-	push(di);
-	deltextline();
-	di = pop();
-	si = pop();
-	ds = pop();
-	es = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	dl = data.byte(kTextlen);
-	al = 0;
-	ah = 0;
-	printdirect();
-	data.byte(kNewtextline) = 1;
 }
 
 void DreamGenContext::printmessage() {
@@ -19389,31 +15974,6 @@ searchmess:
 	al = 0;
 	ah = 0;
 	printdirect();
-}
-
-void DreamGenContext::blocknametext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 0;
-	commandwithob();
-}
-
-void DreamGenContext::personnametext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	_and(bl, 127);
-	bh = data.byte(kCommandtype);
-	al = 2;
-	commandwithob();
-}
-
-void DreamGenContext::walktotext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 3;
-	commandwithob();
 }
 
 void DreamGenContext::getflagunderp() {
@@ -19469,109 +16029,6 @@ alreadywalking:
 holdingreel:
 	data.byte(kDestafterhold) = al;
 	data.byte(kWatchmode) = 2;
-}
-
-void DreamGenContext::autosetwalk() {
-	STACK_CHECK;
-	al = data.byte(kManspath);
-	_cmp(data.byte(kFinaldest), al);
-	if (!flags.z())
-		goto notsamealready;
-	return;
-notsamealready:
-	getroomspaths();
-	checkdest();
-	push(bx);
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLinestartx) = ax;
-	al = es.byte(bx+1);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLinestarty) = ax;
-	bx = pop();
-	al = data.byte(kDestination);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLineendx) = ax;
-	al = es.byte(bx+1);
-	ah = 0;
-	_sub(ax, 12);
-	data.word(kLineendy) = ax;
-	bresenhams();
-	_cmp(data.byte(kLinedirection), 0);
-	if (flags.z())
-		goto normalline;
-	al = data.byte(kLinelength);
-	_dec(al);
-	data.byte(kLinepointer) = al;
-	data.byte(kLinedirection) = 1;
-	return;
-normalline:
-	data.byte(kLinepointer) = 0;
-}
-
-void DreamGenContext::checkdest() {
-	STACK_CHECK;
-	push(bx);
-	_add(bx, 12*8);
-	ah = data.byte(kManspath);
-	cl = 4;
-	_shl(ah, cl);
-	al = data.byte(kDestination);
-	cl = 24;
-	ch = data.byte(kDestination);
-checkdestloop:
-	dh = es.byte(bx);
-	_and(dh, 0xf0);
-	dl = es.byte(bx);
-	_and(dl, 0xf);
-	_cmp(ax, dx);
-	if (!flags.z())
-		goto nextcheck;
-	al = es.byte(bx+1);
-	_and(al, 15);
-	data.byte(kDestination) = al;
-	bx = pop();
-	return;
-nextcheck:
-	dl = es.byte(bx);
-	_and(dl, 0xf0);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	_shr(dl, 1);
-	dh = es.byte(bx);
-	_and(dh, 0xf);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_shl(dh, 1);
-	_cmp(ax, dx);
-	if (!flags.z())
-		goto nextcheck2;
-	ch = es.byte(bx+1);
-	_and(ch, 15);
-nextcheck2:
-	_add(bx, 2);
-	_dec(cl);
-	if (!flags.z())
-		goto checkdestloop;
-	data.byte(kDestination) = ch;
-	bx = pop();
 }
 
 void DreamGenContext::bresenhams() {
@@ -19789,106 +16246,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::getroomspaths() {
-	STACK_CHECK;
-	al = data.byte(kRoomnum);
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-}
-
-void DreamGenContext::copyname() {
-	STACK_CHECK;
-	push(di);
-	findobname();
-	di = pop();
-	es = cs;
-	cx = 28;
-make:
-	_lodsb();
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishmakename;
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishmakename;
-	_stosb();
-	if (--cx)
-		goto make;
-finishmakename:
-	_inc(cx);
-	al = 0;
-	_stosb();
-	return;
-	al = 255;
-	_stosb(cx, true);
-}
-
-void DreamGenContext::findobname() {
-	STACK_CHECK;
-	push(ax);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	ax = pop();
-	_cmp(ah, 5);
-	if (!flags.z())
-		goto notpersonname;
-	push(ax);
-	_and(al, 127);
-	ah = 0;
-	bx = 64*2;
-	_mul(bx);
-	si = ax;
-	ds = data.word(kPeople);
-	_add(si, (0+24));
-	cx = (0+24+(1026*2));
-	ax = ds.word(si);
-	_add(ax, cx);
-	si = ax;
-	ax = pop();
-	return;
-notpersonname:
-	_cmp(ah, 4);
-	if (!flags.z())
-		goto notextraname;
-	ds = data.word(kExtras);
-	_add(bx, (0+2080+30000+(16*114)));
-	ax = ds.word(bx);
-	_add(ax, (0+2080+30000+(16*114)+((114+2)*2)));
-	si = ax;
-	return;
-notextraname:
-	_cmp(ah, 2);
-	if (!flags.z())
-		goto notfreename;
-	ds = data.word(kFreedesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(82*2)));
-	si = ax;
-	return;
-notfreename:
-	_cmp(ah, 1);
-	if (!flags.z())
-		goto notsetname;
-	ds = data.word(kSetdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(130*2)));
-	si = ax;
-	return;
-notsetname:
-	ds = data.word(kBlockdesc);
-	_add(bx, (0));
-	ax = ds.word(bx);
-	_add(ax, (0+(98*2)));
-	si = ax;
-}
-
 void DreamGenContext::showicon() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 50);
@@ -19989,22 +16346,6 @@ void DreamGenContext::showman() {
 	di = 28;
 	bx = 25;
 	al = 2;
-	ah = 0;
-	showframe();
-}
-
-void DreamGenContext::showpanel() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = 72;
-	bx = 0;
-	al = 19;
-	ah = 0;
-	showframe();
-	ds = data.word(kIcons1);
-	di = 192;
-	bx = 0;
-	al = 19;
 	ah = 0;
 	showframe();
 }
@@ -20151,7 +16492,7 @@ void DreamGenContext::showblink() {
 	al = 6;
 nomorethan6:
 	ah = 0;
-	bx = 5888;
+	bx = offset_blinktab;
 	_add(bx, ax);
 	al = cs.byte(bx);
 	ds = data.word(kIcons1);
@@ -20315,32 +16656,6 @@ void DreamGenContext::putunderzoom() {
 	cl = 46;
 	ch = 40;
 	multiput();
-}
-
-void DreamGenContext::crosshair() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 3);
-	if (flags.z())
-		goto nocross;
-	_cmp(data.byte(kCommandtype), 10);
-	if (!flags.c())
-		goto nocross;
-	es = data.word(kWorkspace);
-	ds = data.word(kIcons1);
-	di = (8)+24;
-	bx = (132)+19;
-	al = 9;
-	ah = 0;
-	showframe();
-	return;
-nocross:
-	es = data.word(kWorkspace);
-	ds = data.word(kIcons1);
-	di = (8)+24;
-	bx = (132)+19;
-	al = 29;
-	ah = 0;
-	showframe();
 }
 
 void DreamGenContext::showpointer() {
@@ -20515,40 +16830,6 @@ _tmp1:
 	multiget();
 }
 
-void DreamGenContext::deltextline() {
-	STACK_CHECK;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	ds = data.word(kBuffers);
-	si = (0);
-	cl = (228);
-	ch = (13);
-	multiput();
-}
-
-void DreamGenContext::dumptextline() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewtextline), 1);
-	if (!flags.z())
-		return /* (nodumptextline) */;
-	data.byte(kNewtextline) = 0;
-	di = data.word(kTextaddressx);
-	bx = data.word(kTextaddressy);
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-_tmp1:
-	cl = (228);
-	ch = (13);
-	multidump();
-}
-
 void DreamGenContext::animpointer() {
 	STACK_CHECK;
 	_cmp(data.byte(kPointermode), 2);
@@ -20611,7 +16892,7 @@ rightspeed3:
 finflashmouse:
 	al = data.byte(kPointercount);
 	ah = 0;
-	bx = 5895;
+	bx = offset_flashmousetab;
 	_add(bx, ax);
 	al = cs.byte(bx);
 	data.byte(kPointerframe) = al;
@@ -20704,7 +16985,7 @@ void DreamGenContext::readkey() {
 	_inc(bx);
 	_and(bx, 15);
 	data.word(kBufferout) = bx;
-	di = 5912;
+	di = offset_keybuffer;
 	_add(di, bx);
 	al = cs.byte(di);
 	data.byte(kCurrentkey) = al;
@@ -21028,142 +17309,6 @@ blimey:
 	es = pop();
 }
 
-void DreamGenContext::startloading() {
-	STACK_CHECK;
-	data.byte(kCombatcount) = 0;
-	al = cs.byte(bx+13);
-	data.byte(kRoomssample) = al;
-	al = cs.byte(bx+15);
-	data.byte(kMapx) = al;
-	al = cs.byte(bx+16);
-	data.byte(kMapy) = al;
-	al = cs.byte(bx+20);
-	data.byte(kLiftflag) = al;
-	al = cs.byte(bx+21);
-	data.byte(kManspath) = al;
-	data.byte(kDestination) = al;
-	data.byte(kFinaldest) = al;
-	al = cs.byte(bx+22);
-	data.byte(kFacing) = al;
-	data.byte(kTurntoface) = al;
-	al = cs.byte(bx+23);
-	data.byte(kCounttoopen) = al;
-	al = cs.byte(bx+24);
-	data.byte(kLiftpath) = al;
-	al = cs.byte(bx+25);
-	data.byte(kDoorpath) = al;
-	data.byte(kLastweapon) = -1;
-	al = cs.byte(bx+27);
-	push(ax);
-	al = cs.byte(bx+31);
-	ah = data.byte(kReallocation);
-	data.byte(kReallocation) = al;
-	dx = bx;
-	openfile();
-	readheader();
-	allocateload();
-	ds = ax;
-	data.word(kBackdrop) = ax;
-	dx = (0);
-	loadseg();
-	ds = data.word(kWorkspace);
-	dx = (0);
-	cx = 132*66;
-	al = 0;
-	fillspace();
-	loadseg();
-	sortoutmap();
-	allocateload();
-	data.word(kSetframes) = ax;
-	ds = ax;
-	dx = (0);
-	loadseg();
-	ds = data.word(kSetdat);
-	dx = 0;
-	cx = (64*128);
-	al = 255;
-	fillspace();
-	loadseg();
-	allocateload();
-	data.word(kReel1) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel2) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel3) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReels) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kPeople) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kSetdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kBlockdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kRoomdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kFreeframes) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	ds = data.word(kFreedat);
-	dx = 0;
-	cx = (16*80);
-	al = 255;
-	fillspace();
-	loadseg();
-	allocateload();
-	data.word(kFreedesc) = ax;
-	ds = ax;
-	dx = (0);
-	loadseg();
-	closefile();
-	findroominloc();
-	deletetaken();
-	setallchanges();
-	autoappear();
-	al = data.byte(kNewlocation);
-	getroomdata();
-	data.byte(kLastweapon) = -1;
-	data.byte(kMandead) = 0;
-	data.word(kLookcounter) = 160;
-	data.byte(kNewlocation) = 255;
-	data.byte(kLinepointer) = 254;
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		goto dontwalkin;
-	data.byte(kManspath) = al;
-	push(bx);
-	autosetwalk();
-	bx = pop();
-dontwalkin:
-	findxyfrompath();
-}
-
 void DreamGenContext::disablepath() {
 	STACK_CHECK;
 	push(cx);
@@ -21198,22 +17343,6 @@ lookx2:
 	es.byte(bx+6) = al;
 }
 
-void DreamGenContext::findxyfrompath() {
-	STACK_CHECK;
-	getroomspaths();
-	al = data.byte(kManspath);
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	ax = es.word(bx);
-	_sub(al, 12);
-	_sub(ah, 12);
-	data.byte(kRyanx) = al;
-	data.byte(kRyany) = ah;
-}
-
 void DreamGenContext::findroominloc() {
 	STACK_CHECK;
 	al = data.byte(kMapy);
@@ -21233,25 +17362,6 @@ lookx:
 	data.byte(kRoomnum) = cl;
 }
 
-void DreamGenContext::getroomdata() {
-	STACK_CHECK;
-	ah = 0;
-	cx = 32;
-	_mul(cx);
-	bx = 6187;
-	_add(bx, ax);
-}
-
-void DreamGenContext::readheader() {
-	STACK_CHECK;
-	ds = cs;
-	dx = 6091;
-	cx = (6187-6091);
-	readfromfile();
-	es = cs;
-	di = 6141;
-}
-
 void DreamGenContext::allocateload() {
 	STACK_CHECK;
 	push(es);
@@ -21261,23 +17371,6 @@ void DreamGenContext::allocateload() {
 	_shr(bx, cl);
 	allocatemem();
 	di = pop();
-	es = pop();
-}
-
-void DreamGenContext::fillspace() {
-	STACK_CHECK;
-	push(es);
-	push(ds);
-	push(dx);
-	push(di);
-	push(bx);
-	di = dx;
-	es = ds;
-	_stosb(cx, true);
-	bx = pop();
-	di = pop();
-	dx = pop();
-	ds = pop();
 	es = pop();
 }
 
@@ -21349,153 +17442,6 @@ void DreamGenContext::readsetdata() {
 	dx = 16384;
 	readfromfile();
 	closefile();
-}
-
-void DreamGenContext::makename() {
-	STACK_CHECK;
-	si = dx;
-	di = 6061;
-transfer:
-	al = cs.byte(si);
-	cs.byte(di) = al;
-	_inc(si);
-	_inc(di);
-	_cmp(al, 0);
-	if (!flags.z())
-		goto transfer;
-	dx = 6059;
-}
-
-void DreamGenContext::dreamweb() {
-	STACK_CHECK;
-	seecommandtail();
-	checkbasemem();
-	soundstartup();
-	setkeyboardint();
-	setupemm();
-	allocatebuffers();
-	setmouse();
-	fadedos();
-	gettime();
-	clearbuffers();
-	clearpalette();
-	set16colpalette();
-	readsetdata();
-	data.byte(kWongame) = 0;
-	dx = 1909;
-	loadsample();
-	setsoundoff();
-	scanfornames();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto dodecisions;
-	setmode();
-	loadpalfromiff();
-	titles();
-	credits();
-	goto playgame;
-dodecisions:
-	cls();
-	setmode();
-	decide();
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (exitgame) */;
-	_cmp(data.byte(kGetback), 4);
-	if (flags.z())
-		goto mainloop;
-	titles();
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (exitgame) */;
-	credits();
-playgame:
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (exitgame) */;
-	clearchanges();
-	setmode();
-	loadpalfromiff();
-	data.byte(kLocation) = 255;
-	data.byte(kRoomafterdream) = 1;
-	data.byte(kNewlocation) = 35;
-	data.byte(kVolume) = 7;
-	loadroom();
-	clearsprites();
-	initman();
-	entrytexts();
-	entryanims();
-	data.byte(kDestpos) = 3;
-	initialinv();
-	data.byte(kLastflag) = 32;
-	startup1();
-	data.byte(kVolumeto) = 0;
-	data.byte(kVolumedirection) = -1;
-	data.byte(kCommandtype) = 255;
-	goto mainloop;
-loadnew:
-	clearbeforeload();
-	loadroom();
-	clearsprites();
-	initman();
-	entrytexts();
-	entryanims();
-	data.byte(kNewlocation) = 255;
-	startup();
-	data.byte(kCommandtype) = 255;
-	worktoscreenm();
-	goto mainloop;
-	data.byte(kNewlocation) = 255;
-	clearsprites();
-	initman();
-	startup();
-	data.byte(kCommandtype) = 255;
-mainloop:
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (exitgame) */;
-	screenupdate();
-	_cmp(data.byte(kWongame), 0);
-	if (!flags.z())
-		goto endofgame;
-	_cmp(data.byte(kMandead), 1);
-	if (flags.z())
-		goto gameover;
-	_cmp(data.byte(kMandead), 2);
-	if (flags.z())
-		goto gameover;
-	_cmp(data.word(kWatchingtime), 0);
-	if (flags.z())
-		goto notwatching;
-	al = data.byte(kFinaldest);
-	_cmp(al, data.byte(kManspath));
-	if (!flags.z())
-		goto mainloop;
-	_dec(data.word(kWatchingtime));
-	if (!flags.z())
-		goto mainloop;
-notwatching:
-	_cmp(data.byte(kMandead), 4);
-	if (flags.z())
-		goto gameover;
-	_cmp(data.byte(kNewlocation), 255);
-	if (!flags.z())
-		goto loadnew;
-	goto mainloop;
-gameover:
-	clearbeforeload();
-	showgun();
-	fadescreendown();
-	cx = 100;
-	hangon();
-	goto dodecisions;
-endofgame:
-	clearbeforeload();
-	fadescreendowns();
-	cx = 200;
-	hangon();
-	endgame();
-	{ quickquit2(); return; };
 }
 
 
@@ -22075,745 +18021,647 @@ dreamweb();
 
 void DreamGenContext::__dispatch_call(uint16 addr) {
 	switch(addr) {
-		case 0xc000: alleybarksound(); break;
-		case 0xc004: intromusic(); break;
-		case 0xc008: foghornsound(); break;
-		case 0xc00c: receptionist(); break;
-		case 0xc010: smokebloke(); break;
-		case 0xc014: attendant(); break;
-		case 0xc018: manasleep(); break;
-		case 0xc01c: eden(); break;
-		case 0xc020: edeninbath(); break;
-		case 0xc024: malefan(); break;
-		case 0xc028: femalefan(); break;
-		case 0xc02c: louis(); break;
-		case 0xc030: louischair(); break;
-		case 0xc034: manasleep2(); break;
-		case 0xc038: mansatstill(); break;
-		case 0xc03c: tattooman(); break;
-		case 0xc040: drinker(); break;
-		case 0xc044: bartender(); break;
-		case 0xc048: othersmoker(); break;
-		case 0xc04c: barwoman(); break;
-		case 0xc050: interviewer(); break;
-		case 0xc054: soldier1(); break;
-		case 0xc058: rockstar(); break;
-		case 0xc05c: helicopter(); break;
-		case 0xc060: mugger(); break;
-		case 0xc064: aide(); break;
-		case 0xc068: businessman(); break;
-		case 0xc06c: poolguard(); break;
-		case 0xc070: security(); break;
-		case 0xc074: heavy(); break;
-		case 0xc078: bossman(); break;
-		case 0xc07c: gamer(); break;
-		case 0xc080: sparkydrip(); break;
-		case 0xc084: carparkdrip(); break;
-		case 0xc088: keeper(); break;
-		case 0xc08c: candles1(); break;
-		case 0xc090: smallcandle(); break;
-		case 0xc094: intromagic1(); break;
-		case 0xc098: candles(); break;
-		case 0xc09c: candles2(); break;
-		case 0xc0a0: gates(); break;
-		case 0xc0a4: intromagic2(); break;
-		case 0xc0a8: intromagic3(); break;
-		case 0xc0ac: intromonks1(); break;
-		case 0xc0b0: intromonks2(); break;
-		case 0xc0b4: handclap(); break;
-		case 0xc0b8: monks2text(); break;
-		case 0xc0bc: intro1text(); break;
-		case 0xc0c0: intro2text(); break;
-		case 0xc0c4: intro3text(); break;
-		case 0xc0c8: monkandryan(); break;
-		case 0xc0cc: endgameseq(); break;
-		case 0xc0d0: rollendcredits(); break;
-		case 0xc0d4: priest(); break;
-		case 0xc0d8: madmanstelly(); break;
-		case 0xc0dc: madman(); break;
-		case 0xc0e0: madmantext(); break;
-		case 0xc0e4: madmode(); break;
-		case 0xc0e8: priesttext(); break;
-		case 0xc0ec: textforend(); break;
-		case 0xc0f0: textformonk(); break;
-		case 0xc0f4: drunk(); break;
-		case 0xc0f8: advisor(); break;
-		case 0xc0fc: copper(); break;
-		case 0xc100: sparky(); break;
-		case 0xc104: train(); break;
-		case 0xc108: addtopeoplelist(); break;
-		case 0xc10c: showgamereel(); break;
-		case 0xc110: checkspeed(); break;
-		case 0xc114: clearsprites(); break;
-		case 0xc118: makesprite(); break;
-		case 0xc11c: delsprite(); break;
-		case 0xc120: spriteupdate(); break;
-		case 0xc124: printsprites(); break;
-		case 0xc128: printasprite(); break;
-		case 0xc12c: checkone(); break;
-		case 0xc130: findsource(); break;
-		case 0xc134: initman(); break;
-		case 0xc138: mainman(); break;
-		case 0xc13c: aboutturn(); break;
-		case 0xc140: walking(); break;
-		case 0xc144: facerightway(); break;
-		case 0xc148: checkforexit(); break;
-		case 0xc14c: adjustdown(); break;
-		case 0xc150: adjustup(); break;
-		case 0xc154: adjustleft(); break;
-		case 0xc158: adjustright(); break;
-		case 0xc15c: reminders(); break;
-		case 0xc160: initrain(); break;
-		case 0xc164: splitintolines(); break;
-		case 0xc168: getblockofpixel(); break;
-		case 0xc16c: showrain(); break;
-		case 0xc170: backobject(); break;
-		case 0xc174: liftsprite(); break;
-		case 0xc178: liftnoise(); break;
-		case 0xc17c: random(); break;
-		case 0xc180: steady(); break;
-		case 0xc184: constant(); break;
-		case 0xc188: doorway(); break;
-		case 0xc18c: widedoor(); break;
-		case 0xc190: dodoor(); break;
-		case 0xc194: lockeddoorway(); break;
-		case 0xc198: updatepeople(); break;
-		case 0xc19c: getreelframeax(); break;
-		case 0xc1a0: reelsonscreen(); break;
-		case 0xc1a4: plotreel(); break;
-		case 0xc1a8: soundonreels(); break;
-		case 0xc1ac: reconstruct(); break;
-		case 0xc1b0: dealwithspecial(); break;
-		case 0xc1b4: movemap(); break;
-		case 0xc1b8: getreelstart(); break;
-		case 0xc1bc: showreelframe(); break;
-		case 0xc1c0: deleverything(); break;
-		case 0xc1c4: dumpeverything(); break;
-		case 0xc1c8: allocatework(); break;
-		case 0xc1cc: showpcx(); break;
-		case 0xc1d8: loadpalfromiff(); break;
-		case 0xc1dc: setmode(); break;
-		case 0xc1ec: paneltomap(); break;
-		case 0xc1f0: maptopanel(); break;
-		case 0xc1f4: dumpmap(); break;
-		case 0xc1f8: pixelcheckset(); break;
-		case 0xc1fc: createpanel(); break;
-		case 0xc200: createpanel2(); break;
-		case 0xc204: clearwork(); break;
-		case 0xc208: vsync(); break;
-		case 0xc20c: doshake(); break;
-		case 0xc210: zoom(); break;
-		case 0xc214: delthisone(); break;
-		case 0xc228: doblocks(); break;
-		case 0xc22c: showframe(); break;
-		case 0xc238: frameoutbh(); break;
-		case 0xc23c: frameoutfx(); break;
-		case 0xc240: transferinv(); break;
-		case 0xc244: transfermap(); break;
-		case 0xc248: fadedos(); break;
-		case 0xc24c: dofade(); break;
-		case 0xc250: clearendpal(); break;
-		case 0xc254: clearpalette(); break;
-		case 0xc258: fadescreenup(); break;
-		case 0xc25c: fadetowhite(); break;
-		case 0xc260: fadefromwhite(); break;
-		case 0xc264: fadescreenups(); break;
-		case 0xc268: fadescreendownhalf(); break;
-		case 0xc26c: fadescreenuphalf(); break;
-		case 0xc270: fadescreendown(); break;
-		case 0xc274: fadescreendowns(); break;
-		case 0xc278: clearstartpal(); break;
-		case 0xc27c: showgun(); break;
-		case 0xc280: rollendcredits2(); break;
-		case 0xc284: rollem(); break;
-		case 0xc288: fadecalculation(); break;
-		case 0xc28c: greyscalesum(); break;
-		case 0xc290: showgroup(); break;
-		case 0xc294: paltostartpal(); break;
-		case 0xc298: endpaltostart(); break;
-		case 0xc29c: startpaltoend(); break;
-		case 0xc2a0: paltoendpal(); break;
-		case 0xc2a4: allpalette(); break;
-		case 0xc2a8: dumpcurrent(); break;
-		case 0xc2ac: fadedownmon(); break;
-		case 0xc2b0: fadeupmon(); break;
-		case 0xc2b4: fadeupmonfirst(); break;
-		case 0xc2b8: fadeupyellows(); break;
-		case 0xc2bc: initialmoncols(); break;
-		case 0xc2c0: titles(); break;
-		case 0xc2c4: endgame(); break;
-		case 0xc2c8: monkspeaking(); break;
-		case 0xc2cc: showmonk(); break;
-		case 0xc2d0: gettingshot(); break;
-		case 0xc2d4: credits(); break;
-		case 0xc2d8: biblequote(); break;
-		case 0xc2dc: hangone(); break;
-		case 0xc2e0: intro(); break;
-		case 0xc2e4: runintroseq(); break;
-		case 0xc2e8: runendseq(); break;
-		case 0xc2ec: loadintroroom(); break;
-		case 0xc2f0: mode640x480(); break;
-		case 0xc2f4: set16colpalette(); break;
-		case 0xc2f8: realcredits(); break;
-		case 0xc2fc: printchar(); break;
-		case 0xc300: kernchars(); break;
-		case 0xc304: printslow(); break;
-		case 0xc308: waitframes(); break;
-		case 0xc30c: printboth(); break;
-		case 0xc310: printdirect(); break;
-		case 0xc314: monprint(); break;
-		case 0xc318: getnumber(); break;
-		case 0xc31c: getnextword(); break;
-		case 0xc320: fillryan(); break;
-		case 0xc324: fillopen(); break;
-		case 0xc328: findallryan(); break;
-		case 0xc32c: findallopen(); break;
-		case 0xc330: obtoinv(); break;
-		case 0xc334: isitworn(); break;
-		case 0xc338: makeworn(); break;
-		case 0xc33c: examineob(); break;
-		case 0xc340: makemainscreen(); break;
-		case 0xc344: getbackfromob(); break;
-		case 0xc348: incryanpage(); break;
-		case 0xc34c: openinv(); break;
-		case 0xc350: showryanpage(); break;
-		case 0xc354: openob(); break;
-		case 0xc358: obicons(); break;
-		case 0xc35c: examicon(); break;
-		case 0xc360: obpicture(); break;
-		case 0xc364: describeob(); break;
-		case 0xc368: additionaltext(); break;
-		case 0xc36c: obsthatdothings(); break;
-		case 0xc370: getobtextstart(); break;
-		case 0xc374: searchforsame(); break;
-		case 0xc378: findnextcolon(); break;
-		case 0xc37c: inventory(); break;
-		case 0xc380: setpickup(); break;
-		case 0xc384: examinventory(); break;
-		case 0xc388: reexfrominv(); break;
-		case 0xc38c: reexfromopen(); break;
-		case 0xc390: swapwithinv(); break;
-		case 0xc394: swapwithopen(); break;
-		case 0xc398: intoinv(); break;
-		case 0xc39c: deletetaken(); break;
-		case 0xc3a0: outofinv(); break;
-		case 0xc3a4: getfreead(); break;
-		case 0xc3a8: getexad(); break;
-		case 0xc3ac: geteitherad(); break;
-		case 0xc3b0: getanyad(); break;
-		case 0xc3b4: getanyaddir(); break;
-		case 0xc3b8: getopenedsize(); break;
-		case 0xc3bc: getsetad(); break;
-		case 0xc3c0: findinvpos(); break;
-		case 0xc3c4: findopenpos(); break;
-		case 0xc3c8: dropobject(); break;
-		case 0xc3cc: droperror(); break;
-		case 0xc3d0: cantdrop(); break;
-		case 0xc3d4: wornerror(); break;
-		case 0xc3d8: removeobfrominv(); break;
-		case 0xc3dc: selectopenob(); break;
-		case 0xc3e0: useopened(); break;
-		case 0xc3e4: errormessage1(); break;
-		case 0xc3e8: errormessage2(); break;
-		case 0xc3ec: errormessage3(); break;
-		case 0xc3f0: checkobjectsize(); break;
-		case 0xc3f4: outofopen(); break;
-		case 0xc3f8: transfertoex(); break;
-		case 0xc3fc: pickupconts(); break;
-		case 0xc400: transfercontoex(); break;
-		case 0xc404: transfertext(); break;
-		case 0xc408: getexpos(); break;
-		case 0xc40c: purgealocation(); break;
-		case 0xc410: emergencypurge(); break;
-		case 0xc414: purgeanitem(); break;
-		case 0xc418: deleteexobject(); break;
-		case 0xc41c: deleteexframe(); break;
-		case 0xc420: deleteextext(); break;
-		case 0xc424: blockget(); break;
-		case 0xc428: drawfloor(); break;
-		case 0xc42c: calcmapad(); break;
-		case 0xc430: getdimension(); break;
-		case 0xc434: addalong(); break;
-		case 0xc438: addlength(); break;
-		case 0xc43c: drawflags(); break;
-		case 0xc440: eraseoldobs(); break;
-		case 0xc444: showallobs(); break;
-		case 0xc448: makebackob(); break;
-		case 0xc44c: showallfree(); break;
-		case 0xc450: showallex(); break;
-		case 0xc454: calcfrframe(); break;
-		case 0xc458: finalframe(); break;
-		case 0xc45c: adjustlen(); break;
-		case 0xc460: getmapad(); break;
-		case 0xc464: getxad(); break;
-		case 0xc468: getyad(); break;
-		case 0xc46c: autolook(); break;
-		case 0xc470: look(); break;
-		case 0xc474: dolook(); break;
-		case 0xc478: redrawmainscrn(); break;
-		case 0xc47c: getback1(); break;
-		case 0xc480: talk(); break;
-		case 0xc484: convicons(); break;
-		case 0xc488: getpersframe(); break;
-		case 0xc48c: starttalk(); break;
-		case 0xc490: getpersontext(); break;
-		case 0xc494: moretalk(); break;
-		case 0xc498: dosometalk(); break;
-		case 0xc49c: hangonpq(); break;
-		case 0xc4a0: redes(); break;
-		case 0xc4a4: newplace(); break;
-		case 0xc4a8: selectlocation(); break;
-		case 0xc4ac: showcity(); break;
-		case 0xc4b0: lookatplace(); break;
-		case 0xc4b4: getundercentre(); break;
-		case 0xc4b8: putundercentre(); break;
-		case 0xc4bc: locationpic(); break;
-		case 0xc4c0: getdestinfo(); break;
-		case 0xc4c4: showarrows(); break;
-		case 0xc4c8: nextdest(); break;
-		case 0xc4cc: lastdest(); break;
-		case 0xc4d0: destselect(); break;
-		case 0xc4d4: getlocation(); break;
-		case 0xc4d8: setlocation(); break;
-		case 0xc4dc: resetlocation(); break;
-		case 0xc4e0: readdesticon(); break;
-		case 0xc4e4: readcitypic(); break;
-		case 0xc4e8: usemon(); break;
-		case 0xc4ec: printoutermon(); break;
-		case 0xc4f0: loadpersonal(); break;
-		case 0xc4f4: loadnews(); break;
-		case 0xc4f8: loadcart(); break;
-		case 0xc4fc: lookininterface(); break;
-		case 0xc500: turnonpower(); break;
-		case 0xc504: randomaccess(); break;
-		case 0xc508: powerlighton(); break;
-		case 0xc50c: powerlightoff(); break;
-		case 0xc510: accesslighton(); break;
-		case 0xc514: accesslightoff(); break;
-		case 0xc518: locklighton(); break;
-		case 0xc51c: locklightoff(); break;
-		case 0xc520: input(); break;
-		case 0xc524: makecaps(); break;
-		case 0xc528: delchar(); break;
-		case 0xc52c: execcommand(); break;
-		case 0xc530: neterror(); break;
-		case 0xc534: dircom(); break;
-		case 0xc538: searchforfiles(); break;
-		case 0xc53c: signon(); break;
-		case 0xc540: showkeys(); break;
-		case 0xc544: read(); break;
-		case 0xc548: dirfile(); break;
-		case 0xc54c: getkeyandlogo(); break;
-		case 0xc550: searchforstring(); break;
-		case 0xc554: parser(); break;
-		case 0xc558: scrollmonitor(); break;
-		case 0xc55c: lockmon(); break;
-		case 0xc560: monitorlogo(); break;
-		case 0xc564: printlogo(); break;
-		case 0xc568: showcurrentfile(); break;
-		case 0xc56c: monmessage(); break;
-		case 0xc570: processtrigger(); break;
-		case 0xc574: triggermessage(); break;
-		case 0xc578: printcurs(); break;
-		case 0xc57c: delcurs(); break;
-		case 0xc580: useobject(); break;
-		case 0xc584: useroutine(); break;
-		case 0xc588: wheelsound(); break;
-		case 0xc58c: runtap(); break;
-		case 0xc590: playguitar(); break;
-		case 0xc594: hotelcontrol(); break;
-		case 0xc598: hotelbell(); break;
-		case 0xc59c: opentomb(); break;
-		case 0xc5a0: usetrainer(); break;
-		case 0xc5a4: nothelderror(); break;
-		case 0xc5a8: usepipe(); break;
-		case 0xc5ac: usefullcart(); break;
-		case 0xc5b0: useplinth(); break;
-		case 0xc5b4: chewy(); break;
-		case 0xc5b8: useladder(); break;
-		case 0xc5bc: useladderb(); break;
-		case 0xc5c0: slabdoora(); break;
-		case 0xc5c4: slabdoorb(); break;
-		case 0xc5c8: slabdoord(); break;
-		case 0xc5cc: slabdoorc(); break;
-		case 0xc5d0: slabdoore(); break;
-		case 0xc5d4: slabdoorf(); break;
-		case 0xc5d8: useslab(); break;
-		case 0xc5dc: usecart(); break;
-		case 0xc5e0: useclearbox(); break;
-		case 0xc5e4: usecoveredbox(); break;
-		case 0xc5e8: userailing(); break;
-		case 0xc5ec: useopenbox(); break;
-		case 0xc5f0: wearwatch(); break;
-		case 0xc5f4: wearshades(); break;
-		case 0xc5f8: sitdowninbar(); break;
-		case 0xc5fc: usechurchhole(); break;
-		case 0xc600: usehole(); break;
-		case 0xc604: usealtar(); break;
-		case 0xc608: opentvdoor(); break;
-		case 0xc60c: usedryer(); break;
-		case 0xc610: openlouis(); break;
-		case 0xc614: nextcolon(); break;
-		case 0xc618: openyourneighbour(); break;
-		case 0xc61c: usewindow(); break;
-		case 0xc620: usebalcony(); break;
-		case 0xc624: openryan(); break;
-		case 0xc628: openpoolboss(); break;
-		case 0xc62c: openeden(); break;
-		case 0xc630: opensarters(); break;
-		case 0xc634: isitright(); break;
-		case 0xc638: drawitall(); break;
-		case 0xc63c: openhoteldoor(); break;
-		case 0xc640: openhoteldoor2(); break;
-		case 0xc644: grafittidoor(); break;
-		case 0xc648: trapdoor(); break;
-		case 0xc64c: callhotellift(); break;
-		case 0xc650: calledenslift(); break;
-		case 0xc654: calledensdlift(); break;
-		case 0xc658: usepoolreader(); break;
-		case 0xc65c: uselighter(); break;
-		case 0xc660: showseconduse(); break;
-		case 0xc664: usecardreader1(); break;
-		case 0xc668: usecardreader2(); break;
-		case 0xc66c: usecardreader3(); break;
-		case 0xc670: usecashcard(); break;
-		case 0xc674: lookatcard(); break;
-		case 0xc678: moneypoke(); break;
-		case 0xc67c: usecontrol(); break;
-		case 0xc680: usehatch(); break;
-		case 0xc684: usewire(); break;
-		case 0xc688: usehandle(); break;
-		case 0xc68c: useelevator1(); break;
-		case 0xc690: showfirstuse(); break;
-		case 0xc694: useelevator3(); break;
-		case 0xc698: useelevator4(); break;
-		case 0xc69c: useelevator2(); break;
-		case 0xc6a0: useelevator5(); break;
-		case 0xc6a4: usekey(); break;
-		case 0xc6a8: usestereo(); break;
-		case 0xc6ac: usecooker(); break;
-		case 0xc6b0: useaxe(); break;
-		case 0xc6b4: useelvdoor(); break;
-		case 0xc6b8: withwhat(); break;
-		case 0xc6bc: selectob(); break;
-		case 0xc6c0: compare(); break;
-		case 0xc6c4: findsetobject(); break;
-		case 0xc6c8: findexobject(); break;
-		case 0xc6cc: isryanholding(); break;
-		case 0xc6d0: checkinside(); break;
-		case 0xc6d4: usetext(); break;
-		case 0xc6d8: putbackobstuff(); break;
-		case 0xc6dc: showpuztext(); break;
-		case 0xc6e0: findpuztext(); break;
-		case 0xc6e4: placesetobject(); break;
-		case 0xc6e8: removesetobject(); break;
-		case 0xc6ec: issetobonmap(); break;
-		case 0xc6f0: placefreeobject(); break;
-		case 0xc6f4: removefreeobject(); break;
-		case 0xc6f8: findormake(); break;
-		case 0xc6fc: switchryanon(); break;
-		case 0xc700: switchryanoff(); break;
-		case 0xc704: setallchanges(); break;
-		case 0xc708: dochange(); break;
-		case 0xc70c: autoappear(); break;
-		case 0xc710: getundertimed(); break;
-		case 0xc714: putundertimed(); break;
-		case 0xc718: dumptimedtext(); break;
-		case 0xc71c: setuptimeduse(); break;
-		case 0xc720: setuptimedtemp(); break;
-		case 0xc724: usetimedtext(); break;
-		case 0xc728: edenscdplayer(); break;
-		case 0xc72c: usewall(); break;
-		case 0xc730: usechurchgate(); break;
-		case 0xc734: usegun(); break;
-		case 0xc738: useshield(); break;
-		case 0xc73c: usebuttona(); break;
-		case 0xc740: useplate(); break;
-		case 0xc744: usewinch(); break;
-		case 0xc748: entercode(); break;
-		case 0xc74c: loadkeypad(); break;
-		case 0xc750: quitkey(); break;
-		case 0xc754: addtopresslist(); break;
-		case 0xc758: buttonone(); break;
-		case 0xc75c: buttontwo(); break;
-		case 0xc760: buttonthree(); break;
-		case 0xc764: buttonfour(); break;
-		case 0xc768: buttonfive(); break;
-		case 0xc76c: buttonsix(); break;
-		case 0xc770: buttonseven(); break;
-		case 0xc774: buttoneight(); break;
-		case 0xc778: buttonnine(); break;
-		case 0xc77c: buttonnought(); break;
-		case 0xc780: buttonenter(); break;
-		case 0xc784: buttonpress(); break;
-		case 0xc788: showouterpad(); break;
-		case 0xc78c: showkeypad(); break;
-		case 0xc790: singlekey(); break;
-		case 0xc794: dumpkeypad(); break;
-		case 0xc798: usemenu(); break;
-		case 0xc79c: dumpmenu(); break;
-		case 0xc7a0: getundermenu(); break;
-		case 0xc7a4: putundermenu(); break;
-		case 0xc7a8: showoutermenu(); break;
-		case 0xc7ac: showmenu(); break;
-		case 0xc7b0: loadmenu(); break;
-		case 0xc7b4: viewfolder(); break;
-		case 0xc7b8: nextfolder(); break;
-		case 0xc7bc: folderhints(); break;
-		case 0xc7c0: lastfolder(); break;
-		case 0xc7c4: loadfolder(); break;
-		case 0xc7c8: showfolder(); break;
-		case 0xc7cc: folderexit(); break;
-		case 0xc7d0: showleftpage(); break;
-		case 0xc7d4: showrightpage(); break;
-		case 0xc7d8: entersymbol(); break;
-		case 0xc7dc: quitsymbol(); break;
-		case 0xc7e0: settopleft(); break;
-		case 0xc7e4: settopright(); break;
-		case 0xc7e8: setbotleft(); break;
-		case 0xc7ec: setbotright(); break;
-		case 0xc7f0: dumpsymbol(); break;
-		case 0xc7f4: showsymbol(); break;
-		case 0xc7f8: nextsymbol(); break;
-		case 0xc7fc: updatesymboltop(); break;
-		case 0xc800: updatesymbolbot(); break;
-		case 0xc804: dumpsymbox(); break;
-		case 0xc808: usediary(); break;
-		case 0xc80c: showdiary(); break;
-		case 0xc810: showdiarykeys(); break;
-		case 0xc814: dumpdiarykeys(); break;
-		case 0xc818: diarykeyp(); break;
-		case 0xc81c: diarykeyn(); break;
-		case 0xc820: showdiarypage(); break;
-		case 0xc824: findtext1(); break;
-		case 0xc828: zoomonoff(); break;
-		case 0xc82c: saveload(); break;
-		case 0xc830: dosaveload(); break;
-		case 0xc834: getbackfromops(); break;
-		case 0xc838: showmainops(); break;
-		case 0xc83c: showdiscops(); break;
-		case 0xc840: loadsavebox(); break;
-		case 0xc844: loadgame(); break;
-		case 0xc848: getbacktoops(); break;
-		case 0xc84c: discops(); break;
-		case 0xc850: savegame(); break;
-		case 0xc854: actualsave(); break;
-		case 0xc858: actualload(); break;
-		case 0xc85c: selectslot2(); break;
-		case 0xc860: checkinput(); break;
-		case 0xc864: getnamepos(); break;
-		case 0xc868: showopbox(); break;
-		case 0xc86c: showloadops(); break;
-		case 0xc870: showsaveops(); break;
-		case 0xc874: selectslot(); break;
-		case 0xc878: showslots(); break;
-		case 0xc87c: shownames(); break;
-		case 0xc880: dosreturn(); break;
-		case 0xc884: error(); break;
-		case 0xc888: namestoold(); break;
-		case 0xc88c: oldtonames(); break;
-		case 0xc890: savefilewrite(); break;
-		case 0xc894: savefileread(); break;
-		case 0xc898: saveposition(); break;
-		case 0xc89c: loadposition(); break;
-		case 0xc8a0: loadseg(); break;
-		case 0xc8a4: makeheader(); break;
-		case 0xc8a8: storeit(); break;
-		case 0xc8ac: saveseg(); break;
-		case 0xc8b0: findlen(); break;
-		case 0xc8b4: scanfornames(); break;
-		case 0xc8b8: decide(); break;
-		case 0xc8bc: showdecisions(); break;
-		case 0xc8c0: newgame(); break;
-		case 0xc8c4: loadold(); break;
-		case 0xc8c8: loadspeech(); break;
-		case 0xc8cc: createname(); break;
-		case 0xc8d0: loadsample(); break;
-		case 0xc8d4: loadsecondsample(); break;
-		case 0xc8d8: soundstartup(); break;
-		case 0xc8dc: trysoundalloc(); break;
-		case 0xc8e0: setsoundoff(); break;
-		case 0xc8e4: checksoundint(); break;
-		case 0xc8e8: enablesoundint(); break;
-		case 0xc8ec: disablesoundint(); break;
-		case 0xc8f0: interupttest(); break;
-		case 0xc8f4: soundend(); break;
-		case 0xc8f8: out22c(); break;
-		case 0xc8fc: playchannel0(); break;
-		case 0xc900: playchannel1(); break;
-		case 0xc904: makenextblock(); break;
-		case 0xc908: volumeadjust(); break;
-		case 0xc90c: loopchannel0(); break;
-		case 0xc910: cancelch0(); break;
-		case 0xc914: cancelch1(); break;
-		case 0xc918: channel0only(); break;
-		case 0xc91c: channel1only(); break;
-		case 0xc920: channel0tran(); break;
-		case 0xc924: bothchannels(); break;
-		case 0xc928: saveems(); break;
-		case 0xc92c: restoreems(); break;
-		case 0xc930: domix(); break;
-		case 0xc934: dmaend(); break;
-		case 0xc938: startdmablock(); break;
-		case 0xc93c: setuppit(); break;
-		case 0xc940: getridofpit(); break;
-		case 0xc944: pitinterupt(); break;
-		case 0xc948: dreamweb(); break;
-		case 0xc94c: entrytexts(); break;
-		case 0xc950: entryanims(); break;
-		case 0xc954: initialinv(); break;
-		case 0xc958: pickupob(); break;
-		case 0xc95c: setupemm(); break;
-		case 0xc960: removeemm(); break;
-		case 0xc964: checkforemm(); break;
-		case 0xc968: checkbasemem(); break;
-		case 0xc96c: allocatebuffers(); break;
-		case 0xc970: clearbuffers(); break;
-		case 0xc974: clearchanges(); break;
-		case 0xc978: clearbeforeload(); break;
-		case 0xc97c: clearreels(); break;
-		case 0xc980: clearrest(); break;
-		case 0xc984: deallocatemem(); break;
-		case 0xc988: allocatemem(); break;
-		case 0xc990: parseblaster(); break;
-		case 0xc994: startup(); break;
-		case 0xc998: startup1(); break;
-		case 0xc99c: screenupdate(); break;
-		case 0xc9a0: watchreel(); break;
-		case 0xc9a4: checkforshake(); break;
-		case 0xc9a8: watchcount(); break;
-		case 0xc9ac: showtime(); break;
-		case 0xc9b0: dumpwatch(); break;
-		case 0xc9b4: showbyte(); break;
-		case 0xc9b8: onedigit(); break;
-		case 0xc9bc: twodigitnum(); break;
-		case 0xc9c0: showword(); break;
-		case 0xc9c4: convnum(); break;
-		case 0xc9c8: mainscreen(); break;
-		case 0xc9cc: madmanrun(); break;
-		case 0xc9d0: checkcoords(); break;
-		case 0xc9d4: identifyob(); break;
-		case 0xc9d8: checkifperson(); break;
-		case 0xc9dc: checkifset(); break;
-		case 0xc9e0: checkifex(); break;
-		case 0xc9e4: checkiffree(); break;
-		case 0xc9e8: isitdescribed(); break;
-		case 0xc9ec: findpathofpoint(); break;
-		case 0xc9f0: findfirstpath(); break;
-		case 0xc9f4: turnpathon(); break;
-		case 0xc9f8: turnpathoff(); break;
-		case 0xc9fc: turnanypathon(); break;
-		case 0xca00: turnanypathoff(); break;
-		case 0xca04: checkifpathison(); break;
-		case 0xca08: afternewroom(); break;
-		case 0xca0c: atmospheres(); break;
-		case 0xca10: walkintoroom(); break;
-		case 0xca14: afterintroroom(); break;
-		case 0xca18: obname(); break;
-		case 0xca1c: finishedwalking(); break;
-		case 0xca20: examineobtext(); break;
-		case 0xca24: commandwithob(); break;
-		case 0xca28: commandonly(); break;
-		case 0xca2c: printmessage(); break;
-		case 0xca30: printmessage2(); break;
-		case 0xca34: blocknametext(); break;
-		case 0xca38: personnametext(); break;
-		case 0xca3c: walktotext(); break;
-		case 0xca40: getflagunderp(); break;
-		case 0xca44: setwalk(); break;
-		case 0xca48: autosetwalk(); break;
-		case 0xca4c: checkdest(); break;
-		case 0xca50: bresenhams(); break;
-		case 0xca54: workoutframes(); break;
-		case 0xca58: getroomspaths(); break;
-		case 0xca5c: copyname(); break;
-		case 0xca60: findobname(); break;
-		case 0xca64: showicon(); break;
-		case 0xca68: middlepanel(); break;
-		case 0xca6c: showman(); break;
-		case 0xca70: showpanel(); break;
-		case 0xca74: roomname(); break;
-		case 0xca78: usecharset1(); break;
-		case 0xca7c: usetempcharset(); break;
-		case 0xca80: showexit(); break;
-		case 0xca84: panelicons1(); break;
-		case 0xca88: showwatch(); break;
-		case 0xca8c: gettime(); break;
-		case 0xca90: zoomicon(); break;
-		case 0xca94: showblink(); break;
-		case 0xca98: dumpblink(); break;
-		case 0xca9c: worktoscreenm(); break;
-		case 0xcaa0: blank(); break;
-		case 0xcaa4: allpointer(); break;
-		case 0xcaa8: hangonp(); break;
-		case 0xcaac: hangonw(); break;
-		case 0xcab0: hangoncurs(); break;
-		case 0xcab4: getunderzoom(); break;
-		case 0xcab8: dumpzoom(); break;
-		case 0xcabc: putunderzoom(); break;
-		case 0xcac0: crosshair(); break;
-		case 0xcac4: showpointer(); break;
-		case 0xcac8: delpointer(); break;
-		case 0xcacc: dumppointer(); break;
-		case 0xcad0: undertextline(); break;
-		case 0xcad4: deltextline(); break;
-		case 0xcad8: dumptextline(); break;
-		case 0xcadc: animpointer(); break;
-		case 0xcae0: setmouse(); break;
-		case 0xcae4: readmouse(); break;
-		case 0xcae8: mousecall(); break;
-		case 0xcaec: readmouse1(); break;
-		case 0xcaf0: readmouse2(); break;
-		case 0xcaf4: readmouse3(); break;
-		case 0xcaf8: readmouse4(); break;
-		case 0xcafc: readkey(); break;
-		case 0xcb04: randomnum1(); break;
-		case 0xcb08: randomnum2(); break;
-		case 0xcb10: hangon(); break;
-		case 0xcb14: loadtraveltext(); break;
-		case 0xcb18: loadintotemp(); break;
-		case 0xcb1c: loadintotemp2(); break;
-		case 0xcb20: loadintotemp3(); break;
-		case 0xcb24: loadtempcharset(); break;
-		case 0xcb28: standardload(); break;
-		case 0xcb2c: loadtemptext(); break;
-		case 0xcb30: loadroom(); break;
-		case 0xcb34: loadroomssample(); break;
-		case 0xcb38: getridofreels(); break;
-		case 0xcb3c: getridofall(); break;
-		case 0xcb40: restorereels(); break;
-		case 0xcb44: restoreall(); break;
-		case 0xcb48: sortoutmap(); break;
-		case 0xcb4c: startloading(); break;
-		case 0xcb50: disablepath(); break;
-		case 0xcb54: findxyfrompath(); break;
-		case 0xcb58: findroominloc(); break;
-		case 0xcb5c: getroomdata(); break;
-		case 0xcb60: readheader(); break;
-		case 0xcb64: dontloadseg(); break;
-		case 0xcb68: allocateload(); break;
-		case 0xcb6c: fillspace(); break;
-		case 0xcb70: getridoftemp(); break;
-		case 0xcb74: getridoftemptext(); break;
-		case 0xcb78: getridoftemp2(); break;
-		case 0xcb7c: getridoftemp3(); break;
-		case 0xcb80: getridoftempcharset(); break;
-		case 0xcb84: getridoftempsp(); break;
-		case 0xcb88: readsetdata(); break;
-		case 0xcb8c: createfile(); break;
-		case 0xcb90: openfile(); break;
-		case 0xcb94: openfilefromc(); break;
-		case 0xcb98: makename(); break;
-		case 0xcb9c: openfilenocheck(); break;
-		case 0xcba0: openforsave(); break;
-		case 0xcba4: closefile(); break;
-		case 0xcba8: readfromfile(); break;
-		case 0xcbac: setkeyboardint(); break;
-		case 0xcbb0: resetkeyboard(); break;
-		case 0xcbb4: keyboardread(); break;
-		case 0xcbb8: walkandexamine(); break;
-		case 0xcbbc: doload(); break;
-		case 0xcbc0: generalerror(); break;
+		case addr_alleybarksound: alleybarksound(); break;
+		case addr_intromusic: intromusic(); break;
+		case addr_foghornsound: foghornsound(); break;
+		case addr_receptionist: receptionist(); break;
+		case addr_smokebloke: smokebloke(); break;
+		case addr_attendant: attendant(); break;
+		case addr_manasleep: manasleep(); break;
+		case addr_eden: eden(); break;
+		case addr_edeninbath: edeninbath(); break;
+		case addr_malefan: malefan(); break;
+		case addr_femalefan: femalefan(); break;
+		case addr_louis: louis(); break;
+		case addr_louischair: louischair(); break;
+		case addr_manasleep2: manasleep2(); break;
+		case addr_mansatstill: mansatstill(); break;
+		case addr_tattooman: tattooman(); break;
+		case addr_drinker: drinker(); break;
+		case addr_bartender: bartender(); break;
+		case addr_othersmoker: othersmoker(); break;
+		case addr_barwoman: barwoman(); break;
+		case addr_interviewer: interviewer(); break;
+		case addr_soldier1: soldier1(); break;
+		case addr_rockstar: rockstar(); break;
+		case addr_helicopter: helicopter(); break;
+		case addr_mugger: mugger(); break;
+		case addr_aide: aide(); break;
+		case addr_businessman: businessman(); break;
+		case addr_poolguard: poolguard(); break;
+		case addr_security: security(); break;
+		case addr_heavy: heavy(); break;
+		case addr_bossman: bossman(); break;
+		case addr_gamer: gamer(); break;
+		case addr_sparkydrip: sparkydrip(); break;
+		case addr_carparkdrip: carparkdrip(); break;
+		case addr_keeper: keeper(); break;
+		case addr_candles1: candles1(); break;
+		case addr_smallcandle: smallcandle(); break;
+		case addr_intromagic1: intromagic1(); break;
+		case addr_candles: candles(); break;
+		case addr_candles2: candles2(); break;
+		case addr_gates: gates(); break;
+		case addr_intromagic2: intromagic2(); break;
+		case addr_intromagic3: intromagic3(); break;
+		case addr_intromonks1: intromonks1(); break;
+		case addr_intromonks2: intromonks2(); break;
+		case addr_handclap: handclap(); break;
+		case addr_monks2text: monks2text(); break;
+		case addr_intro1text: intro1text(); break;
+		case addr_intro2text: intro2text(); break;
+		case addr_intro3text: intro3text(); break;
+		case addr_monkandryan: monkandryan(); break;
+		case addr_endgameseq: endgameseq(); break;
+		case addr_rollendcredits: rollendcredits(); break;
+		case addr_priest: priest(); break;
+		case addr_madmanstelly: madmanstelly(); break;
+		case addr_madman: madman(); break;
+		case addr_priesttext: priesttext(); break;
+		case addr_textforend: textforend(); break;
+		case addr_textformonk: textformonk(); break;
+		case addr_drunk: drunk(); break;
+		case addr_advisor: advisor(); break;
+		case addr_copper: copper(); break;
+		case addr_sparky: sparky(); break;
+		case addr_train: train(); break;
+		case addr_addtopeoplelist: addtopeoplelist(); break;
+		case addr_checkspeed: checkspeed(); break;
+		case addr_delsprite: delsprite(); break;
+		case addr_mainman: mainman(); break;
+		case addr_checkforexit: checkforexit(); break;
+		case addr_adjustdown: adjustdown(); break;
+		case addr_adjustup: adjustup(); break;
+		case addr_adjustleft: adjustleft(); break;
+		case addr_adjustright: adjustright(); break;
+		case addr_reminders: reminders(); break;
+		case addr_initrain: initrain(); break;
+		case addr_splitintolines: splitintolines(); break;
+		case addr_getblockofpixel: getblockofpixel(); break;
+		case addr_backobject: backobject(); break;
+		case addr_liftnoise: liftnoise(); break;
+		case addr_random: random(); break;
+		case addr_steady: steady(); break;
+		case addr_constant: constant(); break;
+		case addr_reelsonscreen: reelsonscreen(); break;
+		case addr_soundonreels: soundonreels(); break;
+		case addr_reconstruct: reconstruct(); break;
+		case addr_deleverything: deleverything(); break;
+		case addr_dumpeverything: dumpeverything(); break;
+		case addr_showpcx: showpcx(); break;
+		case addr_loadpalfromiff: loadpalfromiff(); break;
+		case addr_setmode: setmode(); break;
+		case addr_paneltomap: paneltomap(); break;
+		case addr_maptopanel: maptopanel(); break;
+		case addr_dumpmap: dumpmap(); break;
+		case addr_pixelcheckset: pixelcheckset(); break;
+		case addr_createpanel: createpanel(); break;
+		case addr_createpanel2: createpanel2(); break;
+		case addr_vsync: vsync(); break;
+		case addr_doshake: doshake(); break;
+		case addr_delthisone: delthisone(); break;
+		case addr_transferinv: transferinv(); break;
+		case addr_transfermap: transfermap(); break;
+		case addr_fadedos: fadedos(); break;
+		case addr_dofade: dofade(); break;
+		case addr_clearendpal: clearendpal(); break;
+		case addr_clearpalette: clearpalette(); break;
+		case addr_fadescreenup: fadescreenup(); break;
+		case addr_fadetowhite: fadetowhite(); break;
+		case addr_fadefromwhite: fadefromwhite(); break;
+		case addr_fadescreenups: fadescreenups(); break;
+		case addr_fadescreendownhalf: fadescreendownhalf(); break;
+		case addr_fadescreenuphalf: fadescreenuphalf(); break;
+		case addr_fadescreendown: fadescreendown(); break;
+		case addr_fadescreendowns: fadescreendowns(); break;
+		case addr_clearstartpal: clearstartpal(); break;
+		case addr_showgun: showgun(); break;
+		case addr_rollendcredits2: rollendcredits2(); break;
+		case addr_rollem: rollem(); break;
+		case addr_fadecalculation: fadecalculation(); break;
+		case addr_greyscalesum: greyscalesum(); break;
+		case addr_showgroup: showgroup(); break;
+		case addr_paltostartpal: paltostartpal(); break;
+		case addr_endpaltostart: endpaltostart(); break;
+		case addr_startpaltoend: startpaltoend(); break;
+		case addr_paltoendpal: paltoendpal(); break;
+		case addr_allpalette: allpalette(); break;
+		case addr_dumpcurrent: dumpcurrent(); break;
+		case addr_fadedownmon: fadedownmon(); break;
+		case addr_fadeupmon: fadeupmon(); break;
+		case addr_fadeupmonfirst: fadeupmonfirst(); break;
+		case addr_fadeupyellows: fadeupyellows(); break;
+		case addr_initialmoncols: initialmoncols(); break;
+		case addr_titles: titles(); break;
+		case addr_endgame: endgame(); break;
+		case addr_monkspeaking: monkspeaking(); break;
+		case addr_showmonk: showmonk(); break;
+		case addr_gettingshot: gettingshot(); break;
+		case addr_credits: credits(); break;
+		case addr_biblequote: biblequote(); break;
+		case addr_hangone: hangone(); break;
+		case addr_intro: intro(); break;
+		case addr_runintroseq: runintroseq(); break;
+		case addr_runendseq: runendseq(); break;
+		case addr_loadintroroom: loadintroroom(); break;
+		case addr_mode640x480: mode640x480(); break;
+		case addr_set16colpalette: set16colpalette(); break;
+		case addr_realcredits: realcredits(); break;
+		case addr_waitframes: waitframes(); break;
+		case addr_monprint: monprint(); break;
+		case addr_fillryan: fillryan(); break;
+		case addr_fillopen: fillopen(); break;
+		case addr_findallryan: findallryan(); break;
+		case addr_findallopen: findallopen(); break;
+		case addr_obtoinv: obtoinv(); break;
+		case addr_isitworn: isitworn(); break;
+		case addr_makeworn: makeworn(); break;
+		case addr_examineob: examineob(); break;
+		case addr_makemainscreen: makemainscreen(); break;
+		case addr_getbackfromob: getbackfromob(); break;
+		case addr_incryanpage: incryanpage(); break;
+		case addr_openinv: openinv(); break;
+		case addr_showryanpage: showryanpage(); break;
+		case addr_openob: openob(); break;
+		case addr_obicons: obicons(); break;
+		case addr_examicon: examicon(); break;
+		case addr_obpicture: obpicture(); break;
+		case addr_describeob: describeob(); break;
+		case addr_additionaltext: additionaltext(); break;
+		case addr_obsthatdothings: obsthatdothings(); break;
+		case addr_getobtextstart: getobtextstart(); break;
+		case addr_searchforsame: searchforsame(); break;
+		case addr_findnextcolon: findnextcolon(); break;
+		case addr_inventory: inventory(); break;
+		case addr_setpickup: setpickup(); break;
+		case addr_examinventory: examinventory(); break;
+		case addr_reexfrominv: reexfrominv(); break;
+		case addr_reexfromopen: reexfromopen(); break;
+		case addr_swapwithinv: swapwithinv(); break;
+		case addr_swapwithopen: swapwithopen(); break;
+		case addr_intoinv: intoinv(); break;
+		case addr_outofinv: outofinv(); break;
+		case addr_getfreead: getfreead(); break;
+		case addr_getexad: getexad(); break;
+		case addr_geteitherad: geteitherad(); break;
+		case addr_getanyad: getanyad(); break;
+		case addr_getanyaddir: getanyaddir(); break;
+		case addr_getopenedsize: getopenedsize(); break;
+		case addr_getsetad: getsetad(); break;
+		case addr_findinvpos: findinvpos(); break;
+		case addr_findopenpos: findopenpos(); break;
+		case addr_dropobject: dropobject(); break;
+		case addr_droperror: droperror(); break;
+		case addr_cantdrop: cantdrop(); break;
+		case addr_wornerror: wornerror(); break;
+		case addr_removeobfrominv: removeobfrominv(); break;
+		case addr_selectopenob: selectopenob(); break;
+		case addr_useopened: useopened(); break;
+		case addr_errormessage1: errormessage1(); break;
+		case addr_errormessage2: errormessage2(); break;
+		case addr_errormessage3: errormessage3(); break;
+		case addr_checkobjectsize: checkobjectsize(); break;
+		case addr_outofopen: outofopen(); break;
+		case addr_transfertoex: transfertoex(); break;
+		case addr_pickupconts: pickupconts(); break;
+		case addr_transfercontoex: transfercontoex(); break;
+		case addr_transfertext: transfertext(); break;
+		case addr_getexpos: getexpos(); break;
+		case addr_purgealocation: purgealocation(); break;
+		case addr_emergencypurge: emergencypurge(); break;
+		case addr_purgeanitem: purgeanitem(); break;
+		case addr_deleteexobject: deleteexobject(); break;
+		case addr_deleteexframe: deleteexframe(); break;
+		case addr_deleteextext: deleteextext(); break;
+		case addr_blockget: blockget(); break;
+		case addr_drawfloor: drawfloor(); break;
+		case addr_drawflags: drawflags(); break;
+		case addr_showallex: showallex(); break;
+		case addr_autolook: autolook(); break;
+		case addr_look: look(); break;
+		case addr_dolook: dolook(); break;
+		case addr_redrawmainscrn: redrawmainscrn(); break;
+		case addr_getback1: getback1(); break;
+		case addr_talk: talk(); break;
+		case addr_convicons: convicons(); break;
+		case addr_getpersframe: getpersframe(); break;
+		case addr_starttalk: starttalk(); break;
+		case addr_getpersontext: getpersontext(); break;
+		case addr_moretalk: moretalk(); break;
+		case addr_dosometalk: dosometalk(); break;
+		case addr_hangonpq: hangonpq(); break;
+		case addr_redes: redes(); break;
+		case addr_newplace: newplace(); break;
+		case addr_selectlocation: selectlocation(); break;
+		case addr_showcity: showcity(); break;
+		case addr_lookatplace: lookatplace(); break;
+		case addr_getundercentre: getundercentre(); break;
+		case addr_putundercentre: putundercentre(); break;
+		case addr_locationpic: locationpic(); break;
+		case addr_getdestinfo: getdestinfo(); break;
+		case addr_showarrows: showarrows(); break;
+		case addr_nextdest: nextdest(); break;
+		case addr_lastdest: lastdest(); break;
+		case addr_destselect: destselect(); break;
+		case addr_getlocation: getlocation(); break;
+		case addr_setlocation: setlocation(); break;
+		case addr_resetlocation: resetlocation(); break;
+		case addr_readdesticon: readdesticon(); break;
+		case addr_readcitypic: readcitypic(); break;
+		case addr_usemon: usemon(); break;
+		case addr_printoutermon: printoutermon(); break;
+		case addr_loadpersonal: loadpersonal(); break;
+		case addr_loadnews: loadnews(); break;
+		case addr_loadcart: loadcart(); break;
+		case addr_lookininterface: lookininterface(); break;
+		case addr_turnonpower: turnonpower(); break;
+		case addr_randomaccess: randomaccess(); break;
+		case addr_powerlighton: powerlighton(); break;
+		case addr_powerlightoff: powerlightoff(); break;
+		case addr_accesslighton: accesslighton(); break;
+		case addr_accesslightoff: accesslightoff(); break;
+		case addr_locklighton: locklighton(); break;
+		case addr_locklightoff: locklightoff(); break;
+		case addr_input: input(); break;
+		case addr_makecaps: makecaps(); break;
+		case addr_delchar: delchar(); break;
+		case addr_execcommand: execcommand(); break;
+		case addr_neterror: neterror(); break;
+		case addr_dircom: dircom(); break;
+		case addr_searchforfiles: searchforfiles(); break;
+		case addr_signon: signon(); break;
+		case addr_showkeys: showkeys(); break;
+		case addr_read: read(); break;
+		case addr_dirfile: dirfile(); break;
+		case addr_getkeyandlogo: getkeyandlogo(); break;
+		case addr_searchforstring: searchforstring(); break;
+		case addr_parser: parser(); break;
+		case addr_scrollmonitor: scrollmonitor(); break;
+		case addr_monitorlogo: monitorlogo(); break;
+		case addr_printlogo: printlogo(); break;
+		case addr_showcurrentfile: showcurrentfile(); break;
+		case addr_monmessage: monmessage(); break;
+		case addr_processtrigger: processtrigger(); break;
+		case addr_triggermessage: triggermessage(); break;
+		case addr_printcurs: printcurs(); break;
+		case addr_delcurs: delcurs(); break;
+		case addr_useobject: useobject(); break;
+		case addr_useroutine: useroutine(); break;
+		case addr_wheelsound: wheelsound(); break;
+		case addr_runtap: runtap(); break;
+		case addr_playguitar: playguitar(); break;
+		case addr_hotelcontrol: hotelcontrol(); break;
+		case addr_hotelbell: hotelbell(); break;
+		case addr_opentomb: opentomb(); break;
+		case addr_usetrainer: usetrainer(); break;
+		case addr_nothelderror: nothelderror(); break;
+		case addr_usepipe: usepipe(); break;
+		case addr_usefullcart: usefullcart(); break;
+		case addr_useplinth: useplinth(); break;
+		case addr_chewy: chewy(); break;
+		case addr_useladder: useladder(); break;
+		case addr_useladderb: useladderb(); break;
+		case addr_slabdoora: slabdoora(); break;
+		case addr_slabdoorb: slabdoorb(); break;
+		case addr_slabdoord: slabdoord(); break;
+		case addr_slabdoorc: slabdoorc(); break;
+		case addr_slabdoore: slabdoore(); break;
+		case addr_slabdoorf: slabdoorf(); break;
+		case addr_useslab: useslab(); break;
+		case addr_usecart: usecart(); break;
+		case addr_useclearbox: useclearbox(); break;
+		case addr_usecoveredbox: usecoveredbox(); break;
+		case addr_userailing: userailing(); break;
+		case addr_useopenbox: useopenbox(); break;
+		case addr_wearwatch: wearwatch(); break;
+		case addr_wearshades: wearshades(); break;
+		case addr_sitdowninbar: sitdowninbar(); break;
+		case addr_usechurchhole: usechurchhole(); break;
+		case addr_usehole: usehole(); break;
+		case addr_usealtar: usealtar(); break;
+		case addr_opentvdoor: opentvdoor(); break;
+		case addr_usedryer: usedryer(); break;
+		case addr_openlouis: openlouis(); break;
+		case addr_nextcolon: nextcolon(); break;
+		case addr_openyourneighbour: openyourneighbour(); break;
+		case addr_usewindow: usewindow(); break;
+		case addr_usebalcony: usebalcony(); break;
+		case addr_openryan: openryan(); break;
+		case addr_openpoolboss: openpoolboss(); break;
+		case addr_openeden: openeden(); break;
+		case addr_opensarters: opensarters(); break;
+		case addr_isitright: isitright(); break;
+		case addr_drawitall: drawitall(); break;
+		case addr_openhoteldoor: openhoteldoor(); break;
+		case addr_openhoteldoor2: openhoteldoor2(); break;
+		case addr_grafittidoor: grafittidoor(); break;
+		case addr_trapdoor: trapdoor(); break;
+		case addr_callhotellift: callhotellift(); break;
+		case addr_calledenslift: calledenslift(); break;
+		case addr_calledensdlift: calledensdlift(); break;
+		case addr_usepoolreader: usepoolreader(); break;
+		case addr_uselighter: uselighter(); break;
+		case addr_showseconduse: showseconduse(); break;
+		case addr_usecardreader1: usecardreader1(); break;
+		case addr_usecardreader2: usecardreader2(); break;
+		case addr_usecardreader3: usecardreader3(); break;
+		case addr_usecashcard: usecashcard(); break;
+		case addr_lookatcard: lookatcard(); break;
+		case addr_moneypoke: moneypoke(); break;
+		case addr_usecontrol: usecontrol(); break;
+		case addr_usehatch: usehatch(); break;
+		case addr_usewire: usewire(); break;
+		case addr_usehandle: usehandle(); break;
+		case addr_useelevator1: useelevator1(); break;
+		case addr_showfirstuse: showfirstuse(); break;
+		case addr_useelevator3: useelevator3(); break;
+		case addr_useelevator4: useelevator4(); break;
+		case addr_useelevator2: useelevator2(); break;
+		case addr_useelevator5: useelevator5(); break;
+		case addr_usekey: usekey(); break;
+		case addr_usestereo: usestereo(); break;
+		case addr_usecooker: usecooker(); break;
+		case addr_useaxe: useaxe(); break;
+		case addr_useelvdoor: useelvdoor(); break;
+		case addr_withwhat: withwhat(); break;
+		case addr_selectob: selectob(); break;
+		case addr_compare: compare(); break;
+		case addr_findsetobject: findsetobject(); break;
+		case addr_findexobject: findexobject(); break;
+		case addr_isryanholding: isryanholding(); break;
+		case addr_checkinside: checkinside(); break;
+		case addr_usetext: usetext(); break;
+		case addr_putbackobstuff: putbackobstuff(); break;
+		case addr_showpuztext: showpuztext(); break;
+		case addr_findpuztext: findpuztext(); break;
+		case addr_issetobonmap: issetobonmap(); break;
+		case addr_placefreeobject: placefreeobject(); break;
+		case addr_removefreeobject: removefreeobject(); break;
+		case addr_switchryanon: switchryanon(); break;
+		case addr_switchryanoff: switchryanoff(); break;
+		case addr_autoappear: autoappear(); break;
+		case addr_setuptimeduse: setuptimeduse(); break;
+		case addr_edenscdplayer: edenscdplayer(); break;
+		case addr_usewall: usewall(); break;
+		case addr_usechurchgate: usechurchgate(); break;
+		case addr_usegun: usegun(); break;
+		case addr_useshield: useshield(); break;
+		case addr_usebuttona: usebuttona(); break;
+		case addr_useplate: useplate(); break;
+		case addr_usewinch: usewinch(); break;
+		case addr_entercode: entercode(); break;
+		case addr_loadkeypad: loadkeypad(); break;
+		case addr_quitkey: quitkey(); break;
+		case addr_addtopresslist: addtopresslist(); break;
+		case addr_buttonone: buttonone(); break;
+		case addr_buttontwo: buttontwo(); break;
+		case addr_buttonthree: buttonthree(); break;
+		case addr_buttonfour: buttonfour(); break;
+		case addr_buttonfive: buttonfive(); break;
+		case addr_buttonsix: buttonsix(); break;
+		case addr_buttonseven: buttonseven(); break;
+		case addr_buttoneight: buttoneight(); break;
+		case addr_buttonnine: buttonnine(); break;
+		case addr_buttonnought: buttonnought(); break;
+		case addr_buttonenter: buttonenter(); break;
+		case addr_buttonpress: buttonpress(); break;
+		case addr_showouterpad: showouterpad(); break;
+		case addr_showkeypad: showkeypad(); break;
+		case addr_singlekey: singlekey(); break;
+		case addr_dumpkeypad: dumpkeypad(); break;
+		case addr_usemenu: usemenu(); break;
+		case addr_dumpmenu: dumpmenu(); break;
+		case addr_getundermenu: getundermenu(); break;
+		case addr_putundermenu: putundermenu(); break;
+		case addr_showoutermenu: showoutermenu(); break;
+		case addr_showmenu: showmenu(); break;
+		case addr_loadmenu: loadmenu(); break;
+		case addr_viewfolder: viewfolder(); break;
+		case addr_nextfolder: nextfolder(); break;
+		case addr_folderhints: folderhints(); break;
+		case addr_lastfolder: lastfolder(); break;
+		case addr_loadfolder: loadfolder(); break;
+		case addr_showfolder: showfolder(); break;
+		case addr_folderexit: folderexit(); break;
+		case addr_showleftpage: showleftpage(); break;
+		case addr_showrightpage: showrightpage(); break;
+		case addr_entersymbol: entersymbol(); break;
+		case addr_quitsymbol: quitsymbol(); break;
+		case addr_settopleft: settopleft(); break;
+		case addr_settopright: settopright(); break;
+		case addr_setbotleft: setbotleft(); break;
+		case addr_setbotright: setbotright(); break;
+		case addr_dumpsymbol: dumpsymbol(); break;
+		case addr_showsymbol: showsymbol(); break;
+		case addr_nextsymbol: nextsymbol(); break;
+		case addr_updatesymboltop: updatesymboltop(); break;
+		case addr_updatesymbolbot: updatesymbolbot(); break;
+		case addr_dumpsymbox: dumpsymbox(); break;
+		case addr_usediary: usediary(); break;
+		case addr_showdiary: showdiary(); break;
+		case addr_showdiarykeys: showdiarykeys(); break;
+		case addr_dumpdiarykeys: dumpdiarykeys(); break;
+		case addr_diarykeyp: diarykeyp(); break;
+		case addr_diarykeyn: diarykeyn(); break;
+		case addr_showdiarypage: showdiarypage(); break;
+		case addr_findtext1: findtext1(); break;
+		case addr_zoomonoff: zoomonoff(); break;
+		case addr_saveload: saveload(); break;
+		case addr_dosaveload: dosaveload(); break;
+		case addr_getbackfromops: getbackfromops(); break;
+		case addr_showmainops: showmainops(); break;
+		case addr_showdiscops: showdiscops(); break;
+		case addr_loadsavebox: loadsavebox(); break;
+		case addr_loadgame: loadgame(); break;
+		case addr_getbacktoops: getbacktoops(); break;
+		case addr_discops: discops(); break;
+		case addr_savegame: savegame(); break;
+		case addr_actualsave: actualsave(); break;
+		case addr_actualload: actualload(); break;
+		case addr_selectslot2: selectslot2(); break;
+		case addr_checkinput: checkinput(); break;
+		case addr_getnamepos: getnamepos(); break;
+		case addr_showopbox: showopbox(); break;
+		case addr_showloadops: showloadops(); break;
+		case addr_showsaveops: showsaveops(); break;
+		case addr_selectslot: selectslot(); break;
+		case addr_showslots: showslots(); break;
+		case addr_shownames: shownames(); break;
+		case addr_dosreturn: dosreturn(); break;
+		case addr_error: error(); break;
+		case addr_namestoold: namestoold(); break;
+		case addr_oldtonames: oldtonames(); break;
+		case addr_savefilewrite: savefilewrite(); break;
+		case addr_savefileread: savefileread(); break;
+		case addr_saveposition: saveposition(); break;
+		case addr_loadposition: loadposition(); break;
+		case addr_loadseg: loadseg(); break;
+		case addr_makeheader: makeheader(); break;
+		case addr_storeit: storeit(); break;
+		case addr_saveseg: saveseg(); break;
+		case addr_scanfornames: scanfornames(); break;
+		case addr_decide: decide(); break;
+		case addr_showdecisions: showdecisions(); break;
+		case addr_newgame: newgame(); break;
+		case addr_loadold: loadold(); break;
+		case addr_loadspeech: loadspeech(); break;
+		case addr_createname: createname(); break;
+		case addr_loadsample: loadsample(); break;
+		case addr_loadsecondsample: loadsecondsample(); break;
+		case addr_soundstartup: soundstartup(); break;
+		case addr_trysoundalloc: trysoundalloc(); break;
+		case addr_setsoundoff: setsoundoff(); break;
+		case addr_checksoundint: checksoundint(); break;
+		case addr_enablesoundint: enablesoundint(); break;
+		case addr_disablesoundint: disablesoundint(); break;
+		case addr_interupttest: interupttest(); break;
+		case addr_soundend: soundend(); break;
+		case addr_out22c: out22c(); break;
+		case addr_playchannel0: playchannel0(); break;
+		case addr_playchannel1: playchannel1(); break;
+		case addr_volumeadjust: volumeadjust(); break;
+		case addr_channel0only: channel0only(); break;
+		case addr_channel1only: channel1only(); break;
+		case addr_bothchannels: bothchannels(); break;
+		case addr_saveems: saveems(); break;
+		case addr_restoreems: restoreems(); break;
+		case addr_dmaend: dmaend(); break;
+		case addr_startdmablock: startdmablock(); break;
+		case addr_setuppit: setuppit(); break;
+		case addr_getridofpit: getridofpit(); break;
+		case addr_pitinterupt: pitinterupt(); break;
+		case addr_dreamweb: dreamweb(); break;
+		case addr_entrytexts: entrytexts(); break;
+		case addr_entryanims: entryanims(); break;
+		case addr_initialinv: initialinv(); break;
+		case addr_pickupob: pickupob(); break;
+		case addr_setupemm: setupemm(); break;
+		case addr_removeemm: removeemm(); break;
+		case addr_checkforemm: checkforemm(); break;
+		case addr_checkbasemem: checkbasemem(); break;
+		case addr_allocatebuffers: allocatebuffers(); break;
+		case addr_clearbuffers: clearbuffers(); break;
+		case addr_clearchanges: clearchanges(); break;
+		case addr_clearbeforeload: clearbeforeload(); break;
+		case addr_clearreels: clearreels(); break;
+		case addr_clearrest: clearrest(); break;
+		case addr_deallocatemem: deallocatemem(); break;
+		case addr_allocatemem: allocatemem(); break;
+		case addr_startup: startup(); break;
+		case addr_startup1: startup1(); break;
+		case addr_screenupdate: screenupdate(); break;
+		case addr_watchreel: watchreel(); break;
+		case addr_checkforshake: checkforshake(); break;
+		case addr_watchcount: watchcount(); break;
+		case addr_showtime: showtime(); break;
+		case addr_dumpwatch: dumpwatch(); break;
+		case addr_showbyte: showbyte(); break;
+		case addr_onedigit: onedigit(); break;
+		case addr_twodigitnum: twodigitnum(); break;
+		case addr_showword: showword(); break;
+		case addr_convnum: convnum(); break;
+		case addr_mainscreen: mainscreen(); break;
+		case addr_madmanrun: madmanrun(); break;
+		case addr_checkcoords: checkcoords(); break;
+		case addr_identifyob: identifyob(); break;
+		case addr_checkifset: checkifset(); break;
+		case addr_checkifex: checkifex(); break;
+		case addr_isitdescribed: isitdescribed(); break;
+		case addr_findpathofpoint: findpathofpoint(); break;
+		case addr_findfirstpath: findfirstpath(); break;
+		case addr_turnpathon: turnpathon(); break;
+		case addr_turnpathoff: turnpathoff(); break;
+		case addr_turnanypathon: turnanypathon(); break;
+		case addr_turnanypathoff: turnanypathoff(); break;
+		case addr_checkifpathison: checkifpathison(); break;
+		case addr_afternewroom: afternewroom(); break;
+		case addr_atmospheres: atmospheres(); break;
+		case addr_walkintoroom: walkintoroom(); break;
+		case addr_afterintroroom: afterintroroom(); break;
+		case addr_obname: obname(); break;
+		case addr_examineobtext: examineobtext(); break;
+		case addr_printmessage: printmessage(); break;
+		case addr_printmessage2: printmessage2(); break;
+		case addr_getflagunderp: getflagunderp(); break;
+		case addr_setwalk: setwalk(); break;
+		case addr_bresenhams: bresenhams(); break;
+		case addr_workoutframes: workoutframes(); break;
+		case addr_showicon: showicon(); break;
+		case addr_middlepanel: middlepanel(); break;
+		case addr_showman: showman(); break;
+		case addr_roomname: roomname(); break;
+		case addr_usecharset1: usecharset1(); break;
+		case addr_usetempcharset: usetempcharset(); break;
+		case addr_showexit: showexit(); break;
+		case addr_panelicons1: panelicons1(); break;
+		case addr_showwatch: showwatch(); break;
+		case addr_gettime: gettime(); break;
+		case addr_zoomicon: zoomicon(); break;
+		case addr_showblink: showblink(); break;
+		case addr_dumpblink: dumpblink(); break;
+		case addr_worktoscreenm: worktoscreenm(); break;
+		case addr_blank: blank(); break;
+		case addr_allpointer: allpointer(); break;
+		case addr_hangonp: hangonp(); break;
+		case addr_hangonw: hangonw(); break;
+		case addr_hangoncurs: hangoncurs(); break;
+		case addr_getunderzoom: getunderzoom(); break;
+		case addr_dumpzoom: dumpzoom(); break;
+		case addr_putunderzoom: putunderzoom(); break;
+		case addr_showpointer: showpointer(); break;
+		case addr_delpointer: delpointer(); break;
+		case addr_dumppointer: dumppointer(); break;
+		case addr_undertextline: undertextline(); break;
+		case addr_animpointer: animpointer(); break;
+		case addr_setmouse: setmouse(); break;
+		case addr_readmouse: readmouse(); break;
+		case addr_mousecall: mousecall(); break;
+		case addr_readmouse1: readmouse1(); break;
+		case addr_readmouse2: readmouse2(); break;
+		case addr_readmouse3: readmouse3(); break;
+		case addr_readmouse4: readmouse4(); break;
+		case addr_readkey: readkey(); break;
+		case addr_randomnum1: randomnum1(); break;
+		case addr_randomnum2: randomnum2(); break;
+		case addr_hangon: hangon(); break;
+		case addr_loadtraveltext: loadtraveltext(); break;
+		case addr_loadintotemp: loadintotemp(); break;
+		case addr_loadintotemp2: loadintotemp2(); break;
+		case addr_loadintotemp3: loadintotemp3(); break;
+		case addr_loadtempcharset: loadtempcharset(); break;
+		case addr_standardload: standardload(); break;
+		case addr_loadtemptext: loadtemptext(); break;
+		case addr_loadroom: loadroom(); break;
+		case addr_loadroomssample: loadroomssample(); break;
+		case addr_getridofreels: getridofreels(); break;
+		case addr_getridofall: getridofall(); break;
+		case addr_restorereels: restorereels(); break;
+		case addr_restoreall: restoreall(); break;
+		case addr_sortoutmap: sortoutmap(); break;
+		case addr_disablepath: disablepath(); break;
+		case addr_findroominloc: findroominloc(); break;
+		case addr_dontloadseg: dontloadseg(); break;
+		case addr_allocateload: allocateload(); break;
+		case addr_getridoftemp: getridoftemp(); break;
+		case addr_getridoftemptext: getridoftemptext(); break;
+		case addr_getridoftemp2: getridoftemp2(); break;
+		case addr_getridoftemp3: getridoftemp3(); break;
+		case addr_getridoftempcharset: getridoftempcharset(); break;
+		case addr_getridoftempsp: getridoftempsp(); break;
+		case addr_readsetdata: readsetdata(); break;
+		case addr_createfile: createfile(); break;
+		case addr_openfile: openfile(); break;
+		case addr_openfilefromc: openfilefromc(); break;
+		case addr_openfilenocheck: openfilenocheck(); break;
+		case addr_openforsave: openforsave(); break;
+		case addr_closefile: closefile(); break;
+		case addr_readfromfile: readfromfile(); break;
+		case addr_setkeyboardint: setkeyboardint(); break;
+		case addr_resetkeyboard: resetkeyboard(); break;
+		case addr_keyboardread: keyboardread(); break;
+		case addr_walkandexamine: walkandexamine(); break;
+		case addr_doload: doload(); break;
+		case addr_generalerror: generalerror(); break;
 		default: ::error("invalid call to %04x dispatched", (uint16)ax);
 	}
 }

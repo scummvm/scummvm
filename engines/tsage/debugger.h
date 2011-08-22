@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "gui/debugger.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class Debugger : public GUI::Debugger {
 public:
@@ -42,10 +42,10 @@ protected:
 	bool Cmd_ClearFlag(int argc, const char **argv);
 	bool Cmd_ListObjects(int argc, const char **argv);
 	bool Cmd_MoveObject(int argc, const char **argv);
-
 	bool Cmd_Hotspots(int argc, const char **argv);
+	bool Cmd_Sound(int argc, const char **argv);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

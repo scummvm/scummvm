@@ -95,7 +95,7 @@ void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int un
 			_emc->run(&_sceneScriptState);
 	}
 
-	Common::for_each(_wsaSlots, _wsaSlots+ARRAYSIZE(_wsaSlots), Common::mem_fun(&WSAMovie_v2::close));
+	Common::for_each(_wsaSlots, ARRAYEND(_wsaSlots), Common::mem_fun(&WSAMovie_v2::close));
 	_specialExitCount = 0;
 	memset(_specialExitTable, -1, sizeof(_specialExitTable));
 
@@ -735,4 +735,3 @@ bool KyraEngine_HoF::lineIsPassable(int x, int y) {
 }
 
 } // End of namespace Kyra
-

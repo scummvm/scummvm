@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/types.h"
 
 namespace Common {
 
@@ -185,12 +186,12 @@ public:
 	}
 
 	template<class T2>
-	bool operator==(const Common::SharedPtr<T2> &r) const {
+	bool operator==(const SharedPtr<T2> &r) const {
 		return _pointer == r.get();
 	}
 
 	template<class T2>
-	bool operator!=(const Common::SharedPtr<T2> &r) const {
+	bool operator!=(const SharedPtr<T2> &r) const {
 		return _pointer != r.get();
 	}
 
@@ -231,7 +232,6 @@ public:
 
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
-	operator PointerType() const { return _pointer; }
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
@@ -272,6 +272,41 @@ public:
 
 private:
 	PointerType _pointer;
+};
+
+
+template<typename T>
+class DisposablePtr : NonCopyable {
+public:
+	typedef T  ValueType;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
+
+	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
+
+	~DisposablePtr() {
+		if (_dispose) delete _pointer;
+	}
+
+	ReferenceType operator*() const { return *_pointer; }
+	PointerType operator->() const { return _pointer; }
+
+	/**
+	 * Implicit conversion operator to bool for convenience, to make
+	 * checks like "if (scopedPtr) ..." possible.
+	 */
+	operator bool() const { return _pointer; }
+
+	/**
+	 * Returns the plain pointer value.
+	 *
+	 * @return the pointer the DisposablePtr manages
+	 */
+	PointerType get() const { return _pointer; }
+
+private:
+	PointerType           _pointer;
+	DisposeAfterUse::Flag _dispose;
 };
 
 } // End of namespace Common

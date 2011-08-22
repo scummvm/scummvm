@@ -117,7 +117,7 @@ static const char *mystStackNames[12] = {
 static const uint16 default_start_card[12] = {
 	3137,
 	10000,
-	2001, // TODO: Should be 2000?
+	2000,
 	5038,
 	2, // TODO: Should be 1?
 	1,

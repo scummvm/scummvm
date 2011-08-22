@@ -21,38 +21,41 @@
 
 namespace {
 
-#define FLAGS(x, y, z, a, b, c, d, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, id }
-#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, id }
+#define FLAGS(x, y, z, a, b, c, d, e, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, id }
+#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, e, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, true, Kyra::GI_KYRA1)
+#define KYRA1_OLDFLOPPY_FLAGS FLAGS(false, false, false, true, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, false, true, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA2)
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, true, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, false, true, false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, true, false, Kyra::GI_KYRA3)
-#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, false, true, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, true, false, Kyra::GI_KYRA3)
 
-#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, Kyra::GI_LOL)
-#define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_LOL)
-#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, true, true, false, false, Kyra::GI_LOL)
-#define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, true, Kyra::GI_LOL)
+#define LOL_PC98_SJIS_FLAGS FLAGS(false, false, false, false, true, true, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
@@ -95,6 +98,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -142,6 +146,18 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
 		},
 		KYRA1_FLOPPY_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			"Extracted",
+			AD_ENTRY1("GEMCUT.EMC", "689b62b7519215c1b2571d466c95624c"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIPCSPK
+		},
+		KYRA1_OLDFLOPPY_FLAGS
 	},
 	{ // from VooD
 		{
@@ -484,6 +500,32 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
 		},
 		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("CH01-S00.DLG", "54b7a5a94f6e1ec91f0fb1311eec09ab"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		KYRA2_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			"Extracted",
+			AD_ENTRY1("CH01-S00.DLG", "7c36c0e63ab8c81cbb3ea58681331366"),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		KYRA2_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
 	{ // CD version
@@ -1057,6 +1099,59 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_CD_FLAGS
 	},
 
+	// Russian fan translation
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
 	// Italian fan translation
 	{
 		{
@@ -1276,6 +1371,24 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	// Russian fan translation
+	{
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "d8f4c1153aed2418f41f886c3fb27543", -1 },
+				{ "CHAPTER7.PAK", 0, "f0b8a2fdff951738834fadc12248ac1f", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIADLIB | Common::GUIO_MIDIMT32 | Common::GUIO_MIDIGM | Common::GUIO_MIDIPCSPK
+		},
+		LOL_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
+	},
+
 	{
 		{
 			"lol",
@@ -1326,7 +1439,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_KYRA2_DEMO_FLAGS
 	},
 #endif // ENABLE_LOL
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

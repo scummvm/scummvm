@@ -134,4 +134,3 @@ void Label::draw(float x, float y, unsigned int argb, float scale)
   myvertex.cmd |= TA_CMD_VERTEX_EOS;
   ta_commit_list(&myvertex);
 }
-

@@ -96,4 +96,3 @@ SCNHANDLE LanguageFlag(LANGUAGE thisOne);
 } // End of namespace Tinsel
 
 #endif
-

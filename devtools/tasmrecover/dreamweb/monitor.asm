@@ -1490,8 +1490,3 @@ finishcurdel:
 	ret
 
 	endp
-
-
-
-
-

@@ -61,5 +61,3 @@ I_StartThread
 I_GetThreadId
 I_DelayThread
 thbase_IMPORTS_end
-
-

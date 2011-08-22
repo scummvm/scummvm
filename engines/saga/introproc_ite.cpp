@@ -179,21 +179,22 @@ enum {
 EventColumns *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]) {
 	int game;
 	Common::Language lang;
+	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
+							   Common::File::exists("credit3m.dlt"));	// Mac
 
 	// The assumption here is that all WyrmKeep versions have the same
 	// credits, regardless of which operating system they're for.
 
 	lang = _vm->getLanguage();
 
-	if (_vm->getFeatures() & GF_WYRMKEEP) {
+	if (hasWyrmkeepCredits)
 		game = kITEWyrmKeep;
-	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
 		game = kITEMac;
-	} else if (_vm->getFeatures() & GF_EXTRA_ITE_CREDITS) {
+	else if (_vm->getFeatures() & GF_EXTRA_ITE_CREDITS)
 		game = kITEPCCD;
-	} else {
+	else
 		game = kITEPC;
-	}
 
 	int line_spacing = 0;
 	int paragraph_spacing;
@@ -303,6 +304,11 @@ int Scene::SC_ITEIntroAnimProc(int param, void *refCon) {
 int Scene::ITEIntroAnimProc(int param) {
 	Event event;
 	EventColumns *eventColumns;
+	bool isMac = _vm->getPlatform() == Common::kPlatformMacintosh;
+	bool isMultiCD = _vm->getPlatform() == Common::kPlatformUnknown;
+	bool hasWyrmkeepCredits = (Common::File::exists("credit3n.dlt") ||	// PC
+							   Common::File::exists("credit3m.dlt"));	// Mac
+	bool isDemo = Common::File::exists("scriptsd.rsc");
 
 	switch (param) {
 	case SCENE_BEGIN:{
@@ -324,19 +330,10 @@ int Scene::ITEIntroAnimProc(int param) {
 		// playback
 		int lastAnim;
 
-		if (_vm->getFeatures() & GF_WYRMKEEP) {
-			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-				lastAnim = 3;
-			} else {
-				lastAnim = 2;
-			}
-		} else {
-			if (_vm->getPlatform() == Common::kPlatformMacintosh) {
-				lastAnim = 4;
-			} else {
-				lastAnim = 5;
-			}
-		}
+		if (hasWyrmkeepCredits || isMultiCD || isDemo)
+			lastAnim = isMac ? 3 : 2;
+		else
+			lastAnim = isMac ? 4 : 5;
 
 		for (int i = 0; i < lastAnim; i++)
 			_vm->_anim->link(i, i+1);

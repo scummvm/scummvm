@@ -123,4 +123,3 @@ struct Object {
 } // End of namespace Sword1
 
 #endif //BSOBJECT_H
-

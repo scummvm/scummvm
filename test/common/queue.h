@@ -80,4 +80,3 @@ public:
 		TS_ASSERT(!q2.empty());
 	}
 };
-

@@ -683,7 +683,7 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 void GfxPalette::palVaryInstallTimer() {
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
 	// Call signal increase every [ticks]
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this, "sciPalette");
 }
 
 void GfxPalette::palVaryRemoveTimer() {

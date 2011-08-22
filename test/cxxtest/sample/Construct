@@ -60,5 +60,3 @@ sub cons::CxxTestErrorPrinter($$@) {
   my ($env, $dst, @srcs) = @_;
   CxxTestRunner $env $dst, 'ErrorPrinter', @srcs;
 }
-
-

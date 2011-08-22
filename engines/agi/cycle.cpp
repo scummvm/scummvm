@@ -47,8 +47,8 @@ void AgiEngine::newRoom(int n) {
 	i = 0;
 	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
 		v->entry = i++;
-		v->flags &= ~(ANIMATED | DRAWN);
-		v->flags |= UPDATE;
+		v->flags &= ~(fAnimated | fDrawn);
+		v->flags |= fUpdate;
 		v->stepTime = 1;
 		v->stepTimeCount = 1;
 		v->cycleTime = 1;
@@ -220,7 +220,7 @@ int AgiEngine::mainCycle() {
 	}
 
 	// Click-to-walk mouse interface
-	if (_game.playerControl && v->flags & ADJ_EGO_XY) {
+	if (_game.playerControl && v->flags & fAdjEgoXY) {
 		int toX = v->parm1;
 		int toY = v->parm2;
 

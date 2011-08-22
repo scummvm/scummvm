@@ -27,8 +27,8 @@ namespace Agi {
 
 class AgiEngine;
 class PreAgiEngine;
-class Winnie;
-class Mickey;
+class MickeyEngine;
+class WinnieEngine;
 
 struct AgiDebug {
 	int enabled;
@@ -67,23 +67,13 @@ private:
 	AgiEngine *_vm;
 };
 
-class PreAGI_Console : public GUI::Debugger {
+class MickeyConsole : public GUI::Debugger {
 public:
-	PreAGI_Console(PreAgiEngine *vm);
-	virtual ~PreAGI_Console() {}
+	MickeyConsole(MickeyEngine *mickey);
+	virtual ~MickeyConsole() {}
 
 private:
-	PreAgiEngine *_vm;
-};
-
-
-class Mickey_Console : public PreAGI_Console {
-public:
-	Mickey_Console(PreAgiEngine *vm, Mickey *mickey);
-	virtual ~Mickey_Console() {}
-
-private:
-	Mickey *_mickey;
+	MickeyEngine *_mickey;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
 	bool Cmd_GotoRoom(int argc, const char **argv);
@@ -91,17 +81,17 @@ private:
 	bool Cmd_DrawObj(int argc, const char **argv);
 };
 
-class Winnie_Console : public PreAGI_Console {
+class WinnieConsole : public GUI::Debugger {
 public:
-	Winnie_Console(PreAgiEngine *vm, Winnie *winnie);
-	virtual ~Winnie_Console() {}
+	WinnieConsole(WinnieEngine *winnie);
+	virtual ~WinnieConsole() {}
 
 private:
-	Winnie *_winnie;
+	WinnieEngine *_winnie;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
 };
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #endif /* AGI_CONSOLE_H */

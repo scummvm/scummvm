@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.cpp $
- * $Id: dreamweb.cpp 79 2011-06-05 08:26:54Z eriktorbjorn $
- *
  */
 
 #include "common/config-manager.h"
@@ -111,14 +108,6 @@ void DreamWebEngine::processEvents() {
 	if (event_manager->shouldQuit()) {
 		quit();
 		return;
-	}
-
-	if (_enableSavingOrLoading && _loadSavefile >= 0 && _loadSavefile <= 6) {
-		debug(1, "loading save state %d", _loadSavefile);
-		_context.data.byte(_context.kCurrentslot) = _loadSavefile;
-		_loadSavefile = -1;
-		_context.loadposition();
-		_context.data.byte(_context.kGetback) = 1;
 	}
 
 	soundHandler();
@@ -219,9 +208,9 @@ Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
+	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
 
@@ -234,7 +223,7 @@ void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {
@@ -474,6 +463,16 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
+void DreamWebEngine::stopSound(uint8 channel) {
+	debug(1, "stopSound(%u)", channel);
+	assert(channel == 0 || channel == 1);
+	_mixer->stopHandle(_channelHandle[channel]);
+	if (channel == 0)
+		_channel0 = 0;
+	else
+		_channel1 = 0;
+}
+
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 	if (ConfMan.getBool("speech_mute"))
 		return false;
@@ -591,7 +590,7 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 			return 'Z' + 4;
 		case 154:
 			return 'Z' + 6;
-		case 255:
+		case 225:
 			return 'A' - 1;
 		case 153:
 			return 'Z' + 5;
@@ -631,5 +630,3 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 }
 
 } // End of namespace DreamWeb
-
-

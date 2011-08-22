@@ -175,6 +175,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("b", _("To Henry / To Indy"));
 			break;
 		case GID_LOOM:
+			// I18N: These are different musical notes
 			ADD_BIND("q, c", _("play C minor on distaff"));
 			ADD_BIND("w, d", _("play D on distaff"));
 			ADD_BIND("e, e", _("play E on distaff"));
@@ -238,6 +239,7 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("e", _("Examine"));
 			ADD_BIND("t", _("Regular cursor"));
 			ADD_BIND("i", _("Inventory"));
+			// I18N: Comm is a communication device
 			ADD_BIND("c", _("Comm"));
 			break;
 		case GID_CMI:

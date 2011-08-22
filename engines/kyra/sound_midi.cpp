@@ -787,4 +787,3 @@ Common::String SoundMidiPC::getFileName(const Common::String &str) {
 }
 
 } // End of namespace Kyra
-

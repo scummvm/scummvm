@@ -31,11 +31,11 @@ SurfaceList::~SurfaceList() {
 	free();
 }
 
-void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_hack) {
+void SurfaceList::load(Common::SeekableReadStream &stream, Type type, int sub_hack) {
 	free();
 
-	byte fn = stream->readByte();
-	if (stream->eos())
+	byte fn = stream.readByte();
+	if (stream.eos())
 		return;
 
 	surfaces_n = fn - sub_hack;
@@ -47,11 +47,11 @@ void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_ha
 	surfaces = new Surface[surfaces_n];
 
 	for (byte i = 0; i < surfaces_n; ++i) {
-		uint offset = stream->readUint16LE();
-		uint pos = stream->pos();
-		stream->seek(offset);
+		uint offset = stream.readUint16LE();
+		uint pos = stream.pos();
+		stream.seek(offset);
 		surfaces[i].load(stream, Surface::kTypeOns);
-		stream->seek(pos);
+		stream.seek(pos);
 	}
 }
 

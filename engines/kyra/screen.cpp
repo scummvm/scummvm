@@ -3459,4 +3459,3 @@ uint8 *Palette::fetchRealPalette() const {
 }
 
 } // End of namespace Kyra
-
