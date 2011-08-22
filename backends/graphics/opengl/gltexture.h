@@ -44,7 +44,10 @@
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 #endif
 
-#if defined(USE_GLES)
+#if defined(BADA)
+#include <FGraphicsOpengl.h>
+using namespace Osp::Graphics::Opengl;
+#elif defined(USE_GLES)
 #include <GLES/gl.h>
 #elif defined(SDL_BACKEND)
 #include <SDL_opengl.h>

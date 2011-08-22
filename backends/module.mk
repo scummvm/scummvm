@@ -117,6 +117,11 @@ MODULE_OBJS += \
 	mixer/sdl13/sdl13-mixer.o
 endif
 
+ifeq ($(BACKEND),bada)
+MODULE_OBJS += \
+	timer/bada/timer.o
+endif
+
 ifeq ($(BACKEND),ds)
 MODULE_OBJS += \
 	fs/ds/ds-fs.o \
