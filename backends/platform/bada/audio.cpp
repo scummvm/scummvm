@@ -36,7 +36,7 @@
 // sound level pre-sets
 const int levels[] = {0, 1, 10, 45, 70, 99};
 
-AudioThread::AudioThread() : 
+AudioThread::AudioThread() :
 	_mixer(0),
 	_timer(0),
 	_audioOut(0),
@@ -254,7 +254,7 @@ void AudioThread::OnTimerExpired(Timer &timer) {
 	if (_ready && _playing == -1) {
 		OnAudioOutBufferEndReached(*_audioOut);
 	}
-	
+
 	_timer->Start(_interval);
 }
 

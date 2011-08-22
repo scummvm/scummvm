@@ -155,7 +155,7 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 			break;
 		}
 	}
-	 
+
 	va_end(ap);
 	return result;
 }
@@ -171,7 +171,7 @@ int main(int argc, char *pArgv[]) {
 
 	//	strcpy(buffer, "in the buffer something");
 	if (simple_sscanf("CAT 123x-10 0x100 FONT large 1 enough\n	 123456.AUD $",
-										"CAT %dx%d %x FONT %[^\n] %06u.AUD %c", 
+										"CAT %dx%d %x FONT %[^\n] %06u.AUD %c",
 										&x, &y, &h, b, &u, &c) != 6) {
 		printf("Failed\n");
 	} else {

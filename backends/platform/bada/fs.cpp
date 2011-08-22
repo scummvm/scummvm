@@ -35,7 +35,7 @@
 #define PATH_MEDIA       "/Media"
 #define PATH_CARD        "/Storagecard"
 #define PATH_CARD_MEDIA  "/Storagecard/Media"
- 
+
 //
 // BadaFileStream
 //
@@ -68,7 +68,7 @@ private:
 	File *file;
 };
 
-BadaFileStream::BadaFileStream(File *ioFile, bool writeMode) : 
+BadaFileStream::BadaFileStream(File *ioFile, bool writeMode) :
 	bufferIndex(0),
 	bufferLength(0),
 	writeMode(writeMode),
@@ -178,7 +178,7 @@ uint32 BadaFileStream::read(void *ptr, uint32 len) {
 				memcpy((byte*)ptr, &buffer[bufferIndex], available);
 				uint32 remaining = len - available;
 				result = available;
-				
+
 				if (remaining) {
 					result += file->Read(((byte*)ptr) + available, remaining);
 				}
@@ -231,7 +231,7 @@ BadaFileStream *BadaFileStream::makeFromPath(const String &path, bool writeMode)
 	if (r == E_SUCCESS) {
 		return new BadaFileStream(ioFile, writeMode);
 	}
-	
+
 	AppLog("Failed to open file");
 	delete ioFile;
 	return 0;
@@ -244,7 +244,7 @@ Common::String fromString(const Osp::Base::String &in) {
 	ByteBuffer *buf = StringUtil::StringToUtf8N(in);
 	Common::String result((const char*)buf->GetPointer());
 	delete buf;
-	
+
 	return result;
 }
 
@@ -300,8 +300,8 @@ bool BadaFilesystemNode::isDirectory() const {
 
 bool BadaFilesystemNode::isWritable() const {
 	bool result = (_isValid && !_isVirtualDir && !_attr.IsDirectory() && !_attr.IsReadOnly());
-	if (_path == PATH_HOME || 
-			_path == PATH_HOME_EXT || 
+	if (_path == PATH_HOME ||
+			_path == PATH_HOME_EXT ||
 			_path == PATH_HOME_SHARE ||
 			_path == PATH_HOME_SHARE2) {
 		result = true;
@@ -338,11 +338,11 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 			myList.push_back(new BadaFilesystemNode(PATH_HOME_SHARE2));
 		}
 	}
-	
+
 	if (!result) {
 		DirEnumerator *pDirEnum = 0;
 		Directory *pDir = new Directory();
-		
+
 		// open directory
 		if (IsFailed(pDir->Construct(_unicodePath))) {
 			AppLog("Failed to open directory");
@@ -352,24 +352,24 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 			if (pDirEnum) {
 				result = true;
 			}
-			
+
 			// loop through all directory entries
 			while (pDirEnum && pDirEnum->MoveNext() == E_SUCCESS) {
 				DirEntry dirEntry = pDirEnum->GetCurrentDirEntry();
-				
+
 				// skip 'invisible' files if necessary
 				Osp::Base::String fileName = dirEntry.GetName();
-				
+
 				if (fileName[0] == '.' && !hidden) {
 					continue;
 				}
-				
+
 				// skip '.' and '..' to avoid cycles
 				if ((fileName[0] == '.' && fileName[1] == 0) ||
 						(fileName[0] == '.' && fileName[1] == '.')) {
 					continue;
 				}
-				
+
 				// Honor the chosen mode
 				if ((mode == Common::FSNode::kListFilesOnly && dirEntry.IsDirectory()) ||
 						(mode == Common::FSNode::kListDirectoriesOnly && !dirEntry.IsDirectory())) {
@@ -378,12 +378,12 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 				myList.push_back(new BadaFilesystemNode(_path, fromString(fileName)));
 			}
 		}
-		
+
 		// cleanup
 		if (pDirEnum) {
 			delete pDirEnum;
 		}
-		
+
 		// close the opened directory
 		if (pDir) {
 			delete pDir;

@@ -37,7 +37,7 @@
  #include <ctype.h> // causes a link error when building c programs
  #define C_LINKAGE_BEGIN extern "C" {
  #define C_LINKAGE_END }
-#else 
+#else
  #define C_LINKAGE_BEGIN
  #define C_LINKAGE_END
 #endif
@@ -50,7 +50,7 @@ C_LINKAGE_BEGIN
 #define fseeko fseek
 #define ftello ftell
 
-// overcome use of fprintf since bada/newlib (1.2) does not 
+// overcome use of fprintf since bada/newlib (1.2) does not
 // support stderr/stdout (undefined reference to `_impure_ptr').
 
 void stderr_fprintf(void*, const char *format, ...);

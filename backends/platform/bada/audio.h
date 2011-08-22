@@ -42,7 +42,7 @@ using namespace Osp::Io;
 #define NUM_AUDIO_BUFFERS 2
 
 class AudioThread: public Osp::Media::IAudioOutEventListener,
-									 public Osp::Base::Runtime::ITimerEventListener, 
+									 public Osp::Base::Runtime::ITimerEventListener,
 									 public Osp::Base::Runtime::Thread {
 public:
 	AudioThread(void);
@@ -60,7 +60,7 @@ public:
 	void OnAudioOutReleased(Osp::Media::AudioOut &src);
 	void OnAudioOutBufferEndReached(Osp::Media::AudioOut &src);
 	void OnTimerExpired(Timer &timer);
-	
+
 private:
 	Audio::MixerImpl *_mixer;
 	Osp::Base::Runtime::Timer *_timer;

@@ -41,7 +41,7 @@ C_LINKAGE_BEGIN
 
 int __errno; // for overridden method in saves/default/default-saves.cpp
 
-void __assert_func(const char *file, int line, 
+void __assert_func(const char *file, int line,
 									 const char *func, const char *err) {
 	char buffer[BUF_SIZE];
 	snprintf(buffer, sizeof(buffer), "%s %d %s %s", file, line, func, err);

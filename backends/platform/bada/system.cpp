@@ -96,7 +96,7 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
 		return true;
 
 	case E_ILLEGAL_ACCESS:
-		setError(Common::kWritePermissionDenied, "Search or write permission denied: " + 
+		setError(Common::kWritePermissionDenied, "Search or write permission denied: " +
 						 file.getName());
 		break;
 
@@ -206,9 +206,9 @@ int BadaEventManager::shouldQuit() const {
 //
 // BadaSystem
 //
-BadaSystem::BadaSystem(BadaAppForm *appForm) : 
+BadaSystem::BadaSystem(BadaAppForm *appForm) :
 	_appForm(appForm),
-	_audioThread(0), 
+	_audioThread(0),
 	_epoch(0) {
 }
 
@@ -251,7 +251,7 @@ result BadaSystem::initModules() {
 	}
 
 	// depends on _graphicsManager when ENABLE_VKEYBD enabled
-	_eventManager = new BadaEventManager(this); 
+	_eventManager = new BadaEventManager(this);
 	if (!_eventManager) {
 		return E_OUT_OF_MEMORY;
 	}

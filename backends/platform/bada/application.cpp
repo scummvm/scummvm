@@ -51,13 +51,13 @@ bool BadaScummVM::OnAppInitializing(AppRegistry &appRegistry) {
 	return (_appForm != NULL);
 }
 
-bool BadaScummVM::OnAppTerminating(AppRegistry &appRegistry, 
+bool BadaScummVM::OnAppTerminating(AppRegistry &appRegistry,
 																	 bool forcedTermination) {
 	logEntered();
 	return true;
 }
 
-void BadaScummVM::OnUserEventReceivedN(RequestId requestId, 
+void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 																			 Osp::Base::Collection::IList *args) {
 	logEntered();
 
@@ -73,7 +73,7 @@ void BadaScummVM::OnUserEventReceivedN(RequestId requestId,
 		if (!message) {
 			message = new String("Unknown error");
 		}
-		
+
 		MessageBox messageBox;
 		messageBox.Construct(L"Oops...", *message, MSGBOX_STYLE_OK);
 		int modalResult;

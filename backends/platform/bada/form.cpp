@@ -39,7 +39,7 @@ using namespace Osp::Ui::Controls;
 // cursor to be positioned at the top of the screen
 #define MIN_TOUCH_Y 10
 
-// block for up to 2.5 seconds during shutdown to 
+// block for up to 2.5 seconds during shutdown to
 // allow the game thread to exit gracefully.
 #define EXIT_SLEEP_STEP 10
 #define EXIT_SLEEP 250
@@ -47,8 +47,8 @@ using namespace Osp::Ui::Controls;
 //
 // BadaAppForm
 //
-BadaAppForm::BadaAppForm() : 
-	_gameThread(0), 
+BadaAppForm::BadaAppForm() :
+	_gameThread(0),
 	_state(InitState),
 	_buttonState(LeftButton),
 	_shortcut(SetVolume) {
@@ -67,7 +67,7 @@ result BadaAppForm::Construct() {
 
 	badaSystem = new BadaSystem(this);
 	r = badaSystem != NULL ? E_SUCCESS : E_OUT_OF_MEMORY;
-	
+
 	if (!IsFailed(r)) {
 		r = badaSystem->Construct();
 	}
@@ -105,7 +105,7 @@ BadaAppForm::~BadaAppForm() {
 		_gameThread->Stop();
 		if (_state != ErrorState) {
 			_gameThread->Join();
-		}		
+		}
 
 		delete _gameThread;
 		_gameThread = NULL;
@@ -205,13 +205,13 @@ void BadaAppForm::pushEvent(Common::EventType type,
 	BadaSystem *system = (BadaSystem *)g_system;
 	BadaGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
-		// graphics could be NULL at startup or when 
+		// graphics could be NULL at startup or when
 		// displaying the system error screen
 		Common::Event e;
 		e.type = type;
 		e.mouse.x = currentPosition.x;
 		e.mouse.y = currentPosition.y > MIN_TOUCH_Y ? currentPosition.y : 1;
-		
+
 		bool moved = graphics->moveMouse(e.mouse.x, e.mouse.y);
 
 		_eventQueueLock->Acquire();
@@ -245,7 +245,7 @@ void BadaAppForm::pushKey(Common::KeyCode keycode) {
 	_eventQueueLock->Release();
 }
 
-void BadaAppForm::OnOrientationChanged(const Control &source, 
+void BadaAppForm::OnOrientationChanged(const Control &source,
 																			 OrientationStatus orientationStatus) {
 	logEntered();
 	if (_state == InitState) {
@@ -334,8 +334,8 @@ void BadaAppForm::showKeypad() {
 	pushKey(Common::KEYCODE_F7);
 }
 
-void BadaAppForm::OnTouchDoublePressed(const Control &source, 
-																			 const Point &currentPosition, 
+void BadaAppForm::OnTouchDoublePressed(const Control &source,
+																			 const Point &currentPosition,
 																			 const TouchEventInfo &touchInfo) {
 	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
@@ -345,32 +345,32 @@ void BadaAppForm::OnTouchDoublePressed(const Control &source,
 	}
 }
 
-void BadaAppForm::OnTouchFocusIn(const Control &source, 
-																 const Point &currentPosition, 
+void BadaAppForm::OnTouchFocusIn(const Control &source,
+																 const Point &currentPosition,
 																 const TouchEventInfo &touchInfo) {
 }
 
-void BadaAppForm::OnTouchFocusOut(const Control &source, 
-																	const Point &currentPosition, 
+void BadaAppForm::OnTouchFocusOut(const Control &source,
+																	const Point &currentPosition,
 																	const TouchEventInfo &touchInfo) {
 }
 
-void BadaAppForm::OnTouchLongPressed(const Control &source, 
-																		 const Point &currentPosition, 
+void BadaAppForm::OnTouchLongPressed(const Control &source,
+																		 const Point &currentPosition,
 																		 const TouchEventInfo &touchInfo) {
 	if (_buttonState != LeftButton) {
 		pushKey(Common::KEYCODE_RETURN);
 	}
 }
 
-void BadaAppForm::OnTouchMoved(const Control &source, 
-															 const Point &currentPosition, 
+void BadaAppForm::OnTouchMoved(const Control &source,
+															 const Point &currentPosition,
 															 const TouchEventInfo &touchInfo) {
 	pushEvent(Common::EVENT_MOUSEMOVE, currentPosition);
 }
 
-void BadaAppForm::OnTouchPressed(const Control &source, 
-																 const Point &currentPosition, 
+void BadaAppForm::OnTouchPressed(const Control &source,
+																 const Point &currentPosition,
 																 const TouchEventInfo &touchInfo) {
 	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
@@ -378,8 +378,8 @@ void BadaAppForm::OnTouchPressed(const Control &source,
 	}
 }
 
-void BadaAppForm::OnTouchReleased(const Control &source, 
-																	const Point &currentPosition, 
+void BadaAppForm::OnTouchReleased(const Control &source,
+																	const Point &currentPosition,
 																	const TouchEventInfo &touchInfo) {
 	if (_buttonState != MoveOnly) {
 		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
@@ -434,7 +434,7 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 			break;
 
 		case EscapeKey:
-			pushKey(Common::KEYCODE_ESCAPE);			
+			pushKey(Common::KEYCODE_ESCAPE);
 			break;
 
 		case GameMenu:
@@ -446,7 +446,7 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 			break;
 
 		default:
-			setVolume(false, false);			
+			setVolume(false, false);
 			break;
 		}
 		break;

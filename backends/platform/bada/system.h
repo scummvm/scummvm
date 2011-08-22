@@ -58,7 +58,7 @@ void systemError(const char *message);
 //
 // BadaSystem
 //
-class BadaSystem : public ModularBackend, 
+class BadaSystem : public ModularBackend,
 									 Common::EventSource {
 public:
 	BadaSystem(BadaAppForm *appForm);
@@ -92,7 +92,7 @@ private:
 	Common::EventSource *getDefaultEventSource() {return this;}
 	Common::SeekableReadStream *createConfigReadStream();
 	Common::WriteStream *createConfigWriteStream();
-	
+
 	BadaAppForm *_appForm;
 	AudioThread *_audioThread;
 	long long _epoch;

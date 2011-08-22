@@ -58,34 +58,34 @@ private:
 	Object *Run();
 	result OnInitializing(void);
 	result OnDraw(void);
-	void OnOrientationChanged(const Osp::Ui::Control &source, 
+	void OnOrientationChanged(const Osp::Ui::Control &source,
 														Osp::Ui::OrientationStatus orientationStatus);
-	void OnTouchDoublePressed(const Osp::Ui::Control &source, 
-														const Osp::Graphics::Point &currentPosition, 
+	void OnTouchDoublePressed(const Osp::Ui::Control &source,
+														const Osp::Graphics::Point &currentPosition,
 														const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchFocusIn(const Osp::Ui::Control &source, 
-											const Osp::Graphics::Point &currentPosition, 
+	void OnTouchFocusIn(const Osp::Ui::Control &source,
+											const Osp::Graphics::Point &currentPosition,
 											const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchFocusOut(const Osp::Ui::Control &source, 
-											 const Osp::Graphics::Point &currentPosition, 
+	void OnTouchFocusOut(const Osp::Ui::Control &source,
+											 const Osp::Graphics::Point &currentPosition,
 											 const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchLongPressed(const Osp::Ui::Control &source, 
-													const Osp::Graphics::Point &currentPosition, 
+	void OnTouchLongPressed(const Osp::Ui::Control &source,
+													const Osp::Graphics::Point &currentPosition,
 													const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchMoved(const Osp::Ui::Control &source, 
-										const Osp::Graphics::Point &currentPosition, 
+	void OnTouchMoved(const Osp::Ui::Control &source,
+										const Osp::Graphics::Point &currentPosition,
 										const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchPressed(const Osp::Ui::Control &source, 
-											const Osp::Graphics::Point &currentPosition, 
+	void OnTouchPressed(const Osp::Ui::Control &source,
+											const Osp::Graphics::Point &currentPosition,
 											const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnTouchReleased(const Osp::Ui::Control &source, 
-											 const Osp::Graphics::Point &currentPosition, 
+	void OnTouchReleased(const Osp::Ui::Control &source,
+											 const Osp::Graphics::Point &currentPosition,
 											 const Osp::Ui::TouchEventInfo &touchInfo);
-	void OnKeyLongPressed(const Osp::Ui::Control &source, 
+	void OnKeyLongPressed(const Osp::Ui::Control &source,
 												Osp::Ui::KeyCode keyCode);
-	void OnKeyPressed(const Osp::Ui::Control &source, 
+	void OnKeyPressed(const Osp::Ui::Control &source,
 										Osp::Ui::KeyCode keyCode);
-	void OnKeyReleased(const Osp::Ui::Control &source, 
+	void OnKeyReleased(const Osp::Ui::Control &source,
 										 Osp::Ui::KeyCode keyCode);
 
 	void pushEvent(Common::EventType type,

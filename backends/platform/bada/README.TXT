@@ -41,7 +41,7 @@ Build instructions:
  for instructions on how to obtain these modules
 
  3.1 For Target-Release configure ogg and mad with:
-      
+
      ./configure --host=arm-samsung-nucleuseabi --disable-shared
 
      when building vorbis and flac:
@@ -73,13 +73,13 @@ Build instructions:
 
 5. Build the front end application using BADA-Ide:
 
- Copy the scummvm/dists/bada folder into a clean directory 
- outside of the scummvm package. Start the BADA IDE then 
+ Copy the scummvm/dists/bada folder into a clean directory
+ outside of the scummvm package. Start the BADA IDE then
  choose this folder as the eclipse workspace. Click
  Project / Build.
 
 Links:
 
 A short turorial on implementing OpenGL ES 1.1 in BADA:
-  http://forums.badadev.com/viewtopic.php?f=7&t=208 
+  http://forums.badadev.com/viewtopic.php?f=7&t=208
 

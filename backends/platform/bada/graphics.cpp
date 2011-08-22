@@ -75,7 +75,7 @@ Common::List<Graphics::PixelFormat> BadaGraphicsManager::getSupportedFormats() c
 }
 
 bool BadaGraphicsManager::hasFeature(OSystem::Feature f) {
-	bool result = (f == OSystem::kFeatureFullscreenMode || 
+	bool result = (f == OSystem::kFeatureFullscreenMode ||
 								 f == OSystem::kFeatureVirtualKeyboard ||
 								 OpenGLGraphicsManager::hasFeature(f));
 	return result;
@@ -111,7 +111,7 @@ bool BadaGraphicsManager::loadEgl() {
 	};
 
 	EGLint eglContextList[] = {
-		EGL_CONTEXT_CLIENT_VERSION, 1, 
+		EGL_CONTEXT_CLIENT_VERSION, 1,
 		EGL_NONE
 	};
 
@@ -126,14 +126,14 @@ bool BadaGraphicsManager::loadEgl() {
 		systemError("eglGetDisplay() failed");
 		return false;
 	}
-	
-	if (EGL_FALSE == eglInitialize(_eglDisplay, NULL, NULL) || 
+
+	if (EGL_FALSE == eglInitialize(_eglDisplay, NULL, NULL) ||
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglInitialize() failed");
 		return false;
 	}
 
-	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList, 
+	if (EGL_FALSE == eglChooseConfig(_eglDisplay, eglConfigList,
 																	 &_eglConfig, 1, &numConfigs) ||
 			EGL_SUCCESS != eglGetError()) {
 		systemError("eglChooseConfig() failed");
@@ -145,14 +145,14 @@ bool BadaGraphicsManager::loadEgl() {
 		return false;
 	}
 
-	_eglSurface = eglCreateWindowSurface(_eglDisplay, _eglConfig, 
+	_eglSurface = eglCreateWindowSurface(_eglDisplay, _eglConfig,
 																			(EGLNativeWindowType)_appForm, NULL);
 	if (EGL_NO_SURFACE == _eglSurface || EGL_SUCCESS != eglGetError()) {
 		systemError("eglCreateWindowSurface() failed. EGL_NO_SURFACE");
 		return false;
 	}
-	
-	_eglContext = eglCreateContext(_eglDisplay, _eglConfig, 
+
+	_eglContext = eglCreateContext(_eglDisplay, _eglConfig,
 																EGL_NO_CONTEXT, eglContextList);
 	if (EGL_NO_CONTEXT == _eglContext ||
 			EGL_SUCCESS != eglGetError()) {
@@ -227,7 +227,7 @@ void BadaGraphicsManager::unloadGFXMode() {
 		eglTerminate(_eglDisplay);
 		_eglDisplay = EGL_NO_DISPLAY;
 	}
-	
+
 	_eglConfig = NULL;
 
 	OpenGLGraphicsManager::unloadGFXMode();
@@ -292,7 +292,7 @@ void BadaGraphicsManager::showSplash() {
 	canvas.Construct();
 	canvas.SetBackgroundColor(Color::COLOR_BLACK);
 	canvas.Clear();
-	
+
 	int x = _videoMode.hardwareWidth / 3;
 	int y = _videoMode.hardwareHeight / 3;
 
@@ -309,7 +309,7 @@ void BadaGraphicsManager::showSplash() {
 	canvas.SetForegroundColor(Color::COLOR_WHITE);
 	canvas.DrawText(Point(x + 70, y + 50), L"Loading ...");
 	delete pFont;
-	
+
 	canvas.Show();
 
 }
