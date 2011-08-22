@@ -6503,18 +6503,6 @@ blankex:
 	goto exloop;
 }
 
-void DreamGenContext::adjustlen() {
-	STACK_CHECK;
-	ah = al;
-	_add(al, ch);
-	_cmp(al, 100);
-	if (flags.c())
-		return /* (over242) */;
-	al = 224;
-	_sub(al, ch);
-	ch = al;
-}
-
 void DreamGenContext::autolook() {
 	STACK_CHECK;
 	ax = data.word(kMousex);
@@ -18294,7 +18282,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_drawfloor: drawfloor(); break;
 		case addr_drawflags: drawflags(); break;
 		case addr_showallex: showallex(); break;
-		case addr_adjustlen: adjustlen(); break;
 		case addr_autolook: autolook(); break;
 		case addr_look: look(); break;
 		case addr_dolook: dolook(); break;

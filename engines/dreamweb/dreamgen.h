@@ -464,7 +464,6 @@ public:
 	static const uint16 addr_dolook = 0xc474;
 	static const uint16 addr_look = 0xc470;
 	static const uint16 addr_autolook = 0xc46c;
-	static const uint16 addr_adjustlen = 0xc45c;
 	static const uint16 addr_showallex = 0xc450;
 	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_drawfloor = 0xc428;
@@ -1350,7 +1349,7 @@ public:
 	void putundercentre();
 	void checkobjectsize();
 	//void commandonly();
-	void adjustlen();
+	void titles();
 	void deallocatemem();
 	void checkforemm();
 	void watchreel();
@@ -1612,7 +1611,7 @@ public:
 	void chewy();
 	void accesslighton();
 	void dosreturn();
-	void titles();
+	//void adjustlen();
 	//void quickquit();
 	void showpointer();
 	void usecooker();
