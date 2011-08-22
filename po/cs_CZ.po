@@ -2,13 +2,13 @@
 # Copyright (C) 2001-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-08-20 15:12+0100\n"
-"PO-Revision-Date: 2011-06-24 06:44+0100\n"
+"PO-Revision-Date: 2011-08-18 16:57+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1948,9 +1948,8 @@ msgid "~S~how Map"
 msgstr "~Z~obrazit Mapu"
 
 #: engines/mohawk/dialogs.cpp:105
-#, fuzzy
 msgid "~M~ain Menu"
-msgstr "Hlavní Menu ScummVM"
+msgstr "~H~lavní Menu"
 
 #: engines/mohawk/dialogs.cpp:172
 msgid "~W~ater Effect Enabled"
@@ -2130,45 +2129,45 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL Emulátor"
 
 #: audio/mididrv.cpp:205
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Zvolené zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
-"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Zvolené zvukové zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
+"odpojeno)."
 
 #: audio/mididrv.cpp:205 audio/mididrv.cpp:217 audio/mididrv.cpp:253
 #: audio/mididrv.cpp:268
 msgid "Attempting to fall back to the next available device..."
-msgstr ""
+msgstr "Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
 
 #: audio/mididrv.cpp:217
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Zvolené zaøízení '%s' nelze pou¾ít.. Podívejte se na záznam pro více "
-"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Zvolené zvukové zaøízení '%s' nelze pou¾ít. Podívejte se na záznam pro více "
+"informací."
 
 #: audio/mididrv.cpp:253
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Upøednostòované zaøízení '%s' nebylo nalezeno (napø. mù¾e být vypnuto nebo "
-"odpojeno). Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Upøednostòované zvukové zaøízení '%s' nebylo nalezeno (napø. mù¾e být "
+"vypnuto nebo odpojeno)."
 
 #: audio/mididrv.cpp:268
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Upøednostòované zaøízení '%s' nelze pou¾ít. Podívejte se na záznam pro více "
-"informací. Pokus o navrácení na nejbli¾¹í dostupné zaøízení..."
+"Upøednostòované zvukové zaøízení '%s' nelze pou¾ít. Podívejte se na záznam "
+"pro více informací."
 
 #: audio/null.h:43
 msgid "No music"
@@ -2315,27 +2314,25 @@ msgid "Touchpad mode disabled."
 msgstr "Touchpad re¾im vypnut"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:67
-#, fuzzy
 msgid "Hide ScummVM"
-msgstr "Ukonèit ScummVM"
+msgstr "Skrýt ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "Hide Others"
-msgstr ""
+msgstr "Skrýt Ostatní"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:74
 msgid "Show All"
-msgstr ""
+msgstr "Zobrazit V¹e"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:92
 #: backends/platform/sdl/macosx/appmenu_osx.mm:99
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr "Okno"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Minimize"
-msgstr ""
+msgstr "Minimalizovat"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
@@ -2762,7 +2759,7 @@ msgstr "Sni¾uji Hlasitost"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
-msgstr ""
+msgstr "Zkontrolovat Aktualizace..."
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."
