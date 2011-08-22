@@ -537,8 +537,11 @@ bool SmushPlayer::play(const char *filename, bool looping, int x, int y) {
 		handleFramesHeader();
 	}
 
-	if (_videoLooping)
+	if (_videoLooping) {
+		_startPos = new SavePos;
+		_startPos->tmpBuf = NULL;
 		_startPos->filePos = _file->pos();
+	}
 
 	init();
 
