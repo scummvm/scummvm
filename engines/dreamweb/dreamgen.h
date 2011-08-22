@@ -612,7 +612,6 @@ public:
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_mainman = 0xc138;
-	static const uint16 addr_checkone = 0xc12c;
 	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
 	static const uint16 addr_addtopeoplelist = 0xc108;
@@ -1799,7 +1798,7 @@ public:
 	//void copyname();
 	void look();
 	void setmouse();
-	//void getdimension();
+	//void checkone();
 	void transferinv();
 	void candles2();
 	void pickupob();
@@ -1875,7 +1874,7 @@ public:
 	void grafittidoor();
 	void input();
 	void nextdest();
-	void checkone();
+	//void getdimension();
 	void makecaps();
 	void read();
 	void fadescreenups();

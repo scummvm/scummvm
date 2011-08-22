@@ -869,5 +869,25 @@ void DreamGenContext::movemap(uint8 param) {
 	data.byte(kNowinnewroom) = 1;
 }
 
+void DreamGenContext::checkone() {
+	uint8 flag, flagEx, type, flagX, flagY;
+	checkone(cl, ch, &flag, &flagEx, &type, &flagX, &flagY);
+
+	cl = flag;
+	ch = flagEx;
+	dl = flagX;
+	dh = flagY;
+	al = type;
+}
+
+void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
+	*flagX = x / 16;
+	*flagY = y / 16;
+	const uint8 *tileData = segRef(data.word(kBuffers)).ptr(kMapflags + (*flagY * 11 + *flagX) * 3, 3);
+	*flag = tileData[0];
+	*flagEx = tileData[1];
+	*type = tileData[2];
+}
+
 } /*namespace dreamgen */
 

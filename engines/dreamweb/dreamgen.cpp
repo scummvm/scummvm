@@ -2076,41 +2076,6 @@ void DreamGenContext::delsprite() {
 	_stosb(cx, true);
 }
 
-void DreamGenContext::checkone() {
-	STACK_CHECK;
-	push(cx);
-	al = ch;
-	ah = 0;
-	cl = 4;
-	_shr(ax, cl);
-	dl = al;
-	cx = pop();
-	al = cl;
-	ah = 0;
-	cl = 4;
-	_shr(ax, cl);
-	ah = dl;
-	push(ax);
-	ch = 0;
-	cl = al;
-	push(cx);
-	al = ah;
-	ah = 0;
-	cx = 11;
-	_mul(cx);
-	cx = pop();
-	_add(ax, cx);
-	cx = 3;
-	_mul(cx);
-	si = ax;
-	ds = data.word(kBuffers);
-	_add(si, (0+(228*13)+32+60+(32*32)));
-	_lodsw();
-	cx = ax;
-	_lodsb();
-	dx = pop();
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -18123,7 +18088,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_addtopeoplelist: addtopeoplelist(); break;
 		case addr_checkspeed: checkspeed(); break;
 		case addr_delsprite: delsprite(); break;
-		case addr_checkone: checkone(); break;
 		case addr_mainman: mainman(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;
