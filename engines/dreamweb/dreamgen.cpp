@@ -15461,41 +15461,6 @@ notanexid:
 		goto identifyex;
 }
 
-void DreamGenContext::checkiffree() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5))+(79*5);
-	cx = 79;
-identifyfree:
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notafreeid;
-	_cmp(al, es.byte(bx));
-	if (flags.c())
-		goto notafreeid;
-	_cmp(al, es.byte(bx+2));
-	if (!flags.c())
-		goto notafreeid;
-	_cmp(ah, es.byte(bx+1));
-	if (flags.c())
-		goto notafreeid;
-	_cmp(ah, es.byte(bx+3));
-	if (!flags.c())
-		goto notafreeid;
-	al = es.byte(bx+4);
-	ah = 2;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notafreeid:
-	_sub(bx, 5);
-	_dec(cx);
-	_cmp(cx, -1);
-	if (!flags.z())
-		goto identifyfree;
-}
-
 void DreamGenContext::isitdescribed() {
 	STACK_CHECK;
 	push(ax);
@@ -18659,7 +18624,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_identifyob: identifyob(); break;
 		case addr_checkifset: checkifset(); break;
 		case addr_checkifex: checkifex(); break;
-		case addr_checkiffree: checkiffree(); break;
 		case addr_isitdescribed: isitdescribed(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;

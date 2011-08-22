@@ -955,6 +955,32 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 	return false;
 }
 
+void DreamGenContext::checkiffree() {
+	flags._z = not checkiffree(al, ah);
+}
+
+bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
+	const ObjPos *freeList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
+	for (size_t i = 0; i < 80; ++i) {
+		const ObjPos *objPos = freeList + 79 - i;
+		if (objPos->index == 0xff)
+			continue;
+		if (x < objPos->xMin)
+			continue;
+		if (x >= objPos->xMax)
+			continue;
+		if (y < objPos->yMin)
+			continue;
+		if (y >= objPos->yMax)
+			continue;
+		al = objPos->index;
+		ah = 2;
+		obname();
+		return true;
+	}
+	return false;
+}
+
 const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * 2 * (index & 127);

@@ -133,7 +133,6 @@ public:
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
 	static const uint16 addr_isitdescribed = 0xc9e8;
-	static const uint16 addr_checkiffree = 0xc9e4;
 	static const uint16 addr_checkifex = 0xc9e0;
 	static const uint16 addr_checkifset = 0xc9dc;
 	static const uint16 addr_identifyob = 0xc9d4;
@@ -2055,7 +2054,7 @@ public:
 	void useobject();
 	void mainman();
 	void volumeadjust();
-	void checkiffree();
+	//void checkiffree();
 };
 }
 
