@@ -49,7 +49,7 @@ IoBuf::IoBuf(const char *name, Crypt *crypt)
 	  _bufMark(0),
 	  _ptr(0),
 	  _lim(0) {
-	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%s, %d, crypt)", name);
+	debugC(1, kCGEDebugFile, "IoBuf::IoBuf(%s, crypt)", name);
 
 	_buff = (uint8 *) malloc(sizeof(uint8) * kBufferSize);
 	assert(_buff != NULL);
