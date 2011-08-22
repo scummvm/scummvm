@@ -85,6 +85,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
+	{
+		// Grim Fandango Italian version
+		{
+			"grim",
+			"",
+			AD_ENTRY1s("VOX0001.LAB", "9e7075f3fb0427ae8136b290538d07dd", 62185775),
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_GRIM
+	},
 /*	{
 		// Grim Fandango German version
 		{
@@ -131,19 +144,6 @@ static const GrimGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372020),
 			Common::ES_ESP,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		GType_GRIM
-	},
-	{
-		// Grim Fandango Italian version
-		{
-			"grim",
-			"",
-			AD_ENTRY1s("grim.tab", "2d99c796b7a4e5c421cae49dc29dab6c", 369071),
-			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
