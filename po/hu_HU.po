@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-08-20 15:12+0100\n"
-"PO-Revision-Date: 2011-06-21 09:54+0100\n"
+"PO-Revision-Date: 2011-08-07 06:17+0100\n"
 "Last-Translator: Gruby <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -167,7 +167,7 @@ msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"A játék nyelve. Ne állítsd át a pl. Spanyol nyelvû játékodat Angolra nyelvre"
+"A játék nyelve. Ne állítsd át a pl. Spanyol nyelvû játékodat Angol nyelvre"
 
 #: gui/launcher.cpp:184 gui/launcher.cpp:198 gui/options.cpp:74
 #: gui/options.cpp:708 gui/options.cpp:718 gui/options.cpp:1149
@@ -2313,27 +2313,25 @@ msgid "Touchpad mode disabled."
 msgstr "Touchpad mód letiltva."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:67
-#, fuzzy
 msgid "Hide ScummVM"
-msgstr "ScummVM bezárása"
+msgstr "ScummVM elrejtése"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "Hide Others"
-msgstr ""
+msgstr "Többi elrejtése"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:74
 msgid "Show All"
-msgstr ""
+msgstr "Mutasd mind"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:92
 #: backends/platform/sdl/macosx/appmenu_osx.mm:99
-#, fuzzy
 msgid "Window"
-msgstr "Windows MIDI"
+msgstr "Ablak"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:95
 msgid "Minimize"
-msgstr ""
+msgstr "Kis méret"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:45
 msgid "Normal (no scaling)"
