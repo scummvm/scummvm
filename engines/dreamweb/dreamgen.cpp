@@ -15954,15 +15954,6 @@ toofaraway:
 	walktotext();
 }
 
-void DreamGenContext::finishedwalking() {
-	STACK_CHECK;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		return /* (iswalking) */;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kTurntoface));
-}
-
 void DreamGenContext::examineobtext() {
 	STACK_CHECK;
 	bl = data.byte(kCommand);
@@ -18624,7 +18615,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_walkintoroom: walkintoroom(); break;
 		case addr_afterintroroom: afterintroroom(); break;
 		case addr_obname: obname(); break;
-		case addr_finishedwalking: finishedwalking(); break;
 		case addr_examineobtext: examineobtext(); break;
 		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;

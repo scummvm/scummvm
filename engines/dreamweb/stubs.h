@@ -167,4 +167,7 @@
 	void removesetobject();
 	void removesetobject(uint8 index);
 	void showallfree();
+	bool finishedwalkingCPP();
+	void finishedwalking();
+
 

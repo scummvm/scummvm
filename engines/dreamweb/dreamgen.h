@@ -119,7 +119,6 @@ public:
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_examineobtext = 0xca20;
-	static const uint16 addr_finishedwalking = 0xca1c;
 	static const uint16 addr_obname = 0xca18;
 	static const uint16 addr_afterintroroom = 0xca14;
 	static const uint16 addr_walkintoroom = 0xca10;
@@ -1588,7 +1587,7 @@ public:
 	void adjustright();
 	void putunderzoom();
 	void vsync();
-	void turnpathoff();
+	//void finishedwalking();
 	void findinvpos();
 	void usetext();
 	void hangonpq();
@@ -1974,7 +1973,7 @@ public:
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
-	void finishedwalking();
+	void turnpathoff();
 	void findallryan();
 	//void channel0tran();
 	void buttonpress();

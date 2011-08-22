@@ -1155,6 +1155,14 @@ void DreamGenContext::removesetobject(uint8 index) {
 	getsetad(index)->b58[0] = 0xff;
 }
 
+void DreamGenContext::finishedwalking() {
+	flags._z = finishedwalkingCPP();
+}
+
+bool DreamGenContext::finishedwalkingCPP() {
+	return (data.byte(kLinepointer) == 254) && (data.byte(kFacing) == data.byte(kTurntoface));
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

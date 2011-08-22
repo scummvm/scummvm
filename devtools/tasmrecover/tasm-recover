@@ -143,6 +143,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'removesetobject',
 	'showallfree',
 	'adjustlen',
+	'finishedwalking',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
