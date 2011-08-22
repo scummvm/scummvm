@@ -122,7 +122,7 @@ static AspectRatio getDesiredAspectRatio() {
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	:
-	_sdlEventSource(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource),
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
@@ -249,7 +249,10 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 }
 
 bool SurfaceSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
-	assert(_transactionMode == kTransactionNone);
+	// We need to allow this to be called from within a transaction, since we
+	// currently use it to retreive the graphics state, when switching from
+	// SDL->OpenGL mode for example.
+	//assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
@@ -846,7 +849,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
-	_sdlEventSource->resetKeyboadEmulation(
+	_eventSource->resetKeyboadEmulation(
 		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
 		effectiveScreenHeight() - 1);
 
@@ -2235,20 +2238,6 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void SurfaceSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		if (!_overlayVisible) {
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			if (_videoMode.aspectRatioCorrection)
-				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
-		}
-		g_system->getEventManager()->pushEvent(newEvent);
-	}
-}
-
 void SurfaceSdlGraphicsManager::toggleFullScreen() {
 	beginGFXTransaction();
 		setFullscreenMode(!_videoMode.fullscreen);
@@ -2297,31 +2286,33 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			if (handleScalerHotkeys(event.kbd.keycode))
 				return true;
 		}
+
 	case Common::EVENT_KEYUP:
 		return isScalerHotkey(event);
-	case Common::EVENT_MOUSEMOVE:
-		if (event.synthetic)
-			setMousePos(event.mouse.x, event.mouse.y);
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-	case Common::EVENT_MBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_MBUTTONUP:
-		adjustMouseEvent(event);
-		return !event.synthetic;
 
-	// HACK: Handle special SDL event
-	case OSystem_SDL::kSdlEventExpose:
-		_forceFull = true;
-		return false;
 	default:
 		break;
 	}
 
 	return false;
+}
+
+void SurfaceSdlGraphicsManager::notifyVideoExpose() {
+	_forceFull = true;
+}
+
+void SurfaceSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	if (!_overlayVisible) {
+		point.x /= _videoMode.scaleFactor;
+		point.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			point.y = aspect2Real(point.y);
+	}
+}
+
+void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+	transformMouseCoordinates(mouse);
+	setMousePos(mouse.x, mouse.y);
 }
 
 #endif

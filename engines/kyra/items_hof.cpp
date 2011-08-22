@@ -427,4 +427,3 @@ void KyraEngine_HoF::setMouseCursor(Item item) {
 }
 
 } // End of namespace Kyra
-

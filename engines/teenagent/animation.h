@@ -35,7 +35,7 @@ public:
 	enum Type {kTypeLan, kTypeVaria, kTypeInventory};
 
 	Animation();
-	void load(Common::SeekableReadStream *s, Type type = kTypeLan);
+	void load(Common::SeekableReadStream&, Type type = kTypeLan);
 	void free();
 
 	Surface *firstFrame();

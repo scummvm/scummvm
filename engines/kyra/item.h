@@ -39,4 +39,3 @@ enum {
 } // End of namespace Kyra
 
 #endif
-

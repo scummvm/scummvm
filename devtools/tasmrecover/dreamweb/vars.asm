@@ -273,7 +273,7 @@ savesource	dw	0
 savex	db	0
 savey	db	0
 currentob	db	0
-priority	db	0
+priorityDep	db	0	; dep for deprecated, I leave a byte here to minimize changes to the generated code
 
 destpos	db	0
 
@@ -560,4 +560,3 @@ roomssample	db	0
 gameerror	db	0
 
 howmuchalloc	dw	0
-

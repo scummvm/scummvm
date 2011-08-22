@@ -24,6 +24,7 @@
 #define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "graphics/pixelformat.h"
 #include "graphics/scaler.h"
 #include "common/events.h"
@@ -74,7 +75,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SurfaceSdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
+class SurfaceSdlGraphicsManager : public GraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
 	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
 	virtual ~SurfaceSdlGraphicsManager();
@@ -140,9 +141,12 @@ public:
 	// Override from Common::EventObserver
 	bool notifyEvent(const Common::Event &event);
 
-protected:
-	SdlEventSource *_sdlEventSource;
+	// SdlGraphicsManager interface
+	virtual void notifyVideoExpose();
+	virtual void transformMouseCoordinates(Common::Point &point);
+	virtual void notifyMousePos(Common::Point mouse);
 
+protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
 	SDL_Surface *_osdSurface;
@@ -329,7 +333,6 @@ protected:
 
 	virtual bool handleScalerHotkeys(Common::KeyCode key);
 	virtual bool isScalerHotkey(const Common::Event &event);
-	virtual void adjustMouseEvent(const Common::Event &event);
 	virtual void setMousePos(int x, int y);
 	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename);

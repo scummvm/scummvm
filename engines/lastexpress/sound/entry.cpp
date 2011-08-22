@@ -88,8 +88,8 @@ void SoundEntry::close() {
 	_status.status |= kSoundStatusClosed;
 
 	// Loop until ready
-	while (!(_status.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
-		;	// empty loop body
+	//while (!(_status.status1 & 4) && !(getSoundQueue()->getFlag() & 8) && (getSoundQueue()->getFlag() & 1))
+	//	;	// empty loop body
 
 	// The original game remove the entry from the cache here,
 	// but since we are called from within an iterator loop
@@ -290,7 +290,7 @@ bool SoundEntry::updateSound() {
 					}
 				}
 			}
-			//if (status.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer) 
+			//if (status.status2 & 0x40 && !((uint32)_status.status & 0x180) && v1->soundBuffer)
 			//	Sound_FillSoundBuffer(v1);
 		}
 		result = true;

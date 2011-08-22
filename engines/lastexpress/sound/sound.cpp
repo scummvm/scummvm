@@ -1305,8 +1305,8 @@ void SoundManager::playLoopingSound(int param) {
 	int partNumber = 1;
 	int fnameLen = 6;
 
-	if (_queue->getSoundState() & 1 && param >= 0x45 && param <= 0x46) {
-		if (_queue->getSoundState() & 2) {
+	if (_queue->getSoundState() & kSoundState1 && param >= 0x45 && param <= 0x46) {
+		if (_queue->getSoundState() & kSoundState2) {
 			strcpy(tmp, "STEAM.SND");
 
 			_loopingSoundDuration = 32767;

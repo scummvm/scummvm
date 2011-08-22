@@ -171,7 +171,10 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	case 6: // number
 		ConfFile.getKey((const char *)option, (const char *)section, entry);
 
-		push(atoi(entry.c_str()));
+		if (!strcmp((char *)option, "Benchmark"))
+			push(2);
+		else
+			push(atoi(entry.c_str()));
 		break;
 	case 77: // HE 100
 	case 7: // string

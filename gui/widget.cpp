@@ -298,6 +298,10 @@ void ButtonWidget::drawWidget() {
 	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, getFlags());
 }
 
+void ButtonWidget::setLabel(const Common::String &label) {
+	StaticTextWidget::setLabel(cleanupHotkey(label));
+}
+
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)

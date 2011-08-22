@@ -433,8 +433,8 @@ arttime	Blue's Art Time Activities
 	d00ffc8c32d17e575fd985d435d2eb88	-1	en	All	-	Demo	-	Kirben
 
 BluesBirthday	Blue's Birthday Adventure
-	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	Yellow	-	knifethrower
-	1ff5997c78fbd0a841a75ef15a05d9d5	-1	en	Windows	-	Red	-	Mathew
+	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	Yellow	Yellow	-	knifethrower
+	1ff5997c78fbd0a841a75ef15a05d9d5	-1	en	All	Red	Red	-	Mathew
 
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	cc0c4111449054f1692bb3c0c5e04629	-1	en	All	-	Demo	-	George Kormend

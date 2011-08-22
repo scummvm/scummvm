@@ -2095,6 +2095,20 @@ void ScummEngine_v5::o5_startScript() {
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
 
+	// WORKAROUND bug #3306145 (also occurs in original): Some old versions of
+	// Indy3 sometimes fail to allocate IQ points correctly. To quote:
+	// "In the Amiga version you get the 15 points for puzzle 30 if you give the
+	// book or KO the guy. The PC version correctly gives 10 points for puzzle
+	// 29 for KO and 15 for puzzle 30 when giving the book."
+	// This workaround is meant to address that.
+	if (_game.id == GID_INDY3 && vm.slot[_currentScript].number == 106 && script == 125 && VAR(115) != 2) {
+		// If Var[115] != 2, then:
+		// Correct: startScript(125,[29,10]);
+		// Wrong : startScript(125,[30,15]);
+		data[0] = 29;
+		data[1] = 10;
+	}
+
 	// Method used by original games to skip copy protection scheme
 	if (!_copyProtection) {
 		// Copy protection was disabled in LucasArts Classic Adventures (PC Disk)

@@ -26,22 +26,25 @@
 #ifndef AUDIO_QDM2_H
 #define AUDIO_QDM2_H
 
+#include "common/types.h"
+
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Audio {
 
-class AudioStream;
+class Codec;
 
 /**
- * Create a new AudioStream from the QDM2 data in the given stream.
+ * Create a new Codec from the QDM2 data in the given stream.
  *
- * @param stream       the SeekableReadStream from which to read the FLAC data
- * @param extraData    the QuickTime extra data stream
- * @return   a new AudioStream, or NULL, if an error occurred
+ * @param extraData           the QuickTime extra data stream
+ * @param disposeExtraData    the QuickTime extra data stream
+ * @return   a new Codec, or NULL, if an error occurred
  */
-AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
+Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData,
+                       DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
 
 } // End of namespace Audio
 

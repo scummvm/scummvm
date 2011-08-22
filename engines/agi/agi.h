@@ -88,6 +88,7 @@ typedef signed int Err;
 
 #define	_EMPTY		0xfffff
 #define	EGO_OWNED	0xff
+#define	EGO_OWNED_V1	0xf9
 
 #define	CRYPT_KEY_SIERRA	"Avis Durgan"
 #define CRYPT_KEY_AGDS		"Alex Simkin"
@@ -131,9 +132,15 @@ enum AgiGameID {
 
 enum AgiGameType {
 	GType_PreAGI = 0,
-	GType_V2 = 1,
-	GType_V3 = 2
+	GType_V1 = 1,
+	GType_V2 = 2,
+	GType_V3 = 3
 };
+
+ enum BooterDisks {
+	 BooterDisk1 = 0,
+	 BooterDisk2 = 1
+ };
 
 //
 // GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
@@ -537,6 +544,8 @@ enum {
  * by the interpreter.
  */
 struct AgiGame {
+	AgiEngine *_vm;
+
 	State state;		/**< state of the interpreter */
 
 	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
@@ -621,6 +630,11 @@ struct AgiGame {
 	AgiView views[MAX_DIRS];		/**< AGI view resources */
 	AgiSound *sounds[MAX_DIRS];		/**< Pointers to AGI sound resources */
 
+	AgiLogic *_curLogic;
+
+	// words
+	Common::Array<AgiWord*> words[26];
+
 	// view table
 	VtEntry viewTable[MAX_VIEWTABLE];
 
@@ -629,6 +643,13 @@ struct AgiGame {
 	int simpleSave;					/**< select simple savegames */
 
 	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
+
+	// IF condition handling
+	int testResult;
+
+
+	int max_logics;
+	int logic_list[256];
 };
 
 class AgiLoader {
@@ -644,6 +665,28 @@ public:
 	virtual int unloadResource(int, int) = 0;
 	virtual int loadObjects(const char *) = 0;
 	virtual int loadWords(const char *) = 0;
+};
+
+class AgiLoader_v1 : public AgiLoader {
+private:
+	AgiEngine *_vm;
+	Common::String _filenameDisk0;
+	Common::String _filenameDisk1;
+
+	int loadDir_DDP(AgiDir *agid, int offset, int max);
+	int loadDir_BC(AgiDir *agid, int offset, int max);
+	uint8 *loadVolRes(AgiDir *agid);
+
+public:
+	AgiLoader_v1(AgiEngine *vm);
+
+	virtual int init();
+	virtual int deinit();
+	virtual int detectGame();
+	virtual int loadResource(int, int);
+	virtual int unloadResource(int, int);
+	virtual int loadObjects(const char *);
+	virtual int loadWords(const char *);
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -689,6 +732,7 @@ public:
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
 };
+
 
 class GfxMgr;
 class SpritesMgr;
@@ -745,6 +789,8 @@ public:
 	AgiGame _game;
 	Common::RandomSource *_rnd;
 
+	SoundMgr *_sound;
+
 	Mouse _mouse;
 
 	bool _noSaveLoadAllowed;
@@ -789,9 +835,13 @@ public:
 	void initVersion();
 	void setVersion(uint16 version);
 
+	const char *getDiskName(uint16 id);
+
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 };
+
+typedef void (*AgiCommand)(AgiGame *state, uint8 *p);
 
 class AgiEngine : public AgiBase {
 protected:
@@ -851,7 +901,6 @@ public:
 	char _lastSentence[40];
 
 	SpritesMgr *_sprites;
-	SoundMgr *_sound;
 	PictureMgr *_picture;
 	AgiLoader *_loader;	// loader
 
@@ -915,16 +964,21 @@ public:
 	void checkQuickLoad();
 
 	// Objects
+public:
 	int showObjects();
-	int decodeObjects(uint8 *mem, uint32 flen);
 	int loadObjects(const char *fname);
-	int allocObjects(int);
+	int loadObjects(Common::File &fp);
 	void unloadObjects();
 	const char *objectName(unsigned int);
 	int objectGetLocation(unsigned int);
 	void objectSetLocation(unsigned int, int);
+private:
+	int decodeObjects(uint8 *mem, uint32 flen);
+	int readObjects(Common::File &fp, int flen);
+	int allocObjects(int);
 
 	// Logic
+public:
 	int decodeLogic(int);
 	void unloadLogic(int);
 	int runLogic(int);
@@ -932,8 +986,10 @@ public:
 	int testIfCode(int);
 	void executeAgiCommand(uint8, uint8 *);
 
-private:
+public:
 	// Some submethods of testIfCode
+	void skipInstruction(byte op);
+	void skipInstructionsUntil(byte v);
 	uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
 	uint8 testObjCenter(uint8, uint8, uint8, uint8, uint8);
 	uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
@@ -966,8 +1022,10 @@ public:
 	bool isEgoView(const VtEntry *v);
 
 	// Words
+public:
 	int showWords();
 	int loadWords(const char *);
+	int loadWords_v1(Common::File &f);
 	void unloadWords();
 	int findWord(const char *word, int *flen);
 	void dictionaryWords(char *);
@@ -1045,196 +1103,13 @@ public:
 	char _predictiveResult[40];
 
 private:
-	typedef void (AgiEngine::*AgiCommand)(uint8 *);
-
 	AgiCommand _agiCommands[183];
-	AgiLogic *_curLogic;
-	int _timerHack;			// Workaround for timer loop in MH1 logic 153
+	AgiCommand _agiCondCommands[256];
 
 	void setupOpcodes();
 
-	void cmd_increment(uint8 *p);
-	void cmd_decrement(uint8 *p);
-	void cmd_assignn(uint8 *p);
-	void cmd_assignv(uint8 *p);
-	void cmd_addn(uint8 *p);
-	void cmd_addv(uint8 *p);
-	void cmd_subn(uint8 *p);
-	void cmd_subv(uint8 *p);	// 0x08
-	void cmd_lindirectv(uint8 *p);
-	void cmd_rindirect(uint8 *p);
-	void cmd_lindirectn(uint8 *p);
-	void cmd_set(uint8 *p);
-	void cmd_reset(uint8 *p);
-	void cmd_toggle(uint8 *p);
-	void cmd_set_v(uint8 *p);
-	void cmd_reset_v(uint8 *p);	// 0x10
-	void cmd_toggle_v(uint8 *p);
-	void cmd_new_room(uint8 *p);
-	void cmd_new_room_f(uint8 *p);
-	void cmd_load_logic(uint8 *p);
-	void cmd_load_logic_f(uint8 *p);
-	void cmd_call(uint8 *p);
-	void cmd_call_f(uint8 *p);
-	void cmd_load_pic(uint8 *p);	// 0x18
-	void cmd_draw_pic(uint8 *p);
-	void cmd_show_pic(uint8 *p);
-	void cmd_discard_pic(uint8 *p);
-	void cmd_overlay_pic(uint8 *p);
-	void cmd_show_pri_screen(uint8 *p);
-	void cmd_load_view(uint8 *p);
-	void cmd_load_view_f(uint8 *p);
-	void cmd_discard_view(uint8 *p);	// 0x20
-	void cmd_animate_obj(uint8 *p);
-	void cmd_unanimate_all(uint8 *p);
-	void cmd_draw(uint8 *p);
-	void cmd_erase(uint8 *p);
-	void cmd_position(uint8 *p);
-	void cmd_position_f(uint8 *p);
-	void cmd_get_posn(uint8 *p);
-	void cmd_reposition(uint8 *p);	// 0x28
-	void cmd_set_view(uint8 *p);
-	void cmd_set_view_f(uint8 *p);
-	void cmd_set_loop(uint8 *p);
-	void cmd_set_loop_f(uint8 *p);
-	void cmd_fix_loop(uint8 *p);
-	void cmd_release_loop(uint8 *p);
-	void cmd_set_cel(uint8 *p);
-	void cmd_set_cel_f(uint8 *p);	// 0x30
-	void cmd_last_cel(uint8 *p);
-	void cmd_current_cel(uint8 *p);
-	void cmd_current_loop(uint8 *p);
-	void cmd_current_view(uint8 *p);
-	void cmd_number_of_loops(uint8 *p);
-	void cmd_set_priority(uint8 *p);
-	void cmd_set_priority_f(uint8 *p);
-	void cmd_release_priority(uint8 *p);	// 0x38
-	void cmd_get_priority(uint8 *p);
-	void cmd_stop_update(uint8 *p);
-	void cmd_start_update(uint8 *p);
-	void cmd_force_update(uint8 *p);
-	void cmd_ignore_horizon(uint8 *p);
-	void cmd_observe_horizon(uint8 *p);
-	void cmd_set_horizon(uint8 *p);
-	void cmd_object_on_water(uint8 *p);	// 0x40
-	void cmd_object_on_land(uint8 *p);
-	void cmd_object_on_anything(uint8 *p);
-	void cmd_ignore_objs(uint8 *p);
-	void cmd_observe_objs(uint8 *p);
-	void cmd_distance(uint8 *p);
-	void cmd_stop_cycling(uint8 *p);
-	void cmd_start_cycling(uint8 *p);
-	void cmd_normal_cycle(uint8 *p);	// 0x48
-	void cmd_end_of_loop(uint8 *p);
-	void cmd_reverse_cycle(uint8 *p);
-	void cmd_reverse_loop(uint8 *p);
-	void cmd_cycle_time(uint8 *p);
-	void cmd_stop_motion(uint8 *p);
-	void cmd_start_motion(uint8 *p);
-	void cmd_step_size(uint8 *p);
-	void cmd_step_time(uint8 *p);	// 0x50
-	void cmd_move_obj(uint8 *p);
-	void cmd_move_obj_f(uint8 *p);
-	void cmd_follow_ego(uint8 *p);
-	void cmd_wander(uint8 *p);
-	void cmd_normal_motion(uint8 *p);
-	void cmd_set_dir(uint8 *p);
-	void cmd_get_dir(uint8 *p);
-	void cmd_ignore_blocks(uint8 *p);	// 0x58
-	void cmd_observe_blocks(uint8 *p);
-	void cmd_block(uint8 *p);
-	void cmd_unblock(uint8 *p);
-	void cmd_get(uint8 *p);
-	void cmd_get_f(uint8 *p);
-	void cmd_drop(uint8 *p);
-	void cmd_put(uint8 *p);
-	void cmd_put_f(uint8 *p);	// 0x60
-	void cmd_get_room_f(uint8 *p);
-	void cmd_load_sound(uint8 *p);
-	void cmd_sound(uint8 *p);
-	void cmd_stop_sound(uint8 *p);
-	void cmd_print(uint8 *p);
-	void cmd_print_f(uint8 *p);
-	void cmd_display(uint8 *p);
-	void cmd_display_f(uint8 *p);	// 0x68
-	void cmd_clear_lines(uint8 *p);
-	void cmd_text_screen(uint8 *p);
-	void cmd_graphics(uint8 *p);
-	void cmd_set_cursor_char(uint8 *p);
-	void cmd_set_text_attribute(uint8 *p);
-	void cmd_shake_screen(uint8 *p);
-	void cmd_configure_screen(uint8 *p);
-	void cmd_status_line_on(uint8 *p);	// 0x70
-	void cmd_status_line_off(uint8 *p);
-	void cmd_set_string(uint8 *p);
-	void cmd_get_string(uint8 *p);
-	void cmd_word_to_string(uint8 *p);
-	void cmd_parse(uint8 *p);
-	void cmd_get_num(uint8 *p);
-	void cmd_prevent_input(uint8 *p);
-	void cmd_accept_input(uint8 *p);	// 0x78
-	void cmd_set_key(uint8 *p);
-	void cmd_add_to_pic(uint8 *p);
-	void cmd_add_to_pic_f(uint8 *p);
-	void cmd_status(uint8 *p);
-	void cmd_save_game(uint8 *p);
-	void cmd_load_game(uint8 *p);
-	void cmd_init_disk(uint8 *p);
-	void cmd_restart_game(uint8 *p);	// 0x80
-	void cmd_show_obj(uint8 *p);
-	void cmd_random(uint8 *p);
-	void cmd_program_control(uint8 *p);
-	void cmd_player_control(uint8 *p);
-	void cmd_obj_status_f(uint8 *p);
-	void cmd_quit(uint8 *p);
-	void cmd_show_mem(uint8 *p);
-	void cmd_pause(uint8 *p);	// 0x88
-	void cmd_echo_line(uint8 *p);
-	void cmd_cancel_line(uint8 *p);
-	void cmd_init_joy(uint8 *p);
-	void cmd_toggle_monitor(uint8 *p);
-	void cmd_version(uint8 *p);
-	void cmd_script_size(uint8 *p);
-	void cmd_set_game_id(uint8 *p);
-	void cmd_log(uint8 *p);	// 0x90
-	void cmd_set_scan_start(uint8 *p);
-	void cmd_reset_scan_start(uint8 *p);
-	void cmd_reposition_to(uint8 *p);
-	void cmd_reposition_to_f(uint8 *p);
-	void cmd_trace_on(uint8 *p);
-	void cmd_trace_info(uint8 *p);
-	void cmd_print_at(uint8 *p);
-	void cmd_print_at_v(uint8 *p);	// 0x98
-	//void cmd_discard_view(uint8 *p);	// Opcode repeated from 0x20 ?
-	void cmd_clear_text_rect(uint8 *p);
-	void cmd_set_upper_left(uint8 *p);
-	void cmd_set_menu(uint8 *p);
-	void cmd_set_menu_item(uint8 *p);
-	void cmd_submit_menu(uint8 *p);
-	void cmd_enable_item(uint8 *p);
-	void cmd_disable_item(uint8 *p);	// 0xa0
-	void cmd_menu_input(uint8 *p);
-	void cmd_show_obj_v(uint8 *p);
-	void cmd_open_dialogue(uint8 *p);
-	void cmd_close_dialogue(uint8 *p);
-	void cmd_mul_n(uint8 *p);
-	void cmd_mul_v(uint8 *p);
-	void cmd_div_n(uint8 *p);
-	void cmd_div_v(uint8 *p);	// 0xa8
-	void cmd_close_window(uint8 *p);
-	void cmd_set_simple(uint8 *p);
-	void cmd_push_script(uint8 *p);
-	void cmd_pop_script(uint8 *p);
-	void cmd_hold_key(uint8 *p);
-	void cmd_set_pri_base(uint8 *p);
-	void cmd_discard_sound(uint8 *p);
-	void cmd_hide_mouse(uint8 *p);	// 0xb0
-	void cmd_allow_menu(uint8 *p);
-	void cmd_show_mouse(uint8 *p);
-	void cmd_fence_mouse(uint8 *p);
-	void cmd_mouse_posn(uint8 *p);
-	void cmd_release_key(uint8 *p);
-	void cmd_adj_ego_move_to_x_y(uint8 *p);
+public:
+	int _timerHack;			// Workaround for timer loop in MH1 logic 153
 };
 
 } // End of namespace Agi

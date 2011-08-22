@@ -249,4 +249,3 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
     return false;
   }
 }
-

@@ -23,6 +23,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/localization.h"
 #include "common/translation.h"
 
 #include "graphics/scaler.h"
@@ -171,29 +172,33 @@ static const ResString string_map_table_v6[] = {
 };
 
 static const ResString string_map_table_v345[] = {
-	{1, "Insert Disk %c and Press Button to Continue."},
-	{2, "Unable to Find %s, (%c%d) Press Button."},
-	{3, "Error reading disk %c, (%c%d) Press Button."},
-	{4, "Game Paused.  Press SPACE to Continue."},
-	{5, "Are you sure you want to restart?  (Y/N)"},
-	{6, "Are you sure you want to quit?  (Y/N)"},
+	{1, _s("Insert Disk %c and Press Button to Continue.")},
+	{2, _s("Unable to Find %s, (%c%d) Press Button.")},
+	{3, _s("Error reading disk %c, (%c%d) Press Button.")},
+	{4, _s("Game Paused.  Press SPACE to Continue.")},
+	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
+	// "Moechten Sie wirklich neu starten?  (J/N)J"
+	// Will react to J as 'Yes'
+	{5, _s("Are you sure you want to restart?  (Y/N)")},
+	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment 
+	{6, _s("Are you sure you want to quit?  (Y/N)")},
 
 	// Added in SCUMM4
-	{7, "Save"},
-	{8, "Load"},
-	{9, "Play"},
-	{10, "Cancel"},
-	{11, "Quit"},
-	{12, "OK"},
-	{13, "Insert save/load game disk"},
-	{14, "You must enter a name"},
-	{15, "The game was NOT saved (disk full?)"},
-	{16, "The game was NOT loaded"},
-	{17, "Saving '%s'"},
-	{18, "Loading '%s'"},
-	{19, "Name your SAVE game"},
-	{20, "Select a game to LOAD"},
-	{28, "Game title"}
+	{7, _s("Save")},
+	{8, _s("Load")},
+	{9, _s("Play")},
+	{10, _s("Cancel")},
+	{11, _s("Quit")},
+	{12, _s("OK")},
+	{13, _s("Insert save/load game disk")},
+	{14, _s("You must enter a name")},
+	{15, _s("The game was NOT saved (disk full?)")},
+	{16, _s("The game was NOT loaded")},
+	{17, _s("Saving '%s'")},
+	{18, _s("Loading '%s'")},
+	{19, _s("Name your SAVE game")},
+	{20, _s("Select a game to LOAD")},
+	{28, _s("Game title)")}
 };
 
 #pragma mark -
@@ -278,7 +283,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	_numPages = ScummHelp::numPages(_game.id);
 
+	// I18N: Previous page button
 	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", _("~P~revious"), 0, kPrevCmd);
+	// I18N: Next page button
 	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), 0, kNextCmd);
 	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), 0, GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);
@@ -429,7 +436,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	else if (_vm->_game.version >= 3)
 		result = _vm->getStringAddress(string_map_table_v345[stringno - 1].num);
 	else
-		return string_map_table_v345[stringno - 1].string;
+		return _(string_map_table_v345[stringno - 1].string);
 
 	if (result && *result == '/') {
 		_vm->translateText(result, buf);
@@ -437,7 +444,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 	}
 
 	if (!result || *result == '\0') {	// Gracelessly degrade to english :)
-		return string_map_table_v345[stringno - 1].string;
+		return _(string_map_table_v345[stringno - 1].string);
 	}
 
 	// Convert to a proper string (take care of FF codes)
@@ -482,10 +489,14 @@ ConfirmDialog::ConfirmDialog(ScummEngine *scumm, int res)
 }
 
 void ConfirmDialog::handleKeyDown(Common::KeyState state) {
-	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey) {
+	Common::KeyCode keyYes, keyNo;
+
+	Common::getLanguageYesNo(keyYes, keyNo);
+
+	if (state.keycode == Common::KEYCODE_n || state.ascii == _noKey || state.ascii == keyNo) {
 		setResult(0);
 		close();
-	} else if (state.keycode == Common::KEYCODE_y || state.ascii == _yesKey) {
+	} else if (state.keycode == Common::KEYCODE_y || state.ascii == _yesKey || state.ascii == keyYes) {
 		setResult(1);
 		close();
 	} else
@@ -583,9 +594,9 @@ void SubtitleSettingsDialog::open() {
 
 void SubtitleSettingsDialog::cycleValue() {
 	static const char* subtitleDesc[] = {
-		"Speech Only",
-		"Speech and Subtitles",
-		"Subtitles Only"
+		_s("Speech Only"),
+		_s("Speech and Subtitles"),
+		_s("Subtitles Only")
 	};
 
 	_value += 1;
@@ -593,9 +604,9 @@ void SubtitleSettingsDialog::cycleValue() {
 		_value = 0;
 
 	if (_value == 1 && g_system->getOverlayWidth() <= 320)
-		setInfoText("Speech & Subs");
+		setInfoText(_sc("Speech & Subs", "lowres"));
 	else
-		setInfoText(subtitleDesc[_value]);
+		setInfoText(_(subtitleDesc[_value]));
 
 	_timer = g_system->getMillis() + 1500;
 }

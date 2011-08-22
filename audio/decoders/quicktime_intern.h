@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -45,6 +42,7 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
+class Codec;
 class QueuingAudioStream;
 
 class QuickTimeAudioDecoder : public Common::QuickTimeParser {
@@ -68,10 +66,12 @@ protected:
 	class AudioSampleDesc : public Common::QuickTimeParser::SampleDesc {
 	public:
 		AudioSampleDesc(Common::QuickTimeParser::Track *parentTrack, uint32 codecTag);
+		~AudioSampleDesc();
 
 		bool isAudioCodecSupported() const;
 		uint32 getAudioChunkSampleCount(uint chunk) const;
 		AudioStream *createAudioStream(Common::SeekableReadStream *stream) const;
+		void initCodec();
 
 		// TODO: Make private in the long run
 		uint16 _bitsPerSample;
@@ -79,6 +79,8 @@ protected:
 		uint32 _sampleRate;
 		uint32 _samplesPerFrame;
 		uint32 _bytesPerFrame;
+
+		Codec *_codec;
 	};
 
 	// Common::QuickTimeParser API

@@ -9,4 +9,3 @@ export SCUMMVM_MAEMO_DEVICE=$(awk '/^product/ { print $2;}' /proc/component_vers
 [ -x ${0}.bin ] && ${0}.bin "$@"
 # optified binary
 [ -x /opt/scummvm/bin/scummvm ] && /opt/scummvm/bin/scummvm "$@"
-

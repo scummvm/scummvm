@@ -161,7 +161,7 @@ protected:
 	 * is primarily based on computing and matching MD5 checksums of files.
 	 * Since doing that for large files can be slow, it can be restricted
 	 * to a subset of all files.
-	 * Typically this will be set to something between 5 and 50 kilobyte,
+	 * Typically this will be set to something between 5 and 50 kilobytes,
 	 * but arbitrary non-zero values are possible. The default is 5000.
 	 */
 	uint _md5Bytes;

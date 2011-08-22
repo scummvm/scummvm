@@ -41,6 +41,7 @@
 #include "common/list.h"
 #include "common/list_intern.h"
 #include "common/scummsys.h"
+#include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -79,10 +80,21 @@ static void defaultErrorHandler(const char *msg) {
 		if (isSmartphone())
 			debugger = 0;
 #endif
+
+#if defined(USE_TASKBAR)
+		g_system->getTaskbarManager()->notifyError();
+#endif
+
 		if (debugger && !debugger->isActive()) {
 			debugger->attach(msg);
 			debugger->onFrame();
 		}
+
+
+#if defined(USE_TASKBAR)
+		g_system->getTaskbarManager()->clearError();
+#endif
+
 	}
 }
 

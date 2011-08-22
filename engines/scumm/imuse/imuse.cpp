@@ -44,30 +44,31 @@ namespace Scumm {
 ////////////////////////////////////////
 
 IMuseInternal::IMuseInternal() :
-_native_mt32(false),
-_enable_gs(false),
-_sc55(false),
-_midi_adlib(NULL),
-_midi_native(NULL),
-_sysex(NULL),
-_paused(false),
-_initialized(false),
-_tempoFactor(0),
-_player_limit(ARRAYSIZE(_players)),
-_recycle_players(false),
-_queue_end(0),
-_queue_pos(0),
-_queue_sound(0),
-_queue_adding(0),
-_queue_marker(0),
-_queue_cleared(0),
-_master_volume(0),
-_music_volume(0),
-_trigger_count(0),
-_snm_trigger_index(0) {
-	memset(_channel_volume,0,sizeof(_channel_volume));
-	memset(_channel_volume_eff,0,sizeof(_channel_volume_eff));
-	memset(_volchan_table,0,sizeof(_volchan_table));
+	_native_mt32(false),
+	_enable_gs(false),
+	_sc55(false),
+	_midi_adlib(NULL),
+	_midi_native(NULL),
+	_sysex(NULL),
+	_paused(false),
+	_initialized(false),
+	_tempoFactor(0),
+	_player_limit(ARRAYSIZE(_players)),
+	_recycle_players(false),
+	_queue_end(0),
+	_queue_pos(0),
+	_queue_sound(0),
+	_queue_adding(0),
+	_queue_marker(0),
+	_queue_cleared(0),
+	_master_volume(0),
+	_music_volume(0),
+	_trigger_count(0),
+	_snm_trigger_index(0),
+	_pcSpeaker(false) {
+	memset(_channel_volume, 0, sizeof(_channel_volume));
+	memset(_channel_volume_eff, 0, sizeof(_channel_volume_eff));
+	memset(_volchan_table, 0, sizeof(_volchan_table));
 }
 
 IMuseInternal::~IMuseInternal() {
@@ -119,7 +120,7 @@ byte *IMuseInternal::findStartOfSound(int sound, int ct) {
 
 	// Check for old-style headers first, like 'RO'
 	int trFlag = (kMThd | kFORM);
-	if (ptr[0] == 'R' && ptr[1] == 'O'&& ptr[2] != 'L')
+	if (ptr[0] == 'R' && ptr[1] == 'O' && ptr[2] != 'L')
 		return ct == trFlag ? ptr : 0;
 	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return ct == trFlag ? ptr + 4 : 0;
@@ -153,22 +154,22 @@ bool IMuseInternal::isMT32(int sound) {
 
 	uint32 tag = READ_BE_UINT32(ptr);
 	switch (tag) {
-	case MKTAG('A','D','L',' '):
-	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
-	case MKTAG('S','P','K',' '):
+	case MKTAG('A', 'D', 'L', ' '):
+	case MKTAG('A', 'S', 'F', 'X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A','M','I',' '):
-	case MKTAG('R','O','L',' '):
+	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
-	case MKTAG('M','A','C',' '):	// Occurs in the Mac version of FOA and MI2
+	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKTAG('G','M','D',' '):
+	case MKTAG('G', 'M', 'D', ' '):
 		return false;
 
-	case MKTAG('M','I','D','I'):	// Occurs in Sam & Max
+	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		// HE games use Roland music
 		if (ptr[8] == 'H' && ptr[9] == 'S')
 			return true;
@@ -195,20 +196,20 @@ bool IMuseInternal::isMIDI(int sound) {
 
 	uint32 tag = READ_BE_UINT32(ptr);
 	switch (tag) {
-	case MKTAG('A','D','L',' '):
-	case MKTAG('A','S','F','X'): // Special AD class for old AdLib sound effects
-	case MKTAG('S','P','K',' '):
+	case MKTAG('A', 'D', 'L', ' '):
+	case MKTAG('A', 'S', 'F', 'X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S', 'P', 'K', ' '):
 		return false;
 
-	case MKTAG('A','M','I',' '):
-	case MKTAG('R','O','L',' '):
+	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('R', 'O', 'L', ' '):
 		return true;
 
-	case MKTAG('M','A','C',' '):	// Occurs in the Mac version of FOA and MI2
+	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return true;
 
-	case MKTAG('G','M','D',' '):
-	case MKTAG('M','I','D','I'):	// Occurs in Sam & Max
+	case MKTAG('G', 'M', 'D', ' '):
+	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		return true;
 	}
 
@@ -381,7 +382,8 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	for (i = 0; i < ARRAYSIZE(_parts); ++i)
 		_parts[i].saveLoadWithSerializer(ser);
 
-	{ // Load/save the instrument definitions, which were revamped with V11.
+	{
+		// Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
 		if (ser->getVersion() >= VER(11)) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
@@ -467,6 +469,10 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_GAME_ID:
 		_game_id = value;
 		break;
+
+	case IMuse::PROP_PC_SPEAKER:
+		_pcSpeaker = (value != 0);
+		break;
 	}
 
 	return 0;
@@ -522,7 +528,7 @@ void IMuseInternal::stopAllSounds() {
 
 int IMuseInternal::getSoundStatus(int sound) const {
 	Common::StackLock lock(_mutex, "IMuseInternal::getSoundStatus()");
-	return getSoundStatus_internal (sound, true);
+	return getSoundStatus_internal(sound, true);
 }
 
 int IMuseInternal::getMusicTimer() {
@@ -565,7 +571,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	int i;
 	ImTrigger *trigger = _snm_triggers;
 	for (i = ARRAYSIZE(_snm_triggers); i; --i, ++trigger) {
-		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus_internal (trigger->sound,true))
+		if (trigger->sound && trigger->id && trigger->command[0] == 8 && trigger->command[1] == sound && getSoundStatus_internal(trigger->sound, true))
 			return false;
 	}
 
@@ -663,9 +669,7 @@ int IMuseInternal::getSoundStatus_internal(int sound, bool ignoreFadeouts) const
 	return (sound == -1) ? 0 : get_queue_sound_status(sound);
 }
 
-int32 IMuseInternal::doCommand_internal
-	(int a, int b, int c, int d, int e, int f, int g, int h)
-{
+int32 IMuseInternal::doCommand_internal(int a, int b, int c, int d, int e, int f, int g, int h) {
 	int args[8];
 	args[0] = a;
 	args[1] = b;
@@ -733,7 +737,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 			}
 			return -1;
 		case 13:
-			return getSoundStatus_internal (a[1], true);
+			return getSoundStatus_internal(a[1], true);
 		case 14:
 			// Sam and Max: Parameter fade
 			player = findActivePlayer(a[1]);
@@ -779,8 +783,7 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 				a[0] = 0;
 				for (i = 0; i < ARRAYSIZE(_snm_triggers); ++i) {
 					if (_snm_triggers[i].sound == a[1] && _snm_triggers[i].id &&
-					   (a[3] == -1 || _snm_triggers[i].id == a[3]))
-					{
+					        (a[3] == -1 || _snm_triggers[i].id == a[3])) {
 						++a[0];
 					}
 				}
@@ -1002,9 +1005,9 @@ int IMuseInternal::get_queue_sound_status(int sound) const {
 		i = (i + 1) % ARRAYSIZE(_cmd_queue);
 	}
 
-	for (i = 0; i < ARRAYSIZE (_deferredCommands); ++i) {
+	for (i = 0; i < ARRAYSIZE(_deferredCommands); ++i) {
 		if (_deferredCommands[i].time_left && _deferredCommands[i].a == 8 &&
-			_deferredCommands[i].b == sound) {
+		        _deferredCommands[i].b == sound) {
 			return 2;
 		}
 	}
@@ -1213,7 +1216,7 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// NOTE: We ONLY do this if the sound that will trigger the command is actually
 	// playing. Otherwise, there's a problem when exiting and re-entering the
 	// Bumpusville mansion. Ref Bug #780918.
-	if (trig->command[0] == 8 && getSoundStatus_internal(trig->command[1],true) && getSoundStatus_internal(sound,true))
+	if (trig->command[0] == 8 && getSoundStatus_internal(trig->command[1], true) && getSoundStatus_internal(sound, true))
 		stopSound_internal(trig->command[1]);
 	return 0;
 }
@@ -1246,8 +1249,7 @@ int32 IMuseInternal::ImFireAllTriggers(int sound) {
 	return (count > 0) ? 0 : -1;
 }
 
-int IMuseInternal::set_channel_volume(uint chan, uint vol)
-{
+int IMuseInternal::set_channel_volume(uint chan, uint vol) {
 	if (chan >= 8 || vol > 127)
 		return -1;
 
@@ -1427,7 +1429,7 @@ void IMuseInternal::initMT32(MidiDriver *midi) {
 	// Display a welcome message on MT-32 displays.
 	memcpy(&buffer[0], "\x41\x10\x16\x12\x20\x00\x00", 7);
 	memcpy(&buffer[7], "                    ", 20);
-	memcpy(buffer + 7 +(20 - len) / 2, info, len);
+	memcpy(buffer + 7 + (20 - len) / 2, info, len);
 	byte checksum = 0;
 	for (int i = 4; i < 27; ++i)
 		checksum -= buffer[i];
@@ -1473,9 +1475,9 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
 			for (i = 0; i < 16; ++i) {
-				midi->send((  127 << 16) | (0  << 8) | (0xB0 | i));
-				midi->send((  1   << 16) | (32 << 8) | (0xB0 | i));
-				midi->send((  0   << 16) | (0  << 8) | (0xC0 | i));
+				midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
+				midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
+				midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
 			}
 			debug(2, "GS Program Change: CM-64/32L Map Selected");
 
@@ -1496,7 +1498,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		// Set Channels 1-16 Reverb to 64, which is the
 		// equivalent of MT-32 default Reverb Level 5
 		for (i = 0; i < 16; ++i)
-			midi->send((  64   << 16) | (91 << 8) | (0xB0 | i));
+			midi->send((64   << 16) | (91 << 8) | (0xB0 | i));
 		debug(2, "GM Controller 91 Change: Channels 1-16 Reverb Level is 64");
 
 		// Set Channels 1-16 Pitch Bend Sensitivity to
@@ -1637,8 +1639,8 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 		hipart = NULL;
 		for (i = 32, part = _parts; i; i--, part++) {
 			if (part->_player && part->_player->getMidiDriver() == midi &&
-						!part->_percussion && part->_on &&
-						!part->_mc && part->_pri_eff >= hipri) {
+			        !part->_percussion && part->_on &&
+			        !part->_mc && part->_pri_eff >= hipri) {
 				hipri = part->_pri_eff;
 				hipart = part;
 			}
@@ -1668,16 +1670,35 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	}
 }
 
-void IMuseInternal::setGlobalAdLibInstrument(byte slot, byte *data) {
+void IMuseInternal::setGlobalInstrument(byte slot, byte *data) {
 	if (slot < 32) {
-		_global_adlib_instruments[slot].adlib(data);
+		if (_pcSpeaker)
+			_global_instruments[slot].pcspk(data);
+		else
+			_global_instruments[slot].adlib(data);
 	}
 }
 
-void IMuseInternal::copyGlobalAdLibInstrument(byte slot, Instrument *dest) {
+void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
-	_global_adlib_instruments[slot].copy_to(dest);
+
+	// Both the AdLib code and the PC Speaker code use an all zero instrument
+	// as default in the original, thus we do the same.
+	// PC Speaker instrument size is 23, while AdLib instrument size is 30.
+	// Thus we just use a 30 byte instrument data array as default.
+	const byte defaultInstr[30] = { 0 };
+
+	if (_global_instruments[slot].isValid()) {
+		// In case we have an valid instrument set up, copy it to the part.
+		_global_instruments[slot].copy_to(dest);
+	} else if (_pcSpeaker) {
+		debug(0, "Trying to use non-existant global PC Speaker instrument %d", slot);
+		dest->pcspk(defaultInstr);
+	} else {
+		debug(0, "Trying to use non-existant global AdLib instrument %d", slot);
+		dest->adlib(defaultInstr);
+	}
 }
 
 

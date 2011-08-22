@@ -293,8 +293,8 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 		return NULL;
 	}
 
-	Common::strlcpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
-	Common::strlcpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
+	strlcpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
+	strlcpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
 
 	// Process extended headers, if any
 	uint16 extHeaderSize;
@@ -692,15 +692,15 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 typedef HashMap<String, ArjHeader*, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
-class ArjArchive : public Common::Archive {
+class ArjArchive : public Archive {
 	ArjHeadersMap _headers;
-	Common::String _arjFilename;
+	String _arjFilename;
 
 public:
 	ArjArchive(const String &name);
 	virtual ~ArjArchive();
 
-	// Common::Archive implementation
+	// Archive implementation
 	virtual bool hasFile(const String &name);
 	virtual int listMembers(ArchiveMemberList &list);
 	virtual ArchiveMemberPtr getMember(const String &name);
@@ -708,7 +708,7 @@ public:
 };
 
 ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
-	Common::File arjFile;
+	File arjFile;
 
 	if (!arjFile.open(_arjFilename)) {
 		warning("ArjArchive::ArjArchive(): Could not find the archive file");
@@ -775,7 +775,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 
 	ArjHeader *hdr = _headers[name];
 
-	Common::File archiveFile;
+	File archiveFile;
 	archiveFile.open(_arjFilename);
 	archiveFile.seek(hdr->pos, SEEK_SET);
 
@@ -794,8 +794,8 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		// If reading from archiveFile directly is too slow to be usable,
 		// maybe the filesystem code should instead wrap its files
 		// in a BufferedReadStream.
-		decoder->_compressed = Common::wrapBufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
-		decoder->_outstream = new Common::MemoryWriteStream(uncompressedData, hdr->origSize);
+		decoder->_compressed = wrapBufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
+		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
 			decoder->decode(hdr->origSize);
@@ -805,7 +805,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		delete decoder;
 	}
 
-	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
+	return new MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
 }
 
 Archive *makeArjArchive(const String &name) {

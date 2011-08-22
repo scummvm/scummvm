@@ -449,4 +449,3 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		System.load(libpath.getPath());
 	}
 }
-

@@ -23,6 +23,7 @@
 #ifndef COMMON_SUBSTREAM_H
 #define COMMON_SUBSTREAM_H
 
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/types.h"
 
@@ -38,23 +39,17 @@ namespace Common {
  */
 class SubReadStream : virtual public ReadStream {
 protected:
-	ReadStream *_parentStream;
-	DisposeAfterUse::Flag _disposeParentStream;
+	DisposablePtr<ReadStream> _parentStream;
 	uint32 _pos;
 	uint32 _end;
 	bool _eos;
 public:
 	SubReadStream(ReadStream *parentStream, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
-		: _parentStream(parentStream),
-		  _disposeParentStream(disposeParentStream),
+		: _parentStream(parentStream, disposeParentStream),
 		  _pos(0),
 		  _end(end),
 		  _eos(false) {
 		assert(parentStream);
-	}
-	~SubReadStream() {
-		if (_disposeParentStream)
-			delete _parentStream;
 	}
 
 	virtual bool eos() const { return _eos | _parentStream->eos(); }

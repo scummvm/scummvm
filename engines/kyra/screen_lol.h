@@ -119,4 +119,3 @@ private:
 #endif
 
 #endif // ENABLE_LOL
-

@@ -672,6 +672,14 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
 }
 
+void MystGraphics::fadeToBlack() {
+	// TODO: Implement
+}
+
+void MystGraphics::fadeFromBlack() {
+	// TODO: Implement
+}
+
 #endif // ENABLE_MYST
 
 #ifdef ENABLE_RIVEN
@@ -913,7 +921,8 @@ void RivenGraphics::clearMainScreen() {
 }
 
 void RivenGraphics::fadeToBlack() {
-	// Self-explanatory
+	// The transition speed is forced to best here
+	setTransitionSpeed(kRivenTransitionSpeedBest);
 	scheduleTransition(16);
 	clearMainScreen();
 	runScheduledTransition();

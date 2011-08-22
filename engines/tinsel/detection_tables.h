@@ -214,7 +214,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -236,7 +236,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -261,7 +261,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -285,7 +285,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -308,7 +308,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -331,7 +331,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE,
+			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -351,7 +351,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -371,7 +371,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::HE_ISR,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -390,7 +390,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPSX,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -434,7 +434,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -456,7 +456,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -475,7 +475,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dw.scn", "6182c7986eaec893c62fb6ea13a9f225", 774556),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,
@@ -496,7 +496,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD,
 			GUIO_NONE
 		},
 		GID_DW1,

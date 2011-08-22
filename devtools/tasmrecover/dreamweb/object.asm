@@ -2603,8 +2603,3 @@ beforethistext:	mov	[es:di],ax
 	ret
 
 	endp
-
-
-
-
-

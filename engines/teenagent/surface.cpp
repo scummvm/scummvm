@@ -33,26 +33,26 @@ Surface::~Surface() {
 	free();
 }
 
-void Surface::load(Common::SeekableReadStream *stream, Type type) {
+void Surface::load(Common::SeekableReadStream &stream, Type type) {
 	//debug(0, "load()");
 	free();
 
 	x = y = 0;
 
-	uint16 w_ = stream->readUint16LE();
-	uint16 h_ = stream->readUint16LE();
+	uint16 w_ = stream.readUint16LE();
+	uint16 h_ = stream.readUint16LE();
 
 	if (type != kTypeLan) {
-		uint16 pos = stream->readUint16LE();
+		uint16 pos = stream.readUint16LE();
 		x = pos % 320;
 		y = pos / 320;
 	}
 
 	//debug(0, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
-	if (stream->eos() || w_ == 0)
+	if (stream.eos() || w_ == 0)
 		return;
 
-	if (w_ * h_ > stream->size()) {
+	if (w_ * h_ > stream.size()) {
 		debug(0, "invalid surface %ux%u -> %u,%u", w_, h_, x, y);
 		return;
 	}
@@ -60,7 +60,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	//debug(0, "creating surface %ux%u -> %u,%u", w_, h_, x, y);
 	create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 
-	stream->read(pixels, w_ * h_);
+	stream.read(pixels, w_ * h_);
 }
 
 Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect, uint zoom) const {

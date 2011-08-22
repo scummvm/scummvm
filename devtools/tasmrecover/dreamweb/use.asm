@@ -3815,14 +3815,3 @@ nowinch:	call	showfirstuse
 	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-

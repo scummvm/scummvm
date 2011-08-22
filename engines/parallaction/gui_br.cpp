@@ -548,4 +548,3 @@ void Parallaction_br::startIngameMenu() {
 
 
 } // namespace Parallaction
-

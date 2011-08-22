@@ -30,7 +30,7 @@
 #include "tsage/resources.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 TSageEngine *_vm = NULL;
 
@@ -68,18 +68,22 @@ void TSageEngine::initialize() {
 	if (_vm->getFeatures() & GF_DEMO) {
 		// Add the single library file associated with the demo
 		_resourceManager->addLib(getPrimaryFilename());
+		_globals = new Globals();
+
 	} else if (_vm->getGameID() == GType_Ringworld) {
 		_resourceManager->addLib("RING.RLB");
 		_resourceManager->addLib("TSAGE.RLB");
+		_globals = new Globals();
+
 	} else if (_vm->getGameID() == GType_BlueForce) {
 		_resourceManager->addLib("BLUE.RLB");
 		if (_vm->getFeatures() & GF_FLOPPY) {
 			_resourceManager->addLib("FILES.RLB");
 			_resourceManager->addLib("TSAGE.RLB");
 		}
+		_globals = new BlueForce::BlueForceGlobals();
 	}
 
-	_globals = new Globals();
 	_globals->gfxManager().setDefaults();
 
 	// Setup sound settings
@@ -98,7 +102,7 @@ Common::Error TSageEngine::run() {
 	// Basic initialisation
 	initialize();
 
-	_globals->_sceneHandler.registerHandler();
+	_globals->_sceneHandler->registerHandler();
 	_globals->_game->execute();
 
 	deinitialize();
@@ -147,4 +151,8 @@ void TSageEngine::syncSoundSettings() {
 	_globals->_soundManager.syncSounds();
 }
 
-} // End of namespace tSage
+bool TSageEngine::shouldQuit() {
+	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
+}
+
+} // End of namespace TsAGE

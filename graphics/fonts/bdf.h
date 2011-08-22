@@ -97,4 +97,3 @@ public:
 } // End of namespace Graphics
 
 #endif
-

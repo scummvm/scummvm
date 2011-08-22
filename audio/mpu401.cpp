@@ -146,6 +146,6 @@ void MidiDriver_MPU401::setTimerCallback(void *timer_param, Common::TimerManager
 			g_system->getTimerManager()->removeTimerProc(_timer_proc);
 		_timer_proc = timer_proc;
 		if (timer_proc)
-			g_system->getTimerManager()->installTimerProc(timer_proc, 10000, timer_param);
+			g_system->getTimerManager()->installTimerProc(timer_proc, 10000, timer_param, "MPU401");
 	}
 }

@@ -72,4 +72,3 @@ void SymbianSdlMixerManager::callbackHandler(byte *samples, int len) {
 }
 
 #endif
-

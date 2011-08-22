@@ -21,4 +21,3 @@
  */
 
 #include "EventsBuffer.h"
-

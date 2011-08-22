@@ -222,4 +222,3 @@ public class ScummVMActivity extends Activity {
 										InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 }
-

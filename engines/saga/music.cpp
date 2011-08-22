@@ -213,7 +213,7 @@ void Music::setVolume(int volume, int time) {
 		return;
 	}
 
-	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this);
+	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this, "sagaMusicVolume");
 }
 
 bool Music::isPlaying() {
@@ -287,7 +287,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					if (_vm->isBigEndian())
 						musicFlags &= ~Audio::FLAG_LITTLE_ENDIAN;
 
-					if (_vm->getFeatures() & GF_MONO_MUSIC)
+					// The newer ITE Mac demo version contains a music file, but it has mono music.
+					// This is the only music file that is about 7MB, whereas all the other ones
+					// are much larger. Thus, we use this simple heuristic to determine if we got
+					// mono music in the ITE demos or not.
+					if (!strcmp(_digitalMusicContext->fileName(), "musicd.rsc") &&
+						_digitalMusicContext->fileSize() < 8000000)
 						musicFlags &= ~Audio::FLAG_STEREO;
 
 					audioStream = Audio::makeRawStream(musicStream, 11025, musicFlags, DisposeAfterUse::YES);
@@ -368,10 +373,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 void Music::pause() {
 	_player->pause();
+	_player->setVolume(0);
 }
 
 void Music::resume() {
 	_player->resume();
+	_player->setVolume(_vm->_musicVolume);
 }
 
 void Music::stop() {
@@ -379,4 +386,3 @@ void Music::stop() {
 }
 
 } // End of namespace Saga
-

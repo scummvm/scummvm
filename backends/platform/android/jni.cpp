@@ -619,4 +619,3 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 }
 
 #endif
-

@@ -29,7 +29,7 @@
 #include "graphics/surface.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 enum EventType {EVENT_NONE = 0, EVENT_BUTTON_DOWN = 1, EVENT_BUTTON_UP = 2, EVENT_KEYPRESS = 4,
 	EVENT_MOUSE_MOVE = 8};
@@ -100,8 +100,9 @@ public:
 	void delay(int numFrames);
 
 	virtual void listenerSynchronize(Serializer &s);
+	static void loadNotifierProc(bool postFlag);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

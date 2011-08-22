@@ -922,4 +922,3 @@ void OSystem_N64::detectControllers(void) {
 inline uint16 colRGB888toBGR555(byte r, byte g, byte b) {
 	return ((r >> 3) << 1) | ((g >> 3) << 6) | ((b >> 3) << 11);
 }
-

@@ -20,18 +20,11 @@
  *
  */
 
-//
-// New find_word algorithm by Thomas Akesson <tapilot@home.se>
-//
-
 #include "agi/agi.h"
 
 #include "common/textconsole.h"
 
 namespace Agi {
-
-static uint8 *words;		// words in the game
-static uint32 wordsFlen;	// length of word memory
 
 //
 // Local implementation to avoid problems with strndup() used by
@@ -43,12 +36,38 @@ static char *myStrndup(const char *src, int n) {
 	return tmp;
 }
 
+int AgiEngine::loadWords_v1(Common::File &f) {
+	char str[64];
+	int k;
+
+	debug(0, "Loading dictionary");
+	
+	// Loop through alphabet, as words in the dictionary file are sorted by
+	// first character
+	f.seek(f.pos() + 26 * 2, SEEK_SET);
+	do {
+		// Read next word
+		for (k = 0; k < (int)sizeof(str) - 1; k++) {
+			str[k] = f.readByte();
+			if (str[k] == 0 || (uint8)str[k] == 0xFF)
+				break;
+		}
+
+		// And store it in our internal dictionary
+		if (k > 0) {
+			AgiWord *w = new AgiWord;
+			w->word = myStrndup(str, k + 1);
+			w->id = f.readUint16LE();
+			_game.words[str[0] - 'a'].push_back(w);
+			debug(3, "'%s' (%d)", w->word, w->id);
+		}
+	} while((uint8)str[0] != 0xFF);
+
+	return errOK;
+}
+
 int AgiEngine::loadWords(const char *fname) {
 	Common::File fp;
-	uint32 flen;
-	uint8 *mem = NULL;
-
-	words = NULL;
 
 	if (!fp.open(fname)) {
 		warning("loadWords: can't open %s", fname);
@@ -56,85 +75,70 @@ int AgiEngine::loadWords(const char *fname) {
 	}
 	debug(0, "Loading dictionary: %s", fname);
 
-	fp.seek(0, SEEK_END);
-	flen = fp.pos();
-	wordsFlen = flen;
-	fp.seek(0, SEEK_SET);
+	// Loop through alphabet, as words in the dictionary file are sorted by
+	// first character
+	for (int i = 0; i < 26; i++) {
+		fp.seek(i * 2, SEEK_SET);
+		int offset = fp.readUint16BE();
+		if (offset == 0)
+			continue;
+		fp.seek(offset, SEEK_SET);
+		int k = fp.readByte();
+		while (!fp.eos() && !fp.err()) {
+			// Read next word
+			char c, str[64];
+			do {
+				c = fp.readByte();
+				str[k++] = (c ^ 0x7F) & 0x7F;
+			} while (!(c & 0x80) && k < (int)sizeof(str) - 1);
+			str[k] = 0;
 
-	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
-		fp.close();
-		return errNotEnoughMemory;
+			// And store it in our internal dictionary
+			AgiWord *w = new AgiWord;
+			w->word = myStrndup(str, k);
+			w->id = fp.readUint16BE();
+			_game.words[i].push_back(w);
+
+			// Are there more words with an already known prefix?
+			if (!(k = fp.readByte()))
+				break;
+		}
 	}
-
-	fp.read(mem, flen);
-	fp.close();
-
-	words = mem;
 
 	return errOK;
 }
 
 void AgiEngine::unloadWords() {
-	free(words);
-	words = NULL;
+	for (int i = 0; i < 26; i++)
+		_game.words[i].clear();
 }
 
 /**
  * Find a word in the dictionary
  * Uses an algorithm hopefully like the one Sierra used. Returns the ID
  * of the word and the length in flen. Returns -1 if not found.
- *
- * Thomas Akesson, November 2001
  */
 int AgiEngine::findWord(const char *word, int *flen) {
-	int mchr = 0;		// matched chars
-	int len, fchr, id = -1;
-	const uint8 *p = words;
-	const uint8 *q = words + wordsFlen;
-	*flen = 0;
+	int c;
 
 	debugC(2, kDebugLevelScripts, "find_word(%s)", word);
 
 	if (word[0] >= 'a' && word[0] <= 'z')
-		fchr = word[0] - 'a';
+		c = word[0] - 'a';
 	else
 		return -1;
 
-	len = strlen(word);
-
-	// Get the offset to the first word beginning with the
-	// right character
-	p += READ_BE_UINT16(p + 2 * fchr);
-
-	while (p[0] >= mchr) {
-		if (p[0] == mchr) {
-			p++;
-			// Loop through all matching characters
-			while ((p[0] ^ word[mchr]) == 0x7F && mchr < len) {
-				mchr++;
-				p++;
-			}
-			// Check if this is the last character of the word
-			// and if it matches
-			if ((p[0] ^ word[mchr]) == 0xFF && mchr < len) {
-				mchr++;
-				if (word[mchr] == 0 || word[mchr] == 0x20) {
-					id = READ_BE_UINT16(p + 1);
-					*flen = mchr;
-				}
-			}
+	*flen = 0;
+	Common::Array<AgiWord*> &a = _game.words[c];
+	for (int i = 0; i < (int)a.size(); i++) {
+		int wlen = strlen(a[i]->word);
+		if (!strncmp(a[i]->word, word, wlen) && (word[wlen] == 0 || word[wlen] == 0x20)) {
+			*flen = wlen;
+			return a[i]->id;
 		}
-		if (p >= q)
-			return -1;
-
-		// Step to the next word
-		while (p[0] < 0x80)
-			p++;
-
-		p += 3;
 	}
 
-	return id;
+	return -1;
 }
 
 void AgiEngine::dictionaryWords(char *msg) {

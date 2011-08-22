@@ -49,50 +49,52 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	switch (code = *p++) {
 	case 0:
 		// Allocate new part.
-		// There are 17 bytes of useful information here.
+		// There are 8 bytes (after decoding!) of useful information here.
 		// Here is what we know about them so far:
-		//   BYTE 00: Channel #
-		//   BYTE 02: BIT 01(0x01): Part on?(1 = yes)
+		//   BYTE 0: Channel #
+		//   BYTE 1: BIT 01(0x01): Part on?(1 = yes)
 		//            BIT 02(0x02): Reverb? (1 = yes) [bug #1088045]
-		//   BYTE 04: Priority adjustment [guessing]
-		//   BYTE 05: Volume(upper 4 bits) [guessing]
-		//   BYTE 06: Volume(lower 4 bits) [guessing]
-		//   BYTE 07: Pan(upper 4 bits) [bug #1088045]
-		//   BYTE 08: Pan(lower 4 bits) [bug #1088045]
-		//   BYTE 09: BIT 04(0x08): Percussion?(1 = yes)
-		//   BYTE 13: Pitchbend range(upper 4 bits) [bug #1088045]
-		//   BYTE 14: Pitchbend range(lower 4 bits) [bug #1088045]
-		//   BYTE 15: Program(upper 4 bits)
-		//   BYTE 16: Program(lower 4 bits)
-
-		// athrxx (05-21-2011):
-		// BYTE  9, 10: Transpose (if set to 0x80, this means that part->_transpose_eff will be 0 (also ignoring player->_transpose)
-		// BYTE 11, 12: Detune
+		//   BYTE 2: Priority adjustment
+		//   BYTE 3: Volume [guessing]
+		//   BYTE 4: Pan [bug #1088045]
+		//   BYTE 5: BIT 8(0x80): Percussion?(1 = yes) [guessed?]
+		//   BYTE 5: Transpose, if set to 0x80(=-1) it means no transpose
+		//   BYTE 6: Detune
+		//   BYTE 7: Pitchbend factor [bug #1088045]
+		//   BYTE 8: Program
 
 		part = player->getPart(p[0] & 0x0F);
+		player->decode_sysex_bytes(p + 1, buf + 1, len - 1);
 		if (part) {
-			part->set_onoff(p[2] & 0x01);
-			part->effectLevel((p[2] & 0x02) ? 127 : 0);
-			part->set_pri(p[4]);
-			part->volume((p[5] & 0x0F) << 4 |(p[6] & 0x0F));
-			part->set_pan((p[7] & 0x0F) << 4 | (p[8] & 0x0F));
-			part->_percussion = player->_isMIDI ? ((p[9] & 0x08) > 0) : false;
-			part->set_transpose((p[9] & 0x0F) << 4 | (p[10] & 0x0F));
-			part->set_detune((p[11] & 0x0F) << 4 | (p[12] & 0x0F));
-			part->pitchBendFactor((p[13] & 0x0F) << 4 | (p[14] & 0x0F));
+			part->set_onoff(buf[1] & 0x01);
+			part->effectLevel((buf[1] & 0x02) ? 127 : 0);
+			part->set_pri(buf[2]);
+			part->volume(buf[3]);
+			part->set_pan(buf[4]);
+			part->_percussion = player->_isMIDI ? ((buf[5] & 0x80) > 0) : false;
+			part->set_transpose(buf[5]);
+			part->set_detune(buf[6]);
+			part->pitchBendFactor(buf[7]);
 			if (part->_percussion) {
 				if (part->_mc) {
 					part->off();
 					se->reallocateMidiChannels(player->_midi);
 				}
 			} else {
-				// Even in cases where a program does not seem to be specified,
-				// i.e. bytes 15 and 16 are 0, we send a program change because
-				// 0 is a valid program number. MI2 tests show that in such
-				// cases, a regular program change message always seems to follow
-				// anyway.
-				if (player->_isMIDI)
-					part->_instrument.program((p[15] & 0x0F) << 4 |(p[16] & 0x0F), player->_isMT32);
+				if (player->_isMIDI) {
+					// Even in cases where a program does not seem to be specified,
+					// i.e. bytes 15 and 16 are 0, we send a program change because
+					// 0 is a valid program number. MI2 tests show that in such
+					// cases, a regular program change message always seems to follow
+					// anyway.
+					part->_instrument.program(buf[8], player->_isMT32);
+				} else {
+					// Like the original we set up the instrument data of the
+					// specified program here too. In case the global
+					// instrument data is not loaded already, this will take
+					// care of setting a default instrument too.
+					se->copyGlobalInstrument(buf[8], &part->_instrument);
+				}
 				part->sendAll();
 			}
 		}
@@ -113,11 +115,10 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		++p; // Skip hardware type
 		part = player->getPart(a);
 		if (part) {
-			if (len == 62) {
+			if (len == 62 || len == 48) {
 				player->decode_sysex_bytes(p, buf, len - 2);
 				part->set_instrument((byte *)buf);
 			} else {
-				// SPK tracks have len == 48 here, and are not supported
 				part->programChange(254); // Must be invalid, but not 255 (which is reserved)
 			}
 		}
@@ -127,7 +128,8 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		player->decode_sysex_bytes(p, buf, len - 3);
-		se->setGlobalAdLibInstrument(a, buf);
+		if (len == 63 || len == 49)
+			se->setGlobalInstrument(a, buf);
 		break;
 
 	case 33: // Parameter adjust
@@ -185,10 +187,9 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 
 	case 80: // Loop
 		player->decode_sysex_bytes(p + 1, buf, len - 1);
-		player->setLoop
-			(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
-			 READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
-			 READ_BE_UINT16(buf + 8));
+		player->setLoop(READ_BE_UINT16(buf), READ_BE_UINT16(buf + 2),
+		                READ_BE_UINT16(buf + 4), READ_BE_UINT16(buf + 6),
+		                READ_BE_UINT16(buf + 8));
 		break;
 
 	case 81: // End loop

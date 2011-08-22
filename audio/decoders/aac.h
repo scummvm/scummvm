@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -43,23 +40,19 @@ namespace Common {
 
 namespace Audio {
 
-class AudioStream;
+class Codec;
 
 /**
- * Create a new AudioStream from the AAC data of an MPEG-4 file in the given stream.
+ * Create a new Codec for decoding AAC data of an MPEG-4 file in the given stream.
  *
  * @note This should *only* be called by our QuickTime/MPEG-4 decoder since it relies
  *       on the MPEG-4 extra data. If you want to decode a file using AAC, go use
  *       makeQuickTimeStream() instead!
- * @param stream            the SeekableReadStream from which to read the AAC data
- * @param disposeStream     whether to delete the stream after use
  * @param extraData         the SeekableReadStream from which to read the AAC extra data
  * @param disposeExtraData  whether to delete the extra data stream after use
- * @return  a new AudioStream, or NULL, if an error occurred
+ * @return  a new Codec, or NULL, if an error occurred
  */
-AudioStream *makeAACStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeStream,
+Codec *makeAACDecoder(
 	Common::SeekableReadStream *extraData,
 	DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
 

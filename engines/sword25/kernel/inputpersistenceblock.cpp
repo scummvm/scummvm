@@ -55,8 +55,8 @@ void InputPersistenceBlock::read(int16 &value) {
 
 void InputPersistenceBlock::read(signed int &value) {
 	if (checkMarker(SINT_MARKER)) {
-		rawRead(&value, sizeof(signed int));
-		value = convertEndianessFromStorageToSystem(value);
+		value = (int32)READ_LE_UINT32(_iter);
+		_iter += 4;
 	} else {
 		value = 0;
 	}
@@ -64,8 +64,8 @@ void InputPersistenceBlock::read(signed int &value) {
 
 void InputPersistenceBlock::read(uint &value) {
 	if (checkMarker(UINT_MARKER)) {
-		rawRead(&value, sizeof(uint));
-		value = convertEndianessFromStorageToSystem(value);
+		value = READ_LE_UINT32(_iter);
+		_iter += 4;
 	} else {
 		value = 0;
 	}
@@ -73,8 +73,10 @@ void InputPersistenceBlock::read(uint &value) {
 
 void InputPersistenceBlock::read(float &value) {
 	if (checkMarker(FLOAT_MARKER)) {
-		rawRead(&value, sizeof(float));
-		value = convertEndianessFromStorageToSystem(value);
+		uint32 tmp[1];
+		tmp[0] = READ_LE_UINT32(_iter);
+		value = ((float *)tmp)[0];
+		_iter += 4;
 	} else {
 		value = 0.0f;
 	}
@@ -82,12 +84,11 @@ void InputPersistenceBlock::read(float &value) {
 
 void InputPersistenceBlock::read(bool &value) {
 	if (checkMarker(BOOL_MARKER)) {
-		uint uintBool;
-		rawRead(&uintBool, sizeof(float));
-		uintBool = convertEndianessFromStorageToSystem(uintBool);
+		uint uintBool = READ_LE_UINT32(_iter);
+		_iter += 4;
 		value = uintBool == 0 ? false : true;
 	} else {
-		value = 0.0f;
+		value = false;
 	}
 }
 
@@ -114,13 +115,6 @@ void InputPersistenceBlock::readByteArray(Common::Array<byte> &value) {
 			value = Common::Array<byte>(_iter, size);
 			_iter += size;
 		}
-	}
-}
-
-void InputPersistenceBlock::rawRead(void *destPtr, size_t size) {
-	if (checkBlockSize(size)) {
-		memcpy(destPtr, &*_iter, size);
-		_iter += size;
 	}
 }
 

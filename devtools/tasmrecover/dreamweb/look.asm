@@ -158,9 +158,3 @@ dogetback:	mov	getback,1
 	ret
 
 	endp
-
-
-
-
-
-

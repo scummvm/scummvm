@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	fs.o \
 	hashmap.o \
 	iff_container.o \
+	localization.o \
 	macresman.o \
 	memorypool.o \
 	md5.o \
@@ -34,6 +35,17 @@ MODULE_OBJS := \
 	winexe_pe.o \
 	xmlparser.o \
 	zlib.o
+
+ifdef USE_BINK
+MODULE_OBJS += \
+	bitstream.o \
+	cosinetables.o \
+	dct.o \
+	fft.o \
+	huffman.o \
+	rdft.o \
+	sinetables.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

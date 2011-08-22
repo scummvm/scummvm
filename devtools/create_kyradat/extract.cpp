@@ -127,7 +127,7 @@ const ExtractType *findExtractType(const int type) {
 }
 
 byte getTypeID(int type) {
-	return std::find(typeTable, typeTable + ARRAYSIZE(typeTable) - 1, type)->value;
+	return std::find(typeTable, ARRAYEND(typeTable) - 1, type)->value;
 }
 // Extractor implementation
 
@@ -142,19 +142,56 @@ bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, 
 }
 
 bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
-	int fmtPatch = 0;
+	// Skip tables for skipping English string left-overs in the hacky Russian fan translations
+	static const uint8 rusFanSkip_k2SeqplayStrings[] = { 1, 3, 5, 8, 10, 11, 13, 15, 17, 20, 22, 25, 26, 30, 33, 38, 40, 41, 44, 49, 51, 55, 104, 119, 121, 123 };
+	static const uint8 rusFanSkip_k1IntroStrings[] = { 3, 5, 9, 11, 13, 16, 18, 21, 24, 32, 34, 36, 38, 41, 44, 49, 52, 55, 57, 59, 61, 64, 66, 69, 72, 75 };
+	static const uint8 rusFanSkip_k1ThePoisonStrings[] = { 1, 4 };
+	static const uint8 rusFanSkip_k1FullFlaskStrings[] = { 1, 2, 4, 5, 7 };
+	static const uint8 rusFanSkip_k1WispJewelStrings[] = { 2 };
+	static const uint8 rusFanSkip_k1GUIStrings[] = { 1, 3, 6, 8, 11, 13, 18 };
+	uint32 rusFanSkipIdLen = 0;
+	const uint8 *rusFanSkipId = 0;
+	int rusFanEmptyId = 10000;
+	uint32 skipCount = 0;
+
+	int patch = 0;
 	// FM Towns files that need addional patches
 	if (info->platform == kPlatformFMTowns) {
 		if (id == k1TakenStrings || id == k1NoDropStrings || id == k1PoisonGoneString ||
 			id == k1ThePoisonStrings || id == k1FluteStrings || id == k1WispJewelStrings)
-			fmtPatch = 1;
+			patch = 1;
 		else if (id == k1IntroStrings)
-			fmtPatch = 2;
+			patch = 2;
 		else if (id == k2SeqplayStrings)
-			fmtPatch = 3;
+			patch = 3;
 	} else if (info->platform == kPlatformPC) {
 		if (id == k2IngamePakFiles)
-			fmtPatch = 4;
+			patch = 4;
+
+		if (info->lang == Common::RU_RUS) {
+			patch = 5;
+			if (id == k2SeqplayStrings) {
+				rusFanSkipId = rusFanSkip_k2SeqplayStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k2SeqplayStrings);
+				rusFanEmptyId = 81;
+			} else if (id == k1IntroStrings) {
+				rusFanSkipId = rusFanSkip_k1IntroStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1IntroStrings);
+				rusFanEmptyId = 30;
+			} else if (id == k1ThePoisonStrings) {
+				rusFanSkipId = rusFanSkip_k1ThePoisonStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1ThePoisonStrings);
+			} else if (id == k1FullFlaskString) {
+				rusFanSkipId = rusFanSkip_k1FullFlaskStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1FullFlaskStrings);
+			} else if (id == k1GUIStrings) {
+				rusFanSkipId = rusFanSkip_k1GUIStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1GUIStrings);
+			} else if (id == k1WispJewelStrings) {
+				rusFanSkipId = rusFanSkip_k1WispJewelStrings;
+				rusFanSkipIdLen = ARRAYSIZE(rusFanSkip_k1WispJewelStrings);
+			}
+		}
 
 		// HACK
 		if (id == k2SeqplayIntroTracks && info->game == kLol)
@@ -183,7 +220,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 						break;
 					targetsize--;
 				}
-				if (fmtPatch == 1) {
+				if (patch == 1) {
 					// Here is the first step of the extra treatment for all FM-TOWNS string arrays that
 					// contain more than one string and which the original code
 					// addresses via stringname[boolJapanese].
@@ -201,11 +238,38 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 						targetsize--;
 					}
 				}
+			} else if (patch == 5) {
+				++skipCount;
+				while (!data[i + 1]) {
+					if (skipCount == rusFanEmptyId) {
+						++skipCount;
+						++entries;
+						break;
+					}
+					if (++i == size)
+						break;
+					targetsize--;
+				}
+
+				// Skip English string left-overs in the hacky Russian fan translation
+				for (uint32 ii = 0; ii < rusFanSkipIdLen; ++ii) {
+					if (skipCount == rusFanSkipId[ii]) {
+						++skipCount;
+						uint32 len = strlen((const char*) data + i);
+						i += len;
+						targetsize = targetsize - 1 - len;
+						while (!data[i + 1]) {
+							if (++i == len)
+								break;
+							targetsize--;
+						}
+					}
+				}
 			}
 		}
 	}
 
-	if (fmtPatch == 2) {
+	if (patch == 2) {
 		if (info->lang == EN_ANY) {
 			targetsize--;
 			entries += 1;
@@ -215,12 +279,12 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 		}
 	}
 
-	if (fmtPatch == 3) {
+	if (patch == 3) {
 		entries++;
 		targetsize++;
 	}
 
-	if (fmtPatch == 4) {
+	if (patch == 4) {
 		targetsize -= 9;
 	}
 
@@ -229,12 +293,13 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	memset(buffer, 0, targetsize);
 	uint8 *output = buffer;
 	const uint8 *input = (const uint8*) data;
+	skipCount = 0;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
 	if (info->platform == kPlatformFMTowns) {
 		const byte *c = data + size;
 		do {
-			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
+			if (patch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
 				memcpy(output, input, 0x0F);
 				input += 0x11; output += 0x0F;
 			}
@@ -245,14 +310,14 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 			// skip empty entries
 			while (!*input) {
 				// Write one empty string into intro strings file
-				if (fmtPatch == 2) {
+				if (patch == 2) {
 					if ((info->lang == EN_ANY && input - data == 0x260) ||
 						(info->lang == JA_JPN && (input - data == 0x2BD || input - data == 0x2BE)))
 							*output++ = *input;
 				}
 
 				// insert one dummy string at hof sequence strings position 59
-				if (fmtPatch == 3) {
+				if (patch == 3) {
 					if ((info->lang == EN_ANY && input - data == 0x695) ||
 						(info->lang == JA_JPN && input - data == 0x598))
 							*output++ = *input;
@@ -262,7 +327,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 					break;
 			}
 
-			if (fmtPatch == 1) {
+			if (patch == 1) {
 				// Here is the extra treatment for all FM-TOWNS string arrays that
 				// contain more than one string and which the original code
 				// addresses via stringname[boolJapanese].
@@ -292,9 +357,38 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 			++dstPos;
 		}
 		targetsize = dstPos + 4;
+	} else if (patch == 5) {
+		const byte *c = data + size;
+		do {
+			strcpy((char*) output, (const char*) input);
+			uint32 stringsize = strlen((const char*)output) + 1;
+			input += stringsize; output += stringsize;
+
+			++skipCount;
+			while (!*input) {
+				if (skipCount == rusFanEmptyId) {
+					*output++ = *input;
+					++skipCount;
+				}
+				if (++input == c)
+					break;
+			}
+			// Skip English string left-overs in the hacky Russian fan translation
+			for (uint32 ii = 0; ii < rusFanSkipIdLen; ++ii) {
+				if (skipCount == rusFanSkipId[ii]) {
+					++skipCount;
+					input += strlen((const char*)input);
+					while (!*input) {
+						if (++input == c)
+							break;
+					}
+				}
+			}
+		
+		} while (input < c);
 	} else {
 		uint32 copySize = size;
-		if (fmtPatch == 4) {
+		if (patch == 4) {
 			memcpy(output, data, 44);
 			output += 44;
 			data += 44;
@@ -981,4 +1075,3 @@ bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const 
 }
 
 } // end of anonymous namespace
-

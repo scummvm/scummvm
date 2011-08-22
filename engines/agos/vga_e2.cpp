@@ -26,6 +26,7 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
+#include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/surface.h"

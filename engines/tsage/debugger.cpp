@@ -23,9 +23,9 @@
 #include "tsage/debugger.h"
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
 
 Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
@@ -38,6 +38,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("listobjects",	WRAP_METHOD(Debugger, Cmd_ListObjects));
 	DCmd_Register("moveobject",		WRAP_METHOD(Debugger, Cmd_MoveObject));
 	DCmd_Register("hotspots",		WRAP_METHOD(Debugger, Cmd_Hotspots));
+	DCmd_Register("sound",			WRAP_METHOD(Debugger, Cmd_Sound));
 }
 
 static int strToInt(const char *s) {
@@ -434,5 +435,18 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 	return false;
 }
 
+/**
+ * Play the specified sound
+ */
+bool Debugger::Cmd_Sound(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <sound number>\n", argv[0]);
+		return true;
+	}
 
-} // End of namespace tSage
+	int soundNum = strToInt(argv[1]);
+	_globals->_soundHandler.play(soundNum);
+	return false;
+}
+
+} // End of namespace TsAGE

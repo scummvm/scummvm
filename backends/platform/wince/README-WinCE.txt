@@ -1,10 +1,19 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-07-01
-Release version: 1.3.1
+Last updated: 2011-07-20
+Release version: x.x.x
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
+x.x.x:
+- Changed default values for "high_sample_rate" & "FM_high_quality" to "true" as
+  most devices today are fast enough to handle this. It's still possible to set
+  this to "false" if you have a slower device.
+- Fix for TeenAgent & Hugo engines (both weren't running at all, crashed right
+  at the beginning)
+- Replaced the game mass-adding functionality with the functionality used on all
+  other platforms. It now shows progress while searching for games.
+
 1.3.1:
 - Fix for Normal2xAspect scaler which was causing screen update issues in some
   games.
@@ -361,14 +370,13 @@ Some parameters are specific to this port :
 Game specific sections (f.e. [monkey2]) - performance options
 
  *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if
-                                    set.  The default is 11 kHz.
-                                    If you have a fast device, you can set this
-                                    to true to enjoy better sound effects and
-                                    music.
+                                    set.  This is the default.
+                                    If you have a slow device, you can set this
+                                    to false to prevent lags/delays in the game.
  *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower
-                                    quality otherwise. The default is low
+                                    quality otherwise. The default is high
                                     quality. You can change this if you have a
-                                    fast device.
+                                    slow device.
  *  sound_thread_priority  int      Set the priority of the sound thread (0, 1,
                                     2). Depending on the release, this is set
                                     to 1 internally (above normal).

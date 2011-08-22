@@ -96,5 +96,3 @@ int main(int argc, char** argv) {
 	scir_free_resource_manager(resmgr);
 	return 0;
 }
-
-

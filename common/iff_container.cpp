@@ -25,7 +25,7 @@
 
 namespace Common {
 
-IFFParser::IFFParser(Common::ReadStream *stream, bool disposeStream) : _stream(stream), _disposeStream(disposeStream) {
+IFFParser::IFFParser(ReadStream *stream, bool disposeStream) : _stream(stream), _disposeStream(disposeStream) {
 	setInputStream(stream);
 }
 
@@ -36,7 +36,7 @@ IFFParser::~IFFParser() {
 	_stream = 0;
 }
 
-void IFFParser::setInputStream(Common::ReadStream *stream) {
+void IFFParser::setInputStream(ReadStream *stream) {
 	assert(stream);
 	_formChunk.setInputStream(stream);
 	_chunk.setInputStream(stream);
@@ -63,7 +63,7 @@ void IFFParser::parse(IFFCallback &callback) {
 		_chunk.readHeader();
 
 		// invoke the callback
-		Common::SubReadStream stream(&_chunk, _chunk.size);
+		SubReadStream stream(&_chunk, _chunk.size);
 		IFFChunk chunk(_chunk.id, _chunk.size, &stream);
 		stop = callback(chunk);
 

@@ -83,7 +83,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 
 	_specialExitCount = 0;
-	Common::set_to(_specialExitTable, _specialExitTable+ARRAYSIZE(_specialExitTable), 0xFFFF);
+	Common::set_to(_specialExitTable, ARRAYEND(_specialExitTable), 0xFFFF);
 
 	_mainCharacter.sceneId = sceneId;
 	_sceneList[sceneId].flags &= ~1;
@@ -388,7 +388,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	strcat(filename, ".CPS");
 	_screen->loadBitmap(filename, 3, 3, 0);
 
-	Common::set_to(_specialSceneScriptState, _specialSceneScriptState+ARRAYSIZE(_specialSceneScriptState), false);
+	Common::set_to(_specialSceneScriptState, ARRAYEND(_specialSceneScriptState), false);
 	_sceneEnterX1 = 160;
 	_sceneEnterY1 = 0;
 	_sceneEnterX2 = 296;

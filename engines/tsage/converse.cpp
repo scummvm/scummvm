@@ -26,7 +26,7 @@
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 #define STRIP_WORD_DELAY 30
 
@@ -34,7 +34,7 @@ namespace tSage {
 SequenceManager::SequenceManager() : Action() {
 	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	_sequenceData.clear();
-	_field24 = 0;
+	_fontNum = 0;
 	_sequenceOffset = 0;
 	_resNum = 0;
 	_field26 = 0;
@@ -56,7 +56,7 @@ void SequenceManager::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_resNum);
 	s.syncAsSint32LE(_sequenceOffset);
 	s.syncAsByte(_keepActive);
-	s.syncAsSint32LE(_field24);
+	s.syncAsSint32LE(_fontNum);
 	s.syncAsSint32LE(_field26);
 
 	s.syncAsSint32LE(_objectIndex);
@@ -284,6 +284,32 @@ void SequenceManager::signal() {
 				_objectList[objIndex3], _objectList[objIndex4], _objectList[objIndex5], _objectList[objIndex6], NULL);
 			break;
 		}
+		/* Following indexes were introduced for Blue Force */
+		case 35:
+			v1 = getNextValue();
+			_sceneObject->updateAngle(_objectList[v1]);
+			break;
+		case 36:
+			_sceneObject->animate(ANIM_MODE_9, NULL);
+			break;
+		case 37:
+			v1 = getNextValue();
+			v2 = getNextValue();
+			warning("TODO: dword_53030(%d,%d)", v1, v2);
+			break;
+		case 38: {
+			int resNum = getNextValue();
+			int lineNum = getNextValue();
+			int fontNum = getNextValue();
+			int color1 = getNextValue();
+			int color2 = getNextValue();
+			int color3 = getNextValue();
+			int xp = getNextValue();
+			int yp = getNextValue();
+			int width = getNextValue();
+			setMessage(resNum, lineNum, fontNum, color1, color2, color3, Common::Point(xp, yp), width);
+			break;
+		}
 		default:
 			error("SequenceManager::signal - Unknown action %d at offset %xh", idx, _sequenceOffset - 2);
 			break;
@@ -337,10 +363,15 @@ uint16 SequenceManager::getNextValue() {
 }
 
 void SequenceManager::setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width) {
-	_sceneText._color1 = color;
-	_sceneText._color2 = 0;
-	_sceneText._color3 = 0;
-	_sceneText._fontNumber = 2;
+	setMessage(resNum, lineNum, 2, color, 0, 0, pt, width);
+}
+
+void SequenceManager::setMessage(int resNum, int lineNum, int fontNum, int color1, int color2, int color3,
+								 const Common::Point &pt, int width) {
+	_sceneText._color1 = color1;
+	_sceneText._color2 = color2;
+	_sceneText._color3 = color3;
+	_sceneText._fontNumber = fontNum;
 	_sceneText._width = width;
 
 	// Get the display message
@@ -416,13 +447,13 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 
 	// Event handling loop
 	Event event;
-	while (!_vm->getEventManager()->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		while (!_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
-				!_vm->getEventManager()->shouldQuit()) {
+				!_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
 		}
-		if (_vm->getEventManager()->shouldQuit())
+		if (_vm->shouldQuit())
 			break;
 
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode >= Common::KEYCODE_1) &&
@@ -954,4 +985,4 @@ void AnimatedSpeaker::removeText() {
 	_objectList.draw();
 }
 
-} // end of namespace tSage
+} // end of namespace TsAGE

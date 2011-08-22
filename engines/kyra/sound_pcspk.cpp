@@ -364,4 +364,3 @@ const uint8 MidiDriver_PCSpeaker::_noteTable2[] = {
 };
 
 } // End of namespace Kyra
-

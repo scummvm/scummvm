@@ -2445,4 +2445,3 @@ void SoundAdLibPC::unk2() {
 }
 
 } // End of namespace Kyra
-

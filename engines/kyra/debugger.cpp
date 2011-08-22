@@ -461,4 +461,3 @@ Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 #endif // ENABLE_LOL
 
 } // End of namespace Kyra
-

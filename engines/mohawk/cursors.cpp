@@ -49,36 +49,13 @@ void CursorManager::hideCursor() {
 }
 
 void CursorManager::setDefaultCursor() {
-	static const byte defaultCursor[] = {
-		1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
-		1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
-		1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
-		1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
-		1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
-		1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
-		1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
-		1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
-		1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
-		1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
-		1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
-		1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-		0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
-	};
+	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
 
-	static const byte bwPalette[] = {
-		0x00, 0x00, 0x00,	// Black
-		0xFF, 0xFF, 0xFF	// White
-	};
+	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+			cursor->getHotspotY(), cursor->getKeyColor());
+	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 
-	CursorMan.replaceCursor(defaultCursor, 12, 20, 0, 0, 0);
-	CursorMan.replaceCursorPalette(bwPalette, 1, 2);
+	delete cursor;
 }
 
 void CursorManager::setCursor(uint16 id) {

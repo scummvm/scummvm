@@ -292,4 +292,3 @@ void Normal2xAspect(const uint8  *srcPtr,
 }
 
 #endif	// USE_ARM_SCALER_ASM
-

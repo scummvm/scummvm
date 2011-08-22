@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
 	writeByte(outFile, TOON_DAT_VER_MAJ);
 	writeByte(outFile, TOON_DAT_VER_MIN);
 
-	// game versions/variantes
-	writeUint16BE(outFile, NUM_VARIANTE);
+	// game versions/variants
+	writeUint16BE(outFile, NUM_VARIANTS);
 
 	// Write locationDirNotVisited
 	nbrElem = sizeof(locationDirNotVisited_EN) / sizeof(char *);
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
 	nbrElem = sizeof(specialInfoLine_SP) / sizeof(char *);
 	writeTextArray(outFile, specialInfoLine_SP, nbrElem);
 
-// Not yet handled : miscTexts, endingLine and exitLine. Are they useful?
+	// Not yet handled: miscTexts, endingLine and exitLine. Are they useful?
 
 	fclose(outFile);
 	return 0;
@@ -160,4 +160,3 @@ void writeTextArray(FILE *outFile, const char *textArray[], int nbrText) {
 		fwrite(padBuf, pad, 1, outFile);
 	}
 }
-

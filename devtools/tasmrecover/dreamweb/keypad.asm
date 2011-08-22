@@ -1759,4 +1759,3 @@ Findtext1	proc	near
 	ret
 
 	endp
-

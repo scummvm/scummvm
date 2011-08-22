@@ -61,6 +61,7 @@ endif
 ifdef SDL_BACKEND
 MODULE_OBJS += \
 	events/sdl/sdl-events.o \
+	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
@@ -87,7 +88,8 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
-	midi/coremidi.o
+	midi/coremidi.o \
+	updates/macosx/macosx-updates.o
 endif
 
 ifdef WIN32
@@ -113,6 +115,11 @@ MODULE_OBJS += \
 	fs/ps3/ps3-fs-factory.o \
 	events/ps3sdl/ps3sdl-events.o \
 	mixer/sdl13/sdl13-mixer.o
+endif
+
+ifeq ($(BACKEND),bada)
+MODULE_OBJS += \
+	timer/bada/timer.o
 endif
 
 ifeq ($(BACKEND),ds)

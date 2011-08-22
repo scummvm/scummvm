@@ -42,6 +42,7 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/timer.h"
 
 #include "engines/util.h"
 
@@ -146,7 +147,7 @@ Common::Error LastExpressEngine::run() {
 
 	// Start sound manager and setup timer
 	_soundMan = new SoundManager(this);
-	_timer->installTimerProc(&soundTimer, 17000, this);
+	_timer->installTimerProc(&soundTimer, 17000, this, "lastexpressSound");
 
 	// Menu
 	_menu = new Menu(this);

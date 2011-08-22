@@ -20,19 +20,33 @@
  *
  */
 
-namespace tSage {
+namespace TsAGE {
 
 static const tSageGameDescription gameDescriptions[] = {
 
-	// Ringworld CD and First Wave versions
+	// Ringworld English CD and First Wave versions
 	{
 		{
-			"ring",
+			"ringworld",
 			"CD",
 			AD_ENTRY1s("ring.rlb", "466f0e6492d9d0f34d35c5cd088de90f", 37847618),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_UNSTABLE,
+			ADGF_TESTING | ADGF_CD,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
+		},
+		GType_Ringworld,
+		GF_CD | GF_ALT_REGIONS
+	},
+	// Ringworld Spanish CD
+	{
+		{
+			"ringworld",
+			"CD",
+			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			ADGF_TESTING | ADGF_CD,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
@@ -41,12 +55,12 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy",
 			AD_ENTRY1s("ring.rlb", "7b7f0c5b37b58fa5ec06ebb2ca0d0d9d", 8438770),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_UNSTABLE,
+			ADGF_TESTING,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_Ringworld,
@@ -55,7 +69,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy Demo #1 version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy Demo",
 			AD_ENTRY1s("tsage.rlb", "3b3604a97c06c91f3735d3e9d341f63f", 833453),
 			Common::EN_ANY,
@@ -70,7 +84,7 @@ static const tSageGameDescription gameDescriptions[] = {
 	// Ringworld English Floppy Demo #2 version
 	{
 		{
-			"ring",
+			"ringworld",
 			"Floppy Demo",
 			AD_ENTRY1s("demoring.rlb", "64050e1806203b15bb03876140eb4f56", 832206),
 			Common::EN_ANY,
@@ -106,11 +120,11 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "17eabb456cb1546c66baf1aff387ba6a", 10032614),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
-		GF_FLOPPY
+		GF_FLOPPY | GF_ALT_REGIONS
 	},
 	// Blue Force CD and First Wave use the same files
 	{
@@ -120,13 +134,13 @@ static const tSageGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("blue.rlb", "99983f48cb218f1f3760cf2f9a7ef11d", 63863322),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_CD | ADGF_UNSTABLE,
 			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
 		},
 		GType_BlueForce,
-		GF_CD
+		GF_CD | GF_ALT_REGIONS
 	},
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE

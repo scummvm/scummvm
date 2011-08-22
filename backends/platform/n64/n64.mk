@@ -26,4 +26,3 @@ endif
 	$(srcdir)/backends/platform/n64/pad_rom.sh scummvm.v64
 	rm scummvm.bak
 	mv scummvm.v64 $(bundle_name)/scummvm.v64
-

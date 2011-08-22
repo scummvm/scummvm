@@ -218,4 +218,3 @@ void WiiFilesystemFactory::umountUnused(const String &path) {
 }
 
 #endif
-

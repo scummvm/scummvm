@@ -129,4 +129,3 @@ void CharacterDrew::resetScale()
 	setPosition(_x, _y);
 }
 } // End of namespace Toon
-

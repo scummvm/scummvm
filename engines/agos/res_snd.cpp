@@ -27,12 +27,12 @@
 
 #include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/midi.h"
 #include "agos/vga.h"
 
 #include "backends/audiocd/audiocd.h"
 
 #include "audio/audiostream.h"
-#include "audio/mididrv.h"
 #include "audio/mods/protracker.h"
 
 namespace AGOS {
@@ -125,10 +125,10 @@ void AGOSEngine::loadMusic(uint16 music) {
 	_gameFile->read(buf, 4);
 	if (!memcmp(buf, "FORM", 4)) {
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi.loadXMIDI(_gameFile);
+		_midi->loadXMIDI(_gameFile);
 	} else {
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi.loadMultipleSMF(_gameFile);
+		_midi->loadMultipleSMF(_gameFile);
 	}
 
 	_lastMusicPlayed = music;
@@ -242,20 +242,20 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		if (music == 35)
 			return;
 
-		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		_midi->setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 		_gameFile->read(buf, 4);
 		if (!memcmp(buf, "GMF\x1", 4)) {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_midi.loadSMF(_gameFile, music);
+			_midi->loadSMF(_gameFile, music);
 		} else {
 			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_midi.loadMultipleSMF(_gameFile);
+			_midi->loadMultipleSMF(_gameFile);
 		}
 
-		_midi.startTrack(0);
-		_midi.startTrack(track);
+		_midi->startTrack(0);
+		_midi->startTrack(track);
 	} else if (getPlatform() == Common::kPlatformAcorn) {
 		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	} else {
@@ -266,15 +266,15 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		if (f.isOpen() == false)
 			error("playMusic: Can't load music from '%s'", filename);
 
-		_midi.setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		_midi->setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
 		if (getFeatures() & GF_DEMO)
-			_midi.loadS1D(&f);
+			_midi->loadS1D(&f);
 		else
-			_midi.loadSMF(&f, music);
+			_midi->loadSMF(&f, music);
 
-		_midi.startTrack(0);
-		_midi.startTrack(track);
+		_midi->startTrack(0);
+		_midi->startTrack(track);
 	}
 }
 
@@ -286,7 +286,7 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	} else if (getPlatform() == Common::kPlatformAtariST) {
 		// TODO: Add support for music formats used
 	} else {
-		_midi.setLoop(true); // Must do this BEFORE loading music.
+		_midi->setLoop(true); // Must do this BEFORE loading music.
 
 		char filename[15];
 		Common::File f;
@@ -295,21 +295,21 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 		if (f.isOpen() == false)
 			error("playMusic: Can't load music from '%s'", filename);
 
-		_midi.loadS1D(&f);
-		_midi.startTrack(0);
-		_midi.startTrack(track);
+		_midi->loadS1D(&f);
+		_midi->startTrack(0);
+		_midi->startTrack(track);
 	}
 }
 
 void AGOSEngine::stopMusic() {
 	if (_midiEnabled) {
-		_midi.stop();
+		_midi->stop();
 	}
 	_mixer->stopHandle(_modHandle);
 }
 
 void AGOSEngine::playSting(uint16 soundId) {
-	if (!_midi._enable_sfx)
+	if (!_midi->_enable_sfx)
 		return;
 
 	char filename[15];
@@ -328,8 +328,8 @@ void AGOSEngine::playSting(uint16 soundId) {
 		error("playSting: Can't read sting %d offset", soundId);
 
 	mus_file.seek(mus_offset, SEEK_SET);
-	_midi.loadSMF(&mus_file, soundId, true);
-	_midi.startTrack(0);
+	_midi->loadSMF(&mus_file, soundId, true);
+	_midi->startTrack(0);
 }
 
 static const byte elvira1_soundTable[100] = {

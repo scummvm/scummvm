@@ -41,4 +41,3 @@ Plugin *PS2PluginProvider::createPlugin(const Common::FSNode &node) const {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
-

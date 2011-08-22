@@ -150,6 +150,9 @@ Common::Error MohawkEngine_Riven::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	// Set the transition speed
+	_gfx->setTransitionSpeed(_vars["transitionmode"]);
+
 	// Start at main cursor
 	_cursor->setCursor(kRivenMainCursor);
 	_cursor->showCursor();
@@ -209,8 +212,10 @@ void MohawkEngine_Riven::handleEvents() {
 			needsUpdate = true;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			if (_curHotspot >= 0)
+			if (_curHotspot >= 0) {
+				checkSunnerAlertClick();
 				runHotspotScript(_curHotspot, kMouseDownScript);
+			}
 			break;
 		case Common::EVENT_LBUTTONUP:
 			// See RivenScript::switchCard() for more information on why we sometimes
@@ -812,6 +817,138 @@ static void catherineIdleTimer(MohawkEngine_Riven *vm) {
 	vm->installTimer(&catherineIdleTimer, timeUntilNextMovie);
 }
 
+static void sunnersTopStairsTimer(MohawkEngine_Riven *vm) {
+	// If the sunners are gone, we have no video to play
+	if (vm->_vars["jsunners"] != 0) {
+		vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	uint32 timerTime = 500;
+
+	if (oldHandle == NULL_VID_HANDLE || vm->_video->endOfVideo(oldHandle)) {
+		uint32 &sunnerTime = vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+		} else if (sunnerTime < vm->getTotalPlayTime()) {
+			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(1, 3));
+
+			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+		}
+
+		sunnerTime = timerTime + vm->getTotalPlayTime();
+	}
+
+	vm->installTimer(&sunnersTopStairsTimer, timerTime);
+}
+
+static void sunnersMidStairsTimer(MohawkEngine_Riven *vm) {
+	// If the sunners are gone, we have no video to play
+	if (vm->_vars["jsunners"] != 0) {
+		vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	uint32 timerTime = 500;
+
+	if (oldHandle == NULL_VID_HANDLE || vm->_video->endOfVideo(oldHandle)) {
+		uint32 &sunnerTime = vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+		} else if (sunnerTime < vm->getTotalPlayTime()) {
+			// Randomize the video
+			int randValue = vm->_rnd->getRandomNumber(5);
+			uint16 movie = 4;
+			if (randValue == 4)
+				movie = 2;
+			else if (randValue == 5)
+				movie = 3;
+
+			VideoHandle handle = vm->_video->playMovieRiven(movie);
+
+			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+		}
+
+		sunnerTime = timerTime + vm->getTotalPlayTime();
+	}
+
+	vm->installTimer(&sunnersMidStairsTimer, timerTime);
+}
+
+static void sunnersLowerStairsTimer(MohawkEngine_Riven *vm) {
+	// If the sunners are gone, we have no video to play
+	if (vm->_vars["jsunners"] != 0) {
+		vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	uint32 timerTime = 500;
+
+	if (oldHandle == NULL_VID_HANDLE || vm->_video->endOfVideo(oldHandle)) {
+		uint32 &sunnerTime = vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		} else if (sunnerTime < vm->getTotalPlayTime()) {
+			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(3, 5));
+
+			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		}
+
+		sunnerTime = timerTime + vm->getTotalPlayTime();
+	}
+
+	vm->installTimer(&sunnersLowerStairsTimer, timerTime);
+}
+
+static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
+	// If the sunners are gone, we have no video to play
+	if (vm->_vars["jsunners"] != 0) {
+		vm->removeTimer();
+		return;
+	}
+
+	// Play a random sunners video if the script one is not playing already
+	// and then set a new timer for when the new video should be played
+
+	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(3);
+	uint32 timerTime = 500;
+
+	if (oldHandle == NULL_VID_HANDLE || vm->_video->endOfVideo(oldHandle)) {
+		uint32 &sunnerTime = vm->_vars["jsunnertime"];
+
+		if (sunnerTime == 0) {
+			timerTime = vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		} else if (sunnerTime < vm->getTotalPlayTime()) {
+			// Unlike the other cards' scripts which automatically
+			// activate the MLST, we have to set it manually here.
+			uint16 mlstID = vm->_rnd->getRandomNumberRng(3, 8);
+			vm->_video->activateMLST(mlstID, vm->getCurCard());
+			VideoHandle handle = vm->_video->playMovieRiven(mlstID);
+
+			timerTime = vm->_video->getDuration(handle) + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+		}
+
+		sunnerTime = timerTime + vm->getTotalPlayTime();
+	}
+
+	vm->installTimer(&sunnersBeachTimer, timerTime);
+}
+
 void MohawkEngine_Riven::installCardTimer() {
 	switch (getCurCardRMAP()) {
 	case 0x3a85: // Top of elevator on prison island
@@ -819,16 +956,16 @@ void MohawkEngine_Riven::installCardTimer() {
 		installTimer(&catherineIdleTimer, _rnd->getRandomNumberRng(1, 33) * 1000);
 		break;
 	case 0x77d6: // Sunners, top of stairs
-		// TODO: Background Sunner videos
+		installTimer(&sunnersTopStairsTimer, 500);
 		break;
 	case 0x79bd: // Sunners, middle of stairs
-		// TODO: Background Sunner videos
+		installTimer(&sunnersMidStairsTimer, 500);
 		break;
 	case 0x7beb: // Sunners, bottom of stairs
-		// TODO: Background Sunner videos
+		installTimer(&sunnersLowerStairsTimer, 500);
 		break;
 	case 0xb6ca: // Sunners, shoreline
-		// TODO: Background Sunner videos
+		installTimer(&sunnersBeachTimer, 500);
 		break;
 	}
 }
@@ -844,6 +981,34 @@ void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
 	// Run the opcode if we can at this point
 	if (force || _video->getElapsedTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
 		_scriptMan->runStoredMovieOpcode();
+}
+
+void MohawkEngine_Riven::checkSunnerAlertClick() {
+	// We need to do a manual hardcoded check for the sunners'
+	// alert movies.
+
+	uint32 &sunners = _vars["jsunners"];
+
+	// If the sunners are gone, there's nothing for us to do
+	if (sunners != 0)
+		return;
+
+	uint32 rmapCode = getCurCardRMAP();
+
+	// This is only for the mid/lower staircase sections
+	if (rmapCode != 0x79bd && rmapCode != 0x7beb)
+		return;
+
+	// Only set the sunners variable on the forward hotspot
+	if ((rmapCode == 0x79bd && _curHotspot != 1) || (rmapCode == 0x7beb && _curHotspot != 2))
+		return;
+
+	// If the alert video is no longer playing, we have nothing left to do
+	VideoHandle handle = _video->findVideoHandleRiven(1);
+	if (handle == NULL_VID_HANDLE || _video->endOfVideo(handle))
+		return;
+
+	sunners = 1;
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

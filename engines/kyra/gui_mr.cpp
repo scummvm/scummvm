@@ -1607,4 +1607,3 @@ void GUI_MR::drawSliderBar(int slider, const uint8 *shape) {
 }
 
 } // End of namespace Kyra
-

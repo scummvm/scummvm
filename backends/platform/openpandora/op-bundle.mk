@@ -75,11 +75,10 @@ endif
 
 	$(CP) $(libloc)/../arm-angstrom-linux-gnueabi/usr/lib/libFLAC.so.8.2.0 $(bundle_name)/scummvm/lib/libFLAC.so.8
 
-	$(srcdir)/backends/platform/openpandora/build/pnd_make.sh -p $(bundle_name).pnd -d $(bundle_name)/scummvm -x $(bundle_name)/scummvm/data/PXML.xml -i $(bundle_name)/scummvm/icon/scummvm.png
+	$(srcdir)/backends/platform/openpandora/build/pnd_make.sh -p $(bundle_name).pnd -c -d $(bundle_name)/scummvm -x $(bundle_name)/scummvm/data/PXML.xml -i $(bundle_name)/scummvm/icon/scummvm.png
 
 	$(CP) $(srcdir)/backends/platform/openpandora/build/README-PND.txt $(bundle_name)
 	tar -cvjf $(bundle_name)-pnd.tar.bz2 $(bundle_name).pnd $(bundle_name)/README-PND.txt
 	rm -R ./$(bundle_name)
-#	rm $(bundle_name).pnd
 
 .PHONY: op-bundle op-pnd
