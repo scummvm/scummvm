@@ -267,7 +267,7 @@ void DreamGenContext::backobject() {
 }
 
 void DreamGenContext::backobject(Sprite *sprite) {
-	ObjData *objData = (ObjData *)segRef(data.word(kSetdat)).ptr(sprite->objData(), 0);
+	SetObject *objData = (SetObject *)segRef(data.word(kSetdat)).ptr(sprite->objData(), 0);
 
 	if (sprite->delay != 0) {
 		--sprite->delay;
@@ -291,7 +291,7 @@ void DreamGenContext::backobject(Sprite *sprite) {
 		steady(sprite, objData);
 }
 
-void DreamGenContext::constant(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::constant(Sprite *sprite, SetObject *objData) {
 	++sprite->frame;
 	if (objData->b18[sprite->frame] == 255) {
 		sprite->frame = 0;
@@ -301,13 +301,13 @@ void DreamGenContext::constant(Sprite *sprite, ObjData *objData) {
 	sprite->b15 = b18;
 }
 
-void DreamGenContext::random(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
 	randomnum1();
 	uint16 r = ax;
 	sprite->b15 = objData->b18[r&7];
 }
 
-void DreamGenContext::doorway(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::doorway(Sprite *sprite, SetObject *objData) {
 	data.byte(kDoorcheck1) = -24;
 	data.byte(kDoorcheck2) = 10;
 	data.byte(kDoorcheck3) = -30;
@@ -315,7 +315,7 @@ void DreamGenContext::doorway(Sprite *sprite, ObjData *objData) {
 	dodoor(sprite, objData);
 }
 
-void DreamGenContext::widedoor(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::widedoor(Sprite *sprite, SetObject *objData) {
 	data.byte(kDoorcheck1) = -24;
 	data.byte(kDoorcheck2) = 24;
 	data.byte(kDoorcheck3) = -30;
@@ -325,11 +325,11 @@ void DreamGenContext::widedoor(Sprite *sprite, ObjData *objData) {
 
 void DreamGenContext::dodoor() {
 	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
-	ObjData *objData = (ObjData *)ds.ptr(di, 0);
+	SetObject *objData = (SetObject *)ds.ptr(di, 0);
 	dodoor(sprite, objData);
 }
 
-void DreamGenContext::dodoor(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData) {
 	uint8 ryanx = data.byte(kRyanx);
 	uint8 ryany = data.byte(kRyany);
 	if (ryanx < sprite->x) {
@@ -380,13 +380,13 @@ shutdoor:
 		data.byte(kThroughdoor) = 0;
 }
 
-void DreamGenContext::steady(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {
 	uint8 b18 = objData->b18[0];
 	objData->b17 = b18;
 	sprite->b15 = b18;
 }
 
-void DreamGenContext::lockeddoorway(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 	if (data.byte(kRyanx) < sprite->x) {
 		if (sprite->x - data.byte(kRyanx) > 24)
 			goto shutdoor2;
@@ -450,7 +450,7 @@ shutdoor2:
 	}
 }
 
-void DreamGenContext::liftsprite(Sprite *sprite, ObjData *objData) {
+void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 	uint8 liftFlag = data.byte(kLiftflag);
 	if (liftFlag == 0) { //liftclosed
 		turnpathoffCPP(data.byte(kLiftpath));

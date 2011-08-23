@@ -667,7 +667,7 @@ void DreamGenContext::cancelch1() {
 	engine->stopSound(1);
 }
 
-void DreamGenContext::makebackob(ObjData *objData) {
+void DreamGenContext::makebackob(SetObject *objData) {
 	if (data.byte(kNewobs) == 0)
 		return;
 	uint8 priority = objData->priority;
@@ -675,8 +675,8 @@ void DreamGenContext::makebackob(ObjData *objData) {
 	Sprite *sprite = makesprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
 
 	uint16 objDataOffset = (uint8 *)objData - segRef(data.word(kSetdat)).ptr(0, 0);
-	assert(objDataOffset % sizeof(ObjData) == 0);
-	assert(objDataOffset < 128 * sizeof(ObjData));
+	assert(objDataOffset % sizeof(SetObject) == 0);
+	assert(objDataOffset < 128 * sizeof(SetObject));
 	sprite->setObjData(objDataOffset);
 	if (priority == 255)
 		priority = 0;
@@ -1093,16 +1093,16 @@ void DreamGenContext::setallchanges() {
 	}
 }
 
-FreeObject *DreamGenContext::getfreead(uint8 index) {
-	return (FreeObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
+DynObject *DreamGenContext::getfreead(uint8 index) {
+	return (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
 }
 
-FreeObject *DreamGenContext::getexad(uint8 index) {
-	return (FreeObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
+DynObject *DreamGenContext::getexad(uint8 index) {
+	return (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
 }
 
-ObjData *DreamGenContext::getsetad(uint8 index) {
-	return (ObjData *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
+SetObject *DreamGenContext::getsetad(uint8 index) {
+	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
 void DreamGenContext::dochange() {
@@ -1113,7 +1113,7 @@ void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
 		getsetad(index)->b58[0] = value;
 	} else if (type == 1) { //freeobject
-		FreeObject *freeObject = getfreead(index);
+		DynObject *freeObject = getfreead(index);
 		if (freeObject->b2 == 0xff)
 			freeObject->b2 = value;
 	} else { //path
@@ -1124,16 +1124,14 @@ void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamGenContext::deletetaken() {
-	ds = data.word(kExtras);
-	si = kExdata;
-	FreeObject *freeObjects = (FreeObject *)segRef(data.word(kFreedat)).ptr(0, 0);
+	const DynObject *extraObjects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0);
+	DynObject *freeObjects = (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < kNumexobjects; ++i) {
-		uint8 location = ds.byte(si+11);
+		uint8 location = extraObjects[i].location;
 		if (location == data.byte(kReallocation)) {
-			uint8 index = ds.byte(si+1);
+			uint8 index = extraObjects[i].index;
 			freeObjects[index].b2 = 254;
 		}
-		si += 16;
 	}
 }
 

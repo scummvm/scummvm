@@ -150,9 +150,9 @@ void DreamGenContext::showallobs() {
 	data.word(kFramesad) = kFrames;
 
 	const Frame *frames = (const Frame *)segRef(data.word(kFrsegment)).ptr(0, 0);
-	ObjData *setEntries = (ObjData *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(ObjData));
+	SetObject *setEntries = (SetObject *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(SetObject));
 	for (size_t i = 0; i < 128; ++i) {
-		ObjData *setEntry = setEntries + i;
+		SetObject *setEntry = setEntries + i;
 		if (getmapad(setEntry->b58) == 0)
 			continue;
 		uint8 currentFrame = setEntry->b18[0];
