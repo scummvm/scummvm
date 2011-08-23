@@ -55,6 +55,13 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	DEALLOCATE(imgData);
 }
 
+InvObject::InvObject(int visage, int strip, int frame, int sceneNumber) {
+	_visage = visage;
+	_strip = strip;
+	_frame = frame;
+	_sceneNumber = sceneNumber;
+}
+
 void InvObject::setCursor() {
 	_globals->_events._currentCursor = _cursorId;
 
@@ -2306,6 +2313,16 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 
 /*--------------------------------------------------------------------------*/
 
+void AltSceneObject::postInit(SceneObjectList *OwnerList) {
+	SceneObject::postInit(&_globals->_sceneManager._altSceneObjects);
+}
+
+void AltSceneObject::draw() {
+	SceneObject::draw();
+}
+
+/*--------------------------------------------------------------------------*/
+
 void SceneObjectExt2::postInit(SceneObjectList *OwnerList) {
 	_v8A = -1;
 	_v8C = -1;
@@ -2750,6 +2767,9 @@ void Player::synchronize(Serializer &s) {
 	s.syncAsByte(_canWalk);
 	s.syncAsByte(_uiEnabled);
 	s.syncAsSint16LE(_field8C);
+
+	if (_vm->getGameID() == GType_BlueForce)
+		s.syncAsSint16LE(_field8E);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -121,6 +121,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 
 	case GType_BlueForce:
 		_game = new BlueForce::BlueForceGame();
+		_inventory = new BlueForce::BlueForceInvObjectList();
 		_sceneHandler = new BlueForce::SceneHandlerExt();
 		break;
 	}

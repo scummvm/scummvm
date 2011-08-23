@@ -263,7 +263,7 @@ SceneExt::SceneExt(): Scene() {
 
 	_field372 = 0;
 	_field37A = 0;
-	_field37C = NULL;
+	_eventHandler = NULL;
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
@@ -349,6 +349,13 @@ void SceneHandlerExt::process(Event &event) {
 
 	// TODO: All the new stuff from Blue Force
 }
+
+/*--------------------------------------------------------------------------*/
+
+BlueForceInvObjectList::BlueForceInvObjectList() {
+
+}
+
 
 } // End of namespace BlueForce
 

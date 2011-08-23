@@ -30,6 +30,7 @@
 #include "tsage/events.h"
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
+#include "tsage/blue_force/blueforce_ui.h"
 
 namespace TsAGE {
 
@@ -113,6 +114,7 @@ using namespace TsAGE;
 class BlueForceGlobals: public Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3;
+	UIElements _uiElements;
 	int _v4CEA2;
 	int _v4CEA8;
 	int _v4CEF2;

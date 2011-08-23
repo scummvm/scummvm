@@ -37,6 +37,8 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
+#define BLUE_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)_globals->_inventory))
+
 class BlueForceGame: public Game {
 public:
 	virtual void start();
@@ -87,12 +89,17 @@ public:
 	virtual void startMove(SceneObject *sceneObj, va_list va);
 };
 
+class SceneItemType3: public SceneItemType1 {
+public:
+
+};
+
 class SceneExt: public Scene {
 public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
 	int _field37A;
-	EventHandler *_field37C;
+	EventHandler *_eventHandler;
 
 	Rect _v51C34;
 public:
@@ -128,6 +135,13 @@ public:
 
 class BlueAnimatedSpeaker: public Speaker {
 public:
+};
+
+class BlueForceInvObjectList : public InvObjectList {
+public:
+	BlueForceInvObjectList();
+
+	virtual Common::String getClassName() { return "BlueForceInvObjectList"; }
 };
 
 } // End of namespace BlueForce

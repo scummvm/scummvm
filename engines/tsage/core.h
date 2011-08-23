@@ -55,8 +55,13 @@ public:
 	CursorType _cursorId;
 	Common::String _description;
 	int _iconResNum;
+
+	int _visage;
+	int _strip;
+	int _frame;
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
+	InvObject(int visage, int strip, int frame, int sceneNumber);
 
 	bool inInventory() const { return _sceneNumber == 1; }
 	void setCursor();
@@ -567,6 +572,13 @@ public:
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
+class AltSceneObject: public SceneObject {
+public:
+	virtual Common::String getClassName() { return "AltObjectExt"; }
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void draw();
+};
+
 class SceneObjectExt : public SceneObject {
 public:
 	int _state;
@@ -613,6 +625,7 @@ public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
+	int _field8E;
 public:
 	Player();
 
