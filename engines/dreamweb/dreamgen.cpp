@@ -15976,18 +15976,6 @@ searchmess:
 	printdirect();
 }
 
-void DreamGenContext::getflagunderp() {
-	STACK_CHECK;
-	cx = data.word(kMousex);
-	_sub(cx, data.word(kMapadx));
-	ax = data.word(kMousey);
-	_sub(ax, data.word(kMapady));
-	ch = al;
-	checkone();
-	data.byte(kLastflag) = cl;
-	data.byte(kLastflagex) = ch;
-}
-
 void DreamGenContext::setwalk() {
 	STACK_CHECK;
 	_cmp(data.byte(kLinepointer), 254);
@@ -18582,7 +18570,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_examineobtext: examineobtext(); break;
 		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
-		case addr_getflagunderp: getflagunderp(); break;
 		case addr_setwalk: setwalk(); break;
 		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;

@@ -145,6 +145,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'adjustlen',
 	'finishedwalking',
 	'checkone',
+	'getflagunderp',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

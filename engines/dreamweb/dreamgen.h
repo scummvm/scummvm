@@ -115,7 +115,6 @@ public:
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_setwalk = 0xca44;
-	static const uint16 addr_getflagunderp = 0xca40;
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_examineobtext = 0xca20;
@@ -1843,7 +1842,7 @@ public:
 	void louischair();
 	void saveems();
 	void locationpic();
-	void getflagunderp();
+	//void getflagunderp();
 	void dolook();
 	void opentvdoor();
 	void triggermessage();

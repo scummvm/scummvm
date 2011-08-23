@@ -171,4 +171,6 @@
 	void finishedwalking();
 	void checkone();
 	void checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY);
+	void getflagunderp();
+	void getflagunderp(uint8 *flag, uint8 *flagEx);
 

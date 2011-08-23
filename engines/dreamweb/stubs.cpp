@@ -1163,6 +1163,20 @@ bool DreamGenContext::finishedwalkingCPP() {
 	return (data.byte(kLinepointer) == 254) && (data.byte(kFacing) == data.byte(kTurntoface));
 }
 
+void DreamGenContext::getflagunderp() {
+	uint8 flag, flagEx;
+	getflagunderp(&flag, &flagEx);
+	cl = flag;
+	ch = flagEx;
+}
+
+void DreamGenContext::getflagunderp(uint8 *flag, uint8 *flagEx) {
+	uint8 type, flagX, flagY;
+	checkone(data.word(kMousex) - data.word(kMapadx), data.word(kMousey) - data.word(kMapady), flag, flagEx, &type, &flagX, &flagY);
+	cl = data.byte(kLastflag) = *flag;
+	ch = data.byte(kLastflagex) = *flagEx;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
