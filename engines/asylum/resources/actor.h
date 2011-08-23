@@ -51,6 +51,8 @@ struct ActorData : public Common::Serializable {
 		memset(&directions, 0, sizeof(directions));
 	}
 
+	virtual ~ActorData() {}
+
 	void load(Common::SeekableReadStream *stream) {
 		count = stream->readUint32LE();
 
