@@ -176,11 +176,6 @@ Common::Error ComposerEngine::run() {
 				onKeyDown(event.kbd.keycode);
 				break;
 
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				quitGame();
-				break;
-
 			default:
 				break;
 			}
