@@ -947,9 +947,7 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 		if (y >= ymax)
 			continue;
 		data.word(kPersondata) = people->w2();
-		al = people->b4;
-		ah = 5;
-		obname();
+		obname(people->b4, 5);
 		return true;
 	}
 	return false;
@@ -973,9 +971,7 @@ bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
 			continue;
 		if (y >= objPos->yMax)
 			continue;
-		al = objPos->index;
-		ah = 2;
-		obname();
+		obname(objPos->index, 2);
 		return true;
 	}
 	return false;
@@ -1185,6 +1181,81 @@ void DreamGenContext::walkandexamine() {
 	data.byte(kWalkandexam) = 0;
 	if (data.byte(kCommandtype) != 5)
 		examineob();
+}
+
+void DreamGenContext::obname() {
+	obname(al, ah);
+}
+
+void DreamGenContext::obname(uint8 command, uint8 commandType) {
+	if (data.byte(kReasseschanges) == 0) {
+		if ((commandType == data.byte(kCommandtype)) && (command == data.byte(kCommand))) {
+			if (data.byte(kWalkandexam) == 1) {
+				walkandexamine();
+				return;
+			} else if (data.word(kMousebutton) == 0)
+				return;
+			else if ((data.byte(kCommandtype) == 3) && (data.byte(kLastflag) < 2))
+				return;
+			else if ((data.byte(kManspath) != data.byte(kPointerspath)) || (data.byte(kCommandtype) == 3)) {
+				setwalk();
+				data.byte(kReasseschanges) = 1;
+				return;
+			} else if (! finishedwalkingCPP())
+				return;
+			else if (data.byte(kCommandtype) == 5) {
+				if (data.word(kWatchingtime) == 0)
+					talk();
+				return;
+			} else {
+				if (data.word(kWatchingtime) == 0)
+					examineob();
+				return;
+			}
+		}
+	} else
+		data.byte(kReasseschanges) = 0;
+
+	data.byte(kCommand) = command;
+	data.byte(kCommandtype) = commandType;
+	if ((data.byte(kLinepointer) != 254) || (data.word(kWatchingtime) != 0) || (data.byte(kFacing) != data.byte(kTurntoface))) {
+		blocknametext();
+		return;
+	} else if (data.byte(kCommandtype) != 3) {
+		if (data.byte(kManspath) != data.byte(kPointerspath)) {
+			walktotext();
+			return;
+		} else if (data.byte(kCommandtype) == 3) {
+			blocknametext();
+			return;
+		} else if (data.byte(kCommandtype) == 5) {
+			personnametext();
+			return;
+		} else {
+			examineobtext();
+			return;
+		}
+	}
+	if (data.byte(kManspath) == data.byte(kPointerspath)) {
+		uint8 flag, flagEx, type, flagX, flagY;
+		checkone(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
+		if (flag < 2) {
+			blocknametext();
+			return;
+		}
+	}
+
+	getflagunderp();
+	if (data.byte(kLastflag) < 2) {
+		blocknametext();
+		return;
+	} else if (data.byte(kLastflag) >= 128) {
+		blocknametext();
+		return;
+	} else {
+		walktotext();
+		return;
+	}
 }
 
 bool DreamGenContext::isCD() {

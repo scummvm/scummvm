@@ -118,7 +118,6 @@ public:
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_printmessage = 0xca2c;
 	static const uint16 addr_examineobtext = 0xca20;
-	static const uint16 addr_obname = 0xca18;
 	static const uint16 addr_afterintroroom = 0xca14;
 	static const uint16 addr_walkintoroom = 0xca10;
 	static const uint16 addr_atmospheres = 0xca0c;
@@ -1477,7 +1476,7 @@ public:
 	//void domix();
 	void priesttext();
 	void paneltomap();
-	void obname();
+	//void obname();
 	void getridoftemp3();
 	void getridoftemp2();
 	void usebalcony();
@@ -1606,7 +1605,7 @@ public:
 	void dumpmenu();
 	void chewy();
 	void accesslighton();
-	void dosreturn();
+	void useplinth();
 	//void adjustlen();
 	//void quickquit();
 	void showpointer();
@@ -1715,7 +1714,7 @@ public:
 	void describeob();
 	void deleteexframe();
 	void folderexit();
-	void useplinth();
+	void dosreturn();
 	void wheelsound();
 	void actualsave();
 	void autolook();

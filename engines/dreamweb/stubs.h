@@ -174,4 +174,6 @@
 	void getflagunderp();
 	void getflagunderp(uint8 *flag, uint8 *flagEx);
 	void walkandexamine();
+	void obname();
+	void obname(uint8 command, uint8 commandType);
 
