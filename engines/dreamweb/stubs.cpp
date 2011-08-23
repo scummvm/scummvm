@@ -1101,6 +1101,13 @@ DynObject *DreamGenContext::getexad(uint8 index) {
 	return (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
 }
 
+DynObject *DreamGenContext::geteitheradCPP() {
+	if (data.byte(kObjecttype) == 4)
+		return getexad(data.byte(kItemframe));
+	else
+		return getfreead(data.byte(kItemframe));
+}
+
 SetObject *DreamGenContext::getsetad(uint8 index) {
 	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }

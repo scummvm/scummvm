@@ -157,6 +157,7 @@
 	void findormake(uint8 index, uint8 value, uint8 type);
 	DynObject *getfreead(uint8 index);
 	DynObject *getexad(uint8 index);
+	DynObject *geteitheradCPP();
 	SetObject *getsetad(uint8 index);
 	void setallchanges();
 	void dochange();
