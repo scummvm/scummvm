@@ -26,8 +26,6 @@
 
 namespace Parallaction {
 
-#define IS_PATH_CLEAR(x,y) _vm->_gfx->_backgroundInfo->_path->getValue((x), (y))
-
 enum {
 	WALK_LEFT = 0,
 	WALK_RIGHT = 1,
@@ -56,21 +54,45 @@ WalkFrames _char24WalkFrames_NS = {
 	{  2,  2,  4,  4 }
 };
 
+static int get_path_width() {
+	if (!_vm->_gfx->_backgroundInfo->_path) {
+		warning("get_path_width() _path is NULL!");
+		return 0;
+	} else
+		return _vm->_gfx->_backgroundInfo->_path->w;
+}
+
+static int get_path_height() {
+	if (!_vm->_gfx->_backgroundInfo->_path) {
+		warning("get_path_height() _path is NULL!");
+		return 0;
+	} else
+		return _vm->_gfx->_backgroundInfo->_path->h;
+}
+
+static bool is_path_clear(uint16 x, uint16 y) {
+	if (!_vm->_gfx->_backgroundInfo->_path) {
+		warning("is_path_clear() _path is NULL!");
+		return false;
+	} else
+		return (_vm->_gfx->_backgroundInfo->_path->getValue(x, y) ? true : false);
+}
+
 // adjusts position towards nearest walkable point
 void PathWalker_NS::correctPathPoint(Common::Point &to) {
-	if (IS_PATH_CLEAR(to.x, to.y)) return;
+	if (is_path_clear(to.x, to.y)) return;
 
-	int maxX = _vm->_gfx->_backgroundInfo->_path->w;
-	int maxY = _vm->_gfx->_backgroundInfo->_path->h;
+	int maxX = get_path_width();
+	int maxY = get_path_height();
 
 	int16 right = to.x;
 	int16 left = to.x;
 	do {
 		right++;
-	} while ((right < maxX) && !IS_PATH_CLEAR(right, to.y));
+	} while ((right < maxX) && !is_path_clear(right, to.y));
 	do {
 		left--;
-	} while ((left > 0) && !IS_PATH_CLEAR(left, to.y));
+	} while ((left > 0) && !is_path_clear(left, to.y));
 	right = (right == maxX) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
@@ -78,10 +100,10 @@ void PathWalker_NS::correctPathPoint(Common::Point &to) {
 	int16 bottom = to.y;
 	do {
 		top--;
-	} while ((top > 0) && !IS_PATH_CLEAR(to.x, top));
+	} while ((top > 0) && !is_path_clear(to.x, top));
 	do {
 		bottom++;
-	} while ((bottom < maxY) && !IS_PATH_CLEAR(to.x, bottom));
+	} while ((bottom < maxY) && !is_path_clear(to.x, bottom));
 	top = (top == 0) ? 1000 : to.y - top;
 	bottom = (bottom == maxY) ? 1000 : bottom - to.y;
 
@@ -203,10 +225,10 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 	while (foot != arg) {
 
-		if (foot.x < to.x && IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
-		if (foot.x > to.x && IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
-		if (foot.y < to.y && IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
-		if (foot.y > to.y && IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
+		if (foot.x < to.x && is_path_clear(foot.x + 1, foot.y)) foot.x++;
+		if (foot.x > to.x && is_path_clear(foot.x - 1, foot.y)) foot.x--;
+		if (foot.y < to.y && is_path_clear(foot.x, foot.y + 1)) foot.y++;
+		if (foot.y > to.y && is_path_clear(foot.x, foot.y - 1)) foot.y--;
 
 		if (foot == v8 && foot != arg) {
 			// foot couldn't move and still away from target
@@ -215,10 +237,10 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 
 			while (foot != arg) {
 
-				if (foot.x < to.x && !IS_PATH_CLEAR(foot.x + 1, foot.y)) foot.x++;
-				if (foot.x > to.x && !IS_PATH_CLEAR(foot.x - 1, foot.y)) foot.x--;
-				if (foot.y < to.y && !IS_PATH_CLEAR(foot.x, foot.y + 1)) foot.y++;
-				if (foot.y > to.y && !IS_PATH_CLEAR(foot.x, foot.y - 1)) foot.y--;
+				if (foot.x < to.x && !is_path_clear(foot.x + 1, foot.y)) foot.x++;
+				if (foot.x > to.x && !is_path_clear(foot.x - 1, foot.y)) foot.x--;
+				if (foot.y < to.y && !is_path_clear(foot.x, foot.y + 1)) foot.y++;
+				if (foot.y > to.y && !is_path_clear(foot.x, foot.y - 1)) foot.y--;
 
 				if (foot == v8 && foot != arg)
 					return 0;
@@ -238,19 +260,19 @@ uint16 PathWalker_NS::walkFunc1(const Common::Point &to, Common::Point& node) {
 }
 
 void PathWalker_NS::clipMove(Common::Point& pos, const Common::Point& to) {
-	if ((pos.x < to.x) && (pos.x < _vm->_gfx->_backgroundInfo->_path->w) && IS_PATH_CLEAR(pos.x + 2, pos.y)) {
+	if ((pos.x < to.x) && (pos.x < get_path_width()) && is_path_clear(pos.x + 2, pos.y)) {
 		pos.x = (pos.x + 2 < to.x) ? pos.x + 2 : to.x;
 	}
 
-	if ((pos.x > to.x) && (pos.x > 0) && IS_PATH_CLEAR(pos.x - 2, pos.y)) {
+	if ((pos.x > to.x) && (pos.x > 0) && is_path_clear(pos.x - 2, pos.y)) {
 		pos.x = (pos.x - 2 > to.x) ? pos.x - 2 : to.x;
 	}
 
-	if ((pos.y < to.y) && (pos.y < _vm->_gfx->_backgroundInfo->_path->h) && IS_PATH_CLEAR(pos.x, pos.y + 2)) {
+	if ((pos.y < to.y) && (pos.y < get_path_height()) && is_path_clear(pos.x, pos.y + 2)) {
 		pos.y = (pos.y + 2 <= to.y) ? pos.y + 2 : to.y;
 	}
 
-	if ((pos.y > to.y) && (pos.y > 0) && IS_PATH_CLEAR(pos.x, pos.y - 2)) {
+	if ((pos.y > to.y) && (pos.y > 0) && is_path_clear(pos.x, pos.y - 2)) {
 		pos.y = (pos.y - 2 >= to.y) ? pos.y - 2 : to.y;
 	}
 }
@@ -368,10 +390,10 @@ bool PathWalker_BR::directPathExists(const Common::Point &from, const Common::Po
 	Common::Point p(copy);
 
 	while (p != to) {
-		if (p.x < to.x && IS_PATH_CLEAR(p.x + 1, p.y)) p.x++;
-		if (p.x > to.x && IS_PATH_CLEAR(p.x - 1, p.y)) p.x--;
-		if (p.y < to.y && IS_PATH_CLEAR(p.x, p.y + 1)) p.y++;
-		if (p.y > to.y && IS_PATH_CLEAR(p.x, p.y - 1)) p.y--;
+		if (p.x < to.x && is_path_clear(p.x + 1, p.y)) p.x++;
+		if (p.x > to.x && is_path_clear(p.x - 1, p.y)) p.x--;
+		if (p.y < to.y && is_path_clear(p.x, p.y + 1)) p.y++;
+		if (p.y > to.y && is_path_clear(p.x, p.y - 1)) p.y--;
 
 		if (p == copy && p != to)
 			return false;
@@ -620,7 +642,7 @@ void PathWalker_BR::doWalk(State &s) {
 	assert (!s._walkPath.empty());
 	Common::Point p(*s._walkPath.begin());
 
-	if (s._startFoot.y < p.y && (s._startFoot.y + yStep) < maxY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y + yStep)) {
+	if (s._startFoot.y < p.y && (s._startFoot.y + yStep) < maxY && is_path_clear(s._startFoot.x, s._startFoot.y + yStep)) {
 		if (yStep + s._startFoot.y <= p.y) {
 			s._stillWalkingTowardsNode = true;
 			delta.y = yStep;
@@ -631,7 +653,7 @@ void PathWalker_BR::doWalk(State &s) {
 		}
 		s._dirFrame = 9;
 	} else
-	if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && IS_PATH_CLEAR(s._startFoot.x, s._startFoot.y - yStep)) {
+	if (s._startFoot.y > p.y && (s._startFoot.y - yStep) > minY && is_path_clear(s._startFoot.x, s._startFoot.y - yStep)) {
 		if (s._startFoot.y - yStep >= p.y) {
 			s._stillWalkingTowardsNode = true;
 			delta.y = yStep;
@@ -643,7 +665,7 @@ void PathWalker_BR::doWalk(State &s) {
 		s._dirFrame = 0;
 	}
 
-	if (s._startFoot.x < p.x && (s._startFoot.x + xStep) < maxX && IS_PATH_CLEAR(s._startFoot.x + xStep, s._startFoot.y)) {
+	if (s._startFoot.x < p.x && (s._startFoot.x + xStep) < maxX && is_path_clear(s._startFoot.x + xStep, s._startFoot.y)) {
 		if (s._startFoot.x + xStep <= p.x) {
 			s._stillWalkingTowardsNode = true;
 			delta.x = xStep;
@@ -656,7 +678,7 @@ void PathWalker_BR::doWalk(State &s) {
 			s._dirFrame = 18;	// right
 		}
 	} else
-	if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && IS_PATH_CLEAR(s._startFoot.x - xStep, s._startFoot.y)) {
+	if (s._startFoot.x > p.x && (s._startFoot.x - xStep) > minX && is_path_clear(s._startFoot.x - xStep, s._startFoot.y)) {
 		if (s._startFoot.x - xStep >= p.x) {
 			s._stillWalkingTowardsNode = true;
 			delta.x = xStep;
