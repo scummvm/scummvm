@@ -156,6 +156,7 @@
 	void findormake();
 	void findormake(uint8 index, uint8 value, uint8 type);
 	FreeObject *getfreead(uint8 index);
+	FreeObject *getexad(uint8 index);
 	ObjData *getsetad(uint8 index);
 	void setallchanges();
 	void dochange();

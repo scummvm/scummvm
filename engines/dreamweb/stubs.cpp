@@ -1097,6 +1097,10 @@ FreeObject *DreamGenContext::getfreead(uint8 index) {
 	return (FreeObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
 }
 
+FreeObject *DreamGenContext::getexad(uint8 index) {
+	return (FreeObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
+}
+
 ObjData *DreamGenContext::getsetad(uint8 index) {
 	return (ObjData *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
