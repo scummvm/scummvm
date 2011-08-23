@@ -15109,88 +15109,6 @@ notzeronum:
 	ch = 1;
 }
 
-void DreamGenContext::walkandexamine() {
-	STACK_CHECK;
-	finishedwalking();
-	if (!flags.z())
-		return /* (noobselect) */;
-	al = data.byte(kWalkexamtype);
-	data.byte(kCommandtype) = al;
-	al = data.byte(kWalkexamnum);
-	data.byte(kCommand) = al;
-	data.byte(kWalkandexam) = 0;
-	_cmp(data.byte(kCommandtype), 5);
-	if (flags.z())
-		return /* (noobselect) */;
-	examineob();
-	return;
-wantstowalk:
-	setwalk();
-	data.byte(kReasseschanges) = 1;
-	return;
-diff:
-	data.byte(kCommand) = al;
-	data.byte(kCommandtype) = ah;
-	_cmp(data.byte(kLinepointer), 254);
-	if (!flags.z())
-		goto middleofwalk;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		goto middleofwalk;
-	al = data.byte(kFacing);
-	_cmp(al, data.byte(kTurntoface));
-	if (!flags.z())
-		goto middleofwalk;
-	_cmp(data.byte(kCommandtype), 3);
-	if (!flags.z())
-		goto notblock;
-	bl = data.byte(kManspath);
-	_cmp(bl, data.byte(kPointerspath));
-	if (!flags.z())
-		goto dontcheck;
-	cl = data.byte(kRyanx);
-	_add(cl, 12);
-	ch = data.byte(kRyany);
-	_add(ch, 12);
-	checkone();
-	_cmp(cl, 2);
-	if (flags.c())
-		goto isblock;
-dontcheck:
-	getflagunderp();
-	_cmp(data.byte(kLastflag), 2);
-	if (flags.c())
-		goto isblock;
-	_cmp(data.byte(kLastflag), 128);
-	if (!flags.c())
-		goto isblock;
-	goto toofaraway;
-notblock:
-	bl = data.byte(kManspath);
-	_cmp(bl, data.byte(kPointerspath));
-	if (!flags.z())
-		goto toofaraway;
-	_cmp(data.byte(kCommandtype), 3);
-	if (flags.z())
-		goto isblock;
-	_cmp(data.byte(kCommandtype), 5);
-	if (flags.z())
-		goto isaperson;
-	examineobtext();
-	return;
-middleofwalk:
-	blocknametext();
-	return;
-isblock:
-	blocknametext();
-	return;
-isaperson:
-	personnametext();
-	return;
-toofaraway:
-	walktotext();
-}
-
 void DreamGenContext::mainscreen() {
 	STACK_CHECK;
 	data.byte(kInmaparea) = 0;
@@ -15803,7 +15721,7 @@ notdiffob:
 		goto diff;
 	_cmp(data.byte(kWalkandexam), 1);
 	if (flags.z())
-		goto walkandexamine;
+		{ walkandexamine(); return; };
 	_cmp(data.word(kMousebutton), 0);
 	if (flags.z())
 		return /* (noobselect) */;
@@ -18646,7 +18564,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setkeyboardint: setkeyboardint(); break;
 		case addr_resetkeyboard: resetkeyboard(); break;
 		case addr_keyboardread: keyboardread(); break;
-		case addr_walkandexamine: walkandexamine(); break;
 		case addr_doload: doload(); break;
 		case addr_generalerror: generalerror(); break;
 		default: ::error("invalid call to %04x dispatched", (uint16)ax);

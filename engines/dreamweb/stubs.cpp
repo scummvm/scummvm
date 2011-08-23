@@ -1177,6 +1177,16 @@ void DreamGenContext::getflagunderp(uint8 *flag, uint8 *flagEx) {
 	ch = data.byte(kLastflagex) = *flagEx;
 }
 
+void DreamGenContext::walkandexamine() {
+	if (! finishedwalkingCPP())
+		return;
+	data.byte(kCommandtype) = data.byte(kWalkexamtype);
+	data.byte(kCommand) = data.byte(kWalkexamnum);
+	data.byte(kWalkandexam) = 0;
+	if (data.byte(kCommandtype) != 5)
+		examineob();
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

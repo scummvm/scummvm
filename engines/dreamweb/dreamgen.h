@@ -137,7 +137,6 @@ public:
 	static const uint16 addr_checkcoords = 0xc9d0;
 	static const uint16 addr_madmanrun = 0xc9cc;
 	static const uint16 addr_mainscreen = 0xc9c8;
-	static const uint16 addr_walkandexamine = 0xcbb8;
 	static const uint16 addr_convnum = 0xc9c4;
 	static const uint16 addr_showword = 0xc9c0;
 	static const uint16 addr_twodigitnum = 0xc9bc;
@@ -194,7 +193,7 @@ public:
 	static const uint16 addr_createname = 0xc8cc;
 	static const uint16 addr_loadspeech = 0xc8c8;
 	static const uint16 addr_loadold = 0xc8c4;
-	static const uint16 addr_doload = 0xcbbc;
+	static const uint16 addr_doload = 0xcbb8;
 	static const uint16 addr_newgame = 0xc8c0;
 	static const uint16 addr_showdecisions = 0xc8bc;
 	static const uint16 addr_decide = 0xc8b8;
@@ -210,7 +209,7 @@ public:
 	static const uint16 addr_oldtonames = 0xc88c;
 	static const uint16 addr_namestoold = 0xc888;
 	static const uint16 addr_error = 0xc884;
-	static const uint16 addr_generalerror = 0xcbc0;
+	static const uint16 addr_generalerror = 0xcbbc;
 	static const uint16 addr_dosreturn = 0xc880;
 	static const uint16 addr_shownames = 0xc87c;
 	static const uint16 addr_showslots = 0xc878;
@@ -1811,7 +1810,7 @@ public:
 	void usetrainer();
 	//void allocatework();
 	void addtopresslist();
-	void walkandexamine();
+	//void walkandexamine();
 	void dmaend();
 	//void quickquit2();
 	void twodigitnum();
