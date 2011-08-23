@@ -97,9 +97,13 @@ Common::Error ComposerEngine::run() {
 
 	loadLibrary(0);
 
+	_currentTime = 0;
+	_lastTime = 0;
+
 	uint fps = atoi(getStringFromConfig("Common", "FPS").c_str());
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
+
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
 			if (_pendingPageChanges[i]._remove)
@@ -112,15 +116,24 @@ Common::Error ComposerEngine::run() {
 		_pendingPageChanges.clear();
 
 		uint32 thisTime = _system->getMillis();
+		// maintain our own internal timing, since otherwise we get
+		// confused when starved of CPU (for example when the user
+		// is dragging the scummvm window around)
+		if (thisTime > _lastTime + frameTime)
+			_currentTime += frameTime;
+		else
+			_currentTime += thisTime - _lastTime;
+		_lastTime = thisTime;
+
 		for (uint i = 0; i < _queuedScripts.size(); i++) {
 			QueuedScript &script = _queuedScripts[i];
 			if (!script._count)
 				continue;
-			if (script._baseTime + script._duration > thisTime)
+			if (script._baseTime + script._duration > _currentTime)
 				continue;
 			if (script._count != 0xffffffff)
 				script._count--;
-			script._baseTime = thisTime;
+			script._baseTime = _currentTime;
 			runScript(script._scriptId, i, 0, 0);
 		}
 

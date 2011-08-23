@@ -140,6 +140,8 @@ private:
 	Audio::QueuingAudioStream *_audioStream;
 	uint16 _currSoundPriority;
 
+	uint32 _currentTime, _lastTime;
+
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;
 	Graphics::Surface _surface;
