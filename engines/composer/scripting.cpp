@@ -160,7 +160,7 @@ void ComposerEngine::setArg(uint16 arg, uint16 type, uint16 val) {
 
 void ComposerEngine::runScript(uint16 id) {
 	if (!hasResource(ID_SCRP, id)) {
-		warning("ignoring attempt to run script %d, because it doesn't exist", id);
+		debug(1, "ignoring attempt to run script %d, because it doesn't exist", id);
 		return;
 	}
 
