@@ -1,11 +1,6 @@
 ScummVM - Liesmich-Datei
 ------------------------------------------------------------------------
 
-Dieses Dokument ist größtenteils eine Übersetzung der englischen README-Datei.
-Das Original-Dokument ist womöglich aktueller. Sollten Sie hier also nicht das
-finden, was Sie benötigen und ein wenig Englisch können, sollten Sie sich die
-englische README-Datei ansehen.
-
 Für weitere Informationen, Kompatibilitätslisten, Einzelheiten zu Spenden, die
 neusten veröffentlichten Versionen, Fortschrittsberichte und mehr besuchen Sie
 bitte die ScummVM-Website unter der Adresse: http://www.scummvm.org/
@@ -37,7 +32,7 @@ Inhaltsverzeichnis:
  * 3.16 Hinweise zu Mickey's Space Adventure
  * 3.17 Hinweise zu Winnie the Pooh
  * 3.18 Hinweise zu Troll's Tale
- * 3.19 Hinweise zu Draci Historie
+ * 3.19 Hinweise zu Drači Historie
  * 3.20 Bekannte Probleme
 4.0) Unterstützte Plattformen
 5.0) ScummVM verwenden
@@ -300,7 +295,7 @@ Andere Spiele:
      Cruise for a Corpse                         [cruise]
      Discworld                                   [dw]
      Discworld 2: Vermutlich vermisst            [dw2]
-     Draci Historie                              [draci]
+     Drači Historie                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
@@ -831,7 +826,7 @@ notwendig ist, die Inhalte dieser Diskette in einer Abbild-Datei auszugeben und
 diese „troll.img“ zu nennen, um das Spiel unter ScummVM spielen zu können.
 
 
-3.19) Hinweise zu Draci Historie:
+3.19) Hinweise zu Drači Historie:
 ----- ---------------------------
 Es gibt vier Sprachvarianten des Spiels: Tschechisch, Deutsch, Englisch und
 Polnisch. Jede von ihnen wird in einem gesonderten Archiv bereitgestellt. Die
@@ -1283,10 +1278,9 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Strg+d                 - Startet den Debugger.
     Strg+f                 - Schneller Modus EIN/AUS
     Strg+g                 - SEHR schneller Modus EIN/AUS
-    Strg+t                 - Wechselt zwischen
-                             „Speech only“ (nur Sprachausgabe),
-                             „Speech and Subtitles“ (Sprachausgabe und
-                             Untertitel) und „Subtitles only“ (nur Untertitel).
+    Strg+t                 - Wechselt zwischen „Nur Sprachausgabe“,
+                             „Sprachausgabe und Untertitel“ und
+                             „Nur Untertitel“.
     Tilde (~)              - Zeigt/verbirgt Debugging-Konsole.
     [ und ]                - Musiklautstärke, leiser/lauter
     - und +                - Texttempo, langsamer/schneller
@@ -1320,7 +1314,7 @@ zwischen SCUMM-Spielen und anderen Spielen.
     Strg+f                 - Schneller Modus EIN/AUS
     p                      - Spielpause
 
-  Draci Historie:
+  Drači Historie:
     F5                     - Zeigt globales Menü.
     Linksklick             - Laufen, untersuchen
     Rechtsklick            - Verwenden, reden
@@ -2306,11 +2300,11 @@ Debug-Nachrichten zu durchsuchen
     * Rufen Sie „fakeroot dpkg-buildpackage -b -d“ auf.
 
 ------------------------------------------------------------------------
-Viel Glück und viel Spaß beim Spielen!
-Das ScummVM-Team.
+Viel Glück und viel Spaß beim Spielen wünscht
+das ScummVM-Team.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
 
 
 (Deutscher Text basiert auf README mit SHA1 ID:
-d31bf017a9e717759f2410a8d355cf43b3418c4c)
+0e8840568bed09c8baa670f079a6fe438fffad56)
