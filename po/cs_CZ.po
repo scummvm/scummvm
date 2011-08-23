@@ -2,19 +2,19 @@
 # Copyright (C) 2001-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011.
-# 
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.3.0svn\n"
+"Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-08-20 15:12+0100\n"
-"PO-Revision-Date: 2011-08-18 16:57+0100\n"
+"PO-Revision-Date: 2011-08-23 12:36+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
+"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: gui/about.cpp:91
 #, c-format
 msgid "(built on %s)"
-msgstr "(sestaveno na %s)"
+msgstr "(sestaveno %s)"
 
 #: gui/about.cpp:98
 msgid "Features compiled in:"
@@ -1246,39 +1246,37 @@ msgstr "Pøesto spustit"
 #: engines/scumm/dialogs.cpp:175
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr ""
+msgstr "Vlo¾te Disk %c a Stisknìte Tlaèítko Pro Poraèování."
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr ""
+msgstr "Nelze Najít %s, (%c%d) Stsikìte Tlaèítko."
 
 #: engines/scumm/dialogs.cpp:177
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr ""
+msgstr "Chyba pøi ètení disku %c, (%c%d) Stisknìte Tlaèítko."
 
 #: engines/scumm/dialogs.cpp:178
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr ""
+msgstr "Hra Pozastavena. Stisknìte MEZERNÍK pro pokraèování."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:182
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)"
-msgstr "   Jste si jisti, ¾e chcete odejít ?   "
+msgstr "Jste si jisti, ¾e chcete restartovat? (A/N)A"
 
 #. I18N: you may specify 'Yes' symbol at the endo fo the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)"
-msgstr "   Jste si jisti, ¾e chcete odejít ?   "
+msgstr "Jste si jisti, ¾e chcete odejít?  (A/N)A"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "Play"
-msgstr ""
+msgstr "Hrát"
 
 #: engines/scumm/dialogs.cpp:191 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:84
@@ -1291,42 +1289,41 @@ msgstr "Ukonèit"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "Insert save/load game disk"
-msgstr ""
+msgstr "Vlo¾te herní disk pro ulo¾ení/naètení"
 
 #: engines/scumm/dialogs.cpp:194
 msgid "You must enter a name"
-msgstr ""
+msgstr "Musíte zadat jméno"
 
 #: engines/scumm/dialogs.cpp:195
 msgid "The game was NOT saved (disk full?)"
-msgstr ""
+msgstr "Hra NEBYLA ulo¾ena (plný disk?)"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "The game was NOT loaded"
-msgstr ""
+msgstr "Hra NEBYLA naètena"
 
 #: engines/scumm/dialogs.cpp:197
 #, c-format
 msgid "Saving '%s'"
-msgstr ""
+msgstr "Ukládám '%s'"
 
 #: engines/scumm/dialogs.cpp:198
 #, c-format
 msgid "Loading '%s'"
-msgstr ""
+msgstr "Naèítám '%s'"
 
 #: engines/scumm/dialogs.cpp:199
 msgid "Name your SAVE game"
-msgstr ""
+msgstr "Pojmenujte svoji ULO®ENOU hru"
 
 #: engines/scumm/dialogs.cpp:200
-#, fuzzy
 msgid "Select a game to LOAD"
-msgstr "Vyberte Vzhled"
+msgstr "Vyberte hru k NAÈTENÍ"
 
 #: engines/scumm/dialogs.cpp:201
 msgid "Game title)"
-msgstr ""
+msgstr "Název hry"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:287
@@ -1344,25 +1341,21 @@ msgid "~C~lose"
 msgstr "~Z~avøít"
 
 #: engines/scumm/dialogs.cpp:597
-#, fuzzy
 msgid "Speech Only"
-msgstr "Øeè"
+msgstr "Pouze Øeè"
 
 #: engines/scumm/dialogs.cpp:598
-#, fuzzy
 msgid "Speech and Subtitles"
-msgstr "Titulky"
+msgstr "Øeè a Titulky"
 
 #: engines/scumm/dialogs.cpp:599
-#, fuzzy
 msgid "Subtitles Only"
-msgstr "Titulky"
+msgstr "Pouze Titulky"
 
 #: engines/scumm/dialogs.cpp:607
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Øeè"
+msgstr "Øeè a Titulky"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
