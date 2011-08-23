@@ -141,10 +141,10 @@ void L1_IsFullscreenMoviePlaying() {
 }
 
 void L1_IsMoviePlaying() {
-	if (g_grim->getGameFlags() & ADGF_DEMO)
-		pushbool(g_movie->isPlaying());
-	else
-		pushbool(g_movie->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
+	// Previously, if the game was *not* the demo, this checked also if the mode
+	// was ENGINE_MODE_NORMAL. This doesn't seem to be what original does, and causes
+	// bug #301 because the movie eldepot.snm is played before legslide.snm ends.
+	pushbool(g_movie->isPlaying());
 }
 
 void L1_StopMovie() {
