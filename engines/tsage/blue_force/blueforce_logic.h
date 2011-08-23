@@ -139,6 +139,73 @@ public:
 
 class BlueForceInvObjectList : public InvObjectList {
 public:
+	InvObject _business_card;
+	InvObject _lauras_sweater;
+	InvObject _handcuffs;
+	InvObject _magnum;
+	InvObject _ticket_book;
+	InvObject _miranda_card;
+	InvObject _forest_follet;
+	InvObject _bradford_id;
+	InvObject _baseball_card;
+	InvObject _slip_bradford;
+	InvObject _flare;
+	InvObject _rap_sheet;
+	InvObject _cartridges;
+	InvObject _rifle;
+	InvObject _wig;
+	InvObject _frankies_id;
+	InvObject _tyrones_id;
+	InvObject _pistol22;
+	InvObject _unused;
+	InvObject _slip_frankie;
+	InvObject _slip_tyrone;
+	InvObject _atf_teletype;
+	InvObject _da_note;
+	InvObject _blueprints;
+	InvObject _planter_key; 
+	InvObject _center_punch;
+	InvObject _tranquilizer;
+	InvObject _boat_hook;
+	InvObject _oily_rags;
+	InvObject _fuel_jar;
+	InvObject _screwdriver;
+	InvObject _floppy_disk1;
+	InvObject _floppy_disk2;
+	InvObject _driftwood;
+	InvObject _crate_piece1;
+	InvObject _crate_piece2;
+	InvObject _shoebox;
+	InvObject _badge;
+	InvObject _unused2;
+	InvObject _rental_coupons;
+	InvObject _nickel;
+	InvObject _calendar;
+	InvObject _dixon_note;
+	InvObject _cobb_mugshot;
+	InvObject _murder_article;
+	InvObject _microfiche;
+	InvObject _future_wave_keys;
+	InvObject _rental_boat_keys;
+	InvObject _napkin;
+	InvObject _cobb_printout;
+	InvObject _fishing_net;
+	InvObject _id;
+	InvObject _rounds_9mm;
+	InvObject _dates_note;
+	InvObject _hand_grenade;
+	InvObject _cord_110;
+	InvObject _cord_110_plug;
+	InvObject _cord_220;
+	InvObject _unused3;
+	InvObject _cord_220_plug;
+	InvObject _official_document;
+	InvObject _red_sweater;
+	InvObject _jackknife;
+	InvObject _whistle;
+	InvObject _gun;
+	InvObject _alley_cat_key;
+
 	BlueForceInvObjectList();
 
 	virtual Common::String getClassName() { return "BlueForceInvObjectList"; }

@@ -352,8 +352,141 @@ void SceneHandlerExt::process(Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-BlueForceInvObjectList::BlueForceInvObjectList() {
+BlueForceInvObjectList::BlueForceInvObjectList():
+		_business_card(9, 4, 2, 0),
+		_lauras_sweater(9, 4, 3, 0),
+		_handcuffs(9, 1, 4, 0),
+		_magnum(9, 1, 5, 0),
+		_ticket_book(9, 1, 6, 0),
+		_miranda_card(9, 1, 7, 0),
+		_forest_follet(9, 1, 8, 0),
+		_bradford_id(9, 1, 9, 0),
+		_baseball_card(9, 1, 10, 0),
+		_slip_bradford(9, 1, 11, 0),
+		_flare(9, 1, 12, 0),
+		_rap_sheet(9, 1, 13, 0),
+		_cartridges(9, 1, 14, 0),
+		_rifle(9, 1, 15, 0),
+		_wig(9, 1, 16, 0),
+		_frankies_id(9, 1, 17, 0),
+		_tyrones_id(9, 1, 18, 0),
+		_pistol22(9, 1, 19, 0),
+		_unused(1, 1, 1, 0),
+		_slip_frankie(9, 2, 1, 0),
+		_slip_tyrone(9, 2, 2, 0),
+		_atf_teletype(9, 2, 3, 0),
+		_da_note(9, 2, 4, 0),
+		_blueprints(9, 2, 5, 0),
+		_planter_key(9, 2, 6, 0),
+		_center_punch(9, 2, 7, 0),
+		_tranquilizer(9, 2, 8, 0),
+		_boat_hook(9, 2, 9, 0),
+		_oily_rags(9, 2, 10, 0),
+		_fuel_jar(9, 2, 11, 0),
+		_screwdriver(9, 2, 12, 0),
+		_floppy_disk1(9, 2, 13, 0),
+		_floppy_disk2(9, 2, 14, 0),
+		_driftwood(9, 2, 15, 0),
+		_crate_piece1(9, 2, 16, 0),
+		_crate_piece2(9, 2, 17, 0),
+		_shoebox(9, 2, 18, 0),
+		_badge(9, 2, 19, 0),
+		_unused2(1, 1, 1, 0),
+		_rental_coupons(9, 3, 1, 0),
+		_nickel(9, 3, 2, 0),
+		_calendar(9, 3, 3, 0),
+		_dixon_note(9, 3, 4, 0),
+		_cobb_mugshot(9, 3, 5, 0),
+		_murder_article(9, 3, 6, 0),
+		_microfiche(9, 3, 7, 0),
+		_future_wave_keys(9, 3, 8, 0),
+		_rental_boat_keys(9, 3, 9, 0),
+		_napkin(9, 3, 10, 0),
+		_cobb_printout(9, 3, 11, 0),
+		_fishing_net(9, 3, 12, 0),
+		_id(9, 3, 13, 0),
+		_rounds_9mm(9, 3, 14, 0),
+		_dates_note(9, 3, 15, 0),
+		_hand_grenade(9, 3, 16, 0),
+		_cord_110(9, 3, 17, 0),
+		_cord_110_plug(9, 3, 18, 0),
+		_cord_220(9, 3, 19, 0),
+		_unused3(1, 1, 1, 0),
+		_cord_220_plug(9, 4, 1, 0),
+		_official_document(9, 4, 2, 0),
+		_red_sweater(9, 4, 3, 0),
+		_jackknife(9, 4, 4, 0),
+		_whistle(9, 4, 5, 0),
+		_gun(9, 1, 2, 0),
+		_alley_cat_key(9, 4, 7, 0) {
 
+	// Add the items to the list
+	_itemList.push_back(&_business_card);
+	_itemList.push_back(&_lauras_sweater);
+	_itemList.push_back(&_handcuffs);
+	_itemList.push_back(&_magnum);
+	_itemList.push_back(&_ticket_book);
+	_itemList.push_back(&_miranda_card);
+	_itemList.push_back(&_forest_follet);
+	_itemList.push_back(&_bradford_id);
+	_itemList.push_back(&_baseball_card);
+	_itemList.push_back(&_slip_bradford);
+	_itemList.push_back(&_flare);
+	_itemList.push_back(&_rap_sheet);
+	_itemList.push_back(&_cartridges);
+	_itemList.push_back(&_rifle);
+	_itemList.push_back(&_wig);
+	_itemList.push_back(&_frankies_id);
+	_itemList.push_back(&_tyrones_id);
+	_itemList.push_back(&_pistol22);
+	_itemList.push_back(&_unused);
+	_itemList.push_back(&_slip_frankie);
+	_itemList.push_back(&_slip_tyrone);
+	_itemList.push_back(&_atf_teletype);
+	_itemList.push_back(&_da_note);
+	_itemList.push_back(&_blueprints);
+	_itemList.push_back(&_planter_key);
+	_itemList.push_back(&_center_punch);
+	_itemList.push_back(&_tranquilizer);
+	_itemList.push_back(&_boat_hook);
+	_itemList.push_back(&_oily_rags);
+	_itemList.push_back(&_fuel_jar);
+	_itemList.push_back(&_screwdriver);
+	_itemList.push_back(&_floppy_disk1);
+	_itemList.push_back(&_floppy_disk2);
+	_itemList.push_back(&_driftwood);
+	_itemList.push_back(&_crate_piece1);
+	_itemList.push_back(&_crate_piece2);
+	_itemList.push_back(&_shoebox);
+	_itemList.push_back(&_badge);
+	_itemList.push_back(&_unused2);
+	_itemList.push_back(&_rental_coupons);
+	_itemList.push_back(&_nickel);
+	_itemList.push_back(&_calendar);
+	_itemList.push_back(&_dixon_note);
+	_itemList.push_back(&_cobb_mugshot);
+	_itemList.push_back(&_murder_article);
+	_itemList.push_back(&_microfiche);
+	_itemList.push_back(&_future_wave_keys);
+	_itemList.push_back(&_rental_boat_keys);
+	_itemList.push_back(&_napkin);
+	_itemList.push_back(&_cobb_printout);
+	_itemList.push_back(&_fishing_net);
+	_itemList.push_back(&_id);
+	_itemList.push_back(&_rounds_9mm);
+	_itemList.push_back(&_dates_note);
+	_itemList.push_back(&_hand_grenade);
+	_itemList.push_back(&_cord_110);
+	_itemList.push_back(&_cord_110_plug);
+	_itemList.push_back(&_cord_220);
+	_itemList.push_back(&_unused3);
+	_itemList.push_back(&_cord_220_plug);
+	_itemList.push_back(&_official_document);
+	_itemList.push_back(&_red_sweater);
+	_itemList.push_back(&_jackknife);
+	_itemList.push_back(&_whistle);
+	_itemList.push_back(&_gun);
+	_itemList.push_back(&_alley_cat_key);
 }
 
 
