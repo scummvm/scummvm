@@ -537,7 +537,8 @@ bool FontSjisSVM::loadData() {
 	}
 
 	uint32 version = data->readUint32BE();
-	if (version != 3) {
+	if (version != kSjisFontVersion) {
+		warning("SJIS font version mismatch, expected: %d found: %u", kSjisFontVersion, version);
 		delete data;
 		return false;
 	}
