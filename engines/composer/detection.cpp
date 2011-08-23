@@ -84,7 +84,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"liam",
 			0,
-			AD_ENTRY1("install.inf", "320d2f1d4f8dd96947676ae25d6688c6"),
+			AD_ENTRY1s("book.ini", "fc9d9b9e72e7301d011b808606eaa15b", 834),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -111,7 +111,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"darby",
 			0,
-			AD_ENTRY1("install.inf", "e83cc20ee18a2e138da1aadfc640dff2"),
+			{
+				{"book.ini", 0, "7e3404c559d058521fff2aebe5c427a8", 2545},
+				{"page99.rsc", 0, "49cc6b16caa1c5ec7d94a3c47eed9a02", 1286480},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -137,7 +141,11 @@ static const ComposerGameDescription gameDescriptions[] = {
 		{
 			"gregory",
 			0,
-			AD_ENTRY1("install.inf", "b7e9d6f7949d412dad0a183375069844"),
+			{
+				{"book.ini", 0, "14a562dcf361773445255af9f3e94790", 2234},
+				{"page99.rsc", 0, "01f9381162467e052dfd4c704169ef3e", 388644},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -192,10 +200,19 @@ static const ComposerGameDescription gameDescriptions[] = {
 
 using namespace Composer;
 
+// we match from data too, to stop detection from a non-top-level directory
+const static char *directoryGlobs[] = {
+	"data",
+	"programs",
+	0
+};
+
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
 	ComposerMetaEngine() : AdvancedMetaEngine(Composer::gameDescriptions, sizeof(Composer::ComposerGameDescription), composerGames) {
 		_singleid = "composer";
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	virtual const char *getName() const {
