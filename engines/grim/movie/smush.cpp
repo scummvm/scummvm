@@ -63,14 +63,12 @@ void SmushPlayer::timerCallback(void *) {
 	SmushPlayer *smush = static_cast<SmushPlayer *>(g_movie);
 	// Use a mutex to protect against multiple threads running handleFrame
 	// at the same time.
-	smush->_frameMutex->lock();
+	Common::StackLock lock(smush->_frameMutex);
 
 	if (g_grim->getGameFlags() & ADGF_DEMO)
 		smush->handleFrameDemo();
 	else
 		smush->handleFrame();
-
-	smush->_frameMutex->unlock();
 }
 
 SmushPlayer::SmushPlayer() {
@@ -78,7 +76,6 @@ SmushPlayer::SmushPlayer() {
 	_IACTpos = 0;
 	_nbframes = 0;
 	_file = 0;
-	_frameMutex = NULL;
 }
 
 SmushPlayer::~SmushPlayer() {
@@ -103,15 +100,12 @@ void SmushPlayer::init() {
 		vimaInit(smushDestTable);
 	}
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
-	_frameMutex = new Common::Mutex();
 	// Get a valid frame to draw
 	timerCallback(0);
 }
 
 void SmushPlayer::deinit() {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-	delete _frameMutex;
-	_frameMutex = NULL;
 
 	if (_internalBuffer) {
 		delete[] _internalBuffer;

@@ -49,7 +49,7 @@ private:
 	Blocky8 _blocky8;
 	Blocky16 _blocky16;
 	Common::SeekableReadStream *_file;
-	Common::Mutex *_frameMutex;
+	Common::Mutex _frameMutex;
 
 	byte _pal[0x300];
 	int16 _deltaPal[0x300];
