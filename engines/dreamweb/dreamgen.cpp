@@ -16238,42 +16238,6 @@ void DreamGenContext::zoomicon() {
 	showframe();
 }
 
-void DreamGenContext::showblink() {
-	STACK_CHECK;
-	_cmp(data.byte(kManisoffscreen), 1);
-	if (flags.z())
-		return /* (finblink1) */;
-	_inc(data.byte(kBlinkcount));
-	_cmp(data.byte(kShadeson), 0);
-	if (!flags.z())
-		return /* (finblink1) */;
-	_cmp(data.byte(kReallocation), 50);
-	if (!flags.c())
-		return /* (eyesshut) */;
-	al = data.byte(kBlinkcount);
-	_cmp(al, 3);
-	if (!flags.z())
-		return /* (finblink1) */;
-	data.byte(kBlinkcount) = 0;
-	al = data.byte(kBlinkframe);
-	_inc(al);
-	data.byte(kBlinkframe) = al;
-	_cmp(al, 6);
-	if (flags.c())
-		goto nomorethan6;
-	al = 6;
-nomorethan6:
-	ah = 0;
-	bx = offset_blinktab;
-	_add(bx, ax);
-	al = cs.byte(bx);
-	ds = data.word(kIcons1);
-	di = 44;
-	bx = 32;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::dumpblink() {
 	STACK_CHECK;
 	_cmp(data.byte(kShadeson), 0);
@@ -18347,7 +18311,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showwatch: showwatch(); break;
 		case addr_gettime: gettime(); break;
 		case addr_zoomicon: zoomicon(); break;
-		case addr_showblink: showblink(); break;
 		case addr_dumpblink: dumpblink(); break;
 		case addr_worktoscreenm: worktoscreenm(); break;
 		case addr_blank: blank(); break;

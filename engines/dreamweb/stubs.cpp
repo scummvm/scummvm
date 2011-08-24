@@ -1277,6 +1277,27 @@ void DreamGenContext::delpointer() {
 	multiput(segRef(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
+void DreamGenContext::showblink() {
+	if (data.byte(kManisoffscreen) == 1)
+		return;
+	++data.byte(kBlinkcount);
+	if (data.byte(kShadeson) != 0)
+		return;
+	if (data.byte(kReallocation) >= 50) // eyesshut
+		return;
+	if (data.byte(kBlinkcount) != 3)
+		return;
+	data.byte(kBlinkcount) = 0;
+	uint8 blinkFrame = data.byte(kBlinkframe);
+	++blinkFrame; // Implicit %256
+	data.byte(kBlinkframe) = blinkFrame;
+	if (blinkFrame > 6)
+		blinkFrame = 6;
+	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
+	uint8 width, height;
+	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

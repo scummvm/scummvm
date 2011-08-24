@@ -99,7 +99,6 @@ public:
 	static const uint16 addr_blank = 0xcaa0;
 	static const uint16 addr_worktoscreenm = 0xca9c;
 	static const uint16 addr_dumpblink = 0xca98;
-	static const uint16 addr_showblink = 0xca94;
 	static const uint16 addr_zoomicon = 0xca90;
 	static const uint16 addr_gettime = 0xca8c;
 	static const uint16 addr_showwatch = 0xca88;
@@ -679,7 +678,7 @@ public:
 	static const uint16 offset_savelist = 0x0f44;
 	static const uint16 offset_mainlist = 0x1402;
 	static const uint16 offset_gameerror8 = 0x113f;
-	static const uint16 offset_blinktab = 0x1700;
+	static const uint16 offset_gameerror5 = 0x1074;
 	static const uint16 offset_error2patch = 0x0ff6;
 	static const uint16 offset_openchangesize = 0x0a1c;
 	static const uint16 offset_keys = 0x0b14;
@@ -711,14 +710,13 @@ public:
 	static const uint16 offset_error6patch = 0x10fe;
 	static const uint16 offset_keybuffer = 0x1718;
 	static const uint16 offset_speechfilename = 0x13eb;
-	static const uint16 offset_folderlist = 0x0e34;
 	static const uint16 offset_rootdir = 0x0b8c;
 	static const uint16 offset_gameerror3 = 0x1003;
 	static const uint16 offset_rainlocations = 0x0459;
 	static const uint16 offset_diarylist = 0x0e9c;
 	static const uint16 offset_opslist = 0x0ec6;
 	static const uint16 offset_symbollist = 0x0e5e;
-	static const uint16 offset_gameerror5 = 0x1074;
+	static const uint16 offset_folderlist = 0x0e34;
 	static const uint16 offset_facelist = 0x0451;
 	static const uint16 offset_operand1 = 0x0b7e;
 	static const uint16 offset_keypadlist = 0x0d9a;
@@ -1417,7 +1415,7 @@ public:
 	void loadintotemp();
 	void loadintroroom();
 	void saveseg();
-	void showblink();
+	//void showblink();
 	void mousecall();
 	void train();
 	void watchcount();
