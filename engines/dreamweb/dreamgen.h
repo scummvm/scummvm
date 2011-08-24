@@ -98,7 +98,6 @@ public:
 	static const uint16 addr_allpointer = 0xcaa4;
 	static const uint16 addr_blank = 0xcaa0;
 	static const uint16 addr_worktoscreenm = 0xca9c;
-	static const uint16 addr_dumpblink = 0xca98;
 	static const uint16 addr_zoomicon = 0xca90;
 	static const uint16 addr_gettime = 0xca8c;
 	static const uint16 addr_showwatch = 0xca88;
@@ -1376,6 +1375,7 @@ public:
 	//void lockmon();
 	//void dochange();
 	void getanyaddir();
+	//void dumpblink();
 	void showsaveops();
 	void intromonks1();
 	void resetlocation();
@@ -1510,7 +1510,7 @@ public:
 	void getfreead();
 	void showarrows();
 	void walkintoroom();
-	void getridoftemptext();
+	void usehatch();
 	void printoutermon();
 	void setuppit();
 	void showpcx();
@@ -1647,7 +1647,6 @@ public:
 	void talk();
 	void usedryer();
 	void dumpeverything();
-	void usehatch();
 	//void zoom();
 	void outofinv();
 	void viewfolder();
@@ -1863,7 +1862,7 @@ public:
 	void issetobonmap();
 	void getdestinfo();
 	void drunk();
-	void dumpblink();
+	void getridoftemptext();
 	void setuptimeduse();
 	void grafittidoor();
 	void input();

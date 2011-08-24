@@ -1298,6 +1298,16 @@ void DreamGenContext::showblink() {
 	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
+void DreamGenContext::dumpblink() {
+	if (data.byte(kShadeson) != 0)
+		return;
+	if (data.byte(kBlinkcount) != 0)
+		return;
+	if (data.byte(kBlinkframe) >= 6)
+		return;
+	multidump(44, 32, 16, 12);
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

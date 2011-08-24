@@ -16238,27 +16238,6 @@ void DreamGenContext::zoomicon() {
 	showframe();
 }
 
-void DreamGenContext::dumpblink() {
-	STACK_CHECK;
-	_cmp(data.byte(kShadeson), 0);
-	if (!flags.z())
-		return /* (nodumpeye) */;
-	_cmp(data.byte(kBlinkcount), 0);
-	if (!flags.z())
-		return /* (nodumpeye) */;
-	al = data.byte(kBlinkframe);
-	_cmp(al, 6);
-	if (!flags.c())
-		return /* (nodumpeye) */;
-	push(ds);
-	di = 44;
-	bx = 32;
-	cl = 16;
-	ch = 12;
-	multidump();
-	ds = pop();
-}
-
 void DreamGenContext::worktoscreenm() {
 	STACK_CHECK;
 	animpointer();
@@ -18311,7 +18290,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showwatch: showwatch(); break;
 		case addr_gettime: gettime(); break;
 		case addr_zoomicon: zoomicon(); break;
-		case addr_dumpblink: dumpblink(); break;
 		case addr_worktoscreenm: worktoscreenm(); break;
 		case addr_blank: blank(); break;
 		case addr_allpointer: allpointer(); break;

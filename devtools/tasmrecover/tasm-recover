@@ -150,6 +150,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'obname',
 	'delpointer',
 	'showblink',
+	'dumpblink',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
