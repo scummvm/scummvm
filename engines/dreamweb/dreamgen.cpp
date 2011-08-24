@@ -15156,43 +15156,6 @@ alreadyrun:
 	data.byte(kLastweapon) = 8;
 }
 
-void DreamGenContext::checkcoords() {
-	STACK_CHECK;
-	_cmp(data.byte(kNewlocation), 255);
-	if (flags.z())
-		goto loop048;
-	return;
-loop048:
-	ax = cs.word(bx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		return /* (nonefound) */;
-	push(bx);
-	_cmp(data.word(kMousex), ax);
-	if (flags.l())
-		goto over045;
-	ax = cs.word(bx+2);
-	_cmp(data.word(kMousex), ax);
-	if (!flags.l())
-		goto over045;
-	ax = cs.word(bx+4);
-	_cmp(data.word(kMousey), ax);
-	if (flags.l())
-		goto over045;
-	ax = cs.word(bx+6);
-	_cmp(data.word(kMousey), ax);
-	if (!flags.l())
-		goto over045;
-	ax = cs.word(bx+8);
-	__dispatch_call(ax);
-	ax = pop();
-	return;
-over045:
-	bx = pop();
-	_add(bx, 10);
-	goto loop048;
-}
-
 void DreamGenContext::identifyob() {
 	STACK_CHECK;
 	_cmp(data.word(kWatchingtime), 0);
@@ -18257,7 +18220,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_convnum: convnum(); break;
 		case addr_mainscreen: mainscreen(); break;
 		case addr_madmanrun: madmanrun(); break;
-		case addr_checkcoords: checkcoords(); break;
 		case addr_identifyob: identifyob(); break;
 		case addr_checkifset: checkifset(); break;
 		case addr_checkifex: checkifex(); break;

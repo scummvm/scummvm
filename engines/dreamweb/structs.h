@@ -54,6 +54,22 @@ struct Sprite {
 	uint8  hidden;
 };
 
+struct RectWithCallback {
+	uint16 _xMin, _xMax;
+	uint16 _yMin, _yMax;
+	uint16 _callback;
+
+	uint16 xMin() const { return READ_LE_UINT16(&_xMin); }
+	uint16 xMax() const { return READ_LE_UINT16(&_xMax); }
+	uint16 yMin() const { return READ_LE_UINT16(&_yMin); }
+	uint16 yMax() const { return READ_LE_UINT16(&_yMax); }
+	uint16 callback() const { return READ_LE_UINT16(&_callback); }
+
+	bool contains(uint16 x, uint16 y) const {
+		return (x >= xMin()) && (x < xMax()) && (y >= yMin()) && (y < yMax());
+	}
+};
+
 struct SetObject {
 	uint8 b0;
 	uint8 b1;

@@ -1308,6 +1308,25 @@ void DreamGenContext::dumpblink() {
 	multidump(44, 32, 16, 12);
 }
 
+void DreamGenContext::checkcoords() {
+	checkcoords((const RectWithCallback *)cs.ptr(bx, 0));
+}
+
+void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
+	if (data.byte(kNewlocation) != 0xff)
+		return;
+
+	const RectWithCallback *rectWithCallback = rectWithCallbacks;
+	while (rectWithCallback->xMin() != 0xffff) {
+		if (rectWithCallback->contains(data.word(kMousex), data.word(kMousey))) {
+			// TODO : Explicit dispatching
+			__dispatch_call(rectWithCallback->callback());
+			return;
+		}
+		++rectWithCallback;
+	}
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

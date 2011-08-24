@@ -130,7 +130,6 @@ public:
 	static const uint16 addr_checkifex = 0xc9e0;
 	static const uint16 addr_checkifset = 0xc9dc;
 	static const uint16 addr_identifyob = 0xc9d4;
-	static const uint16 addr_checkcoords = 0xc9d0;
 	static const uint16 addr_madmanrun = 0xc9cc;
 	static const uint16 addr_mainscreen = 0xc9c8;
 	static const uint16 addr_convnum = 0xc9c4;
@@ -1598,7 +1597,7 @@ public:
 	void showouterpad();
 	void getkeyandlogo();
 	void selectob();
-	void checkcoords();
+	//void checkcoords();
 	void dumpmenu();
 	void chewy();
 	void accesslighton();
