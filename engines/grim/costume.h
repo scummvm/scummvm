@@ -72,12 +72,13 @@ public:
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
 
-	void update();
+	void update(float frameTime);
 	void animate();
 	void setupTextures();
 	void draw();
 	void draw(int *x1, int *y1, int *x2, int *y2);
 	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	Graphics::Matrix4 getMatrix() const;
 
 	Costume *getPreviousCostume() const;
 
@@ -97,7 +98,7 @@ public:
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
-		virtual void update() { }
+		virtual void update(float time) { }
 		virtual void animate() { }
 		virtual void setupTexture() { }
 		virtual void draw(int *x1, int *y1, int *x2, int *y2) { }
@@ -161,7 +162,7 @@ private:
 		void playLooping();
 		void setLooping(bool val) { _looping = val; }
 		void stop();
-		void update();
+		void update(float time);
 		void setLastFrame();
 		void fadeIn(int msecs);
 		void fadeOut(int msecs);

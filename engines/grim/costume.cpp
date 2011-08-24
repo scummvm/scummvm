@@ -169,7 +169,7 @@ class MainModelComponent : public ModelComponent {
 public:
 	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	void init();
-	void update();
+	void update(float time);
 	void setColormap(CMap *cmap);
 	void reset();
 	~MainModelComponent();
@@ -192,7 +192,7 @@ public:
 		return mc->getCMap();
 	}
 	void setKey(int val);
-	void update();
+	void update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -498,12 +498,12 @@ void MainModelComponent::init() {
 	_hier->_hierVisible = _visible;
 }
 
-void MainModelComponent::update() {
+void MainModelComponent::update(float time) {
 	if (!_hierShared)
 		// Otherwise, it was already initialized
 		// and reinitializing it will destroy work
 		// from previous costumes
-		ModelComponent::update();
+		ModelComponent::update(time);
 }
 
 void MainModelComponent::setColormap(CMap *cmap) {
@@ -579,7 +579,7 @@ public:
 	void init();
 	void fade(Animation::FadeMode, int fadeLength);
 	void setKey(int val);
-	void update();
+	void update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -673,11 +673,10 @@ void KeyframeComponent::reset() {
 	}
 }
 
-void KeyframeComponent::update() {
+void KeyframeComponent::update(float time) {
 	if (!_anim->getIsActive())
 		return;
 
-	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
 	_anim->update(time);
 }
 
@@ -732,7 +731,7 @@ void MeshComponent::reset() {
 // 	_node->_meshVisible = true;
 }
 
-void MeshComponent::update() {
+void MeshComponent::update(float /*time*/) {
 	_node->setMatrix(_matrix);
 }
 
@@ -844,8 +843,8 @@ void SoundComponent::setKey(int val) {
 		// No longer a need to check the sound status, if it's already playing
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
-		if (g_grim->getCurrScene() && g_currentUpdatedActor) {
-			Graphics::Vector3d pos = g_currentUpdatedActor->getPos();
+		if (g_grim->getCurrScene()) {
+			Graphics::Vector3d pos = _cost->getMatrix()._pos;
 			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
@@ -1238,11 +1237,9 @@ void Costume::Chore::setLastFrame() {
 	_currTime = -1;
 }
 
-void Costume::Chore::update() {
+void Costume::Chore::update(float time) {
 	if (!_playing)
 		return;
-
-	int time = (int)(g_grim->getFrameTime() * g_currentUpdatedActor->getTimeScale());
 
 	int newTime;
 	if (_currTime < 0)
@@ -1524,9 +1521,9 @@ void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
 			_components[i]->draw(x1, y1, x2, y2);
 }
 
-void Costume::update() {
+void Costume::update(float time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
-		(*i)->update();
+		(*i)->update(time);
 		if (!(*i)->_playing) {
 			i = _playingChores.erase(i);
 			--i;
@@ -1536,7 +1533,7 @@ void Costume::update() {
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
-			_components[i]->update();
+			_components[i]->update(time);
 		}
 	}
 }
@@ -1705,6 +1702,10 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	_matrix._pos = pos;
 	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
+}
+
+Graphics::Matrix4 Costume::getMatrix() const {
+	return _matrix;
 }
 
 Costume *Costume::getPreviousCostume() const {

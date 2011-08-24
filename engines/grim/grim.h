@@ -292,8 +292,6 @@ extern GrimEngine *g_grim;
 
 extern int g_imuseState;
 
-extern Actor *g_currentUpdatedActor;
-
 void vimaInit(uint16 *destTable);
 void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 

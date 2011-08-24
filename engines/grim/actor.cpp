@@ -1108,7 +1108,7 @@ void Actor::updateWalk() {
 			costumeMarkerCallback(LeftWalk);
 }
 
-void Actor::update() {
+void Actor::update(float frameTime) {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
@@ -1254,10 +1254,11 @@ void Actor::update() {
 		}
 	}
 
+	frameTime *= _timeScale;
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
-		c->update();
+		c->update(frameTime);
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {

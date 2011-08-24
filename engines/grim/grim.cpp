@@ -327,9 +327,6 @@ GrimEngine *g_grim = NULL;
 GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
-// hack for access current upated actor to allow access position of actor to sound costume component
-Actor *g_currentUpdatedActor = NULL;
-
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
 		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
@@ -505,7 +502,7 @@ Common::Error GrimEngine::run() {
 		splash_bm->draw();
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
 		splash_bm->draw();
-	
+
 	g_driver->flipBuffer();
 
 	lua_iolibopen();
@@ -910,15 +907,12 @@ void GrimEngine::luaUpdate() {
 		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = i->_value;
 
-			// Update the actor's costumes & chores
-			g_currentUpdatedActor = i->_value;
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
 			if (a->isInSet(_currScene->getName()))
-				a->update();
+				a->update(_frameTime);
 		}
-		g_currentUpdatedActor = NULL;
 
 		_iris->update(_frameTime);
 	}
