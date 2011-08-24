@@ -151,6 +151,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'delpointer',
 	'showblink',
 	'dumpblink',
+	'dumppointer',
 	'checkcoords',
 	], skip_output = [
 	# These functions are processed but not output

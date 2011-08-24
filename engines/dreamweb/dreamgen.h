@@ -87,7 +87,6 @@ public:
 	static const uint16 addr_setmouse = 0xcae0;
 	static const uint16 addr_animpointer = 0xcadc;
 	static const uint16 addr_undertextline = 0xcad0;
-	static const uint16 addr_dumppointer = 0xcacc;
 	static const uint16 addr_showpointer = 0xcac4;
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
@@ -1319,7 +1318,7 @@ public:
 	void getobtextstart();
 	void loadfolder();
 	void decide();
-	void dumppointer();
+	//void dumppointer();
 	void reelsonscreen();
 	void getridofreels();
 	void readkey();
@@ -1438,7 +1437,7 @@ public:
 	void dircom();
 	//void liftsprite();
 	void dumpkeypad();
-	void dumpzoom();
+	void showsymbol();
 	void endgameseq();
 	//void cancelch0();
 	void setbotleft();
@@ -1448,6 +1447,7 @@ public:
 	void loadtempcharset();
 	void showbyte();
 	void useslab();
+	void dumpzoom();
 	void usealtar();
 	void createpanel2();
 	void turnonpower();
@@ -1876,7 +1876,6 @@ public:
 	//void facerightway();
 	void startup1();
 	void hotelcontrol();
-	void showsymbol();
 	void mugger();
 	void atmospheres();
 	void out22c();

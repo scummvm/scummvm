@@ -1308,6 +1308,13 @@ void DreamGenContext::dumpblink() {
 	multidump(44, 32, 16, 12);
 }
 
+void DreamGenContext::dumppointer() {
+	dumpblink();
+	multidump(data.word(kDelherex), data.word(kDelherey), data.byte(kDelxs), data.byte(kDelys));
+	if ((data.word(kOldpointerx) != data.word(kDelherex)) || (data.word(kOldpointery) != data.word(kDelherey)))
+		multidump(data.word(kOldpointerx), data.word(kOldpointery), data.byte(kPointerxs), data.byte(kPointerys));
+}
+
 void DreamGenContext::checkcoords() {
 	checkcoords((const RectWithCallback *)cs.ptr(bx, 0));
 }
