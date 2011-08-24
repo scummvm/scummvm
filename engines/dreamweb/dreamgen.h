@@ -87,7 +87,6 @@ public:
 	static const uint16 addr_setmouse = 0xcae0;
 	static const uint16 addr_animpointer = 0xcadc;
 	static const uint16 addr_undertextline = 0xcad0;
-	static const uint16 addr_showpointer = 0xcac4;
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
 	static const uint16 addr_getunderzoom = 0xcab4;
@@ -1604,7 +1603,7 @@ public:
 	void useplinth();
 	//void adjustlen();
 	//void quickquit();
-	void showpointer();
+	//void showpointer();
 	void usecooker();
 	void loadmenu();
 	//void aboutturn();

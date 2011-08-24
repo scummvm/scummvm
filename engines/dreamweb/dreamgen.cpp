@@ -16336,120 +16336,6 @@ void DreamGenContext::putunderzoom() {
 	multiput();
 }
 
-void DreamGenContext::showpointer() {
-	STACK_CHECK;
-	showblink();
-	di = data.word(kMousex);
-	data.word(kOldpointerx) = di;
-	bx = data.word(kMousey);
-	data.word(kOldpointery) = bx;
-	_cmp(data.byte(kPickup), 1);
-	if (flags.z())
-		goto itsanobject;
-	push(bx);
-	push(di);
-	ds = data.word(kIcons1);
-	al = data.byte(kPointerframe);
-	_add(al, 20);
-	ah = 0;
-	_add(ax, ax);
-	si = ax;
-	_add(ax, ax);
-	_add(si, ax);
-	cx = ds.word(si);
-	_cmp(cl, 12);
-	if (!flags.c())
-		goto notsmallx;
-	cl = 12;
-notsmallx:
-	_cmp(ch, 12);
-	if (!flags.c())
-		goto notsmally;
-	ch = 12;
-notsmally:
-	data.byte(kPointerxs) = cl;
-	data.byte(kPointerys) = ch;
-	push(ds);
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60);
-	multiget();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	push(di);
-	push(bx);
-	al = data.byte(kPointerframe);
-	_add(al, 20);
-	ah = 0;
-	showframe();
-	bx = pop();
-	di = pop();
-	return;
-itsanobject:
-	al = data.byte(kItemframe);
-	ds = data.word(kExtras);
-	_cmp(data.byte(kObjecttype), 4);
-	if (flags.z())
-		goto itsfrominv;
-	ds = data.word(kFreeframes);
-itsfrominv:
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 0;
-	push(ax);
-	_add(ax, ax);
-	si = ax;
-	_add(ax, ax);
-	_add(si, ax);
-	ax = 2080;
-	cx = ds.word(si);
-	_cmp(cl, 12);
-	if (!flags.c())
-		goto notsmallx2;
-	cl = 12;
-notsmallx2:
-	_cmp(ch, 12);
-	if (!flags.c())
-		goto notsmally2;
-	ch = 12;
-notsmally2:
-	data.byte(kPointerxs) = cl;
-	data.byte(kPointerys) = ch;
-	ax = pop();
-	push(di);
-	push(bx);
-	push(ax);
-	push(bx);
-	push(di);
-	push(ds);
-	al = cl;
-	ah = 0;
-	_shr(ax, 1);
-	_sub(data.word(kOldpointerx), ax);
-	_sub(di, ax);
-	al = ch;
-	_shr(ax, 1);
-	_sub(data.word(kOldpointery), ax);
-	_sub(bx, ax);
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60);
-	multiget();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	ax = pop();
-	ah = 128;
-	showframe();
-	bx = pop();
-	di = pop();
-	ds = data.word(kIcons1);
-	al = 3;
-	ah = 128;
-	showframe();
-}
-
 void DreamGenContext::undertextline() {
 	STACK_CHECK;
 	di = data.word(kTextaddressx);
@@ -18805,7 +18691,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getunderzoom: getunderzoom(); break;
 		case addr_dumpzoom: dumpzoom(); break;
 		case addr_putunderzoom: putunderzoom(); break;
-		case addr_showpointer: showpointer(); break;
 		case addr_undertextline: undertextline(); break;
 		case addr_animpointer: animpointer(); break;
 		case addr_setmouse: setmouse(); break;

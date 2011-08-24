@@ -1466,6 +1466,48 @@ void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 	}
 }
 
+void DreamGenContext::showpointer() {
+	showblink();
+	const Frame *icons1 = ((const Frame *)segRef(data.word(kIcons1)).ptr(0, 0));
+	uint16 x = data.word(kMousex);
+	data.word(kOldpointerx) = data.word(kMousex);
+	uint16 y = data.word(kMousey);
+	data.word(kOldpointery) = data.word(kMousey);
+	if (data.byte(kPickup) == 1) {
+		const Frame *frames;
+		if (data.byte(kObjecttype) != 4)
+			frames = (const Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+		else
+			frames = (const Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+		const Frame *frame = frames + (3 * data.byte(kItemframe) + 1);
+		uint8 width = frame->width;
+		uint8 height = frame->height;
+		if (width < 12)
+			width = 12;
+		if (height < 12)
+			height = 12;
+		data.byte(kPointerxs) = width;
+		data.byte(kPointerys) = height;
+		data.word(kOldpointerx) -= width / 2;
+		data.word(kOldpointery) -= height / 2;
+		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x - width / 2, y - height / 2, width, height);
+		showframe(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
+		showframe(icons1, x, y, 3, 128);
+	} else {
+		const Frame *frame = icons1 + (data.byte(kPointerframe) + 20);
+		uint8 width = frame->width;
+		uint8 height = frame->height;
+		if (width < 12)
+			width = 12;
+		if (height < 12)
+			height = 12;
+		data.byte(kPointerxs) = width;
+		data.byte(kPointerys) = height;
+		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
+		showframe(icons1, x, y, data.byte(kPointerframe) + 20, 0);
+	}
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
