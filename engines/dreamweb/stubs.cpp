@@ -691,14 +691,6 @@ void DreamGenContext::getroomdata() {
 	bx = kRoomdata + sizeof(Room) * al;
 }
 
-void DreamGenContext::getroomdata(uint8 roomIndex) {
-	// FIXME: This calls itself recursively! Clearly not what was intended.
-	// It isn't called anywhere right now, so just throw an error if it's
-	// ever called.
-	//getroomdata(roomIndex);
-	::error("getroomdata() with roomIndex param called");
-}
-
 void DreamGenContext::startloading() {
 	const Room *room = (Room *)cs.ptr(bx, sizeof(Room));
 	startloading(room);

@@ -61,7 +61,6 @@
 	void kernchars();
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void getroomdata();
-	void getroomdata(uint8 roomIndex);
 	void readheader();
 	void fillspace();
 	void startloading();
