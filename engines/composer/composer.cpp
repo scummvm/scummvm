@@ -294,7 +294,7 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 	uint slashesToStrip = _directoriesToStrip;
 	while (slashesToStrip--) {
 		for (uint i = 0; i < filename.size(); i++) {
-			if (filename[i] != '\\')
+			if (filename[i] != '\\' && filename[i] != ':')
 				continue;
 			filename = filename.c_str() + i + 1;
 			break;
@@ -303,7 +303,7 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 
 	Common::String outFilename;
 	for (uint i = 0; i < filename.size(); i++) {
-		if (filename[i] == '\\')
+		if (filename[i] == '\\' || filename[i] == ':')
 			outFilename += '/';
 		else
 			outFilename += filename[i];
