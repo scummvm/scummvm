@@ -124,6 +124,19 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{
+		{
+			"darby",
+			0,
+			AD_ENTRY1("Darby the Dragon.ini", "d81f9214936fa70d42fc578908d4bb3d"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
 		{
 			"darby",
@@ -148,6 +161,19 @@ static const ComposerGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_ComposerV2
+	},
+
+	{
+		{
+			"gregory",
+			0,
+			AD_ENTRY1("Gregory.ini", "fa82f14731f28c7379c5a106df07a0d6"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},

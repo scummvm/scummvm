@@ -81,8 +81,12 @@ Common::Error ComposerEngine::run() {
 	_directoriesToStrip = 1;
 	if (!_bookIni.loadFromFile("book.ini")) {
 		_directoriesToStrip = 0;
-		if (!_bookIni.loadFromFile("programs/book.ini"))
-			error("failed to find book.ini");
+		if (!_bookIni.loadFromFile("programs/book.ini")) {
+			// mac version?
+			if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
+				if (!_bookIni.loadFromFile("Gregory.ini"))
+					error("failed to find book.ini");
+		}
 	}
 
 	uint width = 640;
