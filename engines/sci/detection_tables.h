@@ -2649,6 +2649,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
 
+	// Police Quest 4 - German DOS CD (German text, English speech)
+	// Supplied by markcoolio in bug report #3392955
+	{"pq4", "CD", {
+		{"resource.map", 0, "a398076371ed0e1e706c8f9fb9fc7ac5", 11386},
+		{"resource.000", 0, "6ff21954e0a2c5992279e7eb787c8d56", 18918747},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformPC, ADGF_CD | ADGF_UNSTABLE, GUIO_NONE	},
+
 	// Police Quest 4 - English DOS
 	// SCI interpreter version 2.000.000 (a guess?)
 	{"pq4", "", {
