@@ -28,7 +28,7 @@ namespace Audio {
 
 class XAStream : public Audio::RewindableAudioStream {
 public:
-	XAStream(Common::SeekableReadStream *stream, int rate);
+	XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse);
 	~XAStream();
 
 	bool isStereo() const { return false; }
@@ -39,6 +39,7 @@ public:
 	bool rewind();
 private:
 	Common::SeekableReadStream *_stream;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	byte _predictor;
 	double _samples[28];
@@ -47,7 +48,8 @@ private:
 	double _s1, _s2;
 };
 
-XAStream::XAStream(Common::SeekableReadStream *stream, int rate) : _stream(stream) {
+XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse)
+		: _stream(stream), _disposeAfterUse(disposeAfterUse) {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
@@ -56,7 +58,8 @@ XAStream::XAStream(Common::SeekableReadStream *stream, int rate) : _stream(strea
 
 
 XAStream::~XAStream() {
-	delete _stream;
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete _stream;
 }
 
 static const double s_xaDataTable[5][2] =
@@ -140,8 +143,8 @@ bool XAStream::rewind() {
 	return true;
 }
 
-RewindableAudioStream *makeXAStream(Common::SeekableReadStream *stream, int rate) {
-	return new XAStream(stream, rate);
+RewindableAudioStream *makeXAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse) {
+	return new XAStream(stream, rate, disposeAfterUse);
 }
 
 } // End of namespace Audio

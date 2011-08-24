@@ -31,6 +31,8 @@
 #ifndef AUDIO_DECODERS_XA_H
 #define AUDIO_DECODERS_XA_H
 
+#include "common/types.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -45,11 +47,13 @@ class RewindableAudioStream;
  *
  * @param stream            the SeekableReadStream from which to read the XA ADPCM data
  * @param rate              the sampling rate
+ * @param disposeAfterUse   whether to delete the stream after use.
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeXAStream(
 	Common::SeekableReadStream *stream,
-	int rate);
+	int rate,
+	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace Audio
 
