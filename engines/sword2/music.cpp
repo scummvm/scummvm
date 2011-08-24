@@ -267,7 +267,7 @@ Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
 
 	byte *buffer = (byte *)malloc(size);
 	file->read(buffer, size);
-	return Audio::makeXAStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES));
+	return Audio::makeXAStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES), 11025);
 }
 
 // ----------------------------------------------------------------------------

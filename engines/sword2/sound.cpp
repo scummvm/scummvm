@@ -234,7 +234,7 @@ void Sound::playMovieSound(int32 res, int type) {
 		Audio::RewindableAudioStream *input = 0;
 
 		if (Sword2Engine::isPsx()) {
-			input = Audio::makeXAStream(stream);
+			input = Audio::makeXAStream(stream, 11025);
 		} else {
 			input = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 		}
@@ -361,7 +361,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	Audio::RewindableAudioStream *input = 0;
 
 	if (Sword2Engine::isPsx())
-		input = Audio::makeXAStream(stream);
+		input = Audio::makeXAStream(stream, 11025);
 	else
 		input = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 

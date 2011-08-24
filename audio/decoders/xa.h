@@ -49,7 +49,7 @@ class RewindableAudioStream;
  */
 RewindableAudioStream *makeXAStream(
 	Common::SeekableReadStream *stream,
-	int rate = 11025);
+	int rate);
 
 } // End of namespace Audio
 
