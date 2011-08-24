@@ -35,7 +35,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 
 #define SMP_BUFSIZE 8192
 
@@ -131,7 +131,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = Audio::makeLoopingAudioStream(Audio::makeVagStream(_file.readStream(size)), loop ? 0 : 1);
+		_audioSource = Audio::makeLoopingAudioStream(Audio::makeXAStream(_file.readStream(size)), loop ? 0 : 1);
 		fadeUp();
 	} else {
 		_audioSource = NULL;

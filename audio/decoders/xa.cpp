@@ -20,16 +20,16 @@
  *
  */
 
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 #include "audio/audiostream.h"
 #include "common/stream.h"
 
 namespace Audio {
 
-class VagStream : public Audio::RewindableAudioStream {
+class XAStream : public Audio::RewindableAudioStream {
 public:
-	VagStream(Common::SeekableReadStream *stream, int rate);
-	~VagStream();
+	XAStream(Common::SeekableReadStream *stream, int rate);
+	~XAStream();
 
 	bool isStereo() const { return false; }
 	bool endOfData() const { return _stream->pos() == _stream->size(); }
@@ -47,7 +47,7 @@ private:
 	double _s1, _s2;
 };
 
-VagStream::VagStream(Common::SeekableReadStream *stream, int rate) : _stream(stream) {
+XAStream::XAStream(Common::SeekableReadStream *stream, int rate) : _stream(stream) {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
@@ -55,11 +55,11 @@ VagStream::VagStream(Common::SeekableReadStream *stream, int rate) : _stream(str
 }
 
 
-VagStream::~VagStream() {
+XAStream::~XAStream() {
 	delete _stream;
 }
 
-static const double s_vagDataTable[5][2] =
+static const double s_xaDataTable[5][2] =
 	{
 		{  0.0, 0.0 },
 		{  60.0 / 64.0,  0.0 },
@@ -68,14 +68,14 @@ static const double s_vagDataTable[5][2] =
 		{  122.0 / 64.0, -60.0 / 64.0 }
 	};
 
-int VagStream::readBuffer(int16 *buffer, const int numSamples) {
+int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 	int32 samplesDecoded = 0;
 
 	if (_samplesRemaining) {
 		byte i = 0;
 
 		for (i = 28 - _samplesRemaining; i < 28 && samplesDecoded < numSamples; i++) {
-			_samples[i] = _samples[i] + _s1 * s_vagDataTable[_predictor][0] + _s2 * s_vagDataTable[_predictor][1];
+			_samples[i] = _samples[i] + _s1 * s_xaDataTable[_predictor][0] + _s2 * s_xaDataTable[_predictor][1];
 			_s2 = _s1;
 			_s1 = _samples[i];
 			int16 d = (int) (_samples[i] + 0.5);
@@ -116,7 +116,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		for (i = 0; i < 28 && samplesDecoded < numSamples; i++) {
-			_samples[i] = _samples[i] + _s1 * s_vagDataTable[_predictor][0] + _s2 * s_vagDataTable[_predictor][1];
+			_samples[i] = _samples[i] + _s1 * s_xaDataTable[_predictor][0] + _s2 * s_xaDataTable[_predictor][1];
 			_s2 = _s1;
 			_s1 = _samples[i];
 			int16 d = (int) (_samples[i] + 0.5);
@@ -131,7 +131,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesDecoded;
 }
 
-bool VagStream::rewind() {
+bool XAStream::rewind() {
 	_stream->seek(0);
 	_samplesRemaining = 0;
 	_predictor = 0;
@@ -140,8 +140,8 @@ bool VagStream::rewind() {
 	return true;
 }
 
-RewindableAudioStream *makeVagStream(Common::SeekableReadStream *stream, int rate) {
-	return new VagStream(stream, rate);
+RewindableAudioStream *makeXAStream(Common::SeekableReadStream *stream, int rate) {
+	return new XAStream(stream, rate);
 }
 
-}
+} // End of namespace Audio
