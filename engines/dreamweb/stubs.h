@@ -178,4 +178,5 @@
 	void walkandexamine();
 	void obname();
 	void obname(uint8 command, uint8 commandType);
+	void delpointer();
 

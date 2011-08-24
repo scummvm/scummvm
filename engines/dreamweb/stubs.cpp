@@ -1267,6 +1267,16 @@ void DreamGenContext::obname(uint8 command, uint8 commandType) {
 	}
 }
 
+void DreamGenContext::delpointer() {
+	if (data.word(kOldpointerx) == 0xffff)
+		return;
+	data.word(kDelherex) = data.word(kOldpointerx);
+	data.word(kDelherey) = data.word(kOldpointery);
+	data.byte(kDelxs) = data.byte(kPointerxs);
+	data.byte(kDelys) = data.byte(kPointerys);
+	multiput(segRef(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

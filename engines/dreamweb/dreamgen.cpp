@@ -16544,26 +16544,6 @@ notsmally2:
 	showframe();
 }
 
-void DreamGenContext::delpointer() {
-	STACK_CHECK;
-	ax = data.word(kOldpointerx);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		return /* (nevershown) */;
-	data.word(kDelherex) = ax;
-	ax = data.word(kOldpointery);
-	data.word(kDelherey) = ax;
-	cl = data.byte(kPointerxs);
-	data.byte(kDelxs) = cl;
-	ch = data.byte(kPointerys);
-	data.byte(kDelys) = ch;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60);
-	di = data.word(kDelherex);
-	bx = data.word(kDelherey);
-	multiput();
-}
-
 void DreamGenContext::dumppointer() {
 	STACK_CHECK;
 	dumpblink();
@@ -18379,7 +18359,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumpzoom: dumpzoom(); break;
 		case addr_putunderzoom: putunderzoom(); break;
 		case addr_showpointer: showpointer(); break;
-		case addr_delpointer: delpointer(); break;
 		case addr_dumppointer: dumppointer(); break;
 		case addr_undertextline: undertextline(); break;
 		case addr_animpointer: animpointer(); break;

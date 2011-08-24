@@ -88,7 +88,6 @@ public:
 	static const uint16 addr_animpointer = 0xcadc;
 	static const uint16 addr_undertextline = 0xcad0;
 	static const uint16 addr_dumppointer = 0xcacc;
-	static const uint16 addr_delpointer = 0xcac8;
 	static const uint16 addr_showpointer = 0xcac4;
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
@@ -1556,7 +1555,7 @@ public:
 	void runintroseq();
 	//void doblocks();
 	void restoreall();
-	void allpalette();
+	//void delpointer();
 	void attendant();
 	void nextsymbol();
 	void monks2text();
@@ -1575,7 +1574,7 @@ public:
 	void drinker();
 	void nextcolon();
 	void placefreeobject();
-	void delpointer();
+	void allpalette();
 	//void loopchannel0();
 	void initrain();
 	void showleftpage();
