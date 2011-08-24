@@ -1319,8 +1319,144 @@ void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 	const RectWithCallback *rectWithCallback = rectWithCallbacks;
 	while (rectWithCallback->xMin() != 0xffff) {
 		if (rectWithCallback->contains(data.word(kMousex), data.word(kMousey))) {
-			// TODO : Explicit dispatching
-			__dispatch_call(rectWithCallback->callback());
+			uint16 callback = rectWithCallback->callback();
+
+			// common
+			if(callback == addr_blank)
+				blank();
+			else if(callback == addr_getbackfromob)
+				getbackfromob();
+			else if(callback == addr_incryanpage)
+				incryanpage();
+			else if(callback == addr_getback1)
+				getback1();
+			else if(callback == addr_quitkey)
+				quitkey();
+			else if(callback == addr_dosreturn)
+				dosreturn();
+			else if(callback == addr_getbacktoops)
+				getbacktoops();
+			else if(callback == addr_selectslot)
+				selectslot();
+			// examlist
+			else if(callback == addr_useobject)
+				useobject();
+			else if(callback == addr_selectopenob)
+				selectopenob();
+			else if(callback == addr_setpickup)
+				setpickup();
+			else if(callback == addr_examinventory)
+				examinventory();
+			// invlist1
+			else if(callback == addr_dropobject)
+				dropobject();
+			else if(callback == addr_useopened)
+				useopened();
+			else if(callback == addr_setpickup)
+				setpickup();
+			else if(callback == addr_intoinv)
+				intoinv();
+			// withlist1
+			else if(callback == addr_selectob)
+				selectob();
+			// talklist
+			else if(callback == addr_moretalk)
+				moretalk();
+			// quitlist
+			// destlist
+			else if(callback == addr_nextdest)
+				nextdest();
+			else if(callback == addr_lastdest)
+				lastdest();
+			else if(callback == addr_lookatplace)
+				lookatplace();
+			else if(callback == addr_destselect)
+				destselect();
+			// keypadlist
+			else if(callback == addr_buttonone)
+				buttonone();
+			else if(callback == addr_buttontwo)
+				buttontwo();
+			else if(callback == addr_buttonthree)
+				buttonthree();
+			else if(callback == addr_buttonfour)
+				buttonfour();
+			else if(callback == addr_buttonfive)
+				buttonfive();
+			else if(callback == addr_buttonsix)
+				buttonsix();
+			else if(callback == addr_buttonseven)
+				buttonseven();
+			else if(callback == addr_buttoneight)
+				buttoneight();
+			else if(callback == addr_buttonnine)
+				buttonnine();
+			else if(callback == addr_buttonnought)
+				buttonnought();
+			else if(callback == addr_buttonenter)
+				buttonenter();
+			// menulist
+			// folderlist
+			else if(callback == addr_nextfolder)
+				nextfolder();
+			else if(callback == addr_lastfolder)
+				lastfolder();
+			// symbollist
+			else if(callback == addr_quitsymbol)
+				quitsymbol();
+			else if(callback == addr_settopleft)
+				settopleft();
+			else if(callback == addr_settopright)
+				settopright();
+			else if(callback == addr_setbotleft)
+				setbotleft();
+			else if(callback == addr_setbotright)
+				setbotright();
+			// diarylist
+			else if(callback == addr_diarykeyn)
+				diarykeyn();
+			else if(callback == addr_diarykeyp)
+				diarykeyp();
+			else if(callback == addr_quitkey)
+				quitkey();
+			// opslist
+			else if(callback == addr_getbackfromops)
+				getbackfromops();
+			else if(callback == addr_discops)
+				discops();
+			// discopslist
+			else if(callback == addr_loadgame)
+				loadgame();
+			else if(callback == addr_savegame)
+				savegame();
+			// mainlist, mainlist2
+			else if(callback == addr_look)
+				look();
+			else if(callback == addr_inventory)
+				inventory();
+			else if(callback == addr_zoomonoff)
+				zoomonoff();
+			else if(callback == addr_saveload)
+				saveload();
+			else if(callback == addr_madmanrun)
+				madmanrun();
+			else if(callback == addr_identifyob)
+				identifyob();
+			// decidelist
+			else if(callback == addr_newgame)
+				newgame();
+			else if(callback == addr_loadold)
+				loadold();
+			// loadlist
+			else if(callback == addr_actualload)
+				actualload();
+			// savelist
+			else if(callback == addr_actualsave)
+				actualsave();
+			else {
+				debug("__dispatch_call remaining in checkcoords! %d", (int)callback);
+				__dispatch_call(callback);
+			}
 			return;
 		}
 		++rectWithCallback;
