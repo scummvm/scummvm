@@ -74,7 +74,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1("book.ini", "dbc98c566f4ac61b544443524585dccb"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
 			Common::GUIO_NONE
 		},
 		GType_ComposerV1
@@ -101,7 +101,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1("book.ini", "3dede2522bb0886c95667b082987a87f"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE | ADGF_DEMO,
 			Common::GUIO_NONE
 		},
 		GType_ComposerV2
