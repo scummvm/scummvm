@@ -584,11 +584,17 @@ namespace %s {
 		data_bin = self.data_seg
 		data_impl = "\n\tstatic const uint8 src[] = {\n\t\t"
 		n = 0
+		comment = str()
 		for v in data_bin:
 			data_impl += "0x%02x, " %v
 			n += 1
+
+			comment += chr(v) if (v >= 0x20 and v < 0x7f and v != ord('\\')) else "."
 			if (n & 0xf) == 0:
-				data_impl += "\n\t\t"
+				data_impl += "\n\t\t//0x%04x: %s\n\t\t" %(n - 16, comment)
+				comment = str()
+			elif (n & 0x3) == 0:
+				comment += " "
 		data_impl += "};\n\tds.assign(src, src + sizeof(src));\n"
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
