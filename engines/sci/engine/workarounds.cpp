@@ -209,6 +209,8 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
+	{ GID_PQ1,           500,   500,  0,           "endInter", "changeState", 0x3e8,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the map scene (bug #3389579)
+	{ GID_PQ1,           500,   500,  0,           "endInter", "changeState", 0x46b,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the map scene (bug #3389579)
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4ae,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #3043904)
 	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
