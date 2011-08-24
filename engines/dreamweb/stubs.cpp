@@ -696,7 +696,7 @@ void DreamGenContext::getroomdata(uint8 roomIndex) {
 	// It isn't called anywhere right now, so just throw an error if it's
 	// ever called.
 	//getroomdata(roomIndex);
-	error("getroomdata() with roomIndex param called");
+	::error("getroomdata() with roomIndex param called");
 }
 
 void DreamGenContext::startloading() {
