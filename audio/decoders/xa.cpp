@@ -46,6 +46,7 @@ private:
 	byte _samplesRemaining;
 	int _rate;
 	double _s1, _s2;
+	uint _loopPoint;
 };
 
 XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse)
@@ -54,6 +55,7 @@ XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
 	_rate = rate;
+	_loopPoint = 0;
 }
 
 
@@ -103,8 +105,20 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 		byte shift = _predictor & 0xf;
 		_predictor >>= 4;
 
-		if (_stream->readByte() == 7)
-			return samplesDecoded;
+		byte flags = _stream->readByte();
+		if (flags & 0x1) {
+			if (flags == 3) {
+				// Loop
+				rewind();
+				continue;
+			} else {
+				// End of stream
+				return samplesDecoded;
+			}
+		} else if (flags & 0x4) {
+			// Set loop point
+			_loopPoint = _stream->pos() - 2;
+		}
 
 		for (i = 0; i < 28; i += 2) {
 			byte d = _stream->readByte();
@@ -135,7 +149,7 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool XAStream::rewind() {
-	_stream->seek(0);
+	_stream->seek(_loopPoint);
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
