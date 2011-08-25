@@ -449,7 +449,6 @@ public:
 	static const uint16 addr_look = 0xc470;
 	static const uint16 addr_autolook = 0xc46c;
 	static const uint16 addr_showallex = 0xc450;
-	static const uint16 addr_drawflags = 0xc43c;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_blockget = 0xc424;
 	static const uint16 addr_deleteextext = 0xc420;
@@ -1973,7 +1972,7 @@ public:
 	void getlocation();
 	void geteitherad();
 	//void placesetobject();
-	void drawflags();
+	//void drawflags();
 	void zoomonoff();
 	void updatesymboltop();
 	void showryanpage();
