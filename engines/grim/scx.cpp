@@ -29,15 +29,15 @@
 
 namespace Grim {
 
-// I've only ever seen two (LEFT and RGHT)
-#define NUM_CHANNELS 2
+// I've only ever seen up to two
+#define MAX_CHANNELS 2
 
 class SCXStream : public Audio::RewindableAudioStream {
 public:
 	SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	~SCXStream();
 
-	bool isStereo() const { return true; }
+	bool isStereo() const { return _channels == 2; }
 	bool endOfData() const { return _xaStreams[0]->endOfData(); }
 	int getRate() const { return _rate; }
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -45,14 +45,15 @@ public:
 	bool rewind();
 
 private:
+	int _channels;
 	int _rate;
 	uint16 _blockSize;
 
-	Audio::RewindableAudioStream *_xaStreams[NUM_CHANNELS];
+	Audio::RewindableAudioStream *_xaStreams[MAX_CHANNELS];
 };
 
 SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	static const uint32 channelNames[NUM_CHANNELS] = { MKTAG('L', 'E', 'F', 'T'), MKTAG('R', 'G', 'H', 'T') };
+	static const uint32 stereoChannelNames[MAX_CHANNELS] = { MKTAG('L', 'E', 'F', 'T'), MKTAG('R', 'G', 'H', 'T') };
 
 	stream->readUint32BE(); // 'SCRX'
 	stream->readUint32LE();
@@ -63,21 +64,28 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 	if (_blockSize & 0xf)
 		error("Bad SCX block size %04x", _blockSize);
 
+	// Base our channel count based off the block size
+	_channels = (_blockSize == 0) ? 1 : 2;
+
 	stream->skip(12);
 
-	uint32 channelSize[NUM_CHANNELS];
-	for (int i = 0; i < NUM_CHANNELS; i++) {
+	uint32 channelSize[MAX_CHANNELS];
+	for (int i = 0; i < _channels; i++) {
 		uint32 tag = stream->readUint32BE();
-		if (tag != channelNames[i])
-			error("Bad channel tag found '%s'", tag2str(tag));
+
+		if (isStereo()) {
+			if (tag != stereoChannelNames[i])
+				error("Bad stereo channel tag found '%s'", tag2str(tag));
+		} else if (tag != MKTAG('M', 'O', 'N', 'O'))
+			error("Bad mono channel tag found '%s'", tag2str(tag));
 
 		channelSize[i] = stream->readUint32LE();
 	}
 
-	stream->skip(88);
+	stream->seek(0x80);
 
 	uint32 leftRate = 0, rightRate = 0;
-	for (int i = 0; i < NUM_CHANNELS; i++) {
+	for (int i = 0; i < _channels; i++) {
 		if (stream->readUint32BE() != MKTAG('V', 'A', 'G', 'p'))
 			error("Bad VAG header");
 
@@ -95,73 +103,88 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 		stream->skip(16); // skip zeroes
 	}
 
-	if (leftRate != rightRate)
+	if (isStereo() && leftRate != rightRate)
 		error("Mismatching SCX rates");
 
 	_rate = leftRate;
 
-	// TODO: Make XAStream allow for appending data (similar to how ScummVM
-	// handles AAC/QDM2. For now, we de-interleave the XA ADPCM data and then
-	// re-interleave in readBuffer().
-	byte *leftOut = new byte[channelSize[0]];
-	byte *rightOut = new byte[channelSize[1]];
-	Common::MemoryWriteStream *leftStream = new Common::MemoryWriteStream(leftOut, channelSize[0]);
-	Common::MemoryWriteStream *rightStream = new Common::MemoryWriteStream(rightOut, channelSize[1]);
-	byte *buf = new byte[_blockSize];
+	if (isStereo()) {
+		// TODO: Make XAStream allow for appending data (similar to how ScummVM
+		// handles AAC/QDM2. For now, we de-interleave the XA ADPCM data and then
+		// re-interleave in readBuffer().
+		// Of course, in doing something that does better streaming, it would
+		// screw up the XA loop points. So, I'm not really sure what is best atm.
+		byte *leftOut = new byte[channelSize[0]];
+		byte *rightOut = new byte[channelSize[1]];
+		Common::MemoryWriteStream *leftStream = new Common::MemoryWriteStream(leftOut, channelSize[0]);
+		Common::MemoryWriteStream *rightStream = new Common::MemoryWriteStream(rightOut, channelSize[1]);
+		byte *buf = new byte[_blockSize];
 
-	while (stream->pos() < stream->size()) {
-		stream->read(buf, _blockSize);
-		leftStream->write(buf, _blockSize);
-		stream->read(buf, _blockSize);
-		rightStream->write(buf, _blockSize);
+		while (stream->pos() < stream->size()) {
+			stream->read(buf, _blockSize);
+			leftStream->write(buf, _blockSize);
+			stream->read(buf, _blockSize);
+			rightStream->write(buf, _blockSize);
+		}
+
+		_xaStreams[0] = Audio::makeVagStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
+		_xaStreams[1] = Audio::makeVagStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
+
+		delete[] buf;
+		delete leftStream;
+		delete rightStream;
+	} else {
+		_xaStreams[0] = Audio::makeVagStream(stream->readStream(channelSize[0]), _rate);
+		_xaStreams[1] = 0;
 	}
-
-	_xaStreams[0] = Audio::makeVagStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
-	_xaStreams[1] = Audio::makeVagStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
-
-	delete[] buf;
-	delete leftStream;
-	delete rightStream;
 
 	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;
 }
 
 SCXStream::~SCXStream() {
-	for (int i = 0; i < NUM_CHANNELS; i++)
+	for (int i = 0; i < MAX_CHANNELS; i++)
 		delete _xaStreams[i];
 }
 
 int SCXStream::readBuffer(int16 *buffer, const int numSamples) {
-	// Needs to be divisible by NUM_CHANNELS
-	assert((numSamples % NUM_CHANNELS) == 0);
+	if (isStereo()) {
+		// Needs to be divisible by the channel count
+		assert((numSamples % 2) == 0);
 
-	// TODO: As per above, this should do more actual streaming
+		// TODO: As per above, this probably should do more actual streaming
 
-	// Decode enough data from each channel
-	int samplesPerChannel = numSamples / NUM_CHANNELS;
-	int16 *leftSamples = new int16[samplesPerChannel];
-	int16 *rightSamples = new int16[samplesPerChannel];
+		// Decode enough data from each channel
+		int samplesPerChannel = numSamples / 2;
+		int16 *leftSamples = new int16[samplesPerChannel];
+		int16 *rightSamples = new int16[samplesPerChannel];
 
-	int samplesDecodedLeft = _xaStreams[0]->readBuffer(leftSamples, samplesPerChannel);
-	int samplesDecodedRight = _xaStreams[1]->readBuffer(rightSamples, samplesPerChannel);
-	assert(samplesDecodedLeft == samplesDecodedRight);
+		int samplesDecodedLeft = _xaStreams[0]->readBuffer(leftSamples, samplesPerChannel);
+		int samplesDecodedRight = _xaStreams[1]->readBuffer(rightSamples, samplesPerChannel);
+		assert(samplesDecodedLeft == samplesDecodedRight);
 
-	// Now re-interleave the data
-	int samplesDecoded = 0;
-	int16 *leftSrc = leftSamples, *rightSrc = rightSamples;
-	for (; samplesDecoded < numSamples; samplesDecoded += NUM_CHANNELS) {
-		*buffer++ = *leftSrc++;
-		*buffer++ = *rightSrc++;
+		// Now re-interleave the data
+		int samplesDecoded = 0;
+		int16 *leftSrc = leftSamples, *rightSrc = rightSamples;
+		for (; samplesDecoded < numSamples; samplesDecoded += 2) {
+			*buffer++ = *leftSrc++;
+			*buffer++ = *rightSrc++;
+		}
+
+		delete[] leftSamples;
+		delete[] rightSamples;
+		return samplesDecoded;
 	}
 
-	delete[] leftSamples;
-	delete[] rightSamples;
-	return samplesDecoded;
+	// Just read from the stream directly for mono
+	return _xaStreams[0]->readBuffer(buffer, numSamples);
 }
 
 bool SCXStream::rewind() {
-	return _xaStreams[0]->rewind() && _xaStreams[1]->rewind();
+	if (!_xaStreams[0]->rewind())
+		return false;
+
+	return !isStereo() || _xaStreams[1]->rewind();
 }
 
 Audio::RewindableAudioStream *makeSCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
