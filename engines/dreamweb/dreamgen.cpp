@@ -16352,84 +16352,6 @@ _tmp1:
 	multiget();
 }
 
-void DreamGenContext::animpointer() {
-	STACK_CHECK;
-	_cmp(data.byte(kPointermode), 2);
-	if (flags.z())
-		goto combathand;
-	_cmp(data.byte(kPointermode), 3);
-	if (flags.z())
-		goto mousehand;
-	_cmp(data.word(kWatchingtime), 0);
-	if (flags.z())
-		goto notwatchpoint;
-	data.byte(kPointerframe) = 11;
-	return;
-notwatchpoint:
-	data.byte(kPointerframe) = 0;
-	_cmp(data.byte(kInmaparea), 0);
-	if (flags.z())
-		return /* (gothand) */;
-	_cmp(data.byte(kPointerfirstpath), 0);
-	if (flags.z())
-		return /* (gothand) */;
-	getflagunderp();
-	_cmp(cl, 2);
-	if (flags.c())
-		return /* (gothand) */;
-	_cmp(cl, 128);
-	if (!flags.c())
-		return /* (gothand) */;
-	data.byte(kPointerframe) = 3;
-	_test(cl, 4);
-	if (!flags.z())
-		return /* (gothand) */;
-	data.byte(kPointerframe) = 4;
-	_test(cl, 16);
-	if (!flags.z())
-		return /* (gothand) */;
-	data.byte(kPointerframe) = 5;
-	_test(cl, 2);
-	if (!flags.z())
-		return /* (gothand) */;
-	data.byte(kPointerframe) = 6;
-	_test(cl, 8);
-	if (!flags.z())
-		return /* (gothand) */;
-	data.byte(kPointerframe) = 8;
-	return;
-mousehand:
-	_cmp(data.byte(kPointerspeed), 0);
-	if (flags.z())
-		goto rightspeed3;
-	_dec(data.byte(kPointerspeed));
-	goto finflashmouse;
-rightspeed3:
-	data.byte(kPointerspeed) = 5;
-	_inc(data.byte(kPointercount));
-	_cmp(data.byte(kPointercount), 16);
-	if (!flags.z())
-		goto finflashmouse;
-	data.byte(kPointercount) = 0;
-finflashmouse:
-	al = data.byte(kPointercount);
-	ah = 0;
-	bx = offset_flashmousetab;
-	_add(bx, ax);
-	al = cs.byte(bx);
-	data.byte(kPointerframe) = al;
-	return;
-combathand:
-	data.byte(kPointerframe) = 0;
-	_cmp(data.byte(kReallocation), 14);
-	if (!flags.z())
-		return /* (notarrow) */;
-	_cmp(data.byte(kCommandtype), 211);
-	if (!flags.z())
-		return /* (notarrow) */;
-	data.byte(kPointerframe) = 5;
-}
-
 void DreamGenContext::readmouse() {
 	STACK_CHECK;
 	ax = data.word(kMousebutton);
@@ -18692,7 +18614,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumpzoom: dumpzoom(); break;
 		case addr_putunderzoom: putunderzoom(); break;
 		case addr_undertextline: undertextline(); break;
-		case addr_animpointer: animpointer(); break;
 		case addr_setmouse: setmouse(); break;
 		case addr_readmouse: readmouse(); break;
 		case addr_mousecall: mousecall(); break;

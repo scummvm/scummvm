@@ -182,6 +182,7 @@
 	void dumpblink();
 	void dumppointer();
 	void showpointer();
+	void animpointer();
 	void checkcoords();
 	void checkcoords(const RectWithCallback *rectWithCallbacks);
 

@@ -1508,6 +1508,60 @@ void DreamGenContext::showpointer() {
 	}
 }
 
+void DreamGenContext::animpointer() {
+
+	if (data.byte(kPointermode) == 2) {
+		data.byte(kPointerframe) = 0;
+		if ((data.byte(kReallocation) == 14) && (data.byte(kCommandtype) == 211))
+			data.byte(kPointerframe) = 5;
+		return;
+	} else if (data.byte(kPointermode) == 3) {
+		if (data.byte(kPointerspeed) != 0) {
+			--data.byte(kPointerspeed);
+		} else {
+			data.byte(kPointerspeed) = 5;
+			++data.byte(kPointercount);
+			if (data.byte(kPointercount) == 16)
+				data.byte(kPointercount) = 0;
+		}
+		static const uint8 flashMouseTab[] = { 1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2 };
+		data.byte(kPointerframe) = flashMouseTab[data.byte(kPointercount)];
+		return;
+	}
+	if (data.word(kWatchingtime) != 0) {
+		data.byte(kPointerframe) = 11;
+		return;
+	}
+	data.byte(kPointerframe) = 0;
+	if (data.byte(kInmaparea) == 0)
+		return;
+	if (data.byte(kPointerfirstpath) == 0)
+		return;
+	uint8 flag, flagEx;
+	getflagunderp(&flag, &flagEx);
+	if (flag < 2)
+		return;
+	if (flag >= 128)
+		return;
+	if (flag & 4) {
+		data.byte(kPointerframe) = 3;
+		return;
+	}
+	if (flag & 16) {
+		data.byte(kPointerframe) = 4;
+		return;
+	}
+	if (flag & 2) {
+		data.byte(kPointerframe) = 5;
+		return;
+	}
+	if (flag & 8) {
+		data.byte(kPointerframe) = 6;
+		return;
+	}
+	data.byte(kPointerframe) = 8;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

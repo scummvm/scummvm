@@ -85,7 +85,6 @@ public:
 	static const uint16 addr_mousecall = 0xcae8;
 	static const uint16 addr_readmouse = 0xcae4;
 	static const uint16 addr_setmouse = 0xcae0;
-	static const uint16 addr_animpointer = 0xcadc;
 	static const uint16 addr_undertextline = 0xcad0;
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
@@ -683,14 +682,13 @@ public:
 	static const uint16 offset_gameerror2 = 0x0fb2;
 	static const uint16 offset_loadlist = 0x0ef0;
 	static const uint16 offset_gameerror6 = 0x10be;
-	static const uint16 offset_flashmousetab = 0x1707;
 	static const uint16 offset_speechfile = 0x13f1;
 	static const uint16 offset_atmospherelist = 0x147e;
 	static const uint16 offset_gameerror4 = 0x1037;
 	static const uint16 offset_gameerror1 = 0x0f6e;
 	static const uint16 offset_examlist = 0x09be;
 	static const uint16 offset_gameinfo = 0x1170;
-	static const uint16 offset_decidelist = 0x13c1;
+	static const uint16 offset_opslist = 0x0ec6;
 	static const uint16 offset_invlist1 = 0x09fc;
 	static const uint16 offset_money2poke = 0x0d97;
 	static const uint16 offset_talklist = 0x0a64;
@@ -710,7 +708,7 @@ public:
 	static const uint16 offset_gameerror3 = 0x1003;
 	static const uint16 offset_rainlocations = 0x0459;
 	static const uint16 offset_diarylist = 0x0e9c;
-	static const uint16 offset_opslist = 0x0ec6;
+	static const uint16 offset_decidelist = 0x13c1;
 	static const uint16 offset_symbollist = 0x0e5e;
 	static const uint16 offset_folderlist = 0x0e34;
 	static const uint16 offset_facelist = 0x0451;
@@ -1368,7 +1366,7 @@ public:
 	//void findobname();
 	//void makename();
 	void buttonfour();
-	void animpointer();
+	void dosometalk();
 	//void lockmon();
 	//void dochange();
 	void getanyaddir();
@@ -1685,6 +1683,7 @@ public:
 	void textformonk();
 	void reconstruct();
 	void soldier1();
+	//void animpointer();
 	void getundercentre();
 	void checkforexit();
 	void loadseg();
@@ -2015,7 +2014,6 @@ public:
 	void emergencypurge();
 	void usemenu();
 	void alleybarksound();
-	void dosometalk();
 	void usecart();
 	void intromusic();
 	void quitkey();

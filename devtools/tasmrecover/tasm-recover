@@ -153,6 +153,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'dumpblink',
 	'dumppointer',
 	'showpointer',
+	'animpointer',
 	'checkcoords',
 	], skip_output = [
 	# These functions are processed but not output
