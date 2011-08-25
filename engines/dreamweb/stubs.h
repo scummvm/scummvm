@@ -190,4 +190,5 @@
 	void readmouse2();
 	void readmouse3();
 	void readmouse4();
+	uint16 waitframes();
 

@@ -112,10 +112,10 @@ uint8 DreamGenContext::printslow(const uint8 *string, uint16 x, uint16 y, uint8 
 				printboth(charSet, &offset2, y, c1, c2);
 				data.word(kCharshift) = 0;
 				for (int i=0; i<2; ++i) {
-					waitframes();
-					if (ax == 0)
+					uint16 mouseState = waitframes();
+					if (mouseState == 0)
 						continue;
-					if (ax != data.word(kOldbutton)) {
+					if (mouseState != data.word(kOldbutton)) {
 						return 1;
 					}
 				}
@@ -218,6 +218,15 @@ uint8 DreamGenContext::kernchars(uint8 firstChar, uint8 secondChar, uint8 width)
 
 void DreamGenContext::kernchars() {
 	cl = kernchars(al, ah, cl);
+}
+
+uint16 DreamGenContext::waitframes() {
+	readmouse();
+	showpointer();
+	vsync();
+	dumppointer();
+	delpointer();
+	return data.word(kMousebutton);
 }
 
 } /*namespace dreamgen */

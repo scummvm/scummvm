@@ -3926,26 +3926,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::waitframes() {
-	STACK_CHECK;
-	push(di);
-	push(bx);
-	push(es);
-	push(si);
-	push(ds);
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	delpointer();
-	ax = data.word(kMousebutton);
-	ds = pop();
-	si = pop();
-	es = pop();
-	bx = pop();
-	di = pop();
-}
-
 void DreamGenContext::monprint() {
 	STACK_CHECK;
 	data.byte(kKerning) = 1;
@@ -18109,7 +18089,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mode640x480: mode640x480(); break;
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
-		case addr_waitframes: waitframes(); break;
 		case addr_monprint: monprint(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;

@@ -517,7 +517,6 @@ public:
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
 	static const uint16 addr_monprint = 0xc314;
-	static const uint16 addr_waitframes = 0xc308;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
 	static const uint16 addr_mode640x480 = 0xc2f0;
@@ -1917,7 +1916,7 @@ public:
 	void searchforfiles();
 	void monkspeaking();
 	void fadecalculation();
-	void waitframes();
+	//void waitframes();
 	void clearrest();
 	//void getreelframeax();
 	void barwoman();
