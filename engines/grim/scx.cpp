@@ -65,12 +65,13 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 
 	stream->skip(12);
 
+	uint32 channelSize[NUM_CHANNELS];
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 		uint32 tag = stream->readUint32BE();
 		if (tag != channelNames[i])
 			error("Bad channel tag found '%s'", tag2str(tag));
 
-		/* uint32 channelSize = */ stream->readUint32LE();
+		channelSize[i] = stream->readUint32LE();
 	}
 
 	stream->skip(88);
@@ -102,23 +103,25 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 	// TODO: Make XAStream allow for appending data (similar to how ScummVM
 	// handles AAC/QDM2. For now, we de-interleave the XA ADPCM data and then
 	// re-interleave in readBuffer().
-	Common::MemoryWriteStreamDynamic *leftOut = new Common::MemoryWriteStreamDynamic();
-	Common::MemoryWriteStreamDynamic *rightOut = new Common::MemoryWriteStreamDynamic();
+	byte *leftOut = new byte[channelSize[0]];
+	byte *rightOut = new byte[channelSize[1]];
+	Common::MemoryWriteStream *leftStream = new Common::MemoryWriteStream(leftOut, channelSize[0]);
+	Common::MemoryWriteStream *rightStream = new Common::MemoryWriteStream(rightOut, channelSize[1]);
 	byte *buf = new byte[_blockSize];
 
 	while (stream->pos() < stream->size()) {
 		stream->read(buf, _blockSize);
-		leftOut->write(buf, _blockSize);
+		leftStream->write(buf, _blockSize);
 		stream->read(buf, _blockSize);
-		rightOut->write(buf, _blockSize);
+		rightStream->write(buf, _blockSize);
 	}
 
-	_xaStreams[0] = Audio::makeVagStream(new Common::MemoryReadStream(leftOut->getData(), leftOut->size(), DisposeAfterUse::YES), _rate);
-	_xaStreams[1] = Audio::makeVagStream(new Common::MemoryReadStream(rightOut->getData(), rightOut->size(), DisposeAfterUse::YES), _rate);
+	_xaStreams[0] = Audio::makeVagStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
+	_xaStreams[1] = Audio::makeVagStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
 
 	delete[] buf;
-	delete leftOut;
-	delete rightOut;
+	delete leftStream;
+	delete rightStream;
 
 	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;
