@@ -41,6 +41,8 @@ private:
 	Common::SeekableReadStream *_stream;
 	DisposeAfterUse::Flag _disposeAfterUse;
 
+	void seekToPos(uint pos);
+
 	byte _predictor;
 	double _samples[28];
 	byte _samplesRemaining;
@@ -100,7 +102,7 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 		byte flags = _stream->readByte();
 		if (flags == 3) {
 			// Loop
-			rewind();
+			seekToPos(_loopPoint);
 			continue;
 		} else if (flags == 6) {
 			// Set loop point
@@ -143,13 +145,16 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool XAStream::rewind() {
-	_stream->seek(_loopPoint);
+	seekToPos(0);
+	return true;
+}
+
+void XAStream::seekToPos(uint pos) {
+	_stream->seek(pos);
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
 	_endOfData = false;
-
-	return true;
 }
 
 RewindableAudioStream *makeXAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse) {
