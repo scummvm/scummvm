@@ -193,11 +193,15 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
-	{
+	{ // Provided by sev
 		{
 			"princess",
 			0,
-			AD_ENTRY1s("install.inf", "f1cf45db3c4c54a0d2d89d359af8f334", 244),
+			{
+				{"book.ini", 0, "fb32572577b9a41ba299825ef1e3181e", 966},
+				{"page99.rsc", 0, "fd5ebd3b5e36c4651c50241619525355", 45418},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -206,11 +210,15 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
-	{
+	{ // Provided by sev
 		{
 			"sleepingcub",
 			0,
-			AD_ENTRY1s("install.inf", "1092e753b8692463f41b8c0b1931398e", 251),
+			{
+				{"book.ini", 0, "0d329e592387009c6387a733a3ea2235", 964},
+				{"page99.rsc", 0, "219fbd9bd2ff87c7023814405d753145", 46916},
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -230,6 +238,8 @@ using namespace Composer;
 const static char *directoryGlobs[] = {
 	"data",
 	"programs",
+	"princess",
+	"sleepcub",
 	0
 };
 
