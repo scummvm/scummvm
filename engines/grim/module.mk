@@ -71,6 +71,7 @@ MODULE_OBJS := \
 	resource.o \
 	savegame.o \
 	scene.o \
+	scx.o \
 	sector.o \
 	textobject.o \
 	textsplit.o \
