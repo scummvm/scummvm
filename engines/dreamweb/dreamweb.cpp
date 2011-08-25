@@ -303,7 +303,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 	keybuf[in] = ascii;
 }
 
-void DreamWebEngine::mouseCall() {
+void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	processEvents();
 	Common::EventManager *eventMan = _system->getEventManager();
 	Common::Point pos = eventMan->getMousePos();
@@ -315,13 +315,12 @@ void DreamWebEngine::mouseCall() {
 		pos.y = 15;
 	if (pos.y > 184)
 		pos.y = 184;
-	_context.cx = pos.x;
-	_context.dx = pos.y;
+	*x = pos.x;
+	*y = pos.y;
 
-	unsigned state = eventMan->getButtonState();
-	_context.bx = state == _oldMouseState? 0: state;
-	_oldMouseState = state;
-	_context.flags._c = false;
+	unsigned newState = eventMan->getButtonState();
+	*state = (newState == _oldMouseState? 0 : newState);
+	_oldMouseState = newState;
 }
 
 void DreamWebEngine::fadeDos() {

@@ -82,7 +82,7 @@ public:
 	uint32 skipBytes(uint32 bytes);
 	void closeFile();
 
-	void mouseCall(); //fill mouse pos and button state
+	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
 	void processEvents();
 	void setPalette();
 	void fadeDos();

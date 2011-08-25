@@ -285,7 +285,12 @@ void DreamGenContext::dontloadseg() {
 }
 
 void DreamGenContext::mousecall() {
-	engine->mouseCall();
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	cx = x;
+	dx = y;
+	bx = state;
+	flags._c = false;
 }
 
 void DreamGenContext::setmouse() {
