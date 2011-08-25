@@ -32,7 +32,7 @@ public:
 	~XAStream();
 
 	bool isStereo() const { return false; }
-	bool endOfData() const { return _stream->pos() == _stream->size(); }
+	bool endOfData() const { return _endOfData && _samplesRemaining == 0; }
 	int getRate() const { return _rate; }
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -47,6 +47,7 @@ private:
 	int _rate;
 	double _s1, _s2;
 	uint _loopPoint;
+	bool _endOfData;
 };
 
 XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse::Flag disposeAfterUse)
@@ -56,6 +57,7 @@ XAStream::XAStream(Common::SeekableReadStream *stream, int rate, DisposeAfterUse
 	_s1 = _s2 = 0.0;
 	_rate = rate;
 	_loopPoint = 0;
+	_endOfData = false;
 }
 
 
@@ -64,39 +66,29 @@ XAStream::~XAStream() {
 		delete _stream;
 }
 
-static const double s_xaDataTable[5][2] =
-	{
-		{  0.0, 0.0 },
-		{  60.0 / 64.0,  0.0 },
-		{  115.0 / 64.0, -52.0 / 64.0 },
-		{  98.0 / 64.0, -55.0 / 64.0 },
-		{  122.0 / 64.0, -60.0 / 64.0 }
-	};
+static const double s_xaDataTable[5][2] = {
+	{  0.0, 0.0 },
+	{  60.0 / 64.0,  0.0 },
+	{  115.0 / 64.0, -52.0 / 64.0 },
+	{  98.0 / 64.0, -55.0 / 64.0 },
+	{  122.0 / 64.0, -60.0 / 64.0 }
+};
 
 int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 	int32 samplesDecoded = 0;
 
-	if (_samplesRemaining) {
-		byte i = 0;
-
-		for (i = 28 - _samplesRemaining; i < 28 && samplesDecoded < numSamples; i++) {
-			_samples[i] = _samples[i] + _s1 * s_xaDataTable[_predictor][0] + _s2 * s_xaDataTable[_predictor][1];
-			_s2 = _s1;
-			_s1 = _samples[i];
-			int16 d = (int) (_samples[i] + 0.5);
-			buffer[samplesDecoded] = d;
-			samplesDecoded++;
-		}
-
-#if 0
-		assert(i == 28); // We're screwed if this fails :P
-#endif
-		// This might mean the file is corrupted, or that the stream has
-		// been closed.
-		if (i != 28) return 0;
-
-		_samplesRemaining = 0;
+	for (int i = 28 - _samplesRemaining; i < 28 && samplesDecoded < numSamples; i++) {
+		_samples[i] = _samples[i] + _s1 * s_xaDataTable[_predictor][0] + _s2 * s_xaDataTable[_predictor][1];
+		_s2 = _s1;
+		_s1 = _samples[i];
+		int16 d = (int) (_samples[i] + 0.5);
+		buffer[samplesDecoded] = d;
+		samplesDecoded++;
+		_samplesRemaining--;
 	}
+
+	if (endOfData())
+		return samplesDecoded;
 
 	while (samplesDecoded < numSamples) {
 		byte i = 0;
@@ -106,18 +98,17 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 		_predictor >>= 4;
 
 		byte flags = _stream->readByte();
-		if (flags & 0x1) {
-			if (flags == 3) {
-				// Loop
-				rewind();
-				continue;
-			} else {
-				// End of stream
-				return samplesDecoded;
-			}
-		} else if (flags & 0x4) {
+		if (flags == 3) {
+			// Loop
+			rewind();
+			continue;
+		} else if (flags == 6) {
 			// Set loop point
 			_loopPoint = _stream->pos() - 2;
+		} else if (flags == 7) {
+			// End of stream
+			_endOfData = true;
+			return samplesDecoded;
 		}
 
 		for (i = 0; i < 28; i += 2) {
@@ -141,8 +132,11 @@ int XAStream::readBuffer(int16 *buffer, const int numSamples) {
 			samplesDecoded++;
 		}
 
-		if (i != 27)
+		if (i != 28)
 			_samplesRemaining = 28 - i;
+
+		if (_stream->pos() >= _stream->size())
+			_endOfData = true;
 	}
 
 	return samplesDecoded;
@@ -153,6 +147,7 @@ bool XAStream::rewind() {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
+	_endOfData = false;
 
 	return true;
 }
