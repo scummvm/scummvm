@@ -16352,74 +16352,6 @@ _tmp1:
 	multiget();
 }
 
-void DreamGenContext::readmouse() {
-	STACK_CHECK;
-	ax = data.word(kMousebutton);
-	data.word(kOldbutton) = ax;
-	ax = data.word(kMousex);
-	data.word(kOldx) = ax;
-	ax = data.word(kMousey);
-	data.word(kOldy) = ax;
-	mousecall();
-	data.word(kMousex) = cx;
-	data.word(kMousey) = dx;
-	data.word(kMousebutton) = bx;
-}
-
-void DreamGenContext::readmouse1() {
-	STACK_CHECK;
-	ax = data.word(kMousex);
-	data.word(kOldx) = ax;
-	ax = data.word(kMousey);
-	data.word(kOldy) = ax;
-	mousecall();
-	data.word(kMousex) = cx;
-	data.word(kMousey) = dx;
-	data.word(kMousebutton1) = bx;
-}
-
-void DreamGenContext::readmouse2() {
-	STACK_CHECK;
-	ax = data.word(kMousex);
-	data.word(kOldx) = ax;
-	ax = data.word(kMousey);
-	data.word(kOldy) = ax;
-	mousecall();
-	data.word(kMousex) = cx;
-	data.word(kMousey) = dx;
-	data.word(kMousebutton2) = bx;
-}
-
-void DreamGenContext::readmouse3() {
-	STACK_CHECK;
-	ax = data.word(kMousex);
-	data.word(kOldx) = ax;
-	ax = data.word(kMousey);
-	data.word(kOldy) = ax;
-	mousecall();
-	data.word(kMousex) = cx;
-	data.word(kMousey) = dx;
-	data.word(kMousebutton3) = bx;
-}
-
-void DreamGenContext::readmouse4() {
-	STACK_CHECK;
-	ax = data.word(kMousebutton);
-	data.word(kOldbutton) = ax;
-	ax = data.word(kMousex);
-	data.word(kOldx) = ax;
-	ax = data.word(kMousey);
-	data.word(kOldy) = ax;
-	mousecall();
-	data.word(kMousex) = cx;
-	data.word(kMousey) = dx;
-	ax = data.word(kMousebutton1);
-	_or(ax, data.word(kMousebutton2));
-	_or(ax, data.word(kMousebutton3));
-	_or(bx, ax);
-	data.word(kMousebutton) = bx;
-}
-
 void DreamGenContext::readkey() {
 	STACK_CHECK;
 	bx = data.word(kBufferout);
@@ -18615,12 +18547,7 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_putunderzoom: putunderzoom(); break;
 		case addr_undertextline: undertextline(); break;
 		case addr_setmouse: setmouse(); break;
-		case addr_readmouse: readmouse(); break;
 		case addr_mousecall: mousecall(); break;
-		case addr_readmouse1: readmouse1(); break;
-		case addr_readmouse2: readmouse2(); break;
-		case addr_readmouse3: readmouse3(); break;
-		case addr_readmouse4: readmouse4(); break;
 		case addr_readkey: readkey(); break;
 		case addr_randomnum1: randomnum1(); break;
 		case addr_randomnum2: randomnum2(); break;

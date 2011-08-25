@@ -290,7 +290,58 @@ void DreamGenContext::mousecall() {
 	cx = x;
 	dx = y;
 	bx = state;
-	flags._c = false;
+}
+
+void DreamGenContext::readmouse() {
+	data.word(kOldbutton) = data.word(kMousebutton);
+	data.word(kOldx) = data.word(kMousex);
+	data.word(kOldy) = data.word(kMousey);
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	data.word(kMousex) = x;
+	data.word(kMousey) = y;
+	data.word(kMousebutton) = state;
+}
+
+void DreamGenContext::readmouse1() {
+	data.word(kOldx) = data.word(kMousex);
+	data.word(kOldy) = data.word(kMousey);
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	data.word(kMousex) = x;
+	data.word(kMousey) = y;
+	data.word(kMousebutton1) = state;
+}
+
+void DreamGenContext::readmouse2() {
+	data.word(kOldx) = data.word(kMousex);
+	data.word(kOldy) = data.word(kMousey);
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	data.word(kMousex) = x;
+	data.word(kMousey) = y;
+	data.word(kMousebutton2) = state;
+}
+
+void DreamGenContext::readmouse3() {
+	data.word(kOldx) = data.word(kMousex);
+	data.word(kOldy) = data.word(kMousey);
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	data.word(kMousex) = x;
+	data.word(kMousey) = y;
+	data.word(kMousebutton3) = state;
+}
+
+void DreamGenContext::readmouse4() {
+	data.word(kOldbutton) = data.word(kMousebutton);
+	data.word(kOldx) = data.word(kMousex);
+	data.word(kOldy) = data.word(kMousey);
+	uint16 x, y, state;
+	engine->mouseCall(&x, &y, &state);
+	data.word(kMousex) = x;
+	data.word(kMousey) = y;
+	data.word(kMousebutton) = state | data.word(kMousebutton1) | data.word(kMousebutton2) | data.word(kMousebutton3);
 }
 
 void DreamGenContext::setmouse() {

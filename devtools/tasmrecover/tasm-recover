@@ -155,6 +155,11 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showpointer',
 	'animpointer',
 	'checkcoords',
+	'readmouse',
+	'readmouse1',
+	'readmouse2',
+	'readmouse3',
+	'readmouse4',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
