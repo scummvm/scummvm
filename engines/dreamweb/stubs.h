@@ -58,7 +58,6 @@
 	void dumptextline();
 	void getnumber();
 	uint8 getnumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
-	void kernchars();
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void getroomdata();
 	void readheader();

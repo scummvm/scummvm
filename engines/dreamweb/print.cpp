@@ -216,10 +216,6 @@ uint8 DreamGenContext::kernchars(uint8 firstChar, uint8 secondChar, uint8 width)
 	return width;
 }
 
-void DreamGenContext::kernchars() {
-	cl = kernchars(al, ah, cl);
-}
-
 uint16 DreamGenContext::waitframes() {
 	readmouse();
 	showpointer();
