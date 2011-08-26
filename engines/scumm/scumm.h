@@ -1089,6 +1089,7 @@ protected:
 	bool _enable_gs;
 	bool _copyProtection;
 
+	// Indy4 Amiga specific
 	uint16 _amigaFirstUsedColor;
 	byte _amigaPalette[3 * 64];
 	void mapRoomPalette(int idx);
