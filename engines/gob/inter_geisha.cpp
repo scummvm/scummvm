@@ -108,23 +108,17 @@ int16 Inter_Geisha::loadSound(int16 slot) {
 }
 
 void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
-
 	_vm->_sound->adlibLoadTBR("geisha.tbr");
 	_vm->_sound->adlibLoadMDY("geisha.mdy");
 }
 
 void Inter_Geisha::oGeisha_playMusic(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
-
 	// TODO: The MDYPlayer is still broken!
 	warning("Geisha Stub: oGeisha_playMusic");
 	// _vm->_sound->adlibPlay();
 }
 
 void Inter_Geisha::oGeisha_stopMusic(OpGobParams &params) {
-	_vm->_game->_script->skip(2);
-
 	_vm->_sound->adlibStop();
 	_vm->_sound->adlibUnload();
 }
