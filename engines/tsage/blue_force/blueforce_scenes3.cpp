@@ -101,8 +101,8 @@ void Scene300::Action1::signal() {
 		setDelay(1);
 		break;
 	case 2: {
-		Common::Point pt(BF_GLOBALS._player._position.x - 8, BF_GLOBALS._player._position.y);
-		ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, pt.x, pt.y);
+		ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 8, 
+			BF_GLOBALS._player._position.y);
 		break;
 	}
 	case 3:
@@ -125,8 +125,8 @@ void Scene300::Action2::signal() {
 		setDelay(1);
 		break;
 	case 2: {
-		Common::Point pt(BF_GLOBALS._player._position.x + 8, BF_GLOBALS._player._position.y);
-		ADD_MOVER(BF_GLOBALS._player, pt.x, pt.y);
+		ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 8,
+			BF_GLOBALS._player._position.y);
 		break;
 	}
 	case 3:
