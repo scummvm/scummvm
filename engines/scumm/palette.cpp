@@ -889,7 +889,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
 
 		for (int i = startColor; i <= endColor; ++i) {
-			if (i >= 16 && i <= 48) {
+			if (i >= 16 && i < 48) {
 				if (cycleFlag)
 					_colorUsedByCycle[i - 16] &= ~2;
 				else
@@ -916,7 +916,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		}
 
 		for (int i = 0; i < 256; ++i) {
-			if (i >= 16 && i <= _amigaFirstUsedColor)
+			if (i >= 16 && i < _amigaFirstUsedColor)
 				continue;
 
 			bool inRange = (startColor <= i && i <= endColor);
@@ -1196,7 +1196,7 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	}
 
 	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
-		if (idx < 16 || idx > _amigaFirstUsedColor) {
+		if (idx < 16 || idx >= _amigaFirstUsedColor) {
 			mapRoomPalette(idx);
 			mapVerbPalette(idx);
 		} else if (idx >= 16 && idx < 48 && idx != 33) {
@@ -1205,7 +1205,7 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 			_amigaPalette[(idx - 16) * 3 + 2] = _currentPalette[idx * 3 + 2] >> 4;
 
 			for (int i = 0; i < 256; ++i) {
-				if (i >= 16 && i <= _amigaFirstUsedColor)
+				if (i >= 16 && i < _amigaFirstUsedColor)
 					continue;
 
 				if (idx - 16 == _roomPalette[i])
@@ -1217,7 +1217,7 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 			_amigaPalette[(idx - 16) * 3 + 2] = _currentPalette[idx * 3 + 2] >> 4;
 
 			for (int i = 0; i < 256; ++i) {
-				if (i >= 16 && i <= _amigaFirstUsedColor)
+				if (i >= 16 && i < _amigaFirstUsedColor)
 					continue;
 
 				if (idx - 16 == _verbPalette[i])
