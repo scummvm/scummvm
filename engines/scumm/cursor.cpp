@@ -609,12 +609,16 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		for (i = 0; i < 1024; i++)
 			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
 	} else {
-		color = default_cursor_colors[idx];
-		// Indy4 Amiga always uses the room or verb palette map to match colors to
-		// the currently setup palette, thus we need to select it over here too.
-		// This is guesswork!
-		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
-			color = _roomPalette[color];
+		// Indy4 Amiga uses its own color set for the cursor image.
+		// This is patchwork code to make the cursor flash in correct colors.
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+			static const uint8 indy4AmigaColors[4] = {
+				252, 252, 253, 254
+			};
+			color = indy4AmigaColors[idx];
+		} else {
+			color = default_cursor_colors[idx];
+		}
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 

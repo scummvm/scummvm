@@ -1324,6 +1324,16 @@ void ScummEngine::updatePalette() {
 			*p++ = data[1] * 255 / 15;
 			*p++ = data[2] * 255 / 15;
 		}
+
+		// Setup colors for the mouse cursor
+		// Color values taken from Indy4 DOS
+		static const uint8 mouseCursorPalette[] = {
+			255, 255, 255,
+			171, 171, 171,
+			 87,  87,  87
+		};
+
+		_system->getPaletteManager()->setPalette(mouseCursorPalette, 252, 3);
 	} else {
 		bool noir_mode = (_game.id == GID_SAMNMAX && readVar(0x8000));
 		int i;
