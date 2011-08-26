@@ -2265,13 +2265,15 @@ void SceneObject::dispatch() {
 			if (_frame == _endFrame) {
 				if (_frameChange != -1) {
 					_frameChange = -1;
-					_strip = (_strip - 1) ^ 1 + 1;
+					_strip = ((_strip - 1) ^ 1) + 1;
 					_endFrame = 1;
 				} else if ((_field68 == 0) || (--_field68 != 0)) {
 					_frameChange = 1;
 					_endFrame = getFrameCount();
 
 					setFrame(changeFrame());
+				} else {
+					animEnded();
 				}
 			} else {
 				setFrame(changeFrame());
