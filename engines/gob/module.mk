@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	iniconfig.o \
 	init.o \
 	init_v1.o \
+	init_geisha.o \
 	init_v2.o \
 	init_fascin.o \
 	init_v3.o \

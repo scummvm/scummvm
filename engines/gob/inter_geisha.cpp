@@ -26,7 +26,9 @@
 #include "gob/inter.h"
 #include "gob/dataio.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/game.h"
+#include "gob/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
 
@@ -47,10 +49,18 @@ void Inter_Geisha::setupOpcodesDraw() {
 void Inter_Geisha::setupOpcodesFunc() {
 	Inter_v1::setupOpcodesFunc();
 
+	OPCODEFUNC(0x03, oGeisha_loadCursor);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
 }
 
 void Inter_Geisha::setupOpcodesGob() {
+}
+
+void Inter_Geisha::oGeisha_loadCursor(OpFuncParams &params) {
+	if (_vm->_game->_script->peekByte(1) & 0x80)
+		warning("Geisha Stub: oGeisha_loadCursor: script[1] & 0x80");
+
+	o1_loadCursor(params);
 }
 
 void Inter_Geisha::oGeisha_loadSound(OpFuncParams &params) {

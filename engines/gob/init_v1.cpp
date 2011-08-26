@@ -52,6 +52,10 @@ void Init_v1::initVideo() {
 	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
 
 	_vm->_video->initSurfDesc(320, 200, PRIMARY_SURFACE);
+
+	_vm->_draw->_cursorWidth       = 16;
+	_vm->_draw->_cursorHeight      = 16;
+	_vm->_draw->_transparentCursor =  1;
 }
 
 } // End of namespace Gob

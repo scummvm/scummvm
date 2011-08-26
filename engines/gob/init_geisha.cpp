@@ -30,41 +30,17 @@
 
 namespace Gob {
 
-Init_v2::Init_v2(GobEngine *vm) : Init_v1(vm) {
+Init_Geisha::Init_Geisha(GobEngine *vm) : Init_v1(vm) {
 }
 
-Init_v2::~Init_v2() {
+Init_Geisha::~Init_Geisha() {
 }
 
-void Init_v2::initVideo() {
-	if (_vm->_global->_videoMode)
-		_vm->validateVideoMode(_vm->_global->_videoMode);
-
-	_vm->_draw->_frontSurface = _vm->_global->_primarySurfDesc;
-	_vm->_video->initSurfDesc(_vm->_video->_surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
-
-	_vm->_global->_mousePresent = 1;
-
-	_vm->_global->_inVM = 0;
-
-	_vm->_global->_colorCount = 16;
-	if (!_vm->isEGA() &&
-	   ((_vm->getPlatform() == Common::kPlatformPC) ||
-	     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
-	     (_vm->getPlatform() == Common::kPlatformWindows)) &&
-	    ((_vm->_global->_videoMode == 0x13) ||
-	     (_vm->_global->_videoMode == 0x14)))
-		_vm->_global->_colorCount = 256;
-
-	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
-
-	_vm->_video->initSurfDesc(_vm->_video->_surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
+void Init_Geisha::initVideo() {
+	Init_v1::initVideo();
 
 	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 16;
+	_vm->_draw->_cursorHeight      = 23;
 	_vm->_draw->_transparentCursor =  1;
 }
 

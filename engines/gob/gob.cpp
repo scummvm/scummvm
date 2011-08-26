@@ -414,7 +414,7 @@ bool GobEngine::initGameParts() {
 		break;
 
 	case kGameTypeGeisha:
-		_init     = new Init_v1(this);
+		_init     = new Init_Geisha(this);
 		_video    = new Video_v1(this);
 		_inter    = new Inter_Geisha(this);
 		_mult     = new Mult_v1(this);

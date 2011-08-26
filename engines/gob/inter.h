@@ -344,6 +344,7 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
+	void oGeisha_loadCursor(OpFuncParams &params);
 	void oGeisha_loadSound(OpFuncParams &params);
 
 	int16 loadSound(int16 slot);
