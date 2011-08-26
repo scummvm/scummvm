@@ -72,6 +72,8 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
 				_clickEnabled = !_clickEnabled;
+				((SurfaceSdlGraphicsManager*) _graphicsManager)->displayMessageOnOSD(
+					_clickEnabled ? "Clicking Enabled" : "Clicking Disabled");
 				return true;
 			}
 			break;
