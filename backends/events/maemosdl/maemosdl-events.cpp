@@ -26,6 +26,10 @@
 
 #include "backends/events/maemosdl/maemosdl-events.h"
 
+MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(true) {
+
+}
+
 bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
 	// List of special N810 keys:
@@ -47,8 +51,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				processMouseEvent(event, _km.x, _km.y);
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
-				event.type = Common::EVENT_MBUTTONDOWN;
-				processMouseEvent(event, _km.x, _km.y);
+				// handled in keyup
 				return true;
 			}
 			break;
@@ -68,16 +71,34 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				processMouseEvent(event, _km.x, _km.y);
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
-				event.type = Common::EVENT_MBUTTONUP;
-				processMouseEvent(event, _km.x, _km.y);
+				_clickEnabled = !_clickEnabled;
 				return true;
 			}
 			break;
 		}
 	}
-
 	// Invoke parent implementation of this method
 	return SdlEventSource::remapKey(ev, event);
+}
+
+bool MaemoSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+
+	if (ev.button.button == SDL_BUTTON_LEFT && !_clickEnabled) {
+		return false;
+	}
+
+	// Invoke parent implementation of this method
+	return SdlEventSource::handleMouseButtonDown(ev, event);
+}
+
+bool MaemoSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+
+	if (ev.button.button == SDL_BUTTON_LEFT && !_clickEnabled) {
+		return false;
+	}
+
+	// Invoke parent implementation of this method
+	return SdlEventSource::handleMouseButtonUp(ev, event);
 }
 
 #endif

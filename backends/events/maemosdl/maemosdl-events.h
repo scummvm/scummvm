@@ -33,8 +33,14 @@
  * SDL events manager for Maemo
  */
 class MaemoSdlEventSource : public SdlEventSource {
+public:
+	MaemoSdlEventSource();
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+
+	bool _clickEnabled;
 };
 
 #endif
