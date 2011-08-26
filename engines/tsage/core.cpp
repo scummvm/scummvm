@@ -2072,6 +2072,7 @@ void SceneObject::animate(AnimateMode animMode, ...) {
 		break;
 
 	case ANIM_MODE_8:
+	case ANIM_MODE_9:
 		_field68 = va_arg(va, int);
 		_endAction = va_arg(va, Action *);
 		_frameChange = 1;
@@ -2258,7 +2259,23 @@ void SceneObject::dispatch() {
 			} else {
 				setFrame(changeFrame());
 			}
+			break;
 
+		case ANIM_MODE_9:
+			if (_frame == _endFrame) {
+				if (_frameChange != -1) {
+					_frameChange = -1;
+					_strip = (_strip - 1) ^ 1 + 1;
+					_endFrame = 1;
+				} else if ((_field68 == 0) || (--_field68 != 0)) {
+					_frameChange = 1;
+					_endFrame = getFrameCount();
+
+					setFrame(changeFrame());
+				}
+			} else {
+				setFrame(changeFrame());
+			}
 			break;
 
 		default:
