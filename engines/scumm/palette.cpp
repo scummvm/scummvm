@@ -400,6 +400,10 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 			mapVerbPalette(i);
 		} else {
 			int idx = (i - 16) & 31;
+			// We adjust our verb palette map from [0, 31] to [32, 63], since unlike
+			// the original we set up the verb palette at colors [32, 63].
+			// The original instead used two different palettes for the verb virtual
+			// screen and all the rest.
 			if (idx != 17) {
 				_roomPalette[i] = idx;
 				_verbPalette[i] = idx + 32;
@@ -454,6 +458,10 @@ int ScummEngine::remapRoomPaletteColor(int r, int g, int b) {
 }
 
 void ScummEngine::mapVerbPalette(int idx) {
+	// We adjust our verb palette map from [0, 31] to [32, 63], since unlike
+	// the original we set up the verb palette at colors [32, 63].
+	// The original instead used two different palettes for the verb virtual
+	// screen and all the rest.
 	if (idx >= 48 && idx < 80 && idx != 65)
 		_verbPalette[idx] = idx - 16;
 	else
@@ -1220,6 +1228,8 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 				if (i >= 16 && i < _amigaFirstUsedColor)
 					continue;
 
+				// We do - 16 instead of - 48 like the original, since our
+				// verb palette map is using [32, 63] instead of [0, 31].
 				if (idx - 16 == _verbPalette[i])
 					mapVerbPalette(i);
 			}
