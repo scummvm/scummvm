@@ -50,7 +50,12 @@ void Inter_Geisha::setupOpcodesFunc() {
 	Inter_v1::setupOpcodesFunc();
 
 	OPCODEFUNC(0x03, oGeisha_loadCursor);
+	OPCODEFUNC(0x25, oGeisha_goblinFunc);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
+
+	OPCODEGOB(2, oGeisha_loadTitleMusic);
+	OPCODEGOB(3, oGeisha_playMusic);
+	OPCODEGOB(4, oGeisha_stopMusic);
 }
 
 void Inter_Geisha::setupOpcodesGob() {
@@ -65,6 +70,18 @@ void Inter_Geisha::oGeisha_loadCursor(OpFuncParams &params) {
 
 void Inter_Geisha::oGeisha_loadSound(OpFuncParams &params) {
 	loadSound(-1);
+}
+
+void Inter_Geisha::oGeisha_goblinFunc(OpFuncParams &params) {
+	OpGobParams gobParams;
+	int16 cmd;
+
+	cmd = _vm->_game->_script->readInt16();
+
+	gobParams.paramCount = _vm->_game->_script->readInt16();
+	gobParams.extraData = cmd;
+
+	executeOpcodeGob(cmd, gobParams);
 }
 
 int16 Inter_Geisha::loadSound(int16 slot) {
@@ -88,6 +105,28 @@ int16 Inter_Geisha::loadSound(int16 slot) {
 	}
 
 	return 0;
+}
+
+void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+
+	_vm->_sound->adlibLoadTBR("geisha.tbr");
+	_vm->_sound->adlibLoadMDY("geisha.mdy");
+}
+
+void Inter_Geisha::oGeisha_playMusic(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+
+	// TODO: The MDYPlayer is still broken!
+	warning("Geisha Stub: oGeisha_playMusic");
+	// _vm->_sound->adlibPlay();
+}
+
+void Inter_Geisha::oGeisha_stopMusic(OpGobParams &params) {
+	_vm->_game->_script->skip(2);
+
+	_vm->_sound->adlibStop();
+	_vm->_sound->adlibUnload();
 }
 
 } // End of namespace Gob

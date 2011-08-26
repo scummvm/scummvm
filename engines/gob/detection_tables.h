@@ -2496,7 +2496,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
-		kFeaturesEGA,
+		kFeaturesEGA | kFeaturesAdLib,
 		"disk1.stk", "intro.tot", 0
 	},
 	{
@@ -2510,7 +2510,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
-		kFeaturesEGA,
+		kFeaturesEGA | kFeaturesAdLib,
 		"disk1.stk", "intro.tot", 0
 	},
 	{

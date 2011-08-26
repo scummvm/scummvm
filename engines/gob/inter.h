@@ -345,7 +345,12 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void oGeisha_loadCursor(OpFuncParams &params);
+	void oGeisha_goblinFunc(OpFuncParams &params);
 	void oGeisha_loadSound(OpFuncParams &params);
+
+	void oGeisha_loadTitleMusic(OpGobParams &params);
+	void oGeisha_playMusic(OpGobParams &params);
+	void oGeisha_stopMusic(OpGobParams &params);
 
 	int16 loadSound(int16 slot);
 };
