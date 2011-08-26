@@ -610,6 +610,11 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
 	} else {
 		color = default_cursor_colors[idx];
+		// Indy4 Amiga always uses the room or verb palette map to match colors to
+		// the currently setup palette, thus we need to select it over here too.
+		// This is guesswork!
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+			color = _roomPalette[color];
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 

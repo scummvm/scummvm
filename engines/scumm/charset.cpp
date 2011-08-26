@@ -767,6 +767,13 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		_textScreenID = vs->number;
 	}
 
+	// We need to know the virtual screen we draw on for Indy 4 Amiga, since
+	// it selects the palette map according to this. We furthermore can not
+	// use _textScreenID here, since that will cause inventory graphics
+	// glitches.
+	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4)
+		_drawScreen = vs->number;
+
 	printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask);
 
 	_left += _origWidth;
@@ -917,12 +924,27 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	numbits = 8;
 	byte *cmap = _vm->_charsetColorMap;
 
+	// Indy4 Amiga always uses the room or verb palette map to match colors to
+	// the currently setup palette, thus we need to select it over here too.
+	// Done like the original interpreter.
+	byte *amigaMap = 0;
+	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4) {
+		if (_drawScreen == kVerbVirtScreen)
+			amigaMap = _vm->_verbPalette;
+		else
+			amigaMap = _vm->_roomPalette;
+	}
+
 	for (y = 0; y < height && y + drawTop < s.h; y++) {
 		for (x = 0; x < width; x++) {
 			color = (bits >> (8 - bpp)) & 0xFF;
 
-			if (color && y + drawTop >= 0)
-				*dst = cmap[color];
+			if (color && y + drawTop >= 0) {
+				if (amigaMap)
+					*dst = amigaMap[cmap[color]];
+				else
+					*dst = cmap[color];
+			}
 			dst++;
 			bits <<= bpp;
 			numbits -= bpp;

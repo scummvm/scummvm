@@ -1348,6 +1348,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
 	}
 
+	// We need to restore the internal state of the Amiga palette for Indy4
+	// Amiga.
+	// TODO: We should rather store the state in the savefile and only do this
+	// for old savegames.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+		setAmigaPaletteFromPtr(_currentPalette);
+
 	//
 	// Save/load more global object state
 	//

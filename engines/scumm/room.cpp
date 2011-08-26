@@ -552,6 +552,10 @@ void ScummEngine::resetRoomSubBlocks() {
 		}
 	}
 
+	// We need to setup the current palette before initCycl for Indy4 Amiga.
+	if (_PALS_offs || _CLUT_offs)
+		setCurrentPalette(0);
+
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
 	if (_game.version >= 4 && _game.heversion <= 62) {
@@ -570,9 +574,6 @@ void ScummEngine::resetRoomSubBlocks() {
 		}
 	}
 #endif
-
-	if (_PALS_offs || _CLUT_offs)
-		setCurrentPalette(0);
 }
 
 
