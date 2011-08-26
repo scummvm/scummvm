@@ -348,6 +348,7 @@ protected:
 	void oGeisha_goblinFunc(OpFuncParams &params);
 	void oGeisha_loadSound(OpFuncParams &params);
 
+	void oGeisha_gamePenetration(OpGobParams &params);
 	void oGeisha_loadTitleMusic(OpGobParams &params);
 	void oGeisha_playMusic(OpGobParams &params);
 	void oGeisha_stopMusic(OpGobParams &params);
