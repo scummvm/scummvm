@@ -54,6 +54,7 @@ void Inter_Geisha::setupOpcodesFunc() {
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
 
 	OPCODEGOB(0, oGeisha_gamePenetration);
+	OPCODEGOB(1, oGeisha_gameDiving);
 	OPCODEGOB(2, oGeisha_loadTitleMusic);
 	OPCODEGOB(3, oGeisha_playMusic);
 	OPCODEGOB(4, oGeisha_stopMusic);
@@ -120,6 +121,19 @@ void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
 
 	// Fudge a win for now
 	WRITE_VAR_UINT32(var4, 1);
+}
+
+void Inter_Geisha::oGeisha_gameDiving(OpGobParams &params) {
+	uint16 var1 = _vm->_game->_script->readUint16();
+	uint16 var2 = _vm->_game->_script->readUint16();
+	uint16 var3 = _vm->_game->_script->readUint16();
+
+	WRITE_VAR_UINT32(var3, 1);
+
+	warning("Geisha Stub: Minigame \"Diving\": %d, %d, %d", var1, var2, var3);
+
+	// Fudge a win for now
+	WRITE_VAR_UINT32(var3, 0);
 }
 
 void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
