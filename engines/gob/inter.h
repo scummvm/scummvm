@@ -354,6 +354,9 @@ protected:
 	void oGeisha_playMusic(OpGobParams &params);
 	void oGeisha_stopMusic(OpGobParams &params);
 
+	void oGeisha_caress1(OpGobParams &params);
+	void oGeisha_caress2(OpGobParams &params);
+
 	int16 loadSound(int16 slot);
 };
 

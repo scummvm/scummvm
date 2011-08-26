@@ -29,6 +29,7 @@
 #include "gob/resources.h"
 #include "gob/game.h"
 #include "gob/draw.h"
+#include "gob/video.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
 
@@ -58,6 +59,8 @@ void Inter_Geisha::setupOpcodesFunc() {
 	OPCODEGOB(2, oGeisha_loadTitleMusic);
 	OPCODEGOB(3, oGeisha_playMusic);
 	OPCODEGOB(4, oGeisha_stopMusic);
+	OPCODEGOB(6, oGeisha_caress1);
+	OPCODEGOB(7, oGeisha_caress2);
 }
 
 void Inter_Geisha::setupOpcodesGob() {
@@ -150,6 +153,16 @@ void Inter_Geisha::oGeisha_playMusic(OpGobParams &params) {
 void Inter_Geisha::oGeisha_stopMusic(OpGobParams &params) {
 	_vm->_sound->adlibStop();
 	_vm->_sound->adlibUnload();
+}
+
+void Inter_Geisha::oGeisha_caress1(OpGobParams &params) {
+	if (_vm->_draw->_spritesArray[0])
+		_vm->_video->drawPackedSprite("hp1.cmp", *_vm->_draw->_spritesArray[0]);
+}
+
+void Inter_Geisha::oGeisha_caress2(OpGobParams &params) {
+	if (_vm->_draw->_spritesArray[1])
+		_vm->_video->drawPackedSprite("hpsc1.cmp", *_vm->_draw->_spritesArray[1]);
 }
 
 } // End of namespace Gob
