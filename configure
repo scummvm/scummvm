@@ -1828,16 +1828,18 @@ case $_host_os in
 		# There is no way to get the prefix, so implementing a hack here
 		macport_version=`port version 2>/dev/null`
 		if test "$?" -eq 0; then
-			macport_version="`echo "${macport_version}" } sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
+			macport_version="`echo "${macport_version}" | sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
 			echo_n "You seem to be running MacPorts version ${macport_version}..."
 
-			$macport_prefix=`which port`
-			$macport_prefix=`dirname ${macport_prefix}`
+			macport_prefix=`which port`
+			# strip off /bin/port from /opt/local/bin/port
+			macport_prefix=`dirname ${macport_prefix}`
+			macport_prefix=`dirname ${macport_prefix}`
 
 			echo "adding ${macport_prefix} to paths"
 
 			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
-			CXXFLAGS="-I${macport_prefix}/lib $CXXFLAGS"
+			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
 		fi
 		;;
 	dreamcast)
