@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	init_v7.o \
 	inter.o \
 	inter_v1.o \
+	inter_geisha.o \
 	inter_v2.o \
 	inter_bargon.o \
 	inter_fascin.o \
