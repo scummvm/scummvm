@@ -884,7 +884,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 
 		//bool remappedVerbColors = false;
 		bool remappedRoomColors = false;
-		bool cycleFlag = (blueScale <= 250 && greenScale <= 250 && redScale <= 250);
+		bool cycleFlag = (blueScale >= 250 && greenScale >= 250 && redScale >= 250);
 
 		const byte *palptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
 
@@ -923,7 +923,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 			int idx = _roomPalette[i] + 16;
 			bool mappedInRange = (startColor <= idx && idx <= endColor);
 
-			if (inRange == mappedInRange || (remappedRoomColors && cycleFlag))
+			if (inRange != mappedInRange || (remappedRoomColors && cycleFlag))
 				mapRoomPalette(i);
 		}
 
