@@ -68,10 +68,7 @@ void UIQuestion::showDescription(int lineNum) {
 		// Unknown object description
 	} else {
 		// Display object description
-		SceneItem::display(9001, lineNum, SET_WIDTH, 312, SET_X, 4, SET_Y, 
-			GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-			SET_EXT_FGCOLOR, 13, LIST_END);
+		SceneItem::display2(9001, lineNum);
 	}
 }
 

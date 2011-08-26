@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	blue_force/blueforce_logic.o \
 	blue_force/blueforce_scenes0.o \
 	blue_force/blueforce_scenes1.o \
+	blue_force/blueforce_scenes3.o \
 	blue_force/blueforce_ui.o \
 	converse.o \
 	core.o \

@@ -1583,6 +1583,17 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	}
 }
 
+void SceneItem::display2(int resNum, int lineNum) {
+	if (_vm->getGameID() == GType_BlueForce)
+		display(resNum, lineNum, SET_WIDTH, 312, 
+			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left, 
+			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+			SET_EXT_FGCOLOR, 13, LIST_END);
+	else
+		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneHotspot::doAction(int action) {
@@ -1606,6 +1617,11 @@ void SceneHotspot::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
+NamedHotspot::NamedHotspot() : SceneHotspot() {
+	_resNum = 0;
+	_lookLineNum = _useLineNum = _talkLineNum = -1;
+}
+
 void NamedHotspot::doAction(int action) {
 	switch (action) {
 	case CURSOR_WALK:
@@ -1615,13 +1631,19 @@ void NamedHotspot::doAction(int action) {
 		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_resnum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
 		else
-			SceneItem::display(_resnum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+			SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum == -1)
+			SceneHotspot::doAction(action);
+		else
+			SceneItem::display2(_resNum, _talkLineNum);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1631,17 +1653,52 @@ void NamedHotspot::doAction(int action) {
 
 void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
-	_resnum = resnum;
+	_resNum = resnum;
 	_lookLineNum = lookLineNum;
 	_useLineNum = useLineNum;
+	_talkLineNum = -1;
 	_globals->_sceneItems.addItems(this, NULL);
+}
+
+void NamedHotspot::setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	setBounds(bounds);
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void NamedHotspot::setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+	_sceneRegionId = sceneRegionId;
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
 }
 
 void NamedHotspot::synchronize(Serializer &s) {
 	SceneHotspot::synchronize(s);
-	s.syncAsSint16LE(_resnum);
+	s.syncAsSint16LE(_resNum);
 	s.syncAsSint16LE(_lookLineNum);
 	s.syncAsSint16LE(_useLineNum);
+
+	if (_vm->getGameID() == GType_BlueForce)
+		s.syncAsSint16LE(_talkLineNum);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2319,22 +2376,6 @@ void AltSceneObject::postInit(SceneObjectList *OwnerList) {
 
 void AltSceneObject::draw() {
 	SceneObject::draw();
-}
-
-/*--------------------------------------------------------------------------*/
-
-void SceneObjectExt2::postInit(SceneObjectList *OwnerList) {
-	_v8A = -1;
-	_v8C = -1;
-	_v8E = -1;
-	SceneObject::postInit();
-}
-
-void SceneObjectExt2::synchronize(Serializer &s) {
-	SceneObject::synchronize(s);
-	s.syncAsSint16LE(_v8A);
-	s.syncAsSint16LE(_v8C);
-	s.syncAsSint16LE(_v8E);
 }
 
 /*--------------------------------------------------------------------------*/

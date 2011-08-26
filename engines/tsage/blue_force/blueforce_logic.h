@@ -29,8 +29,6 @@
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 
-#define BF_INTERFACE_Y 168
-
 namespace TsAGE {
 
 namespace BlueForce {
@@ -71,27 +69,69 @@ public:
 	uint32 _endFrame;
 public:
 	Timer();
-	void set(uint32 delay, Action *action);
+	void set(uint32 delay, Action *endAction);
 
+	virtual Common::String getClassName() { return "Timer"; }
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void dispatch();
 };
 
-class SceneItemType1: public SceneItem {
+class TimerExt: public Timer {
 public:
-	virtual void process(Event &event);
+	Action *_newAction;
+public:	
+	TimerExt();
+	void set(uint32 delay, Action *endAction, Action *action);
+
+	virtual Common::String getClassName() { return "TimerExt"; }
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
+};	
+
+class SceneItemType2: public SceneHotspot {
+public:
 	virtual void startMove(SceneObject *sceneObj, va_list va);
 };
 
-class SceneItemType2: public SceneItemType1 {
+class NamedObject: public SceneObject {
 public:
-	virtual void startMove(SceneObject *sceneObj, va_list va);
+	int _resNum;
+	int _lookLineNum, _talkLineNum, _useLineNum;
+
+	virtual Common::String getClassName() { return "NamedObject"; }
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+
+	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
 };
 
-class SceneItemType3: public SceneItemType1 {
+class CountdownObject: public NamedObject {
 public:
+	int _countDown;
+	CountdownObject();
+	void fixCountdown(int mode, ...);
 
+	virtual Common::String getClassName() { return "CountdownObject"; }
+	virtual void synchronize(Serializer &s);
+	virtual void dispatch();
+};
+
+class FollowerObject: public NamedObject {
+public:
+	SceneObject *_object;
+	FollowerObject();
+
+	virtual Common::String getClassName() { return "SceneObjectExt4"; }
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void dispatch();
+	virtual void reposition();
+
+	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
 
 class SceneExt: public Scene {
@@ -133,8 +173,44 @@ public:
 	virtual void process(Event &event);
 };
 
-class BlueAnimatedSpeaker: public Speaker {
+class VisualSpeaker: public Speaker {
 public:
+	NamedObject _object1;
+	CountdownObject _object2;
+	bool _removeObject1, _removeObject2;
+	int _field20C, _field20E;
+	int _numFrames;
+	Common::Point _offsetPos;
+public:
+	VisualSpeaker();
+
+	virtual Common::String getClassName() { return "VisualSpeaker"; }
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void proc12(Action *action);
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerSutter: public VisualSpeaker {
+public:
+	SpeakerSutter();
+
+	virtual Common::String getClassName() { return "SpeakerSutter"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerDoug: public VisualSpeaker {
+public:
+	SpeakerDoug();
+
+	virtual Common::String getClassName() { return "SpeakerDoug"; }
+};
+
+class SpeakerJakeNoHead: public VisualSpeaker {
+public:
+	SpeakerJakeNoHead();
+
+	virtual Common::String getClassName() { return "SpeakerJakeNoHead"; }
 };
 
 class BlueForceInvObjectList : public InvObjectList {

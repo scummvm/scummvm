@@ -2456,7 +2456,7 @@ void ASound::unPrime() {
 	_action = NULL;
 }
 
-void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, Action *action) {
+void ASound::fade(int fadeDest, int fadeSteps, int fadeTicks, bool stopAfterFadeFlag, EventHandler *action) {
 	if (action)
 		_action = action;
 
@@ -2485,8 +2485,17 @@ void ASoundExt::signal() {
 	}
 }
 
-void ASoundExt::fadeOut2(Action *action) {
+void ASoundExt::fadeOut2(EventHandler *action) {
 	fade(0, 10, 10, true, action);
+}
+
+void ASoundExt::changeSound(int soundNum) {
+	if (isPlaying()) {
+		_soundNum = soundNum;
+		fadeOut2(this);
+	} else {
+		fadeSound(soundNum);
+	}
 }
 
 /*--------------------------------------------------------------------------*/

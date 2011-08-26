@@ -35,19 +35,6 @@ namespace Ringworld {
 
 using namespace TsAGE;
 
-#define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	_globals->_player.addMover(mover, &pt, this); }
-#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	OBJ.addMover(mover, &pt, NULL); }
-#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	OBJ.addMover(mover, &pt, this); }
-
-#define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
-	OBJ.addMover(mover, &pt, this); }
-#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
-	OBJ.addMover(mover, &pt, NULL); }
-
-
 class SceneFactory {
 public:
 	static Scene *createScene(int sceneNumber);
@@ -77,6 +64,17 @@ public:
 		if (!performAction(action))
 			SceneHotspot::doAction(action);
 	}
+};
+
+class SceneObjectExt : public SceneObject {
+public:
+	int _state;
+
+	virtual void synchronize(Serializer &s) {
+		SceneObject::synchronize(s);
+		s.syncAsSint16LE(_state);
+	}
+	virtual Common::String getClassName() { return "SceneObjectExt"; }
 };
 
 class SceneArea : public SavedObject {

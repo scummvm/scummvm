@@ -23,8 +23,10 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
+#include "tsage/blue_force/blueforce_scenes3.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
+#include "tsage/graphics.h"
 #include "tsage/staticres.h"
 
 namespace TsAGE {
@@ -33,7 +35,7 @@ namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
-	_globals->_sceneManager.changeScene(50);
+	_globals->_sceneManager.changeScene(300);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 }
@@ -76,6 +78,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 280:
 		error("Scene group 2 not implemented");
 	case 300:
+		// Outside Police Station
+		return new Scene300();
 	case 315:
 	case 325:
 	case 330:
@@ -212,6 +216,13 @@ void Timer::remove() {
 	((Scene100 *)BF_GLOBALS._sceneManager._scene)->removeTimer(this);
 }
 
+void Timer::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	SYNC_POINTER(_tickAction);
+	SYNC_POINTER(_endAction);
+	s.syncAsUint32LE(_endFrame);
+}
+
 void Timer::signal() {
 	assert(_endAction);
 	Action *action = _endAction;
@@ -231,29 +242,172 @@ void Timer::dispatch() {
 	}
 }
 
-void Timer::set(uint32 delay, Action *action) {
+void Timer::set(uint32 delay, Action *endAction) {
 	assert(delay != 0);
 
 	_endFrame = BF_GLOBALS._sceneHandler->getFrameDifference() + delay;
-	_endAction = action;
+	_endAction = endAction;
 
 	((SceneExt *)BF_GLOBALS._sceneManager._scene)->addTimer(this);
 }
 
 /*--------------------------------------------------------------------------*/
 
-void SceneItemType1::process(Event &event) {
-	if (_action)
-		_action->process(event);
+TimerExt::TimerExt(): Timer() {
+	_action = NULL;
 }
 
-void SceneItemType1::startMove(SceneObject *sceneObj, va_list va) {
-	warning("TODO: sub_1621C");
+void TimerExt::set(uint32 delay, Action *endAction, Action *newAction) {
+	_newAction = newAction;
+	Timer::set(delay, endAction);
+}
+
+void TimerExt::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	SYNC_POINTER(_action);
+}
+
+void TimerExt::remove() {
+	_action = NULL;
+	remove();
+}
+
+void TimerExt::signal() {
+	Action *endAction = _endAction;
+	Action *newAction = _newAction;
+	remove();
+
+	// If the end action doesn't have an action anymore, set it to the specified new action
+	assert(endAction);
+	if (!endAction->_action)
+		endAction->setAction(newAction);
+}
+
+void TimerExt::dispatch() {
+
 }
 
 /*--------------------------------------------------------------------------*/
 
 void SceneItemType2::startMove(SceneObject *sceneObj, va_list va) {
+}
+
+/*--------------------------------------------------------------------------*/
+
+void NamedObject::postInit(SceneObjectList *OwnerList) {
+	_lookLineNum = _talkLineNum = _useLineNum = -1;
+	SceneObject::postInit();
+}
+
+void NamedObject::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	s.syncAsSint16LE(_resNum);
+	s.syncAsSint16LE(_lookLineNum);
+	s.syncAsSint16LE(_talkLineNum);
+	s.syncAsSint16LE(_useLineNum);
+}
+
+void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+CountdownObject::CountdownObject(): NamedObject() {
+	_countDown = 0;
+}
+
+void CountdownObject::synchronize(Serializer &s) {
+	SceneObject::synchronize(s);
+	s.syncAsSint16LE(_countDown);
+}
+
+void CountdownObject::dispatch() {
+	int frameNum = _frame;
+	SceneObject::dispatch();
+
+	if ((frameNum != _frame) && (_countDown > 0)) {
+		if (--_countDown == 0) {
+			animate(ANIM_MODE_NONE, 0);
+			_frame = 1;
+		}
+	}
+}
+
+void CountdownObject::fixCountdown(int mode, ...) {
+	if (mode == 8) {
+		va_list va;
+		va_start(va, mode);
+
+		_countDown = va_arg(va, int);
+		animate(ANIM_MODE_8, _countDown, NULL);
+		va_end(va);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+FollowerObject::FollowerObject(): NamedObject() {
+	_object = NULL;
+}
+
+void FollowerObject::synchronize(Serializer &s) {
+	NamedObject::synchronize(s);
+	SYNC_POINTER(_object);
+}
+
+void FollowerObject::remove() {
+	NamedObject::remove();
+	_object = NULL;
+}
+
+void FollowerObject::dispatch() {
+	SceneObject::dispatch();
+	assert(_object);
+
+	if ((_object->_flags & OBJFLAG_HIDE) || ((_object->_visage != 307) &&
+		((_object->_visage != 308) || (_object->_strip != 1)))) {
+		hide();
+	} else if ((_object->_visage != 308) || (_object->_strip != 1)) {
+		show();
+		setStrip(_object->_strip);
+		setPosition(_object->_position, _object->_yDiff);
+	}
+}
+
+void FollowerObject::reposition() {
+	assert(_object);
+	setStrip(_object->_strip);
+	setPosition(_object->_position, _object->_yDiff);
+	reposition();
+}
+
+void FollowerObject::setup(SceneObject *object, int visage, int frameNum, int yDiff) {
+	SceneObject::postInit();
+	_object = object;
+	_yDiff = yDiff;
+	setVisage(visage);
+	setFrame(frameNum);
+
+	dispatch();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -348,6 +502,142 @@ void SceneHandlerExt::process(Event &event) {
 	SceneHandler::process(event);
 
 	// TODO: All the new stuff from Blue Force
+}
+
+/*--------------------------------------------------------------------------*/
+
+VisualSpeaker::VisualSpeaker(): Speaker() {
+	_textWidth = 312;
+	_color1 = 19;
+	_hideObjects = false;
+	_removeObject1 = false;
+	_removeObject2 = false;
+	_field20E = 160;
+	_fontNumber = 4;
+	_color2 = 82;
+	_offsetPos = Common::Point(4, 170);
+	_numFrames = 0;
+}
+
+void VisualSpeaker::remove() {
+	if (_removeObject2)
+		_object2.remove();
+	if (_removeObject1)
+		_object1.remove();
+
+	Speaker::remove();
+}
+
+void VisualSpeaker::synchronize(Serializer &s) {
+	Speaker::synchronize(s);
+	
+	s.syncAsByte(_removeObject1);
+	s.syncAsByte(_removeObject2);
+	s.syncAsSint16LE(_field20C);
+	s.syncAsSint16LE(_field20E);
+	s.syncAsSint16LE(_numFrames);
+	s.syncAsSint16LE(_offsetPos.x);
+	s.syncAsSint16LE(_offsetPos.y);
+}
+
+void VisualSpeaker::proc12(Action *action) {
+	Speaker::proc12(action);
+	_textPos = Common::Point(_offsetPos.x + BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
+		_offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
+	_numFrames = 0;
+}
+
+void VisualSpeaker::setText(const Common::String &msg) {
+	BF_GLOBALS._events.waitForPress();
+	_objectList.draw();
+
+	_sceneText._color1 = _color1;
+	_sceneText._color2 = _color2;
+	_sceneText._color3 = _color3;
+	_sceneText._width = _textWidth;
+	_sceneText._fontNumber = _fontNumber;
+	_sceneText._textMode = _textMode;
+	_sceneText.setup(msg);
+
+	// Get the string bounds
+	GfxFont f;
+	f.setFontNumber(_fontNumber);
+	Rect bounds;
+	f.getStringBounds(msg.c_str(), bounds, _textWidth);
+
+	// Set the position for the text
+	switch (_textMode) {
+	case ALIGN_LEFT:
+	case ALIGN_JUSTIFIED:
+		_sceneText.setPosition(_textPos);
+		break;
+	case ALIGN_CENTER:
+		_sceneText.setPosition(Common::Point(_textPos.x + (_textWidth - bounds.width()) / 2, _textPos.y));
+		break;
+	case ALIGN_RIGHT:
+		_sceneText.setPosition(Common::Point(_textPos.x + _textWidth - bounds.width(), _textPos.y));
+		break;
+	default:
+		break;
+	}
+
+	// Ensure the text is in the foreground
+	_sceneText.fixPriority(256);
+
+	// Count the number of words (by spaces) in the string
+	const char *s = msg.c_str();
+	int spaceCount = 0;
+	while (*s) {
+		if (*s++ == ' ')
+			++spaceCount;
+	}
+
+	_numFrames = spaceCount * 3 + 2;
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerSutter::SpeakerSutter() {
+	_speakerName = "SUTTER";
+	_color1 = 20;
+	_color2 = 22;
+	_textMode = ALIGN_CENTER;
+}
+
+void SpeakerSutter::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(329);
+	_object1.setStrip2(2);
+	_object1.fixPriority(254);
+	_object1.changeZoom(100);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2.postInit();
+	_object2.setVisage(329);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerDoug::SpeakerDoug(): VisualSpeaker() {
+	_color1 = 32;
+	_speakerName = "DOUG";
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerJakeNoHead::SpeakerJakeNoHead(): VisualSpeaker() {
+	_color1 = 13;
+	_speakerName = "JAKE_NO_HEAD";
 }
 
 /*--------------------------------------------------------------------------*/

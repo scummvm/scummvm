@@ -162,6 +162,18 @@ public:
 	int _state;
 };
 
+#define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	_globals->_player.addMover(mover, &pt, this); }
+#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, this); }
+
+#define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, this); }
+#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+
 class ObjectMover : public EventHandler {
 public:
 	Common::Point _destPosition;
@@ -406,9 +418,7 @@ public:
 	void setBounds(const Rect &newBounds) { _bounds = newBounds; }
 	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
-	static void display2(int resNum, int lineNum) {
-		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-	}
+	static void display2(int resNum, int lineNum);
 };
 
 class SceneItemExt : public SceneItem {
@@ -432,13 +442,15 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resnum, _lookLineNum, _useLineNum;
-	NamedHotspot() : SceneHotspot() {}
+	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+	NamedHotspot();
 
-	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 	virtual void synchronize(Serializer &s);
+	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	virtual void setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -578,27 +590,6 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
 };
-
-class SceneObjectExt : public SceneObject {
-public:
-	int _state;
-
-	virtual void synchronize(Serializer &s) {
-		SceneObject::synchronize(s);
-		s.syncAsSint16LE(_state);
-	}
-	virtual Common::String getClassName() { return "SceneObjectExt"; }
-};
-
-class SceneObjectExt2: public SceneObject {
-public:
-	int _v88, _v8A, _v8C, _v8E;
-
-	virtual Common::String getClassName() { return "BF100Object"; }
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-};
-
 
 class SceneText : public SceneObject {
 public:

@@ -67,6 +67,8 @@ enum CursorType {
 	CURSOR_NONE = -1, CURSOR_CROSSHAIRS = -2, CURSOR_ARROW = -3
 };
 
+class GfxSurface;
+
 class EventsClass : public SaveListener {
 private:
 	Common::Event _event;
@@ -84,10 +86,11 @@ public:
 	void pushCursor(CursorType cursorType);
 	void popCursor();
 	void setCursor(Graphics::Surface &cursor, int transColor, const Common::Point &hotspot, CursorType cursorId);
+	void setCursor(GfxSurface &cursor);
 	void setCursorFromFlag();
 	CursorType getCursor() const { return _currentCursor; }
 	void showCursor();
-	void hideCursor();
+	CursorType hideCursor();
 	bool isCursorVisible() const;
 
 	bool pollEvent();
