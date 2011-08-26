@@ -109,10 +109,6 @@ BtKeypack *BtFile::find(const char *key) {
 	return NULL;
 }
 
-int keycomp(const void *k1, const void *k2) {
-	return scumm_strnicmp((const char *) k1, (const char*) k2, kBtKeySize);
-}
-
 void BtPage::read(Common::ReadStream &s) {
 	_hea._count = s.readUint16LE();
 	_hea._down = s.readUint16LE();
