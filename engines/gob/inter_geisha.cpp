@@ -53,6 +53,7 @@ void Inter_Geisha::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, oGeisha_loadCursor);
 	OPCODEFUNC(0x25, oGeisha_goblinFunc);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
+	OPCODEFUNC(0x3F, oGeisha_checkData);
 
 	OPCODEGOB(0, oGeisha_gamePenetration);
 	OPCODEGOB(1, oGeisha_gameDiving);
@@ -110,6 +111,23 @@ int16 Inter_Geisha::loadSound(int16 slot) {
 	}
 
 	return 0;
+}
+
+void Inter_Geisha::oGeisha_checkData(OpFuncParams &params) {
+	const char *file   = _vm->_game->_script->evalString();
+	      int16 varOff = _vm->_game->_script->readVarIndex();
+
+	Common::String fileName(file);
+
+	fileName.toLowercase();
+	if (fileName.hasSuffix(".0ot"))
+		fileName.setChar('t', fileName.size() - 3);
+
+	if (!_vm->_dataIO->hasFile(fileName)) {
+		warning("File \"%s\" not found", fileName.c_str());
+		WRITE_VAR_OFFSET(varOff, (uint32) -1);
+	} else
+		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
 }
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
