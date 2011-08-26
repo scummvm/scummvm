@@ -1094,6 +1094,8 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[i].green = _vm->_game->_script->readByte();
 			_vm->_draw->_vgaPalette[i].blue  = _vm->_game->_script->readByte();
 		}
+
+		memcpy(_vm->_draw->_vgaSmallPalette, _vm->_draw->_vgaPalette, 16 * 3);
 		break;
 
 	case 53:
