@@ -140,15 +140,15 @@ public:
 	}
 
 	void addBefore(T existingItem, T newItem) {
-		SynchronizedList<T>::iterator i = Common::List<T>::begin();
-		while ((i != Common::List<T>::end()) && (*i != existingItem)) ++i;
-		Common::List<T>::insert(i, newItem);
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		this->insert(i, newItem);
 	}
 	void addAfter(T existingItem, T newItem) {
-		SynchronizedList<T>::iterator i = Common::List<T>::begin();
-		while ((i != Common::List<T>::end()) && (*i != existingItem)) ++i;
-		if (i != Common::List<T>::end()) ++i;
-		Common::List<T>::insert(i, newItem);
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		if (i != this->end()) ++i;
+		this->insert(i, newItem);
 	}
 };
 
