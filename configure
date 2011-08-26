@@ -1819,6 +1819,26 @@ case $_host_os in
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
+
+		# Now we may have MacPorts or Fink installed
+		# Which put libraries and headers in non-standard places
+		# Checking them here
+		
+		# MacPorts
+		# There is no way to get the prefix, so implementing a hack here
+		macport_version=`port version 2>/dev/null`
+		if test "$?" -eq 0; then
+			macport_version="`echo "${macport_version}" } sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
+			echo_n "You seem to be running MacPorts version ${macport_version}..."
+
+			$macport_prefix=`which port`
+			$macport_prefix=`dirname ${macport_prefix}`
+
+			echo "adding ${macport_prefix} to paths"
+
+			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${macport_prefix}/lib $CXXFLAGS"
+		fi
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__"
