@@ -224,6 +224,8 @@ Common::Error CGEEngine::loadGameState(int slot) {
 
 	// Load the game
 	loadGame(slot, NULL);
+	_lev = _oldLev;
+	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
 	caveUp();
 
 	return Common::kNoError;
@@ -331,7 +333,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			sndSetVolume();
 		}
 
-		if (! tiny) { // load sprites & pocket
+		if (!tiny) { // load sprites & pocket
 			while (readStream->pos() < readStream->size()) {
 				Sprite S(this, NULL);
 				S.sync(s);
@@ -350,7 +352,6 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			}
 		}
 	}
-	debugC(1, kCGEDebugEngine, "CGEEngine::saveSound()");
 }
 
 bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
@@ -364,7 +365,8 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 	// Read in the string
 	header.saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);
