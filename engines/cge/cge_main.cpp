@@ -310,9 +310,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			_pocref[i] = (pocSpr) ? pocSpr->_ref : -1;
 		}
 
-		warning("STUB: CGEEngine::syncGame Digital and Midi volume");
-//		_volume[0] = _sndDrvInfo.Vol2._d;
-//		_volume[1] = _sndDrvInfo.Vol2._m;
+		// Skip Digital and Midi volumes, useless under ScummVM
 		_volume[0] = 0;
 		_volume[1] = 0;
 	}
@@ -329,9 +327,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 	} else {
 		// Loading game
 		if (_soundOk == 1 && _mode == 0) {
-//			_sndDrvInfo.Vol2._d = _volume[0];
-//			_sndDrvInfo.Vol2._m = _volume[1];
-			warning("STUB: CGEEngine::syncGame Digital and Midi volume");
+			// Skip Digital and Midi volumes, useless under ScummVM
 			sndSetVolume();
 		}
 
@@ -652,7 +648,7 @@ void CGEEngine::qGame() {
 	saveSound();
 
 	// Write out the user's progress
-	saveGame(0, "");
+	saveGame(0, Common::String("Automatic Savegame"));
 
 	_vga->sunset();
 	_finis = true;

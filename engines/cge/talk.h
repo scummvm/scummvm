@@ -29,7 +29,6 @@
 #define __CGE_TALK__
 
 #include "cge/general.h"
-#include "cge/jbw.h"
 #include "cge/vga13h.h"
 
 namespace CGE {
