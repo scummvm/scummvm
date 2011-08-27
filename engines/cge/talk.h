@@ -28,9 +28,9 @@
 #ifndef __CGE_TALK__
 #define __CGE_TALK__
 
-#include "cge/vga13h.h"
 #include "cge/general.h"
 #include "cge/jbw.h"
+#include "cge/vga13h.h"
 
 namespace CGE {
 
@@ -43,10 +43,12 @@ namespace CGE {
 #define kWidSize           256
 #define kPosSize           256
 #define kMapSize          (256*8)
-
-#define kFontHigh   8
-#define kFontExt    ".CFT"
+#define kFontHigh          8
+#define kFontExt           ".CFT"
 #define kPathMax           128
+#define kGetTextMax        24
+#define kGetTextBlink      6
+#define kGetTextTime       6
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
 
@@ -89,6 +91,25 @@ class InfoLine : public Talk {
 public:
 	InfoLine(CGEEngine *vm, uint16 wid);
 	void update(const char *text);
+private:
+	CGEEngine *_vm;
+};
+
+class GetText : public Talk {
+	char   _buff[kGetTextMax + 2];
+	char  *_text;
+	uint16 _size;
+	uint16 _len;
+	uint16 _cntr;
+	Sprite *_oldKeybClient;
+
+public:
+	static GetText *_ptr;
+	GetText(CGEEngine *vm, const char *info, char *text, int size);
+	~GetText();
+	void touch(uint16 mask, int x, int y);
+	void tick();
+
 private:
 	CGEEngine *_vm;
 };

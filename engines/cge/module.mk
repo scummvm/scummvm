@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	fileio.o \
 	game.o \
 	general.o \
-	gettext.o \
 	snail.o \
 	sound.o \
 	talk.o \
