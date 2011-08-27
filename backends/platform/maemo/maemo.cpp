@@ -56,13 +56,11 @@ void OSystem_SDL_Maemo::fatalError() {
 void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) ) {
+	if (SDL_GetWMInfo(&info)) {
 		Display *dpy = info.info.x11.display;
 		Window win;
-		//if (_videoMode.fullscreen)
 		win = info.info.x11.fswindow;
 		if (win) XStoreName(dpy, win, caption);
-		//else
 		win = info.info.x11.wmwindow;
 		if (win) XStoreName(dpy, win, caption);
 	}

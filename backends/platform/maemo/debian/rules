@@ -22,14 +22,13 @@ install: build
 	dh_testroot
 	dh_clean
 	dh_installdirs
-# not as a service
-#	install -m0755 dists/maemo/scummvm.wrapper debian/scummvm/usr/games/scummvm
-#	install -m0644 dists/maemo/scummvm.desktop debian/scummvm/usr/share/applications/hildon
 # run as fake dbus-service to enable switching back to application from desktop via home key
 	install -m0755 dists/maemo/scummvm.servicewrapper debian/scummvm/usr/games/scummvm
 	install -m0644 dists/maemo/scummvm.servicedesktop debian/scummvm/usr/share/applications/hildon/scummvm.desktop
 	install -m0644 dists/maemo/scummvm.service debian/scummvm/usr/share/dbus-1/services
-# end of fake dbus service
+# the following commented out lines are the alternative for not running scummvm as a fake service
+#	install -m0755 dists/maemo/scummvm.wrapper debian/scummvm/usr/games/scummvm
+#	install -m0644 dists/maemo/scummvm.desktop debian/scummvm/usr/share/applications/hildon
 	install -m0644 dists/maemo/scummvm26.png debian/scummvm/usr/share/icons/hicolor/26x26/hildon/scummvm.png
 	install -m0644 dists/maemo/scummvm40.png debian/scummvm/usr/share/icons/hicolor/40x40/hildon/scummvm.png
 	install -m0644 dists/maemo/scummvm48.png debian/scummvm/usr/share/icons/hicolor/48x48/hildon/scummvm.png
