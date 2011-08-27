@@ -1315,7 +1315,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	printf("GrimEngine::StoreSaveGameImage() started.\n");
 
 	int mode = g_grim->getMode();
-	g_grim->setMode(ENGINE_MODE_NORMAL);
+	g_grim->setMode(_previousMode);
 	g_grim->updateDisplayScene();
 	g_driver->storeDisplay();
 	screenshot = g_driver->getScreenshot(width, height);
