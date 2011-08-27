@@ -26,10 +26,7 @@
  */
 
 #include "cge/bitmap.h"
-#include "cge/cfile.h"
 #include "cge/jbw.h"
-#include "cge/vol.h"
-#include "cge/cfile.h"
 #include "cge/vga13h.h"
 #include "cge/cge_main.h"
 #include "common/system.h"
@@ -53,8 +50,8 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
-	if (PIC_FILE::exist(pat)) {
-		PIC_FILE file(pat);
+	if (VFile::exist(pat)) {
+		VFile file(pat);
 		if ((file._error == 0) && (!loadVBM(&file)))
 			error("Bad VBM [%s]", fname);
 	} else {

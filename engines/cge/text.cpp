@@ -28,7 +28,6 @@
 #include "cge/general.h"
 #include "cge/text.h"
 #include "cge/talk.h"
-#include "cge/vol.h"
 #include "cge/game.h"
 #include "cge/snail.h"
 #include "cge/cge_main.h"
@@ -41,7 +40,7 @@ Talk *_talk = NULL;
 Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	_cache = new Han[size];
 	mergeExt(_fileName, fname, kSayExt);
-	if (!INI_FILE::exist(_fileName))
+	if (!VFile::exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 
 	for (_size = 0; _size < size; _size++) {
@@ -78,7 +77,7 @@ int Text::find(int ref) {
 
 
 void Text::preload(int from, int upto) {
-	INI_FILE tf = _fileName;
+	VFile tf = _fileName;
 	if (tf._error)
 		return;
 
@@ -123,7 +122,7 @@ void Text::preload(int from, int upto) {
 
 
 char *Text::load(int idx, int ref) {
-	INI_FILE tf = _fileName;
+	VFile tf = _fileName;
 	if (tf._error)
 		return NULL;
 

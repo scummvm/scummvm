@@ -64,43 +64,6 @@ T min(T A, T B) {
 	return (A < B) ? A : B;
 }
 
-class XFile {
-public:
-	uint16 _error;
-
-	XFile() : _error(0) { }
-	virtual ~XFile() { }
-	virtual uint16 read(void *buf, uint16 len) = 0;
-	virtual long mark() = 0;
-	virtual long size() = 0;
-	virtual long seek(long pos) = 0;
-};
-
-
-template <class T>
-inline uint16 XRead(XFile *xf, T *t) {
-	return xf->read((uint8 *) t, sizeof(*t));
-}
-
-
-class IoHand : public XFile {
-protected:
-	Common::File *_file;
-	uint16 _seed;
-	Crypt *_crypt;
-public:
-	IoHand(const char *name, Crypt crypt = NULL);
-	IoHand(Crypt *crypt = NULL);
-	virtual ~IoHand();
-	static bool exist(const char *name);
-	uint16 read(void *buf, uint16 len);
-	long mark();
-	long size();
-	long seek(long pos);
-};
-
-Crypt     XCrypt;
-Crypt     RCrypt;
 uint16    atow(const char *a);
 uint16    xtow(const char *x);
 char     *wtom(uint16 val, char *str, int radix, int len);
@@ -112,9 +75,6 @@ char     *forceExt(char *buf, const char *name, const char *ext);
 
 // MISSING FUNCTIONS
 const char *progName(const char *ext = NULL);
-unsigned fastRand();
-unsigned fastRand(unsigned s);
-uint16 rCrypt(void *buf, uint16 siz, uint16 seed);
 int newRandom(int range);
 } // End of namespace CGE
 

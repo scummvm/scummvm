@@ -28,7 +28,7 @@
 #ifndef __CGE_SOUND__
 #define __CGE_SOUND__
 
-#include "cge/general.h"
+#include "cge/fileio.h"
 #include "cge/snddrv.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"

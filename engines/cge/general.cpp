@@ -124,38 +124,6 @@ char *forceExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-static unsigned Seed = 0xA5;
-
-unsigned fastRand() {
-	return Seed = 257 * Seed + 817;
-}
-unsigned fastRand(unsigned s) {
-	return Seed = 257 * s + 817;
-}
-
-uint16 RCrypt(void *buf, uint16 siz, uint16 seed) {
-	if (buf && siz) {
-		byte *b = static_cast<byte *>(buf);
-		byte *q = b + (siz - 1);
-		seed = fastRand(seed);
-		*b++ ^= seed;
-		while (buf < q)
-			*b++ ^= fastRand();
-		if (buf == q)
-			*b ^= (seed = fastRand());
-	}
-	return seed;
-}
-
-uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
-	byte *b = static_cast<byte *>(buf);
-
-	for (uint16 i = 0; i < siz; i++)
-		*b++ ^= seed;
-	
-	return seed;
-}
-
 uint16 atow(const char *a) {
 	if (!a)
 		return 0;
@@ -200,51 +168,6 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 		val /= radix;
 	}
 	return str;
-}
-
-IoHand::IoHand(Crypt *crypt)
-	: XFile(), _crypt(crypt), _seed(kCryptSeed) {
-	_file = new Common::File();
-}
-
-IoHand::IoHand(const char *name, Crypt *crypt)
-		: XFile(), _crypt(crypt), _seed(kCryptSeed) {
-	_file = new Common::File();
-	_file->open(name);
-}
-
-IoHand::~IoHand() {
-	_file->close();
-	delete _file;
-}
-
-uint16 IoHand::read(void *buf, uint16 len) {
-	if (!_file->isOpen())
-		return 0;
-
-	uint16 bytesRead = _file->read(buf, len);
-	if (!bytesRead)
-		error("Read %s - %d bytes", _file->getName(), len);
-	if (_crypt)
-		_seed = _crypt(buf, len, Seed);
-	return bytesRead;
-}
-
-long IoHand::mark() {
-	return _file->pos();
-}
-
-long IoHand::seek(long pos) {
-	_file->seek(pos, SEEK_SET);
-	return _file->pos();
-}
-
-long IoHand::size() {
-	return _file->size();
-}
-
-bool IoHand::exist(const char *name) {
-	return Common::File::exists(name);
 }
 
 void sndSetVolume() {

@@ -28,8 +28,6 @@
 #include "cge/general.h"
 #include "cge/sound.h"
 #include "cge/text.h"
-#include "cge/cfile.h"
-#include "cge/vol.h"
 #include "cge/cge_main.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
@@ -126,7 +124,7 @@ void Fx::preload(int ref0) {
 	for (int ref = ref0; ref < ref0 + 10; ref++) {
 		static char fname[] = "FX00000.WAV";
 		wtom(ref, fname + 2, 10, 5);
-		INI_FILE file = INI_FILE(fname);
+		VFile file = VFile(fname);
 		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Han *p = &_cache[find(0)];
@@ -142,7 +140,7 @@ DataCk *Fx::load(int idx, int ref) {
 	static char fname[] = "FX00000.WAV";
 	wtom(ref, fname + 2, 10, 5);
 
-	INI_FILE file = INI_FILE(fname);
+	VFile file = VFile(fname);
 	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Han *p = &_cache[idx];
@@ -203,14 +201,14 @@ void MusicPlayer::killMidi() {
 void MusicPlayer::loadMidi(int ref) {
 	// Work out the filename and check the given MIDI file exists
 	Common::String filename = Common::String::format("%.2d.MID", ref);
-	if (!INI_FILE::exist(filename.c_str()))
+	if (!VFile::exist(filename.c_str()))
 		return;
 
 	// Stop any currently playing MIDI file
 	killMidi();
 
 	// Read in the data for the file
-	INI_FILE mid(filename.c_str());
+	VFile mid(filename.c_str());
 	_dataSize = mid.size();
 	_data = (byte *)malloc(_dataSize);
 	mid.read(_data, _dataSize);

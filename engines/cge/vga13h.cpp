@@ -31,7 +31,6 @@
 #include "cge/general.h"
 #include "cge/vga13h.h"
 #include "cge/bitmap.h"
-#include "cge/vol.h"
 #include "cge/text.h"
 #include "cge/cge_main.h"
 #include "cge/cge.h"
@@ -232,8 +231,8 @@ Sprite *Sprite::expand() {
 	Snail::Com *nea = NULL;
 	Snail::Com *tak = NULL;
 	mergeExt(fname, _file, kSprExt);
-	if (INI_FILE::exist(fname)) { // sprite description file exist
-		INI_FILE sprf(fname);
+	if (VFile::exist(fname)) { // sprite description file exist
+		VFile sprf(fname);
 		if (!(sprf._error==0))
 			error("Bad SPR [%s]", fname);
 		int len = 0, lcnt = 0;
