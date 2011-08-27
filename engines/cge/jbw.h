@@ -32,11 +32,6 @@
 
 namespace CGE {
 
-// Defines found in cge.mak
-#define INI_FILE VFile // Or is it CFile?
-#define PIC_FILE VFile
-//
-
 #define kMaxFile      128
 
 #define IsDigit(c)    ((c) >= '0' && (c) <= '9')

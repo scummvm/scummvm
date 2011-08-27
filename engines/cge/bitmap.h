@@ -28,7 +28,8 @@
 #ifndef __CGE_BITMAP__
 #define __CGE_BITMAP__
 
-#include "cge/general.h"
+#include "cge/fileio.h"
+//#include "cge/general.h"
 
 namespace CGE {
 

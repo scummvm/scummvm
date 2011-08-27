@@ -84,7 +84,7 @@ namespace CGE {
 #define kStackSize     2048
 #define kSavegameCheckSum   (1956 + _now + _oldLev + _game + _music + _demoText)
 #define kSavegame0Name ("{{INIT}}" kSvgExt)
-#define kSavegame0File INI_FILE
+#define kSavegame0File VFile
 #define kSavegameStrSize 11
 #define kGameFrameDelay (1000 / 50)
 #define kGameTickDelay  (1000 / 62)

@@ -33,14 +33,17 @@
 
 namespace CGE {
 
-#define kBtSize      1024
-#define kBtKeySize   13
-#define kBtLevel     2
+#define kBtSize       1024
+#define kBtKeySize    13
+#define kBtLevel      2
 #define kBtInnerCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 2 /*sizeof(Inner) */))
-#define kBtLeafCount ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 4 + 2 /*sizeof(BtKeypack) */))
-
-#define kBtValNone   0xFFFF
-#define kBtValRoot   0
+#define kBtLeafCount  ((kBtSize - 4 /*sizeof(Hea) */) / (kBtKeySize + 4 + 2 /*sizeof(BtKeypack) */))
+#define kBtValNone    0xFFFF
+#define kBtValRoot    0
+#define kLineMaxSize  512
+#define kBufferSize   2048
+#define kCatName      "VOL.CAT"
+#define kDatName      "VOL.DAT"
 
 struct BtKeypack {
 	char _key[kBtKeySize];
@@ -56,6 +59,60 @@ struct Inner {
 struct Hea {
 	uint16 _count;
 	uint16 _down;
+};
+
+class XFile {
+public:
+	uint16 _error;
+
+	XFile() : _error(0) { }
+	virtual ~XFile() { }
+	virtual uint16 read(void *buf, uint16 len) = 0;
+	virtual long mark() = 0;
+	virtual long size() = 0;
+	virtual long seek(long pos) = 0;
+};
+
+class IoHand : public XFile {
+protected:
+	Common::File *_file;
+	uint16 _seed;
+	Crypt *_crypt;
+public:
+	IoHand(const char *name, Crypt crypt);
+	IoHand(Crypt *crypt);
+	virtual ~IoHand();
+	static bool exist(const char *name);
+	uint16 read(void *buf, uint16 len);
+	long mark();
+	long size();
+	long seek(long pos);
+};
+
+class IoBuf : public IoHand {
+protected:
+	uint8 *_buff;
+	uint16 _ptr;
+	uint16 _lim;
+	long _bufMark;
+	virtual void readBuf();
+public:
+	IoBuf(Crypt *crpt);
+	IoBuf(const char *name, Crypt *crpt);
+	virtual ~IoBuf();
+	uint16 read(void *buf, uint16 len);
+	uint16 read(uint8 *buf);
+	int read();
+};
+
+
+class CFile : public IoBuf {
+public:
+	static uint16 _maxLineLen;
+	CFile(const char *name, Crypt *crpt);
+	virtual ~CFile();
+	long mark();
+	long seek(long pos);
 };
 
 struct BtPage {
@@ -85,6 +142,37 @@ public:
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
 	BtKeypack *next();
+};
+
+class Dat {
+	friend class VFile;
+	CFile _file;
+public:
+	Dat();
+	bool read(long org, uint16 len, uint8 *buf);
+};
+
+class VFile : public IoBuf {
+private:
+	static Dat *_dat;
+	static BtFile *_cat;
+	static VFile *_recent;
+
+	long _begMark;
+	long _endMark;
+
+	void readBuf();
+public:
+	VFile(const char *name);
+	~VFile();
+
+	static void init();
+	static void deinit();
+	static bool exist(const char *name);
+	static const char *next();
+	long mark();
+	long size();
+	long seek(long pos);
 };
 
 } // End of namespace CGE

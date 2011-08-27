@@ -41,8 +41,6 @@
 #include "cge/text.h"
 #include "cge/game.h"
 #include "cge/events.h"
-#include "cge/cfile.h"
-#include "cge/vol.h"
 #include "cge/talk.h"
 #include "cge/vmenu.h"
 #include "cge/gettext.h"
@@ -427,7 +425,7 @@ void CGEEngine::tooFar() {
 void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
-	INI_FILE cf(progName(".HXY"));
+	VFile cf(progName(".HXY"));
 	uint16 x, y;
 
 	memset(_heroXY, 0, sizeof(_heroXY));
@@ -446,7 +444,7 @@ void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= _caveMax) {
-		INI_FILE cf(progName(".TAB"));
+		VFile cf(progName(".TAB"));
 		if (!cf._error) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
@@ -1021,8 +1019,8 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 	char line[kLineMax];
 	mergeExt(line, fname, kSprExt);
 
-	if (INI_FILE::exist(line)) {      // sprite description file exist
-		INI_FILE sprf(line);
+	if (VFile::exist(line)) {      // sprite description file exist
+		VFile sprf(line);
 		if (sprf._error)
 			error("Bad SPR [%s]", line);
 
@@ -1158,7 +1156,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 }
 
 void CGEEngine::loadScript(const char *fname) {
-	INI_FILE scrf(fname);
+	VFile scrf(fname);
 
 	if (scrf._error)
 		return;
@@ -1344,7 +1342,7 @@ void CGEEngine::runGame() {
 	if (!_music)
 		_midiPlayer.killMidi();
 
-	if (INI_FILE::exist("MINI.SPR")) {
+	if (VFile::exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
 		_miniShp[0] = _miniShp[1] = NULL;
 
@@ -1362,7 +1360,7 @@ void CGEEngine::runGame() {
 	if (_hero) {
 		expandSprite(_hero);
 		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
-		if (INI_FILE::exist("00SHADOW.SPR")) {
+		if (VFile::exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
 			delete _shadow;
 			if ((_shadow = _sprite) != NULL) {
@@ -1427,7 +1425,7 @@ void CGEEngine::movie(const char *ext) {
 		return;
 
 	const char *fn = progName(ext);
-	if (INI_FILE::exist(fn)) {
+	if (VFile::exist(fn)) {
 		loadScript(fn);
 		expandSprite(_vga->_spareQ->locate(999));
 		feedSnail(_vga->_showQ->locate(999), kTake);
