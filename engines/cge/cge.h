@@ -124,7 +124,6 @@ public:
 	bool   _game;
 	int    _now;
 	int    _lev;
-	char   _usrFnam[15];
 	int    _mode;
 	int    _soundOk;
 	int    _gameCase2Cpt;
@@ -169,7 +168,6 @@ public:
 	void runGame();
 	bool showTitle(const char *name);
 	void movie(const char *ext);
-	void takeName();
 	void inf(const char *text);
 	void selectSound();
 	void dummy() {}

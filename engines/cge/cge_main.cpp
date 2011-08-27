@@ -188,10 +188,6 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 		// Delete the thumbnail
 		saveHeader.thumbnail->free();
 		delete saveHeader.thumbnail;
-
-		// If we're loading the auto-save slot, load the name
-		if (slotNumber == 0)
-			strncpy(_usrFnam, saveHeader.saveName.c_str(), 8);
 	}
 
 	// Get in the savegame
@@ -656,7 +652,7 @@ void CGEEngine::qGame() {
 	saveSound();
 
 	// Write out the user's progress
-	saveGame(0, _usrFnam);
+	saveGame(0, "");
 
 	_vga->sunset();
 	_finis = true;
@@ -849,24 +845,6 @@ void CGEEngine::startCountDown() {
 
 	//SNPOST(SNSEQ, 123, 0, NULL);
 	switchCave(-1);
-}
-
-void CGEEngine::takeName() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::takeName()");
-
-	if (GetText::_ptr) {
-		_snail_->addCom(kSnKill, -1, 0, GetText::_ptr);
-	} else {
-		memset(_usrFnam, 0, 15);
-		GetText *tn = new GetText(this, _text->getText(kGetNamePrompt), _usrFnam, 8);
-		if (tn) {
-			tn->setName(_text->getText(kGetNameTitle));
-			tn->center();
-			tn->gotoxy(tn->_x, tn->_y - 10);
-			tn->_z = 126;
-			_vga->_showQ->insert(tn);
-		}
-	}
 }
 
 void CGEEngine::switchMapping() {
@@ -1487,41 +1465,23 @@ bool CGEEngine::showTitle(const char *name) {
 			_midiPlayer.loadMidi(0);
 	}
 
-	bool userOk = false;
 	if (_mode < 2) {
-		if (_isDemo) {
-			strcpy(_usrFnam, progName(kSvgExt));
-			userOk = true;
-		} else {
-#ifndef EVA
+		if (!_isDemo) {
 			// At this point the game originally set the protection variables
 			// used by the copy protection check
 			movie("X00"); // paylist
 			_vga->copyPage(1, 2);
 			_vga->copyPage(0, 1);
 			_vga->_showQ->append(_mouse);
-			//Mouse.On();
-
-			// For ScummVM, skip prompting for name if a savegame in slot 0 already exists
-			if ((_startGameSlot == -1) && savegameExists(0)) {
-				strcpy(_usrFnam, "User");
-				userOk = true;
-			} else {
-				for (takeName(); GetText::_ptr;) {
-					mainLoop();
-					if (_eventManager->_quitFlag)
-						return false;
-				}
-				if (_keyboard->lastKey() == Enter && *_usrFnam)
-					userOk = true;
-			}
-			//Mouse.Off();
+			// In the original game, the user had to enter his name
+			// As it was only used to name savegames, it has been removed
 			_vga->_showQ->clear();
 			_vga->copyPage(0, 2);
-#endif
 		}
 
-		if (userOk && _mode == 0) {
+		if (_mode == 0) {
+// The auto-load of savegame #0 is currently disabled
+#if 0
 			if (savegameExists(0)) {
 				// Load the savegame
 				loadGame(0, NULL, true); // only system vars
@@ -1532,6 +1492,7 @@ bool CGEEngine::showTitle(const char *name) {
 					_flag[3] = false;
 				}
 			} else
+#endif
 				_mode++;
 		}
 	}
@@ -1541,10 +1502,7 @@ bool CGEEngine::showTitle(const char *name) {
 
 	_vga->copyPage(0, 2);
 
-	if (_isDemo)
-		return true;
-	else
-		return (_mode == 2 || userOk);
+	return true;
 }
 
 void CGEEngine::cge_main() {
