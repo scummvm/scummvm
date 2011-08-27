@@ -29,14 +29,11 @@
 #define __CGE_TEXT__
 
 #include "cge/talk.h"
-#include "cge/jbw.h"
 
 namespace CGE {
 
-#define kSysTextMax     1000
-
 #define kSayExt         ".SAY"
-
+#define kSysTextMax     1000
 #define kTextNoMouse    95
 #define kInfName        101
 #define kSayName        102

@@ -28,7 +28,6 @@
 #ifndef __CGE_SNAIL__
 #define __CGE_SNAIL__
 
-#include "cge/jbw.h"
 #include "cge/cge.h"
 
 namespace CGE {

@@ -171,7 +171,7 @@ char *dwtom(uint32 val, char *str, int radix, int len) {
 }
 
 void sndSetVolume() {
-	warning("STUB: SNDSetVolume");
+	// USeless for ScummVM
 }
 
 DataCk *loadWave(XFile *file) {

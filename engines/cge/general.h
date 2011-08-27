@@ -33,11 +33,14 @@
 #include "common/random.h"
 #include "common/textconsole.h"
 #include "common/str.h"
-#include "cge/jbw.h"
 
 namespace CGE {
 
 #define kCryptSeed  0xA5
+#define kMaxFile      128
+#define IsDigit(c)    ((c) >= '0' && (c) <= '9')
+#define IsHxDig(c)    (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
+#define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
 
 struct Dac {
 	uint8 _r;
