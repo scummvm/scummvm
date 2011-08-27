@@ -258,22 +258,21 @@ void AGOSEngine::endCutscene() {
 	_runScriptReturn1 = true;
 }
 
-Common::File *AGOSEngine::openTablesFile(const char *filename) {
+Common::SeekableReadStream *AGOSEngine::openTablesFile(const char *filename) {
 	if (getFeatures() & GF_OLD_BUNDLE)
 		return openTablesFile_simon1(filename);
 	else
 		return openTablesFile_gme(filename);
 }
 
-Common::File *AGOSEngine::openTablesFile_simon1(const char *filename) {
-	Common::File *fo = new Common::File();
-	fo->open(filename);
-	if (fo->isOpen() == false)
+Common::SeekableReadStream *AGOSEngine::openTablesFile_simon1(const char *filename) {
+	Common::SeekableReadStream *in = _archives.open(filename);
+	if (!in)
 		error("openTablesFile: Can't open '%s'", filename);
-	return fo;
+	return in;
 }
 
-Common::File *AGOSEngine::openTablesFile_gme(const char *filename) {
+Common::SeekableReadStream *AGOSEngine::openTablesFile_gme(const char *filename) {
 	uint res;
 	uint32 offs;
 
@@ -287,7 +286,7 @@ Common::File *AGOSEngine::openTablesFile_gme(const char *filename) {
 bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
 	uint16 min_num, max_num, file_num;
-	Common::File *in;
+	Common::SeekableReadStream *in;
 	char filename[30];
 
 	if (_tblList == NULL)
@@ -336,7 +335,7 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
 	uint min_num, max_num;
-	Common::File *in;
+	Common::SeekableReadStream *in;
 
 	p = _tblList;
 	if (p == NULL)
@@ -403,7 +402,7 @@ bool AGOSEngine::loadXTablesIntoMem(uint16 subrId) {
 	int i;
 	uint min_num, max_num;
 	char filename[30];
-	Common::File *in;
+	Common::SeekableReadStream *in;
 
 	p = _xtblList;
 	if (p == NULL)
@@ -453,9 +452,8 @@ bool AGOSEngine::loadXTablesIntoMem(uint16 subrId) {
 	return 0;
 }
 
-void AGOSEngine::closeTablesFile(Common::File *in) {
+void AGOSEngine::closeTablesFile(Common::SeekableReadStream *in) {
 	if (getFeatures() & GF_OLD_BUNDLE) {
-		in->close();
 		delete in;
 	}
 }
