@@ -43,7 +43,6 @@
 #include "cge/events.h"
 #include "cge/talk.h"
 #include "cge/vmenu.h"
-#include "cge/gettext.h"
 #include "cge/cge_main.h"
 #include "cge/cge.h"
 #include "cge/walk.h"
