@@ -27,23 +27,40 @@
 
 namespace Grim {
 
-// This BitmapData class keeps the actual bitmap data and can be shared
-// between Bitmap instances, by using getBitmapData.
-// Bitmap still keeps the data that can change between the instances
-// i.e. _x, _y and _currImage.
-// They are automatically deleted if they are not used by any bitmap anymore.
+/** 
+ * This BitmapData class keeps the actual bitmap data and can be shared
+ * between Bitmap instances, by using getBitmapData.
+ * Bitmap still keeps the data that can change between the instances
+ * i.e. _x, _y and _currImage.
+ * They are automatically deleted if they are not used by any bitmap anymore.
+ */
 class BitmapData {
 public:
 	BitmapData(const Common::String &fname, const char *data, int len);
 	BitmapData(const char *data, int w, int h, int bpp, const char *fname);
 	BitmapData();
 	~BitmapData();
+	
+	/**
+	 * Loads an EMI TILE-bitmap.
+	 *
+	 * @param data		the data for the TILE.
+	 * @param len		the length of the data.
+	 */
 	bool loadTile(const char *data, int len);
 
 	static BitmapData *getBitmapData(const Common::String &fname, const char *data, int len);
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	char *getImageData(int num) const;
+	
+	/**
+	 * Convert a bitmap to another color-format.
+	 *
+	 * @param num		the bitmap to convert.
+	 * @param format	the format to convert to.
+	 * @see colorFormat
+	 */
 	void convertToColorFormat(int num, int format);
 
 	Common::String _fname;
@@ -65,7 +82,13 @@ private:
 
 class Bitmap : public Object {
 public:
-	// Construct a bitmap from the given data.
+	/**
+	 * Construct a bitmap from the given data.
+	 *
+	 * @oaram filename	the filename of the bitmap
+	 * @param data		the actual data to construct from
+	 * @param len		the length of the data
+	 */
 	Bitmap(const Common::String &filename, const char *data, int len);
 	Bitmap(const char *data, int width, int height, int bpp, const char *filename);
 	Bitmap();
@@ -74,7 +97,11 @@ public:
 
 	void draw() const;
 
-	// Set which image in an animated bitmap to use
+	/**
+	 * Set which image in an animated bitmap to use
+	 * 
+	 * @param n		the image to be selected
+	 */
 	void setNumber(int n);
 
 	int getNumImages() const { return _data->_numImages; }

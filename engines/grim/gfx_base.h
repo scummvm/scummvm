@@ -44,6 +44,9 @@ struct Sprite;
 class Light;
 class Texture;
 
+/**
+ * The Color-formats used for bitmaps in Grim Fandango/Escape From Monkey Island
+ */
 enum colorFormat {
 	BM_RGB565 = 1,    // Grim Fandango
 	BM_RGB1555 = 2,   // EMI-PS2
@@ -183,6 +186,9 @@ public:
 	 * Prepare a movie-frame for drawing
 	 * performing any necessary conversion
 	 *
+	 * @param width			the width of the movie-frame.
+	 * @param height		the height of the movie-frame.
+	 * @param bitmap		a pointer to the data for the movie-frame.
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
