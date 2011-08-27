@@ -38,7 +38,6 @@ MODULE_OBJS := \
 
 ifdef USE_BINK
 MODULE_OBJS += \
-	bitstream.o \
 	cosinetables.o \
 	dct.o \
 	fft.o \
