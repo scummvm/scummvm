@@ -382,6 +382,9 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 
 	_amigaFirstUsedColor = 80;
 	for (; _amigaFirstUsedColor < 256; ++_amigaFirstUsedColor) {
+		// We look for the first used color here. If all color components are
+		// >= 252 the color seems to be unused. Check remapPaletteColor for
+		// the same behavior.
 		if (ptr[_amigaFirstUsedColor * 3 + 0] <= 251
 		    || ptr[_amigaFirstUsedColor * 3 + 1] <= 251
 		    || ptr[_amigaFirstUsedColor * 3 + 2] <= 251)
@@ -408,6 +411,10 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 				_roomPalette[i] = idx;
 				_verbPalette[i] = idx + 32;
 			} else {
+				// In all my tests it seems the colors 0 and 32 in
+				// _amigaPalette are in fact black. Thus 17 is probably black.
+				// For the room map the color 17 is 33 (17+16), for the verb
+				// map it is 65 (17+32).
 				_roomPalette[i] = 0;
 				_verbPalette[i] = 32;
 			}
@@ -418,6 +425,8 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 }
 
 void ScummEngine::mapRoomPalette(int idx) {
+	// For Color 33 (which is in fact 17+16) see the special case in
+	// setAmigaPaletteFromPtr.
 	if (idx >= 16 && idx < 48 && idx != 33)
 		_roomPalette[idx] = idx - 16;
 	else
@@ -462,6 +471,8 @@ void ScummEngine::mapVerbPalette(int idx) {
 	// the original we set up the verb palette at colors [32, 63].
 	// The original instead used two different palettes for the verb virtual
 	// screen and all the rest.
+	// For Color 65 (which is in fact 17+32) see the special case in
+	// setAmigaPaletteFromPtr.
 	if (idx >= 48 && idx < 80 && idx != 65)
 		_verbPalette[idx] = idx - 16;
 	else
@@ -910,6 +921,8 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		}
 
 		for (int i = startColor; i <= endColor; ++i) {
+			// Colors 33 (17+16) and 65 (17+32) will never get changed. For
+			// more information about these check setAmigaPaletteFromPtr.
 			if (i >= 16 && i < 48 && i != 33) {
 				remappedRoomColors = true;
 				_amigaPalette[(i - 16) * 3 + 0] = _currentPalette[i * 3 + 0] >> 4;
@@ -1204,6 +1217,8 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 	}
 
 	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		// Colors 33 (17+16) and 65 (17+32) will never get changed. For
+		// more information about these check setAmigaPaletteFromPtr.
 		if (idx < 16 || idx >= _amigaFirstUsedColor) {
 			mapRoomPalette(idx);
 			mapVerbPalette(idx);
