@@ -119,6 +119,9 @@ protected:
 	int _offsX, _offsY;
 	const byte *_charPtr;
 
+	// On which virtual screen will be drawn right now
+	VirtScreenNumber _drawScreen;
+
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 

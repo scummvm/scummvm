@@ -1322,6 +1322,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
+		// Note that we also save the room palette for Indy4 Amiga, since it
+		// is used as palette map there too, but we do so slightly a bit
+		// further down to group it with the other special palettes needed.
 		if (s->getVersion() >= VER(21) && _game.version < 5)
 			s->saveLoadArrayOf(_roomPalette, sizeof(_roomPalette), 1, sleByte);
 	}
@@ -1346,6 +1349,20 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// _colorUsedByCycle was not saved before V60
 	if (s->isLoading() && s->getVersion() < VER(60)) {
 		memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
+	}
+
+	// Indy4 Amiga specific palette tables were not saved before V85
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		if (s->getVersion() >= 85) {
+			s->saveLoadArrayOf(_roomPalette, 256, 1, sleByte);
+			s->saveLoadArrayOf(_verbPalette, 256, 1, sleByte);
+			s->saveLoadArrayOf(_amigaPalette, 3 * 64, 1, sleByte);
+		} else {
+			warning("Save with old Indiana Jones 4 Amiga palette handling detected");
+			// We need to restore the internal state of the Amiga palette for Indy4
+			// Amiga. This might lead to graphics glitches!
+			setAmigaPaletteFromPtr(_currentPalette);
+		}
 	}
 
 	//
