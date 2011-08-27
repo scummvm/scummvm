@@ -1375,7 +1375,7 @@ void CGEEngine::runGame() {
 	_keyboard->setClient(_sys);
 	// main loop
 	while (!_finis && !_eventManager->_quitFlag) {
-		if (_finis)
+		if (_flag[3])
 			_snail->addCom2(kSnExec,  -1, 0, kQGame);
 		mainLoop();
 	}
