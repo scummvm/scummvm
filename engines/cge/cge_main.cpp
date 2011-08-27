@@ -224,7 +224,6 @@ Common::Error CGEEngine::loadGameState(int slot) {
 
 	// Load the game
 	loadGame(slot, NULL);
-	_lev = _oldLev;
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
 	caveUp();
 
