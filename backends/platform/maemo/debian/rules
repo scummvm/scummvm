@@ -6,8 +6,6 @@ build: scummvm
 
 scummvm:
 	dh_testdir
-#	CXXFLAGS="-Os -mcpu=arm926ej-s -fomit-frame-pointer -DMAEMO_SDL -I/usr/X11R6/include" ./configure --prefix=/usr --disable-debug --disable-mt32emu  --disable-hq-scalers --with-tremor-prefix=/usr --enable-tremor --with-zlib-prefix=/usr --enable-zlib --with-mad-prefix=/usr --enable-mad --enable-flac --disable-alsa --prefix=/opt/scummvm --datadir=/opt/scummvm/share
-##  --host=arm-linux --enable-plugins --disable-scumm-7-8
 	./configure --host=maemo
 	$(MAKE)
 
