@@ -30,10 +30,11 @@
 #include "common/mutex.h"
 #include "common/singleton.h"
 #include "common/ptr.h"
+
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 class MidiParser;
+class MidiChannel;
 
 namespace Lure {
 

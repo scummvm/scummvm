@@ -558,7 +558,10 @@ int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 			_screen->copyPalette(0, 12);
 		}
 	} else {
-		_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
+		if (!_specialPalettes[stackPos(0)])
+			warning("KyraEngine_LoK::o1_setCustomPaletteRange(): Trying to use missing special palette %d", stackPos(0));
+		else
+			_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
 	}
 	return 0;
 }
@@ -1956,4 +1959,3 @@ void KyraEngine_LoK::setupOpcodeTable() {
 #undef Opcode
 
 } // End of namespace Kyra
-

@@ -687,11 +687,25 @@ const char * const LoLEngine::_languageExt[] = {
 	"GER"
 };
 
+const char *const LoLEngine::_charPreviewNamesDefault[] = {
+	"Ak\'shel",
+	"Michael",
+	"Kieran",
+	"Conrad"
+};
+
+const char *const LoLEngine::_charPreviewNamesRussianFloppy[] = {
+	"\x80\xAA\xE8\xA5\xAB\0",
+	"\x8C\xA0\xA9\xAA\xAB\0",
+	"\x8A\xA8\xE0\xA0\xAD\0",
+	"\x8A\xAE\xAD\xE0\xA0\xA4\0"
+};
+
 const LoLEngine::CharacterPrev LoLEngine::_charPreviews[] = {
-	{ "Ak\'shel", 0x060, 0x7F, { 0x0F, 0x08, 0x05 } },
-	{  "Michael", 0x09A, 0x7F, { 0x06, 0x0A, 0x0F } },
-	{   "Kieran", 0x0D4, 0x7F, { 0x08, 0x06, 0x08 } },
-	{   "Conrad", 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
+	{ 0x060, 0x7F, { 0x0F, 0x08, 0x05 } },
+	{ 0x09A, 0x7F, { 0x06, 0x0A, 0x0F } },
+	{ 0x0D4, 0x7F, { 0x08, 0x06, 0x08 } },
+	{ 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
 };
 
 const uint16 LoLEngine::_charPosXPC98[] = {
@@ -877,4 +891,3 @@ const int LoLEngine::_outroMonsterScaleTableY[] = {
 } // End of namespace Kyra
 
 #endif
-

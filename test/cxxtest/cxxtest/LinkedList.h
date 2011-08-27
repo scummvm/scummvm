@@ -62,4 +62,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__LinkedList_h__
-

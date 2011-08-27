@@ -26,10 +26,9 @@
 #include "common/util.h"
 #include "common/mutex.h"
 
+#include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/iff_sound.h"
-#include "audio/mixer.h"
-#include "audio/mididrv.h"
 
 #define PATH_LEN 200
 

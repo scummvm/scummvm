@@ -320,6 +320,10 @@ void MystGameState::deleteSave(const Common::String &saveName) {
 void MystGameState::addZipDest(uint16 stack, uint16 view) {
 	ZipDests *zipDests = 0;
 
+	// The demo has no zip dest storage
+	if (_vm->getFeatures() & GF_DEMO)
+		return;
+
 	// Select stack
 	switch (stack) {
 	case kChannelwoodStack:
@@ -360,6 +364,10 @@ void MystGameState::addZipDest(uint16 stack, uint16 view) {
 bool MystGameState::isReachableZipDest(uint16 stack, uint16 view) {
 	// Zip mode enabled
 	if (!_globals.zipMode)
+		return false;
+
+	// The demo has no zip dest storage
+	if (_vm->getFeatures() & GF_DEMO)
 		return false;
 
 	// Select stack

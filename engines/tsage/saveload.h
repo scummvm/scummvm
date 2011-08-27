@@ -29,7 +29,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 
-namespace tSage {
+namespace TsAGE {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
@@ -138,6 +138,18 @@ public:
 			}
 		}
 	}
+
+	void addBefore(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		this->insert(i, newItem);
+	}
+	void addAfter(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		if (i != this->end()) ++i;
+		this->insert(i, newItem);
+	}
 };
 
 /**
@@ -222,6 +234,6 @@ public:
 
 extern Saver *_saver;
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

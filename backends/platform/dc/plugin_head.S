@@ -3,4 +3,3 @@
 	.section        .dtors,"aw",@progbits
 
 	.end
-	

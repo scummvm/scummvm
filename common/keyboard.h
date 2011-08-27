@@ -291,7 +291,7 @@ struct KeyState {
 		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
 	}
 
-	bool operator ==(const KeyState &x) const {
+	bool operator==(const KeyState &x) const {
 		return keycode == x.keycode && ascii == x.ascii && flags == x.flags;
 	}
 };

@@ -1418,10 +1418,6 @@ void BinkDecoder::audioBlock(AudioTrack &audio, int16 *out) {
 	else if (audio.codec == kAudioCodecRDFT)
 		audioBlockRDFT(audio);
 
-	for (uint32 i = 0; i < audio.channels; i++)
-		for (uint32 j = 0; j < audio.frameLen; j++)
-			audio.coeffsPtr[i][j] = 385.0 + audio.coeffsPtr[i][j] * (1.0 / 32767.0);
-
 	floatToInt16Interleave(out, const_cast<const float **>(audio.coeffsPtr), audio.frameLen, audio.channels);
 
 	if (!audio.first) {
@@ -1535,25 +1531,20 @@ void BinkDecoder::readAudioCoeffs(AudioTrack &audio, float *coeffs) {
 
 }
 
-static inline int floatToInt16One(const float *src) {
-	int32 tmp = *(const int32 *) src;
-
-	if (tmp & 0xF0000)
-		tmp = (0x43C0FFFF - tmp) >> 31;
-
-	return tmp - 0x8000;
+static inline int floatToInt16One(float src) {
+	return (int16) CLIP<int>((int) floor(src + 0.5), -32768, 32767);
 }
 
 void BinkDecoder::floatToInt16Interleave(int16 *dst, const float **src, uint32 length, uint8 channels) {
 	if (channels == 2) {
 		for (uint32 i = 0; i < length; i++) {
-			dst[2 * i    ] = TO_LE_16(floatToInt16One(src[0] + i));
-			dst[2 * i + 1] = TO_LE_16(floatToInt16One(src[1] + i));
+			dst[2 * i    ] = floatToInt16One(src[0][i]);
+			dst[2 * i + 1] = floatToInt16One(src[1][i]);
 		}
 	} else {
 		for(uint8 c = 0; c < channels; c++)
 			for(uint32 i = 0, j = c; i < length; i++, j += channels)
-				dst[j] = TO_LE_16(floatToInt16One(src[c] + i));
+				dst[j] = floatToInt16One(src[c][i]);
 	}
 }
 

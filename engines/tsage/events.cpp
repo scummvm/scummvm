@@ -31,7 +31,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
@@ -40,6 +40,7 @@ EventsClass::EventsClass() {
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
 	_saver->addListener(this);
+	_saver->addLoadNotifier(&EventsClass::loadNotifierProc);
 }
 
 bool EventsClass::pollEvent() {
@@ -154,7 +155,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		_globals->setFlag(122);
 
-		if (_vm->getFeatures() & GF_DEMO) {
+		if ((_vm->getFeatures() & GF_DEMO) || (_vm->getGameID() == GType_BlueForce))  {
 			CursorMan.showMouse(false);
 			return;
 		}
@@ -269,6 +270,17 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 	_currentCursor = cursorId;
 }
 
+void EventsClass::setCursor(GfxSurface &cursor) {
+	// TODO: Find proper parameters for this form in Blue Force
+	Graphics::Surface s = cursor.lockSurface();
+
+	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);
+	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(), 
+		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
+
+	_currentCursor = CURSOR_NONE;
+}
+
 void EventsClass::setCursorFromFlag() {
 	setCursor(isCursorVisible() ? _currentCursor : CURSOR_NONE);
 }
@@ -277,8 +289,10 @@ void EventsClass::showCursor() {
 	setCursor(_currentCursor);
 }
 
-void EventsClass::hideCursor() {
+CursorType EventsClass::hideCursor() {
+	CursorType oldCursor = _currentCursor;
 	setCursor(CURSOR_NONE);
+	return oldCursor;
 }
 
 bool EventsClass::isCursorVisible() const {
@@ -315,4 +329,13 @@ void EventsClass::listenerSynchronize(Serializer &s) {
 	}
 }
 
-} // end of namespace tSage
+void EventsClass::loadNotifierProc(bool postFlag) {
+	if (postFlag) {
+		if (_globals->_events._lastCursor == CURSOR_NONE)
+			_globals->_events._lastCursor = _globals->_events._currentCursor;
+		else
+			_globals->_events._lastCursor = CURSOR_NONE;
+	}
+}
+
+} // end of namespace TsAGE

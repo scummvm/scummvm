@@ -262,4 +262,3 @@ int cd_dclose(iop_file_t *handle) {
 	hd->size = hd->lba = 0;
 	return 0;
 }
-

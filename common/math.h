@@ -26,6 +26,31 @@
 #define COMMON_MATH_H
 
 #include "common/scummsys.h"
+#ifdef _MSC_VER
+// HACK:
+// intrin.h on MSVC includes setjmp.h, which will fail compiling due to our
+// forbidden symbol colde. Since we also can not assure that defining
+// FORBIDDEN_SYMBOL_EXCEPTION_setjmp and FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+// will actually allow the symbols, since forbidden.h might be included
+// earlier already we need to undefine them here...
+#undef setjmp
+#undef longjmp
+#include <intrin.h>
+// ...and redefine them here so no code can actually use it.
+// This could be resolved by including intrin.h on MSVC in scummsys.h before
+// the forbidden.h include. This might make sense, in case we use MSVC
+// extensions like _BitScanReverse in more places. But for now this hack should
+// be ok...
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#undef setjmp
+#define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+#undef longjmp
+#define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+#endif
 
 #ifndef M_SQRT1_2
 	#define M_SQRT1_2 0.70710678118654752440 /* 1/sqrt(2) */
@@ -50,6 +75,28 @@ struct Complex {
 	float re, im;
 };
 
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+inline int intLog2(uint32 v) {
+	// This is a slightly optimized implementation of log2 for natural numbers
+	// targeting gcc. It also saves some binary size over our fallback
+	// implementation, since it does not need any table.
+	if (v == 0)
+		return -1;
+	else
+		// This is really "sizeof(unsigned int) * CHAR_BIT - 1" but using 8
+		// instead of CHAR_BIT is sane enough and it saves us from including
+		// limits.h
+		return (sizeof(unsigned int) * 8 - 1) - __builtin_clz(v);
+}
+#elif defined(_MSC_VER)
+inline int intLog2(uint32 v) {
+	unsigned long result = 0;
+	unsigned char nonZero = _BitScanReverse(&result, v);
+	// _BitScanReverse stores the position of the MSB set in case its result
+	// is non zero, thus we can just return it as is.
+	return nonZero ? result : -1;
+}
+#else
 // See http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogLookup
 static const char LogTable256[256] = {
 #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
@@ -58,7 +105,7 @@ static const char LogTable256[256] = {
 	LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
 };
 
-inline uint32 intLog2(uint32 v) {
+inline int intLog2(uint32 v) {
 	register uint32 t, tt;
 
 	if ((tt = v >> 16))
@@ -66,6 +113,7 @@ inline uint32 intLog2(uint32 v) {
 	else
 		return (t =  v >> 8) ?  8 + LogTable256[t] : LogTable256[v];
 }
+#endif
 
 inline float rad2deg(float rad) {
 	return rad * 180.0 / M_PI;

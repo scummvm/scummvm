@@ -58,4 +58,3 @@ public:
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET) */
 
 #endif /* BACKENDS_PLUGINS_MIPS_LOADER_H */
-

@@ -237,4 +237,3 @@ bool AsyncFio::fioAvail(void) {
 	}
 	return retVal;
 }
-

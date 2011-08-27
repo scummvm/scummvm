@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef BACKENDS_GRAPHICS_OPENGL_GLTEXTURE_H
+#define BACKENDS_GRAPHICS_OPENGL_GLTEXTURE_H
+
 #include "common/scummsys.h"
 
 #ifdef WIN32
@@ -31,7 +34,20 @@
 #undef ARRAYSIZE
 #endif
 
-#if defined(USE_GLES)
+// HACK: At this point in Windows platforms, common/util.h has been included
+// via common/rect.h (from backends/graphics/sdl/sdl-graphics.h), via
+// backends/graphics/openglsdl/openglsdl-graphics.h. Thus, we end up with
+// COMMON_UTIL_H defined, and ARRAYSIZE undefined (bad!). Therefore,
+// ARRAYSIZE is undefined in openglsdl-graphics.cpp. This is a temporary
+// hackish solution fo fix compilation under Windows.
+#if !defined(ARRAYSIZE) && defined(COMMON_UTIL_H)
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+
+#if defined(BADA)
+#include <FGraphicsOpengl.h>
+using namespace Osp::Graphics::Opengl;
+#elif defined(USE_GLES)
 #include <GLES/gl.h>
 #elif defined(SDL_BACKEND)
 #include <SDL_opengl.h>
@@ -106,3 +122,5 @@ protected:
 	GLint _filter;
 	bool _refresh;
 };
+
+#endif

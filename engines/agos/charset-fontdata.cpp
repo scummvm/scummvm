@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -2454,4 +2452,3 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 }
 
 } // End of namespace AGOS
-

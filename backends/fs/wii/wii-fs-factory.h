@@ -85,4 +85,3 @@ private:
 };
 
 #endif /*Wii_FILESYSTEM_FACTORY_H*/
-

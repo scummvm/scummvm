@@ -34,7 +34,7 @@
 #include "tsage/resources.h"
 #include "tsage/saveload.h"
 
-namespace tSage {
+namespace TsAGE {
 
 #define MAX_FLAGS 256
 
@@ -55,8 +55,13 @@ public:
 	CursorType _cursorId;
 	Common::String _description;
 	int _iconResNum;
+
+	int _visage;
+	int _strip;
+	int _frame;
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
+	InvObject(int visage, int strip, int frame, int sceneNumber);
 
 	bool inInventory() const { return _sceneNumber == 1; }
 	void setCursor();
@@ -156,6 +161,18 @@ class ActionExt : public Action {
 public:
 	int _state;
 };
+
+#define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	_globals->_player.addMover(mover, &pt, this); }
+#define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
+#define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
+	OBJ.addMover(mover, &pt, this); }
+
+#define ADD_MOVER(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, this); }
+#define ADD_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); NpcMover *mover = new NpcMover(); \
+	OBJ.addMover(mover, &pt, NULL); }
 
 class ObjectMover : public EventHandler {
 public:
@@ -287,7 +304,7 @@ public:
 
 	PaletteModifierCached();
 
-	void setPalette(ScenePalette *palette, int step);
+	virtual void setPalette(ScenePalette *palette, int step);
 	virtual Common::String getClassName() { return "PaletteModifierCached"; }
 	virtual void synchronize(Serializer &s);
 };
@@ -323,6 +340,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void signal();
 	virtual void remove();
+	virtual void setPalette(ScenePalette *palette, int step);
 };
 
 /*--------------------------------------------------------------------------*/
@@ -356,7 +374,7 @@ public:
 	void clearListeners();
 	void fade(const byte *adjustData, bool fullAdjust, int percent);
 	PaletteRotation *addRotation(int start, int end, int rotationMode, int duration = 0, Action *action = NULL);
-	PaletteFader *addFader(const byte *arrBufferRGB, int palSize, int percent, Action *action);
+	PaletteFader *addFader(const byte *arrBufferRGB, int palSize, int step, Action *action);
 
 	static void changeBackground(const Rect &bounds, FadeMode fadeMode);
 
@@ -400,9 +418,7 @@ public:
 	void setBounds(const Rect &newBounds) { _bounds = newBounds; }
 	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
-	static void display2(int resNum, int lineNum) {
-		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-	}
+	static void display2(int resNum, int lineNum);
 };
 
 class SceneItemExt : public SceneItem {
@@ -426,17 +442,22 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resnum, _lookLineNum, _useLineNum;
-	NamedHotspot() : SceneHotspot() {}
+	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+	NamedHotspot();
 
-	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
 	virtual void doAction(int action);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 	virtual void synchronize(Serializer &s);
+	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	virtual void setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
-		ANIM_MODE_4 = 4, ANIM_MODE_5 = 5, ANIM_MODE_6 = 6, ANIM_MODE_7 = 7, ANIM_MODE_8 = 8};
+		ANIM_MODE_4 = 4, ANIM_MODE_5 = 5, ANIM_MODE_6 = 6, ANIM_MODE_7 = 7, ANIM_MODE_8 = 8,
+		// Introduced in Blue Force
+		ANIM_MODE_9 = 9
+};
 
 class SceneObject;
 
@@ -467,6 +488,7 @@ public:
 	virtual ~SceneObjectWrapper() {}
 
 	void setSceneObject(SceneObject *so);
+	void check();
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneObjectWrapper"; }
@@ -555,18 +577,18 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
+	// New methods introduced by Blue FOrce
+	virtual void updateAngle(SceneObject *sceneObj);
+	virtual void changeAngle(int angle);
+
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
-class SceneObjectExt : public SceneObject {
+class AltSceneObject: public SceneObject {
 public:
-	int _state;
-
-	virtual void synchronize(Serializer &s) {
-		SceneObject::synchronize(s);
-		s.syncAsSint16LE(_state);
-	}
-	virtual Common::String getClassName() { return "SceneObjectExt"; }
+	virtual Common::String getClassName() { return "AltObjectExt"; }
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void draw();
 };
 
 class SceneText : public SceneObject {
@@ -594,6 +616,7 @@ public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
+	int _field8E;
 public:
 	Player();
 
@@ -695,7 +718,7 @@ public:
 	SynchronizedList<SceneObject *>::iterator begin() { return _objList.begin(); }
 	SynchronizedList<SceneObject *>::iterator end() { return _objList.end(); }
 	int size() const { return _objList.size(); }
-	bool contains(SceneObject *sceneObj) { return tSage::contains(_objList, sceneObj); }
+	bool contains(SceneObject *sceneObj) { return TsAGE::contains(_objList, sceneObj); }
 	void push_back(SceneObject *sceneObj) { _objList.push_back(sceneObj); }
 	void push_front(SceneObject *sceneObj) { _objList.push_front(sceneObj); }
 	void remove(SceneObject *sceneObj) {
@@ -827,9 +850,11 @@ public:
 	int _loadGameSlot;
 	int _delayTicks;
 	Common::String _saveName;
+	uint32 _prevFrameNumber;
 public:
 	SceneHandler();
 	void registerHandler();
+	uint32 getFrameDifference();
 
 	virtual Common::String getClassName() { return "SceneHandler"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -840,6 +865,6 @@ public:
 	static void saveListener(Serializer &ser);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

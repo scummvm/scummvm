@@ -202,6 +202,7 @@ enum KyraResources {
 	k1ConfigStrings,
 
 	k1AudioTracks,
+	k1AudioTracks2,
 	k1AudioTracksIntro,
 
 	k1CreditsStrings,
@@ -479,7 +480,3 @@ private:
 } // End of namespace Kyra
 
 #endif
-
-
-
-

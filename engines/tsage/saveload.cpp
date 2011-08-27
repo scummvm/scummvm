@@ -30,7 +30,7 @@
 #include "tsage/sound.h"
 #include "tsage/tsage.h"
 
-namespace tSage {
+namespace TsAGE {
 
 Saver *_saver;
 
@@ -249,12 +249,9 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = new Graphics::Surface();
-	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
-		delete header.thumbnail;
-		header.thumbnail = NULL;
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
 		return false;
-	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();
@@ -413,4 +410,4 @@ void Saver::resolveLoadPointers() {
 		error("Could not resolve savegame block pointers");
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

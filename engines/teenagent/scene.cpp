@@ -57,7 +57,7 @@ Scene::Scene(TeenAgentEngine *engine, OSystem *system) : intro(false), _id(0), o
 	if (!s)
 		error("invalid resource data");
 
-	teenagent.load(s, Animation::kTypeVaria);
+	teenagent.load(*s, Animation::kTypeVaria);
 	if (teenagent.empty())
 		error("invalid mark animation");
 
@@ -65,7 +65,7 @@ Scene::Scene(TeenAgentEngine *engine, OSystem *system) : intro(false), _id(0), o
 	if (!s)
 		error("invalid resource data");
 
-	teenagent_idle.load(s, Animation::kTypeVaria);
+	teenagent_idle.load(*s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 
@@ -340,7 +340,7 @@ void Scene::loadOns() {
 		for (uint32 i = 0; i < ons_count; ++i) {
 			Common::ScopedPtr<Common::SeekableReadStream> s(res->ons.getStream(on_id[i]));
 			if (s) {
-				ons[i].load(s, Surface::kTypeOns);
+				ons[i].load(*s, Surface::kTypeOns);
 			}
 		}
 	}
@@ -363,7 +363,7 @@ void Scene::loadLans() {
 
 		Common::ScopedPtr<Common::SeekableReadStream> s(res->loadLan000(res_id));
 		if (s) {
-			animation[i].load(s, Animation::kTypeLan);
+			animation[i].load(*s, Animation::kTypeLan);
 			if (bxv != 0 && bxv != 0xff)
 				animation[i].id = bxv;
 		}
@@ -412,7 +412,7 @@ void Scene::init(int id, const Common::Point &pos) {
 				sub_hack = 2;
 		}
 	}
-	on.load(stream, SurfaceList::kTypeOn, sub_hack);
+	on.load(*stream, SurfaceList::kTypeOn, sub_hack);
 
 	loadOns();
 	loadLans();
@@ -434,7 +434,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 	if (!s)
 		error("playing animation %u failed", id);
 
-	custom_animation[idx].load(s);
+	custom_animation[idx].load(*s);
 	custom_animation[idx].loop = loop;
 	custom_animation[idx].paused = paused;
 	custom_animation[idx].ignore = ignore;
@@ -446,7 +446,7 @@ void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	if (!s)
 		error("playing animation %u failed", id);
 
-	actor_animation.load(s);
+	actor_animation.load(*s);
 	actor_animation.loop = loop;
 	actor_animation.ignore = ignore;
 	actor_animation.id = id;

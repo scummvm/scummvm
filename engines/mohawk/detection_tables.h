@@ -653,6 +653,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"HARRY.EXE"
 	},
 
+	// part of "Super Living Books" compilation
+	// from rgemini, bug #3309343
+	{
+		{
+			"harryhh",
+			"",
+			AD_ENTRY1("HARRY.512", "39d11399796dfa36d3f631d2d87e8b85"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"HARRY.EXE"
+	},
+
 	{
 		{
 			"carmentq",
@@ -929,6 +946,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"TORTOISE.EXE"
 	},
 
+	// part of "Super Living Books" compilation
+	// from rgemini, bug #3309343
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTOISE.512", "e9ec7a6bc6b451c9e85e5b4f072d5143"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"TORTOISE.EXE"
+	},
+
 	// From afholman in bug#3309308
 	{
 		{
@@ -1043,6 +1077,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"arthur",
 			"",
 			AD_ENTRY1("PAGES.512", "1550a361454ec452fe7d2328aac2003c"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"ARTHUR.EXE"
+	},
+
+	// part of "Super Living Books" compilation
+	// from rgemini, bug #3309343
+	{
+		{
+			"arthur",
+			"",
+			AD_ENTRY1("PAGES.512", "cd995d20d0d7b4642476fd76044b4e5b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1185,6 +1236,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"grandma",
 			"v1.0",
 			AD_ENTRY1("PAGES.512", "e694ac10f957dd2e20611350bf968da3"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_LB_10,
+		"GRANDMA.EXE"
+	},
+
+	// from jjnryan in bug #3389857
+	{
+		{
+			"grandma",
+			"v1.0",
+			AD_ENTRY1("PAGES.512", "613ca946bc8d91087fb7c10e9b84e88b"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1356,6 +1423,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"newkid",
 			"",
 			AD_ENTRY1("NEWKID.512", "5135f24afa138ecdf5b52d955e9a9189"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"NEWKID.EXE"
+	},
+
+	// part of "Super Living Books" compilation
+	// from rgemini, bug #3309343
+	{
+		{
+			"newkid",
+			"",
+			AD_ENTRY1("NEWKID.512", "28a5aef3e6ef7e2ed7742485c25bdff6"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

@@ -276,5 +276,3 @@ const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 };
 
 } // End of namespace Kyra
-
-

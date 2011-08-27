@@ -55,7 +55,7 @@ static void upArrowRepeater(void *ref) {
 	sb->checkBounds(old_pos);
 
 	g_system->getTimerManager()->removeTimerProc(&upArrowRepeater);
-	g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/10, ref);
+	g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/10, ref, "guiScrollBarUp");
 }
 
 static void downArrowRepeater(void *ref) {
@@ -66,7 +66,7 @@ static void downArrowRepeater(void *ref) {
 	sb->checkBounds(old_pos);
 
 	g_system->getTimerManager()->removeTimerProc(&downArrowRepeater);
-	g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/10, ref);
+	g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/10, ref, "guiScrollBarDown");
 }
 
 void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -80,12 +80,12 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 		// Up arrow
 		_currentPos--;
 		_draggingPart = kUpArrowPart;
-		g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/2, this);
+		g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/2, this, "guiScrollBarUp");
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
 		_currentPos++;
 		_draggingPart = kDownArrowPart;
-		g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/2, this);
+		g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/2, this, "guiScrollBarDown");
 	} else if (y < _sliderPos) {
 		_currentPos -= _entriesPerPage - 1;
 	} else if (y >= _sliderPos + _sliderHeight) {

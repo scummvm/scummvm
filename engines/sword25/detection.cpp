@@ -99,4 +99,3 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 #else
 	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #endif
-

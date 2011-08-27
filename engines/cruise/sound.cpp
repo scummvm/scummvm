@@ -31,6 +31,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
 #include "audio/mods/soundfx.h"
 
 namespace Cruise {

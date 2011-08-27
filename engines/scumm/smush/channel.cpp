@@ -60,6 +60,8 @@ void SmushChannel::processBuffer() {
 			if (offset < _tbufferSize) {
 				int new_size = _tbufferSize - offset;
 				_tbuffer = (byte *)malloc(new_size);
+				// FIXME: _tbuffer might be 0 if new_size is 0.
+				// NB: Also check other "if (_tbuffer)" locations in smush
 				if (!_tbuffer)
 					error("smush channel failed to allocate memory");
 				memcpy(_tbuffer, _sbuffer + offset, new_size);
@@ -97,6 +99,8 @@ void SmushChannel::processBuffer() {
 				byte *old = _tbuffer;
 				int32 new_size = _tbufferSize - offset;
 				_tbuffer = (byte *)malloc(new_size);
+				// FIXME: _tbuffer might be 0 if new_size is 0.
+				// NB: Also check other "if (_tbuffer)" locations in smush
 				if (!_tbuffer)
 					error("smush channel failed to allocate memory");
 				memcpy(_tbuffer, old + offset, new_size);

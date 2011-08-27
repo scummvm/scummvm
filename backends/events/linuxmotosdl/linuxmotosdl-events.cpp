@@ -132,7 +132,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_RIGHT) {
 		if (ev.type == SDL_KEYDOWN) {
@@ -144,7 +144,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_DOWN) {
@@ -157,7 +157,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_UP) {
@@ -170,7 +170,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_RETURN) {
@@ -181,7 +181,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_PLUS) {
@@ -191,7 +191,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 		} else {
 			event.type = Common::EVENT_RBUTTONUP;
 		}
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_MINUS) {
@@ -202,7 +202,7 @@ bool LinuxmotoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 
 		return true;
 	} else {

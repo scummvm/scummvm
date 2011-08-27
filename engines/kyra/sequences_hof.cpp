@@ -2920,5 +2920,3 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 }
 
 } // End of namespace Kyra
-
-

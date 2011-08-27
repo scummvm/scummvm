@@ -51,4 +51,3 @@ MusicDevices AppleIIGSMusicPlugin::getDevices() const {
 //#else
 	REGISTER_PLUGIN_STATIC(APPLEIIGS, PLUGIN_TYPE_MUSIC, AppleIIGSMusicPlugin);
 //#endif
-

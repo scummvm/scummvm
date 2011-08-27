@@ -316,8 +316,9 @@ int LoLEngine::chooseCharacter() {
 		_screen->printText(_tim->getCTableEntry(53), 72, 184, 0x81, 0x00);
 		_screen->printText(_tim->getCTableEntry(55), 72, 192, 0x81, 0x00);
 	} else {
+		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : _charPreviewNamesDefault;
 		for (int i = 0; i < 4; ++i) {
-			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, _charPreviews[i].name);
+			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, previewNames[i]);
 			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 48, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[0]);
 			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 56, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[1]);
 			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 64, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[2]);
@@ -1518,4 +1519,3 @@ void LoLEngine::loadOutroShapes(int file, uint8 **storage) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

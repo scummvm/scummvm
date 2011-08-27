@@ -187,4 +187,3 @@ bool WINCESdlMixerManager::checkOggHighSampleRate() {
 #endif
 
 #endif
-

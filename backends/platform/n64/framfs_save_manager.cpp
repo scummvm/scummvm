@@ -69,4 +69,3 @@ Common::StringArray FRAMSaveManager::listSavefiles(const Common::String &pattern
 
 	return list;
 }
-

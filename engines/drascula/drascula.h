@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/hash-str.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -264,15 +265,13 @@ private:
 };
 
 class TextResourceParser {
-	Common::SeekableReadStream *_stream;
-	DisposeAfterUse::Flag _dispose;
+	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	int _maxLen;
 
 	void getLine(char *buf);
 
 public:
 	TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose);
-	~TextResourceParser();
 
 	void parseInt(int &result);
 	void parseString(char *result);
@@ -496,6 +495,8 @@ public:
 	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
 	void volumeControls();
 	bool saveLoadScreen();
+	void loadSaveNames();
+	void saveSaveNames();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	bool confirmExit();
@@ -776,6 +777,7 @@ private:
 	RoomUpdate *_roomPreUpdates, *_roomUpdates;
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
+	char _saveNames[10][23];
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);

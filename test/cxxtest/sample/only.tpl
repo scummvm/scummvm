@@ -30,4 +30,3 @@ int main( int argc, char *argv[] )
 
 // The CxxTest "world"
 <CxxTest world>
-

@@ -386,7 +386,7 @@ bool TeenAgentEngine::showLogo() {
 			}
 
 			Surface s;
-			s.load(frame, Surface::kTypeOns);
+			s.load(*frame, Surface::kTypeOns);
 			if (s.empty()) {
 				free(bg);
 				return true;

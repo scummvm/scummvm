@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	fs.o \
 	hashmap.o \
 	iff_container.o \
+	localization.o \
 	macresman.o \
 	memorypool.o \
 	md5.o \

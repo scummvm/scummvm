@@ -229,4 +229,3 @@ public class ScummVMEvents implements
 		return true;
 	}
 }
-

@@ -445,9 +445,24 @@ sub add_paragraph {
 
 begin_credits("Credits");
   begin_section("ScummVM Team");
-    begin_section("Project Leaders");
+    begin_section("Project Leader");
 	  begin_persons();
 		add_person("Eugene Sandulenko", "sev", "");
+	  end_persons();
+    end_section();
+
+    begin_section("PR Office");
+	  begin_persons();
+		add_person("Arnaud Boutonn&eacute;", "Strangerke", "Public Relations Officer, Project Administrator");
+		add_person("Eugene Sandulenko", "sev", "Project Leader");
+	  end_persons();
+    end_section();
+
+    begin_section("Core Team");
+	  begin_persons();
+		add_person("Willem Jan Palenstijn", "wjp", "");
+		add_person("Eugene Sandulenko", "sev", "");
+		add_person("Johannes Schickel", "LordHoto", "");
 	  end_persons();
     end_section();
 
@@ -526,6 +541,7 @@ begin_credits("Credits");
 	  begin_section("DreamWeb");
 		  add_person("Vladimir Menshakov", "whoozle", "");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Bertrand Augereau", "Tramb", "");
 	  end_section();
 
 	  begin_section("Gob");
@@ -683,6 +699,10 @@ begin_credits("Credits");
 		  add_person("Angus Lees", "Gus", "");
 	  end_section();
 
+	  begin_section("BADA");
+		  add_person("Chris Warren-Smith", "", "");
+	  end_section();
+
 	  begin_section("Dreamcast");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();
@@ -709,6 +729,7 @@ begin_credits("Credits");
 
 	  begin_section("Nintendo DS");
 		  add_person("Neil Millstone", "agent-q", "");
+		  add_person("Bertrand Augereau", "Tramb", "HQ software scaler");
 	  end_section();
 
 	  begin_section("OpenPandora");

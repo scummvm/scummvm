@@ -137,4 +137,3 @@ uint32 fileSize(FILE *fp) {
 	fseek(fp, pos, SEEK_SET);
 	return sz;
 }
-

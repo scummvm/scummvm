@@ -122,5 +122,3 @@ public:
 };
 
 #endif /* PSP_INCLUDE_SWAP */
-
-

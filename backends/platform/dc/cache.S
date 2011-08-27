@@ -35,4 +35,3 @@ ccr_addr:
 	.long	0xff00001c
 ccr_data:
 	.word	0x0905
-

@@ -209,7 +209,7 @@ uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, 
 #ifdef USE_VORBIS
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 #endif
-	uint id;
+	uint id = handleId;
 	SndHandle *handle;
 
 	if (handleId == 0x1337)

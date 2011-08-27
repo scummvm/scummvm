@@ -295,12 +295,7 @@ void SagaEngine::load(const char *fileName) {
 
 	if (_saveHeader.version >= 6) {
 		// We don't need the thumbnail here, so just read it and discard it
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		Graphics::loadThumbnail(*in, *thumbnail);
-		thumbnail->free();
-		delete thumbnail;
-		thumbnail = 0;
+		Graphics::skipThumbnail(*in);
 
 		in->readUint32BE();	// save date
 		in->readUint16BE(); // save time

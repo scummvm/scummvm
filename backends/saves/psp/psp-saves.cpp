@@ -78,4 +78,3 @@ void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
 	PowerMan.endCriticalSection();
 }
 #endif
-

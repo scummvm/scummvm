@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifdef WIN32
+#if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h

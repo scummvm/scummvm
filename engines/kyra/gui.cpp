@@ -415,7 +415,7 @@ void GUI::checkTextfieldInput() {
 
 	bool running = true;
 	int keys = 0;
-	while (_vm->_eventMan->pollEvent(event) && running) {
+	while (running && _vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
@@ -671,4 +671,3 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 }
 
 } // End of namespace Kyra
-

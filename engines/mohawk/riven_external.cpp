@@ -234,10 +234,10 @@ void RivenExternal::runCredits(uint16 video, uint32 delay) {
 				// Set us up to start after delay ms
 				nextCreditsFrameStart = _vm->_system->getMillis() + delay;
 			} else if (_vm->_system->getMillis() >= nextCreditsFrameStart) {
-				// the first two frames stay on for 5 seconds
+				// the first two frames stay on for 4 seconds
 				// the rest of the scroll updates happen at 30Hz
 				if (_vm->_gfx->getCurCreditsImage() < 304)
-					nextCreditsFrameStart = _vm->_system->getMillis() + 5000;
+					nextCreditsFrameStart = _vm->_system->getMillis() + 4000;
 				else
 					nextCreditsFrameStart = _vm->_system->getMillis() + 1000 / 30;
 
@@ -1889,21 +1889,42 @@ void RivenExternal::xjplaybeetle_1450(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjlagoon700_alert(uint16 argc, uint16 *argv) {
-	// TODO: Sunner related
+	// Handle sunner reactions (mid-staircase)
+
+	if (_vm->_vars["jsunners"] == 0)
+		_vm->_video->playMovieRiven(1);
 }
 
 void RivenExternal::xjlagoon800_alert(uint16 argc, uint16 *argv) {
-	// TODO: Sunner related
+	// Handle sunner reactions (lower-staircase)
+
+	uint32 &sunners = _vm->_vars["jsunners"];
+
+	if (sunners == 0) {
+		// Show the sunners alert video
+		_vm->_video->playMovieRiven(1);
+	} else if (sunners == 1) {
+		// Show the sunners leaving if you moved forward in their "alert" status
+		_vm->_video->playMovieBlockingRiven(2);
+		_vm->_video->playMovieBlockingRiven(6);
+		sunners = 2;
+		_vm->refreshCard();
+	}
 }
 
 void RivenExternal::xjlagoon1500_alert(uint16 argc, uint16 *argv) {
-	// Have the sunners move a bit as you get closer ;)
+	// Handle sunner reactions (beach)
+
 	uint32 &sunners = _vm->_vars["jsunners"];
+
 	if (sunners == 0) {
+		// Show the sunners alert video
 		_vm->_video->playMovieBlockingRiven(3);
 	} else if (sunners == 1) {
+		// Show the sunners leaving if you moved forward in their "alert" status
 		_vm->_video->playMovieBlockingRiven(2);
 		sunners = 2;
+		_vm->refreshCard();
 	}
 }
 
@@ -2726,6 +2747,7 @@ void RivenExternal::xtatboundary(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xflies(uint16 argc, uint16 *argv) {
 	// TODO: Activate the "flies" effect
+	debug(1, "STUB: xflies(): create %d %s fl%s", argv[1], (argv[0] == 0) ? "black" : "glowing", (argv[1] == 1) ? "y" : "ies");
 }
 
 } // End of namespace Mohawk

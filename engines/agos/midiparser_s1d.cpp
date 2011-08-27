@@ -31,20 +31,22 @@ namespace AGOS {
 
 /**
  * Simon 1 Demo version of MidiParser.
- *
- * This parser is the result of eyeballing the one MUS file that's included
- * with simon1demo. So there might be some things missing. I've tried to notate
- * question-mark areas where they occur.
  */
 class MidiParser_S1D : public MidiParser {
-protected:
+private:
 	byte *_data;
 	bool _no_delta;
 
+	struct Loop {
+		uint16 timer;
+		byte *start, *end;
+	} _loops[16];
+
+	uint32 readVLQ2(byte *&data);
+	void chainEvent(EventInfo &info);
 protected:
 	void parseNextEvent(EventInfo &info);
 	void resetTracking();
-	uint32 readVLQ2(byte * &data);
 
 public:
 	MidiParser_S1D() : _data(0), _no_delta(false) {}
@@ -52,145 +54,128 @@ public:
 	bool loadMusic(byte *data, uint32 size);
 };
 
+uint32 MidiParser_S1D::readVLQ2(byte *&data) {
+	uint32 delta = 0;
 
-// The VLQs for simon1demo seem to be
-// in Little Endian format.
-uint32 MidiParser_S1D::readVLQ2(byte * &data) {
-	byte str;
-	uint32 value = 0;
-	int i;
-
-	for (i = 0; i < 4; ++i) {
-		str = data[0];
-		++data;
-		value |= (str & 0x7F) << (i * 7);
-		if (!(str & 0x80))
-			break;
+	// LE format VLQ, which is 2 bytes long at max.
+	delta = *data++;
+	if (delta & 0x80) {
+		delta &= 0x7F;
+		delta |= *data++ << 7;
 	}
-	return value;
+
+	return delta;
+}
+
+void MidiParser_S1D::chainEvent(EventInfo &info) {
+	// When we chain an event, we add up the old delta.
+	uint32 delta = info.delta;
+	parseNextEvent(info);
+	info.delta += delta;
 }
 
 void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
+	info.length = 0;
 	info.delta = _no_delta ? 0 : readVLQ2(_position._play_pos);
-
 	_no_delta = false;
-	info.event = *(_position._play_pos++);
-	if (info.command() < 0x8) {
+
+	info.event = *_position._play_pos++;
+	if (!(info.event & 0x80)) {
 		_no_delta = true;
-		info.event += 0x80;
+		info.event |= 0x80;
 	}
 
-	switch (info.command()) {
-	case 0x8:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = 0;
-		info.length = 0;
-		break;
-
-	case 0x9:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = *(_position._play_pos++); // I'm ASSUMING this byte is velocity!
-		info.length = 0;
-		break;
-
-	case 0xA:
-	case 0xB:
-		// I'm not sure what these are meant to do, or what the
-		// parameter is. Elvira 1 needs them, though, and who am I to
-		// argue with her?
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = 0;
-		break;
-
-	case 0xC:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = 0;
-		++_position._play_pos; // I have NO IDEA what the second byte is for.
-		break;
-
-	case 0xD:
-		// Triggered by MOD0/MOD1/MOD2/MOD3/MOD4/MOD6/MOD7/MOD8/MOD9 in Elvira 2
-		// Triggered by MOD0/MOD2/MOD3/MOD5/MOD6/MOD7/MOD8/MOD9/MOD10/MOD12/MOD14/MOD15/MOD20 in Waxworks
-		break;
-
-	case 0xE:
-		// Triggered by MOD9 in Elvira 1
-		// Triggered by MOD3/MOD5 in Elvira 2
-		// Triggered by MOD3/MOD7/MOD8/MOD13 in Waxworks
-		break;
-
-	case 0xF:
-		switch (info.event & 0x0F) {
-		case 0x0:
-			// Trigged by MOD2/MOD6/MOD15 in Waxworks
-			// Pure guesswork
-			info.ext.type = *(_position._play_pos++);
-			info.length = readVLQ(_position._play_pos);
-			info.ext.data = _position._play_pos;
-			break;
-
-		case 0x3: // Not sure, Song Select?
-			// Trigged by MOD1/MOD7/MOD10 in Elvira 1
-			info.basic.param1 = *(_position._play_pos++);
+	if (info.event == 0xFC) {
+		// This means End of Track.
+		// Rewrite in SMF (MIDI transmission) form.
+		info.event = 0xFF;
+		info.ext.type = 0x2F;
+	} else {
+		switch (info.command()) {
+		case 0x8: // note off
+			info.basic.param1 = *_position._play_pos++;
 			info.basic.param2 = 0;
 			break;
 
-		case 0x4:
-			// Trigged by MOD8 in Elvira 1
+		case 0x9: // note on
+			info.basic.param1 = *_position._play_pos++;
+			info.basic.param2 = *_position._play_pos++;
 			break;
 
-		case 0x7:
-			// Trigged by MOD6 in Elvira 2
-			// Trigged by MOD5 in Waxworks
+		case 0xA: { // loop control
+			// In case the stop mode(?) is set to 0x80 this will stop the
+			// track over here.
+
+			const int16 loopIterations = int8(*_position._play_pos++);
+			if (!loopIterations) {
+				_loops[info.channel()].start = _position._play_pos;
+			} else {
+				if (!_loops[info.channel()].timer) {
+					if (_loops[info.channel()].start) {
+						_loops[info.channel()].timer = uint16(loopIterations);
+						_loops[info.channel()].end = _position._play_pos;
+
+						// Go to the start of the loop
+						_position._play_pos = _loops[info.channel()].start;
+					}
+				} else {
+					if (_loops[info.channel()].timer)
+						_position._play_pos = _loops[info.channel()].start;
+					--_loops[info.channel()].timer;
+				}
+			}
+
+			// We need to read the next midi event here. Since we can not
+			// safely pass this event to the MIDI event processing.
+			chainEvent(info);
+			} break;
+
+		case 0xB: // auto stop marker(?)
+			// In case the stop mode(?) is set to 0x80 this will stop the
+			// track.
+
+			// We need to read the next midi event here. Since we can not
+			// safely pass this event to the MIDI event processing.
+			chainEvent(info);
 			break;
 
-		case 0x8: // Not sure, ?
-			// Trigged by MOD19 in Waxworks
-			info.basic.param1 = info.basic.param2 = 0;
+		case 0xC: // program change
+			info.basic.param1 = *_position._play_pos++;
+			info.basic.param2 = 0;
 			break;
 
-		case 0xA:
-			// Trigged by MOD5 in Elvira 2
-			break;
+		case 0xD: // jump to loop end
+			if (_loops[info.channel()].end)
+				_position._play_pos = _loops[info.channel()].end;
 
-		case 0xC:
-			// This means End of Track.
-			// Rewrite in SMF (MIDI transmission) form.
-			info.event = 0xFF;
-			info.ext.type = 0x2F;
-			info.length = 0;
-			break;
-
-		case 0xF: // Not sure, META event?
-			// Trigged by MOD8/MOD9/MOD11/MOD12/MOD13 in Waxworks
-			info.ext.type = *(_position._play_pos++);
-			info.length = readVLQ(_position._play_pos);
-			info.ext.data = _position._play_pos;
-			_position._play_pos += info.length;
+			// We need to read the next midi event here. Since we can not
+			// safely pass this event to the MIDI event processing.
+			chainEvent(info);
 			break;
 
 		default:
-			error("MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
+			// The original called some other function from here, which seems
+			// not to be MIDI related.
+			warning("MidiParser_S1D: default case %d", info.channel());
+
+			// We need to read the next midi event here. Since we can not
+			// safely pass this event to the MIDI event processing.
+			chainEvent(info);
 			break;
 		}
-		break;
-	default:
-		error("MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
-		break;
 	}
 }
 
 bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
+	// The original actually just ignores the first two bytes.
 	byte *pos = data;
 	if (*(pos++) != 0xFC)
 		debug(1, "Expected 0xFC header but found 0x%02X instead", (int) *pos);
 
-	// The next 3 bytes MIGHT be tempo, but we skip them and use the default.
-//	setTempo (*(pos++) | (*(pos++) << 8) | (*(pos++) << 16));
-	pos += 3;
+	pos += 1;
 
 	// And now we're at the actual data. Only one track.
 	_num_tracks = 1;
@@ -208,7 +193,9 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 
 void MidiParser_S1D::resetTracking() {
 	MidiParser::resetTracking();
-	_no_delta = false;
+	// The first event never contains any delta.
+	_no_delta = true;
+	memset(_loops, 0, sizeof(_loops));
 }
 
 MidiParser *MidiParser_createS1D() { return new MidiParser_S1D; }

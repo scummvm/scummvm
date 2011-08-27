@@ -199,6 +199,10 @@ uint32 MadsSceneLogic::getDataValue(int dataId) {
 		return getActiveAnimationBool();
 	case 11:
 		return getAnimationCurrentFrame();
+	case 12:
+		return _madsVm->scene()->_action._inProgress;
+	case 13:
+		return _madsVm->globals()->_difficultyLevel;
 	default:
 		// All other data variables get stored in the hash table
 		return _madsVm->globals()->_dataMap[dataId];
@@ -238,6 +242,12 @@ void MadsSceneLogic::setDataValue(int dataId, uint16 dataValue) {
 	case 10:
 	case 11:
 		error("Tried to set read only data field %d", dataId);
+		break;
+	case 12:
+		_madsVm->scene()->_action._inProgress = dataValue != 0;
+		break;
+	case 13:
+		_madsVm->globals()->_difficultyLevel = dataValue;
 		break;
 	default:
 		// All other data variables get stored in the hash table
@@ -985,6 +995,37 @@ void MadsSceneLogic::callSubroutine(int subIndex, Common::Stack<ScriptVar> &stac
 		obj->setRoom(p[1]);
 		break;
 	}
+
+	case 27:  {
+		// object_get_id_from_desc
+		EXTRACT_PARAMS(1);
+		stack.push(_madsVm->globals()->getObjectIndex(p[0]));
+		break;
+	}
+
+	case 28: {
+		// object_get_folder
+		EXTRACT_PARAMS(1);
+		stack.push(_madsVm->globals()->getObjectFolder(p[0]));
+		break;
+	}
+
+	case 29:
+		// inventory_remove
+		EXTRACT_PARAMS(1);
+		_madsVm->scene()->getInterface()->addObjectToInventory(p[0]);
+		break;
+
+	case 30:
+		// image_inter_list_call
+		EXTRACT_PARAMS(1);
+		warning("TODO: image_inter_list_call");
+		break;
+
+	case 31:
+		// dialog_flags_show
+		warning("todo: dialog_flags_show");
+		break;
 
 	default:
 		error("Unknown subroutine %d called", subIndex);

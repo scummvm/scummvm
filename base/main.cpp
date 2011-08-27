@@ -111,10 +111,7 @@ static const EnginePlugin *detectPlugin() {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 	} else {
-		printf("%s\n", plugin->getName());
-
-		// FIXME: Do we really need this one?
-		printf("  Starting '%s'\n", game.description().c_str());
+		printf("%s\n Starting '%s'\n", plugin->getName(), game.description().c_str());
 	}
 
 	return plugin;
@@ -186,9 +183,15 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	// If a second extrapath is specified on the app domain level, add that as well.
+	// However, since the default hasKey() and get() check the app domain level,
+	// verify that it's not already there before adding it. The search manager will
+	// check for that too, so this check is mostly to avoid a warning message.
 	if (ConfMan.hasKey("extrapath", Common::ConfigManager::kApplicationDomain)) {
-		dir = Common::FSNode(ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain));
-		SearchMan.addDirectory(dir.getPath(), dir);
+		Common::String extraPath = ConfMan.get("extrapath", Common::ConfigManager::kApplicationDomain);
+		if (!SearchMan.hasArchive(extraPath)) {
+			dir = Common::FSNode(extraPath);
+			SearchMan.addDirectory(dir.getPath(), dir);
+		}
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
@@ -418,6 +421,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// Try to run the game
 			Common::Error result = runGame(plugin, system, specialDebug);
+
+			// Flush Event recorder file. The recorder does not get reinitialized for next game
+			// which is intentional. Only single game per session is allowed.
+			g_eventRec.deinit();
 
 		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can

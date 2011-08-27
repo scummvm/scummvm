@@ -163,17 +163,13 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 	struct SAA1099 *saa = &_saa1099[chip];
 	int j, ch;
 
-	/* if the channels are disabled we're done */
-	if (!saa->all_ch_enable) {
-		/* init output data */
-		if (chip == 0) {
-			memset(buffer, 0, sizeof(int16)*length*2);
-		}
-		return;
-	}
-
 	if (chip == 0) {
 		memset(buffer, 0, sizeof(int16)*length*2);
+	}
+
+	/* if the channels are disabled we're done */
+	if (!saa->all_ch_enable) {
+		return;
 	}
 
 	for (ch = 0; ch < 2; ch++) {
@@ -244,8 +240,8 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			}
 		}
 		/* write sound data to the buffer */
-		buffer[j*2] += output_l / 6;
-		buffer[j*2+1] += output_r / 6;
+		buffer[j*2+0] = CLIP<int>(buffer[j*2+0] + output_l / 6, -32768, 32767);
+		buffer[j*2+1] = CLIP<int>(buffer[j*2+1] + output_r / 6, -32768, 32767);
 	}
 }
 

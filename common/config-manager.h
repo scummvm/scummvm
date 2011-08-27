@@ -64,14 +64,14 @@ public:
 	typedef HashMap<String, Domain, IgnoreCase_Hash, IgnoreCase_EqualTo> DomainMap;
 
 	/** The name of the application domain (normally 'scummvm'). */
-	static const char *kApplicationDomain;
+	static char const *const kApplicationDomain;
 
 	/** The transient (pseudo) domain. */
-	static const char *kTransientDomain;
+	static char const *const kTransientDomain;
 
 #ifdef ENABLE_KEYMAPPER
 	/** The name of keymapper domain used to store the key maps */
-	static const char *kKeymapperDomain;
+	static char const *const kKeymapperDomain;
 #endif
 
 	void				loadDefaultConfigFile();
@@ -153,7 +153,7 @@ private:
 	ConfigManager();
 
 	void			loadFromStream(SeekableReadStream &stream);
-	void			addDomain(const Common::String &domainName, const Domain &domain);
+	void			addDomain(const String &domainName, const Domain &domain);
 	void			writeDomain(WriteStream &stream, const String &name, const Domain &domain);
 	void			renameDomain(const String &oldName, const String &newName, DomainMap &map);
 

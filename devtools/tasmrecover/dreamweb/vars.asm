@@ -560,4 +560,3 @@ roomssample	db	0
 gameerror	db	0
 
 howmuchalloc	dw	0
-

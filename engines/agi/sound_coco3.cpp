@@ -34,7 +34,7 @@ static int cocoFrequencies[] = {
 	2093, 2217, 2349, 2489, 2637, 2793, 2959, 3135, 3322, 3520, 3729, 3951
 };
 
-SoundGenCoCo3::SoundGenCoCo3(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
+SoundGenCoCo3::SoundGenCoCo3(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 }
 
 SoundGenCoCo3::~SoundGenCoCo3() {

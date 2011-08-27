@@ -33,6 +33,8 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "audio/mididrv.h"
+
 #include "scumm/detection.h"
 #include "scumm/detection_tables.h"
 #include "scumm/he/intern_he.h"
@@ -145,7 +147,7 @@ Common::String ScummEngine_v70he::generateFilename(const int room) const {
 	Common::String bPattern = _filenamePattern.pattern;
 
 	// Special cases for Blue's games, which share common (b) files
-	if (_game.id == GID_BIRTHDAY && !(_game.features & GF_DEMO))
+	if (_game.id == GID_BIRTHDAYYELLOW || _game.id == GID_BIRTHDAYRED)
 		bPattern = "Blue'sBirthday";
 	else if (_game.id == GID_TREASUREHUNT)
 		bPattern = "Blue'sTreasureHunt";

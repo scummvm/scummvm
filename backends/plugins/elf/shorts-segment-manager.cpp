@@ -85,5 +85,3 @@ void ShortSegmentManager::deleteSegment(ShortSegmentManager::Segment *seg) {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
-
-

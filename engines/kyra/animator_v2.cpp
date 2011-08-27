@@ -185,4 +185,3 @@ void KyraEngine_v2::deleteItemAnimEntry(int item) {
 }
 
 } // End of namespace Kyra
-

@@ -650,4 +650,3 @@ void KyraEngine_v1::syncSoundSettings() {
 }
 
 } // End of namespace Kyra
-

@@ -40,8 +40,8 @@ public:
 	Myst(MohawkEngine_Myst *vm);
 	~Myst();
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	virtual void disablePersistentScripts();
+	virtual void runPersistentScripts();
 
 private:
 	void setupOpcodes();

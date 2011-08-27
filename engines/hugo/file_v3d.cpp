@@ -205,4 +205,3 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 	}
 }
 } // End of namespace Hugo
-

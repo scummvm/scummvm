@@ -42,8 +42,7 @@ public:
 	virtual void hideOverlay();
 	virtual void warpMouse(int x, int y);
 
-protected:
-	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void transformMouseCoordinates(Common::Point &point);
 };
 
 #endif

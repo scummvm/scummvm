@@ -83,4 +83,3 @@ uint32 PspRtc::getMicros() {
 
 	return ticks[0];
 }
-

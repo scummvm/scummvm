@@ -2192,4 +2192,3 @@ void LoLEngine::drawSpecialGuiShape(int pageNum) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

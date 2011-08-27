@@ -575,7 +575,14 @@ void KyraEngine_LoK::dropItem(int unk1, int item, int x, int y, int unk2) {
 	if (processItemDrop(_currentCharacter->sceneId, item, x, y, unk1, unk2))
 		return;
 	snd_playSoundEffect(54);
+	
+	// Old floppy versions don't print warning messages and don't have the necessary string resources.
+	// These versions will only play the warning sound effect.
+	if (_flags.isOldFloppy && !_noDropList)
+		return;
+
 	assert(_noDropList);
+
 	if (12 == countItemsInScene(_currentCharacter->sceneId))
 		drawSentenceCommand(_noDropList[0], 6);
 	else
@@ -969,4 +976,3 @@ int KyraEngine_LoK::getItemListIndex(Item item) {
 }
 
 } // End of namespace Kyra
-

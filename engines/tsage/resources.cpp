@@ -28,7 +28,7 @@
 #include "tsage/resources.h"
 #include "tsage/tsage.h"
 
-namespace tSage {
+namespace TsAGE {
 
 
 MemoryManager::MemoryManager() {
@@ -504,4 +504,4 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
 	return result;
 }
 
-} // end of namespace tSage
+} // end of namespace TsAGE

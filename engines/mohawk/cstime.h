@@ -30,8 +30,6 @@
 #include "common/random.h"
 #include "common/list.h"
 
-#include "audio/mixer.h"
-
 namespace Mohawk {
 
 class CSTimeCase;

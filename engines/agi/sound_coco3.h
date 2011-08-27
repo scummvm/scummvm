@@ -42,7 +42,7 @@ struct CoCoNote {
 
 class SoundGenCoCo3 : public SoundGen, public Audio::AudioStream {
 public:
-	SoundGenCoCo3(AgiEngine *vm, Audio::Mixer *pMixer);
+	SoundGenCoCo3(AgiBase *vm, Audio::Mixer *pMixer);
 	~SoundGenCoCo3();
 
 	void play(int resnum);

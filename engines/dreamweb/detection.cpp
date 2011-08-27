@@ -40,7 +40,7 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
 		_singleid = "dreamweb";
-		_guioptions = Common::GUIO_NOMIDI | Common::GUIO_NOLAUNCHLOAD;
+		_guioptions = Common::GUIO_NOMIDI;
 	}
 
 	virtual const char *getName() const {
@@ -61,8 +61,8 @@ public:
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
-	//case kSupportsLoadingDuringStartup:
-	//case kSupportsDeleteSave:
+	case kSupportsLoadingDuringStartup:
+	case kSupportsDeleteSave:
 		return true;
 	default:
 		return false;
@@ -105,14 +105,15 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		stream->read(name, sizeof(name) - 1);
 		delete stream;
 
-		SaveStateDescriptor sd(i, name);
+		int slotNum = atoi(file.c_str() + file.size() - 2);
+		SaveStateDescriptor sd(slotNum, name);
 		saveList.push_back(sd);
 	}
 
 	return saveList;
 }
 
-int DreamWebMetaEngine::getMaximumSaveSlot() const { return 6; }
+int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 }

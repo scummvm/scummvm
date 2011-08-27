@@ -69,7 +69,7 @@ bool ImageViewer::load(int imageNum) {
 	assert(_renderer);
 
 	// Load a PNG into our buffer and palette. Size it by the actual size of the image
-	PngLoader image(file, *_buffer, *_palette, Buffer::kSizeBySourceSize);
+	PngLoader image(*file, *_buffer, *_palette, Buffer::kSizeBySourceSize);
 
 	PngLoader::Status status = image.allocate();	// allocate the buffers for the file
 

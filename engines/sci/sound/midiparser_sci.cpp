@@ -626,7 +626,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			if (info.ext.type == 0x2F) {// end of track reached
 				if (_pSnd->loop)
 					_pSnd->loop--;
-				if (_pSnd->loop) {
+				// QFG3 abuses the hold flag. Its scripts call kDoSoundSetHold,
+				// but sometimes there's no hold marker in the associated songs
+				// (e.g. song 110, during the intro). The original interpreter
+				// treats this case as an infinite loop (bug #3311911).
+				if (_pSnd->loop || _pSnd->hold > 0) {
 					// We need to play it again...
 					jumpToTick(_loopTick);
 				} else {

@@ -39,6 +39,11 @@ bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
+ifdef USE_SPARKLE
+	mkdir -p $(bundle_name)/Contents/Frameworks
+	cp $(srcdir)/dists/macosx/dsa_pub.pem $(bundle_name)/Contents/Resources/
+	cp -R $(STATICLIBPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
+endif
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
@@ -108,6 +113,10 @@ ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
 
+ifdef USE_SPARKLE
+OSX_STATIC_LIBS += -framework Sparkle -F$(STATICLIBPATH)
+endif
+
 ifdef USE_TERMCONV
 OSX_ICONV ?= -liconv
 endif
@@ -151,6 +160,8 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/fr
 	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
@@ -247,4 +258,3 @@ endif
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
-

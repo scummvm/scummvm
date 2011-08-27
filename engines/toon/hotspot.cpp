@@ -149,4 +149,3 @@ HotspotData *Hotspots::Get(int32 id) {
 }
 
 } // End of namespace Toon
-

@@ -58,4 +58,3 @@
 	<uses-configuration android:reqTouchScreen="stylus"
 			android:reqKeyboardType="qwerty"/>
 </manifest>
-

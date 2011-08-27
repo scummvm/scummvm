@@ -340,4 +340,3 @@ int KyraEngine_v2::o2a_setResetFrame(EMCState *script) {
 }
 
 } // End of namespace Kyra
-

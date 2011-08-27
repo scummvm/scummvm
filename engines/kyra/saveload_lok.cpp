@@ -317,4 +317,3 @@ Common::Error KyraEngine_LoK::saveGameStateIntern(int slot, const char *saveName
 	return Common::kNoError;
 }
 } // End of namespace Kyra
-

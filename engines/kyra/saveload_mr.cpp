@@ -327,4 +327,3 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 }
 
 } // End of namespace Kyra
-

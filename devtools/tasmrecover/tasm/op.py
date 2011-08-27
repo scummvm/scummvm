@@ -428,4 +428,3 @@ class label(baseop):
 		self.name = name
 	def visit(self, visitor):
 		visitor._label(self.name)
-

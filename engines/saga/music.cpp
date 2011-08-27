@@ -213,7 +213,7 @@ void Music::setVolume(int volume, int time) {
 		return;
 	}
 
-	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this);
+	_vm->getTimerManager()->installTimerProc(&musicVolumeGaugeCallback, time * 3000L, this, "sagaMusicVolume");
 }
 
 bool Music::isPlaying() {
@@ -386,4 +386,3 @@ void Music::stop() {
 }
 
 } // End of namespace Saga
-

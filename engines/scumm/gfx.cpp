@@ -4111,4 +4111,3 @@ void ScummEngine::unkScreenEffect6() {
 }
 
 } // End of namespace Scumm
-
