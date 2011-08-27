@@ -21,11 +21,6 @@
  */
 
 #include "common/archive.h"
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/hash-str.h"
-#include "common/hashmap.h"
 #include "common/str.h"
 
 #ifndef AGOS_INSTALLSHIELD_CAB_H
@@ -33,34 +28,13 @@
 
 namespace AGOS {
 
-class InstallShieldCabinet : public Common::Archive {
-public:
-	InstallShieldCabinet();
-	~InstallShieldCabinet();
-
-	bool open(const Common::String &filename);
-	void close();
-	bool isOpen() const { return _stream != 0; }
-
-	// Common::Archive API implementation
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-
-private:
-	struct FileEntry {
-		uint32 uncompressedSize;
-		uint32 compressedSize;
-		uint32 offset;
-		uint16 flags;
-	};
-
-	Common::SeekableReadStream *_stream;
-
-	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
-	FileMap _map;
-};
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the InstallShield compressed file with the given name.
+ *
+ * May return 0 in case of a failure.
+ */
+Common::Archive *makeInstallShieldArchive(const Common::String &name);
 
 } // End of namespace AGOS
 
