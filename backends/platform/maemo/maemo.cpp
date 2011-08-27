@@ -51,9 +51,6 @@ void OSystem_SDL_Maemo::quit() {
 
 void OSystem_SDL_Maemo::fatalError() {
 	delete this;
-	// FIXME
-	warning("fatal error");
-	for (;;) {}
 }
 
 void OSystem_SDL_Maemo::setXWindowName(const char *caption) {
