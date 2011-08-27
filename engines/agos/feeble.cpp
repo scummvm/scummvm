@@ -45,6 +45,9 @@ AGOSEngine_Feeble::~AGOSEngine_Feeble() {
 }
 
 static const GameSpecificSettings feeblefiles_settings = {
+	"game22",                               // base_filename
+	"save.999",                             // restore_filename
+	"tbllist",                              // tbl_filename
 	"",                                     // effects_filename
 	"VOICES",                               // speech_filename
 };

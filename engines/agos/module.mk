@@ -51,6 +51,7 @@ ifdef ENABLE_AGOS2
 MODULE_OBJS += \
 	animation.o \
 	feeble.o \
+	installshield_cab.o \
 	oracle.o \
 	script_dp.o \
 	script_ff.o \
