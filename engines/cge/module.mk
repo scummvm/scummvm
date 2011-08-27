@@ -2,13 +2,12 @@ MODULE := engines/cge
 
 MODULE_OBJS := \
 	bitmap.o \
-	btfile.o \
-	cfile.o \
 	cge.o \
 	cge_main.o \
 	console.o \
 	detection.o \
 	events.o \
+	fileio.o \
 	game.o \
 	general.o \
 	gettext.o \
@@ -18,7 +17,6 @@ MODULE_OBJS := \
 	text.o \
 	vga13h.o \
 	vmenu.o \
-	vol.o \
 	walk.o
 
 MODULE_DIRS += \
