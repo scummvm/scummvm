@@ -1357,6 +1357,15 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 			s->saveLoadArrayOf(_roomPalette, 256, 1, sleByte);
 			s->saveLoadArrayOf(_verbPalette, 256, 1, sleByte);
 			s->saveLoadArrayOf(_amigaPalette, 3 * 64, 1, sleByte);
+
+			// Starting from version 86 we also save the first used color in
+			// the palette beyond the verb palette. For old versions we just
+			// look for it again, which hopefully won't cause any troubles.
+			if (s->getVersion() >= 86) {
+				s->saveLoadArrayOf(&_amigaFirstUsedColor, 1, 2, sleUint16);
+			} else {
+				amigaPaletteFindFirstUsedColor();
+			}
 		} else {
 			warning("Save with old Indiana Jones 4 Amiga palette handling detected");
 			// We need to restore the internal state of the Amiga palette for Indy4

@@ -1092,6 +1092,7 @@ protected:
 	// Indy4 Amiga specific
 	uint16 _amigaFirstUsedColor;
 	byte _amigaPalette[3 * 64];
+	void amigaPaletteFindFirstUsedColor();
 	void mapRoomPalette(int idx);
 	int remapRoomPaletteColor(int r, int g, int b);
 	void mapVerbPalette(int idx);

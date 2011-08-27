@@ -380,16 +380,7 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 		_colorUsedByCycle[i] = 0;
 	}
 
-	_amigaFirstUsedColor = 80;
-	for (; _amigaFirstUsedColor < 256; ++_amigaFirstUsedColor) {
-		// We look for the first used color here. If all color components are
-		// >= 252 the color seems to be unused. Check remapPaletteColor for
-		// the same behavior.
-		if (ptr[_amigaFirstUsedColor * 3 + 0] <= 251
-		    || ptr[_amigaFirstUsedColor * 3 + 1] <= 251
-		    || ptr[_amigaFirstUsedColor * 3 + 2] <= 251)
-			break;
-	}
+	amigaPaletteFindFirstUsedColor();
 
 	for (int i = 0; i < 64; ++i) {
 		_amigaPalette[i * 3 + 0] = _currentPalette[(i + 16) * 3 + 0] >> 4;
@@ -422,6 +413,18 @@ void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
 	}
 
 	setDirtyColors(0, 255);
+}
+
+void ScummEngine::amigaPaletteFindFirstUsedColor() {
+	for (_amigaFirstUsedColor = 80; _amigaFirstUsedColor < 256; ++_amigaFirstUsedColor) {
+		// We look for the first used color here. If all color components are
+		// >= 252 the color seems to be unused. Check remapPaletteColor for
+		// the same behavior.
+		if (_currentPalette[_amigaFirstUsedColor * 3 + 0] <= 251
+		    || _currentPalette[_amigaFirstUsedColor * 3 + 1] <= 251
+		    || _currentPalette[_amigaFirstUsedColor * 3 + 2] <= 251)
+			break;
+	}
 }
 
 void ScummEngine::mapRoomPalette(int idx) {
