@@ -46,9 +46,6 @@ namespace CGE {
 #define kFontHigh          8
 #define kFontExt           ".CFT"
 #define kPathMax           128
-#define kGetTextMax        24
-#define kGetTextBlink      6
-#define kGetTextTime       6
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
 
@@ -91,25 +88,6 @@ class InfoLine : public Talk {
 public:
 	InfoLine(CGEEngine *vm, uint16 wid);
 	void update(const char *text);
-private:
-	CGEEngine *_vm;
-};
-
-class GetText : public Talk {
-	char   _buff[kGetTextMax + 2];
-	char  *_text;
-	uint16 _size;
-	uint16 _len;
-	uint16 _cntr;
-	Sprite *_oldKeybClient;
-
-public:
-	static GetText *_ptr;
-	GetText(CGEEngine *vm, const char *info, char *text, int size);
-	~GetText();
-	void touch(uint16 mask, int x, int y);
-	void tick();
-
 private:
 	CGEEngine *_vm;
 };
