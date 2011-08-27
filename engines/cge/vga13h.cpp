@@ -448,7 +448,6 @@ void Sprite::center() {
 
 void Sprite::show() {
 	SprExt *e;
-// asm cli     // critic section...
 	e = _ext;
 	e->_x0 = e->_x1;
 	e->_y0 = e->_y1;
@@ -456,7 +455,6 @@ void Sprite::show() {
 	e->_x1 = _x;
 	e->_y1 = _y;
 	e->_b1 = shp();
-//  asm sti     // ...done!
 	if (!_flags._hide) {
 		if (_flags._xlat)
 			e->_b1->xShow(e->_x1, e->_y1);
@@ -466,10 +464,10 @@ void Sprite::show() {
 }
 
 void Sprite::show(uint16 pg) {
-	Graphics::Surface *a = Vga::_page[1];
-	Vga::_page[1] = Vga::_page[pg & 3];
+	Graphics::Surface *a = _vga->_page[1];
+	_vga->_page[1] = _vga->_page[pg & 3];
 	shp()->show(_x, _y);
-	Vga::_page[1] = a;
+	_vga->_page[1] = a;
 }
 
 void Sprite::hide() {
@@ -673,45 +671,24 @@ Sprite *Queue::locate(int ref) {
 	return NULL;
 }
 
-//extern const char Copr[];
-Graphics::Surface *Vga::_page[4];
-Dac *Vga::_sysPal;
+Vga::Vga() : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
+	_oldColors = NULL;
+	_newColors = NULL;
+	_showQ = new Queue(true);
+	_spareQ = new Queue(false);
+	_sysPal = new Dac[kPalCount];
 
-void Vga::init() {
 	for (int idx = 0; idx < 4; idx++) {
 		_page[idx] = new Graphics::Surface();
 		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	_sysPal = new Dac[kPalCount];
-}
-
-void Vga::deinit() {
-	for (int idx = 0; idx < 4; idx++) {
-		_page[idx]->free();
-		delete _page[idx];
-	}
-	delete[] _sysPal;
-}
-
-Vga::Vga()
-	: _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
-	_oldColors = NULL;
-	_newColors = NULL;
-	_showQ = new Queue(true);
-	_spareQ = new Queue(false);
-
-	bool std = true;
 	for (int i = 10; i < 20; i++) {
 		char *text = _text->getText(i);
 		if (text) {
 			debugN(1, "%s\n", text);
-			std = false;
 		}
 	}
-	if (std)
-//		warning(Copr);
-		warning("TODO: Fix Copr");
 
 	_oldColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
@@ -743,6 +720,12 @@ Vga::~Vga() {
 
 	delete _showQ;
 	delete _spareQ;
+	delete[] _sysPal;
+
+	for (int idx = 0; idx < 4; idx++) {
+		_page[idx]->free();
+		delete _page[idx];
+	}
 }
 
 void Vga::waitVR() {
@@ -862,14 +845,14 @@ void Bitmap::xShow(int16 x, int16 y) {
 	debugC(4, kCGEDebugBitmap, "Bitmap::xShow(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)Vga::_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
 	byte *lookupTable = _m;
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -915,13 +898,13 @@ void Bitmap::show(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::show(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)Vga::_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -979,8 +962,8 @@ void Bitmap::hide(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::hide(%d, %d)", x, y);
 
 	for (int yp = y; yp < y + _h; yp++) {
-		const byte *srcP = (const byte *)Vga::_page[2]->getBasePtr(x, yp);
-		byte *destP = (byte *)Vga::_page[1]->getBasePtr(x, yp);
+		const byte *srcP = (const byte *)_vga->_page[2]->getBasePtr(x, yp);
+		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x, yp);
 
 		Common::copy(srcP, srcP + _w, destP);
 	}

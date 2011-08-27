@@ -196,13 +196,11 @@ public:
 	Queue *_showQ;
 	Queue *_spareQ;
 	int _mono;
-	static Graphics::Surface *_page[4];
-	static Dac *_sysPal;
+	Graphics::Surface *_page[4];
+	Dac *_sysPal;
 
 	Vga();
 	~Vga();
-	static void init();
-	static void deinit();
 
 	void getColors(Dac *tab);
 	void setColors(Dac *tab, int lum);
