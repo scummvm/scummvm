@@ -117,7 +117,6 @@ void CGEEngine::setup() {
 	_console = new CGEConsole(this);
 
 	// Initialise classes that have static members
-	Vga::init();
 	VFile::init();
 	Bitmap::init();
 	Talk::init();
@@ -178,7 +177,6 @@ CGEEngine::~CGEEngine() {
 	Talk::deinit();
 	Bitmap::deinit();
 	VFile::deinit();
-	Vga::deinit();
 	Cluster::init(this);
 
 	// Remove all of our debug levels here

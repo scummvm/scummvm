@@ -565,7 +565,7 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 			spr->_flags._slav = false;
 		} else {
 			if (spr->_ref % 1000 == 0)
-				Bitmap::_pal = Vga::_sysPal;
+				Bitmap::_pal = _vga->_sysPal;
 			if (spr->_flags._back)
 				spr->backShow(true);
 			else
@@ -856,7 +856,7 @@ void CGEEngine::snFlash(bool on) {
 	if (on) {
 		Dac *pal = (Dac *) malloc(sizeof(Dac) * kPalCount);
 		if (pal) {
-			memcpy(pal, Vga::_sysPal, kPalSize);
+			memcpy(pal, _vga->_sysPal, kPalSize);
 			for (int i = 0; i < kPalCount; i++) {
 				register int c;
 				c = pal[i]._r << 1;
@@ -869,7 +869,7 @@ void CGEEngine::snFlash(bool on) {
 			_vga->setColors(pal, 64);
 		}
 	} else
-		_vga->setColors(Vga::_sysPal, 64);
+		_vga->setColors(_vga->_sysPal, 64);
 	_dark = false;
 }
 
@@ -877,7 +877,7 @@ void CGEEngine::snLight(bool in) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snLight(%s)", in ? "true" : "false");
 
 	if (in)
-		_vga->sunrise(Vga::_sysPal);
+		_vga->sunrise(_vga->_sysPal);
 	else
 		_vga->sunset();
 	_dark = !in;

@@ -545,7 +545,7 @@ void CGEEngine::showBak(int ref) {
 	if (!spr)
 		return;
 
-	Bitmap::_pal = Vga::_sysPal;
+	Bitmap::_pal = _vga->_sysPal;
 	spr->expand();
 	Bitmap::_pal = NULL;
 	spr->show(2);
@@ -600,7 +600,7 @@ void CGEEngine::caveUp() {
 
 	if (_shadow) {
 		_vga->_showQ->remove(_shadow);
-		_shadow->makeXlat(glass(Vga::_sysPal, 204, 204, 204));
+		_shadow->makeXlat(glass(_vga->_sysPal, 204, 204, 204));
 		_vga->_showQ->insert(_shadow, _hero);
 		_shadow->_z = _hero->_z;
 	}
@@ -608,7 +608,7 @@ void CGEEngine::caveUp() {
 	_vga->show();
 	_vga->copyPage(1, 0);
 	_vga->show();
-	_vga->sunrise(Vga::_sysPal);
+	_vga->sunrise(_vga->_sysPal);
 	_dark = false;
 	if (!_startupMode)
 		_mouse->on();
@@ -689,7 +689,7 @@ System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 }
 
 void System::setPal() {
-	Dac *p = Vga::_sysPal + 256 - ArrayCount(_stdPal);
+	Dac *p = _vga->_sysPal + 256 - ArrayCount(_stdPal);
 	for (uint i = 0; i < ArrayCount(_stdPal); i++) {
 		p[i]._r = _stdPal[i]._r >> 2;
 		p[i]._g = _stdPal[i]._g >> 2;
@@ -813,7 +813,7 @@ void CGEEngine::switchColorMode() {
 
 	_snail_->addCom(kSnSeq, 121, _vga->_mono = !_vga->_mono, NULL);
 	keyClick();
-	_vga->setColors(Vga::_sysPal, 64);
+	_vga->setColors(_vga->_sysPal, 64);
 }
 
 void CGEEngine::switchMusic() {
@@ -1419,7 +1419,7 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_eventManager->_quitFlag)
 		return false;
 
-	Bitmap::_pal = Vga::_sysPal;
+	Bitmap::_pal = _vga->_sysPal;
 	BitmapPtr *LB = new BitmapPtr[2];
 	LB[0] = new Bitmap(name);
 	LB[1] = NULL;
@@ -1440,7 +1440,7 @@ bool CGEEngine::showTitle(const char *name) {
 	_vga->copyPage(1, 2);
 	_vga->copyPage(0, 1);
 	selectPocket(-1);
-	_vga->sunrise(Vga::_sysPal);
+	_vga->sunrise(_vga->_sysPal);
 
 	if (_mode < 2 && !_soundOk) {
 		_vga->copyPage(1, 2);
@@ -1481,7 +1481,7 @@ bool CGEEngine::showTitle(const char *name) {
 			if (savegameExists(0)) {
 				// Load the savegame
 				loadGame(0, NULL, true); // only system vars
-				_vga->setColors(Vga::_sysPal, 64);
+				_vga->setColors(_vga->_sysPal, 64);
 				_vga->update();
 				if (_flag[3]) { //flag FINIS
 					_mode++;
