@@ -26,7 +26,6 @@
  */
 
 #include "cge/bitmap.h"
-#include "cge/jbw.h"
 #include "cge/vga13h.h"
 #include "cge/cge_main.h"
 #include "common/system.h"
