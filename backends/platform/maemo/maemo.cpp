@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/scummsys.h"
-
 #if defined(MAEMO)
+
+#include "common/scummsys.h"
 
 #include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"

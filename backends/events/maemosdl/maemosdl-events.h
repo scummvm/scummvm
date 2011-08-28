@@ -20,6 +20,8 @@
  *
  */
 
+#if defined(MAEMO)
+
 #if !defined(BACKEND_EVENTS_SDL_MAEMO_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
 #define BACKEND_EVENTS_SDL_MAEMO_H
 
@@ -40,5 +42,7 @@ protected:
 
 	bool _clickEnabled;
 };
+
+#endif
 
 #endif

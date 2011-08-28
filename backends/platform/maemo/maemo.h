@@ -20,10 +20,10 @@
  *
  */
 
+#if defined(MAEMO)
+
 #ifndef PLATFORM_SDL_MAEMO_H
 #define PLATFORM_SDL_MAEMO_H
-
-#if defined(MAEMO)
 
 #include "backends/platform/sdl/posix/posix.h"
 
