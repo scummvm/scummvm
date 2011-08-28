@@ -40,7 +40,7 @@ void Scene::init(int width, int height) {
 	glEnable(GL_DEPTH_TEST);
 	
 	_cameraPitch = 0.0f;
-	_cameraYaw = 0.0f;
+	_cameraHeading = 0.0f;
 }
 
 void Scene::clear() {
@@ -51,15 +51,22 @@ void Scene::clear() {
 void Scene::setupCamera() {
 	// Rotate the model to simulate the rotation of the camera
 	glLoadIdentity();
-	glRotatef(_cameraPitch, 1.0f, 0.0f, 0.0f);
-	glRotatef(_cameraYaw, 0.0f, 1.0f, 0.0f);
+	glRotatef(_cameraPitch, -1.0f, 0.0f, 0.0f);
+	glRotatef(_cameraHeading - 180.0f, 0.0f, 1.0f, 0.0f);
 }
 
 void Scene::updateCamera(Common::Point &mouse) {
-	_cameraYaw += mouse.x / 3.0f;
-	_cameraPitch += mouse.y / 3.0f;
+	_cameraPitch -= mouse.y / 3.0f;
+	_cameraHeading += mouse.x / 3.0f;
 
-	_cameraPitch = CLIP(_cameraPitch, -90.0f, 90.0f);
+	// Keep heading in 0..360 range
+	if (_cameraHeading > 360.0f)
+		_cameraHeading -= 360.0f;
+	else if (_cameraHeading < 0.0f)
+		_cameraHeading += 360.0f;
+
+	// Keep pitch within allowed values
+	_cameraPitch = CLIP(_cameraPitch, -60.0f, 80.0f);
 }
 
 } // end of namespace Myst3

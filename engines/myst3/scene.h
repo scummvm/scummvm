@@ -40,7 +40,7 @@ namespace Myst3 {
 class Scene {
 	private:
 		float _cameraPitch;
-		float _cameraYaw;
+		float _cameraHeading;
 		Common::Point _mouseOld;
 
 	public:
