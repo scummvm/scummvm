@@ -79,8 +79,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"soltys", "",
 		{
-			{"vol.cat", 0, "bfea076fee47b8d64fdf213e56c60911", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8427396},
+			{"vol.cat", 0, "bd08969b5f1acea0f92d195f750c17d5", 50176},
+			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8428832},
 			AD_LISTEND
 		},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
