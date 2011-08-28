@@ -1,9 +1,0 @@
-name=Willow Fortune's
-type=dead
-East=1
-phase=08kolo
-
-Take= REACH   -1    -1
-Take= SOUND   -1  8005  drap!
-Take= SAY      1  8005
-

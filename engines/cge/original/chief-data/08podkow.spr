@@ -1,9 +1,0 @@
-name=A rack
-type=dead
-phase=08podkow
-East=1
-
-.Take= REACH    -1    -1  si‘g
-.Take= SOUND    -1     1  drap
-Take= SAY       1  8006  gada
-

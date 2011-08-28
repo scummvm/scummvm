@@ -1,4 +1,0 @@
-//            struct far *
-	      BITMAP::Pal = (memcmp(Palette, Pal0, sizeof(Palette))) ? Palette
-								     : NULL;
-//	      assign NULL as DS:0

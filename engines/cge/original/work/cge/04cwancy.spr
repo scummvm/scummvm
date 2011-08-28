@@ -1,9 +1,0 @@
-name=cwancykator
-type=dead
-phase=04cwancy
-
-Take= REACH   -1    -1
-Take= SOUND   -1  4007
-Take= WAIT     1    -1
-Take= SAY      1  4003
-

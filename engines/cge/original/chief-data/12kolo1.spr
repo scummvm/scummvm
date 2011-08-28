@@ -1,8 +1,0 @@
-name=A wagon
-type=dead
-phase=12kolo1
-
-Take= REACH    -1    -1  si‘g
-Take= SOUND    -1     1  drap
-Take= SAY       1 12005  gada
-

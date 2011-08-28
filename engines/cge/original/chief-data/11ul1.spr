@@ -1,9 +1,0 @@
-name=A deserted apiary
-type=dead
-phase=11ul1
-
-
-Take= REACH    -1    -1
-Take= SOUND    -1 11001  pukanie
-Take= SAY       1 11004
-
