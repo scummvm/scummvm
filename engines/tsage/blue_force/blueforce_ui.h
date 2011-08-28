@@ -102,6 +102,7 @@ public:
 	UICollection();
 	void setup(const Common::Point &pt);
 	void hide();
+	void show();
 	void resetClear();
 	void draw();
 };
@@ -119,7 +120,7 @@ public:
 	UIInventoryScroll _scrollLeft, _scrollRight;
 	ASound _sound;
 	int _itemCount, _slotStart, _scoreValue;
-	bool _field820;
+	bool _active;
 	Common::Array<int> _itemList;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL) { error("Wrong init() called"); }

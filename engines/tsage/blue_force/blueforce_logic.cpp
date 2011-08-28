@@ -422,7 +422,7 @@ SceneExt::SceneExt(): Scene() {
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit(OwnerList);
-	if (BF_GLOBALS._v4CEA2) {
+	if (BF_GLOBALS._dayNumber) {
 		// Blank out the bottom portion of the screen
 		BF_GLOBALS._interfaceY = BF_INTERFACE_Y;
 
@@ -441,7 +441,7 @@ void SceneExt::dispatch() {
 	_timerList.dispatch();
 
 	if (_field37A) {
-		if ((--_field37A == 0) && BF_GLOBALS._v4CEA2) {
+		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
 			if (BF_GLOBALS._v4E238 && (BF_GLOBALS._v4CF9E == 1)) {
 				warning("sub_1B052");
 			}
@@ -494,8 +494,11 @@ void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 	SceneHandler::postInit(OwnerList);
 
 	// Load the low end palette data
-	GLOBALS._scenePalette.loadPalette(2);
-	GLOBALS._scenePalette.refresh();
+	BF_GLOBALS._scenePalette.loadPalette(2);
+	BF_GLOBALS._scenePalette.refresh();
+
+	// Setup the user interface
+	BF_GLOBALS._uiElements.setup(Common::Point(0, BF_INTERFACE_Y - 2));
 }
 
 void SceneHandlerExt::process(Event &event) {
@@ -548,8 +551,8 @@ void VisualSpeaker::proc12(Action *action) {
 }
 
 void VisualSpeaker::setText(const Common::String &msg) {
-	BF_GLOBALS._events.waitForPress();
 	_objectList.draw();
+	BF_GLOBALS._sceneObjects->draw();
 
 	_sceneText._color1 = _color1;
 	_sceneText._color2 = _color2;

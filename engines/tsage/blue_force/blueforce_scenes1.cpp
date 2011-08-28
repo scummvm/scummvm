@@ -176,7 +176,7 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.disableControl();
 	_index = 109;
 
-	if (BF_GLOBALS._v4CEA2 < 6) {
+	if (BF_GLOBALS._dayNumber < 6) {
 		// Title
 		loadScene(100);
 		BF_GLOBALS._sound1.play(2);
@@ -191,7 +191,7 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 
 void Scene100::signal() {
 	++_sceneMode;
-	if (BF_GLOBALS._v4CEA2 < 6) {
+	if (BF_GLOBALS._dayNumber < 6) {
 		BF_GLOBALS._scenePalette.clearListeners();
 		BF_GLOBALS._scenePalette.loadPalette(100);
 		BF_GLOBALS._sceneManager.changeScene(_index);

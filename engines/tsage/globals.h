@@ -111,31 +111,78 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
+enum Bookmark {
+	bNone,
+	bStartOfGame, bCalledToDomesticViolence, bArrestedGreen, bLauraToParamedics,
+	bBookedGreen, bStoppedFrankie, bBookedFrankie, bBookedFrankieEvidence,
+	bEndOfWorkDayOne, bTalkedToGrannyAboutSkipsCard, bLyleStoppedBy, bEndDayOne,
+	bInspectionDone, bCalledToDrunkStop, bArrestedDrunk, bEndDayTwo,
+	bFlashBackOne, bFlashBackTwo, bFlashBackThree, bDroppedOffLyle, bEndDayThree,
+	bDoneWithIsland, bDoneAtLyles, bEndDayFour, bInvestigateBoat, bFinishedWGreen,
+	bAmbushed, bAmbushOver, bEndOfGame
+};
+
+enum Flag {
+	JAKE_FILE_COPIED, gunClean, onBike, onDuty, fShowedIdToKate, fLateToMarina,
+	fCalledBackup, fWithLyle, gunDrawn, fBackupArrived340, fBriefedBackup,
+	fGotAllSkip340, fToldToLeave340, fBackupIn350, fNetInBoat, fForbesWaiting,
+	fWithCarter, fTalkedToTony, fMugOnKate, takenWeasel, gotTrailer450,
+	showEugeneNapkin, showRapEugene, fMgrCallsWeasel, fCarterMetLyle,
+	fGunLoaded, fLoadedSpare, showEugeneID, fRandomShot350, examinedFile810,
+	shownLyleCrate1, shownLyleRapsheet, shownLyleDisk, shownLylePO,
+	fCanDrawGun, fGotAutoWeapon, fGotBulletsFromDash, fShotSuttersDesk,
+	greenTaken, fLateToDrunkStop, didDrunk, fSearchedTruck, seenFolder,
+	showMugAround, frankInJail, fTalkedCarterDay3, fDecryptedBluePrints,
+	fTalkedToDrunkInCar, fToldLyleOfSchedule, fTalkedShooterNoBkup,
+	fTalkedDriverNoBkup, fDriverOutOfTruck, readGreenRights, readFrankRights,
+	talkedToHarrisAboutDrunk, unlockBoat, fShootGoon, fBlowUpGoon,
+	fTalkedToBarry, fTalkedToLarry, fLeftTraceIn920, fLeftTraceIn900,
+	fBackupAt340, fShotNicoIn910, fGotPointsForTktBook, fGotPointsForMCard,
+	fShowedBluePrint, fGotPointsForPunch, fGotPointsForBox, fGotPointsForBank,
+	fGotPointsForCombo, fGotPointsForCoin, fGotPointsForCPU, fGotPointsForBoots,
+	fGotPointsForCrate, fGotPointsForBlackCord, fGotPointsForGeneratorPlug,
+	fGotPointsForFuseBoxPlug, fGotPointsForStartGenerator, fGotPointsForLightsOn,
+	fGotPointsForOpeningDoor, fGotPointsForClosingDoor, fGotPointsForLightsOff,
+	fGotPointsForGeneratorOff, fGotPointsForCordOnForklift, fGotPointsForCuffingNico,
+	fGotPointsForCuffingDA, fGotPointsForSearchingNico, fGotPointsForSearchingDA,
+	fLeftTraceIn910, fBookedGreenEvidence, fGotPointsForCleaningGun,
+	fGotPointsForMemo, fGotPointsForFBI, fTookTrailerAmmo, fAlertedGreen355,
+	fGotGreen355fTalkedToGrannyDay3, shownFax, beenToJRDay2, shownLyleCrate1Day1,
+	fLyleOnIsland, iWasAmbushed, fGangInCar, fArrivedAtGangStop, ticketVW,
+	f1015Marina, fCan1015Marina, f1015Frankie, fCan1015Frankie, f1015Drunk,
+	fCan1015Drunk, f1027Marina, fCan1027Marina, f1027Frankie, fCan1027Frankie,
+	f1027Drunk, fCan1027Drunk, f1035Marina, fCan1035Marina, f1035Frankie,
+	fCan1035Frankie, f1035Drunk, fCan1035Drunk, f1097Marina, fCan1097Marina,
+	f1097Frankie, fCan1097Frankie, f1097Drunk, fCan1097Drunk, f1098Marina,
+	fCan1098Marina, f1098Frankie, fCan1098Frankie, f1098Drunk, fCan1098Drunk,
+	fCuffedFrankie, fGotPointsForTrapDog, fGotPointsForUnlockGate,
+	fGotPointsForUnlockWarehouse, fGotPointsForLockWarehouse, fGotPointsForLockGate,
+	fGotPointsForFreeDog, fGotPointsForWhistleDog, fGivenNapkin, fCan1004Marina,
+	fCan1004Drunk, fHasLeftDrunk, fHasDrivenFromDrunk, fCrateOpen, fSawGuns,
+	hookPoints
+};
+
 class BlueForceGlobals: public Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3;
 	UIElements _uiElements;
-	int _v4CEA2;
+	int _dayNumber;
 	int _v4CEA4;
 	int _v4CEA8;
-	int _v4CEF2;
-	int _v4CEF4;
+	int _driveFromScene;
+	int _driveToScene;
 	int _v4CF9E;
 	int _v4E238;
 	int _v501FC;
 	int _v51C42;
 	int _v51C44;
 	int _interfaceY;
-	int _bikiniHutState;
+	Bookmark _bookmark;
 	int _mapLocationId;
-	uint8 _globalFlags[12];
 
 	BlueForceGlobals();
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
-
-	void setFlag(int v);
-	bool getFlag(int v);
 };
 
 } // End of namespace BlueForce

@@ -48,7 +48,7 @@ void Scene300::Object::startMover(CursorType action) {
 void Scene300::Object17::startMover(CursorType action) {
 	if ((action != CURSOR_USE) || !BF_GLOBALS.getFlag(3)) {
 		NamedObject::startMover(action);
-	} else if ((BF_GLOBALS._v4CEA2 != 2) || (BF_GLOBALS._bikiniHutState >= 12)) {
+	} else if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark >= bEndDayOne)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		setAction(&scene->_action4);
 	} else {
@@ -249,10 +249,12 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
 	BF_GLOBALS._player.disableControl();
 
+	_object8.postInit();
+	_object8.setVisage(301);
 	_object8.setStrip(2);
 	_object8.setPosition(Common::Point(300, 77));
 
-	if ((BF_GLOBALS._v4CEA2 != 2) || (BF_GLOBALS._bikiniHutState < 12)) {
+	if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark < bEndDayOne)) {
 		_object17.postInit();
 		_object17.setVisage(301);
 		_object17.setStrip(1);
@@ -280,13 +282,14 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
  //***DEBUG***
 BF_GLOBALS.setFlag(2);
-BF_GLOBALS._sceneManager._previousScene = 190;
+BF_GLOBALS._sceneManager._previousScene = 315; // 190;
 BF_GLOBALS._player.setVisage(190);
+BF_GLOBALS._player.setStrip(1);
 
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 50:
 	case 60:
-		BF_GLOBALS.clearFlag(2);
+		BF_GLOBALS.clearFlag(onBike);
 		if (BF_GLOBALS.getFlag(3)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 318;
@@ -304,7 +307,7 @@ BF_GLOBALS._player.setVisage(190);
 			BF_GLOBALS._player.setPosition(Common::Point(175, 50));
 			ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, 123, 71);
 
-			if ((BF_GLOBALS._v4CEA2 == 2) && (BF_GLOBALS._bikiniHutState < 12))
+			if ((BF_GLOBALS._dayNumber == 2) && (BF_GLOBALS._bookmark < bEndDayOne))
 				setup();
 		} else if (!BF_GLOBALS.getFlag(3)) {
 			BF_GLOBALS._player.disableControl();
@@ -318,8 +321,8 @@ BF_GLOBALS._player.setVisage(190);
 		break;
 	case 315:
 		BF_GLOBALS._player.setPosition(Common::Point(305, 66));
-		if ((BF_GLOBALS._v4CEA2 != 2) || (BF_GLOBALS._bikiniHutState >= 12)) {
-			BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(3) ? 1304 : 303);
+		if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark >= bEndDayOne)) {
+			BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 1304 : 303);
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 0;
 			setAction(&_sequenceManager1, this, 306, &BF_GLOBALS._player, &_object8, NULL);
@@ -344,10 +347,10 @@ void Scene300::signal() {
 	switch (_sceneMode) {
 	case 300:
 		BF_GLOBALS._sound1.fadeSound(33);
-		BF_GLOBALS.clearFlag(2);
+		BF_GLOBALS.clearFlag(onBike);
 		_sceneMode = 0;
 
-		if ((BF_GLOBALS._v4CEA2 != 1) || (BF_GLOBALS._bikiniHutState != 0)) {
+		if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark != bNone)) {
 			signal();
 		} else {
 			_stripManager.start(3005, this);
@@ -373,7 +376,7 @@ void Scene300::signal() {
 		setAction(&_sequenceManager1, this, 303, &_object13, &_object1, NULL);
 		break;
 	case 305:
-		if ((BF_GLOBALS._v4CEA2 == 4) || (BF_GLOBALS._v4CEA2 == 5)) {
+		if ((BF_GLOBALS._dayNumber == 4) || (BF_GLOBALS._dayNumber == 5)) {
 			_sceneMode = 0;
 			setAction(&_action3);
 		} else {
@@ -407,7 +410,7 @@ void Scene300::signal() {
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
 	case 318:
-		BF_GLOBALS.clearFlag(2);
+		BF_GLOBALS.clearFlag(onBike);
 		_sceneMode = 0;
 		signal();
 		break;
@@ -442,7 +445,7 @@ void Scene300::signal() {
 		_object13.setAction(&_sequenceManager2, NULL, 313, &_object13, &_object17, NULL);
 		_object14.setAction(&_sequenceManager3, this, 314, &_object14, &_object18, NULL);
 
-		BF_GLOBALS._bikiniHutState = 12;
+		BF_GLOBALS._bookmark = bEndDayOne;
 		BF_GLOBALS._sound1.changeSound(33);
 		break;
 	case 2307:
@@ -504,6 +507,8 @@ void Scene300::signal() {
 }
 
 void Scene300::process(Event &event) {
+	SceneExt::process(event);
+
 	if ((BF_GLOBALS._player._field8E != 0) && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		Visage visage;
 

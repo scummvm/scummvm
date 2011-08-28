@@ -83,13 +83,13 @@ void UIQuestion::setEnabled(bool flag) {
 
 void UIScore::postInit(SceneObjectList *OwnerList) {
 	int xp = 266;
-	_digit3.setup(1, 6, 1, 266, 180, 255);
+	_digit3.setup(1, 6, 1, xp, 180, 255);
 	xp += 7;
-	_digit2.setup(1, 6, 1, 266, 180, 255);
+	_digit2.setup(1, 6, 1, xp, 180, 255);
 	xp += 7;
-	_digit1.setup(1, 6, 1, 266, 180, 255);
+	_digit1.setup(1, 6, 1, xp, 180, 255);
 	xp += 7;
-	_digit0.setup(1, 6, 1, 266, 180, 255);
+	_digit0.setup(1, 6, 1, xp, 180, 255);
 }
 
 void UIScore::draw() {
@@ -169,6 +169,11 @@ void UICollection::hide() {
 	_visible = false;
 }
 
+void UICollection::show() {
+	_visible = true;
+	draw();
+}
+
 void UICollection::erase() {
 	if (_clearScreen) {
 		Rect tempRect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -216,7 +221,7 @@ void UIElements::setup(const Common::Point &pt) {
 	_slotStart = 0;
 	_itemList.clear();
 	_scoreValue = 0;
-	_field820 = 1;
+	_active = true;
 	UICollection::setup(pt);
 	hide();
 
@@ -224,6 +229,7 @@ void UIElements::setup(const Common::Point &pt) {
 	add(&_object1);
 
 	// Set up the inventory slots
+	int xp = 0;
 	for (int idx = 0; idx < 4; ++idx) {
 		UIElement *item = NULL;
 		switch (idx) {
@@ -241,14 +247,16 @@ void UIElements::setup(const Common::Point &pt) {
 			break;
 		}
 
-		item->setup(9, 1, idx, idx * 63 + 2, 4, 255);
+		xp = idx * 63 + 2;
+		item->setup(9, 1, idx, xp, 4, 255);
 		add(item);
 	}
 
 	// Setup bottom-right hand buttons
-	int xp = 62;
+	xp += 62;
 	_question.setup(1, 4, 7, xp, 16, 255);
 	_question.setEnabled(false);
+	add(&_question);
 
 	xp += 21;
 	_scrollLeft.setup(1, 4, 1, xp, 16, 255);
@@ -275,7 +283,7 @@ void UIElements::add(UIElement *obj) {
 	assert(_objList.size() < 12);
 	_objList.push_back(obj);
 
-	obj->setPosition(Common::Point(_bounds.left + obj->_bounds.left, _bounds.top + obj->_bounds.top));
+	obj->setPosition(Common::Point(_bounds.left + obj->_position.x, _bounds.top + obj->_position.y));
 	GfxSurface s = obj->getFrame();
 	s.draw(obj->_position);
 }
@@ -326,7 +334,7 @@ void UIElements::updateInventory() {
 		}
 	}
 
-	if (_field820)
+	if (_active)
 		draw();
 }
 

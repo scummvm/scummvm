@@ -1786,6 +1786,8 @@ SceneObject::SceneObject() : SceneHotspot() {
 
 	_frameChange = 0;
 	_visage = 0;
+	_strip = 0;
+	_frame = 0;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2305,10 +2307,6 @@ void SceneObject::removeObject() {
 	_globals->_sceneItems.remove(this);
 	_globals->_sceneObjects->remove(this);
 
-	if (_visage) {
-		_visage = 0;
-	}
-
 	if (_objectWrapper) {
 		_objectWrapper->remove();
 		_objectWrapper = NULL;
@@ -2710,8 +2708,8 @@ void SceneText::synchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 Visage::Visage() {
-	_resNum = 0;
-	_rlbNum = 0;
+	_resNum = -1;
+	_rlbNum = -1;
 	_data = NULL;
 }
 
@@ -2738,7 +2736,27 @@ void Visage::setVisage(int resNum, int rlbNum) {
 		_resNum = resNum;
 		_rlbNum = rlbNum;
 		DEALLOCATE(_data);
-		_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
+
+		if (_vm->getGameID() == GType_Ringworld) {
+			// In Ringworld, we immediately get the data
+			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
+		} else {
+			// Blue Force has an extra indirection via a visage index file
+			byte *indexData = _resourceManager->getResource(RES_VISAGE, resNum, 9999);
+			if (rlbNum == 0)
+				rlbNum = 1;
+
+			// Get the flags/rlbNum to use
+			uint32 flags = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
+
+			if (flags & 0xC0000000) {
+				// TODO: See whether rest of flags dword is needed
+				rlbNum = (int)(flags & 0xff);
+			}
+
+			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
+		}
+
 		assert(_data);
 	}
 }
@@ -2787,6 +2805,10 @@ void Player::disableControl() {
 	_canWalk = false;
 	_uiEnabled = false;
 	_globals->_events.setCursor(CURSOR_NONE);
+	_field8E = 0;
+
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.hide();
 }
 
 void Player::enableControl() {
@@ -2805,6 +2827,9 @@ void Player::enableControl() {
 		_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	}
+
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.show();
 }
 
 void Player::process(Event &event) {
