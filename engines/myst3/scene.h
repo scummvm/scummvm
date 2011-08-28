@@ -48,6 +48,7 @@ class Scene {
 		void clear();
 		void setupCamera();
 		void updateCamera(Common::Point &mouse);
+		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
 };
 
 } // end of namespace Myst3

@@ -1,61 +1,43 @@
 /* Residual - A 3D game interpreter
  *
  * Residual is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef MYST3_ENGINE_H
-#define MYST3_ENGINE_H
-
-#include "engines/engine.h"
-
-#include "common/system.h"
-
-#include "engines/myst3/archive.h"
-#include "engines/myst3/room.h"
-#include "engines/myst3/scene.h"
+#include "engines/myst3/hotspot.h"
 
 namespace Myst3 {
 
-class Myst3Engine : public Engine {
+bool HotSpot::isPointInRects(const Common::Point & p)
+{
+	for(uint j = 0;j < rects.size();j++){
+		Common::Rect rect = Common::Rect(
+				rects[j].centerHeading - rects[j].width / 2,
+				rects[j].centerPitch - rects[j].height / 2,
+				rects[j].centerHeading + rects[j].width / 2,
+				rects[j].centerPitch + rects[j].height / 2);
+		if(rect.contains(p)){
+			return true;
+		}
+	}
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return _console; }
-public:
+	return false;
+}
 
-	Myst3Engine(OSystem *syst, int gameFlags);
-	virtual ~Myst3Engine();
-
-private:
-	OSystem *_system;
-	GUI::Debugger *_console;
-	
-	Room _room;
-	Scene _scene;
-	Archive _archive;
-};
-
-} // end of namespace Myst3
-
-#endif
+} /* namespace Myst3 */

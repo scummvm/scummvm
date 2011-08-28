@@ -26,6 +26,7 @@
 #include "engines/myst3/room.h"
 
 #include "common/debug.h"
+#include "common/rect.h"
 
 namespace Myst3 {
 
@@ -79,8 +80,6 @@ void Room::dumpFaceMask(Archive &archive, uint16 index, int face) {
 		dataOffset = maskStream->readUint32LE();
 		headerOffset = maskStream->pos();
 
-		debug("%d %d %d %d", headerOffset, dataOffset, blockX, blockY);
-
 		if (dataOffset != 0) {
 			maskStream->seek(dataOffset, SEEK_SET);
 
@@ -116,6 +115,12 @@ void Room::load(Archive &archive, uint16 index) {
 
 			setFaceTextureJPEG(i, &jpeg);
 		}
+	}
+}
+
+void Room::unload() {
+	for (int i = 0; i < 6; i++) {
+		glDeleteTextures(1, &_cubeTextures[i]);
 	}
 }
 

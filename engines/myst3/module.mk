@@ -2,9 +2,11 @@ MODULE := engines/myst3
 
 MODULE_OBJS := \
 	archive.o \
+	database.o \
 	detection.o \
 	directoryentry.o \
 	directorysubentry.o \
+	hotspot.o \
 	myst3.o \
 	room.o \
 	scene.o
