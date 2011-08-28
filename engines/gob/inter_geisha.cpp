@@ -21,6 +21,10 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
@@ -30,6 +34,7 @@
 #include "gob/game.h"
 #include "gob/draw.h"
 #include "gob/video.h"
+#include "gob/save/saveload.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
 
@@ -54,6 +59,8 @@ void Inter_Geisha::setupOpcodesFunc() {
 	OPCODEFUNC(0x25, oGeisha_goblinFunc);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
 	OPCODEFUNC(0x3F, oGeisha_checkData);
+	OPCODEFUNC(0x4D, oGeisha_readData);
+	OPCODEFUNC(0x4E, oGeisha_writeData);
 
 	OPCODEGOB(0, oGeisha_gamePenetration);
 	OPCODEGOB(1, oGeisha_gameDiving);
@@ -114,20 +121,88 @@ int16 Inter_Geisha::loadSound(int16 slot) {
 }
 
 void Inter_Geisha::oGeisha_checkData(OpFuncParams &params) {
-	const char *file   = _vm->_game->_script->evalString();
-	      int16 varOff = _vm->_game->_script->readVarIndex();
+	Common::String file = _vm->_game->_script->evalString();
+	int16 varOff = _vm->_game->_script->readVarIndex();
 
-	Common::String fileName(file);
+	file.toLowercase();
+	if (file.hasSuffix(".0ot"))
+		file.setChar('t', file.size() - 3);
 
-	fileName.toLowercase();
-	if (fileName.hasSuffix(".0ot"))
-		fileName.setChar('t', fileName.size() - 3);
+	bool exists = false;
 
-	if (!_vm->_dataIO->hasFile(fileName)) {
-		warning("File \"%s\" not found", fileName.c_str());
-		WRITE_VAR_OFFSET(varOff, (uint32) -1);
-	} else
-		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	if (mode == SaveLoad::kSaveModeNone) {
+
+		exists = _vm->_dataIO->hasFile(file);
+		if (!exists)
+			warning("File \"%s\" not found", file.c_str());
+
+	} else if (mode == SaveLoad::kSaveModeSave)
+		exists = _vm->_saveLoad->getSize(file.c_str()) >= 0;
+	else if (mode == SaveLoad::kSaveModeExists)
+		exists = true;
+
+	WRITE_VAR_OFFSET(varOff, exists ? 50 : (uint32)-1);
+}
+
+void Inter_Geisha::oGeisha_readData(OpFuncParams &params) {
+	const char *file = _vm->_game->_script->evalString();
+
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d)", file, dataVar);
+
+	WRITE_VAR(1, 1);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->load(file, dataVar, 0, 0)) {
+
+			GUI::MessageDialog dialog(_("Failed to load game state from file."));
+			dialog.runModal();
+
+		} else
+			WRITE_VAR(1, 0);
+
+		return;
+
+	} else if (mode == SaveLoad::kSaveModeIgnore) {
+		WRITE_VAR(1, 0);
+		return;
+	}
+
+	warning("Attempted to read from file \"%s\"", file);
+}
+
+void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
+	const char *file = _vm->_game->_script->evalString();
+
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int32 size    = _vm->_game->_script->readValExpr();
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes)", file, dataVar, size);
+
+	WRITE_VAR(1, 1);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->save(file, dataVar, size, 0)) {
+
+			GUI::MessageDialog dialog(_("Failed to save game state to file."));
+			dialog.runModal();
+
+		} else
+			WRITE_VAR(1, 0);
+
+	} else if (mode == SaveLoad::kSaveModeIgnore) {
+		WRITE_VAR(1, 0);
+		return;
+	} else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", file);
+
+	WRITE_VAR(1, 0);
 }
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {

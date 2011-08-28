@@ -348,6 +348,8 @@ protected:
 	void oGeisha_goblinFunc(OpFuncParams &params);
 	void oGeisha_loadSound(OpFuncParams &params);
 	void oGeisha_checkData(OpFuncParams &params);
+	void oGeisha_readData(OpFuncParams &params);
+	void oGeisha_writeData(OpFuncParams &params);
 
 	void oGeisha_gamePenetration(OpGobParams &params);
 	void oGeisha_gameDiving(OpGobParams &params);

@@ -422,6 +422,7 @@ bool GobEngine::initGameParts() {
 		_map      = new Map_v1(this);
 		_goblin   = new Goblin_v1(this);
 		_scenery  = new Scenery_v1(this);
+		_saveLoad = new SaveLoad_Geisha(this, _targetName.c_str());
 		break;
 
 	case kGameTypeFascination:
