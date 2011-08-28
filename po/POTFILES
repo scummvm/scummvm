@@ -80,3 +80,4 @@ backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
 backends/updates/macosx/macosx-updates.mm
 backends/platform/bada/form.cpp
+backends/events/maemosdl/maemosdl-events.cpp
