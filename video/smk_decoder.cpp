@@ -29,6 +29,8 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
+#include "common/memstream.h"
+#include "common/bitstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -46,85 +48,15 @@ enum SmkBlockTypes {
 };
 
 /*
- * class BitStream
- * Little-endian bit stream provider.
- */
-
-class BitStream {
-public:
-	BitStream(byte *buf, uint32 length)
-		: _buf(buf), _end(buf+length), _bitCount(8) {
-		_curByte = *_buf++;
-	}
-
-	bool getBit();
-	byte getBits8();
-
-	byte peek8() const;
-	void skip(int n);
-
-private:
-	byte *_buf;
-	byte *_end;
-	byte _curByte;
-	byte  _bitCount;
-};
-
-bool BitStream::getBit() {
-	if (_bitCount == 0) {
-		assert(_buf < _end);
-		_curByte = *_buf++;
-		_bitCount = 8;
-	}
-
-	bool v = _curByte & 1;
-
-	_curByte >>= 1;
-	--_bitCount;
-
-	return v;
-}
-
-byte BitStream::getBits8() {
-	assert(_buf < _end);
-
-	byte v = (*_buf << _bitCount) | _curByte;
-	_curByte = *_buf++ >> (8 - _bitCount);
-
-	return v;
-}
-
-byte BitStream::peek8() const {
-	if (_buf == _end)
-		return _curByte;
-
-	assert(_buf < _end);
-	return (*_buf << _bitCount) | _curByte;
-}
-
-void BitStream::skip(int n) {
-	assert(n <= 8);
-	_curByte >>= n;
-
-	if (_bitCount >= n) {
-		_bitCount -= n;
-	} else {
-		assert(_buf < _end);
-		_bitCount = _bitCount + 8 - n;
-		_curByte = *_buf++ >> (8 - _bitCount);
-	}
-}
-
-/*
  * class SmallHuffmanTree
  * A Huffman-tree to hold 8-bit values.
  */
 
 class SmallHuffmanTree {
 public:
-	SmallHuffmanTree(BitStream &bs);
+	SmallHuffmanTree(Common::BitStream &bs);
 
-	uint16 getCode(BitStream &bs);
+	uint16 getCode(Common::BitStream &bs);
 private:
 	enum {
 		SMK_NODE = 0x8000
@@ -138,10 +70,10 @@ private:
 	uint16 _prefixtree[256];
 	byte _prefixlength[256];
 
-	BitStream &_bs;
+	Common::BitStream &_bs;
 };
 
-SmallHuffmanTree::SmallHuffmanTree(BitStream &bs)
+SmallHuffmanTree::SmallHuffmanTree(Common::BitStream &bs)
 	: _treeSize(0), _bs(bs) {
 	uint32 bit = _bs.getBit();
 	assert(bit);
@@ -157,7 +89,7 @@ SmallHuffmanTree::SmallHuffmanTree(BitStream &bs)
 
 uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 	if (!_bs.getBit()) { // Leaf
-		_tree[_treeSize] = _bs.getBits8();
+		_tree[_treeSize] = _bs.getBits(8);
 
 		if (length <= 8) {
 			for (int i = 0; i < 256; i += (1 << length)) {
@@ -186,8 +118,8 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 	return r1+r2+1;
 }
 
-uint16 SmallHuffmanTree::getCode(BitStream &bs) {
-	byte peek = bs.peek8();
+uint16 SmallHuffmanTree::getCode(Common::BitStream &bs) {
+	byte peek = bs.peekBits(8);
 	uint16 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
@@ -207,11 +139,11 @@ uint16 SmallHuffmanTree::getCode(BitStream &bs) {
 
 class BigHuffmanTree {
 public:
-	BigHuffmanTree(BitStream &bs, int allocSize);
+	BigHuffmanTree(Common::BitStream &bs, int allocSize);
 	~BigHuffmanTree();
 
 	void reset();
-	uint32 getCode(BitStream &bs);
+	uint32 getCode(Common::BitStream &bs);
 private:
 	enum {
 		SMK_NODE = 0x80000000
@@ -227,13 +159,13 @@ private:
 	byte _prefixlength[256];
 
 	/* Used during construction */
-	BitStream &_bs;
+	Common::BitStream &_bs;
 	uint32 _markers[3];
 	SmallHuffmanTree *_loBytes;
 	SmallHuffmanTree *_hiBytes;
 };
 
-BigHuffmanTree::BigHuffmanTree(BitStream &bs, int allocSize)
+BigHuffmanTree::BigHuffmanTree(Common::BitStream &bs, int allocSize)
 	: _bs(bs) {
 	uint32 bit = _bs.getBit();
 	if (!bit) {
@@ -249,12 +181,9 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs, int allocSize)
 	_loBytes = new SmallHuffmanTree(_bs);
 	_hiBytes = new SmallHuffmanTree(_bs);
 
-	_markers[0] = _bs.getBits8();
-	_markers[0] |= (_bs.getBits8() << 8);
-	_markers[1] = _bs.getBits8();
-	_markers[1] |= (_bs.getBits8() << 8);
-	_markers[2] = _bs.getBits8();
-	_markers[2] |= (_bs.getBits8() << 8);
+	_markers[0] = _bs.getBits(16);
+	_markers[1] = _bs.getBits(16);
+	_markers[2] = _bs.getBits(16);
 
 	_last[0] = _last[1] = _last[2] = 0xffffffff;
 
@@ -328,8 +257,8 @@ uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 	return r1+r2+1;
 }
 
-uint32 BigHuffmanTree::getCode(BitStream &bs) {
-	byte peek = bs.peek8();
+uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
+	byte peek = bs.peekBits(8);
 	uint32 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
@@ -459,17 +388,15 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	for (i = 0; i < _frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
-	byte *huffmanTrees = new byte[_header.treesSize];
+	byte *huffmanTrees = (byte *) malloc(_header.treesSize);
 	_fileStream->read(huffmanTrees, _header.treesSize);
 
-	BitStream bs(huffmanTrees, _header.treesSize);
+	Common::BitStream8LSB bs(new Common::MemoryReadStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), true);
 
 	_MMapTree = new BigHuffmanTree(bs, _header.mMapSize);
 	_MClrTree = new BigHuffmanTree(bs, _header.mClrSize);
 	_FullTree = new BigHuffmanTree(bs, _header.fullSize);
 	_TypeTree = new BigHuffmanTree(bs, _header.typeSize);
-
-	delete[] huffmanTrees;
 
 	_surface = new Graphics::Surface();
 
@@ -556,10 +483,13 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 
 	uint32 frameDataSize = frameSize - (_fileStream->pos() - startPos);
 
-	_frameData = (byte *)malloc(frameDataSize);
+	_frameData = (byte *)malloc(frameDataSize + 1);
+	// Padding to keep the BigHuffmanTrees from reading past the data end
+	_frameData[frameDataSize] = 0x00;
+
 	_fileStream->read(_frameData, frameDataSize);
 
-	BitStream bs(_frameData, frameDataSize);
+	Common::BitStream8LSB bs(new Common::MemoryReadStream(_frameData, frameDataSize + 1, DisposeAfterUse::YES), true);
 
 	_MMapTree->reset();
 	_MClrTree->reset();
@@ -701,8 +631,6 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 
 	_fileStream->seek(startPos + frameSize);
 
-	free(_frameData);
-
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
 
@@ -712,7 +640,9 @@ const Graphics::Surface *SmackerDecoder::decodeNextFrame() {
 void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize) {
 	if (_header.audioInfo[track].hasAudio && chunkSize > 0 && track == 0) {
 		// If it's track 0, play the audio data
-		byte *soundBuffer = (byte *)malloc(chunkSize);
+		byte *soundBuffer = (byte *)malloc(chunkSize + 1);
+		// Padding to keep the SmallHuffmanTrees from reading past the data end
+		soundBuffer[chunkSize] = 0x00;
 
 		_fileStream->read(soundBuffer, chunkSize);
 
@@ -722,7 +652,7 @@ void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpac
 			return;
 		} else if (_header.audioInfo[track].compression == kCompressionDPCM) {
 			// Compressed audio (Huffman DPCM encoded)
-			queueCompressedBuffer(soundBuffer, chunkSize, unpackedSize, track);
+			queueCompressedBuffer(soundBuffer, chunkSize + 1, unpackedSize, track);
 			free(soundBuffer);
 		} else {
 			// Uncompressed audio (PCM)
@@ -752,7 +682,7 @@ void SmackerDecoder::handleAudioTrack(byte track, uint32 chunkSize, uint32 unpac
 void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		uint32 unpackedSize, int streamNum) {
 
-	BitStream audioBS(buffer, bufferSize);
+	Common::BitStream8LSB audioBS(new Common::MemoryReadStream(buffer, bufferSize), true);
 	bool dataPresent = audioBS.getBit();
 
 	if (!dataPresent)
@@ -779,20 +709,16 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	if (isStereo) {
 		if (is16Bits) {
-			byte hi = audioBS.getBits8();
-			byte lo = audioBS.getBits8();
-			bases[1] = (int16) ((hi << 8) | lo);
+			bases[1] = FROM_BE_16(audioBS.getBits(16));
 		} else {
-			bases[1] = audioBS.getBits8();
+			bases[1] = audioBS.getBits(8);
 		}
 	}
 
 	if (is16Bits) {
-		byte hi = audioBS.getBits8();
-		byte lo = audioBS.getBits8();
-		bases[0] = (int16) ((hi << 8) | lo);
+		bases[0] = FROM_BE_16(audioBS.getBits(16));
 	} else {
-		bases[0] = audioBS.getBits8();
+		bases[0] = audioBS.getBits(8);
 	}
 
 	// The bases are the first samples, too
