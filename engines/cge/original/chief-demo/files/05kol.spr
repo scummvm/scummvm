@@ -1,9 +1,0 @@
-type=dead
-name=monument
-east=1
-
-phase=solumna
-
-Take= REACH -1    -1
-Take= SAY    1  3202
-
