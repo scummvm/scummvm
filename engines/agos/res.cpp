@@ -38,7 +38,7 @@
 namespace AGOS {
 
 ArchiveMan::ArchiveMan() {
-	_fallBack = false;
+	_fallBack = true;
 }
 
 #ifdef ENABLE_AGOS2

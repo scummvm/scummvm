@@ -273,8 +273,6 @@ void AGOSEngine::loadArchives() {
 				_archives.registerArchive(ag->fileName, ag->fileType);
 		}
 	}
-
-	_archives.enableFallback(true);
 }
 #endif
 
