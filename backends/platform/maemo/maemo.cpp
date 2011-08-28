@@ -84,7 +84,7 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 
 	Common::String cap2("ScummVM - "); // 2 lines in OS2008 task switcher, set first line
-	cap=cap2+cap;
+	cap = cap2 + cap;
 	setXWindowName(cap.c_str());
 }
 
