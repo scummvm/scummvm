@@ -480,11 +480,18 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
-				// at least in kq5/french&mac the first scene in the intro has a song that sets signal to 4 immediately
-				//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
-				//  get immediately removed, so we currently filter it.
-				// Sierra SCI ignores them as well at that time
-				if ((_position._play_tick) || (info.delta)) {
+				// At least in kq5/french&mac the first scene in the intro has
+				// a song that sets signal to 4 immediately on tick 0. Signal
+				// isn't set at that point by sierra sci and it would cause the
+				// castle daventry text to get immediately removed, so we
+				// currently filter it. Sierra SCI ignores them as well at that
+				// time. However, this filtering should only be performed for
+				// SCI1 and newer games. Signalling is done differently in SCI0
+				// though, so ignoring these signals in SCI0 games will result
+				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
+				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
+				if (_soundVersion <= SCI_VERSION_0_LATE ||
+					_position._play_tick || info.delta) {
 					_signalSet = true;
 					_signalToSet = info.basic.param1;
 				}
