@@ -1348,12 +1348,12 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		inputs[inputCount].str        = 0;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
-			uint16 length = _vm->_game->_script->readUint16();
+			inputs[inputCount].length = _vm->_game->_script->readUint16();
 
 			inputs[inputCount].str =
 				(const char *)(_vm->_game->_script->getData() + _vm->_game->_script->pos());
 
-			_vm->_game->_script->skip(length);
+			_vm->_game->_script->skip(inputs[inputCount].length);
 		}
 
 		if (left == 0xFFFF) {
