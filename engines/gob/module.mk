@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	iniconfig.o \
 	init.o \
 	init_v1.o \
+	init_geisha.o \
 	init_v2.o \
 	init_fascin.o \
 	init_v3.o \
@@ -33,6 +34,7 @@ MODULE_OBJS := \
 	init_v7.o \
 	inter.o \
 	inter_v1.o \
+	inter_geisha.o \
 	inter_v2.o \
 	inter_bargon.o \
 	inter_fascin.o \

@@ -402,11 +402,21 @@ bool GobEngine::initGameParts() {
 	_game      = new Game(this);
 
 	switch (_gameType) {
-	case kGameTypeGeisha:
 	case kGameTypeGob1:
 		_init     = new Init_v1(this);
 		_video    = new Video_v1(this);
 		_inter    = new Inter_v1(this);
+		_mult     = new Mult_v1(this);
+		_draw     = new Draw_v1(this);
+		_map      = new Map_v1(this);
+		_goblin   = new Goblin_v1(this);
+		_scenery  = new Scenery_v1(this);
+		break;
+
+	case kGameTypeGeisha:
+		_init     = new Init_Geisha(this);
+		_video    = new Video_v1(this);
+		_inter    = new Inter_Geisha(this);
 		_mult     = new Mult_v1(this);
 		_draw     = new Draw_v1(this);
 		_map      = new Map_v1(this);

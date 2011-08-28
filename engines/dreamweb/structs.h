@@ -54,7 +54,23 @@ struct Sprite {
 	uint8  hidden;
 };
 
-struct ObjData {
+struct RectWithCallback {
+	uint16 _xMin, _xMax;
+	uint16 _yMin, _yMax;
+	uint16 _callback;
+
+	uint16 xMin() const { return READ_LE_UINT16(&_xMin); }
+	uint16 xMax() const { return READ_LE_UINT16(&_xMax); }
+	uint16 yMin() const { return READ_LE_UINT16(&_yMin); }
+	uint16 yMax() const { return READ_LE_UINT16(&_yMax); }
+	uint16 callback() const { return READ_LE_UINT16(&_callback); }
+
+	bool contains(uint16 x, uint16 y) const {
+		return (x >= xMin()) && (x < xMax()) && (y >= yMin()) && (y < yMax());
+	}
+};
+
+struct SetObject {
 	uint8 b0;
 	uint8 b1;
 	uint8 b2;
@@ -102,9 +118,9 @@ struct ObjData {
 	uint8 b63;
 };
 
-struct FreeObject {
+struct DynObject {
 	uint8 b0;
-	uint8 b1;
+	uint8 index;
 	uint8 b2;
 	uint8 b3;
 	uint8 b4;
@@ -114,11 +130,8 @@ struct FreeObject {
 	uint8 b8;
 	uint8 b9;
 	uint8 b10;
-	uint8 b11;
-	uint8 b12;
-	uint8 b13;
-	uint8 b14;
-	uint8 b15;
+	uint8 location;
+	uint8 id[4];
 };
 
 struct ObjPos {

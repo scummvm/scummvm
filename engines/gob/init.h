@@ -56,6 +56,14 @@ public:
 	void initVideo();
 };
 
+class Init_Geisha : public Init_v1 {
+public:
+	Init_Geisha(GobEngine *vm);
+	~Init_Geisha();
+
+	void initVideo();
+};
+
 class Init_v2 : public Init_v1 {
 public:
 	Init_v2(GobEngine *vm);

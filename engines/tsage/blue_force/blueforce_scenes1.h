@@ -71,7 +71,7 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	ScenePalette _scenePalette;
-	SceneObjectExt2 _object1, _object2, _object3, _object4, _object5;
+	NamedObject _object1, _object2, _object3, _object4, _object5;
 	int _index;
 
 	Scene100();
@@ -115,7 +115,6 @@ public:
 	SceneObject _object1, _object2, _protaginist2, _protaginist1, _object5;
 	SceneObject _drunk, _object7, _bartender, _object9, _object10;
 	Text _text;
-	BlueAnimatedSpeaker _speaker;
 	Action1 _action1;
 	Action _action2, _action3;
 public:

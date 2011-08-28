@@ -7,8 +7,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Blue's Birthday Adventure
    - Added support for Ringworld: Revenge Of The Patriarch
 
+ New Ports:
+   - Added PlayStation 3 port.
+
  AGI:
    - Implemented sound support for the DOS version of Winnie the Pooh in the Hundred Acre Wood.
+
+ AGOS:
+   - Implemented support for loading data directly from InstallShield
+     cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
 
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.

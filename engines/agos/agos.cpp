@@ -41,18 +41,51 @@
 namespace AGOS {
 
 static const GameSpecificSettings simon1_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"EFFECTS",                              // effects_filename
 	"SIMON",                                // speech_filename
 };
 
 static const GameSpecificSettings simon2_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
 	"SIMON2",                               // speech_filename
 };
 
-static const GameSpecificSettings puzzlepack_settings = {
+static const GameSpecificSettings dimp_settings = {
+	"Gdimp",                                // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
-	"MUSIC",                               // speech_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings jumble_settings = {
+	"Gjumble",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings puzzle_settings = {
+	"Gpuzzle",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings swampy_settings = {
+	"Gswampy",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
 };
 
 #ifdef ENABLE_AGOS2
@@ -678,7 +711,15 @@ static const uint16 initialVideoWindows_PN[20] = {
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::setupGame() {
-	gss = &puzzlepack_settings;
+	if (getGameId() == GID_DIMP) {
+		gss = &dimp_settings;
+	} else if (getGameId() == GID_JUMBLE) {
+		gss = &jumble_settings;
+	} else if (getGameId() == GID_PUZZLE) {
+		gss = &puzzle_settings;
+	} else if (getGameId() == GID_SWAMPY) {
+		gss = &swampy_settings;
+	}
 	_numVideoOpcodes = 85;
 	_vgaMemSize = 7500000;
 	_itemMemSize = 20000;
@@ -963,6 +1004,10 @@ void AGOSEngine::pause() {
 }
 
 Common::Error AGOSEngine::go() {
+#ifdef ENABLE_AGOS2
+	loadArchives();
+#endif
+
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);

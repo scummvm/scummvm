@@ -20,37 +20,28 @@
  *
  */
 
-/**
- * @file
- * Sound decoder used in engines:
- * - sword1 (PSX port of the game)
- * - sword2 (PSX port of the game)
- * - tinsel (PSX port of the game)
- */
+#include "common/endian.h"
 
-#ifndef SOUND_VAG_H
-#define SOUND_VAG_H
+#include "gob/gob.h"
+#include "gob/init.h"
+#include "gob/global.h"
+#include "gob/draw.h"
+#include "gob/video.h"
 
-namespace Common {
-class SeekableReadStream;
+namespace Gob {
+
+Init_Geisha::Init_Geisha(GobEngine *vm) : Init_v1(vm) {
 }
 
-namespace Audio {
+Init_Geisha::~Init_Geisha() {
+}
 
-class RewindableAudioStream;
+void Init_Geisha::initVideo() {
+	Init_v1::initVideo();
 
-/**
- * Takes an input stream containing Vag sound data and creates
- * an RewindableAudioStream from that.
- *
- * @param stream            the SeekableReadStream from which to read the ADPCM data
- * @param rate              the sampling rate
- * @return   a new RewindableAudioStream, or NULL, if an error occurred
- */
-RewindableAudioStream *makeVagStream(
-	Common::SeekableReadStream *stream,
-	int rate = 11025);
+	_vm->_draw->_cursorWidth       = 16;
+	_vm->_draw->_cursorHeight      = 23;
+	_vm->_draw->_transparentCursor =  1;
+}
 
-} // End of namespace Sword1
-
-#endif
+} // End of namespace Gob

@@ -35,7 +35,7 @@
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 
 #define SMP_BUFSIZE 8192
 
@@ -110,7 +110,7 @@ bool MusicHandle::play(const Common::String &filename, bool loop) {
 	return true;
 }
 
-bool MusicHandle::playPSX(uint16 id, bool loop) {
+bool MusicHandle::playPSX(uint16 id) {
 	stop();
 
 	if (!_file.isOpen())
@@ -131,7 +131,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = Audio::makeLoopingAudioStream(Audio::makeVagStream(_file.readStream(size)), loop ? 0 : 1);
+		_audioSource = Audio::makeXAStream(_file.readStream(size), 11025);
 		fadeUp();
 	} else {
 		_audioSource = NULL;
@@ -297,7 +297,7 @@ void Music::startMusic(int32 tuneId, int32 loopFlag) {
 		   the mutex before, to have the soundthread playing normally.
 		   As the corresponding _converter is NULL, the handle will be ignored by the playing thread */
 		if (SwordEngine::isPsx()) {
-			if (_handles[newStream].playPSX(tuneId, loopFlag != 0)) {
+			if (_handles[newStream].playPSX(tuneId)) {
 				_mutex.lock();
 				_converter[newStream] = Audio::makeRateConverter(_handles[newStream].getRate(), _mixer->getOutputRate(), _handles[newStream].isStereo(), false);
 				_mutex.unlock();

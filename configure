@@ -1073,12 +1073,12 @@ arm-riscos)
 	;;
 bada)
 	_host_os=bada
-  if test "$_debug_build" = yes; then
-    _host_cpu=i686
-	  _host_alias=i686-mingw32
-  else
-    _host_cpu=arm
-	  _host_alias=arm-samsung-nucleuseabi
+	if test "$_debug_build" = yes; then
+		_host_cpu=i686
+		_host_alias=i686-mingw32
+	else
+		_host_cpu=arm
+		_host_alias=arm-samsung-nucleuseabi
 	fi
 	;;
 caanoo)
@@ -1810,12 +1810,12 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	bada)
-    BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"
-    add_line_to_config_mk "BADA_SDK = $BADA_SDK"
-    add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
+		BADA_SDK_ROOT="`cygpath -m ${BADA_SDK}`"
+		add_line_to_config_mk "BADA_SDK = $BADA_SDK"
+		add_line_to_config_mk "BADA_SDK_ROOT = $BADA_SDK_ROOT"
 
-    # assume dependencies have been installed in cygwin's /usr/local
-    CYGWIN_USR_LOCAL="`cygpath -m /usr/local`"
+		# assume dependencies have been installed in cygwin's /usr/local
+		CYGWIN_USR_LOCAL="`cygpath -m /usr/local`"
 		LDFLAGS="$LDFLAGS -L${CYGWIN_USR_LOCAL}/lib"
 		CXXFLAGS="$CXXFLAGS -I${CYGWIN_USR_LOCAL}/include"
 		;;
@@ -1836,6 +1836,28 @@ case $_host_os in
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
+
+		# Now we may have MacPorts or Fink installed
+		# Which put libraries and headers in non-standard places
+		# Checking them here
+		
+		# MacPorts
+		# There is no way to get the prefix, so implementing a hack here
+		macport_version=`port version 2>/dev/null`
+		if test "$?" -eq 0; then
+			macport_version="`echo "${macport_version}" | sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'sed -ne 's/Version: \([0-9]\.[0-9]\.[0-9]\)/\1/gp'`"
+			echo_n "You seem to be running MacPorts version ${macport_version}..."
+
+			macport_prefix=`which port`
+			# strip off /bin/port from /opt/local/bin/port
+			macport_prefix=`dirname ${macport_prefix}`
+			macport_prefix=`dirname ${macport_prefix}`
+
+			echo "adding ${macport_prefix} to paths"
+
+			LDFLAGS="-L${macport_prefix}/lib $LDFLAGS"
+			CXXFLAGS="-I${macport_prefix}/include $CXXFLAGS"
+		fi
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__"
@@ -2049,21 +2071,21 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DLINUPY"
 			;;
 		bada)
-      _unix=yes
-      _backend="bada"
-      _port_mk="backends/platform/bada/bada.mk"
-      if test "$_debug_build" = yes; then
-        _arm_asm=no
-      else
-        _arm_asm=yes
-      fi
-      _taskbar=no
-      _build_scalers=no
-      _seq_midi=no
-      _mt32emu=no
-      _timidity=no
+			_unix=yes
+			_backend="bada"
+			_port_mk="backends/platform/bada/bada.mk"
+			if test "$_debug_build" = yes; then
+				_arm_asm=no
+			else
+				_arm_asm=yes
+			fi
+			_taskbar=no
+			_build_scalers=no
+			_seq_midi=no
+			_mt32emu=no
+			_timidity=no
 			_vkeybd=yes
-      ;;
+			;;
 		bfin*)
 			;;
 		caanoo)
@@ -2414,33 +2436,33 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		;;
   bada)
-    # dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
-    DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
-    DEFINES="$DEFINES -DNO_STDERR_STDOUT"
+		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
+		DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
 		DEFINES="$DEFINES -DDISABLE_COMMAND_LINE"
-    INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
-    INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
-    INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
-    if test "$_debug_build" = yes; then
-      # debug using with the simulator
-      CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
-    else
-      # created a shared library for inclusion via the eclipse build
-      CXXFLAGS="$CXXFLAGS -DSHP"
-      CXXFLAGS="$CXXFLAGS -fpic"
-      CXXFLAGS="$CXXFLAGS -fshort-wchar"
-      CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
-      CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
-      CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
-      CXXFLAGS="$CXXFLAGS -mlittle-endian"
-      CXXFLAGS="$CXXFLAGS -mthumb-interwork"
-      CXXFLAGS="$CXXFLAGS -Wno-psabi"
-		  CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
-		  CXXFLAGS="$CXXFLAGS -fno-short-enums"
-    fi
-    HOSTEXEPRE=lib
-    HOSTEXEEXT=.a
-    ;;
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/bada '
+		INCLUDES="$INCLUDES "'-I$(BADA_SDK)/include'
+		INCLUDES="$INCLUDES "'-I$(BADA_SDK_ROOT)/Include'
+		if test "$_debug_build" = yes; then
+			# debug using with the simulator
+			CXXFLAGS="$CXXFLAGS -D_DEBUG -DSHP -DBUILD_DLL -fmessage-length=0"
+		else
+			# created a shared library for inclusion via the eclipse build
+			CXXFLAGS="$CXXFLAGS -DSHP"
+			CXXFLAGS="$CXXFLAGS -fpic"
+			CXXFLAGS="$CXXFLAGS -fshort-wchar"
+			CXXFLAGS="$CXXFLAGS -mcpu=cortex-a8"
+			CXXFLAGS="$CXXFLAGS -mfpu=vfpv3"
+			CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
+			CXXFLAGS="$CXXFLAGS -mlittle-endian"
+			CXXFLAGS="$CXXFLAGS -mthumb-interwork"
+			CXXFLAGS="$CXXFLAGS -Wno-psabi"
+			CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
+			CXXFLAGS="$CXXFLAGS -fno-short-enums"
+		fi
+		HOSTEXEPRE=lib
+		HOSTEXEEXT=.a
+		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc'
 		INCLUDES="$INCLUDES "'-isystem $(ronindir)/include'
@@ -3301,10 +3323,10 @@ fi
 
 case $_host_os in
 	bada)
-   # components live in non-standard locations so just assume sane SDK
-   _opengl=yes
-   _opengles=yes
-  ;;
+		# components live in non-standard locations so just assume sane SDK
+		_opengl=yes
+		_opengles=yes
+		;;
 esac
 
 if test "$_opengles" = "yes" ; then

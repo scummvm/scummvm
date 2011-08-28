@@ -42,6 +42,14 @@ reg_t kStrCat(EngineState *s, int argc, reg_t *argv) {
 	Common::String s1 = s->_segMan->getString(argv[0]);
 	Common::String s2 = s->_segMan->getString(argv[1]);
 
+	// The Japanese version of PQ2 splits the two strings here
+	// (check bug #3396887).
+	if (g_sci->getGameId() == GID_PQ2 &&
+		g_sci->getLanguage() == Common::JA_JPN) {
+		s1 = g_sci->strSplit(s1.c_str(), NULL);
+		s2 = g_sci->strSplit(s2.c_str(), NULL);
+	}
+
 	s1 += s2;
 	s->_segMan->strcpy(argv[0], s1.c_str());
 	return argv[0];

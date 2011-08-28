@@ -545,6 +545,13 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	oldXpos = v1.x;
 	oldScaleIndexX = _scaleIndexX;
 
+	// Indy4 Amiga always uses the room map to match colors to the currently
+	// setup palette in the actor code in the original, thus we need to do this
+	// mapping over here too.
+	byte *amigaMap = 0;
+	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4)
+		amigaMap = _vm->_roomPalette;
+
 	do {
 		len = *src++;
 		color = len >> v1.shr;
@@ -556,7 +563,10 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 				masked = (y < 0 || y >= _out.h) || (v1.x < 0 || v1.x >= _out.w) || (v1.mask_ptr && (mask[0] & maskbit));
 
 				if (color && !masked) {
-					*dst = _palette[color];
+					if (amigaMap)
+						*dst = amigaMap[_palette[color]];
+					else
+						*dst = _palette[color];
 				}
 
 				if (_scaleX == 255 || v1.scaletable[_scaleIndexX] < _scaleX) {

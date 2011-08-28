@@ -138,8 +138,12 @@ public:
 		void unlock();
 		bool isLocked() const;
 
+		// HE specific
 		void setModified();
 		bool isModified() const;
+		void setOffHeap();
+		void setOnHeap();
+		bool isOffHeap() const;
 	};
 
 	/**
@@ -192,8 +196,11 @@ public:
 	void unlock(ResType type, ResId idx);
 	bool isLocked(ResType type, ResId idx) const;
 
+	// HE Specific
 	void setModified(ResType type, ResId idx);
 	bool isModified(ResType type, ResId idx) const;
+	void setOffHeap(ResType type, ResId idx);
+	void setOnHeap(ResType type, ResId idx);
 
 	/**
 	 * This method increments the _expireCounter, and if it overflows (which happens

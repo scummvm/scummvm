@@ -1721,15 +1721,19 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			if (!resource) {
 				addResource(resId, source, fileOffset);
 			} else {
-				// if resource is already present, change it to new content
-				//  this is needed at least for pharkas/german. This version
-				//  contains several duplicate resources INSIDE the resource
-				//  data files like fonts, views, scripts, etc. And if we use
-				//  the first entries, half of the game will be english and
-				//  umlauts will also be missing :P
-				resource->_source = source;
-				resource->_fileOffset = fileOffset;
-				resource->size = 0;
+				// If the resource is already present in a volume, change it to
+				// the new content (but only in a volume, so as not to overwrite
+				// external patches - refer to bug #3366295).
+				// This is needed at least for the German version of Pharkas.
+				// That version contains several duplicate resources INSIDE the
+				// resource data files like fonts, views, scripts, etc. Thus,
+				// if we use the first entries in the resource file, half of the
+				// game will be English and umlauts will also be missing :P
+				if (resource->_source->getSourceType() == kSourceVolume) {
+					resource->_source = source;
+					resource->_fileOffset = fileOffset;
+					resource->size = 0;
+				}
 			}
 		}
 	}

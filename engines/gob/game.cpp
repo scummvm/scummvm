@@ -492,9 +492,6 @@ void Game::prepareStart() {
 	_vm->_draw->_noInvalidated = true;
 	_vm->_draw->_applyPal = false;
 	_vm->_draw->_paletteCleared = false;
-	_vm->_draw->_cursorWidth = 16;
-	_vm->_draw->_cursorHeight = 16;
-	_vm->_draw->_transparentCursor = 1;
 
 	for (int i = 0; i < 40; i++) {
 		_vm->_draw->_cursorAnimLow[i] = -1;

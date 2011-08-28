@@ -81,8 +81,12 @@ Common::Error ComposerEngine::run() {
 	_directoriesToStrip = 1;
 	if (!_bookIni.loadFromFile("book.ini")) {
 		_directoriesToStrip = 0;
-		if (!_bookIni.loadFromFile("programs/book.ini"))
-			error("failed to find book.ini");
+		if (!_bookIni.loadFromFile("programs/book.ini")) {
+			// mac version?
+			if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
+				if (!_bookIni.loadFromFile("Gregory.ini"))
+					error("failed to find book.ini");
+		}
 	}
 
 	uint width = 640;
@@ -97,9 +101,13 @@ Common::Error ComposerEngine::run() {
 
 	loadLibrary(0);
 
+	_currentTime = 0;
+	_lastTime = 0;
+
 	uint fps = atoi(getStringFromConfig("Common", "FPS").c_str());
 	uint frameTime = 1000 / fps;
 	uint32 lastDrawTime = 0;
+
 	while (!shouldQuit()) {
 		for (uint i = 0; i < _pendingPageChanges.size(); i++) {
 			if (_pendingPageChanges[i]._remove)
@@ -112,15 +120,24 @@ Common::Error ComposerEngine::run() {
 		_pendingPageChanges.clear();
 
 		uint32 thisTime = _system->getMillis();
+		// maintain our own internal timing, since otherwise we get
+		// confused when starved of CPU (for example when the user
+		// is dragging the scummvm window around)
+		if (thisTime > _lastTime + frameTime)
+			_currentTime += frameTime;
+		else
+			_currentTime += thisTime - _lastTime;
+		_lastTime = thisTime;
+
 		for (uint i = 0; i < _queuedScripts.size(); i++) {
 			QueuedScript &script = _queuedScripts[i];
 			if (!script._count)
 				continue;
-			if (script._baseTime + script._duration > thisTime)
+			if (script._baseTime + script._duration > _currentTime)
 				continue;
 			if (script._count != 0xffffffff)
 				script._count--;
-			script._baseTime = thisTime;
+			script._baseTime = _currentTime;
 			runScript(script._scriptId, i, 0, 0);
 		}
 
@@ -174,11 +191,6 @@ Common::Error ComposerEngine::run() {
 				}
 
 				onKeyDown(event.kbd.keycode);
-				break;
-
-			case Common::EVENT_QUIT:
-			case Common::EVENT_RTL:
-				quitGame();
 				break;
 
 			default:
@@ -286,7 +298,7 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 	uint slashesToStrip = _directoriesToStrip;
 	while (slashesToStrip--) {
 		for (uint i = 0; i < filename.size(); i++) {
-			if (filename[i] != '\\')
+			if (filename[i] != '\\' && filename[i] != ':')
 				continue;
 			filename = filename.c_str() + i + 1;
 			break;
@@ -295,7 +307,7 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 
 	Common::String outFilename;
 	for (uint i = 0; i < filename.size(); i++) {
-		if (filename[i] == '\\')
+		if (filename[i] == '\\' || filename[i] == ':')
 			outFilename += '/';
 		else
 			outFilename += filename[i];

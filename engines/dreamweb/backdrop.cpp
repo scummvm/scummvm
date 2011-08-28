@@ -150,9 +150,9 @@ void DreamGenContext::showallobs() {
 	data.word(kFramesad) = kFrames;
 
 	const Frame *frames = (const Frame *)segRef(data.word(kFrsegment)).ptr(0, 0);
-	ObjData *setEntries = (ObjData *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(ObjData));
+	SetObject *setEntries = (SetObject *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(SetObject));
 	for (size_t i = 0; i < 128; ++i) {
-		ObjData *setEntry = setEntries + i;
+		SetObject *setEntry = setEntries + i;
 		if (getmapad(setEntry->b58) == 0)
 			continue;
 		uint8 currentFrame = setEntry->b18[0];
@@ -278,6 +278,22 @@ void DreamGenContext::showallfree() {
 
 		++data.byte(kCurrentfree);
 		mapData += 16;
+	}
+}
+
+void DreamGenContext::drawflags() {
+	uint8 *mapFlags = segRef(data.word(kBuffers)).ptr(kMapflags, 0);
+	const uint8 *mapData = segRef(data.word(kMapdata)).ptr(kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx), 0);
+	const uint8 *backdropFlags = segRef(data.word(kBackdrop)).ptr(kFlags, 0);
+
+	for (size_t i = 0; i < 10; ++i) {
+		for (size_t j = 0; j < 11; ++j) {
+			uint8 tile = mapData[i * kMapwidth + j];
+			mapFlags[0] = backdropFlags[2 * tile + 0];
+			mapFlags[1] = backdropFlags[2 * tile + 1];
+			mapFlags[2] = tile;
+			mapFlags += 3;
+		}
 	}
 }
 

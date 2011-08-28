@@ -263,6 +263,10 @@ private:
 	const uint8 *getCharDataDefault(uint16 c) const;
 
 	void mapKANJIChar(const uint8 fB, const uint8 sB, int &base, int &index) const;
+
+	enum {
+		kSjisFontVersion = 3
+	};
 };
 
 // TODO: Consider adding support for PC98 ROM

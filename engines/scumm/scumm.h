@@ -970,6 +970,7 @@ protected:
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);
+	void setAmigaPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 
 	virtual void setPalColor(int index, int r, int g, int b);
@@ -1065,6 +1066,9 @@ public:
 	uint16 _hePaletteSlot;
 	uint16 *_16BitPalette;
 
+	// Indy4 Amiga specific
+	byte *_verbPalette;
+
 protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
@@ -1084,6 +1088,15 @@ protected:
 	bool _native_mt32;
 	bool _enable_gs;
 	bool _copyProtection;
+
+	// Indy4 Amiga specific
+	uint16 _amigaFirstUsedColor;
+	byte _amigaPalette[3 * 64];
+	void amigaPaletteFindFirstUsedColor();
+	void mapRoomPalette(int idx);
+	int remapRoomPaletteColor(int r, int g, int b);
+	void mapVerbPalette(int idx);
+	int remapVerbPaletteColor(int r, int g, int b);
 
 public:
 	uint16 _extraBoxFlags[65];

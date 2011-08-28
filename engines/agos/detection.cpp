@@ -240,11 +240,40 @@ Common::Platform AGOSEngine::getPlatform() const {
 }
 
 const char *AGOSEngine::getFileName(int type) const {
+	// Required if the InstallShield cab is been used
+	if (getGameType() == GType_PP) {
+		if (type == GAME_BASEFILE)
+			return gss->base_filename;
+	}
+
+	// Required if the InstallShield cab is been used
+	if (getGameType() == GType_FF && getPlatform() == Common::kPlatformWindows) {
+		if (type == GAME_BASEFILE)
+			return gss->base_filename;
+		if (type == GAME_RESTFILE)
+			return gss->restore_filename;
+		if (type == GAME_TBLFILE)
+			return gss->tbl_filename;
+	}
+
 	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
 		if (_gameDescription->desc.filesDescriptions[i].fileType == type)
 			return _gameDescription->desc.filesDescriptions[i].fileName;
 	}
 	return NULL;
 }
+
+#ifdef ENABLE_AGOS2
+void AGOSEngine::loadArchives() {
+	const ADGameFileDescription *ag;
+
+	if (getFeatures() & GF_PACKED) {
+		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
+			if (!_archives.hasArchive(ag->fileName))
+				_archives.registerArchive(ag->fileName, ag->fileType);
+		}
+	}
+}
+#endif
 
 } // End of namespace AGOS

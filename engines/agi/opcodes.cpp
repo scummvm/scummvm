@@ -288,7 +288,7 @@ AgiInstruction insV2[] = {
 	{ "status.line.on",		"",			&cmdStatusLineOn },
 	{ "status.line.off",	"",			&cmdStatusLineOff },
 	{ "set.string",			"ns",		&cmdSetString },
-	{ "get.string",			"ns",		&cmdGetString },
+	{ "get.string",			"nsnnn",		&cmdGetString },
 	{ "word.to.string",		"nn",		&cmdWordToString },
 	{ "parse",				"n",		&cmdParse },
 	{ "get.num",			"nv",		&cmdGetNum },
@@ -307,7 +307,7 @@ AgiInstruction insV2[] = {
 	{ "program.control",	"",			&cmdProgramControl },
 	{ "player.control",		"",			&cmdPlayerControl },
 	{ "obj.status.v",		"v",		&cmdObjStatusF },
-	{ "quit",				"n",		&cmdQuit },
+	{ "quit",				"n",		&cmdQuit },  // 0 args for AGI version 2.089
 	{ "show.mem",			"",			&cmdShowMem },
 	{ "pause",				"",			&cmdPause },
 	{ "echo.line",			"",			&cmdEchoLine },
@@ -324,16 +324,16 @@ AgiInstruction insV2[] = {
 	{ "reposition.to.v",	"nvv",		&cmdRepositionToF },
 	{ "trace.on",			"",			&cmdTraceOn },
 	{ "trace.info", 		"nnn",		&cmdTraceInfo },
-	{ "print.at",			"snnn",		&cmdPrintAt },
+	{ "print.at",			"snnn",		&cmdPrintAt }, // 3 args for AGI versions before 2.440
 	{ "print.at.v",			"vnnn",		&cmdPrintAtV },
 	{ "discard.view.v",		"v",		&cmdDiscardView},
 	{ "clear.text.rect",	"nnnnn",	&cmdClearTextRect },
 	{ "set.upper.left",		"nn",		&cmdSetUpperLeft },
 	{ "set.menu",			"s",		&cmdSetMenu },
-	{ "set.menu.member",	"sn",		&cmdSetMenuItem },
+	{ "set.menu.item",		"sn",		&cmdSetMenuItem },
 	{ "submit.menu",		"",			&cmdSubmitMenu },
-	{ "enable.member",		"n",		&cmdEnableItem },
-	{ "disable.member",		"n",		&cmdDisableItem },
+	{ "enable.item",		"n",		&cmdEnableItem },
+	{ "disable.item",		"n",		&cmdDisableItem },
 	{ "menu.input",			"",			&cmdMenuInput },
 	{ "show.obj.v",			"v",		&cmdShowObjV },
 	{ "open.dialogue",		"",			&cmdOpenDialogue },
@@ -349,12 +349,12 @@ AgiInstruction insV2[] = {
 	{ "hold.key",			"",			&cmdHoldKey },
 	{ "set.pri.base",		"n",		&cmdSetPriBase },
 	{ "discard.sound",		"n",		&cmdDiscardSound },
-	{ "hide.mouse",			"",			&cmdHideMouse },
+	{ "hide.mouse",			"",			&cmdHideMouse }, // 1 arg for AGI version 3.002.086
 	{ "allow.menu",			"n",		&cmdAllowMenu },
 	{ "show.mouse",			"",			&cmdShowMouse },
 	{ "fence.mouse",		"nnnn",		&cmdFenceMouse },
 	{ "mouse.posn",			"vv",		&cmdMousePosn },
-	{ "release.key",		"",			&cmdReleaseKey },
+	{ "release.key",		"",			&cmdReleaseKey }, // 2 args for at least the Amiga GR (v2.05 1989-03-09) using AGI 2.316
 	{ "adj.ego.move.to.xy",	"",			&cmdAdjEgoMoveToXY }
 };
 

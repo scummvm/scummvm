@@ -53,7 +53,7 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 		}
 		delete ret;
 	} // TODO: PC98 font rom support
-	  /* else if (platform == Common::kPlatformPC98) {		
+	/* else if (platform == Common::kPlatformPC98) {
 		ret = new FontPC98();
 		if (ret) {
 			if (ret->loadData())
@@ -90,7 +90,7 @@ void FontSJISBase::toggleFlippedMode(bool enable) {
 	if (hasFeature(kFeatFlipped))
 		_flippedMode = enable;
 	else
-		warning("Flipped mode unsupported by this font");	
+		warning("Flipped mode unsupported by this font");
 }
 
 uint FontSJISBase::getFontHeight() const {
@@ -265,10 +265,10 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 			blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 1, pitch, c1);
 		} else {
 			if (_drawMode != kDefaultMode) {
-				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8*)dst) + 1, pitch, c2);
-				blitCharacter<uint8>(glyphSource, width, height - outlineYOffset, ((uint8*)dst) + pitch, pitch, c2);
+				blitCharacter<uint8>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + 1, pitch, c2);
+				blitCharacter<uint8>(glyphSource, width, height - outlineYOffset, ((uint8 *)dst) + pitch, pitch, c2);
 				if (_drawMode == kShadowMode)
-					blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8*)dst) + pitch + 1, pitch, c2);
+					blitCharacter<uint8>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + 1, pitch, c2);
 			}
 
 			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
@@ -279,10 +279,10 @@ void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1,
 			blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, (uint8 *)dst + pitch + 2, pitch, c1);
 		} else {
 			if (_drawMode != kDefaultMode) {
-				blitCharacter<uint16>(glyphSource, width - outlineXOffset, height, ((uint8*)dst) + 2, pitch, c2);
-				blitCharacter<uint16>(glyphSource, width, height - outlineYOffset, ((uint8*)dst) + pitch, pitch, c2);
+				blitCharacter<uint16>(glyphSource, width - outlineXOffset, height, ((uint8 *)dst) + 2, pitch, c2);
+				blitCharacter<uint16>(glyphSource, width, height - outlineYOffset, ((uint8 *)dst) + pitch, pitch, c2);
 				if (_drawMode == kShadowMode)
-					blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8*)dst) + pitch + 2, pitch, c2);
+					blitCharacter<uint16>(glyphSource, width - outlineXOffset, height - outlineYOffset, ((uint8 *)dst) + pitch + 2, pitch, c2);
 			}
 
 			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
@@ -424,10 +424,10 @@ bool FontPCEngine::loadData() {
 	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("pce.cdbios");
 	if (!data)
 		return false;
-	
+
 	data->seek((data->size() & 0x200) ? 0x30200 : 0x30000);
 	data->read(_fontData12x12, kFont12x12Chars * 18);
-	
+
 	_fontWidth = _fontHeight = 12;
 	_bitPosNewLineMask = _fontWidth & 7;
 
@@ -444,41 +444,41 @@ const uint8 *FontPCEngine::getCharData(uint16 ch) const {
 	const int rangeCnt = 45;
 	static const uint16 rangeTbl[rangeCnt][2] = {
 		// Symbols
-		{0x8140,0x817E},{0x8180,0x81AC},
+		{ 0x8140, 0x817E }, { 0x8180, 0x81AC },
 		// 0-9
-		{0x824F,0x8258},
+		{ 0x824F, 0x8258 },
 		// Latin upper
-		{0x8260,0x8279},
+		{ 0x8260, 0x8279 },
 		// Latin lower
-		{0x8281,0x829A},
+		{ 0x8281, 0x829A },
 		// Kana
-		{0x829F,0x82F1},{0x8340,0x837E},{0x8380,0x8396},
+		{ 0x829F, 0x82F1 }, { 0x8340, 0x837E }, { 0x8380, 0x8396},
 		// Greek upper
-		{0x839F,0x83B6},
+		{ 0x839F, 0x83B6 },
 		// Greek lower
-		{0x83BF,0x83D6},
+		{ 0x83BF, 0x83D6 },
 		// Cyrillic upper
-		{0x8440,0x8460},
+		{ 0x8440, 0x8460 },
 		// Cyrillic lower
-		{0x8470,0x847E},{0x8480,0x8491},
+		{ 0x8470, 0x847E }, { 0x8480, 0x8491},
 		// Kanji
-		{0x889F,0x88FC},
-		{0x8940,0x897E},{0x8980,0x89FC},
-		{0x8A40,0x8A7E},{0x8A80,0x8AFC},
-		{0x8B40,0x8B7E},{0x8B80,0x8BFC},
-		{0x8C40,0x8C7E},{0x8C80,0x8CFC},
-		{0x8D40,0x8D7E},{0x8D80,0x8DFC},
-		{0x8E40,0x8E7E},{0x8E80,0x8EFC},
-		{0x8F40,0x8F7E},{0x8F80,0x8FFC},
-		{0x9040,0x907E},{0x9080,0x90FC},
-		{0x9140,0x917E},{0x9180,0x91FC},
-		{0x9240,0x927E},{0x9280,0x92FC},
-		{0x9340,0x937E},{0x9380,0x93FC},
-		{0x9440,0x947E},{0x9480,0x94FC},
-		{0x9540,0x957E},{0x9580,0x95FC},
-		{0x9640,0x967E},{0x9680,0x96FC},
-		{0x9740,0x977E},{0x9780,0x97FC},
-		{0x9840,0x9872}
+		{ 0x889F, 0x88FC },
+		{ 0x8940, 0x897E }, { 0x8980, 0x89FC },
+		{ 0x8A40, 0x8A7E }, { 0x8A80, 0x8AFC },
+		{ 0x8B40, 0x8B7E }, { 0x8B80, 0x8BFC },
+		{ 0x8C40, 0x8C7E }, { 0x8C80, 0x8CFC },
+		{ 0x8D40, 0x8D7E }, { 0x8D80, 0x8DFC },
+		{ 0x8E40, 0x8E7E }, { 0x8E80, 0x8EFC },
+		{ 0x8F40, 0x8F7E }, { 0x8F80, 0x8FFC },
+		{ 0x9040, 0x907E }, { 0x9080, 0x90FC },
+		{ 0x9140, 0x917E }, { 0x9180, 0x91FC },
+		{ 0x9240, 0x927E }, { 0x9280, 0x92FC },
+		{ 0x9340, 0x937E }, { 0x9380, 0x93FC },
+		{ 0x9440, 0x947E }, { 0x9480, 0x94FC },
+		{ 0x9540, 0x957E }, { 0x9580, 0x95FC },
+		{ 0x9640, 0x967E }, { 0x9680, 0x96FC },
+		{ 0x9740, 0x977E }, { 0x9780, 0x97FC },
+		{ 0x9840, 0x9872 }
 	};
 
 	ch = (ch << 8) | (ch >> 8);
@@ -490,7 +490,7 @@ const uint8 *FontPCEngine::getCharData(uint16 ch) const {
 		}
 		offset += rangeTbl[i][1] - rangeTbl[i][0] + 1;
 	}
-	
+
 	debug(4, "Invalid Char: 0x%x", ch);
 	return 0;
 }
@@ -531,13 +531,14 @@ bool FontSjisSVM::loadData() {
 	uint32 magic1 = data->readUint32BE();
 	uint32 magic2 = data->readUint32BE();
 
-	if (magic1 != MKTAG('S','C','V','M') || magic2 != MKTAG('S','J','I','S')) {
+	if (magic1 != MKTAG('S', 'C', 'V', 'M') || magic2 != MKTAG('S', 'J', 'I', 'S')) {
 		delete data;
 		return false;
 	}
 
 	uint32 version = data->readUint32BE();
-	if (version != 3) {
+	if (version != kSjisFontVersion) {
+		warning("SJIS font version mismatch, expected: %d found: %u", kSjisFontVersion, version);
 		delete data;
 		return false;
 	}

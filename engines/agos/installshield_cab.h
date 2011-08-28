@@ -20,42 +20,22 @@
  *
  */
 
-#include "common/endian.h"
+#include "common/archive.h"
+#include "common/str.h"
 
-#include "gob/gob.h"
-#include "gob/init.h"
-#include "gob/global.h"
-#include "gob/draw.h"
+#ifndef AGOS_INSTALLSHIELD_CAB_H
+#define AGOS_INSTALLSHIELD_CAB_H
 
-namespace Gob {
+namespace AGOS {
 
-Init_v1::Init_v1(GobEngine *vm) : Init(vm) {
-}
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the InstallShield compressed file with the given name.
+ *
+ * May return 0 in case of a failure.
+ */
+Common::Archive *makeInstallShieldArchive(const Common::String &name);
 
-Init_v1::~Init_v1() {
-}
+} // End of namespace AGOS
 
-void Init_v1::initVideo() {
-	if (_vm->_global->_videoMode)
-		_vm->validateVideoMode(_vm->_global->_videoMode);
-
-	_vm->_global->_mousePresent = 1;
-
-	_vm->_global->_inVM = 0;
-
-	if ((_vm->_global->_videoMode == 0x13) && !_vm->isEGA())
-		_vm->_global->_colorCount = 256;
-
-	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
-
-	_vm->_video->initSurfDesc(320, 200, PRIMARY_SURFACE);
-
-	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 16;
-	_vm->_draw->_transparentCursor =  1;
-}
-
-} // End of namespace Gob
+#endif

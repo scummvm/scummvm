@@ -20,42 +20,41 @@
  *
  */
 
-#include "common/endian.h"
+/**
+ * @file
+ * Sound decoder used in engines:
+ * - sword1 (PSX port of the game)
+ * - sword2 (PSX port of the game)
+ * - tinsel (PSX port of the game)
+ */
 
-#include "gob/gob.h"
-#include "gob/init.h"
-#include "gob/global.h"
-#include "gob/draw.h"
+#ifndef AUDIO_DECODERS_XA_H
+#define AUDIO_DECODERS_XA_H
 
-namespace Gob {
+#include "common/types.h"
 
-Init_v1::Init_v1(GobEngine *vm) : Init(vm) {
+namespace Common {
+class SeekableReadStream;
 }
 
-Init_v1::~Init_v1() {
-}
+namespace Audio {
 
-void Init_v1::initVideo() {
-	if (_vm->_global->_videoMode)
-		_vm->validateVideoMode(_vm->_global->_videoMode);
+class RewindableAudioStream;
 
-	_vm->_global->_mousePresent = 1;
+/**
+ * Takes an input stream containing XA ADPCM sound data and creates
+ * an RewindableAudioStream from that.
+ *
+ * @param stream            the SeekableReadStream from which to read the XA ADPCM data
+ * @param rate              the sampling rate
+ * @param disposeAfterUse   whether to delete the stream after use.
+ * @return   a new RewindableAudioStream, or NULL, if an error occurred
+ */
+RewindableAudioStream *makeXAStream(
+	Common::SeekableReadStream *stream,
+	int rate,
+	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-	_vm->_global->_inVM = 0;
+} // End of namespace Audio
 
-	if ((_vm->_global->_videoMode == 0x13) && !_vm->isEGA())
-		_vm->_global->_colorCount = 256;
-
-	_vm->_global->_pPaletteDesc = &_vm->_global->_paletteStruct;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_global->_unusedPalette1;
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_global->_unusedPalette2;
-
-	_vm->_video->initSurfDesc(320, 200, PRIMARY_SURFACE);
-
-	_vm->_draw->_cursorWidth       = 16;
-	_vm->_draw->_cursorHeight      = 16;
-	_vm->_draw->_transparentCursor =  1;
-}
-
-} // End of namespace Gob
+#endif

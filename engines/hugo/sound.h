@@ -60,12 +60,12 @@ public:
 
 	static const int kHugoCNT = 1190000;
 
-	int8 pcspkrTimer;                               // Timer (ticks) for note being played
-	int8 pcspkrOctave;                              // Current octave 1..7
-	int8 pcspkrNoteDuration;                        // Current length of note (ticks)
+	int8 _pcspkrTimer;                              // Timer (ticks) for note being played
+	int8 _pcspkrOctave;                             // Current octave 1..7
+	int8 _pcspkrNoteDuration;                       // Current length of note (ticks)
 
-	const char *DOSSongPtr;
-	const char *DOSIntroSong;
+	const char *_DOSSongPtr;
+	const char *_DOSIntroSong;
 
 	void toggleMusic();
 	void toggleSound();
@@ -80,7 +80,7 @@ public:
 	void loadIntroSong(Common::ReadStream &in);
 	void initPcspkrPlayer();
 protected:
-	byte curPriority;                               // Priority of currently playing sound
+	byte _curPriority;                              // Priority of currently playing sound
 
 private:
 	HugoEngine *_vm;

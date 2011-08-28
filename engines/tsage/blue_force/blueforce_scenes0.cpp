@@ -263,29 +263,31 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 		update();
 
 	if (btnDown) {
-		if ((BF_GLOBALS._bikiniHutState == 14) && BF_GLOBALS.getFlag(98))
+		if ((BF_GLOBALS._bookmark == bCalledToDrunkStop) && BF_GLOBALS.getFlag(beenToJRDay2))
 			scene->_sceneNumber = 600;
-		else if (BF_GLOBALS._bikiniHutState == 5)
+		else if (BF_GLOBALS._bookmark == bBookedGreen)
 			scene->_sceneNumber = 410;
 		else {
-			BF_GLOBALS._v4CEF4 = _newSceneNumber;
+			BF_GLOBALS._driveToScene = _newSceneNumber;
 
-			switch (BF_GLOBALS._v4CEF2) {
+			switch (BF_GLOBALS._driveFromScene) {
 			case 330:
 			case 340:
 			case 342:
 				BF_GLOBALS._player.disableControl();
-				if (_locationId != BF_GLOBALS._mapLocationId) {
+				BF_GLOBALS._mapLocationId = _locationId;
+
+				if (BF_GLOBALS._driveToScene == 330) {
 					scene->_sceneNumber = 330;
 				} else {
-					scene->_sceneNumber = (BF_GLOBALS._v4CEA2 != 1) || (BF_GLOBALS._bikiniHutState < 1) ||
-						(BF_GLOBALS._bikiniHutState >= 2) ? 342 : 340;
+					scene->_sceneNumber = (BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
+						(BF_GLOBALS._bookmark >= bCalledToDomesticViolence) ? 342 : 340;
 				}
 				break;
 
 			case 410:
 			case 551:
-				if (BF_GLOBALS.getFlag((BF_GLOBALS._v4CEF2 == 410) ? 41 : 40)) {
+				if (BF_GLOBALS.getFlag((BF_GLOBALS._driveFromScene == 410) ? fSearchedTruck : didDrunk)) {
 					BF_GLOBALS._mapLocationId = _locationId;
 					BF_GLOBALS._player.disableControl();
 					scene->_sceneNumber = _newSceneNumber;
@@ -298,7 +300,7 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 
 			case 300:
 				if (_locationId == 1) {
-					BF_GLOBALS._v4CEF4 = 300;
+					BF_GLOBALS._driveToScene = 300;
 					_newSceneNumber = 300;
 				}
 				// Deliberate fall through to default
@@ -354,7 +356,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_location5.set(Rect(383, 57, 402, 70), 380, CITY_HALL_JAIL, 32);
 	_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
 	_location9.set(Rect(349, 125, 359, 132), 
-		(BF_GLOBALS._bikiniHutState == 13) || (BF_GLOBALS._bikiniHutState == 14) ? 551 : 550,
+		(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
 		BIKINI_HUT, 16);
 
 	_item.setBounds(Rect(0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT));
@@ -424,7 +426,7 @@ void Scene50::remove() {
 void Scene50::signal() {
 	if (_sceneMode == 1) {
 		// Destination selected
-		if ((BF_GLOBALS._v4CEF2 == 551) && (_sceneNumber != BF_GLOBALS._v4CEF2)) {
+		if ((BF_GLOBALS._driveFromScene == 551) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
 			BF_GLOBALS.setFlag(109);
 			BF_GLOBALS.setFlag(115);
 			BF_GLOBALS.setFlag(121);
@@ -432,20 +434,20 @@ void Scene50::signal() {
 			BF_GLOBALS.setFlag(133);
 		}
 
-		if ((BF_GLOBALS._v4CEF2 == 410) && (_sceneNumber != BF_GLOBALS._v4CEF2)) {
+		if ((BF_GLOBALS._driveFromScene == 410) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
 			BF_GLOBALS.setFlag(125);
 		}
 
-		if ((BF_GLOBALS._v4CEF2 == 340) && (_sceneNumber != BF_GLOBALS._v4CEF2)) {
+		if ((BF_GLOBALS._driveFromScene == 340) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
 			BF_GLOBALS.setFlag(123);
 		}
 
-		if ((BF_GLOBALS._v4CEF2 == 380) && (_sceneNumber != BF_GLOBALS._v4CEF2)) {
-			if (BF_GLOBALS._bikiniHutState >= 4)
+		if ((BF_GLOBALS._driveFromScene == 380) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
+			if (BF_GLOBALS._bookmark >= bLauraToParamedics)
 				BF_GLOBALS.setFlag(129);
-			if (BF_GLOBALS._bikiniHutState >= 6)
+			if (BF_GLOBALS._bookmark >= bStoppedFrankie)
 				BF_GLOBALS.setFlag(131);
-			if (BF_GLOBALS._bikiniHutState == 3) {
+			if (BF_GLOBALS._bookmark == bArrestedGreen) {
 				BF_GLOBALS._v4CEA8 = 19;
 				_sceneNumber = 666;
 			}

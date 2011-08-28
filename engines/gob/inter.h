@@ -334,6 +334,33 @@ protected:
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 };
 
+class Inter_Geisha : public Inter_v1 {
+public:
+	Inter_Geisha(GobEngine *vm);
+	virtual ~Inter_Geisha() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	void oGeisha_loadCursor(OpFuncParams &params);
+	void oGeisha_goblinFunc(OpFuncParams &params);
+	void oGeisha_loadSound(OpFuncParams &params);
+	void oGeisha_checkData(OpFuncParams &params);
+
+	void oGeisha_gamePenetration(OpGobParams &params);
+	void oGeisha_gameDiving(OpGobParams &params);
+	void oGeisha_loadTitleMusic(OpGobParams &params);
+	void oGeisha_playMusic(OpGobParams &params);
+	void oGeisha_stopMusic(OpGobParams &params);
+
+	void oGeisha_caress1(OpGobParams &params);
+	void oGeisha_caress2(OpGobParams &params);
+
+	int16 loadSound(int16 slot);
+};
+
 class Inter_v2 : public Inter_v1 {
 public:
 	Inter_v2(GobEngine *vm);

@@ -31,10 +31,29 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/sound.h"
+#include "agos/installshield_cab.h"
 
 #include "common/zlib.h"
 
 namespace AGOS {
+
+ArchiveMan::ArchiveMan() {
+	_fallBack = true;
+}
+
+#ifdef ENABLE_AGOS2
+void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
+	add(filename, makeInstallShieldArchive(filename), priority);
+}
+#endif
+
+Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
+	if (_fallBack && SearchMan.hasFile(filename)) {
+		return SearchMan.createReadStreamForMember(filename);
+	}
+
+	return createReadStreamForMember(filename);
+}
 
 #ifdef ENABLE_AGOS2
 uint16 AGOSEngine_Feeble::to16Wrapper(uint value) {
@@ -150,21 +169,21 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 }
 
 void AGOSEngine_PN::loadGamePcFile() {
-	Common::File in;
+	Common::SeekableReadStream *in;
 
 	if (getFileName(GAME_BASEFILE) != NULL) {
 		// Read dataBase
-		in.open(getFileName(GAME_BASEFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_BASEFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load database file '%s'", getFileName(GAME_BASEFILE));
 		}
 
-		_dataBaseSize = in.size();
+		_dataBaseSize = in->size();
 		_dataBase = (byte *)malloc(_dataBaseSize);
 		if (_dataBase == NULL)
 			error("loadGamePcFile: Out of memory for dataBase");
-		in.read(_dataBase, _dataBaseSize);
-		in.close();
+		in->read(_dataBase, _dataBaseSize);
+		delete in;
 
 		if (_dataBase[31] != 0)
 			error("Later version of system requested");
@@ -172,17 +191,17 @@ void AGOSEngine_PN::loadGamePcFile() {
 
 	if (getFileName(GAME_TEXTFILE) != NULL) {
 		// Read textBase
-		in.open(getFileName(GAME_TEXTFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_TEXTFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load textbase file '%s'", getFileName(GAME_TEXTFILE));
 		}
 
-		_textBaseSize = in.size();
+		_textBaseSize = in->size();
 		_textBase = (byte *)malloc(_textBaseSize);
 		if (_textBase == NULL)
 			error("loadGamePcFile: Out of memory for textBase");
-		in.read(_textBase, _textBaseSize);
-		in.close();
+		in->read(_textBase, _textBaseSize);
+		delete in;
 
 		if (_textBase[getlong(30L)] != 128)
 			error("Unknown compression format");
@@ -190,20 +209,20 @@ void AGOSEngine_PN::loadGamePcFile() {
 }
 
 void AGOSEngine::loadGamePcFile() {
-	Common::File in;
+	Common::SeekableReadStream *in;
 	int fileSize;
 
 	if (getFileName(GAME_BASEFILE) != NULL) {
 		/* Read main gamexx file */
-		in.open(getFileName(GAME_BASEFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_BASEFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load gamexx file '%s'", getFileName(GAME_BASEFILE));
 		}
 
 		if (getFeatures() & GF_CRUNCHED_GAMEPC) {
-			uint srcSize = in.size();
+			uint srcSize = in->size();
 			byte *srcBuf = (byte *)malloc(srcSize);
-			in.read(srcBuf, srcSize);
+			in->read(srcBuf, srcSize);
 
 			uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
 			byte *dstBuf = (byte *)malloc(dstSize);
@@ -214,25 +233,25 @@ void AGOSEngine::loadGamePcFile() {
 			readGamePcFile(&stream);
 			free(dstBuf);
 		} else {
-			readGamePcFile(&in);
+			readGamePcFile(in);
 		}
-		in.close();
+		delete in;
 	}
 
 	if (getFileName(GAME_TBLFILE) != NULL) {
 		/* Read list of TABLE resources */
-		in.open(getFileName(GAME_TBLFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_TBLFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load table resources file '%s'", getFileName(GAME_TBLFILE));
 		}
 
-		fileSize = in.size();
+		fileSize = in->size();
 
 		_tblList = (byte *)malloc(fileSize);
 		if (_tblList == NULL)
 			error("loadGamePcFile: Out of memory for strip table list");
-		in.read(_tblList, fileSize);
-		in.close();
+		in->read(_tblList, fileSize);
+		delete in;
 
 		/* Remember the current state */
 		_subroutineListOrg = _subroutineList;
@@ -242,71 +261,71 @@ void AGOSEngine::loadGamePcFile() {
 
 	if (getFileName(GAME_STRFILE) != NULL) {
 		/* Read list of TEXT resources */
-		in.open(getFileName(GAME_STRFILE));
-		if (in.isOpen() == false)
+		in = _archives.open(getFileName(GAME_STRFILE));
+		if (!in)
 			error("loadGamePcFile: Can't load text resources file '%s'", getFileName(GAME_STRFILE));
 
-		fileSize = in.size();
+		fileSize = in->size();
 		_strippedTxtMem = (byte *)malloc(fileSize);
 		if (_strippedTxtMem == NULL)
 			error("loadGamePcFile: Out of memory for strip text list");
-		in.read(_strippedTxtMem, fileSize);
-		in.close();
+		in->read(_strippedTxtMem, fileSize);
+		delete in;
 	}
 
 	if (getFileName(GAME_STATFILE) != NULL) {
 		/* Read list of ROOM STATE resources */
-		in.open(getFileName(GAME_STATFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_STATFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load state resources file '%s'", getFileName(GAME_STATFILE));
 		}
 
-		_numRoomStates = in.size() / 8;
+		_numRoomStates = in->size() / 8;
 
 		_roomStates = (RoomState *)calloc(_numRoomStates, sizeof(RoomState));
 		if (_roomStates == NULL)
 			error("loadGamePcFile: Out of memory for room state list");
 
 		for (uint s = 0; s < _numRoomStates; s++) {
-			uint16 num = in.readUint16BE() - (_itemArrayInited - 2);
+			uint16 num = in->readUint16BE() - (_itemArrayInited - 2);
 
-			_roomStates[num].state = in.readUint16BE();
-			_roomStates[num].classFlags = in.readUint16BE();
-			_roomStates[num].roomExitStates = in.readUint16BE();
+			_roomStates[num].state = in->readUint16BE();
+			_roomStates[num].classFlags = in->readUint16BE();
+			_roomStates[num].roomExitStates = in->readUint16BE();
 		}
-		in.close();
+		delete in;
 	}
 
 	if (getFileName(GAME_RMSLFILE) != NULL) {
 		/* Read list of ROOM ITEMS resources */
-		in.open(getFileName(GAME_RMSLFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_RMSLFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load room resources file '%s'", getFileName(GAME_RMSLFILE));
 		}
 
-		fileSize = in.size();
+		fileSize = in->size();
 
 		_roomsList = (byte *)malloc(fileSize);
 		if (_roomsList == NULL)
 			error("loadGamePcFile: Out of memory for room items list");
-		in.read(_roomsList, fileSize);
-		in.close();
+		in->read(_roomsList, fileSize);
+		delete in;
 	}
 
 	if (getFileName(GAME_XTBLFILE) != NULL) {
 		/* Read list of XTABLE resources */
-		in.open(getFileName(GAME_XTBLFILE));
-		if (in.isOpen() == false) {
+		in = _archives.open(getFileName(GAME_XTBLFILE));
+		if (!in) {
 			error("loadGamePcFile: Can't load xtable resources file '%s'", getFileName(GAME_XTBLFILE));
 		}
 
-		fileSize = in.size();
+		fileSize = in->size();
 
 		_xtblList = (byte *)malloc(fileSize);
 		if (_xtblList == NULL)
 			error("loadGamePcFile: Out of memory for strip xtable list");
-		in.read(_xtblList, fileSize);
-		in.close();
+		in->read(_xtblList, fileSize);
+		delete in;
 
 		/* Remember the current state */
 		_xsubroutineListOrg = _subroutineList;

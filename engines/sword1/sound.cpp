@@ -38,7 +38,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 
 namespace Sword1 {
 
@@ -255,8 +255,9 @@ void Sound::playSample(QueueElement *elem) {
 					uint8 volume = (volR + volL) / 2;
 
 					if (SwordEngine::isPsx()) {
+						// We ignore FX_LOOP as XA has its own looping mechanism
 						uint32 size = READ_LE_UINT32(sampleData);
-						Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(Audio::makeVagStream(new Common::MemoryReadStream(sampleData + 4, size-4)), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
+						Audio::AudioStream *audStream = Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size-4), 11025);
 						_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
 					} else {
 						uint32 size = READ_LE_UINT32(sampleData + 0x28);
@@ -364,7 +365,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index * 2048);
 			Common::SeekableReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			stream = Audio::makeVagStream(tmp);
+			stream = Audio::makeXAStream(tmp, 11025);
 			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.

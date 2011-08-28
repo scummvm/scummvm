@@ -1416,7 +1416,7 @@ event_t *Scheduler::doAction(event_t *curEvent) {
 		break;
 	case OLD_SONG:
 		// Replaces ACT26 for DOS games.
-		_vm->_sound->DOSSongPtr = _vm->_text->getTextData(action->a49.songIndex);
+		_vm->_sound->_DOSSongPtr = _vm->_text->getTextData(action->a49.songIndex);
 		break;
 	default:
 		error("An error has occurred: %s", "doAction");

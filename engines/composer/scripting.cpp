@@ -160,7 +160,7 @@ void ComposerEngine::setArg(uint16 arg, uint16 type, uint16 val) {
 
 void ComposerEngine::runScript(uint16 id) {
 	if (!hasResource(ID_SCRP, id)) {
-		warning("ignoring attempt to run script %d, because it doesn't exist", id);
+		debug(1, "ignoring attempt to run script %d, because it doesn't exist", id);
 		return;
 	}
 
@@ -531,7 +531,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		return 0;
 	case kFuncQueueScript:
 		debug(3, "kFuncQueueScript(%d, %d, %d)", param1, param2, param3);
-		_queuedScripts[param1]._baseTime = _system->getMillis();
+		_queuedScripts[param1]._baseTime = _currentTime;
 		_queuedScripts[param1]._duration = 10 * param2;
 		_queuedScripts[param1]._count = 0xffffffff;
 		_queuedScripts[param1]._scriptId = param3;
@@ -642,7 +642,7 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		return 1;
 	case kFuncQueueScriptOnce:
 		debug(3, "kFuncQueueScriptOnce(%d, %d, %d)", param1, param2, param3);
-		_queuedScripts[param1]._baseTime = _system->getMillis();
+		_queuedScripts[param1]._baseTime = _currentTime;
 		_queuedScripts[param1]._duration = 10 * param2;
 		_queuedScripts[param1]._count = 1;
 		_queuedScripts[param1]._scriptId = param3;

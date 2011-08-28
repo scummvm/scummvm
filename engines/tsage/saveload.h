@@ -138,6 +138,18 @@ public:
 			}
 		}
 	}
+
+	void addBefore(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		this->insert(i, newItem);
+	}
+	void addAfter(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		if (i != this->end()) ++i;
+		this->insert(i, newItem);
+	}
 };
 
 /**
