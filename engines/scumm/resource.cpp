@@ -939,18 +939,6 @@ void ResourceManager::unlock(ResType type, ResId idx) {
 	_types[type][idx].unlock();
 }
 
-void ResourceManager::setOffHeap(ResType type, ResId idx) {
-	if (!validateResource("setOffHeap", type, idx))
-		return;
-	_types[type][idx].setOffHeap();
-}
-
-void ResourceManager::setOnHeap(ResType type, ResId idx) {
-	if (!validateResource("setOnHeap", type, idx))
-		return;
-	_types[type][idx].setOnHeap();
-}
-
 bool ResourceManager::isLocked(ResType type, ResId idx) const {
 	if (!validateResource("isLocked", type, idx))
 		return false;
@@ -967,18 +955,6 @@ void ResourceManager::Resource::unlock() {
 
 bool ResourceManager::Resource::isLocked() const {
 	return (_flags & RF_LOCK) != 0;
-}
-
-void ResourceManager::Resource::setOffHeap() {
-	_flags |= RF_OFFHEAP;
-}
-
-void ResourceManager::Resource::setOnHeap() {
-	_flags &= ~RF_OFFHEAP;
-}
-
-bool ResourceManager::Resource::isOffHeap() const {
-	return (_flags & RF_OFFHEAP) != 0;
 }
 
 bool ScummEngine::isResourceInUse(ResType type, ResId idx) const {
@@ -1018,18 +994,42 @@ void ResourceManager::setModified(ResType type, ResId idx) {
 	_types[type][idx].setModified();
 }
 
+void ResourceManager::setOffHeap(ResType type, ResId idx) {
+	if (!validateResource("setOffHeap", type, idx))
+		return;
+	_types[type][idx].setOffHeap();
+}
+
+void ResourceManager::setOnHeap(ResType type, ResId idx) {
+	if (!validateResource("setOnHeap", type, idx))
+		return;
+	_types[type][idx].setOnHeap();
+}
+
 bool ResourceManager::isModified(ResType type, ResId idx) const {
 	if (!validateResource("isModified", type, idx))
 		return false;
 	return _types[type][idx].isModified();
 }
 
+bool ResourceManager::Resource::isModified() const {
+	return (_status & RS_MODIFIED) != 0;
+}
+
+bool ResourceManager::Resource::isOffHeap() const {
+	return (_status & RF_OFFHEAP) != 0;
+}
+
 void ResourceManager::Resource::setModified() {
 	_status |= RS_MODIFIED;
 }
 
-bool ResourceManager::Resource::isModified() const {
-	return (_status & RS_MODIFIED) != 0;
+void ResourceManager::Resource::setOffHeap() {
+	_status |= RF_OFFHEAP;
+}
+
+void ResourceManager::Resource::setOnHeap() {
+	_status &= ~RF_OFFHEAP;
 }
 
 void ResourceManager::expireResources(uint32 size) {
