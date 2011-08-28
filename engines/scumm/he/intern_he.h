@@ -458,6 +458,7 @@ protected:
 	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readMAXS(int blockSize);
+	void setResourceOffHeap(int typeId, int resId, int val);
 
 	virtual void processActors();
 

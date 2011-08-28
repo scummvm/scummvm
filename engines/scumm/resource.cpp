@@ -47,7 +47,8 @@ enum {
 	RF_USAGE = 0x7F,
 	RF_USAGE_MAX = RF_USAGE,
 
-	RS_MODIFIED = 0x10
+	RS_MODIFIED = 0x10,
+	RF_OFFHEAP = 0x40
 };
 
 
@@ -938,6 +939,18 @@ void ResourceManager::unlock(ResType type, ResId idx) {
 	_types[type][idx].unlock();
 }
 
+void ResourceManager::setOffHeap(ResType type, ResId idx) {
+	if (!validateResource("setOffHeap", type, idx))
+		return;
+	_types[type][idx].setOffHeap();
+}
+
+void ResourceManager::setOnHeap(ResType type, ResId idx) {
+	if (!validateResource("setOnHeap", type, idx))
+		return;
+	_types[type][idx].setOnHeap();
+}
+
 bool ResourceManager::isLocked(ResType type, ResId idx) const {
 	if (!validateResource("isLocked", type, idx))
 		return false;
@@ -954,6 +967,18 @@ void ResourceManager::Resource::unlock() {
 
 bool ResourceManager::Resource::isLocked() const {
 	return (_flags & RF_LOCK) != 0;
+}
+
+void ResourceManager::Resource::setOffHeap() {
+	_flags |= RF_OFFHEAP;
+}
+
+void ResourceManager::Resource::setOnHeap() {
+	_flags &= ~RF_OFFHEAP;
+}
+
+bool ResourceManager::Resource::isOffHeap() const {
+	return (_flags & RF_OFFHEAP) != 0;
 }
 
 bool ScummEngine::isResourceInUse(ResType type, ResId idx) const {
@@ -1035,7 +1060,7 @@ void ResourceManager::expireResources(uint32 size) {
 				while (idx-- > 0) {
 					Resource &tmp = _types[type][idx];
 					byte counter = tmp.getResourceCounter();
-					if (!tmp.isLocked() && counter >= best_counter && tmp._address && !_vm->isResourceInUse(type, idx)) {
+					if (!tmp.isLocked() && counter >= best_counter && tmp._address && !_vm->isResourceInUse(type, idx) && !tmp.isOffHeap()) {
 						best_counter = counter;
 						best_type = type;
 						best_res = idx;

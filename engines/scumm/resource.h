@@ -134,12 +134,15 @@ public:
 		inline void setResourceCounter(byte counter);
 		inline byte getResourceCounter() const;
 
+		// HE specific
 		void lock();
 		void unlock();
 		bool isLocked() const;
-
 		void setModified();
 		bool isModified() const;
+		void setOffHeap();
+		void setOnHeap();
+		bool isOffHeap() const;
 	};
 
 	/**
@@ -188,12 +191,14 @@ public:
 
 	bool isResourceLoaded(ResType type, ResId idx) const;
 
+	// HE Specific
 	void lock(ResType type, ResId idx);
 	void unlock(ResType type, ResId idx);
 	bool isLocked(ResType type, ResId idx) const;
-
 	void setModified(ResType type, ResId idx);
 	bool isModified(ResType type, ResId idx) const;
+	void setOffHeap(ResType type, ResId idx);
+	void setOnHeap(ResType type, ResId idx);
 
 	/**
 	 * This method increments the _expireCounter, and if it overflows (which happens
