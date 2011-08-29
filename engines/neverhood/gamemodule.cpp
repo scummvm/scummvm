@@ -444,7 +444,7 @@ void GameModule::updateModule2300() {
 		_childObject = NULL;
 		if (_field20 == 1) {
 			createModule2200(0);
-			// TODO _childObject->handleUpdate();
+			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createModule1200(0);
 			_childObject->handleUpdate();

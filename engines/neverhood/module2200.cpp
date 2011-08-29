@@ -338,12 +338,18 @@ void Module2200::createScene2248(int which) {
 }
 			
 void Module2200::updateScene2201() {
-	// TODO
 	_childObject->handleUpdate();
 	if (_done) {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2203(0);
+		} else if (_field20 == 2) {
+			createScene2202(0);
+		} else {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
 	}
 }
 			
