@@ -178,12 +178,12 @@ struct ReelRoutine {
 struct People {
 	uint8 b0;
 	uint8 b1;
-	uint16 w0() const { return READ_LE_UINT16(&b0); }
-	void setW0(uint16 v) { WRITE_LE_UINT16(&b0, v); }
+	uint16 reelPointer() const { return READ_LE_UINT16(&b0); }
+	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b0, v); }
 	uint8 b2;
 	uint8 b3;
-	uint16 w2() const { return READ_LE_UINT16(&b2); }
-	void setW2(uint16 v) { WRITE_LE_UINT16(&b2, v); }
+	uint16 routinePointer() const { return READ_LE_UINT16(&b2); }
+	void setRoutinePointer(uint16 v) { WRITE_LE_UINT16(&b2, v); }
 	uint8 b4;
 
 };

@@ -985,7 +985,7 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 	for (size_t i = 0; i < 12; ++i, ++people) {
 		if (people->b4 == 255)
 			continue;
-		data.word(kReelpointer) = people->w0();
+		data.word(kReelpointer) = people->reelPointer();
 		Reel *reel = getreelstart();
 		if (reel->frame() == 0xffff)
 			++reel;
@@ -1002,7 +1002,7 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 			continue;
 		if (y >= ymax)
 			continue;
-		data.word(kPersondata) = people->w2();
+		data.word(kPersondata) = people->routinePointer();
 		obname(people->b4, 5);
 		return true;
 	}

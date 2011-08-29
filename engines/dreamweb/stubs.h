@@ -195,4 +195,5 @@
 	uint16 waitframes();
 	void drawflags();
 	void addtopeoplelist();
+	void addtopeoplelist(ReelRoutine *routine);
 

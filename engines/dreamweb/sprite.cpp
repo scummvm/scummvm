@@ -890,10 +890,16 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 }
 
 void DreamGenContext::addtopeoplelist() {
+	addtopeoplelist((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+}
+
+void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
+	uint16 routinePointer = (const uint8 *)routine - cs.ptr(0, 0);
+
 	People *people = (People *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
-	people->setW0(es.word(bx+3));
-	people->setW2(bx);
-	people->b4 = es.byte(bx+7);
+	people->setReelPointer(routine->reelPointer());
+	people->setRoutinePointer(routinePointer);
+	people->b4 = routine->b7;
 	data.word(kListpos) += sizeof(People);
 }
 
