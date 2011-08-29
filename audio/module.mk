@@ -13,8 +13,8 @@ MODULE_OBJS := \
 	decoders/flac.o \
 	decoders/mp3.o \
 	decoders/raw.o \
-	decoders/vag.o \
 	decoders/vorbis.o \
+	decoders/xa.o \
 	softsynth/adlib.o \
 	softsynth/cms.o \
 	softsynth/opl/dbopl.o \

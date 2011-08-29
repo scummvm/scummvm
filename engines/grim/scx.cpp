@@ -21,7 +21,7 @@
  */
 
 #include "audio/audiostream.h"
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
@@ -127,14 +127,14 @@ SCXStream::SCXStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag d
 			rightStream->write(buf, _blockSize);
 		}
 
-		_xaStreams[0] = Audio::makeVagStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
-		_xaStreams[1] = Audio::makeVagStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
+		_xaStreams[0] = Audio::makeXAStream(new Common::MemoryReadStream(leftOut, channelSize[0], DisposeAfterUse::YES), _rate);
+		_xaStreams[1] = Audio::makeXAStream(new Common::MemoryReadStream(rightOut, channelSize[1], DisposeAfterUse::YES), _rate);
 
 		delete[] buf;
 		delete leftStream;
 		delete rightStream;
 	} else {
-		_xaStreams[0] = Audio::makeVagStream(stream->readStream(channelSize[0]), _rate);
+		_xaStreams[0] = Audio::makeXAStream(stream->readStream(channelSize[0]), _rate);
 		_xaStreams[1] = 0;
 	}
 

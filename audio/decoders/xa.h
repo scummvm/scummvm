@@ -28,8 +28,10 @@
  * - tinsel (PSX port of the game)
  */
 
-#ifndef SOUND_VAG_H
-#define SOUND_VAG_H
+#ifndef AUDIO_DECODERS_XA_H
+#define AUDIO_DECODERS_XA_H
+
+#include "common/types.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -40,17 +42,19 @@ namespace Audio {
 class RewindableAudioStream;
 
 /**
- * Takes an input stream containing Vag sound data and creates
+ * Takes an input stream containing XA ADPCM sound data and creates
  * an RewindableAudioStream from that.
  *
- * @param stream            the SeekableReadStream from which to read the ADPCM data
+ * @param stream            the SeekableReadStream from which to read the XA ADPCM data
  * @param rate              the sampling rate
+ * @param disposeAfterUse   whether to delete the stream after use.
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeVagStream(
+RewindableAudioStream *makeXAStream(
 	Common::SeekableReadStream *stream,
-	int rate = 11025);
+	int rate,
+	DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-} // End of namespace Sword1
+} // End of namespace Audio
 
 #endif
