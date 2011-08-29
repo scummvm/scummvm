@@ -225,6 +225,8 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	// Load the game
 	loadGame(slot, NULL);
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
+	_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
+	                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
 	caveUp();
 
 	return Common::kNoError;
@@ -670,8 +672,7 @@ void CGEEngine::switchCave(int cav) {
 		if (_hero) {
 			_hero->park();
 			_hero->step(0);
-			if (!_isDemo)
-				_vga->_spareQ->_show = 0;
+			_vga->_spareQ->_show = 0;
 		}
 		_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
 		                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
@@ -1196,19 +1197,6 @@ void CGEEngine::loadScript(const char *fname) {
 }
 
 void CGEEngine::mainLoop() {
-	if (_isDemo) {
-//		static uint32 tc = 0;
-		if (/* FIXME: TimerCount - tc >= ((182L * 6L) * 5L) && */ _talk == NULL && _snail->idle()) {
-			if (_text->getText(_demoText)) {
-				_snail->addCom(kSnSound,  -1, 4, NULL); // drumla
-				_snail->addCom(kSnInf,  -1, _demoText, NULL);
-				_snail->addCom(kSnLabel, -1, -1, NULL);
-				if (_text->getText(++_demoText) == NULL)
-					_demoText = kDemo + 1;
-			}
-			//FIXME: tc = TimerCount;
-		}
-	}
 	_vga->show();
 	_snail_->runCom();
 	_snail->runCom();
@@ -1463,18 +1451,16 @@ bool CGEEngine::showTitle(const char *name) {
 	}
 
 	if (_mode < 2) {
-		if (!_isDemo) {
-			// At this point the game originally set the protection variables
-			// used by the copy protection check
-			movie("X00"); // paylist
-			_vga->copyPage(1, 2);
-			_vga->copyPage(0, 1);
-			_vga->_showQ->append(_mouse);
-			// In the original game, the user had to enter his name
-			// As it was only used to name savegames, it has been removed
-			_vga->_showQ->clear();
-			_vga->copyPage(0, 2);
-		}
+		// At this point the game originally set the protection variables
+		// used by the copy protection check
+		movie("X00"); // paylist
+		_vga->copyPage(1, 2);
+		_vga->copyPage(0, 1);
+		_vga->_showQ->append(_mouse);
+		// In the original game, the user had to enter his name
+		// As it was only used to name savegames, it has been removed
+		_vga->_showQ->clear();
+		_vga->copyPage(0, 2);
 
 		if (_mode == 0) {
 // The auto-load of savegame #0 is currently disabled
@@ -1531,7 +1517,7 @@ void CGEEngine::cge_main() {
 			movie(kLgoExt);
 
 		if (showTitle("WELCOME")) {
-			if ((!_isDemo) && (_mode == 1))
+			if (_mode == 1)
 				movie("X02"); // intro
 			runGame();
 			_startupMode = 2;

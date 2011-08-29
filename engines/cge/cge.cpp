@@ -46,7 +46,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kCGEDebugFile, "file", "CGE IO debug channel");
 	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
 
-	_isDemo      = _gameDescription->flags & ADGF_DEMO;
 	_startupMode = 1;
 	_demoText    = kDemo;
 	_oldLev      = 0;
@@ -55,32 +54,17 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 void CGEEngine::initCaveValues() {
-	if (_isDemo) {
-		_caveDx = 23;
-		_caveDy = 29;
-		_caveNx = 3;
-		_caveNy = 1;
-	} else {
-		_caveDx = 9;
-		_caveDy = 10;
-		_caveNx = 8;
-		_caveNy = 3;
-	}
+	_caveDx = 9;
+	_caveDy = 10;
+	_caveNx = 8;
+	_caveNy = 3;
 	_caveMax = _caveNx * _caveNy;
 
-	if (_isDemo) {
-		_maxCaveArr[0] = _caveMax;
-		_maxCaveArr[1] = -1;
-		_maxCaveArr[2] = -1;
-		_maxCaveArr[3] = -1;
-		_maxCaveArr[4] = -1;
-	} else {
-		_maxCaveArr[0] = 1;
-		_maxCaveArr[1] = 8;
-		_maxCaveArr[2] = 16;
-		_maxCaveArr[3] = 23;
-		_maxCaveArr[4] = 24;
-	};
+	_maxCaveArr[0] = 1;
+	_maxCaveArr[1] = 8;
+	_maxCaveArr[2] = 16;
+	_maxCaveArr[3] = 23;
+	_maxCaveArr[4] = 24;
 
 	_heroXY = (Hxy *) malloc (sizeof(Hxy) * _caveMax);
 	for (int i = 0; i < _caveMax; i++) {
@@ -100,7 +84,7 @@ void CGEEngine::freeCaveValues() {
 	free(_barriers);
 }
 
-void CGEEngine::setup() {
+void CGEEngine::init() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::setup()");
 
 	// Initialise fields
@@ -129,7 +113,7 @@ void CGEEngine::setup() {
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++)
 		_pocket[i] = NULL;
-	_horzLine = isDemo() ? NULL : new HorizLine(this);
+	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
 	_cavLight = new CavLight(this);
 	_debugLine = new InfoLine(this, kScrWidth);
@@ -170,9 +154,7 @@ void CGEEngine::setup() {
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
-CGEEngine::~CGEEngine() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::~CGEEngine()");
-
+void CGEEngine::deinit() {
 	// Call classes with static members to clear them up
 	Talk::deinit();
 	Bitmap::deinit();
@@ -215,16 +197,28 @@ CGEEngine::~CGEEngine() {
 	freeCaveValues();
 }
 
+CGEEngine::~CGEEngine() {
+	debugC(1, kCGEDebugEngine, "CGEEngine::~CGEEngine()");
+}
+
 Common::Error CGEEngine::run() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::run()");
+
+	if (_gameDescription->flags & ADGF_DEMO) {
+		warning("Demos of Soltys are not supported.\nPlease get a free version on ScummVM download page");
+		return Common::kUnsupportedGameidError;
+	}
 
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
 
 	// Setup necessary game objects
-	setup();
+	init();
 	// Run the game
 	cge_main();
+
+	// Remove game objects
+	deinit();
 
 	return Common::kNoError;
 }
@@ -242,10 +236,6 @@ bool CGEEngine::canLoadGameStateCurrently() {
 
 bool CGEEngine::canSaveGameStateCurrently() {
 	return (_startupMode == 0) && _mouse->_active;
-}
-
-bool CGEEngine::isDemo() const {
-	return _gameDescription->flags & ADGF_DEMO;
 }
 
 } // End of namespace CGE
