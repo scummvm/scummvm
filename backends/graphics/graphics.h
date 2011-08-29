@@ -43,6 +43,7 @@ public:
 
 	virtual void launcherInitSize(uint w, uint h) = 0;
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual int getScreenChangeID() const = 0;
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;
 	virtual void updateScreen() = 0;

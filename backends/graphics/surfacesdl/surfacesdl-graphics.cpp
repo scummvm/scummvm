@@ -47,7 +47,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_overlayVisible(false),
 	_overlayscreen(0),
 	_overlayWidth(0), _overlayHeight(0),
-	_overlayDirty(true)
+	_overlayDirty(true),
+	_screenChangeCount(0)
 #ifdef USE_OPENGL
 	, _overlayNumTex(0), _overlayTexIds(0)
 #endif
@@ -215,6 +216,8 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 	_overlayFormat.bShift = _overlayscreen->format->Bshift;
 	_overlayFormat.aShift = _overlayscreen->format->Ashift;
 
+	_screenChangeCount++;
+
 	return (byte *)_screen->pixels;
 }
 
@@ -363,9 +366,29 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 
 #ifdef USE_OPENGL
 	if (_opengl) {
+		SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+				_overlayscreen->format->Rmask, _overlayscreen->format->Gmask,
+				_overlayscreen->format->Bmask, _overlayscreen->format->Amask);
+
+		SDL_LockSurface(tmp);
 		SDL_LockSurface(_overlayscreen);
-		glReadPixels(0, 0, _overlayWidth, _overlayWidth, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _overlayscreen->pixels);
+
+		glReadPixels(0, 0, _overlayWidth, _overlayHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, tmp->pixels);
+
+		// Flip pixels vertically
+		byte *src = (byte *)tmp->pixels;
+		byte *buf = (byte *)_overlayscreen->pixels + (_overlayHeight - 1) * _overlayscreen->pitch;
+		int h = _overlayHeight;
+		do {
+			memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
+			src += tmp->pitch;
+			buf -= _overlayscreen->pitch;
+		} while (--h);
+
 		SDL_UnlockSurface(_overlayscreen);
+		SDL_UnlockSurface(tmp);
+
+		SDL_FreeSurface(tmp);
 	} else
 #endif
 	{

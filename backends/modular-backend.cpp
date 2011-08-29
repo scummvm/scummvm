@@ -72,6 +72,10 @@ byte *ModularBackend::setupScreen(int screenW, int screenH, bool fullscreen, boo
 	return _graphicsManager->setupScreen(screenW, screenH, fullscreen, accel3d);
 }
 
+int ModularBackend::getScreenChangeID() const {
+	return _graphicsManager->getScreenChangeID();
+}
+
 int16 ModularBackend::getHeight() {
 	return _graphicsManager->getHeight();
 }

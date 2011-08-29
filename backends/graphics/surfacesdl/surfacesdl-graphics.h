@@ -55,6 +55,7 @@ public:
 
 	virtual void launcherInitSize(uint w, uint h);
 	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 
@@ -105,6 +106,8 @@ protected:
 
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
+
+	int _screenChangeCount;
 };
 
 #endif
