@@ -65,10 +65,8 @@ protected:
 	bool _mouseClicked;
 	DataResource _dataResource;
 	RectList *_rectList;
+	HitRectList _hitRectList;
 	int _rectType;
-	// rectListCount
-	// TODO 00000088 someRects	   dd ?
-	// TODO 0000008C someRectsCount  dw ?
 	// TODO 0000008E field_8E		dw ?
 	Sprite *_mouseCursor;
 	Klayman *_klayman;
@@ -104,8 +102,10 @@ protected:
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);
 	void clearRectList();
+	void loadHitRectList();
 	void messageList402220();
 	void loadDataResource(uint32 fileHash);
+	uint16 convertMessageNum(uint32 messageNum);
 };
 
 } // End of namespace Neverhood

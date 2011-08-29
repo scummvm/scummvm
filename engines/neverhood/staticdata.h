@@ -50,7 +50,7 @@ struct RectItem {
 typedef Common::Array<RectItem> RectList;
 
 struct MessageItem {
-	uint16 messageNum;
+	uint32 messageNum;
 	uint32 messageValue;
 };
 

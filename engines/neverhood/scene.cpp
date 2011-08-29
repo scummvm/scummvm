@@ -36,7 +36,6 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects)
 	_mouseClickPos.y = 0;
 	_mouseClicked = false;
 	_rectList = NULL;
-	// TODO _someRects = NULL;
 	_klayman = NULL;
 	_mouseCursor = NULL;
 	_palette = NULL;
@@ -332,10 +331,10 @@ bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
 }
 
 bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
+	int16 klaymanX = _klayman->getX();
+	int16 klaymanY = _klayman->getY();
 	if (_rectType == 1) {
 		RectList &rectList = *_rectList;
-		int16 klaymanX = _klayman->getX();
-		int16 klaymanY = _klayman->getY();
 		for (uint i = 0; i < rectList.size(); i++) {
 			debug("(%d, %d) ? (%d, %d, %d, %d)", klaymanX, klaymanY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
 			if (klaymanX >= rectList[i].rect.x1 && klaymanX <= rectList[i].rect.x2 && 
@@ -350,6 +349,10 @@ bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
 				}
 			}
 		}
+	} else if (_rectType == 2) {
+		MessageList *messageList = _dataResource.getMessageListAtPos(klaymanX, klaymanY, mouseX, mouseY);
+		if (messageList && messageList->size())
+			setMessageList2(messageList, true, true);
 	}
 	return true;
 }
@@ -440,7 +443,7 @@ void Scene::runMessageList() {
 	if (_messageList && _klayman) {
 	
 		while (_messageList && _messageListIndex < _messageListCount && !_messageListFlag1) {
-			int messageNum = (*_messageList)[_messageListIndex].messageNum;
+			uint32 messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
 			
 			debug("Scene::runMessageList() %04X, %08X", messageNum, messageParam);
@@ -450,7 +453,7 @@ void Scene::runMessageList() {
 				_klayman->sendMessage(0x1021, 0, this);
 			}
 			if (_systemCallbackFlag) {
-				// TODO messageNum = systemConvertMessageCb(messageNum);
+				messageNum = convertMessageNum(messageNum);
 			}
 			if (messageNum != 0x4003) {
 				if (messageNum == 0x1009 || messageNum == 0x1024) {
@@ -514,10 +517,48 @@ void Scene::clearRectList() {
 	_rectType = 0;
 }
 
+void Scene::loadHitRectList() {
+	HitRectList *hitRectList = _dataResource.getHitRectList();
+	debug("Scene::loadHitRectList() hitRectList = %p", (void*)hitRectList);
+	if (hitRectList) {
+		_hitRectList = *hitRectList;
+		_vm->_collisionMan->setHitRects(&_hitRectList);
+	}
+}
+
 void Scene::loadDataResource(uint32 fileHash) {
 	_dataResource.load(fileHash);
+	_rectType = 2;
 	if (_klayman)
 		_klayman->loadDataResource(fileHash);
+}
+
+uint16 Scene::convertMessageNum(uint32 messageNum) {
+	switch (messageNum) {
+	case 0x00004004:
+		return 0x4001;
+	case 0x00000083:
+		return 0x100A;
+	case 0x044001C8:
+		return 0x481C;
+	case 0x02420480:
+		return 0x4818;
+	case 0x08004025:
+		return 0x100D;
+	case 0x04404281:
+		return 0x4824;
+	case 0x08400880:
+		return 0x4825;
+	case 0x08209081:
+		return 0x4823;
+	case 0x24000060:
+		return 0x1009;
+	case 0x42002200:
+		return 0x4004;
+	case 0x428D4894:
+		return 0x101A;	
+	}
+	return 0x1000;
 }
 
 } // End of namespace Neverhood

@@ -497,7 +497,7 @@ void DataResource::load(uint32 fileHash) {
 						hitRect.rect.y1 = dataS.readUint16LE();
 						hitRect.rect.x2 = dataS.readUint16LE();
 						hitRect.rect.y2 = dataS.readUint16LE();
-						hitRect.type = dataS.readUint16LE(); 
+						hitRect.type = dataS.readUint16LE() + 0x5001; 
 						debug(3, "(%d, %d, %d, %d) -> %04d", hitRect.rect.x1, hitRect.rect.y1, hitRect.rect.x2, hitRect.rect.y2, hitRect.type);
 						hitRectList->push_back(hitRect);
 					}
@@ -514,7 +514,7 @@ void DataResource::load(uint32 fileHash) {
 						MessageItem messageItem;
 						messageItem.messageNum = dataS.readUint32LE();
 						messageItem.messageValue = dataS.readUint32LE();
-						debug(3, "(%04X, %08X)", messageItem.messageNum, messageItem.messageValue);
+						debug(3, "(%08X, %08X)", messageItem.messageNum, messageItem.messageValue);
 						messageList->push_back(messageItem);
 					}
 					drDirectoryItem.offset = _messageLists.size();
@@ -602,12 +602,26 @@ NPointArray *DataResource::getPointArray(uint32 nameHash) {
 }
 
 HitRectList *DataResource::getHitRectList() {
-	// TODO
+	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(calcHash("HitArray"), 3);
+	if (drDirectoryItem)
+		return _hitRectLists[drDirectoryItem->offset];
 	return NULL;
 }
 
 MessageList *DataResource::getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY) {
-	// TODO
+	for (uint i = 0; i < _drRects.size(); i++) {
+		if (klaymanX >= _drRects[i].rect.x1 && klaymanX <= _drRects[i].rect.x2 && 
+			klaymanY >= _drRects[i].rect.y1 && klaymanY <= _drRects[i].rect.y2) {
+			DRSubRectList *drSubRectList = _drSubRectLists[_drRects[i].subRectIndex]; 
+			for (uint j = 0; j < drSubRectList->size(); j++) {
+				DRSubRect &subRect = (*drSubRectList)[j];
+				if (mouseX >= subRect.rect.x1 && mouseX <= subRect.rect.x2 && 
+					mouseY >= subRect.rect.y1 && mouseY <= subRect.rect.y2) {
+					return _messageLists[subRect.messageListItemIndex];
+				}
+			}
+		}
+	}
 	return NULL;
 }
 
