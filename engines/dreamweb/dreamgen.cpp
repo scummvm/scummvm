@@ -2032,24 +2032,6 @@ gottrainframe:
 	showgamereel();
 }
 
-void DreamGenContext::addtopeoplelist() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	push(bx);
-	cl = es.byte(bx+7);
-	ax = es.word(bx+3);
-	bx = data.word(kListpos);
-	es = data.word(kBuffers);
-	es.word(bx) = ax;
-	ax = pop();
-	es.word(bx+2) = ax;
-	es.byte(bx+4) = cl;
-	bx = pop();
-	es = pop();
-	_add(data.word(kListpos), 5);
-}
-
 void DreamGenContext::checkspeed() {
 	STACK_CHECK;
 	_cmp(data.byte(kLastweapon), -1);
@@ -17948,7 +17930,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_copper: copper(); break;
 		case addr_sparky: sparky(); break;
 		case addr_train: train(); break;
-		case addr_addtopeoplelist: addtopeoplelist(); break;
 		case addr_checkspeed: checkspeed(); break;
 		case addr_delsprite: delsprite(); break;
 		case addr_mainman: mainman(); break;

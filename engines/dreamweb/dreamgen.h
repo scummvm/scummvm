@@ -596,7 +596,6 @@ public:
 	static const uint16 addr_mainman = 0xc138;
 	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
-	static const uint16 addr_addtopeoplelist = 0xc108;
 	static const uint16 addr_train = 0xc104;
 	static const uint16 addr_sparky = 0xc100;
 	static const uint16 addr_copper = 0xc0fc;
@@ -1413,7 +1412,7 @@ public:
 	void showdiary();
 	void purgealocation();
 	//void updatepeople();
-	void addtopeoplelist();
+	//void addtopeoplelist();
 	void hangoncurs();
 	void sparkydrip();
 	void compare();

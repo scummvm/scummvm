@@ -889,5 +889,13 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 	*type = tileData[2];
 }
 
+void DreamGenContext::addtopeoplelist() {
+	People *people = (People *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
+	people->setW0(es.word(bx+3));
+	people->setW2(bx);
+	people->b4 = es.byte(bx+7);
+	data.word(kListpos) += sizeof(People);
+}
+
 } /*namespace dreamgen */
 

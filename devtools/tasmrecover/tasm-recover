@@ -163,6 +163,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'readmouse4',
 	'waitframes',
 	'drawflags',
+	'addtopeoplelist',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

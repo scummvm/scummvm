@@ -193,4 +193,5 @@
 	void readmouse4();
 	uint16 waitframes();
 	void drawflags();
+	void addtopeoplelist();
 
