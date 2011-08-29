@@ -297,5 +297,40 @@ void DreamGenContext::drawflags() {
 	}
 }
 
+void DreamGenContext::showallex() {
+	data.word(kListpos) = kExlist;
+	memset(segRef(data.word(kBuffers)).ptr(kExlist, 100 * 5), 0xff, 100 * 5);
+
+	data.word(kFrsegment) = data.word(kExtras);
+	data.word(kDataad) = kExframedata;
+	data.word(kFramesad) = kExframes;
+	data.byte(kCurrentex) = 0;
+	si = kExdata + 2;
+	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex), si +=16) {
+		es = data.word(kExtras);
+		if (es.byte(si) == 0xff)
+			continue;
+		if (es.byte(si-2) != data.byte(kReallocation))
+			continue;
+		if (getmapad((const uint8 *)es.ptr(si, 5)) == 0)
+			continue;
+		data.word(kCurrentframe) = 3 * data.byte(kCurrentex);
+		uint8 width, height;
+		calcfrframe(&width, &height);
+		uint16 x, y;
+		finalframe(&x, &y);
+		if ((width != 0) || (height != 0)) {
+			showframe((Frame *)segRef(data.word(kFrsegment)).ptr(0, 0), x + data.word(kMapadx), y + data.word(kMapady), data.word(kCurrentframe) & 0xff, 0);
+			ObjPos *objPos = (ObjPos *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
+			objPos->xMin = data.byte(kSavex);
+			objPos->yMin = data.byte(kSavey);
+			objPos->xMax = data.byte(kSavesize + 0) + data.byte(kSavex);
+			objPos->yMax = data.byte(kSavesize + 1) + data.byte(kSavey);
+			objPos->index = i;
+			data.word(kListpos) += sizeof(ObjPos);
+		}
+	}
+}
+
 } /*namespace dreamgen */
 

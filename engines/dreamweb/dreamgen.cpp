@@ -6303,94 +6303,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::showallex() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	data.word(kListpos) = bx;
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	cx = 100*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kExtras);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	data.byte(kCurrentex) = 0;
-	si = (0+2080+30000)+2;
-	cx = 0;
-exloop:
-	push(cx);
-	push(si);
-	es = data.word(kExtras);
-	push(si);
-	ch = 0;
-	_cmp(es.byte(si), 255);
-	if (flags.z())
-		goto notinroom;
-	al = es.byte(si-2);
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto notinroom;
-	getmapad();
-notinroom:
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto blankex;
-	al = data.byte(kCurrentex);
-	ah = 0;
-	dx = ax;
-	_add(ax, ax);
-	_add(ax, dx);
-	data.word(kCurrentframe) = ax;
-	push(es);
-	push(si);
-	calcfrframe();
-	es = data.word(kMapstore);
-	ds = data.word(kFrsegment);
-	finalframe();
-	si = pop();
-	es = pop();
-	_cmp(cx, 0);
-	if (flags.z())
-		goto blankex;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	ax = pop();
-	cx = pop();
-	push(cx);
-	push(ax);
-	es.byte(si+4) = cl;
-	_add(si, 5);
-	data.word(kListpos) = si;
-blankex:
-	_inc(data.byte(kCurrentex));
-	si = pop();
-	cx = pop();
-	_add(si, 16);
-	_inc(cx);
-	_cmp(cx, 100);
-	if (flags.z())
-		return /* (finex) */;
-	goto exloop;
-}
-
 void DreamGenContext::autolook() {
 	STACK_CHECK;
 	ax = data.word(kMousex);
@@ -18078,7 +17990,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_deleteextext: deleteextext(); break;
 		case addr_blockget: blockget(); break;
 		case addr_drawfloor: drawfloor(); break;
-		case addr_showallex: showallex(); break;
 		case addr_autolook: autolook(); break;
 		case addr_look: look(); break;
 		case addr_dolook: dolook(); break;

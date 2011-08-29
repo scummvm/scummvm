@@ -170,6 +170,7 @@
 	void removesetobject();
 	void removesetobject(uint8 index);
 	void showallfree();
+	void showallex();
 	bool finishedwalkingCPP();
 	void finishedwalking();
 	void checkone();

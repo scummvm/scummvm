@@ -143,6 +143,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'placesetobject',
 	'removesetobject',
 	'showallfree',
+	'showallex',
 	'adjustlen',
 	'finishedwalking',
 	'checkone',
