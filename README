@@ -88,6 +88,9 @@ ftp://ftp.lucasarts.com/patches/pc/Gfupd101.exe and obviously requires
 Windows or something similar to unpack and apply it. (There does exist
 tools to unpack it on any platform in the residual-tools git-repos).
 
+Additional information on how to apply the patch, can be found in our
+wiki at: http://sourceforge.net/apps/mediawiki/residual/index.php?title=Grim_Fandango_Patch
+
 If you want to try to play with fullscreen, or you want to play with
 software-rendering, see the configuration-section below.
 
