@@ -549,16 +549,16 @@ void DreamGenContext::showreelframe(Reel *reel) {
 }
 
 void DreamGenContext::showgamereel() {
-	uint16 reelpointer = es.word(bx+3);
+	showgamereel((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+}
+
+void DreamGenContext::showgamereel(ReelRoutine *routine) {
+	uint16 reelpointer = routine->reelPointer();
 	if (reelpointer >= 512)
 		return;
 	data.word(kReelpointer) = reelpointer;
-	push(es);
-	push(bx);
 	plotreel();
-	bx = pop();
-	es = pop();
-	es.word(bx+3) = data.word(kReelpointer);
+	routine->setReelPointer(data.word(kReelpointer));
 }
 
 const Frame *DreamGenContext::getreelframeax(uint16 frame) {

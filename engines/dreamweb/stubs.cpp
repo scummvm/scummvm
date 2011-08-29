@@ -935,7 +935,11 @@ void DreamGenContext::plotreel() {
 			showreelframe(reel);
 		++reel;
 	}
+	push(es);
+	push(bx);
 	soundonreels();
+	bx = pop();
+	es = pop();
 }
 
 void DreamGenContext::crosshair() {
