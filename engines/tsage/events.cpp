@@ -164,19 +164,30 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		if (_vm->getGameID() == GType_BlueForce)
+			cursor = _resourceManager->getSubResource(1, 5, 3, &size);
+		else
+			cursor = _resourceManager->getSubResource(4, 1, 5, &size);
 		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		if (_vm->getGameID() == GType_BlueForce) {
+			cursor = _resourceManager->getSubResource(1, 5, 2, &size);
+		} else {
+			cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		}
 		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		if (_vm->getGameID() == GType_BlueForce) {
+			cursor = _resourceManager->getSubResource(1, 5, 4, &size);
+		} else {
+			cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		}
 		_currentCursor = CURSOR_TALK;
 		break;
 
@@ -189,9 +200,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 	case CURSOR_WALK:
 	default:
 		// Walk cursor
-		cursor = CURSOR_WALK_DATA;
+		if (_vm->getGameID() == GType_BlueForce) {
+			cursor = _resourceManager->getSubResource(1, 5, 1, &size);
+		} else {
+			cursor = CURSOR_WALK_DATA;
+			delFlag = false;
+		}
 		_currentCursor = CURSOR_WALK;
-		delFlag = false;
 		break;
 	}
 

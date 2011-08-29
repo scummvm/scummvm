@@ -41,6 +41,7 @@ class BlueForceGame: public Game {
 public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
+	virtual void rightClick();
 };
 
 #define OBJ_ARRAY_SIZE 10

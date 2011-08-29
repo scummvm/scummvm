@@ -368,6 +368,7 @@ public:
 	bool loadPalette(int paletteNum);
 	void refresh();
 	void setPalette(int index, int count);
+	void setEntry(int index, uint r, uint g, uint b);
 	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff);
 	void getPalette(int start = 0, int count = 256);
 	void signalListeners();

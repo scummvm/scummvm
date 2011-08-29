@@ -21,6 +21,7 @@
  */
 
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
@@ -133,6 +134,12 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		error("Unknown scene number - %d", sceneNumber);
 		break;
 	}
+}
+
+void BlueForceGame::rightClick() {
+	RightClickDialog *dlg = new RightClickDialog();
+	dlg->execute();
+	delete dlg;
 }
 
 /*--------------------------------------------------------------------------*/

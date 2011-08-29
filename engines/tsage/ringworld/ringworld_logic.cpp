@@ -28,6 +28,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld/ringworld_demo.h"
+#include "tsage/ringworld/ringworld_dialogs.h"
 #include "tsage/ringworld/ringworld_scenes1.h"
 #include "tsage/ringworld/ringworld_scenes2.h"
 #include "tsage/ringworld/ringworld_scenes3.h"
@@ -1487,6 +1488,12 @@ void RingworldGame::processEvent(Event &event) {
 			break;
 		}
 	}
+}
+
+void RingworldGame::rightClick() {
+	RightClickDialog *dlg = new RightClickDialog();
+	dlg->execute();
+	delete dlg;
 }
 
 } // End of namespace Ringworld

@@ -132,6 +132,7 @@ public:
 	virtual void endGame(int resNum, int lineNum) {}
 	virtual Scene *createScene(int sceneNumber) = 0;
 	virtual void processEvent(Event &event) {}
+	virtual void rightClick() {}
 };
 
 } // End of namespace TsAGE

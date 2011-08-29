@@ -49,35 +49,6 @@ public:
 	ConfigDialog();
 };
 
-class RightClickButton : public GfxButton {
-private:
-	GfxSurface *_savedButton;
-public:
-	int _buttonIndex;
-
-	RightClickButton(int buttonIndex, int xp, int yp);
-	~RightClickButton() { delete _savedButton; }
-
-	virtual void highlight();
-};
-
-class RightClickDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	RightClickButton *_highlightedButton;
-	int _selectedAction;
-	RightClickButton _walkButton, _lookButton, _useButton, _talkButton, _inventoryButton, _optionsButton;
-
-	RightClickButton *findButton(const Common::Point &pt);
-public:
-	RightClickDialog();
-	~RightClickDialog();
-
-	virtual void draw();
-	virtual bool process(Event &event);
-	void execute();
-};
-
 /*--------------------------------------------------------------------------*/
 
 class ModalDialog : public GfxDialog {

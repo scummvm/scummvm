@@ -1,6 +1,7 @@
 MODULE := engines/tsage
 
 MODULE_OBJS := \
+	blue_force/blueforce_dialogs.o \
 	blue_force/blueforce_logic.o \
 	blue_force/blueforce_scenes0.o \
 	blue_force/blueforce_scenes1.o \
@@ -16,6 +17,7 @@ MODULE_OBJS := \
 	graphics.o \
 	resources.o \
 	ringworld/ringworld_demo.o \
+	ringworld/ringworld_dialogs.o \
 	ringworld/ringworld_logic.o \
 	ringworld/ringworld_scenes1.o \
 	ringworld/ringworld_scenes2.o \

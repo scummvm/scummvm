@@ -1245,6 +1245,15 @@ void ScenePalette::setPalette(int index, int count) {
 }
 
 /**
+ * Set a palette entry
+ */
+void ScenePalette::setEntry(int index, uint r, uint g, uint b) {
+	_palette[index * 3] = r;
+	_palette[index * 3 + 1] = g;
+	_palette[index * 3 + 2] = b;
+}
+
+/**
  * Returns the palette index with the closest matching color to that specified
  * @param r			R component
  * @param g			G component
@@ -3616,9 +3625,7 @@ void SceneHandler::process(Event &event) {
 	// Check for displaying right-click dialog
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (event.btnState == BTNSHIFT_RIGHT) &&
 			_globals->_player._uiEnabled) {
-		RightClickDialog *dlg = new RightClickDialog();
-		dlg->execute();
-		delete dlg;
+		_globals->_game->rightClick();
 
 		event.handled = true;
 		return;
