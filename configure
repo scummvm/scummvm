@@ -2241,6 +2241,7 @@ if test -n "$_host"; then
 			LIBS="$LIBS -L/usr/lib"
 			
 			_backend="maemo"
+			_vkeybd=yes
 			_build_hq_scalers=no
 			_mt32emu=no
 			_alsa=no

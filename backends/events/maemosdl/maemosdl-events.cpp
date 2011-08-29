@@ -52,8 +52,16 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				processMouseEvent(event, _km.x, _km.y);
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
-				// handled in keyup
-				return true;
+				if (ev.key.keysym.mod & KMOD_CTRL) {
+					event.type = Common::EVENT_KEYDOWN;
+					event.kbd.keycode = Common::KEYCODE_F7;
+					event.kbd.ascii = Common::ASCII_F7;
+					event.kbd.flags = 0;
+					return true;
+				} else {
+					// handled in keyup
+					return true;
+				}
 			}
 			break;
 		}
@@ -72,10 +80,18 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				processMouseEvent(event, _km.x, _km.y);
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
-				_clickEnabled = !_clickEnabled;
-				((SurfaceSdlGraphicsManager*) _graphicsManager)->displayMessageOnOSD(
-					_clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
-				return true;
+				if (ev.key.keysym.mod & KMOD_CTRL) {
+					event.type = Common::EVENT_KEYUP;
+					event.kbd.keycode = Common::KEYCODE_F7;
+					event.kbd.ascii = Common::ASCII_F7;
+					event.kbd.flags = 0;
+					return true;
+				} else {
+					_clickEnabled = !_clickEnabled;
+					((SurfaceSdlGraphicsManager*) _graphicsManager)->displayMessageOnOSD(
+						_clickEnabled ? _("Clicking Enabled") : _("Clicking Disabled"));
+					return true;
+				}
 			}
 			break;
 		}
