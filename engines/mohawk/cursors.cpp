@@ -199,12 +199,10 @@ void MacCursorManager::setCursor(uint16 id) {
 	if (!stream)
 		stream = _resFork->getResource(MKTAG('C','U','R','S'), id);
 
-	if (stream) {
+	if (stream)
 		setMacCursor(stream);
-		delete stream;
-	} else {
+	else
 		setDefaultCursor();
-	}
 }
 
 LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
