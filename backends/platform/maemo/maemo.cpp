@@ -23,10 +23,12 @@
 #if defined(MAEMO)
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 
 #include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "common/textconsole.h"
+
 
 #include <SDL/SDL_syswm.h>
 #include <X11/Xutil.h>
@@ -40,6 +42,8 @@ void OSystem_SDL_Maemo::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new MaemoSdlEventSource();
+
+	ConfMan.set("vkeybdpath", DATA_PATH);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
