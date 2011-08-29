@@ -60,6 +60,28 @@ byte *getData(uint32 offset) {
 	return data + offset - dataStart + fileStart;
 }
 
+const char *getStringP(uint32 offset) {
+	return offset != 0 ? (const char*)getData(offset) : NULL;
+}
+
+uint32 calcHash(const char *value) {
+	if (!value)
+		return 0;
+	uint32 hash = 0, shiftValue = 0;
+	while (*value != 0) {
+		char ch = *value++;
+		if (ch >= 'a' && ch <= 'z')
+			ch -= 32;
+		else if (ch >= '0' && ch <= '9')
+			ch += 22;
+		shiftValue += ch - 64;
+		if (shiftValue >= 32)
+			shiftValue -= 32;
+		hash ^= 1 << shiftValue;
+	}
+	return hash;
+}
+
 struct HitRect {
 	int16 x1, y1, x2, y2;
 	uint16 messageNum;
@@ -217,6 +239,36 @@ struct NavigationItem {
 	
 };
 
+struct SceneInfo140Item {
+	uint32 bgFilename1;
+	uint32 bgFilename2;
+	uint32 txFilename;
+	uint32 bgFilename3;
+	byte xPosIndex;
+	byte count;
+
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		// Only save the hashes instead of the full names
+		bgFilename1 = calcHash(getStringP(READ_LE_UINT32(item + 0)));
+		bgFilename2 = calcHash(getStringP(READ_LE_UINT32(item + 4)));
+		txFilename = calcHash(getStringP(READ_LE_UINT32(item + 8)));
+		bgFilename3 = calcHash(getStringP(READ_LE_UINT32(item + 12)));
+		xPosIndex = item[16];
+		count = item[17];
+	}
+
+	void save(FILE *fd) {
+		writeUint32LE(fd, bgFilename1);
+		writeUint32LE(fd, bgFilename2);
+		writeUint32LE(fd, txFilename);
+		writeUint32LE(fd, bgFilename3);
+		writeByte(fd, xPosIndex);
+		writeByte(fd, count);
+	}
+
+};
+
 template<class ITEMCLASS>
 class StaticDataList {
 public:
@@ -346,10 +398,33 @@ public:
 
 };
 
+template<class ITEMCLASS>
+class StaticDataVector {
+public:
+	std::vector<ITEMCLASS> items;
+	
+	void loadVector(const uint32 *offsets) {
+		for (int i = 0; offsets[i] != 0; i++) {
+			ITEMCLASS item;
+			item.load(offsets[i]);
+			items.push_back(item);
+		}
+	}
+	
+	void saveVector(FILE *fd) {
+		writeUint32LE(fd, items.size());
+		for (typename std::vector<ITEMCLASS>::iterator it = items.begin(); it != items.end(); it++) {
+			(*it).save(fd);
+		}
+	}
+
+};
+
 StaticDataListVector<HitRectList> hitRectLists;
 StaticDataListVector<RectList> rectLists;
 StaticDataListVector<MessageList> messageLists;
 StaticDataListVector<NavigationList> navigationLists;
+StaticDataVector<SceneInfo140Item> sceneInfo140Items; 
 
 void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 	MessageList *messageList = new MessageList();
@@ -363,24 +438,22 @@ int main(int argc, char *argv[]) {
 
 	loadExe("nhc.exe");
 
-    hitRectLists.loadListVector(hitRectListOffsets);
-    rectLists.loadListVector(rectListOffsets);
-    messageLists.loadListVector(messageListOffsets);
-    navigationLists.loadListVector(navigationListOffsets);
-    
+	hitRectLists.loadListVector(hitRectListOffsets);
+	rectLists.loadListVector(rectListOffsets);
+	messageLists.loadListVector(messageListOffsets);
+	navigationLists.loadListVector(navigationListOffsets);
+	sceneInfo140Items.loadVector(sceneInfo140Offsets);
+	    
 	datFile = fopen("neverhood.dat", "wb");
 
 	writeUint32LE(datFile, 0x11223344); // Some magic
 	writeUint32LE(datFile, DAT_VERSION);
 		
-	// Write all message lists
-    messageLists.saveListVector(datFile);
-	// Write all rect lists
-    rectLists.saveListVector(datFile);
-	// Write all hit rect lists
-    hitRectLists.saveListVector(datFile);
-	// Write all navigation lists
-    navigationLists.saveListVector(datFile);
+	messageLists.saveListVector(datFile);
+	rectLists.saveListVector(datFile);
+	hitRectLists.saveListVector(datFile);
+	navigationLists.saveListVector(datFile);
+	sceneInfo140Items.saveVector(datFile);
 
 	fclose(datFile);
 
