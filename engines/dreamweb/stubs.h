@@ -47,6 +47,8 @@
 	void printchar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printdirect();
 	void printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	void printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
+	void printmessage();
 	void usetimedtext();
 	void dumptimedtext();
 	void setuptimedtemp();

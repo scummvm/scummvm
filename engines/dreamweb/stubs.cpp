@@ -1618,6 +1618,16 @@ void DreamGenContext::animpointer() {
 	data.byte(kPointerframe) = 8;
 }
 
+void DreamGenContext::printmessage() {
+	printmessage(di, bx, al, dl, (bool)(dl & 1));
+}
+
+void DreamGenContext::printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
+	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index * 2);
+	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
+	printdirect(&string, x, &y, maxWidth, centered);
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

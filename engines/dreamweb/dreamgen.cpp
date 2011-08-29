@@ -15615,26 +15615,6 @@ void DreamGenContext::examineobtext() {
 	commandwithob();
 }
 
-void DreamGenContext::printmessage() {
-	STACK_CHECK;
-	push(dx);
-	push(bx);
-	push(di);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = pop();
-	bx = pop();
-	dx = pop();
-	al = 0;
-	ah = 0;
-	printdirect();
-}
-
 void DreamGenContext::printmessage2() {
 	STACK_CHECK;
 	push(dx);
@@ -18459,7 +18439,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_walkintoroom: walkintoroom(); break;
 		case addr_afterintroroom: afterintroroom(); break;
 		case addr_examineobtext: examineobtext(); break;
-		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
 		case addr_setwalk: setwalk(); break;
 		case addr_bresenhams: bresenhams(); break;
