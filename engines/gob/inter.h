@@ -345,6 +345,7 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void oGeisha_loadCursor(OpFuncParams &params);
+	void oGeisha_loadTot(OpFuncParams &params);
 	void oGeisha_goblinFunc(OpFuncParams &params);
 	void oGeisha_loadSound(OpFuncParams &params);
 	void oGeisha_checkData(OpFuncParams &params);
@@ -361,6 +362,8 @@ protected:
 	void oGeisha_caress2(OpGobParams &params);
 
 	int16 loadSound(int16 slot);
+
+	bool keyPressed();
 };
 
 class Inter_v2 : public Inter_v1 {

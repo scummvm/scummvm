@@ -56,6 +56,7 @@ void Inter_Geisha::setupOpcodesFunc() {
 	Inter_v1::setupOpcodesFunc();
 
 	OPCODEFUNC(0x03, oGeisha_loadCursor);
+	OPCODEFUNC(0x12, oGeisha_loadTot);
 	OPCODEFUNC(0x25, oGeisha_goblinFunc);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
 	OPCODEFUNC(0x3F, oGeisha_checkData);
@@ -79,6 +80,62 @@ void Inter_Geisha::oGeisha_loadCursor(OpFuncParams &params) {
 		warning("Geisha Stub: oGeisha_loadCursor: script[1] & 0x80");
 
 	o1_loadCursor(params);
+}
+
+bool Inter_Geisha::keyPressed() {
+	int16 key = _vm->_util->checkKey();
+	if (key)
+		return true;
+
+	int16 x, y;
+	MouseButtons buttons;
+
+	_vm->_util->getMouseState(&x, &y, &buttons);
+	return buttons != kMouseButtonsNone;
+}
+
+struct TOTTransition {
+	const char *to;
+	const char *from;
+	int32 offset;
+};
+
+static const TOTTransition kTOTTransitions[] = {
+	{"chambre.tot", "photo.tot"  ,  1801},
+	{"mo.tot"     , "chambre.tot", 13580},
+	{"chambre.tot", "mo.tot"     ,   564},
+	{"hard.tot"   , "chambre.tot", 13917},
+	{"carte.tot"  , "hard.tot"   , 17926},
+	{"chambre.tot", "carte.tot"  , 14609},
+	{"chambre.tot", "mo.tot"     ,  3658},
+	{"streap.tot" , "chambre.tot", 14652},
+	{"bonsai.tot" , "porte.tot"  ,  2858},
+	{"lit.tot"    , "napa.tot"   ,  3380},
+	{"oko.tot"    , "chambre.tot", 14146},
+	{"chambre.tot", "oko.tot"    ,  2334}
+};
+
+void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {
+	o1_loadTot(params);
+
+	// WORKAROUND: Geisha often displays text while it loads a new TOT.
+	//             Back in the days, this took long enough so that the text
+	//             could be read. Since this isn't the case anymore, we'll
+	//             wait for the user to press a key or click the mouse.
+	bool needWait = false;
+
+	for (int i = 0; i < ARRAYSIZE(kTOTTransitions); i++)
+		if ((_vm->_game->_script->pos() == kTOTTransitions[i].offset) &&
+		    (_vm->_game->_totToLoad     == kTOTTransitions[i].to) &&
+		    (_vm->_game->_curTotFile    == kTOTTransitions[i].from)) {
+
+			needWait = true;
+			break;
+		}
+
+	if (needWait)
+		while (!keyPressed())
+			_vm->_util->longDelay(1);
 }
 
 void Inter_Geisha::oGeisha_loadSound(OpFuncParams &params) {
