@@ -104,12 +104,10 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
-	bool isDemo() const;
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	const   ADGameDescription *_gameDescription;
-	bool   _isDemo;
 	int    _startupMode;
 	int    _demoText;
 	int    _oldLev;
@@ -262,7 +260,8 @@ protected:
 
 private:
 	CGEConsole *_console;
-	void setup();
+	void init();
+	void deinit();
 };
 
 // Example console class

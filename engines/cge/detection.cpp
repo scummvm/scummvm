@@ -57,24 +57,6 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-	{
-		"soltys", "Soltys Demo",
-		{
-			{"vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788},
-			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
-	},
-	{
-		"soltys", "Soltys Demo",
-		{
-			{"vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168},
-			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
-			AD_LISTEND
-		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
-	},
 	// English ScummVM version
 	{
 		"soltys", "",
@@ -85,7 +67,24 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
 	},
-
+	{
+		"soltys", "Soltys Demo (not supported)",
+		{
+			{"vol.cat", 0, "1e077c8ff58109a187f07ac54b0c873a", 18788},
+			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+	},
+	{
+		"soltys", "Soltys Demo (not supported)",
+		{
+			{"vol.cat", 0, "f17987487fab1ebddd781d8d02fedecc", 7168},
+			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+	},
 	AD_TABLE_END_MARKER
 };
 
