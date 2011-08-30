@@ -20,7 +20,16 @@ MODULE_OBJS = \
 	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o \
 	MMShell/Utilities/MMTimeValue.o \
-	MMShell/Utilities/MMUtilities.o
+	MMShell/Utilities/MMUtilities.o \
+	neighborhood/door.o \
+	neighborhood/exit.o \
+	neighborhood/extra.o \
+	neighborhood/hotspot.o \
+	neighborhood/neighborhood.o \
+	neighborhood/spot.o \
+	neighborhood/turn.o \
+	neighborhood/view.o \
+	neighborhood/zoom.o
 
 
 # This module can be built as a plugin

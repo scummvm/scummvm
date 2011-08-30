@@ -33,6 +33,7 @@
 
 #include "pegasus/console.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/neighborhood.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
@@ -240,118 +241,11 @@ void PegasusEngine::mainGameLoop() {
 
 void PegasusEngine::changeLocation(TimeZone timeZone) {
 	_timeZone = timeZone;
-	loadViews(_timeZone);
-	//loadExits(_timeZone);
-	loadDoors(_timeZone);
-	//loadHSLs(_timeZone);
-	//loadHSIn(_timeZone);
-	loadSoundSpots(_timeZone);
-	//loadTurns(_timeZone);
-	loadZooms(_timeZone);
-	loadExtras(_timeZone);
-}
 
-void PegasusEngine::loadViews(TimeZone timeZone) {
-	_currentViews.clear();
-
-	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('V', 'i', 'e', 'w'), getTimeZoneDesc(timeZone));
-
-	uint32 entryCount = res->readUint32BE();
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		View view;
-		view.u0 = res->readUint16BE(); // Compass reading?
-		view.u1 = res->readByte(); // Always 0-3, direction?
-		view.u2 = res->readByte(); // Usually 0, rarely 3
-		view.frameTime = res->readUint32BE();
-		debug(1, "View[%d]: u0 = %d, u1 = %d, u2 = %d, time = %d", i, view.u0, view.u1, view.u2, view.frameTime);
-		_currentViews.push_back(view);
-	}
-
-	delete res;
-}
-
-void PegasusEngine::loadDoors(TimeZone timeZone) {
-	_currentDoors.clear();
-
-	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('D', 'o', 'o', 'r'), getTimeZoneDesc(timeZone));
-
-	uint32 entryCount = res->readUint32BE();
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		Door door;
-		door.u0 = res->readUint16BE();
-		door.u1 = res->readUint16BE(); // Always divisible by 256?
-		door.startTime = res->readUint32BE();
-		door.endTime = res->readUint32BE();
-		door.u2 = res->readUint16BE();
-		debug(1, "Door[%d]: u0 = %d, u1 = %d, startTime = %d, endTime = %d, u2 = %d", i, door.u0, door.u1, door.startTime, door.endTime, door.u2);
-		_currentDoors.push_back(door);
-	}
-
-	delete res;
-}
-
-void PegasusEngine::loadSoundSpots(TimeZone timeZone) {
-	_currentSoundSpots.clear();
-
-	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('S', 'p', 'o', 't'), getTimeZoneDesc(timeZone));
-
-	uint32 entryCount = res->readUint32BE();
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		SoundSpot spot;
-		spot.u0 = res->readUint16BE();
-		spot.u1 = res->readUint16BE();
-		spot.u2 = res->readUint16BE(); // 0/1 or 768/769
-		spot.startTime = res->readUint32BE();
-		spot.endTime = res->readUint32BE();
-		spot.u3 = res->readUint16BE();
-		debug(1, "Sound Spot[%d]: u0 = %d, u1 = %d, u2 = %d, startTime = %d, endTime = %d, u3 = %d", i, spot.u0, spot.u1, spot.u2, spot.startTime, spot.endTime, spot.u3);
-		_currentSoundSpots.push_back(spot);
-	}
-
-	delete res;
-}
-
-void PegasusEngine::loadZooms(TimeZone timeZone) {
-	_currentZooms.clear();
-
-	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('Z', 'o', 'o', 'm'), getTimeZoneDesc(timeZone));
-
-	uint32 entryCount = res->readUint32BE();
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		Zoom zoom;
-		zoom.u0 = res->readUint16BE();
-		zoom.u1 = res->readUint16BE();
-		zoom.startTime = res->readUint32BE();
-		zoom.endTime = res->readUint32BE();
-		zoom.u2 = res->readUint16BE();
-		debug(1, "Zoom[%d]: u0 = %d, u1 = %d, startTime = %d, endTime = %d, u2 = %d", i, zoom.u0, zoom.u1, zoom.startTime, zoom.endTime, zoom.u2);
-		_currentZooms.push_back(zoom);
-	}
-
-	delete res;
-}
-
-void PegasusEngine::loadExtras(TimeZone timeZone) {
-	_currentExtras.clear();
-
-	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('X', 't', 'r', 'a'), getTimeZoneDesc(timeZone));
-
-	uint32 entryCount = res->readUint32BE();
-
-	for (uint32 i = 0; i < entryCount; i++) {
-		Extra extra;
-		extra.u0 = res->readUint32BE();
-		extra.startTime = res->readUint32BE();
-		extra.endTime = res->readUint32BE();
-		debug(1, "Extra[%d]: u0 = %d, startTime = %d, endTime = %d", i, extra.u0, extra.startTime, extra.endTime);
-		_currentExtras.push_back(extra);
-	}
-
-	delete res;
+	// Just a test...
+	Neighborhood *neighborhood = new Neighborhood(this, getTimeZoneDesc(_timeZone));
+	neighborhood->init();
+	delete neighborhood;
 }
 
 void PegasusEngine::showLoadDialog() {

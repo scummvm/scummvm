@@ -65,44 +65,6 @@ struct ItemLocationData {
 	byte u1;
 };
 
-struct View {
-	uint16 u0;
-	byte u1;
-	byte u2;
-	uint32 frameTime;
-};
-
-struct Door {
-	uint16 u0;
-	uint16 u1;
-	uint32 startTime;
-	uint32 endTime;
-	uint16 u2;
-};
-
-struct SoundSpot {
-	uint16 u0;
-	uint16 u1;
-	uint16 u2;
-	uint32 startTime;
-	uint32 endTime;
-	uint16 u3;
-};
-
-struct Zoom {
-	uint16 u0;
-	uint32 startTime;
-	uint32 endTime;
-	uint16 u1;
-	uint16 u2;
-};
-
-struct Extra {
-	uint32 u0;
-	uint32 startTime;
-	uint32 endTime;
-};
-
 struct InventoryPanelEntry {
 	uint32 startTime;
 	uint32 endTime;
@@ -237,11 +199,6 @@ private:
 	void mainGameLoop();
 	void loadItemLocationData();
 	void changeLocation(TimeZone timeZone);
-	void loadViews(TimeZone timeZone);
-	void loadDoors(TimeZone timeZone);
-	void loadSoundSpots(TimeZone timeZone);
-	void loadZooms(TimeZone timeZone);
-	void loadExtras(TimeZone timeZone);
 
 	// Misc Functions
 	static Common::String getTimeZoneFolder(TimeZone timeZone);
@@ -252,11 +209,6 @@ private:
 	GameMode _gameMode;
 	TimeZone _timeZone;
 	Common::Array<ItemLocationData> _itemLocationData;
-	Common::Array<View> _currentViews;
-	Common::Array<Door> _currentDoors;
-	Common::Array<SoundSpot> _currentSoundSpots;
-	Common::Array<Zoom> _currentZooms;
-	Common::Array<Extra> _currentExtras;
 
 	// Console
 	PegasusConsole *_console;
