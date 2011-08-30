@@ -6026,24 +6026,6 @@ moretext:
 		goto moretext;
 }
 
-void DreamGenContext::getexpos() {
-	STACK_CHECK;
-	es = data.word(kExtras);
-	al = 0;
-	di = (0+2080+30000);
-tryanotherex:
-	_cmp(es.byte(di+2), 255);
-	if (flags.z())
-		goto foundnewex;
-	_add(di, 16);
-	_inc(al);
-	_cmp(al, (114));
-	if (!flags.z())
-		goto tryanotherex;
-foundnewex:
-	data.byte(kExpos) = al;
-}
-
 void DreamGenContext::purgealocation() {
 	STACK_CHECK;
 	push(ax);
@@ -17981,7 +17963,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_pickupconts: pickupconts(); break;
 		case addr_transfercontoex: transfercontoex(); break;
 		case addr_transfertext: transfertext(); break;
-		case addr_getexpos: getexpos(); break;
 		case addr_purgealocation: purgealocation(); break;
 		case addr_emergencypurge: emergencypurge(); break;
 		case addr_purgeanitem: purgeanitem(); break;

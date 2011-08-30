@@ -1198,6 +1198,17 @@ void DreamGenContext::deletetaken() {
 	}
 }
 
+void DreamGenContext::getexpos() {
+	const DynObject *objects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		if (objects[i].b2[0] == 0xff) {
+			data.byte(kExpos) = i;
+			return;
+		}
+	}
+	data.byte(kExpos) = kNumexobjects;
+}
+
 void DreamGenContext::placesetobject() {
 	placesetobject(al);
 }

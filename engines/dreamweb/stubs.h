@@ -197,4 +197,6 @@
 	void drawflags();
 	void addtopeoplelist();
 	void addtopeoplelist(ReelRoutine *routine);
+	void getexpos();
+
 

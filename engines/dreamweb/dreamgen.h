@@ -455,7 +455,6 @@ public:
 	static const uint16 addr_purgeanitem = 0xc414;
 	static const uint16 addr_emergencypurge = 0xc410;
 	static const uint16 addr_purgealocation = 0xc40c;
-	static const uint16 addr_getexpos = 0xc408;
 	static const uint16 addr_transfertext = 0xc404;
 	static const uint16 addr_transfercontoex = 0xc400;
 	static const uint16 addr_pickupconts = 0xc3fc;
@@ -1336,7 +1335,7 @@ public:
 	//void clearwork();
 	void loadtraveltext();
 	//void worktoscreen();
-	void getexpos();
+	//void getexpos();
 	void fadedos();
 	//void fillspace();
 	void selectlocation();
