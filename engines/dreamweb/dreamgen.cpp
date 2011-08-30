@@ -2766,55 +2766,6 @@ void DreamGenContext::createpanel2() {
 	showframe();
 }
 
-void DreamGenContext::transferinv() {
-	STACK_CHECK;
-	di = data.word(kExframepos);
-	push(di);
-	al = data.byte(kExpos);
-	ah = 0;
-	bx = ax;
-	_add(ax, ax);
-	_add(ax, bx);
-	_inc(ax);
-	cx = 6;
-	_mul(cx);
-	es = data.word(kExtras);
-	bx = (0);
-	_add(bx, ax);
-	_add(di, (0+2080));
-	push(bx);
-	al = data.byte(kItemtotran);
-	ah = 0;
-	bx = ax;
-	_add(ax, ax);
-	_add(ax, bx);
-	_inc(ax);
-	cx = 6;
-	_mul(cx);
-	ds = data.word(kFreeframes);
-	bx = (0);
-	_add(bx, ax);
-	si = (0+2080);
-	al = ds.byte(bx);
-	ah = 0;
-	cl = ds.byte(bx+1);
-	ch = 0;
-	_add(si, ds.word(bx+2));
-	dx = ds.word(bx+4);
-	bx = pop();
-	es.byte(bx+0) = al;
-	es.byte(bx+1) = cl;
-	es.word(bx+4) = dx;
-	_mul(cx);
-	cx = ax;
-	push(cx);
-	_movsb(cx, true);
-	cx = pop();
-	ax = pop();
-	es.word(bx+2) = ax;
-	_add(data.word(kExframepos), cx);
-}
-
 void DreamGenContext::transfermap() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -17732,7 +17683,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
-		case addr_transferinv: transferinv(); break;
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;
 		case addr_dofade: dofade(); break;

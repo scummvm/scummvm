@@ -170,6 +170,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'paneltomap',
 	'obpicture',
 	'delthisone',
+	'transferinv',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

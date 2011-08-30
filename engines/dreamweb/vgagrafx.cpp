@@ -415,5 +415,22 @@ void DreamGenContext::paneltomap() {
 	multiget(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
+void DreamGenContext::transferinv() {
+	const Frame *freeFrames = (const Frame *)segRef(data.word(kFreeframes)).ptr(kFrframedata, 0);
+	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
+	Frame *exFrames = (Frame *)segRef(data.word(kExtras)).ptr(kExframedata, 0);
+	Frame *exFrame = exFrames + (3 * data.byte(kExpos) + 1);
+	exFrame->width = freeFrame->width;
+	exFrame->height = freeFrame->height;
+	exFrame->x = freeFrame->x;
+	exFrame->y = freeFrame->y;
+	uint16 byteCount = freeFrame->width * freeFrame->height;
+	const uint8 *src = segRef(data.word(kFreeframes)).ptr(kFrframes + freeFrame->ptr(), byteCount);
+	uint8 *dst = segRef(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
+	memcpy(dst, src, byteCount);
+	exFrame->setPtr(data.word(kExframepos));
+	data.word(kExframepos) += byteCount;
+}
+
 } /*namespace dreamgen */
 

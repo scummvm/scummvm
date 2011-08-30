@@ -202,4 +202,5 @@
 	void getexpos();
 	void paneltomap();
 	void obpicture();
+	void transferinv();
 
