@@ -253,9 +253,9 @@ void DreamGenContext::showallfree() {
 	data.word(kDataad) = kFrframedata;
 	data.word(kFramesad) = kFrframes;
 	data.byte(kCurrentfree) = 0;
-	const uint8 *mapData = segRef(data.word(kFreedat)).ptr(2, 0);
+	const DynObject *freeObjects = (const DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < 80; ++i) {
-		uint8 mapad = getmapad(mapData);
+		uint8 mapad = getmapad(freeObjects[i].mapad);
 		if (mapad != 0) {
 			data.word(kCurrentframe) = 3 * data.byte(kCurrentfree);
 			uint8 width, height;
@@ -277,7 +277,6 @@ void DreamGenContext::showallfree() {
 		}
 
 		++data.byte(kCurrentfree);
-		mapData += 16;
 	}
 }
 
