@@ -340,6 +340,7 @@ public:
 	 * @see walkTo
 	 */
 	void walkForward();
+	void moveTo(const Graphics::Vector3d &pos);
 	/**
 	 * Used to tell the actor if it is running or not.
 	 *
@@ -445,7 +446,7 @@ public:
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
 
-	bool collidesWith(Actor *actor) const;
+	bool collidesWith(Actor *actor, Graphics::Vector3d *vec) const;
 
 	bool _toClean;
 

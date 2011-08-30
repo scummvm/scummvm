@@ -639,6 +639,19 @@ bool Actor::isTurning() const {
 	return false;
 }
 
+void Actor::moveTo(const Graphics::Vector3d &pos) {
+	Graphics::Vector3d v = pos - _pos;
+	if (_collisionMode != CollisionOff) {
+		for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
+			Actor *a = i->_value;
+			if (a != this && a->isInSet(g_grim->getSceneName()) && a->isVisible()) {
+				collidesWith(a, &v);
+			}
+		}
+	}
+	_pos += v;
+}
+
 void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
 	_walking = false;
@@ -675,7 +688,7 @@ void Actor::walkForward() {
 
 	g_grim->getCurrScene()->findClosestSector(_pos, &currSector, &_pos);
 	if (!currSector) { // Shouldn't happen...
-		_pos += forwardVec * dist;
+		moveTo(_pos + forwardVec * dist);
 		_walkedCur = true;
 		return;
 	}
@@ -687,21 +700,7 @@ void Actor::walkForward() {
 		currSector->getExitInfo(_pos, puckVec, &ei);
 		float exitDist = (ei.exitPoint - _pos).magnitude();
 		if (dist < exitDist) {
-			Graphics::Vector3d p = _pos;
-			_pos += puckVec * dist;
-
-			if (_collisionMode != CollisionOff) {
-				for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
-					Actor *a = i->_value;
-					if (a != this && a->isInSet(g_grim->getSceneName()) && a->isVisible()) {
-						if (collidesWith(a)) {
-							_pos = p;
-							return;
-						}
-					}
-				}
-			}
-
+			moveTo(_pos + puckVec * dist);
 			_walkedCur = true;
 			return;
 		}
@@ -1494,7 +1493,7 @@ void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
 }
 
-bool Actor::collidesWith(Actor *actor) const {
+bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 	if (actor->_collisionMode == CollisionOff) {
 		return false;
 	}
@@ -1512,8 +1511,18 @@ bool Actor::collidesWith(Actor *actor) const {
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
-		float distance = (p1 - p2).magnitude();
-		return distance < size1 + size2;
+		Graphics::Vector3d pos = p1 + *vec;
+		float distance = (pos - p2).magnitude();
+		if (distance < size1 + size2) {
+			// Move the destination point so that its distance from the
+			// center of the circle is size1+size2.
+			Graphics::Vector3d v = pos - p2;
+			v.normalize();
+			v *= size1 + size2;
+			*vec = v + p2 - p1;
+
+			return true;
+		}
 	} else if (mode1 == CollisionBox && mode2 == CollisionBox) {
 		warning("Collision between box and box not implemented!");
 		return false;
@@ -1523,19 +1532,21 @@ bool Actor::collidesWith(Actor *actor) const {
 		Graphics::Vector3d bboxPos;
 		Graphics::Vector3d size;
 		Graphics::Vector3d pos;
+		Graphics::Vector3d circlePos;
 		float yaw;
 
 		Graphics::Vector2d circle;
 		float radius;
 
 		if (mode1 == CollisionBox) {
-			pos = p1;
-			bboxPos = p1 + model1->_bboxPos;
+			pos = p1 + *vec;
+			bboxPos = pos + model1->_bboxPos;
 			size = model1->_bboxSize * _collisionScale;
 			yaw = _yaw;
 
 			circle._x = p2.x();
 			circle._y = p2.y();
+			circlePos = p2;
 			radius = size2;
 		} else {
 			pos = p2;
@@ -1543,8 +1554,9 @@ bool Actor::collidesWith(Actor *actor) const {
 			size = model2->_bboxSize * actor->_collisionScale;
 			yaw = actor->_yaw;
 
-			circle._x = p1.x();
-			circle._y = p1.y();
+			circle._x = p1.x() + vec->x();
+			circle._y = p1.y() + vec->y();
+			circlePos = p1;
 			radius = size1;
 		}
 
@@ -1554,8 +1566,72 @@ bool Actor::collidesWith(Actor *actor) const {
 		rect._bottomRight = Graphics::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
 		rect.rotateAround(Graphics::Vector2d(pos.x(), pos.y()), yaw);
 
-		return rect.intersectsCircle(circle, radius);
+		if (rect.intersectsCircle(circle, radius)) {
+			Graphics::Vector2d center = rect.getCenter();
+			// Draw a line from the center of the rect to the place the character
+			// would go to.
+			Graphics::Vector2d v = circle - center;
+			v.normalize();
+
+			Graphics::Segment2d edge;
+			// That line intersects (usually) an edge
+			rect.getIntersection(center, v, &edge);
+			// Take the perpendicular of that edge
+			Graphics::Line2d perpendicular = edge.getPerpendicular(circle);
+
+			Graphics::Vector3d point;
+			Graphics::Vector2d p;
+			// If that perpendicular intersects the edge
+			if (edge.intersectsLine(perpendicular, &p)) {
+				Graphics::Vector2d direction = perpendicular.getDirection();
+				direction.normalize();
+
+				// Move from the intersection until we are at a safe distance
+				Graphics::Vector2d point1(p - direction * radius);
+				Graphics::Vector2d point2(p + direction * radius);
+
+				if (center.getDistanceTo(point1) < center.getDistanceTo(point2)) {
+					point = point2.toVector3d();
+				} else {
+					point = point1.toVector3d();
+				}
+			} else { //if not we're around a corner
+				// Find the nearest vertex of the rect
+				Graphics::Vector2d vertex = rect.getTopLeft();
+				float distance = vertex.getDistanceTo(circle);
+
+				Graphics::Vector2d other = rect.getTopRight();
+				float otherDist = other.getDistanceTo(circle);
+				if (otherDist < distance) {
+					distance = otherDist;
+					vertex = other;
+				}
+
+				other = rect.getBottomLeft();
+				otherDist = other.getDistanceTo(circle);
+				if (otherDist < distance) {
+					distance = otherDist;
+					vertex = other;
+				}
+
+				other = rect.getBottomRight();
+				if (other.getDistanceTo(circle) < distance) {
+					vertex = other;
+				}
+
+				// and move on a circle around it
+				Graphics::Vector2d dst = circle - vertex;
+				dst.normalize();
+				dst = dst * radius;
+				point = (vertex + dst).toVector3d();
+			}
+
+			*vec = point - circlePos;
+			return true;
+		}
 	}
+
+	return false;
 }
 
 extern int refSystemTable;
