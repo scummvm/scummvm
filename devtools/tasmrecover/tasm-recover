@@ -168,6 +168,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'addtopeoplelist',
 	'getexpos',
 	'paneltomap',
+	'maptopanel',
+	'dumpmap',
 	'obpicture',
 	'delthisone',
 	'transferinv',

@@ -201,6 +201,8 @@
 	void addtopeoplelist(ReelRoutine *routine);
 	void getexpos();
 	void paneltomap();
+	void maptopanel();
+	void dumpmap();
 	void obpicture();
 	void transferinv();
 

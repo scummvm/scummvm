@@ -562,8 +562,6 @@ public:
 	static const uint16 addr_createpanel2 = 0xc200;
 	static const uint16 addr_createpanel = 0xc1fc;
 	static const uint16 addr_pixelcheckset = 0xc1f8;
-	static const uint16 addr_dumpmap = 0xc1f4;
-	static const uint16 addr_maptopanel = 0xc1f0;
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_loadpalfromiff = 0xc1d8;
 	static const uint16 addr_showpcx = 0xc1cc;
@@ -1290,7 +1288,7 @@ public:
 	//void lockeddoorway();
 	void isitworn();
 	//void putundertimed();
-	void dumpmap();
+	//void dumpmap();
 	//void multidump();
 	void channel0only();
 	void worktoscreenm();
@@ -1539,7 +1537,7 @@ public:
 	void monks2text();
 	void clearpalette();
 	void cantdrop();
-	void maptopanel();
+	//void maptopanel();
 	//void calcmapad();
 	void getridofall();
 	void copper();

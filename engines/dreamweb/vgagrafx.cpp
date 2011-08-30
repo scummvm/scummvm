@@ -415,6 +415,14 @@ void DreamGenContext::paneltomap() {
 	multiget(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
+void DreamGenContext::maptopanel() {
+	multiput(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+}
+
+void DreamGenContext::dumpmap() {
+	multidump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+}
+
 void DreamGenContext::transferinv() {
 	const Frame *freeFrames = (const Frame *)segRef(data.word(kFreeframes)).ptr(kFrframedata, 0);
 	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
