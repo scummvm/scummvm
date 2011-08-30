@@ -49,8 +49,6 @@
 
 namespace Grim {
 
-#define SMUSH_ALTSPEED(x)		(x & 0x000004)
-
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
 
@@ -494,7 +492,10 @@ bool SmushPlayer::setupAnim(const char *file, bool looping, int x, int y) {
 	_width = width;
 	_height = height;
 
-	_speed = READ_LE_UINT32(s_header + 14);
+	if (looping)
+		_speed = READ_LE_UINT32(s_header + 14);
+	else
+		_speed = 66667;
 	flags = READ_LE_UINT16(s_header + 18);
 	// Output information for checking out the flags
 	if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
@@ -503,15 +504,7 @@ bool SmushPlayer::setupAnim(const char *file, bool looping, int x, int y) {
 			printf(" %d", (flags & (1 << i)) != 0);
 		printf("\n");
 	}
-	// Videos "copaldie.snm" and "getshcks.snm" seem to have
-	// the wrong speed value, the value 66667 (used by the
-	// other videos) seems to work whereas "2x" (68928)
-	// does not quite do it.
-	// TODO: Find out what needs to go on here.
-	if (SMUSH_ALTSPEED(flags)) {
-		printf("Bad time: %d, suggested: %d\n", (int)_speed, (int)(2 * _speed));
-		_speed = 66667;
-	}
+
 	_videoLooping = looping;
 	_startPos = NULL; // Set later
 	delete[] s_header;
