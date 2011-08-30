@@ -2766,50 +2766,6 @@ void DreamGenContext::createpanel2() {
 	showframe();
 }
 
-void DreamGenContext::delthisone() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	al = ah;
-	ah = 0;
-	_add(ax, data.word(kMapady));
-	bx = (320);
-	_mul(bx);
-	bx = pop();
-	bh = 0;
-	_add(bx, data.word(kMapadx));
-	_add(ax, bx);
-	di = ax;
-	ax = pop();
-	push(ax);
-	al = ah;
-	ah = 0;
-	bx = 22*8;
-	_mul(bx);
-	bx = pop();
-	bh = 0;
-	_add(ax, bx);
-	si = ax;
-	es = data.word(kWorkspace);
-	ds = data.word(kMapstore);
-	dl = cl;
-	dh = 0;
-	ax = (320);
-	_sub(ax, dx);
-	_neg(dx);
-	_add(dx, 22*8);
-deloneloop:
-	push(cx);
-	ch = 0;
-	_movsb(cx, true);
-	cx = pop();
-	_add(di, ax);
-	_add(si, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto deloneloop;
-}
-
 void DreamGenContext::transferinv() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -17776,7 +17732,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
-		case addr_delthisone: delthisone(); break;
 		case addr_transferinv: transferinv(); break;
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;
