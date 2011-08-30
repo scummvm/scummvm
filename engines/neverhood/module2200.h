@@ -184,7 +184,6 @@ public:
 	Class444(NeverhoodEngine *vm, int pointIndex, int spriteIndex);
 };
 
-
 class Scene2201 : public Scene {
 public:
 	Scene2201(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -199,6 +198,52 @@ protected:
 	bool _soundFlag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsScene2202PuzzleTile : public StaticSprite {
+public:
+	SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentScene, int16 tileIndex, int16 value);
+protected:
+	Scene *_parentScene;	
+	int16 _value;
+	int16 _tileIndex;
+	int16 _newX, _newY;
+	int16 _xDelta, _yDelta;
+	int16 _xIncr;
+	int16 _yIncr;
+	int16 _errValue;
+	int16 _counter;
+	int16 _xFlagPos;
+	bool _counterDirection;
+	bool _isMoving;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void suMoveTileX();
+	void suMoveTileY();
+	void moveTile(int16 newTileIndex);
+	void stopMoving();
+};
+
+class Scene2202 : public Scene {
+public:
+	Scene2202(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene2202();
+protected:
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	Sprite *_movingTileSprite;
+	Sprite *_doneMovingTileSprite;
+	bool _isTileMoving;
+	int16 _movingTileIndex;
+	int _surfacePriority;
+	bool _leaveScene;
+	bool _isSolved;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	int16 getFreeTileIndex(int16 index);
+	bool testIsSolved();	
 };
 
 } // End of namespace Neverhood

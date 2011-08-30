@@ -197,6 +197,10 @@ void Module2200::createScene2201(int which) {
 }
 
 void Module2200::createScene2202(int which) {
+	// TODO Music18hList_play(0x601C908C, 0, 2, 1);
+	_vm->gameState().sceneNum = 1;
+	_childObject = new Scene2202(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2202);
 }
 
 void Module2200::createScene2203(int which) {
@@ -354,6 +358,13 @@ void Module2200::updateScene2201() {
 }
 			
 void Module2200::updateScene2202() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene2201(2);
+	}
 }
 
 void Module2200::updateScene2203() {
@@ -732,5 +743,394 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 	}
 	return 0;
 }
+
+static const NPoint kSsScene2202PuzzleTilePoints[] = {
+	{196, 105},
+	{323, 102},
+	{445, 106},
+	{192, 216},
+	{319, 220},
+	{446, 216},
+	{188, 320},
+	{319, 319},
+	{443, 322}
+};
+
+static const uint32 kSsScene2202PuzzleTileFileHashes1[] = {
+	0xA500800C,
+	0x2182910C,
+	0x2323980C,
+	0x23049084,
+	0x21008080,
+	0x2303900C,
+	0x6120980C,
+	0x2504D808
+};
+
+static const uint32 kSsScene2202PuzzleTileFileHashes2[] = {
+	0x0AAD8080,
+	0x0A290291,
+	0x0A2BA398,
+	0x822B8490,
+	0x86298080,
+	0x0A2B8390,
+	0x0A69A098,
+	0x0E2D84D8
+};
+
+SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentScene, int16 tileIndex, int16 value)
+	: StaticSprite(vm, 900), _soundResource1(vm), _soundResource2(vm), _parentScene(parentScene),
+	_value(value), _tileIndex(tileIndex), _isMoving(false) {
+	
+	debug("#1 _value = %d; _tileIndex = %d", _value, _tileIndex);
+	SetUpdateHandler(&SsScene2202PuzzleTile::update);
+	SetMessageHandler(&SsScene2202PuzzleTile::handleMessage);
+	debug("#2");
+	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
+	if (_tileIndex >= 0 && _tileIndex <= 2) {
+		createSurface(100, 128, 128);
+	} else	if (_tileIndex >= 3 && _tileIndex <= 5) {
+		createSurface(300, 128, 128);
+	} else {
+		createSurface(500, 128, 128);
+	}
+	debug("#3");
+	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
+	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_deltaRect = _drawRect;
+	_x = kSsScene2202PuzzleTilePoints[_tileIndex].x;
+	_y = kSsScene2202PuzzleTilePoints[_tileIndex].y;
+	processDelta();
+	_needRefresh = true;
+	StaticSprite::update();
+	_soundResource1.load(0x40958621);
+	_soundResource2.load(0x51108241);
+	debug("LOAD OK");
+}
+
+void SsScene2202PuzzleTile::update() {
+	handleSpriteUpdate();
+	StaticSprite::update();
+}
+
+uint32 SsScene2202PuzzleTile::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (!_isMoving && !getGlobalVar(0x404290D5)) {
+			_parentScene->sendMessage(0x2000, _tileIndex, this);
+		}
+		messageResult = 1;
+		break;
+	case 0x2001:
+		_isMoving = true;
+		moveTile(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
 				
+void SsScene2202PuzzleTile::suMoveTileX() {
+
+	bool done = false;
+
+	if (_counterDirection) {
+		if (_counter > 2)
+			_counter -= 2;
+	} else {
+		if (_counter < 20)
+			_counter += 2;
+	}
+
+	for (int16 i = 0; i < _counter; i++) {
+		_x += _xIncr;
+		_errValue += _yDelta;
+		if (_errValue >= _xDelta) {
+			_errValue -= _xDelta;
+			_y += _yIncr;
+		}
+		if (_x == _newX && _y == _newY) {
+			done = true;
+			break;
+		}
+		if (_x == _xFlagPos)
+			_counterDirection = true;
+	}
+	
+	if (done) {
+		stopMoving();			
+	}
+
+	processDelta();
+
+}
+
+void SsScene2202PuzzleTile::suMoveTileY() {
+
+	bool done = false;
+
+	if (_counterDirection) {
+		if (_counter > 2)
+			_counter -= 2;
+	} else {
+		if (_counter < 20)
+			_counter += 2;
+	}
+
+	for (int16 i = 0; i < _counter; i++) {
+		_y += _yIncr;
+		_errValue += _xDelta;
+		if (_errValue >= _yDelta) {
+			_errValue -= _yDelta;
+			_x += _xIncr;
+		}
+		if (_x == _newX && _y == _newY) {
+			done = true;
+			break;
+		}
+		if (_x == _xFlagPos)
+			_counterDirection = true;
+	}
+	
+	if (done) {
+		stopMoving();			
+	}
+
+	processDelta();
+
+}
+
+void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
+
+	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes1[_value]);
+	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
+	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_needRefresh = true;
+
+	setSubVar(0x484498D0, _tileIndex, (uint32)-1);
+	setSubVar(0x484498D0, newTileIndex, (uint32)_value);
+	    
+	_tileIndex = newTileIndex;
+	    
+	_errValue = 0;
+	_counterDirection = false;
+	_counter = 0;
+
+	_newX = kSsScene2202PuzzleTilePoints[newTileIndex].x;
+	_newY = kSsScene2202PuzzleTilePoints[newTileIndex].y;
+
+	if (_x == _newX && _y == _newY)
+		return;
+
+	if (_x <= _newX) {
+		if (_y <= _newY) {
+			_xDelta = _newX - _x;
+			_yDelta = _newY - _y;
+			_xIncr = 1;
+			_yIncr = 1;
+		} else {
+			_xDelta = _newX - _x;
+			_yDelta = _y - _newY;
+			_xIncr = 1;
+			_yIncr = -1;
+		}
+	} else {
+		if (_y <= _newY) {
+			_xDelta = _x - _newX;
+			_yDelta = _newY - _y;
+			_xIncr = -1;
+			_yIncr = 1;
+		} else {
+			_xDelta = _x - _newX;
+			_yDelta = _y - _newY;
+			_xIncr = -1;
+			_yIncr = -1;
+		}
+	}
+
+	if (_xDelta > _yDelta) {
+		SetSpriteCallback(&SsScene2202PuzzleTile::suMoveTileX);
+		if (_xIncr > 0) {
+			if (_newX - _x >= 180)
+				_xFlagPos = _newX - 90;
+			else
+				_xFlagPos = _x + _newX / 2;				
+		} else {
+			if (_x - _newX >= 180)
+				_xFlagPos = _x + 90;
+			else
+				_xFlagPos = _x / 2 + _newX;
+		}
+		_soundResource1.play();
+	} else {
+		SetSpriteCallback(&SsScene2202PuzzleTile::suMoveTileY);
+		if (_yIncr > 0) {
+			if (_newY - _y >= 180)
+				_xFlagPos = _newY - 90;
+			else
+				_xFlagPos = _y + _newY / 2;				
+		} else {
+			if (_y - _newY >= 180)
+				_xFlagPos = _y + 90;
+			else
+				_xFlagPos = _y / 2 + _newY;
+		}
+		_soundResource2.play();
+	}
+	
+}
+
+void SsScene2202PuzzleTile::stopMoving() {
+	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
+	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
+	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_needRefresh = true;
+	SetSpriteCallback(NULL);
+	_isMoving = false;
+	_parentScene->sendMessage(0x2002, _tileIndex, this);
+}
+
+Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
+	_isSolved(false), _leaveScene(false), _isTileMoving(false), _movingTileSprite(NULL), _doneMovingTileSprite(NULL) {
+
+	Palette2 *palette2;
+
+	// TODO initScene2201Vars();
+	SetMessageHandler(&Scene2202::handleMessage);
+	SetUpdateHandler(&Scene2202::update);
+
+	_surfaceFlag = true;
+
+	_background = addBackground(new DirtyBackground(_vm, 0x08100A0C, 0, 0));
+	palette2 = new Palette2(_vm, 0x08100A0C);
+	_palette = palette2;
+	_palette->usePalette();
+	addEntity(palette2);
+	_mouseCursor = addSprite(new Mouse435(_vm, 0x00A08089, 20, 620));
+
+	//DEBUG!
+	for (uint32 index = 0; index < 9; index++)
+		setSubVar(0x484498D0, index, 7 - index);
+
+	for (uint32 index = 0; index < 9; index++) {
+		int16 value = (int16)getSubVar(0x484498D0, index);
+		if (value >= 0) {
+			Sprite *puzzleTileSprite = addSprite(new SsScene2202PuzzleTile(_vm, this, index, value));
+			_vm->_collisionMan->addSprite(puzzleTileSprite);
+		}
+	}
+
+	addSprite(new StaticSprite(_vm, 0x55C043B8, 200));
+	addSprite(new StaticSprite(_vm, 0x85500158, 400));
+	addSprite(new StaticSprite(_vm, 0x25547028, 600));
+
+	_soundResource1.load(0x68E25540);
+	_soundResource2.load(0x40400457);
+
+	// TODO Sound1ChList_addSoundResource(0x60400854, 0x8101A241, true);
+	// TODO Sound1ChList_playLooping(0x8101A241);
+
+}
+
+Scene2202::~Scene2202() {
+	// TODO Sound1ChList_sub_407AF0(0x60400854);
+}
+
+void Scene2202::update() {
+	Scene::update();
+
+	if (_leaveScene && !_soundResource2.isPlaying()) {
+		_parentModule->sendMessage(0x1009, 0, this);
+	}
+
+	if (_isSolved && !_soundResource1.isPlaying()) {
+		_soundResource2.play();
+		_isSolved = false;
+		_leaveScene = true;
+	}
+
+	if (_movingTileSprite && !_isTileMoving) {
+		int16 value = getFreeTileIndex(_movingTileIndex);
+		if (value != -1) {
+			setSurfacePriority(_movingTileSprite->getSurface(), 700);
+			_movingTileSprite->sendMessage(0x2001, value, this);
+			_movingTileSprite = NULL;
+			_isTileMoving = true;
+		}
+	}
+
+	if (_doneMovingTileSprite) {
+		setSurfacePriority(_doneMovingTileSprite->getSurface(), _surfacePriority);
+		_doneMovingTileSprite = NULL;
+		if (testIsSolved()) {
+			_soundResource1.play();
+			setGlobalVar(0x404290D5, 1);
+			_isSolved = true;
+		}
+	}
+	
+}
+
+uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO Debug stuff
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	case 0x000D:
+		// TODO Debug stuff
+		break;
+	case 0x2000:
+		_movingTileIndex = (int16)param.asInteger();
+		_movingTileSprite = (Sprite*)sender;
+		break;
+	case 0x2002:
+		_isTileMoving = false;
+		_doneMovingTileSprite = (Sprite*)sender;
+		if (param.asInteger() >= 0 && param.asInteger() <= 2) {
+			_surfacePriority = 100;
+		} else if (param.asInteger() >= 3 && param.asInteger() <= 5) {
+			_surfacePriority = 300;
+		} else {
+			_surfacePriority = 500;
+		}
+		break;
+	}
+	return 0;
+}
+
+int16 Scene2202::getFreeTileIndex(int16 index) {
+	if (index >= 3 && (int16)getSubVar(0x484498D0, index - 3) == -1) {
+		return index - 3;
+	} else if (index <= 5 && (int16)getSubVar(0x484498D0, index + 3) == -1) {
+		return index + 3;
+	} else if (index != 0 && index != 3 && index != 6 && (int16)getSubVar(0x484498D0, index - 1) == -1) {
+		return index - 1;
+	} else if (index != 2 && index != 5 && index != 8 && (int16)getSubVar(0x484498D0, index + 1) == -1) {
+		return index + 1;
+	} else
+		return -1;
+}
+
+bool Scene2202::testIsSolved() {
+	return 
+		getSubVar(0x484498D0, 0) == 0 &&
+		getSubVar(0x484498D0, 2) == 2 &&
+		getSubVar(0x484498D0, 3) == 3 &&
+		getSubVar(0x484498D0, 4) == 4 &&
+		getSubVar(0x484498D0, 5) == 5 &&
+		getSubVar(0x484498D0, 6) == 6 &&
+		getSubVar(0x484498D0, 8) == 7;
+}
+
 } // End of namespace Neverhood
