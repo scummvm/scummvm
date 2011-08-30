@@ -1,3 +1,26 @@
+/* Residual - A 3D game interpreter
+ *
+ * Residual is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ * $URL$
+ * $Id$
+ */
 
 #include "common/scummsys.h"
 
@@ -5,71 +28,20 @@
 
 namespace Graphics {
 
-Vector2d::Vector2d() :
-	_x(0), _y(0) {
-
-}
-
-Vector2d::Vector2d(float x, float y) :
-	_x(x), _y(y) {
-
-}
-
-Vector2d::Vector2d(const Vector2d &vec) :
-	_x(vec._x), _y(vec._y) {
-
-}
-
-Vector2d &Vector2d::operator=(const Vector2d &vec) {
-	_x = vec._x;
-	_y = vec._y;
-	return *this;
-}
-
-Vector2d &Vector2d::operator+(const Vector2d &vec) {
-	_x += vec._x;
-	_y += vec._y;
-	return *this;
-}
-
-Vector2d &Vector2d::operator-(const Vector2d &vec) {
-	_x -= vec._x;
-	_y -= vec._y;
-	return *this;
-}
-
-void Vector2d::rotateAround(const Vector2d &point, float angle) {
-	_x -= point._x;
-	_y -= point._y;
-	float a = angle * LOCAL_PI / 180.0;
-
-	float x = _x * cos(a) - _y * sin(a);
-	_y = _x * sin(a) + _y * cos(a);
-	_x = x;
-
-	_x += point._x;
-	_y += point._y;
-}
-
-float Vector2d::getAngle() const {
-	const float mag = sqrt(_x * _x + _y * _y);
-	float a = _x / mag;
-	float b = _y / mag;
-	float yaw;
-
-	// find the angle on the upper half of the unit circle
-	yaw = acos(a) * (180.0f / LOCAL_PI);
-	if (b < 0.0f)
-		// adjust for the lower half of the unit circle
-		return 360.0f - yaw;
-	else
-		// no adjustment, angle is on the upper half
-		return yaw;
-}
-
-
 Rect2d::Rect2d() {
 
+}
+
+Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight) {
+	float left = (topLeft._x <= bottomRight._x ? topLeft._x : bottomRight._x);
+	float right = (topLeft._x <= bottomRight._x ? bottomRight._x : topLeft._x);
+	float top = (topLeft._y <= bottomRight._y ? topLeft._y : bottomRight._y);
+	float bottom = (topLeft._y <= bottomRight._y ? bottomRight._y : topLeft._y);
+
+	_topLeft = Vector2d(left, top);
+	_topRight = Vector2d(right, top);
+	_bottomLeft = Vector2d(left, bottom);
+	_bottomRight = Vector2d(right, bottom);
 }
 
 Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
@@ -132,6 +104,11 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 	}
 }
 
+bool Rect2d::containsPoint(const Vector2d &point) const {
+	return (point._x >= _topLeft._x && point._x <= _bottomRight._x &&
+	        point._y >= _topLeft._y && point._y <= _bottomRight._y);
+}
+
 Vector2d Rect2d::getCenter() const {
 	Vector2d sum;
 	sum._x = _topLeft._x + _topRight._x + _bottomLeft._x + _bottomRight._x;
@@ -140,6 +117,22 @@ Vector2d Rect2d::getCenter() const {
 	sum._y /= 4;
 
 	return sum;
+}
+
+Vector2d Rect2d::getTopLeft() const {
+	return _topLeft;
+}
+
+Vector2d Rect2d::getTopRight() const {
+	return _topRight;
+}
+
+Vector2d Rect2d::getBottomLeft() const {
+	return _bottomLeft;
+}
+
+Vector2d Rect2d::getBottomRight() const {
+	return _bottomRight;
 }
 
 float Rect2d::getWidth() const {
@@ -154,6 +147,47 @@ float Rect2d::getHeight() const {
 	float y = _bottomLeft._y - _topLeft._y;
 
 	return sqrt(x * x + y * y);
+}
+
+Vector2d Rect2d::getIntersection(const Vector2d &start, const Vector2d &dir, Segment2d *edge) const {
+	float w = getWidth();
+	float h = getHeight();
+	float d = sqrt(w * w + h * h);
+
+	Segment2d line(start, start + dir.getNormalized() * 2*d);
+	Vector2d intersection;
+
+	Segment2d l(_topLeft, _topRight);
+	if (line.intersectsSegment(l, &intersection)) {
+		if (edge) {
+			*edge = l;
+		}
+		return intersection;
+	}
+	l = Segment2d(_topRight, _bottomRight);
+	if (line.intersectsSegment(l, &intersection)) {
+		if (edge) {
+			*edge = l;
+		}
+		return intersection;
+	}
+	l = Segment2d(_bottomRight, _bottomLeft);
+	if (line.intersectsSegment(l, &intersection)) {
+		if (edge) {
+			*edge = l;
+		}
+		return intersection;
+	}
+	l = Segment2d(_bottomLeft, _topLeft);
+	if (line.intersectsSegment(l, &intersection)) {
+		if (edge) {
+			*edge = l;
+		}
+		return intersection;
+	}
+
+	return intersection;
+
 }
 
 }

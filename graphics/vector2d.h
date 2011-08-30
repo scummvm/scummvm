@@ -22,44 +22,59 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_RECT2D_H
-#define GRAPHICS_RECT2D_H
+#ifndef GRAPHICS_VECTOR2D_H
+#define GRAPHICS_VECTOR2D_H
 
-#include "graphics/vector2d.h"
-#include "graphics/line2d.h"
+#include "graphics/vector3d.h"
 
 namespace Graphics {
 
-class Segment2d;
-
-class Rect2d {
+class Vector2d {
 public:
-	Rect2d();
-	Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight);
-	Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
-		   const Vector2d &bottomLeft, const Vector2d &bottomRight);
+	Vector2d();
+	Vector2d(float x, float y);
+	Vector2d(const Vector2d &vec);
+
+	Vector2d &operator=(const Vector2d &vec);
+
+	void normalize();
+	Vector2d getNormalized() const;
 
 	void rotateAround(const Vector2d &point, float angle);
-	void rotateAroundCenter(float angle);
-	bool intersectsRect(const Rect2d &rect) const;
-	bool intersectsCircle(const Vector2d &center, float radius) const;
-	bool containsPoint(const Vector2d &point) const;
+	float getAngle() const;
+	float getMagnitude() const;
+	float getDistanceTo(const Vector2d &point) const;
 
-	Vector2d getCenter() const;
-	Vector2d getTopLeft() const;
-	Vector2d getTopRight() const;
-	Vector2d getBottomLeft() const;
-	Vector2d getBottomRight() const;
-	float getWidth() const;
-	float getHeight() const;
-	Vector2d getIntersection(const Vector2d &start, const Vector2d &direction, Segment2d *edge) const;
+	Vector3d toVector3d() const;
 
-// private:
-	Vector2d _topLeft;
-	Vector2d _topRight;
-	Vector2d _bottomLeft;
-	Vector2d _bottomRight;
+	// private:
+	float _x;
+	float _y;
 };
+
+inline Vector2d operator-(const Vector2d& v1, const Vector2d& v2) {
+	Vector2d result(v1._x - v2._x, v1._y - v2._y);
+	return result;
+}
+
+inline Vector2d operator+(const Vector2d &v1, const Vector2d &v2) {
+	Vector2d result(v1._x + v2._x, v1._y + v2._y);
+	return result;
+}
+
+inline Vector2d operator*(const Vector2d &v1, float factor) {
+	Vector2d result(v1._x * factor, v1._y * factor);
+	return result;
+}
+
+inline Vector2d operator/(const Vector2d &v1, float factor) {
+	Vector2d result(v1._x / factor, v1._y / factor);
+	return result;
+}
+
+inline Vector2d operator-(const Vector2d &v) {
+	return Vector2d(-v._x, -v._y);
+}
 
 }
 
