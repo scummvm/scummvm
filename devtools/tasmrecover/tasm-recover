@@ -167,6 +167,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'addtopeoplelist',
 	'getexpos',
 	'paneltomap',
+	'obpicture',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

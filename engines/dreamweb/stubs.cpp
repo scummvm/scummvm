@@ -1643,6 +1643,18 @@ void DreamGenContext::printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWid
 	printdirect(&string, x, &y, maxWidth, centered);
 }
 
+void DreamGenContext::obpicture() {
+	if (data.byte(kObjecttype) == 1)
+		return;
+	Frame *frames;
+	if (data.byte(kObjecttype) == 4)
+		frames = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+	else
+		frames = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+	uint8 frame = 3 * data.byte(kCommand) + 1;
+	showframe(frames, 160, 68, frame, 0x80);
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

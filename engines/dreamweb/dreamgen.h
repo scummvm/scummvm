@@ -495,7 +495,6 @@ public:
 	static const uint16 addr_obsthatdothings = 0xc36c;
 	static const uint16 addr_additionaltext = 0xc368;
 	static const uint16 addr_describeob = 0xc364;
-	static const uint16 addr_obpicture = 0xc360;
 	static const uint16 addr_examicon = 0xc35c;
 	static const uint16 addr_obicons = 0xc358;
 	static const uint16 addr_openob = 0xc354;
@@ -1871,7 +1870,7 @@ public:
 	void settopleft();
 	void searchforstring();
 	//void clearsprites();
-	void obpicture();
+	//void obpicture();
 	void selectopenob();
 	//void widedoor();
 	void security();

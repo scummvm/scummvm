@@ -4487,38 +4487,6 @@ void DreamGenContext::examicon() {
 	showframe();
 }
 
-void DreamGenContext::obpicture() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	ah = data.byte(kObjecttype);
-	_cmp(ah, 1);
-	if (flags.z())
-		return /* (setframe) */;
-	_cmp(ah, 4);
-	if (flags.z())
-		goto exframe;
-	ds = data.word(kFreeframes);
-	di = 160;
-	bx = 68;
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
-	showframe();
-	return;
-exframe:
-	ds = data.word(kExtras);
-	di = 160;
-	bx = 68;
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
-	showframe();
-}
-
 void DreamGenContext::describeob() {
 	STACK_CHECK;
 	getobtextstart();
@@ -17908,7 +17876,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_openob: openob(); break;
 		case addr_obicons: obicons(); break;
 		case addr_examicon: examicon(); break;
-		case addr_obpicture: obpicture(); break;
 		case addr_describeob: describeob(); break;
 		case addr_additionaltext: additionaltext(); break;
 		case addr_obsthatdothings: obsthatdothings(); break;

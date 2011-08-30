@@ -199,4 +199,5 @@
 	void addtopeoplelist(ReelRoutine *routine);
 	void getexpos();
 	void paneltomap();
+	void obpicture();
 
