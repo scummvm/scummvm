@@ -1198,11 +1198,11 @@ void DreamGenContext::dochange() {
 
 void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
-		getsetad(index)->b58[0] = value;
+		getsetad(index)->mapad[0] = value;
 	} else if (type == 1) { //freeobject
 		DynObject *freeObject = getfreead(index);
-		if (freeObject->b2[0] == 0xff)
-			freeObject->b2[0] = value;
+		if (freeObject->mapad[0] == 0xff)
+			freeObject->mapad[0] = value;
 	} else { //path
 		bx = kPathdata + (type - 100) * 144 + index * 8;
 		es = data.word(kReels);
@@ -1217,7 +1217,7 @@ void DreamGenContext::deletetaken() {
 		uint8 location = extraObjects[i].initialLocation;
 		if (location == data.byte(kReallocation)) {
 			uint8 index = extraObjects[i].index;
-			freeObjects[index].b2[0] = 254;
+			freeObjects[index].mapad[0] = 0xfe;
 		}
 	}
 }
@@ -1225,7 +1225,7 @@ void DreamGenContext::deletetaken() {
 void DreamGenContext::getexpos() {
 	const DynObject *objects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (objects[i].b2[0] == 0xff) {
+		if (objects[i].mapad[0] == 0xff) {
 			data.byte(kExpos) = i;
 			return;
 		}
@@ -1239,7 +1239,7 @@ void DreamGenContext::placesetobject() {
 
 void DreamGenContext::placesetobject(uint8 index) {
 	findormake(index, 0, 0);
-	getsetad(index)->b58[0] = 0;
+	getsetad(index)->mapad[0] = 0;
 }
 
 void DreamGenContext::removesetobject() {
@@ -1248,7 +1248,7 @@ void DreamGenContext::removesetobject() {
 
 void DreamGenContext::removesetobject(uint8 index) {
 	findormake(index, 0xff, 0);
-	getsetad(index)->b58[0] = 0xff;
+	getsetad(index)->mapad[0] = 0xff;
 }
 
 void DreamGenContext::finishedwalking() {

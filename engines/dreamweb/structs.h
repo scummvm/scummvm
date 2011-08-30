@@ -114,14 +114,14 @@ struct SetObject {
 	uint8 b55;
 	uint8 b56;
 	uint8 b57;
-	uint8 b58[5];
+	uint8 mapad[5];
 	uint8 b63;
 };
 
 struct DynObject {
 	uint8 currentLocation;
 	uint8 index;
-	uint8 b2[5];
+	uint8 mapad[5];
 	uint8 b7;
 	uint8 b8;
 	uint8 b9;

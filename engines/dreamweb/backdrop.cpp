@@ -153,7 +153,7 @@ void DreamGenContext::showallobs() {
 	SetObject *setEntries = (SetObject *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(SetObject));
 	for (size_t i = 0; i < 128; ++i) {
 		SetObject *setEntry = setEntries + i;
-		if (getmapad(setEntry->b58) == 0)
+		if (getmapad(setEntry->mapad) == 0)
 			continue;
 		uint8 currentFrame = setEntry->b18[0];
 		data.word(kCurrentframe) = currentFrame;
@@ -308,11 +308,11 @@ void DreamGenContext::showallex() {
 	DynObject *objects = (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex)) {
 		DynObject *object = objects + i;
-		if (object->b2[0] == 0xff)
+		if (object->mapad[0] == 0xff)
 			continue;
 		if (object->currentLocation != data.byte(kReallocation))
 			continue;
-		if (getmapad(object->b2) == 0)
+		if (getmapad(object->mapad) == 0)
 			continue;
 		data.word(kCurrentframe) = 3 * data.byte(kCurrentex);
 		uint8 width, height;
