@@ -305,14 +305,14 @@ void DreamGenContext::showallex() {
 	data.word(kDataad) = kExframedata;
 	data.word(kFramesad) = kExframes;
 	data.byte(kCurrentex) = 0;
-	si = kExdata + 2;
-	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex), si +=16) {
-		es = data.word(kExtras);
-		if (es.byte(si) == 0xff)
+	DynObject *objects = (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex)) {
+		DynObject *object = objects + i;
+		if (object->b2[0] == 0xff)
 			continue;
-		if (es.byte(si-2) != data.byte(kReallocation))
+		if (object->currentLocation != data.byte(kReallocation))
 			continue;
-		if (getmapad((const uint8 *)es.ptr(si, 5)) == 0)
+		if (getmapad(object->b2) == 0)
 			continue;
 		data.word(kCurrentframe) = 3 * data.byte(kCurrentex);
 		uint8 width, height;

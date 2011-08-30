@@ -1177,8 +1177,8 @@ void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 		getsetad(index)->b58[0] = value;
 	} else if (type == 1) { //freeobject
 		DynObject *freeObject = getfreead(index);
-		if (freeObject->b2 == 0xff)
-			freeObject->b2 = value;
+		if (freeObject->b2[0] == 0xff)
+			freeObject->b2[0] = value;
 	} else { //path
 		bx = kPathdata + (type - 100) * 144 + index * 8;
 		es = data.word(kReels);
@@ -1190,10 +1190,10 @@ void DreamGenContext::deletetaken() {
 	const DynObject *extraObjects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0);
 	DynObject *freeObjects = (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < kNumexobjects; ++i) {
-		uint8 location = extraObjects[i].location;
+		uint8 location = extraObjects[i].initialLocation;
 		if (location == data.byte(kReallocation)) {
 			uint8 index = extraObjects[i].index;
-			freeObjects[index].b2 = 254;
+			freeObjects[index].b2[0] = 254;
 		}
 	}
 }

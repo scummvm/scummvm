@@ -119,18 +119,14 @@ struct SetObject {
 };
 
 struct DynObject {
-	uint8 b0;
+	uint8 currentLocation;
 	uint8 index;
-	uint8 b2;
-	uint8 b3;
-	uint8 b4;
-	uint8 b5;
-	uint8 b6;
+	uint8 b2[5];
 	uint8 b7;
 	uint8 b8;
 	uint8 b9;
 	uint8 b10;
-	uint8 location;
+	uint8 initialLocation;
 	uint8 id[4];
 };
 
