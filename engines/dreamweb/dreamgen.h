@@ -118,7 +118,6 @@ public:
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
 	static const uint16 addr_isitdescribed = 0xc9e8;
-	static const uint16 addr_checkifex = 0xc9e0;
 	static const uint16 addr_checkifset = 0xc9dc;
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_madmanrun = 0xc9cc;
@@ -1609,7 +1608,7 @@ public:
 	void errormessage3();
 	//void deletetaken();
 	void putundermenu();
-	void checkifex();
+	void intromonks2();
 	void intromagic2();
 	void intromagic3();
 	void edeninbath();
@@ -1925,6 +1924,7 @@ public:
 	void delcurs();
 	void randomaccess();
 	void splitintolines();
+	//void checkifex();
 	//void findobname();
 	void initialmoncols();
 	void checkforshake();
@@ -1955,7 +1955,6 @@ public:
 	//void parseblaster();
 	//void readmouse1();
 	void makemainscreen();
-	void intromonks2();
 	void usewinch();
 	void setbotright();
 	//void readmouse3();

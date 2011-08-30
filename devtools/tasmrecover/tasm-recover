@@ -108,6 +108,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'doblocks',
 	'checkifperson',
 	'checkiffree',
+	'checkifex',
 	'getreelstart',
 	'findobname',
 	'copyname',

@@ -1033,6 +1033,30 @@ bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
 	return false;
 }
 
+void DreamGenContext::checkifex() {
+	flags._z = not checkifex(al, ah);
+}
+
+bool DreamGenContext::checkifex(uint8 x, uint8 y) {
+	const ObjPos *exList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
+	for (size_t i = 0; i < 100; ++i) {
+		const ObjPos *objPos = exList + 99 - i;
+		if (objPos->index == 0xff)
+			continue;
+		if (x < objPos->xMin)
+			continue;
+		if (x >= objPos->xMax)
+			continue;
+		if (y < objPos->yMin)
+			continue;
+		if (y >= objPos->yMax)
+			continue;
+		obname(objPos->index, 4);
+		return true;
+	}
+	return false;
+}
+
 const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * 2 * (index & 127);
