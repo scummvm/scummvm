@@ -568,7 +568,6 @@ public:
 	static const uint16 addr_pixelcheckset = 0xc1f8;
 	static const uint16 addr_dumpmap = 0xc1f4;
 	static const uint16 addr_maptopanel = 0xc1f0;
-	static const uint16 addr_paneltomap = 0xc1ec;
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_loadpalfromiff = 0xc1d8;
 	static const uint16 addr_showpcx = 0xc1cc;
@@ -1457,7 +1456,7 @@ public:
 	void runtap();
 	//void domix();
 	void priesttext();
-	void paneltomap();
+	//void paneltomap();
 	//void obname();
 	void getridoftemp3();
 	void getridoftemp2();

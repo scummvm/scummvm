@@ -2657,19 +2657,6 @@ nought:
 		goto palloop;
 }
 
-void DreamGenContext::paneltomap() {
-	STACK_CHECK;
-	di = data.word(kMapxstart);
-	_add(di, data.word(kMapadx));
-	bx = data.word(kMapystart);
-	_add(bx, data.word(kMapady));
-	ds = data.word(kMapstore);
-	si = 0;
-	cl = data.byte(kMapxsize);
-	ch = data.byte(kMapysize);
-	multiget();
-}
-
 void DreamGenContext::maptopanel() {
 	STACK_CHECK;
 	di = data.word(kMapxstart);
@@ -17849,7 +17836,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showpcx: showpcx(); break;
 		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;
-		case addr_paneltomap: paneltomap(); break;
 		case addr_maptopanel: maptopanel(); break;
 		case addr_dumpmap: dumpmap(); break;
 		case addr_pixelcheckset: pixelcheckset(); break;

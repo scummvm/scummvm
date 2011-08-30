@@ -198,5 +198,5 @@
 	void addtopeoplelist();
 	void addtopeoplelist(ReelRoutine *routine);
 	void getexpos();
-
+	void paneltomap();
 

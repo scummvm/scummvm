@@ -411,5 +411,9 @@ void DreamGenContext::zoom() {
 	data.byte(kDidzoom) = 1;
 }
 
+void DreamGenContext::paneltomap() {
+	multiget(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+}
+
 } /*namespace dreamgen */
 
