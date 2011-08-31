@@ -23,6 +23,7 @@
 #include "neverhood/module2200.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
+#include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
 
@@ -211,6 +212,10 @@ void Module2200::createScene2203(int which) {
 }
 
 void Module2200::createScene2204(int which) {
+	_vm->gameState().sceneNum = 3;
+	// TODO Music18hList_stop(0x601C908C, 0, 2);
+	_childObject = new DiskplayerScene(_vm, this, 3);
+	SetUpdateHandler(&Module2200::updateScene2204);
 }
 			
 void Module2200::createScene2205(int which) {
@@ -391,6 +396,13 @@ void Module2200::updateScene2203() {
 }
 			
 void Module2200::updateScene2204() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene2203(2);
+	}
 }
 			
 void Module2200::updateScene2205() {
