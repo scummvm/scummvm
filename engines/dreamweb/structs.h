@@ -77,6 +77,8 @@ struct SetObject {
 	uint8 b3;
 	uint8 b4;
 	uint8 priority;
+	uint16 w4() const { return READ_LE_UINT16(&b4); }
+	void setW4(uint16 v) { WRITE_LE_UINT16(&b4, v); }
 	uint8 b6;
 	uint8 delay;
 	uint8 type;
@@ -124,6 +126,9 @@ struct DynObject {
 	uint8 mapad[5];
 	uint8 b7;
 	uint8 b8;
+	uint16 w7() const { return READ_LE_UINT16(&b7); }
+	void setW7(uint16 v) { WRITE_LE_UINT16(&b7, v); }
+
 	uint8 b9;
 	uint8 b10;
 	uint8 initialLocation;

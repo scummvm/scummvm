@@ -1188,6 +1188,22 @@ DynObject *DreamGenContext::geteitheradCPP() {
 		return getfreead(data.byte(kItemframe));
 }
 
+void *DreamGenContext::getanyad(uint16 *value) {
+	if (data.byte(kObjecttype) == 4) {
+		DynObject *exObject = getexad(data.byte(kCommand));
+		*value = exObject->w7();
+		return exObject;
+	} else if (data.byte(kObjecttype) == 2) {
+		DynObject *freeObject = getfreead(data.byte(kCommand));
+		*value = freeObject->w7();
+		return freeObject;
+	} else {
+		SetObject *setObject = getsetad(data.byte(kCommand));
+		*value = setObject->w4(); // Suspicious : conflicts with priority being a byte?
+		return setObject;
+	}
+}
+
 SetObject *DreamGenContext::getsetad(uint8 index) {
 	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
