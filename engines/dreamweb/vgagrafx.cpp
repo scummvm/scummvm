@@ -154,11 +154,10 @@ void DreamGenContext::frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uin
 
 void DreamGenContext::doshake() {
 	uint8 &counter = data.byte(kShakecounter);
-	_cmp(counter, 48);
-	if (flags.z())
+	if (counter == 48)
 		return;
 
-	_add(counter, 1);
+	++counter;
 	static const int shakeTable[] = {
 		0, -2,  3, -2,  0,  2,  4, -1,
 		1, -3,  3,  2,  0, -2,  3, -2,
