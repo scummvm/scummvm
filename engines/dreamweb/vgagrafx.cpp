@@ -286,11 +286,23 @@ void DreamGenContext::showpcx() {
 	pcxFile.close();
 }
 
-void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
 
+	if(x < 0) {
+		assert(width >= -x);
+		width -= -x;
+		src += -x;
+		x = 0;
+	}
+	if(y < 0) {
+		assert(height >= -y);
+		height -= -y;
+		src += (-y) * width;
+		y = 0;
+	}
 	if(x >= 320)
 		return;
 	if(y >= 200)
