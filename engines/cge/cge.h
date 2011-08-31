@@ -41,7 +41,7 @@ namespace CGE {
 class Console;
 class Sprite;
 
-#define kSavegameVersion 1
+#define kSavegameVersion 2
 #define kSavegameStrSize 11
 #define kPocketX    174
 #define kPocketY    176

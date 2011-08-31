@@ -826,17 +826,26 @@ void CGEEngine::snBackPt(Sprite *spr, int stp) {
 void CGEEngine::snLevel(Sprite *spr, int lev) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snLevel(spr, %d)", lev);
 
-	while (_lev < lev) {
-		_lev++;
-		spr = _vga->_spareQ->locate(100 + _lev);
+	assert((lev >= 0) && (lev < 5));
+
+	for (int i = 0; i < 5; i++) {
+		spr = _vga->_spareQ->locate(100 + i);
 		if (spr) {
-			spr->backShow(true);
-			spr->_cave = 0;
+			if (i <= lev) {
+				spr->backShow(true);
+				spr->_cave = 0;
+				spr->_flags._hide = false;
+			} else {
+				spr->_flags._hide = true;
+				spr->_cave = -1;
+			}
+		} else {
+			warning("SPR not found! ref: %d", 100 + i);
 		}
 	}
+
+	_lev = lev;
 	_maxCave = _maxCaveArr[_lev];
-	if (spr)
-		spr->_flags._hide = false;
 }
 
 void CGEEngine::snFlag(int indx, bool v) {
