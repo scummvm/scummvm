@@ -1188,18 +1188,21 @@ DynObject *DreamGenContext::geteitheradCPP() {
 		return getfreead(data.byte(kItemframe));
 }
 
-void *DreamGenContext::getanyad(uint16 *value) {
+void *DreamGenContext::getanyad(uint8 *value1, uint8 *value2) {
 	if (data.byte(kObjecttype) == 4) {
 		DynObject *exObject = getexad(data.byte(kCommand));
-		*value = exObject->w7();
+		*value1 = exObject->b7;
+		*value2 = exObject->b8;
 		return exObject;
 	} else if (data.byte(kObjecttype) == 2) {
 		DynObject *freeObject = getfreead(data.byte(kCommand));
-		*value = freeObject->w7();
+		*value1 = freeObject->b7;
+		*value2 = freeObject->b8;
 		return freeObject;
 	} else {
 		SetObject *setObject = getsetad(data.byte(kCommand));
-		*value = setObject->w4(); // Suspicious : conflicts with priority being a byte?
+		*value1 = setObject->b4;
+		*value2 = setObject->priority;
 		return setObject;
 	}
 }
@@ -1693,6 +1696,16 @@ void DreamGenContext::obpicture() {
 		frames = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
 	uint8 frame = 3 * data.byte(kCommand) + 1;
 	showframe(frames, 160, 68, frame, 0x80);
+}
+
+void DreamGenContext::obicons() {
+	uint8 value1, value2;
+	getanyad(&value1, &value2);
+	if (value1 == 0xff) {
+		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
+	} else {
+		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
+	}
 }
 
 bool DreamGenContext::isCD() {

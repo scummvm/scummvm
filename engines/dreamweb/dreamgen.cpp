@@ -4338,28 +4338,6 @@ void DreamGenContext::openob() {
 	cs.word(bx) = ax;
 }
 
-void DreamGenContext::obicons() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	getanyad();
-	_cmp(al, 255);
-	if (flags.z())
-		goto cantopenit;
-	ds = data.word(kIcons2);
-	di = 210;
-	bx = 1;
-	al = 4;
-	ah = 0;
-	showframe();
-cantopenit:
-	ds = data.word(kIcons2);
-	di = 260;
-	bx = 1;
-	al = 1;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::examicon() {
 	STACK_CHECK;
 	ds = data.word(kIcons2);
@@ -17718,7 +17696,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_openinv: openinv(); break;
 		case addr_showryanpage: showryanpage(); break;
 		case addr_openob: openob(); break;
-		case addr_obicons: obicons(); break;
 		case addr_examicon: examicon(); break;
 		case addr_describeob: describeob(); break;
 		case addr_additionaltext: additionaltext(); break;

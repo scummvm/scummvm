@@ -162,7 +162,7 @@
 	DynObject *getexad(uint8 index);
 	DynObject *geteitheradCPP();
 	SetObject *getsetad(uint8 index);
-	void *getanyad(uint16 *value);
+	void *getanyad(uint8 *value1, uint8 *value2);
 	void setallchanges();
 	void dochange();
 	void dochange(uint8 index, uint8 value, uint8 type);
@@ -206,4 +206,5 @@
 	void dumpmap();
 	void obpicture();
 	void transferinv();
+	void obicons();
 

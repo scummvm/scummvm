@@ -495,7 +495,6 @@ public:
 	static const uint16 addr_additionaltext = 0xc368;
 	static const uint16 addr_describeob = 0xc364;
 	static const uint16 addr_examicon = 0xc35c;
-	static const uint16 addr_obicons = 0xc358;
 	static const uint16 addr_openob = 0xc354;
 	static const uint16 addr_showryanpage = 0xc350;
 	static const uint16 addr_openinv = 0xc34c;
@@ -1292,6 +1291,7 @@ public:
 	//void multidump();
 	void channel0only();
 	void worktoscreenm();
+	//void obicons();
 	void removeemm();
 	//void frameoutbh();
 	void getobtextstart();
@@ -1634,7 +1634,7 @@ public:
 	//void readabyte();
 	//void showframe();
 	void random();
-	void obicons();
+	void mainman();
 	void mansatstill();
 	void channel1only();
 	void checkbasemem();
@@ -2019,7 +2019,6 @@ public:
 	void accesslightoff();
 	void usehole();
 	void useobject();
-	void mainman();
 	void volumeadjust();
 	//void checkiffree();
 };
