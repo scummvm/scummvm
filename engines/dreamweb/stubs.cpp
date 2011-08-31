@@ -1207,6 +1207,15 @@ void *DreamGenContext::getanyad(uint8 *value1, uint8 *value2) {
 	}
 }
 
+void *DreamGenContext::getanyaddir(uint8 index, uint8 flag) {
+	if (flag == 4)
+		return getexad(index);
+	else if (flag == 2)
+		return getfreead(index);
+	else
+		return getsetad(index);
+}
+
 SetObject *DreamGenContext::getsetad(uint8 index) {
 	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
