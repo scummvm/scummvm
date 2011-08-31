@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_FILEIO__
-#define __CGE_FILEIO__
+#ifndef CGE_FILEIO_H
+#define CGE_FILEIO_H
 
 #include "cge/general.h"
 #include "common/stream.h"

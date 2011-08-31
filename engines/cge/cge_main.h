@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_CGE__
-#define __CGE_CGE__
+#ifndef CGE_CGEMAIN_H
+#define CGE_CGEMAIN_H
 
 #include "cge/vga13h.h"
 #include "cge/events.h"

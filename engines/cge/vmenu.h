@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_VMENU__
-#define __CGE_VMENU__
+#ifndef CGE_VMENU_H
+#define CGE_VMENU_H
 
 #include "cge/talk.h"
 
