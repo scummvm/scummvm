@@ -185,4 +185,10 @@ inline Vector3d get_vector3d(const char *data) {
 
 } // end of namespace Graphics
 
+namespace Common {
+class Debug;
+}
+
+Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector3d &v);
+
 #endif

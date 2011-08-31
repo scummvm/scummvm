@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	line2d.o \
 	rect2d.o \
 	vector2d.o \
+	vector3d.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

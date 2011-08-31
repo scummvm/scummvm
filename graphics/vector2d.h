@@ -84,4 +84,10 @@ inline Vector2d operator-(const Vector2d &v) {
 
 }
 
+namespace Common {
+class Debug;
+}
+
+Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector2d &v);
+
 #endif

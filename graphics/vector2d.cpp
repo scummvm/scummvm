@@ -24,6 +24,8 @@
 
 #include "graphics/vector2d.h"
 
+#include "common/streamdebug.h"
+
 namespace Graphics {
 
 Vector2d::Vector2d() :
@@ -118,3 +120,10 @@ Vector3d Vector2d::toVector3d() const {
 }
 
 }
+
+Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector2d &v) {
+	dbg.nospace() << "Vector2d(" << v.getX() << "," << v.getY() << ")";
+
+	return dbg.space();
+}
+
