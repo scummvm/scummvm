@@ -208,4 +208,6 @@
 	void obpicture();
 	void transferinv();
 	void obicons();
+	void compare();
+	bool compare(uint8 index, uint8 flag, const char id[4]);
 

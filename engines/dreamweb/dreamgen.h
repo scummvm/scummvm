@@ -297,7 +297,6 @@ public:
 	static const uint16 addr_isryanholding = 0xc6cc;
 	static const uint16 addr_findexobject = 0xc6c8;
 	static const uint16 addr_findsetobject = 0xc6c4;
-	static const uint16 addr_compare = 0xc6c0;
 	static const uint16 addr_selectob = 0xc6bc;
 	static const uint16 addr_withwhat = 0xc6b8;
 	static const uint16 addr_useelvdoor = 0xc6b4;
@@ -1359,7 +1358,7 @@ public:
 	void showdiscops();
 	void advisor();
 	void additionaltext();
-	//void kernchars();
+	//void compare();
 	void othersmoker();
 	void dofade();
 	//void setuptimedtemp();
@@ -1406,7 +1405,7 @@ public:
 	//void addtopeoplelist();
 	void hangoncurs();
 	void sparkydrip();
-	void compare();
+	//void kernchars();
 	void printcurs();
 	//void convertkey();
 	void outofopen();

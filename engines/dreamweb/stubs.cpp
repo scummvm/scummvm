@@ -1717,6 +1717,21 @@ void DreamGenContext::obicons() {
 	}
 }
 
+void DreamGenContext::compare() {
+	char id[4] = { cl, ch, dl, dh };
+	flags._z = compare(al, ah, id);
+}
+
+bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
+	void *ptr = getanyaddir(index, flag);
+	const char *objId = (const char *)(((const uint8 *)ptr) + 12); // whether it is a DynObject or a SetObject
+	for (size_t i = 0; i < 4; ++i) {
+		if(id[i] != objId[i] + 'A')
+			return false;
+	}
+	return true;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

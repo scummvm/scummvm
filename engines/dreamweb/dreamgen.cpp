@@ -10535,23 +10535,6 @@ doselob:
 	useroutine();
 }
 
-void DreamGenContext::compare() {
-	STACK_CHECK;
-	_sub(dl, 'A');
-	_sub(dh, 'A');
-	_sub(cl, 'A');
-	_sub(ch, 'A');
-	push(cx);
-	push(dx);
-	getanyaddir();
-	dx = pop();
-	cx = pop();
-	_cmp(es.word(bx+12), cx);
-	if (!flags.z())
-		return /* (comparefin) */;
-	_cmp(es.word(bx+14), dx);
-}
-
 void DreamGenContext::findsetobject() {
 	STACK_CHECK;
 	_sub(al, 'A');
@@ -17893,7 +17876,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_useelvdoor: useelvdoor(); break;
 		case addr_withwhat: withwhat(); break;
 		case addr_selectob: selectob(); break;
-		case addr_compare: compare(); break;
 		case addr_findsetobject: findsetobject(); break;
 		case addr_findexobject: findexobject(); break;
 		case addr_isryanholding: isryanholding(); break;
