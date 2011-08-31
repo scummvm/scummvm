@@ -1626,7 +1626,9 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 				point = (vertex + dst).toVector3d();
 			}
 
+			float z = vec->z();
 			*vec = point - circlePos;
+			vec->z() = z;
 			return true;
 		}
 	}
