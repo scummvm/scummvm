@@ -36,18 +36,18 @@ namespace BlueForce {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene300::Object::startMover(CursorType action) {
+void Scene300::Object::startAction(CursorType action) {
 	if (action == CURSOR_TALK) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		scene->_stripManager.start(_stripNumber, scene);
 	} else {
-		NamedObject::startMover(action);
+		NamedObject::startAction(action);
 	}
 }
 
-void Scene300::Object17::startMover(CursorType action) {
+void Scene300::Object17::startAction(CursorType action) {
 	if ((action != CURSOR_USE) || !BF_GLOBALS.getFlag(3)) {
-		NamedObject::startMover(action);
+		NamedObject::startAction(action);
 	} else if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark >= bEndDayOne)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		setAction(&scene->_action4);
@@ -56,32 +56,32 @@ void Scene300::Object17::startMover(CursorType action) {
 	}
 }
 
-void Scene300::Item1::startMover(CursorType action) {
-	if (action == CURSOR_TALK) {
+void Scene300::Item1::startAction(CursorType action) {
+	if (action == CURSOR_USE) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 305;
 		scene->setAction(&scene->_sequenceManager1, scene, 305, &BF_GLOBALS._player,
 			&scene->_object8, NULL);
 	} else {
-		NamedHotspot::startMover(action);
+		NamedHotspot::startAction(action);
 	}
 }
 
-void Scene300::Item2::startMover(CursorType action) {
+void Scene300::Item2::startAction(CursorType action) {
 	if ((action == CURSOR_LOOK) || (action == CURSOR_USE)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		scene->setAction(&scene->_sequenceManager1, scene, 304, &scene->_object11, NULL);
 	} else {
-		NamedHotspot::startMover(action);
+		NamedHotspot::startAction(action);
 	}
 }
 
-void Scene300::Item14::startMover(CursorType action) {
+void Scene300::Item14::startAction(CursorType action) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 151, 54);
 }
 
-void Scene300::Item15::startMover(CursorType action) {
+void Scene300::Item15::startAction(CursorType action) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 316, 90);
 }
 
@@ -94,10 +94,10 @@ void Scene300::Action1::signal() {
 		setDelay(1);
 		break;
 	case 1:
-		if (BF_GLOBALS.getFlag(7))
-			SceneItem::display2(300, 0);
-		else
+		if (BF_GLOBALS.getFlag(fWithLyle))
 			SceneItem::display2(666, 27);
+		else
+			SceneItem::display2(300, 0);
 		setDelay(1);
 		break;
 	case 2: {
@@ -222,6 +222,8 @@ void Scene300::Action5::signal() {
 Scene300::Scene300(): SceneExt(), _object13(3000), _object14(3001), _object15(3002),
 			_object16(3003) {
 	_field2760 = _field2762 = 0;
+	
+	_cursorVisage.setVisage(1, 8);
 }
 
 void Scene300::postInit(SceneObjectList *OwnerList) {
@@ -341,6 +343,20 @@ BF_GLOBALS._player.setStrip(1);
 		setAction(&_sequenceManager1, this, 306, &BF_GLOBALS._player, &_object8, NULL);
 		break;
 	}
+
+	_item10.setup(4, 300, 7, 13, 16, 1);
+	_item11.setup(2, 300, 9, 13, 18, 1);
+	_item12.setup(5, 300, 10, 13, 19, 1);
+	_item13.setup(3, 300, 25, 26, 27, 1);
+	_item2.setup(Rect(266, 54, 272, 59), 300, -1, -1, -1, 1, NULL);
+	_item1.setup(Rect(262, 47, 299, 76), 300, 1, 13, -1, 1, NULL);
+	_item4.setup(Rect(0, 85, SCREEN_WIDTH - 1, BF_INTERFACE_Y - 1), 300, 6, 13, 15, 1, NULL);
+	_item7.setup(Rect(219, 46, 251, 74), 300, 22, 23, 24, 1, NULL);
+	_item8.setup(Rect(301, 53, 319, 78), 300, 22, 23, 24, 1, NULL);
+	_item5.setup(Rect(179, 44, 200, 55), 300, 8, 13, 17, 1, NULL);
+	_item6.setup(Rect(210, 46, 231, 55), 300, 8, 13, 17, 1, NULL);
+	_item3.setup(Rect(160, 0, SCREEN_WIDTH - 1, 75), 300, 4, 13, 14, 1, NULL);
+	_item9.setup(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 300, 29, 30, 31, 1, NULL);
 }
 
 void Scene300::signal() {
@@ -509,19 +525,16 @@ void Scene300::signal() {
 void Scene300::process(Event &event) {
 	SceneExt::process(event);
 
-	if ((BF_GLOBALS._player._field8E != 0) && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
-		Visage visage;
-
+	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		if (_item14.contains(event.mousePos)) {
-			visage.setVisage(1, 8);
-			GfxSurface surface = visage.getFrame(2);
+			GfxSurface surface = _cursorVisage.getFrame(2);
 			BF_GLOBALS._events.setCursor(surface);
 		} else if (_item15.contains(event.mousePos)) {
-			visage.setVisage(1, 8);
-			GfxSurface surface = visage.getFrame(3);
+			GfxSurface surface = _cursorVisage.getFrame(3);
 			BF_GLOBALS._events.setCursor(surface);
 		} else {
-			CursorType cursorId = BF_GLOBALS._events.hideCursor();
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
 			BF_GLOBALS._events.setCursor(cursorId);
 		}
 	}
@@ -530,7 +543,7 @@ void Scene300::process(Event &event) {
 void Scene300::dispatch() {
 	SceneExt::dispatch();
 
-	if (_action) {
+	if (!_action) {
 		int regionIndex = BF_GLOBALS._player.getRegionIndex();
 		if ((regionIndex == 1) && (_field2762 == 1)) {
 			BF_GLOBALS._player.disableControl();
@@ -545,6 +558,19 @@ void Scene300::dispatch() {
 			BF_GLOBALS._player.disableControl();
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 20, 
 				BF_GLOBALS._player._position.y - 5);
+		}
+
+		if (BF_GLOBALS._player._position.x <= 5)
+			setAction(&_action2);
+
+		if (BF_GLOBALS._player._position.x >= 315) {
+			if (BF_GLOBALS.getFlag(onDuty) || (BF_GLOBALS._bookmark == bNone) || !BF_GLOBALS.getFlag(fWithLyle)) {
+				setAction(&_action1);
+			} else {
+				BF_GLOBALS._player.disableControl();
+				_sceneMode = 317;
+				setAction(&_sequenceManager1, this, 1301, &BF_GLOBALS._player, NULL);
+			}
 		}
 	}
 }

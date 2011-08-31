@@ -412,7 +412,7 @@ public:
 	virtual Common::String getClassName() { return "SceneItem"; }
 	virtual void remove();
 	virtual void destroy() {}
-	virtual void startMover(CursorType action) { doAction(action); }
+	virtual void startAction(CursorType action) { doAction(action); }
 	virtual void doAction(int action);
 
 	bool contains(const Common::Point &pt);
@@ -420,6 +420,7 @@ public:
 	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
 	static void display2(int resNum, int lineNum);
+	static void display(const Common::String &msg);
 };
 
 class SceneItemExt : public SceneItem {
@@ -617,7 +618,7 @@ public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
-	int _field8E;
+	bool _enabled;
 public:
 	Player();
 

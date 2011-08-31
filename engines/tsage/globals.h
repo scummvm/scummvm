@@ -169,6 +169,8 @@ public:
 	int _dayNumber;
 	int _v4CEA4;
 	int _v4CEA8;
+	int _v4CEB8;
+	int _v4CEBA;
 	int _driveFromScene;
 	int _driveToScene;
 	int _v4CF9E;

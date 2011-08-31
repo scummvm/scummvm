@@ -314,6 +314,38 @@ void NamedObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_useLineNum);
 }
 
+void NamedObject::startAction(CursorType action) {
+	bool handled = true;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		if (_lookLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _lookLineNum);
+		break;
+	case CURSOR_USE:
+		if (_useLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _useLineNum);
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _talkLineNum);
+		break;
+	default:
+		handled = false;
+		break;
+	}
+/*
+	if (!handled)
+		((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(action);
+*/
+}
+
 void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -335,6 +367,7 @@ void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLin
 		break;
 	}
 }
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -465,6 +498,21 @@ void SceneExt::loadScene(int sceneNum) {
 	
 	_v51C34.top = 0;
 	_v51C34.bottom = 300;
+}
+
+void SceneExt::checkGun() {
+	if (BF_GLOBALS.getFlag(fLoadedSpare) && (BF_GLOBALS._v4CEBA > 0)) {
+		if (--BF_GLOBALS._v4CEBA == 0)
+			BF_GLOBALS.clearFlag(fGunLoaded);
+	} else {
+		if (BF_GLOBALS._v4CEB8 > 0)
+			--BF_GLOBALS._v4CEB8;
+
+		if (!BF_GLOBALS._v4CEB8)
+			BF_GLOBALS.clearFlag(fGunLoaded);
+	}
+
+	BF_GLOBALS._sound3.play(4);
 }
 
 /*--------------------------------------------------------------------------*/

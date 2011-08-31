@@ -201,7 +201,7 @@ void UICollection::draw() {
 /*--------------------------------------------------------------------------*/
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && BF_GLOBALS._player._field8E && (BF_GLOBALS._sceneManager._sceneNumber != 50)) {
+	if (_clearScreen && BF_GLOBALS._player._enabled && (BF_GLOBALS._sceneManager._sceneNumber != 50)) {
 		if (_bounds.contains(event.mousePos)) {
 
 		} else if (_field4E) {

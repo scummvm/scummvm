@@ -106,6 +106,7 @@ public:
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void startAction(CursorType action);
 
 	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
 };
@@ -151,7 +152,7 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);
-	virtual void proc13() { warning("TODO: SceneExt::proc13"); }
+	virtual void checkGun();
 
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }

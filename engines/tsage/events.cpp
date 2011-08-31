@@ -293,7 +293,7 @@ void EventsClass::setCursor(GfxSurface &cursor) {
 	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(), 
 		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
 
-	_currentCursor = CURSOR_NONE;
+	_lastCursor = CURSOR_NONE;
 }
 
 void EventsClass::setCursorFromFlag() {

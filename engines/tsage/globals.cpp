@@ -189,6 +189,8 @@ BlueForceGlobals::BlueForceGlobals(): Globals() {
 	_dayNumber = 1;
 	_v4CEA4 = 0;
 	_v4CEA8 = 0;
+	_v4CEB8 = 0;
+	_v4CEBA = 0;
 	_driveFromScene = 0;
 	_driveToScene = 0;
 	_v4CF9E = 0;

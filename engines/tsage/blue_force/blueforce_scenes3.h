@@ -46,29 +46,29 @@ class Scene300: public SceneExt {
 	public:
 		Object(int stripNumber) { _stripNumber = stripNumber; }
 
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 	class Object17: public NamedObject {
 	public:
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 	class Item14: public NamedHotspot {
 	public:
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 	class Item15: public NamedHotspot {
 	public:
-		virtual void startMover(CursorType action);
+		virtual void startAction(CursorType action);
 	};
 
 	/* Actions */
@@ -97,6 +97,7 @@ private:
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SequenceManager _sequenceManager3, _sequenceManager4;
+	Visage _cursorVisage;
 	NamedObject _object1;
 	FollowerObject _object2, _object3, _object4, _object5, _object6, _object7;
 	SceneObject _object8, _object9, _object10;

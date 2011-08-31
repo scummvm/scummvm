@@ -1463,7 +1463,11 @@ bool SceneItem::contains(const Common::Point &pt) {
 }
 
 void SceneItem::display(int resNum, int lineNum, ...) {
-	Common::String msg = !resNum ? Common::String() : _resourceManager->getMessage(resNum, lineNum);
+	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() : 
+		_resourceManager->getMessage(resNum, lineNum);
+
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.hide();
 
 	if (_globals->_sceneObjects->contains(&_globals->_sceneText)) {
 		_globals->_sceneText.remove();
@@ -1475,11 +1479,14 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Rect textRect;
 	int maxWidth = 120;
 	bool keepOnscreen = false;
-	bool centerText = true;
+	bool centerText = _vm->getGameID() == GType_Ringworld;
 
-	if (resNum) {
+	if (resNum != 0) {
 		va_list va;
 		va_start(va, lineNum);
+
+		if (resNum == -1)
+			msg = Common::String(va_arg(va, const char *));
 
 		int mode;
 		do {
@@ -1590,6 +1597,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		_globals->_sceneText.remove();
 	}
+
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.show();
 }
 
 void SceneItem::display2(int resNum, int lineNum) {
@@ -1603,23 +1613,46 @@ void SceneItem::display2(int resNum, int lineNum) {
 		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 }
 
+void SceneItem::display(const Common::String &msg) {
+	assert(_vm->getGameID() == GType_BlueForce);
+
+	display(-1, -1, msg.c_str(),
+		SET_WIDTH, 312, 
+		SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left, 
+		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
+		SET_EXT_FGCOLOR, 13, LIST_END);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneHotspot::doAction(int action) {
 	switch ((int)action) {
 	case CURSOR_LOOK:
-		display(1, 0, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display(LOOK_SCENE_HOTSPOT);
+		else
+			display(1, 0, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
-		display(1, 5, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display(USE_SCENE_HOTSPOT);
+		else
+			display(1, 5, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_TALK:
-		display(1, 15, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display(TALK_SCENE_HOTSPOT);
+		else
+			display(1, 15, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_WALK:
 		break;
 	default:
-		display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display(DEFAULT_SCENE_HOTSPOT);
+		else
+			display(2, action, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	}
 }
@@ -1639,18 +1672,24 @@ void NamedHotspot::doAction(int action) {
 	case CURSOR_LOOK:
 		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
+		else if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display2(_resNum, _lookLineNum);
 		else
 			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
+		else if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display2(_resNum, _useLineNum);
 		else
 			SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	case CURSOR_TALK:
 		if (_talkLineNum == -1)
 			SceneHotspot::doAction(action);
+		else if (_vm->getGameID() == GType_BlueForce)
+			SceneItem::display2(_resNum, _talkLineNum);
 		else
 			SceneItem::display2(_resNum, _talkLineNum);
 		break;
@@ -2814,7 +2853,7 @@ void Player::disableControl() {
 	_canWalk = false;
 	_uiEnabled = false;
 	_globals->_events.setCursor(CURSOR_NONE);
-	_field8E = 0;
+	_enabled = false;
 
 	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
 		BF_GLOBALS._uiElements.hide();
@@ -2823,6 +2862,7 @@ void Player::disableControl() {
 void Player::enableControl() {
 	_canWalk = true;
 	_uiEnabled = true;
+	_enabled = true;
 	_globals->_events.setCursor(CURSOR_WALK);
 
 	switch (_globals->_events.getCursor()) {
@@ -2863,7 +2903,7 @@ void Player::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field8C);
 
 	if (_vm->getGameID() == GType_BlueForce)
-		s.syncAsSint16LE(_field8E);
+		s.syncAsByte(_enabled);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3662,7 +3702,7 @@ void SceneHandler::process(Event &event) {
 
 			if (i != _globals->_sceneItems.end()) {
 				// Pass the action to the item
-				(*i)->doAction(_globals->_events.getCursor());
+				(*i)->startAction(_globals->_events.getCursor());
 				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
 				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
