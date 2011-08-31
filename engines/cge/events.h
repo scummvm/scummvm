@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_CGE_EVENTS__
-#define __CGE_CGE_EVENTS__
+#ifndef CGE_EVENTS_H
+#define CGE_EVENTS_H
 
 #include "common/events.h"
 #include "cge/game.h"

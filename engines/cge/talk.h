@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_TALK__
-#define __CGE_TALK__
+#ifndef CGE_TALK_H
+#define CGE_TALK_H
 
 #include "cge/general.h"
 #include "cge/vga13h.h"

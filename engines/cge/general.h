@@ -25,8 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef __CGE_GENERAL__
-#define __CGE_GENERAL__
+#ifndef CGE_GENERAL_H
+#define CGE_GENERAL_H
 
 #include "common/system.h"
 #include "common/file.h"

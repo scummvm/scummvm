@@ -25,17 +25,8 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-// ******************************************************
-// *  Sound Driver by Hedges (c) 1995 LK AVALON         *
-// *  Ver 1.00: 01-Mar-95                               *
-// *  Ver 1.10: 03-Mar-95                               *
-// *  Ver 1.20: 07-Mar-95                               *
-// *  Ver 1.30: 09-Mar-95                               *
-// *  Ver 1.40: 11-Mar-95                               *
-// ******************************************************
-
-#ifndef __CGE_SNDDRV__
-#define __CGE_SNDDRV__
+#ifndef CGE_SNDDRV_H
+#define CGE_SNDDRV_H
 
 namespace CGE {
 
