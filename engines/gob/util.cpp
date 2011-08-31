@@ -20,6 +20,10 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/events.h"
+
+#include "graphics/palette.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"
@@ -30,10 +34,6 @@
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
-
-#include "common/events.h"
-
-#include "graphics/palette.h"
 
 namespace Gob {
 
@@ -532,6 +532,23 @@ Common::String Util::setExtension(const Common::String &str, const Common::Strin
 		return Common::String(str.c_str(), dot - str.c_str()) + ext;
 
 	return str + ext;
+}
+
+Common::String Util::readString(Common::SeekableReadStream &stream, int n) {
+	Common::String str;
+
+	char c;
+	while (n-- > 0) {
+		if ((c = stream.readByte()) == '\0')
+			break;
+
+		str += c;
+	}
+
+	if (n > 0)
+		stream.skip(n);
+
+	return str;
 }
 
 /* NOT IMPLEMENTED */

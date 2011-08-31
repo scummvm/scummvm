@@ -23,7 +23,12 @@
 #ifndef GOB_UTIL_H
 #define GOB_UTIL_H
 
+#include "common/str.h"
 #include "common/keyboard.h"
+
+namespace Common {
+	class SeekableReadStream;
+}
 
 namespace Gob {
 
@@ -130,6 +135,9 @@ public:
 
 	static char *setExtension(char *str, const char *ext);
 	static Common::String setExtension(const Common::String &str, const Common::String &ext);
+
+	/** Read a constant-length string out of a stream. */
+	static Common::String readString(Common::SeekableReadStream &stream, int n);
 
 	Util(GobEngine *vm);
 
