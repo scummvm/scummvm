@@ -43,6 +43,8 @@ void DreamGenContext::multiget() {
 }
 
 void DreamGenContext::multiget(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
+	assert(x < 320);
+	assert(y < 200);
 	const uint8 *src = workspace() + x + y * kScreenwidth;
 	if (y + h > 200)
 		h = 200 - y;
@@ -64,6 +66,8 @@ void DreamGenContext::multiput() {
 }
 
 void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
+	assert(x < 320);
+	assert(y < 200);
 	uint8 *dst = workspace() + x + y * kScreenwidth;
 	if (y + h > 200)
 		h = 200 - y;
