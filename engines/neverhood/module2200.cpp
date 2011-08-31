@@ -204,6 +204,10 @@ void Module2200::createScene2202(int which) {
 }
 
 void Module2200::createScene2203(int which) {
+	// TODO Music18hList_play(0x601C908C, 0, 2, 1);
+	_vm->gameState().sceneNum = 2;
+	_childObject = new Scene2203(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2203);
 }
 
 void Module2200::createScene2204(int which) {
@@ -368,6 +372,22 @@ void Module2200::updateScene2202() {
 }
 
 void Module2200::updateScene2203() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2205(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			createScene2204(0);
+			_childObject->handleUpdate();
+		} else {
+			createScene2201(1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 			
 void Module2200::updateScene2204() {
@@ -782,10 +802,8 @@ SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentS
 	: StaticSprite(vm, 900), _soundResource1(vm), _soundResource2(vm), _parentScene(parentScene),
 	_value(value), _tileIndex(tileIndex), _isMoving(false) {
 	
-	debug("#1 _value = %d; _tileIndex = %d", _value, _tileIndex);
 	SetUpdateHandler(&SsScene2202PuzzleTile::update);
 	SetMessageHandler(&SsScene2202PuzzleTile::handleMessage);
-	debug("#2");
 	_spriteResource.load2(kSsScene2202PuzzleTileFileHashes2[_value]);
 	if (_tileIndex >= 0 && _tileIndex <= 2) {
 		createSurface(100, 128, 128);
@@ -794,7 +812,6 @@ SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentS
 	} else {
 		createSurface(500, 128, 128);
 	}
-	debug("#3");
 	_drawRect.x = -(_spriteResource.getDimensions().width / 2);
 	_drawRect.y = -(_spriteResource.getDimensions().height / 2);
 	_drawRect.width = _spriteResource.getDimensions().width;
@@ -807,7 +824,6 @@ SsScene2202PuzzleTile::SsScene2202PuzzleTile(NeverhoodEngine *vm, Scene *parentS
 	StaticSprite::update();
 	_soundResource1.load(0x40958621);
 	_soundResource2.load(0x51108241);
-	debug("LOAD OK");
 }
 
 void SsScene2202PuzzleTile::update() {
@@ -913,9 +929,9 @@ void SsScene2202PuzzleTile::moveTile(int16 newTileIndex) {
 
 	setSubVar(0x484498D0, _tileIndex, (uint32)-1);
 	setSubVar(0x484498D0, newTileIndex, (uint32)_value);
-	    
+	
 	_tileIndex = newTileIndex;
-	    
+	
 	_errValue = 0;
 	_counterDirection = false;
 	_counter = 0;
@@ -1131,6 +1147,232 @@ bool Scene2202::testIsSolved() {
 		getSubVar(0x484498D0, 5) == 5 &&
 		getSubVar(0x484498D0, 6) == 6 &&
 		getSubVar(0x484498D0, 8) == 7;
+}
+
+static const uint32 kClass545FileHashes[] = {
+	0x2450D850,
+	0x0C9CE8D0,
+	0x2C58A152
+};
+
+Class545::Class545(NeverhoodEngine *vm, Scene *parentScene, int index, int surfacePriority, int16 x, int16 y)
+	: AnimatedSprite(vm, kClass545FileHashes[index], surfacePriority, x, y), _parentScene(parentScene), _index(index) {
+
+	if (!getSubVar(0x0090EA95, _index) && !getSubVar(0x08D0AB11, _index)) {
+		SetMessageHandler(&Class545::handleMessage);
+	} else {
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+	}
+}
+
+uint32 Class545::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x4806:
+		setSubVar(0x0090EA95, _index, 1);
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+	}
+	return messageResult;
+}
+
+static const uint32 kAsScene2203DoorFileHashes[] = {
+	0x7868AE10,
+	0x1A488110
+};
+
+AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, int index)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene),
+	_index(index) {
+
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2203Door::handleMessage);
+	_x = 320;
+	_y = 240;
+	createSurface1(kAsScene2203DoorFileHashes[_index], 900);
+	if (getGlobalVar(0x9A500914) == _index) {
+		setFileHash(kAsScene2203DoorFileHashes[_index], -1, -1);
+		_newHashListIndex = -2;
+	} else {
+		setFileHash(kAsScene2203DoorFileHashes[_index], 0, -1);
+		_newHashListIndex = 0;
+	}
+}
+
+uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_index == getGlobalVar(0x9A500914))
+			_parentScene->sendMessage(0x2002, 0, this);
+		else
+			_parentScene->sendMessage(0x2001, 0, this);
+		messageResult = 1;
+		break;
+	case 0x2000:
+		_otherDoor = (Sprite*)param.asEntity();
+		break;
+	case 0x3002:
+		if (_index == getGlobalVar(0x9A500914))
+			_parentScene->sendMessage(0x4808, 0, this);
+		setFileHash1();
+		break;
+	case 0x4808:
+		setGlobalVar(0x9A500914, _index);
+		_otherDoor->sendMessage(0x4809, 0, this);
+		openDoor();
+		break;
+	case 0x4809:
+		closeDoor();
+		_parentScene->sendMessage(0x2003, 0, this);
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2203Door::openDoor() {
+	_soundResource.play(0x341014C4);
+	setFileHash(kAsScene2203DoorFileHashes[_index], 1, -1);
+}
+
+void AsScene2203Door::closeDoor() {
+	setFileHash(kAsScene2203DoorFileHashes[_index], -1, -1);
+	_playBackwards = true;
+	_newHashListIndex = 0;
+}
+
+Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860))
+		setGlobalVar(0x13382860, 1);
+
+	SetMessageHandler(&Scene2203::handleMessage);
+	_surfaceFlag = true;
+
+	_background = addBackground(new DirtyBackground(_vm, 0x82C80334, 0, 0));
+	_palette = new Palette(_vm, 0x82C80334);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x80330824, NULL));
+
+	_vm->_collisionMan->setHitRects(0x004B8320);
+
+	if (getGlobalVar(0x13382860) == 1) {
+		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 282, 432));
+		_vm->_collisionMan->addSprite(_class545);
+	}
+
+	_asTape = addSprite(new AsScene1201Tape(_vm, this, 1, 1100, 435, 432, 0x9148A011));
+	_vm->_collisionMan->addSprite(_asTape);
+
+	_asLeftDoor = addSprite(new AsScene2203Door(_vm, this, 0));
+	_asRightDoor = addSprite(new AsScene2203Door(_vm, this, 1));
+	
+	_ssSmallLeftDoor = addSprite(new StaticSprite(_vm, 0x542CC072, 1100));
+	_ssSmallRightDoor = addSprite(new StaticSprite(_vm, 0x0A2C0432, 1100));
+	
+	_leftDoorClipRect.x1 = _ssSmallLeftDoor->getSurface()->getDrawRect().x;
+	_leftDoorClipRect.y1 = 0;
+	_leftDoorClipRect.x2 = 640;
+	_leftDoorClipRect.y2 = 480;
+	
+	_rightDoorClipRect.x1 = 0;
+	_rightDoorClipRect.y1 = 0;
+	_rightDoorClipRect.x2 = _ssSmallRightDoor->getSurface()->getDrawRect().x + _ssSmallRightDoor->getSurface()->getDrawRect().width;
+	_rightDoorClipRect.y2 = 480;
+
+	_asLeftDoor->sendEntityMessage(0x2000, _asRightDoor, this);
+	_asRightDoor->sendEntityMessage(0x2000, _asLeftDoor, this);
+	
+	_vm->_collisionMan->addSprite(_asLeftDoor);
+	_vm->_collisionMan->addSprite(_asRightDoor);
+
+	if (which < 0) {
+		_klayman = new KmScene2203(_vm, this, 200, 427);
+		setMessageList(0x004B8340);
+	} else if (which == 1) {
+		_klayman = new KmScene2203(_vm, this, 640, 427);
+		setMessageList(0x004B8350);
+	} else if (which == 2) {
+		if (getGlobalVar(0xC0418A02)) {
+			_klayman = new KmScene2203(_vm, this, 362, 427);
+			_klayman->setDoDeltaX(1);
+		} else {
+			_klayman = new KmScene2203(_vm, this, 202, 427);
+		}
+		setMessageList(0x004B8358);
+	} else {
+		_klayman = new KmScene2203(_vm, this, 0, 427);
+		setMessageList(0x004B8348);
+	}
+	addSprite(_klayman); 
+
+	if (getGlobalVar(0x9A500914)) {
+		_ssSmallLeftDoor->getSurface()->setVisible(false);
+		_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
+	} else {
+		_ssSmallRightDoor->getSurface()->setVisible(false);
+		_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
+	}
+	
+	setRectList(0x004B8420);
+
+}
+
+Scene2203::~Scene2203() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2001:
+		_klayman->sendEntityMessage(0x1014, sender, this);
+		if (sender == _asLeftDoor) {
+			setMessageList2(0x004B83B0);
+		} else {
+			setMessageList2(0x004B83C8);
+		}
+		break;
+	case 0x2002:
+		if (sender == _asLeftDoor) {
+			setMessageList2(0x004B8370);
+		} else {
+			setMessageList2(0x004B8360);
+		}
+		break;
+	case 0x2003:
+		if (sender == _asLeftDoor) {
+			_ssSmallLeftDoor->getSurface()->setVisible(false);
+		} else {
+			_ssSmallRightDoor->getSurface()->setVisible(false);
+		}
+		break;
+	case 0x4808:
+		if (sender == _asLeftDoor) {
+			_ssSmallLeftDoor->getSurface()->setVisible(true);
+			_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
+		} else {
+			_ssSmallRightDoor->getSurface()->setVisible(true);
+			_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
+		}
+		break;
+	case 0x4826:
+		if (sender == _asTape) {
+			_klayman->sendEntityMessage(0x1014, _asTape, this);
+			setMessageList(0x004B83E0);
+		} else if (sender == _class545) {
+			_klayman->sendEntityMessage(0x1014, _class545, this);
+			setMessageList(0x004B83F0);
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood

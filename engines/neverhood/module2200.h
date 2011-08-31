@@ -246,6 +246,44 @@ protected:
 	bool testIsSolved();	
 };
 
+class Class545 : public AnimatedSprite {
+public:
+	Class545(NeverhoodEngine *vm, Scene *parentScene, int index, int surfacePriority, int16 x, int16 y);
+protected:
+	Scene *_parentScene;
+	int _index;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2203Door : public AnimatedSprite {
+public:
+	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, int index);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	Sprite *_otherDoor;
+	int _index;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void openDoor();
+	void closeDoor();
+};
+
+class Scene2203 : public Scene {
+public:
+	Scene2203(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene2203();
+protected:
+	Sprite *_asLeftDoor;
+	Sprite *_asRightDoor;
+	Sprite *_ssSmallLeftDoor;
+	Sprite *_ssSmallRightDoor;
+	Sprite *_asTape;
+	Sprite *_class545;
+	NRect _leftDoorClipRect;
+	NRect _rightDoorClipRect;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2200_H */

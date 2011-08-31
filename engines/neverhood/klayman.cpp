@@ -1765,6 +1765,17 @@ uint32 Klayman::handleMessage41E2F0(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
+void Klayman::sub420750() {
+	if (!sub41CEB0(AnimationCallback(&Klayman::sub420750))) {
+		_status2 = 2;
+		_flagE5 = false;
+		setFileHash(0x5CCCB330, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetSpriteCallback(&Klayman::spriteUpdate41F230);
+		SetMessageHandler(&Klayman::handleMessage41DD20);
+	}
+}
+
 void Klayman::sub4207A0() {
 	if (!sub41CEB0(AnimationCallback(&Klayman::sub4207A0))) {
 		_status2 = 2;
@@ -1995,6 +2006,20 @@ uint32 Klayman::handleMessage41DB90(int messageNum, const MessageParam &param, E
 		}
 	}
 	return handleMessage41D480(messageNum, param, sender);
+}
+
+uint32 Klayman::handleMessage41DD20(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x040D4186) {
+			if (_attachedSprite) {
+				_attachedSprite->sendMessage(0x4808, 0, this);
+			}
+		}
+		break;
+	}
+	return messageResult;
 }
 
 //##############################################################################
@@ -3496,6 +3521,78 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;	
+}
+
+KmScene2203::KmScene2203(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+	
+uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		}else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x4818:
+		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x4819:
+		setCallback2(AnimationCallback(&Klayman::sub420750));
+		break;
+	case 0x481A:
+		setCallback2(AnimationCallback(&Klayman::sub420680));		
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481D:
+		setCallback2(AnimationCallback(&Klayman::sub4207A0));
+		break;
+	case 0x481E:
+		setCallback2(AnimationCallback(&Klayman::sub4207F0));
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

@@ -82,6 +82,7 @@ public:
 	void sub421070();
 	void sub420420();
 	void sub420ED0();
+	void sub420750();
 	void sub4207A0();
 	void sub4207F0();
 	void sub420F20();
@@ -237,6 +238,7 @@ protected:
 	uint32 handleMessage41D640(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41EAB0(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D970(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41DD20(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void update41D1C0();
 	
@@ -373,6 +375,13 @@ protected:
 class KmScene2201 : public Klayman {
 public:
 	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *rect1, int16 unk);
+protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2203 : public Klayman {
+public:
+	KmScene2203(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
