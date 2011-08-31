@@ -518,6 +518,11 @@ void Util::deleteList(List *list) {
 }
 
 char *Util::setExtension(char *str, const char *ext) {
+	assert(str && ext);
+
+	if (str[0] == '\0')
+		return str;
+
 	char *dot = strrchr(str, '.');
 	if (dot)
 		*dot = '\0';
@@ -527,6 +532,9 @@ char *Util::setExtension(char *str, const char *ext) {
 }
 
 Common::String Util::setExtension(const Common::String &str, const Common::String &ext) {
+	if (str.empty())
+		return str;
+
 	const char *dot = strrchr(str.c_str(), '.');
 	if (dot)
 		return Common::String(str.c_str(), dot - str.c_str()) + ext;
