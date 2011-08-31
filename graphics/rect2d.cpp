@@ -33,10 +33,10 @@ Rect2d::Rect2d() {
 }
 
 Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight) {
-	float left = (topLeft._x <= bottomRight._x ? topLeft._x : bottomRight._x);
-	float right = (topLeft._x <= bottomRight._x ? bottomRight._x : topLeft._x);
-	float top = (topLeft._y <= bottomRight._y ? topLeft._y : bottomRight._y);
-	float bottom = (topLeft._y <= bottomRight._y ? bottomRight._y : topLeft._y);
+	float left = (topLeft.getX() <= bottomRight.getX() ? topLeft.getX() : bottomRight.getX());
+	float right = (topLeft.getX() <= bottomRight.getX() ? bottomRight.getX() : topLeft.getX());
+	float top = (topLeft.getY() <= bottomRight.getY() ? topLeft.getY() : bottomRight.getY());
+	float bottom = (topLeft.getY() <= bottomRight.getY() ? bottomRight.getY() : topLeft.getY());
 
 	_topLeft = Vector2d(left, top);
 	_topRight = Vector2d(right, top);
@@ -75,24 +75,24 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 	float angle = (_topRight - _topLeft).getAngle();
 
 	if (angle < 0.1 && angle > -0.1) {
-		Vector2d circleDistance(fabs(center._x - c._x), fabs(center._y - c._y));
+		Vector2d circleDistance(fabs(center.getX() - c.getX()), fabs(center.getY() - c.getY()));
 
-		if (circleDistance._x > (w / 2.f + radius)) {
+		if (circleDistance.getX() > (w / 2.f + radius)) {
 			return false;
 		}
-		if (circleDistance._y > (h / 2.f + radius)) {
+		if (circleDistance.getY() > (h / 2.f + radius)) {
 			return false;
 		}
 
-		if (circleDistance._x <= (w / 2.f)) {
+		if (circleDistance.getX() <= (w / 2.f)) {
 			return true;
 		}
-		if (circleDistance._y <= (h / 2.f)) {
+		if (circleDistance.getY() <= (h / 2.f)) {
 			return true;
 		}
 
-		float cornerDistance_sq = pow(circleDistance._x - w / 2.f, 2.f) +
-								pow(circleDistance._y - h / 2.f, 2.f);
+		float cornerDistance_sq = pow(circleDistance.getX() - w / 2.f, 2.f) +
+								pow(circleDistance.getY() - h / 2.f, 2.f);
 
 		return (cornerDistance_sq <= radius * radius);
 	} else { //The rectangle was rotated
@@ -105,16 +105,13 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 }
 
 bool Rect2d::containsPoint(const Vector2d &point) const {
-	return (point._x >= _topLeft._x && point._x <= _bottomRight._x &&
-	        point._y >= _topLeft._y && point._y <= _bottomRight._y);
+	return (point.getX() >= _topLeft.getX() && point.getX() <= _bottomRight.getX() &&
+	        point.getY() >= _topLeft.getY() && point.getY() <= _bottomRight.getY());
 }
 
 Vector2d Rect2d::getCenter() const {
-	Vector2d sum;
-	sum._x = _topLeft._x + _topRight._x + _bottomLeft._x + _bottomRight._x;
-	sum._x /= 4;
-	sum._y = _topLeft._y + _topRight._y + _bottomLeft._y + _bottomRight._y;
-	sum._y /= 4;
+	Vector2d sum = _topLeft + _topRight + _bottomLeft + _bottomRight;
+	sum /= 4;
 
 	return sum;
 }
@@ -136,15 +133,15 @@ Vector2d Rect2d::getBottomRight() const {
 }
 
 float Rect2d::getWidth() const {
-	float x = _topRight._x - _topLeft._x;
-	float y = _topRight._y - _topLeft._y;
+	float x = _topRight.getX() - _topLeft.getX();
+	float y = _topRight.getY() - _topLeft.getY();
 
 	return sqrt(x * x + y * y);
 }
 
 float Rect2d::getHeight() const {
-	float x = _bottomLeft._x - _topLeft._x;
-	float y = _bottomLeft._y - _topLeft._y;
+	float x = _bottomLeft.getX() - _topLeft.getX();
+	float y = _bottomLeft.getY() - _topLeft.getY();
 
 	return sqrt(x * x + y * y);
 }

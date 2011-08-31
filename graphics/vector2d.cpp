@@ -41,9 +41,23 @@ Vector2d::Vector2d(const Vector2d &vec) :
 
 }
 
+void Vector2d::setX(float x) {
+	_x = x;
+}
+
+void Vector2d::setY(float y) {
+	_y = y;
+}
+
 Vector2d &Vector2d::operator=(const Vector2d &vec) {
 	_x = vec._x;
 	_y = vec._y;
+	return *this;
+}
+
+Vector2d &Vector2d::operator/=(float s) {
+	_x /= s;
+	_y /= s;
 	return *this;
 }
 

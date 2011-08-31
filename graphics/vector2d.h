@@ -35,7 +35,13 @@ public:
 	Vector2d(float x, float y);
 	Vector2d(const Vector2d &vec);
 
+	inline float getX() const { return _x; }
+	inline float getY() const { return _y; }
+	void setX(float x);
+	void setY(float y);
+
 	Vector2d &operator=(const Vector2d &vec);
+	Vector2d &operator/=(float s);
 
 	void normalize();
 	Vector2d getNormalized() const;
@@ -47,33 +53,33 @@ public:
 
 	Vector3d toVector3d() const;
 
-	// private:
+private:
 	float _x;
 	float _y;
 };
 
 inline Vector2d operator-(const Vector2d& v1, const Vector2d& v2) {
-	Vector2d result(v1._x - v2._x, v1._y - v2._y);
+	Vector2d result(v1.getX() - v2.getX(), v1.getY() - v2.getY());
 	return result;
 }
 
 inline Vector2d operator+(const Vector2d &v1, const Vector2d &v2) {
-	Vector2d result(v1._x + v2._x, v1._y + v2._y);
+	Vector2d result(v1.getX() + v2.getX(), v1.getY() + v2.getY());
 	return result;
 }
 
 inline Vector2d operator*(const Vector2d &v1, float factor) {
-	Vector2d result(v1._x * factor, v1._y * factor);
+	Vector2d result(v1.getX() * factor, v1.getY() * factor);
 	return result;
 }
 
 inline Vector2d operator/(const Vector2d &v1, float factor) {
-	Vector2d result(v1._x / factor, v1._y / factor);
+	Vector2d result(v1.getX() / factor, v1.getY() / factor);
 	return result;
 }
 
 inline Vector2d operator-(const Vector2d &v) {
-	return Vector2d(-v._x, -v._y);
+	return Vector2d(-v.getX(), -v.getY());
 }
 
 }

@@ -1544,8 +1544,8 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			size = model1->_bboxSize * _collisionScale;
 			yaw = _yaw;
 
-			circle._x = p2.x();
-			circle._y = p2.y();
+			circle.setX(p2.x());
+			circle.setY(p2.y());
 			circlePos = p2;
 			radius = size2;
 		} else {
@@ -1554,8 +1554,8 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			size = model2->_bboxSize * actor->_collisionScale;
 			yaw = actor->_yaw;
 
-			circle._x = p1.x() + vec->x();
-			circle._y = p1.y() + vec->y();
+			circle.setX(p1.x() + vec->x());
+			circle.setY(p1.y() + vec->y());
 			circlePos = p1;
 			radius = size1;
 		}

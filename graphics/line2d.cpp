@@ -34,13 +34,13 @@ Line2d::Line2d() :
 
 Line2d::Line2d(const Vector2d &direction, const Vector2d &point) {
 	Vector2d d = direction;
-	_a = d._y / d._x;
+	_a = d.getY() / d.getX();
 	_b = -1;
 
 	if (_b == 0) {
-		_c = -point._x;
+		_c = -point.getX();
 	} else {
-		_c = point._y - (d._y / d._x) * point._x;
+		_c = point.getY() - (d.getY() / d.getX()) * point.getX();
 	}
 }
 
@@ -90,7 +90,7 @@ bool Line2d::intersectsLine(const Line2d &line, Vector2d *pos) const {
 }
 
 bool Line2d::containsPoint(const Vector2d &point) const {
-	float n = _a * point._x + _b * point._y + _c;
+	float n = _a * point.getX() + _b * point.getY() + _c;
 	return (n < 0.0001 && n > -0.0001);
 }
 
@@ -127,8 +127,8 @@ Vector2d Segment2d::middle() const {
 }
 
 Line2d Segment2d::getLine() const {
-	float y = _end._y - _begin._y;
-	float x = _end._x - _begin._x;
+	float y = _end.getY() - _begin.getY();
+	float x = _end.getX() - _begin.getX();
 	Vector2d v(x, y);
 
 	return Line2d(v, _begin);
@@ -139,18 +139,18 @@ Line2d Segment2d::getPerpendicular(const Vector2d &point) const {
 }
 
 bool Segment2d::intersectsSegment(const Segment2d &other, Vector2d *pos) {
-	float denom = ((other._end._y - other._begin._y) * (_end._x - _begin._x)) -
-	((other._end._x - other._begin._x) * (_end._y - _begin._y));
+	float denom = ((other._end.getY() - other._begin.getY()) * (_end.getX() - _begin.getX())) -
+	((other._end.getX() - other._begin.getX()) * (_end.getY() - _begin.getY()));
 
 
-	float d = ((_end._y - _begin._y) * (other._end._x - other._begin._x)) -
-	((_end._x - _begin._x) * (other._end._y - other._begin._y));
+	float d = ((_end.getY() - _begin.getY()) * (other._end.getX() - other._begin.getX())) -
+	((_end.getX() - _begin.getX()) * (other._end.getY() - other._begin.getY()));
 
-	float nume_a = ((other._end._x - other._begin._x) * (_begin._y - other._begin._y)) -
-	((other._end._y - other._begin._y) * (_begin._x - other._begin._x));
+	float nume_a = ((other._end.getX() - other._begin.getX()) * (_begin.getY() - other._begin.getY())) -
+	((other._end.getY() - other._begin.getY()) * (_begin.getX() - other._begin.getX()));
 
-	float nume_b = ((_end._x - _begin._x) * (other._begin._y - _begin._y)) -
-	((_end._y - _begin._y) * (other._begin._x - _begin._x));
+	float nume_b = ((_end.getX() - _begin.getX()) * (other._begin.getY() - _begin.getY())) -
+	((_end.getY() - _begin.getY()) * (other._begin.getX() - _begin.getX()));
 
 	if (denom == 0.0f) {
 		return false;
