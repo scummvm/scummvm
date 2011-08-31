@@ -1611,9 +1611,11 @@ void DreamGenContext::showpointer() {
 			height = 12;
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
-		data.word(kOldpointerx) -= width / 2;
-		data.word(kOldpointery) -= height / 2;
-		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x - width / 2, y - height / 2, width, height);
+		uint16 xMin = (x >= width / 2) ? x - width / 2 : 0;
+		uint16 yMin = (y >= height / 2) ? y - height / 2 : 0;
+		data.word(kOldpointerx) = xMin;
+		data.word(kOldpointery) = yMin;
+		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
 		showframe(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
 		showframe(icons1, x, y, 3, 128);
 	} else {
