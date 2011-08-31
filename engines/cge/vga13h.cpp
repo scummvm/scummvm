@@ -99,13 +99,8 @@ BitmapPtr Sprite::shp() {
 		return NULL;
 
 	int i = e->_seq[_seqPtr]._now;
-	if (i >= _shpCnt) {
-		//char s[256];
-		//sprintf(s, "Seq=%p ShpCnt=%d SeqPtr=%d Now=%d Next=%d",
-		//      Seq, ShpCnt, SeqPtr, Seq[SeqPtr].Now, Seq[SeqPtr].Next);
-		//VGA::Exit(s, File);
+	if (i >= _shpCnt)
 		error("Invalid PHASE in SPRITE::Shp() %s", _file);
-	}
 	return e->_shpList[i];
 }
 
