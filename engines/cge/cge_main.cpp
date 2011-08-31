@@ -266,7 +266,7 @@ void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
-	syncGame(NULL, saveFile);
+	syncGame(NULL, saveFile, false);
 
 	// Finish writing out game data
 	saveFile->finalize();
@@ -324,7 +324,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 	if (s.isSaving()) {
 		// Loop through saving the sprite data
 		for (Sprite *spr = _vga->_spareQ->first(); spr; spr = spr->_next) {
-			if ((spr->_ref >= 1000) && !s.err())
+			if (!s.err())
 				spr->sync(s);
 		}
 	} else {
