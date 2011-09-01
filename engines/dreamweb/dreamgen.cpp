@@ -14836,29 +14836,6 @@ notasetid:
 		goto identifyset;
 }
 
-void DreamGenContext::isitdescribed() {
-	STACK_CHECK;
-	push(ax);
-	push(cx);
-	push(es);
-	push(bx);
-	al = es.byte(bx+4);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kSetdesc);
-	_add(bx, (0));
-	ax = es.word(bx);
-	_add(ax, (0+(130*2)));
-	bx = ax;
-	dl = es.byte(bx);
-	bx = pop();
-	es = pop();
-	cx = pop();
-	ax = pop();
-	_cmp(dl, 0);
-}
-
 void DreamGenContext::findpathofpoint() {
 	STACK_CHECK;
 	push(ax);
@@ -17915,7 +17892,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_madmanrun: madmanrun(); break;
 		case addr_identifyob: identifyob(); break;
 		case addr_checkifset: checkifset(); break;
-		case addr_isitdescribed: isitdescribed(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
 		case addr_checkifpathison: checkifpathison(); break;

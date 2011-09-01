@@ -1737,6 +1737,17 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 	return true;
 }
 
+void DreamGenContext::isitdescribed() {
+	ObjPos *pos = (ObjPos *)es.ptr(bx, sizeof(ObjPos));
+	flags._z = !isitdescribed(pos);
+}
+
+bool DreamGenContext::isitdescribed(ObjPos *pos) {
+	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
+	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
+	return result != 0;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version

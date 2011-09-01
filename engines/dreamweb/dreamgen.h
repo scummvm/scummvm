@@ -113,7 +113,6 @@ public:
 	static const uint16 addr_checkifpathison = 0xca04;
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
-	static const uint16 addr_isitdescribed = 0xc9e8;
 	static const uint16 addr_checkifset = 0xc9dc;
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_madmanrun = 0xc9cc;
@@ -1463,7 +1462,7 @@ public:
 	void candles1();
 	void lookininterface();
 	void manasleep();
-	void isitdescribed();
+	//void isitdescribed();
 	void hotelbell();
 	void loadspeech();
 	void interupttest();
