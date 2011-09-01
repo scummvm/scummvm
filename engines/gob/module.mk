@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	dataio.o \
 	databases.o \
 	dbase.o \
+	decfile.o \
 	detection.o \
 	draw.o \
 	draw_v1.o \
