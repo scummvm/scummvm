@@ -141,10 +141,8 @@ Common::Error PegasusEngine::run() {
 			runMainMenu();
 			break;
 		case kMainGameMode:
-			if (isDemo())
-				changeLocation(kLocPrehistoric);
-			else
-				changeLocation(kLocCaldoria);
+			// NOTE: Prehistoric will be our testing location
+			changeLocation(kPrehistoricID);
 			mainGameLoop();
 			break;
 		case kQuitMode:
@@ -233,19 +231,19 @@ void PegasusEngine::mainGameLoop() {
 	_video->playMovieCentered("Images/Caldoria/Pullback.movie");
 	drawInterface();
 
-	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(_timeZone).c_str(), getTimeZoneDesc(_timeZone).c_str());
+	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(_neighborhood).c_str(), getTimeZoneDesc(_neighborhood).c_str());
 	_video->playMovie(navMovie, kViewScreenOffset, kViewScreenOffset);
 
 	_gameMode = kQuitMode;
 }
 
-void PegasusEngine::changeLocation(TimeZone timeZone) {
-	_timeZone = timeZone;
+void PegasusEngine::changeLocation(tNeighborhoodID neighborhood) {
+	_neighborhood = neighborhood;
 
 	// Just a test...
-	Neighborhood *neighborhood = new Neighborhood(this, getTimeZoneDesc(_timeZone));
-	neighborhood->init();
-	delete neighborhood;
+	Neighborhood *neighborhoodPtr = new Neighborhood(this, getTimeZoneDesc(_neighborhood), _neighborhood);
+	neighborhoodPtr->init();
+	delete neighborhoodPtr;
 }
 
 void PegasusEngine::showLoadDialog() {
@@ -267,16 +265,16 @@ void PegasusEngine::showLoadDialog() {
 	slc.close();
 }
 
-Common::String PegasusEngine::getTimeZoneDesc(TimeZone timeZone) {
-	static const char *names[] = { "Prehistoric", "Mars", "WSC", "Tiny TSA", "Full TSA", "Norad Alpha", "Caldoria", "Norad Delta" };
-	return names[timeZone];
+Common::String PegasusEngine::getTimeZoneDesc(tNeighborhoodID neighborhood) {
+	static const char *names[] = { "Caldoria", "Full TSA", "Full TSA", "Tiny TSA", "Prehistoric", "Mars", "WSC", "Norad Alpha", "Norad Delta" };
+	return names[neighborhood];
 }
 
-Common::String PegasusEngine::getTimeZoneFolder(TimeZone timeZone) {
-	if (timeZone == kLocFullTSA || timeZone == kLocTinyTSA)
+Common::String PegasusEngine::getTimeZoneFolder(tNeighborhoodID neighborhood) {
+	if (neighborhood == kFullTSAID || neighborhood == kTinyTSAID || neighborhood == kFinalTSAID)
 		return "TSA";
 
-	return getTimeZoneDesc(timeZone);
+	return getTimeZoneDesc(neighborhood);
 }
 
 GUI::Debugger *PegasusEngine::getDebugger() {

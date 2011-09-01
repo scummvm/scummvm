@@ -33,6 +33,7 @@
 
 #include "pegasus/graphics.h"
 #include "pegasus/video.h"
+#include "pegasus/neighborhood/neighborhood.h"
 
 namespace Video {
 	class Video::QuickTimeDecoder;
@@ -103,17 +104,6 @@ struct RightAreaData {
 struct OverviewHotspot {
 	Common::Rect rect;
 	uint32 time;
-};
-
-enum TimeZone {
-	kLocPrehistoric = 0,
-	kLocMars = 1,
-	kLocWSC = 2,
-	kLocTinyTSA = 3,
-	kLocFullTSA = 4,
-	kLocNoradAlpha = 5,
-	kLocCaldoria = 6,
-	kLocNoradDelta = 7
 };
 
 // Taken from JMP PP Resources
@@ -198,16 +188,16 @@ private:
 	// Main Game Functions
 	void mainGameLoop();
 	void loadItemLocationData();
-	void changeLocation(TimeZone timeZone);
+	void changeLocation(tNeighborhoodID neighborhood);
 
 	// Misc Functions
-	static Common::String getTimeZoneFolder(TimeZone timeZone);
-	static Common::String getTimeZoneDesc(TimeZone timeZone);
+	static Common::String getTimeZoneFolder(tNeighborhoodID neighborhood);
+	static Common::String getTimeZoneDesc(tNeighborhoodID neighborhood);
 
 	// Game Variables
 	bool _adventureMode;
 	GameMode _gameMode;
-	TimeZone _timeZone;
+	tNeighborhoodID _neighborhood;
 	Common::Array<ItemLocationData> _itemLocationData;
 
 	// Console

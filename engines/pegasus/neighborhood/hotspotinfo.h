@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_NEIGHBORHOOD_HOTSPOT_H
-#define PEGASUS_NEIGHBORHOOD_HOTSPOT_H
+#ifndef PEGASUS_NEIGHBORHOOD_HOTSPOTINFO_H
+#define PEGASUS_NEIGHBORHOOD_HOTSPOTINFO_H
 
 #include "common/array.h"
 #include "common/endian.h"
@@ -37,10 +37,10 @@ namespace Common {
 
 namespace Pegasus {
 
-class HotspotTable {
+class HotspotInfoTable {
 public:
-	HotspotTable() {}
-	~HotspotTable() {}
+	HotspotInfoTable() {}
+	~HotspotInfoTable() {}
 
 	static const uint32 getResTag() { return MKTAG('H', 'S', 'I', 'n'); }
 

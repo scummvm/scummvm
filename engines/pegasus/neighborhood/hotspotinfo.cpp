@@ -27,11 +27,11 @@
 #include "common/stream.h"
 #include "common/textconsole.h"
 
-#include "pegasus/neighborhood/hotspot.h"
+#include "pegasus/neighborhood/hotspotinfo.h"
 
 namespace Pegasus {
 
-void HotspotTable::loadFromStream(Common::SeekableReadStream *stream) {
+void HotspotInfoTable::loadFromStream(Common::SeekableReadStream *stream) {
 	uint32 count = stream->readUint32BE();
 	_entries.resize(count);
 
@@ -50,11 +50,11 @@ void HotspotTable::loadFromStream(Common::SeekableReadStream *stream) {
 	}
 }
 
-void HotspotTable::clear() {
+void HotspotInfoTable::clear() {
 	_entries.clear();
 }
 
-HotspotTable::Entry HotspotTable::findEntry(tHotSpotID hotspot) {
+HotspotInfoTable::Entry HotspotInfoTable::findEntry(tHotSpotID hotspot) {
 	for (uint32 i = 0; i < _entries.size(); i++)
 		if (_entries[i].hotspot == hotspot)
 			return _entries[i];

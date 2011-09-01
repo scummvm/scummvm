@@ -24,7 +24,7 @@ MODULE_OBJS = \
 	neighborhood/door.o \
 	neighborhood/exit.o \
 	neighborhood/extra.o \
-	neighborhood/hotspot.o \
+	neighborhood/hotspotinfo.o \
 	neighborhood/neighborhood.o \
 	neighborhood/spot.o \
 	neighborhood/turn.o \

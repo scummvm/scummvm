@@ -31,7 +31,7 @@
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
 #include "pegasus/neighborhood/extra.h"
-#include "pegasus/neighborhood/hotspot.h"
+#include "pegasus/neighborhood/hotspotinfo.h"
 #include "pegasus/neighborhood/spot.h"
 #include "pegasus/neighborhood/turn.h"
 #include "pegasus/neighborhood/view.h"
@@ -41,25 +41,58 @@ namespace Pegasus {
 
 class PegasusEngine;
 
+// Pegasus Prime neighborhood id's
+const tNeighborhoodID kCaldoriaID = 0;
+const tNeighborhoodID kFullTSAID = 1;
+const tNeighborhoodID kFinalTSAID = 2;
+const tNeighborhoodID kTinyTSAID = 3;
+const tNeighborhoodID kPrehistoricID = 4;
+const tNeighborhoodID kMarsID = 5;
+const tNeighborhoodID kWSCID = 6;
+const tNeighborhoodID kNoradAlphaID = 7;
+const tNeighborhoodID kNoradDeltaID = 8;
+//	The sub chase is not really a neighborhood, but we define a constant that is used
+//	to allow an easy transition out of Norad Alpha.
+const tNeighborhoodID kNoradSubChaseID = 1000;
+
 class Neighborhood {
 public:
-	Neighborhood(PegasusEngine *vm, const Common::String &resName);
+	Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();
 
 	virtual void init();
+	void start();
 
-private:
+	void arriveAt(tRoomID room, tDirectionConstant direction);
+
+	virtual void getExitEntry(const tRoomID room, const tDirectionConstant direction, ExitTable::Entry &entry);
+	virtual TimeValue getViewTime(const tRoomID room, const tDirectionConstant direction);
+	virtual void getDoorEntry(const tRoomID room, const tDirectionConstant direction, DoorTable::Entry &doorEntry);
+	virtual tDirectionConstant getTurnEntry(const tRoomID room, const tDirectionConstant direction, const tTurnDirection turn);
+	virtual void findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry);
+	virtual void getZoomEntry(const tHotSpotID id, ZoomTable::Entry &zoomEntry);
+	virtual void getHotspotEntry(const tHotSpotID id, HotspotInfoTable::Entry &hotspotEntry);
+	virtual void getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry);
+
+	tCanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
+	tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
+	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
+
+protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
+	tNeighborhoodID _neighborhoodID;
 
 	DoorTable _doorTable;
 	ExitTable _exitTable;
 	ExtraTable _extraTable;
-	HotspotTable _hotspotTable;
+	HotspotInfoTable _hotspotInfoTable;
 	SpotTable _spotTable;
 	TurnTable _turnTable;
 	ViewTable _viewTable;
 	ZoomTable _zoomTable;
+
+	tAlternateID _currentAlternate;
 };
 
 } // End of namespace Pegasus
