@@ -396,6 +396,19 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
+class KmScene2206 : public Klayman {
+public:
+	KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	~KmScene2206();
+protected:
+	int16 _yDelta;
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void spriteUpdate482450();
+	void sub482490();
+	void sub482530();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_KLAYMAN_H */

@@ -3658,4 +3658,147 @@ void KmScene2205::sub423980() {
 	setCallback1(AnimationCallback(&Klayman::sub41FB30));
 }
 
+KmScene2206::KmScene2206(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	// TODO Sound1ChList_addSoundResource(0x80101800, 0xD3B02847);
+}
+
+KmScene2206::~KmScene2206() {
+	// TODO Sound1ChList_sub_407AF0(0x80101800);
+}
+
+void KmScene2206::xUpdate() {
+	setGlobalVar(0x18288913, _frameIndex);
+}
+	
+uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4803:
+		setCallback2(AnimationCallback(&KmScene2206::sub482490));
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_x4 = param.asInteger();
+			setCallback2(AnimationCallback(&KmScene2206::sub482530));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FC40));
+		}
+		break;
+	case 0x4812:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		}else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481F:
+		if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub420870));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4208B0));
+		} else if (param.asInteger() == 3) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else if (param.asInteger() == 4) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x482E:	 
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub421030));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420FE0));
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4210C0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub421070));
+		}
+		break;
+	case 0x4837:
+		// TODO sub41CE70();
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+void KmScene2206::spriteUpdate482450() {
+	_yDelta++;
+	_y += _yDelta;
+	if (_y > 600) {
+		sendMessage(0x1019, 0, this);
+	}
+}
+
+void KmScene2206::sub482490() {
+	if (!sub41CF10(AnimationCallback(&KmScene2206::sub482490))) {
+		_status2 = 1;
+		_parentScene->sendMessage(0x4803, 0, this);
+		_flagE5 = false;
+		_yDelta = 0;
+		setFileHash(0x5420E254, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetMessageHandler(&Klayman::handleMessage41D360);
+		SetSpriteCallback(&KmScene2206::spriteUpdate482450);
+		// TODO Sound1ChList_playLooping(0xD3B02847);
+	}
+}
+
+void KmScene2206::sub482530() {
+	int16 frameIndex = getGlobalVar(0x18288913) + 1;
+	if (frameIndex < 0 || frameIndex > 13)
+		frameIndex = 0;
+	_status2 = 0;
+	_flagE1 = true;
+	_flagE5 = true;
+	setFileHash(0x1A249001, frameIndex, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EB70);
+	SetSpriteCallback(&Klayman::spriteUpdate41F300);
+	SetAnimationCallback3(&Klayman::sub41FA40);
+	setCallback1(AnimationCallback(&Klayman::sub41FB30));
+}
+
+
 } // End of namespace Neverhood

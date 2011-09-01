@@ -221,11 +221,15 @@ void Module2200::createScene2204(int which) {
 void Module2200::createScene2205(int which) {
 	_vm->gameState().sceneNum = 4;
 	// TODO Music18hList_stop(0x601C908C, 0, 2);
-	_childObject = new Scene2205(_vm, this, 3);
+	_childObject = new Scene2205(_vm, this, which);
 	SetUpdateHandler(&Module2200::updateScene2205);
 }
 			
 void Module2200::createScene2206(int which) {
+	_vm->gameState().sceneNum = 5;
+	// TODO Music18hList_stop(0x601C908C, 0, 2);
+	_childObject = new Scene2206(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2206);
 }
 			
 void Module2200::createScene2207(int which) {
@@ -429,6 +433,25 @@ void Module2200::updateScene2205() {
 }
 			
 void Module2200::updateScene2206() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2247(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			createScene2207(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 3) {
+			createScene2209(0);
+			_childObject->handleUpdate();
+		} else {
+			createScene2205(1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 			
 void Module2200::updateScene2207() {
@@ -1565,6 +1588,324 @@ uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+static const int16 kScene2206XPositions[] = {
+	384, 
+	480, 
+	572
+};
+
+static const uint32 kScene2206MessageIds1[] = {
+	0x004B8998,
+	0x004B89B8,
+	0x004B89D8
+};
+
+static const uint32 kScene2206MessageIds2[] = {
+	0x004B89F8,
+	0x004B8A20,
+	0x004B8A48
+};
+
+static const int16 kClass603XDeltas1[] = {
+	-24, -28, -18, 6, 9, -8
+};
+
+static const int16 kClass603XDeltas2[] = {
+	-8, 7, 11, 26, 13, 14
+};
+
+Class603::Class603(NeverhoodEngine *vm, uint32 fileHash)
+	: StaticSprite(vm, fileHash, 200), _soundResource(vm) {
+	
+	if (getGlobalVar(0x18890C91))
+		_x -= 63;
+	SetUpdateHandler(&Class603::update);
+	SetMessageHandler(&Class603::handleMessage);
+	SetSpriteCallback(NULL);
+}
+
+void Class603::update() {
+	handleSpriteUpdate();
+	StaticSprite::update();
+}
+
+uint32 Class603::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x4808:
+		_index = 0;
+		SetMessageHandler(NULL);
+		SetSpriteCallback(&Class603::spriteUpdate481E60);
+		_soundResource.play(0x032746E0);
+		break;
+	case 0x4809:
+		_index = 0;
+		SetMessageHandler(NULL);
+		SetSpriteCallback(&Class603::spriteUpdate481E90);
+		_soundResource.play(0x002642C0);
+		break;
+	}
+	return messageResult;
+}
+
+void Class603::spriteUpdate481E60() {
+	if (_index < 6) {
+		_x += kClass603XDeltas1[_index];
+		_index++;
+	} else {
+		SetMessageHandler(&Class603::handleMessage);
+		SetSpriteCallback(NULL);
+	}
+}
+
+void Class603::spriteUpdate481E90() {
+	if (_index < 6) {
+		_x += kClass603XDeltas2[_index];
+		_index++;
+	} else {
+		SetMessageHandler(&Class603::handleMessage);
+		SetSpriteCallback(NULL);
+	}
+}
+
+Class604::Class604(NeverhoodEngine *vm, uint32 fileHash)
+	: StaticSprite(vm, fileHash, 50) {
+
+	SetUpdateHandler(&Class604::update);
+	SetMessageHandler(&Class604::handleMessage);
+	SetSpriteCallback(NULL);
+}
+
+void Class604::update() {
+	handleSpriteUpdate();
+	StaticSprite::update();
+}
+
+uint32 Class604::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x4803:
+		SetMessageHandler(NULL);
+		SetSpriteCallback(&Class604::spriteUpdate482020);
+		_yDelta = 0;
+		break;
+	}
+	return messageResult;
+}
+
+void Class604::spriteUpdate482020() {
+	_yDelta++;
+	_y += _yDelta;
+}
+
+Class607::Class607(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, uint32 fileHash)
+	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene) {
+
+	if (getGlobalVar(0x45080C38)) {
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+	} else {
+		SetMessageHandler(&Class607::handleMessage);
+	}
+	_deltaRect = _drawRect;
+	processDelta();
+}
+
+uint32 Class607::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x4806:
+		setGlobalVar(0x45080C38, 1);
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+		break;
+	}
+	return messageResult;
+}
+
+Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource(vm) {
+
+	uint32 fileHash;
+	Palette2 *palette2;
+	
+	SetUpdateHandler(&Scene::update);
+	SetMessageHandler(&Scene2206::handleMessage);
+	_surfaceFlag = true;
+	
+	if (getGlobalVar(0x4D080E54)) {
+		fileHash = 0x41983216;
+		_sprite1 = addSprite(new StaticSprite(_vm, 0x2201266A, 100));
+		_sprite2 = addSprite(new StaticSprite(_vm, 0x3406A333, 300));
+		_sprite3 = addSprite(new StaticSprite(_vm, 0x24A223A2, 100));
+		_sprite4 = addSprite(new Class603(_vm, 0x26133023));
+		_sprite4->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
+		_sprite4->getSurface()->getClipRect().y1 = 0;
+		_sprite4->getSurface()->getClipRect().x2 = 640;
+		_sprite4->getSurface()->getClipRect().y2 = 480;
+		setRectList(0x004B8AF8);
+		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x0E038022, 100, 0));
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x83212411, NULL));
+		_class607 = addSprite(new Class607(_vm, this, 1100, /*464, 433, */0x5E00E262));
+		_class604 = addSprite(new Class604(_vm, 0x085E25E0));
+	} else {
+		fileHash = 0xE0102A45;
+		_sprite1 = addSprite(new StaticSprite(_vm, 0x1C1106B8, 100));
+		_sprite2 = addSprite(new StaticSprite(_vm, 0x020462E0, 300));
+		_sprite3 = addSprite(new StaticSprite(_vm, 0x900626A2, 100));
+		_sprite4 = addSprite(new Class603(_vm, 0x544822A8));
+		_sprite4->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
+		_sprite4->getSurface()->getClipRect().y1 = 0;
+		_sprite4->getSurface()->getClipRect().x2 = 640;
+		_sprite4->getSurface()->getClipRect().y2 = 480;
+		setRectList(0x004B8B58);
+		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x16882608, 100, 0));
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x02A41E09, NULL));
+		_class607 = addSprite(new Class607(_vm, this, 1100, /*464, 433, */0x52032563));
+		_class604 = addSprite(new Class604(_vm, 0x317831A0));
+	}
+
+	_class604->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
+	_class604->getSurface()->getClipRect().y1 = 0;
+	_class604->getSurface()->getClipRect().x2 = _sprite3->getSurface()->getDrawRect().x + _sprite3->getSurface()->getDrawRect().width;
+	_class604->getSurface()->getClipRect().y2 = _sprite1->getSurface()->getDrawRect().y + _sprite1->getSurface()->getDrawRect().height;
+
+	_background = addBackground(new DirtyBackground(_vm, fileHash, 0, 0));
+
+	palette2 = new Palette2(_vm, fileHash);
+	_palette = palette2;
+	_palette->usePalette();
+	addEntity(palette2);
+
+	palette2->addPalette(fileHash, 0, 256, 0);
+
+	if (!getGlobalVar(0x4D080E54)) {
+		_palette->addPalette(0x0263D144, 0, 65, 0);
+	}
+	
+	_vm->_collisionMan->addSprite(_class607);
+	
+	if (which < 0) {
+		_klayman = new KmScene2206(_vm, this, 200, 430);
+		setMessageList(0x004B88A8);
+	} else if (which == 1) {
+		_klayman = new KmScene2206(_vm, this, 640, 430);
+		setMessageList(0x004B88B8);
+	} else if (which == 2) {
+		_klayman = new KmScene2206(_vm, this, 205, 396);
+		setMessageList(0x004B88C8);
+		_palette->addPalette(getGlobalVar(0x4D080E54) ? 0xB103B604 : 0x0263D144, 0, 65, 0);
+		sub4819D0();
+		_soundResource.play(0x53B8284A);
+	} else if (which == 3) {
+		_klayman = new KmScene2206(_vm, this, kScene2206XPositions[getGlobalVar(0x48A68852)], 430);
+		if (getGlobalVar(0xC0418A02))
+			_klayman->setDoDeltaX(1);
+		setMessageList(0x004B8A70);
+	} else {
+		_klayman = new KmScene2206(_vm, this, 0, 430);
+		setMessageList(0x004B88B0);
+	}
+	addSprite(_klayman);
+
+	_klayman->setSoundFlag(true);
+	_klayman->setKlaymanTable2();
+
+}
+
+Scene2206::~Scene2206() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x800C6694) {
+			sub481B00();
+		} else if (param.asInteger() == 0x402064D8) {
+			_klayman->sendEntityMessage(0x1014, _sprite5, this);
+		} else if (param.asInteger() == 0x11C40840) {
+			if (getGlobalVar(0x18890C91))
+				setMessageList(0x004B8948);
+			else
+				setMessageList(0x004B8970);
+		}
+		break;
+	case 0x4803:
+		_class604->sendMessage(0x4803, 0, this);
+		break;
+	case 0x480B:
+		if (sender == _sprite5) {
+			setGlobalVar(0x18890C91, getGlobalVar(0x18890C91) ? 0 : 1);
+			if (getGlobalVar(0x18890C91))
+				_sprite4->sendMessage(0x4808, 0, this);
+			else
+				_sprite4->sendMessage(0x4809, 0, this);
+		}
+		break;
+	case 0x4826:
+		_klayman->sendEntityMessage(0x1014, _class607, this);
+		setMessageList(0x004B8988);
+		break;
+	case 0x482A:
+		sub4819D0();
+		break;
+	case 0x482B:
+		sub481950();
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2206::sub481950() {
+	if (getGlobalVar(0x4D080E54)) {
+		((Palette2*)_palette)->addPalette(0x41983216, 0, 65, 0);
+		((Palette2*)_palette)->startFadeToPalette(12);
+	}
+	setSurfacePriority(_sprite1->getSurface(), 100);
+	setSurfacePriority(_sprite2->getSurface(), 300);
+	setSurfacePriority(_sprite3->getSurface(), 100);
+	setSurfacePriority(_sprite4->getSurface(), 200);
+	_klayman->getSurface()->getClipRect().x1 = 0;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+}
+
+void Scene2206::sub4819D0() {
+	if (!getGlobalVar(0x4D080E54)) {
+		((Palette2*)_palette)->addPalette(0xB103B604, 0, 65, 0);
+		((Palette2*)_palette)->startFadeToPalette(12);
+	}
+	setSurfacePriority(_sprite1->getSurface(), 1100);
+	setSurfacePriority(_sprite2->getSurface(), 1300);
+	setSurfacePriority(_sprite3->getSurface(), 1100);
+	setSurfacePriority(_sprite4->getSurface(), 1200);
+	_klayman->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = _sprite3->getSurface()->getDrawRect().x + _sprite3->getSurface()->getDrawRect().width;
+	_klayman->getSurface()->getClipRect().y2 = _sprite1->getSurface()->getDrawRect().y + _sprite1->getSurface()->getDrawRect().height;
+}
+
+void Scene2206::sub481B00() {
+	setGlobalVar(0x48A68852, (_mouseClickPos.x - 354) / 96);
+	if (getGlobalVar(0x48A68852) > 2)
+		setGlobalVar(0x48A68852, 2);
+	setGlobalVar(0x49C40058, (_mouseClickPos.y - 183) / 7);
+	setGlobalVar(0xC8C28808, calcHash("stLineagex"));
+	setGlobalVar(0x4CE79018, 0);
+	if (ABS(kScene2206XPositions[getGlobalVar(0x48A68852)] - _klayman->getX()) >= 144) {
+		setMessageList2(kScene2206MessageIds1[getGlobalVar(0x48A68852)]);
+	} else {
+		setMessageList2(kScene2206MessageIds2[getGlobalVar(0x48A68852)]);
+	}
 }
 
 } // End of namespace Neverhood
