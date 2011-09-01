@@ -85,7 +85,7 @@ struct SetObject {
 	uint8 b11;
 	uint8 name[4];
 	uint8 b16;
-	uint8 b17;
+	uint8 index;
 	uint8 b18[13]; // NB: Don't know the size yet
 	uint8 b31;
 	uint8 b32;

@@ -455,5 +455,21 @@ void DreamGenContext::transferinv() {
 	data.word(kExframepos) += byteCount;
 }
 
+void DreamGenContext::pixelcheckset() {
+	uint8 x = al;
+	uint8 y = ah;
+	ObjPos *pos = (ObjPos *)es.ptr(bx, sizeof(ObjPos));
+	flags._z = !pixelcheckset(pos, x, y);
+}
+
+bool DreamGenContext::pixelcheckset(ObjPos *pos, uint8 x, uint8 y) {
+	x -= pos->xMin;
+	y -= pos->yMin;
+	SetObject *setObject = getsetad(pos->index);
+	Frame *frame = (Frame *)segRef(data.word(kSetframes)).ptr(kFramedata, 0) + setObject->index;
+	const uint8 *ptr = segRef(data.word(kSetframes)).ptr(kFrames, 0) + frame->ptr() + y * frame->width + x;
+	return *ptr != 0;
+}
+
 } /*namespace dreamgen */
 

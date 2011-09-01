@@ -559,7 +559,6 @@ public:
 	static const uint16 addr_vsync = 0xc208;
 	static const uint16 addr_createpanel2 = 0xc200;
 	static const uint16 addr_createpanel = 0xc1fc;
-	static const uint16 addr_pixelcheckset = 0xc1f8;
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_loadpalfromiff = 0xc1d8;
 	static const uint16 addr_showpcx = 0xc1cc;
@@ -1618,7 +1617,7 @@ public:
 	void playchannel0();
 	void usemon();
 	void steady();
-	void pixelcheckset();
+	//void pixelcheckset();
 	void reexfrominv();
 	void examinventory();
 	void talk();

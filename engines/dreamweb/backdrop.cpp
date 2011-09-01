@@ -162,7 +162,7 @@ void DreamGenContext::showallobs() {
 		calcfrframe();
 		uint16 x, y;
 		finalframe(&x, &y);
-		setEntry->b17 = setEntry->b18[0];
+		setEntry->index = setEntry->b18[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);

@@ -2657,46 +2657,6 @@ nought:
 		goto palloop;
 }
 
-void DreamGenContext::pixelcheckset() {
-	STACK_CHECK;
-	push(ax);
-	_sub(al, es.byte(bx));
-	_sub(ah, es.byte(bx+1));
-	push(es);
-	push(bx);
-	push(cx);
-	push(ax);
-	al = es.byte(bx+4);
-	getsetad();
-	al = es.byte(bx+17);
-	es = data.word(kSetframes);
-	bx = (0);
-	ah = 0;
-	cx = 6;
-	_mul(cx);
-	_add(bx, ax);
-	ax = pop();
-	push(ax);
-	al = ah;
-	ah = 0;
-	cl = es.byte(bx);
-	ch = 0;
-	_mul(cx);
-	cx = pop();
-	ch = 0;
-	_add(ax, cx);
-	_add(ax, es.word(bx+2));
-	bx = ax;
-	_add(bx, (0+2080));
-	al = es.byte(bx);
-	dl = al;
-	cx = pop();
-	bx = pop();
-	es = pop();
-	ax = pop();
-	_cmp(dl, 0);
-}
-
 void DreamGenContext::createpanel() {
 	STACK_CHECK;
 	di = 0;
@@ -17613,7 +17573,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showpcx: showpcx(); break;
 		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;
-		case addr_pixelcheckset: pixelcheckset(); break;
 		case addr_createpanel: createpanel(); break;
 		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
