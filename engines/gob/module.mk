@@ -1,6 +1,7 @@
 MODULE := engines/gob
 
 MODULE_OBJS := \
+	anifile.o \
 	console.o \
 	dataio.o \
 	databases.o \
