@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	mult_v2.o \
 	palanim.o \
 	resources.o \
+	rxyfile.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
