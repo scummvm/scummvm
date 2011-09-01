@@ -972,6 +972,32 @@ Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, ui
 
 }
 
+void Class426::setFileHashes(uint32 fileHash1, uint32 fileHash2) {
+	_fileHashes[0] = fileHash1;
+	_fileHashes[1] = fileHash2;
+	if (_status == 2) {
+		_spriteResource.load2(fileHash2);
+		_surface->getDrawRect().x = 0;
+		_surface->getDrawRect().y = 0;
+		_surface->getDrawRect().width = _spriteResource.getDimensions().width;
+		_surface->getDrawRect().height = _spriteResource.getDimensions().height;
+		_x = _spriteResource.getPosition().x;
+		_y = _spriteResource.getPosition().y;
+		_needRefresh = true;
+		StaticSprite::update();
+	} else {
+		_spriteResource.load2(fileHash1);
+		_surface->getDrawRect().x = 0;
+		_surface->getDrawRect().y = 0;
+		_surface->getDrawRect().width = _spriteResource.getDimensions().width;
+		_surface->getDrawRect().height = _spriteResource.getDimensions().height;
+		_x = _spriteResource.getPosition().x;
+		_y = _spriteResource.getPosition().y;
+		_needRefresh = true;
+		StaticSprite::update();
+	}
+}
+
 void Class426::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
 		if (_status == 1) {

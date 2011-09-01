@@ -219,6 +219,10 @@ void Module2200::createScene2204(int which) {
 }
 			
 void Module2200::createScene2205(int which) {
+	_vm->gameState().sceneNum = 4;
+	// TODO Music18hList_stop(0x601C908C, 0, 2);
+	_childObject = new Scene2205(_vm, this, 3);
+	SetUpdateHandler(&Module2200::updateScene2205);
 }
 			
 void Module2200::createScene2206(int which) {
@@ -406,6 +410,22 @@ void Module2200::updateScene2204() {
 }
 			
 void Module2200::updateScene2205() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2206(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			createScene2205(2);
+			_childObject->handleUpdate();
+		} else {
+			createScene2203(1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 			
 void Module2200::updateScene2206() {
@@ -1385,6 +1405,166 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+SsScene2205DoorFrame::SsScene2205DoorFrame(NeverhoodEngine *vm)
+	: StaticSprite(vm, 900) {
+
+	SetMessageHandler(&SsScene2205DoorFrame::handleMessage);
+	_spriteResource.load2(getGlobalVar(0x4D080E54) ? 0x24306227 : 0xD90032A0);
+	createSurface(1100, 45, 206);
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = _spriteResource.getDimensions().width;
+	_drawRect.height = _spriteResource.getDimensions().height;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_needRefresh = true;
+	StaticSprite::update();
+}
+
+uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		_spriteResource.load2(getGlobalVar(0x4D080E54) ? 0x24306227 : 0xD90032A0);
+		_drawRect.x = 0;
+		_drawRect.y = 0;
+		_drawRect.width = _spriteResource.getDimensions().width;
+		_drawRect.height = _spriteResource.getDimensions().height;
+		_x = _spriteResource.getPosition().x;
+		_y = _spriteResource.getPosition().y;
+		_needRefresh = true;
+		StaticSprite::update();
+	}
+	return messageResult;
+}
+
+Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	Palette2 *palette2;
+	
+	SetMessageHandler(&Scene2205::handleMessage);
+	SetUpdateHandler(&Scene2205::update);
+	
+	_vm->_collisionMan->setHitRects(0x004B0620);
+	_surfaceFlag = true;
+
+	if (getGlobalVar(0x4D080E54)) {
+		_isLightOn = true;
+		_background = addBackground(new DirtyBackground(_vm, 0x0008028D, 0, 0));
+		palette2 = new Palette2(_vm, 0x0008028D);
+		_palette = palette2;
+		_palette->usePalette();
+		addEntity(palette2);
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x80289008, NULL));
+		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0x2D309030, 100, 0);
+		addSprite(_ssLightSwitch);
+	} else {
+		_isLightOn = false;
+		_background = addBackground(new DirtyBackground(_vm, 0xD00A028D, 0, 0));
+		palette2 = new Palette2(_vm, 0xD00A028D);
+		_palette = palette2;
+		_palette->usePalette();
+		addEntity(palette2);
+		_mouseCursor = addSprite(new Mouse433(_vm, 0xA0289D08, NULL));
+		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0xDAC86E84, 100, 0);
+		addSprite(_ssLightSwitch);
+	}
+
+	palette2->addPalette(0xD00A028D, 0, 256, 0);
+	
+	_ssDoorFrame = addSprite(new SsScene2205DoorFrame(_vm));
+
+	if (which < 0) {
+		_klayman = new KmScene2205(_vm, this, 320, 417);
+		setMessageList(0x004B0658);
+		if (!getGlobalVar(0x4D080E54)) {
+			_palette->addPalette(0x68033B1C, 0, 65, 0);
+		}
+		_isKlaymanInLight = false;
+	} else if (which == 1) {
+		_klayman = new KmScene2205(_vm, this, 640, 417);
+		setMessageList(0x004B0648);
+		if (!getGlobalVar(0x4D080E54)) {
+			_palette->addPalette(0x68033B1C, 0, 65, 0);
+		}
+		_isKlaymanInLight = false;
+	} else {
+		_klayman = new KmScene2205(_vm, this, 0, 417);
+		setMessageList(0x004B0640);
+		_isKlaymanInLight = true;
+	}
+	addSprite(_klayman);
+
+	_klayman->getSurface()->getClipRect().x1 = _ssDoorFrame->getSurface()->getDrawRect().x;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+
+	loadDataResource(0x00144822);
+	_klayman->setSoundFlag(true);
+
+}
+	
+void Scene2205::update() {
+	Scene::update();
+
+	if (!_isLightOn && getGlobalVar(0x4D080E54)) {
+		_palette->addPalette(0x0008028D, 0, 256, 0);
+		_background->load(0x0008028D);
+		_ssLightSwitch->setFileHashes(0x2D339030, 0x2D309030);
+		_ssDoorFrame->sendMessage(0x2000, 0, this);
+		((Mouse433*)_mouseCursor)->load(0x80289008);
+		((Mouse433*)_mouseCursor)->updateCursor();
+		_isLightOn = true;
+	} else if (_isLightOn && !getGlobalVar(0x4D080E54)) {
+		_palette->addPalette(0xD00A028D, 0, 256, 0);
+		_background->load(0xD00A028D);
+		_ssLightSwitch->setFileHashes(0x2D339030, 0xDAC86E84);
+		_ssDoorFrame->sendMessage(0x2000, 0, this);
+		((Mouse433*)_mouseCursor)->load(0xA0289D08);
+		((Mouse433*)_mouseCursor)->updateCursor();
+		_isKlaymanInLight = true;
+		if (_klayman->getX() > 85) {
+			_palette->addPalette(0x68033B1C, 0, 65, 0);
+			_isKlaymanInLight = false;
+		}
+		_isLightOn = false;
+	}
+
+	if (!getGlobalVar(0x4D080E54)) {
+		if (_isKlaymanInLight && _klayman->getX() > 85) {
+			((Palette2*)_palette)->addPalette(0x68033B1C, 0, 65, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+			_isKlaymanInLight = false;
+		} else if (!_isKlaymanInLight && _klayman->getX() <= 85) {
+			((Palette2*)_palette)->addPalette(0xD00A028D, 0, 65, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+			_isKlaymanInLight = true;
+		}
+	}
+	
+}
+
+uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x6449569A) {
+			setMessageList(0x004B0690);
+		} else if (param.asInteger() == 0x2841369C) {
+			setMessageList(0x004B0630);
+		} else if (param.asInteger() == 0x402064D8) {
+			_klayman->sendEntityMessage(0x1014, _ssLightSwitch, this);
+		}
+		break;
+	case 0x480B:
+		setGlobalVar(0x4D080E54, getGlobalVar(0x4D080E54) ? 0 : 1);
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

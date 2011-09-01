@@ -111,20 +111,27 @@ public:
 	void sub420EB0();
 	void sub420680();
 	void sub41F9E0();
+	void sub41FA40();
+	void sub41FB30();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
 	void spriteUpdate41F780();
 	void spriteUpdate41F230();
 	void spriteUpdate41F5A0();
+	void spriteUpdate41F300();
+	void spriteUpdate41F320();
 
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender);
 
 	void setKlaymanTable(const KlaymanTableItem *table, int tableCount);
 	void setKlaymanTable1();
 	void setKlaymanTable2();
 	void setKlaymanTable3();
+	
+	void setSoundFlag(bool value) { _soundFlag = value; }
 
 protected:
 	Entity *_parentScene;
@@ -204,14 +211,8 @@ protected:
 	uint32 handleMessage41DD80(int messageNum, const MessageParam &param, Entity *sender);
 	void sub41CD70(int16 x);
 	void sub41F950();
-	void sub41FB30();
 	uint32 handleMessage41EC70(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate41F300();
-	uint32 handleMessage41EB70(int messageNum, const MessageParam &param, Entity *sender);
-	void sub41FA40();
 
-	void spriteUpdate41F320();
-	
 	uint32 handleMessage41E210(int messageNum, const MessageParam &param, Entity *sender);
 
 	uint32 handleMessage41D4C0(int messageNum, const MessageParam &param, Entity *sender);
@@ -383,6 +384,15 @@ class KmScene2203 : public Klayman {
 public:
 	KmScene2203(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
+class KmScene2205 : public Klayman {
+public:
+	KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	void sub423980();
+protected:
+	void xUpdate();
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 

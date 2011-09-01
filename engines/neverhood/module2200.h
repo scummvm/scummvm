@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/module1000.h"
 
 namespace Neverhood {
 
@@ -281,6 +282,25 @@ protected:
 	Sprite *_class545;
 	NRect _leftDoorClipRect;
 	NRect _rightDoorClipRect;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class SsScene2205DoorFrame : public StaticSprite {
+public:
+	SsScene2205DoorFrame(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2205 : public Scene {
+public:
+	Scene2205(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Class426 *_ssLightSwitch;
+	Sprite *_ssDoorFrame;
+	bool _isKlaymanInLight;
+	bool _isLightOn;
+	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

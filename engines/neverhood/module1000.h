@@ -202,7 +202,7 @@ protected:
 class Class426 : public StaticSprite {
 public:
 	Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
-	// TODO Class426_sub433660 (not used yet)
+	void setFileHashes(uint32 fileHash1, uint32 fileHash2);
 protected:
 	Scene *_parentScene;
 	int _countdown;

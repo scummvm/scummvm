@@ -34,19 +34,20 @@ class Mouse433 : public StaticSprite {
 public:
 	Mouse433(NeverhoodEngine *vm, uint32 fileHash, NRect *mouseRect);
 	void load(uint32 fileHash);
+	void updateCursor();
 protected:
 	MouseCursorResource _mouseCursorResource;
 	int _frameNum;
 	NRect _mouseRect;	
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void updateCursor();
 };
 
 class Mouse435 : public StaticSprite {
 public:
 	Mouse435(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2);
 	void load(uint32 fileHash);
+	void updateCursor();
 protected:
 	MouseCursorResource _mouseCursorResource;
 	int _frameNum;
@@ -54,20 +55,19 @@ protected:
 	int16 _x2;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void updateCursor();
 };
 
 class NavigationMouse : public StaticSprite {
 public:
 	NavigationMouse(NeverhoodEngine *vm, uint32 fileHash, int type);
 	void load(uint32 fileHash);
+	void updateCursor();
 protected:
 	MouseCursorResource _mouseCursorResource;
 	int _frameNum;
 	int _type;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void updateCursor();
 };
 
 } // End of namespace Neverhood

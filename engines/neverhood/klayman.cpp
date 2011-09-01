@@ -3595,4 +3595,67 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	return 0;
 }
 
+KmScene2205::KmScene2205(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+void KmScene2205::xUpdate() {
+	setGlobalVar(0x18288913, _frameIndex);
+}
+	
+uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_x4 = param.asInteger();
+			setCallback2(AnimationCallback(&KmScene2205::sub423980));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FC40));
+		}
+		break;
+	case 0x4816:
+		if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x4818:
+		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+void KmScene2205::sub423980() {
+	int16 frameIndex = getGlobalVar(0x18288913);
+	if (frameIndex < 0 || frameIndex > 13)
+		frameIndex = 0;
+	_status2 = 0;
+	_flagE1 = true;
+	_flagE5 = true;
+	setFileHash(0x1A249001, frameIndex, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetMessageHandler(&Klayman::handleMessage41EB70);
+	SetSpriteCallback(&Klayman::spriteUpdate41F300);
+	SetAnimationCallback3(&Klayman::sub41FA40);
+	setCallback1(AnimationCallback(&Klayman::sub41FB30));
+}
+
 } // End of namespace Neverhood
