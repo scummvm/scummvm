@@ -1255,10 +1255,12 @@ void DreamGenContext::getexpos() {
 	const DynObject *objects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff) {
+			data.byte(kExpos) = i;
 			di = kExdata + i * sizeof(DynObject);
 			return;
 		}
 	}
+	data.byte(kExpos) = kNumexobjects;
 	di = kExdata + kNumexobjects * sizeof(DynObject);
 }
 
