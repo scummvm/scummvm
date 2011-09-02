@@ -14795,47 +14795,6 @@ nothingund:
 	blank();
 }
 
-void DreamGenContext::checkifset() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
-	cx = 127;
-identifyset:
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notasetid;
-	_cmp(al, es.byte(bx));
-	if (flags.c())
-		goto notasetid;
-	_cmp(al, es.byte(bx+2));
-	if (!flags.c())
-		goto notasetid;
-	_cmp(ah, es.byte(bx+1));
-	if (flags.c())
-		goto notasetid;
-	_cmp(ah, es.byte(bx+3));
-	if (!flags.c())
-		goto notasetid;
-	pixelcheckset();
-	if (flags.z())
-		goto notasetid;
-	isitdescribed();
-	if (flags.z())
-		goto notasetid;
-	al = es.byte(bx+4);
-	ah = 1;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notasetid:
-	_sub(bx, 5);
-	_dec(cx);
-	_cmp(cx, -1);
-	if (!flags.z())
-		goto identifyset;
-}
-
 void DreamGenContext::findpathofpoint() {
 	STACK_CHECK;
 	push(ax);
@@ -17891,7 +17850,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mainscreen: mainscreen(); break;
 		case addr_madmanrun: madmanrun(); break;
 		case addr_identifyob: identifyob(); break;
-		case addr_checkifset: checkifset(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
 		case addr_checkifpathison: checkifpathison(); break;

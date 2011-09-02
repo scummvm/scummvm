@@ -113,7 +113,6 @@ public:
 	static const uint16 addr_checkifpathison = 0xca04;
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
-	static const uint16 addr_checkifset = 0xc9dc;
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_madmanrun = 0xc9cc;
 	static const uint16 addr_mainscreen = 0xc9c8;
@@ -1440,7 +1439,6 @@ public:
 	void selectslot2();
 	void runtap();
 	//void domix();
-	void priesttext();
 	//void paneltomap();
 	//void obname();
 	void getridoftemp3();
@@ -1449,7 +1447,7 @@ public:
 	void runendseq();
 	void dumpdiarykeys();
 	void disablesoundint();
-	void checkifset();
+	void priesttext();
 	//void showallex();
 	void openpoolboss();
 	void buttontwo();
@@ -1651,6 +1649,7 @@ public:
 	void bossman();
 	void getridofpit();
 	void convnum();
+	//void checkifset();
 	void nothelderror();
 	//void readheader();
 	void getsetad();

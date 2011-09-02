@@ -1738,11 +1738,11 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 }
 
 void DreamGenContext::isitdescribed() {
-	ObjPos *pos = (ObjPos *)es.ptr(bx, sizeof(ObjPos));
+	const ObjPos *pos = (const ObjPos *)es.ptr(bx, sizeof(ObjPos));
 	flags._z = !isitdescribed(pos);
 }
 
-bool DreamGenContext::isitdescribed(ObjPos *pos) {
+bool DreamGenContext::isitdescribed(const ObjPos *pos) {
 	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
 	return result != 0;
@@ -1755,5 +1755,34 @@ bool DreamGenContext::isCD() {
 	// Maybe detect the version during game id?
 	return (data.byte(kSpeechloaded) == 1);
 }
+
+void DreamGenContext::checkifset() {
+	flags._z = !checkifset(al, ah);
+}
+
+bool DreamGenContext::checkifset(uint8 x, uint8 y) {
+	const ObjPos *setList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
+	for (size_t i = 0; i < 128; ++i) {
+		const ObjPos *pos = setList + 127 - i;
+		if (pos->index == 0xff)
+			continue;
+		if (x < pos->xMin)
+			continue;
+		if (x >= pos->xMax)
+			continue;
+		if (y < pos->yMin)
+			continue;
+		if (y >= pos->yMax)
+			continue;
+		if (! pixelcheckset(pos, x, y))
+			continue;
+		if (! isitdescribed(pos))
+			continue;
+		obname(pos->index, 1);
+		return true;
+	}
+	return false;
+}
+
 } /*namespace dreamgen */
 
