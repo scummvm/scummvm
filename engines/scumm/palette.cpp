@@ -913,7 +913,7 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 		const byte *palptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
 
 		for (int i = startColor; i <= endColor; ++i) {
-			if (i >= 16 && i < 48) {
+			if (i > 16 && i < 48) {
 				if (cycleFlag)
 					_colorUsedByCycle[i - 16] &= ~2;
 				else
