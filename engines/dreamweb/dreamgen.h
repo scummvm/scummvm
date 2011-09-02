@@ -494,8 +494,6 @@ public:
 	static const uint16 addr_getbackfromob = 0xc344;
 	static const uint16 addr_makemainscreen = 0xc340;
 	static const uint16 addr_examineob = 0xc33c;
-	static const uint16 addr_makeworn = 0xc338;
-	static const uint16 addr_isitworn = 0xc334;
 	static const uint16 addr_obtoinv = 0xc330;
 	static const uint16 addr_findallopen = 0xc32c;
 	static const uint16 addr_findallryan = 0xc328;
@@ -1273,7 +1271,7 @@ public:
 	void neterror();
 	void storeit();
 	//void lockeddoorway();
-	void isitworn();
+	//void isitworn();
 	//void putundertimed();
 	//void dumpmap();
 	//void multidump();
@@ -1667,7 +1665,7 @@ public:
 	//void showallfree();
 	void loadnews();
 	void rollem();
-	void makeworn();
+	//void makeworn();
 	void examineobtext();
 	void startup();
 	void savegame();

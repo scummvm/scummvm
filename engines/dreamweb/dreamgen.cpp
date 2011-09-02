@@ -4015,22 +4015,6 @@ finishfill:
 	bx = pop();
 }
 
-void DreamGenContext::isitworn() {
-	STACK_CHECK;
-	al = es.byte(bx+12);
-	_cmp(al, 'W'-'A');
-	if (!flags.z())
-		return /* (notworn) */;
-	al = es.byte(bx+13);
-	_cmp(al, 'E'-'A');
-}
-
-void DreamGenContext::makeworn() {
-	STACK_CHECK;
-	es.byte(bx+12) = 'W'-'A';
-	es.byte(bx+13) = 'E'-'A';
-}
-
 void DreamGenContext::examineob() {
 	STACK_CHECK;
 	data.byte(kPointermode) = 0;
@@ -17385,8 +17369,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_findallryan: findallryan(); break;
 		case addr_findallopen: findallopen(); break;
 		case addr_obtoinv: obtoinv(); break;
-		case addr_isitworn: isitworn(); break;
-		case addr_makeworn: makeworn(); break;
 		case addr_examineob: examineob(); break;
 		case addr_makemainscreen: makemainscreen(); break;
 		case addr_getbackfromob: getbackfromob(); break;

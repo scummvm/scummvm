@@ -220,4 +220,8 @@
 	bool checkifset(uint8 x, uint8 y);
 	void checkifpathison();
 	bool checkifpathison(uint8 index);
+	void isitworn();
+	bool isitworn(const DynObject *object);
+	void makeworn();
+	void makeworn(DynObject *object);
 

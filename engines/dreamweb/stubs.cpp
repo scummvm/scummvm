@@ -1779,5 +1779,22 @@ bool DreamGenContext::checkifset(uint8 x, uint8 y) {
 	return false;
 }
 
+void DreamGenContext::isitworn() {
+	flags._z = isitworn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
+}
+
+bool DreamGenContext::isitworn(const DynObject *object) {
+	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
+}
+
+void DreamGenContext::makeworn() {
+	makeworn((DynObject *)es.ptr(bx, sizeof(DynObject)));
+}
+
+void DreamGenContext::makeworn(DynObject *object) {
+	object->id[0] = 'W'-'A';
+	object->id[1] = 'E'-'A';
+}
+
 } /*namespace dreamgen */
 
