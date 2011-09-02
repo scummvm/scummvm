@@ -241,4 +241,6 @@
 	uint8 *getobtextstartCPP();
 	void usetext(const uint8 *string);
 	void usetext();
+	void getblockofpixel();
+	uint8 getblockofpixel(uint8 x, uint8 y);
 

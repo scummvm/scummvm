@@ -876,6 +876,19 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 	*type = tileData[2];
 }
 
+void DreamGenContext::getblockofpixel() {
+	al = getblockofpixel(cl, ch);
+}
+
+uint8 DreamGenContext::getblockofpixel(uint8 x, uint8 y) {
+	uint8 flag, flagEx, type, flagX, flagY;
+	checkone(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
+	if (flag & 1)
+		return 0;
+	else
+		return type;
+}
+
 void DreamGenContext::addtopeoplelist() {
 	addtopeoplelist((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
 }

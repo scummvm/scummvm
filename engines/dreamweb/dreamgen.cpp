@@ -2385,30 +2385,6 @@ foundlineend:
 	goto lookforlinestart;
 }
 
-void DreamGenContext::getblockofpixel() {
-	STACK_CHECK;
-	push(cx);
-	push(es);
-	push(di);
-	ax = data.word(kMapxstart);
-	_add(cl, al);
-	ax = data.word(kMapystart);
-	_add(ch, al);
-	checkone();
-	_and(cl, 1);
-	if (!flags.z())
-		goto failrain;
-	di = pop();
-	es = pop();
-	cx = pop();
-	return;
-failrain:
-	di = pop();
-	es = pop();
-	cx = pop();
-	al = 0;
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -16969,7 +16945,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_reminders: reminders(); break;
 		case addr_initrain: initrain(); break;
 		case addr_splitintolines: splitintolines(); break;
-		case addr_getblockofpixel: getblockofpixel(); break;
 		case addr_backobject: backobject(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;

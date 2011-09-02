@@ -148,6 +148,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'adjustlen',
 	'finishedwalking',
 	'checkone',
+	'getblockofpixel',
 	'getflagunderp',
 	'walkandexamine',
 	'obname',
