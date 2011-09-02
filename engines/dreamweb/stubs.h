@@ -111,8 +111,7 @@
 	void turnanypathoff(uint8 param, uint8 room);
 	void turnanypathon();
 	void turnanypathoff();
-	void getroomspaths();
-	RoomPaths *getroomspathsCPP();
+	RoomPaths *getroomspaths();
 	void makebackob(SetObject *objData);
 	void modifychar();
 	void lockmon();
