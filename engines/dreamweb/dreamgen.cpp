@@ -3921,6 +3921,9 @@ waitexam:
 	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto stopwaiting;
 	_cmp(data.byte(kExamagain), 0);
 	if (flags.z())
 		goto norex;
@@ -3929,6 +3932,7 @@ norex:
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waitexam;
+stopwaiting:
 	data.byte(kPickup) = 0;
 	_cmp(data.word(kWatchingtime), 0);
 	if (!flags.z())
@@ -4301,7 +4305,7 @@ doopeninv:
 	data.byte(kOpenedob) = 255;
 	goto waitexam;
 	return;
-/*continuing to unbounded code: examineagain from examineob:3-66*/
+/*continuing to unbounded code: examineagain from examineob:3-69*/
 examineagain:
 	data.byte(kInmaparea) = 0;
 	data.byte(kExamagain) = 0;
@@ -4344,6 +4348,9 @@ waitexam:
 	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto stopwaiting;
 	_cmp(data.byte(kExamagain), 0);
 	if (flags.z())
 		goto norex;
@@ -4352,6 +4359,7 @@ norex:
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waitexam;
+stopwaiting:
 	data.byte(kPickup) = 0;
 	_cmp(data.word(kWatchingtime), 0);
 	if (!flags.z())
