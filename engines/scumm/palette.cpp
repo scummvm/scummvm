@@ -584,10 +584,12 @@ void ScummEngine::stopCycle(int i) {
 	assertRange(0, i, 16, "stopCycle: cycle");
 	if (i != 0) {
 		_colorCycle[i - 1].delay = 0;
-		cycl = &_colorCycle[i - 1];
-		for (int j = cycl->start; j <= cycl->end && j < 32; ++j) {
-			_shadowPalette[j] = j;
-			_colorUsedByCycle[j] = 0;
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+			cycl = &_colorCycle[i - 1];
+			for (int j = cycl->start; j <= cycl->end && j < 32; ++j) {
+				_shadowPalette[j] = j;
+				_colorUsedByCycle[j] = 0;
+			}
 		}
 		return;
 	}
