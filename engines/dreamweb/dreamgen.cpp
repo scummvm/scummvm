@@ -2552,64 +2552,6 @@ bigroom:
 	_add(data.byte(kMapysize), 8);
 }
 
-void DreamGenContext::dumpeverything() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
-dumpevery1:
-	ax = es.word(bx);
-	cx = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto finishevery1;
-	_cmp(ax, es.word(bx+(40*5)));
-	if (!flags.z())
-		goto notskip1;
-	_cmp(cx, es.word(bx+(40*5)+2));
-	if (flags.z())
-		goto skip1;
-notskip1:
-	push(bx);
-	push(es);
-	push(ds);
-	bl = ah;
-	bh = 0;
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	multidump();
-	ds = pop();
-	es = pop();
-	bx = pop();
-skip1:
-	_add(bx, 5);
-	goto dumpevery1;
-finishevery1:
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
-dumpevery2:
-	ax = es.word(bx);
-	cx = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		return /* (finishevery2) */;
-	push(bx);
-	push(es);
-	push(ds);
-	bl = ah;
-	bh = 0;
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	multidump();
-	ds = pop();
-	es = pop();
-	bx = pop();
-	_add(bx, 5);
-	goto dumpevery2;
-}
-
 void DreamGenContext::loadpalfromiff() {
 	STACK_CHECK;
 	dx = 2481;
@@ -17384,7 +17326,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
 		case addr_deleverything: deleverything(); break;
-		case addr_dumpeverything: dumpeverything(); break;
 		case addr_showpcx: showpcx(); break;
 		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;
