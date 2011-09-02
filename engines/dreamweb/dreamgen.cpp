@@ -8162,91 +8162,6 @@ douse:
 	useroutine();
 }
 
-void DreamGenContext::useroutine() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 50);
-	if (flags.c())
-		goto nodream7;
-	_cmp(data.byte(kPointerpower), 0);
-	if (!flags.z())
-		goto powerok;
-	return;
-powerok:
-	data.byte(kPointerpower) = 0;
-nodream7:
-	getanyad();
-	dx = data;
-	ds = dx;
-	si = offset_uselist;
-checkuselist:
-	push(si);
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+12));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+13));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+14));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+15));
-	if (!flags.z())
-		goto failed;
-	_lodsw();
-	si = pop();
-	__dispatch_call(ax);
-	return;
-failed:
-	si = pop();
-	_add(si, 6);
-	_cmp(ds.byte(si), 140);
-	if (!flags.z())
-		goto checkuselist;
-	delpointer();
-	getobtextstart();
-	findnextcolon();
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	findnextcolon();
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	al = es.byte(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	usetext();
-	cx = 400;
-	hangonp();
-	putbackobstuff();
-	return;
-cantuse2:
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	di = 33;
-	bx = 100;
-	al = 63;
-	dl = 241;
-	printmessage();
-	worktoscreenm();
-	cx = 50;
-	hangonp();
-	putbackobstuff();
-	data.byte(kCommandtype) = 255;
-}
-
 void DreamGenContext::wheelsound() {
 	STACK_CHECK;
 	al = 17;
@@ -17326,7 +17241,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_printcurs: printcurs(); break;
 		case addr_delcurs: delcurs(); break;
 		case addr_useobject: useobject(); break;
-		case addr_useroutine: useroutine(); break;
 		case addr_wheelsound: wheelsound(); break;
 		case addr_runtap: runtap(); break;
 		case addr_playguitar: playguitar(); break;

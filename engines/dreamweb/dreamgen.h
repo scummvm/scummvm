@@ -368,7 +368,6 @@ public:
 	static const uint16 addr_playguitar = 0xc590;
 	static const uint16 addr_runtap = 0xc58c;
 	static const uint16 addr_wheelsound = 0xc588;
-	static const uint16 addr_useroutine = 0xc584;
 	static const uint16 addr_useobject = 0xc580;
 	static const uint16 addr_delcurs = 0xc57c;
 	static const uint16 addr_printcurs = 0xc578;
@@ -642,7 +641,6 @@ public:
 	static const uint16 offset_openchangesize = 0x0a1c;
 	static const uint16 offset_keys = 0x0b14;
 	static const uint16 offset_mainlist2 = 0x1440;
-	static const uint16 offset_uselist = 0x0ba8;
 	static const uint16 offset_gameerror2 = 0x0fb2;
 	static const uint16 offset_loadlist = 0x0ef0;
 	static const uint16 offset_gameerror6 = 0x10be;
@@ -1817,7 +1815,7 @@ public:
 	//void turnanypathon();
 	void restorereels();
 	void setwalk();
-	void useroutine();
+	//void useroutine();
 	void zoomicon();
 	//void findlen();
 	void findpathofpoint();

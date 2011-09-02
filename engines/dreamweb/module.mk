@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	saveload.o \
 	sprite.o \
 	stubs.o \
+	use.o \
 	vgagrafx.o
 
 # This module can be built as a plugin

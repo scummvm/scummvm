@@ -230,4 +230,5 @@
 	void findallryan();
 	void findallryan(uint8 *inv);
 	void fillryan();
+	void useroutine();
 
