@@ -14882,20 +14882,6 @@ gotfirst:
 	al = es.byte(bx+6);
 }
 
-void DreamGenContext::checkifpathison() {
-	STACK_CHECK;
-	push(ax);
-	getroomspaths();
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx+6);
-	_cmp(al, 255);
-}
-
 void DreamGenContext::afternewroom() {
 	STACK_CHECK;
 	_cmp(data.byte(kNowinnewroom), 0);
@@ -17852,7 +17838,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_identifyob: identifyob(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
-		case addr_checkifpathison: checkifpathison(); break;
 		case addr_afternewroom: afternewroom(); break;
 		case addr_atmospheres: atmospheres(); break;
 		case addr_walkintoroom: walkintoroom(); break;

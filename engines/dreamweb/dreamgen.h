@@ -110,7 +110,6 @@ public:
 	static const uint16 addr_walkintoroom = 0xca10;
 	static const uint16 addr_atmospheres = 0xca0c;
 	static const uint16 addr_afternewroom = 0xca08;
-	static const uint16 addr_checkifpathison = 0xca04;
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
 	static const uint16 addr_identifyob = 0xc9d4;
@@ -1576,7 +1575,7 @@ public:
 	void usecooker();
 	void loadmenu();
 	void checkforemm();
-	void checkifpathison();
+	//void checkifpathison();
 	//void finalframe();
 	void receptionist();
 	void selectslot();

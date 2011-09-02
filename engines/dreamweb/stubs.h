@@ -220,4 +220,6 @@
 	bool isitdescribed(const ObjPos *objPos);
 	void checkifset();
 	bool checkifset(uint8 x, uint8 y);
+	void checkifpathison();
+	bool checkifpathison(uint8 index);
 

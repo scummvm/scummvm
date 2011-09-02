@@ -235,7 +235,7 @@ struct PathNode {
 	uint8 b3;
 	uint8 b4;
 	uint8 b5;
-	uint8 b6;
+	uint8 on;
 	uint8 dir;
 };
 
