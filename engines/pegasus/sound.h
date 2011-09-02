@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_MMSHELL_SOUNDS_MMSOUND_H
-#define PEGASUS_MMSHELL_SOUNDS_MMSOUND_H
+#ifndef PEGASUS_SOUND_H
+#define PEGASUS_SOUND_H
 
 #include "audio/mixer.h"
 #include "common/str.h"
@@ -49,26 +49,26 @@ namespace Pegasus {
 //		Pan the sound
 //		Change these settings dynamically over time
 
-class MMSound {
+class Sound {
 public:
-	MMSound();
-	~MMSound();
+	Sound();
+	~Sound();
 
 	// We only have one access point here because we should
 	// only be opening an AIFF file from a file name. We're
 	// not using the resource fork string resources.
-	void InitFromAIFFFile(const Common::String &fileName);
+	void initFromAIFFFile(const Common::String &fileName);
 
-	void DisposeSound();
-	bool SoundLoaded() const;
-	void PlaySound();
-	void LoopSound();
-	void StopSound();
-	void SetVolume(const uint16 volume);
-	bool IsPlaying();
+	void disposeSound();
+	bool isSoundLoaded() const;
+	void playSound();
+	void loopSound();
+	void stopSound();
+	void setVolume(const uint16 volume);
+	bool isPlaying();
 
 	// TODO!
-	//void AttachFader(MMSoundFader*);
+	//void attachFader(SoundFader *fader);
 
 protected:
 	Audio::RewindableAudioStream *_aiffStream;
@@ -76,7 +76,7 @@ protected:
 	byte _volume;
 
 	// TODO!
-	//MMSoundFader *fTheFader;
+	//SoundFader *_fader;
 };
 
 } // End of namespace Pegasus

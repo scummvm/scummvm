@@ -1530,12 +1530,12 @@ bool GameStateManager::isTakenItemID(tItemID id) {
 	return _itemTakenFlags.getFlag(id);
 }
 
-void GameStateManager::setTakenItem(CItem *item, bool value) {
-	setTakenItemID(item->GetObjectID(), value);
+void GameStateManager::setTakenItem(Item *item, bool value) {
+	setTakenItemID(item->getObjectID(), value);
 }
 
-bool GameStateManager::isTakenItem(CItem *item) {
-	return isTakenItemID(item->GetObjectID());
+bool GameStateManager::isTakenItem(Item *item) {
+	return isTakenItemID(item->getObjectID());
 }
 
 void GameStateManager::setCaldoriaFuseTimeLimit(const TimeValue timeLimit) {

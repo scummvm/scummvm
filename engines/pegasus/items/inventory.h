@@ -23,15 +23,15 @@
  *
  */
 
-#ifndef PEGASUS_GAMESHELL_CINVENTORY_H
-#define PEGASUS_GAMESHELL_CINVENTORY_H
+#ifndef PEGASUS_ITEMS_INVENTORY_H
+#define PEGASUS_ITEMS_INVENTORY_H
 
 #include "pegasus/types.h"
-#include "pegasus/Game_Shell/CItemList.h"
+#include "pegasus/items/itemlist.h"
 
 namespace Pegasus {
 
-class CItem;
+class Item;
 
 //	Inventories have a "current item". This item is the default item the player can
 //	use. In a text adventure system, the current item would be "it", as in
@@ -39,40 +39,40 @@ class CItem;
 //	item. In a graphic adventure, the current item would be the item the user selects
 //	to use with the mouse or other pointing device.
 
-class CInventory {
+class Inventory {
 public:
-	CInventory();
-	virtual ~CInventory();
+	Inventory();
+	virtual ~Inventory();
 	
-	tWeightType GetWeightLimit();
-	void SetWeightLimit(tWeightType limit);
-	tWeightType GetWeight();
+	tWeightType getWeightLimit();
+	void setWeightLimit(tWeightType limit);
+	tWeightType getWeight();
 	
-	virtual tInventoryResult AddItem(CItem *item);
-	virtual tInventoryResult RemoveItem(CItem *item);
-	virtual tInventoryResult RemoveItem(tItemID id);
-	virtual bool ItemInInventory(CItem *item);
-	virtual bool ItemInInventory(tItemID id);
-	virtual CItem *GetItemAt(int32 index);
-	virtual tItemID GetItemIDAt(int32 index);
-	virtual CItem *FindItemByID(tItemID id);
-	virtual int32 FindIndexOf(CItem *item);
-	virtual int32 FindIndexOf(tItemID id);
-	int32 GetNumItems();
-	virtual void RemoveAllItems();
+	virtual tInventoryResult addItem(Item *item);
+	virtual tInventoryResult removeItem(Item *item);
+	virtual tInventoryResult removeItem(tItemID id);
+	virtual bool itemInInventory(Item *item);
+	virtual bool itemInInventory(tItemID id);
+	virtual Item *getItemAt(int32 index);
+	virtual tItemID getItemIDAt(int32 index);
+	virtual Item *findItemByID(tItemID id);
+	virtual int32 findIndexOf(Item *item);
+	virtual int32 findIndexOf(tItemID id);
+	int32 getNumItems();
+	virtual void removeAllItems();
 	
-	void SetOwnerID(const tActorID id);
-	tActorID GetOwnerID() const;
+	void setOwnerID(const tActorID id);
+	tActorID getOwnerID() const;
 	
-	uint32 GetReferenceCount() { return fReferenceCount; }
+	uint32 getReferenceCount() { return _referenceCount; }
 
 protected:
-	tWeightType fWeightLimit;
-	tActorID fOwnerID;
-	CItemList fInventoryList;
+	tWeightType _weightLimit;
+	tActorID _ownerID;
+	ItemList _inventoryList;
 
 private:
-	uint32 fReferenceCount;
+	uint32 _referenceCount;
 };
 
 } // End of namespace Pegasus

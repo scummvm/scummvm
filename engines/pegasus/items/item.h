@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_GAMESHELL_CITEM_H
-#define PEGASUS_GAMESHELL_CITEM_H
+#ifndef PEGASUS_ITEMS_ITEM_H
+#define PEGASUS_ITEMS_ITEM_H
 
 #include "pegasus/MMShell/Utilities/MMIDObject.h"
 #include "pegasus/types.h"
@@ -39,12 +39,12 @@ namespace Pegasus {
 
 /*
 
-	CItem is an object which can be picked up and carried around.
-	CItems have
+	Item is an object which can be picked up and carried around.
+	Items have
 		a location
 		an ID.
 		weight
-		an owner (kNoActorID if no one is carrying the CItem)
+		an owner (kNoActorID if no one is carrying the Item)
 
 */
 
@@ -219,35 +219,35 @@ const uint32 kRemoveGlass = 10;
 const uint32 kRemoveDart = 11;
 const uint32 kRemoveSinclairKey = 12;
 
-class CItem : public MMIDObject {
+class Item : public MMIDObject {
 public:
-	CItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
-	virtual ~CItem();
+	Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	virtual ~Item();
 	
 	// WriteToStream writes everything EXCEPT the item's ID.
 	// It is assumed that the calling function will write and read the ID.
-	virtual Common::Error WriteToStream(Common::WriteStream *stream);
-	virtual Common::Error ReadFromStream(Common::ReadStream *stream);
+	virtual Common::Error writeToStream(Common::WriteStream *stream);
+	virtual Common::Error readFromStream(Common::ReadStream *stream);
 	
-	virtual tActorID GetItemOwner() const;
-	virtual void SetItemOwner(const tActorID owner);
+	virtual tActorID getItemOwner() const;
+	virtual void setItemOwner(const tActorID owner);
 	
-	void GetItemRoom(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) const;
-	void SetItemRoom(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
-	tNeighborhoodID GetItemNeighborhood() const;
+	void getItemRoom(tNeighborhoodID &neighborhood, tRoomID &room, tDirectionConstant &direction) const;
+	void setItemRoom(const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
+	tNeighborhoodID getItemNeighborhood() const;
 	
-	virtual tWeightType GetItemWeight();
+	virtual tWeightType getItemWeight();
 	
-	virtual void SetItemState(const tItemState state);
-	virtual tItemState GetItemState() const;
+	virtual void setItemState(const tItemState state);
+	virtual tItemState getItemState() const;
 
 protected:
-	tNeighborhoodID fItemNeighborhood;
-	tRoomID	fItemRoom;
-	tDirectionConstant fItemDirection;
-	tActorID fItemOwnerID;
-	tWeightType fItemWeight;
-	tItemState fItemState;
+	tNeighborhoodID _itemNeighborhood;
+	tRoomID	_itemRoom;
+	tDirectionConstant _itemDirection;
+	tActorID _itemOwnerID;
+	tWeightType _itemWeight;
+	tItemState _itemState;
 };
 
 } // End of namespace Pegasus

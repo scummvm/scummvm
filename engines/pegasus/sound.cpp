@@ -28,25 +28,25 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "engines/pegasus/MMShell/Sounds/MMSound.h"
+#include "pegasus/sound.h"
 
 namespace Pegasus {
 
-MMSound::MMSound() {
+Sound::Sound() {
 	_aiffStream = 0;
 	_volume = 0xFF;
 }
 
-MMSound::~MMSound() {
-	DisposeSound();
+Sound::~Sound() {
+	disposeSound();
 }
 
-void MMSound::DisposeSound() {
-	StopSound();
+void Sound::disposeSound() {
+	stopSound();
 	delete _aiffStream; _aiffStream = 0;
 }
 
-void MMSound::InitFromAIFFFile(const Common::String &fileName) {
+void Sound::initFromAIFFFile(const Common::String &fileName) {
 	Common::File *file = new Common::File();
 	if (!file->open(fileName)) {
 		delete file;
@@ -58,37 +58,37 @@ void MMSound::InitFromAIFFFile(const Common::String &fileName) {
 
 #if 0
 // TODO!
-void MMSound::AttachFader(MMSoundFader *theFader) {
-	if (fTheFader)
-		fTheFader->AttachSound(NULL);
+void Sound::attachFader(SoundFader *fader) {
+	if (_fader)
+		_fader->attachSound(NULL);
 
-	fTheFader = theFader;
+	_fader = fader;
 
-	if (fTheFader)
-		fTheFader->AttachSound(this);
+	if (_fader)
+		_fader->attachSound(this);
 }
 #endif
 
-void MMSound::PlaySound() {
-	if (!SoundLoaded())
+void Sound::playSound() {
+	if (!isSoundLoaded())
 		return;
 
-	StopSound();
+	stopSound();
 
 #if 0
 	// TODO!
-	if (fTheFader)
-		this->SetVolume(fTheFader->GetFaderValue());
+	if (_fader)
+		setVolume(_fader->getFaderValue());
 #endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _aiffStream, -1, _volume, 0, DisposeAfterUse::NO);
 }
 
-void MMSound::LoopSound() {
-	if (!SoundLoaded())
+void Sound::loopSound() {
+	if (!isSoundLoaded())
 		return;
 
-	StopSound();
+	stopSound();
 
 	// Create a looping stream
 	Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_aiffStream, 0, DisposeAfterUse::NO);
@@ -96,18 +96,18 @@ void MMSound::LoopSound() {
 #if 0
 	// TODO!
 	// Assume that if there is a fader, we're going to fade the sound in.
-	if (fTheFader)
-		this->SetVolume(0);
+	if (_fader)
+		setVolume(0);
 #endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopStream, -1, _volume, 0, DisposeAfterUse::YES);
 }
 
-void MMSound::StopSound(void) {
+void Sound::stopSound(void) {
 	g_system->getMixer()->stopHandle(_handle);
 }
 
-void MMSound::SetVolume(const uint16 volume) {
+void Sound::setVolume(const uint16 volume) {
 	// Clipping the volume to [0x00, 0xFF] instead of Apple's [0, 0x100]
 	// We store the volume in case SetVolume is called before the sound starts
 
@@ -115,11 +115,11 @@ void MMSound::SetVolume(const uint16 volume) {
 	g_system->getMixer()->setChannelVolume(_handle, _volume);
 }
 
-bool MMSound::IsPlaying() {
-	return SoundLoaded() && g_system->getMixer()->isSoundHandleActive(_handle);
+bool Sound::isPlaying() {
+	return isSoundLoaded() && g_system->getMixer()->isSoundHandleActive(_handle);
 }
 
-bool MMSound::SoundLoaded() const {
+bool Sound::isSoundLoaded() const {
 	return _aiffStream != 0;
 }
 

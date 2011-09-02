@@ -29,7 +29,7 @@
 #include "common/singleton.h"
 
 #include "pegasus/types.h"
-#include "pegasus/Game_Shell/CItem.h"
+#include "pegasus/items/item.h"
 
 namespace Common {
 	class Error;
@@ -615,8 +615,8 @@ public:
 	bool					allTimeZonesFinished();
 	void						setTakenItemID(tItemID, bool);
 	bool					isTakenItemID(tItemID);
-	void						setTakenItem(CItem*, bool);
-	bool					isTakenItem(CItem*);
+	void						setTakenItem(Item*, bool);
+	bool					isTakenItem(Item*);
 	
 	//	Caldoria
 	void						setCaldoriaFuseTimeLimit(const TimeValue);

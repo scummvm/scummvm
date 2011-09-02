@@ -26,26 +26,26 @@
 #include "common/error.h"
 #include "common/stream.h"
 
-#include "engines/pegasus/Game_Shell/CItem.h"
-#include "engines/pegasus/Game_Shell/CItemList.h"
+#include "engines/pegasus/items/item.h"
+#include "engines/pegasus/items/itemlist.h"
 
 namespace Pegasus {
 
 // TODO: Don't use global construction!
-CItemList gAllItems;
+ItemList g_allItems;
 
-CItemList::CItemList() {
+ItemList::ItemList() {
 }
 
-CItemList::~CItemList() {
+ItemList::~ItemList() {
 }
 
-Common::Error CItemList::WriteToStream(Common::WriteStream *stream) {
+Common::Error ItemList::writeToStream(Common::WriteStream *stream) {
 	stream->writeUint32BE(size());
 
-	for (CItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->GetObjectID());
-		(*it)->WriteToStream(stream);
+	for (ItemIterator it = begin(); it != end(); it++) {
+		stream->writeUint16BE((*it)->getObjectID());
+		(*it)->writeToStream(stream);
 	}
 
 	if (stream->err())
@@ -54,12 +54,12 @@ Common::Error CItemList::WriteToStream(Common::WriteStream *stream) {
 	return Common::kNoError;
 }
 
-Common::Error CItemList::ReadFromStream(Common::ReadStream *stream) {
+Common::Error ItemList::readFromStream(Common::ReadStream *stream) {
 	uint32 itemCount = stream->readUint32BE();
 
 	for (uint32 i = 0; i < itemCount; i++) {
 		tItemID itemID = stream->readUint16BE();
-		gAllItems.FindItemByID(itemID)->ReadFromStream(stream);
+		g_allItems.findItemByID(itemID)->readFromStream(stream);
 	}
 
 	if (stream->err())
@@ -68,9 +68,9 @@ Common::Error CItemList::ReadFromStream(Common::ReadStream *stream) {
 	return Common::kNoError;
 }
 
-CItem *CItemList::FindItemByID(const tItemID id) {
-	for (CItemIterator it = begin(); it != end(); it++)
-		if ((*it)->GetObjectID() == id)
+Item *ItemList::findItemByID(const tItemID id) {
+	for (ItemIterator it = begin(); it != end(); it++)
+		if ((*it)->getObjectID() == id)
 			return *it;
 
 	return 0;

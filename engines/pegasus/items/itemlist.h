@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_GAMESHELL_CITEMLIST_H
-#define PEGASUS_GAMESHELL_CITEMLIST_H
+#ifndef PEGASUS_ITEMS_ITEMLIST_H
+#define PEGASUS_ITEMS_ITEMLIST_H
 
 #include "common/list.h"
 
@@ -37,23 +37,23 @@ namespace Common {
 
 namespace Pegasus {
 
-class CItem;
+class Item;
 
-class CItemList : public Common::List<CItem *> {
+class ItemList : public Common::List<Item *> {
 public:
-	CItemList();
-	virtual ~CItemList();
+	ItemList();
+	virtual ~ItemList();
 	
-	virtual Common::Error WriteToStream(Common::WriteStream *stream);
-	virtual Common::Error ReadFromStream(Common::ReadStream *stream);
+	virtual Common::Error writeToStream(Common::WriteStream *stream);
+	virtual Common::Error readFromStream(Common::ReadStream *stream);
 	
-	CItem *FindItemByID(const tItemID id);
+	Item *findItemByID(const tItemID id);
 };
 
-typedef CItemList::iterator CItemIterator;
+typedef ItemList::iterator ItemIterator;
 
 // TODO: Don't use global construction!
-extern CItemList gAllItems;
+extern ItemList g_allItems;
 
 } // End of namespace Pegasus
 

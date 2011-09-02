@@ -38,29 +38,29 @@ public:
 	MMIDObject(const tMM32BitID id);
 	~MMIDObject();
 	
-	tMM32BitID GetObjectID() const;
+	tMM32BitID getObjectID() const;
 
 private:
-	tMM32BitID fObjectID;
+	tMM32BitID _objectID;
 };
 
 inline MMIDObject::MMIDObject(const tMM32BitID id) {
-	fObjectID = id;
+	_objectID = id;
 }
 
 inline MMIDObject::~MMIDObject() {
 }
 
-inline tMM32BitID MMIDObject::GetObjectID() const {
-	return fObjectID;
+inline tMM32BitID MMIDObject::getObjectID() const {
+	return _objectID;
 }
 
 inline int operator==(const MMIDObject &arg1, const MMIDObject &arg2) {
-	return arg1.fObjectID == arg2.fObjectID;
+	return arg1._objectID == arg2._objectID;
 }
 
 inline int operator!=(const MMIDObject &arg1, const MMIDObject &arg2) {
-	return arg1.fObjectID != arg2.fObjectID;
+	return arg1._objectID != arg2._objectID;
 }
 
 } // End of namespace Pegasus

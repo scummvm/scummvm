@@ -9,15 +9,15 @@ MODULE_OBJS = \
 	menu.o \
 	overview.o \
 	pegasus.o \
+	sound.o \
 	video.o \
-	Game_Shell/CInventory.o \
-	Game_Shell/CItem.o \
-	Game_Shell/CItemList.o \
+	items/inventory.o \
+	items/item.o \
+	items/itemlist.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
 	MMShell/Notification/MMNotification.o \
 	MMShell/Notification/MMNotificationManager.o \
 	MMShell/Notification/MMNotificationReceiver.o \
-	MMShell/Sounds/MMSound.o \
 	MMShell/Utilities/MMResourceFile.o \
 	MMShell/Utilities/MMTimeValue.o \
 	MMShell/Utilities/MMUtilities.o \

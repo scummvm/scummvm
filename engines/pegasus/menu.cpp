@@ -25,8 +25,7 @@
 
 #include "pegasus/console.h"
 #include "pegasus/pegasus.h"
-
-#include "pegasus/MMShell/Sounds/MMSound.h"
+#include "pegasus/sound.h"
 
 namespace Pegasus {
 
@@ -46,9 +45,9 @@ enum {
 };	
 
 void PegasusEngine::runMainMenu() {
-	MMSound sound;
-	sound.InitFromAIFFFile("Sounds/Main Menu.aiff");
-	sound.LoopSound();
+	Sound sound;
+	sound.initFromAIFFFile("Sounds/Main Menu.aiff");
+	sound.loopSound();
 
 	// Note down how long since the last click
 	uint32 lastClickTime = _system->getMillis();
@@ -86,14 +85,14 @@ void PegasusEngine::runMainMenu() {
 				case Common::KEYCODE_RETURN:
 					if (buttonSelected != kDifficultyButton) {
 						drawMenuButtonSelected(buttonSelected);
-						sound.StopSound();
+						sound.stopSound();
 						setGameMode(buttonSelected);
 
 						if (_gameMode != kMainMenuMode)
 							return;
 						
 						drawMenu(buttonSelected);
-						sound.LoopSound();
+						sound.loopSound();
 					}
 					break;
 				case Common::KEYCODE_d:
@@ -122,7 +121,7 @@ void PegasusEngine::runMainMenu() {
 		return;
 
 	// Too slow! Go back and show the intro again.
-	sound.StopSound();
+	sound.stopSound();
 	_video->playMovie(_introDirectory + "/LilMovie.movie");
 	_gameMode = kIntroMode;
 }
