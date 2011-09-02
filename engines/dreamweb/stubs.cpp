@@ -1796,5 +1796,25 @@ void DreamGenContext::makeworn(DynObject *object) {
 	object->id[1] = 'E'-'A';
 }
 
+void DreamGenContext::obtoinv() {
+	obtoinv(al, ah, di, bx);
+}
+
+void DreamGenContext::obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y) {
+	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	showframe(icons1, x - 2, y - 1, 10, 0);
+	if (index == 0xff)
+		return;
+
+	Frame *extras = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+	Frame *frees = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+	Frame *frames = (ah == 4) ? extras : frees;
+	showframe(frames, x + 18, y + 19, 3 * index + 1, 128);
+	const DynObject *object = (const DynObject *)getanyaddir(index, flag);
+	bool worn = isitworn(object);
+	if (worn)
+		showframe(icons1, x - 3, y - 2, 7, 0);
+}
+
 } /*namespace dreamgen */
 

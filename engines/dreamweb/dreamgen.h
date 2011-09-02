@@ -494,7 +494,6 @@ public:
 	static const uint16 addr_getbackfromob = 0xc344;
 	static const uint16 addr_makemainscreen = 0xc340;
 	static const uint16 addr_examineob = 0xc33c;
-	static const uint16 addr_obtoinv = 0xc330;
 	static const uint16 addr_findallopen = 0xc32c;
 	static const uint16 addr_findallryan = 0xc328;
 	static const uint16 addr_fillopen = 0xc324;
@@ -1480,7 +1479,7 @@ public:
 	void checkspeed();
 	//void printchar();
 	void showkeypad();
-	void obtoinv();
+	//void obtoinv();
 	//void getroomdata();
 	void removeobfrominv();
 	void usecoveredbox();

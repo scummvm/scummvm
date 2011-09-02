@@ -3955,66 +3955,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::obtoinv() {
-	STACK_CHECK;
-	push(bx);
-	push(es);
-	push(si);
-	push(ax);
-	push(ax);
-	push(di);
-	push(bx);
-	ds = data.word(kIcons1);
-	_sub(di, 2);
-	_sub(bx, 1);
-	al = 10;
-	ah = 0;
-	showframe();
-	bx = pop();
-	di = pop();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		goto finishfill;
-	push(bx);
-	push(di);
-	push(ax);
-	ds = data.word(kExtras);
-	_cmp(ah, 4);
-	if (flags.z())
-		goto isanextra;
-	ds = data.word(kFreeframes);
-isanextra:
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
-	_add(bx, 19);
-	_add(di, 18);
-	showframe();
-	ax = pop();
-	di = pop();
-	bx = pop();
-	push(bx);
-	getanyaddir();
-	isitworn();
-	bx = pop();
-	if (!flags.z())
-		goto finishfill;
-	ds = data.word(kIcons1);
-	_sub(di, 3);
-	_sub(bx, 2);
-	al = 7;
-	ah = 0;
-	showframe();
-finishfill:
-	ax = pop();
-	si = pop();
-	es = pop();
-	bx = pop();
-}
-
 void DreamGenContext::examineob() {
 	STACK_CHECK;
 	data.byte(kPointermode) = 0;
@@ -17368,7 +17308,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_fillopen: fillopen(); break;
 		case addr_findallryan: findallryan(); break;
 		case addr_findallopen: findallopen(); break;
-		case addr_obtoinv: obtoinv(); break;
 		case addr_examineob: examineob(); break;
 		case addr_makemainscreen: makemainscreen(); break;
 		case addr_getbackfromob: getbackfromob(); break;
