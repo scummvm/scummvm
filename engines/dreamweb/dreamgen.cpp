@@ -2050,14 +2050,6 @@ forcenext:
 	_cmp(al, al);
 }
 
-void DreamGenContext::delsprite() {
-	STACK_CHECK;
-	di = bx;
-	cx = (32);
-	al = 255;
-	_stosb(cx, true);
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
@@ -17373,7 +17365,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_sparky: sparky(); break;
 		case addr_train: train(); break;
 		case addr_checkspeed: checkspeed(); break;
-		case addr_delsprite: delsprite(); break;
 		case addr_mainman: mainman(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;

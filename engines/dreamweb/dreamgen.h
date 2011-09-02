@@ -575,7 +575,6 @@ public:
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_mainman = 0xc138;
-	static const uint16 addr_delsprite = 0xc11c;
 	static const uint16 addr_checkspeed = 0xc110;
 	static const uint16 addr_train = 0xc104;
 	static const uint16 addr_sparky = 0xc100;
@@ -1451,7 +1450,7 @@ public:
 	void openpoolboss();
 	void buttontwo();
 	//void usetimedtext();
-	void delsprite();
+	//void delsprite();
 	//void getroomspaths();
 	//void dumptextline();
 	void fadescreendownhalf();
