@@ -23,7 +23,7 @@
  *
  */
 
-#include "pegasus/MMShell/MMConstants.h"
+#include "pegasus/constants.h"
 #include "pegasus/MMShell/Notification/MMNotification.h"
 #include "pegasus/MMShell/Notification/MMNotificationManager.h"
 #include "pegasus/MMShell/Notification/MMNotificationReceiver.h"

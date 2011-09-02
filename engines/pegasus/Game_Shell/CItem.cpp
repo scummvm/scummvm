@@ -26,9 +26,9 @@
 #include "common/error.h"
 #include "common/stream.h"
 
+#include "pegasus/constants.h"
 #include "pegasus/Game_Shell/CItem.h"
 #include "pegasus/Game_Shell/CItemList.h"
-#include "pegasus/Game_Shell/Headers/Game_Shell_Constants.h"
 
 namespace Pegasus {
 

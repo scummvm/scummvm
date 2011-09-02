@@ -26,8 +26,8 @@
 #ifndef PEGASUS_GAMESHELL_CINVENTORY_H
 #define PEGASUS_GAMESHELL_CINVENTORY_H
 
+#include "pegasus/types.h"
 #include "pegasus/Game_Shell/CItemList.h"
-#include "pegasus/Game_Shell/Headers/Game_Shell_Types.h"
 
 namespace Pegasus {
 

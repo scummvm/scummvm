@@ -4,12 +4,12 @@ MODULE_OBJS = \
 	console.o \
 	credits.o \
 	detection.o \
+	gamestate.o \
 	graphics.o \
 	menu.o \
 	overview.o \
 	pegasus.o \
 	video.o \
-	Game_Shell/CGameState.o \
 	Game_Shell/CInventory.o \
 	Game_Shell/CItem.o \
 	Game_Shell/CItemList.o \

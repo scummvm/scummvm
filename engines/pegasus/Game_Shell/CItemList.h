@@ -28,7 +28,7 @@
 
 #include "common/list.h"
 
-#include "pegasus/Game_Shell/Headers/Game_Shell_Types.h"
+#include "pegasus/types.h"
 
 namespace Common {
 	class ReadStream;

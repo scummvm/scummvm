@@ -106,35 +106,6 @@ struct OverviewHotspot {
 	uint32 time;
 };
 
-// Taken from JMP PP Resources
-enum Item {
-	kAIBiochip = 128,
-	kInterfaceBiochip = 129, // NOT USED!
-	kMapBiochip = 130,
-	kOpticalBiochip = 131,
-	kPegasusBiochip = 132,
-	kRetinalScanBiochip = 133,
-	kShieldBiochip = 134,
-	kAirMask = 135,
-	kAntidote = 136,
-	kArgonCanister = 137,
-	kCardBomb = 138,
-	kCrowbar = 139,
-	kGasCanister = 140,
-	kHistoricalLog = 141,
-	kJourneymanKey = 142,
-	kKeyCard = 143,
-	kMachineGun = 144, // What the hell is this?
-	kMarsCard = 145,
-	kNitrogenCanister = 146,
-	kOrangeJuiceGlassFull = 147,
-	kOrangeJuiceGlassEmpty = 148,
-	kPoisonDart = 149,
-	kSinclairKey = 150,
-	kStunGun = 151,
-	kArgonPickup = 152 // ???
-};
-
 enum GameMode {
 	kIntroMode,
 	kMainMenuMode,
@@ -197,7 +168,6 @@ private:
 	// Game Variables
 	bool _adventureMode;
 	GameMode _gameMode;
-	tNeighborhoodID _neighborhood;
 	Common::Array<ItemLocationData> _itemLocationData;
 
 	// Console

@@ -26,7 +26,7 @@
 #ifndef PEGASUS_MMSHELL_MMIDOBJECT_H
 #define PEGASUS_MMSHELL_MMIDOBJECT_H
 
-#include "pegasus/MMShell/MMTypes.h"
+#include "pegasus/types.h"
 
 namespace Pegasus {
 

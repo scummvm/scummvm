@@ -23,9 +23,9 @@
  *
  */
 
+#include "pegasus/constants.h"
 #include "pegasus/Game_Shell/CItem.h"
 #include "pegasus/Game_Shell/CInventory.h"
-#include "pegasus/Game_Shell/Headers/Game_Shell_Constants.h"
 
 namespace Pegasus {
 

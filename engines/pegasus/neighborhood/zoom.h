@@ -29,7 +29,7 @@
 #include "common/array.h"
 #include "common/endian.h"
 
-#include "pegasus/Game_Shell/Headers/Game_Shell_Constants.h"
+#include "pegasus/constants.h"
 
 namespace Common {
 	class SeekableReadStream;

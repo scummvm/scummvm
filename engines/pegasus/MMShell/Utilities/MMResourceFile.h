@@ -28,7 +28,7 @@
 
 #include "common/str.h"
 
-#include "pegasus/MMShell/MMTypes.h"
+#include "pegasus/types.h"
 
 namespace Common {
 	class Error;

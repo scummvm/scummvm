@@ -22,9 +22,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
-#ifndef PEGASUS_MMSHELL_MMTYPES_H
-#define PEGASUS_MMSHELL_MMTYPES_H
+ 
+#ifndef PEGASUS_TYPES_H
+#define PEGASUS_TYPES_H
 
 #include "common/scummsys.h"
 
@@ -97,6 +97,88 @@ enum tSlideDirection {
 typedef uint TimeValue;
 typedef uint TimeScale;
 // TODO: Fixed and RGBColor
+
+typedef tMM16BitID tGameID;
+
+typedef tGameID tItemID;
+typedef tGameID tActorID;
+typedef tGameID tRoomID;
+typedef tGameID tNeighborhoodID;
+typedef tMM8BitU tAlternateID;
+typedef tMM8BitS tHotSpotActivationID;
+
+typedef tMM16BitS tWeightType;
+
+typedef tMM8BitU tDirectionConstant;
+typedef tMM8BitU tTurnDirection;
+
+// Meant to be room in low 16 bits and direction in high 16 bits.
+typedef tMM32BitU tRoomViewID;
+
+#define MakeRoomView(room, direction) (((tRoomViewID) (room)) | (((tRoomViewID) (direction)) << 16))
+
+typedef tMM32BitU tExtraID;
+
+typedef tMM16BitS tGameMode;
+
+typedef tMM16BitS tWeightType;
+
+typedef tMM16BitS tItemState;
+
+typedef tMM8BitS tDeathReason;
+
+typedef tMM32BitS tGameMenuCommand;
+
+typedef tMM32BitS tGameScoreType;
+
+typedef long tCanMoveForwardReason;
+
+typedef long tCanTurnReason;
+
+typedef long tCanOpenDoorReason;
+
+enum tInventoryResult {
+	kInventoryOK,
+	kTooMuchWeight,
+	kItemNotInInventory
+};
+
+typedef tMM32BitID tInteractionID;
+
+typedef tMM32BitID tAIConditionID;
+
+enum tEnergyStage {
+	kStageNoStage,
+	kStageCasual,				//	more than 50% energy
+	kStageWorried,				//	more than 25% energy
+	kStageNervous,				//	more than 5% energy
+	kStagePanicStricken			//	less than 5% energy
+};
+
+enum tNoradSubPrepState {
+	kSubNotPrepped,
+	kSubPrepped,
+	kSubDamaged
+};
+
+enum tLowerClientSignature {
+	kNoClientSignature,
+	kInventorySignature,
+	kBiochipSignature,
+	kAISignature
+};
+
+enum tLowerAreaSignature {
+	kLeftAreaSignature,
+	kMiddleAreaSignature,
+	kRightAreaSignature
+};
+
+enum tAirQuality {
+	kAirQualityGood,
+	kAirQualityDirty,
+	kAirQualityVacuum
+};
 
 } // End of namespace Pegasus
 

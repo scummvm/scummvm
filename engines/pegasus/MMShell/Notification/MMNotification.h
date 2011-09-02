@@ -28,7 +28,7 @@
 
 #include "common/list.h"
 
-#include "pegasus/MMShell/MMTypes.h"
+#include "pegasus/types.h"
 #include "pegasus/MMShell/Utilities/MMIDObject.h"
 
 namespace Pegasus {

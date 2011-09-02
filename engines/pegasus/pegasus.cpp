@@ -32,8 +32,8 @@
 #include "gui/saveload.h"
 
 #include "pegasus/console.h"
+#include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/neighborhood.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
@@ -231,17 +231,17 @@ void PegasusEngine::mainGameLoop() {
 	_video->playMovieCentered("Images/Caldoria/Pullback.movie");
 	drawInterface();
 
-	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(_neighborhood).c_str(), getTimeZoneDesc(_neighborhood).c_str());
+	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(GameState.getCurrentNeighborhood()).c_str(), getTimeZoneDesc(GameState.getCurrentNeighborhood()).c_str());
 	_video->playMovie(navMovie, kViewScreenOffset, kViewScreenOffset);
 
 	_gameMode = kQuitMode;
 }
 
 void PegasusEngine::changeLocation(tNeighborhoodID neighborhood) {
-	_neighborhood = neighborhood;
+	GameState.setCurrentNeighborhood(neighborhood);
 
 	// Just a test...
-	Neighborhood *neighborhoodPtr = new Neighborhood(this, getTimeZoneDesc(_neighborhood), _neighborhood);
+	Neighborhood *neighborhoodPtr = new Neighborhood(this, getTimeZoneDesc(neighborhood), neighborhood);
 	neighborhoodPtr->init();
 	delete neighborhoodPtr;
 }

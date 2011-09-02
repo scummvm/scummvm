@@ -23,7 +23,7 @@
  *
  */
 
-#include "pegasus/MMShell/MMConstants.h"
+#include "pegasus/constants.h"
 #include "pegasus/MMShell/Utilities/MMTimeValue.h"
 
 namespace Pegasus {

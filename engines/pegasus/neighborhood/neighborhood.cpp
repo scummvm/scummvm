@@ -26,14 +26,14 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
+#include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
-#include "pegasus/game_shell/CGameState.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
 Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : _vm(vm), _resName(resName) {
-	CGameState::SetOpenDoorLocation(kNoRoomID, kNoDirection);
+	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
 }
 
@@ -95,9 +95,9 @@ void Neighborhood::init() {
 }
 
 void Neighborhood::start() {
-	CGameState::SetCurrentRoom(CGameState::GetLastRoom());
-	CGameState::SetCurrentDirection(CGameState::GetLastDirection());
-	arriveAt(CGameState::GetNextRoom(), CGameState::GetNextDirection());
+	GameState.setCurrentRoom(GameState.getLastRoom());
+	GameState.setCurrentDirection(GameState.getLastDirection());
+	arriveAt(GameState.getNextRoom(), GameState.getNextDirection());
 }
 
 void Neighborhood::arriveAt(tRoomID room, tDirectionConstant direction) {
@@ -114,7 +114,7 @@ void Neighborhood::getExitEntry(const tRoomID room, const tDirectionConstant dir
 }
 
 TimeValue Neighborhood::getViewTime(const tRoomID room, const tDirectionConstant direction) {
-	if (CGameState::GetOpenDoorRoom() == room && CGameState::GetOpenDoorDirection() == direction) {
+	if (GameState.getOpenDoorRoom() == room && GameState.getOpenDoorDirection() == direction) {
 		// If we get here, the door entry for this location must exist.
 		DoorTable::Entry doorEntry = _doorTable.findEntry(room, direction, _currentAlternate);
 
@@ -174,13 +174,13 @@ void Neighborhood::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry)
 tCanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 	DoorTable::Entry door;
 	
-	getExitEntry(CGameState::GetCurrentRoom(), CGameState::GetCurrentDirection(), entry);
-	getDoorEntry(CGameState::GetCurrentRoom(), CGameState::GetCurrentDirection(), door);
+	getExitEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
+	getDoorEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), door);
 
 	//	Fixed this so that doors that don't lead anywhere can be opened, but not walked
 	//	through.
 	if (door.flags & kDoorPresentMask) {
-		if (CGameState::IsCurrentDoorOpen()) {
+		if (GameState.isCurrentDoorOpen()) {
 			if (entry.exitRoom == kNoRoomID)
 				return kCantMoveBlocked;
 			else
@@ -198,7 +198,7 @@ tCanMoveForwardReason Neighborhood::canMoveForward(ExitTable::Entry &entry) {
 }
 
 tCanTurnReason Neighborhood::canTurn(tTurnDirection turn, tDirectionConstant &nextDir) {
-	nextDir = getTurnEntry(CGameState::GetCurrentRoom(), CGameState::GetCurrentDirection(), turn);
+	nextDir = getTurnEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), turn);
 
 	if (nextDir == kNoDirection)
 		return kCantTurnNoTurn;
@@ -207,10 +207,10 @@ tCanTurnReason Neighborhood::canTurn(tTurnDirection turn, tDirectionConstant &ne
 }
 
 tCanOpenDoorReason Neighborhood::canOpenDoor(DoorTable::Entry &entry) {
-	getDoorEntry(CGameState::GetCurrentRoom(), CGameState::GetCurrentDirection(), entry);
+	getDoorEntry(GameState.getCurrentRoom(), GameState.getCurrentDirection(), entry);
 
 	if (entry.flags & kDoorPresentMask) {
-		if (CGameState::IsCurrentDoorOpen())
+		if (GameState.isCurrentDoorOpen())
 			return kCantOpenAlreadyOpen;
 
 		if (entry.flags & kDoorLockedMask)
