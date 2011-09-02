@@ -216,9 +216,7 @@
 	void obicons();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]);
-	void pixelcheckset();
 	bool pixelcheckset(const ObjPos *pos, uint8 x, uint8 y);
-	void isitdescribed();
 	bool isitdescribed(const ObjPos *objPos);
 	void checkifset();
 	bool checkifset(uint8 x, uint8 y);

@@ -455,13 +455,6 @@ void DreamGenContext::transferinv() {
 	data.word(kExframepos) += byteCount;
 }
 
-void DreamGenContext::pixelcheckset() {
-	uint8 x = al;
-	uint8 y = ah;
-	const ObjPos *pos = (const ObjPos *)es.ptr(bx, sizeof(ObjPos));
-	flags._z = !pixelcheckset(pos, x, y);
-}
-
 bool DreamGenContext::pixelcheckset(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;

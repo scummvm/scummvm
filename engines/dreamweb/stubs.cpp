@@ -1737,11 +1737,6 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 	return true;
 }
 
-void DreamGenContext::isitdescribed() {
-	const ObjPos *pos = (const ObjPos *)es.ptr(bx, sizeof(ObjPos));
-	flags._z = !isitdescribed(pos);
-}
-
 bool DreamGenContext::isitdescribed(const ObjPos *pos) {
 	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
