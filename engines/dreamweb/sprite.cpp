@@ -90,17 +90,6 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	return sprite;
 }
 
-void DreamGenContext::makesprite() { // NB: returns new sprite in es:bx 
-	Sprite *sprite = makesprite(si & 0xff, si >> 8, cx, dx, di);
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += sizeof(Sprite) * (sprite - sprites);
-	//
-}
-
 void DreamGenContext::spriteupdate() {
 	Sprite *sprites = spritetable();
 	sprites[0].hidden = data.byte(kRyanon);
