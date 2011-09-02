@@ -353,6 +353,77 @@ protected:
 	void sub481B00();
 };
 
+class AsScene2207Elevator : public AnimatedSprite {
+public:
+	AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene);
+	~AsScene2207Elevator();
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	NPointArray *_pointArray;
+	int16 _pointIndex;
+	int16 _destPointIndex, _destPointIndexDelta;
+	bool _isMoving;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void suSetPosition();
+	void moveToY(int16 y);
+};
+
+class Class500 : public AnimatedSprite {
+public:
+	Class500(NeverhoodEngine *vm, Scene *parentScene);
+	~Class500();
+protected:
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	bool _flag1;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void sub441D50();
+	void sub441D90();
+	void sub441DA0();
+};
+
+class Class501 : public AnimatedSprite {
+public:
+	Class501(NeverhoodEngine *vm);
+protected:
+	bool _flag1;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void sub441FA0();
+	void sub441FE0();
+	void sub441FF0();
+};
+
+class Class597 : public StaticSprite {
+public:
+	Class597(NeverhoodEngine *vm, uint32 fileHash, int index);
+};
+
+class Scene2207 : public Scene {
+public:
+	Scene2207(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	Sprite *_asElevator;
+	Sprite *_ssMaskPart1;
+	Sprite *_ssMaskPart2;
+	Sprite *_ssMaskPart3;
+	Sprite *_asTape;
+	Sprite *_class487;
+	Sprite *_class500;
+	Sprite *_class501;
+	Sprite *_ssButton;
+	int _elevatorSurfacePriority;
+	bool _flag1;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage2(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2200_H */

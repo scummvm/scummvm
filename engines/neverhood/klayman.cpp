@@ -3800,5 +3800,125 @@ void KmScene2206::sub482530() {
 	setCallback1(AnimationCallback(&Klayman::sub41FB30));
 }
 
+KmScene2207::KmScene2207(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+	
+uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2001:
+		setCallback2(AnimationCallback(&KmScene2207::sub442460));
+		break;
+	case 0x2005:
+		spriteUpdate442430();
+		setCallback2(AnimationCallback(&KmScene2207::sub41FC80));
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x480D:
+		setCallback2(AnimationCallback(&KmScene2207::sub4424B0));
+		break;
+	case 0x4812:
+		setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		}else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x4827:
+		setCallback2(AnimationCallback(&Klayman::sub420E20));
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+void KmScene2207::spriteUpdate442430() {
+	_x = ((Sprite*)_attachedSprite)->getX() - 20;
+	_y = ((Sprite*)_attachedSprite)->getY() + 46;
+	processDelta();
+}
+
+void KmScene2207::sub442460() {
+	if (!sub41CF10(AnimationCallback(&KmScene2207::sub442460))) {
+		_status2 = 1;
+		_flagE5 = true;
+		setFileHash(0x5420E254, 0, -1);
+		SetUpdateHandler(&Klayman::update);
+		SetSpriteCallback(&KmScene2207::spriteUpdate442430);
+		SetMessageHandler(&Klayman::handleMessage41D360);
+	}
+}
+
+void KmScene2207::sub4424B0() {
+	if (!sub41CEB0(AnimationCallback(&KmScene2207::sub4424B0))) {
+		_status2 = 0;
+		if (_flagF7) {
+			sub420D50();
+		} else {
+			_flagE5 = false;
+			setFileHash(0x0C303040, 0, -1);
+			SetUpdateHandler(&Klayman::update);
+			SetSpriteCallback(&KmScene2207::spriteUpdate41F230);
+			SetMessageHandler(&Klayman::handleMessage41E210);
+			SetAnimationCallback3(&KmScene2207::sub442520);
+		}
+	}
+}
+
+void KmScene2207::sub442520() {
+	setFileHash(0x0D318140, 0, -1);
+	SetAnimationCallback3(&KmScene2207::sub442560);
+	_attachedSprite->sendMessage(0x480F, 0, this);
+}
+
+void KmScene2207::sub442560() {
+	_flagE5 = true;
+	_flagF7 = true;
+	setFileHash(0x1564A2C0, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&KmScene2207::spriteUpdate41F230);
+	SetAnimationCallback3(&KmScene2207::sub4425A0);
+}
+
+void KmScene2207::sub4425A0() {
+	_flagE5 = true;
+	_flagF7 = true;
+	setFileHash(0x4464A440, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&KmScene2207::spriteUpdate41F230);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+}
 
 } // End of namespace Neverhood

@@ -23,6 +23,7 @@
 #include "neverhood/module2200.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/diskplayerscene.h"
 
 namespace Neverhood {
@@ -233,6 +234,9 @@ void Module2200::createScene2206(int which) {
 }
 			
 void Module2200::createScene2207(int which) {
+	_vm->gameState().sceneNum = 6;
+	_childObject = new Scene2207(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2207);
 }
 			
 void Module2200::createScene2208(int which) {
@@ -455,6 +459,14 @@ void Module2200::updateScene2206() {
 }
 			
 void Module2200::updateScene2207() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene2206(2);
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2208() {
@@ -1906,6 +1918,500 @@ void Scene2206::sub481B00() {
 	} else {
 		setMessageList2(kScene2206MessageIds2[getGlobalVar(0x48A68852)]);
 	}
+}
+
+static const uint32 kScene2207FileHashes[] = {
+	0x33B1E12E,
+	0x33D1E12E,
+	0x3311E12E,
+	0x3291E12E,
+	0x3191E12E,
+	0x3791E12E,
+	0x3B91E12E,
+	0x2391E12E,
+	0x1391E12E,
+	0x3BB1E12E,
+	0x23B1E12E,
+	0x13B1E12E
+};
+
+AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _soundResource(vm),
+	_pointIndex(0), _destPointIndex(0), _destPointIndexDelta(0) {
+
+	NPoint pt;
+
+	_dataResource.load(0x00524846);
+	_pointArray = _dataResource.getPointArray(0x005B02B7);
+	pt = _dataResource.getPoint(0x403A82B1);
+	_x = pt.x;
+	_y = pt.y;
+	createSurface(1100, 129, 103);
+	setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, 0, 0);
+	SetUpdateHandler(&AsScene2207Elevator::update);
+	SetSpriteCallback(&AsScene2207Elevator::suSetPosition);
+	SetMessageHandler(&AsScene2207Elevator::handleMessage);
+	_newHashListIndex = 0;
+}
+
+AsScene2207Elevator::~AsScene2207Elevator() {
+	// TODO Sound1ChList_sub_407AF0(0x02700413);
+}
+
+void AsScene2207Elevator::update() {
+
+	if (_destPointIndex + _destPointIndexDelta > _pointIndex) {
+		_pointIndex++;
+		setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
+		_newHashListIndex = _pointIndex;		
+		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
+			if (_destPointIndexDelta != 0) {
+				_destPointIndexDelta = 0;
+			} else {
+				// TODO Sound1ChList_deleteSoundByHash(0xD3B02847);
+				_soundResource.play(0x53B8284A);
+			}
+		}
+	}
+
+	if (_destPointIndex + _destPointIndexDelta < _pointIndex) {
+		_pointIndex--;
+		if (_pointIndex == 0)
+			_parentScene->sendMessage(0x2003, 0, this);
+		setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
+		_newHashListIndex = _pointIndex;		
+		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
+			if (_destPointIndexDelta != 0) {
+				_destPointIndexDelta = 0;
+			} else {
+				// TODO Sound1ChList_deleteSoundByHash(0xD3B02847);
+				_soundResource.play(0x53B8284A);
+			}
+		}
+	}
+
+	if (_pointIndex > 20 && _surface->getPriority() != 900) {
+		_parentScene->sendMessage(0x2002, 900, this);
+	} else if (_pointIndex < 20 && _surface->getPriority() != 1100) {
+		_parentScene->sendMessage(0x2002, 1100, this);
+	}
+	
+	AnimatedSprite::update();
+	
+	if (_destPointIndex + _destPointIndexDelta == _pointIndex && _isMoving) {
+		_parentScene->sendMessage(0x2004, 0, this);
+		_isMoving = false;
+	}
+	
+}
+
+void AsScene2207Elevator::suSetPosition() {
+	_x = (*_pointArray)[_pointIndex].x;
+	_y = (*_pointArray)[_pointIndex].y - 60;
+	processDelta();
+}
+
+uint32 AsScene2207Elevator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		moveToY(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2207Elevator::moveToY(int16 y) {
+	int16 minDistance = 480;
+
+	if (!_pointArray || _pointArray->size() == 0)
+		return;
+	
+	for (uint i = 0; i < _pointArray->size(); i++) {
+		int16 distance = ABS(y - (*_pointArray)[i].y);
+		if (distance < minDistance) {
+			minDistance = distance;
+			_destPointIndex = i;
+		}
+	}	
+
+	if (_destPointIndex != _pointIndex) {
+		if (_destPointIndex == 0 || _destPointIndex == _pointArray->size() - 1) {
+			_destPointIndexDelta = 0;
+		} else if (_destPointIndex < _pointIndex) {
+			_destPointIndexDelta = -2;
+		} else {
+			_destPointIndexDelta = 2;
+		}
+		// TODO Sound1ChList_addSoundResource(0x02700413, 0xD3B02847, true);
+		// TODO Sound1ChList_playLooping(0xD3B02847);
+	}
+
+	_isMoving = true;
+
+}
+
+Class500::Class500(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 1200), _soundResource1(vm), _soundResource2(vm),
+	_soundResource3(vm), _soundResource4(vm), _flag1(true) {
+	
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Class500::handleMessage);
+	createSurface1(0xCCFD6090, 100);
+	_x = 309;
+	_y = 320;
+	setFileHash(0xCCFD6090, 0, -1);
+	_newHashListIndex = 0;
+	_soundResource2.load(0x40330872);
+	_soundResource3.load(0x72A2914A);
+	_soundResource4.load(0xD4226080);
+}
+
+Class500::~Class500() {
+	// TODO Sound1ChList_sub_407AF0(0x80D00820);
+}
+
+uint32 Class500::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (!_flag1) {
+			if (param.asInteger() == 0x3423093) {
+				// TODO Sound1ChList_addSoundResource(0x80D00820, 0x12121943, true);
+				// TODO Sound1ChList_playLooping(0x12121943);
+			} else if (param.asInteger() == 0x834AB011) {
+				_soundResource1.stop();
+				_soundResource2.stop();
+				_soundResource3.stop();
+				_soundResource4.stop();
+				// TODO Sound1ChList_deleteSoundByHash(0x12121943);
+			} else if (param.asInteger() == 0x3A980501) {
+				_soundResource2.play();
+			} else if (param.asInteger() == 0x2A2AD498) {
+				_soundResource3.play();
+			} else if (param.asInteger() == 0xC4980008) {
+				_soundResource4.play();
+			} else if (param.asInteger() == 0x06B84228) {
+				_soundResource1.play(0xE0702146);
+			}
+		}
+		break;
+	case 0x2006:
+		sub441D50();
+		break;
+	case 0x2007:
+		sub441D90();
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+void Class500::sub441D50() {
+	if (!_flag1) {
+		SetAnimationCallback3(NULL);
+	} else {
+		setFileHash(0xCCFD6090, 0, -1);
+		_flag1 = false;
+		_surface->setVisible(true);
+	}
+}
+
+void Class500::sub441D90() {
+	SetAnimationCallback3(&Class500::sub441DA0);
+}
+
+void Class500::sub441DA0() {
+	setFileHash1();
+	_soundResource1.stop();
+	_soundResource2.stop();
+	_soundResource3.stop();
+	_soundResource4.stop();
+	// TODO Sound1ChList_deleteSoundByHash(0x12121943);
+	_flag1 = true;
+	_surface->setVisible(false);
+}
+
+Class501::Class501(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1200), _flag1(true) {
+	
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&Class501::handleMessage);
+	createSurface1(0x8CAA0099, 100);
+	_x = 309;
+	_y = 320;
+	setFileHash(0x8CAA0099, 0, -1);
+	_newHashListIndex = 0;
+}
+
+uint32 Class501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2006:
+		sub441FA0();
+		break;
+	case 0x2007:
+		sub441FE0();
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	}
+	return messageResult;
+}
+
+void Class501::sub441FA0() {
+	if (!_flag1) {
+		SetAnimationCallback3(NULL);
+	} else {
+		_surface->setVisible(true);
+		setFileHash(0x8CAA0099, 0, -1);
+		_flag1 = false;
+	}
+}
+
+void Class501::sub441FE0() {
+	SetAnimationCallback3(&Class501::sub441FF0);
+}
+
+void Class501::sub441FF0() {
+	setFileHash1();
+	_surface->setVisible(false);
+	_flag1 = true;
+}
+
+Class597::Class597(NeverhoodEngine *vm, uint32 fileHash, int index)
+	: StaticSprite(vm, fileHash, 100) {
+
+	_x = 330;
+	_y = 246 + index * 50;
+	StaticSprite::update();	
+}
+
+Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
+	_flag1(true), _elevatorSurfacePriority(0) {
+
+	_vm->gameModule()->initScene3009Vars();
+
+	//DEBUG
+	setGlobalVar(0x4D080E54, 1);
+
+	if (!getSubVar(0x40050052, 0x88460852))
+		setSubVar(0x40050052, 0x88460852, 1);
+
+	SetMessageHandler(&Scene2207::handleMessage);
+	SetUpdateHandler(&Scene2207::update);
+	_surfaceFlag = true;
+
+	_klayman = new KmScene2207(_vm, this, 0, 0); // CHECKME: Stack vars are uninitialized?!
+	addSprite(_klayman);
+	_klayman->setRepl(64, 0);
+	
+	setMessageList(0x004B38E8);
+	
+	_asElevator = addSprite(new AsScene2207Elevator(_vm, this));
+	
+	if (getGlobalVar(0x4D080E54)) {
+
+		_background = addBackground(new DirtyBackground(_vm, 0x88C00241, 0, 0));
+		_palette = new Palette(_vm, 0x88C00241);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x00245884, NULL));
+	
+		_ssMaskPart1 = addSprite(new StaticSprite(_vm, 0xE20A28A0, 1200));
+		_ssMaskPart2 = addSprite(new StaticSprite(_vm, 0x688F62A5, 1100));
+		_ssMaskPart3 = addSprite(new StaticSprite(_vm, 0x0043B038, 1100));
+	
+		_asTape = addSprite(new AsScene1201Tape(_vm, this, 4, 1100, 277, 428, 0x9148A011));
+		_vm->_collisionMan->addSprite(_asTape); 
+	
+//		_class487 = addSprite(new Class487(_vm, this, 527, 333, 0));
+//		_vm->_collisionMan->addSprite(_class487);
+		
+		_class500 = addSprite(new Class500(_vm, this));
+		_class501 = addSprite(new Class501(_vm));
+		
+		_class500->getSurface()->setVisible(false);
+		_class501->getSurface()->setVisible(false);
+
+		_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x2C4061C4, 100, 0));
+	
+//		_class487->getSurface()->getClipRect().x1 = 0;
+//		_class487->getSurface()->getClipRect().y1 = 0;
+//		_class487->getSurface()->getClipRect().x2 = _ssMaskPart3->getSurface()->getDrawRect().x + _ssMaskPart3->getSurface()->getDrawRect().width;
+//		_class487->getSurface()->getClipRect().y2 = 480;
+	
+		_klayman->getSurface()->getClipRect().x1 = 0;
+		_klayman->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
+		_klayman->getSurface()->getClipRect().x2 = 640;
+		_klayman->getSurface()->getClipRect().y2 = _ssMaskPart2->getSurface()->getDrawRect().y + _ssMaskPart2->getSurface()->getDrawRect().height;
+	
+		_asElevator->getSurface()->getClipRect().x1 = 0;
+		_asElevator->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
+		_asElevator->getSurface()->getClipRect().x2 = 640;
+		_asElevator->getSurface()->getClipRect().y2 = _ssMaskPart2->getSurface()->getDrawRect().y + _ssMaskPart2->getSurface()->getDrawRect().height;
+	
+	} else {
+
+		setGlobalVar(0x81890D14, 1);
+
+		_background = addBackground(new DirtyBackground(_vm, 0x05C02A55, 0, 0));
+		_palette = new Palette(_vm, 0x05C02A55);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x02A51054, NULL));
+
+		_ssMaskPart1 = addSprite(new StaticSprite(_vm, 0x980E46A4, 1200));
+
+		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0));
+		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1));
+		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2));
+
+		_asTape = NULL;
+		_class487 = NULL;
+		_class500 = NULL;
+		_class501 = NULL;
+		_ssButton = NULL;
+
+		_klayman->getSurface()->getClipRect().x1 = 0;
+		_klayman->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
+		_klayman->getSurface()->getClipRect().x2 = 640;
+		_klayman->getSurface()->getClipRect().y2 = 480;
+		
+		_asElevator->getSurface()->getClipRect().x1 = 0;
+		_asElevator->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
+		_asElevator->getSurface()->getClipRect().x2 = 640;
+		_asElevator->getSurface()->getClipRect().y2 = 480;
+
+	}
+
+	_dataResource.load(0x00524846);
+
+	setRectList(0x004B38B8);
+
+	_klayman->sendEntityMessage(0x1014, _asElevator, this);
+	_klayman->sendMessage(0x2001, 0, this);
+	_asElevator->sendMessage(0x2000, 480, this);
+
+	_soundResource2.load(calcHash("fxFogHornSoft"));
+
+}
+
+void Scene2207::update() {
+	Scene::update();
+	if (_elevatorSurfacePriority != 0) {
+		setSurfacePriority(_asElevator->getSurface(), _elevatorSurfacePriority);
+		_elevatorSurfacePriority = 0;
+	}
+	if (_klayman->getY() == 423) {
+		_flag1 = _klayman->getX() > 459 && _klayman->getX() < 525;
+	}
+}
+
+uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x0014F275) {
+			if (_flag1) {
+				_asElevator->sendMessage(0x2000, _mouseClickPos.y, this);
+				_klayman->sendEntityMessage(0x1014, _asElevator, this);
+				_klayman->sendMessage(0x2001, 0, this);
+			} else {
+				messageList402220();
+			}
+		} else if (param.asInteger() == 0x34569073) {
+			if (_flag1) {
+				_messageListFlag1 = true;
+				_asElevator->sendMessage(0x2000, 0, this);
+				_klayman->sendEntityMessage(0x1014, _asElevator, this);
+				_klayman->sendMessage(0x2001, 0, this);
+			} else {
+				messageList402220();
+			}
+		} else if (param.asInteger() == 0x4054C877) {
+			if (_flag1) {
+				_asElevator->sendMessage(0x2000, 480, this);
+				_klayman->sendEntityMessage(0x1014, _asElevator, this);
+				_klayman->sendMessage(0x2001, 0, this);
+			} else {
+				messageList402220();
+			}
+		} else if (param.asInteger() == 0x0CBC6211) {
+			_klayman->sendEntityMessage(0x1014, _asElevator, this);
+			_klayman->sendMessage(0x2001, 0, this);
+			setRectList(0x004B38B8);
+		} else if (param.asInteger() == 0x402064D8) {
+			_klayman->sendEntityMessage(0x1014, _ssButton, this);
+		} else if (param.asInteger() == 0x231DA241) {
+			if (_ssButton) {
+				setMessageList(0x004B38F0);
+			} else {
+				setMessageList(0x004B37D8);
+			}
+		}
+		break;
+	case 0x2002:
+		_elevatorSurfacePriority = param.asInteger();
+		break;
+	case 0x2003:
+		_messageListFlag1 = false;
+		break;
+	case 0x4807:
+		_class500->sendMessage(0x2007, 0, this);
+		_class501->sendMessage(0x2007, 0, this);
+		break;
+	case 0x480B:
+		if (sender == _ssButton) {
+			if (getSubVar(0x14800353, 0x40119852)) {
+				setSubVar(0x14800353, 0x40119852, 0);
+				_soundResource1.play(calcHash("fx3LocksDisable"));
+			} else {
+				setSubVar(0x14800353, 0x40119852, 1);
+				_soundResource2.play();
+			}
+		}
+		break;
+	case 0x480F:
+		_class500->sendMessage(0x2006, 0, this);
+		_class501->sendMessage(0x2006, 0, this);
+		_class500->getSurface()->setVisible(true);
+		_class501->getSurface()->setVisible(true);
+		break;
+	case 0x4826:
+		if (sender == _asTape) {
+			if (_klayman->getY() == 423) {
+				_klayman->sendEntityMessage(0x1014, _asTape, this);
+				setMessageList(0x004B3958);
+			}
+		} else if (_flag1) {
+			SetMessageHandler(&Scene2207::handleMessage2);
+			_asElevator->sendMessage(0x2000, 347, this);
+			_klayman->sendEntityMessage(0x1014, _asElevator, this);
+			_klayman->sendMessage(0x2001, 0, this);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2002:
+		_elevatorSurfacePriority = param.asInteger();
+		break;
+	case 0x2004:
+		SetMessageHandler(&Scene2207::handleMessage);
+		_klayman->sendMessage(0x2005, 0, this);
+//		_klayman->sendEntityMessage(0x1014, _class487, this);
+		setMessageList(0x004B3920);
+		setRectList(0x004B3948);
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood
