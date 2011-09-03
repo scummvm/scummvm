@@ -14946,58 +14946,6 @@ gotfirst:
 	al = es.byte(bx+6);
 }
 
-void DreamGenContext::turnanypathon() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 255;
-	ch = ah;
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	al = ah;
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 255;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::turnanypathoff() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 0;
-	ch = ah;
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	al = ah;
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 0;
-	es.byte(bx+6) = al;
-}
-
 void DreamGenContext::checkifpathison() {
 	STACK_CHECK;
 	push(ax);
@@ -17970,8 +17918,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_isitdescribed: isitdescribed(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
-		case addr_turnanypathon: turnanypathon(); break;
-		case addr_turnanypathoff: turnanypathoff(); break;
 		case addr_checkifpathison: checkifpathison(); break;
 		case addr_afternewroom: afternewroom(); break;
 		case addr_atmospheres: atmospheres(); break;

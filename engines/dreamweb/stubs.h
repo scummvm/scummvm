@@ -107,6 +107,10 @@
 	void turnpathoff(uint8 param);
 	void turnpathon();
 	void turnpathoff();
+	void turnanypathon(uint8 param, uint8 room);
+	void turnanypathoff(uint8 param, uint8 room);
+	void turnanypathon();
+	void turnanypathoff();
 	void getroomspaths();
 	uint8 *getroomspathsCPP();
 	void makebackob(SetObject *objData);

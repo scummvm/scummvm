@@ -178,6 +178,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'pixelcheckset',
 	'turnpathon',
 	'turnpathoff',
+	'turnanypathon',
+	'turnanypathoff',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

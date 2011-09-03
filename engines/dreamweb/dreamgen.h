@@ -111,8 +111,6 @@ public:
 	static const uint16 addr_atmospheres = 0xca0c;
 	static const uint16 addr_afternewroom = 0xca08;
 	static const uint16 addr_checkifpathison = 0xca04;
-	static const uint16 addr_turnanypathoff = 0xca00;
-	static const uint16 addr_turnanypathon = 0xc9fc;
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
 	static const uint16 addr_isitdescribed = 0xc9e8;
@@ -1305,7 +1303,7 @@ public:
 	void bresenhams();
 	void getbackfromops();
 	//void frameoutv();
-	void opensarters();
+	void showbyte();
 	void screenupdate();
 	//void addlength();
 	void wornerror();
@@ -1317,7 +1315,7 @@ public:
 	void mainscreen();
 	void watchreel();
 	void showfolder();
-	void turnanypathoff();
+	//void turnanypathoff();
 	void openfilefromc();
 	void gettime();
 	//void clearwork();
@@ -1342,7 +1340,7 @@ public:
 	void opentomb();
 	//void makename();
 	void buttonfour();
-	void dosometalk();
+	void restoreall();
 	//void lockmon();
 	//void dochange();
 	void getanyaddir();
@@ -1418,7 +1416,6 @@ public:
 	//void cancelch1();
 	void loadold();
 	void loadtempcharset();
-	void showbyte();
 	void useslab();
 	void dumpzoom();
 	//void aboutturn();
@@ -1525,7 +1522,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	//void doblocks();
-	void restoreall();
+	void opensarters();
 	//void delpointer();
 	void attendant();
 	void nextsymbol();
@@ -1828,7 +1825,7 @@ public:
 	void gates();
 	void newgame();
 	void showwatch();
-	void turnanypathon();
+	//void turnanypathon();
 	void restorereels();
 	void setwalk();
 	void useroutine();
@@ -1992,6 +1989,7 @@ public:
 	void emergencypurge();
 	void usemenu();
 	void alleybarksound();
+	void dosometalk();
 	void usecart();
 	void intromusic();
 	void quitkey();

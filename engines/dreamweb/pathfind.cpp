@@ -51,6 +51,27 @@ void DreamGenContext::turnpathoff(uint8 param) {
 	roomsPaths[8 * param + 6] = 0x00;
 }
 
+void DreamGenContext::turnanypathon(uint8 param, uint8 room) {
+	findormake(param, 0xff, room + 100);
+	uint8 *paths = segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	paths[8 * param + 6] = 0xff;
+}
+
+
+void DreamGenContext::turnanypathon() {
+	turnanypathon(al, ah);
+}
+
+void DreamGenContext::turnanypathoff(uint8 param, uint8 room) {
+	findormake(param, 0x00, room + 100);
+	uint8 *paths = segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	paths[8 * param + 6] = 0x00;
+}
+
+void DreamGenContext::turnanypathoff() {
+	turnanypathoff(al, ah);
+}
+
 void DreamGenContext::getroomspaths() {
 	es = data.word(kReels);
 	bx = data.byte(kRoomnum) * 144;
