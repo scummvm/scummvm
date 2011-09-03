@@ -202,7 +202,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 		
 		// 90% of the screen height for menu dialog/keyboard
 		if (ABS(dragDiffY) >= ABS(screenY*0.9)) {
-			if (dragDiffY >= 0) {
+			if (dragDiffY <= 0) {
 				int gblPDKVersion = PDL_GetPDKVersion();
 				// check for correct PDK Version
 				if (gblPDKVersion >= 300) {
