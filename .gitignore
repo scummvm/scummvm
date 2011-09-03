@@ -68,6 +68,8 @@ lib*.a
 /backends/platform/wince/scummvm.dll
 /backends/platform/wince/*.swp
 
+/portdist
+
 /dists/rpl.exe
 
 /dists/codeblocks/*.cbp
