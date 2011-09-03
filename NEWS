@@ -23,6 +23,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      better, since important notes are not interrupted anymore.
    - Implemented CMS support for Loom, The Secret of Monkey Island and
      Indiana Jones and the Last Crusade.
+   - Improved palette handling for the Amiga version of Indiana Jones and the
+     Fate of Atlantis.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
