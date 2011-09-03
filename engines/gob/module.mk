@@ -73,6 +73,7 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	minigames/geisha/evilfish.o \
 	save/savefile.o \
 	save/savehandler.o \
 	save/saveload.o \
