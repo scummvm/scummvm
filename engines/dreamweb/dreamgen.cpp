@@ -14946,52 +14946,6 @@ gotfirst:
 	al = es.byte(bx+6);
 }
 
-void DreamGenContext::turnpathon() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 255;
-	ch = data.byte(kRoomnum);
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	getroomspaths();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (nopathon) */;
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 255;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::turnpathoff() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 0;
-	ch = data.byte(kRoomnum);
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	getroomspaths();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (nopathoff) */;
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 0;
-	es.byte(bx+6) = al;
-}
-
 void DreamGenContext::turnanypathon() {
 	STACK_CHECK;
 	push(ax);
@@ -18016,8 +17970,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_isitdescribed: isitdescribed(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
-		case addr_turnpathon: turnpathon(); break;
-		case addr_turnpathoff: turnpathoff(); break;
 		case addr_turnanypathon: turnanypathon(); break;
 		case addr_turnanypathoff: turnanypathoff(); break;
 		case addr_checkifpathison: checkifpathison(); break;

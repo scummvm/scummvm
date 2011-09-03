@@ -176,6 +176,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'obicons',
 	'compare',
 	'pixelcheckset',
+	'turnpathon',
+	'turnpathoff',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

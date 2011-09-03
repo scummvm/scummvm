@@ -27,22 +27,28 @@
 
 namespace DreamGen {
 
-void DreamGenContext::turnpathonCPP(uint8 param) {
-	al = param;
-	push(es);
-	push(bx);
-	turnpathon();
-	bx = pop();
-	es = pop();
+void DreamGenContext::turnpathon() {
+	turnpathon(al);
 }
 
-void DreamGenContext::turnpathoffCPP(uint8 param) {
-	al = param;
-	push(es);
-	push(bx);
-	turnpathoff();
-	bx = pop();
-	es = pop();
+void DreamGenContext::turnpathon(uint8 param) {
+	findormake(param, 0xff, data.byte(kRoomnum) + 100);
+	uint8 *roomsPaths = getroomspathsCPP();
+	if (param == 0xff)
+		return;
+	roomsPaths[8 * param + 6] = 0xff;
+}
+
+void DreamGenContext::turnpathoff() {
+	turnpathoff(al);
+}
+
+void DreamGenContext::turnpathoff(uint8 param) {
+	findormake(param, 0x00, data.byte(kRoomnum) + 100);
+	uint8 *roomsPaths = getroomspathsCPP();
+	if (param == 0xff)
+		return;
+	roomsPaths[8 * param + 6] = 0x00;
 }
 
 void DreamGenContext::getroomspaths() {

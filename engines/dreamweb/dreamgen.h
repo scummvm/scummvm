@@ -113,8 +113,6 @@ public:
 	static const uint16 addr_checkifpathison = 0xca04;
 	static const uint16 addr_turnanypathoff = 0xca00;
 	static const uint16 addr_turnanypathon = 0xc9fc;
-	static const uint16 addr_turnpathoff = 0xc9f8;
-	static const uint16 addr_turnpathon = 0xc9f4;
 	static const uint16 addr_findfirstpath = 0xc9f0;
 	static const uint16 addr_findpathofpoint = 0xc9ec;
 	static const uint16 addr_isitdescribed = 0xc9e8;
@@ -1275,7 +1273,6 @@ public:
 	void uselighter();
 	void showmenu();
 	void usepoolreader();
-	void showgroup();
 	void startdmablock();
 	void useopenbox();
 	void clearbuffers();
@@ -1648,7 +1645,7 @@ public:
 	void purgeanitem();
 	void madman();
 	void createpanel();
-	void turnpathon();
+	//void turnpathon();
 	void enablesoundint();
 	void madmanstelly();
 	void constant();
@@ -1766,6 +1763,7 @@ public:
 	void drawitall();
 	void usestereo();
 	void showcurrentfile();
+	//void turnpathoff();
 	//void copyname();
 	void look();
 	void setmouse();
@@ -1942,7 +1940,7 @@ public:
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
-	void turnpathoff();
+	void showgroup();
 	void findallryan();
 	//void channel0tran();
 	void buttonpress();

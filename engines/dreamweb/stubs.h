@@ -103,8 +103,10 @@
 	void showreelframe();
 	void showreelframe(Reel *reel);
 	const Frame *getreelframeax(uint16 frame);
-	void turnpathonCPP(uint8 param);
-	void turnpathoffCPP(uint8 param);
+	void turnpathon(uint8 param);
+	void turnpathoff(uint8 param);
+	void turnpathon();
+	void turnpathoff();
 	void getroomspaths();
 	uint8 *getroomspathsCPP();
 	void makebackob(SetObject *objData);
