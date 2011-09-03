@@ -43,6 +43,7 @@
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
 
@@ -316,44 +317,6 @@ void GfxFrameout::sortPlanes() {
 	Common::sort(_planes.begin(), _planes.end(), planeSortHelper);
 }
 
-static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
-	uint16 curChar = 0;
-	int16 maxChars = 0, curCharCount = 0;
-	uint16 width = 0;
-
-	while (width <= maxWidth) {
-		curChar = (*(const byte *)text++);
-
-		switch (curChar) {
-		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
-		//  which means, we split text like
-		//  'Mature, experienced software analyst available.' 0xD 0xA
-		//  'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
-		//   and 0xA '-------' 0xA (which is the official sierra subtitle separator)
-		//  Sierra did it the same way.
-		case 0xD:
-			// Check, if 0xA is following, if so include it as well
-			if ((*(const unsigned char *)text) == 0xA)
-				curCharCount++;
-			// it's meant to pass through here
-		case 0xA:
-			curCharCount++;
-			// and it's also meant to pass through here
-		case 0:
-			return curCharCount;
-		case ' ':
-			maxChars = curCharCount; // return count up to (but not including) breaking space
-			break;
-		}
-		if (width + font->getCharWidth(curChar) > maxWidth)
-			break;
-		width += font->getCharWidth(curChar);
-		curCharCount++;
-	}
-
-	return maxChars;
-}
-
 void GfxFrameout::kernelFrameout() {
 	if (g_sci->_robotDecoder->isVideoLoaded()) {
 		bool skipVideo = false;
@@ -578,62 +541,25 @@ void GfxFrameout::kernelFrameout() {
 				}
 			} else {
 				// Most likely a text entry
-				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
-				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					reg_t stringObject = readSelector(_segMan, itemEntry->object, SELECTOR(text));
-
-					// The object in the text selector of the item can be either a raw string
-					// or a Str object. In the latter case, we need to access the object's data
-					// selector to get the raw string.
-					if (_segMan->isHeapObject(stringObject))
-						stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
-
-					Common::String text = _segMan->getString(stringObject);
-					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
-					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
-					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
-
-					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
-					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
-
-					uint16 startX = itemEntry->x + it->planeRect.left;
-					uint16 curY = itemEntry->y + it->planeRect.top;
-					const char *txt = text.c_str();
+					TextEntry *textEntry = g_sci->_gfxText32->getTextEntry(itemEntry->object);
+					uint16 startX = ((textEntry->x * _screen->getWidth()) / scriptsRunningWidth) + it->planeRect.left;
+					uint16 startY = ((textEntry->y * _screen->getHeight()) / scriptsRunningHeight) + it->planeRect.top;
 					// HACK. The plane sometimes doesn't contain the correct width. This
 					// hack breaks the dialog options when speaking with Grace, but it's
 					// the best we got up to now. This happens because of the unimplemented
 					// kTextWidth function in SCI32.
 					// TODO: Remove this once kTextWidth has been implemented.
 					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
-					int16 charCount;
 
 					// Upscale the coordinates/width if the fonts are already upscaled
 					if (_screen->fontIsUpscaled()) {
 						startX = startX * _screen->getDisplayWidth() / _screen->getWidth();
-						curY = curY * _screen->getDisplayHeight() / _screen->getHeight();
+						startY = startY * _screen->getDisplayHeight() / _screen->getHeight();
 						w  = w * _screen->getDisplayWidth() / _screen->getWidth();
 					}
 
-					while (*txt) {
-						charCount = GetLongest(txt, w, font);
-						if (charCount == 0)
-							break;
-
-						uint16 curX = startX;
-
-						for (int i = 0; i < charCount; i++) {
-							unsigned char curChar = txt[i];
-							font->draw(curChar, curY, curX, foreColor, dimmed);
-							curX += font->getCharWidth(curChar);
-						}
-
-						curY += font->getHeight();
-						txt += charCount;
-						while (*txt == ' ')
-							txt++; // skip over breaking spaces
-					}
-
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->object, startX, startY, w);
 				}
 			}
 		}
