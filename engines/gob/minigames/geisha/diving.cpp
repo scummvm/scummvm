@@ -37,11 +37,15 @@ namespace Gob {
 namespace Geisha {
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
-	_objects(0), _gui(0), _oko(0), _lungs(0), _heart(0) {
+	_objects(0), _gui(0), _oko(0), _lungs(0), _heart(0),
+	_blackPearl(0), _blackPearlCount(0) {
 
+	_blackPearl = new Surface(11, 8, 1);
 }
 
 Diving::~Diving() {
+	delete _blackPearl;
+
 	deinit();
 }
 
@@ -88,10 +92,13 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 		_vm->_util->waitEndFrame();
 		_vm->_util->processInput();
+
+		if (_blackPearlCount >= 2)
+			break;
 	}
 
 	deinit();
-	return true;
+	return _blackPearlCount >= 2;
 }
 
 void Diving::init() {
@@ -117,6 +124,14 @@ void Diving::init() {
 	_heart->setPosition();
 	_heart->setVisible(true);
 	_heart->setPause(true);
+
+	Surface tmp(320, 103, 1);
+
+	_vm->_video->drawPackedSprite("tperlobj.cmp", tmp);
+
+	_blackPearl->blit(tmp, 282, 80, 292, 87, 0, 0);
+
+	_blackPearlCount = 0;
 }
 
 void Diving::deinit() {
@@ -152,6 +167,18 @@ void Diving::initScreen() {
 	_heart->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
 
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
+}
+
+void Diving::foundBlackPearl() {
+	_blackPearlCount++;
+
+	if        (_blackPearlCount == 1) {
+		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 147, 179, 0);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 157, 186);
+	} else if (_blackPearlCount == 2) {
+		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 160, 179, 0);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 160, 186);
+	}
 }
 
 } // End of namespace Geisha

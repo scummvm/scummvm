@@ -28,6 +28,7 @@
 namespace Gob {
 
 class GobEngine;
+class Surface;
 class DECFile;
 class ANIFile;
 class ANIObject;
@@ -54,11 +55,16 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
+	Surface *_blackPearl;
+
+	uint8 _blackPearlCount;
 
 	void init();
 	void deinit();
 
 	void initScreen();
+
+	void foundBlackPearl();
 };
 
 } // End of namespace Geisha
