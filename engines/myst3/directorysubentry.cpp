@@ -18,9 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "engines/myst3/directorysubentry.h"
@@ -38,7 +35,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_face = inStream.readByte();
 	_type = inStream.readByte();
 
-	dump();
+	// dump();
 
 	if (_padding == 2) {
 		uint32 _padding2 = inStream.readUint32LE();

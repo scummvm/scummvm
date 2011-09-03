@@ -49,7 +49,7 @@ namespace Myst3 {
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst), _scriptEngine(this),
 		_db(0) {
-	_console = new GUI::Debugger();
+	_console = new Console(this);
 }
 
 Myst3Engine::~Myst3Engine() {

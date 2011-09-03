@@ -27,6 +27,11 @@
 
 namespace Myst3 {
 
+Scene::Scene():
+		_cameraPitch(0.0f), _cameraHeading(0.0f)
+{
+}
+
 void Scene::init(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -38,9 +43,6 @@ void Scene::init(int width, int height) {
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
-	
-	_cameraPitch = 0.0f;
-	_cameraHeading = 0.0f;
 }
 
 void Scene::clear() {
@@ -67,6 +69,11 @@ void Scene::updateCamera(Common::Point &mouse) {
 
 	// Keep pitch within allowed values
 	_cameraPitch = CLIP(_cameraPitch, -60.0f, 80.0f);
+}
+
+void Scene::lookAt(float pitch, float heading) {
+	_cameraPitch = pitch;
+	_cameraHeading = heading;
 }
 
 } // end of namespace Myst3

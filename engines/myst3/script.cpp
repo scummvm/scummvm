@@ -35,9 +35,13 @@ Script::~Script() {
 }
 
 void Script::run(Common::Array<Opcode> *script) {
+	debug("Script start %p", (void *) script);
+
 	for (uint i = 0; i < script->size(); i++) {
 		runOp(&script->operator[](i));
 	}
+
+	debug("Script stop %p ", (void *) script);
 }
 
 void Script::runOp(Opcode *op) {

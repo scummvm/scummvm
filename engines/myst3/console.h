@@ -18,43 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef MYST3_SCENE_H
-#define MYST3_SCENE_H
+#ifndef CONSOLE_H_
+#define CONSOLE_H_
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+#include "gui/debugger.h"
 
-#include "common/rect.h"
+#include "engines/myst3/myst3.h"
 
 namespace Myst3 {
 
-class Scene {
-	private:
-		float _cameraPitch;
-		float _cameraHeading;
-		Common::Point _mouseOld;
+class Myst3Engine;
 
-	public:
-		Scene();
+class Console : public GUI::Debugger {
+public:
+	Console(Myst3Engine *vm);
+	virtual ~Console();
 
-		void init(int width, int height);
-		void clear();
-		void setupCamera();
-		void updateCamera(Common::Point &mouse);
-		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
+private:
+	Myst3Engine *_vm;
 
-		void lookAt(float pitch, float heading);
+	bool Cmd_Infos(int argc, const char **argv);
+	bool Cmd_LookAt(int argc, const char **argv);
 };
 
-} // end of namespace Myst3
-
-#endif
+} /* namespace Myst3 */
+#endif /* CONSOLE_H_ */

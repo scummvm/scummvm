@@ -2,6 +2,7 @@ MODULE := engines/myst3
 
 MODULE_OBJS := \
 	archive.o \
+	console.o \
 	database.o \
 	detection.o \
 	directoryentry.o \

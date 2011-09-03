@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "engines/myst3/archive.h"
+#include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
@@ -35,12 +36,14 @@
 
 namespace Myst3 {
 
+class Console;
+
 class Myst3Engine : public Engine {
 
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return _console; }
+	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 
 	Myst3Engine(OSystem *syst, int gameFlags);
@@ -50,13 +53,15 @@ public:
 
 private:
 	OSystem *_system;
-	GUI::Debugger *_console;
+	Console *_console;
 	
 	Node _node;
 	Scene _scene;
 	Archive _archive;
 	Script _scriptEngine;
 	Database *_db;
+
+	friend class Console;
 };
 
 } // end of namespace Myst3
