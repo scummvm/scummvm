@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "engines/myst3/hotspot.h"
 #include "common/str.h"
+#include "common/ptr.h"
 #include "common/array.h"
 #include "common/stream.h"
 
@@ -37,6 +38,10 @@ struct NodeData
 	Common::Array<CondScript> scripts;
 	Common::Array<HotSpot> hotspots;
 };
+
+// Nodes are using ref counting pointers since they can be
+// deleted by a script they own
+typedef Common::SharedPtr<NodeData> NodePtr;
 
 struct RoomData
 {
@@ -79,7 +84,9 @@ public:
 	/**
 	 * Returns a node's hotspots and scripts from the currently loaded room
 	 */
-	NodeData *getNodeData(uint16 nodeID);
+	NodePtr getNodeData(uint16 nodeID);
+
+	void getRoomName(char name[8]);
 private:
 	struct GameVersion {
 		const char *description;
@@ -94,12 +101,12 @@ private:
 	Common::Array<AgeData> _ages;
 
 	uint16 _currentRoomID;
-	Common::Array<NodeData> _currentRoom;
+	RoomData *_currentRoomData;
+	Common::Array<NodePtr> _currentRoomNodes;
 
 	Common::Array<AgeData> loadAges(Common::ReadStream &s);
 	RoomData loadRoom(Common::ReadStream &s);
 
-	NodeData loadNode(Common::ReadStream & s);
 	Common::Array<CondScript> loadCondScripts(Common::ReadStream & s);
 	Common::Array<Opcode> loadOpcodes(Common::ReadStream & s);
 	Common::Array<HotSpot> loadHotspots(Common::ReadStream & s);

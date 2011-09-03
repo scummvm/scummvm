@@ -31,7 +31,8 @@ namespace Myst3 {
 Database::Database(const Common::String &executable) :
 		_exePath(executable),
 		_currentRoomID(0),
-		_gameVersion(0) {
+		_gameVersion(0),
+		_currentRoomData(0) {
 
 	// Game versions database
 	static GameVersion versions[] = {
@@ -82,59 +83,54 @@ Database::Database(const Common::String &executable) :
 	file.close();
 }
 
-NodeData *Database::getNodeData(uint16 nodeID) {
-	for (uint i = 0; i < _currentRoom.size(); i++) {
-		if (_currentRoom[i].id == nodeID)
-			return &_currentRoom[i];
+NodePtr Database::getNodeData(uint16 nodeID) {
+	for (uint i = 0; i < _currentRoomNodes.size(); i++) {
+		if (_currentRoomNodes[i]->id == nodeID)
+			return _currentRoomNodes[i];
 	}
 
-	return 0;
+	error("Node not found %d", nodeID);
 }
 
 void Database::loadRoomScripts(const uint8 roomID) {
 	if (roomID == _currentRoomID)
 		return;
 
-	_currentRoom.clear();
-
-	uint32 roomScriptsOffset = 0;
+	_currentRoomData = 0;
+	_currentRoomNodes.clear();
 
 	for (uint i = 0; i < _ages.size(); i++)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (_ages[i].rooms[j].id == roomID) {
-				roomScriptsOffset = _ages[i].rooms[j].scriptsOffset;
+				_currentRoomData = &_ages[i].rooms[j];
 				break;
 			}
 		}
 
-	if (!roomScriptsOffset)
+	if (!_currentRoomData || !_currentRoomData->scriptsOffset)
 		return;
 
 	Common::File file;
 	file.open(_exePath);
-	file.seek(roomScriptsOffset);
+	file.seek(_currentRoomData->scriptsOffset);
 
 	_currentRoomID = roomID;
 
 	while (1) {
-		NodeData node = loadNode(file);
+		int16 id = file.readUint16LE();
 
-		if (node.id <= 0)
+		if (id <= 0)
 			break;
 
-		node.scripts = loadCondScripts(file);
-		node.hotspots = loadHotspots(file);
+		NodePtr node = NodePtr(new NodeData());
+		node->id = id;
+		node->scripts = loadCondScripts(file);
+		node->hotspots = loadHotspots(file);
 
-		_currentRoom.push_back(node);
+		_currentRoomNodes.push_back(node);
 	}
 
 	file.close();
-}
-
-NodeData Database::loadNode(Common::ReadStream &s) {
-	NodeData node;
-	node.id = s.readUint16LE();
-	return node;
 }
 
 Common::Array<CondScript> Database::loadCondScripts(Common::ReadStream &s) {
@@ -283,6 +279,10 @@ RoomData Database::loadRoom(Common::ReadStream &s) {
 		room.unkOffset -= _baseOffset;
 
 	return room;
+}
+
+void Database::getRoomName(char name[8]) {
+	memcpy(&name[0], &_currentRoomData->name, 8);
 }
 
 } /* namespace Myst3 */

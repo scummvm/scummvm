@@ -20,45 +20,43 @@
  *
  */
 
-#ifndef MYST3_ENGINE_H
-#define MYST3_ENGINE_H
-
-#include "engines/engine.h"
-
-#include "common/system.h"
-
-#include "engines/myst3/archive.h"
-#include "engines/myst3/database.h"
-#include "engines/myst3/node.h"
-#include "engines/myst3/scene.h"
+#include "engines/myst3/myst3.h"
 #include "engines/myst3/script.h"
+#include "engines/myst3/hotspot.h"
 
 namespace Myst3 {
 
-class Myst3Engine : public Engine {
+Script::Script(Myst3Engine *vm):
+	_vm(vm) {
+}
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return _console; }
-public:
+Script::~Script() {
+	// TODO Auto-generated destructor stub
+}
 
-	Myst3Engine(OSystem *syst, int gameFlags);
-	virtual ~Myst3Engine();
+void Script::run(Common::Array<Opcode> *script) {
+	for (uint i = 0; i < script->size(); i++) {
+		runOp(&script->operator[](i));
+	}
+}
 
-	void goToNode(uint16 nodeID, uint8 roomID = 0);
+void Script::runOp(Opcode *op) {
+	debug("opcode %d", op->op);
 
-private:
-	OSystem *_system;
-	GUI::Debugger *_console;
-	
-	Node _node;
-	Scene _scene;
-	Archive _archive;
-	Script _scriptEngine;
-	Database *_db;
-};
+	for (uint i = 0; i < op->args.size(); i++) {
+		debug("\targ %d: %d", i, op->args[i]);
+	}
 
-} // end of namespace Myst3
+	switch (op->op) {
+	case 138:
+		_vm->goToNode(op->args[0]);
+		break;
+	case 139:
+		_vm->goToNode(op->args[1], op->args[0]);
+		break;
+	default:
+		break;
+	}
+}
 
-#endif
+} /* namespace Myst3 */

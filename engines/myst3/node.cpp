@@ -18,19 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "engines/myst3/room.h"
+#include "engines/myst3/node.h"
 
 #include "common/debug.h"
 #include "common/rect.h"
 
 namespace Myst3 {
 
-void Room::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {	
+void Node::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {
 	Graphics::Surface texture;
 	texture.create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
@@ -52,7 +49,7 @@ void Room::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {
 	texture.free();
 }
 
-void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
+void Node::setFaceTextureRGB(int face, Graphics::Surface *texture) {
 	glGenTextures(1, &_cubeTextures[face]);
 
 	glBindTexture(GL_TEXTURE_2D, _cubeTextures[face]);
@@ -64,7 +61,7 @@ void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-void Room::dumpFaceMask(Archive &archive, uint16 index, int face) {
+void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	byte *mask = new byte[640 * 640];
 	memset(mask, 0, sizeof(mask));
 	uint32 headerOffset = 0;
@@ -105,7 +102,7 @@ void Room::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	delete[] mask;
 }
 
-void Room::load(Archive &archive, uint16 index) {
+void Node::load(Archive &archive, uint16 index) {
 	for (int i = 0; i < 6; i++) {
 		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, DirectorySubEntry::kFaceTexture);
 
@@ -116,15 +113,17 @@ void Room::load(Archive &archive, uint16 index) {
 			setFaceTextureJPEG(i, &jpeg);
 		}
 	}
+
+	_id = index;
 }
 
-void Room::unload() {
+void Node::unload() {
 	for (int i = 0; i < 6; i++) {
 		glDeleteTextures(1, &_cubeTextures[i]);
 	}
 }
 
-void Room::draw() {
+void Node::draw() {
 	// Size of the cube
 	float t = 1.0f;
 

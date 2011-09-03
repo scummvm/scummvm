@@ -95,6 +95,7 @@ bool Archive::open(const char *fileName) {
 }
 
 void Archive::close() {
+	_directory.clear();
 	_file.close();
 }
 

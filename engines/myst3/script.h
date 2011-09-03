@@ -18,43 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef MYST3_ROOM_H
-#define MYST3_ROOM_H
+#ifndef SCRIPT_H_
+#define SCRIPT_H_
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#include "engines/myst3/archive.h"
-
-#include "graphics/surface.h"
-#include "graphics/jpeg.h"
-#include "graphics/conversion.h"
+#include "common/array.h"
 
 namespace Myst3 {
 
-class Room {
-	private:
-		static const int _cubeTextureSize = 1024;
-		GLuint _cubeTextures[6];
-		
-	public:
-		void setFaceTextureRGB(int face, Graphics::Surface *texture);
-		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
-		void draw();
-		void load(Archive &archive, uint16 index);
-		void unload();
-		void dumpFaceMask(Archive &archive, uint16 index, int face);
+class Myst3Engine;
+struct Opcode;
+
+class Script {
+public:
+	Script(Myst3Engine *vm);
+	virtual ~Script();
+
+	void run(Common::Array<Opcode> *script);
+
+private:
+	void runOp(Opcode *op);
+
+	Myst3Engine *_vm;
 };
 
-} // end of namespace Myst3
-
-#endif
+} /* namespace Myst3 */
+#endif /* SCRIPT_H_ */

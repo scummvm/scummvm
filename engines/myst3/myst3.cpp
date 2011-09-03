@@ -18,9 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/events.h"
@@ -50,7 +47,8 @@
 namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
-		Engine(syst), _system(syst) {
+		Engine(syst), _system(syst), _scriptEngine(this),
+		_db(0) {
 	_console = new GUI::Debugger();
 }
 
@@ -61,21 +59,16 @@ Myst3Engine::~Myst3Engine() {
 Common::Error Myst3Engine::run() {
 	const int w = 800;
 	const int h = 600;
-	const char archiveFileName[] = "LEISnodes.m3a";
-	int nodeID = 1;
-	
-	if (!_archive.open(archiveFileName)) {
-		error("Unable to open archive");
-	}
 
-	Database db = Database("M3.exe");
-	db.loadRoomScripts(245); // LEIS
+	_db = new Database("M3.exe");
+
+	goToNode(1, 245); // LEIS
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
 
 	_scene.init(w, h);
-	_room.load(_archive, nodeID);
+	_node.load(_archive, 1);
 	
 	for(;;) {
 		// Process events
@@ -88,17 +81,11 @@ Common::Error Myst3Engine::run() {
 				_scene.updateCamera(event.relMouse);
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				Common::Point mouse = _scene.getMousePos();
-				NodeData *nodeData = db.getNodeData(nodeID);
+				NodePtr nodeData = _db->getNodeData(_node.getId());
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 					if (nodeData->hotspots[j].isPointInRects(mouse)) {
-						const Opcode &op = nodeData->hotspots[j].script[0];
-						debug("op %d, %d", op.op, op.args[0]);
-						if (op.op == 138) {
-							nodeID = op.args[0];
-							_room.unload();
-							_room.load(_archive, nodeID);
-						}
+						_scriptEngine.run(&nodeData->hotspots[j].script);
 					}
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
@@ -119,17 +106,39 @@ Common::Error Myst3Engine::run() {
 		_scene.clear();
 		_scene.setupCamera();
 
-		_room.draw();
+		_node.draw();
 
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 
-	_room.unload();
+	_node.unload();
 
 	_archive.close();
 
+	delete _db;
+
 	return Common::kNoError;
+}
+
+void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
+	_node.unload();
+
+	if (roomID != 0) {
+		char roomName[8];
+
+		_db->loadRoomScripts(roomID);
+
+		_db->getRoomName(roomName);
+		Common::String nodeFile = Common::String::format("%snodes.m3a", roomName);
+
+		_archive.close();
+		if (!_archive.open(nodeFile.c_str())) {
+			error("Unable to open archive %s", nodeFile.c_str());
+		}
+	}
+
+	_node.load(_archive, nodeID);
 }
 
 } // end of namespace Myst3

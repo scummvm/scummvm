@@ -20,43 +20,40 @@
  *
  */
 
-#ifndef MYST3_ENGINE_H
-#define MYST3_ENGINE_H
+#ifndef MYST3_ROOM_H
+#define MYST3_ROOM_H
 
-#include "engines/engine.h"
-
-#include "common/system.h"
+#ifdef SDL_BACKEND
+#include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
 #include "engines/myst3/archive.h"
-#include "engines/myst3/database.h"
-#include "engines/myst3/node.h"
-#include "engines/myst3/scene.h"
-#include "engines/myst3/script.h"
+
+#include "graphics/surface.h"
+#include "graphics/jpeg.h"
+#include "graphics/conversion.h"
 
 namespace Myst3 {
 
-class Myst3Engine : public Engine {
+class Node {
+	private:
+		static const int _cubeTextureSize = 1024;
+		GLuint _cubeTextures[6];
+		
+		uint16 _id;
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return _console; }
-public:
+	public:
+		void setFaceTextureRGB(int face, Graphics::Surface *texture);
+		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
+		void draw();
+		void load(Archive &archive, uint16 id);
+		void unload();
+		void dumpFaceMask(Archive &archive, uint16 index, int face);
 
-	Myst3Engine(OSystem *syst, int gameFlags);
-	virtual ~Myst3Engine();
-
-	void goToNode(uint16 nodeID, uint8 roomID = 0);
-
-private:
-	OSystem *_system;
-	GUI::Debugger *_console;
-	
-	Node _node;
-	Scene _scene;
-	Archive _archive;
-	Script _scriptEngine;
-	Database *_db;
+		uint16 getId() { return _id; }
 };
 
 } // end of namespace Myst3

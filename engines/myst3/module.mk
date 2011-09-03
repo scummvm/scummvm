@@ -8,8 +8,9 @@ MODULE_OBJS := \
 	directorysubentry.o \
 	hotspot.o \
 	myst3.o \
-	room.o \
-	scene.o
+	node.o \
+	scene.o \
+	script.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)
