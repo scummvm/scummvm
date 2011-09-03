@@ -42,6 +42,12 @@ public:
 	/** Is the object currently visible? */
 	bool isVisible() const;
 
+	/** Pause/Unpause the animation. */
+	void setPause(bool pause);
+
+	/** Is the animation currently paused? */
+	bool isPaused() const;
+
 	/** Set the current position to the animation's default. */
 	void setPosition();
 	/** Set the current position. */
@@ -81,6 +87,7 @@ private:
 	uint16 _frame;     ///< The current frame.
 
 	bool _visible; ///< Is the object currently visible?
+	bool _paused;  ///< Is the animation currently paused?
 
 	int16 _x; ///< The current X position.
 	int16 _y; ///< The current Y position.

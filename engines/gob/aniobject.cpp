@@ -26,8 +26,8 @@
 
 namespace Gob {
 
-ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _visible(false),
-	_x(0), _y(0), _background(0), _drawn(false) {
+ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani),
+	_visible(false), _paused(false), _x(0), _y(0), _background(0), _drawn(false) {
 
 	setAnimation(0);
 	setPosition();
@@ -43,6 +43,14 @@ void ANIObject::setVisible(bool visible) {
 
 bool ANIObject::isVisible() const {
 	return _visible;
+}
+
+void ANIObject::setPause(bool pause) {
+	_paused = pause;
+}
+
+bool ANIObject::isPaused() const {
+	return _paused;
 }
 
 void ANIObject::setAnimation(uint16 animation) {
@@ -152,6 +160,9 @@ void ANIObject::clear(Surface &dest, int16 &left, int16 &top,
 }
 
 void ANIObject::advance() {
+	if (_paused)
+		return;
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 

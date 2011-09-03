@@ -58,6 +58,8 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 	objects.push_back(_water);
 	objects.push_back(&shark);
+	objects.push_back(_lungs);
+	objects.push_back(_heart);
 
 	shark.enter(EvilFish::kDirectionLeft, 90);
 
@@ -109,10 +111,12 @@ void Diving::init() {
 	_lungs->setAnimation(0);
 	_lungs->setPosition();
 	_lungs->setVisible(true);
+	_lungs->setPause(true);
 
 	_heart->setAnimation(1);
 	_heart->setPosition();
 	_heart->setVisible(true);
+	_heart->setPause(true);
 }
 
 void Diving::deinit() {
