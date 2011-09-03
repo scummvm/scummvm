@@ -32,6 +32,8 @@
 
 #include "backends/events/webossdl/webossdl-events.h"
 #include "gui/message.h"
+#include "engines/engine.h"
+#include "PDL.h"
 
 // Inidicates if gesture area is pressed down or not.
 static bool gestureDown = false;
@@ -118,6 +120,16 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	    gestureDown = false;
 	}
 
+        // handle virtual keyboard dismiss key
+        if (ev.key.keysym.sym == 24) {
+                int gblPDKVersion = PDL_GetPDKVersion();
+                // check for correct PDK Version
+                if (gblPDKVersion >= 300) {
+                        PDL_SetKeyboardState(PDL_FALSE);
+                        return true;
+                }
+        }
+
 	// Call original SDL key handler.
 	return SdlEventSource::handleKeyDown(ev, event);
 }
@@ -135,6 +147,16 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.key.keysym.sym == SDLK_WORLD_71) {
 		gestureDown = false;
 		return true;
+	}
+
+	// handle virtual keyboard dismiss key
+	if (ev.key.keysym.sym == 24) {
+		int gblPDKVersion = PDL_GetPDKVersion();
+		// check for correct PDK Version
+		if (gblPDKVersion >= 300) {
+			PDL_SetKeyboardState(PDL_FALSE);
+			return true;
+		}
 	}
 
 	// Call original SDL key handler.
@@ -175,6 +197,25 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (motionPtrIndex == ev.button.which) {
 		motionPtrIndex = -1;
+
+		int screenY = g_system->getHeight();
+		
+		// 60% of the screen height for menu dialog/keyboard
+		if (ABS(dragDiffY) >= ABS(screenY*0.6)) {
+			if (dragDiffY >= 0) {
+				int gblPDKVersion = PDL_GetPDKVersion();
+				// check for correct PDK Version
+				if (gblPDKVersion >= 300) {
+					PDL_SetKeyboardState(PDL_TRUE);
+					return true;
+				}
+			} else {
+				if (g_engine && !g_engine->isPaused()) {
+					g_engine->openMainMenuDialog();
+					return true;
+				}
+			}
+		}
 
 		// When drag mode was active then simply send a mouse up event
 		if (dragging)
