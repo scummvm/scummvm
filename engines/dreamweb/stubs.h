@@ -84,7 +84,7 @@
 	void facerightway();
 	void walking(Sprite *sprite);
 	void autosetwalk();
-	void checkdest(const uint8 *roomsPaths);
+	void checkdest(const Path *roomsPaths);
 	void aboutturn(Sprite *sprite);
 	void backobject(Sprite *sprite);
 	void constant(Sprite *sprite, SetObject *objData);
@@ -112,7 +112,7 @@
 	void turnanypathon();
 	void turnanypathoff();
 	void getroomspaths();
-	uint8 *getroomspathsCPP();
+	Path *getroomspathsCPP();
 	void makebackob(SetObject *objData);
 	void modifychar();
 	void lockmon();

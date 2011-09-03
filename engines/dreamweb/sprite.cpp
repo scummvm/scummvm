@@ -501,8 +501,8 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::facerightway() {
-	uint8 *paths = getroomspathsCPP();
-	uint8 dir = paths[8 * data.byte(kManspath) + 7];
+	Path *paths = getroomspathsCPP();
+	uint8 dir = paths[data.byte(kManspath)].b7;
 	data.byte(kTurntoface) = dir;
 	data.byte(kLeavedirection) = dir;
 }
