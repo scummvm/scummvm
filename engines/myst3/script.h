@@ -30,17 +30,35 @@ namespace Myst3 {
 class Myst3Engine;
 struct Opcode;
 
+#define DECLARE_OPCODE(x) void x(const Opcode &cmd)
+
 class Script {
 public:
 	Script(Myst3Engine *vm);
 	virtual ~Script();
 
 	void run(Common::Array<Opcode> *script);
+	const Common::String describeCommand(uint16 op);
 
 private:
-	void runOp(Opcode *op);
+	typedef void (Script::*CommandProc)(const Opcode &cmd);
+
+	struct Command {
+		Command() {}
+		Command(uint16 o, CommandProc p, const char *d) : op(o), proc(p), desc(d) {}
+
+		uint16 op;
+		CommandProc proc;
+		const char *desc;
+	};
 
 	Myst3Engine *_vm;
+	Common::Array<Command> _commands;
+
+	void runOp(const Opcode &op);
+
+	DECLARE_OPCODE(goToNode);
+	DECLARE_OPCODE(goToRoomNode);
 };
 
 } /* namespace Myst3 */

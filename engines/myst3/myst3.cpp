@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/error.h"
 #include "common/config-manager.h"
@@ -47,12 +48,19 @@
 namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
-		Engine(syst), _system(syst), _scriptEngine(this),
-		_db(0) {
-	_console = new Console(this);
+		Engine(syst), _system(syst),
+		_db(0), _console(0), _scriptEngine(0) {
+	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
+	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
+	DebugMan.addDebugChannel(kDebugNode, "Node", "Track Node Changes");
 }
 
 Myst3Engine::~Myst3Engine() {
+	DebugMan.clearAllDebugChannels();
+
+	delete _db;
+	delete _scriptEngine;
 	delete _console;
 }
 
@@ -60,6 +68,8 @@ Common::Error Myst3Engine::run() {
 	const int w = 800;
 	const int h = 600;
 
+	_console = new Console(this);
+	_scriptEngine = new Script(this);
 	_db = new Database("M3.exe");
 
 	goToNode(1, 245); // LEIS
@@ -85,7 +95,7 @@ Common::Error Myst3Engine::run() {
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 					if (nodeData->hotspots[j].isPointInRects(mouse)) {
-						_scriptEngine.run(&nodeData->hotspots[j].script);
+						_scriptEngine->run(&nodeData->hotspots[j].script);
 					}
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
@@ -113,10 +123,7 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_node.unload();
-
 	_archive.close();
-
-	delete _db;
 
 	return Common::kNoError;
 }

@@ -43,7 +43,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	Common::Point lookAt = _vm->_scene.getMousePos();
 
     DebugPrintf("current node: %s%d    ", roomName, nodeId);
-    DebugPrintf("pitch: %d heading: %d",  lookAt.x, lookAt.y);
+    DebugPrintf("pitch: %d heading: %d",  lookAt.y, lookAt.x);
 
     for (uint i = 0; i < nodeData->hotspots.size(); i++) {
     	DebugPrintf("\nhotspot %d > condition: %d\n",
@@ -59,8 +59,8 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
     	for(uint j = 0; j < nodeData->hotspots[i].script.size(); j++) {
     		Opcode &opcode = nodeData->hotspots[i].script[j];
 
-    		DebugPrintf("    op %d ( ",
-    				opcode.op);
+			DebugPrintf("    op %s ( ",
+					_vm->_scriptEngine->describeCommand(opcode.op).c_str());
 
     		for(uint k = 0; k < opcode.args.size(); k++) {
     			DebugPrintf("%d ", opcode.args[k]);

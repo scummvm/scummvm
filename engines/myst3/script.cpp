@@ -28,39 +28,59 @@ namespace Myst3 {
 
 Script::Script(Myst3Engine *vm):
 	_vm(vm) {
+#define OPCODE(op, x) _commands.push_back(Command(op, &Script::x, #x))
+
+	OPCODE(138, goToNode);
+	OPCODE(139, goToRoomNode);
+
+#undef OPCODE
 }
 
 Script::~Script() {
-	// TODO Auto-generated destructor stub
 }
 
 void Script::run(Common::Array<Opcode> *script) {
-	debug("Script start %p", (void *) script);
+	debugC(kDebugScript, "Script start %p", (void *) script);
 
 	for (uint i = 0; i < script->size(); i++) {
-		runOp(&script->operator[](i));
+		runOp(script->operator[](i));
 	}
 
-	debug("Script stop %p ", (void *) script);
+	debugC(kDebugScript, "Script stop %p ", (void *) script);
 }
 
-void Script::runOp(Opcode *op) {
-	debug("opcode %d", op->op);
+void Script::runOp(const Opcode &op) {
+	bool ranOpcode = false;
 
-	for (uint i = 0; i < op->args.size(); i++) {
-		debug("\targ %d: %d", i, op->args[i]);
-	}
+	for (uint16 i = 0; i < _commands.size(); i++)
+		if (_commands[i].op == op.op) {
+			(this->*(_commands[i].proc)) (op);
+			ranOpcode = true;
+			break;
+		}
 
-	switch (op->op) {
-	case 138:
-		_vm->goToNode(op->args[0]);
-		break;
-	case 139:
-		_vm->goToNode(op->args[1], op->args[0]);
-		break;
-	default:
-		break;
-	}
+	if (!ranOpcode)
+		warning("Trying to run invalid opcode %d", op.op);
+}
+
+const Common::String Script::describeCommand(uint16 op) {
+	for (uint16 i = 0; i < _commands.size(); i++)
+		if (_commands[i].op == op)
+			return Common::String::format("%d, %s", op, _commands[i].desc);
+
+	return Common::String::format("%d", op);
+}
+
+void Script::goToNode(const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
+
+	_vm->goToNode(cmd.args[0]);
+}
+
+void Script::goToRoomNode(const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Go to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->goToNode(cmd.args[1], cmd.args[0]);
 }
 
 } /* namespace Myst3 */

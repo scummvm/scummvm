@@ -36,6 +36,14 @@
 
 namespace Myst3 {
 
+// Engine Debug Flags
+enum {
+	kDebugVariable = (1 << 0),
+	kDebugSaveLoad = (1 << 1),
+	kDebugNode     = (1 << 2),
+	kDebugScript   = (1 << 3)
+};
+
 class Console;
 
 class Myst3Engine : public Engine {
@@ -58,7 +66,7 @@ private:
 	Node _node;
 	Scene _scene;
 	Archive _archive;
-	Script _scriptEngine;
+	Script *_scriptEngine;
 	Database *_db;
 
 	friend class Console;
