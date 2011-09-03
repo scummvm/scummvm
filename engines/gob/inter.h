@@ -33,6 +33,11 @@
 
 namespace Gob {
 
+namespace Geisha {
+	class Diving;
+	class Penetration;
+}
+
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save a bit of memory used by opcode names in the Gob engine.
 #ifndef REDUCE_MEMORY_USAGE
@@ -337,7 +342,7 @@ protected:
 class Inter_Geisha : public Inter_v1 {
 public:
 	Inter_Geisha(GobEngine *vm);
-	virtual ~Inter_Geisha() {}
+	virtual ~Inter_Geisha();
 
 protected:
 	virtual void setupOpcodesDraw();
@@ -362,6 +367,10 @@ protected:
 	void oGeisha_caress2(OpGobParams &params);
 
 	int16 loadSound(int16 slot);
+
+private:
+	Geisha::Diving      *_diving;
+	Geisha::Penetration *_penetration;
 };
 
 class Inter_v2 : public Inter_v1 {

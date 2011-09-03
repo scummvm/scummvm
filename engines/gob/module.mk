@@ -74,6 +74,8 @@ MODULE_OBJS := \
 	demos/scnplayer.o \
 	demos/batplayer.o \
 	minigames/geisha/evilfish.o \
+	minigames/geisha/diving.o \
+	minigames/geisha/penetration.o \
 	save/savefile.o \
 	save/savehandler.o \
 	save/saveload.o \
