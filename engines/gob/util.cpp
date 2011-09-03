@@ -257,6 +257,18 @@ bool Util::checkKey(int16 &key) {
 	return true;
 }
 
+bool Util::keyPressed() {
+	int16 key = checkKey();
+	if (key)
+		return true;
+
+	int16 x, y;
+	MouseButtons buttons;
+
+	getMouseState(&x, &y, &buttons);
+	return buttons != kMouseButtonsNone;
+}
+
 void Util::getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;

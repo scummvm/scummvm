@@ -82,18 +82,6 @@ void Inter_Geisha::oGeisha_loadCursor(OpFuncParams &params) {
 	o1_loadCursor(params);
 }
 
-bool Inter_Geisha::keyPressed() {
-	int16 key = _vm->_util->checkKey();
-	if (key)
-		return true;
-
-	int16 x, y;
-	MouseButtons buttons;
-
-	_vm->_util->getMouseState(&x, &y, &buttons);
-	return buttons != kMouseButtonsNone;
-}
-
 struct TOTTransition {
 	const char *to;
 	const char *from;
@@ -134,7 +122,7 @@ void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {
 		}
 
 	if (needWait)
-		while (!keyPressed())
+		while (!_vm->_util->keyPressed())
 			_vm->_util->longDelay(1);
 }
 

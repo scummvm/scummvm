@@ -108,6 +108,7 @@ public:
 	int16 getKey();
 	int16 checkKey();
 	bool checkKey(int16 &key);
+	bool keyPressed();
 
 	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
