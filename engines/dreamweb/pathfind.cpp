@@ -33,7 +33,7 @@ void DreamGenContext::turnpathon() {
 
 void DreamGenContext::turnpathon(uint8 param) {
 	findormake(param, 0xff, data.byte(kRoomnum) + 100);
-	Path *roomsPaths = getroomspathsCPP();
+	PathNode *roomsPaths = getroomspathsCPP()->nodes;
 	if (param == 0xff)
 		return;
 	roomsPaths[param].b6 = 0xff;
@@ -45,7 +45,7 @@ void DreamGenContext::turnpathoff() {
 
 void DreamGenContext::turnpathoff(uint8 param) {
 	findormake(param, 0x00, data.byte(kRoomnum) + 100);
-	Path *roomsPaths = getroomspathsCPP();
+	PathNode *roomsPaths = getroomspathsCPP()->nodes;
 	if (param == 0xff)
 		return;
 	roomsPaths[param].b6 = 0x00;
@@ -53,7 +53,7 @@ void DreamGenContext::turnpathoff(uint8 param) {
 
 void DreamGenContext::turnanypathon(uint8 param, uint8 room) {
 	findormake(param, 0xff, room + 100);
-	Path *paths = (Path *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].b6 = 0xff;
 }
 
@@ -64,7 +64,7 @@ void DreamGenContext::turnanypathon() {
 
 void DreamGenContext::turnanypathoff(uint8 param, uint8 room) {
 	findormake(param, 0x00, room + 100);
-	Path *paths = (Path *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].b6 = 0x00;
 }
 
@@ -77,21 +77,21 @@ void DreamGenContext::getroomspaths() {
 	bx = data.byte(kRoomnum) * 144;
 }
 
-Path *DreamGenContext::getroomspathsCPP() {
+RoomPaths *DreamGenContext::getroomspathsCPP() {
 	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
-	return (Path *)result;
+	return (RoomPaths *)result;
 }
 
 void DreamGenContext::autosetwalk() {
 	al = data.byte(kManspath);
 	if (data.byte(kFinaldest) == al)
 		return;
-	const Path *roomsPaths = getroomspathsCPP();
+	const RoomPaths *roomsPaths = getroomspathsCPP();
 	checkdest(roomsPaths);
-	data.word(kLinestartx) = roomsPaths[data.byte(kManspath)].x - 12;
-	data.word(kLinestarty) = roomsPaths[data.byte(kManspath)].y - 12;
-	data.word(kLineendx) = roomsPaths[data.byte(kDestination)].x - 12;
-	data.word(kLineendy) = roomsPaths[data.byte(kDestination)].y - 12;
+	data.word(kLinestartx) = roomsPaths->nodes[data.byte(kManspath)].x - 12;
+	data.word(kLinestarty) = roomsPaths->nodes[data.byte(kManspath)].y - 12;
+	data.word(kLineendx) = roomsPaths->nodes[data.byte(kDestination)].x - 12;
+	data.word(kLineendy) = roomsPaths->nodes[data.byte(kDestination)].y - 12;
 	bresenhams();
 	if (data.byte(kLinedirection) != 0) {
 		data.byte(kLinepointer) = data.byte(kLinelength) - 1;
@@ -101,30 +101,29 @@ void DreamGenContext::autosetwalk() {
 	data.byte(kLinepointer) = 0;
 }
 
-void DreamGenContext::checkdest(const Path *roomsPaths) {
-	const uint8 *p = (const uint8 *)roomsPaths + 12 * 8;
+void DreamGenContext::checkdest(const RoomPaths *roomsPaths) {
+	const PathSegment *segments = roomsPaths->segments;
 	ah = data.byte(kManspath) << 4;
 	al = data.byte(kDestination);
 	uint8 destination = data.byte(kDestination);
 	for (size_t i = 0; i < 24; ++i) {
-		dh = p[0] & 0xf0;
-		dl = p[0] & 0x0f;
+		dh = segments[i].b0 & 0xf0;
+		dl = segments[i].b0 & 0x0f;
 		if (ax == dx) {
-			data.byte(kDestination) = p[1] & 0x0f;
+			data.byte(kDestination) = segments[i].b1 & 0x0f;
 			return;
 		}
-		dl = (p[0] & 0xf0) >> 4;
-		dh = (p[0] & 0x0f) << 4;
+		dl = (segments[i].b0 & 0xf0) >> 4;
+		dh = (segments[i].b0 & 0x0f) << 4;
 		if (ax == dx) {
-			destination = p[1] & 0x0f;
+			destination = segments[i].b1 & 0x0f;
 		}
-		p += 2;
 	}
 	data.byte(kDestination) = destination;
 }
 
 void DreamGenContext::findxyfrompath() {
-	const Path *roomsPaths = getroomspathsCPP();
+	const PathNode *roomsPaths = getroomspathsCPP()->nodes;
 	data.byte(kRyanx) = roomsPaths[data.byte(kManspath)].x - 12;
 	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
 }

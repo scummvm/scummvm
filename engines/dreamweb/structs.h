@@ -228,7 +228,7 @@ struct Change {
 	uint8 type;
 };
 
-struct Path {
+struct PathNode {
 	uint8 x;
 	uint8 y;
 	uint8 b2;
@@ -236,6 +236,16 @@ struct Path {
 	uint8 b4;
 	uint8 b5;
 	uint8 b6;
-	uint8 b7;
+	uint8 dir;
+};
+
+struct PathSegment {
+	uint8 b0;
+	uint8 b1;
+};
+
+struct RoomPaths {
+	PathNode    nodes[12];
+	PathSegment segments[24];
 };
 
