@@ -20,6 +20,8 @@
  *
  */
 
+//#define ENABLE_XCODE
+
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -177,6 +179,7 @@ int main(int argc, char *argv[]) {
 
 			projectType = kProjectMSVC;
 
+#ifdef ENABLE_XCODE
 		} else if (!std::strcmp(argv[i], "--xcode")) {
 			if (projectType != kProjectNone) {
 				std::cerr << "ERROR: You cannot pass more than one project type!\n";
@@ -184,6 +187,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			projectType = kProjectXcode;
+#endif
 
 		} else if (!std::strcmp(argv[i], "--msvc-version")) {
 			if (i + 1 >= argc) {
