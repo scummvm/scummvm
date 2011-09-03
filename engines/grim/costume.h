@@ -72,7 +72,7 @@ public:
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
 
-	void update(float frameTime);
+	int update(float frameTime);
 	void animate();
 	void setupTextures();
 	void draw();
@@ -98,7 +98,7 @@ public:
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
-		virtual void update(float time) { }
+		virtual int update(float time) { return 0; }
 		virtual void animate() { }
 		virtual void setupTexture() { }
 		virtual void draw(int *x1, int *y1, int *x2, int *y2) { }

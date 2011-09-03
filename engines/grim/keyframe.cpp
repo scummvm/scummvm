@@ -172,6 +172,22 @@ bool KeyframeAnim::animate(ModelNode *nodes, int num, float time, float fade, bo
 	}
 }
 
+int KeyframeAnim::getMarker(float startTime, float stopTime) const {
+	if (!_markers)
+		return 0;
+
+	startTime *= _fps;
+	stopTime *= _fps ;
+
+	for (int i = 0; i < _numMarkers; ++i) {
+		Marker &m = _markers[i];
+		if (m.frame >= startTime && m.frame < stopTime) {
+			return m.val;
+		}
+	}
+	return 0;
+}
+
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);

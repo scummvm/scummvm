@@ -40,6 +40,7 @@ public:
 	void loadBinary(const char *data, int len);
 	void loadText(TextSplitter &ts);
 	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
+	int getMarker(float startTime, float stopTime) const;
 
 	float getLength() const { return _numFrames / _fps; }
 	const Common::String &getFilename() const { return _fname; }

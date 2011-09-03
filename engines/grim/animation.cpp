@@ -100,11 +100,15 @@ Animation::FadeMode Animation::getFadeMode() const {
 
 }
 
-void Animation::update(int time) {
+int Animation::update(int time) {
+	int newTime;
 	if (_time < 0)		// For first time through
-		_time = 0;
+		newTime = 0;
 	else if (!_paused)
-		_time += time;
+		newTime = _time + time;
+
+	int marker = _keyframe->getMarker(_time / 1000.f, newTime / 1000.f);
+	_time = newTime;
 
 	int animLength = (int)(_keyframe->getLength() * 1000);
 
@@ -121,7 +125,7 @@ void Animation::update(int time) {
 				_fade = 1.f;
 				_fadeMode = None;
 				deactivate();
-				return;
+				return 0;
 			}
 		}
 	} else {
@@ -137,9 +141,7 @@ void Animation::update(int time) {
 					_time = animLength;
 				break;
 			case Looping:
-				do
-					_time -= animLength;
-				while (_time > animLength);
+				_time = -1;
 				break;
 			case PauseAtEnd:
 				_time = animLength;
@@ -157,6 +159,8 @@ void Animation::update(int time) {
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyframe->getFilename().c_str());
 		}
 	}
+
+	return marker;
 }
 
 void Animation::saveState(SaveGame *state) const {

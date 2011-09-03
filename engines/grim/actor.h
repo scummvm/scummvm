@@ -451,16 +451,7 @@ public:
 	bool _toClean;
 
 private:
-	enum Footstep {
-		LeftWalk = 10,
-		RightWalk = 15,
-		LeftRun = 20,
-		RightRun = 25,
-		LeftTurn = 30,
-		RightTurn = 35
-	};
-
-	void costumeMarkerCallback(Footstep step);
+	void costumeMarkerCallback(int marker);
 	void updateWalk();
 	void addShadowPlane(const char *n, Scene *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
@@ -500,8 +491,6 @@ private:
 	Costume *_walkCostume;
 	int _walkChore;
 	bool _walkedLast, _walkedCur;
-	bool _lastWasLeft;
-	int _lastStepTime;
 	bool _running;
 
 	Costume *_turnCostume;

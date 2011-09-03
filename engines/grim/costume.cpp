@@ -169,7 +169,7 @@ class MainModelComponent : public ModelComponent {
 public:
 	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	void init();
-	void update(float time);
+	int update(float time);
 	void setColormap(CMap *cmap);
 	void reset();
 	~MainModelComponent();
@@ -192,7 +192,7 @@ public:
 		return mc->getCMap();
 	}
 	void setKey(int val);
-	void update(float time);
+	int update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -498,12 +498,14 @@ void MainModelComponent::init() {
 	_hier->_hierVisible = _visible;
 }
 
-void MainModelComponent::update(float time) {
+int MainModelComponent::update(float time) {
 	if (!_hierShared)
 		// Otherwise, it was already initialized
 		// and reinitializing it will destroy work
 		// from previous costumes
 		ModelComponent::update(time);
+
+	return 0;
 }
 
 void MainModelComponent::setColormap(CMap *cmap) {
@@ -579,7 +581,7 @@ public:
 	void init();
 	void fade(Animation::FadeMode, int fadeLength);
 	void setKey(int val);
-	void update(float time);
+	int update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -673,11 +675,11 @@ void KeyframeComponent::reset() {
 	}
 }
 
-void KeyframeComponent::update(float time) {
+int KeyframeComponent::update(float time) {
 	if (!_anim->getIsActive())
-		return;
+		return 0;
 
-	_anim->update(time);
+	return _anim->update(time);
 }
 
 void KeyframeComponent::init() {
@@ -731,8 +733,9 @@ void MeshComponent::reset() {
 // 	_node->_meshVisible = true;
 }
 
-void MeshComponent::update(float /*time*/) {
+int MeshComponent::update(float /*time*/) {
 	_node->setMatrix(_matrix);
+	return 0;
 }
 
 void MeshComponent::saveState(SaveGame *state) {
@@ -1521,7 +1524,7 @@ void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
 			_components[i]->draw(x1, y1, x2, y2);
 }
 
-void Costume::update(float time) {
+int Costume::update(float time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update(time);
 		if (!(*i)->_playing) {
@@ -1530,12 +1533,18 @@ void Costume::update(float time) {
 		}
 	}
 
+	int marker = 0;
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
-			_components[i]->update(time);
+			int m = _components[i]->update(time);
+			if (m > 0) {
+				marker = m;
+			}
 		}
 	}
+
+	return marker;
 }
 
 void Costume::animate() {

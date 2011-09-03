@@ -72,8 +72,6 @@ Actor::Actor(const Common::String &actorName) :
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
-	_lastWasLeft = false;
-	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
@@ -103,8 +101,6 @@ Actor::Actor() :
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
-	_lastWasLeft = false;
-	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
@@ -661,17 +657,6 @@ void Actor::walkForward() {
 	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
 		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
 
-	if (_lastWasLeft)
-		if (_running)
-			costumeMarkerCallback(RightRun);
-		else
-			costumeMarkerCallback(RightWalk);
-	else
-		if (_running)
-			costumeMarkerCallback(LeftRun);
-		else
-			costumeMarkerCallback(LeftWalk);
-
 	if (! _constrain) {
 		_pos += forwardVec * dist;
 		_walkedCur = true;
@@ -822,11 +807,6 @@ void Actor::turn(int dir) {
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
 	setYaw(_yaw + delta);
 	_currTurnDir = dir;
-
-	if (_lastWasLeft)
-		costumeMarkerCallback(RightTurn);
-	else
-		costumeMarkerCallback(LeftTurn);
 }
 
 float Actor::getYawTo(const Actor &a) const {
@@ -1094,17 +1074,6 @@ void Actor::updateWalk() {
 	}
 
 	_walkedCur = true;
-
-	if (_lastWasLeft)
-		if (_running)
-			costumeMarkerCallback(RightRun);
-		else
-			costumeMarkerCallback(RightWalk);
-	else
-		if (_running)
-			costumeMarkerCallback(LeftRun);
-		else
-			costumeMarkerCallback(LeftWalk);
 }
 
 void Actor::update(float frameTime) {
@@ -1135,11 +1104,6 @@ void Actor::update(float frameTime) {
 			setYaw(_yaw - turnAmt);
 		}
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
-
-		if (_lastWasLeft)
-			costumeMarkerCallback(RightTurn);
-		else
-			costumeMarkerCallback(LeftTurn);
 	}
 
 	if (_walking) {
@@ -1149,7 +1113,6 @@ void Actor::update(float frameTime) {
 	if (_walkChore >= 0) {
 		if (_walkedCur) {
 			if (_walkCostume->isChoring(_walkChore, false) < 0) {
-				_lastStepTime = 0;
 				_walkCostume->stopChore(_walkChore);
 				_walkCostume->playChoreLooping(_walkChore);
 				_walkCostume->fadeChoreIn(_walkChore, 150);
@@ -1257,7 +1220,10 @@ void Actor::update(float frameTime) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
-		c->update(frameTime);
+		int marker = c->update(frameTime);
+		if (marker > 0) {
+			costumeMarkerCallback(marker);
+		}
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
@@ -1638,19 +1604,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 
 extern int refSystemTable;
 
-void Actor::costumeMarkerCallback(Footstep step)
-{
-	int time = g_system->getMillis();
-	float rate = 400;
-	if (_running)
-		rate = 300;
-
-	if (_lastStepTime != 0 && time - _lastStepTime < rate)
-		return;
-
-	_lastStepTime = time;
-	_lastWasLeft = !_lastWasLeft;
-
+void Actor::costumeMarkerCallback(int marker) {
 	lua_beginblock();
 
 	lua_pushobject(lua_getref(refSystemTable));
@@ -1664,12 +1618,12 @@ void Actor::costumeMarkerCallback(Footstep step)
 		if (lua_isfunction(func)) {
 			lua_pushobject(func);
 			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushnumber(step);
+			lua_pushnumber(marker);
 			lua_callfunction(func);
 		}
 	} else if (lua_isfunction(table)) {
 		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushnumber(step);
+		lua_pushnumber(marker);
 		lua_callfunction(table);
 	}
 
