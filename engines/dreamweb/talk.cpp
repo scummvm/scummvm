@@ -31,7 +31,7 @@ uint16 DreamGenContext::getpersframe(uint8 index) {
 void DreamGenContext::convicons() {
 	uint8 index = data.byte(kCharacter) & 127;
 	data.word(kCurrentframe) = getpersframe(index);
-	Frame *frame = findsourceCPP();
+	Frame *frame = findsource();
 	uint16 frameNumber = (data.word(kCurrentframe) - data.word(kTakeoff)) & 0xff;
 	showframe(frame, 234, 2, frameNumber, 0);
 }

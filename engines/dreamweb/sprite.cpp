@@ -494,26 +494,18 @@ void DreamGenContext::facerightway() {
 	data.byte(kLeavedirection) = dir;
 }
 
-void DreamGenContext::findsource() {
+Frame *DreamGenContext::findsource() {
 	uint16 currentFrame = data.word(kCurrentframe);
 	if (currentFrame < 160) {
-		ds = data.word(kReel1);
 		data.word(kTakeoff) = 0;
+		return (Frame *)segRef(data.word(kReel1)).ptr(0, 0);
 	} else if (currentFrame < 320) {
-		ds = data.word(kReel2);
 		data.word(kTakeoff) = 160;
+		return (Frame *)segRef(data.word(kReel2)).ptr(0, 0);
 	} else {
-		ds = data.word(kReel3);
 		data.word(kTakeoff) = 320;
+		return (Frame *)segRef(data.word(kReel3)).ptr(0, 0);
 	}
-}
-
-Frame *DreamGenContext::findsourceCPP() {
-	push(ds);
-	findsource();
-	Frame *result = (Frame *)ds.ptr(0, 0);
-	ds = pop();
-	return result;
 }
 
 Reel *DreamGenContext::getreelstart() {
@@ -525,7 +517,7 @@ void DreamGenContext::showreelframe(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
 	data.word(kCurrentframe) = reel->frame();
-	Frame *source = findsourceCPP();
+	Frame *source = findsource();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
 	showframe(source, x, y, frame, 8);
 }
@@ -545,7 +537,7 @@ void DreamGenContext::showgamereel(ReelRoutine *routine) {
 
 const Frame *DreamGenContext::getreelframeax(uint16 frame) {
 	data.word(kCurrentframe) = frame;
-	Frame *source = findsourceCPP();
+	Frame *source = findsource();
 	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
 	return source + offset;
 }

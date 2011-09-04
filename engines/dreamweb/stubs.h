@@ -96,8 +96,7 @@
 	void widedoor(Sprite *sprite, SetObject *objData);
 	void lockeddoorway(Sprite *sprite, SetObject *objData);
 	void liftsprite(Sprite *sprite, SetObject *objData);
-	void findsource();
-	Frame *findsourceCPP();
+	Frame *findsource();
 	void showgamereel();
 	void showgamereel(ReelRoutine *routine);
 	void showreelframe(Reel *reel);
