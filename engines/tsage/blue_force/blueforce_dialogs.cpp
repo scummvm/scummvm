@@ -342,7 +342,7 @@ void AmmoBeltDialog::draw() {
 
 	// Draw the first clip if necessary
 	if (clip1) {
-		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Frame);
+		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets);
 		_clip1Rect.resize(clipSurface, _clip1Rect.left, _clip1Rect.top, 100);
 		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left, 
 			bounds.top + _clip1Rect.top);
@@ -350,7 +350,7 @@ void AmmoBeltDialog::draw() {
 
 	// Draw the second clip if necessary
 	if (clip2) {
-		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Frame);
+		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets);
 		_clip2Rect.resize(clipSurface, _clip2Rect.left, _clip2Rect.top, 100);
 		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left, 
 			bounds.top + _clip2Rect.top);

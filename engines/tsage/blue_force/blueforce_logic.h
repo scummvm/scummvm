@@ -137,6 +137,8 @@ public:
 };
 
 class SceneExt: public Scene {
+private:
+	void gunDisplay();
 public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
@@ -156,6 +158,7 @@ public:
 
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
+	void display(CursorType action);
 };
 
 class GameScene: public SceneExt {

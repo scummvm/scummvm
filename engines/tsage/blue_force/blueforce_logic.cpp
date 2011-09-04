@@ -340,10 +340,9 @@ void NamedObject::startAction(CursorType action) {
 		handled = false;
 		break;
 	}
-/*
+
 	if (!handled)
 		((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(action);
-*/
 }
 
 void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
@@ -501,18 +500,56 @@ void SceneExt::loadScene(int sceneNum) {
 }
 
 void SceneExt::checkGun() {
-	if (BF_GLOBALS.getFlag(fLoadedSpare) && (BF_GLOBALS._v4CEBA > 0)) {
-		if (--BF_GLOBALS._v4CEBA == 0)
+	// Remove a bullet from the currently loaded clip
+	if (BF_GLOBALS.getFlag(fLoadedSpare) && (BF_GLOBALS._clip2Bullets > 0)) {
+		if (--BF_GLOBALS._clip2Bullets == 0)
 			BF_GLOBALS.clearFlag(fGunLoaded);
 	} else {
-		if (BF_GLOBALS._v4CEB8 > 0)
-			--BF_GLOBALS._v4CEB8;
+		if (BF_GLOBALS._clip1Bullets > 0)
+			--BF_GLOBALS._clip1Bullets;
 
-		if (!BF_GLOBALS._v4CEB8)
+		if (!BF_GLOBALS._clip1Bullets)
 			BF_GLOBALS.clearFlag(fGunLoaded);
 	}
 
 	BF_GLOBALS._sound3.play(4);
+}
+
+void SceneExt::display(CursorType action) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2));
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2) + 6);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2) + 3);
+		break;
+	case INV_COLT45:
+		gunDisplay();
+		break;
+	default:
+		if (action < BF_LAST_INVENT)
+			SceneItem::display2(9002, (int)action);
+		break;
+	}
+}
+
+void SceneExt::gunDisplay() {
+	if (!BF_GLOBALS.getFlag(gunDrawn)) {
+		// Gun not drawn
+		SceneItem::display2(1, BF_GLOBALS.getFlag(fCanDrawGun) ? 0 : 4);
+	} else if (!BF_GLOBALS.getFlag(fGunLoaded)) {
+		// Gun not loaded
+		SceneItem::display2(1, 1);
+	} else if (!BF_GLOBALS.getHasBullets()) {
+		// Out of ammunition
+		SceneItem::display2(1, 2);
+	} else {
+		// Check scene for whether gun can fire
+		checkGun();
+	}
 }
 
 /*--------------------------------------------------------------------------*/

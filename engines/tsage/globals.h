@@ -169,8 +169,6 @@ public:
 	int _dayNumber;
 	int _v4CEA4;
 	int _v4CEA8;
-	int _v4CEB8;
-	int _v4CEBA;
 	int _driveFromScene;
 	int _driveToScene;
 	int _v4CF9E;
@@ -181,10 +179,11 @@ public:
 	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
-	int _clip1Frame, _clip2Frame;
+	int _clip1Bullets, _clip2Bullets;
 
 	BlueForceGlobals();
 	void reset();
+	bool getHasBullets();
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
