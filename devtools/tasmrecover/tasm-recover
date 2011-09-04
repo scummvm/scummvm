@@ -198,6 +198,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'findnextcolon',
 	'usetext',
 	'bresenhams',
+	'sortoutmap',
 	'examineobtext',
 	'wornerror',
 	], skip_output = [

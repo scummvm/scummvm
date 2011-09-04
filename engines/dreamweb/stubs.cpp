@@ -1882,5 +1882,15 @@ void DreamGenContext::zoomonoff() {
 	worktoscreenm();
 }
 
+void DreamGenContext::sortoutmap() {
+	const uint8 *src = (const uint8 *)segRef(data.word(kWorkspace)).ptr(0, 0);
+	uint8 *dst = (uint8 *)segRef(data.word(kMapdata)).ptr(0, 0);
+	for (uint16 y = 0; y < kMaplength; ++y) {
+		memcpy(dst, src, kMapwidth);
+		dst += kMapwidth;
+		src += 132;
+	}
+}
+
 } /*namespace dreamgen */
 

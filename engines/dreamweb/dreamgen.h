@@ -60,7 +60,6 @@ public:
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_findroominloc = 0xcb58;
 	static const uint16 addr_disablepath = 0xcb50;
-	static const uint16 addr_sortoutmap = 0xcb48;
 	static const uint16 addr_restoreall = 0xcb44;
 	static const uint16 addr_restorereels = 0xcb40;
 	static const uint16 addr_getridofall = 0xcb3c;
@@ -1769,7 +1768,7 @@ public:
 	//void madmode();
 	void intro3text();
 	void allocatemem();
-	void sortoutmap();
+	//void sortoutmap();
 	//void showrain();
 	void useopened();
 	void inventory();

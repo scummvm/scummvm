@@ -15374,29 +15374,6 @@ void DreamGenContext::restoreall() {
 	setallchanges();
 }
 
-void DreamGenContext::sortoutmap() {
-	STACK_CHECK;
-	push(es);
-	push(di);
-	ds = data.word(kWorkspace);
-	si = 0;
-	es = data.word(kMapdata);
-	di = 0;
-	cx = (60);
-blimey:
-	push(cx);
-	push(si);
-	cx = (66);
-	_movsb(cx, true);
-	si = pop();
-	cx = pop();
-	_add(si, 132);
-	if (--cx)
-		goto blimey;
-	di = pop();
-	es = pop();
-}
-
 void DreamGenContext::disablepath() {
 	STACK_CHECK;
 	push(cx);
@@ -17237,7 +17214,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getridofall: getridofall(); break;
 		case addr_restorereels: restorereels(); break;
 		case addr_restoreall: restoreall(); break;
-		case addr_sortoutmap: sortoutmap(); break;
 		case addr_disablepath: disablepath(); break;
 		case addr_findroominloc: findroominloc(); break;
 		case addr_dontloadseg: dontloadseg(); break;
