@@ -31,6 +31,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("initScript",			WRAP_METHOD(Console, Cmd_InitScript));
 	DCmd_Register("var",				WRAP_METHOD(Console, Cmd_Var));
 	DCmd_Register("listNodes",			WRAP_METHOD(Console, Cmd_ListNodes));
+	DCmd_Register("run",				WRAP_METHOD(Console, Cmd_Run));
 }
 
 Console::~Console() {
@@ -172,6 +173,23 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::Cmd_Run(int argc, const char **argv) {
+	uint16 nodeId = _vm->_node.getId();
+	uint16 roomId = 0;
+
+	if (argc >= 2) {
+		nodeId = atoi(argv[1]);
+	}
+
+	if (argc >= 3) {
+		roomId = atoi(argv[2]);
+	}
+
+	_vm->runScriptsFromNode(nodeId, roomId);
+
+	return false;
 }
 
 } /* namespace Myst3 */

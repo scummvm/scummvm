@@ -60,6 +60,7 @@ public:
 	virtual ~Myst3Engine();
 
 	void goToNode(uint16 nodeID, uint8 roomID = 0);
+	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 
 private:
 	OSystem *_system;

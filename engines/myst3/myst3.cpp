@@ -152,4 +152,15 @@ void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 	_node.load(_archive, nodeID);
 }
 
+void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
+	NodePtr nodeData = _db->getNodeData(nodeID, roomID, ageID);
+
+	for (uint j = 0; j < nodeData->scripts.size(); j++) {
+		if (_vars->evaluate(nodeData->scripts[j].condition)) {
+			if (!_scriptEngine->run(&nodeData->scripts[j].script))
+				break;
+		}
+	}
+}
+
 } // end of namespace Myst3

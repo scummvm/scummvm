@@ -530,7 +530,7 @@ void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 void Script::runScriptsFromNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
-	warning("Unimplemented opcode %d", cmd.op);
+	_vm->runScriptsFromNode(cmd.args[0]);
 }
 
 } /* namespace Myst3 */
