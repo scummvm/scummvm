@@ -100,7 +100,6 @@
 	Frame *findsourceCPP();
 	void showgamereel();
 	void showgamereel(ReelRoutine *routine);
-	void showreelframe();
 	void showreelframe(Reel *reel);
 	const Frame *getreelframeax(uint16 frame);
 	void turnpathon(uint8 param);

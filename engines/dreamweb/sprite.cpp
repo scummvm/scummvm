@@ -521,11 +521,6 @@ Reel *DreamGenContext::getreelstart() {
 	return reel;
 }
 
-void DreamGenContext::showreelframe() {
-	Reel *reel = (Reel *)es.ptr(si, sizeof(Reel));
-	showreelframe(reel);
-}
-
 void DreamGenContext::showreelframe(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
