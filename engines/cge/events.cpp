@@ -25,6 +25,10 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
+#include "gui/saveload.h"
+#include "gui/about.h"
+#include "gui/message.h"
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "cge/events.h"
 #include "cge/events.h"
@@ -81,7 +85,7 @@ const uint16 Keyboard::_scummVmCodes[0x60] = {
 	0
 };
 
-Keyboard::Keyboard() : _client(NULL) {
+Keyboard::Keyboard(CGEEngine *vm) : _client(NULL), _vm(vm) {
 	Common::set_to(&_key[0], &_key[0x60], false);
 	_current = 0;
 }
@@ -107,6 +111,33 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 	if (keycode == Common::KEYCODE_KP_ENTER) {
 		cgeCode = 28;
 		return true;
+	}
+	if (keycode == Common::KEYCODE_F5) {
+		warning("keycode %d", event.kbd.ascii);
+		if (_vm->canSaveGameStateCurrently()) {
+			const EnginePlugin *plugin = NULL;
+			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
+
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save");
+			dialog->setSaveMode(true);
+			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			Common::String savegameDescription = dialog->getResultString();
+			delete dialog;
+			_vm->saveGameState(savegameId, savegameDescription);
+		}
+		return false;
+	} else if (keycode == Common::KEYCODE_F7) {
+		if (_vm->canLoadGameStateCurrently()) {
+			const EnginePlugin *plugin = NULL;
+			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
+
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore");
+			dialog->setSaveMode(false);
+			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+			delete dialog;
+			_vm->loadGameState(savegameId);
+		}
+		return false;
 	}
 
 	// Scan through the ScummVM mapping list
