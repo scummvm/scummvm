@@ -30,18 +30,19 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("lookAt",				WRAP_METHOD(Console, Cmd_LookAt));
 	DCmd_Register("initScript",			WRAP_METHOD(Console, Cmd_InitScript));
 	DCmd_Register("var",				WRAP_METHOD(Console, Cmd_Var));
+	DCmd_Register("listNodes",			WRAP_METHOD(Console, Cmd_ListNodes));
 }
 
 Console::~Console() {
 }
 
-Common::String Console::describeScript(const Common::Array<Opcode> &script) {
+void Console::describeScript(const Common::Array<Opcode> &script) {
 	Common::String d;
 
 	for(uint j = 0; j < script.size(); j++) {
 		const Opcode &opcode = script[j];
 
-		d += Common::String::format("    op %s ( ",
+		d = Common::String::format("    op %s ( ",
 				_vm->_scriptEngine->describeCommand(opcode.op).c_str());
 
 		for(uint k = 0; k < opcode.args.size(); k++) {
@@ -49,23 +50,41 @@ Common::String Console::describeScript(const Common::Array<Opcode> &script) {
 		}
 
 		d += ")\n";
-	}
 
-	return d;
+		DebugPrintf("%s", d.c_str());
+	}
+}
+
+Common::String Console::describeCondition(int16 condition) {
+	uint16 unsignedCond = abs(condition);
+	uint16 var = unsignedCond & 2047;
+	int16 value = (unsignedCond >> 11) - 1;
+
+	if (value < 0)
+		value = 1;
+
+	return Common::String::format("var[%d] %s %d (%s)",
+			var, condition > 0 ? "==" : "!=", value,
+			_vm->_vars->evaluate(condition) ? "true" : "false");
 }
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	uint16 nodeId = _vm->_node.getId();
+	uint16 roomId = 0;
 
 	if (argc >= 2) {
 		nodeId = atoi(argv[1]);
 	}
 
-	NodePtr nodeData = _vm->_db->getNodeData(nodeId);
+	if (argc >= 3) {
+		roomId = atoi(argv[2]);
+	}
+
+	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId);
 
 	char roomName[8];
-	_vm->_db->getRoomName(roomName);
+	_vm->_db->getRoomName(roomName, roomId);
 
 	Common::Point lookAt = _vm->_scene.getMousePos();
 
@@ -73,8 +92,8 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	DebugPrintf("pitch: %d heading: %d",  lookAt.y, lookAt.x);
 
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
-		DebugPrintf("\nhotspot %d > condition: %d\n",
-				i, nodeData->hotspots[i].condition);
+		DebugPrintf("\nhotspot %d > condition: %s\n",
+				i, describeCondition(nodeData->hotspots[i].condition).c_str());
 
 		for(uint j = 0; j < nodeData->hotspots[i].rects.size(); j++) {
 			PolarRect &rect = nodeData->hotspots[i].rects[j];
@@ -83,14 +102,14 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 					rect.centerPitch, rect.centerHeading, rect.width, rect.height);
 		}
 
-		DebugPrintf("%s", describeScript(nodeData->hotspots[i].script).c_str());
+		describeScript(nodeData->hotspots[i].script);
 	}
 
 	for (uint i = 0; i < nodeData->scripts.size(); i++) {
-		DebugPrintf("\nscript %d > condition: %d\n",
-				i, nodeData->scripts[i].condition);
+		DebugPrintf("\nscript %d > condition: %s\n",
+				i, describeCondition(nodeData->scripts[i].condition).c_str());
 
-		DebugPrintf("%s", describeScript(nodeData->scripts[i].script).c_str());
+		describeScript(nodeData->scripts[i].script);
 	}
 
 	return true;
@@ -110,7 +129,7 @@ bool Console::Cmd_LookAt(int argc, const char **argv) {
 }
 
 bool Console::Cmd_InitScript(int argc, const char **argv) {
-	DebugPrintf("%s", describeScript(_vm->_db->getNodeInitScript()).c_str());
+	describeScript(_vm->_db->getNodeInitScript());
 
 	return true;
 }
@@ -126,7 +145,7 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	}
 
 	uint16 var = atoi(argv[1]);
-	uint16 value = _vm->_vars->get(var);
+	uint32 value = _vm->_vars->get(var);
 
 	if (argc == 3) {
 		value = atoi(argv[2]);
@@ -134,6 +153,24 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	}
 
 	DebugPrintf("var[%d] : %d\n", var, value);
+	return true;
+}
+
+bool Console::Cmd_ListNodes(int argc, const char **argv) {
+
+	uint16 roomID = 0;
+
+	if (argc == 2) {
+		roomID = atoi(argv[1]);
+	}
+
+	DebugPrintf("Nodes:\n");
+
+	Common::Array<uint16> list = _vm->_db->listRoomNodes(roomID);
+	for (uint i = 0; i < list.size(); i++) {
+		DebugPrintf("%d\n", list[i]);
+	}
+
 	return true;
 }
 

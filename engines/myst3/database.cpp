@@ -76,7 +76,7 @@ Database::Database(const Common::String &executable) :
 		for (uint j = 0; j < roomsOffsets.size(); j++) {
 			file.seek(roomsOffsets[j]);
 
-			_ages[i].rooms.push_back(loadRoom(file));
+			_ages[i].rooms.push_back(loadRoomDescription(file));
 		}
 	}
 
@@ -86,38 +86,61 @@ Database::Database(const Common::String &executable) :
 	file.close();
 }
 
-NodePtr Database::getNodeData(uint16 nodeID) {
-	for (uint i = 0; i < _currentRoomNodes.size(); i++) {
-		if (_currentRoomNodes[i]->id == nodeID)
-			return _currentRoomNodes[i];
+Common::Array<uint16> Database::listRoomNodes(uint8 roomID, uint32 ageID) {
+	Common::Array<NodePtr> nodes;
+	Common::Array<uint16> list;
+
+	if (roomID != 0 && roomID != _currentRoomID) {
+		RoomData *data = findRoomData(roomID);
+		nodes = loadRoomScripts(data);
+	} else {
+		nodes = _currentRoomNodes;
+	}
+
+	for (uint i = 0; i < nodes.size(); i++) {
+		list.push_back(nodes[i]->id);
+	}
+
+	return list;
+}
+
+NodePtr Database::getNodeData(uint16 nodeID, uint8 roomID, uint32 ageID) {
+	Common::Array<NodePtr> nodes;
+
+	if (roomID != 0 && roomID != _currentRoomID) {
+		RoomData *data = findRoomData(roomID);
+		nodes = loadRoomScripts(data);
+	} else {
+		nodes = _currentRoomNodes;
+	}
+
+	for (uint i = 0; i < nodes.size(); i++) {
+		if (nodes[i]->id == nodeID)
+			return nodes[i];
 	}
 
 	error("Node not found %d", nodeID);
 }
 
-void Database::loadRoomScripts(const uint8 roomID) {
-	if (roomID == _currentRoomID)
-		return;
-
-	_currentRoomData = 0;
-	_currentRoomNodes.clear();
-
+RoomData *Database::findRoomData(const uint8 & roomID)
+{
 	for (uint i = 0; i < _ages.size(); i++)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (_ages[i].rooms[j].id == roomID) {
-				_currentRoomData = &_ages[i].rooms[j];
+				return &_ages[i].rooms[j];
 				break;
 			}
 		}
+	return 0;
+}
 
-	if (!_currentRoomData || !_currentRoomData->scriptsOffset)
-		return;
+Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
+	Common::Array<NodePtr> nodes;
 
 	Common::File file;
 	file.open(_exePath);
-	file.seek(_currentRoomData->scriptsOffset);
+	file.seek(room->scriptsOffset);
 
-	_currentRoomID = roomID;
 
 	while (1) {
 		int16 id = file.readUint16LE();
@@ -130,10 +153,25 @@ void Database::loadRoomScripts(const uint8 roomID) {
 		node->scripts = loadCondScripts(file);
 		node->hotspots = loadHotspots(file);
 
-		_currentRoomNodes.push_back(node);
+		nodes.push_back(node);
 	}
 
 	file.close();
+
+	return nodes;
+}
+
+void Database::setCurrentRoom(const uint8 roomID) {
+	if (roomID == _currentRoomID)
+		return;
+
+	_currentRoomData = findRoomData(roomID);
+
+	if (!_currentRoomData || !_currentRoomData->scriptsOffset)
+		return;
+
+	_currentRoomID = roomID;
+	_currentRoomNodes = loadRoomScripts(_currentRoomData);
 }
 
 Common::Array<CondScript> Database::loadCondScripts(Common::ReadStream &s) {
@@ -258,7 +296,7 @@ Common::Array<AgeData> Database::loadAges(Common::ReadStream &s)
 	return ages;
 }
 
-RoomData Database::loadRoom(Common::ReadStream &s) {
+RoomData Database::loadRoomDescription(Common::ReadStream &s) {
 	RoomData room;
 
 	room.id = s.readByte();
@@ -284,8 +322,13 @@ RoomData Database::loadRoom(Common::ReadStream &s) {
 	return room;
 }
 
-void Database::getRoomName(char name[8]) {
-	memcpy(&name[0], &_currentRoomData->name, 8);
+void Database::getRoomName(char name[8], uint8 roomID) {
+	if (roomID != 0 && roomID != _currentRoomID) {
+		RoomData * data = findRoomData(roomID);
+		memcpy(&name[0], &data->name, 8);
+	} else {
+		memcpy(&name[0], &_currentRoomData->name, 8);
+	}
 }
 
 } /* namespace Myst3 */

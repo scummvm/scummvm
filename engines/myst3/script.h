@@ -30,18 +30,25 @@ namespace Myst3 {
 class Myst3Engine;
 struct Opcode;
 
-#define DECLARE_OPCODE(x) void x(const Opcode &cmd)
+#define DECLARE_OPCODE(x) void x(Context &c, const Opcode &cmd)
 
 class Script {
 public:
 	Script(Myst3Engine *vm);
 	virtual ~Script();
 
-	void run(Common::Array<Opcode> *script);
+	bool run(Common::Array<Opcode> *script);
 	const Common::String describeCommand(uint16 op);
 
 private:
-	typedef void (Script::*CommandProc)(const Opcode &cmd);
+	struct Context {
+		bool endScript;
+		bool result;
+		Common::Array<Opcode> *script;
+		Common::Array<Opcode>::const_iterator op;
+	};
+
+	typedef void (Script::*CommandProc)(Context &c, const Opcode &cmd);
 
 	struct Command {
 		Command() {}
@@ -55,9 +62,48 @@ private:
 	Myst3Engine *_vm;
 	Common::Array<Command> _commands;
 
-	void runOp(const Opcode &op);
+	void runOp(Context &c, const Opcode &op);
 
+	DECLARE_OPCODE(stopWholeScript);
+	DECLARE_OPCODE(sunspotAdd);
+	DECLARE_OPCODE(varSetZero);
+	DECLARE_OPCODE(varSetOne);
+	DECLARE_OPCODE(varSetTwo);
+	DECLARE_OPCODE(varSetOneHundred);
 	DECLARE_OPCODE(varSetValue);
+	DECLARE_OPCODE(varIncrementMaxTen);
+	DECLARE_OPCODE(varAddValue);
+	DECLARE_OPCODE(varArrayAddValue);
+	DECLARE_OPCODE(varAddVarValue);
+	DECLARE_OPCODE(varSubValue);
+	DECLARE_OPCODE(varSubVarValue);
+	DECLARE_OPCODE(varModValue);
+	DECLARE_OPCODE(varMultValue);
+	DECLARE_OPCODE(varMultVarValue);
+	DECLARE_OPCODE(varDivValue);
+	DECLARE_OPCODE(varDivVarValue);
+	DECLARE_OPCODE(varMinValue);
+	DECLARE_OPCODE(varClipValue);
+	DECLARE_OPCODE(varRotateValue3);
+	DECLARE_OPCODE(continueToNextScript);
+	DECLARE_OPCODE(ifCondition);
+	DECLARE_OPCODE(ifCond1AndCond2);
+	DECLARE_OPCODE(ifCond1OrCond2);
+	DECLARE_OPCODE(ifOneVarSetInRange);
+	DECLARE_OPCODE(ifVarEqualsValue);
+	DECLARE_OPCODE(ifVarNotEqualsValue);
+	DECLARE_OPCODE(ifVar1EqualsVar2);
+	DECLARE_OPCODE(ifVar1NotEqualsVar2);
+	DECLARE_OPCODE(ifVarSupEqValue);
+	DECLARE_OPCODE(ifVarInfEqValue);
+	DECLARE_OPCODE(ifVarInRange);
+	DECLARE_OPCODE(ifVarNotInRange);
+	DECLARE_OPCODE(ifVar1SupEqVar2);
+	DECLARE_OPCODE(ifVar1SupVar2);
+	DECLARE_OPCODE(ifVar1InfEqVar2);
+	DECLARE_OPCODE(ifVarHasAllBitsSet);
+	DECLARE_OPCODE(ifVarHasNoBitsSet);
+	DECLARE_OPCODE(ifVarHasSomeBitsSet);
 	DECLARE_OPCODE(goToNode);
 	DECLARE_OPCODE(goToRoomNode);
 	DECLARE_OPCODE(runScriptsFromNode);

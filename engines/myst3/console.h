@@ -40,12 +40,14 @@ public:
 private:
 	Myst3Engine *_vm;
 
-	Common::String describeScript(const Common::Array<Opcode> &script);
+	void describeScript(const Common::Array<Opcode> &script);
+	Common::String describeCondition(int16 condition);
 
 	bool Cmd_Infos(int argc, const char **argv);
 	bool Cmd_LookAt(int argc, const char **argv);
 	bool Cmd_InitScript(int argc, const char **argv);
 	bool Cmd_Var(int argc, const char **argv);
+	bool Cmd_ListNodes(int argc, const char **argv);
 };
 
 } /* namespace Myst3 */

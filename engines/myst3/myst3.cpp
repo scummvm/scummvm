@@ -138,7 +138,7 @@ void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 	if (roomID != 0) {
 		char roomName[8];
 
-		_db->loadRoomScripts(roomID);
+		_db->setCurrentRoom(roomID);
 
 		_db->getRoomName(roomName);
 		Common::String nodeFile = Common::String::format("%snodes.m3a", roomName);

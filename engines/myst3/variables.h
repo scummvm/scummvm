@@ -32,13 +32,14 @@ public:
 	Variables(Myst3Engine *vm);
 	virtual ~Variables();
 
-	uint16 get(uint16 var);
-	void set(uint16 var, uint16 value);
+	uint32 get(uint16 var);
+	void set(uint16 var, uint32 value);
+	bool evaluate(int16 condition);
 
 private:
 	Myst3Engine *_vm;
 
-	uint16 _vars[2048];
+	uint32 _vars[2048];
 
 	void checkRange(uint16 var);
 };

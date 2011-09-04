@@ -79,19 +79,27 @@ public:
 	/**
 	 * Loads a room's nodes into the database
 	 */
-	void loadRoomScripts(uint8 roomID);
+	void setCurrentRoom(uint8 roomID);
 
 	/**
 	 * Returns a node's hotspots and scripts from the currently loaded room
 	 */
-	NodePtr getNodeData(uint16 nodeID);
+	NodePtr getNodeData(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 
 	/**
 	 * Returns the generic node init script
 	 */
 	const Common::Array<Opcode>& getNodeInitScript() { return _nodeInitScript; }
 
-	void getRoomName(char name[8]);
+	/**
+	 * Returns the name of the currently loaded room
+	 */
+	void getRoomName(char name[8], uint8 roomID = 0);
+
+	/**
+	 * Returns the list of the nodes of a room
+	 */
+	Common::Array<uint16> listRoomNodes(uint8 roomID = 0, uint32 ageID = 0);
 private:
 	struct GameVersion {
 		const char *description;
@@ -112,8 +120,11 @@ private:
 
 	Common::Array<Opcode> _nodeInitScript;
 
+	RoomData *findRoomData(const uint8 & roomID);
+	Common::Array<NodePtr> loadRoomScripts(RoomData *room);
+
 	Common::Array<AgeData> loadAges(Common::ReadStream &s);
-	RoomData loadRoom(Common::ReadStream &s);
+	RoomData loadRoomDescription(Common::ReadStream &s);
 
 	Common::Array<CondScript> loadCondScripts(Common::ReadStream & s);
 	Common::Array<Opcode> loadOpcodes(Common::ReadStream & s);

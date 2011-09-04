@@ -27,6 +27,7 @@ namespace Myst3 {
 Variables::Variables(Myst3Engine *vm):
 	_vm(vm) {
 	memset(&_vars, 0, sizeof(_vars));
+	_vars[1] = 1;
 }
 
 Variables::~Variables() {
@@ -37,14 +38,33 @@ void Variables::checkRange(uint16 var) {
 		error("Variable out of range %d", var);
 }
 
-uint16 Variables::get(uint16 var) {
+uint32 Variables::get(uint16 var) {
 	checkRange(var);
 	return _vars[var];
 }
 
-void Variables::set(uint16 var, uint16 value) {
+void Variables::set(uint16 var, uint32 value) {
 	checkRange(var);
 	_vars[var] = value;
+}
+
+bool Variables::evaluate(int16 condition) {
+	uint16 unsignedCond = abs(condition);
+	uint16 var = unsignedCond & 2047;
+	int32 varValue = get(var);
+	int32 targetValue = (unsignedCond >> 11) - 1;
+
+	if (targetValue >= 0) {
+		if (condition >= 0)
+			return varValue == targetValue;
+		else
+			return varValue != targetValue;
+	} else {
+		if (condition >= 0)
+			return varValue != 0;
+		else
+			return varValue == 0;
+	}
 }
 
 } /* namespace Myst3 */
