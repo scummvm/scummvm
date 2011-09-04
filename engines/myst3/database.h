@@ -86,12 +86,18 @@ public:
 	 */
 	NodePtr getNodeData(uint16 nodeID);
 
+	/**
+	 * Returns the generic node init script
+	 */
+	const Common::Array<Opcode>& getNodeInitScript() { return _nodeInitScript; }
+
 	void getRoomName(char name[8]);
 private:
 	struct GameVersion {
 		const char *description;
 		const char *md5;
 		const uint32 ageTableOffset;
+		const uint32 nodeInitScriptOffset;
 	};
 
 	static const uint32 _baseOffset = 0x400000;
@@ -103,6 +109,8 @@ private:
 	uint16 _currentRoomID;
 	RoomData *_currentRoomData;
 	Common::Array<NodePtr> _currentRoomNodes;
+
+	Common::Array<Opcode> _nodeInitScript;
 
 	Common::Array<AgeData> loadAges(Common::ReadStream &s);
 	RoomData loadRoom(Common::ReadStream &s);

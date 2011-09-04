@@ -30,6 +30,7 @@
 namespace Myst3 {
 
 class Myst3Engine;
+struct Opcode;
 
 class Console : public GUI::Debugger {
 public:
@@ -39,8 +40,11 @@ public:
 private:
 	Myst3Engine *_vm;
 
+	Common::String describeScript(const Common::Array<Opcode> &script);
+
 	bool Cmd_Infos(int argc, const char **argv);
 	bool Cmd_LookAt(int argc, const char **argv);
+	bool Cmd_InitScript(int argc, const char **argv);
 };
 
 } /* namespace Myst3 */

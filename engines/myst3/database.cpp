@@ -36,7 +36,7 @@ Database::Database(const Common::String &executable) :
 
 	// Game versions database
 	static GameVersion versions[] = {
-			{ "1.22 French", "554612b239ff2d9a3364fa38e3f32b45", 0x486108 }
+			{ "1.22 French", "554612b239ff2d9a3364fa38e3f32b45", 0x486108, 0x486040 }
 	};
 
 	Common::File file;
@@ -79,6 +79,9 @@ Database::Database(const Common::String &executable) :
 			_ages[i].rooms.push_back(loadRoom(file));
 		}
 	}
+
+	file.seek(_gameVersion->nodeInitScriptOffset - _baseOffset);
+	_nodeInitScript = loadOpcodes(file);
 
 	file.close();
 }
