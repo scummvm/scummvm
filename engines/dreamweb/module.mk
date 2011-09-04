@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	saveload.o \
 	sprite.o \
 	stubs.o \
+	talk.o \
 	use.o \
 	vgagrafx.o
 
