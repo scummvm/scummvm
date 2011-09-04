@@ -640,7 +640,7 @@ void Actor::moveTo(const Graphics::Vector3d &pos) {
 	if (_collisionMode != CollisionOff) {
 		for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
 			Actor *a = i->_value;
-			if (a != this && a->isInSet(g_grim->getSceneName()) && a->isVisible()) {
+			if (a != this && a->isInSet(_setName) && a->isVisible()) {
 				collidesWith(a, &v);
 			}
 		}
@@ -1487,6 +1487,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			v *= size1 + size2;
 			*vec = v + p2 - p1;
 
+			collisionHandlerCallback(actor);
 			return true;
 		}
 	} else if (mode1 == CollisionBox && mode2 == CollisionBox) {
@@ -1595,6 +1596,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			float z = vec->z();
 			*vec = point - circlePos;
 			vec->z() = z;
+			collisionHandlerCallback(actor);
 			return true;
 		}
 	}
@@ -1624,6 +1626,32 @@ void Actor::costumeMarkerCallback(int marker) {
 	} else if (lua_isfunction(table)) {
 		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
 		lua_pushnumber(marker);
+		lua_callfunction(table);
+	}
+
+	lua_endblock();
+}
+
+void Actor::collisionHandlerCallback(Actor *other) const {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("collisionHandler");
+	lua_Object table = lua_gettable();
+
+	if (lua_istable(table)) {
+		lua_pushobject(table);
+		lua_pushstring("collisionHandler");
+		lua_Object func = lua_gettable();
+		if (lua_isfunction(func)) {
+			lua_pushobject(func);
+			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
+			lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
+			lua_callfunction(func);
+		}
+	} else if (lua_isfunction(table)) {
+		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
+		lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
 		lua_callfunction(table);
 	}
 

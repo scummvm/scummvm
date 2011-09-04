@@ -452,6 +452,7 @@ public:
 
 private:
 	void costumeMarkerCallback(int marker);
+	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
 	void addShadowPlane(const char *n, Scene *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);

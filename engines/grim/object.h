@@ -46,7 +46,7 @@ public:
 	void reference();
 	void dereference();
 
-	int32 getId();
+	int32 getId() const;
 
 private:
 	void setId(int32 id);
