@@ -422,8 +422,6 @@ public:
 	static const uint16 addr_moretalk = 0xc494;
 	static const uint16 addr_getpersontext = 0xc490;
 	static const uint16 addr_starttalk = 0xc48c;
-	static const uint16 addr_getpersframe = 0xc488;
-	static const uint16 addr_convicons = 0xc484;
 	static const uint16 addr_talk = 0xc480;
 	static const uint16 addr_getback1 = 0xc47c;
 	static const uint16 addr_redrawmainscrn = 0xc478;
@@ -1345,7 +1343,7 @@ public:
 	//void deltextline();
 	void entercode();
 	void getopenedsize();
-	void getpersframe();
+	//void getpersframe();
 	void doshake();
 	void resetkeyboard();
 	//void showpanel();
@@ -1539,6 +1537,7 @@ public:
 	//void showcity();
 	void dumpsymbol();
 	void disablepath();
+	//void convicons();
 	void buttonsix();
 	void intro2text();
 	void showouterpad();
@@ -1612,9 +1611,8 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void convicons();
-	void interviewer();
 	void sparky();
+	void interviewer();
 	void purgeanitem();
 	void madman();
 	void createpanel();

@@ -247,4 +247,6 @@
 	void examineobtext();
 	void sortoutmap();
 	void showcity();
+	uint16 getpersframe(uint8 index);
+	void convicons();
 

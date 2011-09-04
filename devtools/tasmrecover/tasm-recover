@@ -202,6 +202,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showcity',
 	'examineobtext',
 	'wornerror',
+	'getpersframe',
+	'convicons',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

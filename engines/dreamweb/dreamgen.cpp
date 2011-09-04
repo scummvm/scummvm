@@ -5950,31 +5950,6 @@ notnexttalk:
 	data.byte(kVolumeto) = 0;
 }
 
-void DreamGenContext::convicons() {
-	STACK_CHECK;
-	al = data.byte(kCharacter);
-	_and(al, 127);
-	getpersframe();
-	di = 234;
-	bx = 2;
-	data.word(kCurrentframe) = ax;
-	findsource();
-	ax = data.word(kCurrentframe);
-	_sub(ax, data.word(kTakeoff));
-	ah = 0;
-	showframe();
-}
-
-void DreamGenContext::getpersframe() {
-	STACK_CHECK;
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kPeople);
-	_add(bx, (0));
-	ax = es.word(bx);
-}
-
 void DreamGenContext::starttalk() {
 	STACK_CHECK;
 	data.byte(kTalkmode) = 0;
@@ -16833,8 +16808,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_redrawmainscrn: redrawmainscrn(); break;
 		case addr_getback1: getback1(); break;
 		case addr_talk: talk(); break;
-		case addr_convicons: convicons(); break;
-		case addr_getpersframe: getpersframe(); break;
 		case addr_starttalk: starttalk(); break;
 		case addr_getpersontext: getpersontext(); break;
 		case addr_moretalk: moretalk(); break;
