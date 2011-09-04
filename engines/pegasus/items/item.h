@@ -26,6 +26,8 @@
 #ifndef PEGASUS_ITEMS_ITEM_H
 #define PEGASUS_ITEMS_ITEM_H
 
+#include "common/endian.h"
+
 #include "pegasus/MMShell/Utilities/MMIDObject.h"
 #include "pegasus/types.h"
 
@@ -33,20 +35,68 @@ namespace Common {
 	class Error;
 	class ReadStream;
 	class WriteStream;
+	class SeekableReadStream;
 }
 
 namespace Pegasus {
 
-/*
+//	JMPItemInfo contains resource data used by all Items.
 
-	Item is an object which can be picked up and carried around.
-	Items have
-		a location
-		an ID.
-		weight
-		an owner (kNoActorID if no one is carrying the Item)
+struct JMPItemInfo {
+	TimeValue infoLeftTime;
+	TimeValue infoRightStart;
+	TimeValue infoRightStop;
+	uint32 dragSpriteNormalID;
+	uint32 dragSpriteUsedID;
+};
 
-*/
+//	ItemStateEntry contains a single state/TimeValue pair. The TimeValue is
+//	the time value to set the shared area movie that corresponds with the given
+//	state of an inventory item.
+
+struct ItemStateEntry {
+	tItemState itemState;
+	TimeValue itemTime;
+};
+
+//	ItemStateInfoHandle is an array of ItemStateEntry.
+
+struct ItemStateInfo {
+	uint16 numEntries; //	For easy ResEdit access
+	ItemStateEntry *entries;
+};
+
+//	ItemExtraEntry
+
+const short kLeftAreaExtra = 0;
+const short kMiddleAreaExtra = 1;
+const short kRightAreaExtra = 2;
+
+struct ItemExtraEntry {
+	uint32 extraID;
+	uint16 extraArea;
+	TimeValue extraStart;
+	TimeValue extraStop;
+};
+
+//	tItemExtraInfoHandle is an array of tItemExtraEntry.
+
+struct ItemExtraInfo {
+	uint16 numEntries;		//	For easy ResEdit access
+	ItemExtraEntry *entries;
+};
+
+//	Inventory info resource type and ID:
+//	Individual inventory items are stored in these resource types.
+//	Resource ID is item ID + kItemBaseResID.
+
+const uint32 kItemInfoResType = MKTAG('I', 't', 'e', 'm');       // JMPItemInfoHandle
+const uint32 kLeftAreaInfoResType = MKTAG('L', 'e', 'f', 't');   // ItemStateInfoHandle
+const uint32 kMiddleAreaInfoResType = MKTAG('M', 'i', 'd', 'l'); // ItemStateInfoHandle
+const uint32 kRightAreaInfoResType = MKTAG('R', 'g', 'h', 't');  // ItemStateInfoHandle
+const uint32 kItemExtraInfoResType = MKTAG('I', 'X', 't', 'r');	 // ItemExtraInfoHandle
+
+const uint16 kItemBaseResID = 128;
 
 //	Item IDs.
 
@@ -219,6 +269,22 @@ const uint32 kRemoveGlass = 10;
 const uint32 kRemoveDart = 11;
 const uint32 kRemoveSinclairKey = 12;
 
+enum tItemType {
+	kInventoryItemType,
+	kBiochipItemType
+};
+
+/*
+
+	Item is an object which can be picked up and carried around.
+	Items have
+		a location
+		an ID.
+		weight
+		an owner (kNoActorID if no one is carrying the Item)
+
+*/
+
 class Item : public MMIDObject {
 public:
 	Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
@@ -241,6 +307,41 @@ public:
 	virtual void setItemState(const tItemState state);
 	virtual tItemState getItemState() const;
 
+	virtual tItemType getItemType() = 0;
+	
+	TimeValue getInfoLeftTime() const;
+	void getInfoRightTimes(TimeValue&, TimeValue&) const;
+	TimeValue getSharedAreaTime() const;
+
+	//TODO
+	//MMSprite*						GetDragSprite(const tDisplayElementID) const;
+	
+	/*
+		select		--	called when this item becomes current. Also called when the inventory
+						panel holding this item is raised and this is the current item.
+		deselect	--	called when this item is no longer current.
+		activate	--	called on the current item when the panel is closed.
+	*/
+	//	In an override of these three member functions, you must call the inherited
+	//	member functions.
+	virtual void select();
+	virtual void deselect();
+	virtual bool isSelected() { return _isSelected; }
+	
+	virtual void activate() { _isActive = true; }
+	virtual bool isActive() { return _isActive; }
+	virtual void pickedUp() {}
+	virtual void addedToInventory() {}
+	virtual void removedFromInventory() {}
+	virtual void dropped() {}
+
+	//	Called when the shared area is taken by another item, but this item is still
+	//	selected.
+	virtual void giveUpSharedArea() {}
+	virtual void takeSharedArea() {}
+	
+	void findItemExtra(const uint32 extraID, ItemExtraEntry &entry);
+
 protected:
 	tNeighborhoodID _itemNeighborhood;
 	tRoomID	_itemRoom;
@@ -248,6 +349,16 @@ protected:
 	tActorID _itemOwnerID;
 	tWeightType _itemWeight;
 	tItemState _itemState;
+
+	JMPItemInfo _itemInfo;
+	ItemStateInfo _sharedAreaInfo;
+	ItemExtraInfo _itemExtras;
+	bool _isActive;
+	bool _isSelected;
+
+	static void getItemStateEntry(ItemStateInfo, uint32, tItemState&, TimeValue&);
+	static void findItemStateEntryByState(ItemStateInfo, tItemState, TimeValue&);
+	static ItemStateInfo readItemState(Common::SeekableReadStream *stream);
 };
 
 } // End of namespace Pegasus

@@ -66,41 +66,6 @@ struct ItemLocationData {
 	byte u1;
 };
 
-struct InventoryPanelEntry {
-	uint32 startTime;
-	uint32 endTime;
-};
-
-struct InventoryItemData {
-	uint32 leftFrameTime;
-	uint32 rightStartTime;
-	uint32 rightEndTime;
-	uint16 pict;        // Cannot use item at this spot
-	uint16 usablePict;  // Can use item at this spot
-};
-
-struct InventoryExtra {
-	uint32 id;
-	uint16 movie;
-	uint32 startTime;
-	uint32 endTime;
-};
-
-struct LeftAreaData {
-	uint16 frame;
-	uint32 time;
-};
-
-struct MiddleAreaData {
-	uint16 id;
-	uint32 time;
-};
-
-struct RightAreaData {
-	uint16 frame;
-	uint32 time;
-};
-
 struct OverviewHotspot {
 	Common::Rect rect;
 	uint32 time;

@@ -14,6 +14,8 @@ MODULE_OBJS = \
 	items/inventory.o \
 	items/item.o \
 	items/itemlist.o \
+	items/biochips/biochipitem.o \
+	items/inventory/inventoryitem.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
 	MMShell/Notification/MMNotification.o \
 	MMShell/Notification/MMNotificationManager.o \
