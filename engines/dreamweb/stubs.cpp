@@ -1113,6 +1113,10 @@ void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
 	data.byte(kNewtextline) = 1;
 }
 
+void DreamGenContext::examineobtext() {
+	commandwithob(1, data.byte(kCommandtype), data.byte(kCommand));
+}
+
 void DreamGenContext::showpanel() {
 	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
 	showframe(frame, 72, 0, 19, 0);

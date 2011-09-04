@@ -14651,14 +14651,6 @@ void DreamGenContext::afterintroroom() {
 	data.byte(kNowinnewroom) = 0;
 }
 
-void DreamGenContext::examineobtext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 1;
-	commandwithob();
-}
-
 void DreamGenContext::printmessage2() {
 	STACK_CHECK;
 	push(dx);
@@ -17265,7 +17257,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_atmospheres: atmospheres(); break;
 		case addr_walkintoroom: walkintoroom(); break;
 		case addr_afterintroroom: afterintroroom(); break;
-		case addr_examineobtext: examineobtext(); break;
 		case addr_printmessage2: printmessage2(); break;
 		case addr_setwalk: setwalk(); break;
 		case addr_workoutframes: workoutframes(); break;

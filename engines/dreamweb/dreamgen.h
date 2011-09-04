@@ -102,7 +102,6 @@ public:
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_printmessage2 = 0xca30;
-	static const uint16 addr_examineobtext = 0xca20;
 	static const uint16 addr_afterintroroom = 0xca14;
 	static const uint16 addr_walkintoroom = 0xca10;
 	static const uint16 addr_atmospheres = 0xca0c;
@@ -1533,7 +1532,7 @@ public:
 	//void finishedwalking();
 	void findinvpos();
 	void dumpmenu();
-	void hangonpq();
+	//void examineobtext();
 	void liftnoise();
 	void workoutframes();
 	void getbackfromob();
@@ -1654,7 +1653,7 @@ public:
 	void loadnews();
 	void rollem();
 	//void makeworn();
-	void examineobtext();
+	void hangonpq();
 	void startup();
 	void savegame();
 	void startpaltoend();
