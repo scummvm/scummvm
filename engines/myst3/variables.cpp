@@ -67,4 +67,11 @@ bool Variables::evaluate(int16 condition) {
 	}
 }
 
+uint32 Variables::valueOrVarValue(int16 value) {
+	if (value < 0)
+		return get(-value);
+
+	return value;
+}
+
 } /* namespace Myst3 */

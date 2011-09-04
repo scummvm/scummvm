@@ -71,7 +71,7 @@ Common::String Console::describeCondition(int16 condition) {
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
-	uint16 nodeId = _vm->_node.getId();
+	uint16 nodeId = _vm->_node->getId();
 	uint16 roomId = 0;
 
 	if (argc >= 2) {
@@ -87,7 +87,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	char roomName[8];
 	_vm->_db->getRoomName(roomName, roomId);
 
-	Common::Point lookAt = _vm->_scene.getMousePos();
+	Common::Point lookAt = _vm->_scene->getMousePos();
 
 	DebugPrintf("node: %s%d    ", roomName, nodeId);
 	DebugPrintf("pitch: %d heading: %d",  lookAt.y, lookAt.x);
@@ -124,7 +124,7 @@ bool Console::Cmd_LookAt(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_scene.lookAt(atof(argv[1]), atof(argv[2]));
+	_vm->_scene->lookAt(atof(argv[1]), atof(argv[2]));
 
 	return false;
 }
@@ -176,7 +176,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Run(int argc, const char **argv) {
-	uint16 nodeId = _vm->_node.getId();
+	uint16 nodeId = _vm->_node->getId();
 	uint16 roomId = 0;
 
 	if (argc >= 2) {

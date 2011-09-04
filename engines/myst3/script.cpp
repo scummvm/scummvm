@@ -31,6 +31,7 @@ Script::Script(Myst3Engine *vm):
 	_vm(vm) {
 #define OPCODE(op, x) _commands.push_back(Command(op, &Script::x, #x))
 
+	OPCODE(4, nodeCubeInit);
 	OPCODE(11, stopWholeScript);
 	OPCODE(35, sunspotAdd);
 	OPCODE(49, varSetZero);
@@ -81,7 +82,7 @@ Script::Script(Myst3Engine *vm):
 Script::~Script() {
 }
 
-bool Script::run(Common::Array<Opcode> *script) {
+bool Script::run(const Common::Array<Opcode> *script) {
 	debugC(kDebugScript, "Script start %p", (void *) script);
 
 	Context c;
@@ -126,6 +127,13 @@ const Common::String Script::describeCommand(uint16 op) {
 	return Common::String::format("%d", op);
 }
 
+void Script::nodeCubeInit(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node cube init %d", cmd.op, cmd.args[0]);
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadNodeCubeFaces(nodeId);
+	// TODO: Load rects
+}
 
 void Script::stopWholeScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Stop whole script", cmd.op);

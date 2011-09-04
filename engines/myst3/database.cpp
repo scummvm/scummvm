@@ -119,7 +119,7 @@ NodePtr Database::getNodeData(uint16 nodeID, uint8 roomID, uint32 ageID) {
 			return nodes[i];
 	}
 
-	error("Node not found %d", nodeID);
+	return NodePtr();
 }
 
 RoomData *Database::findRoomData(const uint8 & roomID)
@@ -326,7 +326,7 @@ void Database::getRoomName(char name[8], uint8 roomID) {
 	if (roomID != 0 && roomID != _currentRoomID) {
 		RoomData * data = findRoomData(roomID);
 		memcpy(&name[0], &data->name, 8);
-	} else {
+	} else if (_currentRoomData) {
 		memcpy(&name[0], &_currentRoomData->name, 8);
 	}
 }

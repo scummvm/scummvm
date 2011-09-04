@@ -35,6 +35,7 @@ public:
 	uint32 get(uint16 var);
 	void set(uint16 var, uint32 value);
 	bool evaluate(int16 condition);
+	uint32 valueOrVarValue(int16 value);
 
 private:
 	Myst3Engine *_vm;

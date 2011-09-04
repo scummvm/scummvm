@@ -37,14 +37,14 @@ public:
 	Script(Myst3Engine *vm);
 	virtual ~Script();
 
-	bool run(Common::Array<Opcode> *script);
+	bool run(const Common::Array<Opcode> *script);
 	const Common::String describeCommand(uint16 op);
 
 private:
 	struct Context {
 		bool endScript;
 		bool result;
-		Common::Array<Opcode> *script;
+		const Common::Array<Opcode> *script;
 		Common::Array<Opcode>::const_iterator op;
 	};
 
@@ -64,6 +64,7 @@ private:
 
 	void runOp(Context &c, const Opcode &op);
 
+	DECLARE_OPCODE(nodeCubeInit);
 	DECLARE_OPCODE(stopWholeScript);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(varSetZero);

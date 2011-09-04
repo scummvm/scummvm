@@ -51,7 +51,7 @@ namespace Myst3 {
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
-		_vars(0) {
+		_vars(0), _node(0), _scene(0), _archive(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -61,6 +61,9 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _scene;
+	delete _node;
+	delete _archive;
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
@@ -75,14 +78,17 @@ Common::Error Myst3Engine::run() {
 	_scriptEngine = new Script(this);
 	_db = new Database("M3.exe");
 	_vars = new Variables(this);
+	_scene = new Scene();
+	_node = new Node();
+	_archive = new Archive();
 
 	goToNode(1, 245); // LEIS
 
 	_system->setupScreen(w, h, false, true);
 	_system->showMouse(false);
 
-	_scene.init(w, h);
-	_node.load(_archive, 1);
+	_scene->init(w, h);
+	_node->load(*_archive, 1);
 	
 	for(;;) {
 		// Process events
@@ -92,10 +98,10 @@ Common::Error Myst3Engine::run() {
 			if (event.type == Common::EVENT_QUIT) {
 				return Common::kNoError;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				_scene.updateCamera(event.relMouse);
+				_scene->updateCamera(event.relMouse);
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-				Common::Point mouse = _scene.getMousePos();
-				NodePtr nodeData = _db->getNodeData(_node.getId());
+				Common::Point mouse = _scene->getMousePos();
+				NodePtr nodeData = _db->getNodeData(_node->getId());
 
 				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 					if (nodeData->hotspots[j].isPointInRects(mouse)) {
@@ -108,7 +114,7 @@ Common::Error Myst3Engine::run() {
 					if (event.kbd.flags & Common::KBD_CTRL) {
 						_console->attach();
 						_console->onFrame();
-						_scene.init(w, h);
+						_scene->init(w, h);
 					}
 					break;
 				default:
@@ -117,39 +123,76 @@ Common::Error Myst3Engine::run() {
 			}
 		}
 		
-		_scene.clear();
-		_scene.setupCamera();
+		_scene->clear();
+		_scene->setupCamera();
 
-		_node.draw();
+		_node->draw();
 
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 
-	_node.unload();
-	_archive.close();
+	_node->unload();
+	_archive->close();
 
 	return Common::kNoError;
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
-	_node.unload();
+	loadNode(nodeID, roomID);
+}
 
-	if (roomID != 0) {
-		char roomName[8];
+void Myst3Engine::loadNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
+	_scriptEngine->run(&_db->getNodeInitScript());
+
+	if (nodeID)
+		_currentNode = _vars->valueOrVarValue(nodeID);
+
+	if (roomID)
+		_currentRoom = _vars->valueOrVarValue(roomID);
+
+	if (ageID)
+		_currentAge = _vars->valueOrVarValue(ageID);
+
+	_node->unload();
+
+	char oldRoomName[8];
+	char newRoomName[8];
+	_db->getRoomName(oldRoomName);
+	_db->getRoomName(newRoomName, roomID);
+
+	if (strcmp(newRoomName, "JRNL") && strcmp(newRoomName, "XXXX")
+			 && strcmp(newRoomName, "MENU") && strcmp(newRoomName, oldRoomName)) {
 
 		_db->setCurrentRoom(roomID);
+		Common::String nodeFile = Common::String::format("%snodes.m3a", newRoomName);
 
-		_db->getRoomName(roomName);
-		Common::String nodeFile = Common::String::format("%snodes.m3a", roomName);
-
-		_archive.close();
-		if (!_archive.open(nodeFile.c_str())) {
+		_archive->close();
+		if (!_archive->open(nodeFile.c_str())) {
 			error("Unable to open archive %s", nodeFile.c_str());
 		}
 	}
 
-	_node.load(_archive, nodeID);
+	runNodeInitScripts();
+}
+
+void Myst3Engine::runNodeInitScripts() {
+	NodePtr nodeData = _db->getNodeData(_currentNode, _currentRoom, _currentAge);
+
+	NodePtr nodeDataInit = _db->getNodeData(32765);
+	if (nodeDataInit)
+		runScriptsFromNode(32765);
+
+	for (uint j = 0; j < nodeData->scripts.size(); j++) {
+		if (_vars->evaluate(nodeData->scripts[j].condition)) {
+			_scriptEngine->run(&nodeData->scripts[j].script);
+		}
+	}
+}
+
+void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
+	_viewType = 1;
+	_node->load(*_archive, nodeID);
 }
 
 void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) {

@@ -60,17 +60,25 @@ public:
 	virtual ~Myst3Engine();
 
 	void goToNode(uint16 nodeID, uint8 roomID = 0);
+	void loadNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
+	void loadNodeCubeFaces(uint16 nodeID);
 	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
+	void runNodeInitScripts();
 
 private:
 	OSystem *_system;
 	Console *_console;
 	
-	Node _node;
-	Scene _scene;
-	Archive _archive;
+	Node *_node;
+	Scene *_scene;
+	Archive *_archive;
 	Script *_scriptEngine;
 	Database *_db;
+
+	uint _viewType;
+	uint16 _currentNode;
+	uint8 _currentRoom;
+	uint32 _currentAge;
 
 	friend class Console;
 };
