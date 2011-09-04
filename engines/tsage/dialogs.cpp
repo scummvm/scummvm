@@ -367,6 +367,7 @@ void OptionsDialog::show() {
 		_globals->_game->restartGame();
 	} else if (btn == &dlg->_btnSound) {
 		// Sound dialog
+		SoundDialog::execute();
 	} else if (btn == &dlg->_btnSave) {
 		// Save button
 		_globals->_game->saveGame();
@@ -414,5 +415,14 @@ OptionsDialog::OptionsDialog() {
 	setCenter(160, 100);
 }
 
+/*--------------------------------------------------------------------------*/
+
+void SoundDialog::execute() {
+	ConfigDialog *dlg = new ConfigDialog();
+	dlg->runModal();
+	delete dlg;
+	_globals->_soundManager.syncSounds();
+	_globals->_events.setCursorFromFlag();
+}
 
 } // End of namespace TsAGE
