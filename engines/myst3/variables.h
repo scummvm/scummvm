@@ -20,48 +20,28 @@
  *
  */
 
-#ifndef SCRIPT_H_
-#define SCRIPT_H_
+#ifndef VARIABLES_H_
+#define VARIABLES_H_
 
-#include "common/array.h"
+#include "engines/myst3/myst3.h"
 
 namespace Myst3 {
 
-class Myst3Engine;
-struct Opcode;
-
-#define DECLARE_OPCODE(x) void x(const Opcode &cmd)
-
-class Script {
+class Variables {
 public:
-	Script(Myst3Engine *vm);
-	virtual ~Script();
+	Variables(Myst3Engine *vm);
+	virtual ~Variables();
 
-	void run(Common::Array<Opcode> *script);
-	const Common::String describeCommand(uint16 op);
+	uint16 get(uint16 var);
+	void set(uint16 var, uint16 value);
 
 private:
-	typedef void (Script::*CommandProc)(const Opcode &cmd);
-
-	struct Command {
-		Command() {}
-		Command(uint16 o, CommandProc p, const char *d) : op(o), proc(p), desc(d) {}
-
-		uint16 op;
-		CommandProc proc;
-		const char *desc;
-	};
-
 	Myst3Engine *_vm;
-	Common::Array<Command> _commands;
 
-	void runOp(const Opcode &op);
+	uint16 _vars[2048];
 
-	DECLARE_OPCODE(varSetValue);
-	DECLARE_OPCODE(goToNode);
-	DECLARE_OPCODE(goToRoomNode);
-	DECLARE_OPCODE(runScriptsFromNode);
+	void checkRange(uint16 var);
 };
 
 } /* namespace Myst3 */
-#endif /* SCRIPT_H_ */
+#endif /* VARIABLES_H_ */

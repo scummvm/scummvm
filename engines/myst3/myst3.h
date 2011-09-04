@@ -45,6 +45,7 @@ enum {
 };
 
 class Console;
+class Variables;
 
 class Myst3Engine : public Engine {
 
@@ -53,6 +54,7 @@ protected:
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
+	Variables *_vars;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();

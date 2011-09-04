@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/console.h"
+#include "engines/myst3/variables.h"
 
 namespace Myst3 {
 
@@ -28,6 +29,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("infos",				WRAP_METHOD(Console, Cmd_Infos));
 	DCmd_Register("lookAt",				WRAP_METHOD(Console, Cmd_LookAt));
 	DCmd_Register("initScript",			WRAP_METHOD(Console, Cmd_InitScript));
+	DCmd_Register("var",				WRAP_METHOD(Console, Cmd_Var));
 }
 
 Console::~Console() {
@@ -55,6 +57,11 @@ Common::String Console::describeScript(const Common::Array<Opcode> &script) {
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	uint16 nodeId = _vm->_node.getId();
+
+	if (argc >= 2) {
+		nodeId = atoi(argv[1]);
+	}
+
 	NodePtr nodeData = _vm->_db->getNodeData(nodeId);
 
 	char roomName[8];
@@ -62,7 +69,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 
 	Common::Point lookAt = _vm->_scene.getMousePos();
 
-	DebugPrintf("current node: %s%d    ", roomName, nodeId);
+	DebugPrintf("node: %s%d    ", roomName, nodeId);
 	DebugPrintf("pitch: %d heading: %d",  lookAt.y, lookAt.x);
 
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
@@ -105,6 +112,28 @@ bool Console::Cmd_LookAt(int argc, const char **argv) {
 bool Console::Cmd_InitScript(int argc, const char **argv) {
 	DebugPrintf("%s", describeScript(_vm->_db->getNodeInitScript()).c_str());
 
+	return true;
+}
+
+
+bool Console::Cmd_Var(int argc, const char **argv) {
+
+	if (argc != 2 && argc != 3) {
+		DebugPrintf("Usage :\n");
+		DebugPrintf("var variable : Display var value\n");
+		DebugPrintf("var variable value : Change var value\n");
+		return true;
+	}
+
+	uint16 var = atoi(argv[1]);
+	uint16 value = _vm->_vars->get(var);
+
+	if (argc == 3) {
+		value = atoi(argv[2]);
+		_vm->_vars->set(var, value);
+	}
+
+	DebugPrintf("var[%d] : %d\n", var, value);
 	return true;
 }
 

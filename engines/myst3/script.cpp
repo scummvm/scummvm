@@ -23,6 +23,7 @@
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/script.h"
 #include "engines/myst3/hotspot.h"
+#include "engines/myst3/variables.h"
 
 namespace Myst3 {
 
@@ -30,8 +31,10 @@ Script::Script(Myst3Engine *vm):
 	_vm(vm) {
 #define OPCODE(op, x) _commands.push_back(Command(op, &Script::x, #x))
 
+	OPCODE(53, varSetValue);
 	OPCODE(138, goToNode);
 	OPCODE(139, goToRoomNode);
+	OPCODE(187, runScriptsFromNode);
 
 #undef OPCODE
 }
@@ -71,6 +74,12 @@ const Common::String Script::describeCommand(uint16 op) {
 	return Common::String::format("%d", op);
 }
 
+void Script::varSetValue(const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set var value %d := %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_vars->set(cmd.args[0], cmd.args[1]);
+}
+
 void Script::goToNode(const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to node %d", cmd.op, cmd.args[0]);
 
@@ -81,6 +90,12 @@ void Script::goToRoomNode(const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->goToNode(cmd.args[1], cmd.args[0]);
+}
+
+void Script::runScriptsFromNode(const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
+
+	warning("Unimplemented opcode %d", cmd.op);
 }
 
 } /* namespace Myst3 */

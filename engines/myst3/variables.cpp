@@ -20,48 +20,31 @@
  *
  */
 
-#ifndef SCRIPT_H_
-#define SCRIPT_H_
-
-#include "common/array.h"
+#include "engines/myst3/variables.h"
 
 namespace Myst3 {
 
-class Myst3Engine;
-struct Opcode;
+Variables::Variables(Myst3Engine *vm):
+	_vm(vm) {
+	memset(&_vars, 0, sizeof(_vars));
+}
 
-#define DECLARE_OPCODE(x) void x(const Opcode &cmd)
+Variables::~Variables() {
+}
 
-class Script {
-public:
-	Script(Myst3Engine *vm);
-	virtual ~Script();
+void Variables::checkRange(uint16 var) {
+	if (var < 1 || var > 2047)
+		error("Variable out of range %d", var);
+}
 
-	void run(Common::Array<Opcode> *script);
-	const Common::String describeCommand(uint16 op);
+uint16 Variables::get(uint16 var) {
+	checkRange(var);
+	return _vars[var];
+}
 
-private:
-	typedef void (Script::*CommandProc)(const Opcode &cmd);
-
-	struct Command {
-		Command() {}
-		Command(uint16 o, CommandProc p, const char *d) : op(o), proc(p), desc(d) {}
-
-		uint16 op;
-		CommandProc proc;
-		const char *desc;
-	};
-
-	Myst3Engine *_vm;
-	Common::Array<Command> _commands;
-
-	void runOp(const Opcode &op);
-
-	DECLARE_OPCODE(varSetValue);
-	DECLARE_OPCODE(goToNode);
-	DECLARE_OPCODE(goToRoomNode);
-	DECLARE_OPCODE(runScriptsFromNode);
-};
+void Variables::set(uint16 var, uint16 value) {
+	checkRange(var);
+	_vars[var] = value;
+}
 
 } /* namespace Myst3 */
-#endif /* SCRIPT_H_ */

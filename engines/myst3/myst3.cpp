@@ -34,6 +34,7 @@
 
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/variables.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -49,7 +50,8 @@ namespace Myst3 {
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
-		_db(0), _console(0), _scriptEngine(0) {
+		_db(0), _console(0), _scriptEngine(0),
+		_vars(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -62,6 +64,7 @@ Myst3Engine::~Myst3Engine() {
 	delete _db;
 	delete _scriptEngine;
 	delete _console;
+	delete _vars;
 }
 
 Common::Error Myst3Engine::run() {
@@ -71,6 +74,7 @@ Common::Error Myst3Engine::run() {
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
 	_db = new Database("M3.exe");
+	_vars = new Variables(this);
 
 	goToNode(1, 245); // LEIS
 

@@ -11,7 +11,8 @@ MODULE_OBJS := \
 	myst3.o \
 	node.o \
 	scene.o \
-	script.o
+	script.o \
+	variables.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)

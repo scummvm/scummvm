@@ -45,6 +45,7 @@ private:
 	bool Cmd_Infos(int argc, const char **argv);
 	bool Cmd_LookAt(int argc, const char **argv);
 	bool Cmd_InitScript(int argc, const char **argv);
+	bool Cmd_Var(int argc, const char **argv);
 };
 
 } /* namespace Myst3 */
