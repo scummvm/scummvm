@@ -84,6 +84,7 @@ class Keyboard {
 private:
 	bool getKey(Common::Event &event, int &cgeCode);
 	uint16 _current;
+	CGEEngine *_vm;
 public:
 	static const uint16 _code[0x60];
 	static const uint16 _scummVmCodes[0x60];
@@ -95,7 +96,7 @@ public:
 	uint16 lastKey();
 	Sprite *setClient(Sprite *spr);
 
-	Keyboard();
+	Keyboard(CGEEngine *vm);
 	~Keyboard();
 };
 
