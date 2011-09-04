@@ -6377,23 +6377,6 @@ quittravel:
 	deallocatemem();
 }
 
-void DreamGenContext::showcity() {
-	STACK_CHECK;
-	clearwork();
-	ds = data.word(kTempgraphics);
-	di = 57;
-	bx = 32;
-	al = 0;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = 120+57;
-	bx = 32;
-	al = 1;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::lookatplace() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 224);
@@ -16860,7 +16843,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_redes: redes(); break;
 		case addr_newplace: newplace(); break;
 		case addr_selectlocation: selectlocation(); break;
-		case addr_showcity: showcity(); break;
 		case addr_lookatplace: lookatplace(); break;
 		case addr_getundercentre: getundercentre(); break;
 		case addr_putundercentre: putundercentre(); break;

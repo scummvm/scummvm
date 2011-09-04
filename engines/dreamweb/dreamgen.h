@@ -414,7 +414,6 @@ public:
 	static const uint16 addr_putundercentre = 0xc4b8;
 	static const uint16 addr_getundercentre = 0xc4b4;
 	static const uint16 addr_lookatplace = 0xc4b0;
-	static const uint16 addr_showcity = 0xc4ac;
 	static const uint16 addr_selectlocation = 0xc4a8;
 	static const uint16 addr_newplace = 0xc4a4;
 	static const uint16 addr_redes = 0xc4a0;
@@ -1537,7 +1536,7 @@ public:
 	void dumpsymbox();
 	void loadgame();
 	void getridoftemp();
-	void showcity();
+	//void showcity();
 	void dumpsymbol();
 	void disablepath();
 	void buttonsix();

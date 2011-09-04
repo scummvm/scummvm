@@ -247,4 +247,5 @@
 	void bresenhams();
 	void examineobtext();
 	void sortoutmap();
+	void showcity();
 

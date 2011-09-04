@@ -199,6 +199,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'usetext',
 	'bresenhams',
 	'sortoutmap',
+	'showcity',
 	'examineobtext',
 	'wornerror',
 	], skip_output = [

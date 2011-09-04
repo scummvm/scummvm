@@ -1892,5 +1892,12 @@ void DreamGenContext::sortoutmap() {
 	}
 }
 
+void DreamGenContext::showcity() {
+	clearwork();
+	Frame *tempGraphics = (Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0);
+	showframe(tempGraphics, 57, 32, 0, 0);
+	showframe(tempGraphics, 120+57, 32, 1, 0);
+}
+
 } /*namespace dreamgen */
 
