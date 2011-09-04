@@ -52,6 +52,7 @@ Diving::~Diving() {
 bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	init();
 	initScreen();
+	initCursor();
 
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
@@ -87,6 +88,8 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 			(*o)->advance();
 		}
+
+		_vm->_draw->animateCursor(1);
 
 		_vm->_draw->blitInvalidated();
 
@@ -135,6 +138,9 @@ void Diving::init() {
 }
 
 void Diving::deinit() {
+	_vm->_draw->_cursorHotspotX = -1;
+	_vm->_draw->_cursorHotspotY = -1;
+
 	delete _heart;
 	delete _lungs;
 	delete _water;
@@ -167,6 +173,23 @@ void Diving::initScreen() {
 	_heart->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
 
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 0, 0, 319, 199);
+}
+
+void Diving::initCursor() {
+	const int index = _vm->_draw->_cursorIndex;
+
+	const int16 left   = index * _vm->_draw->_cursorWidth;
+	const int16 top    = 0;
+	const int16 right  = left + _vm->_draw->_cursorWidth - 1;
+	const int16 bottom = _vm->_draw->_cursorHeight - 1;
+
+	_vm->_draw->_cursorSprites->fillRect(left, top, right, bottom, 0);
+
+	_objects->draw(*_vm->_draw->_cursorSprites, 31, 0, left, top);
+	_vm->_draw->_cursorAnimLow[index] = 0;
+
+	_vm->_draw->_cursorHotspotX = 8;
+	_vm->_draw->_cursorHotspotY = 8;
 }
 
 void Diving::foundBlackPearl() {

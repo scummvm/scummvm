@@ -64,6 +64,7 @@ private:
 	void deinit();
 
 	void initScreen();
+	void initCursor();
 
 	void foundBlackPearl();
 	void foundWhitePearl();
