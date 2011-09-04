@@ -57,6 +57,7 @@ private:
 
 	Surface *_blackPearl;
 
+	uint8 _whitePearlCount;
 	uint8 _blackPearlCount;
 
 	void init();
@@ -65,6 +66,7 @@ private:
 	void initScreen();
 
 	void foundBlackPearl();
+	void foundWhitePearl();
 };
 
 } // End of namespace Geisha

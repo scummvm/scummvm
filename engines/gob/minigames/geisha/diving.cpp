@@ -38,7 +38,7 @@ namespace Geisha {
 
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 	_objects(0), _gui(0), _oko(0), _lungs(0), _heart(0),
-	_blackPearl(0), _blackPearlCount(0) {
+	_blackPearl(0), _whitePearlCount(0), _blackPearlCount(0) {
 
 	_blackPearl = new Surface(11, 8, 1);
 }
@@ -93,7 +93,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 		_vm->_util->waitEndFrame();
 		_vm->_util->processInput();
 
-		if (_blackPearlCount >= 2)
+		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
 			break;
 	}
 
@@ -179,6 +179,17 @@ void Diving::foundBlackPearl() {
 		_vm->_draw->_backSurface->blit(*_blackPearl, 0, 0, 10, 7, 160, 179, 0);
 		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, 147, 179, 160, 186);
 	}
+}
+
+void Diving::foundWhitePearl() {
+	_whitePearlCount++;
+
+	int16 x = 54 + (_whitePearlCount - 1) * 8;
+	if (_whitePearlCount > 10)
+		x += 48;
+
+	_background->drawLayer(*_vm->_draw->_backSurface, 0, 2, x, 177, 0);
+	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, 177, x + 3, 180);
 }
 
 } // End of namespace Geisha
