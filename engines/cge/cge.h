@@ -64,8 +64,7 @@ enum SnList {
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kMiniStep, kXCave, kSelectSound,
-	kSnSelect,   kSndSetVolume
+	kNullCB = 0, kQGame, kMiniStep, kXCave, kSndSetVolume
 };
 
 struct SavegameHeader {

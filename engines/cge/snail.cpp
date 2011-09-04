@@ -1139,12 +1139,6 @@ void Snail::runCom() {
 			case kXCave:
 				_vm->xCave();
 				break;
-			case kSelectSound:
-				warning("TODO: Select sound card");
-				break;
-			case kSnSelect:
-				warning("TODO: Sound card selection");
-				break;
 			case kSndSetVolume:
 				sndSetVolume();
 				break;

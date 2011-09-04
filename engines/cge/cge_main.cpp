@@ -716,18 +716,9 @@ void System::touch(uint16 mask, int x, int y) {
 			return;
 		}
 		switch (x) {
-		case 'F':
-			if (_keyboard->_key[kKeyAlt]) {
-				Sprite *m = _vga->_showQ->locate(17001);
-				if (m) {
-					m->step(1);
-					m->_time = 216; // 3s
-				}
-			}
-			break;
 		case 'X':
 			if (_keyboard->_key[kKeyAlt])
-				_finis = true;
+				_vm->quit();
 			break;
 		case '0':
 		case '1':
@@ -738,6 +729,7 @@ void System::touch(uint16 mask, int x, int y) {
 				_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
+			break;
 		}
 	} else {
 		if (_vm->_startupMode)
@@ -821,17 +813,9 @@ void CGEEngine::switchColorMode() {
 void CGEEngine::switchMusic() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
-	if (_keyboard->_key[kKeyAlt]) {
-		if (Vmenu::_addr) {
-			_snail_->addCom(kSnKill, -1, 0, Vmenu::_addr);
-		} else {
-			_snail_->addCom(kSnSeq, 122, (_music = false), NULL);
-			_snail->addCom2(kSnExec, -1, 0, kSelectSound);
-		}
-	} else {
-		_snail_->addCom(kSnSeq, 122, (_music = !_music), NULL);
-		keyClick();
-	}
+	_snail_->addCom(kSnSeq, 122, (_music = !_music), NULL);
+	keyClick();
+
 	if (_music)
 		_midiPlayer.loadMidi(_now);
 	else
