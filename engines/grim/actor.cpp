@@ -636,13 +636,17 @@ bool Actor::isTurning() const {
 }
 
 void Actor::moveTo(const Graphics::Vector3d &pos) {
+	// This is necessary for collisions in set hl to work, since
+	// Manny's collision mode isn't set.
+	if (_collisionMode == CollisionOff) {
+		_collisionMode = CollisionSphere;
+	}
+
 	Graphics::Vector3d v = pos - _pos;
-	if (_collisionMode != CollisionOff) {
-		for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
-			Actor *a = i->_value;
-			if (a != this && a->isInSet(_setName) && a->isVisible()) {
-				collidesWith(a, &v);
-			}
+	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
+		Actor *a = i->_value;
+		if (a != this && a->isInSet(_setName) && a->isVisible()) {
+			collidesWith(a, &v);
 		}
 	}
 	_pos += v;
