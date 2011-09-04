@@ -181,8 +181,11 @@ public:
 	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
+	int _clip1Frame, _clip2Frame;
 
 	BlueForceGlobals();
+	void reset();
+
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
 };

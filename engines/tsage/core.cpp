@@ -55,21 +55,30 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	DEALLOCATE(imgData);
 }
 
-InvObject::InvObject(int visage, int strip, int frame, int sceneNumber) {
+InvObject::InvObject(int visage, int strip, int frame) {
+	assert(_vm->getGameID() == GType_BlueForce);
 	_visage = visage;
 	_strip = strip;
 	_frame = frame;
-	_sceneNumber = sceneNumber;
+	_sceneNumber = 0;
+	_iconResNum = 10;
 }
 
 void InvObject::setCursor() {
-	_globals->_events._currentCursor = _cursorId;
+	if (_vm->getGameID() == GType_BlueForce) {
+		// Blue Force cursor handling
+		_cursorId = (CursorType)BF_GLOBALS._inventory->indexOf(this);
+		_globals->_events.setCursor(_cursorId);
+	} else {
+		// Ringworld cursor handling
+		_globals->_events._currentCursor = _cursorId;
 
-	if (_iconResNum != -1) {
-		GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
+		if (_iconResNum != -1) {
+			GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
 
-		Graphics::Surface src = s.lockSurface();
-		_globals->_events.setCursor(src, s._transColor, s._centroid, _cursorId);
+			Graphics::Surface src = s.lockSurface();
+			_globals->_events.setCursor(src, s._transColor, s._centroid, _cursorId);
+		}
 	}
 }
 
@@ -82,6 +91,18 @@ InvObjectList::InvObjectList() {
 void InvObjectList::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 	SYNC_POINTER(_selectedItem);
+}
+
+int InvObjectList::indexOf(InvObject *obj) const {
+	int idx = 0;
+	SynchronizedList<InvObject *>::const_iterator i;
+	
+	for (i = _itemList.begin(); i != _itemList.end(); ++i, ++idx) {
+		if ((*i) == obj)
+			return idx;
+	}
+
+	return -1;
 }
 
 /*--------------------------------------------------------------------------*/

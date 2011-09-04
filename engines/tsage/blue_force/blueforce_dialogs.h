@@ -54,6 +54,24 @@ public:
 	void execute();
 };
 
+class AmmoBeltDialog : public GfxDialog {
+private:
+	GfxSurface _surface;
+	Visage _cursorImages;
+	Rect _dialogRect, _loadedRect, _gunRect, _clip1Rect, _clip2Rect;
+	CursorType _cursorNum;
+	int _inDialog;
+	bool _closeFlag;
+public:
+	AmmoBeltDialog();
+	~AmmoBeltDialog();
+
+	virtual void draw();
+	virtual bool process(Event &event);
+	void execute();
+};
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

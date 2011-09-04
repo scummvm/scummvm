@@ -61,7 +61,7 @@ public:
 	int _frame;
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
-	InvObject(int visage, int strip, int frame, int sceneNumber);
+	InvObject(int visage, int strip, int frame);
 
 	bool inInventory() const { return _sceneNumber == 1; }
 	void setCursor();
@@ -78,6 +78,7 @@ public:
 	InvObject *_selectedItem;
 
 	InvObjectList();
+	int indexOf(InvObject *obj) const;
 
 	virtual Common::String getClassName() { return "InvObjectList"; }
 	virtual void synchronize(Serializer &s);
