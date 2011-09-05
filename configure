@@ -707,7 +707,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, bada, dc, dingux, ds, gp2x, gph,
                           iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, webos, wii, wince) [sdl]
+                          psp, samsungtv, sdl, webos, webos_tablet, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -753,6 +753,7 @@ Special configuration feature:
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            webos for HP Palm WebOS
+										   webos_tablet for HP TouchPad
                                            wii for Nintendo Wii
                                            wince for Windows CE
 
@@ -901,7 +902,7 @@ for ac_option in $@; do
 	--enable-vkeybd)          _vkeybd=yes     ;;
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
-	--disable-keymapper)      _keymapper=no   ;;
+	--disable-keymapper)      _keymapper=no;  ;;
 	--enable-text-console)    _text_console=yes ;;
 	--disable-text-console)   _text_console=no ;;
 	--with-fluidsynth-prefix=*)
@@ -1189,7 +1190,7 @@ samsungtv)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-webos)
+webos|webos_tablet)
 	_host_os=webos
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
@@ -1345,7 +1346,7 @@ psp)
 		exit 1
 	fi
 	;;
-webos)
+webos|webos_tablet)
 	if test -z "$WEBOS_SDK"; then
 		echo "Please set WEBOS_SDK in your environment. export WEBOS_SDK=<path to WebOS SDK>"
 		exit 1
@@ -1975,7 +1976,7 @@ case $_host_os in
 		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
-	webos)
+	webos|webos_tablet)
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/include/SDL"
 		CXXFLAGS="$CXXFLAGS -I$WEBOS_PDK/device/usr/include"
@@ -2362,6 +2363,16 @@ if test -n "$_host"; then
 			_vkeybd=no
 			_keymapper=yes
 			;;
+		webos_tablet)
+			_backend="webos"
+			_port_mk="backends/platform/webos/webos.mk"
+			_build_scalers=no
+			_timidity=no
+			_mt32emu=no
+			_seq_midi=no
+			_vkeybd=no
+			_keymapper=no
+			;;
 		wii)
 			_backend="wii"
 			_build_scalers=no
@@ -2502,7 +2513,7 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -shared"
 		LDFLAGS="$LDFLAGS -fpic"
 		;;
-	webos)
+	webos|webos_tablet)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"
@@ -2566,7 +2577,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dreamcast | gph | openpandora | psp | samsungtv | sdl | webos | webos_tablet | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2592,7 +2603,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos | webos_tablet)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -2761,7 +2772,7 @@ LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
 '
 		;;
-	webos)
+	webos|webos_tablet)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		CXXFLAGS="$CXXFLAGS -fpic"
@@ -3448,7 +3459,7 @@ case $_backend in
 		# Add ../plugins as a path so plugins can be found when running from a .PND.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"../plugins\\\""
 		;;
-	webos)
+	webos|webos_tablet)
 		# The WebOS app wants the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir\\\""
