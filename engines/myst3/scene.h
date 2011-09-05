@@ -48,7 +48,8 @@ class Scene {
 
 		void init(int width, int height);
 		void clear();
-		void setupCamera();
+		void setupCameraCube();
+		void setupCameraFrame();
 		void updateCamera(Common::Point &mouse);
 		Common::Point getMousePos() { return Common::Point(_cameraHeading, _cameraPitch); }
 

@@ -18,32 +18,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/memstream.h"
+#ifndef NODECUBE_H_
+#define NODECUBE_H_
+
+#include "engines/myst3/node.h"
 
 namespace Myst3 {
 
-class DirectorySubEntry {
-	private:
-		uint32 _offset;
-		uint32 _size;
-		uint16 _padding; // Additional data, not padding ?
-		byte _face;
-		byte _type;
+class NodeCube: public Myst3::Node {
+public:
+	NodeCube();
+	virtual ~NodeCube();
 
-	public:
-		enum ResourceType {kCubeFace, kFaceMask, kFrame = 6};
-
-		void readFromStream(Common::SeekableReadStream &inStream);
-		void dump();
-		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
-		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream);
-		uint16 getFace() { return _face; }
-		ResourceType getType() { return static_cast<ResourceType>(_type); }
+	void load(Archive &archive, uint16 id);
+	void draw();
 };
 
-} // end of namespace Myst3
+} /* namespace Myst3 */
+#endif /* NODECUBE_H_ */

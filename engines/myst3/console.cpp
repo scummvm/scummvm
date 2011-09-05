@@ -71,7 +71,7 @@ Common::String Console::describeCondition(int16 condition) {
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
-	uint16 nodeId = _vm->_node->getId();
+	uint16 nodeId = _vm->_currentNode;
 	uint16 roomId = 0;
 
 	if (argc >= 2) {
@@ -176,7 +176,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Run(int argc, const char **argv) {
-	uint16 nodeId = _vm->_node->getId();
+	uint16 nodeId = _vm->_currentNode;
 	uint16 roomId = 0;
 
 	if (argc >= 2) {

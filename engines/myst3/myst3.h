@@ -44,6 +44,12 @@ enum {
 	kDebugScript   = (1 << 3)
 };
 
+// View type
+enum ViewType {
+	kCube = 1,
+	kFrame = 2
+};
+
 class Console;
 class Variables;
 
@@ -62,6 +68,7 @@ public:
 	void goToNode(uint16 nodeID, uint8 roomID = 0);
 	void loadNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void loadNodeCubeFaces(uint16 nodeID);
+	void loadNodeFrame(uint16 nodeID);
 	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void runNodeInitScripts();
 
@@ -75,7 +82,7 @@ private:
 	Script *_scriptEngine;
 	Database *_db;
 
-	uint _viewType;
+	ViewType _viewType;
 	uint16 _currentNode;
 	uint8 _currentRoom;
 	uint32 _currentAge;

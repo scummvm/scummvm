@@ -32,6 +32,10 @@ Script::Script(Myst3Engine *vm):
 #define OPCODE(op, x) _commands.push_back(Command(op, &Script::x, #x))
 
 	OPCODE(4, nodeCubeInit);
+	OPCODE(6, nodeCubeInitIndex);
+	OPCODE(7, nodeFrameInit);
+	OPCODE(8, nodeFrameInitCond);
+	OPCODE(9, nodeFrameInitIndex);
 	OPCODE(11, stopWholeScript);
 	OPCODE(35, sunspotAdd);
 	OPCODE(49, varSetZero);
@@ -39,6 +43,26 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(51, varSetTwo);
 	OPCODE(52, varSetOneHundred);
 	OPCODE(53, varSetValue);
+	OPCODE(54, varToggle);
+	OPCODE(55, varSetOneIfZero);
+	OPCODE(67, varRemoveBits);
+	OPCODE(68, varToggleBits);
+	OPCODE(69, varCopy);
+	OPCODE(70, varSetBitsFromVar);
+	OPCODE(71, varSetBits);
+	OPCODE(72, varApplyMask);
+	OPCODE(73, varSwap);
+	OPCODE(74, varIncrement);
+	OPCODE(75, varIncrementMax);
+	OPCODE(76, varIncrementMaxLooping);
+	OPCODE(77, varAddValueMaxLooping);
+	OPCODE(78, varDecrement);
+	OPCODE(79, varDecrementMin);
+	OPCODE(80, varAddValueMax);
+	OPCODE(81, varSubValueMin);
+	OPCODE(82, varZeroRange);
+	OPCODE(83, varCopyRange);
+	OPCODE(84, varSetRange);
 	OPCODE(85, varIncrementMaxTen);
 	OPCODE(86, varAddValue);
 	OPCODE(87, varArrayAddValue);
@@ -135,6 +159,61 @@ void Script::nodeCubeInit(Context &c, const Opcode &cmd) {
 	// TODO: Load rects
 }
 
+void Script::nodeCubeInitIndex(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node cube init indexed %d",
+			cmd.op, cmd.args[0]);
+
+	uint16 var = _vm->_vars->get(cmd.args[0]);
+
+	if (var >= cmd.args.size() - 1)
+		error("Opcode %d, invalid index %d", cmd.op, var);
+
+	uint16 value = cmd.args[var + 1];
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(value);
+	_vm->loadNodeCubeFaces(nodeId);
+	// TODO: Load rects
+}
+
+void Script::nodeFrameInit(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node frame init %d", cmd.op, cmd.args[0]);
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadNodeFrame(nodeId);
+	// TODO: Load rects
+}
+
+void Script::nodeFrameInitCond(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node frame init condition %d ? %d : %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint16 value;
+	if (_vm->_vars->evaluate(cmd.args[0]))
+		value = cmd.args[1];
+	else
+		value = cmd.args[2];
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(value);
+	_vm->loadNodeFrame(nodeId);
+	// TODO: Load rects
+}
+
+void Script::nodeFrameInitIndex(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Node frame init indexed %d",
+			cmd.op, cmd.args[0]);
+
+	uint16 var = _vm->_vars->get(cmd.args[0]);
+
+	if (var >= cmd.args.size() - 1)
+		error("Opcode %d, invalid index %d", cmd.op, var);
+
+	uint16 value = cmd.args[var + 1];
+
+	uint16 nodeId = _vm->_vars->valueOrVarValue(value);
+	_vm->loadNodeFrame(nodeId);
+	// TODO: Load rects
+}
+
 void Script::stopWholeScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Stop whole script", cmd.op);
 
@@ -176,6 +255,220 @@ void Script::varSetValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set var value %d := %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->_vars->set(cmd.args[0], cmd.args[1]);
+}
+
+void Script::varToggle(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Toggle var %d", cmd.op, cmd.args[0]);
+
+	_vm->_vars->set(cmd.args[0], _vm->_vars->get(cmd.args[0]) == 0);
+}
+
+void Script::varSetOneIfZero(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set var %d to one if zero", cmd.op, cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+	if (!value)
+		_vm->_vars->set(cmd.args[0], 1);
+}
+
+void Script::varRemoveBits(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Remove bits %d from var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value &= ~cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varToggleBits(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Toggle bits %d from var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value ^= cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varCopy(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Copy var %d to var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_vars->set(cmd.args[1], _vm->_vars->get(cmd.args[0]));
+}
+
+void Script::varSetBitsFromVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set bits from var %d on var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value |= _vm->_vars->get(cmd.args[1]);
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varSetBits(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set bits %d on var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value |= cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varApplyMask(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Apply mask %d on var %d", cmd.op, cmd.args[1], cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value &= cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varSwap(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Swap var %d and var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+	_vm->_vars->set(cmd.args[0], _vm->_vars->get(cmd.args[1]));
+	_vm->_vars->set(cmd.args[1], value);
+}
+
+void Script::varIncrement(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Increment var %d", cmd.op, cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value++;
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varIncrementMax(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Increment var %d with max value %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value++;
+
+	if (value > cmd.args[1])
+		value = cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varIncrementMaxLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Increment var %d in range [%d, %d]",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value++;
+
+	if (value > cmd.args[2])
+		value = cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varAddValueMaxLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add %d to var %d in range [%d, %d]",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	uint32 value = _vm->_vars->get(cmd.args[1]);
+
+	value += cmd.args[0];
+
+	if (value > cmd.args[3])
+		value = cmd.args[2];
+
+	_vm->_vars->set(cmd.args[1], value);
+}
+
+void Script::varDecrement(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Decrement var %d", cmd.op, cmd.args[0]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value--;
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varDecrementMin(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Decrement var %d with min value %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint32 value = _vm->_vars->get(cmd.args[0]);
+
+	value--;
+
+	if (value < cmd.args[1])
+		value = cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varAddValueMax(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Add value %d to var %d with max value %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint32 value = _vm->_vars->get(cmd.args[1]);
+
+	value += cmd.args[0];
+
+	if (value > cmd.args[2])
+		value = cmd.args[2];
+
+	_vm->_vars->set(cmd.args[1], value);
+}
+
+void Script::varSubValueMin(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Substract value %d from var %d with min value %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint32 value = _vm->_vars->get(cmd.args[1]);
+
+	value -= cmd.args[0];
+
+	if (value < cmd.args[2])
+		value = cmd.args[2];
+
+	_vm->_vars->set(cmd.args[1], value);
+}
+
+void Script::varZeroRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set vars from %d to %d to zero", cmd.op, cmd.args[0], cmd.args[1]);
+
+	if (cmd.args[0] > cmd.args[1])
+		error("Opcode %d, Incorrect range, %d -> %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	for (uint i = cmd.args[0]; i <= cmd.args[1]; i++)
+		_vm->_vars->set(i, 0);
+}
+
+void Script::varCopyRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Copy vars from %d to %d, length: %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	if (cmd.args[2] <= 0)
+		return;
+
+	for (uint i = 0; i < cmd.args[2]; i++)
+		_vm->_vars->set(cmd.args[1] + i, _vm->_vars->get(cmd.args[0] + i));
+}
+
+void Script::varSetRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Set vars from %d to %d to val %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	if (cmd.args[0] > cmd.args[1])
+		error("Opcode %d, Incorrect range, %d -> %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	for (uint i = cmd.args[0]; i <= cmd.args[1]; i++)
+		_vm->_vars->set(i, cmd.args[2]);
 }
 
 void Script::varIncrementMaxTen(Context &c, const Opcode &cmd) {

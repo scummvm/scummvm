@@ -52,7 +52,8 @@ public:
 	int16 unk2;
 	Common::Array<Opcode> script;
 
-	bool isPointInRects(const Common::Point &p);
+	bool isPointInRectsCube(const Common::Point &p);
+	bool isPointInRectsFrame(const Common::Point & p);
 };
 
 

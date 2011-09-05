@@ -39,21 +39,18 @@
 namespace Myst3 {
 
 class Node {
-	private:
+	protected:
 		static const int _cubeTextureSize = 1024;
 		GLuint _cubeTextures[6];
-		
-		uint16 _id;
 
 	public:
 		void setFaceTextureRGB(int face, Graphics::Surface *texture);
 		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
-		void draw();
-		void load(Archive &archive, uint16 id);
+		virtual void draw() = 0;
+		virtual void load(Archive &archive, uint16 id) = 0;
 		void unload();
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
-
-		uint16 getId() { return _id; }
+		virtual ~Node() {};
 };
 
 } // end of namespace Myst3

@@ -65,6 +65,10 @@ private:
 	void runOp(Context &c, const Opcode &op);
 
 	DECLARE_OPCODE(nodeCubeInit);
+	DECLARE_OPCODE(nodeCubeInitIndex);
+	DECLARE_OPCODE(nodeFrameInit);
+	DECLARE_OPCODE(nodeFrameInitCond);
+	DECLARE_OPCODE(nodeFrameInitIndex);
 	DECLARE_OPCODE(stopWholeScript);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(varSetZero);
@@ -72,6 +76,26 @@ private:
 	DECLARE_OPCODE(varSetTwo);
 	DECLARE_OPCODE(varSetOneHundred);
 	DECLARE_OPCODE(varSetValue);
+	DECLARE_OPCODE(varToggle);
+	DECLARE_OPCODE(varSetOneIfZero);
+	DECLARE_OPCODE(varRemoveBits);
+	DECLARE_OPCODE(varToggleBits);
+	DECLARE_OPCODE(varCopy);
+	DECLARE_OPCODE(varSetBitsFromVar);
+	DECLARE_OPCODE(varSetBits);
+	DECLARE_OPCODE(varApplyMask);
+	DECLARE_OPCODE(varSwap);
+	DECLARE_OPCODE(varIncrement);
+	DECLARE_OPCODE(varIncrementMax);
+	DECLARE_OPCODE(varIncrementMaxLooping);
+	DECLARE_OPCODE(varAddValueMaxLooping);
+	DECLARE_OPCODE(varDecrement);
+	DECLARE_OPCODE(varDecrementMin);
+	DECLARE_OPCODE(varAddValueMax);
+	DECLARE_OPCODE(varSubValueMin);
+	DECLARE_OPCODE(varZeroRange);
+	DECLARE_OPCODE(varCopyRange);
+	DECLARE_OPCODE(varSetRange);
 	DECLARE_OPCODE(varIncrementMaxTen);
 	DECLARE_OPCODE(varAddValue);
 	DECLARE_OPCODE(varArrayAddValue);

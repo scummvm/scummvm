@@ -32,8 +32,10 @@
 
 #include "engines/engine.h"
 
-#include "engines/myst3/myst3.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/myst3.h"
+#include "engines/myst3/nodecube.h"
+#include "engines/myst3/nodeframe.h"
 #include "engines/myst3/variables.h"
 
 #include "graphics/jpeg.h"
@@ -62,7 +64,6 @@ Myst3Engine::~Myst3Engine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _scene;
-	delete _node;
 	delete _archive;
 	delete _db;
 	delete _scriptEngine;
@@ -79,16 +80,16 @@ Common::Error Myst3Engine::run() {
 	_db = new Database("M3.exe");
 	_vars = new Variables(this);
 	_scene = new Scene();
-	_node = new Node();
 	_archive = new Archive();
 
-	goToNode(1, 245); // LEIS
-
 	_system->setupScreen(w, h, false, true);
-	_system->showMouse(false);
 
 	_scene->init(w, h);
-	_node->load(*_archive, 1);
+
+	// Var init script
+	runScriptsFromNode(1000, 101);
+
+	goToNode(1, 245); // LEIS
 	
 	for(;;) {
 		// Process events
@@ -98,14 +99,35 @@ Common::Error Myst3Engine::run() {
 			if (event.type == Common::EVENT_QUIT) {
 				return Common::kNoError;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				_scene->updateCamera(event.relMouse);
+				if (_viewType == kCube) {
+					_scene->updateCamera(event.relMouse);
+				}
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-				Common::Point mouse = _scene->getMousePos();
-				NodePtr nodeData = _db->getNodeData(_node->getId());
+				NodePtr nodeData = _db->getNodeData(_currentNode);
+				if (_viewType == kCube) {
+					Common::Point mouse = _scene->getMousePos();
 
-				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-					if (nodeData->hotspots[j].isPointInRects(mouse)) {
-						_scriptEngine->run(&nodeData->hotspots[j].script);
+					for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+						if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
+							_scriptEngine->run(&nodeData->hotspots[j].script);
+
+						}
+					}
+				} else if (_viewType == kFrame) {
+					static const uint originalWidth = 640;
+					static const uint originalHeight = 480;
+					static const uint frameHeight = 360;
+
+					Common::Point mouse = _system->getEventManager()->getMousePos();
+					Common::Point scaledMouse = Common::Point(
+							mouse.x * originalWidth / _system->getWidth(),
+							CLIP<uint>(mouse.y * originalHeight / _system->getHeight()
+									- (originalHeight - 360) / 2, 0, frameHeight));
+
+					for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+						if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
+							_scriptEngine->run(&nodeData->hotspots[j].script);
+						}
 					}
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
@@ -124,8 +146,12 @@ Common::Error Myst3Engine::run() {
 		}
 		
 		_scene->clear();
-		_scene->setupCamera();
 
+		if (_viewType == kFrame) {
+			_scene->setupCameraFrame();
+		} else {
+			_scene->setupCameraCube();
+		}
 		_node->draw();
 
 		_system->updateScreen();
@@ -133,12 +159,20 @@ Common::Error Myst3Engine::run() {
 	}
 
 	_node->unload();
+	delete _node;
+
 	_archive->close();
 
 	return Common::kNoError;
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
+	if (_node) {
+		_node->unload();
+		delete _node;
+		_node = 0;
+	}
+
 	loadNode(nodeID, roomID);
 }
 
@@ -153,8 +187,6 @@ void Myst3Engine::loadNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
 
 	if (ageID)
 		_currentAge = _vars->valueOrVarValue(ageID);
-
-	_node->unload();
 
 	char oldRoomName[8];
 	char newRoomName[8];
@@ -191,7 +223,20 @@ void Myst3Engine::runNodeInitScripts() {
 }
 
 void Myst3Engine::loadNodeCubeFaces(uint16 nodeID) {
-	_viewType = 1;
+	_viewType = kCube;
+
+	_system->showMouse(false);
+
+	_node = new NodeCube();
+	_node->load(*_archive, nodeID);
+}
+
+void Myst3Engine::loadNodeFrame(uint16 nodeID) {
+	_viewType = kFrame;
+
+	_system->showMouse(true);
+
+	_node = new NodeFrame();
 	_node->load(*_archive, nodeID);
 }
 

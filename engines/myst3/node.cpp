@@ -102,85 +102,10 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	delete[] mask;
 }
 
-void Node::load(Archive &archive, uint16 index) {
-	for (int i = 0; i < 6; i++) {
-		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, DirectorySubEntry::kFaceTexture);
-
-		if (jpegStream) {
-			Graphics::JPEG jpeg;
-			jpeg.read(jpegStream);
-
-			setFaceTextureJPEG(i, &jpeg);
-		}
-	}
-
-	_id = index;
-}
-
 void Node::unload() {
 	for (int i = 0; i < 6; i++) {
 		glDeleteTextures(1, &_cubeTextures[i]);
 	}
-}
-
-void Node::draw() {
-	// Size of the cube
-	float t = 1.0f;
-
-	// Used fragment of the textures
-	float s = 640 / (float)_cubeTextureSize;
-
-	glDepthMask(GL_FALSE);
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[4]);
-	glBegin(GL_TRIANGLE_STRIP);			// X-
-		glTexCoord2f(0, s); glVertex3f(-t,-t, t); 	
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[3]);
-	glBegin(GL_TRIANGLE_STRIP);			// X+
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t); 
-		glTexCoord2f(s, 0); glVertex3f( t, t, t); 	
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[1]);
-	glBegin(GL_TRIANGLE_STRIP);			// Y-
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f( t,-t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t,-t, t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[5]);
-	glBegin(GL_TRIANGLE_STRIP);			// Y+
-		glTexCoord2f(0, s); glVertex3f( t, t, t);
-		glTexCoord2f(s, s); glVertex3f(-t, t, t); 
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t); 	
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[0]);
-	glBegin(GL_TRIANGLE_STRIP);			// Z-
-		glTexCoord2f(0, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f( t, t,-t); 
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, _cubeTextures[2]);
-	glBegin(GL_TRIANGLE_STRIP);			// Z+
-		glTexCoord2f(0, s); glVertex3f( t,-t, t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t, t);
-	glEnd();
-	
-	glDepthMask(GL_TRUE);
 }
 
 } // end of namespace Myst3

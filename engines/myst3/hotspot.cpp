@@ -24,7 +24,7 @@
 
 namespace Myst3 {
 
-bool HotSpot::isPointInRects(const Common::Point & p)
+bool HotSpot::isPointInRectsCube(const Common::Point &p)
 {
 	for(uint j = 0;j < rects.size();j++){
 		Common::Rect rect = Common::Rect(
@@ -32,6 +32,22 @@ bool HotSpot::isPointInRects(const Common::Point & p)
 				rects[j].centerPitch - rects[j].height / 2,
 				rects[j].centerHeading + rects[j].width / 2,
 				rects[j].centerPitch + rects[j].height / 2);
+		if(rect.contains(p)){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool HotSpot::isPointInRectsFrame(const Common::Point &p)
+{
+	for(uint j = 0;j < rects.size();j++){
+		Common::Rect rect = Common::Rect(
+				rects[j].centerHeading,
+				rects[j].centerPitch,
+				rects[j].width,
+				rects[j].height);
 		if(rect.contains(p)){
 			return true;
 		}

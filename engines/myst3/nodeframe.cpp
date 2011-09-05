@@ -18,32 +18,51 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
-#include "common/memstream.h"
+#include "engines/myst3/nodeframe.h"
 
 namespace Myst3 {
 
-class DirectorySubEntry {
-	private:
-		uint32 _offset;
-		uint32 _size;
-		uint16 _padding; // Additional data, not padding ?
-		byte _face;
-		byte _type;
+NodeFrame::NodeFrame() {
+}
 
-	public:
-		enum ResourceType {kCubeFace, kFaceMask, kFrame = 6};
+NodeFrame::~NodeFrame() {
+}
 
-		void readFromStream(Common::SeekableReadStream &inStream);
-		void dump();
-		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
-		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream);
-		uint16 getFace() { return _face; }
-		ResourceType getType() { return static_cast<ResourceType>(_type); }
-};
+void NodeFrame::load(Archive &archive, uint16 index) {
+	Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, 1, DirectorySubEntry::kFrame);
 
-} // end of namespace Myst3
+	if (jpegStream) {
+		Graphics::JPEG jpeg;
+		jpeg.read(jpegStream);
+
+		setFaceTextureJPEG(0, &jpeg);
+
+		delete jpegStream;
+	}
+}
+
+void NodeFrame::draw() {
+	// Size of the frame
+	float t = 0.85f;
+	float s = 360.0f / 640.0f * t;
+
+	// Used fragment of texture
+	float u = 640 / (float)_cubeTextureSize;
+	float v = 360 / (float)_cubeTextureSize;
+
+	glDepthMask(GL_FALSE);
+
+	glBindTexture(GL_TEXTURE_2D, _cubeTextures[0]);
+	glBegin(GL_TRIANGLE_STRIP);			// Z+
+		glTexCoord2f(0, v); glVertex3f( t,-s, 1.0f);
+		glTexCoord2f(u, v); glVertex3f(-t,-s, 1.0f);
+		glTexCoord2f(0, 0); glVertex3f( t, s, 1.0f);
+		glTexCoord2f(u, 0); glVertex3f(-t, s, 1.0f);
+	glEnd();
+
+	glDepthMask(GL_TRUE);
+}
+
+} /* namespace Myst3 */

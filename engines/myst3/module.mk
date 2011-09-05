@@ -10,6 +10,8 @@ MODULE_OBJS := \
 	hotspot.o \
 	myst3.o \
 	node.o \
+	nodecube.o \
+	nodeframe.o \
 	scene.o \
 	script.o \
 	variables.o
