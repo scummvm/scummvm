@@ -92,7 +92,7 @@ void Text::preload(int from, int upto) {
 		char *s;
 		if ((s = strtok(line, " =,;/\t\n")) == NULL)
 			continue;
-		if (!IsDigit(*s))
+		if (!isdigit(*s))
 			continue;
 
 		int ref = atoi(s);
@@ -136,7 +136,7 @@ char *Text::load(int idx, int ref) {
 			line[-- n] = '\0';
 		if ((s = strtok(line, " =,;/\t\n")) == NULL)
 			continue;
-		if (!IsDigit(*s))
+		if (!isdigit(*s))
 			continue;
 
 		int r = atoi(s);

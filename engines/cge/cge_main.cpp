@@ -691,8 +691,8 @@ System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 }
 
 void System::setPal() {
-	Dac *p = _vga->_sysPal + 256 - ArrayCount(_stdPal);
-	for (uint i = 0; i < ArrayCount(_stdPal); i++) {
+	Dac *p = _vga->_sysPal + 256 - ARRAYSIZE(_stdPal);
+	for (uint i = 0; i < ARRAYSIZE(_stdPal); i++) {
 		p[i]._r = _stdPal[i]._r >> 2;
 		p[i]._g = _stdPal[i]._g >> 2;
 		p[i]._b = _stdPal[i]._b >> 2;

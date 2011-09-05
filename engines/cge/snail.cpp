@@ -587,10 +587,10 @@ void CGEEngine::snSwap(Sprite *spr, int xref) {
 	bool was1 = (was == 0 || was == _now);
 	bool xwas1 = (xwas == 0 || xwas == _now);
 
-	swap(spr->_cave, xspr->_cave);
-	swap(spr->_x, xspr->_x);
-	swap(spr->_y, xspr->_y);
-	swap(spr->_z, xspr->_z);
+	SWAP(spr->_cave, xspr->_cave);
+	SWAP(spr->_x, xspr->_x);
+	SWAP(spr->_y, xspr->_y);
+	SWAP(spr->_z, xspr->_z);
 	if (spr->_flags._kept) {
 		int n = findPocket(spr);
 		if (n >= 0)
