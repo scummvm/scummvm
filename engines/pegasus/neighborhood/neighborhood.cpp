@@ -32,9 +32,10 @@
 
 namespace Pegasus {
 
-Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : _vm(vm), _resName(resName) {
+Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : MMIDObject(id), _vm(vm), _resName(resName) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
+	_interruptionFilter = kFilterAllInput;
 }
 
 Neighborhood::~Neighborhood() {
@@ -96,6 +97,7 @@ void Neighborhood::init() {
 	delete stream;
 
 	createNeighborhoodSpots();
+	loadSoundSpots();
 
 	// TODO: AI, movies, notifications, buncha other stuff
 }
@@ -266,6 +268,127 @@ void Neighborhood::createNeighborhoodSpots() {
 	}
 
 	delete hotspotList;
+}
+
+void Neighborhood::loadSoundSpots() {
+	// TODO: Eventually push to the subclasses
+
+	Common::String fileName = "Sounds/";
+
+	switch (getObjectID()) {
+	case kCaldoriaID:
+		fileName += "Caldoria/Caldoria Spots";
+		break;
+	case kFullTSAID:
+	case kFinalTSAID:
+	case kTinyTSAID:
+		fileName += "TSA/TSA Spots";
+		break;
+	case kPrehistoricID:
+		fileName += "Prehistoric/Prehistoric Spots";
+		break;
+	case kMarsID:
+		fileName += "Mars/Mars Spots";
+		break;
+	case kWSCID:
+		fileName += "World Science Center/WSC Spots";
+		break;
+	case kNoradAlphaID:
+		fileName += "Norad/Norad Alpha Spots";
+		break;
+	case kNoradDeltaID:
+		fileName += "Norad/Norad Delta Spots";
+		break;
+	}
+
+	_spotSounds.initFromQuickTime(fileName);
+}
+
+void Neighborhood::popActionQueue() {	
+	if (!_actionQueue.empty()) {
+		tQueueRequest topRequest = _actionQueue.pop();
+
+		switch (topRequest.requestType) {
+			case kNavExtraRequest:
+				// TODO
+				break;
+			case kSpotSoundRequest:
+				_spotSounds.stopSound();
+				break;
+			case kDelayRequest:
+				// TODO
+				break;
+		}
+
+		serviceActionQueue();
+	}
+}
+
+void Neighborhood::serviceActionQueue() {
+	if (!_actionQueue.empty()) {
+		tQueueRequest &topRequest = _actionQueue.front();
+
+		if (!topRequest.playing) {
+			topRequest.playing = true;
+			switch (topRequest.requestType) {
+			case kNavExtraRequest:
+				// TODO
+				break;
+			case kSpotSoundRequest:
+				_spotSounds.stopSound();
+				_spotSounds.playSoundSegment(topRequest.start, topRequest.stop);
+				_interruptionFilter = topRequest.interruptionFilter;
+				// TODO: stop trigger
+				break;
+			case kDelayRequest:
+				// TODO
+				break;
+			}
+		}
+	} else {
+		_interruptionFilter = kFilterAllInput;
+	}
+}
+
+void Neighborhood::requestAction(const tQueueRequestType requestType, const tExtraID extra, const TimeValue in, const TimeValue out,
+		const tInputBits interruptionFilter, const tNotificationFlags flags) {
+
+	tQueueRequest request;
+	
+	request.requestType = requestType;
+	request.extra = extra;
+	request.start = in;
+	request.stop = out;
+	request.interruptionFilter = interruptionFilter;
+	request.playing = false;
+	request.flags = flags | kActionRequestCompletedFlag;
+
+	// TODO: notification
+
+	_actionQueue.push(request);
+	if (_actionQueue.size() == 1)
+		serviceActionQueue();
+}
+
+void Neighborhood::requestExtraSequence(const tExtraID whichExtra, const tNotificationFlags flags, const tInputBits interruptionFilter) {
+	requestAction(kNavExtraRequest, whichExtra, 0, 0, interruptionFilter, flags);
+}
+
+void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, const tInputBits interruptionFilter, const tNotificationFlags flags) {
+	requestAction(kSpotSoundRequest, 0xFFFFFFFF, in, out, interruptionFilter, flags);
+}
+
+void Neighborhood::requestDelay(const TimeValue delayDuration, const TimeScale delayScale, const tInputBits interruptionFilter, const tNotificationFlags flags) {
+	requestAction(kDelayRequest, 0xFFFFFFFF, delayDuration, delayScale, interruptionFilter, flags);
+}
+
+bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2) {
+	return arg1.requestType == arg2.requestType && arg1.extra == arg2.extra &&
+			arg1.start == arg2.start && arg1.stop == arg2.stop;
+}
+
+bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2) {
+	return !operator==(arg1, arg2);
 }
 
 } // End of namespace Pegasus

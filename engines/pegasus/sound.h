@@ -30,14 +30,13 @@
 #include "common/str.h"
 
 namespace Audio {
-	class AudioStream;
-	class RewindableAudioStream;
+	class SeekableAudioStream;
 }
 
 namespace Pegasus {
 
 // TODO!
-//class MMSoundFader;
+//class SoundFader;
 
 //	Things you might want to do with sound:
 //		Start it
@@ -59,10 +58,17 @@ public:
 	// not using the resource fork string resources.
 	void initFromAIFFFile(const Common::String &fileName);
 
+	// Unlike the original game, we're going to use a regular
+	// audio stream for sound spots. The original treated them
+	// as movies.
+	void initFromQuickTime(const Common::String &fileName);
+
 	void disposeSound();
 	bool isSoundLoaded() const;
 	void playSound();
 	void loopSound();
+	void playSoundSegment(uint32 start, uint32 end);
+	void loopSoundSegment(uint32 start, uint32 end);
 	void stopSound();
 	void setVolume(const uint16 volume);
 	bool isPlaying();
@@ -71,7 +77,7 @@ public:
 	//void attachFader(SoundFader *fader);
 
 protected:
-	Audio::RewindableAudioStream *_aiffStream;
+	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 	byte _volume;
 

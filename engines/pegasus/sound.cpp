@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
+#include "audio/decoders/quicktime.h"
 #include "common/file.h"
 #include "common/system.h"
 
@@ -33,7 +34,7 @@
 namespace Pegasus {
 
 Sound::Sound() {
-	_aiffStream = 0;
+	_stream = 0;
 	_volume = 0xFF;
 }
 
@@ -43,17 +44,25 @@ Sound::~Sound() {
 
 void Sound::disposeSound() {
 	stopSound();
-	delete _aiffStream; _aiffStream = 0;
+	delete _stream; _stream = 0;
 }
 
 void Sound::initFromAIFFFile(const Common::String &fileName) {
+	disposeSound();
+
 	Common::File *file = new Common::File();
 	if (!file->open(fileName)) {
 		delete file;
 		return;
 	}
 
-	_aiffStream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+	_stream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
+}
+
+void Sound::initFromQuickTime(const Common::String &fileName) {
+	disposeSound();
+
+	_stream = Audio::makeQuickTimeStream(fileName);
 }
 
 #if 0
@@ -81,7 +90,7 @@ void Sound::playSound() {
 		setVolume(_fader->getFaderValue());
 #endif
 
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _aiffStream, -1, _volume, 0, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _stream, -1, _volume, 0, DisposeAfterUse::NO);
 }
 
 void Sound::loopSound() {
@@ -91,7 +100,7 @@ void Sound::loopSound() {
 	stopSound();
 
 	// Create a looping stream
-	Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_aiffStream, 0, DisposeAfterUse::NO);
+	Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
 
 #if 0
 	// TODO!
@@ -103,7 +112,29 @@ void Sound::loopSound() {
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopStream, -1, _volume, 0, DisposeAfterUse::YES);
 }
 
-void Sound::stopSound(void) {
+void Sound::playSoundSegment(uint32 start, uint32 end) {
+	if (!isSoundLoaded())
+		return;
+
+	stopSound();
+
+	Audio::AudioStream *subStream = new Audio::SubSeekableAudioStream(_stream, Audio::Timestamp(0, start, 600), Audio::Timestamp(0, end, 600), DisposeAfterUse::NO);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, subStream, -1, _volume, 0, DisposeAfterUse::YES);
+}
+
+void Sound::loopSoundSegment(uint32 start, uint32 end) {
+	if (!isSoundLoaded())
+		return;
+
+	stopSound();
+
+	Audio::AudioStream *subLoopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp(0, start, 600), Audio::Timestamp(0, end, 600), DisposeAfterUse::NO);
+
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, subLoopStream, -1, _volume, 0, DisposeAfterUse::YES);
+}
+
+void Sound::stopSound() {
 	g_system->getMixer()->stopHandle(_handle);
 }
 
@@ -120,7 +151,7 @@ bool Sound::isPlaying() {
 }
 
 bool Sound::isSoundLoaded() const {
-	return _aiffStream != 0;
+	return _stream != 0;
 }
 
 } // End of namespace Pegasus

@@ -26,9 +26,12 @@
 #ifndef PEGASUS_NEIGHBORHOOD_H
 #define PEGASUS_NEIGHBORHOOD_H
 
+#include "common/queue.h"
 #include "common/str.h"
 
 #include "pegasus/hotspot.h"
+#include "pegasus/sound.h"
+#include "pegasus/MMShell/Utilities/MMIDObject.h"
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
 #include "pegasus/neighborhood/extra.h"
@@ -40,6 +43,7 @@
 
 namespace Pegasus {
 
+class MMNotification;
 class PegasusEngine;
 
 // Pegasus Prime neighborhood id's
@@ -52,11 +56,35 @@ const tNeighborhoodID kMarsID = 5;
 const tNeighborhoodID kWSCID = 6;
 const tNeighborhoodID kNoradAlphaID = 7;
 const tNeighborhoodID kNoradDeltaID = 8;
-//	The sub chase is not really a neighborhood, but we define a constant that is used
-//	to allow an easy transition out of Norad Alpha.
+// The sub chase is not really a neighborhood, but we define a constant that is used
+// to allow an easy transition out of Norad Alpha.
 const tNeighborhoodID kNoradSubChaseID = 1000;
 
-class Neighborhood {
+enum tQueueRequestType {
+	kNavExtraRequest,
+	kSpotSoundRequest,
+	kDelayRequest
+};
+
+// For delay requests, start is interpreted as the total delay and stop is interpreted
+// as the scale the delay is in.
+// For extra requests, start and stop are not used.
+struct tQueueRequest {
+	tQueueRequestType requestType;
+	tExtraID extra;
+	TimeValue start, stop;
+	tInputBits interruptionFilter;
+	bool playing;
+	tNotificationFlags flags;
+	MMNotification *notification;
+};
+
+bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
+bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
+
+typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
+
+class Neighborhood : public MMIDObject {
 public:
 	Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();
@@ -79,12 +107,22 @@ public:
 	tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
 	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
 
+	void requestExtraSequence(const tExtraID, const tNotificationFlags, const tInputBits interruptionFilter);
+	void requestSpotSound(const TimeValue, const TimeValue, const tInputBits interruptionFilter, const tNotificationFlags);
+	void requestDelay(const TimeValue, const TimeScale, const tInputBits interruptionFilter, const tNotificationFlags);
+
+	virtual bool actionQueueEmpty() { return _actionQueue.empty(); }
+
 protected:
 	virtual void createNeighborhoodSpots();
+	virtual void loadSoundSpots();
+
+	void popActionQueue();
+	void serviceActionQueue();
+	void requestAction(const tQueueRequestType, const tExtraID, const TimeValue, const TimeValue, const tInputBits, const tNotificationFlags);
 
 	PegasusEngine *_vm;
 	Common::String _resName;
-	tNeighborhoodID _neighborhoodID;
 
 	DoorTable _doorTable;
 	ExitTable _exitTable;
@@ -98,6 +136,12 @@ protected:
 	tAlternateID _currentAlternate;
 
 	HotspotList _neighborhoodHotspots;
+
+	NeighborhoodActionQueue _actionQueue;
+
+	Sound _spotSounds;
+
+	tInputBits _interruptionFilter;
 };
 
 } // End of namespace Pegasus
