@@ -28,6 +28,7 @@
 #ifndef CGE_WALK_H
 #define CGE_WALK_H
 
+#include "common/rect.h"
 #include "cge/vga13h.h"
 #include "cge/events.h"
 
@@ -44,54 +45,17 @@ namespace CGE {
 
 enum Dir { kDirNone = -1, kDirNorth, kDirEast, kDirSouth, kDirWest };
 
-class Couple {
-protected:
-	signed char _a;
-	signed char _b;
-public:
-	Couple(const signed char a, const signed char b) : _a(a), _b(b) { }
-	Couple operator + (Couple c) {
-		return Couple(_a + c._a, _b + c._b);
-	}
-
-	void operator += (Couple c) {
-		_a += c._a;
-		_b += c._b;
-	}
-
-	Couple operator - (Couple c) {
-		return Couple(_a - c._a, _b - c._b);
-	}
-
-	void operator -= (Couple c) {
-		_a -= c._a;
-		_b -= c._b;
-	}
-
-	bool operator == (const Couple &c) {
-		return ((_a - c._a) | (_b - c._b)) == 0;
-	}
-
-	bool operator != (Couple c) {
-		return !(operator == (c));
-	}
-
-	void split(signed char &a, signed char &b) {
-		a = _a;
-		b = _b;
-	}
-};
-
-class Cluster : public Couple {
+class Cluster {
 public:
 	static uint8 _map[kMapZCnt][kMapXCnt];
 	static CGEEngine *_vm;
+	Common::Point _pt;
 
 	static void init(CGEEngine *vm);
 public:
 	uint8 &cell();
-	Cluster(int a, int b) : Couple(a, b) { }
-	Cluster() : Couple (-1, -1) { }
+	Cluster(int16 a, int16 b) { _pt = Common::Point(a, b); }
+	Cluster() { _pt = Common::Point(-1, -1); }
 	bool chkBar() const;
 	bool isValid() const;
 };
@@ -104,7 +68,7 @@ public:
 	int _tracePtr;
 	int _level;
 	int _findLevel;
-	Couple _target;
+	Common::Point _target;
 	Cluster _trace[kMaxFindLevel];
 
 	Dir _dir;
@@ -122,8 +86,7 @@ public:
 	bool find1Way(Cluster c);
 };
 
-Cluster XZ(int x, int y);
-Cluster XZ(Couple xy);
+Cluster XZ(int16 x, int16 y);
 
 extern Walk *_hero;
 

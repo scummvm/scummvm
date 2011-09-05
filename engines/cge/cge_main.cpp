@@ -763,8 +763,9 @@ void System::touch(uint16 mask, int x, int y) {
 
 			if (_horzLine && !_horzLine->_flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
-					int8 x1, z1;
-					XZ(x, y).split(x1, z1);
+					Cluster tmpCluster = XZ(x, y);
+					int16 x1 = tmpCluster._pt.x;
+					int16 z1 = tmpCluster._pt.y;
 					Cluster::_map[z1][x1] = 1;
 					_vm->setMapBrick(x1, z1);
 				}
