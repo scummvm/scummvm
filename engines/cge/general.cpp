@@ -124,44 +124,9 @@ char *forceExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-uint16 atow(const char *a) {
-	if (!a)
-		return 0;
-
-	uint16 w = 0;
-	while (IsDigit(*a))
-		w = (10 * w) + (*(a++) & 0xF);
-	return w;
-}
-
-uint16 xtow(const char *x) {
-	if (!x)
-		return 0;
-
-	uint16 w = 0;
-	while (IsHxDig(*x)) {
-		register uint16 d = *(x++);
-		if (d > '9')
-			d -= 'A' - ('9' + 1);
-		w = (w << 4) | (d & 0xF);
-	}
-	return w;
-}
-
 char *wtom(uint16 val, char *str, int radix, int len) {
 	while (--len >= 0) {
 		uint16 w = val % radix;
-		if (w > 9)
-			w += ('A' - ('9' + 1));
-		str[len] = '0' + w;
-		val /= radix;
-	}
-	return str;
-}
-
-char *dwtom(uint32 val, char *str, int radix, int len) {
-	while (--len >= 0) {
-		uint16 w = (uint16) (val % radix);
 		if (w > 9)
 			w += ('A' - ('9' + 1));
 		str[len] = '0' + w;

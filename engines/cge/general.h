@@ -38,9 +38,6 @@ namespace CGE {
 
 #define kCryptSeed  0xA5
 #define kMaxFile      128
-#define IsDigit(c)    ((c) >= '0' && (c) <= '9')
-#define IsHxDig(c)    (IsDigit(c) || ((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))
-#define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
 
 struct Dac {
 	uint8 _r;
@@ -50,27 +47,7 @@ struct Dac {
 
 typedef uint16 Crypt(void *buf, uint16 siz, uint16 seed);
 
-template <class T>
-void swap(T &A, T &B) {
-	T a = A;
-	A = B;
-	B = a;
-}
-
-template <class T>
-T max(T A, T B) {
-	return (A > B) ? A : B;
-}
-
-template <class T>
-T min(T A, T B) {
-	return (A < B) ? A : B;
-}
-
-uint16    atow(const char *a);
-uint16    xtow(const char *x);
 char     *wtom(uint16 val, char *str, int radix, int len);
-char     *dwtom(uint32 val, char *str, int radix, int len);
 int       takeEnum(const char **tab, const char *text);
 uint16    chkSum(void *m, uint16 n);
 char     *mergeExt(char *buf, const char *name, const char *ext);

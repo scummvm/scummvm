@@ -94,7 +94,7 @@ Keyboard::~Keyboard() {
 }
 
 Sprite *Keyboard::setClient(Sprite *spr) {
-	swap(_client, spr);
+	SWAP(_client, spr);
 	return spr;
 }
 
