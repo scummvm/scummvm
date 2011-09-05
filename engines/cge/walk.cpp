@@ -40,14 +40,14 @@ void Cluster::init(CGEEngine *vm) {
 }
 
 uint8 &Cluster::cell() {
-	return _map[_b][_a];
+	return _map[_pt.y][_pt.x];
 }
 
 bool Cluster::isValid() const {
-	return (_a >= 0) && (_a < kMapXCnt) && (_b >= 0) && (_b < kMapZCnt);
+	return (_pt.x >= 0) && (_pt.x < kMapXCnt) && (_pt.y >= 0) && (_pt.y < kMapZCnt);
 }
 
-Cluster XZ(int x, int y) {
+Cluster XZ(int16 x, int16 y) {
 	if (y < kMapTop)
 		y = kMapTop;
 
@@ -55,12 +55,6 @@ Cluster XZ(int x, int y) {
 		y = kMapTop + kMapHig - kMapGridZ;
 
 	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
-}
-
-Cluster XZ(Couple xy) {
-	signed char x, y;
-	xy.split(x, y);
-	return XZ(x, y);
 }
 
 Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
@@ -90,12 +84,13 @@ void Walk::tick() {
 	if (_flags._hold || _tracePtr < 0) {
 		park();
 	} else {
-		if (_here == _trace[_tracePtr]) {
+		if (_here._pt == _trace[_tracePtr]._pt) {
 			if (--_tracePtr < 0)
 				park();
 		} else {
-			signed char dx, dz;
-			(_trace[_tracePtr] - _here).split(dx, dz);
+			Common::Point tmpPoint = _trace[_tracePtr]._pt - _here._pt;
+			int16 dx = tmpPoint.x;
+			int16 dz = tmpPoint.y;
 			Dir d = (dx) ? ((dx > 0) ? kDirEast : kDirWest) : ((dz > 0) ? kDirSouth : kDirNorth);
 			turn(d);
 		}
@@ -108,8 +103,8 @@ void Walk::tick() {
 	    (_dir == kDirSouth && _y + _w >= kWorldHeight - 2)) {
 		park();
 	} else {
-		signed char x;            // dummy var
-		_here.split(x, _z);         // take current Z position
+		// take current Z position
+		_z = _here._pt.y;
 		_snail_->addCom(kSnZTrim, -1, 0, this);    // update Hero's pos in show queue
 	}
 }
@@ -154,14 +149,13 @@ void Walk::park() {
 }
 
 void Walk::findWay(Cluster c) {
-	if (c == _here)
+	if (c._pt == _here._pt)
 		return;
 
 	for (_findLevel = 1; _findLevel <= kMaxFindLevel; _findLevel++) {
-		signed char x, z;
-		_here.split(x, z);
-		_target = Couple(x, z);
-		c.split(x, z);
+		_target = _here._pt;
+		int16 x = c._pt.x;
+		int16 z = c._pt.y;
 
 		if (find1Way(Cluster(x, z)))
 			break;
@@ -219,14 +213,14 @@ void Walk::noWay() {
 
 bool Cluster::chkBar() const {
 	assert(_vm->_now <= _vm->_caveMax);
-	return (_a == _vm->_barriers[_vm->_now]._horz) || (_b == _vm->_barriers[_vm->_now]._vert);
+	return (_pt.x == _vm->_barriers[_vm->_now]._horz) || (_pt.y == _vm->_barriers[_vm->_now]._vert);
 }
 
 bool Walk::find1Way(Cluster c) {
 	const Cluster tab[4] = { Cluster(-1, 0), Cluster(1, 0), Cluster(0, -1), Cluster(0, 1)};
 	const int tabLen = 4;
 
-	if (c == _target)
+	if (c._pt == _target)
 		// Found destination
 		return true;
 
@@ -249,7 +243,7 @@ bool Walk::find1Way(Cluster c) {
 		c = start;
 
 		do {
-			c += tab[i];
+			c._pt += tab[i]._pt;
 			if (!c.isValid())
 				// Break to check next direction
 				break;
