@@ -1808,7 +1808,7 @@ void DreamGenContext::obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 
 	Frame *extras = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
 	Frame *frees = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
-	Frame *frames = (ah == 4) ? extras : frees;
+	Frame *frames = (flag == 4) ? extras : frees;
 	showframe(frames, x + 18, y + 19, 3 * index + 1, 128);
 	const DynObject *object = (const DynObject *)getanyaddir(index, flag);
 	bool worn = isitworn(object);
