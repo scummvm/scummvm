@@ -115,7 +115,6 @@ private:
 
 extern Vga *_vga;
 extern System *_sys;
-extern int _offUseCount;
 extern Sprite *_pocLight;
 extern Keyboard *_keyboard;
 extern Mouse *_mouse;

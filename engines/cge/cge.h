@@ -119,11 +119,13 @@ public:
 	bool   _flag[4];
 	bool   _dark;
 	bool   _game;
+	bool   _finis;
 	int    _now;
 	int    _lev;
 	int    _mode;
 	int    _soundOk;
 	int    _gameCase2Cpt;
+	int    _offUseCount;
 
 	Sprite *_sprTv;
 	Sprite *_sprK1;
