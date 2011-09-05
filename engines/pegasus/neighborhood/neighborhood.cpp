@@ -38,6 +38,10 @@ Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNe
 }
 
 Neighborhood::~Neighborhood() {
+	for (HotspotIterator it = _neighborhoodHotspots.begin(); it != _neighborhoodHotspots.end(); it++)
+		g_allHotspots.remove(*it);
+
+	_neighborhoodHotspots.deleteHotspots();
 }
 
 void Neighborhood::init() {
@@ -90,6 +94,8 @@ void Neighborhood::init() {
 		error("Failed to load zooms");
 	_zoomTable.loadFromStream(stream);
 	delete stream;
+
+	createNeighborhoodSpots();
 
 	// TODO: AI, movies, notifications, buncha other stuff
 }
@@ -222,5 +228,44 @@ tCanOpenDoorReason Neighborhood::canOpenDoor(DoorTable::Entry &entry) {
 	return kCantOpenNoDoor;
 }
 
+void Neighborhood::createNeighborhoodSpots() {
+	Common::SeekableReadStream *hotspotList = _vm->_resFork->getResource(MKTAG('H', 'S', 'L', 's'), _resName);
+	if (!hotspotList)
+		error("Could not load neighborhood hotspots");
+
+	uint32 hotspotCount = hotspotList->readUint32BE();
+
+	while (hotspotCount--) {
+		uint16 id = hotspotList->readUint16BE();
+		uint32 flags = hotspotList->readUint32BE();
+		uint32 rgnSize = hotspotList->readUint32BE();
+
+		// duplicate of rgnSize
+		hotspotList->readUint16BE();
+
+		Common::Rect boundingBox;
+		boundingBox.top = hotspotList->readUint16BE();
+		boundingBox.left = hotspotList->readUint16BE();
+		boundingBox.bottom = hotspotList->readUint16BE();
+		boundingBox.right = hotspotList->readUint16BE();
+
+		debug(0, "Hotspot[%d]: Flags = %08x", id, flags); 
+		boundingBox.debugPrint(0, "\tBounding Box:");
+
+		// TODO: Handle non-rectangular hotspots
+		if (rgnSize != 10)
+			warning("Non-rectangular hotspot found - %d extra bytes", rgnSize - 10);
+		hotspotList->skip(rgnSize - 10);
+
+		Hotspot *hotspot = new Hotspot(id);
+		hotspot->setHotspotFlags(flags);
+		hotspot->setArea(boundingBox);
+
+		g_allHotspots.push_back(hotspot);
+		_neighborhoodHotspots.push_back(hotspot);
+	}
+
+	delete hotspotList;
+}
 
 } // End of namespace Pegasus

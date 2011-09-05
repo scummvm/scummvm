@@ -28,6 +28,7 @@
 
 #include "common/str.h"
 
+#include "pegasus/hotspot.h"
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
 #include "pegasus/neighborhood/extra.h"
@@ -79,6 +80,8 @@ public:
 	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
 
 protected:
+	virtual void createNeighborhoodSpots();
+
 	PegasusEngine *_vm;
 	Common::String _resName;
 	tNeighborhoodID _neighborhoodID;
@@ -93,6 +96,8 @@ protected:
 	ZoomTable _zoomTable;
 
 	tAlternateID _currentAlternate;
+
+	HotspotList _neighborhoodHotspots;
 };
 
 } // End of namespace Pegasus

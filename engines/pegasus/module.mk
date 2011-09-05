@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	detection.o \
 	gamestate.o \
 	graphics.o \
+	hotspot.o \
 	menu.o \
 	overview.o \
 	pegasus.o \
