@@ -191,6 +191,7 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 	_object8.changeZoom(100);
 
 	setAction(&_action1);
+	BF_GLOBALS._dialogCenter.y = 165;
 }
 
 /*--------------------------------------------------------------------------

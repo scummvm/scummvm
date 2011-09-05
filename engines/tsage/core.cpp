@@ -1619,8 +1619,13 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		_globals->_sceneText.remove();
 	}
 
-	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active) {
+		// Show user interface
 		BF_GLOBALS._uiElements.show();
+
+		// Re-show the cursor
+		BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
+	}
 }
 
 void SceneItem::display2(int resNum, int lineNum) {
@@ -2772,6 +2777,12 @@ void SceneText::synchronize(Serializer &s) {
 
 	if (s.getVersion() >= 5)
 		_textSurface.synchronize(s);
+}
+
+void SceneText::updateScreen() {
+	// In Blue Force, stop clearing text in the user interface area screwing up user interface
+	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y))
+		SceneObject::updateScreen();
 }
 
 /*--------------------------------------------------------------------------*/

@@ -612,6 +612,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneText"; }
 	virtual GfxSurface getFrame() { return _textSurface; }
+	virtual void updateScreen();
 };
 
 class Player : public SceneObject {
@@ -728,6 +729,7 @@ public:
 		_objList.remove(sceneObj);
 		_listAltered = true;
 	}
+	void clear() { _objList.clear(); }
 };
 
 class ScenePriorities : public Common::List<Region> {

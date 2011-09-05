@@ -142,6 +142,50 @@ void BlueForceGame::rightClick() {
 	delete dlg;
 }
 
+void BlueForceGame::processEvent(Event &event) {
+	if (event.eventType == EVENT_KEYPRESS) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			// F1 - Help
+			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			break;
+
+		case Common::KEYCODE_F2:
+			// F2 - Sound Options
+			SoundDialog::execute();
+			break;
+
+		case Common::KEYCODE_F3:
+			// F3 - Quit
+			quitGame();
+			event.handled = false;
+			break;
+
+		case Common::KEYCODE_F4:
+			// F4 - Restart
+			restartGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F7:
+			// F7 - Restore
+			restoreGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F10:
+			// F10 - Pause
+			GfxDialog::setPalette();
+			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 AObjectArray::AObjectArray(): EventHandler() {

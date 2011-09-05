@@ -42,6 +42,7 @@ public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
 	virtual void rightClick();
+	virtual void processEvent(Event &event);
 };
 
 #define OBJ_ARRAY_SIZE 10

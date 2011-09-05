@@ -74,7 +74,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_gfxColors.foreground = 83;
 		_fontColors.background = 88;
 		_fontColors.foreground = 92;
-		_dialogCenter.y = 165;
+		_dialogCenter.y = 140;
 	} else if ((_vm->getGameID() == GType_Ringworld) &&  (_vm->getFeatures() & GF_CD)) {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;

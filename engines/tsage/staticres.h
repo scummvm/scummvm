@@ -42,7 +42,6 @@ extern const char *RESTORING_NOT_ALLOWED_MSG;
 extern const char *RESTART_CONFIRM_MSG;
 
 // Dialogs
-extern const char *HELP_MSG;
 extern const char *QUIT_CONFIRM_MSG;
 extern const char *RESTART_MSG;
 extern const char *GAME_PAUSED_MSG;
@@ -62,6 +61,7 @@ extern const char *INV_EMPTY_MSG;
 namespace Ringworld {
 
 // Dialog resources
+extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
@@ -95,6 +95,7 @@ extern const char *DEMO_RESUME_BTN_STRING;
 namespace BlueForce {
 
 // Dialog resources
+extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;

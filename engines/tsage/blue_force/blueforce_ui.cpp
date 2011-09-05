@@ -202,8 +202,6 @@ void UICollection::draw() {
 		for (uint idx = 0; idx < _objList.size(); ++idx)
 			_objList[idx]->draw();
 
-		// Update the screen
-		g_system->updateScreen();
 		_clearScreen = 1;
 	}
 }
@@ -322,6 +320,8 @@ void UIElements::add(UIElement *obj) {
 	_objList.push_back(obj);
 
 	obj->setPosition(Common::Point(_bounds.left + obj->_position.x, _bounds.top + obj->_position.y));
+	obj->reposition();
+
 	GfxSurface s = obj->getFrame();
 	s.draw(obj->_position);
 }
