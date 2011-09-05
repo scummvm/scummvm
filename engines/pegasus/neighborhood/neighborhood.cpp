@@ -108,6 +108,13 @@ void Neighborhood::start() {
 	arriveAt(GameState.getNextRoom(), GameState.getNextDirection());
 }
 
+void Neighborhood::receiveNotification(Notification *, const tNotificationFlags flags) {
+	if (flags & kMoveForwardCompletedFlag)
+		arriveAt(GameState.getNextRoom(), GameState.getNextDirection());
+
+	// TODO: Other types
+}
+
 void Neighborhood::arriveAt(tRoomID room, tDirectionConstant direction) {
 	// TODO
 }

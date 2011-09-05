@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	graphics.o \
 	hotspot.o \
 	menu.o \
+	notification.o \
 	overview.o \
 	pegasus.o \
 	sound.o \
@@ -18,9 +19,6 @@ MODULE_OBJS = \
 	items/biochips/biochipitem.o \
 	items/inventory/inventoryitem.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
-	MMShell/Notification/MMNotification.o \
-	MMShell/Notification/MMNotificationManager.o \
-	MMShell/Notification/MMNotificationReceiver.o \
 	MMShell/Utilities/MMResourceFile.o \
 	MMShell/Utilities/MMTimeValue.o \
 	MMShell/Utilities/MMUtilities.o \

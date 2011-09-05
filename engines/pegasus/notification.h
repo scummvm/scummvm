@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PEGASUS_MMSHELL_NOTIFICATION_MMNOTIFICATION_H
-#define PEGASUS_MMSHELL_NOTIFICATION_MMNOTIFICATION_H
+#ifndef PEGASUS_NOTIFICATION_H
+#define PEGASUS_NOTIFICATION_H
 
 #include "common/list.h"
 
@@ -33,12 +33,12 @@
 
 namespace Pegasus {
 
-class MMNotificationManager;
-class MMNotificationReceiver;
+class NotificationManager;
+class NotificationReceiver;
 
 struct tReceiverEntry {
-	MMNotificationReceiver *fReceiver;
-	tNotificationFlags fMask;
+	NotificationReceiver *receiver;
+	tNotificationFlags mask;
 };
 
 int operator==(const tReceiverEntry &entry1, const tReceiverEntry &entry1);
@@ -50,12 +50,12 @@ typedef Common::List<tReceiverEntry> tReceiverList;
 	A notification can have 32 flags associated with it, which can be user-defined.
 */
 
-class MMNotification : public MMIDObject {
-friend class MMNotificationManager;
+class Notification : public MMIDObject {
+friend class NotificationManager;
 
 public:
-	MMNotification(const tNotificationID id, MMNotificationManager *owner);
-	virtual ~MMNotification();
+	Notification(const tNotificationID id, NotificationManager *owner);
+	virtual ~Notification();
 
 	//	NotifyMe will have this receiver notified when any of the specified notification
 	//	flags are set.
@@ -64,20 +64,57 @@ public:
 
 	//	Can selectively set or clear notification bits by using the flags and mask argument.
 
-	void NotifyMe(MMNotificationReceiver*, tNotificationFlags flags, tNotificationFlags mask);
-	void CancelNotification(MMNotificationReceiver *receiver);
+	void notifyMe(NotificationReceiver*, tNotificationFlags flags, tNotificationFlags mask);
+	void cancelNotification(NotificationReceiver *receiver);
 	
-	void SetNotificationFlags(tNotificationFlags flags,	tNotificationFlags mask);
-	tNotificationFlags GetNotificationFlags() { return fCurrentFlags; }
+	void setNotificationFlags(tNotificationFlags flags,	tNotificationFlags mask);
+	tNotificationFlags getNotificationFlags() { return _currentFlags; }
 	
-	void ClearNotificationFlags() { SetNotificationFlags(0, ~(tNotificationFlags)0); }
+	void clearNotificationFlags() { setNotificationFlags(0, ~(tNotificationFlags)0); }
 
 protected:
-	void CheckReceivers();
+	void checkReceivers();
 	
-	MMNotificationManager *fOwner;
-	tReceiverList fReceivers;
-	tNotificationFlags fCurrentFlags;
+	NotificationManager *_owner;
+	tReceiverList _receivers;
+	tNotificationFlags _currentFlags;
+};
+
+class NotificationReceiver {
+friend class Notification;
+
+public:
+	NotificationReceiver();
+	virtual ~NotificationReceiver();
+	
+protected:
+	//	ReceiveNotification is called automatically whenever a notification that this
+	//	receiver depends on has its flags set
+	
+	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void newNotification(Notification *notification);
+
+private:
+	Notification *_notification;
+};
+
+typedef Common::List<Notification *> tNotificationList;
+
+class NotificationManager : public NotificationReceiver {
+friend class Notification;
+
+public:
+	NotificationManager();
+	virtual ~NotificationManager();
+	
+	void checkNotifications();
+
+protected:
+	void addNotification(Notification *notification);
+	void removeNotification(Notification *notification);
+	void detachNotifications();
+	
+	tNotificationList _notifications;
 };
 
 } // End of namespace Pegasus

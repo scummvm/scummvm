@@ -30,6 +30,7 @@
 #include "common/str.h"
 
 #include "pegasus/hotspot.h"
+#include "pegasus/notification.h"
 #include "pegasus/sound.h"
 #include "pegasus/MMShell/Utilities/MMIDObject.h"
 #include "pegasus/neighborhood/door.h"
@@ -43,7 +44,6 @@
 
 namespace Pegasus {
 
-class MMNotification;
 class PegasusEngine;
 
 // Pegasus Prime neighborhood id's
@@ -76,7 +76,7 @@ struct tQueueRequest {
 	tInputBits interruptionFilter;
 	bool playing;
 	tNotificationFlags flags;
-	MMNotification *notification;
+	Notification *notification;
 };
 
 bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
@@ -84,7 +84,7 @@ bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
 typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
 
-class Neighborhood : public MMIDObject {
+class Neighborhood : public MMIDObject, public NotificationReceiver {
 public:
 	Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();
@@ -114,6 +114,8 @@ public:
 	virtual bool actionQueueEmpty() { return _actionQueue.empty(); }
 
 protected:
+	virtual void receiveNotification(Notification *, const tNotificationFlags);
+
 	virtual void createNeighborhoodSpots();
 	virtual void loadSoundSpots();
 
