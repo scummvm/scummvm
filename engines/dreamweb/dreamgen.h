@@ -488,7 +488,6 @@ public:
 	static const uint16 addr_describeob = 0xc364;
 	static const uint16 addr_examicon = 0xc35c;
 	static const uint16 addr_openob = 0xc354;
-	static const uint16 addr_showryanpage = 0xc350;
 	static const uint16 addr_openinv = 0xc34c;
 	static const uint16 addr_incryanpage = 0xc348;
 	static const uint16 addr_getbackfromob = 0xc344;
@@ -1949,7 +1948,7 @@ public:
 	//void drawflags();
 	void zoomonoff();
 	void updatesymboltop();
-	void showryanpage();
+	//void showryanpage();
 	void printlogo();
 	void allpointer();
 	void showseconduse();

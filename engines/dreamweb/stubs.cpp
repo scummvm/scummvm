@@ -1816,5 +1816,11 @@ void DreamGenContext::obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 		showframe(icons1, x - 3, y - 2, 7, 0);
 }
 
+void DreamGenContext::showryanpage() {
+	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	showframe(icons1, kInventx + 167, kInventy - 12, 12, 0);
+	showframe(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+}
+
 } /*namespace dreamgen */
 

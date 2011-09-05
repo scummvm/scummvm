@@ -226,4 +226,5 @@
 	void makeworn(DynObject *object);
 	void obtoinv();
 	void obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y);
+	void showryanpage();
 

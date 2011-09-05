@@ -4101,30 +4101,6 @@ void DreamGenContext::openinv() {
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::showryanpage() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = (80)+167;
-	bx = (58)-12;
-	al = 12;
-	ah = 0;
-	showframe();
-	al = 13;
-	_add(al, data.byte(kRyanpage));
-	push(ax);
-	al = data.byte(kRyanpage);
-	ah = 0;
-	cx = 18;
-	_mul(cx);
-	ds = data.word(kIcons1);
-	di = (80)+167;
-	_add(di, ax);
-	bx = (58)-12;
-	ax = pop();
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::openob() {
 	STACK_CHECK;
 	al = data.byte(kOpenedob);
@@ -17313,7 +17289,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getbackfromob: getbackfromob(); break;
 		case addr_incryanpage: incryanpage(); break;
 		case addr_openinv: openinv(); break;
-		case addr_showryanpage: showryanpage(); break;
 		case addr_openob: openob(); break;
 		case addr_examicon: examicon(); break;
 		case addr_describeob: describeob(); break;
