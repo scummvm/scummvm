@@ -25,8 +25,12 @@
 // Allow use of stuff in <time.h>
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
+// Disable system overrides to allow the use of system headers
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "sys/time.h"
 #include "time.h"
 
@@ -62,6 +66,22 @@ static int curX = 0, curY = 0;
 // The time (seconds after 1/1/1970) when program started.
 static time_t programStartTime = time(0);
 
+// Time in millis to wait before loading a queued event
+static const int queuedInputEventDelay = 50;
+
+// Time to execute queued event
+static long queuedEventTime = 0;
+
+// An event to be processed after the next poll tick
+static Common::Event queuedInputEvent;// = (Common::EventType)0;
+
+/**
+ * Initialize a new WebOSSdlEventSource.
+ */
+WebOSSdlEventSource::WebOSSdlEventSource() {
+	queuedInputEvent.type = (Common::EventType)0;
+}
+
 /**
  * Returns the number of passed milliseconds since program start.
  *
@@ -72,6 +92,26 @@ static time_t getMillis()
    struct timeval tv;
    gettimeofday(&tv, NULL);
    return (time(0) - programStartTime) * 1000 + tv.tv_usec / 1000;
+}
+
+/**
+ * Before calling the original SDL implementation, this method loads in
+ * queued events.
+ *
+ * @param event The ScummVM event
+ */
+bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
+	long curTime = getMillis();
+
+	// Move the queued event into the event if it's time
+	if (queuedInputEvent.type != (Common::EventType)0 && curTime >= queuedEventTime) {
+		event = queuedInputEvent;
+		queuedInputEvent.type = (Common::EventType)0;
+		printf("Running queued event\n");
+		return true;
+	}
+
+	return SdlEventSource::pollEvent(event);
 }
 
 /**
@@ -92,7 +132,7 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
 
-	// Holding down the gesture area emulates the ALT key
+		// Holding down the gesture area emulates the ALT key
 	if (gestureDown)
 		event.kbd.flags |= Common::KBD_ALT;
 }
@@ -198,7 +238,9 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 	if (motionPtrIndex == ev.button.which) {
 		motionPtrIndex = -1;
 
+		int screenX = g_system->getWidth();
 		int screenY = g_system->getHeight();
+		long curTime = getMillis();
 		
 		// 90% of the screen height for menu dialog/keyboard
 		if (ABS(dragDiffY) >= ABS(screenY*0.9)) {
@@ -215,6 +257,24 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 					return true;
 				}
 			}
+		}
+
+		// A swipe left triggers Escape
+		if (ABS(dragDiffX) >= ABS(screenX*0.9) && dragDiffX <= 0) {
+			event.type = Common::EVENT_KEYDOWN;
+			queuedInputEvent.type = Common::EVENT_KEYUP;
+			event.kbd.flags = queuedInputEvent.kbd.flags = 0;
+			event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
+			queuedEventTime = curTime + queuedInputEventDelay;
+
+			/*
+			const char *dialogMsg;
+			dialogMsg = _("Escaped!");
+			GUI::TimedMessageDialog dialog(dialogMsg, 1000);
+			dialog.runModal();
+			*/
+			printf("Escaped!\n");
 		}
 
 		// When drag mode was active then simply send a mouse up event
