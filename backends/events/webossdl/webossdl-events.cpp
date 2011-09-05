@@ -67,13 +67,13 @@ static int curX = 0, curY = 0;
 static time_t programStartTime = time(0);
 
 // Time in millis to wait before loading a queued event
-static const int queuedInputEventDelay = 50;
+static const int queuedInputEventDelay = 250;
 
 // Time to execute queued event
 static long queuedEventTime = 0;
 
 // An event to be processed after the next poll tick
-static Common::Event queuedInputEvent;// = (Common::EventType)0;
+static Common::Event queuedInputEvent;
 
 /**
  * Initialize a new WebOSSdlEventSource.
@@ -107,7 +107,7 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 	if (queuedInputEvent.type != (Common::EventType)0 && curTime >= queuedEventTime) {
 		event = queuedInputEvent;
 		queuedInputEvent.type = (Common::EventType)0;
-		printf("Running queued event\n");
+		//printf("Running queued event\n");
 		return true;
 	}
 
@@ -274,7 +274,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			GUI::TimedMessageDialog dialog(dialogMsg, 1000);
 			dialog.runModal();
 			*/
-			printf("Escaped!\n");
+			//printf("Escaped!\n");
 		}
 
 		// When drag mode was active then simply send a mouse up event
