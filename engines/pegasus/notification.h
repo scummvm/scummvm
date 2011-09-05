@@ -29,7 +29,7 @@
 #include "common/list.h"
 
 #include "pegasus/types.h"
-#include "pegasus/MMShell/Utilities/MMIDObject.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
 
@@ -50,7 +50,7 @@ typedef Common::List<tReceiverEntry> tReceiverList;
 	A notification can have 32 flags associated with it, which can be user-defined.
 */
 
-class Notification : public MMIDObject {
+class Notification : public IDObject {
 friend class NotificationManager;
 
 public:

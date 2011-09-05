@@ -28,15 +28,16 @@
 
 #include "pegasus/types.h"
 
+namespace Common {
+	class RandomSource;
+}
+
 namespace Pegasus {
 
-class MMIDObject {
-friend inline int operator==(const MMIDObject &arg1, const MMIDObject &arg1);
-friend inline int operator!=(const MMIDObject &arg2, const MMIDObject &arg2);
-
+class IDObject {
 public:
-	MMIDObject(const tMM32BitID id);
-	~MMIDObject();
+	IDObject(const tMM32BitID id);
+	~IDObject();
 	
 	tMM32BitID getObjectID() const;
 
@@ -44,24 +45,27 @@ private:
 	tMM32BitID _objectID;
 };
 
-inline MMIDObject::MMIDObject(const tMM32BitID id) {
-	_objectID = id;
-}
+class FunctionPtr;
 
-inline MMIDObject::~MMIDObject() {
-}
+typedef void (*tFunctionPtr)(FunctionPtr *theFunction, void *functionArg);
 
-inline tMM32BitID MMIDObject::getObjectID() const {
-	return _objectID;
-}
+class FunctionPtr {
+public:
+	FunctionPtr();
+	virtual ~FunctionPtr();
+	
+	void setFunctionPtr(tFunctionPtr function, void *functionArg);
 
-inline int operator==(const MMIDObject &arg1, const MMIDObject &arg2) {
-	return arg1._objectID == arg2._objectID;
-}
+protected:
+	void callFunction();
+	
+	tFunctionPtr _function;
+	void *_functionArg;
+};
 
-inline int operator!=(const MMIDObject &arg1, const MMIDObject &arg2) {
-	return arg1._objectID != arg2._objectID;
-}
+int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, const int32 start2, const int32 stop2);
+
+void shuffleArray(int32 *arr, int32 count, Common::RandomSource &random);
 
 } // End of namespace Pegasus
 

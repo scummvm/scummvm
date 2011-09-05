@@ -26,11 +26,48 @@
 #include "common/random.h"
 #include "common/util.h"
 
-#include "pegasus/MMShell/Utilities/MMUtilities.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
 
-inline int32 Round(const int32 a, const int32 b) {
+IDObject::IDObject(const tMM32BitID id) {
+	_objectID = id;
+}
+
+IDObject::~IDObject() {
+}
+
+tMM32BitID IDObject::getObjectID() const {
+	return _objectID;
+}
+
+int operator==(const IDObject &arg1, const IDObject &arg2) {
+	return arg1.getObjectID() == arg2.getObjectID();
+}
+
+int operator!=(const IDObject &arg1, const IDObject &arg2) {
+	return arg1.getObjectID() != arg2.getObjectID();
+}
+
+FunctionPtr::FunctionPtr() {
+	_function = 0;
+	_functionArg = 0;
+}
+
+FunctionPtr::~FunctionPtr() {
+}
+
+void FunctionPtr::setFunctionPtr(tFunctionPtr function, void *functionArg) {
+	_function = function;
+	_functionArg = functionArg;
+}
+
+void FunctionPtr::callFunction() {
+	if (_function != 0)
+		(*_function)(this, _functionArg);
+}
+
+inline int32 pegasusRound(const int32 a, const int32 b) {
 	if (b < 0)
 		if (a < 0)
 			return -((a - (-b >> 1)) / -b);
@@ -43,14 +80,14 @@ inline int32 Round(const int32 a, const int32 b) {
 			return (a + (b >> 1)) / b;
 }
 
-int32 LinearInterp(const int32 start1, const int32 stop1, const int32 current1, const int32 start2, const int32 stop2) {
+int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, const int32 start2, const int32 stop2) {
 	if (start2 == stop2)
 		return start2;
 	else
-		return start2 + Round((current1 - start1) * (stop2 - start2), (stop1 - start1));
+		return start2 + pegasusRound((current1 - start1) * (stop2 - start2), (stop1 - start1));
 }
 
-void ShuffleArray(int32 *arr, int32 count, Common::RandomSource &random) {	
+void shuffleArray(int32 *arr, int32 count, Common::RandomSource &random) {	
 	if (count > 1) {
 		for (int32 i = 1; i < count; ++i) {
 			int32 j = random.getRandomNumber(i);

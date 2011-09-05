@@ -28,8 +28,8 @@
 
 #include "common/endian.h"
 
-#include "pegasus/MMShell/Utilities/MMIDObject.h"
 #include "pegasus/types.h"
+#include "pegasus/util.h"
 
 namespace Common {
 	class Error;
@@ -285,7 +285,7 @@ enum tItemType {
 
 */
 
-class Item : public MMIDObject {
+class Item : public IDObject {
 public:
 	Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction);
 	virtual ~Item();

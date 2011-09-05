@@ -30,7 +30,7 @@ namespace Pegasus {
 
 typedef tReceiverList::iterator tReceiverIterator;
 
-Notification::Notification(const tNotificationID id, NotificationManager *owner) : MMIDObject(id) {
+Notification::Notification(const tNotificationID id, NotificationManager *owner) : IDObject(id) {
 	_owner = owner;
 	_currentFlags = kNoNotificationFlags;
 	if (_owner)

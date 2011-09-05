@@ -31,7 +31,7 @@
 
 #include "pegasus/constants.h"
 #include "pegasus/types.h"
-#include "pegasus/MMShell/Utilities/MMIDObject.h"
+#include "pegasus/util.h"
 
 /*
 
@@ -46,7 +46,7 @@
 
 namespace Pegasus {
 
-class Hotspot : public MMIDObject {
+class Hotspot : public IDObject {
 public:
 	Hotspot(const tHotSpotID);
 	virtual ~Hotspot();

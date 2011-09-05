@@ -12,15 +12,13 @@ MODULE_OBJS = \
 	overview.o \
 	pegasus.o \
 	sound.o \
+	util.o \
 	video.o \
 	items/inventory.o \
 	items/item.o \
 	items/itemlist.o \
 	items/biochips/biochipitem.o \
 	items/inventory/inventoryitem.o \
-	MMShell/Base_Classes/MMFunctionPtr.o \
-	MMShell/Utilities/MMTimeValue.o \
-	MMShell/Utilities/MMUtilities.o \
 	neighborhood/door.o \
 	neighborhood/exit.o \
 	neighborhood/extra.o \

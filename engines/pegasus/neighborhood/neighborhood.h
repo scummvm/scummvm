@@ -32,7 +32,7 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/notification.h"
 #include "pegasus/sound.h"
-#include "pegasus/MMShell/Utilities/MMIDObject.h"
+#include "pegasus/util.h"
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
 #include "pegasus/neighborhood/extra.h"
@@ -84,7 +84,7 @@ bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
 typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
 
-class Neighborhood : public MMIDObject, public NotificationReceiver {
+class Neighborhood : public IDObject, public NotificationReceiver {
 public:
 	Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();

@@ -32,7 +32,7 @@
 
 namespace Pegasus {
 
-Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : MMIDObject(id), _vm(vm), _resName(resName) {
+Neighborhood::Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : IDObject(id), _vm(vm), _resName(resName) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
 	_interruptionFilter = kFilterAllInput;

@@ -29,7 +29,7 @@ namespace Pegasus {
 
 HotspotList g_allHotspots;
 
-Hotspot::Hotspot(const tHotSpotID id) : MMIDObject(id) {
+Hotspot::Hotspot(const tHotSpotID id) : IDObject(id) {
 	_spotFlags = kNoHotSpotFlags;
 	_spotActive = false;
 }

@@ -33,7 +33,7 @@
 
 namespace Pegasus {
 
-Item::Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) : MMIDObject(id) {
+Item::Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) : IDObject(id) {
 	_itemNeighborhood = neighborhood;
 	_itemRoom = room;
 	_itemDirection = direction;
