@@ -192,10 +192,8 @@ MusicPlayer::~MusicPlayer() {
 void MusicPlayer::killMidi() {
 	Audio::MidiPlayer::stop();
 
-	if (_data != NULL) {
-		free(_data);
-		_data = NULL;
-	}
+	free(_data);
+	_data = NULL;
 }
 
 void MusicPlayer::loadMidi(int ref) {

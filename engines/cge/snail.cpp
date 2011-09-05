@@ -399,7 +399,7 @@ const char *Snail::_comText[] = {
 Snail::Snail(CGEEngine *vm, bool turbo)
 	: _turbo(turbo), _busy(false), _textDelay(false),
 	  _timerExpiry(0), _talkEnable(true),
-	  _head(0), _tail(0), _snList((Com *) malloc(sizeof(Com) * 256)), _vm(vm) {
+	  _head(0), _tail(0), _snList((Com *)malloc(sizeof(Com) * 256)), _vm(vm) {
 }
 
 Snail::~Snail() {
@@ -863,7 +863,7 @@ void CGEEngine::snFlash(bool on) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snFlash(%s)", on ? "true" : "false");
 
 	if (on) {
-		Dac *pal = (Dac *) malloc(sizeof(Dac) * kPalCount);
+		Dac *pal = (Dac *)malloc(sizeof(Dac) * kPalCount);
 		if (pal) {
 			memcpy(pal, _vga->_sysPal, kPalSize);
 			for (int i = 0; i < kPalCount; i++) {

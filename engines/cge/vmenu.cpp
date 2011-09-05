@@ -34,7 +34,7 @@ namespace CGE {
 MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	int h = kFontHigh + 2 * kMenuBarVM;
 	int i = (w += 2 * kMenuBarHM) * h;
-	uint8 *p = (uint8 *) malloc(sizeof(uint8) * i);
+	uint8 *p = (uint8 *)malloc(sizeof(uint8) * i);
 
 	memset(p + w, kPixelTransp, i - 2 * w);
 	memset(p, kMenuBarLT, w);

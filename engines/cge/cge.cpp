@@ -66,13 +66,13 @@ void CGEEngine::initCaveValues() {
 	_maxCaveArr[3] = 23;
 	_maxCaveArr[4] = 24;
 
-	_heroXY = (Hxy *) malloc (sizeof(Hxy) * _caveMax);
+	_heroXY = (Hxy *)malloc(sizeof(Hxy) * _caveMax);
 	for (int i = 0; i < _caveMax; i++) {
 		_heroXY[i]._x = 0;
 		_heroXY[i]._y = 0;
 	}
 
-	_barriers = (Bar *) malloc (sizeof(Bar) * (1 + _caveMax));
+	_barriers = (Bar *)malloc(sizeof(Bar) * (1 + _caveMax));
 	for (int i = 0; i < _caveMax + 1; i++) {
 		_barriers[i]._horz = 0xFF;
 		_barriers[i]._vert = 0xFF;
@@ -139,6 +139,7 @@ void CGEEngine::init() {
 	_maxCave    =  0;
 	_dark       = false;
 	_game       = false;
+	_finis      = false;
 	_now        =  1;
 	_lev        = -1;
 	_recentStep = -2;
@@ -150,6 +151,7 @@ void CGEEngine::init() {
 	_soundOk = 1;
 	_sprTv = NULL;
 	_gameCase2Cpt = 0;
+	_offUseCount = 0;
 
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }

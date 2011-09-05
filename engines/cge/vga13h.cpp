@@ -685,8 +685,8 @@ Vga::Vga() : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
 		}
 	}
 
-	_oldColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
-	_newColors = (Dac *) malloc(sizeof(Dac) * kPalCount);
+	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
+	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	getColors(_oldColors);
 	sunset();
 	setColors();
