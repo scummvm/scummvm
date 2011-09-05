@@ -59,29 +59,6 @@ MenuBar::MenuBar(CGEEngine *vm, uint16 w) : Talk(vm), _vm(vm) {
 	_flags._bDel = true;
 }
 
-static char *g_vmgt;
-
-char *VMGather(Choice *list) {
-	Choice *cp;
-	int len = 0, h = 0;
-
-	for (cp = list; cp->_text; cp++) {
-		len += strlen(cp->_text);
-		h++;
-	}
-	g_vmgt = new char[len + h];
-	if (g_vmgt) {
-		*g_vmgt = '\0';
-		for (cp = list; cp->_text; cp++) {
-			if (*g_vmgt)
-				strcat(g_vmgt, "|");
-			strcat(g_vmgt, cp->_text);
-			h++;
-		}
-	}
-	return g_vmgt;
-}
-
 Vmenu *Vmenu::_addr = NULL;
 int Vmenu::_recent = -1;
 
@@ -90,7 +67,7 @@ Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
 	Choice *cp;
 
 	_addr = this;
-	delete[] g_vmgt;
+	delete[] _vmgt;
 	_items = 0;
 	for (cp = list; cp->_text; cp++)
 		_items++;
@@ -142,4 +119,24 @@ void Vmenu::touch(uint16 mask, int x, int y) {
 	}
 }
 
+char *Vmenu::VMGather(Choice *list) {
+	Choice *cp;
+	int len = 0, h = 0;
+
+	for (cp = list; cp->_text; cp++) {
+		len += strlen(cp->_text);
+		h++;
+	}
+	_vmgt = new char[len + h];
+	if (_vmgt) {
+		*_vmgt = '\0';
+		for (cp = list; cp->_text; cp++) {
+			if (*_vmgt)
+				strcat(_vmgt, "|");
+			strcat(_vmgt, cp->_text);
+			h++;
+		}
+	}
+	return _vmgt;
+}
 } // End of namespace CGE

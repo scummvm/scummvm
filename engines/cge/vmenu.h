@@ -53,8 +53,6 @@ private:
 
 
 class Vmenu : public Talk {
-	uint16 _items;
-	Choice *_menu;
 public:
 	static Vmenu *_addr;
 	static int _recent;
@@ -63,7 +61,12 @@ public:
 	~Vmenu();
 	virtual void touch(uint16 mask, int x, int y);
 private:
+	char *_vmgt;
 	CGEEngine *_vm;
+	uint16 _items;
+	Choice *_menu;
+
+	char *VMGather(Choice *list);
 };
 
 } // End of namespace CGE
