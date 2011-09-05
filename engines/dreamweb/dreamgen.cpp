@@ -3847,41 +3847,6 @@ nextopenslot:
 	undertextline();
 }
 
-void DreamGenContext::findallryan() {
-	STACK_CHECK;
-	push(di);
-	cx = 30;
-	ax = 0x0ffff;
-	_stosw(cx, true);
-	di = pop();
-	cl = 4;
-	ds = data.word(kExtras);
-	bx = (0+2080+30000);
-	ch = 0;
-findryanloop:
-	_cmp(ds.byte(bx+2), cl);
-	if (!flags.z())
-		goto notinryaninv;
-	_cmp(ds.byte(bx+3), 255);
-	if (!flags.z())
-		goto notinryaninv;
-	al = ds.byte(bx+4);
-	ah = 0;
-	push(di);
-	_add(di, ax);
-	_add(di, ax);
-	al = ch;
-	ah = 4;
-	_stosw();
-	di = pop();
-notinryaninv:
-	_add(bx, 16);
-	_inc(ch);
-	_cmp(ch, (114));
-	if (!flags.z())
-		goto findryanloop;
-}
-
 void DreamGenContext::findallopen() {
 	STACK_CHECK;
 	push(di);
@@ -17282,7 +17247,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_monprint: monprint(); break;
 		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
-		case addr_findallryan: findallryan(); break;
 		case addr_findallopen: findallopen(); break;
 		case addr_examineob: examineob(); break;
 		case addr_makemainscreen: makemainscreen(); break;

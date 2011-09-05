@@ -494,7 +494,6 @@ public:
 	static const uint16 addr_makemainscreen = 0xc340;
 	static const uint16 addr_examineob = 0xc33c;
 	static const uint16 addr_findallopen = 0xc32c;
-	static const uint16 addr_findallryan = 0xc328;
 	static const uint16 addr_fillopen = 0xc324;
 	static const uint16 addr_fillryan = 0xc320;
 	static const uint16 addr_monprint = 0xc314;
@@ -1929,7 +1928,7 @@ public:
 	void buttonseven();
 	void redrawmainscrn();
 	void showgroup();
-	void findallryan();
+	//void findallryan();
 	//void channel0tran();
 	void buttonpress();
 	//void parseblaster();

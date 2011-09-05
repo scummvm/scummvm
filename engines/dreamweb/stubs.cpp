@@ -1822,5 +1822,24 @@ void DreamGenContext::showryanpage() {
 	showframe(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
 
+void DreamGenContext::findallryan() {
+	findallryan(es.ptr(di, 60));
+}
+
+void DreamGenContext::findallryan(uint8 *inv) {
+	memset(inv, 0xff, 60);
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		DynObject *extra = getexad(i);
+		if (extra->mapad[0] != 4)
+			continue;
+		if (extra->mapad[1] != 0xff)
+			continue;
+		uint8 slot = extra->mapad[2];
+		assert(slot < 30);
+		inv[2 * slot + 0] = i;
+		inv[2 * slot + 1] = 4;
+	}
+}
+
 } /*namespace dreamgen */
 
