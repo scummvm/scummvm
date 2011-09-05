@@ -19,7 +19,6 @@ MODULE_OBJS = \
 	items/biochips/biochipitem.o \
 	items/inventory/inventoryitem.o \
 	MMShell/Base_Classes/MMFunctionPtr.o \
-	MMShell/Utilities/MMResourceFile.o \
 	MMShell/Utilities/MMTimeValue.o \
 	MMShell/Utilities/MMUtilities.o \
 	neighborhood/door.o \
