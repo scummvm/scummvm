@@ -102,9 +102,11 @@ void PegasusEngine::runCredits() {
 					}
 					break;
 				case Common::KEYCODE_RETURN:
-					drawCredits(curButton, true, frame, creditsVideo);
-					_system->updateScreen();
-					continueLooping = (curButton != kCreditsMainMenu);
+					if (curButton == kCreditsMainMenu) {
+						drawCredits(curButton, true, frame, creditsVideo);
+						_system->updateScreen();
+						continueLooping = false;
+					}
 					break;
 				default:
 					break;
