@@ -18,6 +18,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Implemented support for loading data directly from InstallShield
      cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
 
+ Groovie:
+   - Added support for the iOS version of The 7th Guest.
+
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
    - Fixed priority bug in iMuse. As a result the AdLib music should sound
