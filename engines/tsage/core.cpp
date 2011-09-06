@@ -1768,6 +1768,18 @@ void NamedHotspot::setup(int sceneRegionId, int resNum, int lookLineNum, int tal
 	_lookLineNum = lookLineNum;
 	_talkLineNum = talkLineNum;
 	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
+		break;
+	}
 }
 
 void NamedHotspot::synchronize(Serializer &s) {
