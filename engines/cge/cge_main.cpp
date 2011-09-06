@@ -529,10 +529,9 @@ void CGEEngine::setMapBrick(int x, int z) {
 
 	Square *s = new Square(this);
 	if (s) {
-		static char n[] = "00:00";
+		char n[6];
 		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
-		wtom(x, n + 0, 10, 2);
-		wtom(z, n + 3, 10, 2);
+		sprintf(n, "%02d:%02d", x, z);
 		Cluster::_map[z][x] = 1;
 		s->setName(n);
 		_vga->_showQ->insert(s, _vga->_showQ->first());

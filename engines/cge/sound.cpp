@@ -132,11 +132,11 @@ int Fx::find(int ref) {
 
 void Fx::preload(int ref0) {
 	Han *cacheLim = _cache + _size;
+	char filename[12];
 
 	for (int ref = ref0; ref < ref0 + 10; ref++) {
-		static char fname[] = "FX00000.WAV";
-		wtom(ref, fname + 2, 10, 5);
-		VFile file = VFile(fname);
+		sprintf(filename, "FX%05d.WAV", ref);
+		VFile file = VFile(filename);
 		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Han *p = &_cache[find(0)];
@@ -144,20 +144,24 @@ void Fx::preload(int ref0) {
 				break;
 			p->_wav = wav;
 			p->_ref = ref;
+		} else {
+			warning("Unable to load %s", filename);
 		}
 	}
 }
 
 DataCk *Fx::load(int idx, int ref) {
-	static char fname[] = "FX00000.WAV";
-	wtom(ref, fname + 2, 10, 5);
+	char filename[12];
+	sprintf(filename, "FX%05d.WAV", ref);
 
-	VFile file = VFile(fname);
+	VFile file = VFile(filename);
 	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Han *p = &_cache[idx];
 		p->_wav = wav;
 		p->_ref = ref;
+	} else {
+		warning("Unable to load %s", filename);
 	}
 	return wav;
 }
