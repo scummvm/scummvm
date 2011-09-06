@@ -231,4 +231,9 @@
 	void findallryan(uint8 *inv);
 	void fillryan();
 	void useroutine();
+	void hangon();
+	void hangon(uint16 frameCount);
+	void hangonp();
+	void hangonp(uint16 count);
+
 

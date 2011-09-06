@@ -145,8 +145,7 @@ void DreamGenContext::dreamweb() {
 				// "endofgame"
 				clearbeforeload();
 				fadescreendowns();
-				cx = 200;
-				hangon();
+				hangon(200);
 				endgame();
 				quickquit2();
 				return;
@@ -186,8 +185,7 @@ void DreamGenContext::dreamweb() {
 		clearbeforeload();
 		showgun();
 		fadescreendown();
-		cx = 100;
-		hangon();
+		hangon(100);
 
 	}
 }
@@ -1853,6 +1851,52 @@ void DreamGenContext::fillryan() {
 		}
 	}
 	showryanpage();
+}
+
+void DreamGenContext::hangon() {
+	hangon(cx);
+}
+
+void DreamGenContext::hangon(uint16 frameCount) {
+	while (frameCount) {
+		vsync();
+		--frameCount;
+	}
+}
+
+void DreamGenContext::hangonp() {
+	hangonp(cx);
+}
+
+void DreamGenContext::hangonp(uint16 count) {
+	data.word(kMaintimer) = 0;
+	uint8 pointerFrame = data.byte(kPointerframe);
+	uint8 pickup = data.byte(kPickup);
+	data.byte(kPointermode) = 3;
+	data.byte(kPickup) = 0;
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	for (size_t i = 0; i < count * 3; ++i) {
+		delpointer();
+		readmouse();
+		animpointer();
+		showpointer();
+		vsync();
+		dumppointer();
+		if (data.word(kMousebutton) == 0)
+			continue;
+		if (data.word(kMousebutton) != data.word(kOldbutton))
+			break;
+	}
+
+	delpointer();
+	data.byte(kPointerframe) = pointerFrame;
+	data.byte(kPickup) = pickup;
+	data.byte(kPointermode) = 0;
 }
 
 } /*namespace dreamgen */

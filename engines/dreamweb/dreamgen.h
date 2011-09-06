@@ -74,7 +74,6 @@ public:
 	static const uint16 addr_loadintotemp2 = 0xcb1c;
 	static const uint16 addr_loadintotemp = 0xcb18;
 	static const uint16 addr_loadtraveltext = 0xcb14;
-	static const uint16 addr_hangon = 0xcb10;
 	static const uint16 addr_randomnum2 = 0xcb08;
 	static const uint16 addr_randomnum1 = 0xcb04;
 	static const uint16 addr_readkey = 0xcafc;
@@ -86,7 +85,6 @@ public:
 	static const uint16 addr_getunderzoom = 0xcab4;
 	static const uint16 addr_hangoncurs = 0xcab0;
 	static const uint16 addr_hangonw = 0xcaac;
-	static const uint16 addr_hangonp = 0xcaa8;
 	static const uint16 addr_allpointer = 0xcaa4;
 	static const uint16 addr_blank = 0xcaa0;
 	static const uint16 addr_worktoscreenm = 0xca9c;
@@ -1713,7 +1711,7 @@ public:
 	void initialinv();
 	void quitsymbol();
 	//void modifychar();
-	void hangon();
+	//void initman();
 	void settopright();
 	void findsetobject();
 	void singlekey();
@@ -1832,7 +1830,7 @@ public:
 	void read();
 	void fadescreenups();
 	//void checkdest();
-	//void initman();
+	//void hangon();
 	void loadpalfromiff();
 	//void facerightway();
 	void startup1();
@@ -1959,7 +1957,7 @@ public:
 	void parser();
 	void hangonw();
 	void intro();
-	void hangonp();
+	//void hangonp();
 	void fadescreendowns();
 	void openhoteldoor2();
 	void getridoftempsp();

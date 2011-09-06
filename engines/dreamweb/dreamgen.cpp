@@ -15242,53 +15242,6 @@ void DreamGenContext::allpointer() {
 	dumppointer();
 }
 
-void DreamGenContext::hangonp() {
-	STACK_CHECK;
-	push(cx);
-	_add(cx, cx);
-	ax = pop();
-	_add(cx, ax);
-	data.word(kMaintimer) = 0;
-	al = data.byte(kPointerframe);
-	ah = data.byte(kPickup);
-	push(ax);
-	data.byte(kPointermode) = 3;
-	data.byte(kPickup) = 0;
-	push(cx);
-	data.byte(kCommandtype) = 255;
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
-	cx = pop();
-hangloop:
-	push(cx);
-	delpointer();
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
-	cx = pop();
-	ax = data.word(kMousebutton);
-	_cmp(ax, 0);
-	if (flags.z())
-		goto notpressed;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto getoutofit;
-notpressed:
-	if (--cx)
-		goto hangloop;
-getoutofit:
-	delpointer();
-	ax = pop();
-	data.byte(kPointerframe) = al;
-	data.byte(kPickup) = ah;
-	data.byte(kPointermode) = 0;
-}
-
 void DreamGenContext::hangonw() {
 	STACK_CHECK;
 hangloopw:
@@ -15413,16 +15366,6 @@ void DreamGenContext::randomnum2() {
 	di = pop();
 	es = pop();
 	ds = pop();
-}
-
-void DreamGenContext::hangon() {
-	STACK_CHECK;
-hangonloop:
-	push(cx);
-	vsync();
-	cx = pop();
-	if (--cx)
-		goto hangonloop;
 }
 
 void DreamGenContext::loadtraveltext() {
@@ -17521,7 +17464,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_worktoscreenm: worktoscreenm(); break;
 		case addr_blank: blank(); break;
 		case addr_allpointer: allpointer(); break;
-		case addr_hangonp: hangonp(); break;
 		case addr_hangonw: hangonw(); break;
 		case addr_hangoncurs: hangoncurs(); break;
 		case addr_getunderzoom: getunderzoom(); break;
@@ -17533,7 +17475,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_readkey: readkey(); break;
 		case addr_randomnum1: randomnum1(); break;
 		case addr_randomnum2: randomnum2(); break;
-		case addr_hangon: hangon(); break;
 		case addr_loadtraveltext: loadtraveltext(); break;
 		case addr_loadintotemp: loadintotemp(); break;
 		case addr_loadintotemp2: loadintotemp2(); break;

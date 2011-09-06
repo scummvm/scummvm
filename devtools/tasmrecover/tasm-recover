@@ -192,6 +192,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'findallryan',
 	'fillryan',
 	'useroutine',
+	'hangon',
+	'hangonp',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

@@ -144,8 +144,7 @@ void DreamGenContext::useroutine() {
 			al = es.byte(si);
 			if (al != 0) {
 				usetext();
-				cx = 400;
-				hangonp();
+				hangonp(400);
 				putbackobstuff();
 				return;
 			}
@@ -159,8 +158,7 @@ void DreamGenContext::useroutine() {
 	obicons();
 	printmessage(33, 100, 63, 241, true);
 	worktoscreenm();
-	cx = 50;
-	hangonp();
+	hangonp(50);
 	putbackobstuff();
 	data.byte(kCommandtype) = 255;
 }
