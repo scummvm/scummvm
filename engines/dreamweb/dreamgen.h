@@ -495,7 +495,6 @@ public:
 	static const uint16 addr_examineob = 0xc33c;
 	static const uint16 addr_findallopen = 0xc32c;
 	static const uint16 addr_fillopen = 0xc324;
-	static const uint16 addr_fillryan = 0xc320;
 	static const uint16 addr_monprint = 0xc314;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
@@ -1746,7 +1745,7 @@ public:
 	void dropobject();
 	void isitright();
 	void reexfromopen();
-	void fillryan();
+	//void fillryan();
 	void drawitall();
 	void usestereo();
 	void showcurrentfile();

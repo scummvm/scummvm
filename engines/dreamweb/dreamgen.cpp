@@ -3758,51 +3758,6 @@ nottrigger2:
 	data.byte(kKerning) = 0;
 }
 
-void DreamGenContext::fillryan() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32);
-	findallryan();
-	si = (0+(228*13)+32);
-	al = data.byte(kRyanpage);
-	ah = 0;
-	cx = 20;
-	_mul(cx);
-	_add(si, ax);
-	di = (80);
-	bx = (58);
-	cx = 2;
-ryanloop2:
-	push(cx);
-	push(di);
-	push(bx);
-	cx = 5;
-ryanloop1:
-	push(cx);
-	push(di);
-	push(bx);
-	ax = es.word(si);
-	_add(si, 2);
-	push(si);
-	push(es);
-	obtoinv();
-	es = pop();
-	si = pop();
-	bx = pop();
-	di = pop();
-	cx = pop();
-	_add(di, (44));
-	if (--cx)
-		goto ryanloop1;
-	bx = pop();
-	di = pop();
-	cx = pop();
-	_add(bx, (44));
-	if (--cx)
-		goto ryanloop2;
-	showryanpage();
-}
-
 void DreamGenContext::fillopen() {
 	STACK_CHECK;
 	deltextline();
@@ -17245,7 +17200,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
 		case addr_monprint: monprint(); break;
-		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallopen: findallopen(); break;
 		case addr_examineob: examineob(); break;

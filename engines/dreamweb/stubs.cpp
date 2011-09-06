@@ -1841,5 +1841,19 @@ void DreamGenContext::findallryan(uint8 *inv) {
 	}
 }
 
+void DreamGenContext::fillryan() {
+	uint8 *inv = segRef(data.word(kBuffers)).ptr(kRyaninvlist, 60);
+	findallryan(inv);
+	inv += data.byte(kRyanpage) * 2 * 10;
+	for (size_t i = 0; i < 2; ++i) {
+		for (size_t j = 0; j < 5; ++j) {
+			uint8 objIndex = *inv++;
+			uint8 objType = *inv++;
+			obtoinv(objIndex, objType, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
+		}
+	}
+	showryanpage();
+}
+
 } /*namespace dreamgen */
 
