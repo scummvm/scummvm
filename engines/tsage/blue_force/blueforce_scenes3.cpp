@@ -222,8 +222,6 @@ void Scene300::Action5::signal() {
 Scene300::Scene300(): SceneExt(), _object13(3000), _object14(3001), _object15(3002),
 			_object16(3003) {
 	_field2760 = _field2762 = 0;
-	
-	_cursorVisage.setVisage(1, 8);
 }
 
 void Scene300::postInit(SceneObjectList *OwnerList) {
@@ -281,12 +279,6 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_object11.setStrip(8);
 	_object11.setPosition(Common::Point(265, 91));
 	_object11.hide();
-
- //***DEBUG***
-BF_GLOBALS.setFlag(2);
-BF_GLOBALS._sceneManager._previousScene = 315; // 190;
-BF_GLOBALS._player.setVisage(190);
-BF_GLOBALS._player.setStrip(1);
 
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 50:
@@ -526,11 +518,12 @@ void Scene300::process(Event &event) {
 	SceneExt::process(event);
 
 	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
 		if (_item14.contains(event.mousePos)) {
-			GfxSurface surface = _cursorVisage.getFrame(2);
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NE);
 			BF_GLOBALS._events.setCursor(surface);
 		} else if (_item15.contains(event.mousePos)) {
-			GfxSurface surface = _cursorVisage.getFrame(3);
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
 			BF_GLOBALS._events.setCursor(surface);
 		} else {
 			// In case an exit cursor was being shown, restore the previously selected cursor

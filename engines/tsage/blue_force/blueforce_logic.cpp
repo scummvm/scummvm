@@ -67,8 +67,10 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 150:
 	case 160:
 	case 180:
-	case 190:
 		error("Scene group 1 not implemented");
+	case 190:
+		// Front of Police Station
+		return new Scene190();
 	case 200:
 	case 210:
 	case 220:
@@ -501,6 +503,7 @@ SceneExt::SceneExt(): Scene() {
 	_field372 = 0;
 	_field37A = 0;
 	_eventHandler = NULL;
+	_cursorVisage.setVisage(1, 8);
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
@@ -598,17 +601,17 @@ void SceneExt::gunDisplay() {
 
 /*--------------------------------------------------------------------------*/
 
-GameScene::GameScene() {
+GroupedScene::GroupedScene() {
 
 }
 
-void GameScene::postInit(SceneObjectList *OwnerList) {
+void GroupedScene::postInit(SceneObjectList *OwnerList) {
 	_field794 = 0;
 	_field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
-void GameScene::remove() {
+void GroupedScene::remove() {
 	SceneExt::remove();
 	if (_field794 == 1) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();

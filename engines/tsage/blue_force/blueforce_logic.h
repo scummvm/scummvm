@@ -137,6 +137,8 @@ public:
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
 
+enum ExitFrame { EXITFRAME_NE = 2, EXITFRAME_E = 3 };
+
 class SceneExt: public Scene {
 private:
 	void gunDisplay();
@@ -145,6 +147,7 @@ public:
 	int _field372;
 	int _field37A;
 	EventHandler *_eventHandler;
+	Visage _cursorVisage;
 
 	Rect _v51C34;
 public:
@@ -162,12 +165,12 @@ public:
 	void display(CursorType action);
 };
 
-class GameScene: public SceneExt {
+class GroupedScene: public SceneExt {
 public:
 	int _field412;
 	int _field794;
 public:
-	GameScene();
+	GroupedScene();
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
