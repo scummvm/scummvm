@@ -71,6 +71,7 @@ private:
 	void parseNextFrame();
 	void init();
 	void deinit();
+	void pause(bool p);
 	void handleDeltaPalette(byte *src, int32 size);
 	void handleFramesHeader();
 	void handleFrameDemo();
