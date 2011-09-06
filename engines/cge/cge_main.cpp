@@ -162,16 +162,15 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 		s.syncAsUint16LE(_flag[i]);
 
 	if (s.isLoading()) {
-		// Reinitialise cave values
-		freeCaveValues();
+		// Reset cave values
 		initCaveValues();
 	}
 
-	for (i = 0; i < _caveMax; i++) {
+	for (i = 0; i < kCaveMax; i++) {
 		s.syncAsSint16LE(_heroXY[i]._x);
 		s.syncAsUint16LE(_heroXY[i]._y);
 	}
-	for (i = 0; i < 1 + _caveMax; i++) {
+	for (i = 0; i < 1 + kCaveMax; i++) {
 		s.syncAsByte(_barriers[i]._horz);
 		s.syncAsByte(_barriers[i]._vert);
 	}
@@ -281,8 +280,8 @@ Common::Error CGEEngine::loadGameState(int slot) {
 	// Load the game
 	loadGame(slot, NULL);
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
-	                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
+	_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
+	                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
 	caveUp();
 
 	return Common::kNoError;
@@ -480,7 +479,7 @@ void CGEEngine::loadHeroXY() {
 
 	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf._error) {
-		for (int i = 0; i < _caveMax; ++i) {
+		for (int i = 0; i < kCaveMax; ++i) {
 			cf.read((byte *)&x, 2);
 			cf.read((byte *)&y, 2);
 
@@ -493,7 +492,7 @@ void CGEEngine::loadHeroXY() {
 void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
-	if (_now <= _caveMax) {
+	if (_now <= kCaveMax) {
 		VFile cf(progName(".TAB"));
 		if (!cf._error) {
 			// Move to the data for the given room
@@ -730,8 +729,8 @@ void CGEEngine::switchCave(int cav) {
 			_hero->step(0);
 			_vga->_spareQ->_show = 0;
 		}
-		_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
-		                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
+		_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
+		                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
 		killText();
 		if (!_startupMode)
 			keyClick();
@@ -794,9 +793,9 @@ void System::touch(uint16 mask, int x, int y) {
 		_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select cave?
-				if (y >= kCaveY && y < kCaveY + _vm->_caveNy * _vm->_caveDy &&
-				    x >= kCaveX && x < kCaveX + _vm->_caveNx * _vm->_caveDx && !_vm->_game) {
-					cav = ((y - kCaveY) / _vm->_caveDy) * _vm->_caveNx + (x - kCaveX) / _vm->_caveDx + 1;
+				if (y >= kCaveY && y < kCaveY + kCaveNy * kCaveDy &&
+				    x >= kCaveX && x < kCaveX + kCaveNx * kCaveDx && !_vm->_game) {
+					cav = ((y - kCaveY) / kCaveDy) * kCaveNx + (x - kCaveX) / kCaveDx + 1;
 					if (cav > _vm->_maxCave)
 						cav = 0;
 				} else {
@@ -1397,8 +1396,8 @@ void CGEEngine::runGame() {
 	_startupMode = 0;
 
 	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(kCaveX + ((_now - 1) % _caveNx) * _caveDx + kCaveSX,
-	                  kCaveY + ((_now - 1) / _caveNx) * _caveDy + kCaveSY);
+	_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
+	                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
 	caveUp();
 
 	_keyboard->setClient(_sys);

@@ -38,6 +38,8 @@
 
 namespace CGE {
 
+const int CGEEngine::_maxCaveArr[5] = {1, 8, 16, 23, 24};
+
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
 
@@ -54,34 +56,15 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 }
 
 void CGEEngine::initCaveValues() {
-	_caveDx = 9;
-	_caveDy = 10;
-	_caveNx = 8;
-	_caveNy = 3;
-	_caveMax = _caveNx * _caveNy;
-
-	_maxCaveArr[0] = 1;
-	_maxCaveArr[1] = 8;
-	_maxCaveArr[2] = 16;
-	_maxCaveArr[3] = 23;
-	_maxCaveArr[4] = 24;
-
-	_heroXY = (Hxy *)malloc(sizeof(Hxy) * _caveMax);
-	for (int i = 0; i < _caveMax; i++) {
+	for (int i = 0; i < kCaveMax; i++) {
 		_heroXY[i]._x = 0;
 		_heroXY[i]._y = 0;
 	}
 
-	_barriers = (Bar *)malloc(sizeof(Bar) * (1 + _caveMax));
-	for (int i = 0; i < _caveMax + 1; i++) {
+	for (int i = 0; i < kCaveMax + 1; i++) {
 		_barriers[i]._horz = 0xFF;
 		_barriers[i]._vert = 0xFF;
 	}
-}
-
-void CGEEngine::freeCaveValues() {
-	free(_heroXY);
-	free(_barriers);
 }
 
 void CGEEngine::init() {
@@ -195,8 +178,6 @@ void CGEEngine::deinit() {
 			delete _miniShpList[i];
 		delete[] _miniShpList;
 	}
-
-	freeCaveValues();
 }
 
 CGEEngine::~CGEEngine() {

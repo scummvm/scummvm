@@ -200,7 +200,7 @@ void Walk::reach(Sprite *spr, int mode) {
 	_snail->insCom(kSnPause, -1, 64, NULL);
 	_snail->insCom(kSnSeq, -1, kTSeq + mode, this);
 	if (spr) {
-		_snail->insCom(kSnWait, -1, -1, _hero); /////--------$$$$$$$
+		_snail->insCom(kSnWait, -1, -1, _hero);
 		//SNINSERT(SNWALK, -1, -1, spr);
 	}
 	// sequence is not finished,
@@ -212,7 +212,7 @@ void Walk::noWay() {
 }
 
 bool Cluster::chkBar() const {
-	assert(_vm->_now <= _vm->_caveMax);
+	assert(_vm->_now <= kCaveMax);
 	return (_pt.x == _vm->_barriers[_vm->_now]._horz) || (_pt.y == _vm->_barriers[_vm->_now]._vert);
 }
 

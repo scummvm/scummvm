@@ -51,6 +51,12 @@ class Sprite;
 #define kPocketNY   1
 #define kPocketSX   8
 #define kPocketSY   3
+#define kCaveDx     9
+#define kCaveDy     10
+#define kCaveNx     8
+#define kCaveNy     3
+#define kCaveMax    kCaveNx * kCaveNy
+
 
 // our engine debug channels
 enum {
@@ -106,6 +112,8 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
+	static const int _maxCaveArr[5];
+
 	const   ADGameDescription *_gameDescription;
 	int    _startupMode;
 	int    _demoText;
@@ -114,7 +122,6 @@ public:
 	bool   _music;
 	int    _pocref[kPocketNX];
 	uint8  _volume[2];
-	int    _maxCaveArr[5];
 	int    _maxCave;
 	bool   _flag[4];
 	bool   _dark;
@@ -132,13 +139,8 @@ public:
 	Sprite *_sprK2;
 	Sprite *_sprK3;
 
-	uint8 _caveDx;
-	uint8 _caveDy;
-	uint8 _caveNx;
-	uint8 _caveNy;
-	uint16 _caveMax;
-	Hxy *_heroXY;
-	Bar *_barriers;
+	Hxy _heroXY[kCaveMax];
+	Bar _barriers[kCaveMax];
 
 	Common::RandomSource _randomSource;
 	MusicPlayer _midiPlayer;
@@ -212,7 +214,6 @@ public:
 	void postMiniStep(int stp);
 	void showBak(int ref);
 	void initCaveValues();
-	void freeCaveValues();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snBarrier(int cav, int bar, bool horz);
