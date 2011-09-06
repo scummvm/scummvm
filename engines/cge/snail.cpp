@@ -771,13 +771,15 @@ void CGEEngine::snKill(Sprite *spr) {
 	}
 }
 
-void CGEEngine::snSound(Sprite *spr, int wav, int cnt) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snSound(spr, %d, %d)", wav, cnt);
+void CGEEngine::snSound(Sprite *spr, int wav) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSound(spr, %d)", wav);
 
 	if (wav == -1)
 		_sound->stop();
 	else
-		_sound->play((*_fx)[wav], (spr) ? ((spr->_x + spr->_w / 2) / (kScrWidth / 16)) : 8, cnt);
+		_sound->play((*_fx)[wav], (spr) ? ((spr->_x + spr->_w / 2) / (kScrWidth / 16)) : 8);
+
+	_sound->setRepeat(1);
 }
 
 void CGEEngine::snKeep(Sprite *spr, int stp) {
@@ -785,7 +787,10 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 
 	selectPocket(-1);
 	if (spr && ! spr->_flags._kept && _pocket[_pocPtr] == NULL) {
-		snSound(spr, 3, 1);
+		int16 oldRepeat = _sound->getRepeat();
+		_sound->setRepeat(1);
+		snSound(spr, 3);
+		_sound->setRepeat(oldRepeat);
 		_pocket[_pocPtr] = spr;
 		spr->_cave = 0;
 		spr->_flags._kept = true;
@@ -926,8 +931,6 @@ void CGEEngine::snMouse(bool on) {
 }
 
 void Snail::runCom() {
-	static int count = 1;
-
 	if (_busy)
 		return;
 
@@ -1122,11 +1125,10 @@ void Snail::runCom() {
 			_vm->snReach(spr, snc->_val);
 			break;
 		case kSnSound:
-			_vm->snSound(spr, snc->_val, count);
-			count = 1;
+			_vm->snSound(spr, snc->_val);
 			break;
 		case kSnCount:
-			count = snc->_val;
+			_sound->setRepeat(snc->_val);
 			break;
 		case kSnExec:
 			switch (snc->_cbType) {

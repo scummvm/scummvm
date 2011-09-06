@@ -66,9 +66,12 @@ public:
 	~Sound();
 	void open();
 	void close();
-	void play(DataCk *wav, int pan, int cnt = 1);
+	void play(DataCk *wav, int pan);
+	int16 getRepeat();
+	void setRepeat(int16 count);
 	void stop();
 private:
+	int _soundRepeatCount;
 	CGEEngine *_vm;
 	Audio::SoundHandle _soundHandle;
 	Audio::RewindableAudioStream *_audioStream;

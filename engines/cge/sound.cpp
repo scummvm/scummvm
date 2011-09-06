@@ -37,6 +37,7 @@ namespace CGE {
 
 Sound::Sound(CGEEngine *vm) : _vm(vm) {
 	_audioStream = NULL;
+	_soundRepeatCount = 1;
 	open();
 }
 
@@ -49,16 +50,25 @@ void Sound::close() {
 }
 
 void Sound::open() {
+	setRepeat(1);
 	play((*_fx)[30000], 8);
 }
 
-void Sound::play(DataCk *wav, int pan, int cnt) {
+void Sound::setRepeat(int16 count) {
+	_soundRepeatCount = count;
+}
+
+int16 Sound::getRepeat() {
+	return _soundRepeatCount;
+}
+
+void Sound::play(DataCk *wav, int pan) {
 	if (wav) {
 		stop();
 		_smpinf._saddr = &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;
-		_smpinf._sflag = cnt;
+		_smpinf._sflag = getRepeat();
 		sndDigiStart(&_smpinf);
 	}
 }

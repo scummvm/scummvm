@@ -249,7 +249,7 @@ public:
 	void snSetY0(int cav, int y0);
 	void snSetZ(Sprite *spr, int z);
 	void snSlave(Sprite *spr, int ref);
-	void snSound(Sprite *spr, int wav, int cnt);
+	void snSound(Sprite *spr, int wav);
 	void snSwap(Sprite *spr, int xref);
 	void snTNext(Sprite *spr, int p);
 	void snTrans(Sprite *spr, int trans);
