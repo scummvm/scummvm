@@ -47,7 +47,6 @@ struct Dac {
 
 typedef uint16 Crypt(void *buf, uint16 siz, uint16 seed);
 
-char     *wtom(uint16 val, char *str, int radix, int len);
 int       takeEnum(const char **tab, const char *text);
 uint16    chkSum(void *m, uint16 n);
 char     *mergeExt(char *buf, const char *name, const char *ext);
