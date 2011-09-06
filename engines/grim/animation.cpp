@@ -107,8 +107,11 @@ int Animation::update(int time) {
 	else if (!_paused)
 		newTime = _time + time;
 
-	int marker = _keyframe->getMarker(_time / 1000.f, newTime / 1000.f);
-	_time = newTime;
+	int marker = 0;
+	if (!_paused) {
+		marker = _keyframe->getMarker(_time / 1000.f, newTime / 1000.f);
+		_time = newTime;
+	}
 
 	int animLength = (int)(_keyframe->getLength() * 1000);
 
