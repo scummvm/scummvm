@@ -32,6 +32,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("scene",			WRAP_METHOD(Debugger, Cmd_Scene));
 	DCmd_Register("walk_regions",	WRAP_METHOD(Debugger, Cmd_WalkRegions));
 	DCmd_Register("priority_regions",	WRAP_METHOD(Debugger, Cmd_PriorityRegions));
+	DCmd_Register("scene_regions",	WRAP_METHOD(Debugger, Cmd_SceneRegions));
 	DCmd_Register("setflag",		WRAP_METHOD(Debugger, Cmd_SetFlag));
 	DCmd_Register("getflag",		WRAP_METHOD(Debugger, Cmd_GetFlag));
 	DCmd_Register("clearflag",		WRAP_METHOD(Debugger, Cmd_ClearFlag));
@@ -155,6 +156,59 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 		}
 
 		regionsDesc += Common::String::format("Region Priority = %d bounds=%d,%d,%d,%d\n",
+			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
+	}
+
+	// Release the surface
+	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+
+	// Mark the scene as requiring a full redraw
+	_globals->_paneRefreshFlag[0] = 2;
+
+	DebugPrintf("Total regions = %d\n", count);
+	DebugPrintf("%s", regionsDesc.c_str());
+
+	return true;
+}
+
+/*
+ * This command draws the scene regions onto the screen. These are the regions
+ * used by hotspots that have non-rectangular areas.
+ */
+bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
+	int regionNum = 0;
+
+	// Check for an optional specific region to display
+	if (argc == 2)
+		regionNum = strToInt(argv[1]);
+
+	// Color index to use for the first priority region
+	int color = 16;
+	int count = 0;
+
+	// Lock the background surface for access
+	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+
+	Common::List<Region>::iterator i = _globals->_sceneRegions.begin();
+	Common::String regionsDesc;
+
+	for (; i != _globals->_sceneRegions.end(); ++i, ++color, ++count) {
+		Region &r = *i;
+
+		if ((regionNum == 0) || (regionNum == (count + 1))) {
+			for (int y = 0; y < destSurface.h; ++y) {
+				byte *destP = (byte *)destSurface.getBasePtr(0, y);
+
+				for (int x = 0; x < destSurface.w; ++x) {
+					if (r.contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
+							_globals->_sceneManager._scene->_sceneBounds.top + y)))
+						*destP = color;
+					++destP;
+				}
+			}
+		}
+
+		regionsDesc += Common::String::format("Region id = %d bounds=%d,%d,%d,%d\n",
 			r._regionId, r._bounds.left, r._bounds.top, r._bounds.right, r._bounds.bottom);
 	}
 
@@ -414,7 +468,7 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 			if (ri != _globals->_sceneRegions.end()) {
 				// Fill out the areas defined by the region
 				Region &r = *ri;
-
+			
 				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
 					LineSliceSet set = r.getLineSlices(y);
 
