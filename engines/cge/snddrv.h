@@ -39,7 +39,7 @@ struct SmpInfo {
 	const uint8  *_saddr;                              // address
 	uint16  _slen;                                     // length
 	uint16  _span;                                     // left/right pan (0-15)
-	int     _sflag;                                    // flag
+	int     _counter;                                  // number of time the sample should be played
 };
 
 // ******************************************************

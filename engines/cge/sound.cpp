@@ -32,6 +32,7 @@
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
 
 namespace CGE {
 
@@ -68,7 +69,7 @@ void Sound::play(DataCk *wav, int pan) {
 		_smpinf._saddr = &*(wav->addr());
 		_smpinf._slen = (uint16)wav->size();
 		_smpinf._span = pan;
-		_smpinf._sflag = getRepeat();
+		_smpinf._counter = getRepeat();
 		sndDigiStart(&_smpinf);
 	}
 }
@@ -80,7 +81,8 @@ void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
 	_audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	// Start the new sound
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, 
+		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
 }
 
 void Sound::stop() {
