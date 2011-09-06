@@ -546,11 +546,6 @@ bool SmushPlayer::play(const char *filename, bool looping, int x, int y) {
 	return true;
 }
 
-void SmushPlayer::pause(bool p) {
-  MoviePlayer::pause(p);
-  g_system->getMixer()->pauseHandle(_soundHandle, p);
-}
-
 void SmushPlayer::saveState(SaveGame *state) {
 	state->beginSection('SMUS');
 

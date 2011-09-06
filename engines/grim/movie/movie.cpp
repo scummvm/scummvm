@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "engines/grim/movie/movie.h"
 
 #if !defined(USE_MPEG2) || !defined(USE_SMUSH) || !defined(USE_BINK)
@@ -29,6 +31,11 @@
 namespace Grim {
 
 MoviePlayer *g_movie;
+
+void MoviePlayer::pause(bool p) {
+  _videoPause = p;
+  g_system->getMixer()->pauseHandle(_soundHandle, p);
+}
 
 // Fallback for when USE_MPEG2 isnt defined, might want to do something similar
 // for USE_BINK if that comes over from ScummVM
