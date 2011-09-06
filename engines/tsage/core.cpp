@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "tsage/tsage.h"
@@ -307,8 +308,12 @@ void ObjectMover::dispatch() {
 void ObjectMover::setup(const Common::Point &destPos) {
 	_sceneObject->calcAngle(destPos);
 
-	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_SUPPRESS_DISPATCH))
-		_sceneObject->_objectWrapper->dispatch();
+	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_SUPPRESS_DISPATCH)) {
+		if (_vm->getGameID() == GType_Ringworld)
+			_sceneObject->_objectWrapper->dispatch();
+		else
+			_sceneObject->updateAngle(destPos);
+	}
 
 	// Get the difference
 	int diffX = destPos.x - _sceneObject->_position.x;
@@ -1799,11 +1804,11 @@ void SceneObjectWrapper::dispatch() {
 
 void SceneObjectWrapper::check() {
 	_visageImages.setVisage(_sceneObject->_visage);
-	int frameCount = _visageImages.getFrameCount();
+	int visageCount = _visageImages.getFrameCount();
 	int angle = _sceneObject->_angle;
 	int strip = _sceneObject->_strip;
 
-	if (frameCount == 4) {
+	if (visageCount == 4) {
 		if ((angle > 314) || (angle < 45))
 			strip = 4;
 		if ((angle > 44) && (angle < 135))
@@ -1812,7 +1817,7 @@ void SceneObjectWrapper::check() {
 			strip = 3;
 		if ((angle >= 225) && (angle < 315))
 			strip = 2;
-	} else if (frameCount == 8) {
+	} else if (visageCount == 8) {
 		if ((angle > 330) || (angle < 30))
 			strip = 4;
 		if ((angle >= 30) && (angle < 70))
@@ -1831,8 +1836,8 @@ void SceneObjectWrapper::check() {
 			strip = 8;
 	}
 
-	if (strip > frameCount)
-		strip = frameCount;
+	if (strip > visageCount)
+		strip = visageCount;
 
 	_sceneObject->setStrip(strip);
 }
@@ -2165,9 +2170,16 @@ SceneObject *SceneObject::clone() const {
 }
 
 void SceneObject::checkAngle(const SceneObject *obj) {
-	_angle = GfxManager::getAngle(_position, obj->_position);
+	checkAngle(obj->_position);
+}
 
-	if (_objectWrapper)
+void SceneObject::checkAngle(const Common::Point &pt) {
+	int angleAmount = GfxManager::getAngle(_position, pt);
+	if ((_vm->getGameID() == GType_Ringworld) || 
+			((angleAmount != -1) && (_animateMode == ANIM_MODE_9)))
+		_angle = angleAmount;
+
+	if (_objectWrapper && (_vm->getGameID() == GType_Ringworld))
 		_objectWrapper->dispatch();
 }
 
@@ -2438,8 +2450,8 @@ void SceneObject::updateScreen() {
 	}
 }
 
-void SceneObject::updateAngle(SceneObject *sceneObj) {
-	checkAngle(sceneObj);
+void SceneObject::updateAngle(const Common::Point &pt) {
+	checkAngle(pt);
 	if (_objectWrapper)
 		_objectWrapper->check();
 }
@@ -2780,8 +2792,10 @@ void SceneText::synchronize(Serializer &s) {
 }
 
 void SceneText::updateScreen() {
-	// In Blue Force, stop clearing text in the user interface area screwing up user interface
-	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y))
+	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
+	// has been re-activated after showing some scene text
+	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
+			!BF_GLOBALS._uiElements._active)
 		SceneObject::updateScreen();
 }
 
@@ -2791,6 +2805,7 @@ Visage::Visage() {
 	_resNum = -1;
 	_rlbNum = -1;
 	_data = NULL;
+	_flipHoriz = false;
 }
 
 Visage::Visage(const Visage &v) {
@@ -2821,20 +2836,25 @@ void Visage::setVisage(int resNum, int rlbNum) {
 			// In Ringworld, we immediately get the data
 			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		} else {
-			// Blue Force has an extra indirection via a visage index file
+			// Blue Force has an extra indirection via the visage index file
 			byte *indexData = _resourceManager->getResource(RES_VISAGE, resNum, 9999);
-			if (rlbNum == 0)
-				rlbNum = 1;
+			if (rlbNum == 9999) {
+				_data = indexData;
+			} else {
+				if (rlbNum == 0)
+					rlbNum = 1;
 
-			// Get the flags/rlbNum to use
-			uint32 flags = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
+				// Get the flags/rlbNum to use
+				uint32 v = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
+				int flags = v >> 30;
 
-			if (flags & 0xC0000000) {
-				// TODO: See whether rest of flags dword is needed
-				rlbNum = (int)(flags & 0xff);
+				if (flags & 3) {
+					rlbNum = (int)(v & 0xff);
+				}
+				_flipHoriz = flags & 1;
+
+				_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 			}
-
-			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		}
 
 		assert(_data);
@@ -2855,11 +2875,26 @@ GfxSurface Visage::getFrame(int frameNum) {
 	int offset = READ_LE_UINT32(_data + 2 + frameNum * 4);
 	byte *frameData = _data + offset;
 
-	return surfaceFromRes(frameData);
+	GfxSurface result = surfaceFromRes(frameData);
+	if (_flipHoriz) flip(result);
+	return result;
 }
 
 int Visage::getFrameCount() const {
 	return READ_LE_UINT16(_data);
+}
+
+void Visage::flip(GfxSurface &gfxSurface) {
+	Graphics::Surface s = gfxSurface.lockSurface();
+
+	for (int y = 0; y < s.h; ++y) {
+		// Flip the line
+		byte *lineP = (byte *)s.getBasePtr(0, y);
+		for (int x = 0; x < (s.w / 2); ++x)
+			SWAP(lineP[x], lineP[s.w - x - 1]);
+	}
+
+	gfxSurface.unlockSurface();
 }
 
 /*--------------------------------------------------------------------------*/

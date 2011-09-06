@@ -467,9 +467,12 @@ class SceneObject;
 class Visage {
 private:
 	byte *_data;
+
+	void flip(GfxSurface &s);
 public:
 	int _resNum;
 	int _rlbNum;
+	bool _flipHoriz;
 public:
 	Visage();
 	Visage(const Visage &v);
@@ -478,7 +481,7 @@ public:
 	void setVisage(int resNum, int rlbNum = 9999);
 	GfxSurface getFrame(int frameNum);
 	int getFrameCount() const;
-	Visage &operator=(const Visage &s);
+	Visage &operator=(const Visage &gfxSurface);
 };
 
 class SceneObjectWrapper : public EventHandler {
@@ -562,6 +565,7 @@ public:
 	void animate(AnimateMode animMode, ...);
 	SceneObject *clone() const;
 	void checkAngle(const SceneObject *obj);
+	void checkAngle(const Common::Point &pt);
 	void hide();
 	void show();
 	int getSpliceArea(const SceneObject *obj);
@@ -580,8 +584,8 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
-	// New methods introduced by Blue FOrce
-	virtual void updateAngle(SceneObject *sceneObj);
+	// New methods introduced by Blue Force
+	virtual void updateAngle(const Common::Point &pt);
 	virtual void changeAngle(int angle);
 
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
