@@ -167,8 +167,8 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 	}
 
 	for (i = 0; i < kCaveMax; i++) {
-		s.syncAsSint16LE(_heroXY[i]._x);
-		s.syncAsUint16LE(_heroXY[i]._y);
+		s.syncAsSint16LE(_heroXY[i].x);
+		s.syncAsUint16LE(_heroXY[i].y);
 	}
 	for (i = 0; i < 1 + kCaveMax; i++) {
 		s.syncAsByte(_barriers[i]._horz);
@@ -483,8 +483,8 @@ void CGEEngine::loadHeroXY() {
 			cf.read((byte *)&x, 2);
 			cf.read((byte *)&y, 2);
 
-			_heroXY[i]._x = (int16)FROM_LE_16(x);
-			_heroXY[i]._y = (int16)FROM_LE_16(y);
+			_heroXY[i].x = (int16)FROM_LE_16(x);
+			_heroXY[i].y = (int16)FROM_LE_16(y);
 		}
 	}
 }
@@ -641,7 +641,7 @@ void CGEEngine::caveUp() {
 	_fx->preload(BakRef);
 
 	if (_hero) {
-		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
+		_hero->gotoxy(_heroXY[_now - 1].x, _heroXY[_now - 1].y);
 		// following 2 lines trims Hero's Z position!
 		_hero->tick();
 		_hero->_time = 1;
@@ -1361,7 +1361,7 @@ void CGEEngine::runGame() {
 
 	if (_hero) {
 		expandSprite(_hero);
-		_hero->gotoxy(_heroXY[_now - 1]._x, _heroXY[_now - 1]._y);
+		_hero->gotoxy(_heroXY[_now - 1].x, _heroXY[_now - 1].y);
 		if (VFile::exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
 			delete _shadow;

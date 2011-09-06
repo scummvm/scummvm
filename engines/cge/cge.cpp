@@ -57,8 +57,8 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 void CGEEngine::initCaveValues() {
 	for (int i = 0; i < kCaveMax; i++) {
-		_heroXY[i]._x = 0;
-		_heroXY[i]._y = 0;
+		_heroXY[i].x = 0;
+		_heroXY[i].y = 0;
 	}
 
 	for (int i = 0; i < kCaveMax + 1; i++) {
