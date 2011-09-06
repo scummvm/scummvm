@@ -28,6 +28,7 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
+#include "common/rect.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "graphics/surface.h"
@@ -89,11 +90,6 @@ struct Bar {
 	uint8 _vert;
 };
 
-struct Hxy {
-	int _x;
-	int _y;
-};
-
 class CGEEngine : public Engine {
 private:
 	uint32 _lastFrame, _lastTick;
@@ -139,7 +135,7 @@ public:
 	Sprite *_sprK2;
 	Sprite *_sprK3;
 
-	Hxy _heroXY[kCaveMax];
+	Common::Point _heroXY[kCaveMax];
 	Bar _barriers[kCaveMax];
 
 	Common::RandomSource _randomSource;

@@ -653,13 +653,13 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 void CGEEngine::snSetX0(int cav, int x0) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snSetX0(%d, %d)", cav, x0);
 
-	_heroXY[cav - 1]._x = x0;
+	_heroXY[cav - 1].x = x0;
 }
 
 void CGEEngine::snSetY0(int cav, int y0) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snSetY0(%d, %d)", cav, y0);
 
-	_heroXY[cav - 1]._y = y0;
+	_heroXY[cav - 1].y = y0;
 }
 
 void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
