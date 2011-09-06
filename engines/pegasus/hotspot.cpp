@@ -23,11 +23,122 @@
  *
  */
 
+#include "common/stream.h"
+
 #include "pegasus/hotspot.h"
 
 namespace Pegasus {
 
 HotspotList g_allHotspots;
+
+Region::Region(Common::ReadStream *stream) {
+	uint16 length = stream->readUint16BE();
+
+	assert(length >= 10);
+
+	_bounds.top = stream->readUint16BE();
+	_bounds.left = stream->readUint16BE();
+	_bounds.bottom = stream->readUint16BE();
+	_bounds.right = stream->readUint16BE();
+
+	_bounds.debugPrint(0, "Bounds:");
+
+	if (length == 10)
+		return;
+
+	length -= 10;
+
+	while (length > 0) {
+		Vector v;
+		v.y = stream->readUint16BE();
+		length -= 2;
+
+		if (v.y == 0x7fff)
+			break;
+
+		debug(0, "y: %d", v.y);
+
+		// Normalize y to _bounds
+		v.y -= _bounds.top;
+
+		while (length > 0) {
+			Run run;
+			run.start = stream->readUint16BE();
+			length -= 2;
+
+			if (run.start == 0x7fff)
+				break;
+
+			run.end = stream->readUint16BE();
+			length -= 2;
+
+			debug(0, "\t[%d, %d)", run.start, run.end);
+
+			// Normalize to _bounds
+			run.start -= _bounds.left;
+			run.end -= _bounds.left;
+
+			v.push_back(run);
+		}
+
+		_vectors.push_back(v);
+	}
+}
+
+Region::Region(const Common::Rect &rect) {
+	_bounds = rect;
+}
+
+bool Region::pointInRegion(const Common::Point &point) const {
+	if (!_bounds.contains(point))
+		return false;
+
+	bool pixelActive = false;
+
+	// Normalize the points to _bounds
+	uint16 x = point.x - _bounds.left;
+	uint16 y = point.y - _bounds.top;
+
+	for (Common::List<Vector>::const_iterator v = _vectors.begin(); v != _vectors.end(); v++) {
+		if (v->y > y)
+			return pixelActive;
+
+		for (Vector::const_iterator run = v->begin(); run != v->end(); run++) {
+			if (x >= run->start && x < run->end) {
+				pixelActive = !pixelActive;
+				break;
+			}
+		}
+	}
+
+	// the case if the region is just a rect
+	return true;
+}
+
+void Region::moveTo(tCoordType h, tCoordType v) {
+	_bounds.moveTo(h, v);
+}
+
+void Region::moveTo(const Common::Point &point) {
+	_bounds.moveTo(point);
+}
+
+void Region::translate(tCoordType h, tCoordType v) {
+	_bounds.translate(h, v);
+}
+
+void Region::translate(const Common::Point &point) {
+	_bounds.translate(point.x, point.y);
+}
+
+void Region::getCenter(tCoordType &h, tCoordType &v) const {
+	h = (_bounds.left + _bounds.right) / 2;
+	v = (_bounds.top + _bounds.bottom) / 2;
+}
+
+void Region::getCenter(Common::Point &point) const {
+	getCenter(point.x, point.y);
+}
 
 Hotspot::Hotspot(const tHotSpotID id) : IDObject(id) {
 	_spotFlags = kNoHotSpotFlags;
@@ -38,25 +149,23 @@ Hotspot::~Hotspot() {
 }
 
 void Hotspot::setArea(const Common::Rect &area) {
-	_spotArea = area;
+	_spotArea = Region(area);
 }
 
 void Hotspot::setArea(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
-	_spotArea = Common::Rect(left, top, right, bottom);
+	_spotArea = Region(Common::Rect(left, top, right, bottom));
 }
 
 void Hotspot::getBoundingBox(Common::Rect &r) const {
-	r = _spotArea;
+	r = _spotArea.getBoundingBox();
 }
 
 void Hotspot::getCenter(Common::Point &pt) const {
-	pt.x = (_spotArea.left + _spotArea.right) / 2;
-	pt.y = (_spotArea.top + _spotArea.bottom) / 2;
+	_spotArea.getCenter(pt);
 }
 
 void Hotspot::getCenter(tCoordType &h, tCoordType &v) const {
-	h = (_spotArea.left + _spotArea.right) / 2;
-	v = (_spotArea.top + _spotArea.bottom) / 2;
+	_spotArea.getCenter(h, v);
 }
 
 void Hotspot::setActive() {
@@ -96,7 +205,7 @@ void Hotspot::moveSpot(const Common::Point pt) {
 }
 
 bool Hotspot::pointInSpot(const Common::Point where) const {
-	return _spotActive && _spotArea.contains(where);
+	return _spotActive && _spotArea.pointInRegion(where);
 }
 
 tHotSpotFlags Hotspot::getHotspotFlags() const {

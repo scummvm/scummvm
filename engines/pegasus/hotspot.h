@@ -44,16 +44,55 @@
 
 */
 
+namespace Common {
+	class ReadStream;
+}
+
 namespace Pegasus {
+
+// Our implementation of QuickDraw regions
+class Region {
+public:
+	Region() {}
+	Region(Common::ReadStream *stream);
+	Region(const Common::Rect &rect);
+
+	Common::Rect getBoundingBox() const { return _bounds; }
+
+	bool pointInRegion(const Common::Point &point) const;
+
+	void moveTo(tCoordType h, tCoordType v);
+	void moveTo(const Common::Point &point);
+	void translate(tCoordType h, tCoordType v);
+	void translate(const Common::Point &point);
+	void getCenter(tCoordType &h, tCoordType &v) const;
+	void getCenter(Common::Point &point) const;
+
+private:
+	Common::Rect _bounds;
+
+	struct Run {
+		uint16 start, end;
+	};
+
+	class Vector : public Common::List<Run> {
+	public:
+		uint16 y;
+	};
+
+	Common::List<Vector> _vectors;
+};
 
 class Hotspot : public IDObject {
 public:
 	Hotspot(const tHotSpotID);
 	virtual ~Hotspot();
-	
+
+	void setArea(const Region &region) { _spotArea = region; }
 	void setArea(const Common::Rect &);
 	void setArea(const tCoordType, const tCoordType, const tCoordType, const tCoordType);
 	void getBoundingBox(Common::Rect &) const;
+	void getArea(Region &) const;
 	void getCenter(Common::Point&) const;
 	void getCenter(tCoordType&, tCoordType&) const;
 	
@@ -73,7 +112,7 @@ public:
 	void setMaskedHotspotFlags(const tHotSpotFlags flags, const tHotSpotFlags mask);
 
 protected:
-	Common::Rect _spotArea;
+	Region _spotArea;
 	tHotSpotFlags _spotFlags;
 	bool _spotActive;
 };

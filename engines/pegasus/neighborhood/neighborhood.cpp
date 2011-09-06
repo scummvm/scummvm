@@ -249,26 +249,16 @@ void Neighborhood::createNeighborhoodSpots() {
 		uint32 flags = hotspotList->readUint32BE();
 		uint32 rgnSize = hotspotList->readUint32BE();
 
-		// duplicate of rgnSize
-		hotspotList->readUint16BE();
+		int32 startPos = hotspotList->pos();
 
-		Common::Rect boundingBox;
-		boundingBox.top = hotspotList->readUint16BE();
-		boundingBox.left = hotspotList->readUint16BE();
-		boundingBox.bottom = hotspotList->readUint16BE();
-		boundingBox.right = hotspotList->readUint16BE();
+		debug(0, "Hotspot %d:", id);
+		Region region(hotspotList);
 
-		debug(0, "Hotspot[%d]: Flags = %08x", id, flags); 
-		boundingBox.debugPrint(0, "\tBounding Box:");
-
-		// TODO: Handle non-rectangular hotspots
-		if (rgnSize != 10)
-			warning("Non-rectangular hotspot found - %d extra bytes", rgnSize - 10);
-		hotspotList->skip(rgnSize - 10);
+		hotspotList->seek(startPos + rgnSize);
 
 		Hotspot *hotspot = new Hotspot(id);
 		hotspot->setHotspotFlags(flags);
-		hotspot->setArea(boundingBox);
+		hotspot->setArea(region);
 
 		g_allHotspots.push_back(hotspot);
 		_neighborhoodHotspots.push_back(hotspot);
