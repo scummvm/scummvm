@@ -101,7 +101,7 @@ public:
 private:
 	int displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 
-	bool convertSaveGame(uint8 slot, char* desc);
+	bool convertSaveGame(uint8 slot, char *desc);
 	void showSavegameNames();
 	void deselectSaveslots();
 	uint8 *_restoreBuf;
@@ -142,7 +142,7 @@ private:
 	ControlButton *_buttons[MAX_BUTTONS];
 	static const ButtonInfo _deathButtons[3], _panelButtons[7], _saveButtons[16], _volumeButtons[4];
 	static const uint8 _languageStrings[8 * 20][43];
-	const uint8 (*_lStrings)[43];
+	const uint8(*_lStrings)[43];
 	Common::SaveFileManager *_saveFileMan;
 	ObjectMan *_objMan;
 	ResMan *_resMan;

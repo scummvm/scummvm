@@ -122,8 +122,8 @@ ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 f
 	_width = (_width > SCREEN_WIDTH) ? SCREEN_WIDTH : _width;
 	_height = _resMan->getUint16(tmp->height);
 	if ((x == 0) && (y == 0)) { // center the frame (used for panels);
-		_x = (((640 - _width) / 2) < 0)? 0 : ((640 - _width) / 2);
-		_y = (((480 - _height) / 2) < 0)? 0 : ((480 - _height) / 2);
+		_x = (((640 - _width) / 2) < 0) ? 0 : ((640 - _width) / 2);
+		_y = (((480 - _height) / 2) < 0) ? 0 : ((480 - _height) / 2);
 	}
 	_dstBuf = screenBuf + _y * SCREEN_WIDTH + _x;
 	_system = system;
@@ -139,11 +139,11 @@ bool ControlButton::isSaveslot() {
 
 void ControlButton::draw() {
 	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
-	uint8 *src = (uint8*)fHead + sizeof(FrameHeader);
+	uint8 *src = (uint8 *)fHead + sizeof(FrameHeader);
 	uint8 *dst = _dstBuf;
 
 	if (SwordEngine::isPsx() && _resId) {
-		uint8 *HIFbuf = (uint8*)malloc(_resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
+		uint8 *HIFbuf = (uint8 *)malloc(_resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
 		memset(HIFbuf, 0, _resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
 		Screen::decompressHIF(src, HIFbuf);
 		src = HIFbuf;
@@ -163,24 +163,24 @@ void ControlButton::draw() {
 				src += _resMan->readUint16(&fHead->width);
 			}
 		else if (_resId == SR_DEATHPANEL) { // Check for death panel psx version (which is 1/3 of original width)
-			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height)/2; cnt++) {
+			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height) / 2; cnt++) {
 				//Stretched panel is bigger than 640px, check we don't draw outside screen
-				for (uint16 cntx = 0; (cntx < (_resMan->readUint16(&fHead->width))/3) && (cntx < (SCREEN_WIDTH-3) ); cntx++)
-					if (src[cntx]) {
-						dst[cntx * 3] = src[cntx];
-						dst[cntx * 3 + 1] = src[cntx];
-						dst[cntx * 3 + 2] = src[cntx];
-					}
-				dst+= SCREEN_WIDTH;
-
-				for (uint16 cntx = 0; cntx < (_resMan->readUint16(&fHead->width))/3; cntx++)
+				for (uint16 cntx = 0; (cntx < (_resMan->readUint16(&fHead->width)) / 3) && (cntx < (SCREEN_WIDTH - 3)); cntx++)
 					if (src[cntx]) {
 						dst[cntx * 3] = src[cntx];
 						dst[cntx * 3 + 1] = src[cntx];
 						dst[cntx * 3 + 2] = src[cntx];
 					}
 				dst += SCREEN_WIDTH;
-				src += _resMan->readUint16(&fHead->width)/3;
+
+				for (uint16 cntx = 0; cntx < (_resMan->readUint16(&fHead->width)) / 3; cntx++)
+					if (src[cntx]) {
+						dst[cntx * 3] = src[cntx];
+						dst[cntx * 3 + 1] = src[cntx];
+						dst[cntx * 3 + 2] = src[cntx];
+					}
+				dst += SCREEN_WIDTH;
+				src += _resMan->readUint16(&fHead->width) / 3;
 			}
 		} else { //save slots needs to be multiplied by 2 in height
 			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
@@ -198,7 +198,7 @@ void ControlButton::draw() {
 					}
 
 				dst += SCREEN_WIDTH;
-				src += _resMan->readUint16(&fHead->width)/2;
+				src += _resMan->readUint16(&fHead->width) / 2;
 			}
 		}
 
@@ -242,13 +242,13 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 }
 
 void Control::askForCd() {
-	_screenBuf = (uint8*)malloc(640 * 480);
+	_screenBuf = (uint8 *)malloc(640 * 480);
 	uint32 fontId = SR_FONT;
 	if (SwordEngine::_systemVars.language == BS1_CZECH)
 		fontId = CZECH_SR_FONT;
-	_font = (uint8*)_resMan->openFetchRes(fontId);
-	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8*)malloc(256 * 3);
+	_font = (uint8 *)_resMan->openFetchRes(fontId);
+	uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
+	uint8 *palOut = (uint8 *)malloc(256 * 3);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
 		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
 		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
@@ -262,7 +262,7 @@ void Control::askForCd() {
 	char fName[10];
 	uint8 textA[50];
 	sprintf(fName, "cd%d.id", SwordEngine::_systemVars.currentCD);
-	sprintf((char*)textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
+	sprintf((char *)textA, "%s%d", _lStrings[STR_INSERT_CD_A], SwordEngine::_systemVars.currentCD);
 	bool notAccepted = true;
 	bool refreshText = true;
 	do {
@@ -304,7 +304,7 @@ uint8 Control::runPanel() {
 	_restoreBuf = NULL;
 	_keyPressed.reset();
 	_numButtons = 0;
-	_screenBuf = (uint8*)malloc(640 * 480);
+	_screenBuf = (uint8 *)malloc(640 * 480);
 	memset(_screenBuf, 0, 640 * 480);
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 	_sound->quitScreen();
@@ -314,11 +314,11 @@ uint8 Control::runPanel() {
 		fontId = CZECH_SR_FONT;
 		redFontId = CZECH_SR_REDFONT;
 	}
-	_font = (uint8*)_resMan->openFetchRes(fontId);
-	_redFont = (uint8*)_resMan->openFetchRes(redFontId);
+	_font = (uint8 *)_resMan->openFetchRes(fontId);
+	_redFont = (uint8 *)_resMan->openFetchRes(redFontId);
 
-	uint8 *pal = (uint8*)_resMan->openFetchRes(SR_PALETTE);
-	uint8 *palOut = (uint8*)malloc(256 * 3);
+	uint8 *pal = (uint8 *)_resMan->openFetchRes(SR_PALETTE);
+	uint8 *palOut = (uint8 *)malloc(256 * 3);
 	for (uint16 cnt = 1; cnt < 256; cnt++) {
 		palOut[cnt * 3 + 0] = pal[cnt * 3 + 0] << 2;
 		palOut[cnt * 3 + 1] = pal[cnt * 3 + 1] << 2;
@@ -491,7 +491,7 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 			else
 				return mode;
 		} else if ((id == BUTTON_RESTORE_PANEL) || (id == BUTTON_SAVE_PANEL) ||
-			(id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
+		           (id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 			return id;
 		else if (id == BUTTON_TEXT) {
 			SwordEngine::_systemVars.showText ^= 1;
@@ -641,14 +641,14 @@ void Control::handleVolumeClicks() {
 						clickDest = 2;
 					else if (ABS(mouseDiffY) <= 8) // right
 						clickDest = 3;
-					else				 // lower right
+					else                 // lower right
 						clickDest = 4;
 				} else if (mouseDiffX < -8) { // left part
 					if (mouseDiffY < -8) // upper left
 						clickDest = 8;
 					else if (ABS(mouseDiffY) <= 8) // left
 						clickDest = 7;
-					else				 // lower left
+					else                 // lower left
 						clickDest = 6;
 				} else { // middle
 					if (mouseDiffY < -8)
@@ -754,9 +754,9 @@ bool Control::getConfirm(const uint8 *title) {
 bool Control::keyAccepted(uint16 ascii) {
 	static const char allowedSpecials[] = ",.:-()?! \"\'";
 	if (((ascii >= 'A') && (ascii <= 'Z')) ||
-		((ascii >= 'a') && (ascii <= 'z')) ||
-		((ascii >= '0') && (ascii <= '9')) ||
-		strchr(allowedSpecials, ascii))
+	        ((ascii >= 'a') && (ascii <= 'z')) ||
+	        ((ascii >= '0') && (ascii <= '9')) ||
+	        strchr(allowedSpecials, ascii))
 		return true;
 	else
 		return false;
@@ -792,7 +792,7 @@ void Control::readSavegameDescriptions() {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
 	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	_saveNames.clear();
 
@@ -811,7 +811,7 @@ void Control::readSavegameDescriptions() {
 			num++;
 			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
 			if (in) {
-				in->readUint32LE();	// header
+				in->readUint32LE(); // header
 				in->read(saveName, 40);
 				_saveNames.push_back(saveName);
 				delete in;
@@ -860,9 +860,9 @@ void Control::checkForOldSaveGames() {
 	}
 
 	GUI::MessageDialog dialog0(
-		_("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
-		"The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
+	    _("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
+	      "The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
 	if (choice == GUI::kMessageCancel) {
@@ -889,8 +889,8 @@ void Control::checkForOldSaveGames() {
 			}
 		} while ((ch != 10) && (ch != 255) && (!inf->eos()));
 
-		if (pos > 1)	// if the slot has a description
-			convertSaveGame(slot, (char*)saveName);
+		if (pos > 1)    // if the slot has a description
+			convertSaveGame(slot, (char *)saveName);
 		slot++;
 	} while ((ch != 255) && (!inf->eos()));
 
@@ -906,12 +906,12 @@ void Control::showSavegameNames() {
 		uint8 textMode = TEXT_LEFT_ALIGN;
 		uint16 ycoord = _saveButtons[cnt].y + 2;
 		uint8 str[40];
-		sprintf((char*)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
+		sprintf((char *)str, "%d. %s", cnt + _saveScrollPos + 1, _saveNames[cnt + _saveScrollPos].c_str());
 		if (cnt + _saveScrollPos == _selectedSavegame) {
 			textMode |= TEXT_RED_FONT;
 			ycoord += 2;
 			if (_cursorVisible)
-				strcat((char*)str, "_");
+				strcat((char *)str, "_");
 		}
 		renderText(str, _saveButtons[cnt].x + 6, ycoord, textMode);
 	}
@@ -1013,7 +1013,7 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 		uint8 *dst = _screenBuf + y * SCREEN_WIDTH + destX;
 
 		FrameHeader *chSpr = _resMan->fetchFrame(font, *str - 32);
-		uint8 *sprData = (uint8*)chSpr + sizeof(FrameHeader);
+		uint8 *sprData = (uint8 *)chSpr + sizeof(FrameHeader);
 		uint8 *HIFbuf = NULL;
 
 		if (SwordEngine::isPsx()) { //Text fonts are compressed in psx version
@@ -1056,7 +1056,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 		uint8 vol = (chCnt == 0) ? volL : volR;
 		FrameHeader *frHead = _resMan->fetchFrame(_resMan->openFetchRes(SR_VLIGHT), (vol + 15) >> 4);
 		uint8 *destMem = _screenBuf + destY * SCREEN_WIDTH + destX;
-		uint8 *srcMem = (uint8*)frHead + sizeof(FrameHeader);
+		uint8 *srcMem = (uint8 *)frHead + sizeof(FrameHeader);
 		uint16 barHeight = _resMan->getUint16(frHead->height);
 		uint8 *psxVolBuf = NULL;
 
@@ -1135,7 +1135,7 @@ void Control::saveGameToFile(uint8 slot) {
 		outf->writeUint32LE(Logic::_scriptVars[cnt]);
 
 	uint32 playerSize = (sizeof(Object) - 12000) / 4;
-	uint32 *playerRaw = (uint32*)cpt;
+	uint32 *playerRaw = (uint32 *)cpt;
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
 	outf->finalize();
@@ -1163,7 +1163,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		return false;
 	}
 
-	inf->skip(40);		// skip description
+	inf->skip(40);      // skip description
 	uint8 saveVersion = inf->readByte();
 
 	if (saveVersion > SAVEGAME_VERSION) {
@@ -1176,8 +1176,8 @@ bool Control::restoreGameFromFile(uint8 slot) {
 
 	Graphics::skipThumbnail(*inf);
 
-	inf->readUint32BE();	// save date
-	inf->readUint16BE();	// save time
+	inf->readUint32BE();    // save date
+	inf->readUint16BE();    // save time
 
 	if (saveVersion < 2) { // Before version 2 we didn't had play time feature
 		g_engine->setTotalPlayTime(0);
@@ -1185,14 +1185,14 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		g_engine->setTotalPlayTime(inf->readUint32BE() * 1000);
 	}
 
-	_restoreBuf = (uint8*)malloc(
-		TOTAL_SECTIONS * 2 +
-		NUM_SCRIPT_VARS * 4 +
-		(sizeof(Object) - 12000));
+	_restoreBuf = (uint8 *)malloc(
+	                  TOTAL_SECTIONS * 2 +
+	                  NUM_SCRIPT_VARS * 4 +
+	                  (sizeof(Object) - 12000));
 
-	uint16 *liveBuf = (uint16*)_restoreBuf;
-	uint32 *scriptBuf = (uint32*)(_restoreBuf + 2 * TOTAL_SECTIONS);
-	uint32 *playerBuf = (uint32*)(_restoreBuf + 2 * TOTAL_SECTIONS + 4 * NUM_SCRIPT_VARS);
+	uint16 *liveBuf = (uint16 *)_restoreBuf;
+	uint32 *scriptBuf = (uint32 *)(_restoreBuf + 2 * TOTAL_SECTIONS);
+	uint32 *playerBuf = (uint32 *)(_restoreBuf + 2 * TOTAL_SECTIONS + 4 * NUM_SCRIPT_VARS);
 
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		liveBuf[cnt] = inf->readUint16LE();
@@ -1215,7 +1215,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	return true;
 }
 
-bool Control::convertSaveGame(uint8 slot, char* desc) {
+bool Control::convertSaveGame(uint8 slot, char *desc) {
 	char oldFileName[15];
 	char newFileName[40];
 	sprintf(oldFileName, "SAVEGAME.%03d", slot);
@@ -1230,8 +1230,8 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 		delete testSave;
 
 		Common::String msg = Common::String::format(_("Target new save game already exists!\n"
-					 "Would you like to keep the old save game (%s) or the new one (%s)?\n"),
-					 oldFileName, newFileName);
+		                     "Would you like to keep the old save game (%s) or the new one (%s)?\n"),
+		                     oldFileName, newFileName);
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 
 		int choice = dialog0.runModal();
@@ -1299,17 +1299,17 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 
 void Control::doRestore() {
 	uint8 *bufPos = _restoreBuf;
-	_objMan->loadLiveList((uint16*)bufPos);
+	_objMan->loadLiveList((uint16 *)bufPos);
 	bufPos += TOTAL_SECTIONS * 2;
 	for (uint16 cnt = 0; cnt < NUM_SCRIPT_VARS; cnt++) {
-		Logic::_scriptVars[cnt] = *(uint32*)bufPos;
+		Logic::_scriptVars[cnt] = *(uint32 *)bufPos;
 		bufPos += 4;
 	}
 	uint32 playerSize = (sizeof(Object) - 12000) / 4;
-	uint32 *playerRaw = (uint32*)_objMan->fetchObject(PLAYER);
+	uint32 *playerRaw = (uint32 *)_objMan->fetchObject(PLAYER);
 	Object *cpt = _objMan->fetchObject(PLAYER);
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++) {
-		*playerRaw = *(uint32*)bufPos;
+		*playerRaw = *(uint32 *)bufPos;
 		playerRaw++;
 		bufPos += 4;
 	}

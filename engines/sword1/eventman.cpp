@@ -44,14 +44,14 @@ void EventManager::checkForEvent(Object *compact) {
 		if (compact->o_event_list[objCnt].o_event)
 			for (uint8 globCnt = 0; globCnt < TOTAL_EVENT_SLOTS; globCnt++) {
 				if (_eventPendingList[globCnt].delay &&
-					(_eventPendingList[globCnt].eventNumber == compact->o_event_list[objCnt].o_event)) {
-						compact->o_logic = LOGIC_script;      //force into script mode
-						_eventPendingList[globCnt].delay = 0; //started, so remove from queue
-						compact->o_tree.o_script_level++;
-						compact->o_tree.o_script_id[compact->o_tree.o_script_level] =
-							compact->o_event_list[objCnt].o_event_script;
-						compact->o_tree.o_script_pc[compact->o_tree.o_script_level] =
-							compact->o_event_list[objCnt].o_event_script;
+				        (_eventPendingList[globCnt].eventNumber == compact->o_event_list[objCnt].o_event)) {
+					compact->o_logic = LOGIC_script;      //force into script mode
+					_eventPendingList[globCnt].delay = 0; //started, so remove from queue
+					compact->o_tree.o_script_level++;
+					compact->o_tree.o_script_id[compact->o_tree.o_script_level] =
+					    compact->o_event_list[objCnt].o_event_script;
+					compact->o_tree.o_script_pc[compact->o_tree.o_script_level] =
+					    compact->o_event_list[objCnt].o_event_script;
 				}
 			}
 	}
@@ -60,7 +60,7 @@ void EventManager::checkForEvent(Object *compact) {
 bool EventManager::eventValid(int32 event) {
 	for (uint8 slot = 0; slot < TOTAL_EVENT_SLOTS; slot++)
 		if ((_eventPendingList[slot].eventNumber == event) &&
-			(_eventPendingList[slot].delay))
+		        (_eventPendingList[slot].delay))
 			return true;
 	return false;
 }
@@ -76,15 +76,15 @@ int EventManager::fnCheckForEvent(Object *cpt, int32 id, int32 pause) {
 		if (cpt->o_event_list[objCnt].o_event)
 			for (uint8 globCnt = 0; globCnt < TOTAL_EVENT_SLOTS; globCnt++) {
 				if (_eventPendingList[globCnt].delay &&
-					(_eventPendingList[globCnt].eventNumber == cpt->o_event_list[objCnt].o_event)) {
-						cpt->o_logic = LOGIC_script;      //force into script mode
-						_eventPendingList[globCnt].delay = 0; //started, so remove from queue
-						cpt->o_tree.o_script_level++;
-						cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] =
-							cpt->o_event_list[objCnt].o_event_script;
-						cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] =
-							cpt->o_event_list[objCnt].o_event_script;
-						return SCRIPT_STOP;
+				        (_eventPendingList[globCnt].eventNumber == cpt->o_event_list[objCnt].o_event)) {
+					cpt->o_logic = LOGIC_script;      //force into script mode
+					_eventPendingList[globCnt].delay = 0; //started, so remove from queue
+					cpt->o_tree.o_script_level++;
+					cpt->o_tree.o_script_id[cpt->o_tree.o_script_level] =
+					    cpt->o_event_list[objCnt].o_event_script;
+					cpt->o_tree.o_script_pc[cpt->o_tree.o_script_level] =
+					    cpt->o_event_list[objCnt].o_event_script;
+					return SCRIPT_STOP;
 				}
 			}
 	}
