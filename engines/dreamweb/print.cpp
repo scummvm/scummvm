@@ -138,6 +138,10 @@ void DreamGenContext::printdirect() {
 	bx = y;
 }
 
+void DreamGenContext::printdirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+	printdirect(&string, x, &y, maxWidth, centered);
+}
+
 void DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
 	const Frame *charSet = (const Frame *)segRef(data.word(kCurrentset)).ptr(0, 0);

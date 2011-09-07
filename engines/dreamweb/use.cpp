@@ -173,8 +173,7 @@ void DreamGenContext::usetext(const uint8 *string) {
 	showman();
 	showexit();
 	obicons();
-	uint16 y = 104;
-	printdirect(&string, 36, &y, 241, true);
+	printdirect(string, 36, 104, 241, true);
 	worktoscreenm();
 }
 
