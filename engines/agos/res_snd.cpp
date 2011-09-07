@@ -413,7 +413,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	return true;
 }
 
-static const char *dimpSoundList[32] = {
+static const char *const dimpSoundList[32] = {
 	"Beep",
 	"Birth",
 	"Boiling",
