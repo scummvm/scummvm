@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/system.h"
-
 #include "engines/grim/movie/movie.h"
 
 #if !defined(USE_MPEG2) || !defined(USE_SMUSH) || !defined(USE_BINK)
