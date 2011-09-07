@@ -897,10 +897,16 @@ void CGEEngine::snLight(bool in) {
 	_dark = !in;
 }
 
-void CGEEngine::snBarrier(int cav, int bar, bool horz) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snBarrier(%d, %d, %s)", cav, bar, horz ? "true" : "false");
+void CGEEngine::snHBarrier(const int cave, const int barX) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snHBarrier(%d, %d)", cave, barX);
 
-	((uint8 *)(_barriers + ((cav > 0) ? cav : _now)))[horz] = bar;
+	_barriers[(cave > 0) ? cave : _now]._horz = barX;
+}
+
+void CGEEngine::snVBarrier(const int cave, const int barY) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snVBarrier(%d, %d)", cave, barY);
+
+	_barriers[(cave > 0) ? cave : _now]._vert = barY;
 }
 
 void CGEEngine::snWalk(Sprite *spr, int x, int y) {
@@ -1113,10 +1119,10 @@ void Snail::runCom() {
 			_vm->snLight(snc->_val != 0);
 			break;
 		case kSnSetHBarrier:
-			_vm->snBarrier(snc->_ref, snc->_val, true);
+			_vm->snHBarrier(snc->_ref, snc->_val);
 			break;
 		case kSnSetVBarrier:
-			_vm->snBarrier(snc->_ref, snc->_val, false);
+			_vm->snVBarrier(snc->_ref, snc->_val);
 			break;
 		case kSnWalk:
 			_vm->snWalk(spr, snc->_ref, snc->_val);

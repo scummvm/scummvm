@@ -31,19 +31,6 @@
 
 namespace CGE {
 
-const char *progName(const char *ext) {
-	static char buf[kMaxFile];
-	strcpy(buf, "CGE");
-	if (ext) {
-		strcat(buf, ".");
-		if (*ext == '.')
-			ext++;
-		strcat(buf, ext);
-	}
-
-	return buf;
-}
-
 char *mergeExt(char *buf, const char *name, const char *ext) {
 	strcpy(buf, name);
 	char *dot = strrchr(buf, '.');

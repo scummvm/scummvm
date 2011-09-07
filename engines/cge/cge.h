@@ -212,7 +212,8 @@ public:
 	void initCaveValues();
 
 	void snBackPt(Sprite *spr, int stp);
-	void snBarrier(int cav, int bar, bool horz);
+	void snHBarrier(const int cave, const int barX);
+	void snVBarrier(const int cave, const int barY);
 	void snCover(Sprite *spr, int xref);
 	void snFlag(int indx, bool v);
 	void snFlash(bool on);

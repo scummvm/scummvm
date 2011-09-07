@@ -474,7 +474,7 @@ void CGEEngine::tooFar() {
 void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
-	VFile cf(progName(".HXY"));
+	VFile cf("CGE.HXY");
 	uint16 x, y;
 
 	memset(_heroXY, 0, sizeof(_heroXY));
@@ -493,7 +493,7 @@ void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= kCaveMax) {
-		VFile cf(progName(".TAB"));
+		VFile cf("CGE.TAB");
 		if (!cf._error) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
@@ -1295,7 +1295,7 @@ void CGEEngine::loadUser() {
 	} else {
 		error("Creating setup savegames not supported");
 	}
-	loadScript(progName(kIn0Ext));
+	loadScript("CGE.IN0");
 }
 
 void CGEEngine::runGame() {
@@ -1422,10 +1422,14 @@ void CGEEngine::runGame() {
 }
 
 void CGEEngine::movie(const char *ext) {
+	assert(ext);
+
 	if (_eventManager->_quitFlag)
 		return;
 
-	const char *fn = progName(ext);
+	char fn[12];
+	sprintf(fn, "CGE.%s", (*ext == '.') ? ext +1 : ext);
+
 	if (VFile::exist(fn)) {
 		loadScript(fn);
 		expandSprite(_vga->_spareQ->locate(999));
@@ -1492,7 +1496,7 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_mode < 2) {
 		// At this point the game originally set the protection variables
 		// used by the copy protection check
-		movie("X00"); // paylist
+		movie(kPaylistExt); // paylist
 		_vga->copyPage(1, 2);
 		_vga->copyPage(0, 1);
 		_vga->_showQ->append(_mouse);
@@ -1520,7 +1524,7 @@ bool CGEEngine::showTitle(const char *name) {
 	}
 
 	if (_mode < 2)
-		movie("X01"); // wink
+		movie(kWinkExt);
 
 	_vga->copyPage(0, 2);
 
@@ -1550,18 +1554,18 @@ void CGEEngine::cge_main() {
 
 		_startupMode = 2;
 		if (_flag[3]) // Flag FINIS
-			movie("X03");
+			movie(kEndgExt);
 	} else {
 		if (_mode < 2)
 			movie(kLgoExt);
 
 		if (showTitle("WELCOME")) {
 			if (_mode == 1)
-				movie("X02"); // intro
+				movie(kIntroExt);
 			runGame();
 			_startupMode = 2;
 			if (_flag[3]) // Flag FINIS
-				movie("X03");
+				movie(kEndgExt);
 		} else
 			_vga->sunset();
 	}
