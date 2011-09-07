@@ -21,9 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
-#include "common/config-manager.h"
 
 namespace DreamGen {
 
