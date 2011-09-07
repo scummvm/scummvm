@@ -10276,26 +10276,6 @@ notfoundinside:
 		goto insideloop;
 }
 
-void DreamGenContext::usetext() {
-	STACK_CHECK;
-	push(es);
-	push(si);
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	si = pop();
-	es = pop();
-	di = 36;
-	bx = 104;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printdirect();
-	worktoscreenm();
-}
-
 void DreamGenContext::putbackobstuff() {
 	STACK_CHECK;
 	createpanel();
@@ -17252,7 +17232,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_findexobject: findexobject(); break;
 		case addr_isryanholding: isryanholding(); break;
 		case addr_checkinside: checkinside(); break;
-		case addr_usetext: usetext(); break;
 		case addr_putbackobstuff: putbackobstuff(); break;
 		case addr_showpuztext: showpuztext(); break;
 		case addr_findpuztext: findpuztext(); break;

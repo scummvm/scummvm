@@ -238,5 +238,6 @@
 	uint8 findnextcolon(uint8 **string);
 	void findnextcolon();
 	uint8 *getobtextstartCPP();
-
+	void usetext(const uint8 *string);
+	void usetext();
 

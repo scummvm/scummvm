@@ -163,5 +163,20 @@ void DreamGenContext::useroutine() {
 	data.byte(kCommandtype) = 255;
 }
 
+void DreamGenContext::usetext() {
+	usetext(es.ptr(si, 0));
+}
+
+void DreamGenContext::usetext(const uint8 *string) {
+	createpanel();
+	showpanel();
+	showman();
+	showexit();
+	obicons();
+	uint16 y = 104;
+	printdirect(&string, 36, &y, 241, true);
+	worktoscreenm();
+}
+
 } /*namespace dreamgen */
 

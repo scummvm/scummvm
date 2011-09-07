@@ -283,7 +283,6 @@ public:
 	static const uint16 addr_findpuztext = 0xc6e0;
 	static const uint16 addr_showpuztext = 0xc6dc;
 	static const uint16 addr_putbackobstuff = 0xc6d8;
-	static const uint16 addr_usetext = 0xc6d4;
 	static const uint16 addr_checkinside = 0xc6d0;
 	static const uint16 addr_isryanholding = 0xc6cc;
 	static const uint16 addr_findexobject = 0xc6c8;
@@ -1535,7 +1534,7 @@ public:
 	void vsync();
 	//void finishedwalking();
 	void findinvpos();
-	void usetext();
+	void dumpmenu();
 	void hangonpq();
 	void liftnoise();
 	void workoutframes();
@@ -1552,7 +1551,7 @@ public:
 	void getkeyandlogo();
 	void selectob();
 	//void checkcoords();
-	void dumpmenu();
+	//void usetext();
 	void chewy();
 	void accesslighton();
 	void useplinth();
