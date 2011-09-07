@@ -85,7 +85,7 @@ public:
 
 	virtual bool play(const char *filename, bool looping, int x, int y) = 0;
 	virtual void stop() = 0;
-	virtual void pause(bool p) { _videoPause = p; }
+	virtual void pause(bool p);
 	virtual bool isPlaying() { return !_videoFinished; }
 	virtual bool isUpdateNeeded() { return _updateNeeded; }
 	virtual byte *getDstPtr() { return _externalBuffer; }
