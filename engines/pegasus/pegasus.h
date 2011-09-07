@@ -23,6 +23,7 @@
 #ifndef PEGASUS_H
 #define PEGASUS_H
 
+#include "common/list.h"
 #include "common/macresman.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -46,6 +47,7 @@ struct PegasusGameDescription;
 class SoundManager;
 class VideoManager;
 class GraphicsManager;
+class Idler;
 
 enum ItemLocation {
 	kItemLocationCaldoria = 0,
@@ -96,6 +98,9 @@ public:
 
 	bool isDemo() const;
 
+	void addIdler(Idler *idler);
+	void removeIdler(Idler *idler);
+
 private:
 	// Intro
 	void runIntro();
@@ -141,6 +146,10 @@ private:
 	// Intro Directory Code
 	bool detectOpeningClosingDirectory();
 	Common::String _introDirectory;
+
+	// Idlers
+	Common::List<Idler *> _idlers;
+	void giveIdleTime();
 };
 
 } // End of namespace Pegasus

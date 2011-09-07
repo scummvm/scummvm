@@ -34,6 +34,7 @@
 #include "pegasus/console.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/timers.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
@@ -279,6 +280,19 @@ Common::String PegasusEngine::getTimeZoneFolder(tNeighborhoodID neighborhood) {
 
 GUI::Debugger *PegasusEngine::getDebugger() {
 	return _console;
+}
+
+void PegasusEngine::addIdler(Idler *idler) {
+	_idlers.push_back(idler);
+}
+
+void PegasusEngine::removeIdler(Idler *idler) {
+	_idlers.remove(idler);
+}
+
+void PegasusEngine::giveIdleTime() {
+	for (Common::List<Idler *>::iterator it = _idlers.begin(); it != _idlers.end(); it++)
+		(*it)->useIdleTime();
 }
 
 } // End of namespace Pegasus

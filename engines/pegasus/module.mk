@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	overview.o \
 	pegasus.o \
 	sound.o \
+	timers.o \
 	util.o \
 	video.o \
 	items/inventory.o \
