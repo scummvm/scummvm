@@ -42,7 +42,7 @@ namespace CGE {
 
 
 class Text {
-	struct Han {
+	struct Handler {
 		int _ref;
 		char *_text;
 	} *_cache;

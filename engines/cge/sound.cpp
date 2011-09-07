@@ -96,7 +96,7 @@ void Sound::sndDigiStop(SmpInfo *PSmpInfo) {
 }
 
 Fx::Fx(int size) : _current(NULL) {
-	_cache = new Han[size];
+	_cache = new Handler[size];
 	for (_size = 0; _size < size; _size++) {
 		_cache[_size]._ref = 0;
 		_cache[_size]._wav = NULL;
@@ -109,7 +109,7 @@ Fx::~Fx() {
 }
 
 void Fx::clear() {
-	for (Han *p = _cache, *q = p + _size; p < q; p++) {
+	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref) {
 			p->_ref = 0;
 			delete p->_wav;
@@ -121,7 +121,7 @@ void Fx::clear() {
 
 int Fx::find(int ref) {
 	int i = 0;
-	for (Han *p = _cache, *q = p + _size; p < q; p++) {
+	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref == ref)
 			break;
 		else
@@ -131,7 +131,7 @@ int Fx::find(int ref) {
 }
 
 void Fx::preload(int ref0) {
-	Han *cacheLim = _cache + _size;
+	Handler *cacheLim = _cache + _size;
 	char filename[12];
 
 	for (int ref = ref0; ref < ref0 + 10; ref++) {
@@ -139,7 +139,7 @@ void Fx::preload(int ref0) {
 		VFile file = VFile(filename);
 		DataCk *wav = loadWave(&file);
 		if (wav) {
-			Han *p = &_cache[find(0)];
+			Handler *p = &_cache[find(0)];
 			if (p >= cacheLim)
 				break;
 			p->_wav = wav;
@@ -157,7 +157,7 @@ DataCk *Fx::load(int idx, int ref) {
 	VFile file = VFile(filename);
 	DataCk *wav = loadWave(&file);
 	if (wav) {
-		Han *p = &_cache[idx];
+		Handler *p = &_cache[idx];
 		p->_wav = wav;
 		p->_ref = ref;
 	} else {

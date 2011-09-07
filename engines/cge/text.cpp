@@ -38,7 +38,7 @@ Text *_text;
 Talk *_talk = NULL;
 
 Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
-	_cache = new Han[size];
+	_cache = new Handler[size];
 	mergeExt(_fileName, fname, kSayExt);
 	if (!VFile::exist(_fileName))
 		error("No talk (%s)\n", _fileName);
@@ -55,7 +55,7 @@ Text::~Text() {
 }
 
 void Text::clear(int from, int upto) {
-	for (Han *p = _cache, *q = p + _size; p < q; p++) {
+	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref && p->_ref >= from && p->_ref < upto) {
 			p->_ref = 0;
 			delete[] p->_text;
@@ -66,7 +66,7 @@ void Text::clear(int from, int upto) {
 
 int Text::find(int ref) {
 	int i = 0;
-	for (Han *p = _cache, *q = p + _size; p < q; p++) {
+	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
 		if (p->_ref == ref)
 			break;
 		else
@@ -81,7 +81,7 @@ void Text::preload(int from, int upto) {
 	if (tf._error)
 		return;
 
-	Han *CacheLim = _cache + _size;
+	Handler *CacheLim = _cache + _size;
 	char line[kLineMax + 1];
 	int n;
 
@@ -97,7 +97,7 @@ void Text::preload(int from, int upto) {
 
 		int ref = atoi(s);
 		if (ref && ref >= from && ref < upto) {
-			Han *p = &_cache[find(ref)];
+			Handler *p = &_cache[find(ref)];
 
 			if (p < CacheLim) {
 				delete[] p->_text;
@@ -150,7 +150,7 @@ char *Text::load(int idx, int ref) {
 		if (s < line + n)
 			++s;
 
-		Han *p = &_cache[idx];
+		Handler *p = &_cache[idx];
 		p->_ref = ref;
 
 		if ((p->_text = new char[strlen(s) + 1]) == NULL)

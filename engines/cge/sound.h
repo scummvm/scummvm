@@ -82,7 +82,7 @@ private:
 
 
 class Fx {
-	struct Han {
+	struct Handler {
 		int _ref;
 		DataCk *_wav;
 	} *_cache;
