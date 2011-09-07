@@ -47,9 +47,12 @@ namespace CGE {
 #define kMiniY         162
 #define kLineMax       512
 #define kDistMax       3
-#define kIn0Ext        ".IN0"
 #define kLgoExt        ".LGO"
 #define kSvgExt        ".SVG"
+#define kPaylistExt    ".X00"
+#define kWinkExt       ".X01"
+#define kIntroExt      ".X02"
+#define kEndgExt       ".X03"
 #define kWalkSide      10
 #define kBusyRef       500
 #define kSystemRate    6   // 12 Hz

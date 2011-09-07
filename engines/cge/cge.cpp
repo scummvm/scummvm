@@ -90,7 +90,7 @@ void CGEEngine::init() {
 	Cluster::init(this);
 
 	// Initialise engine objects
-	_text = new Text(this, progName(), 128);
+	_text = new Text(this, "CGE", 128);
 	_vga = new Vga();
 	_sys = new System(this);
 	_pocLight = new PocLight(this);

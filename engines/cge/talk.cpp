@@ -93,7 +93,7 @@ Talk::Talk(CGEEngine *vm)
 Font *Talk::_font;
 
 void Talk::init() {
-	_font = new Font(progName());
+	_font = new Font("CGE");
 }
 
 void Talk::deinit() {

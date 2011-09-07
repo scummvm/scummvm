@@ -47,14 +47,11 @@ struct Dac {
 
 typedef uint16 Crypt(void *buf, uint16 siz, uint16 seed);
 
-int       takeEnum(const char **tab, const char *text);
-uint16    chkSum(void *m, uint16 n);
-char     *mergeExt(char *buf, const char *name, const char *ext);
-char     *forceExt(char *buf, const char *name, const char *ext);
-
-// MISSING FUNCTIONS
-const char *progName(const char *ext = NULL);
-int newRandom(int range);
+int     takeEnum(const char **tab, const char *text);
+uint16  chkSum(void *m, uint16 n);
+char   *mergeExt(char *buf, const char *name, const char *ext);
+char   *forceExt(char *buf, const char *name, const char *ext);
+int     newRandom(int range);
 } // End of namespace CGE
 
 #endif
