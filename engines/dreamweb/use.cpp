@@ -136,14 +136,11 @@ void DreamGenContext::useroutine() {
 	}
 
 	delpointer();
-	getobtextstart();
-	findnextcolon();
-	if (al != 0) {
-		findnextcolon();
-		if (al != 0) {
-			al = es.byte(si);
-			if (al != 0) {
-				usetext();
+	uint8 *obText = getobtextstartCPP();
+	if (findnextcolon(&obText) != 0) {
+		if (findnextcolon(&obText) != 0) {
+			if (*obText != 0) {
+				usetext(obText);
 				hangonp(400);
 				putbackobstuff();
 				return;
