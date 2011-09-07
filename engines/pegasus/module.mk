@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	gamestate.o \
 	graphics.o \
 	hotspot.o \
+	input.o \
 	menu.o \
 	notification.o \
 	overview.o \

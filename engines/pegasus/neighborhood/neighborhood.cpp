@@ -27,6 +27,7 @@
 #include "common/stream.h"
 
 #include "pegasus/gamestate.h"
+#include "pegasus/input.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
