@@ -207,8 +207,8 @@ private:
 	int fnPurple(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnBlack(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	static const uint32 _scriptVarInit[NON_ZERO_SCRIPT_VARS][2];
-	static const uint8 *_startData[];
-	static const uint8 *_helperData[];
+	static const uint8 *const _startData[];
+	static const uint8 *const _helperData[];
 	void startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3);
 	void runStartScript(const uint8 *data);
 };

@@ -48,7 +48,7 @@ static const PlainGameDescriptor sword1PSXDemoSettings =
 
 
 // check these subdirectories (if present)
-static const char *g_dirNames[] = { "clusters", "speech", "english", "italian"};
+static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian"};
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
@@ -59,7 +59,7 @@ static const char *g_dirNames[] = { "clusters", "speech", "english", "italian"};
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
 
 #define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK + NUM_PSX_DEMO_FILES_TO_CHECK
-static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
+static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
 	"swordres.rif", // Mac, PC and PSX version
 	"general.clu", // PC and PSX version
 	"compacts.clu", // PC and PSX version

@@ -179,7 +179,7 @@ char ObjectMan::_missingSubTitleStr[] = " ";
 // is not needed. The English version of the game does not include Portuguese
 // so I cannot check.)
 
-const char *ObjectMan::_translationId2950145[7] = {
+const char *const ObjectMan::_translationId2950145[7] = {
 	"Oh?",     // English (not needed)
 	"Quoi?",   // French
 	"Oh?",     // German

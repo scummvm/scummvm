@@ -240,7 +240,7 @@ void SwordEngine::flagsToBool(bool *dest, uint8 flags) {
 	}
 }
 
-static const char *errorMsgs[] = {
+static const char *const errorMsgs[] = {
 	"The file \"%s\" is missing and the game doesn't work without it.\n"
 	"Please copy it from CD %d and try starting the game again.\n"
 	"The Readme file also contains further information.",
