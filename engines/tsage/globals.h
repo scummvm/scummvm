@@ -179,8 +179,12 @@ public:
 	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
+	int _clip1Bullets, _clip2Bullets;
 
 	BlueForceGlobals();
+	void reset();
+	bool getHasBullets();
+
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
 };

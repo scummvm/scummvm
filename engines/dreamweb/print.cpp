@@ -21,8 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
 
 namespace DreamGen {
 
@@ -136,6 +134,10 @@ void DreamGenContext::printdirect() {
 	printdirect(&string, di, &y, dl, (bool)(dl & 1));
 	si = initialSi + (string - initialString);
 	bx = y;
+}
+
+void DreamGenContext::printdirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+	printdirect(&string, x, &y, maxWidth, centered);
 }
 
 void DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {

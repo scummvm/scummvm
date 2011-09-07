@@ -75,9 +75,6 @@ const char *RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time."
 const char *RESTART_CONFIRM_MSG = "Do you want to restart your game?";
 const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 
-const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
-\x01 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
-F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
 const char *RESTART_MSG = "Do you want to restart this game?";
 const char *GAME_PAUSED_MSG = "Game is paused.";
@@ -97,6 +94,9 @@ const char *PICK_BTN_STRING = "Pick";
 namespace Ringworld {
 
 // Dialog resources
+const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
+\x01 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
+F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Start Play ";
 const char *INTRODUCTION_BTN_STRING = "Introduction";
@@ -129,6 +129,9 @@ const char *DEMO_RESUME_BTN_STRING = "Resume";
 namespace BlueForce {
 
 // Dialog resources
+const char *HELP_MSG = "Blue Force\x14\rScummVM Version\r\r\
+Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
+F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Play ";
 const char *INTRODUCTION_BTN_STRING = " Watch ";

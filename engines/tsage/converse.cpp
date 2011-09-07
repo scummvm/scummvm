@@ -287,7 +287,7 @@ void SequenceManager::signal() {
 		/* Following indexes were introduced for Blue Force */
 		case 35:
 			v1 = getNextValue();
-			_sceneObject->updateAngle(_objectList[v1]);
+			_sceneObject->updateAngle(_objectList[v1]->_position);
 			break;
 		case 36:
 			_sceneObject->animate(ANIM_MODE_9, NULL);

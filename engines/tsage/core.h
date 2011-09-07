@@ -61,7 +61,7 @@ public:
 	int _frame;
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
-	InvObject(int visage, int strip, int frame, int sceneNumber);
+	InvObject(int visage, int strip, int frame);
 
 	bool inInventory() const { return _sceneNumber == 1; }
 	void setCursor();
@@ -78,6 +78,7 @@ public:
 	InvObject *_selectedItem;
 
 	InvObjectList();
+	int indexOf(InvObject *obj) const;
 
 	virtual Common::String getClassName() { return "InvObjectList"; }
 	virtual void synchronize(Serializer &s);
@@ -368,6 +369,7 @@ public:
 	bool loadPalette(int paletteNum);
 	void refresh();
 	void setPalette(int index, int count);
+	void setEntry(int index, uint r, uint g, uint b);
 	uint8 indexOf(uint r, uint g, uint b, int threshold = 0xffff);
 	void getPalette(int start = 0, int count = 256);
 	void signalListeners();
@@ -411,7 +413,7 @@ public:
 	virtual Common::String getClassName() { return "SceneItem"; }
 	virtual void remove();
 	virtual void destroy() {}
-	virtual void startMover(CursorType action) { doAction(action); }
+	virtual void startAction(CursorType action) { doAction(action); }
 	virtual void doAction(int action);
 
 	bool contains(const Common::Point &pt);
@@ -419,6 +421,7 @@ public:
 	void setBounds(const int ys, const int xe, const int ye, const int xs) { _bounds = Rect(MIN(xs, xe), MIN(ys, ye), MAX(xs, xe), MAX(ys, ye)); }
 	static void display(int resNum, int lineNum, ...);
 	static void display2(int resNum, int lineNum);
+	static void display(const Common::String &msg);
 };
 
 class SceneItemExt : public SceneItem {
@@ -464,9 +467,12 @@ class SceneObject;
 class Visage {
 private:
 	byte *_data;
+
+	void flip(GfxSurface &s);
 public:
 	int _resNum;
 	int _rlbNum;
+	bool _flipHoriz;
 public:
 	Visage();
 	Visage(const Visage &v);
@@ -475,7 +481,7 @@ public:
 	void setVisage(int resNum, int rlbNum = 9999);
 	GfxSurface getFrame(int frameNum);
 	int getFrameCount() const;
-	Visage &operator=(const Visage &s);
+	Visage &operator=(const Visage &gfxSurface);
 };
 
 class SceneObjectWrapper : public EventHandler {
@@ -559,6 +565,7 @@ public:
 	void animate(AnimateMode animMode, ...);
 	SceneObject *clone() const;
 	void checkAngle(const SceneObject *obj);
+	void checkAngle(const Common::Point &pt);
 	void hide();
 	void show();
 	int getSpliceArea(const SceneObject *obj);
@@ -577,8 +584,8 @@ public:
 	virtual void draw();
 	virtual void proc19() {}
 	virtual void updateScreen();
-	// New methods introduced by Blue FOrce
-	virtual void updateAngle(SceneObject *sceneObj);
+	// New methods introduced by Blue Force
+	virtual void updateAngle(const Common::Point &pt);
 	virtual void changeAngle(int angle);
 
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
@@ -609,6 +616,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneText"; }
 	virtual GfxSurface getFrame() { return _textSurface; }
+	virtual void updateScreen();
 };
 
 class Player : public SceneObject {
@@ -616,7 +624,7 @@ public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
-	int _field8E;
+	bool _enabled;
 public:
 	Player();
 
@@ -725,6 +733,7 @@ public:
 		_objList.remove(sceneObj);
 		_listAltered = true;
 	}
+	void clear() { _objList.clear(); }
 };
 
 class ScenePriorities : public Common::List<Region> {

@@ -324,6 +324,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 }
 
 Interface::~Interface() {
+	_vm->getTimerManager()->removeTimerProc(&saveReminderCallback);
 }
 
 void Interface::saveReminderCallback(void *refCon) {

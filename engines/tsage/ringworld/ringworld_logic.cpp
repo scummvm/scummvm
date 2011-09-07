@@ -28,6 +28,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld/ringworld_demo.h"
+#include "tsage/ringworld/ringworld_dialogs.h"
 #include "tsage/ringworld/ringworld_scenes1.h"
 #include "tsage/ringworld/ringworld_scenes2.h"
 #include "tsage/ringworld/ringworld_scenes3.h"
@@ -1448,15 +1449,10 @@ void RingworldGame::processEvent(Event &event) {
 			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
 			break;
 
-		case Common::KEYCODE_F2: {
+		case Common::KEYCODE_F2:
 			// F2 - Sound Options
-			ConfigDialog *dlg = new ConfigDialog();
-			dlg->runModal();
-			delete dlg;
-			_globals->_soundManager.syncSounds();
-			_globals->_events.setCursorFromFlag();
+			SoundDialog::execute();
 			break;
-		}
 
 		case Common::KEYCODE_F3:
 			// F3 - Quit
@@ -1487,6 +1483,12 @@ void RingworldGame::processEvent(Event &event) {
 			break;
 		}
 	}
+}
+
+void RingworldGame::rightClick() {
+	RightClickDialog *dlg = new RightClickDialog();
+	dlg->execute();
+	delete dlg;
 }
 
 } // End of namespace Ringworld

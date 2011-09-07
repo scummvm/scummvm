@@ -277,7 +277,7 @@ enum kSpecial {
 	kTalkieVersion,
 	kDemoVersion,
 	kTalkieDemoVersion,
-	kOldFloppy,
+	kOldFloppy
 };
 
 enum kGame {

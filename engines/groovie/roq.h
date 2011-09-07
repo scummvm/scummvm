@@ -25,12 +25,6 @@
 
 #include "groovie/player.h"
 
-//#define DITHER
-
-#ifdef DITHER
-#include "graphics/dither.h"
-#endif
-
 namespace Groovie {
 
 class GroovieEngine;
@@ -89,11 +83,6 @@ private:
 	bool _dirty;
 	byte _alpha;
 
-#ifdef DITHER
-	// Dithering
-	Graphics::PaletteLUT *_paletteLookup;
-	Graphics::SierraLight *_dither;
-#endif
 };
 
 } // End of Groovie namespace

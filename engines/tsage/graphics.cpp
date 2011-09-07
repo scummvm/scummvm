@@ -1069,12 +1069,23 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 }
 
 void GfxDialog::setPalette() {
-	_globals->_scenePalette.loadPalette(0);
-	_globals->_scenePalette.setPalette(0, 1);
-	_globals->_scenePalette.setPalette(_globals->_scenePalette._colors.foreground, 1);
-	_globals->_scenePalette.setPalette(_globals->_fontColors.background, 1);
-	_globals->_scenePalette.setPalette(_globals->_fontColors.foreground, 1);
-	_globals->_scenePalette.setPalette(255, 1);
+	if (_vm->getGameID() == GType_BlueForce) {
+		_globals->_scenePalette.loadPalette(2);
+		_globals->_scenePalette.setPalette(0, 1);
+		_globals->_scenePalette.setPalette(_globals->_gfxColors.background, 1);
+		_globals->_scenePalette.setPalette(_globals->_gfxColors.foreground, 1);
+		_globals->_scenePalette.setPalette(_globals->_fontColors.background, 1);
+		_globals->_scenePalette.setPalette(_globals->_fontColors.foreground, 1);
+		_globals->_scenePalette.setEntry(255, 0xff, 0xff, 0xff);
+		_globals->_scenePalette.setPalette(255, 1);	
+	} else {
+		_globals->_scenePalette.loadPalette(0);
+		_globals->_scenePalette.setPalette(0, 1);
+		_globals->_scenePalette.setPalette(_globals->_scenePalette._colors.foreground, 1);
+		_globals->_scenePalette.setPalette(_globals->_fontColors.background, 1);
+		_globals->_scenePalette.setPalette(_globals->_fontColors.foreground, 1);
+		_globals->_scenePalette.setPalette(255, 1);
+	}
 }
 
 /*--------------------------------------------------------------------------*/

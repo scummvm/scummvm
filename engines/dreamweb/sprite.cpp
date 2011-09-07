@@ -21,8 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
 
 namespace DreamGen {
 
@@ -88,17 +86,6 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	sprite->b15 = 0;
 	sprite->delay = 0;
 	return sprite;
-}
-
-void DreamGenContext::makesprite() { // NB: returns new sprite in es:bx 
-	Sprite *sprite = makesprite(si & 0xff, si >> 8, cx, dx, di);
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += sizeof(Sprite) * (sprite - sprites);
-	//
 }
 
 void DreamGenContext::spriteupdate() {
@@ -297,7 +284,7 @@ void DreamGenContext::constant(Sprite *sprite, SetObject *objData) {
 		sprite->frame = 0;
 	}
 	uint8 b18 = objData->b18[sprite->frame];
-	objData->b17 = b18;
+	objData->index = b18;
 	sprite->b15 = b18;
 }
 
@@ -361,7 +348,7 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData) {
 	if (objData->b18[sprite->frame] == 255) {
 		--sprite->frame;
 	}
-	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	sprite->b15 = objData->index = objData->b18[sprite->frame];
 	data.byte(kThroughdoor) = 1;
 	return;
 shutdoor:
@@ -375,14 +362,14 @@ shutdoor:
 	if (sprite->frame != 0) {
 		--sprite->frame;
 	}
-	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	sprite->b15 = objData->index = objData->b18[sprite->frame];
 	if (sprite->frame == 5) //nearly
 		data.byte(kThroughdoor) = 0;
 }
 
 void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {
 	uint8 b18 = objData->b18[0];
-	objData->b17 = b18;
+	objData->index = b18;
 	sprite->b15 = b18;
 }
 
@@ -414,7 +401,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 	}
 
 	if (sprite->frame == 6) {
-		turnpathonCPP(data.byte(kDoorpath));
+		turnpathon(data.byte(kDoorpath));
 	}
 
 	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0)) {
@@ -426,7 +413,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 		--sprite->frame;
 	}
 
-	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	sprite->b15 = objData->index = objData->b18[sprite->frame];
 	if (sprite->frame == 5)
 		data.byte(kThroughdoor) = 1;
 	return;
@@ -442,10 +429,10 @@ shutdoor2:
 	}
 
 	data.byte(kThroughdoor) = 0;
-	sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+	sprite->b15 = objData->index = objData->b18[sprite->frame];
 
 	if (sprite->frame == 0) {
-		turnpathoffCPP(data.byte(kDoorpath));
+		turnpathoff(data.byte(kDoorpath));
 		data.byte(kLockstatus) = 1;
 	}
 }
@@ -453,7 +440,7 @@ shutdoor2:
 void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 	uint8 liftFlag = data.byte(kLiftflag);
 	if (liftFlag == 0) { //liftclosed
-		turnpathoffCPP(data.byte(kLiftpath));
+		turnpathoff(data.byte(kLiftpath));
 
 		if (data.byte(kCounttoopen) != 0) {
 			_dec(data.byte(kCounttoopen));
@@ -461,10 +448,10 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 				data.byte(kLiftflag) = 3;
 		}
 		sprite->frame = 0;
-		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
 	}
 	else if (liftFlag == 1) {  //liftopen
-		turnpathonCPP(data.byte(kLiftpath));
+		turnpathon(data.byte(kLiftpath));
 
 		if (data.byte(kCounttoclose) != 0) {
 			_dec(data.byte(kCounttoclose));
@@ -472,7 +459,7 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 				data.byte(kLiftflag) = 2;
 		}
 		sprite->frame = 12;
-		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
 	}	
 	else if (liftFlag == 3) { //openlift
 		if (sprite->frame == 12) {
@@ -484,7 +471,7 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 			al = 2;
 			liftnoise();
 		}
-		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
 	} else { //closeLift
 		assert(liftFlag == 2);
 		if (sprite->frame == 0) {
@@ -496,13 +483,13 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 			al = 3;
 			liftnoise();
 		}
-		sprite->b15 = objData->b17 = objData->b18[sprite->frame];
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
 	}
 }
 
 void DreamGenContext::facerightway() {
-	uint8 *paths = getroomspathsCPP();
-	uint8 dir = paths[8 * data.byte(kManspath) + 7];
+	PathNode *paths = getroomspaths()->nodes;
+	uint8 dir = paths[data.byte(kManspath)].dir;
 	data.byte(kTurntoface) = dir;
 	data.byte(kLeavedirection) = dir;
 }
@@ -549,16 +536,16 @@ void DreamGenContext::showreelframe(Reel *reel) {
 }
 
 void DreamGenContext::showgamereel() {
-	uint16 reelpointer = es.word(bx+3);
+	showgamereel((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+}
+
+void DreamGenContext::showgamereel(ReelRoutine *routine) {
+	uint16 reelpointer = routine->reelPointer();
 	if (reelpointer >= 512)
 		return;
 	data.word(kReelpointer) = reelpointer;
-	push(es);
-	push(bx);
 	plotreel();
-	bx = pop();
-	es = pop();
-	es.word(bx+3) = data.word(kReelpointer);
+	routine->setReelPointer(data.word(kReelpointer));
 }
 
 const Frame *DreamGenContext::getreelframeax(uint16 frame) {
@@ -887,6 +874,33 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 	*flag = tileData[0];
 	*flagEx = tileData[1];
 	*type = tileData[2];
+}
+
+void DreamGenContext::getblockofpixel() {
+	al = getblockofpixel(cl, ch);
+}
+
+uint8 DreamGenContext::getblockofpixel(uint8 x, uint8 y) {
+	uint8 flag, flagEx, type, flagX, flagY;
+	checkone(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
+	if (flag & 1)
+		return 0;
+	else
+		return type;
+}
+
+void DreamGenContext::addtopeoplelist() {
+	addtopeoplelist((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+}
+
+void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
+	uint16 routinePointer = (const uint8 *)routine - cs.ptr(0, 0);
+
+	People *people = (People *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
+	people->setReelPointer(routine->reelPointer());
+	people->setRoutinePointer(routinePointer);
+	people->b4 = routine->b7;
+	data.word(kListpos) += sizeof(People);
 }
 
 } /*namespace dreamgen */

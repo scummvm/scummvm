@@ -77,12 +77,7 @@ void SceneManager::sceneChange() {
 	}
 
 	// Clear the secondary scene object list
-	io = _globals->_sceneManager._altSceneObjects.begin();
-	while (io != _globals->_sceneManager._altSceneObjects.end()) {
-		SceneObject *sceneObj = *io;
-		++io;
-		sceneObj->removeObject();
-	}
+	_altSceneObjects.clear();
 
 	// Clear the hotspot list
 	SynchronizedList<SceneItem *>::iterator ii = _globals->_sceneItems.begin();

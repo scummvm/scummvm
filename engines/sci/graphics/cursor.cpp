@@ -227,8 +227,10 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 //    Game,            newPosition, validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
 	{ GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
+	{ GID_ISLANDBRAIN,143, 135,     57, 102, 163, 218 },// island of dr. brain / pause menu within copy protection
 	{ GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
 	{ GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
+	{ GID_QFG3,        70, 170,     40, 61, 81, 258 },  // Quest For Glory 3 / run/walk/sleep sub-menu
 	{ (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
 };
 

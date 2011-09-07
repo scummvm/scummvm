@@ -21,6 +21,7 @@
  */
 
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
@@ -66,8 +67,10 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 150:
 	case 160:
 	case 180:
-	case 190:
 		error("Scene group 1 not implemented");
+	case 190:
+		// Front of Police Station
+		return new Scene190();
 	case 200:
 	case 210:
 	case 220:
@@ -132,6 +135,56 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;
+	}
+}
+
+void BlueForceGame::rightClick() {
+	RightClickDialog *dlg = new RightClickDialog();
+	dlg->execute();
+	delete dlg;
+}
+
+void BlueForceGame::processEvent(Event &event) {
+	if (event.eventType == EVENT_KEYPRESS) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			// F1 - Help
+			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			break;
+
+		case Common::KEYCODE_F2:
+			// F2 - Sound Options
+			SoundDialog::execute();
+			break;
+
+		case Common::KEYCODE_F3:
+			// F3 - Quit
+			quitGame();
+			event.handled = false;
+			break;
+
+		case Common::KEYCODE_F4:
+			// F4 - Restart
+			restartGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F7:
+			// F7 - Restore
+			restoreGame();
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F10:
+			// F10 - Pause
+			GfxDialog::setPalette();
+			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			_globals->_events.setCursorFromFlag();
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -307,6 +360,37 @@ void NamedObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_useLineNum);
 }
 
+void NamedObject::startAction(CursorType action) {
+	bool handled = true;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		if (_lookLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _lookLineNum);
+		break;
+	case CURSOR_USE:
+		if (_useLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _useLineNum);
+		break;
+	case CURSOR_TALK:
+		if (_talkLineNum == -1)
+			handled = false;
+		else
+			SceneItem::display2(_resNum, _talkLineNum);
+		break;
+	default:
+		handled = false;
+		break;
+	}
+
+	if (!handled)
+		((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(action);
+}
+
 void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -328,6 +412,7 @@ void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLin
 		break;
 	}
 }
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -418,6 +503,7 @@ SceneExt::SceneExt(): Scene() {
 	_field372 = 0;
 	_field37A = 0;
 	_eventHandler = NULL;
+	_cursorVisage.setVisage(1, 8);
 }
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
@@ -460,19 +546,72 @@ void SceneExt::loadScene(int sceneNum) {
 	_v51C34.bottom = 300;
 }
 
+void SceneExt::checkGun() {
+	// Remove a bullet from the currently loaded clip
+	if (BF_GLOBALS.getFlag(fLoadedSpare) && (BF_GLOBALS._clip2Bullets > 0)) {
+		if (--BF_GLOBALS._clip2Bullets == 0)
+			BF_GLOBALS.clearFlag(fGunLoaded);
+	} else {
+		if (BF_GLOBALS._clip1Bullets > 0)
+			--BF_GLOBALS._clip1Bullets;
+
+		if (!BF_GLOBALS._clip1Bullets)
+			BF_GLOBALS.clearFlag(fGunLoaded);
+	}
+
+	BF_GLOBALS._sound3.play(4);
+}
+
+void SceneExt::display(CursorType action) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2));
+		break;
+	case CURSOR_USE:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2) + 6);
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2) + 3);
+		break;
+	case INV_COLT45:
+		gunDisplay();
+		break;
+	default:
+		if (action < BF_LAST_INVENT)
+			SceneItem::display2(9002, (int)action);
+		break;
+	}
+}
+
+void SceneExt::gunDisplay() {
+	if (!BF_GLOBALS.getFlag(gunDrawn)) {
+		// Gun not drawn
+		SceneItem::display2(1, BF_GLOBALS.getFlag(fCanDrawGun) ? 0 : 4);
+	} else if (!BF_GLOBALS.getFlag(fGunLoaded)) {
+		// Gun not loaded
+		SceneItem::display2(1, 1);
+	} else if (!BF_GLOBALS.getHasBullets()) {
+		// Out of ammunition
+		SceneItem::display2(1, 2);
+	} else {
+		// Check scene for whether gun can fire
+		checkGun();
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
-GameScene::GameScene() {
+GroupedScene::GroupedScene() {
 
 }
 
-void GameScene::postInit(SceneObjectList *OwnerList) {
+void GroupedScene::postInit(SceneObjectList *OwnerList) {
 	_field794 = 0;
 	_field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
-void GameScene::remove() {
+void GroupedScene::remove() {
 	SceneExt::remove();
 	if (_field794 == 1) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
@@ -496,12 +635,15 @@ void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 	// Load the low end palette data
 	BF_GLOBALS._scenePalette.loadPalette(2);
 	BF_GLOBALS._scenePalette.refresh();
-
-	// Setup the user interface
-	BF_GLOBALS._uiElements.setup(Common::Point(0, BF_INTERFACE_Y - 2));
 }
 
 void SceneHandlerExt::process(Event &event) {
+	if (BF_GLOBALS._uiElements._active) {
+		BF_GLOBALS._uiElements.process(event);
+		if (event.handled)
+			return;
+	}
+
 	SceneHandler::process(event);
 
 	// TODO: All the new stuff from Blue Force
@@ -646,142 +788,227 @@ SpeakerJakeNoHead::SpeakerJakeNoHead(): VisualSpeaker() {
 /*--------------------------------------------------------------------------*/
 
 BlueForceInvObjectList::BlueForceInvObjectList():
-		_business_card(9, 4, 2, 0),
-		_lauras_sweater(9, 4, 3, 0),
-		_handcuffs(9, 1, 4, 0),
-		_magnum(9, 1, 5, 0),
-		_ticket_book(9, 1, 6, 0),
-		_miranda_card(9, 1, 7, 0),
-		_forest_follet(9, 1, 8, 0),
-		_bradford_id(9, 1, 9, 0),
-		_baseball_card(9, 1, 10, 0),
-		_slip_bradford(9, 1, 11, 0),
-		_flare(9, 1, 12, 0),
-		_rap_sheet(9, 1, 13, 0),
-		_cartridges(9, 1, 14, 0),
-		_rifle(9, 1, 15, 0),
-		_wig(9, 1, 16, 0),
-		_frankies_id(9, 1, 17, 0),
-		_tyrones_id(9, 1, 18, 0),
-		_pistol22(9, 1, 19, 0),
-		_unused(1, 1, 1, 0),
-		_slip_frankie(9, 2, 1, 0),
-		_slip_tyrone(9, 2, 2, 0),
-		_atf_teletype(9, 2, 3, 0),
-		_da_note(9, 2, 4, 0),
-		_blueprints(9, 2, 5, 0),
-		_planter_key(9, 2, 6, 0),
-		_center_punch(9, 2, 7, 0),
-		_tranquilizer(9, 2, 8, 0),
-		_boat_hook(9, 2, 9, 0),
-		_oily_rags(9, 2, 10, 0),
-		_fuel_jar(9, 2, 11, 0),
-		_screwdriver(9, 2, 12, 0),
-		_floppy_disk1(9, 2, 13, 0),
-		_floppy_disk2(9, 2, 14, 0),
-		_driftwood(9, 2, 15, 0),
-		_crate_piece1(9, 2, 16, 0),
-		_crate_piece2(9, 2, 17, 0),
-		_shoebox(9, 2, 18, 0),
-		_badge(9, 2, 19, 0),
-		_unused2(1, 1, 1, 0),
-		_rental_coupons(9, 3, 1, 0),
-		_nickel(9, 3, 2, 0),
-		_calendar(9, 3, 3, 0),
-		_dixon_note(9, 3, 4, 0),
-		_cobb_mugshot(9, 3, 5, 0),
-		_murder_article(9, 3, 6, 0),
-		_microfiche(9, 3, 7, 0),
-		_future_wave_keys(9, 3, 8, 0),
-		_rental_boat_keys(9, 3, 9, 0),
-		_napkin(9, 3, 10, 0),
-		_cobb_printout(9, 3, 11, 0),
-		_fishing_net(9, 3, 12, 0),
-		_id(9, 3, 13, 0),
-		_rounds_9mm(9, 3, 14, 0),
-		_dates_note(9, 3, 15, 0),
-		_hand_grenade(9, 3, 16, 0),
-		_cord_110(9, 3, 17, 0),
-		_cord_110_plug(9, 3, 18, 0),
-		_cord_220(9, 3, 19, 0),
-		_unused3(1, 1, 1, 0),
-		_cord_220_plug(9, 4, 1, 0),
-		_official_document(9, 4, 2, 0),
-		_red_sweater(9, 4, 3, 0),
-		_jackknife(9, 4, 4, 0),
-		_whistle(9, 4, 5, 0),
-		_gun(9, 1, 2, 0),
-		_alley_cat_key(9, 4, 7, 0) {
+		_none(9, 5, 1),
+		_colt45(9, 1, 1),
+		_ammoClip(9, 4, 2),
+		_spareClip(9, 4, 3),
+		_handcuffs(9, 1, 4),
+		_greensGun(9, 1, 5),
+		_ticketBook(9, 1, 6),
+		_mirandaCard(9, 1, 7),
+		_forestRap(9, 1, 8),
+		_greenId(9, 1, 9),
+		_baseballCard(9, 1, 10),
+		_bookingGreen(9, 1, 11),
+		_flare(9, 1, 12),
+		_cobbRap(9, 1, 13),
+		_bullet22(9, 1, 14),
+		_autoRifle(9, 1, 15),
+		_wig(9, 1, 16),
+		_frankieId(9, 1, 17),
+		_tyroneId(9, 1, 18),
+		_snub22(9, 1, 19),
+		_bug(1, 1, 1),
+		_bookingFrankie(9, 2, 1),
+		_bookingGang(9, 2, 2),
+		_fbiTeletype(9, 2, 3),
+		_daNote(9, 2, 4),
+		_printOut(9, 2, 5),
+		_warehouseKeys(9, 2, 6),
+		_centerPunch(9, 2, 7),
+		_tranqGun(9, 2, 8),
+		_hook(9, 2, 9),
+		_rags(9, 2, 10),
+		_jar(9, 2, 11),
+		_screwdriver(9, 2, 12),
+		_dFloppy(9, 2, 13),
+		_blankDisk(9, 2, 14),
+		_stick(9, 2, 15),
+		_crate1(9, 2, 16),
+		_crate2(9, 2, 17),
+		_shoebox(9, 2, 18),
+		_badge(9, 2, 19),
+		_bug2(1, 1, 1),
+		_rentalCoupon(9, 3, 1),
+		_nickel(9, 3, 2),
+		_lyleCard(9, 3, 3),
+		_carterNote(9, 3, 4),
+		_mugshot(9, 3, 5),
+		_clipping(9, 3, 6),
+		_microfilm(9, 3, 7),
+		_waveKeys(9, 3, 8),
+		_rentalKeys(9, 3, 9),
+		_napkin(9, 3, 10),
+		_dmvPrintout(9, 3, 11),
+		_fishingNet(9, 3, 12),
+		_id(9, 3, 13),
+		_bullets9mm(9, 3, 14),
+		_schedule(9, 3, 15),
+		_grenades(9, 3, 16),
+		_yellowCord(9, 3, 17),
+		_halfYellowCord(9, 3, 18),
+		_blackCord(9, 3, 19),
+		_bug3(1, 1, 1),
+		_halfBlackCord(9, 4, 1),
+		_warrant(9, 4, 2),
+		_jacket(9, 4, 3),
+		_greensKnife(9, 4, 4),
+		_dogWhistle(9, 4, 5),
+		_ammoBelt(9, 1, 2),
+		_lastInvent(9, 4, 7) {
 
 	// Add the items to the list
-	_itemList.push_back(&_business_card);
-	_itemList.push_back(&_lauras_sweater);
+	_itemList.push_back(&_none);
+	_itemList.push_back(&_colt45);
+	_itemList.push_back(&_ammoClip);
+	_itemList.push_back(&_spareClip);
 	_itemList.push_back(&_handcuffs);
-	_itemList.push_back(&_magnum);
-	_itemList.push_back(&_ticket_book);
-	_itemList.push_back(&_miranda_card);
-	_itemList.push_back(&_forest_follet);
-	_itemList.push_back(&_bradford_id);
-	_itemList.push_back(&_baseball_card);
-	_itemList.push_back(&_slip_bradford);
+	_itemList.push_back(&_greensGun);
+	_itemList.push_back(&_ticketBook);
+	_itemList.push_back(&_mirandaCard);
+	_itemList.push_back(&_forestRap);
+	_itemList.push_back(&_greenId);
+	_itemList.push_back(&_baseballCard);
+	_itemList.push_back(&_bookingGreen);
 	_itemList.push_back(&_flare);
-	_itemList.push_back(&_rap_sheet);
-	_itemList.push_back(&_cartridges);
-	_itemList.push_back(&_rifle);
+	_itemList.push_back(&_cobbRap);
+	_itemList.push_back(&_bullet22);
+	_itemList.push_back(&_autoRifle);
 	_itemList.push_back(&_wig);
-	_itemList.push_back(&_frankies_id);
-	_itemList.push_back(&_tyrones_id);
-	_itemList.push_back(&_pistol22);
-	_itemList.push_back(&_unused);
-	_itemList.push_back(&_slip_frankie);
-	_itemList.push_back(&_slip_tyrone);
-	_itemList.push_back(&_atf_teletype);
-	_itemList.push_back(&_da_note);
-	_itemList.push_back(&_blueprints);
-	_itemList.push_back(&_planter_key);
-	_itemList.push_back(&_center_punch);
-	_itemList.push_back(&_tranquilizer);
-	_itemList.push_back(&_boat_hook);
-	_itemList.push_back(&_oily_rags);
-	_itemList.push_back(&_fuel_jar);
+	_itemList.push_back(&_frankieId);
+	_itemList.push_back(&_tyroneId);
+	_itemList.push_back(&_snub22);
+	_itemList.push_back(&_bug);
+	_itemList.push_back(&_bookingFrankie);
+	_itemList.push_back(&_bookingGang);
+	_itemList.push_back(&_fbiTeletype);
+	_itemList.push_back(&_daNote);
+	_itemList.push_back(&_printOut);
+	_itemList.push_back(&_warehouseKeys);
+	_itemList.push_back(&_centerPunch);
+	_itemList.push_back(&_tranqGun);
+	_itemList.push_back(&_hook);
+	_itemList.push_back(&_rags);
+	_itemList.push_back(&_jar);
 	_itemList.push_back(&_screwdriver);
-	_itemList.push_back(&_floppy_disk1);
-	_itemList.push_back(&_floppy_disk2);
-	_itemList.push_back(&_driftwood);
-	_itemList.push_back(&_crate_piece1);
-	_itemList.push_back(&_crate_piece2);
+	_itemList.push_back(&_dFloppy);
+	_itemList.push_back(&_blankDisk);
+	_itemList.push_back(&_stick);
+	_itemList.push_back(&_crate1);
+	_itemList.push_back(&_crate2);
 	_itemList.push_back(&_shoebox);
 	_itemList.push_back(&_badge);
-	_itemList.push_back(&_unused2);
-	_itemList.push_back(&_rental_coupons);
+	_itemList.push_back(&_bug2);
+	_itemList.push_back(&_rentalCoupon);
 	_itemList.push_back(&_nickel);
-	_itemList.push_back(&_calendar);
-	_itemList.push_back(&_dixon_note);
-	_itemList.push_back(&_cobb_mugshot);
-	_itemList.push_back(&_murder_article);
-	_itemList.push_back(&_microfiche);
-	_itemList.push_back(&_future_wave_keys);
-	_itemList.push_back(&_rental_boat_keys);
+	_itemList.push_back(&_lyleCard);
+	_itemList.push_back(&_carterNote);
+	_itemList.push_back(&_mugshot);
+	_itemList.push_back(&_clipping);
+	_itemList.push_back(&_microfilm);
+	_itemList.push_back(&_waveKeys);
+	_itemList.push_back(&_rentalKeys);
 	_itemList.push_back(&_napkin);
-	_itemList.push_back(&_cobb_printout);
-	_itemList.push_back(&_fishing_net);
+	_itemList.push_back(&_dmvPrintout);
+	_itemList.push_back(&_fishingNet);
 	_itemList.push_back(&_id);
-	_itemList.push_back(&_rounds_9mm);
-	_itemList.push_back(&_dates_note);
-	_itemList.push_back(&_hand_grenade);
-	_itemList.push_back(&_cord_110);
-	_itemList.push_back(&_cord_110_plug);
-	_itemList.push_back(&_cord_220);
-	_itemList.push_back(&_unused3);
-	_itemList.push_back(&_cord_220_plug);
-	_itemList.push_back(&_official_document);
-	_itemList.push_back(&_red_sweater);
-	_itemList.push_back(&_jackknife);
-	_itemList.push_back(&_whistle);
-	_itemList.push_back(&_gun);
-	_itemList.push_back(&_alley_cat_key);
+	_itemList.push_back(&_bullets9mm);
+	_itemList.push_back(&_schedule);
+	_itemList.push_back(&_grenades);
+	_itemList.push_back(&_yellowCord);
+	_itemList.push_back(&_halfYellowCord);
+	_itemList.push_back(&_blackCord);
+	_itemList.push_back(&_bug3);
+	_itemList.push_back(&_halfBlackCord);
+	_itemList.push_back(&_warrant);
+	_itemList.push_back(&_jacket);
+	_itemList.push_back(&_greensKnife);
+	_itemList.push_back(&_dogWhistle);
+	_itemList.push_back(&_ammoBelt);
+	_itemList.push_back(&_lastInvent);
 }
 
+void BlueForceInvObjectList::reset() {
+	// Reset all object scene numbers
+	SynchronizedList<InvObject *>::iterator i;
+	for (i = _itemList.begin(); i != _itemList.end(); ++i) {
+		(*i)->_sceneNumber = 0;
+	}
+
+	// Set up default inventory
+	setObjectRoom(INV_COLT45, 1);
+	setObjectRoom(INV_HANDCUFFS, 1);
+	setObjectRoom(INV_AMMO_BELT, 1);
+	setObjectRoom(INV_ID, 1);
+
+	// Set default room for other objects
+	setObjectRoom(INV_TICKET_BOOK, 60);
+	setObjectRoom(INV_MIRANDA_CARD, 60);
+	setObjectRoom(INV_FOREST_RAP, 320);
+	setObjectRoom(INV_GREEN_ID, 370);
+	setObjectRoom(INV_BASEBALL_CARD, 840);
+	setObjectRoom(INV_BOOKING_GREEN, 390);
+	setObjectRoom(INV_FLARE, 355);
+	setObjectRoom(INV_COBB_RAPP, 810);
+	setObjectRoom(INV_22_BULLET, 415);
+	setObjectRoom(INV_AUTO_RIFLE, 415);
+	setObjectRoom(INV_WIG, 415);
+	setObjectRoom(INV_FRANKIE_ID, 410);
+	setObjectRoom(INV_TYRONE_ID, 410);
+	setObjectRoom(INV_22_SNUB, 410);
+	setObjectRoom(INV_FBI_TELETYPE, 320);
+	setObjectRoom(INV_DA_NOTE, 320);
+	setObjectRoom(INV_PRINT_OUT, 570);
+	setObjectRoom(INV_WHAREHOUSE_KEYS, 360);
+	setObjectRoom(INV_CENTER_PUNCH, 0);
+	setObjectRoom(INV_TRANQ_GUN, 830);
+	setObjectRoom(INV_HOOK, 350);
+	setObjectRoom(INV_RAGS, 870);
+	setObjectRoom(INV_JAR, 870);
+	setObjectRoom(INV_SCREWDRIVER, 355);
+	setObjectRoom(INV_D_FLOPPY, 570);
+	setObjectRoom(INV_BLANK_DISK, 560);
+	setObjectRoom(INV_STICK, 710);
+	setObjectRoom(INV_CRATE1, 710);
+	setObjectRoom(INV_CRATE2, 870);
+	setObjectRoom(INV_SHOEBOX, 270);
+	setObjectRoom(INV_BADGE, 560);
+	setObjectRoom(INV_RENTAL_COUPON, 0);
+	setObjectRoom(INV_NICKEL, 560);
+	setObjectRoom(INV_LYLE_CARD, 270);
+	setObjectRoom(INV_CARTER_NOTE, 830);
+	setObjectRoom(INV_MUG_SHOT, 810);
+	setObjectRoom(INV_CLIPPING, 810);
+	setObjectRoom(INV_MICROFILM, 810);
+	setObjectRoom(INV_WAVE_KEYS, 840);
+	setObjectRoom(INV_RENTAL_KEYS, 840);
+	setObjectRoom(INV_NAPKIN, 115);
+	setObjectRoom(INV_DMV_PRINTOUT, 810);
+	setObjectRoom(INV_FISHING_NET, 830);
+	setObjectRoom(INV_9MM_BULLETS, 930);
+	setObjectRoom(INV_SCHEDULE, 930);
+	setObjectRoom(INV_GRENADES, 355);
+	setObjectRoom(INV_GREENS_KNIFE, 370);
+	setObjectRoom(INV_JACKET, 880);
+	setObjectRoom(INV_DOG_WHISTLE, 880);
+	setObjectRoom(INV_YELLOW_CORD, 910);
+	setObjectRoom(INV_BLACK_CORD, 910);
+}
+
+void BlueForceInvObjectList::setObjectRoom(int objectNum, int sceneNumber) {
+	// Find the appropriate object
+	int num = objectNum;
+	SynchronizedList<InvObject *>::iterator i = _itemList.begin(); 
+	while (num-- > 0) ++i;
+	(*i)->_sceneNumber = sceneNumber;
+	
+	// If the item is the currently active one, default back to the use cursor
+	if (BF_GLOBALS._events.getCursor() == objectNum)
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
+
+	// Update the user interface if necessary
+	BF_GLOBALS._uiElements.updateInventory();
+}
 
 } // End of namespace BlueForce
 

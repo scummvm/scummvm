@@ -149,6 +149,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 	const byte *cursor;
 	bool delFlag = true;
 	uint size;
+	bool questionEnabled = false;
 
 	switch (cursorType) {
 	case CURSOR_NONE:
@@ -164,19 +165,37 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		if (_vm->getGameID() == GType_BlueForce)
+			cursor = _resourceManager->getSubResource(1, 5, 3, &size);
+		else
+			cursor = _resourceManager->getSubResource(4, 1, 5, &size);
 		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		if (_vm->getGameID() == GType_BlueForce) {
+			cursor = _resourceManager->getSubResource(1, 5, 2, &size);
+		} else {
+			cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		}
 		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		if (_vm->getGameID() == GType_BlueForce) {
+			cursor = _resourceManager->getSubResource(1, 5, 4, &size);
+		} else {
+			cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		}
+		_currentCursor = CURSOR_TALK;
+		break;
+
+	case CURSOR_EXIT:
+		// Exit cursor (Blue Force)
+		assert(_vm->getGameID() == GType_BlueForce);
+		cursor = _resourceManager->getSubResource(1, 5, 7, &size);
 		_currentCursor = CURSOR_TALK;
 		break;
 
@@ -188,10 +207,22 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_WALK:
 	default:
-		// Walk cursor
-		cursor = CURSOR_WALK_DATA;
-		_currentCursor = CURSOR_WALK;
-		delFlag = false;
+		if (_vm->getGameID() == GType_BlueForce) {
+			if (cursorType == CURSOR_WALK) {
+				cursor = _resourceManager->getSubResource(1, 5, 1, &size);
+			} else {
+				// Inventory icon
+				cursor = _resourceManager->getSubResource(10, ((int)cursorType - 1) / 20 + 1, 
+					((int)cursorType - 1) % 20 + 1, &size);
+				questionEnabled = true;
+			}
+			_currentCursor = cursorType;
+		} else {
+			// For Ringworld, always treat as the walk cursor
+			cursor = CURSOR_WALK_DATA;
+			_currentCursor = CURSOR_WALK;
+			delFlag = false;
+		}
 		break;
 	}
 
@@ -205,6 +236,10 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	if (delFlag)
 		DEALLOCATE(cursor);
+
+	// For Blue Force, enable the question button when an inventory icon is selected
+	if (_vm->getGameID() == GType_BlueForce)
+		BF_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 
 void EventsClass::pushCursor(CursorType cursorType) {
@@ -278,7 +313,7 @@ void EventsClass::setCursor(GfxSurface &cursor) {
 	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(), 
 		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
 
-	_currentCursor = CURSOR_NONE;
+	_lastCursor = CURSOR_NONE;
 }
 
 void EventsClass::setCursorFromFlag() {

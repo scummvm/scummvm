@@ -11,11 +11,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added PlayStation 3 port.
 
  AGI:
-   - Implemented sound support for the DOS version of Winnie the Pooh in the Hundred Acre Wood.
+   - Implemented sound support for the DOS version of Winnie the Pooh in the
+     Hundred Acre Wood.
 
  AGOS:
    - Implemented support for loading data directly from InstallShield
      cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
+
+ Groovie:
+   - Added support for the iOS version of The 7th Guest.
 
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
@@ -23,6 +27,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      better, since important notes are not interrupted anymore.
    - Implemented CMS support for Loom, The Secret of Monkey Island and
      Indiana Jones and the Last Crusade.
+   - Improved palette handling for the Amiga version of Indiana Jones and the
+     Fate of Atlantis.
 
  SDL ports:
    - Added support for OpenGL (GSoC Task).
