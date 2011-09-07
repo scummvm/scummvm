@@ -81,7 +81,7 @@ void L1_SetActorTalkColor() {
 	if (!lua_isuserdata(colorObj) && lua_tag(colorObj) != MKTAG('C','O','L','R'))
 		return;
 	Actor *actor = getactor(actorObj);
-	Color *color = getcolor(colorObj);
+	PoolColor *color = getcolor(colorObj);
 	actor->setTalkColor(color);
 }
 
@@ -1427,7 +1427,7 @@ void L1_GetVisibleThings() {
 	lua_Object result = lua_createtable();
 
 	// TODO verify code below
-	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
+	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 		Actor *a = i->_value;
 		if (!i->_value->isInSet(g_grim->getSceneName()))
 			continue;

@@ -50,7 +50,8 @@ namespace Grim {
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const Common::String &actorName) :
-		Object(), _name(actorName), _setName(""), _talkColor(g_grim->getColor(2)), _pos(0, 0, 0),
+		PoolObject(), _name(actorName), _setName(""),
+		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -90,12 +91,10 @@ Actor::Actor(const Common::String &actorName) :
 		_talkCostume[i] = NULL;
 		_talkChore[i] = -1;
 	}
-
-	g_grim->registerActor(this);
 }
 
 Actor::Actor() :
-	Object() {
+	PoolObject() {
 
 	_shadowArray = new Shadow[5];
 	_winX1 = _winY1 = 1000;
@@ -126,8 +125,6 @@ Actor::~Actor() {
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
 	}
-
-	g_grim->killActor(this);
 }
 
 void Actor::saveState(SaveGame *savedState) const {
@@ -286,7 +283,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor = g_grim->getColor(savedState->readLEUint32());
+	_talkColor = PoolColor::getPool()->getObject(savedState->readLEUint32());
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();
@@ -643,7 +640,7 @@ void Actor::moveTo(const Graphics::Vector3d &pos) {
 	}
 
 	Graphics::Vector3d v = pos - _pos;
-	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
+	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
 		Actor *a = i->_value;
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			collidesWith(a, &v);
@@ -892,9 +889,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	g_grim->setTalkingActor(this);
 
 	if (_sayLineText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
-		if (textObject)
-			g_grim->killTextObject(textObject);
+		delete TextObject::getPool()->getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 
@@ -903,11 +898,12 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
+		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+			TextObject::getPool()->deleteObjects();
+
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
-			g_grim->killTextObjects();
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
@@ -924,7 +920,6 @@ void Actor::sayLine(const char *msgId, bool background) {
 			}
 		}
 		textObject->setText(msgId);
-		g_grim->registerTextObject(textObject);
 		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
 			_sayLineText = textObject->getId();
 	}
@@ -935,7 +930,7 @@ bool Actor::isTalking() {
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	TextObject *textObject = NULL;
 	if (_sayLineText)
-		textObject = g_grim->getTextObject(_sayLineText);
+		textObject = TextObject::getPool()->getObject(_sayLineText);
 	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
@@ -963,9 +958,7 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
-		if (textObject)
-			g_grim->killTextObject(textObject);
+		delete TextObject::getPool()->getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 	if (g_grim->getTalkingActor() == this) {
@@ -1311,7 +1304,7 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
+		TextObject *textObject = TextObject::getPool()->getObject(_sayLineText);
 		if (textObject) {
 			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
 				textObject->setX(640 / 2);

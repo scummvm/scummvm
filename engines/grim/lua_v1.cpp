@@ -41,6 +41,7 @@
 #include "engines/grim/scene.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
+#include "engines/grim/primitives.h"
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
@@ -80,28 +81,32 @@ void pushbool(bool val) {
 		lua_pushnil();
 }
 
+void pushobject(PoolObjectBase *o) {
+	lua_pushusertag(o->getId(), o->getTag());
+}
+
 Actor *getactor(lua_Object obj) {
-	return g_grim->getActor(lua_getuserdata(obj));
+	return Actor::getPool()->getObject(lua_getuserdata(obj));
 }
 
 TextObject *gettextobject(lua_Object obj) {
-	return g_grim->getTextObject(lua_getuserdata(obj));
+	return TextObject::getPool()->getObject(lua_getuserdata(obj));
 }
 
 Font *getfont(lua_Object obj) {
-	return g_grim->getFont(lua_getuserdata(obj));
+	return Font::getPool()->getObject(lua_getuserdata(obj));
 }
 
-Color *getcolor(lua_Object obj) {
-	return g_grim->getColor(lua_getuserdata(obj));
+PoolColor *getcolor(lua_Object obj) {
+	return PoolColor::getPool()->getObject(lua_getuserdata(obj));
 }
 
 PrimitiveObject *getprimitive(lua_Object obj) {
-	return g_grim->getPrimitiveObject(lua_getuserdata(obj));
+	return PrimitiveObject::getPool()->getObject(lua_getuserdata(obj));
 }
 
 ObjectState *getobjectstate(lua_Object obj) {
-	return g_grim->getObjectState(lua_getuserdata(obj));
+	return ObjectState::getPool()->getObject(lua_getuserdata(obj));
 }
 
 byte clamp_color(int c) {
@@ -254,8 +259,7 @@ void L1_MakeColor() {
 	else
 		b = clamp_color((int)lua_getnumber(bObj));
 
-	Color *c = new Color (r, g ,b);
-	g_grim->registerColor(c);
+	PoolColor *c = new PoolColor (r, g ,b);
 	lua_pushusertag(c->getId(), MKTAG('C','O','L','R'));
 }
 
@@ -895,7 +899,6 @@ void L1_NewObjectState() {
 	bool transparency = getbool(5);
 
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
-	g_grim->registerObjectState(state);
 	g_grim->getCurrScene()->addObjectState(state);
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
@@ -904,7 +907,7 @@ void L1_FreeObjectState() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
-	ObjectState *state =  getobjectstate(param);
+	ObjectState *state = getobjectstate(param);
 	g_grim->getCurrScene()->deleteObjectState(state);
 	delete state;
 }
@@ -960,7 +963,7 @@ void L1_GetSaveGameImage() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	screenshot = g_grim->registerBitmap((char *)data, width, height, "screenshot");
+	screenshot = new Bitmap((char *)data, width, height, 16, "screenshot");
 	if (screenshot) {
 		lua_pushusertag(screenshot->getId(), MKTAG('V','B','U','F'));
 	} else {
@@ -1082,7 +1085,6 @@ void L1_LockFont() {
 		const char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
-			g_grim->registerFont(result);
 			lua_pushusertag(result->getId(), MKTAG('F','O','N','T'));
 			return;
 		}

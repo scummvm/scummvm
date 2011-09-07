@@ -1200,7 +1200,7 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 		}
 	}
 
-	Bitmap *screenshot = g_grim->registerBitmap((char *)buffer, w, h, "screenshot");
+	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, 16, "screenshot");
 	delete[] buffer;
 	return screenshot;
 }

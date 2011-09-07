@@ -23,6 +23,7 @@
 #ifndef GRIM_ACTOR_H
 #define GRIM_ACTOR_H
 
+#include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "graphics/vector3d.h"
 
@@ -33,7 +34,7 @@ class Sector;
 class Costume;
 class LipSync;
 class Font;
-class Color;
+class PoolColor;
 class Scene;
 
 struct Plane {
@@ -58,7 +59,7 @@ struct Shadow {
  *
  * @short Actor represents a 3D character on screen.
  */
-class Actor : public Object {
+class Actor : public PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')> {
 public:
 	enum CollisionMode {
 		CollisionOff = 0,
@@ -106,13 +107,13 @@ public:
 	 * @param color The color.
 	 * @see getTalkColor
 	 */
-	void setTalkColor(Color *color) { _talkColor = color; }
+	void setTalkColor(PoolColor *color) { _talkColor = color; }
 	/**
 	 * Returns the color of the subtitles of the actor.
 	 *
 	 * @see setTalkColor
 	 */
-	Color *getTalkColor() const { return _talkColor; }
+	PoolColor *getTalkColor() const { return _talkColor; }
 
 	/**
 	 * Sets the position of the actor on the 3D scene.
@@ -462,7 +463,7 @@ private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
-	Color *_talkColor;
+	PoolColor *_talkColor;
 	Graphics::Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;

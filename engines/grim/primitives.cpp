@@ -30,7 +30,7 @@
 namespace Grim {
 
 PrimitiveObject::PrimitiveObject() :
-	Object() {
+	PoolObject() {
 	_filled = false;
 	_type = 0;
 	_bitmap = NULL;
@@ -68,11 +68,11 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	_type = savedState->readLESint32();
 
-	_color = g_grim->getColor(savedState->readLEUint32());
+	_color = PoolColor::getPool()->getObject(savedState->readLEUint32());
 
 	_filled = savedState->readLEUint32();
 
-	_bitmap = g_grim->getBitmap(savedState->readLEUint32());
+	_bitmap = Bitmap::getPool()->getObject(savedState->readLEUint32());
 
 	_p1.x = savedState->readLEUint32();
 	_p1.y = savedState->readLEUint32();
@@ -86,7 +86,7 @@ bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color *color, bool filled) {
+void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, PoolColor *color, bool filled) {
 	_type = RECTANGLE;
 	_p1 = p1;
 	_p2 = p2;
@@ -102,14 +102,14 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*trans
 	// transparent: what to do ?
 }
 
-void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color *color) {
+void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, PoolColor *color) {
 	_type = LINE;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
 }
 
-void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color *color) {
+void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, PoolColor *color) {
 	_type = POLYGON;
 	_p1 = p1;
 	_p2 = p2;

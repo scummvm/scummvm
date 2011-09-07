@@ -30,11 +30,30 @@
 #include "engines/grim/colormap.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/lab.h"
 
 namespace Grim {
 
 Font::Font(const Common::String &filename, const char *data, int len) :
-		Object(), _userData(0) {
+		PoolObject(), _userData(0) {
+	load(filename, data, len);
+}
+
+Font::Font() :
+		PoolObject() {
+	_charIndex = NULL;
+}
+
+Font::~Font() {
+	if (_charIndex) {
+		delete[] _charIndex;
+		delete[] _charHeaders;
+		delete[] _fontData;
+	}
+	g_driver->destroyFont(this);
+}
+
+void Font::load(const Common::String &filename, const char *data, int len) {
 	_filename = filename;
 	_numChars = READ_LE_UINT32(data);
 	_dataSize = READ_LE_UINT32(data + 4);
@@ -70,8 +89,8 @@ Font::Font(const Common::String &filename, const char *data, int len) :
 		int8 overflow = (_charHeaders[i].dataHeight + _charHeaders[i].startingLine) - available_height;
 		if (overflow > 0) {
 			warning("Font %s, char 0x%02x exceeds font height by %d, increasing font height", _filename.c_str(), i, overflow);
-		    available_height += overflow;
-		    _height += overflow;
+			available_height += overflow;
+			_height += overflow;
 		}
 		data += 16;
 	}
@@ -83,22 +102,6 @@ Font::Font(const Common::String &filename, const char *data, int len) :
 	memcpy(_fontData, data, _dataSize);
 
 	g_driver->createFont(this);
-}
-
-Font::Font() :
-		Object() {
-	_charIndex = NULL;
-}
-
-Font::~Font() {
-	if (_charIndex) {
-		delete[] _charIndex;
-		delete[] _charHeaders;
-		delete[] _fontData;
-
-		g_resourceloader->uncacheFont(this);
-	}
-	g_driver->destroyFont(this);
 }
 
 uint16 Font::getCharIndex(unsigned char c) const {
@@ -138,6 +141,16 @@ int Font::getStringLength(const Common::String &text) const {
 		result += MAX(getCharDataWidth(text[i]), getCharWidth(text[i]));
 	}
 	return result;
+}
+
+void Font::saveState(SaveGame *state) const {
+	state->writeString(getFilename());
+}
+
+void Font::restoreState(SaveGame *state) {
+	Common::String fname = state->readString();
+	Block *b = g_resourceloader->getBlock(fname);
+	load(fname, b->getData(), b->getLen());
 }
 
 // Hardcoded default font for GUI, etc

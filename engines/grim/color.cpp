@@ -25,15 +25,13 @@
 
 namespace Grim {
 
-Color::Color(byte r, byte g, byte b) :
-		Object() {
+Color::Color(byte r, byte g, byte b) {
 	_vals[0] = r;
 	_vals[1] = g;
 	_vals[2] = b;
 }
 
-Color::Color(const Color& c) :
-		Object() {
+Color::Color(const Color& c) {
 	_vals[0] = c._vals[0];
 	_vals[1] = c._vals[1];
 	_vals[2] = c._vals[2];
@@ -53,13 +51,25 @@ Color& Color::operator =(Color *c) {
 	return *this;
 }
 
-void Color::restoreState(SaveGame *state) {
+
+
+PoolColor::PoolColor() :
+	PoolObject(), Color() {
+
+}
+
+PoolColor::PoolColor(byte r, byte g, byte b) :
+	PoolObject(), Color(r, g, b) {
+
+}
+
+void PoolColor::restoreState(SaveGame *state) {
 	getRed() = state->readByte();
 	getGreen() = state->readByte();
 	getBlue() = state->readByte();
 }
 
-void Color::saveState(SaveGame *state) {
+void PoolColor::saveState(SaveGame *state) const {
 	state->writeByte(getRed());
 	state->writeByte(getGreen());
 	state->writeByte(getBlue());
