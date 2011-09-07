@@ -1899,5 +1899,22 @@ void DreamGenContext::hangonp(uint16 count) {
 	data.byte(kPointermode) = 0;
 }
 
+void DreamGenContext::findnextcolon() {
+	uint8 *initialString = es.ptr(si, 0);
+	uint8 *string = initialString;
+	al = findnextcolon(&string);
+	si += (string - initialString);
+}
+
+uint8 DreamGenContext::findnextcolon(uint8 **string) {
+	uint8 c;
+	do {
+		c = **string;
+		++(*string);
+	} while ((c != 0) && (c != ':'));
+	return c;
+}
+
+
 } /*namespace dreamgen */
 

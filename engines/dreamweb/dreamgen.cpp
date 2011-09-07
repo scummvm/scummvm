@@ -4253,19 +4253,6 @@ foundmatch:
 	bx = pop();
 }
 
-void DreamGenContext::findnextcolon() {
-	STACK_CHECK;
-isntcolon:
-	al = es.byte(si);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (endofcolon) */;
-	_cmp(al, ':');
-	if (!flags.z())
-		goto isntcolon;
-}
-
 void DreamGenContext::inventory() {
 	STACK_CHECK;
 	_cmp(data.byte(kMandead), 1);
@@ -17072,7 +17059,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_obsthatdothings: obsthatdothings(); break;
 		case addr_getobtextstart: getobtextstart(); break;
 		case addr_searchforsame: searchforsame(); break;
-		case addr_findnextcolon: findnextcolon(); break;
 		case addr_inventory: inventory(); break;
 		case addr_setpickup: setpickup(); break;
 		case addr_examinventory: examinventory(); break;

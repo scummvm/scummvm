@@ -235,5 +235,6 @@
 	void hangon(uint16 frameCount);
 	void hangonp();
 	void hangonp(uint16 count);
-
+	uint8 findnextcolon(uint8 **string);
+	void findnextcolon();
 

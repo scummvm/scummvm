@@ -477,7 +477,6 @@ public:
 	static const uint16 addr_examinventory = 0xc384;
 	static const uint16 addr_setpickup = 0xc380;
 	static const uint16 addr_inventory = 0xc37c;
-	static const uint16 addr_findnextcolon = 0xc378;
 	static const uint16 addr_searchforsame = 0xc374;
 	static const uint16 addr_getobtextstart = 0xc370;
 	static const uint16 addr_obsthatdothings = 0xc36c;
@@ -1852,7 +1851,7 @@ public:
 	void soundonreels();
 	void usegun();
 	void autoappear();
-	void findnextcolon();
+	//void findnextcolon();
 	//void readmouse4();
 	void openryan();
 	void callhotellift();
