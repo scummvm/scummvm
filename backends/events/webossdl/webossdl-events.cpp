@@ -42,20 +42,20 @@
 // Inidicates if gesture area is pressed down or not.
 static bool gestureDown = false;
 
-// The timestamp when screen was pressed down.
-static int screenDownTime = 0;
+// The timestamp when screen was pressed down, per finger.
+static int screenDownTime[3] = {0, 0, 0};
+
+// Tracks which fingers are currently touching the screen.
+static bool fingerDown[3] = {false, false, false};
 
 // The timestamp when a possible drag operation was triggered.
 static int dragStartTime = 0;
 
-// The index of the motion pointer.
-static int motionPtrIndex = -1;
+// The horizontal distance per finger from touch to release.
+static int dragDiffX[3] = {0, 0, 0};
 
-// The maximum horizontal motion during dragging (For tap recognition).
-static int dragDiffX = 0;
-
-// The maximum vertical motion during dragging (For tap recognition).
-static int dragDiffY = 0;
+// The vertical distance per finger from touch to release.
+static int dragDiffY[3] = {0, 0, 0};
 
 // Indicates if we are in drag mode.
 static bool dragging = false;
@@ -211,11 +211,11 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (motionPtrIndex == -1) {
-		motionPtrIndex = ev.button.which;
-		dragDiffX = 0;
-		dragDiffY = 0;
-		screenDownTime = getMillis();
+	if (ev.button.which >= 0 && ev.button.which < 3) {
+		dragDiffX[ev.button.which] = 0;
+		dragDiffY[ev.button.which] = 0;
+		fingerDown[ev.button.which] = true;
+		screenDownTime[ev.button.which] = getMillis();
 
 		// Start dragging when pressing the screen shortly after a tap.
 		if (getMillis() - dragStartTime < 250) {
@@ -235,51 +235,11 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (motionPtrIndex == ev.button.which) {
-		motionPtrIndex = -1;
-
-		int screenX = g_system->getWidth();
-		int screenY = g_system->getHeight();
-		long curTime = getMillis();
+	if (ev.button.which >= 0 && ev.button.which < 3) {
+		fingerDown[ev.button.which] = false;
 		
-		// 90% of the screen height for menu dialog/keyboard
-		if (ABS(dragDiffY) >= ABS(screenY*0.9)) {
-			if (dragDiffY <= 0) {
-				int gblPDKVersion = PDL_GetPDKVersion();
-				// check for correct PDK Version
-				if (gblPDKVersion >= 300) {
-					PDL_SetKeyboardState(PDL_TRUE);
-					return true;
-				}
-			} else {
-				if (g_engine && !g_engine->isPaused()) {
-					g_engine->openMainMenuDialog();
-					return true;
-				}
-			}
-		}
-
-		// A swipe left triggers Escape
-		if (ABS(dragDiffX) >= ABS(screenX*0.9) && dragDiffX <= 0) {
-			event.type = Common::EVENT_KEYDOWN;
-			queuedInputEvent.type = Common::EVENT_KEYUP;
-			event.kbd.flags = queuedInputEvent.kbd.flags = 0;
-			event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
-			queuedEventTime = curTime + queuedInputEventDelay;
-
-			/*
-			const char *dialogMsg;
-			dialogMsg = _("Escaped!");
-			GUI::TimedMessageDialog dialog(dialogMsg, 1000);
-			dialog.runModal();
-			*/
-			//printf("Escaped!\n");
-		}
-
 		// When drag mode was active then simply send a mouse up event
-		if (dragging)
-		{
+		if (dragging) {
 			event.type = Common::EVENT_LBUTTONUP;
 			processMouseEvent(event, curX, curY);
 			dragging = false;
@@ -288,9 +248,10 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 
 		// When mouse was moved 5 pixels or less then emulate a mouse button
 		// click.
-		if (ABS(dragDiffX) < 6 && ABS(dragDiffY) < 6)
-		{
-			int duration = getMillis() - screenDownTime;
+		if (ev.button.which == 0 && 
+				!fingerDown[0] && !fingerDown[1] && !fingerDown[2] &&
+				ABS(dragDiffX[0]) < 6 && ABS(dragDiffY[0]) < 6) {
+			int duration = getMillis() - screenDownTime[0];
 
 			// When screen was pressed for less than 500ms then emulate a
 			// left mouse click.
@@ -333,15 +294,63 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
-	if (ev.motion.which == motionPtrIndex) {
+	if (ev.motion.which >= 0 && ev.motion.which < 3) {
+		dragDiffX[ev.motion.which] += ev.motion.xrel;
+		dragDiffY[ev.motion.which] += ev.motion.yrel;
 		int screenX = g_system->getWidth();
 		int screenY = g_system->getHeight();
-		curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
-		curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
-		dragDiffX += ev.motion.xrel;
-		dragDiffY += ev.motion.yrel;
-		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, curX, curY);
+
+		// Check for a two-finger vertical 30% swipe
+		if (fingerDown[0] && fingerDown[1] && !fingerDown[2] && 
+				ABS(dragDiffY[0]) >= ABS(screenY*0.3) &&
+				ABS(dragDiffY[1]) >= ABS(screenY*0.3)) {
+			if (dragDiffY[0] < 0 && dragDiffY[1] < 0) {
+				// A swipe up triggers the keyboard, if it exists
+				int gblPDKVersion = PDL_GetPDKVersion();
+				if (gblPDKVersion >= 300)
+					PDL_SetKeyboardState(PDL_TRUE);
+			} else if (dragDiffY[0] > 0 && dragDiffY[1] > 0){
+				// A swipe down triggers the menu
+				if (g_engine && !g_engine->isPaused())
+					g_engine->openMainMenuDialog();
+			}
+			// Virtually lift fingers so we don't get repeat triggers
+			fingerDown[0] = fingerDown[1] = false;
+			return true;
+		}
+
+		// Check for a two-finger horizontal 25% swipe
+		if (fingerDown[0] && fingerDown[1] && !fingerDown[2] && 
+				ABS(dragDiffX[0]) >= ABS(screenX*0.25) &&
+				ABS(dragDiffX[1]) >= ABS(screenX*0.25)) {
+			if (dragDiffX[0] < 0 && dragDiffX[1] < 0) {
+				// A swipe left presses escape
+				event.type = Common::EVENT_KEYDOWN;
+				queuedInputEvent.type = Common::EVENT_KEYUP;
+				event.kbd.flags = queuedInputEvent.kbd.flags = 0;
+				event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+				event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
+				queuedEventTime = getMillis() + queuedInputEventDelay;
+			} else if (dragDiffX[0] > 0 && dragDiffX[1] > 0) {
+				// A swipe right toggles touchpad mode
+				const char *dialogMsg;
+				dialogMsg = _("This will toggle mouse controls in the future!");
+				GUI::TimedMessageDialog dialog(dialogMsg, 1000);
+				dialog.runModal();
+			}
+			// Virtually lift fingers so we don't get repeat triggers
+			fingerDown[0] = fingerDown[1] = false;
+			return true;
+		}
+
+		// If only one finger is on the screen and moving, that's the mouse pointer.
+		if (ev.motion.which == 0 && fingerDown[0] &&
+				!fingerDown[1] && !fingerDown[2]) {
+			curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
+			curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
+			event.type = Common::EVENT_MOUSEMOVE;
+			processMouseEvent(event, curX, curY);
+		}
 	}
 	return true;
 }
