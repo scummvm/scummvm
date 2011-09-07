@@ -97,8 +97,6 @@ private:
 	void setupMcodeTable();
 	const BSMcodeTable *_mcodeTable;
 
-	uint16 inRange(uint16 a, uint16 b, uint16 c);
-
 //- mcodeTable:
 	int fnBackground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);
 	int fnForeground(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x);

@@ -126,7 +126,6 @@ private:
 	void decompressRLE0(uint8 *src, uint32 compSize, uint8 *dest);
 	void decompressTony(uint8 *src, uint32 compSize, uint8 *dest);
 	void fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, uint8 *dest);
-	int32 inRange(int32 a, int32 b, int32 c);
 	void fadePalette();
 
 	void flushPsxCache();

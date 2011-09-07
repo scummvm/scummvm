@@ -1189,8 +1189,8 @@ int Logic::fnISpeak(Object *cpt, int32 id, int32 cdt, int32 textNo, int32 spr, i
 		textTopMargin    = SCREEN_TOP_EDGE    + TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y];
 		textBottomMargin = SCREEN_BOTTOM_EDGE - TEXT_MARGIN + _scriptVars[SCROLL_OFFSET_Y] - textSpriteHeight;
 
-		textCpt->o_anim_x = textCpt->o_xcoord = inRange(textLeftMargin, textX, textRightMargin);
-		textCpt->o_anim_y = textCpt->o_ycoord = inRange(textTopMargin,  textY, textBottomMargin);
+		textCpt->o_anim_x = textCpt->o_xcoord = CLIP<uint16>(textX, textLeftMargin, textRightMargin);
+		textCpt->o_anim_y = textCpt->o_ycoord = CLIP<uint16>(textY, textTopMargin, textBottomMargin);
 	}
 	return SCRIPT_STOP;
 }
@@ -1687,10 +1687,6 @@ int Logic::fnPurple(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, i
 int Logic::fnBlack(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	_screen->fnFlash(BORDER_BLACK);
 	return SCRIPT_CONT;
-}
-
-uint16 Logic::inRange(uint16 a, uint16 b, uint16 c) {
-	return (a > b) ? a : (((b > c) ? c : b));
 }
 
 void Logic::startPosCallFn(uint8 fnId, uint32 param1, uint32 param2, uint32 param3) {
