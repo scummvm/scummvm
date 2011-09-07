@@ -26,6 +26,7 @@
 #include <zlib.h>
 
 #include "common/file.h"
+#include "common/system.h"
 
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
