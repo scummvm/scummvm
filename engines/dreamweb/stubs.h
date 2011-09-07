@@ -237,4 +237,6 @@
 	void hangonp(uint16 count);
 	uint8 findnextcolon(uint8 **string);
 	void findnextcolon();
+	uint8 *getobtextstartCPP();
+
 

@@ -1915,6 +1915,15 @@ uint8 DreamGenContext::findnextcolon(uint8 **string) {
 	return c;
 }
 
+uint8 *DreamGenContext::getobtextstartCPP() {
+	push(es);
+	push(si);
+	getobtextstart();
+	uint8 *result = es.ptr(si, 0);
+	si = pop();
+	es = pop();
+	return result;
+}
 
 } /*namespace dreamgen */
 
