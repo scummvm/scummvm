@@ -48,8 +48,8 @@ Item::Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID r
 		_itemInfo.infoLeftTime = info->readUint32BE();
 		_itemInfo.infoRightStart = info->readUint32BE();
 		_itemInfo.infoRightStop = info->readUint32BE();
-		_itemInfo.dragSpriteNormalID = info->readUint32BE();
-		_itemInfo.dragSpriteUsedID = info->readUint32BE();
+		_itemInfo.dragSpriteNormalID = info->readUint16BE();
+		_itemInfo.dragSpriteUsedID = info->readUint16BE();
 
 		if (vm->isDemo()) {
 			// Adjust info right times to account for the stuff that was chopped out of the
@@ -95,18 +95,20 @@ Item::Item(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID r
 	}
 
 	Common::SeekableReadStream *middleAreaInfo = vm->_resFork->getResource(kMiddleAreaInfoResType, kItemBaseResID + id);
-	if (!middleAreaInfo)
-		error("Middle area info not found for item %d", id);
-
-	_sharedAreaInfo = readItemState(middleAreaInfo);
-
-	delete middleAreaInfo;
+	if (middleAreaInfo) {
+		_sharedAreaInfo = readItemState(middleAreaInfo);
+		delete middleAreaInfo;
+	} else {
+		// Only kArgonPickup does not have this
+		memset(&_sharedAreaInfo, 0, sizeof(_sharedAreaInfo));
+	}
 
 	Common::SeekableReadStream *extraInfo = vm->_resFork->getResource(kItemExtraInfoResType, kItemBaseResID + id);
 	if (!extraInfo)
 		error("Extra info not found for item %d", id);
 
 	_itemExtras.numEntries = extraInfo->readUint16BE();
+	_itemExtras.entries = new ItemExtraEntry[_itemExtras.numEntries];
 	for (uint16 i = 0; i < _itemExtras.numEntries; i++) {
 		_itemExtras.entries[i].extraID = extraInfo->readUint32BE();
 		_itemExtras.entries[i].extraArea = extraInfo->readUint16BE();
@@ -255,6 +257,7 @@ ItemStateInfo Item::readItemState(Common::SeekableReadStream *stream) {
 	ItemStateInfo info;
 
 	info.numEntries = stream->readUint16BE();
+	info.entries = new ItemStateEntry[info.numEntries];
 	for (uint16 i = 0; i < info.numEntries; i++) {
 		info.entries[i].itemState = stream->readSint16BE();
 		info.entries[i].itemTime = stream->readUint32BE();

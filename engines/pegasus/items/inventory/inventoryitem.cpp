@@ -33,7 +33,7 @@ namespace Pegasus {
 InventoryItem::InventoryItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
-	PegasusEngine *vm = (PegasusEngine *)vm;
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	Common::SeekableReadStream *leftInfo = vm->_resFork->getResource(MKTAG('L', 'e', 'f', 't'), kItemBaseResID + id);
 	if (leftInfo) {

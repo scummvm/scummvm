@@ -34,7 +34,7 @@ namespace Pegasus {
 BiochipItem::BiochipItem(const tItemID id, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
-	PegasusEngine *vm = (PegasusEngine *)vm;
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
 
 	Common::SeekableReadStream *biochipInfo = vm->_resFork->getResource(MKTAG('B', 'i', 'o', 'I'), kItemBaseResID + id);
 	if (biochipInfo) {
