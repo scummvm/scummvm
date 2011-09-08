@@ -2364,6 +2364,7 @@ if test -n "$_host"; then
 			_keymapper=yes
 			;;
 		webos_tablet)
+			DEFINES="$DEFINES -DMULTITOUCH"
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
 			_build_scalers=no
@@ -2513,7 +2514,7 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -shared"
 		LDFLAGS="$LDFLAGS -fpic"
 		;;
-	webos|webos_tablet)
+	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"

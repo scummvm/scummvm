@@ -43,6 +43,13 @@
 
 using std::string;
 
+// Indicates whether the device is multitouch-capable
+#ifdef MULTITOUCH
+static const bool multitouch = true;
+#else
+static const bool multitouch = false;
+#endif
+
 // Indicates if gesture area is pressed down or not.
 static bool gestureDown = false;
 
