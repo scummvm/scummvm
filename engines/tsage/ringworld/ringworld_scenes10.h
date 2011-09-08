@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_speakers.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
