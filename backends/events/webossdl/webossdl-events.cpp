@@ -28,6 +28,8 @@
 // Disable system overrides to allow the use of system headers
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <string>
+
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -39,8 +41,16 @@
 #include "engines/engine.h"
 #include "PDL.h"
 
-// Inidicates if gesture area is pressed down or not.
+using std::string;
+
+// Indicates if gesture area is pressed down or not.
 static bool gestureDown = false;
+
+// Indicates if we're in touchpad mode or tap-to-move mode.
+static bool touchpadMode = true;
+
+// Indicates if we're in automatic drag mode.
+static bool autoDragMode = false;
 
 // The timestamp when screen was pressed down, per finger.
 static int screenDownTime[3] = {0, 0, 0};
@@ -304,6 +314,8 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		if (fingerDown[0] && fingerDown[1] && !fingerDown[2] && 
 				ABS(dragDiffY[0]) >= ABS(screenY*0.3) &&
 				ABS(dragDiffY[1]) >= ABS(screenY*0.3)) {
+			// Virtually lift fingers so we don't get repeat triggers
+			fingerDown[0] = fingerDown[1] = false;
 			if (dragDiffY[0] < 0 && dragDiffY[1] < 0) {
 				// A swipe up triggers the keyboard, if it exists
 				int gblPDKVersion = PDL_GetPDKVersion();
@@ -314,8 +326,6 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 				if (g_engine && !g_engine->isPaused())
 					g_engine->openMainMenuDialog();
 			}
-			// Virtually lift fingers so we don't get repeat triggers
-			fingerDown[0] = fingerDown[1] = false;
 			return true;
 		}
 
@@ -323,6 +333,8 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		if (fingerDown[0] && fingerDown[1] && !fingerDown[2] && 
 				ABS(dragDiffX[0]) >= ABS(screenX*0.25) &&
 				ABS(dragDiffX[1]) >= ABS(screenX*0.25)) {
+			// Virtually lift fingers so we don't get repeat triggers
+			fingerDown[0] = fingerDown[1] = false;
 			if (dragDiffX[0] < 0 && dragDiffX[1] < 0) {
 				// A swipe left presses escape
 				event.type = Common::EVENT_KEYDOWN;
@@ -333,13 +345,14 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 				queuedEventTime = getMillis() + queuedInputEventDelay;
 			} else if (dragDiffX[0] > 0 && dragDiffX[1] > 0) {
 				// A swipe right toggles touchpad mode
-				const char *dialogMsg;
-				dialogMsg = _("This will toggle mouse controls in the future!");
-				GUI::TimedMessageDialog dialog(dialogMsg, 1000);
+				touchpadMode = !touchpadMode;
+				string dialogMsg(_("Touchpad mode is now "));
+				dialogMsg += (touchpadMode ? _("ON") : _("OFF"));
+				dialogMsg += ".\n";
+				dialogMsg += _("Swipe two fingers to the right to toggle.");
+				GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
 				dialog.runModal();
 			}
-			// Virtually lift fingers so we don't get repeat triggers
-			fingerDown[0] = fingerDown[1] = false;
 			return true;
 		}
 
