@@ -262,7 +262,7 @@ void VideoPlayer::waitSoundEnd(int slot) {
 
 	video->decoder->finishSound();
 
-	while(video->decoder->isSoundPlaying())
+	while (video->decoder->isSoundPlaying())
 		_vm->_util->longDelay(1);
 }
 

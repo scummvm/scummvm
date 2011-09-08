@@ -65,7 +65,7 @@ void AudioManager::muteMusic(bool muted) {
 }
 
 void AudioManager::muteVoice(bool muted) {
-	if(voiceStillPlaying() && _channels[2]) {
+	if (voiceStillPlaying() && _channels[2]) {
 		_channels[2]->setVolume(muted ? 0 : 255);
 	}
 	_voiceMuted = muted;
@@ -272,7 +272,7 @@ AudioStreamInstance::~AudioStreamInstance() {
 int AudioStreamInstance::readBuffer(int16 *buffer, const int numSamples) {
 	debugC(5, kDebugAudio, "readBuffer(buffer, %d)", numSamples);
 
-	if(_stopped)
+	if (_stopped)
 		return 0;
 
 	handleFade(numSamples);
@@ -598,7 +598,7 @@ void AudioManager::updateAmbientSFX()
 	for (int32 i = 0; i < 4; i++) {
 		AudioAmbientSFX* ambient = &_ambientSFXs[i];
 		if (ambient->_enabled && (ambient->_channel < 0 || !(_channels[ambient->_channel] && _channels[ambient->_channel]->isPlaying()))) {
-			if(ambient->_mode == 1) {
+			if  (ambient->_mode == 1) {
 				if (_vm->randRange(0, 32767) < ambient->_delay) {
 					ambient->_channel = playSFX(ambient->_id, ambient->_volume, false);
 				}
