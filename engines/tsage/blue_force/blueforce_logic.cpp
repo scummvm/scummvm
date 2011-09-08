@@ -567,7 +567,7 @@ void SceneExt::checkGun() {
 	BF_GLOBALS._sound3.play(4);
 }
 
-void SceneExt::display(CursorType action) {
+bool SceneExt::display(CursorType action) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(9000, BF_GLOBALS._randomSource.getRandomNumber(2));
@@ -584,8 +584,12 @@ void SceneExt::display(CursorType action) {
 	default:
 		if (action < BF_LAST_INVENT)
 			SceneItem::display2(9002, (int)action);
+		else
+			return false;
 		break;
 	}
+
+	return true;
 }
 
 void SceneExt::gunDisplay() {
@@ -687,8 +691,22 @@ void SceneHandlerExt::process(Event &event) {
 	}
 
 	SceneHandler::process(event);
+}
 
-	// TODO: All the new stuff from Blue Force
+void SceneHandlerExt::playerAction(Event &event) {
+	if (BF_GLOBALS._events.getCursor() == INV_DOG_WHISTLE) {
+		SceneItem::display2(1, 6);
+		event.handled = true;
+	}
+}
+
+void SceneHandlerExt::processEnd(Event &event) {
+	// Check for a fallback text display for the given cursor/item being used in the scene
+	if (!event.handled && BF_GLOBALS._sceneManager._scene) {
+		CursorType cursor = BF_GLOBALS._events.getCursor();
+		if (((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(cursor))
+			event.handled = true;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

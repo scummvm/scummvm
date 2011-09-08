@@ -863,6 +863,9 @@ public:
 	int _delayTicks;
 	Common::String _saveName;
 	uint32 _prevFrameNumber;
+protected:
+	virtual void playerAction(Event &event) {}
+	virtual void processEnd(Event &event) {}
 public:
 	SceneHandler();
 	void registerHandler();

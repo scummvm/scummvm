@@ -169,7 +169,7 @@ public:
 
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
-	void display(CursorType action);
+	bool display(CursorType action);
 };
 
 class GroupedScene: public SceneExt {
@@ -187,6 +187,9 @@ class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
+
+	virtual void playerAction(Event &event);
+	virtual void processEnd(Event &event);
 };
 
 class BlueForceInvObjectList : public InvObjectList {

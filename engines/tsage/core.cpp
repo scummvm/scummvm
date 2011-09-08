@@ -3787,6 +3787,13 @@ void SceneHandler::process(Event &event) {
 		// Mouse press handling
 		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
 				!_globals->_sceneItems.empty()) {
+			// Check if the mouse is on the player
+			if (_globals->_player.contains(event.mousePos)) {
+				playerAction(event);
+				if (event.handled)
+					return;
+			}
+
 			// Scan the item list to find one the mouse is within
 			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
@@ -3806,6 +3813,9 @@ void SceneHandler::process(Event &event) {
 					_globals->_events.setCursor(CURSOR_USE);
 				}
 			}
+
+			// Handle any fallback text display
+			processEnd(event);
 
 			// Handle player processing
 			_globals->_player.process(event);
