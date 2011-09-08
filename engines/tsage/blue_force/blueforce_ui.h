@@ -33,6 +33,11 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
+class StripProxy: public EventHandler {
+public:
+	virtual void process(Event &event);
+};
+
 class UIElement: public AltSceneObject {
 public:
 	int _field88;
@@ -132,6 +137,7 @@ public:
 
 	void setup(const Common::Point &pt);
 	void updateInventory();
+	void addScore(int amount);
 };
 
 } // End of namespace BlueForce

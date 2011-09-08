@@ -106,6 +106,19 @@ int InvObjectList::indexOf(InvObject *obj) const {
 	return -1;
 }
 
+InvObject *InvObjectList::getItem(int objectNum) {
+	SynchronizedList<InvObject *>::const_iterator i = _itemList.begin();
+	while (objectNum-- > 0)
+		++i;
+
+	return *i;
+}
+
+int InvObjectList::getObjectScene(int objectNum) {
+	InvObject *obj = getItem(objectNum);
+	return obj->_sceneNumber;
+}
+
 /*--------------------------------------------------------------------------*/
 
 void EventHandler::dispatch() {
@@ -3781,7 +3794,7 @@ void SceneHandler::process(Event &event) {
 
 			if (i != _globals->_sceneItems.end()) {
 				// Pass the action to the item
-				(*i)->startAction(_globals->_events.getCursor());
+				(*i)->startAction(_globals->_events.getCursor(), event);
 				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
 				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&

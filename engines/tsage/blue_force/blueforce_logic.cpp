@@ -84,6 +84,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Outside Police Station
 		return new Scene300();
 	case 315:
+		// Inside Police Station
+		return new Scene315();
 	case 325:
 	case 330:
 	case 340:
@@ -360,7 +362,7 @@ void NamedObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_useLineNum);
 }
 
-void NamedObject::startAction(CursorType action) {
+void NamedObject::startAction(CursorType action, Event &event) {
 	bool handled = true;
 
 	switch (action) {
@@ -498,10 +500,13 @@ void FollowerObject::setup(SceneObject *object, int visage, int frameNum, int yD
 /*--------------------------------------------------------------------------*/
 
 SceneExt::SceneExt(): Scene() {
-	warning("TODO: dword_503AA/dword_503AE/dword_53030");
+	_stripManager._onBegin = SceneExt::startStrip;
+	_stripManager._onEnd = SceneExt::endStrip;
 
-	_field372 = 0;
-	_field37A = 0;
+	_field372 = _field37A = 0;
+	_savedPlayerEnabled = false;
+	_savedUiEnabled = false;
+	_savedCanWalk = false;
 	_eventHandler = NULL;
 	_cursorVisage.setVisage(1, 8);
 }
@@ -599,6 +604,35 @@ void SceneExt::gunDisplay() {
 	}
 }
 
+void SceneExt::startStrip() {
+	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+	scene->_field372 = 1;
+	scene->_savedPlayerEnabled = BF_GLOBALS._player._enabled;
+	
+	if (scene->_savedPlayerEnabled) {
+		scene->_savedUiEnabled = BF_GLOBALS._player._uiEnabled;
+		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
+		BF_GLOBALS._player.disableControl();
+
+		if (!BF_GLOBALS._v50696 && BF_GLOBALS._uiElements._active)
+			BF_GLOBALS._uiElements.hide();
+	}
+}
+
+void SceneExt::endStrip() {
+	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+	scene->_field372 = 0;
+
+	if (scene->_savedPlayerEnabled) {
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._player._uiEnabled = scene->_savedUiEnabled;
+		BF_GLOBALS._player._canWalk = scene->_savedCanWalk;
+
+		if (!BF_GLOBALS._v50696 && BF_GLOBALS._uiElements._active)
+			BF_GLOBALS._uiElements.show();
+	}
+}
+
 /*--------------------------------------------------------------------------*/
 
 GroupedScene::GroupedScene() {
@@ -644,145 +678,17 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
+	// If the strip proxy is currently being controlled by the strip manager, 
+	// then pass all events to it first
+	if (BF_GLOBALS._stripProxy._action) {
+		BF_GLOBALS._stripProxy._action->process(event);
+		if (event.handled)
+			return;
+	}
+
 	SceneHandler::process(event);
 
 	// TODO: All the new stuff from Blue Force
-}
-
-/*--------------------------------------------------------------------------*/
-
-VisualSpeaker::VisualSpeaker(): Speaker() {
-	_textWidth = 312;
-	_color1 = 19;
-	_hideObjects = false;
-	_removeObject1 = false;
-	_removeObject2 = false;
-	_field20E = 160;
-	_fontNumber = 4;
-	_color2 = 82;
-	_offsetPos = Common::Point(4, 170);
-	_numFrames = 0;
-}
-
-void VisualSpeaker::remove() {
-	if (_removeObject2)
-		_object2.remove();
-	if (_removeObject1)
-		_object1.remove();
-
-	Speaker::remove();
-}
-
-void VisualSpeaker::synchronize(Serializer &s) {
-	Speaker::synchronize(s);
-	
-	s.syncAsByte(_removeObject1);
-	s.syncAsByte(_removeObject2);
-	s.syncAsSint16LE(_field20C);
-	s.syncAsSint16LE(_field20E);
-	s.syncAsSint16LE(_numFrames);
-	s.syncAsSint16LE(_offsetPos.x);
-	s.syncAsSint16LE(_offsetPos.y);
-}
-
-void VisualSpeaker::proc12(Action *action) {
-	Speaker::proc12(action);
-	_textPos = Common::Point(_offsetPos.x + BF_GLOBALS._sceneManager._scene->_sceneBounds.left,
-		_offsetPos.y + BF_GLOBALS._sceneManager._scene->_sceneBounds.top);
-	_numFrames = 0;
-}
-
-void VisualSpeaker::setText(const Common::String &msg) {
-	_objectList.draw();
-	BF_GLOBALS._sceneObjects->draw();
-
-	_sceneText._color1 = _color1;
-	_sceneText._color2 = _color2;
-	_sceneText._color3 = _color3;
-	_sceneText._width = _textWidth;
-	_sceneText._fontNumber = _fontNumber;
-	_sceneText._textMode = _textMode;
-	_sceneText.setup(msg);
-
-	// Get the string bounds
-	GfxFont f;
-	f.setFontNumber(_fontNumber);
-	Rect bounds;
-	f.getStringBounds(msg.c_str(), bounds, _textWidth);
-
-	// Set the position for the text
-	switch (_textMode) {
-	case ALIGN_LEFT:
-	case ALIGN_JUSTIFIED:
-		_sceneText.setPosition(_textPos);
-		break;
-	case ALIGN_CENTER:
-		_sceneText.setPosition(Common::Point(_textPos.x + (_textWidth - bounds.width()) / 2, _textPos.y));
-		break;
-	case ALIGN_RIGHT:
-		_sceneText.setPosition(Common::Point(_textPos.x + _textWidth - bounds.width(), _textPos.y));
-		break;
-	default:
-		break;
-	}
-
-	// Ensure the text is in the foreground
-	_sceneText.fixPriority(256);
-
-	// Count the number of words (by spaces) in the string
-	const char *s = msg.c_str();
-	int spaceCount = 0;
-	while (*s) {
-		if (*s++ == ' ')
-			++spaceCount;
-	}
-
-	_numFrames = spaceCount * 3 + 2;
-}
-
-/*--------------------------------------------------------------------------*/
-
-SpeakerSutter::SpeakerSutter() {
-	_speakerName = "SUTTER";
-	_color1 = 20;
-	_color2 = 22;
-	_textMode = ALIGN_CENTER;
-}
-
-void SpeakerSutter::setText(const Common::String &msg) {
-	_removeObject1 = _removeObject2 = true;
-
-	_object1.postInit();
-	_object1.setVisage(329);
-	_object1.setStrip2(2);
-	_object1.fixPriority(254);
-	_object1.changeZoom(100);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
-
-	_object2.postInit();
-	_object2.setVisage(329);
-	_object2.setStrip2(1);
-	_object2.fixPriority(255);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
-		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
-
-	VisualSpeaker::setText(msg);
-	_object2.fixCountdown(8, _numFrames);
-}
-
-/*--------------------------------------------------------------------------*/
-
-SpeakerDoug::SpeakerDoug(): VisualSpeaker() {
-	_color1 = 32;
-	_speakerName = "DOUG";
-}
-
-/*--------------------------------------------------------------------------*/
-
-SpeakerJakeNoHead::SpeakerJakeNoHead(): VisualSpeaker() {
-	_color1 = 13;
-	_speakerName = "JAKE_NO_HEAD";
 }
 
 /*--------------------------------------------------------------------------*/
@@ -936,66 +842,66 @@ void BlueForceInvObjectList::reset() {
 	}
 
 	// Set up default inventory
-	setObjectRoom(INV_COLT45, 1);
-	setObjectRoom(INV_HANDCUFFS, 1);
-	setObjectRoom(INV_AMMO_BELT, 1);
-	setObjectRoom(INV_ID, 1);
+	setObjectScene(INV_COLT45, 1);
+	setObjectScene(INV_HANDCUFFS, 1);
+	setObjectScene(INV_AMMO_BELT, 1);
+	setObjectScene(INV_ID, 1);
 
 	// Set default room for other objects
-	setObjectRoom(INV_TICKET_BOOK, 60);
-	setObjectRoom(INV_MIRANDA_CARD, 60);
-	setObjectRoom(INV_FOREST_RAP, 320);
-	setObjectRoom(INV_GREEN_ID, 370);
-	setObjectRoom(INV_BASEBALL_CARD, 840);
-	setObjectRoom(INV_BOOKING_GREEN, 390);
-	setObjectRoom(INV_FLARE, 355);
-	setObjectRoom(INV_COBB_RAPP, 810);
-	setObjectRoom(INV_22_BULLET, 415);
-	setObjectRoom(INV_AUTO_RIFLE, 415);
-	setObjectRoom(INV_WIG, 415);
-	setObjectRoom(INV_FRANKIE_ID, 410);
-	setObjectRoom(INV_TYRONE_ID, 410);
-	setObjectRoom(INV_22_SNUB, 410);
-	setObjectRoom(INV_FBI_TELETYPE, 320);
-	setObjectRoom(INV_DA_NOTE, 320);
-	setObjectRoom(INV_PRINT_OUT, 570);
-	setObjectRoom(INV_WHAREHOUSE_KEYS, 360);
-	setObjectRoom(INV_CENTER_PUNCH, 0);
-	setObjectRoom(INV_TRANQ_GUN, 830);
-	setObjectRoom(INV_HOOK, 350);
-	setObjectRoom(INV_RAGS, 870);
-	setObjectRoom(INV_JAR, 870);
-	setObjectRoom(INV_SCREWDRIVER, 355);
-	setObjectRoom(INV_D_FLOPPY, 570);
-	setObjectRoom(INV_BLANK_DISK, 560);
-	setObjectRoom(INV_STICK, 710);
-	setObjectRoom(INV_CRATE1, 710);
-	setObjectRoom(INV_CRATE2, 870);
-	setObjectRoom(INV_SHOEBOX, 270);
-	setObjectRoom(INV_BADGE, 560);
-	setObjectRoom(INV_RENTAL_COUPON, 0);
-	setObjectRoom(INV_NICKEL, 560);
-	setObjectRoom(INV_LYLE_CARD, 270);
-	setObjectRoom(INV_CARTER_NOTE, 830);
-	setObjectRoom(INV_MUG_SHOT, 810);
-	setObjectRoom(INV_CLIPPING, 810);
-	setObjectRoom(INV_MICROFILM, 810);
-	setObjectRoom(INV_WAVE_KEYS, 840);
-	setObjectRoom(INV_RENTAL_KEYS, 840);
-	setObjectRoom(INV_NAPKIN, 115);
-	setObjectRoom(INV_DMV_PRINTOUT, 810);
-	setObjectRoom(INV_FISHING_NET, 830);
-	setObjectRoom(INV_9MM_BULLETS, 930);
-	setObjectRoom(INV_SCHEDULE, 930);
-	setObjectRoom(INV_GRENADES, 355);
-	setObjectRoom(INV_GREENS_KNIFE, 370);
-	setObjectRoom(INV_JACKET, 880);
-	setObjectRoom(INV_DOG_WHISTLE, 880);
-	setObjectRoom(INV_YELLOW_CORD, 910);
-	setObjectRoom(INV_BLACK_CORD, 910);
+	setObjectScene(INV_TICKET_BOOK, 60);
+	setObjectScene(INV_MIRANDA_CARD, 60);
+	setObjectScene(INV_FOREST_RAP, 320);
+	setObjectScene(INV_GREEN_ID, 370);
+	setObjectScene(INV_BASEBALL_CARD, 840);
+	setObjectScene(INV_BOOKING_GREEN, 390);
+	setObjectScene(INV_FLARE, 355);
+	setObjectScene(INV_COBB_RAP, 810);
+	setObjectScene(INV_22_BULLET, 415);
+	setObjectScene(INV_AUTO_RIFLE, 415);
+	setObjectScene(INV_WIG, 415);
+	setObjectScene(INV_FRANKIE_ID, 410);
+	setObjectScene(INV_TYRONE_ID, 410);
+	setObjectScene(INV_22_SNUB, 410);
+	setObjectScene(INV_FBI_TELETYPE, 320);
+	setObjectScene(INV_DA_NOTE, 320);
+	setObjectScene(INV_PRINT_OUT, 570);
+	setObjectScene(INV_WHAREHOUSE_KEYS, 360);
+	setObjectScene(INV_CENTER_PUNCH, 0);
+	setObjectScene(INV_TRANQ_GUN, 830);
+	setObjectScene(INV_HOOK, 350);
+	setObjectScene(INV_RAGS, 870);
+	setObjectScene(INV_JAR, 870);
+	setObjectScene(INV_SCREWDRIVER, 355);
+	setObjectScene(INV_D_FLOPPY, 570);
+	setObjectScene(INV_BLANK_DISK, 560);
+	setObjectScene(INV_STICK, 710);
+	setObjectScene(INV_CRATE1, 710);
+	setObjectScene(INV_CRATE2, 870);
+	setObjectScene(INV_SHOEBOX, 270);
+	setObjectScene(INV_BADGE, 560);
+	setObjectScene(INV_RENTAL_COUPON, 0);
+	setObjectScene(INV_NICKEL, 560);
+	setObjectScene(INV_LYLE_CARD, 270);
+	setObjectScene(INV_CARTER_NOTE, 830);
+	setObjectScene(INV_MUG_SHOT, 810);
+	setObjectScene(INV_CLIPPING, 810);
+	setObjectScene(INV_MICROFILM, 810);
+	setObjectScene(INV_WAVE_KEYS, 840);
+	setObjectScene(INV_RENTAL_KEYS, 840);
+	setObjectScene(INV_NAPKIN, 115);
+	setObjectScene(INV_DMV_PRINTOUT, 810);
+	setObjectScene(INV_FISHING_NET, 830);
+	setObjectScene(INV_9MM_BULLETS, 930);
+	setObjectScene(INV_SCHEDULE, 930);
+	setObjectScene(INV_GRENADES, 355);
+	setObjectScene(INV_GREENS_KNIFE, 370);
+	setObjectScene(INV_JACKET, 880);
+	setObjectScene(INV_DOG_WHISTLE, 880);
+	setObjectScene(INV_YELLOW_CORD, 910);
+	setObjectScene(INV_BLACK_CORD, 910);
 }
 
-void BlueForceInvObjectList::setObjectRoom(int objectNum, int sceneNumber) {
+void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 	// Find the appropriate object
 	int num = objectNum;
 	SynchronizedList<InvObject *>::iterator i = _itemList.begin(); 
@@ -1009,6 +915,8 @@ void BlueForceInvObjectList::setObjectRoom(int objectNum, int sceneNumber) {
 	// Update the user interface if necessary
 	BF_GLOBALS._uiElements.updateInventory();
 }
+
+/*--------------------------------------------------------------------------*/
 
 } // End of namespace BlueForce
 

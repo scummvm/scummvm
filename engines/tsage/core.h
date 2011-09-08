@@ -79,6 +79,8 @@ public:
 
 	InvObjectList();
 	int indexOf(InvObject *obj) const;
+	InvObject *getItem(int objectNum);
+	int getObjectScene(int objectNum);
 
 	virtual Common::String getClassName() { return "InvObjectList"; }
 	virtual void synchronize(Serializer &s);
@@ -413,7 +415,7 @@ public:
 	virtual Common::String getClassName() { return "SceneItem"; }
 	virtual void remove();
 	virtual void destroy() {}
-	virtual void startAction(CursorType action) { doAction(action); }
+	virtual void startAction(CursorType action, Event &event) { doAction(action); }
 	virtual void doAction(int action);
 
 	bool contains(const Common::Point &pt);
@@ -820,6 +822,7 @@ public:
 		assert((idx >= 1) && (idx <= (int)_regionList.size()));
 		return _regionList[idx - 1];
 	}
+	void proc1(int v) { warning("TODO: WalkRegions::proc1"); }
 };
 
 /*--------------------------------------------------------------------------*/

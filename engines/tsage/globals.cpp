@@ -214,6 +214,7 @@ void BlueForceGlobals::reset() {
 	_v4CEA8 = 0;
 	_v4CF9E = 0;
 	_v4E238 = 0;
+	_v50696 = 0;
 	_v501FC = 0;
 	_v51C42 = 0;
 	_clip1Bullets = 8;

@@ -432,7 +432,7 @@ void Scene109::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene190::Object4::startAction(CursorType action) {
+void Scene190::Object4::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -445,14 +445,14 @@ void Scene190::Object4::startAction(CursorType action) {
 		break;
 	}
 	default:
-		NamedObject::startAction(action);
+		NamedObject::startAction(action, event);
 		break;
 	}
 }
 
 /*--------------------------------------------------------------------------*/
 
-void Scene190::Item1::startAction(CursorType action) {
+void Scene190::Item1::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -460,12 +460,12 @@ void Scene190::Item1::startAction(CursorType action) {
 		scene->setAction(&scene->_action1);
 		break;
 	default:
-		NamedHotspot::startAction(action);
+		NamedHotspot::startAction(action, event);
 		break;
 	}
 }
 
-void Scene190::Item2::startAction(CursorType action) {
+void Scene190::Item2::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -473,12 +473,12 @@ void Scene190::Item2::startAction(CursorType action) {
 		scene->_stripManager.start(1900, scene);
 		break;
 	default:
-		NamedHotspot::startAction(action);
+		NamedHotspot::startAction(action, event);
 		break;
 	}
 }
 
-void Scene190::Exit::startAction(CursorType action) {
+void Scene190::Exit::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	Common::Point pt(316, 91);

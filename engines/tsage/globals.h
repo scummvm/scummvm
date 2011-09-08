@@ -173,6 +173,7 @@ public:
 	int _driveToScene;
 	int _v4CF9E;
 	int _v4E238;
+	int _v50696;
 	int _v501FC;
 	int _v51C42;
 	int _v51C44;
@@ -180,6 +181,7 @@ public:
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
+	StripProxy _stripProxy;
 
 	BlueForceGlobals();
 	void reset();

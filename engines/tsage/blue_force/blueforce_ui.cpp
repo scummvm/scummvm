@@ -30,6 +30,13 @@ namespace TsAGE {
 
 namespace BlueForce {
 
+void StripProxy::process(Event &event) {
+	if (_action)
+		_action->process(event);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void UIElement::synchronize(Serializer &s) {
 	AltSceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
@@ -85,12 +92,16 @@ void UIQuestion::setEnabled(bool flag) {
 void UIScore::postInit(SceneObjectList *OwnerList) {
 	int xp = 266;
 	_digit3.setup(1, 6, 1, xp, 180, 255);
+	_digit3.reposition();
 	xp += 7;
 	_digit2.setup(1, 6, 1, xp, 180, 255);
+	_digit2.reposition();
 	xp += 7;
 	_digit1.setup(1, 6, 1, xp, 180, 255);
+	_digit1.reposition();
 	xp += 7;
 	_digit0.setup(1, 6, 1, xp, 180, 255);
+	_digit0.reposition();
 }
 
 void UIScore::draw() {
@@ -355,7 +366,7 @@ void UIElements::updateInventory() {
 	// Loop through the inventory objects
 	SynchronizedList<InvObject *>::iterator i;
 	int objIndex = 0;
-	for (i = BLUE_INVENTORY._itemList.begin(); i != BLUE_INVENTORY._itemList.end(); ++i, ++objIndex) {
+	for (i = BF_INVENTORY._itemList.begin(); i != BF_INVENTORY._itemList.end(); ++i, ++objIndex) {
 		InvObject *obj = *i;
 
 		// Check whether the object is in any of the four inventory slots
@@ -394,6 +405,15 @@ void UIElements::updateInvList() {
 		if (invObject->inInventory())
 			_itemList.push_back(itemIndex);
 	}
+}
+
+/**
+ * Set the game score
+ */
+void UIElements::addScore(int amount) {
+	_scoreValue += amount;
+	BF_GLOBALS._sound2.play(0);
+	updateInventory();
 }
 
 } // End of namespace BlueForce
