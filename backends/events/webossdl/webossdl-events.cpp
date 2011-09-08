@@ -359,8 +359,13 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		// If only one finger is on the screen and moving, that's the mouse pointer.
 		if (ev.motion.which == 0 && fingerDown[0] &&
 				!fingerDown[1] && !fingerDown[2]) {
-			curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
-			curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
+			if (touchpadMode) {
+				curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
+				curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
+			} else {
+				curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
+				curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
+			}
 			event.type = Common::EVENT_MOUSEMOVE;
 			processMouseEvent(event, curX, curY);
 		}
