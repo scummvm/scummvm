@@ -114,10 +114,10 @@ void UIScore::draw() {
 void UIScore::updateScore() {
 	int score = BF_GLOBALS._uiElements._scoreValue;
 	
-	_digit3.setFrame(score / 1000); score %= 1000;
-	_digit2.setFrame(score / 100); score %= 100;
-	_digit1.setFrame(score / 10); score %= 10;
-	_digit0.setFrame(score);
+	_digit3.setFrame(score / 1000 + 1); score %= 1000;
+	_digit2.setFrame(score / 100 + 1); score %= 100;
+	_digit1.setFrame(score / 10 + 1); score %= 10;
+	_digit0.setFrame(score + 1);
 }
 
 /*--------------------------------------------------------------------------*/
