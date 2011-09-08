@@ -49,24 +49,7 @@ class VideoManager;
 class GraphicsManager;
 class Idler;
 
-enum ItemLocation {
-	kItemLocationCaldoria = 0,
-	kItemLocationTSA = 1,
-	kItemLocationNorad = 4, // ???
-	kItemLocationMars = 5,
-	kItemLocationWSC = 6,
-	kItemLocationPrehistoric = 7,
-	kItemLocationBuiltIn = 0xffff
-};
-
 static const int kViewScreenOffset = 64;
-
-struct ItemLocationData {
-	uint16 id;
-	ItemLocation location;
-	uint16 u0;
-	byte u1;
-};
 
 struct OverviewHotspot {
 	Common::Rect rect;
@@ -128,7 +111,6 @@ private:
 
 	// Main Game Functions
 	void mainGameLoop();
-	void loadItemLocationData();
 	void changeLocation(tNeighborhoodID neighborhood);
 
 	// Misc Functions
@@ -138,7 +120,6 @@ private:
 	// Game Variables
 	bool _adventureMode;
 	GameMode _gameMode;
-	Common::Array<ItemLocationData> _itemLocationData;
 
 	// Console
 	PegasusConsole *_console;
@@ -150,6 +131,10 @@ private:
 	// Idlers
 	Common::List<Idler *> _idlers;
 	void giveIdleTime();
+
+	// Items
+	void createItems();
+	void createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction);
 };
 
 } // End of namespace Pegasus

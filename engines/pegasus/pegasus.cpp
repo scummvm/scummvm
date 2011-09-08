@@ -35,6 +35,8 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
+#include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/items/inventory/inventoryitem.h"
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
@@ -76,7 +78,7 @@ Common::Error PegasusEngine::run() {
 	if (!_biochipLid->open("Images/Lids/Biochip Lid Sequence") || !_biochipLid->hasResFork())
 		error("Could not open Biochip Lid Sequence");
 
-	loadItemLocationData();
+	createItems();
 
 	if (!isDemo() && !detectOpeningClosingDirectory()) {
 		Common::String message = "Missing intro directory. ";
@@ -191,23 +193,49 @@ bool PegasusEngine::detectOpeningClosingDirectory() {
 	return true;
 }
 
-void PegasusEngine::loadItemLocationData() {
+void PegasusEngine::createItems() {
 	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('N', 'I', 't', 'm'), 0x80);
 
 	uint16 entryCount = res->readUint16BE();
 
 	for (uint16 i = 0; i < entryCount; i++) {
-		ItemLocationData loc;
-		loc.id = res->readUint16BE(); // Which is always == i, anyway
-		loc.location = (ItemLocation)res->readUint16BE();
-		loc.u0 = res->readUint16BE();
-		loc.u1 = res->readByte();
-		debug(1, "Item[%d]: ID = %d, location = %x, u0 = %d, u1 = %d", i, loc.id, loc.location, loc.u0, loc.u1);
-		res->readByte();
-		_itemLocationData.push_back(loc);
+		tItemID itemID = res->readUint16BE();
+		tNeighborhoodID neighborhoodID = res->readUint16BE();
+		tRoomID roomID = res->readUint16BE();
+		tDirectionConstant direction = res->readByte();
+		res->readByte(); // alignment
+
+		createItem(itemID, neighborhoodID, roomID, direction);
 	}
 
 	delete res;
+}
+
+void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction) {
+	switch (itemID) {
+	case kInterfaceBiochip:
+		// Unused in game, but still in the data - no need to load it
+		break;
+	case kMapBiochip:
+	case kAIBiochip:
+	case kPegasusBiochip:
+	case kRetinalScanBiochip:
+	case kShieldBiochip:
+	case kOpticalBiochip:
+		// TODO: Specialized biochip classes
+		new BiochipItem(itemID, neighborhoodID, roomID, direction);
+		break;
+	case kAirMask:
+	case kKeyCard:
+	case kGasCanister:
+		// TODO: Specialized inventory item classes
+		new InventoryItem(itemID, neighborhoodID, roomID, direction);
+		break;
+	default:
+		// Everything else is a normal inventory item
+		new InventoryItem(itemID, neighborhoodID, roomID, direction);
+		break;
+	}
 }
 
 void PegasusEngine::runIntro() {
