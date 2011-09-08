@@ -753,50 +753,48 @@ label_nosequence:
 	if (!data->sequence)
 		goto label_nosequence;
 
-	if (data->frame->getInfo()->field_30 > data->field_49B + 1 || (data->direction == kDirectionLeft && data->sequence->count() == 1)) {
+	if (data->frame->getInfo()->field_30 > (data->field_49B + 1) || (data->direction == kDirectionLeft && data->sequence->count() == 1)) {
 		++data->field_49B;
-		INCREMENT_DIRECTION_COUNTER();
-		return;
-	}
-
-	if (data->frame->getInfo()->field_30 > data->field_49B && !data->frame->getInfo()->keepPreviousFrame) {
-		++data->field_49B;
-		INCREMENT_DIRECTION_COUNTER();
-		return;
-	}
-
-	if (data->frame->getInfo()->keepPreviousFrame == 1)
-		keepPreviousFrame = true;
-
-	// Increment current frame
-	++data->currentFrame;
-
-	if (data->currentFrame > (int16)(data->sequence->count() - 1) || (data->field_4A9 && checkSequenceFromPosition(entityIndex))) {
-
-		if (data->direction == kDirectionLeft) {
-			data->currentFrame = 0;
+	} else {
+		if (data->frame->getInfo()->field_30 > data->field_49B && !data->frame->getInfo()->keepPreviousFrame) {
+			++data->field_49B;
 		} else {
-			keepPreviousFrame = true;
-			drawNextSequence(entityIndex);
+			if (data->frame->getInfo()->keepPreviousFrame == 1)
+				keepPreviousFrame = true;
+
+			// Increment current frame
+			++data->currentFrame;
+
+			if (data->currentFrame > (int16)(data->sequence->count() - 1) || (data->field_4A9 && checkSequenceFromPosition(entityIndex))) {
+
+				if (data->direction == kDirectionLeft) {
+					data->currentFrame = 0;
+				} else {
+					keepPreviousFrame = true;
+					drawNextSequence(entityIndex);
+
+					if (getFlags()->flag_entities_0 || data->doProcessEntity)
+						return;
+
+					if (!data->sequence2) {
+						updateEntityPosition(entityIndex);
+						data->doProcessEntity = false;
+						return;
+					}
+
+					copySequenceData(entityIndex);
+				}
+
+			}
+
+			processFrame(entityIndex, keepPreviousFrame, false);
 
 			if (getFlags()->flag_entities_0 || data->doProcessEntity)
 				return;
-
-			if (!data->sequence2) {
-				updateEntityPosition(entityIndex);
-				data->doProcessEntity = false;
-				return;
-			}
-
-			copySequenceData(entityIndex);
 		}
-
 	}
 
-	processFrame(entityIndex, keepPreviousFrame, false);
-
-	if (!getFlags()->flag_entities_0 && !data->doProcessEntity)
-		INCREMENT_DIRECTION_COUNTER();
+	INCREMENT_DIRECTION_COUNTER();
 }
 
 void Entities::computeCurrentFrame(EntityIndex entityIndex) const {
@@ -1109,9 +1107,8 @@ void Entities::processFrame(EntityIndex entityIndex, bool keepPreviousFrame, boo
 	// Get new frame info
 	FrameInfo *info = data->sequence->getFrameInfo((uint16)data->currentFrame);
 
-	if (data->frame && data->frame->getInfo()->subType != kFrameType3)
-		if (!info->field_2E || keepPreviousFrame)
-			getScenes()->setCoordinates(data->frame);
+	if (data->frame && data->frame->getInfo()->subType != kFrameType3 && (!info->field_2E || keepPreviousFrame))
+		getScenes()->setCoordinates(data->frame);
 
 	// Update position
 	if (info->entityPosition) {
