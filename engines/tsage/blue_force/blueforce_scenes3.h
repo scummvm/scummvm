@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
@@ -46,29 +47,29 @@ class Scene300: public SceneExt {
 	public:
 		Object(int stripNumber) { _stripNumber = stripNumber; }
 
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 	class Object17: public NamedObject {
 	public:
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 	class Item14: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 	class Item15: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action);
+		virtual void startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */
@@ -124,6 +125,101 @@ public:
 	int _field2760, _field2762;
 
 	Scene300();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene315: public SceneExt {
+	/* Objects */
+	class Object1: public NamedObject {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObject {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item2: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item4: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item5: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item14: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item15: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item16: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+	class Item17: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerSutter _sutterSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerJailer _jailerSpeaker;
+	Item1 _item1;
+	Item2 _item2;
+	NamedHotspot _item3;
+	Item4 _item4;
+	Item5 _item5;
+	Object1 _object1;
+	Object2 _object2;
+	Object3 _object3;
+	SceneObject _object4, _object5, _object6;
+	SceneObject _object7, _object8, _object9;
+	NamedHotspot _item6, _item7, _item8, _item9;
+	NamedHotspot _item10, _item11, _item12, _item13;
+	Item14 _item14;
+	Item15 _item15;
+	Item16 _item16;
+	Item17 _item17;
+	Action1 _action1;
+	int _field1390;
+	int _stripNumber;
+	int _field1398;
+	int _field1B60, _field1B62, _field1B64;
+	int _field1B66, _field1B6C, _field139C;
+	bool _field1B68, _field1B6A;
+	CursorType _currentCursor;
+
+	Scene315();
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void process(Event &event);
