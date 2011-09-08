@@ -53,12 +53,7 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 			break;
 		}
 	} else if (which == 0) {
-		//createScene1001(0);//Real
-		// DEBUG: Jump to room
-		setGlobalVar(0x8306F218, 1);
-		createScene1002(2);
-		//createScene1005(0);
-		//createScene1004(0);
+		createScene1001(0);
 	} else if (which == 1) {
 		createScene1002(1);
 	}
@@ -884,16 +879,11 @@ AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Sce
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1002DoorSpy::handleMessage4489D0);
 	SetSpriteCallback(&AsScene1002DoorSpy::spriteUpdate448AA0);
-	
 	createSurface(800, 136, 147);
 	_surface->getClipRect() = clipRect;
-	
 	spriteUpdate448AA0();
-
-	// TODO _soundResource.load(0xC0C40298);
-	
+	_soundResource.load(0xC0C40298);
 	setFileHash(0x586C1D48, 0, 0);
-		
 }
 
 uint32 AsScene1002DoorSpy::handleMessage4489D0(int messageNum, const MessageParam &param, Entity *sender) {
@@ -903,7 +893,7 @@ uint32 AsScene1002DoorSpy::handleMessage4489D0(int messageNum, const MessagePara
 		if (param.asInteger() == 0xA61CA1C2) {
 			_class505->sendMessage(0x2004, 0, this);
 		} else if (param.asInteger() == 0x14CE0620) {
-			// TODO _soundResource.play();
+			_soundResource.play();
 		}
 		break;
 	case 0x2003:
@@ -1212,7 +1202,6 @@ uint32 AsScene1002VenusFlyTrap::handleMessage448320(int messageNum, const Messag
 }
 
 void AsScene1002VenusFlyTrap::sub4484F0() {
-	//ok
 	setDoDeltaX(2);
 	setFileHash(0xC4080034, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
@@ -1221,7 +1210,6 @@ void AsScene1002VenusFlyTrap::sub4484F0() {
 }
 
 void AsScene1002VenusFlyTrap::sub448530() {
-	//ok
 	setFileHash(0xC4080034, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage4482E0);
@@ -1229,7 +1217,6 @@ void AsScene1002VenusFlyTrap::sub448530() {
 }
 
 void AsScene1002VenusFlyTrap::sub448560() {
-	//ok
 	_parentScene->sendMessage(0x4807, 0, this);
 	setFileHash(0x82292851, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
@@ -1238,7 +1225,6 @@ void AsScene1002VenusFlyTrap::sub448560() {
 }
 
 void AsScene1002VenusFlyTrap::sub4485B0() {
-	//ok
 	setDoDeltaX(1);
 	setFileHash(0x86A82A11, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
@@ -1247,14 +1233,12 @@ void AsScene1002VenusFlyTrap::sub4485B0() {
 }
 
 void AsScene1002VenusFlyTrap::sub4485F0() {
-	//ok
 	setFileHash(0xB5A86034, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448000);
 }
 
 void AsScene1002VenusFlyTrap::sub448620() {
-	//ok
 	setFileHash(0x31303094, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(NULL);
@@ -1284,7 +1268,6 @@ void AsScene1002VenusFlyTrap::sub448660() {
 }
 
 void AsScene1002VenusFlyTrap::sub448720() {
-	//ok
 	setFileHash(0x152920C4, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
@@ -1292,7 +1275,6 @@ void AsScene1002VenusFlyTrap::sub448720() {
 }
 
 void AsScene1002VenusFlyTrap::sub448750() {
-	//ok
 	setFileHash(0x84001117, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
@@ -1300,7 +1282,6 @@ void AsScene1002VenusFlyTrap::sub448750() {
 }
 
 void AsScene1002VenusFlyTrap::sub448780() {
-debug("AsScene1002VenusFlyTrap::sub448780()");
 	if (_x - 15 < _klayman->getX() && _x + 15 > _klayman->getX()) {
 		if (_flag) {
 			setDoDeltaX(_x > 265 && _x < 330 ? 1 : 0);
@@ -1417,23 +1398,59 @@ void Class478::update() {
 	AnimatedSprite::update();
 }
 
+Class479::Class479(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman)
+	: AnimatedSprite(vm, 1200), _parentScene(parentScene), _klayman(klayman),
+	_flag1(false) {
+	
+	SetUpdateHandler(&Class479::update);
+	SetMessageHandler(&Class479::handleMessage);
+	createSurface(1000, 33, 41);
+	_surface->setVisible(false);
+}
+
+void Class479::update() {
+	if (_klayman->getCurrAnimFileHash() == 0xAC20C012 && _klayman->getFrameIndex() < 50) {
+		setFileHash(0x9820C913, _klayman->getFrameIndex(), -1);
+		_newHashListIndex = _klayman->getFrameIndex();
+		_surface->setVisible(true);
+		_x = _klayman->getX();
+		_y = _klayman->getY();
+		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
+	} else {
+		_surface->setVisible(false);
+	}
+	AnimatedSprite::update();
+}
+
+uint32 Class479::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4AB28209) {
+			_parentScene->sendMessage(0x1022, 1200, this);
+			_flag1 = true;
+			_savedClipRect = _surface->getClipRect();
+			_surface->getClipRect().x1 = 0;
+			_surface->getClipRect().y1 = 0;
+			_surface->getClipRect().x2 = 640;
+			_surface->getClipRect().y2 = 480;
+		} else if (param.asInteger() == 0x88001184) {
+			_parentScene->sendMessage(0x1022, 1000, this);
+			if (_flag1) {
+				_surface->getClipRect() = _savedClipRect;
+			}
+		}
+		break;
+	}
+	return messageResult;
+}
+
 Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
 	_flag1B4(false), _flag1BE(false) {
 
 	NRect tempClipRect;
 	Sprite *tempSprite;
-
-	// TODO _field1B6 = -1;
-	// TODO _resourceTable8.setResourceList(0x004B4110);
-	// TODO _resourceTable7.setResourceList(0x004B4100);
-	// TODO _resourceTable6.setResourceList(0x004B40E8);
-	// TODO _resourceTable5.setResourceList(0x004B40C0);
-	// TODO _resourceTable4.setResourceList(0x004B4080);
-	// TODO _resourceTable3.setResourceList(0x004B4060);
-	// TODO _resourceTable2.setResourceList(0x004B4000, true);
-	// TODO _resourceTable1.setResourceList(0x004B3F90, true);
-	// TODO _resourceTable1.loadSome(3000);
 
 	SetUpdateHandler(&Scene1002::update);
 	SetMessageHandler(&Scene1002::handleMessage);
@@ -1479,42 +1496,40 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
 			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 		}
+	} else if (which == 1) {
+		_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 650, 435);
+		_class478 = addSprite(new Class478(_vm, _klayman));
+		setMessageList(0x004B4478);
+		_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+		_klayman->getSurface()->getClipRect().y1 = 0;
+		_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+		_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+		_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+		_vm->_gameState.field2 = 1;
+	} else if (which == 2) {
+		_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 68, 645);
+		_class478 = addSprite(new Class478(_vm, _klayman));
+		setMessageList(0x004B4298);
+		_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
+		_klayman->getSurface()->getClipRect().y1 = 0;
+		_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+		_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
+		_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+		_vm->_gameState.field2 = 1;
+		_klayman->sendMessage(0x4820, 0, this);
 	} else {
-		if (which == 1) {
-			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 650, 435);
-			_class478 = addSprite(new Class478(_vm, _klayman));
-			setMessageList(0x004B4478);
-			_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
-			_klayman->getSurface()->getClipRect().y1 = 0;
-			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
-			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
-			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
-			_vm->_gameState.field2 = 1;
-		} else if (which == 2) {
-			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 68, 645);
-			_class478 = addSprite(new Class478(_vm, _klayman));
-			setMessageList(0x004B4298);
-			_klayman->getSurface()->getClipRect().x1 = _ssLadderArch->getSurface()->getDrawRect().x;
-			_klayman->getSurface()->getClipRect().y1 = 0;
-			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
-			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart1->getSurface()->getDrawRect().y + _ssLadderArchPart1->getSurface()->getDrawRect().height;
-			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
-			_vm->_gameState.field2 = 1;
-			_klayman->sendMessage(0x4820, 0, this);
-		} else {
-			_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
-			_class478 = addSprite(new Class478(_vm, _klayman));
-			setMessageList(0x004B4470);
-			_klayman->getSurface()->getClipRect().x1 = 31;
-			_klayman->getSurface()->getClipRect().y1 = 0;
-			_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
-			_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart3->getSurface()->getDrawRect().y + _ssLadderArchPart3->getSurface()->getDrawRect().height;
-			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
-			// TODO _class479 = addSprite(new Class479(_vm, this, _klayman));
-			// TODO _class479->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
-			_klayman->setRepl(64, 0);
-			_vm->_gameState.field2 = 0;
-		} 
+		_klayman = new KmScene1002(_vm, this, _class599, _ssLadderArch, 90, 226);
+		_class478 = addSprite(new Class478(_vm, _klayman));
+		setMessageList(0x004B4470);
+		_klayman->getSurface()->getClipRect().x1 = 31;
+		_klayman->getSurface()->getClipRect().y1 = 0;
+		_klayman->getSurface()->getClipRect().x2 = _ssLadderArchPart2->getSurface()->getDrawRect().x + _ssLadderArchPart2->getSurface()->getDrawRect().width;
+		_klayman->getSurface()->getClipRect().y2 = _ssLadderArchPart3->getSurface()->getDrawRect().y + _ssLadderArchPart3->getSurface()->getDrawRect().height;
+		_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+		_class479 = addSprite(new Class479(_vm, this, _klayman));
+		_class479->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
+		_klayman->setRepl(64, 0);
+		_vm->_gameState.field2 = 0;
 	}
 
 	addSprite(_klayman);

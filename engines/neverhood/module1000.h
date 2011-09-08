@@ -262,6 +262,18 @@ protected:
 	void update();
 };
 
+class Class479 : public AnimatedSprite {
+public:
+	Class479(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman);
+protected:
+	Scene *_parentScene;
+	Klayman *_klayman;
+	bool _flag1;
+	NRect _savedClipRect;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class Scene1002 : public Scene {
 public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
