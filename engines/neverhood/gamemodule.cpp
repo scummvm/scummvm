@@ -242,7 +242,7 @@ void GameModule::startup() {
 	createModule2000(-1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 6;
+	_vm->gameState().sceneNum = 7;
 	createModule2200(-1);
 #endif
 }

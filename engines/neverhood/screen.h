@@ -43,7 +43,10 @@ public:
 	void updatePalette();
 	void clear();
 	void drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect, NRect &clipRect, bool transparent);
+	void drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent);
+	void blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent);
 	void drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect);
+	void drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent);
 protected:
 	NeverhoodEngine *_vm;
 	Graphics::Surface *_backScreen;

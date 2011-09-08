@@ -125,7 +125,53 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		ddRect.y1 = 0;
 	}
 	
-	debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
+	//debug(2, "draw: x = %d; y = %d; (%d, %d, %d, %d)", destX, destY, ddRect.x1, ddRect.y1, ddRect.x2, ddRect.y2);
+
+	blit(surface, destX, destY, ddRect, transparent);
+
+	// Useful for debugging	
+	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
+	//_backScreen->frameRect(Common::Rect(destX, destY, destX + ddRect.x2, destY + ddRect.y2), 255); 
+	//_backScreen->frameRect(Common::Rect(drawRect.x, drawRect.y, drawRect.x + drawRect.width, drawRect.y + drawRect.height), 255);
+
+}
+
+void Screen::drawSurface3(const Graphics::Surface *surface, int16 x, int16 y, NDrawRect &drawRect, NRect &clipRect, bool transparent) {
+
+	int16 destX, destY;
+	NRect ddRect;
+	
+	if (x + drawRect.width >= clipRect.x2)
+		ddRect.x2 = clipRect.x2 - drawRect.x - x;
+	else
+		ddRect.x2 = drawRect.x + drawRect.width;
+		
+	if (x < clipRect.x1) {
+		destX = clipRect.x1;
+		ddRect.x1 = clipRect.x1 + drawRect.x - x;
+	} else {
+		destX = x;
+		ddRect.x1 = drawRect.x;
+	}
+
+	if (y + drawRect.height >= clipRect.y2)
+		ddRect.y2 = clipRect.y2 + drawRect.y - y;
+	else
+		ddRect.y2 = drawRect.y + drawRect.height;
+	
+	if (y < clipRect.y1) {
+		destY = clipRect.y1;
+		ddRect.y1 = clipRect.y1 + drawRect.y - y;
+	} else {
+		destY = y;
+		ddRect.y1 = drawRect.y;
+	}
+	
+	blit(surface, destX, destY, ddRect, transparent);
+
+}
+
+void Screen::blit(const Graphics::Surface *surface, int16 destX, int16 destY, NRect &ddRect, bool transparent) {
 
 	const byte *source = (const byte*)surface->getBasePtr(ddRect.x1, ddRect.y1);
 	byte *dest = (byte*)_backScreen->getBasePtr(destX, destY);
@@ -151,11 +197,6 @@ void Screen::drawSurface2(const Graphics::Surface *surface, NDrawRect &drawRect,
 		}
 	}
 
-	// Useful for debugging	
-	//_backScreen->frameRect(Common::Rect(clipRect.x1, clipRect.y1, clipRect.x2, clipRect.y2), 250); 
-	//_backScreen->frameRect(Common::Rect(destX, destY, destX + ddRect.x2, destY + ddRect.y2), 255); 
-	//_backScreen->frameRect(Common::Rect(drawRect.x, drawRect.y, drawRect.x + drawRect.width, drawRect.y + drawRect.height), 255);
-
 }
 
 void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &drawRect) {
@@ -172,6 +213,75 @@ void Screen::drawDoubleSurface2(const Graphics::Surface *surface, NDrawRect &dra
 		memcpy(dest + _backScreen->pitch, dest, surface->w * 2);
 		dest += _backScreen->pitch;
 		dest += _backScreen->pitch;
+	}
+
+}
+
+void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDrawRect &sysRect, NRect &clipRect, bool transparent) {
+	
+	int16 x, y;
+	bool xflag, yflag;
+	NDrawRect newDrawRect;
+
+	x = sysRect.x;
+	if (sysRect.width <= x || -sysRect.width >= x) {
+		x = x % sysRect.width;
+	}
+	if (x < 0)
+		x += sysRect.width;
+
+	y = sysRect.y;
+	if (y >= sysRect.height || -sysRect.height >= y) {
+		y = y % sysRect.height;
+	}
+	if (y < 0)
+		y += sysRect.height;
+	
+	xflag = x <= 0;
+	yflag = y <= 0;
+  
+	newDrawRect.x = x;
+	newDrawRect.width = sysRect.width - x;
+	if (drawRect.width < newDrawRect.width) {
+		xflag = true;
+		newDrawRect.width = drawRect.width;
+	}
+  
+	newDrawRect.y = y;
+	newDrawRect.height = sysRect.height - y;
+	if (drawRect.height < newDrawRect.height) {
+		yflag = true;
+		newDrawRect.height = drawRect.height;
+	}
+	
+	drawSurface3(surface, drawRect.x, drawRect.y, newDrawRect, clipRect, transparent);
+  
+	if (!xflag) {
+		newDrawRect.x = 0;
+		newDrawRect.y = y;
+		newDrawRect.width = x + drawRect.width - sysRect.width;
+		newDrawRect.height = sysRect.height - y;
+		if (drawRect.height < newDrawRect.height)
+			newDrawRect.height = drawRect.height;
+		drawSurface3(surface, sysRect.width + drawRect.x - x, drawRect.y, newDrawRect, clipRect, transparent);
+	}
+  
+	if (!yflag) {
+		newDrawRect.x = x;
+		newDrawRect.y = 0;
+		newDrawRect.width = sysRect.width - x;
+		newDrawRect.height = y + drawRect.height - sysRect.height;
+		if (drawRect.width < newDrawRect.width)
+			newDrawRect.width = drawRect.width;
+		drawSurface3(surface, drawRect.x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent);
+	}
+  
+	if (!xflag && !yflag) {
+		newDrawRect.x = 0;
+		newDrawRect.y = 0;
+		newDrawRect.width = x + drawRect.width - sysRect.width;
+		newDrawRect.height = y + drawRect.height - sysRect.height;
+		drawSurface3(surface, sysRect.width + drawRect.x - x, sysRect.height + drawRect.y - y, newDrawRect, clipRect, transparent);
 	}
 
 }

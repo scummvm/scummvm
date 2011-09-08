@@ -240,6 +240,11 @@ void Module2200::createScene2207(int which) {
 }
 			
 void Module2200::createScene2208(int which) {
+	if (which >= 0)
+		_vm->gameState().which = _vm->gameState().sceneNum; 
+	_vm->gameState().sceneNum = 7;
+	_childObject = new Scene2208(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2208);
 }
 			
 void Module2200::createScene2209(int which) {
@@ -470,6 +475,15 @@ void Module2200::updateScene2207() {
 }
 			
 void Module2200::updateScene2208() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		// TODO
+		createScene2206(2);
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2209() {
@@ -2412,6 +2426,201 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 		break;
 	}
 	return messageResult;
+}
+
+static const uint32 kScene2208FileHashes1[] = {
+	0x041023CB,
+	0x041020CB,
+	0x041026CB,
+	0x04102ACB,
+	0x041032CB,
+	0x041002CB
+};
+	
+static const uint32 kScene2208FileHashes2[] = {
+	0x091206C9,
+	0x091406C9,
+	0x091806C9,
+	0x090006C9,
+	0x093006C9,
+	0x095006C9
+};
+
+Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _textResource(vm) {
+
+	SpriteResource spriteResource(_vm);
+	const char *textStart, *textEnd;
+
+	if (!getGlobalVar(0xC8C28808))
+		setGlobalVar(0xC8C28808, calcHash("stLineagex"));
+
+	_textResource.load(getGlobalVar(0xC8C28808));
+	
+	textStart = _textResource.getString(getGlobalVar(0x48A68852), textEnd);
+	while (textStart < textEnd) {
+		_strings.push_back(textStart);
+		textStart += strlen(textStart) + 1;
+	}
+	
+	_maxRowIndex = 8 + 10 * (3 - (getGlobalVar(0xC8C28808) == calcHash("stLineagex") ? 1 : 0));
+
+	_background = new Background(_vm, 0);
+	_background->createSurface(0, 640, 528);
+	_background->getSpriteResource().getPosition().y = 480;
+	addBackground(_background);
+	
+	_palette = new Palette(_vm, 0x08100289);
+	_palette->usePalette();
+	addEntity(_palette); // Why?
+
+	_mouseCursor = addSprite(new Mouse435(_vm, 0x0028D089, 40, 600));
+	
+	createFontSurface();
+	
+	_backgroundSurface = new BaseSurface(_vm, 0, 640, 480);
+	spriteResource.load2(0x08100289);
+	_backgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
+
+	_topBackgroundSurface = new BaseSurface(_vm, 0, 640, 192);
+	spriteResource.load2(!getGlobalVar(0x4CE79018) ? kScene2208FileHashes1[getGlobalVar(0x48A68852) % 6] : getGlobalVar(0x4CE79018));
+	_topBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
+
+	_bottomBackgroundSurface = new BaseSurface(_vm, 0, 640, 192);
+	spriteResource.load2(kScene2208FileHashes2[getGlobalVar(0x48A68852) % 6]);
+	_bottomBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
+	
+	SetUpdateHandler(&Scene2208::update);
+	SetMessageHandler(&Scene2208::handleMessage);
+
+	_visibleRowsCount = 10;
+
+	_newRowIndex = (int16)getGlobalVar(0x49C40058);
+	if (_newRowIndex + _visibleRowsCount > _maxRowIndex)
+		_newRowIndex = _maxRowIndex - _visibleRowsCount;
+	if (_newRowIndex < 6)
+		_newRowIndex = 0;
+
+	_rowScrollY = 0;
+
+	_backgroundScrollY = 48 * _newRowIndex;		
+
+	_currRowIndex = _newRowIndex;
+
+	for (int16 rowIndex = 0; rowIndex < _visibleRowsCount; rowIndex++)
+		drawRow(_newRowIndex + rowIndex);
+
+	_background->getSurface()->getSysRect().y = _backgroundScrollY;
+
+	// TODO Screen.yOffset = _backgroundScrollY;
+	// TODO Scene2208_sub409080 (creates background Sprites via the text, doesn't seem to be used?)
+
+}
+
+Scene2208::~Scene2208() {
+	delete _fontSurface;
+	delete _backgroundSurface;
+	delete _topBackgroundSurface;
+	delete _bottomBackgroundSurface;
+}
+
+void Scene2208::update() {
+
+	int16 mouseY = _vm->getMouseY();
+	
+	if (mouseY < 48) {
+		if (_currRowIndex > 0)
+			_newRowIndex = _currRowIndex - 1;
+	} else if (mouseY > 432) {
+		if (_currRowIndex < _maxRowIndex - _visibleRowsCount)
+			_newRowIndex = _currRowIndex + 1;
+	} else {
+		if (_currRowIndex > _newRowIndex)
+			_newRowIndex = _currRowIndex;
+	}
+
+	if (_currRowIndex < _newRowIndex) {
+		if (_rowScrollY == 0) {
+			drawRow(_currRowIndex + _visibleRowsCount);
+		}
+		_backgroundScrollY += 4;
+		_rowScrollY += 4;
+		if (_rowScrollY == 48) {
+			_rowScrollY = 0;
+			_currRowIndex++;
+		}
+		_background->getSurface()->getSysRect().y = _backgroundScrollY;
+	} else if (_currRowIndex > _newRowIndex || _rowScrollY > 0) {
+		if (_rowScrollY == 0) {
+			drawRow(_currRowIndex - 1);
+			_currRowIndex--;
+		}
+		_backgroundScrollY -= 4;
+		if (_rowScrollY == 0)
+			_rowScrollY = 48;
+		_rowScrollY -= 4;
+		_background->getSurface()->getSysRect().y = _backgroundScrollY;
+	}
+
+	// TODO Screen.yOffset = _backgroundScrollY;
+	Scene::update();
+
+}
+
+uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x <= 40 || param.asPoint().x >= 600) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2208::createFontSurface() {
+	DataResource fontData(_vm);
+	SpriteResource spriteResource(_vm);
+	fontData.load(calcHash("asRecFont"));
+	uint16 numRows = fontData.getPoint(calcHash("meNumRows")).x;
+	uint16 firstChar = fontData.getPoint(calcHash("meFirstChar")).x;
+	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
+	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
+	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
+	spriteResource.load2(0x0800090C);
+	_fontSurface = new FontSurface(_vm, tracking, numRows, firstChar, charWidth, charHeight);
+	_fontSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
+}
+
+void Scene2208::drawRow(int16 rowIndex) {
+	NDrawRect sourceRect;	
+	int16 y = (rowIndex * 48) % 528;
+	if (rowIndex < 4) {
+		sourceRect.x = 0;
+		sourceRect.y = y;
+		sourceRect.width = 640;
+		sourceRect.height = 48;
+		_background->getSurface()->copyFrom(_topBackgroundSurface->getSurface(), 0, y, sourceRect, true);
+	} else if (rowIndex >= _maxRowIndex - 5) {
+		sourceRect.x = 0;
+		sourceRect.y = (rowIndex - _maxRowIndex + 4) * 48;
+		sourceRect.width = 640;
+		sourceRect.height = 48;
+		_background->getSurface()->copyFrom(_bottomBackgroundSurface->getSurface(), 0, y, sourceRect, true);
+	} else {
+		rowIndex -= 4;
+		sourceRect.x = 0;
+		sourceRect.y = (rowIndex * 48) % 480;
+		sourceRect.width = 640;
+		sourceRect.height = 48;
+		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect, true);
+		if (rowIndex < _strings.size()) {
+			const char *text = _strings[rowIndex];
+			// TODO/CHECKME: Use temporary string up to '{' character (see above)
+			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
+		}
+	}
 }
 
 } // End of namespace Neverhood

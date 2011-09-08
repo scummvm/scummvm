@@ -38,6 +38,7 @@ public:
 	BaseSurface *getSurface() { return _surface; }
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void load(uint32 fileHash);
+	SpriteResource& getSpriteResource() { return _spriteResource; }
 protected:
 	BaseSurface *_surface;
 	SpriteResource _spriteResource;

@@ -49,6 +49,7 @@ struct NPoint;
 
 struct GameState {
 	int sceneNum;
+	int which;
 	int field2;
 };
 

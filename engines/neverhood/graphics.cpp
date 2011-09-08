@@ -52,8 +52,11 @@ BaseSurface::~BaseSurface() {
 
 void BaseSurface::draw() {
 	if (_surface && _visible && _drawRect.width > 0 && _drawRect.height > 0) {
-		// TODO: _sysRect alternate drawing code (is that used?)
-		_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
+		if (_sysRect.x == 0 && _sysRect.y == 0) {
+			_vm->_screen->drawSurface2(_surface, _drawRect, _clipRect, _transparent);
+		} else {
+			_vm->_screen->drawUnk(_surface, _drawRect, _sysRect, _clipRect, _transparent);
+		}
 	}
 }
 

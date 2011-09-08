@@ -114,7 +114,7 @@ void Palette::startFadeToWhite(int counter) {
 }
 
 void Palette::update() {
-	debug("Palette::update() _status = %d", _status);
+	debug(2, "Palette::update() _status = %d", _status);
 	if (_status == 1) {
 		if (_palCounter > 1) {
 			for (int i = 0; i < 256; i++) {

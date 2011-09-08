@@ -27,6 +27,7 @@
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
 #include "neverhood/module1000.h"
+#include "neverhood/graphics.h"
 
 namespace Neverhood {
 
@@ -422,6 +423,29 @@ protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage2(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2208 : public Scene {
+public:
+	Scene2208(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene2208();
+protected:
+	FontSurface *_fontSurface;
+	BaseSurface *_backgroundSurface;
+	BaseSurface *_topBackgroundSurface;
+	BaseSurface *_bottomBackgroundSurface;
+	TextResource _textResource;
+	int16 _backgroundScrollY;
+	int16 _newRowIndex;
+	int16 _currRowIndex;
+	int16 _rowScrollY;
+	int16 _maxRowIndex;
+	int16 _visibleRowsCount;
+	Common::Array<const char*> _strings; // TODO: Move to TextResource
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void createFontSurface();
+	void drawRow(int16 rowIndex);
 };
 
 } // End of namespace Neverhood
