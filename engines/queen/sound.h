@@ -104,7 +104,7 @@ public:
 	static const SongData _song[];
 	static const TuneData _tuneDemo[];
 	static const TuneData _tune[];
-	static const char *_sfxName[];
+	static const char *const _sfxName[];
 	static const int16 _jungleList[];
 
 protected:
