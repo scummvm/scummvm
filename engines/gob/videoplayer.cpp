@@ -61,7 +61,7 @@ void VideoPlayer::Video::close() {
 }
 
 
-const char *VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
+const char *const VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
 
 VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm), _needBlit(false),
 	_noCursorSwitch(false), _woodruffCohCottWorkaround(false) {
