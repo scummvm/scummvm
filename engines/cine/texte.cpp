@@ -28,13 +28,13 @@
 
 namespace Cine {
 
-const char **failureMessages;
+const char *const *failureMessages;
 const CommandeType *defaultActionCommand;
 const CommandeType *systemMenu;
 const CommandeType *confirmMenu;
-const char **otherMessages;
+const char *const *otherMessages;
 const char *defaultCommandPreposition;
-const char **commandPrepositionTable;
+const char *const *commandPrepositionTable;
 
 /**
  * Loads font data from the given file.
@@ -152,7 +152,7 @@ static const CharacterEntry fontParamTable_alt[NUM_FONT_CHARS] = {
 };
 
 void initLanguage(Common::Language lang) {
-	static const char *failureMessages_EN[] = {
+	static const char *const failureMessages_EN[] = {
 		// EXAMINE
 		"I don't see anything unusual.",
 		"There's nothing of interest here.",
@@ -195,7 +195,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const char *commandPrepositionTable_EN[] = {
+	static const char *const commandPrepositionTable_EN[] = {
 		"",   // EXAMINE
 		"",   // TAKE
 		"",   // INVENTORY
@@ -214,7 +214,7 @@ void initLanguage(Common::Language lang) {
 		"Save game"
 	};
 
-	static const char *otherMessages_EN[] = {
+	static const char *const otherMessages_EN[] = {
 		"This backup doesn't exist ...",
 		"Could not create save file ...",
 		"PAUSE",
@@ -229,7 +229,7 @@ void initLanguage(Common::Language lang) {
 		"Absolutely Not!"
 	};
 
-	static const char *failureMessages_FR[] = {
+	static const char *const failureMessages_FR[] = {
 		// EXAMINER
 		"Je ne vois rien de special.",
 		"Il n'y a rien d'int\x82ressant.",
@@ -272,7 +272,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const char *commandPrepositionTable_FR[] = {
+	static const char *const commandPrepositionTable_FR[] = {
 		"",    // EXAMINER
 		"",    // PRENDRE
 		"",    // INVENTAIRE
@@ -296,7 +296,7 @@ void initLanguage(Common::Language lang) {
 		"Surtout Pas !"
 	};
 
-	static const char *otherMessages_FR[] = {
+	static const char *const otherMessages_FR[] = {
 		"Cette sauvegarde n'existe pas ...",
 		"Could not create save file ...", //
 		"PAUSE",
@@ -306,7 +306,7 @@ void initLanguage(Common::Language lang) {
 		"Veuillez entrer le Nom de la Sauvegarde ."
 	};
 
-	static const char *failureMessages_ES[] = {
+	static const char *const failureMessages_ES[] = {
 		// EXAMINE
 		"No veo nada especial",
 		"No hay nada interesante",
@@ -349,7 +349,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const char *commandPrepositionTable_ES[] = {
+	static const char *const commandPrepositionTable_ES[] = {
 		"",      // EXAMINAR
 		"",      // COGER
 		"",      // INVENTARIO
@@ -373,7 +373,7 @@ void initLanguage(Common::Language lang) {
 		"Nade de nada !"
 	};
 
-	static const char *otherMessages_ES[] = {
+	static const char *const otherMessages_ES[] = {
 		"Esta granacion no existe",
 		"Could not create save file ...", //
 		"PAUSE",
@@ -383,7 +383,7 @@ void initLanguage(Common::Language lang) {
 		"Teclea el nombre de la partida grabada"
 	};
 
-	static const char *failureMessages_DE[] = {
+	static const char *const failureMessages_DE[] = {
 		// EXAMINE
 		"Ich sehe nichts Besonderes",
 		"Es gibt hier nichts Interessantes",
@@ -426,7 +426,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const char *commandPrepositionTable_DE[] = {
+	static const char *const commandPrepositionTable_DE[] = {
 		"",      // Prufe
 		"",      // Nimm
 		"",      // Bestand
@@ -450,7 +450,7 @@ void initLanguage(Common::Language lang) {
 		"Absolut Nicht!"
 	};
 
-	static const char *otherMessages_DE[] = {
+	static const char *const otherMessages_DE[] = {
 		"Diese Sicherungskopie gibt es nicht",
 		"Could not create save file ...", //
 		"PAUSE",
@@ -460,7 +460,7 @@ void initLanguage(Common::Language lang) {
 		"Geben Sie den Namen|der Sicherungsdiskette ein"
 	};
 
-	static const char *failureMessages_IT[] = {
+	static const char *const failureMessages_IT[] = {
 		// EXAMINE
 		"Non vedo nula di speciale",
 		"Non c'\x8a niente di interessante",
@@ -503,7 +503,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const char *commandPrepositionTable_IT[] = {
+	static const char *const commandPrepositionTable_IT[] = {
 		"",   // ESAMINARE
 		"",   // PRENDERE
 		"",   // INVENTARIO
@@ -527,7 +527,7 @@ void initLanguage(Common::Language lang) {
 		"Supratutto non!"
 	};
 
-	static const char *otherMessages_IT[] = {
+	static const char *const otherMessages_IT[] = {
 		"Questo salvataggio non esiste...",
 		"Could not create save file ...", //
 		"PAUSE",
@@ -612,7 +612,7 @@ void loadErrmessDat(const char *fname) {
 			ptr[i] = (char *)ptr + (sizeof(char *) * 6 * 4) + 60 * i;
 			in.read(ptr[i], 60);
 		}
-		failureMessages = const_cast<const char **>(ptr);
+		failureMessages = const_cast<const char *const *>(ptr);
 
 		in.close();
 	} else {
@@ -621,7 +621,7 @@ void loadErrmessDat(const char *fname) {
 }
 
 void freeErrmessDat() {
-	free(failureMessages);
+	free(const_cast<const char **>(failureMessages));
 	failureMessages = 0;
 }
 
