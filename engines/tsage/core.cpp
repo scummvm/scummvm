@@ -2820,7 +2820,7 @@ void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
 	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
-			!BF_GLOBALS._uiElements._active)
+			!BF_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
 
