@@ -49,6 +49,7 @@ private:
 	bool Cmd_Var(int argc, const char **argv);
 	bool Cmd_ListNodes(int argc, const char **argv);
 	bool Cmd_Run(int argc, const char **argv);
+	bool Cmd_Go(int argc, const char **argv);
 };
 
 } /* namespace Myst3 */

@@ -128,7 +128,6 @@ RoomData *Database::findRoomData(const uint8 & roomID)
 		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
 			if (_ages[i].rooms[j].id == roomID) {
 				return &_ages[i].rooms[j];
-				break;
 			}
 		}
 	return 0;
@@ -145,15 +144,41 @@ Common::Array<NodePtr> Database::loadRoomScripts(RoomData *room) {
 	while (1) {
 		int16 id = file.readUint16LE();
 
-		if (id <= 0)
+		// End of list
+		if (id == 0)
 			break;
 
-		NodePtr node = NodePtr(new NodeData());
-		node->id = id;
-		node->scripts = loadCondScripts(file);
-		node->hotspots = loadHotspots(file);
+		if (id <= -10)
+			error("Unimplemented node list command");
 
-		nodes.push_back(node);
+		if (id > 0) {
+			// Normal node
+			NodePtr node = NodePtr(new NodeData());
+			node->id = id;
+			node->scripts = loadCondScripts(file);
+			node->hotspots = loadHotspots(file);
+
+			nodes.push_back(node);
+		} else {
+			// Several nodes sharing the same scripts
+			Common::Array<int16> nodeIds;
+
+			for (int i = 0; i < -id; i++) {
+				nodeIds.push_back(file.readUint16LE());
+			}
+
+			Common::Array<CondScript> scripts = loadCondScripts(file);
+			Common::Array<HotSpot> hotspots = loadHotspots(file);
+
+			for (int i = 0; i < -id; i++) {
+				NodePtr node = NodePtr(new NodeData());
+				node->id = nodeIds[i];
+				node->scripts = scripts;
+				node->hotspots = hotspots;
+
+				nodes.push_back(node);
+			}
+		}
 	}
 
 	file.close();
@@ -331,4 +356,14 @@ void Database::getRoomName(char name[8], uint8 roomID) {
 	}
 }
 
+uint8 Database::getRoomId(const char *name) {
+	for (uint i = 0; i < _ages.size(); i++)
+		for (uint j = 0; j < _ages[i].rooms.size(); j++) {
+			if (!scumm_stricmp(_ages[i].rooms[j].name, name)) {
+				return _ages[i].rooms[j].id;
+			}
+		}
+
+	return 0;
+}
 } /* namespace Myst3 */

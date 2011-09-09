@@ -97,6 +97,11 @@ public:
 	void getRoomName(char name[8], uint8 roomID = 0);
 
 	/**
+	 * Returns the id of a room from its name
+	 */
+	uint8 getRoomId(const char *name);
+
+	/**
 	 * Returns the list of the nodes of a room
 	 */
 	Common::Array<uint16> listRoomNodes(uint8 roomID = 0, uint32 ageID = 0);

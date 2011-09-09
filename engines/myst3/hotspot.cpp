@@ -43,11 +43,10 @@ bool HotSpot::isPointInRectsCube(const Common::Point &p)
 bool HotSpot::isPointInRectsFrame(const Common::Point &p)
 {
 	for(uint j = 0;j < rects.size();j++){
-		Common::Rect rect = Common::Rect(
-				rects[j].centerHeading,
-				rects[j].centerPitch,
-				rects[j].width,
+		Common::Rect rect = Common::Rect(rects[j].width,
 				rects[j].height);
+		rect.translate(rects[j].centerHeading,
+				rects[j].centerPitch);
 		if(rect.contains(p)){
 			return true;
 		}

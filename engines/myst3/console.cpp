@@ -32,6 +32,7 @@ Console::Console(Myst3Engine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("var",				WRAP_METHOD(Console, Cmd_Var));
 	DCmd_Register("listNodes",			WRAP_METHOD(Console, Cmd_ListNodes));
 	DCmd_Register("run",				WRAP_METHOD(Console, Cmd_Run));
+	DCmd_Register("go",					WRAP_METHOD(Console, Cmd_Go));
 }
 
 Console::~Console() {
@@ -79,7 +80,12 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	}
 
 	if (argc >= 3) {
-		roomId = atoi(argv[2]);
+		roomId = _vm->_db->getRoomId(argv[2]);
+
+		if (roomId == 0) {
+			DebugPrintf("Unknown room name %s\n", argv[2]);
+			return true;
+		}
 	}
 
 	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId);
@@ -87,10 +93,7 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	char roomName[8];
 	_vm->_db->getRoomName(roomName, roomId);
 
-	Common::Point lookAt = _vm->_scene->getMousePos();
-
-	DebugPrintf("node: %s%d    ", roomName, nodeId);
-	DebugPrintf("pitch: %d heading: %d",  lookAt.y, lookAt.x);
+	DebugPrintf("node: %s %d    ", roomName, nodeId);
 
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
 		DebugPrintf("\nhotspot %d > condition: %s\n",
@@ -118,15 +121,21 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 
 bool Console::Cmd_LookAt(int argc, const char **argv) {
 
-	if (argc != 3) {
+	if (argc != 1 && argc != 3) {
 		DebugPrintf("Usage :\n");
 		DebugPrintf("lookAt pitch heading\n");
 		return true;
 	}
 
-	_vm->_scene->lookAt(atof(argv[1]), atof(argv[2]));
+	Common::Point lookAt = _vm->_scene->getMousePos();
+	DebugPrintf("pitch: %d heading: %d\n",  lookAt.y, lookAt.x);
 
-	return false;
+	if (argc >= 3){
+		_vm->_scene->lookAt(atof(argv[1]), atof(argv[2]));
+		return false;
+	}
+
+	return true;
 }
 
 bool Console::Cmd_InitScript(int argc, const char **argv) {
@@ -162,7 +171,12 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 	uint16 roomID = 0;
 
 	if (argc == 2) {
-		roomID = atoi(argv[1]);
+		roomID = _vm->_db->getRoomId(argv[1]);
+
+		if (roomID == 0) {
+			DebugPrintf("Unknown room name %s\n", argv[1]);
+			return true;
+		}
 	}
 
 	DebugPrintf("Nodes:\n");
@@ -184,10 +198,36 @@ bool Console::Cmd_Run(int argc, const char **argv) {
 	}
 
 	if (argc >= 3) {
-		roomId = atoi(argv[2]);
+		roomId = _vm->_db->getRoomId(argv[2]);
+
+		if (roomId == 0) {
+			DebugPrintf("Unknown room name %s\n", argv[2]);
+			return true;
+		}
 	}
 
 	_vm->runScriptsFromNode(nodeId, roomId);
+
+	return false;
+}
+
+
+bool Console::Cmd_Go(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Usage :\n");
+		DebugPrintf("go [room name] [node id] : Go to node\n");
+		return true;
+	}
+
+	uint8 roomID = _vm->_db->getRoomId(argv[1]);
+	uint16 nodeId = atoi(argv[2]);
+
+	if (roomID == 0) {
+		DebugPrintf("Unknown room name %s\n", argv[1]);
+		return true;
+	}
+
+	_vm->goToNode(nodeId, roomID);
 
 	return false;
 }
