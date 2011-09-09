@@ -131,7 +131,6 @@ public:
 	BtFile(const char *name, Crypt *crpt);
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
-	BtKeypack *next();
 };
 
 class Dat {
