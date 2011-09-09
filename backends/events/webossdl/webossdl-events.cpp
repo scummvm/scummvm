@@ -317,11 +317,11 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		int screenX = g_system->getWidth();
 		int screenY = g_system->getHeight();
 
-		// Check for a three-finger horizontal 25% swipe right
+		// Check for a three-finger horizontal 15% swipe right
 		if (fingerDown[0] && fingerDown[1] && fingerDown[2] && 
-				dragDiffX[0] > screenX * 0.25 &&
-				dragDiffX[1] > screenX * 0.25 &&
-				dragDiffX[2] > screenX * 0.25) {
+				dragDiffX[0] > screenX * 0.15 &&
+				dragDiffX[1] > screenX * 0.15 &&
+				dragDiffX[2] > screenX * 0.15) {
 			// Virtually lift fingers so we don't get repeat triggers
 			fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
 			// Toggle Auto-drag mode
