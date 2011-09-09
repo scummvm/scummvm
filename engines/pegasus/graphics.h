@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1995-1997 Presto Studios, Inc.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -30,8 +33,54 @@
 #include "graphics/surface.h"
 
 #include "pegasus/pegasus.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
+
+class DisplayElement : public IDObject {
+friend class GraphicsManager;
+public:
+	DisplayElement(const tDisplayElementID);
+	virtual ~DisplayElement();
+	
+	void setDisplayOrder(const tDisplayOrder);
+	tDisplayOrder getDisplayOrder() const { return _elementOrder; }
+	
+	bool validToDraw(tDisplayOrder, tDisplayOrder);
+	
+	virtual void draw(const Common::Rect&) {}
+	bool isDisplaying() { return _elementIsDisplaying; }
+	virtual void startDisplaying();
+	virtual void stopDisplaying();
+	
+	virtual void show();
+	virtual void hide();
+	bool isVisible() { return _elementIsVisible; }
+	
+	// triggerRedraw only triggers a draw if the element is displaying and visible.
+	void triggerRedraw();
+	void setTriggeredElement(DisplayElement *);
+	
+	virtual void setBounds(const tCoordType, const tCoordType, const tCoordType, const tCoordType);
+	virtual void setBounds(const Common::Rect&);
+	virtual void getBounds(Common::Rect&) const;
+	virtual void sizeElement(const tCoordType, const tCoordType);
+	virtual void moveElementTo(const tCoordType, const tCoordType);
+	virtual void moveElement(const tCoordType, const tCoordType);
+	virtual void getLocation(tCoordType&, tCoordType&) const;
+	virtual void getCenter(tCoordType&, tCoordType&) const;
+	virtual void centerElementAt(const tCoordType, const tCoordType);
+
+protected:
+	Common::Rect _bounds;
+	bool _elementIsVisible;
+	DisplayElement *_triggeredElement;
+
+	// Used only by PegasusEngine
+	bool _elementIsDisplaying;
+	tDisplayOrder _elementOrder;
+	DisplayElement *_nextElement;
+};
 
 enum {
 	kImageCacheSize = 10
@@ -50,17 +99,30 @@ public:
 	GraphicsManager(PegasusEngine *vm);
 	~GraphicsManager();
 
+	// Older "temporary" API
 	void drawPict(Common::String filename, int x, int y, bool updateScreen = true);
 	void drawPictTransparent(Common::String filename, int x, int y, uint32 transparency, bool updateScreen = true);
 	uint32 getColor(byte r, byte g, byte b);
-	
+
+	// Newer "to-be-used" API
+	void addDisplayElement(DisplayElement *element);
+	void removeDisplayElement(DisplayElement *element);
+	void invalRect(const Common::Rect &rect);
+	tDisplayOrder getBackOfActiveLayer() const { return _backLayer; }
+	tDisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
 private:		
 	PegasusEngine *_vm;
-	Graphics::PictDecoder *_pictDecoder;
 
+	// Older "temporary" API
+	Graphics::PictDecoder *_pictDecoder;
 	Graphics::Surface *decodeImage(const Common::String &filename);
 	ImageCache _cache[kImageCacheSize];
 	int getImageSlot(const Common::String &filename);
+
+	// Newer "to-be-used" API
+	Common::Rect _dirtyRect;
+	tDisplayOrder _backLayer, _frontLayer;
+	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
 };
 
 } // End of namespace Pegasus
