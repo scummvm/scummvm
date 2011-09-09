@@ -2503,7 +2503,12 @@ void AltSceneObject::postInit(SceneObjectList *OwnerList) {
 }
 
 void AltSceneObject::draw() {
-	SceneObject::draw();
+	Rect destRect = _bounds;
+	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
+		-_globals->_sceneManager._scene->_sceneBounds.top);
+	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
+	GfxSurface frame = getFrame();
+	_globals->_gfxManagerInstance.copyFrom(frame, destRect, priorityRegion);
 }
 
 /*--------------------------------------------------------------------------*/

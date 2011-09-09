@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/core.h"
+#include "tsage/graphics.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -54,7 +55,8 @@ public:
 // This class implements the Question mark button
 class UIQuestion: public UIElement {
 private:
-	void showDescription(int lineNum);
+	void showDescription(CursorType item);
+	void showItem(int resNum, int rlbNum, int frameNum);
 public:
 	virtual void process(Event &event);
 	void setEnabled(bool flag);
@@ -87,6 +89,8 @@ public:
 };
 
 class UIInventoryScroll: public UIElement {
+private:
+	void toggle(bool pressed);
 public:
 	bool _isLeft;
 
@@ -126,7 +130,7 @@ public:
 	UIInventorySlot _slot1, _slot2, _slot3, _slot4;
 	UIInventoryScroll _scrollLeft, _scrollRight;
 	ASound _sound;
-	int _itemCount, _slotStart, _scoreValue;
+	int _slotStart, _scoreValue;
 	bool _active;
 	Common::Array<int> _itemList;
 	Visage _cursorVisage;
@@ -138,6 +142,7 @@ public:
 	void setup(const Common::Point &pt);
 	void updateInventory();
 	void addScore(int amount);
+	void scrollInventory(bool isLeft);
 };
 
 } // End of namespace BlueForce

@@ -63,7 +63,7 @@ void UIElement::setEnabled(bool flag) {
 
 void UIQuestion::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		int currentCursor = GLOBALS._events.getCursor();
+		CursorType currentCursor = GLOBALS._events.getCursor();
 		GLOBALS._events.hideCursor();
 		showDescription(currentCursor);
 
@@ -71,12 +71,13 @@ void UIQuestion::process(Event &event) {
 	}
 }
 
-void UIQuestion::showDescription(int lineNum) {
-	if (lineNum == 8) {
-		// Unknown object description
+void UIQuestion::showDescription(CursorType cursor) {
+	if (cursor == INV_FOREST_RAP) {
+		// Forest rap item has a graphical display
+		showItem(5, 1, 1);
 	} else {
 		// Display object description
-		SceneItem::display2(9001, lineNum);
+		SceneItem::display2(9001, (int)cursor);
 	}
 }
 
@@ -85,6 +86,29 @@ void UIQuestion::setEnabled(bool flag) {
 		UIElement::setEnabled(flag);
 		BF_GLOBALS._uiElements.draw();
 	}
+}
+
+void UIQuestion::showItem(int resNum, int rlbNum, int frameNum) {
+	GfxDialog::setPalette();
+
+	// Get the item to display
+	GfxSurface objImage = surfaceFromRes(resNum, rlbNum, frameNum);
+	Rect imgRect;
+	imgRect.resize(objImage, 0, 0, 100);
+	imgRect.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Save the area behind where the image will be displayed
+	GfxSurface *savedArea = Surface_getArea(BF_GLOBALS.gfxManager().getSurface(), imgRect);
+
+	// Draw the image
+	BF_GLOBALS.gfxManager().copyFrom(objImage, imgRect);
+
+	// Wait for a press
+	BF_GLOBALS._events.waitForPress();
+
+	// Restore the old area
+	BF_GLOBALS.gfxManager().copyFrom(*savedArea, imgRect);
+	delete savedArea;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -165,9 +189,28 @@ void UIInventoryScroll::synchronize(Serializer &s) {
 }
 
 void UIInventoryScroll::process(Event &event) {
-	if (event.eventType == EVENT_BUTTON_DOWN) {
-		warning("TODO: UIInventoryScroll::process");
+	switch (event.eventType) {
+	case EVENT_BUTTON_DOWN:
+		// Draw the button as selected
+		toggle(true);
+
 		event.handled = true;
+		break;
+	case EVENT_BUTTON_UP:
+		// Restore unselected version
+		toggle(false);
+
+		// Scroll the inventory as necessary
+		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
+		event.handled = true;
+		break;
+	}
+}
+
+void UIInventoryScroll::toggle(bool pressed) {
+	if (_enabled) {
+		setFrame(pressed ? (_frameNum + 1) : _frameNum);
+		BF_GLOBALS._uiElements.draw();
 	}
 }
 
@@ -345,7 +388,7 @@ void UIElements::updateInventory() {
 	updateInvList();	
 
 	// Enable scroll buttons if the player has more than four items
-	if (_itemCount > 4) {
+	if (_itemList.size() > 4) {
 		_scrollLeft.setEnabled(true);
 		_scrollRight.setEnabled(true);
 	} else {
@@ -354,10 +397,10 @@ void UIElements::updateInventory() {
 	}
 
 	// Handle cropping the slots start within inventory
-	int last  = (_itemList.size() - 1) / 4 + 1;
+	int lastPage  = (_itemList.size() - 1) / 4 + 1;
 	if (_slotStart < 0)
-		_slotStart = last - 1;
-	else if (_slotStart > (last - 1))
+		_slotStart = lastPage - 1;
+	else if (_slotStart > (lastPage - 1))
 		_slotStart = 0;
 
 	// Handle refreshing slot graphics
@@ -371,7 +414,7 @@ void UIElements::updateInventory() {
 
 		// Check whether the object is in any of the four inventory slots
 		for (int slotIndex = 0; slotIndex < 4; ++slotIndex) {
-			int idx = _slotStart + slotIndex;
+			int idx = _slotStart * 4 + slotIndex;
 			int objectIdx = (idx < (int)_itemList.size()) ? _itemList[idx] : 0;
 
 			if (objectIdx == objIndex) {
@@ -413,6 +456,18 @@ void UIElements::updateInvList() {
 void UIElements::addScore(int amount) {
 	_scoreValue += amount;
 	BF_GLOBALS._sound2.play(0);
+	updateInventory();
+}
+
+/*
+ * Scroll the inventory slots
+ */
+void UIElements::scrollInventory(bool isLeft) {
+	if (isLeft)
+		--_slotStart;
+	else
+		++_slotStart;
+
 	updateInventory();
 }
 
