@@ -330,21 +330,13 @@ bool BtFile::exist(const char *name) {
 	return scumm_stricmp(find(name)->_key, name) == 0;
 }
 
-
-/*-----------------------------------------------------------------------
- * Dat
- *-----------------------------------------------------------------------*/
-Dat::Dat(): _file(kDatName, XCrypt) {
-	debugC(1, kCGEDebugFile, "Dat::Dat()");
-}
-
 /*-----------------------------------------------------------------------
  * VFile
  *-----------------------------------------------------------------------*/
 VFile::VFile(const char *name) : IoBuf(NULL) {
 	debugC(3, kCGEDebugFile, "VFile::VFile(%s)", name);
 
-	if (_dat->_file._error || _cat->_error)
+	if (_dat->_error || _cat->_error)
 		error("Bad volume data");
 	BtKeypack *kp = _cat->find(name);
 	if (scumm_stricmp(kp->_key, name) != 0)
@@ -358,12 +350,12 @@ VFile::~VFile() {
 void VFile::readBuf() {
 	debugC(3, kCGEDebugFile, "VFile::readBuf()");
 
-	_dat->_file.seek(_bufMark + _lim);
-	_bufMark = _dat->_file.mark();
+	_dat->seek(_bufMark + _lim);
+	_bufMark = _dat->mark();
 	long n = _endMark - _bufMark;
 	if (n > kBufferSize)
 		n = kBufferSize;
-	_lim = _dat->_file.read(_buff, (uint16) n);
+	_lim = _dat->read(_buff, (uint16) n);
 	_ptr = 0;
 }
 

@@ -63,10 +63,10 @@ struct Header {
 
 class IoHand {
 protected:
-	Common::File *_file;
 	uint16 _seed;
 	Crypt *_crypt;
 public:
+	Common::File *_file;
 	uint16 _error;
 
 	IoHand(const char *name, Crypt crypt);
@@ -132,12 +132,6 @@ public:
 	bool exist(const char *name);
 };
 
-class Dat {
-public:
-	Dat();
-	CFile _file;
-};
-
 class VFile : public IoBuf {
 private:
 	long _begMark;
@@ -153,7 +147,7 @@ public:
 	long seek(long pos);
 };
 
-extern Dat *_dat;
+extern CFile *_dat;
 extern BtFile *_cat;
 
 } // End of namespace CGE
