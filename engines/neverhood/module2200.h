@@ -448,6 +448,18 @@ protected:
 	void drawRow(int16 rowIndex);
 };
 
+class Scene2242 : public Scene {
+public:
+	Scene2242(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene2242();
+protected:
+	Sprite *_asTape;
+	bool _isKlaymanInLight;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void sub4448D0();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2200_H */

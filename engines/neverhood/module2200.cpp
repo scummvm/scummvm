@@ -248,6 +248,9 @@ void Module2200::createScene2208(int which) {
 }
 			
 void Module2200::createScene2209(int which) {
+	_vm->gameState().sceneNum = 8;
+	_childObject = new Scene2208(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2209);
 }
 			
 void Module2200::createScene2210(int which) {
@@ -347,6 +350,9 @@ void Module2200::createScene2241(int which) {
 }
 			
 void Module2200::createScene2242(int which) {
+	_vm->gameState().sceneNum = 41;
+	_childObject = new Scene2242(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2242);
 }
 			
 void Module2200::createScene2243(int which) {
@@ -487,6 +493,14 @@ void Module2200::updateScene2208() {
 }
 			
 void Module2200::updateScene2209() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene2206(3);
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2210() {
@@ -586,6 +600,22 @@ void Module2200::updateScene2241() {
 }
 			
 void Module2200::updateScene2242() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2248(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 2) {
+			createScene2208(0);
+			_childObject->handleUpdate();
+		} else {
+			createScene2241(1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 			
 void Module2200::updateScene2243() {
@@ -2620,6 +2650,132 @@ void Scene2208::drawRow(int16 rowIndex) {
 			// TODO/CHECKME: Use temporary string up to '{' character (see above)
 			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
 		}
+	}
+}
+
+static const int16 kScene2242XPositions[] = {
+	68, 
+	158
+};
+
+static const uint32 kScene2242MessageListIds2[] = {
+	0x004B3CB8,
+	0x004B3CD8
+};
+
+static const uint32 kScene2242MessageListIds1[] = {
+	0x004B3CF8,
+	0x004B3D20
+};
+
+Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _isKlaymanInLight(false) {
+
+	Palette2 *palette2;
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2242::handleMessage);
+	SetUpdateHandler(&Scene2242::update);
+	
+	setGlobalVar(0x4D080E54,1);
+	
+	if (getGlobalVar(0x4D080E54)) {
+		_background = addBackground(new DirtyBackground(_vm, 0x11840E24, 0, 0));
+		_palette = new Palette(_vm, 0x11840E24);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x40E20110, NULL));
+		setRectList(0x004B3DC8);
+	} else {
+		_background = addBackground(new DirtyBackground(_vm, 0x25848E24, 0, 0));
+		palette2 = new Palette2(_vm, 0x25848E24);
+		_palette = palette2;
+		_palette->usePalette();
+		addEntity(palette2);
+		((Palette2*)_palette)->copyBasePalette(0, 256, 0);
+		_palette->addPalette(0x68033B1C, 0, 65, 0);
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x48E20250, NULL));
+		setRectList(0x004B3E18);
+	}
+
+	_asTape = addSprite(new AsScene1201Tape(_vm, this, 10, 1100, 464, 435, 0x9148A011));
+	_vm->_collisionMan->addSprite(_asTape); 
+
+	if (which < 0) {
+		_klayman = new KmScene2242(_vm, this, 200, 430);
+		setMessageList(0x004B3C18);
+	} else if (which == 1) {
+		_klayman = new KmScene2242(_vm, this, 530, 430);
+		setMessageList(0x004B3D60);
+	} else if (which == 2) {
+		_klayman = new KmScene2242(_vm, this, kScene2242XPositions[!getGlobalVar(0x48A68852) ? 0 : 1], 430);
+		setMessageList(0x004B3D48);
+		if (getGlobalVar(0xC0418A02))
+			_klayman->setDoDeltaX(1);
+	} else {
+		_klayman = new KmScene2242(_vm, this, 0, 430);
+		setMessageList(0x004B3C20);
+	}
+	addSprite(_klayman);
+
+	_klayman->setSoundFlag(true);
+
+}
+
+Scene2242::~Scene2242() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+void Scene2242::update() {
+	if (!getGlobalVar(0x4D080E54)) {
+		if (_isKlaymanInLight && _klayman->getX() < 440) {
+			((Palette2*)_palette)->addPalette(0x68033B1C, 0, 65, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+			_isKlaymanInLight = false;
+		} else if (!_isKlaymanInLight && _klayman->getX() >= 440) {
+			((Palette2*)_palette)->addPalette(0x25848E24, 0, 65, 0);
+			((Palette2*)_palette)->startFadeToPalette(12);
+			_isKlaymanInLight = true;
+		}
+	}
+	Scene::update();
+}
+
+uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x800C6694) {
+			sub4448D0();
+		}
+		break;
+	case 0x4826:
+		if (sender == _asTape) {
+			_klayman->sendEntityMessage(0x1014, _asTape, this);
+			setMessageList(0x004B3D50);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2242::sub4448D0() {
+	int index;
+	if (_mouseClickPos.x < 108) {
+		setGlobalVar(0xC8C28808, 0x04290188);
+		setGlobalVar(0x48A68852, 42);
+		setGlobalVar(0x4CE79018, calcHash("bgRecPanelStart1"));
+		index = 0;
+	} else {
+		setGlobalVar(0xC8C28808, 0x04290188);
+		setGlobalVar(0x48A68852, 43);
+		setGlobalVar(0x4CE79018, calcHash("bgRecPanelStart2"));
+		index = 1;
+	}
+	setGlobalVar(0x49C40058, (_mouseClickPos.x - 100) / 7);
+	if (ABS(_klayman->getX() - kScene2242XPositions[index]) < 133) {
+		setMessageList2(kScene2242MessageListIds1[index]);
+	} else {
+		setMessageList2(kScene2242MessageListIds2[index]);
 	}
 }
 
