@@ -368,6 +368,52 @@ protected:
 	Common::Point _inputLocation;
 };
 
+class InputHandler {
+public:
+	static InputHandler *setInputHandler(InputHandler*);
+	static InputHandler *getCurrentHandler() { return _inputHandler; }
+	static InputDevice *getCurrentInputDevice() { return &_inputDevice; }
+	static void pollForInput();
+	static void getInput(Input&, Hotspot*&);
+	static void readInputDevice(Input&);
+	static void invalHotspots() { _invalHotspots = true; }
+	static tInputBits getCurrentFilter() { return _lastFilter; }
+		
+	InputHandler(InputHandler*);
+	virtual ~InputHandler();
+	
+	virtual void setNextHandler(InputHandler *nextHandler) { _nextHandler = nextHandler; }
+	virtual InputHandler *getNextHandler() { return _nextHandler; }
+	
+	virtual void handleInput(const Input&, const Hotspot*);
+	virtual void clickInHotspot(const Input&, const Hotspot*);
+	
+	virtual void activateHotspots();
+	virtual void updateCursor(const Common::Point, const Hotspot*);
+	virtual bool isClickInput(const Input&, const Hotspot*);
+	virtual bool wantsCursor();
+	
+	virtual bool releaseInputFocus() { return true; }
+	virtual void grabInputFocus() {}
+	
+	//	This returns bits set for what kinds of input to accept.
+	virtual tInputBits getInputFilter();
+
+	//	This returns bits defining what input constitutes a "click."
+	virtual tInputBits getClickFilter();
+
+	virtual void allowInput(const bool allow) { _allowInput = allow; }
+
+protected:
+	static InputHandler *_inputHandler;
+	static InputDevice _inputDevice; // TODO: Remove global constructor
+	static bool _invalHotspots;
+	static tInputBits _lastFilter;
+	
+	InputHandler *_nextHandler;
+	bool _allowInput;
+};
+
 } // End of namespace Pegasus
 
 #endif

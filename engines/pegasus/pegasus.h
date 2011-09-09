@@ -33,6 +33,7 @@
 #include "engines/engine.h"
 
 #include "pegasus/graphics.h"
+#include "pegasus/input.h"
 #include "pegasus/video.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
@@ -64,9 +65,8 @@ enum GameMode {
 	kQuitMode
 };
 
-class PegasusEngine : public ::Engine {
-protected:
-	Common::Error run();
+class PegasusEngine : public ::Engine, public InputHandler {
+friend class InputHandler;
 
 public:
 	PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc);
@@ -84,6 +84,11 @@ public:
 
 	void addIdler(Idler *idler);
 	void removeIdler(Idler *idler);
+
+protected:
+	Common::Error run();
+
+	Cursor *_cursor;
 
 private:
 	// Intro
@@ -132,7 +137,6 @@ private:
 	// Idlers
 	Common::List<Idler *> _idlers;
 	void giveIdleTime();
-	Cursor *_cursor;
 
 	// Items
 	void createItems();

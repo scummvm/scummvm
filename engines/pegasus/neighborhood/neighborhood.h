@@ -84,9 +84,9 @@ bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
 typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
 
-class Neighborhood : public IDObject, public NotificationReceiver {
+class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler {
 public:
-	Neighborhood(PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
+	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();
 
 	virtual void init();

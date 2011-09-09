@@ -26,7 +26,9 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "pegasus/cursor.h"
 #include "pegasus/input.h"
+#include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
@@ -133,6 +135,136 @@ int operator==(const Input &arg1, const Input &arg2) {
 
 int operator!=(const Input &arg1, const Input &arg2) {
 	return !operator==(arg1, arg2);
+}
+
+InputHandler *InputHandler::_inputHandler = 0;
+InputDevice InputHandler::_inputDevice;
+bool InputHandler::_invalHotspots = false;
+tInputBits InputHandler::_lastFilter = kFilterNoInput;
+
+InputHandler *InputHandler::setInputHandler(InputHandler *currentHandler) {
+	InputHandler *result = 0;
+
+	if (_inputHandler != currentHandler && (!_inputHandler || _inputHandler->releaseInputFocus())) {
+		result = _inputHandler;
+		_inputHandler = currentHandler;
+		if (_inputHandler)
+			_inputHandler->grabInputFocus();
+	}
+
+	return result;
+}
+
+void InputHandler::pollForInput() {
+	if (_inputHandler) {
+		Input input;
+		Hotspot *cursorSpot;
+
+		InputHandler::getInput(input, cursorSpot);
+		if (_inputHandler->isClickInput(input, cursorSpot))
+			_inputHandler->clickInHotspot(input, cursorSpot);
+		else
+			_inputHandler->handleInput(input, cursorSpot);
+	}
+}
+
+void InputHandler::getInput(Input &input, Hotspot *&cursorSpot) {
+	Cursor *cursor = ((PegasusEngine *)g_engine)->_cursor;
+	
+	if (_inputHandler)
+		_lastFilter = _inputHandler->getInputFilter();
+	else
+		_lastFilter = kFilterAllInput;
+
+	_inputDevice.getInput(input, _lastFilter);
+
+	if (_inputHandler && _inputHandler->wantsCursor() && (_lastFilter & _inputHandler->getClickFilter()) != 0) {
+		if (cursor->isVisible()) {
+			g_allHotspots.deactivateAllHotspots();
+			_inputHandler->activateHotspots();
+
+			Common::Point cursorLocation;
+			cursor->getCursorLocation(cursorLocation);
+			cursorSpot = g_allHotspots.findHotspot(cursorLocation);
+
+			if (_inputHandler)
+				_inputHandler->updateCursor(cursorLocation, cursorSpot);
+		} else {
+			cursor->hideUntilMoved();
+		}
+	} else {
+		cursor->hide();
+	}
+}
+
+void InputHandler::readInputDevice(Input &input) {
+	_inputDevice.getInput(input, kFilterAllInput);
+}
+
+InputHandler::InputHandler(InputHandler *nextHandler) {
+	_nextHandler = nextHandler;
+	allowInput(true);
+}
+
+InputHandler::~InputHandler() {
+	if (_inputHandler == this)
+		setInputHandler(_nextHandler);
+}
+
+void InputHandler::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	if (_nextHandler)
+		_nextHandler->handleInput(input, cursorSpot);
+}
+
+void InputHandler::clickInHotspot(const Input &input, const Hotspot *cursorSpot) {
+	if (_nextHandler)
+		_nextHandler->clickInHotspot(input, cursorSpot);
+}
+
+bool InputHandler::isClickInput(const Input &input, const Hotspot *cursorSpot) {
+	if (_nextHandler)
+		return _nextHandler->isClickInput(input, cursorSpot);
+
+	return false;
+}
+
+void InputHandler::activateHotspots() {
+	if (_nextHandler)
+		_nextHandler->activateHotspots();
+}
+
+tInputBits InputHandler::getInputFilter() {
+	if (_allowInput) {
+		if (_nextHandler)
+			return _nextHandler->getInputFilter();
+		else
+			return kFilterAllInput;
+	}
+
+	return kFilterNoInput;
+}
+
+tInputBits InputHandler::getClickFilter() {
+	if (_allowInput && _nextHandler)
+		return _nextHandler->getClickFilter();
+
+	return kFilterNoInput;
+}
+
+void InputHandler::updateCursor(const Common::Point cursorLocation, const Hotspot *cursorSpot) {
+	if (_nextHandler)
+		_nextHandler->updateCursor(cursorLocation, cursorSpot);
+}
+
+bool InputHandler::wantsCursor() {
+	if (_allowInput) {
+		if (_nextHandler)
+			return _nextHandler->wantsCursor();
+		else
+			return true;
+	}
+
+	return false;
 }
 
 } // End of namespace Pegasus

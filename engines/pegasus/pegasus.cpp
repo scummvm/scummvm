@@ -48,7 +48,7 @@
 
 namespace Pegasus {
 
-PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
+PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc) {
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -279,7 +279,7 @@ void PegasusEngine::changeLocation(tNeighborhoodID neighborhood) {
 	GameState.setCurrentNeighborhood(neighborhood);
 
 	// Just a test...
-	Neighborhood *neighborhoodPtr = new Neighborhood(this, getTimeZoneDesc(neighborhood), neighborhood);
+	Neighborhood *neighborhoodPtr = new Neighborhood(this, this, getTimeZoneDesc(neighborhood), neighborhood);
 	neighborhoodPtr->init();
 	delete neighborhoodPtr;
 }
