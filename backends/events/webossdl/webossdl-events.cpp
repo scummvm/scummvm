@@ -374,7 +374,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
-	if (ev.motion.which >= 0 && ev.motion.which < 3) {
+	if (ev.motion.which >= 0 && ev.motion.which < 3 && fingerDown[ev.motion.which]) {
 		dragDiffX[ev.motion.which] += ev.motion.xrel;
 		dragDiffY[ev.motion.which] += ev.motion.yrel;
 		int screenX = g_system->getWidth();
@@ -393,11 +393,9 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 				// the mouse pointer.
 				if (!fingerDown[1] && !fingerDown[2]) {
 					if (touchpadMode) {
-						printf("Mousemove in touchpad mode. %d %d %d %d\n", curX, curY, (0 + ev.motion.xrel), (0 + ev.motion.yrel));
 						curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
 						curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
 					} else {
-						printf("Mousemove in direct mode.\n");
 						curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
 						curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
 					}
