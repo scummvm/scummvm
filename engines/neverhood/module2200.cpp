@@ -371,6 +371,19 @@ void Module2200::createScene2247(int which) {
 }
 			
 void Module2200::createScene2248(int which) {
+	_vm->gameState().sceneNum = 47;
+	if (!getGlobalVar(0x98109F12)) {
+		if (getGlobalVar(0x4D080E54))
+			_childObject = new Class152(_vm, this, 0x83110287, 0x10283839);
+		else
+			_childObject = new Class152(_vm, this, 0x83412B9D, 0x12B9983C);
+	} else {
+		if (getGlobalVar(0x4D080E54))
+			_childObject = new Class152(_vm, this, 0x48632087, 0x3208348E);
+		else
+			_childObject = new Class152(_vm, this, 0x08C74886, 0x74882084);
+	}
+	SetUpdateHandler(&Module2200::updateScene2248);
 }
 			
 void Module2200::updateScene2201() {
@@ -634,6 +647,14 @@ void Module2200::updateScene2247() {
 }
 			
 void Module2200::updateScene2248() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene2242(1);
+		_childObject->handleUpdate();
+	}
 }
 
 // Scene2201
