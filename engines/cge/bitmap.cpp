@@ -49,7 +49,7 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
-	if (VFile::exist(pat)) {
+	if (_cat->exist(pat)) {
 		VFile file(pat);
 		if ((file._error == 0) && (!loadVBM(&file)))
 			error("Bad VBM [%s]", fname);

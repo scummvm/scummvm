@@ -226,7 +226,7 @@ Sprite *Sprite::expand() {
 	Snail::Com *nea = NULL;
 	Snail::Com *tak = NULL;
 	mergeExt(fname, _file, kSprExt);
-	if (VFile::exist(fname)) { // sprite description file exist
+	if (_cat->exist(fname)) { // sprite description file exist
 		VFile sprf(fname);
 		if (!(sprf._error==0))
 			error("Bad SPR [%s]", fname);

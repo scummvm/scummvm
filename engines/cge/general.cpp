@@ -31,6 +31,15 @@
 
 namespace CGE {
 
+uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
+	byte *b = static_cast<byte *>(buf);
+
+	for (uint16 i = 0; i < siz; i++)
+		*b++ ^= seed;
+	
+	return seed;
+}
+
 char *mergeExt(char *buf, const char *name, const char *ext) {
 	strcpy(buf, name);
 	char *dot = strrchr(buf, '.');

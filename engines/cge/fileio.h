@@ -72,7 +72,6 @@ public:
 	IoHand(const char *name, Crypt crypt);
 	IoHand(Crypt *crypt);
 	virtual ~IoHand();
-	static bool exist(const char *name);
 	uint16 read(void *buf, uint16 len);
 	long mark();
 	long size();
@@ -98,7 +97,6 @@ public:
 
 class CFile : public IoBuf {
 public:
-	static uint16 _maxLineLen;
 	CFile(const char *name, Crypt *crpt);
 	virtual ~CFile();
 	long mark();
@@ -109,7 +107,7 @@ struct BtPage {
 	Header _header;
 	union {
 		// dummy filler to make proper size of union
-		uint8 _data[kBtSize - 4 /*sizeof(Hea) */];
+		uint8 _data[kBtSize - 4]; /* 4 is the size of struct Header */
 		// inner version of data: key + word-sized page link
 		Inner _inner[kBtInnerCount];
 		// leaf version of data: key + all user data
@@ -131,22 +129,17 @@ public:
 	BtFile(const char *name, Crypt *crpt);
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
+	bool exist(const char *name);
 };
 
 class Dat {
-	friend class VFile;
-	CFile _file;
 public:
 	Dat();
-	bool read(long org, uint16 len, uint8 *buf);
+	CFile _file;
 };
 
 class VFile : public IoBuf {
 private:
-	static Dat *_dat;
-	static BtFile *_cat;
-	static VFile *_recent;
-
 	long _begMark;
 	long _endMark;
 
@@ -155,14 +148,13 @@ public:
 	VFile(const char *name);
 	~VFile();
 
-	static void init();
-	static void deinit();
-	static bool exist(const char *name);
-	static const char *next();
 	long mark();
 	long size();
 	long seek(long pos);
 };
+
+extern Dat *_dat;
+extern BtFile *_cat;
 
 } // End of namespace CGE
 
