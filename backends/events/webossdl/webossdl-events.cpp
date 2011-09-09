@@ -130,6 +130,7 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 		if (queuedDragEvent) {
 			dragging = true;
 			processMouseEvent(event, curX, curY);
+			queuedDragEvent = false;
 		}
 		return true;
 	}
@@ -253,6 +254,16 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 				event.type = Common::EVENT_LBUTTONDOWN;
 				processMouseEvent(event, curX, curY);
 			}
+			// If we're not in touchpad mode, move the cursor to the tap
+			if (!touchpadMode) {
+				int screenX = g_system->getWidth();
+				int screenY = g_system->getHeight();
+				curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
+				curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
+				event.type = Common::EVENT_MOUSEMOVE;
+				processMouseEvent(event, curX, curY);
+			}
+			// Watch for a double-tap-triggered drag
 			dragStartTime = getMillis();
 		}
 		// Kill any queued drag event if a second finger goes down
@@ -369,91 +380,97 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 		int screenX = g_system->getWidth();
 		int screenY = g_system->getHeight();
 
-		// If our dragDiff goes > 5 pixels in either direction when there's a
-		// queued drag event, kill it.
-		if (queuedDragEvent && ev.motion.which == 0 &&
-				ABS(dragDiffX[0]) < 6 && ABS(dragDiffY[0]) < 6) {
-			queuedInputEvent.type = (Common::EventType)0;
-			queuedDragEvent = false;
-		}
-
-		// Check for a three-finger horizontal 15% swipe right
-		if (fingerDown[0] && fingerDown[1] && fingerDown[2] && 
-				dragDiffX[0] > screenX * 0.15 &&
-				dragDiffX[1] > screenX * 0.15 &&
-				dragDiffX[2] > screenX * 0.15) {
-			// Virtually lift fingers so we don't get repeat triggers
-			fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
-			// Toggle Auto-drag mode
-			autoDragMode = !autoDragMode;
-			string dialogMsg(_("Auto-drag mode is now "));
-			dialogMsg += (autoDragMode ? _("ON") : _("OFF"));
-			dialogMsg += ".\n";
-			dialogMsg += _("Swipe three fingers to the right to toggle.");
-			GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
-			dialog.runModal();
-			return true;
-		}
-
-		// Check for a two-finger swipe
-		if (fingerDown[0] && fingerDown[1] && !fingerDown[2]) {
-			// Check for a vertical 20% swipe
-			if (ABS(dragDiffY[0]) > screenY * 0.2 &&
-					ABS(dragDiffY[1]) > screenY * 0.2) {
-				// Virtually lift fingers so we don't get repeat triggers
-				fingerDown[0] = fingerDown[1] = false;
-				if (dragDiffY[0] < 0 && dragDiffY[1] < 0) {
-					// A swipe up triggers the keyboard, if it exists
-					int gblPDKVersion = PDL_GetPDKVersion();
-					if (gblPDKVersion >= 300)
-						PDL_SetKeyboardState(PDL_TRUE);
-				} else if (dragDiffY[0] > 0 && dragDiffY[1] > 0){
-					// A swipe down triggers the menu
-					if (g_engine && !g_engine->isPaused())
-						g_engine->openMainMenuDialog();
+		switch (ev.motion.which) {
+			case 0:
+				// If our dragDiff goes > 5 pixels in either direction when
+				// there's a queued drag event, kill it.
+				if (queuedDragEvent && ABS(dragDiffX[0]) < 6 &&
+						ABS(dragDiffY[0]) < 6) {
+					queuedInputEvent.type = (Common::EventType)0;
+					queuedDragEvent = false;
 				}
-				return true;
-			}
-			// Check for a horizontal 15% swipe
-			if (ABS(dragDiffX[0]) > screenX * 0.15 &&
-					ABS(dragDiffX[1]) > screenX * 0.15) {
-				// Virtually lift fingers so we don't get repeat triggers
-				fingerDown[0] = fingerDown[1] = false;
-				if (dragDiffX[0] < 0 && dragDiffX[1] < 0) {
-					// A swipe left presses escape
-					event.type = Common::EVENT_KEYDOWN;
-					queuedInputEvent.type = Common::EVENT_KEYUP;
-					event.kbd.flags = queuedInputEvent.kbd.flags = 0;
-					event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-					event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
-					queuedEventTime = getMillis() + queuedInputEventDelay;
-				} else if (dragDiffX[0] > 0 && dragDiffX[1] > 0) {
-					// A swipe right toggles touchpad mode
-					touchpadMode = !touchpadMode;
-					string dialogMsg(_("Touchpad mode is now "));
-					dialogMsg += (touchpadMode ? _("ON") : _("OFF"));
+				// If only one finger is on the screen and moving, that's
+				// the mouse pointer.
+				if (!fingerDown[1] && !fingerDown[2]) {
+					if (touchpadMode) {
+						printf("Mousemove in touchpad mode. %d %d %d %d\n", curX, curY, (0 + ev.motion.xrel), (0 + ev.motion.yrel));
+						curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
+						curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
+					} else {
+						printf("Mousemove in direct mode.\n");
+						curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
+						curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
+					}
+					event.type = Common::EVENT_MOUSEMOVE;
+					processMouseEvent(event, curX, curY);
+				}
+				break;
+			case 1:
+				// Check for a two-finger swipe
+				if (fingerDown[0] && !fingerDown[2]) {
+					// Check for a vertical 20% swipe
+					if (ABS(dragDiffY[0]) > screenY * 0.2 &&
+							ABS(dragDiffY[1]) > screenY * 0.2) {
+						// Virtually lift fingers so we don't get repeat triggers
+						fingerDown[0] = fingerDown[1] = false;
+						if (dragDiffY[0] < 0 && dragDiffY[1] < 0) {
+							// A swipe up triggers the keyboard, if it exists
+							int gblPDKVersion = PDL_GetPDKVersion();
+							if (gblPDKVersion >= 300)
+								PDL_SetKeyboardState(PDL_TRUE);
+						} else if (dragDiffY[0] > 0 && dragDiffY[1] > 0){
+							// A swipe down triggers the menu
+							if (g_engine && !g_engine->isPaused())
+								g_engine->openMainMenuDialog();
+						}
+						return true;
+					}
+					// Check for a horizontal 15% swipe
+					if (ABS(dragDiffX[0]) > screenX * 0.15 &&
+							ABS(dragDiffX[1]) > screenX * 0.15) {
+						// Virtually lift fingers so we don't get repeat triggers
+						fingerDown[0] = fingerDown[1] = false;
+						if (dragDiffX[0] < 0 && dragDiffX[1] < 0) {
+							// A swipe left presses escape
+							event.type = Common::EVENT_KEYDOWN;
+							queuedInputEvent.type = Common::EVENT_KEYUP;
+							event.kbd.flags = queuedInputEvent.kbd.flags = 0;
+							event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+							event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
+							queuedEventTime = getMillis() + queuedInputEventDelay;
+						} else if (dragDiffX[0] > 0 && dragDiffX[1] > 0) {
+							// A swipe right toggles touchpad mode
+							touchpadMode = !touchpadMode;
+							string dialogMsg(_("Touchpad mode is now "));
+							dialogMsg += (touchpadMode ? _("ON") : _("OFF"));
+							dialogMsg += ".\n";
+							dialogMsg += _("Swipe two fingers to the right to toggle.");
+							GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
+							dialog.runModal();
+						}
+						return true;
+					}
+				}
+				break;
+			case 2:
+				// Check for a three-finger horizontal 15% swipe right
+				if (fingerDown[0] && fingerDown[1] && 
+						dragDiffX[0] > screenX * 0.15 &&
+						dragDiffX[1] > screenX * 0.15 &&
+						dragDiffX[2] > screenX * 0.15) {
+					// Virtually lift fingers so we don't get repeat triggers
+					fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
+					// Toggle Auto-drag mode
+					autoDragMode = !autoDragMode;
+					string dialogMsg(_("Auto-drag mode is now "));
+					dialogMsg += (autoDragMode ? _("ON") : _("OFF"));
 					dialogMsg += ".\n";
-					dialogMsg += _("Swipe two fingers to the right to toggle.");
+					dialogMsg += _("Swipe three fingers to the right to toggle.");
 					GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
 					dialog.runModal();
+					return true;
 				}
-				return true;
-			}
-		}
-
-		// If only one finger is on the screen and moving, that's the mouse pointer.
-		if (ev.motion.which == 0 && fingerDown[0] &&
-				!fingerDown[1] && !fingerDown[2]) {
-			if (touchpadMode) {
-				curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
-				curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
-			} else {
-				curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
-				curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
-			}
-			event.type = Common::EVENT_MOUSEMOVE;
-			processMouseEvent(event, curX, curY);
-		}
+		}	
 	}
 	return true;
 }
