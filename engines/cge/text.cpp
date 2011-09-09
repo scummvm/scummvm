@@ -40,7 +40,7 @@ Talk *_talk = NULL;
 Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
 	_cache = new Handler[size];
 	mergeExt(_fileName, fname, kSayExt);
-	if (!VFile::exist(_fileName))
+	if (!_cat->exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 
 	for (_size = 0; _size < size; _size++) {

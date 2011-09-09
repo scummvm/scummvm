@@ -215,7 +215,7 @@ void MusicPlayer::killMidi() {
 void MusicPlayer::loadMidi(int ref) {
 	// Work out the filename and check the given MIDI file exists
 	Common::String filename = Common::String::format("%.2d.MID", ref);
-	if (!VFile::exist(filename.c_str()))
+	if (!_cat->exist(filename.c_str()))
 		return;
 
 	// Stop any currently playing MIDI file

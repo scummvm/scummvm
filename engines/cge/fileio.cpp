@@ -35,19 +35,6 @@
 
 namespace CGE {
 
-Dat *VFile::_dat = NULL;
-BtFile *VFile::_cat = NULL;
-VFile *VFile::_recent = NULL;
-
-uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
-	byte *b = static_cast<byte *>(buf);
-
-	for (uint16 i = 0; i < siz; i++)
-		*b++ ^= seed;
-	
-	return seed;
-}
-
 /*-----------------------------------------------------------------------
  * IOHand
  *-----------------------------------------------------------------------*/
@@ -89,10 +76,6 @@ long IoHand::seek(long pos) {
 
 long IoHand::size() {
 	return _file->size();
-}
-
-bool IoHand::exist(const char *name) {
-	return Common::File::exists(name);
 }
 
 /*-----------------------------------------------------------------------
@@ -215,10 +198,7 @@ int IoBuf::read() {
 /*-----------------------------------------------------------------------
  * CFile
  *-----------------------------------------------------------------------*/
-uint16 CFile::_maxLineLen = kLineMaxSize;
-
-CFile::CFile(const char *name, Crypt *crypt)
-	: IoBuf(name, crypt) {
+CFile::CFile(const char *name, Crypt *crypt) : IoBuf(name, crypt) {
 	debugC(1, kCGEDebugFile, "CFile::CFile(%s, crypt)", name);
 }
 
@@ -344,6 +324,13 @@ BtKeypack *BtFile::find(const char *key) {
 	return NULL;
 }
 
+bool BtFile::exist(const char *name) {
+	debugC(1, kCGEDebugFile, "BtFile::exist(%s)", name);
+
+	return scumm_stricmp(find(name)->_key, name) == 0;
+}
+
+
 /*-----------------------------------------------------------------------
  * Dat
  *-----------------------------------------------------------------------*/
@@ -354,19 +341,6 @@ Dat::Dat(): _file(kDatName, XCrypt) {
 /*-----------------------------------------------------------------------
  * VFile
  *-----------------------------------------------------------------------*/
-void VFile::init() {
-	debugC(1, kCGEDebugFile, "VFile::init()");
-
-	_dat = new Dat();
-	_cat = new BtFile(kCatName, XCrypt);
-	_recent = NULL;
-}
-
-void VFile::deinit() {
-	delete _dat;
-	delete _cat;
-}
-
 VFile::VFile(const char *name) : IoBuf(NULL) {
 	debugC(3, kCGEDebugFile, "VFile::VFile(%s)", name);
 
@@ -379,23 +353,12 @@ VFile::VFile(const char *name) : IoBuf(NULL) {
 }
 
 VFile::~VFile() {
-	if (_recent == this)
-		_recent = NULL;
-}
-
-bool VFile::exist(const char *name) {
-	debugC(1, kCGEDebugFile, "VFile::exist(%s)", name);
-
-	return scumm_stricmp(_cat->find(name)->_key, name) == 0;
 }
 
 void VFile::readBuf() {
 	debugC(3, kCGEDebugFile, "VFile::readBuf()");
 
-	if (_recent != this) {
-		_dat->_file.seek(_bufMark + _lim);
-		_recent = this;
-	}
+	_dat->_file.seek(_bufMark + _lim);
 	_bufMark = _dat->_file.mark();
 	long n = _endMark - _bufMark;
 	if (n > kBufferSize)
@@ -419,7 +382,6 @@ long VFile::size() {
 long VFile::seek(long pos) {
 	debugC(1, kCGEDebugFile, "VFile::seek(%ld)", pos);
 
-	_recent = NULL;
 	_lim = 0;
 	return (_bufMark = _begMark + pos);
 }

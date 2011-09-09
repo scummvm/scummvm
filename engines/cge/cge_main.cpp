@@ -72,6 +72,9 @@ Snail *_snail_;
 
 Fx *_fx;
 Sound *_sound;
+Dat *_dat;
+BtFile *_cat;
+
 // 0.75 - 17II95  - full sound support
 // 0.76 - 18II95  - small MiniEMS in DEMO,
 //		    unhide CavLight in SNLEVEL
@@ -1033,7 +1036,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 	char line[kLineMax];
 	mergeExt(line, fname, kSprExt);
 
-	if (VFile::exist(line)) {      // sprite description file exist
+	if (_cat->exist(line)) {      // sprite description file exist
 		VFile sprf(line);
 		if (sprf._error)
 			error("Bad SPR [%s]", line);
@@ -1343,7 +1346,7 @@ void CGEEngine::runGame() {
 	if (!_music)
 		_midiPlayer.killMidi();
 
-	if (VFile::exist("MINI.SPR")) {
+	if (_cat->exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
 		_miniShp[0] = _miniShp[1] = NULL;
 
@@ -1361,7 +1364,7 @@ void CGEEngine::runGame() {
 	if (_hero) {
 		expandSprite(_hero);
 		_hero->gotoxy(_heroXY[_now - 1].x, _heroXY[_now - 1].y);
-		if (VFile::exist("00SHADOW.SPR")) {
+		if (_cat->exist("00SHADOW.SPR")) {
 			loadSprite("00SHADOW", -1, 0, _hero->_x + 14, _hero->_y + 51);
 			delete _shadow;
 			if ((_shadow = _sprite) != NULL) {
@@ -1430,7 +1433,7 @@ void CGEEngine::movie(const char *ext) {
 	char fn[12];
 	sprintf(fn, "CGE.%s", (*ext == '.') ? ext +1 : ext);
 
-	if (VFile::exist(fn)) {
+	if (_cat->exist(fn)) {
 		loadScript(fn);
 		expandSprite(_vga->_spareQ->locate(999));
 		feedSnail(_vga->_showQ->locate(999), kTake);
@@ -1537,7 +1540,7 @@ void CGEEngine::cge_main() {
 	if (!_mouse->_exist)
 		error("%s", _text->getText(kTextNoMouse));
 
-	if (!kSavegame0File::exist(kSavegame0Name))
+	if (!_cat->exist(kSavegame0Name))
 		_mode = 2;
 
 	_debugLine->_flags._hide = true;

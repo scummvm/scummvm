@@ -79,12 +79,13 @@ void CGEEngine::init() {
 	_miniShp = NULL;
 	_miniShpList = NULL;
 	_sprite = NULL;
+	_dat = new Dat();
+	_cat = new BtFile(kCatName, XCrypt);
 
 	// Create debugger console
 	_console = new CGEConsole(this);
 
 	// Initialise classes that have static members
-	VFile::init();
 	Bitmap::init();
 	Talk::init();
 	Cluster::init(this);
@@ -143,7 +144,6 @@ void CGEEngine::deinit() {
 	// Call classes with static members to clear them up
 	Talk::deinit();
 	Bitmap::deinit();
-	VFile::deinit();
 	Cluster::init(this);
 
 	// Remove all of our debug levels here
@@ -172,6 +172,8 @@ void CGEEngine::deinit() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
+	delete _dat;
+	delete _cat;
 
 	if (_miniShpList) {
 		for (int i = 0; _miniShpList[i]; ++i)
