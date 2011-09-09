@@ -2677,8 +2677,6 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
 	
-	setGlobalVar(0x4D080E54,1);
-	
 	if (getGlobalVar(0x4D080E54)) {
 		_background = addBackground(new DirtyBackground(_vm, 0x11840E24, 0, 0));
 		_palette = new Palette(_vm, 0x11840E24);
