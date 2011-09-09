@@ -150,7 +150,7 @@ void SpeakerSutter::setText(const Common::String &msg) {
 	_object2.setVisage(329);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
@@ -192,7 +192,7 @@ void SpeakerHarrison::setText(const Common::String &msg) {
 	_object2.fixPriority(255);
 	_object2.setVisage(325);
 	_object2.setStrip2(6);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 277,
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 277,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
@@ -221,7 +221,7 @@ void SpeakerJakeJacket::setText(const Common::String &msg) {
 	_object2.setVisage(1001);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + _xp,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
@@ -250,7 +250,7 @@ void SpeakerJakeUniform::setText(const Common::String &msg) {
 	_object2.setVisage(1001);
 	_object2.setStrip2(1);
 	_object2.fixPriority(255);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 45,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
@@ -279,7 +279,7 @@ void SpeakerJailer::setText(const Common::String &msg) {
 	_object2.setVisage(395);
 	_object2.setStrip(5);
 	_object2.fixPriority(255);
-	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
 	VisualSpeaker::setText(msg);
