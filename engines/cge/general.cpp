@@ -54,7 +54,7 @@ void sndSetVolume() {
 	// USeless for ScummVM
 }
 
-DataCk *loadWave(XFile *file) {
+DataCk *loadWave(VFile *file) {
 	byte *data = (byte *)malloc(file->size());
 	file->read(data, file->size());
 

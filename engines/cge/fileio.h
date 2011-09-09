@@ -52,33 +52,23 @@ struct BtKeypack {
 };
 
 struct Inner {
-	uint8 _key[kBtKeySize];
+	uint8  _key[kBtKeySize];
 	uint16 _down;
 };
 
-struct Hea {
+struct Header {
 	uint16 _count;
 	uint16 _down;
 };
 
-class XFile {
-public:
-	uint16 _error;
-
-	XFile() : _error(0) { }
-	virtual ~XFile() { }
-	virtual uint16 read(void *buf, uint16 len) = 0;
-	virtual long mark() = 0;
-	virtual long size() = 0;
-	virtual long seek(long pos) = 0;
-};
-
-class IoHand : public XFile {
+class IoHand {
 protected:
 	Common::File *_file;
 	uint16 _seed;
 	Crypt *_crypt;
 public:
+	uint16 _error;
+
 	IoHand(const char *name, Crypt crypt);
 	IoHand(Crypt *crypt);
 	virtual ~IoHand();
@@ -116,14 +106,14 @@ public:
 };
 
 struct BtPage {
-	Hea _hea;
+	Header _header;
 	union {
 		// dummy filler to make proper size of union
 		uint8 _data[kBtSize - 4 /*sizeof(Hea) */];
 		// inner version of data: key + word-sized page link
-		Inner _inn[kBtInnerCount];
+		Inner _inner[kBtInnerCount];
 		// leaf version of data: key + all user data
-		BtKeypack _lea[kBtLeafCount];
+		BtKeypack _leaf[kBtLeafCount];
 	};
 
 	void read(Common::ReadStream &s);

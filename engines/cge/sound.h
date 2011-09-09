@@ -57,7 +57,7 @@ public:
 	}
 };
 
-DataCk *loadWave(XFile *file);
+DataCk *loadWave(VFile *file);
 
 class Sound {
 public:
