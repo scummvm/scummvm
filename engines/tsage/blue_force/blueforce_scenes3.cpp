@@ -871,7 +871,7 @@ void Scene315::Object2::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3156;
 		scene->setAction(&scene->_sequenceManager, scene, BF_GLOBALS.getFlag(onDuty) ? 3156 : 3168,
-			this, NULL);
+			&BF_GLOBALS._player, this, NULL);
 		break;
 	default:
 		NamedObject::startAction(action, event);
@@ -922,7 +922,7 @@ void Scene315::Action1::signal() {
 	case 3:
 		if (scene->_sceneMode == 3169) {
 			BF_GLOBALS._uiElements.addScore(30);
-			BF_INVENTORY._mugshot._sceneNumber = 1;
+			BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
 		}
 
 		remove();
@@ -990,14 +990,16 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object3.setup(315, -1, -1, -1, 1, NULL);
 	}
 
-	if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark >= bLauraToParamedics)) {
-		_object1.postInit();
-		_object1.setVisage(315);
-		_object1.setPosition(Common::Point(156, 51));
-		_object1.setStrip(4);
-		_object1.setFrame(2);
-		_object1.fixPriority(82);
-		_object1.setup(315, -1, -1, -1, 1, NULL);
+	if (BF_GLOBALS._dayNumber == 1) {
+		if (BF_GLOBALS._bookmark >= bLauraToParamedics) {
+			_object1.postInit();
+			_object1.setVisage(315);
+			_object1.setPosition(Common::Point(156, 51));
+			_object1.setStrip(4);
+			_object1.setFrame(2);
+			_object1.fixPriority(82);
+			_object1.setup(315, -1, -1, -1, 1, NULL);
+		}
 	} else if ((BF_INVENTORY._daNote._sceneNumber != 1) && (BF_GLOBALS._dayNumber < 3)) {
 		_object2.postInit();
 		_object2.setVisage(315);
@@ -1163,8 +1165,8 @@ void Scene315::signal() {
 			BF_GLOBALS._bookmark = bBookedFrankieEvidence;
 			_field139C = 0;
 			BF_GLOBALS.clearFlag(onDuty);
-			BF_INVENTORY._ticketBook._sceneNumber = 60;
-			BF_INVENTORY._mirandaCard._sceneNumber = 60;
+			BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 60);
+			BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 60);
 			_sceneMode = 3165;
 			setAction(&_sequenceManager, this, 3165, &BF_GLOBALS._player, NULL);
 		}
@@ -1225,7 +1227,7 @@ void Scene315::signal() {
 		break;
 	case 3156:
 		BF_GLOBALS._uiElements.addScore(10);
-		BF_INVENTORY._daNote._sceneNumber = 1;
+		BF_INVENTORY.setObjectScene(INV_DA_NOTE, 1);
 		_object2.remove();
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -1236,7 +1238,7 @@ void Scene315::signal() {
 	case 3158:
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._uiElements.addScore(10);
-		BF_INVENTORY._forestRap._sceneNumber = 1;
+		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 1);
 		break;
 	case 3159:
 		if (!BF_GLOBALS.getFlag(fBookedGreenEvidence)) {
