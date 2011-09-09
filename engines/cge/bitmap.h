@@ -61,7 +61,7 @@ struct HideDesc {
 #include "common/pack-end.h"
 
 class Bitmap {
-	bool loadVBM(XFile *f);
+	bool loadVBM(VFile *f);
 public:
 	static Dac *_pal;
 	uint16 _w;

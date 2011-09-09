@@ -51,12 +51,12 @@ uint16 XCrypt(void *buf, uint16 siz, uint16 seed) {
 /*-----------------------------------------------------------------------
  * IOHand
  *-----------------------------------------------------------------------*/
-IoHand::IoHand(Crypt *crypt) : XFile(), _crypt(crypt), _seed(kCryptSeed) {
+IoHand::IoHand(Crypt *crypt) : _error(0), _crypt(crypt), _seed(kCryptSeed) {
 	_file = new Common::File();
 }
 
 IoHand::IoHand(const char *name, Crypt *crypt)
-		: XFile(), _crypt(crypt), _seed(kCryptSeed) {
+		: _error(0), _crypt(crypt), _seed(kCryptSeed) {
 	_file = new Common::File();
 	_file->open(name);
 }
@@ -248,21 +248,21 @@ long CFile::seek(long pos) {
  * BtPage
  *-----------------------------------------------------------------------*/
 void BtPage::read(Common::ReadStream &s) {
-	_hea._count = s.readUint16LE();
-	_hea._down = s.readUint16LE();
+	_header._count = s.readUint16LE();
+	_header._down = s.readUint16LE();
 
-	if (_hea._down == kBtValNone) {
+	if (_header._down == kBtValNone) {
 		// Leaf list
 		for (int i = 0; i < kBtLeafCount; ++i) {
-			s.read(_lea[i]._key, kBtKeySize);
-			_lea[i]._mark = s.readUint32LE();
-			_lea[i]._size = s.readUint16LE();
+			s.read(_leaf[i]._key, kBtKeySize);
+			_leaf[i]._mark = s.readUint32LE();
+			_leaf[i]._size = s.readUint16LE();
 		}
 	} else {
 		// Root index
 		for (int i = 0; i < kBtInnerCount; ++i) {
-			s.read(_inn[i]._key, kBtKeySize);
-			_inn[i]._down = s.readUint16LE();
+			s.read(_inner[i]._key, kBtKeySize);
+			_inner[i]._down = s.readUint16LE();
 		}
 	}
 }
@@ -321,24 +321,24 @@ BtKeypack *BtFile::find(const char *key) {
 	while (!_error) {
 		BtPage *pg = getPage(lev, nxt);
 		// search
-		if (pg->_hea._down != kBtValNone) {
+		if (pg->_header._down != kBtValNone) {
 			int i;
-			for (i = 0; i < pg->_hea._count; i++) {
+			for (i = 0; i < pg->_header._count; i++) {
 				// Does this work, or does it have to compare the entire buffer?
-				if (scumm_strnicmp((const char *)key, (const char*)pg->_inn[i]._key, kBtKeySize) < 0)
+				if (scumm_strnicmp((const char *)key, (const char*)pg->_inner[i]._key, kBtKeySize) < 0)
 					break;
 			}
-			nxt = (i) ? pg->_inn[i - 1]._down : pg->_hea._down;
+			nxt = (i) ? pg->_inner[i - 1]._down : pg->_header._down;
 			_buff[lev]._indx = i - 1;
 			lev++;
 		} else {
 			int i;
-			for (i = 0; i < pg->_hea._count - 1; i++) {
-				if (scumm_stricmp((const char *)key, (const char *)pg->_lea[i]._key) <= 0)
+			for (i = 0; i < pg->_header._count - 1; i++) {
+				if (scumm_stricmp((const char *)key, (const char *)pg->_leaf[i]._key) <= 0)
 					break;
 			}
 			_buff[lev]._indx = i;
-			return &pg->_lea[i];
+			return &pg->_leaf[i];
 		}
 	}
 	return NULL;

@@ -341,7 +341,7 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	}
 }
 
-bool Bitmap::loadVBM(XFile *f) {
+bool Bitmap::loadVBM(VFile *f) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::loadVBM(f)");
 
 	uint16 p = 0, n = 0;
