@@ -3,6 +3,7 @@ MODULE := engines/pegasus
 MODULE_OBJS = \
 	console.o \
 	credits.o \
+	cursor.o \
 	detection.o \
 	gamestate.o \
 	graphics.o \

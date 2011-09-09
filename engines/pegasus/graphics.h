@@ -34,20 +34,6 @@
 namespace Pegasus {
 
 enum {
-	// The main cursors
-	kMainCursor = 128,
-	kZoomInCursor = 129,
-	kZoomOutCursor = 130,
-	kPointingCursor = 131,
-	kInteractHand = 132,
-	kGrabbingHand = 133,
-	
-	// Reticles when using the Mars shuttle
-	kTargetingReticle1 = 900,
-	kTargetingReticle2 = 901
-}; 
-
-enum {
 	kImageCacheSize = 10
 };
 
@@ -66,7 +52,6 @@ public:
 
 	void drawPict(Common::String filename, int x, int y, bool updateScreen = true);
 	void drawPictTransparent(Common::String filename, int x, int y, uint32 transparency, bool updateScreen = true);
-	void setCursor(uint16 cursor);
 	uint32 getColor(byte r, byte g, byte b);
 	
 private:		

@@ -48,6 +48,7 @@ class SoundManager;
 class VideoManager;
 class GraphicsManager;
 class Idler;
+class Cursor;
 
 static const int kViewScreenOffset = 64;
 
@@ -131,6 +132,7 @@ private:
 	// Idlers
 	Common::List<Idler *> _idlers;
 	void giveIdleTime();
+	Cursor *_cursor;
 
 	// Items
 	void createItems();

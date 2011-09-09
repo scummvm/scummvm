@@ -25,13 +25,14 @@
 #include "graphics/cursorman.h"
 #include "video/qt_decoder.h"
 
+#include "pegasus/cursor.h"
 #include "pegasus/pegasus.h"
 
 namespace Pegasus {
 
 void PegasusEngine::runInterfaceOverview() {
-	CursorMan.showMouse(true);
-	_gfx->setCursor(kPointingCursor);
+	_cursor->setCurrentFrameIndex(3);
+	_cursor->show();
 
 	Video::QuickTimeDecoder *overviewVideo = new Video::QuickTimeDecoder();
 	if (!overviewVideo->loadFile("Images/Interface/Overview Mac.movie"))
@@ -103,7 +104,7 @@ void PegasusEngine::runInterfaceOverview() {
 		_system->delayMillis(10);
 	}
 
-	CursorMan.showMouse(false);
+	_cursor->hide();
 	delete overviewVideo;
 }
 

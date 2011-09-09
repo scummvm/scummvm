@@ -26,7 +26,6 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/cursorman.h"
 
 namespace Pegasus {
 	
@@ -133,83 +132,6 @@ void GraphicsManager::drawPictTransparent(Common::String filename, int x, int y,
 
 uint32 GraphicsManager::getColor(byte r, byte g, byte b) {
 	return _vm->_system->getScreenFormat().RGBToColor(r, g, b);
-}
-
-void GraphicsManager::setCursor(uint16 cursor) {
-	Common::SeekableReadStream *cicnStream = _vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursor);
-	
-	// PixMap section
-	Graphics::PictDecoder::PixMap pixMap = _pictDecoder->readPixMap(cicnStream);
-	
-	// Mask section
-	cicnStream->readUint32BE(); // mask baseAddr
-	uint16 maskRowBytes = cicnStream->readUint16BE(); // mask rowBytes
-	cicnStream->skip(3 * 2); // mask rect
-	/* uint16 maskHeight = */ cicnStream->readUint16BE();
-
-	// Bitmap section
-	cicnStream->readUint32BE(); // baseAddr
-	uint16 rowBytes = cicnStream->readUint16BE();
-	cicnStream->readUint16BE(); // top
-	cicnStream->readUint16BE(); // left
-	uint16 height = cicnStream->readUint16BE(); // bottom
-	cicnStream->readUint16BE(); // right
-	
-	// Data section
-	cicnStream->readUint32BE(); // icon handle
-	cicnStream->skip(maskRowBytes * height); // FIXME: maskHeight doesn't work here, though the specs say it should
-	cicnStream->skip(rowBytes * height);
-	
-	// Palette section
-	cicnStream->readUint32BE(); // always 0
-	cicnStream->readUint16BE(); // always 0
-	uint16 colorCount = cicnStream->readUint16BE() + 1;
-	
-	byte *colors = new byte[256 * 3];;
-	for (uint16 i = 0; i < colorCount; i++) {
-		cicnStream->readUint16BE();
-		colors[i * 3] = cicnStream->readUint16BE() >> 8;
-		colors[i * 3 + 1] = cicnStream->readUint16BE() >> 8;
-		colors[i * 3 + 2] = cicnStream->readUint16BE() >> 8;
-	}
-	
-	// PixMap data
-	byte *data = new byte[pixMap.rowBytes * pixMap.bounds.height()];
-	cicnStream->read(data, pixMap.rowBytes * pixMap.bounds.height());
-	delete cicnStream;
-	
-	// Now to go get the hotspots
-	Common::SeekableReadStream *cursStream = NULL;
-	
-	if (cursor >= kMainCursor && cursor <= kGrabbingHand)
-		cursStream = _vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), kMainCursor);
-	else // if (cursor == kTargetingReticle1 || cursor == kTargetingReticle2)
-		cursStream = _vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), kTargetingReticle1);
-
-	// Go through the stream until we find the right cursor hotspot
-	uint16 x = 0, y = 0;
-	uint16 numHotspots = cursStream->readUint16BE();
-	
-	for (uint16 i = 0; i < numHotspots; i++) {
-		uint16 res = cursStream->readUint16BE();
-		uint16 tempX = cursStream->readUint16BE();
-		uint16 tempY = cursStream->readUint16BE();
-		
-		if (res == cursor) {
-			x = tempX;
-			y = tempY;
-			break;
-		}
-	}
-	
-	// We have the bitmap and the hotspot, let's do this!
-	CursorMan.replaceCursorPalette(colors, 0, colorCount);
-	CursorMan.replaceCursor(data, pixMap.rowBytes, pixMap.bounds.height(), x, y, 0);
-	CursorMan.showMouse(true);
-	_vm->_system->updateScreen();
-
-	delete[] colors;
-	delete[] data;
 }
 
 int GraphicsManager::getImageSlot(const Common::String &filename) {

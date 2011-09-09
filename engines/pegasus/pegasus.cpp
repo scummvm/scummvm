@@ -32,6 +32,7 @@
 #include "gui/saveload.h"
 
 #include "pegasus/console.h"
+#include "pegasus/cursor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
@@ -42,7 +43,7 @@
 //#define RUN_INTERFACE_TEST
 
 #ifdef RUN_INTERFACE_TEST
-#include "pegasus/MMShell/Sounds/MMSound.h"
+#include "pegasus/sound.h"
 #endif
 
 namespace Pegasus {
@@ -57,6 +58,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _inventoryLid;
 	delete _biochipLid;
 	delete _console;
+	delete _cursor;
 }
 
 Common::Error PegasusEngine::run() {
@@ -66,6 +68,7 @@ Common::Error PegasusEngine::run() {
 	_resFork = new Common::MacResManager();
 	_inventoryLid = new Common::MacResManager();
 	_biochipLid = new Common::MacResManager();
+	_cursor = new Cursor();
 	_gameMode = kIntroMode;
 	_adventureMode = true;
 	
@@ -78,7 +81,12 @@ Common::Error PegasusEngine::run() {
 	if (!_biochipLid->open("Images/Lids/Biochip Lid Sequence") || !_biochipLid->hasResFork())
 		error("Could not open Biochip Lid Sequence");
 
+	// Initialize items
 	createItems();
+
+	// Initialize cursors
+	_cursor->addCursorFrames(0x80); // Main
+	_cursor->addCursorFrames(900);  // Mars Shuttle
 
 	if (!isDemo() && !detectOpeningClosingDirectory()) {
 		Common::String message = "Missing intro directory. ";
@@ -116,11 +124,12 @@ Common::Error PegasusEngine::run() {
 #if defined(RUN_SUB_MOVIE)
 	_video->playMovie("Images/Norad Alpha/Sub Chase Movie");
 #elif defined(RUN_INTERFACE_TEST)
+	_cursor->setCurrentFrameIndex(0);
+	_cursor->show();
 	drawInterface();
-	_gfx->setCursor(kMainCursor);
-	MMSound sound;
-	sound.InitFromAIFFFile("Sounds/Caldoria/Apartment Music.aiff");
-	sound.LoopSound();
+	Sound sound;
+	sound.initFromAIFFFile("Sounds/Caldoria/Apartment Music.aiff");
+	sound.loopSound();
 
 	while (!shouldQuit()) {
 		Common::Event event;
