@@ -435,6 +435,7 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 						} else if (dragDiffX[0] > 0 && dragDiffX[1] > 0) {
 							// A swipe right toggles touchpad mode
 							touchpadMode = !touchpadMode;
+							g_system->showMouse(touchpadMode);
 							string dialogMsg(_("Touchpad mode is now "));
 							dialogMsg += (touchpadMode ? _("ON") : _("OFF"));
 							dialogMsg += ".\n";
