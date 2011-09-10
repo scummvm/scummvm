@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -22,27 +22,35 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_MATRIX4_H
-#define GRAPHICS_MATRIX4_H
+#ifndef MATH_LINE3D_H
+#define MATH_LINE3D_H
 
-#include "graphics/matrix3.h"
+#include "common/scummsys.h"
+#include "common/endian.h"
 
-namespace Graphics {
+#include "math/vector3d.h"
 
-// matrix 4 is a rotation matrix + position
-class Matrix4 : public Matrix<4, 4>, public Rotation3D<Matrix4> {
+namespace Math {
+
+class Line3d {
 public:
-	Matrix4();
+	Line3d();
+	Line3d(const Vector3d &begin, const Vector3d &end);
+	Line3d(const Line3d &other);
 
-	void transform(Vector3d *v, bool translate) const;
+	Math::Vector3d begin() const;
+	Math::Vector3d end() const;
+	Math::Vector3d middle() const;
 
-	Vector3d getPosition() const;
-	void setPosition(const Vector3d &v);
+	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos);
 
-	void translate(const Vector3d &v);
+	void operator=(const Line3d &other);
+
+private:
+	Math::Vector3d _begin, _end;
 
 };
 
-} // end of namespace Graphics
+} // end of namespace Math
 
 #endif

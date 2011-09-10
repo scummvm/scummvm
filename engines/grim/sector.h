@@ -26,8 +26,8 @@
 #include "common/str.h"
 #include "common/list.h"
 
-#include "graphics/vector3d.h"
-#include "graphics/line3d.h"
+#include "math/vector3d.h"
+#include "math/line3d.h"
 
 namespace Common {
 	class MemoryReadStream;
@@ -66,26 +66,26 @@ public:
 	int getSectorId() const { return _id; }
 	SectorType getType() const { return _type; } // FIXME: Implement type de-masking
 	bool isVisible() const { return _visible && !_invalid; }
-	bool isPointInSector(const Graphics::Vector3d &point) const;
-	Common::List<Graphics::Line3d> getBridgesTo(Sector *sector) const;
+	bool isPointInSector(const Math::Vector3d &point) const;
+	Common::List<Math::Line3d> getBridgesTo(Sector *sector) const;
 
-	Graphics::Vector3d getProjectionToPlane(const Graphics::Vector3d &point) const;
-	Graphics::Vector3d getProjectionToPuckVector(const Graphics::Vector3d &v) const;
+	Math::Vector3d getProjectionToPlane(const Math::Vector3d &point) const;
+	Math::Vector3d getProjectionToPuckVector(const Math::Vector3d &v) const;
 
-	Graphics::Vector3d getClosestPoint(const Graphics::Vector3d &point) const;
+	Math::Vector3d getClosestPoint(const Math::Vector3d &point) const;
 
 	// Interface to trace a ray to its exit from the polygon
 	struct ExitInfo {
-		Graphics::Vector3d exitPoint;
+		Math::Vector3d exitPoint;
 		float angleWithEdge;
-		Graphics::Vector3d edgeDir;
+		Math::Vector3d edgeDir;
 		int edgeVertex;
 	};
-	void getExitInfo(const Graphics::Vector3d &start, const Graphics::Vector3d &dir, struct ExitInfo *result) const;
+	void getExitInfo(const Math::Vector3d &start, const Math::Vector3d &dir, struct ExitInfo *result) const;
 
 	int getNumVertices() { return _numVertices; }
-	Graphics::Vector3d *getVertices() { return _vertices; }
-	Graphics::Vector3d getNormal() { return _normal; }
+	Math::Vector3d *getVertices() { return _vertices; }
+	Math::Vector3d getNormal() { return _normal; }
 
 	Sector &operator=(const Sector &other);
 	bool operator==(const Sector &other) const;
@@ -97,12 +97,12 @@ private:
 	SectorType _type;
 	bool _visible;
 	bool _invalid;
-	Graphics::Vector3d *_vertices;
-	Graphics::Vector3d *_origVertices;
+	Math::Vector3d *_vertices;
+	Math::Vector3d *_origVertices;
 	float _height;
 	float _shrinkRadius;
 
-	Graphics::Vector3d _normal;
+	Math::Vector3d _normal;
 };
 
 } // end of namespace Grim

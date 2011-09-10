@@ -22,9 +22,9 @@
  * $Id$
  */
 
-#include "graphics/line3d.h"
+#include "math/line3d.h"
 
-namespace Graphics {
+namespace Math {
 
 Line3d::Line3d() {
 
@@ -39,19 +39,19 @@ Line3d::Line3d(const Line3d &other) {
 	*this = other;
 }
 
-Graphics::Vector3d Line3d::begin() const {
+Math::Vector3d Line3d::begin() const {
 	return _begin;
 }
 
-Graphics::Vector3d Line3d::end() const {
+Math::Vector3d Line3d::end() const {
 	return _end;
 }
 
-Graphics::Vector3d Line3d::middle() const {
+Math::Vector3d Line3d::middle() const {
 	return (_begin + _end) / 2.f;
 }
 
-bool Line3d::intersectLine2d(const Line3d &other, Graphics::Vector3d *pos) {
+bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos) {
 
 	float denom = ((other._end.y() - other._begin.y()) * (_end.x() - _begin.x())) -
 	((other._end.x() - other._begin.x()) * (_end.y() - _begin.y()));

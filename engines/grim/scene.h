@@ -61,8 +61,8 @@ public:
 
 	void setupLights();
 
-	void setSoundPosition(const char *soundName, Graphics::Vector3d pos);
-	void setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol);
+	void setSoundPosition(const char *soundName, Math::Vector3d pos);
+	void setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
@@ -75,8 +75,8 @@ public:
 	void setLightsDirty();
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
-	void setLightPosition(const char *light, const Graphics::Vector3d &pos);
-	void setLightPosition(int light, const Graphics::Vector3d &pos);
+	void setLightPosition(const char *light, const Math::Vector3d &pos);
+	void setLightPosition(int light, const Math::Vector3d &pos);
 	void setLightEnabled(const char *light, bool enabled);
 	void setLightEnabled(int light, bool enabled);
 
@@ -88,8 +88,8 @@ public:
 
 	Sector *getSectorBase(int id);
 
-	Sector *findPointSector(const Graphics::Vector3d &p, Sector::SectorType type);
-	void findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphics::Vector3d *closestPt);
+	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
+	void findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPt);
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
 
@@ -109,7 +109,7 @@ public:
 		void setupCamera() const;
 		Common::String _name;
 		Bitmap *_bkgndBm, *_bkgndZBm;
-		Graphics::Vector3d _pos, _interest;
+		Math::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
 
@@ -149,7 +149,7 @@ public:
 	void loadBinary(Common::MemoryReadStream *ms);
 	Common::String _name;
 	Common::String _type;
-	Graphics::Vector3d _pos, _dir;
+	Math::Vector3d _pos, _dir;
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle;
 	bool _enabled;

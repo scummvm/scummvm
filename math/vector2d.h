@@ -22,12 +22,12 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_VECTOR2D_H
-#define GRAPHICS_VECTOR2D_H
+#ifndef MATH_VECTOR2D_H
+#define MATH_VECTOR2D_H
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
-namespace Graphics {
+namespace Math {
 
 class Vector2d {
 public:
@@ -88,6 +88,6 @@ namespace Common {
 class Debug;
 }
 
-Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector2d &v);
+Common::Debug &operator<<(Common::Debug dbg, const Math::Vector2d &v);
 
 #endif

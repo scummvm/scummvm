@@ -23,7 +23,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 #include "engines/grim/savegame.h"
 #include "engines/grim/color.h"
@@ -286,7 +286,7 @@ void SaveGame::writeByte(byte data) {
 	_sectionSize++;
 }
 
-void SaveGame::writeVector3d(const Graphics::Vector3d &vec) {
+void SaveGame::writeVector3d(const Math::Vector3d &vec) {
 	writeFloat(vec.x());
 	writeFloat(vec.y());
 	writeFloat(vec.z());
@@ -310,11 +310,11 @@ void SaveGame::writeString(const Common::String &string) {
 	write(string.c_str(), len);
 }
 
-Graphics::Vector3d SaveGame::readVector3d() {
+Math::Vector3d SaveGame::readVector3d() {
 	float x = readFloat();
 	float y = readFloat();
 	float z = readFloat();
-	return Graphics::Vector3d(x, y, z);
+	return Math::Vector3d(x, y, z);
 }
 
 Grim::Color SaveGame::readColor() {

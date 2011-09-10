@@ -337,8 +337,8 @@ void L1_GetAngleBetweenVectors() {
 	table = lua_gettable();
 	float z2 = lua_getnumber(table);
 
-	Graphics::Vector3d vec1(x1, y1, z1);
-	Graphics::Vector3d vec2(x2, y2, z2);
+	Math::Vector3d vec1(x1, y1, z1);
+	Math::Vector3d vec2(x2, y2, z2);
 	vec1.normalize();
 	vec2.normalize();
 
@@ -412,7 +412,7 @@ void L1_RotateVector() {
 	lua_Object vecObj = lua_getparam(1);
 	lua_Object rotObj = lua_getparam(2);
 	lua_Object resObj;
-	Graphics::Vector3d vec, rot, resVec;
+	Math::Vector3d vec, rot, resVec;
 	float x, y, z;
 
 	if (!lua_istable(vecObj) || !lua_istable(rotObj)) {
@@ -442,7 +442,7 @@ void L1_RotateVector() {
 	z = lua_getnumber(lua_gettable());
 	rot.set(x, y, z);
 
-	Graphics::Matrix3 mat;
+	Math::Matrix3 mat;
 	mat.buildFromPitchYawRoll(x, y, z);
 	mat.transform(&vec);
 
@@ -487,7 +487,7 @@ void L1_GetPointSector() {
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
 
-	Graphics::Vector3d point(x, y, z);
+	Math::Vector3d point(x, y, z);
 	Sector *result = g_grim->getCurrScene()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
@@ -509,7 +509,7 @@ void L1_GetActorSector() {
 
 	Actor *actor = getactor(actorObj);
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
-	Graphics::Vector3d pos = actor->getPos();
+	Math::Vector3d pos = actor->getPos();
 	Sector *result = g_grim->getCurrScene()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
@@ -563,7 +563,7 @@ void L1_IsPointInSector() {
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
-	Graphics::Vector3d pos(x, y, z);
+	Math::Vector3d pos(x, y, z);
 
 	int numSectors = g_grim->getCurrScene()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
@@ -601,7 +601,7 @@ void L1_GetSectorOppositeEdge() {
 		if (strmatch(sector->getName(), name)) {
 			if (sector->getNumVertices() != 4)
 				warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
-			Graphics::Vector3d* vertices = sector->getVertices();
+			Math::Vector3d* vertices = sector->getVertices();
 			Sector::ExitInfo e;
 
 			sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
@@ -609,8 +609,8 @@ void L1_GetSectorOppositeEdge() {
 			e.edgeVertex -= 2;
 			if (e.edgeVertex < 0)
 				e.edgeVertex += sector->getNumVertices();
-			Graphics::Vector3d edge = vertices[e.edgeVertex + 1] - vertices[e.edgeVertex];
-			Graphics::Vector3d p = vertices[e.edgeVertex] + edge * frac;
+			Math::Vector3d edge = vertices[e.edgeVertex + 1] - vertices[e.edgeVertex];
+			Math::Vector3d p = vertices[e.edgeVertex] + edge * frac;
 			lua_pushnumber(p.x());
 			lua_pushnumber(p.y());
 			lua_pushnumber(p.z());
@@ -761,7 +761,7 @@ void L1_GetShrinkPos() {
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
 	float r = lua_getnumber(rObj);
-	Graphics::Vector3d pos;
+	Math::Vector3d pos;
 	pos.set(x, y, z);
 
 	Sector* sector;
@@ -1143,7 +1143,7 @@ void L1_SetLightPosition() {
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
-	Graphics::Vector3d vec(x, y, z);
+	Math::Vector3d vec(x, y, z);
 
 	if (lua_isnumber(lightObj)) {
 		int light = (int)lua_getnumber(lightObj);

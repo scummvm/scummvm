@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_TRANSFORM_H
-#define GRAPHICS_TRANSFORM_H
+#ifndef MATH_TRANSFORM_H
+#define MATH_TRANSFORM_H
 
-namespace Graphics {
+namespace Math {
 
 template<class T>
 class Transform {

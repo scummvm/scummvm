@@ -22,14 +22,14 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_MATRIX3_H
-#define GRAPHICS_MATRIX3_H
+#ifndef MATH_MATRIX3_H
+#define MATH_MATRIX3_H
 
-#include "graphics/matrix.h"
-#include "graphics/transform.h"
-#include "graphics/vector3d.h"
+#include "math/matrix.h"
+#include "math/transform.h"
+#include "math/vector3d.h"
 
-namespace Graphics {
+namespace Math {
 
 template<class T>
 class Rotation3D : public Transform<T> {
@@ -167,7 +167,7 @@ float Rotation3D<T>::getRoll() const {
 }
 
 
-} // end of namespace Graphics
+} // end of namespace Math
 
 #endif
 

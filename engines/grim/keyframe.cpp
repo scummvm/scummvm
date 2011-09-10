@@ -191,11 +191,11 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);
-	_pos = Graphics::get_vector3d(data + 8);
+	_pos = Math::get_vector3d(data + 8);
 	_pitch = get_float(data + 20);
 	_yaw = get_float(data + 24);
 	_roll = get_float(data + 28);
-	_dpos = Graphics::get_vector3d(data + 32);
+	_dpos = Math::get_vector3d(data + 32);
 	_dpitch = get_float(data + 44);
 	_dyaw = get_float(data + 48);
 	_droll = get_float(data + 52);
@@ -228,8 +228,8 @@ void KeyframeAnim::KeyframeNode::loadText(TextSplitter &ts) {
 		ts.scanString(" %f %f %f %f %f %f", 6, &dx, &dy, &dz, &dp, &dyaw, &dr);
 		_entries[which]._frame = frame;
 		_entries[which]._flags = (int)flags;
-		_entries[which]._pos = Graphics::Vector3d(x, y, z);
-		_entries[which]._dpos = Graphics::Vector3d(dx, dy, dz);
+		_entries[which]._pos = Math::Vector3d(x, y, z);
+		_entries[which]._dpos = Math::Vector3d(dx, dy, dz);
 		_entries[which]._pitch = p;
 		_entries[which]._yaw = yaw;
 		_entries[which]._roll = r;
@@ -259,7 +259,7 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 	}
 
 	float dt = frame - _entries[low]._frame;
-	Graphics::Vector3d pos = _entries[low]._pos;
+	Math::Vector3d pos = _entries[low]._pos;
 	float pitch = _entries[low]._pitch;
 	float yaw = _entries[low]._yaw;
 	float roll = _entries[low]._roll;

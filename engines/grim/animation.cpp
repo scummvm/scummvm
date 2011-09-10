@@ -241,7 +241,7 @@ void AnimManager::removeAnimation(Animation *anim) {
 void AnimManager::animate(ModelNode *hier, int numNodes) {
 	// Apply animation to each hierarchy node separately.
 	for (int i = 0; i < numNodes; i++) {
-		Graphics::Vector3d tempPos;
+		Math::Vector3d tempPos;
 		float tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
 		float totalWeight = 0.0f;
 		float remainingWeight = 1.0f;

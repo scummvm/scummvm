@@ -22,35 +22,57 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_LINE3D_H
-#define GRAPHICS_LINE3D_H
+#ifndef MATH_LINE2D_H
+#define MATH_LINE2D_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
+#include "math/vector2d.h"
 
-#include "graphics/vector3d.h"
+namespace Math {
 
-namespace Graphics {
-
-class Line3d {
+class Line2d {
 public:
-	Line3d();
-	Line3d(const Vector3d &begin, const Vector3d &end);
-	Line3d(const Line3d &other);
+	Line2d();
+	Line2d(const Vector2d &direction, const Vector2d &point);
 
-	Graphics::Vector3d begin() const;
-	Graphics::Vector3d end() const;
-	Graphics::Vector3d middle() const;
+	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
+	Vector2d getDirection() const;
 
-	bool intersectLine2d(const Line3d &other, Graphics::Vector3d *pos);
+	bool intersectsLine(const Line2d &line, Vector2d *pos) const;
+	bool containsPoint(const Vector2d &point) const;
 
-	void operator=(const Line3d &other);
+	float getYatX(float x) const;
 
 private:
-	Graphics::Vector3d _begin, _end;
+	float _a, _b, _c;
 
 };
 
-} // end of namespace Graphics
+class Segment2d {
+public:
+	Segment2d();
+	Segment2d(const Vector2d &begin, const Vector2d &end);
+	Segment2d(const Segment2d &other);
+
+	Vector2d begin() const;
+	Vector2d end() const;
+	Vector2d middle() const;
+	Line2d getLine() const;
+	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
+
+	bool containsPoint(const Vector2d &point) const;
+
+	bool intersectsLine(const Line2d &line, Vector2d *pos);
+	bool intersectsSegment(const Segment2d &line, Vector2d *pos);
+
+	void operator=(const Segment2d &other);
+
+private:
+	Math::Vector2d _begin, _end;
+
+};
+
+}
 
 #endif
+
+

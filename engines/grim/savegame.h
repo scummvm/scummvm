@@ -25,7 +25,7 @@
 
 #include "common/savefile.h"
 
-namespace Graphics {
+namespace Math {
     class Vector3d;
 }
 
@@ -59,10 +59,10 @@ public:
 	void writeByte(byte data);
 	void writeString(const Common::String &string);
 
-	void writeVector3d(const Graphics::Vector3d &vec);
+	void writeVector3d(const Math::Vector3d &vec);
 	void writeColor(const Grim::Color &color);
 	void writeFloat(float data);
-	Graphics::Vector3d readVector3d();
+	Math::Vector3d readVector3d();
 	Grim::Color readColor();
 	float readFloat();
 	Common::String readString();

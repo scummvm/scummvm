@@ -22,13 +22,13 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_VECTOR3D_H
-#define GRAPHICS_VECTOR3D_H
+#ifndef MATH_VECTOR3D_H
+#define MATH_VECTOR3D_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"
 
-namespace Graphics {
+namespace Math {
 
 class Vector3d {
 public:
@@ -183,12 +183,12 @@ inline Vector3d get_vector3d(const char *data) {
 	return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
 }
 
-} // end of namespace Graphics
+} // end of namespace Math
 
 namespace Common {
 class Debug;
 }
 
-Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector3d &v);
+Common::Debug &operator<<(Common::Debug dbg, const Math::Vector3d &v);
 
 #endif

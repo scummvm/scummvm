@@ -25,7 +25,7 @@
 
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 namespace Grim {
 
@@ -46,7 +46,7 @@ typedef Common::List<Plane> SectorListType;
 
 struct Shadow {
 	Common::String name;
-	Graphics::Vector3d pos;
+	Math::Vector3d pos;
 	SectorListType planeList;
 	byte *shadowMask;
 	int shadowMaskSize;
@@ -121,13 +121,13 @@ public:
 	 * @param position The position.
 	 * @see getPos
 	 */
-	void setPos(Graphics::Vector3d position);
+	void setPos(Math::Vector3d position);
 	/**
 	 * Returns the position of the actor on the 3D scene.
 	 *
 	 * @see setPos
 	 */
-	Graphics::Vector3d getPos() const { return _pos; }
+	Math::Vector3d getPos() const { return _pos; }
 
 	/**
 	 * Tells the actor to go to the wanted position.
@@ -138,7 +138,7 @@ public:
 	 * @see stopWalking
 	 * @see isWalking
 	 */
-	void walkTo(const Graphics::Vector3d &position);
+	void walkTo(const Math::Vector3d &position);
 	/**
 	 * Stops immediately the actor's walk.
 	 *
@@ -251,7 +251,7 @@ public:
 	 *
 	 * @param actor The point to look at.
 	 */
-	float getYawTo(Graphics::Vector3d p) const;
+	float getYawTo(Math::Vector3d p) const;
 
 	/**
 	 * Sets the actor visibility.
@@ -341,7 +341,7 @@ public:
 	 * @see walkTo
 	 */
 	void walkForward();
-	void moveTo(const Graphics::Vector3d &pos);
+	void moveTo(const Math::Vector3d &pos);
 	/**
 	 * Used to tell the actor if it is running or not.
 	 *
@@ -353,7 +353,7 @@ public:
 	 * Returns a vector representing the direction the actor
 	 * is facing.
 	 */
-	Graphics::Vector3d getPuckVector() const;
+	Math::Vector3d getPuckVector() const;
 
 	/**
 	 * Makes the actor say the given line.
@@ -410,7 +410,7 @@ public:
 	}
 
 	void setActiveShadow(int shadowId);
-	void setShadowPoint(Graphics::Vector3d pos);
+	void setShadowPoint(Math::Vector3d pos);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
@@ -430,10 +430,10 @@ public:
 	void setLookAtVectorZero() {
 		_lookAtVector.set(0.f, 0.f, 0.f);
 	}
-	void setLookAtVector(Graphics::Vector3d vector) {
+	void setLookAtVector(Math::Vector3d vector) {
 		_lookAtVector = vector;
 	}
-	Graphics::Vector3d getLookAtVector() {
+	Math::Vector3d getLookAtVector() {
 		return _lookAtVector;
 	}
 	void setLookAtRate(float rate) {
@@ -447,7 +447,7 @@ public:
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
 
-	bool collidesWith(Actor *actor, Graphics::Vector3d *vec) const;
+	bool collidesWith(Actor *actor, Math::Vector3d *vec) const;
 
 	bool _toClean;
 
@@ -464,7 +464,7 @@ private:
 	Common::String _setName;    // The actual current set
 
 	PoolColor *_talkColor;
-	Graphics::Vector3d _pos;
+	Math::Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
@@ -484,7 +484,7 @@ private:
 
 	// Variables for walking to a point
 	bool _walking;
-	Graphics::Vector3d _destPos;
+	Math::Vector3d _destPos;
 
 	// chores
 	Costume *_restCostume;
@@ -523,7 +523,7 @@ private:
 	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore);
 
 	// lookAt
-	Graphics::Vector3d _lookAtVector;
+	Math::Vector3d _lookAtVector;
 	float _lookAtRate;
 
 	int _winX1, _winY1, _winX2, _winY2;
@@ -532,11 +532,11 @@ private:
 	struct PathNode {
 		Sector *sect;
 		PathNode *parent;
-		Graphics::Vector3d pos;
+		Math::Vector3d pos;
 		float dist;
 		float cost;
 	};
-	Common::List<Graphics::Vector3d> _path;
+	Common::List<Math::Vector3d> _path;
 
 	CollisionMode _collisionMode;
 	float _collisionScale;

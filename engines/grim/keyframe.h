@@ -23,7 +23,7 @@
 #ifndef GRIM_KEYFRAME_H
 #define GRIM_KEYFRAME_H
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 #include "engines/grim/object.h"
 
@@ -63,7 +63,7 @@ private:
 
 		float _frame;
 		int _flags;
-		Graphics::Vector3d _pos, _dpos;
+		Math::Vector3d _pos, _dpos;
 		float _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
 	};
 

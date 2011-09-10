@@ -22,12 +22,12 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_MATRIX_H
-#define GRAPHICS_MATRIX_H
+#ifndef MATH_MATRIX_H
+#define MATH_MATRIX_H
 
 #include <assert.h>
 
-namespace Graphics {
+namespace Math {
 
 template<int rows, int cols>
 class Matrix {

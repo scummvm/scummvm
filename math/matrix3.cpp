@@ -22,45 +22,36 @@
  * $Id$
  */
 
-#include "graphics/matrix4.h"
+#include "math/matrix3.h"
 
-namespace Graphics {
+namespace Math {
 
-Matrix4::Matrix4() :
+Matrix3x3::Matrix3x3() :
 	Matrix(), Rotation3D(this) {
 
 }
 
-void Matrix4::transform(Vector3d *v, bool trans) const {
-	Matrix<4, 1> m;
+void Matrix3x3::transform(Vector3d *v) const {
+
+	Matrix<3, 1> m;
 	m(0, 0) = v->x();
 	m(1, 0) = v->y();
 	m(2, 0) = v->z();
-	m(3, 0) = (trans ? 1.f : 0.f);
 
 	m = *this * m;
 
 	v->set(m(0, 0), m(1, 0), m(2, 0));
 }
 
-Vector3d Matrix4::getPosition() const {
-	return Vector3d(getValue(3, 0), getValue(3, 1), getValue(3, 2));
+#define DEGTORAD(a) (a * LOCAL_PI / 180.0)
+#define RADTODEG(a) (a * 180.0 / LOCAL_PI)
+
+float RadianToDegree(float rad) {
+	return (float)RADTODEG(rad);
 }
 
-void Matrix4::setPosition(const Vector3d &v) {
-	setValue(3, 0, v.x());
-	setValue(3, 1, v.y());
-	setValue(3, 2, v.z());
+float DegreeToRadian(float degrees) {
+	return (float)DEGTORAD(degrees);
 }
 
-void Matrix4::translate(const Vector3d &vec) {
-	Vector3d v(vec);
-	transform(&v, false);
-
-	operator()(3, 0) += v.x();
-	operator()(3, 1) += v.y();
-	operator()(3, 2) += v.z();
-}
-
-} // end of namespace Graphics
-
+} // end of namespace Math

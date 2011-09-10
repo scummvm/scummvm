@@ -22,11 +22,11 @@
  * $Id$
  */
 
-#include "graphics/vector2d.h"
+#include "math/vector2d.h"
 
 #include "common/streamdebug.h"
 
-namespace Graphics {
+namespace Math {
 
 Vector2d::Vector2d() :
 	_x(0), _y(0) {
@@ -121,7 +121,7 @@ Vector3d Vector2d::toVector3d() const {
 
 }
 
-Common::Debug &operator<<(Common::Debug dbg, const Graphics::Vector2d &v) {
+Common::Debug &operator<<(Common::Debug dbg, const Math::Vector2d &v) {
 	dbg.nospace() << "Vector2d(" << v.getX() << "," << v.getY() << ")";
 
 	return dbg.space();
