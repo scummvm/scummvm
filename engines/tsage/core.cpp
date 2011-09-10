@@ -3790,8 +3790,9 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
-				!_globals->_sceneItems.empty()) {
+		bool enabled = (_vm->getGameID() == GType_BlueForce) ? _globals->_player._enabled :
+			_globals->_player._uiEnabled;
+		if (enabled && (event.eventType == EVENT_BUTTON_DOWN) && !_globals->_sceneItems.empty()) {
 			// Check if the mouse is on the player
 			if (_globals->_player.contains(event.mousePos)) {
 				playerAction(event);

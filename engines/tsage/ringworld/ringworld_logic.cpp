@@ -21,8 +21,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/translation.h"
-#include "gui/saveload.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -405,51 +403,6 @@ RingworldInvObjectList::RingworldInvObjectList() :
 }
 
 /*--------------------------------------------------------------------------*/
-
-void RingworldGame::restartGame() {
-	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
-		_globals->_game->restart();
-}
-
-void RingworldGame::saveGame() {
-	if (!_vm->canSaveGameStateCurrently())
-		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
-	else {
-		// Show the save dialog
-		handleSaveLoad(true, _globals->_sceneHandler->_saveGameSlot, _globals->_sceneHandler->_saveName);
-	}
-}
-
-void RingworldGame::restoreGame() {
-	if (!_vm->canLoadGameStateCurrently())
-		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
-	else {
-		// Show the load dialog
-		handleSaveLoad(false, _globals->_sceneHandler->_loadGameSlot, _globals->_sceneHandler->_saveName);
-	}
-}
-
-void RingworldGame::quitGame() {
-	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
-		_vm->quitGame();
-}
-
-void RingworldGame::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(_vm->getGameId(), &plugin);
-	GUI::SaveLoadChooser *dialog;
-	if (saveFlag)
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
-	else
-		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
-
-	dialog->setSaveMode(saveFlag);
-
-	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
-	saveName = dialog->getResultString();
-
-	delete dialog;
-}
 
 void RingworldGame::start() {
 	// Set some default flags

@@ -20,11 +20,15 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/tsage.h"
 #include "tsage/saveload.h"
+#include "tsage/staticres.h"
 
 namespace TsAGE {
 
@@ -504,6 +508,51 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 }
 
 /*--------------------------------------------------------------------------*/
+
+void Game::restartGame() {
+	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
+		_globals->_game->restart();
+}
+
+void Game::saveGame() {
+	if (!_vm->canSaveGameStateCurrently())
+		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the save dialog
+		handleSaveLoad(true, _globals->_sceneHandler->_saveGameSlot, _globals->_sceneHandler->_saveName);
+	}
+}
+
+void Game::restoreGame() {
+	if (!_vm->canLoadGameStateCurrently())
+		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the load dialog
+		handleSaveLoad(false, _globals->_sceneHandler->_loadGameSlot, _globals->_sceneHandler->_saveName);
+	}
+}
+
+void Game::quitGame() {
+	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
+		_vm->quitGame();
+}
+
+void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(_vm->getGameId(), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	if (saveFlag)
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+	else
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
+
+	dialog->setSaveMode(saveFlag);
+
+	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	saveName = dialog->getResultString();
+
+	delete dialog;
+}
 
 void Game::execute() {
 	// Main game loop

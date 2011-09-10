@@ -147,15 +147,9 @@ public:
 #define RING_INVENTORY (*((::TsAGE::Ringworld::RingworldInvObjectList *)_globals->_inventory))
 
 class RingworldGame: public Game {
-protected:
-	virtual void handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName);
 public:
 	virtual void start();
 	virtual void restart();
-	virtual void restartGame();
-	virtual void saveGame();
-	virtual void restoreGame();
-	virtual void quitGame();
 	virtual void endGame(int resNum, int lineNum);
 
 	virtual Scene *createScene(int sceneNumber);

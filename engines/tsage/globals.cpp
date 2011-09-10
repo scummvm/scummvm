@@ -188,7 +188,24 @@ BlueForceGlobals::BlueForceGlobals(): Globals() {
 
 void BlueForceGlobals::synchronize(Serializer &s) {
 	Globals::synchronize(s);
-	error("Sync variables");
+
+	s.syncAsSint16LE(_dayNumber);
+	s.syncAsSint16LE(_v4CEA4);
+	s.syncAsSint16LE(_v4CEA8);
+	s.syncAsSint16LE(_driveFromScene);
+	s.syncAsSint16LE(_driveToScene);
+	s.syncAsSint16LE(_v4CF9E);
+	s.syncAsSint16LE(_v4E238);
+	s.syncAsSint16LE(_v501FC);
+	s.syncAsSint16LE(_v50696);
+	s.syncAsSint16LE(_v51C42);
+	s.syncAsSint16LE(_v51C44);
+	s.syncAsSint16LE(_interfaceY);
+	s.syncAsSint16LE(_bookmark);
+	s.syncAsSint16LE(_mapLocationId);
+	s.syncAsSint16LE(_clip1Bullets);
+	s.syncAsSint16LE(_clip2Bullets);
+
 }
 
 void BlueForceGlobals::reset() {
