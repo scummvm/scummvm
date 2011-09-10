@@ -271,9 +271,12 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 		dragStartTime = getMillis();
 	}
 	// Kill any queued drag event if a second finger goes down
-	else if (ev.button.which == 1 && queuedDragEvent) {
-		queuedInputEvent.type = (Common::EventType)0;
-		queuedDragEvent = false;
+	else if (ev.button.which == 1) {
+		if (queuedDragEvent) {
+			queuedInputEvent.type = (Common::EventType)0;
+			queuedDragEvent = false;
+		}
+		doClick = false;
 	}
 	return true;
 }
