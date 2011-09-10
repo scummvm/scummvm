@@ -289,84 +289,87 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	// No matter what, if it's the first finger that's lifted when
-	// we're dragging, just lift the mouse button.
-	if (ev.button.which == 0 && dragging) {
-		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, curX, curY);
-		dragging = false;
-	}
-	// Use a different control set if multitouch is enabled.
-	else if (multitouch) {
-		// If it was the first finger and the click hasn't been
-		// canceled, it's a click.
-		if (ev.button.which == 0 && doClick &&
-				!fingerDown[1] && !fingerDown[2]) {
+	// Only react if the finger hasn't been virtually lifted already
+	if (fingerDown[ev.button.which]) {
+		// No matter what, if it's the first finger that's lifted when
+		// we're dragging, just lift the mouse button.
+		if (ev.button.which == 0 && dragging) {
 			event.type = Common::EVENT_LBUTTONUP;
 			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_LBUTTONDOWN;
-			if (queuedDragEvent) {
-				queuedDragEvent = false;
-				queuedInputEvent.type = (Common::EventType)0;
+			dragging = false;
+		}
+		// Use a different control set if multitouch is enabled.
+		else if (multitouch) {
+			// If it was the first finger and the click hasn't been
+			// canceled, it's a click.
+			if (ev.button.which == 0 && doClick &&
+					!fingerDown[1] && !fingerDown[2]) {
+				event.type = Common::EVENT_LBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_LBUTTONDOWN;
+				if (queuedDragEvent) {
+					queuedDragEvent = false;
+					queuedInputEvent.type = (Common::EventType)0;
+				}
+			}
+
+			// If the first finger's down and the second taps, it's a
+			// right mouse click.
+			else if (ev.button.which == 1 &&
+					fingerDown[0] && fingerDown[1] && !fingerDown[2]) {
+				event.type = Common::EVENT_RBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_RBUTTONDOWN;
+			}
+
+			// If two fingers are down and a third taps, it's a middle
+			// click -- but lift the second finger so it doesn't register
+			// as a right click.
+			else if (ev.button.which == 2 &&
+					fingerDown[0] && fingerDown[1]) {
+				event.type = Common::EVENT_MBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_MBUTTONDOWN;
+				fingerDown[1] = false;
 			}
 		}
+		else if (ev.button.which == 0 && doClick &&
+				!fingerDown[1] && !fingerDown[2]) {
+			int duration = getMillis() - screenDownTime[0];
 
-		// If the first finger's down and the second taps, it's a
-		// right mouse click.
-		else if (ev.button.which == 1 &&
-				fingerDown[0] && fingerDown[1] && !fingerDown[2]) {
-			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_RBUTTONDOWN;
-		}
+			// When screen was pressed for less than 500ms then emulate a
+			// left mouse click.
+			if (duration < 500) {
+				event.type = Common::EVENT_LBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_LBUTTONDOWN;
+			}
 
-		// If two fingers are down and a third taps, it's a middle
-		// click -- but lift the second finger so it doesn't register
-		// as a right click.
-		else if (ev.button.which == 2 &&
-				fingerDown[0] && fingerDown[1]) {
-			event.type = Common::EVENT_MBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_MBUTTONDOWN;
-			fingerDown[1] = false;
+			// When screen was pressed for less than 1000ms then emulate a
+			// right mouse click.
+			else if (duration < 1000) {
+				event.type = Common::EVENT_RBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_RBUTTONDOWN;
+			}
+
+			// When screen was pressed for more than 1000ms then emulate a
+			// middle mouse click.
+			else {
+				event.type = Common::EVENT_MBUTTONUP;
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+				event.type = Common::EVENT_MBUTTONDOWN;
+			}
 		}
+		// Officially lift the finger that was raised.
+		fingerDown[ev.button.which] = false;	
 	}
-	else if (ev.button.which == 0 && doClick &&
-			!fingerDown[1] && !fingerDown[2]) {
-		int duration = getMillis() - screenDownTime[0];
-
-		// When screen was pressed for less than 500ms then emulate a
-		// left mouse click.
-		if (duration < 500) {
-			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_LBUTTONDOWN;
-		}
-
-		// When screen was pressed for less than 1000ms then emulate a
-		// right mouse click.
-		else if (duration < 1000) {
-			event.type = Common::EVENT_RBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_RBUTTONDOWN;
-		}
-
-		// When screen was pressed for more than 1000ms then emulate a
-		// middle mouse click.
-		else {
-			event.type = Common::EVENT_MBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			g_system->getEventManager()->pushEvent(event);
-			event.type = Common::EVENT_MBUTTONDOWN;
-		}
-	}
-	// Officially lift the finger that was raised.
-	fingerDown[ev.button.which] = false;	
 	return true;
 }
 
