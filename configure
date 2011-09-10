@@ -2367,7 +2367,8 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DMULTITOUCH"
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
-			_build_scalers=no
+			_build_scalers=yes
+			_build_hq_scalers=yes
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
