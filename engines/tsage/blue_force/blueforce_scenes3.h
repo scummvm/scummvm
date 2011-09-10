@@ -49,7 +49,7 @@ class Scene300: public SceneExt {
 
 		virtual void startAction(CursorType action, Event &event);
 	};
-	class Object17: public NamedObject {
+	class Object19: public NamedObject {
 	public:
 		virtual void startAction(CursorType action, Event &event);
 	};
@@ -103,8 +103,8 @@ public:
 	SceneObject _object8, _object9, _object10;
 	NamedObject _object11, _object12;
 	Object _object13, _object14, _object15, _object16;
-	Object17 _object17;
-	NamedObject _object18, _object19;
+	NamedObject _object17, _object18;
+	Object19 _object19;
 	Item1 _item1;
 	Item2 _item2;
 	NamedHotspot _item3, _item4, _item5, _item6, _item7;
@@ -224,6 +224,23 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
+};
+
+class Scene325: public SceneExt {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual void startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerPSutter _PSutterSpeaker;
+	Item1 _item1;
+	NamedObject _object1, _object2, _object3, _object4, _object5;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
 };
 
 } // End of namespace BlueForce

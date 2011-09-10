@@ -286,6 +286,27 @@ void SpeakerJailer::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerPSutter::SpeakerPSutter(): VisualSpeaker() {
+	_color1 = 20;
+	_color2 = 22;
+	_speakerName = "PSUTTER";
+}
+
+void SpeakerPSutter::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(335);
+	_object2.setStrip2(3);
+	_object2.fixPriority(200);
+	_object2.setPosition(Common::Point(202, 48));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

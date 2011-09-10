@@ -45,8 +45,8 @@ void Scene300::Object::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene300::Object17::startAction(CursorType action, Event &event) {
-	if ((action != CURSOR_USE) || !BF_GLOBALS.getFlag(3)) {
+void Scene300::Object19::startAction(CursorType action, Event &event) {
+	if ((action != CURSOR_USE) || !BF_GLOBALS.getFlag(onDuty)) {
 		NamedObject::startAction(action, event);
 	} else if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark >= bEndDayOne)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
@@ -175,7 +175,7 @@ void Scene300::Action4::signal() {
 		setAction(&scene->_sequenceManager1, this, 316, &BF_GLOBALS._player, &scene->_object19, NULL);
 		break;
 	case 2:
-		BF_GLOBALS._sceneManager.changeScene(15);
+		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
 	case 3:
 		setAction(&scene->_sequenceManager1, this, 319, &scene->_object19, NULL);
@@ -203,7 +203,6 @@ void Scene300::Action5::signal() {
 		break;
 	case 2:
 		scene->_stripManager.start(3004, this);
-		BF_GLOBALS._sceneManager.changeScene(15);
 		break;
 	case 3: {
 		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 186, 140);
@@ -1075,7 +1074,8 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object7.postInit();
 		_object8.setFrame(8);
 		_sceneMode = (BF_GLOBALS._dayNumber == 1) ? 3152 : 3155;
-		setAction(&_sequenceManager, this, _sceneMode, &_object6, &_object7, &_object8, NULL);
+		setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_object6, 
+			&_object7, &_object8, NULL);
 		break;
 	case 300:
 	default:
@@ -1339,6 +1339,85 @@ void Scene315::dispatch() {
 				BF_GLOBALS._player._position.y + 120);
 		}
 	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 325 - Police Station Conference Room
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene325::Item1::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_EXIT) {
+		BF_GLOBALS._events.setCursor(CURSOR_WALK);
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._sceneManager.changeScene(315);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene325::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(325);
+	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS.clearFlag(fCanDrawGun);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 1;
+
+	// Add the speakers
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_PSutterSpeaker);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.hide();
+
+	if (BF_GLOBALS._dayNumber == 1) {
+		_object1.postInit();
+		_object1.setVisage(325);
+		_object1.setStrip(8);
+		_object1.setPosition(Common::Point(128, 44));
+	} else {
+		_object1.postInit();
+		_object1.setVisage(325);
+		_object1.setStrip(8);
+		_object1.setFrame(2);
+		_object1.setPosition(Common::Point(132, 28));
+		
+		_object2.postInit();
+		_object2.setVisage(325);
+		_object2.setStrip(8);
+		_object2.setFrame(3);
+		_object2.setPosition(Common::Point(270, 24));
+	}
+
+	_object3.postInit();
+	_object3.setVisage(335);
+	_object3.setStrip(4);
+	_object3.setPosition(Common::Point(202, 122));
+
+	_object4.postInit();
+	_object4.setVisage(335);
+	_object4.setStrip(2);
+	_object4.setPosition(Common::Point(283, 102));
+
+	_object5.postInit();
+	_object5.setVisage(335);
+	_object5.setStrip(1);
+	_object5.setPosition(Common::Point(135, 167));
+
+	_item1.setup(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 560, -1, -1, -1, 1, NULL);
+	BF_GLOBALS._player.disableControl();
+
+	_sceneMode = (BF_GLOBALS._dayNumber == 1) ? 3250 : 3251;
+	setAction(&_sequenceManager, this, _sceneMode, &_object3, &_object4, &_object5, NULL);
+}
+
+void Scene325::signal() {
+	BF_GLOBALS._player._uiEnabled = 0;
+	BF_GLOBALS._player._canWalk = true;
+	BF_GLOBALS._player._enabled = true;
+	BF_GLOBALS._events.setCursor(CURSOR_EXIT);
 }
 
 } // End of namespace BlueForce

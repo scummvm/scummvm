@@ -87,6 +87,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Inside Police Station
 		return new Scene315();
 	case 325:
+		// Police Station Conference Room
+		return new Scene325();
 	case 330:
 	case 340:
 	case 342:
