@@ -255,12 +255,10 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 		}
 		// If we're not in touchpad mode, move the cursor to the tap
 		if (!touchpadMode) {
-			//int screenX = g_system->getWidth();
-			//int screenY = g_system->getHeight();
-			//curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
-			//curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
-			curX = ev.motion.x;
-			curY = ev.motion.y;
+			int screenX = g_system->getOverlayWidth();
+			int screenY = g_system->getOverlayHeight();
+			curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
+			curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
 			event.type = Common::EVENT_MOUSEMOVE;
 			processMouseEvent(event, curX, curY);
 		}
@@ -375,8 +373,8 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 	if (fingerDown[ev.motion.which]) {
 		dragDiffX[ev.motion.which] += ev.motion.xrel;
 		dragDiffY[ev.motion.which] += ev.motion.yrel;
-		int screenX = g_system->getWidth();
-		int screenY = g_system->getHeight();
+		int screenX = g_system->getOverlayWidth();
+		int screenY = g_system->getOverlayHeight();
 
 		switch (ev.motion.which) {
 			case 0:
@@ -391,15 +389,11 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 				// the mouse pointer.
 				if (!fingerDown[1] && !fingerDown[2]) {
 					if (touchpadMode) {
-						//curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
-						//curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
-						curX += ev.motion.xrel;
-						curY += ev.motion.yrel;
+						curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
+						curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
 					} else {
-						//curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
-						//curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
-						curX = ev.motion.x;
-						curY = ev.motion.y;
+						curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
+						curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
 					}
 					event.type = Common::EVENT_MOUSEMOVE;
 					processMouseEvent(event, curX, curY);
