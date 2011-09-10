@@ -384,8 +384,8 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 			case 0:
 				// If our dragDiff goes > 5 pixels in either direction when
 				// there's a queued drag event, kill it.
-				if (queuedDragEvent && ABS(dragDiffX[0]) < 6 &&
-						ABS(dragDiffY[0]) < 6) {
+				if (queuedDragEvent && ABS(dragDiffX[0]) > 5 &&
+						ABS(dragDiffY[0]) > 5) {
 					queuedInputEvent.type = (Common::EventType)0;
 					queuedDragEvent = false;
 				}
