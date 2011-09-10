@@ -847,7 +847,7 @@ void SoundComponent::setKey(int val) {
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
 		if (g_grim->getCurrScene()) {
-			Graphics::Vector3d pos = _cost->getMatrix()._pos;
+			Graphics::Vector3d pos = _cost->getMatrix().getPosition();
 			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
@@ -1598,7 +1598,7 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 		p->setMatrix(_matrix);
 		p->update();
 
-		Graphics::Vector3d v =  lookAt - _joint3Node->_matrix._pos;
+		Graphics::Vector3d v =  lookAt - _joint3Node->_matrix.getPosition();
 		if (v.isZero()) {
 			return;
 		}
@@ -1611,7 +1611,7 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		float bodyYaw = _matrix._rot.getYaw();
+		float bodyYaw = _matrix.getYaw();
 		p = _joint1Node->_parent;
 		while (p) {
 			bodyYaw += p->_yaw + p->_animYaw;
@@ -1709,8 +1709,8 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 }
 
 void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
-	_matrix._pos = pos;
-	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
+	_matrix.setPosition(pos);
+	_matrix.buildFromPitchYawRoll(pitch, yaw, roll);
 }
 
 Graphics::Matrix4 Costume::getMatrix() const {
@@ -1743,7 +1743,7 @@ void Costume::saveState(SaveGame *state) const {
 
 		if (c) {
 			state->writeLESint32(c->_visible);
-			state->writeVector3d(c->_matrix._pos);
+			state->writeVector3d(c->_matrix.getPosition());
 			c->saveState(state);
 		}
 	}
@@ -1782,7 +1782,7 @@ bool Costume::restoreState(SaveGame *state) {
 
 		if (c) {
 			c->_visible = state->readLESint32();
-			c->_matrix._pos = state->readVector3d();
+			c->_matrix.setPosition(state->readVector3d());
 			c->restoreState(state);
 		}
 	}

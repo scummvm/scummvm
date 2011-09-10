@@ -668,14 +668,15 @@ void L1_GetActorNodeLocation() {
 	}
 
 	Graphics::Matrix4 matrix;
-	matrix._pos = actor->getPos();
-	matrix._rot.buildFromPitchYawRoll(actor->getPitch(), actor->getYaw(), actor->getRoll());
+	matrix.setPosition(actor->getPos());
+	matrix.buildFromPitchYawRoll(actor->getPitch(), actor->getYaw(), actor->getRoll());
 	root->setMatrix(matrix);
 	root->update();
 
-	lua_pushnumber(node->_pivotMatrix._pos.x());
-	lua_pushnumber(node->_pivotMatrix._pos.y());
-	lua_pushnumber(node->_pivotMatrix._pos.z());
+	Graphics::Vector3d pos(node->_pivotMatrix.getPosition());
+	lua_pushnumber(pos.x());
+	lua_pushnumber(pos.y());
+	lua_pushnumber(pos.z());
 }
 
 void L1_SetActorWalkDominate() {

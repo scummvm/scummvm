@@ -30,34 +30,17 @@
 namespace Graphics {
 
 // matrix 4 is a rotation matrix + position
-class Matrix4 {
+class Matrix4 : public Matrix<4, 4>, public Rotation3D<Matrix4> {
 public:
-	Matrix3 _rot;
-	Vector3d _pos;
-
 	Matrix4();
 
-	Matrix4& operator =(const Matrix4& s) {
-		_pos = s._pos;
-		_rot = s._rot;
+	void transform(Vector3d *v, bool translate) const;
 
-		return *this;
-	}
+	Vector3d getPosition() const;
+	void setPosition(const Vector3d &v);
 
-	Matrix4& operator *=(const Matrix4& s) {
-		Vector3d v;
+	void translate(const Vector3d &v);
 
-		v = s._pos;
-		_rot.transform(&v);
-		_pos += v;
-		_rot *= s._rot;
-
-		return *this;
-	}
-
-	void translate(float x, float y, float z);
-
-private:
 };
 
 } // end of namespace Graphics

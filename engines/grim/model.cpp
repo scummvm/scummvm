@@ -70,7 +70,7 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 			// bone wagon when approaching it from behind in set sg.
 			// Using the node position looks instead more realistic, but, on the
 			// other hand, it may not work right in all cases.
-			Graphics::Vector3d &p = node._matrix._pos;
+			Graphics::Vector3d p = node._matrix.getPosition();
 			float x = p.x();
 			float y = p.y();
 			float z = p.z();
@@ -664,14 +664,14 @@ void ModelNode::update() {
 	float animYaw = _yaw + _animYaw;
 	float animRoll = _roll + _animRoll;
 
-	_localMatrix._pos.set(animPos.x(), animPos.y(), animPos.z());
-	_localMatrix._rot.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
+	_localMatrix.setPosition(animPos);
+	_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
 
 	_matrix *= _localMatrix;
 
 	_pivotMatrix = _matrix;
 
-	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z());
+	_pivotMatrix.translate(_pivot);
 
 	if (_mesh) {
 		_mesh->_matrix = _pivotMatrix;

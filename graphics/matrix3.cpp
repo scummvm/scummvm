@@ -26,20 +26,21 @@
 
 namespace Graphics {
 
-void Matrix3::setAsIdentity() {
-	_right.set(1.f, 0.f, 0.f);
-	_up.set(0.f, 1.f, 0.f);
-	_at.set(0.f, 0.f, 1.f);
+Matrix3x3::Matrix3x3() :
+	Matrix(), Rotation3D(this) {
+
 }
 
-void Matrix3::buildFromPitchYawRoll(float pitch, float yaw, float roll) {
-	Matrix3 temp;
+void Matrix3x3::transform(Vector3d *v) const {
 
-	constructAroundYaw(yaw);
-	temp.constructAroundPitch(pitch);
-	(*this) *= temp;
-	temp.constructAroundRoll(roll);
-	(*this) *= temp;
+	Matrix<3, 1> m;
+	m(0, 0) = v->x();
+	m(1, 0) = v->y();
+	m(2, 0) = v->z();
+
+	m = *this * m;
+
+	v->set(m(0, 0), m(1, 0), m(2, 0));
 }
 
 #define DEGTORAD(a) (a * LOCAL_PI / 180.0)
@@ -51,135 +52,6 @@ float RadianToDegree(float rad) {
 
 float DegreeToRadian(float degrees) {
 	return (float)DEGTORAD(degrees);
-}
-
-// right
-void Matrix3::constructAroundPitch(float pitch) {
-	float cosa;
-	float sina;
-
-	cosa = (float)cos(DegreeToRadian(pitch));
-	sina = (float)sin(DegreeToRadian(pitch));
-
-	_right.set(1.f, 0.f, 0.f);
-	_up.set(0.f, cosa, sina);
-	_at.set(0.f, -sina, cosa);
-}
-
-// up
-void Matrix3::constructAroundYaw(float yaw) {
-	float cosa;
-	float sina;
-
-	cosa = (float)cos(DegreeToRadian(yaw));
-	sina = (float)sin(DegreeToRadian(yaw));
-
-	_right.set(cosa, sina, 0.f);
-	_up.set(-sina, cosa, 0.f);
-	_at.set(0.f, 0.f, 1.f);
-}
-
-// at
-void Matrix3::constructAroundRoll(float roll) {
-	float cosa;
-	float sina;
-
-	cosa = (float)cos(DegreeToRadian(roll));
-	sina = (float)sin(DegreeToRadian(roll));
-
-	_right.set(cosa, 0.f, -sina);
-	_up.set(0.f, 1.f, 0.f);
-	_at.set(sina, 0.f, cosa);
-}
-
-/*
-0 1 2 3
-4 5 6 7
-8 9 10 11
-*/
-
-// WARNING: Still buggy in some occasions.
-void Matrix3::getPitchYawRoll(float* pPitch, float* pYaw, float* pRoll) const {
-	float D;
-	float C;
-	float ftrx;
-	float ftry;
-	float angle_x;
-	float angle_y;
-	float angle_z;
-
-	angle_y = D = -asin(_right.z());        /* Calculate Y-axis angle */
-	C			= cos(angle_y);
-	angle_y		= RadianToDegree(angle_y);
-
-	if (fabs( C ) > 0.005) {            /* Gimball lock? */
-		ftrx		= _at.z() / C;           /* No, so get X-axis angle */
-		ftry		= _up.z() / C;
-
-		angle_x		= RadianToDegree(atan2(ftry, ftrx));
-
-		ftrx		= _right.x() / C;            /* Get Z-axis angle */
-		ftry		= _right.y() / C;
-
-		angle_z		= RadianToDegree(atan2(ftry, ftrx));
-	} else {                                 /* Gimball lock has occurred */
-		angle_x		= 0;                      /* Set X-axis angle to zqero */
-
-		ftrx		= _at.x();                 /* And calculate Z-axis angle */
-		ftry		= _up.x();
-
-		angle_z  = RadianToDegree(atan2(ftry, ftrx));
-	}
-
-	/* return only positive angles in [0,360] */
-	if (angle_x < 0) angle_x += 360;
-	if (angle_y < 0) angle_y += 360;
-	if (angle_z < 0) angle_z += 360;
-
-	if (pPitch)
-		*pPitch = angle_x;
-
-	if (pYaw)
-		*pYaw = angle_z;
-
-	if (pRoll)
-		*pRoll = angle_y;
-}
-
-float Matrix3::getPitch() const {
-	float pitch;
-
-	getPitchYawRoll(&pitch, 0, 0);
-
-	return pitch;
-}
-
-float Matrix3::getYaw() const {
-	float yaw;
-
-	getPitchYawRoll(0, &yaw, 0);
-
-	return yaw;
-}
-
-float Matrix3::getRoll() const {
-	float roll;
-
-	getPitchYawRoll(0, 0, &roll);
-
-	return roll;
-}
-
-void Matrix3::transform(Vector3d* v) const {
-	float x;
-	float y;
-	float z;
-
-	x = v->dotProduct(_right.x(), _up.x(), _at.x());
-	y = v->dotProduct(_right.y(), _up.y(), _at.y());
-	z = v->dotProduct(_right.z(), _up.z(), _at.z());
-
-	v->set(x, y, z);
 }
 
 } // end of namespace Graphics

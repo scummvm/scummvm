@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -22,45 +22,35 @@
  * $Id$
  */
 
-#include "graphics/matrix4.h"
+#ifndef GRAPHICS_TRANSFORM_H
+#define GRAPHICS_TRANSFORM_H
 
 namespace Graphics {
 
-Matrix4::Matrix4() :
-	Matrix(), Rotation3D(this) {
+template<class T>
+class Transform {
+public:
+	Transform(T *matrix);
+
+protected:
+	inline T *getMatrix() const;
+
+private:
+	T *_matrix;
+
+};
+
+template<class T>
+Transform<T>::Transform(T *matrix) :
+	_matrix(matrix) {
 
 }
 
-void Matrix4::transform(Vector3d *v, bool trans) const {
-	Matrix<4, 1> m;
-	m(0, 0) = v->x();
-	m(1, 0) = v->y();
-	m(2, 0) = v->z();
-	m(3, 0) = (trans ? 1.f : 0.f);
-
-	m = *this * m;
-
-	v->set(m(0, 0), m(1, 0), m(2, 0));
+template<class T>
+T *Transform<T>::getMatrix() const {
+	return _matrix;
 }
 
-Vector3d Matrix4::getPosition() const {
-	return Vector3d(getValue(3, 0), getValue(3, 1), getValue(3, 2));
 }
 
-void Matrix4::setPosition(const Vector3d &v) {
-	setValue(3, 0, v.x());
-	setValue(3, 1, v.y());
-	setValue(3, 2, v.z());
-}
-
-void Matrix4::translate(const Vector3d &vec) {
-	Vector3d v(vec);
-	transform(&v, false);
-
-	operator()(3, 0) += v.x();
-	operator()(3, 1) += v.y();
-	operator()(3, 2) += v.z();
-}
-
-} // end of namespace Graphics
-
+#endif
