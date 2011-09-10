@@ -95,6 +95,9 @@ static bool queuedDragEvent = false;
 // An event to be processed after the next poll tick
 static Common::Event queuedInputEvent;
 
+// Indicates if a click should be executed when the first finger is lifted
+static bool doClick = true;
+
 /**
  * Initialize a new WebOSSdlEventSource.
  */
@@ -241,6 +244,8 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 	screenDownTime[ev.button.which] = getMillis();
 
 	if (ev.button.which == 0) {
+		// Do a click when the finger lifts unless we leave the range
+		doClick = true;
 		// Queue up dragging if auto-drag mode is on
 		if (autoDragMode) {
 			queuedDragEvent = true;
@@ -292,11 +297,10 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 	}
 	// Use a different control set if multitouch is enabled.
 	else if (multitouch) {
-		// If it was the first finger and it wasn't dragged more than
-		// 5 pixels away, it's a click.
-		if (ev.button.which == 0 && 
-				!fingerDown[1] && !fingerDown[2] &&
-				ABS(dragDiffX[0]) < 6 && ABS(dragDiffY[0]) < 6) {
+		// If it was the first finger and the click hasn't been
+		// canceled, it's a click.
+		if (ev.button.which == 0 && doClick &&
+				!fingerDown[1] && !fingerDown[2]) {
 			event.type = Common::EVENT_LBUTTONUP;
 			processMouseEvent(event, curX, curY);
 			g_system->getEventManager()->pushEvent(event);
@@ -325,9 +329,8 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			fingerDown[1] = false;
 		}
 	}
-	else if (ev.button.which == 0 && 
-			!fingerDown[1] && !fingerDown[2] &&
-			ABS(dragDiffX[0]) < 6 && ABS(dragDiffY[0]) < 6) {
+	else if (ev.button.which == 0 && doClick &&
+			!fingerDown[1] && !fingerDown[2]) {
 		int duration = getMillis() - screenDownTime[0];
 
 		// When screen was pressed for less than 500ms then emulate a
@@ -378,12 +381,15 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 
 		switch (ev.motion.which) {
 			case 0:
-				// If our dragDiff goes > 5 pixels in either direction when
-				// there's a queued drag event, kill it.
-				if (queuedDragEvent && ABS(dragDiffX[0]) > 5 &&
-						ABS(dragDiffY[0]) > 5) {
-					queuedInputEvent.type = (Common::EventType)0;
-					queuedDragEvent = false;
+				// If our dragDiff goes > 3 pixels in either direction, kill
+				// the future click and any queued drag event.
+				if (doClick && ABS(dragDiffX[0]) > 3 &&
+						ABS(dragDiffY[0]) > 3) {
+					doClick = false;
+					if (queuedDragEvent) {
+						queuedInputEvent.type = (Common::EventType)0;
+						queuedDragEvent = false;
+					}
 				}
 				// If only one finger is on the screen and moving, that's
 				// the mouse pointer.
