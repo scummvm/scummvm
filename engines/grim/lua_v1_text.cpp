@@ -49,13 +49,7 @@ void L1_KillTextObject() {
 	lua_Object textObj = lua_getparam(1);
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
-		TextObject *textObject = gettextobject(textObj);
-		// Must check that, or else when setting in don's computer a response right
-		// after another one it will crash, since co.computer.stop_interface() will
-		// be called two times.
-		if (textObject) {
-			g_grim->killTextObject(textObject);
-		}
+		delete gettextobject(textObj);
 	}
 }
 
@@ -123,7 +117,6 @@ void L1_MakeTextObject() {
 		setTextObjectParams(textObject, tableObj);
 
 	textObject->setText(text.c_str());
-	g_grim->registerTextObject(textObject);
 
 	lua_pushusertag(textObject->getId(), MKTAG('T', 'E', 'X', 'T'));
 	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
@@ -144,11 +137,12 @@ void L1_GetTextObjectDimensions() {
 
 void L1_ExpireText() {
 	// Expire all the text objects
-	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); ++i)
+	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
+		 i != TextObject::getPool()->getEnd(); ++i)
 		i->_value->setDisabled(true);
 
 	// Cleanup actor references to deleted text objects
-	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i)
+	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i)
 		i->_value->lineCleanup();
 }
 

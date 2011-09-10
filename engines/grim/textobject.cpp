@@ -39,14 +39,14 @@ TextObjectCommon::TextObjectCommon() :
 }
 
 TextObject::TextObject(bool blastDraw, bool isSpeech) :
-		Object(), TextObjectCommon(), _numberLines(1),
+		PoolObject(), TextObjectCommon(), _numberLines(1),
 		_maxLineWidth(0), _lines(0), _userData(0), _created(false) {
 	_blastDraw = blastDraw;
 	_isSpeech = isSpeech;
 }
 
 TextObject::TextObject() :
-	Object(), TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
+	PoolObject(), TextObjectCommon(), _maxLineWidth(0), _lines(NULL) {
 
 }
 
@@ -88,7 +88,7 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-	_fgColor = g_grim->getColor(state->readLEUint32());
+	_fgColor = PoolColor::getPool()->getObject(state->readLEUint32());
 
 	_x            = state->readLESint32();
 	_y            = state->readLESint32();
@@ -103,7 +103,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech     = state->readLESint32();
 	_elapsedTime  = state->readLESint32();
 
-	_font = g_grim->getFont(state->readLEUint32());
+	_font = Font::getPool()->getObject(state->readLEUint32());
 
 	_textID = state->readString();
 

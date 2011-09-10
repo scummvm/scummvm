@@ -24,6 +24,7 @@
 #define GRIM_WALKPLANE_H
 
 #include "common/str.h"
+#include "common/list.h"
 
 #include "graphics/vector3d.h"
 #include "graphics/line3d.h"

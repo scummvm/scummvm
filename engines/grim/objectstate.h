@@ -23,14 +23,14 @@
 #ifndef GRIM_OSTATE_H
 #define GRIM_OSTATE_H
 
-#include "engines/grim/object.h"
+#include "engines/grim/pool.h"
 
 namespace Grim {
 
 class SaveGame;
 class Bitmap;
 
-class ObjectState : public Object {
+class ObjectState : public PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')> {
 public:
 	enum Position {
 		OBJSTATE_BACKGROUND = 0,
@@ -56,7 +56,6 @@ public:
 	void draw();
 
 private:
-
 	bool _visibility;
 	int _setupID;
 	Position _pos;

@@ -23,15 +23,15 @@
 #ifndef GRIM_COLOR_H
 #define GRIM_COLOR_H
 
-#include "engines/grim/object.h"
+#include "engines/grim/pool.h"
 
 namespace Grim {
 
-class Color : public Object {
+class Color {
 public:
 	byte _vals[3];
 
-	Color() : Object() {}
+	Color() {}
 	Color(byte r, byte g, byte b);
 	Color(const Color& c);
 
@@ -44,10 +44,15 @@ public:
 
 	Color& operator =(const Color &c);
 	Color& operator =(Color *c);
+};
+
+class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
+public:
+	PoolColor();
+	PoolColor(byte r, byte g, byte b);
 
 	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state);
-
+	void saveState(SaveGame *state) const;
 };
 
 } // end of namespace Grim

@@ -30,27 +30,21 @@
 namespace Grim {
 
 ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
-		Object(), _setupID(setup), _pos(position), _visibility(false) {
+		PoolObject(), _setupID(setup), _pos(position), _visibility(false) {
 
 	_bitmap = g_resourceloader->loadBitmap(bitmap);
-	g_grim->registerBitmap(_bitmap);
 	if (zbitmap) {
 		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
-		if (_zbitmap) {
-			g_grim->registerBitmap(_zbitmap);
-		}
 	} else
 		_zbitmap = NULL;
 }
 
 ObjectState::ObjectState() :
-		Object(), _bitmap(NULL), _zbitmap(NULL) {
+		PoolObject(), _bitmap(NULL), _zbitmap(NULL) {
 
 }
 
 ObjectState::~ObjectState() {
-	g_grim->killObjectState(this);
-
 	delete _bitmap;
 	delete _zbitmap;
 }
@@ -108,8 +102,8 @@ bool ObjectState::restoreState(SaveGame *savedState) {
 	_setupID    = savedState->readLEUint32();
 	_pos        = (Position) savedState->readLEUint32();
 
-	_bitmap = g_grim->getBitmap(savedState->readLESint32());
-	_zbitmap = g_grim->getBitmap(savedState->readLESint32());
+	_bitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
+	_zbitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
 
 	return true;
 }

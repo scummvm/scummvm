@@ -161,10 +161,10 @@ void callHook(lua_Function func, const char *filename, int32 line) {
 				fprintf(output, "{...}");
 			else if (lua_isuserdata(lua_getparam(i))) {
 				if (lua_tag(lua_getparam(i)) == MKTAG('A','C','T','R')) {
-					Actor *a = g_grim->getActor(lua_getuserdata(lua_getparam(i)));
+					Actor *a = Actor::getPool()->getObject(lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<actor \"%s\">", a->getName().c_str());
 				} else if (lua_tag(lua_getparam(i)) == MKTAG('C','O','L','R')) {
-					Color *c = g_grim->getColor(lua_getuserdata(lua_getparam(i)));
+					Color *c = PoolColor::getPool()->getObject(lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<color #%02x%02x%02x>", c->getRed(), c->getGreen(), c->getBlue());
 				} else
 					fprintf(output, "<userdata %d>", lua_getuserdata(lua_getparam(i)));

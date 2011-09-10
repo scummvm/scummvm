@@ -382,9 +382,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_fps[0] = 0;
 	_iris = new Iris();
 
-	Color *c = new Color(0, 0, 0);
-	registerColor(c);
-	registerColor(new Color(255, 255, 255)); // Default color for actors. Id == 2
+	PoolColor *c = new PoolColor(0, 0, 0);
+	new PoolColor(255, 255, 255); // Default color for actors. Id == 2
 
 	_printLineDefaults.setX(0);
 	_printLineDefaults.setY(100);
@@ -422,17 +421,14 @@ GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	for (SceneListType::const_iterator i = _scenes.begin(); i != _scenes.end(); ++i)
-		delete i->_value;
-
-	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); ++i)
-		delete i->_value;
-
-	killPrimitiveObjects();
-	killTextObjects();
-	killBitmaps();
-	killFonts();
-	killColors();
+	Scene::getPool()->deleteObjects();
+	Actor::getPool()->deleteObjects();
+	PrimitiveObject::getPool()->deleteObjects();
+	TextObject::getPool()->deleteObjects();
+	Bitmap::getPool()->deleteObjects();
+	Font::getPool()->deleteObjects();
+	ObjectState::getPool()->deleteObjects();
+	PoolColor::getPool()->deleteObjects();
 
 	if (g_lua_initialized) {
 		lua_removelibslists();
@@ -490,7 +486,7 @@ Common::Error GrimEngine::run() {
 	// refresh the theme engine so that we can show the gui overlay without it crashing.
 	GUI::GuiManager::instance().theme()->refresh();
 
-	BitmapPtr splash_bm;
+	Bitmap *splash_bm;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
@@ -544,6 +540,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
+	delete splash_bm;
 	g_grim->mainLoop();
 
 	return Common::kNoError;
@@ -858,7 +855,8 @@ void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
 	// Draw text
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
+	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
+		 i != TextObject::getPool()->getEnd(); ++i) {
 		i->_value->draw();
 	}
 }
@@ -904,7 +902,7 @@ void GrimEngine::luaUpdate() {
 	if (_currScene && (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
-		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
+		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 			Actor *a = i->_value;
 
 			// Note that the actor need not be visible to update chores, for example:
@@ -916,7 +914,9 @@ void GrimEngine::luaUpdate() {
 
 		_iris->update(_frameTime);
 	}
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
+
+	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
+		 i != TextObject::getPool()->getEnd(); i++) {
 		i->_value->update();
 	}
 }
@@ -944,7 +944,8 @@ void GrimEngine::updateDisplayScene() {
 				g_driver->releaseMovieFrame();
 		}
 		// Draw Primitives
-		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
+		for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
+			i != PrimitiveObject::getPool()->getEnd(); ++i) {
 			i->_value->draw();
 		}
 		drawPrimitives();
@@ -992,7 +993,8 @@ void GrimEngine::updateDisplayScene() {
 		}
 
 		// Draw Primitives
-		for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
+		for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
+			 i != PrimitiveObject::getPool()->getEnd(); ++i) {
 			i->_value->draw();
 		}
 
@@ -1003,7 +1005,7 @@ void GrimEngine::updateDisplayScene() {
 		_currScene->setupLights();
 
 		// Draw actors
-		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
+		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 			Actor *a = i->_value;
 			if (a->isInSet(_currScene->getName()) && a->isVisible())
 				a->draw();
@@ -1158,22 +1160,17 @@ void GrimEngine::savegameRestore() {
 
 	_selectedActor = NULL;
 	_talkingActor = NULL;
-	if (_currScene)
-		removeScene(_currScene);
 	delete _currScene;
 	_currScene = NULL;
 
-	killTextObjects();
-	killPrimitiveObjects();
-
-	restoreObjects(_colors, 'COLR');
-	restoreBitmaps();
-	restoreFonts();
-	restoreObjects(_objectStates, 'STAT');
-	restoreObjects(_scenes, 'SET ');
-	restoreObjects(_textObjects, 'TEXT');
-	restoreObjects(_primitiveObjects, 'PRIM');
-	restoreObjects(_actors, 'ACTR');
+	PoolColor::getPool()->restoreObjects(_savedState);
+	Bitmap::getPool()->restoreObjects(_savedState);
+	Font::getPool()->restoreObjects(_savedState);
+	ObjectState::getPool()->restoreObjects(_savedState);
+	Scene::getPool()->restoreObjects(_savedState);
+	TextObject::getPool()->restoreObjects(_savedState);
+	PrimitiveObject::getPool()->restoreObjects(_savedState);
+	Actor::getPool()->restoreObjects(_savedState);
 	restoreGRIM();
 
 	g_driver->restoreState(_savedState);
@@ -1209,46 +1206,20 @@ void GrimEngine::savegameRestore() {
 	clearEventQueue();
 }
 
-template<typename T>
-void GrimEngine::restoreObjects(Common::HashMap<int32, T *> &map, uint32 ID) {
-	Common::HashMap<int32, T *> tempMap;
-	_savedState->beginSection(ID);
-	int32 size = _savedState->readLEUint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = _savedState->readLESint32();
-		T *t = map[id];
-		if (!t) {
-			t = new T();
-			t->setId(id);
-		}
-		map.erase(id);
-		tempMap[id] = t;
-		t->restoreState(_savedState);
-	}
-	for (typename Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
-		// Make sure to not try to delete objects which were deleted already by
-		// functions like restoreBitmaps().
-		i->_value->reset();
-		delete i->_value;
-	}
-	map = tempMap;
-	_savedState->endSection();
-}
-
 void GrimEngine::restoreGRIM() {
 	_savedState->beginSection('GRIM');
 
 	// Actor stuff
 	int32 id = _savedState->readLEUint32();
 	if (id != 0) {
-		_selectedActor = _actors[id];
+		_selectedActor = Actor::getPool()->getObject(id);
 	}
-	_talkingActor = getActor(_savedState->readLEUint32());
+	_talkingActor = Actor::getPool()->getObject(_savedState->readLEUint32());
 
 	//TextObject stuff
 	_sayLineDefaults.setDisabled(_savedState->readLESint32());
-	_sayLineDefaults.setFGColor(getColor(_savedState->readLEUint32()));
-	_sayLineDefaults.setFont(getFont(_savedState->readLEUint32()));
+	_sayLineDefaults.setFGColor(PoolColor::getPool()->getObject(_savedState->readLEUint32()));
+	_sayLineDefaults.setFont(Font::getPool()->getObject(_savedState->readLEUint32()));
 	_sayLineDefaults.setHeight(_savedState->readLESint32());
 	_sayLineDefaults.setJustify(_savedState->readLESint32());
 	_sayLineDefaults.setWidth(_savedState->readLESint32());
@@ -1257,53 +1228,7 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
 
 	// Scene stuff
-	_currScene = _scenes[_savedState->readLEUint32()];
-
-	_savedState->endSection();
-}
-
-void GrimEngine::restoreBitmaps() {
-	_savedState->beginSection('VBUF');
-
-	killBitmaps();
-
-	int32 size = _savedState->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = _savedState->readLEUint32();
-		Common::String fname = _savedState->readString();
-		Bitmap *b = g_resourceloader->loadBitmap(fname);
-		killBitmap(b);
-		b->setNumber(_savedState->readLESint32());
-		b->setX(_savedState->readLESint32());
-		b->setY(_savedState->readLESint32());
-		b->_id = id;
-		if (id > Object::s_id) {
-			Object::s_id = id;
-		}
-		registerBitmap(b);
-
-	}
-
-	_savedState->endSection();
-}
-
-void GrimEngine::restoreFonts() {
-	_savedState->beginSection('FONT');
-
-	killFonts();
-
-	int32 size = _savedState->readLESint32();
-	for (int32 i = 0; i < size; ++i) {
-		int32 id = _savedState->readLEUint32();
-		Common::String fname = _savedState->readString();
-		Font *f = g_resourceloader->loadFont(fname);
-		f->_id = id;
-		if (id > Object::s_id) {
-			Object::s_id = id;
-		}
-		registerFont(f);
-
-	}
+	_currScene = Scene::getPool()->getObject(_savedState->readLEUint32());
 
 	_savedState->endSection();
 }
@@ -1359,14 +1284,14 @@ void GrimEngine::savegameSave() {
 
 	savegameCallback();
 
-	saveObjects(_colors, 'COLR');
-	saveBitmaps();
-	saveFonts();
-	saveObjects(_objectStates, 'STAT');
-	saveObjects(_scenes, 'SET ');
-	saveObjects(_textObjects, 'TEXT');
-	saveObjects(_primitiveObjects, 'PRIM');
-	saveObjects(_actors, 'ACTR');
+	PoolColor::getPool()->saveObjects(_savedState);
+	Bitmap::getPool()->saveObjects(_savedState);
+	Font::getPool()->saveObjects(_savedState);
+	ObjectState::getPool()->saveObjects(_savedState);
+	Scene::getPool()->saveObjects(_savedState);
+	TextObject::getPool()->saveObjects(_savedState);
+	PrimitiveObject::getPool()->saveObjects(_savedState);
+	Actor::getPool()->saveObjects(_savedState);
 	saveGRIM();
 
 	g_driver->saveState(_savedState);
@@ -1383,19 +1308,6 @@ void GrimEngine::savegameSave() {
 
 	_shortFrame = true;
 	clearEventQueue();
-}
-
-template<typename T>
-void GrimEngine::saveObjects(Common::HashMap<int32, T *> &map, uint32 ID) {
-	_savedState->beginSection(ID);
-	_savedState->writeLEUint32(map.size());
-	for (typename Common::HashMap<int32, T *>::iterator i = map.begin(); i != map.end(); ++i) {
-		T *a = i->_value;
-		_savedState->writeLESint32(i->_key);
-
-		a->saveState(_savedState);
-	}
-	_savedState->endSection();
 }
 
 void GrimEngine::saveGRIM() {
@@ -1425,36 +1337,7 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLESint32(_sayLineDefaults.getDuration());
 
 	//Scene stuff
-	_savedState->writeLEUint32(_currScene->_id);
-
-	_savedState->endSection();
-}
-
-void GrimEngine::saveBitmaps() {
-	_savedState->beginSection('VBUF');
-
-	_savedState->writeLESint32(_bitmaps.size());
-	for (BitmapListType::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		_savedState->writeLEUint32(i->_key);
-		Bitmap *b = i->_value;
-		_savedState->writeString(b->getFilename());
-
-		_savedState->writeLESint32(b->getCurrentImage());
-		_savedState->writeLESint32(b->getX());
-		_savedState->writeLESint32(b->getY());
-	}
-
-	_savedState->endSection();
-}
-
-void GrimEngine::saveFonts() {
-	_savedState->beginSection('FONT');
-
-	_savedState->writeLESint32(_fonts.size());
-	for (FontListType::iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		_savedState->writeLEUint32(i->_key);
-		_savedState->writeString(i->_value->getFilename());
-	}
+	_savedState->writeLEUint32(_currScene->getId());
 
 	_savedState->endSection();
 }
@@ -1489,7 +1372,7 @@ void GrimEngine::savegameCallback() {
 
 Scene *GrimEngine::findScene(const Common::String &name) {
 	// Find scene object
-	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); ++i) {
+	for (Scene::Pool::Iterator i = Scene::getPool()->getBegin(); i != Scene::getPool()->getEnd(); ++i) {
 		if (i->_value->getName() == name)
 			return i->_value;
 	}
@@ -1521,7 +1404,6 @@ Scene *GrimEngine::loadScene(const Common::String &name) {
 		if (!b)
 			warning("Could not find scene file %s", name.c_str());
 		s = new Scene(name, b->getData(), b->getLen());
-		registerScene(s);
 		delete b;
 	}
 
@@ -1539,7 +1421,7 @@ void GrimEngine::setScene(Scene *scene) {
 	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
 	// and it makes sense too, since when changing set the directions
 	// and coords change too.
-	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
+	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 		Actor *a = i->_value;
 		a->stopWalking();
 	}
@@ -1550,7 +1432,6 @@ void GrimEngine::setScene(Scene *scene) {
 	_currScene->setLightsDirty();
 	// should delete the old scene after setting the new one
 	if (lastScene && !lastScene->_locked) {
-		removeScene(lastScene);
 		delete lastScene;
 	}
 	_shortFrame = true;
@@ -1586,188 +1467,12 @@ float GrimEngine::getPerSecond(float rate) const {
 	return rate * _frameTime / 1000;
 }
 
-void GrimEngine::registerTextObject(TextObject *t) {
-	_textObjects[t->getId()] = t;
-}
-
-void GrimEngine::killTextObject(TextObject *t) {
-	_textObjects.erase(t->getId());
-	delete t;
-}
-
-void GrimEngine::killTextObjects() {
-	while (!_textObjects.empty()) {
-		killTextObject(_textObjects.begin()->_value);
-	}
-}
-
-TextObject *GrimEngine::getTextObject(int id) const {
-	return _textObjects[id];
-}
-
-
-void GrimEngine::registerActor(Actor *a) {
-	_actors[a->getId()] = a;
-}
-
-void GrimEngine::killActor(Actor *a) {
-	_actors.erase(a->getId());
-}
-
-void GrimEngine::killActors() {
-	while (!_actors.empty()) {
-		delete _actors.begin()->_value;
-	}
-}
-
-Actor *GrimEngine::getActor(int id) const {
-	if (_actors.contains(id)) {
-		return _actors[id];
-	}
-
-	return NULL;
-}
-
 Actor *GrimEngine::getTalkingActor() const {
 	return _talkingActor;
 }
 
 void GrimEngine::setTalkingActor(Actor *a) {
 	_talkingActor = a;
-}
-
-Bitmap *GrimEngine::registerBitmap(const char *filename, const char *data, int len) {
-	Bitmap *b = new Bitmap(filename, data, len);
-	registerBitmap(b);
-	return b;
-}
-
-Bitmap *GrimEngine::registerBitmap(const char *data, int width, int height, const char *filename) {
-	Bitmap *b = new Bitmap(data, width, height, 16, filename);
-	registerBitmap(b);
-	return b;
-}
-
-void GrimEngine::registerBitmap(Bitmap *bitmap) {
-	_bitmaps[bitmap->getId()] = bitmap;
-}
-
-void GrimEngine::killBitmap(Bitmap *b) {
-	_bitmaps.erase(b->getId());
-}
-
-void GrimEngine::killBitmaps() {
-	while (!_bitmaps.empty()) {
-		delete _bitmaps.begin()->_value;
-	}
-}
-
-Bitmap *GrimEngine::getBitmap(int32 id) const {
-	if (_bitmaps.contains(id)) {
-		return _bitmaps[id];
-	}
-
-	return NULL;
-}
-
-void GrimEngine::registerFont(Font *font) {
-	_fonts[font->getId()] = font;
-}
-
-void GrimEngine::killFont(Font *f) {
-	_fonts.erase(f->getId());
-	delete f;
-}
-
-void GrimEngine::killFonts() {
-	while (!_fonts.empty()) {
-		killFont(_fonts.begin()->_value);
-	}
-}
-
-Font *GrimEngine::getFont(int32 id) const {
-	if (_fonts.contains(id)) {
-		return _fonts[id];
-	}
-
-	return NULL;
-}
-
-void GrimEngine::registerColor(Color *c) {
-	_colors[c->getId()] = c;
-}
-
-void GrimEngine::killColor(Color *c) {
-	_colors.erase(c->getId());
-	delete c;
-}
-
-void GrimEngine::killColors() {
-	while (!_colors.empty()) {
-		killColor(_colors.begin()->_value);
-	}
-}
-
-Color *GrimEngine::getColor(int32 id) const {
-	if (_colors.contains(id)) {
-		return _colors[id];
-	}
-
-	return NULL;
-}
-
-void GrimEngine::registerObjectState(ObjectState *o) {
-	_objectStates[o->_id] = o;
-}
-
-void GrimEngine::killObjectState(ObjectState *o) {
-	_objectStates.erase(o->_id);
-}
-
-void GrimEngine::killObjectStates() {
-
-}
-
-ObjectState *GrimEngine::getObjectState(int id) const {
-	return _objectStates[id];
-}
-
-void GrimEngine::registerPrimitiveObject(PrimitiveObject *p) {
-	_primitiveObjects[p->_id] = p;
-}
-
-void GrimEngine::killPrimitiveObject(PrimitiveObject *p) {
-	_primitiveObjects.erase(p->_id);
-}
-
-void GrimEngine::killPrimitiveObjects() {
-	while (!_primitiveObjects.empty()) {
-		PrimitiveObject *p = _primitiveObjects.begin()->_value;
-		killPrimitiveObject(p);
-		delete p;
-	}
-}
-
-PrimitiveObject *GrimEngine::getPrimitiveObject(int id) const {
-	return _primitiveObjects[id];
-}
-
-void GrimEngine::registerScene(Scene *s) {
-	_scenes[s->_id] = s;
-}
-
-void GrimEngine::removeScene(Scene *s) {
-	_scenes.erase(s->_id);
-}
-
-void GrimEngine::killScenes() {
-	while (!_scenes.empty()) {
-		removeScene(_scenes.begin()->_value);
-	}
-}
-
-int GrimEngine::sceneId(Scene *s) const {
-	return s->_id;
 }
 
 const Common::String &GrimEngine::getSceneName() const {

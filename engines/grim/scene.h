@@ -23,6 +23,8 @@
 #ifndef GRIM_SCENE_H
 #define GRIM_SCENE_H
 
+#include "engines/grim/pool.h"
+#include "engines/grim/object.h"
 #include "engines/grim/color.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
@@ -36,13 +38,11 @@ class SaveGame;
 class CMap;
 class Light;
 
-class Scene {
+class Scene : public PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')> {
 public:
 	Scene(const Common::String &name, const char *buf, int len);
 	Scene();
 	~Scene();
-
-	int32 getId();
 
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);
@@ -120,11 +120,12 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
-	void reset();
+
+protected:
+	void resetInternalData();
 
 private:
 	bool _locked;
-	void setId(int32 id);
 	Common::String _name;
 	int _numCmaps;
 	ObjectPtr<CMap> *_cmaps;
@@ -138,9 +139,6 @@ private:
 	Setup *_currSetup;
 	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
-
-	int _id;
-	static int s_id;
 
 	friend class GrimEngine;
 };

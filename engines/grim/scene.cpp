@@ -38,13 +38,9 @@
 
 namespace Grim {
 
-int Scene::s_id = 0;
-
 Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
-		_locked(false), _name(sceneName), _enableLights(false), _lightsConfigured(false) {
-
-	++s_id;
-	_id = s_id;
+		PoolObject(), _locked(false), _name(sceneName), _enableLights(false),
+		_lightsConfigured(false) {
 
 	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
 		TextSplitter ts(buf, len);
@@ -56,7 +52,7 @@ Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
 }
 
 Scene::Scene() :
-	_cmaps(NULL) {
+	PoolObject(), _cmaps(NULL) {
 
 }
 
@@ -78,22 +74,11 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::reset() {
+void Scene::resetInternalData() {
 	for (int i = 0; i < _numSetups; ++i) {
 		_setups[i]._bkgndBm = NULL;
 		_setups[i]._bkgndZBm = NULL;
 	}
-}
-
-int32 Scene::getId() {
-	return _id;
-}
-
-void Scene::setId(int32 id) {
-	if (id > s_id) {
-		s_id = id;
-	}
-	_id = id;
 }
 
 void Scene::loadText(TextSplitter &ts){
@@ -308,7 +293,7 @@ bool Scene::restoreState(SaveGame *savedState) {
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
 		int32 id = savedState->readLEUint32();
-		ObjectState *o = g_grim->getObjectState(id);
+		ObjectState *o = ObjectState::getPool()->getObject(id);
 		_states.push_back(o);
 	}
 
@@ -321,8 +306,8 @@ bool Scene::restoreState(SaveGame *savedState) {
 
 		set._name = savedState->readString();
 
-		set._bkgndBm = g_grim->getBitmap(savedState->readLEUint32());
-		set._bkgndZBm = g_grim->getBitmap(savedState->readLEUint32());
+		set._bkgndBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
+		set._bkgndZBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
 
 		set._pos      = savedState->readVector3d();
 		set._interest = savedState->readVector3d();

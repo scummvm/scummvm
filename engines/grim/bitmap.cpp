@@ -29,6 +29,8 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/bitmap.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/lab.h"
 #include "engines/grim/gfx_base.h"
 
 namespace Grim {
@@ -275,7 +277,7 @@ char *BitmapData::getImageData(int num) const {
 // Bitmap
 
 Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
-		Object() {
+		PoolObject() {
 	_data = BitmapData::getBitmapData(fname, data, len);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -283,7 +285,7 @@ Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
 }
 
 Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) :
-		Object() {
+		PoolObject() {
 	_data = new BitmapData(data, w, h, bpp, fname);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -291,8 +293,28 @@ Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) :
 }
 
 Bitmap::Bitmap() :
-		Object() {
+		PoolObject() {
 	_data = new BitmapData();
+}
+
+void Bitmap::saveState(SaveGame *state) const {
+	state->writeString(getFilename());
+
+	state->writeLESint32(getCurrentImage());
+	state->writeLESint32(getX());
+	state->writeLESint32(getY());
+}
+
+void Bitmap::restoreState(SaveGame *state) {
+	freeData();
+
+	Common::String fname = state->readString();
+	Block *b = g_resourceloader->getBlock(fname);
+	_data = BitmapData::getBitmapData(fname, b->getData(), b->getLen());
+
+	_currImage = state->readLESint32();
+	_x = state->readLESint32();
+	_y = state->readLESint32();
 }
 
 void Bitmap::draw() const {
@@ -310,12 +332,15 @@ void Bitmap::setNumber(int n) {
 	}
 }
 
-Bitmap::~Bitmap() {
+void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {
 		delete _data;
 	}
-	g_grim->killBitmap(this);
+}
+
+Bitmap::~Bitmap() {
+	freeData();
 }
 
 void BitmapData::convertToColorFormat(int num, int format) {

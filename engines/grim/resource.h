@@ -66,7 +66,7 @@ public:
 	Model *loadModel(const Common::String &fname, CMap *c, Model *parent = NULL);
 	LipSync *loadLipSync(const Common::String &fname);
 	Block *getFileBlock(const Common::String &filename) const;
-	Block *getBlock(const char *filename);
+	Block *getBlock(const Common::String &filename);
 	Common::File *openNewStreamFile(const char *filename) const;
 	Common::SeekableReadStream *openNewSubStreamFile(const char *filename) const;
 	LuaFile *openNewStreamLuaFile(const char *filename) const;
@@ -77,12 +77,10 @@ public:
 	ModelPtr getModel(const Common::String &fname, CMap *c);
 	CMapPtr getColormap(const Common::String &fname);
 	KeyframeAnimPtr getKeyframe(const Common::String &fname);
-	FontPtr getFont(const Common::String &fname);
 	LipSyncPtr getLipSync(const Common::String &fname);
 	void uncacheModel(Model *m);
 	void uncacheColormap(CMap *c);
 	void uncacheKeyframe(KeyframeAnim *kf);
-	void uncacheFont(Font *f);
 	void uncacheLipSync(LipSync *l);
 
 	struct ResourceCache {
@@ -107,7 +105,6 @@ private:
 	Common::List<Model *> _models;
 	Common::List<CMap *> _colormaps;
 	Common::List<KeyframeAnim *> _keyframeAnims;
-	Common::List<Font *> _fonts;
 	Common::List<LipSync *> _lipsyncs;
 };
 

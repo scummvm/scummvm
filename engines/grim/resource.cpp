@@ -104,7 +104,6 @@ ResourceLoader::~ResourceLoader() {
 	clearList(_models);
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
-	clearList(_fonts);
 	clearList(_lipsyncs);
 }
 
@@ -155,7 +154,7 @@ Block *ResourceLoader::getFileBlock(const Common::String &filename) const {
 		return l->getFileBlock(filename);
 }
 
-Block *ResourceLoader::getBlock(const char *filename) {
+Block *ResourceLoader::getBlock(const Common::String &filename) {
     Common::String fname = filename;
     fname.toLowercase();
     Block *b = getFileFromCache(fname);
@@ -228,8 +227,6 @@ Bitmap *ResourceLoader::loadBitmap(const Common::String &filename) {
 	}
 
 	Bitmap *result = new Bitmap(filename, b->getData(), b->getLen());
-	if (result)
-		g_grim->registerBitmap(result);
 
 	return result;
 }
@@ -401,10 +398,6 @@ void ResourceLoader::uncacheKeyframe(KeyframeAnim *k) {
 	_keyframeAnims.remove(k);
 }
 
-void ResourceLoader::uncacheFont(Font *f) {
-	_fonts.remove(f);
-}
-
 void ResourceLoader::uncacheLipSync(LipSync *s) {
 	_lipsyncs.remove(s);
 }
@@ -446,22 +439,6 @@ KeyframeAnimPtr ResourceLoader::getKeyframe(const Common::String &fname) {
 	}
 
 	return loadKeyframe(fname);
-}
-
-FontPtr ResourceLoader::getFont(const Common::String &fname) {
-	Common::String filename = fname;
-	filename.toLowercase();
-	for (Common::List<Font *>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		Font *f = *i;
-		if (filename == f->getFilename()) {
-			return f;
-		}
-	}
-
-	Font *f = loadFont(fname);
-	_fonts.push_back(f);
-
-	return f;
 }
 
 LipSyncPtr ResourceLoader::getLipSync(const Common::String &fname) {

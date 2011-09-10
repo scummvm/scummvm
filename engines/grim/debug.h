@@ -24,6 +24,7 @@
 #define GRIM_DEBUG_H
 
 #include "common/debug.h"
+#include "common/streamdebug.h"
 
 namespace Grim {
 

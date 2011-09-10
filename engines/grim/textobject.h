@@ -23,6 +23,7 @@
 #ifndef GRIM_TEXTOBJECT_H
 #define GRIM_TEXTOBJECT_H
 
+#include "engines/grim/pool.h"
 #include "engines/grim/color.h"
 
 namespace Grim {
@@ -41,8 +42,8 @@ public:
 	void setFont(Font *font) { _font = font; }
 	Font *getFont() { return _font; }
 
-	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
-	Color *getFGColor() { return _fgColor; }
+	void setFGColor(PoolColor *fgColor) { _fgColor = fgColor; }
+	PoolColor *getFGColor() { return _fgColor; }
 
 	void setJustify(int justify) { _justify = justify; }
 	int getJustify() { return _justify; }
@@ -62,7 +63,7 @@ public:
 protected:
 	TextObjectCommon();
 
-	Color *_fgColor;
+	PoolColor *_fgColor;
 	int _x, _y;
 	int _width, _height;
 	int _justify;
@@ -75,7 +76,8 @@ class TextObjectDefaults : public TextObjectCommon {
 
 };
 
-class TextObject : public Object, public TextObjectCommon {
+class TextObject : public PoolObject<TextObject, MKTAG('T', 'E', 'X', 'T')>,
+                   public TextObjectCommon {
 public:
 	TextObject(bool blastDraw, bool isSpeech = false);
 	TextObject();
