@@ -37,51 +37,6 @@
 
 namespace Pegasus {
 
-class DisplayElement : public IDObject {
-friend class GraphicsManager;
-public:
-	DisplayElement(const tDisplayElementID);
-	virtual ~DisplayElement();
-	
-	void setDisplayOrder(const tDisplayOrder);
-	tDisplayOrder getDisplayOrder() const { return _elementOrder; }
-	
-	bool validToDraw(tDisplayOrder, tDisplayOrder);
-	
-	virtual void draw(const Common::Rect&) {}
-	bool isDisplaying() { return _elementIsDisplaying; }
-	virtual void startDisplaying();
-	virtual void stopDisplaying();
-	
-	virtual void show();
-	virtual void hide();
-	bool isVisible() { return _elementIsVisible; }
-	
-	// triggerRedraw only triggers a draw if the element is displaying and visible.
-	void triggerRedraw();
-	void setTriggeredElement(DisplayElement *);
-	
-	virtual void setBounds(const tCoordType, const tCoordType, const tCoordType, const tCoordType);
-	virtual void setBounds(const Common::Rect&);
-	virtual void getBounds(Common::Rect&) const;
-	virtual void sizeElement(const tCoordType, const tCoordType);
-	virtual void moveElementTo(const tCoordType, const tCoordType);
-	virtual void moveElement(const tCoordType, const tCoordType);
-	virtual void getLocation(tCoordType&, tCoordType&) const;
-	virtual void getCenter(tCoordType&, tCoordType&) const;
-	virtual void centerElementAt(const tCoordType, const tCoordType);
-
-protected:
-	Common::Rect _bounds;
-	bool _elementIsVisible;
-	DisplayElement *_triggeredElement;
-
-	// Used only by PegasusEngine
-	bool _elementIsDisplaying;
-	tDisplayOrder _elementOrder;
-	DisplayElement *_nextElement;
-};
-
 enum {
 	kImageCacheSize = 10
 };
@@ -92,6 +47,7 @@ struct ImageCache {
 	uint32 lastUsed;
 };
 
+class DisplayElement;
 class PegasusEngine;
 
 class GraphicsManager {

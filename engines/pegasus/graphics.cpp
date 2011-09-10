@@ -23,139 +23,14 @@
  *
  */
 
-#include "pegasus/graphics.h"
-
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
 
+#include "pegasus/elements.h"
+#include "pegasus/graphics.h"
+
 namespace Pegasus {
-
-DisplayElement::DisplayElement(const tDisplayElementID id) : IDObject(id) {
-	_elementIsDisplaying = false;
-	_elementIsVisible = false;
-	_elementOrder = 0;
-	_triggeredElement = this;
-	_nextElement = 0;
-}
-
-DisplayElement::~DisplayElement() {
-	if (isDisplaying())
-		((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
-}
-
-void DisplayElement::setDisplayOrder(const tDisplayOrder order) {
-	if (_elementOrder != order) {
-		_elementOrder = order;
-		if (isDisplaying()) {
-			((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
-			((PegasusEngine *)g_engine)->_gfx->addDisplayElement(this);
-			triggerRedraw();
-		}
-	}
-}
-
-void DisplayElement::startDisplaying() {
-	if (!isDisplaying()) {
-		((PegasusEngine *)g_engine)->_gfx->addDisplayElement(this);
-		triggerRedraw();
-	}
-}
-
-void DisplayElement::stopDisplaying() {
-	if (isDisplaying()) {
-		triggerRedraw();
-		((PegasusEngine *)g_engine)->_gfx->removeDisplayElement(this);
-	}
-}
-
-void DisplayElement::setBounds(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
-	_bounds = Common::Rect(left, top, right, bottom);
-}
-
-void DisplayElement::getBounds(Common::Rect &r) const {
-	r = _bounds;
-}
-
-void DisplayElement::sizeElement(const tCoordType h, const tCoordType v) {
-	_bounds.right = _bounds.left + h;
-	_bounds.bottom = _bounds.top + v;
-}
-
-void DisplayElement::moveElementTo(const tCoordType h, const tCoordType v) {
-	_bounds.moveTo(h, v);
-}
-
-void DisplayElement::moveElement(const tCoordType dh, const tCoordType dv) {
-	_bounds.translate(dh, dv);
-}
-
-void DisplayElement::getLocation(tCoordType &h, tCoordType &v) const {
-	h = _bounds.left;
-	v = _bounds.top;
-}
-
-void DisplayElement::centerElementAt(const tCoordType h, const tCoordType v) {
-	_bounds.moveTo(h - (_bounds.width() / 2), v - (_bounds.height() / 2));
-}
-
-void DisplayElement::getCenter(tCoordType &h, tCoordType &v) const {
-	h = (_bounds.left + _bounds.right) / 2;
-	v = (_bounds.top + _bounds.bottom) / 2;
-}
-
-void DisplayElement::setBounds(const Common::Rect &r) {
-	if (r != _bounds) {
-		triggerRedraw();
-		_bounds = r;
-		triggerRedraw();
-	}
-}
-
-void DisplayElement::hide() {
-	if (_elementIsVisible) {
-		triggerRedraw();
-		_elementIsVisible = false;
-	}
-}
-
-void DisplayElement::show() {
-	if (!_elementIsVisible) {
-		_elementIsVisible = true;
-		triggerRedraw();
-	}
-}
-
-//	Only invalidates this element's bounding rectangle if all these conditions are true:
-//	--	The triggered element is this element.
-//	--	The element is displaying on the display list.
-//	--	The element is visible.
-//	--	The element is part of the active layer OR is one of the reserved items.
-void DisplayElement::triggerRedraw() {
-	GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
-
-	if (_triggeredElement == this) {
-		if (validToDraw(gfx->getBackOfActiveLayer(), gfx->getFrontOfActiveLayer()))
-			gfx->invalRect(_bounds);
-	} else {
-		_triggeredElement->triggerRedraw();
-	}
-}
-
-void DisplayElement::setTriggeredElement(DisplayElement *element) {
-	if (element)
-		_triggeredElement = element;
-	else
-		_triggeredElement = this;
-}
-
-bool DisplayElement::validToDraw(tDisplayOrder backLayer, tDisplayOrder frontLayer) {
-	return	isDisplaying() && _elementIsVisible &&
-			(getObjectID() <= kHighestReservedElementID ||
-			(getDisplayOrder() >= backLayer &&
-			getDisplayOrder() <= frontLayer));
-}
 
 GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	initGraphics(640, 480, true, NULL);

@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	credits.o \
 	cursor.o \
 	detection.o \
+	elements.o \
 	gamestate.o \
 	graphics.o \
 	hotspot.o \
