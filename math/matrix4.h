@@ -25,7 +25,9 @@
 #ifndef MATH_MATRIX4_H
 #define MATH_MATRIX4_H
 
-#include "math/matrix3.h"
+#include "math/rotation3d.h"
+#include "math/matrix.h"
+#include "math/vector3d.h"
 
 namespace Math {
 
