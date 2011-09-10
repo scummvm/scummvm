@@ -25,6 +25,7 @@
 #ifndef MATH_MATRIX3_H
 #define MATH_MATRIX3_H
 
+#include "math/utils.h"
 #include "math/matrix.h"
 #include "math/transform.h"
 #include "math/vector3d.h"
@@ -59,8 +60,6 @@ public:
 
 typedef Matrix3x3 Matrix3;
 
-float RadianToDegree(float rad);
-float DegreeToRadian(float degrees);
 
 
 template<class T>
@@ -83,8 +82,8 @@ void Rotation3D<T>::buildFromPitchYawRoll(float pitch, float yaw, float roll) {
 // at, around x-axis
 template<class T>
 void Rotation3D<T>::constructAroundRoll(float roll) {
-	float cosa = (float)cos(DegreeToRadian(roll));
-	float sina = (float)sin(DegreeToRadian(roll));
+	float cosa = (float)cos(degreeToRadian(roll));
+	float sina = (float)sin(degreeToRadian(roll));
 
 	this->getMatrix()->getRow(0) << 1.f << 0.f  << 0.f;
 	this->getMatrix()->getRow(1) << 0.f << cosa << -sina;
@@ -94,8 +93,8 @@ void Rotation3D<T>::constructAroundRoll(float roll) {
 // right
 template<class T>
 void Rotation3D<T>::constructAroundPitch(float pitch) {
-	float cosa = (float)cos(DegreeToRadian(pitch));
-	float sina = (float)sin(DegreeToRadian(pitch));
+	float cosa = (float)cos(degreeToRadian(pitch));
+	float sina = (float)sin(degreeToRadian(pitch));
 
 	this->getMatrix()->getRow(0) << cosa  << 0.f << sina;
 	this->getMatrix()->getRow(1) << 0.f   << 1.f << 0.f;
@@ -105,8 +104,8 @@ void Rotation3D<T>::constructAroundPitch(float pitch) {
 // up
 template<class T>
 void Rotation3D<T>::constructAroundYaw(float yaw) {
-	float cosa = (float)cos(DegreeToRadian(yaw));
-	float sina = (float)sin(DegreeToRadian(yaw));
+	float cosa = (float)cos(degreeToRadian(yaw));
+	float sina = (float)sin(degreeToRadian(yaw));
 
 	this->getMatrix()->getRow(0) << cosa << -sina << 0.f;
 	this->getMatrix()->getRow(1) << sina << cosa  << 0.f;
@@ -122,7 +121,7 @@ template<class T>
 void Rotation3D<T>::getPitchYawRoll(float *pPitch, float *pYaw, float *pRoll) const {
 	// based on http://planning.cs.uiuc.edu/node103.html
 	if (pYaw) {
-		*pYaw = RadianToDegree(atan2f(this->getMatrix()->getValue(1, 0),
+		*pYaw = radianToDegree(atan2f(this->getMatrix()->getValue(1, 0),
 									  this->getMatrix()->getValue(0, 0)));
 	}
 
@@ -130,11 +129,11 @@ void Rotation3D<T>::getPitchYawRoll(float *pPitch, float *pYaw, float *pRoll) co
 		float a = this->getMatrix()->getValue(2, 1);
 		float b = this->getMatrix()->getValue(2, 2);
 		float mag = sqrt(a * a + b * b);
-		*pPitch = RadianToDegree(atan2f(-this->getMatrix()->getValue(2, 0), mag));
+		*pPitch = radianToDegree(atan2f(-this->getMatrix()->getValue(2, 0), mag));
 	}
 
 	if (pRoll) {
-		*pRoll = RadianToDegree(atan2f(this->getMatrix()->getValue(2, 1),
+		*pRoll = radianToDegree(atan2f(this->getMatrix()->getValue(2, 1),
 									   this->getMatrix()->getValue(2, 2)));
 	}
 }
