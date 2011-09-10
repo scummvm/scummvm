@@ -34,6 +34,8 @@ public:
 	virtual void stripCallback(int v) = 0;
 };
 
+typedef void (*SequenceCallback)(int v1, int v2);
+
 class SequenceManager : public Action {
 private:
 	void setup();
@@ -54,6 +56,7 @@ public:
 	SceneObject *_sceneObject;
 	SceneObject *_objectList[6];
 	ASound _soundHandler;
+	SequenceCallback _onCallback;
 public:
 	SequenceManager();
 
@@ -187,6 +190,8 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+typedef void (*StripProc)();
+
 class StripManager : public Action {
 private:
 	void reset();
@@ -208,6 +213,8 @@ public:
 	int _field2E8;
 	Common::Array<Obj44> _obj44List;
 	Common::Array<byte> _script;
+	StripProc _onBegin;
+	StripProc _onEnd;
 public:
 	StripManager();
 	virtual ~StripManager();

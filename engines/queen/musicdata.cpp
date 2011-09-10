@@ -1495,7 +1495,7 @@ const TuneData Sound::_tune[] = {
 	{ { 77, 1017, 0 }, { 0, 0 }, 1, 0 }
 };
 
-const char *Sound::_sfxName[] = {
+const char *const Sound::_sfxName[] = {
 	/* 1 - Door Open (standard) */
 	"116Bssss",
 

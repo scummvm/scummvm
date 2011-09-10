@@ -602,7 +602,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 };
 
 /** Default kernel name table. */
-static const char *s_defaultKernelNames[] = {
+static const char *const s_defaultKernelNames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",
@@ -751,7 +751,7 @@ static const char *s_defaultKernelNames[] = {
 
 // NOTE: 0x72-0x79, 0x85-0x86, 0x88 are from the GK2 demo (which has debug support) and are
 // just Dummy in other SCI2 games.
-static const char *sci2_default_knames[] = {
+static const char *const sci2_default_knames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",
@@ -916,7 +916,7 @@ static const char *sci2_default_knames[] = {
 	/*0x9f*/ "MessageBox"
 };
 
-static const char *sci21_default_knames[] = {
+static const char *const sci21_default_knames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",

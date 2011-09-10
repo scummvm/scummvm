@@ -261,13 +261,13 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 
 void LoLEngine::initStaticResource() {
 	// assign music data
-	static const char *pcMusicFileListIntro[] = { "LOREINTR" };
-	static const char *pcMusicFileListFinale[] = { "LOREFINL" };
-	static const char *pcMusicFileListIngame[] = { "LORE%02d%c" };
+	static const char *const pcMusicFileListIntro[] = { "LOREINTR" };
+	static const char *const pcMusicFileListFinale[] = { "LOREFINL" };
+	static const char *const pcMusicFileListIngame[] = { "LORE%02d%c" };
 
-	static const char *pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
-	static const char *pc98MusicFileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
-	static const char *pc98MusicFileListIngame[] = { "lore%02d.86" };
+	static const char *const pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
+	static const char *const pc98MusicFileListFinale[] = { 0, 0, "lore85.86", "lore86.86", "lore87.86" };
+	static const char *const pc98MusicFileListIngame[] = { "lore%02d.86" };
 
 	memset(_soundData, 0, sizeof(_soundData));
 	if (_flags.platform == Common::kPlatformPC) {

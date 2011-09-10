@@ -21,8 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
 
 namespace DreamGen {
 
@@ -88,17 +86,6 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	sprite->b15 = 0;
 	sprite->delay = 0;
 	return sprite;
-}
-
-void DreamGenContext::makesprite() { // NB: returns new sprite in es:bx 
-	Sprite *sprite = makesprite(si & 0xff, si >> 8, cx, dx, di);
-
-	// Recover es:bx from sprite
-	es = data.word(kBuffers);
-	bx = kSpritetable;
-	Sprite *sprites = (Sprite *)es.ptr(bx, sizeof(Sprite) * 16);
-	bx += sizeof(Sprite) * (sprite - sprites);
-	//
 }
 
 void DreamGenContext::spriteupdate() {
@@ -501,7 +488,7 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::facerightway() {
-	PathNode *paths = getroomspathsCPP()->nodes;
+	PathNode *paths = getroomspaths()->nodes;
 	uint8 dir = paths[data.byte(kManspath)].dir;
 	data.byte(kTurntoface) = dir;
 	data.byte(kLeavedirection) = dir;
@@ -887,6 +874,19 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 	*flag = tileData[0];
 	*flagEx = tileData[1];
 	*type = tileData[2];
+}
+
+void DreamGenContext::getblockofpixel() {
+	al = getblockofpixel(cl, ch);
+}
+
+uint8 DreamGenContext::getblockofpixel(uint8 x, uint8 y) {
+	uint8 flag, flagEx, type, flagX, flagY;
+	checkone(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
+	if (flag & 1)
+		return 0;
+	else
+		return type;
 }
 
 void DreamGenContext::addtopeoplelist() {

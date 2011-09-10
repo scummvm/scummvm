@@ -593,7 +593,7 @@ void SubtitleSettingsDialog::open() {
 }
 
 void SubtitleSettingsDialog::cycleValue() {
-	static const char* subtitleDesc[] = {
+	static const char *const subtitleDesc[] = {
 		_s("Speech Only"),
 		_s("Speech and Subtitles"),
 		_s("Subtitles Only")

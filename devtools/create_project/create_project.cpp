@@ -20,6 +20,8 @@
  *
  */
 
+//#define ENABLE_XCODE
+
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
 #ifdef main
@@ -177,6 +179,7 @@ int main(int argc, char *argv[]) {
 
 			projectType = kProjectMSVC;
 
+#ifdef ENABLE_XCODE
 		} else if (!std::strcmp(argv[i], "--xcode")) {
 			if (projectType != kProjectNone) {
 				std::cerr << "ERROR: You cannot pass more than one project type!\n";
@@ -184,6 +187,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			projectType = kProjectXcode;
+#endif
 
 		} else if (!std::strcmp(argv[i], "--msvc-version")) {
 			if (i + 1 >= argc) {
@@ -255,6 +259,8 @@ int main(int argc, char *argv[]) {
 		} else if (!std::strcmp(argv[i], "--installer")) {
 			setup.runBuildEvents  = true;
 			setup.createInstaller = true;
+		} else if (!std::strcmp(argv[i], "--tools")) {
+			setup.devTools = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -323,6 +329,11 @@ int main(int argc, char *argv[]) {
 		return -1;
 
 	case kProjectCodeBlocks:
+		if (setup.devTools) {
+			std::cerr << "ERROR: Building tools is not supported for the CodeBlocks project type!\n";
+			return -1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// Code::Blocks is using GCC behind the scenes, so we need to pass a list
 		// of options to enable or disable warnings
@@ -480,6 +491,11 @@ int main(int argc, char *argv[]) {
 		break;
 
 	case kProjectXcode:
+		if (setup.devTools) {
+			std::cerr << "ERROR: Building tools is not supported for the XCode project type!\n";
+			return -1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// Xcode is also using GCC behind the scenes. See Code::Blocks comment
 		// for info on all warnings
@@ -504,6 +520,15 @@ int main(int argc, char *argv[]) {
 
 		provider = new CreateProjectTool::XCodeProvider(globalWarnings, projectWarnings);
 		break;
+	}
+
+	// Setup project name and description
+	setup.projectName        = PROJECT_NAME;
+	setup.projectDescription = PROJECT_DESCRIPTION;
+
+	if (setup.devTools) {
+		setup.projectName        += "-tools";
+		setup.projectDescription += "Tools";
 	}
 
 	provider->createProject(setup);
@@ -560,6 +585,9 @@ void displayHelp(const char *exe) {
 	        "                          (default: false)\n"
 	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
+			" --tools                  Create project files for the devtools\n"
+			"                          (ignores --build-events and --installer, as well as engine settings)\n"
+			"                          (default: false)\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines           list all available engines and their default state\n"
@@ -786,6 +814,18 @@ const Feature s_features[] = {
 	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                            // is just no current way of properly detecting this...
 };
+
+const Tool s_tools[] = {
+	{ "create_drascula",     true},
+	{ "create_hugo",         true},
+	{ "create_kyradat",      true},
+	{ "create_lure",         true},
+	{ "create_mads",         true},
+	{ "create_teenagent",    true},
+	{ "create_toon",         true},
+	{ "create_translations", true},
+	{ "qtable",              true}
+};
 } // End of anonymous namespace
 
 FeatureList getAllFeatures() {
@@ -830,6 +870,16 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
 	} else {
 		return false;
 	}
+}
+
+ToolList getAllTools() {
+	const size_t toolCount = sizeof(s_tools) / sizeof(s_tools[0]);
+
+	ToolList tools;
+	for (size_t i = 0; i < toolCount; ++i)
+		tools.push_back(s_tools[i]);
+
+	return tools;
 }
 
 namespace CreateProjectTool {
@@ -1057,63 +1107,90 @@ ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::stri
 }
 
 void ProjectProvider::createProject(const BuildSetup &setup) {
-	_uuidMap = createUUIDMap(setup);
+	if (setup.devTools) {
+		_uuidMap = createToolsUUIDMap();
 
-	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = _uuidMap[PROJECT_NAME] = createUUID();
+		// We also need to add the UUID of the main project file.
+		const std::string svmUUID = _uuidMap[setup.projectName] = createUUID();
 
-	// Create Solution/Workspace file
-	createWorkspace(setup);
+		createWorkspace(setup);
 
-	StringList in, ex;
+		StringList in, ex;
 
-	// Create engine project files
-	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == PROJECT_NAME)
-			continue;
+		// Create tools project files
+		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+			if (i->first == setup.projectName)
+				continue;
 
+			in.clear(); ex.clear();
+			const std::string moduleDir = setup.srcDir + "/devtools/" + i->first;
+
+			createModuleList(moduleDir, setup.defines, in, ex);
+			createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+		}
+
+		// Create other misc. build files
+		createOtherBuildFiles(setup);
+
+	} else {
+		_uuidMap = createUUIDMap(setup);
+
+		// We also need to add the UUID of the main project file.
+		const std::string svmUUID = _uuidMap[setup.projectName] = createUUID();
+
+		// Create Solution/Workspace file
+		createWorkspace(setup);
+
+		StringList in, ex;
+
+		// Create engine project files
+		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+			if (i->first == setup.projectName)
+				continue;
+
+			in.clear(); ex.clear();
+			const std::string moduleDir = setup.srcDir + "/engines/" + i->first;
+
+			createModuleList(moduleDir, setup.defines, in, ex);
+			createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+		}
+
+		// Last but not least create the main project file.
 		in.clear(); ex.clear();
-		const std::string moduleDir = setup.srcDir + "/engines/" + i->first;
 
-		createModuleList(moduleDir, setup.defines, in, ex);
-		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
-	}
-
-	// Last but not least create the main project file.
-	in.clear(); ex.clear();
-
-	// File list for the Project file
-	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
+		// File list for the Project file
+		createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/audio", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/audio/softsynth/mt32", setup.defines, in, ex);
 #if HAS_VIDEO_FOLDER
-	createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
+		createModuleList(setup.srcDir + "/video", setup.defines, in, ex);
 #endif
 
-	// Resource files
-	in.push_back(setup.srcDir + "/icons/" + PROJECT_NAME + ".ico");
-	in.push_back(setup.srcDir + "/dists/" + PROJECT_NAME + ".rc");
+		// Resource files
+		in.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
+		in.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
 
-	// Various text files
-	in.push_back(setup.srcDir + "/AUTHORS");
-	in.push_back(setup.srcDir + "/COPYING");
-	in.push_back(setup.srcDir + "/COPYING.LGPL");
-	in.push_back(setup.srcDir + "/COPYRIGHT");
-	in.push_back(setup.srcDir + "/NEWS");
-	in.push_back(setup.srcDir + "/README");
-	in.push_back(setup.srcDir + "/TODO");
+		// Various text files
+		in.push_back(setup.srcDir + "/AUTHORS");
+		in.push_back(setup.srcDir + "/COPYING");
+		in.push_back(setup.srcDir + "/COPYING.LGPL");
+		in.push_back(setup.srcDir + "/COPYRIGHT");
+		in.push_back(setup.srcDir + "/NEWS");
+		in.push_back(setup.srcDir + "/README");
+		in.push_back(setup.srcDir + "/TODO");
 
-	// Create the main project file.
-	createProjectFile(PROJECT_NAME, svmUUID, setup, setup.srcDir, in, ex);
+		// Create the main project file.
+		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
 
-	// Create other misc. build files
-	createOtherBuildFiles(setup);
+		// Create other misc. build files
+		createOtherBuildFiles(setup);
+	}
 }
 
 ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup) const {
@@ -1121,6 +1198,20 @@ ProjectProvider::UUIDMap ProjectProvider::createUUIDMap(const BuildSetup &setup)
 
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
 		if (!i->enable || isSubEngine(i->name, setup.engines))
+			continue;
+
+		result[i->name] = createUUID();
+	}
+
+	return result;
+}
+
+ProjectProvider::UUIDMap ProjectProvider::createToolsUUIDMap() const {
+	UUIDMap result;
+
+	ToolList tools = getAllTools();
+	for (ToolList::const_iterator i = tools.begin(); i != tools.end(); ++i) {
+		if (!i->enable)
 			continue;
 
 		result[i->name] = createUUID();

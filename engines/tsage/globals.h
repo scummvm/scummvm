@@ -166,23 +166,27 @@ class BlueForceGlobals: public Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3;
 	UIElements _uiElements;
+	StripProxy _stripProxy;
 	int _dayNumber;
 	int _v4CEA4;
 	int _v4CEA8;
-	int _v4CEB8;
-	int _v4CEBA;
 	int _driveFromScene;
 	int _driveToScene;
 	int _v4CF9E;
 	int _v4E238;
 	int _v501FC;
+	int _v50696;
 	int _v51C42;
 	int _v51C44;
 	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
+	int _clip1Bullets, _clip2Bullets;
 
 	BlueForceGlobals();
+	void reset();
+	bool getHasBullets();
+
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
 };

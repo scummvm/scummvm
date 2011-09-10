@@ -340,7 +340,7 @@ const SoundSequenceDataList AnimationSequencePlayer::_soundSeqDataList[] = {
 	{   0,   0,  4,  0,  7, _soundDataSeq19_20 }
 };
 
-const char *AnimationSequencePlayer::_audioFileNamesTable[] = {
+const char *const AnimationSequencePlayer::_audioFileNamesTable[] = {
 	"demomenu.raw",
 	"demorolc.raw",
 	"fx101.wav",

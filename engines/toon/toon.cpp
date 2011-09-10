@@ -191,11 +191,11 @@ void ToonEngine::parseInput() {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
-				if(canSaveGameStateCurrently())
+				if (canSaveGameStateCurrently())
 					saveGame(-1, Common::String());
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
-				if(canLoadGameStateCurrently())
+				if (canLoadGameStateCurrently())
 					loadGame(-1);
 			}
 			if (event.kbd.ascii == 't' && !hasModifier) {
@@ -509,7 +509,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			Common::Rect rect = _oldDirtyRects[i];
 			rect.translate(-state()->_currentScrollValue, 0);
 			offX = 0;
-			if(rect.right <= 0)
+			if (rect.right <= 0)
 				continue;
 			if (rect.left < 0) {
 				offX = -rect.left;
@@ -663,7 +663,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 		while (!clickRelease) {
 
-			if(_dirtyAll) {
+			if (_dirtyAll) {
 				mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
 				addDirtyRect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			} else {
@@ -936,7 +936,7 @@ ToonEngine::~ToonEngine() {
 	delete _animationManager;
 	delete _moviePlayer;
 
-	if(_mainSurface) {
+	if (_mainSurface) {
 		_mainSurface->free();
 		delete _mainSurface;
 	}
@@ -4677,7 +4677,7 @@ void ToonEngine::makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 }
 
 void ToonEngine::playRoomMusic() {
-	if(_gameState->_inConversation) {
+	if (_gameState->_inConversation) {
 		const char* music = getSpecialConversationMusic(_gameState->_currentConversationId);
 		if (music) {
 			_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, music);

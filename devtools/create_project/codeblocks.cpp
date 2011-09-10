@@ -32,20 +32,20 @@ CodeBlocksProvider::CodeBlocksProvider(StringList &global_warnings, std::map<std
 }
 
 void CodeBlocksProvider::createWorkspace(const BuildSetup &setup) {
-	std::ofstream workspace((setup.outputDir + '/' + PROJECT_NAME + ".workspace").c_str());
+	std::ofstream workspace((setup.outputDir + '/' + setup.projectName + ".workspace").c_str());
 	if (!workspace)
-		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME + ".workspace\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".workspace\" for writing");
 
 	workspace << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n"
 	             "<CodeBlocks_workspace_file>\n";
 
-	workspace << "\t<Workspace title=\"" << PROJECT_DESCRIPTION << "\">\n";
+	workspace << "\t<Workspace title=\"" << setup.projectDescription << "\">\n";
 
-	writeReferences(workspace);
+	writeReferences(setup, workspace);
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == PROJECT_NAME)
+		if (i->first == setup.projectName)
 			continue;
 
 		workspace << "\t\t<Project filename=\"" << i->first << ".cbp\" />\n";
@@ -88,15 +88,15 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 	           "\t\t<Option compiler=\"gcc\" />\n"
 	           "\t\t<Build>\n";
 
-	if (name == PROJECT_NAME) {
+	if (name == setup.projectName) {
 		std::string libraries;
 
 		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
 			libraries += processLibraryName(*i) + ".a;";
 
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"" << PROJECT_NAME << "\\" << PROJECT_NAME << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
-		           "\t\t\t\t<Option object_output=\"" << PROJECT_NAME << "\" />\n"
+		           "\t\t\t\t<Option output=\"" << setup.projectName << "\\" << setup.projectName << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		           "\t\t\t\t<Option object_output=\"" << setup.projectName << "\" />\n"
 		           "\t\t\t\t<Option external_deps=\"" << libraries /* + list of engines engines\name\name.a */ << "\" />\n"
 		           "\t\t\t\t<Option type=\"1\" />\n"
 		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
@@ -125,10 +125,10 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 			project << "\t\t\t\t\t<Add library=\"" << processLibraryName(*i) << "\" />\n";
 
 		for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-			if (i->first == PROJECT_NAME)
+			if (i->first == setup.projectName)
 				continue;
 
-			project << "\t\t\t\t\t<Add library=\"" << PROJECT_NAME << "\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
+			project << "\t\t\t\t\t<Add library=\"" << setup.projectName << "\\engines\\" << i->first << "\\lib" << i->first << ".a\" />\n";
 		}
 
 		project << "\t\t\t\t\t<Add directory=\"$(" << LIBS_DEFINE << ")lib\\mingw\" />\n"
@@ -139,7 +139,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 		// Resource compiler
 		project << "\t\t\t\t<ResourceCompiler>\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\dists\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << PROJECT_NAME << "\" />\n"
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << setup.projectName << "\" />\n"
 		           "\t\t\t\t</ResourceCompiler>\n"
 		           "\t\t\t</Target>\n"
 		           "\t\t</Build>\n";
@@ -148,9 +148,9 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 	} else {
 		project << "\t\t\t<Target title=\"default\">\n"
-		           "\t\t\t\t<Option output=\"" << PROJECT_NAME << "\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
+		           "\t\t\t\t<Option output=\"" << setup.projectName << "\\engines\\" << name << "\\lib" << name << "\" prefix_auto=\"1\" extension_auto=\"1\" />\n"
 		           "\t\t\t\t<Option working_dir=\"\" />\n"
-		           "\t\t\t\t<Option object_output=\"" << PROJECT_NAME << "\" />\n"
+		           "\t\t\t\t<Option object_output=\"" << setup.projectName << "\" />\n"
 		           "\t\t\t\t<Option type=\"2\" />\n"
 		           "\t\t\t\t<Option compiler=\"gcc\" />\n"
 		           "\t\t\t\t<Option createDefFile=\"1\" />\n"
@@ -161,7 +161,7 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 		project << "\t\t\t\t\t<Add option=\"-g\" />\n"
 		           "\t\t\t\t\t<Add directory=\"..\\..\\engines\" />\n"
-		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << PROJECT_NAME << "\" />\n";
+		           "\t\t\t\t\t<Add directory=\"..\\..\\..\\" << setup.projectName << "\" />\n";
 
 		// Sword2.5 engine needs theora and vorbis includes
 		if (name == "sword25")
@@ -240,8 +240,8 @@ void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstre
 	}
 }
 
-void CodeBlocksProvider::writeReferences(std::ofstream &output) {
-	output << "\t\t<Project filename=\"" << PROJECT_NAME << ".cbp\" active=\"1\">\n";
+void CodeBlocksProvider::writeReferences(const BuildSetup &setup, std::ofstream &output) {
+	output << "\t\t<Project filename=\"" << setup.projectName << ".cbp\" active=\"1\">\n";
 
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		if (i->first == " << PROJECT_NAME << ")

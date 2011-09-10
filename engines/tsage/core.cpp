@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "tsage/tsage.h"
@@ -55,21 +56,30 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	DEALLOCATE(imgData);
 }
 
-InvObject::InvObject(int visage, int strip, int frame, int sceneNumber) {
+InvObject::InvObject(int visage, int strip, int frame) {
+	assert(_vm->getGameID() == GType_BlueForce);
 	_visage = visage;
 	_strip = strip;
 	_frame = frame;
-	_sceneNumber = sceneNumber;
+	_sceneNumber = 0;
+	_iconResNum = 10;
 }
 
 void InvObject::setCursor() {
-	_globals->_events._currentCursor = _cursorId;
+	if (_vm->getGameID() == GType_BlueForce) {
+		// Blue Force cursor handling
+		_cursorId = (CursorType)BF_GLOBALS._inventory->indexOf(this);
+		_globals->_events.setCursor(_cursorId);
+	} else {
+		// Ringworld cursor handling
+		_globals->_events._currentCursor = _cursorId;
 
-	if (_iconResNum != -1) {
-		GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
+		if (_iconResNum != -1) {
+			GfxSurface s = surfaceFromRes(_iconResNum, _rlbNum, _cursorNum);
 
-		Graphics::Surface src = s.lockSurface();
-		_globals->_events.setCursor(src, s._transColor, s._centroid, _cursorId);
+			Graphics::Surface src = s.lockSurface();
+			_globals->_events.setCursor(src, s._transColor, s._centroid, _cursorId);
+		}
 	}
 }
 
@@ -82,6 +92,31 @@ InvObjectList::InvObjectList() {
 void InvObjectList::synchronize(Serializer &s) {
 	SavedObject::synchronize(s);
 	SYNC_POINTER(_selectedItem);
+}
+
+int InvObjectList::indexOf(InvObject *obj) const {
+	int idx = 0;
+	SynchronizedList<InvObject *>::const_iterator i;
+	
+	for (i = _itemList.begin(); i != _itemList.end(); ++i, ++idx) {
+		if ((*i) == obj)
+			return idx;
+	}
+
+	return -1;
+}
+
+InvObject *InvObjectList::getItem(int objectNum) {
+	SynchronizedList<InvObject *>::const_iterator i = _itemList.begin();
+	while (objectNum-- > 0)
+		++i;
+
+	return *i;
+}
+
+int InvObjectList::getObjectScene(int objectNum) {
+	InvObject *obj = getItem(objectNum);
+	return obj->_sceneNumber;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -286,8 +321,12 @@ void ObjectMover::dispatch() {
 void ObjectMover::setup(const Common::Point &destPos) {
 	_sceneObject->calcAngle(destPos);
 
-	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_SUPPRESS_DISPATCH))
-		_sceneObject->_objectWrapper->dispatch();
+	if ((_sceneObject->_objectWrapper) && !(_sceneObject->_flags & OBJFLAG_SUPPRESS_DISPATCH)) {
+		if (_vm->getGameID() == GType_Ringworld)
+			_sceneObject->_objectWrapper->dispatch();
+		else
+			_sceneObject->updateAngle(destPos);
+	}
 
 	// Get the difference
 	int diffX = destPos.x - _sceneObject->_position.x;
@@ -1598,8 +1637,13 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		_globals->_sceneText.remove();
 	}
 
-	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
+	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active) {
+		// Show user interface
 		BF_GLOBALS._uiElements.show();
+
+		// Re-show the cursor
+		BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
+	}
 }
 
 void SceneItem::display2(int resNum, int lineNum) {
@@ -1737,6 +1781,18 @@ void NamedHotspot::setup(int sceneRegionId, int resNum, int lookLineNum, int tal
 	_lookLineNum = lookLineNum;
 	_talkLineNum = talkLineNum;
 	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
+		break;
+	}
 }
 
 void NamedHotspot::synchronize(Serializer &s) {
@@ -1773,11 +1829,11 @@ void SceneObjectWrapper::dispatch() {
 
 void SceneObjectWrapper::check() {
 	_visageImages.setVisage(_sceneObject->_visage);
-	int frameCount = _visageImages.getFrameCount();
+	int visageCount = _visageImages.getFrameCount();
 	int angle = _sceneObject->_angle;
 	int strip = _sceneObject->_strip;
 
-	if (frameCount == 4) {
+	if (visageCount == 4) {
 		if ((angle > 314) || (angle < 45))
 			strip = 4;
 		if ((angle > 44) && (angle < 135))
@@ -1786,7 +1842,7 @@ void SceneObjectWrapper::check() {
 			strip = 3;
 		if ((angle >= 225) && (angle < 315))
 			strip = 2;
-	} else if (frameCount == 8) {
+	} else if (visageCount == 8) {
 		if ((angle > 330) || (angle < 30))
 			strip = 4;
 		if ((angle >= 30) && (angle < 70))
@@ -1805,8 +1861,8 @@ void SceneObjectWrapper::check() {
 			strip = 8;
 	}
 
-	if (strip > frameCount)
-		strip = frameCount;
+	if (strip > visageCount)
+		strip = visageCount;
 
 	_sceneObject->setStrip(strip);
 }
@@ -2139,9 +2195,16 @@ SceneObject *SceneObject::clone() const {
 }
 
 void SceneObject::checkAngle(const SceneObject *obj) {
-	_angle = GfxManager::getAngle(_position, obj->_position);
+	checkAngle(obj->_position);
+}
 
-	if (_objectWrapper)
+void SceneObject::checkAngle(const Common::Point &pt) {
+	int angleAmount = GfxManager::getAngle(_position, pt);
+	if ((_vm->getGameID() == GType_Ringworld) || 
+			((angleAmount != -1) && (_animateMode == ANIM_MODE_9)))
+		_angle = angleAmount;
+
+	if (_objectWrapper && (_vm->getGameID() == GType_Ringworld))
 		_objectWrapper->dispatch();
 }
 
@@ -2412,8 +2475,8 @@ void SceneObject::updateScreen() {
 	}
 }
 
-void SceneObject::updateAngle(SceneObject *sceneObj) {
-	checkAngle(sceneObj);
+void SceneObject::updateAngle(const Common::Point &pt) {
+	checkAngle(pt);
 	if (_objectWrapper)
 		_objectWrapper->check();
 }
@@ -2440,7 +2503,12 @@ void AltSceneObject::postInit(SceneObjectList *OwnerList) {
 }
 
 void AltSceneObject::draw() {
-	SceneObject::draw();
+	Rect destRect = _bounds;
+	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
+		-_globals->_sceneManager._scene->_sceneBounds.top);
+	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
+	GfxSurface frame = getFrame();
+	_globals->_gfxManagerInstance.copyFrom(frame, destRect, priorityRegion);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2753,12 +2821,21 @@ void SceneText::synchronize(Serializer &s) {
 		_textSurface.synchronize(s);
 }
 
+void SceneText::updateScreen() {
+	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
+	// has been re-activated after showing some scene text
+	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
+			!BF_GLOBALS._uiElements._visible)
+		SceneObject::updateScreen();
+}
+
 /*--------------------------------------------------------------------------*/
 
 Visage::Visage() {
 	_resNum = -1;
 	_rlbNum = -1;
 	_data = NULL;
+	_flipHoriz = false;
 }
 
 Visage::Visage(const Visage &v) {
@@ -2789,20 +2866,25 @@ void Visage::setVisage(int resNum, int rlbNum) {
 			// In Ringworld, we immediately get the data
 			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		} else {
-			// Blue Force has an extra indirection via a visage index file
+			// Blue Force has an extra indirection via the visage index file
 			byte *indexData = _resourceManager->getResource(RES_VISAGE, resNum, 9999);
-			if (rlbNum == 0)
-				rlbNum = 1;
+			if (rlbNum == 9999) {
+				_data = indexData;
+			} else {
+				if (rlbNum == 0)
+					rlbNum = 1;
 
-			// Get the flags/rlbNum to use
-			uint32 flags = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
+				// Get the flags/rlbNum to use
+				uint32 v = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
+				int flags = v >> 30;
 
-			if (flags & 0xC0000000) {
-				// TODO: See whether rest of flags dword is needed
-				rlbNum = (int)(flags & 0xff);
+				if (flags & 3) {
+					rlbNum = (int)(v & 0xff);
+				}
+				_flipHoriz = flags & 1;
+
+				_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 			}
-
-			_data = _resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		}
 
 		assert(_data);
@@ -2823,11 +2905,26 @@ GfxSurface Visage::getFrame(int frameNum) {
 	int offset = READ_LE_UINT32(_data + 2 + frameNum * 4);
 	byte *frameData = _data + offset;
 
-	return surfaceFromRes(frameData);
+	GfxSurface result = surfaceFromRes(frameData);
+	if (_flipHoriz) flip(result);
+	return result;
 }
 
 int Visage::getFrameCount() const {
 	return READ_LE_UINT16(_data);
+}
+
+void Visage::flip(GfxSurface &gfxSurface) {
+	Graphics::Surface s = gfxSurface.lockSurface();
+
+	for (int y = 0; y < s.h; ++y) {
+		// Flip the line
+		byte *lineP = (byte *)s.getBasePtr(0, y);
+		for (int x = 0; x < (s.w / 2); ++x)
+			SWAP(lineP[x], lineP[s.w - x - 1]);
+	}
+
+	gfxSurface.unlockSurface();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -3693,8 +3790,16 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
-				!_globals->_sceneItems.empty()) {
+		bool enabled = (_vm->getGameID() == GType_BlueForce) ? _globals->_player._enabled :
+			_globals->_player._uiEnabled;
+		if (enabled && (event.eventType == EVENT_BUTTON_DOWN) && !_globals->_sceneItems.empty()) {
+			// Check if the mouse is on the player
+			if (_globals->_player.contains(event.mousePos)) {
+				playerAction(event);
+				if (event.handled)
+					return;
+			}
+
 			// Scan the item list to find one the mouse is within
 			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
 			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
@@ -3702,7 +3807,7 @@ void SceneHandler::process(Event &event) {
 
 			if (i != _globals->_sceneItems.end()) {
 				// Pass the action to the item
-				(*i)->startAction(_globals->_events.getCursor());
+				(*i)->startAction(_globals->_events.getCursor(), event);
 				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
 				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
@@ -3714,6 +3819,9 @@ void SceneHandler::process(Event &event) {
 					_globals->_events.setCursor(CURSOR_USE);
 				}
 			}
+
+			// Handle any fallback text display
+			processEnd(event);
 
 			// Handle player processing
 			_globals->_player.process(event);

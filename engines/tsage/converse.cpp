@@ -40,6 +40,7 @@ SequenceManager::SequenceManager() : Action() {
 	_field26 = 0;
 	_objectIndex = 0;
 	_keepActive = false;
+	_onCallback = NULL;
 	setup();
 }
 
@@ -287,7 +288,7 @@ void SequenceManager::signal() {
 		/* Following indexes were introduced for Blue Force */
 		case 35:
 			v1 = getNextValue();
-			_sceneObject->updateAngle(_objectList[v1]);
+			_sceneObject->updateAngle(_objectList[v1]->_position);
 			break;
 		case 36:
 			_sceneObject->animate(ANIM_MODE_9, NULL);
@@ -295,7 +296,8 @@ void SequenceManager::signal() {
 		case 37:
 			v1 = getNextValue();
 			v2 = getNextValue();
-			warning("TODO: dword_53030(%d,%d)", v1, v2);
+			if (_onCallback)
+				_onCallback(v1, v2);
 			break;
 		case 38: {
 			int resNum = getNextValue();
@@ -558,6 +560,8 @@ void Obj44::synchronize(Serializer &s) {
 StripManager::StripManager() {
 	_callbackObject = NULL;
 	_activeSpeaker = NULL;
+	_onBegin = NULL;
+	_onEnd = NULL;
 	reset();
 }
 
@@ -565,6 +569,8 @@ StripManager::~StripManager() {
 }
 
 void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callback) {
+	if (_onBegin)
+		_onBegin();
 	reset();
 
 	_stripNum = stripNum;
@@ -677,6 +683,9 @@ void StripManager::remove() {
 		_globals->_sceneManager._scene->_sceneBounds = _sceneBounds;
 		_globals->_sceneManager._scene->loadScene(_sceneNumber);
 	}
+
+	if (_onEnd)
+		_onEnd();
 
 	Action::remove();
 }

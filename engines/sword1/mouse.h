@@ -34,22 +34,22 @@ namespace Sword1 {
 
 #define MAX_MOUSE 30
 
-#define BS1L_BUTTON_DOWN		2
-#define BS1L_BUTTON_UP			4
-#define BS1R_BUTTON_DOWN		8
-#define BS1R_BUTTON_UP			16
-#define BS1_WHEEL_UP			32
-#define BS1_WHEEL_DOWN			64
-#define MOUSE_BOTH_BUTTONS		(BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
-#define MOUSE_DOWN_MASK			(BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
-#define MOUSE_UP_MASK			(BS1L_BUTTON_UP | BS1R_BUTTON_UP)
+#define BS1L_BUTTON_DOWN        2
+#define BS1L_BUTTON_UP          4
+#define BS1R_BUTTON_DOWN        8
+#define BS1R_BUTTON_UP          16
+#define BS1_WHEEL_UP            32
+#define BS1_WHEEL_DOWN          64
+#define MOUSE_BOTH_BUTTONS      (BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
+#define MOUSE_DOWN_MASK         (BS1L_BUTTON_DOWN | BS1R_BUTTON_DOWN)
+#define MOUSE_UP_MASK           (BS1L_BUTTON_UP | BS1R_BUTTON_UP)
 
 struct MouseObj {
 	int id;
 	Object *compact;
 };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h"  // START STRUCT PACKING
 
 struct MousePtr {
 	uint16 numFrames;
@@ -60,7 +60,7 @@ struct MousePtr {
 	uint8  dummyData[0x30];
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 class Logic;
 class Menu;

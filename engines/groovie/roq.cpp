@@ -43,9 +43,6 @@
 namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
-#ifdef DITHER
-	_dither(NULL),
-#endif
 	VideoPlayer(vm), _codingTypeCount(0),
 	_fg(&_vm->_graphicsMan->_foreground), _bg(&_vm->_graphicsMan->_background) {
 
@@ -55,38 +52,13 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 
 	if (_vm->_mode8bit) {
 		byte pal[256 * 3];
-#ifdef DITHER
-		// Initialize to a black palette
-		memset(pal, 0, 256 * 3);
 
-		// Build a basic color palette
-		for (int r = 0; r < 4; r++) {
-			for (int g = 0; g < 4; g++) {
-				for (int b = 0; b < 4; b++) {
-					byte col = (r << 4) | (g << 2) | (b << 0);
-					pal[3 * col + 0] = r << 6;
-					pal[3 * col + 1] = g << 6;
-					pal[3 * col + 2] = b << 6;
-				}
-			}
-		}
-
-		// Initialize the dithering algorithm
-		_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
-		_paletteLookup->setPalette(pal, Graphics::PaletteLUT::kPaletteRGB, 8);
-		for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
-			debug("Groovie::ROQ: Building palette table: %02d/63", i);
-			_paletteLookup->buildNext();
-		}
-
-#else // !DITHER
 		// Set a grayscale palette
 		for (int i = 0; i < 256; i++) {
 			pal[(i * 3) + 0] = i;
 			pal[(i * 3) + 1] = i;
 			pal[(i * 3) + 2] = i;
 		}
-#endif // DITHER
 
 		_syst->getPaletteManager()->setPalette(pal, 0, 256);
 	}
@@ -98,12 +70,6 @@ ROQPlayer::~ROQPlayer() {
 	delete _currBuf;
 	_prevBuf->free();
 	delete _prevBuf;
-
-#ifdef DITHER
-	// Free the dithering algorithm
-	delete _dither;
-	delete _paletteLookup;
-#endif
 }
 
 uint16 ROQPlayer::loadInternal() {
@@ -147,22 +113,13 @@ uint16 ROQPlayer::loadInternal() {
 }
 
 void ROQPlayer::buildShowBuf() {
-#ifdef DITHER
-	// Start a new frame dithering
-	_dither->newFrame();
-#endif
-
 	for (int line = 0; line < _bg->h; line++) {
 		byte *out = (byte *)_bg->getBasePtr(0, line);
 		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _bg->w; x++) {
 			if (_vm->_mode8bit) {
-#ifdef DITHER
-				*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
-#else
 				// Just use the luminancy component
 				*out = *in;
-#endif // DITHER
 #ifdef USE_RGB_COLOR
 			} else {
 				// Do the format conversion (YUV -> RGB -> Screen format)
@@ -178,9 +135,6 @@ void ROQPlayer::buildShowBuf() {
 			if (!(x % _scaleX))
 				in += _currBuf->format.bytesPerPixel;
 		}
-#ifdef DITHER
-		_dither->nextLine();
-#endif
 	}
 
 	// Swap buffers
@@ -349,11 +303,6 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 			*ptr2++ = 128;
 		}
 
-#ifdef DITHER
-		// Reset the dithering algorithm with the new width
-		delete _dither;
-		_dither = new Graphics::SierraLight(width * _scaleX, _paletteLookup);
-#endif
 	}
 
 	return true;

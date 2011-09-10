@@ -436,7 +436,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 	}
 }
 
-static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char **globs) {
+static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char *const *globs) {
 	if (depth <= 0)
 		return;
 
@@ -454,7 +454,7 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 				continue;
 
 			bool matched = false;
-			for (const char **glob = globs; *glob; glob++)
+			for (const char *const *glob = globs; *glob; glob++)
 				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;

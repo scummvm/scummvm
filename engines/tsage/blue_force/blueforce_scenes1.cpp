@@ -346,11 +346,11 @@ void Scene109::Text::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene109::Scene109(): GameScene() {
+Scene109::Scene109(): GroupedScene() {
 }
 
 void Scene109::postInit(SceneObjectList *OwnerList) {
-	GameScene::postInit(OwnerList);
+	GroupedScene::postInit(OwnerList);
 	loadScene(999);
 
 	_protaginist2.postInit();
@@ -424,6 +424,283 @@ void Scene109::signal() {
 	if (_sceneMode == 1) {
 		BF_GLOBALS._scenePalette.clearListeners();
 		BF_GLOBALS._sceneManager.changeScene(110);
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 190 - Front of Police Station
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene190::Object4::startAction(CursorType action, Event &event) {
+	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE: {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 13;
+		Common::Point pt(62, 96);
+		PlayerMover *mover = new PlayerMover();
+		BF_GLOBALS._player.addMover(mover, &pt, scene);
+		break;
+	}
+	default:
+		NamedObject::startAction(action, event);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene190::Item1::startAction(CursorType action, Event &event) {
+	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		scene->setAction(&scene->_action1);
+		break;
+	default:
+		NamedHotspot::startAction(action, event);
+		break;
+	}
+}
+
+void Scene190::Item2::startAction(CursorType action, Event &event) {
+	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		scene->_stripManager.start(1900, scene);
+		break;
+	default:
+		NamedHotspot::startAction(action, event);
+		break;
+	}
+}
+
+void Scene190::Exit::startAction(CursorType action, Event &event) {
+	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
+
+	Common::Point pt(316, 91);
+	PlayerMover *mover = new PlayerMover();
+	BF_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene190::Action1::signal() {
+	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._player.disableControl();
+		setDelay(2);
+		break;
+	case 1: {
+		ADD_MOVER(BF_GLOBALS._player, 165, 91);
+		break;
+	}
+	case 2:
+		scene->_sound.play(82);
+		scene->_object2.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		ADD_MOVER(BF_GLOBALS._player, 180, 86);
+		break;
+	case 4:
+		scene->_sound.play(82);
+		scene->_object2.animate(ANIM_MODE_6, this);
+		break;
+	case 5:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(315);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene190::Scene190(): SceneExt() {
+	_fieldB52 = true;
+	_cursorVisage.setVisage(1, 8);
+}
+
+void Scene190::postInit(SceneObjectList *OwnerList) {
+	BF_GLOBALS._dialogCenter.y = 100;
+	if ((BF_GLOBALS._sceneManager._previousScene == 100) ||
+			(BF_GLOBALS._sceneManager._previousScene == 20)) {
+//		clearScreen();
+	}
+	if (BF_GLOBALS._dayNumber == 0)
+		// If at start of game, change to first day
+		BF_GLOBALS._dayNumber = 1;
+
+	// Load the scene data
+	loadScene(190);
+	BF_GLOBALS._scenePalette.loadPalette(2);
+
+	_stripManager.addSpeaker(&_speaker);
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.disableControl();
+
+	// Initialise objects
+	_object2.postInit();
+	_object2.setVisage(190);
+	_object2.setStrip(1);
+	_object2.setPosition(Common::Point(179, 88));
+
+	_object3.postInit();
+	_object3.setVisage(190);
+	_object3.setStrip(2);
+	_object3.fixPriority(200);
+	_object3.setPosition(Common::Point(170, 31));
+	_object3.animate(ANIM_MODE_7, 0, NULL);
+	_object3.setup(190, 8, 26, 19, 1, NULL);
+
+	if (BF_GLOBALS.getFlag(fWithLyle)) {
+		BF_GLOBALS._player.setVisage(303);
+		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
+
+		_object4.postInit();
+		_object4.setVisage(444);
+		_object4.setFrame(2);
+		_object4.setPosition(Common::Point(54, 114));
+		_object4.setup(190, -1, -1, -1, 1, NULL);
+		
+		switch (BF_GLOBALS._sceneManager._previousScene) {
+		case 300: {
+			_sceneMode = 12;
+			BF_GLOBALS._player.setPosition(Common::Point(316, 91));
+			ADD_MOVER(BF_GLOBALS._player, 305, 91);
+			break;
+		}
+		case 315:
+			_sceneMode = 1901;
+			setAction(&_sequenceManager, this, 1901, &BF_GLOBALS._player, &_object2, NULL);
+			break;
+		case 50:
+		case 60:
+		default:
+			_fieldB52 = false;
+			BF_GLOBALS._player.setPosition(Common::Point(62, 96));
+			BF_GLOBALS._player._strip = 3;
+			BF_GLOBALS._player.enableControl();
+			break;
+		}
+	} else {
+		BF_GLOBALS._player.setVisage(BF_GLOBALS._player._visage);
+		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+
+		switch (BF_GLOBALS._sceneManager._previousScene) {
+		case 300: {
+			if (!BF_GLOBALS.getFlag(onBike)) {
+				BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
+				_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 11 : 12;
+				BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 1304 : 303);
+				BF_GLOBALS._player.setPosition(Common::Point(316, 91));
+				ADD_MOVER(BF_GLOBALS._player, 305, 91);
+			} else {
+				BF_GLOBALS._player.disableControl();
+				_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 193 : 191;
+				setAction(&_sequenceManager, this, 193, &BF_GLOBALS._player, NULL);
+			}
+			break;
+		}
+		case 315:
+			BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
+			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 1900 : 1901;
+			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_object2, NULL);
+			break;
+		case 50:
+		case 60:
+		default:
+			BF_GLOBALS.setFlag(onBike);
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 192 : 190;
+			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
+			break;
+		}
+	}
+
+	if (BF_GLOBALS.getFlag(onBike)) {
+		BF_GLOBALS._sound1.play(BF_GLOBALS.getFlag(onDuty) ? 37 : 29);
+	} else if (BF_GLOBALS._sceneManager._previousScene != 300) {
+		BF_GLOBALS._sound1.play(33);
+	}
+
+	_exit.setup(Rect(310, 50, 320, 125), 190, -1, -1, -1, 1, NULL);
+	_item2.setup(Rect(108, 1, 111, 94), 190, 7, 11, 18, 1, NULL);
+	_item4.setup(2, 190, 5, 10, 16, 1);
+	_item3.setup(1, 190, 4, 10, 15, 1);
+	_item8.setup(6, 190, 20, 21, 22, 1);
+	_item1.setup(7, 190, 1, 10, -1, 1);
+	_item7.setup(5, 190, 0, 10, 12, 1);
+	_item6.setup(4, 190, 2, 10, 13, 1);
+	_item5.setup(3, 190, 3, 10, 14, 1);
+	_item9.setup(Rect(0, 0, 89, 68), 190, 6, 10, 17, 1, NULL);
+	_item10.setup(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 190, 23, -1, -1, 1, NULL);
+}
+
+void Scene190::signal() {
+	switch (_sceneMode) {
+	case 10:
+		if ((BF_GLOBALS._dayNumber == 2) && (BF_GLOBALS._bookmark < bEndDayOne))
+			BF_GLOBALS._sound1.changeSound(49);
+		BF_GLOBALS._sceneManager.changeScene(300);
+		break;
+	case 11:
+	case 12:
+	case 1900:
+	case 1901:
+		BF_GLOBALS._player.enableControl();
+		_fieldB52 = false;
+		break;
+	case 13:
+	case 191:
+	case 193:
+		BF_GLOBALS._sceneManager.changeScene(60);
+		break;
+	case 190:
+	case 192:
+		BF_GLOBALS._sceneManager.changeScene(300);
+		break;
+	case 0:
+	default:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene190::process(Event &event) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(3);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene190::dispatch() {
+	SceneExt::dispatch();
+
+	if (!_action && !_fieldB52 && (BF_GLOBALS._player._position.x >= 310) 
+			&& !BF_GLOBALS.getFlag(onBike)) {
+		// Handle walking off to the right side of the screen
+		BF_GLOBALS._player.disableControl();
+		_fieldB52 = true;
+		_sceneMode = 10;
+
+		ADD_MOVER(BF_GLOBALS._player, 330, BF_GLOBALS._player._position.y);
 	}
 }
 

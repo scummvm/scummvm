@@ -93,7 +93,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //#define SCI_VERBOSE_RESMAN 1
 
-static const char *sci_error_types[] = {
+static const char *const sci_error_types[] = {
 	"No error",
 	"I/O error",
 	"Resource is empty (size 0)",
@@ -107,7 +107,7 @@ static const char *sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-static const char *s_resourceTypeNames[] = {
+static const char *const s_resourceTypeNames[] = {
 	"view", "pic", "script", "text", "sound",
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
@@ -120,7 +120,7 @@ static const char *s_resourceTypeNames[] = {
 // Resource type suffixes. Note that the
 // suffic of SCI3 scripts has been changed from
 // scr to csc
-static const char *s_resourceTypeSuffixes[] = {
+static const char *const s_resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	   "", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",

@@ -33,7 +33,7 @@
 
 namespace Draci {
 
-static const char *draciIdentString = "DRACI";
+static const char *const draciIdentString = "DRACI";
 
 bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 	char saveIdentBuffer[6];

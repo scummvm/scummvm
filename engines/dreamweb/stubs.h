@@ -47,6 +47,7 @@
 	void printchar(const Frame* charSet, uint16 *x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height);
 	void printdirect();
 	void printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered);
+	void printdirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
 	void printmessage();
 	void usetimedtext();
@@ -76,7 +77,6 @@
 	void multiput();
 	void eraseoldobs();
 	void clearsprites();
-	void makesprite();
 	Sprite *makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi);
 	void spriteupdate();
 	void initman();
@@ -111,8 +111,7 @@
 	void turnanypathoff(uint8 param, uint8 room);
 	void turnanypathon();
 	void turnanypathoff();
-	void getroomspaths();
-	RoomPaths *getroomspathsCPP();
+	RoomPaths *getroomspaths();
 	void makebackob(SetObject *objData);
 	void modifychar();
 	void lockmon();
@@ -216,7 +215,32 @@
 	void obicons();
 	void compare();
 	bool compare(uint8 index, uint8 flag, const char id[4]);
-	void pixelcheckset();
-	bool pixelcheckset(ObjPos *pos, uint8 x, uint8 y);
-
+	bool pixelcheckset(const ObjPos *pos, uint8 x, uint8 y);
+	bool isitdescribed(const ObjPos *objPos);
+	void checkifset();
+	bool checkifset(uint8 x, uint8 y);
+	void checkifpathison();
+	bool checkifpathison(uint8 index);
+	void isitworn();
+	bool isitworn(const DynObject *object);
+	void makeworn();
+	void makeworn(DynObject *object);
+	void obtoinv();
+	void obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y);
+	void showryanpage();
+	void findallryan();
+	void findallryan(uint8 *inv);
+	void fillryan();
+	void useroutine();
+	void hangon();
+	void hangon(uint16 frameCount);
+	void hangonp();
+	void hangonp(uint16 count);
+	uint8 findnextcolon(uint8 **string);
+	void findnextcolon();
+	uint8 *getobtextstartCPP();
+	void usetext(const uint8 *string);
+	void usetext();
+	void getblockofpixel();
+	uint8 getblockofpixel(uint8 x, uint8 y);
 

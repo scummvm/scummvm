@@ -336,11 +336,16 @@ waitexam:	;call	delpointer
 	jz	notuseinv
 	mov	bx,offset cs:withlist1
 notuseinv:	call	checkcoords
+
+	cmp     quitrequested, 0
+	jnz	stopwaiting
+
 	cmp	examagain,0
 	jz	norex
 	jmp	examineagain
 norex:	cmp	getback,0
 	jz	waitexam
+stopwaiting:
 
 	mov	pickup,0
 	cmp	watchingtime,0

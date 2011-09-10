@@ -124,10 +124,10 @@ void Sound::checkSpeechFileEndianness() {
 				size = 2000;
 			else
 				size /= 2;
-			int16 prev_be_value = (int16)SWAP_BYTES_16(*((uint16*)(data)));
+			int16 prev_be_value = (int16)SWAP_BYTES_16(*((uint16 *)(data)));
 			for (uint32 i = 1; i < size; ++i) {
-				le_diff_sum += fabs((double)(data[i] - data[i-1]));
-				int16 be_value = (int16)SWAP_BYTES_16(*((uint16*)(data + i)));
+				le_diff_sum += fabs((double)(data[i] - data[i - 1]));
+				int16 be_value = (int16)SWAP_BYTES_16(*((uint16 *)(data + i)));
 				be_diff_sum += fabs((double)(be_value - prev_be_value));
 				prev_be_value = be_value;
 			}
@@ -187,7 +187,7 @@ void Sound::engine() {
 		} else {
 			if (!_mixer->isSoundHandleActive(_fxQueue[cnt2].handle)) { // sound finished
 				_resMan->resClose(_fxList[_fxQueue[cnt2].id].sampleId);
-				if (cnt2 != _endOfQueue-1)
+				if (cnt2 != _endOfQueue - 1)
 					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
 				_endOfQueue--;
 			}
@@ -201,8 +201,8 @@ void Sound::fnStopFx(int32 fxNo) {
 		if (_fxQueue[cnt].id == (uint32)fxNo) {
 			if (!_fxQueue[cnt].delay) // sound was started
 				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
-			if (cnt != _endOfQueue-1)
-				_fxQueue[cnt] = _fxQueue[_endOfQueue-1];
+			if (cnt != _endOfQueue - 1)
+				_fxQueue[cnt] = _fxQueue[_endOfQueue - 1];
 			_endOfQueue--;
 			return;
 		}
@@ -243,36 +243,36 @@ void Sound::quitScreen() {
 }
 
 void Sound::playSample(QueueElement *elem) {
-	uint8 *sampleData = (uint8*)_resMan->fetchRes(_fxList[elem->id].sampleId);
+	uint8 *sampleData = (uint8 *)_resMan->fetchRes(_fxList[elem->id].sampleId);
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
 			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||
-				(_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
+			        (_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
 
-					uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
-					uint8 volR = (_fxList[elem->id].roomVolList[cnt].rightVol * 10 * _sfxVolR) / 255;
-					int8 pan = (volR - volL) / 2;
-					uint8 volume = (volR + volL) / 2;
+				uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
+				uint8 volR = (_fxList[elem->id].roomVolList[cnt].rightVol * 10 * _sfxVolR) / 255;
+				int8 pan = (volR - volL) / 2;
+				uint8 volume = (volR + volL) / 2;
 
-					if (SwordEngine::isPsx()) {
-						// We ignore FX_LOOP as XA has its own looping mechanism
-						uint32 size = READ_LE_UINT32(sampleData);
-						Audio::AudioStream *audStream = Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size-4), 11025);
-						_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
-					} else {
-						uint32 size = READ_LE_UINT32(sampleData + 0x28);
-						uint8 flags;
-						if (READ_LE_UINT16(sampleData + 0x22) == 16)
-							flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
-						else
-							flags = Audio::FLAG_UNSIGNED;
-						if (READ_LE_UINT16(sampleData + 0x16) == 2)
-							flags |= Audio::FLAG_STEREO;
-						Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-									Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
-									(_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
-						_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
-					}
+				if (SwordEngine::isPsx()) {
+					// We ignore FX_LOOP as XA has its own looping mechanism
+					uint32 size = READ_LE_UINT32(sampleData);
+					Audio::AudioStream *audStream = Audio::makeXAStream(new Common::MemoryReadStream(sampleData + 4, size - 4), 11025);
+					_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
+				} else {
+					uint32 size = READ_LE_UINT32(sampleData + 0x28);
+					uint8 flags;
+					if (READ_LE_UINT16(sampleData + 0x22) == 16)
+						flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+					else
+						flags = Audio::FLAG_UNSIGNED;
+					if (READ_LE_UINT16(sampleData + 0x16) == 2)
+						flags |= Audio::FLAG_STEREO;
+					Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+					                                 Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
+					                                 (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
+					_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
+				}
 			}
 		} else
 			break;
@@ -294,7 +294,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		uint16 i;
 
 		if (!file.open("speech.lis")) {
-			warning ("Could not open speech.lis");
+			warning("Could not open speech.lis");
 			return false;
 		}
 
@@ -306,12 +306,12 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		file.close();
 
 		if (locIndex == 0xFFFFFFFF) {
-			warning ("Could not find room %d in speech.lis", roomNo);
+			warning("Could not find room %d in speech.lis", roomNo);
 			return false;
 		}
 
 		if (!file.open("speech.inf")) {
-			warning ("Could not open speech.inf");
+			warning("Could not open speech.inf");
 			return false;
 		}
 
@@ -333,7 +333,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			}
 
 		if (locIndex == 0xFFFFFFFF) {
-			warning ("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
+			warning("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
 			return false;
 		}
 
@@ -421,7 +421,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 }
 
 int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
-	uint8 *fBuf = (uint8*)malloc(cSize);
+	uint8 *fBuf = (uint8 *)malloc(cSize);
 	_cowFile.seek(index);
 	_cowFile.read(fBuf, cSize);
 	uint32 headerPos = 0;
@@ -456,7 +456,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 				resSize >>= 1;
 			} else {
 				resSize = 0;
-				srcData = (int16*)fBuf;
+				srcData = (int16 *)fBuf;
 				srcPos = headerPos >> 1;
 				while (srcPos < cSize) {
 					length = (int16)READ_LE_UINT16(srcData + srcPos);
@@ -472,10 +472,10 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 			}
 		}
 		assert(!(headerPos & 1));
-		srcData = (int16*)fBuf;
+		srcData = (int16 *)fBuf;
 		srcPos = headerPos >> 1;
 		uint32 dstPos = 0;
-		int16 *dstData = (int16*)malloc(resSize * 2);
+		int16 *dstData = (int16 *)malloc(resSize * 2);
 		int32 samplesLeft = resSize;
 		while (srcPos < cSize && samplesLeft > 0) {
 			length = (int16)(_bigEndianSpeech ? READ_BE_UINT16(srcData + srcPos) : READ_LE_UINT16(srcData + srcPos));
@@ -486,7 +486,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 					length = samplesLeft;
 				int16 value;
 				if (_bigEndianSpeech) {
-					value = (int16)SWAP_BYTES_16(*((uint16*)(srcData + srcPos)));
+					value = (int16)SWAP_BYTES_16(*((uint16 *)(srcData + srcPos)));
 				} else {
 					value = srcData[srcPos];
 				}
@@ -498,7 +498,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 					length = samplesLeft;
 				if (_bigEndianSpeech) {
 					for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
-						dstData[dstPos++] = (int16)SWAP_BYTES_16(*((uint16*)(srcData + (srcPos++))));
+						dstData[dstPos++] = (int16)SWAP_BYTES_16(*((uint16 *)(srcData + (srcPos++))));
 				} else {
 					memcpy(dstData + dstPos, srcData + srcPos, length * 2);
 					dstPos += length;
@@ -511,7 +511,7 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 			memset(dstData + dstPos, 0, samplesLeft * 2);
 		}
 		if (_cowMode == CowDemo) // demo has wave output size embedded in the compressed data
-			*(uint32*)dstData = 0;
+			*(uint32 *)dstData = 0;
 		free(fBuf);
 		*size = resSize * 2;
 		calcWaveVolume(dstData, resSize);
@@ -607,7 +607,7 @@ void Sound::initCowSystem() {
 		_currentCowFile = SwordEngine::_systemVars.currentCD;
 		if (!_cowFile.isOpen()) {
 			if (!_cowFile.open("speech.dat"))
-				error ("Could not open speech.dat");
+				error("Could not open speech.dat");
 			_cowMode = CowPSX;
 		}
 	}
@@ -626,7 +626,7 @@ void Sound::initCowSystem() {
 			// Get data from the external table file
 			Common::File tableFile;
 			if (!tableFile.open("speech.tab"))
-				error ("Could not open speech.tab");
+				error("Could not open speech.tab");
 			_cowHeaderSize = tableFile.size();
 			_cowHeader = (uint32 *)malloc(_cowHeaderSize);
 			if (_cowHeaderSize & 3)
@@ -635,7 +635,7 @@ void Sound::initCowSystem() {
 				_cowHeader[cnt] = tableFile.readUint32LE();
 		} else {
 			_cowHeaderSize = _cowFile.readUint32LE();
-			_cowHeader = (uint32*)malloc(_cowHeaderSize);
+			_cowHeader = (uint32 *)malloc(_cowHeaderSize);
 			if (_cowHeaderSize & 3)
 				error("Unexpected cow header size %d", _cowHeaderSize);
 			for (uint32 cnt = 0; cnt < (_cowHeaderSize / 4) - 1; cnt++)

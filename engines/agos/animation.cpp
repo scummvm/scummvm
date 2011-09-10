@@ -137,7 +137,7 @@ void MoviePlayer::handleNextFrame() {
 // Movie player for DXA movies
 ///////////////////////////////////////////////////////////////////////////////
 
-const char * MoviePlayerDXA::_sequenceList[90] = {
+const char *const MoviePlayerDXA::_sequenceList[90] = {
 	"agent32",
 	"Airlock",
 	"Badluck",

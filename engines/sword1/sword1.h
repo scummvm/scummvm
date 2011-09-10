@@ -63,16 +63,16 @@ class Music;
 class Control;
 
 struct SystemVars {
-	bool	runningFromCd;
-	uint32	currentCD;			// starts at zero, then either 1 or 2 depending on section being played
-	uint32	justRestoredGame;	// see main() in sword.c & New_screen() in gtm_core.c
+	bool    runningFromCd;
+	uint32  currentCD;          // starts at zero, then either 1 or 2 depending on section being played
+	uint32  justRestoredGame;   // see main() in sword.c & New_screen() in gtm_core.c
 
-	uint8	controlPanelMode;	// 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
-	bool	forceRestart;
-	bool	wantFade;			// when true => fade during scene change, else cut.
-	uint8	playSpeech;
-	uint8	showText;
-	uint8	language;
+	uint8   controlPanelMode;   // 1 death screen version of the control panel, 2 = successful end of game, 3 = force restart
+	bool    forceRestart;
+	bool    wantFade;           // when true => fade during scene change, else cut.
+	uint8   playSpeech;
+	uint8   showText;
+	uint8   language;
 	bool    isDemo;
 	Common::Platform platform;
 };
@@ -131,18 +131,18 @@ private:
 	uint16 _mouseState;
 	Common::KeyState _keyPressed;
 
-	ResMan		*_resMan;
-	ObjectMan	*_objectMan;
-	Screen		*_screen;
-	Mouse		*_mouse;
-	Logic		*_logic;
-	Sound		*_sound;
-	Menu		*_menu;
-	Music		*_music;
-	Control		*_control;
+	ResMan      *_resMan;
+	ObjectMan   *_objectMan;
+	Screen      *_screen;
+	Mouse       *_mouse;
+	Logic       *_logic;
+	Sound       *_sound;
+	Menu        *_menu;
+	Music       *_music;
+	Control     *_control;
 	static const uint8  _cdList[TOTAL_SECTIONS];
-	static const CdFile	_pcCdFileList[];
-	static const CdFile	_macCdFileList[];
+	static const CdFile _pcCdFileList[];
+	static const CdFile _macCdFileList[];
 	static const CdFile _psxCdFileList[];
 };
 

@@ -99,6 +99,13 @@ public:
 	static void show();
 };
 
+/*--------------------------------------------------------------------------*/
+
+class SoundDialog {
+public:
+	static void execute();
+};
+
 } // End of namespace TsAGE
 
 #endif

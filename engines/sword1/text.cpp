@@ -35,7 +35,7 @@ namespace Sword1 {
 
 #define OVERLAP 3
 #define SPACE ' '
-#define MAX_LINES		30
+#define MAX_LINES       30
 
 
 Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
@@ -43,7 +43,7 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 	_resMan = pResMan;
 	_textCount = 0;
 	_fontId = (czechVersion) ? CZECH_GAME_FONT : GAME_FONT;
-	_font = (uint8*)_resMan->openFetchRes(_fontId);
+	_font = (uint8 *)_resMan->openFetchRes(_fontId);
 
 	_joinWidth = charWidth(SPACE) - 2 * OVERLAP;
 	_charHeight = _resMan->getUint16(_resMan->fetchFrame(_font, 0)->height); // all chars have the same height
@@ -86,16 +86,16 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 	uint16 sprHeight = _charHeight * numLines;
 	uint32 sprSize = sprWidth * sprHeight;
 	assert(!_textBlocks[slot]); // if this triggers, the speechDriver failed to call Text::releaseText.
-	_textBlocks[slot] = (FrameHeader*)malloc(sprSize + sizeof(FrameHeader));
+	_textBlocks[slot] = (FrameHeader *)malloc(sprSize + sizeof(FrameHeader));
 
 	memcpy(_textBlocks[slot]->runTimeComp, "Nu  ", 4);
-	_textBlocks[slot]->compSize	= 0;
-	_textBlocks[slot]->width	= _resMan->toUint16(sprWidth);
-	_textBlocks[slot]->height	= _resMan->toUint16(sprHeight);
-	_textBlocks[slot]->offsetX	= 0;
-	_textBlocks[slot]->offsetY	= 0;
+	_textBlocks[slot]->compSize = 0;
+	_textBlocks[slot]->width    = _resMan->toUint16(sprWidth);
+	_textBlocks[slot]->height   = _resMan->toUint16(sprHeight);
+	_textBlocks[slot]->offsetX  = 0;
+	_textBlocks[slot]->offsetY  = 0;
 
-	uint8 *linePtr = ((uint8*)_textBlocks[slot]) + sizeof(FrameHeader);
+	uint8 *linePtr = ((uint8 *)_textBlocks[slot]) + sizeof(FrameHeader);
 	memset(linePtr, NO_COL, sprSize);
 	for (lineCnt = 0; lineCnt < numLines; lineCnt++) {
 		uint8 *sprPtr = linePtr + (sprWidth - lines[lineCnt].width) / 2; // center the text
@@ -132,7 +132,7 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			text++;
 
 		wordWidth += OVERLAP; // no overlap on final letter of word!
-		if (firstWord)	{ // first word on first line, so no separating SPACE needed
+		if (firstWord)  { // first word on first line, so no separating SPACE needed
 			line[0].width = wordWidth;
 			line[0].length = wordLength;
 			firstWord = false;
@@ -144,7 +144,7 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			if (line[lineNo].width + spaceNeeded <= maxWidth) {
 				line[lineNo].width += spaceNeeded;
 				line[lineNo].length += 1 + wordLength; // NB. space+word characters
-			} else {	// put word (without separating SPACE) at start of next line
+			} else {    // put word (without separating SPACE) at start of next line
 				lineNo++;
 				assert(lineNo < MAX_LINES);
 				line[lineNo].width = wordWidth;
@@ -152,21 +152,21 @@ uint16 Text::analyzeSentence(const uint8 *text, uint16 maxWidth, LineInfo *line)
 			}
 		}
 	}
-	return lineNo+1;	// return no of lines
+	return lineNo + 1;  // return no of lines
 }
 
 uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 	FrameHeader *chFrame = _resMan->fetchFrame(_font, ch - SPACE);
-	uint8 *chData = ((uint8*)chFrame) + sizeof(FrameHeader);
+	uint8 *chData = ((uint8 *)chFrame) + sizeof(FrameHeader);
 	uint8 *dest = sprPtr;
 	uint8 *decBuf = NULL;
 	uint8 *decChr;
 	uint16 frameHeight = 0;
 
 	if (SwordEngine::isPsx()) {
-		frameHeight =  _resMan->getUint16(chFrame->height)/2;
+		frameHeight = _resMan->getUint16(chFrame->height) / 2;
 		if (_fontId == CZECH_GAME_FONT) { //Czech game fonts are compressed
-			decBuf = (uint8*) malloc((_resMan->getUint16(chFrame->width))*(_resMan->getUint16(chFrame->height)/2));
+			decBuf = (uint8 *)malloc((_resMan->getUint16(chFrame->width)) * (_resMan->getUint16(chFrame->height) / 2));
 			Screen::decompressHIF(chData, decBuf);
 			decChr = decBuf;
 		} else //Normal game fonts are not compressed

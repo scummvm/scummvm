@@ -82,6 +82,12 @@ void TSageEngine::initialize() {
 			_resourceManager->addLib("TSAGE.RLB");
 		}
 		_globals = new BlueForce::BlueForceGlobals();
+		
+		// Setup the user interface
+		BF_GLOBALS._uiElements.setup(Common::Point(0, BF_INTERFACE_Y - 2));
+
+		// Reset all global variables
+		BF_GLOBALS.reset();
 	}
 
 	_globals->gfxManager().setDefaults();

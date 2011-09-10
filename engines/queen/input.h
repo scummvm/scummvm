@@ -141,7 +141,7 @@ private:
 	const char *_currentCommandKeys;
 
 	//! command keys for all languages
-	static const char *_commandKeys[];
+	static const char *const _commandKeys[];
 
 	//! verbs matching the command keys
 	static const Verb _verbKeys[];

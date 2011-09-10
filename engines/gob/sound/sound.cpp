@@ -330,7 +330,7 @@ void Sound::adlibPlayBgMusic() {
 	if (!_adlPlayer)
 		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	static const char *tracksMac[] = {
+	static const char *const tracksMac[] = {
 //		"musmac1.adl", // TODO: This track isn't played correctly at all yet
 		"musmac2.adl",
 		"musmac3.adl",
@@ -339,7 +339,7 @@ void Sound::adlibPlayBgMusic() {
 		"musmac6.adl"
 	};
 
-	static const char *tracksWin[] = {
+	static const char *const tracksWin[] = {
 		"musmac1.mid",
 		"musmac2.mid",
 		"musmac3.mid",
@@ -534,7 +534,7 @@ void Sound::cdPlayBgMusic() {
 	if (!_cdrom)
 		return;
 
-	static const char *tracks[][2] = {
+	static const char *const tracks[][2] = {
 		{"avt00.tot",  "mine"},
 		{"avt001.tot", "nuit"},
 		{"avt002.tot", "campagne"},
@@ -571,7 +571,7 @@ void Sound::cdPlayMultMusic() {
 	if (!_cdrom)
 		return;
 
-	static const char *tracks[][6] = {
+	static const char *const tracks[][6] = {
 		{"avt005.tot", "fra1", "all1", "ang1", "esp1", "ita1"},
 		{"avt006.tot", "fra2", "all2", "ang2", "esp2", "ita2"},
 		{"avt012.tot", "fra3", "all3", "ang3", "esp3", "ita3"},

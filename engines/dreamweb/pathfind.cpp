@@ -21,9 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
-#include "common/config-manager.h"
 
 namespace DreamGen {
 
@@ -33,10 +30,10 @@ void DreamGenContext::turnpathon() {
 
 void DreamGenContext::turnpathon(uint8 param) {
 	findormake(param, 0xff, data.byte(kRoomnum) + 100);
-	PathNode *roomsPaths = getroomspathsCPP()->nodes;
+	PathNode *roomsPaths = getroomspaths()->nodes;
 	if (param == 0xff)
 		return;
-	roomsPaths[param].b6 = 0xff;
+	roomsPaths[param].on = 0xff;
 }
 
 void DreamGenContext::turnpathoff() {
@@ -45,16 +42,16 @@ void DreamGenContext::turnpathoff() {
 
 void DreamGenContext::turnpathoff(uint8 param) {
 	findormake(param, 0x00, data.byte(kRoomnum) + 100);
-	PathNode *roomsPaths = getroomspathsCPP()->nodes;
+	PathNode *roomsPaths = getroomspaths()->nodes;
 	if (param == 0xff)
 		return;
-	roomsPaths[param].b6 = 0x00;
+	roomsPaths[param].on = 0x00;
 }
 
 void DreamGenContext::turnanypathon(uint8 param, uint8 room) {
 	findormake(param, 0xff, room + 100);
 	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].b6 = 0xff;
+	paths[param].on = 0xff;
 }
 
 
@@ -65,19 +62,14 @@ void DreamGenContext::turnanypathon() {
 void DreamGenContext::turnanypathoff(uint8 param, uint8 room) {
 	findormake(param, 0x00, room + 100);
 	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].b6 = 0x00;
+	paths[param].on = 0x00;
 }
 
 void DreamGenContext::turnanypathoff() {
 	turnanypathoff(al, ah);
 }
 
-void DreamGenContext::getroomspaths() {
-	es = data.word(kReels);
-	bx = data.byte(kRoomnum) * 144;
-}
-
-RoomPaths *DreamGenContext::getroomspathsCPP() {
+RoomPaths *DreamGenContext::getroomspaths() {
 	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
 	return (RoomPaths *)result;
 }
@@ -86,7 +78,7 @@ void DreamGenContext::autosetwalk() {
 	al = data.byte(kManspath);
 	if (data.byte(kFinaldest) == al)
 		return;
-	const RoomPaths *roomsPaths = getroomspathsCPP();
+	const RoomPaths *roomsPaths = getroomspaths();
 	checkdest(roomsPaths);
 	data.word(kLinestartx) = roomsPaths->nodes[data.byte(kManspath)].x - 12;
 	data.word(kLinestarty) = roomsPaths->nodes[data.byte(kManspath)].y - 12;
@@ -123,9 +115,19 @@ void DreamGenContext::checkdest(const RoomPaths *roomsPaths) {
 }
 
 void DreamGenContext::findxyfrompath() {
-	const PathNode *roomsPaths = getroomspathsCPP()->nodes;
+	const PathNode *roomsPaths = getroomspaths()->nodes;
 	data.byte(kRyanx) = roomsPaths[data.byte(kManspath)].x - 12;
 	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
+}
+
+void DreamGenContext::checkifpathison() {
+	flags._z = checkifpathison(al);
+}
+
+bool DreamGenContext::checkifpathison(uint8 index) {
+	RoomPaths *roomsPaths = getroomspaths();
+	uint8 pathOn = roomsPaths->nodes[index].on;
+	return pathOn == 0xff;
 }
 
 } /*namespace dreamgen */

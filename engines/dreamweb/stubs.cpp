@@ -22,7 +22,6 @@
 
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
-#include "graphics/surface.h"
 #include "common/config-manager.h"
 
 namespace DreamGen {
@@ -145,8 +144,7 @@ void DreamGenContext::dreamweb() {
 				// "endofgame"
 				clearbeforeload();
 				fadescreendowns();
-				cx = 200;
-				hangon();
+				hangon(200);
 				endgame();
 				quickquit2();
 				return;
@@ -186,8 +184,7 @@ void DreamGenContext::dreamweb() {
 		clearbeforeload();
 		showgun();
 		fadescreendown();
-		cx = 100;
-		hangon();
+		hangon(100);
 
 	}
 }
@@ -1105,19 +1102,14 @@ void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
 	uint16 commandText = kTextstart + segRef(data.word(kCommandtext)).word(command * 2);
 	uint8 textLen = data.byte(kTextlen);
 	{
-		uint16 y = data.word(kTextaddressy);
 		const uint8 *string = segRef(data.word(kCommandtext)).ptr(commandText, 0);
-		printdirect(&string, data.word(kTextaddressx), &y, textLen, (bool)(textLen & 1));
+		printdirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
 	}
 	copyname(type, index, commandLine);
 	uint16 x = data.word(kLastxpos);
 	if (command != 0)
 		x += 5;
-	{
-		uint16 y = data.word(kTextaddressy);
-		const uint8 *string = commandLine;
-		printdirect(&string, x, &y, textLen, (bool)(textLen & 1));
-	}
+	printdirect(commandLine, x, data.word(kTextaddressy), textLen, (bool)(textLen & 1));
 	data.byte(kNewtextline) = 1;
 }
 
@@ -1737,6 +1729,12 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 	return true;
 }
 
+bool DreamGenContext::isitdescribed(const ObjPos *pos) {
+	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
+	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
+	return result != 0;
+}
+
 bool DreamGenContext::isCD() {
 	// The original sources has two codepaths depending if the game is 'if cd' or not
 	// This is a hack to guess which version to use with the assumption that if we have a cd version
@@ -1744,5 +1742,186 @@ bool DreamGenContext::isCD() {
 	// Maybe detect the version during game id?
 	return (data.byte(kSpeechloaded) == 1);
 }
+
+void DreamGenContext::checkifset() {
+	flags._z = !checkifset(al, ah);
+}
+
+bool DreamGenContext::checkifset(uint8 x, uint8 y) {
+	const ObjPos *setList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
+	for (size_t i = 0; i < 128; ++i) {
+		const ObjPos *pos = setList + 127 - i;
+		if (pos->index == 0xff)
+			continue;
+		if (x < pos->xMin)
+			continue;
+		if (x >= pos->xMax)
+			continue;
+		if (y < pos->yMin)
+			continue;
+		if (y >= pos->yMax)
+			continue;
+		if (! pixelcheckset(pos, x, y))
+			continue;
+		if (! isitdescribed(pos))
+			continue;
+		obname(pos->index, 1);
+		return true;
+	}
+	return false;
+}
+
+void DreamGenContext::isitworn() {
+	flags._z = isitworn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
+}
+
+bool DreamGenContext::isitworn(const DynObject *object) {
+	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
+}
+
+void DreamGenContext::makeworn() {
+	makeworn((DynObject *)es.ptr(bx, sizeof(DynObject)));
+}
+
+void DreamGenContext::makeworn(DynObject *object) {
+	object->id[0] = 'W'-'A';
+	object->id[1] = 'E'-'A';
+}
+
+void DreamGenContext::obtoinv() {
+	obtoinv(al, ah, di, bx);
+}
+
+void DreamGenContext::obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y) {
+	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	showframe(icons1, x - 2, y - 1, 10, 0);
+	if (index == 0xff)
+		return;
+
+	Frame *extras = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+	Frame *frees = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+	Frame *frames = (flag == 4) ? extras : frees;
+	showframe(frames, x + 18, y + 19, 3 * index + 1, 128);
+	const DynObject *object = (const DynObject *)getanyaddir(index, flag);
+	bool worn = isitworn(object);
+	if (worn)
+		showframe(icons1, x - 3, y - 2, 7, 0);
+}
+
+void DreamGenContext::showryanpage() {
+	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	showframe(icons1, kInventx + 167, kInventy - 12, 12, 0);
+	showframe(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+}
+
+void DreamGenContext::findallryan() {
+	findallryan(es.ptr(di, 60));
+}
+
+void DreamGenContext::findallryan(uint8 *inv) {
+	memset(inv, 0xff, 60);
+	for (size_t i = 0; i < kNumexobjects; ++i) {
+		DynObject *extra = getexad(i);
+		if (extra->mapad[0] != 4)
+			continue;
+		if (extra->mapad[1] != 0xff)
+			continue;
+		uint8 slot = extra->mapad[2];
+		assert(slot < 30);
+		inv[2 * slot + 0] = i;
+		inv[2 * slot + 1] = 4;
+	}
+}
+
+void DreamGenContext::fillryan() {
+	uint8 *inv = segRef(data.word(kBuffers)).ptr(kRyaninvlist, 60);
+	findallryan(inv);
+	inv += data.byte(kRyanpage) * 2 * 10;
+	for (size_t i = 0; i < 2; ++i) {
+		for (size_t j = 0; j < 5; ++j) {
+			uint8 objIndex = *inv++;
+			uint8 objType = *inv++;
+			obtoinv(objIndex, objType, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
+		}
+	}
+	showryanpage();
+}
+
+void DreamGenContext::hangon() {
+	hangon(cx);
+}
+
+void DreamGenContext::hangon(uint16 frameCount) {
+	while (frameCount) {
+		vsync();
+		--frameCount;
+		if (data.byte(kQuitrequested))
+			break;
+	}
+}
+
+void DreamGenContext::hangonp() {
+	hangonp(cx);
+}
+
+void DreamGenContext::hangonp(uint16 count) {
+	data.word(kMaintimer) = 0;
+	uint8 pointerFrame = data.byte(kPointerframe);
+	uint8 pickup = data.byte(kPickup);
+	data.byte(kPointermode) = 3;
+	data.byte(kPickup) = 0;
+	data.byte(kCommandtype) = 255;
+	readmouse();
+	animpointer();
+	showpointer();
+	vsync();
+	dumppointer();
+	for (size_t i = 0; i < count * 3; ++i) {
+		delpointer();
+		readmouse();
+		animpointer();
+		showpointer();
+		vsync();
+		dumppointer();
+		if (data.byte(kQuitrequested))
+			break;
+		if (data.word(kMousebutton) == 0)
+			continue;
+		if (data.word(kMousebutton) != data.word(kOldbutton))
+			break;
+	}
+
+	delpointer();
+	data.byte(kPointerframe) = pointerFrame;
+	data.byte(kPickup) = pickup;
+	data.byte(kPointermode) = 0;
+}
+
+void DreamGenContext::findnextcolon() {
+	uint8 *initialString = es.ptr(si, 0);
+	uint8 *string = initialString;
+	al = findnextcolon(&string);
+	si += (string - initialString);
+}
+
+uint8 DreamGenContext::findnextcolon(uint8 **string) {
+	uint8 c;
+	do {
+		c = **string;
+		++(*string);
+	} while ((c != 0) && (c != ':'));
+	return c;
+}
+
+uint8 *DreamGenContext::getobtextstartCPP() {
+	push(es);
+	push(si);
+	getobtextstart();
+	uint8 *result = es.ptr(si, 0);
+	si = pop();
+	es = pop();
+	return result;
+}
+
 } /*namespace dreamgen */
 

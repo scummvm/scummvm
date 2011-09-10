@@ -47,7 +47,7 @@ Mouse::~Mouse() {
 	setLuggage(0, 0);
 	setPointer(0, 0);
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)	 // close mouse cursor resources
+	for (uint8 cnt = 0; cnt < 17; cnt++)     // close mouse cursor resources
 		_resMan->resClose(MSE_POINTER + cnt);
 }
 
@@ -60,7 +60,7 @@ void Mouse::initialize() {
 	_mouseOverride = false;
 	_currentPtrId = _currentLuggageId = 0;
 
-	for (uint8 cnt = 0; cnt < 17; cnt++)	 // force res manager to keep mouse
+	for (uint8 cnt = 0; cnt < 17; cnt++)     // force res manager to keep mouse
 		_resMan->resOpen(MSE_POINTER + cnt); // cursors in memory all the time
 
 	CursorMan.showMouse(false);
@@ -112,7 +112,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	_mouse.y = y;
 	if (!(Logic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
 		_numObjs = 0;
-		return;	// no human, so we don't want the mouse engine
+		return; // no human, so we don't want the mouse engine
 	}
 
 	if (!Logic::_scriptVars[TOP_MENU_DISABLED]) {
@@ -144,12 +144,12 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		for (uint16 priority = 0; (priority < 10) && (!touchedId); priority++) {
 			for (uint16 cnt = 0; (cnt < _numObjs) && (!touchedId); cnt++) {
 				if ((_objList[cnt].compact->o_priority == priority) &&
-					(Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
-					(Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
-					(Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
-					(Logic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
-						touchedId = _objList[cnt].id;
-						clicked = cnt;
+				        (Logic::_scriptVars[MOUSE_X] >= (uint32)_objList[cnt].compact->o_mouse_x1) &&
+				        (Logic::_scriptVars[MOUSE_X] <= (uint32)_objList[cnt].compact->o_mouse_x2) &&
+				        (Logic::_scriptVars[MOUSE_Y] >= (uint32)_objList[cnt].compact->o_mouse_y1) &&
+				        (Logic::_scriptVars[MOUSE_Y] <= (uint32)_objList[cnt].compact->o_mouse_y2)) {
+					touchedId = _objList[cnt].id;
+					clicked = cnt;
 				}
 			}
 		}
@@ -160,7 +160,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 				_getOff = 0;
 			}
 			if (touchedId) { // there's something new selected, now.
-				if (_objList[clicked].compact->o_mouse_on)	//run its get on
+				if (_objList[clicked].compact->o_mouse_on)  //run its get on
 					_logic->runMouseScript(_objList[clicked].compact, _objList[clicked].compact->o_mouse_on);
 
 				_getOff = _objList[clicked].compact->o_mouse_off; //setup get-off for later
@@ -197,7 +197,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 
 	if (ptrId) {
 		MousePtr *lugg = NULL;
-		MousePtr *ptr = (MousePtr*)_resMan->openFetchRes(ptrId);
+		MousePtr *ptr = (MousePtr *)_resMan->openFetchRes(ptrId);
 		uint16 noFrames = _resMan->getLEUint16(ptr->numFrames);
 		uint16 ptrSizeX = _resMan->getLEUint16(ptr->sizeX);
 		uint16 ptrSizeY = _resMan->getLEUint16(ptr->sizeY);
@@ -210,7 +210,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 			ptrSizeY *= 2;
 
 		if (luggageId) {
-			lugg = (MousePtr*)_resMan->openFetchRes(luggageId);
+			lugg = (MousePtr *)_resMan->openFetchRes(luggageId);
 			luggSizeX = _resMan->getLEUint16(lugg->sizeX);
 			luggSizeY = _resMan->getLEUint16(lugg->sizeY);
 
@@ -223,18 +223,18 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 			resSizeX = ptrSizeX;
 			resSizeY = ptrSizeY;
 		}
-		_currentPtr = (MousePtr*)malloc(sizeof(MousePtr) + resSizeX * resSizeY * noFrames);
+		_currentPtr = (MousePtr *)malloc(sizeof(MousePtr) + resSizeX * resSizeY * noFrames);
 		_currentPtr->hotSpotX = _resMan->getLEUint16(ptr->hotSpotX);
 		_currentPtr->hotSpotY = _resMan->getLEUint16(ptr->hotSpotY);
 		_currentPtr->numFrames = noFrames;
 		_currentPtr->sizeX = resSizeX;
 		_currentPtr->sizeY = resSizeY;
-		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
+		uint8 *ptrData = (uint8 *)_currentPtr + sizeof(MousePtr);
 		memset(ptrData, 255, resSizeX * resSizeY * noFrames);
 		if (luggageId) {
 			uint8 *dstData = ptrData + resSizeX - luggSizeX;
 			for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
-				uint8 *luggSrc = (uint8*)lugg + sizeof(MousePtr);
+				uint8 *luggSrc = (uint8 *)lugg + sizeof(MousePtr);
 				dstData += (resSizeY - luggSizeY) * resSizeX;
 				for (uint32 cnty = 0; cnty < (uint32)(SwordEngine::isPsx() ? luggSizeY / 2 : luggSizeY); cnty++) {
 					for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
@@ -256,7 +256,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		}
 
 		uint8 *dstData = ptrData;
-		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
+		uint8 *srcData = (uint8 *)ptr + sizeof(MousePtr);
 		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
 			for (uint32 cnty = 0; cnty < (uint32)(SwordEngine::isPsx() ? ptrSizeY / 2 : ptrSizeY); cnty++) {
 				for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
@@ -264,7 +264,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 						dstData[cntx] = srcData[cntx];
 
 				if (SwordEngine::isPsx()) {
-					dstData +=resSizeX;
+					dstData += resSizeX;
 					for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
 						if (srcData[cntx])
 							dstData[cntx] = srcData[cntx];
@@ -309,7 +309,7 @@ void Mouse::animate() {
 		if (_activeFrame == _frame)
 			return;
 
-		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
+		uint8 *ptrData = (uint8 *)_currentPtr + sizeof(MousePtr);
 		ptrData += _frame * _currentPtr->sizeX * _currentPtr->sizeY;
 
 		CursorMan.replaceCursor(ptrData, _currentPtr->sizeX, _currentPtr->sizeY, _currentPtr->hotSpotX, _currentPtr->hotSpotY, 255);

@@ -395,7 +395,7 @@ private:
 
 	static const uint8 _regOffset[];
 	static const uint16 _unkTable[];
-	static const uint8 *_unkTable2[];
+	static const uint8 *const _unkTable2[];
 	static const uint8 _unkTable2_1[];
 	static const uint8 _unkTable2_2[];
 	static const uint8 _unkTable2_3[];
@@ -2074,7 +2074,7 @@ const uint16 AdLibDriver::_unkTable[] = {
 // These tables are currently only used by updateCallback46(), which only ever
 // uses the first element of one of the sub-tables.
 
-const uint8 *AdLibDriver::_unkTable2[] = {
+const uint8 *const AdLibDriver::_unkTable2[] = {
 	AdLibDriver::_unkTable2_1,
 	AdLibDriver::_unkTable2_2,
 	AdLibDriver::_unkTable2_1,
