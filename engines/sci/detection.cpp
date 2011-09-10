@@ -296,8 +296,10 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		sierraId == "mg" || sierraId == "pq" ||
 		sierraId == "jones" ||
 		sierraId == "cardgames" || sierraId == "solitare" ||
-		sierraId == "hoyle3" || sierraId == "hoyle4")
+		sierraId == "hoyle4")
 		demoThreshold = 40;
+	if (sierraId == "hoyle3")
+		demoThreshold = 45;	// cnick-kq has 42 scripts. The actual hoyle 3 demo has 27.
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
@@ -310,8 +312,11 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 			return "cnick-lsl";
 		if (sierraId == "sq4" && resources->size() == 34)
 			return "cnick-sq";
-
-		// TODO: cnick-kq, cnick-laurabow and cnick-longbow (their resources can't be read)
+		if (sierraId == "hoyle3" && resources->size() == 42)
+			return "cnick-kq";
+		if (sierraId == "rh budget" && resources->size() == 39)
+			return "cnick-longbow";
+		// TODO: cnick-laurabow (the name of the game object contains junk)
 
 		// Handle Astrochicken 1 (SQ3) and 2 (SQ4)
 		if (sierraId == "sq3" && resources->size() == 20)
