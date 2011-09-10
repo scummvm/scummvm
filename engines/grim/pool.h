@@ -24,6 +24,9 @@ public:
 	public:
 		typedef typename Common::HashMap<int32, T *>::iterator Iterator;
 
+		Pool();
+		~Pool();
+
 		void addObject(T *obj);
 		void removeObject(int32 id);
 
@@ -126,6 +129,17 @@ int32 PoolObject<T, tag>::getTagStatic() {
  */
 
 template <class T, int32 tag>
+PoolObject<T, tag>::Pool::Pool() :
+	_restoring(false) {
+
+}
+
+template <class T, int32 tag>
+PoolObject<T, tag>::Pool::~Pool() {
+	PoolObject<T, tag>::s_pool = NULL;
+}
+
+template <class T, int32 tag>
 void PoolObject<T, tag>::Pool::addObject(T *obj) {
 	if (!_restoring) {
 		_map.setVal(obj->_id, obj);
@@ -163,7 +177,6 @@ void PoolObject<T, tag>::Pool::deleteObjects() {
 		delete getBegin()->_value;
 	}
 	delete this;
-	PoolObject<T, tag>::s_pool = NULL;
 }
 
 template <class T, int32 tag>
