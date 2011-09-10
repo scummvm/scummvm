@@ -486,7 +486,7 @@ Common::Error GrimEngine::run() {
 	// refresh the theme engine so that we can show the gui overlay without it crashing.
 	GUI::GuiManager::instance().theme()->refresh();
 
-	Bitmap *splash_bm;
+	Bitmap *splash_bm = NULL;
 	if (!(_gameFlags & ADGF_DEMO) && getGameType() == GType_GRIM)
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 	else if ((_gameFlags & ADGF_DEMO) && getGameType() == GType_MONKEY4)
@@ -540,7 +540,8 @@ Common::Error GrimEngine::run() {
 	}
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	delete splash_bm;
+	if (splash_bm)
+		delete splash_bm;
 	g_grim->mainLoop();
 
 	return Common::kNoError;
