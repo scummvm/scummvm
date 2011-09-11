@@ -24,6 +24,7 @@
 #define TSAGE_BLUEFORCE_DIALOGS_H
 
 #include "gui/options.h"
+#include "tsage/dialogs.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
 #include "common/list.h"
@@ -33,6 +34,8 @@
 namespace TsAGE {
 
 namespace BlueForce {
+
+using namespace TsAGE;
 
 class RightClickDialog : public GfxDialog {
 private:
@@ -71,6 +74,16 @@ public:
 	void execute();
 };
 
+class RadioConvDialog : public ModalDialog {
+private:
+	GfxButton _buttons[8];
+public:
+	RadioConvDialog();
+	virtual ~RadioConvDialog();
+	int execute();
+
+	static int show();
+};
 
 } // End of namespace BlueForce
 

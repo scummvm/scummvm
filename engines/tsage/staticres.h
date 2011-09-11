@@ -122,6 +122,9 @@ extern const char *CITY_HALL_JAIL;
 extern const char *JAMISON_RYAN;
 extern const char *BIKINI_HUT;
 
+// Scene 60 radio dispatch buttons
+extern const char *RADIO_BTN_LIST[8];
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

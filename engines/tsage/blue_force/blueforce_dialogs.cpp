@@ -365,6 +365,70 @@ void AmmoBeltDialog::draw() {
 	}
 }
 
+/*--------------------------------------------------------------------------*/
+
+RadioConvDialog::RadioConvDialog() : ModalDialog() {
+	int idx;
+
+	// Set up the list of buttons
+	int maxWidth = 0;
+	for (idx = 0; idx < 8; ++idx) {
+		_buttons[idx].setText(RADIO_BTN_LIST[idx]);
+		maxWidth = MAX(maxWidth, (int)_buttons[idx]._bounds.width());
+
+		add(&_buttons[idx]);
+	}
+
+	// Set up the button positions and add them to the dialog
+	for (idx = 0; idx < 8; ++idx) {
+		_buttons[idx]._bounds.moveTo((idx % 2) * maxWidth + 2,
+				idx / 2 * _buttons[idx]._bounds.height() + 2);
+		_buttons[idx]._bounds.setWidth(maxWidth);
+
+		add(&_buttons[idx]);
+	}
+
+	// Set the dialog size and position
+	setDefaults();
+	setTopLeft(8, 92);
+
+	BF_GLOBALS._events.setCursor(CURSOR_ARROW);
+}
+
+RadioConvDialog::~RadioConvDialog() {
+	BF_GLOBALS._events.setCursor(CURSOR_WALK);
+}
+
+int RadioConvDialog::execute() {
+	GfxButton *btn = ModalDialog::execute();
+
+	// Get which button was pressed
+	int btnIndex = -1;
+	for (int idx = 0; idx < 8; ++idx) {
+		if (btn == &_buttons[idx]) {
+			btnIndex = idx;
+			break;
+		}
+	}
+
+	return btnIndex;
+}
+
+int RadioConvDialog::show() {
+	// Show the dialog
+	RadioConvDialog *dlg = new RadioConvDialog();
+	dlg->draw();
+
+	int btnIndex = dlg->execute();
+
+	// Close the dialog
+	dlg->remove();
+	delete dlg;
+
+	return btnIndex;
+}
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

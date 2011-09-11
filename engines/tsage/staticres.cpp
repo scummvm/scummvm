@@ -158,6 +158,9 @@ const char *CITY_HALL_JAIL = "City Hall & Jail";
 const char *JAMISON_RYAN = "Jamison & Ryan";
 const char *BIKINI_HUT = "Bikini Hut";
 
+// Scene 60 radio messages
+const char *RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
