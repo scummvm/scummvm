@@ -60,14 +60,14 @@ Text::~Text() {
 
 int16 Text::count() {
 	EncryptedStream tf = _fileName;
-	if (tf._error)
+	if (tf.err())
 		return NULL;
 
 	Common::String line;
 	char tmpStr[kLineMax + 1];
 	int n, count = 0;
 
-	for (line = tf._readStream->readLine(); !tf._readStream->eos(); line = tf._readStream->readLine()) {
+	for (line = tf.readLine(); !tf.eos(); line = tf.readLine()) {
 		n = line.size();
 		char *s;
 
@@ -94,13 +94,13 @@ void Text::clear() {
 
 void Text::load() {
 	EncryptedStream tf = _fileName;
-	assert(!tf._error);
+	assert(!tf.err());
 
 	Common::String line;
 	char tmpStr[kLineMax + 1];
 	int idx;
 
-	for (idx = 0, line = tf._readStream->readLine(); !tf._readStream->eos(); line = tf._readStream->readLine()) {
+	for (idx = 0, line = tf.readLine(); !tf.eos(); line = tf.readLine()) {
 		int n = line.size();
 		char *s;
 

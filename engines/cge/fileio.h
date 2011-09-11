@@ -148,11 +148,16 @@ public:
 };
 
 class EncryptedStream {
-public:
+private:
+	Common::SeekableReadStream *_readStream;
 	bool _error;
+public:
 	EncryptedStream(const char *name);
 	~EncryptedStream();
-	Common::SeekableReadStream *_readStream;
+	bool err();
+	bool eos();
+	uint32 read(void *dataPtr, uint32 dataSize);
+	Common::String readLine();
 };
 
 extern CFile *_dat;

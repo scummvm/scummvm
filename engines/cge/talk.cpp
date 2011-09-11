@@ -36,9 +36,9 @@ namespace CGE {
 Font::Font(const char *name) {
 	_map = (uint8 *)malloc(kMapSize);
 	_pos = (uint16 *)malloc(kPosSize * sizeof(uint16));
-	_wid = (uint8 *)malloc(kWidSize);
+	_widthArr = (uint8 *)malloc(kWidSize);
 
-	assert((_map != NULL) && (_pos != NULL) && (_wid != NULL));
+	assert((_map != NULL) && (_pos != NULL) && (_widthArr != NULL));
 	mergeExt(_path, name, kFontExt);
 	load();
 }
@@ -46,22 +46,20 @@ Font::Font(const char *name) {
 Font::~Font() {
 	free(_map);
 	free(_pos);
-	free(_wid);
+	free(_widthArr);
 }
 
 void Font::load() {
-	VFile f(_path);
-	if (f._error)
-		return;
+	EncryptedStream f = _path;
+	assert(!f.err());
 
-	f.read(_wid, kWidSize);
-	if (f._error)
-		return;
+	f.read(_widthArr, kWidSize);
+	assert(!f.err());
 
 	uint16 p = 0;
 	for (uint16 i = 0; i < kPosSize; i++) {
 		_pos[i] = p;
-		p += _wid[i];
+		p += _widthArr[i];
 	}
 	f.read(_map, p);
 }
@@ -71,7 +69,7 @@ uint16 Font::width(const char *text) {
 	if (!text)
 		return 0;
 	while (*text)
-		w += _wid[(unsigned char)*(text++)];
+		w += _widthArr[(unsigned char)*(text++)];
 	return w;
 }
 
@@ -116,7 +114,7 @@ void Talk::update(const char *text) {
 					mw = k;
 				k = 2 * hmarg;
 			} else
-				k += _font->_wid[(unsigned char)*p];
+				k += _font->_widthArr[(unsigned char)*p];
 		}
 		if (k > mw)
 			mw = k;
@@ -132,7 +130,7 @@ void Talk::update(const char *text) {
 		if (*text == '|' || *text == '\n') {
 			m = _ts[0]->_m + (ln += kFontHigh + kTextLineSpace) * mw + hmarg;
 		} else {
-			int cw = _font->_wid[(unsigned char)*text];
+			int cw = _font->_widthArr[(unsigned char)*text];
 			uint8 *f = _font->_map + _font->_pos[(unsigned char)*text];
 			for (int i = 0; i < cw; i++) {
 				uint8 *pp = m;
@@ -223,7 +221,7 @@ void Talk::putLine(int line, const char *text) {
 	uint8 *q = v + size;
 
 	while (*text) {
-		uint16 cw = _font->_wid[(unsigned char)*text], i;
+		uint16 cw = _font->_widthArr[(unsigned char)*text], i;
 		uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
 
 		for (i = 0; i < cw; i++) {
@@ -280,7 +278,7 @@ void InfoLine::update(const char *text) {
 		uint8 *p = v + 2, * q = p + size;
 
 		while (*text) {
-			uint16 cw = _font->_wid[(unsigned char)*text];
+			uint16 cw = _font->_widthArr[(unsigned char)*text];
 			uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
 
 			for (uint16 i = 0; i < cw; i++) {
