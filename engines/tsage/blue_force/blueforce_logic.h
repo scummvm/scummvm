@@ -170,7 +170,7 @@ public:
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
 	bool display(CursorType action);
-	void fadeOut() {}
+	void fadeOut();
 };
 
 class GroupedScene: public SceneExt {

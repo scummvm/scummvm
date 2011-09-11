@@ -25,6 +25,7 @@
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
+#include "tsage/blue_force/blueforce_scenes6.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/graphics.h"
@@ -117,6 +118,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 600:
 	case 620:
 	case 666:
+		// Death scene
+		return new Scene666();
 	case 690:
 		error("Scene group 6 not implemented");
 	case 710:
@@ -595,6 +598,11 @@ bool SceneExt::display(CursorType action) {
 	}
 
 	return true;
+}
+
+void SceneExt::fadeOut() {
+	uint32 black = 0;
+	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
 }
 
 void SceneExt::gunDisplay() {

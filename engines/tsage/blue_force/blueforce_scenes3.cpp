@@ -961,6 +961,8 @@ Scene315::Scene315() {
 }
 
 void Scene315::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
 	s.syncAsSint16LE(_field1390);
 	s.syncAsSint16LE(_stripNumber);
 	s.syncAsSint16LE(_field1398);
@@ -1146,7 +1148,7 @@ void Scene315::signal() {
 		}
 
 		if (ctr) {
-			BF_GLOBALS._v4CEA8 = 20;
+			BF_GLOBALS._deathReason = 20;
 			BF_GLOBALS._sceneManager.changeScene(666);
 		} else {
 			BF_GLOBALS._sceneManager.changeScene(300);
@@ -1171,7 +1173,7 @@ void Scene315::signal() {
 		}
 
 		if (ctr == 1) {
-			BF_GLOBALS._v4CEA8 = 20;
+			BF_GLOBALS._deathReason = 20;
 			BF_GLOBALS._sound1.fadeOut2(NULL);
 		} else if ((BF_GLOBALS._bookmark != bBookedFrankie) || !BF_GLOBALS.getFlag(onDuty)) {
 			BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -1264,7 +1266,7 @@ void Scene315::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3161:
-		BF_GLOBALS._v4CEA8 = 21;
+		BF_GLOBALS._deathReason = 21;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;

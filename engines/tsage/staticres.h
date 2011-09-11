@@ -39,7 +39,6 @@ extern const char *DEFAULT_SCENE_HOTSPOT;
 extern const char *SAVE_ERROR_MSG;
 extern const char *SAVING_NOT_ALLOWED_MSG;
 extern const char *RESTORING_NOT_ALLOWED_MSG;
-extern const char *RESTART_CONFIRM_MSG;
 
 // Dialogs
 extern const char *QUIT_CONFIRM_MSG;

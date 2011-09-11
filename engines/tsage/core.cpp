@@ -2996,6 +2996,9 @@ void Player::process(Event &event) {
 			(_globals->_events.getCursor() == CURSOR_WALK) && _globals->_player._canWalk &&
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {
 
+		if ((_vm->getGameID() == GType_BlueForce) && !BF_GLOBALS._player._enabled)
+			return;
+
 		PlayerMover *newMover = new PlayerMover();
 		Common::Point destPos(event.mousePos.x + _globals->_sceneManager._scene->_sceneBounds.left,
 			event.mousePos.y + _globals->_sceneManager._scene->_sceneBounds.top);
@@ -3824,6 +3827,7 @@ void SceneHandler::process(Event &event) {
 			if (i != _globals->_sceneItems.end()) {
 				// Pass the action to the item
 				(*i)->startAction(_globals->_events.getCursor(), event);
+
 				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
 				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
@@ -3834,6 +3838,9 @@ void SceneHandler::process(Event &event) {
 				} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
 					_globals->_events.setCursor(CURSOR_USE);
 				}
+
+				if (_vm->getGameID() == GType_BlueForce)
+					event.handled = true;
 			}
 
 			// Handle any fallback text display

@@ -294,7 +294,7 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 					BF_GLOBALS._player.disableControl();
 					scene->_sceneNumber = _newSceneNumber;
 				} else {
-					BF_GLOBALS._v4CEA8 = 4;
+					BF_GLOBALS._deathReason = 4;
 					BF_GLOBALS._sceneManager.changeScene(666);
 					return;
 				}
@@ -450,7 +450,7 @@ void Scene50::signal() {
 			if (BF_GLOBALS._bookmark >= bStoppedFrankie)
 				BF_GLOBALS.setFlag(131);
 			if (BF_GLOBALS._bookmark == bArrestedGreen) {
-				BF_GLOBALS._v4CEA8 = 19;
+				BF_GLOBALS._deathReason = 19;
 				_sceneNumber = 666;
 			}
 		}
@@ -570,7 +570,7 @@ bool Scene60::Item2::check1() {
 			BF_GLOBALS._v5098C = (BF_GLOBALS._v5098C & 0xC3) | (v << 2);
 
 			if ((v != 1) && (v != 2)) {
-				BF_GLOBALS._v4CEA8 = 19;
+				BF_GLOBALS._deathReason = 19;
 				BF_GLOBALS._sceneManager.changeScene(666);
 				return true;
 			}
