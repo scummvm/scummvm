@@ -52,7 +52,7 @@ class Font {
 	char _path[kPathMax];
 	void load();
 public:
-	uint8  *_wid;
+	uint8  *_widthArr;
 	uint16 *_pos;
 	uint8  *_map;
 	Font(const char *name);

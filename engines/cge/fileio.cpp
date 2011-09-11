@@ -398,6 +398,22 @@ EncryptedStream::EncryptedStream(const char *name) {
 	_readStream = new Common::MemoryReadStream(dataBuffer, kp->_size, DisposeAfterUse::YES);
 }
 
+uint32 EncryptedStream::read(void *dataPtr, uint32 dataSize) {
+	return _readStream->read(dataPtr, dataSize);
+}
+
+bool EncryptedStream::err() {
+	return (_error & _readStream->err());
+}
+
+bool EncryptedStream::eos() {
+	return _readStream->eos();
+}
+
+Common::String EncryptedStream::readLine() {
+	return _readStream->readLine();
+}
+
 EncryptedStream::~EncryptedStream() {
 }
 
