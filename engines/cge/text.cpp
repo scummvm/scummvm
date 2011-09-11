@@ -65,7 +65,8 @@ int16 Text::count() {
 
 	Common::String line;
 	char tmpStr[kLineMax + 1];
-	int n, count = 0;
+	
+	int n, counter = 0;
 
 	for (line = tf.readLine(); !tf.eos(); line = tf.readLine()) {
 		n = line.size();
@@ -77,9 +78,9 @@ int16 Text::count() {
 		if (!isdigit(*s))
 			continue;
 
-		count++;
+		counter++;
 	}
-	return count;
+	return counter;
 }
 
 void Text::clear() {

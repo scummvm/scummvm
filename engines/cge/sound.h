@@ -57,7 +57,7 @@ public:
 	}
 };
 
-DataCk *loadWave(VFile *file);
+DataCk *loadWave(EncryptedStream *file);
 
 class Sound {
 public:

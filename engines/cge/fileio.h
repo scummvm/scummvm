@@ -156,6 +156,8 @@ public:
 	~EncryptedStream();
 	bool err();
 	bool eos();
+	bool seek(int32 offset);
+	int32 size();
 	uint32 read(void *dataPtr, uint32 dataSize);
 	Common::String readLine();
 };

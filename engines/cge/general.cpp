@@ -63,7 +63,7 @@ void sndSetVolume() {
 	// USeless for ScummVM
 }
 
-DataCk *loadWave(VFile *file) {
+DataCk *loadWave(EncryptedStream *file) {
 	byte *data = (byte *)malloc(file->size());
 	file->read(data, file->size());
 

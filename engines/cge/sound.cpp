@@ -136,7 +136,7 @@ void Fx::preload(int ref0) {
 
 	for (int ref = ref0; ref < ref0 + 10; ref++) {
 		sprintf(filename, "FX%05d.WAV", ref);
-		VFile file = VFile(filename);
+		EncryptedStream file = filename;
 		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Handler *p = &_cache[find(0)];
@@ -154,7 +154,7 @@ DataCk *Fx::load(int idx, int ref) {
 	char filename[12];
 	sprintf(filename, "FX%05d.WAV", ref);
 
-	VFile file = VFile(filename);
+	EncryptedStream file = filename;
 	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Handler *p = &_cache[idx];
@@ -222,7 +222,7 @@ void MusicPlayer::loadMidi(int ref) {
 	killMidi();
 
 	// Read in the data for the file
-	VFile mid(filename.c_str());
+	EncryptedStream mid(filename.c_str());
 	_dataSize = mid.size();
 	_data = (byte *)malloc(_dataSize);
 	mid.read(_data, _dataSize);

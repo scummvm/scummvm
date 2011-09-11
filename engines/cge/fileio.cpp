@@ -410,8 +410,16 @@ bool EncryptedStream::eos() {
 	return _readStream->eos();
 }
 
+bool EncryptedStream::seek(int32 offset) {
+	return _readStream->seek(offset);
+}
+
 Common::String EncryptedStream::readLine() {
 	return _readStream->readLine();
+}
+
+int32 EncryptedStream::size() {
+	return _readStream->size();
 }
 
 EncryptedStream::~EncryptedStream() {
