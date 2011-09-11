@@ -132,21 +132,6 @@ public:
 	bool exist(const char *name);
 };
 
-class VFile : public IoBuf {
-private:
-	long _begMark;
-	long _endMark;
-
-	void readBuf();
-public:
-	VFile(const char *name);
-	~VFile();
-
-	long mark();
-	long size();
-	long seek(long pos);
-};
-
 class EncryptedStream {
 private:
 	Common::SeekableReadStream *_readStream;
@@ -157,6 +142,7 @@ public:
 	bool err();
 	bool eos();
 	bool seek(int32 offset);
+	int32 pos();
 	int32 size();
 	uint32 read(void *dataPtr, uint32 dataSize);
 	Common::String readLine();
