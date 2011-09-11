@@ -50,8 +50,10 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	forceExt(pat, fname, ".VBM");
 
 	if (_cat->exist(pat)) {
-		VFile file(pat);
-		if ((file._error == 0) && (!loadVBM(&file)))
+		EncryptedStream file(pat);
+		if (file.err())
+			error("Unable to find VBM [%s]", fname);
+		if (!loadVBM(&file))
 			error("Bad VBM [%s]", fname);
 	} else {
 		error("Bad VBM [%s]", fname);
@@ -341,27 +343,27 @@ bool Bitmap::solidAt(int16 x, int16 y) {
 	}
 }
 
-bool Bitmap::loadVBM(VFile *f) {
+bool Bitmap::loadVBM(EncryptedStream *f) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::loadVBM(f)");
 
 	uint16 p = 0, n = 0;
-	if (f->_error == 0)
+	if (!f->err())
 		f->read((uint8 *)&p, sizeof(p));
 	p = FROM_LE_16(p);
 
-	if (f->_error == 0)
+	if (!f->err())
 		f->read((uint8 *)&n, sizeof(n));
 	n = FROM_LE_16(n);
 
-	if (f->_error == 0)
+	if (!f->err())
 		f->read((uint8 *)&_w, sizeof(_w));
 	_w = FROM_LE_16(_w);
 
-	if (f->_error == 0)
+	if (!f->err())
 		f->read((uint8 *)&_h, sizeof(_h));
 	_h = FROM_LE_16(_h);
 
-	if (f->_error == 0) {
+	if (!f->err()) {
 		if (p) {
 			if (_pal) {
 				// Read in the palette
@@ -375,17 +377,17 @@ bool Bitmap::loadVBM(VFile *f) {
 					_pal[idx]._b = *(srcP + 2);
 				}
 			} else
-				f->seek(f->mark() + kPalSize);
+				f->seek(f->pos() + kPalSize);
 		}
 	}
 	if ((_v = new uint8[n]) == NULL)
 		return false;
 
-	if (f->_error == 0)
+	if (!f->err())
 		f->read(_v, n);
 
 	_b = (HideDesc *)(_v + n - _h * sizeof(HideDesc));
-	return (f->_error == 0);
+	return (!f->err());
 }
 
 } // End of namespace CGE

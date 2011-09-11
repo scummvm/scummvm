@@ -331,54 +331,6 @@ bool BtFile::exist(const char *name) {
 }
 
 /*-----------------------------------------------------------------------
- * VFile
- *-----------------------------------------------------------------------*/
-VFile::VFile(const char *name) : IoBuf(NULL) {
-	debugC(3, kCGEDebugFile, "VFile::VFile(%s)", name);
-
-	if (_dat->_error || _cat->_error)
-		error("Bad volume data");
-	BtKeypack *kp = _cat->find(name);
-	if (scumm_stricmp(kp->_key, name) != 0)
-		_error = 1;
-	_endMark = (_bufMark = _begMark = kp->_mark) + kp->_size;
-}
-
-VFile::~VFile() {
-}
-
-void VFile::readBuf() {
-	debugC(3, kCGEDebugFile, "VFile::readBuf()");
-
-	_dat->seek(_bufMark + _lim);
-	_bufMark = _dat->mark();
-	long n = _endMark - _bufMark;
-	if (n > kBufferSize)
-		n = kBufferSize;
-	_lim = _dat->read(_buff, (uint16) n);
-	_ptr = 0;
-}
-
-long VFile::mark() {
-	debugC(5, kCGEDebugFile, "VFile::mark()");
-
-	return (_bufMark + _ptr) - _begMark;
-}
-
-long VFile::size() {
-	debugC(1, kCGEDebugFile, "VFile::size()");
-
-	return _endMark - _begMark;
-}
-
-long VFile::seek(long pos) {
-	debugC(1, kCGEDebugFile, "VFile::seek(%ld)", pos);
-
-	_lim = 0;
-	return (_bufMark = _begMark + pos);
-}
-
-/*-----------------------------------------------------------------------
  * EncryptedStream
  *-----------------------------------------------------------------------*/
 EncryptedStream::EncryptedStream(const char *name) {
@@ -420,6 +372,10 @@ Common::String EncryptedStream::readLine() {
 
 int32 EncryptedStream::size() {
 	return _readStream->size();
+}
+
+int32 EncryptedStream::pos() {
+	return _readStream->pos();
 }
 
 EncryptedStream::~EncryptedStream() {
