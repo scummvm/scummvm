@@ -18,32 +18,56 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "common/memstream.h"
+#include "graphics/vector3d.h"
 
 namespace Myst3 {
+
+struct SpotItemData {
+	uint32 u;
+	uint32 v;
+};
+
+struct VideoData {
+	Graphics::Vector3d v1;
+	Graphics::Vector3d v2;
+	uint32 u;
+	uint32 v;
+	uint32 width;
+	uint32 height;
+};
 
 class DirectorySubEntry {
 	private:
 		uint32 _offset;
 		uint32 _size;
-		uint16 _padding; // Additional data, not padding ?
+		uint16 _metadataSize;
 		byte _face;
 		byte _type;
 
+		// Metadata
+		SpotItemData _spotItemData;
+		VideoData _videoData;
+
 	public:
-		enum ResourceType {kCubeFace, kFaceMask, kFrame = 6};
+		enum ResourceType {
+			kCubeFace = 0,
+			kFaceMask = 1,
+			kSpotItem = 5,
+			kFrame = 6,
+			kMovie = 8
+		};
 
 		void readFromStream(Common::SeekableReadStream &inStream);
 		void dump();
 		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
-		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream);
+		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream) const;
 		uint16 getFace() { return _face; }
 		ResourceType getType() { return static_cast<ResourceType>(_type); }
+		const SpotItemData &getSpotItemData() { return _spotItemData; }
+		const VideoData &getVideoData() { return _videoData; }
 };
 
 } // end of namespace Myst3

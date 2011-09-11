@@ -67,7 +67,8 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 	uint32 headerOffset = 0;
 	uint32 dataOffset = 0;
 
-	Common::MemoryReadStream *maskStream = archive.dumpToMemory(index, face, DirectorySubEntry::kFaceMask);
+	const DirectorySubEntry *maskDesc = archive.getDescription(index, face, DirectorySubEntry::kFaceMask);
+	Common::MemoryReadStream *maskStream = archive.getData(maskDesc);
 
 	while (headerOffset < 400) {
 		int blockX = (headerOffset / sizeof(dataOffset)) % 10;
@@ -94,6 +95,8 @@ void Node::dumpFaceMask(Archive &archive, uint16 index, int face) {
 			}
 		}
 	}
+
+	delete maskStream;
 
 	Common::DumpFile outFile;
 	outFile.open("dump/1-1.masku");

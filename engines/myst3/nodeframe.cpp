@@ -31,7 +31,8 @@ NodeFrame::~NodeFrame() {
 }
 
 void NodeFrame::load(Archive &archive, uint16 index) {
-	Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, 1, DirectorySubEntry::kFrame);
+	const DirectorySubEntry *jpegDesc = archive.getDescription(index, 1, DirectorySubEntry::kFrame);
+	Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
 
 	if (jpegStream) {
 		Graphics::JPEG jpeg;

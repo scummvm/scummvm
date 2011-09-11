@@ -77,7 +77,7 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(97, varMinValue);
 	OPCODE(98, varClipValue);
 	OPCODE(103, varRotateValue3);
-	OPCODE(104, continueToNextScript);
+	OPCODE(104, ifElse);
 	OPCODE(105, ifCondition);
 	OPCODE(106, ifCond1AndCond2);
 	OPCODE(107, ifCond1OrCond2);
@@ -603,11 +603,22 @@ void Script::varRotateValue3(Context &c, const Opcode &cmd) {
 	_vm->_vars->set(cmd.args[0], value);
 }
 
-void Script::continueToNextScript(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Return OK", cmd.op);
+void Script::ifElse(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Else (should not be ran)", cmd.op);
+
+	warning("Running an else statement");
 
 	c.result = true;
 	c.endScript = true;
+}
+
+void Script::goToElse(Context &c) {
+
+	// Go to next command until an else statement is met
+	do {
+		c.op++;
+	} while (c.op != c.script->end()
+			&& c.op->op != 104);
 }
 
 void Script::ifCondition(Context &c, const Opcode &cmd) {
@@ -616,8 +627,7 @@ void Script::ifCondition(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->evaluate(cmd.args[0]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifCond1AndCond2(Context &c, const Opcode &cmd) {
@@ -627,8 +637,7 @@ void Script::ifCond1AndCond2(Context &c, const Opcode &cmd) {
 			&& _vm->_vars->evaluate(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifCond1OrCond2(Context &c, const Opcode &cmd) {
@@ -638,8 +647,7 @@ void Script::ifCond1OrCond2(Context &c, const Opcode &cmd) {
 			|| _vm->_vars->evaluate(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
@@ -650,8 +658,7 @@ void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
 	uint16 end = cmd.args[1];
 
 	if (end > var) {
-		c.result = true;
-		c.endScript = true;
+		goToElse(c);
 		return;
 	}
 
@@ -665,8 +672,7 @@ void Script::ifOneVarSetInRange(Context &c, const Opcode &cmd) {
 	if (result)
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarEqualsValue(Context &c, const Opcode &cmd) {
@@ -675,8 +681,7 @@ void Script::ifVarEqualsValue(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) == cmd.args[1])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarNotEqualsValue(Context &c, const Opcode &cmd) {
@@ -685,8 +690,7 @@ void Script::ifVarNotEqualsValue(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) != cmd.args[1])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVar1EqualsVar2(Context &c, const Opcode &cmd) {
@@ -695,8 +699,7 @@ void Script::ifVar1EqualsVar2(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) == _vm->_vars->get(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVar1NotEqualsVar2(Context &c, const Opcode &cmd) {
@@ -705,8 +708,7 @@ void Script::ifVar1NotEqualsVar2(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) != _vm->_vars->get(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarSupEqValue(Context &c, const Opcode &cmd) {
@@ -715,8 +717,7 @@ void Script::ifVarSupEqValue(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) >= cmd.args[1])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarInfEqValue(Context &c, const Opcode &cmd) {
@@ -725,8 +726,7 @@ void Script::ifVarInfEqValue(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) <= cmd.args[1])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarInRange(Context &c, const Opcode &cmd) {
@@ -737,8 +737,7 @@ void Script::ifVarInRange(Context &c, const Opcode &cmd) {
     if(value >= cmd.args[1] && value <= cmd.args[2])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarNotInRange(Context &c, const Opcode &cmd) {
@@ -749,8 +748,7 @@ void Script::ifVarNotInRange(Context &c, const Opcode &cmd) {
     if(value < cmd.args[1] && value > cmd.args[2])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVar1SupEqVar2(Context &c, const Opcode &cmd) {
@@ -759,8 +757,7 @@ void Script::ifVar1SupEqVar2(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) >= _vm->_vars->get(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVar1SupVar2(Context &c, const Opcode &cmd) {
@@ -769,8 +766,7 @@ void Script::ifVar1SupVar2(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) > _vm->_vars->get(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVar1InfEqVar2(Context &c, const Opcode &cmd) {
@@ -779,8 +775,7 @@ void Script::ifVar1InfEqVar2(Context &c, const Opcode &cmd) {
 	if (_vm->_vars->get(cmd.args[0]) <= _vm->_vars->get(cmd.args[1]))
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarHasAllBitsSet(Context &c, const Opcode &cmd) {
@@ -790,8 +785,7 @@ void Script::ifVarHasAllBitsSet(Context &c, const Opcode &cmd) {
 	if ((_vm->_vars->get(cmd.args[0]) & cmd.args[1]) == cmd.args[1])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarHasNoBitsSet(Context &c, const Opcode &cmd) {
@@ -801,8 +795,7 @@ void Script::ifVarHasNoBitsSet(Context &c, const Opcode &cmd) {
 	if ((_vm->_vars->get(cmd.args[0]) & cmd.args[1]) == 0)
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::ifVarHasSomeBitsSet(Context &c, const Opcode &cmd) {
@@ -812,8 +805,7 @@ void Script::ifVarHasSomeBitsSet(Context &c, const Opcode &cmd) {
 	if ((_vm->_vars->get(cmd.args[0]) & cmd.args[1]) == cmd.args[2])
 		return;
 
-	c.result = true;
-	c.endScript = true;
+	goToElse(c);
 }
 
 void Script::goToNode(Context &c, const Opcode &cmd) {

@@ -33,7 +33,8 @@ NodeCube::~NodeCube() {
 
 void NodeCube::load(Archive &archive, uint16 index) {
 	for (int i = 0; i < 6; i++) {
-		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, DirectorySubEntry::kCubeFace);
+		const DirectorySubEntry *jpegDesc = archive.getDescription(index, i + 1, DirectorySubEntry::kCubeFace);
+		Common::MemoryReadStream *jpegStream = archive.getData(jpegDesc);
 
 		if (jpegStream) {
 			Graphics::JPEG jpeg;

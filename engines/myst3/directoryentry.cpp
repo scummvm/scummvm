@@ -18,9 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #include "engines/myst3/directoryentry.h"
@@ -64,11 +61,11 @@ void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {
 	}
 }
 
-Common::MemoryReadStream *DirectoryEntry::dumpToMemory(Common::SeekableReadStream &inStream, uint16 face, DirectorySubEntry::ResourceType type) {
+DirectorySubEntry *DirectoryEntry::getItemDescription(uint16 face, DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _subentries.size(); i++) {
 		if (_subentries[i].getFace() == face
 				&& _subentries[i].getType() == type) {
-			return _subentries[i].dumpToMemory(inStream);
+			return &_subentries[i];
 		}
 	}
 	

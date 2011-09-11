@@ -63,6 +63,7 @@ private:
 	Common::Array<Command> _commands;
 
 	void runOp(Context &c, const Opcode &op);
+	void goToElse(Context &c);
 
 	DECLARE_OPCODE(nodeCubeInit);
 	DECLARE_OPCODE(nodeCubeInitIndex);
@@ -110,7 +111,7 @@ private:
 	DECLARE_OPCODE(varMinValue);
 	DECLARE_OPCODE(varClipValue);
 	DECLARE_OPCODE(varRotateValue3);
-	DECLARE_OPCODE(continueToNextScript);
+	DECLARE_OPCODE(ifElse);
 	DECLARE_OPCODE(ifCondition);
 	DECLARE_OPCODE(ifCond1AndCond2);
 	DECLARE_OPCODE(ifCond1OrCond2);

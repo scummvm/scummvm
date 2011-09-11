@@ -18,9 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
- *
  */
 
 #ifndef MYST3_ARCHIVE_H
@@ -42,7 +39,8 @@ class Archive {
 		void _readDirectory();
 	public:
 
-		Common::MemoryReadStream *dumpToMemory(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+		const DirectorySubEntry *getDescription(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
+		Common::MemoryReadStream *getData(const DirectorySubEntry *description);
 		void dumpDirectory();
 		void dumpToFiles();
 		
