@@ -623,7 +623,6 @@ void CGEEngine::caveUp() {
 
 	showBak(BakRef);
 	loadMapping();
-	_text->preload(BakRef, BakRef + 1000);
 	Sprite *spr = _vga->_spareQ->first();
 	while (spr) {
 		Sprite *n = spr->_next;
@@ -689,8 +688,6 @@ void CGEEngine::caveDown() {
 		}
 		spr = n;
 	}
-
-	_text->clear(1000);
 }
 
 void CGEEngine::xCave() {
@@ -1305,8 +1302,6 @@ void CGEEngine::runGame() {
 	if (_eventManager->_quitFlag)
 		return;
 
-	_text->clear();
-	_text->preload(100, 1000);
 	loadHeroXY();
 
 	_cavLight->_flags._tran = true;

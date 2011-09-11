@@ -48,13 +48,12 @@ class Text {
 	} *_cache;
 	int _size;
 	char _fileName[kPathMax];
-	char *load(int idx, int ref);
-	int find(int ref);
+	void load();
+	int16 count();
 public:
-	Text(CGEEngine *vm, const char *fname, int size);
+	Text(CGEEngine *vm, const char *fname);
 	~Text();
-	void clear(int from = 1, int upto = 0x7FFF);
-	void preload(int from = 1, int upto = 0x7FFF);
+	void clear();
 	char *getText(int ref);
 	void say(const char *text, Sprite *spr);
 	void sayTime(Sprite *spr);

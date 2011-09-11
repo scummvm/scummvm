@@ -31,22 +31,26 @@
 #include "cge/game.h"
 #include "cge/snail.h"
 #include "cge/cge_main.h"
+#include "common/str.h"
 
 namespace CGE {
 
 Text *_text;
 Talk *_talk = NULL;
 
-Text::Text(CGEEngine *vm, const char *fname, int size) : _vm(vm) {
-	_cache = new Handler[size];
+Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	mergeExt(_fileName, fname, kSayExt);
 	if (!_cat->exist(_fileName))
 		error("No talk (%s)\n", _fileName);
+	int16 txtCount = count() + 1;
+	warning("Number of texts: %d", txtCount);
 
-	for (_size = 0; _size < size; _size++) {
+	_cache = new Handler[txtCount];
+	for (_size = 0; _size < txtCount; _size++) {
 		_cache[_size]._ref = 0;
 		_cache[_size]._text = NULL;
 	}
+	load();
 }
 
 Text::~Text() {
@@ -54,9 +58,33 @@ Text::~Text() {
 	delete[] _cache;
 }
 
-void Text::clear(int from, int upto) {
+int16 Text::count() {
+	EncryptedStream tf = _fileName;
+	if (tf._error)
+		return NULL;
+
+	Common::String line;
+	char tmpStr[kLineMax + 1];
+	int n, count = 0;
+
+	for (line = tf._readStream->readLine(); !tf._readStream->eos(); line = tf._readStream->readLine()) {
+		n = line.size();
+		char *s;
+
+		strcpy(tmpStr, line.c_str());
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
+			continue;
+		if (!isdigit(*s))
+			continue;
+
+		count++;
+	}
+	return count;
+}
+
+void Text::clear() {
 	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
-		if (p->_ref && p->_ref >= from && p->_ref < upto) {
+		if (p->_ref) {
 			p->_ref = 0;
 			delete[] p->_text;
 			p->_text = NULL;
@@ -64,115 +92,47 @@ void Text::clear(int from, int upto) {
 	}
 }
 
-int Text::find(int ref) {
-	int i = 0;
-	for (Handler *p = _cache, *q = p + _size; p < q; p++) {
-		if (p->_ref == ref)
-			break;
-		else
-			i++;
-	}
-	return i;
-}
+void Text::load() {
+	EncryptedStream tf = _fileName;
+	assert(!tf._error);
 
+	Common::String line;
+	char tmpStr[kLineMax + 1];
+	int idx;
 
-void Text::preload(int from, int upto) {
-	VFile tf = _fileName;
-	if (tf._error)
-		return;
-
-	Handler *CacheLim = _cache + _size;
-	char line[kLineMax + 1];
-	int n;
-
-	while ((n = tf.read((uint8 *)line)) != 0) {
-		if (line[n - 1] == '\n')
-			line[--n] = '\0';
-
-		char *s;
-		if ((s = strtok(line, " =,;/\t\n")) == NULL)
-			continue;
-		if (!isdigit(*s))
-			continue;
-
-		int ref = atoi(s);
-		if (ref && ref >= from && ref < upto) {
-			Handler *p = &_cache[find(ref)];
-
-			if (p < CacheLim) {
-				delete[] p->_text;
-				p->_text = NULL;
-			} else
-				p = &_cache[find(0)];
-
-			if (p >= CacheLim)
-				break;
-
-			s += strlen(s);
-			if (s < line + n)
-				++s;
-			if ((p->_text = new char[strlen(s) + 1]) == NULL)
-				break;
-
-			p->_ref = ref;
-			strcpy(p->_text, s);
-		}
-	}
-}
-
-
-char *Text::load(int idx, int ref) {
-	VFile tf = _fileName;
-	if (tf._error)
-		return NULL;
-
-	char line[kLineMax + 1];
-	int n;
-
-	while ((n = tf.read((uint8 *)line)) != 0) {
+	for (idx = 0, line = tf._readStream->readLine(); !tf._readStream->eos(); line = tf._readStream->readLine()) {
+		int n = line.size();
 		char *s;
 
-		if (line[n - 1] == '\n')
-			line[-- n] = '\0';
-		if ((s = strtok(line, " =,;/\t\n")) == NULL)
+		strcpy(tmpStr, line.c_str());
+		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
 			continue;
 		if (!isdigit(*s))
 			continue;
 
 		int r = atoi(s);
-		if (r < ref)
-			continue;
-		if (r > ref)
-			break;
 
-		// (r == ref)
 		s += strlen(s);
-		if (s < line + n)
+		if (s < tmpStr + n)
 			++s;
 
-		Handler *p = &_cache[idx];
-		p->_ref = ref;
-
-		if ((p->_text = new char[strlen(s) + 1]) == NULL)
-			return NULL;
-		return strcpy(p->_text, s);
+		_cache[idx]._ref = r;
+		_cache[idx]._text = new char[strlen(s) + 1];
+		strcpy(_cache[idx]._text, s);
+		idx++;
 	}
-	return NULL;
 }
 
 char *Text::getText(int ref) {
 	int i;
-	if ((i = find(ref)) < _size)
+	for (i = 0; (i < _size) && (_cache[i]._ref != ref); i++)
+		;
+
+	if (i < _size)
 		return _cache[i]._text;
 
-	if ((i = find(0)) >= _size) {
-		clear(kSysTextMax);            // clear non-system
-		if ((i = find(0)) >= _size) {
-			clear();              // clear all
-			i = 0;
-		}
-	}
-	return load(i, ref);
+	warning("getText: Unable to find ref %d", ref);
+	return NULL;
 }
 
 void Text::say(const char *text, Sprite *spr) {
