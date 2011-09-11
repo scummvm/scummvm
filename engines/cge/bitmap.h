@@ -42,17 +42,6 @@ namespace CGE {
 
 #include "common/pack-start.h"
 
-struct Bgr4 {
-	uint16 _b : 2;
-	uint16 _B : 6;
-	uint16 _g : 2;
-	uint16 _G : 6;
-	uint16 _r : 2;
-	uint16 _R : 6;
-	uint16 _Z : 8;
-};
-
-
 struct HideDesc {
 	uint16 _skip;
 	uint16 _hide;
