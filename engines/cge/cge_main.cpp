@@ -477,11 +477,11 @@ void CGEEngine::tooFar() {
 void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
-	VFile cf("CGE.HXY");
+	EncryptedStream cf("CGE.HXY");
 	uint16 x, y;
 
 	memset(_heroXY, 0, sizeof(_heroXY));
-	if (!cf._error) {
+	if (!cf.err()) {
 		for (int i = 0; i < kCaveMax; ++i) {
 			cf.read((byte *)&x, 2);
 			cf.read((byte *)&y, 2);
@@ -496,8 +496,8 @@ void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= kCaveMax) {
-		VFile cf("CGE.TAB");
-		if (!cf._error) {
+		EncryptedStream cf("CGE.TAB");
+		if (!cf.err()) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
 			
@@ -1030,23 +1030,24 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 	bool tran = false;
 	int i, lcnt = 0;
 
-	char line[kLineMax];
-	mergeExt(line, fname, kSprExt);
+	char tmpStr[kLineMax + 1];
+	Common::String line;
+	mergeExt(tmpStr, fname, kSprExt);
 
-	if (_cat->exist(line)) {      // sprite description file exist
-		VFile sprf(line);
-		if (sprf._error)
-			error("Bad SPR [%s]", line);
+	if (_cat->exist(tmpStr)) {      // sprite description file exist
+		EncryptedStream sprf(tmpStr);
+		if (sprf.err())
+			error("Bad SPR [%s]", tmpStr);
 
 		uint16 len;
-		while ((len = sprf.read((uint8 *)line)) != 0) {
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
+			len = line.size();			
 			lcnt++;
-			if (len && line[len - 1] == '\n')
-				line[--len] = '\0';
-			if (len == 0 || *line == '.')
+			strcpy(tmpStr, line.c_str());
+			if (len == 0 || *tmpStr == '.')
 				continue;
 
-			if ((i = takeEnum(Comd, strtok(line, " =\t"))) < 0)
+			if ((i = takeEnum(Comd, strtok(tmpStr, " =\t"))) < 0)
 				error("Bad line %d [%s]", lcnt, fname);
 
 
@@ -1073,7 +1074,8 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 		}
 		if (! shpcnt)
 			error("No shapes [%s]", fname);
-	} else { // no sprite description: mono-shaped sprite with only .BMP file
+	} else {
+		// no sprite description: mono-shaped sprite with only .BMP file
 		++shpcnt;
 	}
 
@@ -1084,7 +1086,6 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 		_sprite = new Sprite(this, NULL);
 		if (_sprite) {
 			_sprite->gotoxy(col, row);
-			//Sprite->Time = 1;//-----------$$$$$$$$$$$$$$$$
 		}
 		break;
 	case 2:
@@ -1099,45 +1100,14 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 		_sprite = w;
 		break;
 		}
-	/*
-	case 3 : // NEWTON
-	NEWTON * n = new NEWTON(NULL);
-	if (n)
-	{
-	   n->Ay = (bottom-n->H);
-	   n->By = 90;
-	   n->Cy = 3;
-	   n->Bx = 99;
-	   n->Cx = 3;
-	   n->Goto(col, row);
-	 }
-	     _sprite = n;
-	     break;
-	     */
-	case 4:
-		// LISSAJOUS
+	case 3:  // NEWTON
+	case 4:  // LISSAJOUS
 		error("Bad type [%s]", fname);
-		/*
-		LISSAJOUS * l = new LISSAJOUS(NULL);
-		if (l)
-		{
-		   l->Ax = SCR_WID/2;
-		   l->Ay = SCR_HIG/2;
-		   l->Bx = 7;
-		   l->By = 13;
-		   l->Cx = 300;
-		   l->Cy = 500;
-		   *(long *) &l->Dx = 0; // movex * cnt
-		   l->Goto(col, row);
-		 }
-		     _sprite = l;
-		     */
 		break;
 	case 5:
 		{ // FLY
 		Fly *f = new Fly(this, NULL);
 		_sprite = f;
-		//////Sprite->Time = 1;//-----------$$$$$$$$$$$$$$
 		break;
 		}
 	default:
@@ -1170,26 +1140,29 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 }
 
 void CGEEngine::loadScript(const char *fname) {
-	VFile scrf(fname);
+	EncryptedStream scrf(fname);
 
-	if (scrf._error)
+	if (scrf.err())
 		return;
 
 	bool ok = true;
 	int lcnt = 0;
 
-	char line[kLineMax];
-	while (scrf.read((uint8 *)line) != 0) {
+	char tmpStr[kLineMax+1];
+	Common::String line;
+
+	for (line = scrf.readLine(); !scrf.eos(); line = scrf.readLine()) {
 		char *p;
 
 		lcnt++;
-		if (*line == 0 || *line == '\n' || *line == '.')
+		strcpy(tmpStr, line.c_str());
+		if ((line.size() == 0) || (*tmpStr == '.'))
 			continue;
 
 		ok = false;   // not OK if break
 
 		// sprite ident number
-		if ((p = strtok(line, " \t\n")) == NULL)
+		if ((p = strtok(tmpStr, " \t\n")) == NULL)
 			break;
 		int SpI = atoi(p);
 

@@ -209,37 +209,40 @@ Sprite *Sprite::expand() {
 		return this;
 
 	static const char *Comd[] = { "Name", "Phase", "Seq", "Near", "Take", NULL };
-	char line[kLineMax], fname[kPathMax];
+	char fname[kPathMax];
 
 	Common::Array<BitmapPtr> shplist;
 	for (int i = 0; i < _shpCnt + 1; ++i)
 		shplist.push_back(NULL);
 
 	Seq *seq = NULL;
-	int shpcnt = 0,
-	    seqcnt = 0,
-	    neacnt = 0,
-	    takcnt = 0,
+	int shapeCount = 0,
+	    seqCount = 0,
+	    nearCount = 0,
+	    takeCount = 0,
 	    maxnow = 0,
 	    maxnxt = 0;
 
-	Snail::Com *nea = NULL;
-	Snail::Com *tak = NULL;
+	Snail::Com *near = NULL;
+	Snail::Com *take = NULL;
 	mergeExt(fname, _file, kSprExt);
 	if (_cat->exist(fname)) { // sprite description file exist
-		VFile sprf(fname);
-		if (!(sprf._error==0))
+		EncryptedStream sprf(fname);
+		if (sprf.err())
 			error("Bad SPR [%s]", fname);
+		Common::String line;
+		char tmpStr[kLineMax + 1];
 		int len = 0, lcnt = 0;
-		while ((len = sprf.read((uint8 *)line)) != 0) {
+
+		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
+			len = line.size();
+			strcpy(tmpStr, line.c_str());
 			lcnt++;
-			if (len && line[len - 1] == '\n')
-				line[--len] = '\0';
-			if (len == 0 || *line == '.')
+			if (len == 0 || *tmpStr == '.')
 				continue;
 
 			Snail::Com *c;
-			switch (takeEnum(Comd, strtok(line, " =\t"))) {
+			switch (takeEnum(Comd, strtok(tmpStr, " =\t"))) {
 			case 0:
 				// Name
 				setName(strtok(NULL, ""));
@@ -247,28 +250,28 @@ Sprite *Sprite::expand() {
 			case 1:
 				// Phase
 				// In case the shape index gets too high, increase the array size
-				while ((shpcnt + 1) >= (int)shplist.size()) {
+				while ((shapeCount + 1) >= (int)shplist.size()) {
 					shplist.push_back(NULL);
 					++_shpCnt;
 				}
-				shplist[shpcnt++] = new Bitmap(strtok(NULL, " \t,;/"));
+				shplist[shapeCount++] = new Bitmap(strtok(NULL, " \t,;/"));
 				break;
 			case 2:
 				// Seq
-				seq = (Seq *) realloc(seq, (seqcnt + 1) * sizeof(*seq));
+				seq = (Seq *)realloc(seq, (seqCount + 1) * sizeof(*seq));
 				assert(seq != NULL);
 				Seq *s;
-				s = &seq[seqcnt++];
+				s = &seq[seqCount++];
 				s->_now = atoi(strtok(NULL, " \t,;/"));
 				if (s->_now > maxnow)
 					maxnow = s->_now;
 				s->_next = atoi(strtok(NULL, " \t,;/"));
 				switch (s->_next) {
 				case 0xFF:
-					s->_next = seqcnt;
+					s->_next = seqCount;
 					break;
 				case 0xFE:
-					s->_next = seqcnt - 1;
+					s->_next = seqCount - 1;
 					break;
 				}
 				if (s->_next > maxnxt)
@@ -281,9 +284,9 @@ Sprite *Sprite::expand() {
 				// Near
 				if (_nearPtr == kNoPtr)
 					break;
-				nea = (Snail::Com *) realloc(nea, (neacnt + 1) * sizeof(*nea));
-				assert(nea != NULL);
-				c = &nea[neacnt++];
+				near = (Snail::Com *)realloc(near, (nearCount + 1) * sizeof(*near));
+				assert(near != NULL);
+				c = &near[nearCount++];
 				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
@@ -294,9 +297,9 @@ Sprite *Sprite::expand() {
 				// Take
 				if (_takePtr == kNoPtr)
 					break;
-				tak = (Snail::Com *) realloc(tak, (takcnt + 1) * sizeof(*tak));
-				assert(tak != NULL);
-				c = &tak[takcnt++];
+				take = (Snail::Com *)realloc(take, (takeCount + 1) * sizeof(*take));
+				assert(take != NULL);
+				c = &take[takeCount++];
 				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
@@ -307,14 +310,14 @@ Sprite *Sprite::expand() {
 		}
 	} else {
 		// no sprite description: try to read immediately from .BMP
-		shplist[shpcnt++] = new Bitmap(_file);
+		shplist[shapeCount++] = new Bitmap(_file);
 	}
 
-	shplist[shpcnt] = NULL;
+	shplist[shapeCount] = NULL;
 	if (seq) {
-		if (maxnow >= shpcnt)
+		if (maxnow >= shapeCount)
 			error("Bad PHASE in SEQ [%s]", fname);
-		if (maxnxt >= seqcnt)
+		if (maxnxt >= seqCount)
 			error("Bad JUMP in SEQ [%s]", fname);
 		setSeq(seq);
 	} else
@@ -327,12 +330,12 @@ Sprite *Sprite::expand() {
 
 	setShapeList(shapeList);
 
-	if (nea)
-		nea[neacnt - 1]._ptr = _ext->_near = nea;
+	if (near)
+		near[nearCount - 1]._ptr = _ext->_near = near;
 	else
 		_nearPtr = kNoPtr;
-	if (tak)
-		tak[takcnt - 1]._ptr = _ext->_take = tak;
+	if (take)
+		take[takeCount - 1]._ptr = _ext->_take = take;
 	else
 		_takePtr = kNoPtr;
 
