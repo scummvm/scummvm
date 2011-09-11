@@ -61,7 +61,6 @@ void Font::load() {
 	uint16 p = 0;
 	for (uint16 i = 0; i < kPosSize; i++) {
 		_pos[i] = p;
-		warning("Fonts 0x%X 0x%X", i, p);
 		p += _wid[i];
 	}
 	f.read(_map, p);
