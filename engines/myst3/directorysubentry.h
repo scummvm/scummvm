@@ -33,24 +33,13 @@ struct SpotItemData {
 struct VideoData {
 	Graphics::Vector3d v1;
 	Graphics::Vector3d v2;
-	uint32 u;
-	uint32 v;
-	uint32 width;
-	uint32 height;
+	int32 u;
+	int32 v;
+	int32 width;
+	int32 height;
 };
 
 class DirectorySubEntry {
-	private:
-		uint32 _offset;
-		uint32 _size;
-		uint16 _metadataSize;
-		byte _face;
-		byte _type;
-
-		// Metadata
-		SpotItemData _spotItemData;
-		VideoData _videoData;
-
 	public:
 		enum ResourceType {
 			kCubeFace = 0,
@@ -65,9 +54,20 @@ class DirectorySubEntry {
 		void dumpToFile(Common::SeekableReadStream &inStream, uint16 index);
 		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream) const;
 		uint16 getFace() { return _face; }
-		ResourceType getType() { return static_cast<ResourceType>(_type); }
-		const SpotItemData &getSpotItemData() { return _spotItemData; }
-		const VideoData &getVideoData() { return _videoData; }
+		ResourceType getType() { return _type; }
+		const SpotItemData &getSpotItemData() const { return _spotItemData; }
+		const VideoData &getVideoData() const { return _videoData; }
+
+	private:
+		uint32 _offset;
+		uint32 _size;
+		uint16 _metadataSize;
+		byte _face;
+		ResourceType _type;
+
+		// Metadata
+		SpotItemData _spotItemData;
+		VideoData _videoData;
 };
 
 } // end of namespace Myst3

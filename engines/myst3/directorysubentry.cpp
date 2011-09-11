@@ -33,7 +33,7 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_size = inStream.readUint32LE();
 	_metadataSize = inStream.readUint16LE();
 	_face = inStream.readByte();
-	_type = inStream.readByte();
+	_type = static_cast<ResourceType>(inStream.readByte());
 
 	if (_metadataSize == 0) return;
 
@@ -67,14 +67,14 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 
 	char fileName[255];
 	
 	switch (_type) {
-		case 0:
-		case 5:
+		case kCubeFace:
+		case kSpotItem:
 			sprintf(fileName, "dump/%d-%d.jpg", index, _face);
 			break;
-		case 1:
+		case kFaceMask:
 			sprintf(fileName, "dump/%d-%d.mask", index, _face);
 			break;
-		case 8:
+		case kMovie:
 			sprintf(fileName, "dump/%d.bik", index);
 			break;
 		default:

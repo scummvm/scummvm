@@ -27,6 +27,13 @@
 
 namespace Myst3 {
 
+struct Movie {
+	Graphics::Vector3d pTopLeft;
+	Graphics::Vector3d pBottomLeft;
+	Graphics::Vector3d pBottomRight;
+	Graphics::Vector3d pTopRight;
+};
+
 class NodeCube: public Myst3::Node {
 public:
 	NodeCube();
@@ -34,6 +41,11 @@ public:
 
 	void load(Archive &archive, uint16 id);
 	void draw();
+
+	void loadMovie(Archive &archive, uint16 id);
+
+private:
+	Common::Array<Movie> _movies;
 };
 
 } /* namespace Myst3 */
