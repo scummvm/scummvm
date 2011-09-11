@@ -69,7 +69,7 @@ public:
 	static void init();
 	static void deinit();
 	Bitmap *code();
-	Bitmap &operator = (const Bitmap &bmp);
+	Bitmap &operator=(const Bitmap &bmp);
 	void hide(int16 x, int16 y);
 	void show(int16 x, int16 y);
 	void xShow(int16 x, int16 y);

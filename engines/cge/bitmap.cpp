@@ -130,7 +130,7 @@ Bitmap::~Bitmap() {
 	delete[] _v;
 }
 
-Bitmap &Bitmap::operator = (const Bitmap &bmp) {
+Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	debugC(1, kCGEDebugBitmap, "&Bitmap::operator =");
 
 	uint8 *v0 = bmp._v;

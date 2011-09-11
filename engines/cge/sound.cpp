@@ -166,7 +166,7 @@ DataCk *Fx::load(int idx, int ref) {
 	return wav;
 }
 
-DataCk *Fx::operator [](int ref) {
+DataCk *Fx::operator[](int ref) {
 	int i;
 	if ((i = find(ref)) < _size)
 		_current = _cache[i]._wav;
