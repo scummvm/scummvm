@@ -432,7 +432,7 @@ void Scene109::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene190::Object4::startAction(CursorType action, Event &event) {
+bool Scene190::Object4::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -442,48 +442,46 @@ void Scene190::Object4::startAction(CursorType action, Event &event) {
 		Common::Point pt(62, 96);
 		PlayerMover *mover = new PlayerMover();
 		BF_GLOBALS._player.addMover(mover, &pt, scene);
-		break;
+		return true;
 	}
 	default:
-		NamedObject::startAction(action, event);
-		break;
+		return NamedObject::startAction(action, event);
 	}
 }
 
 /*--------------------------------------------------------------------------*/
 
-void Scene190::Item1::startAction(CursorType action, Event &event) {
+bool Scene190::Item1::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
 		scene->setAction(&scene->_action1);
-		break;
+		return true;
 	default:
-		NamedHotspot::startAction(action, event);
-		break;
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene190::Item2::startAction(CursorType action, Event &event) {
+bool Scene190::Item2::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
 		scene->_stripManager.start(1900, scene);
-		break;
+		return true;
 	default:
-		NamedHotspot::startAction(action, event);
-		break;
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene190::Exit::startAction(CursorType action, Event &event) {
+bool Scene190::Exit::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	Common::Point pt(316, 91);
 	PlayerMover *mover = new PlayerMover();
 	BF_GLOBALS._player.addMover(mover, &pt, scene);
+	return true;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -555,7 +553,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	_object3.fixPriority(200);
 	_object3.setPosition(Common::Point(170, 31));
 	_object3.animate(ANIM_MODE_7, 0, NULL);
-	_object3.setup(190, 8, 26, 19, 1, NULL);
+	_object3.setDetails(190, 8, 26, 19, 1, NULL);
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		BF_GLOBALS._player.setVisage(303);
@@ -567,7 +565,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		_object4.setVisage(444);
 		_object4.setFrame(2);
 		_object4.setPosition(Common::Point(54, 114));
-		_object4.setup(190, -1, -1, -1, 1, NULL);
+		_object4.setDetails(190, -1, -1, -1, 1, NULL);
 		
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {
@@ -631,17 +629,17 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._sound1.play(33);
 	}
 
-	_exit.setup(Rect(310, 50, 320, 125), 190, -1, -1, -1, 1, NULL);
-	_item2.setup(Rect(108, 1, 111, 94), 190, 7, 11, 18, 1, NULL);
-	_item4.setup(2, 190, 5, 10, 16, 1);
-	_item3.setup(1, 190, 4, 10, 15, 1);
-	_item8.setup(6, 190, 20, 21, 22, 1);
-	_item1.setup(7, 190, 1, 10, -1, 1);
-	_item7.setup(5, 190, 0, 10, 12, 1);
-	_item6.setup(4, 190, 2, 10, 13, 1);
-	_item5.setup(3, 190, 3, 10, 14, 1);
-	_item9.setup(Rect(0, 0, 89, 68), 190, 6, 10, 17, 1, NULL);
-	_item10.setup(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 190, 23, -1, -1, 1, NULL);
+	_exit.setDetails(Rect(310, 50, 320, 125), 190, -1, -1, -1, 1, NULL);
+	_item2.setDetails(Rect(108, 1, 111, 94), 190, 7, 11, 18, 1, NULL);
+	_item4.setDetails(2, 190, 5, 10, 16, 1);
+	_item3.setDetails(1, 190, 4, 10, 15, 1);
+	_item8.setDetails(6, 190, 20, 21, 22, 1);
+	_item1.setDetails(7, 190, 1, 10, -1, 1);
+	_item7.setDetails(5, 190, 0, 10, 12, 1);
+	_item6.setDetails(4, 190, 2, 10, 13, 1);
+	_item5.setDetails(3, 190, 3, 10, 14, 1);
+	_item9.setDetails(Rect(0, 0, 89, 68), 190, 6, 10, 17, 1, NULL);
+	_item10.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 190, 23, -1, -1, 1, NULL);
 }
 
 void Scene190::signal() {

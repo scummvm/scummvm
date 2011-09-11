@@ -48,9 +48,11 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Tsunami Title Screen
 		return new Scene20();
 	case 50:
+		// Map screen
 		return new Scene50();
 	case 60:
-		error("Scene group 0 not implemented");
+		// Motorcycle
+		return new Scene60();
 	/* Scene Group #1 */
 	case 100:
 		// Tsnunami Title Screen #2
@@ -364,7 +366,7 @@ void NamedObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_useLineNum);
 }
 
-void NamedObject::startAction(CursorType action, Event &event) {
+bool NamedObject::startAction(CursorType action, Event &event) {
 	bool handled = true;
 
 	switch (action) {
@@ -393,9 +395,10 @@ void NamedObject::startAction(CursorType action, Event &event) {
 
 	if (!handled)
 		((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(action);
+	return handled;
 }
 
-void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
 	_talkLineNum = talkLineNum;

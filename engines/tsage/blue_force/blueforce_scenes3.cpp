@@ -36,53 +36,60 @@ namespace BlueForce {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene300::Object::startAction(CursorType action, Event &event) {
+bool Scene300::Object::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_TALK) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		scene->_stripManager.start(_stripNumber, scene);
+		return true;
 	} else {
-		NamedObject::startAction(action, event);
+		return NamedObject::startAction(action, event);
 	}
 }
 
-void Scene300::Object19::startAction(CursorType action, Event &event) {
+bool Scene300::Object19::startAction(CursorType action, Event &event) {
 	if ((action != CURSOR_USE) || !BF_GLOBALS.getFlag(onDuty)) {
-		NamedObject::startAction(action, event);
+		return NamedObject::startAction(action, event);
 	} else if ((BF_GLOBALS._dayNumber != 2) || (BF_GLOBALS._bookmark >= bEndDayOne)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		setAction(&scene->_action4);
 	} else {
 		SceneItem::display2(300, 33);
 	}
+
+	return true;
 }
 
-void Scene300::Item1::startAction(CursorType action, Event &event) {
+bool Scene300::Item1::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 305;
 		scene->setAction(&scene->_sequenceManager1, scene, 305, &BF_GLOBALS._player,
 			&scene->_object8, NULL);
+		return true;
 	} else {
-		NamedHotspot::startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene300::Item2::startAction(CursorType action, Event &event) {
+bool Scene300::Item2::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_LOOK) || (action == CURSOR_USE)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
 		scene->setAction(&scene->_sequenceManager1, scene, 304, &scene->_object11, NULL);
+		return true;
 	} else {
-		NamedHotspot::startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene300::Item14::startAction(CursorType action, Event &event) {
+bool Scene300::Item14::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 151, 54);
+	return true;
 }
 
-void Scene300::Item15::startAction(CursorType action, Event &event) {
+bool Scene300::Item15::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 316, 90);
+	return true;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -234,8 +241,8 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_jakeSpeaker);
 
 	_field2762 = 0;
-	_item14.setup(Rect(144, 27, 160, 60), 300, -1, -1, -1, 1, NULL);
-	_item15.setup(Rect(310, 76, SCREEN_WIDTH, 105), 300, -1, -1, -1, 1, NULL);
+	_item14.setDetails(Rect(144, 27, 160, 60), 300, -1, -1, -1, 1, NULL);
+	_item15.setDetails(Rect(310, 76, SCREEN_WIDTH, 105), 300, -1, -1, -1, 1, NULL);
 
 	// Setup the player
 	int playerVisage = BF_GLOBALS._player._visage;
@@ -258,20 +265,20 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		_object17.setVisage(301);
 		_object17.setStrip(1);
 		_object17.setPosition(Common::Point(87, 88));
-		_object17.setup(300, 11, 13, 2, 1, NULL);
+		_object17.setDetails(300, 11, 13, 2, 1, NULL);
 		
 		_object18.postInit();
 		_object18.setVisage(301);
 		_object18.setStrip(1);
 		_object18.setPosition(Common::Point(137, 92));
-		_object18.setup(300, 11, 13, 3, 1, NULL);
+		_object18.setDetails(300, 11, 13, 3, 1, NULL);
 	}
 
 	_object19.postInit();
 	_object19.setVisage(301);
 	_object19.setStrip(1);
 	_object19.setPosition(Common::Point(175, 99));
-	_object19.setup(300, 11, 13, 34, 1, NULL);
+	_object19.setDetails(300, 11, 13, 34, 1, NULL);
 
 	_object11.postInit();
 	_object11.setVisage(301);
@@ -283,7 +290,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 	case 50:
 	case 60:
 		BF_GLOBALS.clearFlag(onBike);
-		if (BF_GLOBALS.getFlag(3)) {
+		if (BF_GLOBALS.getFlag(onDuty)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 318;
 			setAction(&_sequenceManager1, this, 318, &BF_GLOBALS._player, &_object19, NULL);
@@ -335,19 +342,19 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
-	_item10.setup(4, 300, 7, 13, 16, 1);
-	_item11.setup(2, 300, 9, 13, 18, 1);
-	_item12.setup(5, 300, 10, 13, 19, 1);
-	_item13.setup(3, 300, 25, 26, 27, 1);
-	_item2.setup(Rect(266, 54, 272, 59), 300, -1, -1, -1, 1, NULL);
-	_item1.setup(Rect(262, 47, 299, 76), 300, 1, 13, -1, 1, NULL);
-	_item4.setup(Rect(0, 85, SCREEN_WIDTH - 1, BF_INTERFACE_Y - 1), 300, 6, 13, 15, 1, NULL);
-	_item7.setup(Rect(219, 46, 251, 74), 300, 22, 23, 24, 1, NULL);
-	_item8.setup(Rect(301, 53, 319, 78), 300, 22, 23, 24, 1, NULL);
-	_item5.setup(Rect(179, 44, 200, 55), 300, 8, 13, 17, 1, NULL);
-	_item6.setup(Rect(210, 46, 231, 55), 300, 8, 13, 17, 1, NULL);
-	_item3.setup(Rect(160, 0, SCREEN_WIDTH - 1, 75), 300, 4, 13, 14, 1, NULL);
-	_item9.setup(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 300, 29, 30, 31, 1, NULL);
+	_item10.setDetails(4, 300, 7, 13, 16, 1);
+	_item11.setDetails(2, 300, 9, 13, 18, 1);
+	_item12.setDetails(5, 300, 10, 13, 19, 1);
+	_item13.setDetails(3, 300, 25, 26, 27, 1);
+	_item2.setDetails(Rect(266, 54, 272, 59), 300, -1, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(262, 47, 299, 76), 300, 1, 13, -1, 1, NULL);
+	_item4.setDetails(Rect(0, 85, SCREEN_WIDTH - 1, BF_INTERFACE_Y - 1), 300, 6, 13, 15, 1, NULL);
+	_item7.setDetails(Rect(219, 46, 251, 74), 300, 22, 23, 24, 1, NULL);
+	_item8.setDetails(Rect(301, 53, 319, 78), 300, 22, 23, 24, 1, NULL);
+	_item5.setDetails(Rect(179, 44, 200, 55), 300, 8, 13, 17, 1, NULL);
+	_item6.setDetails(Rect(210, 46, 231, 55), 300, 8, 13, 17, 1, NULL);
+	_item3.setDetails(Rect(160, 0, SCREEN_WIDTH - 1, 75), 300, 4, 13, 14, 1, NULL);
+	_item9.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 300, 29, 30, 31, 1, NULL);
 }
 
 void Scene300::signal() {
@@ -625,7 +632,7 @@ void Scene300::setup() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene315::Item1::startAction(CursorType action, Event &event) {
+bool Scene315::Item1::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 	scene->_currentCursor = action;
 
@@ -665,6 +672,7 @@ void Scene315::Item1::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 3152;
 			scene->setAction(&scene->_sequenceManager, scene, 3153, 1888, NULL);
 		} 
+		break;
 	case INV_FOREST_RAP:
 		BF_GLOBALS._player.disableControl();
 		scene->_stripNumber = BF_GLOBALS.getFlag(onDuty) ? 3178 : 3173;
@@ -721,12 +729,13 @@ void Scene315::Item1::startAction(CursorType action, Event &event) {
 		}
 		break;
 	default:
-		NamedHotspot::startAction(action, event);
-		break;
+		return NamedHotspot::startAction(action, event);
 	}
+
+	return true;
 }
 
-void Scene315::Item2::startAction(CursorType action, Event &event) {
+bool Scene315::Item2::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -757,12 +766,13 @@ void Scene315::Item2::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_sequenceManager, scene, 3154, &BF_GLOBALS._player, NULL);
 		break;
 	default:
-		NamedHotspot::startAction(action, event);
-		break;
+		return NamedHotspot::startAction(action, event);
 	}
+
+	return true;
 }
 
-void Scene315::Item4::startAction(CursorType action, Event &event) {
+bool Scene315::Item4::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -772,23 +782,25 @@ void Scene315::Item4::startAction(CursorType action, Event &event) {
 		scene->_object9.hide();
 		scene->_sceneMode = 3167;
 		scene->setAction(&scene->_sequenceManager, scene, 3167, &scene->_object9, this, NULL);
+		return true;
 	} else {
-		NamedHotspot::startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene315::Item5::startAction(CursorType action, Event &event) {
+bool Scene315::Item5::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		BF_GLOBALS._player.addMover(NULL);
 		scene->_stripManager.start(3154, &BF_GLOBALS._stripProxy);
+		return true;
 	} else {
-		NamedHotspot::startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene315::Item14::startAction(CursorType action, Event &event) {
+bool Scene315::Item14::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if ((action == INV_COLT45) && BF_GLOBALS.getFlag(onDuty)) {
@@ -805,42 +817,47 @@ void Scene315::Item14::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 3159;
 			scene->setAction(&scene->_sequenceManager, scene, 3159, &BF_GLOBALS._player, NULL);
 		}
+		return true;
 	} else {
-		NamedHotspot::startAction(action, event);
+		return NamedHotspot::startAction(action, event);
 	}
 }
 
-void Scene315::Item15::startAction(CursorType action, Event &event) {
+bool Scene315::Item15::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
-		NamedHotspot::startAction(action, event);
-	else if (BF_INVENTORY._forestRap._sceneNumber == 1)
+		return NamedHotspot::startAction(action, event);
+	else if (BF_INVENTORY._forestRap._sceneNumber == 1) {
 		SceneItem::display2(315, 37);
-	else {
+		return true;
+	} else {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3158;
 		scene->setAction(&scene->_sequenceManager, scene, 3158, &BF_GLOBALS._player, NULL);
+		return true;
 	}
 }
 
-void Scene315::Item16::startAction(CursorType action, Event &event) {
+bool Scene315::Item16::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 190, 75);
+	return true;
 }
 
-void Scene315::Item17::startAction(CursorType action, Event &event) {
+bool Scene315::Item17::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, event.mousePos.x, event.mousePos.y);
+	return true;
 }
 
 /*--------------------------------------------------------------------------*/
 
-void Scene315::Object1::startAction(CursorType action, Event &event) {
+bool Scene315::Object1::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
 		scene->_stripManager.start(3157, &BF_GLOBALS._stripProxy);
-		break;
+		return true;
 	case CURSOR_USE:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCleaningGun)) {
 			BF_GLOBALS._uiElements.addScore(10);
@@ -848,14 +865,14 @@ void Scene315::Object1::startAction(CursorType action, Event &event) {
 		}
 		BF_GLOBALS._player.addMover(NULL);
 		scene->_stripManager.start(3159, &BF_GLOBALS._stripProxy);
-		break;
+		return true;
 	default:
-		NamedObject::startAction(action, event);
+		return NamedObject::startAction(action, event);
 		break;
 	}
 }
 
-void Scene315::Object2::startAction(CursorType action, Event &event) {
+bool Scene315::Object2::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -865,27 +882,26 @@ void Scene315::Object2::startAction(CursorType action, Event &event) {
 		scene->_object9.hide();
 		scene->_sceneMode = 3157;
 		scene->setAction(&scene->_sequenceManager, scene, 3157, &BF_GLOBALS._player, &scene->_object9, NULL);
-		break;
+		return true;
 	case CURSOR_USE:
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 3156;
 		scene->setAction(&scene->_sequenceManager, scene, BF_GLOBALS.getFlag(onDuty) ? 3156 : 3168,
 			&BF_GLOBALS._player, this, NULL);
-		break;
+		return true;
 	default:
-		NamedObject::startAction(action, event);
-		break;
+		return NamedObject::startAction(action, event);
 	}
 }
 
-void Scene315::Object3::startAction(CursorType action, Event &event) {
+bool Scene315::Object3::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
 		BF_GLOBALS._player.addMover(NULL);
 		scene->_stripManager.start(3156, &BF_GLOBALS._stripProxy);
-		break;
+		return true;
 	case CURSOR_USE:
 		if (!BF_GLOBALS.getFlag(fGotPointsForMemo)) {
 			BF_GLOBALS._uiElements.addScore(30);
@@ -894,10 +910,9 @@ void Scene315::Object3::startAction(CursorType action, Event &event) {
 
 		BF_GLOBALS._player.addMover(NULL);
 		scene->_stripManager.start(3158, &BF_GLOBALS._stripProxy);
-		break;
+		return true;
 	default:
-		NamedObject::startAction(action, event);
-		break;
+		return NamedObject::startAction(action, event);
 	}
 }
 
@@ -986,7 +1001,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object3.setStrip(4);
 		_object3.setFrame(4);
 		_object3.fixPriority(82);
-		_object3.setup(315, -1, -1, -1, 1, NULL);
+		_object3.setDetails(315, -1, -1, -1, 1, NULL);
 	}
 
 	if (BF_GLOBALS._dayNumber == 1) {
@@ -997,7 +1012,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 			_object1.setStrip(4);
 			_object1.setFrame(2);
 			_object1.fixPriority(82);
-			_object1.setup(315, -1, -1, -1, 1, NULL);
+			_object1.setDetails(315, -1, -1, -1, 1, NULL);
 		}
 	} else if ((BF_INVENTORY._daNote._sceneNumber != 1) && (BF_GLOBALS._dayNumber < 3)) {
 		_object2.postInit();
@@ -1006,16 +1021,16 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object2.setFrame(2);
 		_object2.setPosition(Common::Point(304, 31));
 		_object2.fixPriority(70);
-		_object2.setup(315, 3, 4, -1, 1, NULL);
+		_object2.setDetails(315, 3, 4, -1, 1, NULL);
 	}
 
-	_item2.setup(12, 315, 35, -1, 36, 1);
-	_item5.setup(3, 315, -1, -1, -1, 1);
-	_item1.setup(4, 315, 10, 11, 12, 1);
-	_item3.setup(2, 315, 0, 1, 2, 1);
-	_item4.setup(Rect(190, 17, 208, 30), 315, -1, -1, -1, 1, NULL);
-	_item16.setup(Rect(184, 31, 211, 80), 315, -1, -1, -1, 1, NULL);
-	_item17.setup(Rect(0, 157, 190, 167), 315, -1, -1, -1, 1, NULL);
+	_item2.setDetails(12, 315, 35, -1, 36, 1);
+	_item5.setDetails(3, 315, -1, -1, -1, 1);
+	_item1.setDetails(4, 315, 10, 11, 12, 1);
+	_item3.setDetails(2, 315, 0, 1, 2, 1);
+	_item4.setDetails(Rect(190, 17, 208, 30), 315, -1, -1, -1, 1, NULL);
+	_item16.setDetails(Rect(184, 31, 211, 80), 315, -1, -1, -1, 1, NULL);
+	_item17.setDetails(Rect(0, 157, 190, 167), 315, -1, -1, -1, 1, NULL);
 	
 	if (!BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._bookmark == bNone) || (BF_GLOBALS._bookmark == bLyleStoppedBy))) {
 		_field1398 = 1;
@@ -1098,14 +1113,14 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._walkRegions.proc1(4);
 	}
 
-	_item15.setup(24, 315, 38, 39, 40, 1);
-	_item14.setup(14, 315, 24, 25, 26, 1);
-	_item7.setup(5, 315, 8, 9, -1, 1);
-	_item6.setup(6, 315, 5, 6, 7, 1);
-	_item10.setup(8, 315, 13, -1, -1, 1);
-	_item11.setup(9, 315, 14, -1, -1, 1);
-	_item8.setup(7, 315, 15, 16, 17, 1);
-	_item9.setup(10, 315, 18, 19, 20, 1);
+	_item15.setDetails(24, 315, 38, 39, 40, 1);
+	_item14.setDetails(14, 315, 24, 25, 26, 1);
+	_item7.setDetails(5, 315, 8, 9, -1, 1);
+	_item6.setDetails(6, 315, 5, 6, 7, 1);
+	_item10.setDetails(8, 315, 13, -1, -1, 1);
+	_item11.setDetails(9, 315, 14, -1, -1, 1);
+	_item8.setDetails(7, 315, 15, 16, 17, 1);
+	_item9.setDetails(10, 315, 18, 19, 20, 1);
 }
 
 void Scene315::signal() {
@@ -1346,11 +1361,14 @@ void Scene315::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene325::Item1::startAction(CursorType action, Event &event) {
+bool Scene325::Item1::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_EXIT) {
 		BF_GLOBALS._events.setCursor(CURSOR_WALK);
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS._sceneManager.changeScene(315);
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -1406,7 +1424,7 @@ void Scene325::postInit(SceneObjectList *OwnerList) {
 	_object5.setStrip(1);
 	_object5.setPosition(Common::Point(135, 167));
 
-	_item1.setup(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 560, -1, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 560, -1, -1, -1, 1, NULL);
 	BF_GLOBALS._player.disableControl();
 
 	_sceneMode = (BF_GLOBALS._dayNumber == 1) ? 3250 : 3251;

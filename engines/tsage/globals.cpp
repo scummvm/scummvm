@@ -233,6 +233,8 @@ void BlueForceGlobals::reset() {
 	_v4E238 = 0;
 	_v50696 = 0;
 	_v501FC = 0;
+	_v5098C = 0;
+	_v5098D = 0;
 	_v51C42 = 0;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
@@ -242,6 +244,19 @@ bool BlueForceGlobals::getHasBullets() {
 	if (!getFlag(fGunLoaded))
 		return false;
 	return BF_GLOBALS.getFlag(fLoadedSpare) ? (_clip2Bullets > 0) : (_clip1Bullets > 0);
+}
+
+void BlueForceGlobals::set2Flags(int flagNum) {
+	if (!getFlag(flagNum + 1)) {
+		setFlag(flagNum + 1);
+		setFlag(flagNum);
+	}
+}
+
+bool BlueForceGlobals::removeFlag(int flagNum) {
+	bool result = getFlag(flagNum);
+	clearFlag(flagNum);
+	return result;
 }
 
 } // end of namespace BlueForce

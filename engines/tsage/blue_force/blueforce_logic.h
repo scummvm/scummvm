@@ -107,9 +107,9 @@ public:
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void startAction(CursorType action, Event &event);
+	virtual bool startAction(CursorType action, Event &event);
 
-	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
 };
 
 class CountdownObject: public NamedObject {
@@ -170,6 +170,7 @@ public:
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
 	bool display(CursorType action);
+	void fadeOut() {}
 };
 
 class GroupedScene: public SceneExt {

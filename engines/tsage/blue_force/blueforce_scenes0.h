@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
@@ -95,6 +96,90 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 };
+
+class Scene60 : public SceneExt {
+	/* Items */
+	class Item2: public NamedHotspot {
+	private:
+		bool check1();
+		bool check2();
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};	
+	class Item3: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};	
+	class Radio: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};	
+	class Compartment: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};	
+
+	/* Objects */
+	class MirandaCard: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class TicketBook: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class CompartmentDoor: public NamedObject {
+	public:
+		bool _flag;
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	
+	/* Actions */
+	class Action1: public ActionExt {
+	private:
+		int useRadio();
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	NamedObject _object1;
+	MirandaCard _mirandaCard;
+	TicketBook _ticketBook;
+	CompartmentDoor _compartmentDoor;
+	SceneObject _dashboard;
+	AltSceneObject _car;
+	NamedHotspot _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Radio _radio;
+	Compartment _compartment;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeRadio _jakeRadioSpeaker;
+	ASound _sound;
+	int _newScene;
+	int _sceneNumber;
+	int _visage;
+	CursorType _cursorId;
+	bool _field1222;
+
+	Scene60();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 
 } // End of namespace BlueForce
 

@@ -128,21 +128,21 @@ class Scene190: public SceneExt {
 	/* Objects */
 	class Object4: public NamedObject {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Exit: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */

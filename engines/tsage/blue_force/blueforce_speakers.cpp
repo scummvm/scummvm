@@ -307,6 +307,14 @@ void SpeakerPSutter::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerJakeRadio::SpeakerJakeRadio(): VisualSpeaker() {
+	_color1 = 13;
+	_color2 = 7;
+	_speakerName = "JAKE_RADIO";
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

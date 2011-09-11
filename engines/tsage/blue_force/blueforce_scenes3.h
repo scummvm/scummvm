@@ -47,29 +47,29 @@ class Scene300: public SceneExt {
 	public:
 		Object(int stripNumber) { _stripNumber = stripNumber; }
 
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object19: public NamedObject {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item14: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item15: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */
@@ -135,49 +135,49 @@ class Scene315: public SceneExt {
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public NamedObject {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObject {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item4: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item5: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item14: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item15: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item16: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item17: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */
@@ -230,7 +230,7 @@ class Scene325: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual void startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
 	SequenceManager _sequenceManager;

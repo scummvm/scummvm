@@ -1467,6 +1467,19 @@ void SceneItem::remove() {
 	_globals->_sceneItems.remove(this);
 }
 
+bool SceneItem::startAction(CursorType action, Event &event) { 
+	if (_vm->getGameID() == GType_Ringworld) {
+		doAction(action); 
+		return true;
+	} else if ((action == CURSOR_LOOK) || (action == CURSOR_USE) || (action == CURSOR_TALK) ||
+			(action < CURSOR_LOOK)) {
+		doAction(action);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void SceneItem::doAction(int action) {
 	const char *msg = NULL;
 
@@ -1743,7 +1756,7 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resNum = resnum;
 	_lookLineNum = lookLineNum;
@@ -1752,7 +1765,7 @@ void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
-void NamedHotspot::setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	setBounds(bounds);
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -1775,7 +1788,7 @@ void NamedHotspot::setup(const Rect &bounds, int resNum, int lookLineNum, int ta
 	}
 }
 
-void NamedHotspot::setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
 	_sceneRegionId = sceneRegionId;
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -3645,8 +3658,11 @@ void ScenePriorities::load(int resNum) {
 
 Region *ScenePriorities::find(int priority) {
 	// If no priority regions are loaded, then return the placeholder region
-	if (empty())
-		return &_defaultPriorityRegion;
+	if (empty()) {
+		if (_vm->getGameID() == GType_Ringworld)
+			return &_defaultPriorityRegion;
+		return NULL;
+	}
 
 	if (priority > 255)
 		priority = 255;

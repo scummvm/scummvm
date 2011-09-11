@@ -176,6 +176,8 @@ public:
 	int _v4E238;
 	int _v501FC;
 	int _v50696;
+	uint8 _v5098C;
+	uint8 _v5098D;
 	int _v51C42;
 	int _v51C44;
 	int _interfaceY;
@@ -189,6 +191,8 @@ public:
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
+	void set2Flags(int flagNum);
+	bool removeFlag(int flagNum);
 };
 
 } // End of namespace BlueForce
