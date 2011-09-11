@@ -147,6 +147,14 @@ public:
 	long seek(long pos);
 };
 
+class EncryptedStream {
+public:
+	bool _error;
+	EncryptedStream(const char *name);
+	~EncryptedStream();
+	Common::SeekableReadStream *_readStream;
+};
+
 extern CFile *_dat;
 extern BtFile *_cat;
 

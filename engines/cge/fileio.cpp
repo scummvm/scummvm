@@ -61,7 +61,7 @@ uint16 IoHand::read(void *buf, uint16 len) {
 	if (!bytesRead)
 		error("Read %s - %d bytes", _file->getName(), len);
 	if (_crypt)
-		_seed = _crypt(buf, len, kCryptSeed);
+		_seed = _crypt(buf, len);
 	return bytesRead;
 }
 
@@ -376,6 +376,29 @@ long VFile::seek(long pos) {
 
 	_lim = 0;
 	return (_bufMark = _begMark + pos);
+}
+
+/*-----------------------------------------------------------------------
+ * EncryptedStream
+ *-----------------------------------------------------------------------*/
+EncryptedStream::EncryptedStream(const char *name) {
+	debugC(3, kCGEDebugFile, "EncryptedStream::EncryptedStream(%s)", name);
+
+	_error = false;
+	if (_dat->_error || _cat->_error)
+		error("Bad volume data");
+	BtKeypack *kp = _cat->find(name);
+	if (scumm_stricmp(kp->_key, name) != 0)
+		_error = true;
+
+	_dat->_file->seek(kp->_mark);
+	byte *dataBuffer = (byte *)malloc(kp->_size);
+	_dat->_file->read(dataBuffer, kp->_size);
+	XCrypt(dataBuffer, kp->_size);
+	_readStream = new Common::MemoryReadStream(dataBuffer, kp->_size, DisposeAfterUse::YES);
+}
+
+EncryptedStream::~EncryptedStream() {
 }
 
 } // End of namespace CGE
