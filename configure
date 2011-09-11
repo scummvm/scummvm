@@ -83,6 +83,7 @@ add_engine he "HE71+ games" yes
 add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
+add_engine cge "CGE" no
 add_engine cine "Cinematique evo 1" yes
 add_engine composer "Magic Composer" no
 add_engine cruise "Cinematique evo 2" yes
