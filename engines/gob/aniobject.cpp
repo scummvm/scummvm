@@ -27,7 +27,8 @@
 namespace Gob {
 
 ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani),
-	_visible(false), _paused(false), _x(0), _y(0), _background(0), _drawn(false) {
+	_visible(false), _paused(false), _mode(kModeContinuous),
+	_x(0), _y(0), _background(0), _drawn(false) {
 
 	setAnimation(0);
 	setPosition();
@@ -51,6 +52,10 @@ void ANIObject::setPause(bool pause) {
 
 bool ANIObject::isPaused() const {
 	return _paused;
+}
+
+void ANIObject::setMode(Mode mode) {
+	_mode = mode;
 }
 
 void ANIObject::setAnimation(uint16 animation) {
@@ -173,6 +178,11 @@ void ANIObject::advance() {
 	if (_frame == 0) {
 		_x += animation.deltaX;
 		_y += animation.deltaY;
+
+		if (_mode == kModeOnce) {
+			_paused  = true;
+			_visible = false;
+		}
 	}
 }
 
