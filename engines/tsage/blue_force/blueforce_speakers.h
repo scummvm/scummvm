@@ -131,6 +131,13 @@ public:
 	virtual Common::String getClassName() { return "SpeakerJakeRadio"; }
 };
 
+class SpeakerLyleHat: public VisualSpeaker {
+public:
+	SpeakerLyleHat();
+
+	virtual Common::String getClassName() { return "SpeakerLyleHat"; }
+	virtual void setText(const Common::String &msg);
+};
 
 } // End of namespace BlueForce
 

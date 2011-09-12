@@ -33,6 +33,7 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 #include "tsage/sound.h"
+#include "tsage/blue_force/blueforce_logic.h"
 
 namespace TsAGE {
 
@@ -1682,6 +1683,16 @@ void SceneItem::display(const Common::String &msg) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+bool SceneHotspot::startAction(CursorType action, Event &event) {
+	if (_vm->getGameID() != GType_BlueForce)
+		return SceneItem::startAction(action, event);
+	else {
+		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
+		assert(scene);
+		return scene->display(action);
+	}
+}
 
 void SceneHotspot::doAction(int action) {
 	switch ((int)action) {
@@ -3820,27 +3831,30 @@ void SceneHandler::process(Event &event) {
 			}
 
 			// Scan the item list to find one the mouse is within
-			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
-			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
-				++i;
+			SynchronizedList<SceneItem *>::iterator i;
+			for (i = _globals->_sceneItems.begin(); i != _globals->_sceneItems.end(); ++i) {
+				if ((*i)->contains(event.mousePos)) {
+					// Pass the action to the item
+					bool handled = (*i)->startAction(_globals->_events.getCursor(), event);
+					if (!handled)
+						// Item wasn't handled, keep scanning
+						continue;
 
-			if (i != _globals->_sceneItems.end()) {
-				// Pass the action to the item
-				(*i)->startAction(_globals->_events.getCursor(), event);
+					event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
-				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
+					if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
+							(_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_WALK);
+					} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_WALK);
+					} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_USE);
+					}
 
-				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
-						(_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_WALK);
-				} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_WALK);
-				} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_USE);
+					if (_vm->getGameID() == GType_BlueForce)
+						event.handled = true;
+					break;
 				}
-
-				if (_vm->getGameID() == GType_BlueForce)
-					event.handled = true;
 			}
 
 			// Handle any fallback text display

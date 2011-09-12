@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	blue_force/blueforce_scenes1.o \
 	blue_force/blueforce_scenes3.o \
 	blue_force/blueforce_scenes6.o \
+	blue_force/blueforce_scenes8.o \
 	blue_force/blueforce_speakers.o \
 	blue_force/blueforce_ui.o \
 	converse.o \
