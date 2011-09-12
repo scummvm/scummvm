@@ -277,7 +277,7 @@ char *BitmapData::getImageData(int num) const {
 // Bitmap
 
 Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
-		PoolObject() {
+		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
 	_data = BitmapData::getBitmapData(fname, data, len);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -285,7 +285,7 @@ Bitmap::Bitmap(const Common::String &fname, const char *data, int len) :
 }
 
 Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) :
-		PoolObject() {
+		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
 	_data = new BitmapData(data, w, h, bpp, fname);
 	_x = _data->_x;
 	_y = _data->_y;
@@ -293,7 +293,7 @@ Bitmap::Bitmap(const char *data, int w, int h, int bpp, const char *fname) :
 }
 
 Bitmap::Bitmap() :
-		PoolObject() {
+		PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')>() {
 	_data = new BitmapData();
 }
 

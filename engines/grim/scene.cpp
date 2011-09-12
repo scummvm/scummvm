@@ -39,7 +39,7 @@
 namespace Grim {
 
 Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
-		PoolObject(), _locked(false), _name(sceneName), _enableLights(false),
+		PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
 		_lightsConfigured(false) {
 
 	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
@@ -52,7 +52,7 @@ Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
 }
 
 Scene::Scene() :
-	PoolObject(), _cmaps(NULL) {
+	PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _cmaps(NULL) {
 
 }
 

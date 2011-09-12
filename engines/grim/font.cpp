@@ -35,12 +35,12 @@
 namespace Grim {
 
 Font::Font(const Common::String &filename, const char *data, int len) :
-		PoolObject(), _userData(0) {
+		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>(), _userData(0) {
 	load(filename, data, len);
 }
 
 Font::Font() :
-		PoolObject() {
+		PoolObject<Font, MKTAG('F', 'O', 'N', 'T')>() {
 	_charIndex = NULL;
 }
 

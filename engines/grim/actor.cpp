@@ -50,7 +50,7 @@ namespace Grim {
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const Common::String &actorName) :
-		PoolObject(), _name(actorName), _setName(""),
+		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
 		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
@@ -94,7 +94,7 @@ Actor::Actor(const Common::String &actorName) :
 }
 
 Actor::Actor() :
-	PoolObject() {
+	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
 
 	_shadowArray = new Shadow[5];
 	_winX1 = _winY1 = 1000;

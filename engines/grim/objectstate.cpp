@@ -30,7 +30,7 @@
 namespace Grim {
 
 ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
-		PoolObject(), _setupID(setup), _pos(position), _visibility(false) {
+		PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')>(), _setupID(setup), _pos(position), _visibility(false) {
 
 	_bitmap = g_resourceloader->loadBitmap(bitmap);
 	if (zbitmap) {
@@ -40,7 +40,7 @@ ObjectState::ObjectState(int setup, ObjectState::Position position, const char *
 }
 
 ObjectState::ObjectState() :
-		PoolObject(), _bitmap(NULL), _zbitmap(NULL) {
+		PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')>(), _bitmap(NULL), _zbitmap(NULL) {
 
 }
 

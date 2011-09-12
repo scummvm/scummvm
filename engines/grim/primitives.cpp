@@ -30,7 +30,7 @@
 namespace Grim {
 
 PrimitiveObject::PrimitiveObject() :
-	PoolObject() {
+	PoolObject<PrimitiveObject, MKTAG('P', 'R', 'I', 'M')>() {
 	_filled = false;
 	_type = 0;
 	_bitmap = NULL;

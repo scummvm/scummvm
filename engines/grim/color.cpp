@@ -54,12 +54,12 @@ Color& Color::operator =(Color *c) {
 
 
 PoolColor::PoolColor() :
-	PoolObject(), Color() {
+	PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>(), Color() {
 
 }
 
 PoolColor::PoolColor(byte r, byte g, byte b) :
-	PoolObject(), Color(r, g, b) {
+	PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>(), Color(r, g, b) {
 
 }
 
