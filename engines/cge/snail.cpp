@@ -978,8 +978,10 @@ void Snail::runCom() {
 				if (spr->seqTest(snc->_val) &&
 					(snc->_val >= 0 || spr != _hero || _hero->_tracePtr < 0)) {
 					_timerExpiry = g_system->getMillis() + spr->_time * kSnailFrameDelay;
-				} else
-					goto xit;
+				} else {
+					_busy = false;
+					return;
+				}
 			}
 			break;
 		case kSnLevel:
@@ -1171,8 +1173,6 @@ void Snail::runCom() {
 		if (!_turbo)
 			break;
 	}
-xit:
-	_busy = false;
 }
 
 bool Snail::idle() {
