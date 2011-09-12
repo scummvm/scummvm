@@ -40,13 +40,13 @@ using Common::GUIO_NONE;
 
 static const Myst3GameDescription gameDescriptions[] = {
 	{
-		// Myst 3 French Version
+		// Myst 3 All PC / Mac Versions
 		{
 			"myst3",
 			0,
 			AD_ENTRY1s("RSRC.m3r", "a2c8ed69800f60bf5667e5c76a88e481", 1223862),
-			Common::FR_FRA,
-			Common::kPlatformWindows,
+			Common::UNK_LANG,
+			Common::kPlatformUnknown,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
