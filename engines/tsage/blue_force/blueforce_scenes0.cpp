@@ -936,8 +936,21 @@ void Scene60::Action3::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene60::Scene60(): SceneExt() {
-	_field1222 = false;
 	_newScene = 0;
+	_sceneNumber = 0;
+	_visage = 0;
+	_cursorId = CURSOR_NONE;
+	_field1222 = false;
+}
+
+void Scene60::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_newScene);
+	s.syncAsSint16LE(_sceneNumber);
+	s.syncAsSint16LE(_visage);
+	s.syncAsSint16LE(_cursorId);
+	s.syncAsSint16LE(_field1222);
 }
 
 void Scene60::postInit(SceneObjectList *OwnerList) {

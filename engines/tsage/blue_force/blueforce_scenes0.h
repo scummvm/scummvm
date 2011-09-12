@@ -175,6 +175,7 @@ public:
 	bool _field1222;
 
 	Scene60();
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
