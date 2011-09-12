@@ -681,13 +681,15 @@ Vga::Vga() : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
 		_page[idx]->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
+#if 0
+	// This part was used to display credits at the beginning of the game
 	for (int i = 10; i < 20; i++) {
 		char *text = _text->getText(i);
 		if (text) {
 			debugN(1, "%s\n", text);
 		}
 	}
-
+#endif
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	getColors(_oldColors);

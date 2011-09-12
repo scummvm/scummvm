@@ -43,7 +43,8 @@ Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	if (!_cat->exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 	int16 txtCount = count() + 1;
-	warning("Number of texts: %d", txtCount);
+	if (!txtCount)
+		error("Unable to read dialog file %s", _fileName);
 
 	_cache = new Handler[txtCount];
 	for (_size = 0; _size < txtCount; _size++) {
@@ -61,7 +62,7 @@ Text::~Text() {
 int16 Text::count() {
 	EncryptedStream tf = _fileName;
 	if (tf.err())
-		return NULL;
+		return -1;
 
 	Common::String line;
 	char tmpStr[kLineMax + 1];
