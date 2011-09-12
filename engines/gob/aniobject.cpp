@@ -63,6 +63,10 @@ void ANIObject::setAnimation(uint16 animation) {
 	_frame     = 0;
 }
 
+void ANIObject::rewind() {
+	_frame = 0;
+}
+
 void ANIObject::setPosition() {
 	if (_animation >= _ani->getAnimationCount())
 		return;
