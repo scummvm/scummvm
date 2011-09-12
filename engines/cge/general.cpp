@@ -82,6 +82,9 @@ int takeEnum(const char **tab, const char *text) {
 }
 
 int newRandom(int range) {
+	if (!range)
+		return 0;
+
 	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
 }
 
