@@ -57,37 +57,12 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
-	EvilFish shark(*_objects, 320, 0, 14, 8, 9, 3);
+	while (!_vm->shouldQuit()) {
+		evilFishEnter();
 
-	Common::List<ANIObject *> objects;
+		checkShots();
 
-	objects.push_back(_water);
-	objects.push_back(&shark);
-	objects.push_back(_lungs);
-	objects.push_back(_heart);
-
-	shark.enter(EvilFish::kDirectionLeft, 90);
-
-	while (!_vm->_util->keyPressed() && !_vm->shouldQuit()) {
-		int16 left, top, right, bottom;
-
-		// Clear the previous animation frames
-		for (Common::List<ANIObject *>::iterator o = objects.reverse_begin();
-		     o != objects.end(); --o) {
-
-			(*o)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
-			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
-		}
-
-		// Draw the current animation frames
-		for (Common::List<ANIObject *>::iterator o = objects.begin();
-		     o != objects.end(); ++o) {
-
-			(*o)->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
-			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
-
-			(*o)->advance();
-		}
+		updateAnims();
 
 		_vm->_draw->animateCursor(1);
 
@@ -95,6 +70,16 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 
 		_vm->_util->waitEndFrame();
 		_vm->_util->processInput();
+
+		int16 mouseX, mouseY;
+		MouseButtons mouseButtons;
+
+		int16 key = checkInput(mouseX, mouseY, mouseButtons);
+		if (key == kKeyEscape)
+			break;
+
+		if (mouseButtons == kMouseButtonsLeft)
+			shoot(mouseX, mouseY);
 
 		if ((_whitePearlCount >= 20) || (_blackPearlCount >= 2))
 			break;
@@ -128,6 +113,17 @@ void Diving::init() {
 	_heart->setVisible(true);
 	_heart->setPause(true);
 
+	_evilFish[0] = new EvilFish(*_objects, 320,  0, 14,  8,  9, 3); // Shark
+	_evilFish[1] = new EvilFish(*_objects, 320, 15,  1, 12, 13, 3); // Moray
+	_evilFish[2] = new EvilFish(*_objects, 320, 16,  2, 10, 11, 3); // Ray
+
+	for (uint i = 0; i < kMaxShotCount; i++) {
+		_shot[i] = new ANIObject(*_objects);
+
+		_shot[i]->setAnimation(17);
+		_shot[i]->setMode(ANIObject::kModeOnce);
+	}
+
 	Surface tmp(320, 103, 1);
 
 	_vm->_video->drawPackedSprite("tperlobj.cmp", tmp);
@@ -135,11 +131,37 @@ void Diving::init() {
 	_blackPearl->blit(tmp, 282, 80, 292, 87, 0, 0);
 
 	_blackPearlCount = 0;
+
+	_currentShot = 0;
+
+	_anims.push_back(_water);
+	for (uint i = 0; i < kMaxShotCount; i++)
+		_anims.push_back(_shot[i]);
+	for (uint i = 0; i < kEvilFishCount; i++)
+		_anims.push_back(_evilFish[i]);
+	_anims.push_back(_lungs);
+	_anims.push_back(_heart);
 }
 
 void Diving::deinit() {
 	_vm->_draw->_cursorHotspotX = -1;
 	_vm->_draw->_cursorHotspotY = -1;
+
+	_anims.clear();
+
+	_activeShots.clear();
+
+	for (uint i = 0; i < kMaxShotCount; i++) {
+		delete _shot[i];
+
+		_shot[i] = 0;
+	}
+
+	for (uint i = 0; i < kEvilFishCount; i++) {
+		delete _evilFish[i];
+
+		_evilFish[i] = 0;
+	}
 
 	delete _heart;
 	delete _lungs;
@@ -192,6 +214,17 @@ void Diving::initCursor() {
 	_vm->_draw->_cursorHotspotY = 8;
 }
 
+void Diving::evilFishEnter() {
+	for (uint i = 0; i < kEvilFishCount; i++) {
+		EvilFish &fish = *_evilFish[i];
+
+		if (fish.isVisible())
+			continue;
+
+		fish.enter((EvilFish::Direction)_vm->_util->getRandom(2), 90 + i * 20);
+	}
+}
+
 void Diving::foundBlackPearl() {
 	_blackPearlCount++;
 
@@ -213,6 +246,82 @@ void Diving::foundWhitePearl() {
 
 	_background->drawLayer(*_vm->_draw->_backSurface, 0, 2, x, 177, 0);
 	_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, x, 177, x + 3, 180);
+}
+
+void Diving::updateAnims() {
+	int16 left, top, right, bottom;
+
+	// Clear the previous animation frames
+	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
+			 a != _anims.end(); --a) {
+
+		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+	}
+
+	// Draw the current animation frames
+	for (Common::List<ANIObject *>::iterator a = _anims.begin();
+			 a != _anims.end(); ++a) {
+
+		(*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
+		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+
+		(*a)->advance();
+	}
+}
+
+int16 Diving::checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons) {
+	_vm->_util->getMouseState(&mouseX, &mouseY, &mouseButtons);
+
+	return _vm->_util->checkKey();
+}
+
+void Diving::shoot(int16 mouseX, int16 mouseY) {
+	// Outside the playable area?
+	if (mouseY > 157)
+		return;
+
+	// Too many shots still active?
+	if (_activeShots.size() >= kMaxShotCount)
+		return;
+
+	ANIObject &shot = *_shot[_currentShot];
+
+	shot.rewind();
+	shot.setVisible(true);
+	shot.setPause(false);
+	shot.setPosition(mouseX - 8, mouseY - 8);
+
+	_activeShots.push_back(_currentShot);
+
+	_currentShot = (_currentShot + 1) % kMaxShotCount;
+}
+
+void Diving::checkShots() {
+	Common::List<int>::iterator activeShot = _activeShots.begin();
+
+	while (activeShot != _activeShots.end()) {
+		ANIObject &shot = *_shot[*activeShot];
+
+		if (shot.lastFrame()) {
+			int16 x, y;
+
+			shot.getPosition(x, y);
+
+			for (uint i = 0; i < kEvilFishCount; i++) {
+				EvilFish &evilFish = *_evilFish[i];
+
+				if (evilFish.isIn(x + 8, y + 8)) {
+					evilFish.die();
+
+					break;
+				}
+			}
+
+			activeShot = _activeShots.erase(activeShot);
+		} else
+			++activeShot;
+	}
 }
 
 } // End of namespace Geisha

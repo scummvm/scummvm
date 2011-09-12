@@ -33,7 +33,11 @@ class DECFile;
 class ANIFile;
 class ANIObject;
 
+enum MouseButtons;
+
 namespace Geisha {
+
+class EvilFish;
 
 /** Geisha's "Diving" minigame. */
 class Diving {
@@ -44,6 +48,9 @@ public:
 	bool play(uint16 playerCount, bool hasPearlLocation);
 
 private:
+	static const uint kEvilFishCount =  3;
+	static const uint kMaxShotCount  = 10;
+
 	GobEngine *_vm;
 
 	DECFile *_background;
@@ -55,10 +62,20 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
+	EvilFish *_evilFish[kEvilFishCount];
+
+	ANIObject *_shot[kMaxShotCount];
+
+	Common::List<int> _activeShots;
+
+	Common::List<ANIObject *> _anims;
+
 	Surface *_blackPearl;
 
 	uint8 _whitePearlCount;
 	uint8 _blackPearlCount;
+
+	uint8 _currentShot;
 
 	void init();
 	void deinit();
@@ -66,8 +83,17 @@ private:
 	void initScreen();
 	void initCursor();
 
+	void evilFishEnter();
+
 	void foundBlackPearl();
 	void foundWhitePearl();
+
+	void updateAnims();
+
+	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+
+	void shoot(int16 mouseX, int16 mouseY);
+	void checkShots();
 };
 
 } // End of namespace Geisha

@@ -33,8 +33,8 @@ namespace Geisha {
 class EvilFish : public ANIObject {
 public:
 	enum Direction {
-		kDirectionLeft,
-		kDirectionRight
+		kDirectionLeft  = 0,
+		kDirectionRight = 1
 	};
 
 	EvilFish(const ANIFile &ani, uint16 screenWidth,
