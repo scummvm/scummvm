@@ -1173,6 +1173,8 @@ void Snail::runCom() {
 		if (!_turbo)
 			break;
 	}
+
+	_busy = false;
 }
 
 bool Snail::idle() {
