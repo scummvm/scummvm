@@ -584,9 +584,6 @@ void CGEEngine::miniStep(int stp) {
 		_miniCave->_flags._hide = true;
 	} else {
 		*_miniShp[0] = *_miniShpList[stp];
-		if (_fx->_current)
-			&*(_fx->_current->addr());
-
 		_miniCave->_flags._hide = false;
 	}
 }
