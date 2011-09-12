@@ -79,7 +79,7 @@ void CGEEngine::init() {
 	_miniShp = NULL;
 	_miniShpList = NULL;
 	_sprite = NULL;
-	_dat = new CFile(kDatName, XCrypt);
+	_dat = new IoHand(kDatName, XCrypt);
 	_cat = new BtFile(kCatName, XCrypt);
 
 	// Create debugger console

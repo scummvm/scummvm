@@ -78,31 +78,6 @@ public:
 	long seek(long pos);
 };
 
-class IoBuf : public IoHand {
-protected:
-	uint8 *_buff;
-	uint16 _ptr;
-	uint16 _lim;
-	long _bufMark;
-	virtual void readBuf();
-public:
-	IoBuf(Crypt *crpt);
-	IoBuf(const char *name, Crypt *crpt);
-	virtual ~IoBuf();
-	uint16 read(void *buf, uint16 len);
-	uint16 read(uint8 *buf);
-	int read();
-};
-
-
-class CFile : public IoBuf {
-public:
-	CFile(const char *name, Crypt *crpt);
-	virtual ~CFile();
-	long mark();
-	long seek(long pos);
-};
-
 struct BtPage {
 	Header _header;
 	union {
@@ -148,7 +123,7 @@ public:
 	Common::String readLine();
 };
 
-extern CFile *_dat;
+extern IoHand *_dat;
 extern BtFile *_cat;
 
 } // End of namespace CGE

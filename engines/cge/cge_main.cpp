@@ -72,7 +72,7 @@ Snail *_snail_;
 
 Fx *_fx;
 Sound *_sound;
-CFile *_dat;
+IoHand *_dat;
 BtFile *_cat;
 
 // 0.75 - 17II95  - full sound support
