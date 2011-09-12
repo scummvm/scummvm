@@ -26,7 +26,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 // Disable system overrides to allow the use of system headers
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+//#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <string>
 
@@ -43,18 +43,11 @@
 
 using std::string;
 
-// Indicates whether the device is multitouch-capable
-#ifdef MULTITOUCH
-static const bool multitouch = true;
-#else
-static const bool multitouch = false;
-#endif
-
 // Indicates if gesture area is pressed down or not.
 static bool gestureDown = false;
 
 // Indicates if we're in touchpad mode or tap-to-move mode.
-static bool touchpadMode = true;
+static bool touchpadMode = false;
 
 // Indicates if we're in automatic drag mode.
 static bool autoDragMode = false;
@@ -91,6 +84,9 @@ static long queuedEventTime = 0;
 
 // Indicates if dragging should be enabled when firing the queued event
 static bool queuedDragEvent = false;
+
+// Indicates whether the mouse pointer visibility should be updated on next poll.
+static bool checkMouseVisibility = true;
 
 // An event to be processed after the next poll tick
 static Common::Event queuedInputEvent;
@@ -138,6 +134,12 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 		return true;
 	}
 
+	// Make the mouse pointer appear or disappear as needed
+	if (checkMouseVisibility) {
+		g_system->showMouse(touchpadMode);
+		checkMouseVisibility = false;
+	}
+
 	return SdlEventSource::pollEvent(event);
 }
 
@@ -159,7 +161,7 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
 
-		// Holding down the gesture area emulates the ALT key
+	// Holding down the gesture area emulates the ALT key
 	if (gestureDown)
 		event.kbd.flags |= Common::KBD_ALT;
 }
@@ -184,18 +186,18 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// gesture tap AFTER the backward gesture event and not BEFORE (Like
 	// WebOS 2).
 	if (ev.key.keysym.sym == 27 || ev.key.keysym.sym == 229) {
-	    gestureDown = false;
+		gestureDown = false;
 	}
 
-        // handle virtual keyboard dismiss key
-        if (ev.key.keysym.sym == 24) {
-                int gblPDKVersion = PDL_GetPDKVersion();
-                // check for correct PDK Version
-                if (gblPDKVersion >= 300) {
-                        PDL_SetKeyboardState(PDL_FALSE);
-                        return true;
-                }
-        }
+	// handle virtual keyboard dismiss key
+	if (ev.key.keysym.sym == 24) {
+		int gblPDKVersion = PDL_GetPDKVersion();
+		// check for correct PDK Version
+		if (gblPDKVersion >= 300) {
+			PDL_SetKeyboardState(PDL_FALSE);
+			return true;
+		}
+	}
 
 	// Call original SDL key handler.
 	return SdlEventSource::handleKeyDown(ev, event);
@@ -218,8 +220,8 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	// handle virtual keyboard dismiss key
 	if (ev.key.keysym.sym == 24) {
-		int gblPDKVersion = PDL_GetPDKVersion();
 		// check for correct PDK Version
+		int gblPDKVersion = PDL_GetPDKVersion();
 		if (gblPDKVersion >= 300) {
 			PDL_SetKeyboardState(PDL_FALSE);
 			return true;
@@ -264,6 +266,12 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 			int screenY = g_system->getOverlayHeight();
 			curX = MIN(screenX, MAX(0, 0 + ev.motion.x));
 			curY = MIN(screenY, MAX(0, 0 + ev.motion.y));
+			// If we're already clicking, hold it until after the move.
+			if (event.type == Common::EVENT_LBUTTONDOWN) {
+				processMouseEvent(event, curX, curY);
+				g_system->getEventManager()->pushEvent(event);
+			}
+			// Move the mouse
 			event.type = Common::EVENT_MOUSEMOVE;
 			processMouseEvent(event, curX, curY);
 		}
@@ -298,8 +306,7 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			processMouseEvent(event, curX, curY);
 			dragging = false;
 		}
-		// Use a different control set if multitouch is enabled.
-		else if (multitouch) {
+		else {
 			// If it was the first finger and the click hasn't been
 			// canceled, it's a click.
 			if (ev.button.which == 0 && doClick &&
@@ -336,37 +343,6 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 				fingerDown[1] = false;
 			}
 		}
-		else if (ev.button.which == 0 && doClick &&
-				!fingerDown[1] && !fingerDown[2]) {
-			int duration = getMillis() - screenDownTime[0];
-
-			// When screen was pressed for less than 500ms then emulate a
-			// left mouse click.
-			if (duration < 500) {
-				event.type = Common::EVENT_LBUTTONUP;
-				processMouseEvent(event, curX, curY);
-				g_system->getEventManager()->pushEvent(event);
-				event.type = Common::EVENT_LBUTTONDOWN;
-			}
-
-			// When screen was pressed for less than 1000ms then emulate a
-			// right mouse click.
-			else if (duration < 1000) {
-				event.type = Common::EVENT_RBUTTONUP;
-				processMouseEvent(event, curX, curY);
-				g_system->getEventManager()->pushEvent(event);
-				event.type = Common::EVENT_RBUTTONDOWN;
-			}
-
-			// When screen was pressed for more than 1000ms then emulate a
-			// middle mouse click.
-			else {
-				event.type = Common::EVENT_MBUTTONUP;
-				processMouseEvent(event, curX, curY);
-				g_system->getEventManager()->pushEvent(event);
-				event.type = Common::EVENT_MBUTTONDOWN;
-			}
-		}
 		// Officially lift the finger that was raised.
 		fingerDown[ev.button.which] = false;	
 	}
@@ -389,10 +365,10 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 
 		switch (ev.motion.which) {
 			case 0:
-				// If our dragDiff goes > 3 pixels in either direction, kill
+				// If our dragDiff goes too many pixels in either direction, kill
 				// the future click and any queued drag event.
-				if (doClick && ABS(dragDiffX[0]) > 2 &&
-						ABS(dragDiffY[0]) > 2) {
+				if (doClick && (ABS(dragDiffX[0]) > 5 ||
+						ABS(dragDiffY[0]) > 5)) {
 					doClick = false;
 					if (queuedDragEvent) {
 						queuedInputEvent.type = (Common::EventType)0;
@@ -462,22 +438,38 @@ bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event)
 				}
 				break;
 			case 2:
-				// Check for a three-finger horizontal 15% swipe right
-				if (fingerDown[0] && fingerDown[1] && 
-						dragDiffX[0] > screenX * 0.15 &&
-						dragDiffX[1] > screenX * 0.15 &&
-						dragDiffX[2] > screenX * 0.15) {
-					// Virtually lift fingers so we don't get repeat triggers
-					fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
-					// Toggle Auto-drag mode
-					autoDragMode = !autoDragMode;
-					string dialogMsg(_("Auto-drag mode is now "));
-					dialogMsg += (autoDragMode ? _("ON") : _("OFF"));
-					dialogMsg += ".\n";
-					dialogMsg += _("Swipe three fingers to the right to toggle.");
-					GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
-					dialog.runModal();
-					return true;
+				// Check for a three-finger 15% swipe
+				if (fingerDown[0] && fingerDown[1]) {
+					// Swipe to the right toggles Auto-drag
+					if (dragDiffX[0] > screenX * 0.15 &&
+							dragDiffX[1] > screenX * 0.15 &&
+							dragDiffX[2] > screenX * 0.15) {
+						// Virtually lift fingers so we don't get repeat triggers
+						fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
+						// Toggle Auto-drag mode
+						autoDragMode = !autoDragMode;
+						string dialogMsg(_("Auto-drag mode is now "));
+						dialogMsg += (autoDragMode ? _("ON") : _("OFF"));
+						dialogMsg += ".\n";
+						dialogMsg += _("Swipe three fingers to the right to toggle.");
+						GUI::TimedMessageDialog dialog(dialogMsg.c_str(), 1500);
+						dialog.runModal();
+						return true;
+					}
+					// Swipe down to emulate spacebar (pause)
+					else if (dragDiffY[0] > screenY * 0.15 &&
+							dragDiffY[1] > screenY * 0.15 &&
+							dragDiffY[2] > screenY * 0.15) {
+						// Virtually lift fingers so we don't get repeat triggers
+						fingerDown[0] = fingerDown[1] = fingerDown[2] = false;
+						// Press space
+						event.type = Common::EVENT_KEYDOWN;
+						queuedInputEvent.type = Common::EVENT_KEYUP;
+						event.kbd.flags = queuedInputEvent.kbd.flags = 0;
+						event.kbd.keycode = queuedInputEvent.kbd.keycode = Common::KEYCODE_SPACE;
+						event.kbd.ascii = queuedInputEvent.kbd.ascii = Common::ASCII_SPACE;
+						queuedEventTime = getMillis() + queuedInputEventDelay;
+					}
 				}
 		}	
 	}
