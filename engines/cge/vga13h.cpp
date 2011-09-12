@@ -74,7 +74,7 @@ Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
 	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
-	*((uint16 *)&_flags) = 0;
+	memset(&_flags, 0, sizeof(_flags));
 	_ref = 0;
 	_x = _y = 0;
 	_w = _h = 0;
@@ -223,8 +223,8 @@ Sprite *Sprite::expand() {
 	    maxnow = 0,
 	    maxnxt = 0;
 
-	Snail::Com *near = NULL;
-	Snail::Com *take = NULL;
+	Snail::Com *nearList = NULL;
+	Snail::Com *takeList = NULL;
 	mergeExt(fname, _file, kSprExt);
 	if (_cat->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(fname);
@@ -284,9 +284,9 @@ Sprite *Sprite::expand() {
 				// Near
 				if (_nearPtr == kNoPtr)
 					break;
-				near = (Snail::Com *)realloc(near, (nearCount + 1) * sizeof(*near));
-				assert(near != NULL);
-				c = &near[nearCount++];
+				nearList = (Snail::Com *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
+				assert(nearList != NULL);
+				c = &nearList[nearCount++];
 				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
@@ -297,9 +297,9 @@ Sprite *Sprite::expand() {
 				// Take
 				if (_takePtr == kNoPtr)
 					break;
-				take = (Snail::Com *)realloc(take, (takeCount + 1) * sizeof(*take));
-				assert(take != NULL);
-				c = &take[takeCount++];
+				takeList = (Snail::Com *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
+				assert(takeList != NULL);
+				c = &takeList[takeCount++];
 				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
@@ -330,12 +330,12 @@ Sprite *Sprite::expand() {
 
 	setShapeList(shapeList);
 
-	if (near)
-		near[nearCount - 1]._ptr = _ext->_near = near;
+	if (nearList)
+		nearList[nearCount - 1]._ptr = _ext->_near = nearList;
 	else
 		_nearPtr = kNoPtr;
-	if (take)
-		take[takeCount - 1]._ptr = _ext->_take = take;
+	if (takeList)
+		takeList[takeCount - 1]._ptr = _ext->_take = takeList;
 	else
 		_takePtr = kNoPtr;
 
