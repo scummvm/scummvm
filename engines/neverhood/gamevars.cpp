@@ -102,7 +102,7 @@ int16 GameVars::addSubVar(int16 varIndex, uint32 subNameHash, uint32 value) {
 }
 
 int16 GameVars::getSubVarIndex(int16 varIndex, uint32 subNameHash) {
-	debug("GameVars::getSubVarIndex(%d, %08X)", varIndex, subNameHash);
+	//debug("GameVars::getSubVarIndex(%d, %08X)", varIndex, subNameHash);
 	int16 subVarIndex = findSubVarIndex(varIndex, subNameHash);
 	if (subVarIndex == -1) {
 		subVarIndex = addSubVar(varIndex, subNameHash, 0);

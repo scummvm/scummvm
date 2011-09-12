@@ -432,6 +432,24 @@ protected:
 	void sub444D20();
 };
 
+class KmHallOfRecords : public Klayman {
+public:
+	KmHallOfRecords(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void sub43B130();
+};
+
+class KmScene2247 : public Klayman {
+public:
+	KmScene2247(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	void xUpdate();
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	void sub453520();
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_KLAYMAN_H */

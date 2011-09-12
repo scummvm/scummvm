@@ -259,12 +259,12 @@ protected:
 
 class AsScene2203Door : public AnimatedSprite {
 public:
-	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, int index);
+	AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint index);
 protected:
 	Scene *_parentScene;
 	SoundResource _soundResource;
 	Sprite *_otherDoor;
-	int _index;
+	uint _index;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void openDoor();
 	void closeDoor();
@@ -371,36 +371,49 @@ protected:
 	void moveToY(int16 y);
 };
 
-class Class500 : public AnimatedSprite {
+class AsScene2207Lever : public AnimatedSprite {
 public:
-	Class500(NeverhoodEngine *vm, Scene *parentScene);
-	~Class500();
+	AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void stLeverDown();
+	void stLeverDownEvent();
+	void stLeverUp();
+	void stLeverUpEvent();
+};
+
+class AsScene2207WallRobotAnimation : public AnimatedSprite {
+public:
+	AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene);
+	~AsScene2207WallRobotAnimation();
 protected:
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;
 	SoundResource _soundResource3;
 	SoundResource _soundResource4;
-	bool _flag1;
+	bool _idle;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub441D50();
-	void sub441D90();
-	void sub441DA0();
+	void stStartAnimation();
+	void stStopAnimation();
+	void cbStopAnimation();
 };
 
-class Class501 : public AnimatedSprite {
+class AsScene2207WallCannonAnimation : public AnimatedSprite {
 public:
-	Class501(NeverhoodEngine *vm);
+	AsScene2207WallCannonAnimation(NeverhoodEngine *vm);
 protected:
-	bool _flag1;
+	bool _idle;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub441FA0();
-	void sub441FE0();
-	void sub441FF0();
+	void stStartAnimation();
+	void stStopAnimation();
+	void cbStopAnimation();
 };
 
-class Class597 : public StaticSprite {
+class SsScene2207Symbol : public StaticSprite {
 public:
-	Class597(NeverhoodEngine *vm, uint32 fileHash, int index);
+	SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int index);
 };
 
 class Scene2207 : public Scene {
@@ -414,12 +427,12 @@ protected:
 	Sprite *_ssMaskPart2;
 	Sprite *_ssMaskPart3;
 	Sprite *_asTape;
-	Sprite *_class487;
-	Sprite *_class500;
-	Sprite *_class501;
+	Sprite *_asLever;
+	Sprite *_asWallRobotAnimation;
+	Sprite *_asWallCannonAnimation;
 	Sprite *_ssButton;
 	int _elevatorSurfacePriority;
-	bool _flag1;
+	bool _klaymanAtElevator;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage2(int messageNum, const MessageParam &param, Entity *sender);
@@ -457,7 +470,26 @@ protected:
 	bool _isKlaymanInLight;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void sub4448D0();
+	void readClickedColumn();
+};
+
+class HallOfRecordsScene : public Scene {
+public:
+	HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfo140Id);
+	~HallOfRecordsScene();
+protected:
+	SceneInfo140 *_sceneInfo140;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void readClickedColumn();
+};
+
+class Scene2247 : public Scene {
+public:
+	Scene2247(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene2247();
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void readClickedColumn();
 };
 
 } // End of namespace Neverhood

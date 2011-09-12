@@ -254,99 +254,195 @@ void Module2200::createScene2209(int which) {
 }
 			
 void Module2200::createScene2210(int which) {
+	_vm->gameState().sceneNum = 9;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7180);
+	SetUpdateHandler(&Module2200::updateScene2210);
 }
 			
 void Module2200::createScene2211(int which) {
+	_vm->gameState().sceneNum = 10;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7198);
+	SetUpdateHandler(&Module2200::updateScene2211);
 }
 			
 void Module2200::createScene2212(int which) {
+	_vm->gameState().sceneNum = 11;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71B0);
+	SetUpdateHandler(&Module2200::updateScene2212);
 }
 			
 void Module2200::createScene2213(int which) {
+	_vm->gameState().sceneNum = 12;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71C8);
+	SetUpdateHandler(&Module2200::updateScene2213);
 }
-			
+
 void Module2200::createScene2214(int which) {
+	_vm->gameState().sceneNum = 13;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71E0);
+	SetUpdateHandler(&Module2200::updateScene2214);
 }
 			
 void Module2200::createScene2215(int which) {
+	_vm->gameState().sceneNum = 14;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71F8);
+	SetUpdateHandler(&Module2200::updateScene2215);
 }
 			
 void Module2200::createScene2216(int which) {
+	_vm->gameState().sceneNum = 15;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7210);
+	SetUpdateHandler(&Module2200::updateScene2216);
 }
 			
 void Module2200::createScene2217(int which) {
+	_vm->gameState().sceneNum = 16;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7228);
+	SetUpdateHandler(&Module2200::updateScene2217);
 }
 			
 void Module2200::createScene2218(int which) {
+	_vm->gameState().sceneNum = 17;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7240);
+	SetUpdateHandler(&Module2200::updateScene2218);
 }
 			
 void Module2200::createScene2219(int which) {
+	_vm->gameState().sceneNum = 18;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7258);
+	SetUpdateHandler(&Module2200::updateScene2219);
 }
 			
 void Module2200::createScene2220(int which) {
+	_vm->gameState().sceneNum = 19;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7270);
+	SetUpdateHandler(&Module2200::updateScene2220);
 }
 			
 void Module2200::createScene2221(int which) {
+	_vm->gameState().sceneNum = 20;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7288);
+	SetUpdateHandler(&Module2200::updateScene2221);
 }
 			
 void Module2200::createScene2222(int which) {
+	_vm->gameState().sceneNum = 21;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72A0);
+	SetUpdateHandler(&Module2200::updateScene2222);
 }
 			
 void Module2200::createScene2223(int which) {
+	_vm->gameState().sceneNum = 22;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72B8);
+	SetUpdateHandler(&Module2200::updateScene2223);
 }
 			
 void Module2200::createScene2224(int which) {
+	_vm->gameState().sceneNum = 23;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72D0);
+	SetUpdateHandler(&Module2200::updateScene2224);
 }
 			
 void Module2200::createScene2225(int which) {
+	_vm->gameState().sceneNum = 24;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72E8);
+	SetUpdateHandler(&Module2200::updateScene2225);
 }
 			
 void Module2200::createScene2226(int which) {
+	_vm->gameState().sceneNum = 25;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7300);
+	SetUpdateHandler(&Module2200::updateScene2226);
 }
 			
 void Module2200::createScene2227(int which) {
+	_vm->gameState().sceneNum = 26;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7318);
+	SetUpdateHandler(&Module2200::updateScene2227);
 }
 			
 void Module2200::createScene2228(int which) {
+	_vm->gameState().sceneNum = 27;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7330);
+	SetUpdateHandler(&Module2200::updateScene2228);
 }
 			
 void Module2200::createScene2229(int which) {
+	_vm->gameState().sceneNum = 28;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7348);
+	SetUpdateHandler(&Module2200::updateScene2229);
 }
 			
 void Module2200::createScene2230(int which) {
+	_vm->gameState().sceneNum = 29;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7360);
+	SetUpdateHandler(&Module2200::updateScene2230);
 }
 			
 void Module2200::createScene2231(int which) {
+	_vm->gameState().sceneNum = 30;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7378);
+	SetUpdateHandler(&Module2200::updateScene2231);
 }
 			
 void Module2200::createScene2232(int which) {
+	_vm->gameState().sceneNum = 31;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7390);
+	SetUpdateHandler(&Module2200::updateScene2232);
 }
 			
 void Module2200::createScene2233(int which) {
+	_vm->gameState().sceneNum = 32;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73A8);
+	SetUpdateHandler(&Module2200::updateScene2233);
 }
 			
 void Module2200::createScene2234(int which) {
+	_vm->gameState().sceneNum = 33;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73C0);
+	SetUpdateHandler(&Module2200::updateScene2234);
 }
 			
 void Module2200::createScene2235(int which) {
+	_vm->gameState().sceneNum = 34;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73D8);
+	SetUpdateHandler(&Module2200::updateScene2235);
 }
 			
 void Module2200::createScene2236(int which) {
+	_vm->gameState().sceneNum = 35;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73F0);
+	SetUpdateHandler(&Module2200::updateScene2236);
 }
 			
 void Module2200::createScene2237(int which) {
+	_vm->gameState().sceneNum = 36;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7408);
+	SetUpdateHandler(&Module2200::updateScene2237);
 }
 			
 void Module2200::createScene2238(int which) {
+	_vm->gameState().sceneNum = 37;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7420);
+	SetUpdateHandler(&Module2200::updateScene2238);
 }
 			
 void Module2200::createScene2239(int which) {
+	_vm->gameState().sceneNum = 38;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7438);
+	SetUpdateHandler(&Module2200::updateScene2239);
 }
 			
 void Module2200::createScene2240(int which) {
+	_vm->gameState().sceneNum = 39;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7450);
+	SetUpdateHandler(&Module2200::updateScene2240);
 }
 			
 void Module2200::createScene2241(int which) {
+	_vm->gameState().sceneNum = 40;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7468);
+	SetUpdateHandler(&Module2200::updateScene2241);
 }
 			
 void Module2200::createScene2242(int which) {
@@ -356,18 +452,33 @@ void Module2200::createScene2242(int which) {
 }
 			
 void Module2200::createScene2243(int which) {
+	_vm->gameState().sceneNum = 42;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7480);
+	SetUpdateHandler(&Module2200::updateScene2243);
 }
 			
 void Module2200::createScene2244(int which) {
+	_vm->gameState().sceneNum = 43;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7498);
+	SetUpdateHandler(&Module2200::updateScene2244);
 }
 			
 void Module2200::createScene2245(int which) {
+	_vm->gameState().sceneNum = 44;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74B0);
+	SetUpdateHandler(&Module2200::updateScene2245);
 }
 			
 void Module2200::createScene2246(int which) {
+	_vm->gameState().sceneNum = 45;
+	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74C8);
+	SetUpdateHandler(&Module2200::updateScene2246);
 }
 			
 void Module2200::createScene2247(int which) {
+	_vm->gameState().sceneNum = 46;
+	_childObject = new Scene2247(_vm, this, which);
+	SetUpdateHandler(&Module2200::updateScene2247);
 }
 			
 void Module2200::createScene2248(int which) {
@@ -420,14 +531,12 @@ void Module2200::updateScene2203() {
 		_childObject = NULL;
 		if (_field20 == 1) {
 			createScene2205(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createScene2204(0);
-			_childObject->handleUpdate();
 		} else {
 			createScene2201(1);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 			
@@ -449,14 +558,12 @@ void Module2200::updateScene2205() {
 		_childObject = NULL;
 		if (_field20 == 1) {
 			createScene2206(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createScene2205(2);
-			_childObject->handleUpdate();
 		} else {
 			createScene2203(1);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 			
@@ -468,17 +575,14 @@ void Module2200::updateScene2206() {
 		_childObject = NULL;
 		if (_field20 == 1) {
 			createScene2247(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createScene2207(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 3) {
 			createScene2209(0);
-			_childObject->handleUpdate();
 		} else {
 			createScene2205(1);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 			
@@ -499,8 +603,123 @@ void Module2200::updateScene2208() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
-		// TODO
-		createScene2206(2);
+		// This is madness!
+		switch (_vm->gameState().which) {
+		case 4:
+			createScene2205(2);
+			break;
+		case 9:
+			createScene2210(2);
+			break;
+		case 10:
+			createScene2211(2);
+			break;
+		case 11:
+			createScene2212(2);
+			break;
+		case 12:
+			createScene2213(2);
+			break;
+		case 13:
+			createScene2214(2);
+			break;
+		case 14:
+			createScene2215(2);
+			break;
+		case 15:
+			createScene2216(2);
+			break;
+		case 16:
+			createScene2217(2);
+			break;
+		case 17:
+			createScene2218(2);
+			break;
+		case 18:
+			createScene2219(2);
+			break;
+		case 19:
+			createScene2220(2);
+			break;
+		case 20:
+			createScene2221(2);
+			break;
+		case 21:
+			createScene2222(2);
+			break;
+		case 22:
+			createScene2223(2);
+			break;
+		case 23:
+			createScene2224(2);
+			break;
+		case 24:
+			createScene2225(2);
+			break;
+		case 25:
+			createScene2226(2);
+			break;
+		case 26:
+			createScene2227(2);
+			break;
+		case 27:
+			createScene2228(2);
+			break;
+		case 28:
+			createScene2229(2);
+			break;
+		case 29:
+			createScene2230(2);
+			break;
+		case 30:
+			createScene2231(2);
+			break;
+		case 31:
+			createScene2232(2);
+			break;
+		case 32:
+			createScene2233(2);
+			break;
+		case 33:
+			createScene2234(2);
+			break;
+		case 34:
+			createScene2235(2);
+			break;
+		case 35:
+			createScene2236(2);
+			break;
+		case 36:
+			createScene2237(2);
+			break;
+		case 37:
+			createScene2238(2);
+			break;
+		case 38:
+			createScene2239(2);
+			break;
+		case 39:
+			createScene2240(2);
+			break;
+		case 40:
+			createScene2241(2);
+			break;
+		case 41:
+			createScene2242(2);
+			break;
+		case 42:
+			createScene2243(2);
+			break;
+		case 43:
+			createScene2244(2);
+			break;
+		case 44:
+			createScene2245(2);
+			break;
+		case 46:
+			createScene2247(2);
+			break;
+		}
 		_childObject->handleUpdate();
 	}
 }
@@ -517,99 +736,547 @@ void Module2200::updateScene2209() {
 }
 			
 void Module2200::updateScene2210() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2211(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2247(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2211() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2212(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2210(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2212() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2213(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2211(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2213() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2214(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2212(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2214() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2215(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2213(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2215() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2216(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2214(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2216() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2217(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2215(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2217() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2218(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2216(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2218() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2219(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2217(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2219() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2220(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2218(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2220() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2221(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2219(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2221() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2222(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2220(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2222() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2223(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2221(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2223() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2224(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2222(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2224() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2225(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2223(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2225() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2226(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2224(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2226() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2227(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2225(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2227() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2228(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2226(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2228() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2229(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2227(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2229() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2230(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2228(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2230() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2231(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2229(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2231() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2232(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2230(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2232() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2233(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2231(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2233() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2234(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2232(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2234() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2235(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2233(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2235() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2243(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2234(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2236() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2237(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2246(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2237() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2238(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2236(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2238() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2239(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2237(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2239() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2240(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2238(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2240() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2241(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2239(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2241() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2242(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2240(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2242() {
@@ -632,18 +1299,88 @@ void Module2200::updateScene2242() {
 }
 			
 void Module2200::updateScene2243() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2244(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2235(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2244() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2245(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2243(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2245() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2246(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2244(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2246() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2236(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2245(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2247() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			createScene2210(0);
+		} else if (_field20 == 2) {
+			createScene2208(0);
+		} else {
+			createScene2206(1);
+		}
+		_childObject->handleUpdate();
+	}
 }
 			
 void Module2200::updateScene2248() {
@@ -1245,7 +1982,7 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2002:
 		_isTileMoving = false;
 		_doneMovingTileSprite = (Sprite*)sender;
-		if (param.asInteger() >= 0 && param.asInteger() <= 2) {
+		if (param.asInteger() <= 2) {
 			_surfacePriority = 100;
 		} else if (param.asInteger() >= 3 && param.asInteger() <= 5) {
 			_surfacePriority = 300;
@@ -1318,7 +2055,7 @@ static const uint32 kAsScene2203DoorFileHashes[] = {
 	0x1A488110
 };
 
-AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, int index)
+AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint index)
 	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene),
 	_index(index) {
 
@@ -2101,7 +2838,7 @@ void AsScene2207Elevator::moveToY(int16 y) {
 	}	
 
 	if (_destPointIndex != _pointIndex) {
-		if (_destPointIndex == 0 || _destPointIndex == _pointArray->size() - 1) {
+		if (_destPointIndex == 0 || _destPointIndex == (int)_pointArray->size() - 1) {
 			_destPointIndexDelta = 0;
 		} else if (_destPointIndex < _pointIndex) {
 			_destPointIndexDelta = -2;
@@ -2116,12 +2853,73 @@ void AsScene2207Elevator::moveToY(int16 y) {
 
 }
 
-Class500::Class500(NeverhoodEngine *vm, Scene *parentScene)
-	: AnimatedSprite(vm, 1200), _soundResource1(vm), _soundResource2(vm),
-	_soundResource3(vm), _soundResource4(vm), _flag1(true) {
+AsScene2207Lever::AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int doDeltaX)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class500::handleMessage);
+	SetMessageHandler(&AsScene2207Lever::handleMessage);
+	createSurface(1010, 71, 73);
+	setDoDeltaX(doDeltaX);
+	setFileHash(0x80880090, 0, -1);
+	_newHashListIndex = 0;
+	_x = x;
+	_y = y;
+}
+
+uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x3002:
+		removeCallbacks();
+		setFileHash1();
+		break;
+	case 0x4807:
+		stLeverUp();
+		break;
+	case 0x480F:
+		stLeverDown();
+		break;
+	case 0x482A:
+		_parentScene->sendMessage(0x1022, 990, this);
+		break;
+	case 0x482B:
+		_parentScene->sendMessage(0x1022, 1010, this);
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene2207Lever::stLeverDown() {
+	setFileHash(0x80880090, 1, -1);
+	setCallback1(AnimationCallback(&AsScene2207Lever::stLeverDownEvent));
+	_soundResource.play(0x40581882);
+}
+
+void AsScene2207Lever::stLeverDownEvent() {
+	_parentScene->sendMessage(0x480F, 0, this);
+}
+
+void AsScene2207Lever::stLeverUp() {
+	setFileHash(0x80880090, 6, -1);
+	setCallback1(AnimationCallback(&AsScene2207Lever::stLeverUpEvent));
+	_playBackwards = true;
+	_soundResource.play(0x40581882);
+}
+
+void AsScene2207Lever::stLeverUpEvent() {
+	_parentScene->sendMessage(0x4807, 0, this);
+}
+
+AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 1200), _soundResource1(vm), _soundResource2(vm),
+	_soundResource3(vm), _soundResource4(vm), _idle(true) {
+	
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2207WallRobotAnimation::handleMessage);
 	createSurface1(0xCCFD6090, 100);
 	_x = 309;
 	_y = 320;
@@ -2132,15 +2930,15 @@ Class500::Class500(NeverhoodEngine *vm, Scene *parentScene)
 	_soundResource4.load(0xD4226080);
 }
 
-Class500::~Class500() {
+AsScene2207WallRobotAnimation::~AsScene2207WallRobotAnimation() {
 	// TODO Sound1ChList_sub_407AF0(0x80D00820);
 }
 
-uint32 Class500::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
-		if (!_flag1) {
+		if (!_idle) {
 			if (param.asInteger() == 0x3423093) {
 				// TODO Sound1ChList_addSoundResource(0x80D00820, 0x12121943, true);
 				// TODO Sound1ChList_playLooping(0x12121943);
@@ -2162,10 +2960,10 @@ uint32 Class500::handleMessage(int messageNum, const MessageParam &param, Entity
 		}
 		break;
 	case 0x2006:
-		sub441D50();
+		stStartAnimation();
 		break;
 	case 0x2007:
-		sub441D90();
+		stStopAnimation();
 		break;
 	case 0x3002:
 		removeCallbacks();
@@ -2174,36 +2972,36 @@ uint32 Class500::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-void Class500::sub441D50() {
-	if (!_flag1) {
+void AsScene2207WallRobotAnimation::stStartAnimation() {
+	if (!_idle) {
 		SetAnimationCallback3(NULL);
 	} else {
 		setFileHash(0xCCFD6090, 0, -1);
-		_flag1 = false;
+		_idle = false;
 		_surface->setVisible(true);
 	}
 }
 
-void Class500::sub441D90() {
-	SetAnimationCallback3(&Class500::sub441DA0);
+void AsScene2207WallRobotAnimation::stStopAnimation() {
+	SetAnimationCallback3(&AsScene2207WallRobotAnimation::cbStopAnimation);
 }
 
-void Class500::sub441DA0() {
+void AsScene2207WallRobotAnimation::cbStopAnimation() {
 	setFileHash1();
 	_soundResource1.stop();
 	_soundResource2.stop();
 	_soundResource3.stop();
 	_soundResource4.stop();
 	// TODO Sound1ChList_deleteSoundByHash(0x12121943);
-	_flag1 = true;
+	_idle = true;
 	_surface->setVisible(false);
 }
 
-Class501::Class501(NeverhoodEngine *vm)
-	: AnimatedSprite(vm, 1200), _flag1(true) {
+AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1200), _idle(true) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&Class501::handleMessage);
+	SetMessageHandler(&AsScene2207WallCannonAnimation::handleMessage);
 	createSurface1(0x8CAA0099, 100);
 	_x = 309;
 	_y = 320;
@@ -2211,14 +3009,14 @@ Class501::Class501(NeverhoodEngine *vm)
 	_newHashListIndex = 0;
 }
 
-uint32 Class501::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2006:
-		sub441FA0();
+		stStartAnimation();
 		break;
 	case 0x2007:
-		sub441FE0();
+		stStopAnimation();
 		break;
 	case 0x3002:
 		removeCallbacks();
@@ -2227,27 +3025,27 @@ uint32 Class501::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
-void Class501::sub441FA0() {
-	if (!_flag1) {
+void AsScene2207WallCannonAnimation::stStartAnimation() {
+	if (!_idle) {
 		SetAnimationCallback3(NULL);
 	} else {
 		_surface->setVisible(true);
 		setFileHash(0x8CAA0099, 0, -1);
-		_flag1 = false;
+		_idle = false;
 	}
 }
 
-void Class501::sub441FE0() {
-	SetAnimationCallback3(&Class501::sub441FF0);
+void AsScene2207WallCannonAnimation::stStopAnimation() {
+	SetAnimationCallback3(&AsScene2207WallCannonAnimation::cbStopAnimation);
 }
 
-void Class501::sub441FF0() {
+void AsScene2207WallCannonAnimation::cbStopAnimation() {
 	setFileHash1();
 	_surface->setVisible(false);
-	_flag1 = true;
+	_idle = true;
 }
 
-Class597::Class597(NeverhoodEngine *vm, uint32 fileHash, int index)
+SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int index)
 	: StaticSprite(vm, fileHash, 100) {
 
 	_x = 330;
@@ -2257,12 +3055,12 @@ Class597::Class597(NeverhoodEngine *vm, uint32 fileHash, int index)
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
-	_flag1(true), _elevatorSurfacePriority(0) {
-
-	_vm->gameModule()->initScene3009Vars();
+	_klaymanAtElevator(true), _elevatorSurfacePriority(0) {
 
 	//DEBUG
 	setGlobalVar(0x4D080E54, 1);
+
+	_vm->gameModule()->initScene3009Vars();
 
 	if (!getSubVar(0x40050052, 0x88460852))
 		setSubVar(0x40050052, 0x88460852, 1);
@@ -2293,21 +3091,21 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asTape = addSprite(new AsScene1201Tape(_vm, this, 4, 1100, 277, 428, 0x9148A011));
 		_vm->_collisionMan->addSprite(_asTape); 
 	
-//		_class487 = addSprite(new Class487(_vm, this, 527, 333, 0));
-//		_vm->_collisionMan->addSprite(_class487);
+		_asLever = addSprite(new AsScene2207Lever(_vm, this, 527, 333, 0));
+		_vm->_collisionMan->addSprite(_asLever);
 		
-		_class500 = addSprite(new Class500(_vm, this));
-		_class501 = addSprite(new Class501(_vm));
+		_asWallRobotAnimation = addSprite(new AsScene2207WallRobotAnimation(_vm, this));
+		_asWallCannonAnimation = addSprite(new AsScene2207WallCannonAnimation(_vm));
 		
-		_class500->getSurface()->setVisible(false);
-		_class501->getSurface()->setVisible(false);
+		_asWallRobotAnimation->getSurface()->setVisible(false);
+		_asWallCannonAnimation->getSurface()->setVisible(false);
 
 		_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x2C4061C4, 100, 0));
 	
-//		_class487->getSurface()->getClipRect().x1 = 0;
-//		_class487->getSurface()->getClipRect().y1 = 0;
-//		_class487->getSurface()->getClipRect().x2 = _ssMaskPart3->getSurface()->getDrawRect().x + _ssMaskPart3->getSurface()->getDrawRect().width;
-//		_class487->getSurface()->getClipRect().y2 = 480;
+		_asLever->getSurface()->getClipRect().x1 = 0;
+		_asLever->getSurface()->getClipRect().y1 = 0;
+		_asLever->getSurface()->getClipRect().x2 = _ssMaskPart3->getSurface()->getDrawRect().x + _ssMaskPart3->getSurface()->getDrawRect().width;
+		_asLever->getSurface()->getClipRect().y2 = 480;
 	
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
@@ -2330,14 +3128,14 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 		_ssMaskPart1 = addSprite(new StaticSprite(_vm, 0x980E46A4, 1200));
 
-		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0));
-		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1));
-		addSprite(new Class597(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2));
+		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0));
+		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1));
+		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2));
 
 		_asTape = NULL;
-		_class487 = NULL;
-		_class500 = NULL;
-		_class501 = NULL;
+		_asLever = NULL;
+		_asWallRobotAnimation = NULL;
+		_asWallCannonAnimation = NULL;
 		_ssButton = NULL;
 
 		_klayman->getSurface()->getClipRect().x1 = 0;
@@ -2371,7 +3169,7 @@ void Scene2207::update() {
 		_elevatorSurfacePriority = 0;
 	}
 	if (_klayman->getY() == 423) {
-		_flag1 = _klayman->getX() > 459 && _klayman->getX() < 525;
+		_klaymanAtElevator = _klayman->getX() > 459 && _klayman->getX() < 525;
 	}
 }
 
@@ -2380,7 +3178,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x0014F275) {
-			if (_flag1) {
+			if (_klaymanAtElevator) {
 				_asElevator->sendMessage(0x2000, _mouseClickPos.y, this);
 				_klayman->sendEntityMessage(0x1014, _asElevator, this);
 				_klayman->sendMessage(0x2001, 0, this);
@@ -2388,7 +3186,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				messageList402220();
 			}
 		} else if (param.asInteger() == 0x34569073) {
-			if (_flag1) {
+			if (_klaymanAtElevator) {
 				_messageListFlag1 = true;
 				_asElevator->sendMessage(0x2000, 0, this);
 				_klayman->sendEntityMessage(0x1014, _asElevator, this);
@@ -2397,7 +3195,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				messageList402220();
 			}
 		} else if (param.asInteger() == 0x4054C877) {
-			if (_flag1) {
+			if (_klaymanAtElevator) {
 				_asElevator->sendMessage(0x2000, 480, this);
 				_klayman->sendEntityMessage(0x1014, _asElevator, this);
 				_klayman->sendMessage(0x2001, 0, this);
@@ -2425,8 +3223,8 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		_messageListFlag1 = false;
 		break;
 	case 0x4807:
-		_class500->sendMessage(0x2007, 0, this);
-		_class501->sendMessage(0x2007, 0, this);
+		_asWallRobotAnimation->sendMessage(0x2007, 0, this);
+		_asWallCannonAnimation->sendMessage(0x2007, 0, this);
 		break;
 	case 0x480B:
 		if (sender == _ssButton) {
@@ -2440,10 +3238,10 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x480F:
-		_class500->sendMessage(0x2006, 0, this);
-		_class501->sendMessage(0x2006, 0, this);
-		_class500->getSurface()->setVisible(true);
-		_class501->getSurface()->setVisible(true);
+		_asWallRobotAnimation->sendMessage(0x2006, 0, this);
+		_asWallCannonAnimation->sendMessage(0x2006, 0, this);
+		_asWallRobotAnimation->getSurface()->setVisible(true);
+		_asWallCannonAnimation->getSurface()->setVisible(true);
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
@@ -2451,7 +3249,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 				_klayman->sendEntityMessage(0x1014, _asTape, this);
 				setMessageList(0x004B3958);
 			}
-		} else if (_flag1) {
+		} else if (_klaymanAtElevator) {
 			SetMessageHandler(&Scene2207::handleMessage2);
 			_asElevator->sendMessage(0x2000, 347, this);
 			_klayman->sendEntityMessage(0x1014, _asElevator, this);
@@ -2471,7 +3269,7 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 	case 0x2004:
 		SetMessageHandler(&Scene2207::handleMessage);
 		_klayman->sendMessage(0x2005, 0, this);
-//		_klayman->sendEntityMessage(0x1014, _class487, this);
+		_klayman->sendEntityMessage(0x1014, _asLever, this);
 		setMessageList(0x004B3920);
 		setRectList(0x004B3948);
 		break;
@@ -2653,7 +3451,7 @@ void Scene2208::drawRow(int16 rowIndex) {
 		sourceRect.width = 640;
 		sourceRect.height = 48;
 		_background->getSurface()->copyFrom(_topBackgroundSurface->getSurface(), 0, y, sourceRect, true);
-	} else if (rowIndex >= _maxRowIndex - 5) {
+	} else if (rowIndex > _maxRowIndex - 5) {
 		sourceRect.x = 0;
 		sourceRect.y = (rowIndex - _maxRowIndex + 4) * 48;
 		sourceRect.width = 640;
@@ -2666,7 +3464,7 @@ void Scene2208::drawRow(int16 rowIndex) {
 		sourceRect.width = 640;
 		sourceRect.height = 48;
 		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect, true);
-		if (rowIndex < _strings.size()) {
+		if (rowIndex < (int)_strings.size()) {
 			const char *text = _strings[rowIndex];
 			// TODO/CHECKME: Use temporary string up to '{' character (see above)
 			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);
@@ -2764,7 +3562,7 @@ uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x800C6694) {
-			sub4448D0();
+			readClickedColumn();
 		}
 		break;
 	case 0x4826:
@@ -2777,7 +3575,7 @@ uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entit
 	return messageResult;
 }
 
-void Scene2242::sub4448D0() {
+void Scene2242::readClickedColumn() {
 	int index;
 	if (_mouseClickPos.x < 108) {
 		setGlobalVar(0xC8C28808, 0x04290188);
@@ -2790,11 +3588,220 @@ void Scene2242::sub4448D0() {
 		setGlobalVar(0x4CE79018, calcHash("bgRecPanelStart2"));
 		index = 1;
 	}
-	setGlobalVar(0x49C40058, (_mouseClickPos.x - 100) / 7);
+	setGlobalVar(0x49C40058, (_mouseClickPos.y - 100) / 7);
 	if (ABS(_klayman->getX() - kScene2242XPositions[index]) < 133) {
 		setMessageList2(kScene2242MessageListIds1[index]);
 	} else {
 		setMessageList2(kScene2242MessageListIds2[index]);
+	}
+}
+
+static const int16 kHallOfRecordsKlaymanXPos[] = {
+	68, 
+	157, 
+	246, 
+	335, 
+	424, 
+	513, 
+	602
+};
+
+static const uint32 kHallOfRecordsSceneMessageListIds2[] = {
+	0x004B2978,
+	0x004B2998,
+	0x004B29B8,
+	0x004B29D8,
+	0x004B29F8,
+	0x004B2A18,
+	0x004B2A38
+};
+
+static const uint32 kHallOfRecordsSceneMessageListIds1[] = {
+	0x004B2A58,
+	0x004B2A80,
+	0x004B2AA8,
+	0x004B2AD0,
+	0x004B2AF8,
+	0x004B2B20,
+	0x004B2B48
+};
+
+HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfo140Id)
+	: Scene(vm, parentModule, true) {
+	
+	_sceneInfo140 = _vm->_staticData->getSceneInfo140Item(sceneInfo140Id);
+
+	_surfaceFlag = true;
+	SetMessageHandler(&HallOfRecordsScene::handleMessage);
+	SetUpdateHandler(&Scene::update);
+
+	if (!getGlobalVar(0x4D080E54) && _sceneInfo140->bgFilename2) {
+		setRectList(0x004B2BF8);
+		_background = addBackground(new DirtyBackground(_vm, _sceneInfo140->bgFilename2, 0, 0));
+		_palette = new Palette(_vm, _sceneInfo140->bgFilename2);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x14320138, NULL));
+	} else {
+		setRectList(0x004B2BB8);
+		_background = addBackground(new DirtyBackground(_vm, _sceneInfo140->bgFilename1, 0, 0));
+		_palette = new Palette(_vm, _sceneInfo140->bgFilename1);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x63A40028, NULL));
+	}
+
+	if (which < 0) {
+		_klayman = new KmHallOfRecords(_vm, this, 200, 430);
+		setMessageList(0x004B2900);
+	} else if (which == 1) {
+		_klayman = new KmHallOfRecords(_vm, this, 640, 430);
+		setMessageList(0x004B2910);
+	} else if (which == 2) {
+		_klayman = new KmHallOfRecords(_vm, this, kHallOfRecordsKlaymanXPos[getGlobalVar(0x48A68852) - _sceneInfo140->xPosIndex], 430);
+		setMessageList(0x004B2B70);
+		if (getGlobalVar(0xC0418A02))
+			_klayman->setDoDeltaX(1);
+	} else {
+		_klayman = new KmHallOfRecords(_vm, this, 0, 430);
+		setMessageList(0x004B2908);
+	}
+	addSprite(_klayman);
+
+	_klayman->setSoundFlag(true);
+	_klayman->setKlaymanTable2();
+
+}
+
+HallOfRecordsScene::~HallOfRecordsScene() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 HallOfRecordsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x800C6694) {
+			readClickedColumn();
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void HallOfRecordsScene::readClickedColumn() {
+	int16 index = (_mouseClickPos.x - 23) / 89;
+	if (index >= _sceneInfo140->count) {
+		setMessageList2(0x004B2920);
+	} else {
+		setGlobalVar(0x48A68852, _sceneInfo140->xPosIndex + index);
+		setGlobalVar(0x49C40058, (_mouseClickPos.y - 100) / 7);
+		setGlobalVar(0xC8C28808, _sceneInfo140->txFilename);
+		if (index == 0 && _sceneInfo140->bgFilename3) {
+			setGlobalVar(0x4CE79018, _sceneInfo140->bgFilename3);
+		} else {
+			setGlobalVar(0x4CE79018, 0);
+		}
+		if (ABS(_klayman->getX() - kHallOfRecordsKlaymanXPos[index]) < 133) {
+			setMessageList2(kHallOfRecordsSceneMessageListIds1[index]);
+		} else {
+			setMessageList2(kHallOfRecordsSceneMessageListIds2[index]);
+		}
+	}
+}
+
+static const int16 kScene2247XPositions[] = {
+	513,
+	602
+};
+
+static const uint32 kScene2247MessageListIds2[] = {
+	0x004B54A0,
+	0x004B54C0
+};
+
+static const uint32 kScene2247MessageListIds1[] = {
+	0x004B54E0,
+	0x004B5508
+};
+
+Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	//DEBUG
+	setGlobalVar(0x4D080E54, 1);
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2247::handleMessage);
+	SetUpdateHandler(&Scene::update);
+
+	if (getGlobalVar(0x4D080E54)) {
+		setRectList(0x004B5588);
+		_background = addBackground(new DirtyBackground(_vm, 0x40339414, 0, 0));
+		_palette = new Palette(_vm, 0x40339414);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x3941040B, NULL));
+	} else {
+		setRectList(0x004B55C8);
+		_background = addBackground(new DirtyBackground(_vm, 0x071963E5, 0, 0));
+		_palette = new Palette(_vm, 0x071963E5);
+		_palette->usePalette();
+		_mouseCursor = addSprite(new Mouse433(_vm, 0x14320138, NULL));
+	}
+
+	if (which < 0) {
+		_klayman = new KmScene2247(_vm, this, 200, 430);
+		setMessageList(0x004B5428);
+	} else if (which == 1) {
+		_klayman = new KmScene2247(_vm, this, 640, 430);
+		setMessageList(0x004B5438);
+	} else if (which == 2) {
+		_klayman = new KmScene2247(_vm, this, kScene2247XPositions[getGlobalVar(0xC8C28808) == 0x0008E486 ? 0 : 1], 430);
+		if (getGlobalVar(0xC0418A02))
+			_klayman->setDoDeltaX(1);
+		setMessageList(0x004B5530);
+	} else {
+		_klayman = new KmScene2247(_vm, this, 0, 430);
+		setMessageList(0x004B5430);
+	}
+	addSprite(_klayman);
+
+	_klayman->setSoundFlag(true);
+	
+}
+
+Scene2247::~Scene2247() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 Scene2247::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	// TODO: Debug stuff
+	case 0x100D:
+		if (param.asInteger() == 0x800C6694) {
+			readClickedColumn();
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void Scene2247::readClickedColumn() {
+	int index;
+	if (_mouseClickPos.x < 553) {
+		setGlobalVar(0xC8C28808, 0x0008E486);
+		setGlobalVar(0x4CE79018, calcHash("bgFatherHeader"));
+		index = 0;
+	} else {
+		setGlobalVar(0xC8C28808, 0x03086004);
+		setGlobalVar(0x4CE79018, calcHash("bgQuaterHeader"));
+		index = 1;
+	}
+	setGlobalVar(0x48A68852, 0);
+	setGlobalVar(0x49C40058, (_mouseClickPos.y - 100) / 7);
+	if (ABS(_klayman->getX() - kScene2247XPositions[index]) < 133) {
+		setMessageList2(kScene2247MessageListIds1[index]);
+	} else {
+		setMessageList2(kScene2247MessageListIds2[index]);
 	}
 }
 

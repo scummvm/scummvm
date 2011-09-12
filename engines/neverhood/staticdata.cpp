@@ -125,6 +125,21 @@ void StaticData::load(const char *filename) {
 		_navigationLists[id] = navigationList;
 	}
 
+	// Load SceneInfo140 items
+	uint32 sceneInfo140ItemsCount = fd.readUint32LE();
+	debug("sceneInfo140ItemsCount: %d", sceneInfo140ItemsCount);
+	for (uint32 i = 0; i < sceneInfo140ItemsCount; i++) {
+		SceneInfo140 *sceneInfo140 = new SceneInfo140();
+		uint32 id = fd.readUint32LE();
+		sceneInfo140->bgFilename1 = fd.readUint32LE();
+		sceneInfo140->bgFilename2 = fd.readUint32LE();
+		sceneInfo140->txFilename = fd.readUint32LE();
+		sceneInfo140->bgFilename3 = fd.readUint32LE();
+		sceneInfo140->xPosIndex = fd.readByte();
+		sceneInfo140->count = fd.readByte();
+		_sceneInfo140Items[id] = sceneInfo140;
+	}
+
 }
 
 HitRectList *StaticData::getHitRectList(uint32 id) {
@@ -149,6 +164,12 @@ NavigationList *StaticData::getNavigationList(uint32 id) {
 	if (!_navigationLists[id])
 		error("StaticData::getNavigationList() NavigationList with id %08X not found", id);
 	return _navigationLists[id];
+}
+
+SceneInfo140 *StaticData::getSceneInfo140Item(uint32 id) {
+	if (!_sceneInfo140Items[id])
+		error("StaticData::getSceneInfo140Item() SceneInfo140 with id %08X not found", id);
+	return _sceneInfo140Items[id];
 }
 
 } // End of namespace Neverhood

@@ -234,7 +234,6 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		// TODO queryPositionSomeRects(param.asPoint().x, param.asPoint().y);			
 		break;
 	case 1: // mouse clicked
-		debug("mouse clicked");
 		_mouseClicked = true;
 		_mouseClickPos = param.asPoint();
 		break;
