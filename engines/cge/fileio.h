@@ -62,15 +62,12 @@ struct Header {
 };
 
 class IoHand {
-protected:
-	uint16 _seed;
-	Crypt *_crypt;
 public:
 	Common::File *_file;
 	uint16 _error;
 
-	IoHand(const char *name, Crypt crypt);
-	IoHand(Crypt *crypt);
+	IoHand(const char *name);
+	IoHand();
 	virtual ~IoHand();
 	uint16 read(void *buf, uint16 len);
 	long mark();
@@ -101,7 +98,7 @@ class BtFile : public IoHand {
 
 	BtPage *getPage(int lev, uint16 pgn);
 public:
-	BtFile(const char *name, Crypt *crpt);
+	BtFile(const char *name);
 	virtual ~BtFile();
 	BtKeypack *find(const char *key);
 	bool exist(const char *name);

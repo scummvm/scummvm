@@ -38,12 +38,11 @@ namespace CGE {
 /*-----------------------------------------------------------------------
  * IOHand
  *-----------------------------------------------------------------------*/
-IoHand::IoHand(Crypt *crypt) : _error(0), _crypt(crypt), _seed(kCryptSeed) {
+IoHand::IoHand() : _error(0) {
 	_file = new Common::File();
 }
 
-IoHand::IoHand(const char *name, Crypt *crypt)
-		: _error(0), _crypt(crypt), _seed(kCryptSeed) {
+IoHand::IoHand(const char *name) : _error(0) {
 	_file = new Common::File();
 	_file->open(name);
 }
@@ -60,8 +59,7 @@ uint16 IoHand::read(void *buf, uint16 len) {
 	uint16 bytesRead = _file->read(buf, len);
 	if (!bytesRead)
 		error("Read %s - %d bytes", _file->getName(), len);
-	if (_crypt)
-		_seed = _crypt(buf, len);
+	XCrypt(buf, len);
 	return bytesRead;
 }
 
@@ -104,9 +102,8 @@ void BtPage::read(Common::ReadStream &s) {
 /*-----------------------------------------------------------------------
  * BtFile
  *-----------------------------------------------------------------------*/
-BtFile::BtFile(const char *name, Crypt *crpt)
-	: IoHand(name, crpt) {
-	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s, crpt)", name);
+BtFile::BtFile(const char *name) : IoHand(name) {
+	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s)", name);
 
 	for (int i = 0; i < kBtLevel; i++) {
 		_buff[i]._page = new BtPage;
