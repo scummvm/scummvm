@@ -534,7 +534,7 @@ void ComposerEngine::setBackground(uint16 id) {
 
 static void decompressSLWM(byte *buffer, Common::SeekableReadStream *stream) {
 	uint bitsLeft = 0;
-	uint16 lastBits;
+	uint16 lastBits = 0;
 	byte currBit;
 	while (true) {
 		if (bitsLeft == 0) { bitsLeft = 16; lastBits = stream->readUint16LE(); }
