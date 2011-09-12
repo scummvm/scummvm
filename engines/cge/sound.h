@@ -29,7 +29,6 @@
 #define CGE_SOUND_H
 
 #include "cge/fileio.h"
-#include "cge/snddrv.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/fmopl.h"
@@ -42,6 +41,14 @@
 namespace CGE {
 
 class CGEEngine;
+
+// sample info
+struct SmpInfo {
+	const uint8  *_saddr;                              // address
+	uint16  _slen;                                     // length
+	uint16  _span;                                     // left/right pan (0-15)
+	int     _counter;                                  // number of time the sample should be played
+};
 
 class DataCk {
 	byte *_buf;

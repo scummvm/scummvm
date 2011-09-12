@@ -53,6 +53,7 @@ uint16  chkSum(void *m, uint16 n);
 char   *mergeExt(char *buf, const char *name, const char *ext);
 char   *forceExt(char *buf, const char *name, const char *ext);
 int     newRandom(int range);
+void    sndSetVolume();
 
 } // End of namespace CGE
 
