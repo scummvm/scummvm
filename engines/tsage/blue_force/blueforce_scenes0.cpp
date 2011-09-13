@@ -331,6 +331,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
 	BF_GLOBALS._player.setStrip(3);
@@ -505,7 +506,7 @@ void Scene50::process(Event &event) {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene60::Item2::startAction(CursorType action, Event &event) {
+bool Scene60::Ignition::startAction(CursorType action, Event &event) {
 	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
 	switch (action) {
 	case CURSOR_LOOK:
@@ -532,7 +533,7 @@ bool Scene60::Item2::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene60::Item2::check1() {
+bool Scene60::Ignition::check1() {
 	if (BF_GLOBALS._bookmark >= bStoppedFrankie) {
 		BF_GLOBALS._v5098C |= 1;
 		return false;
@@ -581,7 +582,7 @@ bool Scene60::Item2::check1() {
 	return false;
 }
 
-bool Scene60::Item2::check2() {
+bool Scene60::Ignition::check2() {
 	switch (BF_GLOBALS._bookmark) {
 	case bInspectionDone:
 		if (BF_GLOBALS._v5098D & 1) {
@@ -1013,13 +1014,13 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		_visage = 62;
-		_item2._sceneRegionId = 22;
+		_ignition._sceneRegionId = 22;
 	} else if (BF_GLOBALS.getFlag(onDuty)) {
 		_visage = 63;
-		_item2._sceneRegionId = 20;
+		_ignition._sceneRegionId = 20;
 	} else {
 		_visage = 61;
-		_item2._sceneRegionId = 28;
+		_ignition._sceneRegionId = 28;
 	}
 	_dashboard.setup(_visage, 1, 1, 160, 168, 100);
 	_cursorId = CURSOR_USE;
@@ -1073,7 +1074,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._sceneItems.push_back(&_compartment);
 	}
 
-	BF_GLOBALS._sceneItems.push_back(&_item2);
+	BF_GLOBALS._sceneItems.push_back(&_ignition);
 	BF_GLOBALS._sceneItems.push_back(&_item3);
 	BF_GLOBALS._player.enableControl();
 	BF_GLOBALS._events.setCursor(CURSOR_USE);

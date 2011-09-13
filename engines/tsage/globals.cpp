@@ -198,6 +198,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v4E238);
 	s.syncAsSint16LE(_v501FC);
 	s.syncAsSint16LE(_v50696);
+	s.syncAsSint16LE(_v5098C);
+	s.syncAsSint16LE(_v5098D);
 	s.syncAsSint16LE(_v51C42);
 	s.syncAsSint16LE(_v51C44);
 	s.syncAsSint16LE(_interfaceY);
@@ -225,17 +227,17 @@ void BlueForceGlobals::reset() {
 	_driveToScene = 0;
 
 	_interfaceY = BF_INTERFACE_Y;
-	_v51C44 = 1;
 	_dayNumber = 0;
 	_v4CEA4 = 0;
 	_deathReason = 0;
 	_v4CF9E = 0;
 	_v4E238 = 0;
-	_v50696 = 0;
 	_v501FC = 0;
+	_v50696 = 0;
 	_v5098C = 0;
 	_v5098D = 0;
 	_v51C42 = 0;
+	_v51C44 = 1;
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
 }
