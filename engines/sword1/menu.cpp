@@ -85,7 +85,7 @@ void MenuIcon::setSelect(bool pSel) {
 
 void MenuIcon::draw(const byte *fadeMask, int8 fadeStatus) {
 	uint16 x = _menuPos * 40;
-	uint16 y = (_menuType == MENU_TOP)?(0):(440);
+	uint16 y = (_menuType == MENU_TOP) ? (0) : (440);
 	_screen->showFrame(x, y, _resId, _frame + (_selected ? 1 : 0), fadeMask, fadeStatus);
 }
 
@@ -193,7 +193,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 								_mouse->setLuggage(0, 0);
 								Logic::_scriptVars[OBJECT_HELD] = 0; // reselected => deselect it
 							} else { // the player is clicking another item on this one.
-								   // run its use-script, if there is one
+								// run its use-script, if there is one
 								Logic::_scriptVars[SECOND_ITEM] = _menuList[cnt];
 								_mouse->setLuggage(0, 0);
 							}

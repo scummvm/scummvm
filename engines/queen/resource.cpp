@@ -30,7 +30,7 @@
 namespace Queen {
 
 
-const char *Resource::_tableFilename = "queen.tbl";
+const char *const Resource::_tableFilename = "queen.tbl";
 
 const RetailGameVersion Resource::_gameVersions[] = {
 	{ "PEM10", 1, 0x00000008,  22677657 },

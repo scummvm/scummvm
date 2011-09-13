@@ -72,7 +72,6 @@ const char *DEFAULT_SCENE_HOTSPOT = "That accomplishes nothing.";
 const char *SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to restore this game!";
 const char *SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
 const char *RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
-const char *RESTART_CONFIRM_MSG = "Do you want to restart your game?";
 const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 
 const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
@@ -157,6 +156,9 @@ const char *ALLEY_CAT = "Alley Cat";
 const char *CITY_HALL_JAIL = "City Hall & Jail";
 const char *JAMISON_RYAN = "Jamison & Ryan";
 const char *BIKINI_HUT = "Bikini Hut";
+
+// Scene 60 radio messages
+const char *RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
 
 } // End of namespace BlueForce
 

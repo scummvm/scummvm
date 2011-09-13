@@ -216,7 +216,7 @@ void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int voc
 		0x08, 0x09, 0x0A, 0x0B
 	};
 
-	static const char *talkFilenameTable[] = {
+	static const char *const talkFilenameTable[] = {
 		"MTFL00S.EMC", "MTFL00Q.EMC", "MTFL00E.EMC", "MTFL00T.EMC",
 		"MTFR00S.EMC", "MTFR00Q.EMC", "MTFR00E.EMC", "MTFR00T.EMC",
 		 "MTL00S.EMC",  "MTL00Q.EMC",  "MTL00E.EMC",  "MTL00T.EMC",

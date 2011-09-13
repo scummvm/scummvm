@@ -27,6 +27,7 @@
 #include "tsage/core.h"
 #include "tsage/converse.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_speakers.h"
 
 namespace TsAGE {
 

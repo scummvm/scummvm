@@ -196,7 +196,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// Exit cursor (Blue Force)
 		assert(_vm->getGameID() == GType_BlueForce);
 		cursor = _resourceManager->getSubResource(1, 5, 7, &size);
-		_currentCursor = CURSOR_TALK;
+		_currentCursor = CURSOR_EXIT;
 		break;
 
 	case CURSOR_ARROW:

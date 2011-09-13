@@ -297,7 +297,7 @@ void Scheduler::readAct(Common::ReadStream &in, act &curAct) {
 		curAct.a3.timer = in.readSint16BE();
 		curAct.a3.promptIndex = in.readSint16BE();
 		numSubAct = in.readUint16BE();
-		curAct.a3.responsePtr = (int *) malloc(sizeof(int) * numSubAct);
+		curAct.a3.responsePtr = (int *)malloc(sizeof(int) * numSubAct);
 		for (int k = 0; k < numSubAct; k++)
 			curAct.a3.responsePtr[k] = in.readSint16BE();
 		curAct.a3.actPassIndex = in.readUint16BE();
@@ -566,7 +566,7 @@ void Scheduler::loadActListArr(Common::ReadStream &in) {
 		for (int i = 0; i < numElem; i++) {
 			numSubElem = in.readUint16BE();
 			if (varnt == _vm->_gameVariant)
-				_actListArr[i] = (act *) malloc(sizeof(act) * (numSubElem + 1));
+				_actListArr[i] = (act *)malloc(sizeof(act) * (numSubElem + 1));
 			for (int j = 0; j < numSubElem; j++) {
 				if (varnt == _vm->_gameVariant) {
 					readAct(in, _actListArr[i][j]);
@@ -1557,7 +1557,7 @@ void Scheduler_v1d::decodeString(char *line) {
 	debugC(1, kDebugSchedule, "decodeString(%s)", line);
 
 	uint16 linelength = strlen(line);
-	for(uint16 i = 0; i < linelength; i++) {
+	for (uint16 i = 0; i < linelength; i++) {
 		line[i] = (line[i] + _cypher.c_str()[i % _cypher.size()]) % '~';
 		if (line[i] < ' ')
 			line[i] += ' ';

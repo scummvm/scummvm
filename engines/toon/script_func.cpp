@@ -223,7 +223,7 @@ ScriptFunc::ScriptFunc(ToonEngine *vm) {
 }
 
 ScriptFunc::~ScriptFunc(void) {
-	while(!_opcodes.empty()) {
+	while (!_opcodes.empty()) {
 		const OpcodeV2 *temp = _opcodes.back();
 		_opcodes.pop_back();
 		delete temp;
@@ -990,7 +990,7 @@ int32 ScriptFunc::sys_Cmd_Set_Scene_Animation_Active_Flag(EMCState *state) {
 	if (sceneAnim->_active) {
 		sceneAnim->_animInstance->setVisible(activeFlag > 0);
 
-		if(activeFlag) {
+		if (activeFlag) {
 			_vm->getAnimationManager()->addInstance(sceneAnim->_animInstance);
 		}
 	}

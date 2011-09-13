@@ -157,7 +157,7 @@ int LogicHEbasketball::op_1012() {
 
 int LogicHEbasketball::op_1050(int32 *args) {
 	// This function loads the court data
-	static const char *courtNames[] = {
+	static const char *const courtNames[] = {
 		"Dobbaguchi", "Jocindas", "SandyFlats", "Queens",
 		"Park", "Scheffler", "Polk", "McMillan",
 		"CrownHill", "Memorial", "TechState", "Garden",

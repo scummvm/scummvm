@@ -39,15 +39,15 @@ void ObjectMan::initialize() {
 	uint16 cnt;
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++)
 		_liveList[cnt] = 0; // we don't need to close the files here. When this routine is
-							// called, the memory was flushed() anyways, so these resources
-							// already *are* closed.
+	                        // called, the memory was flushed() anyways, so these resources
+	                        // already *are* closed.
 
 	_liveList[128] = _liveList[129] = _liveList[130] = _liveList[131] = _liveList[133] =
-		_liveList[134] = _liveList[145] = _liveList[146] = _liveList[TEXT_sect] = 1;
+	                                      _liveList[134] = _liveList[145] = _liveList[146] = _liveList[TEXT_sect] = 1;
 
 	for (cnt = 0; cnt < TOTAL_SECTIONS; cnt++) {
 		if (_liveList[cnt])
-			_cptData[cnt] = (uint8*)_resMan->cptResOpen(_objectList[cnt]) + sizeof(Header);
+			_cptData[cnt] = (uint8 *)_resMan->cptResOpen(_objectList[cnt]) + sizeof(Header);
 		else
 			_cptData[cnt] = NULL;
 	}
@@ -66,7 +66,7 @@ bool ObjectMan::sectionAlive(uint16 section) {
 void ObjectMan::megaEntering(uint16 section) {
 	_liveList[section]++;
 	if (_liveList[section] == 1)
-		_cptData[section] = ((uint8*)_resMan->cptResOpen(_objectList[section])) + sizeof(Header);
+		_cptData[section] = ((uint8 *)_resMan->cptResOpen(_objectList[section])) + sizeof(Header);
 }
 
 void ObjectMan::megaLeaving(uint16 section, int id) {
@@ -87,7 +87,7 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 		return 0; // section does not exist
 
 	uint8 lang = SwordEngine::_systemVars.language;
-	uint32 *textData = (uint32*)((uint8*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]) + sizeof(Header));
+	uint32 *textData = (uint32 *)((uint8 *)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]) + sizeof(Header));
 	if ((textId & ITM_ID) < _resMan->readUint32(textData)) {
 		textData++;
 		if (textData[textId & ITM_ID])
@@ -99,7 +99,7 @@ uint8 ObjectMan::fnCheckForTextLine(uint32 textId) {
 
 char *ObjectMan::lockText(uint32 textId) {
 	uint8 lang = SwordEngine::_systemVars.language;
-	char *addr = (char*)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]);
+	char *addr = (char *)_resMan->openFetchRes(_textList[textId / ITM_PER_SEC][lang]);
 	if (addr == 0)
 		return _missingSubTitleStr;
 	addr += sizeof(Header);
@@ -107,12 +107,12 @@ char *ObjectMan::lockText(uint32 textId) {
 		warning("ObjectMan::lockText(%d): only %d texts in file", textId & ITM_ID, _resMan->readUint32(addr));
 		textId = 0; // get first line instead
 	}
-	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1)* 4);
+	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {
 		// Workaround bug for missing sentence in some langages in Syria (see bug #1977094).
 		// We use the hardcoded text in this case.
 		if (textId == 2950145)
-			return const_cast<char*>(_translationId2950145[lang]);
+			return const_cast<char *>(_translationId2950145[lang]);
 
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
 		return _missingSubTitleStr;
@@ -125,7 +125,7 @@ void ObjectMan::unlockText(uint32 textId) {
 }
 
 uint32 ObjectMan::lastTextNumber(int section) {
-	uint8 *data = (uint8*)_resMan->openFetchRes(_textList[section][SwordEngine::_systemVars.language]) + sizeof(Header);
+	uint8 *data = (uint8 *)_resMan->openFetchRes(_textList[section][SwordEngine::_systemVars.language]) + sizeof(Header);
 	uint32 result = _resMan->readUint32(data) - 1;
 	_resMan->resClose(_textList[section][SwordEngine::_systemVars.language]);
 	return result;
@@ -137,17 +137,17 @@ Object *ObjectMan::fetchObject(uint32 id) {
 		error("fetchObject: section %d is not open", id / ITM_PER_SEC);
 	id &= ITM_ID;
 	// DON'T do endian conversion here. it's already done.
-	return (Object*)(addr + *(uint32*)(addr + (id + 1)*4));
+	return (Object *)(addr + * (uint32 *)(addr + (id + 1) * 4));
 }
 
 uint32 ObjectMan::fetchNoObjects(int section) {
 	if (_cptData[section] == NULL)
 		error("fetchNoObjects: section %d is not open", section);
-	return *(uint32*)_cptData[section];
+	return *(uint32 *)_cptData[section];
 }
 
 void ObjectMan::closeSection(uint32 screen) {
-	if (_liveList[screen] == 0)	 // close the section that PLAYER has just left, if it's empty now
+	if (_liveList[screen] == 0)  // close the section that PLAYER has just left, if it's empty now
 		_resMan->resClose(_objectList[screen]);
 }
 
@@ -159,7 +159,7 @@ void ObjectMan::loadLiveList(uint16 *src) {
 		}
 		_liveList[cnt] = src[cnt];
 		if (_liveList[cnt])
-			_cptData[cnt] = ((uint8*)_resMan->cptResOpen(_objectList[cnt])) + sizeof(Header);
+			_cptData[cnt] = ((uint8 *)_resMan->cptResOpen(_objectList[cnt])) + sizeof(Header);
 	}
 }
 
@@ -179,7 +179,7 @@ char ObjectMan::_missingSubTitleStr[] = " ";
 // is not needed. The English version of the game does not include Portuguese
 // so I cannot check.)
 
-const char *ObjectMan::_translationId2950145[7] = {
+const char *const ObjectMan::_translationId2950145[7] = {
 	"Oh?",     // English (not needed)
 	"Quoi?",   // French
 	"Oh?",     // German

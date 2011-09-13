@@ -21,6 +21,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Groovie:
    - Added support for the iOS version of The 7th Guest.
 
+ Lure:
+   - Fixed crash when trying to talk and ask something at the same time.
+
  SCUMM:
    - Implemented PC Speaker support for SCUMM v5 games.
    - Fixed priority bug in iMuse. As a result the AdLib music should sound

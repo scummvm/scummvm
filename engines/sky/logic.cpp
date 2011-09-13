@@ -1248,6 +1248,17 @@ script:
 
 	debug(3, "Doing Script: %d:%d:%x", moduleNo, scriptNo & 0xFFF, offset ? (offset - moduleStart[scriptNo & 0xFFF]) : 0);
 
+	// WORKAROUND for bug #3149412: "Invalid Mode when giving shades to travel agent"
+	// Using the dark glasses on Trevor (travel agent) multiple times in succession would
+	// wreck the trevor compact's mode, as the script in question doesn't account for using
+	// this item at this point in the game (you will only have it here if you play the game
+	// in an unusual way) and thus would loop indefinitely / never drop out.
+	// To prevent this, we trigger the generic response by pretending we're using an item
+	// which the script /does/ handle.
+	if (scriptNo == TREVOR_SPEECH && _scriptVariables[OBJECT_HELD] == IDO_SHADES)
+		_scriptVariables[OBJECT_HELD] = IDO_GLASS;
+
+
 	// Check whether we have an offset or what
 	if (offset)
 		scriptData = moduleStart + offset;

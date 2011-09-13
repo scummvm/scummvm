@@ -83,6 +83,7 @@ add_engine he "HE71+ games" yes
 add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
+add_engine cge "CGE" no
 add_engine cine "Cinematique evo 1" yes
 add_engine composer "Magic Composer" no
 add_engine cruise "Cinematique evo 2" yes
@@ -2752,6 +2753,19 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
+	irix*)
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
+		CXXFLAGS="$CXXFLAGS -fpic"
+		LIBS="$LIBS -ldl"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -shared -static-libgcc
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+
 	linux*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"

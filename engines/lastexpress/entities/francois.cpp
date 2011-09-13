@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 
 		case 1:
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
-			break;
+			// Fallback to next case
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
@@ -257,7 +257,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 		case 1:
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 			getSavePoints()->push(kEntityFrancois, kEntityMmeBoutarel, kAction102484312);
-			break;
+			// Fallback to next case
 
 		case 2:
 			getData()->location = kLocationInsideCompartment;

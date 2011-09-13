@@ -111,6 +111,8 @@ uint8 DreamGenContext::printslow(const uint8 *string, uint16 x, uint16 y, uint8 
 				data.word(kCharshift) = 0;
 				for (int i=0; i<2; ++i) {
 					uint16 mouseState = waitframes();
+					if (data.byte(kQuitrequested))
+						return 0;
 					if (mouseState == 0)
 						continue;
 					if (mouseState != data.word(kOldbutton)) {

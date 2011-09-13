@@ -857,7 +857,7 @@ void KyraEngine_HoF::loadOptionsBuffer(const char *file) {
 void KyraEngine_HoF::loadChapterBuffer(int chapter) {
 	char tempString[14];
 
-	static const char *chapterFilenames[] = {
+	static const char *const chapterFilenames[] = {
 		"CH1.XXX", "CH2.XXX", "CH3.XXX", "CH4.XXX", "CH5.XXX"
 	};
 
@@ -1413,7 +1413,7 @@ void KyraEngine_HoF::runIdleScript(int script) {
 		setNextIdleAnimTimer();
 	} else {
 		// FIXME: move this to staticres.cpp?
-		static const char *idleScriptFiles[] = {
+		static const char *const idleScriptFiles[] = {
 			"_IDLHAIR.EMC", "_IDLDUST.EMC", "_IDLLEAN.EMC", "_IDLDIRT.EMC", "_IDLTOSS.EMC", "_IDLNOSE.EMC",
 			"_IDLBRSH.EMC", "_Z3IDLE.EMC", "_Z4IDLE.EMC", "_Z6IDLE.EMC", "_Z7IDLE.EMC", "_Z8IDLE.EMC"
 		};

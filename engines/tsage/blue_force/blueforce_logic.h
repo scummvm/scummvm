@@ -35,7 +35,7 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-#define BLUE_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)_globals->_inventory))
+#define BF_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)_globals->_inventory))
 
 class BlueForceGame: public Game {
 public:
@@ -107,9 +107,9 @@ public:
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void startAction(CursorType action);
+	virtual bool startAction(CursorType action, Event &event);
 
-	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
 };
 
 class CountdownObject: public NamedObject {
@@ -137,15 +137,22 @@ public:
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
 
-enum ExitFrame { EXITFRAME_NE = 2, EXITFRAME_E = 3 };
+enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4, 
+		EXITFRAME_S = 5, EXITFRAME_SW = 6, EXITFRAME_W = 7, EXITFRAME_NW = 8 };
 
 class SceneExt: public Scene {
 private:
 	void gunDisplay();
+	static void startStrip();
+	static void endStrip();
 public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
+	bool _savedPlayerEnabled;
+	bool _savedUiEnabled;
+	bool _savedCanWalk;
 	int _field37A;
+
 	EventHandler *_eventHandler;
 	Visage _cursorVisage;
 
@@ -162,7 +169,8 @@ public:
 
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
-	void display(CursorType action);
+	bool display(CursorType action);
+	void fadeOut();
 };
 
 class GroupedScene: public SceneExt {
@@ -180,46 +188,9 @@ class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
-};
 
-class VisualSpeaker: public Speaker {
-public:
-	NamedObject _object1;
-	CountdownObject _object2;
-	bool _removeObject1, _removeObject2;
-	int _field20C, _field20E;
-	int _numFrames;
-	Common::Point _offsetPos;
-public:
-	VisualSpeaker();
-
-	virtual Common::String getClassName() { return "VisualSpeaker"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void proc12(Action *action);
-	virtual void setText(const Common::String &msg);
-};
-
-class SpeakerSutter: public VisualSpeaker {
-public:
-	SpeakerSutter();
-
-	virtual Common::String getClassName() { return "SpeakerSutter"; }
-	virtual void setText(const Common::String &msg);
-};
-
-class SpeakerDoug: public VisualSpeaker {
-public:
-	SpeakerDoug();
-
-	virtual Common::String getClassName() { return "SpeakerDoug"; }
-};
-
-class SpeakerJakeNoHead: public VisualSpeaker {
-public:
-	SpeakerJakeNoHead();
-
-	virtual Common::String getClassName() { return "SpeakerJakeNoHead"; }
+	virtual void playerAction(Event &event);
+	virtual void processEnd(Event &event);
 };
 
 class BlueForceInvObjectList : public InvObjectList {
@@ -295,7 +266,7 @@ public:
 
 	BlueForceInvObjectList();
 	void reset();
-	void setObjectRoom(int objectNum, int sceneNumber);
+	void setObjectScene(int objectNum, int sceneNumber);
 
 	virtual Common::String getClassName() { return "BlueForceInvObjectList"; }
 };

@@ -1855,6 +1855,8 @@ void DreamGenContext::hangon(uint16 frameCount) {
 	while (frameCount) {
 		vsync();
 		--frameCount;
+		if (data.byte(kQuitrequested))
+			break;
 	}
 }
 
@@ -1881,6 +1883,8 @@ void DreamGenContext::hangonp(uint16 count) {
 		showpointer();
 		vsync();
 		dumppointer();
+		if (data.byte(kQuitrequested))
+			break;
 		if (data.word(kMousebutton) == 0)
 			continue;
 		if (data.word(kMousebutton) != data.word(kOldbutton))

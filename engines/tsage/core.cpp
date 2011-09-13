@@ -33,6 +33,7 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 #include "tsage/sound.h"
+#include "tsage/blue_force/blueforce_logic.h"
 
 namespace TsAGE {
 
@@ -104,6 +105,19 @@ int InvObjectList::indexOf(InvObject *obj) const {
 	}
 
 	return -1;
+}
+
+InvObject *InvObjectList::getItem(int objectNum) {
+	SynchronizedList<InvObject *>::const_iterator i = _itemList.begin();
+	while (objectNum-- > 0)
+		++i;
+
+	return *i;
+}
+
+int InvObjectList::getObjectScene(int objectNum) {
+	InvObject *obj = getItem(objectNum);
+	return obj->_sceneNumber;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1409,8 +1423,12 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 		}
 	}
 
+	Rect tempRect = bounds;
+	if (_vm->getGameID() == GType_BlueForce)
+		tempRect.setHeight(BF_GLOBALS._interfaceY);
+	
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
-		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
+		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;
@@ -1452,6 +1470,19 @@ void SceneItem::synchronize(Serializer &s) {
 
 void SceneItem::remove() {
 	_globals->_sceneItems.remove(this);
+}
+
+bool SceneItem::startAction(CursorType action, Event &event) { 
+	if (_vm->getGameID() == GType_Ringworld) {
+		doAction(action); 
+		return true;
+	} else if ((action == CURSOR_LOOK) || (action == CURSOR_USE) || (action == CURSOR_TALK) ||
+			(action < CURSOR_LOOK)) {
+		doAction(action);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void SceneItem::doAction(int action) {
@@ -1657,6 +1688,16 @@ void SceneItem::display(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
+bool SceneHotspot::startAction(CursorType action, Event &event) {
+	if (_vm->getGameID() != GType_BlueForce)
+		return SceneItem::startAction(action, event);
+	else {
+		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
+		assert(scene);
+		return scene->display(action);
+	}
+}
+
 void SceneHotspot::doAction(int action) {
 	switch ((int)action) {
 	case CURSOR_LOOK:
@@ -1730,7 +1771,7 @@ void NamedHotspot::doAction(int action) {
 	}
 }
 
-void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
 	setBounds(ys, xe, ye, xs);
 	_resNum = resnum;
 	_lookLineNum = lookLineNum;
@@ -1739,7 +1780,7 @@ void NamedHotspot::setup(int ys, int xs, int ye, int xe, const int resnum, const
 	_globals->_sceneItems.addItems(this, NULL);
 }
 
-void NamedHotspot::setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	setBounds(bounds);
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -1762,7 +1803,7 @@ void NamedHotspot::setup(const Rect &bounds, int resNum, int lookLineNum, int ta
 	}
 }
 
-void NamedHotspot::setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
 	_sceneRegionId = sceneRegionId;
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
@@ -2490,7 +2531,12 @@ void AltSceneObject::postInit(SceneObjectList *OwnerList) {
 }
 
 void AltSceneObject::draw() {
-	SceneObject::draw();
+	Rect destRect = _bounds;
+	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
+		-_globals->_sceneManager._scene->_sceneBounds.top);
+	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
+	GfxSurface frame = getFrame();
+	_globals->_gfxManagerInstance.copyFrom(frame, destRect, priorityRegion);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2807,7 +2853,7 @@ void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
 	if ((_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
-			!BF_GLOBALS._uiElements._active)
+			!BF_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
 
@@ -2964,6 +3010,9 @@ void Player::process(Event &event) {
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) &&
 			(_globals->_events.getCursor() == CURSOR_WALK) && _globals->_player._canWalk &&
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {
+
+		if ((_vm->getGameID() == GType_BlueForce) && !BF_GLOBALS._player._enabled)
+			return;
 
 		PlayerMover *newMover = new PlayerMover();
 		Common::Point destPos(event.mousePos.x + _globals->_sceneManager._scene->_sceneBounds.left,
@@ -3627,8 +3676,11 @@ void ScenePriorities::load(int resNum) {
 
 Region *ScenePriorities::find(int priority) {
 	// If no priority regions are loaded, then return the placeholder region
-	if (empty())
-		return &_defaultPriorityRegion;
+	if (empty()) {
+		if (_vm->getGameID() == GType_Ringworld)
+			return &_defaultPriorityRegion;
+		return NULL;
+	}
 
 	if (priority > 255)
 		priority = 255;
@@ -3772,27 +3824,45 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		if (_globals->_player._uiEnabled && (event.eventType == EVENT_BUTTON_DOWN) &&
-				!_globals->_sceneItems.empty()) {
+		bool enabled = (_vm->getGameID() == GType_BlueForce) ? _globals->_player._enabled :
+			_globals->_player._uiEnabled;
+		if (enabled && (event.eventType == EVENT_BUTTON_DOWN) && !_globals->_sceneItems.empty()) {
+			// Check if the mouse is on the player
+			if (_globals->_player.contains(event.mousePos)) {
+				playerAction(event);
+				if (event.handled)
+					return;
+			}
+
 			// Scan the item list to find one the mouse is within
-			SynchronizedList<SceneItem *>::iterator i = _globals->_sceneItems.begin();
-			while ((i != _globals->_sceneItems.end()) && !(*i)->contains(event.mousePos))
-				++i;
+			SynchronizedList<SceneItem *>::iterator i;
+			for (i = _globals->_sceneItems.begin(); i != _globals->_sceneItems.end(); ++i) {
+				if ((*i)->contains(event.mousePos)) {
+					// Pass the action to the item
+					bool handled = (*i)->startAction(_globals->_events.getCursor(), event);
+					if (!handled)
+						// Item wasn't handled, keep scanning
+						continue;
 
-			if (i != _globals->_sceneItems.end()) {
-				// Pass the action to the item
-				(*i)->startAction(_globals->_events.getCursor());
-				event.handled = _globals->_events.getCursor() != CURSOR_WALK;
+					event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
-				if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
-						(_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_WALK);
-				} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_WALK);
-				} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-					_globals->_events.setCursor(CURSOR_USE);
+					if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
+							(_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_WALK);
+					} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_WALK);
+					} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+						_globals->_events.setCursor(CURSOR_USE);
+					}
+
+					if (_vm->getGameID() == GType_BlueForce)
+						event.handled = true;
+					break;
 				}
 			}
+
+			// Handle any fallback text display
+			processEnd(event);
 
 			// Handle player processing
 			_globals->_player.process(event);

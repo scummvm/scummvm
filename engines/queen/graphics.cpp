@@ -1201,7 +1201,7 @@ void BamScene::updateCarAnimation() {
 }
 
 void BamScene::updateFightAnimation() {
-	static const BamDataBlock *fightDataBlocks[] = {
+	static const BamDataBlock *const fightDataBlocks[] = {
 		_fight1Data,
 		_fight2Data,
 		_fight3Data

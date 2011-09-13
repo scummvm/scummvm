@@ -442,7 +442,7 @@ void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInvent
 		// The prepositions, like the fonts, were hard code in the engine. Thus
 		// we have to do that, too, and provde localized versions for all the
 		// languages MM/Zak are available in.
-		static const char *prepositions[][5] = {
+		static const char *const prepositions[][5] = {
 			{ " ", " in", " with", " on", " to" },   // English
 			{ " ", " mit", " mit", " mit", " zu" },  // German
 			{ " ", " dans", " avec", " sur", " <" }, // French

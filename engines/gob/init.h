@@ -41,7 +41,7 @@ public:
 
 protected:
 	Video::PalDesc *_palDesc;
-	static const char *_fontNames[4];
+	static const char *const _fontNames[4];
 	GobEngine *_vm;
 
 	void cleanup();

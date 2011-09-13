@@ -30,6 +30,13 @@ namespace TsAGE {
 
 namespace BlueForce {
 
+void StripProxy::process(Event &event) {
+	if (_action)
+		_action->process(event);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void UIElement::synchronize(Serializer &s) {
 	AltSceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
@@ -56,7 +63,7 @@ void UIElement::setEnabled(bool flag) {
 
 void UIQuestion::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN) {
-		int currentCursor = GLOBALS._events.getCursor();
+		CursorType currentCursor = GLOBALS._events.getCursor();
 		GLOBALS._events.hideCursor();
 		showDescription(currentCursor);
 
@@ -64,12 +71,13 @@ void UIQuestion::process(Event &event) {
 	}
 }
 
-void UIQuestion::showDescription(int lineNum) {
-	if (lineNum == 8) {
-		// Unknown object description
+void UIQuestion::showDescription(CursorType cursor) {
+	if (cursor == INV_FOREST_RAP) {
+		// Forest rap item has a graphical display
+		showItem(5, 1, 1);
 	} else {
 		// Display object description
-		SceneItem::display2(9001, lineNum);
+		SceneItem::display2(9001, (int)cursor);
 	}
 }
 
@@ -80,17 +88,44 @@ void UIQuestion::setEnabled(bool flag) {
 	}
 }
 
+void UIQuestion::showItem(int resNum, int rlbNum, int frameNum) {
+	GfxDialog::setPalette();
+
+	// Get the item to display
+	GfxSurface objImage = surfaceFromRes(resNum, rlbNum, frameNum);
+	Rect imgRect;
+	imgRect.resize(objImage, 0, 0, 100);
+	imgRect.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Save the area behind where the image will be displayed
+	GfxSurface *savedArea = Surface_getArea(BF_GLOBALS.gfxManager().getSurface(), imgRect);
+
+	// Draw the image
+	BF_GLOBALS.gfxManager().copyFrom(objImage, imgRect);
+
+	// Wait for a press
+	BF_GLOBALS._events.waitForPress();
+
+	// Restore the old area
+	BF_GLOBALS.gfxManager().copyFrom(*savedArea, imgRect);
+	delete savedArea;
+}
+
 /*--------------------------------------------------------------------------*/
 
 void UIScore::postInit(SceneObjectList *OwnerList) {
 	int xp = 266;
 	_digit3.setup(1, 6, 1, xp, 180, 255);
+	_digit3.reposition();
 	xp += 7;
 	_digit2.setup(1, 6, 1, xp, 180, 255);
+	_digit2.reposition();
 	xp += 7;
 	_digit1.setup(1, 6, 1, xp, 180, 255);
+	_digit1.reposition();
 	xp += 7;
 	_digit0.setup(1, 6, 1, xp, 180, 255);
+	_digit0.reposition();
 }
 
 void UIScore::draw() {
@@ -103,10 +138,10 @@ void UIScore::draw() {
 void UIScore::updateScore() {
 	int score = BF_GLOBALS._uiElements._scoreValue;
 	
-	_digit3.setFrame(score / 1000); score %= 1000;
-	_digit2.setFrame(score / 100); score %= 100;
-	_digit1.setFrame(score / 10); score %= 10;
-	_digit0.setFrame(score);
+	_digit3.setFrame(score / 1000 + 1); score %= 1000;
+	_digit2.setFrame(score / 100 + 1); score %= 100;
+	_digit1.setFrame(score / 10 + 1); score %= 10;
+	_digit0.setFrame(score + 1);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -154,9 +189,28 @@ void UIInventoryScroll::synchronize(Serializer &s) {
 }
 
 void UIInventoryScroll::process(Event &event) {
-	if (event.eventType == EVENT_BUTTON_DOWN) {
-		warning("TODO: UIInventoryScroll::process");
+	switch (event.eventType) {
+	case EVENT_BUTTON_DOWN:
+		// Draw the button as selected
+		toggle(true);
+
 		event.handled = true;
+		break;
+	case EVENT_BUTTON_UP:
+		// Restore unselected version
+		toggle(false);
+
+		// Scroll the inventory as necessary
+		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
+		event.handled = true;
+		break;
+	}
+}
+
+void UIInventoryScroll::toggle(bool pressed) {
+	if (_enabled) {
+		setFrame(pressed ? (_frameNum + 1) : _frameNum);
+		BF_GLOBALS._uiElements.draw();
 	}
 }
 
@@ -210,6 +264,34 @@ void UICollection::draw() {
 
 UIElements::UIElements(): UICollection() {
 	_cursorVisage.setVisage(1, 5);
+	_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+}
+
+void UIElements::synchronize(Serializer &s) {
+	UICollection::synchronize(s);
+
+	s.syncAsSint16LE(_slotStart);
+	s.syncAsSint16LE(_scoreValue);
+	s.syncAsByte(_active);
+
+	int count = _itemList.size();
+	s.syncAsSint16LE(count);
+	if (s.isLoading()) {
+		// Load in item list
+		_itemList.clear();
+
+		for (int idx = 0; idx < count; ++idx) {
+			int itemId;
+			s.syncAsSint16LE(itemId);
+			_itemList.push_back(itemId);
+		}
+	} else {
+		// Save item list
+		for (int idx = 0; idx < count; ++idx) {
+			int itemId = _itemList[idx];
+			s.syncAsSint16LE(itemId);
+		}
+	}
 }
 
 void UIElements::process(Event &event) {
@@ -334,7 +416,7 @@ void UIElements::updateInventory() {
 	updateInvList();	
 
 	// Enable scroll buttons if the player has more than four items
-	if (_itemCount > 4) {
+	if (_itemList.size() > 4) {
 		_scrollLeft.setEnabled(true);
 		_scrollRight.setEnabled(true);
 	} else {
@@ -343,10 +425,10 @@ void UIElements::updateInventory() {
 	}
 
 	// Handle cropping the slots start within inventory
-	int last  = (_itemList.size() - 1) / 4 + 1;
+	int lastPage  = (_itemList.size() - 1) / 4 + 1;
 	if (_slotStart < 0)
-		_slotStart = last - 1;
-	else if (_slotStart > (last - 1))
+		_slotStart = lastPage - 1;
+	else if (_slotStart > (lastPage - 1))
 		_slotStart = 0;
 
 	// Handle refreshing slot graphics
@@ -355,12 +437,12 @@ void UIElements::updateInventory() {
 	// Loop through the inventory objects
 	SynchronizedList<InvObject *>::iterator i;
 	int objIndex = 0;
-	for (i = BLUE_INVENTORY._itemList.begin(); i != BLUE_INVENTORY._itemList.end(); ++i, ++objIndex) {
+	for (i = BF_INVENTORY._itemList.begin(); i != BF_INVENTORY._itemList.end(); ++i, ++objIndex) {
 		InvObject *obj = *i;
 
 		// Check whether the object is in any of the four inventory slots
 		for (int slotIndex = 0; slotIndex < 4; ++slotIndex) {
-			int idx = _slotStart + slotIndex;
+			int idx = _slotStart * 4 + slotIndex;
 			int objectIdx = (idx < (int)_itemList.size()) ? _itemList[idx] : 0;
 
 			if (objectIdx == objIndex) {
@@ -394,6 +476,32 @@ void UIElements::updateInvList() {
 		if (invObject->inInventory())
 			_itemList.push_back(itemIndex);
 	}
+}
+
+/**
+ * Set the game score
+ */
+void UIElements::addScore(int amount) {
+	_scoreValue += amount;
+	BF_GLOBALS._sound2.play(0);
+	updateInventory();
+}
+
+/*
+ * Scroll the inventory slots
+ */
+void UIElements::scrollInventory(bool isLeft) {
+	if (isLeft)
+		--_slotStart;
+	else
+		++_slotStart;
+
+	updateInventory();
+}
+
+void UIElements::loadNotifierProc(bool postFlag) {
+	if (postFlag && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.show();
 }
 
 } // End of namespace BlueForce

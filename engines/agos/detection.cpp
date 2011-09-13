@@ -83,7 +83,7 @@ static const PlainGameDescriptor agosGames[] = {
 
 #include "agos/detection_tables.h"
 
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"execute", // Used by Simon1 Acorn CD
 	0
 };

@@ -2287,7 +2287,7 @@ void Actor::setActorCostume(int c) {
 	}
 }
 
-static const char* v0ActorNames_English[25] = {
+static const char *const v0ActorNames_English[25] = {
 	"Syd",
 	"Razor",
 	"Dave",
@@ -2313,7 +2313,7 @@ static const char* v0ActorNames_English[25] = {
 	"Sandy"
 };
 
-static const char* v0ActorNames_German[25] = {
+static const char *const v0ActorNames_German[25] = {
 	"Syd",
 	"Razor",
 	"Dave",

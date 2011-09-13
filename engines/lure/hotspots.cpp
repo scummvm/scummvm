@@ -1673,6 +1673,12 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 	faceHotspot(hotspot);
 	endAction();
 
+	// WORKAROUND: Fix crash when talking when an ask conversation is active
+	if (_data->talkDestCharacterId != 0) {
+		// Don't allow the talk to start
+		return;
+	}
+
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TALK_TO);
 	if (sequenceOffset >= 0x8000) {
 		showMessage(sequenceOffset);
