@@ -87,6 +87,7 @@ struct HitRect {
 	uint16 messageNum;
 	
 	void load(uint32 offset) {
+		printf("Loading HitRect @ %08X...\n", offset);
 		byte *item = getData(offset);
 		x1 = READ_LE_UINT16(item + 0);
 		y1 = READ_LE_UINT16(item + 2);
@@ -116,6 +117,7 @@ struct MessageItem {
 	MessageItem(uint16 msgNum, uint32 msgParam) : messageNum(msgNum), messageParam(msgParam) {}
 	
 	void load(uint32 offset) {
+		printf("Loading MessageItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		messageNum = READ_LE_UINT16(item + 0);
 		messageParam = READ_LE_UINT32(item + 4);
@@ -138,6 +140,7 @@ struct SubRectItem {
 	uint32 messageListOffset;
 
 	void load(uint32 offset) {
+		printf("Loading SubRectItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		x1 = READ_LE_UINT16(item + 0);
 		y1 = READ_LE_UINT16(item + 2);
@@ -170,6 +173,7 @@ struct RectItem {
 	std::vector<SubRectItem> subRectItems;
 
 	void load(uint32 offset) {
+		printf("Loading RectItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		uint32 subItemOffset;
 		x1 = READ_LE_UINT16(item + 0);
@@ -213,6 +217,7 @@ struct NavigationItem {
 	uint32 mouseCursorFileHash;
 	
 	void load(uint32 offset) {
+		printf("Loading NavigationItem @ %08X...\n", offset);
 		byte *item = getData(offset);
 		fileHash = READ_LE_UINT32(item + 0); 
 		leftSmackerFileHash = READ_LE_UINT32(item + 4);
@@ -240,6 +245,7 @@ struct NavigationItem {
 };
 
 struct SceneInfo140Item {
+	uint32 id;
 	uint32 bgFilename1;
 	uint32 bgFilename2;
 	uint32 txFilename;
@@ -249,6 +255,7 @@ struct SceneInfo140Item {
 
 	void load(uint32 offset) {
 		byte *item = getData(offset);
+		id = offset;
 		// Only save the hashes instead of the full names
 		bgFilename1 = calcHash(getStringP(READ_LE_UINT32(item + 0)));
 		bgFilename2 = calcHash(getStringP(READ_LE_UINT32(item + 4)));
@@ -259,6 +266,7 @@ struct SceneInfo140Item {
 	}
 
 	void save(FILE *fd) {
+		writeUint32LE(fd, id);
 		writeUint32LE(fd, bgFilename1);
 		writeUint32LE(fd, bgFilename2);
 		writeUint32LE(fd, txFilename);
@@ -353,6 +361,30 @@ public:
 			add(MessageItem(0x100D, 0x42845B19));
 			add(MessageItem(0x4805, 1));
 			return true;
+		// Scene 1302 rings
+		case 0x004B0888:
+			add(MessageItem(0x4800, 218));
+			add(MessageItem(0x100D, 0x4A845A00));
+			add(MessageItem(0x4805, 1));
+			return true;
+		case 0x004B08A0:
+			add(MessageItem(0x4800, 218 + 32));
+			add(MessageItem(0x100D, 0x43807801));
+			return true;
+		case 0x004B08B0:
+			add(MessageItem(0x4800, 218 + 32 + 32));
+			add(MessageItem(0x100D, 0x46C26A01));
+			add(MessageItem(0x4805, 1));
+			return true;
+		case 0x004B08C8:
+			add(MessageItem(0x4800, 218 + 32 + 32 + 32));
+			add(MessageItem(0x100D, 0x468C7B11));
+			return true;
+		case 0x004B08D8:
+			add(MessageItem(0x4800, 218 + 32 + 32 + 32 + 32));
+			add(MessageItem(0x100D, 0x42845B19));
+			add(MessageItem(0x4805, 4));
+			return true;
 		}
 		return false;
 	}
@@ -360,7 +392,6 @@ public:
 };
 
 class NavigationList : public StaticDataList<NavigationItem> {
-
 };
 
 template<class LISTCLASS>

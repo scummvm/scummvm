@@ -27,6 +27,8 @@ static const uint32 hitRectListOffsets[] = {
 	1, 0x004B4138,
 	// Scene1201
 	4, 0x004AEBD0,
+	// Scene1302
+	1, 0x004B0858,
 	// Scene1705
 	1, 0x004B69D8,
 	// Scene2203
@@ -51,6 +53,8 @@ static const uint32 rectListOffsets[] = {
 	1, 0x004AEDC8,
 	1, 0x004AEE18,
 	1, 0x004AED88,
+	// Scene1302
+	2, 0x004B0A38,
 	// Scene1401
 	1, 0x004B6758,
 	// Scene1402
@@ -78,6 +82,12 @@ static const uint32 rectListOffsets[] = {
 	// Scene2242
 	1, 0x004B3DC8,
 	1, 0x004B3E18,
+	// HallOfRecordsScene
+	1, 0x004B2BF8,
+	1, 0x004B2BB8,
+	// Scene2247
+	1, 0x004B5588,
+	1, 0x004B55C8,
 	0, 0
 };
 
@@ -123,6 +133,18 @@ static const uint32 messageListOffsets[] = {
 	2, 0x004AECD0,
 	2, 0x004AECE0,
 	2, 0x004AED38,
+	// Scene1302
+	4, 0x004B08F0,
+	3, 0x004B0920,
+	1, 0x004B0950,
+	2, 0x004B0940,
+	1, 0x004B0938,
+	2, 0x004B0910,
+	1, 0x004B0968,
+	2, 0x004B0878,
+	4, 0x004B0978,
+	1, 0x004B0870,
+	1, 0x004B0868,
 	// Scene1401
 	1, 0x004B65C8,
 	1, 0x004B65D0,
@@ -235,10 +257,45 @@ static const uint32 messageListOffsets[] = {
 	5, 0x004B3D20,
 	4, 0x004B3CB8,
 	4, 0x004B3CD8,
+	// HallOfRecordsScene
+	1, 0x004B2900,
+	2, 0x004B2910,
+	1, 0x004B2B70,
+	1, 0x004B2908,
+	2, 0x004B2920,
+	4, 0x004B2978,
+	4, 0x004B2998,
+	4, 0x004B29B8,
+	4, 0x004B29D8,
+	4, 0x004B29F8,
+	4, 0x004B2A18,
+	4, 0x004B2A38,
+	5, 0x004B2A58,
+	5, 0x004B2A80,
+	5, 0x004B2AA8,
+	5, 0x004B2AD0,
+	5, 0x004B2AF8,
+	5, 0x004B2B20,
+	5, 0x004B2B48,
+	// Scene2247
+	1, 0x004B5428,
+	2, 0x004B5438,
+	1, 0x004B5530,
+	1, 0x004B5430,
+	4, 0x004B54A0,
+	4, 0x004B54C0,
+	5, 0x004B54E0,
+	5, 0x004B5508,
 	0, 0
 };
 
 static const uint32 navigationListOffsets[] = {
+	// Module1300
+	6, 0x004B2718,
+	2, 0x004B27A8,
+	2, 0x004B27D8,
+	2, 0x004B2808,
+	2, 0x004B2838,
 	// Module1700
 	2, 0x004AE8B8,
 	3, 0x004AE8E8,
