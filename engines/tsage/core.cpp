@@ -1423,8 +1423,12 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 		}
 	}
 
+	Rect tempRect = bounds;
+	if (_vm->getGameID() == GType_BlueForce)
+		tempRect.setHeight(BF_GLOBALS._interfaceY);
+	
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
-		bounds, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), NULL);
+		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
 		delete *i;

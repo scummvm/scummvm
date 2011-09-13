@@ -224,7 +224,7 @@ void BlueForceGlobals::reset() {
 	_driveFromScene = 300;
 	_driveToScene = 0;
 
-	_interfaceY = 0;
+	_interfaceY = BF_INTERFACE_Y;
 	_v51C44 = 1;
 	_dayNumber = 0;
 	_v4CEA4 = 0;
