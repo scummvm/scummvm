@@ -183,7 +183,7 @@ EobCoreEngine::~EobCoreEngine() {
 	delete[] _itemTypes;
 	if (_itemNames) {
 		for (int i = 0; i < 130; i++)
-			delete _itemNames[i];
+			delete[] _itemNames[i];
 	}
 	delete[] _itemNames;
 	delete[] _flyingObjects;
@@ -218,6 +218,9 @@ EobCoreEngine::~EobCoreEngine() {
 
 	delete _gui;
 	_gui = 0;
+	delete _screen;
+	_screen = 0;
+
 	delete[] _menuDefs;
 	_menuDefs = 0;
 
@@ -227,6 +230,8 @@ EobCoreEngine::~EobCoreEngine() {
 	_timer = 0;
 	delete _debugger;
 	_debugger = 0;
+	delete _txt;
+	_txt = 0;
 }
 
 Common::Error EobCoreEngine::init() {
@@ -672,6 +677,8 @@ void EobCoreEngine::releaseItemsAndDecorationsShapes() {
 		delete []_firebeamShapes;
 	}
 
+	delete[] _redSplatShape;
+	delete[] _greenSplatShape;
 	delete[] _deadCharShape;
 	delete[] _disabledCharGrid;
 	delete[] _blackBoxSmallGrid;
@@ -1214,18 +1221,15 @@ void EobCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
 	gui_drawCharPortraitWithStats(charIndex);
 }
 
-void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char *str1, ...) {
+void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char *str1, va_list &args) {
 	_dialogueNumButtons = numStr;
 	_dialogueButtonString[0] = str1;
 	_dialogueHighlightedButton = 0;
 
-	va_list args;
-	va_start(args, str1);
-	const char **sp = va_arg(args, const char**);
-	va_end(args);
 	for (int i = 1; i < numStr; i++) {
-		if (sp[i - 1])
-			_dialogueButtonString[i] = sp[i - 1];
+		const char *tmp = va_arg(args, const char*);
+		if (tmp)
+			_dialogueButtonString[i] = tmp;
 		else
 			_dialogueNumButtons = numStr = i;
 	}

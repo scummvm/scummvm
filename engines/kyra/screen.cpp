@@ -848,7 +848,8 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
-	memcpy(dst, src, SCREEN_W * SCREEN_H);
+	if (src != dst)
+		memcpy(dst, src, SCREEN_W * SCREEN_H);
 	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
 
 	if (dstPage == 0 || dstPage == 1)

@@ -149,9 +149,6 @@ LolEobBaseEngine::~LolEobBaseEngine() {
 	delete[] _levelDecorationData;
 	delete[] _levelDecorationProperties;
 	delete[] _levelBlockProperties;
-
-	delete _txt;
-	_txt = 0;
 }
 
 Common::Error LolEobBaseEngine::init() {

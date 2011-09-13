@@ -1092,18 +1092,22 @@ void EobCoreEngine::drawSceneShapes(int start) {
 }
 
 void EobCoreEngine::drawDecorations(int index) {
-	static const int16 *dscWalls[] =  { 0, 0, &_sceneDrawVarDown, &_sceneDrawVarRight, &_sceneDrawVarDown,
-		&_sceneDrawVarRight, &_sceneDrawVarDown, 0, &_sceneDrawVarDown, &_sceneDrawVarLeft, &_sceneDrawVarDown,
-		&_sceneDrawVarLeft,	0, 0, &_sceneDrawVarDown, &_sceneDrawVarRight, &_sceneDrawVarDown, &_sceneDrawVarRight,
-		&_sceneDrawVarDown,	0, &_sceneDrawVarDown, &_sceneDrawVarLeft, &_sceneDrawVarDown, &_sceneDrawVarLeft,
-		&_sceneDrawVarDown,	&_sceneDrawVarRight, &_sceneDrawVarDown, 0, &_sceneDrawVarDown, &_sceneDrawVarLeft,
-		0, &_sceneDrawVarRight,	&_sceneDrawVarDown, 0, 0, &_sceneDrawVarLeft
+	static const int16 *dscWalls[] =  { 
+		0,					0,						&_sceneDrawVarDown, &_sceneDrawVarRight,
+		&_sceneDrawVarDown,	&_sceneDrawVarRight,	&_sceneDrawVarDown, 0,
+		&_sceneDrawVarDown, &_sceneDrawVarLeft,		&_sceneDrawVarDown,	&_sceneDrawVarLeft,
+		0,					0,						&_sceneDrawVarDown, &_sceneDrawVarRight,
+		&_sceneDrawVarDown, &_sceneDrawVarRight,	&_sceneDrawVarDown,	0,
+		&_sceneDrawVarDown, &_sceneDrawVarLeft,		&_sceneDrawVarDown, &_sceneDrawVarLeft,
+		&_sceneDrawVarDown,	&_sceneDrawVarRight,	&_sceneDrawVarDown, 0,
+		&_sceneDrawVarDown, &_sceneDrawVarLeft,		0,					&_sceneDrawVarRight,
+		&_sceneDrawVarDown, 0,						0,					&_sceneDrawVarLeft
 	};
 
 	for (int i = 1; i >= 0; i--) {
 		int s = index * 2 + i;
 		if (dscWalls[s]) {
-			int d = *dscWalls[s];
+			int16 d = *dscWalls[s];
 			int8 l = _wllShapeMap[_visibleBlocks[index]->walls[d]];
 
 			uint8 *shapeData = 0;
