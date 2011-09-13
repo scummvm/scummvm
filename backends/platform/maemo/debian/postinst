@@ -1,4 +1,10 @@
 #! /bin/sh
+
+# This is a workaround for older maemo versions related to the icon.
+# The /usr/share/icons/scummvm.xpm icon is needed for OS2006 (Nokia 770)
+# but if present it overrides nicer icons for newer systems in /usr/share/icons/hicolor.
+# This workaround removes it if the OS isn't old (2006/2007).
+
 if [ "$1" = "configure"  ] ; then
 OSVER=$OSSO_VERSION
 [ -z "$OSVER" -a -f /etc/osso_software_version ] && OSVER=`cat /etc/osso_software_version`
