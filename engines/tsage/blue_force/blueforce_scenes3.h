@@ -243,6 +243,26 @@ public:
 	virtual void signal();
 };
 
+class Scene330: public SceneExt {
+	class Timer1: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	NamedObject _object1;
+	SceneObject _object2;
+	ASoundExt _sound1, _sound2;
+	Timer1 _timer;
+	int _seqNumber;
+
+	Scene330();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

@@ -1440,6 +1440,129 @@ void Scene325::signal() {
 	BF_GLOBALS._events.setCursor(CURSOR_EXIT);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 330 - Approaching Marina
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene330::Timer1::signal() {
+	PaletteRotation *rotation = BF_GLOBALS._scenePalette.addRotation(240, 254, 1);
+	rotation->setDelay(25);
+	remove();
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene330::Scene330() {
+	_seqNumber = 0;
+}
+
+void Scene330::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_seqNumber);
+}
+
+void Scene330::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	BF_GLOBALS._sound1.changeSound(35);
+	_sound1.fadeSound(35);
+
+	loadScene(850);
+	_timer.set(2, NULL);
+
+	if (BF_GLOBALS._dayNumber >= 4) {
+		_object2.postInit();
+		_object2.setVisage(851);
+		_object2.setPosition(Common::Point(120, 112));
+	}
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 850 : 852);
+	BF_GLOBALS._player.setStrip(2);
+	BF_GLOBALS._player.setFrame(1);
+	BF_GLOBALS._player.hide();
+	if (BF_GLOBALS.getFlag(fWithLyle))
+		BF_GLOBALS._player.setStrip(5);
+
+	if ((BF_GLOBALS._dayNumber == 1) && BF_GLOBALS.getFlag(fBackupArrived340)) {
+		_object1.postInit();
+		_object1.setVisage(850);
+		_object1.setStrip(6);
+		_object1.setFrame(1);
+		_object1.setPosition(Common::Point(47, 169));
+		_object1.animate(ANIM_MODE_2);
+	}
+
+	if (BF_GLOBALS._sceneManager._previousScene == 50) {
+		// Coming from map
+		if ((BF_GLOBALS._driveFromScene == 340) || (BF_GLOBALS._driveFromScene == 342) ||
+				(BF_GLOBALS._driveFromScene == 330)) {
+			if (BF_GLOBALS.getFlag(fWithLyle)) {
+				_seqNumber = 3304;
+			} else {
+				_seqNumber = 3302;
+				_sound2.play(123);
+				BF_GLOBALS.setFlag(onBike);
+			}
+		} else if (BF_GLOBALS.getFlag(fWithLyle)) {
+			_seqNumber = 3303;
+		} else {
+			_sound2.play(123);
+			_seqNumber = 3301;
+
+			if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark >= bStartOfGame) &&
+					(BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
+				BF_GLOBALS._player.animate(ANIM_MODE_2);
+			}
+		}
+	} else if (BF_GLOBALS.getFlag(fWithLyle)) {
+		_seqNumber = 3303;
+	} else {
+		_seqNumber = 3301;
+		_sound2.play(123);
+
+		if ((BF_GLOBALS._dayNumber == 1) && (BF_GLOBALS._bookmark >= bStartOfGame) &&
+				(BF_GLOBALS._bookmark < bCalledToDomesticViolence)) {
+			BF_GLOBALS._player.animate(ANIM_MODE_2);
+		}
+	}
+
+	BF_GLOBALS._player.disableControl();
+	_sceneMode = 0;
+	setAction(&_sequenceManager, this, _seqNumber, &BF_GLOBALS._player, NULL);
+}
+
+void Scene330::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+void Scene330::signal() {
+	if ((BF_GLOBALS._driveFromScene == 330) || (BF_GLOBALS._driveFromScene == 340) ||
+			(BF_GLOBALS._driveFromScene == 342)) {
+		// Leaving marina
+		if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
+				(BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
+			// Leave scene normally
+			BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._driveToScene);
+		else {
+			// Player leaves with domestic violence unresolved
+			BF_GLOBALS._player.hide();
+			BF_GLOBALS._deathReason = 4;
+			BF_GLOBALS._sceneManager.changeScene(666);
+		}
+	} else {
+		// Arriving at marina
+		BF_GLOBALS.clearFlag(onBike);
+
+		if ((BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
+				(BF_GLOBALS._bookmark >= bCalledToDomesticViolence))
+			BF_GLOBALS._sceneManager.changeScene(342);
+		else
+			BF_GLOBALS._sceneManager.changeScene(340);
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
