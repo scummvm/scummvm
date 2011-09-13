@@ -36,50 +36,9 @@
 namespace CGE {
 
 /*-----------------------------------------------------------------------
- * IOHand
- *-----------------------------------------------------------------------*/
-IoHand::IoHand() : _error(0) {
-	_file = new Common::File();
-}
-
-IoHand::IoHand(const char *name) : _error(0) {
-	_file = new Common::File();
-	_file->open(name);
-}
-
-IoHand::~IoHand() {
-	_file->close();
-	delete _file;
-}
-
-uint16 IoHand::read(void *buf, uint16 len) {
-	if (!_file->isOpen())
-		return 0;
-
-	uint16 bytesRead = _file->read(buf, len);
-	if (!bytesRead)
-		error("Read %s - %d bytes", _file->getName(), len);
-	XCrypt(buf, len);
-	return bytesRead;
-}
-
-long IoHand::mark() {
-	return _file->pos();
-}
-
-long IoHand::seek(long pos) {
-	_file->seek(pos, SEEK_SET);
-	return _file->pos();
-}
-
-long IoHand::size() {
-	return _file->size();
-}
-
-/*-----------------------------------------------------------------------
  * BtPage
  *-----------------------------------------------------------------------*/
-void BtPage::read(Common::ReadStream &s) {
+void BtPage::readBTree(Common::ReadStream &s) {
 	_header._count = s.readUint16LE();
 	_header._down = s.readUint16LE();
 
@@ -87,7 +46,7 @@ void BtPage::read(Common::ReadStream &s) {
 		// Leaf list
 		for (int i = 0; i < kBtLeafCount; ++i) {
 			s.read(_leaf[i]._key, kBtKeySize);
-			_leaf[i]._mark = s.readUint32LE();
+			_leaf[i]._pos = s.readUint32LE();
 			_leaf[i]._size = s.readUint16LE();
 		}
 	} else {
@@ -100,56 +59,94 @@ void BtPage::read(Common::ReadStream &s) {
 }
 
 /*-----------------------------------------------------------------------
- * BtFile
+ * ResourceManager
  *-----------------------------------------------------------------------*/
-BtFile::BtFile(const char *name) : IoHand(name) {
-	debugC(1, kCGEDebugFile, "BtFile::BtFile(%s)", name);
+ResourceManager::ResourceManager() {
+	debugC(1, kCGEDebugFile, "ResourceManager::ResourceManager()");
+
+	_datFile = new Common::File();
+	_datFile->open(kDatName);
+
+	_catFile = new Common::File();
+	_catFile->open(kCatName);
+
+	if ((!_datFile) || (!_catFile))
+		error("Unable to open data files");
 
 	for (int i = 0; i < kBtLevel; i++) {
 		_buff[i]._page = new BtPage;
-		_buff[i]._pgNo = kBtValNone;
-		_buff[i]._indx = -1;
+		_buff[i]._pageNo = kBtValNone;
+		_buff[i]._index = -1;
 		assert(_buff[i]._page != NULL);
 	}
 }
 
-BtFile::~BtFile() {
-	debugC(1, kCGEDebugFile, "BtFile::~BtFile()");
+ResourceManager::~ResourceManager() {
+	debugC(1, kCGEDebugFile, "ResourceManager::~ResourceManager()");
+	_datFile->close();
+	delete _datFile;
+
+	_catFile->close();
+	delete _catFile;
+
 	for (int i = 0; i < kBtLevel; i++)
 		delete _buff[i]._page;
 }
 
-BtPage *BtFile::getPage(int lev, uint16 pgn) {
-	debugC(1, kCGEDebugFile, "BtFile::getPage(%d, %d)", lev, pgn);
+uint16 ResourceManager::XCrypt(void *buf, uint16 length) {
+	byte *b = static_cast<byte *>(buf);
 
-	if (_buff[lev]._pgNo != pgn) {
-		int32 pos = pgn * kBtSize;
-		_buff[lev]._pgNo = pgn;
-		assert(size() > pos);
+	for (uint16 i = 0; i < length; i++)
+		*b++ ^= kCryptSeed;
+	
+	return kCryptSeed;
+}
+
+bool ResourceManager::seek(int32 offs, int whence) {
+	return _datFile->seek(offs, whence);
+}
+
+uint16 ResourceManager::read(void *buf, uint16 length) {
+	if (!_datFile->isOpen())
+		return 0;
+
+	uint16 bytesRead = _datFile->read(buf, length);
+	if (!bytesRead)
+		error("Read %s - %d bytes", _datFile->getName(), length);
+	XCrypt(buf, length);
+	return bytesRead;
+}
+
+BtPage *ResourceManager::getPage(int level, uint16 pageId) {
+	debugC(1, kCGEDebugFile, "IoHand::getPage(%d, %d)", level, pageId);
+
+	if (_buff[level]._pageNo != pageId) {
+		int32 pos = pageId * kBtSize;
+		_buff[level]._pageNo = pageId;
+		assert(_catFile->size() > pos);
 		// In the original, there was a check verifying if the
 		// purpose was to write a new file. This should only be
 		// to create a new file, thus it was removed.
-		seek((uint32) pgn * kBtSize);
+		_catFile->seek(pageId * kBtSize, SEEK_SET);
 
 		// Read in the page
 		byte buffer[kBtSize];
-		int bytesRead = read(buffer, kBtSize);
+		int bytesRead = catRead(buffer, kBtSize);
 
 		// Unpack it into the page structure
 		Common::MemoryReadStream stream(buffer, bytesRead, DisposeAfterUse::NO);
-		_buff[lev]._page->read(stream);
-
-		_buff[lev]._indx = -1;
+		_buff[level]._page->readBTree(stream);
+		_buff[level]._index = -1;
 	}
-	return _buff[lev]._page;
+	return _buff[level]._page;
 }
 
-BtKeypack *BtFile::find(const char *key) {
-	debugC(1, kCGEDebugFile, "BtFile::find(%s)", key);
+BtKeypack *ResourceManager::find(const char *key) {
+	debugC(1, kCGEDebugFile, "IoHand::find(%s)", key);
 
 	int lev = 0;
 	uint16 nxt = kBtValRoot;
-	while (!_error) {
+	while (!_catFile->eos()) {
 		BtPage *pg = getPage(lev, nxt);
 		// search
 		if (pg->_header._down != kBtValNone) {
@@ -160,7 +157,7 @@ BtKeypack *BtFile::find(const char *key) {
 					break;
 			}
 			nxt = (i) ? pg->_inner[i - 1]._down : pg->_header._down;
-			_buff[lev]._indx = i - 1;
+			_buff[lev]._index = i - 1;
 			lev++;
 		} else {
 			int i;
@@ -168,17 +165,28 @@ BtKeypack *BtFile::find(const char *key) {
 				if (scumm_stricmp((const char *)key, (const char *)pg->_leaf[i]._key) <= 0)
 					break;
 			}
-			_buff[lev]._indx = i;
+			_buff[lev]._index = i;
 			return &pg->_leaf[i];
 		}
 	}
 	return NULL;
 }
 
-bool BtFile::exist(const char *name) {
-	debugC(1, kCGEDebugFile, "BtFile::exist(%s)", name);
+bool ResourceManager::exist(const char *name) {
+	debugC(1, kCGEDebugFile, "ResourceManager::exist(%s)", name);
 
 	return scumm_stricmp(find(name)->_key, name) == 0;
+}
+
+uint16 ResourceManager::catRead(void *buf, uint16 length) {
+	if (!_catFile->isOpen())
+		return 0;
+
+	uint16 bytesRead = _catFile->read(buf, length);
+	if (!bytesRead)
+		error("Read %s - %d bytes", _catFile->getName(), length);
+	XCrypt(buf, length);
+	return bytesRead;
 }
 
 /*-----------------------------------------------------------------------
@@ -188,16 +196,13 @@ EncryptedStream::EncryptedStream(const char *name) {
 	debugC(3, kCGEDebugFile, "EncryptedStream::EncryptedStream(%s)", name);
 
 	_error = false;
-	if (_dat->_error || _cat->_error)
-		error("Bad volume data");
-	BtKeypack *kp = _cat->find(name);
+	BtKeypack *kp = _resman->find(name);
 	if (scumm_stricmp(kp->_key, name) != 0)
 		_error = true;
 
-	_dat->_file->seek(kp->_mark);
+	_resman->seek(kp->_pos);
 	byte *dataBuffer = (byte *)malloc(kp->_size);
-	_dat->_file->read(dataBuffer, kp->_size);
-	XCrypt(dataBuffer, kp->_size);
+	_resman->read(dataBuffer, kp->_size);
 	_readStream = new Common::MemoryReadStream(dataBuffer, kp->_size, DisposeAfterUse::YES);
 }
 

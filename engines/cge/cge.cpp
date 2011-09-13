@@ -79,8 +79,7 @@ void CGEEngine::init() {
 	_miniShp = NULL;
 	_miniShpList = NULL;
 	_sprite = NULL;
-	_dat = new IoHand(kDatName);
-	_cat = new BtFile(kCatName);
+	_resman = new ResourceManager();
 
 	// Create debugger console
 	_console = new CGEConsole(this);
@@ -172,8 +171,7 @@ void CGEEngine::deinit() {
 	delete _snail;
 	delete _snail_;
 	delete _hero;
-	delete _dat;
-	delete _cat;
+	delete _resman;
 
 	if (_miniShpList) {
 		for (int i = 0; _miniShpList[i]; ++i)

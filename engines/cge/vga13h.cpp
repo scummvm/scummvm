@@ -226,7 +226,7 @@ Sprite *Sprite::expand() {
 	Snail::Com *nearList = NULL;
 	Snail::Com *takeList = NULL;
 	mergeExt(fname, _file, kSprExt);
-	if (_cat->exist(fname)) { // sprite description file exist
+	if (_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(fname);
 		if (sprf.err())
 			error("Bad SPR [%s]", fname);

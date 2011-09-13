@@ -49,7 +49,7 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
-	if (_cat->exist(pat)) {
+	if (_resman->exist(pat)) {
 		EncryptedStream file(pat);
 		if (file.err())
 			error("Unable to find VBM [%s]", fname);
