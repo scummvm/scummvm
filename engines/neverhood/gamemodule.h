@@ -55,6 +55,8 @@ protected:
 	void updateModule1000();
 	void createModule1200(int which);
 	void updateModule1200();
+	void createModule1300(int which);
+	void updateModule1300();
 	void createModule1400(int which);
 	void updateModule1400();
 	void createModule1500(int which);

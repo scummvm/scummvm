@@ -1045,7 +1045,7 @@ AsScene1002VenusFlyTrap::AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *par
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448000);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 
-	if (!flag) {
+	if (!_flag) {
 		if (getGlobalVar(0x8306F218)) {
 			setDoDeltaX(1);
 			_x = 366;
@@ -1110,7 +1110,7 @@ uint32 AsScene1002VenusFlyTrap::handleMessage448000(int messageNum, const Messag
 		break;
 	case 0x480B:
 		setDoDeltaX(param.asInteger() != 0 ? 1 : 0);
-		if (_flag) {
+		if (!_flag) {
 			if (getGlobalVar(0x8306F218)) {
 				sub448560();
 			} else {
@@ -1143,7 +1143,6 @@ uint32 AsScene1002VenusFlyTrap::handleMessage448000(int messageNum, const Messag
 		}
 		break;
 	case 0x4810:
-	debug("trap collision");
 		sub448780();
 		break;
 	case 0x482A:

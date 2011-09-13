@@ -25,6 +25,7 @@
 #include "neverhood/graphics.h"
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
+#include "neverhood/module1300.h"
 #include "neverhood/module1400.h"
 #include "neverhood/module1500.h"
 #include "neverhood/module1700.h"
@@ -241,9 +242,13 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule2000(-1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 46;
 	createModule2200(-1);
+#endif
+#if 1
+	_vm->gameState().sceneNum = 1;
+	createModule1300(-1);
 #endif
 }
 
@@ -287,6 +292,30 @@ void GameModule::updateModule1200() {
 			// TODO _childObject->handleUpdate();
 		} else {
 			createModule2300(2);
+			_childObject->handleUpdate();
+		}
+	}
+}
+
+void GameModule::createModule1300(int which) {
+	setGlobalVar(0x91080831, 0x0061C090);
+	_childObject = new Module1300(_vm, this, which);
+	SetUpdateHandler(&GameModule::updateModule1300);
+}
+
+void GameModule::updateModule1300() {
+	if (!_childObject)
+		return;
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 1) {
+			// TODO _gameState.clear();
+			// TODO GameModule_handleKeyEscape
+		} else {
+			// TODO createModule2900(0);
 			_childObject->handleUpdate();
 		}
 	}
