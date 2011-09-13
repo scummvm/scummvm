@@ -367,7 +367,7 @@ void AmmoBeltDialog::draw() {
 
 /*--------------------------------------------------------------------------*/
 
-RadioConvDialog::RadioConvDialog() : ModalDialog() {
+RadioConvDialog::RadioConvDialog() : GfxDialog() {
 	int idx;
 
 	// Set up the list of buttons
@@ -400,7 +400,7 @@ RadioConvDialog::~RadioConvDialog() {
 }
 
 int RadioConvDialog::execute() {
-	GfxButton *btn = ModalDialog::execute();
+	GfxButton *btn = GfxDialog::execute();
 
 	// Get which button was pressed
 	int btnIndex = -1;

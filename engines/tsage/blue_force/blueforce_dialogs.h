@@ -74,7 +74,7 @@ public:
 	void execute();
 };
 
-class RadioConvDialog : public ModalDialog {
+class RadioConvDialog : public GfxDialog {
 private:
 	GfxButton _buttons[8];
 public:
