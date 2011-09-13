@@ -296,7 +296,6 @@ void CGEEngine::resetGame() {
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	caveDown();
 	_oldLev = _lev;
-	saveSound();
 
 	// Write out the user's progress
 	saveGame(slot, desc);
@@ -305,10 +304,6 @@ Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	caveUp();
 
 	return Common::kNoError;
-}
-
-void CGEEngine::saveSound() {
-	warning("STUB: CGEEngine::saveSound");
 }
 
 void CGEEngine::saveGame(int slotNumber, const Common::String &desc) {
@@ -698,7 +693,6 @@ void CGEEngine::qGame() {
 
 	caveDown();
 	_oldLev = _lev;
-	saveSound();
 
 	// Write out the user's progress
 	saveGame(0, Common::String("Automatic Savegame"));

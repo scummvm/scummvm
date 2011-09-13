@@ -196,7 +196,6 @@ public:
 	void pocFul();
 	void hide1(Sprite *spr);
 	void loadMapping();
-	void saveSound();
 	void heroCover(int cvr);
 	void trouble(int seq, int text);
 	void offUse();
