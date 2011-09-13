@@ -2892,6 +2892,92 @@ void KmScene1201::sub40E040() {
 	}
 }
 
+KmScene1303::KmScene1303(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+	// Empty
+}
+
+uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4804:
+		setCallback2(AnimationCallback(&KmScene1303::sub4161D0));
+		break;
+	case 0x483B:
+		setCallback2(AnimationCallback(&KmScene1303::sub4162B0));
+		break;
+	case 0x483C:
+		setCallback2(AnimationCallback(&KmScene1303::sub416210));
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene1303::handleMessage4160A0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == calcHash("PopBalloon")) {
+			_parentScene->sendMessage(0x2000, 0, this);
+		} else if (param.asInteger() == 0x02B20220) {
+			_soundResource1.play(0xC5408620);
+		} else if (param.asInteger() == 0x0A720138) {
+			_soundResource1.play(0xD4C08010);
+		} else if (param.asInteger() == 0xB613A180) {
+			_soundResource1.play(0x44051000);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1303::update4161A0() {
+	Klayman::update();
+	_counter3++;
+	if (_counter3 >= _counter3Max)
+		sub416250();
+}
+
+void KmScene1303::sub4161D0() {
+	_status2 = 0;
+	_flagE5 = true;
+	setFileHash(0xAC20C012, 8, 37);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetAnimationCallback3(&KmScene1303::sub416250);
+}
+
+void KmScene1303::sub416210() {
+	_status2 = 1;
+	_flagE5 = false;
+	setFileHash(0xAC20C012, 43, 49);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+}
+
+void KmScene1303::sub416250() {
+	_counter3 = 0;
+	_status2 = 0;
+	_flagE5 = true;
+	_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
+	setFileHash(0xAC20C012, 38, 42);
+	SetUpdateHandler(&KmScene1303::update4161A0);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&Klayman::handleMessage41D360);
+	_newHashListIndex = 42;
+}
+
+void KmScene1303::sub4162B0() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0x2426932E, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene1303::handleMessage4160A0);
+}
+
 // KmScene1401
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)

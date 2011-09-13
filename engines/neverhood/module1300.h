@@ -127,6 +127,26 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class AsScene1303Balloon : public AnimatedSprite {
+public:
+	AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender);
+	void stPopBalloon();
+};
+
+class Scene1303 : public Scene {
+public:
+	Scene1303(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_sprite1;
+	Sprite *_asBalloon;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1300_H */

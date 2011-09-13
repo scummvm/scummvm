@@ -155,6 +155,11 @@ void Module1300::createScene1302(int which) {
 }
 			
 void Module1300::createScene1303(int which) {
+	_vm->gameState().sceneNum = 2;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	_childObject = new Scene1303(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1303);
 }
 			
 void Module1300::createScene1304(int which) {
@@ -243,6 +248,14 @@ void Module1300::updateScene1302() {
 }
 
 void Module1300::updateScene1303() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1306(3);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1304() {
@@ -659,6 +672,102 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
+}
+
+AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
+	: AnimatedSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene) {
+	
+	// TODO createSurface3(200, dword_4AF9F8);
+	createSurface(200, 640, 480); //TODO: Remeove once the line above is done
+	_x = 289;
+	_y = 390;
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1303Balloon::handleMessage);
+	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	setFileHash(0x800278D2, 0, -1);
+}
+
+uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x2000:
+		stPopBalloon();
+		break;
+	}
+	return messageResult;
+}
+
+uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x020B0003) {
+			_soundResource.play(0x742B0055);
+		} 
+		break;
+	case 0x3002:
+		_soundResource.play(0x470007EE);
+		setFileHash1();
+		SetMessageHandler(NULL);
+		_surface->setVisible(false);
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1303Balloon::stPopBalloon() {
+	setFileHash(0xAC004CD0, 0, -1);
+	SetMessageHandler(&AsScene1303Balloon::hmBalloonPopped);
+}
+
+Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1303::handleMessage);
+	setRectList(0x004AF9E8);
+	
+	_background = addBackground(new DirtyBackground(_vm, 0x01581A9C, 0, 0));
+	_palette = new Palette(_vm, 0x01581A9C);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x81A9801D, NULL));
+
+	if (!getGlobalVar(0xAC00C0D0)) {
+		_asBalloon = addSprite(new AsScene1303Balloon(_vm, this));
+		_vm->_collisionMan->addSprite(_asBalloon);
+	}
+	
+	_sprite1 = addSprite(new StaticSprite(_vm, 0xA014216B, 1100));
+
+	_klayman = new KmScene1303(_vm, this, 207, 332);
+	addSprite(_klayman);
+	setMessageList(0x004AF9A0);
+
+	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+
+}
+
+uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		setGlobalVar(0xAC00C0D0, 1);
+		_asBalloon->sendMessage(0x2000, 0, this);
+		break;
+	case 0x4826:
+		if (sender == _asBalloon && getGlobalVar(0x31C63C51)) {
+			setMessageList(0x004AF9B8);
+		}
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood
