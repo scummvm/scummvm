@@ -201,7 +201,7 @@ void Scene800::Action1::signal() {
 		scene->_object6.setFrame(2);
 		scene->_object6.setPosition(Common::Point(58, 135));
 		scene->_object6.fixPriority(170);
-		scene->_object6.animate(ANIM_MODE_5, this);
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
 	case 4:
 		BF_GLOBALS._player.setVisage(352);
