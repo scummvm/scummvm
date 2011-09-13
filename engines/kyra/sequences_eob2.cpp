@@ -951,7 +951,7 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	delete _palettes[11];
 
 	for (int i = 0; i < 30; i++)
-		delete _shapes[i];
+		delete[] _shapes[i];
 	delete[] _shapes;
 
 	_screen->clearCurPage();

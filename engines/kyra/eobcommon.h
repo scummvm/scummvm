@@ -757,7 +757,7 @@ protected:
 	bool _configHpBarGraphs;
 
 	// text
-	void setupDialogueButtons(int presetfirst, int numStr, const char *str1, ...);
+	void setupDialogueButtons(int presetfirst, int numStr, const char *str1, va_list &args);
 	void initDialogueSequence();
 	void restoreAfterDialogueSequence();
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);

@@ -200,6 +200,7 @@ int LoLEngine::assignLevelDecorationShapes(int index) {
 		if (pv) {
 			_levelDecorationProperties[o].shapeIndex[i] = pv;
 		} else {
+			releaseDecorations(_lvlShapeIndex, 1);
 			_levelDecorationShapes[_lvlShapeIndex] = getLevelDecorationShapes(t);
 			p1[t] = _lvlShapeIndex;
 			_levelDecorationProperties[o].shapeIndex[i] = _lvlShapeIndex++;
@@ -230,6 +231,13 @@ uint8 *LoLEngine::getLevelDecorationShapes(int shapeIndex) {
 	_lvlShpFileHandle->read(res, size);
 
 	return res;
+}
+
+void LoLEngine::releaseDecorations(int first, int num) {
+	for (int i = first; i < (first + num); i++) {
+		delete[] _levelDecorationShapes[i];
+		_levelDecorationShapes[i] = 0;
+	}
 }
 
 void LoLEngine::loadBlockProperties(const char *cmzFile) {

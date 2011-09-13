@@ -915,6 +915,7 @@ private:
 	void assignBlockObject(LevelBlockProperty *l, uint16 item);
 	int assignLevelDecorationShapes(int index);
 	uint8 *getLevelDecorationShapes(int index);
+	void releaseDecorations(int first = 0, int num = 400);
 	void restoreTempDataAdjustMonsterStrength(int index);
 	void loadBlockProperties(const char *cmzFile);
 	const uint8 *getBlockFileData(int levelIndex);

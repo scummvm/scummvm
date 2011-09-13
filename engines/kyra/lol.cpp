@@ -225,6 +225,8 @@ LoLEngine::~LoLEngine() {
 	_gui = 0;
 	delete _tim;
 	_tim = 0;
+	delete _txt;
+	_txt = 0;
 
 	delete[] _itemsInPlay;
 	delete[] _itemProperties;
@@ -297,6 +299,8 @@ LoLEngine::~LoLEngine() {
 		delete[] _doorShapes[i];
 		_doorShapes[i] = 0;
 	}
+
+	releaseDecorations();
 
 	delete[] _automapShapes;
 

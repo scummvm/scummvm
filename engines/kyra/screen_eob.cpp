@@ -46,6 +46,7 @@ Screen_Eob::Screen_Eob(EobCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 	_gfxCol = 0;
 	_customDimTable = 0;
 	_dsTempPage = 0;
+	_curDimIndex = 0;
 }
 
 Screen_Eob::~Screen_Eob() {
@@ -266,7 +267,7 @@ uint8 *Screen_Eob::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool no4b
 		uint8 *colorMap = new uint8[0x100];
 		memset (colorMap, 0xff, 0x100);
 
-		shapesize = h * (w << 2) + 0x14;
+		shapesize = h * (w << 2) + 20;
 		shp = new uint8[shapesize];
 		memset (shp, 0, shapesize);
 		uint8 *dst = shp;
@@ -673,14 +674,13 @@ const uint8 *Screen_Eob::scaleShapeStep(const uint8 *shp) {
 		i = -i;
 
 	_dsScaleTmp = (i << 4) | (i & 0x0f);
-	memcpy(d, shp, 16);
-	d += 16;
-	shp += 16;
+	for (int ii = 0; ii < 16; ii++)
+		*d++ = *shp++;
 
 	_dsDiv = w2 / 3;
 	_dsRem = w2 % 3;
 
-	do {
+	while (--h) {
 		scaleShapeProcessLine(d, shp);
 		if (!--h)
 			break;
@@ -688,7 +688,7 @@ const uint8 *Screen_Eob::scaleShapeStep(const uint8 *shp) {
 		if (!--h)
 			break;
 		shp += w2;
-	} while (--h);
+	}
 
 	return (const uint8 *) _dsTempPage;
 }
@@ -1100,15 +1100,14 @@ void Screen_Eob::drawShapeSetPixel(uint8 * dst, uint8 c) {
 void Screen_Eob::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
 	for (int i = 0; i < _dsDiv; i++) {
 		*dst++ = *src++;
-		*dst++ = READ_BE_UINT16(src) >> 4;
+		*dst++ = (READ_BE_UINT16(src) >> 4) & 0xff;
 		src += 2;
 	}
 
 	if (_dsRem == 1) {
 		*dst++ = *src++;
 		*dst++ = _dsScaleTmp;
-
-	} if (_dsRem == 2) {
+	} else if (_dsRem == 2) {
 		*dst++ = (src[0] & 0xf0) | (src[1] >> 4);
 		src += 2;
 		*dst++ = _dsScaleTmp;

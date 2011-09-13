@@ -893,6 +893,7 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 
 	_screen = engine->_screen;
 
+	delete _animator;
 	_animator = new TimAnimator(engine, screen_v2, system, true);
 
 	_drawPage2 = 0;
