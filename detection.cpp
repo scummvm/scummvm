@@ -121,7 +121,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		Common::GUIO_NONE
 	},
-
+	
+	// The Longest Journey
+	// Norwegian DLC-edition (DVD?)
+	{
+		"tlj", "DVD", {
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
+			{"chapters.ini", 0, "f358f604abd1aa1476ed05d6d271ac70", 473},
+			{NULL, 0, NULL, 0}
+		},
+		Common::NB_NOR,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		Common::GUIO_NONE
+	},
+	
 	// The Longest Journey
 	// Spanish 4CD
 	{
@@ -173,7 +187,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
-	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(gameDescriptions), starkGames) {
+	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames) {
 		_singleid = "stark";
 		_guioptions = Common::GUIO_NOMIDI;
 	}
