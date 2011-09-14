@@ -29,6 +29,8 @@
 #include "gob/decfile.h"
 #include "gob/anifile.h"
 
+#include "gob/sound/sound.h"
+
 #include "gob/minigames/geisha/evilfish.h"
 #include "gob/minigames/geisha/diving.h"
 
@@ -149,11 +151,21 @@ void Diving::init() {
 		_anims.push_back(_evilFish[i]);
 	_anims.push_back(_lungs);
 	_anims.push_back(_heart);
+
+	_vm->_sound->sampleLoad(&_soundShoot     , SOUND_SND, "tirgim.snd");
+	_vm->_sound->sampleLoad(&_soundBreathe   , SOUND_SND, "respir.snd");
+	_vm->_sound->sampleLoad(&_soundWhitePearl, SOUND_SND, "virtou.snd");
+	_vm->_sound->sampleLoad(&_soundBlackPearl, SOUND_SND, "trouve.snd");
 }
 
 void Diving::deinit() {
 	_vm->_draw->_cursorHotspotX = -1;
 	_vm->_draw->_cursorHotspotY = -1;
+
+	_soundShoot.free();
+	_soundBreathe.free();
+	_soundWhitePearl.free();
+	_soundBlackPearl.free();
 
 	_anims.clear();
 
@@ -308,6 +320,8 @@ void Diving::shoot(int16 mouseX, int16 mouseY) {
 	_activeShots.push_back(_currentShot);
 
 	_currentShot = (_currentShot + 1) % kMaxShotCount;
+
+	_vm->_sound->blasterPlay(&_soundShoot, 1, 0);
 }
 
 void Diving::checkShots() {

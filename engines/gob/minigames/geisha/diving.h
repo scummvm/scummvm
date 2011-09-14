@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+#include "gob/sound/sounddesc.h"
+
 namespace Gob {
 
 class GobEngine;
@@ -76,6 +78,12 @@ private:
 	uint8 _blackPearlCount;
 
 	uint8 _currentShot;
+
+	SoundDesc _soundShoot;
+	SoundDesc _soundBreathe;
+	SoundDesc _soundWhitePearl;
+	SoundDesc _soundBlackPearl;
+
 
 	void init();
 	void deinit();
