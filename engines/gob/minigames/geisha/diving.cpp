@@ -36,6 +36,15 @@ namespace Gob {
 
 namespace Geisha {
 
+static const int kEvilFishTypeCount = 3;
+
+static const int kEvilFishTypes[kEvilFishTypeCount][5] = {
+	{ 0, 14,  8,  9, 3}, // Shark
+	{15,  1, 12, 13, 3}, // Moray
+	{16,  2, 10, 11, 3}  // Ray
+};
+
+
 Diving::Diving(GobEngine *vm) : _vm(vm), _background(0),
 	_objects(0), _gui(0), _oko(0), _lungs(0), _heart(0),
 	_blackPearl(0), _whitePearlCount(0), _blackPearlCount(0) {
@@ -113,9 +122,8 @@ void Diving::init() {
 	_heart->setVisible(true);
 	_heart->setPause(true);
 
-	_evilFish[0] = new EvilFish(*_objects, 320,  0, 14,  8,  9, 3); // Shark
-	_evilFish[1] = new EvilFish(*_objects, 320, 15,  1, 12, 13, 3); // Moray
-	_evilFish[2] = new EvilFish(*_objects, 320, 16,  2, 10, 11, 3); // Ray
+	for (uint i = 0; i < kEvilFishCount; i++)
+		_evilFish[i] = new EvilFish(*_objects, 320, 0, 0, 0, 0, 0);
 
 	for (uint i = 0; i < kMaxShotCount; i++) {
 		_shot[i] = new ANIObject(*_objects);
@@ -220,6 +228,11 @@ void Diving::evilFishEnter() {
 
 		if (fish.isVisible())
 			continue;
+
+		int fishType = _vm->_util->getRandom(kEvilFishTypeCount);
+		fish.mutate(kEvilFishTypes[fishType][0], kEvilFishTypes[fishType][1],
+		            kEvilFishTypes[fishType][2], kEvilFishTypes[fishType][3],
+		            kEvilFishTypes[fishType][4]);
 
 		fish.enter((EvilFish::Direction)_vm->_util->getRandom(2), 90 + i * 20);
 	}
