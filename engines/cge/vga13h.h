@@ -88,7 +88,7 @@ protected:
 	SprExt *_ext;
 public:
 	int _ref;
-	signed char _cave;
+	signed char _scene;
 	struct Flags {
 		uint16 _hide : 1;       // general visibility switch
 		uint16 _near : 1;       // Near action lock
@@ -220,9 +220,9 @@ public:
 	HorizLine(CGEEngine *vm);
 };
 
-class CavLight: public Sprite {
+class SceneLight: public Sprite {
 public:
-	CavLight(CGEEngine *vm);
+	SceneLight(CGEEngine *vm);
 };
 
 class Spike: public Sprite {

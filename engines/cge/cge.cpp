@@ -38,7 +38,7 @@
 
 namespace CGE {
 
-const int CGEEngine::_maxCaveArr[5] = {1, 8, 16, 23, 24};
+const int CGEEngine::_maxSceneArr[5] = {1, 8, 16, 23, 24};
 
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
@@ -55,13 +55,13 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 
 }
 
-void CGEEngine::initCaveValues() {
-	for (int i = 0; i < kCaveMax; i++) {
+void CGEEngine::initSceneValues() {
+	for (int i = 0; i < kSceneMax; i++) {
 		_heroXY[i].x = 0;
 		_heroXY[i].y = 0;
 	}
 
-	for (int i = 0; i < kCaveMax + 1; i++) {
+	for (int i = 0; i < kSceneMax + 1; i++) {
 		_barriers[i]._horz = 0xFF;
 		_barriers[i]._vert = 0xFF;
 	}
@@ -75,7 +75,7 @@ void CGEEngine::init() {
 	_lastTick = 0;
 	_hero = NULL;
 	_shadow = NULL;
-	_miniCave = NULL;
+	_miniScene = NULL;
 	_miniShp = NULL;
 	_miniShpList = NULL;
 	_sprite = NULL;
@@ -98,7 +98,7 @@ void CGEEngine::init() {
 		_pocket[i] = NULL;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
-	_cavLight = new CavLight(this);
+	_sceneLight = new SceneLight(this);
 	_debugLine = new InfoLine(this, kScrWidth);
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
@@ -117,9 +117,9 @@ void CGEEngine::init() {
 	_volume[0] = 0;
 	_volume[1] = 0;
 
-	initCaveValues();
+	initSceneValues();
 
-	_maxCave    =  0;
+	_maxScene   =  0;
 	_dark       = false;
 	_game       = false;
 	_finis      = false;
@@ -155,11 +155,11 @@ void CGEEngine::deinit() {
 	delete _vga;
 	delete _sys;
 	delete _sprite;
-	delete _miniCave;
+	delete _miniScene;
 	delete _shadow;
 	delete _horzLine;
 	delete _infoLine;
-	delete _cavLight;
+	delete _sceneLight;
 	delete _debugLine;
 	delete _text;
 	delete _pocLight;

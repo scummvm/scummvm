@@ -34,10 +34,10 @@
 
 namespace CGE {
 
-#define kCaveX         4
-#define kCaveY         166
-#define kCaveSX        0
-#define kCaveSY        0
+#define kSceneX        4
+#define kSceneY        166
+#define kSceneSX       0
+#define kSceneSY       0
 #define kInfoX         177
 #define kInfoY         164
 #define kInfoW         140
@@ -121,11 +121,11 @@ extern Mouse *_mouse;
 extern EventManager *_eventManager;
 extern Sprite *_pocket[];
 extern Sprite *_sprite;
-extern Sprite *_miniCave;
+extern Sprite *_miniScene;
 extern Sprite *_shadow;
 extern HorizLine *_horzLine;
 extern InfoLine *_infoLine;
-extern Sprite *_cavLight;
+extern SceneLight *_sceneLight;
 extern InfoLine *_debugLine;
 extern Snail *_snail;
 extern Snail *_snail_;

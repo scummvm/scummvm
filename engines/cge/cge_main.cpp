@@ -60,11 +60,11 @@ Keyboard *_keyboard;
 Mouse *_mouse;
 Sprite *_pocket[kPocketNX];
 Sprite *_sprite;
-Sprite *_miniCave;
+Sprite *_miniScene;
 Sprite *_shadow;
 HorizLine *_horzLine;
 InfoLine *_infoLine;
-Sprite *_cavLight;
+SceneLight *_sceneLight;
 InfoLine *_debugLine;
 
 Snail *_snail;
@@ -73,14 +73,6 @@ Snail *_snail_;
 Fx *_fx;
 Sound *_sound;
 ResourceManager *_resman;
-
-// 0.75 - 17II95  - full sound support
-// 0.76 - 18II95  - small MiniEMS in DEMO,
-//		    unhide CavLight in SNLEVEL
-//		    keyclick suppress in startup
-//		    keyclick on key service in: SYSTEM, GET_TEXT
-// 1.01 - 17VII95 - default savegame with sound ON
-//		    coditionals EVA for 2-month evaluation version
 
 const char *savegameStr = "SCUMMVM_CGE";
 
@@ -164,15 +156,15 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 		s.syncAsUint16LE(_flag[i]);
 
 	if (s.isLoading()) {
-		// Reset cave values
-		initCaveValues();
+		// Reset scene values
+		initSceneValues();
 	}
 
-	for (i = 0; i < kCaveMax; i++) {
+	for (i = 0; i < kSceneMax; i++) {
 		s.syncAsSint16LE(_heroXY[i].x);
 		s.syncAsUint16LE(_heroXY[i].y);
 	}
-	for (i = 0; i < 1 + kCaveMax; i++) {
+	for (i = 0; i < 1 + kSceneMax; i++) {
 		s.syncAsByte(_barriers[i]._horz);
 		s.syncAsByte(_barriers[i]._vert);
 	}
@@ -276,15 +268,15 @@ Common::String CGEEngine::generateSaveName(int slot) {
 
 Common::Error CGEEngine::loadGameState(int slot) {
 	// Clear current game activity
-	caveDown();
+	sceneDown();
 	resetGame();
 
 	// Load the game
 	loadGame(slot, NULL);
-	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
-	                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
-	caveUp();
+	_snail->addCom(kSnLevel, -1, _oldLev, &_sceneLight);
+	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
+	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
+	sceneUp();
 
 	return Common::kNoError;
 }
@@ -294,14 +286,14 @@ void CGEEngine::resetGame() {
 }
 
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
-	caveDown();
+	sceneDown();
 	_oldLev = _lev;
 
 	// Write out the user's progress
 	saveGame(slot, desc);
 
 	// Reload the scene
-	caveUp();
+	sceneUp();
 
 	return Common::kNoError;
 }
@@ -476,7 +468,7 @@ void CGEEngine::loadHeroXY() {
 
 	memset(_heroXY, 0, sizeof(_heroXY));
 	if (!cf.err()) {
-		for (int i = 0; i < kCaveMax; ++i) {
+		for (int i = 0; i < kSceneMax; ++i) {
 			cf.read((byte *)&x, 2);
 			cf.read((byte *)&y, 2);
 
@@ -489,7 +481,7 @@ void CGEEngine::loadHeroXY() {
 void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
-	if (_now <= kCaveMax) {
+	if (_now <= kSceneMax) {
 		EncryptedStream cf("CGE.TAB");
 		if (!cf.err()) {
 			// Move to the data for the given room
@@ -575,17 +567,17 @@ void CGEEngine::miniStep(int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::miniStep(%d)", stp);
 
 	if (stp < 0) {
-		_miniCave->_flags._hide = true;
+		_miniScene->_flags._hide = true;
 	} else {
 		*_miniShp[0] = *_miniShpList[stp];
-		_miniCave->_flags._hide = false;
+		_miniScene->_flags._hide = false;
 	}
 }
 
 void CGEEngine::postMiniStep(int step) {
 	debugC(6, kCGEDebugEngine, "CGEEngine::postMiniStep(%d)", step);
 
-	if (_miniCave && step != _recentStep)
+	if (_miniScene && step != _recentStep)
 		_snail_->addCom2(kSnExec, -1, _recentStep = step, kMiniStep);
 }
 
@@ -605,8 +597,8 @@ void CGEEngine::showBak(int ref) {
 	spr->contract();
 }
 
-void CGEEngine::caveUp() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::caveUp()");
+void CGEEngine::sceneUp() {
+	debugC(1, kCGEDebugEngine, "CGEEngine::sceneUp()");
 
 	const int BakRef = 1000 * _now;
 	if (_music)
@@ -617,7 +609,7 @@ void CGEEngine::caveUp() {
 	Sprite *spr = _vga->_spareQ->first();
 	while (spr) {
 		Sprite *n = spr->_next;
-		if (spr->_cave == _now || spr->_cave == 0)
+		if (spr->_scene == _now || spr->_scene == 0)
 			if (spr->_ref != BakRef) {
 				if (spr->_flags._back)
 					spr->backShow();
@@ -664,15 +656,15 @@ void CGEEngine::caveUp() {
 		_mouse->on();
 }
 
-void CGEEngine::caveDown() {
-	debugC(1, kCGEDebugEngine, "CGEEngine::caveDown()");
+void CGEEngine::sceneDown() {
+	debugC(1, kCGEDebugEngine, "CGEEngine::sceneDown()");
 
 	if (_horzLine && !_horzLine->_flags._hide)
 		switchMapping();
 
 	for (Sprite *spr = _vga->_showQ->first(); spr;) {
 		Sprite *n = spr->_next;
-		if (spr->_ref >= 1000 /*&& spr->_cave*/) {
+		if (spr->_ref >= 1000 /*&& spr->_scene*/) {
 			if (spr->_ref % 1000 == 999)
 				feedSnail(spr, kTake);
 			_vga->_spareQ->append(_vga->_showQ->remove(spr));
@@ -681,17 +673,17 @@ void CGEEngine::caveDown() {
 	}
 }
 
-void CGEEngine::xCave() {
-	debugC(6, kCGEDebugEngine, "CGEEngine::xCave()");
+void CGEEngine::xScene() {
+	debugC(6, kCGEDebugEngine, "CGEEngine::xScene()");
 
-	caveDown();
-	caveUp();
+	sceneDown();
+	sceneUp();
 }
 
 void CGEEngine::qGame() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::qGame()");
 
-	caveDown();
+	sceneDown();
 	_oldLev = _lev;
 
 	// Write out the user's progress
@@ -701,30 +693,30 @@ void CGEEngine::qGame() {
 	_finis = true;
 }
 
-void CGEEngine::switchCave(int cav) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::switchCave(%d)", cav);
+void CGEEngine::switchScene(int newScene) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::switchScene(%d)", newScene);
 
-	if (cav == _now)
+	if (newScene == _now)
 		return;
 
-	if (cav < 0) {
+	if (newScene < 0) {
 		_snail->addCom(kSnLabel, -1, 0, NULL);  // wait for repaint
-		_snail->addCom2(kSnExec,  -1, 0, kQGame); // switch cave
+		_snail->addCom2(kSnExec,  -1, 0, kQGame); // switch scene
 	} else {
-		_now = cav;
+		_now = newScene;
 		_mouse->off();
 		if (_hero) {
 			_hero->park();
 			_hero->step(0);
 			_vga->_spareQ->_show = 0;
 		}
-		_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
-		                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
+		_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
+		                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 		killText();
 		if (!_startupMode)
 			keyClick();
 		_snail->addCom(kSnLabel, -1, 0, NULL);  // wait for repaint
-		_snail->addCom2(kSnExec,   0, 0, kXCave); // switch cave
+		_snail->addCom2(kSnExec,  0, 0, kXScene); // switch scene
 	}
 }
 
@@ -778,17 +770,17 @@ void System::touch(uint16 mask, int x, int y) {
 	} else {
 		if (_vm->_startupMode)
 			return;
-		int cav = 0;
+		int selectedScene = 0;
 		_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
-			if (x < kButtonX) {                           // select cave?
-				if (y >= kCaveY && y < kCaveY + kCaveNy * kCaveDy &&
-				    x >= kCaveX && x < kCaveX + kCaveNx * kCaveDx && !_vm->_game) {
-					cav = ((y - kCaveY) / kCaveDy) * kCaveNx + (x - kCaveX) / kCaveDx + 1;
-					if (cav > _vm->_maxCave)
-						cav = 0;
+			if (x < kButtonX) {                           // select scene?
+				if (y >= kSceneY && y < kSceneY + kSceneNy * kSceneDy &&
+				    x >= kSceneX && x < kSceneX + kSceneNx * kSceneDx && !_vm->_game) {
+					selectedScene = ((y - kSceneY) / kSceneDy) * kSceneNx + (x - kSceneX) / kSceneDx + 1;
+					if (selectedScene > _vm->_maxScene)
+						selectedScene = 0;
 				} else {
-					cav = 0;
+					selectedScene = 0;
 				}
 			} else if (mask & kMouseLeftUp) {
 				if (y >= kPocketY && y < kPocketY + kPocketNY * kPocketDY &&
@@ -799,11 +791,11 @@ void System::touch(uint16 mask, int x, int y) {
 			}
 		}
 
-		_vm->postMiniStep(cav - 1);
+		_vm->postMiniStep(selectedScene - 1);
 
 		if (mask & kMouseLeftUp) {
-			if (cav && _snail->idle() && _hero->_tracePtr < 0)
-				_vm->switchCave(cav);
+			if (selectedScene && _snail->idle() && _hero->_tracePtr < 0)
+				_vm->switchScene(selectedScene);
 
 			if (_horzLine && !_horzLine->_flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
@@ -870,8 +862,7 @@ void CGEEngine::switchMusic() {
 void CGEEngine::startCountDown() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::startCountDown()");
 
-	//SNPOST(SNSEQ, 123, 0, NULL);
-	switchCave(-1);
+	switchScene(-1);
 }
 
 void CGEEngine::switchMapping() {
@@ -1002,7 +993,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 	}
 }
 
-void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int row = 0, int pos = 0) {
+void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, int row = 0, int pos = 0) {
 	static const char *Comd[] = { "Name", "Type", "Phase", "East",
 	                              "Left", "Right", "Top", "Bottom",
 	                              "Seq", "Near", "Take",
@@ -1110,7 +1101,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int cav, int col = 0, int
 
 	if (_sprite) {
 		_sprite->_ref = ref;
-		_sprite->_cave = cav;
+		_sprite->_scene = scene;
 		_sprite->_z = pos;
 		_sprite->_flags._east = east;
 		_sprite->_flags._port = port;
@@ -1161,7 +1152,7 @@ void CGEEngine::loadScript(const char *fname) {
 		if ((SpN = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 
-		// sprite cave
+		// sprite scene
 		if ((p = strtok(NULL, " ,;/\t\n")) == NULL)
 			break;
 		int SpA = atoi(p);
@@ -1267,9 +1258,9 @@ void CGEEngine::runGame() {
 
 	loadHeroXY();
 
-	_cavLight->_flags._tran = true;
-	_vga->_showQ->append(_cavLight);
-	_cavLight->_flags._hide = true;
+	_sceneLight->_flags._tran = true;
+	_vga->_showQ->append(_sceneLight);
+	_sceneLight->_flags._hide = true;
 
 	const Seq pocSeq[] = {
 		{ 0, 0, 0, 0, 20 },
@@ -1309,12 +1300,12 @@ void CGEEngine::runGame() {
 		_miniShp[0] = _miniShp[1] = NULL;
 
 		loadSprite("MINI", -1, 0, kMiniX, kMiniY);
-		expandSprite(_miniCave = _sprite);  // NULL is ok
-		if (_miniCave) {
-			_miniCave->_flags._kill = false;
-			_miniCave->_flags._hide = true;
-			_miniShp[0] = new Bitmap(*_miniCave->shp());
-			_miniShpList = _miniCave->setShapeList(_miniShp);
+		expandSprite(_miniScene = _sprite);  // NULL is ok
+		if (_miniScene) {
+			_miniScene->_flags._kill = false;
+			_miniScene->_flags._hide = true;
+			_miniShp[0] = new Bitmap(*_miniScene->shp());
+			_miniShpList = _miniScene->setShapeList(_miniShp);
 			postMiniStep(-1);
 		}
 	}
@@ -1355,10 +1346,10 @@ void CGEEngine::runGame() {
 
 	_startupMode = 0;
 
-	_snail->addCom(kSnLevel, -1, _oldLev, &_cavLight);
-	_cavLight->gotoxy(kCaveX + ((_now - 1) % kCaveNx) * kCaveDx + kCaveSX,
-	                  kCaveY + ((_now - 1) / kCaveNx) * kCaveDy + kCaveSY);
-	caveUp();
+	_snail->addCom(kSnLevel, -1, _oldLev, &_sceneLight);
+	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
+	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
+	sceneUp();
 
 	_keyboard->setClient(_sys);
 	// main loop

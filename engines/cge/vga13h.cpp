@@ -72,7 +72,7 @@ Sprite *locate(int ref) {
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
-	  _ext(NULL), _ref(-1), _cave(0), _vm(vm) {
+	  _ext(NULL), _ref(-1), _scene(0), _vm(vm) {
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
 	_ref = 0;
@@ -496,7 +496,7 @@ void Sprite::sync(Common::Serializer &s) {
 	s.syncAsUint16LE(unused);
 	s.syncAsUint16LE(unused);	// _ext
 	s.syncAsUint16LE(_ref);
-	s.syncAsByte(_cave);
+	s.syncAsByte(_scene);
 
 	// bitfield in-memory storage is unpredictable, so to avoid
 	// any issues, pack/unpack everything manually
@@ -944,17 +944,6 @@ void Bitmap::show(int16 x, int16 y) {
 				srcP++;
 		}
 	}
-/*
-	DEBUG code to display image immediately
-	// Temporary
-	g_system->copyRectToScreen((const byte *)VGA::Page[1]->getBasePtr(0, 0), SCR_WID, 0, 0, SCR_WID, SCR_HIG);
-	byte palData[PAL_SIZ];
-	VGA::DAC2pal(VGA::SysPal, palData);
-	g_system->getPaletteManager()->setPalette(palData, 0, PAL_CNT);
-
-	g_system->updateScreen();
-	g_system->delayMillis(5000);
-*/
 }
 
 
@@ -980,7 +969,7 @@ HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
 	setShapeList(HL);
 }
 
-CavLight::CavLight(CGEEngine *vm): Sprite(vm, NULL) {
+SceneLight::SceneLight(CGEEngine *vm): Sprite(vm, NULL) {
 	// Set the sprite list
 	BitmapPtr *PR = new BitmapPtr[2];
 	PR[0] = new Bitmap("PRESS");

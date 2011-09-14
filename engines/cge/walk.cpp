@@ -212,7 +212,7 @@ void Walk::noWay() {
 }
 
 bool Cluster::chkBar() const {
-	assert(_vm->_now <= kCaveMax);
+	assert(_vm->_now <= kSceneMax);
 	return (_pt.x == _vm->_barriers[_vm->_now]._horz) || (_pt.y == _vm->_barriers[_vm->_now]._vert);
 }
 

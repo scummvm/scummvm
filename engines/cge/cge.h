@@ -52,11 +52,11 @@ class Sprite;
 #define kPocketNY   1
 #define kPocketSX   8
 #define kPocketSY   3
-#define kCaveDx     9
-#define kCaveDy     10
-#define kCaveNx     8
-#define kCaveNy     3
-#define kCaveMax    kCaveNx * kCaveNy
+#define kSceneDx    9
+#define kSceneDy    10
+#define kSceneNx    8
+#define kSceneNy    3
+#define kSceneMax   kSceneNx * kSceneNy
 
 
 // our engine debug channels
@@ -71,7 +71,7 @@ enum SnList {
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kMiniStep, kXCave, kSndSetVolume
+	kNullCB = 0, kQGame, kMiniStep, kXScene, kSndSetVolume
 };
 
 struct SavegameHeader {
@@ -108,7 +108,7 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
-	static const int _maxCaveArr[5];
+	static const int _maxSceneArr[5];
 
 	const   ADGameDescription *_gameDescription;
 	int    _startupMode;
@@ -118,7 +118,7 @@ public:
 	bool   _music;
 	int    _pocref[kPocketNX];
 	uint8  _volume[2];
-	int    _maxCave;
+	int    _maxScene;
 	bool   _flag[4];
 	bool   _dark;
 	bool   _game;
@@ -135,8 +135,8 @@ public:
 	Sprite *_sprK2;
 	Sprite *_sprK3;
 
-	Common::Point _heroXY[kCaveMax];
-	Bar _barriers[kCaveMax];
+	Common::Point _heroXY[kSceneMax];
+	Bar _barriers[kSceneMax];
 
 	Common::RandomSource _randomSource;
 	MusicPlayer _midiPlayer;
@@ -150,7 +150,7 @@ public:
 	}
 
 	void cge_main();
-	void switchCave(int cav);
+	void switchScene(int newScene);
 	void startCountDown();
 	void quit();
 	void resetQSwitch();
@@ -159,7 +159,7 @@ public:
 	bool loadGame(int slotNumber, SavegameHeader *header = NULL, bool tiny = false);
 	void setMapBrick(int x, int z);
 	void switchMapping();
-	void loadSprite(const char *fname, int ref, int cav, int col, int row, int pos);
+	void loadSprite(const char *fname, int ref, int scene, int col, int row, int pos);
 	void loadScript(const char *fname);
 	void loadUser();
 	void runGame();
@@ -170,9 +170,9 @@ public:
 	void dummy() {}
 	void NONE();
 	void SB();
-	void caveDown();
-	void caveUp();
-	void xCave();
+	void sceneDown();
+	void sceneUp();
+	void xScene();
 	void qGame();
 	void SBM();
 	void GUS();
@@ -208,11 +208,11 @@ public:
 	void miniStep(int stp);
 	void postMiniStep(int stp);
 	void showBak(int ref);
-	void initCaveValues();
+	void initSceneValues();
 
 	void snBackPt(Sprite *spr, int stp);
-	void snHBarrier(const int cave, const int barX);
-	void snVBarrier(const int cave, const int barY);
+	void snHBarrier(const int scene, const int barX);
+	void snVBarrier(const int scene, const int barY);
 	void snCover(Sprite *spr, int xref);
 	void snFlag(int indx, bool v);
 	void snFlash(bool on);
@@ -240,10 +240,10 @@ public:
 	void snSeq(Sprite *spr, int val);
 	void snSetRef(Sprite *spr, int nr);
 	void snSetX(Sprite *spr, int x);
-	void snSetX0(int cav, int x0);
+	void snSetX0(int scene, int x0);
 	void snSetXY(Sprite *spr, uint16 xy);
 	void snSetY(Sprite *spr, int y);
-	void snSetY0(int cav, int y0);
+	void snSetY0(int scene, int y0);
 	void snSetZ(Sprite *spr, int z);
 	void snSlave(Sprite *spr, int ref);
 	void snSound(Sprite *spr, int wav);

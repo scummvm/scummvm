@@ -549,10 +549,10 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 	if (!spr)
 		return;
 
-	int was = spr->_cave;
+	int was = spr->_scene;
 	bool was1 = (was == 0 || was == _now);
 	bool val1 = (val == 0 || val == _now);
-	spr->_cave = val;
+	spr->_scene = val;
 	if (val1 != was1) {
 		if (was1) {
 			if (spr->_flags._kept) {
@@ -582,12 +582,12 @@ void CGEEngine::snSwap(Sprite *spr, int xref) {
 	if (!spr || !xspr)
 		return;
 
-	int was = spr->_cave;
-	int xwas = xspr->_cave;
+	int was = spr->_scene;
+	int xwas = xspr->_scene;
 	bool was1 = (was == 0 || was == _now);
 	bool xwas1 = (xwas == 0 || xwas == _now);
 
-	SWAP(spr->_cave, xspr->_cave);
+	SWAP(spr->_scene, xspr->_scene);
 	SWAP(spr->_x, xspr->_x);
 	SWAP(spr->_y, xspr->_y);
 	SWAP(spr->_z, xspr->_z);
@@ -621,7 +621,7 @@ void CGEEngine::snCover(Sprite *spr, int xref) {
 
 	spr->_flags._hide = true;
 	xspr->_z = spr->_z;
-	xspr->_cave = spr->_cave;
+	xspr->_scene = spr->_scene;
 	xspr->gotoxy(spr->_x, spr->_y);
 	expandSprite(xspr);
 	if ((xspr->_flags._shad = spr->_flags._shad) == 1) {
@@ -638,7 +638,7 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 		return;
 
 	spr->_flags._hide = false;
-	spr->_cave = xspr->_cave;
+	spr->_scene = xspr->_scene;
 	spr->gotoxy(xspr->_x, xspr->_y);
 	if ((spr->_flags._shad = xspr->_flags._shad) == 1) {
 		_vga->_showQ->insert(_vga->_showQ->remove(xspr->_prev), spr);
@@ -650,16 +650,16 @@ void CGEEngine::snUncover(Sprite *spr, Sprite *xspr) {
 		spr->_time++;
 }
 
-void CGEEngine::snSetX0(int cav, int x0) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snSetX0(%d, %d)", cav, x0);
+void CGEEngine::snSetX0(int scene, int x0) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetX0(%d, %d)", scene, x0);
 
-	_heroXY[cav - 1].x = x0;
+	_heroXY[scene - 1].x = x0;
 }
 
-void CGEEngine::snSetY0(int cav, int y0) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snSetY0(%d, %d)", cav, y0);
+void CGEEngine::snSetY0(int scene, int y0) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snSetY0(%d, %d)", scene, y0);
 
-	_heroXY[cav - 1].y = y0;
+	_heroXY[scene - 1].y = y0;
 }
 
 void CGEEngine::snSetXY(Sprite *spr, uint16 xy) {
@@ -722,7 +722,7 @@ void CGEEngine::snSlave(Sprite *spr, int ref) {
 	Sprite *slv = locate(ref);
 	if (spr && slv) {
 		if (spr->active()) {
-			snSend(slv, spr->_cave);
+			snSend(slv, spr->_scene);
 			slv->_flags._slav = true;
 			slv->_z = spr->_z;
 			_vga->_showQ->insert(_vga->_showQ->remove(slv), spr->_next);
@@ -762,7 +762,7 @@ void CGEEngine::snKill(Sprite *spr) {
 	if (spr->_flags._kill) {
 		delete spr;
 	} else {
-		spr->_cave = -1;
+		spr->_scene = -1;
 		_vga->_spareQ->append(spr);
 	}
 	if (nx) {
@@ -792,7 +792,7 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 		snSound(spr, 3);
 		_sound->setRepeat(oldRepeat);
 		_pocket[_pocPtr] = spr;
-		spr->_cave = 0;
+		spr->_scene = 0;
 		spr->_flags._kept = true;
 		spr->gotoxy(kPocketX + kPocketDX * _pocPtr + kPocketDX / 2 - spr->_w / 2,
 		          kPocketY + kPocketDY / 2 - spr->_h / 2);
@@ -809,7 +809,7 @@ void CGEEngine::snGive(Sprite *spr, int stp) {
 		int p = findPocket(spr);
 		if (p >= 0) {
 			_pocket[p] = NULL;
-			spr->_cave = _now;
+			spr->_scene = _now;
 			spr->_flags._kept = false;
 			if (stp >= 0)
 				spr->step(stp);
@@ -838,11 +838,11 @@ void CGEEngine::snLevel(Sprite *spr, int lev) {
 		if (spr) {
 			if (i <= lev) {
 				spr->backShow(true);
-				spr->_cave = 0;
+				spr->_scene = 0;
 				spr->_flags._hide = false;
 			} else {
 				spr->_flags._hide = true;
-				spr->_cave = -1;
+				spr->_scene = -1;
 			}
 		} else {
 			warning("SPR not found! ref: %d", 100 + i);
@@ -850,7 +850,7 @@ void CGEEngine::snLevel(Sprite *spr, int lev) {
 	}
 
 	_lev = lev;
-	_maxCave = _maxCaveArr[_lev];
+	_maxScene = _maxSceneArr[_lev];
 }
 
 void CGEEngine::snFlag(int indx, bool v) {
@@ -897,16 +897,16 @@ void CGEEngine::snLight(bool in) {
 	_dark = !in;
 }
 
-void CGEEngine::snHBarrier(const int cave, const int barX) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snHBarrier(%d, %d)", cave, barX);
+void CGEEngine::snHBarrier(const int scene, const int barX) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snHBarrier(%d, %d)", scene, barX);
 
-	_barriers[(cave > 0) ? cave : _now]._horz = barX;
+	_barriers[(scene > 0) ? scene : _now]._horz = barX;
 }
 
-void CGEEngine::snVBarrier(const int cave, const int barY) {
-	debugC(1, kCGEDebugEngine, "CGEEngine::snVBarrier(%d, %d)", cave, barY);
+void CGEEngine::snVBarrier(const int scene, const int barY) {
+	debugC(1, kCGEDebugEngine, "CGEEngine::snVBarrier(%d, %d)", scene, barY);
 
-	_barriers[(cave > 0) ? cave : _now]._vert = barY;
+	_barriers[(scene > 0) ? scene : _now]._vert = barY;
 }
 
 void CGEEngine::snWalk(Sprite *spr, int x, int y) {
@@ -1012,7 +1012,7 @@ void Snail::runCom() {
 			}
 			break;
 		case kSnCave:
-			_vm->switchCave(snc->_val);
+			_vm->switchScene(snc->_val);
 			break;
 		case kSnKill:
 			_vm->snKill(spr);
@@ -1146,8 +1146,8 @@ void Snail::runCom() {
 			case kMiniStep:
 				_vm->miniStep(snc->_val);
 				break;
-			case kXCave:
-				_vm->xCave();
+			case kXScene:
+				_vm->xScene();
 				break;
 			case kSndSetVolume:
 				sndSetVolume();
