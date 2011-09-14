@@ -41,9 +41,11 @@ public:
 
 	Debug &operator<<(const String &str);
 	Debug &operator<<(const char *str);
+	Debug &operator<<(char str);
 	Debug &operator<<(int number);
 	Debug &operator<<(float number);
 	Debug &operator<<(bool value);
+	Debug &operator<<(void *p);
 
 	Debug &operator=(const Debug &other);
 
