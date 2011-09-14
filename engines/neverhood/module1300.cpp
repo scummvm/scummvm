@@ -22,6 +22,7 @@
 
 #include "neverhood/module1300.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module2200.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/navigationscene.h"
 #include "neverhood/smackerscene.h"
@@ -163,6 +164,11 @@ void Module1300::createScene1303(int which) {
 }
 			
 void Module1300::createScene1304(int which) {
+	_vm->gameState().sceneNum = 3;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	_childObject = new Scene1304(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1304);
 }
 			
 void Module1300::createScene1305(int which) {
@@ -259,6 +265,14 @@ void Module1300::updateScene1303() {
 }
 
 void Module1300::updateScene1304() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1316(0);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1305() {
@@ -764,6 +778,105 @@ uint32 Scene1303::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4826:
 		if (sender == _asBalloon && getGlobalVar(0x31C63C51)) {
 			setMessageList(0x004AF9B8);
+		}
+		break;
+	}
+	return 0;
+}
+
+Class544::Class544(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority, int16 x, int16 y)
+	: AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
+	
+	if (getGlobalVar(0x31C63C51)) {
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+	} else {
+		SetMessageHandler(&Class544::handleMessage);
+	}
+}
+
+uint32 Class544::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		_parentScene->sendMessage(0x4826, 0, this);
+		messageResult = 1;
+		break;
+	case 0x4806:
+		setGlobalVar(0x31C63C51, 1);
+		_surface->setVisible(false);
+		SetMessageHandler(NULL);
+		break;
+	}
+	return messageResult;
+}
+
+Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1304::handleMessage);
+	setRectList(0x004B91A8);
+
+	_background = addBackground(new DirtyBackground(_vm, 0x062C0214, 0, 0));
+	_palette = new Palette(_vm, 0x062C0214);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0xC021006A, NULL));
+	
+	if (getGlobalVar(0xAC00C0D0)) {
+		_class545 = addSprite(new Class545(_vm, this, 0, 1100, 278, 347));
+		_vm->_collisionMan->addSprite(_class545);
+	} else {
+		_class545 = addSprite(new AnimatedSprite(_vm, 0x80106018, 100, 279, 48));
+		// TODO _class545->setUpdateDeltaXY();
+	}
+
+	if (!getGlobalVar(0x31C63C51)) {
+		_class544 = addSprite(new Class544(_vm, this, 1100, 278, 347));
+		_vm->_collisionMan->addSprite(_class544);
+	} else {
+		_class544 = NULL;
+	}
+
+	_sprite1 = addSprite(new StaticSprite(_vm, 0x0562E621, 1100));
+	addSprite(new StaticSprite(_vm, 0x012AE033, 1100));
+	addSprite(new StaticSprite(_vm, 0x090AF033, 1100));
+
+	if (which < 0) {
+		_klayman = new KmScene1304(_vm, this, 217, 347);
+		setMessageList(0x004B90E8);
+	} else {
+		_klayman = new KmScene1304(_vm, this, 100, 347);
+		setMessageList(0x004B90F0);
+	}
+	addSprite(_klayman);
+
+	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
+	_klayman->getSurface()->getClipRect().y1 = 0;
+	_klayman->getSurface()->getClipRect().x2 = 640;
+	_klayman->getSurface()->getClipRect().y2 = 480;
+
+}
+
+uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x415634A4) {
+			if (getGlobalVar(0xAC00C0D0)) {
+				messageList402220();
+			} else {
+				setMessageList(0x004B9158);
+			}
+		}
+		break;
+	case 0x4826:
+		if (sender == _class544) {
+			_klayman->sendEntityMessage(0x1014, _class544, this);
+			setMessageList(0x004B9130);
+		} else if (sender == _class545) {
+			_klayman->sendEntityMessage(0x1014, _class545, this);
+			setMessageList(0x004B9140);
 		}
 		break;
 	}

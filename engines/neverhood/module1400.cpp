@@ -22,6 +22,7 @@
 
 #include "neverhood/module1400.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module2200.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
 
@@ -1456,7 +1457,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class401_1->getSurface()->setVisible(false);
 
 	_class401_2 = addSprite(new StaticSprite(_vm, 0x04442520, 995));
-	    
+	
 	_class401_3 = addSprite(new StaticSprite(_vm, 0x08742271, 995));
 
 	_asTape1 = new AsScene1201Tape(_vm, this, 12, 1100, 201, 468, 0x9148A011);
@@ -1578,8 +1579,8 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	_mouseCursor = addSprite(new Mouse433(_vm, 0xB006BAC8, NULL));
 
 	if (getGlobalVar(0x13382860) == 5) {
-		// TODO _class545 = addSprite(new Class545(_vm, this, 2, 1100, 267, 411));
-		// TODO _vm->_collisionMan->addSprite(_class545);
+		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 267, 411));
+		_vm->_collisionMan->addSprite(_class545);
 	}
 
 	_sprite1 = addSprite(new StaticSprite(_vm, 0x1900A1F8, 1100));

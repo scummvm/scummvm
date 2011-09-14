@@ -2978,6 +2978,59 @@ void KmScene1303::sub4162B0() {
 	SetMessageHandler(&KmScene1303::handleMessage4160A0);
 }
 
+KmScene1304::KmScene1304(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+}
+
+uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;		
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;						
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
 // KmScene1401
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
