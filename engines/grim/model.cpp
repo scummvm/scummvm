@@ -667,7 +667,7 @@ void ModelNode::update() {
 	_localMatrix.setPosition(animPos);
 	_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
 
-	_matrix *= _localMatrix;
+	_matrix = _localMatrix * _matrix;
 
 	_pivotMatrix = _matrix;
 

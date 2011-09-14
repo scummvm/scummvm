@@ -30,26 +30,13 @@ namespace Math {
 template<class T>
 class Transform {
 public:
-	Transform(T *matrix);
+	Transform() {}
 
 protected:
-	inline T *getMatrix() const;
-
-private:
-	T *_matrix;
+	inline const T &getMatrix() const { return *static_cast<const T *>(this); }
+	inline T &getMatrix() { return *static_cast<T *>(this); }
 
 };
-
-template<class T>
-Transform<T>::Transform(T *matrix) :
-	_matrix(matrix) {
-
-}
-
-template<class T>
-T *Transform<T>::getMatrix() const {
-	return _matrix;
-}
 
 }
 

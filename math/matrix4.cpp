@@ -26,12 +26,17 @@
 
 namespace Math {
 
-Matrix4::Matrix4() :
-	Matrix(), Rotation3D(this) {
+Matrix<4, 4>::Matrix() :
+	MatrixType<4, 4>(), Rotation3D<Matrix4>() {
 
 }
 
-void Matrix4::transform(Vector3d *v, bool trans) const {
+Matrix<4, 4>::Matrix(const MatrixBase<4, 4> &m) :
+	MatrixType<4, 4>(m), Rotation3D<Matrix4>() {
+
+}
+
+void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
 	Matrix<4, 1> m;
 	m(0, 0) = v->x();
 	m(1, 0) = v->y();
@@ -43,17 +48,17 @@ void Matrix4::transform(Vector3d *v, bool trans) const {
 	v->set(m(0, 0), m(1, 0), m(2, 0));
 }
 
-Vector3d Matrix4::getPosition() const {
+Vector3d Matrix<4, 4>::getPosition() const {
 	return Vector3d(getValue(3, 0), getValue(3, 1), getValue(3, 2));
 }
 
-void Matrix4::setPosition(const Vector3d &v) {
+void Matrix<4, 4>::setPosition(const Vector3d &v) {
 	setValue(3, 0, v.x());
 	setValue(3, 1, v.y());
 	setValue(3, 2, v.z());
 }
 
-void Matrix4::translate(const Vector3d &vec) {
+void Matrix<4, 4>::translate(const Vector3d &vec) {
 	Vector3d v(vec);
 	transform(&v, false);
 

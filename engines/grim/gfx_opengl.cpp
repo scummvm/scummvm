@@ -422,7 +422,7 @@ void GfxOpenGL::drawModelFace(const MeshFace *face, float *vertices, float *vert
 	// in Manny's Office
 	glAlphaFunc(GL_GREATER, 0.5);
 	glEnable(GL_ALPHA_TEST);
-	glNormal3fv(face->_normal._coords);
+	glNormal3fv(face->_normal.getData());
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
 		glNormal3fv(vertNormals + 3 * face->_vertices[i]);

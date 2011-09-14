@@ -26,8 +26,46 @@
 
 #include "math/vector3d.h"
 
-Common::Debug &operator<<(Common::Debug dbg, const Math::Vector3d &v) {
-	dbg.nospace() << "Vector3d(" << v.x() << "," << v.y() << "," << v.z() << ")";
+namespace Math {
 
-	return dbg.space();
+Vector3d::Matrix() :
+	MatrixType<3, 1>() {
+	x() = 0;
+	y() = 0;
+	z() = 0;
+}
+
+Vector3d::Matrix(float lx, float ly, float lz) :
+	MatrixType<3, 1>() {
+	x() = lx;
+	y() = ly;
+	z() = lz;
+}
+
+Vector3d::Matrix(const MatrixBase<3, 1> &vec) :
+	MatrixType<3, 1>(vec) {
+}
+
+void Vector3d::set(float lx, float ly, float lz) {
+	x() = lx; y() = ly; z() = lz;
+}
+
+// Get the angle a vector is around the unit circle
+// (ignores z-component)
+float Vector3d::unitCircleAngle() const {
+	const float mag = sqrt(x() * x() + y() * y());
+	float a = x() / mag;
+	float b = y() / mag;
+	float yaw;
+
+	// find the angle on the upper half of the unit circle
+	yaw = acos(a) * (180.0f / LOCAL_PI);
+	if (b < 0.0f)
+		// adjust for the lower half of the unit circle
+		return 360.0f - yaw;
+	else
+		// no adjustment, angle is on the upper half
+		return yaw;
+}
+
 }

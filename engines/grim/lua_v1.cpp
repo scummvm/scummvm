@@ -344,7 +344,7 @@ void L1_GetAngleBetweenVectors() {
 	vec1.normalize();
 	vec2.normalize();
 
-	float dot = vec1.dotProduct(vec2.x(), vec2.y(), vec2.z());
+	float dot = vec1.getDotProduct(vec2);
 	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
 	if (angle < 0)
 		angle = -angle;
@@ -446,7 +446,7 @@ void L1_RotateVector() {
 
 	Math::Matrix3 mat;
 	mat.buildFromPitchYawRoll(x, y, z);
-	mat.transform(&vec);
+	mat.transformVector(&vec);
 
 	resObj = lua_createtable();
 	lua_pushobject(resObj);
@@ -607,7 +607,7 @@ void L1_GetSectorOppositeEdge() {
 			Sector::ExitInfo e;
 
 			sector->getExitInfo(actor->getPos(), -actor->getPuckVector(), &e);
-			float frac = (e.exitPoint - vertices[e.edgeVertex + 1]).magnitude() / e.edgeDir.magnitude();
+			float frac = (e.exitPoint - vertices[e.edgeVertex + 1]).getMagnitude() / e.edgeDir.getMagnitude();
 			e.edgeVertex -= 2;
 			if (e.edgeVertex < 0)
 				e.edgeVertex += sector->getNumVertices();

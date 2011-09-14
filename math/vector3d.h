@@ -28,155 +28,41 @@
 #include "common/scummsys.h"
 #include "common/endian.h"
 
+#include "math/vector.h"
+
 namespace Math {
 
-class Vector3d {
+template<>
+class Matrix<3, 1> : public MatrixType<3, 1> {
 public:
-	float _coords[3];		// Make sure this stays as an array so
+	float& x() { return value(0); }
+	float x() const { return value(0); }
+	float& y() { return value(1); }
+	float y() const { return value(1); }
+	float& z() { return value(2); }
+	float z() const { return value(2); }
 
-	float& x() { return _coords[0]; }
-	float x() const { return _coords[0]; }
-	float& y() { return _coords[1]; }
-	float y() const { return _coords[1]; }
-	float& z() { return _coords[2]; }
-	float z() const { return _coords[2]; }
+	Matrix();
+	Matrix(float lx, float ly, float lz);
+	Matrix(const MatrixBase<3, 1> &m);
 
-	Vector3d() { x() = 0; y() = 0; z() = 0; }
-
-	Vector3d(float lx, float ly, float lz) {
-		x() = lx; y() = ly; z() = lz;
-	}
-
-	Vector3d(const Vector3d &v) {
-		x() = v.x(); y() = v.y(); z() = v.z();
-	}
-
-	void set(float lx, float ly, float lz) {
-		x() = lx; y() = ly; z() = lz;
-	}
-
-	Vector3d& operator =(const Vector3d &v) {
-		x() = v.x(); y() = v.y(); z() = v.z();
-		return *this;
-	}
-
-	bool operator ==(const Vector3d &v) {
-		return ( (x() == v.x()) && (y() == v.y()) && (z() == v.z()) );
-	}
-
-	bool operator !=(const Vector3d &v) {
-		return ( (x() != v.x()) || (y() != v.y()) || (z() != v.z()) );
-	}
-
-	Vector3d& operator +=(const Vector3d &v) {
-		x() += v.x(); y() += v.y(); z() += v.z();
-		return *this;
-	}
-
-	Vector3d& operator -=(const Vector3d &v) {
-		x() -= v.x(); y() -= v.y(); z() -= v.z();
-		return *this;
-	}
-
-	Vector3d& operator *=(float s) {
-		x() *= s; y() *= s; z() *= s;
-		return *this;
-	}
-
-	Vector3d& operator /=(float s) {
-		x() /= s; y() /= s; z() /= s;
-		return *this;
-	}
-
-	float magnitude() const {
-		return sqrt(x() * x() + y() * y() + z() * z());
-	}
+	void set(float lx, float ly, float lz);
 
 	// Get the angle a vector is around the unit circle
 	// (ignores z-component)
-	float unitCircleAngle() const {
-		const float mag = sqrt(x() * x() + y() * y());
-		float a = x() / mag;
-		float b = y() / mag;
-		float yaw;
-
-		// find the angle on the upper half of the unit circle
-		yaw = acos(a) * (180.0f / LOCAL_PI);
-		if (b < 0.0f)
-			// adjust for the lower half of the unit circle
-			return 360.0f - yaw;
-		else
-			// no adjustment, angle is on the upper half
-			return yaw;
-	}
-
-	void normalize() {
-		float len = sqrt(dotProduct(x(), y(), z()));
-		if (len != 0.0f) {
-			float t = 1.0f / len;
-			set(x() * t, y() * t, z() * t);
-		}
-	}
-
-	float dotProduct(float sx, float sy, float sz) const {
-		return x() * sx + y() * sy + z() * sz;
-	}
-
-	bool isZero() const {
-		if (x() == 0.f && y() == 0.f && z() == 0.f)
-			return true;
-		return false;
-	}
+	float unitCircleAngle() const;
 };
 
-inline float dot(const Vector3d& v1, const Vector3d& v2) {
-	return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
-}
+typedef Matrix<3, 1> Vector3d;
 
 inline Vector3d cross(const Vector3d& v1, const Vector3d& v2) {
 	return Vector3d(v1.y() * v2.z() - v1.z() * v2.y(),
-		v1.z() * v2.x() - v1.x() * v2.z(),
-		v1.x() * v2.y() - v1.y() * v2.x());
+					v1.z() * v2.x() - v1.x() * v2.z(),
+					v1.x() * v2.y() - v1.y() * v2.x());
 }
 
 inline float angle(const Vector3d& v1, const Vector3d& v2) {
-	return acos(dot(v1, v2) / (v1.magnitude() * v2.magnitude()));
-}
-
-inline Vector3d operator +(const Vector3d& v1, const Vector3d& v2) {
-	Vector3d result = v1;
-	result += v2;
-	return result;
-}
-
-inline Vector3d operator -(const Vector3d& v1, const Vector3d& v2) {
-	Vector3d result = v1;
-	result -= v2;
-	return result;
-}
-
-inline Vector3d operator *(float s, const Vector3d& v) {
-	Vector3d result = v;
-	result *= s;
-	return result;
-}
-
-inline Vector3d operator -(const Vector3d& v) {
-	return (-1.0f) * v;
-}
-
-inline Vector3d operator *(const Vector3d& v, float s) {
-	return s * v;
-}
-
-inline Vector3d operator /(const Vector3d& v, float s) {
-	Vector3d result = v;
-	result /= s;
-	return result;
-}
-
-inline bool operator ==(const Vector3d& v1, const Vector3d& v2) {
-	return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
+	return acos(dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()));
 }
 
 inline Vector3d get_vector3d(const char *data) {
@@ -184,11 +70,5 @@ inline Vector3d get_vector3d(const char *data) {
 }
 
 } // end of namespace Math
-
-namespace Common {
-class Debug;
-}
-
-Common::Debug &operator<<(Common::Debug dbg, const Math::Vector3d &v);
 
 #endif

@@ -25,69 +25,31 @@
 #ifndef MATH_VECTOR2D_H
 #define MATH_VECTOR2D_H
 
+#include "math/vector.h"
 #include "math/vector3d.h"
 
 namespace Math {
 
-class Vector2d {
+template<>
+class Matrix<2, 1> : public MatrixType<2, 1> {
 public:
-	Vector2d();
-	Vector2d(float x, float y);
-	Vector2d(const Vector2d &vec);
+	Matrix();
+	Matrix(float x, float y);
+	Matrix(const MatrixBase<2, 1> &vec);
 
-	inline float getX() const { return _x; }
-	inline float getY() const { return _y; }
-	void setX(float x);
-	void setY(float y);
+	inline float getX() const { return getValue(0); }
+	inline float getY() const { return getValue(1); }
+	inline void setX(float x) { setValue(0, x); }
+	inline void setY(float y) { setValue(1, y); }
 
-	Vector2d &operator=(const Vector2d &vec);
-	Vector2d &operator/=(float s);
-
-	void normalize();
-	Vector2d getNormalized() const;
-
-	void rotateAround(const Vector2d &point, float angle);
+	void rotateAround(const Vector(2) &point, float angle);
 	float getAngle() const;
-	float getMagnitude() const;
-	float getDistanceTo(const Vector2d &point) const;
 
 	Vector3d toVector3d() const;
-
-private:
-	float _x;
-	float _y;
 };
 
-inline Vector2d operator-(const Vector2d& v1, const Vector2d& v2) {
-	Vector2d result(v1.getX() - v2.getX(), v1.getY() - v2.getY());
-	return result;
-}
-
-inline Vector2d operator+(const Vector2d &v1, const Vector2d &v2) {
-	Vector2d result(v1.getX() + v2.getX(), v1.getY() + v2.getY());
-	return result;
-}
-
-inline Vector2d operator*(const Vector2d &v1, float factor) {
-	Vector2d result(v1.getX() * factor, v1.getY() * factor);
-	return result;
-}
-
-inline Vector2d operator/(const Vector2d &v1, float factor) {
-	Vector2d result(v1.getX() / factor, v1.getY() / factor);
-	return result;
-}
-
-inline Vector2d operator-(const Vector2d &v) {
-	return Vector2d(-v.getX(), -v.getY());
-}
+typedef Matrix<2, 1> Vector2d;
 
 }
-
-namespace Common {
-class Debug;
-}
-
-Common::Debug &operator<<(Common::Debug dbg, const Math::Vector2d &v);
 
 #endif

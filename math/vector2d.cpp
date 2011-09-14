@@ -28,58 +28,40 @@
 
 namespace Math {
 
-Vector2d::Vector2d() :
-	_x(0), _y(0) {
-
+Vector2d::Matrix() :
+	MatrixType<2, 1>() {
+	setValue(0, 0.f);
+	setValue(1, 0.f);
 }
 
-Vector2d::Vector2d(float x, float y) :
-	_x(x), _y(y) {
-
+Vector2d::Matrix(float x, float y) :
+	MatrixType<2, 1>() {
+	setValue(0, x);
+	setValue(1, y);
 }
 
-Vector2d::Vector2d(const Vector2d &vec) :
-	_x(vec._x), _y(vec._y) {
+Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
+	MatrixType<2, 1>(vec) {
 
-}
-
-void Vector2d::setX(float x) {
-	_x = x;
-}
-
-void Vector2d::setY(float y) {
-	_y = y;
-}
-
-Vector2d &Vector2d::operator=(const Vector2d &vec) {
-	_x = vec._x;
-	_y = vec._y;
-	return *this;
-}
-
-Vector2d &Vector2d::operator/=(float s) {
-	_x /= s;
-	_y /= s;
-	return *this;
 }
 
 void Vector2d::rotateAround(const Vector2d &point, float angle) {
-	_x -= point._x;
-	_y -= point._y;
-	float a = angle * LOCAL_PI / 180.0;
+	*this -= point;
+	float a = degreeToRadian(angle);
+	float cosa = cos(a);
+	float sina = sin(a);
 
-	float x = _x * cos(a) - _y * sin(a);
-	_y = _x * sin(a) + _y * cos(a);
-	_x = x;
+	float x  = value(0) * cosa - value(1) * sina;
+	value(1) = value(0) * sina + value(1) * cosa;
+	value(0) = x;
 
-	_x += point._x;
-	_y += point._y;
+	*this += point;
 }
 
 float Vector2d::getAngle() const {
-	const float mag = sqrt(_x * _x + _y * _y);
-	float a = _x / mag;
-	float b = _y / mag;
+	const float mag = getMagnitude();
+	float a = value(0) / mag;
+	float b = value(1) / mag;
 	float yaw;
 
 	// find the angle on the upper half of the unit circle
@@ -92,38 +74,9 @@ float Vector2d::getAngle() const {
 		return yaw;
 }
 
-float Vector2d::getMagnitude() const {
-	return sqrt(_x * _x + _y * _y);
-}
-
-void Vector2d::normalize() {
-	float mag = getMagnitude();
-	_x /= mag;
-	_y /= mag;
-}
-
-Vector2d Vector2d::getNormalized() const {
-	float mag = getMagnitude();
-	Vector2d v(_x / mag, _y / mag);
-	return v;
-}
-
-float Vector2d::getDistanceTo(const Vector2d &point) const {
-	float x = point._x - _x;
-	float y = point._y - _y;
-	return sqrt(x * x + y * y);
-}
-
 Vector3d Vector2d::toVector3d() const {
-	Vector3d v(_x, _y, 0);
+	Vector3d v(value(0), value(1), 0);
 	return v;
 }
 
 }
-
-Common::Debug &operator<<(Common::Debug dbg, const Math::Vector2d &v) {
-	dbg.nospace() << "Vector2d(" << v.getX() << "," << v.getY() << ")";
-
-	return dbg.space();
-}
-

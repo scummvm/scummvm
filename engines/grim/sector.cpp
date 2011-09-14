@@ -150,7 +150,7 @@ void Sector::load(TextSplitter &ts) {
 	_vertices[_numVertices] = _vertices[0];
 
 	_normal = cross(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
-	float length = _normal.magnitude();
+	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
 }
@@ -159,7 +159,7 @@ void Sector::loadBinary(Common::MemoryReadStream *ms) {
 	_numVertices = ms->readUint32LE();
 	_vertices = new Math::Vector3d[_numVertices];
 	for(int i = 0; i < _numVertices; i++) {
-		ms->read(_vertices[i]._coords, 12);
+		ms->read(_vertices[i].getData(), 12);
 	}
 
 	char name[128];
@@ -207,7 +207,7 @@ void Sector::shrink(float radius) {
 				Math::Vector3d* otherVerts = other->_vertices;
 				if (other->_origVertices)
 					otherVerts = other->_origVertices;
-				if ((otherVerts[l] - _origVertices[j]).magnitude() < 0.01f) {
+				if ((otherVerts[l] - _origVertices[j]).getMagnitude() < 0.01f) {
 					Math::Vector3d e1 = otherVerts[l + 1] - otherVerts[l];
 					Math::Vector3d e2;
 					if (l - 1 >= 0)
@@ -223,7 +223,7 @@ void Sector::shrink(float radius) {
 			}
 		}
 
-		if (shrinkDir.magnitude() > 0.1f) {
+		if (shrinkDir.getMagnitude() > 0.1f) {
 			shrinkDir.normalize();
 			_vertices[j] = _origVertices[j] + shrinkDir * radius;
 		} else {
@@ -358,7 +358,7 @@ Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 				}
 			}
 
-			if ((bridge.end() - bridge.begin()).magnitude() < 0.01f) {
+			if ((bridge.end() - bridge.begin()).getMagnitude() < 0.01f) {
 				it = bridges.erase(it);
 				continue;
 			}
@@ -418,10 +418,10 @@ Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	}
 
 	// Otherwise, just find the closest vertex
-	float minDist = (point - _vertices[0]).magnitude();
+	float minDist = (point - _vertices[0]).getMagnitude();
 	int index = 0;
 	for (int i = 1; i < _numVertices; i++) {
-		float currDist = (point - _vertices[i]).magnitude();
+		float currDist = (point - _vertices[i]).getMagnitude();
 		if (currDist < minDist) {
 			minDist = currDist;
 			index = i;

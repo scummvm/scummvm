@@ -571,7 +571,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						if (!bridge.intersectLine2d(l, &pos)) {
 							pos = bridge.middle();
 						}
-						float dist = (pos - closestPoint).magnitude();
+						float dist = (pos - closestPoint).getMagnitude();
 						if (dist < bestDist) {
 							bestDist = dist;
 							best = pos;
@@ -587,20 +587,20 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						}
 					}
 					if (n) {
-						float newCost = node->cost + (best - node->pos).magnitude();
+						float newCost = node->cost + (best - node->pos).getMagnitude();
 						if (newCost < n->cost) {
 							n->cost = newCost;
 							n->parent = node;
 							n->pos = best;
-							n->dist = (n->pos - _destPos).magnitude();
+							n->dist = (n->pos - _destPos).getMagnitude();
 						}
 					} else {
 						n = new PathNode;
 						n->parent = node;
 						n->sect = s;
 						n->pos = best;
-						n->dist = (n->pos - _destPos).magnitude();
-						n->cost = node->cost + (n->pos - node->pos).magnitude();
+						n->dist = (n->pos - _destPos).getMagnitude();
+						n->cost = node->cost + (n->pos - node->pos).getMagnitude();
 						openList.push_back(n);
 					}
 				}
@@ -682,9 +682,9 @@ void Actor::walkForward() {
 	while (currSector) {
 		prevSector = currSector;
 		Math::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
-		puckVec /= puckVec.magnitude();
+		puckVec /= puckVec.getMagnitude();
 		currSector->getExitInfo(_pos, puckVec, &ei);
-		float exitDist = (ei.exitPoint - _pos).magnitude();
+		float exitDist = (ei.exitPoint - _pos).getMagnitude();
 		if (dist < exitDist) {
 			moveTo(_pos + puckVec * dist);
 			_walkedCur = true;
@@ -1050,7 +1050,7 @@ void Actor::updateWalk() {
 	turnTo(_pitch, y, _roll);
 
 	Math::Vector3d dir = destPos - _pos;
-	float dist = dir.magnitude();
+	float dist = dir.getMagnitude();
 
 	if (dist > 0)
 		dir /= dist;
@@ -1475,7 +1475,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
 		Math::Vector3d pos = p1 + *vec;
-		float distance = (pos - p2).magnitude();
+		float distance = (pos - p2).getMagnitude();
 		if (distance < size1 + size2) {
 			// Move the destination point so that its distance from the
 			// center of the circle is size1+size2.

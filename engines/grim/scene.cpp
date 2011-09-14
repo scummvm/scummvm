@@ -413,9 +413,9 @@ void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
 	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
-	ms->read(_pos._coords, 12);
+	ms->read(_pos.getData(), 12);
 
-	ms->read(_interest._coords, 12);
+	ms->read(_interest.getData(), 12);
 
 	ms->read(&_roll, 4);
 	ms->read(&_fov, 4);
@@ -542,7 +542,7 @@ void Scene::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vect
 		if ((sector->getType() & Sector::WalkType) == 0 || !sector->isVisible())
 			continue;
 		Math::Vector3d closestPt = sector->getClosestPoint(p);
-		float thisDist = (closestPt - p).magnitude();
+		float thisDist = (closestPt - p).getMagnitude();
 		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;
 			resultPt = closestPt;
@@ -650,7 +650,7 @@ void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos, int minV
 	// TODO: The volume and pan needs to be updated when the setup changes.
 	Math::Vector3d cameraPos = _currSetup->_pos;
 	Math::Vector3d vector = pos - cameraPos;
-	float distance = vector.magnitude();
+	float distance = vector.getMagnitude();
 	float diffVolume = maxVol - minVol;
 	//This 8.f is a guess, so it may need some adjusting
 	int newVolume = (int)(8.f * diffVolume / distance);

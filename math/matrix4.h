@@ -26,15 +26,17 @@
 #define MATH_MATRIX4_H
 
 #include "math/rotation3d.h"
-#include "math/matrix.h"
+#include "math/squarematrix.h"
 #include "math/vector3d.h"
 
 namespace Math {
 
 // matrix 4 is a rotation matrix + position
-class Matrix4 : public Matrix<4, 4>, public Rotation3D<Matrix4> {
+template<>
+class Matrix<4, 4> : public MatrixType<4, 4>, public Rotation3D<Matrix<4, 4> > {
 public:
-	Matrix4();
+	Matrix();
+	Matrix(const MatrixBase<4, 4> &m);
 
 	void transform(Vector3d *v, bool translate) const;
 
@@ -44,6 +46,8 @@ public:
 	void translate(const Vector3d &v);
 
 };
+
+typedef Matrix<4, 4> Matrix4;
 
 } // end of namespace Math
 

@@ -402,7 +402,7 @@ void L1_GetAngleBetweenActors() {
 	vec2.z() = 0;
 	vec1.normalize();
 	vec2.normalize();
-	float dot = vec1.dotProduct(vec2.x(), vec2.y(), 0);
+	float dot = vec1.getDotProduct(vec2);
 	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
 	if (angle < 0)
 		angle = -angle;
@@ -1369,7 +1369,7 @@ void L1_PutActorAtInterest() {
 		Math::Vector3d closestPt = sector->getClosestPoint(p);
 		if (scene->findPointSector(closestPt, Sector::HotType))
 			continue;
-		float thisDist = (closestPt - p).magnitude();
+		float thisDist = (closestPt - p).getMagnitude();
 		if (minDist < 0 || thisDist < minDist) {
 			resultPt = closestPt;
 			minDist = thisDist;

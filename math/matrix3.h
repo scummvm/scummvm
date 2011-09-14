@@ -26,19 +26,20 @@
 #define MATH_MATRIX3_H
 
 #include "math/rotation3d.h"
-#include "math/matrix.h"
+#include "math/squarematrix.h"
 #include "math/vector3d.h"
 
 namespace Math {
 
-class Matrix3x3 : public Matrix<3, 3>, public Rotation3D<Matrix3x3> {
+template<>
+class Matrix<3, 3> : public MatrixType<3, 3>, public Rotation3D<Matrix<3, 3> > {
 public:
-	Matrix3x3();
+	Matrix();
+	Matrix(const MatrixBase<3, 3> &m);
 
-	void transform(Vector3d* v) const;
 };
 
-typedef Matrix3x3 Matrix3;
+typedef Matrix<3, 3> Matrix3;
 
 } // end of namespace Math
 

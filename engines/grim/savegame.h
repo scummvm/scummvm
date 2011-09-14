@@ -25,9 +25,7 @@
 
 #include "common/savefile.h"
 
-namespace Math {
-    class Vector3d;
-}
+#include "math/mathfwd.h"
 
 namespace Grim {
 
