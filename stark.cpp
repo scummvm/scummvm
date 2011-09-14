@@ -28,7 +28,8 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "sound/mixer.h"
+#include "common/system.h"
+#include "audio/mixer.h"
 
 namespace Stark {
 
@@ -39,10 +40,10 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	// Add the available debug channels
-	Common::addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
-	Common::addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
-	Common::addDebugChannel(kDebugXRC, "XRC", "Debug the loading of XRC resource trees");
-	Common::addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
+	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
+	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
+	DebugMan.addDebugChannel(kDebugXRC, "XRC", "Debug the loading of XRC resource trees");
+	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
 }
 
 StarkEngine::~StarkEngine() {

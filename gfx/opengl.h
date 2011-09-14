@@ -26,6 +26,8 @@
 #ifndef STARK_GFX_OPENGL_H
 #define STARK_GFX_OPENGL_H
 
+#include "common/system.h"
+
 #ifdef USE_OPENGL
 
 #include "engines/stark/gfx/driver.h"

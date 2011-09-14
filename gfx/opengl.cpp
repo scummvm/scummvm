@@ -23,11 +23,11 @@
  *
  */
 
-#ifdef USE_OPENGL
-
 #include "engines/stark/gfx/opengl.h"
 
 #include "common/system.h"
+
+#ifdef USE_OPENGL
 
 #ifdef SDL_BACKEND
 #include <SDL_opengl.h>

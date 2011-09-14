@@ -23,6 +23,7 @@
  *
  */
 
+#include "engines/advancedDetector.h"
 #include "engines/stark/stark.h"
 
 
@@ -170,31 +171,13 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{NULL, {NULL}}
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	starkGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"stark",
-	// List of files for file-based fallback detection (optional)
-	fileBasedFallback,
-	// Flags
-	0,
-	// GUI Options
-	Common::GUIO_NOMIDI
-};
-
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
-	StarkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-
+	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(gameDescriptions), starkGames) {
+		_singleid = "stark";
+		_guioptions = Common::GUIO_NOMIDI;
+	}
+	
 	virtual const char *getName() const {
 		return "Stark Engine";
 	}

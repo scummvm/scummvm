@@ -30,6 +30,7 @@
 
 #include "graphics/vector3d.h"
 #include "common/str.h"
+#include "common/array.h"
 
 namespace Common {
 	class ReadStream;

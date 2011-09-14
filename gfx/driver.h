@@ -28,6 +28,7 @@
 
 //#include "engines/stark/color.h"
 #include "graphics/surface.h"
+#include "common/rect.h"
 //#include "graphics/vector3d.h"
 
 namespace Stark {

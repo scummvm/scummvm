@@ -26,6 +26,7 @@
 #include "engines/stark/xrc.h"
 #include "engines/stark/debug.h"
 
+#include "common/debug-channels.h"
 #include "common/util.h"
 
 namespace Stark {
@@ -106,7 +107,7 @@ bool XRCNode::readInternal(Common::ReadStream *stream) {
 
 	// Show the resource data
 	debugC(20, kDebugXRC, "Stark::XRCNode:   \"%s\" has %d bytes of data:", _name.c_str(), _dataLength);
-	if ((gDebugLevel >= 20) && Common::isDebugChannelEnabled(kDebugXRC)) {
+	if ((gDebugLevel >= 20) && DebugMan.isDebugChannelEnabled(kDebugXRC)) {
 		Common::hexdump(_data, _dataLength);
 	}
 	debug(3, "   Raw: %X, %X, %X, %s, %d bytes, %X, %X", _dataType, _unknown1,

@@ -26,6 +26,7 @@
 #ifndef STARK_SCENE_H
 #define STARK_SCENE_H
 
+#include "common/array.h"
 #include "engines/stark/sceneelement.h"
 
 namespace Stark {
