@@ -172,6 +172,42 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class AsScene1306Elevator : public AnimatedSprite {
+public:
+	AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor);
+protected:
+	Scene *_parentScene;
+	AnimatedSprite *_asElevatorDoor;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	bool _isUp;
+	bool _isDown;
+	int _countdown;
+	void update();
+	void upGoingDown();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void stGoingUp();
+	void cbGoingUpEvent();
+	void stGoingDown();
+	void cbGoingDownEvent();
+};
+
+class Scene1306 : public Scene {
+public:
+	Scene1306(NeverhoodEngine *vm, Module *parentModule, int which);
+	~Scene1306();
+protected:
+	Sprite *_ssButton;
+	Sprite *_asTape;
+	AnimatedSprite *_asElevatorDoor;
+	Sprite *_asElevator;
+	Sprite *_sprite1;
+	Sprite *_class545;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1300_H */

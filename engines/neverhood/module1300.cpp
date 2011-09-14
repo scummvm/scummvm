@@ -22,6 +22,7 @@
 
 #include "neverhood/module1300.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module1200.h"
 #include "neverhood/module2200.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/navigationscene.h"
@@ -180,6 +181,11 @@ void Module1300::createScene1305(int which) {
 }
 			
 void Module1300::createScene1306(int which) {
+	_vm->gameState().sceneNum = 5;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_play(0x203197, 0, 2, 1);
+	_childObject = new Scene1306(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1306);
 }
 			
 void Module1300::createScene1307(int which) {
@@ -292,6 +298,24 @@ void Module1300::updateScene1305() {
 }
 
 void Module1300::updateScene1306() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_field20 == 2) {
+			createScene1309(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 3) {
+			createScene1303(0);
+			_childObject->handleUpdate();
+		} else if (_field20 == 0) {
+			_parentModule->sendMessage(0x1009, 0, this);
+		} else if (_field20 == 1) {
+			createScene1311(-1);
+			_childObject->handleUpdate();
+		}
+	}
 }
 
 void Module1300::updateScene1307() {
@@ -921,6 +945,272 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 
 uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	return Scene::handleMessage(messageNum, param, sender);
+}
+
+AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene, AnimatedSprite *asElevatorDoor)
+	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm), 
+	_parentScene(parentScene), _asElevatorDoor(asElevatorDoor), _isUp(false), _isDown(true),
+	_countdown(0) {
+
+	_x = 320;
+	_y = 240;
+	createSurface1(0x043B0270, 100);
+	setFileHash(0x043B0270, 0, -1);
+	_newHashListIndex = 0;
+	SetMessageHandler(&AsScene1306Elevator::handleMessage);
+	_soundResource1.load(0x1C100E83);
+	_soundResource2.load(0x1C08CEC5);
+	_soundResource3.load(0x5D011E87);
+}
+
+void AsScene1306Elevator::update() {
+	if (_isUp && _countdown != 0 && (--_countdown == 0)) {
+		stGoingDown();
+	}
+	AnimatedSprite::update();
+	if (_frameIndex == 7) {
+		_soundResource3.play();
+		_asElevatorDoor->getSurface()->setVisible(false);
+	}
+}
+
+void AsScene1306Elevator::upGoingDown() {
+	AnimatedSprite::update();
+	if (_frameIndex == 5) {
+		_asElevatorDoor->getSurface()->setVisible(true);
+	}
+}
+
+uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2001:
+		if (_isUp)
+			_countdown = 144;
+		messageResult = _isUp ? 1 : 0;
+		break;
+	case 0x3002:
+		removeCallbacks();
+		break;
+	case 0x4808:
+		if (_isDown)
+			stGoingUp();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1306Elevator::stGoingUp() {
+	_surface->setVisible(true);
+	_isDown = false;
+	SetUpdateHandler(&AsScene1306Elevator::update);
+	setFileHash(0x043B0270, 0, -1);
+	SetAnimationCallback3(&AsScene1306Elevator::cbGoingUpEvent);
+	_soundResource1.play();
+}
+
+void AsScene1306Elevator::cbGoingUpEvent() {
+	SetUpdateHandler(&AsScene1306Elevator::update);
+	_parentScene->sendMessage(0x4808, 0, this);
+	_isUp = true;
+	_countdown = 144;
+	setFileHash1();
+	_surface->setVisible(false);
+}
+
+void AsScene1306Elevator::stGoingDown() {
+	SetUpdateHandler(&AsScene1306Elevator::upGoingDown);
+	_isUp = false;
+	_surface->setVisible(true);
+	setFileHash(0x043B0270, -1, -1);
+	_playBackwards = true;
+	SetAnimationCallback3(&AsScene1306Elevator::cbGoingDownEvent);
+	_soundResource2.play();
+}
+
+void AsScene1306Elevator::cbGoingDownEvent() {
+	_isDown = true;
+	_parentScene->sendMessage(0x4809, 0, this);
+	SetUpdateHandler(&AsScene1306Elevator::update);
+	setFileHash1();
+}
+
+Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	if (getGlobalVar(0xC0780812) && !getGlobalVar(0x13382860))
+		setGlobalVar(0x13382860, 4);
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1306::handleMessage);
+
+	_background = addBackground(new DirtyBackground(_vm, 0x05303114, 0, 0));
+	_palette = new Palette(_vm, 0x05303114);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x0311005B, NULL));
+
+	if (!getGlobalVar(0x13382860)) {
+		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 435, 445));
+		_vm->_collisionMan->addSprite(_class545);
+	}
+
+	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x404A36A0, 100, 0x440C1000));
+	
+	_asTape = addSprite(new AsScene1201Tape(_vm, this, 19, 1100, 359, 445, 0x9148A011));
+
+	_asElevatorDoor = new AnimatedSprite(_vm, 0x043B0270, 90, 320, 240);
+	_asElevatorDoor->setFileHash(0x043B0270, 6, -1);
+	_asElevatorDoor->setNewHashListIndex(6);
+	addSprite(_asElevatorDoor);
+
+	_asElevator = addSprite(new AsScene1306Elevator(_vm, this, _asElevatorDoor));
+	
+	_sprite1 = addSprite(new StaticSprite(_vm, 0x036A1EE0, 80));
+	
+	addSprite(new StaticSprite(_vm, 0x00042313, 1100));
+
+	if (which < 0) {
+		_klayman = new KmScene1306(_vm, this, 380, 440);
+		setMessageList(0x004AFAD0);
+		sendMessage(0x2000, 0, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else if (which == 1) {
+		_klayman = new KmScene1306(_vm, this, 136, 440);
+		_klayman->sendMessage(0x2000, 1, this);
+		setMessageList(0x004AFAF0);
+		sendMessage(0x2000, 1, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else if (which == 2) {
+		if (getGlobalVar(0xC0418A02)) {
+			_klayman = new KmScene1306(_vm, this, 515, 440);
+			_klayman->setDoDeltaX(1);
+		} else {
+			_klayman = new KmScene1306(_vm, this, 355, 440);
+		}
+		setMessageList(0x004AFBC8);
+		sendMessage(0x2000, 0, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else if (which == 3) {
+		_klayman = new KmScene1306(_vm, this, 534, 440);
+		setMessageList(0x004AFC30);
+		sendMessage(0x2000, 0, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else if (which == 4) {
+		_klayman = new KmScene1306(_vm, this, 136, 440);
+		_klayman->sendMessage(0x2000, 1, this);
+		setMessageList(0x004AFC38);
+		sendMessage(0x2000, 1, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else if (which == 5) {
+		_klayman = new KmScene1306(_vm, this, 136, 440);
+		_klayman->sendMessage(0x2000, 1, this);
+		setMessageList(0x004AFB00);
+		sendMessage(0x2000, 1, this);
+		_vm->_collisionMan->addSprite(_asTape);
+	} else {
+		_klayman = new KmScene1306(_vm, this, 286, 408);
+		setSurfacePriority(_asElevator->getSurface(), 1100);
+		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
+		setSurfacePriority(_sprite1->getSurface(), 1080);
+		sendMessage(0x2000, 0, this);
+		SetMessageHandler(&Scene1306::handleMessage416EB0);
+		clearRectList();
+		_asElevator->sendMessage(0x4808, 0, this);
+	}
+	addSprite(_klayman);
+
+}
+	
+Scene1306::~Scene1306() {
+	setGlobalVar(0xC0418A02, _klayman->isDoDeltaX() ? 1 : 0);
+}
+
+uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+if (messageNum) debug("%04X", messageNum);
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x402064D8) {
+			_klayman->sendEntityMessage(0x1014, _ssButton, this);
+		} else if (param.asInteger() == 0x01C66840) {
+			if (_asElevator->sendMessage(0x2001, 0, this) != 0) {
+				setMessageList(0x004AFBD8);
+			} else {
+				setMessageList(0x004AFAE0);
+			}
+		} else if (param.asInteger() == 0x8E646E00) {
+			setMessageList(0x004AFAD8);
+			clearRectList();
+			SetMessageHandler(&Scene1306::handleMessage416EB0);
+		}
+		break;
+	case 0x2000:
+		if (param.asInteger() != 0) {
+			setRectList(0x004AFD28);
+			_klayman->setKlaymanTable3();
+		} else {
+			setRectList(0x004AFD18);
+			_klayman->setKlaymanTable1();
+		}
+		break;
+	case 0x480B:
+		if (sender == _ssButton) {
+			_asElevator->sendMessage(0x4808, 0, this);
+		}
+		break;
+	case 0x4826:
+		if (sender == _class545) {
+			if (_klayman->getX() >= 249) {
+				_klayman->sendEntityMessage(0x1014, _class545, this);
+				setMessageList(0x004AFC58);
+			}
+		} else if (sender == _asTape) {
+			if (_klayman->getX() >= 249) {
+				_klayman->sendEntityMessage(0x1014, _class545, this);
+				setMessageList(0x004AFC68);
+			}
+		}
+		break;
+	case 0x482A:
+		setSurfacePriority(_asElevator->getSurface(), 1100);
+		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
+		setSurfacePriority(_sprite1->getSurface(), 1080);
+		break;
+	case 0x482B:
+		setSurfacePriority(_asElevator->getSurface(), 100);
+		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
+		setSurfacePriority(_sprite1->getSurface(), 80);
+		sendMessage(0x2000, 0, this);
+		_vm->_collisionMan->addSprite(_asTape);
+		break;
+	}
+	return 0;
+}
+
+uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x4808:
+		setMessageList(0x004AFBD0);
+		SetMessageHandler(&Scene1306::handleMessage);
+		break;
+	case 0x4809:
+		_parentModule->sendMessage(0x1009, 1, this);
+		break;
+	case 0x482A:
+		setSurfacePriority(_asElevator->getSurface(), 1100);
+		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
+		setSurfacePriority(_sprite1->getSurface(), 1080);
+		break;
+	case 0x482B:
+		setSurfacePriority(_asElevator->getSurface(), 100);
+		setSurfacePriority(_asElevatorDoor->getSurface(), 90);
+		setSurfacePriority(_sprite1->getSurface(), 80);
+		sendMessage(0x2000, 0, this);
+		_vm->_collisionMan->addSprite(_asTape);
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

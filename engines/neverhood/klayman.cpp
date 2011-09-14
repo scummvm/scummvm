@@ -3074,6 +3074,163 @@ void KmScene1305::sub46BF60() {
 	sub41FC80();
 }
 
+KmScene1306::KmScene1306(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	
+	_flag1 = false;	
+}
+
+uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x2000:
+		_flag1 = param.asInteger() != 0;
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub421350));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481A:
+		setCallback2(AnimationCallback(&Klayman::sub420680));		
+		break;
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481D:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub4214D0));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub4207A0));
+		break;
+	case 0x481E:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub421510));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub4207F0));
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4208B0));
+		} else if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub420870));
+		} else if (param.asInteger() == 4) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else if (param.asInteger() == 3) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x482E:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub421030));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420FE0));
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4210C0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub421070));
+		}
+		break;
+	case 0x4834:
+		setCallback2(AnimationCallback(&Klayman::sub421160));
+		break;
+	case 0x4835:
+		_parentScene->sendMessage(0x2000, 1, this);
+		_flag1 = true;
+		setCallback2(AnimationCallback(&Klayman::sub4212C0));
+		break;																		
+	case 0x4836:
+		_parentScene->sendMessage(0x2000, 0, this);
+		_flag1 = false;
+		setCallback2(AnimationCallback(&Klayman::sub421310));
+		break;
+	case 0x483D:
+		sub417D40();
+		break;																				
+	case 0x483E:
+		sub417D80();
+		break;																				
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1306::sub417D40() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0xEE084A04, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene1306::handleMessage417CB0);
+}
+
+void KmScene1306::sub417D80() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0xB86A4274, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene1306::handleMessage417CB0);
+}
+
+uint32 KmScene1306::handleMessage417CB0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24) {
+			_soundResource1.play(0x85B10BB8);
+		} else if (param.asInteger() == 0x4E6A0CA0) {
+			_soundResource1.play(0xC5B709B0);
+		}
+	}
+	return messageResult;
+}
+
 // KmScene1401
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)

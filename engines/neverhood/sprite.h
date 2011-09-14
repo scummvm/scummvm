@@ -114,6 +114,8 @@ public:
 	void clearRepl();
 	uint32 getCurrAnimFileHash() const { return _currAnimFileHash; }
 	int16 getFrameIndex() const { return _frameIndex; }
+	void setNewHashListIndex(int value) { _newHashListIndex = value; }
+	void setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4);
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
@@ -154,7 +156,6 @@ protected:
 	void updateFrameIndex();
 	void updateFrameInfo();
 	void createSurface1(uint32 fileHash, int surfacePriority);
-	void setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4);
 	void setFileHash1();
 	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
 	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
