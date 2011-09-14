@@ -158,6 +158,29 @@ void EvilFish::advance() {
 	}
 }
 
+void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
+                      uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) {
+
+	_animSwimLeft  = animSwimLeft;
+	_animSwimRight = animSwimRight;
+	_animTurnLeft  = animTurnLeft;
+	_animTurnRight = animTurnRight;
+	_animDie       = animDie;
+
+	switch (_state) {
+	case kStateSwimLeft:
+		setAnimation(_animSwimLeft);
+		break;
+
+	case kStateSwimRight:
+		setAnimation(_animSwimRight);
+		break;
+
+	default:
+		break;
+	}
+}
+
 } // End of namespace Geisha
 
 } // End of namespace Gob
