@@ -246,7 +246,8 @@ void Diving::evilFishEnter() {
 		            kEvilFishTypes[fishType][2], kEvilFishTypes[fishType][3],
 		            kEvilFishTypes[fishType][4]);
 
-		fish.enter((EvilFish::Direction)_vm->_util->getRandom(2), 90 + i * 20);
+		fish.enter((EvilFish::Direction)_vm->_util->getRandom(2),
+		           36 + _vm->_util->getRandom(3) * 40);
 	}
 }
 
