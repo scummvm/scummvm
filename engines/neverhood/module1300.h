@@ -165,6 +165,13 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Scene1305 : public Scene {
+public:
+	Scene1305(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1300_H */

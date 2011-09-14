@@ -2981,6 +2981,7 @@ void KmScene1303::sub4162B0() {
 KmScene1304::KmScene1304(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 	
+	// Empty	
 }
 
 uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3029,6 +3030,48 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	}
 	return 0;
+}
+
+KmScene1305::KmScene1305(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+
+	// Empty	
+}
+
+uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;		
+	case 0x4804:
+		setCallback2(AnimationCallback(&KmScene1305::sub46BEF0));
+		break;		
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	}
+	return 0;
+}
+
+void KmScene1305::sub46BEF0() {
+	_soundResource1.play(0x41648271);
+	_status2 = 1;
+	_flagE5 = false;
+	setFileHash2(0x000BAB02, 0x88003000, 0);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&Klayman::handleMessage41D480);
+	SetAnimationCallback3(&KmScene1305::sub46BF60);
+}
+
+void KmScene1305::sub46BF60() {
+	setDoDeltaX(2);
+	sub41FC80();
 }
 
 // KmScene1401

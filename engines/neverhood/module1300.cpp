@@ -172,6 +172,11 @@ void Module1300::createScene1304(int which) {
 }
 			
 void Module1300::createScene1305(int which) {
+	_vm->gameState().sceneNum = 4;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_play(0x203197, 0, 2, 1);
+	_childObject = new Scene1305(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1305);
 }
 			
 void Module1300::createScene1306(int which) {
@@ -276,6 +281,14 @@ void Module1300::updateScene1304() {
 }
 
 void Module1300::updateScene1305() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1317(-1);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1306() {
@@ -881,6 +894,33 @@ uint32 Scene1304::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1305::handleMessage);
+	setRectList(0x004B6E98);
+
+	_background = addBackground(new DirtyBackground(_vm, 0x28801B64, 0, 0));
+	_palette = new Palette(_vm, 0x28801B64);
+	_palette->usePalette();
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x01B60280, NULL));
+
+	if (which < 0) {
+		_klayman = new KmScene1305(_vm, this, 212, 441);
+		setMessageList(0x004B6E40);
+	} else {
+		_klayman = new KmScene1305(_vm, this, 212, 441);
+		setMessageList(0x004B6E48);
+	}
+	addSprite(_klayman);
+	
+}
+
+uint32 Scene1305::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	return Scene::handleMessage(messageNum, param, sender);
 }
 
 } // End of namespace Neverhood
