@@ -423,7 +423,7 @@ void Scene50::remove() {
 	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
 
 	SceneExt::remove();
-	BF_GLOBALS._v4E238 = 1;
+	BF_GLOBALS._uiElements._active = true;
 }
 
 void Scene50::signal() {
