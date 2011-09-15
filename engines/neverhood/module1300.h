@@ -208,6 +208,52 @@ protected:
 	uint32 handleMessage416EB0(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class AsScene1307Key : public AnimatedSprite {
+public:
+	AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint index, NRect *clipRects);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	NPointArray *_pointList;
+	uint _pointIndex;
+	int _frameIndex;
+	uint _index;
+	NRect *_clipRects;
+	bool _isClickable;
+	int16 _prevX, _prevY;
+	int16 _deltaX, _deltaY;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void suRemoveKey();
+	void suInsertKey();
+	void suMoveKey();
+	void stRemoveKey();
+	void stInsertKey();
+	void stMoveKey();
+	void stUnlock();
+	void stInsert();
+};
+
+class Scene1307 : public Scene {
+public:
+	Scene1307(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	SoundResource _soundResource;
+	NPointArray *_keyHolePoints;
+	NRect _keyHoleRects[16];
+	NRect _clipRects[4];
+	Sprite *_asKeys[3];
+	int _countdown;
+	Sprite *_asCurrKey;
+	bool _isInsertingKey;
+	bool _doLeaveScene;
+	bool _isPuzzleSolved;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1300_H */

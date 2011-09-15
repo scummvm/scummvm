@@ -24,6 +24,7 @@
 #include "neverhood/module1000.h"
 #include "neverhood/module1200.h"
 #include "neverhood/module2200.h"
+#include "neverhood/gamemodule.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/navigationscene.h"
 #include "neverhood/smackerscene.h"
@@ -189,6 +190,11 @@ void Module1300::createScene1306(int which) {
 }
 			
 void Module1300::createScene1307(int which) {
+	_vm->gameState().sceneNum = 6;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_play(0x203197, 0, 2, 1);
+	_childObject = new Scene1307(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1307);
 }
 			
 void Module1300::createScene1308(int which) {
@@ -319,6 +325,14 @@ void Module1300::updateScene1306() {
 }
 
 void Module1300::updateScene1307() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1308(2);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1308() {
@@ -1126,7 +1140,6 @@ Scene1306::~Scene1306() {
 }
 
 uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-if (messageNum) debug("%04X", messageNum);
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1211,6 +1224,377 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 		break;
 	}
 	return 0;
+}
+
+static const uint32 kAsScene1307KeyResourceList1[] = {
+	0x0438069C,
+	0x45B0023C,
+	0x05700217
+};
+
+static const uint32 kAsScene1307KeyResourceList2[] = {
+	0x04441334,
+	0x061433F0,
+	0x06019390
+};
+
+static const uint32 kAsScene1307KeyResourceList3[] = {
+	0x11A80030,
+	0x178812B1,
+	0x1488121C
+};
+
+static const uint32 *kAsScene1307KeyResourceLists[] = {
+	kAsScene1307KeyResourceList1,
+	kAsScene1307KeyResourceList2,
+	kAsScene1307KeyResourceList3
+};
+
+static const int kAsScene1307KeySurfacePriorities[] = {
+	700, 
+	500, 
+	300, 
+	100
+};
+
+const uint kAsScene1307KeyPointsCount = 12;
+
+static const NPoint kAsScene1307KeyPoints[] = {
+	{-2,  0},
+	{-5,  0},
+	{ 5,  0},
+	{12,  0},
+	{17,  0},
+	{25,  0},
+	{16, -2},
+	{10, -6},
+	{ 0, -7},
+	{-7, -3},
+	{-3,  4},
+	{ 2,  2}
+};
+
+const uint kAsScene1307KeyFrameIndicesCount = 20;
+
+static const int16 kAsScene1307KeyFrameIndices[] = {
+	 1,  4,  8, 11, 15, 16, 17, 17, 17, 16, 
+	15, 14, 12, 10,  9,  7,  5,  3,  2,  1
+};
+
+const int kAsScene1307KeyDivValue = 200;
+
+const int16 kAsScene1307KeyXDelta = 70;
+const int16 kAsScene1307KeyYDelta = -12;
+
+AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint index, NRect *clipRects)
+	: AnimatedSprite(vm, 1100), _soundResource1(vm), _soundResource2(vm), _soundResource3(vm),
+	_soundResource4(vm), _parentScene(parentScene), _index(index), _clipRects(clipRects),
+	_isClickable(true) {
+	
+	NPoint pt;
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
+	
+	_dataResource.load(0x22102142);
+	_pointList = _dataResource.getPointArray(0xAC849240);
+	
+	pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+	_x = pt.x;
+	_y = pt.y;
+	
+	// TODO createSurface3(kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4], fileHashes);
+	createSurface(kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4], 640, 480); //TODO: Remeove once the line above is done
+	
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene1307Key::handleMessage);
+	
+	setFileHash(fileHashes[0], 0, -1);
+	
+	_soundResource1.load(0xDC4A1280);
+	_soundResource2.load(0xCC021233);
+	_soundResource3.load(0xC4C23844);
+	_soundResource3.load(0xC4523208);
+
+}
+
+uint32 AsScene1307Key::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_isClickable) {
+			_parentScene->sendMessage(0x4826, 0, this);
+			stRemoveKey();
+			messageResult = 1;
+		}
+		break;
+	case 0x2000:
+		_isClickable = param.asInteger() != 0;
+		break;
+	case 0x2001:
+		setSubVar(0xA010B810, _index, param.asInteger());
+		stMoveKey();
+		break;
+	case 0x2003:
+		_soundResource4.play();
+		stUnlock();
+		break;
+	case 0x2004:
+		_soundResource3.play();
+		stInsert();
+		break;
+	}
+	return messageResult;
+}
+
+void AsScene1307Key::suRemoveKey() {
+	if (_pointIndex < kAsScene1307KeyPointsCount) {
+		_x += kAsScene1307KeyPoints[_pointIndex].x;
+		_y += kAsScene1307KeyPoints[_pointIndex].y;
+		processDelta();
+		_pointIndex++;
+	} else {
+		SetSpriteCallback(NULL);
+	}
+}
+
+void AsScene1307Key::suInsertKey() {
+	if (_pointIndex < kAsScene1307KeyPointsCount) {
+		_x -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].x;
+		_y -= kAsScene1307KeyPoints[kAsScene1307KeyPointsCount - _pointIndex - 1].y;
+		processDelta();
+		_pointIndex++;
+		if (_pointIndex == 7)
+			_soundResource1.play();
+	} else {
+		SetSpriteCallback(NULL);
+		_parentScene->sendMessage(0x2002, 0, this);
+	}
+}
+
+void AsScene1307Key::suMoveKey() {
+	if (_pointIndex < kAsScene1307KeyFrameIndicesCount) {
+		_frameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
+		_x = _prevX + (_deltaX * _frameIndex) / kAsScene1307KeyDivValue;
+		_y = _prevY + (_deltaY * _frameIndex) / kAsScene1307KeyDivValue;
+		processDelta();
+		_pointIndex++;
+	} else {
+		NPoint pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+		_x = pt.x + kAsScene1307KeyXDelta;
+		_y = pt.y + kAsScene1307KeyYDelta;
+		stInsertKey();
+	}
+}
+
+void AsScene1307Key::stRemoveKey() {
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
+	_pointIndex = 0;
+	SetSpriteCallback(&AsScene1307Key::suRemoveKey);
+	setFileHash(fileHashes[0], 0, -1);
+	_soundResource2.play();
+}
+
+void AsScene1307Key::stInsertKey() {
+	_pointIndex = 0;
+	_parentScene->sendMessage(0x1022, kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4], this);
+	_surface->getClipRect() = _clipRects[getSubVar(0xA010B810, _index) % 4];
+	SetSpriteCallback(&AsScene1307Key::suInsertKey);
+	_newHashListIndex = -2;
+}
+
+void AsScene1307Key::stMoveKey() {
+	NPoint pt = (*_pointList)[getSubVar(0xA010B810, _index)];
+	int16 newX = pt.x + kAsScene1307KeyXDelta;
+	int16 newY = pt.y + kAsScene1307KeyYDelta;
+	_parentScene->sendMessage(0x1022, 1000, this);
+	_surface->getClipRect().x1 = 0;
+	_surface->getClipRect().y1 = 0;
+	_surface->getClipRect().x2 = 640;
+	_surface->getClipRect().y2 = 480;
+	_prevX = _x;
+	_prevY = _y;
+	if (newX == _x && newY == _y) {
+		stInsertKey();
+	} else {
+		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
+		_pointIndex = 0;
+		_frameIndex = 0;
+		_deltaX = newX - _x;
+		_deltaY = newY - _y;
+		SetSpriteCallback(&AsScene1307Key::suMoveKey);
+		setFileHash(fileHashes[0], 0, -1);
+	}
+}
+
+void AsScene1307Key::stUnlock() {
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
+	setFileHash(fileHashes[1], 0, -1);
+	_newHashListIndex = -2;
+}
+
+void AsScene1307Key::stInsert() {
+	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
+	setFileHash(fileHashes[2], 0, -1);
+	_newHashListIndex = -2;
+}
+
+Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource(vm), _countdown(0),
+	_asCurrKey(NULL), _isInsertingKey(false), _doLeaveScene(false), _isPuzzleSolved(false) {
+
+	//DEBUG
+	setSubVar(0x08D0AB11, 0, 1);
+	setSubVar(0x08D0AB11, 1, 1);
+	setSubVar(0x08D0AB11, 2, 1);
+
+	Sprite *tempSprite;
+	
+	_vm->gameModule()->initScene1307Vars();
+	
+	_dataResource.load(0x22102142);
+	_keyHolePoints = _dataResource.getPointArray(0xAC849240);
+
+	for (uint i = 0; i < 16; i++) {
+		NPoint pt = (*_keyHolePoints)[i];
+		_keyHoleRects[i].x1 = pt.x - 15;
+		_keyHoleRects[i].y1 = pt.y - 15;
+		_keyHoleRects[i].x2 = pt.x + 15;
+		_keyHoleRects[i].y2 = pt.y + 15;
+	}
+
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1307::handleMessage);
+	SetUpdateHandler(&Scene1307::update);
+
+	_background = addBackground(new DirtyBackground(_vm, 0xA8006200, 0, 0));
+	_palette = new Palette(_vm, 0xA8006200);
+	_palette->usePalette();
+	addEntity(_palette);
+	_mouseCursor = addSprite(new Mouse435(_vm, 0x06204A88, 20, 620));
+
+	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3621C, 800));
+	_clipRects[0].x1 = tempSprite->getSurface()->getDrawRect().x;
+	_clipRects[0].y1 = 0;
+	_clipRects[0].x2 = 640;
+	_clipRects[0].y2 = 480;
+
+	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3641C, 600));
+	_clipRects[1].x1 = tempSprite->getSurface()->getDrawRect().x;
+	_clipRects[1].y1 = 0;
+	_clipRects[1].x2 = 640;
+	_clipRects[1].y2 = 480;
+
+	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3681C, 400));
+	_clipRects[2].x1 = tempSprite->getSurface()->getDrawRect().x;
+	_clipRects[2].y1 = 0;
+	_clipRects[2].x2 = 640;
+	_clipRects[2].y2 = 480;
+
+	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3701C, 200));
+	_clipRects[3].x1 = tempSprite->getSurface()->getDrawRect().x;
+	_clipRects[3].y1 = 0;
+	_clipRects[3].x2 = 640;
+	_clipRects[3].y2 = 480;
+
+	for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
+		if (getSubVar(0x08D0AB11, keyIndex)) {
+			_asKeys[keyIndex] = addSprite(new AsScene1307Key(_vm, this, keyIndex, _clipRects));
+			_vm->_collisionMan->addSprite(_asKeys[keyIndex]);
+		} else {
+			_asKeys[keyIndex] = NULL;
+		}
+	}
+
+	_soundResource.load(0x68E25540);
+
+}
+
+void Scene1307::update() {
+	Scene::update();
+	if (_countdown && (--_countdown == 0)) {
+		_doLeaveScene = true;
+	} else if (_countdown == 20) {
+		_palette->startFadeToWhite(40);
+	}
+	if (_doLeaveScene && !_soundResource.isPlaying()) {
+		_parentModule->sendMessage(0x1009, 1, this);
+		setGlobalVar(0x80455A41, 1);
+	} 
+}
+
+uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = 0;
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO Debug stuff
+		if (!_isPuzzleSolved) {
+			if (param.asPoint().x > 20 && param.asPoint().x < 620) {
+				if (_asCurrKey && !_isInsertingKey) {
+					int16 mouseX = param.asPoint().x;
+					int16 mouseY = param.asPoint().y;
+					uint clickedKeyHoleIndex;
+					for (clickedKeyHoleIndex = 0; clickedKeyHoleIndex < 16; clickedKeyHoleIndex++) {
+						if (mouseX >= _keyHoleRects[clickedKeyHoleIndex].x1 && mouseX <= _keyHoleRects[clickedKeyHoleIndex].x2 && 
+							mouseY >= _keyHoleRects[clickedKeyHoleIndex].y1 && mouseY <= _keyHoleRects[clickedKeyHoleIndex].y2)
+							break;
+					}
+					if (clickedKeyHoleIndex < 16) {
+						// Check if the clicked keyhole is already occupied with a key
+						bool occupied = false;
+						for (uint keyIndex = 0; keyIndex < 3 && !occupied; keyIndex++) {
+							if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex] != _asCurrKey) {
+								if (getSubVar(0xA010B810, keyIndex) == clickedKeyHoleIndex)
+									occupied = true;
+							}
+						}
+						if (!occupied) {
+							// If the keyhole is free, insert the current key
+							_asCurrKey->sendMessage(0x2001, clickedKeyHoleIndex, this);
+							_isInsertingKey = true;
+							_mouseClicked = false;
+						}
+					}
+				}
+			} else if (_countdown == 0 && !_asCurrKey && !_isInsertingKey) {
+				_parentModule->sendMessage(0x1009, 0, this);
+			}
+		}
+		break;
+	// TODO Debug stuff
+	case 0x2002:
+		// Check if all keys are in the correct keyholes
+		if (getSubVar(0x08D0AB11, 0) && getSubVar(0xA010B810, 0) == getSubVar(0x0C10A000, 0) &&
+			getSubVar(0x08D0AB11, 1) && getSubVar(0xA010B810, 1) == getSubVar(0x0C10A000, 1) &&
+			getSubVar(0x08D0AB11, 2) && getSubVar(0xA010B810, 2) == getSubVar(0x0C10A000, 2)) {
+			// Play unlock animations for all keys
+			for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
+				if (_asKeys[keyIndex])
+					_asKeys[keyIndex]->sendMessage(0x2003, 1, this);
+			}
+			_soundResource.play();
+			_isPuzzleSolved = true;
+			_countdown = 47;
+		} else {
+			for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
+				if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex]) {
+					_asKeys[keyIndex]->sendMessage(0x2000, 1, this);
+				}
+			}
+			_asCurrKey->sendMessage(0x2004, 1, this);
+		}
+		_asCurrKey = NULL;
+		_isInsertingKey = false;
+		break;
+	case 0x4826:
+		_asCurrKey = (Sprite*)sender;
+		for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
+			if (getSubVar(0x08D0AB11, keyIndex) && _asKeys[keyIndex]) {
+				_asKeys[keyIndex]->sendMessage(0x2000, 0, this);
+			}
+		}
+		break;
+	}
+	return messageResult;
 }
 
 } // End of namespace Neverhood

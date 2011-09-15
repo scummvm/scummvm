@@ -37,6 +37,7 @@ public:
 	void startup();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
+	void initScene1307Vars();
 	void initScene1405Vars();
 	void initScene3009Vars();
 protected:

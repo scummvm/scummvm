@@ -85,6 +85,43 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 	}				
 }
 
+void GameModule::initScene1307Vars() {
+
+	if (getSubVar(0x40050052, 0x25400B10))
+		return;
+
+	for (uint i = 0; i < 3; i++) {
+		bool more;
+		do {
+			more = false;
+			setSubVar(0x0C10A000, i, _vm->_rnd->getRandomNumber(16 - 1));
+			if (i > 0) {
+				for (uint j = 0; j < i && !more; j++) {
+					more = getSubVar(0x0C10A000, j) == getSubVar(0x0C10A000, i);
+				}
+			}
+		} while (more);
+	}
+
+	for (uint i = 0; i < 3; i++) {
+		bool more;
+		do {
+			more = false;
+			setSubVar(0xA010B810, i, _vm->_rnd->getRandomNumber(16 - 1));
+			if (i > 0) {
+				for (uint j = 0; j < i && !more; j++) {
+					more = getSubVar(0xA010B810, j) == getSubVar(0xA010B810, i);
+				}
+			}
+			if (getSubVar(0xA010B810, i) == getSubVar(0x0C10A000, i))
+				more = true;
+		} while (more);
+	}
+
+	setSubVar(0x40050052, 0x25400B10, 1);
+
+}
+
 void GameModule::initScene1405Vars() {
 
 	// TODO: Give better names
@@ -247,7 +284,7 @@ void GameModule::startup() {
 	createModule2200(-1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 5;
+	_vm->gameState().sceneNum = 6;
 	createModule1300(-1);
 #endif
 }
