@@ -215,9 +215,19 @@ void Module1300::createScene1309(int which) {
 }
 			
 void Module1300::createScene1310(int which) {
+	_vm->gameState().sceneNum = 9;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	createSmackerScene(0x20082818, true, true, false);
+	SetUpdateHandler(&Module1300::updateScene1310);
 }
 			
 void Module1300::createScene1311(int which) {
+	_vm->gameState().sceneNum = 10;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	createSmackerScene(0x20082828, true, true, false);
+	SetUpdateHandler(&Module1300::updateScene1310);
 }
 			
 void Module1300::createScene1312(int which) {
@@ -269,6 +279,7 @@ void Module1300::createScene1317(int which) {
 }
 			
 void Module1300::createScene1318(int which) {
+	// TODO: Credits scene
 }
 			
 void Module1300::updateScene1302() {
@@ -380,6 +391,17 @@ void Module1300::updateScene1309() {
 }
 
 void Module1300::updateScene1310() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		if (_vm->gameState().sceneNum == 9)
+			createScene1315(0);
+		else
+			createScene1306(0);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1311() {
