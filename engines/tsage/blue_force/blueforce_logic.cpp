@@ -100,6 +100,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Marina, Domestic Disturbance
 		return new Scene340();
 	case 342:
+		// Marina, Normal
+		return new Scene342();
 	case 350:
 	case 355:
 	case 360:

@@ -374,6 +374,63 @@ public:
 	virtual void dispatch();
 };
 
+class Scene342: public PalettedScene {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class WestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthWestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class NorthExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Timers */
+	class Timer1: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	Lyle _lyle;
+	NamedObject _object2;
+	SceneObject _object3, _object4;
+	Item1 _item1;
+	NamedHotspot _item2, _item3;
+	WestExit _westExit;
+	SouthWestExit _swExit;
+	NorthExit _northExit;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	ASoundExt _sound1;
+	Timer1 _timer1;
+	int _field1A1A;
+
+	Scene342();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
