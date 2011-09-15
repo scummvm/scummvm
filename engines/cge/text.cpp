@@ -39,7 +39,7 @@ Text *_text;
 Talk *_talk = NULL;
 
 Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
-	mergeExt(_fileName, fname, kSayExt);
+	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_resman->exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 	int16 txtCount = count() + 1;

@@ -86,10 +86,10 @@ void CGEEngine::init() {
 
 	// Initialise classes that have static members
 	Bitmap::init();
-	Talk::init();
 	Cluster::init(this);
 
 	// Initialise engine objects
+	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
 	_vga = new Vga();
 	_sys = new System(this);
@@ -141,7 +141,6 @@ void CGEEngine::init() {
 
 void CGEEngine::deinit() {
 	// Call classes with static members to clear them up
-	Talk::deinit();
 	Bitmap::deinit();
 	Cluster::init(this);
 
@@ -168,6 +167,7 @@ void CGEEngine::deinit() {
 	delete _eventManager;
 	delete _fx;
 	delete _sound;
+	delete _font;
 	delete _snail;
 	delete _snail_;
 	delete _hero;

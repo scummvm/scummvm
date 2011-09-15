@@ -33,12 +33,13 @@
 
 namespace CGE {
 
-#define kBmpEOI      0x0000
-#define kBmpSKP      0x4000
-#define kBmpREP      0x8000
-#define kBmpCPY      0xC000
-
 #define kMaxPath  128
+enum {
+	kBmpEOI = 0x0000,
+	kBmpSKP = 0x4000,
+	kBmpREP = 0x8000,
+	kBmpCPY = 0xC000
+};
 
 #include "common/pack-start.h"
 
@@ -50,6 +51,7 @@ struct HideDesc {
 #include "common/pack-end.h"
 
 class Bitmap {
+	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
 public:
 	static Dac *_pal;

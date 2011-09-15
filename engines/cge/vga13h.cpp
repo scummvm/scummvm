@@ -225,7 +225,7 @@ Sprite *Sprite::expand() {
 
 	Snail::Com *nearList = NULL;
 	Snail::Com *takeList = NULL;
-	mergeExt(fname, _file, kSprExt);
+	_vm->mergeExt(fname, _file, kSprExt);
 	if (_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(fname);
 		if (sprf.err())
@@ -242,7 +242,7 @@ Sprite *Sprite::expand() {
 				continue;
 
 			Snail::Com *c;
-			switch (takeEnum(Comd, strtok(tmpStr, " =\t"))) {
+			switch (_vm->takeEnum(Comd, strtok(tmpStr, " =\t"))) {
 			case 0:
 				// Name
 				setName(strtok(NULL, ""));
@@ -287,7 +287,7 @@ Sprite *Sprite::expand() {
 				nearList = (Snail::Com *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
 				assert(nearList != NULL);
 				c = &nearList[nearCount++];
-				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_com = (SnCom)_vm->takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
 				c->_val = atoi(strtok(NULL, " \t,;/"));
@@ -300,7 +300,7 @@ Sprite *Sprite::expand() {
 				takeList = (Snail::Com *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
 				assert(takeList != NULL);
 				c = &takeList[takeCount++];
-				if ((c->_com = (SnCom)takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_com = (SnCom)_vm->takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
 				c->_val = atoi(strtok(NULL, " \t,;/"));

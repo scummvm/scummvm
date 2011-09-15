@@ -44,22 +44,8 @@ namespace CGE {
 #define kMapSize          (256*8)
 #define kFontHigh          8
 #define kFontExt           ".CFT"
-#define kPathMax           128
 
 enum TextBoxStyle { kTBPure, kTBRect, kTBRound };
-
-class Font {
-	char _path[kPathMax];
-	void load();
-public:
-	uint8  *_widthArr;
-	uint16 *_pos;
-	uint8  *_map;
-	Font(const char *name);
-	~Font();
-	uint16 width(const char *text);
-	void save();
-};
 
 class Talk : public Sprite {
 protected:
@@ -70,10 +56,6 @@ public:
 	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode);
 	Talk(CGEEngine *vm);
 	//~TALK();
-
-	static Font *_font;
-	static void init();
-	static void deinit();
 
 	virtual void update(const char *text);
 	virtual void update() {}

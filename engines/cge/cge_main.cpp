@@ -139,6 +139,38 @@ const Dac g_stdPal[] =  {// R    G   B
 	{ 255, 255, 255},   // 255
 };
 
+char *CGEEngine::mergeExt(char *buf, const char *name, const char *ext) {
+	strcpy(buf, name);
+	char *dot = strrchr(buf, '.');
+	if (!dot)
+		strcat(buf, ext);
+
+	return buf;
+}
+
+int CGEEngine::takeEnum(const char **tab, const char *text) {
+	const char **e;
+	if (text) {
+		for (e = tab; *e; e++) {
+			if (scumm_stricmp(text, *e) == 0) {
+				return e - tab;
+			}
+		}
+	}
+	return -1;
+}
+
+int CGEEngine::newRandom(int range) {
+	if (!range)
+		return 0;
+
+	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
+}
+
+void CGEEngine::sndSetVolume() {
+	// USeless for ScummVM
+}
+
 void CGEEngine::syncHeader(Common::Serializer &s) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::syncHeader(s)");
 
@@ -823,7 +855,7 @@ void System::tick() {
 				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
 				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
-					int n = newRandom(100);
+					int n = _vm->newRandom(100);
 					if (n > 96)
 						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
 					else if (n > 90)

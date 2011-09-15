@@ -28,29 +28,15 @@
 #ifndef CGE_GENERAL_H
 #define CGE_GENERAL_H
 
-#include "common/system.h"
 #include "common/file.h"
-#include "common/random.h"
-#include "common/textconsole.h"
-#include "common/str.h"
 
 namespace CGE {
-
-#define kCryptSeed  0xA5
-#define kMaxFile      128
 
 struct Dac {
 	uint8 _r;
 	uint8 _g;
 	uint8 _b;
 };
-
-int     takeEnum(const char **tab, const char *text);
-uint16  chkSum(void *m, uint16 n);
-char   *mergeExt(char *buf, const char *name, const char *ext);
-char   *forceExt(char *buf, const char *name, const char *ext);
-int     newRandom(int range);
-void    sndSetVolume();
 
 } // End of namespace CGE
 

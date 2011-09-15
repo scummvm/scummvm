@@ -1150,7 +1150,7 @@ void Snail::runCom() {
 				_vm->xScene();
 				break;
 			case kSndSetVolume:
-				sndSetVolume();
+				_vm->sndSetVolume();
 				break;
 			default:
 				error("Unknown Callback Type in SNEXEC");

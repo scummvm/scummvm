@@ -23,7 +23,6 @@
 #ifndef CGE_H
 #define CGE_H
 
-#include "cge/general.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
@@ -57,6 +56,9 @@ class Sprite;
 #define kSceneNx    8
 #define kSceneNy    3
 #define kSceneMax   kSceneNx * kSceneNy
+#define kPathMax    128
+#define kCryptSeed  0xA5
+#define kMaxFile    128
 
 
 // our engine debug channels
@@ -88,6 +90,20 @@ extern const char *savegameStr;
 struct Bar {
 	uint8 _horz;
 	uint8 _vert;
+};
+
+class Font {
+	char _path[kPathMax];
+	void load();
+	CGEEngine *_vm;
+public:
+	uint8  *_widthArr;
+	uint16 *_pos;
+	uint8  *_map;
+	Font(CGEEngine *vm, const char *name);
+	~Font();
+	uint16 width(const char *text);
+	void save();
 };
 
 class CGEEngine : public Engine {
@@ -136,7 +152,8 @@ public:
 	Sprite *_sprK3;
 
 	Common::Point _heroXY[kSceneMax];
-	Bar _barriers[kSceneMax];
+	Bar _barriers[kSceneMax + 1];
+	Font *_font;
 
 	Common::RandomSource _randomSource;
 	MusicPlayer _midiPlayer;
@@ -209,6 +226,10 @@ public:
 	void postMiniStep(int stp);
 	void showBak(int ref);
 	void initSceneValues();
+	char *mergeExt(char *buf, const char *name, const char *ext);
+	int  takeEnum(const char **tab, const char *text);
+	int  newRandom(int range);
+	void sndSetVolume();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snHBarrier(const int scene, const int barX);

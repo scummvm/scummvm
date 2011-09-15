@@ -155,6 +155,16 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 	return *this;
 }
 
+char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
+	strcpy(buf, name);
+	char *dot = strrchr(buf, '.');
+	if (dot)
+		*dot = '\0';
+	strcat(buf, ext);
+
+	return buf;
+}
+
 uint16 Bitmap::moveVmap(uint8 *buf) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::moveVmap(buf)");
 

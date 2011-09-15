@@ -89,8 +89,6 @@ namespace CGE {
 #define kGameFrameDelay (1000 / 50)
 #define kGameTickDelay  (1000 / 62)
 
-
-
 class System : public Sprite {
 public:
 	int _funDel;

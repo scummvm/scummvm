@@ -33,13 +33,13 @@
 
 namespace CGE {
 
-Font::Font(const char *name) {
+Font::Font(CGEEngine *vm, const char *name) : _vm(vm) {
 	_map = (uint8 *)malloc(kMapSize);
 	_pos = (uint16 *)malloc(kPosSize * sizeof(uint16));
 	_widthArr = (uint8 *)malloc(kWidSize);
 
 	assert((_map != NULL) && (_pos != NULL) && (_widthArr != NULL));
-	mergeExt(_path, name, kFontExt);
+	_vm->mergeExt(_path, name, kFontExt);
 	load();
 }
 
@@ -87,16 +87,6 @@ Talk::Talk(CGEEngine *vm)
 	_flags._syst = true;
 }
 
-Font *Talk::_font;
-
-void Talk::init() {
-	_font = new Font("CGE");
-}
-
-void Talk::deinit() {
-	delete _font;
-}
-
 void Talk::update(const char *text) {
 	const uint16 vmarg = (_mode) ? kTextVMargin : 0;
 	const uint16 hmarg = (_mode) ? kTextHMargin : 0;
@@ -114,7 +104,7 @@ void Talk::update(const char *text) {
 					mw = k;
 				k = 2 * hmarg;
 			} else
-				k += _font->_widthArr[(unsigned char)*p];
+				k += _vm->_font->_widthArr[(unsigned char)*p];
 		}
 		if (k > mw)
 			mw = k;
@@ -130,8 +120,8 @@ void Talk::update(const char *text) {
 		if (*text == '|' || *text == '\n') {
 			m = _ts[0]->_m + (ln += kFontHigh + kTextLineSpace) * mw + hmarg;
 		} else {
-			int cw = _font->_widthArr[(unsigned char)*text];
-			uint8 *f = _font->_map + _font->_pos[(unsigned char)*text];
+			int cw = _vm->_font->_widthArr[(unsigned char)*text];
+			uint8 *f = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 			for (int i = 0; i < cw; i++) {
 				uint8 *pp = m;
 				uint16 n;
@@ -221,8 +211,8 @@ void Talk::putLine(int line, const char *text) {
 	uint8 *q = v + size;
 
 	while (*text) {
-		uint16 cw = _font->_widthArr[(unsigned char)*text], i;
-		uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
+		uint16 cw = _vm->_font->_widthArr[(unsigned char)*text], i;
+		uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
 		for (i = 0; i < cw; i++) {
 			uint16 b = fp[i];
@@ -278,8 +268,8 @@ void InfoLine::update(const char *text) {
 		uint8 *p = v + 2, * q = p + size;
 
 		while (*text) {
-			uint16 cw = _font->_widthArr[(unsigned char)*text];
-			uint8 *fp = _font->_map + _font->_pos[(unsigned char)*text];
+			uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];
+			uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
 			for (uint16 i = 0; i < cw; i++) {
 				uint16 b = fp[i];

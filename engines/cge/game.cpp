@@ -50,17 +50,17 @@ const int Fly::_l = 20,
 
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
-	step(newRandom(2));
-	gotoxy(_l + newRandom(_r - _l - _w), _t + newRandom(_b - _t - _h));
+	step(_vm->newRandom(2));
+	gotoxy(_l + _vm->newRandom(_r - _l - _w), _t + _vm->newRandom(_b - _t - _h));
 }
 
 void Fly::tick() {
 	step();
 	if (_flags._kept)
 		return;
-	if (newRandom(10) < 1) {
-		_tx = newRandom(3) - 1;
-		_ty = newRandom(3) - 1;
+	if (_vm->newRandom(10) < 1) {
+		_tx = _vm->newRandom(3) - 1;
+		_ty = _vm->newRandom(3) - 1;
 	}
 	if (_x + _tx < _l || _x + _tx + _w > _r)
 		_tx = -_tx;
