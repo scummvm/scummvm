@@ -346,11 +346,11 @@ void Scene109::Text::dispatch() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene109::Scene109(): GroupedScene() {
+Scene109::Scene109(): PalettedScene() {
 }
 
 void Scene109::postInit(SceneObjectList *OwnerList) {
-	GroupedScene::postInit(OwnerList);
+	PalettedScene::postInit(OwnerList);
 	loadScene(999);
 
 	_protaginist2.postInit();

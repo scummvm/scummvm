@@ -97,6 +97,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Approaching Marina
 		return new Scene330();
 	case 340:
+		// Marina, Domestic Disturbance
+		return new Scene340();
 	case 342:
 	case 350:
 	case 355:
@@ -272,13 +274,13 @@ void AObjectArray::remove(EventHandler *obj) {
 
 Timer::Timer() {
 	_endFrame = 0;
-	_endAction = NULL;
+	_endHandler = NULL;
 	_tickAction = NULL;
 }
 
 void Timer::remove() {
 	_endFrame = 0;
-	_endAction = NULL;
+	_endHandler = NULL;
 
 	((Scene100 *)BF_GLOBALS._sceneManager._scene)->removeTimer(this);
 }
@@ -286,15 +288,15 @@ void Timer::remove() {
 void Timer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 	SYNC_POINTER(_tickAction);
-	SYNC_POINTER(_endAction);
+	SYNC_POINTER(_endHandler);
 	s.syncAsUint32LE(_endFrame);
 }
 
 void Timer::signal() {
-	assert(_endAction);
-	Action *action = _endAction;
+	assert(_endHandler);
+	EventHandler *item = _endHandler;
 	remove();
-	action->signal();
+	item->signal();
 }
 
 void Timer::dispatch() {
@@ -309,11 +311,11 @@ void Timer::dispatch() {
 	}
 }
 
-void Timer::set(uint32 delay, Action *endAction) {
+void Timer::set(uint32 delay, EventHandler *endHandler) {
 	assert(delay != 0);
 
 	_endFrame = BF_GLOBALS._sceneHandler->getFrameDifference() + delay;
-	_endAction = endAction;
+	_endHandler = endHandler;
 
 	((SceneExt *)BF_GLOBALS._sceneManager._scene)->addTimer(this);
 }
@@ -324,9 +326,9 @@ TimerExt::TimerExt(): Timer() {
 	_action = NULL;
 }
 
-void TimerExt::set(uint32 delay, Action *endAction, Action *newAction) {
+void TimerExt::set(uint32 delay, EventHandler *endHandler, Action *newAction) {
 	_newAction = newAction;
-	Timer::set(delay, endAction);
+	Timer::set(delay, endHandler);
 }
 
 void TimerExt::synchronize(Serializer &s) {
@@ -336,22 +338,18 @@ void TimerExt::synchronize(Serializer &s) {
 
 void TimerExt::remove() {
 	_action = NULL;
-	remove();
+	Timer::remove();
 }
 
 void TimerExt::signal() {
-	Action *endAction = _endAction;
+	EventHandler *endHandler = _endHandler;
 	Action *newAction = _newAction;
 	remove();
 
 	// If the end action doesn't have an action anymore, set it to the specified new action
-	assert(endAction);
-	if (!endAction->_action)
-		endAction->setAction(newAction);
-}
-
-void TimerExt::dispatch() {
-
+	assert(endHandler);
+	if (!endHandler->_action)
+		endHandler->setAction(newAction);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -546,8 +544,8 @@ void SceneExt::dispatch() {
 
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
-			if (BF_GLOBALS._v4E238 && (BF_GLOBALS._v4CF9E == 1)) {
-				warning("sub_1B052");
+			if (BF_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
+				BF_GLOBALS._uiElements.show();
 			}
 			
 			_field37A = 0;
@@ -657,17 +655,22 @@ void SceneExt::endStrip() {
 
 /*--------------------------------------------------------------------------*/
 
-GroupedScene::GroupedScene() {
-
+PalettedScene::PalettedScene(): SceneExt() {
+	_field794 = 0;
 }
 
-void GroupedScene::postInit(SceneObjectList *OwnerList) {
+void PalettedScene::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field794);
+}
+
+void PalettedScene::postInit(SceneObjectList *OwnerList) {
 	_field794 = 0;
-	_field412 = 1;
+	_palette._field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
-void GroupedScene::remove() {
+void PalettedScene::remove() {
 	SceneExt::remove();
 	if (_field794 == 1) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
@@ -677,10 +680,10 @@ void GroupedScene::remove() {
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		BF_GLOBALS._v51C44 = 1;
-		BF_GLOBALS._v51C42 = 1;
+		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
 
-	BF_GLOBALS._scenePalette._field412 = 1;
+	BF_GLOBALS._scenePalette._field412 = 0;
 }
 
 /*--------------------------------------------------------------------------*/
