@@ -567,7 +567,7 @@ bool Scene60::Ignition::check1() {
 			else
 				BF_GLOBALS._v5098C |= 2;
 		} else {
-			int v = ((BF_GLOBALS._v5098C >> 2) & 15 + 1) & 15;
+			int v = (((BF_GLOBALS._v5098C >> 2) & 15) + 1) & 15;
 			BF_GLOBALS._v5098C = (BF_GLOBALS._v5098C & 0xC3) | (v << 2);
 
 			if ((v != 1) && (v != 2)) {

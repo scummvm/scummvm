@@ -203,6 +203,8 @@ void UIInventoryScroll::process(Event &event) {
 		// Scroll the inventory as necessary
 		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
 		event.handled = true;
+		break;	
+	default:
 		break;
 	}
 }
