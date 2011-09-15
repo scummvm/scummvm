@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	events.o \
 	fileio.o \
 	game.o \
-	general.o \
 	snail.o \
 	sound.o \
 	talk.o \
