@@ -1736,11 +1736,11 @@ NamedHotspot::NamedHotspot() : SceneHotspot() {
 	_lookLineNum = _useLineNum = _talkLineNum = -1;
 }
 
-void NamedHotspot::doAction(int action) {
+bool NamedHotspot::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_WALK:
 		// Nothing
-		break;
+		return false;
 	case CURSOR_LOOK:
 		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1748,7 +1748,7 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _lookLineNum);
 		else
 			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return true;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1756,7 +1756,7 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _useLineNum);
 		else
 			SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return true;
 	case CURSOR_TALK:
 		if (_talkLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1764,10 +1764,9 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _talkLineNum);
 		else
 			SceneItem::display2(_resNum, _talkLineNum);
-		break;
+		return true;
 	default:
-		SceneHotspot::doAction(action);
-		break;
+		return SceneHotspot::startAction(action, event);
 	}
 }
 

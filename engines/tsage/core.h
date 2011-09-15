@@ -451,7 +451,7 @@ public:
 	NamedHotspot();
 
 
-	virtual void doAction(int action);
+	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 	virtual void synchronize(Serializer &s);
 	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);

@@ -137,6 +137,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 810:
 	case 820:
 	case 830:
+		// Outside Boat Rentals
+		return new Scene830();
 	case 840:
 	case 850:
 	case 860:
@@ -686,6 +688,11 @@ void PalettedScene::remove() {
 	}
 
 	BF_GLOBALS._scenePalette._field412 = 0;
+}
+
+PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action *action) {
+	_field794 = 1;
+	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
 /*--------------------------------------------------------------------------*/

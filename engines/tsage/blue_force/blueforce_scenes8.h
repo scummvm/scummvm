@@ -99,6 +99,61 @@ public:
 	virtual void dispatch();
 };
 
+class Scene830: public PalettedScene {
+	/* Items */
+	class SouthEastExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class NoteBoard: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	NamedObject _object1, _lyle, _object6;
+	Door _door;
+	Object4 _object4;
+	Object5 _object5;
+	SouthEastExit _seExit;
+	NoteBoard _noteBoard;
+	NamedHotspot _item2, _item4, _item5;
+	NamedHotspot _item6, _item7, _item8;
+	ASoundExt _sound1;
+	int _field18A4, _field18A6, _field18A8, _field18AA, _field18AC;
+
+	Scene830();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

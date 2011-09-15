@@ -182,6 +182,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
+	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
 };
 
 class SceneHandlerExt: public SceneHandler {
