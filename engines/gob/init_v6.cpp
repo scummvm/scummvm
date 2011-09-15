@@ -48,7 +48,6 @@ void Init_v6::initGame() {
 		// (it checks CD1.ITK - CD4.ITK and the first that's found determines
 		// the CD number), while its NO_CD modus wants everything in CD1.ITK.
 		// So we just open the other ITKs, too.
-			_vm->_dataIO->openArchive("CD1.ITK", false);
 			_vm->_dataIO->openArchive("CD2.ITK", false);
 			_vm->_dataIO->openArchive("CD3.ITK", false);
 			_vm->_dataIO->openArchive("CD4.ITK", false);
