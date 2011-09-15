@@ -53,6 +53,13 @@ private:
 	static const uint kEvilFishCount =  3;
 	static const uint kMaxShotCount  = 10;
 
+	struct ManagedEvilFish {
+		EvilFish *evilFish;
+
+		uint32 enterAt;
+		uint32 leaveAt;
+	};
+
 	GobEngine *_vm;
 
 	DECFile *_background;
@@ -64,7 +71,7 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
-	EvilFish *_evilFish[kEvilFishCount];
+	ManagedEvilFish _evilFish[kEvilFishCount];
 
 	ANIObject *_shot[kMaxShotCount];
 
@@ -91,11 +98,10 @@ private:
 	void initScreen();
 	void initCursor();
 
-	void evilFishEnter();
-
 	void foundBlackPearl();
 	void foundWhitePearl();
 
+	void updateEvilFish();
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
