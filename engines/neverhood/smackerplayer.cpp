@@ -170,10 +170,9 @@ void SmackerPlayer::update() {
 		_dirtyFlag = false;
 	}
 
+#if 0
 	if (!_smackerDecoder->endOfVideo()) {
-
 		updateFrame();
-
 		if (_smackerDecoder->endOfVideo() && !_keepLastFrame) {
 			// Inform the scene about the end of the video playback
 			if (_scene) {
@@ -187,8 +186,23 @@ void SmackerPlayer::update() {
 			}
 			_flag2 = false;
 		}
-		
 	}
+#endif
+
+	if (!_smackerDecoder->endOfVideo()) {
+		updateFrame();
+	} else if (!_keepLastFrame) {
+		// Inform the scene about the end of the video playback
+		if (_scene) {
+			_scene->sendMessage(0x3002, 0, this);
+		}
+		_flag2 = true;
+	} else {
+		rewind();
+		updateFrame();
+		_flag2 = false;
+	}
+	
 }
 
 void SmackerPlayer::updateFrame() {

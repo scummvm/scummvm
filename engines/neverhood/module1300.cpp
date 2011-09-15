@@ -207,6 +207,11 @@ void Module1300::createScene1308(int which) {
 }
 			
 void Module1300::createScene1309(int which) {
+	_vm->gameState().sceneNum = 8;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	_childObject = new DiskplayerScene(_vm, this, 1);
+	SetUpdateHandler(&Module1300::updateScene1309);
 }
 			
 void Module1300::createScene1310(int which) {
@@ -256,6 +261,11 @@ void Module1300::createScene1316(int which) {
 }
 			
 void Module1300::createScene1317(int which) {
+	_vm->gameState().sceneNum = 16;
+	// TODO Sound1ChList_setSoundValuesMulti(dword_4B2868, false, 0, 0, 0, 0);
+	// TODO Music18hList_stop(0x203197, 0, 2);
+	_childObject = new Scene1317(_vm, this, which);
+	SetUpdateHandler(&Module1300::updateScene1317);
 }
 			
 void Module1300::createScene1318(int which) {
@@ -359,6 +369,14 @@ void Module1300::updateScene1308() {
 }
 
 void Module1300::updateScene1309() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1306(2);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1310() {
@@ -452,6 +470,14 @@ void Module1300::updateScene1316() {
 }
 
 void Module1300::updateScene1317() {
+	_childObject->handleUpdate();
+	if (_done) {
+		_done = false;
+		delete _childObject;
+		_childObject = NULL;
+		createScene1318(-1);
+		_childObject->handleUpdate();
+	}
 }
 
 void Module1300::updateScene1318() {
@@ -1989,6 +2015,161 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	SetMessageHandler(&Scene1317::handleMessage);
+	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
+	_mouseCursor = addSprite(new Mouse433(_vm, 0x08284011, NULL));
+	_mouseCursor->getSurface()->setVisible(false);
+	_smackerFileHash = 0;
+	_smackerFlag1 = false;
+}
+
+void Scene1317::update() {
+	if (_smackerFileHash) {
+		_smackerPlayer->open(_smackerFileHash, _smackerFlag1);
+		_smackerFileHash = 0;
+	}
+	Scene::update();
+}
+
+void Scene1317::upChooseKing() {
+	if (!_klaymanBlinks && _klaymanBlinkCountdown != 0 && (--_klaymanBlinkCountdown == 0))
+		_klaymanBlinks = true;
+		
+	if (!_klaymanBlinks && _smackerPlayer->getFrameNumber() + 1 >= 2) {
+		_smackerPlayer->rewind();
+	} else if (_klaymanBlinks && _smackerPlayer->getFrameNumber() + 1 >= 6) {
+		_smackerPlayer->rewind();
+		_klaymanBlinks = false;
+		_klaymanBlinkCountdown = _vm->_rnd->getRandomNumber(30 - 1) + 15;
+	}
+
+	if (!_klaymanBlinks && _decisionCountdown != 0 && (--_decisionCountdown == 0))
+		stNoDecisionYet();
+			
+	if (_smackerFileHash) {
+		_smackerPlayer->open(_smackerFileHash, _smackerFlag1);
+		_smackerFileHash = 0;
+	}
+
+	Scene::update();
+	
+}
+
+uint32 Scene1317::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		stChooseKing();
+		break;
+	}
+	return messageResult;
+}
+	
+uint32 Scene1317::hmChooseKing(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x >= 21 && param.asPoint().y >= 24 &&
+			param.asPoint().x <= 261 && param.asPoint().y <= 280) {
+			stHoborgAsKing();
+		} else if (param.asPoint().x >= 313 && param.asPoint().y >= 184 &&
+			param.asPoint().x <= 399 && param.asPoint().y <= 379) {
+			stKlaymanAsKing();
+		} else if (param.asPoint().x >= 347 && param.asPoint().y >= 380 &&
+			param.asPoint().x <= 418 && param.asPoint().y <= 474) {
+			stKlaymanAsKing();
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene1317::hmNoDecisionYet(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		stChooseKing();
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene1317::hmHoborgAsKing(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		stEndMovie();
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene1317::hmKlaymanAsKing(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		_parentModule->sendMessage(0x1009, 0, this);
+		break;
+	}
+	return messageResult;
+}
+
+uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x3002:
+		_parentModule->sendMessage(0x1009, 0, this);
+		break;
+	}
+	return messageResult;
+}
+
+void Scene1317::stChooseKing() {
+	_mouseCursor->getSurface()->setVisible(true);
+	SetMessageHandler(&Scene1317::hmChooseKing);
+	SetUpdateHandler(&Scene1317::upChooseKing);
+	_smackerFileHash = 0x10982841;
+	_smackerFlag1 = true;
+	_decisionCountdown = 450;
+	_klaymanBlinks = false;
+	_klaymanBlinkCountdown = _vm->_rnd->getRandomNumber(30 - 1) + 15;
+}
+
+void Scene1317::stNoDecisionYet() {
+	_mouseCursor->getSurface()->setVisible(false);
+	SetMessageHandler(&Scene1317::hmNoDecisionYet);
+	SetUpdateHandler(&Scene1317::update);
+	_smackerFileHash = 0x20982841;
+	_smackerFlag1 = false;
+}
+
+void Scene1317::stHoborgAsKing() {
+	_mouseCursor->getSurface()->setVisible(false);
+	SetMessageHandler(&Scene1317::hmHoborgAsKing);
+	SetUpdateHandler(&Scene1317::update);
+	_smackerFileHash = 0x40982841;
+	_smackerFlag1 = false;
+}
+
+void Scene1317::stKlaymanAsKing() {
+	_mouseCursor->getSurface()->setVisible(false);
+	SetMessageHandler(&Scene1317::hmKlaymanAsKing);
+	SetUpdateHandler(&Scene1317::update);
+	_smackerFileHash = 0x80982841;
+	_smackerFlag1 = false;
+}
+
+void Scene1317::stEndMovie() {
+	_mouseCursor->getSurface()->setVisible(false);
+	SetMessageHandler(&Scene1317::hmEndMovie);
+	SetUpdateHandler(&Scene1317::update);
+	_smackerFileHash = 0x40800711;
+	_smackerFlag1 = false;
 }
 
 } // End of namespace Neverhood

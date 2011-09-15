@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/smackerplayer.h"
 
 namespace Neverhood {
 
@@ -320,6 +321,31 @@ protected:
 	Sprite *_sprite5;
 	bool _flag1;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene1317 : public Scene {
+public:
+	Scene1317(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	SmackerPlayer *_smackerPlayer;
+	bool _klaymanBlinks;
+	int _klaymanBlinkCountdown;
+	int _decisionCountdown;
+	uint32 _smackerFileHash;
+	bool _smackerFlag1;
+	void update();
+	void upChooseKing();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmChooseKing(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmNoDecisionYet(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmHoborgAsKing(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmKlaymanAsKing(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmEndMovie(int messageNum, const MessageParam &param, Entity *sender);
+	void stChooseKing();
+	void stNoDecisionYet();
+	void stHoborgAsKing();
+	void stKlaymanAsKing();
+	void stEndMovie();
 };
 
 } // End of namespace Neverhood

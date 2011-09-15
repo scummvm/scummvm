@@ -59,6 +59,7 @@ public:
 	uint32 getFrameNumber(); 
 	uint getStatus();
 	void setDrawPos(int16 x, int16 y);
+	void rewind();
 protected:
 	Scene *_scene;
 	Palette *_palette;
@@ -72,7 +73,6 @@ protected:
 	bool _flag2;
 	bool _dirtyFlag;
 	int _drawX, _drawY;
-	void rewind();
 	void update();
 	void updateFrame();
 	void updatePalette();
