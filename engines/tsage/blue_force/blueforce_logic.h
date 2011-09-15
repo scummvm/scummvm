@@ -67,11 +67,11 @@ public:
 class Timer: public EventHandler {
 public:
 	Action *_tickAction;
-	Action *_endAction;
+	EventHandler *_endHandler;
 	uint32 _endFrame;
 public:
 	Timer();
-	void set(uint32 delay, Action *endAction);
+	void set(uint32 delay, EventHandler *endHandler);
 
 	virtual Common::String getClassName() { return "Timer"; }
 	virtual void synchronize(Serializer &s);
@@ -85,13 +85,12 @@ public:
 	Action *_newAction;
 public:	
 	TimerExt();
-	void set(uint32 delay, Action *endAction, Action *action);
+	void set(uint32 delay, EventHandler *endHandler, Action *action);
 
 	virtual Common::String getClassName() { return "TimerExt"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
-	virtual void dispatch();
 };	
 
 class SceneItemType2: public SceneHotspot {
@@ -107,9 +106,9 @@ public:
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void startAction(CursorType action, Event &event);
+	virtual bool startAction(CursorType action, Event &event);
 
-	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
 };
 
 class CountdownObject: public NamedObject {
@@ -142,7 +141,6 @@ enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_S
 
 class SceneExt: public Scene {
 private:
-	void gunDisplay();
 	static void startStrip();
 	static void endStrip();
 public:
@@ -170,17 +168,21 @@ public:
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
 	bool display(CursorType action);
+	void fadeOut();
+	void gunDisplay();
 };
 
-class GroupedScene: public SceneExt {
+class PalettedScene: public SceneExt {
 public:
-	int _field412;
+	ScenePalette _palette;
 	int _field794;
 public:
-	GroupedScene();
+	PalettedScene();
 
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
+	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
 };
 
 class SceneHandlerExt: public SceneHandler {

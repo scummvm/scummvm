@@ -203,6 +203,8 @@ void UIInventoryScroll::process(Event &event) {
 		// Scroll the inventory as necessary
 		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
 		event.handled = true;
+		break;	
+	default:
 		break;
 	}
 }
@@ -264,6 +266,34 @@ void UICollection::draw() {
 
 UIElements::UIElements(): UICollection() {
 	_cursorVisage.setVisage(1, 5);
+	_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+}
+
+void UIElements::synchronize(Serializer &s) {
+	UICollection::synchronize(s);
+
+	s.syncAsSint16LE(_slotStart);
+	s.syncAsSint16LE(_scoreValue);
+	s.syncAsByte(_active);
+
+	int count = _itemList.size();
+	s.syncAsSint16LE(count);
+	if (s.isLoading()) {
+		// Load in item list
+		_itemList.clear();
+
+		for (int idx = 0; idx < count; ++idx) {
+			int itemId;
+			s.syncAsSint16LE(itemId);
+			_itemList.push_back(itemId);
+		}
+	} else {
+		// Save item list
+		for (int idx = 0; idx < count; ++idx) {
+			int itemId = _itemList[idx];
+			s.syncAsSint16LE(itemId);
+		}
+	}
 }
 
 void UIElements::process(Event &event) {
@@ -469,6 +499,11 @@ void UIElements::scrollInventory(bool isLeft) {
 		++_slotStart;
 
 	updateInventory();
+}
+
+void UIElements::loadNotifierProc(bool postFlag) {
+	if (postFlag && BF_GLOBALS._uiElements._active)
+		BF_GLOBALS._uiElements.show();
 }
 
 } // End of namespace BlueForce

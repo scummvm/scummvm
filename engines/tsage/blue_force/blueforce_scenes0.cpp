@@ -21,6 +21,7 @@
  */
 
 #include "tsage/blue_force/blueforce_scenes0.h"
+#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -293,7 +294,7 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 					BF_GLOBALS._player.disableControl();
 					scene->_sceneNumber = _newSceneNumber;
 				} else {
-					BF_GLOBALS._v4CEA8 = 4;
+					BF_GLOBALS._deathReason = 4;
 					BF_GLOBALS._sceneManager.changeScene(666);
 					return;
 				}
@@ -330,6 +331,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
 	BF_GLOBALS._player.setStrip(3);
@@ -421,7 +423,7 @@ void Scene50::remove() {
 	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
 
 	SceneExt::remove();
-	BF_GLOBALS._v4E238 = 1;
+	BF_GLOBALS._uiElements._active = true;
 }
 
 void Scene50::signal() {
@@ -449,7 +451,7 @@ void Scene50::signal() {
 			if (BF_GLOBALS._bookmark >= bStoppedFrankie)
 				BF_GLOBALS.setFlag(131);
 			if (BF_GLOBALS._bookmark == bArrestedGreen) {
-				BF_GLOBALS._v4CEA8 = 19;
+				BF_GLOBALS._deathReason = 19;
 				_sceneNumber = 666;
 			}
 		}
@@ -496,6 +498,626 @@ void Scene50::process(Event &event) {
 
 		// No hotspot selected, so remove any current tooltip display
 		_text.remove();
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 60 - Motorcycle
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene60::Ignition::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 15);
+		break;
+	default:
+		switch (BF_GLOBALS._dayNumber) {
+		case 1:
+			if (BF_GLOBALS.getFlag(onDuty) && check1())
+				return true;
+			break;
+		case 2:
+			if (BF_GLOBALS.getFlag(onDuty) && check2())
+				return true;
+		}
+		
+		BF_GLOBALS._sound1.play(BF_GLOBALS.getFlag(fWithLyle) ? 80 : 31);
+		BF_GLOBALS._sound1.holdAt(1);
+		scene->fadeOut();
+		BF_GLOBALS._sceneManager.changeScene(50);
+		break;
+	}
+
+	return true;
+}
+
+bool Scene60::Ignition::check1() {
+	if (BF_GLOBALS._bookmark >= bStoppedFrankie) {
+		BF_GLOBALS._v5098C |= 1;
+		return false;
+	} else {
+		if ((BF_GLOBALS._bookmark == bBookedGreen) && BF_GLOBALS.getFlag(fArrivedAtGangStop)) {
+			BF_GLOBALS.set2Flags(f1035Frankie);
+			BF_GLOBALS._sceneManager.changeScene(410);
+		}
+
+		if (BF_GLOBALS._bookmark >= bLauraToParamedics) {
+			if (BF_GLOBALS.getFlag(fLeftTraceIn910)) {
+				if (BF_GLOBALS._bookmark < bBookedGreen) {
+					BF_GLOBALS._bookmark = bBookedGreen;
+					BF_GLOBALS.clearFlag(fCalledBackup);
+					BF_GLOBALS.set2Flags(f1035Frankie);
+					return false;
+				} else if (BF_GLOBALS._bookmark == bBookedGreen) {
+					if (!BF_GLOBALS.getFlag(fCalledBackup))
+						BF_GLOBALS.setFlag(f1035Frankie);
+
+					BF_GLOBALS._sceneManager.changeScene(410);
+					return true;
+				}
+			}
+
+		} else if (BF_GLOBALS._bookmark < bStartOfGame) {
+			// Should never reach here
+		} else if (BF_GLOBALS._bookmark < bCalledToDomesticViolence) {
+			if ((BF_GLOBALS._v5098C >> 1) & 1)
+				BF_GLOBALS.setFlag(fLateToMarina);
+			else
+				BF_GLOBALS._v5098C |= 2;
+		} else {
+			int v = (((BF_GLOBALS._v5098C >> 2) & 15) + 1) & 15;
+			BF_GLOBALS._v5098C = (BF_GLOBALS._v5098C & 0xC3) | (v << 2);
+
+			if ((v != 1) && (v != 2)) {
+				BF_GLOBALS._deathReason = 19;
+				BF_GLOBALS._sceneManager.changeScene(666);
+				return true;
+			}
+		}
+	}
+
+	BF_GLOBALS._v5098C |= 1;
+	return false;
+}
+
+bool Scene60::Ignition::check2() {
+	switch (BF_GLOBALS._bookmark) {
+	case bInspectionDone:
+		if (BF_GLOBALS._v5098D & 1) {
+			BF_GLOBALS.setFlag(fLateToDrunkStop);
+		} else {
+			BF_GLOBALS._v5098D |= 1;
+		}
+		break;
+	case bCalledToDrunkStop:
+		BF_GLOBALS.setFlag(fHasDrivenFromDrunk);
+		break;
+	default:
+		break;
+	}
+	
+	BF_GLOBALS._v5098C |= 0x80;
+	return false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene60::Item3::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+	scene->fadeOut();
+	BF_GLOBALS._sceneManager.changeScene(scene->_newScene);
+	return true;
+}
+
+bool Scene60::Radio::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch(action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 0);
+		break;
+	case CURSOR_USE:
+	case CURSOR_TALK:
+		scene->_sound.play(32);
+		scene->setAction(&scene->_action1);
+		break;
+	default:
+		SceneItem::display2(60, 1);
+		break;
+	}
+	return true;
+}
+
+bool Scene60::Compartment::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch(action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 8);
+		break;
+	case CURSOR_USE:
+		if ((BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 1) && 
+				(BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 1)) {
+			SceneItem::display2(60, 9);
+		}
+		break;
+	case CURSOR_TALK:
+		SceneItem::display2(60, 10);
+		break;
+	case INV_TICKET_BOOK:
+		SceneItem::display2(60, 11);
+		scene->_ticketBook.show();
+		BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 60);
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
+		BF_GLOBALS._sceneItems.addBefore(&scene->_radio, &scene->_ticketBook);
+		break;
+	case INV_MIRANDA_CARD:
+		SceneItem::display2(60, 12);
+		scene->_mirandaCard.show();
+		BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 60);
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
+		BF_GLOBALS._sceneItems.addAfter(&scene->_compartmentDoor, &scene->_mirandaCard);
+		break;
+	default:
+		return NamedHotspot::startAction(action, event);
+	}
+
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene60::MirandaCard::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 5);
+		return true;
+	case CURSOR_USE:
+		if (BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 60) {
+			SceneItem::display2(60, 6);
+			BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 1);
+			if (!BF_GLOBALS.getFlag(fGotPointsForTktBook)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				BF_GLOBALS.setFlag(fGotPointsForTktBook);
+			}
+
+			scene->_mirandaCard.hide();
+			BF_GLOBALS._sceneItems.remove(&scene->_mirandaCard);
+		}
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(60, 7);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+		break;
+	}
+}
+
+bool Scene60::TicketBook::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 2);
+		return true;
+	case CURSOR_USE:
+		if (BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 60) {
+			scene->_ticketBook.hide();
+			BF_GLOBALS._sceneItems.remove(&scene->_ticketBook);
+			SceneItem::display2(60, 3);
+			BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 1);
+			if (!BF_GLOBALS.getFlag(fShotNicoIn910)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				BF_GLOBALS.setFlag(fShotNicoIn910);
+			}
+		}
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(60, 4);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+		break;
+	}
+}
+
+bool Scene60::CompartmentDoor::startAction(CursorType action, Event &event) {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(60, 13);
+		return true;
+	case CURSOR_USE:
+		if (_flag) {
+			_flag = false;
+			BF_GLOBALS._player.disableControl();
+			Common::Point pt(308, 165);
+			NpcMover *mover = new NpcMover();
+			addMover(mover, &pt, scene);
+		} else {
+			_flag = true;
+			BF_GLOBALS._player.disableControl();
+			Common::Point pt(288, 165);
+			NpcMover *mover = new NpcMover();
+			addMover(mover, &pt, scene);
+		}
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(60, 14);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene60::Action1::signal() {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+	case 1:
+		scene->_stripManager.start(634, this);
+		break;
+	case 2:
+		_state = useRadio();
+		setDelay(4);
+		break;
+	case 3:
+		switch (_state) {
+		case 1:
+			if (BF_GLOBALS.removeFlag(fCan1004Marina)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 606;
+			} else if (BF_GLOBALS.removeFlag(fCan1004Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 606;
+			} else {
+				_state = 611;
+			}
+			break;
+		case 2:
+			_state = 612;
+			break;
+		case 3:
+			if (BF_GLOBALS.removeFlag(f1015Marina)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 613;
+			} else if (BF_GLOBALS.removeFlag(f1015Frankie)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 614;
+			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 615;
+			} else {
+				_state = 616;
+			}
+			break;
+		case 4:
+			if (BF_GLOBALS.removeFlag(f1027Marina)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_actionIndex = 5;
+				_state = 617;
+			} else if (BF_GLOBALS.removeFlag(f1027Frankie)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_actionIndex = 5;
+				_state = 618;
+			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_actionIndex = 5;
+				_state = 619;
+			} else {
+				_state = 620;
+			}
+			break;
+		case 5:
+			if (BF_GLOBALS.removeFlag(f1035Marina)) {
+				BF_GLOBALS.setFlag(fCalledBackup);
+				BF_GLOBALS._uiElements.addScore(50);
+				_state = 621;
+			} else if (BF_GLOBALS.removeFlag(f1035Frankie)) {
+				BF_GLOBALS.setFlag(fCalledBackup);
+				BF_GLOBALS._uiElements.addScore(50);
+				_actionIndex = 5;
+				_state = 622;
+			} else if (BF_GLOBALS.removeFlag(f1035Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 623;
+			} else {
+				_state = 624;
+			}
+			break;
+		case 6:
+			if (BF_GLOBALS.removeFlag(f1097Marina)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 625;
+			} else if (BF_GLOBALS.removeFlag(f1097Frankie)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_actionIndex = 5;
+				_state = 626;
+			} else if (BF_GLOBALS.removeFlag(f1097Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 627;
+			} else {
+				_state = 628;
+			}
+			break;
+		case 7:
+			if (BF_GLOBALS.removeFlag(f1098Marina)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 629;
+			} else if (BF_GLOBALS.removeFlag(f1098Frankie)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 630;
+			} else if (BF_GLOBALS.removeFlag(f1098Drunk)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				_state = 631;
+			} else {
+				_state = 632;
+			}
+			break;
+		case 0:
+		default:
+			_state = 610;
+			break;
+		}
+
+		scene->_stripManager.start(_state, this);
+		break;
+	case 4:
+		remove();
+	case 5:
+		setDelay(120);
+		break;
+	case 6:
+		_actionIndex = 4;
+		scene->_stripManager.start(633, this);
+		break;
+	}
+}
+
+int Scene60::Action1::useRadio() {
+	return RadioConvDialog::show();
+}
+
+void Scene60::Action2::signal() {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._player.disableControl();
+		scene->_sound.play(32);
+		setDelay(2);
+		break;
+	case 1:
+		BF_GLOBALS._bookmark = bStartOfGame;
+		BF_GLOBALS.set2Flags(f1035Marina);
+		scene->_stripManager.start(60, this);
+		break;
+	case 2:
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	}
+}
+
+void Scene60::Action3::signal() {
+	Scene60 *scene = (Scene60 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._player.disableControl();
+		scene->_sound.play(32);
+		setDelay(2);
+		break;
+	case 1:
+		BF_GLOBALS._bookmark = bInspectionDone;
+		BF_GLOBALS.set2Flags(f1035Drunk);
+		BF_GLOBALS.setFlag(fCan1004Drunk);
+		scene->_stripManager.start(71, this);
+		break;
+	case 2:
+		scene->_field1222 = true;
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene60::Scene60(): SceneExt() {
+	_newScene = 0;
+	_sceneNumber = 0;
+	_visage = 0;
+	_cursorId = CURSOR_NONE;
+	_field1222 = false;
+}
+
+void Scene60::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_newScene);
+	s.syncAsSint16LE(_sceneNumber);
+	s.syncAsSint16LE(_visage);
+	s.syncAsSint16LE(_cursorId);
+	s.syncAsSint16LE(_field1222);
+}
+
+void Scene60::postInit(SceneObjectList *OwnerList) {
+	_newScene = BF_GLOBALS._driveFromScene = BF_GLOBALS._sceneManager._previousScene;
+
+	// Set up which scene background to use
+	switch (_newScene) {
+	case 300:
+		_sceneNumber = 1301;
+		break;
+	case 380:
+		_sceneNumber = 1380;
+		break;
+	case 410:
+		_sceneNumber = 1410;
+		break;
+	case 551:
+		_sceneNumber = 1550;
+		break;
+	case 550:
+		_sceneNumber = 1555;
+		break;
+	case 580:
+		_sceneNumber = 1580;
+		break;
+	case 800:
+		_sceneNumber = 1810;
+		break;
+	default:
+		_sceneNumber = 60;
+		break;
+	}
+
+	if (_sceneNumber == 1550) {
+		if (BF_GLOBALS.getFlag(fHasDrivenFromDrunk))
+			_sceneNumber = 1555;
+		else {
+			_object1.postInit();
+			_object1.setVisage(1550);
+			_object1.animate(ANIM_MODE_2);
+			_object1.setPosition(Common::Point(158, 18));
+		}
+	}
+
+	loadScene(_sceneNumber);
+
+	if ((_sceneNumber == 1810) && (BF_GLOBALS._dayNumber > 1) && 
+			(BF_GLOBALS._dayNumber < 5) && !BF_GLOBALS.getFlag(fWithLyle) && 
+			((BF_GLOBALS._dayNumber != 4) && (BF_GLOBALS._bookmark >= bEndDayThree))) {
+		_car.setup(1810, 1, 1, 164, 131, 1);
+	}
+
+	if ((_sceneNumber == 1410) && (BF_GLOBALS._bookmark == bBookedGreen) &&
+			!BF_GLOBALS.getFlag(fDriverOutOfTruck)) {
+		_object1.postInit();
+		_object1.setVisage(410);
+		_object1.setStrip(6);
+		_object1.setPosition(Common::Point(135, 47));
+	}
+
+	if (BF_GLOBALS.getFlag(fWithLyle)) {
+		_visage = 62;
+		_ignition._sceneRegionId = 22;
+	} else if (BF_GLOBALS.getFlag(onDuty)) {
+		_visage = 63;
+		_ignition._sceneRegionId = 20;
+	} else {
+		_visage = 61;
+		_ignition._sceneRegionId = 28;
+	}
+	_dashboard.setup(_visage, 1, 1, 160, 168, 100);
+	_cursorId = CURSOR_USE;
+	
+	if (_visage == 63) {
+		_compartmentDoor.postInit();
+		_compartmentDoor.setVisage(60);
+		_compartmentDoor.setStrip(1);
+		_compartmentDoor.setFrame(1);
+		_compartmentDoor.setPosition(Common::Point(288, 165));
+		_compartmentDoor.setPriority(250);
+		_compartmentDoor._flag = true;
+		BF_GLOBALS._sceneItems.push_back(&_compartmentDoor);
+
+		_mirandaCard.postInit();
+		_mirandaCard.setVisage(60);
+		_mirandaCard.setStrip(2);
+		_mirandaCard.setFrame(2);
+		_mirandaCard.setPosition(Common::Point(280, 160));
+
+		if (BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 60) {
+			_mirandaCard.show();
+			BF_GLOBALS._sceneItems.push_back(&_mirandaCard);
+		} else {
+			_mirandaCard.hide();
+		}
+
+		_ticketBook.postInit();
+		_ticketBook.setVisage(60);
+		_ticketBook.setStrip(2);
+		_ticketBook.setFrame(1);
+		_ticketBook.setPosition(Common::Point(289, 161));
+
+		if (BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 60) {
+			_ticketBook.show();
+			BF_GLOBALS._sceneItems.push_back(&_ticketBook);
+		} else {
+			_ticketBook.hide();
+		}
+	}
+
+	_item3._sceneRegionId = 7;
+	_radio._sceneRegionId = 12;
+	_compartment._sceneRegionId = 14;
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_jakeRadioSpeaker);
+
+	if (BF_GLOBALS.getFlag(onDuty) && !BF_GLOBALS.getFlag(fWithLyle)) {
+		BF_GLOBALS._sceneItems.push_back(&_radio);
+		BF_GLOBALS._sceneItems.push_back(&_compartment);
+	}
+
+	BF_GLOBALS._sceneItems.push_back(&_ignition);
+	BF_GLOBALS._sceneItems.push_back(&_item3);
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._events.setCursor(CURSOR_USE);
+
+	switch (BF_GLOBALS._dayNumber) {
+	case 1:
+		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._v5098C & 1) &&
+				(BF_GLOBALS._bookmark < bStartOfGame) && (BF_GLOBALS._sceneManager._previousScene != 342)) {
+			setAction(&_action2);
+			if (BF_GLOBALS._sceneManager._previousScene == 342)
+				_newScene = 340;
+		}
+		break;
+	case 2:
+		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._v5098C >> 7) & 1) &&
+				(BF_GLOBALS._sceneManager._previousScene != 550) &&
+				(BF_GLOBALS._bookmark < bInspectionDone)) {
+			setAction(&_action3);
+		}
+	}
+}
+
+void Scene60::signal() {
+	++_sceneMode;
+	BF_GLOBALS._player.enableControl();
+}
+
+void Scene60::dispatch() {
+	SceneExt::dispatch();
+
+	int idx = BF_GLOBALS._sceneRegions.indexOf(Common::Point(
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.left + BF_GLOBALS._events._mousePos.x,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + BF_GLOBALS._events._mousePos.y));
+
+	if (idx == _item3._sceneRegionId) {
+		if (BF_GLOBALS._events.getCursor() != CURSOR_EXIT) {
+			_cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(CURSOR_EXIT);
+		}
+	} else {
+		if (BF_GLOBALS._events.getCursor() == CURSOR_EXIT) {
+			BF_GLOBALS._events.setCursor(_cursorId);
+		}
 	}
 }
 

@@ -39,7 +39,6 @@ extern const char *DEFAULT_SCENE_HOTSPOT;
 extern const char *SAVE_ERROR_MSG;
 extern const char *SAVING_NOT_ALLOWED_MSG;
 extern const char *RESTORING_NOT_ALLOWED_MSG;
-extern const char *RESTART_CONFIRM_MSG;
 
 // Dialogs
 extern const char *QUIT_CONFIRM_MSG;
@@ -121,6 +120,9 @@ extern const char *ALLEY_CAT;
 extern const char *CITY_HALL_JAIL;
 extern const char *JAMISON_RYAN;
 extern const char *BIKINI_HUT;
+
+// Scene 60 radio dispatch buttons
+extern const char *RADIO_BTN_LIST[8];
 
 } // End of namespace BlueForce
 

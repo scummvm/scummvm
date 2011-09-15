@@ -136,6 +136,8 @@ public:
 	Visage _cursorVisage;
 
 	UIElements();
+	virtual Common::String getClassName() { return "UIElements"; }
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL) { error("Wrong init() called"); }
 	virtual void process(Event &event);
 
@@ -143,6 +145,8 @@ public:
 	void updateInventory();
 	void addScore(int amount);
 	void scrollInventory(bool isLeft);
+
+	static void loadNotifierProc(bool postFlag);
 };
 
 } // End of namespace BlueForce

@@ -4033,7 +4033,7 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerMText);
 	_stripManager.addSpeaker(&_speakerFLText);
 
-	_hotspot11.setup(76, 97, 102, 127, 4300, 5, 6);
+	_hotspot11.setDetails(76, 97, 102, 127, 4300, 5, 6);
 
 	_hotspot7.postInit();
 	_hotspot7.setPosition(Common::Point(90, 128));
@@ -4041,7 +4041,7 @@ void Scene4300::postInit(SceneObjectList *OwnerList) {
 	_hotspot7.fixPriority(250);
 	_globals->_sceneItems.push_back(&_hotspot7);
 
-	_hotspot9.setup(120, 49, 174, 91, 4300, -1, -1);
+	_hotspot9.setDetails(120, 49, 174, 91, 4300, -1, -1);
 
 	_hotspot15.postInit();
 	_hotspot15.setVisage(4300);
@@ -4414,7 +4414,7 @@ void Scene4301::postInit(SceneObjectList *OwnerList) {
 
 	_field68E = false;
 	RING_INVENTORY._stasisBox2._sceneNumber = 1;
-	_hotspot4.setup(97, 76, 127, 102, 4300, 5, 6);
+	_hotspot4.setDetails(97, 76, 127, 102, 4300, 5, 6);
 
 	_hotspot1.postInit();
 	_hotspot1.setPosition(Common::Point(90, 128));

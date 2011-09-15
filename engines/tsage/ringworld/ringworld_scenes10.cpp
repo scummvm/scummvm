@@ -145,13 +145,13 @@ void Scene9100::postInit(SceneObjectList *OwnerList) {
 		_object6.setStrip(6);
 		_object6.setFrame(1);
 		_object6.setPosition(Common::Point(138, 166));
-		_sceneHotspot3.setup(145, 125, 166, 156, 9100, 40, 43);
+		_sceneHotspot3.setDetails(145, 125, 166, 156, 9100, 40, 43);
 	}
-	_sceneHotspot1.setup(140, 176, 185, 215, 9100, 36, 37);
-	_sceneHotspot2.setup(161, 138, 182, 175, 9100, 38, 39);
-	_sceneHotspot4.setup(37, 196, 47, 320, 9100, 44, -1);
-	_sceneHotspot5.setup(69, 36, 121, 272, 9100, 45, 46);
-	_sceneHotspot6.setup(127, 0, 200, 52, 9100, 47, 48);
+	_sceneHotspot1.setDetails(140, 176, 185, 215, 9100, 36, 37);
+	_sceneHotspot2.setDetails(161, 138, 182, 175, 9100, 38, 39);
+	_sceneHotspot4.setDetails(37, 196, 47, 320, 9100, 44, -1);
+	_sceneHotspot5.setDetails(69, 36, 121, 272, 9100, 45, 46);
+	_sceneHotspot6.setDetails(127, 0, 200, 52, 9100, 47, 48);
 
 	_globals->_soundHandler.play(251);
 	if (_globals->_sceneManager._previousScene == 9150) {
@@ -261,16 +261,16 @@ void Scene9150::postInit(SceneObjectList *OwnerList) {
 	_object3.setPosition(Common::Point(312, 95));
 	_object3.signal();
 
-	_sceneHotspot1.setup(0, 0, 200, 94, 9150, 46, -1);
-	_sceneHotspot2.setup(51, 90, 118, 230, 9150, 47, -1);
-	_sceneHotspot3.setup(182, 104, 200, 320, 9150, 48, 49);
-	_sceneHotspot4.setup(103, 292, 152, 314, 9150, 50, 51);
-	_sceneHotspot5.setup(115, 350, 160, 374, 9150, 52, 53);
-	_sceneHotspot6.setup(0, 471, 200, 531, 9150, 54, 55);
-	_sceneHotspot7.setup(170, 320, 185, 640, 9150, 56, -1);
-	_sceneHotspot9.setup(157, 107, 186, 320, 9150, 56, -1);
-	_sceneHotspot8.setup(133, 584, 142, 640, 9150, 57, -1);
-	_sceneHotspot10.setup(83, 304, 103, 323, 9150, 58, 59);
+	_sceneHotspot1.setDetails(0, 0, 200, 94, 9150, 46, -1);
+	_sceneHotspot2.setDetails(51, 90, 118, 230, 9150, 47, -1);
+	_sceneHotspot3.setDetails(182, 104, 200, 320, 9150, 48, 49);
+	_sceneHotspot4.setDetails(103, 292, 152, 314, 9150, 50, 51);
+	_sceneHotspot5.setDetails(115, 350, 160, 374, 9150, 52, 53);
+	_sceneHotspot6.setDetails(0, 471, 200, 531, 9150, 54, 55);
+	_sceneHotspot7.setDetails(170, 320, 185, 640, 9150, 56, -1);
+	_sceneHotspot9.setDetails(157, 107, 186, 320, 9150, 56, -1);
+	_sceneHotspot8.setDetails(133, 584, 142, 640, 9150, 57, -1);
+	_sceneHotspot10.setDetails(83, 304, 103, 323, 9150, 58, 59);
 
 	_globals->_soundHandler.play(285);
 	_globals->_player.disableControl();
@@ -412,15 +412,15 @@ void Scene9200::postInit(SceneObjectList *OwnerList) {
 
 	if (!_globals->getFlag(86)) {
 		_object2.postInit();
-		_hotspot1.setup(96, 194, 160, 234, 9200, 29, 31);
+		_hotspot1.setDetails(96, 194, 160, 234, 9200, 29, 31);
 	}
-	_hotspot2.setup(164, 0, 200, 282, 9200, 0, 1);
-	_hotspot3.setup(140, 39, 165, 153, 9200, 2, 3);
-	_hotspot4.setup(92, 122, 139, 152, 9200, 4, 5);
-	_hotspot5.setup(33, 20, 142, 115, 9200, 6, 7);
-	_hotspot6.setup(104, 235, 153, 265, 9200, 8, 9);
-	_hotspot7.setup(107, 262, 153, 286, 9200, 10, 11);
-	_hotspot8.setup(69, 276, 164, 320, 9200, 12, 13);
+	_hotspot2.setDetails(164, 0, 200, 282, 9200, 0, 1);
+	_hotspot3.setDetails(140, 39, 165, 153, 9200, 2, 3);
+	_hotspot4.setDetails(92, 122, 139, 152, 9200, 4, 5);
+	_hotspot5.setDetails(33, 20, 142, 115, 9200, 6, 7);
+	_hotspot6.setDetails(104, 235, 153, 265, 9200, 8, 9);
+	_hotspot7.setDetails(107, 262, 153, 286, 9200, 10, 11);
+	_hotspot8.setDetails(69, 276, 164, 320, 9200, 12, 13);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
@@ -514,19 +514,19 @@ void Scene9300::postInit(SceneObjectList *OwnerList) {
 	_object2.postInit();
 	_globals->_soundHandler.play(289);
 
-	_hotspot1.setup(35, 142, 76, 212, 9300, 0, 1);
-	_hotspot2.setup(28, 90, 81, 143, 9300, 2, 3);
-	_hotspot3.setup(78, 142, 146, 216, 9300, 4, 5);
-	_hotspot4.setup(3, 43, 91, 74, 9300, 6, 7);
-	_hotspot5.setup(82, 19, 157, 65, 9300, 8, 9);
-	_hotspot6.setup(5, 218, 84, 274, 9300, 10, 11);
-	_hotspot7.setup(86, 233, 168, 293, 9300, 12, 13);
-	_hotspot8.setup(157, 0, 200, 230, 9300, 14, 15);
-	_hotspot9.setup(169, 227, 200, 320, 9300, 16, 17);
-	_hotspot10.setup(145, 97, 166, 225, 9300, 18, 19);
-	_hotspot11.setup(81, 75, 145, 145, 9300, 20, 21);
-	_hotspot12.setup(0, 0, 94, 35, 9300, 22, 23);
-	_hotspot13.setup(12, 268, 149, 320, 9300, 24, 25);
+	_hotspot1.setDetails(35, 142, 76, 212, 9300, 0, 1);
+	_hotspot2.setDetails(28, 90, 81, 143, 9300, 2, 3);
+	_hotspot3.setDetails(78, 142, 146, 216, 9300, 4, 5);
+	_hotspot4.setDetails(3, 43, 91, 74, 9300, 6, 7);
+	_hotspot5.setDetails(82, 19, 157, 65, 9300, 8, 9);
+	_hotspot6.setDetails(5, 218, 84, 274, 9300, 10, 11);
+	_hotspot7.setDetails(86, 233, 168, 293, 9300, 12, 13);
+	_hotspot8.setDetails(157, 0, 200, 230, 9300, 14, 15);
+	_hotspot9.setDetails(169, 227, 200, 320, 9300, 16, 17);
+	_hotspot10.setDetails(145, 97, 166, 225, 9300, 18, 19);
+	_hotspot11.setDetails(81, 75, 145, 145, 9300, 20, 21);
+	_hotspot12.setDetails(0, 0, 94, 35, 9300, 22, 23);
+	_hotspot13.setDetails(12, 268, 149, 320, 9300, 24, 25);
 
 	if (_globals->_sceneManager._previousScene == 9350) {
 		_globals->_player.disableControl();
@@ -593,11 +593,11 @@ void Scene9350::postInit(SceneObjectList *OwnerList) {
 	_globals->_player.postInit();
 
 	_object1.setup(9351, 1, 3, 139, 97, 0);
-	_sceneHotspot1.setup(42, 0, 97, 60, 9350, 0, -1);
-	_sceneHotspot2.setup(37, 205, 82, 256, 9350, 0, -1);
-	_sceneHotspot3.setup(29, 93, 92, 174, 9350, 1, -1);
-	_sceneHotspot4.setup(0, 308, 109, 320, 9350, 2, -1);
-	_sceneHotspot5.setup(0, 0, 200, 320, 9350, 3, -1);
+	_sceneHotspot1.setDetails(42, 0, 97, 60, 9350, 0, -1);
+	_sceneHotspot2.setDetails(37, 205, 82, 256, 9350, 0, -1);
+	_sceneHotspot3.setDetails(29, 93, 92, 174, 9350, 1, -1);
+	_sceneHotspot4.setDetails(0, 308, 109, 320, 9350, 2, -1);
+	_sceneHotspot5.setDetails(0, 0, 200, 320, 9350, 3, -1);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
@@ -677,14 +677,14 @@ void Scene9360::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(95, 80, 200, 100);
 	_globals->_player.postInit();
 
-	_hotspot1.setup(37, 92, 93, 173, 9360, 0, 1);
-	_hotspot2.setup(42, 0, 100, 63, 9360, 2, -1);
-	_hotspot3.setup(36, 205, 82, 260, 9360, 3, -1);
-	_hotspot4.setup(103, 2, 200, 320, 9360, 4, -1);
-	_hotspot5.setup(0, 0, 37, 320, 9360, 4, -1);
-	_hotspot6.setup(35, 61, 103, 92, 9360, 4, -1);
-	_hotspot7.setup(33, 174, 93, 207, 9360, 4, -1);
-	_hotspot8.setup(28, 257, 149, 320, 9360, 4, -1);
+	_hotspot1.setDetails(37, 92, 93, 173, 9360, 0, 1);
+	_hotspot2.setDetails(42, 0, 100, 63, 9360, 2, -1);
+	_hotspot3.setDetails(36, 205, 82, 260, 9360, 3, -1);
+	_hotspot4.setDetails(103, 2, 200, 320, 9360, 4, -1);
+	_hotspot5.setDetails(0, 0, 37, 320, 9360, 4, -1);
+	_hotspot6.setDetails(35, 61, 103, 92, 9360, 4, -1);
+	_hotspot7.setDetails(33, 174, 93, 207, 9360, 4, -1);
+	_hotspot8.setDetails(28, 257, 149, 320, 9360, 4, -1);
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
 	if (_globals->_sceneManager._previousScene == 9350) {
@@ -796,14 +796,14 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 	_object3.postInit();
 	_speakerQText._textPos.x = 20;
 
-	_hotspot7.setup(157, 66, 180, 110, 9400, 21, 23);
-	_hotspot5.setup(130, 133, 152, 198, 9400, 22, -1);
-	_hotspot1.setup(33, 280, 69, 297, 9400, 1, 2);
-	_hotspot2.setup(73, 96, 87, 159, 9400, 3, 4);
-	_hotspot3.setup(89, 253, 111, 305, 9400, 5, 6);
-	_hotspot4.setup(46, 0, 116, 35, 9400, 7, 8);
-	_hotspot8.setup(58, 169, 122, 200, 9400, 9, 10);
-	_hotspot6.setup(0, 0, 199, 319, 9400, 16, 0);
+	_hotspot7.setDetails(157, 66, 180, 110, 9400, 21, 23);
+	_hotspot5.setDetails(130, 133, 152, 198, 9400, 22, -1);
+	_hotspot1.setDetails(33, 280, 69, 297, 9400, 1, 2);
+	_hotspot2.setDetails(73, 96, 87, 159, 9400, 3, 4);
+	_hotspot3.setDetails(89, 253, 111, 305, 9400, 5, 6);
+	_hotspot4.setDetails(46, 0, 116, 35, 9400, 7, 8);
+	_hotspot8.setDetails(58, 169, 122, 200, 9400, 9, 10);
+	_hotspot6.setDetails(0, 0, 199, 319, 9400, 16, 0);
 
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerOR);
@@ -992,23 +992,23 @@ void Scene9450::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (RING_INVENTORY._tunic._sceneNumber != 1)
-		_hotspot1.setup(123, 139, 138, 170, 9450, 37, -1);
+		_hotspot1.setDetails(123, 139, 138, 170, 9450, 37, -1);
 
-	_hotspot2.setup(153, 102, 176, 141, 9450, 39, 40);
-	_hotspot3.setup(97, 198, 130, 229, 9450, 41, 42);
-	_hotspot15.setup(131, 190, 145, 212, 9450, 43, 44);
-	_hotspot4.setup(33, 144, 105, 192, 9450, 0, 1);
-	_hotspot5.setup(20, 236, 106, 287, 9450, 2, 3);
-	_hotspot6.setup(137, 119, 195, 320, 9450, 4, 5);
-	_hotspot7.setup(20, 59, 99, 111, 9450, 6, -1);
-	_hotspot8.setup(110, 0, 199, 117, 9450, 7, 8);
-	_hotspot9.setup(101, 104, 130, 174, 9450, 9, 10);
-	_hotspot10.setup(110, 246, 149, 319, 9450, 11, 12);
-	_hotspot11.setup(16, 34, 74, 62, 6450, 13, 14);
-	_hotspot12.setup(19, 108, 72, 134, 9450, 15, 16);
-	_hotspot13.setup(18, 215, 71, 237, 9450, 17, 18);
-	_hotspot14.setup(15, 288, 76, 314, 9450, 19, 20);
-	_hotspot16.setup(0, 0, 200, 320, 9450, 46, -1);
+	_hotspot2.setDetails(153, 102, 176, 141, 9450, 39, 40);
+	_hotspot3.setDetails(97, 198, 130, 229, 9450, 41, 42);
+	_hotspot15.setDetails(131, 190, 145, 212, 9450, 43, 44);
+	_hotspot4.setDetails(33, 144, 105, 192, 9450, 0, 1);
+	_hotspot5.setDetails(20, 236, 106, 287, 9450, 2, 3);
+	_hotspot6.setDetails(137, 119, 195, 320, 9450, 4, 5);
+	_hotspot7.setDetails(20, 59, 99, 111, 9450, 6, -1);
+	_hotspot8.setDetails(110, 0, 199, 117, 9450, 7, 8);
+	_hotspot9.setDetails(101, 104, 130, 174, 9450, 9, 10);
+	_hotspot10.setDetails(110, 246, 149, 319, 9450, 11, 12);
+	_hotspot11.setDetails(16, 34, 74, 62, 6450, 13, 14);
+	_hotspot12.setDetails(19, 108, 72, 134, 9450, 15, 16);
+	_hotspot13.setDetails(18, 215, 71, 237, 9450, 17, 18);
+	_hotspot14.setDetails(15, 288, 76, 314, 9450, 19, 20);
+	_hotspot16.setDetails(0, 0, 200, 320, 9450, 46, -1);
 }
 
 /*--------------------------------------------------------------------------
@@ -1024,7 +1024,7 @@ void Scene9500::Hotspot1::doAction(int action) {
 		RING_INVENTORY._sword._sceneNumber = 9500;
 		_globals->_player.disableControl();
 		_globals->_sceneItems.remove(this);
-		scene->_hotspot2.setup(87, 294, 104, 314, 9400, 17, -1);
+		scene->_hotspot2.setDetails(87, 294, 104, 314, 9400, 17, -1);
 		scene->setAction(&scene->_sequenceManager, scene, 9510, &_globals->_player, &scene->_object2, NULL);
 	} else {
 		NamedHotspot::doAction(action);
@@ -1182,37 +1182,37 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_object2.setPosition(Common::Point(303, 130));
 		_object2.fixPriority(132);
 		if (RING_INVENTORY._helmet._sceneNumber == 1) {
-			_hotspot2.setup(87, 294, 104, 314, 9400, 17, -1);
+			_hotspot2.setDetails(87, 294, 104, 314, 9400, 17, -1);
 		} else {
 			_object2.setStrip(2);
 			_object2.setFrame(1);
 		}
 	} else {
-		_hotspot1.setup(105, 295, 134, 313, 9500, 9, 10);
+		_hotspot1.setDetails(105, 295, 134, 313, 9500, 9, 10);
 	}
 
-	_hotspot17.setup(101, 293, 135, 315, 9500, 9, 10);
-	_hotspot3.setup(84, 12, 107, 47, 9500, 15, 15);
-	_hotspot6.setup(93, 11, 167, 46, 9500, 0, 1);
-	_hotspot7.setup(100, 70, 125, 139, 9500, 2, 3);
+	_hotspot17.setDetails(101, 293, 135, 315, 9500, 9, 10);
+	_hotspot3.setDetails(84, 12, 107, 47, 9500, 15, 15);
+	_hotspot6.setDetails(93, 11, 167, 46, 9500, 0, 1);
+	_hotspot7.setDetails(100, 70, 125, 139, 9500, 2, 3);
 
 	if (!_globals->getFlag(85)) {
-		_hotspot5.setup(111, 68, 155, 244, 9500, 17, -1);
-		_hotspot4.setup(57, 71, 120, 126, 9500, 16, -1);
+		_hotspot5.setDetails(111, 68, 155, 244, 9500, 17, -1);
+		_hotspot4.setDetails(57, 71, 120, 126, 9500, 16, -1);
 	}
 
-	_hotspot8.setup(60, 24, 90, 53, 9500, 4, 5);
-	_hotspot9.setup(72, 143, 93, 163, 9500, 4, 5);
-	_hotspot10.setup(70, 205, 92, 228, 9500, 4, 5);
-	_hotspot11.setup(66, 291, 90, 317, 9500, 4, 5);
-	_hotspot12.setup(22, 58, 101, 145, 9500, 6, 7);
-	_hotspot13.setup(121, 57, 163, 249, 9500, 6, 7);
-	_hotspot14.setup(115, 133, 135, 252, 9500, 6, 7);
-	_hotspot15.setup(55, 240, 125, 254, 9500, 6, 7);
-	_hotspot16.setup(53, 251, 132, 288, 9500, 8, -1);
-	_hotspot19.setup(101, 207, 120, 225, 9500, 9, 10);
-	_hotspot18.setup(98, 144, 117, 162, 9500, 9, 10);
-	_hotspot20.setup(102, 27, 132, 50, 9500, 9, 10);
+	_hotspot8.setDetails(60, 24, 90, 53, 9500, 4, 5);
+	_hotspot9.setDetails(72, 143, 93, 163, 9500, 4, 5);
+	_hotspot10.setDetails(70, 205, 92, 228, 9500, 4, 5);
+	_hotspot11.setDetails(66, 291, 90, 317, 9500, 4, 5);
+	_hotspot12.setDetails(22, 58, 101, 145, 9500, 6, 7);
+	_hotspot13.setDetails(121, 57, 163, 249, 9500, 6, 7);
+	_hotspot14.setDetails(115, 133, 135, 252, 9500, 6, 7);
+	_hotspot15.setDetails(55, 240, 125, 254, 9500, 6, 7);
+	_hotspot16.setDetails(53, 251, 132, 288, 9500, 8, -1);
+	_hotspot19.setDetails(101, 207, 120, 225, 9500, 9, 10);
+	_hotspot18.setDetails(98, 144, 117, 162, 9500, 9, 10);
+	_hotspot20.setDetails(102, 27, 132, 50, 9500, 9, 10);
 
 	_globals->_events.setCursor(CURSOR_WALK);
 	_globals->_player.disableControl();
@@ -1223,7 +1223,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager, this, 9501, &_globals->_player, &_candle, NULL);
 		} else {
 			RING_INVENTORY._helmet._sceneNumber = 9500;
-			_hotspot2.setup(87, 294, 104, 314, 9400, 17, -1);
+			_hotspot2.setDetails(87, 294, 104, 314, 9400, 17, -1);
 			setAction(&_sequenceManager, this, 9513, &_globals->_player, &_object2, NULL);
 		}
 	} else {
@@ -1282,12 +1282,12 @@ void Scene9700::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
 
-	_sceneHotspot1.setup(84, 218, 151, 278, 9700, 14, -1);
-	_sceneHotspot2.setup(89, 11, 151, 121, 9700, 14, -1);
-	_sceneHotspot3.setup(69, 119, 138, 216, 9700, 15, 16);
-	_sceneHotspot4.setup(34, 13, 88, 116, 9700, 17, -1);
-	_sceneHotspot5.setup(52, 119, 68, 204, 9700, 17, -1);
-	_sceneHotspot6.setup(0, 22, 56, 275, 9700, 18, -1);
+	_sceneHotspot1.setDetails(84, 218, 151, 278, 9700, 14, -1);
+	_sceneHotspot2.setDetails(89, 11, 151, 121, 9700, 14, -1);
+	_sceneHotspot3.setDetails(69, 119, 138, 216, 9700, 15, 16);
+	_sceneHotspot4.setDetails(34, 13, 88, 116, 9700, 17, -1);
+	_sceneHotspot5.setDetails(52, 119, 68, 204, 9700, 17, -1);
+	_sceneHotspot6.setDetails(0, 22, 56, 275, 9700, 18, -1);
 
 	_object1.postInit();
 	_object1.hide();
@@ -1617,26 +1617,26 @@ void Scene9850::postInit(SceneObjectList *OwnerList) {
 		_objSword.hide();
 	}
 
-	_spotLever.setup(30, 251, 45, 270, 9850, 26, -1);
-	_hotspot1.setup(123, 0, 200, 320, 9850, 0, 1);
-	_hotspot2.setup(107, 87, 133, 308, 9850, 0, 1);
-	_hotspot3.setup(2, 28, 53, 80, 9850, 2, 3);
-	_hotspot4.setup(13, 0, 55, 27, 9850, 2, 3);
-	_hotspot5.setup(8, 74, 27, 91, 9850, 4, 5);
-	_hotspot17.setup(61, 0, 125, 28, 9850, 6, 7);
-	_hotspot18.setup(51, 95, 105, 145, 9850, 6, 7);
-	_hotspot19.setup(56, 28, 115, 97, 9850, 6, 8);
-	_hotspot6.setup(0, 223, 115, 257, 9850, 9, 10);
-	_hotspot7.setup(15, 254, 33, 268, 9850, 9, -1);
-	_hotspot8.setup(17, 218, 37, 233, 9850, 9, 10);
-	_hotspot9.setup(8, 113, 26, 221, 9850, 11, 12);
-	_hotspot10.setup(14, 94, 53, 112, 9850, 13, 14);
-	_hotspot11.setup(5, 269, 29, 303, 9850, 15, 16);
-	_hotspot12.setup(43, 278, 91, 317, 9850, 17, 18);
-	_hotspot13.setup(47, 263, 112, 282, 9850, 19, 20);
-	_hotspot14.setup(43, 188, 86, 224, 9850, 21, 22);
-	_hotspot15.setup(43, 162, 92, 191, 9850, 23, 24);
-	_hotspot16.setup(40, 146, 90, 169, 9850, 25, -1);
+	_spotLever.setDetails(30, 251, 45, 270, 9850, 26, -1);
+	_hotspot1.setDetails(123, 0, 200, 320, 9850, 0, 1);
+	_hotspot2.setDetails(107, 87, 133, 308, 9850, 0, 1);
+	_hotspot3.setDetails(2, 28, 53, 80, 9850, 2, 3);
+	_hotspot4.setDetails(13, 0, 55, 27, 9850, 2, 3);
+	_hotspot5.setDetails(8, 74, 27, 91, 9850, 4, 5);
+	_hotspot17.setDetails(61, 0, 125, 28, 9850, 6, 7);
+	_hotspot18.setDetails(51, 95, 105, 145, 9850, 6, 7);
+	_hotspot19.setDetails(56, 28, 115, 97, 9850, 6, 8);
+	_hotspot6.setDetails(0, 223, 115, 257, 9850, 9, 10);
+	_hotspot7.setDetails(15, 254, 33, 268, 9850, 9, -1);
+	_hotspot8.setDetails(17, 218, 37, 233, 9850, 9, 10);
+	_hotspot9.setDetails(8, 113, 26, 221, 9850, 11, 12);
+	_hotspot10.setDetails(14, 94, 53, 112, 9850, 13, 14);
+	_hotspot11.setDetails(5, 269, 29, 303, 9850, 15, 16);
+	_hotspot12.setDetails(43, 278, 91, 317, 9850, 17, 18);
+	_hotspot13.setDetails(47, 263, 112, 282, 9850, 19, 20);
+	_hotspot14.setDetails(43, 188, 86, 224, 9850, 21, 22);
+	_hotspot15.setDetails(43, 162, 92, 191, 9850, 23, 24);
+	_hotspot16.setDetails(40, 146, 90, 169, 9850, 25, -1);
 
 	_globals->_player.postInit();
 	_globals->_player.disableControl();

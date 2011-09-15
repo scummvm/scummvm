@@ -124,6 +124,37 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerJakeRadio: public VisualSpeaker {
+public:
+	SpeakerJakeRadio();
+
+	virtual Common::String getClassName() { return "SpeakerJakeRadio"; }
+};
+
+class SpeakerLyleHat: public VisualSpeaker {
+public:
+	SpeakerLyleHat();
+
+	virtual Common::String getClassName() { return "SpeakerLyleHat"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerJordan: public VisualSpeaker {
+public:
+	SpeakerJordan();
+
+	virtual Common::String getClassName() { return "SpeakerJordan"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerSkipB: public VisualSpeaker {
+public:
+	SpeakerSkipB();
+
+	virtual Common::String getClassName() { return "SpeakerSkipB"; }
+	virtual void setText(const Common::String &msg);
+};
+
 
 } // End of namespace BlueForce
 

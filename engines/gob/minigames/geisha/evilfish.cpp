@@ -94,6 +94,9 @@ void EvilFish::advance() {
 
 	bool wasLastFrame = lastFrame();
 
+	int16 oldX, oldY;
+	getPosition(oldX, oldY);
+
 	ANIObject::advance();
 
 	int16 x, y, width, height;
@@ -107,7 +110,7 @@ void EvilFish::advance() {
 	case kStateSwimLeft:
 		if (!_shouldLeave && (x >= _screenWidth - width)) {
 			setAnimation(_animTurnRight);
-			setPosition(x, y);
+			setPosition(x, oldY);
 			_state = kStateTurnRight;
 		}
 
@@ -122,7 +125,7 @@ void EvilFish::advance() {
 	case kStateSwimRight:
 		if (!_shouldLeave && (x <= 0)) {
 			setAnimation(_animTurnLeft);
-			setPosition(x, y);
+			setPosition(x, oldY);
 			_state = kStateTurnLeft;
 		}
 
@@ -154,6 +157,29 @@ void EvilFish::advance() {
 
 			_state = kStateNone;
 		}
+		break;
+	}
+}
+
+void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
+                      uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) {
+
+	_animSwimLeft  = animSwimLeft;
+	_animSwimRight = animSwimRight;
+	_animTurnLeft  = animTurnLeft;
+	_animTurnRight = animTurnRight;
+	_animDie       = animDie;
+
+	switch (_state) {
+	case kStateSwimLeft:
+		setAnimation(_animSwimLeft);
+		break;
+
+	case kStateSwimRight:
+		setAnimation(_animSwimRight);
+		break;
+
+	default:
 		break;
 	}
 }

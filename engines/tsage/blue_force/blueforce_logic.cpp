@@ -25,6 +25,8 @@
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
+#include "tsage/blue_force/blueforce_scenes6.h"
+#include "tsage/blue_force/blueforce_scenes8.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/graphics.h"
@@ -48,9 +50,11 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Tsunami Title Screen
 		return new Scene20();
 	case 50:
+		// Map screen
 		return new Scene50();
 	case 60:
-		error("Scene group 0 not implemented");
+		// Motorcycle
+		return new Scene60();
 	/* Scene Group #1 */
 	case 100:
 		// Tsnunami Title Screen #2
@@ -90,8 +94,14 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Police Station Conference Room
 		return new Scene325();
 	case 330:
+		// Approaching Marina
+		return new Scene330();
 	case 340:
+		// Marina, Domestic Disturbance
+		return new Scene340();
 	case 342:
+		// Marina, Normal
+		return new Scene342();
 	case 350:
 	case 355:
 	case 360:
@@ -115,14 +125,20 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 600:
 	case 620:
 	case 666:
+		// Death scene
+		return new Scene666();
 	case 690:
 		error("Scene group 6 not implemented");
 	case 710:
 		error("Scene group 7 not implemented");
 	case 800:
+		// Jamison & Ryan
+		return new Scene800();
 	case 810:
 	case 820:
 	case 830:
+		// Outside Boat Rentals
+		return new Scene830();
 	case 840:
 	case 850:
 	case 860:
@@ -262,13 +278,13 @@ void AObjectArray::remove(EventHandler *obj) {
 
 Timer::Timer() {
 	_endFrame = 0;
-	_endAction = NULL;
+	_endHandler = NULL;
 	_tickAction = NULL;
 }
 
 void Timer::remove() {
 	_endFrame = 0;
-	_endAction = NULL;
+	_endHandler = NULL;
 
 	((Scene100 *)BF_GLOBALS._sceneManager._scene)->removeTimer(this);
 }
@@ -276,15 +292,15 @@ void Timer::remove() {
 void Timer::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 	SYNC_POINTER(_tickAction);
-	SYNC_POINTER(_endAction);
+	SYNC_POINTER(_endHandler);
 	s.syncAsUint32LE(_endFrame);
 }
 
 void Timer::signal() {
-	assert(_endAction);
-	Action *action = _endAction;
+	assert(_endHandler);
+	EventHandler *item = _endHandler;
 	remove();
-	action->signal();
+	item->signal();
 }
 
 void Timer::dispatch() {
@@ -299,11 +315,11 @@ void Timer::dispatch() {
 	}
 }
 
-void Timer::set(uint32 delay, Action *endAction) {
+void Timer::set(uint32 delay, EventHandler *endHandler) {
 	assert(delay != 0);
 
 	_endFrame = BF_GLOBALS._sceneHandler->getFrameDifference() + delay;
-	_endAction = endAction;
+	_endHandler = endHandler;
 
 	((SceneExt *)BF_GLOBALS._sceneManager._scene)->addTimer(this);
 }
@@ -314,9 +330,9 @@ TimerExt::TimerExt(): Timer() {
 	_action = NULL;
 }
 
-void TimerExt::set(uint32 delay, Action *endAction, Action *newAction) {
+void TimerExt::set(uint32 delay, EventHandler *endHandler, Action *newAction) {
 	_newAction = newAction;
-	Timer::set(delay, endAction);
+	Timer::set(delay, endHandler);
 }
 
 void TimerExt::synchronize(Serializer &s) {
@@ -326,22 +342,18 @@ void TimerExt::synchronize(Serializer &s) {
 
 void TimerExt::remove() {
 	_action = NULL;
-	remove();
+	Timer::remove();
 }
 
 void TimerExt::signal() {
-	Action *endAction = _endAction;
+	EventHandler *endHandler = _endHandler;
 	Action *newAction = _newAction;
 	remove();
 
 	// If the end action doesn't have an action anymore, set it to the specified new action
-	assert(endAction);
-	if (!endAction->_action)
-		endAction->setAction(newAction);
-}
-
-void TimerExt::dispatch() {
-
+	assert(endHandler);
+	if (!endHandler->_action)
+		endHandler->setAction(newAction);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -364,7 +376,7 @@ void NamedObject::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_useLineNum);
 }
 
-void NamedObject::startAction(CursorType action, Event &event) {
+bool NamedObject::startAction(CursorType action, Event &event) {
 	bool handled = true;
 
 	switch (action) {
@@ -393,9 +405,10 @@ void NamedObject::startAction(CursorType action, Event &event) {
 
 	if (!handled)
 		((SceneExt *)BF_GLOBALS._sceneManager._scene)->display(action);
+	return handled;
 }
 
-void NamedObject::setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
 	_resNum = resNum;
 	_lookLineNum = lookLineNum;
 	_talkLineNum = talkLineNum;
@@ -535,8 +548,8 @@ void SceneExt::dispatch() {
 
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
-			if (BF_GLOBALS._v4E238 && (BF_GLOBALS._v4CF9E == 1)) {
-				warning("sub_1B052");
+			if (BF_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
+				BF_GLOBALS._uiElements.show();
 			}
 			
 			_field37A = 0;
@@ -594,6 +607,11 @@ bool SceneExt::display(CursorType action) {
 	return true;
 }
 
+void SceneExt::fadeOut() {
+	uint32 black = 0;
+	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
+}
+
 void SceneExt::gunDisplay() {
 	if (!BF_GLOBALS.getFlag(gunDrawn)) {
 		// Gun not drawn
@@ -641,17 +659,22 @@ void SceneExt::endStrip() {
 
 /*--------------------------------------------------------------------------*/
 
-GroupedScene::GroupedScene() {
-
+PalettedScene::PalettedScene(): SceneExt() {
+	_field794 = 0;
 }
 
-void GroupedScene::postInit(SceneObjectList *OwnerList) {
+void PalettedScene::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field794);
+}
+
+void PalettedScene::postInit(SceneObjectList *OwnerList) {
 	_field794 = 0;
-	_field412 = 1;
+	_palette._field412 = 1;
 	SceneExt::postInit(OwnerList);
 }
 
-void GroupedScene::remove() {
+void PalettedScene::remove() {
 	SceneExt::remove();
 	if (_field794 == 1) {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
@@ -661,10 +684,15 @@ void GroupedScene::remove() {
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		BF_GLOBALS._v51C44 = 1;
-		BF_GLOBALS._v51C42 = 1;
+		BF_GLOBALS._sceneManager._hasPalette = true;
 	}
 
-	BF_GLOBALS._scenePalette._field412 = 1;
+	BF_GLOBALS._scenePalette._field412 = 0;
+}
+
+PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action *action) {
+	_field794 = 1;
+	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -46,9 +46,8 @@ void Init_v6::initGame() {
 
 		// WORKAROUND: The CD number detection in Urban Runner is quite daft
 		// (it checks CD1.ITK - CD4.ITK and the first that's found determines
-		// the CD number), while its NO_CD modus wants everything in CD1.ITK.
+		// the CD number), while its NO_CD mode wants everything in CD1.ITK.
 		// So we just open the other ITKs, too.
-			_vm->_dataIO->openArchive("CD1.ITK", false);
 			_vm->_dataIO->openArchive("CD2.ITK", false);
 			_vm->_dataIO->openArchive("CD3.ITK", false);
 			_vm->_dataIO->openArchive("CD4.ITK", false);

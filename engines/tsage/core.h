@@ -415,7 +415,7 @@ public:
 	virtual Common::String getClassName() { return "SceneItem"; }
 	virtual void remove();
 	virtual void destroy() {}
-	virtual void startAction(CursorType action, Event &event) { doAction(action); }
+	virtual bool startAction(CursorType action, Event &event);
 	virtual void doAction(int action);
 
 	bool contains(const Common::Point &pt);
@@ -440,7 +440,7 @@ public:
 class SceneHotspot : public SceneItem {
 public:
 	SceneHotspot() : SceneItem() {}
-
+	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "SceneHotspot"; }
 	virtual void doAction(int action);
 };
@@ -450,12 +450,13 @@ public:
 	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 	NamedHotspot();
 
-	virtual void doAction(int action);
+
+	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 	virtual void synchronize(Serializer &s);
-	void setup(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
-	virtual void setup(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	virtual void setup(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
+	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
 };
 
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
@@ -823,6 +824,7 @@ public:
 		return _regionList[idx - 1];
 	}
 	void proc1(int v) { warning("TODO: WalkRegions::proc1"); }
+	void proc2(int v) { warning("TODO: WalkRegions::proc2"); }
 };
 
 /*--------------------------------------------------------------------------*/

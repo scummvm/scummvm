@@ -1158,8 +1158,10 @@ ResVersion ResourceManager::detectMapVersion() {
 		}
 	}
 
-	if (!fileStream)
-		error("Failed to open resource map file");
+	if (!fileStream) {
+		warning("Failed to open resource map file");
+		return kResVersionUnknown;
+	}
 
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
@@ -1259,7 +1261,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	}
 
 	if (!fileStream) {
-		error("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
+		warning("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
 		// resource.p01/resource.p02/etc. may be there when directly copying the files from the original floppies
 		// the sierra installer would merge those together (perhaps we could do this as well?)
 		// possible TODO

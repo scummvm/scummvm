@@ -434,6 +434,8 @@ void Sound::blasterPlay(SoundDesc *sndDesc, int16 repCount,
 	debugC(1, kDebugSound, "SoundBlaster: Playing sample (%d, %d, %d)",
 			repCount, frequency, fadeLength);
 
+	blasterStopComposition();
+
 	_blaster->playSample(*sndDesc, repCount, frequency, fadeLength);
 }
 
