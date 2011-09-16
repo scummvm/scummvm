@@ -70,6 +70,7 @@ public:
 	bool _talkEnable;
 	Snail(CGEEngine *vm, bool turbo);
 	~Snail();
+
 	void runCom();
 	void addCom(SnCom com, int ref, int val, void *ptr);
 	void addCom2(SnCom com, int ref, int val, CallbackType cbType);

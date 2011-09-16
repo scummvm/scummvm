@@ -230,6 +230,8 @@ public:
 	int  takeEnum(const char **tab, const char *text);
 	int  newRandom(int range);
 	void sndSetVolume();
+	Sprite *locate(int ref);
+	Sprite *spriteAt(int x, int y);
 
 	void snBackPt(Sprite *spr, int stp);
 	void snHBarrier(const int scene, const int barX);

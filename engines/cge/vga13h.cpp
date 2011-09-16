@@ -64,11 +64,6 @@ Dac mkDac(uint8 r, uint8 g, uint8 b) {
 	return x;
 }
 
-Sprite *locate(int ref) {
-	Sprite *spr = _vga->_showQ->locate(ref);
-	return (spr) ? spr : _vga->_spareQ->locate(ref);
-}
-
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
@@ -554,19 +549,6 @@ void Sprite::sync(Common::Serializer &s) {
 
 	s.syncAsUint16LE(unused);	// _prev
 	s.syncAsUint16LE(unused);	// _next
-}
-
-Sprite *spriteAt(int x, int y) {
-	Sprite *spr = NULL, * tail = _vga->_showQ->last();
-	if (tail) {
-		for (spr = tail->_prev; spr; spr = spr->_prev) {
-			if (! spr->_flags._hide && ! spr->_flags._tran) {
-				if (spr->shp()->solidAt(x - spr->_x, y - spr->_y))
-					break;
-			}
-		}
-	}
-	return spr;
 }
 
 Queue::Queue(bool show) : _head(NULL), _tail(NULL), _show(show) {

@@ -266,9 +266,6 @@ uint8 closest(CBLK *pal, CBLK x) {
 #undef f
 }
 
-Sprite *spriteAt(int x, int y);
-Sprite *locate(int ref);
-
 } // End of namespace CGE
 
 #endif

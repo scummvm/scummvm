@@ -964,7 +964,7 @@ void Snail::runCom() {
 				break;
 		}
 
-		Sprite *spr = ((snc->_ref >= 0) ? locate(snc->_ref) : ((Sprite *) snc->_ptr));
+		Sprite *spr = ((snc->_ref >= 0) ? _vm->locate(snc->_ref) : ((Sprite *) snc->_ptr));
 		switch (snc->_com) {
 		case kSnLabel:
 			break;
@@ -1033,7 +1033,7 @@ void Snail::runCom() {
 			_vm->snCover(spr, snc->_val);
 			break;
 		case kSnUncover:
-			_vm->snUncover(spr, (snc->_val >= 0) ? locate(snc->_val) : ((Sprite *) snc->_ptr));
+			_vm->snUncover(spr, (snc->_val >= 0) ? _vm->locate(snc->_val) : ((Sprite *) snc->_ptr));
 			break;
 		case kSnKeep:
 			_vm->snKeep(spr, snc->_val);

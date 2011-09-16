@@ -1221,6 +1221,24 @@ void CGEEngine::loadScript(const char *fname) {
 		error("Bad INI line %d [%s]", lcnt, fname);
 }
 
+Sprite *CGEEngine::locate(int ref) {
+	Sprite *spr = _vga->_showQ->locate(ref);
+	return (spr) ? spr : _vga->_spareQ->locate(ref);
+}
+
+Sprite *CGEEngine::spriteAt(int x, int y) {
+	Sprite *spr = NULL, * tail = _vga->_showQ->last();
+	if (tail) {
+		for (spr = tail->_prev; spr; spr = spr->_prev) {
+			if (! spr->_flags._hide && ! spr->_flags._tran) {
+				if (spr->shp()->solidAt(x - spr->_x, y - spr->_y))
+					break;
+			}
+		}
+	}
+	return spr;
+}
+
 void CGEEngine::mainLoop() {
 	_vga->show();
 	_snail_->runCom();

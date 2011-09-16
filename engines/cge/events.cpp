@@ -242,7 +242,7 @@ void Mouse::newMouse(Common::Event &event) {
 	CGEEvent &evt = _eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
-	evt._spritePtr = spriteAt(evt._x, evt._y);
+	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
