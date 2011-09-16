@@ -23,7 +23,6 @@
 #include "common/list.h"
 
 #include "gob/global.h"
-#include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/video.h"
 #include "gob/decfile.h"

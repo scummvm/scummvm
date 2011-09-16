@@ -25,6 +25,8 @@
 
 #include "common/system.h"
 
+#include "gob/util.h"
+
 #include "gob/sound/sounddesc.h"
 
 namespace Gob {
@@ -34,8 +36,6 @@ class Surface;
 class DECFile;
 class ANIFile;
 class ANIObject;
-
-enum MouseButtons;
 
 namespace Geisha {
 
