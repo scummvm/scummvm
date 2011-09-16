@@ -37,7 +37,8 @@
 
 namespace Neverhood {
 
-#define InsertKlayman(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
+#define InsertKlayman(KlaymanClass, X, Y) _klayman = new KlaymanClass(_vm, this, X, Y); addSprite(_klayman)
+#define InsertKlaymanInitArgs(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
 
 class Scene : public Entity {
 public:

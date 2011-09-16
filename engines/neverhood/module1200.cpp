@@ -845,29 +845,29 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	class464 = addSprite(new Class464(_vm));
 
 	if (which < 0) {
-		_klayman = new KmScene1201(_vm, this, class464, 364, 333);
+		InsertKlaymanInitArgs(KmScene1201, 364, 333, (class464));
 		setMessageList(0x004AEC08);
 	} else if (which == 3) {
-		_klayman = new KmScene1201(_vm, this, class464, 400, 329);
+		InsertKlaymanInitArgs(KmScene1201, 400, 329, (class464));
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
 		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-			_klayman = new KmScene1201(_vm, this, class464, 374, 333);
+			InsertKlaymanInitArgs(KmScene1201, 374, 333, (class464));
 			setMessageList(0x004AEC08);
 		} else {
-			_klayman = new KmScene1201(_vm, this, class464, 640, 329);
+			InsertKlaymanInitArgs(KmScene1201, 640, 329, (class464));
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
 		if (getGlobalVar(0xC0418A02)) {
-			_klayman = new KmScene1201(_vm, this, class464, 364, 333);
+			InsertKlaymanInitArgs(KmScene1201, 364, 333, (class464));
 			_klayman->setDoDeltaX(1);
 		} else {
-			_klayman = new KmScene1201(_vm, this, class464, 246, 333);
+			InsertKlaymanInitArgs(KmScene1201, 246, 333, (class464));
 		}
 		setMessageList(0x004AEC30);
 	} else {
-		_klayman = new KmScene1201(_vm, this, class464, 0, 336);
+		InsertKlaymanInitArgs(KmScene1201, 0, 336, (class464));
 		setMessageList(0x004AEC10);
 	}
 
@@ -877,8 +877,6 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->getSurface()->getClipRect().y2 = 480;
 	_klayman->setRepl(64, 0);
 	
-	addSprite(_klayman);
-
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
 		_background = addBackground(new DirtyBackground(_vm, 0x4019A2C4, 0, 0));
 		_palette = new Palette(_vm, 0x4019A2C4);

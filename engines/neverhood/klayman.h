@@ -261,10 +261,7 @@ protected:
 class KmScene1002 : public Klayman {
 public:
 	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void init(Sprite *class599, Sprite *ssLadderArch) {
-		_class599 = class599;
-		_ssLadderArch = ssLadderArch;  
-	}
+	void init(Sprite *class599, Sprite *ssLadderArch);
 protected:
 	Sprite *_class599;
 	Sprite *_ssLadderArch;
@@ -310,7 +307,8 @@ protected:
 
 class KmScene1201 : public Klayman {
 public:
-	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, Entity *class464, int16 x, int16 y);
+	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	void init(Entity *class464);
 protected:
 	Entity *_class464;
 	int _countdown;
@@ -431,7 +429,8 @@ protected:
 
 class KmScene2201 : public Klayman {
 public:
-	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *rect1, int16 unk);
+	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	void init(NRect *clipRects, int clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

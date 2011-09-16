@@ -2125,6 +2125,11 @@ KmScene1002::KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int1
 	
 }
 
+void KmScene1002::init(Sprite *class599, Sprite *ssLadderArch) {
+	_class599 = class599;
+	_ssLadderArch = ssLadderArch;  
+}
+
 void KmScene1002::xUpdate() {
 	if (_x >= 250 && _x <= 435 && _y >= 420) {
 		if (_status == 0) {
@@ -2692,12 +2697,16 @@ void KmScene1004::sub478170() {
 
 // KmScene1201
 
-KmScene1201::KmScene1201(NeverhoodEngine *vm, Entity *parentScene, Entity *class464, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _class464(class464), _countdown(0) {
+KmScene1201::KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _countdown(0) {
 	
 	// TODO setKlaymanTable(dword_4AEF10, 3);
 	_flagF6 = true;
 	
+}
+
+void KmScene1201::init(Entity *class464) {
+	_class464 = class464; 
 }
 
 uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3872,12 +3881,16 @@ void KmScene2001::sub440270() {
 	SetMessageHandler(&KmScene2001::handleMessage4401A0);
 }
 
-KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *rect1, int16 unk)
+KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
 	// TODO: NRect *rect1, int16 unk in Klayman ctor
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
 
 	_dataResource.load(0x04104242);
 	_flagF6 = false;
+}
+
+void KmScene2201::init(NRect *clipRects, int clipRectsCount) {
+	// TODO
 }
 
 uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {

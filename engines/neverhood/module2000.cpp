@@ -142,31 +142,30 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class401 = insertStaticSprite(0x0D641724, 1100);
 
 	if (which < 0) {
-		_klayman = new KmScene2001(_vm, this, 300, 345);
+		InsertKlayman(KmScene2001, 300, 345);
 		setMessageList(0x004B3538);
 		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
-		_klayman = new KmScene2001(_vm, this, 116, 345);
+		InsertKlayman(KmScene2001, 116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3540);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
-		_klayman = new KmScene2001(_vm, this, 116, 345);
+		InsertKlayman(KmScene2001, 116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B35F0);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
-		_klayman = new KmScene2001(_vm, this, 116, 345);
+		InsertKlayman(KmScene2001, 116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3550);
 		sendMessage(this, 0x2000, 1);
 	} else {
-		_klayman = new KmScene2001(_vm, this, 390, 345);
+		InsertKlayman(KmScene2001, 390, 345);
 		setMessageList(0x004B3530);
 		sendMessage(this, 0x2000, 0);
 		_klayman->setDoDeltaX(1);
 	}
-	addSprite(_klayman);
 	
 	_klayman->getSurface()->getClipRect().x1 = _class401->getSurface()->getDrawRect().x;
 	_klayman->getSurface()->getClipRect().y1 = 0;
