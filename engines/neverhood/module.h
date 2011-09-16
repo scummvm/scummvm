@@ -47,8 +47,7 @@ protected:
 	Module *_parentModule;
 	Entity *_childObject;
 	bool _done;
-	int16 _field24, _field26, _field28;
-	uint32 _field20;
+	uint32 _moduleResult;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	NavigationScene *navigationScene();
 	void createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes = NULL);

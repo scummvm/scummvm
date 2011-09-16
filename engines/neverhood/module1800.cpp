@@ -147,13 +147,13 @@ void Module1800::createScene1809(int which) {
 
 void Module1800::updateScene1801() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1805(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1802(-1);
 			_childObject->handleUpdate();
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createScene1804(0);
 			_childObject->handleUpdate();
 		}
@@ -185,15 +185,15 @@ void Module1800::updateScene1802() {
 
 void Module1800::updateScene1803() {
 	if (!updateChild()) {
-		if (_field20 == 2) {
+		if (_moduleResult == 2) {
 			createScene1801(2);
 			_childObject->handleUpdate();
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			sendMessage(_parentModule, 0x1009, 0);
-		} else if (_field20 == 6) {
+		} else if (_moduleResult == 6) {
 			createScene1809(-1);
 			_childObject->handleUpdate();
-		} else if (_field20 == 7) {
+		} else if (_moduleResult == 7) {
 			sendMessage(_parentModule, 0x1009, 3);
 		}
 	}
@@ -201,9 +201,9 @@ void Module1800::updateScene1803() {
 
 void Module1800::updateScene1804() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1804b(-1);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1801(1);
 		}
 		_childObject->handleUpdate();
@@ -212,13 +212,13 @@ void Module1800::updateScene1804() {
 
 void Module1800::updateScene1805() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1807(-1);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1806(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1801(3);
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createScene1805(3);
 		}
 		_childObject->handleUpdate();
@@ -227,9 +227,9 @@ void Module1800::updateScene1805() {
 
 void Module1800::updateScene1806() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			sendMessage(_parentModule, 0x1009, 2);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1805(3);
 			_childObject->handleUpdate();
 		}

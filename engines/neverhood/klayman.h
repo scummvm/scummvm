@@ -34,6 +34,8 @@ namespace Neverhood {
 
 class Klayman;
 
+const uint32 kKlaymanSpeedUpHash = 0x004A2148;
+
 struct KlaymanTableItem {
 	int value;
 	void (Klayman::*callback)();

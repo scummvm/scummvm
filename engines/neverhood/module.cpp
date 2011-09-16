@@ -28,7 +28,7 @@ namespace Neverhood {
 
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
 	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
-	_done(false), _field24(-1), _field26(-1), _field28(-1) {
+	_done(false) {
 	
 	SetMessageHandler(&Module::handleMessage);
 	
@@ -50,20 +50,13 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 			sendMessage(_parentModule, 8, 0);
 		return 0;
 	case 0x1009:
-		_field24 = -1;
-		_field26 = -1;
-		_field28 = -1;
-		_field20 = param.asInteger();
+		_moduleResult = param.asInteger();
 		_done = true;
 		return 0;
 	case 0x100A:
-		_field24 = (int16)param.asInteger();
-		return 0;
 	case 0x1023:
-		_field26 = (int16)param.asInteger();
-		return 0;
 	case 0x1024:
-		_field28 = (int16)param.asInteger();
+		// Unused resource preloading messages
 		return 0;
 	default:
 		if (_childObject && sender == _parentModule)

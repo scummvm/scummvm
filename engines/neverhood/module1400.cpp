@@ -122,10 +122,10 @@ void Module1400::createScene1407(int which) {
 
 void Module1400::updateScene1401() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1402(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1404(0);
 			_childObject->handleUpdate();
 		} else {
@@ -136,10 +136,10 @@ void Module1400::updateScene1401() {
 
 void Module1400::updateScene1402() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1403(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1407(-1);
 			_childObject->handleUpdate();
 		} else {
@@ -158,10 +158,10 @@ void Module1400::updateScene1403() {
 
 void Module1400::updateScene1404() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1405(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1406(-1);
 			_childObject->handleUpdate();
 		} else {

@@ -269,14 +269,14 @@ void Module3000::updateScene3002() {
 		delete _childObject;
 		_childObject = NULL;
 		if (!getGlobalVar(0x01BA1A52)) {
-			if (_field20 == 0) {
+			if (_moduleResult == 0) {
 				createScene3010(-1);
 				_childObject->handleUpdate();
-			} else if (_field20 == 1) {
+			} else if (_moduleResult == 1) {
 				sendMessage(_parentModule, 0x1009, 0);
 			}
 		} else {
-			if (_field20 == 0) {
+			if (_moduleResult == 0) {
 				if (areaType == 2) {
 					createScene3003(0);
 					_childObject->handleUpdate();
@@ -284,7 +284,7 @@ void Module3000::updateScene3002() {
 					//createScene3002b(-1);
 					_childObject->handleUpdate();
 				}
-			} else if (_field20 == 1) {
+			} else if (_moduleResult == 1) {
 				sendMessage(_parentModule, 0x1009, 0);
 			}
 		}
@@ -328,10 +328,10 @@ void Module3000::updateScene3003() {
 			_soundVolume = 0;
 			// TODO Sound1ChList_setVolume(0x90F0D1C3, 0);
 		}
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene3004(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			setGlobalVar(0x01BA1A52, 0);
 			createScene3002(1);
 			_childObject->handleUpdate();
@@ -363,10 +363,10 @@ void Module3000::updateScene3003() {
 
 void Module3000::updateScene3004() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene3005(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createScene3011(-1);
 			_childObject->handleUpdate();
 		} else if (getGlobalVar(0x09221A62)) {
@@ -400,12 +400,12 @@ void Module3000::updateScene3004() {
 
 void Module3000::updateScene3005() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			sendMessage(_parentModule, 0x1009, 1);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene3008(-1);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene3004(3);
 			_childObject->handleUpdate();
 		}
@@ -414,9 +414,9 @@ void Module3000::updateScene3005() {
 
 void Module3000::updateScene3006() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene3007(0);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene3004(0);
 		}
 		_childObject->handleUpdate();
@@ -449,7 +449,7 @@ void Module3000::updateScene3007() {
 void Module3000::updateScene3009() {
 	if (!updateChild()) {
 		_flag = getGlobalVar(0x10938830); // CHECKME
-		if (_field20 != 1) {
+		if (_moduleResult != 1) {
 			// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0):
 			createScene3005(1);
 			_childObject->handleUpdate();
@@ -466,13 +466,12 @@ void Module3000::updateScene3009() {
 
 void Module3000::updateScene3010() {
 	if (!updateChild()) {
-		if (_field20 == 0 || _field20 == 2) {
+		if (_moduleResult == 0 || _moduleResult == 2) {
 			createScene3002(0);
-			_childObject->handleUpdate();
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene3002b(-1);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 

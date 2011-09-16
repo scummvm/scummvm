@@ -114,10 +114,10 @@ void Module1700::updateScene1701() {
 
 void Module1700::updateScene1702() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1703(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1702(1);
 			_childObject->handleUpdate();
 		}
@@ -126,13 +126,13 @@ void Module1700::updateScene1702() {
 
 void Module1700::updateScene1703() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1704(-1);
 			_childObject->handleUpdate();
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1702(1);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			if (!_soundResource.isPlaying()) {
 				// TODO _soundResource.setVolume(60);
 				_soundResource.play(0x58B45E58);

@@ -1340,15 +1340,13 @@ void Klayman::sub41FC40() {
 }
 
 uint32 Klayman::handleMessage41E3C0(int messageNum, const MessageParam &param, Entity *sender) {
+	int16 speedUpFrameIndex;
 	switch (messageNum) {
 	case 0x1008:
-		debug("case 0x1008");
-#if 0 // TODO
-		if (_frameIndex < getHashListIndexByString("SpeedUp")) {
-			setFileHash(0xAC20C012, getHashListIndexByString("SpeedUp"), -1)
-			_y = 435;
+		speedUpFrameIndex = getFrameIndex(kKlaymanSpeedUpHash);
+		if (_frameIndex < speedUpFrameIndex) {
+			setFileHash(0xAC20C012, speedUpFrameIndex, -1);
 		}
-#endif		
 		return 0;
 	case 0x100D:
 		if (param.asInteger() == 0x32180101) {
@@ -2371,16 +2369,15 @@ uint32 KmScene1002::handleMessage449BA0(int messageNum, const MessageParam &para
 }
 
 uint32 KmScene1002::handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender) {
+	int16 speedUpFrameIndex;
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1008:
-		debug("case 0x1008");
-#if 0 // TODO
-		if (_frameIndex < getHashListIndexByString("SpeedUp")) {
-			setFileHash(0x35AA8059, getHashListIndexByString("SpeedUp"), -1)
+		speedUpFrameIndex = getFrameIndex(kKlaymanSpeedUpHash);
+		if (_frameIndex < speedUpFrameIndex) {
+			setFileHash(0x35AA8059, speedUpFrameIndex, -1);
 			_y = 435;
 		}
-#endif		
 		messageResult = 0;
 		break;
 	case 0x100D:

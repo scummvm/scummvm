@@ -84,7 +84,7 @@ void Module2000::createScene2003(int which) {
 
 void Module2000::updateScene2001() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			sendMessage(_parentModule, 0x1009, 0);
 		} else {
 			createScene2002(0);
@@ -94,15 +94,15 @@ void Module2000::updateScene2001() {
 
 void Module2000::updateScene2002() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			if (getGlobalVar(0x98109F12)) {
 				createScene2002(0);
 			} else {
 				createScene2003(-1);
 			}
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene2002(1);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2001(0);
 		}
 	}

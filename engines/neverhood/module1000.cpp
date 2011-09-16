@@ -102,7 +102,7 @@ void Module1000::createScene1005(int which) {
 
 void Module1000::updateScene1001() {
 	if (!updateChild()) {
-		if (_field20 == 2) {
+		if (_moduleResult == 2) {
 			createScene1003(0);
 			_childObject->handleUpdate();
 		} else {
@@ -114,9 +114,9 @@ void Module1000::updateScene1001() {
 
 void Module1000::updateScene1002() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			sendMessage(_parentModule, 0x1009, 0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1004(0);
 			_childObject->handleUpdate();
 		} else {
@@ -135,7 +135,7 @@ void Module1000::updateScene1003() {
 			
 void Module1000::updateScene1004() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1005(0);
 			_childObject->handleUpdate();
 		} else {

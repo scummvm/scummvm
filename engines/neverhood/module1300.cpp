@@ -284,7 +284,7 @@ void Module1300::createScene1318(int which) {
 			
 void Module1300::updateScene1302() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1305(0);
 		} else {
 			createScene1308(1);
@@ -316,15 +316,15 @@ void Module1300::updateScene1305() {
 
 void Module1300::updateScene1306() {
 	if (!updateChild()) {
-		if (_field20 == 2) {
+		if (_moduleResult == 2) {
 			createScene1309(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createScene1303(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 0) {
+		} else if (_moduleResult == 0) {
 			sendMessage(_parentModule, 0x1009, 0);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1311(-1);
 			_childObject->handleUpdate();
 		}
@@ -340,11 +340,11 @@ void Module1300::updateScene1307() {
 
 void Module1300::updateScene1308() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1314(0);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1302(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene1307(0);
 		}
 		_childObject->handleUpdate();
@@ -373,9 +373,9 @@ void Module1300::updateScene1311() {
 
 void Module1300::updateScene1312() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1313(0);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1312(1);
 		}
 		_childObject->handleUpdate();
@@ -384,7 +384,7 @@ void Module1300::updateScene1312() {
 
 void Module1300::updateScene1313() {
 	if (!updateChild()) {
-		switch (_field20) {
+		switch (_moduleResult) {
 		case 0:
 			createScene1315(1);
 			break;
@@ -404,9 +404,9 @@ void Module1300::updateScene1313() {
 
 void Module1300::updateScene1314() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1313(2);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1308(0);
 		}
 		_childObject->handleUpdate();
@@ -415,9 +415,9 @@ void Module1300::updateScene1314() {
 
 void Module1300::updateScene1315() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1313(3);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1310(-1);
 		}
 		_childObject->handleUpdate();
@@ -426,9 +426,9 @@ void Module1300::updateScene1315() {
 
 void Module1300::updateScene1316() {
 	if (!updateChild()) {
-		if (_field20 == 0) {
+		if (_moduleResult == 0) {
 			createScene1313(4);
-		} else if (_field20 == 1) {
+		} else if (_moduleResult == 1) {
 			createScene1304(0);
 		}
 		_childObject->handleUpdate();

@@ -499,9 +499,9 @@ void Module2200::createScene2248(int which) {
 			
 void Module2200::updateScene2201() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2203(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2202(0);
 		} else {
 			sendMessage(_parentModule, 0x1009, 0);
@@ -517,9 +517,9 @@ void Module2200::updateScene2202() {
 
 void Module2200::updateScene2203() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2205(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2204(0);
 		} else {
 			createScene2201(1);
@@ -536,9 +536,9 @@ void Module2200::updateScene2204() {
 			
 void Module2200::updateScene2205() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2206(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2205(2);
 		} else {
 			createScene2203(1);
@@ -549,11 +549,11 @@ void Module2200::updateScene2205() {
 			
 void Module2200::updateScene2206() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2247(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2207(0);
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createScene2209(0);
 		} else {
 			createScene2205(1);
@@ -701,9 +701,9 @@ void Module2200::updateScene2209() {
 			
 void Module2200::updateScene2210() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2211(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2247(1);
@@ -714,9 +714,9 @@ void Module2200::updateScene2210() {
 			
 void Module2200::updateScene2211() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2212(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2210(1);
@@ -727,9 +727,9 @@ void Module2200::updateScene2211() {
 			
 void Module2200::updateScene2212() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2213(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2211(1);
@@ -740,9 +740,9 @@ void Module2200::updateScene2212() {
 			
 void Module2200::updateScene2213() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2214(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2212(1);
@@ -753,9 +753,9 @@ void Module2200::updateScene2213() {
 			
 void Module2200::updateScene2214() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2215(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2213(1);
@@ -766,9 +766,9 @@ void Module2200::updateScene2214() {
 			
 void Module2200::updateScene2215() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2216(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2214(1);
@@ -779,9 +779,9 @@ void Module2200::updateScene2215() {
 			
 void Module2200::updateScene2216() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2217(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2215(1);
@@ -792,9 +792,9 @@ void Module2200::updateScene2216() {
 			
 void Module2200::updateScene2217() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2218(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2216(1);
@@ -805,9 +805,9 @@ void Module2200::updateScene2217() {
 			
 void Module2200::updateScene2218() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2219(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2217(1);
@@ -818,9 +818,9 @@ void Module2200::updateScene2218() {
 			
 void Module2200::updateScene2219() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2220(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2218(1);
@@ -831,9 +831,9 @@ void Module2200::updateScene2219() {
 			
 void Module2200::updateScene2220() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2221(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2219(1);
@@ -844,9 +844,9 @@ void Module2200::updateScene2220() {
 			
 void Module2200::updateScene2221() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2222(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2220(1);
@@ -857,9 +857,9 @@ void Module2200::updateScene2221() {
 			
 void Module2200::updateScene2222() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2223(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2221(1);
@@ -870,9 +870,9 @@ void Module2200::updateScene2222() {
 			
 void Module2200::updateScene2223() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2224(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2222(1);
@@ -883,9 +883,9 @@ void Module2200::updateScene2223() {
 			
 void Module2200::updateScene2224() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2225(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2223(1);
@@ -896,9 +896,9 @@ void Module2200::updateScene2224() {
 			
 void Module2200::updateScene2225() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2226(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2224(1);
@@ -909,9 +909,9 @@ void Module2200::updateScene2225() {
 			
 void Module2200::updateScene2226() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2227(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2225(1);
@@ -922,9 +922,9 @@ void Module2200::updateScene2226() {
 			
 void Module2200::updateScene2227() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2228(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2226(1);
@@ -935,9 +935,9 @@ void Module2200::updateScene2227() {
 			
 void Module2200::updateScene2228() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2229(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2227(1);
@@ -948,9 +948,9 @@ void Module2200::updateScene2228() {
 			
 void Module2200::updateScene2229() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2230(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2228(1);
@@ -961,9 +961,9 @@ void Module2200::updateScene2229() {
 			
 void Module2200::updateScene2230() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2231(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2229(1);
@@ -974,9 +974,9 @@ void Module2200::updateScene2230() {
 			
 void Module2200::updateScene2231() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2232(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2230(1);
@@ -987,9 +987,9 @@ void Module2200::updateScene2231() {
 			
 void Module2200::updateScene2232() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2233(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2231(1);
@@ -1000,9 +1000,9 @@ void Module2200::updateScene2232() {
 			
 void Module2200::updateScene2233() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2234(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2232(1);
@@ -1013,9 +1013,9 @@ void Module2200::updateScene2233() {
 			
 void Module2200::updateScene2234() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2235(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2233(1);
@@ -1026,9 +1026,9 @@ void Module2200::updateScene2234() {
 			
 void Module2200::updateScene2235() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2243(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2234(1);
@@ -1039,9 +1039,9 @@ void Module2200::updateScene2235() {
 			
 void Module2200::updateScene2236() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2237(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2246(1);
@@ -1052,9 +1052,9 @@ void Module2200::updateScene2236() {
 			
 void Module2200::updateScene2237() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2238(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2236(1);
@@ -1065,9 +1065,9 @@ void Module2200::updateScene2237() {
 			
 void Module2200::updateScene2238() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2239(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2237(1);
@@ -1078,9 +1078,9 @@ void Module2200::updateScene2238() {
 			
 void Module2200::updateScene2239() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2240(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2238(1);
@@ -1091,9 +1091,9 @@ void Module2200::updateScene2239() {
 			
 void Module2200::updateScene2240() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2241(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2239(1);
@@ -1104,9 +1104,9 @@ void Module2200::updateScene2240() {
 			
 void Module2200::updateScene2241() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2242(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2240(1);
@@ -1117,10 +1117,10 @@ void Module2200::updateScene2241() {
 			
 void Module2200::updateScene2242() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2248(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 			_childObject->handleUpdate();
 		} else {
@@ -1132,9 +1132,9 @@ void Module2200::updateScene2242() {
 			
 void Module2200::updateScene2243() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2244(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2235(1);
@@ -1145,9 +1145,9 @@ void Module2200::updateScene2243() {
 			
 void Module2200::updateScene2244() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2245(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2243(1);
@@ -1158,9 +1158,9 @@ void Module2200::updateScene2244() {
 			
 void Module2200::updateScene2245() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2246(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2244(1);
@@ -1171,9 +1171,9 @@ void Module2200::updateScene2245() {
 			
 void Module2200::updateScene2246() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2236(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2245(1);
@@ -1184,9 +1184,9 @@ void Module2200::updateScene2246() {
 			
 void Module2200::updateScene2247() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene2210(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createScene2208(0);
 		} else {
 			createScene2206(1);

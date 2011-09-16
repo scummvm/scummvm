@@ -238,20 +238,17 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 		_someFlag1 = true;
 		return messageResult;		
 	case 0x1009:
-		_field24 = -1;
-		_field26 = -1;
-		_field28 = -1;
-		_field20 = param.asInteger();
+		_moduleResult = param.asInteger();
 		_done = true;
 		return messageResult;
 	case 0x100A:
-		_field24 = (int16)param.asInteger();
+		// Unused resource preloading message
 		return messageResult;
 	case 0x101F:
 		_field2C = true;		
 		return messageResult;
 	case 0x1023:
-		_field26 = (int16)param.asInteger();
+		// Unused resource preloading message
 		return messageResult;
 	}
 	return messageResult;
@@ -310,7 +307,7 @@ void GameModule::createModule1200(int which) {
 
 void GameModule::updateModule1200() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			error("// TODO createModule2600(0);");
 			// TODO createModule2600(0);
 			// TODO _childObject->handleUpdate();
@@ -329,7 +326,7 @@ void GameModule::createModule1300(int which) {
 
 void GameModule::updateModule1300() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			// TODO _gameState.clear();
 			// TODO GameModule_handleKeyEscape
 		} else {
@@ -347,7 +344,7 @@ void GameModule::createModule1400(int which) {
 
 void GameModule::updateModule1400() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			error("WEIRD!");
 		} else {
 			// TODO createModule1600(1);
@@ -378,8 +375,8 @@ void GameModule::createModule1700(int which) {
 
 void GameModule::updateModule1700() {
 	if (!updateChild()) {
-		debug("Module1700 done; _field20 = %d", _field20);
-		if (_field20 == 1) {
+		debug("Module1700 done; _moduleResult = %d", _moduleResult);
+		if (_moduleResult == 1) {
 			// TODO createModule2900(3);
 			// TODO _childObject->handleUpdate();
 		} else {
@@ -397,13 +394,13 @@ void GameModule::createModule1800(int which) {
 
 void GameModule::updateModule1800() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			// TODO GameState_clear();
 			// TODO GameModule_handleKeyEscape();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			// TODO createModule2700(0);
 			// TODO _childObject->handleUpdate();
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			// TODO createModule3000(3);
 			// TODO _childObject->handleUpdate();
 		} else {
@@ -447,13 +444,13 @@ void GameModule::createModule2300(int which) {
 
 void GameModule::updateModule2300() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createModule2200(0);
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			createModule1200(0);
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			// TODO createModule2400(0);
-		} else if (_field20 == 4) {
+		} else if (_moduleResult == 4) {
 			// TODO createModule3000(0);
 		} else {
 			createModule1000(1);
@@ -474,15 +471,15 @@ void GameModule::createModule3000(int which) {
 
 void GameModule::updateModule3000() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			// TODO createModule1900(0);
 			// TODO _childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			// WEIRD: Sets the errorFlag
-		} else if (_field20 == 3) {
+		} else if (_moduleResult == 3) {
 			createModule1800(3);
 			_childObject->handleUpdate();
-		} else if (_field20 == 4) {
+		} else if (_moduleResult == 4) {
 			// TODO createModule3000(0);
 			// TODO _childObject->handleUpdate();
 		} else {

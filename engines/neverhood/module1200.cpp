@@ -80,10 +80,10 @@ void Module1200::createScene1203(int which) {
 
 void Module1200::updateScene1201() {
 	if (!updateChild()) {
-		if (_field20 == 1) {
+		if (_moduleResult == 1) {
 			createScene1202(0);
 			_childObject->handleUpdate();
-		} else if (_field20 == 2) {
+		} else if (_moduleResult == 2) {
 			if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
 				createScene1203(-1);
 			} else {

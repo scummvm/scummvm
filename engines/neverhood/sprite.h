@@ -114,6 +114,7 @@ public:
 	void clearRepl();
 	uint32 getCurrAnimFileHash() const { return _currAnimFileHash; }
 	int16 getFrameIndex() const { return _frameIndex; }
+	int16 getFrameIndex(uint32 frameHash) { return _animResource.getFrameIndex(frameHash); }
 	void setNewHashListIndex(int value) { _newHashListIndex = value; }
 	void setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4);
 protected:
