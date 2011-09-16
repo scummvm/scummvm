@@ -769,11 +769,11 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class527 = addSprite(new Class527(_vm, _class525));
 	}
 
-	_sprite3 = addSprite(new StaticSprite(_vm, 0xA82BA811, 1100));
-	addSprite(new StaticSprite(_vm, 0x0A116C60, 1100));
+	_sprite3 = insertStaticSprite(0xA82BA811, 1100);
+	insertStaticSprite(0x0A116C60, 1100);
 	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0xB84B1100, 100, 0));
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x38EA100C, 1005));
-	_sprite2 = addSprite(new StaticSprite(_vm, 0x98D0223C, 1200));
+	_sprite1 = insertStaticSprite(0x38EA100C, 1005);
+	_sprite2 = insertStaticSprite(0x98D0223C, 1200);
 	_sprite2->getSurface()->setVisible(false);
 
 	if (which < 0) {
@@ -1388,7 +1388,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x4222100C, 20, 620));
 
 	_asMouse = addSprite(new AsScene1407Mouse(_vm, this));
-	_ssResetButton = addSprite(new StaticSprite(_vm, 0x12006600, 100));
+	_ssResetButton = insertStaticSprite(0x12006600, 100);
 	_ssResetButton->getSurface()->setVisible(false); 
 
 }
@@ -1453,12 +1453,12 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x0A230219, NULL));
 
-	_class401_1 = addSprite(new StaticSprite(_vm, 0x01102A33, 100));
+	_class401_1 = insertStaticSprite(0x01102A33, 100);
 	_class401_1->getSurface()->setVisible(false);
 
-	_class401_2 = addSprite(new StaticSprite(_vm, 0x04442520, 995));
+	_class401_2 = insertStaticSprite(0x04442520, 995);
 	
-	_class401_3 = addSprite(new StaticSprite(_vm, 0x08742271, 995));
+	_class401_3 = insertStaticSprite(0x08742271, 995);
 
 	_asTape1 = new AsScene1201Tape(_vm, this, 12, 1100, 201, 468, 0x9148A011);
 	addSprite(_asTape1);
@@ -1583,7 +1583,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_class545);
 	}
 
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x1900A1F8, 1100));
+	_sprite1 = insertStaticSprite(0x1900A1F8, 1100);
 
 	_asTape = addSprite(new AsScene1201Tape(_vm, this, 14, 1100, 281, 411, 0x9148A011));
 	_vm->_collisionMan->addSprite(_asTape);

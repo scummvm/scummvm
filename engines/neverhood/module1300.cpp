@@ -645,10 +645,10 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x643C0428, NULL));
 
 	_class595 = addSprite(new Class595(_vm, this));
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x942FC224, 300));
-	_sprite2 = addSprite(new StaticSprite(_vm, 0x70430830, 1200));
+	_sprite1 = insertStaticSprite(0x942FC224, 300);
+	_sprite2 = insertStaticSprite(0x70430830, 1200);
 	_sprite2->getSurface()->setVisible(false);
-	_sprite3 = addSprite(new StaticSprite(_vm, 0x16E01E20, 1100));
+	_sprite3 = insertStaticSprite(0x16E01E20, 1100);
 
 	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 218, 122, _class595->getSurface()->getDrawRect().y, false));
 	_asRing2 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32, 132, _class595->getSurface()->getDrawRect().y, getGlobalVar(0x13206309)));
@@ -875,7 +875,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_collisionMan->addSprite(_asBalloon);
 	}
 	
-	_sprite1 = addSprite(new StaticSprite(_vm, 0xA014216B, 1100));
+	_sprite1 = insertStaticSprite(0xA014216B, 1100);
 
 	_klayman = new KmScene1303(_vm, this, 207, 332);
 	addSprite(_klayman);
@@ -958,9 +958,9 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class544 = NULL;
 	}
 
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x0562E621, 1100));
-	addSprite(new StaticSprite(_vm, 0x012AE033, 1100));
-	addSprite(new StaticSprite(_vm, 0x090AF033, 1100));
+	_sprite1 = insertStaticSprite(0x0562E621, 1100);
+	insertStaticSprite(0x012AE033, 1100);
+	insertStaticSprite(0x090AF033, 1100);
 
 	if (which < 0) {
 		_klayman = new KmScene1304(_vm, this, 217, 347);
@@ -1148,9 +1148,9 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_asElevator = addSprite(new AsScene1306Elevator(_vm, this, _asElevatorDoor));
 	
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x036A1EE0, 80));
+	_sprite1 = insertStaticSprite(0x036A1EE0, 80);
 	
-	addSprite(new StaticSprite(_vm, 0x00042313, 1100));
+	insertStaticSprite(0x00042313, 1100);
 
 	if (which < 0) {
 		_klayman = new KmScene1306(_vm, this, 380, 440);
@@ -1540,25 +1540,25 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	addEntity(_palette);
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x06204A88, 20, 620));
 
-	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3621C, 800));
+	tempSprite = insertStaticSprite(0x00A3621C, 800);
 	_clipRects[0].x1 = tempSprite->getSurface()->getDrawRect().x;
 	_clipRects[0].y1 = 0;
 	_clipRects[0].x2 = 640;
 	_clipRects[0].y2 = 480;
 
-	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3641C, 600));
+	tempSprite = insertStaticSprite(0x00A3641C, 600);
 	_clipRects[1].x1 = tempSprite->getSurface()->getDrawRect().x;
 	_clipRects[1].y1 = 0;
 	_clipRects[1].x2 = 640;
 	_clipRects[1].y2 = 480;
 
-	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3681C, 400));
+	tempSprite = insertStaticSprite(0x00A3681C, 400);
 	_clipRects[2].x1 = tempSprite->getSurface()->getDrawRect().x;
 	_clipRects[2].y1 = 0;
 	_clipRects[2].x2 = 640;
 	_clipRects[2].y2 = 480;
 
-	tempSprite = addSprite(new StaticSprite(_vm, 0x00A3701C, 200));
+	tempSprite = insertStaticSprite(0x00A3701C, 200);
 	_clipRects[3].x1 = tempSprite->getSurface()->getDrawRect().x;
 	_clipRects[3].y1 = 0;
 	_clipRects[3].x2 = 640;
@@ -1866,7 +1866,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		addSprite(new AnimatedSprite(_vm, 0x461A1490, 200, 235, 429));
 	}
 	
-	_sprite1 = addSprite(new StaticSprite(_vm, 0x0A042060, 1100));
+	_sprite1 = insertStaticSprite(0x0A042060, 1100);
 	_class549 = addSprite(new Class549(_vm, this));
 	_class593 = addSprite(new Class593(_vm, this));
 
@@ -1874,28 +1874,28 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class601_2 = addSprite(new Class601(_vm, kScene1308FileHashes[getSubVar(0x0C10A000, 0)], 1));
 	_class601_2 = addSprite(new Class601(_vm, kScene1308FileHashes[getSubVar(0x0C10A000, 2)], 2));
 
-	_sprite2 = addSprite(new StaticSprite(_vm, 0x40043120, 995));
-	_sprite3 = addSprite(new StaticSprite(_vm, 0x43003100, 995));
+	_sprite2 = insertStaticSprite(0x40043120, 995);
+	_sprite3 = insertStaticSprite(0x43003100, 995);
 	_sprite4 = NULL;
 
 	if (which < 0) {
 		_klayman = new KmScene1308(_vm, this, 380, 440);
 		setMessageList(0x004B57C0);
 		if (getGlobalVar(0x80455A41)) {
-			_sprite4 = addSprite(new StaticSprite(_vm, 0x0101A624, 1100));
+			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			setRectList(0x004B5990);
 		} else {
-			_sprite5 = addSprite(new StaticSprite(_vm, 0x080811A0, 100));
+			_sprite5 = insertStaticSprite(0x080811A0, 100);
 			setRectList(0x004B5980);
 		}
 	} else if (which == 1) {
 		_klayman = new KmScene1308(_vm, this, 640, 440);
 		setMessageList(0x004B57C8);
 		if (getGlobalVar(0x80455A41)) {
-			_sprite4 = addSprite(new StaticSprite(_vm, 0x0101A624, 1100));
+			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			setRectList(0x004B5990);
 		} else {
-			_sprite5 = addSprite(new StaticSprite(_vm, 0x080811A0, 100));
+			_sprite5 = insertStaticSprite(0x080811A0, 100);
 			setRectList(0x004B5980);
 		}
 	} else if (which == 2) {
@@ -1903,10 +1903,10 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B58B0);
 		if (getGlobalVar(0x80455A41)) {
 			_sprite5 = addSprite(new Class592(_vm, this));
-			_sprite4 = addSprite(new StaticSprite(_vm, 0x0101A624, 1100));
+			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			_sprite4->getSurface()->setVisible(false);
 		} else {
-			_sprite5 = addSprite(new StaticSprite(_vm, 0x080811A0, 100));
+			_sprite5 = insertStaticSprite(0x080811A0, 100);
 			setRectList(0x004B5980);
 		}
 	} else {
@@ -1915,10 +1915,10 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(_class549, 0x4808, 0);
 		_sprite1->getSurface()->setVisible(false);
 		if (getGlobalVar(0x80455A41)) {
-			_sprite4 = addSprite(new StaticSprite(_vm, 0x0101A624, 1100));
+			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			_klayman->getSurface()->setVisible(false);
 		} else {
-			_sprite5 = addSprite(new StaticSprite(_vm, 0x080811A0, 100));
+			_sprite5 = insertStaticSprite(0x080811A0, 100);
 			_klayman->getSurface()->setVisible(false);
 		}
 	}

@@ -1000,7 +1000,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_smackerPlayer->setDrawPos(89, 37);
 	_palette->usePalette();
 
-	addSprite(new StaticSprite(_vm, 0x8540252C, 400));
+	insertStaticSprite(0x8540252C, 400);
 
 	for (int i = 0; i < 2; i++) {
 		_ssSymbolEdges[i] = new SsScene3009SymbolEdges(_vm, i);

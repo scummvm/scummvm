@@ -254,7 +254,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1));
 	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2));
 
-	_sprite = addSprite(new StaticSprite(_vm, 0x31313A22, 1100));
+	_sprite = insertStaticSprite(0x31313A22, 1100);
 
 	_class606 = addSprite(new Class606(_vm, this, 15, 1100, 238, 439, 0x02363852));
 	_vm->_collisionMan->addSprite(_class606);
@@ -301,7 +301,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(_klayman, 0x2000, 0);
 		setMessageList(0x004B69F0);
 		sendMessage(this, 0x2000, 0);
-		tempSprite = addSprite(new StaticSprite(_vm, 0x30303822, 1100));
+		tempSprite = insertStaticSprite(0x30303822, 1100);
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
 		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
