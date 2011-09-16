@@ -397,6 +397,32 @@ void SpeakerSkipB::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerCarter::SpeakerCarter(): VisualSpeaker() {
+	_color1 = 89;
+	_color2 = 95;
+	_speakerName = "CARTER";
+}
+
+void SpeakerCarter::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(844);
+	_object1.setStrip2(8);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(78, 166));
+
+	_object2.postInit();
+	_object2.setVisage(844);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(78, 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

@@ -155,6 +155,13 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerCarter: public VisualSpeaker {
+public:
+	SpeakerCarter();
+
+	virtual Common::String getClassName() { return "SpeakerCarter"; }
+	virtual void setText(const Common::String &msg);
+};
 
 } // End of namespace BlueForce
 

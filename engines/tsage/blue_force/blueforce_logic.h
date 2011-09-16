@@ -109,6 +109,7 @@ public:
 	virtual bool startAction(CursorType action, Event &event);
 
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class CountdownObject: public NamedObject {
@@ -127,13 +128,25 @@ public:
 	SceneObject *_object;
 	FollowerObject();
 
-	virtual Common::String getClassName() { return "SceneObjectExt4"; }
+	virtual Common::String getClassName() { return "FollowerObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void dispatch();
 	virtual void reposition();
 
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
+};
+
+class FocusObject: public NamedObject {
+public:
+	int _v90, _v92;
+	GfxSurface _img;
+
+	FocusObject();
+	virtual void postInit(SceneObjectList *OwnerList);
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
 };
 
 enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4, 

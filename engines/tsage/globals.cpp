@@ -206,6 +206,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_clip1Bullets);
 	s.syncAsSint16LE(_clip2Bullets);
 	s.syncAsSint16LE(_v4CEB4);
+	s.syncAsSint16LE(_v4CEB6);
 }
 
 void BlueForceGlobals::reset() {
@@ -237,6 +238,7 @@ void BlueForceGlobals::reset() {
 	_clip1Bullets = 8;
 	_clip2Bullets = 8;
 	_v4CEB4 = 0;
+	_v4CEB6 = 0;
 }
 
 bool BlueForceGlobals::getHasBullets() {
