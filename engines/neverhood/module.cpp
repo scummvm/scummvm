@@ -47,7 +47,7 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 	switch (messageNum) {
 	case 0x0008:
 		if (_parentModule)
-			_parentModule->sendMessage(8, 0, this);
+			sendMessage(_parentModule, 8, 0);
 		return 0;
 	case 0x1009:
 		_field24 = -1;
@@ -67,7 +67,7 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 		return 0;
 	default:
 		if (_childObject && sender == _parentModule)
-			return _childObject->sendMessage(messageNum, param, sender);
+			return sender->sendMessage(_childObject, messageNum, param);
 	}
 	return 0;
 }

@@ -286,7 +286,7 @@ void Module3000::updateScene3002() {
 				createScene3010(-1);
 				_childObject->handleUpdate();
 			} else if (_moduleDoneStatus == 1) {
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			}
 		} else {
 			if (_moduleDoneStatus == 0) {
@@ -298,7 +298,7 @@ void Module3000::updateScene3002() {
 					_childObject->handleUpdate();
 				}
 			} else if (_moduleDoneStatus == 1) {
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			}
 		}
 	}
@@ -325,7 +325,7 @@ void Module3000::updateScene3002b() {
 			createScene3009(-1);
 			break;
 		case 11:
-			_parentModule->sendMessage(0x1009, 3, this);
+			sendMessage(_parentModule, 0x1009, 3);
 			break;
 		case 12:
 			createScene3002(0);
@@ -431,7 +431,7 @@ void Module3000::updateScene3005() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_moduleDoneStatus == 0) {
-			_parentModule->sendMessage(0x1009, 1, this);
+			sendMessage(_parentModule, 0x1009, 1);
 		} else if (_moduleDoneStatus == 1) {
 			createScene3008(-1);
 			_childObject->handleUpdate();
@@ -650,7 +650,7 @@ SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Sc
 void SsScene3009FireCannonButton::update() {
 	StaticSprite::update();
 	if (_flag1 && !_soundResource.isPlaying()) {
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_surface->setVisible(false);
 	}
 }
@@ -794,7 +794,7 @@ uint32 SsScene3009SymbolArrow::handleMessage(int messageNum, const MessageParam 
 			_drawRect.width = _spriteResource.getDimensions().width;
 			_drawRect.height = _spriteResource.getDimensions().height;
 			_soundResource.play();
-			_asSymbol->sendMessage(0x2005, _incrDecr, this);
+			sendMessage(_asSymbol, 0x2005, _incrDecr);
 		}
 		messageResult = 1;
 		break;
@@ -827,7 +827,7 @@ uint32 AsScene3009VerticalIndicator::handleMessage(int messageNum, const Message
 	switch (messageNum) {
 	case 0x1011:
 		if (_enabled) {
-			_parentScene->sendMessage(0x2002, 0, this);
+			sendMessage(_parentScene, 0x2002, 0);
 		}
 		messageResult = 1;
 		break;
@@ -857,7 +857,7 @@ uint32 AsScene3009HorizontalIndicator::handleMessage(int messageNum, const Messa
 	switch (messageNum) {
 	case 0x1011:
 		if (_enabled) {
-			_parentScene->sendMessage(0x2004, 0, this);
+			sendMessage(_parentScene, 0x2004, 0);
 		}
 		messageResult = 1;
 		break;
@@ -942,9 +942,9 @@ uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &para
 		_newHashListIndex = _symbolIndex;
 		setSubVar(0x00000914, _index, _symbolIndex);
 		if (_index / 3 == 0) {
-			_parentScene->sendMessage(0x2001, 0, this);
+			sendMessage(_parentScene, 0x2001, 0);
 		} else {
-			_parentScene->sendMessage(0x2003, 0, this);
+			sendMessage(_parentScene, 0x2003, 0);
 		}
 		messageResult = 1;
 		break;
@@ -1025,7 +1025,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	// DEBUG: Set the correct code
 	for (int i = 0; i < 6; i++)
 		setSubVar(0x00000914, i, _correctSymbols[i]);
-	sendMessage(0x2003, 0, this);
+	sendMessage(this, 0x2003, 0);
 	//setGlobalVar(0x610210B7, 1);   
 
 }
@@ -1108,7 +1108,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 		// TODO: Debug stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(0x000809C2)) {
 			setGlobalVar(0x20580A86, 0);
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	case 0x000D:
@@ -1191,7 +1191,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 void Scene3009::playExtVideo() {
 	setGlobalVar(0x20580A86, _cannonLocation);
 	setGlobalVar(0xF0402B0A, kScene3009CannonLocationFileHashes[_cannonLocation]);
-	_parentModule->sendMessage(0x1009, 1, this);
+	sendMessage(_parentModule, 0x1009, 1);
 }
 
 bool Scene3009::isSymbolsPart1Solved() {
@@ -1303,9 +1303,9 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 				_soundResource3.play();
 				_surface->setVisible(true);
 				_buttonLocked = true;
-				_parentScene->sendMessage(0x2000, _buttonIndex, this);
+				sendMessage(_parentScene, 0x2000, _buttonIndex);
 			} else {
-				_parentScene->sendMessage(0x2002, _buttonIndex, this);
+				sendMessage(_parentScene, 0x2002, _buttonIndex);
 			}
 			_needRefresh = true;
 			StaticSprite::update();
@@ -1418,7 +1418,7 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 void AsScene3010DeadBolt::stIdleMessage() {
 	setFileHash1();
 	SetMessageHandler(&Sprite::handleMessage);
-	_parentScene->sendMessage(0x2001, _boltIndex, this);
+	sendMessage(_parentScene, 0x2001, _boltIndex);
 }
 
 void AsScene3010DeadBolt::lock() {
@@ -1454,7 +1454,7 @@ void AsScene3010DeadBolt::stDisabled() {
 
 void AsScene3010DeadBolt::stDisabledMessage() {
 	_surface->setVisible(false);
-	_parentScene->sendMessage(0x2003, _boltIndex, this);
+	sendMessage(_parentScene, 0x2003, _boltIndex);
 }
 
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1513,7 +1513,7 @@ void Scene3010::update() {
 		_checkUnlocked = false;
 	}
 	if (_countdown != 0 && (--_countdown == 0)) {
-		_parentModule->sendMessage(0x1009, _doorUnlocked ? 1 : 0, this);
+		sendMessage(_parentModule, 0x1009, _doorUnlocked ? 1 : 0);
 	}
 }
 
@@ -1646,7 +1646,7 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 		if (_countdown == 0) {
 			_surface->setVisible(true);
 			_countdown = 4;
-			_parentScene->sendMessage(0x2000, 0, this);
+			sendMessage(_parentScene, 0x2000, 0);
 			_soundResource.play();
 		}
 		messageResult = 1;
@@ -1797,7 +1797,7 @@ uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	case 0x2000:

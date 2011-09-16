@@ -41,7 +41,8 @@ struct KlaymanTableItem {
 
 class Klayman : public AnimatedSprite {
 public:
-	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000);
+	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000, NRectArray *clipRects = NULL);
+	void init() { }
 
 	void update();
 
@@ -259,7 +260,11 @@ protected:
 
 class KmScene1002 : public Klayman {
 public:
-	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, Sprite *class599, Sprite *ssLadderArch, int16 x, int16 y);
+	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+	void init(Sprite *class599, Sprite *ssLadderArch) {
+		_class599 = class599;
+		_ssLadderArch = ssLadderArch;  
+	}
 protected:
 	Sprite *_class599;
 	Sprite *_ssLadderArch;

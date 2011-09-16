@@ -89,7 +89,7 @@ void Module2000::updateScene2001() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 1) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		} else {
 			createScene2002(0);
 		}
@@ -144,26 +144,26 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		_klayman = new KmScene2001(_vm, this, 300, 345);
 		setMessageList(0x004B3538);
-		sendMessage(0x2000, 0, this);
+		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
 		_klayman = new KmScene2001(_vm, this, 116, 345);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3540);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
 		_klayman = new KmScene2001(_vm, this, 116, 345);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B35F0);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
 		_klayman = new KmScene2001(_vm, this, 116, 345);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3550);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 	} else {
 		_klayman = new KmScene2001(_vm, this, 390, 345);
 		setMessageList(0x004B3530);
-		sendMessage(0x2000, 0, this);
+		sendMessage(this, 0x2000, 0);
 		_klayman->setDoDeltaX(1);
 	}
 	addSprite(_klayman);

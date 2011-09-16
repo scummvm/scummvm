@@ -96,20 +96,23 @@ public:
 			(this->*_updateHandlerCb)();
 	}
 	bool hasMessageHandler() const { return _messageHandlerCb != NULL; } 
-	uint32 sendMessage(int messageNum, const MessageParam &param, Entity *sender) {
-		debug(2, "sendMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
+	uint32 receiveMessage(int messageNum, const MessageParam &param, Entity *sender) {
+		debug(2, "receiveMessage(%04X) -> [%s]", messageNum, _messageHandlerCbName.c_str());
 		return _messageHandlerCb ? (this->*_messageHandlerCb)(messageNum, param, sender) : 0;
 	}
 	// NOTE: These were overloaded before for the various message parameter types
 	// it caused some problems so each type gets its own sendMessage variant now
-	uint32 sendMessage(int messageNum, uint32 param, Entity *sender) {
-		return sendMessage(messageNum, MessageParam(param), sender);
+	uint32 sendMessage(Entity *receiver, int messageNum, const MessageParam &param) {
+		return receiver->receiveMessage(messageNum, param, this);
 	}
-	uint32 sendPointMessage(int messageNum, const NPoint &param, Entity *sender) {
-		return sendMessage(messageNum, MessageParam(param), sender);
+	uint32 sendMessage(Entity *receiver, int messageNum, uint32 param) {
+		return receiver->receiveMessage(messageNum, MessageParam(param), this);
 	}
-	uint32 sendEntityMessage(int messageNum, Entity *param, Entity *sender) {
-		return sendMessage(messageNum, MessageParam((Entity*)param), sender);
+	uint32 sendPointMessage(Entity *receiver, int messageNum, const NPoint &param) {
+		return receiver->receiveMessage(messageNum, MessageParam(param), this);
+	}
+	uint32 sendEntityMessage(Entity *receiver, int messageNum, Entity *param) {
+		return receiver->receiveMessage(messageNum, MessageParam((Entity*)param), this);
 	}
 	int getPriority() const { return _priority; }
 	// Shortcuts for game variable access

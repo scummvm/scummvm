@@ -71,7 +71,7 @@ void GameModule::handleMouseMove(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseMove(%d, %d)", x, y);
-		_childObject->sendPointMessage(0, mousePos, this);
+		sendPointMessage(_childObject, 0, mousePos);
 	}				
 }
 
@@ -81,7 +81,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 		mousePos.x = x;
 		mousePos.y = y;
 		debug(2, "GameModule::handleMouseDown(%d, %d)", x, y);
-		_childObject->sendPointMessage(1, mousePos, this);
+		sendPointMessage(_childObject, 1, mousePos);
 	}				
 }
 
@@ -267,9 +267,9 @@ void GameModule::startup() {
 	//createModule1700(-1);
 	//createModule1700(1);
 	//createModule1400(-1);
-#if 0
-	_vm->gameState().sceneNum = 10;
-	createModule3000(-1);
+#if 1
+	_vm->gameState().sceneNum = 1;
+	createModule1000(-1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -280,11 +280,11 @@ void GameModule::startup() {
 	createModule2000(-1);
 #endif
 #if 0
-	_vm->gameState().sceneNum = 46;
+	_vm->gameState().sceneNum = 0;
 	createModule2200(-1);
 #endif
-#if 1
-	_vm->gameState().sceneNum = 16;
+#if 0
+	_vm->gameState().sceneNum = 5;
 	createModule1300(-1);
 #endif
 }

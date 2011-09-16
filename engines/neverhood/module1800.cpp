@@ -196,12 +196,12 @@ void Module1800::updateScene1803() {
 			createScene1801(2);
 			_childObject->handleUpdate();
 		} else if (_field20 == 3) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		} else if (_field20 == 6) {
 			createScene1809(-1);
 			_childObject->handleUpdate();
 		} else if (_field20 == 7) {
-			_parentModule->sendMessage(0x1009, 3, this);
+			sendMessage(_parentModule, 0x1009, 3);
 		}
 	}
 }
@@ -251,7 +251,7 @@ void Module1800::updateScene1806() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 0) {
-			_parentModule->sendMessage(0x1009, 2, this);
+			sendMessage(_parentModule, 0x1009, 2);
 		} else if (_field20 == 1) {
 			createScene1805(3);
 			_childObject->handleUpdate();
@@ -271,7 +271,7 @@ void Module1800::updateScene1809() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
-		_parentModule->sendMessage(0x1009, 1, this);
+		sendMessage(_parentModule, 0x1009, 1);
 		// TODO GameState stuff
 	}
 }

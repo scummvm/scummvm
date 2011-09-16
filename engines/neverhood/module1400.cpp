@@ -133,7 +133,7 @@ void Module1400::updateScene1401() {
 			createScene1404(0);
 			_childObject->handleUpdate();
 		} else {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 	}
 }
@@ -505,7 +505,7 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		_parentScene->sendMessage(0x4826, 0, this);
+		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
 	case 0x4807:
@@ -534,10 +534,10 @@ uint32 Class489::handleMessage(int messageNum, const MessageParam &param, Entity
 		}
 		break;
 	case 0x482A:
-		_parentScene->sendMessage(0x1022, 990, this);
+		sendMessage(_parentScene, 0x1022, 990);
 		break;
 	case 0x482B:
-		_parentScene->sendMessage(0x1022, 1010, this);
+		sendMessage(_parentScene, 0x1022, 1010);
 		break;
 	case 0x4828:
 		sub435040();
@@ -552,14 +552,14 @@ uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, 
 	case 0x1011:
 		if (param.asPoint().x - _x >= 17 && param.asPoint().x - _x <= 56 &&
 			param.asPoint().y - _y >= -120 && param.asPoint().y - _y <= -82) {
-			_parentScene->sendMessage(0x4826, 1, this);
+			sendMessage(_parentScene, 0x4826, 1);
 		} else {
-			_parentScene->sendMessage(0x4826, 0, this);
+			sendMessage(_parentScene, 0x4826, 0);
 		}
 		messageResult = 1;
 		break;
 	case 0x4807:
-		_parentScene->sendMessage(0x4807, 0, this);
+		sendMessage(_parentScene, 0x4807, 0);
 		sub434F80();
 		break;
 	case 0x480B:
@@ -583,10 +583,10 @@ uint32 Class489::handleMessage4348E0(int messageNum, const MessageParam &param, 
 		sub434EC0();
 		break;
 	case 0x482A:
-		_parentScene->sendMessage(0x1022, 990, this);
+		sendMessage(_parentScene, 0x1022, 990);
 		break;
 	case 0x482B:
-		_parentScene->sendMessage(0x1022, 1010, this);
+		sendMessage(_parentScene, 0x1022, 1010);
 		break;
 	}
 	return messageResult;
@@ -610,11 +610,11 @@ void Class489::spriteUpdate434B60() {
 	sub434C80();
 	if (_remX == _x) {
 		if (getGlobalVar(0x04A10F33) == 0 && _class489Item->flag4 != 0) {
-			_parentScene->sendMessage(0x1019, 0, this);
+			sendMessage(_parentScene, 0x1019, 0);
 			incGlobalVar(0x04A105B3, -1);
 			setGlobalVar(0x04A10F33, kClass489Items[getGlobalVar(0x04A105B3)].varIndex1);
 		} else if ((int8)getGlobalVar(0x04A10F33) == _class489Item->varIndex1 && _class489Item->flag != 0) {
-			_parentScene->sendMessage(0x1019, 1, this);
+			sendMessage(_parentScene, 0x1019, 1);
 			incGlobalVar(0x04A105B3, +1);
 			setGlobalVar(0x04A10F33, 0);
 		}
@@ -666,7 +666,7 @@ void Class489::sub434C80() {
 void Class489::sub434D80() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
-		_class525->sendMessage(0x483A, 0, this);
+		sendMessage(_class525, 0x483A, 0);
 		setFileHash1();
 		SetMessageHandler(&Sprite::handleMessage);
 		SetSpriteCallback(NULL);
@@ -713,7 +713,7 @@ void Class489::sub434EC0() {
 }
 
 void Class489::sub434F40() {
-	_parentScene->sendMessage(0x480F, 0, this);
+	sendMessage(_parentScene, 0x480F, 0);
 	setFileHash(0xD833207F, 0, -1);
 	SetSpriteCallback(NULL);
 	SetMessageHandler(&Class489::handleMessage4348E0);
@@ -799,12 +799,12 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class489 = addSprite(new Class489(_vm, this, _klayman, _class525));
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 6) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
 		} else if (getGlobalVar(0x04A10F33) == 0) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
@@ -821,7 +821,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->getSurface()->getClipRect().y2 = 480;
 
 	if (which == 0 && _class489 && _class489->hasMessageHandler()) {
-		_class489->sendMessage(0x482B, 0, this);
+		sendMessage(_class489, 0x482B, 0);
 	}
 
 	_class528 = addSprite(new Class528(_vm, _klayman, which == 1));
@@ -843,11 +843,11 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x02144CB1) {
-			_klayman->sendEntityMessage(0x1014, _class427, this);
+			sendEntityMessage(_klayman, 0x1014, _class427);
 		} else if (param.asInteger() == 0x402064D8) {
-			_klayman->sendEntityMessage(0x1014, _ssButton, this);
+			sendEntityMessage(_klayman, 0x1014, _ssButton);
 		} else if (param.asInteger() == 0x01C66840) {
-			if (_class528->hasMessageHandler() && _class528->sendMessage(0x2001, 0, this) != 0) {
+			if (_class528->hasMessageHandler() && sendMessage(_class528, 0x2001, 0) != 0) {
 				setMessageList(0x004B6690);
 			} else {
 				setMessageList(0x004B66B0);
@@ -856,30 +856,30 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x1019:
 		if (param.asInteger() != 0) {
-			_parentModule->sendMessage(0x1009, 2, this);
+			sendMessage(_parentModule, 0x1009, 2);
 		} else {
-			_parentModule->sendMessage(0x1009, 1, this);
+			sendMessage(_parentModule, 0x1009, 1);
 		}			
 		break;
 	case 0x480B:
 		if (sender == _class427) {
-			_class525->sendMessage(0x2000, 0, this);
+			sendMessage(_class525, 0x2000, 0);
 			if (!getGlobalVar(0x01023818)) {
-				_class526->sendMessage(0x4839, 0, this);
-				_class527->sendMessage(0x4839, 0, this);
+				sendMessage(_class526, 0x4839, 0);
+				sendMessage(_class527, 0x4839, 0);
 				setGlobalVar(0x01023818, 1);
 			}
 			if (_class489 && _class489->getX() > 404 && _class489->getX() < 504) {
-				_class489 ->sendMessage(0x4839, 0, this);
+				sendMessage(_class489 , 0x4839, 0);
 			}
 		} else if (sender == _ssButton) {
-			_ssButton->sendMessage(0x4808, 0, this);
+			sendMessage(_ssButton, 0x4808, 0);
 		}
 		break;
 	case 0x4826:
 		if (sender == _class489) {
-			if (_class489->sendMessage(0x480C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
-				_klayman->sendEntityMessage(0x1014, _class489, this);
+			if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _class489);
 				setMessageList2(0x004B6658);
 			} else {
 				setMessageList2(0x004B65F0);
@@ -889,13 +889,13 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x482A:
 		_sprite1->getSurface()->setVisible(true);
 		if (_class489) {
-			_class489->sendMessage(0x482B, 0, this);
+			sendMessage(_class489, 0x482B, 0);
 		}
 		break;
 	case 0x482B:
 		_sprite1->getSurface()->setVisible(false);
 		if (_class489) {
-			_class489->sendMessage(0x482A, 0, this);
+			sendMessage(_class489, 0x482A, 0);
 		}
 		break;
 	}
@@ -955,19 +955,19 @@ uint32 Class482::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class482::sub428500() {
-	_parentScene->sendMessage(0x2000, 0, this);
+	sendMessage(_parentScene, 0x2000, 0);
 	setFileHash1();
 	_surface->setVisible(false);
 }
 
 void Class482::sub428530() {
-	_parentScene->sendMessage(0x2001, 0, this);
+	sendMessage(_parentScene, 0x2001, 0);
 	setFileHash1();
 	_surface->setVisible(false);
 }
 
 void Class482::sub428560() {
-	_parentScene->sendMessage(0x2003, 0, this);
+	sendMessage(_parentScene, 0x2003, 0);
 	setFileHash1();
 }
 
@@ -1035,12 +1035,12 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class489 = addSprite(new Class489(_vm, this, _klayman, 0));
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x4A10F33) == 4) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
 		} else if (getGlobalVar(0x4A10F33) == 0) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
@@ -1086,21 +1086,21 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x00F43389) {
 			if (getGlobalVar(0x70A1189C)) {
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			} else {
 				clearRectList();
 				_klayman->getSurface()->setVisible(false);
 				_mouseCursor->getSurface()->setVisible(false);
-				_class482->sendMessage(0x2002, 0, this);
+				sendMessage(_class482, 0x2002, 0);
 				sub428220();
 			}
 		}
 		break;
 	case 0x1019:
 		if (param.asInteger()) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		} else {
-			_parentModule->sendMessage(0x1009, 1, this);
+			sendMessage(_parentModule, 0x1009, 1);
 		}
 		break;
 	case 0x2000:
@@ -1110,15 +1110,15 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2001:
 		sub428230();
-		_parentModule->sendMessage(0x1009, 0, this);
+		sendMessage(_parentModule, 0x1009, 0);
 		break;
 	case 0x2003:
 		sub428230();
 		break;
 	case 0x4826:
 		if (sender == _class489) {
-			if (_class489->sendMessage(0x408C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
-				_klayman->sendEntityMessage(0x1014, _class489, this);
+			if (sendMessage(_class489, 0x408C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _class489);
 				setMessageList2(0x004B0BB8);
 			} else {
 				setMessageList2(0x004B0B68);
@@ -1249,7 +1249,7 @@ void AsScene1407Mouse::suWalkTo() {
 		xdelta = -_deltaX;
 	_deltaX = 0;		
 	if (_walkDestX == _x) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else {
 		_x += xdelta;
 		processDelta();
@@ -1362,7 +1362,7 @@ void AsScene1407Mouse::stArriveAtHole() {
 	_x = kScene1407MouseHoles[_nextHoleIndex].x;
 	_y = kScene1407MouseFloorY[kScene1407MouseHoles[_nextHoleIndex].floorIndex];
 	if (_nextHoleIndex == 1) {
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_walkDestX = 512;
 		stWalkToDest();
 		_surface->setVisible(true);
@@ -1396,7 +1396,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene1407::update() {
 	Scene::update();
 	if (_puzzleSolvedCountdown != 0 && (--_puzzleSolvedCountdown == 0)) {
-		_parentModule->sendMessage(0x1009, 1, this);
+		sendMessage(_parentModule, 0x1009, 1);
 	} else if (_resetButtonCountdown != 0 && (--_resetButtonCountdown == 0)) {
 		_ssResetButton->getSurface()->setVisible(false);
 	}
@@ -1410,17 +1410,17 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 			// TODO: Debug/Cheat stuff
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				// Exit scene
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			} else if (param.asPoint().x >= 75 && param.asPoint().x <= 104 &&
 				param.asPoint().y >= 62 && param.asPoint().y <= 90) {
 				// The reset button was clicked
-				_asMouse->sendMessage(0x2001, 0, this);
+				sendMessage(_asMouse, 0x2001, 0);
 				_ssResetButton->getSurface()->setVisible(true);
 				_soundResource.play(0x44045000);
 				_resetButtonCountdown = 12;
 			} else {
 				// Handle the mouse
-				_asMouse->sendMessage(messageNum, param, this);
+				sendMessage(_asMouse, messageNum, param);
 			}
 		}
 		break;
@@ -1487,7 +1487,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 		addSprite(_class489);
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 4) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() + 100);
 			_klayman->processDelta();
 			setMessageList(0x004B1F70);
@@ -1509,13 +1509,13 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B2008);
 			_flag = true;
 		} else if (param.asInteger() == 0x08821382) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			setRectList(0x004B1FF8);
 			_flag = false;
 		}
 		break;
 	case 0x1019:
-		_parentModule->sendMessage(0x1009, 0, this);
+		sendMessage(_parentModule, 0x1009, 0);
 		break;
 	case 0x1022:
 		if (sender == _class489) {
@@ -1537,10 +1537,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_flag) {
 				setMessageList2(0x004B1FA8);
 			} else if (param.asInteger() == 1) {
-				_klayman->sendEntityMessage(0x1014, _class489, this);
+				sendEntityMessage(_klayman, 0x1014, _class489);
 				setMessageList2(0x004B1F88);
-			} else if (_class489->sendMessage(0x480C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
-				_klayman->sendEntityMessage(0x1014, _class489, this);
+			} else if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _class489);
 				setMessageList2(0x004B1F58);
 			} else {
 				setMessageList2(0x004B1F28);
@@ -1549,7 +1549,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_flag) {
 				setMessageList2(0x004B1FA8);
 			} else if (_messageListStatus != 2) {
-				_klayman->sendEntityMessage(0x1014, sender, this);
+				sendEntityMessage(_klayman, 0x1014, sender);
 				setMessageList2(0x004B1FB8);
 			}
 		}
@@ -1612,7 +1612,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class489 = addSprite(new Class489(_vm, this, _klayman, 0));
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 0) {
-			_klayman->sendEntityMessage(0x1014, _class489, this);
+			sendEntityMessage(_klayman, 0x1014, _class489);
 			_klayman->setX(_class489->getX() - 100);
 			_klayman->processDelta();
 			setMessageList(0x004B8CB8);
@@ -1647,21 +1647,21 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x1019:
-		_parentModule->sendMessage(0x1009, 0, this);
+		sendMessage(_parentModule, 0x1009, 0);
 		break;
 	case 0x4826:
 		if (sender == _class489) {
-			if (_class489->sendMessage(0x480C, _klayman->getX() > _class489->getX() ? 1 : 0, this) != 0) {
-				_klayman->sendEntityMessage(0x1014, _class489, this);
+			if (sendMessage(_class489, 0x480C, _klayman->getX() > _class489->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klayman, 0x1014, _class489);
 				setMessageList2(0x004B8CA0);
 			} else {
 				setMessageList2(0x004B8C40);
 			}
 		} else if (sender == _asTape && _messageListStatus != 2) {
-			_klayman->sendEntityMessage(0x1014, _asTape, this);
+			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004B8CD0);
 		} else if (sender == _class545 && _messageListStatus != 2) {
-			_klayman->sendEntityMessage(0x1014, _class545, this);
+			sendEntityMessage(_klayman, 0x1014, _class545);
 			setMessageList(0x004B8D18);
 		}
 		break;
@@ -1757,7 +1757,7 @@ uint32 AsScene1405Tile::handleMessage(int messageNum, const MessageParam &param,
 	case 0x1011:
 		if (getSubVar(0xCCE0280F, _index) == 0 && _parentScene->getCountdown() == 0) {
 			show();
-			_parentScene->sendMessage(0x2000, _index, this);
+			sendMessage(_parentScene, 0x2000, _index);
 		}
 		messageResult = 1;
 		break;
@@ -1841,7 +1841,7 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x0001:
 		// TODO: Debug/Cheat stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	case 0x000D:

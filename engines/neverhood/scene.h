@@ -37,6 +37,8 @@
 
 namespace Neverhood {
 
+#define InsertKlayman(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
+
 class Scene : public Entity {
 public:
 	Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects);
@@ -50,6 +52,9 @@ public:
 	void setSurfacePriority(BaseSurface *surface, int priority);
 	void deleteSprite(Sprite **sprite);
 	Background *addBackground(Background *background);
+	void setBackground(uint32 fileHash, bool dirtyBackground = true);
+	void changeBackground(uint32 fileHash);
+	Sprite *insertStaticSprite(uint32 fileHash, int surfacePriority);
 	SmackerPlayer *addSmackerPlayer(SmackerPlayer *smackerPlayer);
 	void update();
 protected:

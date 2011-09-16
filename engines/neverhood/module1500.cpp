@@ -63,14 +63,14 @@ void Module1500::update() {
 			if (_flag) {
 				createScene1503();
 			} else {
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			}
 			break;
 		case 3:
 			createScene1501();
 			break;
 		default:
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 			break;
 		}
 	}
@@ -91,7 +91,7 @@ void Module1500::createScene1502() {
 }
 
 void Module1500::createScene1503() {
-	_parentModule->sendMessage(0x0800, 0, this);
+	sendMessage(_parentModule, 0x0800, 0);
 	_vm->gameState().sceneNum = 2;
 	createSmackerScene(0x001A0005, true, true, true);
 	SetUpdateHandler(&Module1500::update);
@@ -148,7 +148,7 @@ void Scene1501::update() {
 		_countdown1--;
 		if (_countdown1 == 0) {
 			_vm->_screen->clear();
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) /*|| !_soundResource.isPlaying()*/) {
 		_countdown1 = 12;

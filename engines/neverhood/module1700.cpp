@@ -161,7 +161,7 @@ void Module1700::updateScene1705() {
 		_done = false;
 		delete _childObject;
 		_childObject = NULL;
-		_parentModule->sendMessage(0x1009, 1, this);
+		sendMessage(_parentModule, 0x1009, 1);
 	}
 }
 
@@ -211,7 +211,7 @@ uint32 Class606::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		_parentScene->sendMessage(0x4826, 0, this);
+		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
 	case 0x4806:
@@ -264,43 +264,43 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		_klayman = new KmScene1705(_vm, this, 231, 434);
 		setMessageList(0x004B69E8);
-		sendMessage(0x2000, 0, this);
+		sendMessage(this, 0x2000, 0);
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = 0;
 		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
 		_klayman->getSurface()->getClipRect().y2 = 480;
 	} else if (which == 1) {
 		_klayman = new KmScene1705(_vm, this, 431, 434);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A08);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = 0;
 		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
 		_klayman->getSurface()->getClipRect().y2 = 480;
 	} else if (which == 2) {
 		_klayman = new KmScene1705(_vm, this, 431, 434);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6AA0);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = 0;
 		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
 		_klayman->getSurface()->getClipRect().y2 = 480;
 	} else if (which == 3) {
 		_klayman = new KmScene1705(_vm, this, 431, 434);
-		_klayman->sendMessage(0x2000, 1, this);
+		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A18);
-		sendMessage(0x2000, 1, this);
+		sendMessage(this, 0x2000, 1);
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = 0;
 		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
 		_klayman->getSurface()->getClipRect().y2 = 480;
 	} else {
 		_klayman = new KmScene1705(_vm, this, 231, 74);
-		_klayman->sendMessage(0x2000, 0, this);
+		sendMessage(_klayman, 0x2000, 0);
 		setMessageList(0x004B69F0);
-		sendMessage(0x2000, 0, this);
+		sendMessage(this, 0x2000, 0);
 		tempSprite = addSprite(new StaticSprite(_vm, 0x30303822, 1100));
 		_klayman->getSurface()->getClipRect().x1 = 0;
 		_klayman->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
@@ -339,7 +339,7 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _class606 && _klayman->getX() <= 318) {
-			_klayman->sendEntityMessage(0x1014, sender, this);
+			sendEntityMessage(_klayman, 0x1014, sender);
 			setMessageList(0x004B6AC0);
 		}
 		break;		

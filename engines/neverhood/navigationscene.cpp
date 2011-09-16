@@ -55,7 +55,7 @@ NavigationScene::NavigationScene(NeverhoodEngine *vm, Module *parentModule, uint
 
 	_vm->_screen->clear();
 
-	_parentModule->sendMessage(0x100A, _navigationIndex, this);
+	sendMessage(_parentModule, 0x100A, _navigationIndex);
 
 }
 
@@ -68,7 +68,7 @@ int NavigationScene::getNavigationAreaType() {
 	NPoint mousePos;
 	mousePos.x = _mouseCursor->getX();
 	mousePos.y = _mouseCursor->getY();
-	return _mouseCursor->sendPointMessage(0x2064, mousePos, this);
+	return sendPointMessage(_mouseCursor, 0x2064, mousePos);
 }
 
 void NavigationScene::update() {
@@ -80,7 +80,7 @@ void NavigationScene::update() {
 		_smackerFileHash = 0;
 	} else if (_smackerDone) {
 		if (_done) {
-			_parentModule->sendMessage(0x1009, _navigationIndex, this);
+			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else {
 			const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 			createMouseCursor();
@@ -93,7 +93,7 @@ void NavigationScene::update() {
 			_smackerDone = false;
 			_smackerPlayer->open(navigationItem.fileHash, true);
 			_vm->_screen->clear();
-			_parentModule->sendMessage(0x100A, _navigationIndex, this);
+			sendMessage(_parentModule, 0x100A, _navigationIndex);
 		}
 	} 
 	Scene::update();
@@ -103,7 +103,7 @@ uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x0000:
 		if (_interactive)
-			_mouseCursor->sendMessage(0x4002, param, this);
+			sendMessage(_mouseCursor, 0x4002, param);
 		break;
 	case 0x0001:
 		if (_interactive)
@@ -144,7 +144,7 @@ void NavigationScene::createMouseCursor() {
 	}
 
 	_mouseCursor = addSprite(new NavigationMouse(_vm, mouseCursorFileHash, areaType));
-	_mouseCursor->sendPointMessage(0x4002, _vm->getMousePos(), this);
+	sendPointMessage(_mouseCursor, 0x4002, _vm->getMousePos());
 	
 }
 
@@ -153,7 +153,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 	const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 	bool oldSoundFlag1 = _soundFlag1;
 	bool oldSoundFlag2 = _soundFlag2;
-	uint32 direction = _mouseCursor->sendPointMessage(0x2064, mousePos, this);
+	uint32 direction = sendPointMessage(_mouseCursor, 0x2064, mousePos);
 	
 	switch (direction) {
 	// TODO: Merge cases 0 and 1?
@@ -170,7 +170,7 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(0x4200189E, _navigationIndex);
 		} else {
-			_parentModule->sendMessage(0x1009, _navigationIndex, this);
+			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
 	case 1:
@@ -186,14 +186,14 @@ void NavigationScene::handleNavigation(const NPoint &mousePos) {
 			} while (!(*_navigationList)[_navigationIndex].interactive);
 			setGlobalVar(0x4200189E, _navigationIndex);
 		} else {
-			_parentModule->sendMessage(0x1009, _navigationIndex, this);
+			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		}
 		break;
 	case 2:
 	case 3:
 	case 4:
 		if (navigationItem.middleFlag) {
-			_parentModule->sendMessage(0x1009, _navigationIndex, this);
+			sendMessage(_parentModule, 0x1009, _navigationIndex);
 		} else if (navigationItem.middleSmackerFileHash != 0) {
 			_smackerFileHash = navigationItem.middleSmackerFileHash;
 			_interactive = false;

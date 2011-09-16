@@ -57,7 +57,7 @@ static const KlaymanTableItem klaymanTable4[] = {
 
 // Klayman
 
-Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority)
+Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
 	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
 	_counterMax(0), _counter(0), _flagE4(false), _counter3Max(0), _flagF8(false), _counter1(0),
 	_counter2(0), /*_field118(0), */_status2(0), _flagE5(true), _attachedSprite(NULL), _flagE1(false),
@@ -360,7 +360,7 @@ uint32 Klayman::handleMessage41D640(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0xC1380080) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x4806, 0, this);
+				sendMessage(_attachedSprite, 0x4806, 0);
 				_soundResource1.play(0xC8004340);
 			}
 		} else if (param.asInteger() == 0x02B20220) {
@@ -499,7 +499,7 @@ void Klayman::sub41C7B0() {
 		removeCallbackList();
 #endif		
 	} else {
-		_parentScene->sendMessage(0x1006, 0, this);
+		sendMessage(_parentScene, 0x1006, 0);
 	}
 }
 
@@ -975,15 +975,15 @@ void Klayman::spriteUpdate41F320() {
 	_deltaX = 0;		
 
 	if (xdiff == 0) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 42 && _frameIndex >= 5 && _frameIndex <= 11) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 10 && (_frameIndex >= 12 || _frameIndex <= 4)) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else if (_status3 == 3 && xdiff < 30) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else if (_status3 == 3 && xdiff < 150 && _frameIndex >= 6) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	} else {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdelta;
@@ -1026,9 +1026,9 @@ uint32 Klayman::handleMessage41E210(int messageNum, const MessageParam &param, E
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x482A, 0, this);
+			sendMessage(_attachedSprite, 0x482A, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 		}
 		break;
 	}
@@ -1053,7 +1053,7 @@ uint32 Klayman::handleMessage41D4C0(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0xC1380080) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x4806, 0, this);
+				sendMessage(_attachedSprite, 0x4806, 0);
 			}
 			_soundResource1.play(0x40208200);
 		} else if (param.asInteger() == 0x02B20220) {
@@ -1090,7 +1090,7 @@ uint32 Klayman::handleMessage41DAD0(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0x0D01B294) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x480B, 0, this);
+				sendMessage(_attachedSprite, 0x480B, 0);
 			}
 		} else if (param.asInteger() == 0x32180101) {
 			_soundResource1.play(0x4924AAC4);
@@ -1375,7 +1375,7 @@ void Klayman::sub4201C0() {
 	SetMessageHandler(&Klayman::handleMessage41D790);
 	SetSpriteCallback(&Klayman::spriteUpdate41F230);
 	SetAnimationCallback3(&Klayman::sub420340);
-	_attachedSprite->sendMessage(0x482B, 0, this);
+	sendMessage(_attachedSprite, 0x482B, 0);
 }
 
 uint32 Klayman::handleMessage41D790(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1384,15 +1384,15 @@ uint32 Klayman::handleMessage41D790(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0x168050A0) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x4806, 0, this);
+				sendMessage(_attachedSprite, 0x4806, 0);
 			}
 			_flagE5 = true;
 		} else if (param.asInteger() == 0x320AC306) {
 			_soundResource1.play(0x5860C640);
 		} else if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x482A, 0, this);
+			sendMessage(_attachedSprite, 0x482A, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 		}
 		break;
 	}
@@ -1430,7 +1430,7 @@ void Klayman::sub420290() {
 		SetSpriteCallback(&Klayman::spriteUpdate41F230);
 		SetMessageHandler(&Klayman::handleMessage41D880);
 		SetAnimationCallback3(&Klayman::sub420380);
-		_attachedSprite->sendMessage(0x482B, 0, this);
+		sendMessage(_attachedSprite, 0x482B, 0);
 	}
 }
 
@@ -1440,14 +1440,14 @@ uint32 Klayman::handleMessage41D880(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0x168050A0) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x4806, 0, this);
+				sendMessage(_attachedSprite, 0x4806, 0);
 			}
 		} else if (param.asInteger() == 0x320AC306) {
 			_soundResource1.play(0x5860C640);
 		} else if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x482A, 0, this);
+			sendMessage(_attachedSprite, 0x482A, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 		}
 		break;
 	}
@@ -1475,7 +1475,7 @@ void Klayman::sub4203C0() {
 	_status2 = 1;
 	_flagE5 = false;
 	if (_attachedSprite) {
-		_attachedSprite->sendMessage(0x4807, 0, this);
+		sendMessage(_attachedSprite, 0x4807, 0);
 		_attachedSprite = NULL;
 	}
 	setFileHash(0xB869A4B9, 0, -1);
@@ -1597,11 +1597,11 @@ uint32 Klayman::handleMessage41E0D0(int messageNum, const MessageParam &param, E
 			}
 			if (_statusE0 == 1) {
 				if (_y4 >= _y - 30) {
-					sendMessage(0x1019, 0, this);
+					sendMessage(this, 0x1019, 0);
 				}
 			} else {
 				if (_y4 <= _y) {
-					sendMessage(0x1019, 0, this);
+					sendMessage(this, 0x1019, 0);
 				}
 			}
 		}
@@ -1651,9 +1651,9 @@ uint32 Klayman::handleMessage41E490(int messageNum, const MessageParam &param, E
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x80C110B5) {
-			_parentScene->sendMessage(0x482A, 0, this);
+			sendMessage(_parentScene, 0x482A, 0);
 		} else if (param.asInteger() == 0x110010D1) {
-			_parentScene->sendMessage(0x482B, 0, this);
+			sendMessage(_parentScene, 0x482B, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			if (_soundFlag) {
 				_soundResource1.play(0x48498E46);
@@ -1795,7 +1795,7 @@ void Klayman::sub420F20() {
 
 void Klayman::spriteUpdate41F5A0() {
 	if (!_flagF8 && ABS(_x4 - _x) < 80) {
-		_parentScene->sendMessage(0x4829, 0, this);
+		sendMessage(_parentScene, 0x4829, 0);
 		_flagF8 = true;
 	}
 	AnimatedSprite::updateDeltaXY();
@@ -1812,7 +1812,7 @@ void Klayman::sub420600() {
 }
 
 void Klayman::sub420660() {
-	_attachedSprite->sendMessage(0x4807, 0, this);
+	sendMessage(_attachedSprite, 0x4807, 0);
 }
 
 uint32 Klayman::handleMessage41D970(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1820,9 +1820,9 @@ uint32 Klayman::handleMessage41D970(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0x01084280) {
 			if (_attachedSprite)
-				_attachedSprite->sendMessage(0x480B, _doDeltaX ? 1 : 0, this);
+				sendMessage(_attachedSprite, 0x480B, _doDeltaX ? 1 : 0);
 		} else if (param.asInteger() == 0x02421405) {
-			if (_flagE4 && _attachedSprite->hasMessageHandler() && _attachedSprite->sendMessage(0x480C, _doDeltaX ? 1 : 0, this) != 0) {
+			if (_flagE4 && _attachedSprite->hasMessageHandler() && sendMessage(_attachedSprite, 0x480C, _doDeltaX ? 1 : 0) != 0) {
 				sub4205C0();
 			} else {
 				setCallback1(AnimationCallback(&Klayman::sub420660));
@@ -1869,7 +1869,7 @@ void Klayman::sub420C50() {
 		if (_flagF7) {
 			sub420D50();
 		} else {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 			setFileHash(0x0C303040, 0, -1);
 			SetUpdateHandler(&Klayman::update);
 			SetSpriteCallback(&Klayman::spriteUpdate41F230);
@@ -1882,7 +1882,7 @@ void Klayman::sub420C50() {
 
 void Klayman::sub420CD0() {
 	setFileHash(0x0D318140, 0, -1);
-	_attachedSprite->sendMessage(0x480F, 0, this);
+	sendMessage(_attachedSprite, 0x480F, 0);
 	SetAnimationCallback3(&Klayman::sub420D10);
 }
 
@@ -1900,14 +1900,14 @@ void Klayman::sub420D50() {
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteCallback(&Klayman::spriteUpdate41F230);
 	SetMessageHandler(&Klayman::handleMessage41E210);
-	_attachedSprite->sendMessage(0x4807, 0, this);
+	sendMessage(_attachedSprite, 0x4807, 0);
 	SetAnimationCallback3(&Klayman::sub420DA0);
 	_flagE5 = false;
 }
 
 void Klayman::sub420DA0() {
 	setFileHash(0x0D318140, 0, -1);
-	_attachedSprite->sendMessage(0x480F, 0, this);
+	sendMessage(_attachedSprite, 0x480F, 0);
 	SetAnimationCallback3(&Klayman::sub420DE0);
 }
 
@@ -1927,7 +1927,7 @@ void Klayman::sub420E20() {
 		SetUpdateHandler(&Klayman::update);
 		SetSpriteCallback(&Klayman::spriteUpdate41F230);
 		SetMessageHandler(&Klayman::handleMessage41E210);
-		_attachedSprite->sendMessage(0x4807, 0, this);
+		sendMessage(_attachedSprite, 0x4807, 0);
 		SetAnimationCallback3(&Klayman::sub420E90);
 		_flagE5 = false;
 		_flagF7 = false;
@@ -1942,7 +1942,7 @@ void Klayman::sub420E90() {
 }
 
 void Klayman::sub420EB0() {
-	_attachedSprite->sendMessage(0x482A, 0, this);
+	sendMessage(_attachedSprite, 0x482A, 0);
 }
 
 void Klayman::sub420680() {
@@ -2002,7 +2002,7 @@ uint32 Klayman::handleMessage41DD20(int messageNum, const MessageParam &param, E
 	case 0x100D:
 		if (param.asInteger() == 0x040D4186) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x4808, 0, this);
+				sendMessage(_attachedSprite, 0x4808, 0);
 			}
 		}
 		break;
@@ -2078,7 +2078,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4836:
 		if (param.asInteger() == 1) {
-			_parentScene->sendMessage(0x2002, 0, this);
+			sendMessage(_parentScene, 0x2002, 0);
 			setCallback2(AnimationCallback(&Klayman::sub4211F0));
 		}
 		break;		
@@ -2108,7 +2108,7 @@ uint32 KmScene1001::handleMessage44FA00(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x480F, 0, this);
+			sendMessage(_attachedSprite, 0x480F, 0);
 		}
 		break;
 	}
@@ -2117,8 +2117,8 @@ uint32 KmScene1001::handleMessage44FA00(int messageNum, const MessageParam &para
 
 // KmScene1002
 
-KmScene1002::KmScene1002(NeverhoodEngine *vm, Entity *parentScene, Sprite *class599, Sprite *ssLadderArch, int16 x, int16 y)
-	: Klayman(vm, parentScene, x, y, 1000, 1000), _class599(class599), _ssLadderArch(ssLadderArch), _otherSprite(NULL),
+KmScene1002::KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _otherSprite(NULL),
 	_status(0) {
 	
 	setKlaymanTable1();
@@ -2197,21 +2197,21 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		sub41CCE0(param.asInteger());
 		break;
 	case 0x4820:  
-		_parentScene->sendMessage(0x2005, 0, this);
+		sendMessage(_parentScene, 0x2005, 0);
 		setCallback2(AnimationCallback(&Klayman::sub420970));	 
 		break;
 	case 0x4821:	
-		_parentScene->sendMessage(0x2005, 0, this);
+		sendMessage(_parentScene, 0x2005, 0);
 		_y4 = param.asInteger();
 		setCallback2(AnimationCallback(&Klayman::sub4209D0));	 
 		break;
 	case 0x4822:  
-		_parentScene->sendMessage(0x2005, 0, this);
+		sendMessage(_parentScene, 0x2005, 0);
 		_y4 = param.asInteger();
 		setCallback2(AnimationCallback(&Klayman::sub420AD0));	 
 		break;
 	case 0x4823:
-		_parentScene->sendMessage(0x2006, 0, this);
+		sendMessage(_parentScene, 0x2006, 0);
 		setCallback2(AnimationCallback(&Klayman::sub420BC0));	 
 		break;
 	case 0x482E:	 
@@ -2252,19 +2252,19 @@ uint32 KmScene1002::handleMessage449800(int messageNum, const MessageParam &para
 	case 0x100D:
 		if (param.asInteger() == 0x168050A0) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x480F, 0, this);
+				sendMessage(_attachedSprite, 0x480F, 0);
 			}
 		} else if (param.asInteger() == 0x586B0300) {
 			if (_otherSprite) {
-				_otherSprite->sendMessage(0x480E, 1, this);
+				sendMessage(_otherSprite, 0x480E, 1);
 			}
 		} else if (param.asInteger() == 0x4AB28209) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x482A, 0, this);
+				sendMessage(_attachedSprite, 0x482A, 0);
 			}
 		} else if (param.asInteger() == 0x88001184) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x482B, 0, this);
+				sendMessage(_attachedSprite, 0x482B, 0);
 			}
 		}
 		break;
@@ -2301,12 +2301,12 @@ uint32 KmScene1002::handleMessage449990(int messageNum, const MessageParam &para
 	case 0x100D:
 		if (param.asInteger() == 0x942D2081) {
 			_flagE5 = false;
-			_attachedSprite->sendMessage(0x2003, 0, this);
+			sendMessage(_attachedSprite, 0x2003, 0);
 		} else if (param.asInteger() == 0xDA600012) {
 			sub44A370();
 		} else if (param.asInteger() == 0x0D01B294) {
 			_flagE5 = false;
-			_attachedSprite->sendMessage(0x480B, 0, this);
+			sendMessage(_attachedSprite, 0x480B, 0);
 		}
 		break;
 	}
@@ -2318,12 +2318,12 @@ uint32 KmScene1002::handleMessage449A30(int messageNum, const MessageParam &para
 	case 0x100D:
 		if (param.asInteger() == 0x01084280) {
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x480B, (uint32)_doDeltaX, this);
+				sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
 			}
 		} else if (param.asInteger() == 0x02421405) {
 			if (_flagE4) {
 				if (_attachedSprite) {
-					if (_attachedSprite->sendMessage(0x480C, (uint32)_doDeltaX, this) != 0) {
+					if (sendMessage(_attachedSprite, 0x480C, (uint32)_doDeltaX) != 0) {
 						sub44A460();
 					}
 				}
@@ -2331,9 +2331,9 @@ uint32 KmScene1002::handleMessage449A30(int messageNum, const MessageParam &para
 				SetMessageHandler(&KmScene1002::handleMessage449BA0);
 			}
 		} else if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x482A, 0, this);
+			sendMessage(_attachedSprite, 0x482A, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			_soundResource1.play(0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
@@ -2352,9 +2352,9 @@ uint32 KmScene1002::handleMessage449BA0(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x4AB28209) {
-			_attachedSprite->sendMessage(0x482A, 0, this);
+			sendMessage(_attachedSprite, 0x482A, 0);
 		} else if (param.asInteger() == 0x88001184) {
-			_attachedSprite->sendMessage(0x482B, 0, this);
+			sendMessage(_attachedSprite, 0x482B, 0);
 		} else if (param.asInteger() == 0x32180101) {
 			_soundResource1.play(0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
@@ -2407,7 +2407,7 @@ void KmScene1002::spriteUpdate449DC0() {
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		processDelta();
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	}
 	_vm->_collisionMan->checkCollision(this, 0xFFFF, 0x4810, 0);
 }
@@ -2421,7 +2421,7 @@ void KmScene1002::sub449E20() {
 		SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 		SetMessageHandler(&KmScene1002::handleMessage449800);
 		SetAnimationCallback3(&Klayman::sub420420);
-		_attachedSprite->sendMessage(0x482B, 0, this);
+		sendMessage(_attachedSprite, 0x482B, 0);
 	}
 }
 
@@ -2449,12 +2449,12 @@ void KmScene1002::sub449EF0() {
 	
 	SetSpriteCallback(&KmScene1002::spriteUpdate449DC0);
 	SetAnimationCallback3(&KmScene1002::sub449F70);
-	_class599->sendMessage(0x482A, 0, this);
-	_ssLadderArch->sendMessage(0x482A, 0, this);
+	sendMessage(_class599, 0x482A, 0);
+	sendMessage(_ssLadderArch, 0x482A, 0);
 }
 
 void KmScene1002::sub449F70() {
-	_parentScene->sendMessage(0x1024, 1, this);
+	sendMessage(_parentScene, 0x1024, 1);
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
 	_flagE5 = false;
@@ -2464,11 +2464,11 @@ void KmScene1002::sub449F70() {
 	SetSpriteCallback(NULL);
 	SetMessageHandler(&KmScene1002::handleMessage41D480);
 	SetAnimationCallback3(&KmScene1002::sub44A230);
-	_parentScene->sendMessage(0x2002, 0, this);
+	sendMessage(_parentScene, 0x2002, 0);
 	// TODO _callbackList = NULL;
 	_attachedSprite = NULL;
-	_class599->sendMessage(0x482B, 0, this);
-	_ssLadderArch->sendMessage(0x482B, 0, this);
+	sendMessage(_class599, 0x482B, 0);
+	sendMessage(_ssLadderArch, 0x482B, 0);
 }
 
 void KmScene1002::sub44A050() {
@@ -2480,8 +2480,8 @@ void KmScene1002::sub44A050() {
 	SetSpriteCallback(&KmScene1002::spriteUpdate449DC0);
 	SetMessageHandler(&Klayman::handleMessage41D480);
 	SetAnimationCallback3(&KmScene1002::sub449F70);
-	_class599->sendMessage(0x482A, 0, this);
-	_ssLadderArch->sendMessage(0x482A, 0, this);
+	sendMessage(_class599, 0x482A, 0);
+	sendMessage(_ssLadderArch, 0x482A, 0);
 }
 
 void KmScene1002::sub44A0D0() {
@@ -2493,12 +2493,12 @@ void KmScene1002::sub44A0D0() {
 	SetMessageHandler(&Klayman::handleMessage41D360);
 	SetSpriteCallback(&KmScene1002::spriteUpdate449DC0);
 	SetAnimationCallback3(&KmScene1002::sub44A150);
-	_class599->sendMessage(0x482A, 0, this);
-	_ssLadderArch->sendMessage(0x482A, 0, this);
+	sendMessage(_class599, 0x482A, 0);
+	sendMessage(_ssLadderArch, 0x482A, 0);
 }
 
 void KmScene1002::sub44A150() {
-	_parentScene->sendMessage(0x1024, 1, this);
+	sendMessage(_parentScene, 0x1024, 1);
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
 	_flagE5 = false;
@@ -2508,11 +2508,11 @@ void KmScene1002::sub44A150() {
 	SetMessageHandler(&KmScene1002::handleMessage41D480);
 	SetSpriteCallback(NULL);
 	SetAnimationCallback3(&KmScene1002::sub44A230);
-	_parentScene->sendMessage(0x2002, 0, this);
+	sendMessage(_parentScene, 0x2002, 0);
 	// TODO _callbackList = NULL;
 	_attachedSprite = NULL;
-	_class599->sendMessage(0x482B, 0, this);
-	_ssLadderArch->sendMessage(0x482B, 0, this);
+	sendMessage(_class599, 0x482B, 0);
+	sendMessage(_ssLadderArch, 0x482B, 0);
 }
 
 void KmScene1002::sub44A230() {
@@ -2522,7 +2522,7 @@ void KmScene1002::sub44A230() {
 
 void KmScene1002::sub44A250() {
 	if (!sub41CEB0(AnimationCallback(&KmScene1002::sub44A250))) {
-		_parentScene->sendMessage(0x1024, 3, this);
+		sendMessage(_parentScene, 0x1024, 3);
 		_status2 = 2;
 		_flagE5 = false;
 		setFileHash(0xB93AB151, 0, -1);
@@ -2536,7 +2536,7 @@ void KmScene1002::sub44A250() {
 void KmScene1002::sub44A2C0() {
 	if (_attachedSprite) {
 		_x = ((Sprite*)_attachedSprite)->getX();
-		_attachedSprite->sendMessage(0x4807, 0, this);
+		sendMessage(_attachedSprite, 0x4807, 0);
 		_attachedSprite = NULL;
 	}
 	_status2 = 2;
@@ -2569,7 +2569,7 @@ void KmScene1002::sub44A370() {
 }
 
 void KmScene1002::sub44A3C0() {
-	_parentScene->sendMessage(0x1024, 1, this);
+	sendMessage(_parentScene, 0x1024, 1);
 }
 
 void KmScene1002::sub44A3E0() {
@@ -2597,7 +2597,7 @@ void KmScene1002::sub44A460() {
 }
 
 void KmScene1002::sub44A4B0() {
-	_attachedSprite->sendMessage(0x482A, 0, this);
+	sendMessage(_attachedSprite, 0x482A, 0);
 }
 
 // KmScene1004
@@ -2628,30 +2628,30 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 		setCallback2(AnimationCallback(&KmScene1004::sub478170));
 		break;
 	case 0x4820:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		setCallback2(AnimationCallback(&Klayman::sub420970));
 		break;
 	case 0x4821:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_y4 = param.asInteger();
 		setCallback2(AnimationCallback(&Klayman::sub4209D0));
 		break;
 	case 0x4822:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_y4 = param.asInteger();
 		setCallback2(AnimationCallback(&Klayman::sub420AD0));
 		break;
 	case 0x4823:
-		_parentScene->sendMessage(0x2001, 0, this);
+		sendMessage(_parentScene, 0x2001, 0);
 		setCallback2(AnimationCallback(&Klayman::sub420BC0));
 		break;
 	case 0x4824:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_y4 = _dataResource.getPoint(param.asInteger()).y;
 		setCallback2(AnimationCallback(&Klayman::sub4209D0));
 		break;
 	case 0x4825:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_y4 = _dataResource.getPoint(param.asInteger()).y;
 		setCallback2(AnimationCallback(&Klayman::sub420AD0));
 		break;
@@ -2674,7 +2674,7 @@ uint32 KmScene1004::handleMessage478110(int messageNum, const MessageParam &para
 	case 0x100D:
 		if (param.asInteger() == 0x04684052) {
 			_flagE5 = true;
-			_parentScene->sendMessage(0x2002, 0, this);
+			sendMessage(_parentScene, 0x2002, 0);
 		}
 		break;
 	}
@@ -2818,7 +2818,7 @@ uint32 KmScene1201::handleMessage40DDF0(int messageNum, const MessageParam &para
 		if (param.asInteger() == 0x01084280) {
 			_soundResource1.play(0x405002D8);
 			if (_attachedSprite) {
-				_attachedSprite->sendMessage(0x480B, 0, this);
+				sendMessage(_attachedSprite, 0x480B, 0);
 			}
 		} else if (param.asInteger() == 0x02421405) {
 			if (_countdown != 0) {
@@ -2876,7 +2876,7 @@ void KmScene1201::sub40DFA0() {
 		SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 		SetMessageHandler(&KmScene1201::handleMessage40DEA0);
 		SetAnimationCallback3(&Klayman::sub41FC80);
-		_class464->sendMessage(0x2006, 0, this);
+		sendMessage(_class464, 0x2006, 0);
 		_soundResource1.play(0x62E0A356);
 	}
 }
@@ -2918,7 +2918,7 @@ uint32 KmScene1303::handleMessage4160A0(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == calcHash("PopBalloon")) {
-			_parentScene->sendMessage(0x2000, 0, this);
+			sendMessage(_parentScene, 0x2000, 0);
 		} else if (param.asInteger() == 0x02B20220) {
 			_soundResource1.play(0xC5408620);
 		} else if (param.asInteger() == 0x0A720138) {
@@ -3175,12 +3175,12 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		setCallback2(AnimationCallback(&Klayman::sub421160));
 		break;
 	case 0x4835:
-		_parentScene->sendMessage(0x2000, 1, this);
+		sendMessage(_parentScene, 0x2000, 1);
 		_flag1 = true;
 		setCallback2(AnimationCallback(&Klayman::sub4212C0));
 		break;																		
 	case 0x4836:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_flag1 = false;
 		setCallback2(AnimationCallback(&Klayman::sub421310));
 		break;
@@ -3702,12 +3702,12 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		setCallback2(AnimationCallback(&Klayman::sub421160));
 		break;
 	case 0x4835:
-		_parentScene->sendMessage(0x2000, 1, this);
+		sendMessage(_parentScene, 0x2000, 1);
 		_flag = true;
 		setCallback2(AnimationCallback(&Klayman::sub4212C0));
 		break;																		
 	case 0x4836:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_flag = false;
 		setCallback2(AnimationCallback(&Klayman::sub421310));
 		break;
@@ -3741,7 +3741,7 @@ void KmScene1705::spriteUpdate468A30() {
 	if (hitRect->type == 0x5001) {
 		_y = hitRect->rect.y1;
 		processDelta();
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	}
 }
 
@@ -3821,12 +3821,12 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		setCallback2(AnimationCallback(&Klayman::sub421160));
 		break;
 	case 0x4835:
-		_parentScene->sendMessage(0x2000, 1, this);
+		sendMessage(_parentScene, 0x2000, 1);
 		_flag = true;
 		setCallback2(AnimationCallback(&Klayman::sub4212C0));
 		break;
 	case 0x4836:
-		_parentScene->sendMessage(0x2000, 0, this);
+		sendMessage(_parentScene, 0x2000, 0);
 		_flag = false;
 		setCallback2(AnimationCallback(&Klayman::sub421310));
 		break;
@@ -4189,14 +4189,14 @@ void KmScene2206::spriteUpdate482450() {
 	_yDelta++;
 	_y += _yDelta;
 	if (_y > 600) {
-		sendMessage(0x1019, 0, this);
+		sendMessage(this, 0x1019, 0);
 	}
 }
 
 void KmScene2206::sub482490() {
 	if (!sub41CF10(AnimationCallback(&KmScene2206::sub482490))) {
 		_status2 = 1;
-		_parentScene->sendMessage(0x4803, 0, this);
+		sendMessage(_parentScene, 0x4803, 0);
 		_flagE5 = false;
 		_yDelta = 0;
 		setFileHash(0x5420E254, 0, -1);
@@ -4322,7 +4322,7 @@ void KmScene2207::sub4424B0() {
 void KmScene2207::sub442520() {
 	setFileHash(0x0D318140, 0, -1);
 	SetAnimationCallback3(&KmScene2207::sub442560);
-	_attachedSprite->sendMessage(0x480F, 0, this);
+	sendMessage(_attachedSprite, 0x480F, 0);
 }
 
 void KmScene2207::sub442560() {

@@ -97,11 +97,11 @@ void Module1200::updateScene1201() {
 			createScene1202(0);
 			_childObject->handleUpdate();
 		} else if (_moduleDoneStatus == 2) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		} else if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
 			createScene1203(-1);
 		} else {
-			_parentModule->sendMessage(0x1009, 1, this);
+			sendMessage(_parentModule, 0x1009, 1);
 		}
 	}
 }
@@ -245,7 +245,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		_parentScene->sendMessage(0x4826, 0, this);
+		sendMessage(_parentScene, 0x4826, 0);
 		messageResult = 1;
 		break;
 	case 0x4806:
@@ -417,13 +417,13 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x092870C0) {
-			_class466->sendMessage(0x2006, 0, this);
+			sendMessage(_class466, 0x2006, 0);
 		} else if (param.asInteger() == 0x11CA0144) {
 			_soundResource.play(0x51800A04);
 		}
 		break;
 	case 0x1011:
-		_parentScene->sendMessage(0x2002, 0, this);
+		sendMessage(_parentScene, 0x2002, 0);
 		messageResult = 1;
 	case 0x480B:
 		if (!_flag) {
@@ -570,7 +570,7 @@ uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam 
 	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		_parentScene->sendMessage(0x2001, 0, this);
+		sendMessage(_parentScene, 0x2001, 0);
 		messageResult = 1;
 		break;
 	case 0x4806:
@@ -693,8 +693,8 @@ uint32 AsScene1201Creature::handleMessage40C830(int messageNum, const MessagePar
 	case 0x100D:
 		if (param.asInteger() == 0x02060018) {
 			_soundResource.play(0xCD298116);
-			_parentScene->sendMessage(0x4814, 0, this);
-			_klayman->sendMessage(0x4814, 0, this);
+			sendMessage(_parentScene, 0x4814, 0);
+			sendMessage(_klayman, 0x4814, 0);
 		}
 		break;
 	case 0x3002:
@@ -1014,12 +1014,12 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x07053000) {
 			_flag = true;
-			_asCreature->sendMessage(0x2004, 0, this);
+			sendMessage(_asCreature, 0x2004, 0);
 		} else if (param.asInteger() == 0x140E5744) {
-			_asCreature->sendMessage(0x2005, 0, this);
+			sendMessage(_asCreature, 0x2005, 0);
 		} else if (param.asInteger() == 0x40253C40) {
 			_messageListFlag = false;
-			_asCreature->sendMessage(0x2006, 0, this);
+			sendMessage(_asCreature, 0x2006, 0);
 		} else if (param.asInteger() == 0x090EB048) {
 			if (_klayman->getX() < 572) {
 				setMessageList2(0x004AEC90);
@@ -1032,16 +1032,16 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (!getGlobalVar(0x0112090A)) {
 			setMessageList2(0x004AECB0);
 		} else {
-			_klayman->sendEntityMessage(0x1014, _asMatch, this);
+			sendEntityMessage(_klayman, 0x1014, _asMatch);
 			setMessageList2(0x004AECC0);
 		}
 		break;
 	case 0x2002:		
 		if (getGlobalVar(0x20A0C516)) {
-			_klayman->sendEntityMessage(0x1014, _asTntMan, this);
+			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			setMessageList2(0x004AECF0);
 		} else if (getGlobalVar(0x0112090A) == 3) {
-			_klayman->sendEntityMessage(0x1014, _asTntMan, this);
+			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			if (_klayman->getX() > _asTntMan->getX()) {
 				setMessageList(0x004AECD0);
 			} else {
@@ -1054,12 +1054,12 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			_klayman->sendEntityMessage(0x1014, _asTape, this);
+			sendEntityMessage(_klayman, 0x1014, _asTape);
 			setMessageList(0x004AED38);
 		}
 		break;
 	case 0x4829:
-		_asRightDoor->sendMessage(0x4829, 0, this);
+		sendMessage(_asRightDoor, 0x4829, 0);
 		break;		
 	}
 	return messageResult;
@@ -1131,7 +1131,7 @@ uint32 AsScene1202TntItem::handleMessage453FE0(int messageNum, const MessagePara
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		_parentScene->sendMessage(0x2000, _index, this);
+		sendMessage(_parentScene, 0x2000, _index);
 		messageResult = 1;
 		break;
 	case 0x2001:
@@ -1174,7 +1174,7 @@ void AsScene1202TntItem::sub454100() {
 }
 
 void AsScene1202TntItem::sub454160() {
-	_parentScene->sendMessage(0x2002, _index, this);
+	sendMessage(_parentScene, 0x2002, _index);
 	sub4540A0();
 }
 
@@ -1230,7 +1230,7 @@ void Scene1202::update() {
 	Scene::update();
 	if (_soundFlag) {
 		if (!_soundResource4.isPlaying()) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 	} else if (_counter == 0 && isSolved()) {
 		SetMessageHandler(&Scene1202::handleMessage453D90);
@@ -1240,8 +1240,8 @@ void Scene1202::update() {
 		_soundFlag = true;
 	} else if (_index >= 0 && _counter == 0) {
 		int index2 = kScene1202Table[_index];
-		_asTntItems[_index]->sendMessage(0x2001, getSubVar(0x10055D14, index2), this);
-		_asTntItems[index2]->sendMessage(0x2001, getSubVar(0x10055D14, _index), this);
+		sendMessage(_asTntItems[_index], 0x2001, getSubVar(0x10055D14, index2));
+		sendMessage(_asTntItems[index2], 0x2001, getSubVar(0x10055D14, _index));
 		int temp = getSubVar(0x10055D14, index2);
 		setSubVar(0x10055D14, index2, getSubVar(0x10055D14, _index));
 		setSubVar(0x10055D14, _index, temp);
@@ -1263,7 +1263,7 @@ uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param,
 	case 0x0001:
 		// TODO: Debug/Cheat stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_soundFlag) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	case 0x000D:
@@ -1287,7 +1287,7 @@ uint32 Scene1202::handleMessage453D90(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	}

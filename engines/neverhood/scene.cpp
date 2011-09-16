@@ -178,6 +178,18 @@ Background *Scene::addBackground(Background *background) {
 	return background;
 }
 
+void Scene::setBackground(uint32 fileHash, bool dirtyBackground) {
+	_background = addBackground(new DirtyBackground(_vm, fileHash, 0, 0));
+}
+
+void Scene::changeBackground(uint32 fileHash) {
+	_background->load(fileHash);
+}
+
+Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
+	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
+}
+
 SmackerPlayer *Scene::addSmackerPlayer(SmackerPlayer *smackerPlayer) {
 	addEntity(smackerPlayer);
 	addSurface(smackerPlayer->getSurface());
@@ -202,12 +214,12 @@ void Scene::update() {
 			if (_klayman) {
 				// TODO: Merge later
 				if (_klayman->hasMessageHandler() && 
-					_klayman->sendMessage(0x1008, 0, this) != 0 &&
+					sendMessage(_klayman, 0x1008, 0) != 0 &&
 					_messageListFlag &&
 					queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 					_mouseClicked = false;
 				} else if (_klayman->hasMessageHandler() && 
-					_klayman->sendMessage(0x1008, 0, this) != 0 &&
+					sendMessage(_klayman, 0x1008, 0) != 0 &&
 					_messageListFlag) {
 					_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 				}
@@ -230,7 +242,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 	switch (messageNum) {
 	case 0: // mouse moved
 		if (_mouseCursor && _mouseCursor->hasMessageHandler())
-			_mouseCursor->sendMessage(0x4002, param, this);
+			sendMessage(_mouseCursor, 0x4002, param);
 		// TODO queryPositionSomeRects(param.asPoint().x, param.asPoint().y);			
 		break;
 	case 1: // mouse clicked
@@ -253,13 +265,13 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 #endif	
 		break;
 	case 6:
-		_parentModule->sendMessage(0x1009, param, this);		
+		sendMessage(_parentModule, 0x1009, param);		
 		break;
 	case 0x1006:
 		if (_messageListFlag1) {
 			_messageListFlag1 = false;
 			if (_messageListIndex == _messageListCount)
-				_klayman->sendMessage(0x4004, 0, this);
+				sendMessage(_klayman, 0x4004, 0);
 			else {
 				runMessageList();
 			}
@@ -269,7 +281,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		if (_messageListFlag1) {
 			_messageListFlag1 = false;
 			_messageList = NULL;
-			_klayman->sendMessage(0x4004, 0, this);
+			sendMessage(_klayman, 0x4004, 0);
 		}
 		break;
 	case 0x101D:
@@ -281,7 +293,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 	case 0x101E:
 		if (_prevVisible && _mouseCursor) {
 			_mouseCursor->getSurface()->setVisible(false);
-			// TODO _mouseCursor->sendMessage(0x4002, g_Screen->_mousePos, this);
+			// TODO sendMessage(_mouseCursor, 0x4002, g_Screen->_mousePos);
 		}
 		break;
 	case 0x1022:
@@ -322,7 +334,7 @@ bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _vm->_collisionMan->getSpriteCount(); i++) {
 		Sprite *sprite = _vm->_collisionMan->getSprite(i);
 		if (sprite->hasMessageHandler() && sprite->isPointInside(mouseX, mouseY) && 
-			sprite->sendPointMessage(0x1011, _mouseClickPos, this) != 0) {
+			sendPointMessage(sprite, 0x1011, _mouseClickPos) != 0) {
 			return true;
 		}
 	}
@@ -369,7 +381,7 @@ void Scene::setMessageList(MessageList *messageList, bool messageListFlag, bool 
 	_messageListFlag = messageListFlag;
 	_systemCallbackFlag = systemCallbackFlag;
 	_messageListStatus = 1;
-	_klayman->sendMessage(0x101C, 0, this);
+	sendMessage(_klayman, 0x101C, 0);
 	
 	// DEBUG: Show message list
 	for (uint i = 0; i < messageList->size(); i++) {
@@ -397,7 +409,7 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 	if (_messageListStatus == 1) {
 		if (messageList != _messageList2) {
 			if (_messageValue >= 0) {
-				_parentModule->sendMessage(0x1023, _messageValue, this);
+				sendMessage(_parentModule, 0x1023, _messageValue);
 				_messageValue = -1;
 			}
 			_messageList2 = messageList;
@@ -407,7 +419,7 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 	} else if (_messageListStatus == 2) {
 		if (messageList == _messageList2) {
 			if (_messageValue >= 0) {
-				_parentModule->sendMessage(0x1023, _messageValue, this);
+				sendMessage(_parentModule, 0x1023, _messageValue);
 				_messageValue = -1;
 			}
 			_messageList2 = messageList;
@@ -416,7 +428,7 @@ bool Scene::setMessageList2(MessageList *messageList, bool messageListFlag, bool
 		}
 	} else {
 		if (_messageValue >= 0) {
-			_parentModule->sendMessage(0x1023, _messageValue, this);
+			sendMessage(_parentModule, 0x1023, _messageValue);
 			_messageValue = -1;
 		}
 		_messageList2 = messageList;
@@ -449,22 +461,22 @@ void Scene::runMessageList() {
 			
 			_messageListIndex++;
 			if (_messageListIndex == _messageListCount) {
-				_klayman->sendMessage(0x1021, 0, this);
+				sendMessage(_klayman, 0x1021, 0);
 			}
 			if (_systemCallbackFlag) {
 				messageNum = convertMessageNum(messageNum);
 			}
 			if (messageNum != 0x4003) {
 				if (messageNum == 0x1009 || messageNum == 0x1024) {
-					_parentModule->sendMessage(messageNum, messageParam, this);
+					sendMessage(_parentModule, messageNum, messageParam);
 				} else if (messageNum == 0x100A) {
 					_messageValue = messageParam;
-					_parentModule->sendMessage(messageNum, messageParam, this);
+					sendMessage(_parentModule, messageNum, messageParam);
 				} else if (messageNum == 0x4001) {
 					_messageListFlag1 = true;
-					_klayman->sendPointMessage(0x4001, _mouseClickPos, this);
+					sendPointMessage(_klayman, 0x4001, _mouseClickPos);
 				} else if (messageNum == 0x100D) {
-					if (this->hasMessageHandler() && this->sendMessage(0x100D, messageParam, this) != 0)
+					if (this->hasMessageHandler() && sendMessage(this, 0x100D, messageParam) != 0)
 						continue;
 				} else if (messageNum == 0x101A) {
 					_messageListStatus = 0;
@@ -473,13 +485,13 @@ void Scene::runMessageList() {
 				} else if (messageNum == 0x1020) {
 					_messageListFlag = false;
 				} else if (messageNum >= 0x2000 && messageNum <= 0x2FFF) {
-					if (this->hasMessageHandler() && this->sendMessage(messageNum, messageParam, this) != 0) {
+					if (this->hasMessageHandler() && sendMessage(this, messageNum, messageParam) != 0) {
 						_messageListFlag2 = false;
 						return;
 					}
 				} else {
 					_messageListFlag1 = true;
-					if (_klayman->hasMessageHandler() && _klayman->sendMessage(messageNum, messageParam, this) != 0) {
+					if (_klayman->hasMessageHandler() && sendMessage(_klayman, messageNum, messageParam) != 0) {
 						_messageListFlag1 = false;
 					}
 				} 
@@ -499,7 +511,7 @@ void Scene::messageList402220() {
 	_messageListFlag1 = false;
 	_messageList = NULL;
 	_messageListFlag = true;
-	_klayman->sendMessage(0x4004, 0, this);
+	sendMessage(_klayman, 0x4004, 0);
 }
 
 void Scene::setRectList(uint32 id) {

@@ -134,18 +134,8 @@ void Module2300::updateScene2301() {
 			createScene2302(4);
 			_childObject->handleUpdate();
 		} else {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
-	}
-	if (_field24 >= 0) {
-		if (_field24 == 0) {
-			_parentModule->sendMessage(0x100A, 0, this);
-		}
-		_field24 = -1;
-	}
-	if (_field26 >= 0) {
-		_parentModule->sendMessage(0x1023, 0, this);
-		_field26 = -1;
 	}
 }
 
@@ -185,9 +175,9 @@ void Module2300::updateScene2302() {
 			createScene2304(1);
 			_childObject->handleUpdate();
 		} else if (_field20 == 5) {
-			_parentModule->sendMessage(0x1009, 3, this);
+			sendMessage(_parentModule, 0x1009, 3);
 		} else {
-			_parentModule->sendMessage(0x1009, 4, this);
+			sendMessage(_parentModule, 0x1009, 4);
 		}
 	}
 }
@@ -199,7 +189,7 @@ void Module2300::updateScene2303() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 1) {
-			_parentModule->sendMessage(0x1009, 3, this);
+			sendMessage(_parentModule, 0x1009, 3);
 		} else {
 			createScene2302(5);
 			_childObject->handleUpdate();
@@ -229,23 +219,11 @@ void Module2300::updateScene2304() {
 		delete _childObject;
 		_childObject = NULL;
 		if (_field20 == 1) {
-			_parentModule->sendMessage(0x1009, 2, this);
+			sendMessage(_parentModule, 0x1009, 2);
 		} else {
 			createScene2302(1);
 			_childObject->handleUpdate();
 		}
-	}
-	if (_field24 >= 0) {
-		if (_field24 == 0) {
-			_parentModule->sendMessage(0x100A, 2, this);
-		}
-		_field24 = -1;
-	}
-	if (_field26 >= 0) {
-		if (_field26 == 1) {
-			_parentModule->sendMessage(0x1023, 2, this);
-		}
-		_field26 = -1;
 	}
 }
 			

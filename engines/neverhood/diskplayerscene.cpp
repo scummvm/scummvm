@@ -225,10 +225,10 @@ uint32 DiskplayerPlayButton::handleMessage(int messageNum, const MessageParam &p
 	case 0x1011:
 		if (!_diskplayerScene->getFlag3()) {
 			if (_isPlaying) {
-				_diskplayerScene->sendMessage(0x2001, 0, this);
+				sendMessage(_diskplayerScene, 0x2001, 0);
 				release();
 			} else {
-				_diskplayerScene->sendMessage(0x2000, 0, this);
+				sendMessage(_diskplayerScene, 0x2000, 0);
 				press();
 			}
 		}
@@ -500,7 +500,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 		case 0x0001:
 			// TODO: Debug/Cheat
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-				_parentModule->sendMessage(0x1009, 0, this);
+				sendMessage(_parentModule, 0x1009, 0);
 			} else if (!_flag3 &&
 				param.asPoint().x > 38 && param.asPoint().x < 598 &&
 				param.asPoint().y > 400 && param.asPoint().y < 460) {

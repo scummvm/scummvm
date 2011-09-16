@@ -73,7 +73,7 @@ void SmackerScene::nextVideo() {
 		uint32 smackerFileHash = _fileHashList[_fileHashListIndex];
 		if (_vm->_res->getResourceTypeByHash(smackerFileHash) != 10) {
 			// Not a Smacker file
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 			return;
 		}
 		_fieldDF = getSubVar(0x00800410, smackerFileHash);
@@ -89,7 +89,7 @@ void SmackerScene::nextVideo() {
 			_smackerPlayer->open(smackerFileHash, false);
 		}
 	} else {
-		_parentModule->sendMessage(0x1009, 0, this);
+		sendMessage(_parentModule, 0x1009, 0);
 	}
 
 }
@@ -111,7 +111,7 @@ uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, En
 		break;
 	case 0x000C:
 		if (_canAbort) {
-			_parentModule->sendMessage(0x1009, 0, this);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 		break;
 	case 0x3002:

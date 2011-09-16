@@ -176,7 +176,7 @@ void SmackerPlayer::update() {
 		if (_smackerDecoder->endOfVideo() && !_keepLastFrame) {
 			// Inform the scene about the end of the video playback
 			if (_scene) {
-				_scene->sendMessage(0x3002, 0, this);
+				sendMessage(_scene, 0x3002, 0);
 			}
 			_flag2 = true;
 		} else {
@@ -194,7 +194,7 @@ void SmackerPlayer::update() {
 	} else if (!_keepLastFrame) {
 		// Inform the scene about the end of the video playback
 		if (_scene) {
-			_scene->sendMessage(0x3002, 0, this);
+			sendMessage(_scene, 0x3002, 0);
 		}
 		_flag2 = true;
 	} else {

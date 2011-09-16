@@ -392,7 +392,7 @@ void AnimatedSprite::updateFrameIndex() {
 		} else {
 			// Inform self about end of current animation
 			// The caller can then e.g. set a new animation fileHash
-			sendMessage(0x3002, 0, this);
+			sendMessage(this, 0x3002, 0);
 			if (_fileHash1 == 0)
 				_frameIndex = 0;
 		}
@@ -400,7 +400,7 @@ void AnimatedSprite::updateFrameIndex() {
 		if (_frameIndex > 0) {
 			_frameIndex--;
 		} else {
-			sendMessage(0x3002, 0, this);
+			sendMessage(this, 0x3002, 0);
 			if (_fileHash1 == 0)
 				_frameIndex = _frameIndex2;
 		}
@@ -424,7 +424,7 @@ void AnimatedSprite::updateFrameInfo() {
 	_needRefresh = true;
 
 	if (frameInfo.frameHash != 0) {
-		sendMessage(0x100D, frameInfo.frameHash, this);
+		sendMessage(this, 0x100D, frameInfo.frameHash);
 	}
 
 }
