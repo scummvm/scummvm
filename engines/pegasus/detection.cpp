@@ -25,6 +25,7 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/savefile.h"
 
 #include "pegasus/pegasus.h"
 
@@ -36,7 +37,9 @@ struct PegasusGameDescription {
 
 bool PegasusEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL);
+		(f == kSupportsRTL)
+		|| (f == kSupportsLoadingDuringRuntime)
+		|| (f == kSupportsSavingDuringRuntime);
 }
 
 bool PegasusEngine::isDemo() const {
@@ -98,8 +101,43 @@ public:
 		return "The Journeyman Project: Pegasus Prime (C) Presto Studios";
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const { return 999; }
+	virtual void removeSaveState(const char *target, int slot) const;
 };
+
+bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves)
+		|| (f == kSupportsDeleteSave);
+}
+
+SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
+	// The original had no pattern, so the user must rename theirs
+	// Note that we ignore the target because saves are compatible between
+	// all versions
+	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+
+	SaveStateList saveList;
+	for (uint32 i = 0; i < filenames.size(); i++) {
+		// Isolate the description from the file name
+		Common::String desc = filenames[i].c_str() + 8;
+		for (int j = 0; j < 4; j++)
+			desc.deleteLastChar();
+		
+		saveList.push_back(SaveStateDescriptor(i, desc));
+	}
+
+	return saveList;
+}
+
+void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
+	// See listSaves() for info on the pattern
+	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+	g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
+}
 
 bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Pegasus::PegasusGameDescription *gd = (const Pegasus::PegasusGameDescription *)desc;

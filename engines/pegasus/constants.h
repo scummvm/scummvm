@@ -26,6 +26,8 @@
 #ifndef PEGASUS_CONSTANTS_H
 #define PEGASUS_CONSTANTS_H
 
+#include "common/endian.h"
+
 #include "pegasus/types.h"
 
 namespace Pegasus {
@@ -246,6 +248,21 @@ const tNotificationFlags kNeighborhoodFlags =	kNeighborhoodMovieCompletedFlag |
 												kDelayCompletedFlag |
 												kActionRequestCompletedFlag |
 												kDeathExtraCompletedFlag;
+
+const uint32 kPegasusPrimeCreator = MKTAG('J', 'P', 'P', 'P');
+const uint32 kPegasusPrimeContinueType = MKTAG('P', 'P', 'C', 'T');
+
+const uint32 kPegasusPrimeDisk1GameType = MKTAG('P', 'P', 'G', '1');
+const uint32 kPegasusPrimeDisk2GameType = MKTAG('P', 'P', 'G', '2');
+const uint32 kPegasusPrimeDisk3GameType = MKTAG('P', 'P', 'G', '3');
+const uint32 kPegasusPrimeDisk4GameType = MKTAG('P', 'P', 'G', '4');
+
+// We only support one of the save versions; the rest are from betas
+// and we are not supporting them.
+const uint32 kPegasusPrimeVersion = 0x00009019;
+
+const char kNormalSave = 0;
+const char kContinueSave = 1;
 
 } // End of namespace Pegasus
 

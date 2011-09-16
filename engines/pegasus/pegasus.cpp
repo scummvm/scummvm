@@ -25,6 +25,8 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "base/plugins.h"
@@ -36,6 +38,7 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
+#include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
 
@@ -49,6 +52,8 @@
 namespace Pegasus {
 
 PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc) {
+	_continuePoint = 0;
+	_saveAllowed = _loadAllowed = true;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -59,6 +64,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _biochipLid;
 	delete _console;
 	delete _cursor;
+	delete _continuePoint;
 }
 
 Common::Error PegasusEngine::run() {
@@ -338,6 +344,148 @@ void PegasusEngine::addTimeBase(TimeBase *timeBase) {
 
 void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 	_timeBases.remove(timeBase);
+}
+
+bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
+	// TODO: Dispose currently running stuff (neighborhood, etc.)
+
+	// Signature
+	uint32 creator = stream->readUint32BE();
+	if (creator != kPegasusPrimeCreator) {
+		warning("Bad save creator '%s'", tag2str(creator));
+		return false;
+	}
+
+	uint32 gameType = stream->readUint32BE();
+	int saveType;
+
+	switch (gameType) {
+	case kPegasusPrimeDisk1GameType:
+	case kPegasusPrimeDisk2GameType:
+	case kPegasusPrimeDisk3GameType:
+	case kPegasusPrimeDisk4GameType:
+		saveType = kNormalSave;
+		break;
+	case kPegasusPrimeContinueType:
+		saveType = kContinueSave;
+		break;
+	default:
+		// There are five other possible game types on the Pippin
+		// version, but hopefully we don't see any of those here
+		warning("Unhandled pegasus game type '%s'", tag2str(gameType));
+		return false;
+	}
+
+	uint32 version = stream->readUint32BE();
+	if (version != kPegasusPrimeVersion) {
+		warning("Where did you get this save? It's a beta (v%04x)!", version & 0x7fff);
+		return false;
+	}
+
+	// Game State
+	GameState.readGameState(stream);
+
+	// TODO: Energy
+	stream->readUint32BE();
+
+	// TODO: Death reason
+	stream->readByte();
+
+	// TODO: This is as far as we can go right now
+	return true;
+
+	// Items
+	g_allItems.readFromStream(stream);
+
+	// TODO: Player Inventory
+	// TODO: Player BioChips
+	// TODO: Disc check
+	// TODO: Jump to environment
+	// TODO: AI rules
+
+	// Make a new continue point if this isn't already one
+	if (saveType == kNormalSave)
+		makeContinuePoint();
+
+	return true;
+}
+
+bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
+	// Not ready yet! :P
+	return false;
+
+	// Signature
+	stream->writeUint32BE(kPegasusPrimeCreator);
+
+	if (saveType == kNormalSave) {
+		// TODO: Disc check
+		stream->writeUint32BE(kPegasusPrimeDisk1GameType);
+	} else { // Continue
+		stream->writeUint32BE(kPegasusPrimeContinueType);
+	}
+
+	stream->writeUint32BE(kPegasusPrimeVersion);
+
+	// Game State
+	GameState.writeGameState(stream);
+
+	// TODO: Energy
+	stream->writeUint32BE(0);
+
+	// TODO: Death reason
+	stream->writeByte(0);
+
+	// Items
+	g_allItems.writeToStream(stream);
+
+	// TODO: Player Inventory
+	// TODO: Player BioChips
+	// TODO: Jump to environment
+	// TODO: AI rules
+	return true;
+}
+
+void PegasusEngine::makeContinuePoint() {
+	delete _continuePoint;
+
+	Common::MemoryWriteStreamDynamic newPoint(DisposeAfterUse::NO);
+	writeToStream(&newPoint, kContinueSave);
+	_continuePoint = new Common::MemoryReadStream(newPoint.getData(), newPoint.size(), DisposeAfterUse::YES);
+}
+
+void PegasusEngine::loadFromContinuePoint() {
+	// Failure to load a continue point is fatal
+
+	if (!_continuePoint)
+		error("Attempting to load from non-existant continue point");
+
+	if (!loadFromStream(_continuePoint))
+		error("Failed loading continue point");
+}
+
+Common::Error PegasusEngine::loadGameState(int slot) {
+	Common::StringArray filenames = _saveFileMan->listSavefiles("pegasus-*.sav");
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filenames[slot]);
+	if (!loadFile)
+		return Common::kUnknownError;
+
+	bool valid = loadFromStream(loadFile);
+	warning("pos = %d", loadFile->pos());
+	delete loadFile;
+
+	return valid ? Common::kNoError : Common::kUnknownError;
+}
+
+Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::String output = Common::String::format("pegasus-%s.sav", desc.c_str());
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output);
+	if (!saveFile)
+		return Common::kUnknownError;
+
+	bool valid = writeToStream(saveFile, kNormalSave);
+	delete saveFile;
+
+	return valid ? Common::kNoError : Common::kUnknownError;
 }
 
 } // End of namespace Pegasus

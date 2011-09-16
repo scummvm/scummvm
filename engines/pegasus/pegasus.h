@@ -72,22 +72,29 @@ friend class InputHandler;
 public:
 	PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc);
 	virtual ~PegasusEngine();
-	
+
+	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger();
-	
+	bool canLoadGameStateCurrently() { return _loadAllowed; }
+	bool canSaveGameStateCurrently() { return _saveAllowed; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
+
+	// Base classes
 	VideoManager *_video;
 	GraphicsManager *_gfx;
 	Common::MacResManager *_resFork, *_inventoryLid, *_biochipLid;
 
+	// Misc.
 	bool isDemo() const;
-
 	void addIdler(Idler *idler);
 	void removeIdler(Idler *idler);
-
 	void addTimeBase(TimeBase *timeBase);
 	void removeTimeBase(TimeBase *timeBase);
+	void swapSaveAllowed(bool allow) { _saveAllowed = allow; }
+	void swapLoadAllowed(bool allow) { _loadAllowed = allow; }
 
 protected:
 	Common::Error run();
@@ -148,6 +155,14 @@ private:
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
+
+	// Save/Load
+	bool loadFromStream(Common::ReadStream *stream);
+	bool writeToStream(Common::WriteStream *stream, int saveType);
+	void makeContinuePoint();
+	void loadFromContinuePoint();
+	Common::ReadStream *_continuePoint;
+	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
 };
 
 } // End of namespace Pegasus
