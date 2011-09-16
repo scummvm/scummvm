@@ -639,7 +639,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_collisionMan->setHitRects(0x004B0858);
 	setRectList(0x004B0A38);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x420643C4, 0, 0));
+	setBackground(0x420643C4);
 	_palette = new Palette(_vm, 0x420643C4);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x643C0428, NULL));
@@ -1007,7 +1007,7 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1305::handleMessage);
 	setRectList(0x004B6E98);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x28801B64, 0, 0));
+	setBackground(0x28801B64);
 	_palette = new Palette(_vm, 0x28801B64);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x01B60280, NULL));
@@ -1123,7 +1123,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene1306::handleMessage);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x05303114, 0, 0));
+	setBackground(0x05303114);
 	_palette = new Palette(_vm, 0x05303114);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x0311005B, NULL));
@@ -1529,7 +1529,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1307::handleMessage);
 	SetUpdateHandler(&Scene1307::update);
 
-	_background = addBackground(new DirtyBackground(_vm, 0xA8006200, 0, 0));
+	setBackground(0xA8006200);
 	_palette = new Palette(_vm, 0xA8006200);
 	_palette->usePalette();
 	addEntity(_palette);
@@ -1848,7 +1848,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;		
 	SetMessageHandler(&Scene1308::handleMessage);
 	
-	_background = addBackground(new DirtyBackground(_vm, 0x41024202, 0, 0));
+	setBackground(0x41024202);
 	_palette = new Palette(_vm, 0x41024202);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x24206418, NULL));

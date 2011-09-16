@@ -118,7 +118,7 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 	
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, backgroundFileHash, 0, 0));
+	setBackground(backgroundFileHash);
 
 	palette2 = new Palette2(_vm);
 	palette2->usePalette();

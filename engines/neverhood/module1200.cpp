@@ -878,12 +878,12 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setRepl(64, 0);
 	
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-		_background = addBackground(new DirtyBackground(_vm, 0x4019A2C4, 0, 0));
+		setBackground(0x4019A2C4);
 		_palette = new Palette(_vm, 0x4019A2C4);
 		_palette->usePalette();
 		_asRightDoor = NULL;
 	} else {
-		_background = addBackground(new DirtyBackground(_vm, 0x40206EC5, 0, 0));
+		setBackground(0x40206EC5);
 		_palette = new Palette(_vm, 0x40206EC5);
 		_palette->usePalette();
 		_asRightDoor = addSprite(new AsScene1201RightDoor(_vm, _klayman, which == 2));
@@ -1188,7 +1188,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x60210ED5, 0, 0));
+	setBackground(0x60210ED5);
 
 	palette2 = new Palette2(_vm, 0x60210ED5);
 	palette2->usePalette();

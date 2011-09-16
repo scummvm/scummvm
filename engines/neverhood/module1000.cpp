@@ -403,7 +403,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_vm->_collisionMan->setHitRects(0x004B4860);
 	_surfaceFlag = false;
-	_background = addBackground(new DirtyBackground(_vm, 0x4086520E, 0, 0));
+	setBackground(0x4086520E);
 	_palette = new Palette(_vm, 0x4086520E);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x6520A400, NULL));
@@ -1406,7 +1406,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x12C23307, 0, 0));
+	setBackground(0x12C23307);
 	_palette = new Palette(_vm, 0x12C23307);
 	_palette->usePalette();
 
@@ -1686,7 +1686,7 @@ Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundF
 
 	SetMessageHandler(&Class152::handleMessage);
 	
-	_background = addBackground(new DirtyBackground(_vm, backgroundFileHash, 0, 0));
+	setBackground(backgroundFileHash);
 	_palette = new Palette(_vm, backgroundFileHash);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse435(_vm, cursorFileHash, 20, 620));
@@ -1748,7 +1748,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1004::update);
 	SetMessageHandler(&Scene1004::handleMessage);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x50C03005, 0, 0));
+	setBackground(0x50C03005);
 
 	if (getGlobalVar(0x0D0A14D10)) {
 		palette2 = new Palette2(_vm, 0xA30BA329);
@@ -1850,13 +1850,13 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	
 	if (getGlobalVar(0xD0A14D10)) {
-		_background = addBackground(new DirtyBackground(_vm, 0x2800E011, 0, 0));
+		setBackground(0x2800E011);
 		_palette = new Palette(_vm, 0x2800E011);
 		_palette->usePalette();
 		insertStaticSprite(0x492D5AD7, 100);
 		_mouseCursor = addSprite(new Mouse435(_vm, 0x0E015288, 20, 620));
 	} else {
-		_background = addBackground(new DirtyBackground(_vm, 0x8870A546, 0, 0));
+		setBackground(0x8870A546);
 		_palette = new Palette(_vm, 0x8870A546);
 		_palette->usePalette();
 		insertStaticSprite(0x40D1E0A9, 100);

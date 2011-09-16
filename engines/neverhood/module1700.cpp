@@ -239,7 +239,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x03118226, 0, 0));
+	setBackground(0x03118226);
 
 	palette2 = new Palette2(_vm, 0x03118226);
 	palette2->addPalette(0x91D3A391, 0, 64, 0);

@@ -756,7 +756,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B6758);
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x08221FA5, 0, 0));
+	setBackground(0x08221FA5);
 	_palette = new Palette(_vm, 0x08221FA5);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x21FA108A, NULL));
@@ -1380,7 +1380,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1407::handleMessage);
 	SetUpdateHandler(&Scene1407::update);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x00442225, 0, 0));
+	setBackground(0x00442225);
 	_palette = new Palette(_vm, 0x00442225);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x4222100C, 20, 620));
@@ -1446,7 +1446,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B1FF8);
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x2110A234, 0, 0));
+	setBackground(0x2110A234);
 	_palette = new Palette(_vm, 0x2110A234);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x0A230219, NULL));
@@ -1569,7 +1569,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setRectList(0x004B8D80);
 
-	_background = addBackground(new DirtyBackground(_vm, 0xAC0B006F, 0, 0));
+	setBackground(0xAC0B006F);
 	_palette = new Palette(_vm, 0xAC0B006F);
 	_palette->addPalette(0x00801510, 0, 65, 0);
 	_palette->usePalette();
@@ -1784,7 +1784,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->gameModule()->initScene1405Vars();
 	_surfaceFlag = true;
 	
-	_background = addBackground(new DirtyBackground(_vm, 0x0C0C007D, 0, 0));
+	setBackground(0x0C0C007D);
 	_palette = new Palette(_vm, 0x0C0C007D);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse435(_vm, 0xC00790C8, 20, 620));

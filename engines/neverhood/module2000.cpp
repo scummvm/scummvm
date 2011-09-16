@@ -134,7 +134,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2001::handleMessage);
 
-	_background = addBackground(new DirtyBackground(_vm, 0xA6417244, 0, 0));
+	setBackground(0xA6417244);
 	_palette = new Palette(_vm, 0xA6417244);
 	_palette->usePalette();
 	_mouseCursor = addSprite(new Mouse433(_vm, 0x17240A6C, NULL));

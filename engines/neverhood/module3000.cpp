@@ -971,7 +971,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_vm->_screen->clear();
 	
-	_background = addBackground(new DirtyBackground(_vm, 0xD000420C, 0, 0));
+	setBackground(0xD000420C);
 	_palette = new Palette(_vm, 0xD000420C);
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x04208D08, 20, 620));
 
@@ -1470,7 +1470,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x80802626, 0, 0));
+	setBackground(0x80802626);
 	_palette = new Palette(_vm, 0x80802626);
 	_palette->usePalette();
 
@@ -1724,7 +1724,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO _vm->gameModule()->initScene3011Vars();
 	_index1 = getGlobalVar(0x2414C2F2);
 
-	_background = addBackground(new DirtyBackground(_vm, 0x92124A04, 0, 0));
+	setBackground(0x92124A04);
 
 	palette2 = new Palette2(_vm, 0xA4070114);
 	addEntity(palette2);
