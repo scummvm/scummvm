@@ -191,6 +191,8 @@ class Vga {
 	void updateColors();
 	void setColors();
 	void waitVR();
+	uint8 closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB);
+
 public:
 	uint32 _frmCnt;
 	Queue *_showQ;
@@ -202,6 +204,7 @@ public:
 	Vga();
 	~Vga();
 
+	uint8 *glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB);
 	void getColors(Dac *tab);
 	void setColors(Dac *tab, int lum);
 	void clear(uint8 color);
@@ -234,37 +237,6 @@ class PocLight: public Sprite {
 public:
 	PocLight(CGEEngine *vm);
 };
-
-Dac mkDac(uint8 r, uint8 g, uint8 b);
-
-template <class CBLK>
-uint8 closest(CBLK *pal, CBLK x) {
-#define f(col, lum) ((((uint16)(col)) << 8) / lum)
-	uint16 i, dif = 0xFFFF, found = 0;
-	uint16 L = x._r + x._g + x._b;
-	if (!L)
-		L++;
-	uint16 R = f(x._r, L), G = f(x._g, L), B = f(x._b, L);
-	for (i = 0; i < 256; i++) {
-		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
-		if (!l)
-			l++;
-		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
-		uint16 D = ((r > R) ? (r - R) : (R - r)) +
-		           ((g > G) ? (g - G) : (G - g)) +
-		           ((b > B) ? (b - B) : (B - b)) +
-		           ((l > L) ? (l - L) : (L - l)) * 10 ;
-
-		if (D < dif) {
-			found = i;
-			dif = D;
-			if (D == 0)
-				break;    // exact!
-		}
-	}
-	return found;
-#undef f
-}
 
 } // End of namespace CGE
 

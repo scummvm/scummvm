@@ -54,16 +54,6 @@ Seq *getConstantSeq(bool seqFlag) {
 	return seq;
 }
 
-extern "C" void SNDMIDIPlay();
-
-Dac mkDac(uint8 r, uint8 g, uint8 b) {
-	static Dac x;
-	x._r = r;
-	x._g = g;
-	x._b = b;
-	return x;
-}
-
 Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 	: _x(0), _y(0), _z(0), _nearPtr(0), _takePtr(0),
 	  _next(NULL), _prev(NULL), _seqPtr(kNoSeq), _time(0),
@@ -720,6 +710,47 @@ void Vga::getColors(Dac *tab) {
 	byte palData[kPalSize];
 	g_system->getPaletteManager()->grabPalette(palData, 0, kPalCount);
 	palToDac(palData, tab);
+}
+
+uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB) {
+#define f(col, lum) ((((uint16)(col)) << 8) / lum)
+	uint16 i, dif = 0xFFFF, found = 0;
+	uint16 L = colR + colG + colB;
+	if (!L)
+		L++;
+	uint16 R = f(colR, L), G = f(colG, L), B = f(colB, L);
+	for (i = 0; i < 256; i++) {
+		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
+		if (!l)
+			l++;
+		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
+		uint16 D = ((r > R) ? (r - R) : (R - r)) +
+		           ((g > G) ? (g - G) : (G - g)) +
+		           ((b > B) ? (b - B) : (B - b)) +
+		           ((l > L) ? (l - L) : (L - l)) * 10 ;
+
+		if (D < dif) {
+			found = i;
+			dif = D;
+			if (D == 0)
+				break;    // exact!
+		}
+	}
+	return found;
+#undef f
+}
+
+uint8 *Vga::glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB) {
+	uint8 *x = (uint8 *)malloc(256);
+	if (x) {
+		uint16 i;
+		for (i = 0; i < 256; i++) {
+			x[i] = closest(pal, ((uint16)(pal[i]._r) * colR) / 255,
+			                    ((uint16)(pal[i]._g) * colG) / 255,
+			                    ((uint16)(pal[i]._b) * colB) / 255);
+		}
+	}
+	return x;
 }
 
 void Vga::palToDac(const byte *palData, Dac *tab) {

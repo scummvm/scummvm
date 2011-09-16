@@ -674,7 +674,7 @@ void CGEEngine::sceneUp() {
 
 	if (_shadow) {
 		_vga->_showQ->remove(_shadow);
-		_shadow->makeXlat(glass(_vga->_sysPal, 204, 204, 204));
+		_shadow->makeXlat(_vga->glass(_vga->_sysPal, 204, 204, 204));
 		_vga->_showQ->insert(_shadow, _hero);
 		_shadow->_z = _hero->_z;
 	}

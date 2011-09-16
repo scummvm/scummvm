@@ -30,19 +30,6 @@
 
 namespace CGE {
 
-uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
-	uint8 *x = (uint8 *)malloc(256);
-	if (x) {
-		uint16 i;
-		for (i = 0; i < 256; i++) {
-			x[i] = closest(pal, mkDac(((uint16)(pal[i]._r) * r) / 255,
-			                          ((uint16)(pal[i]._g) * g) / 255,
-			                          ((uint16)(pal[i]._b) * b) / 255));
-		}
-	}
-	return x;
-}
-
 const int Fly::_l = 20,
     Fly::_t = 40,
     Fly::_r = 110,

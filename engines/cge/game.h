@@ -32,8 +32,6 @@
 
 namespace CGE {
 
-uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b);
-
 class Fly : public Sprite {
 	static const int _l;
 	static const int _t;
