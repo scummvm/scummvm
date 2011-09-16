@@ -45,6 +45,7 @@ Common::Error GameStateManager::writeGameState(Common::WriteStream *stream) {
 	stream->writeByte(_nextDirection);
 	stream->writeUint16BE(_lastNeighborhood);
 	stream->writeUint16BE(_lastRoom);
+	stream->writeByte(_lastDirection);
 	stream->writeUint16BE(_openDoorRoom);
 	stream->writeByte(_openDoorDirection);
 
@@ -74,6 +75,7 @@ Common::Error GameStateManager::readGameState(Common::ReadStream *stream) {
 	_nextDirection = stream->readByte();
 	_lastNeighborhood = stream->readUint16BE();
 	_lastRoom = stream->readUint16BE();
+	_lastDirection = stream->readByte();
 	_openDoorRoom = stream->readUint16BE();
 	_openDoorDirection = stream->readByte();	
 
@@ -599,13 +601,13 @@ void GameStateManager::resetPrehistoricState() {
 void GameStateManager::writeNoradState(Common::WriteStream *stream) {
 	_noradFlags.writeToStream(stream);
 	stream->writeUint16BE(_noradSubRoomPressure);
-	stream->writeUint32BE(_noradSubPrepState); // FIXME: sizeof(enum)!
+	stream->writeByte(_noradSubPrepState);
 }
 
 void GameStateManager::readNoradState(Common::ReadStream *stream) {
 	_noradFlags.readFromStream(stream);
 	_noradSubRoomPressure = stream->readUint16BE();
-	_noradSubPrepState = (tNoradSubPrepState)stream->readUint32BE(); // FIXME: sizeof(enum)!
+	_noradSubPrepState = (tNoradSubPrepState)stream->readByte();
 }
 
 void GameStateManager::resetNoradState() {

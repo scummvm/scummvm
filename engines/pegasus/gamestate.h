@@ -27,6 +27,7 @@
 #define PEGASUS_GAMESTATE_H
 
 #include "common/singleton.h"
+#include "common/util.h"
 
 #include "pegasus/types.h"
 #include "pegasus/items/item.h"
@@ -879,7 +880,7 @@ private:
 				return;
 			}
 
-			for (uint32 i = 0; i < sizeof(_flags); i++) {
+			for (uint32 i = 0; i < ARRAYSIZE(_flags); i++) {
 				if (sizeof(Unit) == 2)
 					_flags[i] = stream->readUint16BE();
 				else /* if (sizeof(Unit) == 4) */
@@ -894,7 +895,7 @@ private:
 				return;
 			}
 
-			for (uint32 i = 0; i < sizeof(_flags); i++) {
+			for (uint32 i = 0; i < ARRAYSIZE(_flags); i++) {
 				if (sizeof(Unit) == 2)
 					stream->writeUint16BE(_flags[i]);
 				else /* if (sizeof(Unit) == 4) */
