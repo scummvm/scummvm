@@ -58,9 +58,6 @@ struct Seq {
 	int _dly;
 };
 
-extern Seq _seq1[];
-extern Seq _seq2[];
-
 class SprExt {
 public:
 	int _x0;
@@ -214,8 +211,8 @@ public:
 	void show();
 	void update();
 
-	static void palToDac(const byte *palData, Dac *tab);
-	static void dacToPal(const Dac *tab, byte *palData);
+	void palToDac(const byte *palData, Dac *tab);
+	void dacToPal(const Dac *tab, byte *palData);
 };
 
 class HorizLine: public Sprite {
