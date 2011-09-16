@@ -197,7 +197,7 @@ public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	NamedObject _object1;
 	Object2 _object2;
-	NamedObject _object5;
+	NamedObject _doors;
 	Object6 _object6;
 	Carter _carter;
 	NamedObject _lyle;

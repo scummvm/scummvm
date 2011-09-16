@@ -1079,7 +1079,14 @@ Scene840::Scene840(): PalettedScene() {
 
 void Scene840::synchronize(Serializer &s) {
 	PalettedScene::synchronize(s);
-	error("TODO");
+
+	s.syncAsSint16LE(_field1ABA);
+	s.syncAsSint16LE(_field1ABC);
+	s.syncAsSint16LE(_field1ABE);
+	s.syncAsSint16LE(_field1AC0);
+	s.syncAsSint16LE(_field1AC2);
+	s.syncAsSint16LE(_field1AC4);
+	s.syncAsSint16LE(_field1AC6);
 }
 
 void Scene840::postInit(SceneObjectList *OwnerList) {
@@ -1107,11 +1114,11 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.changeZoom(-1);
 	BF_GLOBALS._player._moveDiff.x = BF_GLOBALS.getFlag(onDuty) ? 8 : 7;
 
-	_object5.postInit();
-	_object5.setVisage(840);
-	_object5.setStrip(3);
-	_object5.setPosition(Common::Point(157, 81));
-	_object5.setDetails(840, 0, 1, 2, 1, NULL);
+	_doors.postInit();
+	_doors.setVisage(840);
+	_doors.setStrip(3);
+	_doors.setPosition(Common::Point(157, 81));
+	_doors.setDetails(840, 0, 1, 2, 1, NULL);
 
 	_carter.postInit();
 	_carter.setVisage(843);
@@ -1244,7 +1251,7 @@ void Scene840::signal() {
 		break;
 	case 5:
 		_sceneMode = 8408;
-		setAction(&_sequenceManager1, this, 8408, &BF_GLOBALS._player, &_carter, &_object5, NULL);
+		setAction(&_sequenceManager1, this, 8408, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		_field1AC2 = 1;
 		break;
 	case 6:
@@ -1302,7 +1309,7 @@ void Scene840::signal() {
 			BF_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 8409;
-			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_object5, NULL);
+			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		}
 		break;
 	case 8409:
@@ -1326,7 +1333,7 @@ void Scene840::signal() {
 	case 8412:
 		if (_object2._v1B6) {
 			_sceneMode = 8409;
-			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_object5, NULL);
+			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		} else if (!_object2._v1B4) {
 			BF_GLOBALS._player.enableControl();
 		} else {
@@ -1343,7 +1350,7 @@ void Scene840::signal() {
 	case 8413:
 		BF_GLOBALS._uiElements.addScore(50);
 		_sceneMode = 8409;
-		setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_object5, NULL);
+		setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		break;
 	case 8417:
 		_field1ABA = 1;
