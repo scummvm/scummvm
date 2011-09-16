@@ -137,7 +137,7 @@ char *Text::getText(int ref) {
 }
 
 void Text::say(const char *text, Sprite *spr) {
-	killText();
+	_vm->killText();
 	_talk = new Talk(_vm, text, kTBRound);
 	if (!_talk)
 		return;
@@ -203,14 +203,6 @@ void Text::sayTime(Sprite *spr) {
 	char t[6];
 	sprintf(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
 	say(t, spr);
-}
-
-void killText() {
-	if (!_talk)
-		return;
-
-	_snail_->addCom(kSnKill, -1, 0, _talk);
-	_talk = NULL;
 }
 
 } // End of namespace CGE

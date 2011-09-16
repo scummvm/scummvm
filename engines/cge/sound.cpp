@@ -35,13 +35,6 @@
 
 namespace CGE {
 
-DataCk *loadWave(EncryptedStream *file) {
-	byte *data = (byte *)malloc(file->size());
-	file->read(data, file->size());
-
-	return new DataCk(data, file->size());
-}
-
 DataCk::DataCk(byte *buf, int bufSize) {
 	_buf = buf;
 	_ckSize = bufSize;
@@ -179,6 +172,13 @@ DataCk *Fx::load(int idx, int ref) {
 		warning("Unable to load %s", filename);
 	}
 	return wav;
+}
+
+DataCk *Fx::loadWave(EncryptedStream *file) {
+	byte *data = (byte *)malloc(file->size());
+	file->read(data, file->size());
+
+	return new DataCk(data, file->size());
 }
 
 DataCk *Fx::operator[](int ref) {

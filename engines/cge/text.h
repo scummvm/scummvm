@@ -61,10 +61,7 @@ private:
 	CGEEngine *_vm;
 };
 
-extern Talk *_talk;
 extern Text *_text;
-
-void killText();
 
 } // End of namespace CGE
 

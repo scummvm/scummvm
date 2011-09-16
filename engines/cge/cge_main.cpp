@@ -540,7 +540,7 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & kMouseLeftUp) {
-		XZ(_x + x, _y + y).cell() = 0;
+		_vm->XZ(_x + x, _y + y).cell() = 0;
 		_snail_->addCom(kSnKill, -1, 0, this);
 	}
 }
@@ -778,7 +778,7 @@ void System::touch(uint16 mask, int x, int y) {
 
 	if (mask & kEventKeyb) {
 		_vm->keyClick();
-		killText();
+		_vm->killText();
 		if (_vm->_startupMode == 1) {
 			_snail->addCom(kSnClear, -1, 0, NULL);
 			return;
@@ -831,7 +831,7 @@ void System::touch(uint16 mask, int x, int y) {
 
 			if (_horzLine && !_horzLine->_flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
-					Cluster tmpCluster = XZ(x, y);
+					Cluster tmpCluster = _vm->XZ(x, y);
 					int16 x1 = tmpCluster._pt.x;
 					int16 z1 = tmpCluster._pt.y;
 					Cluster::_map[z1][x1] = 1;
@@ -840,7 +840,7 @@ void System::touch(uint16 mask, int x, int y) {
 			} else {
 				if (!_talk && _snail->idle() && _hero
 				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
-					_hero->findWay(XZ(x, y));
+					_hero->findWay(_vm->XZ(x, y));
 				}
 			}
 		}
@@ -850,7 +850,7 @@ void System::touch(uint16 mask, int x, int y) {
 void System::tick() {
 	if (!_vm->_startupMode)
 		if (--_funDel == 0) {
-			killText();
+			_vm->killText();
 			if (_snail->idle()) {
 				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
@@ -1237,6 +1237,24 @@ Sprite *CGEEngine::spriteAt(int x, int y) {
 		}
 	}
 	return spr;
+}
+
+Cluster CGEEngine::XZ(int16 x, int16 y) {
+	if (y < kMapTop)
+		y = kMapTop;
+
+	if (y > kMapTop + kMapHig - kMapGridZ)
+		y = kMapTop + kMapHig - kMapGridZ;
+
+	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
+}
+
+void CGEEngine::killText() {
+	if (!_talk)
+		return;
+
+	_snail_->addCom(kSnKill, -1, 0, _talk);
+	_talk = NULL;
 }
 
 void CGEEngine::mainLoop() {

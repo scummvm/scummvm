@@ -105,7 +105,7 @@ void CGEEngine::init() {
 
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
-	_eventManager = new EventManager();
+	_eventManager = new EventManager(this);
 	_fx = new Fx(16);   // must precede SOUND!!
 	_sound = new Sound(this);
 

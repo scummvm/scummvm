@@ -51,7 +51,6 @@ private:
 	CGEEngine *_vm;
 };
 
-
 class Vmenu : public Talk {
 public:
 	static Vmenu *_addr;

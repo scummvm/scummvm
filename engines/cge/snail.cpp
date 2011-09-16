@@ -415,7 +415,7 @@ void Snail::addCom(SnCom com, int ref, int val, void *ptr) {
 	snc->_cbType = kNullCB;
 	if (com == kSnClear) {
 		_tail = _head;
-		killText();
+		_vm->killText();
 		_timerExpiry = 0;
 	}
 }
@@ -429,7 +429,7 @@ void Snail::addCom2(SnCom com, int ref, int val, CallbackType cbType) {
 	snc->_cbType = cbType;
 	if (com == kSnClear) {
 		_tail = _head;
-		killText();
+		_vm->killText();
 		_timerExpiry = 0;
 	}
 }
@@ -449,7 +449,7 @@ void Snail::insCom(SnCom com, int ref, int val, void *ptr) {
 	snc->_ptr = ptr;
 	if (com == kSnClear) {
 		_tail = _head;
-		killText();
+		_vm->killText();
 		_timerExpiry = 0;
 	}
 }
@@ -956,7 +956,7 @@ void Snail::runCom() {
 				_timerExpiry = 0;
 			} else {
 				if (_textDelay) {
-					killText();
+					_vm->killText();
 					_textDelay = false;
 				}
 			}

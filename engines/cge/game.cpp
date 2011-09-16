@@ -30,15 +30,10 @@
 
 namespace CGE {
 
-const int Fly::_l = 20,
-    Fly::_t = 40,
-    Fly::_r = 110,
-    Fly::_b = 100;
-
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
 	step(_vm->newRandom(2));
-	gotoxy(_l + _vm->newRandom(_r - _l - _w), _t + _vm->newRandom(_b - _t - _h));
+	gotoxy(kFlyL + _vm->newRandom(kFlyR - kFlyL - _w), kFlyT + _vm->newRandom(kFlyB - kFlyT - _h));
 }
 
 void Fly::tick() {
@@ -49,9 +44,9 @@ void Fly::tick() {
 		_tx = _vm->newRandom(3) - 1;
 		_ty = _vm->newRandom(3) - 1;
 	}
-	if (_x + _tx < _l || _x + _tx + _w > _r)
+	if (_x + _tx < kFlyL || _x + _tx + _w > kFlyR)
 		_tx = -_tx;
-	if (_y + _ty < _t || _y + _ty + _h > _b)
+	if (_y + _ty < kFlyT || _y + _ty + _h > kFlyB)
 		_ty = -_ty;
 	gotoxy(_x + _tx, _y + _ty);
 }

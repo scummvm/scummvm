@@ -47,16 +47,6 @@ bool Cluster::isValid() const {
 	return (_pt.x >= 0) && (_pt.x < kMapXCnt) && (_pt.y >= 0) && (_pt.y < kMapZCnt);
 }
 
-Cluster XZ(int16 x, int16 y) {
-	if (y < kMapTop)
-		y = kMapTop;
-
-	if (y > kMapTop + kMapHig - kMapGridZ)
-		y = kMapTop + kMapHig - kMapGridZ;
-
-	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
-}
-
 Walk::Walk(CGEEngine *vm, BitmapPtr *shpl)
 	: Sprite(vm, shpl), _dir(kDirNone), _tracePtr(-1), _level(0), _target(-1, -1), _findLevel(-1), _vm(vm) {
 }
@@ -65,7 +55,7 @@ void Walk::tick() {
 	if (_flags._hide)
 		return;
 
-	_here = XZ(_x + _w / 2, _y + _h);
+	_here = _vm->XZ(_x + _w / 2, _y + _h);
 
 	if (_dir != kDirNone) {
 		_sys->funTouch();

@@ -134,6 +134,7 @@ private:
 
 class EventManager {
 private:
+	CGEEngine *_vm;
 	Common::Event _event;
 	CGEEvent _eventQueue[kEventMax];
 	uint16 _eventQueueHead;
@@ -143,7 +144,7 @@ private:
 public:
 	bool _quitFlag;
 
-	EventManager();
+	EventManager(CGEEngine *vm);
 	void poll();	
 	void clearEvent(Sprite *spr);
 

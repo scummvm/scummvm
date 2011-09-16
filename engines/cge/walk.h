@@ -86,8 +86,6 @@ public:
 	bool find1Way(Cluster c);
 };
 
-Cluster XZ(int16 x, int16 y);
-
 extern Walk *_hero;
 
 } // End of namespace CGE

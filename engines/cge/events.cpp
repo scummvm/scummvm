@@ -271,7 +271,7 @@ void Mouse::newMouse(Common::Event &event) {
 
 /*----------------- EventManager interface -----------------*/
 
-EventManager::EventManager() {
+EventManager::EventManager(CGEEngine *vm) : _vm(vm){
 	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
@@ -349,7 +349,7 @@ void EventManager::handleEvents() {
 
 			// discard Text if button released
 			if (e._mask & (kMouseLeftUp | kMouseRightUp))
-				killText();
+				_vm->killText();
 		}
 		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
 	}

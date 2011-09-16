@@ -40,6 +40,7 @@ namespace CGE {
 
 class Console;
 class Sprite;
+class Cluster;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -232,6 +233,8 @@ public:
 	void sndSetVolume();
 	Sprite *locate(int ref);
 	Sprite *spriteAt(int x, int y);
+	Cluster XZ(int16 x, int16 y);
+	void killText();
 
 	void snBackPt(Sprite *spr, int stp);
 	void snHBarrier(const int scene, const int barX);

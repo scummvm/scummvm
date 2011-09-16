@@ -64,11 +64,10 @@ public:
 	}
 };
 
-DataCk *loadWave(EncryptedStream *file);
-
 class Sound {
 public:
 	SmpInfo _smpinf;
+
 	Sound(CGEEngine *vm);
 	~Sound();
 	void open();
@@ -87,17 +86,19 @@ private:
 	void sndDigiStop(SmpInfo *PSmpInfo);
 };
 
-
 class Fx {
 	struct Handler {
 		int _ref;
 		DataCk *_wav;
 	} *_cache;
 	int _size;
+
 	DataCk *load(int idx, int ref);
+	DataCk *loadWave(EncryptedStream *file);
 	int find(int ref);
 public:
 	DataCk *_current;
+
 	Fx(int size);
 	~Fx();
 	void clear();
