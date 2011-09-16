@@ -163,7 +163,7 @@ DropHighlight::DropHighlight(const tDisplayElementID id) : DisplayElement(id) {
 }
 
 void DropHighlight::draw(const Common::Rect &) {
-	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
 
 	// Since this is only used in two different ways, I'm only
 	// going to implement it in those two ways. Deal with it.
@@ -181,8 +181,6 @@ void DropHighlight::draw(const Common::Rect &) {
 		screen->vLine(rect.left - 1, rect.top + 1, rect.bottom - 2, _highlightColor);
 		screen->vLine(rect.right, rect.top + 1, rect.bottom - 2, _highlightColor);
 	}
-
-	g_system->unlockScreen();
 }
 
 EnergyBar::EnergyBar(const tDisplayElementID id) : DisplayElement(id) {
@@ -225,11 +223,8 @@ void EnergyBar::draw(const Common::Rect &r) {
 	Common::Rect levelRect;
 	calcLevelRect(levelRect);
 
-	if (r.intersects(levelRect)) {
-		Graphics::Surface *screen = g_system->lockScreen();
-		screen->fillRect(levelRect, _barColor);
-		g_system->lockScreen();
-	}
+	if (r.intersects(levelRect))
+		((PegasusEngine *)g_engine)->_gfx->getWorkArea()->fillRect(levelRect, _barColor);
 }
 
 void EnergyBar::calcLevelRect(Common::Rect &r) const {

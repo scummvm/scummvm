@@ -66,6 +66,9 @@ public:
 	void invalRect(const Common::Rect &rect);
 	tDisplayOrder getBackOfActiveLayer() const { return _backLayer; }
 	tDisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
+	void updateDisplay();
+	Graphics::Surface *getWorkArea() { return &_workArea; }
+
 private:		
 	PegasusEngine *_vm;
 
@@ -79,6 +82,7 @@ private:
 	Common::Rect _dirtyRect;
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
+	Graphics::Surface _workArea;
 };
 
 } // End of namespace Pegasus

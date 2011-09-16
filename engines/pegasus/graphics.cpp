@@ -35,6 +35,9 @@ namespace Pegasus {
 GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	initGraphics(640, 480, true, NULL);
 
+	if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
+		error("No true color mode available");
+
 	// Old
 	_pictDecoder = new Graphics::PictDecoder(_vm->_system->getScreenFormat());
 
@@ -45,6 +48,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_backLayer = kMinAvailableOrder;
 	_frontLayer = kMaxAvailableOrder;
 	_firstDisplayElement = _lastDisplayElement = 0;
+	_workArea.create(640, 480, _vm->_system->getScreenFormat());
 }
 	
 GraphicsManager::~GraphicsManager() {
@@ -57,6 +61,9 @@ GraphicsManager::~GraphicsManager() {
 			delete _cache[i].surface;
 		}
 	}
+
+	// New
+	_workArea.free();
 }
 
 Graphics::Surface *GraphicsManager::decodeImage(const Common::String &filename) {
@@ -271,6 +278,36 @@ void GraphicsManager::removeDisplayElement(DisplayElement *oldElement) {
 
 	oldElement->_nextElement = 0;
 	oldElement->_elementIsDisplaying = false;
+}
+
+void GraphicsManager::updateDisplay() {
+	// TODO: Check for cursor move/change
+
+	bool screenDirty = false;
+
+	if (!_dirtyRect.isEmpty()) {
+		for (DisplayElement *runner = _firstDisplayElement; runner != 0; runner = runner->_nextElement) {
+			Common::Rect bounds;
+			runner->getBounds(bounds);
+
+			// TODO: Better logic; it does a bit more work than it probably needs to
+			// but it should work fine for now.
+			if (bounds.intersects(_dirtyRect) && runner->validToDraw(_backLayer, _frontLayer))
+				runner->draw(bounds);
+		}
+
+		// Copy only the dirty rect to the screen
+		g_system->copyRectToScreen((byte *)_workArea.pixels, _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
+
+		// Mark the screen as dirty
+		screenDirty = true;
+
+		// Clear the dirty rect
+		_dirtyRect = Common::Rect();
+	}
+
+	if (screenDirty)
+		g_system->updateScreen();
 }
 	
 } // End of namespace Pegasus
