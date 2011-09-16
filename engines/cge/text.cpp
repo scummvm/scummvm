@@ -174,8 +174,8 @@ void Text::say(const char *text, Sprite *spr) {
 	spike->step(east);
 	spike->_ref = kSayRef;
 
-	_vga->_showQ->insert(_talk, _vga->_showQ->last());
-	_vga->_showQ->insert(spike, _vga->_showQ->last());
+	_vm->_vga->_showQ->insert(_talk, _vm->_vga->_showQ->last());
+	_vm->_vga->_showQ->insert(spike, _vm->_vga->_showQ->last());
 }
 
 void CGEEngine::inf(const char *text) {

@@ -41,6 +41,7 @@ namespace CGE {
 class Console;
 class Sprite;
 class Cluster;
+class Vga;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -112,8 +113,8 @@ private:
 	uint32 _lastFrame, _lastTick;
 	void tick();
 	void syncHeader(Common::Serializer &s);
-	static void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
-	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny = false);
+	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
+	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny);
 	bool savegameExists(int slotNumber);
 	Common::String generateSaveName(int slot);
 public:
@@ -155,6 +156,7 @@ public:
 	Common::Point _heroXY[kSceneMax];
 	Bar _barriers[kSceneMax + 1];
 	Font *_font;
+	Vga *_vga;
 
 	Common::RandomSource _randomSource;
 	MusicPlayer _midiPlayer;

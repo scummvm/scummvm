@@ -216,21 +216,25 @@ public:
 };
 
 class HorizLine: public Sprite {
+	CGEEngine *_vm;
 public:
 	HorizLine(CGEEngine *vm);
 };
 
 class SceneLight: public Sprite {
+	CGEEngine *_vm;
 public:
 	SceneLight(CGEEngine *vm);
 };
 
 class Spike: public Sprite {
+	CGEEngine *_vm;
 public:
 	Spike(CGEEngine *vm);
 };
 
 class PocLight: public Sprite {
+	CGEEngine *_vm;
 public:
 	PocLight(CGEEngine *vm);
 };

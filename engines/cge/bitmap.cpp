@@ -43,7 +43,7 @@ void Bitmap::init() {
 void Bitmap::deinit() {
 }
 
-Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
 	char pat[kMaxPath];
@@ -60,7 +60,7 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	}
 }
 
-Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, map)", w, h);
 	if (map)
 		code();
@@ -69,11 +69,9 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL)
 // following routine creates filled rectangle
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
-Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
+Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h),
-	  _m(NULL),
-	  _map(0) {
+	  _h(h), _m(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, %d)", w, h, fill);
 
 	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
@@ -111,7 +109,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	_b = b;
 }
 
-Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(bmp)");
 	uint8 *v0 = bmp._v;
 	if (!v0)

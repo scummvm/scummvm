@@ -28,10 +28,13 @@
 #ifndef CGE_BITMAP_H
 #define CGE_BITMAP_H
 
-#include "cge/fileio.h"
-//#include "cge/general.h"
+#include "cge/general.h"
+#include "common/file.h"
 
 namespace CGE {
+
+class CGEEngine;
+class EncryptedStream;
 
 #define kMaxPath  128
 enum {
@@ -51,6 +54,7 @@ struct HideDesc {
 #include "common/pack-end.h"
 
 class Bitmap {
+	CGEEngine *_vm;
 	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
 public:
@@ -62,10 +66,10 @@ public:
 	int32 _map;
 	HideDesc *_b;
 
-	Bitmap(const char *fname);
-	Bitmap(uint16 w, uint16 h, uint8 *map);
-	Bitmap(uint16 w, uint16 h, uint8 fill);
-	Bitmap(const Bitmap &bmp);
+	Bitmap(CGEEngine *vm, const char *fname);
+	Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map);
+	Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill);
+	Bitmap(CGEEngine *vm, const Bitmap &bmp);
 	~Bitmap();
 
 	static void init();

@@ -28,9 +28,7 @@
 #ifndef CGE_CGEMAIN_H
 #define CGE_CGEMAIN_H
 
-#include "cge/vga13h.h"
 #include "cge/events.h"
-#include "cge/sound.h"
 
 namespace CGE {
 
@@ -111,7 +109,6 @@ private:
 	CGEEngine *_vm;
 };
 
-extern Vga *_vga;
 extern System *_sys;
 extern Sprite *_pocLight;
 extern Keyboard *_keyboard;

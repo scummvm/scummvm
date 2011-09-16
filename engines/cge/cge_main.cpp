@@ -34,17 +34,17 @@
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "cge/vga13h.h"
+#include "cge/cge.h"
+#include "cge/cge_main.h"
 #include "cge/general.h"
 #include "cge/sound.h"
-#include "cge/vga13h.h"
 #include "cge/snail.h"
 #include "cge/text.h"
 #include "cge/game.h"
 #include "cge/events.h"
 #include "cge/talk.h"
 #include "cge/vmenu.h"
-#include "cge/cge_main.h"
-#include "cge/cge.h"
 #include "cge/walk.h"
 #include "cge/sound.h"
 
@@ -52,7 +52,6 @@ namespace CGE {
 
 uint16  _stklen = (kStackSize * 2);
 
-Vga *_vga;
 System *_sys;
 Sprite *_pocLight;
 EventManager *_eventManager;
@@ -532,7 +531,7 @@ Square::Square(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	_flags._bDel = false;
 
 	BitmapPtr *MB = new BitmapPtr[2];
-	MB[0] = new Bitmap("BRICK");
+	MB[0] = new Bitmap(_vm, "BRICK");
 	MB[1] = NULL;
 	setShapeList(MB);
 }
@@ -759,7 +758,7 @@ System::System(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 }
 
 void System::setPal() {
-	Dac *p = _vga->_sysPal + 256 - ARRAYSIZE(g_stdPal);
+	Dac *p = _vm->_vga->_sysPal + 256 - ARRAYSIZE(g_stdPal);
 	for (uint i = 0; i < ARRAYSIZE(g_stdPal); i++) {
 		p[i]._r = g_stdPal[i]._r >> 2;
 		p[i]._g = g_stdPal[i]._g >> 2;
@@ -1372,7 +1371,7 @@ void CGEEngine::runGame() {
 		if (_miniScene) {
 			_miniScene->_flags._kill = false;
 			_miniScene->_flags._hide = true;
-			_miniShp[0] = new Bitmap(*_miniScene->shp());
+			_miniShp[0] = new Bitmap(this, *_miniScene->shp());
 			_miniShpList = _miniScene->setShapeList(_miniShp);
 			postMiniStep(-1);
 		}
@@ -1473,7 +1472,7 @@ bool CGEEngine::showTitle(const char *name) {
 
 	Bitmap::_pal = _vga->_sysPal;
 	BitmapPtr *LB = new BitmapPtr[2];
-	LB[0] = new Bitmap(name);
+	LB[0] = new Bitmap(this, name);
 	LB[1] = NULL;
 	Bitmap::_pal = NULL;
 

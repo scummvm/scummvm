@@ -239,7 +239,7 @@ Sprite *Sprite::expand() {
 					shplist.push_back(NULL);
 					++_shpCnt;
 				}
-				shplist[shapeCount++] = new Bitmap(strtok(NULL, " \t,;/"));
+				shplist[shapeCount++] = new Bitmap(_vm, strtok(NULL, " \t,;/"));
 				break;
 			case 2:
 				// Seq
@@ -295,7 +295,7 @@ Sprite *Sprite::expand() {
 		}
 	} else {
 		// no sprite description: try to read immediately from .BMP
-		shplist[shapeCount++] = new Bitmap(_file);
+		shplist[shapeCount++] = new Bitmap(_vm, _file);
 	}
 
 	shplist[shapeCount] = NULL;
@@ -447,10 +447,10 @@ void Sprite::show() {
 }
 
 void Sprite::show(uint16 pg) {
-	Graphics::Surface *a = _vga->_page[1];
-	_vga->_page[1] = _vga->_page[pg & 3];
+	Graphics::Surface *a = _vm->_vga->_page[1];
+	_vm->_vga->_page[1] = _vm->_vga->_page[pg & 3];
 	shp()->show(_x, _y);
-	_vga->_page[1] = a;
+	_vm->_vga->_page[1] = a;
 }
 
 void Sprite::hide() {
@@ -464,7 +464,7 @@ BitmapPtr Sprite::ghost() {
 	if (!e->_b1)
 		return NULL;
 
-	BitmapPtr bmp = new Bitmap(0, 0, (uint8 *)NULL);
+	BitmapPtr bmp = new Bitmap(_vm, 0, 0, (uint8 *)NULL);
 	assert(bmp != NULL);
 	bmp->_w = e->_b1->_w;
 	bmp->_h = e->_b1->_h;
@@ -858,14 +858,14 @@ void Bitmap::xShow(int16 x, int16 y) {
 	debugC(4, kCGEDebugBitmap, "Bitmap::xShow(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vm->_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
 	byte *lookupTable = _m;
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -911,13 +911,13 @@ void Bitmap::show(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::show(%d, %d)", x, y);
 
 	const byte *srcP = (const byte *)_v;
-	byte *destEndP = (byte *)_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
+	byte *destEndP = (byte *)_vm->_vga->_page[1]->pixels + (kScrWidth * kScrHeight);
 
 	// Loop through processing data for each plane. The game originally ran in plane mapped mode, where a
 	// given plane holds each fourth pixel sequentially. So to handle an entire picture, each plane's data
 	// must be decompressed and inserted into the surface
 	for (int planeCtr = 0; planeCtr < 4; planeCtr++) {
-		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x + planeCtr, y);
+		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x + planeCtr, y);
 
 		for (;;) {
 			uint16 v = READ_LE_UINT16(srcP);
@@ -964,8 +964,8 @@ void Bitmap::hide(int16 x, int16 y) {
 	debugC(5, kCGEDebugBitmap, "Bitmap::hide(%d, %d)", x, y);
 
 	for (int yp = y; yp < y + _h; yp++) {
-		const byte *srcP = (const byte *)_vga->_page[2]->getBasePtr(x, yp);
-		byte *destP = (byte *)_vga->_page[1]->getBasePtr(x, yp);
+		const byte *srcP = (const byte *)_vm->_vga->_page[2]->getBasePtr(x, yp);
+		byte *destP = (byte *)_vm->_vga->_page[1]->getBasePtr(x, yp);
 
 		Common::copy(srcP, srcP + _w, destP);
 	}
@@ -973,41 +973,41 @@ void Bitmap::hide(int16 x, int16 y) {
 
 /*--------------------------------------------------------------------------*/
 
-HorizLine::HorizLine(CGEEngine *vm): Sprite(vm, NULL) {
+HorizLine::HorizLine(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *HL = new BitmapPtr[2];
-	HL[0] = new Bitmap("HLINE");
+	HL[0] = new Bitmap(_vm, "HLINE");
 	HL[1] = NULL;
 
 	setShapeList(HL);
 }
 
-SceneLight::SceneLight(CGEEngine *vm): Sprite(vm, NULL) {
+SceneLight::SceneLight(CGEEngine *vm) : Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *PR = new BitmapPtr[2];
-	PR[0] = new Bitmap("PRESS");
+	PR[0] = new Bitmap(_vm, "PRESS");
 	PR[1] = NULL;
 
 	setShapeList(PR);
 }
 
-Spike::Spike(CGEEngine *vm): Sprite(vm, NULL) {
+Spike::Spike(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *SP = new BitmapPtr[3];
-	SP[0] = new Bitmap("SPK_L");
-	SP[1] = new Bitmap("SPK_R");
+	SP[0] = new Bitmap(_vm, "SPK_L");
+	SP[1] = new Bitmap(_vm, "SPK_R");
 	SP[2] = NULL;
 
 	setShapeList(SP);
 }
 
-PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL) {
+PocLight::PocLight(CGEEngine *vm): Sprite(vm, NULL), _vm(vm) {
 	// Set the sprite list
 	BitmapPtr *LI = new BitmapPtr[5];
-	LI[0] = new Bitmap("LITE0");
-	LI[1] = new Bitmap("LITE1");
-	LI[2] = new Bitmap("LITE2");
-	LI[3] = new Bitmap("LITE3");
+	LI[0] = new Bitmap(_vm, "LITE0");
+	LI[1] = new Bitmap(_vm, "LITE1");
+	LI[2] = new Bitmap(_vm, "LITE2");
+	LI[3] = new Bitmap(_vm, "LITE3");
 	LI[4] = NULL;
 
 	setShapeList(LI);
