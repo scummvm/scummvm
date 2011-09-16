@@ -430,6 +430,65 @@ public:
 	virtual void dispatch();
 };
 
+class Scene350: public SceneExt {
+	/* Items */
+	class Item5: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item6: public NamedHotspot {
+	public:
+		bool _flag;
+
+		virtual Common::String getClassName() { return "Scene350_Item6"; }
+		virtual void synchronize(Serializer &s);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthWestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Hook: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Timers */
+	class Timer1: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	NamedObject _lyle;
+	SceneObject _boat;
+	SceneObject _object3;
+	Hook _hook;
+	Object5 _object5;
+	NamedHotspot _item1, _item2, _item3, _item4;
+	Item5 _item5;
+	Item6 _item6;
+	SouthWestExit _swExit;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	ASoundExt _sound1, _sound2;
+	Timer1 _timer1;
+	int _field1D44, _field1D46;
+
+	Scene350();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void checkGun();
+};
 
 } // End of namespace BlueForce
 

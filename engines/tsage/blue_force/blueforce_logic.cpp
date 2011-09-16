@@ -103,6 +103,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Marina, Normal
 		return new Scene342();
 	case 350:
+		// Marina, Outside Boat
+		return new Scene350();
 	case 355:
 	case 360:
 	case 370:
