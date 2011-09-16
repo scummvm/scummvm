@@ -268,8 +268,8 @@ void GameModule::startup() {
 	//createModule1700(1);
 	//createModule1400(-1);
 #if 1
-	_vm->gameState().sceneNum = 1;
-	createModule1000(-1);
+	_vm->gameState().sceneNum = 0;
+	createModule1200(-1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
@@ -296,14 +296,7 @@ void GameModule::createModule1000(int which) {
 }
 
 void GameModule::updateModule1000() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		// TODO _resourceTable3.load();
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createModule2300(0);
 		_childObject->handleUpdate();
 	}
@@ -316,13 +309,7 @@ void GameModule::createModule1200(int which) {
 }
 
 void GameModule::updateModule1200() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			error("// TODO createModule2600(0);");
 			// TODO createModule2600(0);
@@ -341,13 +328,7 @@ void GameModule::createModule1300(int which) {
 }
 
 void GameModule::updateModule1300() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			// TODO _gameState.clear();
 			// TODO GameModule_handleKeyEscape
@@ -365,13 +346,7 @@ void GameModule::createModule1400(int which) {
 }
 
 void GameModule::updateModule1400() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			error("WEIRD!");
 		} else {
@@ -389,13 +364,7 @@ void GameModule::createModule1500(int which) {
 }
 
 void GameModule::updateModule1500() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createModule1000(0);
 		_childObject->handleUpdate();
 	}
@@ -408,13 +377,7 @@ void GameModule::createModule1700(int which) {
 }
 
 void GameModule::updateModule1700() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		debug("Module1700 done; _field20 = %d", _field20);
 		if (_field20 == 1) {
 			// TODO createModule2900(3);
@@ -433,13 +396,7 @@ void GameModule::createModule1800(int which) {
 }
 
 void GameModule::updateModule1800() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			// TODO GameState_clear();
 			// TODO GameModule_handleKeyEscape();
@@ -463,13 +420,7 @@ void GameModule::createModule2000(int which) {
 }
 
 void GameModule::updateModule2000() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		// TODO createModule2900(4);
 		_childObject->handleUpdate();
 	}
@@ -482,13 +433,7 @@ void GameModule::createModule2200(int which) {
 }
 
 void GameModule::updateModule2200() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createModule2300(1);
 		_childObject->handleUpdate();
 	}
@@ -501,40 +446,19 @@ void GameModule::createModule2300(int which) {
 }
 
 void GameModule::updateModule2300() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createModule2200(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createModule1200(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 3) {
 			// TODO createModule2400(0);
-			// TODO _childObject->handleUpdate();
 		} else if (_field20 == 4) {
 			// TODO createModule3000(0);
-			// TODO _childObject->handleUpdate();
 		} else {
 			createModule1000(1);
-			_childObject->handleUpdate();
 		}
-	}
-	if (_field24 >= 0) {
-		if (_field24 == 2) {
-			// TODO _resourceTable4.load();
-		} else if (_field24 == 0) {
-			// TODO _resourceTable3.load();
-		}
-		_field24 = -1;
-	}
-	if (_field26 >= 0) {
-		_field26 = -1;
+		_childObject->handleUpdate();
 	}
 }
 
@@ -549,13 +473,7 @@ void GameModule::createModule3000(int which) {
 }
 
 void GameModule::updateModule3000() {
-	if (!_childObject)
-		return;
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			// TODO createModule1900(0);
 			// TODO _childObject->handleUpdate();

@@ -100,11 +100,7 @@ void Module1700::createScene1705(int which) {
 }
 
 void Module1700::updateScene1701() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_vm->gameState().sceneNum == 3) {
 			createScene1705(0);
 			_childObject->handleUpdate();
@@ -117,11 +113,7 @@ void Module1700::updateScene1701() {
 }
 
 void Module1700::updateScene1702() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1703(0);
 			_childObject->handleUpdate();
@@ -133,11 +125,7 @@ void Module1700::updateScene1702() {
 }
 
 void Module1700::updateScene1703() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1704(-1);
 			_childObject->handleUpdate();
@@ -156,11 +144,7 @@ void Module1700::updateScene1703() {
 }
 
 void Module1700::updateScene1705() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		sendMessage(_parentModule, 0x1009, 1);
 	}
 }

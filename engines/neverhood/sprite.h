@@ -31,8 +31,8 @@
 namespace Neverhood {
 
 #define SetSpriteCallback(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback); debug(2, "SetSpriteCallback(" #callback ")"); _spriteUpdateCbName = #callback
-#define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug("SetFilterX(" #callback ")")
-#define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug("SetFilterY(" #callback ")")
+#define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterX(" #callback ")")
+#define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterY(" #callback ")")
 
 const int16 kDefPosition = -32768;
 
@@ -99,9 +99,9 @@ protected:
 	void init(uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 };
 
-#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback
-#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback2(" #callback ")"); _callback2CbName = #callback
-#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug("SetAnimationCallback3(" #callback ")"); _callback3CbName = #callback
+#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback
+#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback2(" #callback ")"); _callback2CbName = #callback
+#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback3(" #callback ")"); _callback3CbName = #callback
 #define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
 
 class AnimatedSprite : public Sprite {

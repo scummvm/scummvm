@@ -498,11 +498,7 @@ void Module2200::createScene2248(int which) {
 }
 			
 void Module2200::updateScene2201() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2203(0);
 		} else if (_field20 == 2) {
@@ -514,21 +510,13 @@ void Module2200::updateScene2201() {
 }
 			
 void Module2200::updateScene2202() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2201(2);
 	}
 }
 
 void Module2200::updateScene2203() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2205(0);
 		} else if (_field20 == 2) {
@@ -541,21 +529,13 @@ void Module2200::updateScene2203() {
 }
 			
 void Module2200::updateScene2204() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2203(2);
 	}
 }
 			
 void Module2200::updateScene2205() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2206(0);
 		} else if (_field20 == 2) {
@@ -568,11 +548,7 @@ void Module2200::updateScene2205() {
 }
 			
 void Module2200::updateScene2206() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2247(0);
 		} else if (_field20 == 2) {
@@ -587,22 +563,14 @@ void Module2200::updateScene2206() {
 }
 			
 void Module2200::updateScene2207() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2206(2);
 		_childObject->handleUpdate();
 	}
 }
 			
 void Module2200::updateScene2208() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		// This is madness!
 		switch (_vm->gameState().which) {
 		case 4:
@@ -725,22 +693,14 @@ void Module2200::updateScene2208() {
 }
 			
 void Module2200::updateScene2209() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2206(3);
 		_childObject->handleUpdate();
 	}
 }
 			
 void Module2200::updateScene2210() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2211(0);
 		} else if (_field20 == 2) {
@@ -753,11 +713,7 @@ void Module2200::updateScene2210() {
 }
 			
 void Module2200::updateScene2211() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2212(0);
 		} else if (_field20 == 2) {
@@ -770,11 +726,7 @@ void Module2200::updateScene2211() {
 }
 			
 void Module2200::updateScene2212() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2213(0);
 		} else if (_field20 == 2) {
@@ -787,11 +739,7 @@ void Module2200::updateScene2212() {
 }
 			
 void Module2200::updateScene2213() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2214(0);
 		} else if (_field20 == 2) {
@@ -804,11 +752,7 @@ void Module2200::updateScene2213() {
 }
 			
 void Module2200::updateScene2214() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2215(0);
 		} else if (_field20 == 2) {
@@ -821,11 +765,7 @@ void Module2200::updateScene2214() {
 }
 			
 void Module2200::updateScene2215() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2216(0);
 		} else if (_field20 == 2) {
@@ -838,11 +778,7 @@ void Module2200::updateScene2215() {
 }
 			
 void Module2200::updateScene2216() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2217(0);
 		} else if (_field20 == 2) {
@@ -855,11 +791,7 @@ void Module2200::updateScene2216() {
 }
 			
 void Module2200::updateScene2217() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2218(0);
 		} else if (_field20 == 2) {
@@ -872,11 +804,7 @@ void Module2200::updateScene2217() {
 }
 			
 void Module2200::updateScene2218() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2219(0);
 		} else if (_field20 == 2) {
@@ -889,11 +817,7 @@ void Module2200::updateScene2218() {
 }
 			
 void Module2200::updateScene2219() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2220(0);
 		} else if (_field20 == 2) {
@@ -906,11 +830,7 @@ void Module2200::updateScene2219() {
 }
 			
 void Module2200::updateScene2220() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2221(0);
 		} else if (_field20 == 2) {
@@ -923,11 +843,7 @@ void Module2200::updateScene2220() {
 }
 			
 void Module2200::updateScene2221() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2222(0);
 		} else if (_field20 == 2) {
@@ -940,11 +856,7 @@ void Module2200::updateScene2221() {
 }
 			
 void Module2200::updateScene2222() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2223(0);
 		} else if (_field20 == 2) {
@@ -957,11 +869,7 @@ void Module2200::updateScene2222() {
 }
 			
 void Module2200::updateScene2223() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2224(0);
 		} else if (_field20 == 2) {
@@ -974,11 +882,7 @@ void Module2200::updateScene2223() {
 }
 			
 void Module2200::updateScene2224() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2225(0);
 		} else if (_field20 == 2) {
@@ -991,11 +895,7 @@ void Module2200::updateScene2224() {
 }
 			
 void Module2200::updateScene2225() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2226(0);
 		} else if (_field20 == 2) {
@@ -1008,11 +908,7 @@ void Module2200::updateScene2225() {
 }
 			
 void Module2200::updateScene2226() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2227(0);
 		} else if (_field20 == 2) {
@@ -1025,11 +921,7 @@ void Module2200::updateScene2226() {
 }
 			
 void Module2200::updateScene2227() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2228(0);
 		} else if (_field20 == 2) {
@@ -1042,11 +934,7 @@ void Module2200::updateScene2227() {
 }
 			
 void Module2200::updateScene2228() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2229(0);
 		} else if (_field20 == 2) {
@@ -1059,11 +947,7 @@ void Module2200::updateScene2228() {
 }
 			
 void Module2200::updateScene2229() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2230(0);
 		} else if (_field20 == 2) {
@@ -1076,11 +960,7 @@ void Module2200::updateScene2229() {
 }
 			
 void Module2200::updateScene2230() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2231(0);
 		} else if (_field20 == 2) {
@@ -1093,11 +973,7 @@ void Module2200::updateScene2230() {
 }
 			
 void Module2200::updateScene2231() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2232(0);
 		} else if (_field20 == 2) {
@@ -1110,11 +986,7 @@ void Module2200::updateScene2231() {
 }
 			
 void Module2200::updateScene2232() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2233(0);
 		} else if (_field20 == 2) {
@@ -1127,11 +999,7 @@ void Module2200::updateScene2232() {
 }
 			
 void Module2200::updateScene2233() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2234(0);
 		} else if (_field20 == 2) {
@@ -1144,11 +1012,7 @@ void Module2200::updateScene2233() {
 }
 			
 void Module2200::updateScene2234() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2235(0);
 		} else if (_field20 == 2) {
@@ -1161,11 +1025,7 @@ void Module2200::updateScene2234() {
 }
 			
 void Module2200::updateScene2235() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2243(0);
 		} else if (_field20 == 2) {
@@ -1178,11 +1038,7 @@ void Module2200::updateScene2235() {
 }
 			
 void Module2200::updateScene2236() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2237(0);
 		} else if (_field20 == 2) {
@@ -1195,11 +1051,7 @@ void Module2200::updateScene2236() {
 }
 			
 void Module2200::updateScene2237() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2238(0);
 		} else if (_field20 == 2) {
@@ -1212,11 +1064,7 @@ void Module2200::updateScene2237() {
 }
 			
 void Module2200::updateScene2238() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2239(0);
 		} else if (_field20 == 2) {
@@ -1229,11 +1077,7 @@ void Module2200::updateScene2238() {
 }
 			
 void Module2200::updateScene2239() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2240(0);
 		} else if (_field20 == 2) {
@@ -1246,11 +1090,7 @@ void Module2200::updateScene2239() {
 }
 			
 void Module2200::updateScene2240() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2241(0);
 		} else if (_field20 == 2) {
@@ -1263,11 +1103,7 @@ void Module2200::updateScene2240() {
 }
 			
 void Module2200::updateScene2241() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2242(0);
 		} else if (_field20 == 2) {
@@ -1280,11 +1116,7 @@ void Module2200::updateScene2241() {
 }
 			
 void Module2200::updateScene2242() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2248(0);
 			_childObject->handleUpdate();
@@ -1299,11 +1131,7 @@ void Module2200::updateScene2242() {
 }
 			
 void Module2200::updateScene2243() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2244(0);
 		} else if (_field20 == 2) {
@@ -1316,11 +1144,7 @@ void Module2200::updateScene2243() {
 }
 			
 void Module2200::updateScene2244() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2245(0);
 		} else if (_field20 == 2) {
@@ -1333,11 +1157,7 @@ void Module2200::updateScene2244() {
 }
 			
 void Module2200::updateScene2245() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2246(0);
 		} else if (_field20 == 2) {
@@ -1350,11 +1170,7 @@ void Module2200::updateScene2245() {
 }
 			
 void Module2200::updateScene2246() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2236(0);
 		} else if (_field20 == 2) {
@@ -1367,11 +1183,7 @@ void Module2200::updateScene2246() {
 }
 			
 void Module2200::updateScene2247() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2210(0);
 		} else if (_field20 == 2) {
@@ -1384,11 +1196,7 @@ void Module2200::updateScene2247() {
 }
 			
 void Module2200::updateScene2248() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2242(1);
 		_childObject->handleUpdate();
 	}

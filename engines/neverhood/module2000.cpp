@@ -83,11 +83,7 @@ void Module2000::createScene2003(int which) {
 }
 
 void Module2000::updateScene2001() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			sendMessage(_parentModule, 0x1009, 0);
 		} else {
@@ -97,11 +93,7 @@ void Module2000::updateScene2001() {
 }
 
 void Module2000::updateScene2002() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			if (getGlobalVar(0x98109F12)) {
 				createScene2002(0);
@@ -117,11 +109,7 @@ void Module2000::updateScene2002() {
 }
 
 void Module2000::updateScene2003() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene2002(0);
 	}
 }

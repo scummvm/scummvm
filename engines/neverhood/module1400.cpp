@@ -121,11 +121,7 @@ void Module1400::createScene1407(int which) {
 }
 
 void Module1400::updateScene1401() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1402(0);
 			_childObject->handleUpdate();
@@ -139,14 +135,7 @@ void Module1400::updateScene1401() {
 }
 
 void Module1400::updateScene1402() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
-		
-		debug("Scene1402: _field20 = %d", _field20);
-		
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1403(0);
 			_childObject->handleUpdate();
@@ -161,23 +150,14 @@ void Module1400::updateScene1402() {
 }
 
 void Module1400::updateScene1403() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1402(1);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1400::updateScene1404() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
-		debug("Scene1404; _field20 = %d", _field20);
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1405(0);
 			_childObject->handleUpdate();
@@ -192,33 +172,21 @@ void Module1400::updateScene1404() {
 }
 
 void Module1400::updateScene1405() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1404(1);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1400::updateScene1406() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1404(2);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1400::updateScene1407() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1402(2);
 		_childObject->handleUpdate();
 	}

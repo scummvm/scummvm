@@ -53,6 +53,7 @@ protected:
 	NavigationScene *navigationScene();
 	void createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes = NULL);
 	void createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort);
+	bool updateChild();
 };
 
 } // End of namespace Neverhood

@@ -35,8 +35,6 @@ public:
 	Module3000(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module3000();
 protected:
-	bool _moduleDone;
-	int _moduleDoneStatus;
 	int _soundVolume;
 	bool _flag;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

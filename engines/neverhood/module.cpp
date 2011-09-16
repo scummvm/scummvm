@@ -89,4 +89,17 @@ void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1,
 	_childObject = smackerScene;
 }
 
+bool Module::updateChild() {
+	if (_childObject) {
+		_childObject->handleUpdate();
+		if (_done) {
+			_done = false;
+			delete _childObject;
+			_childObject = NULL;
+			return false;
+		}
+	}
+	return true;
+}
+
 } // End of namespace Neverhood

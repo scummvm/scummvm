@@ -27,7 +27,7 @@
 namespace Neverhood {
 
 Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _moduleDone(false), _soundVolume(0) {
+	: Module(vm, parentModule), _soundVolume(0) {
 	
 	debug("Create Module3000(%d)", which);
 
@@ -95,23 +95,10 @@ Module3000::Module3000(NeverhoodEngine *vm, Module *parentModule, int which)
 		createScene3006(1);
 	}
 
-	SetMessageHandler(&Module3000::handleMessage);
-
 }
 
 Module3000::~Module3000() {
 	// TODO Sound1ChList_sub_407A50(0x81293110);
-}
-
-uint32 Module3000::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1009:
-		_moduleDone = true;
-		_moduleDoneStatus = param.asInteger();
-		break;
-	}
-	return messageResult;
 }
 
 void Module3000::createScene3002(int which) {
@@ -276,20 +263,20 @@ void Module3000::updateScene3002() {
 		}
 	}
 #endif
-	if (_moduleDone) {
+	if (_done) {
 		int areaType = navigationScene()->getNavigationAreaType();
-		_moduleDone = false;
+		_done = false;
 		delete _childObject;
 		_childObject = NULL;
 		if (!getGlobalVar(0x01BA1A52)) {
-			if (_moduleDoneStatus == 0) {
+			if (_field20 == 0) {
 				createScene3010(-1);
 				_childObject->handleUpdate();
-			} else if (_moduleDoneStatus == 1) {
+			} else if (_field20 == 1) {
 				sendMessage(_parentModule, 0x1009, 0);
 			}
 		} else {
-			if (_moduleDoneStatus == 0) {
+			if (_field20 == 0) {
 				if (areaType == 2) {
 					createScene3003(0);
 					_childObject->handleUpdate();
@@ -297,7 +284,7 @@ void Module3000::updateScene3002() {
 					//createScene3002b(-1);
 					_childObject->handleUpdate();
 				}
-			} else if (_moduleDoneStatus == 1) {
+			} else if (_field20 == 1) {
 				sendMessage(_parentModule, 0x1009, 0);
 			}
 		}
@@ -305,11 +292,7 @@ void Module3000::updateScene3002() {
 }
 
 void Module3000::updateScene3002b() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 1:
 			if (getGlobalVar(0x01BA1A52)) {
@@ -339,79 +322,51 @@ void Module3000::updateScene3002b() {
 }
 
 void Module3000::updateScene3003() {
-	_childObject->handleUpdate();
-#if 0 // ALL TODO
-	if (navigationScene()->getSoundFlag1()) {
-		uint32 frameNumber = navigationScene()->getFrameNumber();
-		int navigationIndex = navigationScene()->getIndex();
-		if (_flag && _soundVolume > 1 && frameNumber % 2) {
-			_soundVolume--;
-			// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
-		}
-		if (navigationIndex == 0) {
-			if (frameNumber == 35) {
-				// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
-			}
-		} else if (navigationIndex == 1) {
-			if (frameNumber == 55) {
-				// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
-				// TODO Sound1ChList_setVolume(0x48498E46, 70);
-				// TODO Sound1ChList_setVolume(0x50399F64, 70);
-			}
-		}
-	}
-#endif
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
 		if (_flag) {
 			_soundVolume = 0;
 			// TODO Sound1ChList_setVolume(0x90F0D1C3, 0);
 		}
-		if (_moduleDoneStatus == 0) {
+		if (_field20 == 0) {
 			createScene3004(0);
 			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 1) {
+		} else if (_field20 == 1) {
 			setGlobalVar(0x01BA1A52, 0);
 			createScene3002(1);
 			_childObject->handleUpdate();
 		}
+	} else {
+#if 0 // ALL TODO
+		if (navigationScene()->getSoundFlag1()) {
+			uint32 frameNumber = navigationScene()->getFrameNumber();
+			int navigationIndex = navigationScene()->getIndex();
+			if (_flag && _soundVolume > 1 && frameNumber % 2) {
+				_soundVolume--;
+				// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
+			}
+			if (navigationIndex == 0) {
+				if (frameNumber == 35) {
+					// TODO Sound1ChList_sub_407C70(0x81293110, 0x41861371, 0x43A2507F, 0);
+				}
+			} else if (navigationIndex == 1) {
+				if (frameNumber == 55) {
+					// TODO Sound1ChList_sub_407C70(0x81293110, 0x48498E46, 0x50399F64, 0);
+					// TODO Sound1ChList_setVolume(0x48498E46, 70);
+					// TODO Sound1ChList_setVolume(0x50399F64, 70);
+				}
+			}
+		}
+#endif
 	}
 }
 
 void Module3000::updateScene3004() {
-	_childObject->handleUpdate();
-#if 0 // ALL TODO
-	if (navigationScene()->getSoundFlag1()) {
-		uint32 frameNumber = navigationScene()->getFrameNumber();
-		int navigationIndex = navigationScene()->getIndex();
-		if (navigationIndex == 2) {
-			if (frameNumber == 40) {
-				// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
-			}
-			if (_flag && _soundVolume < 90 && frameNumber % 2) {
-				if (frameNumber == 0)
-					_soundVolume = 40;
-				else
-					_soundVolume++;
-				// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
-			}
-		}
-	}
-#endif
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
-		
-		debug("_moduleDoneStatus = %d", _moduleDoneStatus);
-		
-		if (_moduleDoneStatus == 1) {
+	if (!updateChild()) {
+		if (_field20 == 1) {
 			createScene3005(0);
 			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 3) {
+		} else if (_field20 == 3) {
 			createScene3011(-1);
 			_childObject->handleUpdate();
 		} else if (getGlobalVar(0x09221A62)) {
@@ -421,54 +376,64 @@ void Module3000::updateScene3004() {
 			createScene3003(1);
 			_childObject->handleUpdate();
 		}
+	} else {
+#if 0 // ALL TODO
+		if (navigationScene()->getSoundFlag1()) {
+			uint32 frameNumber = navigationScene()->getFrameNumber();
+			int navigationIndex = navigationScene()->getIndex();
+			if (navigationIndex == 2) {
+				if (frameNumber == 40) {
+					// TODO Sound1ChList_sub_407C70(0x81293110, 0x40030A51, 0xC862CA15, 0);
+				}
+				if (_flag && _soundVolume < 90 && frameNumber % 2) {
+					if (frameNumber == 0)
+						_soundVolume = 40;
+					else
+						_soundVolume++;
+					// TODO Sound1ChList_setVolume(0x90F0D1C3, _soundVolume);
+				}
+			}
+		}
+#endif
 	}
 }
 
 void Module3000::updateScene3005() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
-		if (_moduleDoneStatus == 0) {
+	if (!updateChild()) {
+		if (_field20 == 0) {
 			sendMessage(_parentModule, 0x1009, 1);
-		} else if (_moduleDoneStatus == 1) {
+		} else if (_field20 == 1) {
 			createScene3008(-1);
 			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 2) {
+		} else if (_field20 == 2) {
 			createScene3004(3);
 			_childObject->handleUpdate();
 		}
 	}
-	// NOTE: Skipped resource preloading stuff
 }
 
 void Module3000::updateScene3006() {
-	_childObject->handleUpdate();
-#if 0 // ALL TODO
-	if (navigationScene()->getSoundFlag1() && navigationScene()->getIndex() == 0) {
-		// TODO Sound1ChList_sub_4080B0(false);
-	}
-#endif
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
-		if (_moduleDoneStatus == 0) {
+	if (!updateChild()) {
+		if (_field20 == 0) {
 			createScene3007(0);
-			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 1) {
+		} else if (_field20 == 1) {
 			createScene3004(0);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
+	} else {
+#if 0 // ALL TODO
+		if (navigationScene()->getSoundFlag1() && navigationScene()->getIndex() == 0) {
+			// TODO Sound1ChList_sub_4080B0(false);
+		}
+#endif
 	}
 }
 
 void Module3000::updateScene3007() {
 	_childObject->handleUpdate();
-	if (_moduleDone) {
+	if (_done) {
 		int areaType = navigationScene()->getNavigationAreaType();
-		_moduleDone = false;
+		_done = false;
 		delete _childObject;
 		_childObject = NULL;
 		if (areaType == 4) {
@@ -482,14 +447,9 @@ void Module3000::updateScene3007() {
 }
 
 void Module3000::updateScene3009() {
-	_childObject->handleUpdate();
-	// TODO...
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		_flag = getGlobalVar(0x10938830); // CHECKME
-		if (_moduleDoneStatus != 1) {
+		if (_field20 != 1) {
 			// TODO: Sound1ChList_setSoundValuesMulti(dword_4B7FC8, true, 0, 0, 0, 0):
 			createScene3005(1);
 			_childObject->handleUpdate();
@@ -505,15 +465,11 @@ void Module3000::updateScene3009() {
 }
 
 void Module3000::updateScene3010() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
-		if (_moduleDoneStatus == 0 || _moduleDoneStatus == 2) {
+	if (!updateChild()) {
+		if (_field20 == 0 || _field20 == 2) {
 			createScene3002(0);
 			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 1) {
+		} else if (_field20 == 1) {
 			createScene3002b(-1);
 			_childObject->handleUpdate();
 		}
@@ -521,11 +477,7 @@ void Module3000::updateScene3010() {
 }
 
 void Module3000::updateScene3011() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene3004(3);
 		_childObject->handleUpdate();
 	}

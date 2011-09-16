@@ -146,17 +146,7 @@ void Module1800::createScene1809(int which) {
 }
 
 void Module1800::updateScene1801() {
-	_childObject->handleUpdate();
-#if 0 // TODO
-	NavigationScene *navigationScene = (NavigationScene*)_childObject;
-	if (navigationScene->soundFlag1 && navigationScene->index == 2) {
-		// TODO Sound1ChList_sub_4080B0(false);
-	}
-#endif	
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1805(0);
 			_childObject->handleUpdate();
@@ -167,6 +157,13 @@ void Module1800::updateScene1801() {
 			createScene1804(0);
 			_childObject->handleUpdate();
 		}
+	} else {
+#if 0 // TODO
+		NavigationScene *navigationScene = (NavigationScene*)_childObject;
+		if (navigationScene->soundFlag1 && navigationScene->index == 2) {
+			// TODO Sound1ChList_sub_4080B0(false);
+		}
+#endif	
 	}
 }
 
@@ -187,11 +184,7 @@ void Module1800::updateScene1802() {
 }
 
 void Module1800::updateScene1803() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 2) {
 			createScene1801(2);
 			_childObject->handleUpdate();
@@ -207,49 +200,33 @@ void Module1800::updateScene1803() {
 }
 
 void Module1800::updateScene1804() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1804b(-1);
-			_childObject->handleUpdate();
 		} else if (_field20 == 1) {
 			createScene1801(1);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 
 void Module1800::updateScene1805() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1807(-1);
-			_childObject->handleUpdate();
 		} else if (_field20 == 1) {
 			createScene1806(0);
-			_childObject->handleUpdate();
 		} else if (_field20 == 2) {
 			createScene1801(3);
-			_childObject->handleUpdate();
 		} else if (_field20 == 3) {
 			createScene1805(3);
-			_childObject->handleUpdate();
 		}
+		_childObject->handleUpdate();
 	}
 }
 
 void Module1800::updateScene1806() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			sendMessage(_parentModule, 0x1009, 2);
 		} else if (_field20 == 1) {
@@ -257,20 +234,10 @@ void Module1800::updateScene1806() {
 			_childObject->handleUpdate();
 		}
 	}
-	if (_field24 >= 0) {
-		if (_field24 == 1) {
-			// TODO _resourceTable.setResourceList(ex_sub_42EDA0(0), true);
-		}
-		_field24 = -1;
-	}
 }
 
 void Module1800::updateScene1809() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		sendMessage(_parentModule, 0x1009, 1);
 		// TODO GameState stuff
 	}

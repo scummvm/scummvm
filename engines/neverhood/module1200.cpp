@@ -25,10 +25,12 @@
 namespace Neverhood {
 
 Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Module(vm, parentModule), _moduleDone(false) {
+	: Module(vm, parentModule) {
 	
 	// TODO _resourceTable.setResourceList(0x004B3E68);
 	SetMessageHandler(&Module1200::handleMessage);
+
+	debug("Module1200: which = %d", which);
 	
 	if (which < 0) {
 		switch (_vm->gameState().sceneNum) {
@@ -56,17 +58,6 @@ Module1200::~Module1200() {
 	// TODO Music18hList_deleteGroup(0x00478311);
 }
 
-uint32 Module1200::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x1009:
-		_moduleDone = true;
-		_moduleDoneStatus = param.asInteger();
-		break;
-	}
-	return messageResult;
-}
-
 void Module1200::createScene1201(int which) {
 	_vm->gameState().sceneNum = 0;
 	_childObject = new Scene1201(_vm, this, which);
@@ -88,41 +79,31 @@ void Module1200::createScene1203(int which) {
 }
 
 void Module1200::updateScene1201() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
-		if (_moduleDoneStatus == 1) {
+	if (!updateChild()) {
+		if (_field20 == 1) {
 			createScene1202(0);
 			_childObject->handleUpdate();
-		} else if (_moduleDoneStatus == 2) {
-			sendMessage(_parentModule, 0x1009, 0);
-		} else if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
-			createScene1203(-1);
+		} else if (_field20 == 2) {
+			if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
+				createScene1203(-1);
+			} else {
+				sendMessage(_parentModule, 0x1009, 1);
+			}
 		} else {
-			sendMessage(_parentModule, 0x1009, 1);
+			sendMessage(_parentModule, 0x1009, 0);
 		}
 	}
 }
 
 void Module1200::updateScene1202() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1201(1);
 		_childObject->handleUpdate();
 	}
 }
 			
 void Module1200::updateScene1203() {
-	_childObject->handleUpdate();
-	if (_moduleDone) {
-		_moduleDone = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1201(3);
 		_childObject->handleUpdate();
 		// TODO Music18hList_play(0x62222CAE, 0, 0, 1);
@@ -788,15 +769,6 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	int16 x1, x2;
 	Sprite *tempSprite, *class464;
 
-	// TODO _resourceTable2.setResourceList(ex_sub_41C730(), true);
-	if (getGlobalVar(0x0A18CA33)) {
-		// TODO _resourceTable1.setResourceList(0x004AEA10, true);
-	} else if (getGlobalVar(0x0A310817)) {
-		// TODO _resourceTable1.setResourceList(0x004AEA70, true);
-	} else {
-		// TODO _resourceTable1.setResourceList(0x004AEB18, true);
-	}
-
 	SetUpdateHandler(&Scene1201::update);
 	SetMessageHandler(&Scene1201::handleMessage);
 
@@ -843,6 +815,8 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	x2 = tempSprite->getX() + tempSprite->getSurface()->getDrawRect().width;
 
 	class464 = addSprite(new Class464(_vm));
+
+	debug("Scene1201: which = %d", which);
 
 	if (which < 0) {
 		InsertKlaymanInitArgs(KmScene1201, 364, 333, (class464));
@@ -1006,7 +980,6 @@ void Scene1201::update() {
 }
 
 uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	debug("Scene1201::handleMessage(%04X)", messageNum);
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:

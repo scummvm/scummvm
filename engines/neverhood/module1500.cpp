@@ -50,11 +50,7 @@ Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which, boo
 }
 
 void Module1500::update() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			createScene1502();
@@ -77,7 +73,6 @@ void Module1500::update() {
 }
 
 void Module1500::createScene1501() {
-	debug("createScene1501");
 	_vm->gameState().sceneNum = 0;
 	_childObject = new Scene1501(_vm, this, 0x8420221D, 0xA61024C4, 150, 48);
 	SetUpdateHandler(&Module1500::update);

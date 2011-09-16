@@ -283,11 +283,7 @@ void Module1300::createScene1318(int which) {
 }
 			
 void Module1300::updateScene1302() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1305(0);
 		} else {
@@ -298,45 +294,28 @@ void Module1300::updateScene1302() {
 }
 
 void Module1300::updateScene1303() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1306(3);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1300::updateScene1304() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1316(0);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1300::updateScene1305() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1317(-1);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1300::updateScene1306() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
-		debug("_field20 = %d", _field20);
+	if (!updateChild()) {
 		if (_field20 == 2) {
 			createScene1309(0);
 			_childObject->handleUpdate();
@@ -353,22 +332,14 @@ void Module1300::updateScene1306() {
 }
 
 void Module1300::updateScene1307() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1308(2);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1300::updateScene1308() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1314(0);
 		} else if (_field20 == 1) {
@@ -381,22 +352,14 @@ void Module1300::updateScene1308() {
 }
 
 void Module1300::updateScene1309() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1306(2);
 		_childObject->handleUpdate();
 	}
 }
 
 void Module1300::updateScene1310() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_vm->gameState().sceneNum == 9)
 			createScene1306(0);
 		else
@@ -409,11 +372,7 @@ void Module1300::updateScene1311() {
 }
 
 void Module1300::updateScene1312() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1313(0);
 		} else if (_field20 == 1) {
@@ -424,11 +383,7 @@ void Module1300::updateScene1312() {
 }
 
 void Module1300::updateScene1313() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		switch (_field20) {
 		case 0:
 			createScene1315(1);
@@ -448,11 +403,7 @@ void Module1300::updateScene1313() {
 }
 
 void Module1300::updateScene1314() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1313(2);
 		} else if (_field20 == 1) {
@@ -463,11 +414,7 @@ void Module1300::updateScene1314() {
 }
 
 void Module1300::updateScene1315() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1313(3);
 		} else if (_field20 == 1) {
@@ -478,11 +425,7 @@ void Module1300::updateScene1315() {
 }
 
 void Module1300::updateScene1316() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 0) {
 			createScene1313(4);
 		} else if (_field20 == 1) {
@@ -493,11 +436,7 @@ void Module1300::updateScene1316() {
 }
 
 void Module1300::updateScene1317() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1318(-1);
 		_childObject->handleUpdate();
 	}

@@ -37,9 +37,6 @@ public:
 	virtual ~Module1200();
 protected:
 	// TODO ResourceTable _resourceTable;
-	bool _moduleDone;
-	uint32 _moduleDoneStatus; 
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createScene1201(int which);			
 	void createScene1202(int which);			
 	void createScene1203(int which);			

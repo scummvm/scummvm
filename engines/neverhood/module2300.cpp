@@ -125,11 +125,7 @@ void Module2300::createScene2305(int which) {
 }
 
 void Module2300::updateScene2301() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2302(4);
 			_childObject->handleUpdate();
@@ -140,28 +136,7 @@ void Module2300::updateScene2301() {
 }
 
 void Module2300::updateScene2302() {
-	_childObject->handleUpdate();
-#if 0 // TODO
-	NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-	if (_flag && navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 4 && 
-		navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-		_volume++;
-		Sound1ChList_setVolume(0x90F0D1C3, _volume);
-	}
-#endif
-#if 0 // TODO
-	if (navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 0 && 
-		navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() == 50) {
-		Sound1ChList_sub_407C70(0x1A214010, 0x48498E46, 0x50399F64);
-		Sound1ChList_setVolume(0x48498E46, 70);
-		Sound1ChList_setVolume(0x50399F64, 70);
-	}
-#endif
-	if (_done) {
-		debug("SCENE 2302 DONE; _field20 = %d", _field20);
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene2301(0);
 			_childObject->handleUpdate();
@@ -179,15 +154,28 @@ void Module2300::updateScene2302() {
 		} else {
 			sendMessage(_parentModule, 0x1009, 4);
 		}
+	} else {
+#if 0 // TODO
+		NavigationScene *navigationScene = (NavigationScene*)_childObject; 
+		if (_flag && navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 4 && 
+			navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
+			_volume++;
+			Sound1ChList_setVolume(0x90F0D1C3, _volume);
+		}
+#endif
+#if 0 // TODO
+		if (navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 0 && 
+			navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() == 50) {
+			Sound1ChList_sub_407C70(0x1A214010, 0x48498E46, 0x50399F64);
+			Sound1ChList_setVolume(0x48498E46, 70);
+			Sound1ChList_setVolume(0x50399F64, 70);
+		}
+#endif
 	}
 }
 			
 void Module2300::updateScene2303() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			sendMessage(_parentModule, 0x1009, 3);
 		} else {
@@ -195,44 +183,30 @@ void Module2300::updateScene2303() {
 			_childObject->handleUpdate();
 		}
 	}
-	if (_field24 >= 0) {
-		if (_field24 == 1) {
-			// TODO _resourceTable1.setResourceList(ex_sub_479D00(0), true);
-			// TODO _resourceTable2.loadResources();
-		}
-		_field24 = -1;
-	}
 }
 			
 void Module2300::updateScene2304() {
-	_childObject->handleUpdate();
-#if 0 // TODO
-	NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-	if (_flag && navigationScene->getSoundFlag1() && navigationScene->getSmackerPlayer() && 
-		navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-		_volume--;
-		Sound1ChList_setVolume(0x90F0D1C3, _volume);
-	}
-#endif
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			sendMessage(_parentModule, 0x1009, 2);
 		} else {
 			createScene2302(1);
 			_childObject->handleUpdate();
 		}
+	} else {
+#if 0 // TODO
+		NavigationScene *navigationScene = (NavigationScene*)_childObject; 
+		if (_flag && navigationScene->getSoundFlag1() && navigationScene->getSmackerPlayer() && 
+			navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
+			_volume--;
+			Sound1ChList_setVolume(0x90F0D1C3, _volume);
+		}
+#endif
 	}
 }
 			
 void Module2300::updateScene2305() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		// TODO Sound1ChList_sub_4080B0(false);
 		createScene2302(2);
 		_childObject->handleUpdate();

@@ -101,11 +101,7 @@ void Module1000::createScene1005(int which) {
 }
 
 void Module1000::updateScene1001() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 2) {
 			createScene1003(0);
 			_childObject->handleUpdate();
@@ -117,11 +113,7 @@ void Module1000::updateScene1001() {
 }
 
 void Module1000::updateScene1002() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			sendMessage(_parentModule, 0x1009, 0);
 		} else if (_field20 == 2) {
@@ -135,22 +127,14 @@ void Module1000::updateScene1002() {
 }
 			
 void Module1000::updateScene1003() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		createScene1001(2);
 		_childObject->handleUpdate();
 	}
 }
 			
 void Module1000::updateScene1004() {
-	_childObject->handleUpdate();
-	if (_done) {
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
+	if (!updateChild()) {
 		if (_field20 == 1) {
 			createScene1005(0);
 			_childObject->handleUpdate();
@@ -162,12 +146,8 @@ void Module1000::updateScene1004() {
 }
 			
 void Module1000::updateScene1005() {
-	_childObject->handleUpdate();
-	if (_done) {
+	if (!updateChild()) {
 		// TODO Music18hList_stop(_musicFileHash, 0, 1);
-		_done = false;
-		delete _childObject;
-		_childObject = NULL;
 		createScene1004(1);
 		_childObject->handleUpdate();
 	}

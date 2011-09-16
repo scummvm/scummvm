@@ -117,12 +117,8 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, const char *filename, int surfac
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height)
 	: Sprite(vm, 0), _spriteResource(vm) {
-	
-	debug("StaticSprite::StaticSprite(%08X)", fileHash);
-
 	_name = "StaticSprite"; 
 	init(fileHash, surfacePriority, x, y, width, height);
-
 }
 
 void StaticSprite::init(uint32 fileHash, int surfacePriority, int16 x, int16 y, int16 width, int16 height) {
