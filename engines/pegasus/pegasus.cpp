@@ -332,4 +332,12 @@ void PegasusEngine::giveIdleTime() {
 		(*it)->useIdleTime();
 }
 
+void PegasusEngine::addTimeBase(TimeBase *timeBase) {
+	_timeBases.push_back(timeBase);
+}
+
+void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
+	_timeBases.remove(timeBase);
+}
+
 } // End of namespace Pegasus

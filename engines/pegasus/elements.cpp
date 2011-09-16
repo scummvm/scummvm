@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/macresman.h"
+#include "common/stream.h"
+
 #include "pegasus/elements.h"
 #include "pegasus/graphics.h"
 
@@ -236,6 +239,124 @@ void EnergyBar::calcLevelRect(Common::Rect &r) const {
 	} else {
 		r = Common::Rect(0, 0, 0, 0);
 	}
+}
+
+IdlerAnimation::IdlerAnimation(const tDisplayElementID id) : Animation(id) {
+	_lastTime = 0xffffffff;
+}
+
+void IdlerAnimation::startDisplaying() {
+	if (!isDisplaying()) {
+		Animation::startDisplaying();
+		startIdling();
+	}
+}
+
+void IdlerAnimation::stopDisplaying() {
+	if (isDisplaying()) {
+		Animation::stopDisplaying();
+		stopIdling();
+	}
+}
+
+void IdlerAnimation::useIdleTime() {
+	uint32 currentTime = getTime();
+
+	if (currentTime != _lastTime) {
+		_lastTime = currentTime;
+		timeChanged(_lastTime);
+	}
+}
+
+void IdlerAnimation::timeChanged(const TimeValue) {
+	triggerRedraw();
+}
+
+FrameSequence::FrameSequence(const tDisplayElementID id) : IdlerAnimation(id) {
+	_duration = 0;
+	_currentFrameNum = 0;
+	_resFork = new Common::MacResManager();
+}
+
+FrameSequence::~FrameSequence() {
+	delete _resFork;
+}
+
+void FrameSequence::useFileName(const Common::String &fileName) {
+	_resFork->open(fileName);
+}
+
+void FrameSequence::openFrameSequence() {
+	if (!_resFork->hasResFork())
+		return;
+
+	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('P', 'F', 'r', 'm'), 0x80);
+
+	if (!res)
+		return;
+
+	uint32 scale = res->readUint32BE();
+	_bounds.top = res->readUint16BE();
+	_bounds.left = res->readUint16BE();
+	_bounds.bottom = res->readUint16BE();
+	_bounds.right = res->readUint16BE();
+	_numFrames = res->readUint16BE();
+	_duration = 0;
+
+	_frameTimes.clear();
+	for (uint32 i = 0; i < _numFrames; i++) {
+		TimeValue time = res->readUint32BE();
+		_duration += time;
+		_frameTimes.push_back(_duration);
+	}
+
+	setScale(scale);
+	setSegment(0, _duration);
+	setTime(0);
+	_currentFrameNum = 0;
+	newFrame(_currentFrameNum);
+	triggerRedraw();
+
+	delete res;
+}
+
+void FrameSequence::closeFrameSequence() {
+	stop();
+	_resFork->close();
+	_duration = 0;
+	_numFrames = 0;
+	_frameTimes.clear();
+}
+
+void FrameSequence::timeChanged(const TimeValue time) {
+	int16 frameNum = 0;
+	for (int16 i = _numFrames - 1; i >= 0; i--) {
+		if (_frameTimes[i] < time) {
+			frameNum = i;
+			break;
+		}
+	}
+
+	if (frameNum != _currentFrameNum) {
+		_currentFrameNum = frameNum;
+		newFrame(_currentFrameNum);
+		triggerRedraw();
+	}
+}
+
+void FrameSequence::setFrameNum(const int16 frameNum) {
+	int16 f = CLIP<int>(frameNum, 0, _numFrames);
+
+	if (_currentFrameNum != f) {
+		_currentFrameNum = f;
+		setTime(_frameTimes[f]);
+		newFrame(f);
+		triggerRedraw();
+	}
+}
+
+bool FrameSequence::isSequenceOpen() const {
+	return _numFrames != 0;
 }
 
 } // End of namespace Pegasus

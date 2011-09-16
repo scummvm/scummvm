@@ -50,6 +50,7 @@ class VideoManager;
 class GraphicsManager;
 class Idler;
 class Cursor;
+class TimeBase;
 
 static const int kViewScreenOffset = 64;
 
@@ -84,6 +85,9 @@ public:
 
 	void addIdler(Idler *idler);
 	void removeIdler(Idler *idler);
+
+	void addTimeBase(TimeBase *timeBase);
+	void removeTimeBase(TimeBase *timeBase);
 
 protected:
 	Common::Error run();
@@ -141,6 +145,9 @@ private:
 	// Items
 	void createItems();
 	void createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction);
+
+	// TimeBases
+	Common::List<TimeBase *> _timeBases;
 };
 
 } // End of namespace Pegasus

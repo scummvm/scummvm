@@ -33,7 +33,12 @@
 #include "graphics/surface.h"
 
 #include "pegasus/pegasus.h"
+#include "pegasus/timers.h"
 #include "pegasus/util.h"
+
+namespace Common {
+	class MacResManager;
+}
 
 namespace Pegasus {
 
@@ -132,6 +137,60 @@ protected:
 	uint32 _maxEnergy;
 	Common::Rect _levelRect;
 	uint32 _barColor;
+};
+
+class Animation : public DisplayElement, public DynamicElement {
+public:
+	Animation(const tDisplayElementID id) : DisplayElement(id) {}
+};
+
+class IdlerAnimation : public Animation, public Idler {
+public:
+	IdlerAnimation(const tDisplayElementID);
+	
+	virtual void startDisplaying();
+	virtual void stopDisplaying();
+	
+	TimeValue getLastTime() const { return _lastTime; }
+
+protected:
+	virtual void useIdleTime();
+	virtual void timeChanged(const TimeValue);
+	
+	TimeValue _lastTime;
+};
+
+//	This class reads PICT resources and plays them like a movie.
+//	Assumes there is a resource of type 'PFrm' describing the time values for each
+//	PICT frame, as well as the total time in the movie.
+//	Assumes that PICT frames begin at PICT 128
+
+class FrameSequence : public IdlerAnimation {
+public:
+	FrameSequence(const tDisplayElementID);
+	virtual ~FrameSequence();
+
+	void useFileName(const Common::String &fileName);
+
+	virtual void openFrameSequence();
+	virtual void closeFrameSequence();
+	bool isSequenceOpen() const;
+	
+	uint16 getNumFrames() const { return _numFrames; }
+	virtual uint16 getFrameNum() const { return _currentFrameNum; }
+	virtual void setFrameNum(const int16);
+
+protected:		
+	virtual void timeChanged(const TimeValue);
+	virtual void newFrame(const uint16) {}
+
+	Common::MacResManager *_resFork;
+	TimeValue _duration;
+
+	uint16 _numFrames;
+	Common::Array<TimeValue> _frameTimes;
+
+	uint16 _currentFrameNum;
 };
 
 } // End of namespace Pegasus
