@@ -26,6 +26,7 @@
 #ifndef PEGASUS_TIMERS_H
 #define PEGASUS_TIMERS_H
 
+#include "common/list.h"
 #include "common/rational.h"
 
 #include "pegasus/constants.h"

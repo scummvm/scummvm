@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/system.h"
 
+#include "pegasus/fader.h"
 #include "pegasus/sound.h"
 
 namespace Pegasus {
@@ -36,6 +37,7 @@ namespace Pegasus {
 Sound::Sound() {
 	_stream = 0;
 	_volume = 0xFF;
+	_fader = 0;
 }
 
 Sound::~Sound() {
@@ -65,18 +67,15 @@ void Sound::initFromQuickTime(const Common::String &fileName) {
 	_stream = Audio::makeQuickTimeStream(fileName);
 }
 
-#if 0
-// TODO!
 void Sound::attachFader(SoundFader *fader) {
 	if (_fader)
-		_fader->attachSound(NULL);
+		_fader->attachSound(0);
 
 	_fader = fader;
 
 	if (_fader)
 		_fader->attachSound(this);
 }
-#endif
 
 void Sound::playSound() {
 	if (!isSoundLoaded())
@@ -84,11 +83,8 @@ void Sound::playSound() {
 
 	stopSound();
 
-#if 0
-	// TODO!
 	if (_fader)
 		setVolume(_fader->getFaderValue());
-#endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, _stream, -1, _volume, 0, DisposeAfterUse::NO);
 }
@@ -102,12 +98,9 @@ void Sound::loopSound() {
 	// Create a looping stream
 	Audio::AudioStream *loopStream = new Audio::LoopingAudioStream(_stream, 0, DisposeAfterUse::NO);
 
-#if 0
-	// TODO!
 	// Assume that if there is a fader, we're going to fade the sound in.
 	if (_fader)
 		setVolume(0);
-#endif
 
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, loopStream, -1, _volume, 0, DisposeAfterUse::YES);
 }

@@ -35,8 +35,7 @@ namespace Audio {
 
 namespace Pegasus {
 
-// TODO!
-//class SoundFader;
+class SoundFader;
 
 //	Things you might want to do with sound:
 //		Start it
@@ -73,16 +72,14 @@ public:
 	void setVolume(const uint16 volume);
 	bool isPlaying();
 
-	// TODO!
-	//void attachFader(SoundFader *fader);
+	void attachFader(SoundFader *fader);
 
 protected:
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 	byte _volume;
 
-	// TODO!
-	//SoundFader *_fader;
+	SoundFader *_fader;
 };
 
 } // End of namespace Pegasus

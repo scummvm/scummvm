@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	cursor.o \
 	detection.o \
 	elements.o \
+	fader.o \
 	gamestate.o \
 	graphics.o \
 	hotspot.o \
