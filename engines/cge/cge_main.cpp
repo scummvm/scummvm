@@ -497,7 +497,7 @@ void CGEEngine::loadMapping() {
 			
 			// Read in the data
 			for (int z = 0; z < kMapZCnt; ++z) {
-				cf.read(&Cluster::_map[z][0], kMapXCnt);
+				cf.read(&_clusterMap[z][0], kMapXCnt);
 			}
 		}
 	}
@@ -529,7 +529,7 @@ void CGEEngine::setMapBrick(int x, int z) {
 		char n[6];
 		s->gotoxy(x * kMapGridX, kMapTop + z * kMapGridZ);
 		sprintf(n, "%02d:%02d", x, z);
-		Cluster::_map[z][x] = 1;
+		_clusterMap[z][x] = 1;
 		s->setName(n);
 		_vga->_showQ->insert(s, _vga->_showQ->first());
 	}
@@ -596,9 +596,9 @@ void CGEEngine::showBak(int ref) {
 	if (!spr)
 		return;
 
-	Bitmap::_pal = _vga->_sysPal;
+	_bitmapPalette = _vga->_sysPal;
 	spr->expand();
-	Bitmap::_pal = NULL;
+	_bitmapPalette = NULL;
 	spr->show(2);
 	_vga->copyPage(1, 2);
 	_sys->setPal();
@@ -802,7 +802,7 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->postMiniStep(selectedScene - 1);
 
 		if (mask & kMouseLeftUp) {
-			if (selectedScene && _vm->_snail->idle() && _hero->_tracePtr < 0)
+			if (selectedScene && _vm->_snail->idle() && _vm->_hero->_tracePtr < 0)
 				_vm->switchScene(selectedScene);
 
 			if (_vm->_horzLine && !_vm->_horzLine->_flags._hide) {
@@ -810,13 +810,13 @@ void System::touch(uint16 mask, int x, int y) {
 					Cluster tmpCluster = _vm->XZ(x, y);
 					int16 x1 = tmpCluster._pt.x;
 					int16 z1 = tmpCluster._pt.y;
-					Cluster::_map[z1][x1] = 1;
+					_vm->_clusterMap[z1][x1] = 1;
 					_vm->setMapBrick(x1, z1);
 				}
 			} else {
-				if (!_talk && _vm->_snail->idle() && _hero
+				if (!_talk && _vm->_snail->idle() && _vm->_hero
 				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
-					_hero->findWay(_vm->XZ(x, y));
+					_vm->_hero->findWay(_vm->XZ(x, y));
 				}
 			}
 		}
@@ -833,7 +833,7 @@ void System::tick() {
 				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
 					int n = _vm->newRandom(100);
 					if (n > 96)
-						_vm->heroCover(6 + (_hero->_x + _hero->_w / 2 < kScrWidth / 2));
+						_vm->heroCover(6 + (_vm->_hero->_x + _vm->_hero->_w / 2 < kScrWidth / 2));
 					else if (n > 90)
 						_vm->heroCover(5);
 					else if (n > 60)
@@ -880,7 +880,7 @@ void CGEEngine::switchMapping() {
 	if (_horzLine && _horzLine->_flags._hide) {
 		for (int i = 0; i < kMapZCnt; i++) {
 			for (int j = 0; j < kMapXCnt; j++) {
-				if (Cluster::_map[i][j])
+				if (_clusterMap[i][j])
 					setMapBrick(j, i);
 			}
 		}
@@ -949,7 +949,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 	if ((mask & kMouseRightUp) && _vm->_snail->idle()) {
 		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _vm->_pocket[_vm->_pocPtr] : NULL;
 		if (ps) {
-			if (_flags._kept || _hero->distance(this) < kDistMax) {
+			if (_flags._kept || _vm->_hero->distance(this) < kDistMax) {
 				if (works(ps)) {
 					_vm->feedSnail(ps, kTake);
 				} else
@@ -961,7 +961,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			if (_flags._kept) {
 				mask |= kMouseLeftUp;
 			} else {
-				if (_hero->distance(this) < kDistMax) {
+				if (_vm->_hero->distance(this) < kDistMax) {
 					if (_flags._port) {
 						if (_vm->findPocket(NULL) < 0) {
 							_vm->pocFul();
@@ -1222,7 +1222,7 @@ Cluster CGEEngine::XZ(int16 x, int16 y) {
 	if (y > kMapTop + kMapHig - kMapGridZ)
 		y = kMapTop + kMapHig - kMapGridZ;
 
-	return Cluster(x / kMapGridX, (y - kMapTop) / kMapGridZ);
+	return Cluster(this, x / kMapGridX, (y - kMapTop) / kMapGridZ);
 }
 
 void CGEEngine::killText() {
@@ -1447,11 +1447,11 @@ bool CGEEngine::showTitle(const char *name) {
 	if (_eventManager->_quitFlag)
 		return false;
 
-	Bitmap::_pal = _vga->_sysPal;
+	_bitmapPalette = _vga->_sysPal;
 	BitmapPtr *LB = new BitmapPtr[2];
 	LB[0] = new Bitmap(this, name);
 	LB[1] = NULL;
-	Bitmap::_pal = NULL;
+	_bitmapPalette = NULL;
 
 	Sprite D(this, LB);
 	D._flags._kill = true;

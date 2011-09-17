@@ -58,7 +58,6 @@ class Bitmap {
 	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
 public:
-	static Dac *_pal;
 	uint16 _w;
 	uint16 _h;
 	uint8 *_m;
@@ -72,8 +71,6 @@ public:
 	Bitmap(CGEEngine *vm, const Bitmap &bmp);
 	~Bitmap();
 
-	static void init();
-	static void deinit();
 	Bitmap *code();
 	Bitmap &operator=(const Bitmap &bmp);
 	void hide(int16 x, int16 y);

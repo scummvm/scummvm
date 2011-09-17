@@ -52,6 +52,9 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_demoText    = kDemo;
 	_oldLev      = 0;
 	_pocPtr      = 0;
+	_bitmapPalette = NULL;
+
+
 
 }
 
@@ -83,10 +86,6 @@ void CGEEngine::init() {
 
 	// Create debugger console
 	_console = new CGEConsole(this);
-
-	// Initialise classes that have static members
-	Bitmap::init();
-	Cluster::init(this);
 
 	// Initialise engine objects
 	_font = new Font(this, "CGE");
@@ -140,10 +139,6 @@ void CGEEngine::init() {
 }
 
 void CGEEngine::deinit() {
-	// Call classes with static members to clear them up
-	Bitmap::deinit();
-	Cluster::init(this);
-
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 

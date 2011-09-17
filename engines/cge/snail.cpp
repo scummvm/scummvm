@@ -565,12 +565,12 @@ void CGEEngine::snSend(Sprite *spr, int val) {
 			spr->_flags._slav = false;
 		} else {
 			if (spr->_ref % 1000 == 0)
-				Bitmap::_pal = _vga->_sysPal;
+				_bitmapPalette = _vga->_sysPal;
 			if (spr->_flags._back)
 				spr->backShow(true);
 			else
 				expandSprite(spr);
-			Bitmap::_pal = NULL;
+			_bitmapPalette = NULL;
 		}
 	}
 }
@@ -976,7 +976,7 @@ void Snail::runCom() {
 		case kSnWait:
 			if (spr) {
 				if (spr->seqTest(snc->_val) &&
-					(snc->_val >= 0 || spr != _hero || _hero->_tracePtr < 0)) {
+					(snc->_val >= 0 || spr != _vm->_hero || _vm->_hero->_tracePtr < 0)) {
 					_timerExpiry = g_system->getMillis() + spr->_time * kSnailFrameDelay;
 				} else {
 					_busy = false;
@@ -992,7 +992,7 @@ void Snail::runCom() {
 			break;
 		case kSnSay:
 			if (spr && _talkEnable) {
-				if (spr == _hero && spr->seqTest(-1))
+				if (spr == _vm->_hero && spr->seqTest(-1))
 					spr->step(kSeqHTalk);
 				_text->say(_text->getText(snc->_val), spr);
 				_vm->_sys->_funDel = kHeroFun0;
@@ -1006,7 +1006,7 @@ void Snail::runCom() {
 			break;
 		case kSnTime:
 			if (spr && _talkEnable) {
-				if (spr == _hero && spr->seqTest(-1))
+				if (spr == _vm->_hero && spr->seqTest(-1))
 					spr->step(kSeqHTalk);
 				_text->sayTime(spr);
 			}

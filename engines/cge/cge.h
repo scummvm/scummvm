@@ -51,6 +51,7 @@ class SceneLight;
 class Snail;
 class EventManager;
 class ResourceManager;
+class Walk;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -70,7 +71,8 @@ class ResourceManager;
 #define kPathMax    128
 #define kCryptSeed  0xA5
 #define kMaxFile    128
-
+#define kMapXCnt       40
+#define kMapZCnt       20
 
 // our engine debug channels
 enum {
@@ -156,6 +158,8 @@ public:
 	int    _soundOk;
 	int    _gameCase2Cpt;
 	int    _offUseCount;
+	Dac   *_bitmapPalette;
+	uint8 _clusterMap[kMapZCnt][kMapXCnt];
 
 	Sprite *_sprTv;
 	Sprite *_sprK1;
@@ -184,6 +188,7 @@ public:
 	Sound *_sound;
 	ResourceManager *_resman;
 	Sprite *_pocket[kPocketNX];
+	Walk *_hero;
 
 	Common::RandomSource _randomSource;
 	MusicPlayer *_midiPlayer;

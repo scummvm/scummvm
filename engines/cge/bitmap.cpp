@@ -34,15 +34,6 @@
 
 namespace CGE {
 
-Dac *Bitmap::_pal = NULL;
-
-void Bitmap::init() {
-	_pal = NULL;
-}
-
-void Bitmap::deinit() {
-}
-
 Bitmap::Bitmap(CGEEngine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
@@ -373,16 +364,16 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 
 	if (!f->err()) {
 		if (p) {
-			if (_pal) {
+			if (_vm->_bitmapPalette) {
 				// Read in the palette
 				byte palData[kPalSize];
 				f->read(palData, kPalSize);
 				
 				const byte *srcP = palData;
 				for (int idx = 0; idx < kPalCount; idx++, srcP += 3) {
-					_pal[idx]._r = *srcP;
-					_pal[idx]._g = *(srcP + 1);
-					_pal[idx]._b = *(srcP + 2);
+					_vm->_bitmapPalette[idx]._r = *srcP;
+					_vm->_bitmapPalette[idx]._g = *(srcP + 1);
+					_vm->_bitmapPalette[idx]._b = *(srcP + 2);
 				}
 			} else
 				f->seek(f->pos() + kPalSize);
