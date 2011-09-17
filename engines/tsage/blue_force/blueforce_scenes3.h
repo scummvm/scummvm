@@ -490,6 +490,28 @@ public:
 	virtual void checkGun();
 };
 
+class Scene380: public SceneExt {
+	/* Objects */
+	class Vechile: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	Vechile _vechile;
+	Door _door;
+	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	NamedHotspot _item6, _item7, _item8, _item9;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene385: public SceneExt {
 	/* Items */
 	class Exit: public NamedHotspot {
