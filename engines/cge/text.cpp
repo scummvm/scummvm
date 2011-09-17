@@ -142,8 +142,8 @@ void Text::say(const char *text, Sprite *spr) {
 	bool east = spr->_flags._east;
 	int x = (east) ? (spr->_x + spr->_w - 2) : (spr->_x + 2);
 	int y = spr->_y + 2;
-	Sprite *spike = new Spike(_vm);
-	uint16 sw = spike->_w;
+	Speaker *speaker = new Speaker(_vm);
+	uint16 sw = speaker->_w;
 
 	if (east) {
 		if (x + sw + kTextRoundCorner + 5 >= kScrWidth)
@@ -159,20 +159,20 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_talk->_flags._kill = true;
 	_vm->_talk->_flags._bDel = true;
 	_vm->_talk->setName(_vm->_text->getText(kSayName));
-	_vm->_talk->gotoxy(x - (_vm->_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _vm->_talk->_h + 1);
+	_vm->_talk->gotoxy(x - (_vm->_talk->_w - sw) / 2 - 3 + 6 * east, y - speaker->_h - _vm->_talk->_h + 1);
 	_vm->_talk->_z = 125;
 	_vm->_talk->_ref = kSayRef;
 
-	spike->gotoxy(x, _vm->_talk->_y + _vm->_talk->_h - 1);
-	spike->_z = 126;
-	spike->_flags._slav = true;
-	spike->_flags._kill = true;
-	spike->setName(_vm->_text->getText(kSayName));
-	spike->step(east);
-	spike->_ref = kSayRef;
+	speaker->gotoxy(x, _vm->_talk->_y + _vm->_talk->_h - 1);
+	speaker->_z = 126;
+	speaker->_flags._slav = true;
+	speaker->_flags._kill = true;
+	speaker->setName(_vm->_text->getText(kSayName));
+	speaker->step(east);
+	speaker->_ref = kSayRef;
 
 	_vm->_vga->_showQ->insert(_vm->_talk, _vm->_vga->_showQ->last());
-	_vm->_vga->_showQ->insert(spike, _vm->_vga->_showQ->last());
+	_vm->_vga->_showQ->insert(speaker, _vm->_vga->_showQ->last());
 }
 
 void CGEEngine::inf(const char *text) {

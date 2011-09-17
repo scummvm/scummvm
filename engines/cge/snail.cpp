@@ -36,6 +36,345 @@
 
 namespace CGE {
 
+const char *Snail::_comText[] = {
+	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
+	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
+	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP",
+	"GIVE",   "IF",     "GAME",    "SETX0",   "SETY0",
+	"SLAVE",  "SETXY",  "RELX",    "RELY",    "RELZ",
+	"SETX",   "SETY",   "SETZ",    "TRANS",   "PORT",
+	"NEXT",   "NNEXT",  "TNEXT",   "RNNEXT",  "RTNEXT",
+	"RMNEAR", "RMTAKE", "FLAG",    "SETREF",  "BACKPT",
+	"FLASH",  "LIGHT",  "SETHB",   "SETVB",   "WALK",
+	"REACH",  "COVER",  "UNCOVER", "CLEAR",   "TALK",
+	"MOUSE",  "SOUND",  "COUNT",   NULL
+};
+
+Snail::Snail(CGEEngine *vm, bool turbo)
+	: _turbo(turbo), _busy(false), _textDelay(false),
+	  _timerExpiry(0), _talkEnable(true),
+	  _head(0), _tail(0), _snList((Command *)malloc(sizeof(Command) * 256)), _vm(vm) {
+}
+
+Snail::~Snail() {
+	free(_snList);
+}
+
+/**
+ * Add a Command on the head of _snList
+ * @param com			Command
+ * @param ref			Reference
+ * @param val			Value
+ * @param ptr			Sprite pointer
+ */
+void Snail::addCommand(SnCom com, int ref, int val, void *ptr) {
+	Command *snc = &_snList[_head++];
+	snc->_com = com;
+	snc->_ref = ref;
+	snc->_val = val;
+	snc->_spritePtr = ptr;
+	snc->_cbType = kNullCB;
+	if (com == kSnClear) {
+		_tail = _head;
+		_vm->killText();
+		_timerExpiry = 0;
+	}
+}
+
+/**
+ * Add a Callback on the head of _snList
+ * @param com			Command
+ * @param ref			Reference
+ * @param val			Value
+ * @param CallbackType	Callback type
+ */
+void Snail::addCallback(SnCom com, int ref, int val, CallbackType cbType) {
+	Command *snc = &_snList[_head++];
+	snc->_com = com;
+	snc->_ref = ref;
+	snc->_val = val;
+	snc->_spritePtr = NULL;
+	snc->_cbType = cbType;
+	if (com == kSnClear) {
+		_tail = _head;
+		_vm->killText();
+		_timerExpiry = 0;
+	}
+}
+
+/**
+ * Add a Command on the tail of _snList
+ * @param com			Command
+ * @param ref			Reference
+ * @param val			Value
+ * @param ptr			Sprite pointer
+ */
+void Snail::insertCommand(SnCom com, int ref, int val, void *ptr) {
+	Command *snc;
+
+	if (_busy) {
+		_snList[(_tail - 1) & 0xFF] = _snList[_tail];
+		snc = &_snList[_tail];
+	} else
+		snc = &_snList[(_tail - 1) & 0xFF];
+	_tail--;
+	snc->_com = com;
+	snc->_ref = ref;
+	snc->_val = val;
+	snc->_spritePtr = ptr;
+	snc->_cbType = kNullCB;
+	if (com == kSnClear) {
+		_tail = _head;
+		_vm->killText();
+		_timerExpiry = 0;
+	}
+}
+
+void Snail::runCommand() {
+	if (_busy)
+		return;
+
+	_busy = true;
+	uint8 tmpHead = _head;
+	while (_tail != tmpHead) {
+		Command *snc = &_snList[_tail];
+
+		if (!_turbo) { // only for the slower one
+			if (_timerExpiry) {
+				// Delay in progress
+				if (_timerExpiry > g_system->getMillis())
+					// Delay not yet ended
+					break;
+
+				// Delay is finished
+				_timerExpiry = 0;
+			} else {
+				if (_textDelay) {
+					_vm->killText();
+					_textDelay = false;
+				}
+			}
+			if (_vm->_talk && snc->_com != kSnPause)
+				break;
+		}
+
+		Sprite *spr = ((snc->_ref >= 0) ? _vm->locate(snc->_ref) : ((Sprite *) snc->_spritePtr));
+		switch (snc->_com) {
+		case kSnLabel:
+			break;
+		case kSnPause    :
+			_timerExpiry = g_system->getMillis() + snc->_val * kSnailFrameDelay;
+			if (_vm->_talk)
+				_textDelay = true;
+			break;
+		case kSnWait:
+			if (spr) {
+				if (spr->seqTest(snc->_val) &&
+					(snc->_val >= 0 || spr != _vm->_hero || _vm->_hero->_tracePtr < 0)) {
+					_timerExpiry = g_system->getMillis() + spr->_time * kSnailFrameDelay;
+				} else {
+					_busy = false;
+					return;
+				}
+			}
+			break;
+		case kSnLevel:
+			_vm->snLevel(spr, snc->_val);
+			break;
+		case kSnHide:
+			_vm->snHide(spr, snc->_val);
+			break;
+		case kSnSay:
+			if (spr && _talkEnable) {
+				if (spr == _vm->_hero && spr->seqTest(-1))
+					spr->step(kSeqHTalk);
+				_vm->_text->say(_vm->_text->getText(snc->_val), spr);
+				_vm->_sys->_funDel = kHeroFun0;
+			}
+			break;
+		case kSnInf:
+			if (_talkEnable) {
+				_vm->inf(_vm->_text->getText(snc->_val));
+				_vm->_sys->_funDel = kHeroFun0;
+			}
+			break;
+		case kSnTime:
+			if (spr && _talkEnable) {
+				if (spr == _vm->_hero && spr->seqTest(-1))
+					spr->step(kSeqHTalk);
+				_vm->_text->sayTime(spr);
+			}
+			break;
+		case kSnCave:
+			_vm->switchScene(snc->_val);
+			break;
+		case kSnKill:
+			_vm->snKill(spr);
+			break;
+		case kSnSeq:
+			_vm->snSeq(spr, snc->_val);
+			break;
+		case kSnRSeq:
+			_vm->snRSeq(spr, snc->_val);
+			break;
+		case kSnSend:
+			_vm->snSend(spr, snc->_val);
+			break;
+		case kSnSwap:
+			_vm->snSwap(spr, snc->_val);
+			break;
+		case kSnCover:
+			_vm->snCover(spr, snc->_val);
+			break;
+		case kSnUncover:
+			_vm->snUncover(spr, (snc->_val >= 0) ? _vm->locate(snc->_val) : ((Sprite *) snc->_spritePtr));
+			break;
+		case kSnKeep:
+			_vm->snKeep(spr, snc->_val);
+			break;
+		case kSnGive:
+			_vm->snGive(spr, snc->_val);
+			break;
+		case kSnGame:
+			_vm->snGame(spr, snc->_val);
+			break;
+		case kSnSetX0:
+			_vm->snSetX0(snc->_ref, snc->_val);
+			break;
+		case kSnSetY0:
+			_vm->snSetY0(snc->_ref, snc->_val);
+			break;
+		case kSnSetXY:
+			_vm->snSetXY(spr, snc->_val);
+			break;
+		case kSnRelX:
+			_vm->snRelX(spr, snc->_val);
+			break;
+		case kSnRelY:
+			_vm->snRelY(spr, snc->_val);
+			break;
+		case kSnRelZ:
+			_vm->snRelZ(spr, snc->_val);
+			break;
+		case kSnSetX:
+			_vm->snSetX(spr, snc->_val);
+			break;
+		case kSnSetY:
+			_vm->snSetY(spr, snc->_val);
+			break;
+		case kSnSetZ:
+			_vm->snSetZ(spr, snc->_val);
+			break;
+		case kSnSlave:
+			_vm->snSlave(spr, snc->_val);
+			break;
+		case kSnTrans:
+			_vm->snTrans(spr, snc->_val);
+			break;
+		case kSnPort:
+			_vm->snPort(spr, snc->_val);
+			break;
+		case kSnNext:
+		case kSnIf:
+		case kSnTalk:
+			break;
+		case kSnMouse:
+			_vm->snMouse(snc->_val != 0);
+			break;
+		case kSnNNext:
+			_vm->snNNext(spr, snc->_val);
+			break;
+		case kSnTNext:
+			_vm->snTNext(spr, snc->_val);
+			break;
+		case kSnRNNext:
+			_vm->snRNNext(spr, snc->_val);
+			break;
+		case kSnRTNext:
+			_vm->snRTNext(spr, snc->_val);
+			break;
+		case kSnRMNear:
+			_vm->snRmNear(spr);
+			break;
+		case kSnRmTake:
+			_vm->snRmTake(spr);
+			break;
+		case kSnFlag:
+			_vm->snFlag(snc->_ref & 3, snc->_val != 0);
+			break;
+		case kSnSetRef:
+			_vm->snSetRef(spr, snc->_val);
+			break;
+		case kSnBackPt:
+			_vm->snBackPt(spr, snc->_val);
+			break;
+		case kSnFlash:
+			_vm->snFlash(snc->_val != 0);
+			break;
+		case kSnLight:
+			_vm->snLight(snc->_val != 0);
+			break;
+		case kSnSetHBarrier:
+			_vm->snHBarrier(snc->_ref, snc->_val);
+			break;
+		case kSnSetVBarrier:
+			_vm->snVBarrier(snc->_ref, snc->_val);
+			break;
+		case kSnWalk:
+			_vm->snWalk(spr, snc->_ref, snc->_val);
+			break;
+		case kSnReach:
+			_vm->snReach(spr, snc->_val);
+			break;
+		case kSnSound:
+			_vm->snSound(spr, snc->_val);
+			break;
+		case kSnCount:
+			_vm->_sound->setRepeat(snc->_val);
+			break;
+		case kSnExec:
+			switch (snc->_cbType) {
+			case kQGame:
+				_vm->qGame();
+				break;
+			case kMiniStep:
+				_vm->miniStep(snc->_val);
+				break;
+			case kXScene:
+				_vm->xScene();
+				break;
+			case kSndSetVolume:
+				_vm->sndSetVolume();
+				break;
+			default:
+				error("Unknown Callback Type in SNEXEC");
+			}
+			break;
+		case kSnStep:
+			spr->step();
+			break;
+		case kSnZTrim:
+			_vm->snZTrim(spr);
+			break;
+		case kSnGhost:
+			_vm->snGhost((Bitmap *) snc->_spritePtr);
+			break;
+		default:
+			warning("Unhandled snc->_com in SNMouse(bool)");
+			break;
+		}
+		_tail++;
+		if (!_turbo)
+			break;
+	}
+
+	_busy = false;
+}
+
+bool Snail::idle() {
+	return (_head == _tail);
+}
+
 void CGEEngine::snGame(Sprite *spr, int num) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snGame(spr, %d)", num);
 
@@ -63,66 +402,66 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			if (hand && Stage > kDressed)
 				++hand;
 			if (i >= 0 || (dup[i] == spr && newRandom(3) == 0)) {
-				_snail->addCom(kSnSeq, -1, 3, dup[0]);               // yes
-				_snail->addCom(kSnSeq, -1, 3, dup[1]);               // yes
-				_snail->addCom(kSnSeq, -1, 3, dup[2]);               // yes
-				_snail->addCom(kSnTNext, -1, 0, dup[0]);             // reset Take
-				_snail->addCom(kSnTNext, -1, 0, dup[1]);             // reset Take
-				_snail->addCom(kSnTNext, -1, 0, dup[2]);             // reset Take
-				_snail->addCom(kSnNNext, -1, 0, dup[0]);             // reset Near
-				_snail->addCom(kSnPause, -1, 72, NULL);              // little rest
-				_snail->addCom(kSnSay, 1, 16009, NULL);              // hura
-				_snail->addCom(kSnSay, buref, 16010, NULL);          // siadaj
-				_snail->addCom(kSnSay, 1, 16011, NULL);              // postoj‘
+				_snail->addCommand(kSnSeq, -1, 3, dup[0]);               // yes
+				_snail->addCommand(kSnSeq, -1, 3, dup[1]);               // yes
+				_snail->addCommand(kSnSeq, -1, 3, dup[2]);               // yes
+				_snail->addCommand(kSnTNext, -1, 0, dup[0]);             // reset Take
+				_snail->addCommand(kSnTNext, -1, 0, dup[1]);             // reset Take
+				_snail->addCommand(kSnTNext, -1, 0, dup[2]);             // reset Take
+				_snail->addCommand(kSnNNext, -1, 0, dup[0]);             // reset Near
+				_snail->addCommand(kSnPause, -1, 72, NULL);              // little rest
+				_snail->addCommand(kSnSay, 1, 16009, NULL);              // hura
+				_snail->addCommand(kSnSay, buref, 16010, NULL);          // siadaj
+				_snail->addCommand(kSnSay, 1, 16011, NULL);              // postoj‘
 
 				if (hand) {
-					_snail->addCom(kSnSend, 16060 + hand, 16, NULL);   // dawaj r‘k‘
-					_snail->addCom(kSnSeq, buref, 4, NULL);            // zdejmowanie
-					_snail->addCom(kSnSeq, 16060 + hand, 1, NULL);     // ruch
-					_snail->addCom(kSnSound, 16060 + hand, 16002, NULL); // szelest
-					_snail->addCom(kSnWait, 16060 + hand, 3, NULL);    // podniesie
-					_snail->addCom(kSnSwap, buref, buref + 100, NULL); // rozdziana
-					_snail->addCom(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
-					_snail->addCom(kSnSend, 16060 + hand, -1, NULL);   // chowaj r‘k‘
-					_snail->addCom(kSnWait, 16060 + hand, -1, NULL);   // r‘ka zamar’a
+					_snail->addCommand(kSnSend, 16060 + hand, 16, NULL);   // dawaj r‘k‘
+					_snail->addCommand(kSnSeq, buref, 4, NULL);            // zdejmowanie
+					_snail->addCommand(kSnSeq, 16060 + hand, 1, NULL);     // ruch
+					_snail->addCommand(kSnSound, 16060 + hand, 16002, NULL); // szelest
+					_snail->addCommand(kSnWait, 16060 + hand, 3, NULL);    // podniesie
+					_snail->addCommand(kSnSwap, buref, buref + 100, NULL); // rozdziana
+					_snail->addCommand(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
+					_snail->addCommand(kSnSend, 16060 + hand, -1, NULL);   // chowaj r‘k‘
+					_snail->addCommand(kSnWait, 16060 + hand, -1, NULL);   // r‘ka zamar’a
 				} else {
-					_snail->addCom(kSnSeq, buref, 4, NULL);            // zdejmowanie
-					_snail->addCom(kSnSound, 16060 + hand, 16002, NULL); // szelest
-					_snail->addCom(kSnWait, buref, -1, NULL);          // zdejmie
-					_snail->addCom(kSnSwap, buref, buref + 100, NULL); // rozdziana
-					_snail->addCom(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
+					_snail->addCommand(kSnSeq, buref, 4, NULL);            // zdejmowanie
+					_snail->addCommand(kSnSound, 16060 + hand, 16002, NULL); // szelest
+					_snail->addCommand(kSnWait, buref, -1, NULL);          // zdejmie
+					_snail->addCommand(kSnSwap, buref, buref + 100, NULL); // rozdziana
+					_snail->addCommand(kSnSeq, 16016, Stage, NULL);        // rožnie kupa
 				}
 				//SNPOST(SNSEQ, buref+100, 0, NULL);        // reset
-				_snail->addCom(kSnPause, -1, 72, NULL);              // chwilk‘...
-				_snail->addCom(kSnSeq, -1, 0, dup[1]);               // odstaw Go
-				_snail->addCom(kSnSetXY, -1, 203 + kScrWidth * 49, dup[1]);
-				_snail->addCom(kSnSetZ, -1, 7, dup[1]);
-				_snail->addCom(kSnSeq, -1, 0, dup[2]);               // odstaw J†
-				_snail->addCom(kSnSetXY, -1, 182 + kScrWidth * 62, dup[2]);
-				_snail->addCom(kSnSetZ, -1, 9, dup[2]);
+				_snail->addCommand(kSnPause, -1, 72, NULL);              // chwilk‘...
+				_snail->addCommand(kSnSeq, -1, 0, dup[1]);               // odstaw Go
+				_snail->addCommand(kSnSetXY, -1, 203 + kScrWidth * 49, dup[1]);
+				_snail->addCommand(kSnSetZ, -1, 7, dup[1]);
+				_snail->addCommand(kSnSeq, -1, 0, dup[2]);               // odstaw J†
+				_snail->addCommand(kSnSetXY, -1, 182 + kScrWidth * 62, dup[2]);
+				_snail->addCommand(kSnSetZ, -1, 9, dup[2]);
 				_game = 0;
 				return;
 			} else {
-				_snail->addCom(kSnSeq, -1, 2, dup[0]);               // no
-				_snail->addCom(kSnSeq, -1, 2, dup[1]);               // no
-				_snail->addCom(kSnSeq, -1, 2, dup[2]);               // no
-				_snail->addCom(kSnPause, -1, 72, NULL);              // 1 sec
+				_snail->addCommand(kSnSeq, -1, 2, dup[0]);               // no
+				_snail->addCommand(kSnSeq, -1, 2, dup[1]);               // no
+				_snail->addCommand(kSnSeq, -1, 2, dup[2]);               // no
+				_snail->addCommand(kSnPause, -1, 72, NULL);              // 1 sec
 			}
 		}
-		_snail->addCom(kSnWalk, 198, 134, NULL);                 // na miejsce
-		_snail->addCom(kSnWait, 1, -1, NULL);                    // stoi
-		_snail->addCom(kSnCover, 1, 16101, NULL);                // ch’op do bicia
-		_snail->addCom(kSnSeq, 16101, 1, NULL);                  // wystaw
-		_snail->addCom(kSnWait, 16101, 5, NULL);                 // czekaj
-		_snail->addCom(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
-		_snail->addCom(kSnSeq, 16040, 1, NULL);                  // plask
-		_snail->addCom(kSnSound, 16101, 16001, NULL);            // plask!
-		_snail->addCom(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
-		_snail->addCom(kSnSeq, 16040, 0, NULL);                  // schowaj plask
-		_snail->addCom(kSnWait, 16101, -1, NULL);                // stoi
-		_snail->addCom(kSnUncover, 1, 16101, NULL);              // SDS
+		_snail->addCommand(kSnWalk, 198, 134, NULL);                 // na miejsce
+		_snail->addCommand(kSnWait, 1, -1, NULL);                    // stoi
+		_snail->addCommand(kSnCover, 1, 16101, NULL);                // ch’op do bicia
+		_snail->addCommand(kSnSeq, 16101, 1, NULL);                  // wystaw
+		_snail->addCommand(kSnWait, 16101, 5, NULL);                 // czekaj
+		_snail->addCommand(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
+		_snail->addCommand(kSnSeq, 16040, 1, NULL);                  // plask
+		_snail->addCommand(kSnSound, 16101, 16001, NULL);            // plask!
+		_snail->addCommand(kSnPause, 16101, 24, NULL);               // czekaj chwil‘
+		_snail->addCommand(kSnSeq, 16040, 0, NULL);                  // schowaj plask
+		_snail->addCommand(kSnWait, 16101, -1, NULL);                // stoi
+		_snail->addCommand(kSnUncover, 1, 16101, NULL);              // SDS
 		if (!_game) {
-			_snail->addCom(kSnSay, buref, 16008, NULL);            // zgadnij!
+			_snail->addCommand(kSnSay, buref, 16008, NULL);            // zgadnij!
 			_game = true;
 		}
 		}
@@ -136,7 +475,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		}
 
 		if (!_game) { // init
-			_snail->addCom(kSnGame, 20002, 2, NULL);
+			_snail->addCommand(kSnGame, 20002, 2, NULL);
 			_game = true;
 			break;
 		}
@@ -152,23 +491,23 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			_sprK3->step(5);
 		}
 
-		_snail->addCom(kSnSetZ, 20700, 0, NULL);
+		_snail->addCommand(kSnSetZ, 20700, 0, NULL);
 		bool hit = (_sprK1->_seqPtr + _sprK2->_seqPtr + _sprK3->_seqPtr == 15);
 		if (hit) {
 			if (spr->_ref == 1) {
-				_snail->addCom(kSnSay,       1, 20003, NULL);       // hura!
-				_snail->addCom(kSnSeq,   20011,     2, NULL);       // kamera won
-				_snail->addCom(kSnSend,  20701,    -1, NULL);       // k1 won
-				_snail->addCom(kSnSend,  20702,    -1, NULL);       // k2 won
-				_snail->addCom(kSnSend,  20703,    -1, NULL);       // k3 won
-				_snail->addCom(kSnSend,  20700,    -1, NULL);       // tv won
-				_snail->addCom(kSnKeep,  20007,     0, NULL);       // do kieszeni
-				_snail->addCom(kSnSend,  20006,    20, NULL);       // bilon
-				_snail->addCom(kSnSound, 20006, 20002, NULL);      // bilon!
-				_snail->addCom(kSnSay,   20002, 20004, NULL);
-				_snail->addCom(kSnSend,  20010,    20, NULL);       // papier
-				_snail->addCom(kSnSound, 20010, 20003, NULL);      // papier!
-				_snail->addCom(kSnSay,   20001, 20005, NULL);
+				_snail->addCommand(kSnSay,       1, 20003, NULL);       // hura!
+				_snail->addCommand(kSnSeq,   20011,     2, NULL);       // kamera won
+				_snail->addCommand(kSnSend,  20701,    -1, NULL);       // k1 won
+				_snail->addCommand(kSnSend,  20702,    -1, NULL);       // k2 won
+				_snail->addCommand(kSnSend,  20703,    -1, NULL);       // k3 won
+				_snail->addCommand(kSnSend,  20700,    -1, NULL);       // tv won
+				_snail->addCommand(kSnKeep,  20007,     0, NULL);       // do kieszeni
+				_snail->addCommand(kSnSend,  20006,    20, NULL);       // bilon
+				_snail->addCommand(kSnSound, 20006, 20002, NULL);      // bilon!
+				_snail->addCommand(kSnSay,   20002, 20004, NULL);
+				_snail->addCommand(kSnSend,  20010,    20, NULL);       // papier
+				_snail->addCommand(kSnSound, 20010, 20003, NULL);      // papier!
+				_snail->addCommand(kSnSay,   20001, 20005, NULL);
 				_game = false;
 				return;
 			} else
@@ -178,13 +517,13 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		if (_gameCase2Cpt < 100) {
 			switch (_gameCase2Cpt) {
 			case 15:
-				_snail->addCom(kSnSay, 20003, 20021, NULL);
+				_snail->addCommand(kSnSay, 20003, 20021, NULL);
 				break;
 			case 30:
 			case 45:
 			case 60:
 			case 75:
-				_snail->addCom(kSnSay, 20003, 20022, NULL);
+				_snail->addCommand(kSnSay, 20003, 20022, NULL);
 				break;
 			}
 			_gameCase2Cpt++;
@@ -192,49 +531,49 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 
 		switch (spr->_ref) {
 		case 1:
-			_snail->addCom(kSnSay,   20001, 20011, NULL);         // zapro
-			_snail->addCom(kSnSeq,   20001,     1, NULL);             // rzu
-			_snail->addCom(kSnWait,  20001,     1, NULL);             // czekaj
-			_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
-			_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
-			_snail->addCom(kSnWait,  20001,    16, NULL);            // czekaj
-			_snail->addCom(kSnSeq,   20007,     1, NULL);             // lec†
-			_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
-			_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-			_snail->addCom(kSnWait,  20007,    -1, NULL);            // koniec
-			_snail->addCom(kSnGame,  20001,     2, NULL);             // again!
+			_snail->addCommand(kSnSay,   20001, 20011, NULL);        // zapro
+			_snail->addCommand(kSnSeq,   20001,     1, NULL);        // rzu
+			_snail->addCommand(kSnWait,  20001,     1, NULL);        // czekaj
+			_snail->addCommand(kSnSetZ,  20700,     2, NULL);        // skryj k
+			_snail->addCommand(kSnHide,  20007,     1, NULL);        // skryj k
+			_snail->addCommand(kSnWait,  20001,    16, NULL);        // czekaj
+			_snail->addCommand(kSnSeq,   20007,     1, NULL);        // lec†
+			_snail->addCommand(kSnHide,  20007,     0, NULL);        // poka§
+			_snail->addCommand(kSnSound, 20007, 20001, NULL);        // grzech
+			_snail->addCommand(kSnWait,  20007,    -1, NULL);        // koniec
+			_snail->addCommand(kSnGame,  20001,     2, NULL);        // again!
 			break;
 
 		case 20001:
-			_snail->addCom(kSnSay,   20002, 20012, NULL);          // zapro
-			_snail->addCom(kSnSeq,   20002,     1, NULL);              // rzu
-			_snail->addCom(kSnWait,  20002,     3, NULL);             // czekaj
-			_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
-			_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
-			_snail->addCom(kSnWait,  20002,    10, NULL);            // czekaj
-			_snail->addCom(kSnSeq,   20007,     2, NULL);              // lec†
-			_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
-			_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-			_snail->addCom(kSnWait,  20007,    -1, NULL);            // koniec
-			_snail->addCom(kSnGame,  20002,     2, NULL);             // again!
+			_snail->addCommand(kSnSay,   20002, 20012, NULL);        // zapro
+			_snail->addCommand(kSnSeq,   20002,     1, NULL);        // rzu
+			_snail->addCommand(kSnWait,  20002,     3, NULL);        // czekaj
+			_snail->addCommand(kSnSetZ,  20700,     2, NULL);        // skryj k
+			_snail->addCommand(kSnHide,  20007,     1, NULL);        // skryj k
+			_snail->addCommand(kSnWait,  20002,    10, NULL);        // czekaj
+			_snail->addCommand(kSnSeq,   20007,     2, NULL);        // lec†
+			_snail->addCommand(kSnHide,  20007,     0, NULL);        // poka§
+			_snail->addCommand(kSnSound, 20007, 20001, NULL);        // grzech
+			_snail->addCommand(kSnWait,  20007,    -1, NULL);        // koniec
+			_snail->addCommand(kSnGame,  20002,     2, NULL);        // again!
 			break;
 
 		case 20002:
-			_snail->addCom(kSnSay,   20002, 20010, NULL);          // zapro
-			_snail->addCom(kSnWalk,  20005,    -1, NULL);            // do stol
-			_snail->addCom(kSnWait,      1,    -1, NULL);                // stoi
-			_snail->addCom(kSnCover,     1, 20101, NULL);            // grasol
-			_snail->addCom(kSnSeq,   20101,     1, NULL);              // rzu
-			_snail->addCom(kSnWait,  20101,     5, NULL);             // czekaj
-			_snail->addCom(kSnSetZ,  20700,     2, NULL);             // skryj k
-			_snail->addCom(kSnHide,  20007,     1, NULL);             // skryj k
-			_snail->addCom(kSnWait,  20101,    15, NULL);            // czekaj
-			_snail->addCom(kSnSeq,   20007,     1, NULL);              // lec†
-			_snail->addCom(kSnHide,  20007,     0, NULL);             // poka§
-			_snail->addCom(kSnSound, 20007, 20001, NULL);        // grzech
-			_snail->addCom(kSnWait,  20101,    -1, NULL);            // koniec
-			_snail->addCom(kSnUncover,   1, 20101, NULL);          // SDS
-			_snail->addCom(kSnGame,      1,     2, NULL);                 // again!
+			_snail->addCommand(kSnSay,   20002, 20010, NULL);        // zapro
+			_snail->addCommand(kSnWalk,  20005,    -1, NULL);        // do stol
+			_snail->addCommand(kSnWait,      1,    -1, NULL);        // stoi
+			_snail->addCommand(kSnCover,     1, 20101, NULL);        // grasol
+			_snail->addCommand(kSnSeq,   20101,     1, NULL);        // rzu
+			_snail->addCommand(kSnWait,  20101,     5, NULL);        // czekaj
+			_snail->addCommand(kSnSetZ,  20700,     2, NULL);        // skryj k
+			_snail->addCommand(kSnHide,  20007,     1, NULL);        // skryj k
+			_snail->addCommand(kSnWait,  20101,    15, NULL);        // czekaj
+			_snail->addCommand(kSnSeq,   20007,     1, NULL);        // lec†
+			_snail->addCommand(kSnHide,  20007,     0, NULL);        // poka§
+			_snail->addCommand(kSnSound, 20007, 20001, NULL);        // grzech
+			_snail->addCommand(kSnWait,  20101,    -1, NULL);        // koniec
+			_snail->addCommand(kSnUncover,   1, 20101, NULL);        // SDS
+			_snail->addCommand(kSnGame,      1,     2, NULL);        // again!
 			break;
 		}
 	}
@@ -284,17 +623,17 @@ void CGEEngine::pocFul() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::pocFul()");
 
 	_hero->park();
-	_snail->addCom(kSnWait, -1, -1, _hero);
-	_snail->addCom(kSnSeq, -1, kSeqPocketFull, _hero);
-	_snail->addCom(kSnSound, -1, 2, _hero);
-	_snail->addCom(kSnWait, -1, -1, _hero);
-	_snail->addCom(kSnSay,  1, kPocketFull, _hero);
+	_snail->addCommand(kSnWait, -1, -1, _hero);
+	_snail->addCommand(kSnSeq, -1, kSeqPocketFull, _hero);
+	_snail->addCommand(kSnSound, -1, 2, _hero);
+	_snail->addCommand(kSnWait, -1, -1, _hero);
+	_snail->addCommand(kSnSay,  1, kPocketFull, _hero);
 }
 
 void CGEEngine::hide1(Sprite *spr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::hide1(spr)");
 
-	_snail_->addCom(kSnGhost, -1, 0, spr->ghost());
+	_snail_->addCommand(kSnGhost, -1, 0, spr->ghost());
 }
 
 void CGEEngine::snGhost(Bitmap *bmp) {
@@ -317,17 +656,17 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 	if (ptr == kNoPtr)
 		return;
 
-	Snail::Com *comtab = spr->snList(snq);
-	Snail::Com *c = comtab + ptr;
+	Snail::Command *comtab = spr->snList(snq);
+	Snail::Command *c = comtab + ptr;
 
 	if (findPocket(NULL) < 0) {                 // no empty pockets?
-		Snail::Com *p;
+		Snail::Command *p;
 		for (p = c; p->_com != kSnNext; p++) {     // find KEEP command
 			if (p->_com == kSnKeep) {
 				pocFul();
 				return;
 			}
-			if (p->_ptr)
+			if (p->_spritePtr)
 				break;
 		}
 	}
@@ -373,84 +712,12 @@ void CGEEngine::feedSnail(Sprite *spr, SnList snq) {
 			} else
 				++c;
 		} else {
-			_snail->addCom(c->_com, c->_ref, c->_val, spr);
-			if (c->_ptr)
+			_snail->addCommand(c->_com, c->_ref, c->_val, spr);
+			if (c->_spritePtr)
 				break;
 			else
 				c++;
 		}
-	}
-}
-
-const char *Snail::_comText[] = {
-	"LABEL",  "PAUSE",  "WAIT",    "LEVEL",   "HIDE",
-	"SAY",    "INF",    "TIME",    "CAVE",    "KILL",
-	"RSEQ",   "SEQ",    "SEND",    "SWAP",    "KEEP",
-	"GIVE",   "IF",     "GAME",    "SETX0",   "SETY0",
-	"SLAVE",  "SETXY",  "RELX",    "RELY",    "RELZ",
-	"SETX",   "SETY",   "SETZ",    "TRANS",   "PORT",
-	"NEXT",   "NNEXT",  "TNEXT",   "RNNEXT",  "RTNEXT",
-	"RMNEAR", "RMTAKE", "FLAG",    "SETREF",  "BACKPT",
-	"FLASH",  "LIGHT",  "SETHB",   "SETVB",   "WALK",
-	"REACH",  "COVER",  "UNCOVER", "CLEAR",   "TALK",
-	"MOUSE",  "SOUND",  "COUNT",   NULL
-};
-
-Snail::Snail(CGEEngine *vm, bool turbo)
-	: _turbo(turbo), _busy(false), _textDelay(false),
-	  _timerExpiry(0), _talkEnable(true),
-	  _head(0), _tail(0), _snList((Com *)malloc(sizeof(Com) * 256)), _vm(vm) {
-}
-
-Snail::~Snail() {
-	free(_snList);
-}
-
-void Snail::addCom(SnCom com, int ref, int val, void *ptr) {
-	Com *snc = &_snList[_head++];
-	snc->_com = com;
-	snc->_ref = ref;
-	snc->_val = val;
-	snc->_ptr = ptr;
-	snc->_cbType = kNullCB;
-	if (com == kSnClear) {
-		_tail = _head;
-		_vm->killText();
-		_timerExpiry = 0;
-	}
-}
-
-void Snail::addCom2(SnCom com, int ref, int val, CallbackType cbType) {
-	Com *snc = &_snList[_head++];
-	snc->_com = com;
-	snc->_ref = ref;
-	snc->_val = val;
-	snc->_ptr = NULL;
-	snc->_cbType = cbType;
-	if (com == kSnClear) {
-		_tail = _head;
-		_vm->killText();
-		_timerExpiry = 0;
-	}
-}
-
-void Snail::insCom(SnCom com, int ref, int val, void *ptr) {
-	Com *snc;
-
-	if (_busy) {
-		_snList[(_tail - 1) & 0xFF] = _snList[_tail];
-		snc = &_snList[_tail];
-	} else
-		snc = &_snList[(_tail - 1) & 0xFF];
-	_tail--;
-	snc->_com = com;
-	snc->_ref = ref;
-	snc->_val = val;
-	snc->_ptr = ptr;
-	if (com == kSnClear) {
-		_tail = _head;
-		_vm->killText();
-		_timerExpiry = 0;
 	}
 }
 
@@ -934,251 +1201,6 @@ void CGEEngine::snMouse(bool on) {
 		_mouse->on();
 	else
 		_mouse->off();
-}
-
-void Snail::runCom() {
-	if (_busy)
-		return;
-
-	_busy = true;
-	uint8 tmpHead = _head;
-	while (_tail != tmpHead) {
-		Com *snc = &_snList[_tail];
-
-		if (!_turbo) { // only for the slower one
-			if (_timerExpiry) {
-				// Delay in progress
-				if (_timerExpiry > g_system->getMillis())
-					// Delay not yet ended
-					break;
-
-				// Delay is finished
-				_timerExpiry = 0;
-			} else {
-				if (_textDelay) {
-					_vm->killText();
-					_textDelay = false;
-				}
-			}
-			if (_vm->_talk && snc->_com != kSnPause)
-				break;
-		}
-
-		Sprite *spr = ((snc->_ref >= 0) ? _vm->locate(snc->_ref) : ((Sprite *) snc->_ptr));
-		switch (snc->_com) {
-		case kSnLabel:
-			break;
-		case kSnPause    :
-			_timerExpiry = g_system->getMillis() + snc->_val * kSnailFrameDelay;
-			if (_vm->_talk)
-				_textDelay = true;
-			break;
-		case kSnWait:
-			if (spr) {
-				if (spr->seqTest(snc->_val) &&
-					(snc->_val >= 0 || spr != _vm->_hero || _vm->_hero->_tracePtr < 0)) {
-					_timerExpiry = g_system->getMillis() + spr->_time * kSnailFrameDelay;
-				} else {
-					_busy = false;
-					return;
-				}
-			}
-			break;
-		case kSnLevel:
-			_vm->snLevel(spr, snc->_val);
-			break;
-		case kSnHide:
-			_vm->snHide(spr, snc->_val);
-			break;
-		case kSnSay:
-			if (spr && _talkEnable) {
-				if (spr == _vm->_hero && spr->seqTest(-1))
-					spr->step(kSeqHTalk);
-				_vm->_text->say(_vm->_text->getText(snc->_val), spr);
-				_vm->_sys->_funDel = kHeroFun0;
-			}
-			break;
-		case kSnInf:
-			if (_talkEnable) {
-				_vm->inf(_vm->_text->getText(snc->_val));
-				_vm->_sys->_funDel = kHeroFun0;
-			}
-			break;
-		case kSnTime:
-			if (spr && _talkEnable) {
-				if (spr == _vm->_hero && spr->seqTest(-1))
-					spr->step(kSeqHTalk);
-				_vm->_text->sayTime(spr);
-			}
-			break;
-		case kSnCave:
-			_vm->switchScene(snc->_val);
-			break;
-		case kSnKill:
-			_vm->snKill(spr);
-			break;
-		case kSnSeq:
-			_vm->snSeq(spr, snc->_val);
-			break;
-		case kSnRSeq:
-			_vm->snRSeq(spr, snc->_val);
-			break;
-		case kSnSend:
-			_vm->snSend(spr, snc->_val);
-			break;
-		case kSnSwap:
-			_vm->snSwap(spr, snc->_val);
-			break;
-		case kSnCover:
-			_vm->snCover(spr, snc->_val);
-			break;
-		case kSnUncover:
-			_vm->snUncover(spr, (snc->_val >= 0) ? _vm->locate(snc->_val) : ((Sprite *) snc->_ptr));
-			break;
-		case kSnKeep:
-			_vm->snKeep(spr, snc->_val);
-			break;
-		case kSnGive:
-			_vm->snGive(spr, snc->_val);
-			break;
-		case kSnGame:
-			_vm->snGame(spr, snc->_val);
-			break;
-		case kSnSetX0:
-			_vm->snSetX0(snc->_ref, snc->_val);
-			break;
-		case kSnSetY0:
-			_vm->snSetY0(snc->_ref, snc->_val);
-			break;
-		case kSnSetXY:
-			_vm->snSetXY(spr, snc->_val);
-			break;
-		case kSnRelX:
-			_vm->snRelX(spr, snc->_val);
-			break;
-		case kSnRelY:
-			_vm->snRelY(spr, snc->_val);
-			break;
-		case kSnRelZ:
-			_vm->snRelZ(spr, snc->_val);
-			break;
-		case kSnSetX:
-			_vm->snSetX(spr, snc->_val);
-			break;
-		case kSnSetY:
-			_vm->snSetY(spr, snc->_val);
-			break;
-		case kSnSetZ:
-			_vm->snSetZ(spr, snc->_val);
-			break;
-		case kSnSlave:
-			_vm->snSlave(spr, snc->_val);
-			break;
-		case kSnTrans:
-			_vm->snTrans(spr, snc->_val);
-			break;
-		case kSnPort:
-			_vm->snPort(spr, snc->_val);
-			break;
-		case kSnNext:
-		case kSnIf:
-		case kSnTalk:
-			break;
-		case kSnMouse:
-			_vm->snMouse(snc->_val != 0);
-			break;
-		case kSnNNext:
-			_vm->snNNext(spr, snc->_val);
-			break;
-		case kSnTNext:
-			_vm->snTNext(spr, snc->_val);
-			break;
-		case kSnRNNext:
-			_vm->snRNNext(spr, snc->_val);
-			break;
-		case kSnRTNext:
-			_vm->snRTNext(spr, snc->_val);
-			break;
-		case kSnRMNear:
-			_vm->snRmNear(spr);
-			break;
-		case kSnRmTake:
-			_vm->snRmTake(spr);
-			break;
-		case kSnFlag:
-			_vm->snFlag(snc->_ref & 3, snc->_val != 0);
-			break;
-		case kSnSetRef:
-			_vm->snSetRef(spr, snc->_val);
-			break;
-		case kSnBackPt:
-			_vm->snBackPt(spr, snc->_val);
-			break;
-		case kSnFlash:
-			_vm->snFlash(snc->_val != 0);
-			break;
-		case kSnLight:
-			_vm->snLight(snc->_val != 0);
-			break;
-		case kSnSetHBarrier:
-			_vm->snHBarrier(snc->_ref, snc->_val);
-			break;
-		case kSnSetVBarrier:
-			_vm->snVBarrier(snc->_ref, snc->_val);
-			break;
-		case kSnWalk:
-			_vm->snWalk(spr, snc->_ref, snc->_val);
-			break;
-		case kSnReach:
-			_vm->snReach(spr, snc->_val);
-			break;
-		case kSnSound:
-			_vm->snSound(spr, snc->_val);
-			break;
-		case kSnCount:
-			_vm->_sound->setRepeat(snc->_val);
-			break;
-		case kSnExec:
-			switch (snc->_cbType) {
-			case kQGame:
-				_vm->qGame();
-				break;
-			case kMiniStep:
-				_vm->miniStep(snc->_val);
-				break;
-			case kXScene:
-				_vm->xScene();
-				break;
-			case kSndSetVolume:
-				_vm->sndSetVolume();
-				break;
-			default:
-				error("Unknown Callback Type in SNEXEC");
-			}
-			break;
-		case kSnStep:
-			spr->step();
-			break;
-		case kSnZTrim:
-			_vm->snZTrim(spr);
-			break;
-		case kSnGhost:
-			_vm->snGhost((Bitmap *) snc->_ptr);
-			break;
-		default:
-			warning("Unhandled snc->_com in SNMouse(bool)");
-			break;
-		}
-		_tail++;
-		if (!_turbo)
-			break;
-	}
-
-	_busy = false;
-}
-
-bool Snail::idle() {
-	return (_head == _tail);
 }
 
 } // End of namespace CGE

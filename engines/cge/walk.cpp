@@ -103,7 +103,7 @@ void Walk::tick() {
 	} else {
 		// take current Z position
 		_z = _here._pt.y;
-		_vm->_snail_->addCom(kSnZTrim, -1, 0, this);    // update Hero's pos in show queue
+		_vm->_snail_->addCommand(kSnZTrim, -1, 0, this);    // update Hero's pos in show queue
 	}
 }
 
@@ -195,10 +195,10 @@ void Walk::reach(Sprite *spr, int mode) {
 		}
 	}
 	// note: insert SNAIL commands in reverse order
-	_vm->_snail->insCom(kSnPause, -1, 64, NULL);
-	_vm->_snail->insCom(kSnSeq, -1, kTSeq + mode, this);
+	_vm->_snail->insertCommand(kSnPause, -1, 64, NULL);
+	_vm->_snail->insertCommand(kSnSeq, -1, kTSeq + mode, this);
 	if (spr) {
-		_vm->_snail->insCom(kSnWait, -1, -1, _vm->_hero);
+		_vm->_snail->insertCommand(kSnWait, -1, -1, _vm->_hero);
 		//SNINSERT(SNWALK, -1, -1, spr);
 	}
 	// sequence is not finished,

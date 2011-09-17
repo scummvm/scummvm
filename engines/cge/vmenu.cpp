@@ -112,7 +112,7 @@ void Vmenu::touch(uint16 mask, int x, int y) {
 
 	if (ok && (mask & kMouseLeftUp)) {
 		_items = 0;
-		_vm->_snail_->addCom(kSnKill, -1, 0, this);
+		_vm->_snail_->addCommand(kSnKill, -1, 0, this);
 		_recent = n;
 		assert(_menu[n].Proc);
 		CALL_MEMBER_FN(*_vm, _menu[n].Proc)();

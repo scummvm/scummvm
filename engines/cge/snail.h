@@ -53,11 +53,11 @@ enum SnCom {
 
 class Snail {
 public:
-	struct Com {
+	struct Command {
 		SnCom _com;
 		int _ref;
 		int _val;
-		void *_ptr;
+		void *_spritePtr;
 		CallbackType _cbType;
 	} *_snList;
 	static const char *_comText[];
@@ -65,10 +65,10 @@ public:
 
 	Snail(CGEEngine *vm, bool turbo);
 	~Snail();
-	void runCom();
-	void addCom(SnCom com, int ref, int val, void *ptr);
-	void addCom2(SnCom com, int ref, int val, CallbackType cbType);
-	void insCom(SnCom com, int ref, int val, void *ptr);
+	void runCommand();
+	void addCommand(SnCom com, int ref, int val, void *ptr);
+	void addCallback(SnCom com, int ref, int val, CallbackType cbType);
+	void insertCommand(SnCom com, int ref, int val, void *ptr);
 	bool idle();
 private:
 	CGEEngine *_vm;
