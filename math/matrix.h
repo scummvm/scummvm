@@ -129,10 +129,10 @@ public:
 
 	operator Matrix<rows, cols>&() { return *_this; }
 
-	static Matrix<rows, cols> getAddition(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
-	static Matrix<rows, cols> getSubtraction(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
-	static Matrix<rows, cols> getMoltiplication(const Matrix<rows, cols> &m1, float factor);
-	static Matrix<rows, cols> getDivision(const Matrix<rows, cols> &m1, float factor);
+	static Matrix<rows, cols> sum(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
+	static Matrix<rows, cols> difference(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
+	static Matrix<rows, cols> product(const Matrix<rows, cols> &m1, float factor);
+	static Matrix<rows, cols> quotient(const Matrix<rows, cols> &m1, float factor);
 
 	Matrix<rows, cols> &operator=(const Matrix<rows, cols> &m);
 	Matrix<rows, cols> &operator+=(const Matrix<rows, cols> &m);
@@ -283,7 +283,7 @@ Matrix<r, c> MatrixBase<r, c>::getNegative() const {
 }
 
 template <int r, int c>
-Matrix<r, c> MatrixBase<r, c>::getAddition(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
+Matrix<r, c> MatrixBase<r, c>::sum(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 	Matrix<r, c> result;
 	for (int row = 0; row < r; ++row) {
 		for (int col = 0; col < c; ++col) {
@@ -294,7 +294,7 @@ Matrix<r, c> MatrixBase<r, c>::getAddition(const Matrix<r, c> &m1, const Matrix<
 }
 
 template <int r, int c>
-Matrix<r, c> MatrixBase<r, c>::getSubtraction(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
+Matrix<r, c> MatrixBase<r, c>::difference(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 	Matrix<r, c> result;
 	for (int row = 0; row < r; ++row) {
 		for (int col = 0; col < c; ++col) {
@@ -305,7 +305,7 @@ Matrix<r, c> MatrixBase<r, c>::getSubtraction(const Matrix<r, c> &m1, const Matr
 }
 
 template <int r, int c>
-Matrix<r, c> MatrixBase<r, c>::getMoltiplication(const Matrix<r, c> &m1, float factor) {
+Matrix<r, c> MatrixBase<r, c>::product(const Matrix<r, c> &m1, float factor) {
 	Matrix<r, c> result;
 	for (int row = 0; row < r; ++row) {
 		for (int col = 0; col < c; ++col) {
@@ -316,7 +316,7 @@ Matrix<r, c> MatrixBase<r, c>::getMoltiplication(const Matrix<r, c> &m1, float f
 }
 
 template <int r, int c>
-Matrix<r, c> MatrixBase<r, c>::getDivision(const Matrix<r, c> &m1, float factor) {
+Matrix<r, c> MatrixBase<r, c>::quotient(const Matrix<r, c> &m1, float factor) {
 	Matrix<r, c> result;
 	for (int row = 0; row < r; ++row) {
 		for (int col = 0; col < c; ++col) {
@@ -445,27 +445,27 @@ Matrix<m, n> operator*(const Matrix<m, p> &m1, const Matrix<p, n> &m2) {
 
 template <int r, int c>
 inline Matrix<r, c> operator+(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
-	return Matrix<r, c>::getAddition(m1, m2);
+	return Matrix<r, c>::sum(m1, m2);
 }
 
 template <int r, int c>
 inline Matrix<r, c> operator-(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
-	return Matrix<r, c>::getSubtraction(m1, m2);
+	return Matrix<r, c>::difference(m1, m2);
 }
 
 template <int r, int c>
 inline Matrix<r, c> operator*(const Matrix<r, c> &m1, float factor) {
-	return Matrix<r, c>::getMoltiplication(m1, factor);
+	return Matrix<r, c>::product(m1, factor);
 }
 
 template <int r, int c>
 inline Matrix<r, c> operator/(const Matrix<r, c> &m1, float factor) {
-	return Matrix<r, c>::getDivision(m1, factor);
+	return Matrix<r, c>::quotient(m1, factor);
 }
 
 template <int r, int c>
 Matrix<r, c> operator*(float factor, const Matrix<r, c> &m1) {
-	return Matrix<r, c>::getMoltiplication(m1, factor);
+	return Matrix<r, c>::product(m1, factor);
 }
 
 template <int r, int c>
