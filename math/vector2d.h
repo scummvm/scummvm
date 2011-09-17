@@ -22,35 +22,34 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_LINE3D_H
-#define GRAPHICS_LINE3D_H
+#ifndef MATH_VECTOR2D_H
+#define MATH_VECTOR2D_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
+#include "math/vector.h"
+#include "math/vector3d.h"
 
-#include "graphics/vector3d.h"
+namespace Math {
 
-namespace Graphics {
-
-class Line3d {
+template<>
+class Matrix<2, 1> : public MatrixType<2, 1> {
 public:
-	Line3d();
-	Line3d(const Vector3d &begin, const Vector3d &end);
-	Line3d(const Line3d &other);
+	Matrix();
+	Matrix(float x, float y);
+	Matrix(const MatrixBase<2, 1> &vec);
 
-	Graphics::Vector3d begin() const;
-	Graphics::Vector3d end() const;
-	Graphics::Vector3d middle() const;
+	inline float getX() const { return getValue(0); }
+	inline float getY() const { return getValue(1); }
+	inline void setX(float x) { setValue(0, x); }
+	inline void setY(float y) { setValue(1, y); }
 
-	bool intersectLine2d(const Line3d &other, Graphics::Vector3d *pos);
+	void rotateAround(const Vector(2) &point, float angle);
+	float getAngle() const;
 
-	void operator=(const Line3d &other);
-
-private:
-	Graphics::Vector3d _begin, _end;
-
+	Vector3d toVector3d() const;
 };
 
-} // end of namespace Graphics
+typedef Matrix<2, 1> Vector2d;
+
+}
 
 #endif

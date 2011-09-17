@@ -77,7 +77,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 
 	_name 		 = savedState->readString();
 
-	_vertices = new Graphics::Vector3d[_numVertices + 1];
+	_vertices = new Math::Vector3d[_numVertices + 1];
 	for (int i = 0; i < _numVertices + 1; ++i) {
 		_vertices[i] = savedState->readVector3d();
 	}
@@ -87,7 +87,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 	_shrinkRadius = savedState->readFloat();
 	_invalid = savedState->readLESint32();
 	if (_shrinkRadius != 0.f && !_invalid) {
-		_origVertices = new Graphics::Vector3d[_numVertices + 1];
+		_origVertices = new Math::Vector3d[_numVertices + 1];
 		for (int i = 0; i < _numVertices + 1; ++i) {
 			_origVertices[i] = savedState->readVector3d();
 		}
@@ -101,7 +101,7 @@ bool Sector::restoreState(SaveGame *savedState) {
 void Sector::load(TextSplitter &ts) {
 	char buf[256];
 	int ident = 0, i = 0;
-	Graphics::Vector3d tempVert;
+	Math::Vector3d tempVert;
 
 	// Sector NAMES can be null, but ts isn't flexible enough
 	if (strlen(ts.getCurrentLine()) > strlen(" sector"))
@@ -140,7 +140,7 @@ void Sector::load(TextSplitter &ts) {
 		error("Invalid visibility spec: %s", buf);
 	ts.scanString(" height %f", 1, &_height);
 	ts.scanString(" numvertices %d", 1, &_numVertices);
-	_vertices = new Graphics::Vector3d[_numVertices + 1];
+	_vertices = new Math::Vector3d[_numVertices + 1];
 
 	ts.scanString(" vertices: %f %f %f", 3, &_vertices[0].x(), &_vertices[0].y(), &_vertices[0].z());
 	for (i = 1; i < _numVertices; i++)
@@ -150,16 +150,16 @@ void Sector::load(TextSplitter &ts) {
 	_vertices[_numVertices] = _vertices[0];
 
 	_normal = cross(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
-	float length = _normal.magnitude();
+	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
 }
 
 void Sector::loadBinary(Common::MemoryReadStream *ms) {
 	_numVertices = ms->readUint32LE();
-	_vertices = new Graphics::Vector3d[_numVertices];
+	_vertices = new Math::Vector3d[_numVertices];
 	for(int i = 0; i < _numVertices; i++) {
-		ms->read(_vertices[i]._coords, 12);
+		ms->read(_vertices[i].getData(), 12);
 	}
 
 	char name[128];
@@ -191,12 +191,12 @@ void Sector::shrink(float radius) {
 	_shrinkRadius = radius;
 	if (!_origVertices) {
 		_origVertices = _vertices;
-		_vertices = new Graphics::Vector3d[_numVertices + 1];
+		_vertices = new Math::Vector3d[_numVertices + 1];
 	}
 
 	// Move each vertex inwards by the given amount.
 	for (int j = 0; j < _numVertices; j++) {
-		Graphics::Vector3d shrinkDir;
+		Math::Vector3d shrinkDir;
 
 		for (int k = 0; k < g_grim->getCurrScene()->getSectorCount(); k++) {
 			Sector *other = g_grim->getCurrScene()->getSectorBase(k);
@@ -204,26 +204,26 @@ void Sector::shrink(float radius) {
 				continue;
 
 			for (int l = 0; l < other->_numVertices; l++) {
-				Graphics::Vector3d* otherVerts = other->_vertices;
+				Math::Vector3d* otherVerts = other->_vertices;
 				if (other->_origVertices)
 					otherVerts = other->_origVertices;
-				if ((otherVerts[l] - _origVertices[j]).magnitude() < 0.01f) {
-					Graphics::Vector3d e1 = otherVerts[l + 1] - otherVerts[l];
-					Graphics::Vector3d e2;
+				if ((otherVerts[l] - _origVertices[j]).getMagnitude() < 0.01f) {
+					Math::Vector3d e1 = otherVerts[l + 1] - otherVerts[l];
+					Math::Vector3d e2;
 					if (l - 1 >= 0)
 						e2 = otherVerts[l] - otherVerts[l - 1];
 					else
 						e2 = otherVerts[l] - otherVerts[other->_numVertices - 1];
 					e1.normalize();
 					e2.normalize();
-					Graphics::Vector3d bisector = (e1 - e2);
+					Math::Vector3d bisector = (e1 - e2);
 					bisector.normalize();
 					shrinkDir += bisector;
 				}
 			}
 		}
 
-		if (shrinkDir.magnitude() > 0.1f) {
+		if (shrinkDir.getMagnitude() > 0.1f) {
 			shrinkDir.normalize();
 			_vertices[j] = _origVertices[j] + shrinkDir * radius;
 		} else {
@@ -235,8 +235,8 @@ void Sector::shrink(float radius) {
 
 	// Make sure the sector is still convex.
 	for (int j = 0; j < _numVertices; j++) {
-		Graphics::Vector3d e1 = _vertices[j + 1] - _vertices[j];
-		Graphics::Vector3d e2;
+		Math::Vector3d e1 = _vertices[j + 1] - _vertices[j];
+		Math::Vector3d e2;
 		if (j - 1 >= 0)
 			e2 = _vertices[j] - _vertices[j - 1];
 		else
@@ -265,7 +265,7 @@ void Sector::unshrink() {
 	}
 }
 
-bool Sector::isPointInSector(const Graphics::Vector3d &point) const {
+bool Sector::isPointInSector(const Math::Vector3d &point) const {
 	// The algorithm: for each edge A->B, check whether the z-component
 	// of (B-A) x (P-A) is >= 0.  Then the point is at least in the
 	// cylinder above&below the polygon.  (This works because the polygons'
@@ -306,15 +306,15 @@ bool Sector::isPointInSector(const Graphics::Vector3d &point) const {
 	}
 
 	for (int i = 0; i < _numVertices; i++) {
-		Graphics::Vector3d edge = _vertices[i + 1] - _vertices[i];
-		Graphics::Vector3d delta = point - _vertices[i];
+		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
+		Math::Vector3d delta = point - _vertices[i];
 		if (edge.x() * delta.y() < edge.y() * delta.x())
 			return false;
 	}
 	return true;
 }
 
-Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
+Common::List<Math::Line3d> Sector::getBridgesTo(Sector *sector) const {
 	// This returns a list of "bridges", which are edges that can be travelled
 	// through to get to another sector. 0 bridges mean the sectors aren't
 	// connected.
@@ -324,20 +324,20 @@ Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
 	// sector B, so we end up with a list of lines which are at the border
 	// of sector A and inside sector B.
 
-	Common::List<Graphics::Line3d> bridges;
-	Common::List<Graphics::Line3d>::iterator it;
+	Common::List<Math::Line3d> bridges;
+	Common::List<Math::Line3d>::iterator it;
 
 	for (int i = 0; i < _numVertices; i++){
-		bridges.push_back(Graphics::Line3d(_vertices[i], _vertices[i+1]));
+		bridges.push_back(Math::Line3d(_vertices[i], _vertices[i+1]));
 	}
 
-	Graphics::Vector3d* sectorVertices = sector->getVertices();
+	Math::Vector3d* sectorVertices = sector->getVertices();
 	for (int i = 0; i < sector->getNumVertices(); i++) {
-		Graphics::Vector3d pos, edge, delta_b1, delta_b2;
-		Graphics::Line3d line(sectorVertices[i], sectorVertices[i+1]);
+		Math::Vector3d pos, edge, delta_b1, delta_b2;
+		Math::Line3d line(sectorVertices[i], sectorVertices[i+1]);
 		it = bridges.begin();
 		while (it != bridges.end()) {
-			Graphics::Line3d& bridge = (*it);
+			Math::Line3d& bridge = (*it);
 			edge = line.end() - line.begin();
 			delta_b1 = bridge.begin() - line.begin();
 			delta_b2 = bridge.end() - line.begin();
@@ -350,15 +350,15 @@ Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
 				continue;
 			} else if (b1_out) {
 				if (bridge.intersectLine2d(line, &pos)) {
-					bridge = Graphics::Line3d(pos, bridge.end());
+					bridge = Math::Line3d(pos, bridge.end());
 				}
 			} else if (b2_out) {
 				if (bridge.intersectLine2d(line, &pos)) {
-					bridge = Graphics::Line3d(bridge.begin(), pos);
+					bridge = Math::Line3d(bridge.begin(), pos);
 				}
 			}
 
-			if ((bridge.end() - bridge.begin()).magnitude() < 0.01f) {
+			if ((bridge.end() - bridge.begin()).getMagnitude() < 0.01f) {
 				it = bridges.erase(it);
 				continue;
 			}
@@ -378,37 +378,37 @@ Common::List<Graphics::Line3d> Sector::getBridgesTo(Sector *sector) const {
 	return bridges;
 }
 
-Graphics::Vector3d Sector::getProjectionToPlane(const Graphics::Vector3d &point) const {
+Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
 	// Formula: return p - (n . (p - v_0))/(n . k) k
-	Graphics::Vector3d result = point;
+	Math::Vector3d result = point;
 	result.z() -= dot(_normal, point - _vertices[0]) / _normal.z();
 	return result;
 }
 
-Graphics::Vector3d Sector::getProjectionToPuckVector(const Graphics::Vector3d &v) const {
+Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
-	Graphics::Vector3d result = v;
+	Math::Vector3d result = v;
 	result.z() -= dot(_normal, v) / _normal.z();
 	return result;
 }
 
 // Find the closest point on the walkplane to the given point
-Graphics::Vector3d Sector::getClosestPoint(const Graphics::Vector3d &point) const {
+Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	// First try to project to the plane
-	Graphics::Vector3d p2 = point;
+	Math::Vector3d p2 = point;
 	p2 -= (dot(_normal, p2 - _vertices[0])) * _normal;
 	if (isPointInSector(p2))
 		return p2;
 
 	// Now try to project to some edge
 	for (int i = 0; i < _numVertices; i++) {
-		Graphics::Vector3d edge = _vertices[i + 1] - _vertices[i];
-		Graphics::Vector3d delta = point - _vertices[i];
+		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
+		Math::Vector3d delta = point - _vertices[i];
 		float scalar = dot(delta, edge) / dot(edge, edge);
 		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
 			// That last test is just whether the z-component
@@ -418,10 +418,10 @@ Graphics::Vector3d Sector::getClosestPoint(const Graphics::Vector3d &point) cons
 	}
 
 	// Otherwise, just find the closest vertex
-	float minDist = (point - _vertices[0]).magnitude();
+	float minDist = (point - _vertices[0]).getMagnitude();
 	int index = 0;
 	for (int i = 1; i < _numVertices; i++) {
-		float currDist = (point - _vertices[i]).magnitude();
+		float currDist = (point - _vertices[i]).getMagnitude();
 		if (currDist < minDist) {
 			minDist = currDist;
 			index = i;
@@ -430,9 +430,9 @@ Graphics::Vector3d Sector::getClosestPoint(const Graphics::Vector3d &point) cons
 	return _vertices[index];
 }
 
-void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &dirVec, struct ExitInfo *result) const {
-	Graphics::Vector3d start = getProjectionToPlane(s);
-	Graphics::Vector3d dir = getProjectionToPuckVector(dirVec);
+void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, struct ExitInfo *result) const {
+	Math::Vector3d start = getProjectionToPlane(s);
+	Math::Vector3d dir = getProjectionToPuckVector(dirVec);
 
 	// First find the edge the ray exits through: this is where
 	// the z-component of (v_i - start) x dir changes sign from
@@ -442,7 +442,7 @@ void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &
 	// positive z-component.
 	int i;
 	for (i = 0; i < _numVertices; i++) {
-		Graphics::Vector3d delta = _vertices[i] - start;
+		Math::Vector3d delta = _vertices[i] - start;
 		if (delta.x() * dir.y() > delta.y() * dir.x())
 			break;
 	}
@@ -451,7 +451,7 @@ void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &
 	// z-component.
 	while (i < _numVertices) {
 		i++;
-		Graphics::Vector3d delta = _vertices[i] - start;
+		Math::Vector3d delta = _vertices[i] - start;
 		if (delta.x() * dir.y() <= delta.y() * dir.x())
 			break;
 	}
@@ -460,7 +460,7 @@ void Sector::getExitInfo(const Graphics::Vector3d &s, const Graphics::Vector3d &
 	result->angleWithEdge = angle(dir, result->edgeDir);
 	result->edgeVertex = i - 1;
 
-	Graphics::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
+	Math::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
 	float d = dot(dir, edgeNormal);
 	// This is 0 for the albinizod monster in the at set
 	if (!d)
@@ -474,12 +474,12 @@ Sector &Sector::operator=(const Sector &other) {
 	_name = other._name;
 	_type = other._type;
 	_visible = other._visible;
-	_vertices = new Graphics::Vector3d[_numVertices + 1];
+	_vertices = new Math::Vector3d[_numVertices + 1];
 	for (int i = 0; i < _numVertices + 1; ++i) {
 		_vertices[i] = other._vertices[i];
 	}
 	if (other._origVertices) {
-		_origVertices = new Graphics::Vector3d[_numVertices + 1];
+		_origVertices = new Math::Vector3d[_numVertices + 1];
 		for (int i = 0; i < _numVertices + 1; ++i) {
 			_origVertices[i] = other._origVertices[i];
 		}

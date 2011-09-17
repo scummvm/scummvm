@@ -198,11 +198,11 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void GfxTinyGL::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
-	Graphics::Vector3d up_vec(0, 0, 1);
+void GfxTinyGL::positionCamera(Math::Vector3d pos, Math::Vector3d interest) {
+	Math::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Graphics::Vector3d(0, 1, 0);
+		up_vec = Math::Vector3d(0, 1, 0);
 
 	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
@@ -221,7 +221,7 @@ bool GfxTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
-static void tglShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plane, Graphics::Vector3d normal, bool dontNegate) {
+static void tglShadowProjection(Math::Vector3d light, Math::Vector3d plane, Math::Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -286,7 +286,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	TGLfloat winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Graphics::Vector3d v;
+		Math::Vector3d v;
 		float* pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
@@ -356,7 +356,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float scale, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -463,7 +463,7 @@ void GfxTinyGL::getShadowColor(byte *r, byte *g, byte *b) {
 }
 
 void GfxTinyGL::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
-	tglNormal3fv(const_cast<float *>(face->_normal._coords));
+	tglNormal3fv(const_cast<float *>(face->_normal.getData()));
 	tglBegin(TGL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
 		tglNormal3fv(vertNormals + 3 * face->_vertices[i]);
@@ -516,7 +516,7 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
@@ -530,7 +530,7 @@ void GfxTinyGL::translateViewpointFinish() {
 }
 
 void GfxTinyGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
-	Graphics::Vector3d animPos = node->_pos + node->_animPos;
+	Math::Vector3d animPos = node->_pos + node->_animPos;
 	float animPitch = node->_pitch + node->_animPitch;
 	float animYaw = node->_yaw + node->_animYaw;
 	float animRoll = node->_roll + node->_animRoll;

@@ -25,7 +25,7 @@
 
 #include "common/memstream.h"
 
-#include "graphics/matrix4.h"
+#include "math/matrix4.h"
 
 #include "engines/grim/object.h"
 
@@ -70,15 +70,15 @@ public:
 	int getNumChores() const { return _numChores; }
 
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
-	void moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate);
+	void moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rate);
 
 	int update(float frameTime);
 	void animate();
 	void setupTextures();
 	void draw();
 	void draw(int *x1, int *y1, int *x2, int *y2);
-	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
-	Graphics::Matrix4 getMatrix() const;
+	void setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll);
+	Math::Matrix4 getMatrix() const;
 
 	Costume *getPreviousCostume() const;
 
@@ -94,7 +94,7 @@ public:
 		virtual void setColormap(CMap *c);
 		bool isVisible();
 		Component *getParent() { return _parent; }
-		virtual void setMatrix(Graphics::Matrix4) { };
+		virtual void setMatrix(Math::Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
@@ -114,7 +114,7 @@ public:
 		int _parentID;
 		bool _visible;
 		Component *_parent, *_child, *_sibling;
-		Graphics::Matrix4 _matrix;
+		Math::Matrix4 _matrix;
 		Costume *_cost;
 		void setCostume(Costume *cost) { _cost = cost; }
 		void setParent(Component *newParent);
@@ -189,7 +189,7 @@ private:
 	int _numChores;
 	Chore *_chores;
 	Common::List<Chore*> _playingChores;
-	Graphics::Matrix4 _matrix;
+	Math::Matrix4 _matrix;
 	ModelNode *_joint1Node;
 	ModelNode *_joint2Node;
 	ModelNode *_joint3Node;

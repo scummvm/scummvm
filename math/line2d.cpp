@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#include "graphics/line2d.h"
-#include "graphics/rect2d.h"
+#include "math/line2d.h"
+#include "math/rect2d.h"
 
-namespace Graphics {
+namespace Math {
 
 Line2d::Line2d() :
 	_a(0), _b(0), _c(0) {

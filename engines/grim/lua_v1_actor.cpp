@@ -316,7 +316,7 @@ void L1_PutActorAt() {
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
-	actor->setPos(Graphics::Vector3d(x, y, z));
+	actor->setPos(Math::Vector3d(x, y, z));
 }
 
 void L1_GetActorPos() {
@@ -326,7 +326,7 @@ void L1_GetActorPos() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	Graphics::Vector3d pos = actor->getPos();
+	Math::Vector3d pos = actor->getPos();
 	lua_pushnumber(pos.x());
 	lua_pushnumber(pos.y());
 	lua_pushnumber(pos.z());
@@ -395,14 +395,14 @@ void L1_GetAngleBetweenActors() {
 		return;
 	}
 
-	Graphics::Vector3d vec1 = actor1->getPuckVector();
-	Graphics::Vector3d vec2 = actor2->getPos();
+	Math::Vector3d vec1 = actor1->getPuckVector();
+	Math::Vector3d vec2 = actor2->getPos();
 	vec2 -= actor1->getPos();
 	vec1.z() = 0;
 	vec2.z() = 0;
 	vec1.normalize();
 	vec2.normalize();
-	float dot = vec1.dotProduct(vec2.x(), vec2.y(), 0);
+	float dot = vec1.getDotProduct(vec2);
 	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
 	if (angle < 0)
 		angle = -angle;
@@ -439,7 +439,7 @@ void L1_GetActorYawToPoint() {
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
 
-	Graphics::Vector3d yawVector(x, y, z);
+	Math::Vector3d yawVector(x, y, z);
 
 	lua_pushnumber(actor->getYawTo(yawVector));
 }
@@ -556,7 +556,7 @@ void L1_GetActorPuckVector() {
 		return;
 	}
 
-	Graphics::Vector3d result = actor->getPuckVector();
+	Math::Vector3d result = actor->getPuckVector();
 	if (!lua_isnil(addObj))
 		result += actor->getPos();
 
@@ -578,7 +578,7 @@ void L1_WalkActorTo() {
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-	Graphics::Vector3d destVec;
+	Math::Vector3d destVec;
 	Actor *actor = getactor(actorObj);
 	if (!lua_isnumber(xObj)) {
 		if (!lua_isuserdata(xObj) || lua_tag(xObj) != MKTAG('A','C','T','R'))
@@ -596,7 +596,7 @@ void L1_WalkActorTo() {
 	float tx = lua_getnumber(txObj);
 	float ty = lua_getnumber(tyObj);
 	float tz = lua_getnumber(tzObj);
-	Graphics::Vector3d tVec(tx, ty, tz);
+	Math::Vector3d tVec(tx, ty, tz);
 
 	actor->walkTo(destVec);
 }
@@ -667,15 +667,16 @@ void L1_GetActorNodeLocation() {
 		root = root->_parent;
 	}
 
-	Graphics::Matrix4 matrix;
-	matrix._pos = actor->getPos();
-	matrix._rot.buildFromPitchYawRoll(actor->getPitch(), actor->getYaw(), actor->getRoll());
+	Math::Matrix4 matrix;
+	matrix.setPosition(actor->getPos());
+	matrix.buildFromPitchYawRoll(actor->getPitch(), actor->getYaw(), actor->getRoll());
 	root->setMatrix(matrix);
 	root->update();
 
-	lua_pushnumber(node->_pivotMatrix._pos.x());
-	lua_pushnumber(node->_pivotMatrix._pos.y());
-	lua_pushnumber(node->_pivotMatrix._pos.z());
+	Math::Vector3d pos(node->_pivotMatrix.getPosition());
+	lua_pushnumber(pos.x());
+	lua_pushnumber(pos.y());
+	lua_pushnumber(pos.z());
 }
 
 void L1_SetActorWalkDominate() {
@@ -1113,7 +1114,7 @@ void L1_ActorLookAt() {
 		else
 			fZ = 0.0f;
 
-		Graphics::Vector3d vector;
+		Math::Vector3d vector;
 		vector.set(fX, fY, fZ);
 		actor->setLookAtVector(vector);
 
@@ -1166,8 +1167,8 @@ void L1_TurnActorTo() {
 	// TODO turning stuff below is not complete
 
 	// Find the vector pointing from the actor to the desired location
-	Graphics::Vector3d turnToVector(x, y, z);
-	Graphics::Vector3d lookVector = turnToVector - actor->getPos();
+	Math::Vector3d turnToVector(x, y, z);
+	Math::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
 	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
@@ -1210,8 +1211,8 @@ void L1_PointActorAt() {
 	// TODO turning stuff below is not complete
 
 	// Find the vector pointing from the actor to the desired location
-	Graphics::Vector3d turnToVector(x, y, z);
-	Graphics::Vector3d lookVector = turnToVector - actor->getPos();
+	Math::Vector3d turnToVector(x, y, z);
+	Math::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
 	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
@@ -1246,12 +1247,12 @@ void L1_WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Graphics::Vector3d cameraVector = g_grim->getCurrScene()->getCurrSetup()->_interest - g_grim->getCurrScene()->getCurrSetup()->_pos;
+	Math::Vector3d cameraVector = g_grim->getCurrScene()->getCurrSetup()->_interest - g_grim->getCurrScene()->getCurrSetup()->_pos;
 	// find the angle the camera direction is around the unit circle
 	float cameraYaw = cameraVector.unitCircleAngle();
 
 	// Handle the turning
-	Graphics::Vector3d adjustVector(moveHoriz, moveVert, 0);
+	Math::Vector3d adjustVector(moveHoriz, moveVert, 0);
 	// find the angle the adjust vector is around the unit circle
 	float adjustYaw = adjustVector.unitCircleAngle();
 
@@ -1356,8 +1357,8 @@ void L1_PutActorAtInterest() {
 	if (!scene)
 		return;
 
-	Graphics::Vector3d p = scene->getCurrSetup()->_interest;
-	Graphics::Vector3d resultPt = p;
+	Math::Vector3d p = scene->getCurrSetup()->_interest;
+	Math::Vector3d resultPt = p;
 	float minDist = -1.f;
 
 	for (int i = 0; i < scene->getSectorCount(); ++i) {
@@ -1365,10 +1366,10 @@ void L1_PutActorAtInterest() {
 		if (sector->getType() != Sector::WalkType || !sector->isVisible())
 			continue;
 
-		Graphics::Vector3d closestPt = sector->getClosestPoint(p);
+		Math::Vector3d closestPt = sector->getClosestPoint(p);
 		if (scene->findPointSector(closestPt, Sector::HotType))
 			continue;
-		float thisDist = (closestPt - p).magnitude();
+		float thisDist = (closestPt - p).getMagnitude();
 		if (minDist < 0 || thisDist < minDist) {
 			resultPt = closestPt;
 			minDist = thisDist;
@@ -1489,7 +1490,7 @@ void L1_SetActorShadowPoint() {
 	float y = lua_getnumber(yObj);
 	float z = lua_getnumber(zObj);
 
-	actor->setShadowPoint(Graphics::Vector3d(x, y, z));
+	actor->setShadowPoint(Math::Vector3d(x, y, z));
 }
 
 void L1_SetActorShadowPlane() {

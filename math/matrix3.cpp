@@ -22,21 +22,18 @@
  * $Id$
  */
 
-#include "graphics/matrix4.h"
+#include "math/matrix3.h"
 
-namespace Graphics {
+namespace Math {
 
-Matrix4::Matrix4() {
-	_pos.set(0.f, 0.f, 0.f);
-	_rot.setAsIdentity();
+Matrix<3, 3>::Matrix() :
+	MatrixType<3, 3>(), Rotation3D() {
+
 }
 
-void Matrix4::translate(float x, float y, float z) {
-	Vector3d v;
+Matrix<3, 3>::Matrix(const MatrixBase<3, 3> &m) :
+	MatrixType<3, 3>(m), Rotation3D() {
 
-	v.set(x, y, z);
-	_rot.transform(&v);
-	_pos += v;
 }
 
-} // end of namespace Graphics
+} // end of namespace Math

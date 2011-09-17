@@ -22,57 +22,45 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_LINE2D_H
-#define GRAPHICS_LINE2D_H
+#ifndef MATH_RECT2D_H
+#define MATH_RECT2D_H
 
-#include "graphics/vector2d.h"
+#include "math/vector2d.h"
+#include "math/line2d.h"
 
-namespace Graphics {
+namespace Math {
 
-class Line2d {
+class Segment2d;
+
+class Rect2d {
 public:
-	Line2d();
-	Line2d(const Vector2d &direction, const Vector2d &point);
+	Rect2d();
+	Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight);
+	Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
+		   const Vector2d &bottomLeft, const Vector2d &bottomRight);
 
-	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
-	Vector2d getDirection() const;
-
-	bool intersectsLine(const Line2d &line, Vector2d *pos) const;
+	void rotateAround(const Vector2d &point, float angle);
+	void rotateAroundCenter(float angle);
+	bool intersectsRect(const Rect2d &rect) const;
+	bool intersectsCircle(const Vector2d &center, float radius) const;
 	bool containsPoint(const Vector2d &point) const;
 
-	float getYatX(float x) const;
+	Vector2d getCenter() const;
+	Vector2d getTopLeft() const;
+	Vector2d getTopRight() const;
+	Vector2d getBottomLeft() const;
+	Vector2d getBottomRight() const;
+	float getWidth() const;
+	float getHeight() const;
+	Vector2d getIntersection(const Vector2d &start, const Vector2d &direction, Segment2d *edge) const;
 
-private:
-	float _a, _b, _c;
-
-};
-
-class Segment2d {
-public:
-	Segment2d();
-	Segment2d(const Vector2d &begin, const Vector2d &end);
-	Segment2d(const Segment2d &other);
-
-	Vector2d begin() const;
-	Vector2d end() const;
-	Vector2d middle() const;
-	Line2d getLine() const;
-	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
-
-	bool containsPoint(const Vector2d &point) const;
-
-	bool intersectsLine(const Line2d &line, Vector2d *pos);
-	bool intersectsSegment(const Segment2d &line, Vector2d *pos);
-
-	void operator=(const Segment2d &other);
-
-private:
-	Graphics::Vector2d _begin, _end;
-
+// private:
+	Vector2d _topLeft;
+	Vector2d _topRight;
+	Vector2d _bottomLeft;
+	Vector2d _bottomRight;
 };
 
 }
 
 #endif
-
-
