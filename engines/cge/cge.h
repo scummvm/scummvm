@@ -42,6 +42,9 @@ class Console;
 class Sprite;
 class Cluster;
 class Vga;
+class System;
+class Keyboard;
+class Mouse;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -157,6 +160,10 @@ public:
 	Bar _barriers[kSceneMax + 1];
 	Font *_font;
 	Vga *_vga;
+	System *_sys;
+	Sprite *_pocLight;
+	Keyboard *_keyboard;
+	Mouse *_mouse;
 
 	Common::RandomSource _randomSource;
 	MusicPlayer _midiPlayer;

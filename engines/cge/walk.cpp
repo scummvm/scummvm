@@ -58,7 +58,7 @@ void Walk::tick() {
 	_here = _vm->XZ(_x + _w / 2, _y + _h);
 
 	if (_dir != kDirNone) {
-		_sys->funTouch();
+		_vm->_sys->funTouch();
 		for (Sprite *spr = _vm->_vga->_showQ->first(); spr; spr = spr->_next) {
 			if (distance(spr) < 2) {
 				if (!spr->_flags._near) {

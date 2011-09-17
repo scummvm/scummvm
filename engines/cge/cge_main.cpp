@@ -52,11 +52,7 @@ namespace CGE {
 
 uint16  _stklen = (kStackSize * 2);
 
-System *_sys;
-Sprite *_pocLight;
 EventManager *_eventManager;
-Keyboard *_keyboard;
-Mouse *_mouse;
 Sprite *_pocket[kPocketNX];
 Sprite *_sprite;
 Sprite *_miniScene;
@@ -784,7 +780,7 @@ void System::touch(uint16 mask, int x, int y) {
 		}
 		switch (x) {
 		case 'X':
-			if (_keyboard->_key[kKeyAlt])
+			if (_vm->_keyboard->_key[kKeyAlt])
 				_vm->quit();
 			break;
 		case '0':
@@ -792,7 +788,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case '2':
 		case '3':
 		case '4':
-			if (_keyboard->_key[kKeyAlt]) {
+			if (_vm->_keyboard->_key[kKeyAlt]) {
 				_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
@@ -945,7 +941,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 
 #pragma argsused
 void Sprite::touch(uint16 mask, int x, int y) {
-	_sys->funTouch();
+	_vm->_sys->funTouch();
 
 	if ((mask & kEventAttn) != 0)
 		return;
@@ -970,7 +966,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 
 	if ((mask & kMouseRightUp) && _snail->idle()) {
-		Sprite *ps = (_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
+		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
 		if (ps) {
 			if (_flags._kept || _hero->distance(this) < kDistMax) {
 				if (works(ps)) {

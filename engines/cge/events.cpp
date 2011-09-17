@@ -289,7 +289,7 @@ void EventManager::poll() {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			// Handle keyboard events
-			_keyboard->newKeyboard(_event);
+			_vm->_keyboard->newKeyboard(_event);
 			handleEvents();
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -298,7 +298,7 @@ void EventManager::poll() {
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
 			// Handle mouse events
-			_mouse->newMouse(_event);
+			_vm->_mouse->newMouse(_event);
 			handleEvents();
 			break;
 		default:
@@ -311,12 +311,12 @@ void EventManager::handleEvents() {
 	while (_eventQueueTail != _eventQueueHead) {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
-			if (_mouse->_hold && e._spritePtr != _mouse->_hold)
-				_mouse->_hold->touch(e._mask | kEventAttn, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
+			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
+				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y);
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
-				_mouse->gotoxy(e._x, e._y);
+				_vm->_mouse->gotoxy(e._x, e._y);
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
@@ -324,25 +324,25 @@ void EventManager::handleEvents() {
 					e._spritePtr->touch(e._mask, e._x, e._y);
 				else
 					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
-			} else if (_sys)
-					_sys->touch(e._mask, e._x, e._y);
+			} else if (_vm->_sys)
+					_vm->_sys->touch(e._mask, e._x, e._y);
 
 			if (e._mask & kMouseLeftDown) {
-				_mouse->_hold = e._spritePtr;
-				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = true;
+				_vm->_mouse->_hold = e._spritePtr;
+				if (_vm->_mouse->_hold) {
+					_vm->_mouse->_hold->_flags._hold = true;
 
-					if (_mouse->_hold->_flags._drag) {
-						_mouse->_hx = e._x - _mouse->_hold->_x;
-						_mouse->_hy = e._y - _mouse->_hold->_y;
+					if (_vm->_mouse->_hold->_flags._drag) {
+						_vm->_mouse->_hx = e._x - _vm->_mouse->_hold->_x;
+						_vm->_mouse->_hy = e._y - _vm->_mouse->_hold->_y;
 					}
 				}
 			}
 
 			if (e._mask & kMouseLeftUp) {
-				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = false;
-					_mouse->_hold = NULL;
+				if (_vm->_mouse->_hold) {
+					_vm->_mouse->_hold->_flags._hold = false;
+					_vm->_mouse->_hold = NULL;
 				}
 			}
 			///Touched = e.Ptr;
@@ -353,9 +353,9 @@ void EventManager::handleEvents() {
 		}
 		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
 	}
-	if (_mouse->_hold) {
-		if (_mouse->_hold->_flags._drag)
-			_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
+	if (_vm->_mouse->_hold) {
+		if (_vm->_mouse->_hold->_flags._drag)
+			_vm->_mouse->_hold->gotoxy(_vm->_mouse->_x - _vm->_mouse->_hx, _vm->_mouse->_y - _vm->_mouse->_hy);
 	}
 }
 

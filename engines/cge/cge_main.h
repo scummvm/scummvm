@@ -109,10 +109,6 @@ private:
 	CGEEngine *_vm;
 };
 
-extern System *_sys;
-extern Sprite *_pocLight;
-extern Keyboard *_keyboard;
-extern Mouse *_mouse;
 extern EventManager *_eventManager;
 extern Sprite *_pocket[];
 extern Sprite *_sprite;

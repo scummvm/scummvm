@@ -995,13 +995,13 @@ void Snail::runCom() {
 				if (spr == _hero && spr->seqTest(-1))
 					spr->step(kSeqHTalk);
 				_text->say(_text->getText(snc->_val), spr);
-				_sys->_funDel = kHeroFun0;
+				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;
 		case kSnInf:
 			if (_talkEnable) {
 				_vm->inf(_text->getText(snc->_val));
-				_sys->_funDel = kHeroFun0;
+				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;
 		case kSnTime:
