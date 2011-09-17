@@ -184,6 +184,7 @@ public:
 	Fx *_fx;
 	Sound *_sound;
 	ResourceManager *_resman;
+	Sprite *_pocket[kPocketNX];
 
 	Common::RandomSource _randomSource;
 	MusicPlayer *_midiPlayer;

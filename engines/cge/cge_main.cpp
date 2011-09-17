@@ -50,10 +50,6 @@
 
 namespace CGE {
 
-uint16  _stklen = (kStackSize * 2);
-
-Sprite *_pocket[kPocketNX];
-
 const char *savegameStr = "SCUMMVM_CGE";
 
 //--------------------------------------------------------------------------
@@ -951,7 +947,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 
 	if ((mask & kMouseRightUp) && _vm->_snail->idle()) {
-		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
+		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _vm->_pocket[_vm->_pocPtr] : NULL;
 		if (ps) {
 			if (_flags._kept || _hero->distance(this) < kDistMax) {
 				if (works(ps)) {
@@ -994,7 +990,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 	if ((mask & kMouseLeftUp) && _vm->_snail->idle()) {
 		if (_flags._kept) {
 			for (int n = 0; n < kPocketNX; n++) {
-				if (_pocket[n] == this) {
+				if (_vm->_pocket[n] == this) {
 					_vm->selectPocket(n);
 					break;
 				}

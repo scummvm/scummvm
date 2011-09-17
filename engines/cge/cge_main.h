@@ -109,8 +109,6 @@ private:
 	CGEEngine *_vm;
 };
 
-extern Sprite *_pocket[];
-
 } // End of namespace CGE
 
 #endif
