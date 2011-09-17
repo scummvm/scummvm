@@ -48,7 +48,7 @@ class Node {
 		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
 		virtual void draw() = 0;
 		virtual void load(Archive &archive, uint16 id) = 0;
-		void unload();
+		virtual void unload();
 		void dumpFaceMask(Archive &archive, uint16 index, int face);
 		virtual ~Node() {};
 };

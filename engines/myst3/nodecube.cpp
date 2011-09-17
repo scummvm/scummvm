@@ -22,6 +22,8 @@
 
 #include "engines/myst3/nodecube.h"
 
+#include "common/debug.h"
+
 namespace Myst3 {
 
 NodeCube::NodeCube() {
@@ -91,10 +93,22 @@ void NodeCube::loadMovie(Archive &archive, uint16 id) {
 	movie.pBottomLeft = planeOrigin + vBottom + vLeft;
 	movie.pBottomRight = planeOrigin + vBottom + vRight;
 	movie.pTopRight = planeOrigin + vTop + vRight;
+	movie.bink = new Video::BinkDecoder();
+	movie.bink->loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
+	glGenTextures(1, &movie.texture);
+
+	glBindTexture(GL_TEXTURE_2D, movie.texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _cubeTextureSize, _cubeTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	_movies.push_back(movie);
-
-	delete binkStream;
 }
 
 void NodeCube::draw() {
@@ -156,22 +170,49 @@ void NodeCube::draw() {
 
 	glDepthMask(GL_TRUE);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
 	for (uint i = 0; i < _movies.size(); i++) {
-		glBegin(GL_POLYGON);
-			glColor4f(0.0f, 0.5f, 0.0f, 0.2f);
-			glVertex3f(-_movies[i].pTopLeft.x(), _movies[i].pTopLeft.y(), _movies[i].pTopLeft.z());
-			glVertex3f(-_movies[i].pBottomLeft.x(), _movies[i].pBottomLeft.y(), _movies[i].pBottomLeft.z());
-			glVertex3f(-_movies[i].pBottomRight.x(), _movies[i].pBottomRight.y(), _movies[i].pBottomRight.z());
-			glVertex3f(-_movies[i].pTopRight.x(), _movies[i].pTopRight.y(), _movies[i].pTopRight.z());
+		const Myst3::Movie &movie = _movies[i];
+
+		if(movie.bink->endOfVideo())
+			continue;
+
+		const float w = movie.bink->getWidth() / (float)(_cubeTextureSize);
+		const float h = movie.bink->getHeight() / (float)(_cubeTextureSize);
+
+		glBindTexture(GL_TEXTURE_2D, _movies[i].texture);
+
+		if (movie.bink->needsUpdate()) {
+			const Graphics::Surface *frame = movie.bink->decodeNextFrame();
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
+		}
+
+		glBegin(GL_TRIANGLE_STRIP);
+			glTexCoord2f(0, 0);
+			glVertex3f(-movie.pTopLeft.x(), movie.pTopLeft.y(), movie.pTopLeft.z());
+
+			glTexCoord2f(0, h);
+			glVertex3f(-movie.pBottomLeft.x(), movie.pBottomLeft.y(), movie.pBottomLeft.z());
+
+			glTexCoord2f(w, 0);
+			glVertex3f(-movie.pTopRight.x(), movie.pTopRight.y(), movie.pTopRight.z());
+
+			glTexCoord2f(w, h);
+			glVertex3f(-movie.pBottomRight.x(), movie.pBottomRight.y(), movie.pBottomRight.z());
 		glEnd();
 	}
 
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
+}
+
+void NodeCube::unload() {
+
+	for (uint i = 0; i < _movies.size(); i++) {
+		const Myst3::Movie &movie = _movies[i];
+
+		delete movie.bink;
+		glDeleteTextures(1, &movie.texture);
+	}
+
+	Node::unload();
 }
 
 } /* namespace Myst3 */

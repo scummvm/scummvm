@@ -136,7 +136,6 @@ Common::Error Myst3Engine::run() {
 					if (event.kbd.flags & Common::KBD_CTRL) {
 						_console->attach();
 						_console->onFrame();
-						_scene->init(w, h);
 					}
 					break;
 				default:

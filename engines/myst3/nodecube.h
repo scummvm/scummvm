@@ -24,6 +24,7 @@
 #define NODECUBE_H_
 
 #include "engines/myst3/node.h"
+#include "video/bink_decoder.h"
 
 namespace Myst3 {
 
@@ -32,6 +33,9 @@ struct Movie {
 	Graphics::Vector3d pBottomLeft;
 	Graphics::Vector3d pBottomRight;
 	Graphics::Vector3d pTopRight;
+
+	Video::BinkDecoder *bink;
+	GLuint texture;
 };
 
 class NodeCube: public Myst3::Node {
@@ -40,6 +44,7 @@ public:
 	virtual ~NodeCube();
 
 	void load(Archive &archive, uint16 id);
+	void unload();
 	void draw();
 
 	void loadMovie(Archive &archive, uint16 id);
