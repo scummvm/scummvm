@@ -368,7 +368,7 @@ public:
 	Scene340();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
+	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
@@ -424,7 +424,7 @@ public:
 	Scene342();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
+	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
@@ -484,10 +484,63 @@ public:
 
 	Scene350();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
+	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void checkGun();
+};
+
+class Scene385: public SceneExt {
+	/* Items */
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Jim: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Dezi: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	Action2 _action2;
+	Door _door;
+	Jim _jim;
+	Dezi _dezi;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJim _jimSpeaker;
+	SpeakerDezi _deziSpeaker;
+	SpeakerJake385 _jake385Speaker;
+	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	Exit _exit;
+	int _talkAction, _jimFlag;
+
+	Scene385();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
 };
 
 } // End of namespace BlueForce

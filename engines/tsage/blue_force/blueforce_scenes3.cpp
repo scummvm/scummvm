@@ -2818,6 +2818,332 @@ void Scene350::checkGun() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 385 - City Hall
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene385::Action1::signal() {
+	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._player.disableControl();
+
+		switch (scene->_talkAction) {
+		case 0:
+			error("Bugs::talkscript385");
+			break;
+		case 3850:
+		case 3851:
+		case 3852:
+		case 3853:
+		case 3854:
+		case 3855:
+		case 3856:
+		case 3857:
+		case 3863:
+		case 3866: {
+			ADD_PLAYER_MOVER(187, 144);
+			break;
+		}
+		default: {
+			ADD_PLAYER_MOVER(231, 158);
+			break;
+		}
+		}
+		break;
+	case 1:
+		BF_GLOBALS._player.changeAngle(45);
+		setDelay(3);
+		break;
+	case 2:
+		scene->_stripManager.start(scene->_talkAction, this);
+		break;
+	case 3:
+		if (scene->_talkAction)
+			scene->_dezi.animate(ANIM_MODE_5, NULL);
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	}
+}
+
+void Scene385::Action2::signal() {
+	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		ADD_PLAYER_MOVER(231, 158);
+		break;
+	}
+	case 1:
+		BF_GLOBALS._player.updateAngle(BF_GLOBALS._player._position);
+		setDelay(3);
+		break;
+	case 2:
+		scene->_stripManager.start(3864, this);
+		break;
+	case 3:
+		scene->_jim.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		scene->_jim.setStrip(4);
+		scene->_jim.animate(ANIM_MODE_5, this);
+		break;
+	case 5:
+		scene->_stripManager.start(3865, this);
+		break;
+	case 6:
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene385::Door::startAction(CursorType action, Event &event) {
+	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		BF_GLOBALS._walkRegions.proc2(6);
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 3850;
+		scene->setAction(&scene->_sequenceManager, scene, 3850, &BF_GLOBALS._player, this, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene385::Jim::startAction(CursorType action, Event &event) {
+	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		if (scene->_jimFlag) {
+			scene->_talkAction = 3867;
+			scene->setAction(&scene->_action1);
+		} else {
+			switch (BF_GLOBALS._dayNumber) {
+			case 1:
+				scene->_talkAction = 3858;
+				break;
+			case 2:
+				scene->_talkAction = 3859;
+				break;
+			case 3:
+				scene->_talkAction = 3860;
+				break;
+			case 4:
+				scene->_talkAction = 3861;
+				break;
+			default:
+				BF_GLOBALS._deziTopic = 3;
+				scene->_talkAction = 3868;
+				break;
+			}
+			
+			scene->_jimFlag = 1;
+			scene->setAction(&scene->_action1);
+		}
+		return true;
+	case INV_PRINT_OUT:
+		if (!BF_GLOBALS.getFlag(fGotPointsForMCard)) {
+			BF_GLOBALS._uiElements.addScore(30);
+			BF_GLOBALS.getFlag(fGotPointsForMCard);
+
+			scene->setAction(&scene->_action2);
+			return true;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+bool Scene385::Dezi::startAction(CursorType action, Event &event) {
+	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		if (BF_GLOBALS._deziTopic == 3) {
+			scene->_talkAction = 3857;
+		} else {
+			BF_GLOBALS._deziTopic = 3;
+
+			switch (BF_GLOBALS._dayNumber) {
+			case 1:
+				if (BF_GLOBALS._deziTopic++ == 0) {
+					scene->_talkAction = 3850;
+				} else {
+					BF_GLOBALS._deziTopic = 3;
+					scene->_talkAction = 3851;
+				}
+				break;
+			case 2:
+				if (BF_GLOBALS._deziTopic++ == 0) {
+					scene->_talkAction = 3852;
+				} else {
+					BF_GLOBALS._deziTopic = 3;
+					scene->_talkAction = 3853;
+				}
+				break;
+			case 3:
+				if (BF_GLOBALS._deziTopic++ == 0) {
+					scene->_talkAction = 3854;
+				} else {
+					BF_GLOBALS._deziTopic = 3;
+					scene->_talkAction = 3855;
+				}
+				break;
+			case 4:
+				BF_GLOBALS._deziTopic = 3;
+				scene->_talkAction = 3856;
+				break;
+			default:
+				BF_GLOBALS._deziTopic = 3;
+				scene->_talkAction = 3868;
+				break;				
+			}
+		}
+
+		scene->setAction(&scene->_action1);
+		return true;
+	case INV_PRINT_OUT:
+		scene->_talkAction = 3863;
+		scene->setAction(&scene->_action1);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene385::Exit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(BF_GLOBALS._player._position.x - 100, BF_GLOBALS._player._position.y + 100);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+
+Scene385::Scene385(): SceneExt() {
+	_talkAction = _jimFlag = 0;
+}
+
+void Scene385::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_talkAction);
+	s.syncAsSint16LE(_jimFlag);
+}
+
+void Scene385::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 1;
+
+	_exit.setDetails(Rect(0, 162, 320, 167), 385, -1, -1, -1, 1, NULL);
+	BF_GLOBALS._sound1.fadeSound(119);
+
+	loadScene(385);
+	setZoomPercents(115, 90, 145, 100);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_jake385Speaker);
+	_stripManager.addSpeaker(&_jimSpeaker);
+	_stripManager.addSpeaker(&_deziSpeaker);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 361 : 368);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.changeZoom(-1);
+	BF_GLOBALS._player.enableControl();
+
+	_item3.setDetails(1, 385, 5, -1, -1, 1);
+	_item2.setDetails(2, 385, 7, -1, -1, 1);
+	_item1.setDetails(3, 385, 6, -1, 6, 1);
+	_item5.setDetails(4, 385, 14, -1, -1, 1);
+	
+	_jim.postInit();
+	_jim.setVisage(385);
+	_jim.setStrip(3);
+	_jim.setPosition(Common::Point(304, 113));
+	_jim.setDetails(385, 1, -1, 2, 1, NULL);
+
+	_dezi.postInit();
+	_dezi.setVisage(385);
+	_dezi.setStrip(2);
+	_dezi.setPosition(Common::Point(235, 93));
+	_dezi.fixPriority(120);
+	_dezi.setDetails(385, 3, -1, 2, 1, NULL);
+
+	_door.postInit();
+	_door.setVisage(385);
+	_door.setPosition(Common::Point(107, 27));
+	_door.setDetails(385, 0, -1, -1, 1, NULL);
+
+	BF_GLOBALS._walkRegions.proc1(6);
+
+	if (BF_GLOBALS._sceneManager._previousScene == 390) {
+		BF_GLOBALS._player.setPosition(Common::Point(109, 119));
+	} else {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._player.setPosition(Common::Point(15, 250));
+		_sceneMode = 3852;
+		setAction(&_sequenceManager, this, 3852, &BF_GLOBALS._player, NULL);
+	}
+
+	_item4.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 385, 4, -1, -1, 1, NULL);
+}
+
+void Scene385::signal() {
+	switch (_sceneMode) {
+	case 3850:
+		BF_GLOBALS._sceneManager.changeScene(390);
+		break;
+	case 3851:
+		BF_GLOBALS._sceneManager.changeScene(380);
+		break;
+	case 3852:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene385::process(Event &event) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene385::dispatch() {
+	SceneExt::dispatch();
+
+	if (!_action && (BF_GLOBALS._player._position.y > 162)) {
+		// Leaving by exit
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 3851;
+		setAction(&_sequenceManager, this, 3851, &BF_GLOBALS._player, NULL);
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

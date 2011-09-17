@@ -171,6 +171,7 @@ public:
 	int _v4CEA4;
 	int _v4CEB4;
 	int _v4CEB6;
+	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;

@@ -423,6 +423,135 @@ void SpeakerCarter::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerDriver::SpeakerDriver(): VisualSpeaker() {
+	_color1 = 43;
+	_color2 = 70;
+	_speakerName = "DRIVER";
+}
+
+void SpeakerDriver::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(416);
+	_object1.setStrip2(8);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 263,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2.postInit();
+	_object2.setVisage(416);
+	_object2.setStrip2(1);
+	_object2.fixPriority(-1);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 263,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerShooter::SpeakerShooter(): VisualSpeaker() {
+	_color1 = 43;
+	_color2 = 70;
+	_speakerName = "SHOOTER";
+}
+
+void SpeakerShooter::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(418);
+	_object1.setStrip2(7);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 268,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2.postInit();
+	_object2.setVisage(418);
+	_object2.setStrip2(1);
+	_object2.fixPriority(-1);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 268,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerJim::SpeakerJim(): VisualSpeaker() {
+	_color1 = 32;
+	_speakerName = "JIM";
+}
+
+void SpeakerJim::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(385);
+	_object1.setStrip(7);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(262, 166));
+
+	_object2.postInit();
+	_object2.setVisage(385);
+	_object2.setStrip2(6);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(262, 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerDezi::SpeakerDezi(): VisualSpeaker() {
+	_color1 = 21;
+	_speakerName = "DEZI";
+}
+
+void SpeakerDezi::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(385);
+	_object2.setStrip2(5);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(252, 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerJake385::SpeakerJake385(): VisualSpeaker() {
+	_color1 = 13;
+	_speakerName = "JAKE_385";
+}
+
+void SpeakerJake385::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(1001);
+	_object1.setStrip2(BF_GLOBALS.getFlag(onDuty) ? 3 : 4);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(42, 166));
+
+	_object2.postInit();
+	_object2.setVisage(1001);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(42, 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

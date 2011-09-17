@@ -163,6 +163,46 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerDriver: public VisualSpeaker {
+public:
+	SpeakerDriver();
+
+	virtual Common::String getClassName() { return "SpeakerDriver"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerShooter: public VisualSpeaker {
+public:
+	SpeakerShooter();
+
+	virtual Common::String getClassName() { return "SpeakerShooter"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerJim: public VisualSpeaker {
+public:
+	SpeakerJim();
+
+	virtual Common::String getClassName() { return "SpeakerJim"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerDezi: public VisualSpeaker {
+public:
+	SpeakerDezi();
+
+	virtual Common::String getClassName() { return "SpeakerDezi"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerJake385: public VisualSpeaker {
+public:
+	SpeakerJake385();
+
+	virtual Common::String getClassName() { return "SpeakerJake385"; }
+	virtual void setText(const Common::String &msg);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
