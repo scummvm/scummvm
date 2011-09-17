@@ -170,6 +170,20 @@ struct Rect {
 	}
 
 	/**
+	 * Find the intersecting rectangle between this rectangle and the given rectangle
+	 *
+	 * @param r the intersecting rectangle
+	 *
+	 * @return the intersection of the rectangles or an empty rectangle if not intersecting
+	 */
+	Rect findIntersectingRect(const Rect &r) const {
+		if (!intersects(r))
+			return Rect();
+
+		return Rect(MAX(r.left, left), MAX(r.top, top), MIN(r.right, right), MIN(r.bottom, bottom));
+	}
+
+	/**
 	 * Extend this rectangle so that it contains r
 	 *
 	 * @param r the rectangle to extend by
