@@ -30,6 +30,8 @@
 #include "common/rational.h"
 
 #include "pegasus/constants.h"
+#include "pegasus/notification.h"
+#include "pegasus/util.h"
 
 namespace Pegasus {
 
@@ -188,8 +190,6 @@ protected:
 
 };
 
-class Notification;
-
 class NotificationCallBack : public TimeBaseCallBack {
 public:
 	NotificationCallBack();
@@ -210,6 +210,41 @@ protected:
 class DynamicElement : public TimeBase {
 public:
 	TimeValue percentSeconds(const uint32 percent) { return getScale() * percent / 100; }
+};
+
+class Fuse : private NotificationReceiver {
+public:
+	Fuse();
+	virtual ~Fuse() {}
+
+	void primeFuse(const TimeValue, const TimeScale = 1); // An appropriately named function :P
+	void lightFuse();
+	void stopFuse();
+	bool isFuseLit() { return _fuseTimer.isRunning() || _fuseTimer.isPaused(); }
+	void advanceFuse(const TimeValue);
+	TimeValue getTimeRemaining();
+	TimeScale getFuseScale() { return _fuseTimer.getScale(); }
+
+	void pauseFuse() { _fuseTimer.pause(); }
+	void resumeFuse() { _fuseTimer.resume(); }
+	bool isFusePaused() { return _fuseTimer.isPaused(); }
+
+protected:
+	virtual void receiveNotification(Notification *, const tNotificationFlags);
+	virtual void invokeAction() {}
+
+	TimeBase _fuseTimer;
+	NotificationCallBack _fuseCallBack;
+	Notification _fuseNotification;
+};
+
+class FuseFunction : public Fuse, public FunctionPtr {
+public:
+	FuseFunction();
+	virtual ~FuseFunction();
+
+protected:
+	virtual void invokeAction() { callFunction(); }
 };
 
 } // End of namespace Pegasus

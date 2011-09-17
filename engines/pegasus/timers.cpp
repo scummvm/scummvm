@@ -332,4 +332,51 @@ void NotificationCallBack::callBack() {
 		_notifier->setNotificationFlags(_callBackFlag, _callBackFlag);
 }
 
+static const tNotificationFlags kFuseExpiredFlag = 1;
+
+Fuse::Fuse() : _fuseNotification(0, (NotificationManager *)((PegasusEngine *)g_engine)) {
+	_fuseNotification.notifyMe(this, kFuseExpiredFlag, kFuseExpiredFlag);
+	_fuseCallBack.setNotification(&_fuseNotification);
+	_fuseCallBack.initCallBack(&_fuseTimer, kCallBackAtExtremes);
+	_fuseCallBack.setCallBackFlag(kFuseExpiredFlag);
+}
+
+void Fuse::primeFuse(const TimeValue frequency, const TimeScale scale) {
+	stopFuse();
+	_fuseTimer.setScale(scale);
+	_fuseTimer.setSegment(0, frequency);
+	_fuseTimer.setTime(0);
+}
+
+void Fuse::lightFuse() {
+	if (!_fuseTimer.isRunning()) {
+		_fuseCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+		_fuseTimer.start();
+	}
+}
+
+void Fuse::stopFuse() {
+	_fuseTimer.stop();
+	_fuseCallBack.cancelCallBack();
+	// Make sure the fuse has not triggered but not been caught yet...
+	_fuseNotification.setNotificationFlags(0, 0xffffffff);
+}
+
+void Fuse::advanceFuse(const TimeValue time) {
+	if (_fuseTimer.isRunning()) {
+		_fuseTimer.stop();
+		_fuseTimer.setTime(_fuseTimer.getTime() + time);
+		_fuseTimer.start();
+	}
+}
+
+TimeValue Fuse::getTimeRemaining() {
+	return _fuseTimer.getStop() - _fuseTimer.getTime();
+}
+
+void Fuse::receiveNotification(Notification *, const tNotificationFlags) {
+	stopFuse();
+	invokeAction();
+}
+
 } // End of namespace Pegasus
