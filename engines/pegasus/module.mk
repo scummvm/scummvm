@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	pegasus.o \
 	sound.o \
 	timers.o \
+	transition.o \
 	util.o \
 	video.o \
 	items/inventory.o \

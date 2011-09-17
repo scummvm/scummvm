@@ -1,0 +1,105 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * Additional copyright for this file:
+ * Copyright (C) 1995-1997 Presto Studios, Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef PEGASUS_TRANSITION_H
+#define PEGASUS_TRANSITION_H
+
+#include "pegasus/fader.h"
+
+namespace Pegasus {
+
+class ScreenFader : public Fader {
+public:
+	ScreenFader();
+	virtual ~ScreenFader() {}
+	
+	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
+	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
+
+	void setFaderValue(const uint32);	
+
+protected:
+	uint32 _fadeTarget;
+
+private:
+	static uint32 getBlack();
+};
+
+//	Transitions are faders that range over [0,1000], which makes their
+//	"resolution" one tenth of a percent
+
+const long kTransitionBottom = 0;
+const long kTransitionTop = 1000;
+
+const long kTransitionRange = kTransitionTop - kTransitionBottom;
+
+class Transition : public FaderAnimation {
+public:
+	Transition(const tDisplayElementID id);
+	virtual ~Transition() {}
+	
+	virtual void setBounds(const Common::Rect &);
+	
+	virtual void setInAndOutElements(DisplayElement *, DisplayElement *);
+	DisplayElement *getInElement() { return _inPicture; }
+	DisplayElement *getOutElement() { return _outPicture; }
+
+protected:
+	DisplayElement *_outPicture;
+	DisplayElement *_inPicture;
+
+	tCoordType _boundsWidth, _boundsHeight;
+};
+
+class Slide : public Transition {
+public:
+	Slide(const tDisplayElementID id) : Transition(id) {}
+	virtual ~Slide() {}
+
+	virtual void setSlideDirection(tSlideDirection dir) { _direction = dir; }
+	virtual void draw(const Common::Rect &);
+
+	virtual void setDirection(const tSlideDirection dir) { _direction = dir; }
+
+protected:
+	virtual void adjustSlideRects(Common::Rect &, Common::Rect &);
+	virtual void drawElements(const Common::Rect &, const Common::Rect &, const Common::Rect &);
+	virtual void drawSlideElement(const Common::Rect &, const Common::Rect &, DisplayElement *);
+
+	tSlideDirection _direction;
+};
+
+class Push : public Slide {
+public:
+	Push(const tDisplayElementID id) : Slide(id) {}
+	virtual ~Push() {}
+
+protected:
+	virtual void adjustSlideRects(Common::Rect &, Common::Rect &);
+};
+
+} // End of namespace Pegasus
+
+#endif
