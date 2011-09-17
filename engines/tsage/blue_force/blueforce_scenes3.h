@@ -543,6 +543,67 @@ public:
 	virtual void dispatch();
 };
 
+class Scene390: public SceneExt {
+	/* Items */
+	class BookingForms: public NamedHotspotExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Green: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GangMember1: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GangMember2: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SpeakerJailer _jailerSpeaker;
+	SpeakerDriver _driverSpeaker;
+	SpeakerShooter _shooterSpeaker;
+	Action1 _action1;
+	Green _green;
+	Object2 _object2;
+	Object3 _object3;
+	GangMember1 _gangMember1;
+	GangMember2 _gangMember2;
+	Door _door;
+	NamedHotspot _item1, _item3, _item4;
+	BookingForms _bookingForms;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

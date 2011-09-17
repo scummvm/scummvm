@@ -112,6 +112,18 @@ public:
 	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
+class NamedObjectExt: public NamedObject {
+public:
+	int _flag;
+
+	NamedObjectExt() { _flag = 0; }
+	virtual Common::String getClassName() { return "NamedObjectExt"; }
+	virtual void synchronize(Serializer &s) {
+		NamedObject::synchronize(s);
+		s.syncAsSint16LE(_flag);
+	}
+};
+
 class CountdownObject: public NamedObject {
 public:
 	int _countDown;

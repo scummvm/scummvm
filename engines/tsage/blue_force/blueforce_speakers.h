@@ -116,6 +116,14 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerGreen: public VisualSpeaker {
+public:
+	SpeakerGreen();
+
+	virtual Common::String getClassName() { return "SpeakerGreen"; }
+	virtual void setText(const Common::String &msg);
+};
+
 class SpeakerPSutter: public VisualSpeaker {
 public:
 	SpeakerPSutter();

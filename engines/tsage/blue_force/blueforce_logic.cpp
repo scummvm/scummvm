@@ -109,11 +109,13 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 360:
 	case 370:
 	case 380:
+		error("Scene group 3 not implemented");
 	case 385:
 		// City Hall
 		return new Scene385();
 	case 390:
-		error("Scene group 3 not implemented");
+		// City Jail
+		return new Scene390();
 	case 410:
 	case 415:
 	case 440:

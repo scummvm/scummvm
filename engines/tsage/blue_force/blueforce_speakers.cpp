@@ -288,6 +288,28 @@ void SpeakerJailer::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
+SpeakerGreen::SpeakerGreen(): VisualSpeaker() {
+	_color1 = 96;
+	_color2 = 99;
+	_speakerName = "GREEN";
+}
+
+void SpeakerGreen::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(373);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 40,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
 SpeakerPSutter::SpeakerPSutter(): VisualSpeaker() {
 	_color1 = 20;
 	_color2 = 22;
