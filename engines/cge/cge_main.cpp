@@ -52,22 +52,7 @@ namespace CGE {
 
 uint16  _stklen = (kStackSize * 2);
 
-EventManager *_eventManager;
 Sprite *_pocket[kPocketNX];
-Sprite *_sprite;
-Sprite *_miniScene;
-Sprite *_shadow;
-HorizLine *_horzLine;
-InfoLine *_infoLine;
-SceneLight *_sceneLight;
-InfoLine *_debugLine;
-
-Snail *_snail;
-Snail *_snail_;
-
-Fx *_fx;
-Sound *_sound;
-ResourceManager *_resman;
 
 const char *savegameStr = "SCUMMVM_CGE";
 
@@ -219,7 +204,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
-		kSavegame0File file = kSavegame0File(kSavegame0Name);
+		kSavegame0File file = kSavegame0File(this, kSavegame0Name);
 		int size = file.size();
 		byte *dataBuffer = (byte *)malloc(size);
 		file.read(dataBuffer, size);
@@ -490,7 +475,7 @@ void CGEEngine::tooFar() {
 void CGEEngine::loadHeroXY() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadHeroXY()");
 
-	EncryptedStream cf("CGE.HXY");
+	EncryptedStream cf(this, "CGE.HXY");
 	uint16 x, y;
 
 	memset(_heroXY, 0, sizeof(_heroXY));
@@ -509,7 +494,7 @@ void CGEEngine::loadMapping() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::loadMapping()");
 
 	if (_now <= kSceneMax) {
-		EncryptedStream cf("CGE.TAB");
+		EncryptedStream cf(this, "CGE.TAB");
 		if (!cf.err()) {
 			// Move to the data for the given room
 			cf.seek((_now - 1) * kMapArrSize);
@@ -536,7 +521,7 @@ void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & kMouseLeftUp) {
 		_vm->XZ(_x + x, _y + y).cell() = 0;
-		_snail_->addCom(kSnKill, -1, 0, this);
+		_vm->_snail_->addCom(kSnKill, -1, 0, this);
 	}
 }
 
@@ -629,7 +614,7 @@ void CGEEngine::sceneUp() {
 
 	const int BakRef = 1000 * _now;
 	if (_music)
-		_midiPlayer.loadMidi(_now);
+		_midiPlayer->loadMidi(_now);
 
 	showBak(BakRef);
 	loadMapping();
@@ -775,7 +760,7 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->keyClick();
 		_vm->killText();
 		if (_vm->_startupMode == 1) {
-			_snail->addCom(kSnClear, -1, 0, NULL);
+			_vm->_snail->addCom(kSnClear, -1, 0, NULL);
 			return;
 		}
 		switch (x) {
@@ -789,7 +774,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case '3':
 		case '4':
 			if (_vm->_keyboard->_key[kKeyAlt]) {
-				_snail->addCom(kSnLevel, -1, x - '0', NULL);
+				_vm->_snail->addCom(kSnLevel, -1, x - '0', NULL);
 				break;
 			}
 			break;
@@ -798,7 +783,7 @@ void System::touch(uint16 mask, int x, int y) {
 		if (_vm->_startupMode)
 			return;
 		int selectedScene = 0;
-		_infoLine->update(NULL);
+		_vm->_infoLine->update(NULL);
 		if (y >= kWorldHeight ) {
 			if (x < kButtonX) {                           // select scene?
 				if (y >= kSceneY && y < kSceneY + kSceneNy * kSceneDy &&
@@ -821,10 +806,10 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->postMiniStep(selectedScene - 1);
 
 		if (mask & kMouseLeftUp) {
-			if (selectedScene && _snail->idle() && _hero->_tracePtr < 0)
+			if (selectedScene && _vm->_snail->idle() && _hero->_tracePtr < 0)
 				_vm->switchScene(selectedScene);
 
-			if (_horzLine && !_horzLine->_flags._hide) {
+			if (_vm->_horzLine && !_vm->_horzLine->_flags._hide) {
 				if (y >= kMapTop && y < kMapTop + kMapHig) {
 					Cluster tmpCluster = _vm->XZ(x, y);
 					int16 x1 = tmpCluster._pt.x;
@@ -833,7 +818,7 @@ void System::touch(uint16 mask, int x, int y) {
 					_vm->setMapBrick(x1, z1);
 				}
 			} else {
-				if (!_talk && _snail->idle() && _hero
+				if (!_talk && _vm->_snail->idle() && _hero
 				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
 					_hero->findWay(_vm->XZ(x, y));
 				}
@@ -846,7 +831,7 @@ void System::tick() {
 	if (!_vm->_startupMode)
 		if (--_funDel == 0) {
 			_vm->killText();
-			if (_snail->idle()) {
+			if (_vm->_snail->idle()) {
 				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
 				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
@@ -881,9 +866,9 @@ void CGEEngine::switchMusic() {
 	keyClick();
 
 	if (_music)
-		_midiPlayer.loadMidi(_now);
+		_midiPlayer->loadMidi(_now);
 	else
-		_midiPlayer.killMidi();
+		_midiPlayer->killMidi();
 }
 
 void CGEEngine::startCountDown() {
@@ -946,10 +931,10 @@ void Sprite::touch(uint16 mask, int x, int y) {
 	if ((mask & kEventAttn) != 0)
 		return;
 
-	_infoLine->update(name());
+	_vm->_infoLine->update(name());
 
 	if (mask & (kMouseRightDown | kMouseLeftDown))
-		_sprite = this;
+		_vm->_sprite = this;
 
 	if (_ref / 10 == 12) {
 		_vm->optionTouch(_ref % 10, mask);
@@ -965,7 +950,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			mask |= kMouseRightUp;
 		}
 
-	if ((mask & kMouseRightUp) && _snail->idle()) {
+	if ((mask & kMouseRightUp) && _vm->_snail->idle()) {
 		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _pocket[_vm->_pocPtr] : NULL;
 		if (ps) {
 			if (_flags._kept || _hero->distance(this) < kDistMax) {
@@ -985,8 +970,8 @@ void Sprite::touch(uint16 mask, int x, int y) {
 						if (_vm->findPocket(NULL) < 0) {
 							_vm->pocFul();
 						} else {
-							_snail->addCom(kSnReach, -1, -1, this);
-							_snail->addCom(kSnKeep, -1, -1, this);
+							_vm->_snail->addCom(kSnReach, -1, -1, this);
+							_vm->_snail->addCom(kSnKeep, -1, -1, this);
 							_flags._port = false;
 						}
 					} else {
@@ -1006,7 +991,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 	}
 
-	if ((mask & kMouseLeftUp) && _snail->idle()) {
+	if ((mask & kMouseLeftUp) && _vm->_snail->idle()) {
 		if (_flags._kept) {
 			for (int n = 0; n < kPocketNX; n++) {
 				if (_pocket[n] == this) {
@@ -1015,7 +1000,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				}
 			}
 		} else {
-			_snail->addCom(kSnWalk, -1, -1, this); // Hero->FindWay(this);
+			_vm->_snail->addCom(kSnWalk, -1, -1, this); // Hero->FindWay(this);
 		}
 	}
 }
@@ -1043,7 +1028,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 	mergeExt(tmpStr, fname, kSprExt);
 
 	if (_resman->exist(tmpStr)) {      // sprite description file exist
-		EncryptedStream sprf(tmpStr);
+		EncryptedStream sprf(this, tmpStr);
 		if (sprf.err())
 			error("Bad SPR [%s]", tmpStr);
 
@@ -1148,7 +1133,7 @@ void CGEEngine::loadSprite(const char *fname, int ref, int scene, int col = 0, i
 }
 
 void CGEEngine::loadScript(const char *fname) {
-	EncryptedStream scrf(fname);
+	EncryptedStream scrf(this, fname);
 
 	if (scrf.err())
 		return;
@@ -1356,7 +1341,7 @@ void CGEEngine::runGame() {
 		_sprite->step(_music);
 	_snail_->addCom(kSnSeq, -1, _music, _sprite);
 	if (!_music)
-		_midiPlayer.killMidi();
+		_midiPlayer->killMidi();
 
 	if (_resman->exist("MINI.SPR")) {
 		_miniShp = new BitmapPtr[2];
@@ -1505,7 +1490,7 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->copyPage(0, 2);
 		_soundOk = 2;
 		if (_music)
-			_midiPlayer.loadMidi(0);
+			_midiPlayer->loadMidi(0);
 	}
 
 	if (_mode < 2) {
@@ -1560,7 +1545,7 @@ void CGEEngine::cge_main() {
 		_horzLine->_flags._hide = true;
 
 	if (_music && _soundOk)
-		_midiPlayer.loadMidi(0);
+		_midiPlayer->loadMidi(0);
 
 	if (_startGameSlot != -1) {
 		// Starting up a savegame from the launcher

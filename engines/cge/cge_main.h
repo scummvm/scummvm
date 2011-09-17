@@ -109,19 +109,7 @@ private:
 	CGEEngine *_vm;
 };
 
-extern EventManager *_eventManager;
 extern Sprite *_pocket[];
-extern Sprite *_sprite;
-extern Sprite *_miniScene;
-extern Sprite *_shadow;
-extern HorizLine *_horzLine;
-extern InfoLine *_infoLine;
-extern SceneLight *_sceneLight;
-extern InfoLine *_debugLine;
-extern Snail *_snail;
-extern Snail *_snail_;
-extern Fx *_fx;
-extern Sound *_sound;
 
 } // End of namespace CGE
 

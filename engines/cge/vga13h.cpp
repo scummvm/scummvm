@@ -72,8 +72,8 @@ Sprite::Sprite(CGEEngine *vm, BitmapPtr *shpP)
 }
 
 Sprite::~Sprite() {
-	if (_sprite == this)
-		_sprite = NULL;
+	if (_vm->_sprite == this)
+		_vm->_sprite = NULL;
 
 	contract();
 }
@@ -211,8 +211,8 @@ Sprite *Sprite::expand() {
 	Snail::Com *nearList = NULL;
 	Snail::Com *takeList = NULL;
 	_vm->mergeExt(fname, _file, kSprExt);
-	if (_resman->exist(fname)) { // sprite description file exist
-		EncryptedStream sprf(fname);
+	if (_vm->_resman->exist(fname)) { // sprite description file exist
+		EncryptedStream sprf(_vm, fname);
 		if (sprf.err())
 			error("Bad SPR [%s]", fname);
 		Common::String line;

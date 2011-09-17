@@ -50,7 +50,7 @@ Font::~Font() {
 }
 
 void Font::load() {
-	EncryptedStream f = _path;
+	EncryptedStream f(_vm, _path);
 	assert(!f.err());
 
 	f.read(_widthArr, kWidSize);

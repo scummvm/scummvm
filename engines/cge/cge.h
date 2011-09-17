@@ -45,6 +45,13 @@ class Vga;
 class System;
 class Keyboard;
 class Mouse;
+class HorizLine;
+class InfoLine;
+class SceneLight;
+class Snail;
+class Snail;
+class EventManager;
+class ResourceManager;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -164,9 +171,22 @@ public:
 	Sprite *_pocLight;
 	Keyboard *_keyboard;
 	Mouse *_mouse;
+	Sprite *_sprite;
+	Sprite *_miniScene;
+	Sprite *_shadow;
+	HorizLine *_horzLine;
+	InfoLine *_infoLine;
+	InfoLine *_debugLine;
+	SceneLight *_sceneLight;
+	Snail *_snail;
+	Snail *_snail_;
+	EventManager *_eventManager;
+	Fx *_fx;
+	Sound *_sound;
+	ResourceManager *_resman;
 
 	Common::RandomSource _randomSource;
-	MusicPlayer _midiPlayer;
+	MusicPlayer *_midiPlayer;
 	BitmapPtr *_miniShp;
 	BitmapPtr *_miniShpList;
 	int        _startGameSlot;

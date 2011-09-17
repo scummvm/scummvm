@@ -33,6 +33,8 @@
 
 namespace CGE {
 
+class CGEEngine;
+
 #define kBtSize       1024
 #define kBtKeySize    13
 #define kBtLevel      2
@@ -98,10 +100,11 @@ public:
 
 class EncryptedStream {
 private:
+	CGEEngine *_vm;
 	Common::SeekableReadStream *_readStream;
 	bool _error;
 public:
-	EncryptedStream(const char *name);
+	EncryptedStream(CGEEngine *vm, const char *name);
 	~EncryptedStream();
 	bool err();
 	bool eos();
@@ -111,8 +114,6 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 	Common::String readLine();
 };
-
-extern ResourceManager *_resman;
 
 } // End of namespace CGE
 

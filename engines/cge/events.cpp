@@ -165,7 +165,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		_current = Keyboard::_code[keycode];
 
 		if (_client) {
-			CGEEvent &evt = _eventManager->getNextEvent();
+			CGEEvent &evt = _vm->_eventManager->getNextEvent();
 			evt._x = _current;	// Keycode
 			evt._mask = kEventKeyb;	// Event mask
 			evt._spritePtr = _client;	// Sprite pointer
@@ -239,7 +239,7 @@ void Mouse::newMouse(Common::Event &event) {
 	if (!_active)
 		return;
 
-	CGEEvent &evt = _eventManager->getNextEvent();
+	CGEEvent &evt = _vm->_eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
 	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);

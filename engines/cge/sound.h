@@ -87,6 +87,7 @@ private:
 };
 
 class Fx {
+	CGEEngine *_vm;
 	struct Handler {
 		int _ref;
 		DataCk *_wav;
@@ -99,7 +100,7 @@ class Fx {
 public:
 	DataCk *_current;
 
-	Fx(int size);
+	Fx(CGEEngine *vm, int size);
 	~Fx();
 	void clear();
 	void preload(int ref0);
@@ -108,6 +109,7 @@ public:
 
 class MusicPlayer: public Audio::MidiPlayer {
 private:
+	CGEEngine *_vm;
 	byte *_data;
 	int _dataSize;
 	bool _isGM;
@@ -118,7 +120,7 @@ private:
 	// Stop MIDI File
 	void sndMidiStop();
 public:
-	MusicPlayer();
+	MusicPlayer(CGEEngine *vm);
 	~MusicPlayer();
 
 	void loadMidi(int ref);

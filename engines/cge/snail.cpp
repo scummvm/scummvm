@@ -1136,7 +1136,7 @@ void Snail::runCom() {
 			_vm->snSound(spr, snc->_val);
 			break;
 		case kSnCount:
-			_sound->setRepeat(snc->_val);
+			_vm->_sound->setRepeat(snc->_val);
 			break;
 		case kSnExec:
 			switch (snc->_cbType) {

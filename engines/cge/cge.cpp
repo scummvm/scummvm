@@ -102,11 +102,11 @@ void CGEEngine::init() {
 	_debugLine = new InfoLine(this, kScrWidth);
 	_snail = new Snail(this, false);
 	_snail_ = new Snail(this, true);
-
+	_midiPlayer = new MusicPlayer(this);
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
 	_eventManager = new EventManager(this);
-	_fx = new Fx(16);   // must precede SOUND!!
+	_fx = new Fx(this, 16);   // must precede SOUND!!
 	_sound = new Sound(this);
 
 	_offUseCount = atoi(_text->getText(kOffUseCount));
@@ -148,7 +148,7 @@ void CGEEngine::deinit() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _console;
-	_midiPlayer.killMidi();
+	_midiPlayer->killMidi();
 
 	// Delete engine objects
 	delete _vga;

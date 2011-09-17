@@ -40,7 +40,7 @@ Talk *_talk = NULL;
 
 Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
-	if (!_resman->exist(_fileName))
+	if (!_vm->_resman->exist(_fileName))
 		error("No talk (%s)\n", _fileName);
 	int16 txtCount = count() + 1;
 	if (!txtCount)
@@ -60,7 +60,7 @@ Text::~Text() {
 }
 
 int16 Text::count() {
-	EncryptedStream tf = _fileName;
+	EncryptedStream tf(_vm, _fileName);
 	if (tf.err())
 		return -1;
 
@@ -94,7 +94,7 @@ void Text::clear() {
 }
 
 void Text::load() {
-	EncryptedStream tf = _fileName;
+	EncryptedStream tf(_vm, _fileName);
 	assert(!tf.err());
 
 	Common::String line;
