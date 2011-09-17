@@ -140,7 +140,7 @@ int CGEEngine::newRandom(int range) {
 	if (!range)
 		return 0;
 
-	return ((CGEEngine *)g_engine)->_randomSource.getRandomNumber(range - 1);
+	return _randomSource.getRandomNumber(range - 1);
 }
 
 void CGEEngine::sndSetVolume() {
