@@ -62,6 +62,7 @@ public:
 
 	// VideoDecoder API
 	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format);
 	void close();
 	bool isVideoLoaded() const { return _bink != 0; }
 	uint16 getWidth() const { return _surface.w; }

@@ -288,9 +288,8 @@ void BinkDecoder::videoPacket(VideoFrame &video) {
 	}
 
 	// Convert the YUV data we have to our format
-	// We're ignoring alpha for now
-	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
-	Graphics::convertYUV420ToRGB(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2],
+	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2] && _curPlanes[3]);
+	Graphics::convertYUVA420ToRGBA(&_surface, _curPlanes[0], _curPlanes[1], _curPlanes[2], _curPlanes[3],
 			_surface.w, _surface.h, _surface.w, _surface.w >> 1);
 
 	// And swap the planes with the reference planes
@@ -500,6 +499,11 @@ void BinkDecoder::mergeHuffmanSymbols(VideoFrame &video, byte *dst, const byte *
 }
 
 bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
+	Graphics::PixelFormat format = g_system->getOverlayFormat(); // residual FIXME: getScreenFormat();
+	return loadStream(stream, format);
+}
+
+bool BinkDecoder::loadStream(Common::SeekableReadStream *stream, const Graphics::PixelFormat &format) {
 	close();
 
 	_id = stream->readUint32BE();
@@ -579,7 +583,6 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_hasAlpha   = _videoFlags & kVideoFlagAlpha;
 	_swapPlanes = (_id == kBIKhID) || (_id == kBIKiID); // BIKh and BIKi swap the chroma planes
 
-	Graphics::PixelFormat format = g_system->getOverlayFormat();// residual FIXME: getScreenFormat();
 	_surface.create(width, height, format);
 
 	// Give the planes a bit extra space
