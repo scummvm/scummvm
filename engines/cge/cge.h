@@ -49,7 +49,6 @@ class HorizLine;
 class InfoLine;
 class SceneLight;
 class Snail;
-class Snail;
 class EventManager;
 class ResourceManager;
 
