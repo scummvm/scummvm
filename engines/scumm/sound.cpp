@@ -1150,19 +1150,20 @@ int ScummEngine::readSoundResource(ResId idx) {
 			if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && pri != 11)
 				pri = -1;
 
-			// We only allow ADL resources when AdLib or FM-Towns is used as
-			// primary audio output. This fixes some odd sounds when Indy and
-			// Sophia leave Atlantis with the submarine in Indy4. (Easy to
-			// check with bootparam 4061 in the CD version). It seems the game
-			// only contains a ROL resource for sound id 60. Formerly we tried
-			// to play that via the AdLib or FM-Towns audio driver resulting
-			// in strange noises. Now we behave like the original did.
+			// We only allow ADL, SBL and TOWS resources when AdLib
+			// or FM-Towns is used as primary audio output. This fixes some
+			// odd sounds when Indy and Sophia leave Atlantis with the
+			// submarine in Indy4. (Easy to check with bootparam 4061 in
+			// the CD version). It seems the game only contains a ROL resource
+			// for sound id 60. Formerly we tried to play that via the AdLib
+			// or FM-Towns audio driver resulting in strange noises. Now we
+			// behave like the original did.
 			// We make an exception for Macintosh, which uses priority 2 for
 			// its sound resources, and Amiga games, which feature only ROL
 			// resources, since we are a doing Midi -> AdLib conversion for
 			// these.
-			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 10
-				&& pri != 2 && _game.platform != Common::kPlatformAmiga)
+			if ((_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS) && pri != 16 
+				&& pri != 15 && pri != 10 && pri != 2 && _game.platform != Common::kPlatformAmiga)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
