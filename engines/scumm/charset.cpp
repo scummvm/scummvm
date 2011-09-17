@@ -636,7 +636,11 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 		_textScreenID = vs->number;
 	}
 
-	if ((ignoreCharsetMask || !vs->hasTwoBuffers) && (_vm->_game.platform != Common::kPlatformFMTowns))
+	if ((ignoreCharsetMask || !vs->hasTwoBuffers)
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		&& (_vm->_game.platform != Common::kPlatformFMTowns)
+#endif
+		)
 		drawBits1(*vs, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
 	else
 		drawBits1(_vm->_textSurface, _left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier, charPtr, drawTop, origWidth, origHeight);
@@ -997,13 +1001,13 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 		return;
 	}
 #endif
-	byte *dst = (byte *)dest.getBasePtr(x, y);
 	bool scale2x = ((&dest == &_vm->_textSurface) && (_vm->_textSurfaceMultiplier == 2) && !(_sjisCurChar >= 256 && _vm->_useCJKMode));
 #endif
 
 	byte bits = 0;
 	uint8 col = _color;
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
+	byte *dst = (byte *)dest.getBasePtr(x, y);
 	byte *dst2 = dst + dest.pitch;
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
