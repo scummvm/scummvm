@@ -167,7 +167,6 @@ public:
 	void insert(Sprite *spr, Sprite *nxt);
 	void insert(Sprite *spr);
 	Sprite *remove(Sprite *spr);
-	void forAll(void (*fun)(Sprite *));
 	Sprite *first() {
 		return _head;
 	}

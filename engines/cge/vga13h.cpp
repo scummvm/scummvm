@@ -556,15 +556,6 @@ void Queue::clear() {
 	}
 }
 
-void Queue::forAll(void (*fun)(Sprite *)) {
-	Sprite *s = _head;
-	while (s) {
-		Sprite *n = s->_next;
-		fun(s);
-		s = n;
-	}
-}
-
 void Queue::append(Sprite *spr) {
 	if (_tail) {
 		spr->_prev = _tail;
