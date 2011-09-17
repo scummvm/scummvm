@@ -960,7 +960,7 @@ void Snail::runCom() {
 					_textDelay = false;
 				}
 			}
-			if (_talk && snc->_com != kSnPause)
+			if (_vm->_talk && snc->_com != kSnPause)
 				break;
 		}
 
@@ -970,7 +970,7 @@ void Snail::runCom() {
 			break;
 		case kSnPause    :
 			_timerExpiry = g_system->getMillis() + snc->_val * kSnailFrameDelay;
-			if (_talk)
+			if (_vm->_talk)
 				_textDelay = true;
 			break;
 		case kSnWait:
@@ -994,13 +994,13 @@ void Snail::runCom() {
 			if (spr && _talkEnable) {
 				if (spr == _vm->_hero && spr->seqTest(-1))
 					spr->step(kSeqHTalk);
-				_text->say(_text->getText(snc->_val), spr);
+				_vm->_text->say(_vm->_text->getText(snc->_val), spr);
 				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;
 		case kSnInf:
 			if (_talkEnable) {
-				_vm->inf(_text->getText(snc->_val));
+				_vm->inf(_vm->_text->getText(snc->_val));
 				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;
@@ -1008,7 +1008,7 @@ void Snail::runCom() {
 			if (spr && _talkEnable) {
 				if (spr == _vm->_hero && spr->seqTest(-1))
 					spr->step(kSeqHTalk);
-				_text->sayTime(spr);
+				_vm->_text->sayTime(spr);
 			}
 			break;
 		case kSnCave:

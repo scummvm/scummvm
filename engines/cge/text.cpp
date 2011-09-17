@@ -35,9 +35,6 @@
 
 namespace CGE {
 
-Text *_text;
-Talk *_talk = NULL;
-
 Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
@@ -138,8 +135,8 @@ char *Text::getText(int ref) {
 
 void Text::say(const char *text, Sprite *spr) {
 	_vm->killText();
-	_talk = new Talk(_vm, text, kTBRound);
-	if (!_talk)
+	_vm->_talk = new Talk(_vm, text, kTBRound);
+	if (!_vm->_talk)
 		return;
 
 	bool east = spr->_flags._east;
@@ -159,22 +156,22 @@ void Text::say(const char *text, Sprite *spr) {
 	if (spr->_ref == 1)
 		x += ((east) ? -10 : 10); // Hero
 
-	_talk->_flags._kill = true;
-	_talk->_flags._bDel = true;
-	_talk->setName(_text->getText(kSayName));
-	_talk->gotoxy(x - (_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _talk->_h + 1);
-	_talk->_z = 125;
-	_talk->_ref = kSayRef;
+	_vm->_talk->_flags._kill = true;
+	_vm->_talk->_flags._bDel = true;
+	_vm->_talk->setName(_vm->_text->getText(kSayName));
+	_vm->_talk->gotoxy(x - (_vm->_talk->_w - sw) / 2 - 3 + 6 * east, y - spike->_h - _vm->_talk->_h + 1);
+	_vm->_talk->_z = 125;
+	_vm->_talk->_ref = kSayRef;
 
-	spike->gotoxy(x, _talk->_y + _talk->_h - 1);
+	spike->gotoxy(x, _vm->_talk->_y + _vm->_talk->_h - 1);
 	spike->_z = 126;
 	spike->_flags._slav = true;
 	spike->_flags._kill = true;
-	spike->setName(_text->getText(kSayName));
+	spike->setName(_vm->_text->getText(kSayName));
 	spike->step(east);
 	spike->_ref = kSayRef;
 
-	_vm->_vga->_showQ->insert(_talk, _vm->_vga->_showQ->last());
+	_vm->_vga->_showQ->insert(_vm->_talk, _vm->_vga->_showQ->last());
 	_vm->_vga->_showQ->insert(spike, _vm->_vga->_showQ->last());
 }
 

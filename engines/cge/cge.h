@@ -52,6 +52,8 @@ class Snail;
 class EventManager;
 class ResourceManager;
 class Walk;
+class Text;
+class Talk;
 
 #define kSavegameVersion 2
 #define kSavegameStrSize 11
@@ -189,6 +191,9 @@ public:
 	ResourceManager *_resman;
 	Sprite *_pocket[kPocketNX];
 	Walk *_hero;
+	Text *_text;
+	Talk *_talk;
+
 
 	Common::RandomSource _randomSource;
 	MusicPlayer *_midiPlayer;

@@ -61,8 +61,6 @@ private:
 	CGEEngine *_vm;
 };
 
-extern Text *_text;
-
 } // End of namespace CGE
 
 #endif

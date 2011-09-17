@@ -745,7 +745,7 @@ void System::setPal() {
 
 void System::funTouch() {
 	uint16 n = (_vm->_flag[0]) ? kHeroFun1 : kHeroFun0; // PAIN flag
-	if (_talk == NULL || n > _funDel)
+	if (_vm->_talk == NULL || n > _funDel)
 		_funDel = n;
 }
 
@@ -814,7 +814,7 @@ void System::touch(uint16 mask, int x, int y) {
 					_vm->setMapBrick(x1, z1);
 				}
 			} else {
-				if (!_talk && _vm->_snail->idle() && _vm->_hero
+				if (!_vm->_talk && _vm->_snail->idle() && _vm->_hero
 				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
 					_vm->_hero->findWay(_vm->XZ(x, y));
 				}

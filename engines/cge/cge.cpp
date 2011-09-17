@@ -90,6 +90,7 @@ void CGEEngine::init() {
 	// Initialise engine objects
 	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
+	_talk = NULL;
 	_vga = new Vga();
 	_sys = new System(this);
 	_pocLight = new PocLight(this);

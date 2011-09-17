@@ -102,8 +102,6 @@ public:
 
 /*----------------- MOUSE interface -----------------*/
 
-extern Talk *_talk;
-
 struct CGEEvent {
 	uint16 _mask;
 	uint16 _x;
