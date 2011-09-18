@@ -146,7 +146,7 @@ public:
 	void animate();
 	void reset();
 	void resetColormap();
-	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(Math::Matrix4 matrix) { _matrix = matrix; };
 	void restoreState(SaveGame *state);
 	AnimManager *getAnimManager() const;
 	~ModelComponent();
@@ -160,7 +160,7 @@ protected:
 	Common::String _filename;
 	ObjectPtr<Model> _obj;
 	ModelNode *_hier;
-	Graphics::Matrix4 _matrix;
+	Math::Matrix4 _matrix;
 	AnimManager *_animation;
 	Component *_prevComp;
 };
@@ -169,7 +169,7 @@ class MainModelComponent : public ModelComponent {
 public:
 	MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	void init();
-	void update(float time);
+	int update(float time);
 	void setColormap(CMap *cmap);
 	void reset();
 	~MainModelComponent();
@@ -192,13 +192,13 @@ public:
 		return mc->getCMap();
 	}
 	void setKey(int val);
-	void update(float time);
+	int update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 	~MeshComponent() { }
 
-	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(Math::Matrix4 matrix) { _matrix = matrix; };
 
 	ModelNode *getNode() { return _node; }
 	Model *getModel() { return _model; }
@@ -208,7 +208,7 @@ private:
 	int _num;
 	Model *_model;
 	ModelNode *_node;
-	Graphics::Matrix4 _matrix;
+	Math::Matrix4 _matrix;
 };
 
 BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
@@ -450,7 +450,7 @@ void translateObject(ModelNode *node, bool reset) {
 	if (reset) {
 		g_driver->translateViewpointFinish();
 	} else {
-		Graphics::Vector3d animPos = node->_pos + node->_animPos;
+		Math::Vector3d animPos = node->_pos + node->_animPos;
 		float animPitch = node->_pitch + node->_animPitch;
 		float animYaw = node->_yaw + node->_animYaw;
 		float animRoll = node->_roll + node->_animRoll;
@@ -498,12 +498,14 @@ void MainModelComponent::init() {
 	_hier->_hierVisible = _visible;
 }
 
-void MainModelComponent::update(float time) {
+int MainModelComponent::update(float time) {
 	if (!_hierShared)
 		// Otherwise, it was already initialized
 		// and reinitializing it will destroy work
 		// from previous costumes
 		ModelComponent::update(time);
+
+	return 0;
 }
 
 void MainModelComponent::setColormap(CMap *cmap) {
@@ -579,7 +581,7 @@ public:
 	void init();
 	void fade(Animation::FadeMode, int fadeLength);
 	void setKey(int val);
-	void update(float time);
+	int update(float time);
 	void reset();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
@@ -673,11 +675,11 @@ void KeyframeComponent::reset() {
 	}
 }
 
-void KeyframeComponent::update(float time) {
+int KeyframeComponent::update(float time) {
 	if (!_anim->getIsActive())
-		return;
+		return 0;
 
-	_anim->update(time);
+	return _anim->update(time);
 }
 
 void KeyframeComponent::init() {
@@ -731,8 +733,9 @@ void MeshComponent::reset() {
 // 	_node->_meshVisible = true;
 }
 
-void MeshComponent::update(float /*time*/) {
+int MeshComponent::update(float /*time*/) {
 	_node->setMatrix(_matrix);
+	return 0;
 }
 
 void MeshComponent::saveState(SaveGame *state) {
@@ -844,7 +847,7 @@ void SoundComponent::setKey(int val) {
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
 		if (g_grim->getCurrScene()) {
-			Graphics::Vector3d pos = _cost->getMatrix()._pos;
+			Math::Vector3d pos = _cost->getMatrix().getPosition();
 			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
@@ -1521,7 +1524,7 @@ void Costume::draw(int *x1, int *y1, int *x2, int *y2) {
 			_components[i]->draw(x1, y1, x2, y2);
 }
 
-void Costume::update(float time) {
+int Costume::update(float time) {
 	for (Common::List<Chore*>::iterator i = _playingChores.begin(); i != _playingChores.end(); ++i) {
 		(*i)->update(time);
 		if (!(*i)->_playing) {
@@ -1530,12 +1533,18 @@ void Costume::update(float time) {
 		}
 	}
 
+	int marker = 0;
 	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
 			_components[i]->setMatrix(_matrix);
-			_components[i]->update(time);
+			int m = _components[i]->update(time);
+			if (m > 0) {
+				marker = m;
+			}
 		}
 	}
+
+	return marker;
 }
 
 void Costume::animate() {
@@ -1546,7 +1555,7 @@ void Costume::animate() {
 	}
 }
 
-void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float rate) {
+void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rate) {
 	if (_joint1Node) {
 		float step = g_grim->getPerSecond(rate);
 		float yawStep = step;
@@ -1589,7 +1598,7 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 		p->setMatrix(_matrix);
 		p->update();
 
-		Graphics::Vector3d v =  lookAt - _joint3Node->_matrix._pos;
+		Math::Vector3d v =  lookAt - _joint3Node->_matrix.getPosition();
 		if (v.isZero()) {
 			return;
 		}
@@ -1602,7 +1611,7 @@ void Costume::moveHead(bool lookingMode, const Graphics::Vector3d &lookAt, float
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		float bodyYaw = _matrix._rot.getYaw();
+		float bodyYaw = _matrix.getYaw();
 		p = _joint1Node->_parent;
 		while (p) {
 			bodyYaw += p->_yaw + p->_animYaw;
@@ -1699,12 +1708,12 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	}
 }
 
-void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
-	_matrix._pos = pos;
-	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
+void Costume::setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll) {
+	_matrix.setPosition(pos);
+	_matrix.buildFromPitchYawRoll(pitch, yaw, roll);
 }
 
-Graphics::Matrix4 Costume::getMatrix() const {
+Math::Matrix4 Costume::getMatrix() const {
 	return _matrix;
 }
 
@@ -1734,7 +1743,7 @@ void Costume::saveState(SaveGame *state) const {
 
 		if (c) {
 			state->writeLESint32(c->_visible);
-			state->writeVector3d(c->_matrix._pos);
+			state->writeVector3d(c->_matrix.getPosition());
 			c->saveState(state);
 		}
 	}
@@ -1773,7 +1782,7 @@ bool Costume::restoreState(SaveGame *state) {
 
 		if (c) {
 			c->_visible = state->readLESint32();
-			c->_matrix._pos = state->readVector3d();
+			c->_matrix.setPosition(state->readVector3d());
 			c->restoreState(state);
 		}
 	}

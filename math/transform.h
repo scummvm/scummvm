@@ -8,53 +8,36 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
+ * $URL$
+ * $Id$
  */
 
-#ifndef GRIM_COLOR_H
-#define GRIM_COLOR_H
+#ifndef MATH_TRANSFORM_H
+#define MATH_TRANSFORM_H
 
-#include "engines/grim/pool.h"
+namespace Math {
 
-namespace Grim {
-
-class Color {
+template<class T>
+class Transform {
 public:
-	byte _vals[3];
+	Transform() {}
 
-	Color() {}
-	Color(byte r, byte g, byte b);
-	Color(const Color& c);
+protected:
+	inline const T &getMatrix() const { return *static_cast<const T *>(this); }
+	inline T &getMatrix() { return *static_cast<T *>(this); }
 
-	byte &getRed() { return _vals[0]; }
-	byte getRed() const { return _vals[0]; }
-	byte &getGreen() { return _vals[1]; }
-	byte getGreen() const { return _vals[1]; }
-	byte &getBlue() { return _vals[2]; }
-	byte getBlue() const { return _vals[2]; }
-
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
-
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
-
-} // end of namespace Grim
+}
 
 #endif

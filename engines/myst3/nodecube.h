@@ -29,10 +29,10 @@
 namespace Myst3 {
 
 struct Movie {
-	Graphics::Vector3d pTopLeft;
-	Graphics::Vector3d pBottomLeft;
-	Graphics::Vector3d pBottomRight;
-	Graphics::Vector3d pTopRight;
+	Math::Vector3d pTopLeft;
+	Math::Vector3d pBottomLeft;
+	Math::Vector3d pBottomRight;
+	Math::Vector3d pTopRight;
 
 	Video::BinkDecoder *bink;
 	GLuint texture;

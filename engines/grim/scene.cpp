@@ -38,13 +38,9 @@
 
 namespace Grim {
 
-int Scene::s_id = 0;
-
 Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
-		_locked(false), _name(sceneName), _enableLights(false), _lightsConfigured(false) {
-
-	++s_id;
-	_id = s_id;
+		PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
+		_lightsConfigured(false) {
 
 	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
 		TextSplitter ts(buf, len);
@@ -56,7 +52,7 @@ Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
 }
 
 Scene::Scene() :
-	_cmaps(NULL) {
+	PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _cmaps(NULL) {
 
 }
 
@@ -78,22 +74,11 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::reset() {
+void Scene::resetInternalData() {
 	for (int i = 0; i < _numSetups; ++i) {
 		_setups[i]._bkgndBm = NULL;
 		_setups[i]._bkgndZBm = NULL;
 	}
-}
-
-int32 Scene::getId() {
-	return _id;
-}
-
-void Scene::setId(int32 id) {
-	if (id > s_id) {
-		s_id = id;
-	}
-	_id = id;
 }
 
 void Scene::loadText(TextSplitter &ts){
@@ -308,7 +293,7 @@ bool Scene::restoreState(SaveGame *savedState) {
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
 		int32 id = savedState->readLEUint32();
-		ObjectState *o = g_grim->getObjectState(id);
+		ObjectState *o = ObjectState::getPool()->getObject(id);
 		_states.push_back(o);
 	}
 
@@ -321,8 +306,8 @@ bool Scene::restoreState(SaveGame *savedState) {
 
 		set._name = savedState->readString();
 
-		set._bkgndBm = g_grim->getBitmap(savedState->readLEUint32());
-		set._bkgndZBm = g_grim->getBitmap(savedState->readLEUint32());
+		set._bkgndBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
+		set._bkgndZBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
 
 		set._pos      = savedState->readVector3d();
 		set._interest = savedState->readVector3d();
@@ -428,9 +413,9 @@ void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
 	_bkgndBm = g_resourceloader->loadBitmap(fileName);
 
 
-	ms->read(_pos._coords, 12);
+	ms->read(_pos.getData(), 12);
 
-	ms->read(_interest._coords, 12);
+	ms->read(_interest.getData(), 12);
 
 	ms->read(&_roll, 4);
 	ms->read(&_fov, 4);
@@ -538,7 +523,7 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 	}
 }
 
-Sector *Scene::findPointSector(const Graphics::Vector3d &p, Sector::SectorType type) {
+Sector *Scene::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
 		if (sector && (sector->getType() & type) && sector->isVisible() && sector->isPointInSector(p))
@@ -547,17 +532,17 @@ Sector *Scene::findPointSector(const Graphics::Vector3d &p, Sector::SectorType t
 	return NULL;
 }
 
-void Scene::findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphics::Vector3d *closestPoint) {
+void Scene::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPoint) {
 	Sector *resultSect = NULL;
-	Graphics::Vector3d resultPt = p;
+	Math::Vector3d resultPt = p;
 	float minDist = 0.0;
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
 		if ((sector->getType() & Sector::WalkType) == 0 || !sector->isVisible())
 			continue;
-		Graphics::Vector3d closestPt = sector->getClosestPoint(p);
-		float thisDist = (closestPt - p).magnitude();
+		Math::Vector3d closestPt = sector->getClosestPoint(p);
+		float thisDist = (closestPt - p).getMagnitude();
 		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;
 			resultPt = closestPt;
@@ -640,7 +625,7 @@ void Scene::setLightEnabled(int light, bool enabled) {
 	_lightsConfigured = false;
 }
 
-void Scene::setLightPosition(const char *light, const Graphics::Vector3d &pos) {
+void Scene::setLightPosition(const char *light, const Math::Vector3d &pos) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
@@ -651,21 +636,21 @@ void Scene::setLightPosition(const char *light, const Graphics::Vector3d &pos) {
 	}
 }
 
-void Scene::setLightPosition(int light, const Graphics::Vector3d &pos) {
+void Scene::setLightPosition(int light, const Math::Vector3d &pos) {
 	Light &l = _lights[light];
 	l._pos = pos;
 	_lightsConfigured = false;
 }
 
-void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
+void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos) {
 	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
 }
 
-void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol) {
+void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol) {
 	// TODO: The volume and pan needs to be updated when the setup changes.
-	Graphics::Vector3d cameraPos = _currSetup->_pos;
-	Graphics::Vector3d vector = pos - cameraPos;
-	float distance = vector.magnitude();
+	Math::Vector3d cameraPos = _currSetup->_pos;
+	Math::Vector3d vector = pos - cameraPos;
+	float distance = vector.getMagnitude();
 	float diffVolume = maxVol - minVol;
 	//This 8.f is a guess, so it may need some adjusting
 	int newVolume = (int)(8.f * diffVolume / distance);
@@ -674,18 +659,18 @@ void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos, int 
 		newVolume = _maxVolume;
 	g_imuse->setVolume(soundName, newVolume);
 
-	Graphics::Vector3d cameraVector =_currSetup->_interest - _currSetup->_pos;
-	Graphics::Vector3d up(0,0,1);
-	Graphics::Vector3d right;
+	Math::Vector3d cameraVector =_currSetup->_interest - _currSetup->_pos;
+	Math::Vector3d up(0,0,1);
+	Math::Vector3d right;
 	cameraVector.normalize();
 	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
-	up = up * cosr + Graphics::cross(cameraVector, up) * sin(roll) +
-		cameraVector * Graphics::dot(cameraVector, up) * (1 - cosr);
-	right = Graphics::cross(cameraVector, up);
+	up = up * cosr + Math::cross(cameraVector, up) * sin(roll) +
+		cameraVector * Math::dot(cameraVector, up) * (1 - cosr);
+	right = Math::cross(cameraVector, up);
 	right.normalize();
-	float angle = atan2(Graphics::dot(vector, right), Graphics::dot(vector, cameraVector));
+	float angle = atan2(Math::dot(vector, right), Math::dot(vector, cameraVector));
 	float pan = sin(angle);
 	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
 }

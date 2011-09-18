@@ -57,7 +57,7 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 		loadText(&ts, cmap);
 	}
 
-	Graphics::Vector3d max;
+	Math::Vector3d max;
 
 	_rootHierNode->update();
 	bool first = true;
@@ -70,7 +70,7 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 			// bone wagon when approaching it from behind in set sg.
 			// Using the node position looks instead more realistic, but, on the
 			// other hand, it may not work right in all cases.
-			Graphics::Vector3d &p = node._matrix._pos;
+			Math::Vector3d p = node._matrix.getPosition();
 			float x = p.x();
 			float y = p.y();
 			float z = p.z();
@@ -163,7 +163,7 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
 	_radius = get_float(data);
-	_insertOffset = Graphics::get_vector3d(data + 40);
+	_insertOffset = Math::get_vector3d(data + 40);
 }
 
 void Model::loadText(TextSplitter *ts, CMap *cmap) {
@@ -231,11 +231,11 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 			_rootHierNode[num]._sibling = NULL;
 
 		_rootHierNode[num]._numChildren = numChildren;
-		_rootHierNode[num]._pos = Graphics::Vector3d(x, y, z);
+		_rootHierNode[num]._pos = Math::Vector3d(x, y, z);
 		_rootHierNode[num]._pitch = pitch;
 		_rootHierNode[num]._yaw = yaw;
 		_rootHierNode[num]._roll = roll;
-		_rootHierNode[num]._pivot = Graphics::Vector3d(pivotx, pivoty, pivotz);
+		_rootHierNode[num]._pivot = Math::Vector3d(pivotx, pivoty, pivotz);
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
 		_rootHierNode[num]._sprite = NULL;
@@ -358,7 +358,7 @@ int MeshFace::loadBinary(const char *&data, Material *materials[]) {
 	int texPtr = READ_LE_UINT32(data + 28);
 	int materialPtr = READ_LE_UINT32(data + 32);
 	_extraLight = get_float(data + 48);
-	_normal = Graphics::get_vector3d(data + 64);
+	_normal = Math::get_vector3d(data + 64);
 	data += 76;
 
 	_vertices = new int[_numVertices];
@@ -536,7 +536,7 @@ void Mesh::loadText(TextSplitter *ts, Material* materials[]) {
 		int num;
 		float x, y, z;
 		ts->scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
-		_faces[num]._normal = Graphics::Vector3d(x, y, z);
+		_faces[num]._normal = Math::Vector3d(x, y, z);
 	}
 }
 
@@ -595,8 +595,8 @@ void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model:
 	_numChildren = READ_LE_UINT32(data + 88);
 	int childPtr = READ_LE_UINT32(data + 92);
 	int siblingPtr = READ_LE_UINT32(data + 96);
-	_pivot = Graphics::get_vector3d(data + 100);
-	_pos = Graphics::get_vector3d(data + 112);
+	_pivot = Math::get_vector3d(data + 100);
+	_pos = Math::get_vector3d(data + 112);
 	_pitch = get_float(data + 124);
 	_yaw = get_float(data + 128);
 	_roll = get_float(data + 132);
@@ -651,7 +651,7 @@ void ModelNode::removeChild(ModelNode *child) {
 	}
 }
 
-void ModelNode::setMatrix(Graphics::Matrix4 matrix) {
+void ModelNode::setMatrix(Math::Matrix4 matrix) {
 	_matrix = matrix;
 }
 
@@ -659,19 +659,19 @@ void ModelNode::update() {
 	if (!_initialized)
 		return;
 
-	Graphics::Vector3d animPos = _pos + _animPos;
+	Math::Vector3d animPos = _pos + _animPos;
 	float animPitch = _pitch + _animPitch;
 	float animYaw = _yaw + _animYaw;
 	float animRoll = _roll + _animRoll;
 
-	_localMatrix._pos.set(animPos.x(), animPos.y(), animPos.z());
-	_localMatrix._rot.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
+	_localMatrix.setPosition(animPos);
+	_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
 
-	_matrix *= _localMatrix;
+	_matrix = _localMatrix * _matrix;
 
 	_pivotMatrix = _matrix;
 
-	_pivotMatrix.translate(_pivot.x(), _pivot.y(), _pivot.z());
+	_pivotMatrix.translate(_pivot);
 
 	if (_mesh) {
 		_mesh->_matrix = _pivotMatrix;

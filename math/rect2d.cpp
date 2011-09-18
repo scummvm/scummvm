@@ -24,9 +24,9 @@
 
 #include "common/scummsys.h"
 
-#include "graphics/rect2d.h"
+#include "math/rect2d.h"
 
-namespace Graphics {
+namespace Math {
 
 Rect2d::Rect2d() {
 

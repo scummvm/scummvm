@@ -8,53 +8,49 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
+ * $URL$
+ * $Id$
  */
 
-#ifndef GRIM_COLOR_H
-#define GRIM_COLOR_H
+#ifndef MATH_LINE3D_H
+#define MATH_LINE3D_H
 
-#include "engines/grim/pool.h"
+#include "common/scummsys.h"
+#include "common/endian.h"
 
-namespace Grim {
+#include "math/vector3d.h"
 
-class Color {
+namespace Math {
+
+class Line3d {
 public:
-	byte _vals[3];
+	Line3d();
+	Line3d(const Vector3d &begin, const Vector3d &end);
+	Line3d(const Line3d &other);
 
-	Color() {}
-	Color(byte r, byte g, byte b);
-	Color(const Color& c);
+	Math::Vector3d begin() const;
+	Math::Vector3d end() const;
+	Math::Vector3d middle() const;
 
-	byte &getRed() { return _vals[0]; }
-	byte getRed() const { return _vals[0]; }
-	byte &getGreen() { return _vals[1]; }
-	byte getGreen() const { return _vals[1]; }
-	byte &getBlue() { return _vals[2]; }
-	byte getBlue() const { return _vals[2]; }
+	bool intersectLine2d(const Line3d &other, Math::Vector3d *pos);
 
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
+	void operator=(const Line3d &other);
+
+private:
+	Math::Vector3d _begin, _end;
+
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
-
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
-
-} // end of namespace Grim
+} // end of namespace Math
 
 #endif

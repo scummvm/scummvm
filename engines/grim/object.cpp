@@ -59,7 +59,7 @@ void Object::dereference() {
 	}
 }
 
-int32 Object::getId() {
+int32 Object::getId() const {
 	return _id;
 }
 

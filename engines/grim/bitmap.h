@@ -23,11 +23,11 @@
 #ifndef GRIM_BITMAP_H
 #define GRIM_BITMAP_H
 
-#include "engines/grim/object.h"
+#include "engines/grim/pool.h"
 
 namespace Grim {
 
-/** 
+/**
  * This BitmapData class keeps the actual bitmap data and can be shared
  * between Bitmap instances, by using getBitmapData.
  * Bitmap still keeps the data that can change between the instances
@@ -40,7 +40,7 @@ public:
 	BitmapData(const char *data, int w, int h, int bpp, const char *fname);
 	BitmapData();
 	~BitmapData();
-	
+
 	/**
 	 * Loads an EMI TILE-bitmap.
 	 *
@@ -53,7 +53,7 @@ public:
 	static Common::HashMap<Common::String, BitmapData *> *_bitmaps;
 
 	char *getImageData(int num) const;
-	
+
 	/**
 	 * Convert a bitmap to another color-format.
 	 *
@@ -80,7 +80,7 @@ private:
 	char **_data;
 };
 
-class Bitmap : public Object {
+class Bitmap : public PoolObject<Bitmap, MKTAG('V', 'B', 'U', 'F')> {
 public:
 	/**
 	 * Construct a bitmap from the given data.
@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * Set which image in an animated bitmap to use
-	 * 
+	 *
 	 * @param n		the image to be selected
 	 */
 	void setNumber(int n);
@@ -120,9 +120,14 @@ public:
 	void *getTexIds() const { return _data->_texIds; }
 	int getNumTex() const { return _data->_numTex; }
 
+	void saveState(SaveGame *state) const;
+	void restoreState(SaveGame *state);
+
 	virtual ~Bitmap();
 
 private:
+	void freeData();
+
 	BitmapData *_data;
 	int _currImage;
 	int _x, _y;

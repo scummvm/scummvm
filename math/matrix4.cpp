@@ -22,21 +22,50 @@
  * $Id$
  */
 
-#include "graphics/matrix4.h"
+#include "math/matrix4.h"
 
-namespace Graphics {
+namespace Math {
 
-Matrix4::Matrix4() {
-	_pos.set(0.f, 0.f, 0.f);
-	_rot.setAsIdentity();
+Matrix<4, 4>::Matrix() :
+	MatrixType<4, 4>(), Rotation3D<Matrix4>() {
+
 }
 
-void Matrix4::translate(float x, float y, float z) {
-	Vector3d v;
+Matrix<4, 4>::Matrix(const MatrixBase<4, 4> &m) :
+	MatrixType<4, 4>(m), Rotation3D<Matrix4>() {
 
-	v.set(x, y, z);
-	_rot.transform(&v);
-	_pos += v;
 }
 
-} // end of namespace Graphics
+void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
+	Matrix<4, 1> m;
+	m(0, 0) = v->x();
+	m(1, 0) = v->y();
+	m(2, 0) = v->z();
+	m(3, 0) = (trans ? 1.f : 0.f);
+
+	m = *this * m;
+
+	v->set(m(0, 0), m(1, 0), m(2, 0));
+}
+
+Vector3d Matrix<4, 4>::getPosition() const {
+	return Vector3d(getValue(3, 0), getValue(3, 1), getValue(3, 2));
+}
+
+void Matrix<4, 4>::setPosition(const Vector3d &v) {
+	setValue(3, 0, v.x());
+	setValue(3, 1, v.y());
+	setValue(3, 2, v.z());
+}
+
+void Matrix<4, 4>::translate(const Vector3d &vec) {
+	Vector3d v(vec);
+	transform(&v, false);
+
+	operator()(3, 0) += v.x();
+	operator()(3, 1) += v.y();
+	operator()(3, 2) += v.z();
+}
+
+} // end of namespace Math
+

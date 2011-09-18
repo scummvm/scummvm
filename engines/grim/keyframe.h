@@ -23,7 +23,7 @@
 #ifndef GRIM_KEYFRAME_H
 #define GRIM_KEYFRAME_H
 
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 #include "engines/grim/object.h"
 
@@ -40,6 +40,7 @@ public:
 	void loadBinary(const char *data, int len);
 	void loadText(TextSplitter &ts);
 	bool animate(ModelNode *nodes, int num, float time, float fade, bool tagged) const;
+	int getMarker(float startTime, float stopTime) const;
 
 	float getLength() const { return _numFrames / _fps; }
 	const Common::String &getFilename() const { return _fname; }
@@ -62,7 +63,7 @@ private:
 
 		float _frame;
 		int _flags;
-		Graphics::Vector3d _pos, _dpos;
+		Math::Vector3d _pos, _dpos;
 		float _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
 	};
 

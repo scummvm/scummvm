@@ -23,6 +23,8 @@
 #ifndef GRIM_SCENE_H
 #define GRIM_SCENE_H
 
+#include "engines/grim/pool.h"
+#include "engines/grim/object.h"
 #include "engines/grim/color.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
@@ -36,13 +38,11 @@ class SaveGame;
 class CMap;
 class Light;
 
-class Scene {
+class Scene : public PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')> {
 public:
 	Scene(const Common::String &name, const char *buf, int len);
 	Scene();
 	~Scene();
-
-	int32 getId();
 
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);
@@ -61,8 +61,8 @@ public:
 
 	void setupLights();
 
-	void setSoundPosition(const char *soundName, Graphics::Vector3d pos);
-	void setSoundPosition(const char *soundName, Graphics::Vector3d pos, int minVol, int maxVol);
+	void setSoundPosition(const char *soundName, Math::Vector3d pos);
+	void setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
@@ -75,8 +75,8 @@ public:
 	void setLightsDirty();
 	void setLightIntensity(const char *light, float intensity);
 	void setLightIntensity(int light, float intensity);
-	void setLightPosition(const char *light, const Graphics::Vector3d &pos);
-	void setLightPosition(int light, const Graphics::Vector3d &pos);
+	void setLightPosition(const char *light, const Math::Vector3d &pos);
+	void setLightPosition(int light, const Math::Vector3d &pos);
 	void setLightEnabled(const char *light, bool enabled);
 	void setLightEnabled(int light, bool enabled);
 
@@ -88,8 +88,8 @@ public:
 
 	Sector *getSectorBase(int id);
 
-	Sector *findPointSector(const Graphics::Vector3d &p, Sector::SectorType type);
-	void findClosestSector(const Graphics::Vector3d &p, Sector **sect, Graphics::Vector3d *closestPt);
+	Sector *findPointSector(const Math::Vector3d &p, Sector::SectorType type);
+	void findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPt);
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
 
@@ -109,7 +109,7 @@ public:
 		void setupCamera() const;
 		Common::String _name;
 		Bitmap *_bkgndBm, *_bkgndZBm;
-		Graphics::Vector3d _pos, _interest;
+		Math::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
 
@@ -120,11 +120,12 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
-	void reset();
+
+protected:
+	void resetInternalData();
 
 private:
 	bool _locked;
-	void setId(int32 id);
 	Common::String _name;
 	int _numCmaps;
 	ObjectPtr<CMap> *_cmaps;
@@ -139,9 +140,6 @@ private:
 	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
 
-	int _id;
-	static int s_id;
-
 	friend class GrimEngine;
 };
 
@@ -151,7 +149,7 @@ public:
 	void loadBinary(Common::MemoryReadStream *ms);
 	Common::String _name;
 	Common::String _type;
-	Graphics::Vector3d _pos, _dir;
+	Math::Vector3d _pos, _dir;
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle;
 	bool _enabled;

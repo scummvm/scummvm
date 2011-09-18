@@ -16,13 +16,6 @@ MODULE_OBJS := \
 	VectorRendererSpec.o \
 	yuv_to_rgb.o \
 	jpeg.o \
-	matrix3.o \
-	matrix4.o \
-	line3d.o \
-	line2d.o \
-	rect2d.o \
-	vector2d.o \
-	vector3d.o \
 	tinygl/api.o \
 	tinygl/arrays.o \
 	tinygl/clear.o \

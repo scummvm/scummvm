@@ -8,53 +8,60 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
+ * $URL$
+ * $Id$
  */
 
-#ifndef GRIM_COLOR_H
-#define GRIM_COLOR_H
+#ifndef MATH_SQUAREMATRIX_H
+#define MATH_SQUAREMATRIX_H
 
-#include "engines/grim/pool.h"
+#include "math/matrix.h"
+#include "math/vector.h"
 
-namespace Grim {
+namespace Math {
 
-class Color {
+/**
+ * \class MatrixType<dim, dim>
+ * This specialization of MatrixType defines some new methods for square
+ * matrices.
+ */
+template<int dim>
+class MatrixType<dim, dim> : public MatrixBase<dim, dim> {
 public:
-	byte _vals[3];
+	inline void setToIdentity() { *this = 1.f; }
+	inline void transformVector(Vector(dim) *vec) const {
+		*vec = *this->getThis() * *vec;
+	}
 
-	Color() {}
-	Color(byte r, byte g, byte b);
-	Color(const Color& c);
+	Matrix<dim, dim> operator=(float i);
 
-	byte &getRed() { return _vals[0]; }
-	byte getRed() const { return _vals[0]; }
-	byte &getGreen() { return _vals[1]; }
-	byte getGreen() const { return _vals[1]; }
-	byte &getBlue() { return _vals[2]; }
-	byte getBlue() const { return _vals[2]; }
-
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
+protected:
+	MatrixType() : MatrixBase<dim, dim>() { setToIdentity(); }
+	MatrixType(float *data) : MatrixBase<dim, dim>(data) { }
+	MatrixType(const MatrixBase<dim, dim> &m) : MatrixBase<dim, dim>(m) { }
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
+template<int dim>
+Matrix<dim, dim> MatrixType<dim, dim>::operator=(float i) {
+	for (int row = 0; row < dim; ++row) {
+		for (int col = 0; col < dim; ++col) {
+			this->setValue(row, col, (row == col ? i : 0.f));
+		}
+	}
 
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
+	return *this;
+}
 
-} // end of namespace Grim
+}
 
 #endif

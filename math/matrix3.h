@@ -18,43 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
+ * $URL$
+ * $Id$
  */
 
-#ifndef GRIM_COLOR_H
-#define GRIM_COLOR_H
+#ifndef MATH_MATRIX3_H
+#define MATH_MATRIX3_H
 
-#include "engines/grim/pool.h"
+#include "math/rotation3d.h"
+#include "math/squarematrix.h"
+#include "math/vector3d.h"
 
-namespace Grim {
+namespace Math {
 
-class Color {
+template<>
+class Matrix<3, 3> : public MatrixType<3, 3>, public Rotation3D<Matrix<3, 3> > {
 public:
-	byte _vals[3];
+	Matrix();
+	Matrix(const MatrixBase<3, 3> &m);
 
-	Color() {}
-	Color(byte r, byte g, byte b);
-	Color(const Color& c);
-
-	byte &getRed() { return _vals[0]; }
-	byte getRed() const { return _vals[0]; }
-	byte &getGreen() { return _vals[1]; }
-	byte getGreen() const { return _vals[1]; }
-	byte &getBlue() { return _vals[2]; }
-	byte getBlue() const { return _vals[2]; }
-
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
+typedef Matrix<3, 3> Matrix3;
 
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
-
-} // end of namespace Grim
+} // end of namespace Math
 
 #endif
+

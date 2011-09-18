@@ -41,13 +41,13 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 		_spotItemData.u = inStream.readUint32LE();
 		_spotItemData.v = inStream.readUint32LE();
 	} else if (_metadataSize == 10) {
-		_videoData.v1._coords[0] = inStream.readSint32LE() * 0.000001f;
-		_videoData.v1._coords[1] = inStream.readSint32LE() * 0.000001f;
-		_videoData.v1._coords[2] = inStream.readSint32LE() * 0.000001f;
+		_videoData.v1.setValue(0, inStream.readSint32LE() * 0.000001f);
+		_videoData.v1.setValue(1, inStream.readSint32LE() * 0.000001f);
+		_videoData.v1.setValue(2, inStream.readSint32LE() * 0.000001f);
 
-		_videoData.v2._coords[0] = inStream.readSint32LE() * 0.000001f;
-		_videoData.v2._coords[1] = inStream.readSint32LE() * 0.000001f;
-		_videoData.v2._coords[2] = inStream.readSint32LE() * 0.000001f;
+		_videoData.v2.setValue(0, inStream.readSint32LE() * 0.000001f);
+		_videoData.v2.setValue(1, inStream.readSint32LE() * 0.000001f);
+		_videoData.v2.setValue(2, inStream.readSint32LE() * 0.000001f);
 
 		_videoData.u = inStream.readSint32LE();
 		_videoData.v = inStream.readSint32LE();

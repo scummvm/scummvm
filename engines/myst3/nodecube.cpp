@@ -65,27 +65,27 @@ void NodeCube::loadMovie(Archive &archive, uint16 id) {
 	Common::MemoryReadStream *binkStream = archive.getData(binkDesc);
 	const VideoData &videoData = binkDesc->getVideoData();
 
-	Graphics::Vector3d planeDirection = videoData.v1;
+	Math::Vector3d planeDirection = videoData.v1;
 	planeDirection.normalize();
 
-	Graphics::Vector3d u;
+	Math::Vector3d u;
 	u.set(planeDirection.z(), 0.0f, -planeDirection.x());
 	u.normalize();
 
-	Graphics::Vector3d v = Graphics::cross(planeDirection, u);
+	Math::Vector3d v = Math::cross(planeDirection, u);
 	v.normalize();
 
-	Graphics::Vector3d planeOrigin = planeDirection * scale;
+	Math::Vector3d planeOrigin = planeDirection * scale;
 
 	float left = (videoData.u - 320) * 0.003125f;
 	float right = (videoData.u + videoData.width - 320) * 0.003125f;
 	float top = (320 - videoData.v) * 0.003125f;
 	float bottom = (320 - videoData.v - videoData.height) * 0.003125f;
 
-	Graphics::Vector3d vLeft = scale * left * u;
-	Graphics::Vector3d vRight = scale * right * u;
-	Graphics::Vector3d vTop = scale * top * v;
-	Graphics::Vector3d vBottom = scale * bottom * v;
+	Math::Vector3d vLeft = scale * left * u;
+	Math::Vector3d vRight = scale * right * u;
+	Math::Vector3d vTop = scale * top * v;
+	Math::Vector3d vBottom = scale * bottom * v;
 
 	Movie movie;
 

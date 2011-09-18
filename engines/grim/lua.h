@@ -28,7 +28,7 @@
 namespace Grim {
 
 class Actor;
-class Color;
+class PoolColor;
 class Costume;
 class Font;
 class ObjectState;
@@ -36,6 +36,7 @@ class PrimitiveObject;
 class TextObject;
 class TextObjectDefaults;
 class TextObjectCommon;
+class PoolObjectBase;
 
 extern int refSystemTable;
 extern int refTypeOverride;
@@ -60,12 +61,12 @@ extern int refTextObjectPan;
 // Helpers
 bool getbool(int num);
 void pushbool(bool val);
-void pushobject(int id, int32 tag);
+void pushobject(PoolObjectBase *o);
 int getobject(lua_Object obj);
 Actor *getactor(lua_Object obj);
 TextObject *gettextobject(lua_Object obj);
 Font *getfont(lua_Object obj);
-Color *getcolor(lua_Object obj);
+PoolColor *getcolor(lua_Object obj);
 PrimitiveObject *getprimitive(lua_Object obj);
 ObjectState *getobjectstate(lua_Object obj);
 byte clamp_color(int c);

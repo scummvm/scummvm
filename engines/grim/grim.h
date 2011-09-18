@@ -77,15 +77,6 @@ public:
 		TextAndVoice = 3
 	};
 
-	typedef Common::HashMap<int32, Bitmap *> BitmapListType;
-	typedef Common::HashMap<int32, Font *> FontListType;
-	typedef Common::HashMap<int32, Color *> ColorListType;
-	typedef Common::HashMap<int32, ObjectState *> StateListType;
-	typedef Common::HashMap<int32, Scene *> SceneListType;
-	typedef Common::HashMap<int32, Actor *> ActorListType;
-	typedef Common::HashMap<int32, TextObject *> TextListType;
-	typedef Common::HashMap<int32, PrimitiveObject *> PrimitiveListType;
-
 	GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language);
 	virtual ~GrimEngine();
 
@@ -146,68 +137,14 @@ public:
 	const Common::String &getSceneName() const;
 	void makeCurrentSetup(int num);
 
-	// Scene registration
-	SceneListType::const_iterator scenesBegin() const { return _scenes.begin(); }
-	SceneListType::const_iterator scenesEnd() const { return _scenes.end(); }
-	void registerScene(Scene *a);
-	void removeScene(Scene *a);
-	void killScenes();
-	int sceneId(Scene *s) const;
-
 	void flagRefreshShadowMask(bool flag) { _refreshShadowMask = flag; }
 	bool getFlagRefreshShadowMask() { return _refreshShadowMask; }
 
-	Bitmap *registerBitmap(const char *filename, const char *data, int len);
-	Bitmap *registerBitmap(const char *data, int width, int height, const char *filename);
-	void registerBitmap(Bitmap *bitmap);
-	void killBitmap(Bitmap *b);
-	void killBitmaps();
-	Bitmap *getBitmap(int32 id) const;
-
-	// Actor registration
-	ActorListType::const_iterator actorsBegin() const { return _actors.begin(); }
-	ActorListType::const_iterator actorsEnd() const { return _actors.end(); }
-	void registerActor(Actor *a);
-	void killActor(Actor *a);
-	Actor *getActor(int id) const;
 	Actor *getTalkingActor() const;
 	void setTalkingActor(Actor *actor);
 
 	void setSelectedActor(Actor *a) { _selectedActor = a; }
 	Actor *getSelectedActor() { return _selectedActor; }
-	void killActors();
-
-	// Text Object Registration
-	TextListType::const_iterator textsBegin() const { return _textObjects.begin(); }
-	TextListType::const_iterator textsEnd() const { return _textObjects.end(); }
-	void registerTextObject(TextObject *a);
-	void killTextObject(TextObject *a);
-	void killTextObjects();
-	TextObject *getTextObject(int id) const;
-
-
-	// Primitives Object Registration
-	PrimitiveListType::const_iterator primitivesBegin() const { return _primitiveObjects.begin(); }
-	PrimitiveListType::const_iterator primitivesEnd() const { return _primitiveObjects.end(); }
-	void registerPrimitiveObject(PrimitiveObject *a);
-	void killPrimitiveObject(PrimitiveObject *a);
-	void killPrimitiveObjects();
-	PrimitiveObject *getPrimitiveObject(int id) const;
-
-	void registerObjectState(ObjectState *o);
-	void killObjectState(ObjectState *o);
-	void killObjectStates();
-	ObjectState *getObjectState(int id) const;
-
-	void registerFont(Font *f);
-	void killFont(Font *f);
-	void killFonts();
-	Font *getFont(int32 id) const;
-
-	void registerColor(Color *c);
-	void killColor(Color *c);
-	void killColors();
-	Color *getColor(int32 id) const;
 
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
@@ -226,17 +163,9 @@ private:
 
 	void savegameSave();
 	void saveGRIM();
-	void saveBitmaps();
-	void saveFonts();
-	template<typename T>
-	void saveObjects(Common::HashMap<int32, T *> &map, uint32 ID);
 
 	void savegameRestore();
 	void restoreGRIM();
-	void restoreBitmaps();
-	void restoreFonts();
-	template<typename T>
-	void restoreObjects(Common::HashMap<int32, T *> &map, uint32 ID);
 
 	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
@@ -272,15 +201,6 @@ private:
 	Actor *_selectedActor;
 	Actor *_talkingActor;
 	Iris *_iris;
-
-	SceneListType _scenes;
-	ActorListType _actors;
-	TextListType _textObjects;
-	PrimitiveListType _primitiveObjects;
-	BitmapListType _bitmaps;
-	StateListType _objectStates;
-	FontListType _fonts;
-	ColorListType _colors;
 
 	uint32 _gameFlags;
 	GrimGameType _gameType;

@@ -27,8 +27,8 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
-#include "graphics/line3d.h"
-#include "graphics/rect2d.h"
+#include "math/line3d.h"
+#include "math/rect2d.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/actor.h"
@@ -50,7 +50,8 @@ namespace Grim {
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const Common::String &actorName) :
-		Object(), _name(actorName), _setName(""), _talkColor(g_grim->getColor(2)), _pos(0, 0, 0),
+		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
+		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -72,8 +73,6 @@ Actor::Actor(const Common::String &actorName) :
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
-	_lastWasLeft = false;
-	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
@@ -92,19 +91,15 @@ Actor::Actor(const Common::String &actorName) :
 		_talkCostume[i] = NULL;
 		_talkChore[i] = -1;
 	}
-
-	g_grim->registerActor(this);
 }
 
 Actor::Actor() :
-	Object() {
+	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
 
 	_shadowArray = new Shadow[5];
 	_winX1 = _winY1 = 1000;
 	_winX2 = _winY2 = -1000;
 	_toClean = false;
-	_lastWasLeft = false;
-	_lastStepTime = 0;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
@@ -130,8 +125,6 @@ Actor::~Actor() {
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
 	}
-
-	g_grim->killActor(this);
 }
 
 void Actor::saveState(SaveGame *savedState) const {
@@ -275,7 +268,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_winY2);
 
 	savedState->writeLESint32(_path.size());
-	for (Common::List<Graphics::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
+	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
 		savedState->writeVector3d(*i);
 	}
 }
@@ -290,7 +283,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor = g_grim->getColor(savedState->readLEUint32());
+	_talkColor = PoolColor::getPool()->getObject(savedState->readLEUint32());
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();
@@ -465,7 +458,7 @@ void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
 	_turning = false;
 }
 
-void Actor::setPos(Graphics::Vector3d position) {
+void Actor::setPos(Math::Vector3d position) {
 	_walking = false;
 	_pos = position;
 
@@ -487,7 +480,7 @@ void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
 		_turning = false;
 }
 
-void Actor::walkTo(const Graphics::Vector3d &p) {
+void Actor::walkTo(const Math::Vector3d &p) {
 	if (p == _pos)
 		_walking = false;
 	else {
@@ -564,21 +557,21 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 					if (inClosed)
 						continue;
 
-					Common::List<Graphics::Line3d> bridges = sector->getBridgesTo(s);
+					Common::List<Math::Line3d> bridges = sector->getBridgesTo(s);
 					if (bridges.empty())
 						continue; // The sectors are not adjacent.
 
-					Graphics::Vector3d closestPoint = s->getClosestPoint(_destPos);
-					Graphics::Vector3d best;
+					Math::Vector3d closestPoint = s->getClosestPoint(_destPos);
+					Math::Vector3d best;
 					float bestDist = 1e6f;
-					Graphics::Line3d l(node->pos, closestPoint);
+					Math::Line3d l(node->pos, closestPoint);
 					while (!bridges.empty()) {
-						Graphics::Line3d bridge = bridges.back();
-						Graphics::Vector3d pos;
+						Math::Line3d bridge = bridges.back();
+						Math::Vector3d pos;
 						if (!bridge.intersectLine2d(l, &pos)) {
 							pos = bridge.middle();
 						}
-						float dist = (pos - closestPoint).magnitude();
+						float dist = (pos - closestPoint).getMagnitude();
 						if (dist < bestDist) {
 							bestDist = dist;
 							best = pos;
@@ -594,20 +587,20 @@ void Actor::walkTo(const Graphics::Vector3d &p) {
 						}
 					}
 					if (n) {
-						float newCost = node->cost + (best - node->pos).magnitude();
+						float newCost = node->cost + (best - node->pos).getMagnitude();
 						if (newCost < n->cost) {
 							n->cost = newCost;
 							n->parent = node;
 							n->pos = best;
-							n->dist = (n->pos - _destPos).magnitude();
+							n->dist = (n->pos - _destPos).getMagnitude();
 						}
 					} else {
 						n = new PathNode;
 						n->parent = node;
 						n->sect = s;
 						n->pos = best;
-						n->dist = (n->pos - _destPos).magnitude();
-						n->cost = node->cost + (n->pos - node->pos).magnitude();
+						n->dist = (n->pos - _destPos).getMagnitude();
+						n->cost = node->cost + (n->pos - node->pos).getMagnitude();
 						openList.push_back(n);
 					}
 				}
@@ -639,14 +632,18 @@ bool Actor::isTurning() const {
 	return false;
 }
 
-void Actor::moveTo(const Graphics::Vector3d &pos) {
-	Graphics::Vector3d v = pos - _pos;
-	if (_collisionMode != CollisionOff) {
-		for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
-			Actor *a = i->_value;
-			if (a != this && a->isInSet(g_grim->getSceneName()) && a->isVisible()) {
-				collidesWith(a, &v);
-			}
+void Actor::moveTo(const Math::Vector3d &pos) {
+	// This is necessary for collisions in set hl to work, since
+	// Manny's collision mode isn't set.
+	if (_collisionMode == CollisionOff) {
+		_collisionMode = CollisionSphere;
+	}
+
+	Math::Vector3d v = pos - _pos;
+	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
+		Actor *a = i->_value;
+		if (a != this && a->isInSet(_setName) && a->isVisible()) {
+			collidesWith(a, &v);
 		}
 	}
 	_pos += v;
@@ -658,19 +655,8 @@ void Actor::walkForward() {
 
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
 	//float yaw;
-	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
+	Math::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
 		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
-
-	if (_lastWasLeft)
-		if (_running)
-			costumeMarkerCallback(RightRun);
-		else
-			costumeMarkerCallback(RightWalk);
-	else
-		if (_running)
-			costumeMarkerCallback(LeftRun);
-		else
-			costumeMarkerCallback(LeftWalk);
 
 	if (! _constrain) {
 		_pos += forwardVec * dist;
@@ -695,10 +681,10 @@ void Actor::walkForward() {
 
 	while (currSector) {
 		prevSector = currSector;
-		Graphics::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
-		puckVec /= puckVec.magnitude();
+		Math::Vector3d puckVec = currSector->getProjectionToPuckVector(forwardVec);
+		puckVec /= puckVec.getMagnitude();
 		currSector->getExitInfo(_pos, puckVec, &ei);
-		float exitDist = (ei.exitPoint - _pos).magnitude();
+		float exitDist = (ei.exitPoint - _pos).getMagnitude();
 		if (dist < exitDist) {
 			moveTo(_pos + puckVec * dist);
 			_walkedCur = true;
@@ -733,9 +719,9 @@ void Actor::walkForward() {
 	setYaw(_yaw + turnAmt * turnDir);
 }
 
-Graphics::Vector3d Actor::getPuckVector() const {
+Math::Vector3d Actor::getPuckVector() const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
 	Sector *sector = g_grim->getCurrScene()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
@@ -822,24 +808,19 @@ void Actor::turn(int dir) {
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
 	setYaw(_yaw + delta);
 	_currTurnDir = dir;
-
-	if (_lastWasLeft)
-		costumeMarkerCallback(RightTurn);
-	else
-		costumeMarkerCallback(LeftTurn);
 }
 
 float Actor::getYawTo(const Actor &a) const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
-	Graphics::Vector3d delta = a.getPos() - _pos;
+	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Math::Vector3d delta = a.getPos() - _pos;
 	delta.z() = 0;
 
 	return angle(forwardVec, delta) * (180.f / LOCAL_PI);
 }
 
-float Actor::getYawTo(Graphics::Vector3d p) const {
-	Graphics::Vector3d dpos = p - _pos;
+float Actor::getYawTo(Math::Vector3d p) const {
+	Math::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
@@ -908,9 +889,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	g_grim->setTalkingActor(this);
 
 	if (_sayLineText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
-		if (textObject)
-			g_grim->killTextObject(textObject);
+		delete TextObject::getPool()->getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 
@@ -919,11 +898,12 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
+		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+			TextObject::getPool()->deleteObjects();
+
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
-			g_grim->killTextObjects();
 		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
@@ -940,7 +920,6 @@ void Actor::sayLine(const char *msgId, bool background) {
 			}
 		}
 		textObject->setText(msgId);
-		g_grim->registerTextObject(textObject);
 		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
 			_sayLineText = textObject->getId();
 	}
@@ -951,7 +930,7 @@ bool Actor::isTalking() {
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	TextObject *textObject = NULL;
 	if (_sayLineText)
-		textObject = g_grim->getTextObject(_sayLineText);
+		textObject = TextObject::getPool()->getObject(_sayLineText);
 	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
@@ -979,9 +958,7 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
-		if (textObject)
-			g_grim->killTextObject(textObject);
+		delete TextObject::getPool()->getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 	if (g_grim->getTalkingActor() == this) {
@@ -1065,15 +1042,15 @@ void Actor::updateWalk() {
 		return;
 	}
 
-	Graphics::Vector3d destPos = _path.back();
+	Math::Vector3d destPos = _path.back();
 	float y = getYawTo(destPos);
 	if (y < 0.f) {
 		y += 360.f;
 	}
 	turnTo(_pitch, y, _roll);
 
-	Graphics::Vector3d dir = destPos - _pos;
-	float dist = dir.magnitude();
+	Math::Vector3d dir = destPos - _pos;
+	float dist = dir.getMagnitude();
 
 	if (dist > 0)
 		dir /= dist;
@@ -1094,17 +1071,6 @@ void Actor::updateWalk() {
 	}
 
 	_walkedCur = true;
-
-	if (_lastWasLeft)
-		if (_running)
-			costumeMarkerCallback(RightRun);
-		else
-			costumeMarkerCallback(RightWalk);
-	else
-		if (_running)
-			costumeMarkerCallback(LeftRun);
-		else
-			costumeMarkerCallback(LeftWalk);
 }
 
 void Actor::update(float frameTime) {
@@ -1135,11 +1101,6 @@ void Actor::update(float frameTime) {
 			setYaw(_yaw - turnAmt);
 		}
 		_currTurnDir = (dyaw > 0 ? 1 : -1);
-
-		if (_lastWasLeft)
-			costumeMarkerCallback(RightTurn);
-		else
-			costumeMarkerCallback(LeftTurn);
 	}
 
 	if (_walking) {
@@ -1149,7 +1110,6 @@ void Actor::update(float frameTime) {
 	if (_walkChore >= 0) {
 		if (_walkedCur) {
 			if (_walkCostume->isChoring(_walkChore, false) < 0) {
-				_lastStepTime = 0;
 				_walkCostume->stopChore(_walkChore);
 				_walkCostume->playChoreLooping(_walkChore);
 				_walkCostume->fadeChoreIn(_walkChore, 150);
@@ -1257,7 +1217,10 @@ void Actor::update(float frameTime) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
 		c->setPosRotate(_pos, _pitch, _yaw, _roll);
-		c->update(frameTime);
+		int marker = c->update(frameTime);
+		if (marker > 0) {
+			costumeMarkerCallback(marker);
+		}
 	}
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
@@ -1341,7 +1304,7 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		TextObject *textObject = g_grim->getTextObject(_sayLineText);
+		TextObject *textObject = TextObject::getPool()->getObject(_sayLineText);
 		if (textObject) {
 			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
 				textObject->setX(640 / 2);
@@ -1395,8 +1358,8 @@ bool Actor::shouldDrawShadow(int shadowId) {
 
 	// Don't draw a shadow if the actor is behind the shadow plane.
 	Sector *sector = shadow->planeList.front().sector;
-	Graphics::Vector3d n = sector->getNormal();
-	Graphics::Vector3d p = sector->getVertices()[0];
+	Math::Vector3d n = sector->getNormal();
+	Math::Vector3d p = sector->getVertices()[0];
 	float d = -(n.x() * p.x() + n.y() * p.y() + n.z() * p.z());
 
 	p = getPos();
@@ -1430,7 +1393,7 @@ void Actor::setActivateShadow(int shadowId, bool state) {
 	_shadowArray[shadowId].active = state;
 }
 
-void Actor::setShadowPoint(Graphics::Vector3d p) {
+void Actor::setShadowPoint(Math::Vector3d p) {
 	assert(_activeShadowSlot != -1);
 
 	_shadowArray[_activeShadowSlot].pos = p;
@@ -1493,7 +1456,7 @@ void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
 }
 
-bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
+bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 	if (actor->_collisionMode == CollisionOff) {
 		return false;
 	}
@@ -1501,8 +1464,8 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 	Model *model1 = getCurrentCostume()->getModel();
 	Model *model2 = actor->getCurrentCostume()->getModel();
 
-	Graphics::Vector3d p1 = _pos + model1->_insertOffset;
-	Graphics::Vector3d p2 = actor->_pos + model2->_insertOffset;
+	Math::Vector3d p1 = _pos + model1->_insertOffset;
+	Math::Vector3d p2 = actor->_pos + model2->_insertOffset;
 
 	float size1 = model1->_radius * _collisionScale;
 	float size2 = model2->_radius * actor->_collisionScale;
@@ -1511,31 +1474,32 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
-		Graphics::Vector3d pos = p1 + *vec;
-		float distance = (pos - p2).magnitude();
+		Math::Vector3d pos = p1 + *vec;
+		float distance = (pos - p2).getMagnitude();
 		if (distance < size1 + size2) {
 			// Move the destination point so that its distance from the
 			// center of the circle is size1+size2.
-			Graphics::Vector3d v = pos - p2;
+			Math::Vector3d v = pos - p2;
 			v.normalize();
 			v *= size1 + size2;
 			*vec = v + p2 - p1;
 
+			collisionHandlerCallback(actor);
 			return true;
 		}
 	} else if (mode1 == CollisionBox && mode2 == CollisionBox) {
 		warning("Collision between box and box not implemented!");
 		return false;
 	} else {
-		Graphics::Rect2d rect;
+		Math::Rect2d rect;
 
-		Graphics::Vector3d bboxPos;
-		Graphics::Vector3d size;
-		Graphics::Vector3d pos;
-		Graphics::Vector3d circlePos;
+		Math::Vector3d bboxPos;
+		Math::Vector3d size;
+		Math::Vector3d pos;
+		Math::Vector3d circlePos;
 		float yaw;
 
-		Graphics::Vector2d circle;
+		Math::Vector2d circle;
 		float radius;
 
 		if (mode1 == CollisionBox) {
@@ -1560,35 +1524,35 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			radius = size1;
 		}
 
-		rect._topLeft = Graphics::Vector2d(bboxPos.x(), bboxPos.y() + size.y());
-		rect._topRight = Graphics::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
-		rect._bottomLeft = Graphics::Vector2d(bboxPos.x(), bboxPos.y());
-		rect._bottomRight = Graphics::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
-		rect.rotateAround(Graphics::Vector2d(pos.x(), pos.y()), yaw);
+		rect._topLeft = Math::Vector2d(bboxPos.x(), bboxPos.y() + size.y());
+		rect._topRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
+		rect._bottomLeft = Math::Vector2d(bboxPos.x(), bboxPos.y());
+		rect._bottomRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
+		rect.rotateAround(Math::Vector2d(pos.x(), pos.y()), yaw);
 
 		if (rect.intersectsCircle(circle, radius)) {
-			Graphics::Vector2d center = rect.getCenter();
+			Math::Vector2d center = rect.getCenter();
 			// Draw a line from the center of the rect to the place the character
 			// would go to.
-			Graphics::Vector2d v = circle - center;
+			Math::Vector2d v = circle - center;
 			v.normalize();
 
-			Graphics::Segment2d edge;
+			Math::Segment2d edge;
 			// That line intersects (usually) an edge
 			rect.getIntersection(center, v, &edge);
 			// Take the perpendicular of that edge
-			Graphics::Line2d perpendicular = edge.getPerpendicular(circle);
+			Math::Line2d perpendicular = edge.getPerpendicular(circle);
 
-			Graphics::Vector3d point;
-			Graphics::Vector2d p;
+			Math::Vector3d point;
+			Math::Vector2d p;
 			// If that perpendicular intersects the edge
 			if (edge.intersectsLine(perpendicular, &p)) {
-				Graphics::Vector2d direction = perpendicular.getDirection();
+				Math::Vector2d direction = perpendicular.getDirection();
 				direction.normalize();
 
 				// Move from the intersection until we are at a safe distance
-				Graphics::Vector2d point1(p - direction * radius);
-				Graphics::Vector2d point2(p + direction * radius);
+				Math::Vector2d point1(p - direction * radius);
+				Math::Vector2d point2(p + direction * radius);
 
 				if (center.getDistanceTo(point1) < center.getDistanceTo(point2)) {
 					point = point2.toVector3d();
@@ -1597,10 +1561,10 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 				}
 			} else { //if not we're around a corner
 				// Find the nearest vertex of the rect
-				Graphics::Vector2d vertex = rect.getTopLeft();
+				Math::Vector2d vertex = rect.getTopLeft();
 				float distance = vertex.getDistanceTo(circle);
 
-				Graphics::Vector2d other = rect.getTopRight();
+				Math::Vector2d other = rect.getTopRight();
 				float otherDist = other.getDistanceTo(circle);
 				if (otherDist < distance) {
 					distance = otherDist;
@@ -1620,7 +1584,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 				}
 
 				// and move on a circle around it
-				Graphics::Vector2d dst = circle - vertex;
+				Math::Vector2d dst = circle - vertex;
 				dst.normalize();
 				dst = dst * radius;
 				point = (vertex + dst).toVector3d();
@@ -1629,6 +1593,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 			float z = vec->z();
 			*vec = point - circlePos;
 			vec->z() = z;
+			collisionHandlerCallback(actor);
 			return true;
 		}
 	}
@@ -1638,19 +1603,7 @@ bool Actor::collidesWith(Actor *actor, Graphics::Vector3d *vec) const {
 
 extern int refSystemTable;
 
-void Actor::costumeMarkerCallback(Footstep step)
-{
-	int time = g_system->getMillis();
-	float rate = 400;
-	if (_running)
-		rate = 300;
-
-	if (_lastStepTime != 0 && time - _lastStepTime < rate)
-		return;
-
-	_lastStepTime = time;
-	_lastWasLeft = !_lastWasLeft;
-
+void Actor::costumeMarkerCallback(int marker) {
 	lua_beginblock();
 
 	lua_pushobject(lua_getref(refSystemTable));
@@ -1664,12 +1617,38 @@ void Actor::costumeMarkerCallback(Footstep step)
 		if (lua_isfunction(func)) {
 			lua_pushobject(func);
 			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushnumber(step);
+			lua_pushnumber(marker);
 			lua_callfunction(func);
 		}
 	} else if (lua_isfunction(table)) {
 		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushnumber(step);
+		lua_pushnumber(marker);
+		lua_callfunction(table);
+	}
+
+	lua_endblock();
+}
+
+void Actor::collisionHandlerCallback(Actor *other) const {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("collisionHandler");
+	lua_Object table = lua_gettable();
+
+	if (lua_istable(table)) {
+		lua_pushobject(table);
+		lua_pushstring("collisionHandler");
+		lua_Object func = lua_gettable();
+		if (lua_isfunction(func)) {
+			lua_pushobject(func);
+			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
+			lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
+			lua_callfunction(func);
+		}
+	} else if (lua_isfunction(table)) {
+		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
+		lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
 		lua_callfunction(table);
 	}
 

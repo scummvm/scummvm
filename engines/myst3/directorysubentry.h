@@ -21,7 +21,7 @@
  */
 
 #include "common/memstream.h"
-#include "graphics/vector3d.h"
+#include "math/vector3d.h"
 
 namespace Myst3 {
 
@@ -31,8 +31,8 @@ struct SpotItemData {
 };
 
 struct VideoData {
-	Graphics::Vector3d v1;
-	Graphics::Vector3d v2;
+	Math::Vector3d v1;
+	Math::Vector3d v2;
 	int32 u;
 	int32 v;
 	int32 width;

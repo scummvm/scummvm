@@ -25,7 +25,7 @@
 
 #include "common/memstream.h"
 #include "engines/grim/object.h"
-#include "graphics/matrix4.h"
+#include "math/matrix4.h"
 
 namespace Grim {
 
@@ -38,7 +38,7 @@ class CMap;
 struct Sprite {
 	void draw() const;
 
-	Graphics::Vector3d _pos;
+	Math::Vector3d _pos;
 	float _width;
 	float _height;
 	bool _visible;
@@ -84,14 +84,14 @@ public:
 	char (*_materialNames)[32];
 	Material **_materials;
 	bool *_materialsShared;
-	Graphics::Vector3d _insertOffset;
+	Math::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
 	float _radius;
 	int _numHierNodes;
 	ModelNode *_rootHierNode;
-	Graphics::Vector3d _bboxPos;
-	Graphics::Vector3d _bboxSize;
+	Math::Vector3d _bboxPos;
+	Math::Vector3d _bboxSize;
 };
 
 class MeshFace {
@@ -106,7 +106,7 @@ public:
 	float _extraLight;
 	int _numVertices;
 	int *_vertices, *_texVertices;
-	Graphics::Vector3d _normal;
+	Math::Vector3d _normal;
 };
 
 class Mesh {
@@ -134,7 +134,7 @@ public:
 
 	int _numFaces;
 	MeshFace *_faces;
-	Graphics::Matrix4 _matrix;
+	Math::Matrix4 _matrix;
 };
 
 class ModelNode {
@@ -145,7 +145,7 @@ public:
 	void draw(int *x1, int *y1, int *x2, int *y2) const;
 	void addChild(ModelNode *child);
 	void removeChild(ModelNode *child);
-	void setMatrix(Graphics::Matrix4 matrix);
+	void setMatrix(Math::Matrix4 matrix);
 	void update();
 	void addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
@@ -155,15 +155,15 @@ public:
 	int _flags, _type;
 	int _depth, _numChildren;
 	ModelNode *_parent, *_child, *_sibling;
-	Graphics::Vector3d _pos, _pivot;
+	Math::Vector3d _pos, _pivot;
 	float _pitch, _yaw, _roll;
-	Graphics::Vector3d _animPos;
+	Math::Vector3d _animPos;
 	float _animPitch, _animYaw, _animRoll;
 	bool _meshVisible, _hierVisible;
 	bool _initialized;
-	Graphics::Matrix4 _matrix;
-	Graphics::Matrix4 _localMatrix;
-	Graphics::Matrix4 _pivotMatrix;
+	Math::Matrix4 _matrix;
+	Math::Matrix4 _localMatrix;
+	Math::Matrix4 _pivotMatrix;
 	Sprite* _sprite;
 };
 

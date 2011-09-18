@@ -87,6 +87,11 @@ Debug &Debug::operator<<(const char *str) {
 	return maybeSpace();
 }
 
+Debug &Debug::operator<<(char str) {
+	_stream->msg += str;
+	return maybeSpace();
+}
+
 Debug &Debug::operator<<(int num) {
 	_stream->msg += String::format("%d", num);
 	return maybeSpace();
@@ -99,6 +104,11 @@ Debug &Debug::operator<<(float num) {
 
 Debug &Debug::operator<<(bool value) {
 	_stream->msg += (value ? "true" : "false");
+	return maybeSpace();
+}
+
+Debug &Debug::operator<<(void *p) {
+	_stream->msg += String::format("%p", p);
 	return maybeSpace();
 }
 

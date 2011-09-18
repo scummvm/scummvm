@@ -66,7 +66,7 @@ void L1_FreeImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->getBitmap(lua_getuserdata(param));
+	Bitmap *bitmap = Bitmap::getPool()->getObject(lua_getuserdata(param));
 	delete bitmap;
 }
 
@@ -74,7 +74,7 @@ void L1_BlastImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
-	Bitmap *bitmap = g_grim->getBitmap(lua_getuserdata(param));
+	Bitmap *bitmap = Bitmap::getPool()->getObject(lua_getuserdata(param));
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
@@ -156,13 +156,13 @@ void L1_PauseMovie() {
 }
 
 void L1_PurgePrimitiveQueue() {
-	g_grim->killPrimitiveObjects();
+	PrimitiveObject::getPool()->deleteObjects();
 }
 
 void L1_DrawPolygon() {
 	lua_Object pointObj;
 	Common::Point p1, p2, p3, p4;
-	Color *color = NULL;
+	PoolColor *color = NULL;
 
 	lua_Object tableObj1 = lua_getparam(1);
 	if (!lua_istable(tableObj1)) {
@@ -223,13 +223,12 @@ void L1_DrawPolygon() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createPolygon(p1, p2, p3, p4, color);
-	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
 void L1_DrawLine() {
 	Common::Point p1, p2;
-	Color *color = NULL;;
+	PoolColor *color = NULL;;
 	lua_Object x1Obj = lua_getparam(1);
 	lua_Object y1Obj = lua_getparam(2);
 	lua_Object x2Obj = lua_getparam(3);
@@ -263,13 +262,12 @@ void L1_DrawLine() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createLine(p1, p2, color); // TODO Add layer support
-	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
 void L1_ChangePrimitive() {
 	PrimitiveObject *psearch, *pmodify = NULL;
-	Color *color = NULL;
+	PoolColor *color = NULL;
 
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isuserdata(param1) || lua_tag(param1) != MKTAG('P','R','I','M'))
@@ -281,7 +279,8 @@ void L1_ChangePrimitive() {
 
 	psearch = getprimitive(param1);
 
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
+	for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
+		 i != PrimitiveObject::getPool()->getEnd(); ++i) {
 		PrimitiveObject *p = i->_value;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
@@ -377,7 +376,7 @@ void L1_ChangePrimitive() {
 
 void L1_DrawRectangle() {
 	Common::Point p1, p2;
-	Color *color = NULL;
+	PoolColor *color = NULL;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);
@@ -411,13 +410,12 @@ void L1_DrawRectangle() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(p1, p2, color, filled);
-	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
 }
 
 void L1_BlastRect() {
 	Common::Point p1, p2;
-	Color *color = NULL;
+	PoolColor *color = NULL;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);
@@ -462,7 +460,6 @@ void L1_KillPrimitive() {
 		return;
 
 	PrimitiveObject *prim = getprimitive(primObj);
-	g_grim->killPrimitiveObject(prim);
 	delete prim;
 }
 

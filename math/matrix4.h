@@ -18,43 +18,37 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
+ * $URL$
+ * $Id$
  */
 
-#ifndef GRIM_COLOR_H
-#define GRIM_COLOR_H
+#ifndef MATH_MATRIX4_H
+#define MATH_MATRIX4_H
 
-#include "engines/grim/pool.h"
+#include "math/rotation3d.h"
+#include "math/squarematrix.h"
+#include "math/vector3d.h"
 
-namespace Grim {
+namespace Math {
 
-class Color {
+// matrix 4 is a rotation matrix + position
+template<>
+class Matrix<4, 4> : public MatrixType<4, 4>, public Rotation3D<Matrix<4, 4> > {
 public:
-	byte _vals[3];
+	Matrix();
+	Matrix(const MatrixBase<4, 4> &m);
 
-	Color() {}
-	Color(byte r, byte g, byte b);
-	Color(const Color& c);
+	void transform(Vector3d *v, bool translate) const;
 
-	byte &getRed() { return _vals[0]; }
-	byte getRed() const { return _vals[0]; }
-	byte &getGreen() { return _vals[1]; }
-	byte getGreen() const { return _vals[1]; }
-	byte &getBlue() { return _vals[2]; }
-	byte getBlue() const { return _vals[2]; }
+	Vector3d getPosition() const;
+	void setPosition(const Vector3d &v);
 
-	Color& operator =(const Color &c);
-	Color& operator =(Color *c);
+	void translate(const Vector3d &v);
+
 };
 
-class PoolColor : public PoolObject<PoolColor, MKTAG('C', 'O', 'L', 'R')>, public Color {
-public:
-	PoolColor();
-	PoolColor(byte r, byte g, byte b);
+typedef Matrix<4, 4> Matrix4;
 
-	void restoreState(SaveGame *state);
-	void saveState(SaveGame *state) const;
-};
-
-} // end of namespace Grim
+} // end of namespace Math
 
 #endif

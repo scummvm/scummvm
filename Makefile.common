@@ -26,6 +26,7 @@ MODULES += \
 	video \
 	graphics \
 	audio \
+	math \
 	common \
 	po
 

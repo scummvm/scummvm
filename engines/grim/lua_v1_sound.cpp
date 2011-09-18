@@ -250,7 +250,7 @@ void L1_RestoreIMuse() {
 }
 
 void L1_SetSoundPosition() {
-	Graphics::Vector3d pos;
+	Math::Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
 	float someParam = 0;
