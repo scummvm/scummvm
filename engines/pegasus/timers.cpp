@@ -56,6 +56,16 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 	_callBackList = 0;
 	_paused = false;
 	_flags = 0;
+	_lastMillis = 0;
+	_time = 0;
+	_rate = 0;
+	_startTime = 0;
+	_startScale = 1;
+	_stopTime = 0xffffffff;
+	_stopScale = 1;
+	_master = 0;
+	_pausedRate = 0;
+	
 	((PegasusEngine *)g_engine)->addTimeBase(this);
 }
 
@@ -70,39 +80,18 @@ TimeBase::~TimeBase() {
 }
 
 void TimeBase::setTime(const TimeValue time, const TimeScale scale) {
-	// So, we're saying the *current* time from g_system->getMillis() is
-	// what time/scale is. Which means we need to subtract time/scale from
-	// the offset so that g_system->getMillis() - _currentOffset is
-	// equal to time/scale.
-	_timeOffset = g_system->getMillis() - time * 1000 / ((scale == 0) ? _preferredScale : scale);
-
-	// TODO: Also adjust the slaves' offsets (once we're actually using the
-	// masters for calculating time)
+	_time = Common::Rational(time, (scale == 0) ? _preferredScale : scale);
 }
 
 TimeValue TimeBase::getTime(const TimeScale scale) {
-	if (_paused)
-		return _pausedTime;
-
-	Common::Rational normalTime = Common::Rational((g_system->getMillis() - _timeOffset) * ((scale == 0) ? _preferredScale : scale), 1000);
-
-	// Adjust it according to our rate
-	return (normalTime * getEffectiveRate()).toInt();
+	return _time.getNumerator() * ((scale == 0) ? _preferredScale : scale) / _time.getDenominator();
 }
 
 void TimeBase::setRate(const Common::Rational rate) {
-	if (rate == 0) {
-		_paused = false;
-		_timeOffset = 0;
-	} else if (_timeOffset != 0) {
-		// Convert the time from the old rate to the new rate
-		_timeOffset = g_system->getMillis() - (rate * (g_system->getMillis() - _timeOffset) / _rate).toInt();
-	} else {
-		// TODO: Check this
-		setTime(_startTime, _startScale);
-	}
-
 	_rate = rate;
+
+	if (_rate == 0)
+		_paused = false;
 }
 
 Common::Rational TimeBase::getEffectiveRate() const {
@@ -125,7 +114,6 @@ void TimeBase::pause() {
 	if (isRunning() && !_paused) {
 		_pausedRate = getRate();
 		stop();
-		_pausedTime = getTime();
 		_paused = true;
 	}
 }
@@ -150,9 +138,9 @@ bool TimeBase::isRunning() {
 		return true;
 
 	if (rate > 0)
-		return getTime() < getStop();
+		return getTime() != getStop();
 
-	return getTime() > getStart();
+	return getTime() != getStart();
 }
 
 void TimeBase::setStart(const TimeValue startTime, const TimeScale scale) {
@@ -208,31 +196,55 @@ void TimeBase::setMasterTimeBase(TimeBase *tb) {
 }
 
 void TimeBase::checkCallBacks() {
-	uint32 time = getTime();
-	uint32 startTime = getStart();
-	uint32 stopTime = getStop();
+	// Nothing to do if we're paused or not running
+	if (_paused || !isRunning())
+		return;
 
+	Common::Rational startTime = Common::Rational(_startTime, _startScale);
+	Common::Rational stopTime = Common::Rational(_stopTime, _stopScale);
+
+	// First step: update the times
+	if (_lastMillis == 0) {
+		_lastMillis = g_system->getMillis();
+	} else {
+		uint32 curTime = g_system->getMillis();
+		if (_lastMillis == curTime) // No change
+			return;
+
+		_time += Common::Rational(curTime - _lastMillis, 1000) * getEffectiveRate();
+		_lastMillis = curTime;
+
+		// Clip time to the boundaries
+		if (_time >= stopTime)
+			_time = stopTime;
+		else if (_time <= startTime)
+			_time = startTime;
+	}
+
+	// TODO: Update the slaves?
+
+	// Check if we've triggered any callbacks
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = runner->_nextCallBack) {
 		if (runner->_type == kCallBackAtTime && runner->_trigger == kTriggerTimeFwd) {
-			if (time >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
+			if (_time >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
 				runner->callBack();
 		} else if (runner->_type == kCallBackAtExtremes) {
 			if (runner->_trigger == kTriggerAtStop) {
-				if (time >= stopTime)
+				if (_time == stopTime)
 					runner->callBack();
 			} else if (runner->_trigger == kTriggerAtStart) {
-				if (time <= startTime)
+				if (_time == startTime)
 					runner->callBack();
 			}
 		}
 	}
 
+	// Loop if necessary
 	if (getFlags() & kLoopTimeBase) {
-		// Loop
-		if (time >= startTime)
-			setTime(stopTime);
-		else if (time <= stopTime)
-			setTime(startTime);
+		if (_time == startTime)
+			_time = stopTime;
+		else if (_time == stopTime)
+			_time = startTime;
 	}
 }
 

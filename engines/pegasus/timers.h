@@ -115,9 +115,10 @@ protected:
 	bool _paused;
 	uint32 _startTime, _startScale;
 	uint32 _stopTime, _stopScale;
-	int32 _timeOffset;
 	uint32 _flags;
-	TimeValue _pausedTime;
+
+	Common::Rational _time;
+	uint32 _lastMillis;
 
 private:
 	Common::Rational getEffectiveRate() const;
