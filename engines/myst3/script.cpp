@@ -37,6 +37,8 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(8, nodeFrameInitCond);
 	OPCODE(9, nodeFrameInitIndex);
 	OPCODE(11, stopWholeScript);
+	OPCODE(19, movieInitCond);
+	OPCODE(22, movieInitCondPreload);
 	OPCODE(35, sunspotAdd);
 	OPCODE(49, varSetZero);
 	OPCODE(50, varSetOne);
@@ -219,6 +221,17 @@ void Script::stopWholeScript(Context &c, const Opcode &cmd) {
 
 	c.result = false;
 	c.endScript = true;
+}
+
+void Script::movieInitCond(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Init movie %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->loadMovie(cmd.args[0], false, cmd.args[1]);
+}
+void Script::movieInitCondPreload(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->loadMovie(cmd.args[0], true, cmd.args[1]);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {

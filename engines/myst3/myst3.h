@@ -30,6 +30,7 @@
 #include "engines/myst3/archive.h"
 #include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/movie.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/scene.h"
 #include "engines/myst3/script.h"
@@ -72,6 +73,7 @@ public:
 	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void runNodeInitScripts();
 
+	void loadMovie(uint16 id, bool preload, uint16 condition);
 private:
 	OSystem *_system;
 	Console *_console;
@@ -81,6 +83,8 @@ private:
 	Archive *_archive;
 	Script *_scriptEngine;
 	Database *_db;
+
+	Common::Array<Movie *> _movies;
 
 	ViewType _viewType;
 	uint16 _currentNode;

@@ -24,7 +24,6 @@
 #define NODECUBE_H_
 
 #include "engines/myst3/node.h"
-#include "engines/myst3/movie.h"
 
 namespace Myst3 {
 
@@ -36,11 +35,6 @@ public:
 	void load(Archive &archive, uint16 id);
 	void unload();
 	void draw();
-
-	void loadMovie(Archive &archive, uint16 id);
-
-private:
-	Common::Array<Movie *> _movies;
 };
 
 } /* namespace Myst3 */

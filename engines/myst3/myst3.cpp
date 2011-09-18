@@ -153,9 +153,18 @@ Common::Error Myst3Engine::run() {
 		}
 		_node->draw();
 
+		for (uint i = 0; i < _movies.size(); i++) {
+			_movies[i]->draw();
+		}
+
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
+
+	for (uint i = 0; i < _movies.size(); i++) {
+		delete _movies[i];
+	}
+	_movies.clear();
 
 	_node->unload();
 	delete _node;
@@ -167,6 +176,10 @@ Common::Error Myst3Engine::run() {
 
 void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 	if (_node) {
+		for (uint i = 0; i < _movies.size(); i++) {
+			delete _movies[i];
+		}
+		_movies.clear();
 		_node->unload();
 		delete _node;
 		_node = 0;
@@ -248,6 +261,12 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) 
 				break;
 		}
 	}
+}
+
+void Myst3Engine::loadMovie(uint16 id, bool preload, uint16 condition) {
+	Movie *movie = new Movie(_archive, id);
+	movie->setCondition(condition);
+	_movies.push_back(movie);
 }
 
 } // end of namespace Myst3

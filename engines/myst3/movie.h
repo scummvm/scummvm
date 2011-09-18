@@ -32,9 +32,10 @@ namespace Myst3 {
 
 class Movie {
 public:
-	Movie(Archive &archive, uint16 id);
+	Movie(Archive *archive, uint16 id);
 	virtual ~Movie();
 	void draw();
+	void setCondition(uint16 condition) { _condition = condition; }
 
 private:
 	static const int _movieTextureSize = 1024;
@@ -45,6 +46,8 @@ private:
 	Math::Vector3d _pTopRight;
 	Video::BinkDecoder _bink;
 	GLuint _texture;
+
+	uint16 _condition;
 };
 
 } /* namespace Myst3 */

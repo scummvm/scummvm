@@ -71,6 +71,8 @@ private:
 	DECLARE_OPCODE(nodeFrameInitCond);
 	DECLARE_OPCODE(nodeFrameInitIndex);
 	DECLARE_OPCODE(stopWholeScript);
+	DECLARE_OPCODE(movieInitCond);
+	DECLARE_OPCODE(movieInitCondPreload);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(varSetZero);
 	DECLARE_OPCODE(varSetOne);

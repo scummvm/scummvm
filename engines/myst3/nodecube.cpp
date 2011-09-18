@@ -47,16 +47,6 @@ void NodeCube::load(Archive &archive, uint16 index) {
 			delete jpegStream;
 		}
 	}
-
-	// HACK: To load some of the movies of a frame
-	loadMovie(archive, index + 10000);
-	loadMovie(archive, index + 11000);
-	loadMovie(archive, index + 20000);
-}
-
-void NodeCube::loadMovie(Archive &archive, uint16 id) {
-	Movie *movie = new Movie(archive, id);
-	_movies.push_back(movie);
 }
 
 void NodeCube::draw() {
@@ -117,17 +107,9 @@ void NodeCube::draw() {
 	glEnd();
 
 	glDepthMask(GL_TRUE);
-
-	for (uint i = 0; i < _movies.size(); i++) {
-		_movies[i]->draw();
-	}
 }
 
 void NodeCube::unload() {
-	for (uint i = 0; i < _movies.size(); i++) {
-		delete _movies[i];
-	}
-
 	Node::unload();
 }
 

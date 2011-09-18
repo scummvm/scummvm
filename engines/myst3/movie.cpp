@@ -24,15 +24,15 @@
 
 namespace Myst3 {
 
-Movie::Movie(Archive &archive, uint16 id) {
+Movie::Movie(Archive *archive, uint16 id) {
 	static const float scale = 50.0f;
 
-	const DirectorySubEntry *binkDesc = archive.getDescription(id, 0, DirectorySubEntry::kMovie);
+	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
 		return;
 
-	Common::MemoryReadStream *binkStream = archive.getData(binkDesc);
+	Common::MemoryReadStream *binkStream = archive->getData(binkDesc);
 	const VideoData &videoData = binkDesc->getVideoData();
 
 	Math::Vector3d planeDirection = videoData.v1;
