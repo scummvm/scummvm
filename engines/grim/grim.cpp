@@ -22,13 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
 #define FORBIDDEN_SYMBOL_EXCEPTION_chdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_getwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdin
@@ -1142,7 +1140,7 @@ void GrimEngine::loadGame(const Common::String &file) {
 }
 
 void GrimEngine::savegameRestore() {
-	printf("GrimEngine::savegameRestore() started.\n");
+	debug("GrimEngine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1201,7 +1199,7 @@ void GrimEngine::savegameRestore() {
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	printf("GrimEngine::savegameRestore() finished.\n");
+	debug("GrimEngine::savegameRestore() finished.\n");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1238,7 +1236,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	printf("GrimEngine::StoreSaveGameImage() started.\n");
+	debug("GrimEngine::StoreSaveGameImage() started.\n");
 
 	int mode = g_grim->getMode();
 	g_grim->setMode(_previousMode);
@@ -1259,11 +1257,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	}
 	state->endSection();
 	delete screenshot;
-	printf("GrimEngine::StoreSaveGameImage() finished.\n");
+	debug("GrimEngine::StoreSaveGameImage() finished.\n");
 }
 
 void GrimEngine::savegameSave() {
-	printf("GrimEngine::savegameSave() started.\n");
+	debug("GrimEngine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
 	char filename[200];
 	if (_savegameFileName.size() == 0) {
@@ -1305,7 +1303,7 @@ void GrimEngine::savegameSave() {
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	printf("GrimEngine::savegameSave() finished.\n");
+	debug("GrimEngine::savegameSave() finished.\n");
 
 	_shortFrame = true;
 	clearEventQueue();
