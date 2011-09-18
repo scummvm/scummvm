@@ -13,10 +13,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - Implemented sound support for the DOS version of Winnie the Pooh in the
      Hundred Acre Wood.
-
  AGOS:
    - Implemented support for loading data directly from InstallShield
      cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
+   - Fixed loading and saving in the PC version of Waxworks.
+   - Fixed music in the PC versions of Elvira 1/2 and Waxworks.
 
  Groovie:
    - Added support for the iOS version of The 7th Guest.
