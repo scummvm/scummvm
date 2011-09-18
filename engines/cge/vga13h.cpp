@@ -126,11 +126,11 @@ bool Sprite::works(Sprite *spr) {
 	if (!spr || !spr->_ext)
 		return false;
 
-	Snail::Command *c = spr->_ext->_take;
+	CommandHandler::Command *c = spr->_ext->_take;
 	if (c != NULL) {
 		c += spr->_takePtr;
 		if (c->_ref == _ref)
-			if (c->_com != kSnLabel || (c->_val == 0 || c->_val == _vm->_now))
+			if (c->_commandType != kCmdLabel || (c->_val == 0 || c->_val == _vm->_now))
 				return true;
 	}
 
@@ -162,7 +162,7 @@ bool Sprite::seqTest(int n) {
 	return true;
 }
 
-Snail::Command *Sprite::snList(SnList type) {
+CommandHandler::Command *Sprite::snList(SnList type) {
 	SprExt *e = _ext;
 	if (e)
 		return (type == kNear) ? e->_near : e->_take;
@@ -208,8 +208,8 @@ Sprite *Sprite::expand() {
 	    maxnow = 0,
 	    maxnxt = 0;
 
-	Snail::Command *nearList = NULL;
-	Snail::Command *takeList = NULL;
+	CommandHandler::Command *nearList = NULL;
+	CommandHandler::Command *takeList = NULL;
 	_vm->mergeExt(fname, _file, kSprExt);
 	if (_vm->_resman->exist(fname)) { // sprite description file exist
 		EncryptedStream sprf(_vm, fname);
@@ -226,7 +226,7 @@ Sprite *Sprite::expand() {
 			if (len == 0 || *tmpStr == '.')
 				continue;
 
-			Snail::Command *c;
+			CommandHandler::Command *c;
 			switch (_vm->takeEnum(Comd, strtok(tmpStr, " =\t"))) {
 			case 0:
 				// Name
@@ -269,10 +269,10 @@ Sprite *Sprite::expand() {
 				// Near
 				if (_nearPtr == kNoPtr)
 					break;
-				nearList = (Snail::Command *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
+				nearList = (CommandHandler::Command *)realloc(nearList, (nearCount + 1) * sizeof(*nearList));
 				assert(nearList != NULL);
 				c = &nearList[nearCount++];
-				if ((c->_com = (SnCom)_vm->takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
 				c->_val = atoi(strtok(NULL, " \t,;/"));
@@ -282,10 +282,10 @@ Sprite *Sprite::expand() {
 				// Take
 				if (_takePtr == kNoPtr)
 					break;
-				takeList = (Snail::Command *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
+				takeList = (CommandHandler::Command *)realloc(takeList, (takeCount + 1) * sizeof(*takeList));
 				assert(takeList != NULL);
 				c = &takeList[takeCount++];
-				if ((c->_com = (SnCom)_vm->takeEnum(Snail::_comText, strtok(NULL, " \t,;/"))) < 0)
+				if ((c->_commandType = (CommandType)_vm->takeEnum(CommandHandler::_commandText, strtok(NULL, " \t,;/"))) < 0)
 					error("Bad NEAR in %d [%s]", lcnt, fname);
 				c->_ref = atoi(strtok(NULL, " \t,;/"));
 				c->_val = atoi(strtok(NULL, " \t,;/"));

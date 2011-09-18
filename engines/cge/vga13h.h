@@ -69,8 +69,8 @@ public:
 	BitmapPtr *_shpList;
 	Seq *_seq;
 	char *_name;
-	Snail::Command *_near;
-	Snail::Command *_take;
+	CommandHandler::Command *_near;
+	CommandHandler::Command *_take;
 	SprExt() :
 		_x0(0), _y0(0),
 		_x1(0), _y1(0),
@@ -146,7 +146,7 @@ public:
 	void killXlat();
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
-	Snail::Command *snList(SnList type);
+	CommandHandler::Command *snList(SnList type);
 	virtual void touch(uint16 mask, int x, int y);
 	virtual void tick();
 	void sync(Common::Serializer &s);

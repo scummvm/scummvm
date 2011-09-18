@@ -281,7 +281,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 
 	// Load the game
 	loadGame(slot, NULL);
-	_snail->addCommand(kSnLevel, -1, _oldLev, &_sceneLight);
+	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
 	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 	sceneUp();
@@ -442,18 +442,18 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 void CGEEngine::heroCover(int cvr) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::heroCover(%d)", cvr);
 
-	_snail->addCommand(kSnCover, 1, cvr, NULL);
+	_commandHandler->addCommand(kCmdCover, 1, cvr, NULL);
 }
 
 void CGEEngine::trouble(int seq, int text) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::trouble(%d, %d)", seq, text);
 
 	_hero->park();
-	_snail->addCommand(kSnWait, -1, -1, _hero);
-	_snail->addCommand(kSnSeq, -1, seq, _hero);
-	_snail->addCommand(kSnSound, -1, 2, _hero);
-	_snail->addCommand(kSnWait, -1, -1, _hero);
-	_snail->addCommand(kSnSay,  1, text, _hero);
+	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
+	_commandHandler->addCommand(kCmdSeq, -1, seq, _hero);
+	_commandHandler->addCommand(kCmdSound, -1, 2, _hero);
+	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
+	_commandHandler->addCommand(kCmdSay,  1, text, _hero);
 }
 
 void CGEEngine::offUse() {
@@ -517,7 +517,7 @@ void Square::touch(uint16 mask, int x, int y) {
 	Sprite::touch(mask, x, y);
 	if (mask & kMouseLeftUp) {
 		_vm->XZ(_x + x, _y + y).cell() = 0;
-		_vm->_snail_->addCommand(kSnKill, -1, 0, this);
+		_vm->_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, this);
 	}
 }
 
@@ -538,13 +538,13 @@ void CGEEngine::setMapBrick(int x, int z) {
 void CGEEngine::keyClick() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::keyClick()");
 
-	_snail_->addCommand(kSnSound, -1, 5, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSound, -1, 5, NULL);
 }
 
 void CGEEngine::resetQSwitch() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::resetQSwitch()");
 
-	_snail_->addCommand(kSnSeq, 123,  0, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 123,  0, NULL);
 	keyClick();
 }
 
@@ -557,15 +557,15 @@ void CGEEngine::quit() {
 		{ NULL, &CGEEngine::dummy          }
 	};
 
-	if (_snail->idle() && !_hero->_flags._hide) {
+	if (_commandHandler->idle() && !_hero->_flags._hide) {
 		if (Vmenu::_addr) {
-			_snail_->addCommand(kSnKill, -1, 0, Vmenu::_addr);
+			_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, Vmenu::_addr);
 			resetQSwitch();
 		} else {
 			QuitMenu[0]._text = _text->getText(kQuit);
 			QuitMenu[1]._text = _text->getText(kNoQuit);
 			(new Vmenu(this, QuitMenu, -1, -1))->setName(_text->getText(kQuitTitle));
-			_snail_->addCommand(kSnSeq, 123, 1, NULL);
+			_commandHandlerTurbo->addCommand(kCmdSeq, 123, 1, NULL);
 			keyClick();
 		}
 	}
@@ -586,7 +586,7 @@ void CGEEngine::postMiniStep(int step) {
 	debugC(6, kCGEDebugEngine, "CGEEngine::postMiniStep(%d)", step);
 
 	if (_miniScene && step != _recentStep)
-		_snail_->addCallback(kSnExec, -1, _recentStep = step, kMiniStep);
+		_commandHandlerTurbo->addCallback(kCmdExec, -1, _recentStep = step, kMiniStep);
 }
 
 void CGEEngine::showBak(int ref) {
@@ -708,8 +708,8 @@ void CGEEngine::switchScene(int newScene) {
 		return;
 
 	if (newScene < 0) {
-		_snail->addCommand(kSnLabel, -1, 0, NULL);  // wait for repaint
-		_snail->addCallback(kSnExec,  -1, 0, kQGame); // quit game
+		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
+		_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame); // quit game
 	} else {
 		_now = newScene;
 		_mouse->off();
@@ -723,8 +723,8 @@ void CGEEngine::switchScene(int newScene) {
 		killText();
 		if (!_startupMode)
 			keyClick();
-		_snail->addCommand(kSnLabel, -1, 0, NULL);  // wait for repaint
-		_snail->addCallback(kSnExec,  0, 0, kXScene); // switch scene
+		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
+		_commandHandler->addCallback(kCmdExec,  0, 0, kXScene); // switch scene
 	}
 }
 
@@ -756,7 +756,7 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->keyClick();
 		_vm->killText();
 		if (_vm->_startupMode == 1) {
-			_vm->_snail->addCommand(kSnClear, -1, 0, NULL);
+			_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
 			return;
 		}
 		switch (x) {
@@ -770,7 +770,7 @@ void System::touch(uint16 mask, int x, int y) {
 		case '3':
 		case '4':
 			if (_vm->_keyboard->_key[kKeyAlt]) {
-				_vm->_snail->addCommand(kSnLevel, -1, x - '0', NULL);
+				_vm->_commandHandler->addCommand(kCmdLevel, -1, x - '0', NULL);
 				break;
 			}
 			break;
@@ -802,7 +802,7 @@ void System::touch(uint16 mask, int x, int y) {
 		_vm->postMiniStep(selectedScene - 1);
 
 		if (mask & kMouseLeftUp) {
-			if (selectedScene && _vm->_snail->idle() && _vm->_hero->_tracePtr < 0)
+			if (selectedScene && _vm->_commandHandler->idle() && _vm->_hero->_tracePtr < 0)
 				_vm->switchScene(selectedScene);
 
 			if (_vm->_horzLine && !_vm->_horzLine->_flags._hide) {
@@ -814,7 +814,7 @@ void System::touch(uint16 mask, int x, int y) {
 					_vm->setMapBrick(x1, z1);
 				}
 			} else {
-				if (!_vm->_talk && _vm->_snail->idle() && _vm->_hero
+				if (!_vm->_talk && _vm->_commandHandler->idle() && _vm->_hero
 				        && y >= kMapTop && y < kMapTop + kMapHig && !_vm->_game) {
 					_vm->_hero->findWay(_vm->XZ(x, y));
 				}
@@ -827,7 +827,7 @@ void System::tick() {
 	if (!_vm->_startupMode)
 		if (--_funDel == 0) {
 			_vm->killText();
-			if (_vm->_snail->idle()) {
+			if (_vm->_commandHandler->idle()) {
 				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
 				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
@@ -850,7 +850,7 @@ void System::tick() {
 void CGEEngine::switchColorMode() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchColorMode()");
 
-	_snail_->addCommand(kSnSeq, 121, _vga->_mono = !_vga->_mono, NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 121, _vga->_mono = !_vga->_mono, NULL);
 	keyClick();
 	_vga->setColors(_vga->_sysPal, 64);
 }
@@ -858,7 +858,7 @@ void CGEEngine::switchColorMode() {
 void CGEEngine::switchMusic() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
-	_snail_->addCommand(kSnSeq, 122, (_music = !_music), NULL);
+	_commandHandlerTurbo->addCommand(kCmdSeq, 122, (_music = !_music), NULL);
 	keyClick();
 
 	if (_music)
@@ -887,7 +887,7 @@ void CGEEngine::switchMapping() {
 	} else {
 		for (Sprite *s = _vga->_showQ->first(); s; s = s->_next)
 			if (s->_w == kMapGridX && s->_h == kMapGridZ)
-				_snail_->addCommand(kSnKill, -1, 0, s);
+				_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, s);
 	}
 	_horzLine->_flags._hide = !_horzLine->_flags._hide;
 }
@@ -897,7 +897,7 @@ void CGEEngine::killSprite() {
 
 	_sprite->_flags._kill = true;
 	_sprite->_flags._bDel = true;
-	_snail_->addCommand(kSnKill, -1, 0, _sprite);
+	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _sprite);
 	_sprite = NULL;
 }
 
@@ -946,7 +946,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 			mask |= kMouseRightUp;
 		}
 
-	if ((mask & kMouseRightUp) && _vm->_snail->idle()) {
+	if ((mask & kMouseRightUp) && _vm->_commandHandler->idle()) {
 		Sprite *ps = (_vm->_pocLight->_seqPtr) ? _vm->_pocket[_vm->_pocPtr] : NULL;
 		if (ps) {
 			if (_flags._kept || _vm->_hero->distance(this) < kDistMax) {
@@ -966,13 +966,13 @@ void Sprite::touch(uint16 mask, int x, int y) {
 						if (_vm->findPocket(NULL) < 0) {
 							_vm->pocFul();
 						} else {
-							_vm->_snail->addCommand(kSnReach, -1, -1, this);
-							_vm->_snail->addCommand(kSnKeep, -1, -1, this);
+							_vm->_commandHandler->addCommand(kCmdReach, -1, -1, this);
+							_vm->_commandHandler->addCommand(kCmdKeep, -1, -1, this);
 							_flags._port = false;
 						}
 					} else {
 						if (_takePtr != kNoPtr) {
-							if (snList(kTake)[_takePtr]._com == kSnNext)
+							if (snList(kTake)[_takePtr]._commandType == kCmdNext)
 								_vm->offUse();
 							else
 								_vm->feedSnail(this, kTake);
@@ -987,7 +987,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 		}
 	}
 
-	if ((mask & kMouseLeftUp) && _vm->_snail->idle()) {
+	if ((mask & kMouseLeftUp) && _vm->_commandHandler->idle()) {
 		if (_flags._kept) {
 			for (int n = 0; n < kPocketNX; n++) {
 				if (_vm->_pocket[n] == this) {
@@ -996,7 +996,7 @@ void Sprite::touch(uint16 mask, int x, int y) {
 				}
 			}
 		} else {
-			_vm->_snail->addCommand(kSnWalk, -1, -1, this); // Hero->FindWay(this);
+			_vm->_commandHandler->addCommand(kCmdWalk, -1, -1, this); // Hero->FindWay(this);
 		}
 	}
 }
@@ -1229,14 +1229,14 @@ void CGEEngine::killText() {
 	if (!_talk)
 		return;
 
-	_snail_->addCommand(kSnKill, -1, 0, _talk);
+	_commandHandlerTurbo->addCommand(kCmdKill, -1, 0, _talk);
 	_talk = NULL;
 }
 
 void CGEEngine::mainLoop() {
 	_vga->show();
-	_snail_->runCommand();
-	_snail->runCommand();
+	_commandHandlerTurbo->runCommand();
+	_commandHandler->runCommand();
 
 	// Handle a delay between game frames
 	handleFrame();
@@ -1332,10 +1332,10 @@ void CGEEngine::runGame() {
 //    ~~~~~~~~~~~
 
 	if ((_sprite = _vga->_spareQ->locate(121)) != NULL)
-		_snail_->addCommand(kSnSeq, -1, _vga->_mono, _sprite);
+		_commandHandlerTurbo->addCommand(kCmdSeq, -1, _vga->_mono, _sprite);
 	if ((_sprite = _vga->_spareQ->locate(122)) != NULL)
 		_sprite->step(_music);
-	_snail_->addCommand(kSnSeq, -1, _music, _sprite);
+	_commandHandlerTurbo->addCommand(kCmdSeq, -1, _music, _sprite);
 	if (!_music)
 		_midiPlayer->killMidi();
 
@@ -1390,7 +1390,7 @@ void CGEEngine::runGame() {
 
 	_startupMode = 0;
 
-	_snail->addCommand(kSnLevel, -1, _oldLev, &_sceneLight);
+	_commandHandler->addCommand(kCmdLevel, -1, _oldLev, &_sceneLight);
 	_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
 	                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);
 	sceneUp();
@@ -1399,7 +1399,7 @@ void CGEEngine::runGame() {
 	// main loop
 	while (!_finis && !_eventManager->_quitFlag) {
 		if (_flag[3])
-			_snail->addCallback(kSnExec,  -1, 0, kQGame);
+			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
 		mainLoop();
 	}
 
@@ -1408,8 +1408,8 @@ void CGEEngine::runGame() {
 		qGame();
 
 	_keyboard->setClient(NULL);
-	_snail->addCommand(kSnClear, -1, 0, NULL);
-	_snail_->addCommand(kSnClear, -1, 0, NULL);
+	_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
+	_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, NULL);
 	_mouse->off();
 	_vga->_showQ->clear();
 	_vga->_spareQ->clear();
@@ -1432,12 +1432,12 @@ void CGEEngine::movie(const char *ext) {
 		feedSnail(_vga->_showQ->locate(999), kTake);
 		_vga->_showQ->append(_mouse);
 		_keyboard->setClient(_sys);
-		while (!_snail->idle() && !_eventManager->_quitFlag)
+		while (!_commandHandler->idle() && !_eventManager->_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(NULL);
-		_snail->addCommand(kSnClear, -1, 0, NULL);
-		_snail_->addCommand(kSnClear, -1, 0, NULL);
+		_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
+		_commandHandlerTurbo->addCommand(kCmdClear, -1, 0, NULL);
 		_vga->_showQ->clear();
 		_vga->_spareQ->clear();
 	}
@@ -1475,7 +1475,7 @@ bool CGEEngine::showTitle(const char *name) {
 		_vga->copyPage(0, 1);
 		_vga->_showQ->append(_mouse);
 		_mouse->on();
-		for (; !_snail->idle() || Vmenu::_addr;) {
+		for (; !_commandHandler->idle() || Vmenu::_addr;) {
 			mainLoop();
 			if (_eventManager->_quitFlag)
 				return false;

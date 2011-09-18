@@ -100,8 +100,8 @@ void CGEEngine::init() {
 	_infoLine = new InfoLine(this, kInfoW);
 	_sceneLight = new SceneLight(this);
 	_debugLine = new InfoLine(this, kScrWidth);
-	_snail = new Snail(this, false);
-	_snail_ = new Snail(this, true);
+	_commandHandler = new CommandHandler(this, false);
+	_commandHandlerTurbo = new CommandHandler(this, true);
 	_midiPlayer = new MusicPlayer(this);
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
@@ -164,8 +164,8 @@ void CGEEngine::deinit() {
 	delete _fx;
 	delete _sound;
 	delete _font;
-	delete _snail;
-	delete _snail_;
+	delete _commandHandler;
+	delete _commandHandlerTurbo;
 	delete _hero;
 	delete _resman;
 

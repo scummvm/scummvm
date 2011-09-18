@@ -48,7 +48,7 @@ class Mouse;
 class HorizLine;
 class InfoLine;
 class SceneLight;
-class Snail;
+class CommandHandler;
 class EventManager;
 class ResourceManager;
 class Walk;
@@ -88,7 +88,7 @@ enum SnList {
 };
 
 enum CallbackType {
-	kNullCB = 0, kQGame, kMiniStep, kXScene, kSndSetVolume
+	kNullCB = 0, kQGame, kMiniStep, kXScene, kSoundSetVolume
 };
 
 struct SavegameHeader {
@@ -183,8 +183,8 @@ public:
 	InfoLine *_infoLine;
 	InfoLine *_debugLine;
 	SceneLight *_sceneLight;
-	Snail *_snail;
-	Snail *_snail_;
+	CommandHandler *_commandHandler;
+	CommandHandler *_commandHandlerTurbo;
 	EventManager *_eventManager;
 	Fx *_fx;
 	Sound *_sound;
