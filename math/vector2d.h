@@ -42,8 +42,8 @@ public:
 	inline void setX(float x) { setValue(0, x); }
 	inline void setY(float y) { setValue(1, y); }
 
-	void rotateAround(const Vector(2) &point, float angle);
-	float getAngle() const;
+	void rotateAround(const Vector(2) &point, const Angle &angle);
+	Angle getAngle() const;
 
 	Vector3d toVector3d() const;
 };

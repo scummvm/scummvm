@@ -29,6 +29,7 @@
 #include "common/endian.h"
 
 #include "math/vector.h"
+#include "math/angle.h"
 
 namespace Math {
 
@@ -50,7 +51,7 @@ public:
 
 	// Get the angle a vector is around the unit circle
 	// (ignores z-component)
-	float unitCircleAngle() const;
+	Angle unitCircleAngle() const;
 };
 
 typedef Matrix<3, 1> Vector3d;
@@ -61,8 +62,8 @@ inline Vector3d cross(const Vector3d& v1, const Vector3d& v2) {
 					v1.x() * v2.y() - v1.y() * v2.x());
 }
 
-inline float angle(const Vector3d& v1, const Vector3d& v2) {
-	return acos(dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()));
+inline Angle angle(const Vector3d& v1, const Vector3d& v2) {
+	return Angle::arcCosine(dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()));
 }
 
 inline Vector3d get_vector3d(const char *data) {

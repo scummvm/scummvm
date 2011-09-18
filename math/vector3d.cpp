@@ -52,20 +52,8 @@ void Vector3d::set(float lx, float ly, float lz) {
 
 // Get the angle a vector is around the unit circle
 // (ignores z-component)
-float Vector3d::unitCircleAngle() const {
-	const float mag = sqrt(x() * x() + y() * y());
-	float a = x() / mag;
-	float b = y() / mag;
-	float yaw;
-
-	// find the angle on the upper half of the unit circle
-	yaw = acos(a) * (180.0f / LOCAL_PI);
-	if (b < 0.0f)
-		// adjust for the lower half of the unit circle
-		return 360.0f - yaw;
-	else
-		// no adjustment, angle is on the upper half
-		return yaw;
+Angle Vector3d::unitCircleAngle() const {
+	return Angle::arcTangent2(y(), x());
 }
 
 }

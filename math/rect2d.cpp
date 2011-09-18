@@ -51,14 +51,14 @@ Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
 
 }
 
-void Rect2d::rotateAround(const Vector2d &point, float angle) {
+void Rect2d::rotateAround(const Vector2d &point, const Angle &angle) {
 	_topLeft.rotateAround(point, angle);
 	_topRight.rotateAround(point, angle);
 	_bottomLeft.rotateAround(point, angle);
 	_bottomRight.rotateAround(point, angle);
 }
 
-void Rect2d::rotateAroundCenter(float angle) {
+void Rect2d::rotateAroundCenter(const Angle &angle) {
 	Vector2d center = getCenter();
 	rotateAround(center, angle);
 }
@@ -72,9 +72,9 @@ bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
 	float w = getWidth();
 	float h = getHeight();
 
-	float angle = (_topRight - _topLeft).getAngle();
+	Math::Angle angle = (_topRight - _topLeft).getAngle();
 
-	if (angle < 0.1 && angle > -0.1) {
+	if (angle == 0) {
 		Vector2d circleDistance(fabs(center.getX() - c.getX()), fabs(center.getY() - c.getY()));
 
 		if (circleDistance.getX() > (w / 2.f + radius)) {
