@@ -20,28 +20,32 @@
  *
  */
 
-#ifndef NODECUBE_H_
-#define NODECUBE_H_
+#ifndef MOVIE_H_
+#define MOVIE_H_
 
 #include "engines/myst3/node.h"
-#include "engines/myst3/movie.h"
+
+#include "math/vector3d.h"
+#include "video/bink_decoder.h"
 
 namespace Myst3 {
 
-class NodeCube: public Myst3::Node {
+class Movie {
 public:
-	NodeCube();
-	virtual ~NodeCube();
-
-	void load(Archive &archive, uint16 id);
-	void unload();
+	Movie(Archive &archive, uint16 id);
+	virtual ~Movie();
 	void draw();
 
-	void loadMovie(Archive &archive, uint16 id);
-
 private:
-	Common::Array<Movie *> _movies;
+	static const int _movieTextureSize = 1024;
+
+	Math::Vector3d _pTopLeft;
+	Math::Vector3d _pBottomLeft;
+	Math::Vector3d _pBottomRight;
+	Math::Vector3d _pTopRight;
+	Video::BinkDecoder _bink;
+	GLuint _texture;
 };
 
 } /* namespace Myst3 */
-#endif /* NODECUBE_H_ */
+#endif /* MOVIE_H_ */

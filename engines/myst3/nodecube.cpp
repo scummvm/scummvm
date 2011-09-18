@@ -55,59 +55,7 @@ void NodeCube::load(Archive &archive, uint16 index) {
 }
 
 void NodeCube::loadMovie(Archive &archive, uint16 id) {
-	static const float scale = 50.0f;
-
-	const DirectorySubEntry *binkDesc = archive.getDescription(id, 0, DirectorySubEntry::kMovie);
-
-	if (!binkDesc)
-		return;
-
-	Common::MemoryReadStream *binkStream = archive.getData(binkDesc);
-	const VideoData &videoData = binkDesc->getVideoData();
-
-	Math::Vector3d planeDirection = videoData.v1;
-	planeDirection.normalize();
-
-	Math::Vector3d u;
-	u.set(planeDirection.z(), 0.0f, -planeDirection.x());
-	u.normalize();
-
-	Math::Vector3d v = Math::cross(planeDirection, u);
-	v.normalize();
-
-	Math::Vector3d planeOrigin = planeDirection * scale;
-
-	float left = (videoData.u - 320) * 0.003125f;
-	float right = (videoData.u + videoData.width - 320) * 0.003125f;
-	float top = (320 - videoData.v) * 0.003125f;
-	float bottom = (320 - videoData.v - videoData.height) * 0.003125f;
-
-	Math::Vector3d vLeft = scale * left * u;
-	Math::Vector3d vRight = scale * right * u;
-	Math::Vector3d vTop = scale * top * v;
-	Math::Vector3d vBottom = scale * bottom * v;
-
-	Movie movie;
-
-	movie.pTopLeft = planeOrigin + vTop + vLeft;
-	movie.pBottomLeft = planeOrigin + vBottom + vLeft;
-	movie.pBottomRight = planeOrigin + vBottom + vRight;
-	movie.pTopRight = planeOrigin + vTop + vRight;
-	movie.bink = new Video::BinkDecoder();
-	movie.bink->loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
-	glGenTextures(1, &movie.texture);
-
-	glBindTexture(GL_TEXTURE_2D, movie.texture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _cubeTextureSize, _cubeTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
+	Movie *movie = new Movie(archive, id);
 	_movies.push_back(movie);
 }
 
@@ -171,45 +119,13 @@ void NodeCube::draw() {
 	glDepthMask(GL_TRUE);
 
 	for (uint i = 0; i < _movies.size(); i++) {
-		const Myst3::Movie &movie = _movies[i];
-
-		if(movie.bink->endOfVideo())
-			continue;
-
-		const float w = movie.bink->getWidth() / (float)(_cubeTextureSize);
-		const float h = movie.bink->getHeight() / (float)(_cubeTextureSize);
-
-		glBindTexture(GL_TEXTURE_2D, _movies[i].texture);
-
-		if (movie.bink->needsUpdate()) {
-			const Graphics::Surface *frame = movie.bink->decodeNextFrame();
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
-		}
-
-		glBegin(GL_TRIANGLE_STRIP);
-			glTexCoord2f(0, 0);
-			glVertex3f(-movie.pTopLeft.x(), movie.pTopLeft.y(), movie.pTopLeft.z());
-
-			glTexCoord2f(0, h);
-			glVertex3f(-movie.pBottomLeft.x(), movie.pBottomLeft.y(), movie.pBottomLeft.z());
-
-			glTexCoord2f(w, 0);
-			glVertex3f(-movie.pTopRight.x(), movie.pTopRight.y(), movie.pTopRight.z());
-
-			glTexCoord2f(w, h);
-			glVertex3f(-movie.pBottomRight.x(), movie.pBottomRight.y(), movie.pBottomRight.z());
-		glEnd();
+		_movies[i]->draw();
 	}
-
 }
 
 void NodeCube::unload() {
-
 	for (uint i = 0; i < _movies.size(); i++) {
-		const Myst3::Movie &movie = _movies[i];
-
-		delete movie.bink;
-		glDeleteTextures(1, &movie.texture);
+		delete _movies[i];
 	}
 
 	Node::unload();

@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	directoryentry.o \
 	directorysubentry.o \
 	hotspot.o \
+	movie.o \
 	myst3.o \
 	node.o \
 	nodecube.o \
