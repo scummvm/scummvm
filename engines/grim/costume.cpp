@@ -543,7 +543,6 @@ public:
 	MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setupTexture();
 	void reset();
 	void resetColormap();
 	void saveState(SaveGame *state);
@@ -553,7 +552,6 @@ public:
 private:
 	Material *_mat;
 	Common::String _filename;
-	int _num;
 };
 
 ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
@@ -747,8 +745,7 @@ void MeshComponent::restoreState(SaveGame *state) {
 }
 
 MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _filename(filename),
-		_num(0) {
+		Costume::Component(p, parentID, t), _filename(filename) {
 
 	if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("Constructing MaterialComponent %s", filename);
@@ -774,15 +771,11 @@ void MaterialComponent::init() {
 }
 
 void MaterialComponent::setKey(int val) {
-	_num = val;
-}
-
-void MaterialComponent::setupTexture() {
-	_mat->setNumber(_num);
+	_mat->setNumber(val);
 }
 
 void MaterialComponent::reset() {
-	_num = 0;
+	_mat->setNumber(0);
 }
 
 void MaterialComponent::resetColormap() {
@@ -790,11 +783,11 @@ void MaterialComponent::resetColormap() {
 }
 
 void MaterialComponent::saveState(SaveGame *state) {
-	state->writeLESint32(_num);
+	state->writeLESint32(_mat->getCurrentImage());
 }
 
 void MaterialComponent::restoreState(SaveGame *state) {
-	_num = state->readLESint32();
+	_mat->setNumber(state->readLESint32());
 }
 
 class LuaVarComponent : public Costume::Component {
