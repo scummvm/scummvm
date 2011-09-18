@@ -103,6 +103,9 @@ protected:
 private:
 	LolEobBaseEngine *_vm;
 	Screen *_screen;
+
+	char *_table1;
+	char *_table2;
 };
 
 } // End of namespace Kyra
