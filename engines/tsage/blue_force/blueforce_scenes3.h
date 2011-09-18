@@ -490,6 +490,70 @@ public:
 	virtual void checkGun();
 };
 
+class Scene370: public SceneExt {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item6: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class GreensGun: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Green: public NamedObject2 {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Harrison: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Laura: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Speakers */
+	class SpeakerLaura370: public SpeakerLaura {
+	public:
+		virtual void setText(const Common::String &msg);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerLaura _lauraSpeaker;
+	SpeakerLauraHeld _lauraHeldSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	GreensGun _greensGun;
+	Green _green;
+	Harrison _harrison;
+	Laura _laura;
+	NamedObject _object5;
+	SceneObject _object6;
+	Item1 _item1;
+	NamedHotspot _item2, _item3, _item4, _item5;
+	Item6 _item6;
+	Exit _exit;
+	ASound _sound1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene380: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObjectExt {

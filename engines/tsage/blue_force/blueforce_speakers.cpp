@@ -574,6 +574,50 @@ void SpeakerJake385::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerLaura::SpeakerLaura(): VisualSpeaker() {
+	_color1 = 97;
+	_color2 = 105;
+	_speakerName = "LAURA";
+}
+
+void SpeakerLaura::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(345);
+	_object2.setStrip2(2);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerLauraHeld::SpeakerLauraHeld(): VisualSpeaker() {
+	_color1 = 97;
+	_color2 = 105;
+	_speakerName = "LAURAHELD";
+}
+
+void SpeakerLauraHeld::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(374);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 120,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 120));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

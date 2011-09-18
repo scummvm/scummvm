@@ -124,6 +124,19 @@ public:
 	}
 };
 
+class NamedObject2: public NamedObject {
+public:
+	int _v1, _v2;
+
+	NamedObject2() { _v1 = _v2 = 0; }
+	virtual Common::String getClassName() { return "NamedObject2"; }
+	virtual void synchronize(Serializer &s) {
+		NamedObject::synchronize(s);
+		s.syncAsSint16LE(_v1);
+		s.syncAsSint16LE(_v2);
+	}
+};
+
 class CountdownObject: public NamedObject {
 public:
 	int _countDown;
