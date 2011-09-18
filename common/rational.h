@@ -80,6 +80,9 @@ public:
 	double toDouble() const;
 	frac_t toFrac() const;
 
+	int getNumerator() const { return _num; }
+	int getDenominator() const { return _denom; }
+
 	void debugPrint(int debuglevel = 0, const char *caption = "Rational:") const;
 
 private:
