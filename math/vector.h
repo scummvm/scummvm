@@ -46,6 +46,11 @@ public:
 	inline void setValue(int i, float val) { value(i) = val; }
 	inline float getValue(int i) const { return value(i); }
 
+	template<int d>
+	inline static float dotProduct(const Vector(d) &v1, const Vector(d) &v2) {
+		return v1.getDotProduct(v2);
+	}
+
 protected:
 	MatrixType() : MatrixBase<dim, 1>() { }
 	MatrixType(float *data) : MatrixBase<dim, 1>(data) { }
@@ -96,11 +101,6 @@ float MatrixType<dim, 1>::getDotProduct(const Vector(dim) &v) const {
 		result += value(i) * v.value(i);
 	}
 	return result;
-}
-
-template<int dim>
-inline float dot(const Vector(dim) &v1, const Vector(dim) &v2) {
-	return v1.getDotProduct(v2);
 }
 
 }
