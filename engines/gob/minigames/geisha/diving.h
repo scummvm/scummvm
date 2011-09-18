@@ -50,14 +50,22 @@ public:
 	bool play(uint16 playerCount, bool hasPearlLocation);
 
 private:
-	static const uint kEvilFishCount =  3;
-	static const uint kMaxShotCount  = 10;
+	static const uint kEvilFishCount  =  3;
+	static const uint kDecorFishCount =  3;
+	static const uint kMaxShotCount   = 10;
 
 	struct ManagedEvilFish {
 		EvilFish *evilFish;
 
 		uint32 enterAt;
 		uint32 leaveAt;
+	};
+
+	struct ManagedDecorFish {
+		ANIObject *decorFish;
+
+		uint32 enterAt;
+		int8 deltaX;
 	};
 
 	GobEngine *_vm;
@@ -71,7 +79,8 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
-	ManagedEvilFish _evilFish[kEvilFishCount];
+	ManagedEvilFish  _evilFish[kEvilFishCount];
+	ManagedDecorFish _decorFish[kDecorFishCount];
 
 	ANIObject *_shot[kMaxShotCount];
 
@@ -102,6 +111,7 @@ private:
 	void foundWhitePearl();
 
 	void updateEvilFish();
+	void updateDecorFish();
 	void updateAnims();
 
 	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);

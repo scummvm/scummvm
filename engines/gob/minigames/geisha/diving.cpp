@@ -70,6 +70,7 @@ bool Diving::play(uint16 playerCount, bool hasPearlLocation) {
 	while (!_vm->shouldQuit()) {
 		checkShots();
 		updateEvilFish();
+		updateDecorFish();
 		updateAnims();
 
 		_vm->_draw->animateCursor(1);
@@ -128,6 +129,21 @@ void Diving::init() {
 		_evilFish[i].evilFish = new EvilFish(*_objects, 320, 0, 0, 0, 0, 0);
 	}
 
+	for (uint i = 0; i < kDecorFishCount; i++) {
+		_decorFish[i].enterAt = 0;
+
+		_decorFish[i].decorFish = new ANIObject(*_objects);
+	}
+
+	_decorFish[0].decorFish->setAnimation( 6); // Jellyfish
+	_decorFish[0].deltaX = 0;
+
+	_decorFish[1].decorFish->setAnimation(32); // Swarm of red/green fish
+	_decorFish[1].deltaX = -6;
+
+	_decorFish[2].decorFish->setAnimation(33); // Swarm of orange fish
+	_decorFish[2].deltaX = -6;
+
 	for (uint i = 0; i < kMaxShotCount; i++) {
 		_shot[i] = new ANIObject(*_objects);
 
@@ -148,6 +164,8 @@ void Diving::init() {
 	_anims.push_back(_water);
 	for (uint i = 0; i < kMaxShotCount; i++)
 		_anims.push_back(_shot[i]);
+	for (uint i = 0; i < kDecorFishCount; i++)
+		_anims.push_back(_decorFish[i].decorFish);
 	for (uint i = 0; i < kEvilFishCount; i++)
 		_anims.push_back(_evilFish[i].evilFish);
 	_anims.push_back(_lungs);
@@ -182,6 +200,12 @@ void Diving::deinit() {
 		delete _evilFish[i].evilFish;
 
 		_evilFish[i].evilFish = 0;
+	}
+
+	for (uint i = 0; i < kDecorFishCount; i++) {
+		delete _decorFish[i].decorFish;
+
+		_decorFish[i].decorFish = 0;
 	}
 
 	delete _heart;
@@ -266,6 +290,44 @@ void Diving::updateEvilFish() {
 
 				fish.evilFish->enter((EvilFish::Direction)_vm->_util->getRandom(2),
 				                     36 + _vm->_util->getRandom(3) * 40);
+			}
+		}
+	}
+}
+
+void Diving::updateDecorFish() {
+	for (uint i = 0; i < kDecorFishCount; i++) {
+		ManagedDecorFish &fish = _decorFish[i];
+
+		if (fish.decorFish->isVisible()) {
+			// Move the fish
+			int16 x, y;
+			fish.decorFish->getPosition(x, y);
+			fish.decorFish->setPosition(x + fish.deltaX, y);
+
+			// Check if the fish has left the screen
+			int16 width, height;
+			fish.decorFish->getFramePosition(x, y);
+			fish.decorFish->getFrameSize(width, height);
+
+			if ((x + width) <= 0) {
+				fish.decorFish->setVisible(false);
+				fish.decorFish->setPause(true);
+
+				fish.enterAt = 0;
+			}
+
+		} else {
+			// Decor fishes enter the screen every 0s - 10s
+
+			if (fish.enterAt == 0)
+				fish.enterAt = _vm->_util->getTimeKey() + _vm->_util->getRandom(10000);
+
+			if (_vm->_util->getTimeKey() >= fish.enterAt) {
+				fish.decorFish->rewind();
+				fish.decorFish->setPosition(320, 30 + _vm->_util->getRandom(100));
+				fish.decorFish->setVisible(true);
+				fish.decorFish->setPause(false);
 			}
 		}
 	}
