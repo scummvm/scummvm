@@ -490,6 +490,87 @@ public:
 	virtual void checkGun();
 };
 
+class Scene360: public SceneExt {
+	/* Objects */
+	class SlidingDoor: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Window: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class BsseballCards: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object6: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object7: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Barometer: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+private:
+	void setup();
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SlidingDoor _slidingDoor;
+	SceneObject _object2;
+	Window _window;
+	Object4 _object4;
+	BsseballCards _baseballCards;
+	Object6 _object6;
+	Object7 _object7;
+	Item1 _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Barometer _barometer;
+	Action1 _action1;
+	ASound _sound1;
+	int _field380;
+
+	Scene360();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene370: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
