@@ -265,14 +265,23 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 				glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 			}
 
+			// Save current state
+			glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
+
 			// prepare view
 			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
 			glLoadIdentity();
 			glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
+
 			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
 			glLoadIdentity();
+
 			glMatrixMode(GL_TEXTURE);
+			glPushMatrix();
 			glLoadIdentity();
+
 			glDisable(GL_LIGHTING);
 			glEnable(GL_TEXTURE_2D);
 			glDisable(GL_DEPTH_TEST);
@@ -299,11 +308,17 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 				}
 			}
 
-			glDisable(GL_SCISSOR_TEST);
-			glDisable(GL_TEXTURE_2D);
-			glDepthMask(GL_TRUE);
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_LIGHTING);
+			// Restore previous state
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+
+			glMatrixMode(GL_TEXTURE);
+			glPopMatrix();
+
+			glPopAttrib();
 		}
 		SDL_GL_SwapBuffers();
 	} else
