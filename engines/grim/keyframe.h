@@ -64,7 +64,7 @@ private:
 		float _frame;
 		int _flags;
 		Math::Vector3d _pos, _dpos;
-		float _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
+		Math::Angle _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
 	};
 
 	struct KeyframeNode {

@@ -315,7 +315,8 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) {
+void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+							   const Math::Angle &pitch, const Math::Angle &roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -335,9 +336,9 @@ void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glScalef(scale, scale, scale);
-	glRotatef(yaw, 0, 0, 1);
-	glRotatef(pitch, 1, 0, 0);
-	glRotatef(roll, 0, 1, 0);
+	glRotatef(yaw.getDegrees(), 0, 0, 1);
+	glRotatef(pitch.getDegrees(), 1, 0, 0);
+	glRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxOpenGL::finishActorDraw() {
@@ -480,14 +481,15 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glPopMatrix();
 }
 
-void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+										const Math::Angle &yaw, const Math::Angle &roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
 	glTranslatef(pos.x(), pos.y(), pos.z());
-	glRotatef(yaw, 0, 0, 1);
-	glRotatef(pitch, 1, 0, 0);
-	glRotatef(roll, 0, 1, 0);
+	glRotatef(yaw.getDegrees(), 0, 0, 1);
+	glRotatef(pitch.getDegrees(), 1, 0, 0);
+	glRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxOpenGL::translateViewpointFinish() {
@@ -496,9 +498,9 @@ void GfxOpenGL::translateViewpointFinish() {
 
 void GfxOpenGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
 	Math::Vector3d animPos = node->_pos + node->_animPos;
-	float animPitch = node->_pitch + node->_animPitch;
-	float animYaw = node->_yaw + node->_animYaw;
-	float animRoll = node->_roll + node->_animRoll;
+	Math::Angle animPitch = node->_pitch + node->_animPitch;
+	Math::Angle animYaw = node->_yaw + node->_animYaw;
+	Math::Angle animRoll = node->_roll + node->_animRoll;
 	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	if (node->_hierVisible) {
 		glPushMatrix();

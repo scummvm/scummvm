@@ -84,7 +84,8 @@ public:
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) = 0;
+	virtual void startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+								const Math::Angle &pitch, const Math::Angle &roll) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
 	virtual void drawShadowPlanes() = 0;
@@ -95,7 +96,8 @@ public:
 
 	virtual void set3DMode() = 0;
 
-	virtual void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) = 0;
+	virtual void translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+										 const Math::Angle &yaw, const Math::Angle &roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
 	virtual void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) = 0;

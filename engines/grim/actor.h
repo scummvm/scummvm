@@ -26,6 +26,7 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "math/vector3d.h"
+#include "math/angle.h"
 
 namespace Grim {
 
@@ -169,7 +170,7 @@ public:
 	 * @see turn
 	 * @see isTurning
 	 */
-	void turnTo(float pitch, float yaw, float roll);
+	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
 	 * Returns true if the actor is turning.
 	 *
@@ -190,7 +191,7 @@ public:
 	 * @see turn
 	 * @see isTurning
 	 */
-	void setRot(float pitch, float yaw, float roll);
+	void setRot(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
 	 * Turns the actor by the given parameter on the z axis.
 	 * The actual movement depends also on the turn rate.
@@ -214,7 +215,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getPitch() const { return _pitch; }
+	Math::Angle getPitch() const { return _pitch; }
 	/**
 	 * Returns the yaw of the actor, which is the rotation
 	 * on the z axis.
@@ -225,7 +226,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getYaw() const { return _yaw; }
+	Math::Angle getYaw() const { return _yaw; }
 	/**
 	 * Returns the roll of the actor, which is the rotation
 	 * on the y axis.
@@ -236,7 +237,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getRoll() const { return _roll; }
+	Math::Angle getRoll() const { return _roll; }
 
 	/**
 	 * Calculates and returns the angle between the direction the
@@ -244,14 +245,14 @@ public:
 	 *
 	 * @param actor The actor to look at.
 	 */
-	float getYawTo(const Actor &actor) const;
+	Math::Angle  getYawTo(const Actor &actor) const;
 	/**
 	 * Calculates and returns the angle between the direction the
 	 * actor is facing and the direction towards a point.
 	 *
 	 * @param actor The point to look at.
 	 */
-	float getYawTo(Math::Vector3d p) const;
+	Math::Angle  getYawTo(Math::Vector3d p) const;
 
 	/**
 	 * Sets the actor visibility.
@@ -465,7 +466,7 @@ private:
 
 	PoolColor *_talkColor;
 	Math::Vector3d _pos;
-	float _pitch, _yaw, _roll;
+	Math::Angle _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
 	bool _constrain;	// Constrain to walkboxes
@@ -480,7 +481,7 @@ private:
 
 	// Variables for gradual turning
 	bool _turning;
-	float _destYaw;
+	Math::Angle _destYaw;
 
 	// Variables for walking to a point
 	bool _walking;
@@ -514,7 +515,7 @@ private:
 	bool _mustPlaceText;
 
 	// Validate a yaw angle then set it appropriately
-	void setYaw(float yaw);
+	void setYaw(const Math::Angle &yaw);
 
 	int getTurnChore(int dir) {
 		return (dir > 0 ? _rightTurnChore : _leftTurnChore);

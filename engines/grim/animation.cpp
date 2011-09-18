@@ -242,7 +242,7 @@ void AnimManager::animate(ModelNode *hier, int numNodes) {
 	// Apply animation to each hierarchy node separately.
 	for (int i = 0; i < numNodes; i++) {
 		Math::Vector3d tempPos;
-		float tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
+		Math::Angle tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
 		float totalWeight = 0.0f;
 		float remainingWeight = 1.0f;
 		int currPriority = -1;

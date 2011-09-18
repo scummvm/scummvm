@@ -356,7 +356,8 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+							   const Math::Angle &pitch, const Math::Angle &roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -377,9 +378,9 @@ void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglScalef(scale, scale, scale);
-	tglRotatef(yaw, 0, 0, 1);
-	tglRotatef(pitch, 1, 0, 0);
-	tglRotatef(roll, 0, 1, 0);
+	tglRotatef(yaw.getDegrees(), 0, 0, 1);
+	tglRotatef(pitch.getDegrees(), 1, 0, 0);
+	tglRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -516,13 +517,14 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+										const Math::Angle &yaw, const Math::Angle &roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
-	tglRotatef(yaw, 0, 0, 1);
-	tglRotatef(pitch, 1, 0, 0);
-	tglRotatef(roll, 0, 1, 0);
+	tglRotatef(yaw.getDegrees(), 0, 0, 1);
+	tglRotatef(pitch.getDegrees(), 1, 0, 0);
+	tglRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxTinyGL::translateViewpointFinish() {
@@ -531,9 +533,9 @@ void GfxTinyGL::translateViewpointFinish() {
 
 void GfxTinyGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
 	Math::Vector3d animPos = node->_pos + node->_animPos;
-	float animPitch = node->_pitch + node->_animPitch;
-	float animYaw = node->_yaw + node->_animYaw;
-	float animRoll = node->_roll + node->_animRoll;
+	Math::Angle animPitch = node->_pitch + node->_animPitch;
+	Math::Angle animYaw = node->_yaw + node->_animYaw;
+	Math::Angle animRoll = node->_roll + node->_animRoll;
 	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	if (node->_hierVisible) {
 		tglPushMatrix();

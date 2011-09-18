@@ -77,7 +77,8 @@ public:
 	void setupTextures();
 	void draw();
 	void draw(int *x1, int *y1, int *x2, int *y2);
-	void setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll);
+	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
+					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
 
 	Costume *getPreviousCostume() const;
@@ -194,8 +195,8 @@ private:
 	ModelNode *_joint2Node;
 	ModelNode *_joint3Node;
 
-	float _headPitch;
-	float _headYaw;
+	Math::Angle _headPitch;
+	Math::Angle _headYaw;
 };
 
 } // end of namespace Grim

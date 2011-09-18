@@ -140,9 +140,9 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	savedState->writeVector3d(_pos);
 
-	savedState->writeFloat(_pitch);
-	savedState->writeFloat(_yaw);
-	savedState->writeFloat(_roll);
+	savedState->writeFloat(_pitch.getDegrees());
+	savedState->writeFloat(_yaw.getDegrees());
+	savedState->writeFloat(_roll.getDegrees());
 	savedState->writeFloat(_walkRate);
 	savedState->writeFloat(_turnRate);
 	savedState->writeLESint32(_constrain);
@@ -181,7 +181,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeLESint32(_turning);
-	savedState->writeFloat(_destYaw);
+	savedState->writeFloat(_destYaw.getDegrees());
 
 	savedState->writeLESint32(_walking);
 	savedState->writeVector3d(_destPos);
@@ -439,19 +439,11 @@ bool Actor::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Actor::setYaw(float yawParam) {
-	// While the program correctly handle yaw angles outside
-	// of the range [0, 360), proper convention is to roll
-	// these values over correctly
-	if (yawParam >= 360.0)
-		_yaw = yawParam - 360;
-	else if (yawParam < 0.0)
-		_yaw = yawParam + 360;
-	else
-		_yaw = yawParam;
+void Actor::setYaw(const Math::Angle &yawParam) {
+	_yaw = yawParam;
 }
 
-void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
+void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	setYaw(yawParam);
 	_roll = rollParam;
@@ -470,7 +462,7 @@ void Actor::setPos(Math::Vector3d position) {
 	}
 }
 
-void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
+void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	_roll = rollParam;
 	if (_yaw != yawParam) {
@@ -653,10 +645,8 @@ void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
 	_walking = false;
 
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
-	//float yaw;
-	Math::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
-		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
+	Math::Vector3d forwardVec(-_yaw.getSine() * _pitch.getCosine(),
+		_yaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
 	if (! _constrain) {
 		_pos += forwardVec * dist;
@@ -702,7 +692,6 @@ void Actor::walkForward() {
 			break;
 	}
 
-	ei.angleWithEdge *= (float)(180.f / LOCAL_PI);
 	int turnDir = 1;
 	if (ei.angleWithEdge > 90) {
 		ei.angleWithEdge = 180 - ei.angleWithEdge;
@@ -713,15 +702,14 @@ void Actor::walkForward() {
 		return;
 
 	ei.angleWithEdge += (float)0.1;
-	float turnAmt = g_grim->getPerSecond(_turnRate) * 5.;
+	Math::Angle turnAmt = g_grim->getPerSecond(_turnRate) * 5.;
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
 }
 
 Math::Vector3d Actor::getPuckVector() const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Math::Vector3d forwardVec(_yaw.getSine(), _yaw.getCosine(), 0);
 
 	Sector *sector = g_grim->getCurrScene()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
@@ -810,16 +798,15 @@ void Actor::turn(int dir) {
 	_currTurnDir = dir;
 }
 
-float Actor::getYawTo(const Actor &a) const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+Math::Angle Actor::getYawTo(const Actor &a) const {
+	Math::Vector3d forwardVec(_yaw.getSine(), _yaw.getCosine(), 0);
 	Math::Vector3d delta = a.getPos() - _pos;
 	delta.z() = 0;
 
-	return angle(forwardVec, delta) * (180.f / LOCAL_PI);
+	return angle(forwardVec, delta);
 }
 
-float Actor::getYawTo(Math::Vector3d p) const {
+Math::Angle Actor::getYawTo(Math::Vector3d p) const {
 	Math::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
@@ -1043,7 +1030,7 @@ void Actor::updateWalk() {
 	}
 
 	Math::Vector3d destPos = _path.back();
-	float y = getYawTo(destPos);
+	Math::Angle y = getYawTo(destPos);
 	if (y < 0.f) {
 		y += 360.f;
 	}
@@ -1083,16 +1070,12 @@ void Actor::update(float frameTime) {
 
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * 5.f;
-		float dyaw = _destYaw - _yaw;
-		while (dyaw > 180)
-			dyaw -= 360;
-		while (dyaw < -180)
-			dyaw += 360;
+		Math::Angle dyaw = _destYaw - _yaw;
 		// If the actor won't turn because the rate is set to zero then
 		// have the actor turn all the way to the destination yaw.
 		// Without this some actors will lock the interface on changing
 		// scenes, this affects the Bone Wagon in particular.
-		if (turnAmt == 0 || turnAmt >= fabs(dyaw)) {
+		if (turnAmt == 0 || turnAmt >= fabsf(dyaw.getDegrees())) {
 			setYaw(_destYaw);
 			_turning = false;
 		} else if (dyaw > 0) {
@@ -1497,7 +1480,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		Math::Vector3d size;
 		Math::Vector3d pos;
 		Math::Vector3d circlePos;
-		float yaw;
+		Math::Angle yaw;
 
 		Math::Vector2d circle;
 		float radius;

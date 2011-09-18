@@ -451,9 +451,9 @@ void translateObject(ModelNode *node, bool reset) {
 		g_driver->translateViewpointFinish();
 	} else {
 		Math::Vector3d animPos = node->_pos + node->_animPos;
-		float animPitch = node->_pitch + node->_animPitch;
-		float animYaw = node->_yaw + node->_animYaw;
-		float animRoll = node->_roll + node->_animRoll;
+		Math::Angle animPitch = node->_pitch + node->_animPitch;
+		Math::Angle animYaw = node->_yaw + node->_animYaw;
+		Math::Angle animRoll = node->_roll + node->_animRoll;
 		g_driver->translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	}
 }
@@ -1578,11 +1578,12 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 				_headPitch = 0;
 			}
 			_joint1Node->_animYaw = _headYaw;
-			float pi = _headPitch / 3.f;
+			Math::Angle pi = _headPitch / 3.f;
 			_joint1Node->_animPitch += pi;
 			_joint2Node->_animPitch += pi;
 			_joint3Node->_animPitch += pi;
-			_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.f) * -_headPitch / 5.f;
+			_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+										_headPitch.getDegrees() / -5.f;
 
 			if (_joint1Node->_animRoll > _head.maxRoll)
 				_joint1Node->_animRoll = _head.maxRoll;
@@ -1611,7 +1612,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		float bodyYaw = _matrix.getYaw();
+		Math::Angle bodyYaw = _matrix.getYaw();
 		p = _joint1Node->_parent;
 		while (p) {
 			bodyYaw += p->_yaw + p->_animYaw;
@@ -1641,7 +1642,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		magnitude = sqrt(v.z() * v.z() + h * h);
 		a = h / magnitude;
 		b = v.z() / magnitude;
-		float pitch;
+		Math::Angle pitch;
 		pitch = acos(a) * (180.0f / LOCAL_PI);
 
 		if (b < 0.0f)
@@ -1667,7 +1668,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (_headPitch - pitch > pitchStep)
 			pitch = _headPitch - pitchStep;
 
-		float pi = pitch / 3.f;
+		Math::Angle pi = pitch / 3.f;
 		_joint1Node->_animPitch += pi;
 		_joint2Node->_animPitch += pi;
 		_joint3Node->_animPitch += pi;
@@ -1678,7 +1679,8 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (_headYaw - _joint1Node->_animYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw - yawStep;
 
-		_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.f) * -pitch / 5.f;
+		_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+								pitch.getDegrees() / -5.f;
 
 		if (_joint1Node->_animRoll > _head.maxRoll)
 			_joint1Node->_animRoll = _head.maxRoll;
@@ -1708,7 +1710,8 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	}
 }
 
-void Costume::setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void Costume::setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
+						   const Math::Angle &yaw, const Math::Angle &roll) {
 	_matrix.setPosition(pos);
 	_matrix.buildFromPitchYawRoll(pitch, yaw, roll);
 }
@@ -1759,8 +1762,8 @@ void Costume::saveState(SaveGame *state) const {
 	state->writeFloat(_head.maxPitch);
 	state->writeFloat(_head.maxYaw);
 	state->writeFloat(_head.maxRoll);
-	state->writeFloat(_headPitch);
-	state->writeFloat(_headYaw);
+	state->writeFloat(_headPitch.getDegrees());
+	state->writeFloat(_headYaw.getDegrees());
 }
 
 bool Costume::restoreState(SaveGame *state) {

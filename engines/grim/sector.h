@@ -77,7 +77,7 @@ public:
 	// Interface to trace a ray to its exit from the polygon
 	struct ExitInfo {
 		Math::Vector3d exitPoint;
-		float angleWithEdge;
+		Math::Angle angleWithEdge;
 		Math::Vector3d edgeDir;
 		int edgeVertex;
 	};

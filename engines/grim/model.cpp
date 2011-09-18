@@ -660,9 +660,9 @@ void ModelNode::update() {
 		return;
 
 	Math::Vector3d animPos = _pos + _animPos;
-	float animPitch = _pitch + _animPitch;
-	float animYaw = _yaw + _animYaw;
-	float animRoll = _roll + _animRoll;
+	Math::Angle animPitch = _pitch + _animPitch;
+	Math::Angle animYaw = _yaw + _animYaw;
+	Math::Angle animRoll = _roll + _animRoll;
 
 	_localMatrix.setPosition(animPos);
 	_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);

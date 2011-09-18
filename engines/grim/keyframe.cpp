@@ -260,9 +260,9 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	float dt = frame - _entries[low]._frame;
 	Math::Vector3d pos = _entries[low]._pos;
-	float pitch = _entries[low]._pitch;
-	float yaw = _entries[low]._yaw;
-	float roll = _entries[low]._roll;
+	Math::Angle pitch = _entries[low]._pitch;
+	Math::Angle yaw = _entries[low]._yaw;
+	Math::Angle roll = _entries[low]._roll;
 	if (useDelta) {
 		pos += dt * _entries[low]._dpos;
 		pitch += dt * _entries[low]._dpitch;
@@ -272,25 +272,13 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	node._animPos += (pos - node._pos) * fade;
 
-	float dpitch = pitch - node._pitch;
-	while (dpitch > 180)
-		dpitch -= 360;
-	while (dpitch < -180)
-		dpitch += 360;
+	Math::Angle dpitch = pitch - node._pitch;
 	node._animPitch += dpitch * fade;
 
-	float dyaw = yaw - node._yaw;
-	while (dyaw > 180)
-		dyaw -= 360;
-	while (dyaw < -180)
-		dyaw += 360;
+	Math::Angle dyaw = yaw - node._yaw;
 	node._animYaw += dyaw * fade;
 
-	float droll = roll - node._roll;
-	while (droll > 180)
-		droll -= 360;
-	while (droll < -180)
-		droll += 360;
+	Math::Angle droll = roll - node._roll;
 	node._animRoll += droll * fade;
 
 	return true;

@@ -360,9 +360,9 @@ void L1_GetActorRot() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	lua_pushnumber(actor->getPitch());
-	lua_pushnumber(actor->getYaw());
-	lua_pushnumber(actor->getRoll());
+	lua_pushnumber(actor->getPitch().getDegrees());
+	lua_pushnumber(actor->getYaw().getDegrees());
+	lua_pushnumber(actor->getRoll().getDegrees());
 }
 
 void L1_IsActorTurning() {
@@ -441,7 +441,7 @@ void L1_GetActorYawToPoint() {
 
 	Math::Vector3d yawVector(x, y, z);
 
-	lua_pushnumber(actor->getYawTo(yawVector));
+	lua_pushnumber(actor->getYawTo(yawVector).getDegrees());
 }
 
 /* Changes the set that an actor is associated with,
@@ -1170,18 +1170,14 @@ void L1_TurnActorTo() {
 	Math::Vector3d turnToVector(x, y, z);
 	Math::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
-	float yaw = lookVector.unitCircleAngle();
+	Math::Angle yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
 	yaw -= 90.0f;
-	if (yaw < 0) {
-		yaw += 360.f;
-	}
 	actor->turnTo(0, yaw, 0);
 
-	float diff = actor->getYaw() - yaw;
 	// Return true if the actor is still turning and its yaw is not the target one.
 	// This allows manny to have the right yaw when he exits the elevator in the garage
-	pushbool((diff > 0.005) || (diff < -0.005)); //fuzzy compare
+	pushbool(actor->getYaw() != yaw);
 }
 
 void L1_PointActorAt() {
@@ -1214,7 +1210,7 @@ void L1_PointActorAt() {
 	Math::Vector3d turnToVector(x, y, z);
 	Math::Vector3d lookVector = turnToVector - actor->getPos();
 	// find the angle the requested position is around the unit circle
-	float yaw = lookVector.unitCircleAngle();
+	Math::Angle yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
 	yaw -= 90.0f;
 	actor->turnTo(0, yaw, 0);
@@ -1239,7 +1235,7 @@ void L1_WalkActorVector() {
 	Actor *actor2 = getactor(actor2Obj);
 
 	// TODO whole below part need rewrote to much original
-	float moveHoriz, moveVert, yaw;
+	float moveHoriz, moveVert;
 
 	// Third option is the "left/right" movement
 	moveHoriz = luaL_check_number(3);
@@ -1249,22 +1245,17 @@ void L1_WalkActorVector() {
 	// Get the direction the camera is pointing
 	Math::Vector3d cameraVector = g_grim->getCurrScene()->getCurrSetup()->_interest - g_grim->getCurrScene()->getCurrSetup()->_pos;
 	// find the angle the camera direction is around the unit circle
-	float cameraYaw = cameraVector.unitCircleAngle();
+	Math::Angle cameraYaw = cameraVector.unitCircleAngle();
 
 	// Handle the turning
 	Math::Vector3d adjustVector(moveHoriz, moveVert, 0);
 	// find the angle the adjust vector is around the unit circle
-	float adjustYaw = adjustVector.unitCircleAngle();
+	Math::Angle adjustYaw = adjustVector.unitCircleAngle();
 
-	yaw = cameraYaw + adjustYaw;
+	Math::Angle yaw = cameraYaw + adjustYaw;
 	// yaw is offset from forward by 180 degrees
 	yaw -= 180.0f;
-	// set the yaw so it can be compared against the current
-	// value for the actor yaw
-	if (yaw < 0.0f)
-		yaw += 360.0f;
-	if (yaw >= 360.0f)
-		yaw -= 360.0f;
+
 	// set the new direction or walk forward
 	if (actor2->getYaw() != yaw)
 		actor2->turnTo(0, yaw, 0);
