@@ -55,6 +55,11 @@ TextDisplayer_Eob::TextDisplayer_Eob(LolEobBaseEngine *engine, Screen *sScreen) 
 		_textDimData[i].column = d->unkE;
 	}
 
+	_table1 = new char[128];
+	memset(_table1, 0, 128);
+	_table2 = new char[16];
+	memset(_table2, 0, 16);
+
 	_waitButtonSpace = 0;
 }
 
@@ -62,6 +67,8 @@ TextDisplayer_Eob::~TextDisplayer_Eob() {
 	delete[] _dialogueBuffer;
 	delete[] _currentLine;
 	delete[] _textDimData;
+	delete[] _table1;
+	delete[] _table2;
 }
 
 void TextDisplayer_Eob::setupField(int dim, bool mode) {
@@ -257,6 +264,7 @@ char TextDisplayer_Eob::parseCommand() {
 }
 
 void TextDisplayer_Eob::readNextPara() {
+	char c = 0;
 	char d = 0;
 
 	if (_tempString2) {
@@ -275,12 +283,16 @@ void TextDisplayer_Eob::readNextPara() {
 			_tempString1 = 0;
 	}
 
-	if (d & 0x80) {
-		warning("TextDisplayer_Eob::readNextPara():");
+	if ((_vm->game() != GI_LOL) && (d & 0x80)) {		
+		d &= 0x7f;
+		c = d & 7;
+		d = (d & 0x78) >> 3;
+		c = _table1[(d << 3) + c];
+		d = _table2[d];
 	}
 
 	_ctrl[1] = d;
-	_ctrl[2] = 0;
+	_ctrl[2] = c;
 }
 
 void TextDisplayer_Eob::printLine(char *str) {

@@ -380,7 +380,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 	int res = 0;
 	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit(); ) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
-		int inputFlag =getInput(_vm->_activeButtons);
+		int inputFlag = getInput(_vm->_activeButtons);
 		int cbx = _activeBox;
 		_vm->removeInputTop();
 
@@ -517,7 +517,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-		int in = getInput(_vm->_activeButtons) & 0xff;
+		int in = getInput(0) & 0xff;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
@@ -565,7 +565,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-		int in = getInput(_vm->_activeButtons) & 0xff;
+		int in = getInput(0) & 0xff;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
