@@ -267,4 +267,31 @@ bool InputHandler::wantsCursor() {
 	return false;
 }
 
+Tracker *Tracker::_currentTracker = 0;
+
+void Tracker::handleInput(const Input &input, const Hotspot *) {
+	if (stopTrackingInput(input))
+		stopTracking(input);
+	else if (isTracking())
+		continueTracking(input);
+}
+
+void Tracker::startTracking(const Input &) {
+	if (!isTracking()) {
+		_savedHandler = InputHandler::setInputHandler(this);
+		_currentTracker = this;
+	}
+}
+
+void Tracker::stopTracking(const Input &) {
+	if (isTracking()) {
+		_currentTracker = NULL;
+		InputHandler::setInputHandler(_savedHandler);
+	}
+}
+
+bool Tracker::isClickInput(const Input &input, const Hotspot *hotspot) {
+	return !isTracking() && InputHandler::isClickInput(input, hotspot);
+}
+
 } // End of namespace Pegasus

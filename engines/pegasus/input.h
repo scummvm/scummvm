@@ -414,6 +414,41 @@ protected:
 	bool _allowInput;
 };
 
+
+/*
+
+	Tracker implements "dragging". A Tracker can receive a startTracking message,
+	which causes it to be the current tracker, as well as setting it up as the current
+	input handler. In addition, only one tracker can be tracking at a time, and no
+	other handler can be set up as the current handler until the track finishes. By
+	default, there is no next input handler for a Tracker, but this behavior can be
+	overridden if desired.
+
+*/
+
+class Tracker : public InputHandler {
+public:
+	Tracker() : InputHandler(0) {}
+	virtual ~Tracker();
+
+	virtual void handleInput(const Input &, const Hotspot *);
+	virtual bool stopTrackingInput(const Input &) { return false; }
+
+	virtual void startTracking(const Input &);
+	virtual void stopTracking(const Input &);
+	virtual void continueTracking(const Input &) {}
+
+	bool isTracking() { return this == _currentTracker; }
+	bool isClickInput(const Input &, const Hotspot *);
+
+	bool releaseInputFocus() { return !isTracking(); }
+
+protected:
+	static Tracker *_currentTracker;
+
+	InputHandler *_savedHandler;
+};
+
 } // End of namespace Pegasus
 
 #endif
