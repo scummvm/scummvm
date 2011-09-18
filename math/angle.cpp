@@ -144,11 +144,13 @@ void Angle::setRange(float low) {
 }
 
 void Angle::crop() {
-	while (_degrees >= _rangeLow + 360) {
-		_degrees -= 360;
+	if (_degrees >= _rangeLow + 360.f) {
+		int x = (int)(_degrees - _rangeLow) / 360.f;
+		_degrees -= 360.f * x;
 	}
-	while (_degrees < _rangeLow) {
-		_degrees += 360;
+	if (_degrees < _rangeLow) {
+		int x = (int)(_degrees - _rangeLow) / 360.f;
+		_degrees -= 360.f * x;
 	}
 }
 
