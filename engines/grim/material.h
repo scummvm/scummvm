@@ -49,6 +49,7 @@ public:
 	int _numImages;
 	Texture *_textures;
 	int _refCount;
+
 private:
 	void initGrim(const Common::String &filename, const char *data, int len, CMap *cmap);
 	void initEMI(const Common::String &filename, const char *data, int len);
@@ -64,10 +65,11 @@ public:
 	void select() const;
 
 	// Set which image in an animated texture to use
-	void setNumber(int n) { _currImage = n; }
+	void setActiveTexture(int n);
 
-	int getNumImages() const;
-	int getCurrentImage() const;
+	int getNumTextures() const;
+	int getActiveTexture() const;
+
 	const Common::String &getFilename() const;
 	MaterialData *getData() const;
 

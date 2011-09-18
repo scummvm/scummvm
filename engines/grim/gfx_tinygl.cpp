@@ -695,12 +695,12 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 		return;
 	}
 
-	assert(bitmap->getCurrentImage() > 0);
+	assert(bitmap->getActiveImage() > 0);
 	if (bitmap->getFormat() == 1)
-		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
+		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 

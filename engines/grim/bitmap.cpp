@@ -300,7 +300,7 @@ Bitmap::Bitmap() :
 void Bitmap::saveState(SaveGame *state) const {
 	state->writeString(getFilename());
 
-	state->writeLESint32(getCurrentImage());
+	state->writeLESint32(getActiveImage());
 	state->writeLESint32(getX());
 	state->writeLESint32(getY());
 }
@@ -324,7 +324,7 @@ void Bitmap::draw() const {
 	g_driver->drawBitmap(this);
 }
 
-void Bitmap::setNumber(int n) {
+void Bitmap::setActiveImage(int n) {
 	if ((n - 1) >= _data->_numImages) {
 		warning("Bitmap::setNumber: no anim image: %d. (%s)", n, _data->_fname.c_str());
 	} else {

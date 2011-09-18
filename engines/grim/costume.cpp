@@ -220,7 +220,7 @@ void BitmapComponent::setKey(int val) {
 	ObjectState *state = g_grim->getCurrScene()->findState(bitmap);
 
 	if (state) {
-		state->setNumber(val);
+		state->setActiveImage(val);
 		return;
 	}
 	// Complain that we couldn't find the bitmap.  This means we probably
@@ -308,7 +308,7 @@ void SpriteComponent::setKey(int val) {
 		_sprite->_visible = false;
 	} else {
 		_sprite->_visible = true;
-		_sprite->_material->setNumber(val - 1);
+		_sprite->_material->setActiveTexture(val - 1);
 	}
 }
 
@@ -319,12 +319,12 @@ void SpriteComponent::reset() {
 
 void SpriteComponent::saveState(SaveGame *state) {
 	state->writeLEBool(_sprite->_visible);
-	state->writeLESint32(_sprite->_material->getCurrentImage());
+	state->writeLESint32(_sprite->_material->getActiveTexture());
 }
 
 void SpriteComponent::restoreState(SaveGame *state) {
 	_sprite->_visible = state->readLEBool();
-	_sprite->_material->setNumber(state->readLESint32());
+	_sprite->_material->setActiveTexture(state->readLESint32());
 }
 
 ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
@@ -771,11 +771,11 @@ void MaterialComponent::init() {
 }
 
 void MaterialComponent::setKey(int val) {
-	_mat->setNumber(val);
+	_mat->setActiveTexture(val);
 }
 
 void MaterialComponent::reset() {
-	_mat->setNumber(0);
+	_mat->setActiveTexture(0);
 }
 
 void MaterialComponent::resetColormap() {
@@ -783,11 +783,11 @@ void MaterialComponent::resetColormap() {
 }
 
 void MaterialComponent::saveState(SaveGame *state) {
-	state->writeLESint32(_mat->getCurrentImage());
+	state->writeLESint32(_mat->getActiveTexture());
 }
 
 void MaterialComponent::restoreState(SaveGame *state) {
-	_mat->setNumber(state->readLESint32());
+	_mat->setActiveTexture(state->readLESint32());
 }
 
 class LuaVarComponent : public Costume::Component {

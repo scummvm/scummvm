@@ -1249,7 +1249,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	state->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
-		screenshot->setNumber(0);
+		screenshot->setActiveImage(0);
 		uint16 *data = (uint16 *)screenshot->getData();
 		for (int l = 0; l < size; l++) {
 			state->writeLEUint16(data[l]);

@@ -717,10 +717,10 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	// If drawing a Z-buffer image, but no shaders are available, fall back to the glDrawPixels method.
 	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
-		if (bitmap->getCurrentImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getCurrentImage() - 1));
+		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
+			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getActiveImage() - 1));
 		} else {
-			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getCurrentImage(), bitmap->getNumImages());
+			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
 		glEnable(GL_LIGHTING);
 		return;
@@ -741,7 +741,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
-	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getCurrentImage() - 1);
+	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getActiveImage() - 1);
 	for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
 		for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
 			textures = (GLuint *)bitmap->getTexIds();

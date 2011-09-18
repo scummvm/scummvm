@@ -182,11 +182,15 @@ Material::~Material() {
 	}
 }
 
-int Material::getNumImages() const {
+void Material::setActiveTexture(int n) {
+	_currImage = n;
+}
+
+int Material::getNumTextures() const {
 	return _data->_numImages;
 }
 
-int Material::getCurrentImage() const {
+int Material::getActiveTexture() const {
 	return _currImage;
 }
 

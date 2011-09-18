@@ -102,10 +102,10 @@ public:
 	 *
 	 * @param n		the image to be selected
 	 */
-	void setNumber(int n);
+	void setActiveImage(int n);
 
 	int getNumImages() const { return _data->_numImages; }
-	int getCurrentImage() const { return _currImage; }
+	int getActiveImage() const { return _currImage; }
 	bool getHasTransparency() const { return _data->_hasTransparency; }
 	int getFormat() const { return _data->_format; }
 	int getWidth() const { return _data->_width; }
