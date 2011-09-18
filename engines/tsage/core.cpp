@@ -3849,9 +3849,9 @@ void SceneHandler::process(Event &event) {
 						// Item wasn't handled, keep scanning
 						continue;
 
-					event.handled = _globals->_events.getCursor() != CURSOR_WALK;
-
 					if ((_vm->getGameID() == GType_Ringworld) || (_globals->_events.getCursor() == CURSOR_9999)) {
+						event.handled = _globals->_events.getCursor() != CURSOR_WALK;
+
 						if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
 								(_globals->_events.getCursor() != CURSOR_LOOK)) {
 							_globals->_events.setCursor(CURSOR_WALK);
@@ -3863,6 +3863,8 @@ void SceneHandler::process(Event &event) {
 
 						if (_vm->getGameID() == GType_BlueForce)
 							event.handled = true;
+					} else if (_vm->getGameID() != GType_Ringworld) {
+						event.handled = true;
 					}
 					break;
 				}
