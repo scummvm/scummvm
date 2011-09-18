@@ -100,7 +100,6 @@ public:
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_showicon = 0xca64;
 	static const uint16 addr_workoutframes = 0xca54;
-	static const uint16 addr_bresenhams = 0xca50;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_printmessage2 = 0xca30;
 	static const uint16 addr_examineobtext = 0xca20;
@@ -1282,7 +1281,7 @@ public:
 	void buttonenter();
 	void checkinput();
 	//void crosshair();
-	void bresenhams();
+	void setmode();
 	void getbackfromops();
 	//void frameoutv();
 	void showbyte();
@@ -1496,7 +1495,7 @@ public:
 	void entersymbol();
 	void showword();
 	void dirfile();
-	void setmode();
+	//void bresenhams();
 	//void walktotext();
 	void pickupconts();
 	void locklightoff();
