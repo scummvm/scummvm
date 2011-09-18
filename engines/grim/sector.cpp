@@ -149,7 +149,8 @@ void Sector::load(TextSplitter &ts) {
 	// Repeat the last vertex for convenience
 	_vertices[_numVertices] = _vertices[0];
 
-	_normal = cross(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
+										   _vertices[_numVertices - 1] - _vertices[0]);
 	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
@@ -384,7 +385,7 @@ Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
 
 	// Formula: return p - (n . (p - v_0))/(n . k) k
 	Math::Vector3d result = point;
-	result.z() -= dot(_normal, point - _vertices[0]) / _normal.z();
+	result.z() -= Math::Vector3d::dotProduct(_normal, point - _vertices[0]) / _normal.z();
 	return result;
 }
 
@@ -393,7 +394,7 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 		error("Trying to walk along vertical plane");
 
 	Math::Vector3d result = v;
-	result.z() -= dot(_normal, v) / _normal.z();
+	result.z() -= Math::Vector3d::dotProduct(_normal, v) / _normal.z();
 	return result;
 }
 
@@ -401,7 +402,7 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	// First try to project to the plane
 	Math::Vector3d p2 = point;
-	p2 -= (dot(_normal, p2 - _vertices[0])) * _normal;
+	p2 -= (Math::Vector3d::dotProduct(_normal, p2 - _vertices[0])) * _normal;
 	if (isPointInSector(p2))
 		return p2;
 
@@ -409,7 +410,7 @@ Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
-		float scalar = dot(delta, edge) / dot(edge, edge);
+		float scalar = Math::Vector3d::dotProduct(delta, edge) / Math::Vector3d::dotProduct(edge, edge);
 		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
 			// That last test is just whether the z-component
 			// of delta cross edge is positive; we don't
@@ -457,15 +458,15 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	}
 
 	result->edgeDir = _vertices[i] - _vertices[i - 1];
-	result->angleWithEdge = angle(dir, result->edgeDir);
+	result->angleWithEdge = Math::Vector3d::angle(dir, result->edgeDir);
 	result->edgeVertex = i - 1;
 
 	Math::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
-	float d = dot(dir, edgeNormal);
+	float d = Math::Vector3d::dotProduct(dir, edgeNormal);
 	// This is 0 for the albinizod monster in the at set
 	if (!d)
 		d = 1.f;
-	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / d ) * dir;
+	result->exitPoint = start + (Math::Vector3d::dotProduct(_vertices[i] - start, edgeNormal) / d ) * dir;
 }
 
 Sector &Sector::operator=(const Sector &other) {

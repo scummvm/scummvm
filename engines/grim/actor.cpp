@@ -803,7 +803,7 @@ Math::Angle Actor::getYawTo(const Actor &a) const {
 	Math::Vector3d delta = a.getPos() - _pos;
 	delta.z() = 0;
 
-	return angle(forwardVec, delta);
+	return Math::Vector3d::angle(forwardVec, delta);
 }
 
 Math::Angle Actor::getYawTo(Math::Vector3d p) const {
@@ -812,7 +812,7 @@ Math::Angle Actor::getYawTo(Math::Vector3d p) const {
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
 	else
-		return atan2(-dpos.x(), dpos.y()) * (180.f / LOCAL_PI);
+		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
 void Actor::sayLine(const char *msgId, bool background) {

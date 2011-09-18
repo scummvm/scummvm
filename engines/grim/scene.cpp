@@ -666,11 +666,12 @@ void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos, int minV
 	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
-	up = up * cosr + Math::cross(cameraVector, up) * sin(roll) +
-		cameraVector * Math::dot(cameraVector, up) * (1 - cosr);
-	right = Math::cross(cameraVector, up);
+	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
+		cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
-	float angle = atan2(Math::dot(vector, right), Math::dot(vector, cameraVector));
+	float angle = atan2(Math::Vector3d::dotProduct(vector, right),
+						Math::Vector3d::dotProduct(vector, cameraVector));
 	float pan = sin(angle);
 	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
 }

@@ -163,7 +163,7 @@ void Model::loadBinary(const char *&data, CMap *cmap) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
 	_radius = get_float(data);
-	_insertOffset = Math::get_vector3d(data + 40);
+	_insertOffset = Math::Vector3d::get_vector3d(data + 40);
 }
 
 void Model::loadText(TextSplitter *ts, CMap *cmap) {
@@ -358,7 +358,7 @@ int MeshFace::loadBinary(const char *&data, Material *materials[]) {
 	int texPtr = READ_LE_UINT32(data + 28);
 	int materialPtr = READ_LE_UINT32(data + 32);
 	_extraLight = get_float(data + 48);
-	_normal = Math::get_vector3d(data + 64);
+	_normal = Math::Vector3d::get_vector3d(data + 64);
 	data += 76;
 
 	_vertices = new int[_numVertices];
@@ -595,8 +595,8 @@ void ModelNode::loadBinary(const char *&data, ModelNode *hierNodes, const Model:
 	_numChildren = READ_LE_UINT32(data + 88);
 	int childPtr = READ_LE_UINT32(data + 92);
 	int siblingPtr = READ_LE_UINT32(data + 96);
-	_pivot = Math::get_vector3d(data + 100);
-	_pos = Math::get_vector3d(data + 112);
+	_pivot = Math::Vector3d::get_vector3d(data + 100);
+	_pos = Math::Vector3d::get_vector3d(data + 112);
 	_pitch = get_float(data + 124);
 	_yaw = get_float(data + 128);
 	_roll = get_float(data + 132);
