@@ -64,7 +64,7 @@ public:
 	bool intersectsLine(const Line2d &line, Vector2d *pos);
 	bool intersectsSegment(const Segment2d &line, Vector2d *pos);
 
-	void operator=(const Segment2d &other);
+	Segment2d &operator=(const Segment2d &other);
 
 private:
 	Math::Vector2d _begin, _end;

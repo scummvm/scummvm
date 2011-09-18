@@ -127,7 +127,7 @@ public:
 	inline float &operator()(int row, int col);
 	inline float operator()(int row, int col) const;
 
-	operator Matrix<rows, cols>&() { return *_this; }
+	operator Matrix<rows, cols>&() const { return *_this; }
 
 	static Matrix<rows, cols> sum(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
 	static Matrix<rows, cols> difference(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);

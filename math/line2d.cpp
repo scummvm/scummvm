@@ -189,9 +189,11 @@ bool Segment2d::containsPoint(const Vector2d &point) const {
 	return false;
 }
 
-void Segment2d::operator=(const Segment2d &other) {
+Segment2d &Segment2d::operator=(const Segment2d &other) {
 	_begin = other._begin;
 	_end = other._end;
+
+	return *this;
 }
 
 }
