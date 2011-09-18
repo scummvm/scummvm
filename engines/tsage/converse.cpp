@@ -99,8 +99,6 @@ void SequenceManager::signal() {
 		}
 
 		uint16 idx = static_cast<uint16>(getNextValue() - 32000);
-		if (idx > 34)
-			continue;
 
 		int16 v1, v2, v3;
 		switch (idx) {
