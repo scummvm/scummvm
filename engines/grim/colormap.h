@@ -31,7 +31,6 @@ class CMap : public Object {
 public:
 	// Load a colormap from the given data.
 	CMap(const Common::String &fileName, const char *data, int len);
-	CMap();
 	~CMap();
 	const Common::String &getFilename() const { return _fname; }
 

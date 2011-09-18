@@ -233,7 +233,7 @@ void AnimManager::removeAnimation(Animation *anim) {
 	for (i = _activeAnims.begin(); i != _activeAnims.end(); ++i) {
 		if (i->_anim == anim) {
 			i = _activeAnims.erase(i);
-			i--;
+			--i;
 		}
 	}
 }
