@@ -82,11 +82,11 @@ float MatrixType<dim, 1>::getMagnitude() const {
 
 template<int dim>
 float MatrixType<dim, 1>::getDistanceTo(const Vector(dim) &point) const {
-	float sum = 0;
+	float result = 0;
 	for (int i = 0; i < dim; ++i) {
-		sum += square(getValue(i) - point.getValue(i));
+		result += square(getValue(i) - point.getValue(i));
 	}
-	return sqrt(sum);
+	return sqrt(result);
 }
 
 template<int dim>

@@ -23,6 +23,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/textconsole.h"
 
 #include "math/rect2d.h"
 
@@ -64,7 +65,9 @@ void Rect2d::rotateAroundCenter(const Angle &angle) {
 }
 
 bool Rect2d::intersectsRect(const Rect2d &rect) const {
-
+	// TODO: implement this;
+	error("Rect2d::intersectsRect not implemented");
+	return false;
 }
 
 bool Rect2d::intersectsCircle(const Vector2d &center, float radius) const {
