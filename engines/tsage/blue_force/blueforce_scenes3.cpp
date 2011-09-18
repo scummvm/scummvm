@@ -3298,6 +3298,137 @@ void Scene370::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 380 - Outside City Hall & Jail
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene380::Vechile::startAction(CursorType action, Event &event) {
+	Scene380 *scene = (Scene380 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 1;
+		scene->setAction(&scene->_sequenceManager, scene, 3802, &BF_GLOBALS._player, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene380::Door::startAction(CursorType action, Event &event) {
+	Scene380 *scene = (Scene380 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2;
+		scene->setAction(&scene->_sequenceManager, scene, 3800, &BF_GLOBALS._player, &scene->_door, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene380::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(380);
+	setZoomPercents(68, 80, 131, 100);
+
+	BF_GLOBALS._sound1.fadeSound(33);
+	BF_GLOBALS._walkRegions.proc1(9);
+
+	_door.postInit();
+	_door.setVisage(380);
+	_door.setStrip(4);
+	_door.setPosition(Common::Point(132, 66));
+	_door.setDetails(380, 12, 13, -1, 1, NULL);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.changeZoom(-1);
+
+	_vechile.postInit();
+	_vechile.setVisage(380);
+	_vechile.fixPriority(109);
+	
+	if (BF_GLOBALS.getFlag(fWithLyle)) {
+		// Show vechile as car
+		_vechile.setStrip(3);
+		_vechile.setPosition(Common::Point(273, 125));
+		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
+
+		BF_GLOBALS._player.setVisage(129);
+		BF_GLOBALS._walkRegions.proc1(12);
+		BF_GLOBALS._walkRegions.proc1(18);
+		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.proc1(20);
+		BF_GLOBALS._walkRegions.proc1(25);
+		BF_GLOBALS._walkRegions.proc1(26);
+		BF_GLOBALS._walkRegions.proc1(27);
+	} else if (BF_GLOBALS.getFlag(onDuty)) {
+		// Show on duty motorcycle
+		_vechile.setStrip(2);
+		_vechile.setDetails(300, 11, 13, -1, 1, NULL);
+		_vechile.setPosition(Common::Point(252, 115));
+
+		BF_GLOBALS._player.setVisage(1341);
+	} else {
+		// Show off duty motorcycle
+		_vechile.setStrip(1);
+		_vechile.setDetails(580, 0, 1, -1, 1, NULL);
+		_vechile.setPosition(Common::Point(249, 110));
+
+		BF_GLOBALS._player.setVisage(129);
+	}
+
+	BF_GLOBALS._player.updateAngle(_vechile._position);
+	BF_GLOBALS._sceneItems.push_back(&_door);
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 50:
+	case 60:
+	case 330:
+	case 370:
+		BF_GLOBALS._player.setPosition(Common::Point(251, 100));
+		BF_GLOBALS._player._strip = 3;
+		BF_GLOBALS._player.enableControl();
+		break;
+	default:
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 0;
+		setAction(&_sequenceManager, this, 3801, &BF_GLOBALS._player, &_door, NULL);
+		break;
+	}
+
+	_item1.setDetails(7, 380, 0, 1, 2, 1);
+	_item2.setDetails(9, 380, 3, 4, 5, 1);
+	_item3.setDetails(17, 380, 6, 7, 8, 1);
+	_item4.setDetails(20, 380, 9, 10, 11, 1);
+	_item5.setDetails(15, 380, 14, 15, 16, 1);
+	_item6.setDetails(4, 380, 17, 18, 19, 1);
+	_item7.setDetails(19, 380, 20, 4, 21, 1);
+	_item8.setDetails(18, 380, 22, 23, 24, 1);
+	_item9.setDetails(6, 380, 25, 26, 27, 1);
+}
+
+void Scene380::signal() {
+	switch (_sceneMode) {
+	case 1:
+		BF_GLOBALS._sceneManager.changeScene(60);
+		break;
+	case 2:
+		BF_GLOBALS._sceneManager.changeScene(385);
+		break;
+	default:
+		BF_GLOBALS._player.enableControl();
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 385 - City Hall
  *
  *--------------------------------------------------------------------------*/
@@ -4033,137 +4164,6 @@ void Scene390::signal() {
 		BF_GLOBALS._deathReason = 18;
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
-	}
-}
-
-/*--------------------------------------------------------------------------
- * Scene 380 - Outside City Hall & Jail
- *
- *--------------------------------------------------------------------------*/
-
-bool Scene380::Vechile::startAction(CursorType action, Event &event) {
-	Scene380 *scene = (Scene380 *)BF_GLOBALS._sceneManager._scene;
-
-	switch (action) {
-	case CURSOR_USE:
-		BF_GLOBALS._player.disableControl();
-		scene->_sceneMode = 1;
-		scene->setAction(&scene->_sequenceManager, scene, 3802, &BF_GLOBALS._player, NULL);
-		return true;
-	default:
-		return NamedObject::startAction(action, event);
-	}
-}
-
-bool Scene380::Door::startAction(CursorType action, Event &event) {
-	Scene380 *scene = (Scene380 *)BF_GLOBALS._sceneManager._scene;
-
-	switch (action) {
-	case CURSOR_USE:
-		BF_GLOBALS._player.disableControl();
-		scene->_sceneMode = 2;
-		scene->setAction(&scene->_sequenceManager, scene, 3800, &BF_GLOBALS._player, &scene->_door, NULL);
-		return true;
-	default:
-		return NamedObject::startAction(action, event);
-	}
-}
-
-/*--------------------------------------------------------------------------*/
-
-void Scene380::postInit(SceneObjectList *OwnerList) {
-	SceneExt::postInit();
-	loadScene(380);
-	setZoomPercents(68, 80, 131, 100);
-
-	BF_GLOBALS._sound1.fadeSound(33);
-	BF_GLOBALS._walkRegions.proc1(9);
-
-	_door.postInit();
-	_door.setVisage(380);
-	_door.setStrip(4);
-	_door.setPosition(Common::Point(132, 66));
-	_door.setDetails(380, 12, 13, -1, 1, NULL);
-
-	BF_GLOBALS._player.postInit();
-	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
-	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
-	BF_GLOBALS._player.changeZoom(-1);
-
-	_vechile.postInit();
-	_vechile.setVisage(380);
-	_vechile.fixPriority(109);
-	
-	if (BF_GLOBALS.getFlag(fWithLyle)) {
-		// Show vechile as car
-		_vechile.setStrip(3);
-		_vechile.setPosition(Common::Point(273, 125));
-		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
-
-		BF_GLOBALS._player.setVisage(129);
-		BF_GLOBALS._walkRegions.proc1(12);
-		BF_GLOBALS._walkRegions.proc1(18);
-		BF_GLOBALS._walkRegions.proc1(19);
-		BF_GLOBALS._walkRegions.proc1(20);
-		BF_GLOBALS._walkRegions.proc1(25);
-		BF_GLOBALS._walkRegions.proc1(26);
-		BF_GLOBALS._walkRegions.proc1(27);
-	} else if (BF_GLOBALS.getFlag(onDuty)) {
-		// Show on duty motorcycle
-		_vechile.setStrip(2);
-		_vechile.setDetails(300, 11, 13, -1, 1, NULL);
-		_vechile.setPosition(Common::Point(252, 115));
-
-		BF_GLOBALS._player.setVisage(1341);
-	} else {
-		// Show off duty motorcycle
-		_vechile.setStrip(1);
-		_vechile.setDetails(580, 0, 1, -1, 1, NULL);
-		_vechile.setPosition(Common::Point(249, 110));
-
-		BF_GLOBALS._player.setVisage(129);
-	}
-
-	BF_GLOBALS._player.updateAngle(_vechile._position);
-	BF_GLOBALS._sceneItems.push_back(&_door);
-
-	switch (BF_GLOBALS._sceneManager._previousScene) {
-	case 50:
-	case 60:
-	case 330:
-	case 370:
-		BF_GLOBALS._player.setPosition(Common::Point(251, 100));
-		BF_GLOBALS._player._strip = 3;
-		BF_GLOBALS._player.enableControl();
-		break;
-	default:
-		BF_GLOBALS._player.disableControl();
-		_sceneMode = 0;
-		setAction(&_sequenceManager, this, 3801, &BF_GLOBALS._player, &_door, NULL);
-		break;
-	}
-
-	_item1.setDetails(7, 380, 0, 1, 2, 1);
-	_item2.setDetails(9, 380, 3, 4, 5, 1);
-	_item3.setDetails(17, 380, 6, 7, 8, 1);
-	_item4.setDetails(20, 380, 9, 10, 11, 1);
-	_item5.setDetails(15, 380, 14, 15, 16, 1);
-	_item6.setDetails(4, 380, 17, 18, 19, 1);
-	_item7.setDetails(19, 380, 20, 4, 21, 1);
-	_item8.setDetails(18, 380, 22, 23, 24, 1);
-	_item9.setDetails(6, 380, 25, 26, 27, 1);
-}
-
-void Scene380::signal() {
-	switch (_sceneMode) {
-	case 1:
-		BF_GLOBALS._sceneManager.changeScene(60);
-		break;
-	case 2:
-		BF_GLOBALS._sceneManager.changeScene(385);
-		break;
-	default:
-		BF_GLOBALS._player.enableControl();
 	}
 }
 
