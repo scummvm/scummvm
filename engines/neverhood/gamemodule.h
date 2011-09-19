@@ -45,36 +45,10 @@ protected:
 	bool _someFlag1;
 	bool _field2C;
 	uint32 _counter;
-	/* TODO
-	ResourceTable _resourceTable1;
-	ResourceTable _resourceTable2;
-	ResourceTable _resourceTable3;
-	ResourceTable _resourceTable4;
-	*/
+	int _moduleNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createModule1000(int which);
-	void updateModule1000();
-	void createModule1200(int which);
-	void updateModule1200();
-	void createModule1300(int which);
-	void updateModule1300();
-	void createModule1400(int which);
-	void updateModule1400();
-	void createModule1500(int which);
-	void updateModule1500();
-	void createModule1700(int which);
-	void updateModule1700();
-	void createModule1800(int which);
-	void updateModule1800();
-	void createModule2000(int which);
-	void updateModule2000();
-	void createModule2200(int which);
-	void updateModule2200();
-	void createModule2300(int which);
-	void updateModule2300();
-	void createModule2400(int which);
-	void createModule3000(int which);
-	void updateModule3000();
+	void createModule(int moduleNum, int which);
+	void updateModule();
 };
 
 } // End of namespace Neverhood

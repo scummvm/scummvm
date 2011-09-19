@@ -38,31 +38,22 @@
 namespace Neverhood {
 
 GameModule::GameModule(NeverhoodEngine *vm)
-	: Module(vm, NULL) {
+	: Module(vm, NULL), _moduleNum(-1) {
 	
 	// Other initializations moved to actual engine class
-	
 	// TODO
-
 	// TODO Sound1ChList_sub_407F70(0x2D0031, 0x8861079);
-	
 	SetMessageHandler(&GameModule::handleMessage);
-
 }
 
 GameModule::~GameModule() {
 
 	// TODO Sound1ChList_sub_407AF0(0x2D0031);
-
 	delete _childObject;
 	_childObject = NULL;
-
 	// TODO: Set palette to black but probably not neccessary
-	
 	// TODO Sound1ChList_sub_408480();
-	
 	// TODO Set debug vars (maybe)
-
 }
 
 void GameModule::handleMouseMove(int16 x, int16 y) {
@@ -87,6 +78,7 @@ void GameModule::handleMouseDown(int16 x, int16 y) {
 
 void GameModule::initScene1307Vars() {
 
+	// Exit if it's already initialized
 	if (getSubVar(0x40050052, 0x25400B10))
 		return;
 
@@ -256,238 +248,171 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 
 void GameModule::startup() {
 	// TODO: Displaying of error text probably not needed in ScummVM
-//	createModule1500(0); // Logos and intro video //Real
-//	createModule1000(-1);
-//	createModule2300(2);
-	//createModule1200(-1);
-	//createModule1800(-1);
-	//createModule1700(-1);
-	//createModule1700(1);
-	//createModule1400(-1);
+//	createModule(1500, 0); // Logos and intro video //Real
 #if 0
 	_vm->gameState().sceneNum = 0;
-	createModule1200(-1);
+	createModule(1200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
-	createModule1800(-1);
+	createModule(1800, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
-	createModule2000(-1);
+	createModule(2000, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 4;
-	createModule2200(-1);
+	createModule(2200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
-	createModule1000(-1);
+	createModule(1000, -1);
 #endif
 #if 1
 	_vm->gameState().sceneNum = 12;
-	createModule3000(-1);
+	createModule(3000, -1);
 #endif
 }
 
-void GameModule::createModule1000(int which) {
-	setGlobalVar(0x91080831, 0x03294419);
-	_childObject = new Module1000(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1000);
-}
-
-void GameModule::updateModule1000() {
-	if (!updateChild()) {
-		createModule2300(0);
-		_childObject->handleUpdate();
+void GameModule::createModule(int moduleNum, int which) {
+	debug("GameModule::createModule(%d, %d)", moduleNum, which);
+	_moduleNum = moduleNum;
+	switch (_moduleNum) {
+	case 1000:
+		setGlobalVar(0x91080831, 0x03294419);
+		_childObject = new Module1000(_vm, this, which);
+		break;
+	case 1200:
+		setGlobalVar(0x91080831, 0x00478311);
+		_childObject = new Module1200(_vm, this, which);
+		break;
+	case 1300:
+		setGlobalVar(0x91080831, 0x0061C090);
+		_childObject = new Module1300(_vm, this, which);
+		break;
+	case 1400:
+		setGlobalVar(0x91080831, 0x00AD0012);
+		_childObject = new Module1400(_vm, this, which);
+		break;
+	case 1500:
+		_someFlag1 = false;
+		setGlobalVar(0x91080831, 0x00F10114);
+		_childObject = new Module1500(_vm, this, which, true);
+		break;
+	case 1700:
+		setGlobalVar(0x91080831, 0x04212331);
+		_childObject = new Module1700(_vm, this, which);
+		break;
+	case 1800:
+		setGlobalVar(0x91080831, 0x04A14718);
+		_childObject = new Module1800(_vm, this, which);
+		break;
+	case 2000:
+		setGlobalVar(0x91080831, 0x08250000);
+		_childObject = new Module2000(_vm, this, which);
+		break;
+	case 2200:
+		setGlobalVar(0x91080831, 0x11391412);
+		_childObject = new Module2200(_vm, this, which);
+		break;
+	case 2300:
+		setGlobalVar(0x91080831, 0x1A214010);
+		_childObject = new Module2300(_vm, this, which);
+		break;
+	case 3000:
+		setGlobalVar(0x91080831, 0x81293110);
+		_childObject = new Module3000(_vm, this, which);
+		break;
+	default:
+		error("GameModule::createModule() Could not create module %d", moduleNum);
 	}
+	SetUpdateHandler(&GameModule::updateModule);
+	_childObject->handleUpdate();
 }
 
-void GameModule::createModule1200(int which) {
-	setGlobalVar(0x91080831, 0x00478311);
-	_childObject = new Module1200(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1200);
-}
-
-void GameModule::updateModule1200() {
+void GameModule::updateModule() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			error("// TODO createModule2600(0);");
-			// TODO createModule2600(0);
-			// TODO _childObject->handleUpdate();
-		} else {
-			createModule2300(2);
-			_childObject->handleUpdate();
-		}
-	}
-}
-
-void GameModule::createModule1300(int which) {
-	setGlobalVar(0x91080831, 0x0061C090);
-	_childObject = new Module1300(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1300);
-}
-
-void GameModule::updateModule1300() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			// TODO _gameState.clear();
-			// TODO GameModule_handleKeyEscape
-		} else {
-			// TODO createModule2900(0);
-			_childObject->handleUpdate();
-		}
-	}
-}
-
-void GameModule::createModule1400(int which) {
-	setGlobalVar(0x91080831, 0x00AD0012);
-	_childObject = new Module1400(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1400);
-}
-
-void GameModule::updateModule1400() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			error("WEIRD!");
-		} else {
-			// TODO createModule1600(1);
-			// TODO _childObject->handleUpdate();
-		}
-	}
-}
-
-void GameModule::createModule1500(int which) {
-	_someFlag1 = false;
-	setGlobalVar(0x91080831, 0x00F10114);
-	_childObject = new Module1500(_vm, this, which, true);
-	SetUpdateHandler(&GameModule::updateModule1500);
-}
-
-void GameModule::updateModule1500() {
-	if (!updateChild()) {
-		createModule1000(0);
-		_childObject->handleUpdate();
-	}
-}
-
-void GameModule::createModule1700(int which) {
-	setGlobalVar(0x91080831, 0x04212331);
-	_childObject = new Module1700(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1700);
-}
-
-void GameModule::updateModule1700() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			// TODO createModule2900(3);
-			// TODO _childObject->handleUpdate();
-		} else {
-			// TODO createModule1600(2);
-			// TODO _childObject->handleUpdate();
-		}
-	}
-}
-
-void GameModule::createModule1800(int which) {
-	setGlobalVar(0x91080831, 0x04A14718);
-	_childObject = new Module1800(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule1800);
-}
-
-void GameModule::updateModule1800() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			// TODO GameState_clear();
-			// TODO GameModule_handleKeyEscape();
-		} else if (_moduleResult == 2) {
-			// TODO createModule2700(0);
-			// TODO _childObject->handleUpdate();
-		} else if (_moduleResult == 3) {
-			createModule3000(3);
-			_childObject->handleUpdate();
-		} else {
-			// TODO createModule2800(0);
-			// TODO _childObject->handleUpdate();
-		}
-	}
-}
-
-void GameModule::createModule2000(int which) {
-	setGlobalVar(0x91080831, 0x08250000);
-	_childObject = new Module2000(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule2000);
-}
-
-void GameModule::updateModule2000() {
-	if (!updateChild()) {
-		// TODO createModule2900(4);
-		_childObject->handleUpdate();
-	}
-}
-
-void GameModule::createModule2200(int which) {
-	setGlobalVar(0x91080831, 0x11391412);
-	_childObject = new Module2200(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule2200);
-}
-
-void GameModule::updateModule2200() {
-	if (!updateChild()) {
-		createModule2300(1);
-		_childObject->handleUpdate();
-	}
-}
-
-void GameModule::createModule2300(int which) {
-	setGlobalVar(0x91080831, 0x1A214010);
-	_childObject = new Module2300(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule2300);
-}
-
-void GameModule::updateModule2300() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createModule2200(0);
-		} else if (_moduleResult == 2) {
-			createModule1200(0);
-		} else if (_moduleResult == 3) {
-			// TODO createModule2400(0);
-		} else if (_moduleResult == 4) {
-			createModule3000(0);
-		} else {
-			createModule1000(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-
-void GameModule::createModule2400(int which) {
-	error("createModule2400");
-}
-
-void GameModule::createModule3000(int which) {
-	setGlobalVar(0x91080831, 0x81293110);
-	_childObject = new Module3000(_vm, this, which);
-	SetUpdateHandler(&GameModule::updateModule3000);
-}
-
-void GameModule::updateModule3000() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			// TODO createModule1900(0);
-			// TODO _childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			// WEIRD: Sets the errorFlag
-		} else if (_moduleResult == 3) {
-			createModule1800(3);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 4) {
-			createModule3000(0);
-			_childObject->handleUpdate();
-		} else {
-			createModule2300(4);
-			_childObject->handleUpdate();
+		switch (_moduleNum) {
+		case 1000:
+			createModule(2300, 0);
+			break;
+		case 1200:
+			if (_moduleResult == 1) {
+				createModule(2600, 0);
+			} else {
+				createModule(2300, 2);
+			}
+			break;
+		case 1300:
+			if (_moduleResult == 1) {
+				// TODO _gameState.clear();
+				// TODO GameModule_handleKeyEscape
+			} else {
+				createModule(2900, 0);
+			}
+			break;
+		case 1400:
+			if (_moduleResult == 1) {
+				error("WEIRD!");
+			} else {
+				createModule(1600, 1);
+			}
+			break;
+		case 1500:
+			createModule(1000, 0);
+			break;
+		case 1700:
+			if (_moduleResult == 1) {
+				createModule(2900, 3);
+			} else {
+				createModule(1600, 2);
+			}
+			break;
+		case 1800:
+			if (_moduleResult == 1) {
+				// TODO GameState_clear();
+				// TODO GameModule_handleKeyEscape();
+			} else if (_moduleResult == 2) {
+				createModule(2700, 0);
+			} else if (_moduleResult == 3) {
+				createModule(3000, 3);
+			} else {
+				createModule(2800, 0);
+			}
+			break;
+		case 2000:
+			createModule(2900, 4);
+			break;
+		case 2200:
+			createModule(2300, 1);
+			break;
+		case 2300:
+			if (_moduleResult == 1) {
+				createModule(2200, 0);
+			} else if (_moduleResult == 2) {
+				createModule(1200, 0);
+			} else if (_moduleResult == 3) {
+				createModule(2400, 0);
+			} else if (_moduleResult == 4) {
+				createModule(3000, 0);
+			} else {
+				createModule(1000, 1);
+			}
+			break;
+		case 3000:
+			if (_moduleResult == 1) {
+				createModule(1900, 0);
+			} else if (_moduleResult == 2) {
+				// WEIRD: Sets the errorFlag
+			} else if (_moduleResult == 3) {
+				createModule(1800, 3);
+			} else if (_moduleResult == 4) {
+				createModule(3000, 0);
+			} else {
+				createModule(2300, 4);
+			}
+			break;
 		}
 	}
 }
