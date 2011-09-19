@@ -36,154 +36,9 @@ Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO: Music18hList_add(0x11391412, 0x601C908C); 
 
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		default:
-			createScene2201(-1);
-			break;
-		case 1:
-			createScene2202(-1);
-			break;
-		case 2:
-			createScene2203(-1);
-			break;
-		case 3:
-			createScene2204(-1);
-			break;
-		case 4:
-			createScene2205(-1);
-			break;
-		case 5:
-			createScene2206(-1);
-			break;
-		case 6:
-			createScene2207(-1);
-			break;
-		case 7:
-			createScene2208(-1);
-			break;
-		case 8:
-			createScene2209(-1);
-			break;
-		case 9:
-			createScene2210(-1);
-			break;
-		case 10:
-			createScene2211(-1);
-			break;
-		case 11:
-			createScene2212(-1);
-			break;
-		case 12:
-			createScene2213(-1);
-			break;
-		case 13:
-			createScene2214(-1);
-			break;
-		case 14:
-			createScene2215(-1);
-			break;
-		case 15:
-			createScene2216(-1);
-			break;
-		case 16:
-			createScene2217(-1);
-			break;
-		case 17:
-			createScene2218(-1);
-			break;
-		case 18:
-			createScene2219(-1);
-			break;
-		case 19:
-			createScene2220(-1);
-			break;
-		case 20:
-			createScene2221(-1);
-			break;
-		case 21:
-			createScene2222(-1);
-			break;
-		case 22:
-			createScene2223(-1);
-			break;
-		case 23:
-			createScene2224(-1);
-			break;
-		case 24:
-			createScene2225(-1);
-			break;
-		case 25:
-			createScene2226(-1);
-			break;
-		case 26:
-			createScene2227(-1);
-			break;
-		case 27:
-			createScene2228(-1);
-			break;
-		case 28:
-			createScene2229(-1);
-			break;
-		case 29:
-			createScene2230(-1);
-			break;
-		case 30:
-			createScene2231(-1);
-			break;
-		case 31:
-			createScene2232(-1);
-			break;
-		case 32:
-			createScene2233(-1);
-			break;
-		case 33:
-			createScene2234(-1);
-			break;
-		case 34:
-			createScene2235(-1);
-			break;
-		case 35:
-			createScene2236(-1);
-			break;
-		case 36:
-			createScene2237(-1);
-			break;
-		case 37:
-			createScene2238(-1);
-			break;
-		case 38:
-			createScene2239(-1);
-			break;
-		case 39:
-			createScene2240(-1);
-			break;
-		case 40:
-			createScene2241(-1);
-			break;
-		case 41:
-			createScene2242(-1);
-			break;
-		case 42:
-			createScene2243(-1);
-			break;
-		case 43:
-			createScene2244(-1);
-			break;
-		case 44:
-			createScene2245(-1);
-			break;
-		case 45:
-			createScene2246(-1);
-			break;
-		case 46:
-			createScene2247(-1);
-			break;
-		case 47:
-			createScene2248(-1);
-			break;
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else {
-		createScene2201(0);
+		createScene(0, 0);
 	}
 
 }
@@ -192,1016 +47,581 @@ Module2200::~Module2200() {
 	// TODO Sound1ChList_sub_407A50(0x11391412);
 }
 
-void Module2200::createScene2201(int which) {
-	_vm->gameState().sceneNum = 0;
-	_childObject = new Scene2201(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2201);
-}
-
-void Module2200::createScene2202(int which) {
-	// TODO Music18hList_play(0x601C908C, 0, 2, 1);
-	_vm->gameState().sceneNum = 1;
-	_childObject = new Scene2202(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2202);
-}
-
-void Module2200::createScene2203(int which) {
-	// TODO Music18hList_play(0x601C908C, 0, 2, 1);
-	_vm->gameState().sceneNum = 2;
-	_childObject = new Scene2203(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2203);
-}
-
-void Module2200::createScene2204(int which) {
-	_vm->gameState().sceneNum = 3;
-	// TODO Music18hList_stop(0x601C908C, 0, 2);
-	_childObject = new DiskplayerScene(_vm, this, 3);
-	SetUpdateHandler(&Module2200::updateScene2204);
-}
-			
-void Module2200::createScene2205(int which) {
-	_vm->gameState().sceneNum = 4;
-	// TODO Music18hList_stop(0x601C908C, 0, 2);
-	_childObject = new Scene2205(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2205);
-}
-			
-void Module2200::createScene2206(int which) {
-	_vm->gameState().sceneNum = 5;
-	// TODO Music18hList_stop(0x601C908C, 0, 2);
-	_childObject = new Scene2206(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2206);
-}
-			
-void Module2200::createScene2207(int which) {
-	_vm->gameState().sceneNum = 6;
-	_childObject = new Scene2207(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2207);
-}
-			
-void Module2200::createScene2208(int which) {
-	if (which >= 0)
+void Module2200::createScene(int sceneNum, int which) {
+	// CHECKME if this can be used regardless of the new sceneNum
+	if (sceneNum == 7 && which >= 0)
 		_vm->gameState().which = _vm->gameState().sceneNum; 
-	_vm->gameState().sceneNum = 7;
-	_childObject = new Scene2208(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2208);
-}
-			
-void Module2200::createScene2209(int which) {
-	_vm->gameState().sceneNum = 8;
-	_childObject = new Scene2208(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2209);
-}
-			
-void Module2200::createScene2210(int which) {
-	_vm->gameState().sceneNum = 9;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7180);
-	SetUpdateHandler(&Module2200::updateScene2210);
-}
-			
-void Module2200::createScene2211(int which) {
-	_vm->gameState().sceneNum = 10;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7198);
-	SetUpdateHandler(&Module2200::updateScene2211);
-}
-			
-void Module2200::createScene2212(int which) {
-	_vm->gameState().sceneNum = 11;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71B0);
-	SetUpdateHandler(&Module2200::updateScene2212);
-}
-			
-void Module2200::createScene2213(int which) {
-	_vm->gameState().sceneNum = 12;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71C8);
-	SetUpdateHandler(&Module2200::updateScene2213);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		_childObject = new Scene2201(_vm, this, which);
+		break;
+	case 1:
+		// TODO Music18hList_play(0x601C908C, 0, 2, 1);
+		_childObject = new Scene2202(_vm, this, which);
+		break;
+	case 2:
+		// TODO Music18hList_play(0x601C908C, 0, 2, 1);
+		_childObject = new Scene2203(_vm, this, which);
+		break;
+	case 3:
+		// TODO Music18hList_stop(0x601C908C, 0, 2);
+		_childObject = new DiskplayerScene(_vm, this, 3);
+		break;
+	case 4:
+		// TODO Music18hList_stop(0x601C908C, 0, 2);
+		_childObject = new Scene2205(_vm, this, which);
+		break;
+	case 5:
+		// TODO Music18hList_stop(0x601C908C, 0, 2);
+		_childObject = new Scene2206(_vm, this, which);
+		break;
+	case 6:
+		_childObject = new Scene2207(_vm, this, which);
+		break;
+	case 7:
+		_childObject = new Scene2208(_vm, this, which);
+		break;
+	case 8:
+		_childObject = new Scene2208(_vm, this, which);
+		break;
+	case 9:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7180);
+		break;
+	case 10:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7198);
+		break;
+	case 11:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71B0);
+		break;
+	case 12:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71C8);
+		break;
+	case 13:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71E0);
+		break;
+	case 14:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71F8);
+		break;
+	case 15:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7210);
+		break;
+	case 16:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7228);
+		break;
+	case 17:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7240);
+		break;
+	case 18:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7258);
+		break;
+	case 19:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7270);
+		break;
+	case 20:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7288);
+		break;
+	case 21:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72A0);
+		break;
+	case 22:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72B8);
+		break;
+	case 23:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72D0);
+		break;
+	case 24:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72E8);
+		break;
+	case 25:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7300);
+		break;
+	case 26:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7318);
+		break;
+	case 27:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7330);
+		break;
+	case 28:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7348);
+		break;
+	case 29:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7360);
+		break;
+	case 30:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7378);
+		break;
+	case 31:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7390);
+		break;
+	case 32:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73A8);
+		break;
+	case 33:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73C0);
+		break;
+	case 34:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73D8);
+		break;
+	case 35:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73F0);
+		break;
+	case 36:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7408);
+		break;
+	case 37:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7420);
+		break;
+	case 38:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7438);
+		break;
+	case 39:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7450);
+		break;
+	case 40:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7468);
+		break;
+	case 41:
+		_childObject = new Scene2242(_vm, this, which);
+		break;
+	case 42:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7480);
+		break;
+	case 43:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7498);
+		break;
+	case 44:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74B0);
+		break;
+	case 45:
+		_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74C8);
+		break;
+	case 46:
+		_childObject = new Scene2247(_vm, this, which);
+		break;
+	case 47:
+		if (!getGlobalVar(0x98109F12)) {
+			if (getGlobalVar(0x4D080E54))
+				_childObject = new Class152(_vm, this, 0x83110287, 0x10283839);
+			else
+				_childObject = new Class152(_vm, this, 0x83412B9D, 0x12B9983C);
+		} else {
+			if (getGlobalVar(0x4D080E54))
+				_childObject = new Class152(_vm, this, 0x48632087, 0x3208348E);
+			else
+				_childObject = new Class152(_vm, this, 0x08C74886, 0x74882084);
+		}
+		break;
+	}
+	SetUpdateHandler(&Module2200::updateScene);
+	_childObject->handleUpdate();
 }
 
-void Module2200::createScene2214(int which) {
-	_vm->gameState().sceneNum = 13;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71E0);
-	SetUpdateHandler(&Module2200::updateScene2214);
-}
-			
-void Module2200::createScene2215(int which) {
-	_vm->gameState().sceneNum = 14;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B71F8);
-	SetUpdateHandler(&Module2200::updateScene2215);
-}
-			
-void Module2200::createScene2216(int which) {
-	_vm->gameState().sceneNum = 15;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7210);
-	SetUpdateHandler(&Module2200::updateScene2216);
-}
-			
-void Module2200::createScene2217(int which) {
-	_vm->gameState().sceneNum = 16;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7228);
-	SetUpdateHandler(&Module2200::updateScene2217);
-}
-			
-void Module2200::createScene2218(int which) {
-	_vm->gameState().sceneNum = 17;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7240);
-	SetUpdateHandler(&Module2200::updateScene2218);
-}
-			
-void Module2200::createScene2219(int which) {
-	_vm->gameState().sceneNum = 18;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7258);
-	SetUpdateHandler(&Module2200::updateScene2219);
-}
-			
-void Module2200::createScene2220(int which) {
-	_vm->gameState().sceneNum = 19;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7270);
-	SetUpdateHandler(&Module2200::updateScene2220);
-}
-			
-void Module2200::createScene2221(int which) {
-	_vm->gameState().sceneNum = 20;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7288);
-	SetUpdateHandler(&Module2200::updateScene2221);
-}
-			
-void Module2200::createScene2222(int which) {
-	_vm->gameState().sceneNum = 21;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72A0);
-	SetUpdateHandler(&Module2200::updateScene2222);
-}
-			
-void Module2200::createScene2223(int which) {
-	_vm->gameState().sceneNum = 22;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72B8);
-	SetUpdateHandler(&Module2200::updateScene2223);
-}
-			
-void Module2200::createScene2224(int which) {
-	_vm->gameState().sceneNum = 23;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72D0);
-	SetUpdateHandler(&Module2200::updateScene2224);
-}
-			
-void Module2200::createScene2225(int which) {
-	_vm->gameState().sceneNum = 24;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B72E8);
-	SetUpdateHandler(&Module2200::updateScene2225);
-}
-			
-void Module2200::createScene2226(int which) {
-	_vm->gameState().sceneNum = 25;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7300);
-	SetUpdateHandler(&Module2200::updateScene2226);
-}
-			
-void Module2200::createScene2227(int which) {
-	_vm->gameState().sceneNum = 26;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7318);
-	SetUpdateHandler(&Module2200::updateScene2227);
-}
-			
-void Module2200::createScene2228(int which) {
-	_vm->gameState().sceneNum = 27;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7330);
-	SetUpdateHandler(&Module2200::updateScene2228);
-}
-			
-void Module2200::createScene2229(int which) {
-	_vm->gameState().sceneNum = 28;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7348);
-	SetUpdateHandler(&Module2200::updateScene2229);
-}
-			
-void Module2200::createScene2230(int which) {
-	_vm->gameState().sceneNum = 29;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7360);
-	SetUpdateHandler(&Module2200::updateScene2230);
-}
-			
-void Module2200::createScene2231(int which) {
-	_vm->gameState().sceneNum = 30;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7378);
-	SetUpdateHandler(&Module2200::updateScene2231);
-}
-			
-void Module2200::createScene2232(int which) {
-	_vm->gameState().sceneNum = 31;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7390);
-	SetUpdateHandler(&Module2200::updateScene2232);
-}
-			
-void Module2200::createScene2233(int which) {
-	_vm->gameState().sceneNum = 32;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73A8);
-	SetUpdateHandler(&Module2200::updateScene2233);
-}
-			
-void Module2200::createScene2234(int which) {
-	_vm->gameState().sceneNum = 33;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73C0);
-	SetUpdateHandler(&Module2200::updateScene2234);
-}
-			
-void Module2200::createScene2235(int which) {
-	_vm->gameState().sceneNum = 34;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73D8);
-	SetUpdateHandler(&Module2200::updateScene2235);
-}
-			
-void Module2200::createScene2236(int which) {
-	_vm->gameState().sceneNum = 35;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B73F0);
-	SetUpdateHandler(&Module2200::updateScene2236);
-}
-			
-void Module2200::createScene2237(int which) {
-	_vm->gameState().sceneNum = 36;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7408);
-	SetUpdateHandler(&Module2200::updateScene2237);
-}
-			
-void Module2200::createScene2238(int which) {
-	_vm->gameState().sceneNum = 37;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7420);
-	SetUpdateHandler(&Module2200::updateScene2238);
-}
-			
-void Module2200::createScene2239(int which) {
-	_vm->gameState().sceneNum = 38;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7438);
-	SetUpdateHandler(&Module2200::updateScene2239);
-}
-			
-void Module2200::createScene2240(int which) {
-	_vm->gameState().sceneNum = 39;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7450);
-	SetUpdateHandler(&Module2200::updateScene2240);
-}
-			
-void Module2200::createScene2241(int which) {
-	_vm->gameState().sceneNum = 40;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7468);
-	SetUpdateHandler(&Module2200::updateScene2241);
-}
-			
-void Module2200::createScene2242(int which) {
-	_vm->gameState().sceneNum = 41;
-	_childObject = new Scene2242(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2242);
-}
-			
-void Module2200::createScene2243(int which) {
-	_vm->gameState().sceneNum = 42;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7480);
-	SetUpdateHandler(&Module2200::updateScene2243);
-}
-			
-void Module2200::createScene2244(int which) {
-	_vm->gameState().sceneNum = 43;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B7498);
-	SetUpdateHandler(&Module2200::updateScene2244);
-}
-			
-void Module2200::createScene2245(int which) {
-	_vm->gameState().sceneNum = 44;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74B0);
-	SetUpdateHandler(&Module2200::updateScene2245);
-}
-			
-void Module2200::createScene2246(int which) {
-	_vm->gameState().sceneNum = 45;
-	_childObject = new HallOfRecordsScene(_vm, this, which, 0x004B74C8);
-	SetUpdateHandler(&Module2200::updateScene2246);
-}
-			
-void Module2200::createScene2247(int which) {
-	_vm->gameState().sceneNum = 46;
-	_childObject = new Scene2247(_vm, this, which);
-	SetUpdateHandler(&Module2200::updateScene2247);
-}
-			
-void Module2200::createScene2248(int which) {
-	_vm->gameState().sceneNum = 47;
-	if (!getGlobalVar(0x98109F12)) {
-		if (getGlobalVar(0x4D080E54))
-			_childObject = new Class152(_vm, this, 0x83110287, 0x10283839);
-		else
-			_childObject = new Class152(_vm, this, 0x83412B9D, 0x12B9983C);
-	} else {
-		if (getGlobalVar(0x4D080E54))
-			_childObject = new Class152(_vm, this, 0x48632087, 0x3208348E);
-		else
-			_childObject = new Class152(_vm, this, 0x08C74886, 0x74882084);
-	}
-	SetUpdateHandler(&Module2200::updateScene2248);
-}
-			
-void Module2200::updateScene2201() {
+void Module2200::updateScene() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2203(0);
-		} else if (_moduleResult == 2) {
-			createScene2202(0);
-		} else {
-			sendMessage(_parentModule, 0x1009, 0);
-		}
-	}
-}
-			
-void Module2200::updateScene2202() {
-	if (!updateChild()) {
-		createScene2201(2);
-	}
-}
-
-void Module2200::updateScene2203() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2205(0);
-		} else if (_moduleResult == 2) {
-			createScene2204(0);
-		} else {
-			createScene2201(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2204() {
-	if (!updateChild()) {
-		createScene2203(2);
-	}
-}
-			
-void Module2200::updateScene2205() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2206(0);
-		} else if (_moduleResult == 2) {
-			createScene2205(2);
-		} else {
-			createScene2203(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2206() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2247(0);
-		} else if (_moduleResult == 2) {
-			createScene2207(0);
-		} else if (_moduleResult == 3) {
-			createScene2209(0);
-		} else {
-			createScene2205(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2207() {
-	if (!updateChild()) {
-		createScene2206(2);
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2208() {
-	if (!updateChild()) {
-		// This is madness!
-		switch (_vm->gameState().which) {
+		switch (_vm->gameState().sceneNum) {
+		case 0:
+			if (_moduleResult == 1) {
+				createScene(2, 0);
+			} else if (_moduleResult == 2) {
+				createScene(1, 0);
+			} else {
+				sendMessage(_parentModule, 0x1009, 0);
+			}
+			break;
+		case 1:
+			createScene(0, 2);
+			break;
+		case 2:
+			if (_moduleResult == 1) {
+				createScene(4, 0);
+			} else if (_moduleResult == 2) {
+				createScene(3, 0);
+			} else {
+				createScene(0, 1);
+			}
+			break;
+		case 3:
+			createScene(2, 2);
+			break;
 		case 4:
-			createScene2205(2);
+			if (_moduleResult == 1) {
+				createScene(5, 0);
+			} else if (_moduleResult == 2) {
+				createScene(4, 2);
+			} else {
+				createScene(2, 1);
+			}
+			break;
+		case 5:
+			if (_moduleResult == 1) {
+				createScene(46, 0);
+			} else if (_moduleResult == 2) {
+				createScene(6, 0);
+			} else if (_moduleResult == 3) {
+				createScene(8, 0);
+			} else {
+				createScene(4, 1);
+			}
+			break;
+		case 6:
+			createScene(5, 2);
+			break;
+		case 7:
+			createScene(_vm->gameState().which, 2);
+			break;
+		case 8:
+			createScene(5, 3);
 			break;
 		case 9:
-			createScene2210(2);
+			if (_moduleResult == 1) {
+				createScene(10, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(46, 1);
+			}
 			break;
 		case 10:
-			createScene2211(2);
+			if (_moduleResult == 1) {
+				createScene(11, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(9, 1);
+			}
 			break;
 		case 11:
-			createScene2212(2);
+			if (_moduleResult == 1) {
+				createScene(12, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(10, 1);
+			}
 			break;
 		case 12:
-			createScene2213(2);
+			if (_moduleResult == 1) {
+				createScene(13, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(11, 1);
+			}
 			break;
 		case 13:
-			createScene2214(2);
+			if (_moduleResult == 1) {
+				createScene(14, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(12, 1);
+			}
 			break;
 		case 14:
-			createScene2215(2);
+			if (_moduleResult == 1) {
+				createScene(15, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(13, 1);
+			}
 			break;
 		case 15:
-			createScene2216(2);
+			if (_moduleResult == 1) {
+				createScene(16, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(14, 1);
+			}
 			break;
 		case 16:
-			createScene2217(2);
+			if (_moduleResult == 1) {
+				createScene(17, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(15, 1);
+			}
 			break;
 		case 17:
-			createScene2218(2);
+			if (_moduleResult == 1) {
+				createScene(18, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(16, 1);
+			}
 			break;
 		case 18:
-			createScene2219(2);
+			if (_moduleResult == 1) {
+				createScene(19, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(17, 1);
+			}
 			break;
 		case 19:
-			createScene2220(2);
+			if (_moduleResult == 1) {
+				createScene(20, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(18, 1);
+			}
 			break;
 		case 20:
-			createScene2221(2);
+			if (_moduleResult == 1) {
+				createScene(21, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(19, 1);
+			}
 			break;
 		case 21:
-			createScene2222(2);
+			if (_moduleResult == 1) {
+				createScene(22, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(20, 1);
+			}
 			break;
 		case 22:
-			createScene2223(2);
+			if (_moduleResult == 1) {
+				createScene(23, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(21, 1);
+			}
 			break;
 		case 23:
-			createScene2224(2);
+			if (_moduleResult == 1) {
+				createScene(24, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(22, 1);
+			}
 			break;
 		case 24:
-			createScene2225(2);
+			if (_moduleResult == 1) {
+				createScene(25, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(23, 1);
+			}
 			break;
 		case 25:
-			createScene2226(2);
+			if (_moduleResult == 1) {
+				createScene(26, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(24, 1);
+			}
 			break;
 		case 26:
-			createScene2227(2);
+			if (_moduleResult == 1) {
+				createScene(27, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(25, 1);
+			}
 			break;
 		case 27:
-			createScene2228(2);
+			if (_moduleResult == 1) {
+				createScene(28, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(26, 1);
+			}
 			break;
 		case 28:
-			createScene2229(2);
+			if (_moduleResult == 1) {
+				createScene(29, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(27, 1);
+			}
 			break;
 		case 29:
-			createScene2230(2);
+			if (_moduleResult == 1) {
+				createScene(30, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(28, 1);
+			}
 			break;
 		case 30:
-			createScene2231(2);
+			if (_moduleResult == 1) {
+				createScene(31, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(29, 1);
+			}
 			break;
 		case 31:
-			createScene2232(2);
+			if (_moduleResult == 1) {
+				createScene(32, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(30, 1);
+			}
 			break;
 		case 32:
-			createScene2233(2);
+			if (_moduleResult == 1) {
+				createScene(33, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(31, 1);
+			}
 			break;
 		case 33:
-			createScene2234(2);
+			if (_moduleResult == 1) {
+				createScene(34, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(32, 1);
+			}
 			break;
 		case 34:
-			createScene2235(2);
+			if (_moduleResult == 1) {
+				createScene(42, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(33, 1);
+			}
 			break;
 		case 35:
-			createScene2236(2);
+			if (_moduleResult == 1) {
+				createScene(36, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(45, 1);
+			}
 			break;
 		case 36:
-			createScene2237(2);
+			if (_moduleResult == 1) {
+				createScene(37, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(35, 1);
+			}
 			break;
 		case 37:
-			createScene2238(2);
+			if (_moduleResult == 1) {
+				createScene(38, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(36, 1);
+			}
 			break;
 		case 38:
-			createScene2239(2);
+			if (_moduleResult == 1) {
+				createScene(39, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(37, 1);
+			}
 			break;
 		case 39:
-			createScene2240(2);
+			if (_moduleResult == 1) {
+				createScene(40, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(38, 1);
+			}
 			break;
 		case 40:
-			createScene2241(2);
+			if (_moduleResult == 1) {
+				createScene(41, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(39, 1);
+			}
 			break;
 		case 41:
-			createScene2242(2);
+			if (_moduleResult == 1) {
+				createScene(47, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(40, 1);
+			}
 			break;
 		case 42:
-			createScene2243(2);
+			if (_moduleResult == 1) {
+				createScene(43, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(34, 1);
+			}
 			break;
 		case 43:
-			createScene2244(2);
+			if (_moduleResult == 1) {
+				createScene(44, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(42, 1);
+			}
 			break;
 		case 44:
-			createScene2245(2);
+			if (_moduleResult == 1) {
+				createScene(45, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(43, 1);
+			}
+			break;
+		case 45:
+			if (_moduleResult == 1) {
+				createScene(35, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(44, 1);
+			}
 			break;
 		case 46:
-			createScene2247(2);
+			if (_moduleResult == 1) {
+				createScene(9, 0);
+			} else if (_moduleResult == 2) {
+				createScene(7, 0);
+			} else {
+				createScene(5, 1);
+			}
+			break;
+		case 47:
+			createScene(41, 1);
 			break;
 		}
-		_childObject->handleUpdate();
 	}
 }
 			
-void Module2200::updateScene2209() {
-	if (!updateChild()) {
-		createScene2206(3);
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2210() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2211(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2247(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2211() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2212(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2210(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2212() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2213(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2211(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2213() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2214(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2212(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2214() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2215(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2213(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2215() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2216(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2214(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2216() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2217(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2215(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2217() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2218(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2216(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2218() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2219(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2217(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2219() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2220(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2218(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2220() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2221(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2219(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2221() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2222(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2220(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2222() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2223(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2221(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2223() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2224(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2222(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2224() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2225(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2223(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2225() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2226(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2224(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2226() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2227(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2225(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2227() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2228(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2226(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2228() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2229(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2227(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2229() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2230(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2228(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2230() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2231(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2229(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2231() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2232(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2230(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2232() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2233(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2231(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2233() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2234(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2232(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2234() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2235(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2233(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2235() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2243(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2234(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2236() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2237(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2246(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2237() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2238(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2236(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2238() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2239(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2237(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2239() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2240(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2238(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2240() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2241(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2239(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2241() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2242(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2240(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2242() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2248(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-			_childObject->handleUpdate();
-		} else {
-			createScene2241(1);
-			_childObject->handleUpdate();
-		}
-	}
-}
-			
-void Module2200::updateScene2243() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2244(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2235(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2244() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2245(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2243(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2245() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2246(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2244(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2246() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2236(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2245(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2247() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2210(0);
-		} else if (_moduleResult == 2) {
-			createScene2208(0);
-		} else {
-			createScene2206(1);
-		}
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module2200::updateScene2248() {
-	if (!updateChild()) {
-		createScene2242(1);
-		_childObject->handleUpdate();
-	}
-}
-
 // Scene2201
 
 AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
