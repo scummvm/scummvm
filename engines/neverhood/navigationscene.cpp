@@ -73,7 +73,7 @@ int NavigationScene::getNavigationAreaType() {
 
 void NavigationScene::update() {
 	if (_smackerFileHash != 0) {
-		_mouseCursor->getSurface()->setVisible(false);
+		showMouse(false);
 		_smackerPlayer->open(_smackerFileHash, false);
 		_vm->_screen->clear();
 		_smackerDone = false;
@@ -84,7 +84,7 @@ void NavigationScene::update() {
 		} else {
 			const NavigationItem &navigationItem = (*_navigationList)[_navigationIndex];
 			createMouseCursor();
-			_mouseCursor->getSurface()->setVisible(true);
+			showMouse(true);
 			_soundFlag2 = false;
 			_soundFlag1 = false;
 			_interactive = true;
@@ -127,7 +127,7 @@ void NavigationScene::createMouseCursor() {
 	int areaType;
 
 	if (_mouseCursor) {
-		deleteSprite(&_mouseCursor);
+		deleteSprite((Sprite**)&_mouseCursor);
 	}
 
 	mouseCursorFileHash = navigationItem.mouseCursorFileHash;
@@ -143,7 +143,7 @@ void NavigationScene::createMouseCursor() {
 		areaType = 1;
 	}
 
-	_mouseCursor = addSprite(new NavigationMouse(_vm, mouseCursorFileHash, areaType));
+	insertNavigationMouse(mouseCursorFileHash, areaType);
 	sendPointMessage(_mouseCursor, 0x4002, _vm->getMousePos());
 	
 }

@@ -190,6 +190,33 @@ Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
 }
 
+void Scene::insertMouse433(uint32 fileHash, NRect *mouseRect) {
+	NRect rect(-1, -1, -1, -1);
+	if (mouseRect)
+		rect = *mouseRect;
+	_mouseCursor = new Mouse(_vm, 0x0820C408, rect);
+	addSprite(_mouseCursor);
+}
+
+void Scene::insertMouse435(uint32 fileHash, int16 x1, int16 x2) {
+	_mouseCursor = new Mouse(_vm, fileHash, x1, x2);
+	addSprite(_mouseCursor);
+}
+
+void Scene::insertNavigationMouse(uint32 fileHash, int type) {
+	_mouseCursor = new Mouse(_vm, fileHash, type);
+	addSprite(_mouseCursor);
+}
+
+void Scene::showMouse(bool visible) {
+	_mouseCursor->getSurface()->setVisible(visible);
+}
+
+void Scene::changeMouseCursor(uint32 fileHash) {
+	_mouseCursor->load(fileHash);
+	_mouseCursor->updateCursor();
+}
+
 SmackerPlayer *Scene::addSmackerPlayer(SmackerPlayer *smackerPlayer) {
 	addEntity(smackerPlayer);
 	addSurface(smackerPlayer->getSurface());

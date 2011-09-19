@@ -30,43 +30,30 @@
 
 namespace Neverhood {
 
-class Mouse433 : public StaticSprite {
-public:
-	Mouse433(NeverhoodEngine *vm, uint32 fileHash, NRect *mouseRect);
-	void load(uint32 fileHash);
-	void updateCursor();
-protected:
-	MouseCursorResource _mouseCursorResource;
-	int _frameNum;
-	NRect _mouseRect;	
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+enum MouseType {
+	kMouseType433,
+	kMouseType435,
+	kMouseTypeNavigation
 };
 
-class Mouse435 : public StaticSprite {
+class Mouse : public StaticSprite {
 public:
-	Mouse435(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2);
+	Mouse(NeverhoodEngine *vm, uint32 fileHash, const NRect &mouseRect);
+	Mouse(NeverhoodEngine *vm, uint32 fileHash, int16 x1, int16 x2);
+	Mouse(NeverhoodEngine *vm, uint32 fileHash, int _type);
 	void load(uint32 fileHash);
 	void updateCursor();
 protected:
+	MouseType _mouseType;
 	MouseCursorResource _mouseCursorResource;
 	int _frameNum;
+	NRect _mouseRect;
 	int16 _x1;
 	int16 _x2;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-};
-
-class NavigationMouse : public StaticSprite {
-public:
-	NavigationMouse(NeverhoodEngine *vm, uint32 fileHash, int type);
-	void load(uint32 fileHash);
-	void updateCursor();
-protected:
-	MouseCursorResource _mouseCursorResource;
-	int _frameNum;
 	int _type;
+	void init(uint32 fileHash);	
 	void update();
+	void updateCursorNum();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

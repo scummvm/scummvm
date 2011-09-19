@@ -230,7 +230,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->usePalette();
 	addEntity(_palette);
 
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x18222039, NULL));
+	insertMouse433(0x18222039);
 
 	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0));
 	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1));

@@ -581,7 +581,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x420643C4);
 	_palette = new Palette(_vm, 0x420643C4);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x643C0428, NULL));
+	insertMouse433(0x643C0428);
 
 	_class595 = addSprite(new Class595(_vm, this));
 	_sprite1 = insertStaticSprite(0x942FC224, 300);
@@ -806,7 +806,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x01581A9C);
 	_palette = new Palette(_vm, 0x01581A9C);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x81A9801D, NULL));
+	insertMouse433(0x81A9801D);
 
 	if (!getGlobalVar(0xAC00C0D0)) {
 		_asBalloon = addSprite(new AsScene1303Balloon(_vm, this));
@@ -878,7 +878,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x062C0214);
 	_palette = new Palette(_vm, 0x062C0214);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0xC021006A, NULL));
+	insertMouse433(0xC021006A);
 	
 	if (getGlobalVar(0xAC00C0D0)) {
 		_class545 = addSprite(new Class545(_vm, this, 0, 1100, 278, 347));
@@ -949,7 +949,7 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x28801B64);
 	_palette = new Palette(_vm, 0x28801B64);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x01B60280, NULL));
+	insertMouse433(0x01B60280);
 
 	if (which < 0) {
 		InsertKlayman(KmScene1305, 212, 441);
@@ -1065,7 +1065,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x05303114);
 	_palette = new Palette(_vm, 0x05303114);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x0311005B, NULL));
+	insertMouse433(0x0311005B);
 
 	if (!getGlobalVar(0x13382860)) {
 		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 435, 445));
@@ -1472,7 +1472,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette = new Palette(_vm, 0xA8006200);
 	_palette->usePalette();
 	addEntity(_palette);
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x06204A88, 20, 620));
+	insertMouse435(0x06204A88, 20, 620);
 
 	tempSprite = insertStaticSprite(0x00A3621C, 800);
 	_clipRects[0].x1 = tempSprite->getSurface()->getDrawRect().x;
@@ -1790,7 +1790,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x41024202);
 	_palette = new Palette(_vm, 0x41024202);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x24206418, NULL));
+	insertMouse433(0x24206418);
 
 	_asTape = addSprite(new AsScene1201Tape(_vm, this, 17, 1100, 502, 445, 0x9148A011));
 	_vm->_collisionMan->addSprite(_asTape);
@@ -1978,8 +1978,8 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x08284011, NULL));
-	_mouseCursor->getSurface()->setVisible(false);
+	insertMouse433(0x08284011);
+	showMouse(false);
 	_smackerFileHash = 0;
 	_smackerFlag1 = false;
 }
@@ -2086,7 +2086,7 @@ uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *
 }
 
 void Scene1317::stChooseKing() {
-	_mouseCursor->getSurface()->setVisible(true);
+	showMouse(true);
 	SetMessageHandler(&Scene1317::hmChooseKing);
 	SetUpdateHandler(&Scene1317::upChooseKing);
 	_smackerFileHash = 0x10982841;
@@ -2097,7 +2097,7 @@ void Scene1317::stChooseKing() {
 }
 
 void Scene1317::stNoDecisionYet() {
-	_mouseCursor->getSurface()->setVisible(false);
+	showMouse(false);
 	SetMessageHandler(&Scene1317::hmNoDecisionYet);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x20982841;
@@ -2105,7 +2105,7 @@ void Scene1317::stNoDecisionYet() {
 }
 
 void Scene1317::stHoborgAsKing() {
-	_mouseCursor->getSurface()->setVisible(false);
+	showMouse(false);
 	SetMessageHandler(&Scene1317::hmHoborgAsKing);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x40982841;
@@ -2113,7 +2113,7 @@ void Scene1317::stHoborgAsKing() {
 }
 
 void Scene1317::stKlaymanAsKing() {
-	_mouseCursor->getSurface()->setVisible(false);
+	showMouse(false);
 	SetMessageHandler(&Scene1317::hmKlaymanAsKing);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x80982841;
@@ -2121,7 +2121,7 @@ void Scene1317::stKlaymanAsKing() {
 }
 
 void Scene1317::stEndMovie() {
-	_mouseCursor->getSurface()->setVisible(false);
+	showMouse(false);
 	SetMessageHandler(&Scene1317::hmEndMovie);
 	SetUpdateHandler(&Scene1317::update);
 	_smackerFileHash = 0x40800711;

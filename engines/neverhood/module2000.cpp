@@ -125,7 +125,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0xA6417244);
 	_palette = new Palette(_vm, 0xA6417244);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x17240A6C, NULL));
+	insertMouse433(0x17240A6C);
 
 	_class401 = insertStaticSprite(0x0D641724, 1100);
 

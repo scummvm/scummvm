@@ -391,8 +391,8 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	_class650 = new DiskplayerSlot(_vm, this, 20, 0);
 	addEntity(_class650);
 
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x000408A8, 20, 620));
-	_mouseCursor->getSurface()->setVisible(false);
+	insertMouse435(0x000408A8, 20, 620);
+	showMouse(false);
 
 	_smackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
 	addEntity(_smackerPlayer);
@@ -457,7 +457,7 @@ void DiskplayerScene::update() {
 			}
 			_diskIndex = 0;
 			stop();
-			_mouseCursor->getSurface()->setVisible(true);
+			showMouse(true);
 			_flag3 = false;
 		}
 	}
@@ -480,7 +480,7 @@ void DiskplayerScene::update() {
 				_playButton->press();
 				_tuneInCountdown = 2;
 			} else {
-				_mouseCursor->getSurface()->setVisible(true);
+				showMouse(true);
 				_diskSlots[_diskIndex]->activate();
 			}
 		}

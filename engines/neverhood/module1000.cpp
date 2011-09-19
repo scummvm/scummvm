@@ -348,7 +348,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x4086520E);
 	_palette = new Palette(_vm, 0x4086520E);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x6520A400, NULL));
+	insertMouse433(0x6520A400);
 	
 	if (which < 0) {
 		setRectList(0x004B49F0);
@@ -1421,7 +1421,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_gameState.field2 = 0;
 	}
 
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x23303124, NULL));
+	insertMouse433(0x23303124);
 
 	tempSprite = insertStaticSprite(0xB3242310, 825);
 	tempClipRect.x1 = tempSprite->getSurface()->getDrawRect().x;
@@ -1631,7 +1631,7 @@ Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundF
 	setBackground(backgroundFileHash);
 	_palette = new Palette(_vm, backgroundFileHash);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse435(_vm, cursorFileHash, 20, 620));
+	insertMouse435(cursorFileHash, 20, 620);
 }
 
 uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1701,7 +1701,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->usePalette();
 	addEntity(_palette);
 
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x03001504, NULL));
+	insertMouse433(0x03001504);
 
 	if (which < 0) {
 		setRectList(0x004B7C70);
@@ -1794,14 +1794,14 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette = new Palette(_vm, 0x2800E011);
 		_palette->usePalette();
 		insertStaticSprite(0x492D5AD7, 100);
-		_mouseCursor = addSprite(new Mouse435(_vm, 0x0E015288, 20, 620));
+		insertMouse435(0x0E015288, 20, 620);
 	} else {
 		setBackground(0x8870A546);
 		_palette = new Palette(_vm, 0x8870A546);
 		_palette->usePalette();
 		insertStaticSprite(0x40D1E0A9, 100);
 		insertStaticSprite(0x149C00A6, 100);
-		_mouseCursor = addSprite(new Mouse435(_vm, 0x0A54288F, 20, 620));
+		insertMouse435(0x0A54288F, 20, 620);
 	}
 
 	drawTextToBackground();

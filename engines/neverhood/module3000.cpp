@@ -924,7 +924,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setBackground(0xD000420C);
 	_palette = new Palette(_vm, 0xD000420C);
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x04208D08, 20, 620));
+	insertMouse435(0x04208D08, 20, 620);
 
 	_ssFireCannonButton = addSprite(new SsScene3009FireCannonButton(_vm, this));
 	_vm->_collisionMan->addSprite(_ssFireCannonButton);
@@ -1438,7 +1438,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (which == 0) {
-		_mouseCursor = addSprite(new Mouse435(_vm, 0x02622800, 20, 620));
+		insertMouse435(0x02622800, 20, 620);
 	}
 
 	_soundResource.load(0x68E25540);
@@ -1475,7 +1475,7 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 		// TODO: Debug stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && _countdown == 0 && !_checkUnlocked) {
 			if (!_boltUnlocking[0] && !_boltUnlocking[1] && !_boltUnlocking[2]) {
-				_mouseCursor->getSurface()->setVisible(false);
+				showMouse(false);
 				if (!_boltUnlocked[0] && !_boltUnlocked[1] && !_boltUnlocked[2]) {
 					_countdown = 1;
 				} else {
@@ -1679,7 +1679,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->usePalette();
 	addEntity(_palette);
 
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x24A00929, 20, 620));
+	insertMouse435(0x24A00929, 20, 620);
 
 	for (int i = 0; i < 12; i++) {
 		_asSymbols[i] = new AsScene3011Symbol(_vm, i, true);

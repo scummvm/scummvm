@@ -727,7 +727,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x08221FA5);
 	_palette = new Palette(_vm, 0x08221FA5);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x21FA108A, NULL));
+	insertMouse433(0x21FA108A);
 	
 	// TODO _class427 = addSprite(new Class427(_vm, this, 0x980F3124, 0x12192892, 100, 0));
 	_class525 = addSprite(new Class525(_vm));
@@ -949,7 +949,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette = new Palette(_vm, 0x231482F0);
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x482F4239, NULL));
+	insertMouse433(0x482F4239);
 
 	_class454_1 = addSprite(new Class454(_vm, 0x15402D64, 1100));
 	_class454_2 = addSprite(new Class454(_vm, 0x10A02120, 1100));
@@ -976,7 +976,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(0x70A1189C)) {
 			_class482 = addSprite(new Class482(_vm, this, 1));
 			clearRectList();
-			_mouseCursor->getSurface()->setVisible(false);
+			showMouse(false);
 			sub428220();
 		} else {
 			_class482 = addSprite(new Class482(_vm, this, 0));
@@ -1056,7 +1056,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 			} else {
 				clearRectList();
 				_klayman->getSurface()->setVisible(false);
-				_mouseCursor->getSurface()->setVisible(false);
+				showMouse(false);
 				sendMessage(_class482, 0x2002, 0);
 				sub428220();
 			}
@@ -1071,7 +1071,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2000:
 		sub428230();
-		_mouseCursor->getSurface()->setVisible(true);
+		showMouse(true);
 		setRectList(0x004B0C48);
 		break;
 	case 0x2001:
@@ -1351,7 +1351,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x00442225);
 	_palette = new Palette(_vm, 0x00442225);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x4222100C, 20, 620));
+	insertMouse435(0x4222100C, 20, 620);
 
 	_asMouse = addSprite(new AsScene1407Mouse(_vm, this));
 	_ssResetButton = insertStaticSprite(0x12006600, 100);
@@ -1397,7 +1397,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 		// The mouse got the cheese (nomnom)
 		setGlobalVar(0x70A1189C, 1);
 		_soundResource.play(0x68E25540);
-		_mouseCursor->getSurface()->setVisible(false);
+		showMouse(false);
 		_puzzleSolvedCountdown = 72;
 		break;
 	}
@@ -1417,7 +1417,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x2110A234);
 	_palette = new Palette(_vm, 0x2110A234);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x0A230219, NULL));
+	insertMouse433(0x0A230219);
 
 	_class401_1 = insertStaticSprite(0x01102A33, 100);
 	_class401_1->getSurface()->setVisible(false);
@@ -1541,7 +1541,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette = new Palette(_vm, 0xAC0B006F);
 	_palette->addPalette(0x00801510, 0, 65, 0);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse433(_vm, 0xB006BAC8, NULL));
+	insertMouse433(0xB006BAC8);
 
 	if (getGlobalVar(0x13382860) == 5) {
 		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 267, 411));
@@ -1755,7 +1755,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x0C0C007D);
 	_palette = new Palette(_vm, 0x0C0C007D);
 	_palette->usePalette();
-	_mouseCursor = addSprite(new Mouse435(_vm, 0xC00790C8, 20, 620));
+	insertMouse435(0xC00790C8, 20, 620);
 	
 	// TODO: Some debug code: Leave two matching tiles open
 	for (int i = 0; i < 48; i++)

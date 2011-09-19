@@ -783,7 +783,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_mouseCursor = addSprite(new Mouse433(_vm, 0x9A2C0409, NULL));
+	insertMouse433(0x9A2C0409);
 	
 	_asTape = addSprite(new AsScene1201Tape(_vm, this, 3, 1100, 243, 340, 0x9148A011));
 	_vm->_collisionMan->addSprite(_asTape);
@@ -1168,7 +1168,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 	_paletteResource.load(0x60250EB5);
 	_paletteResource.copyPalette(_paletteData);
 
-	_mouseCursor = addSprite(new Mouse435(_vm, 0x10ED160A, 20, 620));
+	insertMouse435(0x10ED160A, 20, 620);
 
 	for (int i = 0; i < 18; i++) {
 		_asTntItems[i] = addSprite(new AsScene1202TntItem(_vm, this, i));
