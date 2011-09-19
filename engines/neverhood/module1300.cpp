@@ -428,7 +428,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class595 = addSprite(new Class595(_vm, this));
 	_sprite1 = insertStaticSprite(0x942FC224, 300);
 	_sprite2 = insertStaticSprite(0x70430830, 1200);
-	_sprite2->getSurface()->setVisible(false);
+	_sprite2->setVisible(false);
 	_sprite3 = insertStaticSprite(0x16E01E20, 1100);
 
 	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 218, 122, _class595->getSurface()->getDrawRect().y, false));
@@ -533,7 +533,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x2032:
-		_sprite2->getSurface()->setVisible(true);
+		_sprite2->setVisible(true);
 		break;
 	case 0x4806:
 		sendMessage(_parentModule, 0x1024, 2);
@@ -555,7 +555,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (sender == _asRing2) {
 			sendMessage(_asBridge, 0x4809, 0);
 			setGlobalVar(0x13206309, 0);
-			_sprite2->getSurface()->setVisible(false);
+			_sprite2->setVisible(false);
 		} else if (sender == _asRing4) {
 			sendMessage(_ssFence, 0x4809, 0);
 			setGlobalVar(0x80101B1E, 0);
@@ -627,7 +627,7 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 		_soundResource.play(0x470007EE);
 		setFileHash1();
 		SetMessageHandler(NULL);
-		_surface->setVisible(false);
+		setVisible(false);
 		break;
 	}
 	return messageResult;
@@ -687,7 +687,7 @@ Class544::Class544(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority,
 	: AnimatedSprite(vm, 0x548E9411, surfacePriority, x, y), _parentScene(parentScene) {
 	
 	if (getGlobalVar(0x31C63C51)) {
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	} else {
 		SetMessageHandler(&Class544::handleMessage);
@@ -703,7 +703,7 @@ uint32 Class544::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x4806:
 		setGlobalVar(0x31C63C51, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
 	}
@@ -830,14 +830,14 @@ void AsScene1306Elevator::update() {
 	AnimatedSprite::update();
 	if (_frameIndex == 7) {
 		_soundResource3.play();
-		_asElevatorDoor->getSurface()->setVisible(false);
+		_asElevatorDoor->setVisible(false);
 	}
 }
 
 void AsScene1306Elevator::upGoingDown() {
 	AnimatedSprite::update();
 	if (_frameIndex == 5) {
-		_asElevatorDoor->getSurface()->setVisible(true);
+		_asElevatorDoor->setVisible(true);
 	}
 }
 
@@ -861,7 +861,7 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 }
 
 void AsScene1306Elevator::stGoingUp() {
-	_surface->setVisible(true);
+	setVisible(true);
 	_isDown = false;
 	SetUpdateHandler(&AsScene1306Elevator::update);
 	setFileHash(0x043B0270, 0, -1);
@@ -875,13 +875,13 @@ void AsScene1306Elevator::cbGoingUpEvent() {
 	_isUp = true;
 	_countdown = 144;
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void AsScene1306Elevator::stGoingDown() {
 	SetUpdateHandler(&AsScene1306Elevator::upGoingDown);
 	_isUp = false;
-	_surface->setVisible(true);
+	setVisible(true);
 	setFileHash(0x043B0270, -1, -1);
 	_playBackwards = true;
 	SetAnimationCallback3(&AsScene1306Elevator::cbGoingDownEvent);
@@ -1466,7 +1466,7 @@ Class549::Class549(NeverhoodEngine *vm, Scene *parentScene)
 	_parentScene(parentScene) {
 	
 	SetMessageHandler(&Class549::handleMessage);
-	_surface->setVisible(false);
+	setVisible(false);
 	setFileHash1();
 }
 
@@ -1488,7 +1488,7 @@ uint32 Class549::handleMessage(int messageNum, const MessageParam &param, Entity
 
 void Class549::sub455470() {
 	setFileHash(0xBA0AE050, 0, -1);
-	_surface->setVisible(true);
+	setVisible(true);
 	SetAnimationCallback3(&Class549::hide);
 	_soundResource.play(calcHash("fxDoorOpen38"));
 }
@@ -1496,13 +1496,13 @@ void Class549::sub455470() {
 void Class549::hide() {
 	sendMessage(_parentScene, 0x2000, 0);
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void Class549::sub4554F0() {
 	setFileHash(0xBA0AE050, -1, -1);
 	_playBackwards = true;
-	_surface->setVisible(true);
+	setVisible(true);
 	SetAnimationCallback3(&Class549::sub455550);
 	_soundResource.play(calcHash("fxDoorClose38"));
 }
@@ -1541,14 +1541,14 @@ void Class592::sub455710() {
 void Class592::sub455740() {
 	sendMessage(_parentScene, 0x2004, 0);
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 Class593::Class593(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0x80180A10, 100, 320, 240), _parentScene(parentScene) {
 	
 	SetMessageHandler(&Class593::handleMessage);
-	_surface->setVisible(false);
+	setVisible(false);
 	setFileHash1();
 	Entity::_priority = 1200;
 }
@@ -1570,7 +1570,7 @@ uint32 Class593::handleMessage(int messageNum, const MessageParam &param, Entity
 
 void Class593::sub4558F0() {
 	setFileHash(0x80180A10, 0, -1);
-	_surface->setVisible(false);
+	setVisible(false);
 	_newHashListIndex = -2;
 }
 
@@ -1583,13 +1583,13 @@ void Class593::sub455920() {
 void Class593::sub455950() {
 	sendMessage(_parentScene, 0x2003, 0);
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 Class601::Class601(NeverhoodEngine *vm, uint32 fileHash, int index)
 	: StaticSprite(vm, fileHash, 100) {
 	
-	_surface->setVisible(false);
+	setVisible(false);
 	_x = _spriteResource.getPosition().x + index * 20;
 	StaticSprite::update();
 }
@@ -1680,7 +1680,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (getGlobalVar(0x80455A41)) {
 			_sprite5 = addSprite(new Class592(_vm, this));
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
-			_sprite4->getSurface()->setVisible(false);
+			_sprite4->setVisible(false);
 		} else {
 			_sprite5 = insertStaticSprite(0x080811A0, 100);
 			setRectList(0x004B5980);
@@ -1689,13 +1689,13 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		InsertKlayman(KmScene1308, 41, 440);
 		setMessageList(0x004B57D0);
 		sendMessage(_class549, 0x4808, 0);
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 		if (getGlobalVar(0x80455A41)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
-			_klayman->getSurface()->setVisible(false);
+			_klayman->setVisible(false);
 		} else {
 			_sprite5 = insertStaticSprite(0x080811A0, 100);
-			_klayman->getSurface()->setVisible(false);
+			_klayman->setVisible(false);
 		}
 	}
 
@@ -1744,8 +1744,8 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x4AC68808) {
 			clearRectList();
 			sendMessage(_class549, 0x4809, 0);
-			_sprite1->getSurface()->setVisible(false);
-			_klayman->getSurface()->setVisible(false);
+			_sprite1->setVisible(false);
+			_klayman->setVisible(false);
 		}
 		break;
 	case 0x1022:
@@ -1763,19 +1763,19 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B5980);
 		}
 		setMessageList(0x004B57E8);
-		_sprite1->getSurface()->setVisible(true);
-		_klayman->getSurface()->setVisible(true);
+		_sprite1->setVisible(true);
+		_klayman->setVisible(true);
 		break;
 	case 0x2001:
 		sendMessage(_parentModule, 0x1009, 0);
 		break;
 	case 0x2003:
-		_class601_1->getSurface()->setVisible(false);
-		_class601_2->getSurface()->setVisible(false);
-		_class601_3->getSurface()->setVisible(false);
+		_class601_1->setVisible(false);
+		_class601_2->setVisible(false);
+		_class601_3->setVisible(false);
 		break;
 	case 0x2004:
-		_sprite4->getSurface()->setVisible(true);
+		_sprite4->setVisible(true);
 		setRectList(0x004B5990);
 		break;
 	case 0x4807:
@@ -1783,9 +1783,9 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480F:
 		sendMessage(_class593, 0x2002, 0);
-		_class601_1->getSurface()->setVisible(true);
-		_class601_2->getSurface()->setVisible(true);
-		_class601_3->getSurface()->setVisible(true);
+		_class601_1->setVisible(true);
+		_class601_2->setVisible(true);
+		_class601_3->setVisible(true);
 		break;
 	case 0x4826:
 		if (sender == _class489) {

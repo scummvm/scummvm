@@ -259,7 +259,7 @@ void Class526::spriteUpdate466720() {
 		setFileHash1();
 		SetSpriteCallback(NULL);
 		SetMessageHandler(NULL);
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -297,7 +297,7 @@ void Class527::spriteUpdate466920() {
 		setFileHash1();
 		SetSpriteCallback(NULL);
 		SetMessageHandler(NULL);
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -322,7 +322,7 @@ Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
 	} else {
 		_flag = false;
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -356,7 +356,7 @@ uint32 Class528::handleMessage(int messageNum, const MessageParam &param, Entity
 
 void Class528::sub466BF0() {
 	_flag = true;
-	_surface->setVisible(true);
+	setVisible(true);
 	setFileHash(0x04551900, 0, -1);
 	_newHashListIndex = -2;
 	_soundResource.play(calcHash("fxDoorOpen24"));
@@ -364,7 +364,7 @@ void Class528::sub466BF0() {
 
 void Class528::sub466C50() {
 	_flag = false;
-	_surface->setVisible(true);
+	setVisible(true);
 	setFileHash(0x04551900, -1, -1);
 	_soundResource.play(calcHash("fxDoorClose24"));
 	_playBackwards = true;
@@ -373,7 +373,7 @@ void Class528::sub466C50() {
 
 void Class528::sub466CB0() {
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 static const Class489Item kClass489Items[] = {
@@ -577,7 +577,7 @@ void Class489::sub434D80() {
 		setFileHash1();
 		SetMessageHandler(&Sprite::handleMessage);
 		SetSpriteCallback(NULL);
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -681,24 +681,24 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0xB84B1100, 100, 0));
 	_sprite1 = insertStaticSprite(0x38EA100C, 1005);
 	_sprite2 = insertStaticSprite(0x98D0223C, 1200);
-	_sprite2->getSurface()->setVisible(false);
+	_sprite2->setVisible(false);
 
 	if (which < 0) {
 		InsertKlayman(KmScene1401, 380, 447);
 		setMessageList(0x004B65C8);
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 	} else if (which == 1) {
 		InsertKlayman(KmScene1401, 0, 447);
 		setMessageList(0x004B65D0);
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 	} else if (which == 2) {
 		InsertKlayman(KmScene1401, 660, 447);
 		setMessageList(0x004B65D8);
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 	} else {
 		InsertKlayman(KmScene1401, 290, 413);
 		setMessageList(0x004B65E8);
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 	}
 
 	if (getGlobalVar(0x04A105B3) == 2) {
@@ -737,10 +737,10 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene1401::update() {
 	Scene::update();
 	if (_class489 && !_flag && _class489->getY() < 360) {
-		_sprite2->getSurface()->setVisible(true);
+		_sprite2->setVisible(true);
 		_flag = true;
 	} else {
-		_sprite2->getSurface()->setVisible(false);
+		_sprite2->setVisible(false);
 	}
 }
 
@@ -793,13 +793,13 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		}						
 		break;
 	case 0x482A:
-		_sprite1->getSurface()->setVisible(true);
+		_sprite1->setVisible(true);
 		if (_class489) {
 			sendMessage(_class489, 0x482B, 0);
 		}
 		break;
 	case 0x482B:
-		_sprite1->getSurface()->setVisible(false);
+		_sprite1->setVisible(false);
 		if (_class489) {
 			sendMessage(_class489, 0x482A, 0);
 		}
@@ -863,13 +863,13 @@ uint32 Class482::handleMessage(int messageNum, const MessageParam &param, Entity
 void Class482::sub428500() {
 	sendMessage(_parentScene, 0x2000, 0);
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void Class482::sub428530() {
 	sendMessage(_parentScene, 0x2001, 0);
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void Class482::sub428560() {
@@ -994,7 +994,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 				sendMessage(_parentModule, 0x1009, 0);
 			} else {
 				clearRectList();
-				_klayman->getSurface()->setVisible(false);
+				_klayman->setVisible(false);
 				showMouse(false);
 				sendMessage(_class482, 0x2002, 0);
 				sub428220();
@@ -1258,7 +1258,7 @@ void AsScene1407Mouse::stGoThroughHole() {
 	SetMessageHandler(NULL);
 	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
 	SetAnimationCallback3(&AsScene1407Mouse::stArriveAtHole);
-	_surface->setVisible(false);
+	setVisible(false);
 	_countdown = 12;
 }
 
@@ -1270,11 +1270,11 @@ void AsScene1407Mouse::stArriveAtHole() {
 		sendMessage(_parentScene, 0x2000, 0);
 		_walkDestX = 512;
 		stWalkToDest();
-		_surface->setVisible(true);
+		setVisible(true);
 	} else {
 		_walkDestX = _x + 14;
 		stWalkToDest();
-		_surface->setVisible(true);
+		setVisible(true);
 	}
 }
 
@@ -1294,7 +1294,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_asMouse = addSprite(new AsScene1407Mouse(_vm, this));
 	_ssResetButton = insertStaticSprite(0x12006600, 100);
-	_ssResetButton->getSurface()->setVisible(false); 
+	_ssResetButton->setVisible(false); 
 
 }
 
@@ -1303,7 +1303,7 @@ void Scene1407::update() {
 	if (_puzzleSolvedCountdown != 0 && (--_puzzleSolvedCountdown == 0)) {
 		sendMessage(_parentModule, 0x1009, 1);
 	} else if (_resetButtonCountdown != 0 && (--_resetButtonCountdown == 0)) {
-		_ssResetButton->getSurface()->setVisible(false);
+		_ssResetButton->setVisible(false);
 	}
 }
 
@@ -1320,7 +1320,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 				param.asPoint().y >= 62 && param.asPoint().y <= 90) {
 				// The reset button was clicked
 				sendMessage(_asMouse, 0x2001, 0);
-				_ssResetButton->getSurface()->setVisible(true);
+				_ssResetButton->setVisible(true);
 				_soundResource.play(0x44045000);
 				_resetButtonCountdown = 12;
 			} else {
@@ -1359,7 +1359,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x0A230219);
 
 	_class401_1 = insertStaticSprite(0x01102A33, 100);
-	_class401_1->getSurface()->setVisible(false);
+	_class401_1->setVisible(false);
 
 	_class401_2 = insertStaticSprite(0x04442520, 995);
 	
@@ -1431,10 +1431,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4807:
-		_class401_1->getSurface()->setVisible(false);
+		_class401_1->setVisible(false);
 		break;
 	case 0x480F:
-		_class401_1->getSurface()->setVisible(true);
+		_class401_1->setVisible(true);
 		break;
 	case 0x4826:
 		if (sender == _class489) {
@@ -1634,7 +1634,7 @@ AsScene1405Tile::AsScene1405Tile(NeverhoodEngine *vm, Scene1405 *parentScene, ui
 	_x = kAsScene1405TileItemPositions[_index].x;
 	_y = kAsScene1405TileItemPositions[_index].y;
 	createSurface1(0x844B805C, 1100);
-	_surface->setVisible(false);
+	setVisible(false);
 	if (getSubVar(0xCCE0280F, _index))
 		_countdown = _vm->_rnd->getRandomNumber(36 - 1) + 1;
 	SetUpdateHandler(&AsScene1405Tile::update);
@@ -1672,7 +1672,7 @@ void AsScene1405Tile::show() {
 	if (!_flag) {
 		_flag = true;
 		_soundResource.play();
-		_surface->setVisible(true);
+		setVisible(true);
 	}
 }
 
@@ -1680,7 +1680,7 @@ void AsScene1405Tile::hide() {
 	if (_flag) {
 		_flag = false;
 		_soundResource.play();
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 

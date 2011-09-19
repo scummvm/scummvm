@@ -57,6 +57,7 @@ public:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void loadDataResource(uint32 fileHash);
 	int16 defFilterY(int16 y);
+	void setVisible(bool value) { _surface->setVisible(value); }
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes

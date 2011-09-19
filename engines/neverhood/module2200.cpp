@@ -650,7 +650,7 @@ AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *
 	} else {
 		setFileHash(0xE2CB0412, 0, -1);
 		_newHashListIndex = 0;
-		_doorLightSprite->getSurface()->setVisible(false);
+		_doorLightSprite->setVisible(false);
 	}
 }
 
@@ -667,10 +667,10 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 	case 0x100D:
 		if (param.asInteger() == 0x11001090) {
 			if (_doorOpen)
-				_doorLightSprite->getSurface()->setVisible(true);
+				_doorLightSprite->setVisible(true);
 		} else if (param.asInteger() == 0x11283090) {
 			if (!_doorOpen)
-				_doorLightSprite->getSurface()->setVisible(false);
+				_doorLightSprite->setVisible(false);
 		}
 		break;
 	case 0x2000:
@@ -1254,7 +1254,7 @@ Class545::Class545(NeverhoodEngine *vm, Scene *parentScene, int index, int surfa
 	if (!getSubVar(0x0090EA95, _index) && !getSubVar(0x08D0AB11, _index)) {
 		SetMessageHandler(&Class545::handleMessage);
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	}
 }
@@ -1268,7 +1268,7 @@ uint32 Class545::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x4806:
 		setSubVar(0x0090EA95, _index, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	}
 	return messageResult;
@@ -1405,10 +1405,10 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x9A500914)) {
-		_ssSmallLeftDoor->getSurface()->setVisible(false);
+		_ssSmallLeftDoor->setVisible(false);
 		_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
 	} else {
-		_ssSmallRightDoor->getSurface()->setVisible(false);
+		_ssSmallRightDoor->setVisible(false);
 		_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
 	}
 	
@@ -1440,17 +1440,17 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2003:
 		if (sender == _asLeftDoor) {
-			_ssSmallLeftDoor->getSurface()->setVisible(false);
+			_ssSmallLeftDoor->setVisible(false);
 		} else {
-			_ssSmallRightDoor->getSurface()->setVisible(false);
+			_ssSmallRightDoor->setVisible(false);
 		}
 		break;
 	case 0x4808:
 		if (sender == _asLeftDoor) {
-			_ssSmallLeftDoor->getSurface()->setVisible(true);
+			_ssSmallLeftDoor->setVisible(true);
 			_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
 		} else {
-			_ssSmallRightDoor->getSurface()->setVisible(true);
+			_ssSmallRightDoor->setVisible(true);
 			_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
 		}
 		break;
@@ -1734,7 +1734,7 @@ Class607::Class607(NeverhoodEngine *vm, Scene *parentScene, int surfacePriority,
 	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene) {
 
 	if (getGlobalVar(0x45080C38)) {
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	} else {
 		SetMessageHandler(&Class607::handleMessage);
@@ -1752,7 +1752,7 @@ uint32 Class607::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x4806:
 		setGlobalVar(0x45080C38, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
 	}
@@ -2191,7 +2191,7 @@ void AsScene2207WallRobotAnimation::stStartAnimation() {
 	} else {
 		setFileHash(0xCCFD6090, 0, -1);
 		_idle = false;
-		_surface->setVisible(true);
+		setVisible(true);
 	}
 }
 
@@ -2207,7 +2207,7 @@ void AsScene2207WallRobotAnimation::cbStopAnimation() {
 	_soundResource4.stop();
 	// TODO Sound1ChList_deleteSoundByHash(0x12121943);
 	_idle = true;
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *vm)
@@ -2242,7 +2242,7 @@ void AsScene2207WallCannonAnimation::stStartAnimation() {
 	if (!_idle) {
 		SetAnimationCallback3(NULL);
 	} else {
-		_surface->setVisible(true);
+		setVisible(true);
 		setFileHash(0x8CAA0099, 0, -1);
 		_idle = false;
 	}
@@ -2254,7 +2254,7 @@ void AsScene2207WallCannonAnimation::stStopAnimation() {
 
 void AsScene2207WallCannonAnimation::cbStopAnimation() {
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 	_idle = true;
 }
 
@@ -2309,8 +2309,8 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asWallRobotAnimation = addSprite(new AsScene2207WallRobotAnimation(_vm, this));
 		_asWallCannonAnimation = addSprite(new AsScene2207WallCannonAnimation(_vm));
 		
-		_asWallRobotAnimation->getSurface()->setVisible(false);
-		_asWallCannonAnimation->getSurface()->setVisible(false);
+		_asWallRobotAnimation->setVisible(false);
+		_asWallCannonAnimation->setVisible(false);
 
 		_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x2C4061C4, 100, 0));
 	
@@ -2452,8 +2452,8 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x480F:
 		sendMessage(_asWallRobotAnimation, 0x2006, 0);
 		sendMessage(_asWallCannonAnimation, 0x2006, 0);
-		_asWallRobotAnimation->getSurface()->setVisible(true);
-		_asWallCannonAnimation->getSurface()->setVisible(true);
+		_asWallRobotAnimation->setVisible(true);
+		_asWallCannonAnimation->setVisible(true);
 		break;
 	case 0x4826:
 		if (sender == _asTape) {

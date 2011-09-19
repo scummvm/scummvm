@@ -462,7 +462,7 @@ SsScene3009FireCannonButton::SsScene3009FireCannonButton(NeverhoodEngine *vm, Sc
 	_deltaRect.y = 0;
 	_deltaRect.width = _spriteResource.getDimensions().width;
 	_deltaRect.height = _spriteResource.getDimensions().height;
-	_surface->setVisible(false);
+	setVisible(false);
 	processDelta();
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene3009FireCannonButton::update);
@@ -474,7 +474,7 @@ void SsScene3009FireCannonButton::update() {
 	StaticSprite::update();
 	if (_flag1 && !_soundResource.isPlaying()) {
 		sendMessage(_parentScene, 0x2000, 0);
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -484,7 +484,7 @@ uint32 SsScene3009FireCannonButton::handleMessage(int messageNum, const MessageP
 	case 0x1011:
 		if (!_flag1 && !_parentScene->sub462E90()) {
 			_flag1 = true;
-			_surface->setVisible(true);
+			setVisible(true);
 			_soundResource.play();
 		}
 		messageResult = 1;
@@ -516,9 +516,9 @@ SsScene3009SymbolEdges::SsScene3009SymbolEdges(NeverhoodEngine *vm, int index)
 void SsScene3009SymbolEdges::update() {
 	if (_blinkCountdown != 0 && (--_blinkCountdown == 0)) {
 		if (_blinkToggle) {
-			_surface->setVisible(true);
+			setVisible(true);
 		} else {
-			_surface->setVisible(false);
+			setVisible(false);
 		}
 		StaticSprite::update();
 		_blinkCountdown = 3;
@@ -527,19 +527,19 @@ void SsScene3009SymbolEdges::update() {
 }
 
 void SsScene3009SymbolEdges::show() {
-	_surface->setVisible(true);
+	setVisible(true);
 	StaticSprite::update();
 	_blinkCountdown = 0;
 }
 
 void SsScene3009SymbolEdges::hide() {
-	_surface->setVisible(false);
+	setVisible(false);
 	StaticSprite::update();
 	_blinkCountdown = 0;
 }
 
 void SsScene3009SymbolEdges::startBlinking() {
-	_surface->setVisible(true);
+	setVisible(true);
 	StaticSprite::update();
 	_blinkCountdown = 3;
 	_blinkToggle = true;
@@ -556,12 +556,12 @@ SsScene3009TargetLine::SsScene3009TargetLine(NeverhoodEngine *vm, int index)
 	_drawRect.y = 0;
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
-	_surface->setVisible(false);
+	setVisible(false);
 	_needRefresh = true;
 }
 
 void SsScene3009TargetLine::show() {
-	_surface->setVisible(true);
+	setVisible(true);
 	StaticSprite::update();
 }
 
@@ -589,7 +589,7 @@ SsScene3009SymbolArrow::SsScene3009SymbolArrow(NeverhoodEngine *vm, Sprite *asSy
 
 void SsScene3009SymbolArrow::hide() {
 	_enabled = false;
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void SsScene3009SymbolArrow::update() {
@@ -633,14 +633,14 @@ AsScene3009VerticalIndicator::AsScene3009VerticalIndicator(NeverhoodEngine *vm, 
 	createSurface1(0xC2463913, 1200);
 	_needRefresh = true;
 	updatePosition();
-	_surface->setVisible(false);
+	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009VerticalIndicator::handleMessage);
 }
 
 void AsScene3009VerticalIndicator::show() {
 	setFileHash(0xC2463913, 0, -1);
-	_surface->setVisible(true);
+	setVisible(true);
 	updatePosition();
 	_enabled = true;
 }
@@ -666,7 +666,7 @@ AsScene3009HorizontalIndicator::AsScene3009HorizontalIndicator(NeverhoodEngine *
 	createSurface1(0xC0C12954, 1200);
 	_needRefresh = true;
 	updatePosition();
-	_surface->setVisible(false);
+	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009HorizontalIndicator::handleMessage);
 	if (varValue == 8 || varValue == 9 || varValue == 10) {
@@ -706,7 +706,7 @@ void AsScene3009HorizontalIndicator::suMoveRight() {
 
 void AsScene3009HorizontalIndicator::show() {
 	setFileHash(0xC0C12954, 0, -1);
-	_surface->setVisible(true);
+	setVisible(true);
 	updatePosition();
 	_enabled = true;
 }
@@ -1105,12 +1105,12 @@ void SsScene3010DeadBoltButton::update() {
 
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
 		_soundResource1.play();
-		_surface->setVisible(false);
+		setVisible(false);
 		setSprite(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
 	}
 
 	if (_countdown2 != 0 && (--_countdown2 == 0)) {
-		_surface->setVisible(true);
+		setVisible(true);
 		setSprite(kScene3010DeadBoltButtonFileHashes2[_buttonIndex]);
 	}
 
@@ -1124,7 +1124,7 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 			if (_buttonEnabled) {
 				_soundResource2.play();
 				_soundResource3.play();
-				_surface->setVisible(true);
+				setVisible(true);
 				_buttonLocked = true;
 				sendMessage(_parentScene, 0x2000, _buttonIndex);
 			} else {
@@ -1142,7 +1142,7 @@ uint32 SsScene3010DeadBoltButton::handleMessage(int messageNum, const MessagePar
 void SsScene3010DeadBoltButton::disableButton() {
 	_buttonLocked = true;
 	setSprite(kScene3010DeadBoltButtonFileHashes1[_buttonIndex]);
-	_surface->setVisible(true);
+	setVisible(true);
 }
 
 void SsScene3010DeadBoltButton::setSprite(uint32 fileHash) {
@@ -1185,7 +1185,7 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 		_soundResource2.load(0x420073DC);
 	}
 	
-	_surface->setVisible(false);
+	setVisible(false);
 	stIdle();
 	if (initUnlocked)
 		unlock(true);
@@ -1222,7 +1222,7 @@ void AsScene3010DeadBolt::stIdle() {
 
 void AsScene3010DeadBolt::unlock(bool skipAnim) {
 	if (!_unlocked) {
-		_surface->setVisible(true);
+		setVisible(true);
 		if (skipAnim) {
 			setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], -1, 0);
 			_newHashListIndex = -2;
@@ -1247,7 +1247,7 @@ void AsScene3010DeadBolt::stIdleMessage() {
 void AsScene3010DeadBolt::lock() {
 	if (!_locked) {
 		_locked = true;
-		_surface->setVisible(true);
+		setVisible(true);
 		setFileHash(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
 		SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 		setCallback1(AnimationCallback(&AsScene3010DeadBolt::stDisabledMessage));
@@ -1266,7 +1266,7 @@ void AsScene3010DeadBolt::setCountdown(int count) {
 }
 
 void AsScene3010DeadBolt::stDisabled() {
-	_surface->setVisible(true);
+	setVisible(true);
 	setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 	SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 	setCallback1(AnimationCallback(&AsScene3010DeadBolt::stDisabledMessage));
@@ -1276,7 +1276,7 @@ void AsScene3010DeadBolt::stDisabled() {
 }
 
 void AsScene3010DeadBolt::stDisabledMessage() {
-	_surface->setVisible(false);
+	setVisible(false);
 	sendMessage(_parentScene, 0x2003, _boltIndex);
 }
 
@@ -1447,7 +1447,7 @@ SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bo
 	_deltaRect.y = 0;
 	_deltaRect.width = _spriteResource.getDimensions().width;
 	_deltaRect.height = _spriteResource.getDimensions().height;
-	_surface->setVisible(false);
+	setVisible(false);
 	processDelta();
 	_needRefresh = true;
 	SetUpdateHandler(&SsScene3011Button::update);
@@ -1457,7 +1457,7 @@ SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bo
 void SsScene3011Button::update() {
 	StaticSprite::update();
 	if (_countdown != 0 && (--_countdown == 0)) {
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -1467,7 +1467,7 @@ uint32 SsScene3011Button::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x1011:
 		if (_countdown == 0) {
-			_surface->setVisible(true);
+			setVisible(true);
 			_countdown = 4;
 			sendMessage(_parentScene, 0x2000, 0);
 			_soundResource.play();
@@ -1496,7 +1496,7 @@ AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
 		_soundResource1.load(0x64428609);
 		_soundResource2.load(0x7080023B);
 	}
-	_surface->setVisible(false);
+	setVisible(false);
 	_needRefresh = true;
 	SetUpdateHandler(&AnimatedSprite::update);
 }
@@ -1504,7 +1504,7 @@ AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
 void AsScene3011Symbol::show(bool flag) {
 	_flag2 = flag;
 	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
-	_surface->setVisible(true);
+	setVisible(true);
 	if (flag) {
 		_soundResource2.play();
 	} else {
@@ -1514,7 +1514,7 @@ void AsScene3011Symbol::show(bool flag) {
 
 void AsScene3011Symbol::hide() {
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void AsScene3011Symbol::stopSound() {
@@ -1529,7 +1529,7 @@ void AsScene3011Symbol::change(int index, bool flag) {
 	_index = index;
 	_flag2 = flag;
 	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
-	_surface->setVisible(true);
+	setVisible(true);
 	if (flag) {
 		_soundResource2.play();
 	} else {

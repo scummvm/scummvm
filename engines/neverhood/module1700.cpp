@@ -144,7 +144,7 @@ Class606::Class606(NeverhoodEngine *vm, Scene *parentScene, int index, int surfa
 	if (!getSubVar(0x02038314, _index) && !getSubVar(0x02720344, _index)) {
 		SetMessageHandler(&Class606::handleMessage);
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	}
 	_deltaRect = _drawRect;
@@ -164,7 +164,7 @@ uint32 Class606::handleMessage(int messageNum, const MessageParam &param, Entity
 		break;
 	case 0x4806:
 		setSubVar(0x02038314, _index, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 		break;		
 	}

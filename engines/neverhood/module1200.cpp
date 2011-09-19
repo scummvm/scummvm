@@ -202,7 +202,7 @@ AsScene1201Tape::AsScene1201Tape(NeverhoodEngine *vm, Scene *parentScene, uint32
 	if (!getSubVar(0x02038314, _nameHash) && !getSubVar(0x02720344, _nameHash)) {
 		SetMessageHandler(&AsScene1201Tape::handleMessage);
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 	}
 }
@@ -216,7 +216,7 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 		break;
 	case 0x4806:
 		setSubVar(0x02038314, _nameHash, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
 	}
@@ -283,7 +283,7 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 		_countdown = 25;
 	} else {
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 
@@ -310,21 +310,21 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 void AsScene1201RightDoor::sub40D7E0() {
 	setFileHash(0xD088AC30, 0, -1);
 	_newHashListIndex = -2;
-	_surface->setVisible(true);
+	setVisible(true);
 	_soundResource.play(calcHash("fxDoorOpen20"));
 }
 
 void AsScene1201RightDoor::sub40D830() {
 	setFileHash(0xD088AC30, -1, -1);
 	_playBackwards = true;
-	_surface->setVisible(true);
+	setVisible(true);
 	_soundResource.play(calcHash("fxDoorClose20"));
 	SetAnimationCallback3(&AsScene1201RightDoor::sub40D880);
 }
 
 void AsScene1201RightDoor::sub40D880() {
 	setFileHash1();
-	_surface->setVisible(false);
+	setVisible(false);
 }
 		
 Class464::Class464(NeverhoodEngine *vm)
@@ -334,7 +334,7 @@ Class464::Class464(NeverhoodEngine *vm)
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class464::handleMessage);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -344,11 +344,11 @@ uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity
 		_x = 436;
 		_y = 339;
 		setFileHash(0xA060C599, 0, -1);
-		_surface->setVisible(true);
+		setVisible(true);
 		break;
 	case 0x3002:
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 		removeCallbacks();
 		break;
 	}
@@ -447,7 +447,7 @@ Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
 	SetMessageHandler(&Sprite::handleMessage);
 	SetSpriteCallback(&Class465::spriteUpdate40D150);
 	setFileHash(0x828C0411, 0, -1);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 Class465::~Class465() {
@@ -457,7 +457,7 @@ Class465::~Class465() {
 void Class465::update() {
 	AnimatedSprite::update();
 	if (getGlobalVar(0x20A0C516)) {
-		_surface->setVisible(true);
+		setVisible(true);
 		SetUpdateHandler(&AnimatedSprite::update);
 		// TODO Sound1ChList_addSoundResource(0x041080A4, 0x460A1050, true);
 		// TODO Sound1ChList_playLooping(0x460A1050);
@@ -540,7 +540,7 @@ uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam 
 		messageResult = 1;
 		break;
 	case 0x4806:
-		_surface->setVisible(false);
+		setVisible(false);
 		setGlobalVar(0x0112090A, 3);
 		break;
 	}

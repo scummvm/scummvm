@@ -174,7 +174,7 @@ void AsScene1001Door::callback1() {
 		break;
 	case 3:
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 		break;
 	default:
 		setFileHash(0x624C0498, 0, -1);
@@ -193,7 +193,7 @@ void AsScene1001Door::callback2() {
 void AsScene1001Door::callback3() {
 	_soundResource1.play();
 	setFileHash1();
-	_surface->setVisible(false);	
+	setVisible(false);	
 }
 	
 AsScene1001Hammer::AsScene1001Hammer(NeverhoodEngine *vm, Sprite *asDoor)
@@ -255,7 +255,7 @@ uint32 AsScene1001Window::handleMessage(int messageNum, const MessageParam &para
 	case 0x3002:
 		SetMessageHandler(NULL);
 		setGlobalVar(0x03C698DA, 1);
-		_surface->setVisible(false);
+		setVisible(false);
 		break;
 	}
 	return 0;
@@ -310,14 +310,14 @@ SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentSce
 
 	_priority = 1100;
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000; 
-	_surface->setVisible(false);
+	setVisible(false);
 	SetUpdateHandler(&SsCommonButtonSprite::update);
 	SetMessageHandler(&SsCommonButtonSprite::handleMessage);
 }
 	
 void SsCommonButtonSprite::update() {
 	if (_countdown != 0 && (--_countdown) == 0) {
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 }
 	
@@ -326,7 +326,7 @@ uint32 SsCommonButtonSprite::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x480B:
 		sendMessage(_parentScene, 0x480B, 0);
-		_surface->setVisible(true);
+		setVisible(true);
 		_countdown = 8;
 		_soundResource.play(_soundFileHash);
 		break;
@@ -740,7 +740,7 @@ Class505::Class505(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1400) {
 
 	createSurface(1025, 88, 165);
-	_surface->setVisible(false);
+	setVisible(false);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class505::handleMessage);	
 }
@@ -752,11 +752,11 @@ uint32 Class505::handleMessage(int messageNum, const MessageParam &param, Entity
 		_x = ((Sprite*)sender)->getX() - 98;
 		_y = ((Sprite*)sender)->getY() - 111;
 		setFileHash(0x0422255A, 0, -1);
-		_surface->setVisible(true);
+		setVisible(true);
 		break;
 	case 0x3002:
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 		break;
 	}
 	return messageResult;
@@ -844,7 +844,7 @@ Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, ui
 	_x = _spriteResource.getPosition().x;
 	_y = _spriteResource.getPosition().y;
 
-	_surface->setVisible(false);
+	setVisible(false);
 	_needRefresh = true;
 	
 	SetUpdateHandler(&Class426::update);
@@ -906,7 +906,7 @@ void Class426::update() {
 			_countdown = 4;
 		} else if (_status == 3) {
 			_status = 0;
-			_surface->setVisible(false);
+			setVisible(false);
 		}
 	}
 }
@@ -918,7 +918,7 @@ uint32 Class426::handleMessage(int messageNum, const MessageParam &param, Entity
 		sendMessage(_parentScene, 0x480B, 0);
 		_status = 1;
 		_countdown = 4;
-		_surface->setVisible(true);
+		setVisible(true);
 		_soundResource.play(_soundFileHash);
 		break;
 	}
@@ -1195,7 +1195,7 @@ Class506::Class506(NeverhoodEngine *vm)
 		setFileHash(0x004A4495, -1, -1);
 		_newHashListIndex = -2;
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 	SetUpdateHandler(&Class506::update);
 	SetMessageHandler(&Class506::handleMessage4491B0);	
@@ -1241,7 +1241,7 @@ void Class506::sub449250() {
 	setFileHash(0x004A4495, 0, -1);
 	SetMessageHandler(&Class506::handleMessage4491B0);
 	_newHashListIndex = -2;
-	_surface->setVisible(true);
+	setVisible(true);
 }
 
 void Class506::sub449280() {
@@ -1249,11 +1249,11 @@ void Class506::sub449280() {
 	_playBackwards = true;
 	SetMessageHandler(&Class506::handleMessage449210);
 	SetAnimationCallback3(&Class506::sub4492C0);
-	_surface->setVisible(true);
+	setVisible(true);
 }
 
 void Class506::sub4492C0() {
-	_surface->setVisible(false);
+	setVisible(false);
 	setFileHash1();
 }
 
@@ -1263,26 +1263,26 @@ Class478::Class478(NeverhoodEngine *vm, Klayman *klayman)
 	createSurface(1200, 40, 163);
 	SetUpdateHandler(&Class478::update);
 	SetMessageHandler(&Sprite::handleMessage);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void Class478::update() {
 	if (_klayman->getCurrAnimFileHash() == 0x3A292504) {
 		setFileHash(0xBA280522, _frameIndex, -1);
 		_newHashListIndex = _klayman->getFrameIndex();
-		_surface->setVisible(true);
+		setVisible(true);
 		_x = _klayman->getX(); 
 		_y = _klayman->getY(); 
 		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
 	} else if (_klayman->getCurrAnimFileHash() == 0x122D1505) {
 		setFileHash(0x1319150C, _frameIndex, -1);
 		_newHashListIndex = _klayman->getFrameIndex();
-		_surface->setVisible(true);
+		setVisible(true);
 		_x = _klayman->getX(); 
 		_y = _klayman->getY(); 
 		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 	AnimatedSprite::update();
 }
@@ -1294,19 +1294,19 @@ Class479::Class479(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman)
 	SetUpdateHandler(&Class479::update);
 	SetMessageHandler(&Class479::handleMessage);
 	createSurface(1000, 33, 41);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 void Class479::update() {
 	if (_klayman->getCurrAnimFileHash() == 0xAC20C012 && _klayman->getFrameIndex() < 50) {
 		setFileHash(0x9820C913, _klayman->getFrameIndex(), -1);
 		_newHashListIndex = _klayman->getFrameIndex();
-		_surface->setVisible(true);
+		setVisible(true);
 		_x = _klayman->getX();
 		_y = _klayman->getY();
 		setDoDeltaX(_klayman->isDoDeltaX() ? 1 : 0);
 	} else {
-		_surface->setVisible(false);
+		setVisible(false);
 	}
 	AnimatedSprite::update();
 }
@@ -1656,7 +1656,7 @@ AsScene1004TrashCan::AsScene1004TrashCan(NeverhoodEngine *vm)
 	createSurface(800, 56, 50);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1004TrashCan::handleMessage);
-	_surface->setVisible(false);
+	setVisible(false);
 }
 
 uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1669,11 +1669,11 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 		break;
 	case 0x2002:
 		setFileHash(0xEB312C11, 0, -1);
-		_surface->setVisible(true);
+		setVisible(true);
 		break;
 	case 0x3002:
 		setFileHash1();
-		_surface->setVisible(false);
+		setVisible(false);
 		break;
 	}
 	return 0;
