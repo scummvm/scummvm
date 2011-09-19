@@ -70,7 +70,7 @@ void Palette::usePalette() {
 }
 
 void Palette::addPalette(const char *filename, int toIndex, int count, int fromIndex) {
-	// TODO: addPalette(calcHash(filename), toIndex, count, fromIndex);
+	addPalette(calcHash(filename), toIndex, count, fromIndex);
 }
 
 void Palette::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
@@ -179,7 +179,7 @@ void Palette2::copyBasePalette(int toIndex, int count, int fromIndex) {
 	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);		
 }
 
-void Palette2::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
+void Palette2::addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
 	PaletteResource paletteResource(_vm);
 	if (toIndex + count > 256)
 		count = 256 - toIndex;

@@ -226,7 +226,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x03118226);
 
 	palette2 = new Palette2(_vm, 0x03118226);
-	palette2->addPalette(0x91D3A391, 0, 64, 0);
+	palette2->addBasePalette(0x91D3A391, 0, 64, 0);
 	palette2->copyBasePalette(0, 256, 0);
 	palette2->usePalette();
 	_palette = palette2;
@@ -297,11 +297,11 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene1705::update() {
 	Scene::update();
 	if (_klayman->getX() < 224 && _paletteArea != 0) {
-		((Palette2*)_palette)->addPalette(0xF2210C15, 0, 64, 0);
+		((Palette2*)_palette)->addBasePalette(0xF2210C15, 0, 64, 0);
 		((Palette2*)_palette)->startFadeToPalette(12);
 		_paletteArea = 0;
 	} else if (_klayman->getX() >= 224 && _paletteArea == 0) {
-		((Palette2*)_palette)->addPalette(0x91D3A391, 0, 64, 0);
+		((Palette2*)_palette)->addBasePalette(0x91D3A391, 0, 64, 0);
 		((Palette2*)_palette)->startFadeToPalette(12);
 		_paletteArea = 1;
 	}

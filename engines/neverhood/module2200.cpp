@@ -1536,7 +1536,7 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 		addSprite(_ssLightSwitch);
 	}
 
-	palette2->addPalette(0xD00A028D, 0, 256, 0);
+	palette2->addBasePalette(0xD00A028D, 0, 256, 0);
 	
 	_ssDoorFrame = addSprite(new SsScene2205DoorFrame(_vm));
 
@@ -1598,11 +1598,11 @@ void Scene2205::update() {
 
 	if (!getGlobalVar(0x4D080E54)) {
 		if (_isKlaymanInLight && _klayman->getX() > 85) {
-			((Palette2*)_palette)->addPalette(0x68033B1C, 0, 65, 0);
+			((Palette2*)_palette)->addBasePalette(0x68033B1C, 0, 65, 0);
 			((Palette2*)_palette)->startFadeToPalette(12);
 			_isKlaymanInLight = false;
 		} else if (!_isKlaymanInLight && _klayman->getX() <= 85) {
-			((Palette2*)_palette)->addPalette(0xD00A028D, 0, 65, 0);
+			((Palette2*)_palette)->addBasePalette(0xD00A028D, 0, 65, 0);
 			((Palette2*)_palette)->startFadeToPalette(12);
 			_isKlaymanInLight = true;
 		}
@@ -1822,7 +1822,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->usePalette();
 	addEntity(palette2);
 
-	palette2->addPalette(fileHash, 0, 256, 0);
+	palette2->addBasePalette(fileHash, 0, 256, 0);
 
 	if (!getGlobalVar(0x4D080E54)) {
 		_palette->addPalette(0x0263D144, 0, 65, 0);
@@ -1904,7 +1904,7 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 
 void Scene2206::sub481950() {
 	if (getGlobalVar(0x4D080E54)) {
-		((Palette2*)_palette)->addPalette(0x41983216, 0, 65, 0);
+		((Palette2*)_palette)->addBasePalette(0x41983216, 0, 65, 0);
 		((Palette2*)_palette)->startFadeToPalette(12);
 	}
 	setSurfacePriority(_sprite1->getSurface(), 100);
@@ -1919,7 +1919,7 @@ void Scene2206::sub481950() {
 
 void Scene2206::sub4819D0() {
 	if (!getGlobalVar(0x4D080E54)) {
-		((Palette2*)_palette)->addPalette(0xB103B604, 0, 65, 0);
+		((Palette2*)_palette)->addBasePalette(0xB103B604, 0, 65, 0);
 		((Palette2*)_palette)->startFadeToPalette(12);
 	}
 	setSurfacePriority(_sprite1->getSurface(), 1100);
@@ -2767,11 +2767,11 @@ Scene2242::~Scene2242() {
 void Scene2242::update() {
 	if (!getGlobalVar(0x4D080E54)) {
 		if (_isKlaymanInLight && _klayman->getX() < 440) {
-			((Palette2*)_palette)->addPalette(0x68033B1C, 0, 65, 0);
+			((Palette2*)_palette)->addBasePalette(0x68033B1C, 0, 65, 0);
 			((Palette2*)_palette)->startFadeToPalette(12);
 			_isKlaymanInLight = false;
 		} else if (!_isKlaymanInLight && _klayman->getX() >= 440) {
-			((Palette2*)_palette)->addPalette(0x25848E24, 0, 65, 0);
+			((Palette2*)_palette)->addBasePalette(0x25848E24, 0, 65, 0);
 			((Palette2*)_palette)->startFadeToPalette(12);
 			_isKlaymanInLight = true;
 		}

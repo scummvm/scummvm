@@ -1762,13 +1762,13 @@ uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entit
 
 void Scene3011::fadeIn() {
 	Palette2 *palette2 = (Palette2*)_palette;
-	palette2->addPalette(0x92124A04, 0, 256, 0);
+	palette2->addBasePalette(0x92124A04, 0, 256, 0);
 	palette2->startFadeToPalette(24);
 }
 
 void Scene3011::fadeOut() {
 	Palette2 *palette2 = (Palette2*)_palette;
-	palette2->addPalette(0xA4070114, 0, 256, 0);
+	palette2->addBasePalette(0xA4070114, 0, 256, 0);
 	palette2->startFadeToPalette(24);
 }
 

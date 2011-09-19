@@ -62,7 +62,7 @@ public:
 	Palette2(NeverhoodEngine *vm, uint32 fileHash);
 	virtual ~Palette2();
 	void copyBasePalette(int toIndex, int count, int fromIndex);
-	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
+	void addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex);
 	void startFadeToPalette(int counter);
 public:
 	byte *_basePalette;
