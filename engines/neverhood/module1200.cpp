@@ -33,21 +33,11 @@ Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
 	debug("Module1200: which = %d", which);
 	
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		case 0:
-			createScene1201(-1);
-			break;
-		case 1:
-			createScene1202(-1);
-			break;
-		case 2:
-			createScene1203(-1);
-			break;
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 1) {
-		createScene1201(2);
+		createScene(0, 2);
 	} else {
-		createScene1201(0);
+		createScene(0, 0);
 	}
 
 	// TODO Music18hList_add(0x00478311, 0x62222CAE);
@@ -58,55 +48,50 @@ Module1200::~Module1200() {
 	// TODO Music18hList_deleteGroup(0x00478311);
 }
 
-void Module1200::createScene1201(int which) {
-	_vm->gameState().sceneNum = 0;
-	_childObject = new Scene1201(_vm, this, which);
-	SetUpdateHandler(&Module1200::updateScene1201);
-}
-			
-void Module1200::createScene1202(int which) {
-	_vm->gameState().sceneNum = 1;
-	_childObject = new Scene1202(_vm, this, which);
-	SetUpdateHandler(&Module1200::updateScene1202);
+void Module1200::createScene(int sceneNum, int which) {
+	debug("Module1200::createScene(%d, %d)", sceneNum, which);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		_childObject = new Scene1201(_vm, this, which);
+		break;
+	case 1:
+		_childObject = new Scene1202(_vm, this, which);
+		break;
+	case 2:
+		// TODO Music18hList_stop(0x62222CAE, 0, 0);
+		createSmackerScene(0x31890001, true, true, false);
+		setGlobalVar(0x2A02C07B, 1);
+		break;
+	}
+	SetUpdateHandler(&Module1200::updateScene);
+	_childObject->handleUpdate();
 }
 
-void Module1200::createScene1203(int which) {
-	_vm->gameState().sceneNum = 2;
-	// TODO Music18hList_stop(0x62222CAE, 0, 0);
-	createSmackerScene(0x31890001, true, true, false);
-	setGlobalVar(0x2A02C07B, 1);
-	SetUpdateHandler(&Module1200::updateScene1203);
-}
-
-void Module1200::updateScene1201() {
+void Module1200::updateScene() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene1202(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
-				createScene1203(-1);
+		switch (_vm->gameState().sceneNum) {
+		case 0:
+			if (_moduleResult == 1) {
+				createScene(1, 0);
+			} else if (_moduleResult == 2) {
+				if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
+					createScene(2, -1);
+				} else {
+					sendMessage(_parentModule, 0x1009, 1);
+				}
 			} else {
-				sendMessage(_parentModule, 0x1009, 1);
+				sendMessage(_parentModule, 0x1009, 0);
 			}
-		} else {
-			sendMessage(_parentModule, 0x1009, 0);
+			break;
+		case 1:
+			createScene(0, 1);
+			break;
+		case 2:
+			// TODO Music18hList_play(0x62222CAE, 0, 0, 1);
+			createScene(0, 3);
+			break;
 		}
-	}
-}
-
-void Module1200::updateScene1202() {
-	if (!updateChild()) {
-		createScene1201(1);
-		_childObject->handleUpdate();
-	}
-}
-			
-void Module1200::updateScene1203() {
-	if (!updateChild()) {
-		createScene1201(3);
-		_childObject->handleUpdate();
-		// TODO Music18hList_play(0x62222CAE, 0, 0, 1);
 	}
 }
 

@@ -36,13 +36,8 @@ public:
 	Module1200(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1200();
 protected:
-	// TODO ResourceTable _resourceTable;
-	void createScene1201(int which);			
-	void createScene1202(int which);			
-	void createScene1203(int which);			
-	void updateScene1201();			
-	void updateScene1202();			
-	void updateScene1203();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene1201
