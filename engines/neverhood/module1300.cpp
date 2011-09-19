@@ -421,8 +421,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B0A38);
 
 	setBackground(0x420643C4);
-	_palette = new Palette(_vm, 0x420643C4);
-	_palette->usePalette();
+	setPalette(0x420643C4);
 	insertMouse433(0x643C0428);
 
 	_class595 = addSprite(new Class595(_vm, this));
@@ -646,8 +645,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004AF9E8);
 	
 	setBackground(0x01581A9C);
-	_palette = new Palette(_vm, 0x01581A9C);
-	_palette->usePalette();
+	setPalette(0x01581A9C);
 	insertMouse433(0x81A9801D);
 
 	if (!getGlobalVar(0xAC00C0D0)) {
@@ -718,8 +716,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B91A8);
 
 	setBackground(0x062C0214);
-	_palette = new Palette(_vm, 0x062C0214);
-	_palette->usePalette();
+	setPalette(0x062C0214);
 	insertMouse433(0xC021006A);
 	
 	if (getGlobalVar(0xAC00C0D0)) {
@@ -789,8 +786,7 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B6E98);
 
 	setBackground(0x28801B64);
-	_palette = new Palette(_vm, 0x28801B64);
-	_palette->usePalette();
+	setPalette(0x28801B64);
 	insertMouse433(0x01B60280);
 
 	if (which < 0) {
@@ -905,8 +901,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1306::handleMessage);
 
 	setBackground(0x05303114);
-	_palette = new Palette(_vm, 0x05303114);
-	_palette->usePalette();
+	setPalette(0x05303114);
 	insertMouse433(0x0311005B);
 
 	if (!getGlobalVar(0x13382860)) {
@@ -1311,8 +1306,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1307::update);
 
 	setBackground(0xA8006200);
-	_palette = new Palette(_vm, 0xA8006200);
-	_palette->usePalette();
+	setPalette(0xA8006200);
 	addEntity(_palette);
 	insertMouse435(0x06204A88, 20, 620);
 
@@ -1630,8 +1624,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1308::handleMessage);
 	
 	setBackground(0x41024202);
-	_palette = new Palette(_vm, 0x41024202);
-	_palette->usePalette();
+	setPalette(0x41024202);
 	insertMouse433(0x24206418);
 
 	_asTape = addSprite(new AsScene1201Tape(_vm, this, 17, 1100, 502, 445, 0x9148A011));

@@ -82,30 +82,27 @@ void Module1000::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			if (_moduleResult == 2) {
+			if (_moduleResult == 2)
 				createScene(2, 0);
-			} else {
+			else
 				createScene(1, 0);
-			}
 			break;
 		case 1:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				sendMessage(_parentModule, 0x1009, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createScene(3, 0);
-			} else {
+			else
 				createScene(0, 1);
-			}
 			break;
 		case 2:
 			createScene(0, 2);
 			break;
 		case 3:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createScene(4, 0);
-			} else {
+			else
 				createScene(1, 2);
-			}
 			break;
 		case 4:
 			// TODO Music18hList_stop(_musicFileHash, 0, 1);
@@ -213,9 +210,7 @@ uint32 AsScene1001Hammer::handleMessage(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x00352100) {
-			if (_asDoor) {
-				sendMessage(_asDoor, 0x2000, 0);
-			}
+			sendMessage(_asDoor, 0x2000, 0);
 		} else if (param.asInteger() == 0x0A1A0109) {
 			_soundResource.play(0x66410886);
 		}
@@ -309,7 +304,7 @@ SsCommonButtonSprite::SsCommonButtonSprite(NeverhoodEngine *vm, Scene *parentSce
 	: StaticSprite(vm, fileHash, surfacePriority), _parentScene(parentScene), _soundResource(vm), _countdown(0) {
 
 	_priority = 1100;
-	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000; 
+	_soundFileHash = soundFileHash ? soundFileHash : 0x44141000; 
 	setVisible(false);
 	SetUpdateHandler(&SsCommonButtonSprite::update);
 	SetMessageHandler(&SsCommonButtonSprite::handleMessage);
@@ -346,8 +341,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_collisionMan->setHitRects(0x004B4860);
 	_surfaceFlag = false;
 	setBackground(0x4086520E);
-	_palette = new Palette(_vm, 0x4086520E);
-	_palette->usePalette();
+	setPalette(0x4086520E);
 	insertMouse433(0x6520A400);
 	
 	if (which < 0) {
@@ -1349,8 +1343,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x12C23307);
-	_palette = new Palette(_vm, 0x12C23307);
-	_palette->usePalette();
+	setPalette(0x12C23307);
 
 	_flag = false;
 
@@ -1629,8 +1622,7 @@ Class152::Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundF
 	SetMessageHandler(&Class152::handleMessage);
 	
 	setBackground(backgroundFileHash);
-	_palette = new Palette(_vm, backgroundFileHash);
-	_palette->usePalette();
+	setPalette(backgroundFileHash);
 	insertMouse435(cursorFileHash, 20, 620);
 }
 
@@ -1692,13 +1684,12 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x50C03005);
 
 	if (getGlobalVar(0x0D0A14D10)) {
-		_palette = new Palette(_vm, 0xA30BA329);
+		setPalette(0xA30BA329);
 		_palette->addBasePalette(0xA30BA329, 0, 256, 0);
 	} else {
-		_palette = new Palette(_vm, 0x50C03005);
+		setPalette(0x50C03005);
 		_palette->addBasePalette(0x50C03005, 0, 256, 0);
 	}
-	_palette->usePalette();
 	addEntity(_palette);
 
 	insertMouse433(0x03001504);
@@ -1791,14 +1782,12 @@ Scene1005::Scene1005(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (getGlobalVar(0xD0A14D10)) {
 		setBackground(0x2800E011);
-		_palette = new Palette(_vm, 0x2800E011);
-		_palette->usePalette();
+		setPalette(0x2800E011);
 		insertStaticSprite(0x492D5AD7, 100);
 		insertMouse435(0x0E015288, 20, 620);
 	} else {
 		setBackground(0x8870A546);
-		_palette = new Palette(_vm, 0x8870A546);
-		_palette->usePalette();
+		setPalette(0x8870A546);
 		insertStaticSprite(0x40D1E0A9, 100);
 		insertStaticSprite(0x149C00A6, 100);
 		insertMouse435(0x0A54288F, 20, 620);

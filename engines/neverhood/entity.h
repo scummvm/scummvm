@@ -103,16 +103,16 @@ public:
 	// NOTE: These were overloaded before for the various message parameter types
 	// it caused some problems so each type gets its own sendMessage variant now
 	uint32 sendMessage(Entity *receiver, int messageNum, const MessageParam &param) {
-		return receiver->receiveMessage(messageNum, param, this);
+		return receiver ? receiver->receiveMessage(messageNum, param, this) : 0;
 	}
 	uint32 sendMessage(Entity *receiver, int messageNum, uint32 param) {
-		return receiver->receiveMessage(messageNum, MessageParam(param), this);
+		return sendMessage(receiver, messageNum, MessageParam(param));
 	}
 	uint32 sendPointMessage(Entity *receiver, int messageNum, const NPoint &param) {
-		return receiver->receiveMessage(messageNum, MessageParam(param), this);
+		return sendMessage(receiver, messageNum, MessageParam(param));
 	}
 	uint32 sendEntityMessage(Entity *receiver, int messageNum, Entity *param) {
-		return receiver->receiveMessage(messageNum, MessageParam((Entity*)param), this);
+		return sendMessage(receiver, messageNum, MessageParam((Entity*)param));
 	}
 	int getPriority() const { return _priority; }
 	// Shortcuts for game variable access

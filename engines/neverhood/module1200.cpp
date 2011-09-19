@@ -838,13 +838,11 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
 		setBackground(0x4019A2C4);
-		_palette = new Palette(_vm, 0x4019A2C4);
-		_palette->usePalette();
+		setPalette(0x4019A2C4);
 		_asRightDoor = NULL;
 	} else {
 		setBackground(0x40206EC5);
-		_palette = new Palette(_vm, 0x40206EC5);
-		_palette->usePalette();
+		setPalette(0x40206EC5);
 		_asRightDoor = addSprite(new AsScene1201RightDoor(_vm, _klayman, which == 2));
 	}
 
@@ -1146,8 +1144,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x60210ED5);
 
-	_palette = new Palette(_vm, 0x60210ED5);
-	_palette->usePalette();
+	setPalette(0x60210ED5);
 	addEntity(_palette);
 
 	_paletteResource.load(0x60250EB5);

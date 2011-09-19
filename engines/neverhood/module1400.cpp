@@ -664,8 +664,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x08221FA5);
-	_palette = new Palette(_vm, 0x08221FA5);
-	_palette->usePalette();
+	setPalette(0x08221FA5);
 	insertMouse433(0x21FA108A);
 	
 	// TODO _class427 = addSprite(new Class427(_vm, this, 0x980F3124, 0x12192892, 100, 0));
@@ -885,9 +884,8 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	_background = addBackground(new Background(_vm, 0x231482F0, 0, 0));
 	_background->getSurface()->getDrawRect().y = -10;
 	// TODO g_screen->field_26 = 0;
-	_palette = new Palette(_vm, 0x231482F0);
+	setPalette(0x231482F0);
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
-	_palette->usePalette();
 	insertMouse433(0x482F4239);
 
 	_class454_1 = addSprite(new Class454(_vm, 0x15402D64, 1100));
@@ -1288,8 +1286,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1407::update);
 
 	setBackground(0x00442225);
-	_palette = new Palette(_vm, 0x00442225);
-	_palette->usePalette();
+	setPalette(0x00442225);
 	insertMouse435(0x4222100C, 20, 620);
 
 	_asMouse = addSprite(new AsScene1407Mouse(_vm, this));
@@ -1354,8 +1351,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x2110A234);
-	_palette = new Palette(_vm, 0x2110A234);
-	_palette->usePalette();
+	setPalette(0x2110A234);
 	insertMouse433(0x0A230219);
 
 	_class401_1 = insertStaticSprite(0x01102A33, 100);
@@ -1477,9 +1473,8 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	setRectList(0x004B8D80);
 
 	setBackground(0xAC0B006F);
-	_palette = new Palette(_vm, 0xAC0B006F);
+	setPalette(0xAC0B006F);
 	_palette->addPalette(0x00801510, 0, 65, 0);
-	_palette->usePalette();
 	insertMouse433(0xB006BAC8);
 
 	if (getGlobalVar(0x13382860) == 5) {
@@ -1692,8 +1687,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 	
 	setBackground(0x0C0C007D);
-	_palette = new Palette(_vm, 0x0C0C007D);
-	_palette->usePalette();
+	setPalette(0x0C0C007D);
 	insertMouse435(0xC00790C8, 20, 620);
 	
 	// TODO: Some debug code: Leave two matching tiles open

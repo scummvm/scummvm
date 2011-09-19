@@ -93,8 +93,7 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 
 	setBackground(backgroundFileHash);
 
-	_palette = new Palette(_vm);
-	_palette->usePalette();
+	setPalette();
 	addEntity(_palette);
 	_palette->addBasePalette(backgroundFileHash, 0, 256, 0);
 	_palette->startFadeToPalette(12);

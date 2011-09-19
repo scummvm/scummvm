@@ -102,8 +102,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene2001::handleMessage);
 
 	setBackground(0xA6417244);
-	_palette = new Palette(_vm, 0xA6417244);
-	_palette->usePalette();
+	setPalette(0xA6417244);
 	insertMouse433(0x17240A6C);
 
 	_class401 = insertStaticSprite(0x0D641724, 1100);

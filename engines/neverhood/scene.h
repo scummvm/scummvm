@@ -55,6 +55,7 @@ public:
 	Background *addBackground(Background *background);
 	void setBackground(uint32 fileHash, bool dirtyBackground = true);
 	void changeBackground(uint32 fileHash);
+	void setPalette(uint32 fileHash = 0);
 	Sprite *insertStaticSprite(uint32 fileHash, int surfacePriority);
 	void insertMouse433(uint32 fileHash, NRect *mouseRect = NULL);
 	void insertMouse435(uint32 fileHash, int16 x1, int16 x2);

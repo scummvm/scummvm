@@ -795,7 +795,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_screen->clear();
 	
 	setBackground(0xD000420C);
-	_palette = new Palette(_vm, 0xD000420C);
+	setPalette(0xD000420C);
 	insertMouse435(0x04208D08, 20, 620);
 
 	_ssFireCannonButton = addSprite(new SsScene3009FireCannonButton(_vm, this));
@@ -821,7 +821,7 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009SmackerFileHashes[_cannonLocation], false, _keepVideo));
 	_smackerPlayer->setDrawPos(89, 37);
-	_palette->usePalette();
+	_palette->usePalette(); // Use it again since the SmackerPlayer overrides the usage
 
 	insertStaticSprite(0x8540252C, 400);
 
@@ -1032,7 +1032,7 @@ bool Scene3009::isSymbolsPart2Solved() {
 }
 
 bool Scene3009::sub462E90() {
-	return /*_flag3 || */_flag4;
+	return _flag4;
 }
 
 // Scene3010
@@ -1153,10 +1153,7 @@ void SsScene3010DeadBoltButton::setSprite(uint32 fileHash) {
 	_drawRect.y = 0;
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
-	_deltaRect.x = 0;
-	_deltaRect.y = 0;
-	_deltaRect.width = _spriteResource.getDimensions().width;
-	_deltaRect.height = _spriteResource.getDimensions().height;
+	_deltaRect = _drawRect;
 	processDelta();
 	_needRefresh = true;
 	StaticSprite::update();
@@ -1294,8 +1291,7 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x80802626);
-	_palette = new Palette(_vm, 0x80802626);
-	_palette->usePalette();
+	setPalette(0x80802626);
 
 	for (int i = 0; i < 3; i++) {
 		_asDeadBolts[i] = new AsScene3010DeadBolt(_vm, this, i, which == 1);//CHECKME
@@ -1443,10 +1439,7 @@ SsScene3011Button::SsScene3011Button(NeverhoodEngine *vm, Scene *parentScene, bo
 	_drawRect.y = 0;
 	_drawRect.width = _spriteResource.getDimensions().width;
 	_drawRect.height = _spriteResource.getDimensions().height;
-	_deltaRect.x = 0;
-	_deltaRect.y = 0;
-	_deltaRect.width = _spriteResource.getDimensions().width;
-	_deltaRect.height = _spriteResource.getDimensions().height;
+	_deltaRect = _drawRect;
 	setVisible(false);
 	processDelta();
 	_needRefresh = true;
@@ -1546,9 +1539,7 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	_index1 = getGlobalVar(0x2414C2F2);
 
 	setBackground(0x92124A04);
-
-	_palette = new Palette(_vm, 0xA4070114);
-	_palette->usePalette();
+	setPalette(0xA4070114);
 	addEntity(_palette);
 
 	insertMouse435(0x24A00929, 20, 620);

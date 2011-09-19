@@ -353,8 +353,8 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	
 	_surfaceFlag = true;
 
-	_background = addBackground(new DirtyBackground(_vm, 0x8A000044, 0, 0));
-	_palette = new Palette(_vm, kDiskplayerPaletteFileHashes[_which]);
+	setBackground(0x8A000044);
+	setPalette(kDiskplayerPaletteFileHashes[_which]);
 	_playButton = new DiskplayerPlayButton(_vm, this);
 	addSprite(_playButton);
 	_vm->_collisionMan->addSprite(_playButton);

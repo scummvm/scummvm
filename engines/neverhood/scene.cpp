@@ -186,6 +186,11 @@ void Scene::changeBackground(uint32 fileHash) {
 	_background->load(fileHash);
 }
 
+void Scene::setPalette(uint32 fileHash) {
+	_palette = fileHash ? new Palette(_vm, fileHash) : new Palette(_vm);
+	_palette->usePalette();
+}
+
 Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
 }

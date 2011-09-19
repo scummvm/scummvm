@@ -188,10 +188,9 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x03118226);
 
-	_palette = new Palette(_vm, 0x03118226);
+	setPalette(0x03118226);
 	_palette->addBasePalette(0x91D3A391, 0, 64, 0);
 	_palette->copyBasePalette(0, 256, 0);
-	_palette->usePalette();
 	addEntity(_palette);
 
 	insertMouse433(0x18222039);

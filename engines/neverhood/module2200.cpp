@@ -736,8 +736,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	loadHitRectList();
 
 	setBackground(0x40008208);
-	_palette = new Palette(_vm, 0x40008208);
-	_palette->usePalette();
+	setPalette(0x40008208);
 	insertMouse433(0x0820C408);
 
 	_asTape = addSprite(new AsScene1201Tape(_vm, this, 7, 1100, 459, 432, 0x9148A011));
@@ -1119,8 +1118,7 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x08100A0C);
-	_palette = new Palette(_vm, 0x08100A0C);
-	_palette->usePalette();
+	setPalette(0x08100A0C);
 	addEntity(_palette);
 	insertMouse435(0x00A08089, 20, 620);
 
@@ -1349,8 +1347,7 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x82C80334);
-	_palette = new Palette(_vm, 0x82C80334);
-	_palette->usePalette();
+	setPalette(0x82C80334);
 	insertMouse433(0x80330824);
 
 	_vm->_collisionMan->setHitRects(0x004B8320);
@@ -1512,8 +1509,7 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0x4D080E54)) {
 		_isLightOn = true;
 		setBackground(0x0008028D);
-		_palette = new Palette(_vm, 0x0008028D);
-		_palette->usePalette();
+		setPalette(0x0008028D);
 		addEntity(_palette);
 		insertMouse433(0x80289008);
 		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0x2D309030, 100, 0);
@@ -1521,8 +1517,7 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else {
 		_isLightOn = false;
 		setBackground(0xD00A028D);
-		_palette = new Palette(_vm, 0xD00A028D);
-		_palette->usePalette();
+		setPalette(0xD00A028D);
 		addEntity(_palette);
 		insertMouse433(0xA0289D08);
 		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0xDAC86E84, 100, 0);
@@ -1807,8 +1802,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(fileHash);
 
-	_palette = new Palette(_vm, fileHash);
-	_palette->usePalette();
+	setPalette(fileHash);
 	addEntity(_palette);
 
 	_palette->addBasePalette(fileHash, 0, 256, 0);
@@ -2292,8 +2286,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0x4D080E54)) {
 
 		setBackground(0x88C00241);
-		_palette = new Palette(_vm, 0x88C00241);
-		_palette->usePalette();
+		setPalette(0x88C00241);
 		insertMouse433(0x00245884);
 	
 		_ssMaskPart1 = insertStaticSprite(0xE20A28A0, 1200);
@@ -2334,8 +2327,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 		setGlobalVar(0x81890D14, 1);
 
 		setBackground(0x05C02A55);
-		_palette = new Palette(_vm, 0x05C02A55);
-		_palette->usePalette();
+		setPalette(0x05C02A55);
 		insertMouse433(0x02A51054);
 
 		_ssMaskPart1 = insertStaticSprite(0x980E46A4, 1200);
@@ -2531,8 +2523,7 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 	_background->getSpriteResource().getPosition().y = 480;
 	addBackground(_background);
 	
-	_palette = new Palette(_vm, 0x08100289);
-	_palette->usePalette();
+	setPalette(0x08100289);
 	addEntity(_palette); // Why?
 
 	insertMouse435(0x0028D089, 40, 600);
@@ -2708,14 +2699,12 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (getGlobalVar(0x4D080E54)) {
 		setBackground(0x11840E24);
-		_palette = new Palette(_vm, 0x11840E24);
-		_palette->usePalette();
+		setPalette(0x11840E24);
 		insertMouse433(0x40E20110);
 		setRectList(0x004B3DC8);
 	} else {
 		setBackground(0x25848E24);
-		_palette = new Palette(_vm, 0x25848E24);
-		_palette->usePalette();
+		setPalette(0x25848E24);
 		addEntity(_palette);
 		_palette->copyBasePalette(0, 256, 0);
 		_palette->addPalette(0x68033B1C, 0, 65, 0);
@@ -2846,14 +2835,12 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 	if (!getGlobalVar(0x4D080E54) && _sceneInfo140->bgFilename2) {
 		setRectList(0x004B2BF8);
 		setBackground(_sceneInfo140->bgFilename2);
-		_palette = new Palette(_vm, _sceneInfo140->bgFilename2);
-		_palette->usePalette();
+		setPalette(_sceneInfo140->bgFilename2);
 		insertMouse433(0x14320138);
 	} else {
 		setRectList(0x004B2BB8);
 		setBackground(_sceneInfo140->bgFilename1);
-		_palette = new Palette(_vm, _sceneInfo140->bgFilename1);
-		_palette->usePalette();
+		setPalette(_sceneInfo140->bgFilename1);
 		insertMouse433(0x63A40028);
 	}
 
@@ -2943,14 +2930,12 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0x4D080E54)) {
 		setRectList(0x004B5588);
 		setBackground(0x40339414);
-		_palette = new Palette(_vm, 0x40339414);
-		_palette->usePalette();
+		setPalette(0x40339414);
 		insertMouse433(0x3941040B);
 	} else {
 		setRectList(0x004B55C8);
 		setBackground(0x071963E5);
-		_palette = new Palette(_vm, 0x071963E5);
-		_palette->usePalette();
+		setPalette(0x071963E5);
 		insertMouse433(0x14320138);
 	}
 
