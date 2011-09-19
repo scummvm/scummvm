@@ -38,6 +38,12 @@ namespace Neverhood {
 
 class NavigationScene;
 
+enum SceneType {
+	kSceneTypeNormal,
+	kSceneTypeSmacker,
+	kSceneTypeNavigation
+};
+
 class Module : public Entity {
 public:
 	Module(NeverhoodEngine *vm, Module *parentModule);
@@ -48,6 +54,8 @@ protected:
 	Entity *_childObject;
 	bool _done;
 	uint32 _moduleResult;
+	SceneType _sceneType;
+	int _navigationAreaType;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	NavigationScene *navigationScene();
 	void createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes = NULL);

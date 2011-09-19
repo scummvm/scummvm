@@ -36,26 +36,8 @@ public:
 	Module1800(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1800();
 protected:
-	// TODO ResourceTable _resourceTable;
-	void createScene1801(int which);			
-	void createScene1802(int which);			
-	void createScene1803(int which);			
-	void createScene1804(int which);
-	void createScene1804b(int which);			
-	void createScene1805(int which);			
-	void createScene1806(int which);			
-	void createScene1807(int which);			
-	void createScene1808(int which);			
-	void createScene1809(int which);			
-	void updateScene1801();			
-	void updateScene1802();			
-	void updateScene1803();			
-	void updateScene1804();			
-	void updateScene1805();			
-	void updateScene1806();			
-	void updateScene1807();			
-	void updateScene1808();			
-	void updateScene1809();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 } // End of namespace Neverhood

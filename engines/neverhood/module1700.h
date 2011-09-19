@@ -36,16 +36,8 @@ public:
 	virtual ~Module1700();
 protected:
 	SoundResource _soundResource;
-	void update();
-	void createScene1701(int which);
-	void createScene1702(int which);
-	void createScene1703(int which);
-	void createScene1704(int which);
-	void createScene1705(int which);
-	void updateScene1701();			
-	void updateScene1702();			
-	void updateScene1703();			
-	void updateScene1705();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene1705

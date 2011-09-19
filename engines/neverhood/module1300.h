@@ -38,40 +38,8 @@ public:
 	virtual ~Module1300();
 protected:
 	uint32 _musicFileHash;
-	void createScene1302(int which);			
-	void createScene1303(int which);			
-	void createScene1304(int which);			
-	void createScene1305(int which);			
-	void createScene1306(int which);			
-	void createScene1307(int which);			
-	void createScene1308(int which);			
-	void createScene1309(int which);			
-	void createScene1310(int which);			
-	void createScene1311(int which);			
-	void createScene1312(int which);			
-	void createScene1313(int which);			
-	void createScene1314(int which);			
-	void createScene1315(int which);			
-	void createScene1316(int which);			
-	void createScene1317(int which);			
-	void createScene1318(int which);			
-	void updateScene1302();			
-	void updateScene1303();			
-	void updateScene1304();			
-	void updateScene1305();			
-	void updateScene1306();			
-	void updateScene1307();			
-	void updateScene1308();			
-	void updateScene1309();			
-	void updateScene1310();			
-	void updateScene1311();			
-	void updateScene1312();			
-	void updateScene1313();			
-	void updateScene1314();			
-	void updateScene1315();			
-	void updateScene1316();			
-	void updateScene1317();			
-	void updateScene1318();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 class AsScene1302Bridge : public AnimatedSprite {

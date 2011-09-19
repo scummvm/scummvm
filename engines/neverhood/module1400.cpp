@@ -31,36 +31,13 @@ namespace Neverhood {
 Module1400::Module1400(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	debug("Create Module1400(%d)", which);
-
 	// TODO Music18hList_add(0x00AD0012, 0x06333232);
 	// TODO Music18hList_add(0x00AD0012, 0x624A220E);
 
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		case 1:
-			createScene1402(-1);
-			break;
-		case 2:
-			createScene1403(-1);
-			break;
-		case 3:
-			createScene1404(-1);
-			break;
-		case 4:
-			createScene1405(-1);
-			break;
-		case 5:
-			createScene1406(-1);
-			break;
-		case 6:
-			createScene1407(-1);
-			break;
-		default:
-			createScene1401(-1);
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else {
-		createScene1401(0);
+		createScene(0, 0);
 	}
 
 }
@@ -69,126 +46,88 @@ Module1400::~Module1400() {
 	// TODO Music18hList_deleteGroup(0x00AD0012);
 }
 
-void Module1400::createScene1401(int which) {
-	_vm->gameState().sceneNum = 0;
-	// TODO Music18hList_play(0x06333232, 0, 2, 1);
-	_childObject = new Scene1401(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1401);
+void Module1400::createScene(int sceneNum, int which) {
+	debug("Module1400::createScene(%d, %d)", sceneNum, which);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		_childObject = new Scene1401(_vm, this, which);
+		break;
+	case 1:
+		// TODO Music18hList_stop(0x06333232, 0, 2);
+		// TODO Music18hList_stop(0x624A220E, 0, 2);
+		_childObject = new Scene1402(_vm, this, which);
+		break;
+	case 2:
+		// TODO Music18hList_stop(0x06333232, 0, 2);
+		// TODO Music18hList_play(0x624A220E, 0, 2, 1);
+		_childObject = new Scene1403(_vm, this, which);
+		break;
+	case 3:
+		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		_childObject = new Scene1404(_vm, this, which);
+		break;
+	case 4:
+		// TODO Music18hList_play(0x06333232, 0, 2, 1);
+		_childObject = new Scene1405(_vm, this, which);
+		break;
+	case 5:
+		// TODO Music18hList_stop(0x06333232, 0, 2);
+		_childObject = new DiskplayerScene(_vm, this, 2);
+		break;
+	case 6:
+		// TODO Music18hList_stop(0x06333232, 0, 2);
+		_childObject = new Scene1407(_vm, this, which);
+		break;
+	}
+	SetUpdateHandler(&Module1400::updateScene);
+	_childObject->handleUpdate();
 }
 
-void Module1400::createScene1402(int which) {
-	_vm->gameState().sceneNum = 1;
-	// TODO Music18hList_stop(0x06333232, 0, 2);
-	// TODO Music18hList_stop(0x624A220E, 0, 2);
-	_childObject = new Scene1402(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1402);
-}
-
-void Module1400::createScene1403(int which) {
-	_vm->gameState().sceneNum = 2;
-	// TODO Music18hList_stop(0x06333232, 0, 2);
-	// TODO Music18hList_play(0x624A220E, 0, 2, 1);
-	_childObject = new Scene1403(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1403);
-}
-
-void Module1400::createScene1404(int which) {
-	_vm->gameState().sceneNum = 3;
-	// TODO Music18hList_play(0x06333232, 0, 2, 1);
-	_childObject = new Scene1404(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1404);
-}
-
-void Module1400::createScene1405(int which) {
-	_vm->gameState().sceneNum = 4;
-	// TODO Music18hList_play(0x06333232, 0, 2, 1);
-	_childObject = new Scene1405(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1405);
-}
-
-void Module1400::createScene1406(int which) {
-	_vm->gameState().sceneNum = 5;
-	// TODO Music18hList_stop(0x06333232, 0, 2);
-	_childObject = new DiskplayerScene(_vm, this, 2);
-	SetUpdateHandler(&Module1400::updateScene1406);
-}
-
-void Module1400::createScene1407(int which) {
-	_vm->gameState().sceneNum = 6;
-	// TODO Music18hList_stop(0x06333232, 0, 2);
-	_childObject = new Scene1407(_vm, this, which);
-	SetUpdateHandler(&Module1400::updateScene1407);
-}
-
-void Module1400::updateScene1401() {
+void Module1400::updateScene() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene1402(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			createScene1404(0);
-			_childObject->handleUpdate();
-		} else {
-			sendMessage(_parentModule, 0x1009, 0);
+		switch (_vm->gameState().sceneNum) {
+		case 0:
+			if (_moduleResult == 1) {
+				createScene(1, 0);
+			} else if (_moduleResult == 2) {
+				createScene(3, 0);
+			} else {
+				sendMessage(_parentModule, 0x1009, 0);
+			}
+			break;
+		case 1:
+			if (_moduleResult == 1) {
+				createScene(2, 0);
+			} else if (_moduleResult == 2) {
+				createScene(6, -1);
+			} else {
+				createScene(0, 1);
+			}
+			break;
+		case 2:
+			createScene(1, 1);
+			break;
+		case 3:
+			if (_moduleResult == 1) {
+				createScene(4, 0);
+			} else if (_moduleResult == 2) {
+				createScene(5, -1);
+			} else {
+				createScene(0, 2);
+			}
+			break;
+		case 4:
+			createScene(3, 1);
+			break;
+		case 5:
+			createScene(3, 2);
+			break;
+		case 6:
+			createScene(1, 2);
+			break;
 		}
-	}
-}
-
-void Module1400::updateScene1402() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene1403(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			createScene1407(-1);
-			_childObject->handleUpdate();
-		} else {
-			createScene1401(1);
-			_childObject->handleUpdate();
-		}
-	}
-}
-
-void Module1400::updateScene1403() {
-	if (!updateChild()) {
-		createScene1402(1);
-		_childObject->handleUpdate();
-	}
-}
-
-void Module1400::updateScene1404() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene1405(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			createScene1406(-1);
-			_childObject->handleUpdate();
-		} else {
-			createScene1401(2);
-			_childObject->handleUpdate();
-		}
-	}
-}
-
-void Module1400::updateScene1405() {
-	if (!updateChild()) {
-		createScene1404(1);
-		_childObject->handleUpdate();
-	}
-}
-
-void Module1400::updateScene1406() {
-	if (!updateChild()) {
-		createScene1404(2);
-		_childObject->handleUpdate();
-	}
-}
-
-void Module1400::updateScene1407() {
-	if (!updateChild()) {
-		createScene1402(2);
-		_childObject->handleUpdate();
 	}
 }
 

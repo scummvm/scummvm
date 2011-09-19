@@ -276,13 +276,17 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule2000(-1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 4;
 	createModule2200(-1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 0;
 	createModule1000(-1);
+#endif
+#if 1
+	_vm->gameState().sceneNum = 12;
+	createModule3000(-1);
 #endif
 }
 
@@ -375,7 +379,6 @@ void GameModule::createModule1700(int which) {
 
 void GameModule::updateModule1700() {
 	if (!updateChild()) {
-		debug("Module1700 done; _moduleResult = %d", _moduleResult);
 		if (_moduleResult == 1) {
 			// TODO createModule2900(3);
 			// TODO _childObject->handleUpdate();
@@ -401,8 +404,8 @@ void GameModule::updateModule1800() {
 			// TODO createModule2700(0);
 			// TODO _childObject->handleUpdate();
 		} else if (_moduleResult == 3) {
-			// TODO createModule3000(3);
-			// TODO _childObject->handleUpdate();
+			createModule3000(3);
+			_childObject->handleUpdate();
 		} else {
 			// TODO createModule2800(0);
 			// TODO _childObject->handleUpdate();
@@ -451,7 +454,7 @@ void GameModule::updateModule2300() {
 		} else if (_moduleResult == 3) {
 			// TODO createModule2400(0);
 		} else if (_moduleResult == 4) {
-			// TODO createModule3000(0);
+			createModule3000(0);
 		} else {
 			createModule1000(1);
 		}
@@ -480,8 +483,8 @@ void GameModule::updateModule3000() {
 			createModule1800(3);
 			_childObject->handleUpdate();
 		} else if (_moduleResult == 4) {
-			// TODO createModule3000(0);
-			// TODO _childObject->handleUpdate();
+			createModule3000(0);
+			_childObject->handleUpdate();
 		} else {
 			createModule2300(4);
 			_childObject->handleUpdate();

@@ -37,11 +37,8 @@ public:
 	Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag);
 protected:
 	bool _flag;
-	void update();
-	void createScene1501();			
-	void createScene1502();
-	void createScene1503();
-	void createScene1504();
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 class Scene1501 : public Scene {

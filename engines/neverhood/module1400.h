@@ -35,20 +35,8 @@ public:
 	Module1400(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module1400();
 protected:
-	void createScene1401(int which);
-	void createScene1402(int which);
-	void createScene1403(int which);
-	void createScene1404(int which);
-	void createScene1405(int which);
-	void createScene1406(int which);
-	void createScene1407(int which);
-	void updateScene1401();			
-	void updateScene1402();			
-	void updateScene1403();			
-	void updateScene1404();			
-	void updateScene1405();			
-	void updateScene1406();			
-	void updateScene1407();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene1401

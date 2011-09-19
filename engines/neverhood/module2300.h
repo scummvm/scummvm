@@ -36,20 +36,10 @@ public:
 	Module2300(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Module2300();
 protected:
-	// TODO ResourceTable _resourceTable1;
-	// TODO ResourceTable _resourceTable2;
 	bool _flag;
 	int _volume;
-	void createScene2301(int which);			
-	void createScene2302(int which);			
-	void createScene2303(int which);			
-	void createScene2304(int which);			
-	void createScene2305(int which);			
-	void updateScene2301();			
-	void updateScene2302();			
-	void updateScene2303();			
-	void updateScene2304();			
-	void updateScene2305();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 } // End of namespace Neverhood

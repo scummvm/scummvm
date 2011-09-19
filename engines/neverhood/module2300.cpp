@@ -27,8 +27,6 @@ namespace Neverhood {
 Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule), _volume(0) {
 	
-	debug("Create Module2300(%d)", which);
-
 	// TODO Sound1ChList_addSoundResources(0x1A214010, dword_4B6938, true);
 	// TODO Sound1ChList_setSoundValuesMulti(dword_4B6938, true, 50, 600, 10, 10, 150);
 
@@ -45,33 +43,17 @@ Module2300::Module2300(NeverhoodEngine *vm, Module *parentModule, int which)
 	// TODO Sound1ChList_sub_407C70(0x1A214010, 0x41861371, 0x43A2507F, 0);
 
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		case 0:
-			createScene2301(-1);
-			break;
-		case 1:
-			createScene2302(-1);
-			break;
-		case 2:
-			createScene2303(-1);
-			break;
-		case 3:
-			createScene2304(-1);
-			break;
-		case 4:
-			createScene2305(-1);
-			break;
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 1) {
-		createScene2303(0);
+		createScene(2, 0);
 	} else if (which == 2) {
-		createScene2304(0);
+		createScene(3, 0);
 	} else if (which == 3) {
-		createScene2305(-1);
+		createScene(4, -1);
 	} else if (which == 4) {
-		createScene2302(3);
+		createScene(1, 3);
 	} else {
-		createScene2301(1);
+		createScene(0, 1);
 	}
 
 }
@@ -80,136 +62,119 @@ Module2300::~Module2300() {
 	// TODO Sound1ChList_sub_407A50(0x1A214010);
 }
 
-void Module2300::createScene2301(int which) {
-	_vm->gameState().sceneNum = 0;
-	createNavigationScene(0x004B67B8, which);
-	SetUpdateHandler(&Module2300::updateScene2301);
-}
-			
-void Module2300::createScene2302(int which) {
-	_vm->gameState().sceneNum = 1;
-	createNavigationScene(0x004B67E8, which);
-	SetUpdateHandler(&Module2300::updateScene2302);
-	if (_flag) {
-		_volume = 15;
-		// TODO Sound1ChList_setVolume(0x90F0D1C3, 15);
-	}
-}
-
-void Module2300::createScene2303(int which) {
-	_vm->gameState().sceneNum = 2;
-	createNavigationScene(0x004B6878, which);
-	SetUpdateHandler(&Module2300::updateScene2303);
-}
-
-void Module2300::createScene2304(int which) {
-	_vm->gameState().sceneNum = 3;
-	if (getGlobalVar(0x10938830)) {
-		createNavigationScene(0x004B68F0, which);
-	} else {
-		// TODO Sound1ChList_setVolume(0x90F0D1C3, _volume);
-		createNavigationScene(0x004B68A8, which);
+void Module2300::createScene(int sceneNum, int which) {
+	debug("Module2300::createScene(%d, %d)", sceneNum, which);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		createNavigationScene(0x004B67B8, which);
+		break;
+	case 1:
+		createNavigationScene(0x004B67E8, which);
 		if (_flag) {
-			_volume = 87;
-			// TODO Sound1ChList_setVolume(0x90F0D1C3, 87);
+			_volume = 15;
+			// TODO Sound1ChList_setVolume(0x90F0D1C3, 15);
 		}
-	}
-	SetUpdateHandler(&Module2300::updateScene2304);
-}
-
-void Module2300::createScene2305(int which) {
-	_vm->gameState().sceneNum = 4;
-	// TODO Sound1ChList_sub_4080B0(true);
-	createSmackerScene(0x20080A0B, true, true, false);
-	SetUpdateHandler(&Module2300::updateScene2305);
-}
-
-void Module2300::updateScene2301() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2302(4);
-			_childObject->handleUpdate();
+		break;
+	case 2:
+		createNavigationScene(0x004B6878, which);
+		break;
+	case 3:
+		if (getGlobalVar(0x10938830)) {
+			createNavigationScene(0x004B68F0, which);
 		} else {
-			sendMessage(_parentModule, 0x1009, 0);
+			// TODO Sound1ChList_setVolume(0x90F0D1C3, _volume);
+			createNavigationScene(0x004B68A8, which);
+			if (_flag) {
+				_volume = 87;
+				// TODO Sound1ChList_setVolume(0x90F0D1C3, 87);
+			}
 		}
+		break;
+	case 4:
+		// TODO Sound1ChList_sub_4080B0(true);
+		createSmackerScene(0x20080A0B, true, true, false);
+		break;
 	}
+	SetUpdateHandler(&Module2300::updateScene);
+	_childObject->handleUpdate();
 }
 
-void Module2300::updateScene2302() {
+void Module2300::updateScene() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			createScene2301(0);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 2) {
-			createScene2303(1);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 3) {
-			createScene2302(3);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 4) {
-			createScene2304(1);
-			_childObject->handleUpdate();
-		} else if (_moduleResult == 5) {
-			sendMessage(_parentModule, 0x1009, 3);
-		} else {
-			sendMessage(_parentModule, 0x1009, 4);
+		switch (_vm->gameState().sceneNum) {
+		case 0:
+			if (_moduleResult == 1) {
+				createScene(1, 4);
+			} else {
+				sendMessage(_parentModule, 0x1009, 0);
+			}
+			break;
+		case 1:
+			if (_moduleResult == 1) {
+				createScene(0, 0);
+			} else if (_moduleResult == 2) {
+				createScene(2, 1);
+			} else if (_moduleResult == 3) {
+				createScene(1, 3);
+			} else if (_moduleResult == 4) {
+				createScene(3, 1);
+			} else if (_moduleResult == 5) {
+				sendMessage(_parentModule, 0x1009, 3);
+			} else {
+				sendMessage(_parentModule, 0x1009, 4);
+			}
+			break;
+		case 2:
+			if (_moduleResult == 1) {
+				sendMessage(_parentModule, 0x1009, 3);
+			} else {
+				createScene(1, 5);
+			}
+			break;
+		case 3:
+			if (_moduleResult == 1) {
+				sendMessage(_parentModule, 0x1009, 2);
+			} else {
+				createScene(1, 1);
+			}
+			break;
+		case 4:
+			// TODO Sound1ChList_sub_4080B0(false);
+			createScene(1, 2);
+			break;
 		}
 	} else {
+		switch (_vm->gameState().sceneNum) {
+		case 1:
 #if 0 // TODO
-		NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-		if (_flag && navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 4 && 
-			navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-			_volume++;
-			Sound1ChList_setVolume(0x90F0D1C3, _volume);
-		}
+			NavigationScene *navigationScene = (NavigationScene*)_childObject; 
+			if (_flag && navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 4 && 
+				navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
+				_volume++;
+				Sound1ChList_setVolume(0x90F0D1C3, _volume);
+			}
 #endif
 #if 0 // TODO
-		if (navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 0 && 
-			navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() == 50) {
-			Sound1ChList_sub_407C70(0x1A214010, 0x48498E46, 0x50399F64);
-			Sound1ChList_setVolume(0x48498E46, 70);
-			Sound1ChList_setVolume(0x50399F64, 70);
-		}
+			if (navigationScene->getSoundFlag1() && navigationScene->getNavigationIndex() == 0 && 
+				navigationScene->getSmackerPlayer() && navigationScene->getSmackerPlayer()->getFrameNumber() == 50) {
+				Sound1ChList_sub_407C70(0x1A214010, 0x48498E46, 0x50399F64);
+				Sound1ChList_setVolume(0x48498E46, 70);
+				Sound1ChList_setVolume(0x50399F64, 70);
+			}
 #endif
-	}
-}
-			
-void Module2300::updateScene2303() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			sendMessage(_parentModule, 0x1009, 3);
-		} else {
-			createScene2302(5);
-			_childObject->handleUpdate();
-		}
-	}
-}
-			
-void Module2300::updateScene2304() {
-	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			sendMessage(_parentModule, 0x1009, 2);
-		} else {
-			createScene2302(1);
-			_childObject->handleUpdate();
-		}
-	} else {
+			break;
+		case 3:
 #if 0 // TODO
-		NavigationScene *navigationScene = (NavigationScene*)_childObject; 
-		if (_flag && navigationScene->getSoundFlag1() && navigationScene->getSmackerPlayer() && 
-			navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
-			_volume--;
-			Sound1ChList_setVolume(0x90F0D1C3, _volume);
-		}
+			NavigationScene *navigationScene = (NavigationScene*)_childObject; 
+			if (_flag && navigationScene->getSoundFlag1() && navigationScene->getSmackerPlayer() && 
+				navigationScene->getSmackerPlayer()->getFrameNumber() % 2) {
+				_volume--;
+				Sound1ChList_setVolume(0x90F0D1C3, _volume);
+			}
 #endif
-	}
-}
-			
-void Module2300::updateScene2305() {
-	if (!updateChild()) {
-		// TODO Sound1ChList_sub_4080B0(false);
-		createScene2302(2);
-		_childObject->handleUpdate();
+			break;
+		}
 	}
 }
 			

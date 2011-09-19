@@ -28,7 +28,7 @@ namespace Neverhood {
 
 Module::Module(NeverhoodEngine *vm, Module *parentModule)
 	: Entity(vm, 0), _parentModule(parentModule), _childObject(NULL),
-	_done(false) {
+	_done(false), _sceneType(kSceneTypeNormal) {
 	
 	SetMessageHandler(&Module::handleMessage);
 	
@@ -71,11 +71,13 @@ NavigationScene *Module::navigationScene() {
 }
 
 void Module::createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes) {
+	_sceneType = kSceneTypeNavigation;
 	_childObject = new NavigationScene(_vm, this, navigationListId, navigationIndex, itemsTypes);
 }
 
 void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort) {
 	SmackerScene *smackerScene;
+	_sceneType = kSceneTypeSmacker;
 	smackerScene = new SmackerScene(_vm, this, doubleSurface, flag1, canAbort);
 	smackerScene->setFileHash(fileHash);
 	smackerScene->nextVideo();
@@ -87,8 +89,12 @@ bool Module::updateChild() {
 		_childObject->handleUpdate();
 		if (_done) {
 			_done = false;
+			// Save the last area type if it's a NavigationScene for further processing
+			if (_sceneType == kSceneTypeNavigation)
+				_navigationAreaType = navigationScene()->getNavigationAreaType();
 			delete _childObject;
 			_childObject = NULL;
+			_sceneType = kSceneTypeNormal;
 			return false;
 		}
 	}

@@ -27,43 +27,51 @@ namespace Neverhood {
 Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which, bool flag)
 	: Module(vm, parentModule), _flag(flag) {
 	
-	debug("Create Module1500(%d)", which);
-
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		case 1:
-			createScene1502();
-			break;
-		case 2:
-			createScene1503();
-			break;
-		case 3:
-			createScene1504();
-			break;
-		default:
-			createScene1501();			
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else {
-		createScene1504();
+		createScene(3, -1);
 	}
 
 }
 
-void Module1500::update() {
+void Module1500::createScene(int sceneNum, int which) {
+	debug("Module1500::createScene(%d, %d)", sceneNum, which);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		_childObject = new Scene1501(_vm, this, 0x8420221D, 0xA61024C4, 150, 48);
+		break;
+	case 1:
+		_childObject = new Scene1501(_vm, this, 0x30050A0A, 0x58B45E58, 110, 48);
+		break;
+	case 2:
+		sendMessage(_parentModule, 0x0800, 0);
+		createSmackerScene(0x001A0005, true, true, true);
+		break;
+	case 3:
+		_childObject = new Scene1501(_vm, this, 0x0CA04202, 0, 110, 48);
+		break;
+	}
+	SetUpdateHandler(&Module1500::updateScene);
+	_childObject->handleUpdate();
+}
+
+void Module1500::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			createScene1502();
+			createScene(1, -1);
 			break;
 		case 1:
 			if (_flag) {
-				createScene1503();
+				createScene(2, -1);
 			} else {
 				sendMessage(_parentModule, 0x1009, 0);
 			}
 			break;
 		case 3:
-			createScene1501();
+			createScene(0, -1);
 			break;
 		default:
 			sendMessage(_parentModule, 0x1009, 0);
@@ -72,40 +80,12 @@ void Module1500::update() {
 	}
 }
 
-void Module1500::createScene1501() {
-	_vm->gameState().sceneNum = 0;
-	_childObject = new Scene1501(_vm, this, 0x8420221D, 0xA61024C4, 150, 48);
-	SetUpdateHandler(&Module1500::update);
-}
-			
-void Module1500::createScene1502() {
-	debug("createScene1502");
-	_vm->gameState().sceneNum = 1;
-	_childObject = new Scene1501(_vm, this, 0x30050A0A, 0x58B45E58, 110, 48);
-	SetUpdateHandler(&Module1500::update);
-}
-
-void Module1500::createScene1503() {
-	sendMessage(_parentModule, 0x0800, 0);
-	_vm->gameState().sceneNum = 2;
-	createSmackerScene(0x001A0005, true, true, true);
-	SetUpdateHandler(&Module1500::update);
-}
-
-void Module1500::createScene1504() {
-	_vm->gameState().sceneNum = 3;
-	_childObject = new Scene1501(_vm, this, 0x0CA04202, 0, 110, 48);
-	SetUpdateHandler(&Module1500::update);
-}
-
 // Scene1501
 
 Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 soundFileHash, int countdown2, int countdown3)
 	: Scene(vm, parentModule, true), _soundResource(vm), 
 	_countdown3(countdown3), _countdown2(countdown2), _countdown1(0), _flag(false) {
 
-	debug("Create Scene1501(%08X, %08X, %d, %d)", backgroundFileHash, soundFileHash, countdown2, countdown3);
-	
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
 	

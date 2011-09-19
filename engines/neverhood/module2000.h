@@ -36,12 +36,8 @@ public:
 	virtual ~Module2000();
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createScene2001(int which);
-	void createScene2002(int which);
-	void createScene2003(int which);
-	void updateScene2001();			
-	void updateScene2002();			
-	void updateScene2003();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene2001

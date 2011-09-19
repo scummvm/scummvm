@@ -37,30 +37,8 @@ public:
 protected:
 	int _soundVolume;
 	bool _flag;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createScene3002(int which);
-	void createScene3002b(int which);
-	void createScene3003(int which);
-	void createScene3004(int which);
-	void createScene3005(int which);
-	void createScene3006(int which);
-	void createScene3007(int which);
-	void createScene3008(int which);
-	void createScene3009(int which);
-	void createScene3010(int which);
-	void createScene3011(int which);
-	void createScene3012(int which);
-	void createScene3013(int which);
-	void updateScene3002();			
-	void updateScene3002b();			
-	void updateScene3003();			
-	void updateScene3004();			
-	void updateScene3005();			
-	void updateScene3006();			
-	void updateScene3007();			
-	void updateScene3009();			
-	void updateScene3010();			
-	void updateScene3011();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene3009

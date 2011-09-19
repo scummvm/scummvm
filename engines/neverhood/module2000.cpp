@@ -29,24 +29,12 @@ namespace Neverhood {
 Module2000::Module2000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	debug("Create Module2000(%d)", which);
-
 	if (which < 0) {
-		switch (_vm->gameState().sceneNum) {
-		case 0:
-			createScene2001(-1);
-			break;
-		case 2:
-			createScene2003(-1);
-			break;
-		default:
-			createScene2002(-1);
-			break;
-		}
+		createScene(_vm->gameState().sceneNum, -1);
 	} else if (which == 0) {
-		createScene2001(3);
+		createScene(0, 3);
 	} else if (which == 1) {
-		createScene2001(1);
+		createScene(0, 1);
 	}
 
 }
@@ -55,62 +43,53 @@ Module2000::~Module2000() {
 	// TODO Sound1ChList_sub_407A50(0x81293110);
 }
 
-void Module2000::createScene2001(int which) {
-	_vm->gameState().sceneNum = 0;
-	_childObject = new Scene2001(_vm, this, which);
-	SetUpdateHandler(&Module2000::updateScene2001);
-	_childObject->handleUpdate();
-}
-
-void Module2000::createScene2002(int which) {
-	_vm->gameState().sceneNum = 1;
-	if (getGlobalVar(0x98109F12)) {
-		createNavigationScene(0x004B7B48, which);
-	} else {
-		createNavigationScene(0x004B7B00, which);
+void Module2000::createScene(int sceneNum, int which) {
+	debug("Module2000::createScene(%d, %d)", sceneNum, which);
+	_vm->gameState().sceneNum = sceneNum;
+	switch (_vm->gameState().sceneNum) {
+	case 0:
+		_childObject = new Scene2001(_vm, this, which);
+		break;
+	case 1:
+		createNavigationScene(getGlobalVar(0x98109F12) ? 0x004B7B48 : 0x004B7B00, which);
+		break;
+	case 2:
+		setGlobalVar(0x98109F12, 1);
+		setSubVar(0x2C145A98, 1, 1);
+		createSmackerScene(0x204B2031, true, true, false);
+		break;
 	}
-	SetUpdateHandler(&Module2000::updateScene2002);
+	SetUpdateHandler(&Module2000::updateScene);
 	_childObject->handleUpdate();
 }
 
-void Module2000::createScene2003(int which) {
-	_vm->gameState().sceneNum = 2;
-	setGlobalVar(0x98109F12, 1);
-	setSubVar(0x2C145A98, 1, 1);
-	createSmackerScene(0x204B2031, true, true, false);
-	SetUpdateHandler(&Module2000::updateScene2003);
-	_childObject->handleUpdate();
-}
-
-void Module2000::updateScene2001() {
+void Module2000::updateScene() {
 	if (!updateChild()) {
-		if (_moduleResult == 1) {
-			sendMessage(_parentModule, 0x1009, 0);
-		} else {
-			createScene2002(0);
-		}
-	}
-}
-
-void Module2000::updateScene2002() {
-	if (!updateChild()) {
-		if (_moduleResult == 0) {
-			if (getGlobalVar(0x98109F12)) {
-				createScene2002(0);
+		switch (_vm->gameState().sceneNum) {
+		case 0:
+			if (_moduleResult == 1) {
+				sendMessage(_parentModule, 0x1009, 0);
 			} else {
-				createScene2003(-1);
+				createScene(1, 0);
 			}
-		} else if (_moduleResult == 1) {
-			createScene2002(1);
-		} else if (_moduleResult == 2) {
-			createScene2001(0);
+			break;
+		case 1:
+			if (_moduleResult == 0) {
+				if (getGlobalVar(0x98109F12)) {
+					createScene(1, 0);
+				} else {
+					createScene(2, -1);
+				}
+			} else if (_moduleResult == 1) {
+				createScene(1, 1);
+			} else if (_moduleResult == 2) {
+				createScene(0, 0);
+			}
+			break;
+		case 2:
+			createScene(1, 0);
+			break;
 		}
-	}
-}
-
-void Module2000::updateScene2003() {
-	if (!updateChild()) {
-		createScene2002(0);
 	}
 }
 

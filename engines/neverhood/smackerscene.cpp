@@ -81,9 +81,7 @@ void SmackerScene::nextVideo() {
 			setSubVar(0x00800410, smackerFileHash, 1);
 		}
 		if (_fileHashListIndex == 0) {
-			_smackerPlayer = new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false);
-			addEntity(_smackerPlayer);
-			addSurface(_smackerPlayer->getSurface());
+			_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, smackerFileHash, _doubleSurface, false));
 			// TODO? Screen.hSmack = _smackerPlayer;
 		} else {
 			_smackerPlayer->open(smackerFileHash, false);
