@@ -195,10 +195,7 @@ void GraphicsManager::invalRect(const Common::Rect &rect) {
 		_dirtyRect = rect;
 	} else {
 		// Expand our dirty rect to include rect
-		_dirtyRect.left = MIN<int>(_dirtyRect.left, rect.left);
-		_dirtyRect.top = MIN<int>(_dirtyRect.top, rect.top);
-		_dirtyRect.right = MAX<int>(_dirtyRect.right, rect.right);
-		_dirtyRect.bottom = MAX<int>(_dirtyRect.bottom, rect.bottom);
+		_dirtyRect.extend(rect);
 	}
 }
 

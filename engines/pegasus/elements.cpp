@@ -28,6 +28,7 @@
 
 #include "pegasus/elements.h"
 #include "pegasus/graphics.h"
+#include "pegasus/surface.h"
 
 namespace Pegasus {
 
@@ -70,7 +71,10 @@ void DisplayElement::stopDisplaying() {
 }
 
 void DisplayElement::setBounds(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
-	_bounds = Common::Rect(left, top, right, bottom);
+	_bounds.left = left;
+	_bounds.top = top;
+	_bounds.right = right;
+	_bounds.bottom = bottom;
 }
 
 void DisplayElement::getBounds(Common::Rect &r) const {
@@ -352,6 +356,172 @@ void FrameSequence::setFrameNum(const int16 frameNum) {
 
 bool FrameSequence::isSequenceOpen() const {
 	return _numFrames != 0;
+}
+
+Sprite::Sprite(const tDisplayElementID id) : DisplayElement(id) {
+	_numFrames = 0;
+	_currentFrameNum = 0xffffffff;
+	_currentFrame = 0;
+}
+
+Sprite::~Sprite() {
+	discardFrames();
+}
+
+void Sprite::discardFrames() {
+	if (!_frameArray.empty()) {
+		for (uint32 i = 0; i < _numFrames; i++) {
+			SpriteFrame *frame = _frameArray[i].frame;
+			frame->_referenceCount--;
+			if (frame->_referenceCount == 0)
+				delete frame;
+		}
+
+		_frameArray.clear();
+		_numFrames = 0;
+		_currentFrame = 0;
+		_currentFrameNum = 0xffffffff;
+		setBounds(0, 0, 0, 0);
+	}
+}
+
+void Sprite::addPICTResourceFrame(const tResIDType pictID, bool transparent, const tCoordType left, const tCoordType top) {
+	SpriteFrame *frame = new SpriteFrame();
+	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, pictID, transparent);
+	addFrame(frame, left, top);
+}
+
+uint32 Sprite::addFrame(SpriteFrame *frame, const tCoordType left, const tCoordType top) {
+	SpriteFrameRec frameRecord;
+	frameRecord.frame = frame;
+	frameRecord.frameLeft = left;
+	frameRecord.frameTop = top;
+	_frameArray.push_back(frameRecord);
+	_numFrames++;
+	frame->_referenceCount++;
+
+	Common::Rect frameBounds;
+	frame->getSurfaceBounds(frameBounds);
+
+	// 9/3/96
+	// BB Should this be + left or - left?
+	frameBounds.moveTo(_bounds.left + left, _bounds.top + top);
+
+	frameBounds.extend(_bounds);
+
+	if (_bounds != frameBounds)
+		setBounds(frameBounds);
+
+	return _numFrames - 1;
+}
+
+void Sprite::removeFrame(const uint32 frameNum) {
+	_frameArray[frameNum].frame->_referenceCount--;
+	if (_frameArray[frameNum].frame->_referenceCount == 0)
+		delete _frameArray[frameNum].frame;
+
+	// Calculate the new bounds
+	Common::Rect frameBounds;
+	for (uint32 i = 0; i < _numFrames; i++) {
+		if (i == frameNum)
+			continue;
+
+		Common::Rect r;
+		_frameArray[i].frame->getSurfaceBounds(r);
+		r.translate(_frameArray[i].frameLeft, _frameArray[i].frameTop);
+		frameBounds.extend(r);
+	}
+
+	_frameArray.remove_at(frameNum);
+
+	frameBounds.moveTo(_bounds.left, _bounds.top);
+	setBounds(frameBounds);
+
+	if (_currentFrameNum == frameNum)
+		triggerRedraw();
+	else if (_currentFrameNum != 0xffffffff && _currentFrameNum > frameNum)
+		--_currentFrameNum;
+}
+
+void Sprite::setCurrentFrameIndex(const int32 frameNum) {	
+	if (frameNum < 0) {
+		if (_currentFrameNum != 0xffffffff) {
+			_currentFrameNum = 0xffffffff;
+			_currentFrame = 0;
+			triggerRedraw();
+		}
+	} else if (_numFrames > 0) {
+		uint32 f = frameNum % _numFrames;
+		if (f != _currentFrameNum) {
+			_currentFrameNum = f;
+			_currentFrame = &_frameArray[f];
+			triggerRedraw();
+		}
+	}
+}
+
+SpriteFrame *Sprite::getFrame(const int32 index) {
+	if (index < 0 || (uint32)index >= _numFrames)
+		return 0;
+
+	return _frameArray[index].frame;
+}
+
+void Sprite::draw(const Common::Rect &r) {
+	if (_currentFrame) {
+		Common::Rect frameBounds;
+		_currentFrame->frame->getSurfaceBounds(frameBounds);
+
+		frameBounds.translate(_bounds.left + _currentFrame->frameLeft, _bounds.top + _currentFrame->frameTop);
+		Common::Rect r1 = frameBounds.findIntersectingRect(r);
+
+		Common::Rect r2 = frameBounds;
+		r2.translate(frameBounds.left - _bounds.left - _currentFrame->frameLeft, frameBounds.top - _bounds.top - _currentFrame->frameTop);
+
+		_currentFrame->frame->drawImage(r2, r1);
+	}
+}
+
+SpriteSequence::SpriteSequence(const tDisplayElementID id, const tDisplayElementID spriteID) :
+		FrameSequence(id), _sprite(spriteID), _transparent(false) {
+}
+
+void SpriteSequence::openFrameSequence() {	
+	if (!isSequenceOpen()) {
+		FrameSequence::openFrameSequence();
+
+		if (isSequenceOpen()) {
+			uint32 numFrames = getNumFrames();
+
+			for (uint32 i = 0; i < numFrames; ++i) {
+				SpriteFrame *frame = new SpriteFrame();
+				frame->initFromPICTResource(_resFork, i + 0x80, _transparent);
+				_sprite.addFrame(frame, 0, 0);
+			}
+
+			_sprite.setBounds(_bounds);
+		}
+	}
+}
+
+void SpriteSequence::closeFrameSequence() {
+	if (isSequenceOpen()) {
+		FrameSequence::closeFrameSequence();
+		_sprite.discardFrames();
+	}
+}
+
+void SpriteSequence::setBounds(const Common::Rect &bounds) {
+	FrameSequence::setBounds(bounds);
+	_sprite.setBounds(_bounds);
+}
+
+void SpriteSequence::draw(const Common::Rect &r) {
+	_sprite.draw(r);
+}
+
+void SpriteSequence::newFrame(const uint16 frame) {
+	_sprite.setCurrentFrameIndex(frame);
 }
 
 } // End of namespace Pegasus

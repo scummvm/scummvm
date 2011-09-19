@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	overview.o \
 	pegasus.o \
 	sound.o \
+	surface.o \
 	timers.o \
 	transition.o \
 	util.o \

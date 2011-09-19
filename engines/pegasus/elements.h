@@ -193,6 +193,66 @@ protected:
 	uint16 _currentFrameNum;
 };
 
+class SpriteFrame;
+
+class Sprite : public DisplayElement {
+friend class SpriteFrame;
+public:
+	Sprite(const tDisplayElementID);
+	virtual ~Sprite();
+
+	virtual void addPICTResourceFrame(const tResIDType, const bool, const tCoordType, const tCoordType);
+	virtual uint32 addFrame(SpriteFrame *, const tCoordType, const tCoordType);
+	virtual void removeFrame(const uint32);
+	virtual void discardFrames();
+	
+	// Setting the current frame.
+	// If the index is negative, sets the current frame to NULL and hides the sprite.
+	// If the index is larger than the number of frames in the sprite, the number
+	// is treated modulo the number of frames.
+	virtual void setCurrentFrameIndex(const int32);
+	virtual uint32 getCurrentFrameIndex() const { return _currentFrameNum; }
+	
+	virtual SpriteFrame *getFrame(const int32);
+	
+	virtual void draw(const Common::Rect &);
+	
+	uint32 getNumFrames() const { return _numFrames; }
+
+protected:
+	struct SpriteFrameRec {
+		SpriteFrame *frame;
+		tCoordType frameLeft;
+		tCoordType frameTop;
+	};
+
+	uint32 _numFrames;
+	uint32 _currentFrameNum;
+	SpriteFrameRec *_currentFrame;
+	Common::Array<SpriteFrameRec> _frameArray;
+};
+
+class SpriteSequence : public FrameSequence {
+public:
+	SpriteSequence(const tDisplayElementID id, const tDisplayElementID spriteID);
+	virtual ~SpriteSequence() {}
+
+	void useTransparent(bool transparent) { _transparent = transparent; }
+
+	virtual void openFrameSequence();
+	virtual void closeFrameSequence();
+
+	virtual void draw(const Common::Rect &);
+
+	virtual void setBounds(const Common::Rect &);
+
+protected:
+	virtual void newFrame(const uint16);
+
+	bool _transparent;
+	Sprite _sprite;
+};
+
 } // End of namespace Pegasus
 
 #endif
