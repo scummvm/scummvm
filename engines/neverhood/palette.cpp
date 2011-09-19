@@ -29,32 +29,28 @@ namespace Neverhood {
 // Palette
 
 Palette::Palette(NeverhoodEngine *vm) : Entity(vm, 0) {
-	_status = 0;
-	_palette = new byte[1024];
+	init();
 	memset(_palette, 0, 1024);
 	SetUpdateHandler(&Palette::update);
 }
 
 Palette::Palette(NeverhoodEngine *vm, byte *palette) : Entity(vm, 0) {
-	_status = 0;
-	_palette = new byte[1024];
+	init();
 	memcpy(_palette, palette, 1024);
 	SetUpdateHandler(&Palette::update);
 }
 
 Palette::Palette(NeverhoodEngine *vm, const char *filename) : Entity(vm, 0) {
 	PaletteResource paletteResource(_vm);
-	_status = 0;
-	_palette = new byte[1024];
-	// TODO: paletteResource.load(calcHash(filename));
-	// paletteResource.copyPalette(_palette);
+	init();
+	paletteResource.load(calcHash(filename));
+	paletteResource.copyPalette(_palette);
 	SetUpdateHandler(&Palette::update);
 }
 
 Palette::Palette(NeverhoodEngine *vm, uint32 fileHash) : Entity(vm, 0) {
 	PaletteResource paletteResource(_vm);
-	_status = 0;
-	_palette = new byte[1024];
+	init();
 	paletteResource.load(fileHash);
 	paletteResource.copyPalette(_palette);
 	SetUpdateHandler(&Palette::update);
@@ -63,6 +59,13 @@ Palette::Palette(NeverhoodEngine *vm, uint32 fileHash) : Entity(vm, 0) {
 Palette::~Palette() {
 	_vm->_screen->unsetPaletteData(_palette);
 	delete[] _palette;
+	delete[] _basePalette;
+}
+
+void Palette::init() {
+	_status = 0;
+	_palette = new byte[1024];
+	_basePalette = new byte[1024];
 }
 
 void Palette::usePalette() {
@@ -82,6 +85,14 @@ void Palette::addPalette(uint32 fileHash, int toIndex, int count, int fromIndex)
 	_vm->_screen->testPalette(_palette);
 }
 
+void Palette::addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
+	PaletteResource paletteResource(_vm);
+	if (toIndex + count > 256)
+		count = 256 - toIndex;
+	paletteResource.load(fileHash);
+	memcpy(_basePalette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
+}
+
 void Palette::copyPalette(const byte *palette, int toIndex, int count, int fromIndex) {
 	if (toIndex + count > 256)
 		count = 256 - toIndex;
@@ -89,8 +100,14 @@ void Palette::copyPalette(const byte *palette, int toIndex, int count, int fromI
 	_vm->_screen->testPalette(_palette);
 }
 
+void Palette::copyBasePalette(int toIndex, int count, int fromIndex) {
+	if (toIndex + count > 256)
+		count = 256 - toIndex;
+	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);		
+}
+
 void Palette::startFadeToBlack(int counter) {
-	debug("Palette::startFadeToBlack(%d)", counter);
+	debug(2, "Palette::startFadeToBlack(%d)", counter);
 	if (counter == 0)
 		counter = 1;
 	_fadeToR = 0;
@@ -102,7 +119,7 @@ void Palette::startFadeToBlack(int counter) {
 }
 
 void Palette::startFadeToWhite(int counter) {
-	debug("Palette::startFadeToWhite(%d)", counter);
+	debug(2, "Palette::startFadeToWhite(%d)", counter);
 	if (counter == 0)
 		counter = 1;
 	_fadeToR = 255;
@@ -111,6 +128,15 @@ void Palette::startFadeToWhite(int counter) {
 	_palCounter = counter;
 	_fadeStep = 255 / counter;
 	_status = 1;			
+}
+
+void Palette::startFadeToPalette(int counter) {
+	debug(2, "Palette::startFadeToPalette(%d)", counter);
+	if (counter == 0)
+		counter = 1;
+	_palCounter = counter;
+	_fadeStep = 255 / counter;
+	_status = 2;			
 }
 
 void Palette::update() {
@@ -126,39 +152,6 @@ void Palette::update() {
 			memset(_palette, 0, 1024);
 			_status = 0;
 		}
-	}
-}
-
-void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
-	#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
-	FADE(rgb[0], toR);
-	FADE(rgb[1], toG);
-	FADE(rgb[2], toB);
-	#undef FADE
-}
-
-// Palette2
-
-Palette2::Palette2(NeverhoodEngine *vm)
-	: Palette(vm) {
-	_basePalette = new byte[1024];
-	SetUpdateHandler(&Palette2::update);
-}
-
-Palette2::Palette2(NeverhoodEngine *vm, uint32 fileHash)
-	: Palette(vm, fileHash) {
-	_basePalette = new byte[1024];
-	SetUpdateHandler(&Palette2::update);
-}
-
-Palette2::~Palette2() {
-	delete _basePalette;
-}
-
-void Palette2::update() {
-	debug("Palette2::update() _status = %d", _status);
-	if (_status == 1) {
-		Palette::update();
 	} else if (_status == 2) {
 		if (_palCounter > 1) {
 			for (int i = 0; i < 256; i++) {
@@ -173,27 +166,12 @@ void Palette2::update() {
 	}
 }
 
-void Palette2::copyBasePalette(int toIndex, int count, int fromIndex) {
-	if (toIndex + count > 256)
-		count = 256 - toIndex;
-	memcpy(_basePalette + toIndex * 4, _palette + fromIndex * 4, count * 4);		
-}
-
-void Palette2::addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex) {
-	PaletteResource paletteResource(_vm);
-	if (toIndex + count > 256)
-		count = 256 - toIndex;
-	paletteResource.load(fileHash);
-	memcpy(_basePalette + toIndex * 4, paletteResource.palette() + fromIndex * 4, count * 4);		
-}
-
-void Palette2::startFadeToPalette(int counter) {
-	debug("Palette2::startFadeToPalette(%d)", counter);
-	if (counter == 0)
-		counter = 1;
-	_palCounter = counter;
-	_fadeStep = 255 / counter;
-	_status = 2;			
+void Palette::fadeColor(byte *rgb, byte toR, byte toG, byte toB) {
+	#define FADE(color, toColor) color += _fadeStep < toColor - color ? _fadeStep : (-_fadeStep <= toColor - color ? toColor - color : -_fadeStep)
+	FADE(rgb[0], toR);
+	FADE(rgb[1], toG);
+	FADE(rgb[2], toB);
+	#undef FADE
 }
 
 } // End of namespace Neverhood

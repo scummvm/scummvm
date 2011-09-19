@@ -1682,7 +1682,6 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _paletteAreaStatus(-1) {
 
-	Palette2 *palette2;
 	Sprite *tempSprite;
 	
 	_surfaceFlag = true;
@@ -1693,13 +1692,12 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	setBackground(0x50C03005);
 
 	if (getGlobalVar(0x0D0A14D10)) {
-		palette2 = new Palette2(_vm, 0xA30BA329);
-		palette2->addBasePalette(0xA30BA329, 0, 256, 0);
+		_palette = new Palette(_vm, 0xA30BA329);
+		_palette->addBasePalette(0xA30BA329, 0, 256, 0);
 	} else {
-		palette2 = new Palette2(_vm, 0x50C03005);
-		palette2->addBasePalette(0x50C03005, 0, 256, 0);
+		_palette = new Palette(_vm, 0x50C03005);
+		_palette->addBasePalette(0x50C03005, 0, 256, 0);
 	}
-	_palette = palette2;
 	_palette->usePalette();
 	addEntity(_palette);
 
@@ -1770,14 +1768,14 @@ void Scene1004::updatePaletteArea() {
 	if (_klayman->getY() < 150) {
 		if (_paletteAreaStatus != 0) {
 			_paletteAreaStatus = 0;
-			((Palette2*)_palette)->addBasePalette(0x406B0D10, 0, 64, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0x406B0D10, 0, 64, 0);
+			_palette->startFadeToPalette(12);
 		}
 	} else {
 		if (_paletteAreaStatus != 1) {
 			_paletteAreaStatus = 1;
-			((Palette2*)_palette)->addBasePalette(0x24332243, 0, 64, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0x24332243, 0, 64, 0);
+			_palette->startFadeToPalette(12);
 		}
 	}
 }

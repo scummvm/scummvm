@@ -1112,8 +1112,6 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource1(vm), _soundResource2(vm),
 	_isSolved(false), _leaveScene(false), _isTileMoving(false), _movingTileSprite(NULL), _doneMovingTileSprite(NULL) {
 
-	Palette2 *palette2;
-
 	// TODO initScene2201Vars();
 	SetMessageHandler(&Scene2202::handleMessage);
 	SetUpdateHandler(&Scene2202::update);
@@ -1121,10 +1119,9 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	_surfaceFlag = true;
 
 	setBackground(0x08100A0C);
-	palette2 = new Palette2(_vm, 0x08100A0C);
-	_palette = palette2;
+	_palette = new Palette(_vm, 0x08100A0C);
 	_palette->usePalette();
-	addEntity(palette2);
+	addEntity(_palette);
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x00A08089, 20, 620));
 
 	//DEBUG!
@@ -1506,8 +1503,6 @@ uint32 SsScene2205DoorFrame::handleMessage(int messageNum, const MessageParam &p
 Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 
-	Palette2 *palette2;
-	
 	SetMessageHandler(&Scene2205::handleMessage);
 	SetUpdateHandler(&Scene2205::update);
 	
@@ -1517,26 +1512,24 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (getGlobalVar(0x4D080E54)) {
 		_isLightOn = true;
 		setBackground(0x0008028D);
-		palette2 = new Palette2(_vm, 0x0008028D);
-		_palette = palette2;
+		_palette = new Palette(_vm, 0x0008028D);
 		_palette->usePalette();
-		addEntity(palette2);
+		addEntity(_palette);
 		_mouseCursor = addSprite(new Mouse433(_vm, 0x80289008, NULL));
 		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0x2D309030, 100, 0);
 		addSprite(_ssLightSwitch);
 	} else {
 		_isLightOn = false;
 		setBackground(0xD00A028D);
-		palette2 = new Palette2(_vm, 0xD00A028D);
-		_palette = palette2;
+		_palette = new Palette(_vm, 0xD00A028D);
 		_palette->usePalette();
-		addEntity(palette2);
+		addEntity(_palette);
 		_mouseCursor = addSprite(new Mouse433(_vm, 0xA0289D08, NULL));
 		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0xDAC86E84, 100, 0);
 		addSprite(_ssLightSwitch);
 	}
 
-	palette2->addBasePalette(0xD00A028D, 0, 256, 0);
+	_palette->addBasePalette(0xD00A028D, 0, 256, 0);
 	
 	_ssDoorFrame = addSprite(new SsScene2205DoorFrame(_vm));
 
@@ -1598,12 +1591,12 @@ void Scene2205::update() {
 
 	if (!getGlobalVar(0x4D080E54)) {
 		if (_isKlaymanInLight && _klayman->getX() > 85) {
-			((Palette2*)_palette)->addBasePalette(0x68033B1C, 0, 65, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0x68033B1C, 0, 65, 0);
+			_palette->startFadeToPalette(12);
 			_isKlaymanInLight = false;
 		} else if (!_isKlaymanInLight && _klayman->getX() <= 85) {
-			((Palette2*)_palette)->addBasePalette(0xD00A028D, 0, 65, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0xD00A028D, 0, 65, 0);
+			_palette->startFadeToPalette(12);
 			_isKlaymanInLight = true;
 		}
 	}
@@ -1772,7 +1765,6 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource(vm) {
 
 	uint32 fileHash;
-	Palette2 *palette2;
 	
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&Scene2206::handleMessage);
@@ -1817,12 +1809,11 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(fileHash);
 
-	palette2 = new Palette2(_vm, fileHash);
-	_palette = palette2;
+	_palette = new Palette(_vm, fileHash);
 	_palette->usePalette();
-	addEntity(palette2);
+	addEntity(_palette);
 
-	palette2->addBasePalette(fileHash, 0, 256, 0);
+	_palette->addBasePalette(fileHash, 0, 256, 0);
 
 	if (!getGlobalVar(0x4D080E54)) {
 		_palette->addPalette(0x0263D144, 0, 65, 0);
@@ -1904,8 +1895,8 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 
 void Scene2206::sub481950() {
 	if (getGlobalVar(0x4D080E54)) {
-		((Palette2*)_palette)->addBasePalette(0x41983216, 0, 65, 0);
-		((Palette2*)_palette)->startFadeToPalette(12);
+		_palette->addBasePalette(0x41983216, 0, 65, 0);
+		_palette->startFadeToPalette(12);
 	}
 	setSurfacePriority(_sprite1->getSurface(), 100);
 	setSurfacePriority(_sprite2->getSurface(), 300);
@@ -1919,8 +1910,8 @@ void Scene2206::sub481950() {
 
 void Scene2206::sub4819D0() {
 	if (!getGlobalVar(0x4D080E54)) {
-		((Palette2*)_palette)->addBasePalette(0xB103B604, 0, 65, 0);
-		((Palette2*)_palette)->startFadeToPalette(12);
+		_palette->addBasePalette(0xB103B604, 0, 65, 0);
+		_palette->startFadeToPalette(12);
 	}
 	setSurfacePriority(_sprite1->getSurface(), 1100);
 	setSurfacePriority(_sprite2->getSurface(), 1300);
@@ -2713,8 +2704,6 @@ static const uint32 kScene2242MessageListIds1[] = {
 Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _isKlaymanInLight(false) {
 
-	Palette2 *palette2;
-	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
@@ -2727,11 +2716,10 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B3DC8);
 	} else {
 		setBackground(0x25848E24);
-		palette2 = new Palette2(_vm, 0x25848E24);
-		_palette = palette2;
+		_palette = new Palette(_vm, 0x25848E24);
 		_palette->usePalette();
-		addEntity(palette2);
-		((Palette2*)_palette)->copyBasePalette(0, 256, 0);
+		addEntity(_palette);
+		_palette->copyBasePalette(0, 256, 0);
 		_palette->addPalette(0x68033B1C, 0, 65, 0);
 		_mouseCursor = addSprite(new Mouse433(_vm, 0x48E20250, NULL));
 		setRectList(0x004B3E18);
@@ -2767,12 +2755,12 @@ Scene2242::~Scene2242() {
 void Scene2242::update() {
 	if (!getGlobalVar(0x4D080E54)) {
 		if (_isKlaymanInLight && _klayman->getX() < 440) {
-			((Palette2*)_palette)->addBasePalette(0x68033B1C, 0, 65, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0x68033B1C, 0, 65, 0);
+			_palette->startFadeToPalette(12);
 			_isKlaymanInLight = false;
 		} else if (!_isKlaymanInLight && _klayman->getX() >= 440) {
-			((Palette2*)_palette)->addBasePalette(0x25848E24, 0, 65, 0);
-			((Palette2*)_palette)->startFadeToPalette(12);
+			_palette->addBasePalette(0x25848E24, 0, 65, 0);
+			_palette->startFadeToPalette(12);
 			_isKlaymanInLight = true;
 		}
 	}

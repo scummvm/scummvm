@@ -1668,8 +1668,6 @@ void AsScene3011Symbol::change(int index, bool flag) {
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _index2(0) {
 
-	Palette2 *palette2;
-	
 	_surfaceFlag = true;
 
 	// TODO _vm->gameModule()->initScene3011Vars();
@@ -1677,10 +1675,9 @@ Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x92124A04);
 
-	palette2 = new Palette2(_vm, 0xA4070114);
-	addEntity(palette2);
-	palette2->usePalette();
-	_palette = palette2;
+	_palette = new Palette(_vm, 0xA4070114);
+	_palette->usePalette();
+	addEntity(_palette);
 
 	_mouseCursor = addSprite(new Mouse435(_vm, 0x24A00929, 20, 620));
 
@@ -1761,15 +1758,13 @@ uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene3011::fadeIn() {
-	Palette2 *palette2 = (Palette2*)_palette;
-	palette2->addBasePalette(0x92124A04, 0, 256, 0);
-	palette2->startFadeToPalette(24);
+	_palette->addBasePalette(0x92124A04, 0, 256, 0);
+	_palette->startFadeToPalette(24);
 }
 
 void Scene3011::fadeOut() {
-	Palette2 *palette2 = (Palette2*)_palette;
-	palette2->addBasePalette(0xA4070114, 0, 256, 0);
-	palette2->startFadeToPalette(24);
+	_palette->addBasePalette(0xA4070114, 0, 256, 0);
+	_palette->startFadeToPalette(24);
 }
 
 } // End of namespace Neverhood

@@ -106,8 +106,6 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 
 	debug("Create Scene1501(%08X, %08X, %d, %d)", backgroundFileHash, soundFileHash, countdown2, countdown3);
 	
-	Palette2 *palette2;
-
 	SetUpdateHandler(&Scene1501::update);
 	SetMessageHandler(&Scene1501::handleMessage);
 	
@@ -115,12 +113,11 @@ Scene1501::Scene1501(NeverhoodEngine *vm, Module *parentModule, uint32 backgroun
 
 	setBackground(backgroundFileHash);
 
-	palette2 = new Palette2(_vm);
-	palette2->usePalette();
-	_palette = palette2; 
+	_palette = new Palette(_vm);
+	_palette->usePalette();
 	addEntity(_palette);
-	palette2->addBasePalette(backgroundFileHash, 0, 256, 0);
-	palette2->startFadeToPalette(12);
+	_palette->addBasePalette(backgroundFileHash, 0, 256, 0);
+	_palette->startFadeToPalette(12);
 
 	/*	
 	if (soundFileHash != 0) {

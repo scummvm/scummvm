@@ -39,34 +39,25 @@ public:
 	// Create from resource with fileHash
 	Palette(NeverhoodEngine *vm, uint32 fileHash);
 	virtual ~Palette();
+	void init();
 	void usePalette();
 	void addPalette(const char *filename, int toIndex, int count, int fromIndex);
 	void addPalette(uint32 fileHash, int toIndex, int count, int fromIndex);
+	void addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex);
 	void copyPalette(const byte *palette, int toIndex, int count, int fromIndex);
+	void copyBasePalette(int toIndex, int count, int fromIndex);
 	void startFadeToBlack(int counter);
 	void startFadeToWhite(int counter);
+	void startFadeToPalette(int counter);
 protected:
 	int _status;
 	byte *_palette;
+	byte *_basePalette;
 	int _palCounter;
 	byte _fadeToR, _fadeToG, _fadeToB;
 	int _fadeStep;
 	void update();
 	void fadeColor(byte *rgb, byte toR, byte toG, byte toB);
-};
-
-class Palette2 : public Palette {
-public:
-	Palette2(NeverhoodEngine *vm);
-	// TODO: Other ctors
-	Palette2(NeverhoodEngine *vm, uint32 fileHash);
-	virtual ~Palette2();
-	void copyBasePalette(int toIndex, int count, int fromIndex);
-	void addBasePalette(uint32 fileHash, int toIndex, int count, int fromIndex);
-	void startFadeToPalette(int counter);
-public:
-	byte *_basePalette;
-	void update();
 };
 
 } // End of namespace Neverhood

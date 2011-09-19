@@ -1154,8 +1154,6 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 	_soundResource2(vm), _soundResource3(vm), _soundResource4(vm),
 	_flag(true), _soundFlag(false), _counter(0), _index(-1) {
 
-	Palette2 *palette2;
-
 	SetMessageHandler(&Scene1202::handleMessage453C10);
 	SetUpdateHandler(&Scene1202::update);
 
@@ -1163,9 +1161,8 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	setBackground(0x60210ED5);
 
-	palette2 = new Palette2(_vm, 0x60210ED5);
-	palette2->usePalette();
-	_palette = palette2;
+	_palette = new Palette(_vm, 0x60210ED5);
+	_palette->usePalette();
 	addEntity(_palette);
 
 	_paletteResource.load(0x60250EB5);
