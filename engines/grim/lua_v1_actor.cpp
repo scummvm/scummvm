@@ -25,7 +25,7 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/costume.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/model.h"
 #include "engines/grim/gfx_base.h"
 
@@ -1243,7 +1243,7 @@ void L1_WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Math::Vector3d cameraVector = g_grim->getCurrScene()->getCurrSetup()->_interest - g_grim->getCurrScene()->getCurrSetup()->_pos;
+	Math::Vector3d cameraVector = g_grim->getCurrSet()->getCurrSetup()->_interest - g_grim->getCurrSet()->getCurrSetup()->_pos;
 	// find the angle the camera direction is around the unit circle
 	Math::Angle cameraYaw = cameraVector.unitCircleAngle();
 
@@ -1344,7 +1344,7 @@ void L1_PutActorAtInterest() {
 		return;
 
 	Actor *actor = getactor(actorObj);
-	Scene *scene = g_grim->getCurrScene();
+	Set *scene = g_grim->getCurrSet();
 	if (!scene)
 		return;
 
@@ -1421,7 +1421,7 @@ void L1_GetVisibleThings() {
 	// TODO verify code below
 	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 		Actor *a = i->_value;
-		if (!i->_value->isInSet(g_grim->getSceneName()))
+		if (!i->_value->isInSet(g_grim->getSetName()))
 			continue;
 		// Consider the active actor visible
 		if (actor == a || actor->getYawTo(*a) < 90) {

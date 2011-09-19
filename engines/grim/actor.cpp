@@ -41,7 +41,7 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
@@ -241,7 +241,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeVector3d(shadow.pos);
 
 		savedState->writeLESint32(shadow.planeList.size());
-		// Cannot use g_grim->getCurrScene() here because an actor can have walk planes
+		// Cannot use g_grim->getCurrSet() here because an actor can have walk planes
 		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
 		// Naranja is dead.
 		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
@@ -394,12 +394,12 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		size = savedState->readLESint32();
 		shadow.planeList.clear();
-		Scene *scene = NULL;
+		Set *scene = NULL;
 		for (int j = 0; j < size; ++j) {
 			Common::String setName = savedState->readString();
 			Common::String secName = savedState->readString();
 			if (!scene || scene->getName() != setName) {
-				scene = g_grim->findScene(setName);
+				scene = g_grim->findSet(setName);
 			}
 			if (scene) {
 				addShadowPlane(secName.c_str(), scene, i);
@@ -458,7 +458,7 @@ void Actor::setPos(Math::Vector3d position) {
 	// This is necessary after solving the tree pump puzzle, when the bone
 	// wagon returns to the signopost set.
 	if (_constrain && !_walking) {
-		g_grim->getCurrScene()->findClosestSector(_pos, NULL, &_pos);
+		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 }
 
@@ -481,7 +481,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 		_path.clear();
 
 		if (_constrain) {
-			g_grim->getCurrScene()->findClosestSector(p, NULL, &_destPos);
+			g_grim->getCurrSet()->findClosestSector(p, NULL, &_destPos);
 
 			Common::List<PathNode *> openList;
 			Common::List<PathNode *> closedList;
@@ -492,11 +492,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			start->dist = 0.f;
 			start->cost = 0.f;
 			openList.push_back(start);
-			g_grim->getCurrScene()->findClosestSector(_pos, &start->sect, NULL);
+			g_grim->getCurrSet()->findClosestSector(_pos, &start->sect, NULL);
 
 			Common::List<Sector *> sectors;
-			for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
-				Sector *s = g_grim->getCurrScene()->getSectorBase(i);
+			for (int i = 0; i < g_grim->getCurrSet()->getSectorCount(); ++i) {
+				Sector *s = g_grim->getCurrSet()->getSectorBase(i);
 				int type = s->getType();
 				if ((type == Sector::WalkType || type == Sector::HotType || type == Sector::FunnelType) && s->isVisible()) {
 					sectors.push_back(s);
@@ -504,7 +504,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			}
 
 			Sector *endSec = NULL;
-			g_grim->getCurrScene()->findClosestSector(_destPos, &endSec, NULL);
+			g_grim->getCurrSet()->findClosestSector(_destPos, &endSec, NULL);
 
 			do {
 				PathNode *node = NULL;
@@ -662,7 +662,7 @@ void Actor::walkForward() {
 	Sector *currSector = NULL, *prevSector = NULL;
 	Sector::ExitInfo ei;
 
-	g_grim->getCurrScene()->findClosestSector(_pos, &currSector, &_pos);
+	g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
 	if (!currSector) { // Shouldn't happen...
 		moveTo(_pos + forwardVec * dist);
 		_walkedCur = true;
@@ -687,7 +687,7 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_grim->getCurrScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
+		currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
 		if (currSector == prevSector)
 			break;
 	}
@@ -711,7 +711,7 @@ void Actor::walkForward() {
 Math::Vector3d Actor::getPuckVector() const {
 	Math::Vector3d forwardVec(_yaw.getSine(), _yaw.getCosine(), 0);
 
-	Sector *sector = g_grim->getCurrScene()->findPointSector(_pos, Sector::WalkType);
+	Sector *sector = g_grim->getCurrSet()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
 		return forwardVec;
 	else
@@ -844,8 +844,8 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 	_talkSoundName = soundName;
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrScene()) {
-			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
+			g_grim->getCurrSet()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 	}
 
@@ -898,7 +898,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
-			if (_visible && isInSet(g_grim->getCurrScene()->getName())) {
+			if (_visible && isInSet(g_grim->getCurrSet()->getName())) {
 				_mustPlaceText = true;
 			} else {
 				_mustPlaceText = false;
@@ -1065,7 +1065,7 @@ void Actor::update(float frameTime) {
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_constrain && !_walking) {
-		g_grim->getCurrScene()->findClosestSector(_pos, NULL, &_pos);
+		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 
 	if (_turning) {
@@ -1314,13 +1314,13 @@ void Actor::setShadowPlane(const char *n) {
 	_shadowArray[_activeShadowSlot].name = n;
 }
 
-void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
+void Actor::addShadowPlane(const char *n, Set *scene, int shadowId) {
 	assert(shadowId != -1);
 
 	int numSectors = scene->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
-		// Create a copy so we are sure it will not be deleted by the Scene destructor
+		// Create a copy so we are sure it will not be deleted by the Set destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
@@ -1353,7 +1353,7 @@ bool Actor::shouldDrawShadow(int shadowId) {
 }
 
 void Actor::addShadowPlane(const char *n) {
-	addShadowPlane(n, g_grim->getCurrScene(), _activeShadowSlot);
+	addShadowPlane(n, g_grim->getCurrSet(), _activeShadowSlot);
 }
 
 void Actor::setActiveShadow(int shadowId) {

@@ -36,7 +36,7 @@ class Costume;
 class LipSync;
 class Font;
 class PoolColor;
-class Scene;
+class Set;
 
 struct Plane {
 	Common::String setName;
@@ -456,7 +456,7 @@ private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
-	void addShadowPlane(const char *n, Scene *scene, int shadowId);
+	void addShadowPlane(const char *n, Set *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();
 	bool stopMumbleChore();

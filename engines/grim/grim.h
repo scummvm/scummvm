@@ -41,7 +41,7 @@ class Bitmap;
 class Font;
 class Color;
 class ObjectState;
-class Scene;
+class Set;
 class TextObject;
 class PrimitiveObject;
 
@@ -128,13 +128,13 @@ public:
 	bool getControlState(int num);
 	void clearEventQueue();
 
-	Scene *findScene(const Common::String &name);
-	void setSceneLock(const char *name, bool lockStatus);
-	Scene *loadScene(const Common::String &name);
-	void setScene(const char *name);
-	void setScene(Scene *scene);
-	Scene *getCurrScene() { return _currScene; }
-	const Common::String &getSceneName() const;
+	Set *findSet(const Common::String &name);
+	void setSetLock(const char *name, bool lockStatus);
+	Set *loadSet(const Common::String &name);
+	void setSet(const char *name);
+	void setSet(Set *scene);
+	Set *getCurrSet() { return _currSet; }
+	const Common::String &getSetName() const;
 	void makeCurrentSetup(int num);
 
 	void flagRefreshShadowMask(bool flag) { _refreshShadowMask = flag; }
@@ -175,7 +175,7 @@ private:
 	Common::String _savegameFileName;
 	SaveGame *_savedState;
 
-	Scene *_currScene;
+	Set *_currSet;
 	int _mode, _previousMode;
 	SpeechMode _speechMode;
 	int _textSpeed;

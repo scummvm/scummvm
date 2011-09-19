@@ -63,7 +63,7 @@
 #include "engines/grim/font.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/objectstate.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/lua/lualib.h"
 
@@ -326,7 +326,7 @@ GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
+		Engine(syst), _currSet(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
 	_gameType = gameType;
@@ -353,7 +353,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_currScene = NULL;
+	_currSet = NULL;
 	_selectedActor = NULL;
 	_talkingActor = NULL;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
@@ -419,7 +419,7 @@ GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	Scene::getPool()->deleteObjects();
+	Set::getPool()->deleteObjects();
 	Actor::getPool()->deleteObjects();
 	PrimitiveObject::getPool()->deleteObjects();
 	TextObject::getPool()->deleteObjects();
@@ -898,7 +898,7 @@ void GrimEngine::luaUpdate() {
 	// Run asynchronous tasks
 	lua_runtasks();
 
-	if (_currScene && (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH)) {
+	if (_currSet && (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
@@ -907,7 +907,7 @@ void GrimEngine::luaUpdate() {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
-			if (a->isInSet(_currScene->getName()))
+			if (a->isInSet(_currSet->getName()))
 				a->update(_frameTime);
 		}
 
@@ -949,29 +949,29 @@ void GrimEngine::updateDisplayScene() {
 		}
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_NORMAL) {
-		if (!_currScene)
+		if (!_currSet)
 			return;
 
-		cameraPostChangeHandle(_currScene->getSetup());
+		cameraPostChangeHandle(_currSet->getSetup());
 
 		g_driver->clearScreen();
 
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 
-		_currScene->drawBackground();
+		_currSet->drawBackground();
 
 		// Draw underlying scene components
 		// Background objects are drawn underneath everything except the background
 		// There are a bunch of these, especially in the tube-switcher room
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
 
 		// Underlay objects are just above the background
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 
 		// State objects are drawn on top of other things, such as the flag
 		// on Manny's message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_STATE);
 
 		// Play SMUSH Animations
 		// This should occur on top of all underlying scene objects,
@@ -997,25 +997,25 @@ void GrimEngine::updateDisplayScene() {
 			i->_value->draw();
 		}
 
-		_currScene->setupCamera();
+		_currSet->setupCamera();
 
 		g_driver->set3DMode();
 
-		_currScene->setupLights();
+		_currSet->setupLights();
 
 		// Draw actors
 		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 			Actor *a = i->_value;
-			if (a->isInSet(_currScene->getName()) && a->isVisible())
+			if (a->isInSet(_currSet->getName()) && a->isVisible())
 				a->draw();
-			a->undraw(a->isInSet(_currScene->getName()) && a->isVisible());
+			a->undraw(a->isInSet(_currSet->getName()) && a->isVisible());
 		}
 		flagRefreshShadowMask(false);
 
 		// Draw overlying scene components
 		// The overlay objects should be drawn on top of everything else,
 		// including 3D objects such as Manny and the message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
 	} else if (_mode == ENGINE_MODE_DRAW) {
@@ -1159,14 +1159,14 @@ void GrimEngine::savegameRestore() {
 
 	_selectedActor = NULL;
 	_talkingActor = NULL;
-	delete _currScene;
-	_currScene = NULL;
+	delete _currSet;
+	_currSet = NULL;
 
 	PoolColor::getPool()->restoreObjects(_savedState);
 	Bitmap::getPool()->restoreObjects(_savedState);
 	Font::getPool()->restoreObjects(_savedState);
 	ObjectState::getPool()->restoreObjects(_savedState);
-	Scene::getPool()->restoreObjects(_savedState);
+	Set::getPool()->restoreObjects(_savedState);
 	TextObject::getPool()->restoreObjects(_savedState);
 	PrimitiveObject::getPool()->restoreObjects(_savedState);
 	Actor::getPool()->restoreObjects(_savedState);
@@ -1226,8 +1226,8 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setY(_savedState->readLESint32());
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
 
-	// Scene stuff
-	_currScene = Scene::getPool()->getObject(_savedState->readLEUint32());
+	// Set stuff
+	_currSet = Set::getPool()->getObject(_savedState->readLEUint32());
 
 	_savedState->endSection();
 }
@@ -1287,7 +1287,7 @@ void GrimEngine::savegameSave() {
 	Bitmap::getPool()->saveObjects(_savedState);
 	Font::getPool()->saveObjects(_savedState);
 	ObjectState::getPool()->saveObjects(_savedState);
-	Scene::getPool()->saveObjects(_savedState);
+	Set::getPool()->saveObjects(_savedState);
 	TextObject::getPool()->saveObjects(_savedState);
 	PrimitiveObject::getPool()->saveObjects(_savedState);
 	Actor::getPool()->saveObjects(_savedState);
@@ -1335,8 +1335,8 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLESint32(_sayLineDefaults.getY());
 	_savedState->writeLESint32(_sayLineDefaults.getDuration());
 
-	//Scene stuff
-	_savedState->writeLEUint32(_currScene->getId());
+	//Set stuff
+	_savedState->writeLEUint32(_currSet->getId());
 
 	_savedState->endSection();
 }
@@ -1369,29 +1369,29 @@ void GrimEngine::savegameCallback() {
 	lua_endblock();
 }
 
-Scene *GrimEngine::findScene(const Common::String &name) {
+Set *GrimEngine::findSet(const Common::String &name) {
 	// Find scene object
-	for (Scene::Pool::Iterator i = Scene::getPool()->getBegin(); i != Scene::getPool()->getEnd(); ++i) {
+	for (Set::Pool::Iterator i = Set::getPool()->getBegin(); i != Set::getPool()->getEnd(); ++i) {
 		if (i->_value->getName() == name)
 			return i->_value;
 	}
 	return NULL;
 }
 
-void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
-	Scene *scene = findScene(name);
+void GrimEngine::setSetLock(const char *name, bool lockStatus) {
+	Set *scene = findSet(name);
 
 	if (!scene) {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Scene object '%s' not found in list", name);
+			warning("Set object '%s' not found in list", name);
 		return;
 	}
 	// Change the locking status
 	scene->_locked = lockStatus;
 }
 
-Scene *GrimEngine::loadScene(const Common::String &name) {
-	Scene *s = findScene(name);
+Set *GrimEngine::loadSet(const Common::String &name) {
+	Set *s = findSet(name);
 
 	if (!s) {
 		Common::String filename(name);
@@ -1402,19 +1402,19 @@ Scene *GrimEngine::loadScene(const Common::String &name) {
 		Block *b = g_resourceloader->getFileBlock(filename);
 		if (!b)
 			warning("Could not find scene file %s", name.c_str());
-		s = new Scene(name, b->getData(), b->getLen());
+		s = new Set(name, b->getData(), b->getLen());
 		delete b;
 	}
 
 	return s;
 }
 
-void GrimEngine::setScene(const char *name) {
-	setScene(loadScene(name));
+void GrimEngine::setSet(const char *name) {
+	setSet(loadSet(name));
 }
 
-void GrimEngine::setScene(Scene *scene) {
-	if (scene == _currScene)
+void GrimEngine::setSet(Set *scene) {
+	if (scene == _currSet)
 		return;
 
 	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
@@ -1425,22 +1425,22 @@ void GrimEngine::setScene(Scene *scene) {
 		a->stopWalking();
 	}
 
-	Scene *lastScene = _currScene;
-	_currScene = scene;
-	_currScene->setSoundParameters(20, 127);
-	_currScene->setLightsDirty();
+	Set *lastSet = _currSet;
+	_currSet = scene;
+	_currSet->setSoundParameters(20, 127);
+	_currSet->setLightsDirty();
 	// should delete the old scene after setting the new one
-	if (lastScene && !lastScene->_locked) {
-		delete lastScene;
+	if (lastSet && !lastSet->_locked) {
+		delete lastSet;
 	}
 	_shortFrame = true;
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
-	int prevSetup = g_grim->getCurrScene()->getSetup();
+	int prevSetup = g_grim->getCurrSet()->getSetup();
 	if (prevSetup != num) {
-		getCurrScene()->setSetup(num);
-		getCurrScene()->setSoundParameters(20, 127);
+		getCurrSet()->setSetup(num);
+		getCurrSet()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
 		// here should be set sound position
 	}
@@ -1474,8 +1474,8 @@ void GrimEngine::setTalkingActor(Actor *a) {
 	_talkingActor = a;
 }
 
-const Common::String &GrimEngine::getSceneName() const {
-	return _currScene->getName();
+const Common::String &GrimEngine::getSetName() const {
+	return _currSet->getName();
 }
 
 void GrimEngine::clearEventQueue() {

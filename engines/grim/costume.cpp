@@ -35,7 +35,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/objectstate.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/animation.h"
@@ -97,7 +97,7 @@ namespace Grim {
 // easier to move objects Manny is holding when his hands move, for
 // example.)
 //
-// For bitmaps, the actual drawing is handled by the Scene class.  The
+// For bitmaps, the actual drawing is handled by the Set class.  The
 // bitmaps to be drawn are associated to the needed camera setups
 // using NewObjectState; bitmaps marked OBJSTATE_UNDERLAY and
 // OBJSTATE_STATE are drawn first, then the 3D objects, then bitmaps
@@ -217,7 +217,7 @@ BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char
 
 void BitmapComponent::setKey(int val) {
 	const char *bitmap = _filename.c_str();
-	ObjectState *state = g_grim->getCurrScene()->findState(bitmap);
+	ObjectState *state = g_grim->getCurrSet()->findState(bitmap);
 
 	if (state) {
 		state->setActiveImage(val);
@@ -239,7 +239,7 @@ void BitmapComponent::setKey(int val) {
 			warning("Couldn't find bitmap %s in current scene", _filename.c_str());
 		return;
 	}
-	g_grim->getCurrScene()->addObjectState(state);
+	g_grim->getCurrSet()->addObjectState(state);
 	state->setNumber(val);
 */
 }
@@ -361,8 +361,8 @@ void ModelComponent::init() {
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
-		if (!cm && g_grim->getCurrScene())
-			cm = g_grim->getCurrScene()->getCMap();
+		if (!cm && g_grim->getCurrSet())
+			cm = g_grim->getCurrSet()->getCMap();
 		if (!cm) {
 			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
@@ -839,9 +839,9 @@ void SoundComponent::setKey(int val) {
 		// No longer a need to check the sound status, if it's already playing
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
-		if (g_grim->getCurrScene()) {
+		if (g_grim->getCurrSet()) {
 			Math::Vector3d pos = _cost->getMatrix().getPosition();
-			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
+			g_grim->getCurrSet()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
 	case 1: // "Stop"

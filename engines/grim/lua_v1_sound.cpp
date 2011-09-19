@@ -27,7 +27,7 @@
 #include "engines/grim/lipsync.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -257,8 +257,8 @@ void L1_SetSoundPosition() {
 	int argId = 1;
 	lua_Object paramObj;
 
-	if (g_grim->getCurrScene()) {
-		g_grim->getCurrScene()->getSoundParameters(&minVolume, &maxVolume);
+	if (g_grim->getCurrSet()) {
+		g_grim->getCurrSet()->getSoundParameters(&minVolume, &maxVolume);
 	}
 
 	lua_Object nameObj = lua_getparam(argId++);
@@ -300,12 +300,12 @@ void L1_SetSoundPosition() {
 			someParam = 0.0;
 	}
 
-	if (g_grim->getCurrScene()) {
+	if (g_grim->getCurrSet()) {
 		if (lua_isnumber(nameObj))
 			error("SetSoundPosition: number is not yet supported");
 		else {
 			const char *soundName = lua_getstring(nameObj);
-			g_grim->getCurrScene()->setSoundPosition(soundName, pos, minVolume, maxVolume);
+			g_grim->getCurrSet()->setSoundPosition(soundName, pos, minVolume, maxVolume);
 		}
 	}
 }

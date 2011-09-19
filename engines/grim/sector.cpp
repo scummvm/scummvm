@@ -29,7 +29,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 namespace Grim {
 
@@ -199,8 +199,8 @@ void Sector::shrink(float radius) {
 	for (int j = 0; j < _numVertices; j++) {
 		Math::Vector3d shrinkDir;
 
-		for (int k = 0; k < g_grim->getCurrScene()->getSectorCount(); k++) {
-			Sector *other = g_grim->getCurrScene()->getSectorBase(k);
+		for (int k = 0; k < g_grim->getCurrSet()->getSectorCount(); k++) {
+			Sector *other = g_grim->getCurrSet()->getSectorBase(k);
 			if ((other->getType() & WalkType) == 0)
 				continue;
 

@@ -40,7 +40,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 #include "engines/grim/primitives.h"
@@ -490,7 +490,7 @@ void L1_GetPointSector() {
 	float z = lua_getnumber(zObj);
 
 	Math::Vector3d point(x, y, z);
-	Sector *result = g_grim->getCurrScene()->findPointSector(point, sectorType);
+	Sector *result = g_grim->getCurrSet()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
 		lua_pushstring(const_cast<char *>(result->getName()));
@@ -512,7 +512,7 @@ void L1_GetActorSector() {
 	Actor *actor = getactor(actorObj);
 	Sector::SectorType sectorType = (Sector::SectorType)(int)lua_getnumber(typeObj);
 	Math::Vector3d pos = actor->getPos();
-	Sector *result = g_grim->getCurrScene()->findPointSector(pos, sectorType);
+	Sector *result = g_grim->getCurrSet()->findPointSector(pos, sectorType);
 	if (result) {
 		lua_pushnumber(result->getSectorId());
 		lua_pushstring(const_cast<char *>(result->getName()));
@@ -535,9 +535,9 @@ void L1_IsActorInSector() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	int numSectors = g_grim->getCurrSet()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
 		if (strstr(sector->getName(), name)) {
 			if (sector->isPointInSector(actor->getPos())) {
 				lua_pushnumber(sector->getSectorId());
@@ -567,9 +567,9 @@ void L1_IsPointInSector() {
 	float z = lua_getnumber(zObj);
 	Math::Vector3d pos(x, y, z);
 
-	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	int numSectors = g_grim->getCurrSet()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
 		if (strstr(sector->getName(), name)) {
 			if (sector->isPointInSector(pos)) {
 				lua_pushnumber(sector->getSectorId());
@@ -597,9 +597,9 @@ void L1_GetSectorOppositeEdge() {
 	Actor *actor = getactor(actorObj);
 	const char *name = lua_getstring(nameObj);
 
-	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	int numSectors = g_grim->getCurrSet()->getSectorCount();
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+		Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
 		if (strmatch(sector->getName(), name)) {
 			if (sector->getNumVertices() != 4)
 				warning("GetSectorOppositeEdge(): cheat box with %d (!= 4) edges!", sector->getNumVertices());
@@ -631,17 +631,17 @@ void L1_MakeSectorActive() {
 		return;
 
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_grim->getCurrScene()) {
+	if (!g_grim->getCurrSet()) {
 		warning("!!!! Trying to call MakeSectorActive without a scene");
 		return;
 	}
 
 	bool visible = !lua_isnil(lua_getparam(2));
-	int numSectors = g_grim->getCurrScene()->getSectorCount();
+	int numSectors = g_grim->getCurrSet()->getSectorCount();
 	if (lua_isstring(sectorObj)) {
 		const char *name = lua_getstring(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
-			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+			Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
 			if (strmatch(sector->getName(), name)) {
 				sector->setVisible(visible);
 				return;
@@ -650,7 +650,7 @@ void L1_MakeSectorActive() {
 	} else if (lua_isnumber(sectorObj)) {
 		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
-			Sector *sector = g_grim->getCurrScene()->getSectorBase(i);
+			Sector *sector = g_grim->getCurrSet()->getSectorBase(i);
 			if (sector->getSectorId() == id) {
 				sector->setVisible(visible);
 				return;
@@ -659,7 +659,7 @@ void L1_MakeSectorActive() {
 	}
 }
 
-// Scene functions
+// Set functions
 void L1_LockSet() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj))
@@ -667,7 +667,7 @@ void L1_LockSet() {
 
 	const char *name = lua_getstring(nameObj);
 	// TODO implement proper locking
-	g_grim->setSceneLock(name, true);
+	g_grim->setSetLock(name, true);
 }
 
 void L1_UnLockSet() {
@@ -677,7 +677,7 @@ void L1_UnLockSet() {
 
 	const char *name = lua_getstring(nameObj);
 	// TODO implement proper unlocking
-	g_grim->setSceneLock(name, false);
+	g_grim->setSetLock(name, false);
 }
 
 void L1_MakeCurrentSet() {
@@ -691,7 +691,7 @@ void L1_MakeCurrentSet() {
 	const char *name = lua_getstring(nameObj);
 	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("Entered new scene '%s'.\n", name);
-	g_grim->setScene(name);
+	g_grim->setSet(name);
 }
 
 void L1_MakeCurrentSetup() {
@@ -717,7 +717,7 @@ void L1_GetCurrentSetup() {
 	const char *name = lua_getstring(nameObj);
 
 	// FIXME there are some big difference here !
-	Scene *scene = g_grim->loadScene(name);
+	Set *scene = g_grim->loadSet(name);
 	if (!scene) {
 		warning("GetCurrentSetup() Requested scene (%s) is not loaded", name);
 		lua_pushnil();
@@ -738,12 +738,12 @@ void L1_ShrinkBoxes() {
 
 	if (lua_isnumber(sizeObj)) {
 		float size = lua_getnumber(sizeObj);
-		g_grim->getCurrScene()->shrinkBoxes(size);
+		g_grim->getCurrSet()->shrinkBoxes(size);
 	}
 }
 
 void L1_UnShrinkBoxes() {
-	g_grim->getCurrScene()->unshrinkBoxes();
+	g_grim->getCurrSet()->unshrinkBoxes();
 }
 
 /* Given a position and a size this function calculates and pushes
@@ -767,9 +767,9 @@ void L1_GetShrinkPos() {
 	pos.set(x, y, z);
 
 	Sector* sector;
-	g_grim->getCurrScene()->shrinkBoxes(r);
-	g_grim->getCurrScene()->findClosestSector(pos, &sector, &pos);
-	g_grim->getCurrScene()->unshrinkBoxes();
+	g_grim->getCurrSet()->shrinkBoxes(r);
+	g_grim->getCurrSet()->findClosestSector(pos, &sector, &pos);
+	g_grim->getCurrSet()->unshrinkBoxes();
 
 	if (sector) {
 		lua_pushnumber(pos.x());
@@ -901,7 +901,7 @@ void L1_NewObjectState() {
 	bool transparency = getbool(5);
 
 	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
-	g_grim->getCurrScene()->addObjectState(state);
+	g_grim->getCurrSet()->addObjectState(state);
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 
@@ -910,7 +910,7 @@ void L1_FreeObjectState() {
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
 	ObjectState *state = getobjectstate(param);
-	g_grim->getCurrScene()->deleteObjectState(state);
+	g_grim->getCurrSet()->deleteObjectState(state);
 	delete state;
 }
 
@@ -918,7 +918,7 @@ void L1_SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToBack(state);
+		g_grim->getCurrSet()->moveObjectStateToBack(state);
 	}
 }
 
@@ -926,7 +926,7 @@ void L1_SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
-		g_grim->getCurrScene()->moveObjectStateToFront(state);
+		g_grim->getCurrSet()->moveObjectStateToFront(state);
 	}
 }
 
@@ -1105,12 +1105,12 @@ void L1_LightMgrSetChange() {
 void L1_SetAmbientLight() {
 	int mode = (int)lua_getnumber(lua_getparam(1));
 	if (mode == 0) {
-		if (g_grim->getCurrScene()) {
-			g_grim->getCurrScene()->setLightEnableState(true);
+		if (g_grim->getCurrSet()) {
+			g_grim->getCurrSet()->setLightEnableState(true);
 		}
 	} else if (mode == 1) {
-		if (g_grim->getCurrScene()) {
-			g_grim->getCurrScene()->setLightEnableState(false);
+		if (g_grim->getCurrSet()) {
+			g_grim->getCurrSet()->setLightEnableState(false);
 		}
 	}
 }
@@ -1126,10 +1126,10 @@ void L1_SetLightIntensity() {
 
 	if (lua_isnumber(lightObj)) {
 		int light = (int)lua_getnumber(lightObj);
-		g_grim->getCurrScene()->setLightIntensity(light, intensity);
+		g_grim->getCurrSet()->setLightIntensity(light, intensity);
 	} else if (lua_isstring(lightObj)) {
 		const char *light = lua_getstring(lightObj);
-		g_grim->getCurrScene()->setLightIntensity(light, intensity);
+		g_grim->getCurrSet()->setLightIntensity(light, intensity);
 	}
 }
 
@@ -1149,17 +1149,17 @@ void L1_SetLightPosition() {
 
 	if (lua_isnumber(lightObj)) {
 		int light = (int)lua_getnumber(lightObj);
-		g_grim->getCurrScene()->setLightPosition(light, vec);
+		g_grim->getCurrSet()->setLightPosition(light, vec);
 	} else if (lua_isstring(lightObj)) {
 		const char *light = lua_getstring(lightObj);
-		g_grim->getCurrScene()->setLightPosition(light, vec);
+		g_grim->getCurrSet()->setLightPosition(light, vec);
 	}
 }
 
 void L1_TurnLightOn() {
 	lua_Object lightObj = lua_getparam(1);
 
-	Scene *scene = g_grim->getCurrScene();
+	Set *scene = g_grim->getCurrSet();
 	bool isOn = getbool(2);
 	if (lua_isnumber(lightObj)) {
 		scene->setLightEnabled((int)lua_getnumber(lightObj), isOn);

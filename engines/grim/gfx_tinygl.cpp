@@ -33,7 +33,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 namespace Grim {
 
@@ -610,7 +610,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		   and walk along left wall under the lamp. */
 		cutoff = 90.0f;
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
+		error("Set::setupLights() Unknown type of light: %s", light->_type.c_str());
 		return;
 	}
 	tglDisable(TGL_LIGHT0 + lightId);

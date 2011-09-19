@@ -70,7 +70,7 @@ MODULE_OBJS := \
 	registry.o \
 	resource.o \
 	savegame.o \
-	scene.o \
+	set.o \
 	scx.o \
 	sector.o \
 	textobject.o \

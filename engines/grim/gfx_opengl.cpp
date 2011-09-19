@@ -39,7 +39,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 #ifdef USE_OPENGL
 
@@ -570,7 +570,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[2] = light->_dir.z();
 		cutoff = light->_penumbraangle;
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
+		error("Set::setupLights() Unknown type of light: %s", light->_type.c_str());
 		return;
 	}
 	glDisable(GL_LIGHT0 + lightId);
