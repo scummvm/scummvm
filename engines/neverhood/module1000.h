@@ -37,20 +37,8 @@ public:
 	virtual ~Module1000();
 protected:
 	uint32 _musicFileHash;
-	// TODO ResourceTable _resourceTable1;
-	// TODO ResourceTable _resourceTable2;
-	// TODO ResourceTable _resourceTable3;
-	// TODO ResourceTable _resourceTable4;
-	void createScene1001(int which);			
-	void createScene1002(int which);			
-	void createScene1003(int which);			
-	void createScene1004(int which);			
-	void createScene1005(int which);			
-	void updateScene1001();			
-	void updateScene1002();			
-	void updateScene1003();			
-	void updateScene1004();			
-	void updateScene1005();			
+	void createScene(int sceneNum, int which);
+	void updateScene();
 };
 
 // Scene1001
