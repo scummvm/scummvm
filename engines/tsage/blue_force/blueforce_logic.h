@@ -93,6 +93,19 @@ public:
 	virtual void signal();
 };	
 
+
+class SceneHotspotExt: public SceneHotspot {
+public:
+	int _state;
+
+	SceneHotspotExt() { _state = 0; }
+	virtual Common::String getClassName() { return "SceneHotspotExt"; }
+	virtual void synchronize(Serializer &s) {
+		SceneHotspot::synchronize(s);
+		s.syncAsSint16LE(_state);
+	}
+};
+
 class SceneItemType2: public SceneHotspot {
 public:
 	virtual void startMove(SceneObject *sceneObj, va_list va);

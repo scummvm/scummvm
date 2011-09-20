@@ -106,7 +106,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Marina, Outside Boat
 		return new Scene350();
 	case 355:
-		error("Scene group 3 not implemented");
+		// Future Wave Exterior
+		return new Scene355();
 	case 360:
 		// Future Wave Interior
 		return new Scene360();
