@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	hotspot.o \
 	input.o \
 	menu.o \
+	movie.o \
 	notification.o \
 	overview.o \
 	pegasus.o \
