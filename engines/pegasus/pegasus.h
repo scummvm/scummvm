@@ -33,8 +33,11 @@
 #include "engines/engine.h"
 
 #include "pegasus/graphics.h"
+#include "pegasus/hotspot.h"
 #include "pegasus/input.h"
+#include "pegasus/notification.h"
 #include "pegasus/video.h"
+#include "pegasus/items/inventory.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Video {
@@ -66,7 +69,7 @@ enum GameMode {
 	kQuitMode
 };
 
-class PegasusEngine : public ::Engine, public InputHandler {
+class PegasusEngine : public ::Engine, public InputHandler, public NotificationManager {
 friend class InputHandler;
 
 public:
@@ -100,6 +103,9 @@ protected:
 	Common::Error run();
 
 	Cursor *_cursor;
+
+	Notification _shellNotification;
+	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
 
 private:
 	// Intro
@@ -152,6 +158,8 @@ private:
 	// Items
 	void createItems();
 	void createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction);
+	Inventory _items;
+	Inventory _biochips;
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
@@ -163,6 +171,9 @@ private:
 	void loadFromContinuePoint();
 	Common::ReadStream *_continuePoint;
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
+
+	// Misc.
+	Hotspot _returnHotspot;
 };
 
 } // End of namespace Pegasus

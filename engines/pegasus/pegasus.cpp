@@ -44,6 +44,7 @@
 
 //#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
+//#define RUN_OLD_CODE
 
 #ifdef RUN_INTERFACE_TEST
 #include "pegasus/sound.h"
@@ -51,7 +52,8 @@
 
 namespace Pegasus {
 
-PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc) {
+PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc),
+		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID) {
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
 }
@@ -147,7 +149,7 @@ Common::Error PegasusEngine::run() {
 		
 		_system->delayMillis(10);
 	}
-#else
+#elif defined(RUN_OLD_CODE)
 	while (!shouldQuit()) {
 		switch (_gameMode) {
 		case kIntroMode:
@@ -169,6 +171,30 @@ Common::Error PegasusEngine::run() {
 			_gameMode = kMainMenuMode;
 			break;
 		}
+	}
+#else
+	// Set up input
+	InputHandler::setInputHandler(this);
+	allowInput(true);
+
+	// Set up inventories
+	_items.setWeightLimit(0);
+	_items.setOwnerID(kPlayerID);
+	_biochips.setWeightLimit(8);
+	_biochips.setOwnerID(kPlayerID);
+
+	_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
+	_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
+
+	_returnHotspot.setArea(Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
+	_returnHotspot.setHotspotFlags(kInfoReturnSpotFlag);
+	g_allHotspots.push_back(&_returnHotspot);
+
+	while (!shouldQuit()) {
+		checkNotifications();
+		InputHandler::pollForInput();
+		giveIdleTime();
+		_gfx->updateDisplay();
 	}
 #endif
 
@@ -486,6 +512,13 @@ Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc)
 	delete saveFile;
 
 	return valid ? Common::kNoError : Common::kUnknownError;
+}
+
+void PegasusEngine::receiveNotification(Notification *notification, const tNotificationFlags flags) {
+	if (&_shellNotification == notification) {
+		if (flags == kGameStartingFlag)
+			error("Notification test complete");
+	}
 }
 
 } // End of namespace Pegasus

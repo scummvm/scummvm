@@ -27,6 +27,7 @@
 #define PEGASUS_CONSTANTS_H
 
 #include "common/endian.h"
+#include "common/rect.h"
 
 #include "pegasus/types.h"
 
@@ -263,6 +264,261 @@ const uint32 kPegasusPrimeVersion = 0x00009019;
 
 const char kNormalSave = 0;
 const char kContinueSave = 1;
+
+//	Display IDs.
+
+const tDisplayElementID kNavMovieID = 1;
+const tDisplayElementID kTurnPushID = 2;
+
+const tDisplayElementID kMaxGameShellDisplayID = kTurnPushID;
+
+//	Display ordering.
+
+const tDisplayOrder kNavLayer = 10000;
+const tDisplayOrder kNavMovieOrder = kNavLayer;
+const tDisplayOrder kTurnPushOrder = kNavMovieOrder + 1;
+
+/////////////////////////////////////////////
+//
+//	Display IDs.
+
+const tDisplayElementID kScreenDimmerID = kMaxGameShellDisplayID + 1;
+const tDisplayElementID kInterface1ID = kScreenDimmerID + 1;
+const tDisplayElementID kInterface2ID = kInterface1ID + 1;
+const tDisplayElementID kInterface3ID = kInterface2ID + 1;
+const tDisplayElementID kInterface4ID = kInterface3ID + 1;
+const tDisplayElementID kDateID = kInterface4ID + 1;
+const tDisplayElementID kCompassID = kDateID + 1;
+const tDisplayElementID kInventoryPushID = kCompassID + 1;
+const tDisplayElementID kInventoryLidID = kInventoryPushID + 1;
+const tDisplayElementID kBiochipPushID = kInventoryLidID + 1;
+const tDisplayElementID kBiochipLidID = kBiochipPushID + 1;
+const tDisplayElementID kEnergyBarID = kBiochipLidID + 1;
+const tDisplayElementID kWarningLightID = kEnergyBarID + 1;
+const tDisplayElementID kAILeftAreaID = kWarningLightID + 1;
+const tDisplayElementID kAIMiddleAreaID = kAILeftAreaID + 1;
+const tDisplayElementID kAIRightAreaID = kAIMiddleAreaID + 1;
+const tDisplayElementID kAIMovieID = kAIRightAreaID + 1;
+const tDisplayElementID kInventoryDropHighlightID = kAIMovieID + 1;
+const tDisplayElementID kBiochipDropHighlightID = kInventoryDropHighlightID + 1;
+
+const tDisplayElementID kDraggingSpriteID = 1000;
+
+const tDisplayElementID kCroppedMovieID = 2000;
+
+const tDisplayElementID kNeighborhoodDisplayID = 3000;
+
+const tDisplayElementID kItemPictureBaseID = 5000;
+
+const tCoordType kNavAreaLeft = 64;
+const tCoordType kNavAreaTop = 64;
+
+const tCoordType kBackground1Left = 0;
+const tCoordType kBackground1Top = 64;
+
+const tCoordType kBackground2Left = 0;
+const tCoordType kBackground2Top = 0;
+
+const tCoordType kBackground3Left = 576;
+const tCoordType kBackground3Top = 64;
+
+const tCoordType kBackground4Left = 0;
+const tCoordType kBackground4Top = 320;
+
+const tCoordType kOverviewControllerLeft = 540;
+const tCoordType kOverviewControllerTop = 348;
+
+const tCoordType kSwapLeft = 194;
+const tCoordType kSwapTop = 116;
+
+const tCoordType kSwapHiliteLeft = 200;
+const tCoordType kSwapHiliteTop = 206;
+
+const tCoordType kDateLeft = 136;
+const tCoordType kDateTop = 44;
+
+const tCoordType kCompassLeft = 222;
+const tCoordType kCompassTop = 42;
+const tCoordType kCompassWidth = 92;
+
+const tCoordType kInventoryPushLeft = 74;
+const tCoordType kInventoryPushTop = 92;
+
+const tCoordType kInventoryLidLeft = 74;
+const tCoordType kInventoryLidTop = 316;
+
+const tCoordType kBiochipPushLeft = 362;
+const tCoordType kBiochipPushTop = 192;
+
+const tCoordType kBiochipLidLeft = 362;
+const tCoordType kBiochipLidTop = 316;
+
+// TODO: Remove global variable needs
+//const Common::Rect kInventoryHiliteBounds(334, 76, 430, 172);
+//const Common::Rect kBiochipHiliteBounds (334, 364, 430, 460);
+
+const tCoordType kInventoryDropLeft = 0;
+const tCoordType kInventoryDropTop = 320;
+const tCoordType kInventoryDropRight = 232;
+const tCoordType kInventoryDropBottom = 480;
+
+const tCoordType kBiochipDropLeft = 302;
+const tCoordType kBiochipDropTop = 320;
+const tCoordType kBiochipDropRight = 640;
+const tCoordType kBiochipDropBottom = 480;
+
+const tCoordType kFinalMessageLeft = kInventoryPushLeft + 1;
+const tCoordType kFinalMessageTop = kInventoryPushTop + 24;
+
+/////////////////////////////////////////////
+//
+//	Notifications.
+
+const tNotificationID kJMPDCShellNotificationID = kLastNeighborhoodNotificationID + 1;
+const tNotificationID kInterfaceNotificationID = kJMPDCShellNotificationID + 1;
+const tNotificationID kAINotificationID = kInterfaceNotificationID + 1;
+const tNotificationID kNoradNotificationID = kAINotificationID + 1;
+const tNotificationID kNoradECRNotificationID = kNoradNotificationID + 1;
+const tNotificationID kNoradFillingStationNotificationID = kNoradECRNotificationID + 1;
+const tNotificationID kNoradPressureNotificationID = kNoradFillingStationNotificationID + 1;
+const tNotificationID kNoradUtilityNotificationID = kNoradPressureNotificationID + 1;
+const tNotificationID kNoradElevatorNotificationID = kNoradUtilityNotificationID + 1;
+const tNotificationID kNoradSubPlatformNotificationID = kNoradElevatorNotificationID + 1;
+const tNotificationID kSubControlNotificationID = kNoradSubPlatformNotificationID + 1;
+const tNotificationID kNoradGreenBallNotificationID = kSubControlNotificationID + 1;
+const tNotificationID kNoradGlobeNotificationID = kNoradGreenBallNotificationID + 1;
+const tNotificationID kCaldoriaVidPhoneNotificationID = kNoradGlobeNotificationID + 1;
+const tNotificationID kCaldoriaMessagesNotificationID = kCaldoriaVidPhoneNotificationID + 1;
+const tNotificationID kCaldoriaBombTimerNotificationID = kCaldoriaMessagesNotificationID + 1;
+
+//	Sent to the shell by fShellNotification.
+const tNotificationFlags kGameStartingFlag = 1;
+const tNotificationFlags kNeedNewJumpFlag = kGameStartingFlag << 1;
+const tNotificationFlags kPlayerDiedFlag = kNeedNewJumpFlag << 1;
+
+const tNotificationFlags kJMPShellNotificationFlags = kGameStartingFlag |
+														kNeedNewJumpFlag |
+														kPlayerDiedFlag;
+
+//	Sent to the interface.
+const tNotificationFlags kInventoryLidOpenFlag = 1;
+const tNotificationFlags kInventoryLidClosedFlag = kInventoryLidOpenFlag << 1;
+const tNotificationFlags kInventoryDrawerUpFlag = kInventoryLidClosedFlag << 1;
+const tNotificationFlags kInventoryDrawerDownFlag = kInventoryDrawerUpFlag << 1;
+const tNotificationFlags kBiochipLidOpenFlag = kInventoryDrawerDownFlag << 1;
+const tNotificationFlags kBiochipLidClosedFlag = kBiochipLidOpenFlag << 1;
+const tNotificationFlags kBiochipDrawerUpFlag = kBiochipLidClosedFlag << 1;
+const tNotificationFlags kBiochipDrawerDownFlag = kBiochipDrawerUpFlag << 1;
+
+const tNotificationFlags kInterfaceNotificationFlags =	kInventoryLidOpenFlag |
+														kInventoryLidClosedFlag |
+														kInventoryDrawerUpFlag |
+														kInventoryDrawerDownFlag |
+														kBiochipLidOpenFlag |
+														kBiochipLidClosedFlag |
+														kBiochipDrawerUpFlag |
+														kBiochipDrawerDownFlag;
+
+//	Hot spots.
+
+//	Neighborhood hot spots.
+
+const tHotSpotID kFirstNeighborhoodSpotID = 5000;
+
+//	kShellSpotFlag is a flag which marks all hot spots which belong to the shell, like
+//	the current item and current biochip spots.
+const tHotSpotFlags kShellSpotFlag = 1;
+//	kNeighborhoodSpotFlag is a flag which marks all hot spots which belong to a
+//	neighborhood, like buttons on walls and so on.
+const tHotSpotFlags kNeighborhoodSpotFlag = kShellSpotFlag << 1;
+//	kZoomInSpotFlag is a flag which marks all hot spots which indicate a zoom.
+const tHotSpotFlags kZoomInSpotFlag = kNeighborhoodSpotFlag << 1;
+//	kZoomOutSpotFlag is a flag which marks all hot spots which indicate a zoom.
+const tHotSpotFlags kZoomOutSpotFlag = kZoomInSpotFlag << 1;
+
+const tHotSpotFlags kClickSpotFlag = kZoomOutSpotFlag << 1;
+const tHotSpotFlags kPlayExtraSpotFlag = kClickSpotFlag << 1;
+const tHotSpotFlags kPickUpItemSpotFlag = kPlayExtraSpotFlag << 1;
+const tHotSpotFlags kDropItemSpotFlag = kPickUpItemSpotFlag << 1;
+const tHotSpotFlags kOpenDoorSpotFlag = kDropItemSpotFlag << 1;
+
+const tHotSpotFlags kZoomSpotFlags = kZoomInSpotFlag | kZoomOutSpotFlag;
+
+const tHotSpotFlags kHighestGameShellSpotFlag = kOpenDoorSpotFlag;
+
+/////////////////////////////////////////////
+//
+//	Hot spots.
+
+//	Shell hot spots.
+//	The shell reserves all hot spot IDs from 0 to 999
+
+const tHotSpotID kCurrentItemSpotID = 0;
+const tHotSpotID kCurrentBiochipSpotID = kCurrentItemSpotID + 1;
+
+const tHotSpotID kInventoryDropSpotID = kCurrentBiochipSpotID + 1;
+const tHotSpotID kBiochipDropSpotID = kInventoryDropSpotID + 1;
+
+const tHotSpotID kInfoReturnSpotID = kBiochipDropSpotID + 1;
+
+const tHotSpotID kAIHint1SpotID = kInfoReturnSpotID + 1;
+const tHotSpotID kAIHint2SpotID = kAIHint1SpotID + 1;
+const tHotSpotID kAIHint3SpotID = kAIHint2SpotID + 1;
+const tHotSpotID kAISolveSpotID = kAIHint3SpotID + 1;
+const tHotSpotID kAIBriefingSpotID = kAISolveSpotID + 1;
+const tHotSpotID kAIScanSpotID = kAIBriefingSpotID + 1;
+
+const tHotSpotID kPegasusRecallSpotID = kAIScanSpotID + 1;
+
+const tHotSpotID kAriesSpotID = kPegasusRecallSpotID + 1;
+const tHotSpotID kMercurySpotID = kAriesSpotID + 1;
+const tHotSpotID kPoseidonSpotID = kMercurySpotID + 1;
+
+const tHotSpotID kAirMaskToggleSpotID = kPoseidonSpotID + 1;
+
+const tHotSpotID kShuttleEnergySpotID = kAirMaskToggleSpotID + 1;
+const tHotSpotID kShuttleGravitonSpotID = kShuttleEnergySpotID + 1;
+const tHotSpotID kShuttleTractorSpotID = kShuttleGravitonSpotID + 1;
+const tHotSpotID kShuttleViewSpotID = kShuttleTractorSpotID + 1;
+const tHotSpotID kShuttleTransportSpotID = kShuttleViewSpotID + 1;
+
+//	Most of these are obsolete:
+
+//	kInventoryDropSpotFlag is a flag which marks hot spots which are valid drop spots
+//	for inventory items.
+//	const tHotSpotFlags kInventoryDropSpotFlag = kHighestGameShellSpotFlag << 1;
+
+//	kBiochipDropSpotFlag is a flag which marks hot spots which are valid drop spots
+//	for biochips.
+//	const tHotSpotFlags kBiochipDropSpotFlag = kInventoryDropSpotFlag << 1;
+
+//	kInventorySpotFlag is a flag which marks hot spots which indicate inventory items
+//	in the environment.
+//	const tHotSpotFlags kInventorySpotFlag = kBiochipDropSpotFlag << 1;
+
+//	kBiochipSpotFlag is a flag which marks hot spots which indicate biochips
+//	in the environment.
+const tHotSpotFlags kPickUpBiochipSpotFlag = kHighestGameShellSpotFlag << 1;
+const tHotSpotFlags kDropBiochipSpotFlag = kPickUpBiochipSpotFlag << 1;
+
+const tHotSpotFlags kInfoReturnSpotFlag = kDropBiochipSpotFlag << 1;
+
+//	Biochip and inventory hot spot flags...
+
+const tHotSpotFlags kAIBiochipSpotFlag = kInfoReturnSpotFlag << 1;
+const tHotSpotFlags kPegasusBiochipSpotFlag = kAIBiochipSpotFlag << 1;
+const tHotSpotFlags kOpticalBiochipSpotFlag = kPegasusBiochipSpotFlag << 1;
+const tHotSpotFlags kAirMaskSpotFlag = kOpticalBiochipSpotFlag << 1;
+
+const tHotSpotFlags kJMPClickingSpotFlags = kClickSpotFlag |
+											kPlayExtraSpotFlag |
+											kOpenDoorSpotFlag |
+											kInfoReturnSpotFlag |
+											kAIBiochipSpotFlag |
+											kPegasusBiochipSpotFlag |
+											kOpticalBiochipSpotFlag |
+											kAirMaskSpotFlag;
+
 
 } // End of namespace Pegasus
 
