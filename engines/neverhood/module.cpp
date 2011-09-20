@@ -84,6 +84,15 @@ void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1,
 	_childObject = smackerScene;
 }
 
+void Module::createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool flag1, bool canAbort) {
+	SmackerScene *smackerScene;
+	_sceneType = kSceneTypeSmacker;
+	smackerScene = new SmackerScene(_vm, this, doubleSurface, flag1, canAbort);
+	smackerScene->setFileHashList(fileHashList);
+	smackerScene->nextVideo();
+	_childObject = smackerScene;
+}
+
 bool Module::updateChild() {
 	if (_childObject) {
 		_childObject->handleUpdate();

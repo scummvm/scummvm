@@ -131,6 +131,9 @@ public:
 	void incGlobalVar(uint32 nameHash, int incrValue) {
 		setGlobalVar(nameHash, getGlobalVar(nameHash) + incrValue);
 	}
+	void incSubVar(uint32 nameHash, uint32 subNameHash, int incrValue) {
+		setSubVar(nameHash, subNameHash, getSubVar(nameHash, subNameHash) + incrValue);
+	}
 protected:
 	void (Entity::*_updateHandlerCb)();
 	uint32 (Entity::*_messageHandlerCb)(int messageNum, const MessageParam &param, Entity *sender);

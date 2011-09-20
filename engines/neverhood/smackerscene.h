@@ -34,7 +34,7 @@ public:
 	SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort);
 	virtual ~SmackerScene();
 	void setFileHash(uint32 fileHash);
-	void setFileHashList(uint32 *fileHashList);
+	void setFileHashList(const uint32 *fileHashList);
 	void nextVideo();
 protected:
 	bool _doubleSurface;
@@ -43,7 +43,7 @@ protected:
 	bool _fieldDF;
 	bool _playNextVideoFlag;
 	int _fileHashListIndex;
-	uint32 *_fileHashList;
+	const uint32 *_fileHashList;
 	uint32 _fileHash[2];
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

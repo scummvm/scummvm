@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	klayman.o \
 	module.o \
 	module1000.o \
+	module1100.o \
 	module1200.o \
 	module1300.o \
 	module1400.o \

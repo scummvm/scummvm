@@ -217,6 +217,9 @@ void Module2200::createScene(int sceneNum, int which) {
 	_childObject->handleUpdate();
 }
 
+#define HallOfRecordsSceneLink(nextSceneNum, prevSceneNum) \
+	if (_moduleResult == 1) createScene(nextSceneNum, 0); else if (_moduleResult == 2) createScene(7, 0); else createScene(prevSceneNum, 1)
+
 void Module2200::updateScene() {
 	if (!updateChild()) {
 		switch (_vm->gameState().sceneNum) {
@@ -274,346 +277,118 @@ void Module2200::updateScene() {
 			createScene(5, 3);
 			break;
 		case 9:
-			if (_moduleResult == 1) {
-				createScene(10, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(46, 1);
-			}
+			HallOfRecordsSceneLink(10, 46);
 			break;
 		case 10:
-			if (_moduleResult == 1) {
-				createScene(11, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(9, 1);
-			}
+			HallOfRecordsSceneLink(11, 9);
 			break;
 		case 11:
-			if (_moduleResult == 1) {
-				createScene(12, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(10, 1);
-			}
+			HallOfRecordsSceneLink(12, 10);
 			break;
 		case 12:
-			if (_moduleResult == 1) {
-				createScene(13, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(11, 1);
-			}
+			HallOfRecordsSceneLink(13, 11);
 			break;
 		case 13:
-			if (_moduleResult == 1) {
-				createScene(14, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(12, 1);
-			}
+			HallOfRecordsSceneLink(14, 12);
 			break;
 		case 14:
-			if (_moduleResult == 1) {
-				createScene(15, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(13, 1);
-			}
+			HallOfRecordsSceneLink(15, 13);
 			break;
 		case 15:
-			if (_moduleResult == 1) {
-				createScene(16, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(14, 1);
-			}
+			HallOfRecordsSceneLink(16, 14);
 			break;
 		case 16:
-			if (_moduleResult == 1) {
-				createScene(17, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(15, 1);
-			}
+			HallOfRecordsSceneLink(17, 15);
 			break;
 		case 17:
-			if (_moduleResult == 1) {
-				createScene(18, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(16, 1);
-			}
+			HallOfRecordsSceneLink(18, 16);
 			break;
 		case 18:
-			if (_moduleResult == 1) {
-				createScene(19, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(17, 1);
-			}
+			HallOfRecordsSceneLink(19, 17);
 			break;
 		case 19:
-			if (_moduleResult == 1) {
-				createScene(20, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(18, 1);
-			}
+			HallOfRecordsSceneLink(20, 18);
 			break;
 		case 20:
-			if (_moduleResult == 1) {
-				createScene(21, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(19, 1);
-			}
+			HallOfRecordsSceneLink(21, 19);
 			break;
 		case 21:
-			if (_moduleResult == 1) {
-				createScene(22, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(20, 1);
-			}
+			HallOfRecordsSceneLink(22, 20);
 			break;
 		case 22:
-			if (_moduleResult == 1) {
-				createScene(23, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(21, 1);
-			}
+			HallOfRecordsSceneLink(23, 21);
 			break;
 		case 23:
-			if (_moduleResult == 1) {
-				createScene(24, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(22, 1);
-			}
+			HallOfRecordsSceneLink(24, 22);
 			break;
 		case 24:
-			if (_moduleResult == 1) {
-				createScene(25, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(23, 1);
-			}
+			HallOfRecordsSceneLink(25, 23);
 			break;
 		case 25:
-			if (_moduleResult == 1) {
-				createScene(26, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(24, 1);
-			}
+			HallOfRecordsSceneLink(26, 24);
 			break;
 		case 26:
-			if (_moduleResult == 1) {
-				createScene(27, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(25, 1);
-			}
+			HallOfRecordsSceneLink(27, 25);
 			break;
 		case 27:
-			if (_moduleResult == 1) {
-				createScene(28, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(26, 1);
-			}
+			HallOfRecordsSceneLink(28, 26);
 			break;
 		case 28:
-			if (_moduleResult == 1) {
-				createScene(29, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(27, 1);
-			}
+			HallOfRecordsSceneLink(29, 27);
 			break;
 		case 29:
-			if (_moduleResult == 1) {
-				createScene(30, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(28, 1);
-			}
+			HallOfRecordsSceneLink(30, 28);
 			break;
 		case 30:
-			if (_moduleResult == 1) {
-				createScene(31, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(29, 1);
-			}
+			HallOfRecordsSceneLink(31, 29);
 			break;
 		case 31:
-			if (_moduleResult == 1) {
-				createScene(32, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(30, 1);
-			}
+			HallOfRecordsSceneLink(32, 30);
 			break;
 		case 32:
-			if (_moduleResult == 1) {
-				createScene(33, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(31, 1);
-			}
+			HallOfRecordsSceneLink(33, 31);
 			break;
 		case 33:
-			if (_moduleResult == 1) {
-				createScene(34, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(32, 1);
-			}
+			HallOfRecordsSceneLink(34, 32);
 			break;
 		case 34:
-			if (_moduleResult == 1) {
-				createScene(42, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(33, 1);
-			}
+			HallOfRecordsSceneLink(42, 33);
 			break;
 		case 35:
-			if (_moduleResult == 1) {
-				createScene(36, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(45, 1);
-			}
+			HallOfRecordsSceneLink(36, 45);
 			break;
 		case 36:
-			if (_moduleResult == 1) {
-				createScene(37, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(35, 1);
-			}
+			HallOfRecordsSceneLink(37, 35);
 			break;
 		case 37:
-			if (_moduleResult == 1) {
-				createScene(38, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(36, 1);
-			}
+			HallOfRecordsSceneLink(38, 36);
 			break;
 		case 38:
-			if (_moduleResult == 1) {
-				createScene(39, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(37, 1);
-			}
+			HallOfRecordsSceneLink(39, 37);
 			break;
 		case 39:
-			if (_moduleResult == 1) {
-				createScene(40, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(38, 1);
-			}
+			HallOfRecordsSceneLink(40, 38);
 			break;
 		case 40:
-			if (_moduleResult == 1) {
-				createScene(41, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(39, 1);
-			}
+			HallOfRecordsSceneLink(41, 39);
 			break;
 		case 41:
-			if (_moduleResult == 1) {
-				createScene(47, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(40, 1);
-			}
+			HallOfRecordsSceneLink(47, 40);
 			break;
 		case 42:
-			if (_moduleResult == 1) {
-				createScene(43, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(34, 1);
-			}
+			HallOfRecordsSceneLink(43, 34);
 			break;
 		case 43:
-			if (_moduleResult == 1) {
-				createScene(44, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(42, 1);
-			}
+			HallOfRecordsSceneLink(44, 42);
 			break;
 		case 44:
-			if (_moduleResult == 1) {
-				createScene(45, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(43, 1);
-			}
+			HallOfRecordsSceneLink(45, 43);
 			break;
 		case 45:
-			if (_moduleResult == 1) {
-				createScene(35, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(44, 1);
-			}
+			HallOfRecordsSceneLink(35, 44);
 			break;
 		case 46:
-			if (_moduleResult == 1) {
-				createScene(9, 0);
-			} else if (_moduleResult == 2) {
-				createScene(7, 0);
-			} else {
-				createScene(5, 1);
-			}
+			HallOfRecordsSceneLink(9, 5);
 			break;
 		case 47:
 			createScene(41, 1);

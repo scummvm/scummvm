@@ -59,7 +59,7 @@ void SmackerScene::setFileHash(uint32 fileHash) {
 	_fileHashList = _fileHash;
 }
 
-void SmackerScene::setFileHashList(uint32 *fileHashList) {
+void SmackerScene::setFileHashList(const uint32 *fileHashList) {
 	debug("SmackerScene::setFileHashList(...)");
 	_fileHashList = fileHashList;
 }
