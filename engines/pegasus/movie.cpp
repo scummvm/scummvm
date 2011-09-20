@@ -91,6 +91,8 @@ void Movie::redrawMovieWorld() {
 			// Just copy to our surface
 			_surface->copyFrom(*frame);
 		}
+
+		triggerRedraw();
 	}
 }
 
@@ -125,6 +127,8 @@ TimeValue Movie::getTime(const TimeScale scale) {
 void Movie::setRate(const Common::Rational rate) {
 	if (rate != 1 && rate != 0)
 		error("Cannot set movie rate");
+
+	TimeBase::setRate(rate);
 }
 
 void Movie::start() {
