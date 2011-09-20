@@ -142,7 +142,9 @@ void PegasusEngine::drawCredits(int button, bool highlight, int frame, Video::Qu
 		_gfx->drawPictTransparent("Images/Credits/SelectS.pict", 40, s_creditsButtonY[button], _gfx->getColor(0xf8, 0xf8, 0xf8));
 
 	video->seekToTime(frame * 200);
-	_video->copyFrameToScreen(video->decodeNextFrame(), video->getWidth(), video->getHeight(), 288, 0);
+
+	const Graphics::Surface *surf = video->decodeNextFrame();
+	_system->copyRectToScreen((byte *)surf->pixels, surf->pitch, 288, 0, video->getWidth(), video->getHeight());
 }
 
 void PegasusEngine::runDemoCredits() {

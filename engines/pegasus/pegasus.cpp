@@ -32,17 +32,18 @@
 #include "base/plugins.h"
 #include "base/version.h"
 #include "gui/saveload.h"
+#include "video/qt_decoder.h"
 
 #include "pegasus/console.h"
 #include "pegasus/cursor.h"
 #include "pegasus/gamestate.h"
+#include "pegasus/movie.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
 #include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
 
-//#define RUN_SUB_MOVIE // :D :D :D :D :D :D
 //#define RUN_INTERFACE_TEST
 //#define RUN_OLD_CODE
 
@@ -59,11 +60,8 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 }
 
 PegasusEngine::~PegasusEngine() {
-	delete _video;
 	delete _gfx;
 	delete _resFork;
-	delete _inventoryLid;
-	delete _biochipLid;
 	delete _console;
 	delete _cursor;
 	delete _continuePoint;
@@ -72,22 +70,13 @@ PegasusEngine::~PegasusEngine() {
 Common::Error PegasusEngine::run() {
 	_console = new PegasusConsole(this);
 	_gfx = new GraphicsManager(this);
-	_video = new VideoManager(this);
 	_resFork = new Common::MacResManager();
-	_inventoryLid = new Common::MacResManager();
-	_biochipLid = new Common::MacResManager();
 	_cursor = new Cursor();
 	_gameMode = kIntroMode;
 	_adventureMode = true;
 	
 	if (!_resFork->open("JMP PP Resources") || !_resFork->hasResFork())
 		error("Could not load JMP PP Resources");
-
-	if (!_inventoryLid->open("Images/Lids/Inventory Lid Sequence") || !_inventoryLid->hasResFork())
-		error("Could not open Inventory Lid Sequence");
-
-	if (!_biochipLid->open("Images/Lids/Biochip Lid Sequence") || !_biochipLid->hasResFork())
-		error("Could not open Biochip Lid Sequence");
 
 	// Initialize items
 	createItems();
@@ -111,27 +100,7 @@ Common::Error PegasusEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-#if 0
-	Common::MacResIDArray pictIds = _biochipLid->getResIDArray(MKID_BE('PICT'));
-	for (uint32 i = 0; i < pictIds.size(); i++) {
-		Common::String filename = Common::String::printf("PICT_%d.pict", pictIds[i]);
-		Common::DumpFile file;
-		assert(file.open(filename));
-		Common::SeekableReadStream *res = _biochipLid->getResource(MKID_BE('PICT'), pictIds[i]);
-		byte *data = new byte[res->size()];
-		res->read(data, res->size());
-		for (int j = 0; j < 512; j++)
-			file.writeByte(0);
-		file.write(data, res->size());
-		file.close();
-		delete res;
-		delete[] data;
-	}
-#endif
-
-#if defined(RUN_SUB_MOVIE)
-	_video->playMovie("Images/Norad Alpha/Sub Chase Movie");
-#elif defined(RUN_INTERFACE_TEST)
+#if defined(RUN_INTERFACE_TEST)
 	_cursor->setCurrentFrameIndex(0);
 	_cursor->show();
 	drawInterface();
@@ -183,6 +152,7 @@ Common::Error PegasusEngine::run() {
 	_biochips.setWeightLimit(8);
 	_biochips.setOwnerID(kPlayerID);
 
+	// Start up the first notification
 	_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
 	_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
 
@@ -191,6 +161,7 @@ Common::Error PegasusEngine::run() {
 	g_allHotspots.push_back(&_returnHotspot);
 
 	while (!shouldQuit()) {
+		checkCallBacks();
 		checkNotifications();
 		InputHandler::pollForInput();
 		giveIdleTime();
@@ -280,10 +251,73 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 }
 
 void PegasusEngine::runIntro() {
-	_video->playMovieCentered(_introDirectory + "/BandaiLogo.movie");
-	VideoHandle handle = _video->playBackgroundMovie(_introDirectory + "/Big Movie.movie");
-	_video->seekToTime(handle, 10 * 600);
-	_video->waitUntilMovieEnds(handle);
+	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+	if (video->loadFile(_introDirectory + "/BandaiLogo.movie")) {
+		while (!shouldQuit() && !video->endOfVideo()) {
+			if (video->needsUpdate()) {
+				const Graphics::Surface *frame = video->decodeNextFrame();
+				_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
+				_system->updateScreen();
+			}
+
+			Common::Event event;
+			while (_eventMan->pollEvent(event))
+				;
+		}
+	}
+
+	delete video;
+
+	if (shouldQuit())
+		return;
+
+	video = new Video::QuickTimeDecoder();
+
+	if (!video->loadFile(_introDirectory + "/Big Movie.movie"))
+		error("Could not load intro movie");
+
+	video->seekToTime(Audio::Timestamp(0, 10 * 600, 600));
+
+	while (!shouldQuit() && !video->endOfVideo()) {
+		if (video->needsUpdate()) {
+			const Graphics::Surface *frame = video->decodeNextFrame();
+
+			// Scale up the frame doing some simple scaling
+			Graphics::Surface scaledFrame;
+			scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
+			const byte *src = (const byte *)frame->pixels;
+			byte *dst1 = (byte *)scaledFrame.pixels;
+			byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
+
+			for (int y = 0; y < frame->h; y++) {
+				for (int x = 0; x < frame->w; x++) {
+					memcpy(dst1, src, frame->format.bytesPerPixel);
+					dst1 += frame->format.bytesPerPixel;
+					memcpy(dst1, src, frame->format.bytesPerPixel);
+					dst1 += frame->format.bytesPerPixel;
+					memcpy(dst2, src, frame->format.bytesPerPixel);
+					dst2 += frame->format.bytesPerPixel;
+					memcpy(dst2, src, frame->format.bytesPerPixel);
+					dst2 += frame->format.bytesPerPixel;
+					src += frame->format.bytesPerPixel;
+				}
+
+				src += frame->pitch - frame->format.bytesPerPixel * frame->w;
+				dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+				dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+			}
+
+			_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, 0, 0, scaledFrame.w, scaledFrame.h);
+			_system->updateScreen();
+			scaledFrame.free();
+		}
+
+		Common::Event event;
+		while (_eventMan->pollEvent(event))
+			;
+	}
+
+	delete video;
 }
 
 void PegasusEngine::drawInterface() {
@@ -296,14 +330,7 @@ void PegasusEngine::drawInterface() {
 }
 
 void PegasusEngine::mainGameLoop() {
-	// TODO: Yeah...
-	_system->fillScreen(0);
-	_video->playMovieCentered("Images/Caldoria/Pullback.movie");
-	drawInterface();
-
-	Common::String navMovie = Common::String::format("Images/%s/%s.movie", getTimeZoneFolder(GameState.getCurrentNeighborhood()).c_str(), getTimeZoneDesc(GameState.getCurrentNeighborhood()).c_str());
-	_video->playMovie(navMovie, kViewScreenOffset, kViewScreenOffset);
-
+	// TODO: Remove me
 	_gameMode = kQuitMode;
 }
 
@@ -496,7 +523,6 @@ Common::Error PegasusEngine::loadGameState(int slot) {
 		return Common::kUnknownError;
 
 	bool valid = loadFromStream(loadFile);
-	warning("pos = %d", loadFile->pos());
 	delete loadFile;
 
 	return valid ? Common::kNoError : Common::kUnknownError;
@@ -516,9 +542,48 @@ Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc)
 
 void PegasusEngine::receiveNotification(Notification *notification, const tNotificationFlags flags) {
 	if (&_shellNotification == notification) {
-		if (flags == kGameStartingFlag)
-			error("Notification test complete");
+		switch (flags) {
+		case kGameStartingFlag: {
+#if 0
+			// This is just some graphical test that I wrote; I'll
+			// keep it around for reference.
+			Movie opening(1);
+			opening.initFromMovieFile(_introDirectory + "/Big Movie.movie");
+			opening.setTime(10, 1);
+			opening.setStart(10, 1);
+			opening.startDisplaying();
+			opening.show();
+			opening.start();
+			opening.setFlags(kLoopTimeBase);
+
+			Input input;
+			InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+
+			while (opening.isRunning() && !shouldQuit()) {
+				checkCallBacks();
+				_gfx->updateDisplay();
+
+				InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+				if (input.anyInput())
+					break;
+
+				_system->delayMillis(10);
+			}
+#else
+			if (!isDemo())
+				runIntro();
+#endif
+			break;
+		}
+		default:
+			break;
+		}
 	}
+}
+
+void PegasusEngine::checkCallBacks() {
+	for (Common::List<TimeBase *>::iterator it = _timeBases.begin(); it != _timeBases.end(); it++)
+		(*it)->checkCallBacks();
 }
 
 } // End of namespace Pegasus

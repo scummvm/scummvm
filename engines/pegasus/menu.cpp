@@ -49,13 +49,10 @@ void PegasusEngine::runMainMenu() {
 	sound.initFromAIFFFile("Sounds/Main Menu.aiff");
 	sound.loopSound();
 
-	// Note down how long since the last click
-	uint32 lastClickTime = _system->getMillis();
-
 	int buttonSelected = 0;
 	drawMenu(buttonSelected);
 
-	while (!shouldQuit() && _system->getMillis() - lastClickTime < 60 * 1000) {
+	while (!shouldQuit()) {
 		Common::Event event;
 	
 		// Ignore events for now
@@ -105,8 +102,6 @@ void PegasusEngine::runMainMenu() {
 					break;
 				}
 
-				// Update our last press time too
-				lastClickTime = _system->getMillis();
 				break;
 			default:
 				break;
@@ -119,11 +114,6 @@ void PegasusEngine::runMainMenu() {
 
 	if (shouldQuit())
 		return;
-
-	// Too slow! Go back and show the intro again.
-	sound.stopSound();
-	_video->playMovie(_introDirectory + "/LilMovie.movie");
-	_gameMode = kIntroMode;
 }
 
 void PegasusEngine::drawMenu(int buttonSelected) {

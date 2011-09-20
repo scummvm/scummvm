@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	timers.o \
 	transition.o \
 	util.o \
-	video.o \
 	items/inventory.o \
 	items/item.o \
 	items/itemlist.o \

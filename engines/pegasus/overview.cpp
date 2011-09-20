@@ -115,7 +115,8 @@ void PegasusEngine::drawInterfaceOverview(const OverviewHotspot &hotspot, Video:
 	_gfx->drawPict("Images/Interface/OVBottom.mac", 0, kViewScreenOffset + 256, false);
 
 	video->seekToTime(hotspot.time);
-	_video->copyFrameToScreen(video->decodeNextFrame(), video->getWidth(), video->getHeight(), kViewScreenOffset, kViewScreenOffset);
+	const Graphics::Surface *surf = video->decodeNextFrame();
+	_system->copyRectToScreen((byte *)surf->pixels, surf->pitch, kViewScreenOffset, kViewScreenOffset, video->getWidth(), video->getHeight());
 
 	if (hotspot.time == 530) {
 		// The keyboard is special

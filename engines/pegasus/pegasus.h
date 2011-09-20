@@ -36,12 +36,11 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
 #include "pegasus/notification.h"
-#include "pegasus/video.h"
 #include "pegasus/items/inventory.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Video {
-	class Video::QuickTimeDecoder;
+	class QuickTimeDecoder;
 }
 
 namespace Pegasus {
@@ -49,7 +48,6 @@ namespace Pegasus {
 class PegasusConsole;
 struct PegasusGameDescription;
 class SoundManager;
-class VideoManager;
 class GraphicsManager;
 class Idler;
 class Cursor;
@@ -86,9 +84,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
 	// Base classes
-	VideoManager *_video;
 	GraphicsManager *_gfx;
-	Common::MacResManager *_resFork, *_inventoryLid, *_biochipLid;
+	Common::MacResManager *_resFork;
 
 	// Misc.
 	bool isDemo() const;
@@ -163,6 +160,7 @@ private:
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
+	void checkCallBacks();
 
 	// Save/Load
 	bool loadFromStream(Common::ReadStream *stream);
