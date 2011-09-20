@@ -55,10 +55,8 @@ protected:
 public:
 	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode);
 	Talk(CGEEngine *vm);
-	//~TALK();
 
 	virtual void update(const char *text);
-	virtual void update() {}
 	void putLine(int line, const char *text);
 private:
 	CGEEngine *_vm;
