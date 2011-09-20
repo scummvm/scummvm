@@ -40,6 +40,7 @@ class Sprite : public Entity {
 public:
 	Sprite(NeverhoodEngine *vm, int objectPriority);
 	~Sprite();
+	void init() {}
 	BaseSurface *getSurface() { return _surface; }
 	void processDelta();
 	void setDoDeltaX(int type);

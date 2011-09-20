@@ -40,8 +40,8 @@ namespace Neverhood {
 #define InsertKlayman(KlaymanClass, X, Y) _klayman = new KlaymanClass(_vm, this, X, Y); addSprite(_klayman)
 #define InsertKlaymanInitArgs(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
 
-#define InsertSprite(SpriteClass) (SpriteClass*)addSprite(new SpriteClass(_vm)); 
-#define InsertSpriteInitArgs(SpriteClass, InitArgs) (SpriteClass*)addSprite((new SpriteClass(_vm))-> init InitArgs);
+#define InsertSprite(SpriteObj, SpriteClass) SpriteObj = (SpriteClass*)addSprite(new SpriteClass(_vm)); 
+#define InsertSpriteInitArgs(SpriteObj, SpriteClass, InitArgs) SpriteObj = new SpriteClass(_vm); ((SpriteClass*)(SpriteObj))-> init InitArgs; addSprite(SpriteObj)
 
 class Scene : public Entity {
 public:
@@ -69,6 +69,35 @@ public:
 	void changeMouseCursor(uint32 fileHash);
 	SmackerPlayer *addSmackerPlayer(SmackerPlayer *smackerPlayer);
 	void update();
+	// Some crazy templated functions to make the logic code smaller/simpler (imo!)
+	template<class T> 
+	T* insertSprite() {
+		return (T*)addSprite(new T(_vm));
+	}
+	template<class T, class Arg1> 
+	T* insertSprite(Arg1 arg1) {
+		return (T*)addSprite(new T(_vm, arg1));
+	}
+	template<class T, class Arg1, class Arg2> 
+	T* insertSprite(Arg1 arg1, Arg2 arg2) {
+		return (T*)addSprite(new T(_vm, arg1, arg2));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3> 
+	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+		return (T*)addSprite(new T(_vm, arg1, arg2, arg3));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4> 
+	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5> 
+	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
+		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6> 
+	T* insertSprite(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
+		return (T*)addSprite(new T(_vm, arg1, arg2, arg3, arg4, arg5, arg6));
+	}
 protected:
 	Module *_parentModule;
 	Common::Array<Entity*> _entities;

@@ -372,28 +372,28 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	
 	if (getGlobalVar(0xD217189D) == 0) {
-		_asDoor = addSprite(new AsScene1001Door(_vm));
+		_asDoor = insertSprite<AsScene1001Door>();
 		_asDoor->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	} else {
 		_asDoor = NULL;
 	}
 
-	_asLever = addSprite(new AsScene1001Lever(_vm, this, 150, 433, 1));
+	_asLever = insertSprite<AsScene1001Lever>(this, 150, 433, 1);
 
 	insertStaticSprite(0x809861A6, 950);
 	insertStaticSprite(0x89C03848, 1100);
 
-	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x15288120, 100, 0));
+	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x15288120, 100, 0);
 
 	if (getGlobalVar(0x03C698DA) == 0) {
 		tempSprite = insertStaticSprite(0x8C066150, 200);
-		_asWindow = addSprite(new AsScene1001Window(_vm));
+		_asWindow = insertSprite<AsScene1001Window>();
 		_asWindow->setClipRect(tempSprite->getDrawRect());
 	} else {
 		_asWindow = NULL;
 	}
 
-	_asHammer = addSprite(new AsScene1001Hammer(_vm, _asDoor));
+	_asHammer = insertSprite<AsScene1001Hammer>(_asDoor);
 
 }
 
@@ -516,7 +516,7 @@ AsScene1002Ring::AsScene1002Ring(NeverhoodEngine *vm, Scene *parentScene, bool f
 		SetMessageHandler(&AsScene1002Ring::handleMessage4475E0);
 	}
 
-    setClipRect(0, clipY1, 640, 480);
+	setClipRect(0, clipY1, 640, 480);
 
 	_x = x;
 	_y = y;
@@ -1329,38 +1329,38 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x06149428, 1100);
 	insertStaticSprite(0x312C8774, 1100);
 
-	_ssLadderArch = addSprite(new SsScene1002LadderArch(_vm, this));
+	_ssLadderArch = insertSprite<SsScene1002LadderArch>(this);
 	_ssLadderArchPart1 = insertStaticSprite(0x060000A0, 1200);
 	_ssLadderArchPart2 = insertStaticSprite(0xB2A423B0, 1100);
 	_ssLadderArchPart3 = insertStaticSprite(0x316E0772, 1100);
 
-	_class599 = addSprite(new Class599(_vm, this));
+	_class599 = insertSprite<Class599>(this);
 
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
 			InsertKlaymanInitArgs(KmScene1002, 90, 226, (_class599, _ssLadderArch)); 
-			_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = insertSprite<Class478>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
 			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 		} else {
 			InsertKlaymanInitArgs(KmScene1002, 379, 435, (_class599, _ssLadderArch));
-			_class478 = addSprite(new Class478(_vm, _klayman));
+			_class478 = insertSprite<Class478>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 			_class478->setClipRect(_klayman->getClipRect());
 		}
 	} else if (which == 1) {
 		InsertKlaymanInitArgs(KmScene1002, 650, 435, (_class599, _ssLadderArch));
-		_class478 = addSprite(new Class478(_vm, _klayman));
+		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4478);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_class478->setClipRect(_klayman->getClipRect());
 		_vm->_gameState.field2 = 1;
 	} else if (which == 2) {
 		InsertKlaymanInitArgs(KmScene1002, 68, 645, (_class599, _ssLadderArch));
-		_class478 = addSprite(new Class478(_vm, _klayman));
+		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4298);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_class478->setClipRect(_klayman->getClipRect());
@@ -1368,11 +1368,11 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		sendMessage(_klayman, 0x4820, 0);
 	} else {
 		InsertKlaymanInitArgs(KmScene1002, 90, 226, (_class599, _ssLadderArch));
-		_class478 = addSprite(new Class478(_vm, _klayman));
+		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4470);
 		_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
 		_class478->setClipRect(_klayman->getClipRect());
-		_class479 = addSprite(new Class479(_vm, this, _klayman));
+		_class479 = insertSprite<Class479>(this, _klayman);
 		_class479->setClipRect(_klayman->getClipRect());
 		_klayman->setRepl(64, 0);
 		_vm->_gameState.field2 = 0;
@@ -1384,26 +1384,22 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempClipRect.set(tempSprite->getDrawRect().x, tempSprite->getDrawRect().y,
 		_ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart2->getDrawRect().y2());
 
-	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 258, 191, _class599->getDrawRect().y, false));
-	_asRing2 = addSprite(new AsScene1002Ring(_vm, this, false, 297, 189, _class599->getDrawRect().y, false));
-	_asRing3 = addSprite(new AsScene1002Ring(_vm, this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(0x8306F218) != 0));
-	_asRing4 = addSprite(new AsScene1002Ring(_vm, this, false, 334, 191, _class599->getDrawRect().y, false));
-	_asRing5 = addSprite(new AsScene1002Ring(_vm, this, false, 425, 184, _class599->getDrawRect().y, false));
+	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _class599->getDrawRect().y, false);
+	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _class599->getDrawRect().y, false);
+	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(0x8306F218) != 0);
+	_asRing4 = insertSprite<AsScene1002Ring>(this, false, 334, 191, _class599->getDrawRect().y, false);
+	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 425, 184, _class599->getDrawRect().y, false);
 
-	_asDoor = addSprite(new AsScene1002Door(_vm, tempClipRect));
-	
-	tempSprite = addSprite(new Class505(_vm));
-
-	_asDoorSpy = addSprite(new AsScene1002DoorSpy(_vm, tempClipRect, this, _asDoor, tempSprite));
-	
-	_class426 = addSprite(new Class426(_vm, this, 0x00412692, 0x140B60BE, 800, 0));
-	_asVenusFlyTrap = addSprite(new AsScene1002VenusFlyTrap(_vm, this, _klayman, false));
-	
+	_asDoor = insertSprite<AsScene1002Door>(tempClipRect);
+	tempSprite = insertSprite<Class505>();
+	_asDoorSpy = insertSprite<AsScene1002DoorSpy>(tempClipRect, this, _asDoor, tempSprite);
+	_class426 = insertSprite<Class426>(this, 0x00412692, 0x140B60BE, 800, 0);
+	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, false);
 	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klayman, 0x2007, _asVenusFlyTrap);
 
-	_class506 = addSprite(new Class506(_vm));
+	_class506 = insertSprite<Class506>();
 								  
 	setRectList(0x004B43A0);
 
@@ -1660,7 +1656,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	updatePaletteArea();
 	
-	_class478 = addSprite(new Class478(_vm, _klayman));
+	_class478 = insertSprite<Class478>(_klayman);
 
 	insertStaticSprite(0x800034A0, 1100);
 	insertStaticSprite(0x64402020, 1100);
@@ -1670,7 +1666,7 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setClipRect(0, tempSprite->getDrawRect().y, 640, 480);
 	_class478->setClipRect(_klayman->getClipRect());
 
-	_asTrashCan = addSprite(new AsScene1004TrashCan(_vm));
+	_asTrashCan = insertSprite<AsScene1004TrashCan>();
 
 }
 
