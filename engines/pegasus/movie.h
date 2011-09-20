@@ -42,7 +42,7 @@ public:
 	Movie(const tDisplayElementID);
 	virtual ~Movie();
 
-	virtual void initFromMovieFile(const Common::String &fileName, bool transparent);
+	virtual void initFromMovieFile(const Common::String &fileName, bool transparent = false);
 
 	bool isMovieValid() { return _video != 0; }
 	
