@@ -156,8 +156,8 @@ void Surface::copyToCurrentPort(const Common::Rect &srcRect, const Common::Rect 
 
 	for (int y = 0; y < srcRect.height(); y++) {
 		memcpy(dst, src, lineSize);
-		src += _surface->pitch - lineSize;
-		dst += screen->pitch - lineSize;
+		src += _surface->pitch;
+		dst += screen->pitch;
 	}
 }
 
