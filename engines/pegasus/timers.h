@@ -102,7 +102,7 @@ public:
 	void disposeAllCallBacks();
 
 	// ScummVM's API additions (to replace the need for actual timers)
-	void checkCallBacks();
+	virtual void checkCallBacks();
 
 protected:
 	void addCallBack(TimeBaseCallBack *);

@@ -223,17 +223,19 @@ void TimeBase::checkCallBacks() {
 
 	// TODO: Update the slaves?
 
+	Common::Rational time = getTime();
+
 	// Check if we've triggered any callbacks
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = runner->_nextCallBack) {
 		if (runner->_type == kCallBackAtTime && runner->_trigger == kTriggerTimeFwd) {
-			if (_time >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
+			if (time >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
 				runner->callBack();
 		} else if (runner->_type == kCallBackAtExtremes) {
 			if (runner->_trigger == kTriggerAtStop) {
-				if (_time == stopTime)
+				if (time == stopTime)
 					runner->callBack();
 			} else if (runner->_trigger == kTriggerAtStart) {
-				if (_time == startTime)
+				if (time == startTime)
 					runner->callBack();
 			}
 		}
@@ -241,10 +243,10 @@ void TimeBase::checkCallBacks() {
 
 	// Loop if necessary
 	if (getFlags() & kLoopTimeBase) {
-		if (_time == startTime)
-			_time = stopTime;
-		else if (_time == stopTime)
-			_time = startTime;
+		if (time == startTime)
+			setTime(_stopTime, _stopScale);
+		else if (time == stopTime)
+			setTime(_startTime, _startScale);
 	}
 }
 
