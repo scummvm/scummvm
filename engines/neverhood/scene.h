@@ -40,6 +40,9 @@ namespace Neverhood {
 #define InsertKlayman(KlaymanClass, X, Y) _klayman = new KlaymanClass(_vm, this, X, Y); addSprite(_klayman)
 #define InsertKlaymanInitArgs(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
 
+#define InsertSprite(SpriteClass) (SpriteClass*)addSprite(new SpriteClass(_vm)); 
+#define InsertSpriteInitArgs(SpriteClass, InitArgs) (SpriteClass*)addSprite((new SpriteClass(_vm))-> init InitArgs);
+
 class Scene : public Entity {
 public:
 	Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects);
@@ -55,6 +58,8 @@ public:
 	Background *addBackground(Background *background);
 	void setBackground(uint32 fileHash, bool dirtyBackground = true);
 	void changeBackground(uint32 fileHash);
+	void setBackgroundY(int16 y) { _background->getSurface()->getDrawRect().y = y; }
+	int16 getBackgroundY() { return _background->getSurface()->getDrawRect().y; }
 	void setPalette(uint32 fileHash = 0);
 	Sprite *insertStaticSprite(uint32 fileHash, int surfacePriority);
 	void insertMouse433(uint32 fileHash, NRect *mouseRect = NULL);

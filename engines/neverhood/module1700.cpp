@@ -210,47 +210,32 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 		InsertKlayman(KmScene1705, 231, 434);
 		setMessageList(0x004B69E8);
 		sendMessage(this, 0x2000, 0);
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 1) {
 		InsertKlayman(KmScene1705, 431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A08);
 		sendMessage(this, 0x2000, 1);
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 2) {
 		InsertKlayman(KmScene1705, 431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6AA0);
 		sendMessage(this, 0x2000, 1);
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 3) {
 		InsertKlayman(KmScene1705, 431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A18);
 		sendMessage(this, 0x2000, 1);
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else {
 		InsertKlayman(KmScene1705, 231, 74);
 		sendMessage(_klayman, 0x2000, 0);
 		setMessageList(0x004B69F0);
 		sendMessage(this, 0x2000, 0);
 		tempSprite = insertStaticSprite(0x30303822, 1100);
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
-		_klayman->getSurface()->getClipRect().x2 = _sprite->getSurface()->getDrawRect().x + _sprite->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, tempSprite->getDrawRect().y, _sprite->getDrawRect().x2(), 480);
 	}
 
 }

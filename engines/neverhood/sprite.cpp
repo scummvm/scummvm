@@ -98,6 +98,22 @@ int16 Sprite::defFilterY(int16 y) {
 	return y;
 }
 
+void Sprite::setClipRect(int16 x1, int16 y1, int16 x2, int16 y2) {
+	NRect &clipRect = _surface->getClipRect();
+	clipRect.x1 = x1;
+	clipRect.y1 = y1;
+	clipRect.x2 = x2;
+	clipRect.y2 = y2;
+}
+
+void Sprite::setClipRect(NRect& clipRect) {
+	_surface->getClipRect() = clipRect;
+}
+
+void Sprite::setClipRect(NDrawRect& drawRect) {
+	setClipRect(drawRect.x, drawRect.y, drawRect.x2(), drawRect.y2());
+}
+
 // StaticSprite
 
 StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)

@@ -714,16 +714,10 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->processDelta();
 			setMessageList(0x004B6670);
 		}
-		_class489->getSurface()->getClipRect().x1 = _sprite3->getSurface()->getDrawRect().x;
-		_class489->getSurface()->getClipRect().y1 = _sprite2->getSurface()->getDrawRect().y;
-		_class489->getSurface()->getClipRect().x2 = 640;
-		_class489->getSurface()->getClipRect().y2 = 480;
+		_class489->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
 	}
 	
-	_klayman->getSurface()->getClipRect().x1 = _sprite3->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
 	if (which == 0 && _class489 && _class489->hasMessageHandler()) {
 		sendMessage(_class489, 0x482B, 0);
@@ -881,8 +875,8 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1402::handleMessage);
 
-	_background = addBackground(new Background(_vm, 0x231482F0, 0, 0));
-	_background->getSurface()->getDrawRect().y = -10;
+	setBackground(0x231482F0);
+	setBackgroundY(-10);
 	// TODO g_screen->field_26 = 0;
 	setPalette(0x231482F0);
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
@@ -928,10 +922,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (_class482) {
-		_class482->getSurface()->getClipRect().x1 = 0;
-		_class482->getSurface()->getClipRect().y1 = 0;
-		_class482->getSurface()->getClipRect().x2 = 640;
-		_class482->getSurface()->getClipRect().y2 = _class454_3->getSurface()->getDrawRect().y + _class454_3->getSurface()->getDrawRect().height;
+		_class482->setClipRect(0, 0, 640, _class454_3->getDrawRect().y2());
 	}
 
 	if (getGlobalVar(0x4A105B3) == 1) {
@@ -948,39 +939,27 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->processDelta();
 			setMessageList(0x004B0BD0);
 		}
-		_class489->getSurface()->getClipRect().x1 = _class454_1->getSurface()->getDrawRect().x;
-		_class489->getSurface()->getClipRect().y1 = 0;
-		_class489->getSurface()->getClipRect().x2 = _class454_2->getSurface()->getDrawRect().x;
-		_class489->getSurface()->getClipRect().y2 = _class454_3->getSurface()->getDrawRect().y + _class454_3->getSurface()->getDrawRect().height;
+		_class489->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x, _class454_3->getDrawRect().y2());
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = _class454_1->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = _class454_2->getSurface()->getDrawRect().x + _class454_2->getSurface()->getDrawRect().width; 
-	_klayman->getSurface()->getClipRect().y2 = _class454_3->getSurface()->getDrawRect().y + _class454_3->getSurface()->getDrawRect().height;
+	_klayman->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x2(), _class454_3->getDrawRect().y2());
 	
 }
 
 void Scene1402::update() {
 	if (_flag) {
-		_background->getSurface()->getDrawRect().y = _vm->_rnd->getRandomNumber(10 - 1) - 10;
-		// TODO g_screen->field_26 = -10 - _background->getSurface()->getDrawRect().y;
+		setBackgroundY(_vm->_rnd->getRandomNumber(10 - 1) - 10);
+		// TODO g_screen->field_26 = -10 - _background->getDrawRect().y;
 	} else {
-		_background->getSurface()->getDrawRect().y = -10;
+		setBackgroundY(-10);
 		// TODO g_screen->field_26 = 0;
 		SetUpdateHandler(&Scene::update);
 	}
 	Scene::update();
 	if (_class482) {
-		_class482->getSurface()->getClipRect().x1 = 0;
-		_class482->getSurface()->getClipRect().y1 = 0;
-		_class482->getSurface()->getClipRect().x2 = 640;
-		_class482->getSurface()->getClipRect().y2 = _class454_3->getSurface()->getDrawRect().y + _class454_3->getSurface()->getDrawRect().height;
+		_class482->setClipRect(0, 0, 640, _class454_3->getDrawRect().y2());
 	}
-	_klayman->getSurface()->getClipRect().x1 = _class454_1->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = _class454_2->getSurface()->getDrawRect().x + _class454_2->getSurface()->getDrawRect().width; 
-	_klayman->getSurface()->getClipRect().y2 = _class454_3->getSurface()->getDrawRect().y + _class454_3->getSurface()->getDrawRect().height;
+	_klayman->setClipRect(_class454_1->getDrawRect().x, 0, _class454_2->getDrawRect().x2(), _class454_3->getDrawRect().y2());
 }
 
 uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1392,10 +1371,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->processDelta();
 			setMessageList(0x004B1F70);
 		}
-		_class489->getSurface()->getClipRect().x1 = 0;
-		_class489->getSurface()->getClipRect().y1 = 0;
-		_class489->getSurface()->getClipRect().x2 = 640;
-		_class489->getSurface()->getClipRect().y2 = _class401_2->getSurface()->getDrawRect().y + _class401_2->getSurface()->getDrawRect().height;
+		_class489->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
 		class489->setRepl(64, 0);
 	}
 
@@ -1515,16 +1491,10 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 			_klayman->processDelta();
 			setMessageList(0x004B8CB8);
 		}
-		_class489->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-		_class489->getSurface()->getClipRect().y1 = 0;
-		_class489->getSurface()->getClipRect().x2 = 640;
-		_class489->getSurface()->getClipRect().y2 = 480;
+		_class489->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 }
 

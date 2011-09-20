@@ -27,7 +27,6 @@ namespace Neverhood {
 Module1200::Module1200(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	// TODO _resourceTable.setResourceList(0x004B3E68);
 	SetMessageHandler(&Module1200::handleMessage);
 
 	debug("Module1200: which = %d", which);
@@ -188,10 +187,7 @@ SsScene1201Tnt::SsScene1201Tnt(NeverhoodEngine *vm, uint32 elemIndex, uint32 poi
 	
 	}
 	createSurface(50, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
-	_surface->getClipRect().x1 = 0;
-	_surface->getClipRect().y1 = 0;
-	_surface->getClipRect().x2 = 640;
-	_surface->getClipRect().y2 = clipY2;
+	setClipRect(0, 0, 640, clipY2);
 	_needRefresh = true;
 	StaticSprite::update();
 }
@@ -774,22 +770,19 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_collisionMan->addSprite(_asTape);
 	
 	tempSprite = insertStaticSprite(0x03C82530, 100);
-	topY1 = tempSprite->getY() + tempSprite->getSurface()->getDrawRect().height; 
+	topY1 = tempSprite->getY() + tempSprite->getDrawRect().height; 
 
 	tempSprite = insertStaticSprite(0x88182069, 200);
-	topY2 = tempSprite->getY() + tempSprite->getSurface()->getDrawRect().height; 
+	topY2 = tempSprite->getY() + tempSprite->getDrawRect().height; 
 
 	tempSprite = insertStaticSprite(0x476014E0, 300);
-	topY3 = tempSprite->getY() + tempSprite->getSurface()->getDrawRect().height; 
+	topY3 = tempSprite->getY() + tempSprite->getDrawRect().height; 
 
 	tempSprite = insertStaticSprite(0x04063110, 500);
 	topY4 = tempSprite->getY() + 1; 
 
 	_class466 = addSprite(new Class466(_vm, getGlobalVar(0x000CF819) && which != 1));
-	_class466->getSurface()->getClipRect().x1 = 0;
-	_class466->getSurface()->getClipRect().y1 = topY4;
-	_class466->getSurface()->getClipRect().x2 = 640;
-	_class466->getSurface()->getClipRect().y2 = 480;
+	_class466->setClipRect(0, topY4, 640, 480);
 	
 	insertStaticSprite(0x400B04B0, 1200);
 
@@ -797,7 +790,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	x1 = tempSprite->getX();
 
 	tempSprite = insertStaticSprite(0xA29223FA, 1200);
-	x2 = tempSprite->getX() + tempSprite->getSurface()->getDrawRect().width;
+	x2 = tempSprite->getX() + tempSprite->getDrawRect().width;
 
 	class464 = addSprite(new Class464(_vm));
 
@@ -830,10 +823,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004AEC10);
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = x1;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = x2;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(x1, 0, x2, 480);
 	_klayman->setRepl(64, 0);
 	
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
@@ -851,17 +841,11 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 		if (!getGlobalVar(0x0A18CA33)) {
 			AsScene1201TntMan *asTntMan;
 			asTntMan = new AsScene1201TntMan(_vm, this, _class466, which == 1);
-			asTntMan->getSurface()->getClipRect().x1 = x1;
-			asTntMan->getSurface()->getClipRect().y1 = 0;
-			asTntMan->getSurface()->getClipRect().x2 = x2;
-			asTntMan->getSurface()->getClipRect().y2 = 480;
+			asTntMan->setClipRect(x1, 0, x2, 480);
 			_vm->_collisionMan->addSprite(asTntMan);
 			_asTntMan = addSprite(asTntMan);
 			tempSprite = addSprite(new Class465(_vm, _asTntMan));
-			tempSprite->getSurface()->getClipRect().x1 = x1;
-			tempSprite->getSurface()->getClipRect().y1 = 0;
-			tempSprite->getSurface()->getClipRect().x2 = x2;
-			tempSprite->getSurface()->getClipRect().y2 = 480;
+			tempSprite->setClipRect(x1, 0, x2, 480);
 			asTntMan->setRepl(64, 0);
 		}
 		
@@ -926,10 +910,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x63D400BC, 900);
 
 	_asLeftDoor = addSprite(new AsScene1201LeftDoor(_vm, _klayman));
-	_asLeftDoor->getSurface()->getClipRect().x1 = x1;
-	_asLeftDoor->getSurface()->getClipRect().y1 = tempSprite->getSurface()->getDrawRect().y;
-	_asLeftDoor->getSurface()->getClipRect().x2 = tempSprite->getSurface()->getDrawRect().x + tempSprite->getSurface()->getDrawRect().width;
-	_asLeftDoor->getSurface()->getClipRect().y2 = 480;
+	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
 	if (getGlobalVar(0x0A310817) && ! getGlobalVar(0x0112090A)) {
 		setGlobalVar(0x0112090A, 1);
@@ -944,10 +925,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
 		_asCreature = addSprite(new AsScene1201Creature(_vm, this, _klayman));
-		_asCreature->getSurface()->getClipRect().x1 = x1;
-		_asCreature->getSurface()->getClipRect().y1 = 0;
-		_asCreature->getSurface()->getClipRect().x2 = x2;
-		_asCreature->getSurface()->getClipRect().y2 = 480;
+		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
 
 }

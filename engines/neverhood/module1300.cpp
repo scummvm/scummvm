@@ -430,18 +430,15 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2->setVisible(false);
 	_sprite3 = insertStaticSprite(0x16E01E20, 1100);
 
-	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 218, 122, _class595->getSurface()->getDrawRect().y, false));
-	_asRing2 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32, 132, _class595->getSurface()->getDrawRect().y, getGlobalVar(0x13206309)));
-	_asRing3 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32, 122, _class595->getSurface()->getDrawRect().y, false));
-	_asRing4 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32 + 32 + 32, 132, _class595->getSurface()->getDrawRect().y, getGlobalVar(0x80101B1E)));
-	_asRing5 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32 + 32 + 32, 115, _class595->getSurface()->getDrawRect().y, false));
+	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 218, 122, _class595->getDrawRect().y, false));
+	_asRing2 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x13206309)));
+	_asRing3 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32, 122, _class595->getDrawRect().y, false));
+	_asRing4 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32 + 32 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x80101B1E)));
+	_asRing5 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32 + 32 + 32, 115, _class595->getDrawRect().y, false));
 
 	_asBridge = addSprite(new AsScene1302Bridge(_vm, this));
 	_ssFence = addSprite(new SsScene1302Fence(_vm));
-	_ssFence->getSurface()->getClipRect().x1 = 0;
-	_ssFence->getSurface()->getClipRect().y1 = 0;
-	_ssFence->getSurface()->getClipRect().x2 = 640;
-	_ssFence->getSurface()->getClipRect().y2 = _sprite1->getSurface()->getDrawRect().y + _sprite1->getSurface()->getDrawRect().height;
+	_ssFence->setClipRect(0, 0, 640, _sprite1->getDrawRect().y2());
 
 	if (which < 0) {
 		InsertKlaymanInitArgs(KmScene1002, 380, 364, (_class595, NULL));
@@ -451,10 +448,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B0870);
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = 0;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = _sprite3->getSurface()->getDrawRect().x + _sprite3->getSurface()->getDrawRect().width;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(0, 0, _sprite3->getDrawRect().x2(), 480);
 
 	_asVenusFlyTrap = addSprite(new AsScene1002VenusFlyTrap(_vm, this, _klayman, true));
 	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
@@ -658,10 +652,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	InsertKlayman(KmScene1303, 207, 332);
 	setMessageList(0x004AF9A0);
 
-	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 }
 
@@ -746,10 +737,7 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B90F0);
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 }
 
@@ -1236,7 +1224,7 @@ void AsScene1307Key::stRemoveKey() {
 void AsScene1307Key::stInsertKey() {
 	_pointIndex = 0;
 	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4]);
-	_surface->getClipRect() = _clipRects[getSubVar(0xA010B810, _index) % 4];
+	setClipRect(_clipRects[getSubVar(0xA010B810, _index) % 4]);
 	SetSpriteCallback(&AsScene1307Key::suInsertKey);
 	_newHashListIndex = -2;
 }
@@ -1246,10 +1234,7 @@ void AsScene1307Key::stMoveKey() {
 	int16 newX = pt.x + kAsScene1307KeyXDelta;
 	int16 newY = pt.y + kAsScene1307KeyYDelta;
 	sendMessage(_parentScene, 0x1022, 1000);
-	_surface->getClipRect().x1 = 0;
-	_surface->getClipRect().y1 = 0;
-	_surface->getClipRect().x2 = 640;
-	_surface->getClipRect().y2 = 480;
+	setClipRect(0, 0, 640, 480);
 	_prevX = _x;
 	_prevY = _y;
 	if (newX == _x && newY == _y) {
@@ -1311,28 +1296,16 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse435(0x06204A88, 20, 620);
 
 	tempSprite = insertStaticSprite(0x00A3621C, 800);
-	_clipRects[0].x1 = tempSprite->getSurface()->getDrawRect().x;
-	_clipRects[0].y1 = 0;
-	_clipRects[0].x2 = 640;
-	_clipRects[0].y2 = 480;
+	_clipRects[0].set(tempSprite->getDrawRect().x, 0, 640, 480);
 
 	tempSprite = insertStaticSprite(0x00A3641C, 600);
-	_clipRects[1].x1 = tempSprite->getSurface()->getDrawRect().x;
-	_clipRects[1].y1 = 0;
-	_clipRects[1].x2 = 640;
-	_clipRects[1].y2 = 480;
+	_clipRects[1].set(tempSprite->getDrawRect().x, 0, 640, 480);
 
 	tempSprite = insertStaticSprite(0x00A3681C, 400);
-	_clipRects[2].x1 = tempSprite->getSurface()->getDrawRect().x;
-	_clipRects[2].y1 = 0;
-	_clipRects[2].x2 = 640;
-	_clipRects[2].y2 = 480;
+	_clipRects[2].set(tempSprite->getDrawRect().x, 0, 640, 480);
 
 	tempSprite = insertStaticSprite(0x00A3701C, 200);
-	_clipRects[3].x1 = tempSprite->getSurface()->getDrawRect().x;
-	_clipRects[3].y1 = 0;
-	_clipRects[3].x2 = 640;
-	_clipRects[3].y2 = 480;
+	_clipRects[3].set(tempSprite->getDrawRect().x, 0, 640, 480);
 
 	for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
 		if (getSubVar(0x08D0AB11, keyIndex)) {
@@ -1693,25 +1666,16 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (_sprite4) {
-		_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = _sprite4->getSurface()->getDrawRect().x + _sprite4->getSurface()->getDrawRect().width;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite4->getDrawRect().x2(), 480);
 	} else {
-		_klayman->getSurface()->getClipRect().x1 = _sprite1->getSurface()->getDrawRect().x;
-		_klayman->getSurface()->getClipRect().y1 = 0;
-		_klayman->getSurface()->getClipRect().x2 = 640;
-		_klayman->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 	}
 
 	if (getGlobalVar(0x04A105B3) == 4) {
 		_class489 = new Class489(_vm, this, _klayman, 0);
 		addSprite(_class489);
 		_vm->_collisionMan->addSprite(_class489);
-		_class489->getSurface()->getClipRect().x1 = 0;
-		_class489->getSurface()->getClipRect().y1 = 0;
-		_class489->getSurface()->getClipRect().x2 = 0;
-		_class489->getSurface()->getClipRect().y2 = _sprite2->getSurface()->getDrawRect().y + _sprite2->getSurface()->getDrawRect().height;
+		_class489->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_class489->setRepl(64, 0);
 	} else {
 		_class489 = NULL;

@@ -58,6 +58,12 @@ public:
 	void loadDataResource(uint32 fileHash);
 	int16 defFilterY(int16 y);
 	void setVisible(bool value) { _surface->setVisible(value); }
+	NDrawRect& getDrawRect() { return _surface->getDrawRect(); }
+	// Some shortcuts to set the clipRect
+	NRect& getClipRect() { return _surface->getClipRect(); }
+	void setClipRect(int16 x1, int16 y1, int16 x2, int16 y2);
+	void setClipRect(NRect& clipRect);
+	void setClipRect(NDrawRect& drawRect);
 protected:
 	void (Sprite::*_spriteUpdateCb)();
 	Common::String _spriteUpdateCbName; // For debugging purposes

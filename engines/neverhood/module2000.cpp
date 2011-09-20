@@ -133,10 +133,7 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 		_klayman->setDoDeltaX(1);
 	}
 	
-	_klayman->getSurface()->getClipRect().x1 = _class401->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_class401->getDrawRect().x, 0, 640, 480);
 	
 }
 

@@ -267,14 +267,6 @@ public:
 	Scene1002(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~Scene1002();
 protected:
-	// TODO ResourceTable _resourceTable1;
-	// TODO ResourceTable _resourceTable2;
-	// TODO ResourceTable _resourceTable3;
-	// TODO ResourceTable _resourceTable4;
-	// TODO ResourceTable _resourceTable5;
-	// TODO ResourceTable _resourceTable6;
-	// TODO ResourceTable _resourceTable7;
-	// TODO ResourceTable _resourceTable8;
 	Sprite *_asRing1;
 	Sprite *_asRing2;
 	Sprite *_asRing3;

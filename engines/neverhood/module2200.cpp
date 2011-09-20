@@ -760,16 +760,16 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	tempSprite = insertStaticSprite(0x030326A0, 1100);
-	_rect1.x1 = tempSprite->getSurface()->getDrawRect().x;
+	_rect1.x1 = tempSprite->getDrawRect().x;
 	
 	insertStaticSprite(0x811DA061, 1100);
 
 	tempSprite = insertStaticSprite(0x11180022, 1100);
-	_rect2.x1 = tempSprite->getSurface()->getDrawRect().x;
+	_rect2.x1 = tempSprite->getDrawRect().x;
 
 	tempSprite = insertStaticSprite(0x0D411130, 1100);
-	_rect1.y2 = tempSprite->getSurface()->getDrawRect().y + tempSprite->getSurface()->getDrawRect().height;
-	_rect2.y1 = tempSprite->getSurface()->getDrawRect().y + tempSprite->getSurface()->getDrawRect().height;
+	_rect1.y2 = tempSprite->getDrawRect().y2();
+	_rect2.y1 = tempSprite->getDrawRect().y2();
 	
 	_doorLightSprite = insertStaticSprite(0xA4062212, 900);
 
@@ -1366,15 +1366,8 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssSmallLeftDoor = insertStaticSprite(0x542CC072, 1100);
 	_ssSmallRightDoor = insertStaticSprite(0x0A2C0432, 1100);
 	
-	_leftDoorClipRect.x1 = _ssSmallLeftDoor->getSurface()->getDrawRect().x;
-	_leftDoorClipRect.y1 = 0;
-	_leftDoorClipRect.x2 = 640;
-	_leftDoorClipRect.y2 = 480;
-	
-	_rightDoorClipRect.x1 = 0;
-	_rightDoorClipRect.y1 = 0;
-	_rightDoorClipRect.x2 = _ssSmallRightDoor->getSurface()->getDrawRect().x + _ssSmallRightDoor->getSurface()->getDrawRect().width;
-	_rightDoorClipRect.y2 = 480;
+	_leftDoorClipRect.set(_ssSmallLeftDoor->getDrawRect().x, 0, 640, 480);
+	_rightDoorClipRect.set(0, 0, _ssSmallRightDoor->getDrawRect().x2(), 480);
 
 	sendEntityMessage(_asLeftDoor, 0x2000, _asRightDoor);
 	sendEntityMessage(_asRightDoor, 0x2000, _asLeftDoor);
@@ -1403,10 +1396,10 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(0x9A500914)) {
 		_ssSmallLeftDoor->setVisible(false);
-		_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
+		_klayman->setClipRect(_rightDoorClipRect);
 	} else {
 		_ssSmallRightDoor->setVisible(false);
-		_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
+		_klayman->setClipRect(_leftDoorClipRect);
 	}
 	
 	setRectList(0x004B8420);
@@ -1445,10 +1438,10 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4808:
 		if (sender == _asLeftDoor) {
 			_ssSmallLeftDoor->setVisible(true);
-			_klayman->getSurface()->getClipRect() = _leftDoorClipRect;
+			_klayman->setClipRect(_leftDoorClipRect);
 		} else {
 			_ssSmallRightDoor->setVisible(true);
-			_klayman->getSurface()->getClipRect() = _rightDoorClipRect;
+			_klayman->setClipRect(_rightDoorClipRect);
 		}
 		break;
 	case 0x4826:
@@ -1548,10 +1541,7 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 		_isKlaymanInLight = true;
 	}
 
-	_klayman->getSurface()->getClipRect().x1 = _ssDoorFrame->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 640, 480);
 
 	loadDataResource(0x00144822);
 	_klayman->setSoundFlag(true);
@@ -1563,14 +1553,14 @@ void Scene2205::update() {
 
 	if (!_isLightOn && getGlobalVar(0x4D080E54)) {
 		_palette->addPalette(0x0008028D, 0, 256, 0);
-		_background->load(0x0008028D);
+		changeBackground(0x0008028D);
 		_ssLightSwitch->setFileHashes(0x2D339030, 0x2D309030);
 		sendMessage(_ssDoorFrame, 0x2000, 0);
 		changeMouseCursor(0x80289008);
 		_isLightOn = true;
 	} else if (_isLightOn && !getGlobalVar(0x4D080E54)) {
 		_palette->addPalette(0xD00A028D, 0, 256, 0);
-		_background->load(0xD00A028D);
+		changeBackground(0xD00A028D);
 		_ssLightSwitch->setFileHashes(0x2D339030, 0xDAC86E84);
 		sendMessage(_ssDoorFrame, 0x2000, 0);
 		changeMouseCursor(0xA0289D08);
@@ -1769,10 +1759,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite2 = insertStaticSprite(0x3406A333, 300);
 		_sprite3 = insertStaticSprite(0x24A223A2, 100);
 		_sprite4 = addSprite(new Class603(_vm, 0x26133023));
-		_sprite4->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
-		_sprite4->getSurface()->getClipRect().y1 = 0;
-		_sprite4->getSurface()->getClipRect().x2 = 640;
-		_sprite4->getSurface()->getClipRect().y2 = 480;
+		_sprite4->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8AF8);
 		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x0E038022, 100, 0));
 		insertMouse433(0x83212411);
@@ -1784,10 +1771,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite2 = insertStaticSprite(0x020462E0, 300);
 		_sprite3 = insertStaticSprite(0x900626A2, 100);
 		_sprite4 = addSprite(new Class603(_vm, 0x544822A8));
-		_sprite4->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
-		_sprite4->getSurface()->getClipRect().y1 = 0;
-		_sprite4->getSurface()->getClipRect().x2 = 640;
-		_sprite4->getSurface()->getClipRect().y2 = 480;
+		_sprite4->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8B58);
 		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x16882608, 100, 0));
 		insertMouse433(0x02A41E09);
@@ -1795,10 +1779,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_class604 = addSprite(new Class604(_vm, 0x317831A0));
 	}
 
-	_class604->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
-	_class604->getSurface()->getClipRect().y1 = 0;
-	_class604->getSurface()->getClipRect().x2 = _sprite3->getSurface()->getDrawRect().x + _sprite3->getSurface()->getDrawRect().width;
-	_class604->getSurface()->getClipRect().y2 = _sprite1->getSurface()->getDrawRect().y + _sprite1->getSurface()->getDrawRect().height;
+	_class604->setClipRect(_sprite2->getDrawRect().x, 0, _sprite3->getDrawRect().x2(), _sprite1->getDrawRect().y2());
 
 	setBackground(fileHash);
 
@@ -1894,10 +1875,7 @@ void Scene2206::sub481950() {
 	setSurfacePriority(_sprite2->getSurface(), 300);
 	setSurfacePriority(_sprite3->getSurface(), 100);
 	setSurfacePriority(_sprite4->getSurface(), 200);
-	_klayman->getSurface()->getClipRect().x1 = 0;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = 640;
-	_klayman->getSurface()->getClipRect().y2 = 480;
+	_klayman->setClipRect(0, 0, 640, 480);
 }
 
 void Scene2206::sub4819D0() {
@@ -1909,10 +1887,7 @@ void Scene2206::sub4819D0() {
 	setSurfacePriority(_sprite2->getSurface(), 1300);
 	setSurfacePriority(_sprite3->getSurface(), 1100);
 	setSurfacePriority(_sprite4->getSurface(), 1200);
-	_klayman->getSurface()->getClipRect().x1 = _sprite2->getSurface()->getDrawRect().x;
-	_klayman->getSurface()->getClipRect().y1 = 0;
-	_klayman->getSurface()->getClipRect().x2 = _sprite3->getSurface()->getDrawRect().x + _sprite3->getSurface()->getDrawRect().width;
-	_klayman->getSurface()->getClipRect().y2 = _sprite1->getSurface()->getDrawRect().y + _sprite1->getSurface()->getDrawRect().height;
+	_klayman->setClipRect(_sprite2->getDrawRect().x, 0, _sprite3->getDrawRect().x2(), _sprite1->getDrawRect().y2());
 }
 
 void Scene2206::sub481B00() {
@@ -2307,20 +2282,9 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 		_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x2C4061C4, 100, 0));
 	
-		_asLever->getSurface()->getClipRect().x1 = 0;
-		_asLever->getSurface()->getClipRect().y1 = 0;
-		_asLever->getSurface()->getClipRect().x2 = _ssMaskPart3->getSurface()->getDrawRect().x + _ssMaskPart3->getSurface()->getDrawRect().width;
-		_asLever->getSurface()->getClipRect().y2 = 480;
-	
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
-		_klayman->getSurface()->getClipRect().x2 = 640;
-		_klayman->getSurface()->getClipRect().y2 = _ssMaskPart2->getSurface()->getDrawRect().y + _ssMaskPart2->getSurface()->getDrawRect().height;
-	
-		_asElevator->getSurface()->getClipRect().x1 = 0;
-		_asElevator->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
-		_asElevator->getSurface()->getClipRect().x2 = 640;
-		_asElevator->getSurface()->getClipRect().y2 = _ssMaskPart2->getSurface()->getDrawRect().y + _ssMaskPart2->getSurface()->getDrawRect().height;
+		_asLever->setClipRect(0, 0, _ssMaskPart3->getDrawRect().x2(), 480);
+		_klayman->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
+		_asElevator->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
 	
 	} else {
 
@@ -2342,15 +2306,8 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asWallCannonAnimation = NULL;
 		_ssButton = NULL;
 
-		_klayman->getSurface()->getClipRect().x1 = 0;
-		_klayman->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
-		_klayman->getSurface()->getClipRect().x2 = 640;
-		_klayman->getSurface()->getClipRect().y2 = 480;
-		
-		_asElevator->getSurface()->getClipRect().x1 = 0;
-		_asElevator->getSurface()->getClipRect().y1 = _ssMaskPart1->getSurface()->getDrawRect().y;
-		_asElevator->getSurface()->getClipRect().x2 = 640;
-		_asElevator->getSurface()->getClipRect().y2 = 480;
+		_klayman->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
+		_asElevator->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
 
 	}
 
