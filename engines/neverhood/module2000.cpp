@@ -108,26 +108,26 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	_class401 = insertStaticSprite(0x0D641724, 1100);
 
 	if (which < 0) {
-		InsertKlayman(KmScene2001, 300, 345);
+		insertKlayman<KmScene2001>(300, 345);
 		setMessageList(0x004B3538);
 		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
-		InsertKlayman(KmScene2001, 116, 345);
+		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3540);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
-		InsertKlayman(KmScene2001, 116, 345);
+		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B35F0);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
-		InsertKlayman(KmScene2001, 116, 345);
+		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B3550);
 		sendMessage(this, 0x2000, 1);
 	} else {
-		InsertKlayman(KmScene2001, 390, 345);
+		insertKlayman<KmScene2001>(390, 345);
 		setMessageList(0x004B3530);
 		sendMessage(this, 0x2000, 0);
 		_klayman->setDoDeltaX(1);

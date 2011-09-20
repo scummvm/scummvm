@@ -182,7 +182,7 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene1705::handleMessage);
 	SetUpdateHandler(&Scene1705::update);
 
-	_vm->_collisionMan->setHitRects(0x004B69D8);
+	setHitRects(0x004B69D8);
 
 	_surfaceFlag = true;
 
@@ -207,30 +207,30 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	which = 4;
 
 	if (which < 0) {
-		InsertKlayman(KmScene1705, 231, 434);
+		insertKlayman<KmScene1705>(231, 434);
 		setMessageList(0x004B69E8);
 		sendMessage(this, 0x2000, 0);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 1) {
-		InsertKlayman(KmScene1705, 431, 434);
+		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A08);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 2) {
-		InsertKlayman(KmScene1705, 431, 434);
+		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6AA0);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 3) {
-		InsertKlayman(KmScene1705, 431, 434);
+		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004B6A18);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else {
-		InsertKlayman(KmScene1705, 231, 74);
+		insertKlayman<KmScene1705>(231, 74);
 		sendMessage(_klayman, 0x2000, 0);
 		setMessageList(0x004B69F0);
 		sendMessage(this, 0x2000, 0);

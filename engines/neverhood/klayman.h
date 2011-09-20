@@ -44,7 +44,6 @@ struct KlaymanTableItem {
 class Klayman : public AnimatedSprite {
 public:
 	Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000, NRectArray *clipRects = NULL);
-	void init() { }
 
 	void update();
 
@@ -262,8 +261,7 @@ protected:
 
 class KmScene1002 : public Klayman {
 public:
-	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void init(Sprite *class599, Sprite *ssLadderArch);
+	KmScene1002(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, Sprite *class599, Sprite *ssLadderArch);
 protected:
 	Sprite *_class599;
 	Sprite *_ssLadderArch;
@@ -309,8 +307,7 @@ protected:
 
 class KmScene1201 : public Klayman {
 public:
-	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void init(Entity *class464);
+	KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, Entity *class464);
 protected:
 	Entity *_class464;
 	int _countdown;
@@ -431,8 +428,7 @@ protected:
 
 class KmScene2201 : public Klayman {
 public:
-	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
-	void init(NRect *clipRects, int clipRectsCount);
+	KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };

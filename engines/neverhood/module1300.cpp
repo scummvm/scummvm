@@ -417,7 +417,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _soundResource(vm) {
 
 	SetMessageHandler(&Scene1302::handleMessage);
-	_vm->_collisionMan->setHitRects(0x004B0858);
+	setHitRects(0x004B0858);
 	setRectList(0x004B0A38);
 
 	setBackground(0x420643C4);
@@ -441,10 +441,10 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssFence->setClipRect(0, 0, 640, _sprite1->getDrawRect().y2());
 
 	if (which < 0) {
-		InsertKlaymanInitArgs(KmScene1002, 380, 364, (_class595, NULL));
+		insertKlayman<KmScene1002>(380, 364, _class595, (Sprite*)NULL);
 		setMessageList(0x004B0868);
 	} else {
-		InsertKlaymanInitArgs(KmScene1002, 293, 330, (_class595, NULL));
+		insertKlayman<KmScene1002>(293, 330, _class595, (Sprite*)NULL);
 		setMessageList(0x004B0870);
 	}
 
@@ -649,7 +649,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_sprite1 = insertStaticSprite(0xA014216B, 1100);
 
-	InsertKlayman(KmScene1303, 207, 332);
+	insertKlayman<KmScene1303>(207, 332);
 	setMessageList(0x004AF9A0);
 
 	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
@@ -730,10 +730,10 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x090AF033, 1100);
 
 	if (which < 0) {
-		InsertKlayman(KmScene1304, 217, 347);
+		insertKlayman<KmScene1304>(217, 347);
 		setMessageList(0x004B90E8);
 	} else {
-		InsertKlayman(KmScene1304, 100, 347);
+		insertKlayman<KmScene1304>(100, 347);
 		setMessageList(0x004B90F0);
 	}
 
@@ -778,10 +778,10 @@ Scene1305::Scene1305(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x01B60280);
 
 	if (which < 0) {
-		InsertKlayman(KmScene1305, 212, 441);
+		insertKlayman<KmScene1305>(212, 441);
 		setMessageList(0x004B6E40);
 	} else {
-		InsertKlayman(KmScene1305, 212, 441);
+		insertKlayman<KmScene1305>(212, 441);
 		setMessageList(0x004B6E48);
 	}
 	
@@ -913,45 +913,45 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x00042313, 1100);
 
 	if (which < 0) {
-		InsertKlayman(KmScene1306, 380, 440);
+		insertKlayman<KmScene1306>(380, 440);
 		setMessageList(0x004AFAD0);
 		sendMessage(this, 0x2000, 0);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 1) {
-		InsertKlayman(KmScene1306, 136, 440);
+		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFAF0);
 		sendMessage(this, 0x2000, 1);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 2) {
 		if (getGlobalVar(0xC0418A02)) {
-			InsertKlayman(KmScene1306, 515, 440);
+			insertKlayman<KmScene1306>(515, 440);
 			_klayman->setDoDeltaX(1);
 		} else {
-			InsertKlayman(KmScene1306, 355, 440);
+			insertKlayman<KmScene1306>(355, 440);
 		}
 		setMessageList(0x004AFBC8);
 		sendMessage(this, 0x2000, 0);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 3) {
-		InsertKlayman(KmScene1306, 534, 440);
+		insertKlayman<KmScene1306>(534, 440);
 		setMessageList(0x004AFC30);
 		sendMessage(this, 0x2000, 0);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 4) {
-		InsertKlayman(KmScene1306, 136, 440);
+		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFC38);
 		sendMessage(this, 0x2000, 1);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else if (which == 5) {
-		InsertKlayman(KmScene1306, 136, 440);
+		insertKlayman<KmScene1306>(136, 440);
 		sendMessage(_klayman, 0x2000, 1);
 		setMessageList(0x004AFB00);
 		sendMessage(this, 0x2000, 1);
 		_vm->_collisionMan->addSprite(_asTape);
 	} else {
-		InsertKlayman(KmScene1306, 286, 408);
+		insertKlayman<KmScene1306>(286, 408);
 		setSurfacePriority(_asElevator->getSurface(), 1100);
 		setSurfacePriority(_asElevatorDoor->getSurface(), 1090);
 		setSurfacePriority(_sprite1->getSurface(), 1080);
@@ -1621,7 +1621,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite4 = NULL;
 
 	if (which < 0) {
-		InsertKlayman(KmScene1308, 380, 440);
+		insertKlayman<KmScene1308>(380, 440);
 		setMessageList(0x004B57C0);
 		if (getGlobalVar(0x80455A41)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
@@ -1631,7 +1631,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004B5980);
 		}
 	} else if (which == 1) {
-		InsertKlayman(KmScene1308, 640, 440);
+		insertKlayman<KmScene1308>(640, 440);
 		setMessageList(0x004B57C8);
 		if (getGlobalVar(0x80455A41)) {
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
@@ -1641,7 +1641,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004B5980);
 		}
 	} else if (which == 2) {
-		InsertKlayman(KmScene1308, 475, 440);
+		insertKlayman<KmScene1308>(475, 440);
 		setMessageList(0x004B58B0);
 		if (getGlobalVar(0x80455A41)) {
 			_sprite5 = addSprite(new Class592(_vm, this));
@@ -1652,7 +1652,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 			setRectList(0x004B5980);
 		}
 	} else {
-		InsertKlayman(KmScene1308, 41, 440);
+		insertKlayman<KmScene1308>(41, 440);
 		setMessageList(0x004B57D0);
 		sendMessage(_class549, 0x4808, 0);
 		_sprite1->setVisible(false);

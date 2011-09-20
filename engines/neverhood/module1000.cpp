@@ -338,7 +338,7 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene1001::handleMessage);
 	
-	_vm->_collisionMan->setHitRects(0x004B4860);
+	setHitRects(0x004B4860);
 	_surfaceFlag = false;
 	setBackground(0x4086520E);
 	setPalette(0x4086520E);
@@ -346,24 +346,24 @@ Scene1001::Scene1001(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (which < 0) {
 		setRectList(0x004B49F0);
-		InsertKlayman(KmScene1001, 200, 433);
+		insertKlayman<KmScene1001>(200, 433);
 		setMessageList(0x004B4888);
 	} else if (which == 1) {
 		setRectList(0x004B49F0);
-		InsertKlayman(KmScene1001, 640, 433);
+		insertKlayman<KmScene1001>(640, 433);
 		setMessageList(0x004B4898);
 	} else if (which == 2) {
 		setRectList(0x004B49F0);
 		if (getGlobalVar(0xC0418A02)) {
-			InsertKlayman(KmScene1001, 390, 433);
+			insertKlayman<KmScene1001>(390, 433);
 			_klayman->setDoDeltaX(1);
 		} else {
-			InsertKlayman(KmScene1001, 300, 433);
+			insertKlayman<KmScene1001>(300, 433);
 		}
 		setMessageList(0x004B4970);
 	} else {
 		setRectList(0x004B4A00);
-		InsertKlayman(KmScene1001, 200, 433);
+		insertKlayman<KmScene1001>(200, 433);
 		setMessageList(0x004B4890);
 	}
 
@@ -1317,7 +1317,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1002::update);
 	SetMessageHandler(&Scene1002::handleMessage);
 
-	_vm->_collisionMan->setHitRects(0x004B4138);
+	setHitRects(0x004B4138);
 
 	_surfaceFlag = true;
 
@@ -1338,28 +1338,28 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		if (_vm->_gameState.field2 == 0) {
-			InsertKlaymanInitArgs(KmScene1002, 90, 226, (_class599, _ssLadderArch)); 
+			insertKlayman<KmScene1002>(90, 226, _class599, _ssLadderArch);
 			_class478 = insertSprite<Class478>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
 			_class478->getSurface()->getClipRect() = _klayman->getSurface()->getClipRect();
 			_klayman->setRepl(64, 0);
 		} else {
-			InsertKlaymanInitArgs(KmScene1002, 379, 435, (_class599, _ssLadderArch));
+			insertKlayman<KmScene1002>(379, 435, _class599, _ssLadderArch);
 			_class478 = insertSprite<Class478>(_klayman);
 			setMessageList(0x004B4270);
 			_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 			_class478->setClipRect(_klayman->getClipRect());
 		}
 	} else if (which == 1) {
-		InsertKlaymanInitArgs(KmScene1002, 650, 435, (_class599, _ssLadderArch));
+		insertKlayman<KmScene1002>(650, 435, _class599, _ssLadderArch);
 		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4478);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
 		_class478->setClipRect(_klayman->getClipRect());
 		_vm->_gameState.field2 = 1;
 	} else if (which == 2) {
-		InsertKlaymanInitArgs(KmScene1002, 68, 645, (_class599, _ssLadderArch));
+		insertKlayman<KmScene1002>(68, 645, _class599, _ssLadderArch);
 		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4298);
 		_klayman->setClipRect(_ssLadderArch->getDrawRect().x, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart1->getDrawRect().y2());
@@ -1367,7 +1367,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 		_vm->_gameState.field2 = 1;
 		sendMessage(_klayman, 0x4820, 0);
 	} else {
-		InsertKlaymanInitArgs(KmScene1002, 90, 226, (_class599, _ssLadderArch));
+		insertKlayman<KmScene1002>(90, 226, _class599, _ssLadderArch);
 		_class478 = insertSprite<Class478>(_klayman);
 		setMessageList(0x004B4470);
 		_klayman->setClipRect(31, 0, _ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart3->getDrawRect().y2());
@@ -1642,15 +1642,15 @@ Scene1004::Scene1004(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		setRectList(0x004B7C70);
-		InsertKlayman(KmScene1004, 330, 327);
+		insertKlayman<KmScene1004>(330, 327);
 		setMessageList(0x004B7C18);
 	} else if (which == 1) {
 		setRectList(0x004B7C70);
-		InsertKlayman(KmScene1004, 330, 327);
+		insertKlayman<KmScene1004>(330, 327);
 		setMessageList(0x004B7C08);
 	} else {
 		loadDataResource(0x01900A04);
-		InsertKlayman(KmScene1004, _dataResource.getPoint(0x80052A29).x, 27);
+		insertKlayman<KmScene1004>(_dataResource.getPoint(0x80052A29).x, 27);
 		setMessageList(0x004B7BF0);
 	}
 	

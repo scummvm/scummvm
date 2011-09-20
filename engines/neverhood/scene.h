@@ -37,12 +37,6 @@
 
 namespace Neverhood {
 
-#define InsertKlayman(KlaymanClass, X, Y) _klayman = new KlaymanClass(_vm, this, X, Y); addSprite(_klayman)
-#define InsertKlaymanInitArgs(KlaymanClass, X, Y, InitArgs) _klayman = new KlaymanClass(_vm, this, X, Y); ((KlaymanClass*)_klayman)->init InitArgs; addSprite(_klayman)
-
-#define InsertSprite(SpriteObj, SpriteClass) SpriteObj = (SpriteClass*)addSprite(new SpriteClass(_vm)); 
-#define InsertSpriteInitArgs(SpriteObj, SpriteClass, InitArgs) SpriteObj = new SpriteClass(_vm); ((SpriteClass*)(SpriteObj))-> init InitArgs; addSprite(SpriteObj)
-
 class Scene : public Entity {
 public:
 	Scene(NeverhoodEngine *vm, Module *parentModule, bool clearHitRects);
@@ -61,6 +55,7 @@ public:
 	void setBackgroundY(int16 y) { _background->getSurface()->getDrawRect().y = y; }
 	int16 getBackgroundY() { return _background->getSurface()->getDrawRect().y; }
 	void setPalette(uint32 fileHash = 0);
+	void setHitRects(uint32 id);
 	Sprite *insertStaticSprite(uint32 fileHash, int surfacePriority);
 	void insertMouse433(uint32 fileHash, NRect *mouseRect = NULL);
 	void insertMouse435(uint32 fileHash, int16 x1, int16 x2);
@@ -70,6 +65,36 @@ public:
 	SmackerPlayer *addSmackerPlayer(SmackerPlayer *smackerPlayer);
 	void update();
 	// Some crazy templated functions to make the logic code smaller/simpler (imo!)
+	// insertKlayman
+	template<class T> 
+	void insertKlayman() {
+		_klayman = (T*)addSprite(new T(_vm, this));
+	}
+	template<class T, class Arg1> 
+	void insertKlayman(Arg1 arg1) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1));
+	}
+	template<class T, class Arg1, class Arg2> 
+	void insertKlayman(Arg1 arg1, Arg2 arg2) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1, arg2));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3> 
+	void insertKlayman(Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4> 
+	void insertKlayman(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5> 
+	void insertKlayman(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5));
+	}
+	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6> 
+	void insertKlayman(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6) {
+		_klayman = (T*)addSprite(new T(_vm, this, arg1, arg2, arg3, arg4, arg5, arg6));
+	}
+	// insertSprite
 	template<class T> 
 	T* insertSprite() {
 		return (T*)addSprite(new T(_vm));

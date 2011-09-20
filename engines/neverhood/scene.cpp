@@ -191,6 +191,10 @@ void Scene::setPalette(uint32 fileHash) {
 	_palette->usePalette();
 }
 
+void Scene::setHitRects(uint32 id) {
+	_vm->_collisionMan->setHitRects(id);
+}
+
 Sprite *Scene::insertStaticSprite(uint32 fileHash, int surfacePriority) {
 	return addSprite(new StaticSprite(_vm, fileHash, surfacePriority));
 }

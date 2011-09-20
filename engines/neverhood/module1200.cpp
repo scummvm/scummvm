@@ -753,7 +753,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene1201::update);
 	SetMessageHandler(&Scene1201::handleMessage);
 
-	_vm->_collisionMan->setHitRects(0x004AEBD0);
+	setHitRects(0x004AEBD0);
 	
 	_surfaceFlag = true;
 
@@ -797,29 +797,29 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	debug("Scene1201: which = %d", which);
 
 	if (which < 0) {
-		InsertKlaymanInitArgs(KmScene1201, 364, 333, (class464));
+		insertKlayman<KmScene1201>(364, 333, class464);
 		setMessageList(0x004AEC08);
 	} else if (which == 3) {
-		InsertKlaymanInitArgs(KmScene1201, 400, 329, (class464));
+		insertKlayman<KmScene1201>(400, 329, class464);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
 		if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-			InsertKlaymanInitArgs(KmScene1201, 374, 333, (class464));
+			insertKlayman<KmScene1201>(374, 333, class464);
 			setMessageList(0x004AEC08);
 		} else {
-			InsertKlaymanInitArgs(KmScene1201, 640, 329, (class464));
+			insertKlayman<KmScene1201>(640, 329, class464);
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
 		if (getGlobalVar(0xC0418A02)) {
-			InsertKlaymanInitArgs(KmScene1201, 364, 333, (class464));
+			insertKlayman<KmScene1201>(364, 333, class464);
 			_klayman->setDoDeltaX(1);
 		} else {
-			InsertKlaymanInitArgs(KmScene1201, 246, 333, (class464));
+			insertKlayman<KmScene1201>(246, 333, class464);
 		}
 		setMessageList(0x004AEC30);
 	} else {
-		InsertKlaymanInitArgs(KmScene1201, 0, 336, (class464));
+		insertKlayman<KmScene1201>(0, 336, class464);
 		setMessageList(0x004AEC10);
 	}
 
