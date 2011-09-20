@@ -223,7 +223,7 @@ void TimeBase::checkCallBacks() {
 
 	// TODO: Update the slaves?
 
-	Common::Rational time = getTime();
+	Common::Rational time = Common::Rational(getTime(), getScale());
 
 	// Check if we've triggered any callbacks
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = runner->_nextCallBack) {
