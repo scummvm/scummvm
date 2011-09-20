@@ -243,9 +243,9 @@ void TimeBase::checkCallBacks() {
 
 	// Loop if necessary
 	if (getFlags() & kLoopTimeBase) {
-		if (time == startTime)
+		if (getRate() < 0 && time == startTime)
 			setTime(_stopTime, _stopScale);
-		else if (time == stopTime)
+		else if (getRate() > 0 && time == stopTime)
 			setTime(_startTime, _startScale);
 	}
 }
