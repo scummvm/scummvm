@@ -519,6 +519,42 @@ const tHotSpotFlags kJMPClickingSpotFlags = kClickSpotFlag |
 											kOpticalBiochipSpotFlag |
 											kAirMaskSpotFlag;
 
+const tMM32BitID kMainMenuID = 1;
+const tMM32BitID kPauseMenuID = 2;
+const tMM32BitID kCreditsMenuID = 3;
+const tMM32BitID kDeathMenuID = 4;
+
+/////////////////////////////////////////////
+//
+//	Menu commands.
+
+const tGameMenuCommand kMenuCmdOverview = kMenuCmdNoCommand + 1;
+const tGameMenuCommand kMenuCmdStartAdventure = kMenuCmdOverview + 1;
+const tGameMenuCommand kMenuCmdStartWalkthrough = kMenuCmdStartAdventure + 1;
+const tGameMenuCommand kMenuCmdRestore = kMenuCmdStartWalkthrough + 1;
+const tGameMenuCommand kMenuCmdCredits = kMenuCmdRestore + 1;
+const tGameMenuCommand kMenuCmdQuit = kMenuCmdCredits + 1;
+
+const tGameMenuCommand kMenuCmdDeathContinue = kMenuCmdQuit + 1;
+
+const tGameMenuCommand kMenuCmdDeathQuitDemo = kMenuCmdDeathContinue + 1;
+const tGameMenuCommand kMenuCmdDeathMainMenuDemo = kMenuCmdDeathQuitDemo + 1;
+
+const tGameMenuCommand kMenuCmdDeathRestore = kMenuCmdDeathContinue + 1;
+const tGameMenuCommand kMenuCmdDeathMainMenu = kMenuCmdDeathRestore + 1;
+
+const tGameMenuCommand kMenuCmdPauseSave = kMenuCmdDeathMainMenu + 1;
+const tGameMenuCommand kMenuCmdPauseContinue = kMenuCmdPauseSave + 1;
+const tGameMenuCommand kMenuCmdPauseRestore = kMenuCmdPauseContinue + 1;
+const tGameMenuCommand kMenuCmdPauseQuit = kMenuCmdPauseRestore + 1;
+
+const tGameMenuCommand kMenuCmdCreditsMainMenu = kMenuCmdPauseQuit + 1;
+
+const tGameMenuCommand kMenuCmdCancelRestart = kMenuCmdCreditsMainMenu + 1;
+const tGameMenuCommand kMenuCmdEjectRestart = kMenuCmdCancelRestart + 1;
+
+const TimeValue kMenuButtonHiliteTime = 20;
+const TimeScale kMenuButtonHiliteScale = kSixtyTicksPerSecond;
 
 } // End of namespace Pegasus
 

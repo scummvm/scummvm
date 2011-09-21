@@ -36,6 +36,7 @@
 #include "pegasus/console.h"
 #include "pegasus/cursor.h"
 #include "pegasus/gamestate.h"
+#include "pegasus/menu.h"
 #include "pegasus/movie.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
@@ -49,6 +50,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID) {
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
+	_gameMenu = 0;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -57,6 +59,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _console;
 	delete _cursor;
 	delete _continuePoint;
+	delete _gameMenu;
 }
 
 Common::Error PegasusEngine::run() {
@@ -483,6 +486,14 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 #else
 			if (!isDemo())
 				runIntro();
+
+			if (shouldQuit())
+				return;
+
+			useMenu(new MainMenu());
+			_gfx->invalRect(Common::Rect(0, 0, 640, 480));
+			_gfx->updateDisplay();
+			((MainMenu *)_gameMenu)->startMainMenuLoop();
 #endif
 			break;
 		}
@@ -495,6 +506,87 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 void PegasusEngine::checkCallBacks() {
 	for (Common::List<TimeBase *>::iterator it = _timeBases.begin(); it != _timeBases.end(); it++)
 		(*it)->checkCallBacks();
+}
+
+void PegasusEngine::resetIntroTimer() {
+	// TODO
+}
+
+void PegasusEngine::delayShell(TimeValue time, TimeScale scale) {
+	if (time == 0 || scale == 0)
+		return;
+
+	uint32 startTime = g_system->getMillis();
+	uint32 timeInMillis = time * 1000 / scale;
+
+	while (g_system->getMillis() < startTime + timeInMillis) {
+		checkCallBacks();
+		_gfx->updateDisplay();
+	}
+}
+
+void PegasusEngine::useMenu(GameMenu *newMenu) {
+	if (_gameMenu) {
+		_gameMenu->restorePreviousHandler();
+		delete _gameMenu;
+	}
+
+	_gameMenu = newMenu;
+
+	if (_gameMenu)
+		_gameMenu->becomeCurrentHandler();
+}
+
+bool PegasusEngine::checkGameMenu() {
+	tGameMenuCommand command = kMenuCmdNoCommand;
+
+	if (_gameMenu) {
+		command = _gameMenu->getLastCommand();
+		if (command != kMenuCmdNoCommand) {
+			_gameMenu->clearLastCommand();
+			doGameMenuCommand(command);
+		}
+	}
+
+	return command != kMenuCmdNoCommand;
+}
+
+void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
+	switch (command) {
+	case kMenuCmdStartAdventure:
+		GameState.setWalkthroughMode(false);
+		error("Start new game (adventure mode)");
+		break;
+	case kMenuCmdCredits:
+		error("Show credits");
+		break;
+	case kMenuCmdQuit:
+		_system->quit();
+		break;
+	case kMenuCmdOverview:
+		error("Show overview");
+		break;
+	case kMenuCmdStartWalkthrough:
+		GameState.setWalkthroughMode(true);
+		error("Start new game (walkthrough mode)");
+		break;
+	case kMenuCmdRestore:
+		error("Load game");
+		break;
+	case kMenuCmdNoCommand:
+		break;
+	default:
+		error("Unknown menu command %d", command);
+	}
+}
+
+void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	if (!checkGameMenu())
+		; // TODO: Other input
+
+	// TODO: Quit request
+	// TODO: Save request
+	// TODO: Load request
 }
 
 } // End of namespace Pegasus

@@ -52,6 +52,7 @@ class GraphicsManager;
 class Idler;
 class Cursor;
 class TimeBase;
+class GameMenu;
 
 class PegasusEngine : public ::Engine, public InputHandler, public NotificationManager {
 friend class InputHandler;
@@ -73,6 +74,10 @@ public:
 	GraphicsManager *_gfx;
 	Common::MacResManager *_resFork;
 
+	// Menu
+	void useMenu(GameMenu *menu);
+	bool checkGameMenu();
+
 	// Misc.
 	bool isDemo() const;
 	void addIdler(Idler *idler);
@@ -81,6 +86,8 @@ public:
 	void removeTimeBase(TimeBase *timeBase);
 	void swapSaveAllowed(bool allow) { _saveAllowed = allow; }
 	void swapLoadAllowed(bool allow) { _loadAllowed = allow; }
+	void delayShell(TimeValue time, TimeScale scale);
+	void resetIntroTimer();
 
 protected:
 	Common::Error run();
@@ -89,6 +96,8 @@ protected:
 
 	Notification _shellNotification;
 	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
+
+	void handleInput(const Input &input, const Hotspot *cursorSpot);
 
 private:
 	// Console
@@ -124,6 +133,10 @@ private:
 	// Misc.
 	Hotspot _returnHotspot;
 	void showLoadDialog();
+
+	// Menu
+	GameMenu *_gameMenu;
+	void doGameMenuCommand(const tGameMenuCommand);
 };
 
 } // End of namespace Pegasus

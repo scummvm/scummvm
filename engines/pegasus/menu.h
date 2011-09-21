@@ -27,7 +27,10 @@
 #define PEGASUS_MENU_H
 
 #include "pegasus/constants.h"
+#include "pegasus/fader.h"
 #include "pegasus/input.h"
+#include "pegasus/sound.h"
+#include "pegasus/surface.h"
 #include "pegasus/util.h"
 
 namespace Pegasus {
@@ -48,6 +51,41 @@ protected:
 
 	InputHandler *_previousHandler;
 	tGameMenuCommand _lastCommand;
+};
+
+class Hotspot;
+
+class MainMenu : public GameMenu {
+public:
+	MainMenu();
+	virtual ~MainMenu();
+
+	virtual void handleInput(const Input &input, const Hotspot *);
+	void startMainMenuLoop();
+	void stopMainMenuLoop();
+
+protected:
+	void updateDisplay();
+
+	uint32 _menuSelection;
+
+	// Full and Demo
+	Picture _menuBackground;
+	Picture _startButton;
+	Picture _creditsButton;
+	Picture _quitButton;
+	Picture _largeSelect;
+	Picture _smallSelect;
+
+	// Full only
+	bool _adventureMode;
+	Picture _overviewButton;
+	Picture _restoreButton;
+	Picture _adventureButton;
+	Picture _walkthroughButton;
+
+	Sound _menuLoop;
+	SoundFader _menuFader;
 };
 
 } // End of namespace Pegasus
