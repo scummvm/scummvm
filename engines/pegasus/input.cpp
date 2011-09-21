@@ -111,10 +111,13 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 
 	// Update the mouse position too
 	input.setInputLocation(g_system->getEventManager()->getMousePos());
-	_lastRawBits = currentBits;
 
-	tInputBits filteredBits = currentBits & filter;
+	// Set the outgoing bits
+	tInputBits filteredBits = currentBits & filter;	
 	input.setInputBits((filteredBits & kAllButtonDownBits) | (filteredBits & _lastRawBits & kAllAutoBits));
+
+	// Update the last bits
+	_lastRawBits = currentBits;
 }
 
 //	Wait until the input device stops returning input allowed by filter...
