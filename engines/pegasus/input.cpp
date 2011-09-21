@@ -46,10 +46,10 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		// We only care about two events here
+		// We only care about key down here
 		// We're mapping from ScummVM events to pegasus events, which
 		// are based on pippin events.
-		if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
+		if (event.type == Common::EVENT_KEYDOWN) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_KP8:
