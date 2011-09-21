@@ -87,9 +87,6 @@ private:
 	Common::Array<Movie *> _movies;
 
 	ViewType _viewType;
-	uint16 _currentNode;
-	uint8 _currentRoom;
-	uint32 _currentAge;
 
 	friend class Console;
 };

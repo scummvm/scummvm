@@ -72,7 +72,7 @@ Common::String Console::describeCondition(int16 condition) {
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
 
-	uint16 nodeId = _vm->_currentNode;
+	uint16 nodeId = _vm->_vars->getLocationNode();
 	uint16 roomId = 0;
 
 	if (argc >= 2) {
@@ -89,6 +89,11 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	}
 
 	NodePtr nodeData = _vm->_db->getNodeData(nodeId, roomId);
+
+	if (!nodeData) {
+		DebugPrintf("No node with id %d\n", nodeId);
+		return true;
+	}
 
 	char roomName[8];
 	_vm->_db->getRoomName(roomName, roomId);
@@ -190,7 +195,7 @@ bool Console::Cmd_ListNodes(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Run(int argc, const char **argv) {
-	uint16 nodeId = _vm->_currentNode;
+	uint16 nodeId = _vm->_vars->getLocationNode();
 	uint16 roomId = 0;
 
 	if (argc >= 2) {

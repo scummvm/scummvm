@@ -26,6 +26,33 @@ namespace Myst3 {
 
 Variables::Variables(Myst3Engine *vm):
 	_vm(vm) {
+
+#define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
+
+	VAR(61, LocationAge, false)
+	VAR(62, LocationRoom, false)
+	VAR(63, LocationNode, false)
+
+	VAR(142, MovieOverrideStartFrame, true)
+	VAR(143, MovieOverrideEndFrame, true)
+
+	VAR(149, MovieConditionBit, true)
+	VAR(150, MoviePreloadToMemory, true)
+	VAR(151, MovieScriptDriven, true)
+	VAR(152, MovieNextFrameSetVar, true)
+	VAR(153, MovieNextFrameGetVar, true)
+	VAR(154, MovieStartFrameVar, true)
+	VAR(155, MovieEndFrameVar, true)
+
+	VAR(164, MovieUVar, true)
+	VAR(165, MovieVVar, true)
+	VAR(166, MovieOverridePosition, true)
+	VAR(167, MovieOverridePosU, true)
+	VAR(168, MovieOverridePosV, true)
+
+
+#undef VAR
+
 	memset(&_vars, 0, sizeof(_vars));
 	_vars[1] = 1;
 }
@@ -45,6 +72,13 @@ uint32 Variables::get(uint16 var) {
 
 void Variables::set(uint16 var, uint32 value) {
 	checkRange(var);
+
+	if (_descriptions.contains(var)) {
+		const Description &d = _descriptions.getVal(var);
+		if (d.unknown)
+			warning("A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
+	}
+
 	_vars[var] = value;
 }
 
@@ -72,6 +106,20 @@ uint32 Variables::valueOrVarValue(int16 value) {
 		return get(-value);
 
 	return value;
+}
+
+uint32 Variables::engineGet(uint16 var) {
+	if (!_descriptions.contains(var))
+		error("The engine is trying to access an undescribed var (%d)", var);
+
+	return _vars[var];
+}
+
+void Variables::engineSet(uint16 var, uint32 value) {
+	if (!_descriptions.contains(var))
+		error("The engine is trying to access an undescribed var (%d)", var);
+
+	_vars[var] = value;
 }
 
 } /* namespace Myst3 */

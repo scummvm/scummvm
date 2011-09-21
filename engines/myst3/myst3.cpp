@@ -103,7 +103,7 @@ Common::Error Myst3Engine::run() {
 					_scene->updateCamera(event.relMouse);
 				}
 			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-				NodePtr nodeData = _db->getNodeData(_currentNode);
+				NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
 				if (_viewType == kCube) {
 					Common::Point mouse = _scene->getMousePos();
 
@@ -180,6 +180,7 @@ void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {
 			delete _movies[i];
 		}
 		_movies.clear();
+
 		_node->unload();
 		delete _node;
 		_node = 0;
@@ -192,13 +193,13 @@ void Myst3Engine::loadNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
 	_scriptEngine->run(&_db->getNodeInitScript());
 
 	if (nodeID)
-		_currentNode = _vars->valueOrVarValue(nodeID);
+		_vars->setLocationNode(_vars->valueOrVarValue(nodeID));
 
 	if (roomID)
-		_currentRoom = _vars->valueOrVarValue(roomID);
+		_vars->setLocationRoom(_vars->valueOrVarValue(roomID));
 
 	if (ageID)
-		_currentAge = _vars->valueOrVarValue(ageID);
+		_vars->setLocationAge(_vars->valueOrVarValue(ageID));
 
 	char oldRoomName[8];
 	char newRoomName[8];
@@ -221,7 +222,10 @@ void Myst3Engine::loadNode(uint16 nodeID, uint8 roomID, uint32 ageID) {
 }
 
 void Myst3Engine::runNodeInitScripts() {
-	NodePtr nodeData = _db->getNodeData(_currentNode, _currentRoom, _currentAge);
+	NodePtr nodeData = _db->getNodeData(
+			_vars->getLocationNode(),
+			_vars->getLocationRoom(),
+			_vars->getLocationAge());
 
 	NodePtr nodeDataInit = _db->getNodeData(32765);
 	if (nodeDataInit)
