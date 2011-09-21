@@ -218,4 +218,20 @@ void Frame::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool
 	_transparent = transparent;
 }
 
+void Picture::draw(const Common::Rect &r) {
+	Common::Rect surfaceBounds;
+	getSurfaceBounds(surfaceBounds);
+	Common::Rect r1 = r;
+
+	Common::Rect bounds;
+	getBounds(bounds);
+	surfaceBounds.moveTo(bounds.left, bounds.top);
+	r1 = r1.findIntersectingRect(surfaceBounds);
+	getSurfaceBounds(surfaceBounds);
+
+	Common::Rect r2 = r1;
+	r2.translate(surfaceBounds.left - bounds.left, surfaceBounds.top - bounds.top);
+	drawImage(r2, r1);
+}
+
 } // End of namespace Pegasus

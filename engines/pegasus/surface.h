@@ -29,6 +29,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "pegasus/elements.h"
 #include "pegasus/types.h"
 
 namespace Common {
@@ -112,6 +113,14 @@ public:
 
 protected:
 	uint32 _referenceCount;
+};
+
+class Picture : public DisplayElement, public Frame {
+public:
+	Picture(const tDisplayElementID id) : DisplayElement(id) {}
+	virtual ~Picture() {}
+
+	virtual void draw(const Common::Rect &);
 };
 
 } // End of namespace Pegasus
