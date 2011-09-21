@@ -279,7 +279,7 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 				BF_GLOBALS._player.disableControl();
 				BF_GLOBALS._mapLocationId = _locationId;
 
-				if (BF_GLOBALS._driveToScene == 330) {
+				if (BF_GLOBALS._driveToScene != 330) {
 					scene->_sceneNumber = 330;
 				} else {
 					scene->_sceneNumber = (BF_GLOBALS._dayNumber != 1) || (BF_GLOBALS._bookmark < bStartOfGame) ||
@@ -429,11 +429,11 @@ void Scene50::signal() {
 	if (_sceneMode == 1) {
 		// Destination selected
 		if ((BF_GLOBALS._driveFromScene == 551) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(109);
-			BF_GLOBALS.setFlag(115);
-			BF_GLOBALS.setFlag(121);
-			BF_GLOBALS.setFlag(127);
-			BF_GLOBALS.setFlag(133);
+			BF_GLOBALS.clearFlag(f1015Drunk);
+			BF_GLOBALS.clearFlag(f1027Drunk);
+			BF_GLOBALS.clearFlag(f1035Drunk);
+			BF_GLOBALS.clearFlag(f1097Drunk);
+			BF_GLOBALS.clearFlag(f1098Drunk);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 410) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
@@ -446,16 +446,16 @@ void Scene50::signal() {
 
 		if ((BF_GLOBALS._driveFromScene == 380) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
 			if (BF_GLOBALS._bookmark >= bLauraToParamedics)
-				BF_GLOBALS.setFlag(129);
+				BF_GLOBALS.setFlag(f1098Marina);
 			if (BF_GLOBALS._bookmark >= bStoppedFrankie)
-				BF_GLOBALS.setFlag(131);
+				BF_GLOBALS.setFlag(f1098Frankie);
 			if (BF_GLOBALS._bookmark == bArrestedGreen) {
 				BF_GLOBALS._deathReason = 19;
 				_sceneNumber = 666;
 			}
 		}
 
-		if ((_sceneNumber == 551) && BF_GLOBALS.getFlag(147))
+		if ((_sceneNumber == 551) && BF_GLOBALS.getFlag(fHasDrivenFromDrunk))
 			_sceneNumber = 550;
 
 		BF_GLOBALS._sound1.fadeOut2(NULL);
