@@ -1174,7 +1174,7 @@ namespace Scumm {
 	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
 }
 
-int ScummMetaEngine::getMaximumSaveSlot() const { return 99; }
+int ScummMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
