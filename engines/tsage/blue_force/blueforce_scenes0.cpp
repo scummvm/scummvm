@@ -337,8 +337,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.setStrip(3);
 	BF_GLOBALS._player.setPosition(Common::Point(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	BF_GLOBALS._player.hide();
-	BF_GLOBALS._player.enableControl();
-	BF_GLOBALS._player._uiEnabled = false;
+	BF_GLOBALS._player.disableControl();
 
 	BF_GLOBALS._scrollFollower = NULL;
 	_text._color1 = 19;
@@ -466,6 +465,7 @@ void Scene50::signal() {
 		// Initial delay complete, time to switch to interactive mode
 		_text.remove();
 		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 0;
 		_field380 = 0;
 	}
