@@ -294,7 +294,7 @@ void GraphicsManager::updateDisplay() {
 		}
 
 		// Copy only the dirty rect to the screen
-		g_system->copyRectToScreen((byte *)_workArea.pixels, _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
+		g_system->copyRectToScreen((byte *)_workArea.getBasePtr(_dirtyRect.left, _dirtyRect.top), _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
 
 		// Mark the screen as dirty
 		screenDirty = true;
