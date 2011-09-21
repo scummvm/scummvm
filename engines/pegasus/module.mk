@@ -2,7 +2,6 @@ MODULE := engines/pegasus
 
 MODULE_OBJS = \
 	console.o \
-	credits.o \
 	cursor.o \
 	detection.o \
 	elements.o \
@@ -11,10 +10,8 @@ MODULE_OBJS = \
 	graphics.o \
 	hotspot.o \
 	input.o \
-	menu.o \
 	movie.o \
 	notification.o \
-	overview.o \
 	pegasus.o \
 	sound.o \
 	surface.o \

@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/fs.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -43,13 +42,6 @@
 #include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
-
-//#define RUN_INTERFACE_TEST
-//#define RUN_OLD_CODE
-
-#ifdef RUN_INTERFACE_TEST
-#include "pegasus/sound.h"
-#endif
 
 namespace Pegasus {
 
@@ -72,8 +64,6 @@ Common::Error PegasusEngine::run() {
 	_gfx = new GraphicsManager(this);
 	_resFork = new Common::MacResManager();
 	_cursor = new Cursor();
-	_gameMode = kIntroMode;
-	_adventureMode = true;
 	
 	if (!_resFork->open("JMP PP Resources") || !_resFork->hasResFork())
 		error("Could not load JMP PP Resources");
@@ -100,48 +90,6 @@ Common::Error PegasusEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-#if defined(RUN_INTERFACE_TEST)
-	_cursor->setCurrentFrameIndex(0);
-	_cursor->show();
-	drawInterface();
-	Sound sound;
-	sound.initFromAIFFFile("Sounds/Caldoria/Apartment Music.aiff");
-	sound.loopSound();
-
-	while (!shouldQuit()) {
-		Common::Event event;
-		// Ignore events for now
-		while (_eventMan->pollEvent(event)) {
-			if (event.type == Common::EVENT_MOUSEMOVE)
-				_system->updateScreen();
-		}
-		
-		_system->delayMillis(10);
-	}
-#elif defined(RUN_OLD_CODE)
-	while (!shouldQuit()) {
-		switch (_gameMode) {
-		case kIntroMode:
-			if (!isDemo())
-				runIntro();
-			_gameMode = kMainMenuMode;
-			break;
-		case kMainMenuMode:
-			runMainMenu();
-			break;
-		case kMainGameMode:
-			// NOTE: Prehistoric will be our testing location
-			changeLocation(kPrehistoricID);
-			mainGameLoop();
-			break;
-		case kQuitMode:
-			return Common::kNoError;
-		default:
-			_gameMode = kMainMenuMode;
-			break;
-		}
-	}
-#else
 	// Set up input
 	InputHandler::setInputHandler(this);
 	allowInput(true);
@@ -167,7 +115,6 @@ Common::Error PegasusEngine::run() {
 		giveIdleTime();
 		_gfx->updateDisplay();
 	}
-#endif
 
 	return Common::kNoError;
 }
@@ -320,29 +267,6 @@ void PegasusEngine::runIntro() {
 	delete video;
 }
 
-void PegasusEngine::drawInterface() {
-	_gfx->drawPict("Images/Interface/3DInterface Top", 0, 0, false);
-	_gfx->drawPict("Images/Interface/3DInterface Left", 0, kViewScreenOffset, false);
-	_gfx->drawPict("Images/Interface/3DInterface Right", 640 - kViewScreenOffset, kViewScreenOffset, false);
-	_gfx->drawPict("Images/Interface/3DInterface Bottom", 0, kViewScreenOffset + 256, false);
-	//drawCompass();
-	_system->updateScreen();
-}
-
-void PegasusEngine::mainGameLoop() {
-	// TODO: Remove me
-	_gameMode = kQuitMode;
-}
-
-void PegasusEngine::changeLocation(tNeighborhoodID neighborhood) {
-	GameState.setCurrentNeighborhood(neighborhood);
-
-	// Just a test...
-	Neighborhood *neighborhoodPtr = new Neighborhood(this, this, getTimeZoneDesc(neighborhood), neighborhood);
-	neighborhoodPtr->init();
-	delete neighborhoodPtr;
-}
-
 void PegasusEngine::showLoadDialog() {
 	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
 	slc.setSaveMode(false);
@@ -356,22 +280,9 @@ void PegasusEngine::showLoadDialog() {
 
 	if (slot >= 0) {
 		warning("TODO: Load game");
-		_gameMode = kMainGameMode;
 	}
 
 	slc.close();
-}
-
-Common::String PegasusEngine::getTimeZoneDesc(tNeighborhoodID neighborhood) {
-	static const char *names[] = { "Caldoria", "Full TSA", "Full TSA", "Tiny TSA", "Prehistoric", "Mars", "WSC", "Norad Alpha", "Norad Delta" };
-	return names[neighborhood];
-}
-
-Common::String PegasusEngine::getTimeZoneFolder(tNeighborhoodID neighborhood) {
-	if (neighborhood == kFullTSAID || neighborhood == kTinyTSAID || neighborhood == kFinalTSAID)
-		return "TSA";
-
-	return getTimeZoneDesc(neighborhood);
 }
 
 GUI::Debugger *PegasusEngine::getDebugger() {

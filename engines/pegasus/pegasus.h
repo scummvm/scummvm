@@ -53,20 +53,6 @@ class Idler;
 class Cursor;
 class TimeBase;
 
-static const int kViewScreenOffset = 64;
-
-struct OverviewHotspot {
-	Common::Rect rect;
-	uint32 time;
-};
-
-enum GameMode {
-	kIntroMode,
-	kMainMenuMode,
-	kMainGameMode,
-	kQuitMode
-};
-
 class PegasusEngine : public ::Engine, public InputHandler, public NotificationManager {
 friend class InputHandler;
 
@@ -105,46 +91,11 @@ protected:
 	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
 
 private:
-	// Intro
-	void runIntro();
-	void runMainMenu();
-	void drawMenu(int buttonSelected);
-	void drawMenuButtonHighlighted(int buttonSelected);
-	void drawMenuButtonSelected(int buttonSelected);
-	//void runInterfaceOverview();
-	void setGameMode(int buttonSelected);
-
-	// Interface
-	void drawInterface();
-	//void drawCompass();
-	//void runPauseMenu();
-	void showLoadDialog();
-
-	// Interface Overview
-	void runInterfaceOverview();
-	void drawInterfaceOverview(const OverviewHotspot &hotspot, Video::QuickTimeDecoder *video);
-
-	// Credits
-	void runCredits();
-	void drawCredits(int button, bool highlight, int frame, Video::QuickTimeDecoder *video);
-	void runDemoCredits();
-
-	// Main Game Functions
-	void mainGameLoop();
-	void changeLocation(tNeighborhoodID neighborhood);
-
-	// Misc Functions
-	static Common::String getTimeZoneFolder(tNeighborhoodID neighborhood);
-	static Common::String getTimeZoneDesc(tNeighborhoodID neighborhood);
-
-	// Game Variables
-	bool _adventureMode;
-	GameMode _gameMode;
-
 	// Console
 	PegasusConsole *_console;
 
-	// Intro Directory Code
+	// Intro
+	void runIntro();
 	bool detectOpeningClosingDirectory();
 	Common::String _introDirectory;
 
@@ -172,6 +123,7 @@ private:
 
 	// Misc.
 	Hotspot _returnHotspot;
+	void showLoadDialog();
 };
 
 } // End of namespace Pegasus
