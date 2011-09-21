@@ -139,7 +139,7 @@ void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 int CGEMetaEngine::getMaximumSaveSlot() const {
-	return 99;
+	return 999;
 }
 
 SaveStateList CGEMetaEngine::listSaves(const char *target) const {
