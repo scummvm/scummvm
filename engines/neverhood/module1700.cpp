@@ -214,19 +214,19 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 1) {
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B6A08);
+		setMessageList(0x004B6A08, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 2) {
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B6AA0);
+		setMessageList(0x004B6AA0, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 3) {
 		insertKlayman<KmScene1705>(431, 434);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B6A18);
+		setMessageList(0x004B6A18, false);
 		sendMessage(this, 0x2000, 1);
 		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else {

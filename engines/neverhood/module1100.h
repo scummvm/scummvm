@@ -123,6 +123,14 @@ protected:
 	void update();
 };
 
+class Scene1109 : public Scene {
+public:
+	Scene1109(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Sprite *_sprite1;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE1100_H */

@@ -62,7 +62,7 @@ void Background::load(uint32 fileHash) {
 DirtyBackground::DirtyBackground(NeverhoodEngine *vm, const char *fileName, int objectPriority, int surfacePriority)
 	: Background(vm, objectPriority) {
 	
-	// TODO _spriteResource.load(calcHash(fileName));
+	_spriteResource.load(calcHash(fileName));
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_surface->drawSpriteResource(_spriteResource);
 }
@@ -84,6 +84,5 @@ void DirtyBackground::createSurface(int surfacePriority, int16 width, int16 heig
 	_spriteResource.getPosition().y = height;
 
 }
-
 
 } // End of namespace Neverhood

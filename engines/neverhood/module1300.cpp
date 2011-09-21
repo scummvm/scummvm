@@ -1719,7 +1719,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else {
 			setRectList(0x004B5980);
 		}
-		setMessageList(0x004B57E8);
+		setMessageList(0x004B57E8, false);
 		_sprite1->setVisible(true);
 		_klayman->setVisible(true);
 		break;

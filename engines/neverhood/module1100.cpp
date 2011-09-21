@@ -94,7 +94,7 @@ void Module1100::createScene(int sceneNum, int which) {
 		createSmackerScene(kSmackerFileHashList07, true, true, false);
 		break;
 	case 8:
-//TODO		_childObject = new Scene1109(_vm, this, which);
+		_childObject = new Scene1109(_vm, this, which);
 		break;
 	case 1002:
 		_countdown = 40;
@@ -108,7 +108,6 @@ void Module1100::createScene(int sceneNum, int which) {
 
 void Module1100::updateScene() {
 	if (!updateChild()) {
-		debug("_vm->gameState().sceneNum = %d", _vm->gameState().sceneNum);
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			_countdown = 0;
@@ -658,6 +657,63 @@ void Scene1105::update() {
 		sendMessage(_asTeddyBear, 0x2002, 0);
 		_flag3 = false;
 	}
+}
+
+Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, which) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1109::handleMessage);
+	
+	setBackground(0x8449E02F);
+	setPalette(0x8449E02F);
+	insertMouse433(0x9E02B84C);
+	
+	_sprite1 = insertStaticSprite(0x600CEF01, 1100);
+
+	if (which < 0) {
+		insertKlayman<KmScene1109>(140, 436);
+		setMessageList(0x004B6260);
+		sendMessage(this, 0x2000, 0);
+	} else if (which == 1) {
+		insertKlayman<KmScene1109>(450, 436);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004B6268, false);
+		sendMessage(this, 0x2000, 1);
+	} else if (which == 2) {
+		insertKlayman<KmScene1109>(450, 436);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004B6318, false);
+		sendMessage(this, 0x2000, 1);
+	} else if (which == 3) {
+		insertKlayman<KmScene1109>(450, 436);
+		sendMessage(_klayman, 0x2000, 1);
+		setMessageList(0x004B6278, false);
+		sendMessage(this, 0x2000, 1);
+	} else {
+		insertKlayman<KmScene1109>(0, 436);
+		setMessageList(0x004B6258);
+		sendMessage(this, 0x2000, 0);
+	}
+
+	_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), 480);
+
+}
+
+uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		if (param.asInteger()) {
+			setRectList(0x004B63A8);
+			_klayman->setKlaymanTable3();
+		} else {
+			setRectList(0x004B6398);
+			_klayman->setKlaymanTable1();
+		}
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

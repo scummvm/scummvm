@@ -2687,6 +2687,102 @@ void KmScene1004::sub478170() {
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 }
 
+KmScene1109::KmScene1109(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _flag1(false) {
+	
+	// Empty
+}
+
+uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2000:
+		_flag1 = param.asInteger() != 0;
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub421350));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4804:
+		if (param.asInteger() != 0) {
+			_x4 = param.asInteger();
+			setCallback2(AnimationCallback(&Klayman::sub41F9E0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FC40));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;
+	case 0x481D:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub4214D0));
+		break;
+	case 0x481E:
+		if (_flag)
+			setCallback2(AnimationCallback(&Klayman::sub421510));
+		break;
+	case 0x4834:
+		setCallback2(AnimationCallback(&Klayman::sub421160));
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_flag1 = true;
+		setCallback2(AnimationCallback(&Klayman::sub4212C0));
+		break;																		
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_flag1 = false;
+		setCallback2(AnimationCallback(&Klayman::sub421310));
+		break;
+	case 0x483D:
+		sub461F30();
+		break;
+	case 0x483E:
+		sub461F70();
+		break;
+	}
+	return 0;
+}
+
+uint32 KmScene1109::handleMessage461EA0(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Klayman::handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24) {
+			_soundResource1.play(0x85B10BB8);
+		} else if (param.asInteger() == 0x4E6A0CA0) {
+			_soundResource1.play(0xC5B709B0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene1109::sub461F30() {
+	_status2 = 0;
+	_flagE5 = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene1109::handleMessage461EA0);
+	setFileHash(0x2C2A4A1C, 0, -1);
+}
+
+void KmScene1109::sub461F70() {
+	_status2 = 0;
+	_flagE5 = false;
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene1109::handleMessage461EA0);
+	setFileHash(0x3C2E4245, 0, -1);
+}
+
 // KmScene1201
 
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, Entity *class464)

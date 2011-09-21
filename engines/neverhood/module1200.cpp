@@ -971,7 +971,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2002:		
 		if (getGlobalVar(0x20A0C516)) {
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
-			setMessageList2(0x004AECF0);
+			setMessageList2(0x004AECF0, false);
 		} else if (getGlobalVar(0x0112090A) == 3) {
 			sendEntityMessage(_klayman, 0x1014, _asTntMan);
 			if (_klayman->getX() > _asTntMan->getX()) {

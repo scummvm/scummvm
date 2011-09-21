@@ -249,14 +249,14 @@ void Scene::update() {
 		if (_mouseClicked) {
 			if (_klayman) {
 				// TODO: Merge later
-				if (_klayman->hasMessageHandler() && 
+				if (_messageListFlag &&
+					_klayman->hasMessageHandler() && 
 					sendMessage(_klayman, 0x1008, 0) != 0 &&
-					_messageListFlag &&
 					queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 					_mouseClicked = false;
-				} else if (_klayman->hasMessageHandler() && 
-					sendMessage(_klayman, 0x1008, 0) != 0 &&
-					_messageListFlag) {
+				} else if (_messageListFlag &&
+					_klayman->hasMessageHandler() && 
+					sendMessage(_klayman, 0x1008, 0) != 0) {
 					_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 				}
 			} else if (queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {

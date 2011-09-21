@@ -275,7 +275,7 @@ void GameModule::startup() {
 	createModule(1000, -1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 4;
+	_vm->gameState().sceneNum = 8;
 	createModule(1100, -1);
 #endif
 }
@@ -351,6 +351,14 @@ void GameModule::updateModule() {
 				createModule(2600, 0);
 			} else {
 				createModule(2300, 2);
+			}
+			break;
+		case 1100:
+			if (_moduleResult == 0) {
+				createModule(2900, 2);
+			} else {
+				setGlobalVar(0xD0A14D10, 1);
+				createModule(1300, 0);
 			}
 			break;
 		case 1300:

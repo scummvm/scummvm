@@ -114,17 +114,17 @@ Scene2001::Scene2001(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else if (which == 1) {
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B3540);
+		setMessageList(0x004B3540, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B35F0);
+		setMessageList(0x004B35F0, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
 		insertKlayman<KmScene2001>(116, 345);
 		sendMessage(_klayman, 0x2000, 1);
-		setMessageList(0x004B3550);
+		setMessageList(0x004B3550, false);
 		sendMessage(this, 0x2000, 1);
 	} else {
 		insertKlayman<KmScene2001>(390, 345);
