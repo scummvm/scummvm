@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	graphics.o \
 	hotspot.o \
 	input.o \
+	menu.o \
 	movie.o \
 	notification.o \
 	pegasus.o \
