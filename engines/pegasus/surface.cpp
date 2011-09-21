@@ -234,4 +234,20 @@ void Picture::draw(const Common::Rect &r) {
 	drawImage(r2, r1);
 }
 
+void Picture::initFromPICTFile(const Common::String &fileName, bool transparent) {
+	Frame::initFromPICTFile(fileName, transparent);
+
+	Common::Rect surfaceBounds;
+	getSurfaceBounds(surfaceBounds);
+	setBounds(surfaceBounds);
+}
+
+void Picture::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent) {
+	Frame::initFromPICTResource(resFork, id, transparent);
+
+	Common::Rect surfaceBounds;
+	getSurfaceBounds(surfaceBounds);
+	setBounds(surfaceBounds);
+}
+
 } // End of namespace Pegasus

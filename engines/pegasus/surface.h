@@ -120,6 +120,9 @@ public:
 	Picture(const tDisplayElementID id) : DisplayElement(id) {}
 	virtual ~Picture() {}
 
+	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
+	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
+
 	virtual void draw(const Common::Rect &);
 };
 
