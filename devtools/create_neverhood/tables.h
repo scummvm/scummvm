@@ -340,6 +340,13 @@ static const uint32 messageListOffsets[] = {
 };
 
 static const uint32 navigationListOffsets[] = {
+	// Module1100
+	2, 0x004B8430,
+	2, 0x004B8460,
+	4, 0x004B84F0,
+	4, 0x004B8490,
+	2, 0x004B8580,
+	2, 0x004B8550,
 	// Module1300
 	6, 0x004B2718,
 	2, 0x004B27A8,
