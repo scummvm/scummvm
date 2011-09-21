@@ -449,6 +449,29 @@ protected:
 	InputHandler *_savedHandler;
 };
 
+class JMPPPInput {
+public:
+	static bool isMenuButtonPressInput(const Input &input) { return input.twoButtonDown(); }
+
+	static tInputBits getClickInputFilter() { return kFilterTwoButton; }
+	static bool isClickInput(const Input &input) { return input.twoButtonDown(); }
+	static bool isDraggingInput(const Input &input) { return input.twoButtonAnyDown(); }
+	static bool isPressingInput(const Input &input) { return input.twoButtonAnyDown(); }
+
+	static bool isRaiseInventoryInput(const Input &input) { return input.leftFireButtonDown(); }
+	static bool isRaiseBiochipsInput(const Input &input) { return input.rightFireButtonDown(); }
+	static tInputBits getItemPanelsInputFilter() { return kFilterLeftFireButton | kFilterRightFireButton; }
+
+	static bool isToggleAIMiddleInput(const Input &input) { return input.threeButtonDown(); }
+
+	static bool isToggleInfoInput(const Input &input) { return input.fourButtonDown(); }
+
+	// Hmmmmm....
+	static bool isEasterEggModifierInput(const Input &input) { return input.mod2ButtonAnyDown(); }
+	
+	static bool isTogglePauseInput(const Input &input) { return input.mod3ButtonDown(); }
+};
+
 } // End of namespace Pegasus
 
 #endif
