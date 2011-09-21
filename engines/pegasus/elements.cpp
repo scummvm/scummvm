@@ -71,10 +71,7 @@ void DisplayElement::stopDisplaying() {
 }
 
 void DisplayElement::setBounds(const tCoordType left, const tCoordType top, const tCoordType right, const tCoordType bottom) {
-	_bounds.left = left;
-	_bounds.top = top;
-	_bounds.right = right;
-	_bounds.bottom = bottom;
+	setBounds(Common::Rect(left, top, right, bottom));
 }
 
 void DisplayElement::getBounds(Common::Rect &r) const {
@@ -82,16 +79,22 @@ void DisplayElement::getBounds(Common::Rect &r) const {
 }
 
 void DisplayElement::sizeElement(const tCoordType h, const tCoordType v) {
-	_bounds.right = _bounds.left + h;
-	_bounds.bottom = _bounds.top + v;
+	Common::Rect newBounds = _bounds;
+	newBounds.right = _bounds.left + h;
+	newBounds.bottom = _bounds.top + v;
+	setBounds(newBounds);
 }
 
 void DisplayElement::moveElementTo(const tCoordType h, const tCoordType v) {
-	_bounds.moveTo(h, v);
+	Common::Rect newBounds = _bounds;
+	newBounds.moveTo(h, v);
+	setBounds(newBounds);
 }
 
 void DisplayElement::moveElement(const tCoordType dh, const tCoordType dv) {
-	_bounds.translate(dh, dv);
+	Common::Rect newBounds = _bounds;
+	newBounds.translate(dh, dv);
+	setBounds(newBounds);
 }
 
 void DisplayElement::getLocation(tCoordType &h, tCoordType &v) const {
@@ -100,7 +103,9 @@ void DisplayElement::getLocation(tCoordType &h, tCoordType &v) const {
 }
 
 void DisplayElement::centerElementAt(const tCoordType h, const tCoordType v) {
-	_bounds.moveTo(h - (_bounds.width() / 2), v - (_bounds.height() / 2));
+	Common::Rect newBounds = _bounds;
+	newBounds.moveTo(h - (_bounds.width() / 2), v - (_bounds.height() / 2));
+	setBounds(newBounds);
 }
 
 void DisplayElement::getCenter(tCoordType &h, tCoordType &v) const {
