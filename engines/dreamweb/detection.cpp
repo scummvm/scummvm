@@ -113,7 +113,7 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
+int DreamWebMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 }
