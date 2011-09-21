@@ -708,7 +708,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-int SciMetaEngine::getMaximumSaveSlot() const { return 99; }
+int SciMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
