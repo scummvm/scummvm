@@ -54,7 +54,6 @@ public:
 	void setDirectDraw(const bool);
 	
 	virtual void setTime(const TimeValue, const TimeScale = 0);
-	virtual TimeValue getTime(const TimeScale = 0);
 	
 	virtual void setRate(const Common::Rational);
 	

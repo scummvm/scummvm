@@ -116,20 +116,10 @@ void Movie::setVolume(uint16 volume) {
 }
 
 void Movie::setTime(const TimeValue time, const TimeScale scale) {
-	if (_video)
-		_video->seekToTime(Audio::Timestamp(0, time, ((scale == 0) ? getScale() : scale)));
-}
-
-TimeValue Movie::getTime(const TimeScale scale) {
 	if (_video) {
-		TimeScale actualScale = ((scale == 0) ? getScale() : scale);
-
-		uint32 startTime = _startTime * actualScale / _startScale;
-		uint32 stopTime = _stopTime * actualScale / _stopScale;
-		return CLIP<int>(_video->getElapsedTime() * actualScale / 1000, startTime, stopTime);
+		_video->seekToTime(Audio::Timestamp(0, time, ((scale == 0) ? getScale() : scale)));
+		_time = Common::Rational(time, ((scale == 0) ? getScale() : scale));
 	}
-
-	return 0;
 }
 
 void Movie::setRate(const Common::Rational rate) {
@@ -165,8 +155,15 @@ void Movie::checkCallBacks() {
 
 	// The reason why we overrode TimeBase's checkCallBacks():
 	// Again, avoiding timers and handling it here
-	if (!_video->isPaused() && _video->needsUpdate())
-		redrawMovieWorld();
+	if (!_video->isPaused()) {
+		if (_video->needsUpdate())
+			redrawMovieWorld();
+
+		uint32 startTime = _startTime * getScale() / _startScale;
+		uint32 stopTime = _stopTime * getScale() / _stopScale;
+		uint32 actualTime = CLIP<int>(_video->getElapsedTime() * getScale() / 1000, startTime, stopTime);
+		_time = Common::Rational(actualTime, getScale());
+	}
 }
 
 } // End of namespace Pegasus
