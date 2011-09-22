@@ -200,24 +200,29 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 }
 
 void PegasusEngine::runIntro() {
+	bool skipped = false;
+
 	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
 	if (video->loadFile(_introDirectory + "/BandaiLogo.movie")) {
-		while (!shouldQuit() && !video->endOfVideo()) {
+		while (!shouldQuit() && !video->endOfVideo() && !skipped) {
 			if (video->needsUpdate()) {
 				const Graphics::Surface *frame = video->decodeNextFrame();
 				_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, 0, 0, frame->w, frame->h);
 				_system->updateScreen();
 			}
 
-			Common::Event event;
-			while (_eventMan->pollEvent(event))
-				;
+			Input input;
+			InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+			if (input.anyInput())
+				skipped = true;
+
+			_system->delayMillis(10);
 		}
 	}
 
 	delete video;
 
-	if (shouldQuit())
+	if (shouldQuit() || skipped)
 		return;
 
 	video = new Video::QuickTimeDecoder();
@@ -261,9 +266,12 @@ void PegasusEngine::runIntro() {
 			scaledFrame.free();
 		}
 
-		Common::Event event;
-		while (_eventMan->pollEvent(event))
-			;
+		Input input;
+		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+		if (input.anyInput())
+			break;
+
+		_system->delayMillis(10);
 	}
 
 	delete video;
