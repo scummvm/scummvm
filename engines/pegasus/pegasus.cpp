@@ -558,7 +558,14 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		error("Start new game (adventure mode)");
 		break;
 	case kMenuCmdCredits:
-		error("Show credits");
+		if (isDemo()) {
+			showTempScreen("Images/Demo/DemoCredits.pict");
+			// TODO: Fade out
+			_gfx->updateDisplay();
+			// TODO: Fade in
+		} else {
+			error("Show credits");
+		}
 		break;
 	case kMenuCmdQuit:
 		_system->quit();
@@ -753,6 +760,38 @@ void PegasusEngine::doInterfaceOverview() {
 	// TODO: Fade in
 
 	// TODO: Cancel save/load requests?
+}
+
+void PegasusEngine::showTempScreen(const Common::String &fileName) {
+	// TODO: Fade out
+
+	Picture picture(0);
+	picture.initFromPICTFile(fileName);
+	picture.setDisplayOrder(kMaxAvailableOrder);
+	picture.startDisplaying();
+	picture.show();
+	_gfx->updateDisplay();
+
+	// TODO: Fade in
+
+	// Wait for the next event
+	bool done = false;
+	while (!shouldQuit() && !done) {
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+			case Common::EVENT_KEYDOWN:
+				done = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Pegasus

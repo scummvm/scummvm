@@ -133,6 +133,7 @@ private:
 	// Misc.
 	Hotspot _returnHotspot;
 	void showLoadDialog();
+	void showTempScreen(const Common::String &fileName);
 
 	// Menu
 	GameMenu *_gameMenu;
