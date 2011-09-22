@@ -96,10 +96,19 @@ void Movie::redrawMovieWorld() {
 }
 
 void Movie::draw(const Common::Rect &r) {
-	if (_transparent)
-		copyToCurrentPortTransparent(r);
-	else
-		copyToCurrentPort(r);
+	Common::Rect surfaceBounds;
+	getSurfaceBounds(surfaceBounds);
+	Common::Rect r1 = r;
+
+	Common::Rect bounds;
+	getBounds(bounds);
+	surfaceBounds.moveTo(bounds.left, bounds.top);
+	r1 = r1.findIntersectingRect(surfaceBounds);
+	getSurfaceBounds(surfaceBounds);
+
+	Common::Rect r2 = r1;
+	r2.translate(surfaceBounds.left - bounds.left, surfaceBounds.top - bounds.top);
+	drawImage(r2, r1);
 }
 
 void Movie::setVolume(uint16 volume) {
