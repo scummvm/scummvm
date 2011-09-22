@@ -2074,6 +2074,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DCAANOO"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DNO_SAVEGAME_TIMESTAMP"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
@@ -2167,6 +2168,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2X"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DNO_SAVEGAME_TIMESTAMP"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
@@ -2186,6 +2188,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DGPH_DEVICE"
 			DEFINES="$DEFINES -DGP2XWIZ"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DNO_SAVEGAME_TIMESTAMP"
 			if test "$_debug_build" = yes; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			fi
