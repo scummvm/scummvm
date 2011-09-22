@@ -83,6 +83,7 @@ private:
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
 	Graphics::Surface _workArea;
+	Common::Point _lastMousePosition;
 };
 
 } // End of namespace Pegasus
