@@ -232,7 +232,7 @@ void MainMenuDialog::save() {
 			g_system->getTimeAndDate(curTime);
 			curTime.tm_year += 1900; // fixup year
 			curTime.tm_mon++; // fixup month
-			buf = Common::String::format("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			buf = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 			_engine->saveGameState(slot, buf);
 		} else {
 			_engine->saveGameState(slot, result);
