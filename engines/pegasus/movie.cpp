@@ -78,7 +78,7 @@ void Movie::setDirectDraw(const bool flag) {
 }
 
 void Movie::redrawMovieWorld() {
-	if (_video && _video->needsUpdate()) {
+	if (_video) {
 		const Graphics::Surface *frame = _video->decodeNextFrame();
 
 		if (_directDraw) {
@@ -154,7 +154,11 @@ void Movie::resume() {
 
 void Movie::checkCallBacks() {
 	TimeBase::checkCallBacks();
-	redrawMovieWorld();
+
+	// The reason why we overrode TimeBase's checkCallBacks():
+	// Again, avoiding timers and handling it here
+	if (_video->needsUpdate())
+		redrawMovieWorld();
 }
 
 } // End of namespace Pegasus
