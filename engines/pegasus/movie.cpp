@@ -165,7 +165,7 @@ void Movie::checkCallBacks() {
 
 	// The reason why we overrode TimeBase's checkCallBacks():
 	// Again, avoiding timers and handling it here
-	if (_video->needsUpdate())
+	if (!_video->isPaused() && _video->needsUpdate())
 		redrawMovieWorld();
 }
 
