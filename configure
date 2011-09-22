@@ -166,6 +166,7 @@ _translation=yes
 # Default platform settings
 _backend=sdl
 _16bit=auto
+_savegame_timestamp=auto
 _dynamic_modules=no
 _elf_loader=no
 _plugins_default=static
@@ -773,6 +774,7 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
+  --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
@@ -852,6 +854,7 @@ done # for parm in ...
 for ac_option in $@; do
 	case "$ac_option" in
 	--disable-16bit)          _16bit=no       ;;
+	--disable-savegame-timestamp) _savegame_timestamp=no ;;
 	--disable-scalers)        _build_scalers=no ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
@@ -2105,6 +2108,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -2195,6 +2199,7 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -static"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -2214,6 +2219,7 @@ if test -n "$_host"; then
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			_backend="gph"
 			_build_hq_scalers=no
+			_savegame_timestamp=no
 			_vkeybd=yes
 			_seq_midi=no
 			_mt32emu=no
@@ -2619,6 +2625,26 @@ case $_backend in
 		;;
 esac
 
+#
+# Disable savegame timestamp support for backends which don't have a reliable real time clock
+#
+case $_backend in
+	gph)
+		if test "$_savegame_timestamp" = auto ; then
+			_savegame_timestamp=no
+		else
+			_savegame_timestamp=yes
+		fi
+		;;
+	*)
+		if test "$_savegame_timestamp" = auto ; then
+			_savegame_timestamp=yes
+		else
+			_savegame_timestamp=no
+		fi
+		;;
+esac
+
 
 #
 # Determine whether host is POSIX compliant, or at least POSIX
@@ -2873,6 +2899,11 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 # Check whether 16bit color support is requested
 #
 define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
+
+#
+# Check whether 16bit color support is requested
+#
+define_in_config_if_yes "$_savegame_timestamp" 'USE_SAVEGAME_TIMESTAMP'
 
 #
 # Check whether to enable the (hq) scalers
@@ -3535,6 +3566,10 @@ fi
 
 if test "$_16bit" = yes ; then
 	echo_n ", 16bit color"
+fi
+
+if test "$_savegame_timestamp" = yes ; then
+	echo_n ", savegame timestamp"
 fi
 
 if test "$_build_scalers" = yes ; then
