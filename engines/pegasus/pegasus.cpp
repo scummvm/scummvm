@@ -604,6 +604,12 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	if (!checkGameMenu())
 		; // TODO: Other input
 
+	// Handle the console here
+	if (input.isConsoleRequested()) {
+		_console->attach();
+		_console->onFrame();
+	}
+
 	// TODO: Quit request
 	// TODO: Save request
 	// TODO: Load request

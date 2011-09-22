@@ -43,6 +43,7 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 	// TODO: Save/Load keys
 
 	tInputBits currentBits = 0;
+	bool consoleRequested = false;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -94,6 +95,10 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 			case Common::KEYCODE_DELETE:
 				currentBits |= (kRawButtonDown << kRightFireButtonShift);
 				break;
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) // Console!
+					consoleRequested = true;
+				break;
 			default:
 				break;
 			}
@@ -119,6 +124,9 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 
 	// Update the last bits
 	_lastRawBits = currentBits;
+
+	// Set the console to be requested or not
+	input.setConsoleRequested(consoleRequested);
 }
 
 //	Wait until the input device stops returning input allowed by filter...

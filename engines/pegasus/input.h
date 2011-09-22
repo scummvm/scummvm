@@ -353,19 +353,24 @@ public:
 	void getInputLocation(Common::Point &where) const { where = _inputLocation; }
 	
 	bool anyInputBitSet(const tInputBits bits) const { return (_inputState & bits) != 0; }
-	
+
+	bool isConsoleRequested() const { return _consoleRequested; }
+
 	void clearInput() {
 		_inputState = kAllUpBits;
 		_inputLocation.x = 0;
 		_inputLocation.y = 0;
+		_consoleRequested = false;
 	}
 
 protected:
 	void setInputBits(const tInputBits state) { _inputState = state; }
 	void setInputLocation(const Common::Point &where) { _inputLocation = where; }
+	void setConsoleRequested(bool consoleRequested) { _consoleRequested = consoleRequested; }
 	
 	tInputBits _inputState;
 	Common::Point _inputLocation;
+	bool _consoleRequested;
 };
 
 class InputHandler {
