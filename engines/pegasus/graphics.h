@@ -37,16 +37,6 @@
 
 namespace Pegasus {
 
-enum {
-	kImageCacheSize = 10
-};
-
-struct ImageCache {
-	Common::String filename;
-	Graphics::Surface *surface;
-	uint32 lastUsed;
-};
-
 class DisplayElement;
 class PegasusEngine;
 
@@ -55,12 +45,6 @@ public:
 	GraphicsManager(PegasusEngine *vm);
 	~GraphicsManager();
 
-	// Older "temporary" API
-	void drawPict(Common::String filename, int x, int y, bool updateScreen = true);
-	void drawPictTransparent(Common::String filename, int x, int y, uint32 transparency, bool updateScreen = true);
-	uint32 getColor(byte r, byte g, byte b);
-
-	// Newer "to-be-used" API
 	void addDisplayElement(DisplayElement *element);
 	void removeDisplayElement(DisplayElement *element);
 	void invalRect(const Common::Rect &rect);
@@ -72,13 +56,6 @@ public:
 private:		
 	PegasusEngine *_vm;
 
-	// Older "temporary" API
-	Graphics::PictDecoder *_pictDecoder;
-	Graphics::Surface *decodeImage(const Common::String &filename);
-	ImageCache _cache[kImageCacheSize];
-	int getImageSlot(const Common::String &filename);
-
-	// Newer "to-be-used" API
 	Common::Rect _dirtyRect;
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
