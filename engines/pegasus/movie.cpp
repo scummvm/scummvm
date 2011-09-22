@@ -81,6 +81,9 @@ void Movie::redrawMovieWorld() {
 	if (_video) {
 		const Graphics::Surface *frame = _video->decodeNextFrame();
 
+		if (!frame)
+			return;
+
 		if (_directDraw) {
 			// Copy to the screen
 			Common::Rect bounds;
@@ -117,8 +120,16 @@ void Movie::setVolume(uint16 volume) {
 
 void Movie::setTime(const TimeValue time, const TimeScale scale) {
 	if (_video) {
-		_video->seekToTime(Audio::Timestamp(0, time, ((scale == 0) ? getScale() : scale)));
-		_time = Common::Rational(time, ((scale == 0) ? getScale() : scale));
+		// Don't go past the ends of the movie
+		Common::Rational timeFrac = Common::Rational(time, ((scale == 0) ? getScale() : scale));
+
+		if (timeFrac < Common::Rational(_startTime, _startScale))
+			timeFrac = Common::Rational(_startTime, _startScale);
+		else if (timeFrac >= Common::Rational(_stopTime, _stopScale))
+			return;
+
+		_video->seekToTime(Audio::Timestamp(0, timeFrac.getNumerator(), timeFrac.getDenominator()));
+		_time = timeFrac;
 	}
 }
 
