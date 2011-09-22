@@ -178,6 +178,7 @@ void DropHighlight::draw(const Common::Rect &) {
 	// going to implement it in those two ways. Deal with it.
 
 	Common::Rect rect = _bounds;
+	rect.grow(-_thickness);
 	screen->frameRect(rect, _highlightColor);
 	rect.grow(1);
 	screen->frameRect(rect, _highlightColor);
