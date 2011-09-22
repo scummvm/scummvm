@@ -209,15 +209,9 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
-	{ GID_PQ1,           500,   500,  0,           "endInter", "changeState", 0x3e8,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the map scene (bug #3389579)
-	{ GID_PQ1,           500,   500,  0,           "endInter", "changeState", 0x46b,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the map scene (bug #3389579)
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4ae,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #3043904)
 	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
-	{ GID_QFG3,           -1,    47,  0,          "barterWin", "open",       0x1426,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
-	{ GID_QFG3,           -1,    47,  0,         "barterIcon", "show",       0x135c,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
-	{ GID_SQ1,            -1,   700,  0,       "arcadaRegion", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // restoring in some rooms of the arcada (right at the start)
-	{ GID_SQ1,            44,    44,  0,           "spinDone", "changeState",0x13b0,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the slot machine in Ulence Flats (bug #3308087)
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
@@ -285,10 +279,7 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
-	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
-	// ^^ TODO: check, if this is really a script error or an issue with our restore code
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
-	{ GID_SQ5,           850,   850,  0,                 NULL, "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens while playing Battle Cruiser (invalid segment) - bug #3056811
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

@@ -488,8 +488,15 @@ bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
 		if ((type & SIG_IS_INVALID) && (!(curSig & SIG_IS_INVALID)))
 			return false; // pointer is invalid and signature doesn't allow that?
 
-		if (!((type & ~SIG_IS_INVALID) & curSig))
-			return false; // type mismatch
+		if (!((type & ~SIG_IS_INVALID) & curSig)) {
+			if ((type & ~SIG_IS_INVALID) == SIG_TYPE_ERROR && (curSig & SIG_IS_INVALID)) {
+				// Type is unknown (error - usually because of a deallocated object or
+				// stale pointer) and the signature allows invalid pointers. In this case,
+				// ignore the invalid pointer.
+			} else {
+				return false; // type mismatch
+			}
+		}
 
 		if (!(curSig & SIG_MORE_MAY_FOLLOW)) {
 			sig++;
