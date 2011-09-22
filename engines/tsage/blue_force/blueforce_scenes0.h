@@ -177,6 +177,7 @@ public:
 	Scene60();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
 	virtual void signal();
 	virtual void dispatch();
 };

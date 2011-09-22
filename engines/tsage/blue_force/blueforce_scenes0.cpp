@@ -1097,6 +1097,14 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	}
 }
 
+void Scene60::remove() {
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._events.setCursor(_cursorId);
+
+	if (_cursorId == CURSOR_EXIT)
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
+}
+
 void Scene60::signal() {
 	++_sceneMode;
 	BF_GLOBALS._player.enableControl();
