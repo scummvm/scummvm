@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	transition.o \
 	util.o \
 	items/inventory.o \
+	items/inventorypicture.o \
 	items/item.o \
 	items/itemlist.o \
 	items/biochips/biochipitem.o \

@@ -88,6 +88,7 @@ public:
 	void swapLoadAllowed(bool allow) { _loadAllowed = allow; }
 	void delayShell(TimeValue time, TimeScale scale);
 	void resetIntroTimer();
+	void refreshDisplay();
 
 protected:
 	Common::Error run();

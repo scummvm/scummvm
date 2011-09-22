@@ -115,8 +115,7 @@ Common::Error PegasusEngine::run() {
 		checkCallBacks();
 		checkNotifications();
 		InputHandler::pollForInput();
-		giveIdleTime();
-		_gfx->updateDisplay();
+		refreshDisplay();
 	}
 
 	return Common::kNoError;
@@ -755,8 +754,7 @@ void PegasusEngine::doInterfaceOverview() {
 		overviewText.setTime(time * 3 + 2, 15);
 		overviewText.redrawMovieWorld();
 
-		giveIdleTime();
-		_gfx->updateDisplay();
+		refreshDisplay();
 	}
 
 	if (shouldQuit())
@@ -804,6 +802,11 @@ void PegasusEngine::showTempScreen(const Common::String &fileName) {
 
 		_system->delayMillis(10);
 	}
+}
+
+void PegasusEngine::refreshDisplay() {
+	giveIdleTime();
+	_gfx->updateDisplay();
 }
 
 } // End of namespace Pegasus
