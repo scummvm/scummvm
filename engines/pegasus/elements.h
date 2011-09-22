@@ -111,34 +111,6 @@ protected:
 	uint16 _cornerDiameter;
 };
 
-class EnergyBar : public DisplayElement {
-public:
-	EnergyBar(const tDisplayElementID);
-	virtual ~EnergyBar() {}
-	
-	void getBarColor(uint32 &color) const { color = _barColor; }
-	void setBarColor(const uint32 &color) { _barColor = color; }
-	
-	long getEnergyLevel() const { return _energyLevel; }
-	void setEnergyLevel(const uint32);
-	
-	long getMaxEnergy() const { return _maxEnergy; }
-	void setMaxEnergy(const uint32);
-	
-	virtual void setBounds(const Common::Rect&);
-	
-	virtual void draw(const Common::Rect&);
-
-protected:
-	void calcLevelRect(Common::Rect&) const;
-	void checkRedraw();
-	
-	uint32 _energyLevel;
-	uint32 _maxEnergy;
-	Common::Rect _levelRect;
-	uint32 _barColor;
-};
-
 class Animation : public DisplayElement, public DynamicElement {
 public:
 	Animation(const tDisplayElementID id) : DisplayElement(id) {}

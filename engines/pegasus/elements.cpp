@@ -193,59 +193,6 @@ void DropHighlight::draw(const Common::Rect &) {
 	}
 }
 
-EnergyBar::EnergyBar(const tDisplayElementID id) : DisplayElement(id) {
-	_maxEnergy = 0;
-	_energyLevel = 0;
-	_barColor = 0;
-}
-
-void EnergyBar::checkRedraw() {	
-	if (_elementIsVisible) {
-		Common::Rect r;
-		calcLevelRect(r);
-		if (r != _levelRect)
-			triggerRedraw();
-	}
-}
-
-void EnergyBar::setEnergyLevel(const uint32 newLevel) {
-	if (_energyLevel != newLevel) {
-		_energyLevel = newLevel;
-		checkRedraw();
-	}
-}
-
-void EnergyBar::setMaxEnergy(const uint32 newMax) {
-	if (_maxEnergy != newMax) {
-		if (_energyLevel > newMax)
-			_energyLevel = newMax;
-		_maxEnergy = newMax;
-		checkRedraw();
-	}
-}
-
-void EnergyBar::setBounds(const Common::Rect &r) {
-	DisplayElement::setBounds(r);
-	checkRedraw();
-}
-
-void EnergyBar::draw(const Common::Rect &r) {
-	Common::Rect levelRect;
-	calcLevelRect(levelRect);
-
-	if (r.intersects(levelRect))
-		((PegasusEngine *)g_engine)->_gfx->getWorkArea()->fillRect(levelRect, _barColor);
-}
-
-void EnergyBar::calcLevelRect(Common::Rect &r) const {
-	if (_maxEnergy > 0) {
-		r = _bounds;
-		r.left = r.right - _bounds.width() * _energyLevel / _maxEnergy;
-	} else {
-		r = Common::Rect(0, 0, 0, 0);
-	}
-}
-
 IdlerAnimation::IdlerAnimation(const tDisplayElementID id) : Animation(id) {
 	_lastTime = 0xffffffff;
 }
