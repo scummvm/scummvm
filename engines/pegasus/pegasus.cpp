@@ -54,12 +54,12 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 }
 
 PegasusEngine::~PegasusEngine() {
-	delete _gfx;
 	delete _resFork;
 	delete _console;
 	delete _cursor;
 	delete _continuePoint;
 	delete _gameMenu;
+	delete _gfx;
 }
 
 Common::Error PegasusEngine::run() {
@@ -564,7 +564,11 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 			_gfx->updateDisplay();
 			// TODO: Fade in
 		} else {
-			error("Show credits");
+			// TODO: Stop intro timer
+			// TODO: Fade out
+			useMenu(new CreditsMenu());
+			_gfx->updateDisplay();
+			// TODO: Fade in
 		}
 		break;
 	case kMenuCmdQuit:
@@ -581,6 +585,14 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		break;
 	case kMenuCmdRestore:
 		error("Load game");
+		break;
+	case kMenuCmdCreditsMainMenu:
+		// TODO: Fade out
+		useMenu(new MainMenu());
+		_gfx->updateDisplay();
+		((MainMenu *)_gameMenu)->startMainMenuLoop();
+		// TODO: Fade in
+		resetIntroTimer();
 		break;
 	case kMenuCmdNoCommand:
 		break;

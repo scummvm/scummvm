@@ -372,4 +372,177 @@ void MainMenu::updateDisplay() {
 	}
 }
 
+enum {
+	kCreditsMenuCoreTeam,
+	kCreditsMenuSupportTeam,
+	kCreditsMenuOriginalTeam,
+	kCreditsMenuTalent,
+	kCreditsMenuOtherTitles,
+	kCreditsMenuMainMenu,
+	
+	kCreditsFirstSelection = kCreditsMenuCoreTeam,
+	kCreditsLastSelection = kCreditsMenuMainMenu
+};
+
+static const tCoordType kCreditsMovieLeft = 288;
+static const tCoordType kCreditsMovieTop = 0;
+
+static const tCoordType kCoreTeamSelectLeft = 40;
+static const tCoordType kCoreTeamSelectTop = 223;
+
+static const tCoordType kSupportTeamSelectLeft = 40;
+static const tCoordType kSupportTeamSelectTop = 259;
+
+static const tCoordType kOriginalTeamSelectLeft = 40;
+static const tCoordType kOriginalTeamSelectTop = 295;
+
+static const tCoordType kTalentSelectLeft = 40;
+static const tCoordType kTalentSelectTop = 331;
+
+static const tCoordType kOtherTitlesSelectLeft = 40;
+static const tCoordType kOtherTitlesSelectTop = 367;
+
+static const tCoordType kCreditsMainMenuLeft = 32;
+static const tCoordType kCreditsMainMenuTop = 412;
+
+static const tCoordType kCreditsMainMenuSelectLeft = 30;
+static const tCoordType kCreditsMainMenuSelectTop = 408;
+
+static const TimeValue kCoreTeamTime = 0;
+static const TimeValue kSupportTeamTime = 1920;
+static const TimeValue kOriginalTeamTime = 3000;
+static const TimeValue kTalentTime = 4440;
+static const TimeValue kOtherTitlesTime = 4680;
+
+static const TimeValue kFrameIncrement = 120;		//	Three frames...
+
+//	Never set the current input handler to the CreditsMenu.
+CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _creditsMovie(0),
+		_mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
+
+	_menuBackground.initFromPICTFile("Images/Credits/CredScrn.pict");
+	_menuBackground.setDisplayOrder(0);
+	_menuBackground.startDisplaying();
+	_menuBackground.show();
+
+	_creditsMovie.initFromMovieFile("Images/Credits/Credits.movie");
+	_creditsMovie.setDisplayOrder(1);
+	_creditsMovie.moveElementTo(kCreditsMovieLeft, kCreditsMovieTop);
+	_creditsMovie.startDisplaying();
+	_creditsMovie.show();
+	_creditsMovie.redrawMovieWorld();
+
+	_mainMenuButton.initFromPICTFile("Images/Credits/MainMenu.pict");
+	_mainMenuButton.setDisplayOrder(1);
+	_mainMenuButton.moveElementTo(kCreditsMainMenuLeft, kCreditsMainMenuTop);
+	_mainMenuButton.startDisplaying();
+
+	_largeSelect.initFromPICTFile("Images/Credits/SelectL.pict", true);
+	_largeSelect.setDisplayOrder(2);
+	_largeSelect.moveElementTo(kCreditsMainMenuSelectLeft, kCreditsMainMenuSelectTop);
+	_largeSelect.startDisplaying();
+
+	_smallSelect.initFromPICTFile("Images/Credits/SelectS.pict", true);
+	_smallSelect.setDisplayOrder(2);
+	_smallSelect.show();
+	_smallSelect.startDisplaying();
+	
+	_menuSelection = -1;
+	
+	newMenuSelection(kCreditsMenuCoreTeam);
+}
+
+// Assumes the new selection is never more than one away from the old...
+void CreditsMenu::newMenuSelection(const int newSelection) {
+	if (newSelection != _menuSelection) {
+		switch (newSelection) {
+			case kCreditsMenuCoreTeam:
+				_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
+				_creditsMovie.setTime(kCoreTeamTime);
+				_creditsMovie.redrawMovieWorld();
+				break;
+			case kCreditsMenuSupportTeam:
+				_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
+				_creditsMovie.setTime(kSupportTeamTime);
+				_creditsMovie.redrawMovieWorld();
+				break;
+			case kCreditsMenuOriginalTeam:
+				_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
+				_creditsMovie.setTime(kOriginalTeamTime);
+				_creditsMovie.redrawMovieWorld();
+				break;
+			case kCreditsMenuTalent:
+				_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
+				_creditsMovie.setTime(kTalentTime);
+				_creditsMovie.redrawMovieWorld();
+				break;
+			case kCreditsMenuOtherTitles:
+				_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
+				_smallSelect.show();
+				_largeSelect.hide();
+				_creditsMovie.setTime(kOtherTitlesTime);
+				_creditsMovie.redrawMovieWorld();
+				break;
+			case kCreditsMenuMainMenu:
+				_smallSelect.hide();
+				_largeSelect.show();
+				break;
+		}
+
+		_menuSelection = newSelection;
+	}
+}
+
+void CreditsMenu::newMovieTime(const TimeValue newTime) {
+	if (newTime < kSupportTeamTime) {
+		_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
+		_menuSelection = kCreditsMenuCoreTeam;
+	} else if (newTime < kOriginalTeamTime) {
+		_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
+		_menuSelection = kCreditsMenuSupportTeam;
+	} else if (newTime < kTalentTime) {
+		_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
+		_menuSelection = kCreditsMenuOriginalTeam;
+	} else if (newTime < kOtherTitlesTime) {
+		_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
+		_smallSelect.show();
+		_largeSelect.hide();
+		_menuSelection = kCreditsMenuTalent;
+	} else if ((int)newTime == -120) {
+		// HACK: Avoid getting sent to the bottom button in the default case
+		return;
+	} else {
+		_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
+		_smallSelect.show();
+		_largeSelect.hide();
+		_menuSelection = kCreditsMenuOtherTitles;
+	}
+
+	_creditsMovie.setTime(newTime);
+	_creditsMovie.redrawMovieWorld();
+}
+
+void CreditsMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	if (input.upButtonDown()) {
+		if (_menuSelection > kCreditsFirstSelection)
+			newMenuSelection(_menuSelection - 1);
+	} else if (input.downButtonDown()) {
+		if (_menuSelection < kCreditsLastSelection)
+			newMenuSelection(_menuSelection + 1);
+	} else if (input.leftButtonDown()) {
+		newMovieTime(_creditsMovie.getTime() - kFrameIncrement);
+	} else if (input.rightButtonDown()) {
+		newMovieTime(_creditsMovie.getTime() + kFrameIncrement);
+	} else if (JMPPPInput::isMenuButtonPressInput(input)) {
+		if (_menuSelection == kCreditsMenuMainMenu) {
+			_mainMenuButton.show();
+			((PegasusEngine *)g_engine)->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			_mainMenuButton.hide();
+			setLastCommand(kMenuCmdCreditsMainMenu);
+		}
+	}
+
+	InputHandler::handleInput(input, cursorSpot);
+}
+
 } // End of namespace Pegasus

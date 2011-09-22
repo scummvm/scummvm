@@ -29,6 +29,7 @@
 #include "pegasus/constants.h"
 #include "pegasus/fader.h"
 #include "pegasus/input.h"
+#include "pegasus/movie.h"
 #include "pegasus/sound.h"
 #include "pegasus/surface.h"
 #include "pegasus/util.h"
@@ -86,6 +87,25 @@ protected:
 
 	Sound _menuLoop;
 	SoundFader _menuFader;
+};
+
+class CreditsMenu : public GameMenu {
+public:
+	CreditsMenu(void);
+	virtual ~CreditsMenu() {}
+	
+	virtual void handleInput(const Input &input, const Hotspot *);
+
+protected:
+	void newMenuSelection(const int);
+	void newMovieTime(const TimeValue);
+	
+	int _menuSelection;
+	Picture _menuBackground;
+	Movie _creditsMovie;
+	Picture _mainMenuButton;
+	Picture _largeSelect;
+	Picture _smallSelect;
 };
 
 } // End of namespace Pegasus
