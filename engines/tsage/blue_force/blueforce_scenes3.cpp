@@ -2018,7 +2018,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 		_woman.setVisage(344);
 		_woman.setStrip(3);
 		_woman.setFrame(1);
-		_woman.fixPriority(120);
+		_woman.fixPriority(123);
 		_woman.setPosition(Common::Point(88, 143));
 
 		_object4.postInit();
