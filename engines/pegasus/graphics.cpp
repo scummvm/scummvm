@@ -197,6 +197,10 @@ void GraphicsManager::invalRect(const Common::Rect &rect) {
 		// Expand our dirty rect to include rect
 		_dirtyRect.extend(rect);
 	}
+
+	// Sanity check: clip our rect to the screen
+	_dirtyRect.right = MIN<int>(640, _dirtyRect.right);
+	_dirtyRect.bottom = MIN<int>(480, _dirtyRect.bottom);
 }
 
 void GraphicsManager::addDisplayElement(DisplayElement *newElement) {
