@@ -27,7 +27,9 @@
 #include "common/stream.h"
 
 #include "pegasus/constants.h"
+#include "pegasus/elements.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/surface.h"
 #include "pegasus/items/item.h"
 #include "pegasus/items/itemlist.h"
 
@@ -264,6 +266,24 @@ ItemStateInfo Item::readItemState(Common::SeekableReadStream *stream) {
 	}
 
 	return info;
+}
+
+Sprite *Item::getDragSprite(const tDisplayElementID id) const {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	Sprite *result = new Sprite(id);
+	SpriteFrame *frame = new SpriteFrame();
+
+	frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteNormalID);
+	result->addFrame(frame, 0, 0);
+
+	if (_itemInfo.dragSpriteNormalID != _itemInfo.dragSpriteUsedID) {
+		frame = new SpriteFrame();
+		frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteUsedID);
+	}
+
+	result->addFrame(frame, 0, 0);
+	result->setCurrentFrameIndex(0);
+	return result;
 }
 
 } // End of namespace Pegasus

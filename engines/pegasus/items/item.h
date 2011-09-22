@@ -274,6 +274,8 @@ enum tItemType {
 	kBiochipItemType
 };
 
+class Sprite;
+
 /*
 
 	Item is an object which can be picked up and carried around.
@@ -313,8 +315,7 @@ public:
 	void getInfoRightTimes(TimeValue&, TimeValue&) const;
 	TimeValue getSharedAreaTime() const;
 
-	//TODO
-	//MMSprite*						GetDragSprite(const tDisplayElementID) const;
+	Sprite *getDragSprite(const tDisplayElementID) const;
 	
 	/*
 		select		--	called when this item becomes current. Also called when the inventory
