@@ -87,6 +87,7 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 				currentBits |= (kRawButtonDown << kMod3ButtonShift);
 				break;
 			case Common::KEYCODE_TILDE:
+			case Common::KEYCODE_BACKQUOTE:
 			case Common::KEYCODE_NUMLOCK: // Yes, the original uses Num Lock/Clear on the Mac...
 				currentBits |= (kRawButtonDown << kLeftFireButtonShift);
 				break;
