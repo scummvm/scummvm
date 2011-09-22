@@ -564,7 +564,9 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		_system->quit();
 		break;
 	case kMenuCmdOverview:
-		error("Show overview");
+		// TODO: Stop intro timer
+		doInterfaceOverview();
+		resetIntroTimer();
 		break;
 	case kMenuCmdStartWalkthrough:
 		GameState.setWalkthroughMode(true);
@@ -587,6 +589,170 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	// TODO: Quit request
 	// TODO: Save request
 	// TODO: Load request
+}
+
+void PegasusEngine::doInterfaceOverview() {
+	static const short kNumOverviewSpots = 11;
+	static const Common::Rect overviewSpots[kNumOverviewSpots] = {
+		Common::Rect(354, 318, 354 + 204, 318 + 12),
+		Common::Rect(211, 34, 211 + 114, 34 + 28),
+		Common::Rect(502, 344, 502 + 138, 344 + 120),
+		Common::Rect(132, 40, 132 + 79, 40 + 22),
+		Common::Rect(325, 40, 332 + 115, 40 + 22),
+		Common::Rect(70, 318, 70 + 284, 318 + 12),
+		Common::Rect(76, 334, 76 + 96, 334 + 96),
+		Common::Rect(64, 64, 64 + 512, 64 + 256),
+		Common::Rect(364, 334, 364 + 96, 334 + 96),
+		Common::Rect(172, 334, 172 + 192, 334 + 96),
+		Common::Rect(542, 36, 542 + 58, 36 + 20)
+	};
+
+	// TODO: fade out
+	useMenu(0);
+
+	Picture leftBackground(kNoDisplayElement);
+	leftBackground.initFromPICTFile("Images/Interface/OVLeft.mac");
+	leftBackground.setDisplayOrder(0);
+	leftBackground.moveElementTo(kBackground1Left, kBackground1Top);
+	leftBackground.startDisplaying();
+	leftBackground.show();
+
+	Picture topBackground(kNoDisplayElement);
+	topBackground.initFromPICTFile("Images/Interface/OVTop.mac");
+	topBackground.setDisplayOrder(0);
+	topBackground.moveElementTo(kBackground2Left, kBackground2Top);
+	topBackground.startDisplaying();
+	topBackground.show();
+
+	Picture rightBackground(kNoDisplayElement);
+	rightBackground.initFromPICTFile("Images/Interface/OVRight.mac");
+	rightBackground.setDisplayOrder(0);
+	rightBackground.moveElementTo(kBackground3Left, kBackground3Top);
+	rightBackground.startDisplaying();
+	rightBackground.show();
+
+	Picture bottomBackground(kNoDisplayElement);
+	bottomBackground.initFromPICTFile("Images/Interface/OVBottom.mac");
+	bottomBackground.setDisplayOrder(0);
+	bottomBackground.moveElementTo(kBackground4Left, kBackground4Top);
+	bottomBackground.startDisplaying();
+	bottomBackground.show();
+
+	Picture controllerHighlight(kNoDisplayElement);
+	controllerHighlight.initFromPICTFile("Images/Interface/OVcontrollerHilite.mac");
+	controllerHighlight.setDisplayOrder(0);
+	controllerHighlight.moveElementTo(kOverviewControllerLeft, kOverviewControllerTop);
+	controllerHighlight.startDisplaying();
+
+	Movie overviewText(kNoDisplayElement);
+	overviewText.initFromMovieFile("Images/Interface/Overview Mac.movie");
+	overviewText.setDisplayOrder(0);
+	overviewText.moveElementTo(kNavAreaLeft, kNavAreaTop);
+	overviewText.startDisplaying();
+	overviewText.show();
+	overviewText.redrawMovieWorld();
+
+	DropHighlight highlight(kNoDisplayElement);
+	highlight.setDisplayOrder(1);
+	highlight.startDisplaying();
+	highlight.setHighlightThickness(4);
+	highlight.setHighlightColor(g_system->getScreenFormat().RGBToColor(239, 239, 0));
+	highlight.setHighlightCornerDiameter(8);
+
+	Input input;
+	InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+
+	Common::Point cursorLoc;
+	input.getInputLocation(cursorLoc);
+
+	uint16 i;
+	for (i = 0; i < kNumOverviewSpots; ++i)
+		if (overviewSpots[i].contains(cursorLoc))
+			break;
+
+	TimeValue time;
+	if (i == kNumOverviewSpots)
+		time = 5;
+	else if (i > 4)
+		time = i + 1;
+	else
+		time = i;
+
+	if (time == 2) {
+		highlight.hide();
+		controllerHighlight.show();
+	} else if (i != kNumOverviewSpots) {
+		controllerHighlight.hide();
+		Common::Rect r = overviewSpots[i];
+		r.grow(5);
+		highlight.setBounds(r);
+		highlight.show();
+	} else {
+		highlight.hide();
+		controllerHighlight.hide();
+	}
+
+	overviewText.setTime(time * 3 + 2, 15);
+	overviewText.redrawMovieWorld();
+
+	_cursor->setCurrentFrameIndex(3);
+	_cursor->show();
+
+	_gfx->updateDisplay();
+	// TODO: Fade in
+
+	for (;;) {
+		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+
+		if (input.anyInput() || shouldQuit()) // TODO: Check for save/load requests too
+			break;
+
+		input.getInputLocation(cursorLoc);
+		for (i = 0; i < kNumOverviewSpots; ++i)
+			if (overviewSpots[i].contains(cursorLoc))
+				break;
+
+		if (i == kNumOverviewSpots)
+			time = 5;
+		else if (i > 4)
+			time = i + 1;
+		else
+			time = i;
+
+		if (time == 2) {
+			highlight.hide();
+			controllerHighlight.show();
+		} else if (i != kNumOverviewSpots) {
+			controllerHighlight.hide();
+			Common::Rect r = overviewSpots[i];
+			r.grow(5);
+			highlight.setBounds(r);
+			highlight.show();
+		} else {
+			highlight.hide();
+			controllerHighlight.hide();
+		}
+
+		overviewText.setTime(time * 3 + 2, 15);
+		overviewText.redrawMovieWorld();
+
+		giveIdleTime();
+		_gfx->updateDisplay();
+	}
+
+	if (shouldQuit())
+		return;
+
+	highlight.hide();
+	_cursor->hide();
+
+	// TODO: Fade out
+	useMenu(new MainMenu());
+	_gfx->updateDisplay();
+	((MainMenu *)_gameMenu)->startMainMenuLoop();
+	// TODO: Fade in
+
+	// TODO: Cancel save/load requests?
 }
 
 } // End of namespace Pegasus

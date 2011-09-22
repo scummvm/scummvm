@@ -137,6 +137,7 @@ private:
 	// Menu
 	GameMenu *_gameMenu;
 	void doGameMenuCommand(const tGameMenuCommand);
+	void doInterfaceOverview();
 };
 
 } // End of namespace Pegasus
