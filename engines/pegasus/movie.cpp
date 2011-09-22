@@ -83,7 +83,6 @@ void Movie::redrawMovieWorld() {
 
 		if (_directDraw) {
 			// Copy to the screen
-			// TODO: Scaling
 			Common::Rect bounds;
 			getBounds(bounds);
 			g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, bounds.left, bounds.top, frame->w, frame->h);
