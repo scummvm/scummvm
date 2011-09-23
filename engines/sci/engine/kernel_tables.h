@@ -564,6 +564,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// just use GetConfig and mark this one as empty, like the DOS version does.
 	{ MAP_EMPTY(GetSierraProfileInt), SIG_EVERYWHERE,        "(.*)",                  NULL,            NULL },
 
+	// Debug function called whenever the current room changes
+	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+
 	// Unused / debug SCI2.1 unused functions, always mapped to kDummy
 
 	// The debug functions are called from the inbuilt debugger or polygon
@@ -593,7 +596,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// UpdateLine - used by LSL6
 	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
 	//   (inclusive) are set to 0
-	// NewRoom - 1 integer parameter, the current room number
 	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
 	// SetHotRectangles - used by Phantasmagoria 1
 #endif
@@ -1059,7 +1061,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x8b*/ "SetPalStyleRange",
 	/*0x8c*/ "AddPicAt",
 	/*0x8d*/ "MessageBox",	// SCI3, was Dummy in SCI2.1
-	/*0x8e*/ "NewRoom",
+	/*0x8e*/ "NewRoom",		// debug function
 	/*0x8f*/ "Dummy",
 	/*0x90*/ "Priority",
 	/*0x91*/ "MorphOn",
