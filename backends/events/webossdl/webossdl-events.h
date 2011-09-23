@@ -29,8 +29,11 @@
  * SDL events manager for WebOS
  */
 class WebOSSdlEventSource : public SdlEventSource {
+public:
+	WebOSSdlEventSource();
 protected:
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);

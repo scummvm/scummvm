@@ -2393,7 +2393,8 @@ if test -n "$_host"; then
 		webos)
 			_backend="webos"
 			_port_mk="backends/platform/webos/webos.mk"
-			_build_scalers=no
+			_build_scalers=yes
+			_build_hq_scalers=no
 			_timidity=no
 			_mt32emu=no
 			_seq_midi=no
@@ -2545,7 +2546,7 @@ case $_backend in
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
-		LIBS="$LIBS -lSDL"
+		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
