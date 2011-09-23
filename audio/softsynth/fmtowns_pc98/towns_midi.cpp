@@ -563,7 +563,7 @@ int TownsMidiOutputChannel::getEffectModLevel(int lvl, int mod) {
 		if (lvl < 0)
 			return -_driver->_operatorLevelTable[((-lvl) << 5) + mod];
 		else
-			return _driver->_operatorLevelTable[((-lvl) << 5) + mod];
+			return _driver->_operatorLevelTable[(lvl << 5) + mod];
 	}
 
 	return 0;

@@ -169,11 +169,13 @@ public:
 	StripProxy _stripProxy;
 	int _dayNumber;
 	int _v4CEA4;
+	int _v4CEB4;
+	int _v4CEB6;
+	int _v4CEC2;
+	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
-	int _v4CF9E;
-	int _v4E238;
 	int _v501FC;
 	int _v50696;
 	uint8 _v5098C;

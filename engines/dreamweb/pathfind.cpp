@@ -130,5 +130,125 @@ bool DreamGenContext::checkifpathison(uint8 index) {
 	return pathOn == 0xff;
 }
 
+void DreamGenContext::bresenhams() {
+	workoutframes();
+	int8 *lineData = (int8 *)data.ptr(kLinedata, 0);
+	int16 startX = (int16)data.word(kLinestartx);
+	int16 startY = (int16)data.word(kLinestarty);
+	int16 endX = (int16)data.word(kLineendx);
+	int16 endY = (int16)data.word(kLineendy);
+
+	if (endX == startX) {
+		uint16 deltaY;
+		int8 y;
+		if (endY < startY) {
+			deltaY = startY - endY;
+			y = (int8)endY;
+			data.byte(kLinedirection) = 1;
+		} else {
+			deltaY = endY - startY;
+			y = (int8)startY;
+			data.byte(kLinedirection) = 0;
+		}
+		++deltaY;
+		int8 x = (int8)startX;
+		data.byte(kLinelength) = deltaY;
+		do {
+			lineData[0] = x;
+			lineData[1] = y;
+			lineData += 2;
+			++y;
+			--deltaY;
+		} while (deltaY);
+		return;
+	}
+	uint16 deltaX;
+	if (endX < startX) {
+		deltaX = startX - endX;
+		SWAP(startX, endX);
+		SWAP(startY, endY);
+		data.word(kLinestartx) = (uint16)startX;
+		data.word(kLinestarty) = (uint16)startY;
+		data.word(kLineendx) = (uint16)endX;
+		data.word(kLineendy) = (uint16)endY;
+		data.byte(kLinedirection) = 1;
+	} else {
+		deltaX = endX - startX;
+		data.byte(kLinedirection) = 0;
+	}
+
+	int16 increment;
+	if (endY == startY) {
+		int8 x = (int8)startX;
+		int8 y = (int8)startY;
+		++deltaX;
+		data.byte(kLinelength) = deltaX;
+		do {
+			lineData[0] = x;
+			lineData[1] = y;
+			lineData += 2;
+			++x;
+			--deltaX;
+		} while (deltaX);
+		return;
+	}
+	uint16 deltaY;
+	if (startY > endY) {
+		deltaY = startY - endY;
+		increment = -1;
+	} else {
+		deltaY = endY - startY;
+		increment = 1;
+	}
+
+	uint16 delta1, delta2;
+	if (deltaY > deltaX) {
+		data.byte(kLineroutine) = 1;
+		delta1 = deltaY;
+		delta2 = deltaX;
+	} else {
+		data.byte(kLineroutine) = 0;
+		delta1 = deltaX;
+		delta2 = deltaY;
+	}
+
+	data.word(kIncrement1) = delta2 * 2;
+	int16 remainder = delta2 * 2 - delta1;
+	data.word(kIncrement2) = delta2 * 2 - delta1 * 2;
+	++delta1;
+	int8 x = (int8)startX;
+	int8 y = (int8)startY;
+	data.byte(kLinelength) = delta1;
+	if (data.byte(kLineroutine) != 1) {
+		do {
+			lineData[0] = x;
+			lineData[1] = y;
+			lineData += 2;
+			++x;
+			if (remainder < 0) {
+				remainder += data.word(kIncrement1);
+			} else {
+				remainder += data.word(kIncrement2);
+				y += increment;
+			}
+			--delta1;
+		} while (delta1);
+	} else {
+		do {
+			lineData[0] = x;
+			lineData[1] = y;
+			lineData += 2;
+			y += increment;
+			if (remainder < 0) {
+				remainder += data.word(kIncrement1);
+			} else {
+				remainder += data.word(kIncrement2);
+				++x;
+			}
+			--delta1;
+		} while (delta1);
+	}
+}
+
 } /*namespace dreamgen */
 

@@ -44,4 +44,11 @@ void Init_Geisha::initVideo() {
 	_vm->_draw->_transparentCursor =  1;
 }
 
+void Init_Geisha::initGame() {
+	// HACK - Since the MDY/TBR player is not working, claim we have no AdLib
+	_vm->_global->_soundFlags = 0;
+
+	Init::initGame();
+}
+
 } // End of namespace Gob

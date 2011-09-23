@@ -102,8 +102,6 @@ public:
 
 /*----------------- MOUSE interface -----------------*/
 
-extern Talk *_talk;
-
 struct CGEEvent {
 	uint16 _mask;
 	uint16 _x;
@@ -134,6 +132,7 @@ private:
 
 class EventManager {
 private:
+	CGEEngine *_vm;
 	Common::Event _event;
 	CGEEvent _eventQueue[kEventMax];
 	uint16 _eventQueueHead;
@@ -143,7 +142,7 @@ private:
 public:
 	bool _quitFlag;
 
-	EventManager();
+	EventManager(CGEEngine *vm);
 	void poll();	
 	void clearEvent(Sprite *spr);
 

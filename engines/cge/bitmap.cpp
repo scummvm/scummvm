@@ -34,23 +34,14 @@
 
 namespace CGE {
 
-Dac *Bitmap::_pal = NULL;
-
-void Bitmap::init() {
-	_pal = NULL;
-}
-
-void Bitmap::deinit() {
-}
-
-Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, const char *fname) : _m(NULL), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%s)", fname);
 
 	char pat[kMaxPath];
 	forceExt(pat, fname, ".VBM");
 
-	if (_resman->exist(pat)) {
-		EncryptedStream file(pat);
+	if (_vm->_resman->exist(pat)) {
+		EncryptedStream file(_vm, pat);
 		if (file.err())
 			error("Unable to find VBM [%s]", fname);
 		if (!loadVBM(&file))
@@ -60,7 +51,7 @@ Bitmap::Bitmap(const char *fname) : _m(NULL), _v(NULL), _map(0) {
 	}
 }
 
-Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, map)", w, h);
 	if (map)
 		code();
@@ -69,11 +60,9 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 *map) : _w(w), _h(h), _m(map), _v(NULL)
 // following routine creates filled rectangle
 // immediately as VGA video chunks, in near memory as fast as possible,
 // especially for text line real time display
-Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
+Bitmap::Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill)
 	: _w((w + 3) & ~3),                              // only full uint32 allowed!
-	  _h(h),
-	  _m(NULL),
-	  _map(0) {
+	  _h(h), _m(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(%d, %d, %d)", w, h, fill);
 
 	uint16 dsiz = _w >> 2;                           // data size (1 plane line size)
@@ -111,7 +100,7 @@ Bitmap::Bitmap(uint16 w, uint16 h, uint8 fill)
 	_b = b;
 }
 
-Bitmap::Bitmap(const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0) {
+Bitmap::Bitmap(CGEEngine *vm, const Bitmap &bmp) : _w(bmp._w), _h(bmp._h), _m(NULL), _v(NULL), _map(0), _vm(vm) {
 	debugC(1, kCGEDebugBitmap, "Bitmap::Bitmap(bmp)");
 	uint8 *v0 = bmp._v;
 	if (!v0)
@@ -153,6 +142,16 @@ Bitmap &Bitmap::operator=(const Bitmap &bmp) {
 		_b = (HideDesc *)((_v = v1) + vsiz);
 	}
 	return *this;
+}
+
+char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
+	strcpy(buf, name);
+	char *dot = strrchr(buf, '.');
+	if (dot)
+		*dot = '\0';
+	strcat(buf, ext);
+
+	return buf;
 }
 
 uint16 Bitmap::moveVmap(uint8 *buf) {
@@ -365,16 +364,16 @@ bool Bitmap::loadVBM(EncryptedStream *f) {
 
 	if (!f->err()) {
 		if (p) {
-			if (_pal) {
+			if (_vm->_bitmapPalette) {
 				// Read in the palette
 				byte palData[kPalSize];
 				f->read(palData, kPalSize);
 				
 				const byte *srcP = palData;
 				for (int idx = 0; idx < kPalCount; idx++, srcP += 3) {
-					_pal[idx]._r = *srcP;
-					_pal[idx]._g = *(srcP + 1);
-					_pal[idx]._b = *(srcP + 2);
+					_vm->_bitmapPalette[idx]._r = *srcP;
+					_vm->_bitmapPalette[idx]._g = *(srcP + 1);
+					_vm->_bitmapPalette[idx]._b = *(srcP + 2);
 				}
 			} else
 				f->seek(f->pos() + kPalSize);

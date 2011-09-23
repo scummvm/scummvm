@@ -64,11 +64,10 @@ public:
 	}
 };
 
-DataCk *loadWave(EncryptedStream *file);
-
 class Sound {
 public:
 	SmpInfo _smpinf;
+
 	Sound(CGEEngine *vm);
 	~Sound();
 	void open();
@@ -87,18 +86,21 @@ private:
 	void sndDigiStop(SmpInfo *PSmpInfo);
 };
 
-
 class Fx {
+	CGEEngine *_vm;
 	struct Handler {
 		int _ref;
 		DataCk *_wav;
 	} *_cache;
 	int _size;
+
 	DataCk *load(int idx, int ref);
+	DataCk *loadWave(EncryptedStream *file);
 	int find(int ref);
 public:
 	DataCk *_current;
-	Fx(int size);
+
+	Fx(CGEEngine *vm, int size);
 	~Fx();
 	void clear();
 	void preload(int ref0);
@@ -107,6 +109,7 @@ public:
 
 class MusicPlayer: public Audio::MidiPlayer {
 private:
+	CGEEngine *_vm;
 	byte *_data;
 	int _dataSize;
 	bool _isGM;
@@ -117,7 +120,7 @@ private:
 	// Stop MIDI File
 	void sndMidiStop();
 public:
-	MusicPlayer();
+	MusicPlayer(CGEEngine *vm);
 	~MusicPlayer();
 
 	void loadMidi(int ref);

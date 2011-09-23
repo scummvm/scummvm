@@ -263,6 +263,628 @@ public:
 	virtual void signal();
 };
 
+class Scene340: public PalettedScene {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action8: public Action {
+	public:
+		virtual void signal();
+		void process(Event &event);
+	};
+
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class WestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthWestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class NorthExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Child: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Woman: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Timers */
+	class Timer2: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	Child _child;
+	Woman _woman;
+	Lyle _lyle;
+	SceneObject _object4, _object5;
+	Item1 _item1;
+	NamedHotspot _item2, _item3;
+	WestExit _westExit;
+	SouthWestExit _swExit;
+	NorthExit _northExit;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJordan _jordanSpeaker;
+	SpeakerSkipB _skipBSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	ASoundExt _sound1, _sound2;
+	TimerExt _timer1;
+	Timer2 _timer2;
+	int _seqNumber1, _field2652, _field2654;
+
+	Scene340();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene342: public PalettedScene {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class WestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthWestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class NorthExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Timers */
+	class Timer1: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	Lyle _lyle;
+	NamedObject _object2;
+	SceneObject _object3, _object4;
+	Item1 _item1;
+	NamedHotspot _item2, _item3;
+	WestExit _westExit;
+	SouthWestExit _swExit;
+	NorthExit _northExit;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	ASoundExt _sound1;
+	Timer1 _timer1;
+	int _field1A1A;
+
+	Scene342();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene350: public SceneExt {
+	/* Items */
+	class Item5: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item6: public NamedHotspot {
+	public:
+		bool _flag;
+
+		virtual Common::String getClassName() { return "Scene350_Item6"; }
+		virtual void synchronize(Serializer &s);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthWestExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Hook: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Timers */
+	class Timer1: public Timer {
+	public:	
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	NamedObject _lyle;
+	SceneObject _boat;
+	SceneObject _object3;
+	Hook _hook;
+	Object5 _object5;
+	NamedHotspot _item1, _item2, _item3, _item4;
+	Item5 _item5;
+	Item6 _item6;
+	SouthWestExit _swExit;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	ASoundExt _sound1, _sound2;
+	Timer1 _timer1;
+	int _field1D44, _field1D46;
+
+	Scene350();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void checkGun();
+};
+
+class Scene355: public PalettedScene {
+	/* Objects */
+	class Object2: public NamedObject {
+	public:
+		int _v1, _v2, _v3;
+
+		Object2() { _v1 = _v2 = _v3 = 0; }
+		virtual Common::String getClassName() { return "Scene355_Object2"; }
+		virtual void synchronize(Serializer &s);
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object6: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object7: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object8: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3: public SceneHotspotExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item4: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item5: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item11: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item12: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	SpeakerGreen _greenSpeaker;
+	NamedObject _object1;
+	Object2 _object2;
+	Object3 _object3;
+	Object4 _object4;
+	Object5 _object5;
+	Object6 _object6;
+	Object7 _object7;
+	Object8 _object8;
+	NamedObject _object9, _object10, _object11;
+	Item1 _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Item4 _item4;
+	Item5 _item5;
+	NamedHotspot _item6, _item7, _item8;
+	NamedHotspot _item9, _item10;
+	Item11 _item11;
+	Item12 _item12;
+	ASoundExt _sound1, _sound2, _sound3;
+	Action1 _action1;
+	Action2 _action2;
+	int _fieldB0E, _fieldB10;
+
+	Scene355();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+
+	void proc1(int v1, int v2);
+};
+
+class Scene360: public SceneExt {
+	/* Objects */
+	class SlidingDoor: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Window: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class BsseballCards: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object6: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object7: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item2: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item3: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Barometer: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SlidingDoor _slidingDoor;
+	SceneObject _object2;
+	Window _window;
+	Object4 _object4;
+	BsseballCards _baseballCards;
+	Object6 _object6;
+	Object7 _object7;
+	Item1 _item1;
+	Item2 _item2;
+	Item3 _item3;
+	Barometer _barometer;
+	Action1 _action1;
+	ASound _sound1;
+	int _field380;
+
+	Scene360();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene370: public SceneExt {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item6: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class GreensGun: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Green: public NamedObject2 {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Harrison: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Laura: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Speakers */
+	class SpeakerLaura370: public SpeakerLaura {
+	public:
+		virtual void setText(const Common::String &msg);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerLaura _lauraSpeaker;
+	SpeakerLauraHeld _lauraHeldSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SpeakerHarrison _harrisonSpeaker;
+	GreensGun _greensGun;
+	Green _green;
+	Harrison _harrison;
+	Laura _laura;
+	NamedObject _object5;
+	SceneObject _object6;
+	Item1 _item1;
+	NamedHotspot _item2, _item3, _item4, _item5;
+	Item6 _item6;
+	Exit _exit;
+	ASound _sound1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene380: public SceneExt {
+	/* Objects */
+	class Vechile: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	Vechile _vechile;
+	Door _door;
+	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	NamedHotspot _item6, _item7, _item8, _item9;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
+class Scene385: public SceneExt {
+	/* Items */
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Jim: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Dezi: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	Action2 _action2;
+	Door _door;
+	Jim _jim;
+	Dezi _dezi;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJim _jimSpeaker;
+	SpeakerDezi _deziSpeaker;
+	SpeakerJake385 _jake385Speaker;
+	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	Exit _exit;
+	int _talkAction, _jimFlag;
+
+	Scene385();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
+class Scene390: public SceneExt {
+	/* Items */
+	class BookingForms: public NamedHotspotExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Green: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GangMember1: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GangMember2: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerGreen _greenSpeaker;
+	SpeakerJailer _jailerSpeaker;
+	SpeakerDriver _driverSpeaker;
+	SpeakerShooter _shooterSpeaker;
+	Action1 _action1;
+	Green _green;
+	Object2 _object2;
+	Object3 _object3;
+	GangMember1 _gangMember1;
+	GangMember2 _gangMember2;
+	Door _door;
+	NamedHotspot _item1, _item3, _item4;
+	BookingForms _bookingForms;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

@@ -33,7 +33,7 @@ namespace Gob {
 
 namespace Geisha {
 
-static byte kPalette[48] = {
+static const byte kPalette[48] = {
 	0x16,  0x16,  0x16,
 	0x12,  0x14,  0x16,
 	0x34,  0x00,  0x25,

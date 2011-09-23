@@ -62,6 +62,7 @@ public:
 	~Init_Geisha();
 
 	void initVideo();
+	void initGame();
 };
 
 class Init_v2 : public Init_v1 {

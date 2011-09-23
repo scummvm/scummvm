@@ -192,17 +192,17 @@ uint16 ResourceManager::catRead(void *buf, uint16 length) {
 /*-----------------------------------------------------------------------
  * EncryptedStream
  *-----------------------------------------------------------------------*/
-EncryptedStream::EncryptedStream(const char *name) {
+EncryptedStream::EncryptedStream(CGEEngine *vm, const char *name) : _vm(vm) {
 	debugC(3, kCGEDebugFile, "EncryptedStream::EncryptedStream(%s)", name);
 
 	_error = false;
-	BtKeypack *kp = _resman->find(name);
+	BtKeypack *kp = _vm->_resman->find(name);
 	if (scumm_stricmp(kp->_key, name) != 0)
 		_error = true;
 
-	_resman->seek(kp->_pos);
+	_vm->_resman->seek(kp->_pos);
 	byte *dataBuffer = (byte *)malloc(kp->_size);
-	_resman->read(dataBuffer, kp->_size);
+	_vm->_resman->read(dataBuffer, kp->_size);
 	_readStream = new Common::MemoryReadStream(dataBuffer, kp->_size, DisposeAfterUse::YES);
 }
 

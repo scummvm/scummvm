@@ -28,17 +28,21 @@
 #ifndef CGE_BITMAP_H
 #define CGE_BITMAP_H
 
-#include "cge/fileio.h"
-//#include "cge/general.h"
+#include "cge/general.h"
+#include "common/file.h"
 
 namespace CGE {
 
-#define kBmpEOI      0x0000
-#define kBmpSKP      0x4000
-#define kBmpREP      0x8000
-#define kBmpCPY      0xC000
+class CGEEngine;
+class EncryptedStream;
 
 #define kMaxPath  128
+enum {
+	kBmpEOI = 0x0000,
+	kBmpSKP = 0x4000,
+	kBmpREP = 0x8000,
+	kBmpCPY = 0xC000
+};
 
 #include "common/pack-start.h"
 
@@ -50,9 +54,10 @@ struct HideDesc {
 #include "common/pack-end.h"
 
 class Bitmap {
+	CGEEngine *_vm;
+	char *forceExt(char *buf, const char *name, const char *ext);
 	bool loadVBM(EncryptedStream *f);
 public:
-	static Dac *_pal;
 	uint16 _w;
 	uint16 _h;
 	uint8 *_m;
@@ -60,14 +65,12 @@ public:
 	int32 _map;
 	HideDesc *_b;
 
-	Bitmap(const char *fname);
-	Bitmap(uint16 w, uint16 h, uint8 *map);
-	Bitmap(uint16 w, uint16 h, uint8 fill);
-	Bitmap(const Bitmap &bmp);
+	Bitmap(CGEEngine *vm, const char *fname);
+	Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 *map);
+	Bitmap(CGEEngine *vm, uint16 w, uint16 h, uint8 fill);
+	Bitmap(CGEEngine *vm, const Bitmap &bmp);
 	~Bitmap();
 
-	static void init();
-	static void deinit();
 	Bitmap *code();
 	Bitmap &operator=(const Bitmap &bmp);
 	void hide(int16 x, int16 y);

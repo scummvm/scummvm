@@ -25,14 +25,21 @@
 
 #include "common/system.h"
 
+#include "gob/util.h"
+
+#include "gob/sound/sounddesc.h"
+
 namespace Gob {
 
 class GobEngine;
+class Surface;
 class DECFile;
 class ANIFile;
 class ANIObject;
 
 namespace Geisha {
+
+class EvilFish;
 
 /** Geisha's "Diving" minigame. */
 class Diving {
@@ -43,6 +50,24 @@ public:
 	bool play(uint16 playerCount, bool hasPearlLocation);
 
 private:
+	static const uint kEvilFishCount  =  3;
+	static const uint kDecorFishCount =  3;
+	static const uint kMaxShotCount   = 10;
+
+	struct ManagedEvilFish {
+		EvilFish *evilFish;
+
+		uint32 enterAt;
+		uint32 leaveAt;
+	};
+
+	struct ManagedDecorFish {
+		ANIObject *decorFish;
+
+		uint32 enterAt;
+		int8 deltaX;
+	};
+
 	GobEngine *_vm;
 
 	DECFile *_background;
@@ -54,11 +79,45 @@ private:
 	ANIObject *_lungs;
 	ANIObject *_heart;
 
+	ManagedEvilFish  _evilFish[kEvilFishCount];
+	ManagedDecorFish _decorFish[kDecorFishCount];
+
+	ANIObject *_shot[kMaxShotCount];
+
+	Common::List<int> _activeShots;
+
+	Common::List<ANIObject *> _anims;
+
+	Surface *_blackPearl;
+
+	uint8 _whitePearlCount;
+	uint8 _blackPearlCount;
+
+	uint8 _currentShot;
+
+	SoundDesc _soundShoot;
+	SoundDesc _soundBreathe;
+	SoundDesc _soundWhitePearl;
+	SoundDesc _soundBlackPearl;
+
 
 	void init();
 	void deinit();
 
 	void initScreen();
+	void initCursor();
+
+	void foundBlackPearl();
+	void foundWhitePearl();
+
+	void updateEvilFish();
+	void updateDecorFish();
+	void updateAnims();
+
+	int16 checkInput(int16 &mouseX, int16 &mouseY, MouseButtons &mouseButtons);
+
+	void shoot(int16 mouseX, int16 mouseY);
+	void checkShots();
 };
 
 } // End of namespace Geisha

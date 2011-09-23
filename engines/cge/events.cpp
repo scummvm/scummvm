@@ -165,7 +165,7 @@ void Keyboard::newKeyboard(Common::Event &event) {
 		_current = Keyboard::_code[keycode];
 
 		if (_client) {
-			CGEEvent &evt = _eventManager->getNextEvent();
+			CGEEvent &evt = _vm->_eventManager->getNextEvent();
 			evt._x = _current;	// Keycode
 			evt._mask = kEventKeyb;	// Event mask
 			evt._spritePtr = _client;	// Sprite pointer
@@ -200,8 +200,8 @@ Mouse::Mouse(CGEEngine *vm) : Sprite(vm, NULL), _busy(NULL), _hold(NULL), _hx(0)
 	setSeq(seq);
 
 	BitmapPtr *MC = new BitmapPtr[3];
-	MC[0] = new Bitmap("MOUSE");
-	MC[1] = new Bitmap("DUMMY");
+	MC[0] = new Bitmap(_vm, "MOUSE");
+	MC[1] = new Bitmap(_vm, "DUMMY");
 	MC[2] = NULL;
 	setShapeList(MC);
 
@@ -239,10 +239,10 @@ void Mouse::newMouse(Common::Event &event) {
 	if (!_active)
 		return;
 
-	CGEEvent &evt = _eventManager->getNextEvent();
+	CGEEvent &evt = _vm->_eventManager->getNextEvent();
 	evt._x = event.mouse.x;
 	evt._y = event.mouse.y;
-	evt._spritePtr = spriteAt(evt._x, evt._y);
+	evt._spritePtr = _vm->spriteAt(evt._x, evt._y);
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
@@ -271,7 +271,7 @@ void Mouse::newMouse(Common::Event &event) {
 
 /*----------------- EventManager interface -----------------*/
 
-EventManager::EventManager() {
+EventManager::EventManager(CGEEngine *vm) : _vm(vm){
 	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
@@ -289,7 +289,7 @@ void EventManager::poll() {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			// Handle keyboard events
-			_keyboard->newKeyboard(_event);
+			_vm->_keyboard->newKeyboard(_event);
 			handleEvents();
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -298,7 +298,7 @@ void EventManager::poll() {
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
 			// Handle mouse events
-			_mouse->newMouse(_event);
+			_vm->_mouse->newMouse(_event);
 			handleEvents();
 			break;
 		default:
@@ -311,12 +311,12 @@ void EventManager::handleEvents() {
 	while (_eventQueueTail != _eventQueueHead) {
 		CGEEvent e = _eventQueue[_eventQueueTail];
 		if (e._mask) {
-			if (_mouse->_hold && e._spritePtr != _mouse->_hold)
-				_mouse->_hold->touch(e._mask | kEventAttn, e._x - _mouse->_hold->_x, e._y - _mouse->_hold->_y);
+			if (_vm->_mouse->_hold && e._spritePtr != _vm->_mouse->_hold)
+				_vm->_mouse->_hold->touch(e._mask | kEventAttn, e._x - _vm->_mouse->_hold->_x, e._y - _vm->_mouse->_hold->_y);
 
 			// update mouse cursor position
 			if (e._mask & kMouseRoll)
-				_mouse->gotoxy(e._x, e._y);
+				_vm->_mouse->gotoxy(e._x, e._y);
 
 			// activate current touched SPRITE
 			if (e._spritePtr) {
@@ -324,38 +324,38 @@ void EventManager::handleEvents() {
 					e._spritePtr->touch(e._mask, e._x, e._y);
 				else
 					e._spritePtr->touch(e._mask, e._x - e._spritePtr->_x, e._y - e._spritePtr->_y);
-			} else if (_sys)
-					_sys->touch(e._mask, e._x, e._y);
+			} else if (_vm->_sys)
+					_vm->_sys->touch(e._mask, e._x, e._y);
 
 			if (e._mask & kMouseLeftDown) {
-				_mouse->_hold = e._spritePtr;
-				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = true;
+				_vm->_mouse->_hold = e._spritePtr;
+				if (_vm->_mouse->_hold) {
+					_vm->_mouse->_hold->_flags._hold = true;
 
-					if (_mouse->_hold->_flags._drag) {
-						_mouse->_hx = e._x - _mouse->_hold->_x;
-						_mouse->_hy = e._y - _mouse->_hold->_y;
+					if (_vm->_mouse->_hold->_flags._drag) {
+						_vm->_mouse->_hx = e._x - _vm->_mouse->_hold->_x;
+						_vm->_mouse->_hy = e._y - _vm->_mouse->_hold->_y;
 					}
 				}
 			}
 
 			if (e._mask & kMouseLeftUp) {
-				if (_mouse->_hold) {
-					_mouse->_hold->_flags._hold = false;
-					_mouse->_hold = NULL;
+				if (_vm->_mouse->_hold) {
+					_vm->_mouse->_hold->_flags._hold = false;
+					_vm->_mouse->_hold = NULL;
 				}
 			}
 			///Touched = e.Ptr;
 
 			// discard Text if button released
 			if (e._mask & (kMouseLeftUp | kMouseRightUp))
-				killText();
+				_vm->killText();
 		}
 		_eventQueueTail = (_eventQueueTail + 1) % kEventMax;
 	}
-	if (_mouse->_hold) {
-		if (_mouse->_hold->_flags._drag)
-			_mouse->_hold->gotoxy(_mouse->_x - _mouse->_hx, _mouse->_y - _mouse->_hy);
+	if (_vm->_mouse->_hold) {
+		if (_vm->_mouse->_hold->_flags._drag)
+			_vm->_mouse->_hold->gotoxy(_vm->_mouse->_x - _vm->_mouse->_hx, _vm->_mouse->_y - _vm->_mouse->_hy);
 	}
 }
 

@@ -79,7 +79,7 @@ public:
 	virtual void signal();
 };
 
-class Scene109: public GroupedScene {
+class Scene109: public PalettedScene {
 	/* Actions */
 	class Action1: public Action {
 	public:

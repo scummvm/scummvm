@@ -26,7 +26,8 @@
 
 namespace Gob {
 
-ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani), _visible(false),
+ANIObject::ANIObject(const ANIFile &ani) : _ani(&ani),
+	_visible(false), _paused(false), _mode(kModeContinuous),
 	_x(0), _y(0), _background(0), _drawn(false) {
 
 	setAnimation(0);
@@ -45,9 +46,25 @@ bool ANIObject::isVisible() const {
 	return _visible;
 }
 
+void ANIObject::setPause(bool pause) {
+	_paused = pause;
+}
+
+bool ANIObject::isPaused() const {
+	return _paused;
+}
+
+void ANIObject::setMode(Mode mode) {
+	_mode = mode;
+}
+
 void ANIObject::setAnimation(uint16 animation) {
 	_animation = animation;
 	_frame     = 0;
+}
+
+void ANIObject::rewind() {
+	_frame = 0;
 }
 
 void ANIObject::setPosition() {
@@ -152,6 +169,9 @@ void ANIObject::clear(Surface &dest, int16 &left, int16 &top,
 }
 
 void ANIObject::advance() {
+	if (_paused)
+		return;
+
 	if (_animation >= _ani->getAnimationCount())
 		return;
 
@@ -162,6 +182,11 @@ void ANIObject::advance() {
 	if (_frame == 0) {
 		_x += animation.deltaX;
 		_y += animation.deltaY;
+
+		if (_mode == kModeOnce) {
+			_paused  = true;
+			_visible = false;
+		}
 	}
 }
 

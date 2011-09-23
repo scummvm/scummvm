@@ -38,7 +38,7 @@
 
 namespace CGE {
 
-const int CGEEngine::_maxCaveArr[5] = {1, 8, 16, 23, 24};
+const int CGEEngine::_maxSceneArr[5] = {1, 8, 16, 23, 24};
 
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
@@ -52,16 +52,19 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_demoText    = kDemo;
 	_oldLev      = 0;
 	_pocPtr      = 0;
+	_bitmapPalette = NULL;
+
+
 
 }
 
-void CGEEngine::initCaveValues() {
-	for (int i = 0; i < kCaveMax; i++) {
+void CGEEngine::initSceneValues() {
+	for (int i = 0; i < kSceneMax; i++) {
 		_heroXY[i].x = 0;
 		_heroXY[i].y = 0;
 	}
 
-	for (int i = 0; i < kCaveMax + 1; i++) {
+	for (int i = 0; i < kSceneMax + 1; i++) {
 		_barriers[i]._horz = 0xFF;
 		_barriers[i]._vert = 0xFF;
 	}
@@ -75,7 +78,7 @@ void CGEEngine::init() {
 	_lastTick = 0;
 	_hero = NULL;
 	_shadow = NULL;
-	_miniCave = NULL;
+	_miniScene = NULL;
 	_miniShp = NULL;
 	_miniShpList = NULL;
 	_sprite = NULL;
@@ -84,13 +87,10 @@ void CGEEngine::init() {
 	// Create debugger console
 	_console = new CGEConsole(this);
 
-	// Initialise classes that have static members
-	Bitmap::init();
-	Talk::init();
-	Cluster::init(this);
-
 	// Initialise engine objects
+	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
+	_talk = NULL;
 	_vga = new Vga();
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
@@ -98,15 +98,15 @@ void CGEEngine::init() {
 		_pocket[i] = NULL;
 	_horzLine = new HorizLine(this);
 	_infoLine = new InfoLine(this, kInfoW);
-	_cavLight = new CavLight(this);
+	_sceneLight = new SceneLight(this);
 	_debugLine = new InfoLine(this, kScrWidth);
-	_snail = new Snail(this, false);
-	_snail_ = new Snail(this, true);
-
+	_commandHandler = new CommandHandler(this, false);
+	_commandHandlerTurbo = new CommandHandler(this, true);
+	_midiPlayer = new MusicPlayer(this);
 	_mouse = new Mouse(this);
 	_keyboard = new Keyboard(this);
-	_eventManager = new EventManager();
-	_fx = new Fx(16);   // must precede SOUND!!
+	_eventManager = new EventManager(this);
+	_fx = new Fx(this, 16);   // must precede SOUND!!
 	_sound = new Sound(this);
 
 	_offUseCount = atoi(_text->getText(kOffUseCount));
@@ -117,9 +117,9 @@ void CGEEngine::init() {
 	_volume[0] = 0;
 	_volume[1] = 0;
 
-	initCaveValues();
+	initSceneValues();
 
-	_maxCave    =  0;
+	_maxScene   =  0;
 	_dark       = false;
 	_game       = false;
 	_finis      = false;
@@ -140,26 +140,21 @@ void CGEEngine::init() {
 }
 
 void CGEEngine::deinit() {
-	// Call classes with static members to clear them up
-	Talk::deinit();
-	Bitmap::deinit();
-	Cluster::init(this);
-
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
 	delete _console;
-	_midiPlayer.killMidi();
+	_midiPlayer->killMidi();
 
 	// Delete engine objects
 	delete _vga;
 	delete _sys;
 	delete _sprite;
-	delete _miniCave;
+	delete _miniScene;
 	delete _shadow;
 	delete _horzLine;
 	delete _infoLine;
-	delete _cavLight;
+	delete _sceneLight;
 	delete _debugLine;
 	delete _text;
 	delete _pocLight;
@@ -168,8 +163,9 @@ void CGEEngine::deinit() {
 	delete _eventManager;
 	delete _fx;
 	delete _sound;
-	delete _snail;
-	delete _snail_;
+	delete _font;
+	delete _commandHandler;
+	delete _commandHandlerTurbo;
 	delete _hero;
 	delete _resman;
 

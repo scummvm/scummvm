@@ -515,6 +515,11 @@ begin_credits("Credits");
 		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
 
+	  begin_section("CGE");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+	  end_section();
+
 	  begin_section("Cine");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");

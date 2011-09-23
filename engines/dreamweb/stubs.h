@@ -243,4 +243,7 @@
 	void usetext();
 	void getblockofpixel();
 	uint8 getblockofpixel(uint8 x, uint8 y);
+	void bresenhams();
+	void examineobtext();
+
 

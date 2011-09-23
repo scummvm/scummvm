@@ -112,6 +112,9 @@ void Draw_v1::animateCursor(int16 cursor) {
 		if (_cursorHotspotXVar != -1) {
 			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
 			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+		} else if (_cursorHotspotX != -1) {
+			newX -= hotspotX = _cursorHotspotX;
+			newY -= hotspotY = _cursorHotspotY;
 		}
 
 		_scummvmCursor->clear();

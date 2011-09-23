@@ -58,9 +58,6 @@ struct Seq {
 	int _dly;
 };
 
-extern Seq _seq1[];
-extern Seq _seq2[];
-
 class SprExt {
 public:
 	int _x0;
@@ -72,8 +69,8 @@ public:
 	BitmapPtr *_shpList;
 	Seq *_seq;
 	char *_name;
-	Snail::Com *_near;
-	Snail::Com *_take;
+	CommandHandler::Command *_near;
+	CommandHandler::Command *_take;
 	SprExt() :
 		_x0(0), _y0(0),
 		_x1(0), _y1(0),
@@ -88,7 +85,7 @@ protected:
 	SprExt *_ext;
 public:
 	int _ref;
-	signed char _cave;
+	signed char _scene;
 	struct Flags {
 		uint16 _hide : 1;       // general visibility switch
 		uint16 _near : 1;       // Near action lock
@@ -149,7 +146,7 @@ public:
 	void killXlat();
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
-	Snail::Com *snList(SnList type);
+	CommandHandler::Command *snList(SnList type);
 	virtual void touch(uint16 mask, int x, int y);
 	virtual void tick();
 	void sync(Common::Serializer &s);
@@ -170,7 +167,6 @@ public:
 	void insert(Sprite *spr, Sprite *nxt);
 	void insert(Sprite *spr);
 	Sprite *remove(Sprite *spr);
-	void forAll(void (*fun)(Sprite *));
 	Sprite *first() {
 		return _head;
 	}
@@ -191,6 +187,8 @@ class Vga {
 	void updateColors();
 	void setColors();
 	void waitVR();
+	uint8 closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB);
+
 public:
 	uint32 _frmCnt;
 	Queue *_showQ;
@@ -202,6 +200,7 @@ public:
 	Vga();
 	~Vga();
 
+	uint8 *glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB);
 	void getColors(Dac *tab);
 	void setColors(Dac *tab, int lum);
 	void clear(uint8 color);
@@ -211,63 +210,33 @@ public:
 	void show();
 	void update();
 
-	static void palToDac(const byte *palData, Dac *tab);
-	static void dacToPal(const Dac *tab, byte *palData);
+	void palToDac(const byte *palData, Dac *tab);
+	void dacToPal(const Dac *tab, byte *palData);
 };
 
 class HorizLine: public Sprite {
+	CGEEngine *_vm;
 public:
 	HorizLine(CGEEngine *vm);
 };
 
-class CavLight: public Sprite {
+class SceneLight: public Sprite {
+	CGEEngine *_vm;
 public:
-	CavLight(CGEEngine *vm);
+	SceneLight(CGEEngine *vm);
 };
 
-class Spike: public Sprite {
+class Speaker: public Sprite {
+	CGEEngine *_vm;
 public:
-	Spike(CGEEngine *vm);
+	Speaker(CGEEngine *vm);
 };
 
 class PocLight: public Sprite {
+	CGEEngine *_vm;
 public:
 	PocLight(CGEEngine *vm);
 };
-
-Dac mkDac(uint8 r, uint8 g, uint8 b);
-
-template <class CBLK>
-uint8 closest(CBLK *pal, CBLK x) {
-#define f(col, lum) ((((uint16)(col)) << 8) / lum)
-	uint16 i, dif = 0xFFFF, found = 0;
-	uint16 L = x._r + x._g + x._b;
-	if (!L)
-		L++;
-	uint16 R = f(x._r, L), G = f(x._g, L), B = f(x._b, L);
-	for (i = 0; i < 256; i++) {
-		uint16 l = pal[i]._r + pal[i]._g + pal[i]._b;
-		if (!l)
-			l++;
-		int  r = f(pal[i]._r, l), g = f(pal[i]._g, l), b = f(pal[i]._b, l);
-		uint16 D = ((r > R) ? (r - R) : (R - r)) +
-		           ((g > G) ? (g - G) : (G - g)) +
-		           ((b > B) ? (b - B) : (B - b)) +
-		           ((l > L) ? (l - L) : (L - l)) * 10 ;
-
-		if (D < dif) {
-			found = i;
-			dif = D;
-			if (D == 0)
-				break;    // exact!
-		}
-	}
-	return found;
-#undef f
-}
-
-Sprite *spriteAt(int x, int y);
-Sprite *locate(int ref);
 
 } // End of namespace CGE
 

@@ -25,58 +25,59 @@
  * Copyright (c) 1994-1995 Janus B. Wisniewski and L.K. Avalon
  */
 
-#ifndef CGE_SNAIL_H
-#define CGE_SNAIL_H
+#ifndef CGE_COMMANDHANDLER_H
+#define CGE_COMMANDHANDLER_H
 
 #include "cge/cge.h"
 
 namespace CGE {
 
-#define kSnailFrameRate 80
-#define kSnailFrameDelay (1000 / kSnailFrameRate)
+#define kCommandFrameRate 80
+#define kCommandFrameDelay (1000 / kCommandFrameRate)
 #define kDressed 3
 
-enum SnCom {
-	kSnLabel,  kSnPause,  kSnWait,        kSnLevel,       kSnHide,
-	kSnSay,    kSnInf,    kSnTime,        kSnCave,        kSnKill,
-	kSnRSeq,   kSnSeq,    kSnSend,        kSnSwap,        kSnKeep,
-	kSnGive,   kSnIf,     kSnGame,        kSnSetX0,       kSnSetY0,
-	kSnSlave,  kSnSetXY,  kSnRelX,        kSnRelY,        kSnRelZ,
-	kSnSetX,   kSnSetY,   kSnSetZ,        kSnTrans,       kSnPort,
-	kSnNext,   kSnNNext,  kSnTNext,       kSnRNNext,      kSnRTNext,
-	kSnRMNear, kSnRmTake, kSnFlag,        kSnSetRef,      kSnBackPt,
-	kSnFlash,  kSnLight,  kSnSetHBarrier, kSnSetVBarrier, kSnWalk,
-	kSnReach,  kSnCover,  kSnUncover,     kSnClear,       kSnTalk,
-	kSnMouse,  kSnSound,  kSnCount,       kSnExec,        kSnStep,
-	kSnZTrim,  kSnGhost
+enum CommandType {
+	kCmdLabel,  kCmdPause,  kCmdWait,        kCmdLevel,       kCmdHide,
+	kCmdSay,    kCmdInf,    kCmdTime,        kCmdCave,        kCmdKill,
+	kCmdRSeq,   kCmdSeq,    kCmdSend,        kCmdSwap,        kCmdKeep,
+	kCmdGive,   kCmdIf,     kCmdGame,        kCmdSetX0,       kCmdSetY0,
+	kCmdSlave,  kCmdSetXY,  kCmdRelX,        kCmdRelY,        kCmdRelZ,
+	kCmdSetX,   kCmdSetY,   kCmdSetZ,        kCmdTrans,       kCmdPort,
+	kCmdNext,   kCmdNNext,  kCmdTNext,       kCmdRNNext,      kCmdRTNext,
+	kCmdRMNear, kCmdRmTake, kCmdFlag,        kCmdSetRef,      kCmdBackPt,
+	kCmdFlash,  kCmdLight,  kCmdSetHBarrier, kCmdSetVBarrier, kCmdWalk,
+	kCmdReach,  kCmdCover,  kCmdUncover,     kCmdClear,       kCmdTalk,
+	kCmdMouse,  kCmdSound,  kCmdCount,       kCmdExec,        kCmdStep,
+	kCmdZTrim,  kCmdGhost
 };
 
-class Snail {
+class CommandHandler {
 public:
-	struct Com {
-		SnCom _com;
+	struct Command {
+		CommandType _commandType;
 		int _ref;
 		int _val;
-		void *_ptr;
+		void *_spritePtr;
 		CallbackType _cbType;
-	} *_snList;
-	uint8 _head;
-	uint8 _tail;
-	bool _turbo;
-	bool _busy;
-	bool _textDelay;
-	uint32 _timerExpiry;
-	static const char *_comText[];
+	} *_commandList;
+	static const char *_commandText[];
 	bool _talkEnable;
-	Snail(CGEEngine *vm, bool turbo);
-	~Snail();
-	void runCom();
-	void addCom(SnCom com, int ref, int val, void *ptr);
-	void addCom2(SnCom com, int ref, int val, CallbackType cbType);
-	void insCom(SnCom com, int ref, int val, void *ptr);
+
+	CommandHandler(CGEEngine *vm, bool turbo);
+	~CommandHandler();
+	void runCommand();
+	void addCommand(CommandType com, int ref, int val, void *ptr);
+	void addCallback(CommandType com, int ref, int val, CallbackType cbType);
+	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
 private:
 	CGEEngine *_vm;
+	bool _turbo;
+	uint8 _head;
+	uint8 _tail;
+	bool _busy;
+	bool _textDelay;
+	uint32 _timerExpiry;
 };
 
 } // End of namespace CGE

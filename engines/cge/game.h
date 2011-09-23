@@ -32,19 +32,20 @@
 
 namespace CGE {
 
-uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b);
+enum {
+	kFlyL = 20,
+	kFlyT = 40,
+	kFlyR = 110,
+	kFlyB = 100
+};
 
 class Fly : public Sprite {
-	static const int _l;
-	static const int _t;
-	static const int _r;
-	static const int _b;
+private:
+	CGEEngine *_vm;
 public:
 	int _tx, _ty;
 	Fly(CGEEngine *vm, Bitmap **shpl);
 	void tick();
-private:
-	CGEEngine *_vm;
 };
 
 } // End of namespace CGE

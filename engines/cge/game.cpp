@@ -30,41 +30,23 @@
 
 namespace CGE {
 
-uint8 *glass(Dac *pal, uint8 r, uint8 g, uint8 b) {
-	uint8 *x = (uint8 *)malloc(256);
-	if (x) {
-		uint16 i;
-		for (i = 0; i < 256; i++) {
-			x[i] = closest(pal, mkDac(((uint16)(pal[i]._r) * r) / 255,
-			                          ((uint16)(pal[i]._g) * g) / 255,
-			                          ((uint16)(pal[i]._b) * b) / 255));
-		}
-	}
-	return x;
-}
-
-const int Fly::_l = 20,
-    Fly::_t = 40,
-    Fly::_r = 110,
-    Fly::_b = 100;
-
 Fly::Fly(CGEEngine *vm, Bitmap **shpl)
 	: Sprite(vm, shpl), _tx(0), _ty(0), _vm(vm) {
-	step(newRandom(2));
-	gotoxy(_l + newRandom(_r - _l - _w), _t + newRandom(_b - _t - _h));
+	step(_vm->newRandom(2));
+	gotoxy(kFlyL + _vm->newRandom(kFlyR - kFlyL - _w), kFlyT + _vm->newRandom(kFlyB - kFlyT - _h));
 }
 
 void Fly::tick() {
 	step();
 	if (_flags._kept)
 		return;
-	if (newRandom(10) < 1) {
-		_tx = newRandom(3) - 1;
-		_ty = newRandom(3) - 1;
+	if (_vm->newRandom(10) < 1) {
+		_tx = _vm->newRandom(3) - 1;
+		_ty = _vm->newRandom(3) - 1;
 	}
-	if (_x + _tx < _l || _x + _tx + _w > _r)
+	if (_x + _tx < kFlyL || _x + _tx + _w > kFlyR)
 		_tx = -_tx;
-	if (_y + _ty < _t || _y + _ty + _h > _b)
+	if (_y + _ty < kFlyT || _y + _ty + _h > kFlyB)
 		_ty = -_ty;
 	gotoxy(_x + _tx, _y + _ty);
 }

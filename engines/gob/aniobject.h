@@ -33,6 +33,11 @@ class Surface;
 /** An ANI object, controlling an animation within an ANI file. */
 class ANIObject {
 public:
+	enum Mode {
+		kModeContinuous, ///< Play the animation continuously.
+		kModeOnce        ///< Play the animation only once.
+	};
+
 	ANIObject(const ANIFile &ani);
 	virtual ~ANIObject();
 
@@ -41,6 +46,15 @@ public:
 
 	/** Is the object currently visible? */
 	bool isVisible() const;
+
+	/** Pause/Unpause the animation. */
+	void setPause(bool pause);
+
+	/** Is the animation currently paused? */
+	bool isPaused() const;
+
+	/** Set the animation mode. */
+	void setMode(Mode mode);
 
 	/** Set the current position to the animation's default. */
 	void setPosition();
@@ -57,6 +71,9 @@ public:
 
 	/** Set the animation number. */
 	void setAnimation(uint16 animation);
+
+	/** Rewind the current animation to the first frame. */
+	void rewind();
 
 	/** Return the current animation number. */
 	uint16 getAnimation() const;
@@ -81,6 +98,9 @@ private:
 	uint16 _frame;     ///< The current frame.
 
 	bool _visible; ///< Is the object currently visible?
+	bool _paused;  ///< Is the animation currently paused?
+
+	Mode _mode; ///< The animation mode.
 
 	int16 _x; ///< The current X position.
 	int16 _y; ///< The current Y position.

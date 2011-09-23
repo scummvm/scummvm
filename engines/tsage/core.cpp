@@ -1736,11 +1736,11 @@ NamedHotspot::NamedHotspot() : SceneHotspot() {
 	_lookLineNum = _useLineNum = _talkLineNum = -1;
 }
 
-void NamedHotspot::doAction(int action) {
+bool NamedHotspot::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_WALK:
 		// Nothing
-		break;
+		return false;
 	case CURSOR_LOOK:
 		if (_lookLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1748,7 +1748,7 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _lookLineNum);
 		else
 			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return true;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1756,7 +1756,7 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _useLineNum);
 		else
 			SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return true;
 	case CURSOR_TALK:
 		if (_talkLineNum == -1)
 			SceneHotspot::doAction(action);
@@ -1764,10 +1764,9 @@ void NamedHotspot::doAction(int action) {
 			SceneItem::display2(_resNum, _talkLineNum);
 		else
 			SceneItem::display2(_resNum, _talkLineNum);
-		break;
+		return true;
 	default:
-		SceneHotspot::doAction(action);
-		break;
+		return SceneHotspot::startAction(action, event);
 	}
 }
 
@@ -2988,22 +2987,28 @@ void Player::enableControl() {
 	_canWalk = true;
 	_uiEnabled = true;
 	_enabled = true;
-	_globals->_events.setCursor(CURSOR_WALK);
 
-	switch (_globals->_events.getCursor()) {
-	case CURSOR_WALK:
-	case CURSOR_LOOK:
-	case CURSOR_USE:
-	case CURSOR_TALK:
-		_globals->_events.setCursor(_globals->_events.getCursor());
-		break;
-	default:
+	if (_vm->getGameID() == GType_Ringworld) {
 		_globals->_events.setCursor(CURSOR_WALK);
-		break;
-	}
 
-	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
-		BF_GLOBALS._uiElements.show();
+		switch (_globals->_events.getCursor()) {
+		case CURSOR_WALK:
+		case CURSOR_LOOK:
+		case CURSOR_USE:
+		case CURSOR_TALK:
+			_globals->_events.setCursor(_globals->_events.getCursor());
+			break;
+		default:
+			_globals->_events.setCursor(CURSOR_WALK);
+			break;
+		}
+	} else {
+		CursorType cursor = _globals->_events.getCursor();
+		_globals->_events.setCursor(cursor);
+
+		if (BF_GLOBALS._uiElements._active)
+			BF_GLOBALS._uiElements.show();
+	}
 }
 
 void Player::process(Event &event) {
@@ -3844,19 +3849,23 @@ void SceneHandler::process(Event &event) {
 						// Item wasn't handled, keep scanning
 						continue;
 
-					event.handled = _globals->_events.getCursor() != CURSOR_WALK;
+					if ((_vm->getGameID() == GType_Ringworld) || (_globals->_events.getCursor() == CURSOR_9999)) {
+						event.handled = _globals->_events.getCursor() != CURSOR_WALK;
 
-					if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
-							(_globals->_events.getCursor() != CURSOR_LOOK)) {
-						_globals->_events.setCursor(CURSOR_WALK);
-					} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-						_globals->_events.setCursor(CURSOR_WALK);
-					} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
-						_globals->_events.setCursor(CURSOR_USE);
-					}
+						if (_globals->_player._uiEnabled && _globals->_player._canWalk &&
+								(_globals->_events.getCursor() != CURSOR_LOOK)) {
+							_globals->_events.setCursor(CURSOR_WALK);
+						} else if (_globals->_player._canWalk && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+							_globals->_events.setCursor(CURSOR_WALK);
+						} else if (_globals->_player._uiEnabled && (_globals->_events.getCursor() != CURSOR_LOOK)) {
+							_globals->_events.setCursor(CURSOR_USE);
+						}
 
-					if (_vm->getGameID() == GType_BlueForce)
+						if (_vm->getGameID() == GType_BlueForce)
+							event.handled = true;
+					} else if (_vm->getGameID() != GType_Ringworld) {
 						event.handled = true;
+					}
 					break;
 				}
 			}
