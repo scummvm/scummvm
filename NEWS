@@ -4,8 +4,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.4.0 (????-??-??)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
-   - Added support for Blue's Birthday Adventure
-   - Added support for Ringworld: Revenge Of The Patriarch
+   - Added support for Blue's Birthday Adventure.
+   - Added support for Ringworld: Revenge Of The Patriarch.
 
  New Ports:
    - Added PlayStation 3 port.
@@ -13,6 +13,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - Implemented sound support for the DOS version of Winnie the Pooh in the
      Hundred Acre Wood.
+
  AGOS:
    - Implemented support for loading data directly from InstallShield
      cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
@@ -39,7 +40,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  TINSEL:
    - Fixed deleting saved games from the list of saved games (from the launcher
-     and the in-game ScummVM menu)
+     and the in-game ScummVM menu).
 
 1.3.1 (2011-07-12)
  General:
