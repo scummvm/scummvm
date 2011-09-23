@@ -3817,10 +3817,6 @@ void SceneHandler::process(Event &event) {
 	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->process(event);
 
-	// Handle player processing
-	if (_vm->getGameID() != GType_Ringworld)
-		_globals->_player.process(event);
-
 	if (!event.handled) {
 		// Separate check for F5 - Save key
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_F5)) {
@@ -3884,8 +3880,7 @@ void SceneHandler::process(Event &event) {
 			processEnd(event);
 
 			// Handle player processing
-			if (_vm->getGameID() == GType_Ringworld)
-				_globals->_player.process(event);
+			_globals->_player.process(event);
 		}
 	}
 }
