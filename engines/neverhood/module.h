@@ -62,6 +62,7 @@ protected:
 	void createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort);
 	void createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool flag1, bool canAbort);
 	bool updateChild();
+	void leaveModule(uint32 result);
 };
 
 } // End of namespace Neverhood

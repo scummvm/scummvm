@@ -274,6 +274,10 @@ void Scene::update() {
 
 }
 
+void Scene::leaveScene(uint32 result) {
+	sendMessage(_parentModule, 0x1009, result);
+}
+
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
 	case 0: // mouse moved

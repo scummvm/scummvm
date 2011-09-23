@@ -282,7 +282,7 @@ void Klayman::sub421350() {
 	SetMessageHandler(&Klayman::handleMessage41D360);
 	_counter3 = 0;
 	_counterMax = 8;
-	_counter3Max = _vm->_rnd->getRandomNumber(64) + 24;
+	_counter3Max = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
 void Klayman::update41D1C0() {
@@ -3712,6 +3712,93 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483F:
 		sub41CD00(param.asInteger());
 		break;
+	case 0x4840:
+		sub41CD70(param.asInteger());
+		break;
+	}
+	return 0;
+}
+
+KmScene1608::KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _flag1(false) {
+}
+
+uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x2032:
+		_flag1 = param.asInteger() != 0;
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub421350));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481D:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub4214D0));
+		break;
+	case 0x481E:
+		if (_flag)
+			setCallback2(AnimationCallback(&Klayman::sub421510));
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub4208B0));
+		} else if (param.asInteger() == 0) {
+			setCallback2(AnimationCallback(&Klayman::sub420870));
+		} else if (param.asInteger() == 4) {
+			setCallback2(AnimationCallback(&Klayman::sub420930));
+		} else if (param.asInteger() == 3) {
+			setCallback2(AnimationCallback(&Klayman::sub4208F0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub420830));
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		sub41C7B0();
+		break;
+	case 0x4834:
+		setCallback2(AnimationCallback(&Klayman::sub421160));
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2032, 1);
+		_flag1 = true;
+		setCallback2(AnimationCallback(&Klayman::sub4212C0));
+		break;																		
+	case 0x4836:
+		sendMessage(_parentScene, 0x2032, 0);
+		_flag1 = false;
+		setCallback2(AnimationCallback(&Klayman::sub421310));
+		break;
+	case 0x483F:
+		sub41CD00(param.asInteger());
+		break;		
 	case 0x4840:
 		sub41CD70(param.asInteger());
 		break;

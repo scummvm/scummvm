@@ -413,6 +413,14 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
 
+class KmScene1608 : public Klayman {
+public:
+	KmScene1608(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
+protected:
+	bool _flag1;
+	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+};
+
 class KmScene1705 : public Klayman {
 public:
 	KmScene1705(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);

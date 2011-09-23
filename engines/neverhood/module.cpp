@@ -110,4 +110,8 @@ bool Module::updateChild() {
 	return true;
 }
 
+void Module::leaveModule(uint32 result) {
+	sendMessage(_parentModule, 0x1009, result);
+}
+
 } // End of namespace Neverhood
