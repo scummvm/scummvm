@@ -183,7 +183,7 @@ void InventoryPicture::activateInventoryPicture() {
 
 		tCoordType x, y;
 		getItemXY(0, x, y);
-		_panelMovie.moveElementTo(x, y);
+		_panelMovie.moveMovieBoxTo(x, y);
 		_panelMovie.show();
 
 		for (uint32 i = 0; i < numItems; i++) {
@@ -192,7 +192,7 @@ void InventoryPicture::activateInventoryPicture() {
 				item->select();
 
 			getItemXY(i, x, y);
-			_panelMovie.moveElementTo(x, y);
+			_panelMovie.moveMovieBoxTo(x, y);
 			_panelMovie.setTime(getItemPanelTime(item));
 			_panelMovie.redrawMovieWorld();
 		}
@@ -202,7 +202,7 @@ void InventoryPicture::activateInventoryPicture() {
 
 		for (uint32 i = numItems; i < numSlots; i++) {
 			getItemXY(i, x, y);
-			_panelMovie.moveElementTo(x, y);
+			_panelMovie.moveMovieBoxTo(x, y);
 			_panelMovie.redrawMovieWorld();
 		}
 
@@ -324,7 +324,7 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 	_shouldDrawHighlight = false;
 	endMessage.shareSurface(this);
 	endMessage.initFromMovieFile("Images/Caldoria/A56 Congrats");
-	endMessage.moveElementTo(kFinalMessageLeft - kInventoryPushLeft, kFinalMessageTop - kInventoryPushTop);
+	endMessage.moveMovieBoxTo(kFinalMessageLeft - kInventoryPushLeft, kFinalMessageTop - kInventoryPushTop);
 	endMessage.setTriggeredElement(pushElement);
 	endMessage.start();
 
@@ -355,7 +355,7 @@ void BiochipPicture::unhighlightCurrentItem() {
 	tCoordType x, y;
 	getItemXY(_currentItemIndex, x, y);
 	_panelMovie.show();
-	_panelMovie.moveElementTo(x, y);
+	_panelMovie.moveMovieBoxTo(x, y);
 	_panelMovie.setTime(getItemPanelTime(_currentItem));
 	_panelMovie.redrawMovieWorld();
 }
