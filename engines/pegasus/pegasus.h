@@ -90,6 +90,15 @@ public:
 	void resetIntroTimer();
 	void refreshDisplay();
 
+	// Energy
+	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
+	int32 getSavedEnergyValue() { return _savedEnergyValue; }
+
+	// Death
+	void setEnergyDeathReason(const tDeathReason reason) { _deathReason = reason; } 
+	tDeathReason getEnergyDeathReason() { return _deathReason; }
+	void resetEnergyDeathReason();
+
 protected:
 	Common::Error run();
 
@@ -140,6 +149,12 @@ private:
 	GameMenu *_gameMenu;
 	void doGameMenuCommand(const tGameMenuCommand);
 	void doInterfaceOverview();
+
+	// Energy
+	int32 _savedEnergyValue;
+
+	// Death
+	tDeathReason _deathReason;
 };
 
 } // End of namespace Pegasus

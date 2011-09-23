@@ -51,6 +51,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
 	_gameMenu = 0;
+	_deathReason = kDeathStranded;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -359,11 +360,11 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	// Game State
 	GameState.readGameState(stream);
 
-	// TODO: Energy
-	stream->readUint32BE();
+	// Energy
+	setLastEnergyValue(stream->readUint32BE() >> 16);
 
-	// TODO: Death reason
-	stream->readByte();
+	// Death reason
+	setEnergyDeathReason(stream->readByte());
 
 	// TODO: This is as far as we can go right now
 	return true;
@@ -403,11 +404,11 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	// Game State
 	GameState.writeGameState(stream);
 
-	// TODO: Energy
-	stream->writeUint32BE(0);
+	// Energy
+	stream->writeUint32BE(getSavedEnergyValue() << 16);
 
-	// TODO: Death reason
-	stream->writeByte(0);
+	// Death reason
+	stream->writeByte(getEnergyDeathReason());
 
 	// Items
 	g_allItems.writeToStream(stream);
@@ -821,6 +822,11 @@ void PegasusEngine::showTempScreen(const Common::String &fileName) {
 void PegasusEngine::refreshDisplay() {
 	giveIdleTime();
 	_gfx->updateDisplay();
+}
+
+void PegasusEngine::resetEnergyDeathReason() {
+	// TODO!
+	_deathReason = kDeathStranded;
 }
 
 } // End of namespace Pegasus

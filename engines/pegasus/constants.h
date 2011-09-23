@@ -556,6 +556,133 @@ const tGameMenuCommand kMenuCmdEjectRestart = kMenuCmdCancelRestart + 1;
 const TimeValue kMenuButtonHiliteTime = 20;
 const TimeScale kMenuButtonHiliteScale = kSixtyTicksPerSecond;
 
+//	PICT resources:
+
+//	Warning light PICTs:
+
+const tResIDType kLightOffID = 128;
+const tResIDType kLightYellowID = 129;
+const tResIDType kLightOrangeID = 130;
+const tResIDType kLightRedID = 131;
+
+//	Date PICTs:
+
+const tResIDType kDatePrehistoricID = 138;
+const tResIDType kDate2112ID = 139;
+const tResIDType kDate2185ID = 140;
+const tResIDType kDate2310ID = 141;
+const tResIDType kDate2318ID = 142;
+
+/////////////////////////////////////////////
+//
+//	Display Order
+
+const tDisplayOrder kCroppedMovieLayer = 11000;
+
+const tDisplayOrder kMonitorLayer = 12000;
+
+const tDisplayOrder kDragSpriteLayer = 15000;
+const tDisplayOrder kDragSpriteOrder = kDragSpriteLayer;
+
+const tDisplayOrder kInterfaceLayer = 20000;
+const tDisplayOrder kBackground1Order = kInterfaceLayer;
+const tDisplayOrder kBackground2Order = kBackground1Order + 1;
+const tDisplayOrder kBackground3Order = kBackground2Order + 1;
+const tDisplayOrder kBackground4Order = kBackground3Order + 1;
+const tDisplayOrder kDateOrder = kBackground4Order + 1;
+const tDisplayOrder kCompassOrder = kDateOrder + 1;
+const tDisplayOrder kEnergyBarOrder = kCompassOrder + 1;
+const tDisplayOrder kEnergyLightOrder = kEnergyBarOrder + 1;
+
+const tDisplayOrder kAILayer = 22000;
+const tDisplayOrder kAILeftAreaOrder = kAILayer;
+const tDisplayOrder kAIMiddleAreaOrder = kAILeftAreaOrder + 1;
+const tDisplayOrder kAIRightAreaOrder = kAIMiddleAreaOrder + 1;
+const tDisplayOrder kAIMovieOrder = kAIRightAreaOrder + 1;
+
+const tDisplayOrder kHilitesLayer = 23000;
+const tDisplayOrder kInventoryHiliteOrder = kHilitesLayer;
+const tDisplayOrder kBiochipHiliteOrder = kInventoryHiliteOrder + 1;
+
+const tDisplayOrder kPanelsLayer = 25000;
+const tDisplayOrder kInventoryPushOrder = kPanelsLayer;
+const tDisplayOrder kInventoryLidOrder = kInventoryPushOrder + 1;
+const tDisplayOrder kBiochipPushOrder = kInventoryLidOrder + 1;
+const tDisplayOrder kBiochipLidOrder = kBiochipPushOrder + 1;
+const tDisplayOrder kFinalMessageOrder = kBiochipLidOrder + 1;
+
+const tDisplayOrder kInfoLayer = 26000;
+const tDisplayOrder kInfoBackgroundOrder = kInfoLayer;
+const tDisplayOrder kInfoSpinOrder = kInfoBackgroundOrder + 1;
+
+const tDisplayOrder kScreenDimmerOrder = 30000;
+
+const tDisplayOrder kPauseScreenLayer = 31000;
+const tDisplayOrder kPauseMenuOrder = kPauseScreenLayer;
+const tDisplayOrder kSaveGameOrder = kPauseMenuOrder + 1;
+const tDisplayOrder kContinueOrder = kSaveGameOrder + 1;
+const tDisplayOrder kRestoreOrder = kContinueOrder + 1;
+const tDisplayOrder kSoundFXOrder = kRestoreOrder + 1;
+const tDisplayOrder kAmbienceOrder = kSoundFXOrder + 1;
+const tDisplayOrder kWalkthruOrder = kAmbienceOrder + 1;
+const tDisplayOrder kQuitToMainMenuOrder = kWalkthruOrder + 1;
+const tDisplayOrder kPauseLargeHiliteOrder = kQuitToMainMenuOrder + 1;
+const tDisplayOrder kPauseSmallHiliteOrder = kPauseLargeHiliteOrder + 1;
+
+/////////////////////////////////////////////
+//
+//	Death reasons.
+enum {
+	// Caldoria
+	kDeathUncreatedInCaldoria = 1,
+	kDeathCardBomb,
+	kDeathShotBySinclair,
+	kDeathSinclairShotDelegate,
+	kDeathNuclearExplosion,
+
+	// TSA
+	kDeathUncreatedInTSA,
+	kDeathShotByTSARobots,
+
+	// Prehistoric
+	kDeathFallOffCliff,
+	kDeathEatenByDinosaur,
+	kDeathStranded,
+
+	// Norad
+	kDeathGassedInNorad,
+	kDeathArrestedInNorad,
+	kDeathWokeUpNorad,
+	kDeathSubDestroyed, // Unused
+	kDeathRobotThroughNoradDoor,
+	kDeathRobotSubControlRoom,
+
+	// Mars
+	kDeathWrongShuttleLock,
+	kDeathArrestedInMars,
+	kDeathRunOverByPod,
+	kDeathDidntGetOutOfWay,
+	kDeathReactorBurn,
+	kDeathDidntFindMarsBomb,
+	kDeathDidntDisarmMarsBomb,
+	kDeathNoMaskInMaze,
+	kDeathNoAirInMaze,
+	kDeathGroundByMazebot,
+	kDeathMissedOreBucket,
+	kDeathDidntLeaveBucket,
+	kDeathRanIntoCanyonWall, // Unused
+	kDeathRanIntoSpaceJunk,
+
+	// WSC
+	kDeathDidntStopPoison,
+	kDeathArrestedInWSC,
+	kDeathHitByPlasma,
+	kDeathShotOnCatwalk,
+
+	// Winning
+	kPlayerWonGame
+};
+
 } // End of namespace Pegasus
 
 #endif
