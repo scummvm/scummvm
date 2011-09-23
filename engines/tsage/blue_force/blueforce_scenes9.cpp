@@ -644,7 +644,7 @@ void Scene900::signal() {
 		_sound1.play(92);
 		if (BF_GLOBALS._v4CEC0 == 2) {
 			_sceneMode = 9008;
-			setAction(&_sequenceManager1, this, 9008, &BF_GLOBALS._player, _object3, NULL);
+			setAction(&_sequenceManager1, this, 9008, &BF_GLOBALS._player, &_object3, NULL);
 		} else {
 			BF_GLOBALS._player._strip = 7;
 			_action1.setActionIndex(9);
