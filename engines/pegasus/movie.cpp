@@ -67,6 +67,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 	Common::Rect bounds(0, 0, _video->getWidth(), _video->getHeight());
 	allocateSurface(bounds);
 	setBounds(bounds);
+	_movieBox = bounds;
 
 	setStart(0, getScale());
 	setStop(_video->getDuration() * getScale() / 1000, getScale());
@@ -90,8 +91,12 @@ void Movie::redrawMovieWorld() {
 			getBounds(bounds);
 			g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, bounds.left, bounds.top, frame->w, frame->h);
 		} else {
-			// Just copy to our surface
-			_surface->copyFrom(*frame);
+			// Copy to the surface using _movieBox
+			uint16 width = MIN<int>(MIN<int>(frame->w, _movieBox.width()), _surface->w - _movieBox.left);
+			uint16 height = MIN<int>(MIN<int>(frame->h, _movieBox.height()), _surface->h - _movieBox.top);
+
+			for (uint16 y = 0; y < height; y++)
+				memcpy((byte *)_surface->getBasePtr(_movieBox.left, _movieBox.top + y), (const byte *)frame->getBasePtr(0, y), width * frame->format.bytesPerPixel);
 		}
 
 		triggerRedraw();
@@ -112,6 +117,10 @@ void Movie::draw(const Common::Rect &r) {
 	Common::Rect r2 = r1;
 	r2.translate(surfaceBounds.left - bounds.left, surfaceBounds.top - bounds.top);
 	drawImage(r2, r1);
+}
+
+void Movie::moveMovieBoxTo(const tCoordType h, const tCoordType v) {
+	_movieBox.moveTo(h, v);
 }
 
 void Movie::setVolume(uint16 volume) {

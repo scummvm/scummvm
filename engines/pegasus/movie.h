@@ -61,6 +61,8 @@ public:
 	virtual void stop();
 	virtual void resume();
 
+	virtual void moveMovieBoxTo(const tCoordType, const tCoordType);
+
 	// *** HACK ALERT
 	Video::SeekableVideoDecoder *getMovie() { return _video; }
 	void setVolume(uint16);
@@ -70,6 +72,7 @@ public:
 protected:
 	Video::SeekableVideoDecoder *_video;
 	bool _directDraw;
+	Common::Rect _movieBox;
 };
 
 } // End of namespace Pegasus
