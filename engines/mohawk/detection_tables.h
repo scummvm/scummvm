@@ -1977,6 +1977,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"FIGHT.EXE"
 	},
 
+	// The Berenstain Bears Get in a Fight (English and Spanish) Version 1.0 1995
+	// From jacecen in bug #3413119
+	{
+		{
+			"bearfight",
+			"",
+			AD_ENTRY1("FIGHT.512", "e313242a4cba2fffcd8cded5ca23c68a"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"FIGHT.EXE"
+	},
+
 	{
 		{
 			"bearfight",
