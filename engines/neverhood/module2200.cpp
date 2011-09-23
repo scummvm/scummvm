@@ -229,7 +229,7 @@ void Module2200::updateScene() {
 			} else if (_moduleResult == 2) {
 				createScene(1, 0);
 			} else {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 1:
@@ -929,7 +929,7 @@ void Scene2202::update() {
 	Scene::update();
 
 	if (_leaveScene && !_soundResource2.isPlaying()) {
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 	}
 
 	if (_isSolved && !_soundResource1.isPlaying()) {
@@ -966,7 +966,7 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x0001:
 		// TODO Debug stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x000D:
@@ -2356,7 +2356,7 @@ uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 40 || param.asPoint().x >= 600) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	}

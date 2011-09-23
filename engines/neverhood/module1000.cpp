@@ -89,7 +89,7 @@ void Module1000::updateScene() {
 			break;
 		case 1:
 			if (_moduleResult == 1)
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			else if (_moduleResult == 2)
 				createScene(3, 0);
 			else
@@ -408,12 +408,12 @@ uint32 Scene1001::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x == 0 && getGlobalVar(0xA4014072)) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x000D:
 		if (param.asInteger() == 0x188B2105) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 			messageResult = 1;
 		}
 		break;
@@ -1439,7 +1439,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x == 0 && getGlobalVar(0xA4014072)) {
 			setGlobalVar(0x8306F218, 1);
 			setGlobalVar(0x1B144052, 3);
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveScene(1);
 		}
 		break;
 	case 0x000D:
@@ -1447,7 +1447,7 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asInteger() == 0x48848178) {
 			setGlobalVar(0x8306F218, 1);
 			setGlobalVar(0x1B144052, 3);
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveScene(1);
 		}
 		messageResult = 1;
 		break;
@@ -1577,7 +1577,7 @@ uint32 Class152::handleMessage(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	}
@@ -1745,7 +1745,7 @@ uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);			
+			leaveScene(0);			
 		}
 		break;
 	}

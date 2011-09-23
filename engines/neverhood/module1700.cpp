@@ -107,7 +107,7 @@ void Module1700::updateScene() {
 			createScene(4, 0);
 			break;
 		case 4:
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveModule(1);
 			break;
 		}
 	}

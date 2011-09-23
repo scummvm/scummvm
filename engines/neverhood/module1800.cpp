@@ -134,7 +134,7 @@ void Module1800::updateScene() {
 			break;
 		case 5:
 			if (_moduleResult == 0) {
-				sendMessage(_parentModule, 0x1009, 2);
+				leaveModule(2);
 			} else if (_moduleResult == 1) {
 				createScene(4, 3);
 			}
@@ -143,14 +143,14 @@ void Module1800::updateScene() {
 			createScene(8, -1);
 			break;
 		case 7:
-			sendMessage(_parentModule, 0x1009, 3);
+			leaveModule(3);
 			break;
 		case 8:
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveModule(1);
 			// TODO GameState stuff
 			break;
 		case 9:
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveModule(0);
 			break;
 		}
 	} else {

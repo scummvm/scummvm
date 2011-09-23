@@ -68,7 +68,7 @@ void Module2000::updateScene() {
 		switch (_vm->gameState().sceneNum) {
 		case 0:
 			if (_moduleResult == 1) {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			} else {
 				createScene(1, 0);
 			}

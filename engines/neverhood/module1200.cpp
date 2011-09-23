@@ -77,10 +77,10 @@ void Module1200::updateScene() {
 				if (getGlobalVar(0x0A18CA33) && !getGlobalVar(0x2A02C07B)) {
 					createScene(2, -1);
 				} else {
-					sendMessage(_parentModule, 0x1009, 1);
+					leaveModule(1);
 				}
 			} else {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 1:
@@ -1157,9 +1157,8 @@ Scene1202::~Scene1202() {
 void Scene1202::update() {
 	Scene::update();
 	if (_soundFlag) {
-		if (!_soundResource4.isPlaying()) {
-			sendMessage(_parentModule, 0x1009, 0);
-		}
+		if (!_soundResource4.isPlaying())
+			leaveScene(0);
 	} else if (_counter == 0 && isSolved()) {
 		SetMessageHandler(&Scene1202::handleMessage453D90);
 		setGlobalVar(0x000CF819, 1);
@@ -1191,7 +1190,7 @@ uint32 Scene1202::handleMessage453C10(int messageNum, const MessageParam &param,
 	case 0x0001:
 		// TODO: Debug/Cheat stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_soundFlag) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x000D:
@@ -1215,7 +1214,7 @@ uint32 Scene1202::handleMessage453D90(int messageNum, const MessageParam &param,
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	}

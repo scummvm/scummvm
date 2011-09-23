@@ -169,7 +169,7 @@ void Module3000::updateScene() {
 				if (_moduleResult == 0)
 					createScene(9, -1);
 				else if (_moduleResult == 1)
-					sendMessage(_parentModule, 0x1009, 0);
+					leaveModule(0);
 			} else {
 				if (_moduleResult == 0)
 					if (_navigationAreaType == 2)
@@ -177,7 +177,7 @@ void Module3000::updateScene() {
 					else
 						createScene(1001, -1);
 				else if (_moduleResult == 1)
-					sendMessage(_parentModule, 0x1009, 0);
+					leaveModule(0);
 			}
 			break;
 		case 2:
@@ -205,7 +205,7 @@ void Module3000::updateScene() {
 			break;
 		case 4:
 			if (_moduleResult == 0)
-				sendMessage(_parentModule, 0x1009, 1);
+				leaveModule(1);
 			else if (_moduleResult == 1)
 				createScene(7, -1);
 			else if (_moduleResult == 2)
@@ -248,7 +248,7 @@ void Module3000::updateScene() {
 			createScene(3, 3);
 			break;
 		case 11:
-			sendMessage(_parentModule, 0x1009, 3);
+			leaveModule(3);
 			break;
 		case 12:
 			createScene(1, 0);
@@ -931,7 +931,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 		// TODO: Debug stuff
 		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !getGlobalVar(0x000809C2)) {
 			setGlobalVar(0x20580A86, 0);
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x000D:
@@ -1014,7 +1014,7 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 void Scene3009::playExtVideo() {
 	setGlobalVar(0x20580A86, _cannonLocation);
 	setGlobalVar(0xF0402B0A, kScene3009CannonLocationFileHashes[_cannonLocation]);
-	sendMessage(_parentModule, 0x1009, 1);
+	leaveScene(1);
 }
 
 bool Scene3009::isSymbolsPart1Solved() {
@@ -1332,7 +1332,7 @@ void Scene3010::update() {
 		_checkUnlocked = false;
 	}
 	if (_countdown != 0 && (--_countdown == 0)) {
-		sendMessage(_parentModule, 0x1009, _doorUnlocked ? 1 : 0);
+		leaveScene(_doorUnlocked ? 1 : 0);
 	}
 }
 
@@ -1608,7 +1608,7 @@ uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x0001:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x2000:

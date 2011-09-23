@@ -67,14 +67,14 @@ void Module1500::updateScene() {
 			if (_flag) {
 				createScene(2, -1);
 			} else {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 3:
 			createScene(0, -1);
 			break;
 		default:
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveModule(0);
 			break;
 		}
 	}
@@ -119,7 +119,7 @@ void Scene1501::update() {
 		_countdown1--;
 		if (_countdown1 == 0) {
 			_vm->_screen->clear();
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 	} else if ((_countdown2 != 0 && (--_countdown2 == 0)) /*|| !_soundResource.isPlaying()*/) {
 		_countdown1 = 12;

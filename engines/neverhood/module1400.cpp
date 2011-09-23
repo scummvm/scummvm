@@ -94,7 +94,7 @@ void Module1400::updateScene() {
 			} else if (_moduleResult == 2) {
 				createScene(3, 0);
 			} else {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 1:
@@ -755,9 +755,9 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x1019:
 		if (param.asInteger() != 0) {
-			sendMessage(_parentModule, 0x1009, 2);
+			leaveScene(2);
 		} else {
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveScene(1);
 		}			
 		break;
 	case 0x480B:
@@ -968,7 +968,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x100D:
 		if (param.asInteger() == 0x00F43389) {
 			if (getGlobalVar(0x70A1189C)) {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveScene(0);
 			} else {
 				clearRectList();
 				_klayman->setVisible(false);
@@ -980,9 +980,9 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x1019:
 		if (param.asInteger()) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		} else {
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveScene(1);
 		}
 		break;
 	case 0x2000:
@@ -992,7 +992,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2001:
 		sub428230();
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	case 0x2003:
 		sub428230();
@@ -1277,7 +1277,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 void Scene1407::update() {
 	Scene::update();
 	if (_puzzleSolvedCountdown != 0 && (--_puzzleSolvedCountdown == 0)) {
-		sendMessage(_parentModule, 0x1009, 1);
+		leaveScene(1);
 	} else if (_resetButtonCountdown != 0 && (--_resetButtonCountdown == 0)) {
 		_ssResetButton->setVisible(false);
 	}
@@ -1291,7 +1291,7 @@ uint32 Scene1407::handleMessage(int messageNum, const MessageParam &param, Entit
 			// TODO: Debug/Cheat stuff
 			if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
 				// Exit scene
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveScene(0);
 			} else if (param.asPoint().x >= 75 && param.asPoint().x <= 104 &&
 				param.asPoint().y >= 62 && param.asPoint().y <= 90) {
 				// The reset button was clicked
@@ -1391,7 +1391,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x1019:
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	case 0x1022:
 		if (sender == _class489) {
@@ -1515,7 +1515,7 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x1019:
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	case 0x4826:
 		if (sender == _class489) {
@@ -1708,7 +1708,7 @@ uint32 Scene1405::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x0001:
 		// TODO: Debug/Cheat stuff
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			sendMessage(_parentModule, 0x1009, 0);
+			leaveScene(0);
 		}
 		break;
 	case 0x000D:

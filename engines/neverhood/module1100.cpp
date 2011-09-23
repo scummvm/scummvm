@@ -168,7 +168,7 @@ void Module1100::updateScene() {
 			}
 			break;
 		case 6:
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveModule(1);
 			break;
 		case 7:
 			createScene(2, 2);
@@ -177,7 +177,7 @@ void Module1100::updateScene() {
 			if (_moduleResult == 0) {
 				createScene(0, 0);
 			} else if (_moduleResult == 1) {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 1002:
@@ -651,7 +651,7 @@ void Scene1105::update() {
 		createObjects();
 	}
 	if (_flag4 && !_soundResource2.isPlaying()) {
-		sendMessage(_parentModule, 0x1009, _flag5);
+		leaveScene(_flag5);
 	}
 	if (_flag3 && !_soundResource3.isPlaying()) {
 		sendMessage(_asTeddyBear, 0x2002, 0);

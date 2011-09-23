@@ -107,7 +107,7 @@ void Module2300::updateScene() {
 			if (_moduleResult == 1) {
 				createScene(1, 4);
 			} else {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			}
 			break;
 		case 1:
@@ -120,21 +120,21 @@ void Module2300::updateScene() {
 			} else if (_moduleResult == 4) {
 				createScene(3, 1);
 			} else if (_moduleResult == 5) {
-				sendMessage(_parentModule, 0x1009, 3);
+				leaveModule(3);
 			} else {
-				sendMessage(_parentModule, 0x1009, 4);
+				leaveModule(4);
 			}
 			break;
 		case 2:
 			if (_moduleResult == 1) {
-				sendMessage(_parentModule, 0x1009, 3);
+				leaveModule(3);
 			} else {
 				createScene(1, 5);
 			}
 			break;
 		case 3:
 			if (_moduleResult == 1) {
-				sendMessage(_parentModule, 0x1009, 2);
+				leaveModule(2);
 			} else {
 				createScene(1, 1);
 			}

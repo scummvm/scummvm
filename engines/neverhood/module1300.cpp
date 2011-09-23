@@ -214,7 +214,7 @@ void Module1300::updateScene() {
 			} else if (_moduleResult == 3) {
 				createScene(2, 0);
 			} else if (_moduleResult == 0) {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveModule(0);
 			} else if (_moduleResult == 1) {
 				createScene(10, -1);
 			}
@@ -522,7 +522,7 @@ uint32 Scene1302::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x2002:
 		if (_klayman->getX() > 545) {
-			sendMessage(_parentModule, 0x1009, 1);
+			leaveScene(1);
 		}
 		break;
 	case 0x2032:
@@ -1036,7 +1036,7 @@ uint32 Scene1306::handleMessage416EB0(int messageNum, const MessageParam &param,
 		SetMessageHandler(&Scene1306::handleMessage);
 		break;
 	case 0x4809:
-		sendMessage(_parentModule, 0x1009, 1);
+		leaveScene(1);
 		break;
 	case 0x482A:
 		setSurfacePriority(_asElevator->getSurface(), 1100);
@@ -1328,7 +1328,7 @@ void Scene1307::update() {
 		_palette->startFadeToWhite(40);
 	}
 	if (_doLeaveScene && !_soundResource.isPlaying()) {
-		sendMessage(_parentModule, 0x1009, 1);
+		leaveScene(1);
 		setGlobalVar(0x80455A41, 1);
 	} 
 }
@@ -1368,7 +1368,7 @@ uint32 Scene1307::handleMessage(int messageNum, const MessageParam &param, Entit
 					}
 				}
 			} else if (_countdown == 0 && !_asCurrKey && !_isInsertingKey) {
-				sendMessage(_parentModule, 0x1009, 0);
+				leaveScene(0);
 			}
 		}
 		break;
@@ -1724,7 +1724,7 @@ uint32 Scene1308::handleMessage(int messageNum, const MessageParam &param, Entit
 		_klayman->setVisible(true);
 		break;
 	case 0x2001:
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	case 0x2003:
 		_class601_1->setVisible(false);
@@ -1868,7 +1868,7 @@ uint32 Scene1317::hmKlaymanAsKing(int messageNum, const MessageParam &param, Ent
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	}
 	return messageResult;
@@ -1878,7 +1878,7 @@ uint32 Scene1317::hmEndMovie(int messageNum, const MessageParam &param, Entity *
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		sendMessage(_parentModule, 0x1009, 0);
+		leaveScene(0);
 		break;
 	}
 	return messageResult;
