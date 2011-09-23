@@ -55,7 +55,7 @@ namespace Video {
  * Video decoder used in engines:
  *  - scumm (he)
  */
-class BinkDecoder : public FixedRateVideoDecoder {
+class BinkDecoder : public FixedRateVideoDecoder, public SeekableVideoDecoder {
 public:
 	BinkDecoder();
 	~BinkDecoder();
@@ -74,6 +74,11 @@ public:
 
 	// FixedRateVideoDecoder
 	Common::Rational getFrameRate() const { return _frameRate; }
+
+	// SeekableVideoDecoder API
+	void seekToFrame(uint32 frame);
+	void seekToTime(Audio::Timestamp time);
+	uint32 getDuration() const;
 
 private:
 	static const int kAudioChannelsMax  = 2;
@@ -220,14 +225,12 @@ private:
 
 	Audio::SoundHandle _audioHandle;
 	Audio::QueuingAudioStream *_audioStream;
-	bool _audioStarted;
+	int32 _audioStartOffset;
 
 	uint32 _videoFlags; ///< Video frame features.
 
 	bool _hasAlpha;   ///< Do video frames have alpha?
 	bool _swapPlanes; ///< Are the planes ordered (A)YVU instead of (A)YUV?
-
-	uint32 _audioFrame;
 
 	Common::Array<AudioTrack> _audioTracks; ///< All audio tracks.
 	Common::Array<VideoFrame> _frames;      ///< All video frames.
@@ -326,6 +329,14 @@ private:
 	void IDCT(int16 *block);
 	void IDCTPut(DecodeContext &ctx, int16 *block);
 	void IDCTAdd(DecodeContext &ctx, int16 *block);
+
+	/** Find the keyframe needed to decode a frame */
+	uint32 findKeyFrame(uint32 frame) const;
+
+	/** Start playing the autio track */
+	void startAudio();
+	/** Stop playing the audio track */
+	void stopAudio();
 };
 
 } // End of namespace Video

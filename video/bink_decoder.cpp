@@ -112,7 +112,22 @@ BinkDecoder::BinkDecoder() {
 	}
 
 	_audioStream = 0;
-	_audioStarted = false;
+}
+
+void BinkDecoder::startAudio() {
+	if (_audioTrack < _audioTracks.size()) {
+		const AudioTrack &audio = _audioTracks[_audioTrack];
+
+		_audioStream = Audio::makeQueuingAudioStream(audio.outSampleRate, audio.outChannels == 2);
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
+	} // else no audio
+}
+
+void BinkDecoder::stopAudio() {
+	if (_audioStream) {
+		g_system->getMixer()->stopHandle(_audioHandle);
+		_audioStream = 0;
+	}
 }
 
 BinkDecoder::~BinkDecoder() {
@@ -122,13 +137,8 @@ BinkDecoder::~BinkDecoder() {
 void BinkDecoder::close() {
 	reset();
 
-	if (_audioStream) {
-		// Stop audio
-		g_system->getMixer()->stopHandle(_audioHandle);
-		_audioStream = 0;
-	}
-
-	_audioStarted = false;
+	// Stop audio
+	stopAudio();
 
 	for (int i = 0; i < 4; i++) {
 		delete[] _curPlanes[i]; _curPlanes[i] = 0;
@@ -172,7 +182,7 @@ void BinkDecoder::close() {
 
 uint32 BinkDecoder::getElapsedTime() const {
 	if (_audioStream && g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		return g_system->getMixer()->getSoundElapsedTime(_audioHandle);
+		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) + _audioStartOffset;
 
 	return g_system->getMillis() - _startTime;
 }
@@ -230,11 +240,6 @@ const Graphics::Surface *BinkDecoder::decodeNextFrame() {
 	_curFrame++;
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
-
-	if (!_audioStarted && _audioStream) {
-		_audioStarted = true;
-		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream);
-	}
 
 	return &_surface;
 }
@@ -611,11 +616,8 @@ bool BinkDecoder::loadStream(Common::SeekableReadStream *stream, const Graphics:
 	initBundles();
 	initHuffman();
 
-	if (_audioTrack < _audioTracks.size()) {
-		const AudioTrack &audio = _audioTracks[_audioTrack];
-
-		_audioStream = Audio::makeQueuingAudioStream(audio.outSampleRate, audio.outChannels == 2);
-	}
+	startAudio();
+	_audioStartOffset = 0;
 
 	return true;
 }
@@ -1641,6 +1643,57 @@ void BinkDecoder::IDCTPut(DecodeContext &ctx, int16 *block) {
 	for (i = 0; i < 8; i++) {
 		IDCT_ROW( (&ctx.dest[i*ctx.pitch]), (&temp[8*i]) );
 	}
+}
+
+uint32 BinkDecoder::getDuration() const
+{
+	Common::Rational duration = getFrameCount() * 1000 / getFrameRate();
+	return duration.toInt();
+}
+
+uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
+	for (int i = frame; i >= 0; i--) {
+		if (_frames[i].keyFrame)
+				return i;
+	}
+
+	// If none found, we'll assume the requested frame is a key frame
+	return frame;
+}
+
+void BinkDecoder::seekToFrame(uint32 frame) {
+	assert(frame < _frames.size());
+
+	// Fast path
+	if ((int32)frame == _curFrame)
+		return;
+
+	// Stop all audio (for now)
+	stopAudio();
+
+	// Track down the keyframe
+	_curFrame = findKeyFrame(frame) - 1;
+	while (_curFrame < (int32)frame - 1)
+		decodeNextFrame();
+
+	// Map out the starting point
+	Common::Rational startTime = frame * 1000 / getFrameRate();
+	_startTime = g_system->getMillis() - startTime.toInt();
+	resetPauseStartTime();
+
+	// Adjust the audio starting point
+	if (_audioTrack < _audioTracks.size()) {
+		_audioStartOffset = startTime.toInt();
+	}
+
+	// Restart the audio
+	startAudio();
+}
+
+void BinkDecoder::seekToTime(Audio::Timestamp time) {
+	// Try to find the last frame that should have been decoded
+	Common::Rational frame = time.msecs() * getFrameRate() / 1000;
+	seekToFrame(frame.toInt());
 }
 
 } // End of namespace Video
