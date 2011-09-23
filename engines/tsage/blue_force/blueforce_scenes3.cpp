@@ -1579,7 +1579,7 @@ bool Scene340::Child::startAction(CursorType action, Event &event) {
 		SceneItem::display2(340, 14);
 		return true;
 	case CURSOR_TALK:
-		if (!BF_GLOBALS.getFlag(fBackupArrived340) || (BF_GLOBALS._v4CEB4 < 3) || !BF_GLOBALS.getFlag(fGotAllSkip340))
+		if (!BF_GLOBALS.getFlag(fBackupArrived340) || (BF_GLOBALS._marinaWomanCtr < 3) || !BF_GLOBALS.getFlag(fGotAllSkip340))
 			scene->setAction(&scene->_action3);
 		else
 			scene->setAction(&scene->_action2);
@@ -1604,7 +1604,7 @@ bool Scene340::Woman::startAction(CursorType action, Event &event) {
 		SceneItem::display2(340, 13);
 		return true;
 	case CURSOR_TALK:
-		if (!BF_GLOBALS.getFlag(fBackupArrived340) || (BF_GLOBALS._v4CEB4 < 3) || !BF_GLOBALS.getFlag(fGotAllSkip340))
+		if (!BF_GLOBALS.getFlag(fBackupArrived340) || (BF_GLOBALS._marinaWomanCtr < 3) || !BF_GLOBALS.getFlag(fGotAllSkip340))
 			scene->setAction(&scene->_action1);
 		else
 			scene->setAction(&scene->_action2);
@@ -1697,16 +1697,16 @@ void Scene340::Action1::signal() {
 		setDelay(3);
 		break;
 	case 2:
-		if (!BF_GLOBALS._v4CEB4) {
+		if (!BF_GLOBALS._marinaWomanCtr) {
 			setAction(&scene->_action8, this);
 		} else if (!_action) {
 			BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 
-					MIN(BF_GLOBALS._v4CEB4, 3) + 2340, &scene->_woman, &scene->_child,
+					MIN(BF_GLOBALS._marinaWomanCtr, 3) + 2340, &scene->_woman, &scene->_child,
 					&scene->_object4, NULL);
 		}
 		break;
 	case 3:
-		if ((BF_GLOBALS._v4CEB4 != 1) || BF_GLOBALS.getFlag(fCalledBackup)) {
+		if ((BF_GLOBALS._marinaWomanCtr != 1) || BF_GLOBALS.getFlag(fCalledBackup)) {
 			setDelay(3);
 		} else {
 			scene->_sound1.play(8);
@@ -1714,8 +1714,8 @@ void Scene340::Action1::signal() {
 		}
 		break;
 	case 4:
-		if (BF_GLOBALS._v4CEB4 == 1)
-			++BF_GLOBALS._v4CEB4;
+		if (BF_GLOBALS._marinaWomanCtr == 1)
+			++BF_GLOBALS._marinaWomanCtr;
 
 		if (BF_GLOBALS.getFlag(fBackupArrived340)) {
 			scene->_field2654 = 1;
@@ -1724,6 +1724,10 @@ void Scene340::Action1::signal() {
 		} else if (BF_GLOBALS.getFlag(fCalledBackup)) {
 			scene->_timer1.set(40, &scene->_harrison, &scene->_action4);
 		}
+
+		++BF_GLOBALS._marinaWomanCtr;
+		BF_GLOBALS._player.enableControl();
+		remove();
 		break;
 	}
 }
@@ -2062,7 +2066,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 			_field2654 = 1;
 			_harrison.setPosition(Common::Point(46, 154));
 			BF_GLOBALS._walkRegions.proc1(19);
-		} else if (BF_GLOBALS.getFlag(fCalledBackup) && (BF_GLOBALS._v4CEB4 > 0)) {
+		} else if (BF_GLOBALS.getFlag(fCalledBackup) && (BF_GLOBALS._marinaWomanCtr > 0)) {
 			_timer1.set(900, &_harrison, &_action4);
 		} 
 	}

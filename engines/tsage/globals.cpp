@@ -191,7 +191,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_dayNumber);
 	s.syncAsSint16LE(_v4CEA4);
-	s.syncAsSint16LE(_v4CEB4);
+	s.syncAsSint16LE(_marinaWomanCtr);
 	s.syncAsSint16LE(_v4CEB6);
 	s.syncAsSint16LE(_v4CEC2);
 	s.syncAsSint16LE(_deziTopic);
@@ -230,7 +230,7 @@ void BlueForceGlobals::reset() {
 	_interfaceY = BF_INTERFACE_Y;
 	_dayNumber = 0;
 	_v4CEA4 = 0;
-	_v4CEB4 = 0;
+	_marinaWomanCtr = 0;
 	_v4CEB6 = 0;
 	_v4CEC2 = 0;
 	_deziTopic = 0;
