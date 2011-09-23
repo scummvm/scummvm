@@ -326,7 +326,7 @@ class Scene340: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Lyle: public NamedObject {
+	class Harrison: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -340,7 +340,7 @@ public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	Child _child;
 	Woman _woman;
-	Lyle _lyle;
+	Harrison _harrison;
 	SceneObject _object4, _object5;
 	Item1 _item1;
 	NamedHotspot _item2, _item3;
@@ -436,7 +436,7 @@ class Scene350: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item6: public NamedHotspot {
+	class Yacht: public NamedHotspot {
 	public:
 		bool _flag;
 
@@ -466,14 +466,14 @@ class Scene350: public SceneExt {
 	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
-	NamedObject _lyle;
+	NamedObject _harrison;
 	SceneObject _boat;
-	SceneObject _object3;
+	SceneObject _yachtBody;
 	Hook _hook;
 	Object5 _object5;
 	NamedHotspot _item1, _item2, _item3, _item4;
 	Item5 _item5;
-	Item6 _item6;
+	Yacht _yacht;
 	SouthWestExit _swExit;
 	SpeakerGameText _gameTextSpeaker;
 	SpeakerJakeUniform _jakeUniformSpeaker;
