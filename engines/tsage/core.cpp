@@ -3015,6 +3015,9 @@ void Player::enableControl() {
 }
 
 void Player::process(Event &event) {
+	if ((_vm->getGameID() != GType_Ringworld) && _action)
+		_action->process(event);
+
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) &&
 			(_globals->_events.getCursor() == CURSOR_WALK) && _globals->_player._canWalk &&
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {
@@ -3814,6 +3817,10 @@ void SceneHandler::process(Event &event) {
 	if (_globals->_sceneManager._scene)
 		_globals->_sceneManager._scene->process(event);
 
+	// Handle player processing
+	if (_vm->getGameID() != GType_Ringworld)
+		_globals->_player.process(event);
+
 	if (!event.handled) {
 		// Separate check for F5 - Save key
 		if ((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_F5)) {
@@ -3877,7 +3884,8 @@ void SceneHandler::process(Event &event) {
 			processEnd(event);
 
 			// Handle player processing
-			_globals->_player.process(event);
+			if (_vm->getGameID() == GType_Ringworld)
+				_globals->_player.process(event);
 		}
 	}
 }
