@@ -103,8 +103,13 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 				break;
 			}
 
-			if (event.kbd.flags & Common::KBD_ALT) // Alt, option, same thing!
+#if 0
+			// FIXME: This is disabled for now because it interferes with
+			// the ScummVM alt combinations. It's only used for one easter egg
+			// anyway, so I'll come up with something when I get around to that.
+			if (event.kbd.flags & Common::KBD_ALT)
 				currentBits |= (kRawButtonDown << kMod2ButtonShift);
+#endif
 		}
 	}
 
