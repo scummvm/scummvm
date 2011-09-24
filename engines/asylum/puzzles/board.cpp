@@ -267,10 +267,12 @@ void PuzzleBoard::checkSlots() {
 			if (_data.checkForSpace && _solvedText[index] == ' ')
 				return;
 
-			if (_selectedSlot == -1)
+			if (_selectedSlot == -1) {
 				_selectedSlot = index;
-			else
+			} else {
 				SWAP(_solvedText[index], _solvedText[_selectedSlot]);
+				_selectedSlot = -1;
+			}
 
 			updateScreen();
 		}
