@@ -2529,7 +2529,11 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 /*--------------------------------------------------------------------------*/
 
 void BackgroundSceneObject::postInit(SceneObjectList *OwnerList) {
-	SceneObject::postInit(&_globals->_sceneManager._bgSceneObjects);
+	SceneObjectList dummyList;
+	SceneObjectList *pList = !_globals->_sceneManager._scene ? &dummyList : 
+		&_globals->_sceneManager._scene->_bgSceneObjects;
+
+	SceneObject::postInit(pList);
 }
 
 void BackgroundSceneObject::draw() {

@@ -48,6 +48,7 @@ public:
 	int _enabledSections[256];
 	int _zoomPercents[256];
 	ScenePriorities _priorities;
+	SceneObjectList _bgSceneObjects;
 
 	int _fieldA;
 	int _fieldE;
@@ -86,7 +87,6 @@ public:
 	Common::Point _sceneBgOffset;
 	int _sceneLoadCount;
 	Rect _scrollerRect;
-	SceneObjectList _bgSceneObjects;
 	int _objectCount;
 public:
 	SceneManager();
