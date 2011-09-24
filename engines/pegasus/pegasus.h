@@ -118,6 +118,7 @@ public:
 	// Items
 	bool playerHasItem(const Item *);
 	bool playerHasItemID(const tItemID);
+	void checkFlashlight();
 
 	// Inventory Items
 	InventoryItem *getCurrentInventoryItem();

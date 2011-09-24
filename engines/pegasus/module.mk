@@ -33,7 +33,9 @@ MODULE_OBJS = \
 	items/biochips/opticalchip.o \
 	items/biochips/pegasuschip.o \
 	items/inventory/airmask.o \
+	items/inventory/gascanister.o \
 	items/inventory/inventoryitem.o \
+	items/inventory/keycard.o \
 	neighborhood/door.o \
 	neighborhood/exit.o \
 	neighborhood/extra.o \

@@ -126,6 +126,7 @@ public:
 
 	virtual tAirQuality getAirQuality(const tRoomID);
 	virtual void checkAirMask() {}
+	virtual void checkFlashlight() {}
 
 protected:
 	virtual void receiveNotification(Notification *, const tNotificationFlags);

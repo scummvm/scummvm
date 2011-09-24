@@ -46,7 +46,9 @@
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/pegasuschip.h"
 #include "pegasus/items/inventory/airmask.h"
+#include "pegasus/items/inventory/gascanister.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/items/inventory/keycard.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
@@ -203,9 +205,10 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 		new AirMask(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kKeyCard:
+		new KeyCard(itemID, neighborhoodID, roomID, direction);
+		break;
 	case kGasCanister:
-		// TODO: Specialized inventory item classes
-		new InventoryItem(itemID, neighborhoodID, roomID, direction);
+		new GasCanister(itemID, neighborhoodID, roomID, direction);
 		break;
 	default:
 		// Everything else is a normal inventory item
@@ -934,6 +937,11 @@ void PegasusEngine::cleanUpAfterAIHint(const Common::String &movieName) {
 void PegasusEngine::jumpToNewEnvironment(const tNeighborhoodID neighborhoodID, const tRoomID roomID, const tDirectionConstant direction) {
 	GameState.setNextLocation(neighborhoodID, roomID, direction);
 	_shellNotification.setNotificationFlags(kNeedNewJumpFlag, kNeedNewJumpFlag);
+}
+
+void PegasusEngine::checkFlashlight() {
+	if (_neighborhood)
+		_neighborhood->checkFlashlight();
 }
 
 } // End of namespace Pegasus

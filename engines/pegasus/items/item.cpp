@@ -302,4 +302,13 @@ void Item::getInfoRightTimes(TimeValue &start, TimeValue &stop) const {
 	stop = _itemInfo.infoRightStop;
 }
 
+void Item::findItemExtra(const uint32 extraID, ItemExtraEntry &entry) {
+	for (uint32 i = 0; i < _itemExtras.numEntries; i++) {
+		if (_itemExtras.entries[i].extraID == extraID) {
+			entry = _itemExtras.entries[i];
+			return;
+		}
+	}
+}
+
 } // End of namespace Pegasus
