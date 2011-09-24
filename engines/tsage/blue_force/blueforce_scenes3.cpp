@@ -2516,7 +2516,7 @@ bool Scene350::Yacht::startAction(CursorType action, Event &event) {
 			if ((BF_GLOBALS._dayNumber == 1) || (BF_GLOBALS._dayNumber == 4)) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 1;
-				scene->setAction(&scene->_sequenceManager1, scene, 3512, &BF_GLOBALS._player, &scene->_boat, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 3512, &BF_GLOBALS._player, &scene->_yachtDoor, NULL);
 				return true;
 			}
 		} else {
@@ -2524,7 +2524,7 @@ bool Scene350::Yacht::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 1;
 			BF_GLOBALS._player.disableControl();
 			scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(gunDrawn) ? 3504 : 3505, 
-				&BF_GLOBALS._player, &scene->_boat, NULL);
+				&BF_GLOBALS._player, &scene->_yachtDoor, NULL);
 			return true;
 		}
 		break;
@@ -2640,14 +2640,14 @@ void Scene350::postInit(SceneObjectList *OwnerList) {
 	if ((BF_GLOBALS._dayNumber != 1) && (BF_GLOBALS._dayNumber != 4)) {
 		_yacht.setDetails(28, 350, 15, 16, 17, 1);
 	} else {
-		_boat.postInit();
-		_boat.setVisage(350);
-		_boat.setStrip(3);
-		_boat.setFrame(1);
-		_boat.fixPriority(72);
-		_boat.setPosition(Common::Point(40, 74));
+		_yachtDoor.postInit();
+		_yachtDoor.setVisage(350);
+		_yachtDoor.setStrip(3);
+		_yachtDoor.setFrame(1);
+		_yachtDoor.fixPriority(72);
+		_yachtDoor.setPosition(Common::Point(40, 74));
 		
-		_yachtBody.setup(350, 1, 1, 129, 142, -1);
+		_yachtBody.setup(350, 1, 1, 129, 142, 255);
 
 		if (BF_GLOBALS.getFlag(fBackupIn350)) {
 			_harrison.postInit();

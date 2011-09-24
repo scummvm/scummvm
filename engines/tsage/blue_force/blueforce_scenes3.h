@@ -467,8 +467,8 @@ class Scene350: public SceneExt {
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	NamedObject _harrison;
-	SceneObject _boat;
-	SceneObject _yachtBody;
+	SceneObject _yachtDoor;
+	BackgroundSceneObject _yachtBody;
 	Hook _hook;
 	Object5 _object5;
 	NamedHotspot _item1, _item2, _item3, _item4;
