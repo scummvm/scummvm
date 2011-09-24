@@ -155,8 +155,10 @@ void Movie::update() {
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_vars->get(_nextFrameReadVar);
 			if (nextFrame > 0) {
-				_bink.seekToFrame(nextFrame);
-				drawNextFrameToTexture();
+				if (_bink.getCurFrame() != nextFrame) {
+					_bink.seekToFrame(nextFrame - 1);
+					drawNextFrameToTexture();
+				}
 				_vm->_vars->set(_nextFrameReadVar, 0);
 				_isLastFrame = false;
 			}

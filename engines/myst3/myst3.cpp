@@ -53,7 +53,8 @@ namespace Myst3 {
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
-		_vars(0), _node(0), _scene(0), _archive(0) {
+		_vars(0), _node(0), _scene(0), _archive(0),
+		_frameCount(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -144,22 +145,7 @@ Common::Error Myst3Engine::run() {
 			}
 		}
 		
-		_scene->clear();
-
-		if (_viewType == kFrame) {
-			_scene->setupCameraFrame();
-		} else {
-			_scene->setupCameraCube();
-		}
-		_node->draw();
-
-		for (uint i = 0; i < _movies.size(); i++) {
-			_movies[i]->update();
-			_movies[i]->draw();
-		}
-
-		_system->updateScreen();
-		_system->delayMillis(10);
+		drawFrame();
 	}
 
 	for (uint i = 0; i < _movies.size(); i++) {
@@ -173,6 +159,26 @@ Common::Error Myst3Engine::run() {
 	_archive->close();
 
 	return Common::kNoError;
+}
+
+void Myst3Engine::drawFrame() {
+	_scene->clear();
+
+	if (_viewType == kFrame) {
+		_scene->setupCameraFrame();
+	} else {
+		_scene->setupCameraCube();
+	}
+	_node->draw();
+
+	for (uint i = 0; i < _movies.size(); i++) {
+		_movies[i]->update();
+		_movies[i]->draw();
+	}
+
+	_system->updateScreen();
+	_system->delayMillis(10);
+	_frameCount++;
 }
 
 void Myst3Engine::goToNode(uint16 nodeID, uint8 roomID) {

@@ -1665,7 +1665,7 @@ void BinkDecoder::seekToFrame(uint32 frame) {
 	assert(frame < _frames.size());
 
 	// Fast path
-	if ((int32)frame == _curFrame)
+	if ((int32)frame == _curFrame + 1)
 		return;
 
 	// Stop all audio (for now)

@@ -86,6 +86,10 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(95, varDivVarValue);
 	OPCODE(97, varMinValue);
 	OPCODE(98, varClipValue);
+	OPCODE(99, varClipChangeBound);
+	OPCODE(100, varAbsoluteSubValue);
+	OPCODE(101, varAbsoluteSubVar);
+	OPCODE(102, varRatioToPercents);
 	OPCODE(103, varRotateValue3);
 	OPCODE(104, ifElse);
 	OPCODE(105, ifCondition);
@@ -108,7 +112,18 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(122, ifVarHasSomeBitsSet);
 	OPCODE(138, goToNode);
 	OPCODE(139, goToRoomNode);
-	OPCODE(187, runScriptsFromNode);
+	OPCODE(176, runScriptForVar);
+	OPCODE(177, runScriptForVarEachXFrames);
+	OPCODE(178, runScriptForVarStartVar);
+	OPCODE(179, runScriptForVarStartVarEachXFrames);
+	OPCODE(180, runScriptForVarEndVar);
+	OPCODE(181, runScriptForVarEndVarEachXFrames);
+	OPCODE(182, runScriptForVarStartEndVar);
+	OPCODE(183, runScriptForVarStartEndVarEachXFrames);
+	OPCODE(184, drawFramesForVar);
+	OPCODE(185, drawFramesForVarEachTwoFrames);
+	OPCODE(186, drawFramesForVarStartEndVarEachTwoFrames);
+	OPCODE(187, runScript);
 
 #undef OPCODE
 }
@@ -386,7 +401,7 @@ void Script::varToggle(Context &c, const Opcode &cmd) {
 void Script::varSetOneIfZero(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set var %d to one if zero", cmd.op, cmd.args[0]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	if (!value)
 		_vm->_vars->set(cmd.args[0], 1);
 }
@@ -450,7 +465,7 @@ void Script::varApplyMask(Context &c, const Opcode &cmd) {
 void Script::varSwap(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Swap var %d and var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	_vm->_vars->set(cmd.args[0], _vm->_vars->get(cmd.args[1]));
 	_vm->_vars->set(cmd.args[1], value);
 }
@@ -458,7 +473,7 @@ void Script::varSwap(Context &c, const Opcode &cmd) {
 void Script::varIncrement(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Increment var %d", cmd.op, cmd.args[0]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value++;
 
@@ -469,7 +484,7 @@ void Script::varIncrementMax(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Increment var %d with max value %d",
 			cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value++;
 
@@ -483,7 +498,7 @@ void Script::varIncrementMaxLooping(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Increment var %d in range [%d, %d]",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value++;
 
@@ -497,7 +512,7 @@ void Script::varAddValueMaxLooping(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add %d to var %d in range [%d, %d]",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 
 	value += cmd.args[0];
 
@@ -510,7 +525,7 @@ void Script::varAddValueMaxLooping(Context &c, const Opcode &cmd) {
 void Script::varDecrement(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Decrement var %d", cmd.op, cmd.args[0]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value--;
 
@@ -521,7 +536,7 @@ void Script::varDecrementMin(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Decrement var %d with min value %d",
 			cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value--;
 
@@ -535,7 +550,7 @@ void Script::varAddValueMax(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add value %d to var %d with max value %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 
 	value += cmd.args[0];
 
@@ -549,7 +564,7 @@ void Script::varSubValueMin(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Substract value %d from var %d with min value %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 
 	value -= cmd.args[0];
 
@@ -594,7 +609,7 @@ void Script::varSetRange(Context &c, const Opcode &cmd) {
 void Script::varIncrementMaxTen(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Increment var %d max 10", cmd.op, cmd.args[0]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	value++;
 
@@ -607,7 +622,7 @@ void Script::varIncrementMaxTen(Context &c, const Opcode &cmd) {
 void Script::varAddValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add value %d to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 	value += cmd.args[0];
 	_vm->_vars->set(cmd.args[1], value);
 }
@@ -616,7 +631,7 @@ void Script::varArrayAddValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add value %d to array base var %d item var %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1] + _vm->_vars->get(cmd.args[2]));
+	int32 value = _vm->_vars->get(cmd.args[1] + _vm->_vars->get(cmd.args[2]));
 	value += cmd.args[0];
 	_vm->_vars->set(cmd.args[1] + _vm->_vars->get(cmd.args[2]), value);
 }
@@ -624,7 +639,7 @@ void Script::varArrayAddValue(Context &c, const Opcode &cmd) {
 void Script::varAddVarValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Add var %d value to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 	value += _vm->_vars->get(cmd.args[0]);
 	_vm->_vars->set(cmd.args[1], value);
 }
@@ -632,7 +647,7 @@ void Script::varAddVarValue(Context &c, const Opcode &cmd) {
 void Script::varSubValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Substract value %d to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 	value -= cmd.args[0];
 	_vm->_vars->set(cmd.args[1], value);
 }
@@ -640,7 +655,7 @@ void Script::varSubValue(Context &c, const Opcode &cmd) {
 void Script::varSubVarValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Substract var %d value to var %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[1]);
+	int32 value = _vm->_vars->get(cmd.args[1]);
 	value -= _vm->_vars->get(cmd.args[0]);
 	_vm->_vars->set(cmd.args[1], value);
 }
@@ -648,7 +663,7 @@ void Script::varSubVarValue(Context &c, const Opcode &cmd) {
 void Script::varModValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Apply modulo %d to var %d", cmd.op, cmd.args[1], cmd.args[0]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	value %= cmd.args[1];
 	_vm->_vars->set(cmd.args[0], value);
 }
@@ -656,7 +671,7 @@ void Script::varModValue(Context &c, const Opcode &cmd) {
 void Script::varMultValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Multiply var %d by value %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	value *= cmd.args[1];
 	_vm->_vars->set(cmd.args[0], value);
 }
@@ -664,7 +679,7 @@ void Script::varMultValue(Context &c, const Opcode &cmd) {
 void Script::varMultVarValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Multiply var %d by var %d value", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	value *= _vm->_vars->get(cmd.args[1]);
 	_vm->_vars->set(cmd.args[0], value);
 }
@@ -672,7 +687,7 @@ void Script::varMultVarValue(Context &c, const Opcode &cmd) {
 void Script::varDivValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Divide var %d by value %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	value /= cmd.args[1];
 	_vm->_vars->set(cmd.args[0], value);
 }
@@ -680,7 +695,7 @@ void Script::varDivValue(Context &c, const Opcode &cmd) {
 void Script::varDivVarValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Divide var %d by var %d value", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 	value /= _vm->_vars->get(cmd.args[1]);
 	_vm->_vars->set(cmd.args[0], value);
 }
@@ -688,7 +703,7 @@ void Script::varDivVarValue(Context &c, const Opcode &cmd) {
 void Script::varMinValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Set var %d to min between %d and var value", cmd.op, cmd.args[0], cmd.args[1]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	if (value > cmd.args[1])
 		value = cmd.args[1];
@@ -699,18 +714,65 @@ void Script::varMinValue(Context &c, const Opcode &cmd) {
 void Script::varClipValue(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Clip var %d value between %d and %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
-	value = CLIP<uint32>(value, cmd.args[1], cmd.args[2]);
+	value = CLIP<int32>(value, cmd.args[1], cmd.args[2]);
 
 	_vm->_vars->set(cmd.args[0], value);
 }
+
+void Script::varClipChangeBound(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Clip var %d value between %d and %d changing bounds", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	int32 value = _vm->_vars->get(cmd.args[0]);
+
+	if (value < cmd.args[1])
+		value = cmd.args[2];
+
+	if (value > cmd.args[2])
+		value = cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varAbsoluteSubValue(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Take absolute value of var %d and substract %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	int32 value = _vm->_vars->get(cmd.args[0]);
+
+	value = abs(value) - cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varAbsoluteSubVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Take absolute value of var %d and substract var %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	int32 value = _vm->_vars->get(cmd.args[0]);
+
+	value = abs(value) - _vm->_vars->get(cmd.args[1]);
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
+void Script::varRatioToPercents(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Convert var %d to percents (max value %d, tare weight %d)",
+			cmd.op, cmd.args[0], cmd.args[2], cmd.args[1]);
+
+	int32 value = _vm->_vars->get(cmd.args[0]);
+
+	value = 100 * (cmd.args[2] - abs(value) - _vm->_vars->get(cmd.args[1])) / cmd.args[2];
+	value = MIN(0, value);
+
+	_vm->_vars->set(cmd.args[0], value);
+}
+
 
 void Script::varRotateValue3(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Var take next value, var %d values %d %d %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
 
-	uint32 value = _vm->_vars->get(cmd.args[0]);
+	int32 value = _vm->_vars->get(cmd.args[0]);
 
 	if (value == cmd.args[1]) {
 		value = cmd.args[2];
@@ -724,9 +786,7 @@ void Script::varRotateValue3(Context &c, const Opcode &cmd) {
 }
 
 void Script::ifElse(Context &c, const Opcode &cmd) {
-	debugC(kDebugScript, "Opcode %d: Else (should not be ran)", cmd.op);
-
-	warning("Running an else statement");
+	debugC(kDebugScript, "Opcode %d: Else", cmd.op);
 
 	c.result = true;
 	c.endScript = true;
@@ -853,8 +913,8 @@ void Script::ifVarInRange(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: If var %d in range %d %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-    uint32 value = _vm->_vars->get(cmd.args[0]);
-    if(value >= cmd.args[1] && value <= cmd.args[2])
+	int32 value = _vm->_vars->get(cmd.args[0]);
+	if(value >= cmd.args[1] && value <= cmd.args[2])
 		return;
 
 	goToElse(c);
@@ -864,8 +924,8 @@ void Script::ifVarNotInRange(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: If var %d not in range %d %d",
 			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
 
-    uint32 value = _vm->_vars->get(cmd.args[0]);
-    if(value < cmd.args[1] && value > cmd.args[2])
+	int32 value = _vm->_vars->get(cmd.args[0]);
+	if(value < cmd.args[1] && value > cmd.args[2])
 		return;
 
 	goToElse(c);
@@ -940,7 +1000,151 @@ void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 	_vm->goToNode(cmd.args[1], cmd.args[0]);
 }
 
-void Script::runScriptsFromNode(Context &c, const Opcode &cmd) {
+void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {
+	if (numFrames < 0) {
+		numFrames = -numFrames;
+		uint startFrame = _vm->getFrameCount();
+		uint currentFrame = startFrame;
+		uint endFrame = startFrame + numFrames;
+		uint numValues = abs(endValue - startValue);
+
+		if (startFrame < endFrame) {
+			int currentValue = -9999;
+			while (1) {
+				int nextValue = numValues * (currentFrame - startFrame) / numFrames;
+				if (currentValue != nextValue) {
+					currentValue = nextValue;
+
+					int16 varValue;
+					if (endValue > startValue)
+						varValue = startValue + currentValue;
+					else
+						varValue = startValue - currentValue;
+
+					_vm->_vars->set(var, varValue);
+
+					if (script) {
+						_vm->runScriptsFromNode(script);
+					}
+				}
+
+				_vm->drawFrame();
+				currentFrame = _vm->getFrameCount();
+
+				if (currentFrame > endFrame)
+					break;
+			}
+		}
+
+		_vm->_vars->set(var, endValue);
+	} else {
+		int currentValue = startValue;
+		uint endFrame = 0;
+
+		bool positiveDirection = endValue > startValue;
+
+		while (1) {
+			if ((positiveDirection && (currentValue >= endValue))
+					|| (!positiveDirection && (currentValue <= startValue)))
+				break;
+
+			_vm->_vars->set(var, currentValue);
+
+			if (script)
+				_vm->runScriptsFromNode(script);
+
+			for (uint i = _vm->getFrameCount(); i < endFrame; i = _vm->getFrameCount())
+				_vm->drawFrame();
+
+			endFrame = _vm->getFrameCount() + numFrames;
+
+			currentValue += positiveDirection ? 1 : -1;
+		}
+	}
+}
+
+void Script::runScriptForVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, run script %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], 0);
+}
+
+void Script::runScriptForVarEachXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, run script %d every %d frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], (int16) cmd.args[4]);
+}
+
+void Script::runScriptForVarStartVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to %d, run script %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_vars->get(cmd.args[1]), cmd.args[2], cmd.args[3], 0);
+}
+
+void Script::runScriptForVarStartVarEachXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to %d, run script %d every %d frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_vars->get(cmd.args[1]), cmd.args[2], cmd.args[3], (int16) cmd.args[4]);
+}
+
+void Script::runScriptForVarEndVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from %d to var %d value, run script %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_vars->get(cmd.args[2]), cmd.args[3], 0);
+}
+
+void Script::runScriptForVarEndVarEachXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], _vm->_vars->get(cmd.args[2]), cmd.args[3], (int16) cmd.args[4]);
+}
+
+void Script::runScriptForVarStartEndVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_vars->get(cmd.args[1]), _vm->_vars->get(cmd.args[2]), cmd.args[3], 0);
+}
+
+void Script::runScriptForVarStartEndVarEachXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value, run script %d every %d frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3], cmd.args[4]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_vars->get(cmd.args[1]), _vm->_vars->get(cmd.args[2]), cmd.args[3], (int16) cmd.args[4]);
+}
+
+void Script::drawFramesForVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d, every %d frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, -((int16) cmd.args[3]));
+}
+
+void Script::drawFramesForVarEachTwoFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from %d to %d draw 2 frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint numFrames = 2 * (-1 - abs(cmd.args[2] - cmd.args[1]));
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], cmd.args[1], cmd.args[2], 0, numFrames);
+}
+
+void Script::drawFramesForVarStartEndVarEachTwoFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: For var %d from var %d value to var %d value draw 2 frames",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	uint numFrames = 2 * (-1 - abs(cmd.args[2] - cmd.args[1]));
+
+	runScriptForVarDrawFramesHelper(cmd.args[0], _vm->_vars->get(cmd.args[1]), _vm->_vars->get(cmd.args[2]), 0, numFrames);
+}
+
+void Script::runScript(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Run scripts from node %d", cmd.op, cmd.args[0]);
 
 	_vm->runScriptsFromNode(cmd.args[0]);

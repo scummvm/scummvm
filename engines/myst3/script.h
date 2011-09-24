@@ -65,6 +65,8 @@ private:
 	void runOp(Context &c, const Opcode &op);
 	void goToElse(Context &c);
 
+	void runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames);
+
 	DECLARE_OPCODE(nodeCubeInit);
 	DECLARE_OPCODE(nodeCubeInitIndex);
 	DECLARE_OPCODE(nodeFrameInit);
@@ -120,6 +122,10 @@ private:
 	DECLARE_OPCODE(varDivVarValue);
 	DECLARE_OPCODE(varMinValue);
 	DECLARE_OPCODE(varClipValue);
+	DECLARE_OPCODE(varClipChangeBound);
+	DECLARE_OPCODE(varAbsoluteSubValue);
+	DECLARE_OPCODE(varAbsoluteSubVar);
+	DECLARE_OPCODE(varRatioToPercents);
 	DECLARE_OPCODE(varRotateValue3);
 	DECLARE_OPCODE(ifElse);
 	DECLARE_OPCODE(ifCondition);
@@ -142,7 +148,18 @@ private:
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
 	DECLARE_OPCODE(goToNode);
 	DECLARE_OPCODE(goToRoomNode);
-	DECLARE_OPCODE(runScriptsFromNode);
+	DECLARE_OPCODE(runScriptForVar);
+	DECLARE_OPCODE(runScriptForVarEachXFrames);
+	DECLARE_OPCODE(runScriptForVarStartVar);
+	DECLARE_OPCODE(runScriptForVarStartVarEachXFrames);
+	DECLARE_OPCODE(runScriptForVarEndVar);
+	DECLARE_OPCODE(runScriptForVarEndVarEachXFrames);
+	DECLARE_OPCODE(runScriptForVarStartEndVar);
+	DECLARE_OPCODE(runScriptForVarStartEndVarEachXFrames);
+	DECLARE_OPCODE(drawFramesForVar);
+	DECLARE_OPCODE(drawFramesForVarEachTwoFrames);
+	DECLARE_OPCODE(drawFramesForVarStartEndVarEachTwoFrames);
+	DECLARE_OPCODE(runScript);
 };
 
 } /* namespace Myst3 */

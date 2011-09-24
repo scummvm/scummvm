@@ -74,6 +74,9 @@ public:
 	void runNodeInitScripts();
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
+
+	void drawFrame();
+	uint getFrameCount() { return _frameCount; }
 private:
 	OSystem *_system;
 	Console *_console;
@@ -87,6 +90,8 @@ private:
 	Common::Array<Movie *> _movies;
 
 	ViewType _viewType;
+
+	uint _frameCount;
 
 	friend class Console;
 };
