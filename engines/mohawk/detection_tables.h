@@ -1605,6 +1605,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Arthur Birthday (English) Version 2.0 Windows(R) August 8, 1997
+	// From jacecen in bug #3413119
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("Outline", "3b793adf2b303722e0fb6c632f94e1fb"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"Living Books Player"
+	},
+
 	{
 		{
 			"arthurbday",
