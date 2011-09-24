@@ -3878,10 +3878,10 @@ void SceneHandler::process(Event &event) {
 
 			// Handle any fallback text display
 			processEnd(event);
-
-			// Handle player processing
-			_globals->_player.process(event);
 		}
+
+		// Handle player processing
+		_globals->_player.process(event);
 	}
 }
 
