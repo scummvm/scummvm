@@ -29,7 +29,33 @@
  * SDL events manager for WebOS
  */
 class WebOSSdlEventSource : public SdlEventSource {
+public:
+	WebOSSdlEventSource();
 protected:
+	// Inidicates if gesture area is pressed down or not.
+	bool _gestureDown;
+	
+	// The timestamp when screen was pressed down.
+	uint32 _screenDownTime;
+	
+	// The timestamp when a possible drag operation was triggered.
+	uint32 _dragStartTime;
+	
+	// The index of the motion pointer.
+	int _motionPtrIndex;
+	
+	// The maximum horizontal motion during dragging (For tap recognition).
+	int _dragDiffX;
+	
+	// The maximum vertical motion during dragging (For tap recognition).
+	int _dragDiffY;
+	
+	// Indicates if we are in drag mode.
+	bool _dragging;
+	
+	// The current mouse position on the screen.
+	int _curX, _curY;
+
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);

@@ -35,43 +35,18 @@
 #include "engines/engine.h"
 #include "PDL.h"
 
-// Inidicates if gesture area is pressed down or not.
-static bool gestureDown = false;
-
-// The timestamp when screen was pressed down.
-static int screenDownTime = 0;
-
-// The timestamp when a possible drag operation was triggered.
-static int dragStartTime = 0;
-
-// The index of the motion pointer.
-static int motionPtrIndex = -1;
-
-// The maximum horizontal motion during dragging (For tap recognition).
-static int dragDiffX = 0;
-
-// The maximum vertical motion during dragging (For tap recognition).
-static int dragDiffY = 0;
-
-// Indicates if we are in drag mode.
-static bool dragging = false;
-
-// The current mouse position on the screen.
-static int curX = 0, curY = 0;
-
-// The time (seconds after 1/1/1970) when program started.
-static time_t programStartTime = time(0);
-
 /**
- * Returns the number of passed milliseconds since program start.
- *
- * @return The number of passed milliseconds.
+ * Construct a new WebOSSdlEventSource.
  */
-static time_t getMillis()
-{
-   struct timeval tv;
-   gettimeofday(&tv, NULL);
-   return (time(0) - programStartTime) * 1000 + tv.tv_usec / 1000;
+WebOSSdlEventSource::WebOSSdlEventSource() :
+		_gestureDown(false),
+		_screenDownTime(0),
+		_dragStartTime(0),
+		_motionPtrIndex(-1),
+		_dragDiffX(0), _dragDiffY(0),
+		_dragging(false),
+		_curX(0), _curY(0) {
+
 }
 
 /**
@@ -93,7 +68,7 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
 		event.kbd.flags |= Common::KBD_CTRL;
 
 	// Holding down the gesture area emulates the ALT key
-	if (gestureDown)
+	if (_gestureDown)
 		event.kbd.flags |= Common::KBD_ALT;
 }
 
@@ -101,14 +76,14 @@ void WebOSSdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod,
  * Before calling the original SDL implementation this method checks if the
  * gesture area is pressed down.
  *
- * @param ev    The SDL event
+ * @param ev	 The SDL event
  * @param event The ScummVM event.
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// Handle gesture area tap.
 	if (ev.key.keysym.sym == SDLK_WORLD_71) {
-		gestureDown = true;
+		_gestureDown = true;
 		return true;
 	}
 
@@ -117,18 +92,18 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// gesture tap AFTER the backward gesture event and not BEFORE (Like
 	// WebOS 2).
 	if (ev.key.keysym.sym == 27 || ev.key.keysym.sym == 229) {
-	    gestureDown = false;
+		 _gestureDown = false;
 	}
 
-        // handle virtual keyboard dismiss key
-        if (ev.key.keysym.sym == 24) {
-                int gblPDKVersion = PDL_GetPDKVersion();
-                // check for correct PDK Version
-                if (gblPDKVersion >= 300) {
-                        PDL_SetKeyboardState(PDL_FALSE);
-                        return true;
-                }
-        }
+	// handle virtual keyboard dismiss key
+	if (ev.key.keysym.sym == 24) {
+		int gblPDKVersion = PDL_GetPDKVersion();
+		// check for correct PDK Version
+		if (gblPDKVersion >= 300) {
+			PDL_SetKeyboardState(PDL_FALSE);
+			return true;
+		}
+	}
 
 	// Call original SDL key handler.
 	return SdlEventSource::handleKeyDown(ev, event);
@@ -138,14 +113,14 @@ bool WebOSSdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
  * Before calling the original SDL implementation this method checks if the
  * gesture area has been released.
  *
- * @param ev    The SDL event
+ * @param ev	 The SDL event
  * @param event The ScummVM event.
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// Handle gesture area tap.
 	if (ev.key.keysym.sym == SDLK_WORLD_71) {
-		gestureDown = false;
+		_gestureDown = false;
 		return true;
 	}
 
@@ -166,22 +141,22 @@ bool WebOSSdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 /**
  * Handles mouse button press.
  *
- * @param ev    The SDL event
+ * @param ev	 The SDL event
  * @param event The ScummVM event.
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (motionPtrIndex == -1) {
-		motionPtrIndex = ev.button.which;
-		dragDiffX = 0;
-		dragDiffY = 0;
-		screenDownTime = getMillis();
+	if (_motionPtrIndex == -1) {
+		_motionPtrIndex = ev.button.which;
+		_dragDiffX = 0;
+		_dragDiffY = 0;
+		_screenDownTime = g_system->getMillis();
 
 		// Start dragging when pressing the screen shortly after a tap.
-		if (getMillis() - dragStartTime < 250) {
-			dragging = true;
+		if (g_system->getMillis() - _dragStartTime < 250) {
+			_dragging = true;
 			event.type = Common::EVENT_LBUTTONDOWN;
-			processMouseEvent(event, curX, curY);
+			processMouseEvent(event, _curX, _curY);
 		}
 	}
 	return true;
@@ -190,19 +165,19 @@ bool WebOSSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &ev
 /**
  * Handles mouse button release.
  *
- * @param ev    The SDL event
+ * @param ev	 The SDL event
  * @param event The ScummVM event.
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (motionPtrIndex == ev.button.which) {
-		motionPtrIndex = -1;
+	if (_motionPtrIndex == ev.button.which) {
+		_motionPtrIndex = -1;
 
-		int screenY = g_system->getHeight();
+		int screenY = g_system->getOverlayHeight();
 		
 		// 60% of the screen height for menu dialog/keyboard
-		if (ABS(dragDiffY) >= ABS(screenY*0.6)) {
-			if (dragDiffY >= 0) {
+		if (ABS(_dragDiffY) >= ABS(screenY*0.6)) {
+			if (_dragDiffY >= 0) {
 				int gblPDKVersion = PDL_GetPDKVersion();
 				// check for correct PDK Version
 				if (gblPDKVersion >= 300) {
@@ -218,35 +193,33 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 		}
 
 		// When drag mode was active then simply send a mouse up event
-		if (dragging)
-		{
+		if (_dragging) {
 			event.type = Common::EVENT_LBUTTONUP;
-			processMouseEvent(event, curX, curY);
-			dragging = false;
+			processMouseEvent(event, _curX, _curY);
+			_dragging = false;
 			return true;
 		}
 
 		// When mouse was moved 5 pixels or less then emulate a mouse button
 		// click.
-		if (ABS(dragDiffX) < 6 && ABS(dragDiffY) < 6)
-		{
-			int duration = getMillis() - screenDownTime;
+		if (ABS(_dragDiffX) < 6 && ABS(_dragDiffY) < 6) {
+			int duration = g_system->getMillis() - _screenDownTime;
 
 			// When screen was pressed for less than 500ms then emulate a
 			// left mouse click.
 			if (duration < 500) {
 				event.type = Common::EVENT_LBUTTONUP;
-				processMouseEvent(event, curX, curY);
+				processMouseEvent(event, _curX, _curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_LBUTTONDOWN;
-				dragStartTime = getMillis();
+				_dragStartTime = g_system->getMillis();
 			}
 
 			// When screen was pressed for less than 1000ms then emulate a
 			// right mouse click.
 			else if (duration < 1000) {
 				event.type = Common::EVENT_RBUTTONUP;
-				processMouseEvent(event, curX, curY);
+				processMouseEvent(event, _curX, _curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_RBUTTONDOWN;
 			}
@@ -255,11 +228,10 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 			// middle mouse click.
 			else {
 				event.type = Common::EVENT_MBUTTONUP;
-				processMouseEvent(event, curX, curY);
+				processMouseEvent(event, _curX, _curY);
 				g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_MBUTTONDOWN;
 			}
-
 		}
 	}
 	return true;
@@ -268,20 +240,20 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 /**
  * Handles mouse motion.
  *
- * @param ev    The SDL event
+ * @param ev	 The SDL event
  * @param event The ScummVM event.
  * @return True if event was processed, false if not.
  */
 bool WebOSSdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
-	if (ev.motion.which == motionPtrIndex) {
-		int screenX = g_system->getWidth();
-		int screenY = g_system->getHeight();
-		curX = MIN(screenX, MAX(0, curX + ev.motion.xrel));
-		curY = MIN(screenY, MAX(0, curY + ev.motion.yrel));
-		dragDiffX += ev.motion.xrel;
-		dragDiffY += ev.motion.yrel;
+	if (ev.motion.which == _motionPtrIndex) {
+		int screenX = g_system->getOverlayWidth();
+		int screenY = g_system->getOverlayHeight();
+		_curX = MIN(screenX, MAX(0, _curX + ev.motion.xrel));
+		_curY = MIN(screenY, MAX(0, _curY + ev.motion.yrel));
+		_dragDiffX += ev.motion.xrel;
+		_dragDiffY += ev.motion.yrel;
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, curX, curY);
+		processMouseEvent(event, _curX, _curY);
 	}
 	return true;
 }
