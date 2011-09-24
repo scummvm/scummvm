@@ -164,3 +164,6 @@ ScummVM.config
 ScummVM.creator
 ScummVM.files
 ScummVM.includes
+
+#Ignore Komodo IDE/Edit project files
+*.komodoproject
