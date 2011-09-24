@@ -41,7 +41,6 @@ namespace Sci {
 const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
-//#define VM_DEBUG_SEND
 // Enable the define below to have the VM abort on cases where a conditional
 // statement is followed by an unconditional jump (which will most likely lead
 // to an infinite loop). Aids in detecting script bugs such as #3040722.

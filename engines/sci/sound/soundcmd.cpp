@@ -130,8 +130,14 @@ reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processPlaySound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
+		// The sound hasn't been initialized for some reason, so initialize it here.
+		// Happens in KQ6, room 460, when giving the creature to the bookwork (the
+		// bookworm's child). Fixes bug #3413301.
+		processInitSound(obj);
+		musicSlot = _music->getSlot(obj);
+		if (!musicSlot)
+			error("Failed to initialize uninitialized sound slot");
 	}
 
 	int resourceId = getSoundResourceId(obj);

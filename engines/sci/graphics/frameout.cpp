@@ -198,12 +198,13 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 	}
 }
 
-void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX) {
+void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY) {
 	PlanePictureEntry newPicture;
 	newPicture.object = object;
 	newPicture.pictureId = pictureId;
 	newPicture.picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
 	newPicture.startX = startX;
+	newPicture.startY = startY;
 	newPicture.pictureCels = 0;
 	_planePictures.push_back(newPicture);
 }
@@ -275,9 +276,8 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back().object, SELECTOR(priority));
 }
 
-// TODO: No idea yet how to implement this
-void GfxFrameout::kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId) {
-	addPlanePicture(planeObj, pictureId, forWidth);
+void GfxFrameout::kernelAddPicAt(reg_t planeObj, GuiResourceId pictureId, int16 pictureX, int16 pictureY) {
+	addPlanePicture(planeObj, pictureId, pictureX, pictureY);
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
@@ -403,6 +403,7 @@ void GfxFrameout::kernelFrameout() {
 					picEntry->y = planePicture->getSci32celY(pictureCelNr);
 					picEntry->x = planePicture->getSci32celX(pictureCelNr);
 					picEntry->picStartX = pictureIt->startX;
+					picEntry->picStartY = pictureIt->startY;
 
 					picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
@@ -425,8 +426,9 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 				itemEntry->picStartX = ((itemEntry->picStartX * _screen->getWidth()) / scriptsRunningWidth);
+				itemEntry->picStartY = ((itemEntry->picStartY * _screen->getHeight()) / scriptsRunningHeight);
 
-				// Out of view
+				// Out of view horizontally (sanity checks)
 				int16 pictureCelStartX = itemEntry->picStartX + itemEntry->x;
 				int16 pictureCelEndX = pictureCelStartX + itemEntry->picture->getSci32celWidth(itemEntry->celNo);
 				int16 planeStartX = it->planeOffsetX;
@@ -435,6 +437,9 @@ void GfxFrameout::kernelFrameout() {
 					continue;
 				if (pictureCelStartX > planeEndX)
 					continue;
+
+				// Out of view vertically (sanity checks)
+				// TODO
 
 				int16 pictureOffsetX = it->planeOffsetX;
 				int16 pictureX = itemEntry->x;
@@ -447,6 +452,7 @@ void GfxFrameout::kernelFrameout() {
 					}
 				}
 
+				// TODO: pictureOffsetY
 				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, it->planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 

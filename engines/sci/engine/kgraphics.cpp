@@ -1322,10 +1322,10 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();
-	int16 forWidth = argv[2].toSint16();
-	// argv[3] seems to be 0 most of the time
+	int16 pictureX = argv[2].toSint16();
+	int16 pictureY = argv[3].toSint16();
 
-	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, forWidth, pictureId);
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, pictureX, pictureY);
 	return s->r_acc;
 }
 
@@ -1334,12 +1334,7 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
-	// This kernel call likely seems to be doing the screen updates,
-	// as its called right after a view is updated
-
-	// TODO
 	g_sci->_gfxFrameout->kernelFrameout();
-
 	return NULL_REG;
 }
 

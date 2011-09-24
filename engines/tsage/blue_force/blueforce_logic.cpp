@@ -27,6 +27,7 @@
 #include "tsage/blue_force/blueforce_scenes3.h"
 #include "tsage/blue_force/blueforce_scenes6.h"
 #include "tsage/blue_force/blueforce_scenes8.h"
+#include "tsage/blue_force/blueforce_scenes9.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/graphics.h"
@@ -161,6 +162,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 880:
 		error("Scene group 8 not implemented");
 	case 900:
+		// Outside Warehouse
+		return new Scene900();
 	case 910:
 	case 920:
 	case 930:

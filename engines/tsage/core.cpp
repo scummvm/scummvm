@@ -2227,9 +2227,12 @@ void SceneObject::checkAngle(const SceneObject *obj) {
 
 void SceneObject::checkAngle(const Common::Point &pt) {
 	int angleAmount = GfxManager::getAngle(_position, pt);
-	if ((_vm->getGameID() == GType_Ringworld) || 
-			((angleAmount != -1) && (_animateMode == ANIM_MODE_9)))
+	if (angleAmount != -1) {
 		_angle = angleAmount;
+
+		if (_animateMode == ANIM_MODE_9)
+			_angle = (angleAmount + 180) % 360;
+	}
 
 	if (_objectWrapper && (_vm->getGameID() == GType_Ringworld))
 		_objectWrapper->dispatch();
@@ -3012,6 +3015,9 @@ void Player::enableControl() {
 }
 
 void Player::process(Event &event) {
+	if ((_vm->getGameID() != GType_Ringworld) && _action)
+		_action->process(event);
+
 	if (!event.handled && (event.eventType == EVENT_BUTTON_DOWN) &&
 			(_globals->_events.getCursor() == CURSOR_WALK) && _globals->_player._canWalk &&
 			(_position != event.mousePos) && _globals->_sceneObjects->contains(this)) {

@@ -58,6 +58,7 @@ struct FrameoutEntry {
 	Common::Rect celRect;
 	GfxPicture *picture;
 	int16 picStartX;
+	int16 picStartY;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
@@ -65,6 +66,7 @@ typedef Common::List<FrameoutEntry *> FrameoutList;
 struct PlanePictureEntry {
 	reg_t object;
 	int16 startX;
+	int16 startY;
 	GuiResourceId pictureId;
 	GfxPicture *picture;
 	FrameoutEntry *pictureCels; // temporary
@@ -93,10 +95,10 @@ public:
 	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
-	void kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId);
+	void kernelAddPicAt(reg_t planeObj, GuiResourceId pictureId, int16 pictureX, int16 pictureY);
 	void kernelFrameout();
 
-	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX);
+	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY = 0);
 	void deletePlanePictures(reg_t object);
 	void clear();
 
