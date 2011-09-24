@@ -2303,6 +2303,7 @@ if test -n "$_host"; then
 			_backend="n64"
 			_mt32emu=no
 			_build_scalers=no
+			_savegame_timestamp=no
 			_translation=no
 			_keymapper=no
 			_text_console=no
@@ -2629,7 +2630,7 @@ esac
 # Disable savegame timestamp support for backends which don't have a reliable real time clock
 #
 case $_backend in
-	gph)
+	gph | n64)
 		if test "$_savegame_timestamp" = auto ; then
 			_savegame_timestamp=no
 		else
