@@ -33,10 +33,13 @@
 
 namespace Pegasus {
 
+Neighborhood *g_neighborhood = 0;
+
 Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
 	_interruptionFilter = kFilterAllInput;
+	g_neighborhood = this;
 }
 
 Neighborhood::~Neighborhood() {
@@ -44,6 +47,7 @@ Neighborhood::~Neighborhood() {
 		g_allHotspots.remove(*it);
 
 	_neighborhoodHotspots.deleteHotspots();
+	g_neighborhood = 0;
 }
 
 void Neighborhood::init() {
@@ -387,6 +391,48 @@ bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2) {
 
 bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2) {
 	return !operator==(arg1, arg2);
+}
+
+Common::String Neighborhood::getBriefingMovie() {
+	// TODO: Interaction check
+
+	return Common::String();
+}
+
+Common::String Neighborhood::getEnvScanMovie() {
+	// TODO: Interaction check
+
+	return Common::String();
+}
+
+uint Neighborhood::getNumHints() {
+	// TODO: Interaction check
+
+	return 0;
+}
+
+Common::String Neighborhood::getHintMovie(uint hintNum) {
+	// TODO: Interaction check
+
+	return Common::String();
+}
+
+bool Neighborhood::canSolve() {
+	// TODO: Interaction check
+
+	return false;
+}
+
+void Neighborhood::doSolve() {
+	// TODO: Interaction check
+}
+
+bool Neighborhood::okayToJump() {
+	return !_vm->playerHasItemID(kGasCanister) && !_vm->playerHasItemID(kMachineGun);
+}
+
+tAirQuality Neighborhood::getAirQuality(const tRoomID) {
+	return kAirQualityGood;
 }
 
 } // End of namespace Pegasus

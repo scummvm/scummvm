@@ -41,8 +41,13 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
 #include "pegasus/items/itemlist.h"
+#include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/items/biochips/opticalchip.h"
+#include "pegasus/items/biochips/pegasuschip.h"
+#include "pegasus/items/inventory/airmask.h"
 #include "pegasus/items/inventory/inventoryitem.h"
+#include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
@@ -52,6 +57,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_saveAllowed = _loadAllowed = true;
 	_gameMenu = 0;
 	_deathReason = kDeathStranded;
+	_neighborhood = 0;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -178,16 +184,24 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 	case kInterfaceBiochip:
 		// Unused in game, but still in the data - no need to load it
 		break;
-	case kMapBiochip:
 	case kAIBiochip:
+		new AIChip(itemID, neighborhoodID, roomID, direction);
+		break;
 	case kPegasusBiochip:
+		new PegasusChip(itemID, neighborhoodID, roomID, direction);
+		break;
+	case kOpticalBiochip:
+		new OpticalChip(itemID, neighborhoodID, roomID, direction);
+		break;
+	case kMapBiochip:
 	case kRetinalScanBiochip:
 	case kShieldBiochip:
-	case kOpticalBiochip:
-		// TODO: Specialized biochip classes
+		// TODO: Rest of specialized biochip classes
 		new BiochipItem(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kAirMask:
+		new AirMask(itemID, neighborhoodID, roomID, direction);
+		break;
 	case kKeyCard:
 	case kGasCanister:
 		// TODO: Specialized inventory item classes
@@ -827,6 +841,99 @@ void PegasusEngine::refreshDisplay() {
 void PegasusEngine::resetEnergyDeathReason() {
 	// TODO!
 	_deathReason = kDeathStranded;
+}
+
+uint16 PegasusEngine::getSoundFXLevel() {
+	// TODO
+	return 0x100;
+}
+
+bool PegasusEngine::playerHasItem(const Item *item) {
+	return playerHasItemID(item->getObjectID());
+}
+
+bool PegasusEngine::playerHasItemID(const tItemID itemID) {
+	return itemInInventory(itemID) || itemInBiochips(itemID);
+}
+
+InventoryItem *PegasusEngine::getCurrentInventoryItem() {
+	// TODO
+	return 0;
+}
+
+bool PegasusEngine::itemInInventory(InventoryItem *item) {
+	return _items.itemInInventory(item);
+}
+
+bool PegasusEngine::itemInInventory(tItemID id) {
+	return _items.itemInInventory(id);
+}
+
+BiochipItem *PegasusEngine::getCurrentBiochip() {
+	// TODO
+	return 0;
+}
+
+bool PegasusEngine::itemInBiochips(BiochipItem *item) {
+	return _biochips.itemInInventory(item);
+}
+
+bool PegasusEngine::itemInBiochips(tItemID id) {
+	return _biochips.itemInInventory(id);
+}
+
+bool PegasusEngine::playerAlive() {
+	return (_shellNotification.getNotificationFlags() & kPlayerDiedFlag) == 0;
+}
+
+Common::String PegasusEngine::getBriefingMovie() {
+	if (_neighborhood)
+		return _neighborhood->getBriefingMovie();
+
+	return Common::String();
+}
+
+Common::String PegasusEngine::getEnvScanMovie() {
+	if (_neighborhood)
+		return _neighborhood->getEnvScanMovie();
+
+	return Common::String();
+}
+
+uint PegasusEngine::getNumHints() {
+	if (_neighborhood)
+		return _neighborhood->getNumHints();
+
+	return 0;
+}
+
+Common::String PegasusEngine::getHintMovie(uint hintNum) {
+	if (_neighborhood)
+		return _neighborhood->getHintMovie(hintNum);
+
+	return Common::String();
+}
+
+bool PegasusEngine::canSolve() {
+	if (_neighborhood)
+		return _neighborhood->canSolve();
+
+	return false;
+}
+
+void PegasusEngine::prepareForAIHint(const Common::String &movieName) {
+	if (g_neighborhood)
+		g_neighborhood->prepareForAIHint(movieName);
+}
+
+void PegasusEngine::cleanUpAfterAIHint(const Common::String &movieName) {
+	if (g_neighborhood)
+		g_neighborhood->cleanUpAfterAIHint(movieName);
+}
+
+void PegasusEngine::jumpToNewEnvironment(const tNeighborhoodID neighborhoodID, const tRoomID roomID, const tDirectionConstant direction) {
+	GameState.setNextLocation(neighborhoodID, roomID, direction);
+	_shellNotification.setNotificationFlags(kNeedNewJumpFlag, kNeedNewJumpFlag);
 }
 
 } // End of namespace Pegasus

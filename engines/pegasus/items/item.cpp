@@ -30,8 +30,11 @@
 #include "pegasus/elements.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/surface.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/item.h"
 #include "pegasus/items/itemlist.h"
+#include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/items/inventory/inventoryitem.h"
 
 namespace Pegasus {
 
@@ -128,30 +131,20 @@ Item::~Item() {
 	delete[] _itemExtras.entries;
 }
 
-Common::Error Item::writeToStream(Common::WriteStream *stream) {
+void Item::writeToStream(Common::WriteStream *stream) {
 	stream->writeUint16BE(_itemNeighborhood);
 	stream->writeUint16BE(_itemRoom);
 	stream->writeByte(_itemDirection);
 	stream->writeUint16BE(_itemOwnerID);
 	stream->writeUint16BE(_itemState);
-
-	if (stream->err())
-		return Common::kWritingFailed;
-	
-	return Common::kNoError;
 }
 
-Common::Error Item::readFromStream(Common::ReadStream *stream) {
+void Item::readFromStream(Common::ReadStream *stream) {
 	_itemNeighborhood = stream->readUint16BE();
 	_itemRoom = stream->readUint16BE();
 	_itemDirection = stream->readByte();
 	_itemOwnerID = stream->readUint16BE();
 	_itemState = stream->readUint16BE();
-	
-	if (stream->err())
-		return Common::kReadingFailed;
-	
-	return Common::kNoError;
 }
 
 tActorID Item::getItemOwner() const {
@@ -181,7 +174,11 @@ tItemState Item::getItemState() const {
 void Item::setItemState(const tItemState state) {
 	if (state != _itemState) {
 		_itemState = state;
-		// TODO: Selection
+
+		if (getItemType() == kInventoryItemType && ((PegasusEngine *)g_engine)->getCurrentInventoryItem() == (InventoryItem *)this)
+			select();
+		else if (getItemType() == kBiochipItemType && ((PegasusEngine *)g_engine)->getCurrentBiochip() == (BiochipItem *)this)
+			select();
 	}
 }
 
@@ -224,14 +221,24 @@ TimeValue Item::getSharedAreaTime() const {
 void Item::select() {
 	_isSelected = true;
 
-	// TODO: AI
+	if (g_AIArea) {
+		if (getItemType() == kInventoryItemType)
+			g_AIArea->setAIAreaToTime(kInventorySignature, kMiddleAreaSignature, getSharedAreaTime());
+		else
+			g_AIArea->setAIAreaToTime(kBiochipSignature, kMiddleAreaSignature, getSharedAreaTime());
+	}
 }
 
 void Item::deselect() {
 	_isActive = false;
 	_isSelected = false;
 
-	// TODO: AI
+	if (g_AIArea) {
+		if (getItemType() == kInventoryItemType)
+			g_AIArea->setAIAreaToTime(kInventorySignature, kMiddleAreaSignature, 0xffffffff);
+		else
+			g_AIArea->setAIAreaToTime(kBiochipSignature, kMiddleAreaSignature, 0xffffffff);
+	}
 }
 
 void Item::getItemStateEntry(ItemStateInfo info, uint32 index, tItemState &state, TimeValue &time) {	
@@ -284,6 +291,15 @@ Sprite *Item::getDragSprite(const tDisplayElementID id) const {
 	result->addFrame(frame, 0, 0);
 	result->setCurrentFrameIndex(0);
 	return result;
+}
+
+TimeValue Item::getInfoLeftTime() const {
+	return _itemInfo.infoLeftTime;
+}
+
+void Item::getInfoRightTimes(TimeValue &start, TimeValue &stop) const {
+	start = _itemInfo.infoRightStart;
+	stop = _itemInfo.infoRightStop;
 }
 
 } // End of namespace Pegasus

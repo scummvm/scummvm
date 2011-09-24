@@ -44,8 +44,8 @@ public:
 	ItemList();
 	virtual ~ItemList();
 	
-	virtual Common::Error writeToStream(Common::WriteStream *stream);
-	virtual Common::Error readFromStream(Common::ReadStream *stream);
+	virtual void writeToStream(Common::WriteStream *stream);
+	virtual void readFromStream(Common::ReadStream *stream);
 	
 	Item *findItemByID(const tItemID id);
 };

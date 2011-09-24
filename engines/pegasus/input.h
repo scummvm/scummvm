@@ -267,6 +267,10 @@ enum {
 								kFilterMod3Button
 };
 
+static const tInputBits kHintInterruption = kFilterAllInputNoAuto;
+static const tInputBits kWarningInterruption = kFilterNoInput;
+static const tInputBits kOpticalInterruption = kFilterAllInputNoAuto;
+
 /*
 
 	Buttons are defined as:

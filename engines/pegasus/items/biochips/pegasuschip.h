@@ -23,47 +23,33 @@
  *
  */
 
-#include "common/error.h"
-#include "common/stream.h"
+#ifndef PEGASUS_ITEMS_BIOCHIPS_PEGASUSCHIP_H
+#define PEGASUS_ITEMS_BIOCHIPS_PEGASUSCHIP_H
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/hotspot.h"
+#include "pegasus/items/biochips/biochipitem.h"
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+class PegasusChip : public BiochipItem {
+public:
+	PegasusChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	virtual ~PegasusChip();
 
-ItemList::ItemList() {
-}
+	void select();
 
-ItemList::~ItemList() {
-}
+	void setUpPegasusChip();
 
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
+	// Called to set up the Pegasus chip when the Pegasus chip is the current chip but does not
+	// own the center area.
+	void setUpPegasusChipRude();
+	void activatePegasusHotspots();
+	void clickInPegasusHotspot();
 
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
-	}
-}
-
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
-
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
-	}
-}
-
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
-
-	return 0;
-}
+protected:
+	Hotspot _recallSpot;
+};
 
 } // End of namespace Pegasus
+
+#endif

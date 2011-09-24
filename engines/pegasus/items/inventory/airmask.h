@@ -23,47 +23,54 @@
  *
  */
 
-#include "common/error.h"
-#include "common/stream.h"
+#ifndef PEGASUS_ITEMS_INVENTORY_AIRMASK_H
+#define PEGASUS_ITEMS_INVENTORY_AIRMASK_H
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/hotspot.h"
+#include "pegasus/timers.h"
+#include "pegasus/items/inventory/inventoryitem.h"
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+class AirMask : public InventoryItem, private Idler {
+public:
+	AirMask(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	virtual ~AirMask();
 
-ItemList::ItemList() {
-}
+	virtual void writeToStream(Common::WriteStream *);
+	virtual void readFromStream(Common::ReadStream *);
 
-ItemList::~ItemList() {
-}
+	virtual void setItemState(const tItemState);
+	void putMaskOn();
+	void takeMaskOff();
+	void toggleItemState();
+	void airQualityChanged();
 
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
+	bool isAirMaskInUse();
+	bool isAirMaskOn();
+	bool isAirFilterOn();
 
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
-	}
-}
+	void refillAirMask();
 
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
+	// Returns a percentage
+	uint getAirLeft();
 
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
-	}
-}
+	void activateAirMaskHotspots();
+	void clickInAirMaskHotspot();
 
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
+protected:
+	static void airMaskTimerExpired(FunctionPtr *, void *);
 
-	return 0;
-}
+	virtual void removedFromInventory();
+	virtual void addedToInventory();
+	void useIdleTime();
+
+	Hotspot _toggleSpot;
+	FuseFunction _oxygenTimer;
+};
+
+extern AirMask *g_airMask;
 
 } // End of namespace Pegasus
+
+#endif

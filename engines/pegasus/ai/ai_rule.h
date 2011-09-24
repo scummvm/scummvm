@@ -23,47 +23,64 @@
  *
  */
 
-#include "common/error.h"
-#include "common/stream.h"
+#ifndef PEGASUS_AI_AIRULE_H
+#define PEGASUS_AI_AIRULE_H
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "common/list.h"
+
+#include "pegasus/ai/ai_action.h"
+#include "pegasus/ai/ai_condition.h"
+
+namespace Common {
+	class ReadStream;
+	class WriteStream;
+}
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+class AICondition;
+class AIAction;
 
-ItemList::ItemList() {
-}
-
-ItemList::~ItemList() {
-}
-
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
-
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
+class AIRule {
+public:
+	AIRule(AICondition *condition, AIAction *rule) {
+		_ruleCondition = condition;
+		_ruleAction = rule;
+		_ruleActive = true;
 	}
-}
+	
+	~AIRule() {
+		if (_ruleCondition)
+			delete _ruleCondition;
 
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
-
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
+		if (_ruleAction)
+			delete _ruleAction;
 	}
-}
 
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
+	bool fireRule();
 
-	return 0;
-}
+	void activateRule() { _ruleActive = true; }
+	void deactivateRule() { _ruleActive = false; }
+	bool isRuleActive() { return _ruleActive; }
+
+	void writeAIRule(Common::WriteStream *);
+	void readAIRule(Common::ReadStream *);
+
+protected:
+	AICondition *_ruleCondition;
+	AIAction *_ruleAction;
+	bool _ruleActive;
+};
+
+class AIRuleList : public Common::List<AIRule *> {
+public:
+	AIRuleList() {}
+	~AIRuleList() {}
+
+	void writeAIRules(Common::WriteStream *);
+	void readAIRules(Common::ReadStream *);
+};
 
 } // End of namespace Pegasus
+
+#endif

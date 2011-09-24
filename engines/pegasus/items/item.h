@@ -294,8 +294,8 @@ public:
 	
 	// WriteToStream writes everything EXCEPT the item's ID.
 	// It is assumed that the calling function will write and read the ID.
-	virtual Common::Error writeToStream(Common::WriteStream *stream);
-	virtual Common::Error readFromStream(Common::ReadStream *stream);
+	virtual void writeToStream(Common::WriteStream *stream);
+	virtual void readFromStream(Common::ReadStream *stream);
 	
 	virtual tActorID getItemOwner() const;
 	virtual void setItemOwner(const tActorID owner);
@@ -312,7 +312,7 @@ public:
 	virtual tItemType getItemType() = 0;
 	
 	TimeValue getInfoLeftTime() const;
-	void getInfoRightTimes(TimeValue&, TimeValue&) const;
+	void getInfoRightTimes(TimeValue &, TimeValue &) const;
 	TimeValue getSharedAreaTime() const;
 
 	Sprite *getDragSprite(const tDisplayElementID) const;

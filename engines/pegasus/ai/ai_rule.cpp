@@ -23,47 +23,56 @@
  *
  */
 
-#include "common/error.h"
 #include "common/stream.h"
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/ai/ai_action.h"
+#include "pegasus/ai/ai_area.h"
+#include "pegasus/ai/ai_condition.h"
+#include "pegasus/ai/ai_rule.h"
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+bool AIRule::fireRule() {
+	if (_ruleActive && _ruleCondition && _ruleAction && _ruleCondition->fireCondition()) {
+		if (g_AIArea)
+			g_AIArea->lockAIOut();
 
-ItemList::ItemList() {
-}
+		_ruleAction->performAIAction(this);
 
-ItemList::~ItemList() {
-}
+		if (--_ruleAction->_actionCount <= 0)
+			deactivateRule();
 
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
+		if (g_AIArea)
+			g_AIArea->unlockAI();
 
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
+		return true;
 	}
+
+	return false;
 }
 
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
+void AIRule::writeAIRule(Common::WriteStream *stream) {
+	stream->writeByte(_ruleActive);
 
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
-	}
+	if (_ruleCondition)
+		_ruleCondition->writeAICondition(stream);
 }
 
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
+void AIRule::readAIRule(Common::ReadStream *stream) {
+	_ruleActive = stream->readByte();
 
-	return 0;
+	if (_ruleCondition)
+		_ruleCondition->readAICondition(stream);
+}
+
+void AIRuleList::writeAIRules(Common::WriteStream *stream) {
+	for (AIRuleList::iterator it = begin(); it != end(); it++)
+		(*it)->writeAIRule(stream);
+}
+
+void AIRuleList::readAIRules(Common::ReadStream *stream) {
+	for (AIRuleList::iterator it = begin(); it != end(); it++)
+		(*it)->readAIRule(stream);
 }
 
 } // End of namespace Pegasus

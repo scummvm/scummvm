@@ -23,47 +23,47 @@
  *
  */
 
-#include "common/error.h"
-#include "common/stream.h"
+#ifndef PEGASUS_ITEMS_BIOCHIPS_AICHIP_H
+#define PEGASUS_ITEMS_BIOCHIPS_AICHIP_H
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/hotspot.h"
+#include "pegasus/items/biochips/biochipitem.h"
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+class AIChip : public BiochipItem {
+public:
+	AIChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	virtual ~AIChip();
 
-ItemList::ItemList() {
-}
+	void select();
 
-ItemList::~ItemList() {
-}
+	void setUpAIChip();
 
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
+	// Called to set up the AI chip when the AI chip is the current chip but does not
+	// own the center area.
+	void setUpAIChipRude();
+	void activateAIHotspots();
+	void clickInAIHotspot(tHotSpotID);
 
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
-	}
-}
+	void takeSharedArea();
 
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
+	void showBriefingClicked();
+	void showEnvScanClicked();
+	void clearClicked();
 
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
-	}
-}
+protected:
+	Hotspot _briefingSpot;
+	Hotspot _scanSpot;
+	Hotspot _hint1Spot;
+	Hotspot _hint2Spot;
+	Hotspot _hint3Spot;
+	Hotspot _solveSpot;
+	bool _playingMovie;
+};
 
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
-
-	return 0;
-}
+extern AIChip *g_AIChip;
 
 } // End of namespace Pegasus
+
+#endif

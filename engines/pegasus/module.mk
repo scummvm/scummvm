@@ -20,11 +20,19 @@ MODULE_OBJS = \
 	timers.o \
 	transition.o \
 	util.o \
+	ai/ai_action.o \
+	ai/ai_area.o \
+	ai/ai_condition.o \
+	ai/ai_rule.o \
 	items/inventory.o \
 	items/inventorypicture.o \
 	items/item.o \
 	items/itemlist.o \
+	items/biochips/aichip.o \
 	items/biochips/biochipitem.o \
+	items/biochips/opticalchip.o \
+	items/biochips/pegasuschip.o \
+	items/inventory/airmask.o \
 	items/inventory/inventoryitem.o \
 	neighborhood/door.o \
 	neighborhood/exit.o \

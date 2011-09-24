@@ -30,6 +30,7 @@
 #include "common/util.h"
 
 #include "pegasus/types.h"
+#include "pegasus/util.h"
 #include "pegasus/items/item.h"
 
 namespace Common {
@@ -853,60 +854,6 @@ private:
 	tDirectionConstant _openDoorDirection;
 
 	// Pegasus Prime
-	#define NUM_FLAGS (sizeof(Unit) * 8)
-	#define BIT_INDEX_SHIFT (sizeof(Unit) + 2 - (sizeof(Unit)) / 3)
-	#define BIT_INDEX_MASK (NUM_FLAGS - 1)
-	template <typename Unit, uint32 kNumFlags>
-	class FlagsArray {
-	public:
-		FlagsArray() { clearAllFlags(); }
-		void clearAllFlags() { memset(_flags, 0, sizeof(_flags)); }
-		void setAllFlags() { memset(_flags, ~((Unit)0), sizeof(_flags)); }
-		void setFlag(uint32 flag) { _flags[flag >> BIT_INDEX_SHIFT] |= 1 << (flag & BIT_INDEX_MASK); }
-		void clearFlag(uint32 flag) { _flags[flag >> BIT_INDEX_SHIFT] &= ~(1 << (flag & BIT_INDEX_MASK)); }
-		void setFlag(uint32 flag, bool val) { if (val) setFlag(flag); else clearFlag(flag); }
-		bool getFlag(uint32 flag) { return (_flags[flag >> BIT_INDEX_SHIFT] & (1 << (flag & BIT_INDEX_MASK))) != 0; }
-		bool anyFlagSet() {
-			for (uint32 i = 0; i < sizeof(_flags); i++)
-				if (_flags[i] != 0)
-					return true;
-			return false;
-		}
-
-		void readFromStream(Common::ReadStream *stream) {
-			// Shortcut
-			if (sizeof(Unit) == 1) {
-				stream->read(_flags, sizeof(_flags));
-				return;
-			}
-
-			for (uint32 i = 0; i < ARRAYSIZE(_flags); i++) {
-				if (sizeof(Unit) == 2)
-					_flags[i] = stream->readUint16BE();
-				else /* if (sizeof(Unit) == 4) */
-					_flags[i] = stream->readUint32BE();
-			}
-		}
-
-		void writeToStream(Common::WriteStream *stream) {
-			// Shortcut
-			if (sizeof(Unit) == 1) {
-				stream->write(_flags, sizeof(_flags));
-				return;
-			}
-
-			for (uint32 i = 0; i < ARRAYSIZE(_flags); i++) {
-				if (sizeof(Unit) == 2)
-					stream->writeUint16BE(_flags[i]);
-				else /* if (sizeof(Unit) == 4) */
-					stream->writeUint32BE(_flags[i]);
-			}
-		}
-
-	private:
-		Unit _flags[(kNumFlags - 1) / NUM_FLAGS + 1];
-	};
-
 	FlagsArray<byte, kNumGlobalFlags> _globalFlags;
 	FlagsArray<byte, kNumScoringFlags> _scoringFlags;
 	FlagsArray<uint32, kNumItems> _itemTakenFlags;
@@ -934,6 +881,6 @@ private:
 
 } // End of namespace Pegasus
 
-#define GameState	(::Pegasus::GameStateManager::instance())
+#define GameState (::Pegasus::GameStateManager::instance())
 
 #endif

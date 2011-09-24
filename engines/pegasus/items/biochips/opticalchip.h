@@ -23,47 +23,49 @@
  *
  */
 
-#include "common/error.h"
-#include "common/stream.h"
+#ifndef PEGASUS_ITEMS_BIOCHIPS_OPTICALCHIP_H
+#define PEGASUS_ITEMS_BIOCHIPS_OPTICALCHIP_H
 
-#include "engines/pegasus/items/item.h"
-#include "engines/pegasus/items/itemlist.h"
+#include "pegasus/hotspot.h"
+#include "pegasus/util.h"
+#include "pegasus/items/biochips/biochipitem.h"
 
 namespace Pegasus {
 
-// TODO: Don't use global construction!
-ItemList g_allItems;
+class OpticalChip : public BiochipItem {
+public:
+	OpticalChip(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	virtual ~OpticalChip();
 
-ItemList::ItemList() {
-}
+	virtual void writeToStream(Common::WriteStream *);
+	virtual void readFromStream(Common::ReadStream *);
 
-ItemList::~ItemList() {
-}
+	void addAries();
+	void addMercury();
+	void addPoseidon();
 
-void ItemList::writeToStream(Common::WriteStream *stream) {
-	stream->writeUint32BE(size());
+	void activateOpticalHotspots();
+	void clickInOpticalHotspot(tHotSpotID);
+	void playOpMemMovie(tHotSpotID);
 
-	for (ItemIterator it = begin(); it != end(); it++) {
-		stream->writeUint16BE((*it)->getObjectID());
-		(*it)->writeToStream(stream);
-	}
-}
+protected:
+	enum {
+		kOpticalAriesExposed,
+		kOpticalMercuryExposed,
+		kOpticalPoseidonExposed,
+		kNumOpticalChipFlags
+	};
+	
+	void setUpOpticalChip();
+	
+	FlagsArray<byte, kNumOpticalChipFlags> _opticalFlags;
+	Hotspot _ariesHotspot;
+	Hotspot _mercuryHotspot;
+	Hotspot _poseidonHotspot;
+};
 
-void ItemList::readFromStream(Common::ReadStream *stream) {
-	uint32 itemCount = stream->readUint32BE();
-
-	for (uint32 i = 0; i < itemCount; i++) {
-		tItemID itemID = stream->readUint16BE();
-		g_allItems.findItemByID(itemID)->readFromStream(stream);
-	}
-}
-
-Item *ItemList::findItemByID(const tItemID id) {
-	for (ItemIterator it = begin(); it != end(); it++)
-		if ((*it)->getObjectID() == id)
-			return *it;
-
-	return 0;
-}
+extern OpticalChip *g_opticalChip;
 
 } // End of namespace Pegasus
+
+#endif

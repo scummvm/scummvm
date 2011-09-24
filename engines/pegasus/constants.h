@@ -33,6 +33,8 @@
 
 namespace Pegasus {
 
+// TODO: Organize these
+
 const tGameID kGameIDNothing = -1;
 
 const tActorID kNoActorID = kGameIDNothing;
@@ -682,6 +684,53 @@ enum {
 	// Winning
 	kPlayerWonGame
 };
+
+static const tCoordType kAILeftAreaLeft = 76;
+static const tCoordType kAILeftAreaTop = 334;
+
+static const tCoordType kAILeftAreaWidth = 96;
+static const tCoordType kAILeftAreaHeight = 96;
+
+static const tCoordType kAIMiddleAreaLeft = 172;
+static const tCoordType kAIMiddleAreaTop = 334;
+
+static const tCoordType kAIMiddleAreaWidth = 192;
+static const tCoordType kAIMiddleAreaHeight = 96;
+
+static const tCoordType kAIRightAreaLeft = 364;
+static const tCoordType kAIRightAreaTop = 334;
+
+static const tCoordType kAIRightAreaWidth = 96;
+static const tCoordType kAIRightAreaHeight = 96;
+
+enum {
+	kTSAPlayerNotArrived,				//	initial state, must be zero
+	kTSAPlayerForcedReview,				//	Player must watch TBP before rip occurs.
+	kTSAPlayerDetectedRip,				//	Player finished TBP, rip alarm just went off.
+	kTSAPlayerNeedsHistoricalLog,		//	Player is instructed to get historical log
+	kTSAPlayerGotHistoricalLog,
+	kTSAPlayerInstalledHistoricalLog,
+	kTSABossSawHistoricalLog,
+	kRobotsAtCommandCenter,
+	kRobotsAtFrontDoor,
+	kRobotsAtReadyRoom,
+	kPlayerLockedInPegasus,
+	kPlayerOnWayToPrehistoric,
+	kPlayerWentToPrehistoric,
+	kPlayerOnWayToNorad,
+	kPlayerOnWayToMars,
+	kPlayerOnWayToWSC,
+	kPlayerFinishedWithTSA
+};
+
+static const tDirectionConstant kNorth = 0;
+static const tDirectionConstant kSouth = 1;
+static const tDirectionConstant kEast = 2;
+static const tDirectionConstant kWest = 3;
+
+// TODO: Remove me
+const tRoomID kTSA37 = 42;
+const tRoomID kTinyTSA37 = 0;
 
 } // End of namespace Pegasus
 

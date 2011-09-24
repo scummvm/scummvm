@@ -26,6 +26,7 @@
 #include "common/stream.h"
 
 #include "pegasus/pegasus.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/inventoryitem.h"
 
 namespace Pegasus {
@@ -90,13 +91,15 @@ TimeValue InventoryItem::getAnimationTime() const {
 void InventoryItem::select() {
 	Item::select();
 
-	// TODO: AI
+	if (g_AIArea)
+		g_AIArea->setAIAreaToTime(kInventorySignature, kLeftAreaSignature, getLeftAreaTime());
 }
 
 void InventoryItem::deselect() {
 	Item::deselect();
 
-	// TODO: AI
+	if (g_AIArea)
+		g_AIArea->setAIAreaToTime(kInventorySignature, kLeftAreaSignature, 0xffffffff);
 }
 
 void InventoryItem::getPanelTimes(TimeValue &start, TimeValue &stop) const {

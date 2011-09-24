@@ -241,8 +241,8 @@ protected:
 
 class FuseFunction : public Fuse, public FunctionPtr {
 public:
-	FuseFunction();
-	virtual ~FuseFunction();
+	FuseFunction() {}
+	virtual ~FuseFunction() {}
 
 protected:
 	virtual void invokeAction() { callFunction(); }

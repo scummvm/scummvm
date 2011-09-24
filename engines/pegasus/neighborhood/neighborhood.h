@@ -113,6 +113,20 @@ public:
 
 	virtual bool actionQueueEmpty() { return _actionQueue.empty(); }
 
+	virtual Common::String getBriefingMovie();
+	virtual Common::String getEnvScanMovie();
+	virtual uint getNumHints();
+	virtual Common::String getHintMovie(uint);
+	virtual bool canSolve();
+	virtual void prepareForAIHint(const Common::String &) {}
+	virtual void cleanUpAfterAIHint(const Common::String &) {}
+	virtual void doSolve();
+
+	virtual bool okayToJump();
+
+	virtual tAirQuality getAirQuality(const tRoomID);
+	virtual void checkAirMask() {}
+
 protected:
 	virtual void receiveNotification(Notification *, const tNotificationFlags);
 
@@ -145,6 +159,8 @@ protected:
 
 	tInputBits _interruptionFilter;
 };
+
+extern Neighborhood *g_neighborhood;
 
 } // End of namespace Pegasus
 

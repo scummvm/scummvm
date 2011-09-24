@@ -27,6 +27,7 @@
 #include "common/stream.h"
 
 #include "pegasus/pegasus.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/biochipitem.h"
 
 namespace Pegasus {
@@ -80,13 +81,15 @@ TimeValue BiochipItem::getRightAreaTime() const {
 void BiochipItem::select() {
 	Item::select();
 
-	// TODO: AI
+	if (g_AIArea)
+		g_AIArea->setAIAreaToTime(kBiochipSignature, kRightAreaSignature, getRightAreaTime());
 }
 
 void BiochipItem::deselect() {
 	Item::deselect();
 
-	// TODO: AI
+	if (g_AIArea)
+		g_AIArea->setAIAreaToTime(kBiochipSignature, kRightAreaSignature, 0xffffffff);
 }
 
 } // End of namespace Pegasus

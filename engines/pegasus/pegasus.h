@@ -53,6 +53,9 @@ class Idler;
 class Cursor;
 class TimeBase;
 class GameMenu;
+class InventoryItem;
+class BiochipItem;
+class Neighborhood;
 
 class PegasusEngine : public ::Engine, public InputHandler, public NotificationManager {
 friend class InputHandler;
@@ -73,6 +76,7 @@ public:
 	// Base classes
 	GraphicsManager *_gfx;
 	Common::MacResManager *_resFork;
+	Cursor *_cursor;
 
 	// Menu
 	void useMenu(GameMenu *menu);
@@ -84,11 +88,20 @@ public:
 	void removeIdler(Idler *idler);
 	void addTimeBase(TimeBase *timeBase);
 	void removeTimeBase(TimeBase *timeBase);
-	void swapSaveAllowed(bool allow) { _saveAllowed = allow; }
-	void swapLoadAllowed(bool allow) { _loadAllowed = allow; }
+	bool swapSaveAllowed(bool allow) {
+		bool old = _saveAllowed;
+		_saveAllowed = allow;
+		return old;
+	}
+	bool swapLoadAllowed(bool allow) {
+		bool old = _loadAllowed;
+		_loadAllowed = allow;
+		return old;
+	}
 	void delayShell(TimeValue time, TimeScale scale);
 	void resetIntroTimer();
 	void refreshDisplay();
+	bool playerAlive();
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
@@ -99,10 +112,37 @@ public:
 	tDeathReason getEnergyDeathReason() { return _deathReason; }
 	void resetEnergyDeathReason();
 
+	// Volume
+	uint16 getSoundFXLevel();
+
+	// Items
+	bool playerHasItem(const Item *);
+	bool playerHasItemID(const tItemID);
+
+	// Inventory Items
+	InventoryItem *getCurrentInventoryItem();
+	bool itemInInventory(InventoryItem *);
+	bool itemInInventory(tItemID);
+
+	// Biochips
+	BiochipItem *getCurrentBiochip();
+	bool itemInBiochips(BiochipItem *);
+	bool itemInBiochips(tItemID);
+
+	// AI
+	Common::String getBriefingMovie();
+	Common::String getEnvScanMovie();
+	uint getNumHints();
+	Common::String getHintMovie(uint);
+	bool canSolve();
+	void prepareForAIHint(const Common::String &);
+	void cleanUpAfterAIHint(const Common::String &);
+
+	// Neighborhood
+	void jumpToNewEnvironment(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+
 protected:
 	Common::Error run();
-
-	Cursor *_cursor;
 
 	Notification _shellNotification;
 	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
@@ -155,6 +195,9 @@ private:
 
 	// Death
 	tDeathReason _deathReason;
+
+	// Neighborhood
+	Neighborhood *_neighborhood;
 };
 
 } // End of namespace Pegasus
