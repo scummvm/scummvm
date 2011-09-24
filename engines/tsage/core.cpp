@@ -2962,6 +2962,7 @@ void Visage::flip(GfxSurface &gfxSurface) {
 
 Player::Player(): SceneObject() {
 	_canWalk = false;
+	_enabled = false;
 	_uiEnabled = false;
 	_field8C = 0;
 }

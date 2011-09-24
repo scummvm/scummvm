@@ -131,6 +131,8 @@ public:
 				if (in) {
 					if (TsAGE::Saver::readSavegameHeader(in, header)) {
 						saveList.push_back(SaveStateDescriptor(slot, header.saveName));
+
+						header.thumbnail->free();
 						delete header.thumbnail;
 					}
 
