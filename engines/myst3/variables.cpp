@@ -35,7 +35,11 @@ Variables::Variables(Myst3Engine *vm):
 
 	VAR(142, MovieOverrideStartFrame, true)
 	VAR(143, MovieOverrideEndFrame, true)
-
+	VAR(144, MovieVolume1, true)
+	VAR(145, MovieVolume2, true)
+	VAR(146, MovieUnk146, true)
+	VAR(147, MovieUnk147, true)
+	VAR(148, MovieUnk148, true)
 	VAR(149, MovieConditionBit, true)
 	VAR(150, MoviePreloadToMemory, true)
 	VAR(151, MovieScriptDriven, true)
@@ -43,12 +47,26 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(153, MovieNextFrameGetVar, true)
 	VAR(154, MovieStartFrameVar, true)
 	VAR(155, MovieEndFrameVar, true)
-
+	VAR(156, MovieForce2d, true)
+	VAR(157, MovieVolumeVar, true)
+	VAR(158, MovieSoundHeading, true)
+	VAR(159, MoviePanningStrenght, true)
+	VAR(160, MovieForcePause, true)
+	VAR(161, MovieUnk161, true)
+	VAR(162, MovieUnk162, true)
+	VAR(163, MovieOverrideCondition, true)
 	VAR(164, MovieUVar, true)
 	VAR(165, MovieVVar, true)
 	VAR(166, MovieOverridePosition, true)
 	VAR(167, MovieOverridePosU, true)
 	VAR(168, MovieOverridePosV, true)
+	VAR(169, MovieScale, true)
+	VAR(170, MovieUnk170, true)
+	VAR(171, MovieUnk171, true)
+	VAR(172, MovieUnk172, true)
+	VAR(173, MovieVarPlaying, true)
+
+	VAR(178, MovieUnk178, true)
 
 
 #undef VAR

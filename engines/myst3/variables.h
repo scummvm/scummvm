@@ -47,6 +47,16 @@ public:
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)
 
+	DECLARE_VAR(150, MoviePreloadToMemory)
+	DECLARE_VAR(151, MovieScriptDriven)
+	DECLARE_VAR(153, MovieNextFrameGetVar)
+	DECLARE_VAR(163, MovieOverrideCondition)
+	DECLARE_VAR(164, MovieUVar)
+	DECLARE_VAR(165, MovieVVar)
+	DECLARE_VAR(166, MovieOverridePosition)
+	DECLARE_VAR(167, MovieOverridePosU)
+	DECLARE_VAR(168, MovieOverridePosV)
+
 private:
 	Myst3Engine *_vm;
 

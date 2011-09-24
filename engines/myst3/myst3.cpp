@@ -267,7 +267,7 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) 
 	}
 }
 
-void Myst3Engine::loadMovie(uint16 id, bool preload, uint16 condition) {
+void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
 	Movie *movie = new Movie(_archive, id);
 	movie->setCondition(condition);
 	_movies.push_back(movie);

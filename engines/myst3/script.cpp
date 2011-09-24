@@ -37,8 +37,16 @@ Script::Script(Myst3Engine *vm):
 	OPCODE(8, nodeFrameInitCond);
 	OPCODE(9, nodeFrameInitIndex);
 	OPCODE(11, stopWholeScript);
+	OPCODE(17, movieInitLooping);
+	OPCODE(18, movieInitCondLooping);
 	OPCODE(19, movieInitCond);
+	OPCODE(20, movieInitPreloadLooping);
+	OPCODE(21, movieInitCondPreloadLooping);
 	OPCODE(22, movieInitCondPreload);
+	OPCODE(23, movieInitFrameVar);
+	OPCODE(24, movieInitFrameVarPreload);
+	OPCODE(25, movieInitOverrridePosition);
+	OPCODE(26, movieInitScriptedPosition);
 	OPCODE(35, sunspotAdd);
 	OPCODE(49, varSetZero);
 	OPCODE(50, varSetOne);
@@ -223,15 +231,114 @@ void Script::stopWholeScript(Context &c, const Opcode &cmd) {
 	c.endScript = true;
 }
 
+void Script::movieInitLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Init movie %d, looping", cmd.op, cmd.args[0]);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, 1, false, true);
+}
+
+void Script::movieInitCondLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Init movie %d with condition %d, looping", cmd.op, cmd.args[0], cmd.args[1]);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], false, true);
+}
+
 void Script::movieInitCond(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Init movie %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	_vm->loadMovie(cmd.args[0], false, cmd.args[1]);
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], true, false);
 }
+
+void Script::movieInitPreloadLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d, looping", cmd.op, cmd.args[0]);
+
+	_vm->_vars->setMoviePreloadToMemory(true);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, 1, false, true);
+}
+
+void Script::movieInitCondPreloadLooping(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d, looping", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_vars->setMoviePreloadToMemory(true);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], false, true);
+}
+
 void Script::movieInitCondPreload(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d", cmd.op, cmd.args[0], cmd.args[1]);
 
-	_vm->loadMovie(cmd.args[0], true, cmd.args[1]);
+	_vm->_vars->setMoviePreloadToMemory(true);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], true, false);
+}
+
+void Script::movieInitFrameVar(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Init movie %d with next frame var %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_vars->setMovieScriptDriven(true);
+	_vm->_vars->setMovieNextFrameGetVar(cmd.args[1]);
+
+	uint32 condition = _vm->_vars->getMovieOverrideCondition();
+	_vm->_vars->setMovieOverrideCondition(0);
+
+	if (!condition)
+		condition = 1;
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, condition, false, true);
+}
+
+void Script::movieInitFrameVarPreload(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with next frame var %d",
+			cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->_vars->setMoviePreloadToMemory(true);
+	_vm->_vars->setMovieScriptDriven(true);
+	_vm->_vars->setMovieNextFrameGetVar(cmd.args[1]);
+
+	uint32 condition = _vm->_vars->getMovieOverrideCondition();
+	_vm->_vars->setMovieOverrideCondition(0);
+
+	if (!condition)
+		condition = 1;
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, condition, false, true);
+}
+
+void Script::movieInitOverrridePosition(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with condition %d and position U %d V %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2], cmd.args[3]);
+
+	_vm->_vars->setMoviePreloadToMemory(true);
+	_vm->_vars->setMovieScriptDriven(true);
+	_vm->_vars->setMovieOverridePosition(true);
+	_vm->_vars->setMovieOverridePosU(cmd.args[2]);
+	_vm->_vars->setMovieOverridePosV(cmd.args[3]);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, cmd.args[1], false, true);
+}
+
+void Script::movieInitScriptedPosition(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Preload movie %d with position U-var %d V-var %d",
+			cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	_vm->_vars->setMoviePreloadToMemory(true);
+	_vm->_vars->setMovieScriptDriven(true);
+	_vm->_vars->setMovieUVar(cmd.args[1]);
+	_vm->_vars->setMovieUVar(cmd.args[2]);
+
+	uint16 movieid = _vm->_vars->valueOrVarValue(cmd.args[0]);
+	_vm->loadMovie(movieid, 1, false, true);
 }
 
 void Script::sunspotAdd(Context &c, const Opcode &cmd) {

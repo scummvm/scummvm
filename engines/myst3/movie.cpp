@@ -78,7 +78,7 @@ Movie::Movie(Archive *archive, uint16 id) {
 
 void Movie::draw() {
 	if (_bink.endOfVideo())
-		return;
+		_bink.seekToFrame(_bink.getFrameCount() / 2);
 
 	const float w = _bink.getWidth() / (float)(_movieTextureSize);
 	const float h = _bink.getHeight() / (float)(_movieTextureSize);

@@ -71,8 +71,16 @@ private:
 	DECLARE_OPCODE(nodeFrameInitCond);
 	DECLARE_OPCODE(nodeFrameInitIndex);
 	DECLARE_OPCODE(stopWholeScript);
+	DECLARE_OPCODE(movieInitLooping);
+	DECLARE_OPCODE(movieInitCondLooping);
 	DECLARE_OPCODE(movieInitCond);
+	DECLARE_OPCODE(movieInitPreloadLooping);
+	DECLARE_OPCODE(movieInitCondPreloadLooping);
 	DECLARE_OPCODE(movieInitCondPreload);
+	DECLARE_OPCODE(movieInitFrameVar);
+	DECLARE_OPCODE(movieInitFrameVarPreload);
+	DECLARE_OPCODE(movieInitOverrridePosition);
+	DECLARE_OPCODE(movieInitScriptedPosition);
 	DECLARE_OPCODE(sunspotAdd);
 	DECLARE_OPCODE(varSetZero);
 	DECLARE_OPCODE(varSetOne);

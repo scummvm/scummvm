@@ -73,7 +73,7 @@ public:
 	void runScriptsFromNode(uint16 nodeID, uint8 roomID = 0, uint32 ageID = 0);
 	void runNodeInitScripts();
 
-	void loadMovie(uint16 id, bool preload, uint16 condition);
+	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 private:
 	OSystem *_system;
 	Console *_console;
