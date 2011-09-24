@@ -83,36 +83,30 @@ bool Scene900::Object1::startAction(CursorType action, Event &event) {
 			return true;
 		}
 		break;
-	case CURSOR_1000:
-		if (BF_GLOBALS._events.getCursor() == 26){
-			if (BF_GLOBALS._v4CEC0 == 2) {
-				SceneItem::display2(900, 14);
-				return true;
+	case INV_WAREHOUSE_KEYS:
+		if (BF_GLOBALS._v4CEC0 == 2) {
+			SceneItem::display2(900, 14);
+		} else {
+			if (BF_GLOBALS._v4CEC0 == 0) {
+				if (!BF_GLOBALS.getFlag(fGotPointsForUnlockGate)) {
+					BF_GLOBALS.setFlag(fGotPointsForUnlockGate);
+					BF_GLOBALS._uiElements.addScore(30);
+				}
+				BF_GLOBALS._v4CEC0 = 1;
 			} else {
-				if (BF_GLOBALS._v4CEC0 == 0) {
-					if (!BF_GLOBALS.getFlag(fGotPointsForUnlockGate)) {
-						BF_GLOBALS.setFlag(fGotPointsForUnlockGate);
+				if (!BF_GLOBALS.getFlag(fGotPointsForLockGate)) {
+					if (BF_GLOBALS._bookmark == bEndDayThree) {
+						BF_GLOBALS.setFlag(fGotPointsForLockGate);
 						BF_GLOBALS._uiElements.addScore(30);
 					}
-					BF_GLOBALS._v4CEC0 = 1;
-				} else {
-					if (!BF_GLOBALS.getFlag(fGotPointsForLockGate)) {
-						if (BF_GLOBALS._bookmark == bEndDayThree) {
-							BF_GLOBALS.setFlag(fGotPointsForLockGate);
-							BF_GLOBALS._uiElements.addScore(30);
-						}
-					}
-					BF_GLOBALS._v4CEC0 = 0;
 				}
-				scene->_sceneMode = 9004;
-				BF_GLOBALS._player.disableControl();
-				scene->setAction(&scene->_sequenceManager1, scene, 9004, &BF_GLOBALS._player, NULL);
-				return true;
+				BF_GLOBALS._v4CEC0 = 0;
 			}
-		} else {
-			return false;
+			scene->_sceneMode = 9004;
+			BF_GLOBALS._player.disableControl();
+			scene->setAction(&scene->_sequenceManager1, scene, 9004, &BF_GLOBALS._player, NULL);
 		}
-		break;
+		return true;
 	default:
 		return NamedObject::startAction(action, event);
 	}
@@ -136,18 +130,14 @@ bool Scene900::Object2::startAction(CursorType action, Event &event) {
 		} else
 			return NamedObject::startAction(action, event);
 		break;
-	case CURSOR_1000:
-		if (BF_GLOBALS._events.getCursor() == 26) {
-			if (BF_GLOBALS._v4CEC0 == 2) {
-				BF_GLOBALS._player.disableControl();
-				scene->_sceneMode = 9012;
-				scene->setAction(&scene->_sequenceManager1, scene, 9012, &BF_GLOBALS._player, &scene->_object2, NULL);
-			} else
-				SceneItem::display2(900, 5);
-			return true;
+	case INV_WAREHOUSE_KEYS:
+		if (BF_GLOBALS._v4CEC0 == 2) {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 9012;
+			scene->setAction(&scene->_sequenceManager1, scene, 9012, &BF_GLOBALS._player, &scene->_object2, NULL);
 		} else
-			return false;
-		break;
+			SceneItem::display2(900, 5);
+		return true;
 	default:
 		return NamedObject::startAction(action, event);
 	}
