@@ -243,7 +243,8 @@ void UICollection::show() {
 void UICollection::erase() {
 	if (_clearScreen) {
 		Rect tempRect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
-		GLOBALS._screenSurface.fillRect(tempRect, 0);
+		BF_GLOBALS._screenSurface.fillRect(tempRect, 0);
+		BF_GLOBALS._sceneManager._scene->_backSurface.fillRect(tempRect, 0);
 		_clearScreen = false;
 	}
 }
@@ -254,9 +255,14 @@ void UICollection::resetClear() {
 
 void UICollection::draw() {
 	if (_visible) {
-		// Draw the elements
+		// Draw the elements onto the background
 		for (uint idx = 0; idx < _objList.size(); ++idx)
 			_objList[idx]->draw();
+
+		// Draw the resulting UI onto the screen
+		BF_GLOBALS._screenSurface.copyFrom(BF_GLOBALS._sceneManager._scene->_backSurface, 
+			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
+			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 		_clearScreen = 1;
 	}
