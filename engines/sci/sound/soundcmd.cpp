@@ -163,6 +163,9 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	// Reset hold when starting a new song. kDoSoundSetHold is always called after
+	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
+	musicSlot->hold = -1;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
