@@ -766,7 +766,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse433(0x9A2C0409);
 	
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 3, 1100, 243, 340, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 3, 1100, 243, 340, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 	
 	tempSprite = insertStaticSprite(0x03C82530, 100);
@@ -781,7 +781,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x04063110, 500);
 	topY4 = tempSprite->getY() + 1; 
 
-	_class466 = addSprite(new Class466(_vm, getGlobalVar(0x000CF819) && which != 1));
+	_class466 = insertSprite<Class466>(getGlobalVar(0x000CF819) && which != 1);
 	_class466->setClipRect(0, topY4, 640, 480);
 	
 	insertStaticSprite(0x400B04B0, 1200);
@@ -792,7 +792,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0xA29223FA, 1200);
 	x2 = tempSprite->getX() + tempSprite->getDrawRect().width;
 
-	class464 = addSprite(new Class464(_vm));
+	class464 = insertSprite<Class464>();
 
 	debug("Scene1201: which = %d", which);
 
@@ -833,20 +833,18 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else {
 		setBackground(0x40206EC5);
 		setPalette(0x40206EC5);
-		_asRightDoor = addSprite(new AsScene1201RightDoor(_vm, _klayman, which == 2));
+		_asRightDoor = insertSprite<AsScene1201RightDoor>(_klayman, which == 2);
 	}
 
 	if (getGlobalVar(0x000CF819)) {
 		insertStaticSprite(0x10002ED8, 500);
 		if (!getGlobalVar(0x0A18CA33)) {
-			AsScene1201TntMan *asTntMan;
-			asTntMan = new AsScene1201TntMan(_vm, this, _class466, which == 1);
-			asTntMan->setClipRect(x1, 0, x2, 480);
-			_vm->_collisionMan->addSprite(asTntMan);
-			_asTntMan = addSprite(asTntMan);
-			tempSprite = addSprite(new Class465(_vm, _asTntMan));
+			_asTntMan = insertSprite<AsScene1201TntMan>(this, _class466, which == 1);
+			_asTntMan->setClipRect(x1, 0, x2, 480);
+			_asTntMan->setRepl(64, 0);
+			_vm->_collisionMan->addSprite(_asTntMan);
+			tempSprite = insertSprite<Class465>(_asTntMan);
 			tempSprite->setClipRect(x1, 0, x2, 480);
-			asTntMan->setRepl(64, 0);
 		}
 		
 		uint32 tntIndex = 1; 
@@ -859,7 +857,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 				clipY2 = topY2;
 			else
 				clipY2 = topY3;
-			addSprite(new SsScene1201Tnt(_vm, tntIndex, getSubVar(0x10055D14, tntIndex), clipY2));
+			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(0x10055D14, tntIndex), clipY2);
 			elemIndex = getSubVar(0x10055D14, tntIndex + 1);
 			if (kScene1201PointArray[elemIndex].y < 175)
 				clipY2 = topY1;
@@ -867,7 +865,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 				clipY2 = topY2;
 			else
 				clipY2 = topY3;
-			addSprite(new SsScene1201Tnt(_vm, tntIndex + 1, getSubVar(0x10055D14, tntIndex + 1), clipY2));
+			insertSprite<SsScene1201Tnt>(tntIndex + 1, getSubVar(0x10055D14, tntIndex + 1), clipY2);
 			tntIndex += 3;
 		}
 
@@ -895,7 +893,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 				else
 					clipY2 = topY3;
 			}
-			addSprite(new SsScene1201Tnt(_vm, tntIndex, getSubVar(0x10055D14, tntIndex), clipY2));
+			insertSprite<SsScene1201Tnt>(tntIndex, getSubVar(0x10055D14, tntIndex), clipY2);
 			tntIndex++;
 		}
 
@@ -909,7 +907,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = insertStaticSprite(0x63D400BC, 900);
 
-	_asLeftDoor = addSprite(new AsScene1201LeftDoor(_vm, _klayman));
+	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klayman);
 	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
 	if (getGlobalVar(0x0A310817) && ! getGlobalVar(0x0112090A)) {
@@ -919,12 +917,12 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asMatch = NULL;
 
 	if (getGlobalVar(0x0112090A) < 3) {
-		_asMatch = addSprite(new AsScene1201Match(_vm, this));
+		_asMatch = insertSprite<AsScene1201Match>(this);
 		_vm->_collisionMan->addSprite(_asMatch);
 	}
 
 	if (getGlobalVar(0x0A310817) && !getGlobalVar(0x0A18CA33)) {
-		_asCreature = addSprite(new AsScene1201Creature(_vm, this, _klayman));
+		_asCreature = insertSprite<AsScene1201Creature>(this, _klayman);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
 
@@ -1131,7 +1129,7 @@ Scene1202::Scene1202(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse435(0x10ED160A, 20, 620);
 
 	for (int i = 0; i < 18; i++) {
-		_asTntItems[i] = addSprite(new AsScene1202TntItem(_vm, this, i));
+		_asTntItems[i] = insertSprite<AsScene1202TntItem>(this, i);
 		_vm->_collisionMan->addSprite(_asTntItems[i]);
 	}
 

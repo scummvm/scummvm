@@ -276,7 +276,7 @@ void GameModule::startup() {
 	createModule(1000, -1);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 7;
+	_vm->gameState().sceneNum = 8;
 	_vm->gameState().which = 1;
 	createModule(1600, -1);
 #endif

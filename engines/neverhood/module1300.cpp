@@ -424,20 +424,20 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x420643C4);
 	insertMouse433(0x643C0428);
 
-	_class595 = addSprite(new Class595(_vm, this));
+	_class595 = insertSprite<Class595>(this);
 	_sprite1 = insertStaticSprite(0x942FC224, 300);
 	_sprite2 = insertStaticSprite(0x70430830, 1200);
 	_sprite2->setVisible(false);
 	_sprite3 = insertStaticSprite(0x16E01E20, 1100);
 
-	_asRing1 = addSprite(new AsScene1002Ring(_vm, this, false, 218, 122, _class595->getDrawRect().y, false));
-	_asRing2 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x13206309)));
-	_asRing3 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32, 122, _class595->getDrawRect().y, false));
-	_asRing4 = addSprite(new AsScene1002Ring(_vm, this, true, 218 + 32 + 32 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x80101B1E)));
-	_asRing5 = addSprite(new AsScene1002Ring(_vm, this, false, 218 + 32 + 32 + 32 + 32, 115, _class595->getDrawRect().y, false));
+	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 218, 122, _class595->getDrawRect().y, false);
+	_asRing2 = insertSprite<AsScene1002Ring>(this, true, 218 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x13206309));
+	_asRing3 = insertSprite<AsScene1002Ring>(this, false, 218 + 32 + 32, 122, _class595->getDrawRect().y, false);
+	_asRing4 = insertSprite<AsScene1002Ring>(this, true, 218 + 32 + 32 + 32, 132, _class595->getDrawRect().y, getGlobalVar(0x80101B1E));
+	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 218 + 32 + 32 + 32 + 32, 115, _class595->getDrawRect().y, false);
 
-	_asBridge = addSprite(new AsScene1302Bridge(_vm, this));
-	_ssFence = addSprite(new SsScene1302Fence(_vm));
+	_asBridge = insertSprite<AsScene1302Bridge>(this);
+	_ssFence = insertSprite<SsScene1302Fence>();
 	_ssFence->setClipRect(0, 0, 640, _sprite1->getDrawRect().y2());
 
 	if (which < 0) {
@@ -450,7 +450,7 @@ Scene1302::Scene1302(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klayman->setClipRect(0, 0, _sprite3->getDrawRect().x2(), 480);
 
-	_asVenusFlyTrap = addSprite(new AsScene1002VenusFlyTrap(_vm, this, _klayman, true));
+	_asVenusFlyTrap = insertSprite<AsScene1002VenusFlyTrap>(this, _klayman, true);
 	_vm->_collisionMan->addSprite(_asVenusFlyTrap);
 
 	sendEntityMessage(_klayman, 0x2007, _asVenusFlyTrap);
@@ -643,7 +643,7 @@ Scene1303::Scene1303(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x81A9801D);
 
 	if (!getGlobalVar(0xAC00C0D0)) {
-		_asBalloon = addSprite(new AsScene1303Balloon(_vm, this));
+		_asBalloon = insertSprite<AsScene1303Balloon>(this);
 		_vm->_collisionMan->addSprite(_asBalloon);
 	}
 	
@@ -711,15 +711,15 @@ Scene1304::Scene1304(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0xC021006A);
 	
 	if (getGlobalVar(0xAC00C0D0)) {
-		_class545 = addSprite(new Class545(_vm, this, 0, 1100, 278, 347));
+		_class545 = insertSprite<Class545>(this, 0, 1100, 278, 347);
 		_vm->_collisionMan->addSprite(_class545);
 	} else {
-		_class545 = addSprite(new AnimatedSprite(_vm, 0x80106018, 100, 279, 48));
+		_class545 = insertSprite<AnimatedSprite>(0x80106018, 100, 279, 48);
 		// TODO _class545->setUpdateDeltaXY();
 	}
 
 	if (!getGlobalVar(0x31C63C51)) {
-		_class544 = addSprite(new Class544(_vm, this, 1100, 278, 347));
+		_class544 = insertSprite<Class544>(this, 1100, 278, 347);
 		_vm->_collisionMan->addSprite(_class544);
 	} else {
 		_class544 = NULL;
@@ -893,20 +893,19 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0x0311005B);
 
 	if (!getGlobalVar(0x13382860)) {
-		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 435, 445));
+		_class545 = insertSprite<Class545>(this, 2, 1100, 435, 445);
 		_vm->_collisionMan->addSprite(_class545);
 	}
 
-	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x404A36A0, 100, 0x440C1000));
+	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x404A36A0, 100, 0x440C1000);
 	
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 19, 1100, 359, 445, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 19, 1100, 359, 445, 0x9148A011);
 
-	_asElevatorDoor = new AnimatedSprite(_vm, 0x043B0270, 90, 320, 240);
+	_asElevatorDoor = insertSprite<AnimatedSprite>(0x043B0270, 90, 320, 240);
 	_asElevatorDoor->setFileHash(0x043B0270, 6, -1);
 	_asElevatorDoor->setNewHashListIndex(6);
-	addSprite(_asElevatorDoor);
 
-	_asElevator = addSprite(new AsScene1306Elevator(_vm, this, _asElevatorDoor));
+	_asElevator = insertSprite<AsScene1306Elevator>(this, _asElevatorDoor);
 	
 	_sprite1 = insertStaticSprite(0x036A1EE0, 80);
 	
@@ -1309,7 +1308,7 @@ Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	for (uint keyIndex = 0; keyIndex < 3; keyIndex++) {
 		if (getSubVar(0x08D0AB11, keyIndex)) {
-			_asKeys[keyIndex] = addSprite(new AsScene1307Key(_vm, this, keyIndex, _clipRects));
+			_asKeys[keyIndex] = insertSprite<AsScene1307Key>(this, keyIndex, _clipRects);
 			_vm->_collisionMan->addSprite(_asKeys[keyIndex]);
 		} else {
 			_asKeys[keyIndex] = NULL;
@@ -1600,21 +1599,21 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x41024202);
 	insertMouse433(0x24206418);
 
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 17, 1100, 502, 445, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 17, 1100, 502, 445, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
 	if (getGlobalVar(0x01023818)) {
-		addSprite(new Class513(_vm));
-		addSprite(new AnimatedSprite(_vm, 0x461A1490, 200, 235, 429));
+		insertSprite<Class513>();
+		insertSprite<AnimatedSprite>(0x461A1490, 200, 235, 429);
 	}
 	
 	_sprite1 = insertStaticSprite(0x0A042060, 1100);
-	_class549 = addSprite(new Class549(_vm, this));
-	_class593 = addSprite(new Class593(_vm, this));
+	_class549 = insertSprite<Class549>(this);
+	_class593 = insertSprite<Class593>(this);
 
-	_class601_1 = addSprite(new Class601(_vm, kScene1308FileHashes[getSubVar(0x0C10A000, 1)], 0));
-	_class601_2 = addSprite(new Class601(_vm, kScene1308FileHashes[getSubVar(0x0C10A000, 0)], 1));
-	_class601_2 = addSprite(new Class601(_vm, kScene1308FileHashes[getSubVar(0x0C10A000, 2)], 2));
+	_class601_1 = insertSprite<Class601>(kScene1308FileHashes[getSubVar(0x0C10A000, 1)], 0);
+	_class601_2 = insertSprite<Class601>(kScene1308FileHashes[getSubVar(0x0C10A000, 0)], 1);
+	_class601_2 = insertSprite<Class601>(kScene1308FileHashes[getSubVar(0x0C10A000, 2)], 2);
 
 	_sprite2 = insertStaticSprite(0x40043120, 995);
 	_sprite3 = insertStaticSprite(0x43003100, 995);
@@ -1644,7 +1643,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1308>(475, 440);
 		setMessageList(0x004B58B0);
 		if (getGlobalVar(0x80455A41)) {
-			_sprite5 = addSprite(new Class592(_vm, this));
+			_sprite5 = insertSprite<Class592>(this);
 			_sprite4 = insertStaticSprite(0x0101A624, 1100);
 			_sprite4->setVisible(false);
 		} else {
@@ -1672,8 +1671,7 @@ Scene1308::Scene1308(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 4) {
-		_class489 = new Class489(_vm, this, _klayman, 0);
-		addSprite(_class489);
+		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_class489);
 		_class489->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
 		_class489->setRepl(64, 0);

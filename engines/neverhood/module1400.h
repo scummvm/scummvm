@@ -143,7 +143,7 @@ public:
 protected:
 	bool _flag;
 	Sprite *_class427;
-	Sprite *_class489;
+	Class489 *_class489;
 	Sprite *_class525;
 	Sprite *_class526;
 	Sprite *_class527;
@@ -184,7 +184,7 @@ protected:
 	Sprite *_class454_2;
 	Sprite *_class454_3;
 	Sprite *_class482;
-	Sprite *_class489;
+	Class489 *_class489;
 	bool _flag;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -237,7 +237,7 @@ protected:
 	Sprite *_class401_3;
 	AsScene1201Tape *_asTape1;
 	AsScene1201Tape *_asTape2;
-	Sprite *_class489;
+	Class489 *_class489;
 	bool _flag;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -251,7 +251,7 @@ public:
 protected:
 	Sprite *_sprite1;
 	Sprite *_asTape;
-	Sprite *_class489;
+	Class489 *_class489;
 	Sprite *_class545;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

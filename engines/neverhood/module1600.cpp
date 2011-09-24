@@ -83,7 +83,7 @@ void Module1600::createScene(int sceneNum, int which) {
 		_childObject = new Scene1608(_vm, this, which);
 		break;
 	case 8:
-//TODO		_childObject = new Scene1609(_vm, this, which);
+		_childObject = new Scene1609(_vm, this, which);
 		break;
 	case 1001:
 		if (getGlobalVar(0xA0808898) == 1) {
@@ -1382,6 +1382,111 @@ uint32 Scene1608::handleMessage44D510(int messageNum, const MessageParam &param,
 		break;
 	}
 	return 0;
+}
+	
+Scene1609::Scene1609(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _soundResource(vm), _countdown1(1),
+	_index1(0), _index3(0), _flag5(true), _flag6(false) {
+
+	// TODO _vm->gameModule()->initScene3011Vars();
+	_index2 = getGlobalVar(0x2414C2F2);
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene1609::handleMessage);
+	SetUpdateHandler(&Scene1609::update);
+	
+	setBackground(0x92124A14);
+	setPalette(0x92124A14);
+	
+	for (int i = 0; i < 12; i++)
+		_asSymbols[i] = insertSprite<AsScene3011Symbol>(i, false);
+	
+	_ssButton = insertSprite<SsScene3011Button>(this, true);
+	_vm->_collisionMan->addSprite(_ssButton);
+
+	insertMouse435(0x24A10929, 20, 620);
+
+	_soundResource.load(0x68E25540);
+
+}
+
+void Scene1609::update() {
+	if (!_flag6 && _countdown1 != 0 && (--_countdown1 == 0)) {
+		if (_flag5) {
+			_index1++;
+			if (_index1 >= 12)
+				_index1 = 0;
+			_asSymbols[_index3]->change(_index1 + 12, _index1 == (int)getSubVar(0x04909A50, _index2));
+			_flag5 = false;
+			_countdown1 = 36;
+		} else {
+			_asSymbols[_index3]->hide();
+			_flag5 = true;
+			_countdown1 = 12;
+		}
+	}
+	if (_flag6 && !_soundResource.isPlaying()) {
+		leaveScene(1);
+	}
+	Scene::update();
+}
+
+uint32 Scene1609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		// TODO: Debug stuff
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
+			leaveScene(0);
+		break;
+	// TODO: Debug stuff
+	case 0x2000:
+		if (!_flag6) {
+			if (_flag5)
+				_asSymbols[_index3]->change(_index1 + 12, false);
+			_asSymbols[_index3]->stopSound();
+			_index3++;
+			if (_index3 >= 12) {
+				if (testVars()) {
+					_soundResource.play();
+					setGlobalVar(0x2C531AF8, 1);
+					_flag6 = true;
+				} else {
+					_index3 = 0;
+					for (int i = 0; i < 12; i++)
+						_asSymbols[i]->hide();
+				}
+			}
+			_flag5 = true;
+			_countdown1 = 1;
+		}
+		break;
+	}
+	return 0;
+}
+
+bool Scene1609::testVars() {
+	int index1 = 0;
+	do {
+		int cmpIndex = _asSymbols[0]->getIndex();
+		if (!_asSymbols[0]->getFlag1())
+			cmpIndex -= 12;
+		if ((int)getSubVar(0x04909A50, index1) == cmpIndex)
+			break;
+		index1++;
+	} while(1);
+	for (int index2 = 0; index2 < 12; index2++) {
+		int cmpIndex = _asSymbols[index2]->getIndex();
+		if (!_asSymbols[index2]->getFlag1())
+			cmpIndex -= 12;
+		if ((int)getSubVar(0x04909A50, index1) != cmpIndex)
+			return false;
+		_index1++;
+		if (_index1 >= 12)
+			_index1 = 0;
+		_index2++;
+	}
+	return true;
 }
 	
 } // End of namespace Neverhood

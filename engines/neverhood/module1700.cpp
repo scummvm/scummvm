@@ -195,13 +195,13 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertMouse433(0x18222039);
 
-	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0));
-	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1));
-	addSprite(new Class602(_vm, kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2));
+	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 0)], 0);
+	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 1)], 1);
+	insertSprite<Class602>(kScene1705FileHashes[getSubVar(0x0A4C0A9A, 2)], 2);
 
 	_sprite = insertStaticSprite(0x31313A22, 1100);
 
-	_class606 = addSprite(new Class606(_vm, this, 15, 1100, 238, 439, 0x02363852));
+	_class606 = insertSprite<Class606>(this, 15, 1100, 238, 439, 0x02363852);
 	_vm->_collisionMan->addSprite(_class606);
 
 	which = 4;

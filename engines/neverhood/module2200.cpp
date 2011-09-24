@@ -514,14 +514,14 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x40008208);
 	insertMouse433(0x0820C408);
 
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 7, 1100, 459, 432, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 7, 1100, 459, 432, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape); 
 
-	_ssDoorButton = addSprite(new Class426(_vm, this, 0xE4A43E29, 0xE4A43E29, 100, 0));
+	_ssDoorButton = insertSprite<Class426>(this, 0xE4A43E29, 0xE4A43E29, 100, 0);
 	
 	for (uint32 i = 0; i < 9; i++) {
 		if ((int16)getSubVar(0x484498D0, i) >= 0) {
-			addSprite(new Class444(_vm, i, (int16)getSubVar(0x484498D0, i)));
+			insertSprite<Class444>(i, (int16)getSubVar(0x484498D0, i));
 		}
 	}
 
@@ -551,11 +551,11 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		insertKlayman<KmScene2201>(300, 427, &_rect1, 2);
 		setMessageList(0x004B8118);
-		_asDoor = addSprite(new AsScene2201Door(_vm, _klayman, _doorLightSprite, false));
+		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else if (which == 1) {
 		insertKlayman<KmScene2201>(412, 393, &_rect1, 2);
 		setMessageList(0x004B8130);
-		_asDoor = addSprite(new AsScene2201Door(_vm, _klayman, _doorLightSprite, false));
+		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else if (which == 2) {
 		if (getGlobalVar(0xC0418A02)) {
 			insertKlayman<KmScene2201>(379, 427, &_rect1, 2);
@@ -564,15 +564,15 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 			insertKlayman<KmScene2201>(261, 427, &_rect1, 2);
 		}
 		setMessageList(0x004B8178);
-		_asDoor = addSprite(new AsScene2201Door(_vm, _klayman, _doorLightSprite, false));
+		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, false);
 	} else {
 		NPoint pt = _dataResource.getPoint(0x0304D8DC);
 		insertKlayman<KmScene2201>(pt.x, pt.y, &_rect1, 2);
 		setMessageList(0x004B8120);
-		_asDoor = addSprite(new AsScene2201Door(_vm, _klayman, _doorLightSprite, true));
+		_asDoor = insertSprite<AsScene2201Door>(_klayman, _doorLightSprite, true);
 	}
 	
-	addSprite(new AsScene2201CeilingFan(_vm));
+	insertSprite<AsScene2201CeilingFan>();
 
 	// TODO Sound1ChList_addSoundResource(0x04106220, 0x81212040, true);
 
@@ -598,7 +598,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asInteger() == 0x402064D8) {
 			sendEntityMessage(_klayman, 0x1014, _ssDoorButton);
 		} else if (param.asInteger() == 0x35803198) {
-			if (_asDoor->hasMessageHandler() && sendMessage(_asDoor, 0x2000, 0)) {
+			if (sendMessage(_asDoor, 0x2000, 0)) {
 				setMessageList(0x004B81A0);
 			} else {
 				setMessageList(0x004B81B8);
@@ -904,7 +904,7 @@ Scene2202::Scene2202(NeverhoodEngine *vm, Module *parentModule, int which)
 	for (uint32 index = 0; index < 9; index++) {
 		int16 value = (int16)getSubVar(0x484498D0, index);
 		if (value >= 0) {
-			Sprite *puzzleTileSprite = addSprite(new SsScene2202PuzzleTile(_vm, this, index, value));
+			Sprite *puzzleTileSprite = insertSprite<SsScene2202PuzzleTile>(this, index, value);
 			_vm->_collisionMan->addSprite(puzzleTileSprite);
 		}
 	}
@@ -1128,15 +1128,15 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 	setHitRects(0x004B8320);
 
 	if (getGlobalVar(0x13382860) == 1) {
-		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 282, 432));
+		_class545 = insertSprite<Class545>(this, 2, 1100, 282, 432);
 		_vm->_collisionMan->addSprite(_class545);
 	}
 
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 1, 1100, 435, 432, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 1, 1100, 435, 432, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
-	_asLeftDoor = addSprite(new AsScene2203Door(_vm, this, 0));
-	_asRightDoor = addSprite(new AsScene2203Door(_vm, this, 1));
+	_asLeftDoor = insertSprite<AsScene2203Door>(this, 0);
+	_asRightDoor = insertSprite<AsScene2203Door>(this, 1);
 	
 	_ssSmallLeftDoor = insertStaticSprite(0x542CC072, 1100);
 	_ssSmallRightDoor = insertStaticSprite(0x0A2C0432, 1100);
@@ -1280,21 +1280,19 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 		setPalette(0x0008028D);
 		addEntity(_palette);
 		insertMouse433(0x80289008);
-		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0x2D309030, 100, 0);
-		addSprite(_ssLightSwitch);
+		_ssLightSwitch = insertSprite<Class426>(this, 0x2D339030, 0x2D309030, 100, 0);
 	} else {
 		_isLightOn = false;
 		setBackground(0xD00A028D);
 		setPalette(0xD00A028D);
 		addEntity(_palette);
 		insertMouse433(0xA0289D08);
-		_ssLightSwitch = new Class426(_vm, this, 0x2D339030, 0xDAC86E84, 100, 0);
-		addSprite(_ssLightSwitch);
+		_ssLightSwitch = insertSprite<Class426>(this, 0x2D339030, 0xDAC86E84, 100, 0);
 	}
 
 	_palette->addBasePalette(0xD00A028D, 0, 256, 0);
 	
-	_ssDoorFrame = addSprite(new SsScene2205DoorFrame(_vm));
+	_ssDoorFrame = insertSprite<SsScene2205DoorFrame>();
 
 	if (which < 0) {
 		insertKlayman<KmScene2205>(320, 417);
@@ -1533,25 +1531,25 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite1 = insertStaticSprite(0x2201266A, 100);
 		_sprite2 = insertStaticSprite(0x3406A333, 300);
 		_sprite3 = insertStaticSprite(0x24A223A2, 100);
-		_sprite4 = addSprite(new Class603(_vm, 0x26133023));
+		_sprite4 = insertSprite<Class603>(0x26133023);
 		_sprite4->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8AF8);
-		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x0E038022, 100, 0));
+		_sprite5 = insertSprite<SsCommonButtonSprite>(this, 0x0E038022, 100, 0);
 		insertMouse433(0x83212411);
-		_class607 = addSprite(new Class607(_vm, this, 1100, /*464, 433, */0x5E00E262));
-		_class604 = addSprite(new Class604(_vm, 0x085E25E0));
+		_class607 = insertSprite<Class607>(this, 1100, /*464, 433, */0x5E00E262);
+		_class604 = insertSprite<Class604>(0x085E25E0);
 	} else {
 		fileHash = 0xE0102A45;
 		_sprite1 = insertStaticSprite(0x1C1106B8, 100);
 		_sprite2 = insertStaticSprite(0x020462E0, 300);
 		_sprite3 = insertStaticSprite(0x900626A2, 100);
-		_sprite4 = addSprite(new Class603(_vm, 0x544822A8));
+		_sprite4 = insertSprite<Class603>(0x544822A8);
 		_sprite4->setClipRect(_sprite2->getDrawRect().x, 0, 640, 480);
 		setRectList(0x004B8B58);
-		_sprite5 = addSprite(new SsCommonButtonSprite(_vm, this, 0x16882608, 100, 0));
+		_sprite5 = insertSprite<SsCommonButtonSprite>(this, 0x16882608, 100, 0);
 		insertMouse433(0x02A41E09);
-		_class607 = addSprite(new Class607(_vm, this, 1100, /*464, 433, */0x52032563));
-		_class604 = addSprite(new Class604(_vm, 0x317831A0));
+		_class607 = insertSprite<Class607>(this, 1100, /*464, 433, */0x52032563);
+		_class604 = insertSprite<Class604>(0x317831A0);
 	}
 
 	_class604->setClipRect(_sprite2->getDrawRect().x, 0, _sprite3->getDrawRect().x2(), _sprite1->getDrawRect().y2());
@@ -2031,7 +2029,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	setMessageList(0x004B38E8);
 	
-	_asElevator = addSprite(new AsScene2207Elevator(_vm, this));
+	_asElevator = insertSprite<AsScene2207Elevator>(this);
 	
 	if (getGlobalVar(0x4D080E54)) {
 
@@ -2043,19 +2041,19 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 		_ssMaskPart2 = insertStaticSprite(0x688F62A5, 1100);
 		_ssMaskPart3 = insertStaticSprite(0x0043B038, 1100);
 	
-		_asTape = addSprite(new AsScene1201Tape(_vm, this, 4, 1100, 277, 428, 0x9148A011));
+		_asTape = insertSprite<AsScene1201Tape>(this, 4, 1100, 277, 428, 0x9148A011);
 		_vm->_collisionMan->addSprite(_asTape); 
 	
-		_asLever = addSprite(new AsScene2207Lever(_vm, this, 527, 333, 0));
+		_asLever = insertSprite<AsScene2207Lever>(this, 527, 333, 0);
 		_vm->_collisionMan->addSprite(_asLever);
 		
-		_asWallRobotAnimation = addSprite(new AsScene2207WallRobotAnimation(_vm, this));
-		_asWallCannonAnimation = addSprite(new AsScene2207WallCannonAnimation(_vm));
+		_asWallRobotAnimation = insertSprite<AsScene2207WallRobotAnimation>(this);
+		_asWallCannonAnimation = insertSprite<AsScene2207WallCannonAnimation>();
 		
 		_asWallRobotAnimation->setVisible(false);
 		_asWallCannonAnimation->setVisible(false);
 
-		_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0x2C4061C4, 100, 0));
+		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x2C4061C4, 100, 0);
 	
 		_asLever->setClipRect(0, 0, _ssMaskPart3->getDrawRect().x2(), 480);
 		_klayman->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
@@ -2071,9 +2069,9 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule, int which)
 
 		_ssMaskPart1 = insertStaticSprite(0x980E46A4, 1200);
 
-		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0));
-		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1));
-		addSprite(new SsScene2207Symbol(_vm, kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2));
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 0)], 0);
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 1)], 1);
+		insertSprite<SsScene2207Symbol>(kScene2207FileHashes[getSubVar(0x00504B86, 2)], 2);
 
 		_asTape = NULL;
 		_asLever = NULL;
@@ -2444,7 +2442,7 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 		setRectList(0x004B3E18);
 	}
 
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 10, 1100, 464, 435, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 10, 1100, 464, 435, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape); 
 
 	if (which < 0) {

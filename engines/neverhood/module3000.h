@@ -236,6 +236,8 @@ public:
 	void hide();
 	void stopSound();
 	void change(int index, bool flag);
+	bool getFlag1() { return _flag1; }
+	int getIndex() { return _index; }
 protected:
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;

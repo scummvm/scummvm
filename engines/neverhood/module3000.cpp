@@ -735,15 +735,10 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 	updatePosition();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene3009Symbol::handleMessage);
-
-	_ssArrowPrev = new SsScene3009SymbolArrow(_vm, this, _index * 2 + 0);
-	_parentScene->addSprite(_ssArrowPrev);
+	_ssArrowPrev = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _index * 2 + 0);
 	_vm->_collisionMan->addSprite(_ssArrowPrev);
-
-	_ssArrowNext = new SsScene3009SymbolArrow(_vm, this, _index * 2 + 1);
-	_parentScene->addSprite(_ssArrowNext);
+	_ssArrowNext = _parentScene->insertSprite<SsScene3009SymbolArrow>(this, _index * 2 + 1);
 	_vm->_collisionMan->addSprite(_ssArrowNext);
-
 }
 
 uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -798,15 +793,13 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0xD000420C);
 	insertMouse435(0x04208D08, 20, 620);
 
-	_ssFireCannonButton = addSprite(new SsScene3009FireCannonButton(_vm, this));
+	_ssFireCannonButton = insertSprite<SsScene3009FireCannonButton>(this);
 	_vm->_collisionMan->addSprite(_ssFireCannonButton);
 
-	_asVerticalIndicator = new AsScene3009VerticalIndicator(_vm, this, _cannonLocation);
-	addSprite(_asVerticalIndicator);
+	_asVerticalIndicator = insertSprite<AsScene3009VerticalIndicator>(this, _cannonLocation);
 	_vm->_collisionMan->addSprite(_asVerticalIndicator);
 
-	_asHorizontalIndicator = new AsScene3009HorizontalIndicator(_vm, this, _cannonLocation);
-	addSprite(_asHorizontalIndicator);
+	_asHorizontalIndicator = insertSprite<AsScene3009HorizontalIndicator>(this, _cannonLocation);
 	_vm->_collisionMan->addSprite(_asHorizontalIndicator);
 
 	if (_cannonLocation != 0 && _cannonLocation != 8 && _cannonLocation != 9 && _cannonLocation != 10) {
@@ -826,16 +819,12 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertStaticSprite(0x8540252C, 400);
 
 	for (int i = 0; i < 2; i++) {
-		_ssSymbolEdges[i] = new SsScene3009SymbolEdges(_vm, i);
-		addSprite(_ssSymbolEdges[i]);
-		_ssTargetLines[i] = new SsScene3009TargetLine(_vm, i);
-		addSprite(_ssTargetLines[i]);
+		_ssSymbolEdges[i] = insertSprite<SsScene3009SymbolEdges>(i);
+		_ssTargetLines[i] = insertSprite<SsScene3009TargetLine>(i);
 	}
 
-
 	for (int i = 0; i < 6; i++) {
-		_asSymbols[i] = new AsScene3009Symbol(_vm, this, i);
-		addSprite(_asSymbols[i]);
+		_asSymbols[i] = insertSprite<AsScene3009Symbol>(this, i);
 		if (i < 3)
 			_correctSymbols[i] = getSubVar(0x00504B86, i);
 		else
@@ -1294,10 +1283,8 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x80802626);
 
 	for (int i = 0; i < 3; i++) {
-		_asDeadBolts[i] = new AsScene3010DeadBolt(_vm, this, i, which == 1);//CHECKME
-		addSprite(_asDeadBolts[i]);
-		_ssDeadBoltButtons[i] = new SsScene3010DeadBoltButton(_vm, this, i, initCountdown, which == 1);//CHECKME
-		addSprite(_ssDeadBoltButtons[i]);
+		_asDeadBolts[i] = insertSprite<AsScene3010DeadBolt>(this, i, which == 1);//CHECKME
+		_ssDeadBoltButtons[i] = insertSprite<SsScene3010DeadBoltButton>(this, i, initCountdown, which == 1);//CHECKME
 		_vm->_collisionMan->addSprite(_ssDeadBoltButtons[i]);
 		if (getSubVar(0x14800353, kScene3010ButtonNameHashes[i]))
 			initCountdown++;
@@ -1533,27 +1520,24 @@ void AsScene3011Symbol::change(int index, bool flag) {
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true), _updateStatus(0), _buttonClicked(false), _index2(0) {
 
-	_surfaceFlag = true;
-
 	// TODO _vm->gameModule()->initScene3011Vars();
 	_index1 = getGlobalVar(0x2414C2F2);
 
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene3011::handleMessage);
+	SetUpdateHandler(&Scene3011::update);
+	
 	setBackground(0x92124A04);
 	setPalette(0xA4070114);
 	addEntity(_palette);
 
 	insertMouse435(0x24A00929, 20, 620);
 
-	for (int i = 0; i < 12; i++) {
-		_asSymbols[i] = new AsScene3011Symbol(_vm, i, true);
-		addSprite(_asSymbols[i]);
-	}
+	for (int i = 0; i < 12; i++)
+		_asSymbols[i] = insertSprite<AsScene3011Symbol>(i, true);
 
-	_ssButton = addSprite(new SsScene3011Button(_vm, this, true));
+	_ssButton = insertSprite<SsScene3011Button>(this, true);
 	_vm->_collisionMan->addSprite(_ssButton);
-	
-	SetUpdateHandler(&Scene3011::update);
-	SetMessageHandler(&Scene3011::handleMessage);
 	
 }
 

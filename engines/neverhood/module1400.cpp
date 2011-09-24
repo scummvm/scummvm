@@ -667,17 +667,17 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x08221FA5);
 	insertMouse433(0x21FA108A);
 	
-	// TODO _class427 = addSprite(new Class427(_vm, this, 0x980F3124, 0x12192892, 100, 0));
-	_class525 = addSprite(new Class525(_vm));
+	// TODO _class427 = insertSprite<Class427>(this, 0x980F3124, 0x12192892, 100, 0);
+	_class525 = insertSprite<Class525>();
 
 	if (!getGlobalVar(0x01023818)) {
-		_class526 = addSprite(new Class526(_vm, _class525));
-		_class527 = addSprite(new Class527(_vm, _class525));
+		_class526 = insertSprite<Class526>(_class525);
+		_class527 = insertSprite<Class527>(_class525);
 	}
 
 	_sprite3 = insertStaticSprite(0xA82BA811, 1100);
 	insertStaticSprite(0x0A116C60, 1100);
-	_ssButton = addSprite(new SsCommonButtonSprite(_vm, this, 0xB84B1100, 100, 0));
+	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0xB84B1100, 100, 0);
 	_sprite1 = insertStaticSprite(0x38EA100C, 1005);
 	_sprite2 = insertStaticSprite(0x98D0223C, 1200);
 	_sprite2->setVisible(false);
@@ -701,7 +701,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 2) {
-		_class489 = addSprite(new Class489(_vm, this, _klayman, _class525));
+		_class489 = insertSprite<Class489>(this, _klayman, _class525);
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 6) {
 			sendEntityMessage(_klayman, 0x1014, _class489);
@@ -719,11 +719,11 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
-	if (which == 0 && _class489 && _class489->hasMessageHandler()) {
+	if (which == 0 && _class489) {
 		sendMessage(_class489, 0x482B, 0);
 	}
 
-	_class528 = addSprite(new Class528(_vm, _klayman, which == 1));
+	_class528 = insertSprite<Class528>(_klayman, which == 1);
 
 }
 
@@ -746,7 +746,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		} else if (param.asInteger() == 0x402064D8) {
 			sendEntityMessage(_klayman, 0x1014, _ssButton);
 		} else if (param.asInteger() == 0x01C66840) {
-			if (_class528->hasMessageHandler() && sendMessage(_class528, 0x2001, 0) != 0) {
+			if (sendMessage(_class528, 0x2001, 0) != 0) {
 				setMessageList(0x004B6690);
 			} else {
 				setMessageList(0x004B66B0);
@@ -882,9 +882,9 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	_palette->addPalette(0x91D3A391, 0, 64, 0);
 	insertMouse433(0x482F4239);
 
-	_class454_1 = addSprite(new Class454(_vm, 0x15402D64, 1100));
-	_class454_2 = addSprite(new Class454(_vm, 0x10A02120, 1100));
-	_class454_3 = addSprite(new Class454(_vm, 0x60882BE0, 1100));
+	_class454_1 = insertSprite<Class454>(0x15402D64, 1100);
+	_class454_2 = insertSprite<Class454>(0x10A02120, 1100);
+	_class454_3 = insertSprite<Class454>(0x60882BE0, 1100);
 
 	if (getGlobalVar(0x70A1189C))
 		setRectList(0x004B0C48);
@@ -895,7 +895,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertKlayman<KmScene1402>(377, 391);
 		setMessageList(0x004B0B48);
 		if (!getGlobalVar(0x70A1189C)) {
-			_class482 = addSprite(new Class482(_vm, this, 0));
+			_class482 = insertSprite<Class482>(this, 0);
 		}
 	} else if (which == 1) {
 		insertKlayman<KmScene1402>(42, 391);
@@ -905,18 +905,18 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		setMessageList(0x004B0B60);
 		_klayman->setDoDeltaX(1);
 		if (getGlobalVar(0x70A1189C)) {
-			_class482 = addSprite(new Class482(_vm, this, 1));
+			_class482 = insertSprite<Class482>(this, 1);
 			clearRectList();
 			showMouse(false);
 			sub428220();
 		} else {
-			_class482 = addSprite(new Class482(_vm, this, 0));
+			_class482 = insertSprite<Class482>(this, 0);
 		}
 	} else {
 		insertKlayman<KmScene1402>(513, 391);
 		setMessageList(0x004B0B58);
 		if (!getGlobalVar(0x70A1189C)) {
-			_class482 = addSprite(new Class482(_vm, this, 2));
+			_class482 = insertSprite<Class482>(this, 2);
 			sub428220();
 		}
 	}
@@ -926,7 +926,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x4A105B3) == 1) {
-		_class489 = addSprite(new Class489(_vm, this, _klayman, 0));
+		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x4A10F33) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _class489);
@@ -1268,7 +1268,7 @@ Scene1407::Scene1407(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x00442225);
 	insertMouse435(0x4222100C, 20, 620);
 
-	_asMouse = addSprite(new AsScene1407Mouse(_vm, this));
+	_asMouse = insertSprite<AsScene1407Mouse>(this);
 	_ssResetButton = insertStaticSprite(0x12006600, 100);
 	_ssResetButton->setVisible(false); 
 
@@ -1340,13 +1340,11 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_class401_3 = insertStaticSprite(0x08742271, 995);
 
-	_asTape1 = new AsScene1201Tape(_vm, this, 12, 1100, 201, 468, 0x9148A011);
-	addSprite(_asTape1);
+	_asTape1 = insertSprite<AsScene1201Tape>(this, 12, 1100, 201, 468, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape1);
 	_asTape1->setRepl(64, 0);
 
-	_asTape2 = new AsScene1201Tape(_vm, this, 16, 1100, 498, 468, 0x9048A093);
-	addSprite(_asTape2);
+	_asTape2 = insertSprite<AsScene1201Tape>(this, 16, 1100, 498, 468, 0x9048A093);
 	_vm->_collisionMan->addSprite(_asTape2);
 	_asTape2->setRepl(64, 0);
 
@@ -1360,10 +1358,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_klayman->setRepl(64, 0);
 
 	if (getGlobalVar(0x04A105B3) == 4) {
-		Class489 *class489;
-		class489 = new Class489(_vm, this, _klayman, 0);
-		_class489 = class489;
-		addSprite(_class489);
+		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 4) {
 			sendEntityMessage(_klayman, 0x1014, _class489);
@@ -1372,7 +1367,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 			setMessageList(0x004B1F70);
 		}
 		_class489->setClipRect(0, 0, 640, _class401_2->getDrawRect().y2());
-		class489->setRepl(64, 0);
+		_class489->setRepl(64, 0);
 	}
 
 }
@@ -1454,13 +1449,13 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	insertMouse433(0xB006BAC8);
 
 	if (getGlobalVar(0x13382860) == 5) {
-		_class545 = addSprite(new Class545(_vm, this, 2, 1100, 267, 411));
+		_class545 = insertSprite<Class545>(this, 2, 1100, 267, 411);
 		_vm->_collisionMan->addSprite(_class545);
 	}
 
 	_sprite1 = insertStaticSprite(0x1900A1F8, 1100);
 
-	_asTape = addSprite(new AsScene1201Tape(_vm, this, 14, 1100, 281, 411, 0x9148A011));
+	_asTape = insertSprite<AsScene1201Tape>(this, 14, 1100, 281, 411, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape);
 
 	if (which < 0) {
@@ -1483,7 +1478,7 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(0x04A105B3) == 3) {
-		_class489 = addSprite(new Class489(_vm, this, _klayman, 0));
+		_class489 = insertSprite<Class489>(this, _klayman, (Sprite*)NULL);
 		_vm->_collisionMan->addSprite(_class489);
 		if (getGlobalVar(0x04A10F33) == 0) {
 			sendEntityMessage(_klayman, 0x1014, _class489);
@@ -1673,8 +1668,7 @@ Scene1405::Scene1405(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	for (uint32 index = 0; index < 48; index++) {
-		_tiles[index] = new AsScene1405Tile(_vm, this, index);
-		addSprite(_tiles[index]);
+		_tiles[index] = insertSprite<AsScene1405Tile>(this, index);
 		_vm->_collisionMan->addSprite(_tiles[index]);
 		if (getSubVar(0xCCE0280F, index))
 			_tilesLeft--;

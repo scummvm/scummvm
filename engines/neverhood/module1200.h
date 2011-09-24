@@ -179,7 +179,7 @@ protected:
 	// TODO ResourceTable _resourceTable1;
 	// TODO ResourceTable _resourceTable2;
 	Sprite *_asMatch;
-	Sprite *_asTntMan;
+	AsScene1201TntMan *_asTntMan;
 	Sprite *_asCreature;
 	Sprite *_class466;
 	Sprite *_asLeftDoor;
