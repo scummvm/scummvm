@@ -184,7 +184,9 @@ void PegasusEngine::createItems() {
 void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction) {
 	switch (itemID) {
 	case kInterfaceBiochip:
-		// Unused in game, but still in the data - no need to load it
+		// Unused in game, but still in the data and we need to create
+		// it because it's saved/loaded from save files.
+		new BiochipItem(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kAIBiochip:
 		new AIChip(itemID, neighborhoodID, roomID, direction);
