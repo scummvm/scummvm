@@ -530,7 +530,6 @@ private:
 	int getNewFrame();
 	void animEnded();
 	int changeFrame();
-	bool isNoMover() const { return !_mover || (_regionIndex > 0); }
 public:
 	uint32 _updateStartFrame;
 	uint32 _walkStartFrame;
@@ -585,6 +584,7 @@ public:
 	void show();
 	int getSpliceArea(const SceneObject *obj);
 	int getFrameCount();
+	bool isNoMover() const { return !_mover || (_regionIndex > 0); }
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneObject"; }

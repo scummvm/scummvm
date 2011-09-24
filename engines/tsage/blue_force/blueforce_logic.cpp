@@ -162,6 +162,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 880:
 		error("Scene group 8 not implemented");
 	case 900:
+		// Outside Warehouse
 		return new Scene900();
 	case 910:
 	case 920:

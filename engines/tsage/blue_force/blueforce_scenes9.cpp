@@ -31,7 +31,7 @@ namespace TsAGE {
 namespace BlueForce {
 
 /*--------------------------------------------------------------------------
- * Scene 900 - ?
+ * Scene 900 - Outside Warehouse
  *
  *--------------------------------------------------------------------------*/
 
@@ -90,15 +90,15 @@ bool Scene900::Object1::startAction(CursorType action, Event &event) {
 				return true;
 			} else {
 				if (BF_GLOBALS._v4CEC0 == 0) {
-					if (BF_GLOBALS.getFlag(137) == 0) {
-						BF_GLOBALS.setFlag(137);
+					if (!BF_GLOBALS.getFlag(fGotPointsForUnlockGate)) {
+						BF_GLOBALS.setFlag(fGotPointsForUnlockGate);
 						BF_GLOBALS._uiElements.addScore(30);
 					}
 					BF_GLOBALS._v4CEC0 = 1;
 				} else {
-					if (BF_GLOBALS.getFlag(140) == 0) {
+					if (!BF_GLOBALS.getFlag(fGotPointsForLockGate)) {
 						if (BF_GLOBALS._bookmark == bEndDayThree) {
-							BF_GLOBALS.setFlag(140);
+							BF_GLOBALS.setFlag(fGotPointsForLockGate);
 							BF_GLOBALS._uiElements.addScore(30);
 						}
 					}
@@ -160,37 +160,25 @@ bool Scene900::Object3::startAction(CursorType action, Event &event) {
 	case CURSOR_LOOK:
 		SceneItem::display2(900, 8);
 		return true;
-		break;
 	case CURSOR_USE:
 		SceneItem::display2(900, 9);
 		return true;
-		break;
-	case CURSOR_1000:
-		switch (BF_GLOBALS._events.getCursor()) {
-		case 29:
-			if (_flag) {
-				BF_GLOBALS._player.disableControl();
-				scene->_sceneMode = 9010;
-				scene->setAction(&scene->_sequenceManager1, scene, 9010, &BF_GLOBALS._player, &scene->_object5, this, NULL);
-			} else
-				SceneItem::display2(900, 23);
-			return true;
-			break;
-		case 52:
+	case INV_HOOK:
+		if (_flag) {
 			BF_GLOBALS._player.disableControl();
-			BF_GLOBALS._player.setAction(&scene->_action2);
-			return true;
-			break;
-		case 65:
-			BF_GLOBALS._player.disableControl();
-			BF_GLOBALS._player.setAction(&scene->_action3);
-			return true;
-			break;
-		default:
-			return false;
-			break;
-		}
-		break;
+			scene->_sceneMode = 9010;
+			scene->setAction(&scene->_sequenceManager1, scene, 9010, &BF_GLOBALS._player, &scene->_object5, this, NULL);
+		} else
+			SceneItem::display2(900, 23);
+		return true;
+	case INV_FISHING_NET:
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._player.setAction(&scene->_action2);
+		return true;
+	case INV_DOG_WHISTLE:
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._player.setAction(&scene->_action3);
+		return true;
 	default:
 		return NamedObject::startAction(action, event);
 	}
@@ -342,15 +330,15 @@ void Scene900::Action2::signal() {
 		scene->_object5.setPosition(Common::Point(-20, -20));
 		scene->_object5._moveDiff.y = 10;
 		setAction(&scene->_sequenceManager1, this, 9009, &BF_GLOBALS._player, &scene->_object5, &scene->_object3, NULL);
-		BF_INVENTORY.setObjectScene(52, 900);
+		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 900);
 		break;
 	case 2:
 		BF_GLOBALS._player._strip = 7;
-		if (!BF_GLOBALS.getFlag(136)) {
-			BF_GLOBALS.setFlag(136);
+		if (!BF_GLOBALS.getFlag(fGotPointsForTrapDog)) {
+			BF_GLOBALS.setFlag(fGotPointsForTrapDog);
 			BF_GLOBALS._uiElements.addScore(50);
 		}
-		SceneItem::display(900, 10);
+		SceneItem::display2(900, 10);
 		scene->_object3._flag = 1;
 		scene->_object3.fixPriority(130);
 		BF_GLOBALS._player.enableControl();
@@ -398,9 +386,9 @@ void Scene900::Action3::signal() {
 	case 3:
 		scene->_object3.remove();
 		scene->_object3._flag = 1;
-		SceneItem::display(900, 24);
-		if (!BF_GLOBALS.getFlag(139)) {
-			BF_GLOBALS.setFlag(139);
+		SceneItem::display2(900, 24);
+		if (!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) {
+			BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
 			BF_GLOBALS._uiElements.addScore(10);
 		}
 		BF_GLOBALS._player.enableControl();
@@ -449,11 +437,11 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_field1974 = 0;
 	_field1976 = 0;
 	BF_GLOBALS._uiElements._active = true;
-	BF_GLOBALS.clearFlag(34);
+	BF_GLOBALS.clearFlag(fCanDrawGun);
 	if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._dayNumber = 4;
-		BF_INVENTORY.setObjectScene(52, 1);
-		BF_INVENTORY.setObjectScene(29, 1);
+		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
+		BF_INVENTORY.setObjectScene(INV_HOOK, 1);
 	}
 	PalettedScene::postInit();
 	_object3._flag = 0;
@@ -467,10 +455,10 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._sceneManager._previousScene == 910) {
 		_sceneBounds.moveTo(640, 0);
 		BF_GLOBALS._v4CEC0 = 2;
-		BF_INVENTORY.setObjectScene(52, 900);
+		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 900);
 		_object3._flag = 1;
 	}
-	if (BF_INVENTORY.getObjectScene(52) == 900)
+	if (BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900)
 		_object3._flag = 1;
 	loadScene(900);
 	_stripManager.addSpeaker(&_gameTextSpeaker);
@@ -516,7 +504,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._dayNumber == 5)
 		BF_GLOBALS._v4CEC8 = 0;
 
-	if ((BF_GLOBALS._v4CEC8 == 0) && (BF_GLOBALS.getFlag(7))) {
+	if ((BF_GLOBALS._v4CEC8 == 0) && (BF_GLOBALS.getFlag(fWithLyle))) {
 		_object4.postInit();
 		_object4.setVisage(900);
 		_object4.setStrip(3);
@@ -548,7 +536,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			_jakeJacketSpeaker._xp = 75;
 			setAction(&_sequenceManager1, this, 9013, &BF_GLOBALS._player, &_lyle, NULL);
 			BF_GLOBALS._bookmark = bAmbushed;
-			BF_GLOBALS.setFlag(7);
+			BF_GLOBALS.setFlag(fWithLyle);
 		} else if (BF_GLOBALS._bookmark > bFinishedWGreen) {
 			_lyle.postInit();
 			_lyle.setVisage(811);
@@ -566,7 +554,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_object2.setFrame(_object2.getFrameCount());
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9002;
-		if (BF_GLOBALS.getFlag(7)) {
+		if (BF_GLOBALS.getFlag(fWithLyle)) {
 			_lyle.postInit();
 			_lyle._flags |= 0x1000;
 			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
@@ -598,10 +586,11 @@ void Scene900::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9001:
-		if ((BF_INVENTORY.getObjectScene(52) == 900) || (BF_GLOBALS._v4CEC0 != 0) || (_object2._flag == 0))
-			BF_GLOBALS.setFlag(61);
+		if ((BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900) || (BF_GLOBALS._v4CEC0 != 0) || 
+				(_object2._flag == 0))
+			BF_GLOBALS.setFlag(fLeftTraceIn900);
 		else
-			BF_GLOBALS.clearFlag(61);
+			BF_GLOBALS.clearFlag(fLeftTraceIn900);
 
 		BF_GLOBALS._sceneManager.changeScene(880);
 		break;
@@ -611,9 +600,9 @@ void Scene900::signal() {
 		break;
 	case 9004:
 		if (BF_GLOBALS._v4CEC0 == 0)
-			SceneItem::display(900, 3);
+			SceneItem::display2(900, 3);
 		else
-			SceneItem::display(900, 4);
+			SceneItem::display2(900, 4);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9005:
@@ -627,7 +616,7 @@ void Scene900::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9007:
-		if (BF_GLOBALS.getFlag(7)) {
+		if (BF_GLOBALS.getFlag(fWithLyle)) {
 			Common::Point pt(862, 119);
 			PlayerMover *mover = new PlayerMover();
 			_lyle.addMover(mover, &pt, NULL);
@@ -649,28 +638,28 @@ void Scene900::signal() {
 			BF_GLOBALS._player._strip = 7;
 			_action1.setActionIndex(9);
 			_object3.signal();
-			if ((!BF_GLOBALS.getFlag(141)) && (BF_GLOBALS._bookmark == 21)) {
-				BF_GLOBALS.setFlag(141);
+			if ((!BF_GLOBALS.getFlag(fGotPointsForFreeDog)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
+				BF_GLOBALS.setFlag(fGotPointsForFreeDog);
 				BF_GLOBALS._uiElements.addScore(50);
 			}
-			BF_INVENTORY.setObjectScene(52, 1);
-			SceneItem::display(900, 11);
+			BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
+			SceneItem::display2(900, 11);
 			BF_GLOBALS._player.enableControl();
 		}
 		break;
 	case 9012:
 		if (_object2._flag == 0) {
-			SceneItem::display(900, 12);
+			SceneItem::display2(900, 12);
 			_object2._flag = 1;
-			if ((!BF_GLOBALS.getFlag(139)) && (BF_GLOBALS._bookmark == 21)) {
-				BF_GLOBALS.setFlag(139);
+			if ((!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
+				BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
 				BF_GLOBALS._uiElements.addScore(30);
 			}
 		} else {
-			SceneItem::display(900, 13);
+			SceneItem::display2(900, 13);
 			_object2._flag = 0;
-			if (!BF_GLOBALS.getFlag(138)) {
-				BF_GLOBALS.setFlag(138);
+			if (!BF_GLOBALS.getFlag(fGotPointsForUnlockWarehouse)) {
+				BF_GLOBALS.setFlag(fGotPointsForUnlockWarehouse);
 				BF_GLOBALS._uiElements.addScore(30);
 			}
 		}
@@ -686,15 +675,15 @@ void Scene900::signal() {
 		if ((BF_GLOBALS._clip1Bullets == 0) && (BF_GLOBALS._clip2Bullets == 0)){
 			BF_GLOBALS._clip1Bullets = 8;
 			BF_GLOBALS._clip1Bullets = 8;
-			SceneItem::display(900, 25);
+			SceneItem::display2(900, 25);
 		} else if (BF_GLOBALS._clip1Bullets == 0) {
 			BF_GLOBALS._clip1Bullets = 8;
-			SceneItem::display(900, 26);
+			SceneItem::display2(900, 26);
 		} else if (BF_GLOBALS._clip2Bullets == 0) {
 			BF_GLOBALS._clip2Bullets = 8;
-			SceneItem::display(900, 26);
+			SceneItem::display2(900, 26);
 		} else
-			SceneItem::display(900, 27);
+			SceneItem::display2(900, 27);
 
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -705,6 +694,7 @@ void Scene900::signal() {
 
 void Scene900::process(Event &event) {
 	SceneExt::process(event);
+
 	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		if (_item4.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
@@ -719,15 +709,12 @@ void Scene900::process(Event &event) {
 void Scene900::dispatch() {
 	SceneExt::dispatch();
 
-	if (BF_GLOBALS.getFlag(7)) {
-		warning("Missing: _lyle.sub_2DF70()");
-		// TODO: the following replaces sub_2DF70(), to be checked
-		if ((_lyle._regionIndex != 0) && (_lyle._mover))
-			_lyle.updateAngle(BF_GLOBALS._player._position);
+	if (BF_GLOBALS.getFlag(fWithLyle) && _lyle.isNoMover()) {
+		_lyle.updateAngle(BF_GLOBALS._player._position);
 	}
 
-	if (_action == 0) {
-		if ((BF_GLOBALS._player._position.x <= 20) || (BF_GLOBALS._player._position.y < 130)) {
+	if (!_action) {
+		if ((BF_GLOBALS._player._position.x <= 20) && (BF_GLOBALS._player._position.y < 130)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 9001;
 			setAction(&_sequenceManager1, this, 9001, &BF_GLOBALS._player, NULL);
