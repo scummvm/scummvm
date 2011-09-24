@@ -422,6 +422,9 @@ Scene900::Scene900(): PalettedScene() {
 }
 
 void Scene900::postInit(SceneObjectList *OwnerList) {
+	PalettedScene::postInit();
+	loadScene(900);
+
 	if (BF_GLOBALS._sceneManager._previousScene == 910)
 		BF_GLOBALS._sound1.changeSound(91);
 	_field1974 = 0;
@@ -433,7 +436,6 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
 		BF_INVENTORY.setObjectScene(INV_HOOK, 1);
 	}
-	PalettedScene::postInit();
 	_object3._flag = 0;
 	if (BF_GLOBALS._bookmark >= bFinishedWGreen) {
 		_object7.postInit();
@@ -450,7 +452,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	}
 	if (BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900)
 		_object3._flag = 1;
-	loadScene(900);
+
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
 	_stripManager.addSpeaker(&_lyleHatSpeaker);
