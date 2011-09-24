@@ -1619,7 +1619,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		},
 		GType_LIVINGBOOKSV3,
 		0,
-		"Living Books Player"
+		0
 	},
 
 	{
