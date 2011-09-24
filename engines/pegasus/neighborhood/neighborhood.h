@@ -30,6 +30,7 @@
 #include "common/str.h"
 
 #include "pegasus/hotspot.h"
+#include "pegasus/input.h"
 #include "pegasus/notification.h"
 #include "pegasus/sound.h"
 #include "pegasus/util.h"
@@ -127,6 +128,8 @@ public:
 	virtual tAirQuality getAirQuality(const tRoomID);
 	virtual void checkAirMask() {}
 	virtual void checkFlashlight() {}
+	virtual void shieldOn() {}
+	virtual void shieldOff() {}
 
 protected:
 	virtual void receiveNotification(Notification *, const tNotificationFlags);

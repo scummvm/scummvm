@@ -32,6 +32,8 @@ MODULE_OBJS = \
 	items/biochips/biochipitem.o \
 	items/biochips/opticalchip.o \
 	items/biochips/pegasuschip.o \
+	items/biochips/retscanchip.o \
+	items/biochips/shieldchip.o \
 	items/inventory/airmask.o \
 	items/inventory/gascanister.o \
 	items/inventory/inventoryitem.o \

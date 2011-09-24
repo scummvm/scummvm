@@ -45,6 +45,8 @@
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/pegasuschip.h"
+#include "pegasus/items/biochips/retscanchip.h"
+#include "pegasus/items/biochips/shieldchip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/items/inventory/gascanister.h"
 #include "pegasus/items/inventory/inventoryitem.h"
@@ -198,11 +200,15 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 		new OpticalChip(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kMapBiochip:
-	case kRetinalScanBiochip:
-	case kShieldBiochip:
-		// TODO: Rest of specialized biochip classes
+		// TODO: Implement this biochip
 		new BiochipItem(itemID, neighborhoodID, roomID, direction);
 		break;
+	case kRetinalScanBiochip:
+		new RetScanChip(itemID, neighborhoodID, roomID, direction);
+		break;
+	case kShieldBiochip:
+		new ShieldChip(itemID, neighborhoodID, roomID, direction);
+		break;		
 	case kAirMask:
 		new AirMask(itemID, neighborhoodID, roomID, direction);
 		break;
