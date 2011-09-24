@@ -37,7 +37,7 @@ Scene2::Scene2() : Scene() {
 /*--------------------------------------------------------------------------*/
 
 void Object9350::postInit(SceneObjectList *OwnerList) {
-	//SceneObject::postInit(&_globals->_sceneManager._altSceneObjects);
+	//SceneObject::postInit(&_globals->_sceneManager._bgSceneObjects);
 	SceneObject::postInit(OwnerList);
 }
 

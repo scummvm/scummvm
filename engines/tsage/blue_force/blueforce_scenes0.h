@@ -159,7 +159,7 @@ public:
 	TicketBook _ticketBook;
 	CompartmentDoor _compartmentDoor;
 	SceneObject _dashboard;
-	AltSceneObject _car;
+	BackgroundSceneObject _car;
 	NamedHotspot _item1;
 	Ignition _ignition;
 	Item3 _item3;

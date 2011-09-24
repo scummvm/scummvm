@@ -606,9 +606,9 @@ public:
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 };
 
-class AltSceneObject: public SceneObject {
+class BackgroundSceneObject: public SceneObject {
 public:
-	virtual Common::String getClassName() { return "AltObjectExt"; }
+	virtual Common::String getClassName() { return "BackgroundSceneObject"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
 };

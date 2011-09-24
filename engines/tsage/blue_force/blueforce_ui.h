@@ -39,7 +39,7 @@ public:
 	virtual void process(Event &event);
 };
 
-class UIElement: public AltSceneObject {
+class UIElement: public BackgroundSceneObject {
 public:
 	int _field88;
 	bool _enabled;

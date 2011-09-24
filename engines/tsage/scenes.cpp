@@ -81,7 +81,7 @@ void SceneManager::sceneChange() {
 	}
 
 	// Clear the secondary scene object list
-	_altSceneObjects.clear();
+	_bgSceneObjects.clear();
 
 	// Clear the hotspot list
 	SynchronizedList<SceneItem *>::iterator ii = _globals->_sceneItems.begin();
@@ -234,7 +234,7 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 		// in order for the savegame loading to work correctly
 		_globals->_sceneManager._scene = new Scene();
 
-	_altSceneObjects.synchronize(s);
+	_bgSceneObjects.synchronize(s);
 	s.syncAsSint32LE(_sceneNumber);
 	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
 
@@ -442,16 +442,16 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 	}
 
 	if (changedFlag) {
-		drawAltObjects();
+		drawBackgroundObjects();
 	}
 }
 
-void Scene::drawAltObjects() {
+void Scene::drawBackgroundObjects() {
 	Common::Array<SceneObject *> objList;
 
 	// Initial loop to set the priority for entries in the list
-	for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneManager._altSceneObjects.begin();
-		i != _globals->_sceneManager._altSceneObjects.end(); ++i) {
+	for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneManager._bgSceneObjects.begin();
+		i != _globals->_sceneManager._bgSceneObjects.end(); ++i) {
 		SceneObject *obj = *i;
 		objList.push_back(obj);
 
@@ -463,7 +463,7 @@ void Scene::drawAltObjects() {
 	}
 
 	// Sort the list by priority
-	_globals->_sceneManager._altSceneObjects.sortList(objList);
+	_globals->_sceneManager._bgSceneObjects.sortList(objList);
 
 	// Drawing loop
 	for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {

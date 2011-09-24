@@ -33,7 +33,7 @@ namespace TsAGE {
 
 class Scene : public StripCallback {
 private:
-	void drawAltObjects();
+	void drawBackgroundObjects();
 public:
 	int _field12;
 	int _screenNumber;
@@ -86,7 +86,7 @@ public:
 	Common::Point _sceneBgOffset;
 	int _sceneLoadCount;
 	Rect _scrollerRect;
-	SceneObjectList _altSceneObjects;
+	SceneObjectList _bgSceneObjects;
 	int _objectCount;
 public:
 	SceneManager();

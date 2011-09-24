@@ -2528,17 +2528,18 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 
 /*--------------------------------------------------------------------------*/
 
-void AltSceneObject::postInit(SceneObjectList *OwnerList) {
-	SceneObject::postInit(&_globals->_sceneManager._altSceneObjects);
+void BackgroundSceneObject::postInit(SceneObjectList *OwnerList) {
+	SceneObject::postInit(&_globals->_sceneManager._bgSceneObjects);
 }
 
-void AltSceneObject::draw() {
+void BackgroundSceneObject::draw() {
+	assert(_globals->_sceneManager._scene);
 	Rect destRect = _bounds;
 	destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
 		-_globals->_sceneManager._scene->_sceneBounds.top);
 	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(_priority);
 	GfxSurface frame = getFrame();
-	_globals->_gfxManagerInstance.copyFrom(frame, destRect, priorityRegion);
+	_globals->_sceneManager._scene->_backSurface.copyFrom(frame, destRect, priorityRegion);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -38,7 +38,7 @@ void StripProxy::process(Event &event) {
 /*--------------------------------------------------------------------------*/
 
 void UIElement::synchronize(Serializer &s) {
-	AltSceneObject::synchronize(s);
+	BackgroundSceneObject::synchronize(s);
 	s.syncAsSint16LE(_field88);
 	s.syncAsSint16LE(_enabled);
 	s.syncAsSint16LE(_frameNum);
