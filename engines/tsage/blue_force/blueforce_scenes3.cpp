@@ -2049,7 +2049,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 		_harrison.setVisage(326);
 		_harrison.setObjectWrapper(new SceneObjectWrapper());
 		_harrison.animate(ANIM_MODE_1, NULL);
-		_harrison.setPosition(Common::Point(-40, 219));
+		_harrison.setPosition(Common::Point(-60, 219));
 		BF_GLOBALS._sceneItems.push_back(&_harrison);
 
 		_stripManager.addSpeaker(&_harrisonSpeaker);
