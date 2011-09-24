@@ -466,7 +466,7 @@ void SpeakerDriver::setText(const Common::String &msg) {
 	_object2.postInit();
 	_object2.setVisage(416);
 	_object2.setStrip2(1);
-	_object2.fixPriority(-1);
+	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 263,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
@@ -495,7 +495,7 @@ void SpeakerShooter::setText(const Common::String &msg) {
 	_object2.postInit();
 	_object2.setVisage(418);
 	_object2.setStrip2(1);
-	_object2.fixPriority(-1);
+	_object2.fixPriority(255);
 	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 268,
 		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
 
