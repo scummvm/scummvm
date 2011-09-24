@@ -30,15 +30,35 @@
 
 namespace Myst3 {
 
+class Myst3Engine;
+
 class Movie {
 public:
-	Movie(Archive *archive, uint16 id);
+	Movie(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~Movie();
 	void draw();
-	void setCondition(uint16 condition) { _condition = condition; }
+	void update();
 
+	void setEndFrame(int32 v) { _endFrame = v; }
+	void setEndFrameVar(uint16 v) { _endFrameVar = v; }
+	void setNextFrameReadVar(uint16 v) { _nextFrameReadVar = v; }
+	void setNextFrameWriteVar(uint16 v) { _nextFrameWriteVar = v; }
+	void setPlayingVar(uint16 v) { _playingVar = v; }
+	void setPosU(int32 v) { _posU = v; }
+	void setPosUVar(uint16 v) { _posUVar = v; }
+	void setPosV(int32 v) { _posV = v; }
+	void setPosVVar(uint16 v) { _posVVar = v; }
+	void setStartFrame(int32 v) { _startFrame = v; }
+	void setStartFrameVar(uint16 v) { _startFrameVar = v; }
+	void setCondition(int16 condition) { _condition = condition; }
+	void setConditionBit(int16 cb) { _conditionBit = cb; }
+	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
+	void setLoop(bool loop) { _loop = loop; }
+	void setScriptDriven(bool b) { _scriptDriven = b; }
 private:
 	static const int _movieTextureSize = 1024;
+
+	Myst3Engine *_vm;
 
 	Math::Vector3d _pTopLeft;
 	Math::Vector3d _pBottomLeft;
@@ -47,7 +67,32 @@ private:
 	Video::BinkDecoder _bink;
 	GLuint _texture;
 
-	uint16 _condition;
+	bool _enabled;
+	bool _loop;
+	bool _disableWhenComplete;
+	bool _scriptDriven;
+	bool _isLastFrame;
+
+	int16 _condition;
+	uint16 _conditionBit;
+
+	int32 _startFrame;
+	uint16 _startFrameVar;
+	int32 _endFrame;
+	uint16 _endFrameVar;
+	int32 _posU;
+	uint16 _posUVar;
+	int32 _posV;
+	uint16 _posVVar;
+
+	uint16 _nextFrameReadVar;
+	uint16 _nextFrameWriteVar;
+
+	uint16 _playingVar;
+
+	void loadPosition(const VideoData &videoData);
+	void initTexture();
+	void drawNextFrameToTexture();
 };
 
 } /* namespace Myst3 */

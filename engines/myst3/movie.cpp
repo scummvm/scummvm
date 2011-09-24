@@ -21,19 +21,45 @@
  */
 
 #include "engines/myst3/movie.h"
+#include "engines/myst3/myst3.h"
+#include "engines/myst3/variables.h"
 
 namespace Myst3 {
 
-Movie::Movie(Archive *archive, uint16 id) {
-	static const float scale = 50.0f;
+Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
+	_vm(vm),
+	_condition(0),
+	_conditionBit(0),
+	_startFrame(0),
+	_startFrameVar(0),
+	_endFrame(0),
+	_endFrameVar(0),
+	_posU(0),
+	_posUVar(0),
+	_posV(0),
+	_posVVar(0),
+	_nextFrameReadVar(0),
+	_nextFrameWriteVar(0),
+	_playingVar(0),
+	_enabled(false),
+	_disableWhenComplete(false),
+	_scriptDriven(false),
+	_isLastFrame(false) {
 
 	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
 
 	if (!binkDesc)
-		return;
+		error("Movie %d does not exist", id);
+
+	loadPosition(binkDesc->getVideoData());
+	initTexture();
 
 	Common::MemoryReadStream *binkStream = archive->getData(binkDesc);
-	const VideoData &videoData = binkDesc->getVideoData();
+	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+}
+
+void Movie::loadPosition(const VideoData &videoData) {
+	static const float scale = 50.0f;
 
 	Math::Vector3d planeDirection = videoData.v1;
 	planeDirection.normalize();
@@ -61,8 +87,9 @@ Movie::Movie(Archive *archive, uint16 id) {
 	_pBottomLeft = planeOrigin + vBottom + vLeft;
 	_pBottomRight = planeOrigin + vBottom + vRight;
 	_pTopRight = planeOrigin + vTop + vRight;
-	_bink.loadStream(binkStream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+}
 
+void Movie::initTexture() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 
@@ -76,19 +103,110 @@ Movie::Movie(Archive *archive, uint16 id) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
+void Movie::update() {
+	if (_startFrameVar) {
+		_startFrame = _vm->_vars->get(_startFrameVar);
+	}
+
+	if (_endFrameVar) {
+		_endFrame = _vm->_vars->get(_endFrameVar);
+	}
+
+	if (!_endFrame) {
+		_endFrame = _bink.getFrameCount() - 1;
+	}
+
+	if (_posUVar) {
+		_posU = _vm->_vars->get(_posUVar);
+	}
+
+	if (_posVVar) {
+		_posV = _vm->_vars->get(_posVVar);
+	}
+
+	bool newEnabled;
+	if (_conditionBit) {
+		newEnabled = (_vm->_vars->get(_condition) & (1 << (_conditionBit - 1))) != 0;
+	} else {
+		newEnabled = _vm->_vars->evaluate(_condition);
+	}
+
+	if (newEnabled != _enabled) {
+		_enabled = newEnabled;
+
+		if (newEnabled) {
+			if (_disableWhenComplete
+					|| _bink.getCurFrame() < _startFrame
+					|| _bink.endOfVideo()) {
+				_bink.seekToFrame(_startFrame);
+			}
+
+			if (!_scriptDriven)
+				_bink.pauseVideo(false);
+
+			drawNextFrameToTexture();
+
+		} else {
+			_bink.pauseVideo(true);
+		}
+	}
+
+	if (_enabled) {
+		if (_nextFrameReadVar) {
+			int32 nextFrame = _vm->_vars->get(_nextFrameReadVar);
+			if (nextFrame > 0) {
+				_bink.seekToFrame(nextFrame);
+				drawNextFrameToTexture();
+				_vm->_vars->set(_nextFrameReadVar, 0);
+				_isLastFrame = false;
+			}
+		}
+
+		if (!_scriptDriven && (_bink.needsUpdate() || _isLastFrame)) {
+
+			bool complete = false;
+
+			if (_isLastFrame) {
+				_isLastFrame = 0;
+
+				if (_loop) {
+					_bink.seekToFrame(_startFrame);
+					drawNextFrameToTexture();
+				} else {
+					complete = true;
+				}
+			} else {
+				drawNextFrameToTexture();
+				_isLastFrame = _bink.getCurFrame() == _endFrame;
+			}
+
+			if (_nextFrameWriteVar) {
+				_vm->_vars->set(_nextFrameWriteVar, _bink.getCurFrame() + 1);
+			}
+
+			if (_disableWhenComplete && complete) {
+				_bink.pauseVideo(true);
+
+				if (_playingVar) {
+					_vm->_vars->set(_playingVar, 0);
+				} else {
+					_enabled = 0;
+					_vm->_vars->set(_condition & 0x7FF, 0);
+				}
+			}
+
+		}
+	}
+}
+
 void Movie::draw() {
-	if (_bink.endOfVideo())
-		_bink.seekToFrame(_bink.getFrameCount() / 2);
+	if (!_enabled)
+		return;
 
 	const float w = _bink.getWidth() / (float)(_movieTextureSize);
 	const float h = _bink.getHeight() / (float)(_movieTextureSize);
 
 	glBindTexture(GL_TEXTURE_2D, _texture);
-
-	if (_bink.needsUpdate()) {
-		const Graphics::Surface *frame = _bink.decodeNextFrame();
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
-	}
 
 	glBegin(GL_TRIANGLE_STRIP);
 		glTexCoord2f(0, 0);
@@ -103,6 +221,13 @@ void Movie::draw() {
 		glTexCoord2f(w, h);
 		glVertex3f(-_pBottomRight.x(), _pBottomRight.y(), _pBottomRight.z());
 	glEnd();
+}
+
+void Movie::drawNextFrameToTexture() {
+	const Graphics::Surface *frame = _bink.decodeNextFrame();
+
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
 }
 
 Movie::~Movie() {

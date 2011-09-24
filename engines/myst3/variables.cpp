@@ -64,7 +64,7 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(170, MovieUnk170, true)
 	VAR(171, MovieUnk171, true)
 	VAR(172, MovieUnk172, true)
-	VAR(173, MovieVarPlaying, true)
+	VAR(173, MoviePlayingVar, true)
 
 	VAR(178, MovieUnk178, true)
 

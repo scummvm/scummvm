@@ -154,6 +154,7 @@ Common::Error Myst3Engine::run() {
 		_node->draw();
 
 		for (uint i = 0; i < _movies.size(); i++) {
+			_movies[i]->update();
 			_movies[i]->draw();
 		}
 
@@ -268,8 +269,81 @@ void Myst3Engine::runScriptsFromNode(uint16 nodeID, uint8 roomID, uint32 ageID) 
 }
 
 void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop) {
-	Movie *movie = new Movie(_archive, id);
+	Movie *movie = new Movie(this, _archive, id);
 	movie->setCondition(condition);
+	movie->setDisableWhenComplete(resetCond);
+	movie->setLoop(loop);
+
+	if (_vars->getMovieScriptDriven()) {
+		movie->setScriptDriven(_vars->getMovieScriptDriven());
+		_vars->setMovieScriptDriven(0);
+	}
+
+	if (_vars->getMovieStartFrameVar()) {
+		movie->setStartFrameVar(_vars->getMovieStartFrameVar());
+		_vars->setMovieStartFrameVar(0);
+	}
+
+	if (_vars->getMovieEndFrameVar()) {
+		movie->setEndFrameVar(_vars->getMovieEndFrameVar());
+		_vars->setMovieEndFrameVar(0);
+	}
+
+	if (_vars->getMovieStartFrame()) {
+		movie->setStartFrame(_vars->getMovieStartFrame());
+		_vars->setMovieStartFrame(0);
+	}
+
+	if (_vars->getMovieEndFrame()) {
+		movie->setEndFrame(_vars->getMovieEndFrame());
+		_vars->setMovieEndFrame(0);
+	}
+
+	if (_vars->getMovieNextFrameGetVar()) {
+		movie->setNextFrameReadVar(_vars->getMovieNextFrameGetVar());
+		_vars->setMovieNextFrameGetVar(0);
+	}
+
+	if (_vars->getMovieNextFrameSetVar()) {
+		movie->setNextFrameWriteVar(_vars->getMovieNextFrameSetVar());
+		_vars->setMovieNextFrameSetVar(0);
+	}
+
+	if (_vars->getMoviePlayingVar()) {
+		movie->setPlayingVar(_vars->getMoviePlayingVar());
+		_vars->setMoviePlayingVar(0);
+	}
+
+	if (_vars->getMovieOverridePosU()) {
+		movie->setPosU(_vars->getMovieOverridePosU());
+		_vars->setMovieOverridePosU(0);
+	}
+
+	if (_vars->getMovieOverridePosV()) {
+		movie->setPosV(_vars->getMovieOverridePosV());
+		_vars->setMovieOverridePosV(0);
+	}
+
+	if (_vars->getMovieUVar()) {
+		movie->setPosUVar(_vars->getMovieUVar());
+		_vars->setMovieUVar(0);
+	}
+
+	if (_vars->getMovieVVar()) {
+		movie->setPosVVar(_vars->getMovieVVar());
+		_vars->setMovieVVar(0);
+	}
+
+	if (_vars->getMovieOverrideCondition()) {
+		movie->setCondition(_vars->getMovieOverrideCondition());
+		_vars->setMovieOverrideCondition(0);
+	}
+
+	if (_vars->getMovieConditionBit()) {
+		movie->setConditionBit(_vars->getMovieConditionBit());
+		_vars->setMovieConditionBit(0);
+	}
+
 	_movies.push_back(movie);
 }
 
