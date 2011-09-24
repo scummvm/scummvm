@@ -256,5 +256,11 @@ endif
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
 	package_finalize scummvm-ps3.pkg
 
+ps3run: $(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE)
+	sprxlinker $(EXECUTABLE)
+	make_self $(EXECUTABLE) $(EXECUTABLE).self
+	ps3load $(EXECUTABLE).self
+
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
