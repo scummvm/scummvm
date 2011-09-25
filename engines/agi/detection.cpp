@@ -276,6 +276,8 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor desc(slot, name);
 
+		// Do not allow save slot 0 (used for auto-saving) to be deleted or
+		// overwritten.
 		desc.setDeletableFlag(slot != 0);
 		desc.setWriteProtectedFlag(slot == 0);
 
@@ -307,7 +309,8 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		return desc;
 	} else {
-		SaveStateDescriptor emptySave(slot, "");
+		SaveStateDescriptor emptySave;
+		// Do not allow save slot 0 (used for auto-saving) to be overwritten.
 		emptySave.setWriteProtectedFlag(slot == 0);
 		return emptySave;
 	}
