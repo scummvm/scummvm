@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	graphics.o \
 	hotspot.o \
 	input.o \
+	interface.o \
 	menu.o \
 	movie.o \
 	notification.o \

@@ -71,7 +71,7 @@ protected:
 	FaderKnot _knots[kMaxFaderKnots];
 };
 
-class Fader : private IdlerTimeBase {
+class Fader : public IdlerTimeBase {
 public:
 	Fader();
 	virtual ~Fader() {}

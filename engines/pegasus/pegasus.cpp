@@ -36,6 +36,7 @@
 #include "pegasus/console.h"
 #include "pegasus/cursor.h"
 #include "pegasus/gamestate.h"
+#include "pegasus/interface.h"
 #include "pegasus/menu.h"
 #include "pegasus/movie.h"
 #include "pegasus/pegasus.h"
@@ -868,7 +869,9 @@ bool PegasusEngine::playerHasItemID(const tItemID itemID) {
 }
 
 InventoryItem *PegasusEngine::getCurrentInventoryItem() {
-	// TODO
+	if (g_interface)
+		return g_interface->getCurrentInventoryItem();
+
 	return 0;
 }
 
@@ -881,7 +884,9 @@ bool PegasusEngine::itemInInventory(tItemID id) {
 }
 
 BiochipItem *PegasusEngine::getCurrentBiochip() {
-	// TODO
+	if (g_interface)
+		g_interface->getCurrentBiochip();
+
 	return 0;
 }
 

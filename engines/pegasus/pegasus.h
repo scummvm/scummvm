@@ -124,11 +124,13 @@ public:
 	InventoryItem *getCurrentInventoryItem();
 	bool itemInInventory(InventoryItem *);
 	bool itemInInventory(tItemID);
+	Inventory *getItemsInventory() { return &_items; }
 
 	// Biochips
 	BiochipItem *getCurrentBiochip();
 	bool itemInBiochips(BiochipItem *);
 	bool itemInBiochips(tItemID);
+	Inventory *getBiochipsInventory() { return &_biochips; }
 
 	// AI
 	Common::String getBriefingMovie();
