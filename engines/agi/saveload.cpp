@@ -557,7 +557,7 @@ void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
 	Common::InSaveFile *in;
 
 	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
-	sprintf(fileName, "%s", getSavegameFilename(num));
+	strcpy(fileName, getSavegameFilename(num));
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
 
@@ -852,7 +852,7 @@ int AgiEngine::saveGameDialog() {
 		return errOK;
 	}
 
-	sprintf(fileName, "%s", getSavegameFilename(_firstSlot + slot));
+	strcpy(fileName, getSavegameFilename(_firstSlot + slot));
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName);
 
 	// Make sure all graphics was blitted to screen. This fixes bug
