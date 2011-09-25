@@ -114,7 +114,7 @@ bool GfxPalette::isMerging() {
 void GfxPalette::setDefault() {
 	if (_resMan->getViewType() == kViewEga)
 		setEGA();
-	else if (_resMan->getViewType() == kViewAmiga)
+	else if (_resMan->getViewType() == kViewAmiga || _resMan->getViewType() == kViewAmiga64)
 		setAmiga();
 	else
 		kernelSetFromResource(999, true);
