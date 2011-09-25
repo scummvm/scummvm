@@ -1368,7 +1368,7 @@ void cmdRestartGame(AgiGame *state, uint8 *p) {
 
 	state->_vm->_sound->stopSound();
 	sel = getflag(fAutoRestart) ? 0 :
-		state->_vm->selectionBox(" Restart _game, or continue? \n\n\n", buttons);
+		state->_vm->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
 		state->_vm->_restartGame = true;
