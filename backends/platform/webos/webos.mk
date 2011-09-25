@@ -51,8 +51,8 @@
 
 # Increment this number when the packaging of the app has been changed while
 # ScummVM itself has the same version as before. The number can be reset to 
-# 1 when the ScummVM version is increased.
-VER_PACKAGE = 5
+# 0 when the ScummVM version is increased.
+VER_PACKAGE = 0
 
 PATH_DIST = $(srcdir)/dists/webos
 PATH_MOJO = $(PATH_DIST)/mojo
