@@ -881,7 +881,7 @@ public:
 
 	StringData _stringdata;
 
-	const char *getSavegameFilename(int num);
+	void getSavegameFilename(int num, char *fileName);
 	void getSavegameDescription(int num, char *buf, bool showEmpty = true);
 	int selectSlot();
 	int saveGame(const char *fileName, const char *saveName);

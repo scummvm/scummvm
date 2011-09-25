@@ -546,10 +546,10 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 #define NUM_SLOTS 100
 #define NUM_VISIBLE_SLOTS 12
 
-const char *AgiEngine::getSavegameFilename(int num) {
+void AgiEngine::getSavegameFilename(int num, char *fileName) {
 	Common::String saveLoadSlot = _targetName;
 	saveLoadSlot += Common::String::format(".%.3d", num);
-	return saveLoadSlot.c_str();
+	strcpy(fileName, saveLoadSlot.c_str());
 }
 
 void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
@@ -557,7 +557,8 @@ void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
 	Common::InSaveFile *in;
 
 	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
-	strcpy(fileName, getSavegameFilename(num));
+	getSavegameFilename(num, fileName);
+
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
 		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName);
 
@@ -852,7 +853,7 @@ int AgiEngine::saveGameDialog() {
 		return errOK;
 	}
 
-	strcpy(fileName, getSavegameFilename(_firstSlot + slot));
+	getSavegameFilename(_firstSlot + slot, fileName);
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName);
 
 	// Make sure all graphics was blitted to screen. This fixes bug
@@ -870,7 +871,10 @@ int AgiEngine::saveGameDialog() {
 }
 
 int AgiEngine::saveGameSimple() {
-	int result = saveGame(getSavegameFilename(0), "Default savegame");
+	char fileName[MAXPATHLEN];
+	getSavegameFilename(0, fileName);
+
+	int result = saveGame(fileName, "Default savegame");
 	if (result != errOK)
 		messageBox("Error saving game.");
 	return result;
@@ -904,7 +908,7 @@ int AgiEngine::loadGameDialog() {
 		return errOK;
 	}
 
-	sprintf(fileName, "%s", getSavegameFilename(_firstSlot + slot));
+	getSavegameFilename(_firstSlot + slot, fileName);
 
 	if ((rc = loadGame(fileName)) == errOK) {
 		messageBox("Game restored.");
@@ -921,7 +925,7 @@ int AgiEngine::loadGameSimple() {
 	char fileName[MAXPATHLEN];
 	int rc = 0;
 
-	sprintf(fileName, "%s", getSavegameFilename(0));
+	getSavegameFilename(0, fileName);
 
 	_sprites->eraseBoth();
 	_sound->stopSound();
