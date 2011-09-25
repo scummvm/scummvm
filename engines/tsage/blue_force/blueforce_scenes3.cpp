@@ -2842,7 +2842,7 @@ bool Scene355::Doorway::startAction(CursorType action, Event &event) {
 		SceneItem::display2(355, 9);
 		return true;
 	case CURSOR_USE:
-		if (scene->_gameTextSpeaker._sceneText._frame == 0) {
+		if (!scene->_modeFlag) {
 			scene->_sceneMode = 9984;
 			scene->signal();
 		} else {
@@ -3605,23 +3605,23 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 		break;
 	default:
 		if (!BF_GLOBALS.getFlag(greenTaken)) {
-			_object1.postInit();
-			_object1.setPosition(Common::Point(152, 131));
-			_object1.animate(ANIM_MODE_1, NULL);
-			_object1.setObjectWrapper(new SceneObjectWrapper());
+			_harrison.postInit();
+			_harrison.setPosition(Common::Point(152, 131));
+			_harrison.animate(ANIM_MODE_1, NULL);
+			_harrison.setObjectWrapper(new SceneObjectWrapper());
 			
 			if (BF_GLOBALS.getFlag(gunDrawn)) {
-				_object1.setVisage(357);
-				_object1.setStrip(2);
+				_harrison.setVisage(357);
+				_harrison.setStrip(2);
 			} else {
-				_object1.setVisage(1363);
-				_object1.setStrip(3);
+				_harrison.setVisage(1363);
+				_harrison.setStrip(3);
 			}
 
-			_object1.hide();
+			_harrison.hide();
 			if (BF_GLOBALS.getFlag(fBackupIn350)) {
-				_object1.show();
-				BF_GLOBALS._sceneItems.push_back(&_object1);
+				_harrison.show();
+				BF_GLOBALS._sceneItems.push_back(&_harrison);
 			}
 
 			_sceneMode = 1355;
@@ -3630,7 +3630,7 @@ void Scene355::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
-	_object1.setDetails(355, 18, 20, 19, 1, NULL);
+	_harrison.setDetails(355, 18, 20, 19, 1, NULL);
 	_item6.setDetails(10, 355, 2, -1, 14, 1);
 	_item7.setDetails(11, 355, 3, -1, 15, 1);
 	_item8.setDetails(12, 355, 4, -1, 8, 1);
@@ -3666,19 +3666,21 @@ void Scene355::signal() {
 	case 1356:
 		switch (_doorway._v1) {
 		case 0:
+			++_doorway._v1;
 			_sceneMode = 9999;
 			_stripManager.start(3550, this);
 			break;
 		case 1:
 			_sceneMode = 9999;
 			_stripManager.start(3551, this);
+			++_doorway._v1;
 			break;
 		default:
 			break;
 		}
 		break;
 	case 2357:
-		_object1.animate(ANIM_MODE_1, NULL);
+		_harrison.animate(ANIM_MODE_1, NULL);
 		// Deliberate fall-through
 	case 1357:
 		BF_GLOBALS._player.enableControl();
@@ -3693,7 +3695,7 @@ void Scene355::signal() {
 			BF_GLOBALS._sceneManager.changeScene(360);
 		else {
 			_sceneMode = 1359;
-			setAction(&_sequenceManager, this, BF_GLOBALS.getFlag(gunDrawn) ? 1359 : 3550, NULL);
+			setAction(&_sequenceManager, this, BF_GLOBALS.getFlag(gunDrawn) ? 1359 : 3550, &_harrison, NULL);
 		}
 		break;
 	case 3553:
@@ -3822,7 +3824,7 @@ void Scene355::signal() {
 				BF_GLOBALS.setFlag(fTookTrailerAmmo);
 				_stripManager.start(3575, this);
 				_object7._flag = 1;
-				_doorway._v2 = 0;
+				++_doorway._v2;
 				break;
 			case 1:
 				_stripManager.start(3573, this);
@@ -3835,6 +3837,7 @@ void Scene355::signal() {
 		} else if (BF_GLOBALS.getFlag(greenTaken) || (BF_GLOBALS._dayNumber > 1)) {
 			if (_doorway._v3) {
 				SceneItem::display2(355, 23);
+				_sceneMode = 0;
 				signal();
 			} else {
 				BF_GLOBALS._player.disableControl();
@@ -3964,15 +3967,15 @@ void Scene355::signal() {
 		error("Talkdoor state");
 		break;
 	case 9999:
-		if (_doorway._v2 != 2) {
+		if (_doorway._v1 != 2) {
 			BF_GLOBALS._player.enableControl();
 			BF_GLOBALS._player._canWalk = false;
 		} else if (BF_GLOBALS.getFlag(gunDrawn)) {
 			_sceneMode = 2358;
-			setAction(&_sequenceManager, this, 2359, &BF_GLOBALS._player, &_doorway, &_object1, NULL);
+			setAction(&_sequenceManager, this, 2359, &BF_GLOBALS._player, &_doorway, &_harrison, NULL);
 		} else {
 			_sceneMode = 2358;
-			setAction(&_sequenceManager, this, 2358, &BF_GLOBALS._player, &_doorway, &_object1, NULL);
+			setAction(&_sequenceManager, this, 2358, &BF_GLOBALS._player, &_doorway, &_harrison, NULL);
 		}
 		break;
 	case 0:
@@ -4063,11 +4066,11 @@ void Scene355::process(Event &event) {
 				if (BF_GLOBALS.getFlag(gunDrawn)) {
 					BF_GLOBALS.clearFlag(gunDrawn);
 					_sceneMode = 2357;
-					setAction(&_sequenceManager, this, 2357, &BF_GLOBALS._player, &_object1, NULL);
+					setAction(&_sequenceManager, this, 2357, &BF_GLOBALS._player, &_harrison, NULL);
 				} else {
 					BF_GLOBALS._player.disableControl();
 					_sceneMode = 1357;
-					setAction(&_sequenceManager, this, 1357, &BF_GLOBALS._player, &_object1, NULL);
+					setAction(&_sequenceManager, this, 1357, &BF_GLOBALS._player, &_harrison, NULL);
 					BF_GLOBALS.setFlag(gunDrawn);
 				}
 			} else {

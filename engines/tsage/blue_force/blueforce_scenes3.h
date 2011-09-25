@@ -573,7 +573,7 @@ public:
 	SpeakerHarrison _harrisonSpeaker;
 	SpeakerLyleHat _lyleHatSpeaker;
 	SpeakerGreen _greenSpeaker;
-	NamedObject _object1;
+	NamedObject _harrison;
 	Doorway _doorway;
 	Locker _locker;
 	LockerDoor _lockerDoor;
