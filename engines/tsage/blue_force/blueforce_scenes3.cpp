@@ -4829,7 +4829,7 @@ void Scene370::postInit(SceneObjectList *OwnerList) {
 		_green.setStrip(2);
 		_green._numFrames = 5;
 		_green.setPosition(Common::Point(164, 137));
-		_green.animate(ANIM_MODE_7, NULL);
+		_green.animate(ANIM_MODE_7, 0, NULL);
 		_green.fixPriority(125);
 		BF_GLOBALS._sceneItems.push_back(&_green);
 
