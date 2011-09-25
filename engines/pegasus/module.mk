@@ -1,6 +1,7 @@
 MODULE := engines/pegasus
 
 MODULE_OBJS = \
+	compass.o \
 	console.o \
 	cursor.o \
 	detection.o \
