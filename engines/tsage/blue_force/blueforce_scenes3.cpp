@@ -4338,6 +4338,7 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 
 	_window.postInit();
 	_window.setVisage(760);
+	_window.setStrip(4);
 	_window.setPosition(Common::Point(176, 43));
 	_window.fixPriority(10);
 	_window._numFrames = 2;
@@ -4493,7 +4494,9 @@ void Scene360::process(Event &event) {
 
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
 			BF_GLOBALS._player.contains(event.mousePos) && !BF_GLOBALS.getFlag(greenTaken)) {
+		// Player clicked gun on themselves
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
+			// Handle holstering gun
 			if (BF_GLOBALS._player._position.x <= 160)
 				SceneItem::display2(360, 18);
 			else {
@@ -4509,8 +4512,23 @@ void Scene360::process(Event &event) {
 				
 				_object6.setVisage(1363);
 			}
+		} else {
+			// Handle drawing gun
+			if (BF_GLOBALS.getFlag(fBackupIn350))
+				SceneItem::display2(360, 19);
 
+			BF_GLOBALS._player.disableControl();
+			BF_GLOBALS._player.addMover(NULL);
+			BF_GLOBALS._player.setVisage(1361);
+			BF_GLOBALS._player.setFrame(1);
+			BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+
+			BF_GLOBALS.setFlag(gunDrawn);
+			_sceneMode = 9998;
+			_object6.setVisage(363);
 		}
+		
+		event.handled = true;
 	}
 }
 
