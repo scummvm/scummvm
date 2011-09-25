@@ -23,6 +23,7 @@
 #ifndef GRAPHICS_PICT_H
 #define GRAPHICS_PICT_H
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 
@@ -36,6 +37,8 @@ namespace Graphics {
 
 class JPEG;
 struct Surface;
+
+#define DECLARE_OPCODE(x) void x(Common::SeekableReadStream *stream)
 
 class PictDecoder {
 public:
@@ -70,12 +73,55 @@ private:
 	byte _palette[256 * 3];
 	bool _isPaletted;
 	Graphics::Surface *_outputSurface;
+	bool _continueParsing;
 
-	void decodeDirectBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
-	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel);
+	// Utility Functions
+	void unpackBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
+	void unpackBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bitsPerPixel, byte bytesPerPixel);
+	void skipBitsRect(Common::SeekableReadStream *stream, bool hasPalette);
 	void decodeCompressedQuickTime(Common::SeekableReadStream *stream);
 	void outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel);
+
+	// Opcodes
+	typedef void (PictDecoder::*OpcodeProcPICT)(Common::SeekableReadStream *stream);
+	struct PICTOpcode {
+		PICTOpcode() { op = 0; proc = 0; desc = 0; }
+		PICTOpcode(uint16 o, OpcodeProcPICT p, const char *d) { op = o; proc = p; desc = d; }
+		uint16 op;
+		OpcodeProcPICT proc;
+		const char *desc;
+	};
+	Common::Array<PICTOpcode> _opcodes;
+
+	// Common Opcodes
+	void setupOpcodesCommon();
+	DECLARE_OPCODE(o_nop);
+	DECLARE_OPCODE(o_clip);
+	DECLARE_OPCODE(o_txFont);
+	DECLARE_OPCODE(o_txFace);
+	DECLARE_OPCODE(o_pnSize);
+	DECLARE_OPCODE(o_txSize);
+	DECLARE_OPCODE(o_txRatio);
+	DECLARE_OPCODE(o_versionOp);
+	DECLARE_OPCODE(o_longText);
+	DECLARE_OPCODE(o_longComment);
+	DECLARE_OPCODE(o_opEndPic);
+	DECLARE_OPCODE(o_headerOp);
+
+	// Regular-mode Opcodes
+	void setupOpcodesNormal();
+	DECLARE_OPCODE(on_packBitsRect);
+	DECLARE_OPCODE(on_directBitsRect);
+	DECLARE_OPCODE(on_compressedQuickTime);
+
+	// QuickTime-mode Opcodes
+	void setupOpcodesQuickTime();
+	DECLARE_OPCODE(oq_packBitsRect);
+	DECLARE_OPCODE(oq_directBitsRect);
+	DECLARE_OPCODE(oq_compressedQuickTime);
 };
+
+#undef DECLARE_OPCODE
 
 } // End of namespace Graphics
 
