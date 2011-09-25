@@ -1442,7 +1442,8 @@ void cmdPreventInput(AgiGame *state, uint8 *p) {
 	state->_vm->newInputMode(INPUT_NONE);
 	state->inputEnabled = false;
 
-	state->_vm->clearPrompt();
+	// Always clear with black background. Fixes bug #3080041.
+	state->_vm->clearPrompt(true);
 }
 
 void cmdGetString(AgiGame *state, uint8 *p) {

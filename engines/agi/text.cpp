@@ -676,11 +676,11 @@ void AgiEngine::writePrompt() {
 	_gfx->doUpdate();
 }
 
-void AgiEngine::clearPrompt() {
+void AgiEngine::clearPrompt(bool useBlackBg) {
 	int l;
 
 	l = _game.lineUserInput;
-	clearLines(l, l, _game.colorBg);
+	clearLines(l, l, useBlackBg ? 0 : _game.colorBg);
 	flushLines(l, l);
 
 	_gfx->doUpdate();
