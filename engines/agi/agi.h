@@ -614,7 +614,6 @@ struct AgiGame {
 
 	bool controllerOccured[MAX_DIRS];  /**< keyboard keypress events */
 	AgiController controllers[MAX_CONTROLLERS];
-	int lastController;
 
 	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
 

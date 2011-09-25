@@ -578,11 +578,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
 
-	// NOTE: On game reload the keys do not get set again,
-	// thus it is incorrect to reset it in agiInit(). Fixes bug #2823762
-	_game.lastController = 0;
-	for (int i = 0; i < MAX_DIRS; i++)
-		_game.controllerOccured[i] = false;
+	resetControllers();
 
 	setupOpcodes();
 	_game._curLogic = NULL;

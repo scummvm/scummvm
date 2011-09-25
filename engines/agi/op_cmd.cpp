@@ -1516,20 +1516,25 @@ void cmdSetCursorChar(AgiGame *state, uint8 *p) {
 }
 
 void cmdSetKey(AgiGame *state, uint8 *p) {
-	int key;
+	int key = 256 * p1 + p0;
+	int slot = -1;
 
-	if (state->lastController >= MAX_CONTROLLERS) {
+	for (int i = 0; i < MAX_CONTROLLERS; i++) {
+		if (slot == -1 && !state->controllers[i].keycode)
+			slot = i;
+
+		if (state->controllers[i].keycode == key && state->controllers[i].controller == p2)
+			return;
+	}
+
+	if (slot == -1) {
 		warning("Number of set.keys exceeded %d", MAX_CONTROLLERS);
 		return;
 	}
 
-	debugC(4, kDebugLevelScripts, "%d %d %d", p0, p1, p2);
-
-	key = 256 * p1 + p0;
-
-	state->controllers[state->lastController].keycode = key;
-	state->controllers[state->lastController].controller = p2;
-	state->lastController++;
+	debugC(4, kDebugLevelScripts, "cmdSetKey: %d %d %d", p0, p1, p2);
+	state->controllers[slot].keycode = key;
+	state->controllers[slot].controller = p2;
 
 	state->controllerOccured[p2] = false;
 }
