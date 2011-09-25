@@ -306,9 +306,11 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 		delete in;
 
 		return desc;
+	} else {
+		SaveStateDescriptor emptySave(slot, "");
+		emptySave.setWriteProtectedFlag(slot == 0);
+		return emptySave;
 	}
-
-	return SaveStateDescriptor();
 }
 
 const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
