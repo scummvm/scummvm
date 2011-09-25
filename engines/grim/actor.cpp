@@ -645,7 +645,7 @@ void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
 	// Limit the amount of the movement per frame, otherwise with low fps
 	// scripts that use WalkActorForward and proximity may break.
-	if (dist > _walkRate / 5.f)
+	if ((dist > 0 && dist > _walkRate / 5.f) || (dist < 0 && dist < _walkRate / 5.f))
 		dist = _walkRate / 5.f;
 
 	_walking = false;
