@@ -133,7 +133,7 @@ public:
 
 class Scene315: public SceneExt {
 	/* Objects */
-	class Object1: public NamedObject {
+	class BulletinMemo: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -141,41 +141,41 @@ class Scene315: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public NamedObject {
+	class ATFMemo: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Barry: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item2: public NamedHotspot {
+	class SutterSlot: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4: public NamedHotspot {
+	class Sign: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item5: public NamedHotspot {
+	class BulletinBoard: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item14: public NamedHotspot {
+	class CleaningKit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item15: public NamedHotspot {
+	class BriefingMaterial: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item16: public NamedHotspot {
+	class WestExit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item17: public NamedHotspot {
+	class SouthWestExit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -193,22 +193,22 @@ public:
 	SpeakerJakeJacket _jakeJacketSpeaker;
 	SpeakerJakeUniform _jakeUniformSpeaker;
 	SpeakerJailer _jailerSpeaker;
-	Item1 _item1;
-	Item2 _item2;
+	Barry _barry;
+	SutterSlot _sutterSlot;
 	NamedHotspot _item3;
-	Item4 _item4;
-	Item5 _item5;
-	Object1 _object1;
+	Sign _sign;
+	BulletinBoard _bulletinBoard;
+	BulletinMemo _bulletinMemo;
 	Object2 _object2;
-	Object3 _object3;
+	ATFMemo _atfMemo;
 	SceneObject _object4, _object5, _object6;
 	SceneObject _object7, _object8, _object9;
 	NamedHotspot _item6, _item7, _item8, _item9;
 	NamedHotspot _item10, _item11, _item12, _item13;
-	Item14 _item14;
-	Item15 _item15;
-	Item16 _item16;
-	Item17 _item17;
+	CleaningKit _cleaningKit;
+	BriefingMaterial _briefingMaterial;
+	WestExit _westExit;
+	SouthWestExit _swExit;
 	Action1 _action1;
 	int _field1390;
 	int _stripNumber;

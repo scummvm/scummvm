@@ -632,7 +632,7 @@ void Scene300::setup() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene315::Item1::startAction(CursorType action, Event &event) {
+bool Scene315::Barry::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 	scene->_currentCursor = action;
 
@@ -663,14 +663,14 @@ bool Scene315::Item1::startAction(CursorType action, Event &event) {
 	case INV_GREENS_GUN:
 	case INV_GREENS_KNIFE:
 		BF_GLOBALS._player.disableControl();
-		if (BF_INVENTORY._bookingGreen._sceneNumber != 390) {
+		if (BF_INVENTORY._bookingGreen._sceneNumber == 390) {
 			scene->_stripNumber = 3174;
 			scene->setAction(&scene->_action1);
 		} else {
 			++scene->_field1B62;
 			scene->_stripNumber = (action == INV_GREENS_GUN) ? 3168 : 0;
-			scene->_sceneMode = 3152;
-			scene->setAction(&scene->_sequenceManager, scene, 3153, 1888, NULL);
+			scene->_sceneMode = 3153;
+			scene->setAction(&scene->_sequenceManager, scene, 3153, &BF_GLOBALS._player, NULL);
 		} 
 		break;
 	case INV_FOREST_RAP:
@@ -735,7 +735,7 @@ bool Scene315::Item1::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene315::Item2::startAction(CursorType action, Event &event) {
+bool Scene315::SutterSlot::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -772,7 +772,7 @@ bool Scene315::Item2::startAction(CursorType action, Event &event) {
 	return true;
 }
 
-bool Scene315::Item4::startAction(CursorType action, Event &event) {
+bool Scene315::Sign::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -788,7 +788,7 @@ bool Scene315::Item4::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene315::Item5::startAction(CursorType action, Event &event) {
+bool Scene315::BulletinBoard::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
@@ -800,7 +800,7 @@ bool Scene315::Item5::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene315::Item14::startAction(CursorType action, Event &event) {
+bool Scene315::CleaningKit::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if ((action == INV_COLT45) && BF_GLOBALS.getFlag(onDuty)) {
@@ -823,7 +823,7 @@ bool Scene315::Item14::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene315::Item15::startAction(CursorType action, Event &event) {
+bool Scene315::BriefingMaterial::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -839,19 +839,19 @@ bool Scene315::Item15::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene315::Item16::startAction(CursorType action, Event &event) {
+bool Scene315::WestExit::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 190, 75);
 	return true;
 }
 
-bool Scene315::Item17::startAction(CursorType action, Event &event) {
+bool Scene315::SouthWestExit::startAction(CursorType action, Event &event) {
 	ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, event.mousePos.x, event.mousePos.y);
 	return true;
 }
 
 /*--------------------------------------------------------------------------*/
 
-bool Scene315::Object1::startAction(CursorType action, Event &event) {
+bool Scene315::BulletinMemo::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -894,7 +894,7 @@ bool Scene315::Object2::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene315::Object3::startAction(CursorType action, Event &event) {
+bool Scene315::ATFMemo::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -997,24 +997,24 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 	_object8.setPosition(Common::Point(272, 69));
 
 	if (BF_GLOBALS._bookmark >= bLauraToParamedics) {
-		_object3.postInit();
-		_object3.setVisage(315);
-		_object3.setPosition(Common::Point(167, 53));
-		_object3.setStrip(4);
-		_object3.setFrame(4);
-		_object3.fixPriority(82);
-		_object3.setDetails(315, -1, -1, -1, 1, NULL);
+		_atfMemo.postInit();
+		_atfMemo.setVisage(315);
+		_atfMemo.setPosition(Common::Point(167, 53));
+		_atfMemo.setStrip(4);
+		_atfMemo.setFrame(4);
+		_atfMemo.fixPriority(82);
+		_atfMemo.setDetails(315, -1, -1, -1, 1, NULL);
 	}
 
 	if (BF_GLOBALS._dayNumber == 1) {
 		if (BF_GLOBALS._bookmark >= bLauraToParamedics) {
-			_object1.postInit();
-			_object1.setVisage(315);
-			_object1.setPosition(Common::Point(156, 51));
-			_object1.setStrip(4);
-			_object1.setFrame(2);
-			_object1.fixPriority(82);
-			_object1.setDetails(315, -1, -1, -1, 1, NULL);
+			_bulletinMemo.postInit();
+			_bulletinMemo.setVisage(315);
+			_bulletinMemo.setPosition(Common::Point(156, 51));
+			_bulletinMemo.setStrip(4);
+			_bulletinMemo.setFrame(2);
+			_bulletinMemo.fixPriority(82);
+			_bulletinMemo.setDetails(315, -1, -1, -1, 1, NULL);
 		}
 	} else if ((BF_INVENTORY._daNote._sceneNumber != 1) && (BF_GLOBALS._dayNumber < 3)) {
 		_object2.postInit();
@@ -1026,13 +1026,13 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		_object2.setDetails(315, 3, 4, -1, 1, NULL);
 	}
 
-	_item2.setDetails(12, 315, 35, -1, 36, 1);
-	_item5.setDetails(3, 315, -1, -1, -1, 1);
-	_item1.setDetails(4, 315, 10, 11, 12, 1);
+	_sutterSlot.setDetails(12, 315, 35, -1, 36, 1);
+	_bulletinBoard.setDetails(3, 315, -1, -1, -1, 1);
+	_barry.setDetails(4, 315, 10, 11, 12, 1);
 	_item3.setDetails(2, 315, 0, 1, 2, 1);
-	_item4.setDetails(Rect(190, 17, 208, 30), 315, -1, -1, -1, 1, NULL);
-	_item16.setDetails(Rect(184, 31, 211, 80), 315, -1, -1, -1, 1, NULL);
-	_item17.setDetails(Rect(0, 157, 190, 167), 315, -1, -1, -1, 1, NULL);
+	_sign.setDetails(Rect(190, 17, 208, 30), 315, -1, -1, -1, 1, NULL);
+	_westExit.setDetails(Rect(184, 31, 211, 80), 315, -1, -1, -1, 1, NULL);
+	_swExit.setDetails(Rect(0, 157, 190, 167), 315, -1, -1, -1, 1, NULL);
 	
 	if (!BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._bookmark == bNone) || (BF_GLOBALS._bookmark == bLyleStoppedBy))) {
 		_field1398 = 1;
@@ -1115,8 +1115,8 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._walkRegions.proc1(4);
 	}
 
-	_item15.setDetails(24, 315, 38, 39, 40, 1);
-	_item14.setDetails(14, 315, 24, 25, 26, 1);
+	_briefingMaterial.setDetails(24, 315, 38, 39, 40, 1);
+	_cleaningKit.setDetails(14, 315, 24, 25, 26, 1);
 	_item7.setDetails(5, 315, 8, 9, -1, 1);
 	_item6.setDetails(6, 315, 5, 6, 7, 1);
 	_item10.setDetails(8, 315, 13, -1, -1, 1);
@@ -1295,10 +1295,10 @@ void Scene315::process(Event &event) {
 
 	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
-		if (_item17.contains(event.mousePos)) {
+		if (_swExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
 			BF_GLOBALS._events.setCursor(surface);
-		} else if ((BF_GLOBALS._bookmark != bBookedFrankie) && _item16.contains(event.mousePos)) {
+		} else if ((BF_GLOBALS._bookmark != bBookedFrankie) && _westExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
 			BF_GLOBALS._events.setCursor(surface);
 		} else {
@@ -5892,14 +5892,18 @@ void Scene390::signal() {
 		_object3.setPosition(Common::Point(250, 60));
 		_object3.fixPriority(255);
 		_object3.setDetails(390, 8, -1, 9, 2, NULL);
+
+		BF_GLOBALS._player.enableControl();
 		break;
 	case 3903:
 		SceneItem::display2(390, 18);
+		BF_GLOBALS._player.enableControl();
 		break;
 	case 3905:
 		BF_GLOBALS._uiElements.addScore(30);
 		_object2.remove();
 		BF_INVENTORY.setObjectScene(INV_HANDCUFFS, 1);
+		BF_GLOBALS._player.enableControl();
 		break;
 	case 3906:
 		BF_GLOBALS._deathReason = 18;
