@@ -492,20 +492,20 @@ public:
 
 class Scene355: public PalettedScene {
 	/* Objects */
-	class Object2: public NamedObject {
+	class Doorway: public NamedObject {
 	public:
 		int _v1, _v2, _v3;
 
-		Object2() { _v1 = _v2 = _v3 = 0; }
-		virtual Common::String getClassName() { return "Scene355_Object2"; }
+		Doorway() { _v1 = _v2 = _v3 = 0; }
+		virtual Common::String getClassName() { return "Scene355_Doorway"; }
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public NamedObject {
+	class Locker: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object4: public NamedObject {
+	class LockerDoor: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -574,9 +574,9 @@ public:
 	SpeakerLyleHat _lyleHatSpeaker;
 	SpeakerGreen _greenSpeaker;
 	NamedObject _object1;
-	Object2 _object2;
-	Object3 _object3;
-	Object4 _object4;
+	Doorway _doorway;
+	Locker _locker;
+	LockerDoor _lockerDoor;
 	Object5 _object5;
 	Object6 _object6;
 	Object7 _object7;
@@ -594,7 +594,8 @@ public:
 	ASoundExt _sound1, _sound2, _sound3;
 	Action1 _action1;
 	Action2 _action2;
-	int _fieldB0E, _fieldB10;
+	int _nextSceneMode;
+	bool _modeFlag;
 
 	Scene355();
 	virtual void synchronize(Serializer &s);
@@ -603,7 +604,7 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 
-	void proc1(int v1, int v2);
+	void setMode(bool mode, int sceneMode);
 };
 
 class Scene360: public SceneExt {
