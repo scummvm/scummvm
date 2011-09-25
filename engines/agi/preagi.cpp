@@ -185,7 +185,6 @@ void PreAgiEngine::printStr(const char* szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
 	_gfx->doUpdate();
-	_system->updateScreen();
 }
 
 void PreAgiEngine::XOR80(char *buffer) {
@@ -284,7 +283,6 @@ void PreAgiEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		_gfx->doUpdate();
-		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }
