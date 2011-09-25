@@ -59,7 +59,7 @@ int AgiEngine::saveGame(Common::String fileName, Common::String description) {
 	Common::OutSaveFile *out;
 	int result = errOK;
 
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), description);
+	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), description.c_str());
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		warning("Can't create file '%s', game not saved", fileName.c_str());
 		return errBadFileOpen;
@@ -242,7 +242,7 @@ int AgiEngine::saveGame(Common::String fileName, Common::String description) {
 		warning("Can't write file '%s'. (Disk full?)", fileName.c_str());
 		result = errIOError;
 	} else
-		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", description, fileName.c_str());
+		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", description.c_str(), fileName.c_str());
 
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
