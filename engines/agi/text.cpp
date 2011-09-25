@@ -437,11 +437,13 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 
 	debugC(4, kDebugLevelText, "print(): lin = %d, col = %d, len = %d", lin, col, len);
 
-	if (col == 0 && lin == 0 && len == 0)
-		lin = col = -1;
-
-	if (len == 0)
-		len = 30;
+	// WORKAROUND for SQ0, room 28: when the tree is talking, non-blocking
+	// text boxes are shown and the tree's animation is shown underneath.
+	// The text boxes are drawn too low, and the tree's animation is painted
+	// over them. We cheat here and move the text boxex one line above to
+	// avoid getting them overdrawn. Fixes bug #3295652.
+	if (getGameID() == GID_SQ0 && getvar(0) == 28 && lin == 6)
+		lin = 5;
 
 	blitTextbox(p, lin, col, len);
 
