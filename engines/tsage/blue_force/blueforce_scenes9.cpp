@@ -720,6 +720,187 @@ void Scene900::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1976);
 }
 
-} // End of namespace BlueForce
+/*--------------------------------------------------------------------------
+ * Scene 920 - Inside Warehouse: Secret Room
+ *
+ *--------------------------------------------------------------------------*/
+// Crate
+bool Scene920::Item1::startAction(CursorType action, Event &event) {
+	Scene920 *scene = (Scene920 *)BF_GLOBALS._sceneManager._scene;
 
+	switch (action) {
+	case CURSOR_LOOK:
+		if ((BF_GLOBALS.getFlag(fCrateOpen)) && (BF_GLOBALS._player._visage == 921)) {
+			BF_GLOBALS._player.disableControl();
+			scene->_object2.postInit();
+			scene->_sceneMode = 9204;
+			if (!BF_GLOBALS.getFlag(fGotPointsForBoots)) {
+				BF_GLOBALS._uiElements.addScore(30);
+				BF_GLOBALS.setFlag(fGotPointsForBoots);
+			}
+			scene->setAction(&scene->_sequenceManager1, scene, 9204, &BF_GLOBALS._player, &scene->_object2, NULL);
+			return true;
+		} else
+			return NamedHotspot::startAction(action, event);
+		break;
+	case CURSOR_USE:
+		BF_GLOBALS._player.disableControl();
+		if (BF_GLOBALS.getFlag(fCrateOpen)) {
+			if (BF_GLOBALS._player._visage == 921) {
+				if ((BF_INVENTORY.getObjectScene(15) != 1) && (BF_GLOBALS.getFlag(fSawGuns))) {
+					scene->_sceneMode = 9207;
+					scene->setAction(&scene->_sequenceManager1, scene, 9207, &BF_GLOBALS._player, NULL);
+				} else {
+					scene->_sceneMode = 9203;
+					scene->setAction(&scene->_sequenceManager1, scene, 9203, &BF_GLOBALS._player, &scene->_object1, NULL);
+					BF_GLOBALS.clearFlag(fCrateOpen);
+				}
+			} else {
+				scene->_sceneMode = 9205;
+				scene->setAction(&scene->_sequenceManager1, scene, 9205, &BF_GLOBALS._player, NULL);
+			}
+		} else {
+			scene->_sceneMode = 9202;
+			scene->setAction(&scene->_sequenceManager1, scene, 9202, &BF_GLOBALS._player, &scene->_object1, NULL);
+			BF_GLOBALS.setFlag(fCrateOpen);
+		}
+		return true;
+		break;
+	default:
+		return NamedHotspot::startAction(action, event);
+		break;
+	}
+}
+
+// North Exit
+bool Scene920::Item8::startAction(CursorType action, Event &event) {
+	Scene920 *scene = (Scene920 *)BF_GLOBALS._sceneManager._scene;
+	
+	BF_GLOBALS._player.disableControl();
+	if (BF_GLOBALS._player._visage == 921) {
+		scene->_sceneMode = 10;
+		scene->setAction(&scene->_sequenceManager1, scene, 9206, &BF_GLOBALS._player, NULL);
+		// TO BE CHECKED: Original code uses a variable to store the address of scene instance.
+		// As it's used later a coordinates to create a playermover, I don't understand.
+		// On the other hand, it's not really important as just after the hero leaves the scene
+		// so the variable is no longer used.
+		// scene->_oldCoord = &scene;
+		_field10 = 1;
+	} else {
+		scene->_sceneMode = 9201;
+		scene->setAction(&scene->_sequenceManager1, scene, 9201, &BF_GLOBALS._player, NULL);
+	}
+	return true;
+}
+
+void Scene920::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(920);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 4;
+	BF_GLOBALS._player.postInit();
+	if (BF_GLOBALS._v4CEC8 != 0) {
+		_object3.postInit();
+		_object3.setVisage(922);
+		_object3.setStrip(2);
+		_object3.fixPriority(1);
+		_object3.setPosition(Common::Point(145, 82));
+	}
+
+	_object1.postInit();
+	_object1.setVisage(922);
+	if (BF_GLOBALS.getFlag(fCrateOpen)) {
+		_object1.setStrip(3);
+		_object1.setFrame(5);
+	}
+
+	_object1.setPosition(Common::Point(158, 107));
+	_object1.setPriority(130);
+	_exitN.setDetails(Rect(116, 12, 165, 81), 920, -1, -1, -1, 1, NULL);
+	_item6.setDetails(6, 920, 15, 16, 17, 1);
+	_item4.setDetails(5, 920, 12, 13, 14, 1);
+	_item7.setDetails(4, 920, 9, 10, 11, 1);
+	_item5.setDetails(3, 920, 6, 7, 8, 1);
+	_crate.setDetails(2, 920, 3, 4, 5, 1);
+	_item3.setDetails(1, 920, 3, 4, 5, 1);
+	_item2.setDetails(Rect(0, 0, 320, 200), 920, 0, 1, 2, 1, NULL);
+
+	BF_GLOBALS._player.disableControl();
+	_sceneMode = 9200;
+	setAction(&_sequenceManager1, this, 9200, &BF_GLOBALS._player, NULL);
+}
+
+void Scene920::signal() {
+	switch (_sceneMode) {
+	case 10:
+		_sceneMode = 9201;
+		setAction(&_sequenceManager1, this, 9201, &BF_GLOBALS._player, NULL);
+		break;
+	case 9201:
+		if (BF_GLOBALS.getFlag(fCrateOpen))
+			BF_GLOBALS.setFlag(fLeftTraceIn920);
+		else
+			BF_GLOBALS.clearFlag(fLeftTraceIn920);
+		BF_GLOBALS._sceneManager.changeScene(910);
+		break;
+	case 9204:
+		_object2.remove();
+		BF_GLOBALS.setFlag(fSawGuns);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 9206: {
+		BF_GLOBALS._player.enableControl();
+		PlayerMover *mover = new PlayerMover();
+		BF_GLOBALS._player.addMover(mover, &_oldCoord, NULL);
+		break;
+		}
+	case 9207:
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._uiElements.addScore(30);
+		BF_INVENTORY.setObjectScene(15, 1);
+		BF_GLOBALS._bookmark = bEndDayThree;
+		break;
+	default:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+void Scene920::process(Event &event) {
+	SceneExt::process(event);
+	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (_exitN.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) && (BF_GLOBALS._player._visage == 921)) {
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 9206;
+		setAction(&_sequenceManager1, this, 9206, &BF_GLOBALS._player, NULL);
+		_oldCoord = event.mousePos;
+		event.handled = true;
+	}
+}
+
+void Scene920::dispatch() {
+	SceneExt::dispatch();
+	if ((_action == 0) && (BF_GLOBALS._player._position.y < 75)) {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._sceneManager.changeScene(910);
+	}
+}
+
+void Scene920::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_oldCoord.x);
+	s.syncAsSint16LE(_oldCoord.y);
+}
+
+} // End of namespace BlueForce
 } // End of namespace TsAGE

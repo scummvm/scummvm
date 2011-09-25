@@ -121,6 +121,41 @@ public:
 	void synchronize(Serializer &s);
 };
 
+class Scene920: public PalettedScene {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item8: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+public:
+	SequenceManager _sequenceManager1;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+
+	Item1 _crate;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	NamedHotspot _item6;
+	NamedHotspot _item7;
+	NamedObject _object1;
+	NamedObject _object2;
+	NamedObject _object3;
+	Item8 _exitN;
+	Common::Point _oldCoord;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	void synchronize(Serializer &s);
+};
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
