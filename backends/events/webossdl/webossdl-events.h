@@ -30,31 +30,65 @@
  */
 class WebOSSdlEventSource : public SdlEventSource {
 public:
-	WebOSSdlEventSource();
+	enum {
+		MAX_FINGERS = 3
+	};
+	WebOSSdlEventSource() :
+			_gestureDown(false),
+			_dragStartTime(0),
+			_dragging(false),
+			_curX(0), _curY(0),
+			_touchpadMode(false),
+			_autoDragMode(true),
+			_doClick(true),
+			_queuedDragTime(0), _queuedEscapeUpTime(0), _queuedSpaceUpTime(0),
+			_firstPoll(true),
+			QUEUED_KEY_DELAY(250), QUEUED_DRAG_DELAY(500) {
+		for (int i = 0; i < MAX_FINGERS; i++) {
+			_fingerDown[i] = false;
+			_screenDownTime[i] = _dragDiffX[i] = _dragDiffY[i] = 0;
+		}
+	};
 protected:
 	// Inidicates if gesture area is pressed down or not.
 	bool _gestureDown;
-	
-	// The timestamp when screen was pressed down.
-	uint32 _screenDownTime;
-	
+
+	// The timestamp when screen was pressed down for each finger.
+	uint32 _screenDownTime[MAX_FINGERS];
+
 	// The timestamp when a possible drag operation was triggered.
 	uint32 _dragStartTime;
-	
-	// The index of the motion pointer.
-	int _motionPtrIndex;
-	
-	// The maximum horizontal motion during dragging (For tap recognition).
-	int _dragDiffX;
-	
-	// The maximum vertical motion during dragging (For tap recognition).
-	int _dragDiffY;
-	
+
+	// The distance each finger traveled from touch to release.
+	int _dragDiffX[MAX_FINGERS], _dragDiffY[MAX_FINGERS];
+
 	// Indicates if we are in drag mode.
 	bool _dragging;
-	
+
 	// The current mouse position on the screen.
 	int _curX, _curY;
+
+	// Indicates if we're in touchpad mode or tap-to-move mode.
+	bool _touchpadMode;
+
+	// Indicates if we're in automatic drag mode.
+	bool _autoDragMode;
+
+	// Tracks which fingers are currently touching the screen.
+	bool _fingerDown[MAX_FINGERS];
+
+	// Indicates if a click should be executed when the first finger is lifted
+	bool _doClick;
+
+	// Indicates whether the event poll has been run before
+	bool _firstPoll;
+
+	// Event queues
+	uint32 _queuedDragTime, _queuedEscapeUpTime, _queuedSpaceUpTime;
+
+	// Standard event queue delays in milliseconds
+	const int QUEUED_KEY_DELAY;
+	const int QUEUED_DRAG_DELAY;
 
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
@@ -62,6 +96,7 @@ protected:
 	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool pollEvent(Common::Event &event);
 };
 
 #endif
