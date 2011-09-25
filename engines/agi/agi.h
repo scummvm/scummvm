@@ -809,8 +809,8 @@ public:
 	virtual void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
 	virtual void releaseImageStack() = 0;
-	virtual	int saveGame(const char *fileName, const char *saveName) = 0;
-	virtual int loadGame(const char *fileName, bool checkId = true) = 0;
+	virtual	int saveGame(Common::String fileName, Common::String saveName) = 0;
+	virtual int loadGame(Common::String fileName, bool checkId = true) = 0;
 
 	int _soundemu;
 
@@ -881,13 +881,13 @@ public:
 
 	StringData _stringdata;
 
-	void getSavegameFilename(int num, char *fileName);
+	Common::String getSavegameFilename(int num);
 	void getSavegameDescription(int num, char *buf, bool showEmpty = true);
 	int selectSlot();
-	int saveGame(const char *fileName, const char *saveName);
+	int saveGame(Common::String fileName, Common::String saveName);
+	int loadGame(Common::String fileName, bool checkId = true);
 	int saveGameDialog();
 	int saveGameSimple();
-	int loadGame(const char *fileName, bool checkId = true);
 	int loadGameDialog();
 	int loadGameSimple();
 
