@@ -35,15 +35,15 @@ public:
 	};
 	WebOSSdlEventSource() :
 			_gestureDown(false),
-			_dragStartTime(0),
-			_dragging(false),
+			_dragStartTime(0), _dragging(false),
 			_curX(0), _curY(0),
-			_touchpadMode(false),
-			_autoDragMode(true),
+			_touchpadMode(false), _autoDragMode(true),
 			_doClick(true),
 			_queuedDragTime(0), _queuedEscapeUpTime(0), _queuedSpaceUpTime(0),
+			_queuedRUpTime(0),
 			_firstPoll(true),
-			QUEUED_KEY_DELAY(250), QUEUED_DRAG_DELAY(500) {
+			QUEUED_KEY_DELAY(250), QUEUED_DRAG_DELAY(500),
+			QUEUED_RUP_DELAY(50) {
 		for (int i = 0; i < MAX_FINGERS; i++) {
 			_fingerDown[i] = false;
 			_screenDownTime[i] = _dragDiffX[i] = _dragDiffY[i] = 0;
@@ -84,11 +84,13 @@ protected:
 	bool _firstPoll;
 
 	// Event queues
-	uint32 _queuedDragTime, _queuedEscapeUpTime, _queuedSpaceUpTime;
+	uint32 _queuedDragTime, _queuedEscapeUpTime, _queuedSpaceUpTime,
+		_queuedRUpTime;
 
 	// Standard event queue delays in milliseconds
 	const int QUEUED_KEY_DELAY;
 	const int QUEUED_DRAG_DELAY;
+	const int QUEUED_RUP_DELAY;
 
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);

@@ -209,10 +209,11 @@ bool WebOSSdlEventSource::handleMouseButtonUp(SDL_Event &ev,
 			// right mouse click.
 			else if (ev.button.which == 1 &&
 					_fingerDown[0] && _fingerDown[1] && !_fingerDown[2]) {
-				event.type = Common::EVENT_RBUTTONUP;
-				processMouseEvent(event, _curX, _curY);
-				g_system->getEventManager()->pushEvent(event);
+				//event.type = Common::EVENT_RBUTTONUP;
+				//g_system->getEventManager()->pushEvent(event);
 				event.type = Common::EVENT_RBUTTONDOWN;
+				processMouseEvent(event, _curX, _curY);
+				_queuedRUpTime = g_system->getMillis() + QUEUED_RUP_DELAY;
 			}
 
 			// If two fingers are down and a third taps, it's a middle
@@ -372,8 +373,9 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 
 	// Run down the priority list for queued events. The built-in
 	// event queue runs events on the next poll, which causes many
-	// WebOS devices to ignore certain inputs.  Allowing keys to
-	// stay "down" longer is enough to register the press.
+	// WebOS devices (and a few game engines) to ignore certain inputs.
+	// Allowing keys and clicks to stay "down" longer is enough to register
+	// the press.
 	if (_queuedEscapeUpTime != 0 && curTime >= _queuedEscapeUpTime) {
 		event.type = Common::EVENT_KEYUP;
 		event.kbd.flags = 0;
@@ -388,6 +390,12 @@ bool WebOSSdlEventSource::pollEvent(Common::Event &event) {
 		event.kbd.keycode = Common::KEYCODE_SPACE;
 		event.kbd.ascii = Common::ASCII_SPACE;
 		_queuedSpaceUpTime = 0;
+		return true;
+	}
+	else if (_queuedRUpTime != 0 && curTime >= _queuedRUpTime) {
+		event.type = Common::EVENT_RBUTTONUP;
+		processMouseEvent(event, _curX, _curY);
+		_queuedRUpTime = 0;
 		return true;
 	}
 	else if (_queuedDragTime != 0 && curTime >= _queuedDragTime) {
