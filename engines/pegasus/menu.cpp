@@ -191,7 +191,7 @@ MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButto
 
 	_adventureMode = true;
 
-	//_menuLoop.attachFader(&_menuFader);
+	_menuLoop.attachFader(&_menuFader);
 	_menuLoop.initFromAIFFFile("Sounds/Main Menu.aiff");
 
 	updateDisplay();
@@ -207,14 +207,14 @@ void MainMenu::startMainMenuLoop() {
 
 	_menuLoop.loopSound();
 	spec.makeTwoKnotFaderSpec(30, 0, 0, 30, 255);
-	//_menuFader.startFaderSync(spec);
+	_menuFader.startFaderSync(spec);
 }
 
 void MainMenu::stopMainMenuLoop() {
 	FaderMoveSpec spec;
 	
 	spec.makeTwoKnotFaderSpec(30, 0, 255, 30, 0);
-	//_menuFader.startFaderSync(spec);
+	_menuFader.startFaderSync(spec);
 	_menuLoop.stopSound();
 }
 
