@@ -312,11 +312,11 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 				scene->_sceneNumber = _newSceneNumber;
 				break;
 			}
-
-			// Signal the scene to change to the new scene
-			scene->_sceneMode = 1;
-			scene->signal();
 		}
+
+		// Signal the scene to change to the new scene
+		scene->_sceneMode = 1;
+		scene->signal();
 	}
 }
 
