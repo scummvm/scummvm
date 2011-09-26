@@ -498,7 +498,7 @@ void Actor::update() {
 			if (_vm->getRandom(100) < 50) {
 				if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
 					if (isDefaultDirection(10))
-						updateStatus(kActorStatus9);
+						updateStatus(kActorStatusFidget);
 				}
 			}
 			_lastScreenUpdate = _vm->screenUpdateCount;
@@ -642,7 +642,7 @@ void Actor::update() {
 		updateStatus3_19();
 		break;
 
-	case kActorStatus7:
+	case kActorStatusPickupItem:
 		if (getSharedData()->actorEnableForStatus7) {
 			getSharedData()->actorEnableForStatus7 = false;
 			enable();
@@ -662,7 +662,7 @@ void Actor::update() {
 		updateStatus21();
 		break;
 
-	case kActorStatus9:
+	case kActorStatusFidget:
 		updateStatus9();
 		break;
 
@@ -705,7 +705,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	case kActorStatus12:
 		if ((getWorld()->chapter == kChapter2
 		 && _index == getSharedData()->getPlayerIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
-		 || (_status != kActorStatusEnabled && _status != kActorStatus9 && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
+		 || (_status != kActorStatusEnabled && _status != kActorStatusFidget && _status != kActorStatus14 && _status != kActorStatus15 && _status != kActorStatus18))
 			return;
 
 		updateGraphicData(0);
@@ -741,7 +741,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		getScreen()->setFlag(-1);
 		break;
 
-	case kActorStatus7:
+	case kActorStatusPickupItem:
 		if (getWorld()->chapter == kChapter2 && _index == 10 && _vm->isGameFlagSet(kGameFlag279)) {
 			Actor *actor = getScene()->getActor(0);
 			actor->getPoint1()->x = _point2.x + _point1.x - actor->getPoint2()->x;
@@ -766,7 +766,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		updateGraphicData(20);
 		break;
 
-	case kActorStatus9:
+	case kActorStatusFidget:
 		if (getSharedData()->getFlag(kFlagIsEncounterRunning))
 			return;
 
@@ -1174,7 +1174,7 @@ void Actor::clearFields() {
 }
 
 bool Actor::isResourcePresent() const {
-	if (_status != kActorStatus9)
+	if (_status != kActorStatusFidget)
 		return false;
 
 	int index;
@@ -2154,7 +2154,7 @@ void Actor::updateStatus3_19() {
 			++_frameIndex;
 		} else {
 			if (_status == kActorStatus3)
-				updateStatus(kActorStatus7);
+				updateStatus(kActorStatusPickupItem);
 			else
 				updateStatus(kActorStatus20);
 		}
@@ -2201,7 +2201,7 @@ void Actor::updateStatusEnabled() {
 			if (_vm->getRandom(100) < 50
 			 && (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			 && isDefaultDirection(10))
-				updateStatus(kActorStatus9);
+				updateStatus(kActorStatusFidget);
 
 			_lastScreenUpdate = _vm->screenUpdateCount;
 		}

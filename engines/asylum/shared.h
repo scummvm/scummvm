@@ -395,9 +395,9 @@ enum ActorStatus {
 	kActorStatusEnabled,     // Standing Still
 	kActorStatusDisabled,    // 5
 	kActorStatus6,
-	kActorStatus7,
+	kActorStatusPickupItem,
 	kActorStatus8,
-	kActorStatus9,
+	kActorStatusFidget,
 	kActorStatus10,
 	kActorStatus11,
 	kActorStatus12,
