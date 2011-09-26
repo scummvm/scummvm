@@ -173,6 +173,11 @@ void PictDecoder::on_compressedQuickTime(Common::SeekableReadStream *stream) {
 	_opcodes.clear();
 	setupOpcodesQuickTime();
 
+	// We set up the surface for JPEG here too
+	if (!_outputSurface)
+		_outputSurface = new Graphics::Surface();
+	_outputSurface->create(_imageRect.width(), _imageRect.height(), _pixelFormat);
+
 	// We'll decode the first QuickTime data from here, but the QuickTime-specific
 	// opcodes will take over from here on out. Normal opcodes, signing off.
 	decodeCompressedQuickTime(stream);
@@ -427,8 +432,50 @@ void PictDecoder::unpackBitsLine(byte *out, uint32 length, Common::SeekableReadS
 }
 
 void PictDecoder::skipBitsRect(Common::SeekableReadStream *stream, bool hasPalette) {
-	// TODO
-	error("TODO: PICT-QuickTime mode: skip PackBitsRect/DirectBitsRect");
+	// Step through a PackBitsRect/DirectBitsRect function
+
+	if (!hasPalette)
+		stream->readUint32BE();
+
+	uint16 rowBytes = stream->readUint16BE();
+	uint16 height = stream->readUint16BE();
+	stream->readUint16BE();
+	height = stream->readUint16BE() - height;
+	stream->readUint16BE();
+
+	uint16 packType;
+	uint16 pixelSize;
+
+	// Top two bits signify PixMap vs BitMap
+	if (rowBytes & 0xC000) {
+		// PixMap
+		stream->readUint16BE();
+		packType = stream->readUint16BE();
+		stream->skip(14);
+		pixelSize = stream->readUint16BE();
+		stream->skip(16);
+
+		if (hasPalette) {
+			stream->readUint32BE();
+			stream->readUint16BE();
+			stream->skip((stream->readUint16BE() + 1) * 8);
+		}
+
+		rowBytes &= 0x3FFF;
+	} else {
+		// BitMap
+		packType = 0;
+		pixelSize = 1;
+	}
+
+	stream->skip(18);
+
+	for (uint16 i = 0; i < height; i++) {
+		if (packType == 1 || packType == 2 || rowBytes < 8)
+			error("Unpacked PackBitsRect data");
+		else if (packType == 0 || packType > 2)
+			stream->skip((rowBytes > 250) ? stream->readUint16BE() : stream->readByte());
+	}
 }
 
 void PictDecoder::outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel) {
@@ -461,10 +508,15 @@ void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) 
 
 	/* uint16 version = */ stream->readUint16BE();
 
+	// Read in the display matrix
 	uint32 matrix[3][3];
 	for (uint32 i = 0; i < 3; i++)
 		for (uint32 j = 0; j < 3; j++)
 			matrix[i][j] = stream->readUint32BE();
+
+	// We currently only support offseting images vertically from the matrix
+	uint16 xOffset = 0;
+	uint16 yOffset = matrix[2][1] >> 16;
 
 	uint32 matteSize = stream->readUint32BE();
 	stream->skip(8); // matte rect
@@ -472,22 +524,26 @@ void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) 
 	stream->skip(8); // src rect
 	/* uint32 accuracy = */ stream->readUint32BE();
 	uint32 maskSize = stream->readUint32BE();
-	
+
+	// Skip the matte and mask
 	stream->skip(matteSize + maskSize);
 	
 	// Now we've reached the image descriptor, so read the relevant data from that
 	uint32 idStart = stream->pos();
 	uint32 idSize = stream->readUint32BE();
-	stream->skip(40);
+	stream->skip(40); // miscellaneous stuff
 	uint32 jpegSize = stream->readUint32BE();
-	stream->skip(idSize - (stream->pos() - idStart));
+	stream->skip(idSize - (stream->pos() - idStart)); // more useless stuff
 
 	Common::SeekableReadStream *jpegStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + jpegSize);
 
 	if (!_jpeg->read(jpegStream))
 		error("PictDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
 
-	_outputSurface = _jpeg->getSurface(_pixelFormat);
+	Graphics::Surface *jpegSurface = _jpeg->getSurface(_pixelFormat);
+
+	for (uint16 y = 0; y < jpegSurface->h; y++)
+		memcpy(_outputSurface->getBasePtr(0 + xOffset, y + yOffset), jpegSurface->getBasePtr(0, y), jpegSurface->w * _pixelFormat.bytesPerPixel);
 
 	stream->seek(startPos + dataSize);
 	delete jpegStream;
