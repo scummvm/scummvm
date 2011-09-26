@@ -29,10 +29,13 @@
 #include "common/queue.h"
 #include "common/str.h"
 
+#include "pegasus/fader.h"
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
+#include "pegasus/movie.h"
 #include "pegasus/notification.h"
 #include "pegasus/sound.h"
+#include "pegasus/timers.h"
 #include "pegasus/util.h"
 #include "pegasus/neighborhood/door.h"
 #include "pegasus/neighborhood/exit.h"
@@ -83,9 +86,24 @@ struct tQueueRequest {
 bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
 bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
+class Neighborhood;
+
+class StriderCallBack : public TimeBaseCallBack {
+public:
+	StriderCallBack(Neighborhood *);
+	virtual ~StriderCallBack() {}
+
+protected:
+	virtual void callBack();
+
+	Neighborhood *_neighborhood;
+};
+
 typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler {
+friend class StriderCallBack;
+
 public:
 	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
 	virtual ~Neighborhood();
@@ -131,19 +149,30 @@ public:
 	virtual void shieldOn() {}
 	virtual void shieldOff() {}
 
+	virtual void scheduleNavCallBack(tNotificationFlags);
+
 protected:
+	PegasusEngine *_vm;
+	Common::String _resName;
+
 	virtual void receiveNotification(Notification *, const tNotificationFlags);
 
 	virtual void createNeighborhoodSpots();
 	virtual void loadSoundSpots();
 
+	// Nav movie sequences.
+	virtual void checkStriding();
+	virtual void keepStriding(ExitTable::Entry &);
+	virtual void stopStriding();
+	virtual bool stillMoveForward();
+	virtual void scheduleStridingCallBack(const TimeValue, tNotificationFlags flags);
+
+	// Action queue stuff
 	void popActionQueue();
 	void serviceActionQueue();
 	void requestAction(const tQueueRequestType, const tExtraID, const TimeValue, const TimeValue, const tInputBits, const tNotificationFlags);
 
-	PegasusEngine *_vm;
-	Common::String _resName;
-
+	// Navigation Data
 	DoorTable _doorTable;
 	ExitTable _exitTable;
 	ExtraTable _extraTable;
@@ -152,6 +181,16 @@ protected:
 	TurnTable _turnTable;
 	ViewTable _viewTable;
 	ZoomTable _zoomTable;
+	virtual uint16 getStaticCompassAngle(const tRoomID, const tDirectionConstant dir);
+	virtual void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
+
+	// Graphics
+	Movie _navMovie;
+
+	// Callbacks
+	Notification _neighborhoodNotification;
+	NotificationCallBack _navMovieCallBack;
+	StriderCallBack _stridingCallBack;
 
 	tAlternateID _currentAlternate;
 

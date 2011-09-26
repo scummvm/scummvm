@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/energymonitor.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/surface.h"
 
 namespace Pegasus {

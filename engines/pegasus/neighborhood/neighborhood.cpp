@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/stream.h"
 
+#include "pegasus/compass.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/input.h"
 #include "pegasus/pegasus.h"
@@ -33,9 +34,21 @@
 
 namespace Pegasus {
 
+StriderCallBack::StriderCallBack(Neighborhood *neighborhood) {
+	_neighborhood = neighborhood;
+}
+
+void StriderCallBack::callBack() {
+	_neighborhood->checkStriding();
+}
+
+static const TimeValue kStridingSlop = 39;
+
 Neighborhood *g_neighborhood = 0;
 
-Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id) : InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName) {
+Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id)
+		: InputHandler(nextHandler), IDObject(id), _vm(vm), _resName(resName), _navMovie(kNavMovieID), _stridingCallBack(this),
+		_neighborhoodNotification(kNeighborhoodNotificationID, (NotificationManager *)vm) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
 	_interruptionFilter = kFilterAllInput;
@@ -433,6 +446,88 @@ bool Neighborhood::okayToJump() {
 
 tAirQuality Neighborhood::getAirQuality(const tRoomID) {
 	return kAirQualityGood;
+}
+
+void Neighborhood::checkStriding() {
+	if (stillMoveForward()) {
+		ExitTable::Entry nextExit;
+		getExitEntry(GameState.getNextRoom(), GameState.getNextDirection(), nextExit);
+		keepStriding(nextExit);
+	} else {
+		stopStriding();
+	}
+}
+
+bool Neighborhood::stillMoveForward() {
+	Input input;
+
+	InputHandler::readInputDevice(input);
+	return input.upButtonAnyDown();
+}
+
+void Neighborhood::keepStriding(ExitTable::Entry &nextExitEntry) {
+	FaderMoveSpec compassMove;
+
+	// TODO: Map
+	if (g_compass)
+		getExitCompassMove(nextExitEntry, compassMove);
+
+	GameState.setCurrentRoom(GameState.getNextRoom());
+	GameState.setCurrentDirection(GameState.getNextDirection());
+	GameState.setNextRoom(nextExitEntry.exitRoom);
+	GameState.setNextDirection(nextExitEntry.exitDirection);
+
+	if (nextExitEntry.movieEnd == nextExitEntry.exitEnd)
+		scheduleNavCallBack(kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag);
+	else
+		scheduleStridingCallBack(nextExitEntry.movieEnd - kStridingSlop, kStrideCompletedFlag);
+
+	if (g_compass)
+		g_compass->startFader(compassMove);
+}
+
+void Neighborhood::stopStriding() {
+	_navMovie.stop();
+	_neighborhoodNotification.setNotificationFlags(kNeighborhoodMovieCompletedFlag |
+			kMoveForwardCompletedFlag, kNeighborhoodMovieCompletedFlag | kMoveForwardCompletedFlag);
+}
+
+//	Compass support
+uint16 Neighborhood::getStaticCompassAngle(const tRoomID, const tDirectionConstant dir) {
+	//	North, south, east, west
+	static const uint16 compassAngles[] = { 0, 180, 90, 270 };
+	return compassAngles[dir];
+}
+
+void Neighborhood::getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove) {	
+	int32 startAngle = getStaticCompassAngle(exitEntry.room, exitEntry.direction);
+	int32 stopAngle = getStaticCompassAngle(exitEntry.exitRoom, exitEntry.exitDirection);
+
+	if (startAngle > stopAngle) {
+		if (stopAngle + 180 < startAngle)
+			stopAngle += 360;
+	} else {
+		if (startAngle + 180 < stopAngle)
+			startAngle += 360;
+	}
+
+	compassMove.makeTwoKnotFaderSpec(_navMovie.getScale(), exitEntry.movieStart, startAngle, exitEntry.movieEnd, stopAngle);
+}
+
+void Neighborhood::scheduleNavCallBack(tNotificationFlags flags) {
+	_navMovieCallBack.cancelCallBack();
+
+	if (flags != 0) {
+		_navMovieCallBack.setCallBackFlag(flags);
+		_navMovieCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+	}
+}
+
+void Neighborhood::scheduleStridingCallBack(const TimeValue strideStop, tNotificationFlags flags) {	
+	_stridingCallBack.cancelCallBack();
+
+	if (flags != 0)
+		_stridingCallBack.scheduleCallBack(kTriggerTimeFwd, strideStop, _navMovie.getScale());
 }
 
 } // End of namespace Pegasus

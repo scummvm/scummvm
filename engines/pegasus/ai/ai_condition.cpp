@@ -28,6 +28,7 @@
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/ai/ai_condition.h"
+#include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/inventory/inventoryitem.h"
 

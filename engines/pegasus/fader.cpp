@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/fader.h"
+#include "pegasus/sound.h"
 #include "pegasus/util.h"
 
 namespace Pegasus {

@@ -32,7 +32,6 @@
 #include "graphics/pict.h"
 #include "graphics/surface.h"
 
-#include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
 #include "pegasus/util.h"
 
