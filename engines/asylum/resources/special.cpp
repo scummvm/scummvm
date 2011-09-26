@@ -877,14 +877,14 @@ void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 			break;
 
 		case 1:
-			if (actor->getStatus() == kActorStatus9
+			if (actor->getStatus() == kActorStatusFidget
 			 && actor->isResourcePresent()
 			 && actor->getFrameIndex() == 0)
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1861), 22, actorIndex);
 			break;
 
 		case 2:
-			if (actor->getStatus() == kActorStatus9
+			if (actor->getStatus() == kActorStatusFidget
 			 && actor->isResourcePresent()
 			 && actor->getFrameIndex() == 1)
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1892), 16, actorIndex);
