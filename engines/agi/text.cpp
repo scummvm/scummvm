@@ -222,13 +222,14 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
  * @param str  String to wrap.
  * @param len  Length of line.
  *
- * Based on GBAGI implementaiton with permission from the author
+ * Based on GBAGI implementation with permission from the author
  */
 char *AgiEngine::wordWrapString(const char *s, int *len) {
 	char *outStr, *msgBuf, maxWidth = *len;
 	const char *pWord;
 	int lnLen, wLen;
 
+	// FIXME: outStr may end up being longer than s, so this can overflow
 	msgBuf = outStr = strdup(s);
 
 	int msgWidth = 0;
