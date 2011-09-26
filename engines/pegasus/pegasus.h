@@ -40,7 +40,7 @@
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Video {
-	class QuickTimeDecoder;
+	class SeekableVideoDecoder;
 }
 
 namespace Pegasus {
@@ -187,6 +187,7 @@ private:
 	Hotspot _returnHotspot;
 	void showLoadDialog();
 	void showTempScreen(const Common::String &fileName);
+	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 
 	// Menu
 	GameMenu *_gameMenu;

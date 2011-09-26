@@ -52,6 +52,11 @@ protected:
 
 	InputHandler *_previousHandler;
 	tGameMenuCommand _lastCommand;
+
+	void drawScore(tGameScoreType, tGameScoreType, const Common::Rect &, Surface *);
+
+private:
+	void drawNumber(tGameScoreType, tCoordType &, tCoordType, Surface *);
 };
 
 class Hotspot;
@@ -91,7 +96,7 @@ protected:
 
 class CreditsMenu : public GameMenu {
 public:
-	CreditsMenu(void);
+	CreditsMenu();
 	virtual ~CreditsMenu() {}
 	
 	virtual void handleInput(const Input &input, const Hotspot *);
@@ -106,6 +111,36 @@ protected:
 	Picture _mainMenuButton;
 	Picture _largeSelect;
 	Picture _smallSelect;
+};
+
+class DeathMenu : public GameMenu {
+public:
+	DeathMenu(const tDeathReason);
+	virtual ~DeathMenu() {}
+
+	virtual void handleInput(const Input &input, const Hotspot *);
+
+	bool playerWon() { return _playerWon; }
+
+protected:
+	void drawAllScores();
+
+	void updateDisplay();
+
+	bool _playerWon;
+	int _menuSelection;
+	tDeathReason _deathReason;
+
+	Picture _deathBackground;
+	Picture _continueButton;
+	Picture _restoreButton;
+	Picture _mainMenuButton;
+	Picture _quitButton;
+
+	Picture _largeSelect;
+	Picture _smallSelect;
+
+	Sound _triumphSound;
 };
 
 } // End of namespace Pegasus

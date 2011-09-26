@@ -542,7 +542,7 @@ const tGameMenuCommand kMenuCmdDeathContinue = kMenuCmdQuit + 1;
 const tGameMenuCommand kMenuCmdDeathQuitDemo = kMenuCmdDeathContinue + 1;
 const tGameMenuCommand kMenuCmdDeathMainMenuDemo = kMenuCmdDeathQuitDemo + 1;
 
-const tGameMenuCommand kMenuCmdDeathRestore = kMenuCmdDeathContinue + 1;
+const tGameMenuCommand kMenuCmdDeathRestore = kMenuCmdDeathMainMenuDemo + 1;
 const tGameMenuCommand kMenuCmdDeathMainMenu = kMenuCmdDeathRestore + 1;
 
 const tGameMenuCommand kMenuCmdPauseSave = kMenuCmdDeathMainMenu + 1;

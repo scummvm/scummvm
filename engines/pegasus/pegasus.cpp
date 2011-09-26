@@ -259,47 +259,7 @@ void PegasusEngine::runIntro() {
 
 	video->seekToTime(Audio::Timestamp(0, 10 * 600, 600));
 
-	while (!shouldQuit() && !video->endOfVideo()) {
-		if (video->needsUpdate()) {
-			const Graphics::Surface *frame = video->decodeNextFrame();
-
-			// Scale up the frame doing some simple scaling
-			Graphics::Surface scaledFrame;
-			scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
-			const byte *src = (const byte *)frame->pixels;
-			byte *dst1 = (byte *)scaledFrame.pixels;
-			byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
-
-			for (int y = 0; y < frame->h; y++) {
-				for (int x = 0; x < frame->w; x++) {
-					memcpy(dst1, src, frame->format.bytesPerPixel);
-					dst1 += frame->format.bytesPerPixel;
-					memcpy(dst1, src, frame->format.bytesPerPixel);
-					dst1 += frame->format.bytesPerPixel;
-					memcpy(dst2, src, frame->format.bytesPerPixel);
-					dst2 += frame->format.bytesPerPixel;
-					memcpy(dst2, src, frame->format.bytesPerPixel);
-					dst2 += frame->format.bytesPerPixel;
-					src += frame->format.bytesPerPixel;
-				}
-
-				src += frame->pitch - frame->format.bytesPerPixel * frame->w;
-				dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-				dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-			}
-
-			_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, 0, 0, scaledFrame.w, scaledFrame.h);
-			_system->updateScreen();
-			scaledFrame.free();
-		}
-
-		Input input;
-		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
-		if (input.anyInput())
-			break;
-
-		_system->delayMillis(10);
-	}
+	playMovieScaled(video, 0, 0);
 
 	delete video;
 }
@@ -462,6 +422,8 @@ void PegasusEngine::loadFromContinuePoint() {
 
 	if (!loadFromStream(_continuePoint))
 		error("Failed loading continue point");
+
+	error("STUB: loadFromContinuePoint()");
 }
 
 Common::Error PegasusEngine::loadGameState(int slot) {
@@ -608,6 +570,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		}
 		break;
 	case kMenuCmdQuit:
+	case kMenuCmdDeathQuitDemo:
 		if (isDemo())
 			showTempScreen("Images/Demo/NGquitScrn.pict");
 		_system->quit();
@@ -622,6 +585,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		error("Start new game (walkthrough mode)");
 		break;
 	case kMenuCmdRestore:
+	case kMenuCmdDeathRestore:
 		error("Load game");
 		break;
 	case kMenuCmdCreditsMainMenu:
@@ -631,6 +595,53 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
 		// TODO: Fade in
 		resetIntroTimer();
+		break;
+	case kMenuCmdDeathContinue:
+		if (((DeathMenu *)_gameMenu)->playerWon()) {
+			if (isDemo()) {
+				showTempScreen("Images/Demo/DemoCredits.pict");
+				// TODO: Fade out
+				_gfx->updateDisplay();
+				// TODO: Fade in
+			} else {
+				// TODO: Fade out
+				useMenu(0);
+				_gfx->clearScreen();
+				_gfx->updateDisplay();
+
+				Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+				if (!video->loadFile(_introDirectory + "/Closing.movie"))
+					error("Could not load closing movie");
+
+				uint16 x = (640 - video->getWidth() * 2) / 2;
+				uint16 y = (480 - video->getHeight() * 2) / 2;
+
+				playMovieScaled(video, x, y);
+
+				delete video;
+
+				if (shouldQuit())
+					return;
+
+				useMenu(new MainMenu());
+				_gfx->updateDisplay();
+				((MainMenu *)_gameMenu)->startMainMenuLoop();
+				// TODO: Fade in
+				resetIntroTimer();
+			}
+		} else {
+			loadFromContinuePoint();
+		}
+		break;
+	case kMenuCmdDeathMainMenuDemo:
+	case kMenuCmdDeathMainMenu:
+		// TODO: Fade out
+		useMenu(new MainMenu());
+		_gfx->updateDisplay();
+		((MainMenu *)_gameMenu)->startMainMenuLoop();
+		// TODO: Fade in
+		if (!isDemo())
+			resetIntroTimer();
 		break;
 	case kMenuCmdNoCommand:
 		break;
@@ -959,6 +970,54 @@ void PegasusEngine::jumpToNewEnvironment(const tNeighborhoodID neighborhoodID, c
 void PegasusEngine::checkFlashlight() {
 	if (_neighborhood)
 		_neighborhood->checkFlashlight();
+}
+
+bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y) {
+	bool skipped = false;
+
+	while (!shouldQuit() && !video->endOfVideo() && !skipped) {
+		if (video->needsUpdate()) {
+			const Graphics::Surface *frame = video->decodeNextFrame();
+
+			// Scale up the frame doing some simple scaling
+			Graphics::Surface scaledFrame;
+			scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
+			const byte *src = (const byte *)frame->pixels;
+			byte *dst1 = (byte *)scaledFrame.pixels;
+			byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
+
+			for (int i = 0; i < frame->h; i++) {
+				for (int j = 0; j < frame->w; j++) {
+					memcpy(dst1, src, frame->format.bytesPerPixel);
+					dst1 += frame->format.bytesPerPixel;
+					memcpy(dst1, src, frame->format.bytesPerPixel);
+					dst1 += frame->format.bytesPerPixel;
+					memcpy(dst2, src, frame->format.bytesPerPixel);
+					dst2 += frame->format.bytesPerPixel;
+					memcpy(dst2, src, frame->format.bytesPerPixel);
+					dst2 += frame->format.bytesPerPixel;
+					src += frame->format.bytesPerPixel;
+				}
+
+				src += frame->pitch - frame->format.bytesPerPixel * frame->w;
+				dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+				dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+			}
+
+			_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+			_system->updateScreen();
+			scaledFrame.free();
+		}
+
+		Input input;
+		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
+		if (input.anyInput())
+			skipped = true;
+
+		_system->delayMillis(10);
+	}
+
+	return skipped;
 }
 
 } // End of namespace Pegasus

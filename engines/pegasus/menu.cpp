@@ -23,8 +23,10 @@
  *
  */
 
+#include "pegasus/gamestate.h"
 #include "pegasus/menu.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/scoring.h"
 
 namespace Pegasus {
 
@@ -39,6 +41,34 @@ void GameMenu::becomeCurrentHandler() {
 
 void GameMenu::restorePreviousHandler() {
 	InputHandler::setInputHandler(_previousHandler);
+}
+
+void GameMenu::drawScore(tGameScoreType score, tGameScoreType total, const Common::Rect &scoreBounds, Surface *numbers) {
+	tCoordType x = scoreBounds.right;
+	drawNumber(total, x, scoreBounds.top, numbers);
+
+	x -= 12;
+	Common::Rect r1(120, 0, 132, 12); // The slash.
+	Common::Rect r2 = r1;
+	r2.moveTo(x, scoreBounds.top);
+	numbers->copyToCurrentPort(r1, r2);
+	drawNumber(score, x, scoreBounds.top, numbers);
+}
+
+void GameMenu::drawNumber(tGameScoreType number, tCoordType &x, tCoordType y, Surface *numbers) {
+	Common::Rect r1(0, 0, 12, 12); // Width, height of one digit
+	Common::Rect r2 = r1;
+	r2.moveTo(x - 12, y);
+
+	do {
+		uint16 digit = number % 10;
+		number /= 10;
+		r1.moveTo(digit * 12, 0);
+		numbers->copyToCurrentPort(r1, r2);
+		r2.translate(-12, 0);
+	} while (number != 0);
+
+	x = r2.right;
 }
 
 enum {
@@ -543,6 +573,342 @@ void CreditsMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	}
 
 	InputHandler::handleInput(input, cursorSpot);
+}
+
+static const tCoordType kContinueLeft = 44;
+static const tCoordType kContinueTop = 336;
+
+static const tCoordType kContinueSelectLeft = 40;
+static const tCoordType kContinueSelectTopDemo = 331;
+static const tCoordType kContinueSelectTop = 332;
+
+static const tCoordType kMainMenuLeftDemo = 44;
+static const tCoordType kMainMenuTopDemo = 372;
+
+static const tCoordType kMainMenuSelectLeftDemo = 40;
+static const tCoordType kMainMenuSelectTopDemo = 367;
+
+static const tCoordType kQuitLeftDemo = 32;
+static const tCoordType kQuitTopDemo = 412;
+
+static const tCoordType kQuitSelectLeftDemo = 28;
+static const tCoordType kQuitSelectTopDemo = 408;
+
+static const tCoordType kRestoreLeftDeath = 44;
+static const tCoordType kRestoreTopDeath = 372;
+
+static const tCoordType kRestoreSelectLeftDeath = 40;
+static const tCoordType kRestoreSelectTopDeath = 368;
+
+static const tCoordType kMainMenuLeft = 32;
+static const tCoordType kMainMenuTop = 412;
+
+static const tCoordType kMainMenuSelectLeft = 28;
+static const tCoordType kMainMenuSelectTop = 408;
+
+enum {
+	kDeathScreenContinueDemo = 0,
+	kDeathScreenMainMenuDemo,
+	kDeathScreenQuitDemo,
+	
+	kFirstDeathSelectionDemo = kDeathScreenContinueDemo,
+	kLastDeathSelectionDemo = kDeathScreenQuitDemo,
+
+	kDeathScreenContinue = 0,
+	kDeathScreenRestore,
+	kDeathScreenMainMenu,
+	
+	kFirstDeathSelection = kDeathScreenContinue,
+	kLastDeathSelection = kDeathScreenMainMenu
+};
+
+// Never set the current input handler to the DeathMenu.
+DeathMenu::DeathMenu(const tDeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
+		_mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	bool isDemo = vm->isDemo();
+
+	_playerWon = (deathReason == kPlayerWonGame);
+
+	Common::String prefix = "Images/";
+	Common::String imageName;
+	if (isDemo) {
+		prefix += "Demo/";
+		imageName = prefix;
+
+		switch (deathReason) {
+		case kDeathFallOffCliff:
+			imageName += "dPfall";
+			break;
+		case kDeathEatenByDinosaur:
+			imageName += "dPdino";
+			break;
+		case kDeathStranded:
+			imageName += "dPstuck";
+			break;
+		default:
+			imageName += "dPdemowin";
+			break;
+		}
+
+		imageName += ".pict";
+	} else {
+		prefix += "Death Screens/";
+		imageName = prefix;
+
+		static const char *fileNames[] = {
+			"dAunmade", "dAbombed", "dAshot", "dAassass", "dAnuked",
+			"dTunmade", "dTshot", "dPfall", "dPdino", "dPstuck",
+			"dNchoke", "dNcaught", "dNcaught", "dNsub", "dNrobot1",
+			"dNrobot2", "dMfall", "dMcaught", "dMtracks", "dMrobot",
+			"dMtoast", "dMexplo1", "dMexplo2", "dMchoke1", "dMchoke2",
+			"dMdroid", "dMfall", "dMgears", "dMshutt1", "dMshutt2",
+			"dWpoison", "dWcaught", "dWplasma", "dWshot", "dAfinale"
+		};
+
+		imageName += fileNames[deathReason - 1];
+		imageName += ".pict";
+	}
+
+	_deathBackground.initFromPICTFile(imageName);
+	_deathReason = deathReason;
+
+	if (!isDemo)
+		drawAllScores();
+
+	_deathBackground.setDisplayOrder(0);
+	_deathBackground.startDisplaying();
+	_deathBackground.show();
+
+	if (isDemo) {
+		if (_playerWon) // Make credits button...
+			_continueButton.initFromPICTFile(prefix + "Credits.pict");
+		else            // Make continue button...
+			_continueButton.initFromPICTFile(prefix + "Continue.pict");
+
+		_mainMenuButton.initFromPICTFile(prefix + "MainMenu.pict");
+		_mainMenuButton.setDisplayOrder(1);
+		_mainMenuButton.moveElementTo(kMainMenuLeftDemo, kMainMenuTopDemo);
+		_mainMenuButton.startDisplaying();
+
+		_quitButton.initFromPICTFile(prefix + "Quit.pict");
+		_quitButton.setDisplayOrder(1);
+		_quitButton.moveElementTo(kQuitLeftDemo, kQuitTopDemo);
+		_quitButton.startDisplaying();
+
+		_menuSelection = kDeathScreenContinueDemo;
+	} else {
+		if (!_playerWon) {
+			_mainMenuButton.initFromPICTFile(prefix + "MainMenu.pict");
+			_mainMenuButton.setDisplayOrder(1);
+			_mainMenuButton.moveElementTo(kMainMenuLeft, kMainMenuTop);
+			_mainMenuButton.startDisplaying();
+
+			_restoreButton.initFromPICTFile(prefix + "Restore.pict");
+			_restoreButton.setDisplayOrder(1);
+			_restoreButton.moveElementTo(kRestoreLeftDeath, kRestoreTopDeath);
+			_restoreButton.startDisplaying();
+		}
+
+		_continueButton.initFromPICTFile(prefix + "Continue.pict");
+
+		_menuSelection = kDeathScreenContinue;
+	}
+
+	_smallSelect.initFromPICTFile(prefix + "SelectS.pict", true);
+	_smallSelect.setDisplayOrder(2);
+	_smallSelect.startDisplaying();
+
+	_continueButton.setDisplayOrder(1);
+	_continueButton.moveElementTo(kContinueLeft, kContinueTop);
+	_continueButton.startDisplaying();
+
+	if (isDemo || !_playerWon) {
+		_largeSelect.initFromPICTFile(prefix + "SelectL.pict", true);
+		_largeSelect.setDisplayOrder(2);
+		_largeSelect.startDisplaying();
+	} else {
+		_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
+		_triumphSound.playSound();
+	}
+
+	updateDisplay();
+}
+
+void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	if (input.upButtonDown()) {
+		if (_menuSelection > (vm->isDemo() ? kFirstDeathSelectionDemo : kFirstDeathSelection)) {
+			_menuSelection--;
+			updateDisplay();
+		}
+	} else if (input.downButtonDown() && (vm->isDemo() || !_playerWon)) {
+		if (_menuSelection < (vm->isDemo() ? kLastDeathSelectionDemo : kLastDeathSelection)) {
+			_menuSelection++;
+			updateDisplay();
+		}
+	} else if (JMPPPInput::isMenuButtonPressInput(input)) {
+		if (vm->isDemo()) {
+			switch (_menuSelection) {
+			case kDeathScreenContinueDemo:
+				_continueButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_continueButton.hide();
+				setLastCommand(kMenuCmdDeathContinue);
+				break;
+			case kDeathScreenQuitDemo:
+				_quitButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_quitButton.hide();
+				setLastCommand(kMenuCmdDeathQuitDemo);
+				break;
+			case kDeathScreenMainMenuDemo:
+				_mainMenuButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_mainMenuButton.hide();
+				setLastCommand(kMenuCmdDeathMainMenuDemo);
+				break;
+			}
+		} else {
+			switch (_menuSelection) {
+			case kDeathScreenContinue:
+				_continueButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_continueButton.hide();
+				setLastCommand(kMenuCmdDeathContinue);
+				break;
+			case kDeathScreenRestore:
+				_restoreButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_restoreButton.hide();
+				setLastCommand(kMenuCmdDeathRestore);
+				break;
+			case kDeathScreenMainMenu:
+				_mainMenuButton.show();
+				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				_mainMenuButton.hide();
+				setLastCommand(kMenuCmdDeathMainMenu);
+				break;
+			}
+		}
+	}
+
+	InputHandler::handleInput(input, cursorSpot);
+}
+
+void DeathMenu::updateDisplay() {
+	if (((PegasusEngine *)g_engine)->isDemo()) {
+		switch (_menuSelection) {
+		case kDeathScreenContinueDemo:
+			_smallSelect.moveElementTo(kContinueSelectLeft, kContinueSelectTopDemo);
+			_smallSelect.show();
+			_largeSelect.hide();
+			break;
+		case kDeathScreenQuitDemo:
+			_largeSelect.moveElementTo(kQuitSelectLeftDemo, kQuitSelectTopDemo);
+			_largeSelect.show();
+			_smallSelect.hide();
+			break;
+		case kDeathScreenMainMenuDemo:
+			_smallSelect.moveElementTo(kMainMenuSelectLeftDemo, kMainMenuSelectTopDemo);
+			_smallSelect.show();
+			_largeSelect.hide();
+			break;
+		}
+	} else {
+		switch (_menuSelection) {
+		case kDeathScreenContinue:
+			_smallSelect.moveElementTo(kContinueSelectLeft, kContinueSelectTop);
+			_smallSelect.show();
+			_largeSelect.hide();
+			break;
+		case kDeathScreenRestore:
+			_smallSelect.moveElementTo(kRestoreSelectLeftDeath, kRestoreSelectTopDeath);
+			_smallSelect.show();
+			_largeSelect.hide();
+			break;
+		case kDeathScreenMainMenu:
+			_largeSelect.moveElementTo(kMainMenuSelectLeft, kMainMenuSelectTop);
+			_largeSelect.show();
+			_smallSelect.hide();
+			break;
+		}
+	}
+}
+
+void DeathMenu::drawAllScores() {
+	Surface numbers;
+	numbers.getImageFromPICTFile("Images/Death Screens/Numbers.pict");
+
+	Common::Rect scoreBounds;
+	tGameScoreType caldoriaTotal = 0;
+
+	switch (_deathReason) {
+	case kDeathCardBomb:
+	case kDeathShotBySinclair:
+	case kDeathSinclairShotDelegate:
+	case kDeathNuclearExplosion:
+	case kDeathGassedInNorad:
+	case kDeathWokeUpNorad:
+	case kDeathArrestedInNorad:
+	case kDeathSubDestroyed:
+	case kDeathRobotThroughNoradDoor:
+	case kDeathRobotSubControlRoom:
+	case kDeathWrongShuttleLock:
+	case kDeathArrestedInMars:
+	case kDeathRunOverByPod:
+	case kDeathDidntGetOutOfWay:
+	case kDeathReactorBurn:
+	case kDeathDidntFindMarsBomb:
+	case kDeathDidntDisarmMarsBomb:
+	case kDeathNoMaskInMaze:
+	case kDeathNoAirInMaze:
+	case kDeathGroundByMazebot:
+	case kDeathMissedOreBucket:
+	case kDeathDidntLeaveBucket:
+	case kDeathRanIntoCanyonWall:
+	case kDeathRanIntoSpaceJunk:
+	case kDeathDidntStopPoison:
+	case kDeathArrestedInWSC:
+	case kDeathHitByPlasma:
+	case kDeathShotOnCatwalk:
+	case kPlayerWonGame:
+		caldoriaTotal += kMaxCaldoriaTSAScoreAfter;
+		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 5,
+				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 5 + kDeathScreenScoreHeight);
+		drawScore(GameState.getGandhiScore(), kMaxGandhiScore, scoreBounds, &numbers);
+
+		scoreBounds.translate(0, kDeathScreenScoreSkipVert);
+		drawScore(GameState.getWSCScore(), kMaxWSCScore, scoreBounds, &numbers);
+
+		scoreBounds.translate(0, kDeathScreenScoreSkipVert);
+		drawScore(GameState.getNoradScore(), kMaxNoradScore, scoreBounds, &numbers);
+
+		scoreBounds.translate(0, kDeathScreenScoreSkipVert);
+		drawScore(GameState.getMarsScore(), kMaxMarsScore, scoreBounds, &numbers);
+		// fall through
+	case kDeathFallOffCliff:
+	case kDeathEatenByDinosaur:
+	case kDeathStranded:
+	case kDeathShotByTSARobots:
+		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert,
+				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert + kDeathScreenScoreHeight);
+		drawScore(GameState.getPrehistoricScore(), kMaxPrehistoricScore, scoreBounds, &numbers);
+		// fall through
+	case kDeathUncreatedInCaldoria:
+	case kDeathUncreatedInTSA:
+		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop, kDeathScreenScoreLeft + kDeathScreenScoreWidth,
+				kDeathScreenScoreTop + kDeathScreenScoreHeight);
+		caldoriaTotal += kMaxCaldoriaTSAScoreBefore;
+		drawScore(GameState.getCaldoriaTSAScore(), caldoriaTotal, scoreBounds, &numbers);
+
+		scoreBounds = Common::Rect(kDeathScreenScoreLeft, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6,
+				kDeathScreenScoreLeft + kDeathScreenScoreWidth, kDeathScreenScoreTop - kDeathScreenScoreSkipVert * 6 + kDeathScreenScoreHeight);
+
+		drawScore(GameState.getTotalScore(), kMaxTotalScore, scoreBounds, &numbers);
+		break;
+	}
 }
 
 } // End of namespace Pegasus
