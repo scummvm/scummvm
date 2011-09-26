@@ -471,7 +471,8 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			curByte = *rlePtr++;
 			if (curByte & 0xC0) { // fill with color
 				runLength = curByte >> 6;
-				memset(outPtr + pixelNr,    curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				curByte = curByte & 0x3F;
+				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte & 0x3F;
 			}
