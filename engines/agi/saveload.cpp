@@ -53,7 +53,7 @@ namespace Agi {
 
 static const uint32 AGIflag = MKTAG('A','G','I',':');
 
-int AgiEngine::saveGame(Common::String fileName, Common::String description) {
+int AgiEngine::saveGame(const Common::String &fileName, const Common::String &description) {
 	char gameIDstring[8] = "gameIDX";
 	int i;
 	Common::OutSaveFile *out;
@@ -252,7 +252,7 @@ int AgiEngine::saveGame(Common::String fileName, Common::String description) {
 	return result;
 }
 
-int AgiEngine::loadGame(Common::String fileName, bool checkId) {
+int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	char description[31], saveVersion, loadId[8];
 	int i, vtEntries = MAX_VIEWTABLE;
 	uint8 t;
@@ -546,7 +546,7 @@ int AgiEngine::loadGame(Common::String fileName, bool checkId) {
 #define NUM_SLOTS 100
 #define NUM_VISIBLE_SLOTS 12
 
-Common::String AgiEngine::getSavegameFilename(int num) {
+Common::String AgiEngine::getSavegameFilename(int num) const {
 	Common::String saveLoadSlot = _targetName;
 	saveLoadSlot += Common::String::format(".%.3d", num);
 	return saveLoadSlot;
@@ -858,7 +858,7 @@ int AgiEngine::saveGameDialog() {
 	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
 	_gfx->doUpdate();
 
-	int result = saveGame(fileName.c_str(), desc);
+	int result = saveGame(fileName, desc);
 
 	if (result == errOK)
 		messageBox("Game saved.");
@@ -871,7 +871,7 @@ int AgiEngine::saveGameDialog() {
 int AgiEngine::saveGameSimple() {
 	Common::String fileName = getSavegameFilename(0);
 
-	int result = saveGame(fileName.c_str(), "Default savegame");
+	int result = saveGame(fileName, "Default savegame");
 	if (result != errOK)
 		messageBox("Error saving game.");
 	return result;
@@ -906,7 +906,7 @@ int AgiEngine::loadGameDialog() {
 
 	Common::String fileName = getSavegameFilename(_firstSlot + slot);
 
-	if ((rc = loadGame(fileName.c_str())) == errOK) {
+	if ((rc = loadGame(fileName)) == errOK) {
 		messageBox("Game restored.");
 		_game.exitAllLogics = 1;
 		_menu->enableAll();
@@ -926,7 +926,7 @@ int AgiEngine::loadGameSimple() {
 	_sound->stopSound();
 	closeWindow();
 
-	if ((rc = loadGame(fileName.c_str())) == errOK) {
+	if ((rc = loadGame(fileName)) == errOK) {
 		messageBox("Game restored.");
 		_game.exitAllLogics = 1;
 		_menu->enableAll();
@@ -979,12 +979,12 @@ void AgiEngine::releaseImageStack() {
 
 void AgiEngine::checkQuickLoad() {
 	if (ConfMan.hasKey("save_slot")) {
-		Common::String saveNameBuffer = Common::String::format("%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+		Common::String saveNameBuffer = getSavegameFilename(ConfMan.getInt("save_slot"));
 
 		_sprites->eraseBoth();
 		_sound->stopSound();
 
-		if (loadGame(saveNameBuffer.c_str(), false) == errOK) {	 // Do not check game id
+		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
 			_game.exitAllLogics = 1;
 			_menu->enableAll();
 		}
@@ -992,8 +992,7 @@ void AgiEngine::checkQuickLoad() {
 }
 
 Common::Error AgiEngine::loadGameState(int slot) {
-	char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+	Common::String saveLoadSlot = getSavegameFilename(slot);
 
 	_sprites->eraseBoth();
 	_sound->stopSound();
@@ -1008,9 +1007,8 @@ Common::Error AgiEngine::loadGameState(int slot) {
 }
 
 Common::Error AgiEngine::saveGameState(int slot, const Common::String &desc) {
-	char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
-	if (saveGame(saveLoadSlot, desc.c_str()) == errOK)
+	Common::String saveLoadSlot = getSavegameFilename(slot);
+	if (saveGame(saveLoadSlot, desc) == errOK)
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;
