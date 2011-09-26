@@ -453,13 +453,36 @@ void PictDecoder::outputPixelBuffer(byte *&out, byte value, byte bitsPerPixel) {
 // Compressed QuickTime details can be found here:
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
 // http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
-// I'm just ignoring that because Myst ME uses none of that extra stuff. The offset is always the same.
 
 void PictDecoder::decodeCompressedQuickTime(Common::SeekableReadStream *stream) {
+	// First, read all the fields from the opcode
 	uint32 dataSize = stream->readUint32BE();
 	uint32 startPos = stream->pos();
 
-	Common::SeekableReadStream *jpegStream = new Common::SeekableSubReadStream(stream, stream->pos() + 156, stream->pos() + dataSize);
+	/* uint16 version = */ stream->readUint16BE();
+
+	uint32 matrix[3][3];
+	for (uint32 i = 0; i < 3; i++)
+		for (uint32 j = 0; j < 3; j++)
+			matrix[i][j] = stream->readUint32BE();
+
+	uint32 matteSize = stream->readUint32BE();
+	stream->skip(8); // matte rect
+	/* uint16 transferMode = */ stream->readUint16BE();
+	stream->skip(8); // src rect
+	/* uint32 accuracy = */ stream->readUint32BE();
+	uint32 maskSize = stream->readUint32BE();
+	
+	stream->skip(matteSize + maskSize);
+	
+	// Now we've reached the image descriptor, so read the relevant data from that
+	uint32 idStart = stream->pos();
+	uint32 idSize = stream->readUint32BE();
+	stream->skip(40);
+	uint32 jpegSize = stream->readUint32BE();
+	stream->skip(idSize - (stream->pos() - idStart));
+
+	Common::SeekableReadStream *jpegStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + jpegSize);
 
 	if (!_jpeg->read(jpegStream))
 		error("PictDecoder::decodeCompressedQuickTime(): Could not decode JPEG data");
