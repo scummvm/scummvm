@@ -180,10 +180,17 @@ int AgiEngine::handleController(int key) {
 		if (!(getFeatures() & GF_AGIMOUSE)) {
 			// Handle mouse button events
 			if (key == BUTTON_LEFT) {
-				v->flags |= fAdjEgoXY;
-				v->parm1 = WIN_TO_PIC_X(_mouse.x);
-				v->parm2 = WIN_TO_PIC_Y(_mouse.y);
-				return true;
+				if (getGameID() == GID_PQ1 && _game.vars[vCurRoom] == 116) {
+					// Special handling for mouse clicks in the newspaper
+					// screen of PQ1. Fixes bug #3018770.
+					d = 3;	// fake a right arrow key (next page)
+				} else {
+					// Click-to-walk mouse interface
+					v->flags |= fAdjEgoXY;
+					v->parm1 = WIN_TO_PIC_X(_mouse.x);
+					v->parm2 = WIN_TO_PIC_Y(_mouse.y);
+					return true;
+				}
 			}
 		}
 
