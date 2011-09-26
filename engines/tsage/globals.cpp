@@ -204,6 +204,10 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v50696);
 	s.syncAsSint16LE(_v5098C);
 	s.syncAsSint16LE(_v5098D);
+	s.syncAsSint16LE(_v50CC2);
+	s.syncAsSint16LE(_v50CC4);
+	s.syncAsSint16LE(_v50CC6);
+	s.syncAsSint16LE(_v50CC8);
 	s.syncAsSint16LE(_v51C42);
 	s.syncAsSint16LE(_v51C44);
 	s.syncAsSint16LE(_interfaceY);
@@ -243,6 +247,10 @@ void BlueForceGlobals::reset() {
 	_v50696 = 0;
 	_v5098C = 0;
 	_v5098D = 0;
+	_v50CC2 = 0;
+	_v50CC4 = 0;
+	_v50CC6 = 0;
+	_v50CC8 = 0;
 	_v51C42 = 0;
 	_v51C44 = 1;
 	_clip1Bullets = 8;

@@ -182,6 +182,10 @@ public:
 	int _v50696;
 	uint8 _v5098C;
 	uint8 _v5098D;
+	int _v50CC2;
+	int _v50CC4;
+	int _v50CC6;
+	int _v50CC8;
 	int _v51C42;
 	int _v51C44;
 	int _interfaceY;

@@ -25,6 +25,7 @@
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
+#include "tsage/blue_force/blueforce_scenes4.h"
 #include "tsage/blue_force/blueforce_scenes6.h"
 #include "tsage/blue_force/blueforce_scenes8.h"
 #include "tsage/blue_force/blueforce_scenes9.h"
@@ -125,6 +126,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// City Jail
 		return new Scene390();
 	case 410:
+		// Traffic Stop Gang Members
+		return new Scene410();
 	case 415:
 	case 440:
 	case 450:
