@@ -525,6 +525,21 @@ AgiBase::~AgiBase() {
 	}
 }
 
+void AgiBase::initRenderMode() {
+	_renderMode = Common::kRenderEGA;
+
+	if (ConfMan.hasKey("platform")) {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+		_renderMode = (platform == Common::kPlatformAmiga) ? Common::kRenderAmiga : Common::kRenderEGA;
+	}
+
+	if (ConfMan.hasKey("render_mode")) {
+		Common::RenderMode tmpMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+		if (tmpMode != Common::kRenderDefault)
+			_renderMode = tmpMode;
+	}
+}
+
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
@@ -620,23 +635,7 @@ void AgiEngine::initialize() {
 		}
 	}
 
-	if (ConfMan.hasKey("render_mode")) {
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
-	} else if (ConfMan.hasKey("platform")) {
-		switch (Common::parsePlatform(ConfMan.get("platform"))) {
-		case Common::kPlatformAmiga:
-			_renderMode = Common::kRenderAmiga;
-			break;
-		case Common::kPlatformPC:
-			_renderMode = Common::kRenderEGA;
-			break;
-		default:
-			_renderMode = Common::kRenderEGA;
-			break;
-		}
-	} else {
-		_renderMode = Common::kRenderDefault;
-	}
+	initRenderMode();
 
 	_buttonStyle = AgiButtonStyle(_renderMode);
 	_defaultButtonStyle = AgiButtonStyle();

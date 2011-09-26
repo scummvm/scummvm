@@ -54,21 +54,7 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 }
 
 void PreAgiEngine::initialize() {
-	if (ConfMan.hasKey("render_mode")) {
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
-	} else if (ConfMan.hasKey("platform")) {
-		switch (Common::parsePlatform(ConfMan.get("platform"))) {
-		case Common::kPlatformAmiga:
-			_renderMode = Common::kRenderAmiga;
-			break;
-		case Common::kPlatformPC:
-			_renderMode = Common::kRenderEGA;
-			break;
-		default:
-			_renderMode = Common::kRenderEGA;
-			break;
-		}
-	}
+	initRenderMode();
 
 	_gfx = new GfxMgr(this);
 	_picture = new PictureMgr(this, _gfx);

@@ -776,6 +776,8 @@ protected:
 
 	virtual void initialize() = 0;
 
+	void initRenderMode();
+
 public:
 	GfxMgr *_gfx;
 
