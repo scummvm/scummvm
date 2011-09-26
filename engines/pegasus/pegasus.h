@@ -111,6 +111,7 @@ public:
 	void setEnergyDeathReason(const tDeathReason reason) { _deathReason = reason; } 
 	tDeathReason getEnergyDeathReason() { return _deathReason; }
 	void resetEnergyDeathReason();
+	void die(const tDeathReason);
 
 	// Volume
 	uint16 getSoundFXLevel();
@@ -188,6 +189,7 @@ private:
 	void showLoadDialog();
 	void showTempScreen(const Common::String &fileName);
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
+	void throwAwayEverything();
 
 	// Menu
 	GameMenu *_gameMenu;
@@ -199,6 +201,7 @@ private:
 
 	// Death
 	tDeathReason _deathReason;
+	void doDeath();
 
 	// Neighborhood
 	Neighborhood *_neighborhood;

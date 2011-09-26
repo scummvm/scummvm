@@ -495,6 +495,9 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 #endif
 			break;
 		}
+		case kPlayerDiedFlag:
+			doDeath();
+			break;
 		default:
 			break;
 		}
@@ -1018,6 +1021,25 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 	}
 
 	return skipped;
+}
+
+void PegasusEngine::die(const tDeathReason reason) {
+	// TODO: Stop dragging
+
+	_deathReason = reason;
+	_shellNotification.setNotificationFlags(kPlayerDiedFlag, kPlayerDiedFlag);
+}
+
+void PegasusEngine::doDeath() {
+	// TODO: Fade out
+	throwAwayEverything();
+	useMenu(new DeathMenu(_deathReason));
+	_gfx->updateDisplay();
+	// TODO: Fade in
+}
+
+void PegasusEngine::throwAwayEverything() {
+	// TODO
 }
 
 } // End of namespace Pegasus

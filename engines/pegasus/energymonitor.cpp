@@ -160,9 +160,9 @@ int32 EnergyMonitor::getCurrentEnergy() {
 
 void EnergyMonitor::timeChanged(const TimeValue currentTime) {
 	if (currentTime == getStop()) {
-		// TODO: Die :P
-		if (((PegasusEngine *)g_engine)->getEnergyDeathReason() != -1)
-			error("You're dead");
+		PegasusEngine *vm = (PegasusEngine *)g_engine;
+		if (vm->getEnergyDeathReason() != -1)
+			vm->die(vm->getEnergyDeathReason());
 	} else {
 		uint32 currentEnergy = kMaxJMPEnergy - currentTime;
 
