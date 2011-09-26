@@ -1087,7 +1087,7 @@ void KyraEngine_HoF::resetScaleTable() {
 }
 
 void KyraEngine_HoF::setScaleTableItem(int item, int data) {
-	if (item >= 1 || item <= 15)
+	if (item >= 1 && item <= 15)
 		_scaleTable[item-1] = (data << 8) / 100;
 }
 
@@ -1096,7 +1096,7 @@ int KyraEngine_HoF::getScale(int x, int y) {
 }
 
 void KyraEngine_HoF::setDrawLayerTableEntry(int entry, int data) {
-	if (entry >= 1 || entry <= 15)
+	if (entry >= 1 && entry <= 15)
 		_drawLayerTable[entry-1] = data;
 }
 
