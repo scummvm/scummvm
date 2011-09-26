@@ -606,6 +606,11 @@ void Actor::update() {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
 				if (canMoveCheckActors(&current, _direction)) {
+					// FIXME This matches the original, but results in a negative x value,
+					// which causes the actor to warp to the left side of the screen.
+					// Perhaps _point2.x is not being properly set somewhere ...
+					// This can be quickly tested in Scene 1 by trying to pick up
+					// the towel.
 					_point1.x = (int16)dist - _point2.x;
 					_point1.y = current.y - _point2.y;
 
