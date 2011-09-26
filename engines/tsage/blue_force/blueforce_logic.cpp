@@ -783,6 +783,42 @@ PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action
 	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
+void PalettedScene::sub15DD6(const byte *arrBufferRGB, int step, int paletteNum, Action *action) {
+	BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, 100, NULL);
+	_palette.loadPalette(paletteNum);
+	_palette.loadPalette(2);
+	BF_GLOBALS._scenePalette.addFader(_palette._palette, 256, step, action);
+}
+
+void PalettedScene::sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
+	byte tmpPalette[768];
+
+	_palette.loadPalette(paletteNum);
+	_palette.loadPalette(2);
+	if (!flag) {
+		for (int i = fromColor1; i <= fromColor2; i++) {
+			tmpPalette[(3 * i)]     = BF_GLOBALS._scenePalette._palette[(3 * i)];
+			tmpPalette[(3 * i) + 1] = BF_GLOBALS._scenePalette._palette[(3 * i) + 1];
+			tmpPalette[(3 * i) + 2] = BF_GLOBALS._scenePalette._palette[(3 * i) + 2];
+		}
+	} else {
+		for (int i = fromColor1; i <= fromColor2; i++) {
+			tmpPalette[(3 * i)]     = _palette._palette[(3 * i)];
+			tmpPalette[(3 * i) + 1] = _palette._palette[(3 * i) + 1];
+			tmpPalette[(3 * i) + 2] = _palette._palette[(3 * i) + 2];
+		}
+	}
+
+	for (int i = toColor1; i <= toColor2; i++) {
+		tmpPalette[i] = _palette._palette[i] - ((_palette._palette[i] - arrBufferRGB[0]) * (100 - arg8)) / 100;
+		tmpPalette[i + 1] = _palette._palette[i + 1] - ((_palette._palette[i + 1] - arrBufferRGB[1]) * (100 - arg8)) / 100;
+		tmpPalette[i + 2] = _palette._palette[i + 2] - ((_palette._palette[i + 2] - arrBufferRGB[2]) * (100 - arg8)) / 100;
+	}
+
+	BF_GLOBALS._scenePalette.addFader((const byte *)tmpPalette, 256, 100, action);
+}
+
+
 /*--------------------------------------------------------------------------*/
 
 void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {

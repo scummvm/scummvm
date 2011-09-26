@@ -909,7 +909,7 @@ void Scene920::synchronize(Serializer &s) {
 
 void Scene935::Action1::signal() {
 	Scene935 *scene = (Scene935 *)BF_GLOBALS._sceneManager._scene;
-	static uint32 v50ECC = 0, v50EEE = 0, v50F2A = 0, v50F66 = 0;
+	static uint32 v50ECC = 0, v50EEA = 0, v50EEE = 0, v50F26 = 0, v50F2A = 0, v50F62 = 0, v50F66 = 0, v50F6A = 0;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -917,8 +917,8 @@ void Scene935::Action1::signal() {
 		break;
 	case 1:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
-//		for (int i = 1; i < 21; i++)
-//			scene->sub_15E4F(&v50EEA, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		for (int i = 1; i < 21; i++)
+			scene->sub15E4F((const byte *)&v50EEA, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		warning("Scene935::Action1::signal(): sub_15E4F");
 		setDelay(3);
 		break;
@@ -935,8 +935,8 @@ void Scene935::Action1::signal() {
 		break;
 	case 4:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
-//		for (int i = 1; i < 21; i++)
-//			scene->sub_15E4F(&v50F26, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		for (int i = 1; i < 21; i++)
+			scene->sub15E4F((const byte *)&v50F26, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		warning("Scene935::Action1::signal(): sub_15E4F");
 		setDelay(3);
 		break;
@@ -953,8 +953,8 @@ void Scene935::Action1::signal() {
 		break;
 	case 7:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
-//		for (int i = 1; i < 21; i++)
-//			scene->sub_15E4F(&v50F62, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		for (int i = 1; i < 21; i++)
+			scene->sub15E4F((const byte *)&v50F62, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		warning("Scene935::Action1::signal(): sub_15E4F");
 		setDelay(3);
 		break;
@@ -967,8 +967,7 @@ void Scene935::Action1::signal() {
 		break;
 	case 10:
 		scene->_sceneMode = 1;
-//		scene->sub_15DD6(&v50F6A, 5, 935, this);
-		warning("Scene935::Action1::signal(): sub_15DD6");
+		scene->sub15DD6((const byte *)&v50F6A, 5, 935, scene);
 		remove();
 		break;
 	default:

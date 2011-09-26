@@ -198,7 +198,7 @@ public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
 	bool _savedPlayerEnabled;
-	bool _savedUiEnabled;
+	bool _savedUiEnabled;	
 	bool _savedCanWalk;
 	int _field37A;
 
@@ -234,6 +234,8 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
+	void sub15DD6(const byte *arrBufferRGB, int step, int paletteNum, Action *action);
+	void sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
 };
 
 class SceneHandlerExt: public SceneHandler {
