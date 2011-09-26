@@ -63,21 +63,14 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
 
 			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
-				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-				// needs fixing, or remove it!
-				// FIXME
-				int ypos;
-
-				ypos = (y1 * CHAR_LINES) + yoff;
+				int ypos = (y1 * CHAR_LINES) + yoff;
 
 				if ((x1 != (len - 1) || x1 == 39) && (ypos <= (GFX_HEIGHT - CHAR_LINES))) {
-					int xpos;
-
-					xpos = (x1 * CHAR_COLS) + xoff + foff;
+					int xpos = (x1 * CHAR_COLS) + xoff + foff;
 
 					if (xpos >= GFX_WIDTH)
 						continue;
-
+					 
 					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard);
 
 					if (x1 > maxx)
@@ -88,7 +81,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 				x1++;
 
-				// DF: changed the len-1 to len...
+				// Change line if we've reached the end of this one
 				if (x1 == len && m[len - 1] != '\n') {
 					y1++;
 					x1 = foff = 0;
@@ -249,6 +242,8 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 			wLen--;
 
 		if (wLen + lnLen >= maxWidth) {
+			// Check if outStr isn't msgBuf. If this is the case, outStr hasn't advanced
+			// yet, so no output has been written yet
 			if (outStr != msgBuf) {
 				if (outStr[-1] == ' ')
 					outStr[-1] = '\n';
