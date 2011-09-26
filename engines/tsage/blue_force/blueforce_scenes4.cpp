@@ -367,7 +367,8 @@ bool Scene410::Object1::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager1, scene, 4126, &BF_GLOBALS._player, &scene->_object1, NULL);
 		}
 		return true;
-			
+	default:
+		break;
 	}
 
 	return NamedObject::startAction(action, event);
@@ -428,6 +429,8 @@ bool Scene410::Object2::startAction(CursorType action, Event &event) {
 				&scene->_object2, NULL);
 		}
 		return true;
+	default:
+		break;
 	}
 
 	return NamedObject::startAction(action, event);
