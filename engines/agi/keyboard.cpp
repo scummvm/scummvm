@@ -181,7 +181,7 @@ int AgiEngine::handleController(int key) {
 			// Handle mouse button events
 			if (key == BUTTON_LEFT) {
 				if (getGameID() == GID_PQ1 && _game.vars[vCurRoom] == 116) {
-					// Special handling for mouse clicks in the newspaper
+					// WORKAROUND: Special handling for mouse clicks in the newspaper
 					// screen of PQ1. Fixes bug #3018770.
 					d = 3;	// fake a right arrow key (next page)
 				} else {
