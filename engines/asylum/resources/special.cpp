@@ -222,7 +222,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 	case 15:
 	case 17:
 	case 18:
-		if (actor->getStatus() == kActorStatus1) {
+		if (actor->getStatus() == kActorStatusWalking) {
 			int32 counter = getSharedData()->getChapter2Counter(getCounter(actorIndex));
 			counter++;
 
@@ -234,7 +234,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			getSharedData()->setChapter2Counter(4, counter);
 
 		} else if (actor->getStatus() == kActorStatusEnabled) {
-			actor->updateStatus(kActorStatus1);
+			actor->updateStatus(kActorStatusWalking);
 		}
 		break;
 

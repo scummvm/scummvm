@@ -389,10 +389,10 @@ enum ActorIndexes {
 
 enum ActorStatus {
 	kActorStatusNone = 0,
-	kActorStatus1 = 1,
-	kActorStatus2,
+	kActorStatusWalking = 1, // Walking
+	kActorStatusWalkingTo,   // Auto-walking to target
 	kActorStatus3,
-	kActorStatusEnabled,
+	kActorStatusEnabled,     // Standing Still
 	kActorStatusDisabled,    // 5
 	kActorStatus6,
 	kActorStatus7,

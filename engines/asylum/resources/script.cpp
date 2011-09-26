@@ -700,7 +700,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpAndSetDirection)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->getStatus() != kActorStatus2 && actor->getStatus() != kActorStatus13) {
+	if (actor->getStatus() != kActorStatusWalkingTo && actor->getStatus() != kActorStatus13) {
 		if (cmd->param5 != 2) {
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
@@ -1703,7 +1703,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(Interact)
 	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorInvalid : cmd->param1);
 
-	if (actor->getStatus() == kActorStatus2 || actor->getStatus() == kActorStatus13) {
+	if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatus13) {
 		if (cmd->param2 == 2)
 			_processNextEntry = true;
 

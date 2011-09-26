@@ -544,7 +544,7 @@ void Actor::update() {
 		}
 		// Fallback to next case
 
-	case kActorStatus1: {
+	case kActorStatusWalking: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
 		uint32 dist = (uint32)abs((double)getDistanceForFrame(_direction, index));
@@ -577,7 +577,7 @@ void Actor::update() {
 		}
 		break;
 
-	case kActorStatus2:
+	case kActorStatusWalkingTo:
 	case kActorStatus13: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
@@ -701,7 +701,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 	default:
 		break;
 
-	case kActorStatus1:
+	case kActorStatusWalking:
 	case kActorStatus12:
 		if ((getWorld()->chapter == kChapter2
 		 && _index == getSharedData()->getPlayerIndex() && (_status == kActorStatus18 || _status == kActorStatus16 || _status == kActorStatus17))
@@ -717,7 +717,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		}
 		break;
 
-	case kActorStatus2:
+	case kActorStatusWalkingTo:
 	case kActorStatus13:
 		updateGraphicData(0);
 		break;
@@ -1048,8 +1048,8 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 				_resourceId = _graphicResourceIds[(actorDirection > kDirectionS) ? kDirection8 - actorDirection : actorDirection];
 		break;
 
-	case kActorStatus1:
-	case kActorStatus2:
+	case kActorStatusWalking:
+	case kActorStatusWalkingTo:
 	case kActorStatus12:
 		_resourceId = _graphicResourceIds[(actorDirection > kDirectionS ? kDirection8 - actorDirection : actorDirection)];
 		break;
@@ -1469,7 +1469,7 @@ bool Actor::process(const Common::Point &point) {
 void Actor::processStatus(int16 actorX, int16 actorY, bool doSpeech) {
 	if (process(Common::Point(actorX, actorY))) {
 		if (_status <= kActorStatus11)
-			updateStatus(kActorStatus2);
+			updateStatus(kActorStatusWalkingTo);
 		else
 			updateStatus(kActorStatus13);
 	} else if (doSpeech) {
@@ -1743,8 +1743,8 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	default:
 		break;
 
-	case kActorStatus1:
-	case kActorStatus2:
+	case kActorStatusWalking:
+	case kActorStatusWalkingTo:
 	case kActorStatus12:
 	case kActorStatus13:
 		updateCoordinatesForDirection(actorDir, (int16)dist, &_point1);
