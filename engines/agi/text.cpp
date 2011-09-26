@@ -225,8 +225,10 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 	const char *pWord;
 	int lnLen, wLen;
 
-	// FIXME: outStr may end up being longer than s, so this can overflow
-	msgBuf = outStr = strdup(s);
+	// Allocate some extra space for the final buffer, as
+	// outStr may end up being longer than s
+	// 26 = 200 (screen height) / 8 (font height) + 1
+	msgBuf = outStr = (char *)malloc(strlen(s) + 26);
 
 	int msgWidth = 0;
 
