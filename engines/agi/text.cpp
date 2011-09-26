@@ -62,7 +62,10 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
 
-			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
+			// Note: there were extra checks for *m being a cursor character
+			// here (1, 2 or 3), which have been removed, as the cursor
+			// character is no longer printed via this function. 
+			if (*m >= 0x20) {
 				int ypos = (y1 * CHAR_LINES) + yoff;
 
 				if ((x1 != (len - 1) || x1 == 39) && (ypos <= (GFX_HEIGHT - CHAR_LINES))) {
