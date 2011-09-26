@@ -188,7 +188,7 @@ enum GameFlag {
 
 enum ChapterIndex {
 	kChapterInvalid = -1,
-	kChapterNone = 0,
+	kChapterNone    = 0,
 	kChapter1,
 	kChapter2,
 	kChapter3,
@@ -240,8 +240,8 @@ enum ResourcePackId {
 typedef int ResourceId;
 
 enum ResourcesId {
-	kResourceInvalid      = -1,
-	kResourceNone         = 0
+	kResourceInvalid = -1,
+	kResourceNone    = 0
 };
 
 #define kMusicStopped -666
@@ -262,15 +262,15 @@ enum ActionType {
 	kActionTypeFind = 1,
 	kActionTypeTalk = 2,
 	kActionTypeGrab = 4,
-	kActionType8 = 8,
-	kActionType16 = 16
+	kActionType8    = 8,
+	kActionType16   = 16
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Script
 //////////////////////////////////////////////////////////////////////////
 enum OpcodeType {
-	kOpcodeReturn                        = 0,
+	kOpcodeReturn = 0,
 	kOpcodeSetGameFlag,
 	kOpcodeClearGameFlag,
 	kOpcodeToggleGameFlag,
@@ -388,7 +388,7 @@ enum ActorIndexes {
 };
 
 enum ActorStatus {
-	kActorStatusNone = 0,
+	kActorStatusNone    = 0,
 	kActorStatusWalking = 1, // Walking
 	kActorStatusWalkingTo,   // Auto-walking to target
 	kActorStatus3,
@@ -414,15 +414,15 @@ enum ActorStatus {
 
 enum ActorDirection {
 	kDirectionInvalid = -1,
-	kDirectionN = 0,
-	kDirectionNW = 1,
-	kDirectionW = 2,
-	kDirectionSW = 3,
-	kDirectionS = 4,
-	kDirectionSE = 5,
-	kDirectionE = 6,
-	kDirectionNE = 7,
-	kDirection8 = 8
+	kDirectionN       = 0,
+	kDirectionNW      = 1,
+	kDirectionW       = 2,
+	kDirectionSW      = 3,
+	kDirectionS       = 4,
+	kDirectionSE      = 5,
+	kDirectionE       = 6,
+	kDirectionNE      = 7,
+	kDirection8       = 8
 };
 
 enum ActorFlags {
@@ -431,9 +431,9 @@ enum ActorFlags {
 };
 
 enum DirectionFrom {
-	kDirectionFromObject = 0,
-	kDirectionFromPolygons = 1,
-	kDirectionFromActor = 2,
+	kDirectionFromObject     = 0,
+	kDirectionFromPolygons   = 1,
+	kDirectionFromActor      = 2,
 	kDirectionFromParameters = 3
 };
 
