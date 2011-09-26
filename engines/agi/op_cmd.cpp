@@ -1259,7 +1259,6 @@ void cmdSetMenuItem(AgiGame *state, uint8 *p) {
 }
 
 void cmdVersion(AgiGame *state, uint8 *p) {
-	char verMsg[64];
 	char ver2Msg[] =
 	    "\n"
 	    "                               \n\n"
@@ -1269,33 +1268,17 @@ void cmdVersion(AgiGame *state, uint8 *p) {
 	    "                             \n\n"
 	    "  Emulating AGI v%x.002.%03x\n";
 	// no Sierra as it wraps textbox
-	char *r, *q;
-	int ver, maj, min;
-	char msg[256];
-	int gap;
-	int len;
 
-	sprintf(verMsg, TITLE " v%s", gScummVMVersion);
+	Common::String verMsg = TITLE " v%s";
+	
+	int ver = getVersion();
+	int maj = (ver >> 12) & 0xf;
+	int min = ver & 0xfff;
 
-	ver = getVersion();
-	maj = (ver >> 12) & 0xf;
-	min = ver & 0xfff;
+	verMsg += (maj == 2 ? ver2Msg : ver3Msg);
+	verMsg = Common::String::format(verMsg.c_str(), gScummVMVersion, maj, min);
 
-	q = maj == 2 ? ver2Msg : ver3Msg;
-	r = strchr(q + 1, '\n');
-
-	// insert our version into the other version
-	len = strlen(verMsg);
-	gap = r - q;
-
-	if (gap < 0)
-		gap = 0;
-	else
-		gap = (gap - len) / 2;
-
-	strncpy(q + 1 + gap, verMsg, strlen(verMsg));
-	sprintf(msg, q, maj, min);
-	state->_vm->messageBox(msg);
+	state->_vm->messageBox(verMsg.c_str());
 }
 
 void cmdConfigureScreen(AgiGame *state, uint8 *p) {
