@@ -81,14 +81,17 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 				x1++;
 
-				// Change line if we've reached the end of this one
-				if (x1 == len && m[len - 1] != '\n') {
+				// Change line if we've reached the end of this one, unless the next
+				// character is a new line itself, or the end of the string
+				if (x1 == len && m[1] != '\n' && m[1] != 0) {
 					y1++;
 					x1 = foff = 0;
 				}
 			} else {
-				y1++;
-				x1 = foff = 0;
+				if (m[1] != 0) {
+					y1++;
+					x1 = foff = 0;
+				}
 			}
 		}
 	}
