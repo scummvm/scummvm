@@ -722,6 +722,7 @@ void Special::playChapterSound(Object *object, ActorIndex actorIndex) {
 
 void Special::playSoundChapter1(Object *object, ActorIndex actorIndex) {
 	if (actorIndex == kActorInvalid) {
+		warning("Trying to play sound for %s", object->getName());
 		switch(object->getId()) {
 		default:
 			break;

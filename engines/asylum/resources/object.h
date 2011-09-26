@@ -154,6 +154,7 @@ public:
 	 */
 	bool checkFlags() const;
 
+	uint8 *getName() { return _name; }
 	/**
 	 * Convert this object into a string representation.
 	 *

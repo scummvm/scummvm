@@ -146,7 +146,7 @@ void Scene::enter(ResourcePackId packId) {
 			Actor *actor = _ws->actors[i];
 
 			actor->hide();
-			actor->setDirection(kDirectionNO);
+			actor->setDirection(kDirectionNW);
 			actor->enable();
 
 			actor->getPoint1()->x -= actor->getPoint2()->x;
@@ -709,48 +709,48 @@ void Scene::updateMouse() {
 	if (mouse.x < actorRect.left) {
 		if (mouse.y >= actorRect.top) {
 			if (mouse.y > actorRect.bottom) {
-				if (player->getDirection() == kDirectionO) {
+				if (player->getDirection() == kDirectionW) {
 					if ((mouse.y - actorRect.bottom) > 10)
-						newDirection = kDirectionSO;
+						newDirection = kDirectionSW;
 				} else {
 					if (player->getDirection() == kDirectionS) {
 						if ((actorRect.left - mouse.x) > 10)
-							newDirection = kDirectionSO;
+							newDirection = kDirectionSW;
 					} else {
-						newDirection = kDirectionSO;
+						newDirection = kDirectionSW;
 					}
 				}
 			} else {
-				if (player->getDirection() == kDirectionNO) {
+				if (player->getDirection() == kDirectionNW) {
 					if ((mouse.y - actorRect.top) > 10)
-						newDirection = kDirectionO;
+						newDirection = kDirectionW;
 				} else {
-					if (player->getDirection() == kDirectionSO) {
+					if (player->getDirection() == kDirectionSW) {
 						if ((actorRect.bottom - mouse.y) > 10)
-							newDirection = kDirectionO;
+							newDirection = kDirectionW;
 					} else {
-						newDirection = kDirectionO;
+						newDirection = kDirectionW;
 					}
 				}
 			}
 		} else {
 			if (player->getDirection() != kDirectionN) {
-				if (player->getDirection() == kDirectionO) {
+				if (player->getDirection() == kDirectionW) {
 					if ((actorRect.top - mouse.y) > 10)
-						newDirection = kDirectionNO;
+						newDirection = kDirectionNW;
 				} else {
-					newDirection = kDirectionNO;
+					newDirection = kDirectionNW;
 				}
 			} else {
 				if ((actorRect.left - mouse.x) > 10)
-					newDirection = kDirectionNO;
+					newDirection = kDirectionNW;
 			}
 		}
 
 	} else if (mouse.x <= actorRect.right) {
 		if (mouse.y >= actorRect.top) {
 			if (mouse.y > actorRect.bottom) {
-				if (player->getDirection() == kDirectionSO) {
+				if (player->getDirection() == kDirectionSW) {
 					if ((mouse.x - actorRect.left) > 10)
 						newDirection = kDirectionS;
 				} else {
@@ -763,7 +763,7 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (player->getDirection() == kDirectionNO) {
+			if (player->getDirection() == kDirectionNW) {
 				if ((mouse.x - actorRect.left) > 10)
 					newDirection = kDirectionN;
 			} else {

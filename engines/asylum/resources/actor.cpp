@@ -702,6 +702,8 @@ void Actor::update() {
 
 
 void Actor::updateStatus(ActorStatus actorStatus) {
+	debugC(kDebugLevelActor, "[updateStatus] %d point1(%d/%d)", actorStatus, this->_point1.x, this->_point1.y);
+
 	switch (actorStatus) {
 	default:
 		break;
@@ -862,58 +864,58 @@ void Actor::updateDirection() {
 			direction = kDirectionNE;
 			break;
 
-		case kDirectionNO:
-			direction = kDirectionSO;
+		case kDirectionNW:
+			direction = kDirectionSW;
 			break;
 
-		case kDirectionSO:
-			direction = kDirectionNO;
+		case kDirectionSW:
+			direction = kDirectionNW;
 			break;
 		}
 		break;
 
-	case kDirectionO:
+	case kDirectionW:
 	case kDirectionE:
 		position.x = _nextPosition.x + sum.x;
-		position.x += (int16)((_nextDirection == kDirectionO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
+		position.x += (int16)((_nextDirection == kDirectionW ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
 		position.y = _nextPosition.y + sum.y;
 
 		switch (direction) {
 		default:
 			break;
 
-		case kDirectionO:
+		case kDirectionW:
 			direction = kDirectionE;
 			break;
 
 		case kDirectionE:
-			direction = kDirectionO;
+			direction = kDirectionW;
 			break;
 
-		case kDirectionSO:
+		case kDirectionSW:
 			direction = kDirectionSE;
 			break;
 
-		case kDirectionNO:
+		case kDirectionNW:
 			direction = kDirectionNE;
 			break;
 
 		case kDirectionSE:
-			direction = kDirectionSO;
+			direction = kDirectionSW;
 			break;
 
 		case kDirectionNE:
-			direction = kDirectionNO;
+			direction = kDirectionNW;
 			break;
 		}
 		break;
 
-	case kDirectionNO:
+	case kDirectionNW:
 	case kDirectionSE:
 		position.x = _nextPosition.x + sum.x;
 		position.y = _nextPosition.y + sum.y;
-		position.x += (int16)((_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
-		position.y += (int16)((_nextDirection == kDirectionNO ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
+		position.x += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
+		position.y += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
 
 		switch (direction) {
 		default:
@@ -924,10 +926,10 @@ void Actor::updateDirection() {
 			break;
 
 		case kDirectionS:
-			direction = kDirectionO;
+			direction = kDirectionW;
 			break;
 
-		case kDirectionO:
+		case kDirectionW:
 			direction = kDirectionS;
 			break;
 
@@ -935,7 +937,7 @@ void Actor::updateDirection() {
 			direction = kDirectionN;
 			break;
 
-		case kDirectionNO:
+		case kDirectionNW:
 			direction = kDirectionSE;
 			break;
 
@@ -943,19 +945,19 @@ void Actor::updateDirection() {
 			direction = kDirectionNE;
 			break;
 
-		case kDirectionSO:
-			direction = kDirectionSO;
+		case kDirectionSW:
+			direction = kDirectionSW;
 			break;
 
 		case kDirectionSE:
-			direction = kDirectionNO;
+			direction = kDirectionNW;
 			break;
 		}
 		break;
 
-	case kDirectionSO:
+	case kDirectionSW:
 	case kDirectionNE:
-		if (_nextDirection == kDirectionSO) {
+		if (_nextDirection == kDirectionSW) {
 			position.x = (int16)(_nextPosition.x + sum.x - 2 * abs(sum.y - _nextPositionOffset.y));
 			position.y = (int16)(_nextPosition.y + sum.y + 2 * abs(sum.x - _nextPositionOffset.x));
 		} else {
@@ -974,14 +976,14 @@ void Actor::updateDirection() {
 			break;
 
 		case kDirectionN:
-			direction = kDirectionO;
+			direction = kDirectionW;
 			break;
 
 		case kDirectionE:
 			direction = kDirectionS;
 			break;
 
-		case kDirectionO:
+		case kDirectionW:
 			direction = kDirectionN;
 			break;
 
@@ -989,16 +991,16 @@ void Actor::updateDirection() {
 			direction = kDirectionSE;
 			break;
 
-		case kDirectionSO:
+		case kDirectionSW:
 			direction = kDirectionNE;
 			break;
 
 		case kDirectionNE:
-			direction = kDirectionSO;
+			direction = kDirectionSW;
 			break;
 
-		case kDirectionNO:
-			direction = kDirectionNO;
+		case kDirectionNW:
+			direction = kDirectionNW;
 			break;
 		}
 		break;
@@ -1249,7 +1251,7 @@ bool Actor::process(const Common::Point &point) {
 	}
 
 	if (point.y == sum.y) {
-		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionO;
+		ActorDirection actorDir = (a3 != 0 || a3 != 3) ? kDirectionE : kDirectionW;
 
 		if (canMove(&sum, actorDir, (uint32)abs(delta.x), true)) {
 			_data.points[0] = point;
@@ -1286,7 +1288,7 @@ bool Actor::process(const Common::Point &point) {
 				break;
 
 			case 0:
-				direction1 = kDirectionNO;
+				direction1 = kDirectionNW;
 				direction2 = kDirectionN;
 				break;
 
@@ -1301,7 +1303,7 @@ bool Actor::process(const Common::Point &point) {
 				break;
 
 			case 3:
-				direction1 = kDirectionSO;
+				direction1 = kDirectionSW;
 				direction2 = kDirectionS;
 				break;
 			}
@@ -1317,8 +1319,8 @@ bool Actor::process(const Common::Point &point) {
 				break;
 
 			case 0:
-				direction1 = kDirectionNO;
-				direction2 = kDirectionO;
+				direction1 = kDirectionNW;
+				direction2 = kDirectionW;
 				break;
 
 			case 1:
@@ -1332,8 +1334,8 @@ bool Actor::process(const Common::Point &point) {
 				break;
 
 			case 3:
-				direction1 = kDirectionSO;
-				direction2 = kDirectionO;
+				direction1 = kDirectionSW;
+				direction2 = kDirectionW;
 				break;
 			}
 		}
@@ -1439,13 +1441,13 @@ bool Actor::process(const Common::Point &point) {
 	// Last case: abs(delta.x) == abs(delta.y)
 
 	// Compute direction
-	ActorDirection actorDir = kDirectionSO;
+	ActorDirection actorDir = kDirectionSW;
 	switch (a3) {
 	default:
 		break;
 
 	case 0:
-		actorDir = kDirectionNO;
+		actorDir = kDirectionNW;
 		break;
 
 	case 1:
@@ -1512,7 +1514,7 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 							offset.y = point.y;
 						break;
 
-					case kDirectionNO:
+					case kDirectionNW:
 						if (offset.y > point.y)
 							offset.y = point.y;
 
@@ -1520,12 +1522,12 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 							offset.x = point.x;
 						break;
 
-					case kDirectionO:
+					case kDirectionW:
 						if (offset.x > point.x)
 							offset.x = point.x;
 						break;
 
-					case kDirectionSO:
+					case kDirectionSW:
 						if (offset.y < point.y)
 							offset.y = point.y;
 
@@ -1935,7 +1937,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 			default:
 				break;
 
-			case kDirectionNO:
+			case kDirectionNW:
 				if (x4 >= x)
 					break;
 				// Fallback to next case
@@ -1946,13 +1948,13 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 
 				return false;
 
-			case kDirectionO:
+			case kDirectionW:
 				if (x4 < x)
 					return false;
 
 				break;
 
-			case kDirectionSO:
+			case kDirectionSW:
 				if (x4 < x && y4 > y)
 					return false;
 
@@ -3393,9 +3395,9 @@ bool Actor::processActionAll(Common::Point source, const Common::Point &destinat
 	Common::Point src = source;
 
 	for (uint32 i = 0; i < 60; i++) {
-		if (!processAction(source, actions, &src, kDirectionO,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionNO, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSO, destination, &flag)) {
+		if (!processAction(source, actions, &src, kDirectionW,  destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionNW, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSW, destination, &flag)) {
 			if (src.y <= destination.y) {
 				if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
 				 && !processAction(source, actions, &src, kDirectionN,  destination, &flag)
@@ -3434,16 +3436,16 @@ bool Actor::processActionTop(Common::Point source, const Common::Point &destinat
 	for (uint32 i = 0; i < 60; i++) {
 		if (!processAction(source, actions, &src, kDirectionN, destination, &flag)) {
 			if (src.x >= destination.x) {
-				if (!processAction(source, actions, &src, kDirectionNO, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionO,  destination, &flag)
+				if (!processAction(source, actions, &src, kDirectionNW, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionW,  destination, &flag)
 				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
 				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag))
 					continue;
 			} else {
 				if (!processAction(source, actions, &src, kDirectionNE, destination, &flag)
 				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionNO, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionO,  destination, &flag))
+				 && !processAction(source, actions, &src, kDirectionNW, destination, &flag)
+				 && !processAction(source, actions, &src, kDirectionW,  destination, &flag))
 					continue;
 			}
 		}
@@ -3469,9 +3471,9 @@ bool Actor::processActionDown(Common::Point source, const Common::Point &destina
 	for (uint32 i = 0; i < 60; i++) {
 		if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
 		 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSO, destination, &flag)
+		 && !processAction(source, actions, &src, kDirectionSW, destination, &flag)
 		 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionO,  destination, &flag))
+		 && !processAction(source, actions, &src, kDirectionW,  destination, &flag))
 			continue;
 
 		// Update source point after all processing
@@ -3497,16 +3499,16 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 		sign.y = -1;
 		break;
 
-	case kDirectionNO:
+	case kDirectionNW:
 		sign.x = -1;
 		sign.y = -1;
 		break;
 
-	case kDirectionO:
+	case kDirectionW:
 		sign.x = -1;
 		break;
 
-	case kDirectionSO:
+	case kDirectionSW:
 		sign.x = -1;
 		sign.y = 1;
 		break;
@@ -3538,11 +3540,11 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 		src.x += (int16)(sign.x * dist);
 		src.y += (int16)(sign.y * dist);
 
-		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionO, frameNumber)) {
+		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionW, frameNumber)) {
 			if (abs(src.y - destination.y) >= getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
 
 				if (src.x >= destination.x) {
-					if (checkPath(actions, src, kDirectionO, src.x - destination.x)) {
+					if (checkPath(actions, src, kDirectionW, src.x - destination.x)) {
 						*flag = true;
 						*point = src;
 
@@ -3551,7 +3553,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 						_data.count++;
 
 						_data.points[_data.count]     = destination;
-						_data.directions[_data.count] = kDirectionO;
+						_data.directions[_data.count] = kDirectionW;
 						_data.count++;
 
 						return true;
@@ -3805,7 +3807,7 @@ ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common
 								if (dirAngle < 202 || dirAngle >= 247) {
 									error("[Actor::direction] got a bad direction angle: %d!", dirAngle);
 								} else {
-									dir = kDirectionSO;
+									dir = kDirectionSW;
 								}
 							} else {
 								dir = kDirectionS;
@@ -3823,10 +3825,10 @@ ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common
 				dir = kDirectionN;
 			}
 		} else {
-			dir = kDirectionNO;
+			dir = kDirectionNW;
 		}
 	} else {
-		dir = kDirectionO;
+		dir = kDirectionW;
 	}
 
 	return dir;
@@ -3877,13 +3879,13 @@ int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) 
 	case kDirectionS:
 		return _distancesNS[frameIndex];
 
-	case kDirectionNO:
-	case kDirectionSO:
+	case kDirectionNW:
+	case kDirectionSW:
 	case kDirectionSE:
 	case kDirectionNE:
 		return _distancesNSEO[frameIndex];
 
-	case kDirectionO:
+	case kDirectionW:
 	case kDirectionE:
 		return _distancesEO[frameIndex];
 	}
@@ -3903,19 +3905,19 @@ int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	case kDirectionS:
 		return _distancesNS[frameIndex];
 
-	case kDirectionNO:
+	case kDirectionNW:
 		return -_distancesNSEO[frameIndex];
 
 	case kDirectionNE:
 		return -_distancesNSEO[frameIndex];
 
-	case kDirectionSO:
+	case kDirectionSW:
 		return _distancesNSEO[frameIndex];
 
 	case kDirectionSE:
 		return _distancesNSEO[frameIndex];
 
-	case kDirectionO:
+	case kDirectionW:
 		return -_distancesEO[frameIndex];
 
 	case kDirectionE:
@@ -3935,16 +3937,16 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int16 delta,
 		point->y -= delta;
 		break;
 
-	case kDirectionNO:
+	case kDirectionNW:
 		point->x -= delta;
 		point->y -= delta;
 		break;
 
-	case kDirectionO:
+	case kDirectionW:
 		point->x -= delta;
 		break;
 
-	case kDirectionSO:
+	case kDirectionSW:
 		point->x -= delta;
 		point->y += delta;
 		break;
@@ -3999,17 +4001,17 @@ void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, cons
 		rect->left = point.y - 84;
 		break;
 
-	case kDirectionNO:
+	case kDirectionNW:
 		rect->top = point.x - 55;
 		rect->left = point.y - 84;
 		break;
 
-	case kDirectionO:
+	case kDirectionW:
 		rect->top = point.x - 34;
 		rect->left = point.y - 93;
 		break;
 
-	case kDirectionSO:
+	case kDirectionSW:
 		rect->top = point.x + 27;
 		rect->left = point.y - 94;
 		break;
