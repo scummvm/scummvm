@@ -299,8 +299,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_P("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS),
 
-	// King's Quest 2 (Amiga) 2.0J (Broken)
-	GAME_P("kq2", "2.0J 1987-01-29 [OBJECT decrypted]", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
+	// King's Quest 2 (Amiga) 2.0J
+	GAME_P("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
 
 	// King's Quest 2 (Mac) 2.0R
 	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
