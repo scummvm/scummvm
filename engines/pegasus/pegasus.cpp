@@ -520,6 +520,8 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 #else
 			if (!isDemo())
 				runIntro();
+			else
+				showTempScreen("Images/Demo/NGsplashScrn.pict");
 
 			if (shouldQuit())
 				return;
@@ -606,6 +608,8 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		}
 		break;
 	case kMenuCmdQuit:
+		if (isDemo())
+			showTempScreen("Images/Demo/NGquitScrn.pict");
 		_system->quit();
 		break;
 	case kMenuCmdOverview:
