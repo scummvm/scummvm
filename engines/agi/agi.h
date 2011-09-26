@@ -124,7 +124,6 @@ enum AgiGameID {
 	GID_XMASCARD,
 	GID_FANMADE,
 	GID_GETOUTTASQ,	// Fanmade
-	GID_SQ0,				// Fanmade
 	GID_MICKEY,			// PreAGI
 	GID_WINNIE,			// PreAGI
 	GID_TROLL				// PreAGI
