@@ -902,5 +902,163 @@ void Scene920::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_oldCoord.y);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 935 - ?
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene935::Action1::signal() {
+	Scene935 *scene = (Scene935 *)BF_GLOBALS._sceneManager._scene;
+	static uint32 v50ECC = 0, v50EEE = 0, v50F2A = 0, v50F66 = 0;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->addFader((const byte *)&v50ECC, 100, this);
+		break;
+	case 1:
+		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+//		for (int i = 1; i < 21; i++)
+//			scene->sub_15E4F(&v50EEA, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		warning("Scene935::Action1::signal(): sub_15E4F");
+		setDelay(3);
+		break;
+	case 2:
+		scene->addFader((const byte *)&v50EEE, 5, this);
+		break;
+	case 3:
+		scene->_visualSpeaker.removeText();
+		scene->_visualSpeaker._textPos.y = scene->_sceneBounds.top + 80;
+		scene->_visualSpeaker._color1 = 252;
+		scene->_visualSpeaker._color1 = 251;
+		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		setDelay(3);
+		break;
+	case 4:
+		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+//		for (int i = 1; i < 21; i++)
+//			scene->sub_15E4F(&v50F26, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		warning("Scene935::Action1::signal(): sub_15E4F");
+		setDelay(3);
+		break;
+	case 5:
+		scene->addFader((const byte *)&v50F2A, 5, this);
+		break;
+	case 6:
+		scene->_visualSpeaker.removeText();
+		scene->_visualSpeaker._textPos.y = scene->_sceneBounds.top + 150;
+		scene->_visualSpeaker._color1 = 250;
+		scene->_visualSpeaker._color1 = 249;
+		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+		setDelay(3);
+		break;
+	case 7:
+		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
+//		for (int i = 1; i < 21; i++)
+//			scene->sub_15E4F(&v50F62, 5 * i, 935, 0, 0, 0, 255, 249, 255, 1);
+		warning("Scene935::Action1::signal(): sub_15E4F");
+		setDelay(3);
+		break;
+	case 8:
+		scene->addFader((const byte *)&v50F66, 5, this);
+		break;
+	case 9:
+		scene->_visualSpeaker.removeText();
+		setDelay(3);
+		break;
+	case 10:
+		scene->_sceneMode = 1;
+//		scene->sub_15DD6(&v50F6A, 5, 935, this);
+		warning("Scene935::Action1::signal(): sub_15DD6");
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene935::postInit(SceneObjectList *OwnerList) {
+	PalettedScene::postInit();
+	loadScene(935);
+
+	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._player.disableControl();
+	_visualSpeaker._textMode = ALIGN_CENTER;
+	_visualSpeaker._hideObjects = false;
+	_visualSpeaker._color1 = 254;
+	_visualSpeaker._color2 = 253;
+	_visualSpeaker._textPos.y = _sceneBounds.top + 18;
+	_visualSpeaker._textWidth = 300;
+	_visualSpeaker._textPos.x = _sceneBounds.left + 10;
+	setAction(&_action1);
+	BF_GLOBALS._sound1.fadeSound(67);
+}
+
+void Scene935::remove() {
+	BF_GLOBALS._sound1.fadeOut2(NULL);
+	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
+	PalettedScene::remove();
+}
+
+void Scene935::signal() {
+	static uint32 v50EC8 = 0;
+
+	switch (_sceneMode) {
+	case 1:
+		_object1.postInit();
+		if (BF_GLOBALS._sceneManager._previousScene == 810) {
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 9352;
+			setAction(&_sequenceManager, this, 9350, &_object1, NULL);
+		} else if (BF_GLOBALS._sceneManager._previousScene == 930) {
+			_object3.postInit();
+			_object3.setVisage(938);
+			_object3.fixPriority(255);
+			_object3.setPosition(Common::Point(260, -4));
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 0;
+			setAction(&_sequenceManager, this, 9354, &_object1, &_object3, NULL);
+		} else {
+			_sceneMode = 9351;
+			setAction(&_sequenceManager, this, 9350, &_object1, NULL);
+		}
+		break;
+	case 2:
+		BF_GLOBALS._sound1.play(68);
+		_sceneMode = 0;
+		addFader((const byte *)&v50EC8, 5, this);
+		break;
+	case 3:
+		_sceneMode = 2;
+		_object1.animate(ANIM_MODE_6, NULL);
+		signal();
+		break;
+	case 9351:
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 2;
+		setAction(&_sequenceManager, this, 9351, &_object1, NULL);
+		if (BF_GLOBALS._sceneManager._previousScene == 910)
+			_sceneMode = 9353;
+		break;
+	case 9352:
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 2;
+		setAction(&_sequenceManager, this, 9352, &_object1, NULL);
+		break;
+	case 9353:
+		_object2.postInit();
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 3;
+		setAction(&_sequenceManager, this, 9353, &_object1, &_object2, NULL);
+		break;
+	default:
+		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._sceneManager._previousScene);
+		break;
+	}
+}
+
+void Scene935::dispatch() {
+	SceneExt::dispatch();
+}
+
 } // End of namespace BlueForce
 } // End of namespace TsAGE

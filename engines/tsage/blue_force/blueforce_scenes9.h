@@ -43,50 +43,50 @@ class Scene900: public PalettedScene {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Item4: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObjectExt {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Object6: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Object7: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		virtual void signal();
+		void signal();
 	};
 	class Action2 : public Action {
 	public:
-		virtual void signal();
+		void signal();
 	};
 	class Action3 : public Action {
 	public:
-		virtual void signal();
+		void signal();
 	};
 	class Action4 : public Action {
 	public:
-		virtual void signal();
+		void signal();
 	};
 
 public:
@@ -114,10 +114,10 @@ public:
 	int _field1976;
 
 	Scene900();
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void postInit(SceneObjectList *OwnerList = NULL);
+	void signal();
+	void process(Event &event);
+	void dispatch();
 	void synchronize(Serializer &s);
 };
 
@@ -125,11 +125,11 @@ class Scene920: public PalettedScene {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 	class Item8: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event);
 	};
 
 public:
@@ -150,14 +150,36 @@ public:
 	Item8 _exitN;
 	Common::Point _oldCoord;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void dispatch();
+	void postInit(SceneObjectList *OwnerList = NULL);
+	void signal();
+	void process(Event &event);
+	void dispatch();
 	void synchronize(Serializer &s);
 };
-} // End of namespace BlueForce
 
+class Scene935: public PalettedScene {
+	/* Actions */
+	class Action1 : public Action {
+	public:
+		void signal();
+	};
+
+public:
+	ScenePalette _scenePalette;
+	SequenceManager _sequenceManager;
+	NamedObject _object1;
+	NamedObject _object2;
+	NamedObject _object3;
+	Action1 _action1;
+	VisualSpeaker _visualSpeaker;
+
+	void postInit(SceneObjectList *OwnerList = NULL);
+	void remove();
+	void signal();
+	void dispatch();
+};
+
+} // End of namespace BlueForce
 } // End of namespace TsAGE
 
 #endif
