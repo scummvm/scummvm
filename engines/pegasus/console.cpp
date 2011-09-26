@@ -29,10 +29,34 @@
 namespace Pegasus {
 
 PegasusConsole::PegasusConsole(PegasusEngine *vm) : GUI::Debugger(), _vm(vm) {
-	// TODO! :P
+	DCmd_Register("die", WRAP_METHOD(PegasusConsole, Cmd_Die));
 }
 
 PegasusConsole::~PegasusConsole() {
+}
+
+bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
+	if (argc == 1) {
+		DebugPrintf("Usage: die <death reason>\n");
+		return true;
+	}
+
+	int reason = atoi(argv[1]);
+
+	bool invalidReason = (reason == 0 || reason > kPlayerWonGame);
+
+	if (!invalidReason && _vm->isDemo())
+		invalidReason = (reason != kDeathFallOffCliff) && (reason != kDeathEatenByDinosaur) &&
+				(reason != kDeathStranded) && (reason != kPlayerWonGame);
+
+
+	if (invalidReason) {
+		DebugPrintf("Invalid death reason %d\n", reason);
+		return true;
+	}
+
+	_vm->die(atoi(argv[1]));
+	return false;
 }
 
 } // End of namespace Pegasus

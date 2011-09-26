@@ -38,6 +38,8 @@ public:
 	virtual ~PegasusConsole();
 
 private:
+	bool Cmd_Die(int argc, const char **argv);
+
 	PegasusEngine *_vm;
 };
 
