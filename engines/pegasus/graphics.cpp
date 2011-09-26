@@ -44,6 +44,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_firstDisplayElement = _lastDisplayElement = 0;
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
 	_lastMousePosition = Common::Point(-1, -1);
+	_modifiedScreen = false;
 }
 	
 GraphicsManager::~GraphicsManager() {
@@ -162,22 +163,31 @@ void GraphicsManager::updateDisplay() {
 
 			// TODO: Better logic; it does a bit more work than it probably needs to
 			// but it should work fine for now.
-			if (bounds.intersects(_dirtyRect) && runner->validToDraw(_backLayer, _frontLayer))
+			if (bounds.intersects(_dirtyRect) && runner->validToDraw(_backLayer, _frontLayer)) {
 				runner->draw(bounds);
+				screenDirty = true;
+			}
 		}
 
 		// Copy only the dirty rect to the screen
-		g_system->copyRectToScreen((byte *)_workArea.getBasePtr(_dirtyRect.left, _dirtyRect.top), _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
-
-		// Mark the screen as dirty
-		screenDirty = true;
+		if (screenDirty)
+			g_system->copyRectToScreen((byte *)_workArea.getBasePtr(_dirtyRect.left, _dirtyRect.top), _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
 
 		// Clear the dirty rect
 		_dirtyRect = Common::Rect();
 	}
 
-	if (screenDirty)
+	if (screenDirty || _modifiedScreen)
 		g_system->updateScreen();
+
+	_modifiedScreen = false;
+}
+
+void GraphicsManager::clearScreen() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	screen->fillRect(Common::Rect(0, 0, 640, 480), g_system->getScreenFormat().RGBToColor(0, 0, 0));
+	g_system->unlockScreen();
+	_modifiedScreen = true;
 }
 	
 } // End of namespace Pegasus

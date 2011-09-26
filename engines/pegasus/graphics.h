@@ -52,10 +52,12 @@ public:
 	tDisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
 	void updateDisplay();
 	Graphics::Surface *getWorkArea() { return &_workArea; }
+	void clearScreen();
 
 private:		
 	PegasusEngine *_vm;
 
+	bool _modifiedScreen;
 	Common::Rect _dirtyRect;
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
