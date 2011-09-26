@@ -415,9 +415,9 @@ enum ActorStatus {
 enum ActorDirection {
 	kDirectionInvalid = -1,
 	kDirectionN = 0,
-	kDirectionNO = 1,
-	kDirectionO = 2,
-	kDirectionSO = 3,
+	kDirectionNW = 1,
+	kDirectionW = 2,
+	kDirectionSW = 3,
 	kDirectionS = 4,
 	kDirectionSE = 5,
 	kDirectionE = 6,
