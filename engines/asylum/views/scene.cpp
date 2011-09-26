@@ -332,7 +332,7 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 void Scene::activate() {
 	Actor *player = getActor();
 
-	if (player->getStatus() == kActorStatus1)
+	if (player->getStatus() == kActorStatusWalking)
 		player->updateStatus(kActorStatusEnabled);
 
 	if (player->getStatus() == kActorStatus12)
@@ -538,7 +538,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 			player->updateStatus(kActorStatusEnabled);
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 		} else if (player->getStatus() != kActorStatusDisabled) {
-			player->updateStatus(kActorStatus1);
+			player->updateStatus(kActorStatusWalking);
 		}
 		break;
 
@@ -809,7 +809,7 @@ void Scene::updateMouse() {
 	updateCursor(newDirection, actorRect);
 
 	if (newDirection >= kDirectionN)
-		if (player->getStatus() == kActorStatus1 || player->getStatus() == kActorStatus12)
+		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatus12)
 			player->updateFromDirection(newDirection);
 }
 
@@ -1140,7 +1140,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	}
 
 	if (getCursor()->getState() & kCursorStateRight) {
-		if (player->getStatus() == kActorStatus1 || player->getStatus() == kActorStatus12) {
+		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatus12) {
 
 			ResourceId resourceId =_ws->cursorResources[direction];
 
