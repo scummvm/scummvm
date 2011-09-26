@@ -85,7 +85,8 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	DebugMan.addDebugChannel(kDebugLevelSound,     "Sound",     "Sound debugging");
 	DebugMan.addDebugChannel(kDebugLevelSavegame,  "Savegame",  "Saving & restoring game debugging");
 	DebugMan.addDebugChannel(kDebugLevelScene,     "Scene",     "Scene process and draw debugging");
-	DebugMan.addDebugChannel(kDebugLevelObjects,   "Objects",   "Debug Object Objects");
+	DebugMan.addDebugChannel(kDebugLevelObjects,   "Objects",   "Debug Object objects");
+	DebugMan.addDebugChannel(kDebugLevelActor,     "Actor",     "Debug Actor");
 
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
