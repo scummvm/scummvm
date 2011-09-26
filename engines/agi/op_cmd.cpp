@@ -73,9 +73,9 @@ void cmdDecrement(AgiGame *state, uint8 *p) {
 void cmdAssignN(AgiGame *state, uint8 *p) {
 	_v[p0] = p1;
 
-	// WORKAROUND for a bug in fan _game "Get outta SQ"
+	// WORKAROUND for a bug in fan game "Get outta SQ"
 	// Total number of points is stored in variable 7, which
-	// is then incorrectly assigned to 0. Thus, when the _game
+	// is then incorrectly assigned to 0. Thus, when the game
 	// is restarted, "Points 0 of 0" is shown. We set the
 	// variable to the correct value here
 	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
@@ -184,10 +184,10 @@ void cmdNewRoom(AgiGame *state, uint8 *p) {
 	// of the copy protection string (Copy protection is in logic.128) was
 	// left over to the intro scene (Starts with room 73 i.e. logic.073).
 	// The intro scene checks for any keys pressed and if it finds any it
-	// jumps to the _game's start (Room 1 i.e. logic.001). We clear the
+	// jumps to the game's start (Room 1 i.e. logic.001). We clear the
 	// keyboard buffer when the intro sequence's first room (Room 73) is
 	// loaded so that no keys from the copy protection scene can be left
-	// over to cause the intro to skip to the _game's start.
+	// over to cause the intro to skip to the game's start.
 	if (getGameID() == GID_GOLDRUSH && p0 == 73)
 		state->keypress = 0;
 }
@@ -275,9 +275,9 @@ void cmdSetPriority(AgiGame *state, uint8 *p) {
 	// It seems that in this scene, ego's priority is set to 8, but the priority of
 	// the last dwarf with the soup bowls (view 152) is also set to 8, which causes
 	// the dwarf to be drawn behind ego
-	// With this workaround, when the _game scripts set the priority of view 152
+	// With this workaround, when the game scripts set the priority of view 152
 	// (seventh dwarf with soup bowls), ego's priority is set to 7
-	// The _game script itself sets priotity 8 for ego before she starts walking,
+	// The game script itself sets priotity 8 for ego before she starts walking,
 	// and then releases the fixed priority set on ego after ego is seated
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
@@ -902,7 +902,7 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->eraseUpdSprites();
 	vt.flags |= fDrawn;
 
-	// WORKAROUND: This fixes a bug with AGI Fanmade _game Space Trek.
+	// WORKAROUND: This fixes a bug with AGI Fanmade game Space Trek.
 	// The original workaround checked if AGI version was <= 2.440, which could
 	// cause regressions with some AGI games. The original workaround no longer
 	// works for Space Trek in ScummVM, as all fanmade games are set to use
