@@ -315,7 +315,7 @@ bool AmmoBeltDialog::process(Event &event) {
 
 	return false;
 }
-						   
+
 void AmmoBeltDialog::draw() {
 	Rect bounds = _bounds;
 
@@ -344,7 +344,7 @@ void AmmoBeltDialog::draw() {
 	if (clip1) {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets);
 		_clip1Rect.resize(clipSurface, _clip1Rect.left, _clip1Rect.top, 100);
-		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left, 
+		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left,
 			bounds.top + _clip1Rect.top);
 	}
 
@@ -352,7 +352,7 @@ void AmmoBeltDialog::draw() {
 	if (clip2) {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets);
 		_clip2Rect.resize(clipSurface, _clip2Rect.left, _clip2Rect.top, 100);
-		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left, 
+		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left,
 			bounds.top + _clip2Rect.top);
 	}
 
@@ -360,7 +360,7 @@ void AmmoBeltDialog::draw() {
 	if (gunLoaded) {
 		GfxSurface loadedSurface = surfaceFromRes(9, 7, 1);
 		_loadedRect.resize(loadedSurface, _loadedRect.left, _loadedRect.top, 100);
-		_globals->gfxManager().copyFrom(loadedSurface, bounds.left + _loadedRect.left, 
+		_globals->gfxManager().copyFrom(loadedSurface, bounds.left + _loadedRect.left,
 			bounds.top + _loadedRect.top);
 	}
 }

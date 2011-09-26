@@ -98,7 +98,7 @@ void InvObjectList::synchronize(Serializer &s) {
 int InvObjectList::indexOf(InvObject *obj) const {
 	int idx = 0;
 	SynchronizedList<InvObject *>::const_iterator i;
-	
+
 	for (i = _itemList.begin(); i != _itemList.end(); ++i, ++idx) {
 		if ((*i) == obj)
 			return idx;
@@ -1426,7 +1426,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	Rect tempRect = bounds;
 	if (_vm->getGameID() == GType_BlueForce)
 		tempRect.setHeight(BF_GLOBALS._interfaceY);
-	
+
 	_globals->_screenSurface.copyFrom(_globals->_sceneManager._scene->_backSurface,
 		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 
@@ -1472,9 +1472,9 @@ void SceneItem::remove() {
 	_globals->_sceneItems.remove(this);
 }
 
-bool SceneItem::startAction(CursorType action, Event &event) { 
+bool SceneItem::startAction(CursorType action, Event &event) {
 	if (_vm->getGameID() == GType_Ringworld) {
-		doAction(action); 
+		doAction(action);
 		return true;
 	} else if ((action == CURSOR_LOOK) || (action == CURSOR_USE) || (action == CURSOR_TALK) ||
 			(action < CURSOR_LOOK)) {
@@ -1520,7 +1520,7 @@ bool SceneItem::contains(const Common::Point &pt) {
 }
 
 void SceneItem::display(int resNum, int lineNum, ...) {
-	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() : 
+	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() :
 		_resourceManager->getMessage(resNum, lineNum);
 
 	if ((_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
@@ -1666,8 +1666,8 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 void SceneItem::display2(int resNum, int lineNum) {
 	if (_vm->getGameID() == GType_BlueForce)
-		display(resNum, lineNum, SET_WIDTH, 312, 
-			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left, 
+		display(resNum, lineNum, SET_WIDTH, 312,
+			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
 			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
 			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 			SET_EXT_FGCOLOR, 13, LIST_END);
@@ -1679,8 +1679,8 @@ void SceneItem::display(const Common::String &msg) {
 	assert(_vm->getGameID() == GType_BlueForce);
 
 	display(-1, -1, msg.c_str(),
-		SET_WIDTH, 312, 
-		SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left, 
+		SET_WIDTH, 312,
+		SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
 		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
 		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 		SET_EXT_FGCOLOR, 13, LIST_END);
@@ -2530,7 +2530,7 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 
 void BackgroundSceneObject::postInit(SceneObjectList *OwnerList) {
 	SceneObjectList dummyList;
-	SceneObjectList *pList = !_globals->_sceneManager._scene ? &dummyList : 
+	SceneObjectList *pList = !_globals->_sceneManager._scene ? &dummyList :
 		&_globals->_sceneManager._scene->_bgSceneObjects;
 
 	SceneObject::postInit(pList);

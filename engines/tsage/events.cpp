@@ -212,7 +212,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 				cursor = _resourceManager->getSubResource(1, 5, 1, &size);
 			} else {
 				// Inventory icon
-				cursor = _resourceManager->getSubResource(10, ((int)cursorType - 1) / 20 + 1, 
+				cursor = _resourceManager->getSubResource(10, ((int)cursorType - 1) / 20 + 1,
 					((int)cursorType - 1) % 20 + 1, &size);
 				questionEnabled = true;
 			}
@@ -310,7 +310,7 @@ void EventsClass::setCursor(GfxSurface &cursor) {
 	Graphics::Surface s = cursor.lockSurface();
 
 	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);
-	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(), 
+	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(),
 		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
 
 	_lastCursor = CURSOR_NONE;

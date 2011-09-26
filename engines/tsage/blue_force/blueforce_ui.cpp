@@ -137,7 +137,7 @@ void UIScore::draw() {
 
 void UIScore::updateScore() {
 	int score = BF_GLOBALS._uiElements._scoreValue;
-	
+
 	_digit3.setFrame(score / 1000 + 1); score %= 1000;
 	_digit2.setFrame(score / 100 + 1); score %= 100;
 	_digit1.setFrame(score / 10 + 1); score %= 10;
@@ -166,7 +166,7 @@ void UIInventorySlot::process(Event &event) {
 			showAmmoBelt();
 
 		} else if (_objIndex != INV_NONE) {
-			_object->setCursor();			
+			_object->setCursor();
 		}
 	}
 }
@@ -203,7 +203,7 @@ void UIInventoryScroll::process(Event &event) {
 		// Scroll the inventory as necessary
 		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
 		event.handled = true;
-		break;	
+		break;
 	default:
 		break;
 	}
@@ -260,7 +260,7 @@ void UICollection::draw() {
 			_objList[idx]->draw();
 
 		// Draw the resulting UI onto the screen
-		BF_GLOBALS._screenSurface.copyFrom(BF_GLOBALS._sceneManager._scene->_backSurface, 
+		BF_GLOBALS._screenSurface.copyFrom(BF_GLOBALS._sceneManager._scene->_backSurface,
 			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
 			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
@@ -405,7 +405,7 @@ void UIElements::setup(const Common::Point &pt) {
 }
 
 void UIElements::add(UIElement *obj) {
-	// Add object 
+	// Add object
 	assert(_objList.size() < 12);
 	_objList.push_back(obj);
 
@@ -421,7 +421,7 @@ void UIElements::add(UIElement *obj) {
  */
 void UIElements::updateInventory() {
 	_score.updateScore();
-	updateInvList();	
+	updateInvList();
 
 	// Enable scroll buttons if the player has more than four items
 	if (_itemList.size() > 4) {

@@ -83,7 +83,7 @@ public:
 class TimerExt: public Timer {
 public:
 	Action *_newAction;
-public:	
+public:
 	TimerExt();
 	void set(uint32 delay, EventHandler *endHandler, Action *action);
 
@@ -91,7 +91,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
-};	
+};
 
 
 class SceneHotspotExt: public SceneHotspot {
@@ -187,7 +187,7 @@ public:
 	virtual void process(Event &event);
 };
 
-enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4, 
+enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4,
 		EXITFRAME_S = 5, EXITFRAME_SW = 6, EXITFRAME_W = 7, EXITFRAME_NW = 8 };
 
 class SceneExt: public Scene {
@@ -198,7 +198,7 @@ public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
 	bool _savedPlayerEnabled;
-	bool _savedUiEnabled;	
+	bool _savedUiEnabled;
 	bool _savedCanWalk;
 	int _field37A;
 

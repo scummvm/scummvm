@@ -54,7 +54,7 @@ void VisualSpeaker::remove() {
 
 void VisualSpeaker::synchronize(Serializer &s) {
 	Speaker::synchronize(s);
-	
+
 	s.syncAsByte(_removeObject1);
 	s.syncAsByte(_removeObject2);
 	s.syncAsSint16LE(_xp);

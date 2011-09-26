@@ -174,7 +174,7 @@ public:
 		SceneExt::synchronize(s);
 		s.syncAsSint16LE(_fieldB52);
 	}
-};	
+};
 
 } // End of namespace BlueForce
 

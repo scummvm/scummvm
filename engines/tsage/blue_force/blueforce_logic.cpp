@@ -249,7 +249,7 @@ void AObjectArray::clear() {
 void AObjectArray::synchronize(Serializer &s) {
 	EventHandler::synchronize(s);
 	for (int i = 0; i < OBJ_ARRAY_SIZE; ++i)
-		SYNC_POINTER(_objList[i]);	
+		SYNC_POINTER(_objList[i]);
 }
 
 void AObjectArray::process(Event &event) {
@@ -639,7 +639,7 @@ void SceneExt::dispatch() {
 			if (BF_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
 				BF_GLOBALS._uiElements.show();
 			}
-			
+
 			_field37A = 0;
 		}
 	}
@@ -649,7 +649,7 @@ void SceneExt::dispatch() {
 
 void SceneExt::loadScene(int sceneNum) {
 	Scene::loadScene(sceneNum);
-	
+
 	_v51C34.top = 0;
 	_v51C34.bottom = 300;
 }
@@ -720,7 +720,7 @@ void SceneExt::startStrip() {
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
 	scene->_field372 = 1;
 	scene->_savedPlayerEnabled = BF_GLOBALS._player._enabled;
-	
+
 	if (scene->_savedPlayerEnabled) {
 		scene->_savedUiEnabled = BF_GLOBALS._player._uiEnabled;
 		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
@@ -768,7 +768,7 @@ void PalettedScene::remove() {
 		for (SynchronizedList<SceneObject *>::iterator i = BF_GLOBALS._sceneObjects->begin();
 				i != BF_GLOBALS._sceneObjects->end(); ++i)
 			(*i)->remove();
-		
+
 		BF_GLOBALS._sceneObjects->draw();
 		BF_GLOBALS._scenePalette.loadPalette(2);
 		BF_GLOBALS._v51C44 = 1;
@@ -836,7 +836,7 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
-	// If the strip proxy is currently being controlled by the strip manager, 
+	// If the strip proxy is currently being controlled by the strip manager,
 	// then pass all events to it first
 	if (BF_GLOBALS._stripProxy._action) {
 		BF_GLOBALS._stripProxy._action->process(event);
@@ -1076,10 +1076,10 @@ void BlueForceInvObjectList::reset() {
 void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 	// Find the appropriate object
 	int num = objectNum;
-	SynchronizedList<InvObject *>::iterator i = _itemList.begin(); 
+	SynchronizedList<InvObject *>::iterator i = _itemList.begin();
 	while (num-- > 0) ++i;
 	(*i)->_sceneNumber = sceneNumber;
-	
+
 	// If the item is the currently active one, default back to the use cursor
 	if (BF_GLOBALS._events.getCursor() == objectNum)
 		BF_GLOBALS._events.setCursor(CURSOR_USE);

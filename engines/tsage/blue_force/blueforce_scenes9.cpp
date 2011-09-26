@@ -506,7 +506,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 
 	_object2.postInit();
 	_object2.setVisage(900);
-	
+
 	if (BF_GLOBALS._v4CEC8 == 0)
 		_object2.setStrip(4);
 	else
@@ -578,7 +578,7 @@ void Scene900::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9001:
-		if ((BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900) || (BF_GLOBALS._v4CEC0 != 0) || 
+		if ((BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900) || (BF_GLOBALS._v4CEC0 != 0) ||
 				(_object2._flag == 0))
 			BF_GLOBALS.setFlag(fLeftTraceIn900);
 		else
@@ -775,7 +775,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 // North Exit
 bool Scene920::Item8::startAction(CursorType action, Event &event) {
 	Scene920 *scene = (Scene920 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	BF_GLOBALS._player.disableControl();
 	if (BF_GLOBALS._player._visage == 921) {
 		scene->_sceneMode = 10;

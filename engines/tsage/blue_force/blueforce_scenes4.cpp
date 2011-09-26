@@ -88,8 +88,8 @@ void Scene410::Action2::signal() {
 		scene->_stripManager.start(4110, scene);
 		break;
 	default:
-		SceneItem::display(410, 11, SET_WIDTH, 300, 
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 10, 
+		SceneItem::display(410, 11, SET_WIDTH, 300,
+				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 10,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 13, SET_EXT_BGCOLOR, 82,
 				SET_EXT_FGCOLOR, 13, LIST_END);
@@ -362,7 +362,7 @@ bool Scene410::Object1::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
-			
+
 			// TODO: Original code pushes a copy of the entirety of object1 onto stack
 			scene->setAction(&scene->_sequenceManager1, scene, 4126, &BF_GLOBALS._player, &scene->_object1, NULL);
 		}
@@ -423,9 +423,9 @@ bool Scene410::Object2::startAction(CursorType action, Event &event) {
 			BF_GLOBALS.setFlag(readFrankRights);
 			BF_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
-			
+
 			scene->_sceneMode = 0;
-			scene->setAction(&scene->_sequenceManager1, scene, 4125, &BF_GLOBALS._player, 
+			scene->setAction(&scene->_sequenceManager1, scene, 4125, &BF_GLOBALS._player,
 				&scene->_object2, NULL);
 		}
 		return true;
@@ -534,7 +534,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.changeZoom(-1);
 
 	_item2.setDetails(8, 410, 15, -1, -1, 1);
-	
+
 	_object2.postInit();
 	_object2.setVisage(415);
 	_object2.setStrip(1);
@@ -557,7 +557,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 	_object6.setVisage(410);
 	_object6.setStrip(4);
 	_object6.setPosition(Common::Point(240, 43));
-	
+
 	_item4.setDetails(6, 410, 3, -1, -1, 1);
 	_item3.setDetails(7, 410, 3, -1, -1, 1);
 
@@ -584,7 +584,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 		_object4.setDetails(410, 8, 9, 10, 1, NULL);
 		_object4.fixPriority(148);
 		_object4.setPosition(Common::Point(39, 168));
-		
+
 		_field1FC4 = 1;
 		_sceneMode = 0;
 		signal();
@@ -614,13 +614,13 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 				_object2.setStrip(6);
 				_object2.setFrame(8);
 			}
-			
+
 			BF_GLOBALS._walkRegions.proc1(16);
 			if (BF_GLOBALS.getFlag(fDriverOutOfTruck)) {
 				_object1.setVisage(417);
 				_object1.setStrip(1);
 				_object1.setPosition(Common::Point(152, 97));
-				
+
 				BF_GLOBALS._walkRegions.proc1(7);
 			}
 

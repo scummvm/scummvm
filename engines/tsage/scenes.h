@@ -72,8 +72,8 @@ public:
 
 class SceneManager : public GameHandler, public SaveListener {
 private:
-	void disposeRegions() { 
-		// No need to do anything, since regions will be freed automatically when the scene is	
+	void disposeRegions() {
+		// No need to do anything, since regions will be freed automatically when the scene is
 	}
 	Scene *getNewScene();
 public:

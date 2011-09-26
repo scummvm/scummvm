@@ -245,7 +245,7 @@ public:
 
 class Scene330: public SceneExt {
 	class Timer1: public Timer {
-	public:	
+	public:
 		virtual void signal();
 	};
 public:
@@ -333,7 +333,7 @@ class Scene340: public PalettedScene {
 
 	/* Timers */
 	class Timer2: public Timer {
-	public:	
+	public:
 		virtual void signal();
 	};
 public:
@@ -401,7 +401,7 @@ class Scene342: public PalettedScene {
 
 	/* Timers */
 	class Timer1: public Timer {
-	public:	
+	public:
 		virtual void signal();
 	};
 public:
@@ -461,7 +461,7 @@ class Scene350: public SceneExt {
 
 	/* Timers */
 	class Timer1: public Timer {
-	public:	
+	public:
 		virtual void signal();
 	};
 public:

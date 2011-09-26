@@ -72,7 +72,7 @@ struct RegisterValue {
 	uint8 _regNum;
 	uint8 _value;
 
-	RegisterValue(int regNum, int value) { 
+	RegisterValue(int regNum, int value) {
 		_regNum = regNum; _value = value;
 	}
 };

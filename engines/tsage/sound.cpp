@@ -91,7 +91,7 @@ void SoundManager::postInit() {
 
 //	I originally separated the sound manager update method into a separate thread, since
 //  it handles updates for both music and Fx. However, since Adlib updates also get done in a
-//	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to 
+//	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to
 //	call the update method, rather than having it be called separately
 //		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL, "tsageSoundUpdate");
 		__sndmgrReady = true;
@@ -139,7 +139,7 @@ Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
 	assert(__sndmgrReady);
 	_availableDrivers.clear();
 
-	// Build up a list of available drivers. Currently we only implement an Adlib music 
+	// Build up a list of available drivers. Currently we only implement an Adlib music
 	// and SoundBlaster FX driver
 
 	// Adlib driver
@@ -1362,7 +1362,7 @@ void SoundManager::_sfExtractGroupMask() {
 bool SoundManager::_sfInstallDriver(SoundDriver *driver) {
 	if (!driver->open())
 		return false;
-	
+
 	sfManager()._installedDrivers.push_back(driver);
 	driver->_groupOffset = driver->getGroupData();
 	driver->_groupMask = driver->_groupOffset->groupMask;

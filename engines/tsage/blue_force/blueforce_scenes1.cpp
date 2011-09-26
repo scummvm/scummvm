@@ -42,7 +42,7 @@ void Scene100::Text::dispatch() {
 	// Keep the second text string below the first one
 	Scene100 *scene = (Scene100 *)BF_GLOBALS._sceneManager._scene;
 	Common::Point &pt = scene->_action1._sceneText1._position;
-	scene->_action1._sceneText2.setPosition(Common::Point(pt.x, 
+	scene->_action1._sceneText2.setPosition(Common::Point(pt.x,
 		pt.y + scene->_action1._textHeight));
 }
 
@@ -63,7 +63,7 @@ void Scene100::Action1::signal() {
 			--_actionIndex;
 		} else {
 			setTextStrings(BF_NAME, BF_ALL_RIGHTS_RESERVED, this);
-			
+
 			Common::Point pt(_sceneText1._position.x, 80);
 			NpcMover *mover = new NpcMover();
 			_sceneText1.addMover(mover, &pt, this);
@@ -111,13 +111,13 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 	_sceneText2.setPosition(Common::Point((SCREEN_WIDTH - textSurface.getBounds().width()) / 2, 202));
 	_sceneText2._moveRate = 30;
 	_sceneText2._moveDiff.y = 1;
-	
+
 	_textHeight = textSurface.getBounds().height();
 	int yp = -(_textHeight * 2);
 
-	Common::Point pt(_sceneText1._position.x, yp); 
+	Common::Point pt(_sceneText1._position.x, yp);
 	NpcMover *mover = new NpcMover();
-	_sceneText1.addMover(mover, &pt, action); 
+	_sceneText1.addMover(mover, &pt, action);
 }
 
 void Scene100::Action2::signal() {
@@ -566,7 +566,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		_object4.setFrame(2);
 		_object4.setPosition(Common::Point(54, 114));
 		_object4.setDetails(190, -1, -1, -1, 1, NULL);
-		
+
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {
 			_sceneMode = 12;
@@ -691,7 +691,7 @@ void Scene190::process(Event &event) {
 void Scene190::dispatch() {
 	SceneExt::dispatch();
 
-	if (!_action && !_fieldB52 && (BF_GLOBALS._player._position.x >= 310) 
+	if (!_action && !_fieldB52 && (BF_GLOBALS._player._position.x >= 310)
 			&& !BF_GLOBALS.getFlag(onBike)) {
 		// Handle walking off to the right side of the screen
 		BF_GLOBALS._player.disableControl();

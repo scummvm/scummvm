@@ -71,7 +71,7 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
-	
+
 	void updateScore();
 };
 

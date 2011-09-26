@@ -357,7 +357,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_location6.set(Rect(242, 131, 264, 144), 440, ALLEY_CAT, 64);
 	_location5.set(Rect(383, 57, 402, 70), 380, CITY_HALL_JAIL, 32);
 	_location7.set(Rect(128, 32, 143, 42), 800, JAMISON_RYAN, 128);
-	_location9.set(Rect(349, 125, 359, 132), 
+	_location9.set(Rect(349, 125, 359, 132),
 		(BF_GLOBALS._bookmark == bInspectionDone) || (BF_GLOBALS._bookmark == bCalledToDrunkStop) ? 551 : 550,
 		BIKINI_HUT, 16);
 
@@ -522,7 +522,7 @@ bool Scene60::Ignition::startAction(CursorType action, Event &event) {
 			if (BF_GLOBALS.getFlag(onDuty) && check2())
 				return true;
 		}
-		
+
 		BF_GLOBALS._sound1.play(BF_GLOBALS.getFlag(fWithLyle) ? 80 : 31);
 		BF_GLOBALS._sound1.holdAt(1);
 		scene->fadeOut();
@@ -597,7 +597,7 @@ bool Scene60::Ignition::check2() {
 	default:
 		break;
 	}
-	
+
 	BF_GLOBALS._v5098C |= 0x80;
 	return false;
 }
@@ -638,7 +638,7 @@ bool Scene60::Compartment::startAction(CursorType action, Event &event) {
 		SceneItem::display2(60, 8);
 		break;
 	case CURSOR_USE:
-		if ((BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 1) && 
+		if ((BF_INVENTORY.getObjectScene(INV_TICKET_BOOK) == 1) &&
 				(BF_INVENTORY.getObjectScene(INV_MIRANDA_CARD) == 1)) {
 			SceneItem::display2(60, 9);
 		}
@@ -998,8 +998,8 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 	loadScene(_sceneNumber);
 
-	if ((_sceneNumber == 1810) && (BF_GLOBALS._dayNumber > 1) && 
-			(BF_GLOBALS._dayNumber < 5) && !BF_GLOBALS.getFlag(fWithLyle) && 
+	if ((_sceneNumber == 1810) && (BF_GLOBALS._dayNumber > 1) &&
+			(BF_GLOBALS._dayNumber < 5) && !BF_GLOBALS.getFlag(fWithLyle) &&
 			((BF_GLOBALS._dayNumber != 4) && (BF_GLOBALS._bookmark >= bEndDayThree))) {
 		_car.setup(1810, 1, 1, 164, 131, 1);
 	}
@@ -1024,7 +1024,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	}
 	_dashboard.setup(_visage, 1, 1, 160, 168, 100);
 	_cursorId = CURSOR_USE;
-	
+
 	if (_visage == 63) {
 		_compartmentDoor.postInit();
 		_compartmentDoor.setVisage(60);

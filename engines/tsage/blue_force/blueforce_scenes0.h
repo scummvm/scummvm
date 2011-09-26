@@ -91,7 +91,7 @@ public:
 public:
 	Scene50();
 	virtual Common::String getClassName() { return "Scene50"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);	
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -105,19 +105,19 @@ class Scene60 : public SceneExt {
 		bool check2();
 	public:
 		virtual bool startAction(CursorType action, Event &event);
-	};	
+	};
 	class Item3: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
-	};	
+	};
 	class Radio: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
-	};	
+	};
 	class Compartment: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
-	};	
+	};
 
 	/* Objects */
 	class MirandaCard: public NamedObject {
@@ -133,7 +133,7 @@ class Scene60 : public SceneExt {
 		bool _flag;
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	
+
 	/* Actions */
 	class Action1: public ActionExt {
 	private:

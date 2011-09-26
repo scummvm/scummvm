@@ -400,7 +400,7 @@ bool Scene830::Door::startAction(CursorType action, Event &event) {
 		} else if (scene->_field18A4) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 832;
-			
+
 			if (BF_GLOBALS.getFlag(onDuty)) {
 				scene->setAction(&scene->_sequenceManager, scene, 8302, &BF_GLOBALS._player, &scene->_door, NULL);
 			} else if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -536,7 +536,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 		_object4.fixPriority(90);
 		_object4.setDetails(830, 0, 1, 2, 1, NULL);
 	}
-	
+
 	_door.postInit();
 	_door.setVisage(830);
 	_door.setDetails(830, 3, 4, -1, 1, NULL);
@@ -690,7 +690,7 @@ void Scene830::signal() {
 		break;
 	case 831:
 	case 8306:
-		BF_GLOBALS._sceneManager.changeScene((BF_GLOBALS._bookmark < bStartOfGame) || 
+		BF_GLOBALS._sceneManager.changeScene((BF_GLOBALS._bookmark < bStartOfGame) ||
 			(BF_GLOBALS._bookmark >= bCalledToDomesticViolence) ? 342 : 340);
 		break;
 	case 832:
@@ -842,7 +842,7 @@ void Scene840::Object2::process(Event &event) {
 		if (_bounds.contains(event.mousePos)) {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();
 			BF_GLOBALS._events.setCursor(cursorId);
-		
+
 			if ((event.eventType == EVENT_BUTTON_DOWN) && (cursorId == CURSOR_WALK) && (event.btnState == 3)) {
 				BF_GLOBALS._events.setCursor(CURSOR_USE);
 				event.handled = true;
@@ -930,7 +930,7 @@ bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event)
 			SceneItem::display2(840, 55);
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
 			BF_GLOBALS._uiElements.addScore(30);
-			
+
 			scene->_object2._v1B4 = 1;
 			remove();
 		}
@@ -1053,7 +1053,7 @@ bool Scene840::Coins::startAction(CursorType action, Event &event) {
 	case CURSOR_LOOK:
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 8404;
-		scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8415 : 8404, 
+		scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8415 : 8404,
 			&BF_GLOBALS._player, NULL);
 		return true;
 	default:
@@ -1178,7 +1178,7 @@ void Scene840::signal() {
 		switch (BF_GLOBALS._dayNumber) {
 		case 1:
 			if (_field1ABA == 1) {
-				_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8430 : 8406, this);	
+				_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8430 : 8406, this);
 			} else if (!BF_GLOBALS.getFlag(onDuty)) {
 				_stripManager.start(!BF_GLOBALS._v4CEB6 ? 8400 : 8406, this);
 			} else if (BF_GLOBALS._bookmark < bStartOfGame) {
@@ -1202,7 +1202,7 @@ void Scene840::signal() {
 			} else {
 				_stripManager.start(8413, this);
 			}
-			
+
 			BF_GLOBALS.setFlag(fTalkedCarterDay3);
 			break;
 		case 4:
@@ -1292,7 +1292,7 @@ void Scene840::signal() {
 		_stripManager.start(8441, this);
 		break;
 	case 8407:
-		if (((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark >= bEndDayThree)) || 
+		if (((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark >= bEndDayThree)) ||
 				(BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1)) {
 			_sceneMode = 8416;
 			setAction(&_sequenceManager1, this, 8416, &BF_GLOBALS._player, NULL);
@@ -1379,7 +1379,7 @@ void Scene840::process(Event &event) {
 
 void Scene840::dispatch() {
 	SceneExt::dispatch();
-		
+
 	if (_field1ABC && (BF_GLOBALS._player._position.x > 310) && !_action) {
 		_field1ABC = 0;
 		BF_GLOBALS._player.disableControl();
