@@ -92,6 +92,14 @@ public:
 	virtual void setText(const Common::String &msg);
 };
 
+class SpeakerJake: public VisualSpeaker {
+public:
+	SpeakerJake();
+
+	virtual Common::String getClassName() { return "SpeakerJake"; }
+	virtual void setText(const Common::String &msg);
+};
+
 class SpeakerJakeJacket: public VisualSpeaker {
 public:
 	SpeakerJakeJacket();
@@ -152,6 +160,14 @@ public:
 	SpeakerJordan();
 
 	virtual Common::String getClassName() { return "SpeakerJordan"; }
+	virtual void setText(const Common::String &msg);
+};
+
+class SpeakerSkip: public VisualSpeaker {
+public:
+	SpeakerSkip();
+
+	virtual Common::String getClassName() { return "SpeakerSkip"; }
 	virtual void setText(const Common::String &msg);
 };
 
