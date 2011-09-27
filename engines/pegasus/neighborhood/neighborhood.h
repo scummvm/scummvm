@@ -91,6 +91,7 @@ struct tQueueRequest {
 bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
 bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
+class GameInteraction;
 class Neighborhood;
 
 class StriderCallBack : public TimeBaseCallBack {
@@ -329,8 +330,7 @@ protected:
 	// Nav hiding (for info support...)
 	bool _isRunning;
 
-	// TODO
-	//GameInteraction *_currentInteraction;
+	GameInteraction *_currentInteraction;
 	bool _doneWithInteraction;
 	Movie _croppedMovie;
 	

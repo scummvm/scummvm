@@ -31,6 +31,7 @@
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/input.h"
+#include "pegasus/interaction.h"
 #include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
@@ -499,37 +500,43 @@ bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2) {
 }
 
 Common::String Neighborhood::getBriefingMovie() {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		return _currentInteraction->getBriefingMovie();
 
 	return Common::String();
 }
 
 Common::String Neighborhood::getEnvScanMovie() {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		return _currentInteraction->getEnvScanMovie();
 
 	return Common::String();
 }
 
 uint Neighborhood::getNumHints() {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		return _currentInteraction->getNumHints();
 
 	return 0;
 }
 
 Common::String Neighborhood::getHintMovie(uint hintNum) {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		return _currentInteraction->getHintMovie(hintNum);
 
 	return Common::String();
 }
 
 bool Neighborhood::canSolve() {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		return _currentInteraction->canSolve();
 
 	return false;
 }
 
 void Neighborhood::doSolve() {
-	// TODO: Interaction check
+	if (_currentInteraction)
+		_currentInteraction->doSolve();
 }
 
 bool Neighborhood::okayToJump() {
@@ -902,9 +909,8 @@ void Neighborhood::setSoundFXLevel(const uint16 fxLevel) {
 		_navMovie.setVolume(fxLevel);
 	if (_spotSounds.isSoundLoaded())
 		_spotSounds.setVolume(fxLevel);
-	// TODO
-	//if (_currentInteraction)
-	//	_currentInteraction->setSoundFXLevel(fxLevel);
+	if (_currentInteraction)
+		_currentInteraction->setSoundFXLevel(fxLevel);
 }
 
 void Neighborhood::setAmbienceLevel(const uint16 ambientLevel) {
@@ -912,9 +918,8 @@ void Neighborhood::setAmbienceLevel(const uint16 ambientLevel) {
 		_loop1Fader.setMasterVolume(_vm->getAmbienceLevel());
 	if (_soundLoop2.isSoundLoaded())
 		_loop2Fader.setMasterVolume(_vm->getAmbienceLevel());
-	// TODO
-	//if (_currentInteraction)
-	//	_currentInteraction->setAmbienceLevel(ambientLevel);
+	if (_currentInteraction)
+		_currentInteraction->setAmbienceLevel(ambientLevel);
 }
 
 // Force the exit taken from (room, direction, alternate) to come to a stop.
@@ -1241,7 +1246,8 @@ void Neighborhood::throwAwayInterface() {
 		g_AIArea->removeAllRules();
 	}
 
-	// TODO: Interaction
+	if (_currentInteraction)
+		newInteraction(kNoInteractionID);
 
 	_croppedMovie.releaseMovie();
 
