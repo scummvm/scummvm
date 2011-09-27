@@ -166,24 +166,29 @@ Scene100::Scene100(): SceneExt() {
 }
 
 void Scene100::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	if (BF_GLOBALS._dayNumber < 6) {
+		// Title
+		loadScene(100);
+	} else {
+		// Credits
+		loadScene(101);
+	}
 	BF_GLOBALS._scenePalette.loadPalette(2);
 	BF_GLOBALS._v51C44 = 1;
-	Scene::postInit();
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
-	_globals->_player.enableControl();
+	_globals->_player.postInit();
 	_globals->_player.hide();
 	_globals->_player.disableControl();
 	_index = 109;
 
 	if (BF_GLOBALS._dayNumber < 6) {
 		// Title
-		loadScene(100);
 		BF_GLOBALS._sound1.play(2);
 		setAction(&_action2, this);
 	} else {
 		// Credits
-		loadScene(101);
 		BF_GLOBALS._sound1.play(118);
 		setAction(&_action1, this);
 	}
