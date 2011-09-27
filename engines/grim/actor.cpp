@@ -804,7 +804,7 @@ void Actor::turn(int dir) {
 }
 
 Math::Angle Actor::getYawTo(const Actor &a) const {
-	Math::Vector3d forwardVec(_yaw.getSine(), _yaw.getCosine(), 0);
+	Math::Vector3d forwardVec(-_yaw.getSine(), _yaw.getCosine(), 0);
 	Math::Vector3d delta = a.getPos() - _pos;
 	delta.z() = 0;
 
