@@ -41,6 +41,7 @@
 #include "pegasus/movie.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/timers.h"
+#include "pegasus/ai/ai_area.h"
 #include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/biochipitem.h"
@@ -1071,6 +1072,40 @@ bool PegasusEngine::canSwitchGameMode(const tGameMode newMode, const tGameMode o
 	if (newMode == kModeBiochipPick && oldMode == kModeInventoryPick)
 		return false;
 	return true;
+}
+
+bool PegasusEngine::itemInLocation(const tItemID itemID, const tNeighborhoodID neighborhood, const tRoomID room, const tDirectionConstant direction) {
+	tNeighborhoodID itemNeighborhood;
+	tRoomID itemRoom;
+	tDirectionConstant itemDirection;
+	
+	Item *item = g_allItems.findItemByID(itemID);
+	item->getItemRoom(itemNeighborhood, itemRoom, itemDirection);
+
+	return itemNeighborhood == neighborhood && itemRoom == room && itemDirection == direction;
+}
+
+tInventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
+	tInventoryResult result;
+	
+	do {
+		if (g_interface)
+			result = g_interface->addInventoryItem(item);
+		else
+			result = _items.addItem(item);
+
+		// TODO
+		if (result == kTooMuchWeight)
+			error("Out of inventory space");
+	} while (result != kInventoryOK);
+
+	GameState.setTakenItem(item, true);
+	if (g_neighborhood)
+			g_neighborhood->pickedUpItem(item);
+
+	g_AIArea->checkMiddleArea();
+
+	return result;
 }
 
 } // End of namespace Pegasus

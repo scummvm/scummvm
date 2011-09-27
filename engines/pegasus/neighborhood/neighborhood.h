@@ -254,6 +254,7 @@ protected:
 	Common::String _resName;
 	
 	virtual void loadSoundSpots();
+	virtual Common::String getNavMovieName() = 0;
 
 	// Notification function.
 	virtual void receiveNotification(Notification *, const tNotificationFlags);
@@ -304,7 +305,7 @@ protected:
 	virtual tInputBits getInputFilter();
 
 	// Misc.
-	virtual uint16 getStaticCompassAngle(const tRoomID, const tDirectionConstant dir);
+	virtual int16 getStaticCompassAngle(const tRoomID, const tDirectionConstant dir);
 	virtual void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
 	virtual void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec&);
 	virtual void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec&);

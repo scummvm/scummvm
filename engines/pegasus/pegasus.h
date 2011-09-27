@@ -116,12 +116,14 @@ public:
 	bool playerHasItem(const Item *);
 	bool playerHasItemID(const tItemID);
 	void checkFlashlight();
+	bool itemInLocation(const tItemID, const tNeighborhoodID, const tRoomID, const tDirectionConstant);
 
 	// Inventory Items
 	InventoryItem *getCurrentInventoryItem();
 	bool itemInInventory(InventoryItem *);
 	bool itemInInventory(tItemID);
 	Inventory *getItemsInventory() { return &_items; }
+	tInventoryResult addItemToInventory(InventoryItem *);
 
 	// Biochips
 	BiochipItem *getCurrentBiochip();

@@ -128,7 +128,7 @@ void Neighborhood::init() {
 
 	createNeighborhoodSpots();
 
-	// TODO: Load _navMovie
+	_navMovie.initFromMovieFile(getNavMovieName());
 	_navMovie.setVolume(_vm->getSoundFXLevel());
 
 	loadSoundSpots();
@@ -602,9 +602,9 @@ void Neighborhood::stopStriding() {
 }
 
 //	Compass support
-uint16 Neighborhood::getStaticCompassAngle(const tRoomID, const tDirectionConstant dir) {
+int16 Neighborhood::getStaticCompassAngle(const tRoomID, const tDirectionConstant dir) {
 	//	North, south, east, west
-	static const uint16 compassAngles[] = { 0, 180, 90, 270 };
+	static const int16 compassAngles[] = { 0, 180, 90, 270 };
 	return compassAngles[dir];
 }
 

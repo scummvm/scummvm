@@ -45,6 +45,7 @@ MODULE_OBJS = \
 	neighborhood/extra.o \
 	neighborhood/hotspotinfo.o \
 	neighborhood/neighborhood.o \
+	neighborhood/prehistoric.o \
 	neighborhood/spot.o \
 	neighborhood/turn.o \
 	neighborhood/view.o \

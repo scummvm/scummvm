@@ -65,8 +65,9 @@ public:
 	void clear();
 
 	struct Entry {
-		Entry() { movieStart = 0xffffffff; }
+		Entry() { clear(); }
 		bool isEmpty() { return movieStart == 0xffffffff; }
+		void clear() { movieStart = 0xffffffff; }
 
 		tRoomID room;
 		tDirectionConstant direction;
