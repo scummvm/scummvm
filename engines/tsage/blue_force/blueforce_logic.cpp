@@ -181,7 +181,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 935:
 		return new Scene935();
 	case 940:
-		error("Scene group 9 not implemented");
+		return new Scene940();
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;

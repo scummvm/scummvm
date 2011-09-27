@@ -179,6 +179,51 @@ public:
 	void dispatch();
 };
 
+class Scene940: public PalettedScene {
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	/* Actions */
+	class Action1 : public Action {
+	public:
+		void signal();
+	};
+
+public:
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager3;
+	SequenceManager _sequenceManager4;
+	NamedObject _object1;
+	NamedObject _object2;
+	NamedObject _object3;
+	NamedObject _object4;
+	NamedObject _object5;
+	NamedObject _object6;
+	NamedObject _object7;
+	NamedObject _object8;
+	NamedObject _object9;
+	NamedObject _object10;
+	NamedObject _object11;
+	NamedObject _object12;
+	NamedObject _object13;
+	NamedObject _object14;
+	NamedObject _object15;
+	NamedObject _object16;
+	NamedObject _object17;
+	NamedObject _object18;
+	Item1 _item1;
+	Action1 _action1;
+
+	SpeakerGameText _gameTextSpeaker1;
+	SpeakerGameText _gameTextSpeaker2;
+
+	void postInit(SceneObjectList *OwnerList = NULL);
+	void remove();
+};
+
 } // End of namespace BlueForce
 } // End of namespace TsAGE
 

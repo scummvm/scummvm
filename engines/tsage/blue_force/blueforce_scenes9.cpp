@@ -1049,7 +1049,7 @@ void Scene935::signal() {
 		_sceneMode = 3;
 		setAction(&_sequenceManager, this, 9353, &_object1, &_object2, NULL);
 		break;
-	default:
+	default:	
 		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._sceneManager._previousScene);
 		break;
 	}
@@ -1057,6 +1057,245 @@ void Scene935::signal() {
 
 void Scene935::dispatch() {
 	SceneExt::dispatch();
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 940 - ?
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene940::Item1::startAction(CursorType action, Event &event) {
+	return true;
+}
+
+void Scene940::Action1::signal() {
+	Scene940 *scene = (Scene940 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex) {
+	case 0:
+		_actionIndex = 2;
+		setDelay(60);
+		break;
+	case 2:
+		_actionIndex = 941;
+		if (BF_GLOBALS.getFlag(fBackupAt340))
+			scene->_stripManager.start(9408, this);
+		else
+			scene->_stripManager.start(9400, this);
+		break;
+	case 5:
+		setActionIndex(948);
+		setDelay(90);
+		scene->_object2.remove();
+		scene->_object3.remove();
+		scene->_object4.remove();
+		scene->_object5.remove();
+		scene->_object6.remove();
+		scene->_object7.remove();
+		scene->_object8.remove();
+		scene->_object9.remove();
+		scene->_object10.remove();
+		break;
+	case 99:
+		BF_GLOBALS._sound1.play(117);
+		BF_GLOBALS._sceneManager.changeScene(100);
+		remove();
+		break;
+	case 941:
+		scene->_gameTextSpeaker1._textWidth = 312;
+		_actionIndex = 944;
+		setAction(&scene->_sequenceManager1, this, 941, &BF_GLOBALS._player, NULL);
+		break;
+	case 942:
+		_actionIndex = 955;
+		setAction(&scene->_sequenceManager1, this, 942, &scene->_object2, NULL);
+		break;
+	case 943:
+		_actionIndex = 946;
+		setAction(&scene->_sequenceManager1, this, 943, &scene->_object3, NULL);
+		break;
+	case 944:
+		scene->_object4.setAction(&scene->_sequenceManager2, NULL, 944, &scene->_object4, &scene->_object5);
+		_actionIndex = 945;
+		setDelay(3);
+		break;
+	case 945:
+		scene->_object6.setAction(&scene->_sequenceManager3, NULL, 945, &scene->_object6, &scene->_object10, NULL);
+		_actionIndex = 943;
+		setDelay(3);
+		break;
+	case 946:
+		_actionIndex = 942;
+		setAction(&scene->_sequenceManager1, this, 946, &scene->_object7, &scene->_object8, NULL); 
+		break;
+	case 947:
+		_actionIndex = 5;
+		setAction(&scene->_sequenceManager1, this, 947, &scene->_object1, &scene->_object11, &scene->_object12, &scene->_object13, NULL);
+		break;
+	case 948:
+		scene->_gameTextSpeaker1._textPos.x = scene->_sceneBounds.left + 10;
+		scene->_object17.postInit();
+		scene->_object17.hide();
+		scene->_object18.postInit();
+		scene->_object18.hide();
+		_actionIndex = 960;
+		setAction(&scene->_sequenceManager1, this, 948, &scene->_object11, &scene->_object12, &scene->_object13, &scene->_object1, &scene->_object14, NULL);
+		break;
+	case 949:
+		_actionIndex = 950;
+		setAction(&scene->_sequenceManager1, this, 949, &scene->_object17, &scene->_object18, &scene->_object1, &scene->_object12, &scene->_object13, &scene->_object15, NULL);
+		scene->_object11.setAction(&scene->_sequenceManager2, NULL, 952, &scene->_object11, NULL);
+		break;
+	case 950:
+		_actionIndex = 951;
+		setAction(&scene->_sequenceManager1, this, 950, &scene->_object17, &scene->_object18, &scene->_object1, &scene->_object13, &scene->_object16, NULL);
+		scene->_object12.setAction(&scene->_sequenceManager3, NULL, 953, &scene->_object12, NULL);
+		break;
+	case 951:
+		scene->_object13.setAction(&scene->_sequenceManager4, NULL, 954, &scene->_object13, NULL);
+		scene->_object11.setAction(&scene->_sequenceManager2, NULL, 952, &scene->_object11, NULL);
+		scene->_stripManager.start(9407, this);
+		setActionIndex(99);
+		break;
+	case 955:
+		scene->_object2.remove();
+		_actionIndex = 956;
+		setAction(&scene->_sequenceManager1, this, 955, &BF_GLOBALS._player, NULL);
+		break;
+	case 956:
+		_actionIndex = 947;
+		setAction(&scene->_sequenceManager1, this, 956, &scene->_object3, NULL);
+		scene->_object11.postInit();
+		scene->_object11.setVisage(943);
+		scene->_object11.setStrip(1);
+		scene->_object11.setPosition(Common::Point(-8, 178));
+		scene->_object12.postInit();
+		scene->_object12.setVisage(942);
+		scene->_object12.setStrip(1);
+		scene->_object12.setPosition(Common::Point(-41, 181));
+		scene->_object13.postInit();
+		scene->_object13.setVisage(944);
+		scene->_object13.setStrip(2);
+		scene->_object13.setPosition(Common::Point(-74, 179));
+		scene->_object1.postInit();
+		scene->_object1.setVisage(948);
+		scene->_object1.setStrip(2);
+		scene->_object1.setPosition(Common::Point(-107, 180));
+		scene->_object14.postInit();
+		scene->_object14.setVisage(949);
+		scene->_object14.setStrip(1);
+		scene->_object14.setFrame(3);
+		scene->_object14.setPosition(Common::Point(234, 75));
+		scene->_object15.postInit();
+		scene->_object15.setVisage(949);
+		scene->_object15.setStrip(1);
+		scene->_object15.setFrame(2);
+		scene->_object15.setPosition(Common::Point(144, 76));
+		scene->_object16.postInit();
+		scene->_object16.setVisage(949);
+		scene->_object16.setStrip(1);
+		scene->_object16.setFrame(1);
+		scene->_object16.setPosition(Common::Point(45, 77));
+		break;
+	case 960:
+		_actionIndex = 949;
+		setAction(&scene->_sequenceManager1, this, 960, &scene->_object11, &scene->_object17, &scene->_object18, &scene->_object1, &scene->_object14, NULL);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene940::postInit(SceneObjectList *OwnerList) {
+	PalettedScene::postInit();
+	loadScene(940);
+
+	BF_GLOBALS._sound1.play(115);
+	BF_GLOBALS._dayNumber = 6;
+	BF_GLOBALS._interfaceY = 200;
+	BF_GLOBALS._uiElements._active = false;
+
+	_gameTextSpeaker2._speakerName = "SENTTEXT";
+	_gameTextSpeaker2._color1 = 104;
+	_gameTextSpeaker2._textMode = ALIGN_CENTER;
+	_stripManager.addSpeaker(&_gameTextSpeaker1);
+	_stripManager.addSpeaker(&_gameTextSpeaker2);
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(941);
+	BF_GLOBALS._player.setStrip(1);
+	BF_GLOBALS._player.setFrame(7);
+	BF_GLOBALS._player.setPosition(Common::Point(563, 80));
+	BF_GLOBALS._player.disableControl();
+	_object3.postInit();
+	_object3.setVisage(944);
+	_object3.setStrip(3);
+	_object3.setFrame(3);
+	_object3.setPosition(Common::Point(626, 78));
+	_object3.fixPriority(0);
+	_object2.postInit();
+	_object2.setVisage(944);
+	_object2.setStrip(3);
+	_object2.setFrame(6);
+	_object2.setPosition(Common::Point(378, 136));
+	_object2.setZoom(80);
+	_object2.fixPriority(0);
+	_object4.postInit();
+	_object4.setVisage(945);
+	_object4.setStrip(6);
+	_object4.setPosition(Common::Point(361, 70));
+	_object4.setZoom(80);
+	_object4.fixPriority(0);
+	_object5.postInit();
+	_object5.setVisage(945);
+	_object5.setStrip(7);
+	_object5.setPosition(Common::Point(366, 39));
+	_object5.setZoom(80);
+	_object5.fixPriority(3);
+	_object6.postInit();
+	_object6.setVisage(945);
+	_object6.setStrip(4);
+	_object6.setPosition(Common::Point(432, 70));
+	_object6.setZoom(65);
+	_object6.fixPriority(0);
+	_object7.postInit();
+	_object7.setVisage(945);
+	_object7.setStrip(1);
+	_object7.setPosition(Common::Point(423, 131));
+	_object7.setZoom(65);
+	_object7.fixPriority(0);
+	_object8.postInit();
+	_object8.setVisage(945);
+	_object8.setStrip(2);
+	_object8.setPosition(Common::Point(420, 99));
+	_object8.setZoom(65);
+	_object8.fixPriority(3);
+	_object9.postInit();
+	_object9.setVisage(945);
+	_object9.setStrip(3);
+	_object9.setPosition(Common::Point(458, 65));
+	_object9.setZoom(55);
+	_object9.fixPriority(0);
+	_object10.postInit();
+	_object10.setVisage(945);
+	_object10.setStrip(3);
+	_object10.setFrame(2);
+	_object10.setPosition(Common::Point(465, 118));
+	_object10.setZoom(55);
+	_object10.fixPriority(0);
+	_item1.setBounds(Rect(0, 0, 320, 200));
+	BF_GLOBALS._sceneItems.push_back(&_item1);
+	_sceneBounds.moveTo(320, 0);
+	_gameTextSpeaker1._textPos.x = _sceneBounds.left + 10;
+	_gameTextSpeaker1._color1 = 16;
+	_gameTextSpeaker1._textWidth = 265;
+	setAction(&_action1);
+}
+
+void Scene940::remove() {
+	// clearScren();
+	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
+	SceneExt::remove();
+	BF_GLOBALS._uiElements._active = true;
 }
 
 } // End of namespace BlueForce
