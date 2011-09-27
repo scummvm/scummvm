@@ -395,7 +395,7 @@ void L1_GetAngleBetweenActors() {
 		return;
 	}
 
-	lua_pushnumber(actor1->getYawTo(*actor2).getDegrees());
+	lua_pushnumber(actor1->getYawTo(actor2).getDegrees());
 }
 
 void L1_GetActorYawToPoint() {
@@ -1413,7 +1413,7 @@ void L1_GetVisibleThings() {
 		if (!i->_value->isInSet(g_grim->getSetName()))
 			continue;
 		// Consider the active actor visible
-		if (actor == a || actor->getYawTo(*a) < 90) {
+		if (actor == a || actor->getYawTo(a) < 90) {
 			lua_pushobject(result);
 			lua_pushusertag(i->_key, MKTAG('A','C','T','R'));
 			lua_pushnumber(1);

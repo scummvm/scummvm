@@ -450,7 +450,7 @@ void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, c
 	_turning = false;
 }
 
-void Actor::setPos(Math::Vector3d position) {
+void Actor::setPos(const Math::Vector3d &position) {
 	_walking = false;
 	_pos = position;
 
@@ -803,15 +803,15 @@ void Actor::turn(int dir) {
 	_currTurnDir = dir;
 }
 
-Math::Angle Actor::getYawTo(const Actor &a) const {
+Math::Angle Actor::getYawTo(Actor *a) const {
 	Math::Vector3d forwardVec(-_yaw.getSine(), _yaw.getCosine(), 0);
-	Math::Vector3d delta = a.getPos() - _pos;
+	Math::Vector3d delta = a->getPos() - _pos;
 	delta.z() = 0;
 
 	return Math::Vector3d::angle(forwardVec, delta);
 }
 
-Math::Angle Actor::getYawTo(Math::Vector3d p) const {
+Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 	Math::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
@@ -1381,7 +1381,7 @@ void Actor::setActivateShadow(int shadowId, bool state) {
 	_shadowArray[shadowId].active = state;
 }
 
-void Actor::setShadowPoint(Math::Vector3d p) {
+void Actor::setShadowPoint(const Math::Vector3d &p) {
 	assert(_activeShadowSlot != -1);
 
 	_shadowArray[_activeShadowSlot].pos = p;

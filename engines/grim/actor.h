@@ -122,7 +122,7 @@ public:
 	 * @param position The position.
 	 * @see getPos
 	 */
-	void setPos(Math::Vector3d position);
+	void setPos(const Math::Vector3d &position);
 	/**
 	 * Returns the position of the actor on the 3D scene.
 	 *
@@ -245,14 +245,14 @@ public:
 	 *
 	 * @param actor The actor to look at.
 	 */
-	Math::Angle  getYawTo(const Actor &actor) const;
+	Math::Angle  getYawTo(Actor *actor) const;
 	/**
 	 * Calculates and returns the angle between the direction the
 	 * actor is facing and the direction towards a point.
 	 *
 	 * @param actor The point to look at.
 	 */
-	Math::Angle  getYawTo(Math::Vector3d p) const;
+	Math::Angle  getYawTo(const Math::Vector3d &p) const;
 
 	/**
 	 * Sets the actor visibility.
@@ -411,7 +411,7 @@ public:
 	}
 
 	void setActiveShadow(int shadowId);
-	void setShadowPoint(Math::Vector3d pos);
+	void setShadowPoint(const Math::Vector3d &pos);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
