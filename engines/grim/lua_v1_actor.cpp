@@ -395,18 +395,7 @@ void L1_GetAngleBetweenActors() {
 		return;
 	}
 
-	Math::Vector3d vec1 = actor1->getPuckVector();
-	Math::Vector3d vec2 = actor2->getPos();
-	vec2 -= actor1->getPos();
-	vec1.z() = 0;
-	vec2.z() = 0;
-	vec1.normalize();
-	vec2.normalize();
-	float dot = vec1.getDotProduct(vec2);
-	float angle = 90.0f - (180.0f * asin(dot)) / LOCAL_PI;
-	if (angle < 0)
-		angle = -angle;
-	lua_pushnumber(angle);
+	lua_pushnumber(actor1->getYawTo(*actor2).getDegrees());
 }
 
 void L1_GetActorYawToPoint() {

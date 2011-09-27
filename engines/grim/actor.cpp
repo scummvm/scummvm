@@ -714,7 +714,7 @@ void Actor::walkForward() {
 }
 
 Math::Vector3d Actor::getPuckVector() const {
-	Math::Vector3d forwardVec(_yaw.getSine(), _yaw.getCosine(), 0);
+	Math::Vector3d forwardVec(-_yaw.getSine(), _yaw.getCosine(), 0);
 
 	Sector *sector = g_grim->getCurrSet()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
