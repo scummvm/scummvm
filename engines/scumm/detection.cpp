@@ -937,6 +937,11 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Based on generateComplexID() in advancedDetector.cpp.
 		dg["preferredtarget"] = generatePreferredTarget(*x);
 
+		// Store the variant if it's there - should help with fallback detection
+		// FIXME: We (ab)use 'variant' for the 'extra' description for now.
+		if (x->extra)
+			dg.setVal("variant", Common::String(x->extra));
+
 		// HACK: Detect and distinguish the FM-TOWNS demos
 		if (x->game.platform == Common::kPlatformFMTowns && (x->game.features & GF_DEMO)) {
 			if (x->md5 == "2d388339d6050d8ccaa757b64633954e") {
@@ -1018,6 +1023,30 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		} else {
 			results = tmp;
 		}
+	}
+
+	// No unique match found. If a variant override is present, try to
+	// narrow down the list a bit more.
+	if (results.size() > 1 && ConfMan.hasKey("variant")) {
+		const char *variant = ConfMan.get("variant").c_str();
+		Common::List<DetectorResult> tmp;
+
+		// Copy only those candidates which match the variant setting
+		for (Common::List<DetectorResult>::iterator
+		          x = results.begin(); x != results.end(); ++x) {
+			if (x->game.variant && !scumm_stricmp(x->game.variant, variant)) {
+				tmp.push_back(*x);
+			}
+		}
+
+		// If we narrowed it down too much, print a warning, else use the list
+		// we just computed as new candidates list.
+		if (tmp.empty()) {
+			warning("Engine_SCUMM_create: Game data inconsistent with variant override");
+		} else {
+			results = tmp;
+		}
+
 	}
 
 	// Still no unique match found -> print a warning
