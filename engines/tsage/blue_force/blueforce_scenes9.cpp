@@ -1207,7 +1207,7 @@ void Scene940::Action1::signal() {
 }
 
 void Scene940::postInit(SceneObjectList *OwnerList) {
-	PalettedScene::postInit();
+	SceneExt::postInit();
 	loadScene(940);
 
 	BF_GLOBALS._sound1.play(115);

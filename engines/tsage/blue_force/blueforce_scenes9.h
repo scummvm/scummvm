@@ -121,7 +121,7 @@ public:
 	void synchronize(Serializer &s);
 };
 
-class Scene920: public PalettedScene {
+class Scene920: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
@@ -179,7 +179,7 @@ public:
 	void dispatch();
 };
 
-class Scene940: public PalettedScene {
+class Scene940: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
