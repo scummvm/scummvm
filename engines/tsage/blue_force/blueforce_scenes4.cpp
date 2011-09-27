@@ -890,6 +890,246 @@ void Scene410::dispatch() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 415 - Searching Truck
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene415::GunInset::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (BF_GLOBALS.getFlag(fGotAutoWeapon)) {
+			FocusObject::startAction(action, event);
+		} else {
+			remove();
+			scene->_gunAndWig.remove();
+		}
+		return true;
+	} else {
+		return FocusObject::startAction(action, event);
+	}
+}
+
+bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		NamedObject::startAction(action, event);
+		BF_INVENTORY.setObjectScene(INV_AUTO_RIFLE, 1);
+		BF_INVENTORY.setObjectScene(INV_WIG, 1);
+		BF_GLOBALS.setFlag(fGotAutoWeapon);
+		BF_GLOBALS._uiElements.addScore(30);
+
+		remove();
+		return true;
+	case INV_FOREST_RAP:
+		if (scene->_fieldE14)
+			break;
+
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 0;
+		scene->_stripManager.start(4126, scene);
+		BF_GLOBALS._uiElements.addScore(50);
+		scene->_fieldE14 = true;
+		return true;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+bool Scene415::BulletsInset::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		if (BF_GLOBALS.getFlag(fGotAutoWeapon)) {
+			FocusObject::startAction(action, event);
+		} else {
+			remove();
+			scene->_theBullets.remove();
+		}
+		return true;
+	} else {
+		return FocusObject::startAction(action, event);
+	}
+}
+
+bool Scene415::DashDrawer::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	if ((action == CURSOR_LOOK) || (action == CURSOR_USE)) {
+		scene->showBullets();
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		NamedObject::startAction(action, event);
+		BF_INVENTORY.setObjectScene(INV_22_BULLET, 1);
+		BF_GLOBALS.setFlag(fGotBulletsFromDash);
+		BF_GLOBALS._uiElements.addScore(30);
+
+		remove();
+		scene->_dashDrawer.remove();
+		return true;
+	case INV_FOREST_RAP:
+		if (scene->_fieldE16) {
+			SceneItem::display2(415, 35);
+			return true;
+		} else {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 0;
+			scene->_stripManager.start(4122, scene);
+			BF_GLOBALS._uiElements.addScore(50);
+			scene->_fieldE16 = true;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene415::Lever::startAction(CursorType action, Event &event) {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (BF_GLOBALS.getFlag(fGotAutoWeapon)) {
+			SceneItem::display2(415, 20);
+		} else {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 2;
+			scene->setAction(&scene->_sequenceManager, scene, 4150, &scene->_object6, NULL);
+		}
+		return true;
+	default:
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene415::Scene415(): SceneExt() {
+	_fieldE14 = _fieldE16 = false;
+}
+
+void Scene415::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_fieldE14);
+	s.syncAsSint16LE(_fieldE16);
+}
+
+void Scene415::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(415);
+
+	_stripManager.addSpeaker(&_jakeRadioSpeaker);
+
+	_dashDrawer.postInit();
+	_dashDrawer.setVisage(411);
+	_dashDrawer.setStrip(3);
+	_dashDrawer.setPosition(Common::Point(151, 97));
+	_dashDrawer.setDetails(415, 22, -1, -1, 1, NULL);
+
+	_object6.postInit();
+	_object6.setVisage(419);
+	_object6.setStrip(1);
+	_object6.setPosition(Common::Point(306, 116));
+	_object6.fixPriority(80);
+	
+	_windowLever.setDetails(16, 415, 25, -1, 26, 1);
+	_item7.setDetails(17, 415, 32, -1, 33, 1);
+	_seatBelt.setDetails(14, 415, 29, -1, 30, 1);
+	_lever.setDetails(19, 415, 23, 24, -1, 1);
+	_seat.setDetails(18, 415, 3, 4, 2, 1);
+	_dashboard.setDetails(20, 415, 11, 12, 19, 1);
+	_steeringWheel.setDetails(15, 415, 5, 6, 7, 1);
+	_horn.setDetails(31, 415, 8, 9, 10, 1);
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 415, 0, 1, 2, 1, NULL);
+
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._player._canWalk = false;
+	BF_GLOBALS._events.setCursor(CURSOR_WALK);
+
+	signal();
+}
+
+void Scene415::signal() {
+	switch (_sceneMode) {
+	case 1:
+		BF_GLOBALS._sceneManager.changeScene(410);
+		break;
+	case 2:
+		showGunAndWig();
+		_sceneMode = 0;
+		signal();
+		break;
+	case 0:
+	default:
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._player._canWalk = false;
+		break;
+	}
+}
+
+void Scene415::dispatch() {
+	SceneExt::dispatch();
+	if (BF_GLOBALS.getFlag(fGotAutoWeapon) && BF_GLOBALS.getFlag(fGotBulletsFromDash)) {
+		_sceneMode = 1;
+		signal();
+	}
+}
+
+void Scene415::showBullets() {
+	_bulletsInset.postInit();
+	_bulletsInset.setVisage(411);
+	_bulletsInset.setStrip(1);
+	_bulletsInset.setPosition(Common::Point(158, 100));
+	_bulletsInset.setDetails(415, -1, -1, -1);
+
+	_theBullets.postInit();
+	_theBullets.setVisage(411);
+	_theBullets.setStrip(1);
+	_theBullets.setFrame(2);
+	_theBullets.setPosition(Common::Point(184, 86));
+	_theBullets.fixPriority(105);
+	_theBullets.setDetails(415, 16, 17, 18, 1, NULL);
+	BF_GLOBALS._sceneItems.remove(&_theBullets);
+	BF_GLOBALS._sceneItems.push_front(&_theBullets);
+}
+
+void Scene415::showGunAndWig() {
+	_gunInset.postInit();
+	_gunInset.setVisage(411);
+	_gunInset.setStrip(2);
+	_gunInset.setPosition(Common::Point(158, 100));
+	_gunInset.setDetails(415, -1, -1, -1);
+
+	_gunAndWig.postInit();
+	_gunAndWig.setVisage(411);
+	_gunAndWig.setStrip(2);
+	_gunAndWig.setFrame(2);
+	_gunAndWig.setPosition(Common::Point(159, 88));
+	_gunAndWig.fixPriority(105);
+	_gunAndWig.setDetails(415, 13, 14, 15, 1, NULL);
+
+	BF_GLOBALS._sceneItems.remove(&_gunAndWig);
+	BF_GLOBALS._sceneItems.push_front(&_gunAndWig);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

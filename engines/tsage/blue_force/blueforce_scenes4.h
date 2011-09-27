@@ -128,6 +128,58 @@ public:
 	virtual void dispatch();
 };
 
+class Scene415: public SceneExt {
+	/* Objects */
+	class GunInset: public FocusObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GunAndWig: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class BulletsInset: public FocusObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class DashDrawer: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class TheBullets: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Lever: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+private:
+	void showBullets();
+	void showGunAndWig();
+public:
+	SequenceManager _sequenceManager;
+	GunInset _gunInset;
+	GunAndWig _gunAndWig;
+	BulletsInset _bulletsInset;
+	DashDrawer _dashDrawer;
+	TheBullets _theBullets;
+	NamedObject _object6;
+	NamedHotspot _item1, _steeringWheel, _horn, _dashboard;
+	NamedHotspot _seat, _windowLever, _item7, _seatBelt;
+	Lever _lever;
+	SpeakerJakeRadio _jakeRadioSpeaker;
+	bool _fieldE14, _fieldE16;
+
+	Scene415();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void signal();
+	virtual void dispatch();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
