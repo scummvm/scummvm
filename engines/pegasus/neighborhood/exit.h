@@ -68,6 +68,10 @@ public:
 
 	Entry findEntry(tRoomID room, tDirectionConstant direction, tAlternateID altCode);
 
+	typedef Common::Array<Entry>::iterator iterator;
+	iterator begin() { return _entries.begin(); }
+	iterator end() { return _entries.end(); }
+
 private:
 	Common::Array<Entry> _entries;
 };

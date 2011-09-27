@@ -63,6 +63,8 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_gameMenu = 0;
 	_deathReason = kDeathStranded;
 	_neighborhood = 0;
+	_FXLevel = 0x80;
+	_ambientLevel = 0x80;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -873,11 +875,6 @@ void PegasusEngine::resetEnergyDeathReason() {
 	_deathReason = kDeathStranded;
 }
 
-uint16 PegasusEngine::getSoundFXLevel() {
-	// TODO
-	return 0x100;
-}
-
 bool PegasusEngine::playerHasItem(const Item *item) {
 	return playerHasItemID(item->getObjectID());
 }
@@ -1041,5 +1038,11 @@ void PegasusEngine::doDeath() {
 void PegasusEngine::throwAwayEverything() {
 	// TODO
 }
+
+void PegasusEngine::dragItem(const Input &, Item *, tDragType) {
+	// TODO
+}
+
+
 
 } // End of namespace Pegasus

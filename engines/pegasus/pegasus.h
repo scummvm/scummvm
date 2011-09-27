@@ -114,7 +114,8 @@ public:
 	void die(const tDeathReason);
 
 	// Volume
-	uint16 getSoundFXLevel();
+	uint16 getSoundFXLevel() { return _FXLevel; }
+	uint16 getAmbienceLevel() { return _ambientLevel; }
 
 	// Items
 	bool playerHasItem(const Item *);
@@ -144,6 +145,11 @@ public:
 
 	// Neighborhood
 	void jumpToNewEnvironment(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+
+	// Dragging
+	void dragItem(const Input &, Item *, tDragType);
+	tDragType getDragType() const { return (tDragType)0; } // TODO
+	Item *getDraggingItem() const { return 0; } // TODO
 
 protected:
 	Common::Error run();
@@ -205,6 +211,10 @@ private:
 
 	// Neighborhood
 	Neighborhood *_neighborhood;
+
+	// Sound
+	uint16 _ambientLevel;
+	uint16 _FXLevel;
 };
 
 } // End of namespace Pegasus

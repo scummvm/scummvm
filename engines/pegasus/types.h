@@ -180,6 +180,13 @@ enum tAirQuality {
 	kAirQualityVacuum
 };
 
+enum tDragType {
+	kDragNoDrag,
+	kDragInventoryPickup,
+	kDragBiochipPickup,
+	kDragInventoryUse
+};
+
 } // End of namespace Pegasus
 
 #endif
