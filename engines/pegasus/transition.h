@@ -38,7 +38,7 @@ public:
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
 	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, const uint32 = getBlack());
 
-	void setFaderValue(const uint32);	
+	void setFaderValue(const int32);	
 
 protected:
 	uint32 _fadeTarget;

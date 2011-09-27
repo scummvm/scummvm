@@ -49,19 +49,19 @@ public:
 	void setFaderScale(const TimeScale scale) { _faderScale = scale; }
 	TimeScale getFaderScale() const { return _faderScale; }
 
-	void makeOneKnotFaderSpec(const uint32);
-	void makeTwoKnotFaderSpec(const TimeScale, const TimeValue, const uint32, const TimeValue, const uint32);
+	void makeOneKnotFaderSpec(const int32);
+	void makeTwoKnotFaderSpec(const TimeScale, const TimeValue, const int32, const TimeValue, const int32);
 
-	void insertFaderKnot(const TimeValue, const uint32);
+	void insertFaderKnot(const TimeValue, const int32);
 
 	uint32 getNumKnots() const { return _numKnots; }
-	uint32 getNthKnotTime(const uint32 index) const { return _knots[index].knotTime; }
-	uint32 getNthKnotValue(const uint32 index) const { return _knots[index].knotValue; }
+	TimeValue getNthKnotTime(const uint32 index) const { return _knots[index].knotTime; }
+	int32 getNthKnotValue(const uint32 index) const { return _knots[index].knotValue; }
 
 protected:
 	struct FaderKnot {
 		TimeValue knotTime;
-		uint32 knotValue;
+		int32 knotValue;
 	};
 	
 	TimeScale _faderScale;
@@ -76,8 +76,8 @@ public:
 	Fader();
 	virtual ~Fader() {}
 
-	virtual void setFaderValue(const uint32);
-	uint32 getFaderValue() const { return _currentValue; }
+	virtual void setFaderValue(const int32);
+	int32 getFaderValue() const { return _currentValue; }
 	virtual void startFader(const FaderMoveSpec &);
 	virtual void startFaderSync(const FaderMoveSpec &);
 	virtual void loopFader(const FaderMoveSpec &);
@@ -93,7 +93,7 @@ protected:
 	bool initFaderMove(const FaderMoveSpec &);
 	virtual void timeChanged(const TimeValue);
 	
-	uint32 _currentValue;
+	int32 _currentValue;
 	FaderMoveSpec _currentFaderMove;
 };
 
@@ -102,7 +102,7 @@ public:
 	FaderAnimation(const tDisplayElementID id) : DisplayElement(id) {}
 	virtual ~FaderAnimation() {}
 
-	void setFaderValue(const uint32);
+	void setFaderValue(const int32);
 };
 
 class Sound;
@@ -113,7 +113,7 @@ public:
 	SoundFader();
 	virtual ~SoundFader() {}
 
-	void setFaderValue(const uint32);
+	void setFaderValue(const int32);
 
 	void setMasterVolume(const uint16);
 	uint16 getMasterVolume() const { return _masterVolume; }

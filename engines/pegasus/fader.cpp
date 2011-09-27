@@ -35,13 +35,13 @@ Fader::Fader() {
 	_currentFaderMove._numKnots = 0;
 }
 
-void Fader::setFaderValue(const uint32 newValue) {
+void Fader::setFaderValue(const int32 newValue) {
 	_currentValue = newValue;
 }
 
 bool Fader::initFaderMove(const FaderMoveSpec &spec) {	
 	bool faderMoves = false;
-	uint32 value = 0;
+	int32 value = 0;
 
 	if (spec._numKnots > 0) {
 		stopFader();
@@ -135,7 +135,7 @@ void Fader::timeChanged(const TimeValue newTime) {
 			if (_currentFaderMove._knots[i].knotTime > newTime)
 				break;
 
-		uint32 newValue;
+		int32 newValue;
 		if (i == 0)
 			newValue = _currentFaderMove._knots[0].knotValue;
 		else if (i == _currentFaderMove._numKnots)
@@ -148,13 +148,13 @@ void Fader::timeChanged(const TimeValue newTime) {
 	}
 }
 
-void FaderMoveSpec::makeOneKnotFaderSpec(const uint32 knotValue) {
+void FaderMoveSpec::makeOneKnotFaderSpec(const int32 knotValue) {
 	_numKnots = 1;
 	_knots[0].knotTime = 0;
 	_knots[0].knotValue = knotValue;
 }
 
-void FaderMoveSpec::makeTwoKnotFaderSpec(const TimeScale faderScale, const TimeValue time1, const uint32 value1, const TimeValue time2, const uint32 value2) {
+void FaderMoveSpec::makeTwoKnotFaderSpec(const TimeScale faderScale, const TimeValue time1, const int32 value1, const TimeValue time2, const int32 value2) {
 	_numKnots = 2;
 	_faderScale = faderScale;
 	_knots[0].knotTime = time1;
@@ -163,7 +163,7 @@ void FaderMoveSpec::makeTwoKnotFaderSpec(const TimeScale faderScale, const TimeV
 	_knots[1].knotValue = value2;
 }
 
-void FaderMoveSpec::insertFaderKnot(const TimeValue knotTime, const uint32 knotValue) {	
+void FaderMoveSpec::insertFaderKnot(const TimeValue knotTime, const int32 knotValue) {	
 	if (_numKnots != kMaxFaderKnots) {
 		uint32 index;
 		for (index = 0; index < _numKnots; index++) {
@@ -184,7 +184,7 @@ void FaderMoveSpec::insertFaderKnot(const TimeValue knotTime, const uint32 knotV
 	}
 }
 
-void FaderAnimation::setFaderValue(const uint32 newValue) {
+void FaderAnimation::setFaderValue(const int32 newValue) {
 	if (getFaderValue() != newValue) {
 		Fader::setFaderValue(newValue);
 		triggerRedraw();
@@ -203,7 +203,7 @@ void SoundFader::attachSound(Sound *sound) {
 	_sound = sound;
 }
 
-void SoundFader::setFaderValue(const uint32 newVolume) {	
+void SoundFader::setFaderValue(const int32 newVolume) {	
 	if (_sound)
 		_sound->setVolume((newVolume * _masterVolume) >> 8);
 

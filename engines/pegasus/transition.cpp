@@ -51,7 +51,7 @@ void ScreenFader::doFadeInSync(const TimeValue duration, const TimeValue scale, 
 	startFaderSync(spec);
 }
 
-void ScreenFader::setFaderValue(const uint32 value) {
+void ScreenFader::setFaderValue(const int32 value) {
 	if (value != getFaderValue()) {
 		Fader::setFaderValue(value);
 

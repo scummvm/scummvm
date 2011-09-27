@@ -53,8 +53,8 @@ void Compass::deallocateCompass() {
 	_compassImage.deallocateSurface();
 }
 
-void Compass::setFaderValue(const uint32 angle) {
-	int16 a = (int32)angle % 360;
+void Compass::setFaderValue(const int32 angle) {
+	int16 a = angle % 360;
 
 	if (a < 0)
 		a += 360;
