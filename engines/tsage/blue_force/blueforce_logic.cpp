@@ -65,7 +65,6 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Introduction Bar Room
 		return new Scene109();
 	case 110:
-
 	case 114:
 	case 115:
 	case 125:
@@ -145,6 +144,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		error("Scene group 5 not implemented");
 	case 600:
 	case 620:
+		error("Scene group 6 not implemented");
 	case 666:
 		// Death scene
 		return new Scene666();
@@ -157,6 +157,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		return new Scene800();
 	case 810:
 	case 820:
+		error("Scene group 8 not implemented");
 	case 830:
 		// Outside Boat Rentals
 		return new Scene830();
