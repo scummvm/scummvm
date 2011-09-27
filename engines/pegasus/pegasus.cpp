@@ -65,6 +65,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_neighborhood = 0;
 	_FXLevel = 0x80;
 	_ambientLevel = 0x80;
+	_gameMode = kNoMode;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -125,12 +126,8 @@ Common::Error PegasusEngine::run() {
 	_returnHotspot.setHotspotFlags(kInfoReturnSpotFlag);
 	g_allHotspots.push_back(&_returnHotspot);
 
-	while (!shouldQuit()) {
-		checkCallBacks();
-		checkNotifications();
-		InputHandler::pollForInput();
-		refreshDisplay();
-	}
+	while (!shouldQuit())
+		processShell();
 
 	return Common::kNoError;
 }
@@ -1043,6 +1040,37 @@ void PegasusEngine::dragItem(const Input &, Item *, tDragType) {
 	// TODO
 }
 
+void PegasusEngine::processShell() {
+	checkCallBacks();
+	checkNotifications();
+	InputHandler::pollForInput();
+	refreshDisplay();
+}
 
+void PegasusEngine::createInterface() {
+	if (!g_interface)
+		new Interface();
+
+	g_interface->createInterface();
+}
+
+void PegasusEngine::setGameMode(const tGameMode newMode) {
+	if (newMode != _gameMode && canSwitchGameMode(newMode, _gameMode)) {
+		switchGameMode(newMode, _gameMode);
+		_gameMode = newMode;
+	}
+}
+
+void PegasusEngine::switchGameMode(const tGameMode newMode, const tGameMode oldMode) {
+	// TODO
+}
+
+bool PegasusEngine::canSwitchGameMode(const tGameMode newMode, const tGameMode oldMode) {
+	if (newMode == kModeInventoryPick && oldMode == kModeBiochipPick)
+		return false;
+	if (newMode == kModeBiochipPick && oldMode == kModeInventoryPick)
+		return false;
+	return true;
+}
 
 } // End of namespace Pegasus

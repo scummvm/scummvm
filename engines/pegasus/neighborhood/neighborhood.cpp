@@ -57,8 +57,14 @@ Neighborhood::Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const C
 		_turnPush(kTurnPushID), _croppedMovie(kCroppedMovieID) {
 	GameState.setOpenDoorLocation(kNoRoomID, kNoDirection);
 	_currentAlternate = 0;
+	_currentActivation = kActivateHotSpotAlways;
 	_interruptionFilter = kFilterAllInput;
+	allowInput(true);
+	resetLastExtra();
 	g_neighborhood = this;
+	_currentInteraction = 0;
+	_doneWithInteraction = false;
+	_croppedMovie.setDisplayOrder(kCroppedMovieLayer);
 }
 
 Neighborhood::~Neighborhood() {
@@ -400,15 +406,15 @@ void Neighborhood::popActionQueue() {
 		tQueueRequest topRequest = _actionQueue.pop();
 
 		switch (topRequest.requestType) {
-			case kNavExtraRequest:
-				// TODO
-				break;
-			case kSpotSoundRequest:
-				_spotSounds.stopSound();
-				break;
-			case kDelayRequest:
-				// TODO
-				break;
+		case kNavExtraRequest:
+			_navMovie.stop();
+			break;
+		case kSpotSoundRequest:
+			_spotSounds.stopSound();
+			break;
+		case kDelayRequest:
+			_delayTimer.stop();
+			break;
 		}
 
 		serviceActionQueue();
@@ -423,7 +429,7 @@ void Neighborhood::serviceActionQueue() {
 			topRequest.playing = true;
 			switch (topRequest.requestType) {
 			case kNavExtraRequest:
-				// TODO
+				startExtraSequence(topRequest.extra, topRequest.flags, topRequest.interruptionFilter);
 				break;
 			case kSpotSoundRequest:
 				_spotSounds.stopSound();
@@ -432,7 +438,13 @@ void Neighborhood::serviceActionQueue() {
 				// TODO: stop trigger
 				break;
 			case kDelayRequest:
-				// TODO
+				_delayTimer.stop();
+				_delayCallBack.setCallBackFlag(topRequest.flags);
+				_delayTimer.setSegment(0, topRequest.start, topRequest.stop);
+				_delayTimer.setTime(0);
+				_delayCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+				_interruptionFilter = topRequest.interruptionFilter;
+				_delayTimer.start();
 				break;
 			}
 		}
@@ -453,9 +465,7 @@ void Neighborhood::requestAction(const tQueueRequestType requestType, const tExt
 	request.interruptionFilter = interruptionFilter;
 	request.playing = false;
 	request.flags = flags | kActionRequestCompletedFlag;
-
-	// TODO: notification
-
+	request.notification = &_neighborhoodNotification;
 	_actionQueue.push(request);
 	if (_actionQueue.size() == 1)
 		serviceActionQueue();
@@ -1350,27 +1360,152 @@ void Neighborhood::getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec 
 }
 
 void Neighborhood::setUpAIRules() {
-	// TODO
+	//	Set up default rules here:
+	//	--  Energy warning rules.
+
+	if (g_AIArea) {
+		g_AIArea->forceAIUnlocked();
+
+		if (getObjectID() == kPrehistoricID || getObjectID() == kNoradAlphaID ||
+				getObjectID() == kNoradDeltaID || getObjectID() == kMarsID || getObjectID() == kWSCID) {
+
+			AIEnergyMonitorCondition *condition50 = new AIEnergyMonitorCondition(kWorriedEnergy);
+			AIPlayMessageAction *message = new AIPlayMessageAction("Images/AI/Globals/XGLOB4A", false);
+			AIRule *rule50 = new AIRule(condition50, message);
+
+			AIEnergyMonitorCondition *condition25 = new AIEnergyMonitorCondition(kNervousEnergy);
+			AICompoundAction *compound = new AICompoundAction();
+			message = new AIPlayMessageAction("Images/AI/Globals/XGLOB4B", false);
+			compound->addAction(message);
+			AIDeactivateRuleAction *deactivate = new AIDeactivateRuleAction(rule50);
+			compound->addAction(deactivate);
+			AIRule *rule25 = new AIRule(condition25, compound);
+
+			AIEnergyMonitorCondition *condition5 = new AIEnergyMonitorCondition(kPanicStrickenEnergy);
+			compound = new AICompoundAction();
+			message = new AIPlayMessageAction("Images/AI/Globals/XGLOB4C", false);
+			compound->addAction(message);
+			deactivate = new AIDeactivateRuleAction(rule50);
+			compound->addAction(deactivate);
+			deactivate = new AIDeactivateRuleAction(rule25);
+			compound->addAction(deactivate);
+			AIRule *rule5 = new AIRule(condition5, compound);
+
+			g_AIArea->addAIRule(rule5);
+			g_AIArea->addAIRule(rule25);
+			g_AIArea->addAIRule(rule50);
+		}
+	}
+}
+
+GameInteraction *Neighborhood::makeInteraction(const tInteractionID interactionID) {
+	if (interactionID == kNoInteractionID)
+		return 0;
+
+	return new GameInteraction(interactionID, this);
 }
 
 void Neighborhood::newInteraction(const tInteractionID interactionID) {
-	// TODO
+	GameInteraction *interaction = makeInteraction(interactionID);
+	_doneWithInteraction = false;
+
+	if (_currentInteraction) {
+		_currentInteraction->stopInteraction();
+		delete _currentInteraction;
+	}
+
+	_currentInteraction = interaction;
+
+	if (_currentInteraction)
+		_currentInteraction->startInteraction();
+
+	if (g_AIArea)
+		g_AIArea->checkMiddleArea();
 }
 
 void Neighborhood::bumpIntoWall() {
 	// TODO
+	warning("bump");
 }
 
 void Neighborhood::zoomUpOrBump() {
-	// TODO
+	Hotspot *zoomSpot = 0;
+
+	for (HotspotList::iterator it = g_allHotspots.begin(); it != g_allHotspots.end(); it++) {
+		Hotspot *hotspot = *it;
+
+		if ((hotspot->getHotspotFlags() & (kNeighborhoodSpotFlag | kZoomInSpotFlag)) == (kNeighborhoodSpotFlag | kZoomInSpotFlag)) {
+			HotspotInfoTable::Entry *entry = findHotspotEntry(hotspot->getObjectID());
+
+			if (entry && entry->hotspotRoom == GameState.getCurrentRoom() && entry->hotspotDirection == GameState.getCurrentDirection()) {
+				if (zoomSpot) {
+					zoomSpot = 0;
+					break;
+				} else {
+					zoomSpot = hotspot;
+				}
+			}
+		}
+	}
+
+	if (zoomSpot)
+		zoomTo(zoomSpot);
+	else
+		bumpIntoWall();
 }
 
 void Neighborhood::loadLoopSound1(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
-	// TODO
+	FaderMoveSpec faderMove;
+	
+	if (!loop1Loaded(soundName)) {
+		_loop1SoundString = soundName;
+
+		if (_soundLoop1.isSoundLoaded()) {
+			faderMove.makeTwoKnotFaderSpec(fadeScale, 0, _loop1Fader.getFaderValue(), fadeOut, 0);
+			_loop1Fader.startFaderSync(faderMove);
+		}
+
+		if (!_loop1SoundString.empty()) {
+			_soundLoop1.initFromAIFFFile(_loop1SoundString);
+			_soundLoop1.loopSound();
+			_loop1Fader.setMasterVolume(_vm->getAmbienceLevel());
+			_loop1Fader.setFaderValue(0);
+			faderMove.makeTwoKnotFaderSpec(fadeScale, 0, 0, fadeIn, volume);
+			_loop1Fader.startFaderSync(faderMove);
+		} else {
+			_soundLoop1.disposeSound();
+		}
+	} else if (_loop1Fader.getFaderValue() != volume) {
+		faderMove.makeTwoKnotFaderSpec(fadeScale, 0, _loop1Fader.getFaderValue(), fadeIn, volume);
+		_loop1Fader.startFaderSync(faderMove);
+	}
 }
 
 void Neighborhood::loadLoopSound2(const Common::String &soundName, uint16 volume, TimeValue fadeOut, TimeValue fadeIn, TimeScale fadeScale) {
-	// TODO
+	FaderMoveSpec faderMove;
+	
+	if (!loop2Loaded(soundName)) {
+		_loop2SoundString = soundName;
+
+		if (_soundLoop2.isSoundLoaded()) {
+			faderMove.makeTwoKnotFaderSpec(fadeScale, 0, _loop2Fader.getFaderValue(), fadeOut, 0);
+			_loop2Fader.startFaderSync(faderMove);
+		}
+
+		if (!_loop2SoundString.empty()) {
+			_soundLoop2.initFromAIFFFile(_loop2SoundString);
+			_soundLoop2.loopSound();
+			_loop2Fader.setMasterVolume(_vm->getAmbienceLevel());
+			_loop2Fader.setFaderValue(0);
+			faderMove.makeTwoKnotFaderSpec(fadeScale, 0, 0, fadeIn, volume);
+			_loop2Fader.startFaderSync(faderMove);
+		} else {
+			_soundLoop2.disposeSound();
+		}
+	} else if (_loop2Fader.getFaderValue() != volume) {
+		faderMove.makeTwoKnotFaderSpec(fadeScale, 0, _loop2Fader.getFaderValue(), fadeIn, volume);
+		_loop2Fader.startFaderSync(faderMove);
+	}
 }
 
 void Neighborhood::takeItemFromRoom(Item *item) {
@@ -1378,6 +1513,265 @@ void Neighborhood::takeItemFromRoom(Item *item) {
 	// Also set the taken item flag. Do this before updating the view frame.
 	GameState.setTakenItem(item, true);
 	updateViewFrame();
+}
+
+void Neighborhood::dropItemIntoRoom(Item *item, Hotspot *) {
+	item->setItemRoom(getObjectID(), GameState.getCurrentRoom(), GameState.getCurrentDirection());
+	// Also set the taken item flag. Do this before updating the view frame.
+	GameState.setTakenItem(item, false);
+	updateViewFrame();
+}
+
+void Neighborhood::makeContinuePoint() {
+	_vm->makeContinuePoint();
+}
+
+void Neighborhood::startLoop1Fader(const FaderMoveSpec &faderMove) {
+	_loop1Fader.startFader(faderMove);
+}
+
+void Neighborhood::startLoop2Fader(const FaderMoveSpec &faderMove) {
+	_loop2Fader.startFader(faderMove);
+}
+
+// *** Revised 6/13/96 to use the last frame of the extra sequence.
+//     Necessary for Cinepak buildup.
+void Neighborhood::showExtraView(uint32 extraID) {
+	ExtraTable::Entry entry;
+	getExtraEntry(extraID, entry);
+
+	if (entry.movieEnd != 0xffffffff)
+		showViewFrame(entry.movieEnd - 1);
+}
+
+void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 lastExtra, tNotificationFlags flags,
+		const tInputBits interruptionFilter) {
+	ExtraTable::Entry firstEntry, lastEntry;
+	getExtraEntry(firstExtra, firstEntry);
+
+	if (firstEntry.movieStart != 0xffffffff) {
+		getExtraEntry(lastExtra, lastEntry);
+		_lastExtra = firstExtra;
+		_turnPush.hide();
+		startMovieSequence(firstEntry.movieStart, lastEntry.movieEnd, flags, kFilterNoInput, interruptionFilter);
+	}
+}
+
+void Neighborhood::openCroppedMovie(const Common::String &movieName, tCoordType left, tCoordType top) {
+	if (_croppedMovie.isMovieValid())
+		closeCroppedMovie();
+
+	_croppedMovie.initFromMovieFile(movieName);
+	_croppedMovie.moveElementTo(left, top);
+	_croppedMovie.startDisplaying();
+	_croppedMovie.show();
+}
+
+void Neighborhood::loopCroppedMovie(const Common::String &movieName, tCoordType left, tCoordType top) {
+	openCroppedMovie(movieName, left, top);
+	_croppedMovie.redrawMovieWorld();
+	_croppedMovie.setFlags(kLoopTimeBase);
+	_croppedMovie.start();
+}
+
+void Neighborhood::closeCroppedMovie() {
+	_croppedMovie.releaseMovie();
+}
+
+void Neighborhood::playCroppedMovieOnce(const Common::String &movieName, tCoordType left, tCoordType top, const tInputBits interruptionFilter) {	
+	openCroppedMovie(movieName, left, top);
+	_croppedMovie.redrawMovieWorld();
+	_croppedMovie.start();
+
+	tInputBits oldInterruptionFilter = _interruptionFilter;
+	if (oldInterruptionFilter != kFilterNoInput)
+		_interruptionFilter = kFilterNoInput;
+
+	bool saveAllowed = _vm->swapSaveAllowed(false);
+	bool openAllowed = _vm->swapLoadAllowed(false);
+
+	Input input;
+	while (_croppedMovie.isRunning() && !_vm->shouldQuit()) {
+		_vm->processShell();
+		InputHandler::getCurrentInputDevice()->getInput(input, interruptionFilter);
+		if (input.anyInput() || _vm->shouldQuit()) // TODO: Save/Load request
+			break;
+		_vm->_system->delayMillis(10);
+	}
+
+	if (oldInterruptionFilter != kFilterNoInput)
+		_interruptionFilter = oldInterruptionFilter;
+
+	closeCroppedMovie();
+	_vm->swapSaveAllowed(saveAllowed);
+	_vm->swapLoadAllowed(openAllowed);
+}
+
+void Neighborhood::playMovieSegment(Movie *movie, TimeValue startTime, TimeValue stopTime) {
+	TimeValue oldStart, oldStop;
+	movie->getSegment(oldStart, oldStop);
+
+	if (stopTime == 0xffffffff)
+		stopTime = movie->getDuration();
+	
+	movie->setSegment(startTime, stopTime);
+	movie->setTime(startTime);
+	movie->start();
+
+	while (movie->isRunning()) {
+		_vm->checkCallBacks();
+		_vm->refreshDisplay();
+		_vm->_system->delayMillis(10);
+	}
+
+	movie->stop();
+	movie->setSegment(oldStart, oldStop);
+}
+
+void Neighborhood::recallToTSASuccess() {
+	if (GameState.allTimeZonesFinished())
+		_vm->jumpToNewEnvironment(kFullTSAID, kTSA37, kNorth);
+	else
+		_vm->jumpToNewEnvironment(kTinyTSAID, kTinyTSA37, kNorth);
+}
+
+void Neighborhood::recallToTSAFailure() {
+	_vm->jumpToNewEnvironment(kTinyTSAID, kTinyTSA37, kNorth);
+}
+
+void Neighborhood::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	if (_vm->getGameMode() == kModeNavigation) {
+		if (input.upButtonAnyDown())
+			upButton(input);
+		else if (input.downButtonAnyDown())
+			downButton(input);
+		else if (input.leftButtonAnyDown())
+			leftButton(input);
+		else if (input.rightButtonAnyDown())
+			rightButton(input);
+	}
+
+	InputHandler::handleInput(input, cursorSpot);
+}
+
+void Neighborhood::setHotspotFlags(const tHotSpotID id, const tHotSpotFlags flags) {
+	Hotspot *hotspot = g_allHotspots.findHotspotByID(id);
+	hotspot->setMaskedHotspotFlags(flags, flags);
+}
+
+void Neighborhood::setIsItemTaken(const tItemID id) {
+	GameState.setTakenItemID(id, _vm->playerHasItemID(id));
+}
+
+void Neighborhood::upButton(const Input &) {
+	moveForward();
+}
+
+void Neighborhood::leftButton(const Input &) {
+	turnLeft();
+}
+
+void Neighborhood::rightButton(const Input &) {
+	turnRight();
+}
+
+void Neighborhood::downButton(const Input &) {
+	if (_inputHandler->wantsCursor()) {
+		g_allHotspots.deactivateAllHotspots();
+		_inputHandler->activateHotspots();
+
+		for (HotspotList::iterator it = g_allHotspots.begin(); it != g_allHotspots.end(); it++) {
+			Hotspot *hotspot = *it;
+
+			if (hotspot->isSpotActive() && (hotspot->getHotspotFlags() & (kNeighborhoodSpotFlag | kZoomOutSpotFlag)) == (kNeighborhoodSpotFlag | kZoomOutSpotFlag)) {
+				HotspotInfoTable::Entry *entry = findHotspotEntry(hotspot->getObjectID());
+
+				if (entry && entry->hotspotRoom == GameState.getCurrentRoom() && entry->hotspotDirection == GameState.getCurrentDirection()) {
+					Input scratch;
+					_inputHandler->clickInHotspot(scratch, hotspot);
+					return;
+				}
+			}
+		}
+	}
+}
+
+void Neighborhood::initOnePicture(Picture *picture, const Common::String &pictureName, tDisplayOrder order, tCoordType left, tCoordType top, bool show) {
+	picture->initFromPICTFile(pictureName);
+	picture->setDisplayOrder(order);
+	picture->moveElementTo(left, top);
+	picture->startDisplaying();
+	if (show)
+		picture->show();
+}
+
+void Neighborhood::initOneMovie(Movie *movie, const Common::String &movieName, tDisplayOrder order, tCoordType left, tCoordType top, bool show) {
+	movie->initFromMovieFile(movieName);
+	movie->setDisplayOrder(order);
+	movie->moveElementTo(left, top);
+	movie->startDisplaying();
+
+	if (show)
+		movie->show();
+
+	movie->redrawMovieWorld();
+}
+
+void Neighborhood::reinstateMonocleInterface() {
+	// TODO: Disable erase?
+
+	_vm->createInterface();
+
+	if (g_AIArea)
+		setNextHandler(g_AIArea);
+
+	init();
+
+	moveNavTo(kNavAreaLeft, kNavAreaTop);
+
+	if (g_interface)
+		g_interface->setDate(getDateResID());
+
+	if (g_AIArea)
+		g_AIArea->restoreAIState();
+}
+
+void Neighborhood::useIdleTime() {
+	if (_doneWithInteraction) {
+		newInteraction(kNoInteractionID);
+		loadAmbientLoops();
+	}
+}
+
+void timerFunction(FunctionPtr *, void *neighborhood) {
+	((Neighborhood *)neighborhood)->timerExpired(((Neighborhood *)neighborhood)->getTimerEvent());
+}
+
+void Neighborhood::scheduleEvent(const TimeValue time, const TimeScale scale, const uint32 eventType) {
+	_eventTimer.stopFuse();
+	_eventTimer.primeFuse(time, scale);
+	_timerEvent = eventType;
+	_eventTimer.setFunctionPtr(&timerFunction, this);
+	_eventTimer.lightFuse();
+}
+
+void Neighborhood::cancelEvent() {
+	_eventTimer.stopFuse();
+}
+
+void Neighborhood::pauseTimer() {
+	_eventTimer.pauseFuse();
+}
+
+void Neighborhood::resumeTimer() {
+	// NOTE: Yes, this function calls pauseFuse!
+	// Looks like an original game bug, will need
+	// to investigate how this affects gameplay.
+	_eventTimer.pauseFuse();
+}
+
+bool Neighborhood::timerPaused() {
+	return _eventTimer.isFusePaused();
 }
 
 } // End of namespace Pegasus

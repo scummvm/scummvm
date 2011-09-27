@@ -88,20 +88,15 @@ public:
 	void removeIdler(Idler *idler);
 	void addTimeBase(TimeBase *timeBase);
 	void removeTimeBase(TimeBase *timeBase);
-	bool swapSaveAllowed(bool allow) {
-		bool old = _saveAllowed;
-		_saveAllowed = allow;
-		return old;
-	}
-	bool swapLoadAllowed(bool allow) {
-		bool old = _loadAllowed;
-		_loadAllowed = allow;
-		return old;
-	}
 	void delayShell(TimeValue time, TimeScale scale);
 	void resetIntroTimer();
 	void refreshDisplay();
 	bool playerAlive();
+	void processShell();
+	void checkCallBacks();
+	void createInterface();
+	void setGameMode(const tGameMode);
+	tGameMode getGameMode() const { return _gameMode; }
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
@@ -151,6 +146,19 @@ public:
 	tDragType getDragType() const { return (tDragType)0; } // TODO
 	Item *getDraggingItem() const { return 0; } // TODO
 
+	// Save/Load
+	void makeContinuePoint();
+	bool swapSaveAllowed(bool allow) {
+		bool old = _saveAllowed;
+		_saveAllowed = allow;
+		return old;
+	}
+	bool swapLoadAllowed(bool allow) {
+		bool old = _loadAllowed;
+		_loadAllowed = allow;
+		return old;
+	}
+
 protected:
 	Common::Error run();
 
@@ -180,12 +188,10 @@ private:
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
-	void checkCallBacks();
 
 	// Save/Load
 	bool loadFromStream(Common::ReadStream *stream);
 	bool writeToStream(Common::WriteStream *stream, int saveType);
-	void makeContinuePoint();
 	void loadFromContinuePoint();
 	Common::ReadStream *_continuePoint;
 	bool _saveAllowed, _loadAllowed; // It's so nice that this was in the original code already :P
@@ -215,6 +221,11 @@ private:
 	// Sound
 	uint16 _ambientLevel;
 	uint16 _FXLevel;
+
+	// Game Mode
+	tGameMode _gameMode;
+	void switchGameMode(const tGameMode, const tGameMode);
+	bool canSwitchGameMode(const tGameMode, const tGameMode);
 };
 
 } // End of namespace Pegasus

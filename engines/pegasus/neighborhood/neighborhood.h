@@ -109,6 +109,7 @@ typedef Common::Queue<tQueueRequest> NeighborhoodActionQueue;
 
 class Neighborhood : public IDObject, public NotificationReceiver, public InputHandler, public Idler {
 friend class StriderCallBack;
+friend void timerFunction(FunctionPtr *, void *);
 
 public:
 	Neighborhood(InputHandler *nextHandler, PegasusEngine *vm, const Common::String &resName, tNeighborhoodID id);
@@ -118,6 +119,7 @@ public:
 	void start();
 	virtual void moveNavTo(const tCoordType, const tCoordType);
 	virtual void checkContinuePoint(const tRoomID, const tDirectionConstant) = 0;
+	void makeContinuePoint();
 
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
@@ -217,9 +219,36 @@ public:
 	virtual void loadLoopSound2(const Common::String &, const uint16 volume = 0x100,
 			const TimeValue fadeOut = kDefaultLoopFadeOut, const TimeValue fadeIn = kDefaultLoopFadeIn,
 			const TimeScale fadeScale = kDefaultLoopFadeScale);
+	bool loop1Loaded(const Common::String &soundName) { return _loop1SoundString == soundName; }
+	bool loop2Loaded(const Common::String &soundName) { return _loop2SoundString == soundName; }
+	void startLoop1Fader(const FaderMoveSpec &);
+	void startLoop2Fader(const FaderMoveSpec &);
 
 	virtual void takeItemFromRoom(Item *);
+	virtual void dropItemIntoRoom(Item *, Hotspot *);
+	virtual Hotspot *getItemScreenSpot(Item *, DisplayElement *) { return 0; }
 
+	virtual GameInteraction *makeInteraction(const tInteractionID);
+	virtual void requestDeleteCurrentInteraction() { _doneWithInteraction = true; }
+
+	virtual uint16 getDateResID() const = 0;
+
+	virtual void showExtraView(uint32);
+	virtual void startExtraLongSequence(const uint32, const uint32, tNotificationFlags, const tInputBits interruptionFilter);
+	
+	void openCroppedMovie(const Common::String &, tCoordType, tCoordType);
+	void loopCroppedMovie(const Common::String &, tCoordType, tCoordType);
+	void closeCroppedMovie();
+	void playCroppedMovieOnce(const Common::String &, tCoordType, tCoordType, const tInputBits interruptionFilter = kFilterNoInput);
+
+	void playMovieSegment(Movie *, TimeValue = 0, TimeValue = 0xffffffff);
+
+	virtual void recallToTSASuccess();
+	virtual void recallToTSAFailure();
+	
+	virtual void pickedUpItem(Item *) {}
+
+	virtual void handleInput(const Input &, const Hotspot *);
 protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
@@ -281,10 +310,33 @@ protected:
 	virtual void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec&);
 
 	virtual void setUpAIRules();
+	virtual void setHotspotFlags(const tHotSpotID, const tHotSpotFlags);
+	virtual void setIsItemTaken(const tItemID);
+
+	virtual void upButton(const Input &);
+	virtual void leftButton(const Input &);
+	virtual void rightButton(const Input &);
+	virtual void downButton(const Input &);
+
+	void initOnePicture(Picture *, const Common::String &, tDisplayOrder, tCoordType, tCoordType, bool);
+	void initOneMovie(Movie *, const Common::String &, tDisplayOrder, tCoordType, tCoordType, bool);
+
+	void reinstateMonocleInterface();
 
 	virtual void newInteraction(const tInteractionID);
+	virtual void useIdleTime();
 	virtual void bumpIntoWall();
 	virtual void zoomUpOrBump();
+
+	void scheduleEvent(const TimeValue, const TimeScale, const uint32);
+	void cancelEvent();
+	virtual void timerExpired(const uint32) {}
+	bool isEventTimerRunning() { return _eventTimer.isFuseLit(); }
+	uint32 getTimerEvent() { return _timerEvent; }
+
+	void pauseTimer();
+	void resumeTimer();
+	bool timerPaused();
 
 	// Navigation Data
 	DoorTable _doorTable;

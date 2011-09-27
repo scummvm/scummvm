@@ -728,6 +728,14 @@ static const tDirectionConstant kSouth = 1;
 static const tDirectionConstant kEast = 2;
 static const tDirectionConstant kWest = 3;
 
+/////////////////////////////////////////////
+//
+//	Mode constants.
+
+static const tGameMode kModeInventoryPick = kLastGameShellMode + 1;
+static const tGameMode kModeBiochipPick = kModeInventoryPick + 1;
+static const tGameMode kModeInfoScreen = kModeBiochipPick + 1;
+
 // TODO: Remove me
 const tRoomID kTSA37 = 42;
 const tRoomID kTinyTSA37 = 0;
