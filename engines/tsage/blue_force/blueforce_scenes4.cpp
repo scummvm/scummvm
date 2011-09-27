@@ -1130,6 +1130,185 @@ void Scene415::showGunAndWig() {
 	BF_GLOBALS._sceneItems.push_front(&_gunAndWig);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 440 - Outside Alleycat Bowl
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene440::Doorway::startAction(CursorType action, Event &event) {
+	Scene440 *scene = (Scene440 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(440, 1);
+		return true;
+	case CURSOR_USE:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 4400;
+		scene->setAction(&scene->_sequenceManager, scene, 4400, &BF_GLOBALS._player, this, &scene->_lyle, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene440::Vechile::startAction(CursorType action, Event &event) {
+	Scene440 *scene = (Scene440 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		if (BF_GLOBALS.getFlag(fWithLyle)) {
+			SceneItem::display2(440, 3);
+		} else {
+			SceneItem::display2(440, 2);
+		}
+		return true;
+	case CURSOR_USE:
+		if (BF_GLOBALS.getFlag(fWithLyle)) {
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 4403;
+			scene->setAction(&scene->_sequenceManager, scene, 4403, &BF_GLOBALS._player, &scene->_lyle, NULL);
+		} else {
+			BF_GLOBALS._sceneManager.changeScene(60);
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene440::Lyle::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(440, 4);
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(440, 5);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene440::Item1::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(440, 0);
+		return true;
+	default:
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene440::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(440);
+	setZoomPercents(75, 60, 120, 100);
+	BF_GLOBALS._sound1.fadeSound(33);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(303);
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.changeZoom(-1);
+	BF_GLOBALS._player.disableControl();
+	BF_GLOBALS._player.setPosition(Common::Point(203, 113));
+
+	_vechile.postInit();
+
+	_lyle.postInit();
+	_lyle.setVisage(835);
+	_lyle.animate(ANIM_MODE_1, NULL);
+	_lyle.setObjectWrapper(new SceneObjectWrapper());
+	_lyle.setPosition(Common::Point(-40, -10));
+	_lyle.changeZoom(-1);
+	_lyle.hide();
+	BF_GLOBALS._sceneItems.push_back(&_lyle);
+
+	if (BF_GLOBALS.getFlag(fWithLyle)) {
+		_vechile.setVisage(444);
+		_vechile.setFrame(2);
+		_vechile.setPosition(Common::Point(147, 128));
+		_vechile.fixPriority(114);
+
+		BF_GLOBALS._player.setVisage(303);
+		BF_GLOBALS._player.setPosition(Common::Point(187, 104));
+		
+		_lyle.setPosition(Common::Point(135, 128));
+		_lyle.show();
+
+		BF_GLOBALS._walkRegions.proc1(12);
+		BF_GLOBALS._walkRegions.proc1(13);
+	} else {
+		_vechile.setPosition(Common::Point(169, 121));
+		_vechile.fixPriority(117);
+
+		if (BF_GLOBALS.getFlag(onDuty)) {
+			_vechile.setVisage(440);
+			_vechile.setStrip(1);
+
+			BF_GLOBALS._player.setVisage(304);
+			BF_GLOBALS._player.setStrip(3);
+		} else {
+			_vechile.setVisage(580);
+			_vechile.setStrip(2);
+			_vechile.setFrame(3);
+			
+			BF_GLOBALS._player.setVisage(303);
+		}
+	}
+
+	BF_GLOBALS._sceneItems.push_back(&_vechile);
+	BF_GLOBALS._walkRegions.proc1(11);
+
+	_doorway.postInit();
+	_doorway.setVisage(440);
+	_doorway.setStrip(5);
+	_doorway.setPosition(Common::Point(198, 91));
+	_doorway.fixPriority(80);
+	BF_GLOBALS._sceneItems.push_back(&_doorway);
+
+	if (BF_GLOBALS._sceneManager._previousScene == 450) {
+		_lyle.setPosition(Common::Point(143, 93));
+		_lyle.setStrip(5);
+		_lyle.fixPriority(90);
+		
+		_doorway.setFrame(_doorway.getFrameCount());
+		_sceneMode = 4401;
+		setAction(&_sequenceManager, this, 4401, &BF_GLOBALS._player, &_doorway, NULL);
+	} else if (BF_GLOBALS.getFlag(fWithLyle)) {
+		_sceneMode = 4402;
+		setAction(&_sequenceManager, this, 4402, &_lyle, NULL);
+	} else {
+		BF_GLOBALS._player.enableControl();
+	}
+
+	_item1.setBounds(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y - 1));
+	BF_GLOBALS._sceneItems.push_back(&_item1);
+}
+
+void Scene440::signal() {
+	switch (_sceneMode) {
+	case 4400:
+		BF_GLOBALS._sceneManager.changeScene(450);
+		break;
+	case 4401:
+		BF_GLOBALS._player.fixPriority(-1);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 4402:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 4403:
+		BF_GLOBALS._sceneManager.changeScene(60);
+		break;
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

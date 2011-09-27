@@ -132,6 +132,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Searching Truck
 		return new Scene415();
 	case 440:
+		// Outside Alleycat Bowl
+		return new Scene440();
 	case 450:
 		error("Scene group 4 not implemented");
 	case 550:

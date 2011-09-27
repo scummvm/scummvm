@@ -180,6 +180,38 @@ public:
 	virtual void dispatch();
 };
 
+class Scene440: public SceneExt {
+	/* Objects */
+	class Doorway: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Vechile: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	Doorway _doorway;
+	Vechile _vechile;
+	Lyle _lyle;
+	Item1 _item1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
