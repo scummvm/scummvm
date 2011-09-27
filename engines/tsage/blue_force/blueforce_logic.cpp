@@ -129,6 +129,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Traffic Stop Gang Members
 		return new Scene410();
 	case 415:
+		// Searching Truck
+		return new Scene415();
 	case 440:
 	case 450:
 		error("Scene group 4 not implemented");
@@ -560,7 +562,7 @@ void FocusObject::postInit(SceneObjectList *OwnerList) {
 	_v92 = 1;
 
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	scene->_eventHandler = this;
+	scene->_focusObject = this;
 	BF_GLOBALS._sceneItems.push_front(this);
 }
 
@@ -574,8 +576,8 @@ void FocusObject::remove() {
 	BF_GLOBALS._sceneItems.remove(this);
 
 	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-	if (scene->_eventHandler == this)
-		scene->_eventHandler = NULL;
+	if (scene->_focusObject == this)
+		scene->_focusObject = NULL;
 
 	BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
 	NamedObject::remove();
@@ -584,20 +586,27 @@ void FocusObject::remove() {
 void FocusObject::process(Event &event) {
 	if (BF_GLOBALS._player._enabled) {
 		if (_bounds.contains(event.mousePos)) {
+			// Reset the cursor back to normal
 			BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
+
 			if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
 					(event.btnState == 3)) {
 				BF_GLOBALS._events.setCursor(CURSOR_USE);
 				event.handled = true;
 			}
 		} else if (event.mousePos.y < 168) {
+			// Change the cursor to an 'Exit' image
 			BF_GLOBALS._events.setCursor(_img);
 			if (event.eventType == EVENT_BUTTON_DOWN) {
+				// Remove the object from display
 				event.handled = true;
 				remove();
 			}
 		}
 	}
+
+	if (_action)
+		_action->process(event);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -610,7 +619,7 @@ SceneExt::SceneExt(): Scene() {
 	_savedPlayerEnabled = false;
 	_savedUiEnabled = false;
 	_savedCanWalk = false;
-	_eventHandler = NULL;
+	_focusObject = NULL;
 	_cursorVisage.setVisage(1, 8);
 }
 
@@ -830,6 +839,10 @@ void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
 }
 
 void SceneHandlerExt::process(Event &event) {
+	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+	if (scene && scene->_focusObject)
+		scene->_focusObject->process(event);
+
 	if (BF_GLOBALS._uiElements._active) {
 		BF_GLOBALS._uiElements.process(event);
 		if (event.handled)

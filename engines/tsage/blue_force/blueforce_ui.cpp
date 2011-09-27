@@ -335,7 +335,7 @@ void UIElements::process(Event &event) {
 			_cursorChanged = false;
 
 			SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
-			if (scene->_eventHandler) {
+			if (scene->_focusObject) {
 				GfxSurface surface = _cursorVisage.getFrame(7);
 				BF_GLOBALS._events.setCursor(surface);
 			}

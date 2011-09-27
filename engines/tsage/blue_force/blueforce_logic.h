@@ -181,7 +181,7 @@ public:
 	GfxSurface _img;
 
 	FocusObject();
-	virtual void postInit(SceneObjectList *OwnerList);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void process(Event &event);
@@ -202,7 +202,7 @@ public:
 	bool _savedCanWalk;
 	int _field37A;
 
-	EventHandler *_eventHandler;
+	FocusObject *_focusObject;
 	Visage _cursorVisage;
 
 	Rect _v51C34;

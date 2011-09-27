@@ -523,7 +523,7 @@ void Scene300::signal() {
 void Scene300::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_item14.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NE);
@@ -1293,7 +1293,7 @@ void Scene315::signal() {
 void Scene315::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_swExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
@@ -2137,7 +2137,7 @@ void Scene340::process(Event &event) {
 	if (!event.handled) {
 		SceneExt::process(event);
 
-		if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 			// Check if the cursor is on an exit
 			if (_westExit.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
@@ -2434,7 +2434,7 @@ void Scene342::process(Event &event) {
 	if (!event.handled) {
 		SceneExt::process(event);
 
-		if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 			// Check if the cursor is on an exit
 			if (_westExit.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
@@ -2792,7 +2792,7 @@ void Scene350::process(Event &event) {
 	if (!event.handled) {
 		SceneExt::process(event);
 
-		if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 			// Check if the cursor is on an exit
 			if (_swExit.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
@@ -3989,7 +3989,7 @@ void Scene355::signal() {
 void Scene355::process(Event &event) {
 	if (BF_GLOBALS._dayNumber == 5) {
 		// Handling for day 5
-		if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 			// Check if the cursor is on an exit
 			if (_item12.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NW);
@@ -4047,7 +4047,7 @@ void Scene355::process(Event &event) {
 		}
 	} else {
 		// All other days
-		if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 			// Check if the cursor is on an exit
 			if (_item2.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(!_modeFlag ? EXITFRAME_SW : EXITFRAME_NE);
@@ -5009,7 +5009,7 @@ void Scene370::signal() {
 void Scene370::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
@@ -5471,7 +5471,7 @@ void Scene385::signal() {
 void Scene385::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);

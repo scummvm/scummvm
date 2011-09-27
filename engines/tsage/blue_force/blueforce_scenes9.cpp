@@ -687,7 +687,7 @@ void Scene900::signal() {
 void Scene900::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		if (_item4.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
 			BF_GLOBALS._events.setCursor(surface);
@@ -870,7 +870,7 @@ void Scene920::signal() {
 }
 void Scene920::process(Event &event) {
 	SceneExt::process(event);
-	if (BF_GLOBALS._player._enabled && !_eventHandler && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		if (_exitN.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
 			BF_GLOBALS._events.setCursor(surface);
