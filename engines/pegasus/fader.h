@@ -89,15 +89,12 @@ public:
 
 	void getCurrentFaderMove(FaderMoveSpec &spec) { spec = _currentFaderMove; }
 
-	virtual void checkCallBacks();
-
 protected:
 	bool initFaderMove(const FaderMoveSpec &);
 	virtual void timeChanged(const TimeValue);
 	
 	uint32 _currentValue;
 	FaderMoveSpec _currentFaderMove;
-	bool _syncMode;
 };
 
 class FaderAnimation : public DisplayElement, public Fader {

@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/fader.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/sound.h"
 #include "pegasus/util.h"
 
@@ -32,7 +33,6 @@ namespace Pegasus {
 Fader::Fader() {
 	_currentValue = 0;
 	_currentFaderMove._numKnots = 0;
-	_syncMode = false;
 }
 
 void Fader::setFaderValue(const uint32 newValue) {
@@ -86,14 +86,22 @@ void Fader::startFader(const FaderMoveSpec &spec) {
 }
 
 void Fader::startFaderSync(const FaderMoveSpec &spec) {
-	if (initFaderMove(spec)) {
-		_syncMode = true;
-	
+	if (initFaderMove(spec)) {	
 		setFlags(0);
 		setScale(spec._faderScale);
 		setSegment(spec._knots[0].knotTime, spec._knots[spec._numKnots - 1].knotTime);
 		setTime(spec._knots[0].knotTime);
-		start();		
+		start();
+
+		while (isFading()) {
+			((PegasusEngine *)g_engine)->checkCallBacks();
+			useIdleTime();
+		}
+
+		// Once more, for good measure, to make sure that there are no boundary
+		// condition problems.
+		useIdleTime();
+		stopFader();
 	}
 }
 
@@ -137,18 +145,6 @@ void Fader::timeChanged(const TimeValue newTime) {
 
 		if (newValue != _currentValue)
 			setFaderValue(newValue);
-	}
-}
-
-void Fader::checkCallBacks() {
-	IdlerTimeBase::checkCallBacks();
-
-	if (_syncMode && !isRunning()) {
-		// Once more, for good measure, to make sure that there are no boundary
-		// condition problems.
-		useIdleTime();
-		stopFader();
-		_syncMode = false;
 	}
 }
 
