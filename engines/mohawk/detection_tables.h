@@ -700,6 +700,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// From afholman in bug #3309306
+	{
+		{
+			"lbsampler",
+			"v3",
+			AD_ENTRY1("outline", "8397cea6bed1ff90029f7602ef37684d"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"Living Books Sampler"
+	},
+
 	{
 		{
 			"maggiesfa",
@@ -1221,7 +1237,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
@@ -1614,7 +1630,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("Outline", "3b793adf2b303722e0fb6c632f94e1fb"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
