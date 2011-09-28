@@ -228,6 +228,7 @@ FrameSequence::FrameSequence(const tDisplayElementID id) : IdlerAnimation(id) {
 	_duration = 0;
 	_currentFrameNum = 0;
 	_resFork = new Common::MacResManager();
+	_numFrames = 0;
 }
 
 FrameSequence::~FrameSequence() {
