@@ -132,6 +132,110 @@ void Scene600::signal() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 620 - Hospital cut-scene
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene620::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(999);
+	
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.disableControl();
+	BF_GLOBALS._player.setVisage(621);
+	BF_GLOBALS._player.setPosition(Common::Point(47, 96));
+
+	static const uint32 black = 0;
+	sub15DD6((const byte *)&black, 2, 621, this);
+}
+
+void Scene620::signal() {
+	static const uint32 black = 0;
+
+	switch (_sceneMode++) {
+	case 0:
+	case 3:
+	case 9:
+	case 12:
+		_timer1.set(60, this);
+		break;
+	case 1:
+	case 4:
+	case 7:
+	case 10:
+	case 13:
+	case 16:
+	case 19:
+		addFader((const byte *)&black, 2, this);	
+		break;
+	case 2:
+		BF_GLOBALS._player.remove();
+		_object1.postInit();
+		_object1.setVisage(622);
+		_object1.setPosition(Common::Point(101, 41));
+		addFader((const byte *)&black, 2, this);	
+		break;
+	case 5:
+		_object1.remove();
+
+		_object2.postInit();
+		_object2.setVisage(623);
+		_object2.setPosition(Common::Point(216, 4));
+		sub15DD6((const byte *)&black, 2, 623, this);
+		break;
+	case 6:
+		_object2.animate(ANIM_MODE_5, this);
+		break;
+	case 8:
+		_object2.remove();
+
+		_object3.postInit();
+		_object3.setVisage(624);
+		_object3.setFrame(1);
+		_object3.setPosition(Common::Point(28, 88));
+		sub15DD6((const byte *)&black, 2, 624, this);
+		break;
+	case 11:
+		_object3.remove();
+
+		_object4.postInit();
+		_object4.setVisage(625);
+		_object4.setPosition(Common::Point(168, 8));
+		sub15DD6((const byte *)&black, 2, 625, this);
+		break;
+	case 14:
+		_object4.remove();
+
+		_object5.postInit();
+		_object5.setVisage(626);
+		_object5.setPosition(Common::Point(249, 183));
+		sub15DD6((const byte *)&black, 2, 626, this);
+		break;
+	case 15:
+		_object5.animate(ANIM_MODE_5, this);
+		break;
+	case 17:
+		_object5.remove();
+
+		_object6.postInit();
+		_object6.setVisage(627);
+		_object6.setPosition(Common::Point(65, 24));
+		sub15DD6((const byte *)&black, 2, 627, this);
+		break;
+	case 18:
+		_object6.animate(ANIM_MODE_5, this);
+		break;
+	case 20:
+		_object6.remove();
+		BF_GLOBALS._bookmark = bArrestedDrunk;
+		BF_GLOBALS._v4CEB6 = 0;
+		BF_GLOBALS._dayNumber = 3;
+		BF_GLOBALS._sceneManager.changeScene(271);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 666 - Death Scene
  *
  *--------------------------------------------------------------------------*/

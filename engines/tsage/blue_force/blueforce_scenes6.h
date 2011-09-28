@@ -57,6 +57,17 @@ public:
 	virtual void signal();
 };
 
+class Scene620 : public PalettedScene {
+public:
+	SequenceManager _sequenceManager;
+	Timer _timer1;
+	NamedObject _object1, _object2, _object3;
+	NamedObject _object4, _object5, _object6;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene666 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {

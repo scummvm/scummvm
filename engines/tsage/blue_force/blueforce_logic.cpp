@@ -147,7 +147,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Crash cut-scene
 		return new Scene600();
 	case 620:
-		error("Scene group 6 not implemented");
+		// Hospital cut-scene
+		return new Scene620();
 	case 666:
 		// Death scene
 		return new Scene666();
