@@ -46,11 +46,11 @@ MODULE_OBJS = \
 	neighborhood/extra.o \
 	neighborhood/hotspotinfo.o \
 	neighborhood/neighborhood.o \
-	neighborhood/prehistoric.o \
 	neighborhood/spot.o \
 	neighborhood/turn.o \
 	neighborhood/view.o \
-	neighborhood/zoom.o
+	neighborhood/zoom.o \
+	neighborhood/prehistoric/prehistoric.o
 
 
 # This module can be built as a plugin

@@ -31,7 +31,7 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/ai/ai_condition.h"
 #include "pegasus/ai/ai_rule.h"
-#include "pegasus/neighborhood/prehistoric.h"
+#include "pegasus/neighborhood/prehistoric/prehistoric.h"
 
 namespace Pegasus {
 
