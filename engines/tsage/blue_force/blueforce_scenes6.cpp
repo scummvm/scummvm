@@ -368,6 +368,140 @@ void Scene666::signal() {
 	_text.show();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 690 - Decking
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene690::Object1::startAction(CursorType action, Event &event) {
+	Scene690 *scene = (Scene690 *)BF_GLOBALS._sceneManager._scene;
+
+	if ((action == CURSOR_USE) && (scene->_object2._strip == 1)) {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._walkRegions.proc2(1);
+		BF_GLOBALS._walkRegions.proc2(6);
+		scene->_sceneMode = 6901;
+		scene->setAction(&scene->_sequenceManager, scene, 6901, &BF_GLOBALS._player,
+			&scene->_object2, &scene->_object1, &scene->_object4, &scene->_object5, NULL);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene690::Object2::startAction(CursorType action, Event &event) {
+	Scene690 *scene = (Scene690 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_object2._strip == 3) {
+			scene->_object6.postInit();
+			scene->_object6.hide();
+			scene->_object6.fixPriority(1);
+			scene->_object6.setDetails(690, 21, 17, 23, 1, NULL);
+
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 6902;
+			scene->setAction(&scene->_sequenceManager, scene, 6902, &BF_GLOBALS._player,
+				&scene->_object2, &scene->_object6, NULL);
+			return true;
+		}
+		break;
+	case CURSOR_TALK:
+		scene->_stripManager.start(6900, &BF_GLOBALS._stripProxy);
+		return true;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene690::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(690);
+	setZoomPercents(125, 80, 140, 100);
+	BF_GLOBALS._sound1.fadeSound(48);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 1;
+
+	_stripManager.addSpeaker(&_jakeSpeaker);
+	
+	_object1.postInit();
+	_object1.setVisage(690);
+	_object1.setStrip2(2);
+	_object1.fixPriority(188);
+	_object1.setPosition(Common::Point(50, 166));
+	_object1.setDetails(690, 4, 17, 26, 1, NULL);
+
+	_object3.postInit();
+	_object3.setVisage(690);
+	_object3.fixPriority(100);
+	_object3.setPosition(Common::Point(238, 125));
+	_object3.setDetails(690, 7, 17, 28, 1, NULL);
+
+	_object2.postInit();
+	_object2.setVisage(694);
+	_object2.setStrip2(3);
+	_object2.fixPriority(125);
+	_object2.setPosition(Common::Point(100, 134));
+	_object2.setDetails(690, 12, -1, 11, 1, NULL);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.disableControl();
+	BF_GLOBALS._player._moveDiff.x = 8;
+
+	_object4.postInit();
+	_object4.setDetails(690, 13, -1, -1, 1, NULL);
+
+	_object5.postInit();
+	_object5.setDetails(690, 14, -1, -1, 1, NULL);
+
+	_sceneMode = 6903;
+	setAction(&_sequenceManager, this, 6903, &BF_GLOBALS._player, &_object3, &_object4, &_object5, NULL);
+
+	_item1.setDetails(Rect(45, 28, 74, 48), 690, 0, 15, 20, 1, NULL);
+	_item2.setDetails(Rect(0, 0, 129, 78), 690, 1, 15, 20, 1, NULL);
+	_item9.setDetails(Rect(4, 26, 35, 143), 690, 29, 17, 22, 1, NULL);
+	_item10.setDetails(Rect(87, 29, 109, 112), 690, 29, 17, 22, 1, NULL);
+	_item11.setDetails(Rect(135, 30, 160, 120), 690, 29, 17, 22, 1, NULL);
+	_item3.setDetails(Rect(37, 89, 84, 117), 690, 2, 16, 21, 1, NULL);
+	_item4.setDetails(Rect(123, 98, 201, 131), 690, 5, -1, -1, 1, NULL);
+	_item7.setDetails(Rect(285, 95, 303, 133), 690, 8, -1, 25, 1, NULL);
+	_item16.setDetails(Rect(166, 35, 210, 116), 690, 32, -1, -1, 1, NULL);
+	_item6.setDetails(Rect(255, 44, 289, 130), 690, 7, 17, 24, 1, NULL);
+	_item8.setDetails(Rect(299, 44, 314, 53), 690, 27, 15, -1, 1, NULL);
+	_item5.setDetails(Rect(130, 20, 319, 135), 690, 6, 16, 28, 1, NULL);
+	_item12.setDetails(1, 690, 10, -1, -1, 1);
+	_item13.setDetails(2, 690, 30, -1, -1, 1);
+	_item14.setDetails(3, 690, 31, -1, -1, 1);
+	_item15.setDetails(4, 690, 9, -1, -1, 1);
+	_item17.setDetails(Rect(143, 0, 182, 14), 690, 33, -1, -1, 1, NULL);
+}
+
+void Scene690::signal() {
+	switch (_sceneMode) {
+	case 6901:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(710);
+		break;
+	case 6902:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 6903:
+		BF_GLOBALS._walkRegions.proc1(1);
+		BF_GLOBALS._walkRegions.proc1(6);
+		BF_GLOBALS._player.enableControl();
+		break;
+	default:
+		break;
+	}
+}
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

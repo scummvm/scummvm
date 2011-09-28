@@ -92,6 +92,31 @@ public:
 	virtual void signal();
 };
 
+
+class Scene690 : public SceneExt {
+	/* Objects */
+	class Object1: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	Object1 _object1;
+	Object2 _object2;
+	NamedObject _object3, _object4, _object5, _object6;
+	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	NamedHotspot _item6, _item7, _item8, _item9, _item10;
+	NamedHotspot _item11, _item12, _item13, _item14, _item15;
+	NamedHotspot _item16, _item17;
+	SpeakerJake _jakeSpeaker;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

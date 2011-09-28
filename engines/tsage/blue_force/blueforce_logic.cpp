@@ -153,7 +153,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Death scene
 		return new Scene666();
 	case 690:
-		error("Scene group 6 not implemented");
+		// Decking
+		return new Scene690();
 	case 710:
 		error("Scene group 7 not implemented");
 	case 800:
