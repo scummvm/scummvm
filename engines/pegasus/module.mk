@@ -29,6 +29,7 @@ MODULE_OBJS = \
 	items/inventory.o \
 	items/inventorypicture.o \
 	items/item.o \
+	items/itemdragger.o \
 	items/itemlist.o \
 	items/biochips/aichip.o \
 	items/biochips/biochipitem.o \

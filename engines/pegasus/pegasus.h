@@ -150,6 +150,7 @@ public:
 	void dragItem(const Input &, Item *, tDragType);
 	tDragType getDragType() const { return (tDragType)0; } // TODO
 	Item *getDraggingItem() const { return 0; } // TODO
+	void dragTerminated(const Input &) {} // TODO
 
 	// Save/Load
 	void makeContinuePoint();
