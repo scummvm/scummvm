@@ -92,8 +92,8 @@ void Movie::redrawMovieWorld() {
 			g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, bounds.left, bounds.top, frame->w, frame->h);
 		} else {
 			// Copy to the surface using _movieBox
-			uint16 width = MIN<int>(MIN<int>(frame->w, _movieBox.width()), _surface->w - _movieBox.left);
-			uint16 height = MIN<int>(MIN<int>(frame->h, _movieBox.height()), _surface->h - _movieBox.top);
+			uint16 width = MIN<int>(frame->w, _movieBox.width());
+			uint16 height = MIN<int>(frame->h, _movieBox.height());
 
 			for (uint16 y = 0; y < height; y++)
 				memcpy((byte *)_surface->getBasePtr(_movieBox.left, _movieBox.top + y), (const byte *)frame->getBasePtr(0, y), width * frame->format.bytesPerPixel);
