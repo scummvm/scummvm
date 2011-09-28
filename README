@@ -884,7 +884,7 @@ Supported platforms include (but are not limited to):
         Dreamcast
         GP2x
         iPhone          (also includes iPod Touch and iPad)
-        Maemo           (Nokia Internet tablets 770, N800, N810, N900)
+        Maemo           (Nokia Internet tablet N810)
         Nintendo 64
         Nintendo DS
         Nintendo GameCube
@@ -2127,12 +2127,11 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
   Maemo:
-    * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
+    * Install Maemo SDK with 4.1.2 rootstrap
     * Install libmad, Tremor, FLAC from source
-    * patch scummvm source (some stuff is currently too dirty to be in git directly):
-      patch -p1 < backends/platform/maemo/scummvm-[currentversion]-maemo.patch
+    * run 'ln -s backends/platform/maemo/debian'
     * update debian/changelog
-    * run 'fakeroot dpkg-buildpackage -b -d'
+    * run 'sb2 dpkg-buildpackage -b'
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
