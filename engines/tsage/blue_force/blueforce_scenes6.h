@@ -39,6 +39,24 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
+class Scene600 : public SceneExt {
+	/* Actions */
+	class Action1 : public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	ASoundExt _sound1;
+	NamedObject _object1, _object2, _object3;
+	BackgroundSceneObject _object4, _object5;
+	BackgroundSceneObject _object6, _object7, _object8;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene666 : public SceneExt {
 	/* Actions */
 	class Action1 : public Action {

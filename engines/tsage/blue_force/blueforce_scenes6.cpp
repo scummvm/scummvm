@@ -31,6 +31,107 @@ namespace TsAGE {
 namespace BlueForce {
 
 /*--------------------------------------------------------------------------
+ * Scene 600 - Crash cut-scene
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene600::Action1::signal() {
+	Scene600 *scene = (Scene600 *)BF_GLOBALS._sceneManager._scene;
+	static const uint32 black = 0;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+	case 1:
+		BF_GLOBALS._sound1.play(57);
+		setDelay(120);
+		break;
+	case 2:
+		scene->_sound1.play(59);
+		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_object1, 
+			&BF_GLOBALS._player, &scene->_object3, NULL);
+		break;
+	case 3:
+		BF_GLOBALS._sound1.play(61);
+		setDelay(180);
+		break;
+	case 4:
+		setDelay(180);
+		break;
+	case 5: {
+		BF_GLOBALS._player.remove();
+		scene->_object1.remove();
+		scene->_object2.remove();
+		scene->_object3.remove();
+
+		for (int percent = 100; percent >= 0; percent -= 5) {
+			BF_GLOBALS._scenePalette.fade((byte *)&black, false, percent);
+			g_system->delayMillis(10);
+		}
+
+		SynchronizedList<SceneObject *>::iterator i;
+		for (i = BF_GLOBALS._sceneObjects->begin(); i != BF_GLOBALS._sceneObjects->end(); ++i) {
+			SceneObject *pObj = *i;
+			pObj->addMover(NULL);
+			pObj->setObjectWrapper(NULL);
+			pObj->animate(ANIM_MODE_NONE, NULL);
+		}
+
+		BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
+		BF_GLOBALS._v51C44 = 1;
+		scene->loadScene(999);
+		setDelay(5);
+		break;
+	}
+	case 6:
+		setDelay(5);
+		break;
+	case 7:
+		BF_GLOBALS._v51C44 = 0;
+		remove();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene600::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(600);
+	setZoomPercents(0, 100, 200, 100);
+	_sceneBounds.moveTo(320, 0);
+
+	_sound1.play(58);
+	_sound1.holdAt(1);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.hide();
+	BF_GLOBALS._player.setPosition(Common::Point(639, 0));
+	BF_GLOBALS._player.disableControl();
+
+	_object3.postInit();
+	_object3.hide();
+	_object2.postInit();
+	
+	_object1.postInit();
+	_object1.setVisage(600);
+	_object1.setStrip(7);
+	_object1.setPosition(Common::Point(417, 82));
+
+	BF_GLOBALS.clearFlag(onDuty);
+	BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 60);
+	BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 60);
+	_sceneMode = 600;
+
+	setAction(&_action1, this);
+}
+
+void Scene600::signal() {
+	BF_GLOBALS._sceneManager.changeScene(620);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 666 - Death Scene
  *
  *--------------------------------------------------------------------------*/

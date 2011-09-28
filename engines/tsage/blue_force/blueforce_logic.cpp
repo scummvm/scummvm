@@ -144,6 +144,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	case 590:
 		error("Scene group 5 not implemented");
 	case 600:
+		// Crash cut-scene
+		return new Scene600();
 	case 620:
 		error("Scene group 6 not implemented");
 	case 666:
