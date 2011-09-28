@@ -150,6 +150,7 @@ protected:
 	FlagsArray<byte, kNumPrehistoricPrivateFlags> _privateFlags;
 
 	Common::String getNavMovieName();
+	Common::String getSoundSpotsName();
 };
 
 } // End of namespace Pegasus

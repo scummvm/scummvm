@@ -131,7 +131,7 @@ void Neighborhood::init() {
 	_navMovie.initFromMovieFile(getNavMovieName());
 	_navMovie.setVolume(_vm->getSoundFXLevel());
 
-	loadSoundSpots();
+	_spotSounds.initFromQuickTime(getSoundSpotsName());
 	_spotSounds.setVolume(_vm->getSoundFXLevel());
 
 	_navMovie.setDisplayOrder(kNavMovieOrder);
@@ -365,40 +365,6 @@ void Neighborhood::createNeighborhoodSpots() {
 	}
 
 	delete hotspotList;
-}
-
-void Neighborhood::loadSoundSpots() {
-	// TODO: Eventually push to the subclasses
-
-	Common::String fileName = "Sounds/";
-
-	switch (getObjectID()) {
-	case kCaldoriaID:
-		fileName += "Caldoria/Caldoria Spots";
-		break;
-	case kFullTSAID:
-	case kFinalTSAID:
-	case kTinyTSAID:
-		fileName += "TSA/TSA Spots";
-		break;
-	case kPrehistoricID:
-		fileName += "Prehistoric/Prehistoric Spots";
-		break;
-	case kMarsID:
-		fileName += "Mars/Mars Spots";
-		break;
-	case kWSCID:
-		fileName += "World Science Center/WSC Spots";
-		break;
-	case kNoradAlphaID:
-		fileName += "Norad/Norad Alpha Spots";
-		break;
-	case kNoradDeltaID:
-		fileName += "Norad/Norad Delta Spots";
-		break;
-	}
-
-	_spotSounds.initFromQuickTime(fileName);
 }
 
 void Neighborhood::popActionQueue() {	

@@ -253,7 +253,7 @@ protected:
 	PegasusEngine *_vm;
 	Common::String _resName;
 	
-	virtual void loadSoundSpots();
+	virtual Common::String getSoundSpotsName() = 0;
 	virtual Common::String getNavMovieName() = 0;
 
 	// Notification function.

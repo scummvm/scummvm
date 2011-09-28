@@ -682,4 +682,8 @@ Common::String Prehistoric::getNavMovieName() {
 	return "Images/Prehistoric/Prehistoric.movie";
 }
 
+Common::String Prehistoric::getSoundSpotsName() {
+	return "Sounds/Prehistoric/Prehistoric Spots";
+}
+
 } // End of namespace Pegasus
