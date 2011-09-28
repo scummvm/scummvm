@@ -523,13 +523,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 
 				if (sector == endSec) {
 					PathNode *n = closedList.back();
-					while (n) {
-						// Don't put the start position in the list, or else
-						// the first angle calculated in updateWalk() will be
-						// meaningless.
-						if (n->pos == _pos) {
-							break;
-						}
+					// Don't put the start position in the list, or else
+					// the first angle calculated in updateWalk() will be
+					// meaningless. The only node without parent is the start
+					// one.
+					while (n->parent) {
 						_path.push_back(n->pos);
 						n = n->parent;
 					}
