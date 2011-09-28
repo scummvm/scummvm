@@ -1335,9 +1335,9 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 		obj->y = z->getY();
 		obj->_prog = _zoneProg;
 
-		// HACK for bug #2969913
+		// WORKAROUND for script bug #2969913
 		// The katana object has the same default z index (kGfxObjGetZ or -100)
-		// as the cripta object (the safe).
+		// as the cripta object (the safe) - a script bug.
 		// Game scripts do not set an explicit z for the katana (as it isn't an
 		// animation), but rather rely on the draw order to draw it over the
 		// safe. In this particular case, the safe is added to the scene after
