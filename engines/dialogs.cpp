@@ -228,7 +228,15 @@ void MainMenuDialog::save() {
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			Common::String buf;
+			#if defined(USE_SAVEGAME_TIMESTAMP)
+			TimeDate curTime;
+			g_system->getTimeAndDate(curTime);
+			curTime.tm_year += 1900; // fixup year
+			curTime.tm_mon++; // fixup month
+			buf = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			#else
 			buf = Common::String::format("Save %d", slot + 1);
+			#endif
 			_engine->saveGameState(slot, buf);
 		} else {
 			_engine->saveGameState(slot, result);
