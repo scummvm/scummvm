@@ -253,7 +253,7 @@ bool Scene410::Item2::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 4103;
 			scene->signal();
 		} else if (scene->_field1FBC != 0) {
-			SceneItem::display(410, 12);
+			SceneItem::display2(410, 12);
 		} else {
 			scene->_sceneMode = 4103;
 			scene->signal();
@@ -1306,6 +1306,351 @@ void Scene440::signal() {
 	case 4403:
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 450 - Inside Alleycat Bowl
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene450::Object1::startAction(CursorType action, Event &event) {
+	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(450, 0);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(450, 1);
+		return true;
+	case CURSOR_TALK:
+	case INV_ID:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 4504;
+		if (_flag) {
+			scene->setAction(&scene->_sequenceManager, scene, 4515, &BF_GLOBALS._player, this, NULL);
+		} else {
+			++_flag;
+			scene->setAction(&scene->_sequenceManager, scene, 4504, &BF_GLOBALS._player, this, NULL);
+		}
+		return true;
+	case INV_FOREST_RAP:
+		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 450);
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._uiElements.addScore(30);
+
+		scene->_sceneMode = 4505;
+		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this, 
+			&scene->_counterDoor, &scene->_object2, NULL);
+		return true;
+	default:
+		return NamedObjectExt::startAction(action, event);
+	}
+}
+
+bool Scene450::Object3::startAction(CursorType action, Event &event) {
+	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(450, 4);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(450, 5);
+		return true;
+	case CURSOR_TALK:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 4502;
+		if (BF_GLOBALS.getFlag(onDuty)) {
+			scene->setAction(&scene->_sequenceManager, scene, 4516, &BF_GLOBALS._player, this, NULL);
+		} else {
+			scene->setAction(&scene->_sequenceManager, scene, 4502, &BF_GLOBALS._player, this, NULL);
+		}
+		return true;
+	case INV_NAPKIN:
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 4509;
+		scene->setAction(&scene->_sequenceManager, scene, 4509, &BF_GLOBALS._player, this, NULL);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene450::Object4::startAction(CursorType action, Event &event) {
+	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(450, 6);
+		return true;
+	case CURSOR_USE:
+		SceneItem::display2(450, 7);
+		return true;
+	case CURSOR_TALK:
+		BF_GLOBALS._player.disableControl();
+		if (BF_GLOBALS.getFlag(takenWeasel) && !BF_GLOBALS.getFlag(gotTrailer450)) {
+			BF_GLOBALS.setFlag(gotTrailer450);
+			scene->_sceneMode = 4517;
+			scene->setAction(&scene->_sequenceManager, scene, 4517, &BF_GLOBALS._player, this, 
+				&scene->_door, NULL);
+		} else {
+			animate(ANIM_MODE_8, 1, NULL);
+
+			if (scene->_field19AC) {
+				scene->_sceneMode = 2;
+				if (scene->_field19AE) {
+					scene->_stripManager.start(4521, scene);
+				} else {
+					scene->_field19AE = 1;
+					scene->_stripManager.start(4512, scene);
+				}
+			} else {
+				scene->_sceneMode = 4506;
+				if (scene->_field19AE) {
+					scene->setAction(&scene->_sequenceManager, scene, 4518, &BF_GLOBALS._player, this, NULL);
+				} else {
+					scene->_sceneMode = 4506;
+					scene->_field19AE = 1;
+					scene->setAction(&scene->_sequenceManager, scene, 4506, &BF_GLOBALS._player, this, NULL);
+				}
+			}
+		}
+		return true;
+	case INV_FOREST_RAP:
+		SceneItem::display2(450, 19);
+		return true;
+	case INV_NAPKIN:
+		animate(ANIM_MODE_8, 1, NULL);
+		BF_GLOBALS._player.disableControl();
+
+		if (BF_GLOBALS.getFlag(showEugeneNapkin)) {
+			SceneItem::display2(450, 16);
+			BF_GLOBALS._player.enableControl();
+		} else {
+			BF_GLOBALS.setFlag(showEugeneNapkin);
+
+			if (!BF_GLOBALS.getFlag(showEugeneID)) {
+				scene->_sceneMode = 4513;
+				scene->setAction(&scene->_sequenceManager, scene, 4513, &BF_GLOBALS._player, this, NULL);
+			} else if (BF_GLOBALS.getFlag(fMgrCallsWeasel)) {
+				SceneItem::display2(450, 16);
+				BF_GLOBALS._player.enableControl();
+			} else {
+				BF_GLOBALS._uiElements.addScore(30);
+				scene->_sceneMode = 4510;
+				BF_INVENTORY.setObjectScene(INV_NAPKIN, 450);
+				scene->setAction(&scene->_sequenceManager, scene, 4510, &BF_GLOBALS._player, this, NULL);
+			}
+		}
+		return true;
+	case INV_ID:
+		if (BF_GLOBALS.getFlag(takenWeasel)) {
+			return startAction(CURSOR_TALK, event);
+		} else {
+			animate(ANIM_MODE_8, 1, NULL);
+			BF_GLOBALS._player.disableControl();
+			
+			if (!BF_GLOBALS.getFlag(showEugeneID))
+				BF_GLOBALS._uiElements.addScore(30);
+			BF_GLOBALS.setFlag(showEugeneID);
+			
+			if ((BF_GLOBALS.getFlag(showRapEugene) || BF_GLOBALS.getFlag(showEugeneNapkin)) &&
+					!BF_GLOBALS.getFlag(fMgrCallsWeasel)) {
+				BF_GLOBALS._uiElements.addScore(30);
+				scene->_sceneMode = 4511;
+				scene->setAction(&scene->_sequenceManager, scene, 4511, &BF_GLOBALS._player, this, NULL);
+			} else {
+				scene->_sceneMode = 4506;
+				scene->setAction(&scene->_sequenceManager, scene, 4512, &BF_GLOBALS._player, this, NULL);
+			}
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene450::Item1::startAction(CursorType action, Event &event) {
+	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
+
+	if (event.eventType == EVENT_BUTTON_DOWN) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 4501;
+		scene->signal();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene450::Scene450(): SceneExt() {
+	_field19AC = _field19AE = 0;
+}
+
+void Scene450::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field19AC);
+	s.syncAsSint16LE(_field19AE);
+}
+
+void Scene450::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(450);
+	setZoomPercents(110, 90, 155, 115);
+	BF_GLOBALS._sound1.fadeSound(13);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_eugeneSpeaker);
+	_stripManager.addSpeaker(&_billySpeaker);
+	_stripManager.addSpeaker(&_weaselSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	_stripManager.addSpeaker(&_lyleHatSpeaker);
+	_stripManager.addSpeaker(&_jakeUniformSpeaker);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 1341 : 129);
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.setPosition(Common::Point(-30, 155));
+	BF_GLOBALS._player.changeZoom(-1);
+	BF_GLOBALS._player.disableControl();
+
+	_door.postInit();
+	_door.setVisage(450);
+	_door.setStrip(2);
+	_door.setPosition(Common::Point(72, 80));
+	_door.setDetails(450, 15, -1, 13, 1, NULL);
+
+	_counterDoor.postInit();
+	_counterDoor.setVisage(450);
+	_counterDoor.setPosition(Common::Point(39, 104));
+	_counterDoor.fixPriority(100);
+	_counterDoor.setDetails(450, 12, -1, 13, 1, NULL);
+
+	if (BF_GLOBALS._dayNumber != 3) {
+		_object3.postInit();
+		_object3.setVisage(463);
+		_object3.setPosition(Common::Point(138, 121));
+		_object3.fixPriority(100);
+		_object3.setFrame(_object3.getFrameCount());
+		BF_GLOBALS._sceneItems.push_back(&_object3);
+	} else if (!BF_GLOBALS.getFlag(fWithLyle) || !BF_GLOBALS.getFlag(fGivenNapkin) ||
+			(BF_INVENTORY.getObjectScene(BF_LAST_INVENT) == 1)) {
+		_object3.postInit();
+		_object3.setVisage(463);
+		_object3.setPosition(Common::Point(138, 121));
+		_object3.fixPriority(100);
+		_object3.setFrame(_object3.getFrameCount());
+		BF_GLOBALS._sceneItems.push_back(&_object3);
+	} else {
+		_object4.postInit();
+		_object4.setVisage(467);
+		_object4.setPosition(Common::Point(138, 121));
+		_object4.changeZoom(-1);
+		BF_GLOBALS._sceneItems.push_back(&_object4);
+
+		if (!BF_GLOBALS.getFlag(takenWeasel)) {
+			_object2.postInit();
+			_object2.setVisage(469);
+			_object2.animate(ANIM_MODE_1, NULL);
+			_object2.setObjectWrapper(new SceneObjectWrapper());
+			_object2.setPosition(Common::Point(-30, 126));
+			ADD_MOVER_NULL(_object2, 27, 126);
+			_object2.changeZoom(-1);
+			_object2.setDetails(450, 2, 18, 3, 1, NULL);
+
+			BF_GLOBALS._walkRegions.proc1(4);
+
+			_object1.postInit();
+			_object1.setVisage(466);
+			_object1.animate(ANIM_MODE_1, NULL);
+			_object1.setObjectWrapper(new SceneObjectWrapper());
+			_object1.setPosition(Common::Point(70, 80));
+			_object1.setStrip(5);
+			_object1.changeZoom(90);
+			_object1.fixPriority(65);
+			_object1._flag = 0;
+			BF_GLOBALS._sceneItems.push_back(&_object1);
+		}
+	}
+
+	_sceneMode = 4500;
+	setAction(&_sequenceManager, this, 4500, &BF_GLOBALS._player, NULL);
+
+	_exit.setDetails(Rect(0, 100, 4, 167), 450, -1, -1, -1, 1, NULL);
+	_counter.setDetails(8, 450, 8, -1, 9, 1);
+	_shelf.setDetails(Rect(114, 10, 179, 77), 450, 10, -1, 11, 1, NULL);
+	_interior.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 450, 14, -1, -1, 1, NULL);
+}
+
+void Scene450::signal() {
+	switch (_sceneMode) {
+	case 450:
+	case 451:
+		BF_GLOBALS._sceneManager.changeScene(440);
+		break;
+	case 4501:
+		if (BF_GLOBALS._sceneObjects->contains(&_object2)) {
+			ADD_MOVER(_object2, -20, 135);
+		} else {
+			ADD_PLAYER_MOVER(0, 160);
+		}
+		break;
+	case 4503:
+		_object1.fixPriority(100);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 4505:
+		BF_GLOBALS.setFlag(takenWeasel);
+		_object1.remove();
+		_object2.remove();
+		BF_GLOBALS._walkRegions.proc2(4);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 4507:
+	case 4510:
+	case 4511:
+		BF_GLOBALS.setFlag(fMgrCallsWeasel);
+		_field19AC = 1;
+		_sceneMode = 4503;
+		setAction(&_sequenceManager, this, 4503, &_object1, &_door, &_object4, NULL);
+		break;
+	case 4508:
+		_object4.remove();
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+		break;
+	case 4517:
+		BF_GLOBALS.setFlag(gotTrailer450);
+		BF_INVENTORY.setObjectScene(BF_LAST_INVENT, 1);
+		_sceneMode = 4508;
+		setAction(&_sequenceManager, this, 4508, &BF_GLOBALS._player, &_object4, &_door, NULL);
+		break;
+	default:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene450::process(Event &event) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
 	}
 }
 

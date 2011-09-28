@@ -212,6 +212,54 @@ public:
 	virtual void signal();
 };
 
+class Scene450: public SceneExt {
+	/* Objects */
+	class Object1: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerEugene _eugeneSpeaker;
+	SpeakerWeasel _weaselSpeaker;
+	SpeakerBilly _billySpeaker;
+	Object1 _object1;
+	NamedObject _object2;
+	Object3 _object3;
+	Object4 _object4;
+	NamedObject _door, _counterDoor;
+	NamedHotspot _exit, _interior, _shelf, _counter;
+	int _field19AC, _field19AE;
+
+	Scene450();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

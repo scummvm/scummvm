@@ -134,7 +134,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Outside Alleycat Bowl
 		return new Scene440();
 	case 450:
-		error("Scene group 4 not implemented");
+		// Inside Alleycat Bowl
+		return new Scene450();
 	case 550:
 	case 551:
 	case 560:
