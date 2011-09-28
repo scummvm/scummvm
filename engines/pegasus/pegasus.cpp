@@ -129,7 +129,7 @@ Common::Error PegasusEngine::run() {
 	allowInput(true);
 
 	// Set up inventories
-	_items.setWeightLimit(0);
+	_items.setWeightLimit(9);
 	_items.setOwnerID(kPlayerID);
 	_biochips.setWeightLimit(8);
 	_biochips.setOwnerID(kPlayerID);
