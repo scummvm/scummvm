@@ -725,7 +725,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Maemo");
-		  add_person("Frantisek Dufka", "fanoush", "");
+		  add_person("Frantisek Dufka", "fanoush", "(retired)");
+		  add_person("Tarek Soliman", "tsoliman", "");
 	  end_section();
 
 	  begin_section("Nintendo 64");
