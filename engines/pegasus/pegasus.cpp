@@ -75,6 +75,9 @@ PegasusEngine::~PegasusEngine() {
 	delete _cursor;
 	delete _continuePoint;
 	delete _gameMenu;
+	delete _neighborhood;
+
+	// NOTE: This must be deleted last!
 	delete _gfx;
 }
 
@@ -1106,6 +1109,20 @@ tInventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
 	g_AIArea->checkMiddleArea();
 
 	return result;
+}
+
+void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
+	delete _neighborhood;
+	_neighborhood = neighborhood;
+
+	if (_neighborhood) {
+		InputHandler::setInputHandler(_neighborhood);
+		_neighborhood->init();
+		_neighborhood->moveNavTo(kNavAreaLeft, kNavAreaTop);
+		g_interface->setDate(_neighborhood->getDateResID());
+	} else {
+		InputHandler::setInputHandler(this);
+	}
 }
 
 } // End of namespace Pegasus

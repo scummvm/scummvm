@@ -219,6 +219,7 @@ private:
 
 	// Neighborhood
 	Neighborhood *_neighborhood;
+	void useNeighborhood(Neighborhood *neighborhood);
 
 	// Sound
 	uint16 _ambientLevel;
