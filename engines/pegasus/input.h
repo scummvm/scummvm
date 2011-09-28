@@ -438,7 +438,7 @@ protected:
 class Tracker : public InputHandler {
 public:
 	Tracker() : InputHandler(0) {}
-	virtual ~Tracker();
+	virtual ~Tracker() {}
 
 	virtual void handleInput(const Input &, const Hotspot *);
 	virtual bool stopTrackingInput(const Input &) { return false; }

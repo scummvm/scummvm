@@ -53,6 +53,7 @@ public:
 	void updateDisplay();
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
+	DisplayElement *findDisplayElement(const tDisplayElementID id);
 
 private:		
 	PegasusEngine *_vm;

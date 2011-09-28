@@ -129,9 +129,6 @@ void SpriteDragger::pinPointInRect(const Common::Rect &r, Common::Point &pt) {
 ItemDragger::ItemDragger(PegasusEngine *owner) : _inventoryDropSpot(kInventoryDropSpotID), _biochipDropSpot(kBiochipDropSpotID),
 		_inventoryHighlight(kInventoryDropHighlightID), _biochipHighlight(kBiochipDropHighlightID) {	
 	_owner = owner;
-	
-	_inventoryHighlight.setBounds(Common::Rect(76, 334, 172, 430));
-	_biochipHighlight.setBounds(Common::Rect(364, 334, 460, 430));
 
 	Common::Rect r(kInventoryDropLeft, kInventoryDropTop, kInventoryDropRight, kInventoryDropBottom);
 	_inventoryDropSpot.setArea(r);
@@ -183,6 +180,11 @@ void ItemDragger::exitHotspot(Hotspot *spot) {
 		_biochipHighlight.hide();
 	else if ((spot->getHotspotFlags() & kDropItemSpotFlag) != 0)
 		_draggingSprite->setCurrentFrameIndex(0);
+}
+
+void ItemDragger::setHighlightBounds() {
+	_inventoryHighlight.setBounds(Common::Rect(76, 334, 172, 430));
+	_biochipHighlight.setBounds(Common::Rect(364, 334, 460, 430));
 }
 
 } // End of namespace Pegasus

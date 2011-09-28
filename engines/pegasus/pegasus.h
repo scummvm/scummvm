@@ -40,6 +40,7 @@
 #include "pegasus/input.h"
 #include "pegasus/notification.h"
 #include "pegasus/items/inventory.h"
+#include "pegasus/items/itemdragger.h"
 #include "pegasus/neighborhood/neighborhood.h"
 
 namespace Video {
@@ -127,12 +128,17 @@ public:
 	bool itemInInventory(tItemID);
 	Inventory *getItemsInventory() { return &_items; }
 	tInventoryResult addItemToInventory(InventoryItem *);
+	void removeAllItemsFromInventory();
+	tInventoryResult removeItemFromInventory(InventoryItem *);
+	uint32 countInventoryItems() { return _items.getNumItems(); }
 
 	// Biochips
 	BiochipItem *getCurrentBiochip();
 	bool itemInBiochips(BiochipItem *);
 	bool itemInBiochips(tItemID);
 	Inventory *getBiochipsInventory() { return &_biochips; }
+	void removeAllItemsFromBiochips();
+	tInventoryResult addItemToBiochips(BiochipItem *);
 
 	// AI
 	Common::String getBriefingMovie();
@@ -148,9 +154,10 @@ public:
 
 	// Dragging
 	void dragItem(const Input &, Item *, tDragType);
-	tDragType getDragType() const { return (tDragType)0; } // TODO
-	Item *getDraggingItem() const { return 0; } // TODO
-	void dragTerminated(const Input &) {} // TODO
+	bool isDragging() const { return _dragType != kDragNoDrag; }
+	tDragType getDragType() const { return _dragType; } // TODO
+	Item *getDraggingItem() const { return _draggingItem; } // TODO
+	void dragTerminated(const Input &);
 
 	// Save/Load
 	void makeContinuePoint();
@@ -172,6 +179,14 @@ protected:
 	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
 
 	void handleInput(const Input &input, const Hotspot *cursorSpot);
+	virtual bool isClickInput(const Input &, const Hotspot *);
+	virtual tInputBits getClickFilter();
+
+	void clickInHotspot(const Input &, const Hotspot *);
+	void activateHotspots(void);
+
+	void updateCursor(const Common::Point, const Hotspot *);
+	bool wantsCursor();
 
 private:
 	// Console
@@ -191,6 +206,8 @@ private:
 	void createItem(tItemID itemID, tNeighborhoodID neighborhoodID, tRoomID roomID, tDirectionConstant direction);
 	Inventory _items;
 	Inventory _biochips;
+	tItemID _currentItemID;
+	tItemID _currentBiochipID;
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
@@ -204,10 +221,12 @@ private:
 
 	// Misc.
 	Hotspot _returnHotspot;
+	InputHandler *_savedHandler;
 	void showLoadDialog();
 	void showTempScreen(const Common::String &fileName);
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
+	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
 
 	// Menu
 	GameMenu *_gameMenu;
@@ -224,6 +243,10 @@ private:
 	// Neighborhood
 	Neighborhood *_neighborhood;
 	void useNeighborhood(Neighborhood *neighborhood);
+	void performJump(const tNeighborhoodID start);
+	void startNewGame();
+	void startNeighborhood();
+	void makeNeighborhood(tNeighborhoodID, Neighborhood *&);
 
 	// Sound
 	uint16 _ambientLevel;
@@ -231,8 +254,31 @@ private:
 
 	// Game Mode
 	tGameMode _gameMode;
+	bool _switchModesSync;
 	void switchGameMode(const tGameMode, const tGameMode);
 	bool canSwitchGameMode(const tGameMode, const tGameMode);
+
+	// Dragging
+	ItemDragger _itemDragger;
+	Item *_draggingItem;
+	Sprite *_draggingSprite;
+	tDragType _dragType;
+
+	// Interface
+	void toggleInventoryDisplay();
+	void toggleBiochipDisplay();
+	void raiseInventoryDrawer();
+	void raiseBiochipDrawer();
+	void lowerInventoryDrawer();
+	void lowerBiochipDrawer();
+	void raiseInventoryDrawerSync();
+	void raiseBiochipDrawerSync();
+	void lowerInventoryDrawerSync();
+	void lowerBiochipDrawerSync();
+	void showInfoScreen();
+	void hideInfoScreen();
+	void toggleInfo();
+	Movie _bigInfoMovie, _smallInfoMovie;
 };
 
 } // End of namespace Pegasus

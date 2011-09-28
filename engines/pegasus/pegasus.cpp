@@ -38,6 +38,7 @@
 
 #include "pegasus/console.h"
 #include "pegasus/cursor.h"
+#include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/interface.h"
 #include "pegasus/menu.h"
@@ -57,11 +58,13 @@
 #include "pegasus/items/inventory/inventoryitem.h"
 #include "pegasus/items/inventory/keycard.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/neighborhood/prehistoric/prehistoric.h"
 
 namespace Pegasus {
 
 PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc) : Engine(syst), InputHandler(0), _gameDescription(gamedesc),
-		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID) {
+		_shellNotification(kJMPDCShellNotificationID, this), _returnHotspot(kInfoReturnSpotID), _itemDragger(this), _bigInfoMovie(kNoDisplayElement),
+		_smallInfoMovie(kNoDisplayElement) {
 	_continuePoint = 0;
 	_saveAllowed = _loadAllowed = true;
 	_gameMenu = 0;
@@ -70,6 +73,9 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_FXLevel = 0x80;
 	_ambientLevel = 0x80;
 	_gameMode = kNoMode;
+	_switchModesSync = false;
+	_draggingItem = 0;
+	_dragType = kDragNoDrag;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -99,6 +105,9 @@ Common::Error PegasusEngine::run() {
 	// Initialize cursors
 	_cursor->addCursorFrames(0x80); // Main
 	_cursor->addCursorFrames(900);  // Mars Shuttle
+
+	// Initialize the item dragger bounds
+	_itemDragger.setHighlightBounds();
 
 	if (!isDemo() && !detectOpeningClosingDirectory()) {
 		Common::String message = "Missing intro directory. ";
@@ -504,6 +513,10 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 		case kPlayerDiedFlag:
 			doDeath();
 			break;
+		case kNeedNewJumpFlag:
+			performJump(GameState.getNextNeighborhood());
+			startNeighborhood();
+			break;
 		default:
 			break;
 		}
@@ -661,7 +674,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 
 void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	if (!checkGameMenu())
-		; // TODO: Other input
+		shellGameInput(input, cursorSpot);
 
 	// Handle the console here
 	if (input.isConsoleRequested()) {
@@ -1043,10 +1056,6 @@ void PegasusEngine::throwAwayEverything() {
 	// TODO
 }
 
-void PegasusEngine::dragItem(const Input &, Item *, tDragType) {
-	// TODO
-}
-
 void PegasusEngine::processShell() {
 	checkCallBacks();
 	checkNotifications();
@@ -1069,7 +1078,38 @@ void PegasusEngine::setGameMode(const tGameMode newMode) {
 }
 
 void PegasusEngine::switchGameMode(const tGameMode newMode, const tGameMode oldMode) {
-	// TODO
+	// Start raising panels before lowering panels, to give the activating panel time
+	// to set itself up without cutting into the lowering panel's animation time.
+	
+	if (_switchModesSync) {
+		if (newMode == kModeInventoryPick)
+			raiseInventoryDrawerSync();
+		else if (newMode == kModeBiochipPick)
+			raiseBiochipDrawerSync();
+		else if (newMode == kModeInfoScreen)
+			showInfoScreen();
+		
+		if (oldMode == kModeInventoryPick)
+			lowerInventoryDrawerSync();
+		else if (oldMode == kModeBiochipPick)
+			lowerBiochipDrawerSync();
+		else if (oldMode == kModeInfoScreen)
+			hideInfoScreen();
+	} else {
+		if (newMode == kModeInventoryPick)
+			raiseInventoryDrawer();
+		else if (newMode == kModeBiochipPick)
+			raiseBiochipDrawer();
+		else if (newMode == kModeInfoScreen)
+			showInfoScreen();
+		
+		if (oldMode == kModeInventoryPick)
+			lowerInventoryDrawer();
+		else if (oldMode == kModeBiochipPick)
+			lowerBiochipDrawer();
+		else if (oldMode == kModeInfoScreen)
+			hideInfoScreen();
+	}
 }
 
 bool PegasusEngine::canSwitchGameMode(const tGameMode newMode, const tGameMode oldMode) {
@@ -1126,6 +1166,467 @@ void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
 	} else {
 		InputHandler::setInputHandler(this);
 	}
+}
+
+void PegasusEngine::performJump(const tNeighborhoodID neighborhoodID) {
+	if (neighborhoodID == kNoradSubChaseID)
+		error("TODO: Sub chase");
+
+	if (_neighborhood)
+		useNeighborhood(0);
+
+	Neighborhood *neighborhood;
+	makeNeighborhood(neighborhoodID, neighborhood);
+	useNeighborhood(neighborhood);
+}
+
+void PegasusEngine::startNeighborhood() {
+	if (_currentItemID != kNoItemID)
+		g_interface->setCurrentInventoryItemID(_currentItemID);
+	
+	if (_currentBiochipID != kNoItemID)
+		g_interface->setCurrentBiochipID(_currentBiochipID);
+	
+	setGameMode(kModeNavigation);
+	
+	if (_neighborhood)
+		_neighborhood->start();
+}
+
+void PegasusEngine::startNewGame() {
+	// WORKAROUND: The original game ignored the menu difficulty
+	// setting. We're going to pass it through here so that
+	// the menu actually makes sense now.
+	bool isWalkthrough = GameState.getWalkthroughMode();
+	GameState.resetGameState();
+	GameState.setWalkthroughMode(isWalkthrough);
+
+	// TODO: Enable erase
+	// TODO: Fade out
+	useMenu(0);
+	_gfx->updateDisplay();
+
+	createInterface();
+
+	if (isDemo()) {
+		setLastEnergyValue(kFullEnergy);
+		jumpToNewEnvironment(kPrehistoricID, kPrehistoric02, kSouth);
+		GameState.setPrehistoricSeenTimeStream(false);
+		GameState.setPrehistoricSeenFlyer1(false);
+		GameState.setPrehistoricSeenFlyer2(false);
+		GameState.setPrehistoricSeenBridgeZoom(false);
+		GameState.setPrehistoricBreakerThrown(false);
+	} else {
+		jumpToNewEnvironment(kCaldoriaID, kCaldoria00, kEast);
+	}
+
+	removeAllItemsFromInventory();
+	removeAllItemsFromBiochips();
+
+	BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID(kAIBiochip);
+	addItemToBiochips(biochip);
+
+	if (isDemo()) {
+		biochip = (BiochipItem *)g_allItems.findItemByID(kPegasusBiochip);
+		addItemToBiochips(biochip);
+		biochip = (BiochipItem *)g_allItems.findItemByID(kMapBiochip);
+		addItemToBiochips(biochip);
+		InventoryItem *item = (InventoryItem *)g_allItems.findItemByID(kKeyCard);
+		addItemToInventory(item);
+		item = (InventoryItem *)g_allItems.findItemByID(kJourneymanKey);
+		addItemToInventory(item);
+		_currentItemID = kJourneymanKey;
+	} else {
+		_currentItemID = kNoItemID;
+	}
+
+	_currentBiochipID = kAIBiochip;
+
+	// Clear jump notification flags and just perform the jump...
+	_shellNotification.setNotificationFlags(0, kNeedNewJumpFlag);
+	
+	performJump(GameState.getNextNeighborhood());
+	
+	startNeighborhood();
+}
+
+void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhood *&neighborhood) {
+	// TODO: CD check
+	
+	switch (neighborhoodID) {
+	case kPrehistoricID:
+		neighborhood = new Prehistoric(g_AIArea, this);
+		break;
+	}
+}
+
+bool PegasusEngine::wantsCursor() {
+	return _gameMenu == 0;
+}
+
+void PegasusEngine::updateCursor(const Common::Point, const Hotspot *cursorSpot) {	
+	if (_itemDragger.isTracking()) {
+		_cursor->setCurrentFrameIndex(5);
+	} else {
+		if (!cursorSpot) {
+			_cursor->setCurrentFrameIndex(0);
+		} else {
+			uint32 id = cursorSpot->getObjectID();
+
+			switch (id) {
+			case kCurrentItemSpotID:
+				if (countInventoryItems() != 0)
+					_cursor->setCurrentFrameIndex(4);
+				else
+					_cursor->setCurrentFrameIndex(0);
+				break;
+			default:
+				tHotSpotFlags flags = cursorSpot->getHotspotFlags();
+
+				if (flags & kZoomInSpotFlag)
+					_cursor->setCurrentFrameIndex(1);
+				else if (flags & kZoomOutSpotFlag)
+					_cursor->setCurrentFrameIndex(2);
+				else if (flags & (kPickUpItemSpotFlag | kPickUpBiochipSpotFlag))
+					_cursor->setCurrentFrameIndex(4);
+				else if (flags & kJMPClickingSpotFlags)
+					_cursor->setCurrentFrameIndex(3);
+				else
+					_cursor->setCurrentFrameIndex(0);
+			}
+		}
+	}
+}
+
+void PegasusEngine::toggleInventoryDisplay() {
+	if (_gameMode == kModeInventoryPick)
+		setGameMode(kModeNavigation);
+	else
+		setGameMode(kModeInventoryPick);
+}
+
+void PegasusEngine::toggleBiochipDisplay() {
+	if (_gameMode == kModeBiochipPick)
+		setGameMode(kModeNavigation);
+	else
+		setGameMode(kModeBiochipPick);
+}
+
+void PegasusEngine::showInfoScreen() {	
+	if (g_neighborhood) {
+		// Break the input handler chain...
+		_savedHandler = InputHandler::getCurrentHandler();
+		InputHandler::setInputHandler(this);
+		
+		Picture *pushPicture = ((Neighborhood *)g_neighborhood)->getTurnPushPicture();
+		
+		_bigInfoMovie.shareSurface(pushPicture);
+		_smallInfoMovie.shareSurface(pushPicture);
+
+		g_neighborhood->hideNav();
+
+		_smallInfoMovie.initFromMovieFile("Images/Items/Info Right Movie");
+		_smallInfoMovie.setDisplayOrder(kInfoSpinOrder);
+		_smallInfoMovie.moveElementTo(kNavAreaLeft + 304, kNavAreaTop + 8);
+		_smallInfoMovie.moveMovieBoxTo(304, 8);
+		_smallInfoMovie.startDisplaying();
+		_smallInfoMovie.show();
+
+		TimeValue startTime, stopTime;
+		g_AIArea->getSmallInfoSegment(startTime, stopTime);
+		_smallInfoMovie.setSegment(startTime, stopTime);
+		_smallInfoMovie.setFlags(kLoopTimeBase);
+
+		_bigInfoMovie.initFromMovieFile("Images/Items/Info Left Movie");
+		_bigInfoMovie.setDisplayOrder(kInfoBackgroundOrder);
+		_bigInfoMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+		_bigInfoMovie.startDisplaying();
+		_bigInfoMovie.show();
+		_bigInfoMovie.setTime(g_AIArea->getBigInfoTime());
+
+		_bigInfoMovie.redrawMovieWorld();
+		_smallInfoMovie.redrawMovieWorld();
+		_smallInfoMovie.start();
+	}
+}
+
+void PegasusEngine::hideInfoScreen() {
+	if (g_neighborhood) {
+		InputHandler::setInputHandler(_savedHandler);
+
+		_bigInfoMovie.hide();
+		_bigInfoMovie.stopDisplaying();
+		_bigInfoMovie.releaseMovie();
+
+		_smallInfoMovie.hide();
+		_smallInfoMovie.stopDisplaying();
+		_smallInfoMovie.stop();
+		_smallInfoMovie.releaseMovie();
+
+		g_neighborhood->showNav();
+	}
+}
+
+void PegasusEngine::raiseInventoryDrawer() {
+	if (g_interface)
+		g_interface->raiseInventoryDrawer();
+}
+
+void PegasusEngine::raiseBiochipDrawer() {
+	if (g_interface)
+		g_interface->raiseBiochipDrawer();
+}
+
+void PegasusEngine::lowerInventoryDrawer() {
+	if (g_interface)
+		g_interface->lowerInventoryDrawer();
+}
+
+void PegasusEngine::lowerBiochipDrawer() {
+	if (g_interface)
+		g_interface->lowerBiochipDrawer();
+}
+
+void PegasusEngine::raiseInventoryDrawerSync() {
+	if (g_interface)
+		g_interface->raiseInventoryDrawerSync();
+}
+
+void PegasusEngine::raiseBiochipDrawerSync() {
+	if (g_interface)
+		g_interface->raiseBiochipDrawerSync();
+}
+
+void PegasusEngine::lowerInventoryDrawerSync() {
+	if (g_interface)
+		g_interface->lowerInventoryDrawerSync();
+}
+
+void PegasusEngine::lowerBiochipDrawerSync() {
+	if (g_interface)
+		g_interface->lowerBiochipDrawerSync();
+}
+
+void PegasusEngine::toggleInfo() {
+	if (_gameMode == kModeInfoScreen)
+		setGameMode(kModeNavigation);
+	else if (_gameMode == kModeNavigation)
+		setGameMode(kModeInfoScreen);
+}
+
+void PegasusEngine::dragTerminated(const Input &) {
+	Hotspot *finalSpot = _itemDragger.getLastHotspot();
+	tInventoryResult result;
+
+	if (_dragType == kDragInventoryPickup) {
+		if (finalSpot && finalSpot->getObjectID() == kInventoryDropSpotID)
+			result = addItemToInventory((InventoryItem *)_draggingItem);
+		else
+			result = kTooMuchWeight;
+
+		if (result != kInventoryOK)
+			warning("Auto drag item into the room");
+		else
+			delete _draggingSprite;
+	} else if (_dragType == kDragBiochipPickup) {
+		if (finalSpot && finalSpot->getObjectID() == kBiochipDropSpotID)
+			result = addItemToBiochips((BiochipItem *)_draggingItem);
+		else
+			result = kTooMuchWeight;
+
+		if (result != kInventoryOK)
+			warning("Auto drag item into the room");
+		else
+			delete _draggingSprite;
+	} else if (_dragType == kDragInventoryUse) {
+		if (finalSpot && (finalSpot->getHotspotFlags() & kDropItemSpotFlag) != 0) {
+			//	*** Need to decide on a case by case basis what to do here.
+			//	the crowbar should break the cover off the Mars reactor if its frozen, the
+			//	global transport card should slide through the slot, the oxygen mask should
+			//	attach to the filling station, and so on...
+			_neighborhood->dropItemIntoRoom(_draggingItem, finalSpot);
+			delete _draggingSprite;
+		} else {
+			warning("Auto drag item into inventory");
+		}
+	}
+
+	_dragType = kDragNoDrag;
+
+	if (g_AIArea)
+		g_AIArea->unlockAI();
+}
+
+
+void PegasusEngine::dragItem(const Input &input, Item *item, tDragType type) {	
+	_draggingItem = item;
+	_dragType = type;
+
+	//	Create the sprite.
+	_draggingSprite = _draggingItem->getDragSprite(kDraggingSpriteID);
+	Common::Point where;
+	input.getInputLocation(where);
+	Common::Rect r1;
+	_draggingSprite->getBounds(r1);
+	r1 = Common::Rect::center(where.x, where.y, r1.width(), r1.height());
+	_draggingSprite->setBounds(r1);
+
+	//	Set up drag constraints.
+	DisplayElement *navMovie = _gfx->findDisplayElement(kNavMovieID);
+	Common::Rect r2;
+	navMovie->getBounds(r2);
+	r2.left -= r1.width() / 3;
+	r2.right += r1.width() / 3;
+	r2.top -= r1.height() / 3;
+	r2.bottom += r2.height() / 3;
+
+	r1 = Common::Rect(-30000, -30000, 30000, 30000);
+	_itemDragger.setDragConstraints(r2, r1);
+
+	// Start dragging.
+	_draggingSprite->setDisplayOrder(kDragSpriteOrder);
+	_draggingSprite->startDisplaying();
+	_draggingSprite->show();
+	_itemDragger.setDragSprite(_draggingSprite);
+	_itemDragger.setNextHandler(_neighborhood);
+	_itemDragger.startTracking(input);
+
+	if (g_AIArea)
+		g_AIArea->lockAIOut();
+}
+
+void PegasusEngine::shellGameInput(const Input &input, const Hotspot *cursorSpot) {
+	if (_gameMode == kModeInfoScreen) {
+		if (JMPPPInput::isToggleAIMiddleInput(input)) {
+			tLowerClientSignature middleOwner = g_AIArea->getMiddleAreaOwner();
+			g_AIArea->toggleMiddleAreaOwner();
+
+			if (middleOwner != g_AIArea->getMiddleAreaOwner()) {
+				_bigInfoMovie.setTime(g_AIArea->getBigInfoTime());
+				_smallInfoMovie.stop();
+				_smallInfoMovie.setFlags(0);
+
+				TimeValue startTime, stopTime;
+				g_AIArea->getSmallInfoSegment(startTime, stopTime);
+				_smallInfoMovie.setSegment(startTime, stopTime);
+				_smallInfoMovie.setFlags(kLoopTimeBase);
+
+				_bigInfoMovie.redrawMovieWorld();
+				_smallInfoMovie.redrawMovieWorld();
+				_smallInfoMovie.start();
+			}
+		}
+	} else {
+		if (JMPPPInput::isRaiseInventoryInput(input))
+			toggleInventoryDisplay();
+
+		if (JMPPPInput::isRaiseBiochipsInput(input))
+			toggleBiochipDisplay();
+
+		// TODO
+		if (JMPPPInput::isTogglePauseInput(input) && _neighborhood)
+			warning("Pause");
+	}
+
+	if (JMPPPInput::isToggleInfoInput(input))
+		toggleInfo();
+}
+
+void PegasusEngine::activateHotspots() {
+	if (_gameMode == kModeInfoScreen) {
+		g_allHotspots.activateOneHotspot(kInfoReturnSpotID);
+	} else {
+		// Set up hot spots.
+		if (_dragType == kDragInventoryPickup)
+			g_allHotspots.activateOneHotspot(kInventoryDropSpotID);
+		else if (_dragType == kDragBiochipPickup)
+			g_allHotspots.activateOneHotspot(kBiochipDropSpotID);
+		else if (_dragType == kDragNoDrag)
+			g_allHotspots.activateMaskedHotspots(kShellSpotFlag);
+	}
+}
+
+bool PegasusEngine::isClickInput(const Input &input, const Hotspot *cursorSpot) {
+	if (_cursor->isVisible() && cursorSpot)
+		return JMPPPInput::isClickInput(input);
+	else
+		return false;
+}
+
+tInputBits PegasusEngine::getClickFilter() {
+	return JMPPPInput::getClickInputFilter();
+}
+
+void PegasusEngine::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
+	if (clickedSpot->getObjectID() == kCurrentItemSpotID) {
+		InventoryItem *currentItem = getCurrentInventoryItem();
+		if (currentItem) {
+			removeItemFromInventory(currentItem);
+			dragItem(input, currentItem, kDragInventoryUse);
+		}
+	} else if (clickedSpot->getObjectID() == kInfoReturnSpotID) {
+		toggleInfo();
+	}
+}
+
+tInventoryResult PegasusEngine::removeItemFromInventory(InventoryItem *item) {
+	tInventoryResult result;
+	
+	if (g_interface)
+		result = g_interface->removeInventoryItem(item);
+	else
+		result = _items.removeItem(item);
+
+	// This should never happen
+	assert(result == kInventoryOK);
+
+	return result;
+}
+
+void PegasusEngine::removeAllItemsFromInventory() {
+	if (g_interface)
+		g_interface->removeAllItemsFromInventory();
+	else
+		_items.removeAllItems();
+}
+
+/////////////////////////////////////////////
+//
+// Biochip handling.
+
+// Adding biochips to the biochip drawer is a little funny, because of two things:
+//      --  We get the map biochip and pegasus biochip at the same time by dragging
+//          one sprite in TSA
+//      --  We can drag in more than one copy of the various biochips.
+// Because of this we need to make sure that no more than one copy of each biochip
+// is ever added.
+
+tInventoryResult PegasusEngine::addItemToBiochips(BiochipItem *biochip) {
+	tInventoryResult result;
+
+	if (g_interface)
+		result = g_interface->addBiochip(biochip);
+	else
+		result = _biochips.addItem(biochip);
+
+	// This can never happen
+	assert(result == kInventoryOK);
+
+	GameState.setTakenItem(biochip, true);
+
+	if (g_neighborhood)
+		g_neighborhood->pickedUpItem(biochip);
+
+	g_AIArea->checkMiddleArea();
+
+	return result;
+}
+
+void PegasusEngine::removeAllItemsFromBiochips() {
+	if (g_interface)
+		g_interface->removeAllItemsFromBiochips();
+	else
+		_biochips.removeAllItems();
 }
 
 } // End of namespace Pegasus

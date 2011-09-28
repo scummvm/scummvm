@@ -189,5 +189,17 @@ void GraphicsManager::clearScreen() {
 	g_system->unlockScreen();
 	_modifiedScreen = true;
 }
+
+DisplayElement *GraphicsManager::findDisplayElement(const tDisplayElementID id) {
+	DisplayElement *runner = _firstDisplayElement;
+
+	while (runner) {
+		if (runner->getObjectID() == id)
+			return runner;
+		runner = runner->_nextElement;
+	}
+
+	return 0;
+}
 	
 } // End of namespace Pegasus

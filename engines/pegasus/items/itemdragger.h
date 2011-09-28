@@ -26,6 +26,7 @@
 #ifndef PEGASUS_ITEMS_ITEMDRAGGER_H
 #define PEGASUS_ITEMS_ITEMDRAGGER_H
 
+#include "pegasus/elements.h"
 #include "pegasus/input.h"
 
 namespace Pegasus {
@@ -73,7 +74,8 @@ class ItemDragger : public SpriteDragger {
 public:
 	ItemDragger(PegasusEngine *);
 	virtual ~ItemDragger() {}
-	
+
+	void setHighlightBounds();
 	void startTracking(const Input &);
 	void stopTracking(const Input &);
 	bool stopTrackingInput(const Input &);
