@@ -27,6 +27,7 @@
 #include "tsage/blue_force/blueforce_scenes3.h"
 #include "tsage/blue_force/blueforce_scenes4.h"
 #include "tsage/blue_force/blueforce_scenes6.h"
+#include "tsage/blue_force/blueforce_scenes7.h"
 #include "tsage/blue_force/blueforce_scenes8.h"
 #include "tsage/blue_force/blueforce_scenes9.h"
 #include "tsage/scenes.h"
@@ -156,7 +157,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Decking
 		return new Scene690();
 	case 710:
-		error("Scene group 7 not implemented");
+		return new Scene710();
 	case 800:
 		// Jamison & Ryan
 		return new Scene800();
