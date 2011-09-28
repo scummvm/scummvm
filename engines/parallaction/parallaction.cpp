@@ -914,7 +914,7 @@ void CharacterName::bind(const char *name) {
 			}
 			if (IS_MINI_CHARACTER(name)) {
 				_prefix = _prefixMini;
-				begin = name+4;
+				begin = name + 4;
 			}
 		}
 	}
