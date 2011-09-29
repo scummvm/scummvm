@@ -575,7 +575,13 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 	switch (command) {
 	case kMenuCmdStartAdventure:
 		GameState.setWalkthroughMode(false);
-		error("Start new game (adventure mode)");
+
+		// Only start the game in the demo for now
+		// (until it works and I implement Caldoria)
+		if (isDemo())
+			startNewGame();
+		else
+			error("Start new game (adventure mode)");
 		break;
 	case kMenuCmdCredits:
 		if (isDemo()) {
