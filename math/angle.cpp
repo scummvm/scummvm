@@ -141,6 +141,7 @@ Angle Angle::arcTangent2(float y, float x) {
 
 void Angle::setRange(float low) {
 	_rangeLow = low;
+	crop();
 }
 
 void Angle::crop() {
