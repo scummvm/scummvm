@@ -65,9 +65,11 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 	_video->pauseVideo(true);
 
 	Common::Rect bounds(0, 0, _video->getWidth(), _video->getHeight());
-	allocateSurface(bounds);
-	setBounds(bounds);
+	sizeElement(_video->getWidth(), _video->getHeight());
 	_movieBox = bounds;
+
+	if (!isSurfaceValid())
+		allocateSurface(bounds);
 
 	setStart(0, getScale());
 	setStop(_video->getDuration() * getScale() / 1000, getScale());
@@ -103,19 +105,16 @@ void Movie::redrawMovieWorld() {
 	}
 }
 
-void Movie::draw(const Common::Rect &r) {
-	Common::Rect surfaceBounds;
-	getSurfaceBounds(surfaceBounds);
-	Common::Rect r1 = r;
+void Movie::draw(const Common::Rect &r) {	
+	Common::Rect worldBounds = _movieBox;
+	Common::Rect elementBounds;
+	getBounds(elementBounds);
 
-	Common::Rect bounds;
-	getBounds(bounds);
-	surfaceBounds.moveTo(bounds.left, bounds.top);
-	r1 = r1.findIntersectingRect(surfaceBounds);
-	getSurfaceBounds(surfaceBounds);
+	worldBounds.moveTo(elementBounds.left, elementBounds.top);
+	Common::Rect r1 = r.findIntersectingRect(worldBounds);
 
 	Common::Rect r2 = r1;
-	r2.translate(surfaceBounds.left - bounds.left, surfaceBounds.top - bounds.top);
+	r2.translate(_movieBox.left - elementBounds.left, _movieBox.top - elementBounds.top);
 	drawImage(r2, r1);
 }
 
