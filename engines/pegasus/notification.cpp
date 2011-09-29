@@ -66,9 +66,12 @@ void Notification::notifyMe(NotificationReceiver *receiver, tNotificationFlags f
 }
 
 void Notification::cancelNotification(NotificationReceiver *receiver) {
-	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end(); it++)
+	for (tReceiverIterator it = _receivers.begin(); it != _receivers.end();) {
 		if (it->receiver == receiver)
-			_receivers.erase(it);
+			it = _receivers.erase(it);
+		else
+			it++;
+	}
 }
 
 void Notification::setNotificationFlags(tNotificationFlags flags, tNotificationFlags mask) {
@@ -124,9 +127,12 @@ void NotificationManager::addNotification(Notification *notification) {
 }
 
 void NotificationManager::removeNotification(Notification *notification) {
-	for (tNotificationIterator it = _notifications.begin(); it != _notifications.end(); it++)
+	for (tNotificationIterator it = _notifications.begin(); it != _notifications.end();) {
 		if ((*it) == notification)
-			_notifications.erase(it);
+			it = _notifications.erase(it);
+		else
+			it++;
+	}
 }
 
 void NotificationManager::detachNotifications() {
