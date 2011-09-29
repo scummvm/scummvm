@@ -132,7 +132,7 @@ void Interface::setDate(const uint16 dateResID) {
 }
 
 void Interface::validateCompass() {
-	if (g_compass) {
+	if (!g_compass) {
 		new Compass();
 		g_compass->initCompass();
 		g_compass->setDisplayOrder(kCompassOrder);
