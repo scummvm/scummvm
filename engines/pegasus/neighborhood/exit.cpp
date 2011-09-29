@@ -43,7 +43,7 @@ void ExitTable::loadFromStream(Common::SeekableReadStream *stream) {
 		_entries[i].movieEnd = stream->readUint32BE();
 		_entries[i].exitEnd = stream->readUint32BE();
 		_entries[i].exitLoop = stream->readUint32BE();
-		_entries[i].exitRoom = stream->readUint32BE();
+		_entries[i].exitRoom = stream->readUint16BE();
 		_entries[i].exitDirection = stream->readByte();
 		stream->readByte(); // alignment
 

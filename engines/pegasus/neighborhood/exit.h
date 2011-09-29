@@ -48,8 +48,20 @@ public:
 	void clear();
 
 	struct Entry {
-		Entry() { movieStart = 0xffffffff; }
+		Entry() { clear(); }
 		bool isEmpty() { return movieStart == 0xffffffff; }
+		void clear() {
+			room = kNoRoomID;
+			direction = kNoDirection;
+			altCode = kNoAlternateID;
+			movieStart = 0xffffffff;
+			movieEnd = 0xffffffff;
+			exitEnd = 0xffffffff;
+			originalEnd = 0xffffffff;
+			exitLoop = 0xffffffff;
+			exitRoom = kNoRoomID;
+			exitDirection = kNoDirection;
+		}
 
 		tRoomID room;
 		tDirectionConstant direction;
