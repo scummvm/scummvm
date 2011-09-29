@@ -81,6 +81,7 @@ TimeBase::~TimeBase() {
 
 void TimeBase::setTime(const TimeValue time, const TimeScale scale) {
 	_time = Common::Rational(time, (scale == 0) ? _preferredScale : scale);
+	_lastMillis = 0;
 }
 
 TimeValue TimeBase::getTime(const TimeScale scale) {
