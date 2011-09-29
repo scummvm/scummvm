@@ -430,7 +430,7 @@ void Sprite::draw(const Common::Rect &r) {
 		Common::Rect r1 = frameBounds.findIntersectingRect(r);
 
 		Common::Rect r2 = frameBounds;
-		r2.translate(frameBounds.left - _bounds.left - _currentFrame->frameLeft, frameBounds.top - _bounds.top - _currentFrame->frameTop);
+		r2.translate(-_bounds.left - _currentFrame->frameLeft, -_bounds.top - _currentFrame->frameTop);
 
 		_currentFrame->frame->drawImage(r2, r1);
 	}
