@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	blue_force/blueforce_scenes1.o \
 	blue_force/blueforce_scenes3.o \
 	blue_force/blueforce_scenes4.o \
+	blue_force/blueforce_scenes5.o \
 	blue_force/blueforce_scenes6.o \
 	blue_force/blueforce_scenes7.o \
 	blue_force/blueforce_scenes8.o \

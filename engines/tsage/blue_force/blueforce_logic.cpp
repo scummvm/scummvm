@@ -26,6 +26,7 @@
 #include "tsage/blue_force/blueforce_scenes1.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
 #include "tsage/blue_force/blueforce_scenes4.h"
+#include "tsage/blue_force/blueforce_scenes5.h"
 #include "tsage/blue_force/blueforce_scenes6.h"
 #include "tsage/blue_force/blueforce_scenes7.h"
 #include "tsage/blue_force/blueforce_scenes8.h"
@@ -138,6 +139,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Inside Alleycat Bowl
 		return new Scene450();
 	case 550:
+		// Outside Bikini Hut
+		return new Scene550();
 	case 551:
 	case 560:
 	case 570:
