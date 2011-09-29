@@ -267,45 +267,25 @@ void Sector::unshrink() {
 }
 
 bool Sector::isPointInSector(const Math::Vector3d &point) const {
-	// The algorithm: for each edge A->B, check whether the z-component
-	// of (B-A) x (P-A) is >= 0.  Then the point is at least in the
-	// cylinder above&below the polygon.  (This works because the polygons'
-	// vertices are always given in counterclockwise order, and the
-	// polygons are always convex.)
-	//
-	// Checking the box height on the first point fixes problems with Manny
-	// changing sectors outside Velasco's storeroom.  We make an exceptions
-	// for heights of 0 and 9999 since these appear to have special meaning.
-	// In order to have the entrance to the Blue Casket work we need to
-	// handle the vertices having different z-coordinates.
-	// TODO: Improve height checking for when vertices have different
-	// z-coordinates so the railing in Cafe Calavera works properly.
-	if (_height != 0.0f && _height != 9999.0f) {
-		bool heightOK = false;
-		// Handle height above Z
-		if ((point.z() >= _vertices[0].z()) && (point.z() <= _vertices[0].z() + _height))
-			heightOK = true;
-		// Handle height below Z
-		if ((point.z() <= _vertices[0].z()) && (point.z() >= _vertices[0].z() - _height))
-			heightOK = true;
+	// Calculate the distance of the point from the plane of the sector.
+	// Return false if it isn't within a margin.
+	if (_height < 9000.f) { // No need to check when height is 9999.
+		// The plane has equation ax + by + cz + d = 0
+		float a = _normal.x();
+		float b = _normal.y();
+		float c = _normal.z();
+		float d = -_vertices[0].x() * a - _vertices[0].y() * b - _vertices[0].z() * c;
 
-		for (int i = 0; i < _numVertices; i++) {
-			if (_vertices[i + 1].z() != _vertices[i].z())
-				heightOK = true;
-		}
-		if (!heightOK) {
-/* Use this for debugging problems at height interfaces
-			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
-				printf("Rejected trigger due to height: %s (%f)\n", _name.c_str(), _height);
-				printf("Actor Z: %f\n", point.z());
-				for (int i = 0; i < _numVertices; i++)
-					printf("(%d) Z: %f\n", i, _vertices[i].z());
-			}
-*/
+		float dist = (a * point.x() + b * point.y() + c * point.z() + d) /
+					sqrt(a * a + b * b + c * c);
+		// dist is positive if it is above the plain, negative if it is
+		// below and 0 if it is on the plane.
+
+		if (fabsf(dist) > _height + 0.01) // Add an error margin
 			return false;
-		}
 	}
 
+	// On the plane, so check if it is inside the polygon.
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
