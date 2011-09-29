@@ -1468,7 +1468,7 @@ void PegasusEngine::dragTerminated(const Input &) {
 			result = kTooMuchWeight;
 
 		if (result != kInventoryOK)
-			warning("Auto drag item into the room");
+			autoDragItemIntoRoom(_draggingItem, _draggingSprite);
 		else
 			delete _draggingSprite;
 	} else if (_dragType == kDragBiochipPickup) {
@@ -1478,7 +1478,7 @@ void PegasusEngine::dragTerminated(const Input &) {
 			result = kTooMuchWeight;
 
 		if (result != kInventoryOK)
-			warning("Auto drag item into the room");
+			autoDragItemIntoRoom(_draggingItem, _draggingSprite);
 		else
 			delete _draggingSprite;
 	} else if (_dragType == kDragInventoryUse) {
@@ -1490,7 +1490,7 @@ void PegasusEngine::dragTerminated(const Input &) {
 			_neighborhood->dropItemIntoRoom(_draggingItem, finalSpot);
 			delete _draggingSprite;
 		} else {
-			warning("Auto drag item into inventory");
+			autoDragItemIntoInventory(_draggingItem, _draggingSprite);
 		}
 	}
 
@@ -1699,6 +1699,81 @@ void PegasusEngine::pauseMenu(bool menuUp) {
 		useMenu(0);
 		g_AIArea->checkMiddleArea();
 	}
+}
+
+void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {	
+	if (g_AIArea)
+		g_AIArea->lockAIOut();
+
+	Common::Point start, stop;
+	draggingSprite->getLocation(start.x, start.y);
+
+	Hotspot *dropSpot = _neighborhood->getItemScreenSpot(item, draggingSprite);
+
+	if (dropSpot) {
+		dropSpot->getCenter(stop.x, stop.y);
+	} else {
+		stop.x = kNavAreaLeft + 256;
+		stop.y = kNavAreaTop + 128;
+	}
+
+	Common::Rect bounds;
+	draggingSprite->getBounds(bounds);
+	stop.x -= bounds.width() >> 1;
+	stop.y -= bounds.height() >> 1;
+
+	int dx = ABS(stop.x - start.x);
+	int dy = ABS(stop.y = start.y);
+	TimeValue time = MAX(dx, dy);
+
+	allowInput(false);
+	_autoDragger.autoDrag(draggingSprite, start, stop, time, kDefaultTimeScale);
+
+	while (_autoDragger.isDragging()) {
+		checkCallBacks();
+		refreshDisplay();
+		_system->delayMillis(10);
+	}
+
+	_neighborhood->dropItemIntoRoom(_draggingItem, dropSpot);
+	allowInput(true);
+	delete _draggingSprite;
+
+	if (g_AIArea)
+		g_AIArea->unlockAI();
+}
+
+void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {	
+	if (g_AIArea)
+		g_AIArea->lockAIOut();
+
+	Common::Point start;
+	draggingSprite->getLocation(start.x, start.y);
+
+	Common::Rect r;
+	draggingSprite->getBounds(r);
+
+	Common::Point stop((76 + 172 - r.width()) / 2, 334 - (2 * r.height() / 3));
+
+	int dx = ABS(stop.x - start.x);
+	int dy = ABS(stop.y = start.y);
+	TimeValue time = MAX(dx, dy);
+
+	allowInput(false);
+	_autoDragger.autoDrag(draggingSprite, start, stop, time, kDefaultTimeScale);
+
+	while (_autoDragger.isDragging()) {
+		checkCallBacks();
+		refreshDisplay();
+		_system->delayMillis(10);
+	}
+
+	addItemToInventory((InventoryItem *)_draggingItem);
+	allowInput(true);
+	delete _draggingSprite;
+
+	if (g_AIArea)
+		g_AIArea->unlockAI();
 }
 
 } // End of namespace Pegasus

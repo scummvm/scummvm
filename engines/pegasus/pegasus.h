@@ -39,6 +39,7 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
 #include "pegasus/notification.h"
+#include "pegasus/items/autodragger.h"
 #include "pegasus/items/inventory.h"
 #include "pegasus/items/itemdragger.h"
 #include "pegasus/neighborhood/neighborhood.h"
@@ -157,9 +158,11 @@ public:
 	// Dragging
 	void dragItem(const Input &, Item *, tDragType);
 	bool isDragging() const { return _dragType != kDragNoDrag; }
-	tDragType getDragType() const { return _dragType; } // TODO
-	Item *getDraggingItem() const { return _draggingItem; } // TODO
+	tDragType getDragType() const { return _dragType; }
+	Item *getDraggingItem() const { return _draggingItem; }
 	void dragTerminated(const Input &);
+	void autoDragItemIntoRoom(Item *, Sprite *);
+	void autoDragItemIntoInventory(Item *, Sprite*);
 
 	// Save/Load
 	void makeContinuePoint();
@@ -268,6 +271,7 @@ private:
 	Item *_draggingItem;
 	Sprite *_draggingSprite;
 	tDragType _dragType;
+	AutoDragger _autoDragger;
 
 	// Interface
 	void toggleInventoryDisplay();

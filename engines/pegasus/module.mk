@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	ai/ai_area.o \
 	ai/ai_condition.o \
 	ai/ai_rule.o \
+	items/autodragger.o \
 	items/inventory.o \
 	items/inventorypicture.o \
 	items/item.o \
