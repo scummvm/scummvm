@@ -684,10 +684,6 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		error("Load game");
 		break;
 	case kMenuCmdPauseQuit:
-#if 1
-		// TODO: This doesn't work yet
-		error("Return to main menu");
-#else
 		// TODO: Fade out
 		throwAwayEverything();
 		pauseMenu(false);
@@ -697,7 +693,6 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		// TODO: Fade in
 		if (!isDemo())
 			resetIntroTimer();
-#endif
 		break;
 	case kMenuCmdNoCommand:
 		break;
@@ -1087,7 +1082,21 @@ void PegasusEngine::doDeath() {
 }
 
 void PegasusEngine::throwAwayEverything() {
-	// TODO
+	if (_items.getNumItems() != 0)
+		_currentItemID = g_interface->getCurrentInventoryItem()->getObjectID();
+	else
+		_currentItemID = kNoItemID;
+
+	if (_biochips.getNumItems() != 0)
+		_currentItemID = g_interface->getCurrentBiochip()->getObjectID();
+	else
+		_currentItemID = kNoItemID;
+
+	useMenu(0);
+	useNeighborhood(0);
+
+	delete g_interface;
+	g_interface = 0;
 }
 
 void PegasusEngine::processShell() {
