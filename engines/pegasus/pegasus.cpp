@@ -326,7 +326,13 @@ void PegasusEngine::removeTimeBase(TimeBase *timeBase) {
 }
 
 bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
-	// TODO: Dispose currently running stuff (neighborhood, etc.)
+	// Dispose currently running stuff
+	useMenu(0);
+	useNeighborhood(0);
+	removeAllItemsFromInventory();
+	removeAllItemsFromBiochips();
+	_currentItemID = kNoItemID;
+	_currentBiochipID = kNoItemID;
 
 	// Signature
 	uint32 creator = stream->readUint32BE();
@@ -370,17 +376,47 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	// Death reason
 	setEnergyDeathReason(stream->readByte());
 
-	// TODO: This is as far as we can go right now
+	// TODO: This is as far as we can go right now (until I implement the mapping biochip and AI rules loading)
 	return true;
 
 	// Items
 	g_allItems.readFromStream(stream);
 
-	// TODO: Player Inventory
-	// TODO: Player BioChips
+	// Inventory
+	uint32 itemCount = stream->readUint32BE();
+
+	if (itemCount > 0) {
+		for (uint32 i = 0; i < itemCount; i++) {
+			InventoryItem *inv = (InventoryItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
+			addItemToInventory(inv);
+		}
+
+		g_interface->setCurrentInventoryItemID((tItemID)stream->readUint16BE());
+	}
+
+	// Biochips
+	uint32 biochipCount = stream->readUint32BE();
+
+	if (biochipCount > 0) {
+		for (uint32 i = 0; i < biochipCount; i++) {
+			BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
+			addItemToBiochips(biochip);
+		}
+
+		g_interface->setCurrentBiochipID((tItemID)stream->readUint16BE());
+	}
+
+
 	// TODO: Disc check
-	// TODO: Jump to environment
+
+	// Jump to environment
+	jumpToNewEnvironment(GameState.getCurrentNeighborhood(), GameState.getCurrentRoom(), GameState.getCurrentDirection());
+	_shellNotification.setNotificationFlags(0, kNeedNewJumpFlag);
+	performJump(GameState.getCurrentNeighborhood());
+
 	// TODO: AI rules
+
+	startNeighborhood();
 
 	// Make a new continue point if this isn't already one
 	if (saveType == kNormalSave)
@@ -417,10 +453,30 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	// Items
 	g_allItems.writeToStream(stream);
 
-	// TODO: Player Inventory
-	// TODO: Player BioChips
-	// TODO: Jump to environment
+	// Inventory
+	uint32 itemCount = _items.getNumItems();
+	stream->writeUint32BE(itemCount);
+
+	if (itemCount > 0) {
+		for (uint32 i = 0; i < itemCount; i++)
+			stream->writeUint16BE(_items.getItemIDAt(i));
+
+		stream->writeUint16BE(g_interface->getCurrentInventoryItem()->getObjectID());
+	}
+
+	// Biochips
+	uint32 biochipCount = _biochips.getNumItems();
+	stream->writeUint32BE(biochipCount);
+
+	if (itemCount > 0) {
+		for (uint32 i = 0; i < biochipCount; i++)
+			stream->writeUint16BE(_biochips.getItemIDAt(i));
+
+		stream->writeUint16BE(g_interface->getCurrentBiochip()->getObjectID());
+	}
+
 	// TODO: AI rules
+
 	return true;
 }
 
@@ -440,8 +496,6 @@ void PegasusEngine::loadFromContinuePoint() {
 
 	if (!loadFromStream(_continuePoint))
 		error("Failed loading continue point");
-
-	error("STUB: loadFromContinuePoint()");
 }
 
 Common::Error PegasusEngine::loadGameState(int slot) {

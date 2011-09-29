@@ -73,8 +73,8 @@ public:
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger();
-	bool canLoadGameStateCurrently() { return _loadAllowed; }
-	bool canSaveGameStateCurrently() { return _saveAllowed; }
+	bool canLoadGameStateCurrently() { return _loadAllowed && !isDemo(); }
+	bool canSaveGameStateCurrently() { return _saveAllowed && !isDemo(); }
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 

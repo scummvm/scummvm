@@ -77,7 +77,7 @@ static const PegasusGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK|ADGF_DEMO,
-			Common::GUIO_NONE
+			Common::GUIO_NOLAUNCHLOAD
 		},
 	},
 
