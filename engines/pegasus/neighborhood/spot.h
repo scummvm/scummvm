@@ -67,7 +67,15 @@ public:
 	struct Entry {
 		Entry() { clear(); }
 		bool isEmpty() { return movieStart == 0xffffffff; }
-		void clear() { movieStart = 0xffffffff; }
+		void clear() {
+			room = kNoRoomID;
+			direction = kNoDirection;
+			srcFlags = kNoSpotFlags;
+			altCode = kNoAlternateID;
+			movieStart = 0xffffffff;
+			movieEnd = 0xffffffff;
+			dstFlags = kNoSpotFlags;
+		}
 
 		tRoomID room;
 		tDirectionConstant direction;
