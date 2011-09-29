@@ -1317,7 +1317,7 @@ void CharacterGenerator::finish() {
 	}
 
 	if (_chargenButtonLabels) {
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 17; i++)
 			delete[] _chargenButtonLabels[i];
 		delete[] _chargenButtonLabels;
 		_chargenButtonLabels = 0;

@@ -149,9 +149,6 @@ private:
 	bool checkPartyStatusExtra();
 	int resurrectionSelectDialogue();
 	void healParty();
-
-	uint32 convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility);
-	uint32 convertCharacterEffectFlagToEob2Format(uint32 flag);
 };
 
 

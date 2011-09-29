@@ -85,6 +85,7 @@ void LolEobBaseEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, in
 }
 
 void LolEobBaseEngine::gui_initButtonsFromList(const int16 *list) {
+	return;
 	while (*list != -1)
 		gui_initButton(*list++);
 }
@@ -1480,7 +1481,7 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 GUI_Eob::~GUI_Eob() {
 	if (_menuStringsPrefsTemp) {
 		for (int i = 0; i < 4; i++)
-			delete _menuStringsPrefsTemp[i];
+			delete[] _menuStringsPrefsTemp[i];
 		delete[] _menuStringsPrefsTemp;
 	}
 
@@ -1600,6 +1601,7 @@ void GUI_Eob::processButton(Button *button) {
 }
 
 int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8 mouseWheel) {
+	return 0;
 	_progress = 0;
 	uint16 in = inputFlags & 0xff;
 	uint16 buttonReleaseFlag = 0;
@@ -3897,7 +3899,7 @@ void GUI_Eob::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 
 void GUI_Eob::updateOptionsStrings() {
 	for (int i = 0; i < 4; i++) {
-		delete _menuStringsPrefsTemp[i];
+		delete[] _menuStringsPrefsTemp[i];
 		_menuStringsPrefsTemp[i] = new char[strlen(_vm->_menuStringsPrefs[i]) + 8];
 	}
 

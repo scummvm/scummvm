@@ -187,6 +187,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			delete[] _lvlTempData[i]->flags;
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
+			releaseWallOfForceTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 

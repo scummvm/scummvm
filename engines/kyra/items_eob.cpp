@@ -461,12 +461,18 @@ void EobCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	int icn = _items[itemId].icon;
 	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[itemId].flags & 0x80)) ? true : false;
 
+	memcpy(_tempIconShape, _itemIconShapes[icn], _itemIconShapes[icn][1] * _itemIconShapes[icn][2] * 4 + 20);
+
 	if (applyBluePal) {
-		_screen->setFadeTableIndex(3);
-		_screen->setShapeFadeMode(1, true);
+		if (_flags.gameID == GI_EOB1) {
+			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icn << 4]);
+		} else {
+			_screen->setFadeTableIndex(3);
+			_screen->setShapeFadeMode(1, true);
+		}
 	}
 
-	_screen->drawShape(pageNum, _itemIconShapes[icn], x, y, 0);
+	_screen->drawShape(pageNum, _tempIconShape, x, y, 0);
 
 	if (applyBluePal) {
 		_screen->setFadeTableIndex(4);
@@ -491,8 +497,8 @@ void EobCoreEngine::eatItemInHand(int charIndex) {
 	EobCharacter *c = &_characters[charIndex];
 	if (!testCharacter(charIndex, 5)) {
 		_txt->printMessage(_warningStrings[1], -1, c->name);
-	} else if (_itemInHand && _items[_itemInHand].type != 31) {
-		_txt->printMessage(_warningStrings[3]);
+	} else if (_itemInHand && _items[_itemInHand].type != 31 && !(_flags.gameID == GI_EOB1 && _items[_itemInHand].type == 49)) {
+		_txt->printMessage(_warningStrings[_flags.gameID == GI_EOB1 ? 2 : 3]);
 	} else if (_items[_itemInHand].value == -1) {
 		printWarning(_warningStrings[2]);
 	} else {

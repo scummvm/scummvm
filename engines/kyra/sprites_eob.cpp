@@ -657,13 +657,13 @@ void EobCoreEngine::drawFlyingObjects(int index) {
 				flipped = fo->direction == ((_currentDirection + 1) & 3) ? 1 : 0;
 			} else {
 				shp = (_flightObjShpMap[shpIx] + dirOffs) < _numThrownItemShapes ? _thrownItemShapes[_flightObjShpMap[shpIx] + dirOffs] : _spellShapes[_flightObjShpMap[shpIx - _numThrownItemShapes] + dirOffs];
-				flipped = _flightObjFlipIndex[(fo->direction << 2) + fo->curPos];
+				flipped = _flightObjFlipIndex[(fo->direction << 2) + (fo->curPos & 3)];
 			}
 
 		} else {
 			rstFade = true;
 			shp = (fo->objectType < _numThrownItemShapes) ? _thrownItemShapes[fo->objectType] : _spellShapes[fo->objectType - _numThrownItemShapes];
-			flipped = _flightObjFlipIndex[(fo->direction << 2) + fo->curPos];
+			flipped = _flightObjFlipIndex[(fo->direction << 2) + (fo->curPos & 3)];
 
 			if (fo->flags & 0x40) {
 				x = _dscShapeCoords[(index * 5 + 4) << 1] + 88;

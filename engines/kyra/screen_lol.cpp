@@ -42,8 +42,10 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 	for (int i = 0; i < 8; i++)
 		_levelOverlays[i] = new uint8[256];
 
-	_fadeFlag = 2;
+	_screenDimTable = 0;
+	_customDimTable = 0;
 	_curDimIndex = 0;
+	_fadeFlag = 2;
 }
 
 Screen_LoL::~Screen_LoL() {

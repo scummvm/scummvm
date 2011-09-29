@@ -1230,7 +1230,7 @@ void EobEngine::initSpells() {
 	for (int i = 0; i < _numSpells; i++) {
 		EobSpell *s = &_spells[i];
 		src += 4;
-		s->flags = flagTable[i].typeFlag;/*convertSpellFlagToEob2Format(src[0], src[14]);*/
+		s->flags = flagTable[i].typeFlag;
 		s->damageFlags = flagTable[i].damageFlag;
 		s->effectFlags = flagTable[i].effectFlag;
 		s->sound = src[13];

@@ -287,8 +287,9 @@ void TextDisplayer_Eob::readNextPara() {
 		d &= 0x7f;
 		c = d & 7;
 		d = (d & 0x78) >> 3;
-		c = _table1[(d << 3) + c];
-		d = _table2[d];
+		uint8 l = d;
+		c = _table1[(l << 3) + c];
+		d = _table2[l];
 	}
 
 	_ctrl[1] = d;
