@@ -674,6 +674,31 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		if (!isDemo())
 			resetIntroTimer();
 		break;
+	case kMenuCmdPauseSave:
+		error("Save game");
+		break;
+	case kMenuCmdPauseContinue:
+		pauseMenu(false);
+		break;
+	case kMenuCmdPauseRestore:
+		error("Load game");
+		break;
+	case kMenuCmdPauseQuit:
+#if 1
+		// TODO: This doesn't work yet
+		error("Return to main menu");
+#else
+		// TODO: Fade out
+		throwAwayEverything();
+		pauseMenu(false);
+		useMenu(new MainMenu());
+		_gfx->updateDisplay();
+		((MainMenu *)_gameMenu)->startMainMenuLoop();
+		// TODO: Fade in
+		if (!isDemo())
+			resetIntroTimer();
+#endif
+		break;
 	case kMenuCmdNoCommand:
 		break;
 	default:
@@ -1532,9 +1557,8 @@ void PegasusEngine::shellGameInput(const Input &input, const Hotspot *cursorSpot
 		if (JMPPPInput::isRaiseBiochipsInput(input))
 			toggleBiochipDisplay();
 
-		// TODO
 		if (JMPPPInput::isTogglePauseInput(input) && _neighborhood)
-			warning("Pause");
+			pauseMenu(!isPaused());
 	}
 
 	if (JMPPPInput::isToggleInfoInput(input))
@@ -1636,6 +1660,36 @@ void PegasusEngine::removeAllItemsFromBiochips() {
 		g_interface->removeAllItemsFromBiochips();
 	else
 		_biochips.removeAllItems();
+}
+
+void PegasusEngine::setSoundFXLevel(uint16 fxLevel) {
+	_FXLevel = fxLevel;
+	if (_neighborhood)
+		_neighborhood->setSoundFXLevel(fxLevel);
+	if (g_AIArea)
+		g_AIArea->setAIVolume(fxLevel);
+}
+
+void PegasusEngine::setAmbienceLevel(uint16 ambientLevel) {
+	_ambientLevel = ambientLevel;
+	if (_neighborhood)
+		_neighborhood->setAmbienceLevel(ambientLevel);
+}
+
+void PegasusEngine::pauseMenu(bool menuUp) {
+	if (menuUp) {
+		// TODO: Pause engine
+		_screenDimmer.startDisplaying();
+		_screenDimmer.show();
+		_gfx->updateDisplay();
+		useMenu(new PauseMenu());
+	} else {
+		// TODO: Resume engine
+		_screenDimmer.hide();
+		_screenDimmer.stopDisplaying();
+		useMenu(0);
+		g_AIArea->checkMiddleArea();
+	}
 }
 
 } // End of namespace Pegasus

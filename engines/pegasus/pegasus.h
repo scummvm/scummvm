@@ -114,7 +114,9 @@ public:
 
 	// Volume
 	uint16 getSoundFXLevel() { return _FXLevel; }
+	void setSoundFXLevel(uint16);
 	uint16 getAmbienceLevel() { return _ambientLevel; }
+	void setAmbienceLevel(uint16);
 
 	// Items
 	bool playerHasItem(const Item *);
@@ -227,12 +229,14 @@ private:
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
+	bool isPaused() { return false; } // TODO
 
 	// Menu
 	GameMenu *_gameMenu;
 	void doGameMenuCommand(const tGameMenuCommand);
 	void doInterfaceOverview();
 	ScreenDimmer _screenDimmer;
+	void pauseMenu(bool menuUp);
 
 	// Energy
 	int32 _savedEnergyValue;

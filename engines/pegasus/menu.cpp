@@ -914,4 +914,302 @@ void DeathMenu::drawAllScores() {
 	}
 }
 
+enum {
+	kPauseMenuSave,
+	kPauseMenuContinue,
+	kPauseMenuRestore,
+	kPauseMenuSoundFX,
+	kPauseMenuAmbience,
+	kPauseMenuWalkthru,
+	kPauseMenuQuitToMainMenu,
+	
+	kFirstPauseSelection = kPauseMenuSave,
+	kLastPauseSelection = kPauseMenuQuitToMainMenu
+};
+
+const tCoordType kPauseLeft = 194;
+const tCoordType kPauseTop = 68;
+
+const tCoordType kSaveGameLeft = kPauseLeft + 6;
+const tCoordType kSaveGameTop = kPauseTop + 56;
+
+const tCoordType kSaveGameSelectLeft = kPauseLeft - 44;
+const tCoordType kSaveGameSelectTop = kPauseTop + 52;
+
+const tCoordType kPauseContinueLeft = kPauseLeft + 18;
+const tCoordType kPauseContinueTop = kPauseTop + 100;
+
+const tCoordType kPauseContinueSelectLeft = kPauseLeft - 44;
+const tCoordType kPauseContinueSelectTop = kPauseTop + 95;
+
+const tCoordType kPauseRestoreLeft = kPauseLeft + 18;
+const tCoordType kPauseRestoreTop = kPauseTop + 136;
+
+const tCoordType kPauseRestoreSelectLeft = kPauseLeft - 44;
+const tCoordType kPauseRestoreSelectTop = kPauseTop + 131;
+
+const tCoordType kSoundFXLeft = kPauseLeft + 128;
+const tCoordType kSoundFXTop = kPauseTop + 187;
+const tCoordType kSoundFXRight = kSoundFXLeft + 96;
+const tCoordType kSoundFXBottom = kSoundFXTop + 14;
+
+const tCoordType kSoundFXSelectLeft = kPauseLeft - 44;
+const tCoordType kSoundFXSelectTop = kPauseTop + 172;
+
+const tCoordType kAmbienceLeft = kPauseLeft + 128;
+const tCoordType kAmbienceTop = kPauseTop + 227;
+const tCoordType kAmbienceRight = kAmbienceLeft + 96;
+const tCoordType kAmbienceBottom = kAmbienceTop + 14;
+
+const tCoordType kAmbienceSelectLeft = kPauseLeft - 44;
+const tCoordType kAmbienceSelectTop = kPauseTop + 212;
+
+const tCoordType kWalkthruLeft = kPauseLeft + 128;
+const tCoordType kWalkthruTop = kPauseTop + 264;
+
+const tCoordType kWalkthruSelectLeft = kPauseLeft - 44;
+const tCoordType kWalkthruSelectTop = kPauseTop + 255;
+
+const tCoordType kQuitLeft = kPauseLeft + 18;
+const tCoordType kQuitTop = kPauseTop + 302;
+
+const tCoordType kQuitSelectLeft = kPauseLeft - 44;
+const tCoordType kQuitSelectTop = kPauseTop + 297;
+
+//	These are relative to the pause background.
+const tCoordType kPauseScoreLeft = 130;
+const tCoordType kPauseScoreTop = 34;
+const tCoordType kPauseScoreRight = kPauseScoreLeft + 108;
+const tCoordType kPauseScoreBottom = kPauseScoreTop + 12;
+
+// Never set the current input handler to the CPauseMenu.
+PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),
+		_walkthroughButton(0), _continueButton(0), _soundFXLevel(0), _ambienceLevel(0), _quitButton(0),
+		_largeSelect(0), _smallSelect(0) {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	_pauseBackground.initFromPICTFile("Images/Pause Screen/PausScrn.pict", true);
+
+	if (!vm->isDemo()) {
+		Surface numbers;
+		numbers.getImageFromPICTFile("Images/Pause Screen/Numbers.pict");
+		drawScore(GameState.getTotalScore(), kMaxTotalScore,
+				Common::Rect(kPauseScoreLeft, kPauseScoreTop, kPauseScoreRight, kPauseScoreBottom), &numbers);
+	}
+
+	_pauseBackground.setDisplayOrder(kPauseMenuOrder);
+	_pauseBackground.moveElementTo(kPauseLeft, kPauseTop);
+	_pauseBackground.startDisplaying();
+	_pauseBackground.show();
+
+	if (!vm->isDemo()) {
+		_saveButton.initFromPICTFile("Images/Pause Screen/SaveGame.pict");
+		_saveButton.setDisplayOrder(kSaveGameOrder);
+		_saveButton.moveElementTo(kSaveGameLeft, kSaveGameTop);
+		_saveButton.startDisplaying();
+
+		_restoreButton.initFromPICTFile("Images/Pause Screen/Restore.pict");
+		_restoreButton.setDisplayOrder(kRestoreOrder);
+		_restoreButton.moveElementTo(kPauseRestoreLeft, kPauseRestoreTop);
+		_restoreButton.startDisplaying();
+
+		_walkthroughButton.initFromPICTFile("Images/Pause Screen/Walkthru.pict");
+		_walkthroughButton.setDisplayOrder(kWalkthruOrder);
+		_walkthroughButton.moveElementTo(kWalkthruLeft, kWalkthruTop);
+		_walkthroughButton.startDisplaying();
+
+		if (GameState.getWalkthroughMode())
+			_walkthroughButton.show();
+	}
+
+	_continueButton.initFromPICTFile("Images/Pause Screen/Continue.pict");
+	_continueButton.setDisplayOrder(kContinueOrder);
+	_continueButton.moveElementTo(kPauseContinueLeft, kPauseContinueTop);
+	_continueButton.startDisplaying();
+
+	_soundFXLevel.setDisplayOrder(kSoundFXOrder);
+	_soundFXLevel.setBounds(Common::Rect(kSoundFXLeft, kSoundFXTop, kSoundFXRight, kSoundFXBottom));
+	_soundFXLevel.startDisplaying();
+	_soundFXLevel.show();
+	_soundFXLevel.setSoundLevel(vm->getSoundFXLevel());
+
+	_ambienceLevel.setDisplayOrder(kAmbienceOrder);
+	_ambienceLevel.setBounds(Common::Rect(kAmbienceLeft, kAmbienceTop, kAmbienceRight, kAmbienceBottom));
+	_ambienceLevel.startDisplaying();
+	_ambienceLevel.show();
+	_ambienceLevel.setSoundLevel(vm->getAmbienceLevel());
+
+	_quitButton.initFromPICTFile("Images/Pause Screen/Quit2MM.pict");
+	_quitButton.setDisplayOrder(kQuitToMainMenuOrder);
+	_quitButton.moveElementTo(kQuitLeft, kQuitTop);
+	_quitButton.startDisplaying();
+
+	_largeSelect.initFromPICTFile("Images/Pause Screen/SelectL.pict", true);
+	_largeSelect.setDisplayOrder(kPauseLargeHiliteOrder);
+	_largeSelect.startDisplaying();
+
+	_smallSelect.initFromPICTFile("Images/Pause Screen/SelectS.pict", true);
+	_smallSelect.setDisplayOrder(kPauseSmallHiliteOrder);
+	_smallSelect.startDisplaying();
+
+	_menuSelection = (vm->isDemo()) ? kPauseMenuContinue : kPauseMenuSave;
+
+	updateDisplay();
+}
+
+void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	if (input.upButtonDown()) {
+		if (vm->isDemo()) {
+			if (_menuSelection > kPauseMenuContinue) {
+				switch (_menuSelection) {
+				case kPauseMenuSoundFX:
+					_menuSelection = kPauseMenuContinue;
+					break;
+				case kPauseMenuAmbience:
+					_menuSelection = kPauseMenuSoundFX;
+					break;
+				case kPauseMenuQuitToMainMenu:
+					_menuSelection = kPauseMenuAmbience;
+					break;
+				}
+				updateDisplay();
+			}
+		} else {
+			if (_menuSelection > kFirstPauseSelection) {
+				_menuSelection--;
+				updateDisplay();
+			}
+		}
+	} else if (input.downButtonDown()) {
+		if (vm->isDemo()) {
+			if (_menuSelection < kPauseMenuQuitToMainMenu) {
+				switch (_menuSelection) {
+				case kPauseMenuContinue:
+					_menuSelection = kPauseMenuSoundFX;
+					break;
+				case kPauseMenuSoundFX:
+					_menuSelection = kPauseMenuAmbience;
+					break;
+				case kPauseMenuAmbience:
+					_menuSelection = kPauseMenuQuitToMainMenu;
+					break;
+				}
+				updateDisplay();
+			}
+		} else {
+			if (_menuSelection < kLastPauseSelection) {
+				_menuSelection++;
+				updateDisplay();
+			}
+		}
+	} else if (input.leftButtonDown()) {
+		if (_menuSelection == kPauseMenuSoundFX) {
+			_soundFXLevel.decrementLevel();
+			vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
+		} else if (_menuSelection == kPauseMenuAmbience) {
+			_ambienceLevel.decrementLevel();
+			vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
+		} else if (!vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
+			GameState.setWalkthroughMode(!GameState.getWalkthroughMode());
+			if (GameState.getWalkthroughMode())
+				_walkthroughButton.show();
+			else
+				_walkthroughButton.hide();
+		}
+	} else if (input.rightButtonDown()) {
+		if (_menuSelection == kPauseMenuSoundFX) {
+			_soundFXLevel.incrementLevel();
+			vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
+		} else if (_menuSelection == kPauseMenuAmbience) {
+			_ambienceLevel.incrementLevel();
+			vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
+		} else if (!vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
+			GameState.setWalkthroughMode(!GameState.getWalkthroughMode());
+			if (GameState.getWalkthroughMode())
+				_walkthroughButton.show();
+			else
+				_walkthroughButton.hide();
+		}
+	} else if (JMPPPInput::isMenuButtonPressInput(input)) {
+		switch (_menuSelection) {
+		case kPauseMenuSave:
+			_saveButton.show();
+			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			_saveButton.hide();
+			setLastCommand(kMenuCmdPauseSave);
+			break;
+		case kPauseMenuRestore:
+			_restoreButton.show();
+			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			_restoreButton.hide();
+			setLastCommand(kMenuCmdPauseRestore);
+			break;
+		case kPauseMenuContinue:
+			_continueButton.show();
+			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			_continueButton.hide();
+			setLastCommand(kMenuCmdPauseContinue);
+			break;
+		case kPauseMenuWalkthru:
+			GameState.setWalkthroughMode(!GameState.getWalkthroughMode());
+			if (GameState.getWalkthroughMode())
+				_walkthroughButton.show();
+			else
+				_walkthroughButton.hide();
+			break;
+		case kPauseMenuQuitToMainMenu:
+			_quitButton.show();
+			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			_quitButton.hide();
+			setLastCommand(kMenuCmdPauseQuit);
+			break;
+		}
+	}
+
+	InputHandler::handleInput(input, cursorSpot);
+}
+
+void PauseMenu::updateDisplay() {
+	switch (_menuSelection) {
+	case kPauseMenuSave:
+		_largeSelect.moveElementTo(kSaveGameSelectLeft, kSaveGameSelectTop);
+		_largeSelect.show();
+		_smallSelect.hide();
+		break;
+	case kPauseMenuContinue:
+		_smallSelect.moveElementTo(kPauseContinueSelectLeft, kPauseContinueSelectTop);
+		_smallSelect.show();
+		_largeSelect.hide();
+		break;
+	case kPauseMenuRestore:
+		_smallSelect.moveElementTo(kPauseRestoreSelectLeft, kPauseRestoreSelectTop);
+		_smallSelect.show();
+		_largeSelect.hide();
+		break;
+	case kPauseMenuSoundFX:
+		_largeSelect.moveElementTo(kSoundFXSelectLeft, kSoundFXSelectTop);
+		_largeSelect.show();
+		_smallSelect.hide();
+		break;
+	case kPauseMenuAmbience:
+		_largeSelect.moveElementTo(kAmbienceSelectLeft, kAmbienceSelectTop);
+		_largeSelect.show();
+		_smallSelect.hide();
+		break;
+	case kPauseMenuWalkthru:
+		_largeSelect.moveElementTo(kWalkthruSelectLeft, kWalkthruSelectTop);
+		_largeSelect.show();
+		_smallSelect.hide();
+		break;
+	case kPauseMenuQuitToMainMenu:
+		_smallSelect.moveElementTo(kQuitSelectLeft, kQuitSelectTop);
+		_smallSelect.show();
+		_largeSelect.hide();
+		break;
+	}
+}
+
+
 } // End of namespace Pegasus

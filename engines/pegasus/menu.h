@@ -143,6 +143,29 @@ protected:
 	Sound _triumphSound;
 };
 
+class PauseMenu : public GameMenu {
+public:
+	PauseMenu();
+	virtual ~PauseMenu() {}
+
+	virtual void handleInput(const Input &input, const Hotspot *);
+
+protected:
+	void updateDisplay();
+
+	uint32 _menuSelection;
+	Picture _pauseBackground;
+	Picture _saveButton;
+	Picture _restoreButton;
+	Picture _walkthroughButton;
+	Picture _continueButton;
+	SoundLevel _soundFXLevel;
+	SoundLevel _ambienceLevel;
+	Picture _quitButton;
+	Picture _largeSelect;
+	Picture _smallSelect;
+};
+
 } // End of namespace Pegasus
 
 #endif
