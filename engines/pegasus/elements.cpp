@@ -556,7 +556,7 @@ void SoundLevel::setSoundLevel(uint16 level) {
 }
 
 void SoundLevel::draw(const Common::Rect &r) {
-	Common::Rect levelRect(_bounds.right - (8 * (_soundLevel - 12)), _bounds.top, _bounds.right, _bounds.bottom);
+	Common::Rect levelRect(_bounds.right + (8 * (_soundLevel - 12)), _bounds.top, _bounds.right, _bounds.bottom);
 	levelRect = r.findIntersectingRect(levelRect);
 
 	if (!levelRect.isEmpty()) {
