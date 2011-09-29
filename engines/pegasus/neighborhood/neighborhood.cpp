@@ -1023,8 +1023,7 @@ void Neighborhood::startTurnPush(const tTurnDirection turnDirection, const TimeV
 	// will work.
 	_navMovie.setSegment(0, _navMovie.getDuration());
 
-	// TODO
-	//_pushIn.initFromMovieFrame(_navMovie.getMovie(), newView, kNoMask);
+	_pushIn.initFromMovieFrame(_navMovie.getMovie(), newView);
 
 	_navMovie.hide();
 
@@ -1075,6 +1074,7 @@ void Neighborhood::startTurnPush(const tTurnDirection turnDirection, const TimeV
 	_turnPush.continueFader();
 
 	do {
+		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
 	} while (_turnPush.isFading());

@@ -73,6 +73,7 @@ public:
 
 	virtual void getImageFromPICTFile(const Common::String &fileName);
 	virtual void getImageFromPICTResource(Common::MacResManager *resFork, uint16 id);
+	virtual void getImageFromMovieFrame(Video::SeekableVideoDecoder *, TimeValue);
 
 protected:
 	bool _ownsSurface;
@@ -103,6 +104,7 @@ public:
 
 	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
 	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
+	virtual void initFromMovieFrame(Video::SeekableVideoDecoder *, TimeValue, bool transparent = false);
 };
 
 class SpriteFrame : public Frame {
@@ -122,6 +124,7 @@ public:
 
 	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
 	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
+	virtual void initFromMovieFrame(Video::SeekableVideoDecoder *, TimeValue, bool transparent = false);
 
 	virtual void draw(const Common::Rect &);
 };

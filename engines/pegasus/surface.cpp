@@ -131,6 +131,22 @@ void Surface::getImageFromPICTStream(Common::SeekableReadStream *stream) {
 	_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
 }
 
+void Surface::getImageFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time) {
+	video->seekToTime(Audio::Timestamp(0, time, 600));
+	const Graphics::Surface *frame = video->decodeNextFrame();
+
+	if (frame) {
+		if (!_surface)
+			_surface = new Graphics::Surface();
+
+		_surface->copyFrom(*frame);
+		_ownsSurface = true;
+		_bounds = Common::Rect(0, 0, _surface->w, _surface->h);
+	} else {
+		deallocateSurface();
+	}
+}
+
 void Surface::copyToCurrentPort() const {
 	copyToCurrentPort(_bounds);
 }
@@ -218,6 +234,11 @@ void Frame::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool
 	_transparent = transparent;
 }
 
+void Frame::initFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time, bool transparent) {
+	getImageFromMovieFrame(video, time);
+	_transparent = transparent;
+}
+
 void Picture::draw(const Common::Rect &r) {
 	Common::Rect surfaceBounds;
 	getSurfaceBounds(surfaceBounds);
@@ -244,6 +265,14 @@ void Picture::initFromPICTFile(const Common::String &fileName, bool transparent)
 
 void Picture::initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent) {
 	Frame::initFromPICTResource(resFork, id, transparent);
+
+	Common::Rect surfaceBounds;
+	getSurfaceBounds(surfaceBounds);
+	sizeElement(surfaceBounds.width(), surfaceBounds.height());
+}
+
+void Picture::initFromMovieFrame(Video::SeekableVideoDecoder *video, TimeValue time, bool transparent) {
+	Frame::initFromMovieFrame(video, time, transparent);
 
 	Common::Rect surfaceBounds;
 	getSurfaceBounds(surfaceBounds);
