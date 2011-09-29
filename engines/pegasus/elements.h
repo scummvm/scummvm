@@ -232,6 +232,23 @@ public:
 	virtual void draw(const Common::Rect &);
 };
 
+class SoundLevel : public DisplayElement {
+public:
+	SoundLevel(const tDisplayElementID);
+	virtual ~SoundLevel() {}
+	
+	void incrementLevel();
+	void decrementLevel();
+	
+	uint16 getSoundLevel();
+	void setSoundLevel(uint16);
+	
+	void draw(const Common::Rect &);
+
+protected:
+	uint16 _soundLevel;
+};
+
 } // End of namespace Pegasus
 
 #endif

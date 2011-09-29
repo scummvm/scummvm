@@ -524,4 +524,45 @@ void ScreenDimmer::draw(const Common::Rect &r) {
 #undef DRAW_PIXEL
 #undef SKIP_PIXEL
 
+SoundLevel::SoundLevel(const tDisplayElementID id) : DisplayElement(id) {
+	_soundLevel = 0;
+}
+
+void SoundLevel::incrementLevel() {
+	if (_soundLevel < 12) {
+		_soundLevel++;
+		triggerRedraw();
+	}
+}
+
+void SoundLevel::decrementLevel() {
+	if (_soundLevel > 0) {
+		_soundLevel--;
+		triggerRedraw();
+	}
+}
+
+uint16 SoundLevel::getSoundLevel() {
+	return CLIP<int>(_soundLevel * 22, 0, 256);
+}
+
+void SoundLevel::setSoundLevel(uint16 level) {
+	uint16 newLevel = (level + 21) / 22;
+
+	if (newLevel != _soundLevel) {
+		_soundLevel = newLevel;
+		triggerRedraw();
+	}
+}
+
+void SoundLevel::draw(const Common::Rect &r) {
+	Common::Rect levelRect(_bounds.right - (8 * (_soundLevel - 12)), _bounds.top, _bounds.right, _bounds.bottom);
+	levelRect = r.findIntersectingRect(levelRect);
+
+	if (!levelRect.isEmpty()) {
+		Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+		screen->fillRect(levelRect, g_system->getScreenFormat().RGBToColor(0, 0, 0));
+	}
+}
+
 } // End of namespace Pegasus
