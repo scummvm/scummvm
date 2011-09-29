@@ -182,6 +182,11 @@ void Movie::checkCallBacks() {
 		uint32 stopTime = _stopTime * getScale() / _stopScale;
 		uint32 actualTime = CLIP<int>(_video->getElapsedTime() * getScale() / 1000, startTime, stopTime);
 		_time = Common::Rational(actualTime, getScale());
+
+		// Stop the video when we go past our end
+		// TODO: Check if this should really be -1
+		if (actualTime >= stopTime - 1)
+			stop();
 	}
 }
 
