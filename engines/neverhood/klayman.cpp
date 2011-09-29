@@ -4091,6 +4091,157 @@ void KmScene2001::sub440270() {
 	SetMessageHandler(&KmScene2001::handleMessage4401A0);
 }
 
+KmScene2101::KmScene2101(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000), _flag1(false) {
+	
+	// Empty
+}
+
+uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
+	uint32 messageResult = 0;
+	switch (messageNum) {
+	case 0x2000:
+		_flag1 = param.asInteger() != 0;
+		messageResult = 1;
+		break;
+	case 0x4001:
+	case 0x4800:
+		sub41C930(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub421350));
+		else
+			setCallback2(AnimationCallback(&Klayman::sub41FC80));
+		break;
+	case 0x4811:
+		setCallback2(AnimationCallback(&KmScene2101::sub4862C0));
+		break;
+	case 0x4812:
+		if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420060));
+		} else if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub41FFF0));
+		} else {
+			setCallback2(AnimationCallback(&Klayman::sub41FF80));
+		}
+		break;
+	case 0x4816:
+		if (param.asInteger() == 1) {
+			setCallback2(AnimationCallback(&Klayman::sub420120));
+		} else if (param.asInteger() == 2) {
+			setCallback2(AnimationCallback(&Klayman::sub420170));
+		}else {
+			setCallback2(AnimationCallback(&Klayman::sub4200D0));
+		} 
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		sub41C7B0();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;
+	case 0x481D:
+		if (_flag1)
+			setCallback2(AnimationCallback(&Klayman::sub4214D0));
+		break;
+	case 0x481E:
+		if (_flag)
+			setCallback2(AnimationCallback(&Klayman::sub421510));
+		break;
+	case 0x4834:
+		setCallback2(AnimationCallback(&Klayman::sub421160));
+		break;
+	case 0x4835:
+		sendMessage(_parentScene, 0x2000, 1);
+		_flag1 = true;
+		setCallback2(AnimationCallback(&Klayman::sub4212C0));
+		break;																		
+	case 0x4836:
+		sendMessage(_parentScene, 0x2000, 0);
+		_flag1 = false;
+		setCallback2(AnimationCallback(&Klayman::sub421310));
+		break;
+	case 0x483D:
+		sub486320();
+		break;
+	case 0x483E:
+		sub486360();
+		break;
+	}
+	return messageResult;	
+}
+
+uint32 KmScene2101::handleMessage486160(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	int16 speedUpFrameIndex;
+	switch (messageNum) {
+	case 0x1008:
+		speedUpFrameIndex = getFrameIndex(kKlaymanSpeedUpHash);
+		if (_frameIndex < speedUpFrameIndex) {
+			setFileHash(0x35AA8059, speedUpFrameIndex, -1);
+			_y = 438;
+		}
+		messageResult = 0;
+		break;
+	case 0x100D:
+		if (param.asInteger() == 0x1A1A0785) {
+			_soundResource1.play(0x40F0A342);
+		} else if (param.asInteger() == 0x60428026) {
+			_soundResource1.play(0x40608A59);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+uint32 KmScene2101::handleMessage486230(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x100D:
+		if (param.asInteger() == 0x4E0A2C24) {
+			_soundResource1.play(0x85B10BB8);
+		} else if (param.asInteger() == 0x4E6A0CA0) {
+			_soundResource1.play(0xC5B709B0);
+		}
+		break;
+	}
+	return messageResult;
+}
+
+void KmScene2101::sub4862C0() {
+	_status2 = 1;
+	_flagE5 = false;
+	setFileHash(0x35AA8059, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
+	SetMessageHandler(&KmScene2101::handleMessage486160);
+	_soundResource1.play(0x402E82D4);
+}
+
+void KmScene2101::sub486320() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0xFF290E30, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene2101::handleMessage486230);
+}
+
+void KmScene2101::sub486360() {
+	_status2 = 0;
+	_flagE5 = false;
+	setFileHash(0x9A28CA1C, 0, -1);
+	SetUpdateHandler(&Klayman::update);
+	SetSpriteCallback(NULL);
+	SetMessageHandler(&KmScene2101::handleMessage486230);
+}
+
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
 	// TODO: NRect *rect1, int16 unk in Klayman ctor
 	: Klayman(vm, parentScene, x, y, 1000, 1000) {
