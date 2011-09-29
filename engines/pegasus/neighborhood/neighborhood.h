@@ -116,7 +116,7 @@ public:
 	virtual ~Neighborhood();
 
 	virtual void init();
-	void start();
+	virtual void start();
 	virtual void moveNavTo(const tCoordType, const tCoordType);
 	virtual void checkContinuePoint(const tRoomID, const tDirectionConstant) = 0;
 	void makeContinuePoint();
