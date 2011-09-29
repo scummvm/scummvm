@@ -31,6 +31,15 @@ namespace Kyra {
 EobEngine::EobEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(system, flags) {
 	_numSpells = 53;
 	_menuChoiceInit = 4;
+
+	_turnUndeadString = _introFilesOpening = _introFilesTower = _introFilesOrb = _introFilesWdEntry	= _introFilesKing = _introFilesHands = _introFilesWdExit =
+		_introFilesTunnel = _finBonusStrings = _npc11Strings = _npc12Strings = _npc21Strings = _npc22Strings = _npc31Strings = _npc32Strings = _npc4Strings	=
+		_npc5Strings = _npc6Strings	= _npc7Strings = 0;
+	_introOpeningFrmDelay = _introWdEncodeX	= _introWdEncodeY = _introWdEncodeWH = _npcShpData = _npcSubShpIndex1 = _npcSubShpIndex2 = _npcSubShpY = _introWdDsY =
+		_introTvlX1 = _introTvlY1 = _introTvlX2	= _introTvlY2 = _introTvlW = _introTvlH = _dscDoorScaleMult4 = _dscDoorScaleMult5 = _dscDoorScaleMult6 =
+		_dscDoorY3 = _dscDoorY4 = _dscDoorY5 = _dscDoorY6 = _dscDoorY7 = _doorShapeEncodeDefs = _doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
+	_introWdDsX = 0;
+	_dscDoorCoordsExt = 0;
 }
 
 EobEngine::~EobEngine() {
@@ -556,34 +565,6 @@ void EobEngine::healParty() {
 		if (_characters[i].hitPointsCur > _characters[i].hitPointsMax)
 			_characters[i].hitPointsCur = _characters[i].hitPointsMax;
 	}
-}
-
-uint32 EobEngine::convertSpellFlagToEob2Format(uint32 flag, int ignoreInvisibility) {
-	uint32 res = 0;
-	if (flag & 0x01)
-		res |= 0x20;
-	if (flag & 0x02)
-		res |= 0x400;
-	if (flag & 0x04)
-		res |= 0x80;
-	if (flag & 0x08)
-		res |= 0x40;
-	if (ignoreInvisibility)
-		res |= 0x100;
-	return res;
-}
-
-uint32 EobEngine::convertCharacterEffectFlagToEob2Format(uint32 flag) {
-	uint32 res = 0;
-	if (flag & 0x02)
-		res |= 0x08;
-	if (flag & 0x04)
-		res |= 0x40;
-	if (flag & 0x80)
-		res |= 0x2000;
-	if (flag & 0x100)
-		res |= 0x4000;
-	return res;
 }
 
 }	// End of namespace Kyra

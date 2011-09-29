@@ -110,6 +110,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_color9 = 17;
 	_color10 = 23;
 	_color11 = 20;
+	_color4 = _color5 = _color6 = _color7 = _color8 = _color12 = _color13 = _color14 = 0;
 
 	_menuDefs = 0;
 
@@ -153,6 +154,48 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_rrCount = 0;
 	memset(_rrNames, 0, 10 * sizeof(const char*));
 	memset(_rrId, 0, 10 * sizeof(int8));
+
+	_mainMenuStrings = _levelGainStrings = _monsterSpecAttStrings = _characterGuiStringsHp = _characterGuiStringsWp = _characterGuiStringsWr = _characterGuiStringsSt =
+		_characterGuiStringsIn = _characterStatusStrings7 = _characterStatusStrings8 = _characterStatusStrings9 = _characterStatusStrings12 = _characterStatusStrings13 = 0;
+	_classModifierFlags = _constModLevelIndex = _constModDiv = _constModExt = _wandTypes = _drawObjPosIndex = _flightObjFlipIndex = _expObjectTblIndex =
+		_expObjectShpStart = _expObjectTlMode = _expObjectAnimTbl1 = _expObjectAnimTbl2 = _expObjectAnimTbl3 = 0;
+	_monsterStepTable0 = _monsterStepTable1 = _monsterStepTable2 = _monsterStepTable3 = _projectileWeaponAmmoTypes = _flightObjShpMap = _flightObjSclIndex = 0;
+	_monsterCloseAttPosTable1 = _monsterCloseAttPosTable2 = _monsterCloseAttChkTable1 = _monsterCloseAttChkTable2 = _monsterCloseAttDstTable1 = _monsterCloseAttDstTable2 = 0;
+	_monsterProximityTable = _findBlockMonstersTable = _wallOfForceDsY = _wallOfForceDsNumW = _wallOfForceDsNumH = _wallOfForceShpId = _wllFlagPreset = _teleporterShapeCoords = 0;
+		_monsterCloseAttUnkTable = _monsterFrmOffsTable1 = _monsterFrmOffsTable2 = _monsterDirChangeTable = _portalSeq = 0;
+	_wallOfForceDsX = 0;
+	_expObjectAnimTbl1Size = _expObjectAnimTbl2Size = _expObjectAnimTbl3Size = _wllFlagPresetSize = _scriptTimersCount = _buttonList1Size = _buttonList2Size = 
+		_buttonList3Size = _buttonList4Size = _buttonList5Size = _buttonList6Size = _buttonList7Size = _buttonList8Size = 0;
+	_inventorySlotsY = _mnDef = 0;
+	_buttonDefs = 0;
+	_npcPreset = 0;
+	_chargenStatStrings	= _chargenRaceSexStrings = _chargenClassStrings = _chargenAlignmentStrings = _pryDoorStrings = _warningStrings = _ripItemStrings =
+		_cursedString = _enchantedString = _magicObjectStrings = _magicObjectString5 = _patternSuffix = _patternGrFix1 = _patternGrFix2 = _validateArmorString =
+		_validateCursedString = _validateNoDropString = _potionStrings = _wandStrings = _itemMisuseStrings = _suffixStringsRings = _suffixStringsPotions =
+		_suffixStringsWands	= _takenStrings	= _potionEffectStrings = _yesNoStrings = _npcMaxStrings = _okStrings = _npcJoinStrings = _cancelStrings	=
+		_abortStrings = _saveLoadStrings = _mnWord = _mnPrompt = _bookNumbers = _mageSpellList = _clericSpellList = _spellNames = _magicStrings1 = _magicStrings2 =
+		_magicStrings3 = _magicStrings4 = _magicStrings6 = _magicStrings7 = _magicStrings8 = 0;
+	_spellAnimBuffer = 0;
+	_sparkEffectDefSteps = _sparkEffectDefSubSteps = _sparkEffectDefShift = _sparkEffectDefAdd = _sparkEffectDefX = _sparkEffectDefY = _sparkEffectOfShift =
+		_sparkEffectOfX	= _sparkEffectOfY = _magicFlightObjectProperties = _turnUndeadEffect = _burningHandsDest = _coneOfColdGfxTbl = 0;
+	_sparkEffectOfFlags1 = _sparkEffectOfFlags2 = 0;
+	_coneOfColdDest1 = _coneOfColdDest2 = _coneOfColdDest3 = _coneOfColdDest4 = 0;
+	_coneOfColdGfxTblSize = 0;
+	_menuButtonDefs = 0;
+	_menuStringsMain = _menuStringsSaveLoad	= _menuStringsOnOff	= _menuStringsSpells = _menuStringsRest	= _menuStringsDrop = _menuStringsExit = _menuStringsStarve =
+		_menuStringsScribe = _menuStringsDrop2 = _menuStringsHead = _menuStringsPoison = _menuStringsMgc = _menuStringsPrefs = _menuStringsRest2 = _menuStringsRest3 =
+		_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = _menuStringsSpellNo = _menuYesNoStrings = 0;
+	_errorSlotEmptyString = _errorSlotNoNameString = _menuOkString = 0;
+	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj	= _numSpellsPal	= _numSpellsMage = 0;
+	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
+	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
+	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
+	memset(_constModTables, 0, sizeof(_constModTables));
+	memset(_doorType, 0, sizeof(_doorType));
+	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
+	memset(_scriptTimers, 0, sizeof(_scriptTimers));
+	memset(_monsterBlockPosArray, 0, sizeof(_monsterBlockPosArray));
+	memset(_foundMonstersArray, 0, sizeof(_foundMonstersArray));
 }
 
 EobCoreEngine::~EobCoreEngine() {
@@ -251,11 +294,10 @@ Common::Error EobCoreEngine::init() {
 
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
-	_sound->init();
 	assert(_sound);
+	_sound->init();	
 
-	if (_sound)
-		_sound->updateVolumeSettings();
+	syncSoundSettings();
 
 	_res = new Resource(this);
 	assert(_res);
@@ -287,8 +329,6 @@ Common::Error EobCoreEngine::init() {
 
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
-
-	readSettings();
 
 	Common::Error err = LolEobBaseEngine::init();
 	if (err.getCode() != Common::kNoError)
@@ -364,6 +404,9 @@ Common::Error EobCoreEngine::init() {
 	memset(_monsterOvl1, 15, 16 * sizeof(uint8));
 	memset(_monsterOvl2, 13, 16 * sizeof(uint8));
 	_monsterOvl1[0] = _monsterOvl2[0] = 0;
+
+	// Prevent autosave on game startup
+	_lastAutosave = _system->getMillis();
 
 	return Common::kNoError;
 }
@@ -701,7 +744,7 @@ void EobCoreEngine::setHandItem(Item itemIndex) {
 	const uint8 *shp = _itemIconShapes[icon];
 
 	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
-		memcpy(_tempIconShape, shp, 300);
+		memcpy(_tempIconShape, shp, shp[1] * shp[2] * 4 + 20);
 		if (_flags.gameID == GI_EOB1)
 			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icon << 4]);
 		else
@@ -1225,9 +1268,10 @@ void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char
 	_dialogueNumButtons = numStr;
 	_dialogueButtonString[0] = str1;
 	_dialogueHighlightedButton = 0;
+	const char *tmp = 0;
 
 	for (int i = 1; i < numStr; i++) {
-		const char *tmp = va_arg(args, const char*);
+		tmp = va_arg(args, const char*);
 		if (tmp)
 			_dialogueButtonString[i] = tmp;
 		else

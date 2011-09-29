@@ -34,6 +34,12 @@ DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EobCor
 	_dscDoorType5Offs = 0;
 	_numSpells = 70;
 	_menuChoiceInit = 4;
+
+	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npc1Strings = _npc2Strings = _hornStrings = 0;
+	_seqIntro = _seqFinale = 0;
+	_shapesIntro = _shapesFinale = 0;
+	_creditsData = _npcShpData = _dscDoorType5Offs = _hornSounds = 0;
+	_dreamSteps = 0;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {

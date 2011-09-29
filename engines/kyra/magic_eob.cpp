@@ -542,7 +542,7 @@ bool EobCoreEngine::magicObjectDamageHit(EobFlyingObject *fo, int dcTimes, int d
 			}
 		} else {
 			int c = _dscItemPosIndex[(_currentDirection << 2) + (fo->curPos & 3)];
-			if ((c > 2) && (testCharacter(5, 1) || testCharacter(6, 1)) && rollDice(1, 2, -1))
+			if ((c > 2) && (testCharacter(4, 1) || testCharacter(5, 1)) && rollDice(1, 2, -1))
 				c += 2;
 
 			if (!fo->item && (_characters[c].effectFlags & 8)) {

@@ -39,6 +39,7 @@ void LolEobBaseEngine::generateTempData() {
 		delete[] _lvlTempData[l]->flags;
 		releaseMonsterTempData(_lvlTempData[l]);
 		releaseFlyingObjectTempData(_lvlTempData[l]);
+		releaseWallOfForceTempData(_lvlTempData[l]);
 		delete _lvlTempData[l];
 	}
 
@@ -280,6 +281,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 			delete[] _lvlTempData[i]->flags;
 			releaseMonsterTempData(_lvlTempData[i]);
 			releaseFlyingObjectTempData(_lvlTempData[i]);
+			releaseWallOfForceTempData(_lvlTempData[i]);
 			delete _lvlTempData[i];
 		}
 

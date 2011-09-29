@@ -47,10 +47,18 @@ Screen_Eob::Screen_Eob(EobCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 	_customDimTable = 0;
 	_dsTempPage = 0;
 	_curDimIndex = 0;
+	_dsDiv = 0;
+	_dsRem = 0;
+	_dsScaleTmp = 0;
+	_gfxMaxY = 0;
 }
 
 Screen_Eob::~Screen_Eob() {
 	delete[] _fadeData;
+	if (_customDimTable) {
+		for (int i = 0; i < _screenDimTableCount; i++)
+			delete _customDimTable[i];
+	}
 	delete[] _customDimTable;
 	delete[] _dsTempPage;
 }
@@ -58,7 +66,7 @@ Screen_Eob::~Screen_Eob() {
 bool Screen_Eob::init() {
 	if (Screen::init()) {
 		_customDimTable = new ScreenDim*[_screenDimTableCount];
-		memset(_customDimTable, 0, sizeof(ScreenDim *)* _screenDimTableCount);
+		memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
 
 		int temp;
 		_gfxMaxY = _vm->staticres()->loadRawData(kEobBaseExpObjectY, temp);

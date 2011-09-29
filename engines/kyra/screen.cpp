@@ -51,6 +51,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 
 	_currentFont = FID_8_FNT;
 	_paletteChanged = true;
+	_curDim = 0;
 }
 
 Screen::~Screen() {
