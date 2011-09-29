@@ -413,9 +413,6 @@ void L1_Enumerate3DDevices() {
 void L1_RotateVector() {
 	lua_Object vecObj = lua_getparam(1);
 	lua_Object rotObj = lua_getparam(2);
-	lua_Object resObj;
-	Math::Vector3d vec, rot, resVec;
-	float x, y, z;
 
 	if (!lua_istable(vecObj) || !lua_istable(rotObj)) {
 		lua_pushnil();
@@ -424,31 +421,30 @@ void L1_RotateVector() {
 
 	lua_pushobject(vecObj);
 	lua_pushstring("x");
-	x = lua_getnumber(lua_gettable());
+	float x = lua_getnumber(lua_gettable());
 	lua_pushobject(vecObj);
 	lua_pushstring("y");
-	y = lua_getnumber(lua_gettable());
+	float y = lua_getnumber(lua_gettable());
 	lua_pushobject(vecObj);
 	lua_pushstring("z");
-	z = lua_getnumber(lua_gettable());
-	vec.set(x, y, z);
+	float z = lua_getnumber(lua_gettable());
+	Math::Vector3d vec(x, y, z);
 
 	lua_pushobject(rotObj);
 	lua_pushstring("x");
-	x = lua_getnumber(lua_gettable());
+	Math::Angle roll = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("y");
-	y = lua_getnumber(lua_gettable());
+	Math::Angle yaw = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("z");
-	z = lua_getnumber(lua_gettable());
-	rot.set(x, y, z);
+	Math::Angle pitch = lua_getnumber(lua_gettable());
 
 	Math::Matrix3 mat;
-	mat.buildFromPitchYawRoll(x, y, z);
+	mat.buildFromPitchYawRoll(pitch, yaw, roll);
 	mat.transformVector(&vec);
 
-	resObj = lua_createtable();
+	lua_Object resObj = lua_createtable();
 	lua_pushobject(resObj);
 	lua_pushstring("x");
 	lua_pushnumber(vec.x());
