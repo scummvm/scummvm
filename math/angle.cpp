@@ -149,7 +149,7 @@ void Angle::crop() {
 		_degrees -= 360.f * x;
 	}
 	if (_degrees < _rangeLow) {
-		int x = (int)(_degrees - _rangeLow) / 360.f;
+		int x = (int)(_degrees + _rangeLow) / 360.f;
 		_degrees -= 360.f * x;
 	}
 }
