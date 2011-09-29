@@ -40,7 +40,7 @@ class MatrixType<dim, dim> : public MatrixBase<dim, dim> {
 public:
 	inline void setToIdentity() { *this = 1.f; }
 	inline void transformVector(Vector(dim) *vec) const {
-		*vec = *this->getThis() * *vec;
+		*vec = this->getThis() * *vec;
 	}
 
 	Matrix<dim, dim> operator=(float i);
@@ -59,7 +59,7 @@ Matrix<dim, dim> MatrixType<dim, dim>::operator=(float i) {
 		}
 	}
 
-	return *this;
+	return this->getThis();
 }
 
 }
