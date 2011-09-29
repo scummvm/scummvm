@@ -224,6 +224,14 @@ protected:
 	Sprite _sprite;
 };
 
+class ScreenDimmer : public DisplayElement {
+public:
+	ScreenDimmer() : DisplayElement(kScreenDimmerID) {}
+	virtual ~ScreenDimmer() {}
+
+	virtual void draw(const Common::Rect &);
+};
+
 } // End of namespace Pegasus
 
 #endif

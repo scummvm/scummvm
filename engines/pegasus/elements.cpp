@@ -478,4 +478,50 @@ void SpriteSequence::newFrame(const uint16 frame) {
 	_sprite.setCurrentFrameIndex(frame);
 }
 
+#define DRAW_PIXEL() \
+	if (bytesPerPixel == 2) \
+		*((uint16 *)dst) = black; \
+	else \
+		*((uint32 *)dst) = black; \
+	dst += bytesPerPixel
+
+#define SKIP_PIXEL() \
+	dst += bytesPerPixel
+
+void ScreenDimmer::draw(const Common::Rect &r) {
+	// We're going to emulate QuickDraw's srcOr+gray mode here
+	// In this mode, every other y column is all black (odd-columns).
+	// Basically, every row does three black and then one transparent
+	// repeatedly.
+
+	// The output is identical to the original
+
+	uint32 black = g_system->getScreenFormat().RGBToColor(0, 0, 0);
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	byte bytesPerPixel = g_system->getScreenFormat().bytesPerPixel;
+
+	// We're currently doing it to the whole screen to simplify the code
+
+	for (int y = 0; y < 480; y++) {
+		byte *dst = (byte *)screen->getBasePtr(0, y);
+
+		for (int x = 0; x < 640; x += 4) {
+			if (y & 1) {
+				DRAW_PIXEL();
+				DRAW_PIXEL();
+				SKIP_PIXEL();
+				DRAW_PIXEL();
+			} else {
+				SKIP_PIXEL();
+				DRAW_PIXEL();
+				DRAW_PIXEL();
+				DRAW_PIXEL();
+			}
+		}
+	}
+}
+
+#undef DRAW_PIXEL
+#undef SKIP_PIXEL
+
 } // End of namespace Pegasus

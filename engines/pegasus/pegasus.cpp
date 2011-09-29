@@ -142,6 +142,9 @@ Common::Error PegasusEngine::run() {
 	_returnHotspot.setHotspotFlags(kInfoReturnSpotFlag);
 	g_allHotspots.push_back(&_returnHotspot);
 
+	_screenDimmer.setBounds(Common::Rect(0, 0, 640, 480));
+	_screenDimmer.setDisplayOrder(kScreenDimmerOrder);
+
 	while (!shouldQuit())
 		processShell();
 

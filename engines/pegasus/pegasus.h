@@ -232,6 +232,7 @@ private:
 	GameMenu *_gameMenu;
 	void doGameMenuCommand(const tGameMenuCommand);
 	void doInterfaceOverview();
+	ScreenDimmer _screenDimmer;
 
 	// Energy
 	int32 _savedEnergyValue;
