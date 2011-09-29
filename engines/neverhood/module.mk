@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	module1600.o \
 	module1700.o \
 	module1800.o \
+	module1900.o \
 	module2000.o \
 	module2200.o \
 	module2300.o \
