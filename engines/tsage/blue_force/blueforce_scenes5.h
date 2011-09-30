@@ -39,7 +39,7 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class Scene550 : public SceneExt {
+class Scene550: public SceneExt {
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
@@ -55,7 +55,7 @@ class Scene550 : public SceneExt {
 	};
 
 	/* Actions */
-	class Action1: public Action {
+	class Action1: public ActionExt {
 	public:
 		virtual void signal();
 	};
@@ -69,11 +69,76 @@ public:
 	SpeakerLyleHat _lyleHatSpeaker;
 	SpeakerJakeJacket _jakeJacketSpeaker;
 	Action1 _action1;
-	int _fieldF90;
 
-	Scene550();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
+};
+
+class Scene551: public Scene550 {
+	/* Objects */
+	class Vechile: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class DrunkStanding: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Drunk: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class PatrolCarTrunk: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class TrunkInset: public FocusObject {
+	public:
+		virtual void remove();
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class TrunkKits: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Harrison: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item4: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SpeakerDrunk _drunkSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerGiggles _gigglesSpeaker;
+	Vechile _vechile2;
+	DrunkStanding _drunkStanding;
+	Drunk _drunk;
+	PatrolCarTrunk _patrolCarTrunk;
+	TrunkInset _trunkInset;
+	TrunkKits _trunkKits;
+	Harrison _harrison;
+	NamedObject _object11, _object12, _object13;
+	SceneObject _object14, _object15;
+	Item4 _item4;
+	Action2 _action2;
+	int _field1CD0, _field1CD2;
+
+	Scene551();
+	virtual void synchronize(Serializer &s);
+	void postInit(SceneObjectList *OwnerList);
+	virtual void signal();
+	virtual void dispatch();
 };
 
 } // End of namespace BlueForce
