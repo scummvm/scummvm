@@ -85,7 +85,6 @@ void LolEobBaseEngine::gui_drawHorizontalBarGraph(int x, int y, int w, int h, in
 }
 
 void LolEobBaseEngine::gui_initButtonsFromList(const int16 *list) {
-	return;
 	while (*list != -1)
 		gui_initButton(*list++);
 }
@@ -808,13 +807,17 @@ void EobCoreEngine::gui_initButton(int index, int, int, int) {
 	b->index = index + 1;
 
 	const EobGuiButtonDef *d = &_buttonDefs[index];
+	b->buttonCallback = _buttonCallbacks[index];
 
 	if (_flags.gameID == GI_EOB1) {
 		// EOB1 spellbook modifications
-		if (index > 60 && index < 66)
+		if (index > 60 && index < 66) {
 			d = &_buttonDefs[index + 33];
-		if (index == 88)
+			b->buttonCallback = _buttonCallbacks[index + 33];
+		} else if (index == 88) {
 			d = &_buttonDefs[index + 12];
+			b->buttonCallback = _buttonCallbacks[index + 12];
+		}
 	}
 
 	b->x = d->x;
@@ -830,7 +833,6 @@ void EobCoreEngine::gui_initButton(int index, int, int, int) {
 	b->keyCode = d->keyCode;
 	b->keyCode2 = d->keyCode2;
 	b->arg = d->arg;
-	b->buttonCallback = d->buttonCallback;
 }
 
 int EobCoreEngine::clickedCharPortraitDefault(Button *button) {
@@ -1437,8 +1439,6 @@ void EobCoreEngine::gui_processInventorySlotClick(int slot) {
 }
 
 GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
-	//_scrollUpFunctor = _scrollDownFunctor = BUTTON_FUNCTOR(GUI_Eob, this, 0);
-
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
 
@@ -1601,7 +1601,6 @@ void GUI_Eob::processButton(Button *button) {
 }
 
 int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8 mouseWheel) {
-	return 0;
 	_progress = 0;
 	uint16 in = inputFlags & 0xff;
 	uint16 buttonReleaseFlag = 0;

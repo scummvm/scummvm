@@ -570,114 +570,170 @@ void EobCoreEngine::initStaticResource() {
 }
 
 void EobCoreEngine::initButtonData() {
-	#define EOB_CB(x)	BUTTON_FUNCTOR(EobCoreEngine, this, &EobCoreEngine::x)
 	static const EobGuiButtonDef buttonDefs[] = {
-		{ 112, 0, 0x1100, 184, 2, 63, 50, EOB_CB(clickedCharPortraitDefault), 0 },
-		{ 113, 0, 0x1100, 256, 2, 63, 50, EOB_CB(clickedCharPortraitDefault), 1 },
-		{ 114, 0, 0x1100, 184, 54, 63, 50, EOB_CB(clickedCharPortraitDefault), 2 },
-		{ 115, 0, 0x1100, 256, 54, 63, 50, EOB_CB(clickedCharPortraitDefault), 3 },
-		{ 48, 110, 0x1100, 289, 177, 31, 21, EOB_CB(clickedCamp), 0 },
-		{ 0, 0, 0x1100, 0, 102, 88, 18, EOB_CB(clickedSceneDropPickupItem), 0 },
-		{ 0, 0, 0x1100, 89, 102, 88, 18, EOB_CB(clickedSceneDropPickupItem), 1 },
-		{ 0, 0, 0x1100, 0, 72, 88, 29, EOB_CB(clickedSceneDropPickupItem), 2 },
-		{ 0, 0, 0x1100, 89, 72, 88, 29, EOB_CB(clickedSceneDropPickupItem), 3 },
-		{ 24, 0, 0x1100, 184, 10, 33, 33, EOB_CB(clickedCharPortrait2), 0 },
-		{ 0, 0, 0x1100, 256, 10, 33, 33, EOB_CB(clickedCharPortrait2), 1 },
-		{ 0, 0, 0x1100, 184, 62, 33, 33, EOB_CB(clickedCharPortrait2), 2 },
-		{ 0, 0, 0x1100, 256, 62, 33, 33, EOB_CB(clickedCharPortrait2), 3 },
-		{ 0, 0, 0x1100, 216, 10, 31, 33, EOB_CB(clickedWeaponSlot), 0 },
-		{ 0, 0, 0x1100, 288, 10, 31, 33, EOB_CB(clickedWeaponSlot), 1 },
-		{ 0, 0, 0x1100, 216, 62, 31, 33, EOB_CB(clickedWeaponSlot), 2 },
-		{ 0, 0, 0x1100, 288, 62, 31, 33, EOB_CB(clickedWeaponSlot), 3 },
-		{ 368, 0, 0x1000, 184, 2, 63, 8, EOB_CB(clickedCharNameLabelRight), 0 },
-		{ 369, 0, 0x1000, 256, 2, 63, 8, EOB_CB(clickedCharNameLabelRight), 1 },
-		{ 370, 0, 0x1000, 184, 54, 63, 8, EOB_CB(clickedCharNameLabelRight), 2 },
-		{ 371, 0, 0x1000, 256, 54, 63, 8, EOB_CB(clickedCharNameLabelRight), 3 },
-		{ 0, 0, 0x1100, 230, 116, 16, 16, EOB_CB(clickedInventorySlot), 0 },
-		{ 0, 0, 0x1100, 278, 116, 16, 16, EOB_CB(clickedInventorySlot), 1 },
-		{ 0, 0, 0x1100, 181, 40, 16, 16, EOB_CB(clickedInventorySlot), 2 },
-		{ 0, 0, 0x1100, 199, 40, 16, 16, EOB_CB(clickedInventorySlot), 3 },
-		{ 0, 0, 0x1100, 181, 58, 16, 16, EOB_CB(clickedInventorySlot), 4 },
-		{ 0, 0, 0x1100, 199, 58, 16, 16, EOB_CB(clickedInventorySlot), 5 },
-		{ 0, 0, 0x1100, 181, 76, 16, 16, EOB_CB(clickedInventorySlot), 6 },
-		{ 0, 0, 0x1100, 199, 76, 16, 16, EOB_CB(clickedInventorySlot), 7 },
-		{ 0, 0, 0x1100, 181, 94, 16, 16, EOB_CB(clickedInventorySlot), 8 },
-		{ 0, 0, 0x1100, 199, 94, 16, 16, EOB_CB(clickedInventorySlot), 9 },
-		{ 0, 0, 0x1100, 181, 112, 16, 16, EOB_CB(clickedInventorySlot), 10 },
-		{ 0, 0, 0x1100, 199, 112, 16, 16, EOB_CB(clickedInventorySlot), 11 },
-		{ 0, 0, 0x1100, 181, 130, 16, 16, EOB_CB(clickedInventorySlot), 12 },
-		{ 0, 0, 0x1100, 199, 130, 16, 16, EOB_CB(clickedInventorySlot), 13 },
-		{ 0, 0, 0x1100, 181, 148, 16, 16, EOB_CB(clickedInventorySlot), 14 },
-		{ 0, 0, 0x1100, 199, 148, 16, 16, EOB_CB(clickedInventorySlot), 15 },
-		{ 0, 0, 0x1100, 225, 55, 16, 16, EOB_CB(clickedInventorySlot), 16 },
-		{ 0, 0, 0x1100, 224, 76, 16, 16, EOB_CB(clickedInventorySlot), 17 },
-		{ 0, 0, 0x1100, 225, 96, 16, 16, EOB_CB(clickedInventorySlot), 18 },
-		{ 0, 0, 0x1100, 298, 55, 16, 16, EOB_CB(clickedInventorySlot), 19 },
-		{ 0, 0, 0x1100, 287, 75, 16, 16, EOB_CB(clickedInventorySlot), 20 },
-		{ 0, 0, 0x1100, 277, 137, 16, 16, EOB_CB(clickedInventorySlot), 21 },
-		{ 0, 0, 0x1100, 300, 94, 16, 16, EOB_CB(clickedInventorySlot), 22 },
-		{ 0, 0, 0x1100, 300, 112, 16, 16, EOB_CB(clickedInventorySlot), 23 },
-		{ 0, 0, 0x1100, 300, 130, 16, 16, EOB_CB(clickedInventorySlot), 24 },
-		{ 0, 0, 0x1100, 236, 37, 31, 16, EOB_CB(clickedEatItem), 25 },
-		{ 26, 0, 0x1100, 291, 149, 25, 17, EOB_CB(clickedInventoryNextPage), 25 },
-		{ 110, 24, 0x1100, 181, 3, 32, 32, EOB_CB(clickedPortraitRestore), 25 },
-		{ 96, 352, 0x1100, 24, 128, 21, 16, EOB_CB(clickedUpArrow), 25 },
-		{ 98, 97, 0x1100, 24, 144, 21, 16, EOB_CB(clickedDownArrow), 25 },
-		{ 92, 348, 0x1100, 3, 144, 21, 16, EOB_CB(clickedLeftArrow), 25 },
-		{ 102, 358, 0x1100, 45, 144, 21, 16, EOB_CB(clickedRightArrow), 25 },
-		{ 91, 0, 0x1100, 3, 128, 21, 16, EOB_CB(clickedTurnLeftArrow), 25 },
-		{ 101, 0, 0x1100, 45, 128, 21, 16, EOB_CB(clickedTurnRightArrow), 25 },
-		{ 110, 0, 0x1100, 184, 0, 136, 120, EOB_CB(clickedAbortCharSwitch), 0 },
-		{ 0, 0, 0x1100, 0, 8, 88, 48, EOB_CB(clickedSceneThrowItem), 0 },
-		{ 0, 0, 0x1100, 88, 8, 88, 48, EOB_CB(clickedSceneThrowItem), 1 },
-		{ 0, 0, 0x1100, 24, 8, 128, 96, EOB_CB(clickedSceneSpecial), 1 },
-		{ 112, 113, 0x1100, 274, 35, 20, 15, EOB_CB(clickedInventoryPrevChar), 1 },
-		{ 114, 115, 0x1100, 297, 35, 20, 15, EOB_CB(clickedInventoryNextChar), 1 },
-		{ 2, 0, 0x1100, 68, 121, 18, 10, EOB_CB(clickedSpellbookTab), 0 },
-		{ 3, 0, 0x1100, 86, 121, 18, 10, EOB_CB(clickedSpellbookTab), 1 },
-		{ 4, 0, 0x1100, 104, 121, 15, 10, EOB_CB(clickedSpellbookTab), 2 },
-		{ 5, 0, 0x1100, 122, 121, 15, 10, EOB_CB(clickedSpellbookTab), 3 },
-		{ 6, 0, 0x1100, 140, 121, 15, 10, EOB_CB(clickedSpellbookTab), 4 },
-		{ 0, 0, 0x1100, 75, 131, 97, 6, EOB_CB(clickedSpellbookList), 0 },
-		{ 0, 0, 0x1100, 75, 137, 97, 6, EOB_CB(clickedSpellbookList), 1 },
-		{ 0, 0, 0x1100, 75, 143, 97, 6, EOB_CB(clickedSpellbookList), 2 },
-		{ 0, 0, 0x1100, 75, 149, 97, 6, EOB_CB(clickedSpellbookList), 3 },
-		{ 0, 0, 0x1100, 75, 155, 97, 6, EOB_CB(clickedSpellbookList), 4 },
-		{ 0, 0, 0x1100, 75, 161, 97, 6, EOB_CB(clickedSpellbookList), 5 },
-		{ 112, 0, 0x1100, 184, 2, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 0 },
-		{ 113, 0, 0x1100, 256, 2, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 1 },
-		{ 114, 0, 0x1100, 184, 54, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 2 },
-		{ 115, 0, 0x1100, 256, 54, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 3 },
-		{ 53, 54, 0x1100, 320, 200, 0, 0, EOB_CB(clickedSpellbookList), 6 },
-		{ 61, 0, 0x1100, 320, 200, 0, 0, EOB_CB(clickedSpellbookList), 7 },
-		{ 0, 0, 0x1100, 184, 114, 33, 33, EOB_CB(clickedCharPortrait2), 4 },
-		{ 0, 0, 0x1100, 256, 114, 33, 33, EOB_CB(clickedCharPortrait2), 5 },
-		{ 0, 0, 0x1100, 216, 114, 31, 33, EOB_CB(clickedWeaponSlot), 4 },
-		{ 0, 0, 0x1100, 288, 114, 31, 33, EOB_CB(clickedWeaponSlot), 5 },
-		{ 372, 0, 0x1000, 184, 106, 63, 8, EOB_CB(clickedCharNameLabelRight), 4 },
-		{ 373, 0, 0x1000, 256, 106, 63, 8, EOB_CB(clickedCharNameLabelRight), 5 },
-		{ 0, 0, 0x1100, 227, 135, 10, 10, EOB_CB(clickedInventorySlot), 25 },
-		{ 0, 0, 0x1100, 239, 135, 10, 10, EOB_CB(clickedInventorySlot), 26 },
-		{ 116, 0, 0x1100, 184, 106, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 4 },
-		{ 117, 0, 0x1100, 256, 106, 63, 50, EOB_CB(clickedCastSpellOnCharacter), 5 },
-		{ 110, 0, 0x1100, 68, 168, 78, 10, EOB_CB(clickedSpellbookAbort), 0 },
-		{ 110, 0, 0x1100, 68, 168, 78, 10, EOB_CB(clickedCastSpellOnCharacter), 65535 },
-		{ 116, 0, 0x1100, 184, 106, 63, 50, EOB_CB(clickedCharPortraitDefault), 4 },
-		{ 117, 0, 0x1100, 256, 106, 63, 50, EOB_CB(clickedCharPortraitDefault), 5 },
-		{ 116, 117, 0x1100, 320, 200, 1, 1, EOB_CB(clickedInventoryNextChar), 2 },
-		{ 7, 0, 0x1100, 158, 121, 15, 10, EOB_CB(clickedSpellbookTab), 5 },
-		{ 0, 0, 0x1100, 146, 168, 32, 10, EOB_CB(clickedSpellbookScroll), 0 },
+		{ 112, 0, 0x1100, 184, 2, 63, 50, 0 },
+		{ 113, 0, 0x1100, 256, 2, 63, 50, 1 },
+		{ 114, 0, 0x1100, 184, 54, 63, 50, 2 },
+		{ 115, 0, 0x1100, 256, 54, 63, 50, 3 },
+		{ 48, 110, 0x1100, 289, 177, 31, 21, 0 },
+		{ 0, 0, 0x1100, 0, 102, 88, 18, 0 },
+		{ 0, 0, 0x1100, 89, 102, 88, 18, 1 },
+		{ 0, 0, 0x1100, 0, 72, 88, 29, 2 },
+		{ 0, 0, 0x1100, 89, 72, 88, 29, 3 },
+		{ 24, 0, 0x1100, 184, 10, 33, 33, 0 },
+		{ 0, 0, 0x1100, 256, 10, 33, 33, 1 },
+		{ 0, 0, 0x1100, 184, 62, 33, 33, 2 },
+		{ 0, 0, 0x1100, 256, 62, 33, 33, 3 },
+		{ 0, 0, 0x1100, 216, 10, 31, 33, 0 },
+		{ 0, 0, 0x1100, 288, 10, 31, 33, 1 },
+		{ 0, 0, 0x1100, 216, 62, 31, 33, 2 },
+		{ 0, 0, 0x1100, 288, 62, 31, 33, 3 },
+		{ 368, 0, 0x1000, 184, 2, 63, 8, 0 },
+		{ 369, 0, 0x1000, 256, 2, 63, 8, 1 },
+		{ 370, 0, 0x1000, 184, 54, 63, 8, 2 },		
+		{ 371, 0, 0x1000, 256, 54, 63, 8, 3 },
+		{ 0, 0, 0x1100, 230, 116, 16, 16, 0 },
+		{ 0, 0, 0x1100, 278, 116, 16, 16, 1 },
+		{ 0, 0, 0x1100, 181, 40, 16, 16, 2 },
+		{ 0, 0, 0x1100, 199, 40, 16, 16, 3 },
+		{ 0, 0, 0x1100, 181, 58, 16, 16, 4 },
+		{ 0, 0, 0x1100, 199, 58, 16, 16, 5 },
+		{ 0, 0, 0x1100, 181, 76, 16, 16, 6 },
+		{ 0, 0, 0x1100, 199, 76, 16, 16, 7 },
+		{ 0, 0, 0x1100, 181, 94, 16, 16, 8 },		
+		{ 0, 0, 0x1100, 199, 94, 16, 16, 9 },
+		{ 0, 0, 0x1100, 181, 112, 16, 16, 10 },
+		{ 0, 0, 0x1100, 199, 112, 16, 16, 11 },
+		{ 0, 0, 0x1100, 181, 130, 16, 16, 12 },
+		{ 0, 0, 0x1100, 199, 130, 16, 16, 13 },
+		{ 0, 0, 0x1100, 181, 148, 16, 16, 14 },
+		{ 0, 0, 0x1100, 199, 148, 16, 16, 15 },
+		{ 0, 0, 0x1100, 225, 55, 16, 16, 16 },
+		{ 0, 0, 0x1100, 224, 76, 16, 16, 17 },
+		{ 0, 0, 0x1100, 225, 96, 16, 16, 18 },
+		{ 0, 0, 0x1100, 298, 55, 16, 16, 19 },
+		{ 0, 0, 0x1100, 287, 75, 16, 16, 20 },
+		{ 0, 0, 0x1100, 277, 137, 16, 16, 21 },
+		{ 0, 0, 0x1100, 300, 94, 16, 16, 22 },
+		{ 0, 0, 0x1100, 300, 112, 16, 16, 23 },
+		{ 0, 0, 0x1100, 300, 130, 16, 16, 24 },
+		{ 0, 0, 0x1100, 236, 37, 31, 16, 25 },
+		{ 26, 0, 0x1100, 291, 149, 25, 17, 25 },
+		{ 110, 24, 0x1100, 181, 3, 32, 32, 25 },
+		{ 96, 352, 0x1100, 24, 128, 21, 16, 25 },
+		{ 98, 97, 0x1100, 24, 144, 21, 16, 25 },
+		{ 92, 348, 0x1100, 3, 144, 21, 16, 25 },
+		{ 102, 358, 0x1100, 45, 144, 21, 16, 25 },
+		{ 91, 0, 0x1100, 3, 128, 21, 16, 25 },
+		{ 101, 0, 0x1100, 45, 128, 21, 16, 25 },
+		{ 110, 0, 0x1100, 184, 0, 136, 120, 0 },
+		{ 0, 0, 0x1100, 0, 8, 88, 48, 0 },
+		{ 0, 0, 0x1100, 88, 8, 88, 48, 1 },
+		{ 0, 0, 0x1100, 24, 8, 128, 96, 1 },
+		{ 112, 113, 0x1100, 274, 35, 20, 15, 1 },
+		{ 114, 115, 0x1100, 297, 35, 20, 15, 1 },
+		{ 2, 0, 0x1100, 68, 121, 18, 10, 0 },
+		{ 3, 0, 0x1100, 86, 121, 18, 10, 1 },
+		{ 4, 0, 0x1100, 104, 121, 15, 10, 2 },
+		{ 5, 0, 0x1100, 122, 121, 15, 10, 3 },
+		{ 6, 0, 0x1100, 140, 121, 15, 10, 4 },
+		{ 0, 0, 0x1100, 75, 131, 97, 6, 0 },
+		{ 0, 0, 0x1100, 75, 137, 97, 6, 1 },
+		{ 0, 0, 0x1100, 75, 143, 97, 6, 2 },
+		{ 0, 0, 0x1100, 75, 149, 97, 6, 3 },
+		{ 0, 0, 0x1100, 75, 155, 97, 6, 4 },
+		{ 0, 0, 0x1100, 75, 161, 97, 6, 5 },
+		{ 112, 0, 0x1100, 184, 2, 63, 50, 0 },
+		{ 113, 0, 0x1100, 256, 2, 63, 50, 1 },
+		{ 114, 0, 0x1100, 184, 54, 63, 50, 2 },
+		{ 115, 0, 0x1100, 256, 54, 63, 50, 3 },
+		{ 53, 54, 0x1100, 320, 200, 0, 0, 6 },
+		{ 61, 0, 0x1100, 320, 200, 0, 0, 7 },
+		{ 0, 0, 0x1100, 184, 114, 33, 33, 4 },
+		{ 0, 0, 0x1100, 256, 114, 33, 33, 5 },
+		{ 0, 0, 0x1100, 216, 114, 31, 33, 4 },
+		{ 0, 0, 0x1100, 288, 114, 31, 33, 5 },
+		{ 372, 0, 0x1000, 184, 106, 63, 8, 4 },
+		{ 373, 0, 0x1000, 256, 106, 63, 8, 5 },
+		{ 0, 0, 0x1100, 227, 135, 10, 10, 25 },
+		{ 0, 0, 0x1100, 239, 135, 10, 10, 26 },
+		{ 116, 0, 0x1100, 184, 106, 63, 50, 4 },
+		{ 117, 0, 0x1100, 256, 106, 63, 50, 5 },
+		{ 110, 0, 0x1100, 68, 168, 78, 10, 0 },
+		{ 110, 0, 0x1100, 68, 168, 78, 10, 65535 },
+		{ 116, 0, 0x1100, 184, 106, 63, 50, 4 },
+		{ 117, 0, 0x1100, 256, 106, 63, 50, 5 },
+		{ 116, 117, 0x1100, 320, 200, 1, 1, 2 },
+		{ 7, 0, 0x1100, 158, 121, 15, 10, 5 },
+		{ 0, 0, 0x1100, 146, 168, 32, 10, 0 },
 
 		// EOB1 spellbook modifications
-		{ 2, 0, 0x1100, 71, 122, 20, 8, EOB_CB(clickedSpellbookTab), 0 },
-		{ 3, 0, 0x1100, 92, 122, 20, 8, EOB_CB(clickedSpellbookTab), 1 },
-		{ 4, 0, 0x1100, 113, 122, 20, 8, EOB_CB(clickedSpellbookTab), 2 },
-		{ 5, 0, 0x1100, 134, 122, 20, 8, EOB_CB(clickedSpellbookTab), 3 },
-		{ 6, 0, 0x1100, 155, 122, 20, 8, EOB_CB(clickedSpellbookTab), 4 },
-		{ 110, 0, 0x1100, 75, 168, 97, 6, EOB_CB(clickedSpellbookAbort), 0 }
+		{ 2, 0, 0x1100, 71, 122, 20, 8, 0 },
+		{ 3, 0, 0x1100, 92, 122, 20, 8, 1 },
+		{ 4, 0, 0x1100, 113, 122, 20, 8, 2 },
+		{ 5, 0, 0x1100, 134, 122, 20, 8, 3 },
+		{ 6, 0, 0x1100, 155, 122, 20, 8, 4 },
+		{ 110, 0, 0x1100, 75, 168, 97, 6, 0 }
 	};
 
 	_buttonDefs = buttonDefs;
+	_buttonCallbacks.clear();
+	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
+
+#define EOB_CBN(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EobCoreEngine, this, &EobCoreEngine::x))
+#define EOB_CBR(x) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1]); }
+#define EOB_CBI(x, y) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[y]); }
+	EOB_CBN(clickedCharPortraitDefault);
+	EOB_CBR(3);
+	EOB_CBN(clickedCamp);
+	EOB_CBN(clickedSceneDropPickupItem);
+	EOB_CBR(3);
+	EOB_CBN(clickedCharPortrait2);
+	EOB_CBR(3);
+	EOB_CBN(clickedWeaponSlot);
+	EOB_CBR(3);
+	EOB_CBN(clickedCharNameLabelRight);
+	EOB_CBR(3);
+	EOB_CBN(clickedInventorySlot);
+	EOB_CBR(24);
+	EOB_CBN(clickedEatItem);
+	EOB_CBN(clickedInventoryNextPage);
+	EOB_CBN(clickedPortraitRestore);
+	EOB_CBN(clickedUpArrow);
+	EOB_CBN(clickedDownArrow);
+	EOB_CBN(clickedLeftArrow);
+	EOB_CBN(clickedRightArrow);
+	EOB_CBN(clickedTurnLeftArrow);
+	EOB_CBN(clickedTurnRightArrow);
+	EOB_CBN(clickedAbortCharSwitch);
+	EOB_CBN(clickedSceneThrowItem);
+	EOB_CBR(1);
+	EOB_CBN(clickedSceneSpecial);
+	EOB_CBN(clickedInventoryPrevChar);
+	EOB_CBN(clickedInventoryNextChar);
+	EOB_CBN(clickedSpellbookTab);
+	EOB_CBR(4);
+	EOB_CBN(clickedSpellbookList);
+	EOB_CBR(5);
+	EOB_CBN(clickedCastSpellOnCharacter);
+	EOB_CBR(3);
+	EOB_CBI(2, 66);
+	EOB_CBI(2, 9);
+	EOB_CBI(2, 13);
+	EOB_CBI(2, 17);
+	EOB_CBI(2, 21);
+	EOB_CBI(2, 72);
+	EOB_CBN(clickedSpellbookAbort);
+	EOB_CBI(1, 72);
+	EOB_CBI(2, 0);
+	EOB_CBI(1, 60);
+	EOB_CBI(1, 61);
+	EOB_CBN(clickedSpellbookScroll);
+	EOB_CBI(5, 61);
+	EOB_CBI(1, 88);
+#undef EOB_CBI
+#undef EOB_CBR
+#undef EOB_CBN
 }
 
 void EobCoreEngine::initMenus() {
@@ -788,19 +844,19 @@ void EobCoreEngine::initSpells() {
 	mpn;
 	mp(0);	// Detect Magic
 	mpn;	// Magic Missile
-	mp1n;						///
+	mp1n;
 	mp(1);	// Shield
 	mp(2);	// Shocking Grasp
-	mp2(3);	// Blur				///
-	mp2(1);	// Detect Invis		///
-	mp2n;	// Imp Identify		///
+	mp2(3);	// Blur
+	mp2(1);	// Detect Invis
+	mp2n;	// Imp Identify
 	mpn;	// Invis
-	mp1n;						///
+	mp1n;
 	mpn;	// Melf
-	mp1n;	// Stinking Cloud	///
+	mp1n;	// Stinking Cloud
 	mpn;	// Dispel Magic
 	mpn;	// Fireball
-	mp1n;	// Flame Arrow		///
+	mp1n;	// Flame Arrow
 	mp(3);	// Haste
 	mpn;	// Hold Person
 	mpn;	// Invisibility
@@ -809,23 +865,23 @@ void EobCoreEngine::initSpells() {
 	mpn;	// Fear
 	mpn;	// Ice Storm
 	mp1n;	// Stone Skin
-	mp1n;	// Cloud Kill		///
-	mp2(4);	// Improved Invisibility	///
-	mp2n;	// remove Curse		///
+	mp1n;	// Cloud Kill
+	mp2(4);	// Improved Invisibility
+	mp2n;	// remove Curse
 	mpn;	// Cone of Cold
 	mpn;	// Hold Monster
-	mp2n;	// Wall of Force	///
-	mp2n;	// Disintegrate		///
-	mp2n;	// Flesh To Stone	///
-	mp2n;	// Stone To Flesh	///
-	mp2(2);	// True Seeing		///
-	mp2n;	// Finger of Death	///
-	mp2n;	// Power Word Stun	///
-	mp2n;	// Bigby's Fist		///
-	mp2n;	// empty			///
+	mp2n;	// Wall of Force
+	mp2n;	// Disintegrate
+	mp2n;	// Flesh To Stone
+	mp2n;	// Stone To Flesh
+	mp2(2);	// True Seeing
+	mp2n;	// Finger of Death
+	mp2n;	// Power Word Stun
+	mp2n;	// Bigby's Fist
+	mp2n;	// empty
 	mp(5);	// Bless
-	mpn;						/// EOB1: cure, EOB2: cause
-	mpn;						/// EOB1: cause, EOB2: cure
+	mpn;						// EOB1: cure, EOB2: cause
+	mpn;						// EOB1: cause, EOB2: cure
 	mp(0);	// Detect Magic
 	mp(6);	// Prot from Evil
 	mp(7);	// Aid
@@ -837,25 +893,25 @@ void EobCoreEngine::initSpells() {
 	mp(1);	// Magical Vestment
 	mp(2);	// Prayer
 	mpn;	// Remove Paralysis
-	mpn;						/// EOB1: cure, EOB2: cause
-	mpn;						/// EOB1: cause, EOB2: cure
+	mpn;						// EOB1: cure, EOB2: cause
+	mpn;						// EOB1: cause, EOB2: cure
 	mpn;	// Neutral Poison
 	mp(6);	// Prot From Evil 10'
-	mp1n;	// Prot From Lightning			/// --- para required?
-	mpn;						/// EOB1: cure, EOB2: cause
-	mpn;						/// EOB1: cause, EOB2: cure
+	mp1n;	// Prot From Lightning
+	mpn;						// EOB1: cure, EOB2: cause
+	mpn;						// EOB1: cause, EOB2: cure
 	mpn;	// Flame Strike
 	mpn;	// Raise Dead
-	mp2n;	// Slay Living		///
-	mp2(2);	// True Seeing		///
-	mp2n;	// Harm				///
-	mp2n;	// Heal				///
-	mp2n;	// Resurrect		///
+	mp2n;	// Slay Living
+	mp2(2);	// True Seeing
+	mp2n;	// Harm
+	mp2n;	// Heal
+	mp2n;	// Resurrect
 	mpn;	// Lay on Hands
-	mp2n;	// Turn Undead		///
-	mpn;	// UNK 1 passive
-	mp2(10);// Mystic Defense	///
-	mp2n;	// UNK 2 passive	///
+	mp2n;	// Turn Undead
+	mpn;	// Lightning Bolt (EOB1) / Fireball 1(EOB2) passive
+	mp2(10);// Mystic Defense
+	mp2n;	// Fireball 2 passive
 	mpn;	// death spell passive
 	mpn;	// disintegrate passive
 	mp2n;	// cause critical passive
@@ -921,7 +977,7 @@ void EobCoreEngine::initSpells() {
 	sc1(causeSeriousWounds);
 	sc(neutralizePoison);
 	sc(empty);
-	sc1(empty);	// Prot from Lightning
+	sc1(empty);
 	sc2(causeCriticalWounds);
 	sc(cureCriticalWounds);
 	sc1(causeCriticalWounds);

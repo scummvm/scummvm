@@ -256,6 +256,7 @@ protected:
 
 	Button *_activeButtons;
 	Button _activeButtonData[70];
+	Common::Array<Button::Callback> _buttonCallbacks;
 	//bool _processingButtons;
 
 	uint8 _mouseClick;
