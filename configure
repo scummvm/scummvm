@@ -2902,7 +2902,7 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 define_in_config_if_yes "$_16bit" 'USE_RGB_COLOR'
 
 #
-# Check whether 16bit color support is requested
+# Check whether save games use the current time as default description
 #
 define_in_config_if_yes "$_savegame_timestamp" 'USE_SAVEGAME_TIMESTAMP'
 
