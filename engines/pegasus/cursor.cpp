@@ -38,6 +38,7 @@ namespace Pegasus {
 Cursor::Cursor() {
 	_cursorObscured = false;
 	_index = -1;
+	startIdling();
 }
 
 Cursor::~Cursor() {
@@ -48,6 +49,8 @@ Cursor::~Cursor() {
 		}
 		delete[] _info[i].palette;
 	}
+
+	stopIdling();
 }
 
 void Cursor::addCursorFrames(uint16 id) {
