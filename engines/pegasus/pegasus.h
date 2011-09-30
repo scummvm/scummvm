@@ -154,6 +154,7 @@ public:
 
 	// Neighborhood
 	void jumpToNewEnvironment(const tNeighborhoodID, const tRoomID, const tDirectionConstant);
+	tNeighborhoodID getCurrentNeighborhoodID() const;
 
 	// Dragging
 	void dragItem(const Input &, Item *, tDragType);

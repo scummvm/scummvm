@@ -643,15 +643,15 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 	case kMenuCmdCredits:
 		if (isDemo()) {
 			showTempScreen("Images/Demo/DemoCredits.pict");
-			// TODO: Fade out
+			_gfx->doFadeOutSync();
 			_gfx->updateDisplay();
-			// TODO: Fade in
+			_gfx->doFadeInSync();
 		} else {
 			// TODO: Stop intro timer
-			// TODO: Fade out
+			_gfx->doFadeOutSync();
 			useMenu(new CreditsMenu());
 			_gfx->updateDisplay();
-			// TODO: Fade in
+			_gfx->doFadeInSync();
 		}
 		break;
 	case kMenuCmdQuit:
@@ -674,22 +674,22 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		error("Load game");
 		break;
 	case kMenuCmdCreditsMainMenu:
-		// TODO: Fade out
+		_gfx->doFadeOutSync();
 		useMenu(new MainMenu());
 		_gfx->updateDisplay();
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
-		// TODO: Fade in
+		_gfx->doFadeInSync();
 		resetIntroTimer();
 		break;
 	case kMenuCmdDeathContinue:
 		if (((DeathMenu *)_gameMenu)->playerWon()) {
 			if (isDemo()) {
 				showTempScreen("Images/Demo/DemoCredits.pict");
-				// TODO: Fade out
+				_gfx->doFadeOutSync();
 				_gfx->updateDisplay();
-				// TODO: Fade in
+				_gfx->doFadeInSync();
 			} else {
-				// TODO: Fade out
+				_gfx->doFadeOutSync();
 				useMenu(0);
 				_gfx->clearScreen();
 				_gfx->updateDisplay();
@@ -711,7 +711,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 				useMenu(new MainMenu());
 				_gfx->updateDisplay();
 				((MainMenu *)_gameMenu)->startMainMenuLoop();
-				// TODO: Fade in
+				_gfx->doFadeInSync();
 				resetIntroTimer();
 			}
 		} else {
@@ -720,11 +720,11 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		break;
 	case kMenuCmdDeathMainMenuDemo:
 	case kMenuCmdDeathMainMenu:
-		// TODO: Fade out
+		_gfx->doFadeOutSync();
 		useMenu(new MainMenu());
 		_gfx->updateDisplay();
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
-		// TODO: Fade in
+		_gfx->doFadeInSync();
 		if (!isDemo())
 			resetIntroTimer();
 		break;
@@ -738,13 +738,13 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		error("Load game");
 		break;
 	case kMenuCmdPauseQuit:
-		// TODO: Fade out
+		_gfx->doFadeOutSync();
 		throwAwayEverything();
 		pauseMenu(false);
 		useMenu(new MainMenu());
 		_gfx->updateDisplay();
 		((MainMenu *)_gameMenu)->startMainMenuLoop();
-		// TODO: Fade in
+		_gfx->doFadeInSync();
 		if (!isDemo())
 			resetIntroTimer();
 		break;
@@ -765,7 +765,6 @@ void PegasusEngine::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		_console->onFrame();
 	}
 
-	// TODO: Quit request
 	// TODO: Save request
 	// TODO: Load request
 }
@@ -786,7 +785,7 @@ void PegasusEngine::doInterfaceOverview() {
 		Common::Rect(542, 36, 542 + 58, 36 + 20)
 	};
 
-	// TODO: fade out
+	_gfx->doFadeOutSync();
 	useMenu(0);
 
 	Picture leftBackground(kNoDisplayElement);
@@ -878,7 +877,7 @@ void PegasusEngine::doInterfaceOverview() {
 	_cursor->show();
 
 	_gfx->updateDisplay();
-	// TODO: Fade in
+	_gfx->doFadeInSync();
 
 	for (;;) {
 		InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
@@ -924,17 +923,17 @@ void PegasusEngine::doInterfaceOverview() {
 	highlight.hide();
 	_cursor->hide();
 
-	// TODO: Fade out
+	_gfx->doFadeOutSync();
 	useMenu(new MainMenu());
 	_gfx->updateDisplay();
 	((MainMenu *)_gameMenu)->startMainMenuLoop();
-	// TODO: Fade in
+	_gfx->doFadeInSync();
 
 	// TODO: Cancel save/load requests?
 }
 
 void PegasusEngine::showTempScreen(const Common::String &fileName) {
-	// TODO: Fade out
+	_gfx->doFadeOutSync();
 
 	Picture picture(0);
 	picture.initFromPICTFile(fileName);
@@ -943,7 +942,7 @@ void PegasusEngine::showTempScreen(const Common::String &fileName) {
 	picture.show();
 	_gfx->updateDisplay();
 
-	// TODO: Fade in
+	_gfx->doFadeInSync();
 
 	// Wait for the next event
 	bool done = false;
@@ -971,8 +970,21 @@ void PegasusEngine::refreshDisplay() {
 }
 
 void PegasusEngine::resetEnergyDeathReason() {
-	// TODO!
-	_deathReason = kDeathStranded;
+	switch (getCurrentNeighborhoodID()) {
+	case kMarsID:
+		_deathReason = kDeathArrestedInMars;
+		break;
+	case kNoradAlphaID:
+	case kNoradDeltaID:
+		_deathReason = kDeathArrestedInNorad;
+		break;
+	case kWSCID:
+		_deathReason = kDeathArrestedInWSC;
+		break;
+	default:
+		_deathReason = kDeathStranded;
+		break;
+	}
 }
 
 bool PegasusEngine::playerHasItem(const Item *item) {
@@ -1121,18 +1133,20 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 }
 
 void PegasusEngine::die(const tDeathReason reason) {
-	// TODO: Stop dragging
+	Input dummy;
+	if (isDragging())
+		_itemDragger.stopTracking(dummy);
 
 	_deathReason = reason;
 	_shellNotification.setNotificationFlags(kPlayerDiedFlag, kPlayerDiedFlag);
 }
 
 void PegasusEngine::doDeath() {
-	// TODO: Fade out
+	_gfx->doFadeOutSync();
 	throwAwayEverything();
 	useMenu(new DeathMenu(_deathReason));
 	_gfx->updateDisplay();
-	// TODO: Fade in
+	_gfx->doFadeInSync();
 }
 
 void PegasusEngine::throwAwayEverything() {
@@ -1299,7 +1313,7 @@ void PegasusEngine::startNewGame() {
 	GameState.setWalkthroughMode(isWalkthrough);
 
 	// TODO: Enable erase
-	// TODO: Fade out
+	_gfx->doFadeOutSync();
 	useMenu(0);
 	_gfx->updateDisplay();
 
@@ -1828,6 +1842,13 @@ void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {
 
 	if (g_AIArea)
 		g_AIArea->unlockAI();
+}
+
+tNeighborhoodID PegasusEngine::getCurrentNeighborhoodID() const {
+	if (_neighborhood)
+		return _neighborhood->getObjectID();
+
+	return kNoNeighborhoodID;
 }
 
 } // End of namespace Pegasus

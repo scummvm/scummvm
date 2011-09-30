@@ -54,6 +54,8 @@ public:
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
 	DisplayElement *findDisplayElement(const tDisplayElementID id);
+	void doFadeOutSync();
+	void doFadeInSync();
 
 private:		
 	PegasusEngine *_vm;

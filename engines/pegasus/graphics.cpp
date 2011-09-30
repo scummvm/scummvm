@@ -201,5 +201,13 @@ DisplayElement *GraphicsManager::findDisplayElement(const tDisplayElementID id) 
 
 	return 0;
 }
+
+void GraphicsManager::doFadeOutSync() {
+	// TODO
+}
+
+void GraphicsManager::doFadeInSync() {
+	// TODO
+}
 	
 } // End of namespace Pegasus
