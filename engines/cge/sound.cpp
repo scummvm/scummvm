@@ -260,6 +260,8 @@ void MusicPlayer::sndMidiStart() {
 
 		syncVolume();
 
+		// Al the tracks are supposed to loop
+		_isLooping = true;
 		_isPlaying = true;
 	}
 }
