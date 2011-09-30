@@ -1016,7 +1016,7 @@ bool PegasusEngine::itemInInventory(tItemID id) {
 
 BiochipItem *PegasusEngine::getCurrentBiochip() {
 	if (g_interface)
-		g_interface->getCurrentBiochip();
+		return g_interface->getCurrentBiochip();
 
 	return 0;
 }
