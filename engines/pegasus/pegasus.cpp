@@ -414,7 +414,9 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	_shellNotification.setNotificationFlags(0, kNeedNewJumpFlag);
 	performJump(GameState.getCurrentNeighborhood());
 
-	// TODO: AI rules
+	// AI rules
+	if (g_AIArea)
+		g_AIArea->readAIRules(stream);
 
 	startNeighborhood();
 
@@ -475,7 +477,9 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 		stream->writeUint16BE(g_interface->getCurrentBiochip()->getObjectID());
 	}
 
-	// TODO: AI rules
+	// AI rules
+	if (g_AIArea)
+		g_AIArea->writeAIRules(stream);
 
 	return true;
 }

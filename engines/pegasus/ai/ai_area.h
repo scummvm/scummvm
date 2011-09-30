@@ -31,6 +31,11 @@
 #include "pegasus/timers.h"
 #include "pegasus/ai/ai_rule.h"
 
+namespace Common {
+	class ReadStream;
+	class WriteStream;
+}
+
 /*
 
 	The AI area is the area at the bottom of the screen. There are three areas within
@@ -79,6 +84,9 @@ class AIArea : public Surface, public Idler, public InputHandler {
 public:
 	AIArea(InputHandler *);
 	virtual ~AIArea();
+
+	void writeAIRules(Common::WriteStream *stream);
+	void readAIRules(Common::ReadStream *stream);
 
 	void initAIArea();
 

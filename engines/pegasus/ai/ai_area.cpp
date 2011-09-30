@@ -79,6 +79,14 @@ void AIArea::restoreAIState() {
 	// TODO
 }
 
+void AIArea::writeAIRules(Common::WriteStream *stream) {
+	_AIRules.writeAIRules(stream);
+}
+
+void AIArea::readAIRules(Common::ReadStream *stream) {
+	_AIRules.readAIRules(stream);
+}
+
 void AIArea::initAIArea() {
 	allocateSurface(Common::Rect(0, 0, 384, 96));
 	
