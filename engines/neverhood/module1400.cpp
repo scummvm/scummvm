@@ -22,6 +22,7 @@
 
 #include "neverhood/module1400.h"
 #include "neverhood/module1000.h"
+#include "neverhood/module2100.h"
 #include "neverhood/module2200.h"
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
@@ -667,7 +668,7 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x08221FA5);
 	insertMouse433(0x21FA108A);
 	
-	// TODO _class427 = insertSprite<Class427>(this, 0x980F3124, 0x12192892, 100, 0);
+	_class427 = insertSprite<Class427>(this, 0x980F3124, 0x12192892, 100, 0);
 	_class525 = insertSprite<Class525>();
 
 	if (!getGlobalVar(0x01023818)) {
