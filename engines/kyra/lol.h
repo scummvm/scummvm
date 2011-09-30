@@ -561,7 +561,6 @@ private:
 	int clickedLamp(Button *button);
 	int clickedStatusIcon(Button *button);
 
-	Common::Array<Button::Callback> _buttonCallbacks;
 	const LoLButtonDef *_buttonData;
 	const int16 *_buttonList1;
 	const int16 *_buttonList2;

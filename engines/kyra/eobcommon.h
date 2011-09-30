@@ -71,7 +71,6 @@ struct EobGuiButtonDef {
 	uint8 y;
 	uint16 w;
 	uint8 h;
-	Button::Callback buttonCallback;
 	uint16 arg;
 };
 
@@ -738,6 +737,7 @@ protected:
 	int _buttonList8Size;
 
 	const EobGuiButtonDef *_buttonDefs;
+
 	const char *const *_characterGuiStringsHp;
 	const char *const *_characterGuiStringsWp;
 	const char *const *_characterGuiStringsWr;
