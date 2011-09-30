@@ -60,6 +60,7 @@ public:
 	virtual void start();
 	virtual void stop();
 	virtual void resume();
+	virtual void pause();
 
 	virtual void moveMovieBoxTo(const tCoordType, const tCoordType);
 

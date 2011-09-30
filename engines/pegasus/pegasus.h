@@ -180,6 +180,7 @@ public:
 
 protected:
 	Common::Error run();
+	void pauseEngineIntern(bool pause);
 
 	Notification _shellNotification;
 	virtual void receiveNotification(Notification *notification, const tNotificationFlags flags);
@@ -233,7 +234,6 @@ private:
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
-	bool isPaused() { return false; } // TODO
 
 	// Menu
 	GameMenu *_gameMenu;

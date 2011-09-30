@@ -163,10 +163,17 @@ void Movie::stop() {
 }
 
 void Movie::resume() {
-	if (_video && _video->isPaused())
+	if (_video)
 		_video->pauseVideo(false);
 
 	TimeBase::resume();
+}
+
+void Movie::pause() {
+	if (_video)
+		_video->pauseVideo(true);
+
+	TimeBase::pause();
 }
 
 void Movie::checkCallBacks() {

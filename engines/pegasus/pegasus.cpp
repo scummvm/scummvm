@@ -1759,13 +1759,13 @@ void PegasusEngine::setAmbienceLevel(uint16 ambientLevel) {
 
 void PegasusEngine::pauseMenu(bool menuUp) {
 	if (menuUp) {
-		// TODO: Pause engine
+		pauseEngine(true);
 		_screenDimmer.startDisplaying();
 		_screenDimmer.show();
 		_gfx->updateDisplay();
 		useMenu(new PauseMenu());
 	} else {
-		// TODO: Resume engine
+		pauseEngine(false);
 		_screenDimmer.hide();
 		_screenDimmer.stopDisplaying();
 		useMenu(0);
@@ -1853,6 +1853,18 @@ tNeighborhoodID PegasusEngine::getCurrentNeighborhoodID() const {
 		return _neighborhood->getObjectID();
 
 	return kNoNeighborhoodID;
+}
+
+void PegasusEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+
+	if (pause) {
+		for (Common::List<TimeBase *>::iterator it = _timeBases.begin(); it != _timeBases.end(); it++)
+			(*it)->pause();
+	} else {
+		for (Common::List<TimeBase *>::iterator it = _timeBases.begin(); it != _timeBases.end(); it++)
+			(*it)->resume();
+	}
 }
 
 } // End of namespace Pegasus
