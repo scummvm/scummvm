@@ -60,6 +60,20 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
+class Class427 : public StaticSprite {
+public:
+	Class427(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource;
+	uint32 _soundFileHash;
+	uint32 _fileHash1, _fileHash2;
+	int16 _countdown;
+	void update();	
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+
 class Scene2101 : public Scene {
 public:
 	Scene2101(NeverhoodEngine *vm, Module *parentModule, int which);

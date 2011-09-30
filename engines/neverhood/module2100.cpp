@@ -156,6 +156,49 @@ uint32 Class539::handleMessage(int messageNum, const MessageParam &param, Entity
 	return messageResult;
 }
 
+Class427::Class427(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash)
+	: StaticSprite(vm, 1100), _soundResource(vm), _parentScene(parentScene), _countdown(0),
+	_fileHash1(fileHash1), _fileHash2(fileHash2), _soundFileHash(soundFileHash) {
+
+	SetUpdateHandler(&Class427::update);
+	SetMessageHandler(&Class427::handleMessage);
+	if (_soundFileHash == 0)
+		_soundFileHash = 0x44141000;
+	createSurface(1010, 61, 30);
+	if (_fileHash1) {
+		load(_fileHash1, true, true);
+		StaticSprite::update();
+	} else
+		setVisible(false);
+}
+
+void Class427::update() {
+	if (_countdown != 0 && (--_countdown == 0)) {
+		sendMessage(_parentScene, 0x1022, 1010);
+		if (_fileHash1) {
+			load(_fileHash1, true, true);
+			StaticSprite::update();
+		} else
+			setVisible(false);
+	}
+}	
+	
+uint32 Class427::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x480B:
+		sendMessage(_parentScene, 0x480B, 0);
+		setVisible(true);
+		sendMessage(_parentScene, 0x1022, 990);
+		load(_fileHash2, true, true);
+		StaticSprite::update();
+		_countdown = 16;
+		_soundResource.play(_soundFileHash);
+		break;
+	}
+	return messageResult;
+}
+
 Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
@@ -169,7 +212,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	insertStaticSprite(0x00502330, 1100);
 	_sprite1 = insertStaticSprite(0x78492010, 1100);
-	// TODO _class427 = insertSprite<Class427>(this, 0x72427010, 0x32423010, 200, 0);
+	_class427 = insertSprite<Class427>(this, 0x72427010, 0x32423010, 200, 0);
 	_asTape1 = insertSprite<AsScene1201Tape>(this, 18, 1100, 412, 443, 0x9148A011);
 	_vm->_collisionMan->addSprite(_asTape1);
 	_asTape2 = insertSprite<AsScene1201Tape>(this, 11, 1100, 441, 443, 0x9148A011);
