@@ -331,7 +331,7 @@ void PictDecoder::unpackBitsRect(Common::SeekableReadStream *stream, bool hasPal
 	if (packBitsData.pixMap.pixelSize <= 8)
 		bytesPerPixel = 1;
 	else if (packBitsData.pixMap.pixelSize == 32)
-		bytesPerPixel = 3;
+		bytesPerPixel = packBitsData.pixMap.cmpCount;
 	else
 		bytesPerPixel = packBitsData.pixMap.pixelSize / 8;
 
@@ -357,10 +357,12 @@ void PictDecoder::unpackBitsRect(Common::SeekableReadStream *stream, bool hasPal
 		}
 	}
 
-	if (bytesPerPixel == 1) {
+	switch (bytesPerPixel) {
+	case 1:
 		// Just copy to the image
 		memcpy(_outputSurface->pixels, buffer, _outputSurface->w * _outputSurface->h);
-	} else if (bytesPerPixel == 2) {
+		break;
+	case 2:
 		// Convert from 16-bit to whatever surface we need
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
@@ -373,7 +375,8 @@ void PictDecoder::unpackBitsRect(Common::SeekableReadStream *stream, bool hasPal
 					*((uint32 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 			}
 		}
-	} else {
+		break;
+	case 3:
 		// Convert from 24-bit (planar!) to whatever surface we need
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
@@ -386,6 +389,22 @@ void PictDecoder::unpackBitsRect(Common::SeekableReadStream *stream, bool hasPal
 					*((uint32 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
 			}
 		}
+		break;
+	case 4:
+		// Convert from 32-bit (planar!) to whatever surface we need
+		for (uint16 y = 0; y < _outputSurface->h; y++) {
+			for (uint16 x = 0; x < _outputSurface->w; x++) {
+				byte r = *(buffer + y * _outputSurface->w * 4 + x);
+				byte g = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w + x);
+				byte b = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 2 + x);
+				byte a = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 3 + x);
+				if (_pixelFormat.bytesPerPixel == 2)
+					*((uint16 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.ARGBToColor(r, g, b, a);
+				else
+					*((uint32 *)_outputSurface->getBasePtr(x, y)) = _pixelFormat.ARGBToColor(r, g, b, a);
+			}
+		}
+		break;
 	}
 
 	delete[] buffer;
@@ -421,7 +440,7 @@ void PictDecoder::unpackBitsLine(byte *out, uint32 length, Common::SeekableReadS
 		}
 	}
 
-	// HACK: rowBytes is in 32-bit, but the data is 24-bit...
+	// HACK: Even if the data is 24-bit, rowBytes is still 32-bit
 	if (bytesPerPixel == 3)
 		dataDecoded += length / 4;
 
