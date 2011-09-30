@@ -299,6 +299,7 @@ bool AIArea::playAIMovie(const tLowerAreaSignature area, const Common::String &m
 			break;
 		}
 
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
