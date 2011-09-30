@@ -1074,6 +1074,7 @@ void Actor::update(float frameTime) {
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * 5.f;
 		Math::Angle dyaw = _destYaw - _yaw;
+		dyaw.normalize(-180);
 		// If the actor won't turn because the rate is set to zero then
 		// have the actor turn all the way to the destination yaw.
 		// Without this some actors will lock the interface on changing

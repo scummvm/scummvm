@@ -273,13 +273,13 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 	node._animPos += (pos - node._pos) * fade;
 
 	Math::Angle dpitch = pitch - node._pitch;
-	node._animPitch += dpitch * fade;
+	node._animPitch += dpitch.normalize(-180) * fade;
 
 	Math::Angle dyaw = yaw - node._yaw;
-	node._animYaw += dyaw * fade;
+	node._animYaw += dyaw.normalize(-180) * fade;
 
 	Math::Angle droll = roll - node._roll;
-	node._animRoll += droll * fade;
+	node._animRoll += droll.normalize(-180) * fade;
 
 	return true;
 }

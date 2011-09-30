@@ -69,7 +69,7 @@ void Animation::play(RepeatMode repeatMode) {
 void Animation::fade(FadeMode fadeMode, int fadeLength) {
 	if (!_active) {
 		if (fadeMode == FadeIn) {
-			_repeatMode = Once;
+			_repeatMode = Once;//FadeAtEnd;
 			_time = -1;
 			_fade = 0.f;
 			_paused = false;
