@@ -280,12 +280,12 @@ Sprite *Item::getDragSprite(const tDisplayElementID id) const {
 	Sprite *result = new Sprite(id);
 	SpriteFrame *frame = new SpriteFrame();
 
-	frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteNormalID);
+	frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteNormalID, true);
 	result->addFrame(frame, 0, 0);
 
 	if (_itemInfo.dragSpriteNormalID != _itemInfo.dragSpriteUsedID) {
 		frame = new SpriteFrame();
-		frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteUsedID);
+		frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteUsedID, true);
 	}
 
 	result->addFrame(frame, 0, 0);
