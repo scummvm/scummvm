@@ -39,9 +39,8 @@ public:
 	 * Construct an angle object.
 	 *
 	 * \param degrees The angle, in degrees. Default is 0.
-	 * \param low The lower bound of the range, in degrees. Default is -180.
 	 */
-	Angle(float degrees = 0, float low = -180);
+	Angle(float degrees = 0);
 	/**
 	 * Construct and angle object, copying an already existing one.
 	 *
@@ -49,17 +48,17 @@ public:
 	 */
 	Angle(const Angle &a);
 
-	void setDegrees(float degrees);
-	void setRadians(float radians);
-
 	/**
-	 * Sets the range of the angle.
+	 * Normalize the angle in a [x; x + 360] range and return the object.
 	 *
 	 * \param low The lower bound of the range, in degrees.
 	 */
-	void setRange(float low);
+	Angle &normalize(float low);
 
-	inline float getDegrees() const { return _degrees; }
+	void setDegrees(float degrees);
+	void setRadians(float radians);
+
+	float getDegrees() const;
 	float getRadians() const;
 
 	/**
@@ -90,9 +89,8 @@ public:
 	 * Build an angle object.
 	 *
 	 * \param radians The angle, in radians.
-	 * \param low The lower bound of the range, in degrees. Default is -180.
 	 */
-	static Angle fromRadians(float radians, float low = -180);
+	static Angle fromRadians(float radians);
 
 	static Angle arcCosine(float x);
 	static Angle arcSine(float x);
@@ -100,10 +98,7 @@ public:
 	static Angle arcTangent2(float y, float x);
 
 private:
-	void crop();
-
 	float _degrees;
-	float _rangeLow;
 
 };
 
@@ -114,22 +109,9 @@ inline Angle operator-(const Angle &a) {
 inline Angle operator+(const Angle &a1, const Angle &a2) {
 	return Angle(a1.getDegrees() + a2.getDegrees());
 }
-inline Angle operator+(const Angle &a1, float degrees) {
-	return Angle(a1.getDegrees() + degrees);
-}
-inline Angle operator+(float degrees, const Angle &a2) {
-	return Angle(degrees + a2.getDegrees());
-}
-
 
 inline Angle operator-(const Angle &a1, const Angle &a2) {
 	return Angle(a1.getDegrees() - a2.getDegrees());
-}
-inline Angle operator-(const Angle &a1, float degrees) {
-	return Angle(a1.getDegrees() - degrees);
-}
-inline Angle operator-(float degrees, const Angle &a2) {
-	return Angle(degrees - a2.getDegrees());
 }
 
 inline Angle operator*(const Angle &a1, float f) {
@@ -160,22 +142,9 @@ inline bool operator!=(const Angle &a1, const Angle &a2) {
 inline bool operator<(const Angle &a1, const Angle &a2) {
 	return a1.getDegrees() < a2.getDegrees();
 }
-inline bool operator<(const Angle &a1, float degrees) {
-	return a1.getDegrees() < degrees;
-}
-inline bool operator<(float degrees, const Angle &a2) {
-	return degrees < a2.getDegrees();
-}
-
 
 inline bool operator>(const Angle &a1, const Angle &a2) {
 	return a1.getDegrees() > a2.getDegrees();
-}
-inline bool operator>(const Angle &a1, float degrees) {
-	return a1.getDegrees() > degrees;
-}
-inline bool operator>(float degrees, const Angle &a2) {
-	return degrees > a2.getDegrees();
 }
 
 }

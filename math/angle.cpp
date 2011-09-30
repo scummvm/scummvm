@@ -29,32 +29,47 @@
 
 namespace Math {
 
-Angle::Angle(float degrees, float low) :
-	_degrees(degrees), _rangeLow(low) {
-	crop();
+Angle::Angle(float degrees) :
+	_degrees(degrees) {
 }
 
 Angle::Angle(const Angle &a) :
-	_degrees(a._degrees), _rangeLow(a._rangeLow) {
+	_degrees(a._degrees) {
 
+}
+
+Angle &Angle::normalize(float low) {
+	_degrees = getDegrees(low);
+
+	return *this;
 }
 
 void Angle::setDegrees(float degrees) {
 	_degrees = degrees;
-	crop();
 }
 
 void Angle::setRadians(float radians) {
 	_degrees = radianToDegree(radians);
-	crop();
+}
+
+float Angle::getDegrees() const {
+	return _degrees;
 }
 
 float Angle::getRadians() const {
-	return degreeToRadian(_degrees);
+	return degreeToRadian(getDegrees());
 }
 
 float Angle::getDegrees(float low) const {
-	return _degrees - _rangeLow + low;
+	float degrees = _degrees;
+	if (degrees >= low + 360.f) {
+		float x = floor((degrees - low) / 360.f);
+		degrees -= 360.f * x;
+	} else if (degrees < low) {
+		float x = floor((degrees - low) / 360.f);
+		degrees -= 360.f * x;
+	}
+	return degrees;
 }
 
 float Angle::getRadians(float low) const {
@@ -76,7 +91,6 @@ float Angle::getTangent() const {
 
 Angle &Angle::operator=(const Angle &a) {
 	_degrees = a._degrees;
-	_rangeLow = a._rangeLow;
 
 	return *this;
 }
@@ -111,8 +125,8 @@ Angle &Angle::operator-=(float degrees) {
 	return *this;
 }
 
-Angle Angle::fromRadians(float radians, float low) {
-	return Angle(radianToDegree(radians), low);
+Angle Angle::fromRadians(float radians) {
+	return Angle(radianToDegree(radians));
 }
 
 Angle Angle::arcCosine(float x) {
@@ -139,26 +153,10 @@ Angle Angle::arcTangent2(float y, float x) {
 	return a;
 }
 
-void Angle::setRange(float low) {
-	_rangeLow = low;
-	crop();
-}
-
-void Angle::crop() {
-	if (_degrees >= _rangeLow + 360.f) {
-		int x = (int)(_degrees - _rangeLow) / 360.f;
-		_degrees -= 360.f * x;
-	}
-	if (_degrees < _rangeLow) {
-		int x = (int)(_degrees + _rangeLow) / 360.f;
-		_degrees -= 360.f * x;
-	}
-}
-
 }
 
 Common::Debug &operator<<(Common::Debug dbg, const Math::Angle &a) {
-	dbg.nospace() << "Angle(" << a.getDegrees() << ")";
+	dbg.nospace() << "Angle(" << a.getDegrees(-180) << ")";
 
 	return dbg.space();
 }
