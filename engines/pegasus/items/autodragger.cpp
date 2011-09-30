@@ -73,9 +73,9 @@ void AutoDragger::useIdleTime() {
 	TimeValue thisTime = getTime();
 
 	if (thisTime != _lastTime) {
-		uint32 offsetX = (_stopLocation.x - _startLocation.x) * thisTime / getDuration();
-		uint32 offsetY = (_stopLocation.y - _startLocation.y) * thisTime / getDuration();
-		_draggingElement->moveElementTo(_startLocation.x + offsetX, _startLocation.x + offsetY);
+		int32 offsetX = (_stopLocation.x - _startLocation.x) * (int32)thisTime / (int32)getDuration();
+		int32 offsetY = (_stopLocation.y - _startLocation.y) * (int32)thisTime / (int32)getDuration();
+		_draggingElement->moveElementTo(_startLocation.x + offsetX, _startLocation.y + offsetY);
 		_lastTime = thisTime;
 	}
 
