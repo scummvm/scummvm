@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "pegasus/cursor.h"
+#include "pegasus/graphics.h"
 #include "pegasus/pegasus.h"
 
 namespace Pegasus {
@@ -83,6 +84,7 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 			loadCursorImage(_info[index]);
 			CursorMan.replaceCursorPalette(_info[index].palette, 0, _info[index].colorCount);
 			CursorMan.replaceCursor((byte *)_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
+			((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 		}
 	}
 }
@@ -96,6 +98,7 @@ void Cursor::show() {
 		CursorMan.showMouse(true);
 
 	_cursorObscured = false;
+	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hide() {
@@ -115,6 +118,7 @@ void Cursor::useIdleTime() {
 		_cursorLocation = g_system->getEventManager()->getMousePos();
 		if (_index != -1 && _cursorObscured)
 			show();
+		((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 	}
 }
 

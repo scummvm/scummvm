@@ -43,7 +43,6 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_frontLayer = kMaxAvailableOrder;
 	_firstDisplayElement = _lastDisplayElement = 0;
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
-	_lastMousePosition = Common::Point(-1, -1);
 	_modifiedScreen = false;
 }
 	
@@ -149,13 +148,6 @@ void GraphicsManager::removeDisplayElement(DisplayElement *oldElement) {
 void GraphicsManager::updateDisplay() {
 	bool screenDirty = false;
 
-	// TODO: Check for cursor change
-	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	if (_lastMousePosition != mousePos) {
-		screenDirty = true;
-		_lastMousePosition = mousePos;
-	}
-
 	if (!_dirtyRect.isEmpty()) {
 		for (DisplayElement *runner = _firstDisplayElement; runner != 0; runner = runner->_nextElement) {
 			Common::Rect bounds;
@@ -208,6 +200,10 @@ void GraphicsManager::doFadeOutSync() {
 
 void GraphicsManager::doFadeInSync() {
 	// TODO
+}
+
+void GraphicsManager::markCursorAsDirty() {
+	_modifiedScreen = true;
 }
 	
 } // End of namespace Pegasus

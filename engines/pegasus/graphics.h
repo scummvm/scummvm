@@ -37,10 +37,12 @@
 
 namespace Pegasus {
 
+class Cursor;
 class DisplayElement;
 class PegasusEngine;
 
 class GraphicsManager {
+friend class Cursor;
 public:
 	GraphicsManager(PegasusEngine *vm);
 	~GraphicsManager();
@@ -57,6 +59,9 @@ public:
 	void doFadeOutSync();
 	void doFadeInSync();
 
+protected:
+	void markCursorAsDirty();
+
 private:		
 	PegasusEngine *_vm;
 
@@ -65,7 +70,6 @@ private:
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
 	Graphics::Surface _workArea;
-	Common::Point _lastMousePosition;
 };
 
 } // End of namespace Pegasus
