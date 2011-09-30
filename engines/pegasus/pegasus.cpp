@@ -1795,7 +1795,7 @@ void PegasusEngine::autoDragItemIntoRoom(Item *item, Sprite *draggingSprite) {
 	stop.y -= bounds.height() >> 1;
 
 	int dx = ABS(stop.x - start.x);
-	int dy = ABS(stop.y = start.y);
+	int dy = ABS(stop.y - start.y);
 	TimeValue time = MAX(dx, dy);
 
 	allowInput(false);
@@ -1828,7 +1828,7 @@ void PegasusEngine::autoDragItemIntoInventory(Item *, Sprite *draggingSprite) {
 	Common::Point stop((76 + 172 - r.width()) / 2, 334 - (2 * r.height() / 3));
 
 	int dx = ABS(stop.x - start.x);
-	int dy = ABS(stop.y = start.y);
+	int dy = ABS(stop.y - start.y);
 	TimeValue time = MAX(dx, dy);
 
 	allowInput(false);
