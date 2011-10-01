@@ -157,6 +157,95 @@ public:
 	void synchronize(Serializer &s);
 };
 
+class Scene930: public PalettedScene {
+	/* Objects */
+	class Object1: public NamedObject {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public FocusObject {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public FocusObject {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public FocusObject {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	/* Items */
+	class Item1: public NamedHotspot {
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+	/* Actions */
+	class Action1 : public Action {
+	public:
+		void signal();
+	};
+	class Action2 : public Action {
+	public:
+		void signal();
+	};
+	class Action3 : public Action {
+	public:
+		void signal();
+	};
+
+	void showBootWindow();
+	void subF3C07();
+	void subF3D6F();
+public:
+	SequenceManager _sequenceManager1;
+	Object1 _box;
+	Object2 _object2;
+	Object3 _boots;
+	Object4 _bootsWindow;
+	Object5 _object5;
+	
+	Item1 _item1;
+	NamedHotspot _item2;
+	NamedHotspot _item3;
+	NamedHotspot _item4;
+	NamedHotspot _item5;
+	NamedHotspot _item6;
+	NamedHotspot _item7;
+	NamedHotspot _item8;
+	NamedHotspot _item9;
+	NamedHotspot _item10;
+	NamedHotspot _item11;
+	NamedHotspot _item12;
+	NamedHotspot _item13;
+	NamedHotspot _item14;
+	NamedHotspot _item15;
+	NamedHotspot _item16;
+	NamedHotspot _item17;
+	NamedHotspot _item18;
+	NamedHotspot _item19;
+	NamedHotspot _item20;
+	NamedHotspot _item21;
+
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+
+	SpeakerGameText gameTextSpeaker;
+
+	int _v141A;
+	int _v141C;
+
+	void postInit(SceneObjectList *OwnerList = NULL);
+	void signal();
+	void dispatch();
+	void synchronize(Serializer &s);
+};
+
 class Scene935: public PalettedScene {
 	/* Actions */
 	class Action1 : public Action {
@@ -165,7 +254,6 @@ class Scene935: public PalettedScene {
 	};
 
 public:
-	ScenePalette _scenePalette;
 	SequenceManager _sequenceManager;
 	NamedObject _object1;
 	NamedObject _object2;

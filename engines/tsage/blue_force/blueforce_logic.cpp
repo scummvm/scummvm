@@ -191,8 +191,10 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Inside Warehouse: Secret room
 		return new Scene920();
 	case 930:
-		error("Scene group 9 not implemented");
+		// Inside the caravan
+		return new Scene930();
 	case 935:
+		// Hidden in the wardrobe
 		return new Scene935();
 	case 940:
 		return new Scene940();
