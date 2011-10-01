@@ -157,12 +157,12 @@ void SmushDecoder::handleFrame() {
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;100;0;0;0;0;0;2;0;
 			//  Lola engine room (loops a limited number of times?):
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;90;1;0;0;0;0;2;0;
-			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				debug("Announcement data: %s\n", anno);
 			// It looks like the announcement data is actually for setting some of the
 			// header parameters, not for any looping purpose
 		} else {
-			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				debug("Announcement header not understood: %s\n", anno);
 		}
 		delete[] anno;
@@ -185,7 +185,7 @@ void SmushDecoder::handleFrame() {
 			else
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
+		} else if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
 			error("SmushDecoder::handleFrame() unknown tag");
 		}
 	} while (pos < size);
@@ -443,7 +443,7 @@ bool SmushDecoder::setupAnim() {
 
 	flags = READ_LE_UINT16(s_header + 18);
 	// Output information for checking out the flags
-	if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
+	if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
 		warning("SMUSH Flags:");
 		for (int i = 0; i < 16; i++)
 			warning(" %d", (flags & (1 << i)) != 0);
@@ -481,7 +481,7 @@ bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 bool SmushDecoder::loadFile(const Common::String &filename) {
-	if (gDebugLevel == DEBUG_SMUSH)
+	if (gDebugLevel == DEBUG_MOVIE)
 		warning("Playing video '%s'.\n", filename.c_str());
 
 	if (g_grim->getGameFlags() & ADGF_DEMO) {

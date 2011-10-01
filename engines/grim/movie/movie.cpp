@@ -132,7 +132,7 @@ bool MoviePlayer::play(const char *filename, bool looping, int x, int y) {
 	if (!_videoDecoder->loadFile(_fname))
 		return false;
 
-	if (gDebugLevel == DEBUG_SMUSH)
+	if (gDebugLevel == DEBUG_MOVIE)
 		warning("Playing video '%s'.\n", filename);
 
 	init();
