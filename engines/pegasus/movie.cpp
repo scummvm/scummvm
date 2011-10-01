@@ -192,8 +192,14 @@ void Movie::checkCallBacks() {
 
 		// Stop the video when we go past our end
 		// TODO: Check if this should really be -1
-		if (actualTime >= stopTime - 1)
-			stop();
+		if (actualTime >= stopTime - 1) {
+			// HACK: Handle looping here as well
+			// Should be handled like the rest of TimeBases
+			if (getFlags() & kLoopTimeBase)
+				setTime(_startTime, _startScale);
+			else
+				stop();
+		}
 	}
 }
 
