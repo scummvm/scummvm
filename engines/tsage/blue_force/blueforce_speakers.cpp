@@ -859,14 +859,14 @@ void SpeakerNico::setText(const Common::String &msg) {
 
 /*--------------------------------------------------------------------------*/
 
-SpeakerNico::SpeakerNico(): VisualSpeaker() {
+SpeakerDA::SpeakerDA(): VisualSpeaker() {
 	_color1 = 82;
 	_color2 = 80;
 	
 	_speakerName = "DA";
 }
 
-void SpeakerNico::setText(const Common::String &msg) {
+void SpeakerDA::setText(const Common::String &msg) {
 	_removeObject1 = _removeObject2 = true;
 
 	_object1.postInit();
