@@ -176,6 +176,10 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 
 		// Restart the audio
 		startAudio();
+
+		// Pause the audio again if we're still paused
+		if (isPaused() && _audStream)
+			g_system->getMixer()->pauseHandle(_audHandle, true);
 	}
 }
 
