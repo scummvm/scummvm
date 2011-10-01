@@ -41,7 +41,7 @@ MenuSystem::~MenuSystem() {
 
 int MenuSystem::run() {
 
-	debug("MenuSystem::run()");
+	//debug("MenuSystem::run()");
 
 	_background = new Graphics::Surface();
 	_background->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
@@ -99,7 +99,7 @@ void MenuSystem::update() {
 
 	if (_currMenuID != _newMenuID) {
 		_currMenuID = _newMenuID;
-		debug("_currMenuID = %d", _currMenuID);
+		//debug("_currMenuID = %d", _currMenuID);
 		initMenu(_currMenuID);
 	}
 
@@ -346,11 +346,11 @@ void MenuSystem::clickItem(ItemID id) {
 			setCfgText(true, false);
 		break;
 	case kItemIdVolumesMenu:
-		debug("kItemIdVolumesMenu");
+		//debug("kItemIdVolumesMenu");
 		_newMenuID = kMenuIdVolumes;
 		break;
 	case kItemIdPlay:
-		debug("kItemIdPlay");
+		//debug("kItemIdPlay");
 		_running = false;
 		break;
 	case kItemIdQuit:
@@ -490,19 +490,13 @@ int MenuSystem::loadSavegamesList() {
 MenuSystem::SavegameItem *MenuSystem::getSavegameItemByID(ItemID id) {
 	switch (id) {
 	case kItemIdSavegame1:
-		return &_savegames[_savegameListTopIndex + 0];
 	case kItemIdSavegame2:
-		return &_savegames[_savegameListTopIndex + 1];
 	case kItemIdSavegame3:
-		return &_savegames[_savegameListTopIndex + 2];
 	case kItemIdSavegame4:
-		return &_savegames[_savegameListTopIndex + 3];
 	case kItemIdSavegame5:
-		return &_savegames[_savegameListTopIndex + 4];
 	case kItemIdSavegame6:
-		return &_savegames[_savegameListTopIndex + 5];
 	case kItemIdSavegame7:
-		return &_savegames[_savegameListTopIndex + 6];
+		return &_savegames[_savegameListTopIndex + id - kItemIdSavegame1];
 	default:
 		return NULL;
 	}
@@ -536,7 +530,7 @@ void MenuSystem::scrollSavegames(int delta) {
 void MenuSystem::clickSavegameItem(ItemID id) {
 	if (_currMenuID == kMenuIdLoad) {
 		SavegameItem *savegameItem = getSavegameItemByID(id);
-		debug("slotNum = [%d]; description = [%s]", savegameItem->_slotNum, savegameItem->_description.c_str());
+		//debug("slotNum = [%d]; description = [%s]", savegameItem->_slotNum, savegameItem->_description.c_str());
 		//_vm->loadgame(savegameItem->_filename.c_str());
 		_vm->requestLoadgame(savegameItem->_slotNum);
 		_running = false;
