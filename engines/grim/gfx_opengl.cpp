@@ -29,6 +29,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"

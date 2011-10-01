@@ -24,7 +24,10 @@
 #define GRIM_GFX_BASE_H
 
 #include "math/vector3d.h"
-#include "graphics/surface.h"
+
+namespace Graphics {
+	struct Surface;
+}
 
 namespace Grim {
 
