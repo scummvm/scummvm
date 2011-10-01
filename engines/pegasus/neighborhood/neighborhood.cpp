@@ -76,6 +76,14 @@ Neighborhood::~Neighborhood() {
 }
 
 void Neighborhood::init() {
+	_neighborhoodNotification.notifyMe(this, kNeighborhoodFlags, kNeighborhoodFlags);
+	_navMovieCallBack.setNotification(&_neighborhoodNotification);
+	_turnPushCallBack.setNotification(&_neighborhoodNotification);
+	_delayCallBack.setNotification(&_neighborhoodNotification);
+
+	// TODO
+	//_spotSoundCallBack.setNotification(&_neighborhoodNotification);
+
 	debug(0, "Loading '%s' neighborhood resources", _resName.c_str());
 
 	Common::SeekableReadStream *stream = _vm->_resFork->getResource(_doorTable.getResTag(), _resName);
