@@ -26,6 +26,8 @@
 
 #include "common/scummsys.h"
 
+#include "graphics/surface.h"
+
 #ifdef USE_BINK
 
 #ifndef VIDEO_BINK_DECODER_H
