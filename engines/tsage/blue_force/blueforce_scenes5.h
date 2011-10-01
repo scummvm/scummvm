@@ -223,7 +223,7 @@ public:
 	Nickel _nickel;
 	Object5 _object5;
 	NamedObject _object6;
-	PicturePart _picture1, _picture2, _picture3, _picture4;;
+	PicturePart _picture1, _picture2, _picture3, _picture4;
 	Computer _computer;
 	NamedHotspot _chair, _lamp, _item4, _trophy, _watercolours, _fileCabinets;
 	NamedHotspot _certificate, _bookcase, _desk, _carpet, _item12, _office;
@@ -236,7 +236,6 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
-
 };
 
 } // End of namespace BlueForce
