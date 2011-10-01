@@ -804,6 +804,88 @@ void SpeakerGiggles::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
-} // End of namespace BlueForce
+/*--------------------------------------------------------------------------*/
 
+SpeakerFBI::SpeakerFBI(): VisualSpeaker() {
+	_color1 = 27;
+	_color2 = 89;
+	
+	_speakerName = "FBI";
+}
+
+void SpeakerFBI::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(837);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 267,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerNico::SpeakerNico(): VisualSpeaker() {
+	_color1 = 105;
+	_color2 = 102;
+	
+	_speakerName = "NICO";
+}
+
+void SpeakerNico::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(905);
+	_object1.setStrip2(2);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 262,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	
+	_object2.postInit();
+	_object2.setVisage(905);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 262,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerNico::SpeakerNico(): VisualSpeaker() {
+	_color1 = 82;
+	_color2 = 80;
+	
+	_speakerName = "DA";
+}
+
+void SpeakerNico::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(915);
+	_object1.setStrip2(8);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 84,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	
+	_object2.postInit();
+	_object2.setVisage(915);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 84,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+} // End of namespace BlueForce
 } // End of namespace TsAGE
