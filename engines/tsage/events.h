@@ -123,6 +123,7 @@ public:
 	uint32 getFrameNumber() const { return _frameNumber; }
 	void delay(int numFrames);
 	bool isInventoryIcon() const { return _currentCursor < 256; }
+	void proc1() { warning("TODO: EventsClass::proc1"); }
 
 	virtual void listenerSynchronize(Serializer &s);
 	static void loadNotifierProc(bool postFlag);

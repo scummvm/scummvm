@@ -171,6 +171,7 @@ public:
 	int _v4CEA4;
 	int _marinaWomanCtr;
 	int _v4CEB6;
+	int _safeCombination;
 	int _v4CEC0;
 	int _v4CEC2;
 	int _v4CEC8;

@@ -136,9 +136,107 @@ public:
 
 	Scene551();
 	virtual void synchronize(Serializer &s);
-	void postInit(SceneObjectList *OwnerList);
+	void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
+};
+
+class Scene560: public SceneExt {
+	/* Objects */
+	class DeskChair: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SafeInset: public FocusObject {
+		/* Items */
+		class Item: public NamedHotspotExt {
+		public:
+			virtual bool startAction(CursorType action, Event &event);
+		};
+	public:
+		NamedObject _digit0, _digit1, _digit2;
+		Item _item1, _item2, _item3, _item4, _item5, _item6;
+		Visage _cursorVisage;
+
+		virtual Common::String getClassName() { return "Scene560_SafeInset"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void remove();
+		virtual void signal();
+		virtual void process(Event &event);
+	};
+	class Nickel: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public FocusObject {
+		/* Items */
+		class Item1: public NamedHotspot {
+		public:
+			virtual bool startAction(CursorType action, Event &event);
+		};
+	public:
+		Item1 _item1;
+
+		virtual Common::String getClassName() { return "Scene560_Object5"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void remove();
+	};
+
+	/* Item groups */
+	class PicturePart: public NamedHotspotExt {
+	public:
+		virtual Common::String getClassName() { return "Scene560_Group1"; }
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Computer: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	SpeakerGameText _gameTextSpeaker;
+	DeskChair _deskChair;
+	Object2 _object2;
+	SafeInset _safeInset;
+	Nickel _nickel;
+	Object5 _object5;
+	NamedObject _object6;
+	PicturePart _picture1, _picture2, _picture3, _picture4;;
+	Computer _computer;
+	NamedHotspot _chair, _lamp, _item4, _trophy, _watercolours, _fileCabinets;
+	NamedHotspot _certificate, _bookcase, _desk, _carpet, _item12, _office;
+	ASound _sound1;
+	int _field380, _field11EA;
+	Common::Point _destPosition;
+
+	Scene560();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+
 };
 
 } // End of namespace BlueForce

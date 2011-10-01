@@ -193,6 +193,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v4CEA4);
 	s.syncAsSint16LE(_marinaWomanCtr);
 	s.syncAsSint16LE(_v4CEB6);
+	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_v4CEC0);
 	s.syncAsSint16LE(_v4CEC2);
 	s.syncAsSint16LE(_v4CEC8);
@@ -238,6 +239,7 @@ void BlueForceGlobals::reset() {
 	_v4CEA4 = 0;
 	_marinaWomanCtr = 0;
 	_v4CEB6 = 0;
+	_safeCombination = 0;
 	_v4CEC0 = 0;
 	_v4CEC2 = 0;
 	_v4CEC8 = 1;

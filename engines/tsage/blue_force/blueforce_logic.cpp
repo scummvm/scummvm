@@ -145,6 +145,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Outside Bikini Hut (Drunk Stop)
 		return new Scene551();
 	case 560:
+		// Study
+		return new Scene560();
 	case 570:
 	case 580:
 	case 590:
