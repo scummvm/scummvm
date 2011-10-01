@@ -27,6 +27,7 @@
 
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_condition.h"
 #include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/biochipitem.h"
@@ -230,9 +231,7 @@ AICurrentItemCondition::AICurrentItemCondition(const tItemID item) {
 }
 	
 bool AICurrentItemCondition::fireCondition() {
-	// TODO
-	//InventoryItem *item = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
-	InventoryItem *item = 0;
+	InventoryItem *item = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
 
 	if (_item == kNoItemID)
 		return item == 0;
@@ -245,9 +244,7 @@ AICurrentBiochipCondition::AICurrentBiochipCondition(const tItemID biochip)  {
 }
 
 bool AICurrentBiochipCondition::fireCondition() {
-	// TODO
-	///BiochipItem *biochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
-	BiochipItem *biochip = 0;
+	BiochipItem *biochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
 	
 	if (_biochip == kNoItemID)
 		return biochip == 0;
@@ -278,8 +275,7 @@ AILastExtraCondition::AILastExtraCondition(const tExtraID lastExtra) {
 }
 
 bool AILastExtraCondition::fireCondition() {
-	// TODO
-	return false;
+	return g_neighborhood && (tExtraID)g_neighborhood->getLastExtra() == _lastExtra;
 }
 
 AICondition *makeLocationAndDoesntHaveItemCondition(const tRoomID room, const tDirectionConstant direction, const tItemID item) {
