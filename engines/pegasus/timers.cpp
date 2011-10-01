@@ -229,7 +229,7 @@ void TimeBase::checkCallBacks() {
 	// Check if we've triggered any callbacks
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = runner->_nextCallBack) {
 		if (runner->_type == kCallBackAtTime && runner->_trigger == kTriggerTimeFwd) {
-			if (time >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
+			if (getTime() >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
 				runner->callBack();
 		} else if (runner->_type == kCallBackAtExtremes) {
 			if (runner->_trigger == kTriggerAtStop) {
