@@ -145,8 +145,10 @@ Common::Error PegasusEngine::run() {
 	_screenDimmer.setBounds(Common::Rect(0, 0, 640, 480));
 	_screenDimmer.setDisplayOrder(kScreenDimmerOrder);
 
-	while (!shouldQuit())
+	while (!shouldQuit()) {
 		processShell();
+		_system->delayMillis(10); // Ease off the CPU
+	}
 
 	return Common::kNoError;
 }
