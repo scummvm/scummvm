@@ -46,6 +46,11 @@ int MenuSystem::run() {
 	_background = new Graphics::Surface();
 	_background->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
+	// Save original background
+	Graphics::Surface backgroundOrig;
+	backgroundOrig.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+	memcpy(backgroundOrig.getBasePtr(0,0), _vm->_screen->_frontScreen, 640 * 400);
+
 	_currMenuID = kMenuIdNone;
 	_newMenuID = kMenuIdMain;
 	_currItemID = kItemIdNone;
@@ -66,17 +71,25 @@ int MenuSystem::run() {
 	_vm->_palette->buildColorTransTable(0, 16, 7);
 
 	_vm->_screen->_renderQueue->clear();
+	// Draw the menu background and frame
 	_vm->_screen->blastSprite(0x140 + _vm->_cameraX, 0x175 + _vm->_cameraY, 0, 1, 0x4000);
+	shadeRect(60, 39, 520, 246, 30, 94);
 
 	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
-
-	shadeRect(60, 39, 520, 246, 30, 94);
 
 	while (_running) {
 		update();
 		_vm->_system->updateScreen();
 	}
 	
+	// Restore original background
+	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0,0), 640 * 400);
+	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+	_vm->_system->updateScreen();
+
+	// Cleanup
+	backgroundOrig.free();
+	_background->free();
 	delete _background;
 
 	return 0;	
@@ -95,7 +108,7 @@ void MenuSystem::update() {
 	if (_needRedraw) {
 		//_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
 		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
-		debug("redraw");
+		//debug("redraw");
 		_needRedraw = false;
 	}
 
@@ -412,25 +425,6 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 }
 
 void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
-	// FIXME: Why is the following block disabled?
-#if 0
-	byte *src = (byte*)_background->getBasePtr(x, y);
-	for (int xc = 0; xc < w; xc++) {
-		src[xc] = color1;
-		src[xc + h * 640] = 46;
-	}
-	src += 640;
-	w -= 1;
-	h -= 1;
-	while (h--) {
-		src[0] = color2;
-		src[w] = color2;
-		for (int xc = 1; xc < w; xc++) {
-			src[xc] = _vm->_palette->getColorTransPixel(src[xc]);
-		}
-		src += 640;
-	}
-#endif	
 	byte *src = (byte*)_background->getBasePtr(x, y);
 	for (int xc = 0; xc < w; xc++) {
 		src[xc] = color2;
