@@ -83,9 +83,6 @@ private:
 
 	void play(uint8 track);
 
-	void unk1();
-	void unk2();
-
 	AdLibDriver *_driver;
 
 	bool _v2;

@@ -2297,8 +2297,8 @@ void SoundAdLibPC::playTrack(uint8 track) {
 }
 
 void SoundAdLibPC::haltTrack() {
-	unk1();
-	unk2();
+	playSoundEffect(0);
+	playSoundEffect(0);
 	//_vm->_system->delayMillis(3 * 60);
 }
 
@@ -2402,8 +2402,8 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 		return;
 	}
 
-	unk2();
-	unk1();
+	playSoundEffect(0);
+	playSoundEffect(0);
 
 	_driver->callback(8, int(-1));
 	_soundDataPtr = 0;
@@ -2433,15 +2433,6 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	_driver->callback(4, _soundDataPtr);
 
 	_soundFileLoaded = file;
-}
-
-void SoundAdLibPC::unk1() {
-	playSoundEffect(0);
-	//_vm->_system->delayMillis(5 * 60);
-}
-
-void SoundAdLibPC::unk2() {
-	playSoundEffect(0);
 }
 
 } // End of namespace Kyra
