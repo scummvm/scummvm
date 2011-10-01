@@ -206,9 +206,9 @@ void TimeBase::checkCallBacks() {
 
 	// First step: update the times
 	if (_lastMillis == 0) {
-		_lastMillis = g_system->getMillis();
+		_lastMillis = g_engine->getTotalPlayTime();
 	} else {
-		uint32 curTime = g_system->getMillis();
+		uint32 curTime = g_engine->getTotalPlayTime();
 		if (_lastMillis == curTime) // No change
 			return;
 
