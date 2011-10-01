@@ -790,6 +790,11 @@ void AdLibDriver::executePrograms() {
 						noteOn(channel);
 						setupDuration(param, channel);
 						if (param) {
+							// We need to make sure we are always running the
+							// effects after this. Otherwise some sounds are
+							// wrong. Like the sfx when bumping into a wall in
+							// LoL.
+							result = 1;
 							channel.dataptr = dataptr;
 							break;
 						}
