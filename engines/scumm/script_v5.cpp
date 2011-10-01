@@ -1799,12 +1799,20 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 13:	// SO_SAVE_STRING
 		{
-			// This subopcode is used in Indy 4 to save the IQ points data.
-			// No other game uses it. We use this to replace the given filename by
-			// one based on the targetname ("TARGET.iq").
-			// This way, the iq data of each Indy 4 variant a user might have stays
-			// separate. Moreover, the filename now clearly reflects to which target
-			// it belongs (as it should).
+			// This subopcode is used in Indy 4 to save the IQ points
+			// data. No other LucasArts game uses it. We use this fact
+			// to substitute a filename based on the targetname
+			// ("TARGET.iq").
+			//
+			// This way, the iq data of each Indy 4 variant stays
+			// separate. Moreover, the filename now clearly reflects to
+			// which target it belongs (as it should).
+			//
+			// In addition, the Monkey Island fan patch (which adds
+			// speech support and more things to MI 1 and 2) uses
+			// this opcode to generate a "monkey.cfg" file containing.
+			// some user controllable settings.
+			// Once more we use a custom filename ("TARGET.cfg").
 			Common::String filename;
 			char chr;
 
@@ -1814,6 +1822,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
+			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+				filename = _targetName + ".cfg";
 			} else {
 				error("SO_SAVE_STRING: Unsupported filename %s", filename.c_str());
 			}
@@ -1841,6 +1851,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
+			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+				filename = _targetName + ".cfg";
 			} else {
 				error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());
 			}
