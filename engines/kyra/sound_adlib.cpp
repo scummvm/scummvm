@@ -318,7 +318,6 @@ private:
 	//
 	// _unkValue1      - Unknown. Used for updating _unkValue2
 	// _unkValue2      - Unknown. Used for updating _unkValue4
-	// _unkValue3      - Unknown. Used for updating _unkValue2
 	// _unkValue4      - Unknown. Used for updating _unkValue5
 	// _unkValue5      - Unknown. Used for controlling updateCallback24().
 	// _unkValue6      - Unknown. Rhythm section volume?
@@ -357,7 +356,7 @@ private:
 
 	uint8 _unkValue1;
 	uint8 _unkValue2;
-	uint8 _unkValue3;
+	uint8 _callbackTimer;
 	uint8 _unkValue4;
 	uint8 _unkValue5;
 	uint8 _unkValue6;
@@ -434,7 +433,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 	_tempo = 0;
 	_soundTrigger = 0;
 
-	_unkValue3 = 0xFF;
+	_callbackTimer = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
 	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
@@ -635,9 +634,9 @@ void AdLibDriver::callback() {
 	setupPrograms();
 	executePrograms();
 
-	uint8 temp = _unkValue3;
-	_unkValue3 += _tempo;
-	if (_unkValue3 < temp) {
+	uint8 temp = _callbackTimer;
+	_callbackTimer += _tempo;
+	if (_callbackTimer < temp) {
 		if (!(--_unkValue2)) {
 			_unkValue2 = _unkValue1;
 			++_unkValue4;
@@ -1470,7 +1469,7 @@ int AdLibDriver::update_setPriority(uint8 *&dataptr, Channel &channel, uint8 val
 int AdLibDriver::updateCallback23(uint8 *&dataptr, Channel &channel, uint8 value) {
 	value >>= 1;
 	_unkValue1 = _unkValue2 = value;
-	_unkValue3 = 0xFF;
+	_callbackTimer = 0xFF;
 	_unkValue4 = _unkValue5 = 0;
 	return 0;
 }
