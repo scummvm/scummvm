@@ -169,6 +169,7 @@ Common::Error ToltecsEngine::run() {
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= 99) {
+			_screen->loadMouseCursor(12);
 			loadGameState(saveSlot);
 		}
 	}
