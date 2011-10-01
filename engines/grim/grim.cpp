@@ -927,7 +927,7 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getDstSurface());
 				g_movie->clearUpdateNeeded();
 			}
 			int frame = g_movie->getFrame();
@@ -982,7 +982,7 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getDstSurface());
 				g_movie->clearUpdateNeeded();
 			}
 			if (g_movie->getFrame() > 0)

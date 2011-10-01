@@ -24,6 +24,7 @@
 #define GRIM_GFX_BASE_H
 
 #include "math/vector3d.h"
+#include "graphics/surface.h"
 
 namespace Grim {
 
@@ -194,7 +195,7 @@ public:
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
-	virtual void prepareMovieFrame(int width, int height, byte *bitmap) = 0;
+	virtual void prepareMovieFrame(Graphics::Surface* frame) = 0;
 	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**

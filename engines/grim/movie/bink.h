@@ -46,23 +46,16 @@ namespace Graphics{
 namespace Grim {
 
 class BinkPlayer : public MoviePlayer {
-private:
-	Video::BinkDecoder *_binkDecoder;
-	Graphics::Surface *_surface, *_externalSurface;
 public:
 	BinkPlayer();
 	~BinkPlayer();
 
 	bool play(const char *filename, bool looping, int x, int y);
-	void stop();
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
 	void deliverFrameFromDecode(int width, int height, uint16 *dat);
 private:
-	static void timerCallback(void *ptr);
 	virtual void handleFrame();
-	void init();
-	void deinit();
 };
 
 } // end of namespace Grim
