@@ -284,19 +284,22 @@ void CruiseMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Cruise::CruiseEngine::getSavegameFile(slot));
-	assert(f);
+	
+	if (f) {
+		Cruise::CruiseSavegameHeader header;
+		Cruise::readSavegameHeader(f, header);
+		delete f;
 
-	Cruise::CruiseSavegameHeader header;
-	Cruise::readSavegameHeader(f, header);
-	delete f;
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header.saveName);
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+		desc.setThumbnail(header.thumbnail);
 
-	// Create the return descriptor
-	SaveStateDescriptor desc(slot, header.saveName);
-	desc.setDeletableFlag(true);
-	desc.setWriteProtectedFlag(false);
-	desc.setThumbnail(header.thumbnail);
+		return desc;
+	}
 
-	return desc;
+	return SaveStateDescriptor();
 }
 
 bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

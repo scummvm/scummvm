@@ -156,22 +156,25 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 			generateGameStateFileName(target, slot));
-		assert(f);
+		
+		if (f) {
+			TsAGE::tSageSavegameHeader header;
+			TsAGE::Saver::readSavegameHeader(f, header);
+			delete f;
 
-		TsAGE::tSageSavegameHeader header;
-		TsAGE::Saver::readSavegameHeader(f, header);
-		delete f;
+			// Create the return descriptor
+			SaveStateDescriptor desc(slot, header.saveName);
+			desc.setDeletableFlag(true);
+			desc.setWriteProtectedFlag(false);
+			desc.setThumbnail(header.thumbnail);
+			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+			desc.setSaveTime(header.saveHour, header.saveMinutes);
+			desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
 
-		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-		desc.setThumbnail(header.thumbnail);
-		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-		desc.setSaveTime(header.saveHour, header.saveMinutes);
-		desc.setPlayTime(header.totalFrames * GAME_FRAME_TIME);
+			return desc;
+		}
 
-		return desc;
+		return SaveStateDescriptor();
 	}
 };
 

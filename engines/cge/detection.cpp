@@ -189,38 +189,41 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-	assert(f);
+	
+	if (f) {
+		CGE::SavegameHeader header;
 
-	CGE::SavegameHeader header;
+		// Check to see if it's a ScummVM savegame or not
+		char buffer[kSavegameStrSize + 1];
+		f->read(buffer, kSavegameStrSize + 1);
 
-	// Check to see if it's a ScummVM savegame or not
-	char buffer[kSavegameStrSize + 1];
-	f->read(buffer, kSavegameStrSize + 1);
+		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
+			CGE::CGEEngine::readSavegameHeader(f, header);
+		delete f;
 
-	bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
-		CGE::CGEEngine::readSavegameHeader(f, header);
-	delete f;
+		if (!hasHeader) {
+			// Original savegame perhaps?
+			SaveStateDescriptor desc(slot, "Unknown");
+			return desc;
+		} else {
+			// Create the return descriptor
+			SaveStateDescriptor desc(slot, header.saveName);
+			desc.setDeletableFlag(true);
+			desc.setWriteProtectedFlag(false);
+			desc.setThumbnail(header.thumbnail);
+			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+			desc.setSaveTime(header.saveHour, header.saveMinutes);
 
-	if (!hasHeader) {
-		// Original savegame perhaps?
-		SaveStateDescriptor desc(slot, "Unknown");
-		return desc;
-	} else {
-		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
-		desc.setDeletableFlag(true);
-		desc.setWriteProtectedFlag(false);
-		desc.setThumbnail(header.thumbnail);
-		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-		desc.setSaveTime(header.saveHour, header.saveMinutes);
+			// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
+			// we prevent it from being deleted or overwritten by accident.
+			desc.setDeletableFlag(slot != 0);
+			desc.setWriteProtectedFlag(slot == 0);
 
-		// Slot 0 is used for the 'automatic save on exit' save in Soltys, thus
-		// we prevent it from being deleted or overwritten by accident.
-		desc.setDeletableFlag(slot != 0);
-		desc.setWriteProtectedFlag(slot == 0);
-
-		return desc;
+			return desc;
+		}
 	}
+	
+	return SaveStateDescriptor();
 }
 
 bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
