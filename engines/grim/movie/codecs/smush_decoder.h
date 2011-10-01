@@ -24,7 +24,6 @@
 #define GRIM_SMUSH_DECODER_H
 
 #include "common/rational.h"
-#include "common/mutex.h"
 
 #include "engines/grim/movie/codecs/blocky8.h"
 #include "engines/grim/movie/codecs/blocky16.h"
@@ -54,7 +53,6 @@ private:
 	Blocky16 _blocky16;
 	Common::SeekableReadStream *_file;
 	Common::Rational _frameRate;
-	Common::Mutex _frameMutex;
 	Graphics::Surface _surface;
 	Graphics::PixelFormat _format;
 

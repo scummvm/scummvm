@@ -20,30 +20,11 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_chdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_getwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_unlink
-
-#include "common/endian.h"
-#include "common/timer.h"
-#include "common/file.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
-
 #include "graphics/surface.h"
 #include "video/bink_decoder.h"
 
 #include "engines/grim/movie/bink.h"
 
-#include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 
 #ifdef USE_BINK
@@ -60,27 +41,12 @@ BinkPlayer::BinkPlayer() : MoviePlayer() {
 	_speed = 1000;
 }
 
-BinkPlayer::~BinkPlayer() {
-	deinit();
-	delete _videoDecoder;
-}
-
-void BinkPlayer::handleFrame() {
-	basicHandleFrame();
-}
-
 bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
 	_fname = filename;
 	// The demo uses a weird .lab suffix instead of the normal .bik
 	_fname += (g_grim->getGameFlags() & ADGF_DEMO) ? ".lab" : ".bik";
 
 	return MoviePlayer::play(_fname.c_str(), looping, x, y);
-}
-
-void BinkPlayer::saveState(SaveGame *state) {
-}
-
-void BinkPlayer::restoreState(SaveGame *state) {
 }
 
 } // end of namespace Grim

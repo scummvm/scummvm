@@ -23,39 +23,16 @@
 #ifndef GRIM_BINK_PLAYER_H
 #define GRIM_BINK_PLAYER_H
 
-#include "common/scummsys.h"
-#include "common/file.h"
-
-#include "graphics/pixelformat.h"
-
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-
 #include "engines/grim/movie/movie.h"
 
 #ifdef USE_BINK
-
-namespace Video{
-	class BinkDecoder;
-}
-
-namespace Graphics{
-	struct Surface;
-}
 
 namespace Grim {
 
 class BinkPlayer : public MoviePlayer {
 public:
 	BinkPlayer();
-	~BinkPlayer();
-
 	bool play(const char *filename, bool looping, int x, int y);
-	void saveState(SaveGame *state);
-	void restoreState(SaveGame *state);
-	void deliverFrameFromDecode(int width, int height, uint16 *dat);
-private:
-	virtual void handleFrame();
 };
 
 } // end of namespace Grim

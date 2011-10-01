@@ -34,7 +34,6 @@ class SmushDecoder;
 class SmushPlayer : public MoviePlayer {
 public:
 	SmushPlayer();
-	~SmushPlayer();
 
 	void restoreState(SaveGame *state);
 private:

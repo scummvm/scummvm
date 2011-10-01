@@ -52,7 +52,7 @@ protected:
 
 public:
 	MoviePlayer();
-	virtual ~MoviePlayer() { }
+	virtual ~MoviePlayer();
 
 	/**
 	 * Loads a file for playing, and starts playing it.
@@ -98,20 +98,19 @@ protected:
 	 * @return false if a frame wasnt drawn to _externalBuffer, true otherwise.
 	 * @see handleFrame
 	 */
-	virtual bool basicHandleFrame();
+	virtual bool prepareFrame();
 
 	/**
 	 * Frame-handling function.
-	 * should check if there is a new frame to be drawn,
-	 * and if possible, put it in _externalBuffer. (Setting updateNeeded in
-	 * the process). A default basic handler is available, to get the basics
-	 * down for VideoDecoder-based drawing.
 	 *
-	 * @see basicHandleFrame
+	 * Perform any codec-specific per-frame operations after prepareFrame has been
+	 * run, this function is called whenever prepareFrame returns true.
+	 *
+	 * @see prepareFrame
 	 * @see clearUpdateNeeded
 	 * @see isUpdateNeeded
 	 */
-	virtual void handleFrame() = 0;
+	virtual void handleFrame() {};
 
 	/**
 	 * Initialization of buffers

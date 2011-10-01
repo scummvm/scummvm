@@ -46,8 +46,14 @@ MoviePlayer::MoviePlayer() {
 	_frame = 0;
 	_x = 0;
 	_y = 0;
+	_videoDecoder = NULL;
 	_surface = new Graphics::Surface();
 	_externalSurface = new Graphics::Surface();
+}
+
+MoviePlayer::~MoviePlayer() {
+	deinit();
+	delete _videoDecoder;
 }
 
 void MoviePlayer::pause(bool p) {
@@ -62,11 +68,12 @@ void MoviePlayer::stop() {
 
 void MoviePlayer::timerCallback(void *) {
 	g_movie->_frameMutex.lock();
-	g_movie->handleFrame();
+	if (g_movie->prepareFrame())
+		g_movie->handleFrame();
 	g_movie->_frameMutex.unlock();
 }
 
-bool MoviePlayer::basicHandleFrame() {
+bool MoviePlayer::prepareFrame() {
 	if (_videoDecoder->endOfVideo())
 		_videoFinished = true;
 

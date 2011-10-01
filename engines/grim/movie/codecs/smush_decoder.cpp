@@ -23,7 +23,6 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "common/mutex.h"
 #include "common/rational.h"
 #include "common/system.h"
 #include "common/timer.h"
@@ -492,7 +491,6 @@ bool SmushDecoder::loadFile(const Common::String &filename) {
 }
 
 const Graphics::Surface *SmushDecoder::decodeNextFrame() {
-	Common::StackLock lock(_frameMutex);
 	if (g_grim->getGameFlags() & ADGF_DEMO)
 		handleFrameDemo();
 	else

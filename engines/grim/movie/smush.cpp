@@ -41,11 +41,6 @@ SmushPlayer::SmushPlayer() : MoviePlayer() {
 	_videoDecoder = new Grim::SmushDecoder();
 }
 
-SmushPlayer::~SmushPlayer() {
-	deinit();
-	delete _videoDecoder;
-}
-
 SmushDecoder* SmushPlayer::getDecoder() {
 	return dynamic_cast<SmushDecoder*>(_videoDecoder);
 }
@@ -61,9 +56,6 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if(!basicHandleFrame())
-		return;
-
 	if (g_grim->getGameFlags() & ADGF_DEMO) {
 		_x = getDecoder()->getX();
 		_y = getDecoder()->getY();
