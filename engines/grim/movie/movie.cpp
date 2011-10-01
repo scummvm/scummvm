@@ -129,22 +129,26 @@ void MoviePlayer::deinit() {
 	_videoFinished = true;
 }
 
-bool MoviePlayer::play(const char *filename, bool looping, int x, int y) {
+bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	deinit();
 	_x = x;
 	_y = y;
 	_fname = filename;
 	_videoLooping = looping;
 
-	if (!_videoDecoder->loadFile(_fname))
+	if (!loadFile(_fname))
 		return false;
 
 	if (gDebugLevel == DEBUG_MOVIE)
-		warning("Playing video '%s'.\n", filename);
+		warning("Playing video '%s'.\n", filename.c_str());
 
 	init();
 
 	return true;
+}
+
+bool MoviePlayer::loadFile(Common::String filename) {
+	return _videoDecoder->loadFile(filename);
 }
 
 void MoviePlayer::saveState(SaveGame *state) {

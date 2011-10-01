@@ -31,8 +31,10 @@ namespace Grim {
 
 class BinkPlayer : public MoviePlayer {
 public:
-	BinkPlayer();
-	bool play(const char *filename, bool looping, int x, int y);
+	BinkPlayer(bool demo);
+private:
+	bool loadFile(Common::String filename);
+	bool _demo;
 };
 
 } // end of namespace Grim

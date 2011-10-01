@@ -33,14 +33,18 @@
 #include "audio/decoders/raw.h"
 
 #include "engines/grim/debug.h"
-#include "engines/grim/grim.h"
-#include "engines/grim/resource.h"
 
+#include "engines/grim/movie/codecs/blocky8.h"
+#include "engines/grim/movie/codecs/blocky16.h"
 #include "engines/grim/movie/codecs/smush_decoder.h"
 
 #ifdef USE_SMUSH
 
 namespace Grim {
+
+// Prototypes to avoid depending on grim.h
+void vimaInit(uint16 *destTable);
+void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
 #define BUFFER_SIZE 16385
@@ -62,7 +66,14 @@ SmushDecoder::SmushDecoder() {
 	_startPos = 0;
 	_x = 0;
 	_y = 0;
+	_blocky8 = new Blocky8();
+	_blocky16 = new Blocky16();
 	init();
+}
+
+SmushDecoder::~SmushDecoder() {
+	delete _blocky8;
+	delete _blocky16;
 }
 
 void SmushDecoder::init() {
@@ -71,7 +82,7 @@ void SmushDecoder::init() {
 	_curFrame = 0;
 	_videoPause = false;
 
-	if (!(g_grim->getGameFlags() & ADGF_DEMO)) {
+	if (!_demo) {
 		_surface.create(_width, _height, _format);
 		vimaInit(smushDestTable);
 	}
@@ -175,7 +186,7 @@ void SmushDecoder::handleFrame() {
 
 	do {
 		if (READ_BE_UINT32(frame + pos) == MKTAG('B','l','1','6')) {
-			_blocky16.decode((byte *)_surface.pixels, frame + pos + 8);
+			_blocky16->decode((byte *)_surface.pixels, frame + pos + 8);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKTAG('W','a','v','e')) {
 			int decompressed_size = READ_BE_UINT32(frame + pos + 8);
@@ -316,9 +327,9 @@ void SmushDecoder::handleFrameDemo() {
 				_width = width;
 				_height = height;
 				_surface.create(_width, _height, _format);
-				_blocky8.init(_width, _height);
+				_blocky8->init(_width, _height);
 			}
-			_blocky8.decode((byte *)_surface.pixels, frame + pos + 8 + 14);
+			_blocky8->decode((byte *)_surface.pixels, frame + pos + 8 + 14);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKTAG('I','A','C','T')) {
 			handleIACT(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
@@ -431,7 +442,7 @@ bool SmushDecoder::setupAnim() {
 	int width = READ_LE_UINT16(s_header + 8);
 	int height = READ_LE_UINT16(s_header + 10);
 	if (_width != width || _height != height) {
-		_blocky16.init(width, height);
+		_blocky16->init(width, height);
 	}
 
 	_width = width;
@@ -459,7 +470,7 @@ bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	// Load the video
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
+	if (_demo) {
 		_file = stream;
 		if (!setupAnimDemo())
 			return false;
@@ -474,24 +485,13 @@ bool SmushDecoder::loadStream(Common::SeekableReadStream *stream) {
 	_startPos = _file->pos();
 
 	init();
-	if (!g_grim->getGameFlags() & ADGF_DEMO)
+	if (!_demo)
 		_surface.create(_width, _height, _format);
 	return true;
 }
 
-bool SmushDecoder::loadFile(const Common::String &filename) {
-	if (gDebugLevel == DEBUG_MOVIE)
-		warning("Playing video '%s'.\n", filename.c_str());
-
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
-		return VideoDecoder::loadFile(filename);
-	} else {
-		return loadStream(g_resourceloader->openNewSubStreamFile(filename.c_str()));
-	}
-}
-
 const Graphics::Surface *SmushDecoder::decodeNextFrame() {
-	if (g_grim->getGameFlags() & ADGF_DEMO)
+	if (_demo)
 		handleFrameDemo();
 	else
 		handleFrame();

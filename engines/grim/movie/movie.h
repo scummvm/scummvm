@@ -48,7 +48,6 @@ protected:
 	bool _videoPause;
 	bool _videoLooping;
 	int _x, _y;
-	//int _width, _height;
 
 public:
 	MoviePlayer();
@@ -66,7 +65,7 @@ public:
 	 * @see	init
 	 * @see stop
 	 */
-	virtual bool play(const char *filename, bool looping, int x, int y);
+	virtual bool play(Common::String filename, bool looping, int x, int y);
 	virtual void stop();
 	virtual void pause(bool p);
 	virtual bool isPlaying() { return !_videoFinished; }
@@ -129,14 +128,24 @@ protected:
 	 * @see init
 	 */
 	virtual void deinit();
+
+	/**
+	 * Loads a file for playback, any additional setup is not done here, but in
+	 * the play-function. This function is supposed to handle any specifics w.r.t.
+	 * files vs containers (i.e. load from LAB vs load from file).
+	 *
+	 * @see play
+	 * @param filename		The filename to be handled.
+	 */
+	virtual bool loadFile(Common::String filename);
 };
 
 
 // Factory-like functions:
 
 MoviePlayer *CreateMpegPlayer();
-MoviePlayer *CreateSmushPlayer();
-MoviePlayer *CreateBinkPlayer();
+MoviePlayer *CreateSmushPlayer(bool demo);
+MoviePlayer *CreateBinkPlayer(bool demo);
 extern MoviePlayer *g_movie;
 
 } // end of namespace Grim

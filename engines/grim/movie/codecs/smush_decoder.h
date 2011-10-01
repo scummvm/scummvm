@@ -25,9 +25,6 @@
 
 #include "common/rational.h"
 
-#include "engines/grim/movie/codecs/blocky8.h"
-#include "engines/grim/movie/codecs/blocky16.h"
-
 #include "audio/mixer.h"
 
 #include "video/video_decoder.h"
@@ -42,15 +39,16 @@ namespace Audio {
 
 namespace Grim {
 
-class SaveGame;
+class Blocky8;
+class Blocky16;
 
 class SmushDecoder : public virtual Video::SeekableVideoDecoder, public virtual Video::FixedRateVideoDecoder {
 private:
 	int32 _nbframes;
 	int _width, _height;
 	int _x, _y;
-	Blocky8 _blocky8;
-	Blocky16 _blocky16;
+	Blocky8 *_blocky8;
+	Blocky16 *_blocky16;
 	Common::SeekableReadStream *_file;
 	Common::Rational _frameRate;
 	Graphics::Surface _surface;
@@ -69,12 +67,15 @@ private:
 	int _freq;
 	bool _videoPause;
 	bool _videoLooping;
+	bool _demo;
 public:
 	SmushDecoder();
+	~SmushDecoder();
 
 	int getX() { return _x; }
 	int getY() { return _y; }
 	void setLooping(bool l);
+	void setDemo(bool demo) { _demo = demo; }
 
 	uint16 getWidth() const { return _width; }
 	uint16 getHeight() const { return _height; }
@@ -82,7 +83,6 @@ public:
 	Graphics::PixelFormat getPixelFormat() const { return _surface.format; }
 	bool isVideoLoaded() const { return _file != 0; }
 
-	bool loadFile(const Common::String &filename);
 	bool loadStream(Common::SeekableReadStream *stream);
 	const Graphics::Surface *decodeNextFrame();
 

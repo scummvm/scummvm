@@ -23,22 +23,28 @@
 #include "engines/grim/movie/codecs/smush_decoder.h"
 #include "engines/grim/movie/smush.h"
 
-#include "engines/grim/savegame.h"
-
+#include "engines/grim/resource.h"
 #include "engines/grim/grim.h"
 
 #ifdef USE_SMUSH
 
 namespace Grim {
 
-MoviePlayer *CreateSmushPlayer() {
-	return new SmushPlayer();
+MoviePlayer *CreateSmushPlayer(bool demo) {
+	return new SmushPlayer(demo);
 }
 
-SmushPlayer::SmushPlayer() : MoviePlayer() {
-	g_movie = this;
+SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_speed = 5000;
 	_videoDecoder = new Grim::SmushDecoder();
+	getDecoder()->setDemo(_demo);
+}
+
+bool SmushPlayer::loadFile(Common::String filename) {
+	if (!_demo)
+		return _videoDecoder->loadStream(g_resourceloader->openNewSubStreamFile(filename.c_str()));
+	else
+		return _videoDecoder->loadFile(filename);
 }
 
 SmushDecoder* SmushPlayer::getDecoder() {
@@ -46,7 +52,7 @@ SmushDecoder* SmushPlayer::getDecoder() {
 }
 
 void SmushPlayer::init() {
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
+	if (_demo) {
 		_x = getDecoder()->getX();
 		_y = getDecoder()->getY();
 	} else {
@@ -56,7 +62,7 @@ void SmushPlayer::init() {
 }
 
 void SmushPlayer::handleFrame() {
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
+	if (_demo) {
 		_x = getDecoder()->getX();
 		_y = getDecoder()->getY();
 	}

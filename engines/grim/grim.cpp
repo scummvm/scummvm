@@ -456,12 +456,12 @@ Common::Error GrimEngine::run() {
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
 	if (getGameType() == GType_GRIM)
-		g_movie = CreateSmushPlayer();
+		g_movie = CreateSmushPlayer(getGameFlags() & ADGF_DEMO);
 	else if (getGameType() == GType_MONKEY4) {
 		if (_gamePlatform == Common::kPlatformPS2)
 			g_movie = CreateMpegPlayer();
 		else
-			g_movie = CreateBinkPlayer();
+			g_movie = CreateBinkPlayer(getGameFlags() & ADGF_DEMO);
 	}
 	g_imuse = new Imuse(20);
 

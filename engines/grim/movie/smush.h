@@ -33,13 +33,15 @@ class SmushDecoder;
 
 class SmushPlayer : public MoviePlayer {
 public:
-	SmushPlayer();
+	SmushPlayer(bool demo);
 
 	void restoreState(SaveGame *state);
 private:
+	bool loadFile(Common::String filename);
 	void handleFrame();
 	SmushDecoder* getDecoder();
 	void init();
+	bool _demo;
 };
 
 } // end of namespace Grim

@@ -25,28 +25,25 @@
 
 #include "engines/grim/movie/bink.h"
 
-#include "engines/grim/grim.h"
-
 #ifdef USE_BINK
 
 namespace Grim {
 
-MoviePlayer *CreateBinkPlayer() {
-	return new BinkPlayer();
+MoviePlayer *CreateBinkPlayer(bool demo) {
+	return new BinkPlayer(demo);
 }
 
-BinkPlayer::BinkPlayer() : MoviePlayer() {
-	g_movie = this;
+BinkPlayer::BinkPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 	_videoDecoder = new Video::BinkDecoder();
 	_speed = 1000;
 }
 
-bool BinkPlayer::play(const char *filename, bool looping, int x, int y) {
-	_fname = filename;
+bool BinkPlayer::loadFile(Common::String filename) {
 	// The demo uses a weird .lab suffix instead of the normal .bik
-	_fname += (g_grim->getGameFlags() & ADGF_DEMO) ? ".lab" : ".bik";
+	_fname = filename;
+	_fname += (_demo) ? ".lab" : ".bik";
 
-	return MoviePlayer::play(_fname.c_str(), looping, x, y);
+	return MoviePlayer::loadFile(_fname);
 }
 
 } // end of namespace Grim
