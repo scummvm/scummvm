@@ -275,7 +275,7 @@ void InventoryItemsPicture::loopCurrentItem() {
 	if (_isLooping) {
 		tCoordType x, y;
 		getItemXY(_currentItemIndex, x, y);
-		_panelMovie.moveElementTo(x, y);
+		_panelMovie.moveMovieBoxTo(x, y);
 		_highlightBounds.moveTo(x, y);
 
 		TimeValue start, stop;
