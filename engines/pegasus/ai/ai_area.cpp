@@ -275,6 +275,7 @@ bool AIArea::playAIMovie(const tLowerAreaSignature area, const Common::String &m
 		_leftAreaMovie.hide();
 	} else {
 		_AIMovie.moveElementTo(kAIRightAreaLeft, kAIRightAreaTop);
+		_AIMovie.moveMovieBoxTo(kAIRightAreaLeft - kAILeftAreaLeft, 0);
 		_rightAreaMovie.hide();
 	}
 
