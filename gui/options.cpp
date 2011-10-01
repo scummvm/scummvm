@@ -280,6 +280,10 @@ void OptionsDialog::open() {
 			ConfMan.setBool("mute", false);
 		}
 		_muteCheckbox->setState(val);
+
+		// in case guioptions change during runtime
+		if (_guioptions & Common::GUIO_NOSPEECH)
+			_speechVolumeSlider->setEnabled(false);
 	}
 
 	// Subtitle options
@@ -295,6 +299,12 @@ void OptionsDialog::open() {
 		speed = (ConfMan.getInt("talkspeed", _domain) * sliderMaxValue + 255 / 2) / 255;
 		_subSpeedSlider->setValue(speed);
 		_subSpeedLabel->setValue(speed);
+
+		// in case guioptions change during runtime
+		if (_guioptions & Common::GUIO_NOSPEECH) {
+			_subToggleGroup->setEnabled(false);
+			_subToggleDesc->setEnabled(false);
+		}
 	}
 }
 
