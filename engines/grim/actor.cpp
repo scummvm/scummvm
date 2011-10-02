@@ -59,11 +59,9 @@ Actor::Actor(const Common::String &actorName) :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f), _turnRate(100.0f),
 		_reflectionAngle(80),
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
-		_restCostume(NULL), _restChore(-1),
-		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
-		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
+		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(0) {
+		_sayLineText(0) {
 	_lookingMode = false;
 	_lookAtRate = 200;
 	_constrain = false;
@@ -85,11 +83,6 @@ Actor::Actor(const Common::String &actorName) :
 		_shadowArray[i].dontNegate = false;
 		_shadowArray[i].shadowMask = NULL;
 		_shadowArray[i].shadowMaskSize = 0;
-	}
-
-	for (int i = 0; i < 10; i++) {
-		_talkCostume[i] = NULL;
-		_talkChore[i] = -1;
 	}
 }
 
@@ -186,53 +179,53 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_walking);
 	savedState->writeVector3d(_destPos);
 
-	if (_restCostume) {
+	if (_restChore._costume) {
 		savedState->writeLEUint32(1);
-		savedState->writeString(_restCostume->getFilename());
+		savedState->writeString(_restChore._costume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
-	savedState->writeLESint32(_restChore);
+	savedState->writeLESint32(_restChore._chore);
 
-	if (_walkCostume) {
+	if (_walkChore._costume) {
 		savedState->writeLEUint32(1);
-		savedState->writeString(_walkCostume->getFilename());
+		savedState->writeString(_walkChore._costume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
-	savedState->writeLESint32(_walkChore);
+	savedState->writeLESint32(_walkChore._chore);
 	savedState->writeLESint32(_walkedLast);
 	savedState->writeLESint32(_walkedCur);
 
-	if (_turnCostume) {
+	if (_leftTurnChore._costume) {
 		savedState->writeLEUint32(1);
-		savedState->writeString(_turnCostume->getFilename());
+		savedState->writeString(_leftTurnChore._costume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
-	savedState->writeLESint32(_leftTurnChore);
-	savedState->writeLESint32(_rightTurnChore);
+	savedState->writeLESint32(_leftTurnChore._chore);
+	savedState->writeLESint32(_rightTurnChore._chore);
 	savedState->writeLESint32(_lastTurnDir);
 	savedState->writeLESint32(_currTurnDir);
 
 	for (int i = 0; i < 10; ++i) {
-		if (_talkCostume[i]) {
+		if (_talkChore[i]._costume) {
 			savedState->writeLEUint32(1);
-			savedState->writeString(_talkCostume[i]->getFilename());
+			savedState->writeString(_talkChore[i]._costume->getFilename());
 		} else {
 			savedState->writeLEUint32(0);
 		}
-		savedState->writeLESint32(_talkChore[i]);
+		savedState->writeLESint32(_talkChore[i]._chore);
 	}
 	savedState->writeLESint32(_talkAnim);
 
-	if (_mumbleCostume) {
+	if (_mumbleChore._costume) {
 		savedState->writeLEUint32(1);
-		savedState->writeString(_mumbleCostume->getFilename());
+		savedState->writeString(_mumbleChore._costume->getFilename());
 	} else {
 		savedState->writeLEUint32(0);
 	}
-	savedState->writeLESint32(_mumbleChore);
+	savedState->writeLESint32(_mumbleChore._chore);
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -337,54 +330,54 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walking = savedState->readLESint32();
 	_destPos = savedState->readVector3d();
 
+	Costume *cost;
 	if (savedState->readLEUint32()) {
 		Common::String fname = savedState->readString();
-		_restCostume = findCostume(fname);
+		cost = findCostume(fname);
 	} else {
-		_restCostume = NULL;
+		cost = NULL;
 	}
-	_restChore = savedState->readLESint32();
+	_restChore = Chore(cost, savedState->readLESint32());
 
 	if (savedState->readLEUint32()) {
 		Common::String fname = savedState->readString();
-		_walkCostume = findCostume(fname);
+		cost = findCostume(fname);
 	} else {
-		_walkCostume = NULL;
+		cost = NULL;
 	}
-
-	_walkChore = savedState->readLESint32();
+	_walkChore = Chore(cost, savedState->readLESint32());
 	_walkedLast = savedState->readLESint32();
 	_walkedCur = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
 		Common::String fname = savedState->readString();
-		_turnCostume = findCostume(fname);
+		cost = findCostume(fname);
 	} else {
-		_turnCostume = NULL;
+		cost = NULL;
 	}
-	_leftTurnChore = savedState->readLESint32();
-	_rightTurnChore = savedState->readLESint32();
+	_leftTurnChore = Chore(cost, savedState->readLESint32());
+	_rightTurnChore = Chore(cost, savedState->readLESint32());
 	_lastTurnDir = savedState->readLESint32();
 	_currTurnDir = savedState->readLESint32();
 
 	for (int i = 0; i < 10; ++i) {
 		if (savedState->readLEUint32()) {
 			Common::String fname = savedState->readString();
-			_talkCostume[i] = findCostume(fname);
+			cost = findCostume(fname);
 		} else {
-			_talkCostume[i] = NULL;
+			cost = NULL;
 		}
-		_talkChore[i] = savedState->readLESint32();
+		_talkChore[i] = Chore(cost, savedState->readLESint32());
 	}
 	_talkAnim = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
 		Common::String fname = savedState->readString();
-		_mumbleCostume = findCostume(fname);
+		cost = findCostume(fname);
 	} else {
-		_mumbleCostume = NULL;
+		cost = NULL;
 	}
-	_mumbleChore = savedState->readLESint32();
+	_mumbleChore = Chore(cost, savedState->readLESint32());
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -722,49 +715,42 @@ Math::Vector3d Actor::getPuckVector() const {
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {
-	if (_restCostume == cost && _restChore == chore)
+	if (_restChore.equals(cost, chore))
 		return;
 
-	if (_restChore >= 0)
-		_restCostume->stopChore(_restChore);
+	_restChore.stop(true);
 
-	_restCostume = cost;
-	_restChore = chore;
+	_restChore = Chore(cost, chore);
 
-	if (_restChore >= 0)
-		_restCostume->playChoreLooping(_restChore);
+	_restChore.playLooping(true);
+}
+
+int Actor::getRestChore() const {
+	return _restChore._chore;
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
-	if (_walkCostume == cost && _walkChore == chore)
+	if (_walkChore.equals(cost, chore))
 		return;
 
-	if (_walkedLast && _walkChore >= 0 && _walkCostume->isChoring(_walkChore, false) >= 0) {
-		_walkCostume->fadeChoreOut(_walkChore, 150);
-		_walkCostume->stopChore(_walkChore);
-		if (_restChore >= 0) {
-			_restCostume->playChoreLooping(_restChore);
-			_restCostume->fadeChoreIn(_restChore, 150);
-		}
+	if (_walkedLast && _walkChore.isPlaying()) {
+		_walkChore.stop(true);
+
+		_restChore.playLooping(true);
 	}
 
-	_walkCostume = cost;
-	_walkChore = chore;
+	_walkChore = Chore(cost, chore);
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
-	if (_turnCostume == cost && _leftTurnChore == left_chore &&
-		_rightTurnChore == right_chore)
+	if (_leftTurnChore.equals(cost, left_chore) && _rightTurnChore.equals(cost, right_chore))
 		return;
 
-	if (_leftTurnChore >= 0) {
-		_turnCostume->stopChore(_leftTurnChore);
-		_turnCostume->stopChore(_rightTurnChore);
-	}
+	_leftTurnChore.stop(true);
+	_rightTurnChore.stop(true);
 
-	_turnCostume = cost;
-	_leftTurnChore = left_chore;
-	_rightTurnChore = right_chore;
+	_leftTurnChore = Chore(cost, left_chore);
+	_rightTurnChore = Chore(cost, right_chore);
 
 	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
 		error("Unexpectedly got only one turn chore");
@@ -776,22 +762,26 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 
 	index--;
 
-	if (_talkCostume[index] == cost && _talkChore[index] == chore)
+	if (_talkChore[index].equals(cost, chore))
 		return;
 
-	if (_talkChore[index] >= 0)
-		_talkCostume[index]->stopChore(_talkChore[index]);
+	_talkChore[index].stop();
 
-	_talkCostume[index] = cost;
-	_talkChore[index] = chore;
+	_talkChore[index] = Chore(cost, chore);
+}
+
+int Actor::getTalkChore(int index) const {
+	return _talkChore[index]._chore;
+}
+
+Costume *Actor::getTalkCostume(int index) const {
+	return _talkChore[index]._costume;
 }
 
 void Actor::setMumbleChore(int chore, Costume *cost) {
-	if (_mumbleChore >= 0)
-		_mumbleCostume->stopChore(_mumbleChore);
+	_mumbleChore.stop();
 
-	_mumbleCostume = cost;
-	_mumbleChore = chore;
+	_mumbleChore = Chore(cost, chore);
 }
 
 void Actor::turn(int dir) {
@@ -857,9 +847,9 @@ void Actor::sayLine(const char *msgId, bool background) {
 		Common::String soundLip = id;
 		soundLip += ".lip";
 
-		if (_talkChore[0] >= 0 && _talkCostume[0]->isChoring(_talkChore[0], true) < 0) {
+		if (!_talkChore[0].isPlaying()) {
 			// _talkChore[0] is *_stop_talk
-			_talkCostume[0]->setChoreLastFrame(_talkChore[0]);
+			_talkChore[0].setLastFrame();
 		}
 		// Sometimes actors speak offscreen before they, including their
 		// talk chores are initialized.
@@ -870,8 +860,8 @@ void Actor::sayLine(const char *msgId, bool background) {
 			_lipSync = g_resourceloader->getLipSync(soundLip);
 		// If there's no lip sync file then load the mumble chore if it exists
 		// (the mumble chore doesn't exist with the cat races announcer)
-		if (!_lipSync && _mumbleChore != -1)
-			_mumbleCostume->playChoreLooping(_mumbleChore);
+		if (!_lipSync)
+			_mumbleChore.playLooping();
 
 		_talkAnim = -1;
 	}
@@ -939,8 +929,8 @@ void Actor::shutUp() {
 		_talkSoundName = "";
 	}
 	if (_lipSync) {
-		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+		if (_talkAnim != -1)
+			_talkChore[_talkAnim].stop();
 		_lipSync = NULL;
 		stopTalking();
 	} else if (stopMumbleChore()) {
@@ -981,18 +971,17 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back(), _restCostume, _restChore);
-		freeCostumeChore(_costumeStack.back(), _walkCostume, _walkChore);
+		freeCostumeChore(_costumeStack.back(), &_restChore);
+		freeCostumeChore(_costumeStack.back(), &_walkChore);
 
-		if (_turnCostume == _costumeStack.back()) {
-			_turnCostume = NULL;
-			_leftTurnChore = -1;
-			_rightTurnChore = -1;
+		if (_leftTurnChore._costume == _costumeStack.back()) {
+			_leftTurnChore = Chore();
+			_rightTurnChore = Chore();
 		}
 
-		freeCostumeChore(_costumeStack.back(), _mumbleCostume, _mumbleChore);
+		freeCostumeChore(_costumeStack.back(), &_mumbleChore);
 		for (int i = 0; i < 10; i++)
-			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
+			freeCostumeChore(_costumeStack.back(), &_talkChore[i]);
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
 
@@ -1094,66 +1083,55 @@ void Actor::update(float frameTime) {
 		updateWalk();
 	}
 
-	if (_walkChore >= 0) {
+	if (_walkChore.isValid()) {
 		if (_walkedCur) {
-			if (_walkCostume->isChoring(_walkChore, false) < 0) {
-				_walkCostume->stopChore(_walkChore);
-				_walkCostume->playChoreLooping(_walkChore);
-				_walkCostume->fadeChoreIn(_walkChore, 150);
+			if (!_walkChore.isPlaying()) {
+				_walkChore.playLooping(true);
 			}
-
-			if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) >= 0) {
-				_restCostume->fadeChoreOut(_restChore, 150);
-				_restCostume->stopChore(_restChore);
+			if (_restChore.isPlaying()) {
+				_restChore.stop(true);
 			}
 		} else {
-			if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
-				_walkCostume->fadeChoreOut(_walkChore, 150);
-				_walkCostume->stopChore(_walkChore);
-
-				if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0) {
-					_restCostume->playChoreLooping(_restChore);
-					_restCostume->fadeChoreIn(_restChore, 150);
+			if (_walkedLast && _walkChore.isPlaying()) {
+				_walkChore.stop(true);
+				if (!_restChore.isPlaying()) {
+					_restChore.playLooping(true);
 				}
 			}
 		}
 	}
 
-	if (_leftTurnChore >= 0) {
+	if (_leftTurnChore.isValid()) {
 		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
 
-		if (_restChore >= 0) {
+		if (_restChore.isValid()) {
 			if (_currTurnDir != 0) {
-				if (_turnCostume->isChoring(getTurnChore(_currTurnDir), false) >= 0 &&
-					_restChore >= 0 && _restCostume->isChoring(_restChore, false) >= 0) {
-					_restCostume->fadeChoreOut(_restChore, 500);
-					_restCostume->stopChore(_restChore);
+				if (getTurnChore(_currTurnDir)->isPlaying() && _restChore.isPlaying()) {
+					_restChore.stop(true, 500);
 				}
-			}
-			else if (_lastTurnDir != 0) {
-				if (!_walkedCur && _turnCostume->isChoring(getTurnChore(_lastTurnDir), false) >= 0) {
-					_restCostume->playChoreLooping(_restChore);
-					_restCostume->fadeChoreIn(_restChore, 150);
+			} else if (_lastTurnDir != 0) {
+				if (!_walkedCur && getTurnChore(_lastTurnDir)->isPlaying()) {
+					_restChore.playLooping(true);
 				}
 			}
 		}
 
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir) {
-			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 150);
-			_turnCostume->stopChore(getTurnChore(_lastTurnDir));
+			getTurnChore(_lastTurnDir)->stop(true);
 		}
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
-			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
-			_turnCostume->fadeChoreIn(getTurnChore(_currTurnDir), 500);
+			getTurnChore(_currTurnDir)->playLooping(true, 500);
 		}
-	} else
+	} else {
 		_currTurnDir = 0;
+	}
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (!_walkedCur && _currTurnDir == 0 && _restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
-		_restCostume->playChoreLooping(_restChore);
+	if (!_walkedCur && _currTurnDir == 0 && !_restChore.isPlaying()) {
+		_restChore.playLooping(true);
+	}
 
 	_walkedLast = _walkedCur;
 	_walkedCur = false;
@@ -1174,24 +1152,25 @@ void Actor::update(float frameTime) {
 			int anim = _lipSync->getAnim(posSound);
 			if (_talkAnim != anim) {
 				if (anim != -1) {
-					if (_talkChore[anim] >= 0) {
+					if (_talkChore[anim].isValid()) {
 						stopMumbleChore();
-						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+						if (_talkAnim != -1) {
+							_talkChore[_talkAnim].stop();
+						}
 
 						// Run the stop_talk chore so that it resets the components
 						// to the right visibility.
 						stopTalking();
 						_talkAnim = anim;
-						_talkCostume[_talkAnim]->playChore(_talkChore[_talkAnim]);
-					} else if (_mumbleChore != -1 && _mumbleCostume->isChoring(_mumbleChore, false) < 0) {
-						_mumbleCostume->playChoreLooping(_mumbleChore);
+						_talkChore[_talkAnim].play();
+					} else if (_mumbleChore.isValid() && !_mumbleChore.isPlaying()) {
+						_mumbleChore.playLooping();
 						_talkAnim = -1;
 					}
 				} else {
 					stopMumbleChore();
-					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+					if (_talkAnim != -1)
+						_talkChore[_talkAnim].stop();
 
 					_talkAnim = 0;
 					stopTalking();
@@ -1411,24 +1390,21 @@ bool Actor::isInSet(const Common::String &setName) const {
 	return _setName == setName;
 }
 
-void Actor::freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
-	if (cost == toFree) {
-		cost = NULL;
-		chore = -1;
+void Actor::freeCostumeChore(Costume *toFree, Chore *chore) {
+	if (chore->_costume == toFree) {
+		*chore = Chore();
 	}
 }
 
 void Actor::stopTalking() {
-	if (_talkChore[0] >= 0) {
-		// _talkChore[0] is *_stop_talk
-		// Don't playLooping it, or else manny's mouth will flicker when he smokes.
-		_talkCostume[0]->playChore(_talkChore[0]);
-	}
+	// _talkChore[0] is *_stop_talk
+	// Don't playLooping it, or else manny's mouth will flicker when he smokes.
+	_talkChore[0].play();
 }
 
 bool Actor::stopMumbleChore() {
-	if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
-		_mumbleCostume->stopChore(_mumbleChore);
+	if (_mumbleChore.isPlaying()) {
+		_mumbleChore.stop();
 		return true;
 	}
 
@@ -1640,6 +1616,58 @@ void Actor::collisionHandlerCallback(Actor *other) const {
 	}
 
 	lua_endblock();
+}
+
+
+unsigned const int Actor::Chore::fadeTime = 150;
+
+Actor::Chore::Chore() :
+	_costume(NULL),
+	_chore(-1) {
+
+}
+
+Actor::Chore::Chore(Costume *cost, int chore) :
+	_costume(cost),
+	_chore(chore) {
+
+}
+
+void Actor::Chore::play(bool fade, unsigned int time) {
+	if (isValid()) {
+		_costume->playChore(_chore);
+		if (fade) {
+			_costume->fadeChoreIn(_chore, time);
+		}
+	}
+}
+
+void Actor::Chore::playLooping(bool fade, unsigned int time) {
+	if (isValid()) {
+		_costume->playChoreLooping(_chore);
+		if (fade) {
+			_costume->fadeChoreIn(_chore, time);
+		}
+	}
+}
+
+void Actor::Chore::stop(bool fade, unsigned int time) {
+	if (isValid()) {
+		if (fade) {
+			_costume->fadeChoreOut(_chore, time);
+		}
+		_costume->stopChore(_chore);
+	}
+}
+
+void Actor::Chore::setLastFrame() {
+	if (isValid()) {
+		_costume->setChoreLastFrame(_chore);
+	}
+}
+
+bool Actor::Chore::isPlaying() const {
+	return (isValid() && _costume->isChoring(_chore, false) >= 0);
 }
 
 } // end of namespace Grim

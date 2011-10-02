@@ -386,12 +386,12 @@ public:
 	bool isTalking();
 
 	void setRestChore(int choreNumber, Costume *cost);
-	int getRestChore() const { return _restChore; }
+	int getRestChore() const;
 	void setWalkChore(int choreNumber, Costume *cost);
 	void setTurnChores(int left_chore, int right_chore, Costume *cost);
 	void setTalkChore(int index, int choreNumber, Costume *cost);
-	int getTalkChore(int index) const { return _talkChore[index]; }
-	Costume* getTalkCostume(int index) const { return _talkCostume[index]; }
+	int getTalkChore(int index) const;
+	Costume *getTalkCostume(int index) const;
 	void setMumbleChore(int choreNumber, Costume *cost);
 
 	void setColormap(const char *map);
@@ -488,24 +488,40 @@ private:
 	Math::Vector3d _destPos;
 
 	// chores
-	Costume *_restCostume;
-	int _restChore;
+	class Chore {
+	public:
+		Chore();
+		Chore(Costume *cost, int chore);
 
-	Costume *_walkCostume;
-	int _walkChore;
+		void play(bool fade = false, unsigned int time = fadeTime);
+		void playLooping(bool fade = false, unsigned int time = fadeTime);
+		void stop(bool fade = false, unsigned int time = fadeTime);
+		void setLastFrame();
+
+		inline bool isValid() const { return _chore > -1; }
+		bool isPlaying() const;
+		inline bool equals(Costume *cost, int chore) const {
+			return (_costume == cost && _chore == chore);
+		}
+
+		Costume *_costume;
+		int _chore;
+
+		static const unsigned int fadeTime;
+	};
+	Chore _restChore;
+
+	Chore _walkChore;
 	bool _walkedLast, _walkedCur;
 	bool _running;
 
-	Costume *_turnCostume;
-	int _leftTurnChore, _rightTurnChore;
+	Chore _leftTurnChore, _rightTurnChore;
 	int _lastTurnDir, _currTurnDir;
 
-	Costume *_talkCostume[10];
-	int _talkChore[10];
+	Chore _talkChore[10];
 	int _talkAnim;
 
-	Costume *_mumbleCostume;
-	int _mumbleChore;
+	Chore _mumbleChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
@@ -517,11 +533,11 @@ private:
 	// Validate a yaw angle then set it appropriately
 	void setYaw(const Math::Angle &yaw);
 
-	int getTurnChore(int dir) {
-		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
+	Chore *getTurnChore(int dir) {
+		return (dir > 0 ? &_rightTurnChore : &_leftTurnChore);
 	}
 
-	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore);
+	void freeCostumeChore(Costume *toFree, Chore *chore);
 
 	// lookAt
 	Math::Vector3d _lookAtVector;
