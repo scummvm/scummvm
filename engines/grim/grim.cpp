@@ -1208,6 +1208,9 @@ void GrimEngine::savegameRestore() {
 void GrimEngine::restoreGRIM() {
 	_savedState->beginSection('GRIM');
 
+	_mode = _savedState->readLEUint32();
+	_previousMode = _savedState->readLEUint32();
+
 	// Actor stuff
 	int32 id = _savedState->readLEUint32();
 	if (id != 0) {
@@ -1311,6 +1314,9 @@ void GrimEngine::savegameSave() {
 
 void GrimEngine::saveGRIM() {
 	_savedState->beginSection('GRIM');
+
+	_savedState->writeLEUint32(_mode);
+	_savedState->writeLEUint32(_previousMode);
 
 	//Actor stuff
 	if (_selectedActor) {
