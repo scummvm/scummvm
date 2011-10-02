@@ -121,6 +121,20 @@ extern const char *CITY_HALL_JAIL;
 extern const char *JAMISON_RYAN;
 extern const char *BIKINI_HUT;
 
+extern const char *SCENE570_PASSWORD;
+extern const char *SCENE570_C_DRIVE;
+extern const char *SCENE570_RING;
+extern const char *SCENE570_PROTO;
+extern const char *SCENE570_WACKY;
+extern const char *SCENE570_COBB;
+extern const char *SCENE570_LETTER;
+extern const char *SCENE570_RINGEXE;
+extern const char *SCENE570_RINGDATA;
+extern const char *SCENE570_PROTOEXE;
+extern const char *SCENE570_PROTODATA;
+extern const char *SCENE570_WACKYEXE;
+extern const char *SCENE570_WACKYDATA;
+
 // Scene 60 radio dispatch buttons
 extern const char *RADIO_BTN_LIST[8];
 

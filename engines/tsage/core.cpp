@@ -2819,6 +2819,14 @@ void SceneText::setup(const Common::String &msg) {
 	gfxMan.activate();
 	Rect textRect;
 
+	if ((_vm->getGameID() != GType_Ringworld) && _globals->_sceneObjects->contains(this) &&
+			(_flags & OBJFLAG_REMOVE)) {
+		// Trying to setup a SceneText scheduled to be removed, so remove it now
+		_bounds.expandPanes();
+		this->removeObject();
+		_globals->_sceneObjects->remove(this);
+	}
+
 	gfxMan._font.setFontNumber(_fontNumber);
 	gfxMan._font._colors.foreground = _color1;
 	gfxMan._font._colors2.background = _color2;

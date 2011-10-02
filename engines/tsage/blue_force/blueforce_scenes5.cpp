@@ -1553,6 +1553,585 @@ void Scene560::dispatch() {
 	SceneExt::dispatch();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 570 - Computer
+ *
+ *--------------------------------------------------------------------------*/
+
+Scene570::PasswordEntry::PasswordEntry(): EventHandler() {
+	_passwordStr = SCENE570_PASSWORD;
+}
+
+void Scene570::PasswordEntry::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+	s.syncString(_entryBuffer);
+}
+
+void Scene570::PasswordEntry::postInit(SceneObjectList *OwnerList) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
+
+	scene->_sceneMode = 10;
+	scene->_object3.setStrip(6);
+	scene->_object3.setFrame(1);
+	scene->_object3.fixPriority(3);
+
+	_passwordText._color1 = 22;
+	_passwordText._color2 = 9;
+	_passwordText._color3 = 9;
+	_passwordText._width = 128;
+	_passwordText._fontNumber = 9000;
+	_passwordText.setPosition(Common::Point(165, 40));
+	_passwordText.fixPriority(255);
+	_passwordText.setup(_passwordStr);
+
+	_entryText._color1 = 22;
+	_entryText._color2 = 9;
+	_entryText._color3 = 9;
+	_entryText._width = 128;
+	_entryText._fontNumber = 9000;
+	_entryText.setPosition(Common::Point(220, 40));
+	_entryText.fixPriority(255);
+	_entryText.setup(_entryBuffer);
+}
+
+void Scene570::PasswordEntry::process(Event &event) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
+	bool entryChanged = false;
+	
+	switch (event.eventType) {
+	case EVENT_KEYPRESS: {
+		int key = toupper(event.kbd.ascii);
+		scene->_sound1.play(72);
+
+		if ((event.kbd.keycode == Common::KEYCODE_BACKSPACE) || (event.kbd.keycode == Common::KEYCODE_DELETE)) {
+			// Delete a key from the entry
+			if (_entryBuffer.size() > 0)
+				_entryBuffer.deleteLastChar();
+			entryChanged = true;
+		} else if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+			// Finished entering password
+			_passwordText.remove();
+			_entryText.remove();
+
+			checkPassword();
+			remove();
+		} else if ((key >= 32) || (key <= 126)) {
+			// Valid character pressed
+			if (_entryBuffer.size() < 10)
+				_entryBuffer += (char)key;
+			event.handled = true;
+			entryChanged = true;
+		}
+		break;
+	}
+	case EVENT_BUTTON_DOWN:
+		event.handled = true;
+		break;
+	default:
+		break;
+	}
+
+	if (entryChanged) {
+		_entryText._color1 = 22;
+		_entryText._color2 = 9;
+		_entryText._color3 = 9;
+		_entryText._width = 128;
+		_entryText._fontNumber = 9000;
+		_entryText.setPosition(Common::Point(213, 40));
+		_entryText.fixPriority(255);
+		_entryText.setup(_entryBuffer);
+		
+		// Pad entered text with spaces to make up the allowed width and then display
+		Common::String msg = _entryBuffer;
+		while (msg.size() < 10)
+			msg += " ";
+		_entryText.setup(msg);
+	}
+}
+
+void Scene570::PasswordEntry::checkPassword() {
+	// Check if the password is correctly entered as 'JACKIE' or, as a nod to the 
+	// reimplementation in ScummVM, as the project name.
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
+
+	if (!_entryBuffer.compareTo("JACKIE") || !_entryBuffer.compareTo("SCUMMVM")) {
+		// Password was correct
+		BF_GLOBALS._uiElements.addScore(30);
+		BF_GLOBALS._player.disableControl();
+		scene->_sound1.play(73);
+
+		BF_GLOBALS._uiElements.hide();
+		BF_GLOBALS._uiElements._active = false;
+		scene->_sceneMode = 5701;
+		scene->setAction(&scene->_sequenceManager, scene, 5701, &scene->_object3, NULL);
+	} else {
+		// Password was incorrect
+		_entryBuffer = "";
+
+		scene->_object3.fixPriority(1);
+		scene->_iconManager.refreshList();
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
+		scene->_sceneMode = 0;
+	}
+}
+
+Scene570::IconManager::IconManager(): EventHandler() {
+	_mode = _selectedFolder = _fieldAA = _fieldAC = 0;
+}
+
+void Scene570::IconManager::remove() {
+	_object1.remove();
+	EventHandler::remove();
+}
+
+void Scene570::IconManager::setup(int mode) {
+	_mode = mode;
+	_selectedFolder = 0;
+
+	_object1.postInit();
+	_object1.setVisage(572);
+	_object1.fixPriority(2);
+	_object1.setFrame((mode == 1) ? 4 : 5);
+	EventHandler::postInit();
+}
+
+void Scene570::IconManager::hideList() {
+	SynchronizedList<Icon *>::iterator i;
+	for (i = _list.begin(); i != _list.end(); ++i) {
+		(*i)->_sceneText.remove();
+	}
+}
+
+void Scene570::IconManager::refreshList() {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;
+
+	_object1.setPosition(Common::Point(163, 19));
+	scene->_object3.setStrip(4);
+
+	// Clear any current icons
+	SynchronizedList<Icon *>::iterator i;
+	for (i = _list.begin(); i != _list.end(); ++i) {
+		Icon *item = *i;
+
+		item->setVisage(572);
+		item->setStrip(1);
+		item->fixPriority(2);
+		item->setPosition(Common::Point(330, 100));
+		item->_sceneText.remove();
+	}
+
+	// Refresh the list
+	int iconIndex = 0, folderIndex = 0;
+	for (i = _list.begin(); i != _list.end(); ++i) {
+		Icon *item = *i;
+
+		if (item->_iconId == 1) {
+			// Folder
+			int parentId = item->_parentFolderId;
+			item->setFrame((_selectedFolder == (item->_folderId - 1)) ? 1 : 8);
+			item->setPosition(Common::Point(168 + parentId * 11, folderIndex * 8 + 27));
+			item->_sceneText.setPosition(Common::Point(175 + parentId * 11, folderIndex * 8 + 21));
+			item->_sceneText.setup(item->_text);
+			++folderIndex;
+		} else if (item->_parentFolderId == _selectedFolder) {
+			item->setPosition(Common::Point(229, 27 + iconIndex * 12));
+
+			switch (item->_iconId) {
+			case 2:
+				item->setFrame(9);
+				break;
+			case 3:
+				item->setFrame(7);
+				break;
+			case 5:
+				item->setFrame(10);
+				break;
+			case 6:
+				item->setFrame(11);
+				break;
+			case 7:
+				item->setFrame(12);
+				break;
+			default:
+				break;
+			}
+
+			item->_sceneText.setPosition(Common::Point(236, iconIndex * 12 + 22));
+			item->_sceneText.setup(item->_text);
+			++iconIndex;
+		}
+	}
+}
+
+void Scene570::IconManager::addItem(Icon *item) {
+	item->_mode = _mode;
+	_list.push_back(item);
+}
+
+Scene570::Icon::Icon(): NamedObject() {
+	_iconId = _folderId = 0;
+}
+
+void Scene570::Icon::synchronize(Serializer &s) {
+	NamedObject::synchronize(s);
+	s.syncAsSint16LE(_iconId);
+	s.syncAsSint16LE(_folderId);
+	s.syncAsSint16LE(_parentFolderId);
+	s.syncAsSint16LE(_mode);
+}
+
+void Scene570::Icon::remove() {
+	_sceneText.remove();
+	NamedObject::remove();
+}
+
+bool Scene570::Icon::startAction(CursorType action, Event &event) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+
+	switch (action) {
+	case CURSOR_LOOK:
+		switch (_iconId) {
+		case 1:
+			SceneItem::display2(570, 9);
+			break;
+		case 2:
+			SceneItem::display2(570, 10);
+			break;
+		case 3:
+			SceneItem::display2(570, 4);
+			break;
+		case 5:
+			SceneItem::display2(570, 11);
+			break;
+		case 6:
+			SceneItem::display2(570, 12);
+			break;
+		case 7:
+			SceneItem::display2(570, 13);
+			break;
+		default:
+			break;
+		}
+		return true;
+	case CURSOR_USE:
+		// Select the given icon
+		scene->_sound1.play(73);
+		switch (_iconId) {
+		case 1:
+			// Folder, so select it
+			scene->_iconManager._selectedFolder = _folderId - 1;
+			scene->_iconManager.refreshList();
+			break;
+		case 2:
+			scene->_iconManager.hideList();
+			scene->_sceneMode = 5702;
+			scene->setAction(&scene->_sequenceManager, scene, 5702, &scene->_object3, NULL);
+			break;
+		case 3:
+			scene->_iconManager.hideList();
+			scene->_passwordEntry.postInit();
+			break;
+		case 5:
+			SceneItem::display2(570, 5);
+			break;
+		case 6:
+			scene->_iconManager.hideList();
+			switch (_folderId) {
+			case 8:
+				BF_GLOBALS._uiElements.hide();
+				BF_GLOBALS._uiElements._active = false;
+				scene->_sceneMode = 5705;
+				scene->setAction(&scene->_sequenceManager, scene, 5705, &scene->_object3, NULL);
+				break;
+			case 10:
+				BF_GLOBALS._uiElements.hide();
+				BF_GLOBALS._uiElements._active = false;
+				scene->_sceneMode = 5706;
+				scene->setAction(&scene->_sequenceManager, scene, 5706, &scene->_object3, NULL);
+				break;
+			case 12:
+				BF_GLOBALS._uiElements.hide();
+				BF_GLOBALS._uiElements._active = false;
+				scene->_sceneMode = 5707;
+				scene->setAction(&scene->_sequenceManager, scene, 5707, &scene->_object3, NULL);
+				break;
+			default:
+				break;
+			}
+			break;
+		case 7:
+			scene->_iconManager.hideList();
+			BF_GLOBALS._uiElements.hide();
+			BF_GLOBALS._uiElements._active = false;
+			scene->_sceneMode = 5704;
+			scene->setAction(&scene->_sequenceManager, scene, 5704, &scene->_object3, NULL);
+			break;
+		}
+		return true;
+	case CURSOR_TALK:
+		SceneItem::display2(570, 15);
+		return true;
+	case CURSOR_PRINTER:
+		switch (_iconId) {
+		case 1:
+			// Folder - "You can't print that"
+			SceneItem::display2(570, 8);
+			break;
+		case 7:
+			scene->_sound1.play(74);
+			if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 570) {
+				SceneItem::display2(570, 6);
+				BF_GLOBALS._uiElements.addScore(30);
+				BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 1);
+			} else {
+				SceneItem::display2(570, 7);
+			}
+			break;
+		default:
+			// You don't want to print that
+			SceneItem::display2(570, 18);
+			break;
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+void Scene570::Icon::setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;	
+	NamedObject::postInit();
+
+	_iconId = iconId;
+	_folderId = folderId;
+	_parentFolderId = parentFolderId;
+	_text = msg;
+
+	_sceneText._color1 = 22;
+	_sceneText._color2 = 9;
+	_sceneText._color3 = 9;
+	_sceneText._width = 128;
+	_sceneText._fontNumber = 9000;
+	_sceneText.fixPriority(2);
+
+	BF_GLOBALS._sceneItems.push_front(this);
+	scene->_iconManager.addItem(this);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene570::PowerSwitch::startAction(CursorType action, Event &event) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+
+	switch (action) {
+	case CURSOR_USE:
+		if (scene->_object4._flag == 1) {
+			setFrame(1);
+			scene->_object3.remove();
+		} else {
+			if (!BF_GLOBALS.getFlag(fGotPointsForCoin)) {
+				BF_GLOBALS._uiElements.addScore(10);
+				BF_GLOBALS.setFlag(fGotPointsForCoin);
+			}
+
+			scene->_sound1.play(70);
+			scene->_object4._flag = 1;
+			setFrame(2);
+
+			scene->_object3.postInit();
+			scene->_object3.fixPriority(1);
+			scene->_object3.setDetails(570, 16, 15, 17);
+			BF_GLOBALS._sceneItems.remove(&scene->_object3);
+			BF_GLOBALS._sceneItems.push_front(&scene->_object3);
+
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 5700;
+			setAction(&scene->_sequenceManager, scene, 5700, &scene->_object3, NULL);
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene570::PrinterIcon::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._events.setCursor(CURSOR_PRINTER);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+void Scene570::Object3::remove() {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+	scene->_object4._flag = 0;
+
+	scene->_printerIcon.remove();
+	scene->_iconManager.remove();
+	scene->_folder1.remove();
+	scene->_folder2.remove();
+	scene->_folder3.remove();
+	scene->_folder4.remove();
+	scene->_icon1.remove();
+	scene->_icon2.remove();
+	scene->_icon3.remove();
+	scene->_icon4.remove();
+	scene->_icon5.remove();
+	scene->_icon6.remove();
+	scene->_icon7.remove();
+	scene->_icon8.remove();
+	scene->_icon9.remove();
+
+	FocusObject::remove();
+	BF_GLOBALS._sceneManager.changeScene(560);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene570::FloppyDrive::startAction(CursorType action, Event &event) {
+	Scene570 *scene = (Scene570 *)BF_GLOBALS._sceneManager._scene;		
+
+	switch (action) {
+	case CURSOR_USE:
+		if (BF_INVENTORY.getObjectScene(INV_D_FLOPPY) == 571) {
+			BF_INVENTORY.setObjectScene(INV_D_FLOPPY, 1);
+			scene->_iconManager.refreshList();
+			SceneItem::display2(570, 2);
+		} else {
+			SceneItem::display2(570, 3);
+		}
+		return true;
+	case INV_D_FLOPPY:
+		BF_INVENTORY.setObjectScene(INV_D_FLOPPY, 571);
+		scene->_iconManager.refreshList();
+		return true;
+	default:
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene570::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(570);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 1;
+
+	_object4._flag = 0;
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._player.hide();
+
+	_powerSwitch.postInit();
+	_powerSwitch.setVisage(570);
+	_powerSwitch.setStrip(4);
+	_powerSwitch.setFrame(1);
+	_powerSwitch.setPosition(Common::Point(163, 131));
+	_powerSwitch.setDetails(570, 1, 15, -1, 1, NULL);
+
+	_floppyDrive.setDetails(Rect(258, 111, 303, 120), 570, 0, 15, -1, 1, NULL);
+	_item11.setDetails(0, 570, 15, 15, 15, 1);
+	_monitor.setDetails(1, 570, 19, 20, 21, 1);
+	_item3.setDetails(2, 570, 22, 23, 24, 1);
+	_case.setDetails(3, 570, 25, 26, 27, 1);
+	_keyboard.setDetails(4, 570, 28, 29, 30, 1);
+	_desk.setDetails(5, 570, 31, 32, 33, 1);
+	_printer.setDetails(7, 570, 37, 38, 39, 1);
+	_window.setDetails(8, 570, 40, 41, 42, 1);
+	_plant.setDetails(9, 570, 43, 44, 45, 1);
+
+	if ((BF_GLOBALS._dayNumber == 1) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1)) {
+		_object4.postInit();
+		_object4.setVisage(574);
+		_object4.setPosition(Common::Point(90, 84));
+	}
+}
+
+void Scene570::signal() {
+	switch (_sceneMode) {
+	case 5700:
+		_object3.setStrip(4);
+		_object3.setFrame(1);
+
+		_printerIcon.postInit();
+		_printerIcon.setVisage(572);
+		_printerIcon.setFrame(3);
+		_printerIcon.setPosition(Common::Point(172, 71));
+		_printerIcon.fixPriority(2);
+		_printerIcon.setDetails(570, 14, 15, -1, 2, NULL);
+
+		_iconManager.setup(2);
+		_folder1.setDetails(1, 1, 0, 2, SCENE570_C_DRIVE);
+		_folder2.setDetails(1, 2, 1, 2, SCENE570_RING);
+		_folder3.setDetails(1, 3, 1, 2, SCENE570_PROTO);
+		_folder4.setDetails(1, 4, 1, 2, SCENE570_WACKY);
+
+		if (!BF_GLOBALS.getFlag(fDecryptedBluePrints))
+			_icon1.setDetails(3, 5, 0, 2, SCENE570_COBB);
+		_icon2.setDetails(2, 7, 0, 2, SCENE570_LETTER);
+		if (BF_GLOBALS.getFlag(fDecryptedBluePrints))
+			_icon3.setDetails(7, 6, 0, 2, SCENE570_COBB);
+
+		_icon4.setDetails(6, 8, 1, 2, SCENE570_RINGEXE);
+		_icon5.setDetails(5, 9, 1, 2, SCENE570_RINGDATA);
+		_icon6.setDetails(6, 10, 2, 2, SCENE570_PROTOEXE);
+		_icon7.setDetails(5, 11, 2, 2, SCENE570_PROTODATA);
+		_icon8.setDetails(6, 12, 3, 2, SCENE570_WACKYEXE);
+		_icon9.setDetails(5, 13, 3, 2, SCENE570_WACKYDATA);
+
+		_iconManager.refreshList();
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 5701:
+		BF_GLOBALS.setFlag(fDecryptedBluePrints);
+		_iconManager._list.remove(&_icon1);
+		_icon1.remove();
+
+		_object3.setVisage(572);
+		_object3.setStrip(4);
+		_object3.setFrame(1);
+		_object3.fixPriority(1);
+
+		_icon3.setDetails(7, 6, 0, 2, SCENE570_COBB);
+		_iconManager.refreshList();
+		BF_GLOBALS._uiElements._active = true;
+		BF_GLOBALS._uiElements.show();
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 5704:
+	case 5705:
+	case 5706:
+	case 5707:
+		BF_GLOBALS._uiElements._active = true;
+		BF_GLOBALS._uiElements.show();
+		_object3.setPosition(Common::Point(220, 75));
+		_object3.setVisage(572);
+		_object3.setStrip(4);
+		_object3.setFrame(1);
+		// Deliberate fall-through
+	case 5702:
+	case 5703:
+		_object3.fixPriority(1);
+		_iconManager.refreshList();
+		BF_GLOBALS._player.enableControl();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene570::process(Event &event) {
+	SceneExt::process(event);
+
+	if (!event.handled && (_sceneMode == 10))
+		// Password entry active, so pass events to it
+		_passwordEntry.process(event);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

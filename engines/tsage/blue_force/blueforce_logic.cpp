@@ -148,6 +148,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Study
 		return new Scene560();
 	case 570:
+		// Computer
+		return new Scene570();
 	case 580:
 	case 590:
 		error("Scene group 5 not implemented");

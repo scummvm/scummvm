@@ -238,6 +238,91 @@ public:
 	virtual void dispatch();
 };
 
+class Scene570: public SceneExt {
+	/* Custom classes */
+	class PasswordEntry: public EventHandler {
+	private:
+		void checkPassword();
+	public:
+		SceneText _passwordText, _entryText;
+		Common::String _passwordStr, _entryBuffer;
+
+		PasswordEntry();
+		virtual Common::String getClassName() { return "Scene570_PasswordEntry"; }
+		virtual void synchronize(Serializer &s);
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void process(Event &event);
+	};
+	class Icon: public NamedObject {
+	public:
+		SceneText _sceneText;
+		int _iconId, _folderId, _parentFolderId, _mode;
+		Common::String _text;
+
+		Icon();
+		virtual Common::String getClassName() { return "Scene570_Custom2"; }
+		virtual void synchronize(Serializer &s);
+		virtual void remove();
+		virtual bool startAction(CursorType action, Event &event);
+
+		void setDetails(int iconId, int folderId, int parentFolderId, int unused, const Common::String &msg);
+	};
+	class IconManager: public EventHandler {
+	public:
+		NamedObject _object1;
+		SynchronizedList<Icon *> _list;
+		int _mode, _selectedFolder, _fieldAA, _fieldAC;
+
+		IconManager();
+		virtual void remove();
+
+		void setup(int mode);
+		void hideList();
+		void refreshList();
+		void addItem(Icon *item);
+	};
+
+	/* Objects */
+	class PowerSwitch: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class PrinterIcon: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public FocusObject {
+	public:
+		virtual void remove();
+	};
+
+	/* Items */
+	class FloppyDrive: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	PasswordEntry _passwordEntry;
+	PowerSwitch _powerSwitch;
+	PrinterIcon _printerIcon;
+	Object3 _object3;
+	NamedObjectExt _object4;
+	Icon _folder1, _folder2, _folder3, _folder4;
+	Icon _icon1, _icon2, _icon3, _icon4, _icon5;
+	Icon _icon6, _icon7, _icon8, _icon9;
+	IconManager _iconManager;
+	FloppyDrive _floppyDrive;
+	NamedHotspot _monitor, _item3, _case, _keyboard, _desk;
+	NamedHotspot _item7, _printer, _window, _plant, _item11;
+	ASound _sound1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

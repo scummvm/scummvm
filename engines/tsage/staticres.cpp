@@ -160,6 +160,21 @@ const char *BIKINI_HUT = "Bikini Hut";
 // Scene 60 radio messages
 const char *RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
 
+// Scene 570 computer messageS
+const char *SCENE570_PASSWORD = "PASSWORD -> ";
+const char *SCENE570_C_DRIVE = "C:\\";
+const char *SCENE570_RING = "RING";
+const char *SCENE570_PROTO = "PROTO";
+const char *SCENE570_WACKY = "WACKY";
+const char *SCENE570_COBB = "COBB";
+const char *SCENE570_LETTER = "LETTER";
+const char *SCENE570_RINGEXE = "RINGEXE";
+const char *SCENE570_RINGDATA = "RINGDATA";
+const char *SCENE570_PROTOEXE = "PROTOEXE";
+const char *SCENE570_PROTODATA = "PROTODATA";
+const char *SCENE570_WACKYEXE = "WACKYEXE";
+const char *SCENE570_WACKYDATA = "WACKYDATA";
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

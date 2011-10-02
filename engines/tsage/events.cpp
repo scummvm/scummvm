@@ -199,6 +199,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 		_currentCursor = CURSOR_EXIT;
 		break;
 
+	case CURSOR_PRINTER:
+		// Printer cursor (Blue Force)
+		assert(_vm->getGameID() == GType_BlueForce);
+		cursor = _resourceManager->getSubResource(1, 7, 6, &size);
+		_currentCursor = CURSOR_PRINTER;
+		break;
+
 	case CURSOR_ARROW:
 		// Arrow cursor
 		cursor = CURSOR_ARROW_DATA;
