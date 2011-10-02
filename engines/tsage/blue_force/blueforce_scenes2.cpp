@@ -36,7 +36,7 @@ namespace BlueForce {
 void Scene200::Action1::signal() {
 	Scene200 *scene = (Scene200 *)BF_GLOBALS._sceneManager._scene;
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	static const uint32 black = 0;
+
 	assert(owner);
 
 	switch (_actionIndex++) {
@@ -452,8 +452,8 @@ void Scene225::Action1::signal() {
 		owner->_moveDiff.x = 8;
 
 		Common::Point destPos(402, 116);
-		NpcMover *mover = new NpcMover();
-		owner->addMover(mover, &destPos, this);
+		NpcMover *mover2 = new NpcMover();
+		owner->addMover(mover2, &destPos, this);
 
 		BF_GLOBALS._player.setPosition(Common::Point(owner->_position.x, 0));
 		ADD_MOVER_NULL(BF_GLOBALS._player, 500, 0);
