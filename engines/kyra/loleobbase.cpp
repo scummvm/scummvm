@@ -149,10 +149,6 @@ LolEobBaseEngine::~LolEobBaseEngine() {
 	delete[] _levelDecorationData;
 	delete[] _levelDecorationProperties;
 	delete[] _levelBlockProperties;
-
-	for (Common::Array<Button::Callback>::iterator i = _buttonCallbacks.begin(); i != _buttonCallbacks.end(); ++i)
-		i->reset();
-	_buttonCallbacks.clear();
 }
 
 Common::Error LolEobBaseEngine::init() {

@@ -680,59 +680,47 @@ void EobCoreEngine::initButtonData() {
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(ARRAYSIZE(buttonDefs));
 
-#define EOB_CBN(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EobCoreEngine, this, &EobCoreEngine::x))
-#define EOB_CBR(x) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1]); }
+#define EOB_CBN(x, y) _buttonCallbacks.push_back(BUTTON_FUNCTOR(EobCoreEngine, this, &EobCoreEngine::y)); for (int l = 0; l < (x - 1); l++) { _buttonCallbacks.push_back(_buttonCallbacks[_buttonCallbacks.size() - 1 - l]); }
 #define EOB_CBI(x, y) for (int l = x; l; l--) { _buttonCallbacks.push_back(_buttonCallbacks[y]); }
-	EOB_CBN(clickedCharPortraitDefault);
-	EOB_CBR(3);
-	EOB_CBN(clickedCamp);
-	EOB_CBN(clickedSceneDropPickupItem);
-	EOB_CBR(3);
-	EOB_CBN(clickedCharPortrait2);
-	EOB_CBR(3);
-	EOB_CBN(clickedWeaponSlot);
-	EOB_CBR(3);
-	EOB_CBN(clickedCharNameLabelRight);
-	EOB_CBR(3);
-	EOB_CBN(clickedInventorySlot);
-	EOB_CBR(24);
-	EOB_CBN(clickedEatItem);
-	EOB_CBN(clickedInventoryNextPage);
-	EOB_CBN(clickedPortraitRestore);
-	EOB_CBN(clickedUpArrow);
-	EOB_CBN(clickedDownArrow);
-	EOB_CBN(clickedLeftArrow);
-	EOB_CBN(clickedRightArrow);
-	EOB_CBN(clickedTurnLeftArrow);
-	EOB_CBN(clickedTurnRightArrow);
-	EOB_CBN(clickedAbortCharSwitch);
-	EOB_CBN(clickedSceneThrowItem);
-	EOB_CBR(1);
-	EOB_CBN(clickedSceneSpecial);
-	EOB_CBN(clickedInventoryPrevChar);
-	EOB_CBN(clickedInventoryNextChar);
-	EOB_CBN(clickedSpellbookTab);
-	EOB_CBR(4);
-	EOB_CBN(clickedSpellbookList);
-	EOB_CBR(5);
-	EOB_CBN(clickedCastSpellOnCharacter);
-	EOB_CBR(3);
+	EOB_CBN(4, clickedCharPortraitDefault);
+	EOB_CBN(1, clickedCamp);
+	EOB_CBN(4, clickedSceneDropPickupItem);
+	EOB_CBN(4, clickedCharPortrait2);
+	EOB_CBN(4, clickedWeaponSlot);
+	EOB_CBN(4, clickedCharNameLabelRight);
+	EOB_CBN(25, clickedInventorySlot);
+	EOB_CBN(1, clickedEatItem);
+	EOB_CBN(1, clickedInventoryNextPage);
+	EOB_CBN(1, clickedPortraitRestore);
+	EOB_CBN(1, clickedUpArrow);
+	EOB_CBN(1, clickedDownArrow);
+	EOB_CBN(1, clickedLeftArrow);
+	EOB_CBN(1, clickedRightArrow);
+	EOB_CBN(1, clickedTurnLeftArrow);
+	EOB_CBN(1, clickedTurnRightArrow);
+	EOB_CBN(1, clickedAbortCharSwitch);
+	EOB_CBN(2, clickedSceneThrowItem);
+	EOB_CBN(1, clickedSceneSpecial);
+	EOB_CBN(1, clickedInventoryPrevChar);
+	EOB_CBN(1, clickedInventoryNextChar);
+	EOB_CBN(5, clickedSpellbookTab);
+	EOB_CBN(6, clickedSpellbookList);
+	EOB_CBN(4, clickedCastSpellOnCharacter);
 	EOB_CBI(2, 66);
 	EOB_CBI(2, 9);
 	EOB_CBI(2, 13);
 	EOB_CBI(2, 17);
 	EOB_CBI(2, 21);
 	EOB_CBI(2, 72);
-	EOB_CBN(clickedSpellbookAbort);
+	EOB_CBN(1, clickedSpellbookAbort);
 	EOB_CBI(1, 72);
 	EOB_CBI(2, 0);
 	EOB_CBI(1, 60);
 	EOB_CBI(1, 61);
-	EOB_CBN(clickedSpellbookScroll);
+	EOB_CBN(1, clickedSpellbookScroll);
 	EOB_CBI(5, 61);
 	EOB_CBI(1, 88);
 #undef EOB_CBI
-#undef EOB_CBR
 #undef EOB_CBN
 }
 
