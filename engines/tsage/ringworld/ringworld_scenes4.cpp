@@ -36,7 +36,7 @@ namespace Ringworld {
  *--------------------------------------------------------------------------*/
 
 void Scene3500::Action1::signal() {
-	Scene3500 *scene = (Scene3500 *)_globals->_sceneManager._scene;
+	Scene3500 *scene = (Scene3500 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -49,13 +49,13 @@ void Scene3500::Action1::signal() {
 		setDelay(3);
 		break;
 	case 3:
-		_globals->_sceneManager.changeScene(9999);
+		g_globals->_sceneManager.changeScene(9999);
 		break;
 	}
 }
 
 void Scene3500::Action2::signal() {
-	Scene3500 *scene = (Scene3500 *)_globals->_sceneManager._scene;
+	Scene3500 *scene = (Scene3500 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -68,7 +68,7 @@ void Scene3500::Action2::signal() {
 		setDelay(3);
 		break;
 	case 3:
-		_globals->_sceneManager.changeScene(2012);
+		g_globals->_sceneManager.changeScene(2012);
 		break;
 	}
 }
@@ -76,17 +76,17 @@ void Scene3500::Action2::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene3500::postInit(SceneObjectList *OwnerList) {
-	loadScene((_globals->_stripNum == 3600) ? 3600 : 3500);
+	loadScene((g_globals->_stripNum == 3600) ? 3600 : 3500);
 	Scene::postInit();
 
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerMText);
 	_stripManager.addSpeaker(&_speakerSText);
 
-	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.top / 160) * 160;
+	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
+	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.top / 160) * 160;
 
-	setAction((_globals->_stripNum == 3600) ? (Action *)&_action2 : (Action *)&_action1);
+	setAction((g_globals->_stripNum == 3600) ? (Action *)&_action2 : (Action *)&_action1);
 }
 
 /*--------------------------------------------------------------------------
@@ -102,7 +102,7 @@ Scene3700::Viewer::Viewer() {
 
 	_frameList[0] = 1;
 	for (int idx = 1; idx <= 3; ++idx)
-		_frameList[idx] = _globals->_randomSource.getRandomNumber(4) + 1;
+		_frameList[idx] = g_globals->_randomSource.getRandomNumber(4) + 1;
 
 	_active = true;
 	_countdownCtr = 0;
@@ -132,7 +132,7 @@ void Scene3700::Viewer::dispatch() {
 
 			int newFrame;
 			do {
-				newFrame = _globals->_randomSource.getRandomNumber(4) + 1;
+				newFrame = g_globals->_randomSource.getRandomNumber(4) + 1;
 			} while (newFrame == _frameList[2]);
 
 			_frameList[1] = newFrame;
@@ -146,27 +146,27 @@ void Scene3700::Viewer::reposition() {
 }
 
 void Scene3700::Viewer::draw() {
-	Region *priorityRegion = _globals->_sceneManager._scene->_priorities.find(1);
+	Region *priorityRegion = g_globals->_sceneManager._scene->_priorities.find(1);
 
 	for (int idx = 0; idx < 4; ++idx) {
 		Visage &v = (idx == 0) ? _images1 : _images2;
 
 		GfxSurface img = v.getFrame(_frameList[idx]);
 		Rect destRect = img.getBounds();
-		destRect.resize(img, (_position.x - _globals->_sceneOffset.x),
-			(_position.y  - _globals->_sceneOffset.y - _yDiff), _percentList[idx]);
+		destRect.resize(img, (_position.x - g_globals->_sceneOffset.x),
+			(_position.y  - g_globals->_sceneOffset.y - _yDiff), _percentList[idx]);
 
-		destRect.translate(-_globals->_sceneManager._scene->_sceneBounds.left,
-			-_globals->_sceneManager._scene->_sceneBounds.top);
+		destRect.translate(-g_globals->_sceneManager._scene->_sceneBounds.left,
+			-g_globals->_sceneManager._scene->_sceneBounds.top);
 
-		_globals->gfxManager().copyFrom(img, destRect, priorityRegion);
+		g_globals->gfxManager().copyFrom(img, destRect, priorityRegion);
 	}
 }
 
 /*--------------------------------------------------------------------------*/
 
 void Scene3700::Action1::signal() {
-	Scene3700 *scene = (Scene3700 *)_globals->_sceneManager._scene;
+	Scene3700 *scene = (Scene3700 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -218,11 +218,11 @@ void Scene3700::Action1::signal() {
 	case 8:
 		scene->_hotspot1.remove();
 		scene->_hotspot2.show();
-		_globals->setFlag(59);
+		g_globals->setFlag(59);
 		setDelay(30);
 		break;
 	case 9:
-		_globals->_sceneManager.changeScene(2100);
+		g_globals->_sceneManager.changeScene(2100);
 		break;
 	}
 }
@@ -246,7 +246,7 @@ void Scene3700::postInit(TsAGE::SceneObjectList *OwnerList) {
 	_viewer.setPosition(Common::Point(195, 83));
 
 	setAction(&_action1);
-	_globals->_soundHandler.play(195);
+	g_globals->_soundHandler.play(195);
 }
 
 } // End of namespace Ringworld

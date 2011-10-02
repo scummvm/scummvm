@@ -144,7 +144,7 @@ public:
 	virtual Common::String getClassName() { return "RingworldInvObjectList"; }
 };
 
-#define RING_INVENTORY (*((::TsAGE::Ringworld::RingworldInvObjectList *)_globals->_inventory))
+#define RING_INVENTORY (*((::TsAGE::Ringworld::RingworldInvObjectList *)g_globals->_inventory))
 
 class RingworldGame: public Game {
 public:

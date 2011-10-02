@@ -438,7 +438,7 @@ ResourceManager::~ResourceManager() {
 void ResourceManager::addLib(const Common::String &libName) {
 	assert(_libList.size() < 5);
 
-	_libList.push_back(new TLib(_vm->_memoryManager, libName));
+	_libList.push_back(new TLib(g_vm->_memoryManager, libName));
 }
 
 byte *ResourceManager::getResource(uint16 id, bool suppressErrors) {

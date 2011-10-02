@@ -355,7 +355,7 @@ void Scene666::signal() {
 	_text._fontNumber = 4;
 	_text._width = 150;
 
-	Common::String msg = _resourceManager->getMessage(666, BF_GLOBALS._deathReason);
+	Common::String msg = g_resourceManager->getMessage(666, BF_GLOBALS._deathReason);
 	sceneBounds = BF_GLOBALS._sceneManager._scene->_sceneBounds;
 	sceneBounds.collapse(4, 2);
 	BF_GLOBALS.gfxManager()._font.getStringBounds(msg.c_str(), textRect, _text._width);

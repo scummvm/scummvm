@@ -166,7 +166,7 @@ public:
 };
 
 #define ADD_PLAYER_MOVER(X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
-	_globals->_player.addMover(mover, &pt, this); }
+	g_globals->_player.addMover(mover, &pt, this); }
 #define ADD_PLAYER_MOVER_NULL(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \
 	OBJ.addMover(mover, &pt, NULL); }
 #define ADD_PLAYER_MOVER_THIS(OBJ, X, Y) { Common::Point pt(X, Y); PlayerMover *mover = new PlayerMover(); \

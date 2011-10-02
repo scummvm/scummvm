@@ -32,14 +32,14 @@
 
 namespace TsAGE {
 
-Saver *_saver;
+Saver *g_saver;
 
 SavedObject::SavedObject() {
-	_saver->addObject(this);
+	g_saver->addObject(this);
 }
 
 SavedObject::~SavedObject() {
-	_saver->removeObject(this);
+	g_saver->removeObject(this);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ Saver::Saver() {
 Saver::~Saver() {
 	// Internal validation that no saved object is still present
 	int totalLost = 0;
-	for (SynchronizedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = g_saver->_objList.begin(); i != g_saver->_objList.end(); ++i) {
 		SavedObject *so = *i;
 		if (so)
 			++totalLost;
@@ -72,7 +72,7 @@ void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 	if (isSaving()) {
 		// Get the object index for the given pointer and write it out
 		if (*ptr) {
-			idx = _saver->blockIndexOf(*ptr);
+			idx = g_saver->blockIndexOf(*ptr);
 			assert(idx > 0);
 		}
 		syncAsUint32LE(idx);
@@ -82,7 +82,7 @@ void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 		*ptr = NULL;
 		if (idx > 0)
 			// For non-zero (null) pointers, create a record for later resolving it to an address
-			_saver->addSavedObjectPtr(ptr, idx);
+			g_saver->addSavedObjectPtr(ptr, idx);
 	}
 }
 
@@ -120,7 +120,7 @@ void Serializer::syncAsDouble(double &v) {
 
 Common::Error Saver::save(int slot, const Common::String &saveName) {
 	assert(!getMacroRestoreFlag());
-	Common::StackLock slock1(_globals->_soundManager._serverDisabledMutex);
+	Common::StackLock slock1(g_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_saveNotifiers.notify(false);
@@ -130,7 +130,7 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_saveSlot = slot;
 
 	// Set up the serializer
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
 	Serializer serializer(NULL, saveFile);
 	serializer.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
@@ -165,7 +165,7 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 Common::Error Saver::restore(int slot) {
 	assert(!getMacroRestoreFlag());
-	Common::StackLock slock1(_globals->_soundManager._serverDisabledMutex);
+	Common::StackLock slock1(g_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_loadNotifiers.notify(false);
@@ -176,7 +176,7 @@ Common::Error Saver::restore(int slot) {
 	_unresolvedPtrs.clear();
 
 	// Set up the serializer
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(_vm->generateSaveName(slot));
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
 	Serializer serializer(saveFile, NULL);
 
 	// Read in the savegame header
@@ -279,10 +279,10 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = _globals->_screenSurface.lockSurface();
+	Graphics::Surface s = g_globals->_screenSurface.lockSurface();
 	::createThumbnail(thumb, (const byte *)s.pixels, SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
-	_globals->_screenSurface.unlockSurface();
+	g_globals->_screenSurface.unlockSurface();
 	delete thumb;
 
 	// Write out the save date/time
@@ -293,7 +293,7 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
-	out->writeUint32LE(_globals->_events.getFrameNumber());
+	out->writeUint32LE(g_globals->_events.getFrameNumber());
 }
 
 /**
@@ -335,7 +335,7 @@ void Saver::removeObject(SavedObject *obj) {
  * Returns true if any savegames exist
  */
 bool Saver::savegamesExist() const {
-	Common::String slot1Name = _vm->generateSaveName(1);
+	Common::String slot1Name = g_vm->generateSaveName(1);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slot1Name);
 	bool result = saveFile != NULL;

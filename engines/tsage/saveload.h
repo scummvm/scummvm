@@ -232,7 +232,7 @@ public:
 	void listObjects();
 };
 
-extern Saver *_saver;
+extern Saver *g_saver;
 
 } // End of namespace TsAGE
 

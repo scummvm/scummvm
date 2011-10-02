@@ -54,18 +54,18 @@ RightClickButton::RightClickButton(int buttonIndex, int xp, int yp) : GfxButton(
 void RightClickButton::highlight() {
 	if (_savedButton) {
 		// Button was previously highlighted, so de-highlight by restoring saved area
-		_globals->gfxManager().copyFrom(*_savedButton, _bounds.left, _bounds.top);
+		g_globals->gfxManager().copyFrom(*_savedButton, _bounds.left, _bounds.top);
 		delete _savedButton;
 		_savedButton = NULL;
 	} else {
 		// Highlight button by getting the needed highlighted image resource
-		_savedButton = Surface_getArea(_globals->gfxManager().getSurface(), _bounds);
+		_savedButton = Surface_getArea(g_globals->gfxManager().getSurface(), _bounds);
 
 		uint size;
-		byte *imgData = _resourceManager->getSubResource(7, 2, _buttonIndex, &size);
+		byte *imgData = g_resourceManager->getSubResource(7, 2, _buttonIndex, &size);
 
 		GfxSurface btnSelected = surfaceFromRes(imgData);
-		_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);
+		g_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);
 
 		DEALLOCATE(imgData);
 	}
@@ -83,17 +83,17 @@ RightClickDialog::RightClickDialog() : GfxDialog(),
 
 	// Set the palette and change the cursor
 	_gfxManager.setDialogPalette();
-	_globals->_events.setCursor(CURSOR_ARROW);
+	g_globals->_events.setCursor(CURSOR_ARROW);
 
 	// Get the dialog image
 	_surface = surfaceFromRes(7, 1, 1);
 
 	// Set the dialog position
 	dialogRect.resize(_surface, 0, 0, 100);
-	dialogRect.center(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
+	dialogRect.center(g_globals->_events._mousePos.x, g_globals->_events._mousePos.y);
 
 	// Ensure the dialog will be entirely on-screen
-	Rect screenRect = _globals->gfxManager()._bounds;
+	Rect screenRect = g_globals->gfxManager()._bounds;
 	screenRect.collapse(4, 4);
 	dialogRect.contain(screenRect);
 
@@ -122,10 +122,10 @@ RightClickButton *RightClickDialog::findButton(const Common::Point &pt) {
 
 void RightClickDialog::draw() {
 	// Save the covered background area
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 
 	// Draw the dialog image
-	_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);
+	g_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);
 }
 
 bool RightClickDialog::process(Event &event) {
@@ -173,9 +173,9 @@ void RightClickDialog::execute() {
 	// Dialog event handler loop
 	_gfxManager.activate();
 
-	while (!_vm->shouldQuit() && (_selectedAction == -1)) {
+	while (!g_vm->shouldQuit() && (_selectedAction == -1)) {
 		Event evt;
-		while (_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
+		while (g_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
 			evt.mousePos.x -= _bounds.left;
 			evt.mousePos.y -= _bounds.top;
 
@@ -190,19 +190,19 @@ void RightClickDialog::execute() {
 	switch (_selectedAction) {
 	case 1:
 		// Look action
-		_globals->_events.setCursor(CURSOR_LOOK);
+		g_globals->_events.setCursor(CURSOR_LOOK);
 		break;
 	case 2:
 		// Walk action
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	case 3:
 		// Use cursor
-		_globals->_events.setCursor(CURSOR_USE);
+		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 4:
 		// Talk cursor
-		_globals->_events.setCursor(CURSOR_TALK);
+		g_globals->_events.setCursor(CURSOR_TALK);
 		break;
 	case 5:
 		// Inventory dialog

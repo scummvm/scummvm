@@ -278,7 +278,7 @@ void SceneArea::display() {
 	_bounds.setWidth(_surface.getBounds().width());
 	_bounds.setHeight(_surface.getBounds().height());
 
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 	draw2();
 }
 
@@ -297,13 +297,13 @@ void SceneArea::draw(bool flag) {
 void SceneArea::wait() {
 	// Wait until a mouse or keypress
 	Event event;
-	while (!_vm->shouldQuit() && !_globals->_events.getEvent(event)) {
+	while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event)) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 
 	SynchronizedList<SceneItem *>::iterator ii;
-	for (ii = _globals->_sceneItems.begin(); ii != _globals->_sceneItems.end(); ++ii) {
+	for (ii = g_globals->_sceneItems.begin(); ii != g_globals->_sceneItems.end(); ++ii) {
 		SceneItem *sceneItem = *ii;
 		if (sceneItem->contains(event.mousePos)) {
 			sceneItem->doAction(_actionId);
@@ -311,7 +311,7 @@ void SceneArea::wait() {
 		}
 	}
 
-	_globals->_events.setCursor(CURSOR_ARROW);
+	g_globals->_events.setCursor(CURSOR_ARROW);
 }
 
 void SceneArea::synchronize(Serializer &s) {
@@ -406,11 +406,11 @@ RingworldInvObjectList::RingworldInvObjectList() :
 
 void RingworldGame::start() {
 	// Set some default flags
-	_globals->setFlag(12);
-	_globals->setFlag(34);
+	g_globals->setFlag(12);
+	g_globals->setFlag(34);
 
 	// Set the screen to scroll in response to the player moving off-screen
-	_globals->_scrollFollower = &_globals->_player;
+	g_globals->_scrollFollower = &g_globals->_player;
 
 	// Set the object's that will be in the player's inventory by default
 	RING_INVENTORY._stunner._sceneNumber = 1;
@@ -421,8 +421,8 @@ void RingworldGame::start() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		slot = ConfMan.getInt("save_slot");
-		Common::String file = _vm->generateSaveName(slot);
-		Common::InSaveFile *in = _vm->_system->getSavefileManager()->openForLoading(file);
+		Common::String file = g_vm->generateSaveName(slot);
+		Common::InSaveFile *in = g_vm->_system->getSavefileManager()->openForLoading(file);
 		if (in)
 			delete in;
 		else
@@ -430,28 +430,28 @@ void RingworldGame::start() {
 	}
 
 	if (slot >= 0)
-		_globals->_sceneHandler->_loadGameSlot = slot;
+		g_globals->_sceneHandler->_loadGameSlot = slot;
 	else
 		// Switch to the title screen
-		_globals->_sceneManager.setNewScene(1000);
+		g_globals->_sceneManager.setNewScene(1000);
 
-	_globals->_events.showCursor();
+	g_globals->_events.showCursor();
 }
 
 void RingworldGame::restart() {
-	_globals->_scenePalette.clearListeners();
-	_globals->_soundHandler.stop();
+	g_globals->_scenePalette.clearListeners();
+	g_globals->_soundHandler.stop();
 
 	// Reset the flags
-	_globals->reset();
-	_globals->setFlag(34);
+	g_globals->reset();
+	g_globals->setFlag(34);
 
 	// Clear save/load slots
-	_globals->_sceneHandler->_saveGameSlot = -1;
-	_globals->_sceneHandler->_loadGameSlot = -1;
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
 
-	_globals->_stripNum = 0;
-	_globals->_events.setCursor(CURSOR_WALK);
+	g_globals->_stripNum = 0;
+	g_globals->_events.setCursor(CURSOR_WALK);
 
 	// Reset item properties
 	RING_INVENTORY._stunner._sceneNumber = 1;
@@ -489,37 +489,37 @@ void RingworldGame::restart() {
 	RING_INVENTORY._selectedItem = NULL;
 
 	// Change to the first game scene
-	_globals->_sceneManager.changeScene(30);
+	g_globals->_sceneManager.changeScene(30);
 }
 
 void RingworldGame::endGame(int resNum, int lineNum) {
-	_globals->_events.setCursor(CURSOR_WALK);
-	Common::String msg = _resourceManager->getMessage(resNum, lineNum);
-	bool savesExist = _saver->savegamesExist();
+	g_globals->_events.setCursor(CURSOR_WALK);
+	Common::String msg = g_resourceManager->getMessage(resNum, lineNum);
+	bool savesExist = g_saver->savegamesExist();
 
 	if (!savesExist) {
 		// No savegames exist, so prompt the user to restart or quit
 		if (MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING) == 0)
-			_vm->quitGame();
+			g_vm->quitGame();
 		else
 			restart();
 	} else {
 		// Savegames exist, so prompt for Restore/Restart
 		bool breakFlag;
 		do {
-			if (_vm->shouldQuit()) {
+			if (g_vm->shouldQuit()) {
 				breakFlag = true;
 			} else if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
 				restart();
 				breakFlag = true;
 			} else {
-				handleSaveLoad(false, _globals->_sceneHandler->_loadGameSlot, _globals->_sceneHandler->_saveName);
-				breakFlag = _globals->_sceneHandler->_loadGameSlot >= 0;
+				handleSaveLoad(false, g_globals->_sceneHandler->_loadGameSlot, g_globals->_sceneHandler->_saveName);
+				breakFlag = g_globals->_sceneHandler->_loadGameSlot >= 0;
 			}
 		} while (!breakFlag);
 	}
 
-	_globals->_events.setCursorFromFlag();
+	g_globals->_events.setCursorFromFlag();
 }
 
 void RingworldGame::processEvent(Event &event) {
@@ -544,20 +544,20 @@ void RingworldGame::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		default:

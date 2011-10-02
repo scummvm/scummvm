@@ -68,9 +68,9 @@ bool Debugger::Cmd_Scene(int argc, const char **argv) {
 	}
 
 	if (argc == 3)
-		_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
+		g_globals->_sceneManager._sceneNumber = strToInt(argv[2]);
 
-	_globals->_sceneManager.changeScene(strToInt(argv[1]));
+	g_globals->_sceneManager.changeScene(strToInt(argv[1]));
 	return false;
 }
 
@@ -87,20 +87,20 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	int color = 16;
 
 	// Lock the background surface for access
-	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
 
 	// Loop through drawing each walk region in a different color to the background surface
 	Common::String regionsDesc;
 
-	for (uint regionIndex = 0; regionIndex < _globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
-		WalkRegion &wr = _globals->_walkRegions._regionList[regionIndex];
+	for (uint regionIndex = 0; regionIndex < g_globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
+		WalkRegion &wr = g_globals->_walkRegions._regionList[regionIndex];
 
 		for (int yp = wr._bounds.top; yp < wr._bounds.bottom; ++yp) {
 			LineSliceSet sliceSet = wr.getLineSlices(yp);
 
 			for (uint idx = 0; idx < sliceSet.items.size(); ++idx)
-				destSurface.hLine(sliceSet.items[idx].xs - _globals->_sceneOffset.x, yp,
-				sliceSet.items[idx].xe - _globals->_sceneOffset.x, color);
+				destSurface.hLine(sliceSet.items[idx].xs - g_globals->_sceneOffset.x, yp,
+				sliceSet.items[idx].xe - g_globals->_sceneOffset.x, color);
 		}
 
 		regionsDesc += Common::String::format("Region #%d d bounds=%d,%d,%d,%d\n",
@@ -108,12 +108,12 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	}
 
 	// Release the surface
-	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
 
 	// Mark the scene as requiring a full redraw
-	_globals->_paneRefreshFlag[0] = 2;
+	g_globals->_paneRefreshFlag[0] = 2;
 
-	DebugPrintf("Total regions = %d\n", _globals->_walkRegions._regionList.size());
+	DebugPrintf("Total regions = %d\n", g_globals->_walkRegions._regionList.size());
 	DebugPrintf("%s\n", regionsDesc.c_str());
 
 	return false;
@@ -134,12 +134,12 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	int count = 0;
 
 	// Lock the background surface for access
-	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
 
-	Common::List<Region>::iterator i = _globals->_sceneManager._scene->_priorities.begin();
+	Common::List<Region>::iterator i = g_globals->_sceneManager._scene->_priorities.begin();
 	Common::String regionsDesc;
 
-	for (; i != _globals->_sceneManager._scene->_priorities.end(); ++i, ++color, ++count) {
+	for (; i != g_globals->_sceneManager._scene->_priorities.end(); ++i, ++color, ++count) {
 		Region &r = *i;
 
 		if ((regionNum == 0) || (regionNum == (count + 1))) {
@@ -147,8 +147,8 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 				byte *destP = (byte *)destSurface.getBasePtr(0, y);
 
 				for (int x = 0; x < destSurface.w; ++x) {
-					if (r.contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
-							_globals->_sceneManager._scene->_sceneBounds.top + y)))
+					if (r.contains(Common::Point(g_globals->_sceneManager._scene->_sceneBounds.left + x,
+							g_globals->_sceneManager._scene->_sceneBounds.top + y)))
 						*destP = color;
 					++destP;
 				}
@@ -160,10 +160,10 @@ bool Debugger::Cmd_PriorityRegions(int argc, const char **argv) {
 	}
 
 	// Release the surface
-	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
 
 	// Mark the scene as requiring a full redraw
-	_globals->_paneRefreshFlag[0] = 2;
+	g_globals->_paneRefreshFlag[0] = 2;
 
 	DebugPrintf("Total regions = %d\n", count);
 	DebugPrintf("%s", regionsDesc.c_str());
@@ -187,12 +187,12 @@ bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
 	int count = 0;
 
 	// Lock the background surface for access
-	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
 
-	Common::List<Region>::iterator i = _globals->_sceneRegions.begin();
+	Common::List<Region>::iterator i = g_globals->_sceneRegions.begin();
 	Common::String regionsDesc;
 
-	for (; i != _globals->_sceneRegions.end(); ++i, ++color, ++count) {
+	for (; i != g_globals->_sceneRegions.end(); ++i, ++color, ++count) {
 		Region &r = *i;
 
 		if ((regionNum == 0) || (regionNum == (count + 1))) {
@@ -200,8 +200,8 @@ bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
 				byte *destP = (byte *)destSurface.getBasePtr(0, y);
 
 				for (int x = 0; x < destSurface.w; ++x) {
-					if (r.contains(Common::Point(_globals->_sceneManager._scene->_sceneBounds.left + x,
-							_globals->_sceneManager._scene->_sceneBounds.top + y)))
+					if (r.contains(Common::Point(g_globals->_sceneManager._scene->_sceneBounds.left + x,
+							g_globals->_sceneManager._scene->_sceneBounds.top + y)))
 						*destP = color;
 					++destP;
 				}
@@ -213,10 +213,10 @@ bool Debugger::Cmd_SceneRegions(int argc, const char **argv) {
 	}
 
 	// Release the surface
-	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
 
 	// Mark the scene as requiring a full redraw
-	_globals->_paneRefreshFlag[0] = 2;
+	g_globals->_paneRefreshFlag[0] = 2;
 
 	DebugPrintf("Total regions = %d\n", count);
 	DebugPrintf("%s", regionsDesc.c_str());
@@ -235,7 +235,7 @@ bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
 	}
 
 	int flagNum = strToInt(argv[1]);
-	_globals->setFlag(flagNum);
+	g_globals->setFlag(flagNum);
 	return true;
 }
 
@@ -250,7 +250,7 @@ bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
 	}
 
 	int flagNum = strToInt(argv[1]);
-	DebugPrintf("Value: %d\n", _globals->getFlag(flagNum));
+	DebugPrintf("Value: %d\n", g_globals->getFlag(flagNum));
 	return true;
 }
 
@@ -265,7 +265,7 @@ bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
 	}
 
 	int flagNum = strToInt(argv[1]);
-	_globals->clearFlag(flagNum);
+	g_globals->clearFlag(flagNum);
 	return true;
 }
 
@@ -444,14 +444,14 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
  */
 bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 	int colIndex = 16;
-	const Rect &sceneBounds = _globals->_sceneManager._scene->_sceneBounds;
+	const Rect &sceneBounds = g_globals->_sceneManager._scene->_sceneBounds;
 
 	// Lock the background surface for access
-	Graphics::Surface destSurface = _globals->_sceneManager._scene->_backSurface.lockSurface();
+	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
 
 	// Iterate through the scene items
 	SynchronizedList<SceneItem *>::iterator i;
-	for (i = _globals->_sceneItems.reverse_begin(); i != _globals->_sceneItems.end(); --i, ++colIndex) {
+	for (i = g_globals->_sceneItems.reverse_begin(); i != g_globals->_sceneItems.end(); --i, ++colIndex) {
 		SceneItem *o = *i;
 
 		// Draw the contents of the hotspot area
@@ -461,11 +461,11 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 				o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
 		} else {
 			// Scene uses a region, so get it and use it to fill out only the correct parts
-			SceneRegions::iterator ri = _globals->_sceneRegions.begin();
-			while ((ri != _globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
+			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
+			while ((ri != g_globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
 				++ri;
 
-			if (ri != _globals->_sceneRegions.end()) {
+			if (ri != g_globals->_sceneRegions.end()) {
 				// Fill out the areas defined by the region
 				Region &r = *ri;
 			
@@ -481,10 +481,10 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 	}
 
 	// Release the surface
-	_globals->_sceneManager._scene->_backSurface.unlockSurface();
+	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
 
 	// Mark the scene as requiring a full redraw
-	_globals->_paneRefreshFlag[0] = 2;
+	g_globals->_paneRefreshFlag[0] = 2;
 
 	return false;
 }
@@ -499,7 +499,7 @@ bool Debugger::Cmd_Sound(int argc, const char **argv) {
 	}
 
 	int soundNum = strToInt(argv[1]);
-	_globals->_soundHandler.play(soundNum);
+	g_globals->_soundHandler.play(soundNum);
 	return false;
 }
 

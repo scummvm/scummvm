@@ -64,16 +64,16 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 	setDefaults();
 
 	// Set the dialog's center
-	setCenter(_globals->_dialogCenter.x, _globals->_dialogCenter.y);
+	setCenter(g_globals->_dialogCenter.x, g_globals->_dialogCenter.y);
 }
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
 	// Ensure that the cursor is the arrow
-	_globals->_events.setCursor(CURSOR_ARROW);
+	g_globals->_events.setCursor(CURSOR_ARROW);
 
 	int result = show2(message, btn1Message, btn2Message);
 
-	_globals->_events.setCursorFromFlag();
+	g_globals->_events.setCursorFromFlag();
 	return result;
 }
 
@@ -116,7 +116,7 @@ void ModalDialog::draw() {
 	// Make a backup copy of the area the dialog will occupy
 	Rect tempRect = _bounds;
 	tempRect.collapse(-10, -10);
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), tempRect);
+	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), tempRect);
 
 	_gfxManager.activate();
 
@@ -138,7 +138,7 @@ void ModalDialog::drawFrame() {
 	_bounds.collapse(-10, -10);
 
 	// Fill the dialog area
-	_globals->gfxManager().fillRect(origRect, 54);
+	g_globals->gfxManager().fillRect(origRect, 54);
 
 	// Draw top line
 	GfxSurface surface = surfaceFromRes(8, 1, 7);
@@ -285,14 +285,14 @@ void InventoryDialog::execute() {
 	bool lookFlag = false;
 	_gfxManager.activate();
 
-	while (!_vm->shouldQuit()) {
+	while (!g_vm->shouldQuit()) {
 		// Get events
 		Event event;
-		while (!_globals->_events.getEvent(event) && !_vm->shouldQuit()) {
+		while (!g_globals->_events.getEvent(event) && !g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
 		}
-		if (_vm->shouldQuit())
+		if (g_vm->shouldQuit())
 			break;
 
 		hiliteObj = NULL;
@@ -319,18 +319,18 @@ void InventoryDialog::execute() {
 		if (hiliteObj == &_btnOk) {
 			// Ok button clicked
 			if (lookFlag)
-				_globals->_events.setCursor(CURSOR_WALK);
+				g_globals->_events.setCursor(CURSOR_WALK);
 			break;
 		} else if (hiliteObj == &_btnLook) {
 			// Look button clicked
 			if (_btnLook._message == LOOK_BTN_STRING) {
 				_btnLook._message = PICK_BTN_STRING;
 				lookFlag = 1;
-				_globals->_events.setCursor(CURSOR_LOOK);
+				g_globals->_events.setCursor(CURSOR_LOOK);
 			} else {
 				_btnLook._message = LOOK_BTN_STRING;
 				lookFlag = 0;
-				_globals->_events.setCursor(CURSOR_WALK);
+				g_globals->_events.setCursor(CURSOR_WALK);
 			}
 
 			hiliteObj->draw();
@@ -338,7 +338,7 @@ void InventoryDialog::execute() {
 			// Inventory item selected
 			InvObject *invObject = static_cast<GfxInvImage *>(hiliteObj)->_invObject;
 			if (lookFlag) {
-				_globals->_screenSurface.displayText(invObject->_description);
+				g_globals->_screenSurface.displayText(invObject->_description);
 			} else {
 				RING_INVENTORY._selectedItem = invObject;
 				invObject->setCursor();
@@ -360,20 +360,20 @@ void OptionsDialog::show() {
 	if (btn == &dlg->_btnQuit) {
 		// Quit game
 		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
-			_vm->quitGame();
+			g_vm->quitGame();
 		}
 	} else if (btn == &dlg->_btnRestart) {
 		// Restart game
-		_globals->_game->restartGame();
+		g_globals->_game->restartGame();
 	} else if (btn == &dlg->_btnSound) {
 		// Sound dialog
 		SoundDialog::execute();
 	} else if (btn == &dlg->_btnSave) {
 		// Save button
-		_globals->_game->saveGame();
+		g_globals->_game->saveGame();
 	} else if (btn == &dlg->_btnRestore) {
 		// Restore button
-		_globals->_game->restoreGame();
+		g_globals->_game->restoreGame();
 	}
 
 	dlg->remove();
@@ -421,8 +421,8 @@ void SoundDialog::execute() {
 	ConfigDialog *dlg = new ConfigDialog();
 	dlg->runModal();
 	delete dlg;
-	_globals->_soundManager.syncSounds();
-	_globals->_events.setCursorFromFlag();
+	g_globals->_soundManager.syncSounds();
+	g_globals->_events.setCursorFromFlag();
 }
 
 } // End of namespace TsAGE

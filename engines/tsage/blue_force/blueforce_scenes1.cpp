@@ -56,9 +56,9 @@ void Scene100::Action1::signal() {
 		setDelay(6);
 		break;
 	case 1: {
-		Common::String msg1 = _resourceManager->getMessage(100, _state++);
+		Common::String msg1 = g_resourceManager->getMessage(100, _state++);
 		if (msg1.compareTo("LASTCREDIT")) {
-			Common::String msg2 = _resourceManager->getMessage(100, _state++);
+			Common::String msg2 = g_resourceManager->getMessage(100, _state++);
 			setTextStrings(msg1, msg2, this);
 			--_actionIndex;
 		} else {
@@ -121,7 +121,7 @@ void Scene100::Action1::setTextStrings(const Common::String &msg1, const Common:
 }
 
 void Scene100::Action2::signal() {
-	Scene100 *scene = (Scene100 *)_globals->_sceneManager._scene;
+	Scene100 *scene = (Scene100 *)g_globals->_sceneManager._scene;
 	static byte black[3] = {0, 0, 0};
 
 	switch (_actionIndex++) {
@@ -139,7 +139,7 @@ void Scene100::Action2::signal() {
 			ConfMan.flushToDisk();
 		} else {
 			// Prompt user for whether to start play or watch introduction
-			_globals->_player.enableControl();
+			g_globals->_player.enableControl();
 
 			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
 				// Signal to start the game
@@ -150,7 +150,7 @@ void Scene100::Action2::signal() {
 		}
 
 		// At this point the introduction needs to start
-		_globals->_scenePalette.addFader(black, 1, 2, this);
+		g_globals->_scenePalette.addFader(black, 1, 2, this);
 		break;
 	}
 	case 3:
@@ -178,9 +178,9 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._v51C44 = 1;
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
-	_globals->_player.postInit();
-	_globals->_player.hide();
-	_globals->_player.disableControl();
+	g_globals->_player.postInit();
+	g_globals->_player.hide();
+	g_globals->_player.disableControl();
 	_index = 109;
 
 	if (BF_GLOBALS._dayNumber < 6) {

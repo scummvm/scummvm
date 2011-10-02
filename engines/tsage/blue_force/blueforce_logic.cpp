@@ -43,9 +43,9 @@ namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
-	_globals->_sceneManager.changeScene(300);
+	g_globals->_sceneManager.changeScene(300);
 
-	_globals->_events.setCursor(CURSOR_WALK);
+	g_globals->_events.setCursor(CURSOR_WALK);
 }
 
 Scene *BlueForceGame::createScene(int sceneNumber) {
@@ -240,20 +240,20 @@ void BlueForceGame::processEvent(Event &event) {
 		case Common::KEYCODE_F4:
 			// F4 - Restart
 			restartGame();
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F7:
 			// F7 - Restore
 			restoreGame();
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
 			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
-			_globals->_events.setCursorFromFlag();
+			g_globals->_events.setCursorFromFlag();
 			break;
 
 		default:
@@ -470,16 +470,16 @@ void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int u
 
 	switch (mode) {
 	case 2:
-		_globals->_sceneItems.push_front(this);
+		g_globals->_sceneItems.push_front(this);
 		break;
 	case 4:
-		_globals->_sceneItems.addBefore(item, this);
+		g_globals->_sceneItems.addBefore(item, this);
 		break;
 	case 5:
-		_globals->_sceneItems.addAfter(item, this);
+		g_globals->_sceneItems.addAfter(item, this);
 		break;
 	default:
-		_globals->_sceneItems.push_back(this);
+		g_globals->_sceneItems.push_back(this);
 		break;
 	}
 }

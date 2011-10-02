@@ -28,8 +28,8 @@
 
 namespace TsAGE {
 
-Globals *_globals = NULL;
-ResourceManager *_resourceManager = NULL;
+Globals *g_globals = NULL;
+ResourceManager *g_resourceManager = NULL;
 
 /*--------------------------------------------------------------------------*/
 
@@ -56,7 +56,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	_stripNum = 0;
 	_gfxEdgeAdjust = 3;
 
-	if (_vm->getFeatures() & GF_DEMO) {
+	if (g_vm->getFeatures() & GF_DEMO) {
 		_gfxFontNumber = 0;
 		_gfxColors.background = 6;
 		_gfxColors.foreground = 0;
@@ -67,7 +67,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_color1 = _gfxColors.foreground;
 		_color2 = _gfxColors.foreground;
 		_color3 = _gfxColors.foreground;
-	} else if (_vm->getGameID() == GType_BlueForce) {
+	} else if (g_vm->getGameID() == GType_BlueForce) {
 		// Blue Force
 		_gfxFontNumber = 0;
 		_gfxColors.background = 89;
@@ -75,7 +75,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_fontColors.background = 88;
 		_fontColors.foreground = 92;
 		_dialogCenter.y = 140;
-	} else if ((_vm->getGameID() == GType_Ringworld) &&  (_vm->getFeatures() & GF_CD)) {
+	} else if ((g_vm->getGameID() == GType_Ringworld) &&  (g_vm->getFeatures() & GF_CD)) {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
 		_gfxColors.foreground = 0;
@@ -108,9 +108,9 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	_scrollFollower = NULL;
 	_inventory = NULL;
 
-	switch (_vm->getGameID()) {
+	switch (g_vm->getGameID()) {
 	case GType_Ringworld:
-		if (!(_vm->getFeatures() & GF_DEMO)) {
+		if (!(g_vm->getFeatures() & GF_DEMO)) {
 			_inventory = new Ringworld::RingworldInvObjectList();
 			_game = new Ringworld::RingworldGame();
 		} else {
@@ -132,12 +132,12 @@ Globals::~Globals() {
 	delete _inventory;
 	delete _sceneHandler;
 	delete _game;
-	_globals = NULL;
+	g_globals = NULL;
 }
 
 void Globals::reset() {
 	Common::set_to(&_flags[0], &_flags[MAX_FLAGS], false);
-	_saver->addFactory(classFactoryProc);
+	g_saver->addFactory(classFactoryProc);
 }
 
 void Globals::synchronize(Serializer &s) {

@@ -97,14 +97,14 @@ public:
 	void dispatchSounds();
 };
 
-extern Globals *_globals;
+extern Globals *g_globals;
 
-#define GLOBALS (*_globals)
-#define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)_globals))
+#define GLOBALS (*g_globals)
+#define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)g_globals))
 
-// Note: Currently this can't be part of the _globals structure, since it needs to be constructed
+// Note: Currently this can't be part of the g_globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
-extern ResourceManager *_resourceManager;
+extern ResourceManager *g_resourceManager;
 
 
 namespace BlueForce {

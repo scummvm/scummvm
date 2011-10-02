@@ -272,7 +272,7 @@ void UICollection::draw() {
 
 UIElements::UIElements(): UICollection() {
 	_cursorVisage.setVisage(1, 5);
-	_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
 }
 
 void UIElements::synchronize(Serializer &s) {

@@ -66,10 +66,10 @@ RightClickDialog::RightClickDialog() : GfxDialog() {
 	// Set the dialog position
 	Rect dialogRect;
 	dialogRect.resize(_surface, 0, 0, 100);
-	dialogRect.center(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
+	dialogRect.center(g_globals->_events._mousePos.x, g_globals->_events._mousePos.y);
 
 	// Ensure the dialog will be entirely on-screen
-	Rect screenRect = _globals->gfxManager()._bounds;
+	Rect screenRect = g_globals->gfxManager()._bounds;
 	screenRect.collapse(4, 4);
 	dialogRect.contain(screenRect);
 
@@ -88,10 +88,10 @@ RightClickDialog::~RightClickDialog() {
 
 void RightClickDialog::draw() {
 	// Save the covered background area
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 
 	// Draw the dialog image
-	_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);
+	g_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);
 
 	// Pre-process rect lists
 	for (int idx = 0; idx < 5; ++idx) {
@@ -153,9 +153,9 @@ void RightClickDialog::execute() {
 	// Dialog event handler loop
 	_gfxManager.activate();
 
-	while (!_vm->shouldQuit() && (_selectedAction == -1)) {
+	while (!g_vm->shouldQuit() && (_selectedAction == -1)) {
 		Event evt;
-		while (_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
+		while (g_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
 			evt.mousePos.x -= _bounds.left;
 			evt.mousePos.y -= _bounds.top;
 
@@ -232,9 +232,9 @@ void AmmoBeltDialog::execute() {
 	// Dialog event handler loop
 	_gfxManager.activate();
 
-	while (!_vm->shouldQuit() && !_closeFlag) {
+	while (!g_vm->shouldQuit() && !_closeFlag) {
 		Event evt;
-		while (_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
+		while (g_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
 			evt.mousePos.x -= _bounds.left;
 			evt.mousePos.y -= _bounds.top;
 
@@ -321,13 +321,13 @@ void AmmoBeltDialog::draw() {
 
 	if (!_savedArea) {
 		// Save the covered background area
-		_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
+		_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 	} else {
 		bounds.moveTo(0, 0);
 	}
 
 	// Draw the dialog image
-	_globals->gfxManager().copyFrom(_surface, bounds.left, bounds.top);
+	g_globals->gfxManager().copyFrom(_surface, bounds.left, bounds.top);
 
 	// Setup clip flags
 	bool clip1 = true, clip2 = true;
@@ -344,7 +344,7 @@ void AmmoBeltDialog::draw() {
 	if (clip1) {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets);
 		_clip1Rect.resize(clipSurface, _clip1Rect.left, _clip1Rect.top, 100);
-		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left,
+		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left,
 			bounds.top + _clip1Rect.top);
 	}
 
@@ -352,7 +352,7 @@ void AmmoBeltDialog::draw() {
 	if (clip2) {
 		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets);
 		_clip2Rect.resize(clipSurface, _clip2Rect.left, _clip2Rect.top, 100);
-		_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left,
+		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left,
 			bounds.top + _clip2Rect.top);
 	}
 
@@ -360,7 +360,7 @@ void AmmoBeltDialog::draw() {
 	if (gunLoaded) {
 		GfxSurface loadedSurface = surfaceFromRes(9, 7, 1);
 		_loadedRect.resize(loadedSurface, _loadedRect.left, _loadedRect.top, 100);
-		_globals->gfxManager().copyFrom(loadedSurface, bounds.left + _loadedRect.left,
+		g_globals->gfxManager().copyFrom(loadedSurface, bounds.left + _loadedRect.left,
 			bounds.top + _loadedRect.top);
 	}
 }

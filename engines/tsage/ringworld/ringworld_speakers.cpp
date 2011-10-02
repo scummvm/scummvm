@@ -51,7 +51,7 @@ void SpeakerGText::setText(const Common::String &msg) {
 
 	// Set the text
 	Rect textRect;
-	_globals->gfxManager()._font.getStringBounds(msg.c_str(), textRect, _textWidth);
+	g_globals->gfxManager()._font.getStringBounds(msg.c_str(), textRect, _textWidth);
 	textRect.center(_sceneObject._position.x, _sceneObject._position.y);
 	_textPos.x = textRect.left;
 	Speaker::setText(msg);
@@ -74,13 +74,13 @@ SpeakerPOR::SpeakerPOR() {
 void SpeakerPOR::SpeakerAction1::signal(){
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(60) + 60);
+		setDelay(g_globals->_randomSource.getRandomNumber(60) + 60);
 		break;
 	case 1:
 		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_5, this, NULL);
 		break;
 	case 2:
-		setDelay(_globals->_randomSource.getRandomNumber(10));
+		setDelay(g_globals->_randomSource.getRandomNumber(10));
 		_actionIndex = 0;
 		break;
 	default:

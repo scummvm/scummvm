@@ -35,7 +35,7 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-#define BF_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)_globals->_inventory))
+#define BF_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)g_globals->_inventory))
 
 class BlueForceGame: public Game {
 public:
