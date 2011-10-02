@@ -35,7 +35,9 @@ namespace BlueForce {
 
 void Scene200::Action1::signal() {
 	Scene200 *scene = (Scene200 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 	static const uint32 black = 0;
+	assert(owner);
 
 	switch (_actionIndex++) {
 	case 0:
@@ -49,12 +51,12 @@ void Scene200::Action1::signal() {
 		break;
 	case 2:
 		assert(_owner);
-		static_cast<SceneObject *>(_owner)->animate(ANIM_MODE_5, this);
+		owner->animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		if (++_state < 2) {
 			scene->_action2.signal();
-			static_cast<SceneObject *>(_owner)->setFrame(1);
+			owner->setFrame(1);
 			_actionIndex = 2;
 		}
 		setDelay(2);
@@ -80,7 +82,8 @@ void Scene200::Action1::signal() {
 
 void Scene200::Action2::signal() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
-	
+	assert(owner);
+
 	switch (_actionIndex++) {
 	case 1:
 		owner->setPosition(owner->_position);
@@ -128,11 +131,87 @@ void Scene200::postInit(SceneObjectList *OwnerList) {
 	_object11.setVisage(200);
 	_object11.setPosition(Common::Point(96, 112), 1000);
 	_object11.setStrip(3);
-	_object11.setFrame(1);
+	_object11.setFrame(1); 
 	_object11.changeZoom(100);
 
 	_object10.setAction(&_action1);
 	_object11.setAction(&_action2);
+}
+
+void Scene200::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 200 - Credits - Car Training
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene210::Action1::signal() {
+	Scene210 *scene = (Scene210 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(_owner);
+	assert(owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(1);
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2: {
+		PaletteRotation *rot;
+		rot = BF_GLOBALS._scenePalette.addRotation(64, 79, 1);
+		rot->setDelay(10);
+		rot = BF_GLOBALS._scenePalette.addRotation(96, 111, 1);
+		rot->setDelay(10);
+		
+		scene->setAction(&scene->_sequenceManager, this, 210, &scene->_object10, &scene->_object11,
+			&scene->_object12, &scene->_object13, &scene->_object14, &scene->_object15, NULL);
+		break;
+	}
+	case 3:
+		BF_GLOBALS._sceneManager.changeScene(220);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene210::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(210);
+	BF_GLOBALS._scenePalette.loadPalette(235);
+	BF_GLOBALS._scenePalette.refresh();
+
+	_object9.postInit();
+	_object9.setVisage(210);
+	_object9.setPosition(Common::Point(146, 151));
+	_object9.setStrip(1);
+	_object9.setFrame(1);
+	_object9.changeZoom(100);
+	_object9.setAction(&_action1);
+
+	_object10.postInit();
+	_object10.hide();
+	_object11.postInit();
+	_object11.hide();
+	_object12.postInit();
+	_object12.hide();
+	_object13.postInit();
+	_object13.hide();
+	_object14.postInit();
+	_object14.hide();
+	_object15.postInit();
+	_object15.hide();
+}
+
+void Scene210::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
 }
 
 } // End of namespace BlueForce

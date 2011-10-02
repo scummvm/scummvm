@@ -80,9 +80,11 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Front of Police Station
 		return new Scene190();
 	case 200:
-		// Credits #2
+		// Credits - Motorcycle Training
 		return new Scene200();
 	case 210:
+		// Credits - Car Training
+		return new Scene210();
 	case 220:
 	case 225:
 	case 265:
