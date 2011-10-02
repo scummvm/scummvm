@@ -85,8 +85,8 @@ void Iris::saveState(SaveGame *state) const {
 	state->writeLEUint32((uint32)_direction);
 	state->writeLEUint32(_x1);
 	state->writeLEUint32(_y1);
-// 	state->writeLEUint32(_x2);
-// 	state->writeLEUint32(_y2);
+	state->writeLEUint32(_x2);
+	state->writeLEUint32(_y2);
 	state->writeLEUint32(_lenght);
 	state->writeLEUint32(_currTime);
 
@@ -100,8 +100,8 @@ void Iris::restoreState(SaveGame *state) {
 	_direction = (Direction)state->readLEUint32();
 	_x1 = state->readLEUint32();
 	_y1 = state->readLEUint32();
-// 	_x2 = state->readLEUint32();
-// 	_y2 = state->readLEUint32();
+	_x2 = state->readLEUint32();
+	_y2 = state->readLEUint32();
 	_lenght = state->readLEUint32();
 	_currTime = state->readLEUint32();
 
