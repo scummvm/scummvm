@@ -1118,11 +1118,11 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 		return;
 
 	// Initialize unk1 to the current frequency
-	uint16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
+	int16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
 
 	// This is presumably to shift the "note on" bit so far to the left
 	// that it won't be affected by any of the calculations below.
-	uint16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
+	int16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
 
 	int16 unk3 = (int16)channel.unk30;
 
