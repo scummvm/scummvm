@@ -2132,6 +2132,155 @@ void Scene570::process(Event &event) {
 		_passwordEntry.process(event);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 580 - Child Protective Services Parking Lot
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene580::Vechile::startAction(CursorType action, Event &event) {
+	Scene580 *scene = (Scene580 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 1;
+		scene->setAction(&scene->_sequenceManager, scene, 5800, &BF_GLOBALS._player, NULL);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene580::Door::startAction(CursorType action, Event &event) {
+	Scene580 *scene = (Scene580 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 5802;
+		scene->setAction(&scene->_sequenceManager, scene, 5802, &BF_GLOBALS._player, this, NULL);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene580::Lyle::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_LOOK) {
+		SceneItem::display2(580, 7);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene580::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(580);
+	setZoomPercents(45, 95, 55, 100);
+	BF_GLOBALS._sound1.changeSound(33);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 1;
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player._moveDiff = Common::Point(2, 1);
+
+	_door.postInit();
+	_door.setVisage(580);
+	_door.setStrip(4);
+	_door.setPosition(Common::Point(168, 41));
+	_door.hide();
+	_door.setDetails(580, 5, -1, -1, 1, NULL);
+
+	_vechile.postInit();
+	_vechile.setVisage(580);
+	_vechile.fixPriority(65);
+
+	if (BF_GLOBALS.getFlag(fWithLyle)) {
+		_lyle.postInit();
+		_lyle.setVisage(835);
+		_lyle.setObjectWrapper(new SceneObjectWrapper());
+		_lyle.animate(ANIM_MODE_1, NULL);
+		_lyle._moveDiff = Common::Point(2, 1);
+		_lyle.setPosition(Common::Point(149, 70));
+		BF_GLOBALS._sceneItems.push_back(&_lyle);
+
+		_vechile.changeZoom(90);
+		_vechile.setStrip(3);
+		_vechile.setPosition(Common::Point(165, 76));
+		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
+		_vechile.setVisage(303);
+
+		BF_GLOBALS._player.setVisage(303);
+
+		BF_GLOBALS._walkRegions.proc1(8);
+		BF_GLOBALS._walkRegions.proc1(9);
+		BF_GLOBALS._walkRegions.proc1(10);
+		BF_GLOBALS._walkRegions.proc1(11);
+	} else {
+		_vechile.setPosition(Common::Point(159, 72));
+
+		if (BF_GLOBALS.getFlag(onDuty)) {
+			_vechile.setStrip(1);
+			_vechile.setFrame(2);
+			_vechile.setDetails(300, 11, 13, -1, 1, NULL);
+
+			BF_GLOBALS._player.setVisage(304);
+		} else {
+			_vechile.setStrip(2);
+			_vechile.setFrame(3);
+			_vechile.setDetails(580, 0, 1, -1, 1, NULL);
+
+			BF_GLOBALS._player.setVisage(303);
+		}
+	}
+
+	BF_GLOBALS._player.updateAngle(_vechile._position);
+
+	if (BF_GLOBALS._sceneManager._previousScene == 590) {
+		// Leaving Services
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 0;
+		setAction(&_sequenceManager, this, 5801, &BF_GLOBALS._player, NULL);
+	} else {
+		// Arriving at parking lot
+		BF_GLOBALS._player.setPosition(Common::Point(177, 58));
+		signal();
+	}
+
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 580, 6, -1, -1, 1, NULL);
+}
+
+void Scene580::signal() {
+	switch (_sceneMode) {
+	case 1:
+		BF_GLOBALS._sceneManager.changeScene(60);
+		break;
+	case 5802:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(590);
+		break;
+	default:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene580::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == INV_COLT45) &&
+			BF_GLOBALS._player.contains(event.mousePos)) {
+		BF_GLOBALS._player.disableControl();
+		SceneItem::display2(350, 26);
+
+		_sceneMode = 0;
+		signal();
+		event.handled = true;
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

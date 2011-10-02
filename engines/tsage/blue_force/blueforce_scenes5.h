@@ -323,6 +323,33 @@ public:
 	virtual void process(Event &event);
 };
 
+class Scene580: public SceneExt {
+	/* Objects */
+	class Vechile: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Door: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Lyle: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	Vechile _vechile;
+	Door _door;
+	Lyle _lyle;
+	NamedHotspot _item1;
+	SpeakerGameText _gameTextSpeaker;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
