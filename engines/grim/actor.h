@@ -549,8 +549,6 @@ private:
 	Math::Vector3d _lookAtVector;
 	float _lookAtRate;
 
-	int _winX1, _winY1, _winX2, _winY2;
-
 	// struct used for path finding
 	struct PathNode {
 		Sector *sect;

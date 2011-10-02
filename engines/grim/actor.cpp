@@ -47,8 +47,6 @@
 
 namespace Grim {
 
-int g_winX1, g_winY1, g_winX2, g_winY2;
-
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
 		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
@@ -68,8 +66,6 @@ Actor::Actor(const Common::String &actorName) :
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	_winX1 = _winY1 = 1000;
-	_winX2 = _winY2 = -1000;
 	_toClean = false;
 	_running = false;
 	_scale = 1.f;
@@ -91,8 +87,6 @@ Actor::Actor() :
 	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
 
 	_shadowArray = new Shadow[5];
-	_winX1 = _winY1 = 1000;
-	_winX2 = _winY2 = -1000;
 	_toClean = false;
 	_running = false;
 	_scale = 1.f;
@@ -145,8 +139,12 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_lookingMode),
 	savedState->writeFloat(_scale);
 	savedState->writeFloat(_timeScale);
+	savedState->writeLEBool(_puckOrient);
 
 	savedState->writeString(_talkSoundName);
+
+	savedState->writeLEUint32((uint32)_collisionMode);
+	savedState->writeLESint32(_collisionScale);
 
 	if (_lipSync) {
 		savedState->writeLEUint32(1);
@@ -226,11 +224,6 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeVector3d(_lookAtVector);
 	savedState->writeFloat(_lookAtRate);
 
-	savedState->writeLESint32(_winX1);
-	savedState->writeLESint32(_winY1);
-	savedState->writeLESint32(_winX2);
-	savedState->writeLESint32(_winY2);
-
 	savedState->writeLESint32(_path.size());
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
 		savedState->writeVector3d(*i);
@@ -261,9 +254,12 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_lookingMode        = savedState->readLESint32();
 	_scale              = savedState->readFloat();
 	_timeScale          = savedState->readFloat();
-	_puckOrient = false;
+	_puckOrient         = savedState->readLEBool();
 
 	_talkSoundName 		= savedState->readString();
+
+	_collisionMode      = (CollisionMode)savedState->readLEUint32();
+	_collisionScale     = savedState->readLESint32();
 
 	if (savedState->readLEUint32()) {
 		Common::String fn = savedState->readString();
@@ -359,11 +355,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 	_lookAtVector = savedState->readVector3d();
 	_lookAtRate = savedState->readFloat();
-
-	_winX1 = savedState->readLESint32();
-	_winY1 = savedState->readLESint32();
-	_winX2 = savedState->readLESint32();
-	_winY2 = savedState->readLESint32();
 
 	size = savedState->readLESint32();
 	for (int i = 0; i < size; ++i) {
