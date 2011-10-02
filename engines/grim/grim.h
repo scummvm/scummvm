@@ -212,9 +212,6 @@ extern GrimEngine *g_grim;
 
 extern int g_imuseState;
 
-void vimaInit(uint16 *destTable);
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
-
 // Fake KEYCODE_* values for joystick and mouse events
 
 enum {

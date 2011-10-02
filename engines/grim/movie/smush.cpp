@@ -39,6 +39,7 @@
 #include "audio/decoders/raw.h"
 
 #include "engines/grim/movie/smush.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"

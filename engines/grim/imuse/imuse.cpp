@@ -31,6 +31,7 @@
 #include "engines/grim/debug.h"
 
 #include "engines/grim/imuse/imuse.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
