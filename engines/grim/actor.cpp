@@ -180,53 +180,23 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_walking);
 	savedState->writeVector3d(_destPos);
 
-	if (_restChore._costume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_restChore._costume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_restChore._chore);
+	_restChore.saveState(savedState);
 
-	if (_walkChore._costume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_walkChore._costume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_walkChore._chore);
+	_walkChore.saveState(savedState);
 	savedState->writeLESint32(_walkedLast);
 	savedState->writeLESint32(_walkedCur);
 
-	if (_leftTurnChore._costume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_leftTurnChore._costume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_leftTurnChore._chore);
-	savedState->writeLESint32(_rightTurnChore._chore);
+	_leftTurnChore.saveState(savedState);
+	_rightTurnChore.saveState(savedState);
 	savedState->writeLESint32(_lastTurnDir);
 	savedState->writeLESint32(_currTurnDir);
 
 	for (int i = 0; i < 10; ++i) {
-		if (_talkChore[i]._costume) {
-			savedState->writeLEUint32(1);
-			savedState->writeString(_talkChore[i]._costume->getFilename());
-		} else {
-			savedState->writeLEUint32(0);
-		}
-		savedState->writeLESint32(_talkChore[i]._chore);
+		_talkChore[i].saveState(savedState);
 	}
 	savedState->writeLESint32(_talkAnim);
 
-	if (_mumbleChore._costume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_mumbleChore._costume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_mumbleChore._chore);
+	_mumbleChore.saveState(savedState);
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -332,54 +302,23 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walking = savedState->readLESint32();
 	_destPos = savedState->readVector3d();
 
-	Costume *cost;
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		cost = findCostume(fname);
-	} else {
-		cost = NULL;
-	}
-	_restChore = Chore(cost, savedState->readLESint32());
+	_restChore.restoreState(savedState, this);
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		cost = findCostume(fname);
-	} else {
-		cost = NULL;
-	}
-	_walkChore = Chore(cost, savedState->readLESint32());
+	_walkChore.restoreState(savedState, this);
 	_walkedLast = savedState->readLESint32();
 	_walkedCur = savedState->readLESint32();
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		cost = findCostume(fname);
-	} else {
-		cost = NULL;
-	}
-	_leftTurnChore = Chore(cost, savedState->readLESint32());
-	_rightTurnChore = Chore(cost, savedState->readLESint32());
+	_leftTurnChore.restoreState(savedState, this);
+	_rightTurnChore.restoreState(savedState, this);
 	_lastTurnDir = savedState->readLESint32();
 	_currTurnDir = savedState->readLESint32();
 
 	for (int i = 0; i < 10; ++i) {
-		if (savedState->readLEUint32()) {
-			Common::String fname = savedState->readString();
-			cost = findCostume(fname);
-		} else {
-			cost = NULL;
-		}
-		_talkChore[i] = Chore(cost, savedState->readLESint32());
+		_talkChore[i].restoreState(savedState, this);
 	}
 	_talkAnim = savedState->readLESint32();
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		cost = findCostume(fname);
-	} else {
-		cost = NULL;
-	}
-	_mumbleChore = Chore(cost, savedState->readLESint32());
+	_mumbleChore.restoreState(savedState, this);
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -1675,6 +1614,26 @@ void Actor::Chore::setLastFrame() {
 
 bool Actor::Chore::isPlaying() const {
 	return (isValid() && _costume->isChoring(_chore, false) >= 0);
+}
+
+void Actor::Chore::saveState(SaveGame *savedState) const {
+	if (_costume) {
+		savedState->writeLEUint32(1);
+		savedState->writeString(_costume->getFilename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_chore);
+}
+
+void Actor::Chore::restoreState(SaveGame *savedState, Actor *actor) {
+	if (savedState->readLEUint32()) {
+		Common::String fname = savedState->readString();
+		_costume = actor->findCostume(fname);
+	} else {
+		_costume = NULL;
+	}
+	_chore = savedState->readLESint32();
 }
 
 } // end of namespace Grim

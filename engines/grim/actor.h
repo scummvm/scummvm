@@ -506,6 +506,10 @@ private:
 			return (_costume == cost && _chore == chore);
 		}
 
+		void saveState(SaveGame *state) const;
+		void restoreState(SaveGame *state, Actor *actor);
+
+
 		Costume *_costume;
 		int _chore;
 
