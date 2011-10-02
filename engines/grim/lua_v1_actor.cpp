@@ -554,6 +554,17 @@ void L1_GetActorPuckVector() {
 	lua_pushnumber(result.z());
 }
 
+void L1_ActorPuckOrient() {
+	lua_Object	actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R')) {
+		return;
+	}
+
+	Actor *actor = getactor(actorObj);
+	actor->setPuckOrient(getbool(2));
+}
+
 void L1_WalkActorTo() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object xObj = lua_getparam(2);

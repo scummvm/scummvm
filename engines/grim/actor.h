@@ -356,6 +356,8 @@ public:
 	 */
 	Math::Vector3d getPuckVector() const;
 
+	void setPuckOrient(bool orient);
+
 	/**
 	 * Makes the actor say the given line.
 	 * It will show a subtitle and/or play the voice, depending
@@ -557,6 +559,8 @@ private:
 
 	CollisionMode _collisionMode;
 	float _collisionScale;
+
+	bool _puckOrient;
 
 	friend class GrimEngine;
 };

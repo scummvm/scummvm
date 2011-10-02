@@ -77,6 +77,7 @@ Actor::Actor(const Common::String &actorName) :
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
 	_collisionScale = 1.f;
+	_puckOrient = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -290,6 +291,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_lookingMode        = savedState->readLESint32();
 	_scale              = savedState->readFloat();
 	_timeScale          = savedState->readFloat();
+	_puckOrient = false;
 
 	_talkSoundName 		= savedState->readString();
 
@@ -712,6 +714,11 @@ Math::Vector3d Actor::getPuckVector() const {
 		return forwardVec;
 	else
 		return sector->getProjectionToPuckVector(forwardVec);
+}
+
+void Actor::setPuckOrient(bool orient) {
+	_puckOrient = orient;
+	warning("Actor::setPuckOrient() not implemented");
 }
 
 void Actor::setRestChore(int chore, Costume *cost) {

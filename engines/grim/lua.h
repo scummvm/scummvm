@@ -126,6 +126,7 @@ void L1_SetActorTurnRate();
 void L1_WalkActorForward();
 void L1_SetActorReflection();
 void L1_GetActorPuckVector();
+void L1_ActorPuckOrient();
 void L1_WalkActorTo();
 void L1_ActorToClean();
 void L1_IsActorMoving();
