@@ -2506,6 +2506,7 @@ case $_backend in
 		;;
 	webos)
 		# There is no sdl-config in the WebOS PDK so we don't use find_sdlconfig here.
+		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
 		LIBS="$LIBS -lSDL -lpdl"
 		DEFINES="$DEFINES -DWEBOS"
 		DEFINES="$DEFINES -DSDL_BACKEND"

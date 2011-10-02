@@ -31,19 +31,25 @@
 class WebOSSdlEventSource : public SdlEventSource {
 public:
 	enum {
-		MAX_FINGERS = 3
+		DOUBLETAP_LIMIT = 400,
+		MAX_FINGERS = 3,
+		MOUSE_DEADZONE_PIXELS = 5,
+		QUEUED_DRAG_DELAY = 500,
+		QUEUED_KEY_DELAY = 250,
+		QUEUED_RUP_DELAY = 50,
+		SWIPE_PERCENT_HORIZ = 15,
+		SWIPE_PERCENT_VERT = 20
 	};
 	WebOSSdlEventSource() :
 			_gestureDown(false),
 			_dragStartTime(0), _dragging(false),
 			_curX(0), _curY(0),
+			_screenX(0), _screenY(0),
 			_touchpadMode(false), _autoDragMode(true),
 			_doClick(true),
 			_queuedDragTime(0), _queuedEscapeUpTime(0), _queuedSpaceUpTime(0),
 			_queuedRUpTime(0),
-			_firstPoll(true),
-			QUEUED_KEY_DELAY(250), QUEUED_DRAG_DELAY(500),
-			QUEUED_RUP_DELAY(50) {
+			_firstPoll(true) {
 		for (int i = 0; i < MAX_FINGERS; i++) {
 			_fingerDown[i] = false;
 			_screenDownTime[i] = _dragDiffX[i] = _dragDiffY[i] = 0;
@@ -67,6 +73,12 @@ protected:
 
 	// The current mouse position on the screen.
 	int _curX, _curY;
+	
+	// The current screen dimensions
+	int _screenX, _screenY;
+	
+	// The drag distance for linear gestures
+	int _swipeDistX, _swipeDistY;
 
 	// Indicates if we're in touchpad mode or tap-to-move mode.
 	bool _touchpadMode;
@@ -87,11 +99,7 @@ protected:
 	uint32 _queuedDragTime, _queuedEscapeUpTime, _queuedSpaceUpTime,
 		_queuedRUpTime;
 
-	// Standard event queue delays in milliseconds
-	const int QUEUED_KEY_DELAY;
-	const int QUEUED_DRAG_DELAY;
-	const int QUEUED_RUP_DELAY;
-
+	// SDL overrides
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
@@ -99,6 +107,9 @@ protected:
 	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
+	
+	// Utility functions
+	void calculateDimensions();
 };
 
 #endif
