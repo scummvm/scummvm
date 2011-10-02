@@ -739,7 +739,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 	if (_walkCostume == cost && _walkChore == chore)
 		return;
 
-	if (_walkChore >= 0 && _walkCostume->isChoring(_walkChore, false) >= 0) {
+	if (_walkedLast && _walkChore >= 0 && _walkCostume->isChoring(_walkChore, false) >= 0) {
 		_walkCostume->fadeChoreOut(_walkChore, 150);
 		_walkCostume->stopChore(_walkChore);
 		if (_restChore >= 0) {
