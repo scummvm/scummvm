@@ -221,6 +221,7 @@ public:
 	bool display(CursorType action);
 	void fadeOut();
 	void gunDisplay();
+	void clearScreen();
 };
 
 class PalettedScene: public SceneExt {

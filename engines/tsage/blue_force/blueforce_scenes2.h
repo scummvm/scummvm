@@ -152,6 +152,19 @@ public:
 	virtual void remove();
 };
 
+class Scene265: public SceneExt {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		virtual void signal();
+	};
+public:
+	Action1 _action1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

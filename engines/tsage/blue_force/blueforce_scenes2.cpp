@@ -707,6 +707,55 @@ void Scene225::remove() {
 	SceneExt::remove();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 265 - Graduation Article
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene265::Action1::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._scenePalette.loadPalette(2);
+		setDelay(30);
+		break;
+	case 1:
+		BF_GLOBALS._scenePalette.refresh();
+		setDelay(240);
+		break;
+	case 2:
+		ADD_MOVER(BF_GLOBALS._player, 160, 280);
+		break;
+	case 3:
+		// Wait until sound finishes playing
+		if (BF_GLOBALS._sound1.isPlaying())
+			_actionIndex = 3;
+		setDelay(1);
+		break;
+	case 4:
+		BF_GLOBALS._dayNumber = 1;
+		BF_GLOBALS._sceneManager.changeScene(190);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene265::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(265);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
+	BF_GLOBALS._player.hide();
+	setAction(&_action1);
+}
+
+void Scene265::remove() {
+	clearScreen();
+	remove();
+}
 
 } // End of namespace BlueForce
 

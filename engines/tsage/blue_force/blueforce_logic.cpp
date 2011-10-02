@@ -92,6 +92,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Credits - Gun Training
 		return new Scene225();
 	case 265:
+		// Graduation Article
+		return new Scene265();
 	case 270:
 	case 271:
 	case 280:
@@ -784,6 +786,10 @@ void SceneExt::endStrip() {
 		if (!BF_GLOBALS._v50696 && BF_GLOBALS._uiElements._active)
 			BF_GLOBALS._uiElements.show();
 	}
+}
+
+void SceneExt::clearScreen() {
+	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
 }
 
 /*--------------------------------------------------------------------------*/

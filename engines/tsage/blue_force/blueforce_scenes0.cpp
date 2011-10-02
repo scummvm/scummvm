@@ -419,7 +419,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 
 void Scene50::remove() {
 	// Blank out the screen
-	BF_GLOBALS._screenSurface.fillRect(BF_GLOBALS._screenSurface.getBounds(), 0);
+	clearScreen();
 
 	SceneExt::remove();
 	BF_GLOBALS._uiElements._active = true;
