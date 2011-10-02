@@ -24,6 +24,7 @@
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
 #include "tsage/blue_force/blueforce_scenes1.h"
+#include "tsage/blue_force/blueforce_scenes2.h"
 #include "tsage/blue_force/blueforce_scenes3.h"
 #include "tsage/blue_force/blueforce_scenes4.h"
 #include "tsage/blue_force/blueforce_scenes5.h"
@@ -79,6 +80,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Front of Police Station
 		return new Scene190();
 	case 200:
+		// Credits #2
+		return new Scene200();
 	case 210:
 	case 220:
 	case 225:
