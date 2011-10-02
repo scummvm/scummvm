@@ -2281,6 +2281,259 @@ void Scene580::process(Event &event) {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 590 - Child Protective Services
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene590::Laura::startAction(CursorType action, Event &event) {
+	Scene590 *scene = (Scene590 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		if (!scene->_field17DC)
+			scene->_stripNumber = 5905;
+		else if (!scene->_field17DE) {
+			if (scene->_field17E2) {
+				scene->_stripNumber = 5907;
+			} else {
+				scene->_field17E2 = 1;
+				scene->_stripNumber = 5906;
+			}
+		}
+
+		scene->setAction(&scene->_action1);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene590::Skip::startAction(CursorType action, Event &event) {
+	Scene590 *scene = (Scene590 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		if (BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) == 1) {
+			scene->_stripNumber = !scene->_field17DC ? 5903 : 5902;
+		} else {
+			scene->_stripNumber = !scene->_field17DC ? 5901 : 5902;
+		}
+		
+		scene->setAction(&scene->_action1);
+		scene->_field17DC = 1;
+		return true;
+	case INV_BASEBALL_CARD:
+		scene->_field17DE = 1;
+		BF_GLOBALS._uiElements.addScore(10);
+		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 2);
+		BF_GLOBALS._player.disableControl();
+
+		scene->_stripNumber = !scene->_field17DC ? 5900 : 5904;
+		scene->_field17DC = 1;
+		scene->setAction(&scene->_action2);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene590::Exit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(BF_GLOBALS._player._position.x - 100, BF_GLOBALS._player._position.y + 75);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene590::Action1::signal() {
+	Scene590 *scene = (Scene590 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		ADD_PLAYER_MOVER(220, 132);
+		break;
+	case 1:
+		scene->_stripManager.start(scene->_stripNumber, this);
+		break;
+	case 2:
+		BF_GLOBALS._player.enableControl();
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene590::Action2::signal() {
+	Scene590 *scene = (Scene590 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0: {
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, 220, 132);
+		break;
+	}
+	case 1:
+		ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, 220, 132);
+		break;
+	case 2:
+		BF_GLOBALS._player.setVisage(381);
+		BF_GLOBALS._player.setStrip(2);
+		BF_GLOBALS._player.setFrame(1);
+		BF_GLOBALS._player.setPosition(Common::Point(257, 130));
+		BF_GLOBALS._player.animate(ANIM_MODE_4, 3, 1, this);
+
+		scene->_skip.setStrip(2);
+		scene->_skip.animate(ANIM_MODE_5, NULL);
+		break;
+	case 3:
+		scene->_skip.animate(ANIM_MODE_6, NULL);
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		scene->_skip.setStrip(1);
+		scene->_skip.animate(ANIM_MODE_1, NULL);
+		
+		BF_GLOBALS._player.setVisage(368);
+		BF_GLOBALS._player.setStrip(7);
+		BF_GLOBALS._player.setPosition(Common::Point(238, 131));
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		scene->_stripManager.start(scene->_stripNumber, this);
+		break;
+	case 5:
+		scene->_sceneMode = 3;
+		scene->signal();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene590::Scene590(): PalettedScene() {
+	_field17DC = _field17DE = _stripNumber = _field17E2 = 0;
+}
+
+void Scene590::synchronize(Serializer &s) {
+	PalettedScene::synchronize(s);
+	s.syncAsSint16LE(_field17DC);
+	s.syncAsSint16LE(_field17DE);
+	s.syncAsSint16LE(_stripNumber);
+	s.syncAsSint16LE(_field17E2);
+}
+
+void Scene590::postInit(SceneObjectList *OwnerList) {
+	PalettedScene::postInit();
+	loadScene(590);
+
+	BF_GLOBALS._sound1.fadeOut2(NULL);
+	_sound1.play(18);
+	_sound1.fade(100, 5, 10, false, NULL);
+
+	if (BF_GLOBALS._dayNumber == 0) {
+		BF_GLOBALS._dayNumber = 1;
+		BF_GLOBALS._bookmark = bEndOfWorkDayOne;
+		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 1);
+	}
+
+	_exit.setDetails(Rect(0, 157, 182, 167), 590, -1, -1, -1, 1, NULL);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player.setPosition(Common::Point(0, 190));
+
+	_stripManager.addSpeaker(&_skipSpeaker);
+	_stripManager.addSpeaker(&_lauraSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	
+	if (BF_GLOBALS.getFlag(onDuty)) {
+		BF_GLOBALS._player.setVisage(361);
+		BF_GLOBALS._player._moveDiff = Common::Point(6, 2);
+	} else {
+		BF_GLOBALS._player.setVisage(368);
+		BF_GLOBALS._player._moveDiff = Common::Point(6, 2);
+
+		if ((BF_GLOBALS._bookmark >= bEndOfWorkDayOne) && (BF_GLOBALS._bookmark < bLyleStoppedBy)) {
+			_skip.postInit();
+			_skip.setVisage(693);
+			_skip.setPosition(Common::Point(271, 117));
+			_skip.setDetails(590, 26, -1, 27, 1, NULL);
+
+			_laura.postInit();
+			_laura.setVisage(692);
+			_laura.setPosition(Common::Point(248, 115));
+			_laura.setDetails(590, 24, -1, 25, 1, NULL);
+		}
+	}
+
+	_item2.setDetails(1, 590, 0, -1, 12, 1);
+	_item3.setDetails(3, 590, 2, -1, 14, 1);
+	_item4.setDetails(20, 590, 3, -1, 15, 1);
+	_item5.setDetails(22, 590, 4, -1, 16, 1);
+	_item6.setDetails(7, 590, 6, -1, 17, 1);
+	_item7.setDetails(7, 590, 6, -1, 18, 1);
+	_item8.setDetails(9, 590, 7, -1, 19, 1);
+	_item9.setDetails(11, 590, 8, -1, 20, 1);
+	_item10.setDetails(13, 590, 9, -1, 21, 1);
+	_item11.setDetails(15, 590, 10, -1, 22, 1);
+	_item12.setDetails(17, 590, 11, -1, 23, 1);
+	
+	BF_GLOBALS._player.disableControl();
+	_sceneMode = 0;
+	setAction(&_sequenceManager, this, 5900, &BF_GLOBALS._player, NULL);
+}
+
+void Scene590::signal() {
+	static uint32 black = 0;
+
+	switch (_sceneMode) {
+	case 1:
+		_sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(271);
+		break;
+	case 2:
+		_sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(580);
+		break;
+	case 3:
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 0, 170);
+
+		_skip.animate(ANIM_MODE_1, NULL);
+		ADD_MOVER_NULL(_skip, 0, 170);
+
+		_laura.animate(ANIM_MODE_1, NULL);
+		ADD_MOVER_NULL(_laura, 0, 170);
+
+		_sceneMode = 1;
+		addFader((byte *)&black, 2, this);
+		break;
+	default:
+		BF_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene590::process(Event &event) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

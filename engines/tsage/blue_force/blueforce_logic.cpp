@@ -154,7 +154,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Child Protective Services Parking Lot
 		return new Scene580();
 	case 590:
-		error("Scene group 5 not implemented");
+		// Child Protective Services
+		return new Scene590();
 	case 600:
 		// Crash cut-scene
 		return new Scene600();

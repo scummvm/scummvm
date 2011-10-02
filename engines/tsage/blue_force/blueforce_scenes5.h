@@ -350,6 +350,55 @@ public:
 	virtual void process(Event &event);
 };
 
+class Scene590: public PalettedScene {
+	/* Objects */
+	class Laura: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Skip: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Laura _laura;
+	Skip _skip;
+	SceneObject _object3;
+	Exit _exit;
+	NamedHotspot _item2, _item3, _item4, _item5, _item6, _item7;
+	NamedHotspot _item8, _item9, _item10, _item11, _item12;
+	SpeakerSkip _skipSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLaura _lauraSpeaker;
+	ASoundExt _sound1;
+	Action1 _action1;
+	Action2 _action2;
+	int _field17DC, _field17DE, _stripNumber, _field17E2;
+
+	Scene590();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
