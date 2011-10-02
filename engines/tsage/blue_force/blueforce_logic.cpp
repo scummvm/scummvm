@@ -86,6 +86,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Credits - Car Training
 		return new Scene210();
 	case 220:
+		// Credits - Martial Arts
+		return new Scene220();
 	case 225:
 	case 265:
 	case 270:

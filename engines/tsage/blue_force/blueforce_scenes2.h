@@ -37,6 +37,9 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
+class IntroObject: public NamedObject {
+};
+
 class Scene200: public SceneExt {
 	/* Actions */
 	class Action1: public ActionExt {
@@ -52,7 +55,8 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	NamedObject _object1, _object2, _object3, _object4, _object5, _object6;
-	NamedObject  _object7, _object8, _object9, _object10, _object11;
+	IntroObject  _object7, _object8, _object9;
+	NamedObject _object10, _object11;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
@@ -71,13 +75,38 @@ class Scene210: public SceneExt {
 public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
-	NamedObject _object1, _object2, _object3, _object4, _object5, _object6;
-	NamedObject  _object7, _object8, _object9, _object10, _object11;
-	NamedObject _object12, _object13, _object14, _object15;
+	IntroObject _object1, _object2, _object3, _object4;
+	IntroObject _object5, _object6, _object7, _object8;
+	NamedObject _object9, _object10, _object11, _object12;
+	NamedObject _object13, _object14, _object15;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
 };
+
+class Scene220: public SceneExt {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	Action2 _action2;
+	NamedObject _object1, _object2, _object3, _object4, _object5;
+	NamedObject _object6, _object7, _object8, _object9;
+	IntroObject _object10, _object11, _object12, _object13;
+	IntroObject _object14, _object15, _object16;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+};
+
 
 } // End of namespace BlueForce
 
