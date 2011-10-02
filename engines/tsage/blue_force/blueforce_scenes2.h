@@ -107,6 +107,50 @@ public:
 	virtual void remove();
 };
 
+class Scene225: public SceneExt {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	IntroObject _object1, _object2, _object3, _object4;
+	IntroObject _object5, _object6, _object7;
+	NamedObject _object8, _object9, _object10, _object11, _object12;
+	NamedObject _object13, _object14, _object15, _object16;
+	NamedObject _object17, _object18, _object19;
+	NamedObject _object20, _object21;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+};
 
 } // End of namespace BlueForce
 

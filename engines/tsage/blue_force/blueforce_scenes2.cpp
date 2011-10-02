@@ -384,6 +384,330 @@ void Scene220::remove() {
 	SceneExt::remove();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 225 - Credits - Gun Training
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene225::Action1::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1:
+		BF_GLOBALS._scenePalette.loadPalette(235);
+		BF_GLOBALS._scenePalette.refresh();
+		setDelay(5);
+		break;
+	case 2:
+		owner->animate(ANIM_MODE_4, 7, 1, this);
+		break;
+	case 3:
+		scene->_object8.animate(ANIM_MODE_5, this);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		scene->_object8.remove();
+		break;
+	case 5:
+		scene->_action3.signal();
+		break;
+	case 6:
+		owner->setPosition(Common::Point(owner->_position.x, owner->_position.y - 4));
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 7:
+		scene->_action2.signal();
+		break;
+	case 8:
+		owner->animate(ANIM_MODE_6, this);
+		break;
+	case 9:
+		owner->setPosition(Common::Point(owner->_position.x - 2, owner->_position.y - 1));
+		owner->setStrip(3);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 10: {
+		owner->setPosition(Common::Point(owner->_position.x + 10, owner->_position.y + 4));
+		owner->setStrip(4);
+		owner->setFrame(1);
+		owner->fixPriority(116);
+		owner->animate(ANIM_MODE_1, NULL);
+
+		Common::Point destPos(138, 117);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+	}
+	case 11: {
+		owner->setPosition(Common::Point(owner->_position.x - 12, owner->_position.y - 1));
+		owner->setStrip(5);
+		owner->setFrame(1);
+		owner->_moveDiff.x = 8;
+
+		Common::Point destPos(402, 116);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+
+		BF_GLOBALS._player.setPosition(Common::Point(owner->_position.x, 0));
+		ADD_MOVER_NULL(BF_GLOBALS._player, 500, 0);
+		break;
+	}
+	case 12:
+		owner->setVisage(1227);
+		owner->setStrip(1);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 13:
+		owner->setStrip(2);
+		owner->setFrame(4);
+		scene->_action4.signal();
+		break;
+	case 14:
+		owner->animate(ANIM_MODE_6, this);
+		break;
+	case 15:
+		scene->_action6.signal();
+		break;
+	case 16:
+		owner->animate(ANIM_MODE_4, 4, 1, this);
+		break;
+	case 17:
+		owner->setFrame(6);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 18:
+		scene->_action5.signal();
+		break;
+	case 19:
+		owner->animate(ANIM_MODE_4, 4, -1, this);
+		break;
+	case 20:
+		PaletteRotation *rot;
+		rot = BF_GLOBALS._scenePalette.addRotation(64, 79, 1);
+		rot->setDelay(10);
+		rot = BF_GLOBALS._scenePalette.addRotation(96, 111, 1);
+		rot->setDelay(10);
+		
+		scene->setAction(&scene->_sequenceManager, this, 225, &scene->_object15, &scene->_object16,
+			&scene->_object17, &scene->_object18, &scene->_object19, &scene->_object20, NULL);
+		break;
+	case 21:
+		scene->_object21.hide();
+		BF_GLOBALS._player._moveDiff.x = 5;
+		BF_GLOBALS._sceneManager.changeScene(265);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene225::Action2::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->setStrip(3);
+		owner->setFrame(2);
+		scene->_action1.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene225::Action3::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->setStrip(3);
+		owner->setFrame(1);
+		scene->_action1.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene225::Action4::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->setStrip(5);
+		owner->setFrame(4);
+		scene->_action1.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene225::Action5::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->setStrip(3);
+		owner->setFrame(6);
+		scene->_action1.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene225::Action6::signal() {
+	Scene225 *scene = (Scene225 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->setStrip(3);
+		owner->setFrame(3);
+		scene->_action1.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene225::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(1225);
+	loadBackground(-320, 0);
+
+	_object8.postInit();
+	_object8.setVisage(1225);
+	_object8.setPosition(Common::Point(114, 119));
+	_object8._frame = 1;
+	_object8.setStrip(2);
+	_object8.changeZoom(100);
+
+	_object9.postInit();
+	_object9.setVisage(1226);
+	_object9.setPosition(Common::Point(83, 128));
+	_object9.setStrip(1);
+	_object9.changeZoom(100);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setPosition(Common::Point(83, 0));
+	BF_GLOBALS._player.hide();
+
+	_object10.postInit();
+	_object10.setVisage(1225);
+	_object10.setPosition(Common::Point(237, 29));
+	_object10.setStrip(1);
+	_object10._frame = 1;
+	_object10.changeZoom(100);
+	_object10._numFrames = 2;
+
+	_object11.postInit();
+	_object11.setVisage(1225);
+	_object11.setPosition(Common::Point(290, 47));
+	_object11.setStrip(1);
+	_object11._frame = 1;
+	_object11.changeZoom(100);
+	_object11._numFrames = 2;
+	
+	_object12.postInit();
+	_object12.setVisage(1225);
+	_object12.setPosition(Common::Point(368, 35));
+	_object12.setStrip(4);
+	_object12._frame = 1;
+	_object12.changeZoom(100);
+	_object12._numFrames = 2;
+
+	_object13.postInit();
+	_object13.setVisage(1225);
+	_object13.setPosition(Common::Point(416, 33));
+	_object13.setStrip(1);
+	_object13._frame = 1;
+	_object13.changeZoom(100);
+	_object13._numFrames = 2;
+
+	_object14.postInit();
+	_object14.setVisage(1225);
+	_object14.setPosition(Common::Point(476, 30));
+	_object14.setStrip(1);
+	_object14._frame = 1;
+	_object14.changeZoom(100);
+	_object14._numFrames = 2;
+
+	_object21.postInit();
+	_object21.setVisage(235);
+	_object21.setStrip(1);
+	_object21._frame = 1;
+	_object21.setPosition(Common::Point(498, 41));
+	_object21.changeZoom(100);
+	_object21.hide();
+
+	_object15.postInit();
+	_object15.hide();
+	_object16.postInit();
+	_object16.hide();
+	_object17.postInit();
+	_object17.hide();
+	_object18.postInit();
+	_object18.hide();
+	_object19.postInit();
+	_object19.hide();
+	_object20.postInit();
+	_object20.hide();
+
+	_object9.setAction(&_action1);
+	_object10.setAction(&_action2);
+	_object11.setAction(&_action3);
+	_object12.setAction(&_action4);
+	_object13.setAction(&_action5);
+	_object14.setAction(&_action6);
+}
+
+void Scene225::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
