@@ -7,16 +7,21 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
+		<string>ca</string>
+		<string>cs</string>
 		<string>da</string>
 		<string>de</string>
 		<string>es</string>
 		<string>fr</string>
 		<string>hu</string>
 		<string>it</string>
-		<string>no</string>
+		<string>nb</string>
+		<string>nn</string>
 		<string>pl</string>
-		<string>se</string>
+		<string>pt</string>
 		<string>ru</string>
+		<string>se</string>
+		<string>uk</string>
 	</array>
 	<key>CFBundleDisplayName</key>
 	<string>ScummVM</string>
