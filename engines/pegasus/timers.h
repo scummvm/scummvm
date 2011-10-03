@@ -50,6 +50,7 @@ protected:
 	virtual void useIdleTime() {}
 
 	bool _isIdling;
+	Idler *_nextIdler, *_prevIdler;
 };
 
 enum {

@@ -31,6 +31,8 @@ namespace Pegasus {
 
 Idler::Idler() {
 	_isIdling = false;
+	_nextIdler = 0;
+	_prevIdler = 0;
 }
 
 Idler::~Idler() {

@@ -78,6 +78,7 @@ PegasusEngine::PegasusEngine(OSystem *syst, const PegasusGameDescription *gamede
 	_switchModesSync = false;
 	_draggingItem = 0;
 	_dragType = kDragNoDrag;
+	_idlerHead = 0;
 }
 
 PegasusEngine::~PegasusEngine() {
@@ -311,16 +312,27 @@ GUI::Debugger *PegasusEngine::getDebugger() {
 }
 
 void PegasusEngine::addIdler(Idler *idler) {
-	_idlers.push_back(idler);
+	idler->_nextIdler = _idlerHead;
+	if (_idlerHead)
+		_idlerHead->_prevIdler = idler;
+	idler->_prevIdler = 0;
+	_idlerHead = idler;
 }
 
 void PegasusEngine::removeIdler(Idler *idler) {
-	_idlers.remove(idler);
+	if (idler->_prevIdler)
+		idler->_prevIdler->_nextIdler = idler->_nextIdler;
+	if (idler->_nextIdler)
+		idler->_nextIdler->_prevIdler = idler->_prevIdler;
+	if (idler == _idlerHead)
+		_idlerHead = idler->_nextIdler;
+	idler->_nextIdler = 0;
+	idler->_prevIdler = 0;
 }
 
 void PegasusEngine::giveIdleTime() {
-	for (Common::List<Idler *>::iterator it = _idlers.begin(); it != _idlers.end(); it++)
-		(*it)->useIdleTime();
+	for (Idler *idler = _idlerHead; idler != 0; idler = idler->_nextIdler)
+		idler->useIdleTime();
 }
 
 void PegasusEngine::addTimeBase(TimeBase *timeBase) {

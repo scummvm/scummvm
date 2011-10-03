@@ -211,7 +211,7 @@ private:
 	Common::String _introDirectory;
 
 	// Idlers
-	Common::List<Idler *> _idlers;
+	Idler *_idlerHead;
 	void giveIdleTime();
 
 	// Items
