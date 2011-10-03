@@ -25,10 +25,9 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-// #include "backends/platform/gph/gph-options.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/gph/gph-hw.h"
-#include "backends/platform/gph/gph-sdl.h"
+#include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -105,8 +104,9 @@ void OSystem_GPH::initBackend() {
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
 	#ifdef DUMP_STDOUT
-		// The GP2X Wiz has a serial console on the breakout board but most users do not use this so we
-		// output all our STDOUT and STDERR to files for debug purposes.
+		// The GPH devices have a serial console on the breakout board
+		// but most users do not use this so we output all our STDOUT
+		// and STDERR to files for debug purposes.
 		char STDOUT_FILE[PATH_MAX+1];
 		char STDERR_FILE[PATH_MAX+1];
 
@@ -168,9 +168,6 @@ void OSystem_GPH::initBackend() {
 
 	/* Make sure SDL knows that we have a joystick we want to use. */
 	ConfMan.setInt("joystick_num", 0);
-
-	/* Now setup any device specific user options (Left handed mode, that sort of thing). */
-	// GPH::setOptions();
 
 	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();

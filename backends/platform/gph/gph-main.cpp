@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/platform/gph/gph-sdl.h"
+#include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
 
