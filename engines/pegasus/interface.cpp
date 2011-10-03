@@ -574,6 +574,7 @@ void Interface::raiseInventoryDrawerSync() {
 	raiseInventoryDrawer(false);
 
 	while (_inventoryLid.isRunning()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -582,6 +583,7 @@ void Interface::raiseInventoryDrawerSync() {
 	inventoryLidOpen(false);
 
 	while (_inventoryPush.isFading()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -596,6 +598,7 @@ void Interface::lowerInventoryDrawerSync() {
 	lowerInventoryDrawer(false);
 
 	while (_inventoryPush.isFading()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -604,6 +607,7 @@ void Interface::lowerInventoryDrawerSync() {
 	inventoryDrawerDown(false);
 
 	while (_inventoryLid.isRunning()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -618,6 +622,7 @@ void Interface::raiseBiochipDrawerSync() {
 	raiseBiochipDrawer(false);
 
 	while (_biochipLid.isRunning()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -626,6 +631,7 @@ void Interface::raiseBiochipDrawerSync() {
 	biochipLidOpen(false);
 
 	while (_biochipPush.isFading()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -640,6 +646,7 @@ void Interface::lowerBiochipDrawerSync() {
 	lowerBiochipDrawer(false);
 
 	while (_biochipPush.isFading()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
@@ -648,6 +655,7 @@ void Interface::lowerBiochipDrawerSync() {
 	biochipDrawerDown(false);
 
 	while (_biochipLid.isRunning()) {
+		vm->checkCallBacks();
 		vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
