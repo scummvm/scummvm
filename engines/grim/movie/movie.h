@@ -23,31 +23,21 @@
 #ifndef GRIM_MOVIE_PLAYER_H
 #define GRIM_MOVIE_PLAYER_H
 
-#include <zlib.h>
-
-#include "common/file.h"
+#include "common/mutex.h"
 #include "common/system.h"
 
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
+#include "video/video_decoder.h"
 
 namespace Grim {
 
 class SaveGame;
 
-struct SavePos {
-	uint32 filePos;
-	z_stream streamBuf;
-	byte *tmpBuf;
-};
-
 class MoviePlayer {
 protected:
-	Common::File _f;
 	Common::String _fname;
-	Audio::SoundHandle _soundHandle;
-	Audio::QueuingAudioStream *_stream;
-
+	Common::Mutex _frameMutex;
+	Video::VideoDecoder *_videoDecoder;		//< Initialize this to your needed subclass of VideoDecoder in the constructor
+	Graphics::Surface *_surface, *_externalSurface;
 	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
@@ -57,63 +47,105 @@ protected:
 	bool _videoFinished;
 	bool _videoPause;
 	bool _videoLooping;
-	struct SavePos *_startPos;
 	int _x, _y;
-	int _width, _height;
-	byte *_internalBuffer, *_externalBuffer;
 
 public:
-	MoviePlayer() {
-		_internalBuffer = NULL;
-		_externalBuffer = NULL;
-		_width = 0;
-		_height = 0;
-		_speed = 0;
-		_channels = -1;
-		_freq = 22050;
-		_videoFinished = false;
-		_videoLooping = false;
-		_videoPause = true;
-		_updateNeeded = false;
-		_startPos = NULL;
-		_stream = NULL;
-		_movieTime = 0;
-		_frame = 0;
-		_x = 0;
-		_y = 0;
-	};
-	virtual ~MoviePlayer() {}
+	MoviePlayer();
+	virtual ~MoviePlayer();
 
-	virtual bool play(const char *filename, bool looping, int x, int y) = 0;
-	virtual void stop() = 0;
+	/**
+	 * Loads a file for playing, and starts playing it.
+	 * the default implementation calls init()/deinit() to handle
+	 * any necessary setup.
+	 *
+	 * @param filename		the file to open
+	 * @param looping		true if we want the video to loop, false otherwise
+	 * @param x				the x-coordinate for the draw-position
+	 * @param y				the y-coordinate for the draw-position
+	 * @see	init
+	 * @see stop
+	 */
+	virtual bool play(Common::String filename, bool looping, int x, int y);
+	virtual void stop();
 	virtual void pause(bool p);
 	virtual bool isPlaying() { return !_videoFinished; }
 	virtual bool isUpdateNeeded() { return _updateNeeded; }
-	virtual byte *getDstPtr() { return _externalBuffer; }
+	virtual Graphics::Surface *getDstSurface();
 	virtual int getX() { return _x; }
 	virtual int getY() { return _y; }
-	virtual int getWidth() {return _width; }
-	virtual int getHeight() { return _height; }
 	virtual int getFrame() { return _frame; }
 	virtual void clearUpdateNeeded() { _updateNeeded = false; }
 	virtual int32 getMovieTime() { return (int32)_movieTime; }
 
-	virtual void saveState(SaveGame *state) = 0;
-	virtual void restoreState(SaveGame *state) = 0;
+	/**
+	 * Saves the state of the video to a savegame
+	 *
+	 * If you overload this in a subclass, call this first thing in the
+	 * overloaded function
+	 *
+	 * @param state			the state to save to
+	 */
+	virtual void saveState(SaveGame *state);
+	virtual void restoreState(SaveGame *state);
 	
 protected:
 	static void timerCallback(void *ptr);
-	virtual void handleFrame() = 0;
-	virtual void init() = 0;
-	virtual void deinit() = 0;
+	/**
+	 * Handles basic stuff per frame, like copying the latest frame to
+	 * _externalBuffer, and updating the frame-counters.
+	 *
+	 * @return false if a frame wasnt drawn to _externalBuffer, true otherwise.
+	 * @see handleFrame
+	 */
+	virtual bool prepareFrame();
+
+	/**
+	 * Frame-handling function.
+	 *
+	 * Perform any codec-specific per-frame operations after prepareFrame has been
+	 * run, this function is called whenever prepareFrame returns true.
+	 *
+	 * @see prepareFrame
+	 * @see clearUpdateNeeded
+	 * @see isUpdateNeeded
+	 */
+	virtual void handleFrame() {};
+
+	/**
+	 * Initialization of buffers
+	 * This function is called by the default-implementation of play,
+	 * and is expected to get the necessary datastructures set up for
+	 * playback, as well as initializing the callback.
+	 *
+	 * @see deinit
+	 */
+	virtual void init();
+
+	/**
+	 * Closes any file/codec-handles, and resets the movie-state to
+	 * a blank MoviePlayer.
+	 *
+	 * @see init
+	 */
+	virtual void deinit();
+
+	/**
+	 * Loads a file for playback, any additional setup is not done here, but in
+	 * the play-function. This function is supposed to handle any specifics w.r.t.
+	 * files vs containers (i.e. load from LAB vs load from file).
+	 *
+	 * @see play
+	 * @param filename		The filename to be handled.
+	 */
+	virtual bool loadFile(Common::String filename);
 };
 
 
 // Factory-like functions:
 
 MoviePlayer *CreateMpegPlayer();
-MoviePlayer *CreateSmushPlayer();
-MoviePlayer *CreateBinkPlayer();
+MoviePlayer *CreateSmushPlayer(bool demo);
+MoviePlayer *CreateBinkPlayer(bool demo);
 extern MoviePlayer *g_movie;
 
 } // end of namespace Grim

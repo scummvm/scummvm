@@ -23,6 +23,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/material.h"
@@ -857,10 +859,10 @@ void GfxTinyGL::destroyMaterial(Texture *material) {
 	delete[] (TGLuint *)material->_texture;
 }
 
-void GfxTinyGL::prepareMovieFrame(int width, int height, byte *bitmap) {
-	_smushWidth = width;
-	_smushHeight = height;
-	_smushBitmap = bitmap;
+void GfxTinyGL::prepareMovieFrame(Graphics::Surface* frame) {
+	_smushWidth = frame->w;
+	_smushHeight = frame->h;
+	_smushBitmap = (byte *)frame->pixels;
 }
 
 void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {

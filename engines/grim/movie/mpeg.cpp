@@ -38,15 +38,17 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/movie/mpeg.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 
+#ifdef USE_MPEG2
+
 #define MWIDTH 640
 #define MHEIGHT 400
-
-#ifdef USE_MPEG2
 
 namespace Grim {
 
@@ -67,49 +69,25 @@ protected:
 	}
 };
 
-void MpegPlayer::timerCallback(void *) {
-	((MpegPlayer*)g_movie)->handleFrame();
-}
-
 MpegPlayer::MpegPlayer() : MoviePlayer() {
 	g_movie = this;
 	_speed = 50;
 	_videoBase = new MpegHandler(this, g_system, MWIDTH, MHEIGHT);
 }
 
-MpegPlayer::~MpegPlayer() {
-	deinit();
-}
-
 void MpegPlayer::init() {
-	_frame = 0;
-	_movieTime = 0;
-	_videoPause = false;
-	_updateNeeded = false;
-	_width = MWIDTH;
-	_height = MHEIGHT;
+	MoviePlayer::init();
 
-	assert(!_externalBuffer);
+	// FIXME, deal with pixelformat differently when we get this properly tested.
+	Graphics::PixelFormat format = Graphics::PixelFormat(16, 5, 6, 5, 0, 11, 5, 0, 0);
+	_externalSurface->create(MWIDTH, MHEIGHT, format);
 
-	_externalBuffer = new byte[_width * _height * 2];
-
-	warning("Trying to play %s",_fname.c_str());
-	_videoBase->init(_fname.c_str());
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void MpegPlayer::deinit() {
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
-	if (_externalBuffer) {
-		delete[] _externalBuffer;
-		_externalBuffer = NULL;
-	}
-	if (_videoLooping && _startPos) {
-		delete[] _startPos->tmpBuf;
-		delete[] _startPos;
-		_startPos = NULL;
-	}
 	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
@@ -133,32 +111,14 @@ void MpegPlayer::handleFrame() {
 }
 
 void MpegPlayer::deliverFrameFromDecode(int width, int height, uint16 *dat) {
-	memcpy(_externalBuffer, dat, _width * _height * 2);
+	memcpy(_externalSurface->pixels, dat, _externalSurface->w * _externalSurface->h * 2);
 	_frame++;
 	_updateNeeded = true;
 }
 
-void MpegPlayer::stop() {
-	deinit();
-	g_grim->setMode(ENGINE_MODE_NORMAL);
-}
-
-bool MpegPlayer::play(const char *filename, bool looping, int x, int y) {
-	deinit();
-	_fname = filename;
-
-	if (gDebugLevel == DEBUG_SMUSH)
-		printf("Playing video '%s'.\n", filename);
-
-	init();
-
-	return true;
-}
-
-void MpegPlayer::saveState(SaveGame *state) {
-}
-
-void MpegPlayer::restoreState(SaveGame *state) {
+bool MpegPlayer::loadFile(Common::String filename) {
+	_videoBase->init(_fname.c_str());
+	return true; // FIXME
 }
 
 } // end of namespace Grim

@@ -29,6 +29,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
@@ -1040,7 +1042,11 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::prepareMovieFrame(int width, int height, byte *bitmap) {
+void GfxOpenGL::prepareMovieFrame(Graphics::Surface* frame) {
+	int height = frame->h;
+	int width = frame->w;
+	byte *bitmap = (byte *)frame->pixels;
+
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);

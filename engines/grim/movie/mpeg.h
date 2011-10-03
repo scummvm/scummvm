@@ -41,23 +41,18 @@ namespace Grim {
 
 class MpegPlayer : public MoviePlayer {
 private:
-	Common::File _f;
 	Video::BaseAnimationState *_videoBase;
-
+	Audio::SoundHandle _soundHandle;
+	Audio::QueuingAudioStream *_stream;
 public:
 	MpegPlayer();
-	virtual ~MpegPlayer();
 
-	virtual bool play(const char *filename, bool looping, int x, int y);
-	virtual void stop();
-	virtual void saveState(SaveGame *state);
-	virtual void restoreState(SaveGame *state);
 	void deliverFrameFromDecode(int width, int height, uint16 *dat);
 private:
-	static void timerCallback(void *ptr);
-	virtual void handleFrame();
+	void handleFrame();
 	void init();
 	void deinit();
+	bool loadFile(Common::String filename);
 };
 
 } // end of namespace Grim

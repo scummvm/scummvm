@@ -106,7 +106,7 @@ public:
 	void drawLine(PrimitiveObject *primitive);
 	void drawPolygon(PrimitiveObject *primitive);
 
-	void prepareMovieFrame(int width, int height, byte *bitmap);
+	void prepareMovieFrame(Graphics::Surface* frame);
 	void drawMovieFrame(int offsetX, int offsetY);
 	void releaseMovieFrame();
 

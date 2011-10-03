@@ -25,6 +25,10 @@
 
 #include "math/vector3d.h"
 
+namespace Graphics {
+	struct Surface;
+}
+
 namespace Grim {
 
 struct Shadow;
@@ -194,7 +198,7 @@ public:
 	 * @see drawMovieFrame
 	 * @see releaseMovieFrame
 	 */
-	virtual void prepareMovieFrame(int width, int height, byte *bitmap) = 0;
+	virtual void prepareMovieFrame(Graphics::Surface* frame) = 0;
 	virtual void drawMovieFrame(int offsetX, int offsetY) = 0;
 
 	/**
