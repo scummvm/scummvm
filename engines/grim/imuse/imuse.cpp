@@ -352,7 +352,10 @@ void Imuse::switchToNextRegion(Track *track) {
 
 	ImuseSndMgr::SoundDesc *soundDesc = track->soundDesc;
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if (jumpId == -1)
+	// It seems 128 is a special value meaning it should not force the 0 hookId,
+	// otherwise the sound hkwine.imu when glottis drinks the wine in the barrel
+	// in hk won't stop.
+	if (jumpId == -1 && track->curHookId != 128)
 		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
 		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
