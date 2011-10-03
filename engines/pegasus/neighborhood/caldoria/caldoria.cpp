@@ -682,7 +682,7 @@ void Caldoria::spotCompleted() {
 		startExtraSequence(kBinocularsZoomInOnShip, kExtraCompletedFlag, kFilterNoInput);
 }
 
-void Caldoria::arriveAt(const tRoomID room, const tDirectionConstant direction) {	
+void Caldoria::arriveAt(const tRoomID room, const tDirectionConstant direction) {
 	switch (room) {
 	case kCaldoria56:
 		if (!GameState.getCaldoriaGunAimed())
@@ -798,6 +798,7 @@ void Caldoria::arriveAt(const tRoomID room, const tDirectionConstant direction) 
 
 void Caldoria::doAIRecalibration() {
 	GameState.setCaldoriaDidRecalibration(true);
+
 	if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB1", true, kRecalibrationInterruptFilter))
 		return;
 
@@ -1896,17 +1897,18 @@ Common::String Caldoria::getHintMovie(uint hintNum) {
 }
 
 void Caldoria::updateCursor(const Common::Point where, const Hotspot *cursorSpot) {
-	switch (cursorSpot->getObjectID()) {
-	case kCa4DEnvironCloseSpotID:
-		_vm->_cursor->setCurrentFrameIndex(2);
-		break;
-	case kCaldoriaKioskSpotID:
-		_vm->_cursor->setCurrentFrameIndex(3);
-		break;
-	default:
-		Neighborhood::updateCursor(where, cursorSpot);
-		break;
+	if (cursorSpot) {
+		switch (cursorSpot->getObjectID()) {
+		case kCa4DEnvironCloseSpotID:
+			_vm->_cursor->setCurrentFrameIndex(2);
+			return;
+		case kCaldoriaKioskSpotID:
+			_vm->_cursor->setCurrentFrameIndex(3);
+			return;
+		}
 	}
+
+	Neighborhood::updateCursor(where, cursorSpot);
 }
 
 Common::String Caldoria::getNavMovieName() {
