@@ -262,11 +262,9 @@ void EnergyMonitor::calibrateEnergyBar() {
 	_energyLight.setCurrentFrameIndex(0);
 	_energyLight.hide();
 
-#if 0
-	// FIXME: This doesn't work yet
 	show();
 	setEnergyValue(0);
-	setEnergyDrainRate(-kMaxJMPEnergy / 2);
+	setEnergyDrainRate(-(int32)kMaxJMPEnergy / 2);
 
 	//	Make sure warning light is hidden...
 	_energyLight.hide();
@@ -279,7 +277,6 @@ void EnergyMonitor::calibrateEnergyBar() {
 	vm->refreshDisplay();
 	setEnergyDrainRate(0);
 	hide();
-#endif
 
 	_calibrating = false;
 }
