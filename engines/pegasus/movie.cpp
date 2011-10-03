@@ -138,6 +138,7 @@ void Movie::setTime(const TimeValue time, const TimeScale scale) {
 
 		_video->seekToTime(Audio::Timestamp(0, timeFrac.getNumerator(), timeFrac.getDenominator()));
 		_time = timeFrac;
+		_lastMillis = 0;
 	}
 }
 
