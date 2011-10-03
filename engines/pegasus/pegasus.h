@@ -28,9 +28,9 @@
 
 #include "common/list.h"
 #include "common/macresman.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/rect.h"
 #include "common/util.h"
 
 #include "engines/engine.h"
@@ -43,6 +43,10 @@
 #include "pegasus/items/inventory.h"
 #include "pegasus/items/itemdragger.h"
 #include "pegasus/neighborhood/neighborhood.h"
+
+namespace Common {
+	class RandomSource;
+}
 
 namespace Video {
 	class SeekableVideoDecoder;
@@ -102,6 +106,7 @@ public:
 	void createInterface();
 	void setGameMode(const tGameMode);
 	tGameMode getGameMode() const { return _gameMode; }
+	uint getRandomBit();
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
@@ -112,6 +117,7 @@ public:
 	tDeathReason getEnergyDeathReason() { return _deathReason; }
 	void resetEnergyDeathReason();
 	void die(const tDeathReason);
+	void playEndMessage();
 
 	// Volume
 	uint16 getSoundFXLevel() { return _FXLevel; }
@@ -234,6 +240,7 @@ private:
 	bool playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x, uint16 y);
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
+	Common::RandomSource *_rnd;
 
 	// Menu
 	GameMenu *_gameMenu;

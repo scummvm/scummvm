@@ -31,6 +31,7 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/random.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "gui/saveload.h"
@@ -58,6 +59,7 @@
 #include "pegasus/items/inventory/inventoryitem.h"
 #include "pegasus/items/inventory/keycard.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 
 namespace Pegasus {
@@ -85,6 +87,7 @@ PegasusEngine::~PegasusEngine() {
 	delete _continuePoint;
 	delete _gameMenu;
 	delete _neighborhood;
+	delete _rnd;
 
 	// NOTE: This must be deleted last!
 	delete _gfx;
@@ -95,6 +98,7 @@ Common::Error PegasusEngine::run() {
 	_gfx = new GraphicsManager(this);
 	_resFork = new Common::MacResManager();
 	_cursor = new Cursor();
+	_rnd = new Common::RandomSource("Pegasus");
 	
 	if (!_resFork->open("JMP PP Resources") || !_resFork->hasResFork())
 		error("Could not load JMP PP Resources");
@@ -532,32 +536,6 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 	if (&_shellNotification == notification) {
 		switch (flags) {
 		case kGameStartingFlag: {
-#if 0
-			// This is just some graphical test that I wrote; I'll
-			// keep it around for reference.
-			Movie opening(1);
-			opening.initFromMovieFile(_introDirectory + "/Big Movie.movie");
-			opening.setTime(10, 1);
-			opening.setStart(10, 1);
-			opening.startDisplaying();
-			opening.show();
-			opening.start();
-			opening.setFlags(kLoopTimeBase);
-
-			Input input;
-			InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
-
-			while (opening.isRunning() && !shouldQuit()) {
-				checkCallBacks();
-				_gfx->updateDisplay();
-
-				InputHandler::getCurrentInputDevice()->getInput(input, kFilterAllInput);
-				if (input.anyInput())
-					break;
-
-				_system->delayMillis(10);
-			}
-#else
 			if (!isDemo())
 				runIntro();
 			else
@@ -570,7 +548,6 @@ void PegasusEngine::receiveNotification(Notification *notification, const tNotif
 			_gfx->invalRect(Common::Rect(0, 0, 640, 480));
 			_gfx->updateDisplay();
 			((MainMenu *)_gameMenu)->startMainMenuLoop();
-#endif
 			break;
 		}
 		case kPlayerDiedFlag:
@@ -638,13 +615,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 	switch (command) {
 	case kMenuCmdStartAdventure:
 		GameState.setWalkthroughMode(false);
-
-		// Only start the game in the demo for now
-		// (until it works and I implement Caldoria)
-		if (isDemo())
-			startNewGame();
-		else
-			error("Start new game (adventure mode)");
+		startNewGame();
 		break;
 	case kMenuCmdCredits:
 		if (isDemo()) {
@@ -673,7 +644,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		break;
 	case kMenuCmdStartWalkthrough:
 		GameState.setWalkthroughMode(true);
-		error("Start new game (walkthrough mode)");
+		startNewGame();
 		break;
 	case kMenuCmdRestore:
 	case kMenuCmdDeathRestore:
@@ -1371,6 +1342,9 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 	// TODO: CD check
 	
 	switch (neighborhoodID) {
+	case kCaldoriaID:
+		neighborhood = new Caldoria(g_AIArea, this);
+		break;
 	case kPrehistoricID:
 		neighborhood = new Prehistoric(g_AIArea, this);
 		break;
@@ -1867,6 +1841,20 @@ void PegasusEngine::pauseEngineIntern(bool pause) {
 		for (Common::List<TimeBase *>::iterator it = _timeBases.begin(); it != _timeBases.end(); it++)
 			(*it)->resume();
 	}
+}
+
+uint PegasusEngine::getRandomBit() {
+	return _rnd->getRandomBit();
+}
+
+void PegasusEngine::playEndMessage() {
+	if (g_interface) {
+		allowInput(false);
+		g_interface->playEndMessage();
+		allowInput(true);
+	}
+
+	die(kPlayerWonGame);
 }
 
 } // End of namespace Pegasus

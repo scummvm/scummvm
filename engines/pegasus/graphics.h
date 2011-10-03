@@ -32,6 +32,7 @@
 #include "graphics/pict.h"
 #include "graphics/surface.h"
 
+#include "pegasus/constants.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/util.h"
 
@@ -56,8 +57,10 @@ public:
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
 	DisplayElement *findDisplayElement(const tDisplayElementID id);
-	void doFadeOutSync();
-	void doFadeInSync();
+
+	// These default to black
+	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
+	void doFadeInSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
 
 protected:
 	void markCursorAsDirty();

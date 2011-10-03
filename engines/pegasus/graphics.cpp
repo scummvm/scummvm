@@ -194,11 +194,18 @@ DisplayElement *GraphicsManager::findDisplayElement(const tDisplayElementID id) 
 	return 0;
 }
 
-void GraphicsManager::doFadeOutSync() {
-	// TODO
+void GraphicsManager::doFadeOutSync(const TimeValue, const TimeValue, uint32 color) {
+	if (color == 0)
+		color = g_system->getScreenFormat().RGBToColor(0, 0, 0);
+
+	// HACK: Until fading out is done, white-out the screen here
+	Graphics::Surface *screen = g_system->lockScreen();
+	screen->fillRect(Common::Rect(0, 0, 640, 480), color);
+	g_system->unlockScreen();
+	g_system->updateScreen();
 }
 
-void GraphicsManager::doFadeInSync() {
+void GraphicsManager::doFadeInSync(const TimeValue, const TimeValue, uint32) {
 	// TODO
 }
 

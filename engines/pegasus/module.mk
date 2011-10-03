@@ -51,6 +51,10 @@ MODULE_OBJS = \
 	neighborhood/turn.o \
 	neighborhood/view.o \
 	neighborhood/zoom.o \
+	neighborhood/caldoria/caldoria.o \
+	neighborhood/caldoria/caldoria4dsystem.o \
+	neighborhood/caldoria/caldoriamessages.o \
+	neighborhood/caldoria/caldoriamirror.o \
 	neighborhood/prehistoric/prehistoric.o
 
 

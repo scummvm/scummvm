@@ -92,6 +92,7 @@ bool operator==(const tQueueRequest &arg1, const tQueueRequest &arg2);
 bool operator!=(const tQueueRequest &arg1, const tQueueRequest &arg2);
 
 class GameInteraction;
+class Item;
 class Neighborhood;
 
 class StriderCallBack : public TimeBaseCallBack {
