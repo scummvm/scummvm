@@ -326,6 +326,9 @@ void GPHGraphicsManager::internUpdateScreen() {
 		_dirtyRectList[0].y = 0;
 		_dirtyRectList[0].w = width;
 		_dirtyRectList[0].h = height;
+
+		// HACK: Make sure the full hardware screen is wiped clean.
+		SDL_FillRect(_hwscreen, NULL, 0);
 	}
 
 	// Only draw anything if necessary
@@ -454,82 +457,34 @@ void GPHGraphicsManager::hideOverlay() {
 	SurfaceSdlGraphicsManager::hideOverlay();
 }
 
-
-//bool GPHGraphicsManager::loadGFXMode() {
-
-
-//	_videoMode.overlayWidth = 320;
-//	_videoMode.overlayHeight = 240;
-//	_videoMode.fullscreen = true;
-//
-//	/* Forcefully disable aspect ratio correction for games
-//	   that start with a native 240px height resolution
-//	   This corrects games with non-standard resolutions
-//	   such as MM Nes (256x240).
-//	*/
-//	if(_videoMode.screenHeight == 240) {
-//		_videoMode.aspectRatioCorrection = false;
-//	}
-
-//	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
-//	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
-//		_videoMode.aspectRatioCorrection = false;
-//		setGraphicsMode(GFX_HALF);
-//		debug("GraphicsMode set to HALF");
-//	} else {
-//		setGraphicsMode(GFX_NORMAL);
-//		debug("GraphicsMode set to NORMAL");
-//	}
-
-
-//	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
-//		//_videoMode.overlayWidth = _videoMode.screenWidth / 2;
-//		//_videoMode.overlayHeight = _videoMode.screenHeight / 2;
-//		_videoMode.overlayWidth = 320;
-//		_videoMode.overlayHeight = 240;
-//		_videoMode.fullscreen = true;
-//	} else {
-//
-//		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-//		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-//
-//		if (_videoMode.aspectRatioCorrection)
-//			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-//
-//		//_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-//		//_videoMode.hardwareHeight = effectiveScreenHeight();
-//		_videoMode.hardwareWidth = 320;
-//		_videoMode.hardwareHeight = 240;
-//
-//	}
-
-//	return SurfaceSdlGraphicsManager::loadGFXMode();
-//}
-
 bool GPHGraphicsManager::loadGFXMode() {
+
+	// We don't offer anything other than fullscreen on GPH devices so let’s not even pretend.
+	_videoMode.fullscreen = true;
+
+	// Set the hardware stats to match the LCD.
+	_videoMode.hardwareWidth = 320;
+	_videoMode.hardwareHeight = 240;
+
+	if (_videoMode.screenHeight != 200)
+		_videoMode.aspectRatioCorrection = false;
+
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
-//		printf("GFX_HALF\n");
 	} else {
 		setGraphicsMode(GFX_NORMAL);
-//		printf("GFX_NORMAL\n");
 	}
 
 	if ((_videoMode.mode == GFX_HALF) && !_overlayVisible) {
 		_videoMode.overlayWidth = _videoMode.screenWidth / 2;
 		_videoMode.overlayHeight = _videoMode.screenHeight / 2;
-		_videoMode.fullscreen = true;
 	} else {
-
 		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
 		if (_videoMode.aspectRatioCorrection)
 			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-
-		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = effectiveScreenHeight();
 	}
 	return SurfaceSdlGraphicsManager::loadGFXMode();
 }
@@ -545,6 +500,10 @@ void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+		case OSystem::kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		blitCursor();
+		break;
 	default:
 		break;
 	}
@@ -556,6 +515,8 @@ bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
 	switch (f) {
 		case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
+		case OSystem::kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}
