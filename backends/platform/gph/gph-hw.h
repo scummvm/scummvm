@@ -32,9 +32,9 @@ namespace WIZ_HW {
 
 extern int volumeLevel;
 
-extern void	deviceInit();
-extern void	deviceDeinit();
-extern void	mixerMoveVolume(int);
+extern void deviceInit();
+extern void deviceDeinit();
+extern void mixerMoveVolume(int);
 
 } /* namespace WIZ_HW */
 
@@ -42,7 +42,7 @@ namespace GPH {
 
 extern int tapmodeLevel;
 
-extern void	ToggleTapMode();
+extern void ToggleTapMode();
 
 } /* namespace GPH */
 

@@ -36,7 +36,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource)
- : SurfaceSdlGraphicsManager(sdlEventSource) {
+	: SurfaceSdlGraphicsManager(sdlEventSource) {
 }
 
 const OSystem::GraphicsMode *GPHGraphicsManager::getSupportedGraphicsModes() const {
@@ -138,7 +138,7 @@ void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *f
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
 
-	if (w > 320 || h > 240){
+	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
 		_eventSource->toggleMouseGrab();
@@ -161,9 +161,9 @@ void GPHGraphicsManager::drawMouse() {
 	int width, height;
 	int hotX, hotY;
 
-	if (_videoMode.mode == GFX_HALF && !_overlayVisible){
-		dst.x = _mouseCurState.x/2;
-		dst.y = _mouseCurState.y/2;
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+		dst.x = _mouseCurState.x / 2;
+		dst.y = _mouseCurState.y / 2;
 	} else {
 		dst.x = _mouseCurState.x;
 		dst.y = _mouseCurState.y;
@@ -230,9 +230,9 @@ void GPHGraphicsManager::undrawMouse() {
 	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
 		return;
 
-	if (_mouseBackup.w != 0 && _mouseBackup.h != 0){
-		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
-			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+			addDirtyRect(x * 2, y * 2, _mouseBackup.w * 2, _mouseBackup.h * 2);
 		} else {
 			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
 		}
@@ -252,8 +252,8 @@ void GPHGraphicsManager::internUpdateScreen() {
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos ||
-		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+	        (_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth *_videoMode.scaleFactor, _newShakePos *_videoMode.scaleFactor};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
@@ -269,8 +269,8 @@ void GPHGraphicsManager::internUpdateScreen() {
 	// screen surface accordingly.
 	if (_screen && _paletteDirtyEnd != 0) {
 		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
+		              _paletteDirtyStart,
+		              _paletteDirtyEnd - _paletteDirtyStart);
 
 		_paletteDirtyEnd = 0;
 
@@ -340,8 +340,8 @@ void GPHGraphicsManager::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+			dst.x++;    // Shift rect by one since 2xSai needs to access the data around
+			dst.y++;    // any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
 				error("SDL_BlitSurface failed: %s", SDL_GetError());
@@ -377,11 +377,11 @@ void GPHGraphicsManager::internUpdateScreen() {
 				assert(scalerProc != NULL);
 
 				if ((_videoMode.mode == GFX_HALF) && (scalerProc == DownscaleAllByHalf)) {
-					if (dst_x%2==1){
+					if (dst_x % 2 == 1) {
 						dst_x--;
 						dst_w++;
 					}
-					if (dst_y%2==1){
+					if (dst_y % 2 == 1) {
 						dst_y--;
 						dst_h++;
 					}
@@ -391,14 +391,14 @@ void GPHGraphicsManager::internUpdateScreen() {
 					dst_y = dst_y / 2;
 
 					scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
-						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
+					           (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 				} else {
 					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
 					           (byte *)_hwscreen->pixels + r->x * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 				}
 			}
 
-			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf){
+			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf) {
 				r->w = r->w / 2;
 				r->h = dst_h / 2;
 			} else {
@@ -422,7 +422,7 @@ void GPHGraphicsManager::internUpdateScreen() {
 		// This is necessary if shaking is active.
 		if (_forceFull) {
 			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight()/2 : effectiveScreenHeight();
+			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight() / 2 : effectiveScreenHeight();
 		}
 
 		drawMouse();
@@ -442,7 +442,7 @@ void GPHGraphicsManager::internUpdateScreen() {
 }
 
 void GPHGraphicsManager::showOverlay() {
-	if (_videoMode.mode == GFX_HALF){
+	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
@@ -450,7 +450,7 @@ void GPHGraphicsManager::showOverlay() {
 }
 
 void GPHGraphicsManager::hideOverlay() {
-	if (_videoMode.mode == GFX_HALF){
+	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
@@ -497,10 +497,10 @@ bool GPHGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void GPHGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
+	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
-		case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
 		break;
@@ -513,9 +513,9 @@ bool GPHGraphicsManager::getFeatureState(OSystem::Feature f) {
 	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
+	case OSystem::kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
-		case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureCursorPalette:
 		return !_cursorPaletteDisabled;
 	default:
 		return false;
@@ -532,7 +532,7 @@ SurfaceSdlGraphicsManager::VideoState *GPHGraphicsManager::getVideoMode() {
 
 void GPHGraphicsManager::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
 			x = x / 2;
 			y = y / 2;
 		}

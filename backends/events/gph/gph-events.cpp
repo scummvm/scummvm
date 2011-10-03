@@ -42,167 +42,141 @@
 #define JOY_YAXIS 1
 
 /* Quick default button states for modifiers. */
-int BUTTON_STATE_L					=	false;
+int BUTTON_STATE_L                  =   false;
 
 #if defined(CAANOO)
 
-	/* Caanoo: Main Joystick Button Mappings */
-	/* 		   The Caanoo has an analogue stick so no digital DPAD */
-	enum {
-		/* Joystick Buttons */
-		BUTTON_A			= 0,
-		BUTTON_X			= 1,
-		BUTTON_B			= 2,
-		BUTTON_Y			= 3,
-		BUTTON_L			= 4,
-		BUTTON_R			= 5,
-		BUTTON_HOME			= 6,	// Home
-		BUTTON_HOLD			= 7,	// Hold (on Power)
-		BUTTON_HELP			= 8,	// Help I
-		BUTTON_HELP2		= 9,	// Help II
-		BUTTON_CLICK		= 10	// Stick Click
-	};
+/* Caanoo: Main Joystick Button Mappings */
+/*         The Caanoo has an analogue stick so no digital DPAD */
+enum {
+	/* Joystick Buttons */
+	BUTTON_A            = 0,
+	BUTTON_X            = 1,
+	BUTTON_B            = 2,
+	BUTTON_Y            = 3,
+	BUTTON_L            = 4,
+	BUTTON_R            = 5,
+	BUTTON_HOME         = 6,    // Home
+	BUTTON_HOLD         = 7,    // Hold (on Power)
+	BUTTON_HELP         = 8,    // Help I
+	BUTTON_HELP2        = 9,    // Help II
+	BUTTON_CLICK        = 10    // Stick Click
+};
 
-	enum {
-		/* Unused Joystick Buttons on the Caanoo */
-		BUTTON_VOLUP		= 51,
-		BUTTON_VOLDOWN		= 52,
-		BUTTON_UP			= 53,
-		BUTTON_UPLEFT		= 54,
-		BUTTON_LEFT			= 55,
-		BUTTON_DOWNLEFT		= 56,
-		BUTTON_DOWN			= 57,
-		BUTTON_DOWNRIGHT	= 58,
-		BUTTON_RIGHT		= 59,
-		BUTTON_UPRIGHT		= 60,
-		BUTTON_MENU			= 61,
-		BUTTON_SELECT		= 62
-	};
+enum {
+	/* Unused Joystick Buttons on the Caanoo */
+	BUTTON_VOLUP        = 51,
+	BUTTON_VOLDOWN      = 52,
+	BUTTON_UP           = 53,
+	BUTTON_UPLEFT       = 54,
+	BUTTON_LEFT         = 55,
+	BUTTON_DOWNLEFT     = 56,
+	BUTTON_DOWN         = 57,
+	BUTTON_DOWNRIGHT    = 58,
+	BUTTON_RIGHT        = 59,
+	BUTTON_UPRIGHT      = 60,
+	BUTTON_MENU         = 61,
+	BUTTON_SELECT       = 62
+};
 
-#endif
+#elif defined(GP2XWIZ)
 
-#if defined(GP2XWIZ)
+/* Wiz: Main Joystick Mappings */
+enum {
+	/* DPAD */
+	BUTTON_UP           = 0,
+	BUTTON_UPLEFT       = 1,
+	BUTTON_LEFT         = 2,
+	BUTTON_DOWNLEFT     = 3,
+	BUTTON_DOWN         = 4,
+	BUTTON_DOWNRIGHT    = 5,
+	BUTTON_RIGHT        = 6,
+	BUTTON_UPRIGHT      = 7,
+	/* Joystick Buttons */
+	BUTTON_MENU         = 8,
+	BUTTON_SELECT       = 9,
+	BUTTON_L            = 10,
+	BUTTON_R            = 11,
+	BUTTON_A            = 12,
+	BUTTON_B            = 13,
+	BUTTON_X            = 14,
+	BUTTON_Y            = 15,
+	BUTTON_VOLUP        = 16,
+	BUTTON_VOLDOWN      = 17
+};
 
-	/* Wiz: Main Joystick Mappings */
-	enum {
-		/* DPAD */
-		BUTTON_UP			= 0,
-		BUTTON_UPLEFT		= 1,
-		BUTTON_LEFT			= 2,
-		BUTTON_DOWNLEFT		= 3,
-		BUTTON_DOWN			= 4,
-		BUTTON_DOWNRIGHT	= 5,
-		BUTTON_RIGHT		= 6,
-		BUTTON_UPRIGHT		= 7,
-		/* Joystick Buttons */
-		BUTTON_MENU			= 8,
-		BUTTON_SELECT		= 9,
-		BUTTON_L			= 10,
-		BUTTON_R			= 11,
-		BUTTON_A			= 12,
-		BUTTON_B			= 13,
-		BUTTON_X			= 14,
-		BUTTON_Y			= 15,
-		BUTTON_VOLUP		= 16,
-		BUTTON_VOLDOWN		= 17
-	};
+enum {
+	/* Unused Joystick Buttons on the Wiz */
+	BUTTON_HOME         = 51,
+	BUTTON_HOLD         = 52,
+	BUTTON_CLICK        = 53,
+	BUTTON_HELP         = 54,
+	BUTTON_HELP2        = 55
+};
 
-	enum {
-		/* Unused Joystick Buttons on the Wiz */
-		BUTTON_HOME			= 51,
-		BUTTON_HOLD			= 52,
-		BUTTON_CLICK		= 53,
-		BUTTON_HELP			= 54,
-		BUTTON_HELP2		= 55
-	};
-
-#endif
-
-#if defined(GP2X)
+#elif defined(GP2X)
 
 enum {
 	/* DPAD/Stick */
-	BUTTON_UP			= 0,
-	BUTTON_UPLEFT		= 1,
-	BUTTON_LEFT			= 2,
-	BUTTON_DOWNLEFT		= 3,
-	BUTTON_DOWN			= 4,
-	BUTTON_DOWNRIGHT	= 5,
-	BUTTON_RIGHT		= 6,
-	BUTTON_UPRIGHT		= 7,
+	BUTTON_UP           = 0,
+	BUTTON_UPLEFT       = 1,
+	BUTTON_LEFT         = 2,
+	BUTTON_DOWNLEFT     = 3,
+	BUTTON_DOWN         = 4,
+	BUTTON_DOWNRIGHT    = 5,
+	BUTTON_RIGHT        = 6,
+	BUTTON_UPRIGHT      = 7,
 	/* Joystick Buttons */
-	BUTTON_MENU			= 8,	// Start on F100 GP2X
-	BUTTON_SELECT		= 9,
-	BUTTON_L			= 10,
-	BUTTON_R			= 11,
-	BUTTON_A			= 12,
-	BUTTON_B			= 13,
-	BUTTON_X			= 14,
-	BUTTON_Y			= 15,
-	BUTTON_VOLUP		= 16,
-	BUTTON_VOLDOWN		= 17,
-	BUTTON_CLICK		= 18
+	BUTTON_MENU         = 8,    // Start on F100 GP2X
+	BUTTON_SELECT       = 9,
+	BUTTON_L            = 10,
+	BUTTON_R            = 11,
+	BUTTON_A            = 12,
+	BUTTON_B            = 13,
+	BUTTON_X            = 14,
+	BUTTON_Y            = 15,
+	BUTTON_VOLUP        = 16,
+	BUTTON_VOLDOWN      = 17,
+	BUTTON_CLICK        = 18
 };
 
 enum {
 	/* Unused Joystick Buttons on the GP2X */
-	BUTTON_HOME			= 51,
-	BUTTON_HOLD			= 52,
-	BUTTON_HELP			= 53,
-	BUTTON_HELP2		= 54
+	BUTTON_HOME         = 51,
+	BUTTON_HOLD         = 52,
+	BUTTON_HELP         = 53,
+	BUTTON_HELP2        = 54
 };
 
 #endif
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT		= 0,
-	TAPMODE_RIGHT		= 1,
-	TAPMODE_HOVER		= 2
+	TAPMODE_LEFT        = 0,
+	TAPMODE_RIGHT       = 1,
+	TAPMODE_HOVER       = 2
 };
 
 GPHEventSource::GPHEventSource()
-	: _buttonStateL(false){
+	: _buttonStateL(false) {
 }
-
-//void GPHEventSource::processMouseEvent(Common::Event &event, int x, int y) {
-//	if (GPHGraphicsManager::_videoMode.mode == GFX_HALF && !GPHGraphicsManager::_overlayVisible){
-//		event.mouse.x = x*2;
-//		event.mouse.y = y*2;
-//	} else {
-//		event.mouse.x = x;
-//		event.mouse.y = y;
-//	}
-//
-//	// Update the "keyboard mouse" coords
-//	_km.x = x;
-//	_km.y = y;
-//
-//	// Adjust for the screen scaling
-//	if (!_overlayVisible) {
-//		event.mouse.x /= _videoMode.scaleFactor;
-//		event.mouse.y /= _videoMode.scaleFactor;
-//		if (_videoMode.aspectRatioCorrection)
-//			event.mouse.y = aspect2Real(event.mouse.y);
-//	}
-//}
 
 void GPHEventSource::moveStick() {
 	bool stickBtn[32];
 
 	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
 
-	if ((stickBtn[0])||(stickBtn[2])||(stickBtn[4])||(stickBtn[6]))
+	if ((stickBtn[0]) || (stickBtn[2]) || (stickBtn[4]) || (stickBtn[6]))
 		stickBtn[1] = stickBtn[3] = stickBtn[5] = stickBtn[7] = 0;
 
-	if ((stickBtn[1])||(stickBtn[2])||(stickBtn[3])) {
-		if (_km.x_down_count!=2) {
+	if ((stickBtn[1]) || (stickBtn[2]) || (stickBtn[3])) {
+		if (_km.x_down_count != 2) {
 			_km.x_vel = -1;
 			_km.x_down_count = 1;
 		} else
 			_km.x_vel = -4;
-	} else if ((stickBtn[5])||(stickBtn[6])||(stickBtn[7])) {
-		if (_km.x_down_count!=2) {
+	} else if ((stickBtn[5]) || (stickBtn[6]) || (stickBtn[7])) {
+		if (_km.x_down_count != 2) {
 			_km.x_vel = 1;
 			_km.x_down_count = 1;
 		} else
@@ -212,14 +186,14 @@ void GPHEventSource::moveStick() {
 		_km.x_down_count = 0;
 	}
 
-	if ((stickBtn[0])||(stickBtn[1])||(stickBtn[7])) {
-		if (_km.y_down_count!=2) {
+	if ((stickBtn[0]) || (stickBtn[1]) || (stickBtn[7])) {
+		if (_km.y_down_count != 2) {
 			_km.y_vel = -1;
 			_km.y_down_count = 1;
 		} else
 			_km.y_vel = -4;
-	} else if ((stickBtn[3])||(stickBtn[4])||(stickBtn[5])) {
-		if (_km.y_down_count!=2) {
+	} else if ((stickBtn[3]) || (stickBtn[4]) || (stickBtn[5])) {
+		if (_km.y_down_count != 2) {
 			_km.y_vel = 1;
 			_km.y_down_count = 1;
 		} else
@@ -233,7 +207,7 @@ void GPHEventSource::moveStick() {
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT){
+	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
 		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
@@ -244,8 +218,7 @@ bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-	}
-	else if (ev.button.button == SDL_BUTTON_RIGHT)
+	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONDOWN;
 #if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 	else if (ev.button.button == SDL_BUTTON_WHEELUP)
@@ -266,7 +239,7 @@ bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 }
 
 bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT){
+	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
 		else if (GPH::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
@@ -277,8 +250,7 @@ bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
-	}
-	else if (ev.button.button == SDL_BUTTON_RIGHT)
+	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONUP;
 #if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
@@ -354,8 +326,8 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 		if (BUTTON_STATE_L == true) {
 			event.type = Common::EVENT_PREDICTIVE_DIALOG;
 		} else {
-		event.kbd.keycode = Common::KEYCODE_PERIOD;
-		event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
+			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
 		}
 		break;
 	case BUTTON_Y:
@@ -500,7 +472,7 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool GPHEventSource::remapKey(SDL_Event &ev,Common::Event &event) {
+bool GPHEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 

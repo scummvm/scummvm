@@ -34,7 +34,7 @@
 #define __GP2XWIZ__
 
 #ifndef PATH_MAX
-	#define PATH_MAX 255
+#define PATH_MAX 255
 #endif
 
 class OSystem_GPH : public OSystem_POSIX {
