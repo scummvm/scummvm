@@ -1299,6 +1299,7 @@ bool Neighborhood::waitMovieFinish(Movie *movie, const tInputBits interruptionFi
 			break;
 		}
 
+		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
 	}
