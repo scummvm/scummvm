@@ -965,7 +965,9 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 			for (Common::FSList::const_iterator file = fslist.begin();
 					file != fslist.end(); ++file) {
 				if (!file->isDirectory()
-						&& file->getName().hasPrefix("monster.so")) {
+						&& (file->getName().hasPrefix("monster.so")
+								|| file->getName().hasPrefix("monkey.so")
+								|| file->getName().hasPrefix("monkey2.so"))) {
 					guiOptions &= ~GUIO_NOSPEECH;
 					break;
 				}
