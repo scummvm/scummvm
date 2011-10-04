@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 
-#include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/lab.h"
 #include "engines/grim/colormap.h"
@@ -32,7 +31,8 @@
 
 namespace Grim {
 
-ImuseSndMgr::ImuseSndMgr() {
+ImuseSndMgr::ImuseSndMgr(bool demo) {
+	_demo = demo;
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		memset(&_sounds[l], 0, sizeof(SoundDesc));
 	}
@@ -173,7 +173,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	strcpy(sound->name, soundName);
 	sound->volGroupId = volGroupId;
 
-	if (!(g_grim->getGameFlags() & ADGF_DEMO) && scumm_stricmp(extension, "imu") == 0) {
+	if (!_demo && scumm_stricmp(extension, "imu") == 0) {
 		sound->blockRes = g_resourceloader->getFileBlock(soundName);
 		if (sound->blockRes) {
 			ptr = (byte *)sound->blockRes->getData();
@@ -185,7 +185,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 			return NULL;
 		}
 	} else if (scumm_stricmp(extension, "wav") == 0 || scumm_stricmp(extension, "imc") == 0 ||
-			(g_grim->getGameFlags() & ADGF_DEMO && scumm_stricmp(extension, "imu") == 0)) {
+			(_demo && scumm_stricmp(extension, "imu") == 0)) {
 		sound->mcmpMgr = new McmpMgr();
 		if (!sound->mcmpMgr->openSound(soundName, &ptr, headerSize)) {
 			closeSound(sound);

@@ -214,15 +214,16 @@ GrimEngine::~GrimEngine() {
 Common::Error GrimEngine::run() {
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
+	bool demo = getGameFlags() & ADGF_DEMO;
 	if (getGameType() == GType_GRIM)
-		g_movie = CreateSmushPlayer(getGameFlags() & ADGF_DEMO);
+		g_movie = CreateSmushPlayer(demo);
 	else if (getGameType() == GType_MONKEY4) {
 		if (_gamePlatform == Common::kPlatformPS2)
 			g_movie = CreateMpegPlayer();
 		else
-			g_movie = CreateBinkPlayer(getGameFlags() & ADGF_DEMO);
+			g_movie = CreateBinkPlayer(demo);
 	}
-	g_imuse = new Imuse(20);
+	g_imuse = new Imuse(20, demo);
 
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
 

@@ -46,6 +46,7 @@ private:
 	ImuseSndMgr *_sound;
 
 	bool _pause;
+	bool _demo;
 
 	int32 _attributes[185];
 	int32 _curMusicState;
@@ -71,7 +72,7 @@ private:
 	void flushTrack(Track *track);
 
 public:
-	Imuse(int fps);
+	Imuse(int fps, bool demo);
 	~Imuse();
 
 	bool startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority, Track *otherTrack);
