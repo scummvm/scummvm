@@ -315,6 +315,10 @@ static void closeDiskImage(ScummDiskImage *img) {
 static bool detectSpeech(const Common::FSList &fslist, const GameSettings * gs) {
 	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
 
+		// FMTOWNS monkey and monkey2 games don't have speech but may have .sou files
+		if (gs->platform == Common::kPlatformFMTowns)
+			return false;
+
 		static const char* basenames[] = {
 			gs->gameid,
 			"monster",
