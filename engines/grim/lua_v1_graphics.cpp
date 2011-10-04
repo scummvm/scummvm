@@ -93,42 +93,41 @@ void L1_CleanBuffer() {
 }
 
 void L1_StartFullscreenMovie() {
-	bool looping = getbool(2), result;
-	int prev_engine_mode = g_grim->getMode();
-
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
 	L1_CleanBuffer();
-	g_grim->setMode(ENGINE_MODE_SMUSH);
-	result = g_movie->play(lua_getstring(name), looping, 0, 0);
+
+	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
+	g_grim->setMode(GrimEngine::SmushMode);
+	bool looping = getbool(2);
+	bool result = g_movie->play(lua_getstring(name), looping, 0, 0);
 	if (!result)
-		g_grim->setMode(prev_engine_mode);
+		g_grim->setMode(prevEngineMode);
 	pushbool(result);
 }
 
 void L1_StartMovie() {
-	bool looping = getbool(2), result;
-	int prev_engine_mode = g_grim->getMode();
-	int x = 0, y = 0;
-
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
+	int x = 0, y = 0;
 	if (!lua_isnil(lua_getparam(3)))
 		x = (int)lua_getnumber(lua_getparam(3));
-
 	if (!lua_isnil(lua_getparam(4)))
 		y = (int)lua_getnumber(lua_getparam(4));
 
-	g_grim->setMode(ENGINE_MODE_NORMAL);
-	result = g_movie->play(lua_getstring(name), looping, x, y);
+	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
+	g_grim->setMode(GrimEngine::NormalMode);
+
+	bool looping = getbool(2);
+	bool result = g_movie->play(lua_getstring(name), looping, x, y);
 	if (!result)
-		g_grim->setMode(prev_engine_mode);
+		g_grim->setMode(prevEngineMode);
 	pushbool(result);
 }
 
@@ -142,7 +141,7 @@ void L1_IsFullscreenMoviePlaying() {
 
 void L1_IsMoviePlaying() {
 	// Previously, if the game was *not* the demo, this checked also if the mode
-	// was ENGINE_MODE_NORMAL. This doesn't seem to be what original does, and causes
+	// was GrimEngine::NormalMode. This doesn't seem to be what original does, and causes
 	// bug #301 because the movie eldepot.snm is played before legslide.snm ends.
 	pushbool(g_movie->isPlaying());
 }
@@ -480,8 +479,8 @@ void L1_DimRegion() {
 void L1_ScreenShot() {
 	int width = (int)lua_getnumber(lua_getparam(1));
 	int height = (int)lua_getnumber(lua_getparam(2));
-	int mode = g_grim->getMode();
-	g_grim->setMode(ENGINE_MODE_NORMAL);
+	GrimEngine::EngineMode mode = g_grim->getMode();
+	g_grim->setMode(GrimEngine::NormalMode);
 	g_grim->updateDisplayScene();
 	g_driver->storeDisplay();
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
@@ -526,11 +525,11 @@ void L1_ForceRefresh() {
 
 void L1_RenderModeUser() {
 	lua_Object param1 = lua_getparam(1);
-	if (!lua_isnil(param1) && g_grim->getMode() != ENGINE_MODE_DRAW) {
+	if (!lua_isnil(param1) && g_grim->getMode() != GrimEngine::DrawMode) {
 		g_grim->setPreviousMode(g_grim->getMode());
 		g_movie->pause(true);
-		g_grim->setMode(ENGINE_MODE_DRAW);
-	} else if (lua_isnil(param1) && g_grim->getMode() == ENGINE_MODE_DRAW) {
+		g_grim->setMode(GrimEngine::DrawMode);
+	} else if (lua_isnil(param1) && g_grim->getMode() == GrimEngine::DrawMode) {
 		g_movie->pause(false);
 		g_grim->refreshDrawMode();
 		g_grim->setMode(g_grim->getPreviousMode());

@@ -45,11 +45,6 @@ class Set;
 class TextObject;
 class PrimitiveObject;
 
-#define ENGINE_MODE_PAUSE	1
-#define ENGINE_MODE_NORMAL	2
-#define ENGINE_MODE_SMUSH	3
-#define ENGINE_MODE_DRAW	4
-
 enum GrimGameType {
 	GType_GRIM,
 	GType_MONKEY4
@@ -71,6 +66,12 @@ protected:
 	virtual Common::Error run();
 
 public:
+	enum EngineMode {
+		PauseMode = 1,
+		NormalMode = 2,
+		SmushMode = 3,
+		DrawMode = 4
+	};
 	enum SpeechMode {
 		TextOnly = 1,
 		VoiceOnly = 2,
@@ -89,10 +90,10 @@ public:
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 
-	void setMode(int mode) { _mode = mode; }
-	int getMode() { return _mode; }
-	void setPreviousMode(int mode) { _previousMode = mode; }
-	int getPreviousMode() { return _previousMode; }
+	void setMode(EngineMode mode) { _mode = mode; }
+	EngineMode getMode() { return _mode; }
+	void setPreviousMode(EngineMode mode) { _previousMode = mode; }
+	EngineMode getPreviousMode() { return _previousMode; }
 	void setSpeechMode(SpeechMode mode) { _speechMode = mode; }
 	SpeechMode getSpeechMode() { return _speechMode; }
 	SaveGame *savedState() { return _savedState; }
@@ -176,7 +177,7 @@ private:
 	SaveGame *_savedState;
 
 	Set *_currSet;
-	int _mode, _previousMode;
+	EngineMode _mode, _previousMode;
 	SpeechMode _speechMode;
 	int _textSpeed;
 	bool _flipEnable;

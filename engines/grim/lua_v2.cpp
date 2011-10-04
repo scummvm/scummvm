@@ -703,21 +703,20 @@ static void L2_GetCPUSpeed() {
 // This should be correct, judging by the Demo
 // the only real difference from L1 is the lack of looping
 static void L2_StartMovie() {
-	bool result;
-	int prev_engine_mode = g_grim->getMode();
-	
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
 	L1_CleanBuffer();
-	g_grim->setMode(ENGINE_MODE_SMUSH);
-	result = g_movie->play(lua_getstring(name), false, 0, 0);
+
+	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
+	g_grim->setMode(GrimEngine::SmushMode);
+	bool result = g_movie->play(lua_getstring(name), false, 0, 0);
 	if (!result)
-		g_grim->setMode(prev_engine_mode);
+		g_grim->setMode(prevEngineMode);
 	pushbool(result);
-	g_grim->setMode(ENGINE_MODE_SMUSH);
+	g_grim->setMode(GrimEngine::SmushMode);
 }
 
 static void L2_IsMoviePlaying() {

@@ -123,7 +123,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	}
 	_speechMode = TextAndVoice;
 	_textSpeed = 7;
-	_mode = _previousMode = ENGINE_MODE_NORMAL;
+	_mode = _previousMode = NormalMode;
 	_flipEnable = true;
 	int speed = atol(g_registry->get("engine_speed", "30"));
 	if (speed <= 0 || speed > 100)
@@ -297,7 +297,7 @@ Common::Error GrimEngine::run() {
 		_savegameFileName = saveName;
 	}
 
-	g_grim->setMode(ENGINE_MODE_NORMAL);
+	g_grim->setMode(NormalMode);
 	if (splash_bm)
 		delete splash_bm;
 	g_grim->mainLoop();
@@ -637,7 +637,7 @@ void GrimEngine::luaUpdate() {
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
-	if (_mode == ENGINE_MODE_PAUSE || _shortFrame) {
+	if (_mode == PauseMode || _shortFrame) {
 		_frameTime = 0;
 	}
 
@@ -658,7 +658,7 @@ void GrimEngine::luaUpdate() {
 	// Run asynchronous tasks
 	lua_runtasks();
 
-	if (_currSet && (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH)) {
+	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
@@ -683,7 +683,7 @@ void GrimEngine::luaUpdate() {
 void GrimEngine::updateDisplayScene() {
 	_doFlip = true;
 
-	if (_mode == ENGINE_MODE_SMUSH) {
+	if (_mode == SmushMode) {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
@@ -708,7 +708,7 @@ void GrimEngine::updateDisplayScene() {
 			i->_value->draw();
 		}
 		drawPrimitives();
-	} else if (_mode == ENGINE_MODE_NORMAL) {
+	} else if (_mode == NormalMode) {
 		if (!_currSet)
 			return;
 
@@ -778,7 +778,7 @@ void GrimEngine::updateDisplayScene() {
 		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
-	} else if (_mode == ENGINE_MODE_DRAW) {
+	} else if (_mode == DrawMode) {
 		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
@@ -792,7 +792,7 @@ void GrimEngine::doFlip() {
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
-	if (_showFps && _doFlip && _mode != ENGINE_MODE_DRAW) {
+	if (_showFps && _doFlip && _mode != DrawMode) {
 		_frameCounter++;
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
@@ -840,7 +840,7 @@ void GrimEngine::mainLoop() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_mode != ENGINE_MODE_DRAW && _mode != ENGINE_MODE_SMUSH && (event.kbd.ascii == 'q')) {
+				if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
 					handleExit();
 					break;
 				} else {
@@ -866,7 +866,7 @@ void GrimEngine::mainLoop() {
 
 		luaUpdate();
 
-		if (_mode != ENGINE_MODE_PAUSE) {
+		if (_mode != PauseMode) {
 			updateDisplayScene();
 			doFlip();
 		}
@@ -968,8 +968,8 @@ void GrimEngine::savegameRestore() {
 void GrimEngine::restoreGRIM() {
 	_savedState->beginSection('GRIM');
 
-	_mode = _savedState->readLEUint32();
-	_previousMode = _savedState->readLEUint32();
+	_mode = (EngineMode)_savedState->readLEUint32();
+	_previousMode = (EngineMode)_savedState->readLEUint32();
 
 	// Actor stuff
 	int32 id = _savedState->readLEUint32();
@@ -1001,7 +1001,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 
 	debug("GrimEngine::StoreSaveGameImage() started.\n");
 
-	int mode = g_grim->getMode();
+	EngineMode mode = g_grim->getMode();
 	g_grim->setMode(_previousMode);
 	g_grim->updateDisplayScene();
 	g_driver->storeDisplay();
@@ -1075,8 +1075,8 @@ void GrimEngine::savegameSave() {
 void GrimEngine::saveGRIM() {
 	_savedState->beginSection('GRIM');
 
-	_savedState->writeLEUint32(_mode);
-	_savedState->writeLEUint32(_previousMode);
+	_savedState->writeLEUint32((uint32)_mode);
+	_savedState->writeLEUint32((uint32)_previousMode);
 
 	//Actor stuff
 	if (_selectedActor) {

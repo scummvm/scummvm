@@ -72,7 +72,7 @@ void SmushPlayer::handleFrame() {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if (!_videoLooping ) {
 			_videoFinished = true;
-			g_grim->setMode(ENGINE_MODE_NORMAL);
+			g_grim->setMode(GrimEngine::NormalMode);
 			deinit();
 			return;
 		} else {

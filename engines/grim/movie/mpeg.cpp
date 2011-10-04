@@ -103,7 +103,7 @@ void MpegPlayer::handleFrame() {
 
 	if (!_videoBase->decodeFrame()) {
 		_videoFinished = true;
-		g_grim->setMode(ENGINE_MODE_NORMAL);
+		g_grim->setMode(GrimEngine::NormalMode);
 		return;
 	}
 	//else

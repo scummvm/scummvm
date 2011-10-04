@@ -781,7 +781,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
-	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL)) {
+	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == GrimEngine::NormalMode)) {
 		Common::String soundLip = id;
 		soundLip += ".lip";
 
@@ -816,16 +816,16 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+		if (g_grim->getMode() == GrimEngine::SmushMode)
 			TextObject::getPool()->deleteObjects();
 
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
-		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
+		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
+		if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
@@ -838,7 +838,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			}
 		}
 		textObject->setText(msgId);
-		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
+		if (g_grim->getMode() != GrimEngine::SmushMode)
 			_sayLineText = textObject->getId();
 	}
 }
