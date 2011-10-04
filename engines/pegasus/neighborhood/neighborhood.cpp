@@ -268,7 +268,7 @@ tDirectionConstant Neighborhood::getTurnEntry(const tRoomID room, const tDirecti
 	if (turnEntry.isEmpty())
 		turnEntry = _turnTable.findEntry(room, direction, turnDirection, kNoAlternateID);
 
-	return turnEntry.turnDirection;
+	return turnEntry.endDirection;
 }
 
 void Neighborhood::findSpotEntry(const tRoomID room, const tDirectionConstant direction, tSpotFlags flags, SpotTable::Entry &spotEntry) {
