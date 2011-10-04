@@ -957,7 +957,22 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 			}
 		}
 
-		dg.setGUIOptions(x->game.guioptions | MidiDriver::musicType2GUIO(x->game.midi));
+		uint32 guiOptions = x->game.guioptions
+				| MidiDriver::musicType2GUIO(x->game.midi);
+
+		if (x->game.id == GID_MONKEY || x->game.id == GID_MONKEY2) {
+			// Check if this is a fanpatched version of MI1/MI2
+			for (Common::FSList::const_iterator file = fslist.begin();
+					file != fslist.end(); ++file) {
+				if (!file->isDirectory()
+						&& file->getName().hasPrefix("monster.so")) {
+					guiOptions &= ~GUIO_NOSPEECH;
+					break;
+				}
+			}
+		}
+
+		dg.setGUIOptions(guiOptions);
 		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(dg);
