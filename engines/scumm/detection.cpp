@@ -308,6 +308,49 @@ static void closeDiskImage(ScummDiskImage *img) {
 	SearchMan.remove("tmpDiskImgDir");
 }
 
+/*
+ * This function tries to detect if a speech file exists.
+ * False doesn't necessarily mean there are no speech files.
+ */
+static bool detectSpeech(const Common::FSList &fslist, const GameSettings * gs) {
+	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
+
+		static const char* basenames[] = {
+			gs->gameid,
+			"monster",
+			0
+		};
+		static const char* extensions[] = {
+			"sou",
+#ifdef USE_FLAC
+			"sof",
+#endif
+#ifdef USE_VORBIS
+			"sog",
+#endif
+#ifdef USE_MAD
+			"so3",
+#endif
+			0
+		};
+
+	    for (Common::FSList::const_iterator file = fslist.begin();
+				file != fslist.end(); ++file) {
+			if (!file->isDirectory()) {
+				for (int i = 0; basenames[i]; ++i) {
+					for (int j = 0; extensions[j]; ++j) {
+						Common::String filename = Common::String(basenames[i])
+								+ "." + Common::String(extensions[j]);
+						if (filename.equalsIgnoreCase(file->getName()))
+							return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
 // The following function tries to detect the language for COMI and DIG
 static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	// First try to detect Chinese translation
@@ -607,6 +650,10 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 			// HACK: Perhaps it is some modified translation?
 			dr.language = detectLanguage(fslist, g->id);
+
+			// detect if there are speech files in this unknown game
+			if(detectSpeech(fslist, g))
+				dr.game.guioptions &= ~GUIO_NOSPEECH;
 
 			// Add the game/variant to the candidates list if it is consistent
 			// with the file(s) we are seeing.
