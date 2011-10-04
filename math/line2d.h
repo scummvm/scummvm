@@ -36,6 +36,7 @@ public:
 
 	Line2d getPerpendicular(const Vector2d &point = Vector2d()) const;
 	Vector2d getDirection() const;
+	float getDistanceTo(const Vector2d &point, Vector2d *intersection) const;
 
 	bool intersectsLine(const Line2d &line, Vector2d *pos) const;
 	bool containsPoint(const Vector2d &point) const;
