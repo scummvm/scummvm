@@ -462,7 +462,7 @@ void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	}
 
 	_spotSounds.stopSound();
-	_spotSounds.playSoundSegment(in * 1000 / 600, out * 1000 / 600);
+	_spotSounds.playSoundSegment(in, out);
 
 	while (_spotSounds.isPlaying()) {
 		_vm->refreshDisplay();
