@@ -859,6 +859,13 @@ void Sound::setupSound() {
 
 	_sfxFile = openSfxFile();
 
+	if (!_sfxFile->isOpen()) {
+		debug(1, "speech file doesn't exist, disabling speech");
+		_vm->_game.guioptions |= Common::GUIO_NOSPEECH;
+		Common::updateGameGUIOptions(_vm->_game.guioptions,
+				getGameGUIOptionsDescriptionLanguage(_vm->_language));
+	}
+
 	if (_vm->_game.id == GID_FT) {
 		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();
 	}
