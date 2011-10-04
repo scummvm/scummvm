@@ -462,6 +462,17 @@ private:
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();
 	bool stopMumbleChore();
+	/**
+	 * Given a start point and a destination this function returns a position
+	 * that doesn't collide with any actor.
+	 */
+	Math::Vector3d handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const;
+	/**
+	 * Check if the line from pos to dest collides with this actor's bounding
+	 * box, and if yes return a point that, together with pos, defines a line
+	 * tangent with the bounding box.
+	 */
+	Math::Vector3d getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const;
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set

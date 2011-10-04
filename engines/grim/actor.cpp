@@ -493,6 +493,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						}
 						bridges.pop_back();
 					}
+					best = handleCollisionTo(node->pos, best);
 
 					PathNode *n = NULL;
 					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
@@ -959,34 +960,30 @@ void Actor::updateWalk() {
 	}
 
 	Math::Vector3d destPos = _path.back();
-	Math::Angle y = getYawTo(destPos);
-	if (y < 0.f) {
-		y += 360.f;
-	}
-	turnTo(_pitch, y, _roll);
-
 	Math::Vector3d dir = destPos - _pos;
 	float dist = dir.getMagnitude();
 
-	if (dist > 0)
-		dir /= dist;
-
+	_walkedCur = true;
 	float walkAmt = g_grim->getPerSecond(_walkRate);
-
 	if (walkAmt >= dist) {
-		_pos = destPos;
 		_path.pop_back();
 		if (_path.empty()) {
 			_walking = false;
+			_pos = destPos;
 // It seems that we need to allow an already active turning motion to
 // continue or else turning actors away from barriers won't work right
 			_turning = false;
+			return;
 		}
-	} else {
-		_pos += dir * walkAmt;
 	}
 
-	_walkedCur = true;
+	destPos = handleCollisionTo(_pos, destPos);
+	Math::Angle y = getYawTo(destPos);
+	turnTo(_pitch, y, _roll);
+
+	dir = destPos - _pos;
+	dir.normalize();
+	_pos += dir * walkAmt;
 }
 
 void Actor::update(float frameTime) {
@@ -1354,6 +1351,56 @@ void Actor::setCollisionMode(CollisionMode mode) {
 
 void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
+}
+
+Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const {
+	if (_collisionMode == CollisionOff) {
+		return pos;
+	}
+
+	Math::Vector3d p = pos;
+	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
+		Actor *a = i->_value;
+		if (a != this && a->isInSet(_setName) && a->isVisible()) {
+			p = a->getTangentPos(from, p);
+		}
+	}
+	return p;
+}
+
+Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const {
+	if (_collisionMode == CollisionOff) {
+		return dest;
+	}
+
+	Model *model = getCurrentCostume()->getModel();
+	Math::Vector3d p = _pos + model->_insertOffset;
+	float size = model->_radius * _collisionScale;
+
+	Math::Vector2d p1(pos.x(), pos.y());
+	Math::Vector2d p2(dest.x(), dest.y());
+	Math::Segment2d segment(p1, p2);
+
+	// TODO: collision with Box
+// 	if (_collisionMode == CollisionSphere) {
+		Math::Vector2d center(p.x(), p.y());
+
+		Math::Vector2d inter;
+		float distance = segment.getLine().getDistanceTo(center, &inter);
+
+		if (distance < size && segment.containsPoint(inter)) {
+			Math::Vector2d v(inter - center);
+			v.normalize();
+			v *= size;
+			v += center;
+
+			return Math::Vector3d(v.getX(), v.getY(), dest.z());
+		}
+// 	} else {
+
+// 	}
+
+	return dest;
 }
 
 bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
