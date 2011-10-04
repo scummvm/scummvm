@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "engines/grim/debug.h"
 
 #include "engines/grim/imuse/imuse.h"
@@ -44,7 +42,7 @@ void Imuse::setMusicState(int stateId) {
 	assert(num != -1);
 
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::setMusicState(): SoundId %d, filename: %s\n", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
+		debug("Imuse::setMusicState(): SoundId %d, filename: %s", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
 
 	if (_curMusicState == num)
 		return;
@@ -75,7 +73,7 @@ int Imuse::setMusicSequence(int seqId) {
 	assert(num != -1);
 
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::setMusicSequence(): SoundId %d, filename: %s\n", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
+		debug("Imuse::setMusicSequence(): SoundId %d, filename: %s", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
 
 	if (_curMusicSeq == num)
 		return _seqMusicTable[_curMusicSeq].soundId;

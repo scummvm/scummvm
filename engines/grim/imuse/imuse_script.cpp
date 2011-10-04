@@ -20,8 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "common/textconsole.h"
 
 #include "engines/grim/imuse/imuse.h"
@@ -79,25 +77,25 @@ void Imuse::refreshScripts() {
 
 bool Imuse::startVoice(const char *soundName, int volume, int pan) {
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::startVoice(): SoundName %s, vol:%d, pan:%d\n", soundName, volume, pan);
+		debug("Imuse::startVoice(): SoundName %s, vol:%d, pan:%d", soundName, volume, pan);
 	return startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127, NULL);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::startMusic(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, hookId, volume, pan);
+		debug("Imuse::startMusic(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, NULL);
 }
 
 void Imuse::startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack) {
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, hookId, volume, pan);
+		debug("Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d", soundName, hookId, volume, pan);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, otherTrack);
 }
 
 void Imuse::startSfx(const char *soundName, int priority) {
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::startSfx(): SoundName %s, priority:%d\n", soundName, priority);
+		debug("Imuse::startSfx(): SoundName %s, priority:%d", soundName, priority);
 	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority, NULL);
 }
 
@@ -144,7 +142,7 @@ bool Imuse::getSoundStatus(const char *soundName) {
 		// This debug warning should be "light" since this function gets called
 		// on occassion to see if a sound has stopped yet
 		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-			printf("Sound '%s' could not be found to get status, assume inactive.\n", soundName);
+			debug("Sound '%s' could not be found to get status, assume inactive.", soundName);
 		return false;
 	}
 	return true;
@@ -153,7 +151,7 @@ bool Imuse::getSoundStatus(const char *soundName) {
 void Imuse::stopSound(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::stopSound(): SoundName %s\n", soundName);
+		debug("Imuse::stopSound(): SoundName %s", soundName);
 	Track *removeTrack = NULL;
 
 	removeTrack = findTrack(soundName);
@@ -169,7 +167,7 @@ void Imuse::stopSound(const char *soundName) {
 void Imuse::stopAllSounds() {
 	Common::StackLock lock(_mutex);
 	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::stopAllSounds()\n");
+		debug("Imuse::stopAllSounds()");
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
