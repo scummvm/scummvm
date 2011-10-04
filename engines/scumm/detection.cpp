@@ -312,12 +312,11 @@ static void closeDiskImage(ScummDiskImage *img) {
  * This function tries to detect if a speech file exists.
  * False doesn't necessarily mean there are no speech files.
  */
-static bool detectSpeech(const Common::FSList &fslist, byte id) {
-	if (id == GID_MONKEY || id == GID_MONKEY2) {
+static bool detectSpeech(const Common::FSList &fslist, const GameSettings * gs) {
+	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
 
 		static const char* basenames[] = {
-			"monkey",
-			"monkey2",
+			gs->gameid,
 			"monster",
 			0
 		};
@@ -653,7 +652,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			dr.language = detectLanguage(fslist, g->id);
 
 			// detect if there are speech files in this unknown game
-			if(detectSpeech(fslist, g->id))
+			if(detectSpeech(fslist, g))
 				dr.game.guioptions &= ~GUIO_NOSPEECH;
 
 			// Add the game/variant to the candidates list if it is consistent
