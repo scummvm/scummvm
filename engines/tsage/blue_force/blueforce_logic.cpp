@@ -95,6 +95,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Graduation Article
 		return new Scene265();
 	case 270:
+		// Grandma's Living Room
+		return new Scene270();
 	case 271:
 	case 280:
 		error("Scene group 2 not implemented");

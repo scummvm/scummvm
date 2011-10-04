@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
 #include "tsage/scenes.h"
@@ -163,6 +164,63 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
+};
+
+class Scene270: public SceneExt {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		virtual void signal();
+	};
+
+	/* Objects */
+	class Object8: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Grandma: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Item: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	SpeakerGrandma _grandmaSpeaker;
+	SpeakerLyle _lyleSpeaker;
+	SpeakerJake _jakeSpeaker;
+	SpeakerLaura _lauraSpeaker;
+	SpeakerSkip _skipSpeaker;
+	SpeakerGameText _gameTextSpeaker;
+	Action1 _action1;
+	NamedObject _object1, _object2, _object3, _object4;
+	NamedObject _object5, _object6, _object7;
+	Object8 _object8;
+	Grandma _grandma;
+	Item _item1;
+	NamedHotspot _item2, _item3;
+	Item _item4;
+	NamedHotspot _item5, _item6, _item7, _item8, _item9;
+	NamedHotspot _item10, _item11, _item12;
+	Exit _exit;
+	int _field380, _field382, _field384, _field386;
+	int _field219A, _field21A0;
+	Common::Point _tempPos;
+
+	Scene270();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
 };
 
 } // End of namespace BlueForce

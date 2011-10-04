@@ -757,6 +757,517 @@ void Scene265::remove() {
 	remove();
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 270 - Grandma's Living Room
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene270::Action1::signal() {
+	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
+
+	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_object6, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene270::Object8::startAction(CursorType action, Event &event) {
+	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		scene->_field21A0 = 1;
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2706;
+
+		if (scene->_field380 == 1) {
+			scene->setAction(&scene->_sequenceManager1, scene, 2706, &BF_GLOBALS._player, &scene->_object2, NULL);
+		} else {
+			scene->signal();
+		}
+		return true;
+	case INV_CRATE1:
+		scene->_field21A0 = 2;
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2706;
+
+		if (scene->_field380 == 1) {
+			scene->setAction(&scene->_sequenceManager1, scene, 2706, &BF_GLOBALS._player, NULL);
+		} else {
+			scene->signal();
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene270::Grandma::startAction(CursorType action, Event &event) {
+	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_TALK:
+		switch (BF_GLOBALS._dayNumber) {
+		case 1:
+			// Day 1
+			if (scene->_field380 == 1) {
+				scene->_stripManager.start((scene->_grandma._position.x == 157) ? 2712 : 2723, &BF_GLOBALS._stripProxy);
+			} else if (BF_GLOBALS._bookmark == bBookedFrankieEvidence) {
+				BF_GLOBALS._player.disableControl();
+				scene->_sceneMode = 2710;
+				scene->setAction(&scene->_sequenceManager1, scene, 2710, &BF_GLOBALS._player, &scene->_grandma, NULL);
+			} else if (BF_GLOBALS.getFlag(onDuty) || (BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) == 2) ||
+						(scene->_field386 != 0)) {
+				scene->_stripManager.start(2723, &BF_GLOBALS._stripProxy);
+			} else {
+				BF_GLOBALS._player.disableControl();
+				scene->_sceneMode = 2715;
+				scene->setAction(&scene->_sequenceManager1, scene, 2715, &BF_GLOBALS._player, &scene->_grandma, NULL);
+			}
+			return true;
+		case 3:
+			// Day 3
+			if (scene->_field380 == 1) {
+				scene->_stripManager.start(2712, &BF_GLOBALS._stripProxy);
+			} else if (BF_GLOBALS.getFlag(fGotGreen355fTalkedToGrannyDay3)) {
+				scene->_stripManager.start(2714, &BF_GLOBALS._stripProxy);
+			} else {
+				BF_GLOBALS._player.disableControl();
+				scene->_sceneMode = 2713;
+				scene->setAction(&scene->_sequenceManager1, scene, 2713, &BF_GLOBALS._player, &scene->_grandma, NULL);
+			}
+			return true;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return NamedObject::startAction(action, event);
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene270::Item::startAction(CursorType action, Event &event) {
+	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
+
+	if ((action == CURSOR_USE) && (scene->_field380 == 0)) {
+		BF_GLOBALS._player.disableControl();
+		scene->_object2.postInit();
+		scene->_object2.hide();
+		scene->_sceneMode = 2705;
+		scene->setAction(&scene->_sequenceManager1, this, 2705, &BF_GLOBALS._player, &scene->_object2, NULL);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+bool Scene270::Exit::startAction(CursorType action, Event &event) {
+	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
+
+	if (!_action && !scene->_field384 && !scene->_field386) {
+		if (scene->_field380 == 1) {
+			scene->_tempPos = Common::Point(320, 140);
+			BF_GLOBALS._player.disableControl();
+
+			scene->_sceneMode = 2706;
+			scene->setAction(&scene->_sequenceManager1, scene, 2706, &BF_GLOBALS._player, &scene->_object2, NULL);
+		} else {
+			ADD_PLAYER_MOVER(320, 140);
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene270::Scene270(): SceneExt() {
+	_field380 = _field382 =_field384 = _field386 = 0;
+	_field219A = _tempPos.x = _tempPos.y = _field21A0 = 0;
+	_sceneMode = 0;
+}
+
+void Scene270::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field380);
+	s.syncAsSint16LE(_field382);
+	s.syncAsSint16LE(_field384);
+	s.syncAsSint16LE(_field386);
+	s.syncAsSint16LE(_field219A);
+	s.syncAsSint16LE(_tempPos.x);
+	s.syncAsSint16LE(_tempPos.y);
+	s.syncAsSint16LE(_field21A0);
+}
+
+void Scene270::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(270);
+	setZoomPercents(120, 90, 130, 100);
+
+	if (BF_GLOBALS._sceneManager._previousScene != 560)
+		BF_GLOBALS._sound1.fadeSound(26);
+
+	_exit.setDetails(Rect(310, 115, 320, 167), 270, -1, -1, -1, 1, NULL);
+	
+	if (BF_GLOBALS._dayNumber == 0) {
+		BF_GLOBALS._dayNumber = 1;
+		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 2);
+		BF_INVENTORY.setObjectScene(INV_CRATE1, 1);
+		BF_GLOBALS._sceneManager._previousScene = 710;
+	}
+
+	if ((BF_GLOBALS._bookmark >= bLauraToParamedics) && (BF_GLOBALS._dayNumber == 1) &&
+			(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
+			(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) {
+		BF_GLOBALS._walkRegions.proc1(6);
+		BF_GLOBALS._walkRegions.proc1(14);
+		BF_GLOBALS._walkRegions.proc1(19);
+
+		_grandma.postInit();
+		_grandma.setVisage(274);
+		_grandma.setPosition(Common::Point(157, 132));
+		_grandma._numFrames = 5;
+		_grandma.animate(ANIM_MODE_2, NULL);
+		_grandma.fixPriority(129);
+	}
+
+	if (BF_GLOBALS._bookmark == bTalkedToGrannyAboutSkipsCard) {
+		_grandma.postInit();
+	}
+
+	if (BF_GLOBALS._sceneManager._previousScene == 710) {
+		_object5.postInit();
+		_object4.postInit();
+		_object8.postInit();
+		_grandma.postInit();
+	}
+
+	_stripManager.addSpeaker(&_grandmaSpeaker);
+	_stripManager.addSpeaker(&_lyleSpeaker);
+	_stripManager.addSpeaker(&_jakeSpeaker);
+	_stripManager.addSpeaker(&_skipSpeaker);
+	_stripManager.addSpeaker(&_lauraSpeaker);
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+
+	_object6.postInit();
+	_object6.setVisage(270);
+	_object6.setPosition(Common::Point(264, 74));
+	_object6.setStrip(5);
+	_object6.fixPriority(132);
+	_object6._numFrames = 3;
+	_object6.setAction(&_action1);
+
+	_object7.postInit();
+	_object7.setVisage(270);
+	_object7.setStrip(2);
+	_object7.setPosition(Common::Point(302, 121));
+	_object7.fixPriority(132);
+	_object7.animate(ANIM_MODE_2, NULL);
+
+	_item6.setDetails(Rect(0, 56, 56, 130), 270, 9, 10, 11, 1, NULL);
+	_object3.setDetails(270, 12, 13, 14, 1, NULL);
+	_object4.setDetails(270, 15, -1, -1, 1, NULL);
+	_object5.setDetails(270, 14, -1, -1, 1, NULL);
+	_object8.setDetails(270, 34, 35, 36, 1, NULL);
+	_object6.setDetails(270, 3, 4, 5, 1, NULL);
+	_object7.setDetails(270, 6, 7, 8, 1, NULL);
+
+	if ((BF_GLOBALS._sceneManager._previousScene == 710) && (BF_GLOBALS._bookmark == bTalkedToGrannyAboutSkipsCard)) {
+		_grandma.setDetails(270, 15, 16, 17, 1, NULL);
+	} else {
+		_grandma.setDetails(270, 40, 16, 17, 1, NULL);
+	}
+
+	_item4.setDetails(4, 270, 27, 28, 29, 1);
+	_item1.setDetails(1, 270, 18, 19, 20, 1);
+	_item7.setDetails(Rect(278, 50, 318, 72), 270, 21, 22, 23, 1, NULL);
+	_item3.setDetails(3, 270, 24, 25, 26, 1);
+	_item5.setDetails(2, 270, 30, 31, 32, 1);
+	_item12.setDetails(Rect(0, 0, 320, 168), 270, 0, 1, 2, 1, NULL);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player._moveDiff.x = 8;
+	BF_GLOBALS._player.changeZoom(-1);
+	BF_GLOBALS._player.disableControl();
+	
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 560:
+		if (BF_GLOBALS._bookmark == bTalkedToGrannyAboutSkipsCard) {
+			_field219A = 1;
+			BF_GLOBALS._player._moveDiff.x = 5;
+			_field386 = 0;
+			
+			_grandma.animate(ANIM_MODE_1, NULL);
+			setAction(&_sequenceManager1, NULL, 2720, &BF_GLOBALS._player, &_grandma, NULL);
+			BF_GLOBALS._bookmark = bLyleStoppedBy;
+		} else {
+			_sceneMode = 2700;
+			setAction(&_sequenceManager1, this, 2700, &BF_GLOBALS._player, NULL);
+		}
+		break;
+	case 690:
+		BF_GLOBALS._player.setPosition(Common::Point(-13, 162));
+		_sceneMode = 2702;
+		setAction(&_sequenceManager1, this, 2702, &BF_GLOBALS._player, NULL);
+		break;
+	case 710:
+		BF_GLOBALS._player._moveDiff.x = 6;
+		_sceneMode = 2717;
+		setAction(&_sequenceManager1, this, 2717, &BF_GLOBALS._player, &_object4, &_object5, &_object8, &_grandma, NULL);
+		break;
+	default:
+		_sceneMode = 2701;
+		setAction(&_sequenceManager1, this, 2701, &BF_GLOBALS._player, NULL);
+		break;
+	}
+}
+
+void Scene270::signal() {
+	switch (_sceneMode) {
+	case 10:
+		_sceneMode = 2702;
+		setAction(&_sequenceManager1, this, 2702, &BF_GLOBALS._player, NULL);
+		break;
+	case 11:
+		BF_GLOBALS._player._strip = 8;
+		BF_GLOBALS._player._frame = 1;
+
+		if (_field382) {
+			_sceneMode = 2719;
+			_stripManager.start(2720, this);
+		} else {
+			_field382 = 1;
+			_sceneMode = 13;
+			_stripManager.start(2718, this);
+		}
+		break;
+	case 12:
+		BF_GLOBALS._player._strip = 8;
+		BF_GLOBALS._player._frame = 1;
+		_sceneMode = 13;
+		_stripManager.start(2719, this);
+		break;
+	case 13:
+	case 2713:
+	case 2715:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2700:
+		_field219A = 1;
+		BF_GLOBALS._player._strip = 6;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2701:
+		BF_GLOBALS._player._strip = 2;
+		BF_GLOBALS._player.enableControl();
+		_field219A = 1;
+		break;
+	case 2702:
+		BF_GLOBALS._player._strip = 1;
+		BF_GLOBALS._player.enableControl();
+		_field219A = 1;
+		break;
+	case 2705:
+		_field380 = 1;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2706:
+		BF_GLOBALS._player.changeZoom(-1);
+		_object2.remove();
+		_field380 = 0;
+
+		switch (_field21A0) {
+		case 1:
+			_sceneMode = 11;
+			ADD_PLAYER_MOVER(192, 135);
+			break;
+		case 2:
+			if (BF_GLOBALS.getFlag(shownLyleCrate1Day1)) {
+				SceneItem::display2(270, 37);
+				BF_GLOBALS._player.enableControl();
+			} else {
+				BF_GLOBALS._uiElements.addScore(30);
+				BF_GLOBALS.setFlag(shownLyleCrate1Day1);
+				_sceneMode = 12;
+				ADD_PLAYER_MOVER(192, 135);
+			}
+			break;
+		default:
+			BF_GLOBALS._player.enableControl();
+			ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, _tempPos.x, _tempPos.y);
+			break;
+		}
+
+		_field21A0 = 0;
+		break;
+	case 2710:
+		BF_GLOBALS._bookmark = bEndOfWorkDayOne;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2711:
+		BF_GLOBALS._player.setPosition(Common::Point(150, 300));
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(180);
+		BF_GLOBALS._bookmark = bLyleStoppedBy;
+		break;
+	case 2712:
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(180);
+		break;
+	case 2714:
+		BF_GLOBALS._sceneManager.changeScene(560);
+		break;
+	case 2717:
+		_sceneMode = 2718;
+		_object8.setFrame2(-1);
+		setAction(&_sequenceManager1, this, 2718, &BF_GLOBALS._player, &_object4, &_object5, 
+			&_object8, &_grandma, NULL);
+		break;
+	case 2718:
+		BF_GLOBALS._walkRegions.proc1(6);
+		BF_GLOBALS._walkRegions.proc1(14);
+		BF_GLOBALS._walkRegions.proc1(19);
+
+		_field219A = 1;
+		BF_GLOBALS._bookmark = bTalkedToGrannyAboutSkipsCard;
+
+		_grandma.setStrip(8);
+		_grandma._frame = 5;
+		_field384 = 1;
+		_field384 = 1;
+
+		BF_GLOBALS._player._moveDiff.x = 8;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2719:
+		_sceneMode = 13;
+		_field384 = 0;
+		BF_GLOBALS._player._moveDiff.x = 6;
+
+		_object8.setFrame2(-1);
+		setAction(&_sequenceManager1, this, 2719, &BF_GLOBALS._player, &_object8, &_grandma, NULL);
+		break;
+	default:
+		break;
+	}		
+}
+
+void Scene270::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
+			(_field380 == 1) && !_action) {
+		_tempPos = event.mousePos;
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 2706;
+		setAction(&_sequenceManager1, this, 2706, &BF_GLOBALS._player, &_object2, NULL);
+		event.handled = true;
+	}
+
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1)) &&
+			!_field384 && !_field386) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene270::dispatch() {
+	if (_field384) {
+		_object8.updateAngle(BF_GLOBALS._player._position);
+
+		if (_object8._angle < 110)
+			_object8.setFrame2(4);
+		else if (_object8._angle < 180)
+			_object8.setFrame2(3);
+		else if (_object8._angle < 250)
+			_object8.setFrame2(2);
+		else
+			_object8.setFrame2(1);
+	}
+
+	if (_field386) {
+		if (BF_GLOBALS._player._position.x > 290) {
+			_grandma.setFrame(6);
+		} else if (BF_GLOBALS._player._position.x > 274) {
+			_grandma.setFrame(5);
+		} else if (BF_GLOBALS._player._position.x > 258) {
+			_grandma.setFrame(4);
+		} else if (BF_GLOBALS._player._position.x > 242) {
+			_grandma.setFrame(3);
+		} else if (BF_GLOBALS._player._position.x > 226) {
+			_grandma.setFrame(2);
+		} else if (BF_GLOBALS._player._position.x > 210) {
+			if ((_grandma._animateMode == ANIM_MODE_NONE) && (_grandma._frame > 1))
+				_grandma.animate(ANIM_MODE_6, NULL);
+		} else {
+			if ((_grandma._animateMode == ANIM_MODE_NONE) && (_grandma._frame < 3))
+				_grandma.animate(ANIM_MODE_4, 3, 1, NULL);
+		}
+	}
+
+	if (!_action && !_field219A) {
+		if ((BF_GLOBALS._player._position.x < 236) && (BF_GLOBALS._player._position.y < 125)) {
+			_field219A = 0;
+			BF_GLOBALS._player.disableControl();
+			if (!_field384) {
+				BF_GLOBALS._sceneManager.changeScene(560);
+			} else {
+				BF_GLOBALS._player.addMover(NULL);
+				SceneItem::display2(270, 38);
+				_sceneMode = 2700;
+				ADD_PLAYER_MOVER(BF_GLOBALS._player._position.x - 10, BF_GLOBALS._player._position.y + 15);
+			}
+		}
+
+		if (BF_GLOBALS._player._position.x <= 20) {
+			_field219A = 0;
+			BF_GLOBALS._player.disableControl();
+			BF_GLOBALS._player.addMover(NULL);
+			BF_GLOBALS._player._strip = 3;
+			BF_GLOBALS._player._frame = 1;
+
+			if (BF_GLOBALS._sceneObjects->contains(&_grandma)) {
+				_sceneMode = 10;
+				_stripManager.start(2711, this);
+			} else {
+				SceneItem::display2(270, 33);
+				_sceneMode = 2702;
+				setAction(&_sequenceManager1, this, 2702, &BF_GLOBALS._player, NULL);
+			}
+		}
+
+		if (BF_GLOBALS._player._position.x > 310) {
+			_field219A = 0;
+			BF_GLOBALS._player.disableControl();
+			if (!_field384 && !_field386) {
+				_sceneMode = 2712;
+				setAction(&_sequenceManager1, this, 2712, &BF_GLOBALS._player, NULL);
+			} else {
+				BF_GLOBALS._player.addMover(NULL);
+				BF_GLOBALS._player._strip = 2;
+				BF_GLOBALS._player._frame = 1;
+				SceneItem::display2(270, !_field384 ? 39 : 38);
+				_sceneMode = 2701;
+
+				ADD_PLAYER_MOVER(BF_GLOBALS._player._position.x - 10, BF_GLOBALS._player._position.y);
+			}
+		}
+	}
+
+	SceneExt::dispatch();
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
