@@ -2,13 +2,13 @@
 # Copyright (C) 2007-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Jordi Vilalta Prat <jvprat@jvprat.com>, 2007-2011.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-10-04 20:43+0200\n"
-"PO-Revision-Date: 2011-08-18 11:38+0100\n"
+"PO-Revision-Date: 2011-10-04 20:51+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
 "Language: Catalan\n"
@@ -1256,39 +1256,37 @@ msgstr "Inicia de totes maneres"
 #: engines/scumm/dialogs.cpp:175
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr ""
+msgstr "Inseriu el disc %c i premeu un botó per continuar."
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr ""
+msgstr "No s'ha pogut trobar %s, (%c%d) Premeu un botó."
 
 #: engines/scumm/dialogs.cpp:177
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr ""
+msgstr "Error llegint el disc %c, (%c%d) Premeu un botó."
 
 #: engines/scumm/dialogs.cpp:178
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr ""
+msgstr "Joc pausat.  Premeu ESPAI per continuar."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:182
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)"
-msgstr "    Esteu segur de voler sortir?     "
+msgstr "Esteu segur de voler reiniciar?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)"
-msgstr "    Esteu segur de voler sortir?     "
+msgstr "Esteu segur de voler sortir?  (S/N)S"
 
 #: engines/scumm/dialogs.cpp:189
 msgid "Play"
-msgstr ""
+msgstr "Jugar"
 
 #: engines/scumm/dialogs.cpp:191 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:84
@@ -1301,42 +1299,41 @@ msgstr "Surt"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "Insert save/load game disk"
-msgstr ""
+msgstr "Inseriu el disc de partides desades"
 
 #: engines/scumm/dialogs.cpp:194
 msgid "You must enter a name"
-msgstr ""
+msgstr "Heu d'introduir un nom"
 
 #: engines/scumm/dialogs.cpp:195
 msgid "The game was NOT saved (disk full?)"
-msgstr ""
+msgstr "La partida NO s'ha desat (el disc està ple?)"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "The game was NOT loaded"
-msgstr ""
+msgstr "La partida NO s'ha desat"
 
 #: engines/scumm/dialogs.cpp:197
 #, c-format
 msgid "Saving '%s'"
-msgstr ""
+msgstr "Desant '%s'"
 
 #: engines/scumm/dialogs.cpp:198
 #, c-format
 msgid "Loading '%s'"
-msgstr ""
+msgstr "Carregant '%s'"
 
 #: engines/scumm/dialogs.cpp:199
 msgid "Name your SAVE game"
-msgstr ""
+msgstr "Anomeneu la partida DESADA"
 
 #: engines/scumm/dialogs.cpp:200
-#, fuzzy
 msgid "Select a game to LOAD"
-msgstr "Seleccioneu un Tema"
+msgstr "Seleccioneu una partida per CARREGAR"
 
 #: engines/scumm/dialogs.cpp:201
 msgid "Game title)"
-msgstr ""
+msgstr "Títol del joc)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:287
@@ -1354,25 +1351,21 @@ msgid "~C~lose"
 msgstr "~T~anca"
 
 #: engines/scumm/dialogs.cpp:597
-#, fuzzy
 msgid "Speech Only"
-msgstr "Veus"
+msgstr "Només veus"
 
 #: engines/scumm/dialogs.cpp:598
-#, fuzzy
 msgid "Speech and Subtitles"
-msgstr "Subtítols"
+msgstr "Veu i subtítols"
 
 #: engines/scumm/dialogs.cpp:599
-#, fuzzy
 msgid "Subtitles Only"
-msgstr "Subtítols"
+msgstr "Només subtítols"
 
 #: engines/scumm/dialogs.cpp:607
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Veus"
+msgstr "Veus i sub."
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -1951,7 +1944,7 @@ msgstr "~T~ransicions activades"
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:95
 msgid "~D~rop Page"
-msgstr "~L~lença la pàgina"
+msgstr "~D~escarta la pàgina"
 
 #: engines/mohawk/dialogs.cpp:99
 msgid "~S~how Map"
@@ -2775,37 +2768,33 @@ msgid "Check for Updates..."
 msgstr "Comprova les actualitzacions..."
 
 #: backends/platform/bada/form.cpp:270
-#, fuzzy
 msgid "Right Click Once"
-msgstr "Clic dret"
+msgstr "Un clic dret"
 
 #: backends/platform/bada/form.cpp:278
-#, fuzzy
 msgid "Move Only"
-msgstr "Veus"
+msgstr "Només mou"
 
 #: backends/platform/bada/form.cpp:292
 msgid "Escape Key"
-msgstr ""
+msgstr "Tecla d'escapada"
 
 #: backends/platform/bada/form.cpp:297
-#, fuzzy
 msgid "Game Menu"
-msgstr "Joc"
+msgstr "Menú del joc"
 
 #: backends/platform/bada/form.cpp:302
-#, fuzzy
 msgid "Show Keypad"
-msgstr "Mostra el teclat"
+msgstr "Mostra el teclat numèric"
 
 #: backends/platform/bada/form.cpp:310
 msgid "Control Mouse"
-msgstr ""
+msgstr "Controla el ratolí"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:92
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "Clicat activat"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:92
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "Clicat desactivat"
