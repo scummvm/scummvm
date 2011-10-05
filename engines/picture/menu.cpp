@@ -477,7 +477,7 @@ int MenuSystem::loadSavegamesList() {
 			if (in) {
 				if (Picture::PictureEngine::readSaveHeader(in, false, header) == Picture::PictureEngine::kRSHENoError) {
 					_savegames.push_back(SavegameItem(slotNum, header.description));
-					debug("%s -> %s", file->c_str(), header.description.c_str());
+					//debug("%s -> %s", file->c_str(), header.description.c_str());
 				}
 				delete in;
 			}
