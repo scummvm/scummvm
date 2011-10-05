@@ -36,6 +36,7 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/neighborhood/tsa/tinytsa.h"
 
 namespace Pegasus {
 
@@ -139,8 +140,13 @@ void Neighborhood::init() {
 	_navMovie.initFromMovieFile(getNavMovieName());
 	_navMovie.setVolume(_vm->getSoundFXLevel());
 
-	_spotSounds.initFromQuickTime(getSoundSpotsName());
-	_spotSounds.setVolume(_vm->getSoundFXLevel());
+	Common::String soundSpotsName = getSoundSpotsName();
+	if (soundSpotsName.empty()) {
+		_spotSounds.disposeSound();
+	} else {
+		_spotSounds.initFromQuickTime(getSoundSpotsName());
+		_spotSounds.setVolume(_vm->getSoundFXLevel());
+	}
 
 	_navMovie.setDisplayOrder(kNavMovieOrder);
 	_navMovie.startDisplaying();

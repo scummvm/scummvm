@@ -55,7 +55,8 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoria4dsystem.o \
 	neighborhood/caldoria/caldoriamessages.o \
 	neighborhood/caldoria/caldoriamirror.o \
-	neighborhood/prehistoric/prehistoric.o
+	neighborhood/prehistoric/prehistoric.o \
+	neighborhood/tsa/tinytsa.o
 
 
 # This module can be built as a plugin

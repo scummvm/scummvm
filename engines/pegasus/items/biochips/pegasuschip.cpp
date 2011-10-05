@@ -27,6 +27,7 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/items/biochips/pegasuschip.h"
+#include "pegasus/neighborhood/tsa/tinytsa.h"
 
 namespace Pegasus {
 
