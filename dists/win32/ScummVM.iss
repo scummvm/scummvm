@@ -48,12 +48,12 @@ Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app};
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not de
-Name: {group}\Neues; Filename: {app}\Liesmich.txt; WorkingDir: {app}; Comment: Neues; Flags: createonlyiffileexists; Languages: de
+Name: {group}\Neues; Filename: {app}\Neues.txt; WorkingDir: {app}; Comment: Neues; Flags: createonlyiffileexists; Languages: de
 ;QUICKSTART
 Name: {group}\QuickStart; Filename: {app}\QUICKSTART.txt; WorkingDir: {app}; Comment: QUICKSTART; Flags: createonlyiffileexists; Languages: not (fr or de or nb)
 Name: {group}\QuickStart_fr; Filename: {app}\QuickStart_fr.txt; WorkingDir: {app}; Comment: QuickStart_fr; Flags: createonlyiffileexists; Languages: fr
 Name: {group}\Schnellstart; Filename: {app}\Schnellstart.txt; WorkingDir: {app}; Comment: Schnellstart; Flags: createonlyiffileexists; Languages: de
-Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; Comment: QuickStart_fr; Flags: createonlyiffileexists; Languages: nb
+Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; Comment: HurtigStart; Flags: createonlyiffileexists; Languages: nb
 ;README
 Name: {group}\Readme; Filename: {app}\README.txt; WorkingDir: {app}; Comment: README; Flags: createonlyiffileexists; Languages: not de
 Name: {group}\Liesmich; Filename: {app}\Liesmich.txt; WorkingDir: {app}; Comment: Liesmich; Flags: createonlyiffileexists; Languages: de
