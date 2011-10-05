@@ -51,7 +51,7 @@ Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; 
 Name: {group}\Neues; Filename: {app}\Neues.txt; WorkingDir: {app}; Comment: Neues; Flags: createonlyiffileexists; Languages: de
 ;QUICKSTART
 Name: {group}\QuickStart; Filename: {app}\QUICKSTART.txt; WorkingDir: {app}; Comment: QUICKSTART; Flags: createonlyiffileexists; Languages: not (fr or de or nb)
-Name: {group}\QuickStart_fr; Filename: {app}\QuickStart_fr.txt; WorkingDir: {app}; Comment: QuickStart_fr; Flags: createonlyiffileexists; Languages: fr
+Name: {group}\DemarrageRapide; Filename: {app}\DemarrageRapide.txt; WorkingDir: {app}; Comment: DemarrageRapide; Flags: createonlyiffileexists; Languages: fr
 Name: {group}\Schnellstart; Filename: {app}\Schnellstart.txt; WorkingDir: {app}; Comment: Schnellstart; Flags: createonlyiffileexists; Languages: de
 Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; Comment: HurtigStart; Flags: createonlyiffileexists; Languages: nb
 ;README
@@ -72,7 +72,7 @@ Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not de
 Source: doc/de/Neues.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
 Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (fr or de or nb)
-Source: doc/fr/QuickStart_fr.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: fr
+Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: fr
 Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
 Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: nb
 Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not de

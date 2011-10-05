@@ -157,7 +157,7 @@ osxsnap: bundle
 	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
 	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
 	mkdir ScummVM-snapshot/doc/fr
-	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
+	cp $(srcdir)/doc/fr/DemarrageRapide ./ScummVM-snapshot/doc/fr/DemarrageRapide
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
@@ -199,7 +199,7 @@ endif
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/de/Neues $(WIN32PATH)/doc/de/Neues.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
-	cp $(srcdir)/doc/fr/QuickStart_fr $(WIN32PATH)/doc/fr/QuickStart_fr.txt
+	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
 	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
