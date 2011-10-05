@@ -147,7 +147,7 @@ class Scene560: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObjectExt {
+	class Box: public NamedObjectExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -172,7 +172,7 @@ class Scene560: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object5: public FocusObject {
+	class BoxInset: public FocusObject {
 		/* Items */
 		class Item1: public NamedHotspot {
 		public:
@@ -181,7 +181,7 @@ class Scene560: public SceneExt {
 	public:
 		Item1 _item1;
 
-		virtual Common::String getClassName() { return "Scene560_Object5"; }
+		virtual Common::String getClassName() { return "Scene560_BoxInset"; }
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
 	};
@@ -189,7 +189,7 @@ class Scene560: public SceneExt {
 	/* Item groups */
 	class PicturePart: public NamedHotspotExt {
 	public:
-		virtual Common::String getClassName() { return "Scene560_Group1"; }
+		virtual Common::String getClassName() { return "Scene560_PicturePart"; }
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
@@ -218,10 +218,10 @@ public:
 	Action3 _action3;
 	SpeakerGameText _gameTextSpeaker;
 	DeskChair _deskChair;
-	Object2 _object2;
+	Box _box;
 	SafeInset _safeInset;
 	Nickel _nickel;
-	Object5 _object5;
+	BoxInset _boxInset;
 	NamedObject _object6;
 	PicturePart _picture1, _picture2, _picture3, _picture4;
 	Computer _computer;

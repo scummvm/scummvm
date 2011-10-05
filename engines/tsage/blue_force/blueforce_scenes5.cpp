@@ -1030,7 +1030,7 @@ bool Scene560::DeskChair::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene560::Object2::startAction(CursorType action, Event &event) {
+bool Scene560::Box::startAction(CursorType action, Event &event) {
 	Scene560 *scene = (Scene560 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1038,7 +1038,10 @@ bool Scene560::Object2::startAction(CursorType action, Event &event) {
 		if (scene->_field380) {
 			SceneItem::display2(560, 54);
 		} else {
-			ADD_PLAYER_MOVER(289, 108);
+			scene->_sceneMode = 9;
+			Common::Point destPos(289, 108);
+			PlayerMover *mover = new PlayerMover();
+			BF_GLOBALS._player.addMover(mover, &destPos, scene);
 		}
 		return true;
 	default:
@@ -1146,7 +1149,7 @@ void Scene560::SafeInset::remove() {
 	scene->_nickel.remove();
 
 	if (BF_GLOBALS._events.getCursor() == CURSOR_USE) {
-		GfxSurface cursor = surfaceFromRes(1, 1, 2);
+		GfxSurface cursor = _cursorVisage.getFrame(2);
 		BF_GLOBALS._events.setCursor(cursor);
 	}
 
@@ -1176,7 +1179,8 @@ void Scene560::SafeInset::signal() {
 			BF_GLOBALS.setFlag(fGotPointsForBank);
 		}
 
-		GfxSurface cursor = surfaceFromRes(1, 1, 2);
+		setFrame(2);
+		GfxSurface cursor = _cursorVisage.getFrame(2);
 		BF_GLOBALS._events.setCursor(cursor);
 
 		_item1.remove();
@@ -1205,11 +1209,14 @@ void Scene560::SafeInset::signal() {
 }
 void Scene560::SafeInset::process(Event &event) {
 	if (_bounds.contains(event.mousePos)) {
-		if (BF_GLOBALS._events.getCursor() == CURSOR_USE) {
+		CursorType cursorId = BF_GLOBALS._events.getCursor();
+		if (cursorId == CURSOR_USE) {
+			// Instead of standard cursor, use special hand cursor
 			GfxSurface cursor = _cursorVisage.getFrame(6);
 			BF_GLOBALS._events.setCursor(cursor);
 		} else {
-			BF_GLOBALS._events.proc1();
+			// Set cursor again just in case Exit cursor was showing
+			BF_GLOBALS._events.setCursor(cursorId);
 		}
 
 		if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
@@ -1235,7 +1242,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		switch (_flag) {
-		case 0: {
+		case 1: {
 			int newFrame = scene->_safeInset._digit2._frame + 1;
 			if (newFrame == 11)
 				newFrame = 1;
@@ -1243,7 +1250,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 			scene->_safeInset._digit2.setFrame(newFrame);
 			break;
 		}
-		case 1: {
+		case 2: {
 			int newFrame = scene->_safeInset._digit1._frame + 1;
 			if (newFrame == 11)
 				newFrame = 1;
@@ -1251,7 +1258,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 			scene->_safeInset._digit1.setFrame(newFrame);
 			break;
 		}
-		case 2: {
+		case 3: {
 			int newFrame = scene->_safeInset._digit0._frame + 1;
 			if (newFrame == 11)
 				newFrame = 1;
@@ -1259,7 +1266,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 			scene->_safeInset._digit0.setFrame(newFrame);
 			break;
 		}
-		case 3: {
+		case 4: {
 			int newFrame = scene->_safeInset._digit2._frame - 1;
 			if (newFrame == 0)
 				newFrame = 10;
@@ -1267,7 +1274,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 			scene->_safeInset._digit2.setFrame(newFrame);
 			break;
 		}
-		case 4: {
+		case 5: {
 			int newFrame = scene->_safeInset._digit1._frame - 1;
 			if (newFrame == 0)
 				newFrame = 10;
@@ -1275,7 +1282,7 @@ bool Scene560::SafeInset::Item::startAction(CursorType action, Event &event) {
 			scene->_safeInset._digit1.setFrame(newFrame);
 			break;
 		}
-		case 5: {
+		case 6: {
 			int newFrame = scene->_safeInset._digit0._frame - 1;
 			if (newFrame == 0)
 				newFrame = 10;
@@ -1306,14 +1313,14 @@ bool Scene560::Nickel::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene560::Object5::postInit(SceneObjectList *OwnerList) {
+void Scene560::BoxInset::postInit(SceneObjectList *OwnerList) {
 	FocusObject::postInit();
 	_item1.setDetails(Rect(110, 48, 189, 102), 560, 43, 44, -1, 1, NULL);
 	BF_GLOBALS._sceneItems.remove(&_item1);
 	BF_GLOBALS._sceneItems.push_front(&_item1);
 }
 
-void Scene560::Object5::remove() {
+void Scene560::BoxInset::remove() {
 	Scene560 *scene = (Scene560 *)BF_GLOBALS._sceneManager._scene;
 
 	if (scene->_sceneMode != 3)
@@ -1323,7 +1330,7 @@ void Scene560::Object5::remove() {
 	FocusObject::remove();
 }
 
-bool Scene560::Object5::Item1::startAction(CursorType action, Event &event) {
+bool Scene560::BoxInset::Item1::startAction(CursorType action, Event &event) {
 	Scene560 *scene = (Scene560 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
@@ -1340,7 +1347,7 @@ bool Scene560::Object5::Item1::startAction(CursorType action, Event &event) {
 		scene->_safeInset.setDetails(560, 45, 46, -1);
 		
 		scene->_sceneMode = 3;
-		scene->_object5.remove();
+		scene->_boxInset.remove();
 
 		GfxSurface cursor = surfaceFromRes(1, 5, 6);
 		BF_GLOBALS._events.setCursor(cursor);
@@ -1393,12 +1400,12 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._dayNumber = 3;
 
 	if (BF_GLOBALS._bookmark >= bTalkedToGrannyAboutSkipsCard) {
-		_object2.postInit();
-		_object2.setVisage(560);
-		_object2.setStrip(4);
-		_object2.setFrame(1);
-		_object2.setPosition(Common::Point(295, 37));
-		_object2.setDetails(560, 41, 42, -1, 1, NULL);
+		_box.postInit();
+		_box.setVisage(560);
+		_box.setStrip(4);
+		_box.setFrame(1);
+		_box.setPosition(Common::Point(295, 37));
+		_box.setDetails(560, 41, 42, -1, 1, NULL);
 	}
 
 	_deskChair.postInit();
@@ -1489,6 +1496,7 @@ void Scene560::signal() {
 		_sceneMode = 1;
 		break;
 	case 9:
+		// Clicked on the Baseball Cards Box
 		_object6._strip = 4;
 		_object6._frame = 1;
 
@@ -1509,13 +1517,13 @@ void Scene560::signal() {
 				BF_GLOBALS.setFlag(fGotPointsForPunch);
 			}
 			
-			_object5.postInit();
-			_object5.setVisage(560);
-			_object5.setStrip(2);
-			_object5.setFrame(4);
-			_object5.setPosition(Common::Point(160, 141));
-			_object5.fixPriority(251);
-			_object5.setDetails(560, 43, 44, -1);
+			_boxInset.postInit();
+			_boxInset.setVisage(560);
+			_boxInset.setStrip(2);
+			_boxInset.setFrame(4);
+			_boxInset.setPosition(Common::Point(160, 141));
+			_boxInset.fixPriority(251);
+			_boxInset.setDetails(560, 43, 44, -1);
 
 			_sceneMode = 4;
 		}
