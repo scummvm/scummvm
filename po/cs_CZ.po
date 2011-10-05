@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-10-04 20:43+0200\n"
-"PO-Revision-Date: 2011-08-23 12:36+0100\n"
+"PO-Revision-Date: 2011-10-05 18:43+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
-"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
@@ -2757,40 +2757,36 @@ msgid "Check for Updates..."
 msgstr "Zkontrolovat Aktualizace..."
 
 #: backends/platform/bada/form.cpp:270
-#, fuzzy
 msgid "Right Click Once"
-msgstr "Pravé kliknutí"
+msgstr "Pravé kliknutí jednou"
 
 #: backends/platform/bada/form.cpp:278
-#, fuzzy
 msgid "Move Only"
-msgstr "Pouze Øeè"
+msgstr "Pouze Pohyb"
 
 #: backends/platform/bada/form.cpp:292
 msgid "Escape Key"
-msgstr ""
+msgstr "Klávesa Escape"
 
 #: backends/platform/bada/form.cpp:297
-#, fuzzy
 msgid "Game Menu"
-msgstr "Hra"
+msgstr "Menu Hry"
 
 #: backends/platform/bada/form.cpp:302
-#, fuzzy
 msgid "Show Keypad"
-msgstr "Zobrazit klávesnici"
+msgstr "Zobrazit Klávesnici"
 
 #: backends/platform/bada/form.cpp:310
 msgid "Control Mouse"
-msgstr ""
+msgstr "Ovládání My¹i"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:92
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "Kliknutí Povoleno"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:92
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "Kliknutí Zakázáno"
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."
