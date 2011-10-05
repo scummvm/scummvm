@@ -457,8 +457,9 @@ bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
 		// Draw the contents of the hotspot area
 		if (o->_sceneRegionId == 0) {
 			// Scene item doesn't use a region, so fill in the entire area
-			destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
-				o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
+			if ((o->_bounds.right > o->_bounds.left) && (o->_bounds.bottom > o->_bounds.top))
+				destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
+					o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
 		} else {
 			// Scene uses a region, so get it and use it to fill out only the correct parts
 			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
