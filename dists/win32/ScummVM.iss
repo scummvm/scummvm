@@ -69,8 +69,9 @@ Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
-Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion
-Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (fr or de)
+Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not de
+Source: doc/de/Neues.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
+Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (fr or de or nb)
 Source: doc/fr/QuickStart_fr.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: fr
 Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
 Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: nb
