@@ -475,7 +475,7 @@ int MenuSystem::loadSavegamesList() {
 			if (in) {
 				if (Toltecs::ToltecsEngine::readSaveHeader(in, false, header) == Toltecs::ToltecsEngine::kRSHENoError) {
 					_savegames.push_back(SavegameItem(slotNum, header.description));
-					debug("%s -> %s", file->c_str(), header.description.c_str());
+					//debug("%s -> %s", file->c_str(), header.description.c_str());
 				}
 				delete in;
 			}
