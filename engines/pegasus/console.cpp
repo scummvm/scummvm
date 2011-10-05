@@ -24,12 +24,18 @@
  */
 
 #include "pegasus/console.h"
+#include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/neighborhood.h"
 
 namespace Pegasus {
 
 PegasusConsole::PegasusConsole(PegasusEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("die", WRAP_METHOD(PegasusConsole, Cmd_Die));
+
+	// These functions are non-demo specific
+	if (!_vm->isDemo())
+		DCmd_Register("jump", WRAP_METHOD(PegasusConsole, Cmd_Jump));
 }
 
 PegasusConsole::~PegasusConsole() {
@@ -56,6 +62,42 @@ bool PegasusConsole::Cmd_Die(int argc, const char **argv) {
 	}
 
 	_vm->die(atoi(argv[1]));
+	return false;
+}
+
+bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
+	if (!g_interface) {
+		// TODO
+		DebugPrintf("Cannot jump without interface set up\n");
+		return true;
+	}
+
+	// TODO: Default room/direction for each neighborhood
+
+	if (argc < 4) {
+		DebugPrintf("Usage: jump <neighborhood> <room> <direction>\n");
+		return true;
+	}
+
+	tNeighborhoodID neighborhood = (tNeighborhoodID)atoi(argv[1]);
+	tRoomID room = (tRoomID)atoi(argv[2]);
+	tDirectionConstant direction = (tDirectionConstant)atoi(argv[3]);
+
+	if (neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) {
+		DebugPrintf("Invalid neighborhood %d", neighborhood);
+		return true;
+	}
+
+	// No real way to check room validity at this point
+
+	if (direction > kWest) {
+		DebugPrintf("Invalid direction %d", direction);
+		return true;
+	}
+
+	// Here we go!
+	// TODO: Can't clear menu since the engine is paused
+	_vm->jumpToNewEnvironment(neighborhood, room, direction);
 	return false;
 }
 

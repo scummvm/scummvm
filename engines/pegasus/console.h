@@ -39,6 +39,7 @@ public:
 
 private:
 	bool Cmd_Die(int argc, const char **argv);
+	bool Cmd_Jump(int argc, const char **argv);
 
 	PegasusEngine *_vm;
 };
