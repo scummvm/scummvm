@@ -691,7 +691,7 @@ void GrimEngine::updateDisplayScene() {
 				g_movie->clearUpdateNeeded();
 			}
 			int frame = g_movie->getFrame();
-			if (frame > 0) {
+			if (frame >= 0) {
 				if (frame != _prevSmushFrame) {
 					_prevSmushFrame = g_movie->getFrame();
 					g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
@@ -745,7 +745,7 @@ void GrimEngine::updateDisplayScene() {
 				g_driver->prepareMovieFrame(g_movie->getDstSurface());
 				g_movie->clearUpdateNeeded();
 			}
-			if (g_movie->getFrame() > 0)
+			if (g_movie->getFrame() >= 0)
 				g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
 			else
 				g_driver->releaseMovieFrame();

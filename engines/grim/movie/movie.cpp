@@ -43,7 +43,7 @@ MoviePlayer::MoviePlayer() {
 	_videoPause = true;
 	_updateNeeded = false;
 	_movieTime = 0;
-	_frame = 0;
+	_frame = -1;
 	_x = 0;
 	_y = 0;
 	_videoDecoder = NULL;
@@ -110,7 +110,7 @@ Graphics::Surface *MoviePlayer::getDstSurface() {
 }
 
 void MoviePlayer::init() {
-	_frame = 0;
+	_frame = -1;
 	_movieTime = 0;
 	_updateNeeded = false;
 	_videoFinished = false;

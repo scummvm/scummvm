@@ -138,14 +138,6 @@ void SmushDecoder::handleFrame() {
 		return;
 	}
 
-	if (_curFrame == _nbframes) {
-		// If the video has been looping and was previously on the last
-		// frame then reset the frame number and the movie time, this
-		// needs to occur at the beginning so the last frame has time to
-		// render appropriately
-		_curFrame = 1;
-	}
-
 	tag = _file->readUint32BE();
 	if (tag == MKTAG('A','N','N','O')) {
 		char *anno;
@@ -202,10 +194,10 @@ void SmushDecoder::handleFrame() {
 	delete[] frame;
 
 	_curFrame++;
-	if (_curFrame == _nbframes) {
-		// If we're not supposed to loop (or looping fails) then end the video
-		if (!_videoLooping || !_file->seek(_startPos, SEEK_SET)) {
-			return;
+	if (_curFrame == _nbframes - 1) {
+		if (_videoLooping) {
+			_file->seek(_startPos, SEEK_SET);
+			_curFrame = 0;
 		}
 	}
 }
@@ -307,10 +299,10 @@ void SmushDecoder::handleFrameDemo() {
 		_videoPause = true;
 		return;
 	}
-	
+
 	if (_curFrame == 0)
 		_startTime = g_system->getMillis();
-	
+
 	tag = _file->readUint32BE();
 	assert(tag == MKTAG('F','R','M','E'));
 	size = _file->readUint32BE();
@@ -345,11 +337,11 @@ void SmushDecoder::handleFrameDemo() {
 		}
 	} while (pos < size);
 	delete[] frame;
-	
+
 	Graphics::Surface conversion;
 	conversion.create(0, 0, _format); // Avoid issues with copyFrom, by creating an empty surface.
 	conversion.copyFrom(_surface);
-	
+
 	uint16 *d = (uint16 *)_surface.pixels;
 	for (int l = 0; l < _width * _height; l++) {
 		int index = ((byte *)conversion.pixels)[l];
@@ -513,7 +505,7 @@ void SmushDecoder::pauseVideoIntern(bool p) {
 uint32 SmushDecoder::getFrameCount() const {
 	return _nbframes;
 }
-	
+
 void SmushDecoder::setMsPerFrame(int ms) {
 	_frameRate = Common::Rational(1000000, ms);
 }
