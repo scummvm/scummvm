@@ -95,7 +95,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Graduation Article
 		return new Scene265();
 	case 270:
-		// Grandma's Living Room
+		// Living Room & Kitchen
 		return new Scene270();
 	case 271:
 	case 280:

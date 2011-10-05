@@ -758,19 +758,19 @@ void Scene265::remove() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 270 - Grandma's Living Room
+ * Scene 270 - Living Room & Kitchen
  *
  *--------------------------------------------------------------------------*/
 
 void Scene270::Action1::signal() {
 	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_object6, NULL);
+	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
 
-bool Scene270::Object8::startAction(CursorType action, Event &event) {
+bool Scene270::Lyle::startAction(CursorType action, Event &event) {
 	Scene270 *scene = (Scene270 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -912,7 +912,7 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._sound1.fadeSound(26);
 
 	_exit.setDetails(Rect(310, 115, 320, 167), 270, -1, -1, -1, 1, NULL);
-	
+
 	if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._dayNumber = 1;
 		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 2);
@@ -920,9 +920,10 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._sceneManager._previousScene = 710;
 	}
 
-	if ((BF_GLOBALS._bookmark >= bLauraToParamedics) && (BF_GLOBALS._dayNumber == 1) &&
-			(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
-			(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) {
+	if (((BF_GLOBALS._bookmark >= bLauraToParamedics) && (BF_GLOBALS._dayNumber == 1) &&
+				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
+				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) ||
+			((BF_GLOBALS._dayNumber == 3) && BF_GLOBALS.getFlag(fGotGreen355fTalkedToGrannyDay3))) {
 		BF_GLOBALS._walkRegions.proc1(6);
 		BF_GLOBALS._walkRegions.proc1(14);
 		BF_GLOBALS._walkRegions.proc1(19);
@@ -940,9 +941,9 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (BF_GLOBALS._sceneManager._previousScene == 710) {
-		_object5.postInit();
-		_object4.postInit();
-		_object8.postInit();
+		_skip.postInit();
+		_laura.postInit();
+		_lyle.postInit();
 		_grandma.postInit();
 	}
 
@@ -953,28 +954,28 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_lauraSpeaker);
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 
-	_object6.postInit();
-	_object6.setVisage(270);
-	_object6.setPosition(Common::Point(264, 74));
-	_object6.setStrip(5);
-	_object6.fixPriority(132);
-	_object6._numFrames = 3;
-	_object6.setAction(&_action1);
+	_tv.postInit();
+	_tv.setVisage(270);
+	_tv.setPosition(Common::Point(264, 74));
+	_tv.setStrip(5);
+	_tv.fixPriority(132);
+	_tv._numFrames = 3;
+	_tv.setAction(&_action1);
 
-	_object7.postInit();
-	_object7.setVisage(270);
-	_object7.setStrip(2);
-	_object7.setPosition(Common::Point(302, 121));
-	_object7.fixPriority(132);
-	_object7.animate(ANIM_MODE_2, NULL);
+	_fireplace.postInit();
+	_fireplace.setVisage(270);
+	_fireplace.setStrip(2);
+	_fireplace.setPosition(Common::Point(302, 121));
+	_fireplace.fixPriority(132);
+	_fireplace.animate(ANIM_MODE_2, NULL);
 
-	_item6.setDetails(Rect(0, 56, 56, 130), 270, 9, 10, 11, 1, NULL);
+	_fridge.setDetails(Rect(0, 56, 56, 130), 270, 9, 10, 11, 1, NULL);
 	_object3.setDetails(270, 12, 13, 14, 1, NULL);
-	_object4.setDetails(270, 15, -1, -1, 1, NULL);
-	_object5.setDetails(270, 14, -1, -1, 1, NULL);
-	_object8.setDetails(270, 34, 35, 36, 1, NULL);
-	_object6.setDetails(270, 3, 4, 5, 1, NULL);
-	_object7.setDetails(270, 6, 7, 8, 1, NULL);
+	_laura.setDetails(270, 15, -1, -1, 1, NULL);
+	_skip.setDetails(270, 14, -1, -1, 1, NULL);
+	_lyle.setDetails(270, 34, 35, 36, 1, NULL);
+	_tv.setDetails(270, 3, 4, 5, 1, NULL);
+	_fireplace.setDetails(270, 6, 7, 8, 1, NULL);
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 710) && (BF_GLOBALS._bookmark == bTalkedToGrannyAboutSkipsCard)) {
 		_grandma.setDetails(270, 15, 16, 17, 1, NULL);
@@ -982,12 +983,12 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 		_grandma.setDetails(270, 40, 16, 17, 1, NULL);
 	}
 
-	_item4.setDetails(4, 270, 27, 28, 29, 1);
-	_item1.setDetails(1, 270, 18, 19, 20, 1);
-	_item7.setDetails(Rect(278, 50, 318, 72), 270, 21, 22, 23, 1, NULL);
-	_item3.setDetails(3, 270, 24, 25, 26, 1);
-	_item5.setDetails(2, 270, 30, 31, 32, 1);
-	_item12.setDetails(Rect(0, 0, 320, 168), 270, 0, 1, 2, 1, NULL);
+	_afgan.setDetails(4, 270, 27, 28, 29, 1);
+	_couch.setDetails(1, 270, 18, 19, 20, 1);
+	_photos.setDetails(Rect(278, 50, 318, 72), 270, 21, 22, 23, 1, NULL);
+	_appliances.setDetails(3, 270, 24, 25, 26, 1);
+	_ivy.setDetails(2, 270, 30, 31, 32, 1);
+	_background.setDetails(Rect(0, 0, 320, 168), 270, 0, 1, 2, 1, NULL);
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player._moveDiff.x = 8;
@@ -1017,7 +1018,7 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 	case 710:
 		BF_GLOBALS._player._moveDiff.x = 6;
 		_sceneMode = 2717;
-		setAction(&_sequenceManager1, this, 2717, &BF_GLOBALS._player, &_object4, &_object5, &_object8, &_grandma, NULL);
+		setAction(&_sequenceManager1, this, 2717, &BF_GLOBALS._player, &_laura, &_skip, &_lyle, &_grandma, NULL);
 		break;
 	default:
 		_sceneMode = 2701;
@@ -1123,9 +1124,9 @@ void Scene270::signal() {
 		break;
 	case 2717:
 		_sceneMode = 2718;
-		_object8.setFrame2(-1);
-		setAction(&_sequenceManager1, this, 2718, &BF_GLOBALS._player, &_object4, &_object5, 
-			&_object8, &_grandma, NULL);
+		_lyle.setFrame2(-1);
+		setAction(&_sequenceManager1, this, 2718, &BF_GLOBALS._player, &_laura, &_skip, 
+			&_lyle, &_grandma, NULL);
 		break;
 	case 2718:
 		BF_GLOBALS._walkRegions.proc1(6);
@@ -1148,8 +1149,8 @@ void Scene270::signal() {
 		_field384 = 0;
 		BF_GLOBALS._player._moveDiff.x = 6;
 
-		_object8.setFrame2(-1);
-		setAction(&_sequenceManager1, this, 2719, &BF_GLOBALS._player, &_object8, &_grandma, NULL);
+		_lyle.setFrame2(-1);
+		setAction(&_sequenceManager1, this, 2719, &BF_GLOBALS._player, &_lyle, &_grandma, NULL);
 		break;
 	default:
 		break;
@@ -1184,16 +1185,16 @@ void Scene270::process(Event &event) {
 
 void Scene270::dispatch() {
 	if (_field384) {
-		_object8.updateAngle(BF_GLOBALS._player._position);
+		_lyle.updateAngle(BF_GLOBALS._player._position);
 
-		if (_object8._angle < 110)
-			_object8.setFrame2(4);
-		else if (_object8._angle < 180)
-			_object8.setFrame2(3);
-		else if (_object8._angle < 250)
-			_object8.setFrame2(2);
+		if (_lyle._angle < 110)
+			_lyle.setFrame2(4);
+		else if (_lyle._angle < 180)
+			_lyle.setFrame2(3);
+		else if (_lyle._angle < 250)
+			_lyle.setFrame2(2);
 		else
-			_object8.setFrame2(1);
+			_lyle.setFrame2(1);
 	}
 
 	if (_field386) {
@@ -1216,8 +1217,8 @@ void Scene270::dispatch() {
 		}
 	}
 
-	if (!_action && !_field219A) {
-		if ((BF_GLOBALS._player._position.x < 236) && (BF_GLOBALS._player._position.y < 125)) {
+	if (!_action && _field219A) {
+		if ((BF_GLOBALS._player._position.x > 236) && (BF_GLOBALS._player._position.y < 125)) {
 			_field219A = 0;
 			BF_GLOBALS._player.disableControl();
 			if (!_field384) {

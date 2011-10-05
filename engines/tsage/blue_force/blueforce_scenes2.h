@@ -174,7 +174,7 @@ class Scene270: public SceneExt {
 	};
 
 	/* Objects */
-	class Object8: public NamedObject {
+	class Lyle: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -201,15 +201,14 @@ public:
 	SpeakerSkip _skipSpeaker;
 	SpeakerGameText _gameTextSpeaker;
 	Action1 _action1;
-	NamedObject _object1, _object2, _object3, _object4;
-	NamedObject _object5, _object6, _object7;
-	Object8 _object8;
+	NamedObject _object1, _object2, _object3, _laura;
+	NamedObject _skip, _tv, _fireplace;
+	Lyle _lyle;
 	Grandma _grandma;
-	Item _item1;
-	NamedHotspot _item2, _item3;
-	Item _item4;
-	NamedHotspot _item5, _item6, _item7, _item8, _item9;
-	NamedHotspot _item10, _item11, _item12;
+	Item _couch, _afgan;
+	NamedHotspot _appliances;
+	NamedHotspot _ivy, _fridge, _photos, _item8, _item9;
+	NamedHotspot _item10, _item11, _background;
 	Exit _exit;
 	int _field380, _field382, _field384, _field386;
 	int _field219A, _field21A0;
