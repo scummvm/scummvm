@@ -314,7 +314,6 @@ static void closeDiskImage(ScummDiskImage *img) {
  */
 static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
-
 		// FMTOWNS monkey and monkey2 games don't have speech but may have .sou files
 		if (gs->platform == Common::kPlatformFMTowns)
 			return false;
@@ -332,16 +331,16 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 #endif
 		 0 };
 
-		for (Common::FSList::const_iterator file = fslist.begin();
-		 file != fslist.end(); ++file) {
-			if (!file->isDirectory()) {
-				for (int i = 0; basenames[i]; ++i) {
-					for (int j = 0; extensions[j]; ++j) {
-						Common::String filename = Common::String(basenames[i])
-						 + "." + Common::String(extensions[j]);
-						if (filename.equalsIgnoreCase(file->getName()))
-							return true;
-					}
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			if (file->isDirectory())
+				continue;
+
+			for (int i = 0; basenames[i]; ++i) {
+				Common::String basename = Common::String(basenames[i]) + ".";
+
+				for (int j = 0; extensions[j]; ++j) {
+					if ((basename + extensions[j]).equalsIgnoreCase(file->getName()))
+						return true;
 				}
 			}
 		}
