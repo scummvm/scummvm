@@ -985,7 +985,6 @@ void L1_FadeOutChore() {
 		int time = (int)lua_getnumber(timeObj);
 
 		costume->fadeChoreOut(chore, time);
-		costume->stopChore(chore);
 	}
 }
 
