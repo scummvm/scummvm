@@ -649,7 +649,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			dr.language = detectLanguage(fslist, g->id);
 
 			// Detect if there are speech files in this unknown game
-			if(detectSpeech(fslist, g))
+			if (detectSpeech(fslist, g))
 				dr.game.guioptions &= ~GUIO_NOSPEECH;
 
 			// Add the game/variant to the candidates list if it is consistent
