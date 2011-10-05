@@ -73,8 +73,6 @@ void Animation::fade(FadeMode fadeMode, int fadeLength) {
 			_time = -1;
 			_fade = 0.f;
 			_paused = false;
-		} else {
-			return;
 		}
 	}
 	_fadeMode = fadeMode;
@@ -127,8 +125,10 @@ int Animation::update(int time) {
 		} else {
 			_fade -= (float)time / (float)_fadeLength;
 			if (_fade <= 0.f) {
-				_fade = 1.f;
-				_fadeMode = None;
+				_fade = 0.f;
+				// Don't reset the _fadeMode here. This way if fadeOut() was called
+				// on a looping chore its keyframe animations will remain faded out
+				// when it calls play() again.
 				deactivate();
 				return 0;
 			}
