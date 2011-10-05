@@ -103,7 +103,7 @@ static const EnginePlugin *detectPlugin() {
 
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("%s", "  Looking for a plugin supporting this gameid... ");
+	printf("  Looking for a plugin supporting this gameid... ");
 
  	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
