@@ -12,6 +12,7 @@ TODO
    delta-frames so currently, once restored, the screen is wrong. This is only observed in
    a few places.
 - Add "Quit game" functionality to the menu
+- Flush the resource cache when changing rooms, otherwise the game will keep eating up memory
 
 BUGS
 ------
