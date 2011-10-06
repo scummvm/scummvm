@@ -546,6 +546,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 

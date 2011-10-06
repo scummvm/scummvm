@@ -1670,6 +1670,95 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
+	// Used for bitmap operations in SCI2.1 and SCI3.
+	// This is the SCI2.1 version, the functionality seems to have changed in SCI3.
+
+	switch (argv[0].toUint16()) {
+	case 0:	// init bitmap surface
+		{
+		// 6 params, called e.g. from TextView::init() in Torin's Passage,
+		// script 64890 and TransView::init() in script 64884
+		uint16 width = argv[1].toUint16();
+		uint16 height = argv[2].toUint16();
+		uint16 skip = argv[3].toUint16();
+		uint16 back = argv[4].toUint16();
+		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
+		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
+		uint16 transparent = (argc >= 8) ? argv[7].toUint16() : 0;
+		warning("kBitmap(0): width %d, height %d, skip %d, back %d, width2 %d, height2 %d, transparent %d",
+				width, height, skip, back, width2, height2, transparent);
+		// returns a pointer to a bitmap
+		}
+		break;
+	case 1:	// dispose bitmap surface
+		// 1 param, bitmap pointer, called e.g. from MenuItem::dispose
+		// in Torin's Passage, script 64893
+		warning("kBitmap(1), bitmap ptr %04x:%04x", PRINT_REG(argv[1]));
+		break;
+	case 2:	// dispose bitmap surface, with extra param
+		// 2 params, called e.g. from MenuItem::dispose in Torin's Passage,
+		// script 64893
+		warning("kBitmap(2), unk1 %d, bitmap ptr %04x:%04x", argv[1].toUint16(), PRINT_REG(argv[2]));
+		break;
+	case 3:	// tiled surface
+		{
+		// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
+		// script 64869
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		// The tiled view seems to always have 2 loops.
+		// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
+		uint16 view = argv[2].toUint16();	// vTiles selector
+		uint16 loop = argv[3].toUint16();
+		uint16 cel = argv[4].toUint16();
+		uint16 x = argv[5].toUint16();
+		uint16 y = argv[6].toUint16();
+		warning("kBitmap(3): bitmap ptr %04x:%04x, view %d, loop %d, cel %d, x %d, y %d",
+				PRINT_REG(bitmapPtr), view, loop, cel, x, y);
+		}
+		break;
+	case 4:	// process text
+		{
+		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
+		// script 64894
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		Common::String text = s->_segMan->getString(argv[2]);
+		// unk3
+		// unk4
+		// unk5
+		// unk6
+		// skip?
+		// back?
+		uint16 font = argv[9].toUint16();
+		uint16 mode = argv[10].toUint16();
+		// unk
+		uint16 dimmed = argv[12].toUint16();
+		warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
+				PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
+		}
+		break;
+	case 5:
+		{
+		// 6 params, called e.g. from TextView::init() and TextView::draw()
+		// in Torin's Passage, script 64890
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		uint16 unk1 = argv[2].toUint16();	// unknown, usually 0, judging from scripts?
+		uint16 unk2 = argv[3].toUint16();	// unknown, usually 0, judging from scripts?
+		uint16 width = argv[4].toUint16();	// width - 1
+		uint16 height = argv[5].toUint16();	// height - 1
+		uint16 back = argv[6].toUint16();
+		warning("kBitmap(5): bitmap ptr %04x:%04x, unk1 %d, unk2 %d, width %d, height %d, back %d",
+				PRINT_REG(bitmapPtr), unk1, unk2, width, height, back);
+		}
+		break;
+	default:
+		kStub(s, argc, argv);
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
