@@ -247,10 +247,15 @@ void ConfigFile::renameSection(const String &oldName, const String &newName) {
 	assert(isValidName(oldName));
 	assert(isValidName(newName));
 
-	//Section *os = getSection(oldName);
-	Section *ns = getSection(newName);
-	if (ns) {
-		ns->name = newName;
+	Section *os = getSection(oldName);
+	const Section *ns = getSection(newName);
+	if (os) {
+		// HACK: For now we just print a warning, for more info see the TODO
+		// below.
+		if (ns)
+			warning("ConfigFile::renameSection: Section name \"%s\" already used", newName.c_str());
+		else
+			os->name = newName;
 	}
 	// TODO: Check here whether there already is a section with the
 	// new name. Not sure how to cope with that case, we could:
