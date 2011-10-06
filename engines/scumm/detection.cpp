@@ -318,8 +318,8 @@ static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
 		if (gs->platform == Common::kPlatformFMTowns)
 			return false;
 
-		const char *basenames[] = { gs->gameid, "monster", 0 };
-		const char *extensions[] = { "sou",
+		const char *const basenames[] = { gs->gameid, "monster", 0 };
+		static const char *const extensions[] = { "sou",
 #ifdef USE_FLAC
 		 "sof",
 #endif
