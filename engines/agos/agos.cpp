@@ -165,6 +165,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_numMusic = 0;
 	_numSFX = 0;
 	_numSpeech = 0;
+	_numZone = 0;
 
 	_numBitArray1 = 0;
 	_numBitArray2 = 0;
@@ -732,6 +733,8 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	_numTextBoxes = 40;
 	_numVars = 2048;
 
+	_numZone = 450;
+
 	AGOSEngine::setupGame();
 }
 #endif
@@ -766,6 +769,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_numMusic = 93;
 	_numSFX = 222;
 	_numSpeech = 11997;
+	_numZone = 140;
 
 	AGOSEngine::setupGame();
 }
@@ -792,6 +796,7 @@ void AGOSEngine_Simon1::setupGame() {
 	_numMusic = 34;
 	_numSFX = 127;
 	_numSpeech = 3623;
+	_numZone = 164;
 
 	AGOSEngine::setupGame();
 }
@@ -812,6 +817,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 26;
+	_numZone = 155;
 
 	AGOSEngine::setupGame();
 }
@@ -831,6 +837,7 @@ void AGOSEngine_Elvira2::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 9;
+	_numZone = 99;
 
 	AGOSEngine::setupGame();
 }
@@ -847,6 +854,7 @@ void AGOSEngine_Elvira1::setupGame() {
 	_numVars = 512;
 
 	_numMusic = 14;
+	_numZone = 74;
 
 	AGOSEngine::setupGame();
 }
@@ -859,6 +867,8 @@ void AGOSEngine_PN::setupGame() {
 	_vgaBaseDelay = 1;
 	_vgaPeriod = 50;
 	_numVars = 256;
+
+	_numZone = 26;
 
 	AGOSEngine::setupGame();
 }

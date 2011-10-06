@@ -69,6 +69,7 @@ void AGOSEngine_Feeble::setupGame() {
 	_numVars = 255;
 
 	_numSpeech = 10000;
+	_numZone = 450;
 
 	AGOSEngine::setupGame();
 }

@@ -257,6 +257,7 @@ protected:
 
 	uint8 _numMusic, _numSFX;
 	uint16 _numSpeech;
+	uint16 _numZone;
 
 	uint8 _numBitArray1, _numBitArray2, _numBitArray3, _numItemStore;
 	uint16 _numVars;
