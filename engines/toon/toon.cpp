@@ -1503,7 +1503,7 @@ void ToonEngine::clickEvent() {
 			if (leftButton)
 				createMouseItem(104);
 			else
-				characterTalk(518);
+				characterTalk(1104);
 		}
 	}
 	if (_currentHotspotItem == -4) {
