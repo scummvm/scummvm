@@ -98,6 +98,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Living Room & Kitchen
 		return new Scene270();
 	case 271:
+		// Living Room & Kitchen #2
+		return new Scene271();
 	case 280:
 		error("Scene group 2 not implemented");
 	case 300:
@@ -832,7 +834,7 @@ PaletteFader *PalettedScene::addFader(const byte *arrBufferRGB, int step, Action
 	return BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, step, action);
 }
 
-void PalettedScene::sub15DD6(const byte *arrBufferRGB, int step, int paletteNum, Action *action) {
+void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNum, Action *action) {
 	BF_GLOBALS._scenePalette.addFader(arrBufferRGB, 1, 100, NULL);
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);
@@ -986,7 +988,7 @@ BlueForceInvObjectList::BlueForceInvObjectList():
 		_greensKnife(9, 4, 4),
 		_dogWhistle(9, 4, 5),
 		_ammoBelt(9, 1, 2),
-		_lastInvent(9, 4, 7) {
+		_alleyCatKey(9, 4, 7) {
 
 	// Add the items to the list
 	_itemList.push_back(&_none);
@@ -1056,7 +1058,7 @@ BlueForceInvObjectList::BlueForceInvObjectList():
 	_itemList.push_back(&_greensKnife);
 	_itemList.push_back(&_dogWhistle);
 	_itemList.push_back(&_ammoBelt);
-	_itemList.push_back(&_lastInvent);
+	_itemList.push_back(&_alleyCatKey);
 }
 
 void BlueForceInvObjectList::reset() {
@@ -1139,6 +1141,95 @@ void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 
 	// Update the user interface if necessary
 	BF_GLOBALS._uiElements.updateInventory();
+}
+
+void BlueForceInvObjectList::alterInventory(int mode) {
+	// Check for existing specific items in player's inventory
+	bool hasPrintout = getObjectScene(INV_PRINT_OUT) == 1;
+	bool hasRags = getObjectScene(INV_RAGS) == 1;
+	bool hasJar = getObjectScene(INV_JAR) == 1;
+	bool hasNickel = getObjectScene(INV_NICKEL) == 1;
+	bool hasCrate1 = getObjectScene(INV_CRATE1) == 1;	//di
+	bool hasForestRap = getObjectScene(INV_FOREST_RAP) == 1;
+	bool hasRentalCoupon = getObjectScene(INV_RENTAL_COUPON) == 1;	//si
+	bool hasWarehouseKeys = getObjectScene(INV_WAREHOUSE_KEYS) == 1;
+	bool hasCobbRap = getObjectScene(INV_COBB_RAP) == 1;
+	bool hasHook = getObjectScene(INV_HOOK) == 1;
+	bool hasMugShot = getObjectScene(INV_MUG_SHOT) == 1;
+
+	// Remove any items currently in player's inventory
+	SynchronizedList<InvObject *>::iterator i;
+	for (i = _itemList.begin(); i != _itemList.end(); ++i) {
+		if ((*i)->_sceneNumber == 1)
+			(*i)->_sceneNumber = 0;
+	}
+
+	// Give basic set of items back into inventory
+	setObjectScene(INV_COLT45, 1);
+	setObjectScene(INV_HANDCUFFS, 1);
+	setObjectScene(INV_AMMO_BELT, 1);
+	setObjectScene(INV_ID, 1);
+
+	// Reset ticket book and miranda card back to motorcycle
+	setObjectScene(INV_TICKET_BOOK, 60);
+	setObjectScene(INV_MIRANDA_CARD, 60);
+
+	BF_GLOBALS._v4CEC4 = 0;
+
+	switch (mode) {
+	case 2:
+		if (hasPrintout)
+			setObjectScene(INV_PRINT_OUT, 1);
+		if (hasNickel)
+			setObjectScene(INV_NICKEL, 1);
+		if (hasForestRap)
+			setObjectScene(INV_FOREST_RAP, 1);
+		if (hasCrate1)
+			setObjectScene(INV_CRATE1, 1);
+		if (hasRentalCoupon)
+			setObjectScene(INV_RENTAL_COUPON, 1);
+		if (hasHook)
+			setObjectScene(INV_HOOK, 1);
+		break;
+	case 3:
+		if (hasPrintout)
+			setObjectScene(INV_PRINT_OUT, 1);
+		if (hasNickel)
+			setObjectScene(INV_NICKEL, 1);
+		if (hasForestRap)
+			setObjectScene(INV_FOREST_RAP, 1);
+		if (hasCrate1)
+			setObjectScene(INV_CRATE1, 1);
+		if (hasRentalCoupon)
+			setObjectScene(INV_RENTAL_COUPON, 1);
+		if (hasCobbRap)
+			setObjectScene(INV_COBB_RAP, 1);
+		if (hasHook)
+			setObjectScene(INV_HOOK, 1);
+		if (hasMugShot)
+			setObjectScene(INV_MUG_SHOT, 1);
+		break;
+	case 4:
+		if (hasNickel)
+			setObjectScene(INV_NICKEL, 1);
+		if (hasRentalCoupon)
+			setObjectScene(INV_RENTAL_COUPON, 1);
+		if (hasHook)
+			setObjectScene(INV_HOOK, 1);
+		break;
+	case 5:
+		if (hasRags)
+			setObjectScene(INV_RAGS, 1);
+		if (hasJar)
+			setObjectScene(INV_JAR, 1);
+		if (hasRentalCoupon)
+			setObjectScene(INV_RENTAL_COUPON, 1);
+		if (hasWarehouseKeys)
+			setObjectScene(INV_WAREHOUSE_KEYS, 1);
+		break;
+	default:
+		break;
+	}
 }
 
 /*--------------------------------------------------------------------------*/

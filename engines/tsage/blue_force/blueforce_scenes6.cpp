@@ -146,7 +146,7 @@ void Scene620::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.setPosition(Common::Point(47, 96));
 
 	static const uint32 black = 0;
-	sub15DD6((const byte *)&black, 2, 621, this);
+	add2Faders((const byte *)&black, 2, 621, this);
 }
 
 void Scene620::signal() {
@@ -181,7 +181,7 @@ void Scene620::signal() {
 		_object2.postInit();
 		_object2.setVisage(623);
 		_object2.setPosition(Common::Point(216, 4));
-		sub15DD6((const byte *)&black, 2, 623, this);
+		add2Faders((const byte *)&black, 2, 623, this);
 		break;
 	case 6:
 		_object2.animate(ANIM_MODE_5, this);
@@ -193,7 +193,7 @@ void Scene620::signal() {
 		_object3.setVisage(624);
 		_object3.setFrame(1);
 		_object3.setPosition(Common::Point(28, 88));
-		sub15DD6((const byte *)&black, 2, 624, this);
+		add2Faders((const byte *)&black, 2, 624, this);
 		break;
 	case 11:
 		_object3.remove();
@@ -201,7 +201,7 @@ void Scene620::signal() {
 		_object4.postInit();
 		_object4.setVisage(625);
 		_object4.setPosition(Common::Point(168, 8));
-		sub15DD6((const byte *)&black, 2, 625, this);
+		add2Faders((const byte *)&black, 2, 625, this);
 		break;
 	case 14:
 		_object4.remove();
@@ -209,7 +209,7 @@ void Scene620::signal() {
 		_object5.postInit();
 		_object5.setVisage(626);
 		_object5.setPosition(Common::Point(249, 183));
-		sub15DD6((const byte *)&black, 2, 626, this);
+		add2Faders((const byte *)&black, 2, 626, this);
 		break;
 	case 15:
 		_object5.animate(ANIM_MODE_5, this);
@@ -220,7 +220,7 @@ void Scene620::signal() {
 		_object6.postInit();
 		_object6.setVisage(627);
 		_object6.setPosition(Common::Point(65, 24));
-		sub15DD6((const byte *)&black, 2, 627, this);
+		add2Faders((const byte *)&black, 2, 627, this);
 		break;
 	case 18:
 		_object6.animate(ANIM_MODE_5, this);

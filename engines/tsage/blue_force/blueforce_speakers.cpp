@@ -947,6 +947,24 @@ void SpeakerLyle::setText(const Common::String &msg) {
 	_object2.fixCountdown(8, _numFrames);
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerGranText::SpeakerGranText(): VisualSpeaker() {
+	_color1 = 20;
+	_color2 = 23;
+	
+	_speakerName = "GRANTEXT";
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerLyleText::SpeakerLyleText(): VisualSpeaker() {
+	_color1 = 29;
+	_color2 = 89;
+	
+	_speakerName = "LYLETEXT";
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

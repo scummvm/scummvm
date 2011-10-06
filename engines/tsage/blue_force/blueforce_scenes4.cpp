@@ -1541,7 +1541,7 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 		_object3.setFrame(_object3.getFrameCount());
 		BF_GLOBALS._sceneItems.push_back(&_object3);
 	} else if (!BF_GLOBALS.getFlag(fWithLyle) || !BF_GLOBALS.getFlag(fGivenNapkin) ||
-			(BF_INVENTORY.getObjectScene(BF_LAST_INVENT) == 1)) {
+			(BF_INVENTORY.getObjectScene(BF_ITEM_67) == 1)) {
 		_object3.postInit();
 		_object3.setVisage(463);
 		_object3.setPosition(Common::Point(138, 121));
@@ -1628,7 +1628,7 @@ void Scene450::signal() {
 		break;
 	case 4517:
 		BF_GLOBALS.setFlag(gotTrailer450);
-		BF_INVENTORY.setObjectScene(BF_LAST_INVENT, 1);
+		BF_INVENTORY.setObjectScene(BF_ITEM_67, 1);
 		_sceneMode = 4508;
 		setAction(&_sequenceManager, this, 4508, &BF_GLOBALS._player, &_object4, &_door, NULL);
 		break;

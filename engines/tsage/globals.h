@@ -174,6 +174,7 @@ public:
 	int _safeCombination;
 	int _v4CEC0;
 	int _v4CEC2;
+	int _v4CEC4;
 	int _v4CEC8;
 	int _deziTopic;
 	int _deathReason;

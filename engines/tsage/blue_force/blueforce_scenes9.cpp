@@ -1342,7 +1342,7 @@ void Scene935::Action1::signal() {
 		break;
 	case 10:
 		scene->_sceneMode = 1;
-		scene->sub15DD6((const byte *)&v50F6A, 5, 935, scene);
+		scene->add2Faders((const byte *)&v50F6A, 5, 935, scene);
 		remove();
 		break;
 	default:
