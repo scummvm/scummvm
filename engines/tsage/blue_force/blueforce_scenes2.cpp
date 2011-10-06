@@ -1653,6 +1653,8 @@ void Scene271::signal() {
 		_sceneMode = 13;
 		addFader((const byte *)&black, 2, this);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1713,6 +1715,123 @@ void Scene271::dispatch() {
 	}
 
 	SceneExt::dispatch();
+}
+
+/*--------------------------------------------------------------------------
+ * Scene 280 - Bedroom Flashback cut-scene
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene280::Action1::signal() {
+	Scene280 *scene = (Scene280 *)BF_GLOBALS._sceneManager._scene;
+	static uint32 black = 0;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_jake.postInit();
+		scene->_jake.setVisage(283);
+		scene->_jake.setPosition(Common::Point(331, 200));
+		scene->_jake.animate(ANIM_MODE_1, NULL);
+		scene->_jake.setStrip(1);
+		ADD_MOVER(scene->_jake, 189, 131);
+		break;
+	case 1:
+		scene->_jake.setStrip(2);
+		scene->_jake.setFrame(1);
+		scene->_jake.animate(ANIM_MODE_8, NULL);
+		scene->_jake._numFrames = 5;
+		
+		scene->_stripManager.start(2800, this);
+		break;
+	case 2:
+		scene->_jake.animate(ANIM_MODE_5, NULL);
+		scene->_dad.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		scene->_jake.setStrip(4);
+		scene->_jake.setFrame(1);
+		scene->_dad.setStrip(2);
+		scene->_jake.setFrame(1);
+		scene->_dad.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		scene->_dad.setStrip(3);
+		scene->_dad.setFrame(1);
+		scene->_dad.animate(ANIM_MODE_5, this);
+		break;
+	case 5:
+		scene->_object4.hide();
+		scene->_dad.setVisage(282);
+		scene->_dad.setStrip(1);
+		scene->_dad.setFrame(1);
+		scene->_dad._numFrames = 5;
+		scene->_dad.animate(ANIM_MODE_5, this);
+		break;
+	case 6:
+		scene->_stripManager.start(2801, this);
+		break;
+	case 7:
+		scene->_mum.postInit();
+		scene->_mum.setVisage(282);
+		scene->_mum.setStrip(2);
+		scene->_mum.setFrame(1);
+		scene->_mum.fixPriority(1);
+		scene->_mum.setPosition(Common::Point(160, 138));
+
+		scene->_jake.setStrip(3);
+		scene->_jake.setFrame(1);
+		scene->_jake.animate(ANIM_MODE_5, this);
+
+		scene->_dad._numFrames = 10;
+		scene->_dad.setVisage(284);
+		scene->_dad.setStrip(1);
+		scene->_dad.fixPriority(-1);
+		scene->_dad.setPosition(Common::Point(174, 136));
+		scene->_dad.setFrame(1);
+		scene->_dad.animate(ANIM_MODE_1, NULL);
+		ADD_MOVER(scene->_dad, 438, 320);
+		break;
+	case 8:
+		scene->_mum.animate(ANIM_MODE_4, 5, 1, this);
+		break;
+	case 9:
+		scene->_sceneMode = 2;
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		scene->addFader((const byte *)&black, 2, scene);
+
+		scene->_jake.remove();
+		scene->_mum.animate(ANIM_MODE_5, NULL);
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene280::postInit(SceneObjectList *OwnerList) {
+	PalettedScene::postInit();
+	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
+	loadScene(280);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+
+	_dad.postInit();
+	_dad.setVisage(281);
+	_dad.setPosition(Common::Point(160, 138));
+	_dad.fixPriority(1);
+
+	_object4.postInit();
+	_object4.setVisage(280);
+	_object4.setPosition(Common::Point(139, 141));
+
+	const uint32 black = 0;
+	add2Faders((const byte *)&black, 2, 280, this);
+	_sceneMode = 1;
+	setAction(&_action1);
+}
+
+void Scene280::signal() {
+	if (_sceneMode == 2)
+		BF_GLOBALS._sceneManager.changeScene(271);
 }
 
 } // End of namespace BlueForce

@@ -276,6 +276,20 @@ public:
 	virtual void dispatch();
 };
 
+class Scene280: public PalettedScene {
+	/* Actions */
+	class Action1: public ActionExt {
+	public:
+		virtual void signal();
+	};
+public:
+	Action1 _action1;
+	SpeakerGameText _gameTextSpeaker;
+	NamedObject _jake, _dad, _mum, _object4;
+
+	void postInit(SceneObjectList *OwnerList);
+	virtual void signal();
+};
 
 } // End of namespace BlueForce
 

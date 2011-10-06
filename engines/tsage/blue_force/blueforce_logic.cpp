@@ -101,7 +101,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Living Room & Kitchen #2
 		return new Scene271();
 	case 280:
-		error("Scene group 2 not implemented");
+		// Bedroom Flashback cut-scene
+		return new Scene280();
 	case 300:
 		// Outside Police Station
 		return new Scene300();
