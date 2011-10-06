@@ -1,7 +1,7 @@
 Source: scummvm
 Section: user/games
 Priority: optional
-Maintainer: Frantisek Dufka <dufkaf@seznam.cz>
+Maintainer: Tarek Soliman <tsoliman@scummvm.org>
 Build-Depends: debhelper (>> 4.0.0), libsdl1.2-dev, libmad0-dev, libasound2-dev, libvorbisidec-dev, libmpeg2-4-dev, libflac-dev (>= 1.1.2), libz-dev, quilt
 
 Standards-Version: 3.6.1.1

@@ -1,8 +1,8 @@
 scummvm (1.4.0~git) unstable; urgency=low
 
-  * Non-maintainer upload.
+  * development snapshot
 
- -- Tarek Soliman <tarek@bashasoliman.com>  Wed, 29 Jun 2011 16:41:09 -0500
+ -- Tarek Soliman <tsoliman@scummvm.org>  Wed, 05 Oct 2011 19:01:25 -0500
 
 scummvm (1.2.1~pre) unstable; urgency=low
 
