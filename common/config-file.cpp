@@ -26,16 +26,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
-#define MAXLINELEN 256
-
 namespace Common {
 
-/**
- * Check whether the given string is a valid section or key name.
- * For that, it must only consist of letters, numbers, dashes and
- * underscores. In particular, white space and "#", "=", "[", "]"
- * are not valid!
- */
 bool ConfigFile::isValidName(const String &name) {
 	const char *p = name.c_str();
 	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_' || *p == '.'))
