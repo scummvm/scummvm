@@ -586,10 +586,10 @@ void Actor::update() {
 		Common::Point point = _point1 + _point2;
 		Common::Point current = _data.points[_data.current];
 
-		if (point.x < (int16)(current.x - (dist - 1))
-		 || point.x > (int16)(current.x + (dist - 1))
-		 || point.y < (int16)(current.y - (dist - 1))
-		 || point.y > (int16)(current.y + (dist - 1))) {
+		if (point.x < (int16)(current.x - (dist + 1))
+		 || point.x > (int16)(current.x + (dist + 1))
+		 || point.y < (int16)(current.y - (dist + 1))
+		 || point.y > (int16)(current.y + (dist + 1))) {
 			if (canMove(&point, _direction, (uint32)dist, false)) {
 				move(_direction, (uint32)dist);
 			} else {
@@ -702,7 +702,7 @@ void Actor::update() {
 
 
 void Actor::updateStatus(ActorStatus actorStatus) {
-	debugC(kDebugLevelActor, "[updateStatus] %d point1(%d/%d)", actorStatus, this->_point1.x, this->_point1.y);
+	debugC(kDebugLevelActor, "[updateStatus] %d point1(%d:%d) point2(%d:%d)", actorStatus, _point1.x, _point1.y, _point2.x, _point2.y);
 
 	switch (actorStatus) {
 	default:
