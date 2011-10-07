@@ -83,7 +83,9 @@ void SmushPlayer::handleFrame() {
 
 void SmushPlayer::restoreState(SaveGame *state) {
 	MoviePlayer::restoreState(state);
-	getDecoder()->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
+	if (isPlaying()) {
+		getDecoder()->seekToTime((uint32)_movieTime); // Currently not fully working (out of synch)
+	}
 }
 
 } // end of namespace Grim
