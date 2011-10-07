@@ -99,6 +99,146 @@ public:
 	virtual void dispatch();
 };
 
+class Scene810: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Items */
+	class Map: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Window: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Bookcase: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class FaxMachine: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class GarbageCan: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class FileCabinets: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class CoffeeMaker: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Shelves: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class MicroficheReader: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item10: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Pictures: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item12: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Background: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Desk: public SceneHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Lyle: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Chair: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object5: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object7: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	Action1 _action1;
+	Action2 _action2;
+	SequenceManager _sequenceManager1, _sequenceManager2;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	Lyle _lyle;
+	Chair _chair;
+	Object3 _object3;
+	Object4 _object4;
+	Object5 _object5;
+	NamedObject _object6;
+	Object7 _object7;
+	Map _map;
+	Window _window;
+	Bookcase _bookcase;
+	FaxMachine _faxMachine;
+	GarbageCan _garbageCan;
+	FileCabinets _fileCabinets;
+	CoffeeMaker _coffeeMaker;
+	Shelves _shelves;
+	MicroficheReader _microficheReader;
+	Item10 _item10;
+	Pictures _pictures;
+	Item12 _item12;
+	Background _background;
+	Desk _desk;
+	Exit _exit;
+	ASoundExt _sound1;
+	Rect _rect1, _rect2, _rect3;
+	int _fieldA70, _fieldA72, _fieldA74;
+
+	Scene810();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene830: public PalettedScene {
 	/* Items */
 	class SouthEastExit: public NamedHotspot {

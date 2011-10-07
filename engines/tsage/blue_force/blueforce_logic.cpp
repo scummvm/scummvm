@@ -190,6 +190,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Jamison & Ryan
 		return new Scene800();
 	case 810:
+		// Lyle's Office
+		return new Scene810();
 	case 820:
 		error("Scene group 8 not implemented");
 	case 830:
