@@ -26,10 +26,10 @@
 #include "common/list.h"
 #include "common/str.h"
 #include "common/winexe.h"
+#include "common/array.h"
 
 namespace Common {
 
-template<class T> class Array;
 class SeekableReadStream;
 
 /** The default Windows resources. */

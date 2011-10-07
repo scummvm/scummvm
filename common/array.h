@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/memory.h"
 #include "common/textconsole.h"	// For error()
 
 namespace Common {
@@ -37,44 +38,37 @@ namespace Common {
  * proportional to the number of elements in the array.
  *
  * The container class closest to this in the C++ standard library is
- * std::vector. However, there are some differences. The most important one is
- * that std::vector has a far more sophisticated (and complicated) memory
- * management scheme. There, only elements that 'live' are actually constructed
- * (i.e., have their constructor called), and objects that are removed are
- * immediately destructed (have their destructor called).
- * With Array, this is not the case; instead, it simply uses new[] and
- * delete[] to allocate whole blocks of objects, possibly more than are
- * currently 'alive'. This simplifies memory management, but may have
- * undesirable side effects when one wants to use an Array of complex
- * data types.
- *
- * @todo Improve the storage management of this class.
- * In particular, don't use new[] and delete[], but rather
- * construct/destruct objects manually. This way, we can
- * ensure that storage which is not currently used does not
- * correspond to a live active object.
- * (This is only of interest for array of non-POD objects).
+ * std::vector.
  */
-template<class T>
+template<class T, class A = Allocator<T> >
 class Array {
 protected:
 	uint _capacity;
 	uint _size;
-	T *_storage;
+	typename A::Pointer _storage;
+	A _allocator;
 
 public:
-	typedef T *iterator;
-	typedef const T *const_iterator;
+	typedef typename A::Pointer iterator;
+	typedef typename A::ConstPointer const_iterator;
 
-	typedef T value_type;
+	typedef typename A::ValueType value_type;
 
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 
-	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
+	Array(const Array<T, A> &array) : _capacity(array._size), _size(array._size), _storage(0) {
 		if (array._storage) {
 			allocCapacity(_size);
-			copy(array._storage, array._storage + _size, _storage);
+			uninitialized_copy(array._storage, array._storage + _size, _storage);
+		}
+	}
+
+	template<class A2>
+	Array(const Array<T, A2> &array) : _capacity(array._size), _size(array._size), _storage(0) {
+		if (array._storage) {
+			allocCapacity(_size);
+			uninitialized_copy(array._storage, array._storage + _size, _storage);
 		}
 	}
 
@@ -85,11 +79,11 @@ public:
 	Array(const T2 *data, int n) {
 		_size = n;
 		allocCapacity(n);
-		copy(data, data + _size, _storage);
+		uninitialized_copy(data, data + _size, _storage);
 	}
 
 	~Array() {
-		delete[] _storage;
+		freeStorage(_storage, _size, _capacity);
 		_storage = 0;
 		_capacity = _size = 0;
 	}
@@ -97,14 +91,15 @@ public:
 	/** Appends element to the end of the array. */
 	void push_back(const T &element) {
 		if (_size + 1 <= _capacity)
-			_storage[_size++] = element;
+			_allocator.construct(&_storage[_size++], element);
 		else
 			insert_aux(end(), &element, &element + 1);
 	}
 
-	void push_back(const Array<T> &array) {
+	template<class A2>
+	void push_back(const Array<T, A2> &array) {
 		if (_size + array.size() <= _capacity) {
-			copy(array.begin(), array.end(), end());
+			uninitialized_copy(array.begin(), array.end(), end());
 			_size += array.size();
 		} else
 			insert_aux(end(), array.begin(), array.end());
@@ -114,6 +109,8 @@ public:
 	void pop_back() {
 		assert(_size > 0);
 		_size--;
+		// We also need to destroy the last object properly here.
+		_allocator.destroy(&_storage[_size]);
 	}
 
 	/** Returns a reference to the first element of the array. */
@@ -146,7 +143,8 @@ public:
 		insert_aux(_storage + idx, &element, &element + 1);
 	}
 
-	void insert_at(int idx, const Array<T> &array) {
+	template<class A2>
+	void insert_at(int idx, const Array<T, A2> &array) {
 		assert(idx >= 0 && (uint)idx <= _size);
 		insert_aux(_storage + idx, array.begin(), array.end());
 	}
@@ -157,6 +155,8 @@ public:
 		T tmp = _storage[idx];
 		copy(_storage + idx + 1, _storage + _size, _storage + idx);
 		_size--;
+		// We also need to destroy the last object properly here.
+		_allocator.destroy(&_storage[_size]);
 		return tmp;
 	}
 
@@ -172,14 +172,27 @@ public:
 		return _storage[idx];
 	}
 
-	Array<T>& operator=(const Array<T> &array) {
+	Array<T>& operator=(const Array<T, A> &array) {
 		if (this == &array)
 			return *this;
 
-		delete[] _storage;
+		freeStorage(_storage, _size, _capacity);
 		_size = array._size;
 		allocCapacity(_size);
-		copy(array._storage, array._storage + _size, _storage);
+		uninitialized_copy(array._storage, array._storage + _size, _storage);
+
+		return *this;
+	}
+
+	template<class A2>
+	Array<T>& operator=(const Array<T, A2> &array) {
+		if (this == &array)
+			return *this;
+
+		freeStorage(_storage, _size, _capacity);
+		_size = array._size;
+		allocCapacity(_size);
+		uninitialized_copy(array._storage, array._storage + _size, _storage);
 
 		return *this;
 	}
@@ -189,7 +202,7 @@ public:
 	}
 
 	void clear() {
-		delete[] _storage;
+		freeStorage(_storage, _size, _capacity);
 		_storage = 0;
 		_size = 0;
 		_capacity = 0;
@@ -199,7 +212,8 @@ public:
 		return (_size == 0);
 	}
 
-	bool operator==(const Array<T> &other) const {
+	template<class A2>
+	bool operator==(const Array<T, A2> &other) const {
 		if (this == &other)
 			return true;
 		if (_size != other._size)
@@ -210,7 +224,8 @@ public:
 		}
 		return true;
 	}
-	bool operator!=(const Array<T> &other) const {
+	template<class A2>
+	bool operator!=(const Array<T, A2> &other) const {
 		return !(*this == other);
 	}
 
@@ -235,20 +250,21 @@ public:
 		if (newCapacity <= _capacity)
 			return;
 
+		uint oldCapacity = _capacity;
 		T *oldStorage = _storage;
 		allocCapacity(newCapacity);
 
 		if (oldStorage) {
 			// Copy old data
-			copy(oldStorage, oldStorage + _size, _storage);
-			delete[] oldStorage;
+			uninitialized_copy(oldStorage, oldStorage + _size, _storage);
+			freeStorage(oldStorage, _size, oldCapacity);
 		}
 	}
 
 	void resize(uint newSize) {
 		reserve(newSize);
 		for (uint i = _size; i < newSize; ++i)
-			_storage[i] = T();
+			_allocator.construct(&_storage[i], T());
 		_size = newSize;
 	}
 
@@ -272,12 +288,18 @@ protected:
 	void allocCapacity(uint capacity) {
 		_capacity = capacity;
 		if (capacity) {
-			_storage = new T[capacity];
+			_storage = _allocator.allocate(capacity);
 			if (!_storage)
 				::error("Common::Array: failure to allocate %u bytes", capacity * (uint)sizeof(T));
 		} else {
 			_storage = 0;
 		}
+	}
+
+	void freeStorage(typename A::Pointer storage, const uint elements, const uint capacity) {
+		for (uint i = 0; i < elements; ++i)
+			_allocator.destroy(&storage[i]);
+		_allocator.deallocate(storage, capacity);
 	}
 
 	/**
@@ -299,29 +321,50 @@ protected:
 		const uint n = last - first;
 		if (n) {
 			const uint idx = pos - _storage;
-			T *oldStorage = _storage;
-			if (_size + n > _capacity || (_storage <= first && first <= _storage + _size) ) {
-				// If there is not enough space, allocate more and
-				// copy old elements over.
+			if (_size + n > _capacity || (_storage <= first && first <= _storage + _size)) {
+				const uint oldCapacity = _capacity;
+				T *const oldStorage = _storage;
+
+				// If there is not enough space, allocate more.
 				// Likewise, if this is a self-insert, we allocate new
-				// storage to avoid conflicts. This is not the most efficient
-				// way to ensure that, but probably the simplest on.
+				// storage to avoid conflicts.
 				allocCapacity(roundUpCapacity(_size + n));
-				copy(oldStorage, oldStorage + idx, _storage);
-				pos = _storage + idx;
+
+				// Copy the data from the old storage till the position where
+				// we insert new data
+				uninitialized_copy(oldStorage, oldStorage + idx, _storage);
+				// Copy the data we insert
+				uninitialized_copy(first, last, _storage + idx);
+				// Afterwards copy the old data from the position where we
+				// insert.
+				uninitialized_copy(oldStorage + idx, oldStorage + _size, _storage + idx + n);
+
+				freeStorage(oldStorage, _size, oldCapacity);
+			} else if (idx + n <= _size) {
+				// Make room for the new elements by shifting back
+				// existing ones.
+				// 1. Move a part of the data to the uninitialized area
+				uninitialized_copy(_storage + _size - n, _storage + _size, _storage + _size);
+				// 2. Move a part of the data to the initialized area
+				copy_backward(pos, _storage + _size - n, _storage + _size);
+
+				// Insert the new elements.
+				copy(first, last, pos);
+			} else {
+				// Copy the old data from the position till the end to the new
+				// place.
+				uninitialized_copy(pos, _storage + _size, _storage + idx + n);
+
+				// Copy a part of the new data to the position inside the
+				// initialized space.
+				copy(first, first + (_size - idx), pos);
+				
+				// Copy a part of the new data to the position inside the
+				// uninitialized space.
+				uninitialized_copy(first + (_size - idx), last, _storage + _size);
 			}
-
-			// Make room for the new elements by shifting back
-			// existing ones.
-			copy_backward(oldStorage + idx, oldStorage + _size, _storage + _size + n);
-
-			// Insert the new elements.
-			copy(first, last, pos);
 
 			// Finally, update the internal state
-			if (_storage != oldStorage) {
-				delete[] oldStorage;
-			}
 			_size += n;
 		}
 		return pos;

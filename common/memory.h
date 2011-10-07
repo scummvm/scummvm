@@ -85,6 +85,20 @@ public:
 	};
 };
 
+/**
+ * Copies data from the range [first, last) to [dst, dst + (last - first)).
+ * It requires the range [dst, dst + (last - first)) to be valid.
+ * It also requires dst not to be in the range [first, last).
+ *
+ * Unlike copy this works on uninitialized dst memory!
+ */
+template<class In, class Out>
+Out *uninitialized_copy(In first, In last, Out *dst) {
+	while (first != last)
+		new ((void *)dst++) Out(*first++);
+	return dst;
+}
+
 } // End of namespace Common
 
 #endif
