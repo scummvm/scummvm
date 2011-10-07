@@ -308,6 +308,46 @@ static void closeDiskImage(ScummDiskImage *img) {
 	SearchMan.remove("tmpDiskImgDir");
 }
 
+/*
+ * This function tries to detect if a speech file exists.
+ * False doesn't necessarily mean there are no speech files.
+ */
+static bool detectSpeech(const Common::FSList &fslist, const GameSettings *gs) {
+	if (gs->id == GID_MONKEY || gs->id == GID_MONKEY2) {
+		// FMTOWNS monkey and monkey2 games don't have speech but may have .sou files
+		if (gs->platform == Common::kPlatformFMTowns)
+			return false;
+
+		const char *const basenames[] = { gs->gameid, "monster", 0 };
+		static const char *const extensions[] = { "sou",
+#ifdef USE_FLAC
+		 "sof",
+#endif
+#ifdef USE_VORBIS
+		 "sog",
+#endif
+#ifdef USE_MAD
+		 "so3",
+#endif
+		 0 };
+
+		for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+			if (file->isDirectory())
+				continue;
+
+			for (int i = 0; basenames[i]; ++i) {
+				Common::String basename = Common::String(basenames[i]) + ".";
+
+				for (int j = 0; extensions[j]; ++j) {
+					if ((basename + extensions[j]).equalsIgnoreCase(file->getName()))
+						return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 // The following function tries to detect the language for COMI and DIG
 static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 	// First try to detect Chinese translation
@@ -436,7 +476,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 	}
 }
 
-static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char **globs) {
+static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist, int depth, const char *const *globs) {
 	if (depth <= 0)
 		return;
 
@@ -454,7 +494,7 @@ static void composeFileHashMap(DescMap &fileMD5Map, const Common::FSList &fslist
 				continue;
 
 			bool matched = false;
-			for (const char **glob = globs; *glob; glob++)
+			for (const char *const *glob = globs; *glob; glob++)
 				if (file->getName().matchString(*glob, true)) {
 					matched = true;
 					break;
@@ -607,6 +647,10 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 			// HACK: Perhaps it is some modified translation?
 			dr.language = detectLanguage(fslist, g->id);
+
+			// Detect if there are speech files in this unknown game
+			if (detectSpeech(fslist, g))
+				dr.game.guioptions &= ~GUIO_NOSPEECH;
 
 			// Add the game/variant to the candidates list if it is consistent
 			// with the file(s) we are seeing.

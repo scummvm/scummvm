@@ -1350,8 +1350,10 @@ void Myst::o_generatorButtonPressed(uint16 op, uint16 var, uint16 argc, uint16 *
 
 		if (_state.generatorVoltage)
 			_vm->_sound->replaceSoundMyst(8297);
-		else
+		else {
 			_vm->_sound->replaceSoundMyst(9297);
+			_vm->_sound->stopBackgroundMyst();
+		}
 	} else {
 		if (_generatorVoltage)
 			_vm->_sound->replaceSoundMyst(6297);

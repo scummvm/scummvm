@@ -102,18 +102,28 @@ static const char * const sci2Selectors[] = {
 #endif
 
 static const SelectorRemap sciSelectorRemap[] = {
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
-	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,    "nodePtr",  44 },
-	{     SCI_VERSION_1_LATE,     SCI_VERSION_1_LATE, "cantBeHere",  57 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString", 101 },
-	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags", 102 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone",  170 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points",  316 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags",  368 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,    "nodePtr",   44 },
+	{     SCI_VERSION_1_LATE,     SCI_VERSION_1_LATE, "cantBeHere",   57 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString",  101 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags",  102 },
 	// SCI1.1
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
-	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-",4103 },
-	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",   41 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",   54 },
+	// The following are not really needed. They've only been defined to
+	// ease game debugging.
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,    "-objID-", 4096 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-size-", 4097 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-propDict-", 4098 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-methDict-", 4099 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1, "-classScript-", 4100 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,   "-script-", 4101 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,    "-super-", 4102 },
+	//
+	{        SCI_VERSION_1_1,        SCI_VERSION_2_1,     "-info-", 4103 },
+	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,    0 }
 };
 
 struct ClassReference {

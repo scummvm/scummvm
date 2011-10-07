@@ -486,7 +486,7 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 	uint32 sampleToChunkIndex = 0;
 
 	for (uint32 i = 0; i < _tracks[_videoTrackIndex]->chunkCount; i++) {
-		if (i >= _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].first)
+		if (sampleToChunkIndex < _tracks[_videoTrackIndex]->sampleToChunkCount && i >= _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].first)
 			sampleToChunkIndex++;
 
 		totalSampleCount += _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex - 1].count;

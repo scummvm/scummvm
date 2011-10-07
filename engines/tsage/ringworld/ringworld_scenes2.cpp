@@ -36,11 +36,11 @@ namespace Ringworld {
  *--------------------------------------------------------------------------*/
 
 void Scene1000::Action1::signal() {
-	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
+	Scene1000 *scene = (Scene1000 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		setDelay(10);
 		break;
 	case 1:
@@ -63,7 +63,7 @@ void Scene1000::Action1::signal() {
 		break;
 	}
 	case 3:
-		_globals->_sceneManager.changeScene(1400);
+		g_globals->_sceneManager.changeScene(1400);
 		break;
 	}
 
@@ -72,7 +72,7 @@ void Scene1000::Action1::signal() {
 void Scene1000::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		setDelay(10);
 		break;
 	case 1:
@@ -82,7 +82,7 @@ void Scene1000::Action2::signal() {
 		break;
 	case 2:
 		SceneItem::display(0, 0);
-		_globals->_sceneManager.changeScene(2000);
+		g_globals->_sceneManager.changeScene(2000);
 		break;
 	default:
 		break;
@@ -90,11 +90,11 @@ void Scene1000::Action2::signal() {
 }
 
 void Scene1000::Action3::signal() {
-	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
+	Scene1000 *scene = (Scene1000 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		_globals->_sceneManager._scene->loadBackground(0, 0);
+		g_globals->_sceneManager._scene->loadBackground(0, 0);
 		setDelay(60);
 		break;
 	case 1: {
@@ -108,11 +108,11 @@ void Scene1000::Action3::signal() {
 		setDelay(60);
 		break;
 	case 4:
-		_globals->_player.show();
+		g_globals->_player.show();
 		setDelay(240);
 		break;
 	case 5: {
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 
 		const char *SEEN_INTRO = "seen_intro";
 		if (!ConfMan.hasKey(SEEN_INTRO) || !ConfMan.getBool(SEEN_INTRO)) {
@@ -123,31 +123,31 @@ void Scene1000::Action3::signal() {
 			setDelay(1);
 		} else {
 			// Prompt user for whether to start play or watch introduction
-			_globals->_player.enableControl();
+			g_globals->_player.enableControl();
 
 			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
 				_actionIndex = 20;
-				_globals->_soundHandler.fadeOut(this);
+				g_globals->_soundHandler.fadeOut(this);
 			} else {
 				setDelay(1);
 			}
 		}
 
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		break;
 	}
 	case 6: {
 		scene->_object3.remove();
-		_globals->_player.setStrip2(2);
+		g_globals->_player.setStrip2(2);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(480, 100);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 7:
-		_globals->_scenePalette.loadPalette(1002);
-		_globals->_scenePalette.refresh();
-		_globals->_scenePalette.addRotation(80, 95, -1);
+		g_globals->_scenePalette.loadPalette(1002);
+		g_globals->_scenePalette.refresh();
+		g_globals->_scenePalette.addRotation(80, 95, -1);
 		scene->_object3.postInit();
 		scene->_object3.setVisage(1002);
 		scene->_object3.setStrip(1);
@@ -216,14 +216,14 @@ void Scene1000::Action3::signal() {
 		break;
 	case 18:
 		zoom(false);
-		_globals->_scenePalette.clearListeners();
-		_globals->_soundHandler.fadeOut(this);
+		g_globals->_scenePalette.clearListeners();
+		g_globals->_soundHandler.fadeOut(this);
 		break;
 	case 19:
-		_globals->_sceneManager.changeScene(10);
+		g_globals->_sceneManager.changeScene(10);
 		break;
 	case 20:
-		_globals->_sceneManager.changeScene(30);
+		g_globals->_sceneManager.changeScene(30);
 		break;
 	default:
 		break;
@@ -231,19 +231,19 @@ void Scene1000::Action3::signal() {
 }
 
 void Scene1000::Action3::zoom(bool up) {
-	Scene1000 *scene = (Scene1000 *)_globals->_sceneManager._scene;
+	Scene1000 *scene = (Scene1000 *)g_globals->_sceneManager._scene;
 
 	if (up) {
-		while ((scene->_object3._percent < 100) && !_vm->shouldQuit()) {
+		while ((scene->_object3._percent < 100) && !g_vm->shouldQuit()) {
 			scene->_object3.changeZoom(MIN(scene->_object3._percent + 5, 100));
-			_globals->_sceneObjects->draw();
-			_globals->_events.delay(1);
+			g_globals->_sceneObjects->draw();
+			g_globals->_events.delay(1);
 		}
 	} else {
-		while ((scene->_object3._percent > 0) && !_vm->shouldQuit()) {
+		while ((scene->_object3._percent > 0) && !g_vm->shouldQuit()) {
 			scene->_object3.changeZoom(MAX(scene->_object3._percent - 5, 0));
-			_globals->_sceneObjects->draw();
-			_globals->_events.delay(1);
+			g_globals->_sceneObjects->draw();
+			g_globals->_events.delay(1);
 		}
 	}
 }
@@ -255,7 +255,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(0, 100, 200, 100);
 	loadScene(1000);
 
-	if (_globals->_sceneManager._previousScene == 2000) {
+	if (g_globals->_sceneManager._previousScene == 2000) {
 		setZoomPercents(150, 10, 180, 100);
 		_object1.postInit();
 		_object1.setVisage(1001);
@@ -266,12 +266,12 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 
 		setAction(&_action2);
 
-		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
-		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
+		g_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
+		g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
 
-		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
-		_globals->_soundHandler.play(114);
-	} else if (_globals->_sceneManager._previousScene == 2222) {
+		g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+		g_globals->_soundHandler.play(114);
+	} else if (g_globals->_sceneManager._previousScene == 2222) {
 		setZoomPercents(150, 10, 180, 100);
 		_object1.postInit();
 		_object1.setVisage(1001);
@@ -280,28 +280,28 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
 		_object1._moveDiff = Common::Point(2, 2);
 		_object1.setPosition(Common::Point(120, 180));
 
-		_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
-		_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-		_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+		g_globals->_sceneManager._scene->_sceneBounds.center(_object1._position.x, _object1._position.y);
+		g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
+		g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
 		setAction(&_action1);
 	} else {
-		_globals->_soundHandler.play(4);
+		g_globals->_soundHandler.play(4);
 		setZoomPercents(0, 10, 30, 100);
 		_object3.postInit();
 		_object3.setVisage(1050);
 		_object3.changeZoom(-1);
 		_object3.setPosition(Common::Point(158, 0));
 
-		_globals->_player.postInit();
-		_globals->_player.setVisage(1050);
-		_globals->_player.setStrip(3);
-		_globals->_player.setPosition(Common::Point(160, 191));
-		_globals->_player._moveDiff.x = 12;
-		_globals->_player.hide();
-		_globals->_player.disableControl();
+		g_globals->_player.postInit();
+		g_globals->_player.setVisage(1050);
+		g_globals->_player.setStrip(3);
+		g_globals->_player.setPosition(Common::Point(160, 191));
+		g_globals->_player._moveDiff.x = 12;
+		g_globals->_player.hide();
+		g_globals->_player.disableControl();
 
-		_globals->_sceneManager._scene->_sceneBounds.center(_object3._position.x, _object3._position.y);
+		g_globals->_sceneManager._scene->_sceneBounds.center(_object3._position.x, _object3._position.y);
 
 		setAction(&_action3);
 	}
@@ -313,7 +313,7 @@ void Scene1000::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene1001::Action1::signal() {
-	Scene1001 *scene = (Scene1001 *)_globals->_sceneManager._scene;
+	Scene1001 *scene = (Scene1001 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -478,9 +478,9 @@ void Scene1001::Action1::signal() {
 		setDelay(30);
 		break;
 	case 19: {
-		_globals->_soundHandler.play(91);
+		g_globals->_soundHandler.play(91);
 		byte adjustData[4] = {0xff, 0xff, 0xff, 0};
-		_globals->_scenePalette.fade(adjustData, false, 0);
+		g_globals->_scenePalette.fade(adjustData, false, 0);
 
 		scene->_object1._strip = 7;
 		scene->_object1._frame = 1;
@@ -490,8 +490,8 @@ void Scene1001::Action1::signal() {
 		break;
 	}
 	case 20:
-		_globals->_scenePalette.loadPalette(16);
-		_globals->_scenePalette.refresh();
+		g_globals->_scenePalette.loadPalette(16);
+		g_globals->_scenePalette.refresh();
 		setDelay(6);
 		break;
 	case 21:
@@ -499,14 +499,14 @@ void Scene1001::Action1::signal() {
 		scene->_object1.animate(ANIM_MODE_5, this);
 		break;
 	case 22:
-		_globals->_soundHandler.play(92);
+		g_globals->_soundHandler.play(92);
 		scene->_stripManager.start(111, this);
 		break;
 	case 23:
 		setDelay(60);
 		break;
 	case 24:
-		_globals->_sceneManager.changeScene(2000);
+		g_globals->_sceneManager.changeScene(2000);
 		break;
 	}
 }
@@ -529,7 +529,7 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
 	_object3.setStrip2(4);
 	_object3.setPosition(Common::Point(61, 177));
 
-	_globals->_soundHandler.play(85);
+	g_globals->_soundHandler.play(85);
 	setAction(&_action1);
 }
 
@@ -540,11 +540,11 @@ void Scene1001::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene1250::Action1::signal() {
-	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	Scene1250 *scene = (Scene1250 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(120) + 60);
+		setDelay(g_globals->_randomSource.getRandomNumber(120) + 60);
 		break;
 	case 1:
 		scene->_object1.animate(ANIM_MODE_5, this);
@@ -554,11 +554,11 @@ void Scene1250::Action1::signal() {
 }
 
 void Scene1250::Action2::signal() {
-	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	Scene1250 *scene = (Scene1250 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		switch (_globals->_randomSource.getRandomNumber(2)) {
+		switch (g_globals->_randomSource.getRandomNumber(2)) {
 		case 0:
 			scene->_object2.setPosition(Common::Point(163, 75));
 			break;
@@ -580,7 +580,7 @@ void Scene1250::Action2::signal() {
 }
 
 void Scene1250::Action3::signal() {
-	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	Scene1250 *scene = (Scene1250 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -593,13 +593,13 @@ void Scene1250::Action3::signal() {
 		setDelay(6);
 		break;
 	case 3:
-		_globals->_sceneManager.changeScene(1000);
+		g_globals->_sceneManager.changeScene(1000);
 		break;
 	}
 }
 
 void Scene1250::Action4::signal() {
-	Scene1250 *scene = (Scene1250 *)_globals->_sceneManager._scene;
+	Scene1250 *scene = (Scene1250 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -612,7 +612,7 @@ void Scene1250::Action4::signal() {
 		setDelay(6);
 		break;
 	case 3:
-		_globals->_sceneManager.changeScene(2000);
+		g_globals->_sceneManager.changeScene(2000);
 		break;
 	}
 }
@@ -643,14 +643,14 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
 	_object2._frame = 1;
 	_object2.setAction(&_action2);
 
-	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
+	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
-	if ((_globals->_sceneManager._previousScene != 2000) || (_globals->_stripNum != 1250)) {
+	if ((g_globals->_sceneManager._previousScene != 2000) || (g_globals->_stripNum != 1250)) {
 		setAction(&_action4);
 	} else {
 		setAction(&_action3);
-		_globals->_soundHandler.play(114);
+		g_globals->_soundHandler.play(114);
 	}
 }
 
@@ -660,7 +660,7 @@ void Scene1250::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene1400::Action1::signal() {
-	Scene1400 *scene = (Scene1400 *)_globals->_sceneManager._scene;
+	Scene1400 *scene = (Scene1400 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -671,23 +671,23 @@ void Scene1400::Action1::signal() {
 
 		Common::Point pt(160, 700);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 2: {
-		_globals->_player.setStrip2(3);
-		_globals->_player.changeZoom(100);
+		g_globals->_player.setStrip2(3);
+		g_globals->_player.changeZoom(100);
 
 		Common::Point pt(160, 100);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 
 		SceneItem::display(0, 0);
 		setDelay(360);
 		break;
 	}
 	case 3:
-		SceneItem::display(1400, 2, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
+		SceneItem::display(1400, 2, SET_X, 60, SET_Y, g_globals->_sceneManager._scene->_sceneBounds.bottom - 80,
 			SET_FONT, 2, SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(420);
 		break;
@@ -696,7 +696,7 @@ void Scene1400::Action1::signal() {
 		setDelay(360);
 		break;
 	case 5:
-		SceneItem::display(1400, 3, SET_X, 60, SET_Y, _globals->_sceneManager._scene->_sceneBounds.bottom - 80,
+		SceneItem::display(1400, 3, SET_X, 60, SET_Y, g_globals->_sceneManager._scene->_sceneBounds.bottom - 80,
 			SET_FONT, 2, SET_FG_COLOR, 23, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(360);
 		break;
@@ -704,25 +704,25 @@ void Scene1400::Action1::signal() {
 		SceneItem::display(0, 0);
 		break;
 	case 7: {
-		_globals->_player._frame = 1;
-		_globals->_player.setStrip2(1);
-		_globals->_player._numFrames = 5;
-		_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player._frame = 1;
+		g_globals->_player.setStrip2(1);
+		g_globals->_player._numFrames = 5;
+		g_globals->_player.animate(ANIM_MODE_5, this);
 
 		Common::Point pt(205, 70);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, NULL);
-		_globals->_sceneManager._fadeMode = FADEMODE_NONE;
+		g_globals->_player.addMover(mover, &pt, NULL);
+		g_globals->_sceneManager._fadeMode = FADEMODE_NONE;
 
 		scene->loadScene(1402);
 		break;
 	}
 	case 8:
-		_globals->_player.setStrip2(2);
-		_globals->_player._numFrames = 10;
-		_globals->_player.animate(ANIM_MODE_2, NULL);
+		g_globals->_player.setStrip2(2);
+		g_globals->_player._numFrames = 10;
+		g_globals->_player.animate(ANIM_MODE_2, NULL);
 
-		SceneItem::display(1400, 4, SET_X, 30, SET_Y, _globals->_player._position.y + 10, SET_FONT, 2,
+		SceneItem::display(1400, 4, SET_X, 30, SET_Y, g_globals->_player._position.y + 10, SET_FONT, 2,
 			SET_FG_COLOR, 13, SET_POS_MODE, 0, SET_KEEP_ONSCREEN, -1, LIST_END);
 		setDelay(300);
 		break;
@@ -730,16 +730,16 @@ void Scene1400::Action1::signal() {
 		SceneItem::display(0, 0);
 		Common::Point pt(450, 45);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 10:
-		_globals->_sceneManager._scrollerRect = Rect(40, 20, 280, 180);
-		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
-		_globals->_stripNum = 1500;
-		_globals->_soundHandler.stop();
+		g_globals->_sceneManager._scrollerRect = Rect(40, 20, 280, 180);
+		g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		g_globals->_stripNum = 1500;
+		g_globals->_soundHandler.stop();
 
-		_globals->_sceneManager.changeScene(1500);
+		g_globals->_sceneManager.changeScene(1500);
 		break;
 	}
 }
@@ -748,41 +748,41 @@ void Scene1400::Action1::dispatch() {
 	Action::dispatch();
 
 	if ((_actionIndex > 3) && (_actionIndex < 9))
-		_globals->_sceneText.setPosition(Common::Point(60, _globals->_sceneManager._scene->_sceneBounds.bottom - 80));
+		g_globals->_sceneText.setPosition(Common::Point(60, g_globals->_sceneManager._scene->_sceneBounds.bottom - 80));
 
-	if ((_actionIndex <= 2) && (_globals->_player._percent > 22))
-		_globals->_player.changeZoom(100 - (800 - _globals->_player._position.y));
+	if ((_actionIndex <= 2) && (g_globals->_player._percent > 22))
+		g_globals->_player.changeZoom(100 - (800 - g_globals->_player._position.y));
 
-	if ((_actionIndex >= 9) && (_globals->_player._percent > 22))
-		_globals->_player.changeZoom(100 - (_globals->_player._position.x - 205));
+	if ((_actionIndex >= 9) && (g_globals->_player._percent > 22))
+		g_globals->_player.changeZoom(100 - (g_globals->_player._position.x - 205));
 }
 
 /*--------------------------------------------------------------------------*/
 
 void Scene1400::postInit(SceneObjectList *OwnerList) {
-	if (_globals->_stripNum != 1400) {
+	if (g_globals->_stripNum != 1400) {
 		loadScene(1401);
 	} else {
 		loadScene(1402);
 	}
 	Scene::postInit();
 
-	_globals->_sceneManager._scrollerRect = Rect(40, 90, 280, 180);
-	_globals->_player.postInit();
-	_globals->_player.setVisage(1401);
-	_globals->_player.animate(ANIM_MODE_2, 0);
-	_globals->_player.setStrip2(4);
-	_globals->_player.fixPriority(4);
-	_globals->_player.disableControl();
+	g_globals->_sceneManager._scrollerRect = Rect(40, 90, 280, 180);
+	g_globals->_player.postInit();
+	g_globals->_player.setVisage(1401);
+	g_globals->_player.animate(ANIM_MODE_2, 0);
+	g_globals->_player.setStrip2(4);
+	g_globals->_player.fixPriority(4);
+	g_globals->_player.disableControl();
 
-	_globals->_player._moveDiff = Common::Point(4, 2);
-	_globals->_player.setPosition(Common::Point(160, 800));
-	_globals->_sceneManager._scene->_sceneBounds.center(_globals->_player._position);
-	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-	_globals->_sceneOffset.y = (_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
+	g_globals->_player._moveDiff = Common::Point(4, 2);
+	g_globals->_player.setPosition(Common::Point(160, 800));
+	g_globals->_sceneManager._scene->_sceneBounds.center(g_globals->_player._position);
+	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
+	g_globals->_sceneOffset.y = (g_globals->_sceneManager._scene->_sceneBounds.top / 100) * 100;
 
 	setAction(&_action1);
-	_globals->_soundHandler.play(118);
+	g_globals->_soundHandler.play(118);
 }
 
 /*--------------------------------------------------------------------------
@@ -791,7 +791,7 @@ void Scene1400::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene1500::Action1::signal() {
-	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
+	Scene1500 *scene = (Scene1500 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
@@ -856,17 +856,17 @@ void Scene1500::Action1::signal() {
 		scene->_soundHandler.play(124, this);
 		break;
 	case 8:
-		_globals->_soundHandler.play(126, this);
+		g_globals->_soundHandler.play(126, this);
 		break;
 	case 9:
-		_globals->_soundHandler.play(127);
-		_globals->_sceneManager.changeScene(2000);
+		g_globals->_soundHandler.play(127);
+		g_globals->_sceneManager.changeScene(2000);
 		break;
 	}
 }
 
 void Scene1500::Action2::signal() {
-	Scene1500 *scene = (Scene1500 *)_globals->_sceneManager._scene;
+	Scene1500 *scene = (Scene1500 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -897,8 +897,8 @@ void Scene1500::Action2::signal() {
 	}
 	case 3:
 		scene->_soundHandler.release();
-		_globals->_stripNum = 1505;
-		_globals->_sceneManager.changeScene(2400);
+		g_globals->_stripNum = 1505;
+		g_globals->_sceneManager.changeScene(2400);
 		break;
 	}
 }
@@ -909,8 +909,8 @@ void Scene1500::postInit(SceneObjectList *OwnerList) {
 	loadScene(1500);
 	Scene::postInit();
 
-	if ((_globals->_stripNum == 1500) || ((_globals->_stripNum != 1504) && (_globals->_stripNum != 2751))) {
-		_globals->_soundHandler.play(120);
+	if ((g_globals->_stripNum == 1500) || ((g_globals->_stripNum != 1504) && (g_globals->_stripNum != 2751))) {
+		g_globals->_soundHandler.play(120);
 		setZoomPercents(105, 20, 145, 100);
 
 		setAction(&_action1);

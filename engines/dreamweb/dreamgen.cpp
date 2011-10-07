@@ -2032,24 +2032,6 @@ gottrainframe:
 	showgamereel();
 }
 
-void DreamGenContext::addtopeoplelist() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	push(bx);
-	cl = es.byte(bx+7);
-	ax = es.word(bx+3);
-	bx = data.word(kListpos);
-	es = data.word(kBuffers);
-	es.word(bx) = ax;
-	ax = pop();
-	es.word(bx+2) = ax;
-	es.byte(bx+4) = cl;
-	bx = pop();
-	es = pop();
-	_add(data.word(kListpos), 5);
-}
-
 void DreamGenContext::checkspeed() {
 	STACK_CHECK;
 	_cmp(data.byte(kLastweapon), -1);
@@ -2066,14 +2048,6 @@ void DreamGenContext::checkspeed() {
 	return;
 forcenext:
 	_cmp(al, al);
-}
-
-void DreamGenContext::delsprite() {
-	STACK_CHECK;
-	di = bx;
-	cx = (32);
-	al = 255;
-	_stosb(cx, true);
 }
 
 void DreamGenContext::checkforexit() {
@@ -2411,30 +2385,6 @@ foundlineend:
 	goto lookforlinestart;
 }
 
-void DreamGenContext::getblockofpixel() {
-	STACK_CHECK;
-	push(cx);
-	push(es);
-	push(di);
-	ax = data.word(kMapxstart);
-	_add(cl, al);
-	ax = data.word(kMapystart);
-	_add(ch, al);
-	checkone();
-	_and(cl, 1);
-	if (!flags.z())
-		goto failrain;
-	di = pop();
-	es = pop();
-	cx = pop();
-	return;
-failrain:
-	di = pop();
-	es = pop();
-	cx = pop();
-	al = 0;
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -2578,64 +2528,6 @@ bigroom:
 	_add(data.byte(kMapysize), 8);
 }
 
-void DreamGenContext::dumpeverything() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40));
-dumpevery1:
-	ax = es.word(bx);
-	cx = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		goto finishevery1;
-	_cmp(ax, es.word(bx+(40*5)));
-	if (!flags.z())
-		goto notskip1;
-	_cmp(cx, es.word(bx+(40*5)+2));
-	if (flags.z())
-		goto skip1;
-notskip1:
-	push(bx);
-	push(es);
-	push(ds);
-	bl = ah;
-	bh = 0;
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	multidump();
-	ds = pop();
-	es = pop();
-	bx = pop();
-skip1:
-	_add(bx, 5);
-	goto dumpevery1;
-finishevery1:
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40))+(40*5);
-dumpevery2:
-	ax = es.word(bx);
-	cx = es.word(bx+2);
-	_cmp(ax, 0x0ffff);
-	if (flags.z())
-		return /* (finishevery2) */;
-	push(bx);
-	push(es);
-	push(ds);
-	bl = ah;
-	bh = 0;
-	ah = 0;
-	di = ax;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	multidump();
-	ds = pop();
-	es = pop();
-	bx = pop();
-	_add(bx, 5);
-	goto dumpevery2;
-}
-
 void DreamGenContext::loadpalfromiff() {
 	STACK_CHECK;
 	dx = 2481;
@@ -2673,83 +2565,6 @@ nought:
 	_stosb();
 	if (--cx)
 		goto palloop;
-}
-
-void DreamGenContext::paneltomap() {
-	STACK_CHECK;
-	di = data.word(kMapxstart);
-	_add(di, data.word(kMapadx));
-	bx = data.word(kMapystart);
-	_add(bx, data.word(kMapady));
-	ds = data.word(kMapstore);
-	si = 0;
-	cl = data.byte(kMapxsize);
-	ch = data.byte(kMapysize);
-	multiget();
-}
-
-void DreamGenContext::maptopanel() {
-	STACK_CHECK;
-	di = data.word(kMapxstart);
-	_add(di, data.word(kMapadx));
-	bx = data.word(kMapystart);
-	_add(bx, data.word(kMapady));
-	ds = data.word(kMapstore);
-	si = 0;
-	cl = data.byte(kMapxsize);
-	ch = data.byte(kMapysize);
-	multiput();
-}
-
-void DreamGenContext::dumpmap() {
-	STACK_CHECK;
-	di = data.word(kMapxstart);
-	_add(di, data.word(kMapadx));
-	bx = data.word(kMapystart);
-	_add(bx, data.word(kMapady));
-	cl = data.byte(kMapxsize);
-	ch = data.byte(kMapysize);
-	multidump();
-}
-
-void DreamGenContext::pixelcheckset() {
-	STACK_CHECK;
-	push(ax);
-	_sub(al, es.byte(bx));
-	_sub(ah, es.byte(bx+1));
-	push(es);
-	push(bx);
-	push(cx);
-	push(ax);
-	al = es.byte(bx+4);
-	getsetad();
-	al = es.byte(bx+17);
-	es = data.word(kSetframes);
-	bx = (0);
-	ah = 0;
-	cx = 6;
-	_mul(cx);
-	_add(bx, ax);
-	ax = pop();
-	push(ax);
-	al = ah;
-	ah = 0;
-	cl = es.byte(bx);
-	ch = 0;
-	_mul(cx);
-	cx = pop();
-	ch = 0;
-	_add(ax, cx);
-	_add(ax, es.word(bx+2));
-	bx = ax;
-	_add(bx, (0+2080));
-	al = es.byte(bx);
-	dl = al;
-	cx = pop();
-	bx = pop();
-	es = pop();
-	ax = pop();
-	_cmp(dl, 0);
 }
 
 void DreamGenContext::createpanel() {
@@ -2795,99 +2610,6 @@ void DreamGenContext::createpanel2() {
 	al = 5;
 	ah = 2;
 	showframe();
-}
-
-void DreamGenContext::delthisone() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	al = ah;
-	ah = 0;
-	_add(ax, data.word(kMapady));
-	bx = (320);
-	_mul(bx);
-	bx = pop();
-	bh = 0;
-	_add(bx, data.word(kMapadx));
-	_add(ax, bx);
-	di = ax;
-	ax = pop();
-	push(ax);
-	al = ah;
-	ah = 0;
-	bx = 22*8;
-	_mul(bx);
-	bx = pop();
-	bh = 0;
-	_add(ax, bx);
-	si = ax;
-	es = data.word(kWorkspace);
-	ds = data.word(kMapstore);
-	dl = cl;
-	dh = 0;
-	ax = (320);
-	_sub(ax, dx);
-	_neg(dx);
-	_add(dx, 22*8);
-deloneloop:
-	push(cx);
-	ch = 0;
-	_movsb(cx, true);
-	cx = pop();
-	_add(di, ax);
-	_add(si, dx);
-	_dec(ch);
-	if (!flags.z())
-		goto deloneloop;
-}
-
-void DreamGenContext::transferinv() {
-	STACK_CHECK;
-	di = data.word(kExframepos);
-	push(di);
-	al = data.byte(kExpos);
-	ah = 0;
-	bx = ax;
-	_add(ax, ax);
-	_add(ax, bx);
-	_inc(ax);
-	cx = 6;
-	_mul(cx);
-	es = data.word(kExtras);
-	bx = (0);
-	_add(bx, ax);
-	_add(di, (0+2080));
-	push(bx);
-	al = data.byte(kItemtotran);
-	ah = 0;
-	bx = ax;
-	_add(ax, ax);
-	_add(ax, bx);
-	_inc(ax);
-	cx = 6;
-	_mul(cx);
-	ds = data.word(kFreeframes);
-	bx = (0);
-	_add(bx, ax);
-	si = (0+2080);
-	al = ds.byte(bx);
-	ah = 0;
-	cl = ds.byte(bx+1);
-	ch = 0;
-	_add(si, ds.word(bx+2));
-	dx = ds.word(bx+4);
-	bx = pop();
-	es.byte(bx+0) = al;
-	es.byte(bx+1) = cl;
-	es.word(bx+4) = dx;
-	_mul(cx);
-	cx = ax;
-	push(cx);
-	_movsb(cx, true);
-	cx = pop();
-	ax = pop();
-	es.word(bx+2) = ax;
-	_add(data.word(kExframepos), cx);
 }
 
 void DreamGenContext::transfermap() {
@@ -4012,51 +3734,6 @@ nottrigger2:
 	data.byte(kKerning) = 0;
 }
 
-void DreamGenContext::fillryan() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32);
-	findallryan();
-	si = (0+(228*13)+32);
-	al = data.byte(kRyanpage);
-	ah = 0;
-	cx = 20;
-	_mul(cx);
-	_add(si, ax);
-	di = (80);
-	bx = (58);
-	cx = 2;
-ryanloop2:
-	push(cx);
-	push(di);
-	push(bx);
-	cx = 5;
-ryanloop1:
-	push(cx);
-	push(di);
-	push(bx);
-	ax = es.word(si);
-	_add(si, 2);
-	push(si);
-	push(es);
-	obtoinv();
-	es = pop();
-	si = pop();
-	bx = pop();
-	di = pop();
-	cx = pop();
-	_add(di, (44));
-	if (--cx)
-		goto ryanloop1;
-	bx = pop();
-	di = pop();
-	cx = pop();
-	_add(bx, (44));
-	if (--cx)
-		goto ryanloop2;
-	showryanpage();
-}
-
 void DreamGenContext::fillopen() {
 	STACK_CHECK;
 	deltextline();
@@ -4099,41 +3776,6 @@ nextopenslot:
 	if (!flags.z())
 		goto openloop1;
 	undertextline();
-}
-
-void DreamGenContext::findallryan() {
-	STACK_CHECK;
-	push(di);
-	cx = 30;
-	ax = 0x0ffff;
-	_stosw(cx, true);
-	di = pop();
-	cl = 4;
-	ds = data.word(kExtras);
-	bx = (0+2080+30000);
-	ch = 0;
-findryanloop:
-	_cmp(ds.byte(bx+2), cl);
-	if (!flags.z())
-		goto notinryaninv;
-	_cmp(ds.byte(bx+3), 255);
-	if (!flags.z())
-		goto notinryaninv;
-	al = ds.byte(bx+4);
-	ah = 0;
-	push(di);
-	_add(di, ax);
-	_add(di, ax);
-	al = ch;
-	ah = 4;
-	_stosw();
-	di = pop();
-notinryaninv:
-	_add(bx, 16);
-	_inc(ch);
-	_cmp(ch, (114));
-	if (!flags.z())
-		goto findryanloop;
 }
 
 void DreamGenContext::findallopen() {
@@ -4209,82 +3851,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::obtoinv() {
-	STACK_CHECK;
-	push(bx);
-	push(es);
-	push(si);
-	push(ax);
-	push(ax);
-	push(di);
-	push(bx);
-	ds = data.word(kIcons1);
-	_sub(di, 2);
-	_sub(bx, 1);
-	al = 10;
-	ah = 0;
-	showframe();
-	bx = pop();
-	di = pop();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		goto finishfill;
-	push(bx);
-	push(di);
-	push(ax);
-	ds = data.word(kExtras);
-	_cmp(ah, 4);
-	if (flags.z())
-		goto isanextra;
-	ds = data.word(kFreeframes);
-isanextra:
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
-	_add(bx, 19);
-	_add(di, 18);
-	showframe();
-	ax = pop();
-	di = pop();
-	bx = pop();
-	push(bx);
-	getanyaddir();
-	isitworn();
-	bx = pop();
-	if (!flags.z())
-		goto finishfill;
-	ds = data.word(kIcons1);
-	_sub(di, 3);
-	_sub(bx, 2);
-	al = 7;
-	ah = 0;
-	showframe();
-finishfill:
-	ax = pop();
-	si = pop();
-	es = pop();
-	bx = pop();
-}
-
-void DreamGenContext::isitworn() {
-	STACK_CHECK;
-	al = es.byte(bx+12);
-	_cmp(al, 'W'-'A');
-	if (!flags.z())
-		return /* (notworn) */;
-	al = es.byte(bx+13);
-	_cmp(al, 'E'-'A');
-}
-
-void DreamGenContext::makeworn() {
-	STACK_CHECK;
-	es.byte(bx+12) = 'W'-'A';
-	es.byte(bx+13) = 'E'-'A';
-}
-
 void DreamGenContext::examineob() {
 	STACK_CHECK;
 	data.byte(kPointermode) = 0;
@@ -4331,6 +3897,9 @@ waitexam:
 	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto stopwaiting;
 	_cmp(data.byte(kExamagain), 0);
 	if (flags.z())
 		goto norex;
@@ -4339,6 +3908,7 @@ norex:
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waitexam;
+stopwaiting:
 	data.byte(kPickup) = 0;
 	_cmp(data.word(kWatchingtime), 0);
 	if (!flags.z())
@@ -4431,30 +4001,6 @@ void DreamGenContext::openinv() {
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::showryanpage() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = (80)+167;
-	bx = (58)-12;
-	al = 12;
-	ah = 0;
-	showframe();
-	al = 13;
-	_add(al, data.byte(kRyanpage));
-	push(ax);
-	al = data.byte(kRyanpage);
-	ah = 0;
-	cx = 18;
-	_mul(cx);
-	ds = data.word(kIcons1);
-	di = (80)+167;
-	_add(di, ax);
-	bx = (58)-12;
-	ax = pop();
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::openob() {
 	STACK_CHECK;
 	al = data.byte(kOpenedob);
@@ -4486,28 +4032,6 @@ void DreamGenContext::openob() {
 	cs.word(bx) = ax;
 }
 
-void DreamGenContext::obicons() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	getanyad();
-	_cmp(al, 255);
-	if (flags.z())
-		goto cantopenit;
-	ds = data.word(kIcons2);
-	di = 210;
-	bx = 1;
-	al = 4;
-	ah = 0;
-	showframe();
-cantopenit:
-	ds = data.word(kIcons2);
-	di = 260;
-	bx = 1;
-	al = 1;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::examicon() {
 	STACK_CHECK;
 	ds = data.word(kIcons2);
@@ -4515,38 +4039,6 @@ void DreamGenContext::examicon() {
 	bx = 5;
 	al = 3;
 	ah = 0;
-	showframe();
-}
-
-void DreamGenContext::obpicture() {
-	STACK_CHECK;
-	al = data.byte(kCommand);
-	ah = data.byte(kObjecttype);
-	_cmp(ah, 1);
-	if (flags.z())
-		return /* (setframe) */;
-	_cmp(ah, 4);
-	if (flags.z())
-		goto exframe;
-	ds = data.word(kFreeframes);
-	di = 160;
-	bx = 68;
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
-	showframe();
-	return;
-exframe:
-	ds = data.word(kExtras);
-	di = 160;
-	bx = 68;
-	cl = al;
-	_add(al, al);
-	_add(al, cl);
-	_inc(al);
-	ah = 128;
 	showframe();
 }
 
@@ -4741,19 +4233,6 @@ foundmatch:
 	bx = pop();
 }
 
-void DreamGenContext::findnextcolon() {
-	STACK_CHECK;
-isntcolon:
-	al = es.byte(si);
-	_inc(si);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (endofcolon) */;
-	_cmp(al, ':');
-	if (!flags.z())
-		goto isntcolon;
-}
-
 void DreamGenContext::inventory() {
 	STACK_CHECK;
 	_cmp(data.byte(kMandead), 1);
@@ -4802,7 +4281,7 @@ doopeninv:
 	data.byte(kOpenedob) = 255;
 	goto waitexam;
 	return;
-/*continuing to unbounded code: examineagain from examineob:3-66*/
+/*continuing to unbounded code: examineagain from examineob:3-69*/
 examineagain:
 	data.byte(kInmaparea) = 0;
 	data.byte(kExamagain) = 0;
@@ -4845,6 +4324,9 @@ waitexam:
 	bx = offset_withlist1;
 notuseinv:
 	checkcoords();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		goto stopwaiting;
 	_cmp(data.byte(kExamagain), 0);
 	if (flags.z())
 		goto norex;
@@ -4853,6 +4335,7 @@ norex:
 	_cmp(data.byte(kGetback), 0);
 	if (flags.z())
 		goto waitexam;
+stopwaiting:
 	data.byte(kPickup) = 0;
 	_cmp(data.word(kWatchingtime), 0);
 	if (!flags.z())
@@ -6044,24 +5527,6 @@ moretext:
 		goto moretext;
 }
 
-void DreamGenContext::getexpos() {
-	STACK_CHECK;
-	es = data.word(kExtras);
-	al = 0;
-	di = (0+2080+30000);
-tryanotherex:
-	_cmp(es.byte(di+2), 255);
-	if (flags.z())
-		goto foundnewex;
-	_add(di, 16);
-	_inc(al);
-	_cmp(al, (114));
-	if (!flags.z())
-		goto tryanotherex;
-foundnewex:
-	data.byte(kExpos) = al;
-}
-
 void DreamGenContext::purgealocation() {
 	STACK_CHECK;
 	push(ax);
@@ -6319,94 +5784,6 @@ void DreamGenContext::drawfloor() {
 	data.byte(kNewobs) = 0;
 	bx = pop();
 	es = pop();
-}
-
-void DreamGenContext::showallex() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	data.word(kListpos) = bx;
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5));
-	cx = 100*5;
-	al = 255;
-	_stosb(cx, true);
-	es = data.word(kExtras);
-	data.word(kFrsegment) = es;
-	ax = (0);
-	data.word(kDataad) = ax;
-	ax = (0+2080);
-	data.word(kFramesad) = ax;
-	data.byte(kCurrentex) = 0;
-	si = (0+2080+30000)+2;
-	cx = 0;
-exloop:
-	push(cx);
-	push(si);
-	es = data.word(kExtras);
-	push(si);
-	ch = 0;
-	_cmp(es.byte(si), 255);
-	if (flags.z())
-		goto notinroom;
-	al = es.byte(si-2);
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto notinroom;
-	getmapad();
-notinroom:
-	si = pop();
-	_cmp(ch, 0);
-	if (flags.z())
-		goto blankex;
-	al = data.byte(kCurrentex);
-	ah = 0;
-	dx = ax;
-	_add(ax, ax);
-	_add(ax, dx);
-	data.word(kCurrentframe) = ax;
-	push(es);
-	push(si);
-	calcfrframe();
-	es = data.word(kMapstore);
-	ds = data.word(kFrsegment);
-	finalframe();
-	si = pop();
-	es = pop();
-	_cmp(cx, 0);
-	if (flags.z())
-		goto blankex;
-	ax = data.word(kCurrentframe);
-	ah = 0;
-	_add(di, data.word(kMapadx));
-	_add(bx, data.word(kMapady));
-	showframe();
-	si = data.word(kListpos);
-	es = data.word(kBuffers);
-	al = data.byte(kSavex);
-	ah = data.byte(kSavey);
-	es.word(si) = ax;
-	cx = ax;
-	ax = data.word(kSavesize);
-	_add(al, cl);
-	_add(ah, ch);
-	es.word(si+2) = ax;
-	ax = pop();
-	cx = pop();
-	push(cx);
-	push(ax);
-	es.byte(si+4) = cl;
-	_add(si, 5);
-	data.word(kListpos) = si;
-blankex:
-	_inc(data.byte(kCurrentex));
-	si = pop();
-	cx = pop();
-	_add(si, 16);
-	_inc(cx);
-	_cmp(cx, 100);
-	if (flags.z())
-		return /* (finex) */;
-	goto exloop;
 }
 
 void DreamGenContext::autolook() {
@@ -8756,91 +8133,6 @@ douse:
 	useroutine();
 }
 
-void DreamGenContext::useroutine() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 50);
-	if (flags.c())
-		goto nodream7;
-	_cmp(data.byte(kPointerpower), 0);
-	if (!flags.z())
-		goto powerok;
-	return;
-powerok:
-	data.byte(kPointerpower) = 0;
-nodream7:
-	getanyad();
-	dx = data;
-	ds = dx;
-	si = offset_uselist;
-checkuselist:
-	push(si);
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+12));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+13));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+14));
-	if (!flags.z())
-		goto failed;
-	_lodsb();
-	_sub(al, 'A');
-	_cmp(al, es.byte(bx+15));
-	if (!flags.z())
-		goto failed;
-	_lodsw();
-	si = pop();
-	__dispatch_call(ax);
-	return;
-failed:
-	si = pop();
-	_add(si, 6);
-	_cmp(ds.byte(si), 140);
-	if (!flags.z())
-		goto checkuselist;
-	delpointer();
-	getobtextstart();
-	findnextcolon();
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	findnextcolon();
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	al = es.byte(si);
-	_cmp(al, 0);
-	if (flags.z())
-		goto cantuse2;
-	usetext();
-	cx = 400;
-	hangonp();
-	putbackobstuff();
-	return;
-cantuse2:
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	di = 33;
-	bx = 100;
-	al = 63;
-	dl = 241;
-	printmessage();
-	worktoscreenm();
-	cx = 50;
-	hangonp();
-	putbackobstuff();
-	data.byte(kCommandtype) = 255;
-}
-
 void DreamGenContext::wheelsound() {
 	STACK_CHECK;
 	al = 17;
@@ -10843,23 +10135,6 @@ doselob:
 	useroutine();
 }
 
-void DreamGenContext::compare() {
-	STACK_CHECK;
-	_sub(dl, 'A');
-	_sub(dh, 'A');
-	_sub(cl, 'A');
-	_sub(ch, 'A');
-	push(cx);
-	push(dx);
-	getanyaddir();
-	dx = pop();
-	cx = pop();
-	_cmp(es.word(bx+12), cx);
-	if (!flags.z())
-		return /* (comparefin) */;
-	_cmp(es.word(bx+14), dx);
-}
-
 void DreamGenContext::findsetobject() {
 	STACK_CHECK;
 	_sub(al, 'A');
@@ -10983,26 +10258,6 @@ notfoundinside:
 	_cmp(cl, (114));
 	if (!flags.z())
 		goto insideloop;
-}
-
-void DreamGenContext::usetext() {
-	STACK_CHECK;
-	push(es);
-	push(si);
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	si = pop();
-	es = pop();
-	di = 36;
-	bx = 104;
-	dl = 241;
-	al = 0;
-	ah = 0;
-	printdirect();
-	worktoscreenm();
 }
 
 void DreamGenContext::putbackobstuff() {
@@ -15160,105 +14415,6 @@ nothingund:
 	blank();
 }
 
-void DreamGenContext::checkifset() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32))+(127*5);
-	cx = 127;
-identifyset:
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notasetid;
-	_cmp(al, es.byte(bx));
-	if (flags.c())
-		goto notasetid;
-	_cmp(al, es.byte(bx+2));
-	if (!flags.c())
-		goto notasetid;
-	_cmp(ah, es.byte(bx+1));
-	if (flags.c())
-		goto notasetid;
-	_cmp(ah, es.byte(bx+3));
-	if (!flags.c())
-		goto notasetid;
-	pixelcheckset();
-	if (flags.z())
-		goto notasetid;
-	isitdescribed();
-	if (flags.z())
-		goto notasetid;
-	al = es.byte(bx+4);
-	ah = 1;
-	obname();
-	al = 0;
-	_cmp(al, 1);
-	return;
-notasetid:
-	_sub(bx, 5);
-	_dec(cx);
-	_cmp(cx, -1);
-	if (!flags.z())
-		goto identifyset;
-}
-
-void DreamGenContext::checkifex() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5))+(99*5);
-	cx = 99;
-identifyex:
-	_cmp(es.byte(bx+4), 255);
-	if (flags.z())
-		goto notanexid;
-	_cmp(al, es.byte(bx));
-	if (flags.c())
-		goto notanexid;
-	_cmp(al, es.byte(bx+2));
-	if (!flags.c())
-		goto notanexid;
-	_cmp(ah, es.byte(bx+1));
-	if (flags.c())
-		goto notanexid;
-	_cmp(ah, es.byte(bx+3));
-	if (!flags.c())
-		goto notanexid;
-	al = es.byte(bx+4);
-	ah = 4;
-	obname();
-	al = 1;
-	_cmp(al, 0);
-	return;
-notanexid:
-	_sub(bx, 5);
-	_dec(cx);
-	_cmp(cx, -1);
-	if (!flags.z())
-		goto identifyex;
-}
-
-void DreamGenContext::isitdescribed() {
-	STACK_CHECK;
-	push(ax);
-	push(cx);
-	push(es);
-	push(bx);
-	al = es.byte(bx+4);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kSetdesc);
-	_add(bx, (0));
-	ax = es.word(bx);
-	_add(ax, (0+(130*2)));
-	bx = ax;
-	dl = es.byte(bx);
-	bx = pop();
-	es = pop();
-	cx = pop();
-	ax = pop();
-	_cmp(dl, 0);
-}
-
 void DreamGenContext::findpathofpoint() {
 	STACK_CHECK;
 	push(ax);
@@ -15344,118 +14500,6 @@ nofirst:
 	return;
 gotfirst:
 	al = es.byte(bx+6);
-}
-
-void DreamGenContext::turnpathon() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 255;
-	ch = data.byte(kRoomnum);
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	getroomspaths();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (nopathon) */;
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 255;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::turnpathoff() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 0;
-	ch = data.byte(kRoomnum);
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	getroomspaths();
-	ax = pop();
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (nopathoff) */;
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 0;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::turnanypathon() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 255;
-	ch = ah;
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	al = ah;
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 255;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::turnanypathoff() {
-	STACK_CHECK;
-	push(ax);
-	push(ax);
-	cl = 0;
-	ch = ah;
-	_add(ch, 100);
-	findormake();
-	ax = pop();
-	al = ah;
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 0;
-	es.byte(bx+6) = al;
-}
-
-void DreamGenContext::checkifpathison() {
-	STACK_CHECK;
-	push(ax);
-	getroomspaths();
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx+6);
-	_cmp(al, 255);
 }
 
 void DreamGenContext::afternewroom() {
@@ -15607,34 +14651,6 @@ void DreamGenContext::afterintroroom() {
 	data.byte(kNowinnewroom) = 0;
 }
 
-void DreamGenContext::examineobtext() {
-	STACK_CHECK;
-	bl = data.byte(kCommand);
-	bh = data.byte(kCommandtype);
-	al = 1;
-	commandwithob();
-}
-
-void DreamGenContext::printmessage() {
-	STACK_CHECK;
-	push(dx);
-	push(bx);
-	push(di);
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	es = data.word(kCommandtext);
-	ax = es.word(bx);
-	_add(ax, (66*2));
-	si = ax;
-	di = pop();
-	bx = pop();
-	dx = pop();
-	al = 0;
-	ah = 0;
-	printdirect();
-}
-
 void DreamGenContext::printmessage2() {
 	STACK_CHECK;
 	push(dx);
@@ -15705,134 +14721,6 @@ alreadywalking:
 holdingreel:
 	data.byte(kDestafterhold) = al;
 	data.byte(kWatchmode) = 2;
-}
-
-void DreamGenContext::bresenhams() {
-	STACK_CHECK;
-	workoutframes();
-	dx = data;
-	es = dx;
-	di = 8173;
-	si = 1;
-	data.byte(kLinedirection) = 0;
-	cx = data.word(kLineendx);
-	_sub(cx, data.word(kLinestartx));
-	if (flags.z())
-		goto vertline;
-	if (!flags.s())
-		goto line1;
-	_neg(cx);
-	bx = data.word(kLineendx);
-	_xchg(bx, data.word(kLinestartx));
-	data.word(kLineendx) = bx;
-	bx = data.word(kLineendy);
-	_xchg(bx, data.word(kLinestarty));
-	data.word(kLineendy) = bx;
-	data.byte(kLinedirection) = 1;
-line1:
-	bx = data.word(kLineendy);
-	_sub(bx, data.word(kLinestarty));
-	if (flags.z())
-		goto horizline;
-	if (!flags.s())
-		goto line3;
-	_neg(bx);
-	_neg(si);
-line3:
-	push(si);
-	data.byte(kLineroutine) = 0;
-	_cmp(bx, cx);
-	if (flags.le())
-		goto line4;
-	data.byte(kLineroutine) = 1;
-	_xchg(bx, cx);
-line4:
-	_shl(bx, 1);
-	data.word(kIncrement1) = bx;
-	_sub(bx, cx);
-	si = bx;
-	_sub(bx, cx);
-	data.word(kIncrement2) = bx;
-	ax = data.word(kLinestartx);
-	bx = data.word(kLinestarty);
-	ah = bl;
-	_inc(cx);
-	bx = pop();
-	_cmp(data.byte(kLineroutine), 1);
-	if (flags.z())
-		goto hislope;
-	goto loslope;
-vertline:
-	ax = data.word(kLinestarty);
-	bx = data.word(kLineendy);
-	cx = bx;
-	_sub(cx, ax);
-	if (!flags.l())
-		goto line31;
-	_neg(cx);
-	ax = bx;
-	data.byte(kLinedirection) = 1;
-line31:
-	_inc(cx);
-	bx = data.word(kLinestartx);
-	_xchg(ax, bx);
-	ah = bl;
-	bx = si;
-line32:
-	_stosw();
-	_add(ah, bl);
-	if (--cx)
-		goto line32;
-	goto lineexit;
-horizline:
-	ax = data.word(kLinestartx);
-	bx = data.word(kLinestarty);
-	ah = bl;
-	_inc(cx);
-horizloop:
-	_stosw();
-	_inc(al);
-	if (--cx)
-		goto horizloop;
-	goto lineexit;
-loslope:
-loloop:
-	_stosw();
-	_inc(al);
-	_or(si, si);
-	if (!flags.s())
-		goto line12;
-	_add(si, data.word(kIncrement1));
-	if (--cx)
-		goto loloop;
-	goto lineexit;
-line12:
-	_add(si, data.word(kIncrement2));
-	_add(ah, bl);
-	if (--cx)
-		goto loloop;
-	goto lineexit;
-hislope:
-hiloop:
-	_stosw();
-	_add(ah, bl);
-	_or(si, si);
-	if (!flags.s())
-		goto line23;
-	_add(si, data.word(kIncrement1));
-	if (--cx)
-		goto hiloop;
-	goto lineexit;
-line23:
-	_add(si, data.word(kIncrement2));
-	_inc(al);
-	if (--cx)
-		goto hiloop;
-lineexit:
-	_sub(di, 8173);
-	ax = di;
-	_shr(ax, 1);
-	data.byte(kLinelength) = al;
 }
 
 void DreamGenContext::workoutframes() {
@@ -16169,53 +15057,6 @@ void DreamGenContext::allpointer() {
 	dumppointer();
 }
 
-void DreamGenContext::hangonp() {
-	STACK_CHECK;
-	push(cx);
-	_add(cx, cx);
-	ax = pop();
-	_add(cx, ax);
-	data.word(kMaintimer) = 0;
-	al = data.byte(kPointerframe);
-	ah = data.byte(kPickup);
-	push(ax);
-	data.byte(kPointermode) = 3;
-	data.byte(kPickup) = 0;
-	push(cx);
-	data.byte(kCommandtype) = 255;
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
-	cx = pop();
-hangloop:
-	push(cx);
-	delpointer();
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
-	cx = pop();
-	ax = data.word(kMousebutton);
-	_cmp(ax, 0);
-	if (flags.z())
-		goto notpressed;
-	_cmp(ax, data.word(kOldbutton));
-	if (!flags.z())
-		goto getoutofit;
-notpressed:
-	if (--cx)
-		goto hangloop;
-getoutofit:
-	delpointer();
-	ax = pop();
-	data.byte(kPointerframe) = al;
-	data.byte(kPickup) = ah;
-	data.byte(kPointermode) = 0;
-}
-
 void DreamGenContext::hangonw() {
 	STACK_CHECK;
 hangloopw:
@@ -16340,16 +15181,6 @@ void DreamGenContext::randomnum2() {
 	di = pop();
 	es = pop();
 	ds = pop();
-}
-
-void DreamGenContext::hangon() {
-	STACK_CHECK;
-hangonloop:
-	push(cx);
-	vsync();
-	cx = pop();
-	if (--cx)
-		goto hangonloop;
 }
 
 void DreamGenContext::loadtraveltext() {
@@ -17968,9 +16799,7 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_copper: copper(); break;
 		case addr_sparky: sparky(); break;
 		case addr_train: train(); break;
-		case addr_addtopeoplelist: addtopeoplelist(); break;
 		case addr_checkspeed: checkspeed(); break;
-		case addr_delsprite: delsprite(); break;
 		case addr_mainman: mainman(); break;
 		case addr_checkforexit: checkforexit(); break;
 		case addr_adjustdown: adjustdown(); break;
@@ -17980,7 +16809,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_reminders: reminders(); break;
 		case addr_initrain: initrain(); break;
 		case addr_splitintolines: splitintolines(); break;
-		case addr_getblockofpixel: getblockofpixel(); break;
 		case addr_backobject: backobject(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;
@@ -17990,20 +16818,13 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_soundonreels: soundonreels(); break;
 		case addr_reconstruct: reconstruct(); break;
 		case addr_deleverything: deleverything(); break;
-		case addr_dumpeverything: dumpeverything(); break;
 		case addr_showpcx: showpcx(); break;
 		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;
-		case addr_paneltomap: paneltomap(); break;
-		case addr_maptopanel: maptopanel(); break;
-		case addr_dumpmap: dumpmap(); break;
-		case addr_pixelcheckset: pixelcheckset(); break;
 		case addr_createpanel: createpanel(); break;
 		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
-		case addr_delthisone: delthisone(); break;
-		case addr_transferinv: transferinv(); break;
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;
 		case addr_dofade: dofade(); break;
@@ -18051,29 +16872,20 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
 		case addr_monprint: monprint(); break;
-		case addr_fillryan: fillryan(); break;
 		case addr_fillopen: fillopen(); break;
-		case addr_findallryan: findallryan(); break;
 		case addr_findallopen: findallopen(); break;
-		case addr_obtoinv: obtoinv(); break;
-		case addr_isitworn: isitworn(); break;
-		case addr_makeworn: makeworn(); break;
 		case addr_examineob: examineob(); break;
 		case addr_makemainscreen: makemainscreen(); break;
 		case addr_getbackfromob: getbackfromob(); break;
 		case addr_incryanpage: incryanpage(); break;
 		case addr_openinv: openinv(); break;
-		case addr_showryanpage: showryanpage(); break;
 		case addr_openob: openob(); break;
-		case addr_obicons: obicons(); break;
 		case addr_examicon: examicon(); break;
-		case addr_obpicture: obpicture(); break;
 		case addr_describeob: describeob(); break;
 		case addr_additionaltext: additionaltext(); break;
 		case addr_obsthatdothings: obsthatdothings(); break;
 		case addr_getobtextstart: getobtextstart(); break;
 		case addr_searchforsame: searchforsame(); break;
-		case addr_findnextcolon: findnextcolon(); break;
 		case addr_inventory: inventory(); break;
 		case addr_setpickup: setpickup(); break;
 		case addr_examinventory: examinventory(); break;
@@ -18108,7 +16920,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_pickupconts: pickupconts(); break;
 		case addr_transfercontoex: transfercontoex(); break;
 		case addr_transfertext: transfertext(); break;
-		case addr_getexpos: getexpos(); break;
 		case addr_purgealocation: purgealocation(); break;
 		case addr_emergencypurge: emergencypurge(); break;
 		case addr_purgeanitem: purgeanitem(); break;
@@ -18117,7 +16928,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_deleteextext: deleteextext(); break;
 		case addr_blockget: blockget(); break;
 		case addr_drawfloor: drawfloor(); break;
-		case addr_showallex: showallex(); break;
 		case addr_autolook: autolook(); break;
 		case addr_look: look(); break;
 		case addr_dolook: dolook(); break;
@@ -18187,7 +16997,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_printcurs: printcurs(); break;
 		case addr_delcurs: delcurs(); break;
 		case addr_useobject: useobject(); break;
-		case addr_useroutine: useroutine(); break;
 		case addr_wheelsound: wheelsound(); break;
 		case addr_runtap: runtap(); break;
 		case addr_playguitar: playguitar(); break;
@@ -18266,12 +17075,10 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_useelvdoor: useelvdoor(); break;
 		case addr_withwhat: withwhat(); break;
 		case addr_selectob: selectob(); break;
-		case addr_compare: compare(); break;
 		case addr_findsetobject: findsetobject(); break;
 		case addr_findexobject: findexobject(); break;
 		case addr_isryanholding: isryanholding(); break;
 		case addr_checkinside: checkinside(); break;
-		case addr_usetext: usetext(); break;
 		case addr_putbackobstuff: putbackobstuff(); break;
 		case addr_showpuztext: showpuztext(); break;
 		case addr_findpuztext: findpuztext(); break;
@@ -18444,25 +17251,14 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mainscreen: mainscreen(); break;
 		case addr_madmanrun: madmanrun(); break;
 		case addr_identifyob: identifyob(); break;
-		case addr_checkifset: checkifset(); break;
-		case addr_checkifex: checkifex(); break;
-		case addr_isitdescribed: isitdescribed(); break;
 		case addr_findpathofpoint: findpathofpoint(); break;
 		case addr_findfirstpath: findfirstpath(); break;
-		case addr_turnpathon: turnpathon(); break;
-		case addr_turnpathoff: turnpathoff(); break;
-		case addr_turnanypathon: turnanypathon(); break;
-		case addr_turnanypathoff: turnanypathoff(); break;
-		case addr_checkifpathison: checkifpathison(); break;
 		case addr_afternewroom: afternewroom(); break;
 		case addr_atmospheres: atmospheres(); break;
 		case addr_walkintoroom: walkintoroom(); break;
 		case addr_afterintroroom: afterintroroom(); break;
-		case addr_examineobtext: examineobtext(); break;
-		case addr_printmessage: printmessage(); break;
 		case addr_printmessage2: printmessage2(); break;
 		case addr_setwalk: setwalk(); break;
-		case addr_bresenhams: bresenhams(); break;
 		case addr_workoutframes: workoutframes(); break;
 		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
@@ -18478,7 +17274,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_worktoscreenm: worktoscreenm(); break;
 		case addr_blank: blank(); break;
 		case addr_allpointer: allpointer(); break;
-		case addr_hangonp: hangonp(); break;
 		case addr_hangonw: hangonw(); break;
 		case addr_hangoncurs: hangoncurs(); break;
 		case addr_getunderzoom: getunderzoom(); break;
@@ -18490,7 +17285,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_readkey: readkey(); break;
 		case addr_randomnum1: randomnum1(); break;
 		case addr_randomnum2: randomnum2(); break;
-		case addr_hangon: hangon(); break;
 		case addr_loadtraveltext: loadtraveltext(); break;
 		case addr_loadintotemp: loadintotemp(); break;
 		case addr_loadintotemp2: loadintotemp2(); break;

@@ -37,6 +37,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 	_music = new SciMusic(_soundVersion);
 	_music->init();
+	_bMultiMidi = ConfMan.getBool("multi_midi");
 }
 
 SoundCommandParser::~SoundCommandParser() {
@@ -63,30 +64,11 @@ int SoundCommandParser::getSoundResourceId(reg_t obj) {
 	return resourceId;
 }
 
-void SoundCommandParser::processInitSound(reg_t obj) {
-	int resourceId = getSoundResourceId(obj);
-
-	// Check if a track with the same sound object is already playing
-	MusicEntry *oldSound = _music->getSlot(obj);
-	if (oldSound)
-		processDisposeSound(obj);
-
-	MusicEntry *newSound = new MusicEntry();
-	newSound->resourceId = resourceId;
-	if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId)))
-		newSound->soundRes = new SoundResource(resourceId, _resMan, _soundVersion);
+void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
+	if (newSound->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, newSound->resourceId)))
+		newSound->soundRes = new SoundResource(newSound->resourceId, _resMan, _soundVersion);
 	else
 		newSound->soundRes = 0;
-
-	newSound->soundObj = obj;
-	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
-	if (_soundVersion >= SCI_VERSION_1_EARLY)
-		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
-	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
-
-	debugC(kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
-			resourceId,	newSound->loop, newSound->priority, newSound->volume);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -98,15 +80,40 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	// if we play those, we will only make the user deaf and break speakers. Sierra SCI doesn't play anything
 	// on soundblaster. FIXME: check, why this is
 
-	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
-		// Found a relevant audio resource, play it
-		int sampleLen;
-		newSound->pStreamAud = _audio->getAudioStream(resourceId, 65535, &sampleLen);
-		newSound->soundType = Audio::Mixer::kSpeechSoundType;
-	} else {
-		if (newSound->soundRes)
-			_music->soundInitSnd(newSound);
+	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
+		// Found a relevant audio resource, create an audio stream
+		if (_bMultiMidi || !newSound->soundRes) {
+			int sampleLen;
+			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
+			newSound->soundType = Audio::Mixer::kSpeechSoundType;
+		}
 	}
+
+	if (!newSound->pStreamAud && newSound->soundRes)
+		_music->soundInitSnd(newSound);
+}
+
+void SoundCommandParser::processInitSound(reg_t obj) {
+	int resourceId = getSoundResourceId(obj);
+
+	// Check if a track with the same sound object is already playing
+	MusicEntry *oldSound = _music->getSlot(obj);
+	if (oldSound)
+		processDisposeSound(obj);
+
+	MusicEntry *newSound = new MusicEntry();
+	newSound->resourceId = resourceId;
+	newSound->soundObj = obj;
+	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
+		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
+	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
+
+	debugC(kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
+			resourceId,	newSound->loop, newSound->priority, newSound->volume);
+
+	initSoundResource(newSound);
 
 	_music->pushBackSlot(newSound);
 
@@ -130,8 +137,14 @@ reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processPlaySound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
+		// The sound hasn't been initialized for some reason, so initialize it here.
+		// Happens in KQ6, room 460, when giving the creature to the bookwork (the
+		// bookworm's child). Fixes bug #3413301.
+		processInitSound(obj);
+		musicSlot = _music->getSlot(obj);
+		if (!musicSlot)
+			error("Failed to initialize uninitialized sound slot");
 	}
 
 	int resourceId = getSoundResourceId(obj);
@@ -157,6 +170,9 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	// Reset hold when starting a new song. kDoSoundSetHold is always called after
+	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
+	musicSlot->hold = -1;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 

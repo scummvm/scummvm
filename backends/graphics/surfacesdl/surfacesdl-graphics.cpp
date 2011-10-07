@@ -731,7 +731,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.hardwareHeight = effectiveScreenHeight();
-#else
+// On GPH devices ALL the _videoMode.hardware... are setup in GPHGraphicsManager::loadGFXMode()
+#elif !defined(GPH_DEVICE)
 	_videoMode.hardwareWidth = _videoMode.overlayWidth;
 	_videoMode.hardwareHeight = _videoMode.overlayHeight;
 #endif

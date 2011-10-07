@@ -49,6 +49,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
 #endif
@@ -1321,10 +1322,10 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();
-	int16 forWidth = argv[2].toSint16();
-	// argv[3] seems to be 0 most of the time
+	int16 pictureX = argv[2].toSint16();
+	int16 pictureY = argv[3].toSint16();
 
-	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, forWidth, pictureId);
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, pictureX, pictureY);
 	return s->r_acc;
 }
 
@@ -1333,12 +1334,7 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
-	// This kernel call likely seems to be doing the screen updates,
-	// as its called right after a view is updated
-
-	// TODO
 	g_sci->_gfxFrameout->kernelFrameout();
-
 	return NULL_REG;
 }
 
@@ -1380,15 +1376,19 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
 	switch (argv[0].toUint16()) {
 	case 0: {
 		if (argc != 4) {
 			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
 			return NULL_REG;
 		}
-		//reg_t object = argv[3];
-		//Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
+				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
+		debugC(kDebugLevelStrings, "%s", text.c_str());
+		// TODO: arguments 1 and 2
+		g_sci->_gfxText32->createTextBitmap(object);
 		break;
 	}
 	case 1: {
@@ -1396,8 +1396,11 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 			warning("kCreateTextBitmap(0): expected 2 arguments, got %i", argc);
 			return NULL_REG;
 		}
-		//reg_t object = argv[1];
-		//Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		reg_t object = argv[1];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		debugC(kDebugLevelStrings, "kCreateTextBitmap case 1 (%04x:%04x)", PRINT_REG(argv[1]));
+		debugC(kDebugLevelStrings, "%s", text.c_str());
+		g_sci->_gfxText32->createTextBitmap(object);
 		break;
 	}
 	default:
@@ -1662,6 +1665,95 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 		return kSetFontRes(s, argc - 1, argv + 1);
 	default:
 		warning("kFont: unknown subop %d", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
+
+reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
+	// Used for bitmap operations in SCI2.1 and SCI3.
+	// This is the SCI2.1 version, the functionality seems to have changed in SCI3.
+
+	switch (argv[0].toUint16()) {
+	case 0:	// init bitmap surface
+		{
+		// 6 params, called e.g. from TextView::init() in Torin's Passage,
+		// script 64890 and TransView::init() in script 64884
+		uint16 width = argv[1].toUint16();
+		uint16 height = argv[2].toUint16();
+		uint16 skip = argv[3].toUint16();
+		uint16 back = argv[4].toUint16();
+		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
+		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
+		uint16 transparent = (argc >= 8) ? argv[7].toUint16() : 0;
+		warning("kBitmap(0): width %d, height %d, skip %d, back %d, width2 %d, height2 %d, transparent %d",
+				width, height, skip, back, width2, height2, transparent);
+		// returns a pointer to a bitmap
+		}
+		break;
+	case 1:	// dispose bitmap surface
+		// 1 param, bitmap pointer, called e.g. from MenuItem::dispose
+		// in Torin's Passage, script 64893
+		warning("kBitmap(1), bitmap ptr %04x:%04x", PRINT_REG(argv[1]));
+		break;
+	case 2:	// dispose bitmap surface, with extra param
+		// 2 params, called e.g. from MenuItem::dispose in Torin's Passage,
+		// script 64893
+		warning("kBitmap(2), unk1 %d, bitmap ptr %04x:%04x", argv[1].toUint16(), PRINT_REG(argv[2]));
+		break;
+	case 3:	// tiled surface
+		{
+		// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
+		// script 64869
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		// The tiled view seems to always have 2 loops.
+		// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
+		uint16 view = argv[2].toUint16();	// vTiles selector
+		uint16 loop = argv[3].toUint16();
+		uint16 cel = argv[4].toUint16();
+		uint16 x = argv[5].toUint16();
+		uint16 y = argv[6].toUint16();
+		warning("kBitmap(3): bitmap ptr %04x:%04x, view %d, loop %d, cel %d, x %d, y %d",
+				PRINT_REG(bitmapPtr), view, loop, cel, x, y);
+		}
+		break;
+	case 4:	// process text
+		{
+		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
+		// script 64894
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		Common::String text = s->_segMan->getString(argv[2]);
+		// unk3
+		// unk4
+		// unk5
+		// unk6
+		// skip?
+		// back?
+		uint16 font = argv[9].toUint16();
+		uint16 mode = argv[10].toUint16();
+		// unk
+		uint16 dimmed = argv[12].toUint16();
+		warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
+				PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
+		}
+		break;
+	case 5:
+		{
+		// 6 params, called e.g. from TextView::init() and TextView::draw()
+		// in Torin's Passage, script 64890
+		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		uint16 unk1 = argv[2].toUint16();	// unknown, usually 0, judging from scripts?
+		uint16 unk2 = argv[3].toUint16();	// unknown, usually 0, judging from scripts?
+		uint16 width = argv[4].toUint16();	// width - 1
+		uint16 height = argv[5].toUint16();	// height - 1
+		uint16 back = argv[6].toUint16();
+		warning("kBitmap(5): bitmap ptr %04x:%04x, unk1 %d, unk2 %d, width %d, height %d, back %d",
+				PRINT_REG(bitmapPtr), unk1, unk2, width, height, back);
+		}
+		break;
+	default:
+		kStub(s, argc, argv);
+		break;
 	}
 
 	return s->r_acc;

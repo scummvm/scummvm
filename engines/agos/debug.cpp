@@ -297,20 +297,18 @@ void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
 }
 
 void AGOSEngine::dumpAllVgaImageFiles() {
-	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
-	uint16 end = (getGameType() == GType_PN) ? 26 : 450;
+	const uint8 start = (getGameType() == GType_PN) ? 0 : 2;
 
-	for (int z = start; z < end; z++) {
+	for (int z = start; z < _numZone; z++) {
 		loadZone(z, false);
 		dumpVgaBitmaps(z);
 	}
 }
 
 void AGOSEngine::dumpAllVgaScriptFiles() {
-	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
-	uint16 end = (getGameType() == GType_PN) ? 26 : 450;
+	const uint8 start = (getGameType() == GType_PN) ? 0 : 2;
 
-	for (int z = start; z < end; z++) {
+	for (int z = start; z < _numZone; z++) {
 		uint16 zoneNum = (getGameType() == GType_PN) ? 0 : z;
 		loadZone(z, false);
 
@@ -516,7 +514,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 			dst += w;
 			src += w;
 		}
-	} else if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && w == 320 && (h == 134 || h == 200)) {
+	} else if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && w == 320 && (h == 134 || h == 135 || h == 200)) {
 		for (j = 0; j != h; j++) {
 			uint16 count = w / 8;
 
@@ -620,7 +618,7 @@ void AGOSEngine::palLoad(byte *pal, const byte *vga1, int a, int b) {
 
 void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 	uint16 width, height, flags;
-	uint32 offs, curOffs = 0;
+	uint32 offs, offsEnd;
 	const byte *p2;
 	byte pal[768];
 
@@ -636,7 +634,11 @@ void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 	memset(pal, 0, sizeof(pal));
 	palLoad(pal, vga1, 0, 0);
 
-	for (int i = 1; ; i++) {
+	offsEnd = readUint32Wrapper(vga2 + 8);
+	for (uint i = 1; ; i++) {
+		if ((i * 8) >= offsEnd)
+			break;
+
 		p2 = vga2 + i * 8;
 		offs = readUint32Wrapper(p2);
 
@@ -650,10 +652,8 @@ void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
 		}
 
 		debug(1, "Zone %d: Image %d. Offs= %d Width=%d, Height=%d, Flags=0x%X", zoneNum, i, offs, width, height, flags);
-		if (offs < curOffs || offs >= imageBlockSize || width == 0 || height == 0)
-			return;
-
-		curOffs = offs;
+		if (offs >= imageBlockSize || width == 0 || height == 0)
+			break;
 
 		/* dump bitmap */
 		char buf[40];

@@ -1192,7 +1192,6 @@ void GfxMgr::flushScreen() {
 	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 
 	doUpdate();
-	g_system->updateScreen();
 }
 
 /**

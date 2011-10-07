@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/core.h"
+#include "tsage/graphics.h"
 #include "tsage/sound.h"
 
 namespace TsAGE {
@@ -33,7 +34,12 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-class UIElement: public AltSceneObject {
+class StripProxy: public EventHandler {
+public:
+	virtual void process(Event &event);
+};
+
+class UIElement: public BackgroundSceneObject {
 public:
 	int _field88;
 	bool _enabled;
@@ -49,7 +55,8 @@ public:
 // This class implements the Question mark button
 class UIQuestion: public UIElement {
 private:
-	void showDescription(int lineNum);
+	void showDescription(CursorType item);
+	void showItem(int resNum, int rlbNum, int frameNum);
 public:
 	virtual void process(Event &event);
 	void setEnabled(bool flag);
@@ -64,13 +71,16 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void draw();
-	
+
 	void updateScore();
 };
 
 class UIInventorySlot: public UIElement {
+private:
+	void showAmmoBelt();
 public:
 	int _objIndex;
+	InvObject *_object;
 
 	UIInventorySlot();
 	virtual Common::String getClassName() { return "UIInventorySlot"; }
@@ -79,6 +89,8 @@ public:
 };
 
 class UIInventoryScroll: public UIElement {
+private:
+	void toggle(bool pressed);
 public:
 	bool _isLeft;
 
@@ -96,12 +108,13 @@ public:
 	Rect _bounds;
 	bool _visible;
 	bool _clearScreen;
-	int _field4E;
+	bool _cursorChanged;
 	Common::Array<UIElement *> _objList;
 
 	UICollection();
 	void setup(const Common::Point &pt);
 	void hide();
+	void show();
 	void resetClear();
 	void draw();
 };
@@ -109,7 +122,6 @@ public:
 class UIElements: public UICollection {
 private:
 	void add(UIElement *obj);
-	void updateInventory();
 	void updateInvList();
 public:
 	UIElement _object1;
@@ -118,14 +130,23 @@ public:
 	UIInventorySlot _slot1, _slot2, _slot3, _slot4;
 	UIInventoryScroll _scrollLeft, _scrollRight;
 	ASound _sound;
-	int _itemCount, _slotStart, _scoreValue;
-	bool _field820;
+	int _slotStart, _scoreValue;
+	bool _active;
 	Common::Array<int> _itemList;
+	Visage _cursorVisage;
 
+	UIElements();
+	virtual Common::String getClassName() { return "UIElements"; }
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL) { error("Wrong init() called"); }
 	virtual void process(Event &event);
 
 	void setup(const Common::Point &pt);
+	void updateInventory();
+	void addScore(int amount);
+	void scrollInventory(bool isLeft);
+
+	static void loadNotifierProc(bool postFlag);
 };
 
 } // End of namespace BlueForce

@@ -193,7 +193,6 @@ void WinnieEngine::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	printStr(IDS_WTP_INTRO_0);
 	_gfx->doUpdate();
-	_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (getPlatform() == Common::kPlatformAmiga)
@@ -203,7 +202,6 @@ void WinnieEngine::intro() {
 
 	printStr(IDS_WTP_INTRO_1);
 	_gfx->doUpdate();
-	_system->updateScreen();
 	_system->delayMillis(0x640);
 
 	if (!playSound(IDI_WTP_SND_POOH_0))
@@ -455,7 +453,6 @@ int WinnieEngine::parser(int pc, int index, uint8 *buffer) {
 		if (iBlock == 1)
 			return IDI_WTP_PAR_OK;
 		_gfx->doUpdate();
-		_system->updateScreen();
 	}
 
 	return IDI_WTP_PAR_OK;
@@ -481,7 +478,6 @@ void WinnieEngine::inventory() {
 
 	drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, missing.c_str());
 	_gfx->doUpdate();
-	_system->updateScreen(); //TODO: Move to game's main loop
 	getSelection(kSelAnyKey);
 }
 
@@ -760,7 +756,6 @@ void WinnieEngine::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	}
 	drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
 	_gfx->doUpdate();
-	_system->updateScreen(); //TODO: Move to game's main loop
 }
 
 void WinnieEngine::incMenuSel(int *iSel, int fCanSel[]) {
@@ -1019,7 +1014,6 @@ phase0:
 	readRoom(_room, roomdata, hdr);
 	drawRoomPic();
 	_gfx->doUpdate();
-	_system->updateScreen();
 
 phase1:
 	if (getObjInRoom(_room)) {

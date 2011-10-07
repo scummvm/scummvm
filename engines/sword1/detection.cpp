@@ -48,7 +48,7 @@ static const PlainGameDescriptor sword1PSXDemoSettings =
 
 
 // check these subdirectories (if present)
-static const char *g_dirNames[] = {	"clusters",	"speech", "english", "italian"};
+static const char *const g_dirNames[] = { "clusters", "speech", "english", "italian"};
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
@@ -59,7 +59,7 @@ static const char *g_dirNames[] = {	"clusters",	"speech", "english", "italian"};
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
 
 #define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK + NUM_PSX_DEMO_FILES_TO_CHECK
-static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
+static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
 	"swordres.rif", // Mac, PC and PSX version
 	"general.clu", // PC and PSX version
 	"compacts.clu", // PC and PSX version
@@ -68,7 +68,7 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 	"compacts.clm", // Mac version only
 	"scripts.clm", // Mac version only
 	"paris2.clm", // Mac version (full game only)
-	"cows.mad",	// this one should only exist in the demo version
+	"cows.mad", // this one should only exist in the demo version
 	"scripts.clm", // Mac version both demo and full game
 	"train.plx", // PSX version only
 	"speech.dat", // PSX version only
@@ -99,20 +99,20 @@ public:
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate) ||
+	    (f == kSavesSupportPlayTime);
 }
 
 bool Sword1::SwordEngine::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsLoadingDuringRuntime);
+	    (f == kSupportsRTL) ||
+	    (f == kSupportsSavingDuringRuntime) ||
+	    (f == kSupportsLoadingDuringRuntime);
 }
 
 GameList SwordMetaEngine::getSupportedGames() const {
@@ -225,7 +225,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	char saveName[40];
 
 	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.???");
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum = 0;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -235,7 +235,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				in->readUint32LE();	// header
+				in->readUint32LE(); // header
 				in->read(saveName, 40);
 				saveList.push_back(SaveStateDescriptor(slotNum, saveName));
 				delete in;
@@ -261,9 +261,9 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
 	if (in) {
-		in->skip(4);		// header
+		in->skip(4);        // header
 		in->read(name, sizeof(name));
-		in->read(&versionSave, 1);		// version
+		in->read(&versionSave, 1);      // version
 
 		SaveStateDescriptor desc(slot, name);
 
@@ -323,7 +323,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 	reinitialize();
 	_control->doRestore();
 	reinitRes();
-	return Common::kNoError;	// TODO: return success/failure
+	return Common::kNoError;    // TODO: return success/failure
 }
 
 bool SwordEngine::canLoadGameStateCurrently() {
@@ -333,7 +333,7 @@ bool SwordEngine::canLoadGameStateCurrently() {
 Common::Error SwordEngine::saveGameState(int slot, const Common::String &desc) {
 	_control->setSaveDescription(slot, desc.c_str());
 	_control->saveGameToFile(slot);
-	return Common::kNoError;	// TODO: return success/failure
+	return Common::kNoError;    // TODO: return success/failure
 }
 
 bool SwordEngine::canSaveGameStateCurrently() {

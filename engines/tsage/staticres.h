@@ -39,10 +39,8 @@ extern const char *DEFAULT_SCENE_HOTSPOT;
 extern const char *SAVE_ERROR_MSG;
 extern const char *SAVING_NOT_ALLOWED_MSG;
 extern const char *RESTORING_NOT_ALLOWED_MSG;
-extern const char *RESTART_CONFIRM_MSG;
 
 // Dialogs
-extern const char *HELP_MSG;
 extern const char *QUIT_CONFIRM_MSG;
 extern const char *RESTART_MSG;
 extern const char *GAME_PAUSED_MSG;
@@ -62,6 +60,7 @@ extern const char *INV_EMPTY_MSG;
 namespace Ringworld {
 
 // Dialog resources
+extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
@@ -95,6 +94,7 @@ extern const char *DEMO_RESUME_BTN_STRING;
 namespace BlueForce {
 
 // Dialog resources
+extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
@@ -120,6 +120,23 @@ extern const char *ALLEY_CAT;
 extern const char *CITY_HALL_JAIL;
 extern const char *JAMISON_RYAN;
 extern const char *BIKINI_HUT;
+
+extern const char *SCENE570_PASSWORD;
+extern const char *SCENE570_C_DRIVE;
+extern const char *SCENE570_RING;
+extern const char *SCENE570_PROTO;
+extern const char *SCENE570_WACKY;
+extern const char *SCENE570_COBB;
+extern const char *SCENE570_LETTER;
+extern const char *SCENE570_RINGEXE;
+extern const char *SCENE570_RINGDATA;
+extern const char *SCENE570_PROTOEXE;
+extern const char *SCENE570_PROTODATA;
+extern const char *SCENE570_WACKYEXE;
+extern const char *SCENE570_WACKYDATA;
+
+// Scene 60 radio dispatch buttons
+extern const char *RADIO_BTN_LIST[8];
 
 } // End of namespace BlueForce
 

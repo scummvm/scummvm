@@ -2515,6 +2515,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"geisha",
+			"",
+			AD_ENTRY1s("disk1.stk", "e5892f00917c62423e93f5fd9920cf47", 208120),
+			UNK_LANG,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGeisha,
+		kFeaturesEGA,
+		"disk1.stk", "intro.tot", 0
+	},
+	{
+		{
 			"gob3",
 			"",
 			AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),

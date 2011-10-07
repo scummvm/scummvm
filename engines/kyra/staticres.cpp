@@ -794,8 +794,8 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
-	static const char *tIntro98[] = { "INTRO%d.DAT" };
-	static const char *tIngame98[] = { "KYRAM%d.DAT" };
+	static const char *const tIntro98[] = { "INTRO%d.DAT" };
+	static const char *const tIngame98[] = { "KYRAM%d.DAT" };
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
 	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
@@ -1011,13 +1011,13 @@ void KyraEngine_HoF::initStaticResource() {
 	_sequenceSoundList = tmpSndLst;
 
 	// assign music data
-	static const char *fmtMusicFileListIntro[] = { "intro%d.twn" };
-	static const char *fmtMusicFileListFinale[] = { "finale%d.twn" };
-	static const char *fmtMusicFileListIngame[] = { "km%02d.twn" };
+	static const char *const fmtMusicFileListIntro[] = { "intro%d.twn" };
+	static const char *const fmtMusicFileListFinale[] = { "finale%d.twn" };
+	static const char *const fmtMusicFileListIngame[] = { "km%02d.twn" };
 
-	static const char *pc98MusicFileListIntro[] = { "intro%d.86" };
-	static const char *pc98MusicFileListFinale[] = { "finale%d.86" };
-	static const char *pc98MusicFileListIngame[] = { "km%02d.86" };
+	static const char *const pc98MusicFileListIntro[] = { "intro%d.86" };
+	static const char *const pc98MusicFileListFinale[] = { "finale%d.86" };
+	static const char *const pc98MusicFileListIngame[] = { "km%02d.86" };
 
 	memset(_soundData, 0, sizeof(_soundData));
 	if (_flags.platform == Common::kPlatformPC) {
@@ -1387,7 +1387,7 @@ const int GUI_v2::_sliderBarsPosition[] = {
 
 const uint8 KyraEngine_HoF::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
-const char *KyraEngine_HoF::_languageExtension[] = {
+const char *const KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
@@ -1396,7 +1396,7 @@ const char *KyraEngine_HoF::_languageExtension[] = {
 	"JPN",
 };
 
-const char *KyraEngine_HoF::_scriptLangExt[] = {
+const char *const KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
@@ -1885,7 +1885,7 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 
 // kyra 3 static res
 
-const char *KyraEngine_MR::_languageExtension[] = {
+const char *const KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,

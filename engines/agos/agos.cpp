@@ -41,18 +41,51 @@
 namespace AGOS {
 
 static const GameSpecificSettings simon1_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"EFFECTS",                              // effects_filename
 	"SIMON",                                // speech_filename
 };
 
 static const GameSpecificSettings simon2_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
 	"SIMON2",                               // speech_filename
 };
 
-static const GameSpecificSettings puzzlepack_settings = {
+static const GameSpecificSettings dimp_settings = {
+	"Gdimp",                                // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
-	"MUSIC",                               // speech_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings jumble_settings = {
+	"Gjumble",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings puzzle_settings = {
+	"Gpuzzle",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings swampy_settings = {
+	"Gswampy",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
 };
 
 #ifdef ENABLE_AGOS2
@@ -132,6 +165,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_numMusic = 0;
 	_numSFX = 0;
 	_numSpeech = 0;
+	_numZone = 0;
 
 	_numBitArray1 = 0;
 	_numBitArray2 = 0;
@@ -678,7 +712,15 @@ static const uint16 initialVideoWindows_PN[20] = {
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::setupGame() {
-	gss = &puzzlepack_settings;
+	if (getGameId() == GID_DIMP) {
+		gss = &dimp_settings;
+	} else if (getGameId() == GID_JUMBLE) {
+		gss = &jumble_settings;
+	} else if (getGameId() == GID_PUZZLE) {
+		gss = &puzzle_settings;
+	} else if (getGameId() == GID_SWAMPY) {
+		gss = &swampy_settings;
+	}
 	_numVideoOpcodes = 85;
 	_vgaMemSize = 7500000;
 	_itemMemSize = 20000;
@@ -690,6 +732,8 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	_numItemStore = 10;
 	_numTextBoxes = 40;
 	_numVars = 2048;
+
+	_numZone = 450;
 
 	AGOSEngine::setupGame();
 }
@@ -725,6 +769,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_numMusic = 93;
 	_numSFX = 222;
 	_numSpeech = 11997;
+	_numZone = 140;
 
 	AGOSEngine::setupGame();
 }
@@ -751,6 +796,7 @@ void AGOSEngine_Simon1::setupGame() {
 	_numMusic = 34;
 	_numSFX = 127;
 	_numSpeech = 3623;
+	_numZone = 164;
 
 	AGOSEngine::setupGame();
 }
@@ -771,6 +817,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 26;
+	_numZone = 155;
 
 	AGOSEngine::setupGame();
 }
@@ -790,6 +837,7 @@ void AGOSEngine_Elvira2::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 9;
+	_numZone = 99;
 
 	AGOSEngine::setupGame();
 }
@@ -806,6 +854,7 @@ void AGOSEngine_Elvira1::setupGame() {
 	_numVars = 512;
 
 	_numMusic = 14;
+	_numZone = 74;
 
 	AGOSEngine::setupGame();
 }
@@ -818,6 +867,8 @@ void AGOSEngine_PN::setupGame() {
 	_vgaBaseDelay = 1;
 	_vgaPeriod = 50;
 	_numVars = 256;
+
+	_numZone = 26;
 
 	AGOSEngine::setupGame();
 }
@@ -963,6 +1014,10 @@ void AGOSEngine::pause() {
 }
 
 Common::Error AGOSEngine::go() {
+#ifdef ENABLE_AGOS2
+	loadArchives();
+#endif
+
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);

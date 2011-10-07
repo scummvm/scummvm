@@ -29,13 +29,13 @@ namespace Sword1 {
 
 #define LOOPED 1
 
-#define	FRAME_RATE			12						// number of frames per second (max rate)
-#define	SCREEN_WIDTH		640
-#define	SCREEN_DEPTH		400
-#define	SCREEN_LEFT_EDGE	128
-#define	SCREEN_RIGHT_EDGE	(128+SCREEN_WIDTH-1)
-#define	SCREEN_TOP_EDGE		128
-#define	SCREEN_BOTTOM_EDGE	(128+SCREEN_DEPTH-1)
+#define FRAME_RATE          12                      // number of frames per second (max rate)
+#define SCREEN_WIDTH        640
+#define SCREEN_DEPTH        400
+#define SCREEN_LEFT_EDGE    128
+#define SCREEN_RIGHT_EDGE   (128+SCREEN_WIDTH-1)
+#define SCREEN_TOP_EDGE     128
+#define SCREEN_BOTTOM_EDGE  (128+SCREEN_DEPTH-1)
 #define TYPE_FLOOR 1
 #define TYPE_MOUSE 2
 #define TYPE_SPRITE 3
@@ -81,22 +81,22 @@ namespace Sword1 {
 #define TOTAL_subjects (375-256+1)
 #define BASE_SUBJECT 256
 
-#define TOTAL_SECTIONS		150						//number of sections, rooms + mega sections
-#define	TOTAL_ROOMS			100						//total number of rooms
-#define	ITM_PER_SEC			0x10000					//65536 items per section -> was originally called "SIZE"
-#define	ITM_ID				0xFFFF					//& with this -> originally "NuSIZE"
+#define TOTAL_SECTIONS      150                     //number of sections, rooms + mega sections
+#define TOTAL_ROOMS         100                     //total number of rooms
+#define ITM_PER_SEC         0x10000                 //65536 items per section -> was originally called "SIZE"
+#define ITM_ID              0xFFFF                  //& with this -> originally "NuSIZE"
 
-#define	MAX_text_obs	2			//text compacts
-#define	TEXT_sect		149			//text compacts exist in section 149, probably after all the megas
+#define MAX_text_obs    2           //text compacts
+#define TEXT_sect       149         //text compacts exist in section 149, probably after all the megas
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h"  // START STRUCT PACKING
 
 struct Header {
 	char type[6];
 	uint16 version;
-	uint32	comp_length;
-	char	compression[4];
-	uint32	decomp_length;
+	uint32  comp_length;
+	char    compression[4];
+	uint32  decomp_length;
 } PACKED_STRUCT;
 
 struct FrameHeader {
@@ -132,7 +132,7 @@ struct WalkGridHeader {
 	int32 numNodes;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 enum fileTypes {
 	TYPE_CD1 = 0,
@@ -144,12 +144,12 @@ enum fileTypes {
 };
 
 enum fileFlags {
-	FLAG_CD1 =		(1 << TYPE_CD1),	  // this file is on cd1
-	FLAG_CD2 =		(1 << TYPE_CD2),	  // this file is on cd2
-	FLAG_DEMO =		(1 << TYPE_DEMO),	  // file for the demo version
-	FLAG_IMMED =	(1 << TYPE_IMMED),	  // this file is needed immediately, game won't start without it
-	FLAG_SPEECH1 =	(1 << TYPE_SPEECH1),
-	FLAG_SPEECH2 =	(1 << TYPE_SPEECH2)
+	FLAG_CD1     = (1 << TYPE_CD1),         // this file is on cd1
+	FLAG_CD2     = (1 << TYPE_CD2),         // this file is on cd2
+	FLAG_DEMO    = (1 << TYPE_DEMO),        // file for the demo version
+	FLAG_IMMED   = (1 << TYPE_IMMED),       // this file is needed immediately, game won't start without it
+	FLAG_SPEECH1 = (1 << TYPE_SPEECH1),
+	FLAG_SPEECH2 = (1 << TYPE_SPEECH2)
 };
 
 struct CdFile {
@@ -167,29 +167,29 @@ enum Language {
 	BS1_PORT
 };
 
-#define SAM		2162689
-#define PLAYER	8388608
-#define GEORGE	8388608
-#define NICO	8454144
-#define BENOIR	8585216
-#define ROSSO	8716288
-#define DUANE	8781824
-#define MOUE	9502720
-#define ALBERT	9568256
+#define SAM     2162689
+#define PLAYER  8388608
+#define GEORGE  8388608
+#define NICO    8454144
+#define BENOIR  8585216
+#define ROSSO   8716288
+#define DUANE   8781824
+#define MOUE    9502720
+#define ALBERT  9568256
 
-#define STAND		0
-#define UP			0
-#define UP_RIGHT	1
-#define U_R			1
-#define RIGHT		2
-#define DOWN_RIGHT	3
-#define D_R			3
-#define DOWN		4
-#define DOWN_LEFT	5
-#define D_L			5
-#define LEFT		6
-#define UP_LEFT		7
-#define U_L			7
+#define STAND       0
+#define UP          0
+#define UP_RIGHT    1
+#define U_R         1
+#define RIGHT       2
+#define DOWN_RIGHT  3
+#define D_R         3
+#define DOWN        4
+#define DOWN_LEFT   5
+#define D_L         5
+#define LEFT        6
+#define UP_LEFT     7
+#define U_L         7
 
 #define BEER_TOWEL 3
 #define HOTEL_KEY 4
@@ -373,10 +373,10 @@ enum Language {
 #define IT_MINUS                12
 #define IT_AND                  13
 #define IT_OR                   14
-#define IT_GTE			15		// >=
-#define IT_LTE			16		// <=
-#define IT_DEVIDE		17		// <=
-#define IT_GT			18		// >
+#define IT_GTE          15      // >=
+#define IT_LTE          16      // <=
+#define IT_DEVIDE       17      // <=
+#define IT_GT           18      // >
 
 #define IT_SCRIPTEND            20
 #define IT_POPVAR               21

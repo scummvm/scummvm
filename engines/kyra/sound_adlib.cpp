@@ -318,7 +318,6 @@ private:
 	//
 	// _unkValue1      - Unknown. Used for updating _unkValue2
 	// _unkValue2      - Unknown. Used for updating _unkValue4
-	// _unkValue3      - Unknown. Used for updating _unkValue2
 	// _unkValue4      - Unknown. Used for updating _unkValue5
 	// _unkValue5      - Unknown. Used for controlling updateCallback24().
 	// _unkValue6      - Unknown. Rhythm section volume?
@@ -357,7 +356,7 @@ private:
 
 	uint8 _unkValue1;
 	uint8 _unkValue2;
-	uint8 _unkValue3;
+	uint8 _callbackTimer;
 	uint8 _unkValue4;
 	uint8 _unkValue5;
 	uint8 _unkValue6;
@@ -395,7 +394,7 @@ private:
 
 	static const uint8 _regOffset[];
 	static const uint16 _unkTable[];
-	static const uint8 *_unkTable2[];
+	static const uint8 *const _unkTable2[];
 	static const uint8 _unkTable2_1[];
 	static const uint8 _unkTable2_2[];
 	static const uint8 _unkTable2_3[];
@@ -434,7 +433,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 	_tempo = 0;
 	_soundTrigger = 0;
 
-	_unkValue3 = 0xFF;
+	_callbackTimer = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
 	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
@@ -635,9 +634,9 @@ void AdLibDriver::callback() {
 	setupPrograms();
 	executePrograms();
 
-	uint8 temp = _unkValue3;
-	_unkValue3 += _tempo;
-	if (_unkValue3 < temp) {
+	uint8 temp = _callbackTimer;
+	_callbackTimer += _tempo;
+	if (_callbackTimer < temp) {
 		if (!(--_unkValue2)) {
 			_unkValue2 = _unkValue1;
 			++_unkValue4;
@@ -791,6 +790,11 @@ void AdLibDriver::executePrograms() {
 						noteOn(channel);
 						setupDuration(param, channel);
 						if (param) {
+							// We need to make sure we are always running the
+							// effects after this. Otherwise some sounds are
+							// wrong. Like the sfx when bumping into a wall in
+							// LoL.
+							result = 1;
 							channel.dataptr = dataptr;
 							break;
 						}
@@ -1114,11 +1118,11 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 		return;
 
 	// Initialize unk1 to the current frequency
-	uint16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
+	int16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
 
 	// This is presumably to shift the "note on" bit so far to the left
 	// that it won't be affected by any of the calculations below.
-	uint16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
+	int16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
 
 	int16 unk3 = (int16)channel.unk30;
 
@@ -1470,7 +1474,7 @@ int AdLibDriver::update_setPriority(uint8 *&dataptr, Channel &channel, uint8 val
 int AdLibDriver::updateCallback23(uint8 *&dataptr, Channel &channel, uint8 value) {
 	value >>= 1;
 	_unkValue1 = _unkValue2 = value;
-	_unkValue3 = 0xFF;
+	_callbackTimer = 0xFF;
 	_unkValue4 = _unkValue5 = 0;
 	return 0;
 }
@@ -2074,7 +2078,7 @@ const uint16 AdLibDriver::_unkTable[] = {
 // These tables are currently only used by updateCallback46(), which only ever
 // uses the first element of one of the sub-tables.
 
-const uint8 *AdLibDriver::_unkTable2[] = {
+const uint8 *const AdLibDriver::_unkTable2[] = {
 	AdLibDriver::_unkTable2_1,
 	AdLibDriver::_unkTable2_2,
 	AdLibDriver::_unkTable2_1,
@@ -2297,8 +2301,8 @@ void SoundAdLibPC::playTrack(uint8 track) {
 }
 
 void SoundAdLibPC::haltTrack() {
-	unk1();
-	unk2();
+	playSoundEffect(0);
+	playSoundEffect(0);
 	//_vm->_system->delayMillis(3 * 60);
 }
 
@@ -2402,8 +2406,8 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 		return;
 	}
 
-	unk2();
-	unk1();
+	playSoundEffect(0);
+	playSoundEffect(0);
 
 	_driver->callback(8, int(-1));
 	_soundDataPtr = 0;
@@ -2433,15 +2437,6 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	_driver->callback(4, _soundDataPtr);
 
 	_soundFileLoaded = file;
-}
-
-void SoundAdLibPC::unk1() {
-	playSoundEffect(0);
-	//_vm->_system->delayMillis(5 * 60);
-}
-
-void SoundAdLibPC::unk2() {
-	playSoundEffect(0);
 }
 
 } // End of namespace Kyra

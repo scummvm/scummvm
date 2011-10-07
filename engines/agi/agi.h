@@ -124,7 +124,6 @@ enum AgiGameID {
 	GID_XMASCARD,
 	GID_FANMADE,
 	GID_GETOUTTASQ,	// Fanmade
-	GID_SQ0,				// Fanmade
 	GID_MICKEY,			// PreAGI
 	GID_WINNIE,			// PreAGI
 	GID_TROLL				// PreAGI
@@ -614,7 +613,6 @@ struct AgiGame {
 
 	bool controllerOccured[MAX_DIRS];  /**< keyboard keypress events */
 	AgiController controllers[MAX_CONTROLLERS];
-	int lastController;
 
 	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
 
@@ -778,6 +776,8 @@ protected:
 
 	virtual void initialize() = 0;
 
+	void initRenderMode();
+
 public:
 	GfxMgr *_gfx;
 
@@ -809,8 +809,8 @@ public:
 	virtual void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
 	virtual void releaseImageStack() = 0;
-	virtual	int saveGame(const char *fileName, const char *saveName) = 0;
-	virtual int loadGame(const char *fileName, bool checkId = true) = 0;
+	virtual	int saveGame(const Common::String &fileName, const Common::String &saveName) = 0;
+	virtual int loadGame(const Common::String &fileName, bool checkId = true) = 0;
 
 	int _soundemu;
 
@@ -881,13 +881,13 @@ public:
 
 	StringData _stringdata;
 
-	const char *getSavegameFilename(int num);
+	Common::String getSavegameFilename(int num) const;
 	void getSavegameDescription(int num, char *buf, bool showEmpty = true);
 	int selectSlot();
-	int saveGame(const char *fileName, const char *saveName);
+	int saveGame(const Common::String &fileName, const Common::String &saveName);
+	int loadGame(const Common::String &fileName, bool checkId = true);
 	int saveGameDialog();
 	int saveGameSimple();
-	int loadGame(const char *fileName, bool checkId = true);
 	int loadGameDialog();
 	int loadGameSimple();
 
@@ -1076,7 +1076,7 @@ public:
 	char *agiSprintf(const char *);
 	void writeStatus();
 	void writePrompt();
-	void clearPrompt();
+	void clearPrompt(bool useBlackBg = false);
 	void clearLines(int, int, int);
 	void flushLines(int, int);
 	bool predictiveDialog();

@@ -159,6 +159,16 @@ uint16 Channelwood::getVar(uint16 var) {
 		return ((_state.waterValveStates & 0xe2) == 0x80) ? 1 : 0;
 	case 30: // Door State
 		return _doorOpened;
+	case 31: // Water flowing in pipe fork ?
+		// 0 -> keep sound.
+		// 1 -> not flowing.
+		// 2 --> flowing.
+		if ((_state.waterValveStates & 0xe2) == 0x82)	// From left.
+			return 2;
+		if ((_state.waterValveStates & 0xf4) == 0xa0)	// From right.
+			return 1;
+
+		return 0;
 	case 32: // Sound - Water Flowing in Pipe to Book Room Elevator
 		return ((_state.waterValveStates & 0xf8) == 0xb0 && _state.pipeState) ? 1 : 0;
 	case 33: // Channelwood Lower Walkway to Upper Walkway Spiral Stair Upper Door State

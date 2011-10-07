@@ -20,11 +20,15 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
 #include "tsage/scenes.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/tsage.h"
 #include "tsage/saveload.h"
+#include "tsage/staticres.h"
 
 namespace TsAGE {
 
@@ -36,7 +40,7 @@ SceneManager::SceneManager() {
 	_previousScene = 0;
 	_fadeMode = FADEMODE_GRADUAL;
 	_scrollerRect = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	_saver->addListener(this);
+	g_saver->addListener(this);
 	_objectCount = 0;
 	_loadMode = 0;
 }
@@ -56,7 +60,7 @@ void SceneManager::checkScene() {
 		_nextSceneNumber = -1;
 	}
 
-	_globals->dispatchSounds();
+	g_globals->dispatchSounds();
 }
 
 void SceneManager::sceneChange() {
@@ -69,24 +73,16 @@ void SceneManager::sceneChange() {
 	}
 
 	// Clear the scene objects
-	SynchronizedList<SceneObject *>::iterator io = _globals->_sceneObjects->begin();
-	while (io != _globals->_sceneObjects->end()) {
-		SceneObject *sceneObj = *io;
-		++io;
-		sceneObj->removeObject();
-	}
-
-	// Clear the secondary scene object list
-	io = _globals->_sceneManager._altSceneObjects.begin();
-	while (io != _globals->_sceneManager._altSceneObjects.end()) {
+	SynchronizedList<SceneObject *>::iterator io = g_globals->_sceneObjects->begin();
+	while (io != g_globals->_sceneObjects->end()) {
 		SceneObject *sceneObj = *io;
 		++io;
 		sceneObj->removeObject();
 	}
 
 	// Clear the hotspot list
-	SynchronizedList<SceneItem *>::iterator ii = _globals->_sceneItems.begin();
-	while (ii != _globals->_sceneItems.end()) {
+	SynchronizedList<SceneItem *>::iterator ii = g_globals->_sceneItems.begin();
+	while (ii != g_globals->_sceneItems.end()) {
 		SceneItem *sceneItem = *ii;
 		++ii;
 		sceneItem->remove();
@@ -111,37 +107,37 @@ void SceneManager::sceneChange() {
 
 	// Ensure that the same number of objects are registered now as when the scene started
 	if (_objectCount > 0) {
-		assert(_objectCount == _saver->getObjectCount());
+		assert(_objectCount == g_saver->getObjectCount());
 	}
-	_objectCount = _saver->getObjectCount();
-	_globals->_sceneHandler->_delayTicks = 2;
+	_objectCount = g_saver->getObjectCount();
+	g_globals->_sceneHandler->_delayTicks = 2;
 
 	// Instantiate and set the new scene
 	_scene = getNewScene();
 
-	if (!_saver->getMacroRestoreFlag())
+	if (!g_saver->getMacroRestoreFlag())
 		_scene->postInit();
 	else
 		_scene->loadScene(activeScreenNumber);
 }
 
 Scene *SceneManager::getNewScene() {
-	return _globals->_game->createScene(_nextSceneNumber);
+	return g_globals->_game->createScene(_nextSceneNumber);
 }
 
 void SceneManager::fadeInIfNecessary() {
 	if (_hasPalette) {
 		uint32 adjustData = 0;
 		for (int percent = 0; percent < 100; percent += 5) {
-			if (_globals->_sceneManager._fadeMode == FADEMODE_IMMEDIATE)
+			if (g_globals->_sceneManager._fadeMode == FADEMODE_IMMEDIATE)
 				percent = 100;
 
-			_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
+			g_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 
-		_globals->_scenePalette.refresh();
+		g_globals->_scenePalette.refresh();
 		_hasPalette = false;
 	}
 }
@@ -151,7 +147,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 	// Fade out the scene
 	ScenePalette scenePalette;
 	uint32 adjustData = 0;
-	_globals->_scenePalette.clearListeners();
+	g_globals->_scenePalette.clearListeners();
 	scenePalette.getPalette();
 
 	for (int percent = 100; percent >= 0; percent -= 5) {
@@ -161,7 +157,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 
 	// Stop any objects that were animating
 	SynchronizedList<SceneObject *>::iterator i;
-	for (i = _globals->_sceneObjects->begin(); i != _globals->_sceneObjects->end(); ++i) {
+	for (i = g_globals->_sceneObjects->begin(); i != g_globals->_sceneObjects->end(); ++i) {
 		SceneObject *sceneObj = *i;
 		Common::Point pt(0, 0);
 		sceneObj->addMover(NULL, &pt);
@@ -172,10 +168,10 @@ void SceneManager::changeScene(int newSceneNumber) {
 	}
 
 	// Blank out the screen
-	_globals->_screenSurface.fillRect(_globals->_screenSurface.getBounds(), 0);
+	g_globals->_screenSurface.fillRect(g_globals->_screenSurface.getBounds(), 0);
 
 	// If there are any fading sounds, wait until fading is complete
-	while (_globals->_soundManager.isFading()) {
+	while (g_globals->_soundManager.isFading()) {
 		g_system->delayMillis(10);
 	}
 
@@ -184,30 +180,30 @@ void SceneManager::changeScene(int newSceneNumber) {
 }
 
 void SceneManager::setup() {
-	_saver->addLoadNotifier(SceneManager::loadNotifier);
+	g_saver->addLoadNotifier(SceneManager::loadNotifier);
 	setBackSurface();
 }
 
 void SceneManager::setBackSurface() {
-	int size = _globals->_sceneManager._scene->_backgroundBounds.width() *
-		_globals->_sceneManager._scene->_backgroundBounds.height();
+	int size = g_globals->_sceneManager._scene->_backgroundBounds.width() *
+		g_globals->_sceneManager._scene->_backgroundBounds.height();
 
 	if (size > 96000) {
-		if (_globals->_sceneManager._scene->_backgroundBounds.width() <= SCREEN_WIDTH) {
+		if (g_globals->_sceneManager._scene->_backgroundBounds.width() <= SCREEN_WIDTH) {
 			// Standard size creation
-			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
-			_globals->_sceneManager._scrollerRect = Rect(0, 30, SCREEN_WIDTH, SCREEN_HEIGHT - 30);
+			g_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT * 3 / 2);
+			g_globals->_sceneManager._scrollerRect = Rect(0, 30, SCREEN_WIDTH, SCREEN_HEIGHT - 30);
 		} else {
 			// Wide screen needs extra space to allow for scrolling
-			_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH * 3 / 2, SCREEN_HEIGHT);
-			_globals->_sceneManager._scrollerRect = Rect(80, 0, SCREEN_WIDTH - 80, SCREEN_HEIGHT);
+			g_globals->_sceneManager._scene->_backSurface.create(SCREEN_WIDTH * 3 / 2, SCREEN_HEIGHT);
+			g_globals->_sceneManager._scrollerRect = Rect(80, 0, SCREEN_WIDTH - 80, SCREEN_HEIGHT);
 		}
 	} else {
-		_globals->_sceneManager._scene->_backSurface.create(
-			_globals->_sceneManager._scene->_backgroundBounds.width(),
-			_globals->_sceneManager._scene->_backgroundBounds.height()
+		g_globals->_sceneManager._scene->_backSurface.create(
+			g_globals->_sceneManager._scene->_backgroundBounds.width(),
+			g_globals->_sceneManager._scene->_backgroundBounds.height()
 		);
-		_globals->_sceneManager._scrollerRect = Rect(80, 20, SCREEN_WIDTH - 80, SCREEN_HEIGHT - 20);
+		g_globals->_sceneManager._scrollerRect = Rect(80, 20, SCREEN_WIDTH - 80, SCREEN_HEIGHT - 20);
 	}
 }
 
@@ -216,9 +212,9 @@ void SceneManager::saveListener(int saveMode) {
 
 void SceneManager::loadNotifier(bool postFlag) {
 	if (postFlag) {
-		if (_globals->_sceneManager._scene->_activeScreenNumber != -1)
-			_globals->_sceneManager._scene->loadSceneData(_globals->_sceneManager._scene->_activeScreenNumber);
-		_globals->_sceneManager._hasPalette = true;
+		if (g_globals->_sceneManager._scene->_activeScreenNumber != -1)
+			g_globals->_sceneManager._scene->loadSceneData(g_globals->_sceneManager._scene->_activeScreenNumber);
+		g_globals->_sceneManager._hasPalette = true;
 	}
 }
 
@@ -230,14 +226,17 @@ void SceneManager::setBgOffset(const Common::Point &pt, int loadCount) {
 void SceneManager::listenerSynchronize(Serializer &s) {
 	s.validate("SceneManager");
 
-	if (s.isLoading() && !_globals->_sceneManager._scene)
+	if (s.isLoading() && !g_globals->_sceneManager._scene)
 		// Loading a savegame straight from the launcher, so instantiate a blank placeholder scene
 		// in order for the savegame loading to work correctly
-		_globals->_sceneManager._scene = new Scene();
+		g_globals->_sceneManager._scene = new Scene();
 
-	_altSceneObjects.synchronize(s);
+	// Depreciated: the background scene objects used to be located here
+	uint32 unused = 0;
+	s.syncAsUint32LE(unused);
+
 	s.syncAsSint32LE(_sceneNumber);
-	s.syncAsUint16LE(_globals->_sceneManager._scene->_activeScreenNumber);
+	s.syncAsUint16LE(g_globals->_sceneManager._scene->_activeScreenNumber);
 
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
@@ -248,8 +247,8 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 		}
 	}
 
-	_globals->_sceneManager._scrollerRect.synchronize(s);
-	SYNC_POINTER(_globals->_scrollFollower);
+	g_globals->_sceneManager._scrollerRect.synchronize(s);
+	SYNC_POINTER(g_globals->_scrollFollower);
 	s.syncAsSint16LE(_loadMode);
 }
 
@@ -284,6 +283,9 @@ void Scene::synchronize(Serializer &s) {
 		s.syncAsUint16LE(_enabledSections[i]);
 	for (int i = 0; i < 256; ++i)
 		s.syncAsSint16LE(_zoomPercents[i]);
+
+	if (s.getVersion() >= 7)
+		_bgSceneObjects.synchronize(s);
 }
 
 void Scene::postInit(SceneObjectList *OwnerList) {
@@ -305,8 +307,8 @@ void Scene::dispatch() {
 void Scene::loadScene(int sceneNum) {
 	debug(1, "loadScene(%d)", sceneNum);
 	_screenNumber = sceneNum;
-	if (_globals->_scenePalette.loadPalette(sceneNum))
-		_globals->_sceneManager._hasPalette = true;
+	if (g_globals->_scenePalette.loadPalette(sceneNum))
+		g_globals->_sceneManager._hasPalette = true;
 
 	loadSceneData(sceneNum);
 }
@@ -315,19 +317,19 @@ void Scene::loadSceneData(int sceneNum) {
 	_activeScreenNumber = sceneNum;
 
 	// Get the basic scene size
-	byte *data = _resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
+	byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
 	_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
-	_globals->_sceneManager._scene->_sceneBounds.contain(_backgroundBounds);
+	g_globals->_sceneManager._scene->_sceneBounds.contain(_backgroundBounds);
 	DEALLOCATE(data);
 
 	// Set up a surface for storing the scene background
 	SceneManager::setBackSurface();
 
 	// Load the data lists for the scene
-	_globals->_walkRegions.load(sceneNum);
+	g_globals->_walkRegions.load(sceneNum);
 
 	// Load the item regions of the scene
-	_globals->_sceneRegions.load(sceneNum);
+	g_globals->_sceneRegions.load(sceneNum);
 
 	// Load the priority regions
 	_priorities.load(sceneNum);
@@ -335,13 +337,13 @@ void Scene::loadSceneData(int sceneNum) {
 	// Initialize the section enabled list
 	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
-	_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
-	_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
-	_globals->_paneRefreshFlag[0] = 1;
-	_globals->_paneRefreshFlag[1] = 1;
-	_globals->_sceneManager._loadMode = 1;
-	_globals->_sceneManager._sceneLoadCount = 0;
-	_globals->_sceneManager._sceneBgOffset = Common::Point(0, 0);
+	g_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
+	g_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
+	g_globals->_paneRefreshFlag[0] = 1;
+	g_globals->_paneRefreshFlag[1] = 1;
+	g_globals->_sceneManager._loadMode = 1;
+	g_globals->_sceneManager._sceneLoadCount = 0;
+	g_globals->_sceneManager._sceneBgOffset = Common::Point(0, 0);
 
 	// Load the background for the scene
 	loadBackground(0, 0);
@@ -353,35 +355,35 @@ void Scene::loadBackground(int xAmount, int yAmount) {
 	_sceneBounds.contain(_backgroundBounds);
 	_sceneBounds.left &= ~3;
 	_sceneBounds.right &= ~3;
-	_globals->_sceneOffset.x &= ~3;
+	g_globals->_sceneOffset.x &= ~3;
 
 	if ((_sceneBounds.top != _oldSceneBounds.top) || (_sceneBounds.left != _oldSceneBounds.left)) {
-		if (_globals->_sceneManager._loadMode == 0) {
-			_globals->_paneRefreshFlag[0] = 2;
-			_globals->_paneRefreshFlag[1] = 2;
-			_globals->_sceneManager._loadMode = 2;
+		if (g_globals->_sceneManager._loadMode == 0) {
+			g_globals->_paneRefreshFlag[0] = 2;
+			g_globals->_paneRefreshFlag[1] = 2;
+			g_globals->_sceneManager._loadMode = 2;
 		}
 		_oldSceneBounds = _sceneBounds;
 	}
 
-	_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
-	_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
+	g_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
+	g_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
 
 	if ((_backgroundBounds.width() / 160) == 3)
-		_globals->_sceneOffset.x = 0;
+		g_globals->_sceneOffset.x = 0;
 	if ((_backgroundBounds.height() / 100) == 3)
-		_globals->_sceneOffset.y = 0;
+		g_globals->_sceneOffset.y = 0;
 
-	if ((_globals->_sceneOffset.x != _globals->_prevSceneOffset.x) ||
-		(_globals->_sceneOffset.y != _globals->_prevSceneOffset.y)) {
+	if ((g_globals->_sceneOffset.x != g_globals->_prevSceneOffset.x) ||
+		(g_globals->_sceneOffset.y != g_globals->_prevSceneOffset.y)) {
 		// Change has happend, so refresh background
-		_globals->_prevSceneOffset = _globals->_sceneOffset;
+		g_globals->_prevSceneOffset = g_globals->_sceneOffset;
 		refreshBackground(xAmount, yAmount);
 	}
 }
 
 void Scene::refreshBackground(int xAmount, int yAmount) {
-	if (_globals->_sceneManager._scene->_activeScreenNumber == -1)
+	if (g_globals->_sceneManager._scene->_activeScreenNumber == -1)
 		return;
 
 	// Set the quadrant ranges
@@ -426,7 +428,7 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
-						if (_vm->getGameID() == GType_BlueForce) {
+						if (g_vm->getGameID() == GType_BlueForce) {
 							// For Blue Force, if the scene has an interface area, exclude it from the copy
 							srcBounds.bottom = MIN<int16>(srcBounds.bottom, BF_GLOBALS._interfaceY);
 							destBounds.bottom = MIN<int16>(destBounds.bottom, BF_GLOBALS._interfaceY);
@@ -443,28 +445,27 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 	}
 
 	if (changedFlag) {
-		drawAltObjects();
+		drawBackgroundObjects();
 	}
 }
 
-void Scene::drawAltObjects() {
+void Scene::drawBackgroundObjects() {
 	Common::Array<SceneObject *> objList;
 
 	// Initial loop to set the priority for entries in the list
-	for (SynchronizedList<SceneObject *>::iterator i = _globals->_sceneManager._altSceneObjects.begin();
-		i != _globals->_sceneManager._altSceneObjects.end(); ++i) {
+	for (SynchronizedList<SceneObject *>::iterator i = _bgSceneObjects.begin(); i != _bgSceneObjects.end(); ++i) {
 		SceneObject *obj = *i;
 		objList.push_back(obj);
 
 		// Handle updating object priority
 		if (!(obj->_flags & OBJFLAG_FIXED_PRIORITY)) {
 			obj->_priority = MIN((int)obj->_position.y - 1,
-				(int)_globals->_sceneManager._scene->_backgroundBounds.bottom);
+				(int)g_globals->_sceneManager._scene->_backgroundBounds.bottom);
 		}
 	}
 
 	// Sort the list by priority
-	_globals->_sceneManager._altSceneObjects.sortList(objList);
+	_bgSceneObjects.sortList(objList);
 
 	// Drawing loop
 	for (uint objIndex = 0; objIndex < objList.size(); ++objIndex) {
@@ -510,6 +511,51 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 
 /*--------------------------------------------------------------------------*/
 
+void Game::restartGame() {
+	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
+		g_globals->_game->restart();
+}
+
+void Game::saveGame() {
+	if (!g_vm->canSaveGameStateCurrently())
+		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the save dialog
+		handleSaveLoad(true, g_globals->_sceneHandler->_saveGameSlot, g_globals->_sceneHandler->_saveName);
+	}
+}
+
+void Game::restoreGame() {
+	if (!g_vm->canLoadGameStateCurrently())
+		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+	else {
+		// Show the load dialog
+		handleSaveLoad(false, g_globals->_sceneHandler->_loadGameSlot, g_globals->_sceneHandler->_saveName);
+	}
+}
+
+void Game::quitGame() {
+	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
+		g_vm->quitGame();
+}
+
+void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName) {
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(g_vm->getGameId(), &plugin);
+	GUI::SaveLoadChooser *dialog;
+	if (saveFlag)
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"));
+	else
+		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"));
+
+	dialog->setSaveMode(saveFlag);
+
+	saveSlot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	saveName = dialog->getResultString();
+
+	delete dialog;
+}
+
 void Game::execute() {
 	// Main game loop
 	bool activeFlag = false;
@@ -523,7 +569,7 @@ void Game::execute() {
 				activeFlag = true;
 			}
 		}
-	} while (activeFlag && !_vm->shouldQuit());
+	} while (activeFlag && !g_vm->shouldQuit());
 }
 
 } // End of namespace TsAGE

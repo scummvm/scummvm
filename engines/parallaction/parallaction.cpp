@@ -899,22 +899,23 @@ void CharacterName::bind(const char *name) {
 	_dummy = IS_DUMMY_CHARACTER(name);
 
 	if (!_dummy) {
-		if (!strstr(name, "donna")) {
+		if (!strcmp(name, "donna")) {
 			_engineFlags &= ~kEngineTransformedDonna;
-		} else
-		if (_engineFlags & kEngineTransformedDonna) {
-			_suffix = _suffixTras;
 		} else {
-			const char *s = strstr(name, "tras");
-			if (s) {
-				_engineFlags |= kEngineTransformedDonna;
+			if (_engineFlags & kEngineTransformedDonna) {
 				_suffix = _suffixTras;
-				end = s;
+			} else {
+				const char *s = strstr(name, "tras");
+				if (s) {
+					_engineFlags |= kEngineTransformedDonna;
+					_suffix = _suffixTras;
+					end = s;
+				}
 			}
-		}
-		if (IS_MINI_CHARACTER(name)) {
-			_prefix = _prefixMini;
-			begin = name+4;
+			if (IS_MINI_CHARACTER(name)) {
+				_prefix = _prefixMini;
+				begin = name + 4;
+			}
 		}
 	}
 

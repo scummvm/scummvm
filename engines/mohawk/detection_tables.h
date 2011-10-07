@@ -700,6 +700,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// From afholman in bug #3309306
+	{
+		{
+			"lbsampler",
+			"v3",
+			AD_ENTRY1("outline", "8397cea6bed1ff90029f7602ef37684d"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		"Living Books Sampler"
+	},
+
 	{
 		{
 			"maggiesfa",
@@ -1221,7 +1237,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
@@ -1605,6 +1621,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
+	// Arthur Birthday (English) Version 2.0 Windows(R) August 8, 1997
+	// From jacecen in bug #3413119
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("Outline", "3b793adf2b303722e0fb6c632f94e1fb"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
 	{
 		{
 			"arthurbday",
@@ -1967,6 +2000,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"bearfight",
 			"",
 			AD_ENTRY1("FIGHT.512", "f6e6c77a216c400a69388c94a11766d2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"FIGHT.EXE"
+	},
+
+	// The Berenstain Bears Get in a Fight (English and Spanish) Version 1.0 1995
+	// From jacecen in bug #3413119
+	{
+		{
+			"bearfight",
+			"",
+			AD_ENTRY1("FIGHT.512", "e313242a4cba2fffcd8cded5ca23c68a"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

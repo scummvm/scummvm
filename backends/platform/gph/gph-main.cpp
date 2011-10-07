@@ -20,7 +20,7 @@
  *
  */
 
-#include "backends/platform/gph/gph-sdl.h"
+#include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "base/main.h"
 
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_GPH *)g_system;
+	delete(OSystem_GPH *)g_system;
 
 	return res;
 }

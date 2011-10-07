@@ -50,13 +50,13 @@ struct TextHandler {
 	CharacterEntry fontParamTable[NUM_FONT_CHARS];
 };
 
-extern const char **failureMessages;
+extern const char *const *failureMessages;
 extern const CommandeType *defaultActionCommand;
 extern const CommandeType *systemMenu;
 extern const CommandeType *confirmMenu;
-extern const char **otherMessages;
+extern const char *const *otherMessages;
 extern const char *defaultCommandPreposition;
-extern const char **commandPrepositionTable;
+extern const char *const *commandPrepositionTable;
 
 void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);

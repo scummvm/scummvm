@@ -702,6 +702,21 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2, bool immediate) {
 	y1 = CLIP(y1, 0, _HEIGHT - 1);
 	y2 = CLIP(y2, 0, _HEIGHT - 1);
 
+	// Check if a window is active, and clip the block commited to exclude the
+	// window's contents. Fixes bug #3295652, and partially fixes bug #3080415.
+	AgiBlock &window = _vm->_game.window;
+	if (window.active) {
+		if (y1 < window.y2 && y2 > window.y2 && (x1 < window.x2 || x2 > window.x1)) {
+			// The top of the block covers the bottom of the window
+			y1 = window.y2;
+		}
+
+		if (y1 < window.y1 && y2 > window.y1 && (x1 < window.x2 || x2 > window.x1)) {
+			// The bottom of the block covers the top of the window
+			y2 = window.y1;
+		}
+	}
+
 	debugC(7, kDebugLevelSprites, "commitBlock(%d, %d, %d, %d)", x1, y1, x2, y2);
 
 	w = x2 - x1 + 1;

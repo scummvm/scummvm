@@ -33,7 +33,7 @@ namespace TsAGE {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 6
+#define TSAGE_SAVEGAME_VERSION 7
 
 class SavedObject;
 
@@ -232,7 +232,7 @@ public:
 	void listObjects();
 };
 
-extern Saver *_saver;
+extern Saver *g_saver;
 
 } // End of namespace TsAGE
 

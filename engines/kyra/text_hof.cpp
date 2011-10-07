@@ -194,7 +194,7 @@ void KyraEngine_HoF::objectChat(const char *str, int object, int vocHigh, int vo
 	assert(_mainCharacter.facing * 3 + chatType < ARRAYSIZE(talkScriptTable));
 	int script = talkScriptTable[_mainCharacter.facing * 3 + chatType];
 
-	static const char *chatScriptFilenames[] = {
+	static const char *const chatScriptFilenames[] = {
 		"_Z1FSTMT.EMC",
 		"_Z1FQUES.EMC",
 		"_Z1FEXCL.EMC",

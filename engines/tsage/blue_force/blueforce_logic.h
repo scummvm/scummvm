@@ -35,12 +35,14 @@ namespace BlueForce {
 
 using namespace TsAGE;
 
-#define BLUE_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)_globals->_inventory))
+#define BF_INVENTORY (*((::TsAGE::BlueForce::BlueForceInvObjectList *)g_globals->_inventory))
 
 class BlueForceGame: public Game {
 public:
 	virtual void start();
 	virtual Scene *createScene(int sceneNumber);
+	virtual void rightClick();
+	virtual void processEvent(Event &event);
 };
 
 #define OBJ_ARRAY_SIZE 10
@@ -65,11 +67,11 @@ public:
 class Timer: public EventHandler {
 public:
 	Action *_tickAction;
-	Action *_endAction;
+	EventHandler *_endHandler;
 	uint32 _endFrame;
 public:
 	Timer();
-	void set(uint32 delay, Action *endAction);
+	void set(uint32 delay, EventHandler *endHandler);
 
 	virtual Common::String getClassName() { return "Timer"; }
 	virtual void synchronize(Serializer &s);
@@ -81,16 +83,28 @@ public:
 class TimerExt: public Timer {
 public:
 	Action *_newAction;
-public:	
+public:
 	TimerExt();
-	void set(uint32 delay, Action *endAction, Action *action);
+	void set(uint32 delay, EventHandler *endHandler, Action *action);
 
 	virtual Common::String getClassName() { return "TimerExt"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
-	virtual void dispatch();
-};	
+};
+
+
+class SceneHotspotExt: public SceneHotspot {
+public:
+	int _state;
+
+	SceneHotspotExt() { _state = 0; }
+	virtual Common::String getClassName() { return "SceneHotspotExt"; }
+	virtual void synchronize(Serializer &s) {
+		SceneHotspot::synchronize(s);
+		s.syncAsSint16LE(_state);
+	}
+};
 
 class SceneItemType2: public SceneHotspot {
 public:
@@ -105,8 +119,35 @@ public:
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual bool startAction(CursorType action, Event &event);
 
-	void setup(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
+};
+
+class NamedObjectExt: public NamedObject {
+public:
+	int _flag;
+
+	NamedObjectExt() { _flag = 0; }
+	virtual Common::String getClassName() { return "NamedObjectExt"; }
+	virtual void synchronize(Serializer &s) {
+		NamedObject::synchronize(s);
+		s.syncAsSint16LE(_flag);
+	}
+};
+
+class NamedObject2: public NamedObject {
+public:
+	int _v1, _v2;
+
+	NamedObject2() { _v1 = _v2 = 0; }
+	virtual Common::String getClassName() { return "NamedObject2"; }
+	virtual void synchronize(Serializer &s) {
+		NamedObject::synchronize(s);
+		s.syncAsSint16LE(_v1);
+		s.syncAsSint16LE(_v2);
+	}
 };
 
 class CountdownObject: public NamedObject {
@@ -125,7 +166,7 @@ public:
 	SceneObject *_object;
 	FollowerObject();
 
-	virtual Common::String getClassName() { return "SceneObjectExt4"; }
+	virtual Common::String getClassName() { return "FollowerObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void dispatch();
@@ -134,12 +175,35 @@ public:
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
 
+class FocusObject: public NamedObject {
+public:
+	int _v90, _v92;
+	GfxSurface _img;
+
+	FocusObject();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
+};
+
+enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4,
+		EXITFRAME_S = 5, EXITFRAME_SW = 6, EXITFRAME_W = 7, EXITFRAME_NW = 8 };
+
 class SceneExt: public Scene {
+private:
+	static void startStrip();
+	static void endStrip();
 public:
 	AObjectArray _timerList, _objArray2;
 	int _field372;
+	bool _savedPlayerEnabled;
+	bool _savedUiEnabled;
+	bool _savedCanWalk;
 	int _field37A;
-	EventHandler *_eventHandler;
+
+	FocusObject *_focusObject;
+	Visage _cursorVisage;
 
 	Rect _v51C34;
 public:
@@ -150,139 +214,115 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);
-	virtual void proc13() { warning("TODO: SceneExt::proc13"); }
+	virtual void checkGun();
 
 	void addTimer(Timer *timer) { _timerList.add(timer); }
 	void removeTimer(Timer *timer) { _timerList.remove(timer); }
+	bool display(CursorType action);
+	void fadeOut();
+	void gunDisplay();
+	void clearScreen();
 };
 
-class GameScene: public SceneExt {
+class PalettedScene: public SceneExt {
 public:
-	int _field412;
+	ScenePalette _palette;
 	int _field794;
 public:
-	GameScene();
+	PalettedScene();
 
+	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void remove();
+	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
+	void add2Faders(const byte *arrBufferRGB, int step, int paletteNum, Action *action);
+	void sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
 };
 
 class SceneHandlerExt: public SceneHandler {
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void process(Event &event);
-};
 
-class VisualSpeaker: public Speaker {
-public:
-	NamedObject _object1;
-	CountdownObject _object2;
-	bool _removeObject1, _removeObject2;
-	int _field20C, _field20E;
-	int _numFrames;
-	Common::Point _offsetPos;
-public:
-	VisualSpeaker();
-
-	virtual Common::String getClassName() { return "VisualSpeaker"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void proc12(Action *action);
-	virtual void setText(const Common::String &msg);
-};
-
-class SpeakerSutter: public VisualSpeaker {
-public:
-	SpeakerSutter();
-
-	virtual Common::String getClassName() { return "SpeakerSutter"; }
-	virtual void setText(const Common::String &msg);
-};
-
-class SpeakerDoug: public VisualSpeaker {
-public:
-	SpeakerDoug();
-
-	virtual Common::String getClassName() { return "SpeakerDoug"; }
-};
-
-class SpeakerJakeNoHead: public VisualSpeaker {
-public:
-	SpeakerJakeNoHead();
-
-	virtual Common::String getClassName() { return "SpeakerJakeNoHead"; }
+	virtual void playerAction(Event &event);
+	virtual void processEnd(Event &event);
 };
 
 class BlueForceInvObjectList : public InvObjectList {
 public:
-	InvObject _business_card;
-	InvObject _lauras_sweater;
+	InvObject _none;
+	InvObject _colt45;
+	InvObject _ammoClip;
+	InvObject _spareClip;
 	InvObject _handcuffs;
-	InvObject _magnum;
-	InvObject _ticket_book;
-	InvObject _miranda_card;
-	InvObject _forest_follet;
-	InvObject _bradford_id;
-	InvObject _baseball_card;
-	InvObject _slip_bradford;
+	InvObject _greensGun;
+	InvObject _ticketBook;
+	InvObject _mirandaCard;
+	InvObject _forestRap;
+	InvObject _greenId;
+	InvObject _baseballCard;
+	InvObject _bookingGreen;
 	InvObject _flare;
-	InvObject _rap_sheet;
-	InvObject _cartridges;
-	InvObject _rifle;
+	InvObject _cobbRap;
+	InvObject _bullet22;
+	InvObject _autoRifle;
 	InvObject _wig;
-	InvObject _frankies_id;
-	InvObject _tyrones_id;
-	InvObject _pistol22;
-	InvObject _unused;
-	InvObject _slip_frankie;
-	InvObject _slip_tyrone;
-	InvObject _atf_teletype;
-	InvObject _da_note;
-	InvObject _blueprints;
-	InvObject _planter_key; 
-	InvObject _center_punch;
-	InvObject _tranquilizer;
-	InvObject _boat_hook;
-	InvObject _oily_rags;
-	InvObject _fuel_jar;
+	InvObject _frankieId;
+	InvObject _tyroneId;
+	InvObject _snub22;
+	InvObject _bug;
+	InvObject _bookingFrankie;
+	InvObject _bookingGang;
+	InvObject _fbiTeletype;
+	InvObject _daNote;
+	InvObject _printOut;
+	InvObject _warehouseKeys;
+	InvObject _centerPunch;
+	InvObject _tranqGun;
+	InvObject _hook;
+	InvObject _rags;
+	InvObject _jar;
 	InvObject _screwdriver;
-	InvObject _floppy_disk1;
-	InvObject _floppy_disk2;
-	InvObject _driftwood;
-	InvObject _crate_piece1;
-	InvObject _crate_piece2;
+	InvObject _dFloppy;
+	InvObject _blankDisk;
+	InvObject _stick;
+	InvObject _crate1;
+	InvObject _crate2;
 	InvObject _shoebox;
 	InvObject _badge;
-	InvObject _unused2;
-	InvObject _rental_coupons;
+	InvObject _bug2;
+	InvObject _rentalCoupon;
 	InvObject _nickel;
-	InvObject _calendar;
-	InvObject _dixon_note;
-	InvObject _cobb_mugshot;
-	InvObject _murder_article;
-	InvObject _microfiche;
-	InvObject _future_wave_keys;
-	InvObject _rental_boat_keys;
+	InvObject _lyleCard;
+	InvObject _carterNote;
+	InvObject _mugshot;
+	InvObject _clipping;
+	InvObject _microfilm;
+	InvObject _waveKeys;
+	InvObject _rentalKeys;
 	InvObject _napkin;
-	InvObject _cobb_printout;
-	InvObject _fishing_net;
+	InvObject _dmvPrintout;
+	InvObject _fishingNet;
 	InvObject _id;
-	InvObject _rounds_9mm;
-	InvObject _dates_note;
-	InvObject _hand_grenade;
-	InvObject _cord_110;
-	InvObject _cord_110_plug;
-	InvObject _cord_220;
-	InvObject _unused3;
-	InvObject _cord_220_plug;
-	InvObject _official_document;
-	InvObject _red_sweater;
-	InvObject _jackknife;
-	InvObject _whistle;
-	InvObject _gun;
-	InvObject _alley_cat_key;
+	InvObject _bullets9mm;
+	InvObject _schedule;
+	InvObject _grenades;
+	InvObject _yellowCord;
+	InvObject _halfYellowCord;
+	InvObject _blackCord;
+	InvObject _bug3;
+	InvObject _halfBlackCord;
+	InvObject _warrant;
+	InvObject _jacket;
+	InvObject _greensKnife;
+	InvObject _dogWhistle;
+	InvObject _ammoBelt;
+	InvObject _alleyCatKey;
 
 	BlueForceInvObjectList();
+	void reset();
+	void setObjectScene(int objectNum, int sceneNumber);
+	void alterInventory(int mode);
 
 	virtual Common::String getClassName() { return "BlueForceInvObjectList"; }
 };

@@ -1025,6 +1025,16 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	if (rect.left > vs->w)
 		return;
 
+	// Indy4 Amiga always uses the room or verb palette map to match colors to
+	// the currently setup palette, thus we need to select it over here too.
+	// Done like the original interpreter.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		if (vs->number == kVerbVirtScreen)
+			backColor = _verbPalette[backColor];
+		else
+			backColor = _roomPalette[backColor];
+	}
+
 	// Convert 'rect' to local (virtual screen) coordinates
 	rect.top -= vs->topline;
 	rect.bottom -= vs->topline;
@@ -1234,6 +1244,16 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 
 	if ((vs = findVirtScreen(y)) == NULL)
 		return;
+
+	// Indy4 Amiga always uses the room or verb palette map to match colors to
+	// the currently setup palette, thus we need to select it over here too.
+	// Done like the original interpreter.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		if (vs->number == kVerbVirtScreen)
+			color = _verbPalette[color];
+		else
+			color = _roomPalette[color];
+	}
 
 	if (x > x2)
 		SWAP(x, x2);
@@ -1871,6 +1891,16 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			offset = READ_LE_UINT32(smap_ptr + stripnr * 4 + 8);
 	}
 	assertRange(0, offset, smapLen-1, "screen strip");
+
+	// Indy4 Amiga always uses the room or verb palette map to match colors to
+	// the currently setup palette, thus we need to select it over here too.
+	// Done like the original interpreter.
+	if (_vm->_game.platform == Common::kPlatformAmiga && _vm->_game.id == GID_INDY4) {
+		if (vs->number == kVerbVirtScreen)
+			_roomPalette = _vm->_verbPalette;
+		else
+			_roomPalette = _vm->_roomPalette;
+	}
 
 	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 }

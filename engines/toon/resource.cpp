@@ -41,7 +41,7 @@ Resources::~Resources() {
 		delete temp;
 	}
 
-	while(!_pakFiles.empty()) {
+	while (!_pakFiles.empty()) {
 		PakFile *temp = _pakFiles.back();
 		_pakFiles.pop_back();
 		delete temp;

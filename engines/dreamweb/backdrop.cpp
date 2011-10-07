@@ -21,8 +21,6 @@
  */
 
 #include "dreamweb/dreamweb.h"
-#include "engines/util.h"
-#include "graphics/surface.h"
 
 namespace DreamGen {
 
@@ -153,7 +151,7 @@ void DreamGenContext::showallobs() {
 	SetObject *setEntries = (SetObject *)segRef(data.word(kSetdat)).ptr(0, 128 * sizeof(SetObject));
 	for (size_t i = 0; i < 128; ++i) {
 		SetObject *setEntry = setEntries + i;
-		if (getmapad(setEntry->b58) == 0)
+		if (getmapad(setEntry->mapad) == 0)
 			continue;
 		uint8 currentFrame = setEntry->b18[0];
 		data.word(kCurrentframe) = currentFrame;
@@ -162,7 +160,7 @@ void DreamGenContext::showallobs() {
 		calcfrframe();
 		uint16 x, y;
 		finalframe(&x, &y);
-		setEntry->b17 = setEntry->b18[0];
+		setEntry->index = setEntry->b18[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);
@@ -253,9 +251,9 @@ void DreamGenContext::showallfree() {
 	data.word(kDataad) = kFrframedata;
 	data.word(kFramesad) = kFrframes;
 	data.byte(kCurrentfree) = 0;
-	const uint8 *mapData = segRef(data.word(kFreedat)).ptr(2, 0);
+	const DynObject *freeObjects = (const DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < 80; ++i) {
-		uint8 mapad = getmapad(mapData);
+		uint8 mapad = getmapad(freeObjects[i].mapad);
 		if (mapad != 0) {
 			data.word(kCurrentframe) = 3 * data.byte(kCurrentfree);
 			uint8 width, height;
@@ -277,7 +275,6 @@ void DreamGenContext::showallfree() {
 		}
 
 		++data.byte(kCurrentfree);
-		mapData += 16;
 	}
 }
 
@@ -293,6 +290,41 @@ void DreamGenContext::drawflags() {
 			mapFlags[1] = backdropFlags[2 * tile + 1];
 			mapFlags[2] = tile;
 			mapFlags += 3;
+		}
+	}
+}
+
+void DreamGenContext::showallex() {
+	data.word(kListpos) = kExlist;
+	memset(segRef(data.word(kBuffers)).ptr(kExlist, 100 * 5), 0xff, 100 * 5);
+
+	data.word(kFrsegment) = data.word(kExtras);
+	data.word(kDataad) = kExframedata;
+	data.word(kFramesad) = kExframes;
+	data.byte(kCurrentex) = 0;
+	DynObject *objects = (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	for (size_t i = 0; i < 100; ++i, ++data.byte(kCurrentex)) {
+		DynObject *object = objects + i;
+		if (object->mapad[0] == 0xff)
+			continue;
+		if (object->currentLocation != data.byte(kReallocation))
+			continue;
+		if (getmapad(object->mapad) == 0)
+			continue;
+		data.word(kCurrentframe) = 3 * data.byte(kCurrentex);
+		uint8 width, height;
+		calcfrframe(&width, &height);
+		uint16 x, y;
+		finalframe(&x, &y);
+		if ((width != 0) || (height != 0)) {
+			showframe((Frame *)segRef(data.word(kFrsegment)).ptr(0, 0), x + data.word(kMapadx), y + data.word(kMapady), data.word(kCurrentframe) & 0xff, 0);
+			ObjPos *objPos = (ObjPos *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(ObjPos));
+			objPos->xMin = data.byte(kSavex);
+			objPos->yMin = data.byte(kSavey);
+			objPos->xMax = data.byte(kSavesize + 0) + data.byte(kSavex);
+			objPos->yMax = data.byte(kSavesize + 1) + data.byte(kSavey);
+			objPos->index = i;
+			data.word(kListpos) += sizeof(ObjPos);
 		}
 	}
 }

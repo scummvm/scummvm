@@ -290,6 +290,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 #endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
+	_verbPalette = NULL;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
@@ -610,6 +611,7 @@ ScummEngine::~ScummEngine() {
 	_textSurface.free();
 
 	free(_shadowPalette);
+	free(_verbPalette);
 
 	free(_palManipPalette);
 	free(_palManipIntermediatePal);
@@ -1407,6 +1409,10 @@ void ScummEngine::resetScumm() {
 		)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
 #endif
+
+	// Indy4 Amiga needs another palette map for the verb area.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4 && !_verbPalette)
+		_verbPalette = (uint8 *)calloc(256, 1);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {

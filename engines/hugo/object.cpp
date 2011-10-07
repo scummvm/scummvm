@@ -283,7 +283,7 @@ void ObjectHandler::freeObjects() {
 		free(_uses);
 	}
 
-	for(int16 i = 0; i < _objCount; i++) {
+	for (int16 i = 0; i < _objCount; i++) {
 		free(_objects[i].stateDataIndex);
 		_objects[i].stateDataIndex = 0;
 	}

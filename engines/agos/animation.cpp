@@ -137,7 +137,7 @@ void MoviePlayer::handleNextFrame() {
 // Movie player for DXA movies
 ///////////////////////////////////////////////////////////////////////////////
 
-const char * MoviePlayerDXA::_sequenceList[90] = {
+const char *const MoviePlayerDXA::_sequenceList[90] = {
 	"agent32",
 	"Airlock",
 	"Badluck",
@@ -251,8 +251,11 @@ bool MoviePlayerDXA::load() {
 	}
 
 	Common::String videoName = Common::String::format("%s.dxa", baseName);
-	if (!loadFile(videoName))
+	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
+	if (!loadStream(videoStream))
+		error("Failed to load video stream from file %s", videoName.c_str());
 
 	debug(0, "Playing video %s", videoName.c_str());
 
@@ -412,8 +415,11 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 bool MoviePlayerSMK::load() {
 	Common::String videoName = Common::String::format("%s.smk", baseName);
 
-	if (!loadFile(videoName))
+	Common::SeekableReadStream *videoStream = _vm->_archives.open(videoName);
+	if (!videoStream)
 		error("Failed to load video file %s", videoName.c_str());
+	if (!loadStream(videoStream))
+		error("Failed to load video stream from file %s", videoName.c_str());
 
 	debug(0, "Playing video %s", videoName.c_str());
 

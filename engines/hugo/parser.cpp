@@ -449,7 +449,7 @@ const char *Parser::findVerb() const {
  */
 void Parser::showDosInventory() const {
 	debugC(1, kDebugParser, "showDosInventory()");
-	static const char *blanks = "                                        ";
+	static const char *const blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns

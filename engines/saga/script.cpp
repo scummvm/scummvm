@@ -26,6 +26,7 @@
 #include "saga/gfx.h"
 #include "saga/console.h"
 
+#include "saga/animation.h"
 #include "saga/script.h"
 #include "saga/interface.h"
 #include "saga/itedata.h"
@@ -940,6 +941,18 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 		breakOut = false;
 		return;
 	}
+
+#ifdef ENABLE_IHNM
+	// WORKAROUND for script bug #3358007 in IHNM. When the zeppelin is landing
+	// and the player attempts to exit from the right door in room 13, the game
+	// scripts change to scene 5, but do not clear the cutaway that appears
+	// before Gorrister's speech starts, resulting in a deadlock. We do this
+	// manually here.
+	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 1 && 
+		_vm->_scene->currentSceneNumber() == 5 && _vm->_anim->hasCutaway()) {
+		_vm->_anim->returnFromCutaway();
+	}
+#endif
 
 	int stringsCount = scriptS->readByte();
 	uint16 actorId = scriptS->readUint16LE();

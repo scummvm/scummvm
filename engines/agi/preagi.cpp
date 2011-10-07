@@ -54,21 +54,7 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 }
 
 void PreAgiEngine::initialize() {
-	if (ConfMan.hasKey("render_mode")) {
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
-	} else if (ConfMan.hasKey("platform")) {
-		switch (Common::parsePlatform(ConfMan.get("platform"))) {
-		case Common::kPlatformAmiga:
-			_renderMode = Common::kRenderAmiga;
-			break;
-		case Common::kPlatformPC:
-			_renderMode = Common::kRenderEGA;
-			break;
-		default:
-			_renderMode = Common::kRenderEGA;
-			break;
-		}
-	}
+	initRenderMode();
 
 	_gfx = new GfxMgr(this);
 	_picture = new PictureMgr(this, _gfx);
@@ -185,7 +171,6 @@ void PreAgiEngine::printStr(const char* szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
 	_gfx->doUpdate();
-	_system->updateScreen();
 }
 
 void PreAgiEngine::XOR80(char *buffer) {
@@ -284,7 +269,6 @@ void PreAgiEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		_gfx->doUpdate();
-		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }

@@ -62,22 +62,18 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
 
-			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
-				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-				// needs fixing, or remove it!
-				// FIXME
-				int ypos;
-
-				ypos = (y1 * CHAR_LINES) + yoff;
+			// Note: there were extra checks for *m being a cursor character
+			// here (1, 2 or 3), which have been removed, as the cursor
+			// character is no longer printed via this function. 
+			if (*m >= 0x20) {
+				int ypos = (y1 * CHAR_LINES) + yoff;
 
 				if ((x1 != (len - 1) || x1 == 39) && (ypos <= (GFX_HEIGHT - CHAR_LINES))) {
-					int xpos;
-
-					xpos = (x1 * CHAR_COLS) + xoff + foff;
+					int xpos = (x1 * CHAR_COLS) + xoff + foff;
 
 					if (xpos >= GFX_WIDTH)
 						continue;
-
+					 
 					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard);
 
 					if (x1 > maxx)
@@ -88,15 +84,17 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 				x1++;
 
-				// DF: changed the len-1 to len...
-				// FIXME: m[len] doesn't make sense and may read out of bounds?
-				if (x1 == len && m[len] != '\n') {
+				// Change line if we've reached the end of this one, unless the next
+				// character is a new line itself, or the end of the string
+				if (x1 == len && m[1] != '\n' && m[1] != 0) {
 					y1++;
 					x1 = foff = 0;
 				}
 			} else {
-				y1++;
-				x1 = foff = 0;
+				if (m[1] != 0) {
+					y1++;
+					x1 = foff = 0;
+				}
 			}
 		}
 	}
@@ -223,14 +221,17 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
  * @param str  String to wrap.
  * @param len  Length of line.
  *
- * Based on GBAGI implementaiton with permission from the author
+ * Based on GBAGI implementation with permission from the author
  */
 char *AgiEngine::wordWrapString(const char *s, int *len) {
 	char *outStr, *msgBuf, maxWidth = *len;
 	const char *pWord;
 	int lnLen, wLen;
 
-	msgBuf = outStr = strdup(s);
+	// Allocate some extra space for the final buffer, as
+	// outStr may end up being longer than s
+	// 26 = 200 (screen height) / 8 (font height) + 1
+	msgBuf = outStr = (char *)malloc(strlen(s) + 26);
 
 	int msgWidth = 0;
 
@@ -249,6 +250,8 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 			wLen--;
 
 		if (wLen + lnLen >= maxWidth) {
+			// Check if outStr isn't msgBuf. If this is the case, outStr hasn't advanced
+			// yet, so no output has been written yet
 			if (outStr != msgBuf) {
 				if (outStr[-1] == ' ')
 					outStr[-1] = '\n';
@@ -437,12 +440,6 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 		return 0;
 
 	debugC(4, kDebugLevelText, "print(): lin = %d, col = %d, len = %d", lin, col, len);
-
-	if (col == 0 && lin == 0 && len == 0)
-		lin = col = -1;
-
-	if (len == 0)
-		len = 30;
 
 	blitTextbox(p, lin, col, len);
 
@@ -675,11 +672,11 @@ void AgiEngine::writePrompt() {
 	_gfx->doUpdate();
 }
 
-void AgiEngine::clearPrompt() {
+void AgiEngine::clearPrompt(bool useBlackBg) {
 	int l;
 
 	l = _game.lineUserInput;
-	clearLines(l, l, _game.colorBg);
+	clearLines(l, l, useBlackBg ? 0 : _game.colorBg);
 	flushLines(l, l);
 
 	_gfx->doUpdate();

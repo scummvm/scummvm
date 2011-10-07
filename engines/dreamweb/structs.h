@@ -85,7 +85,7 @@ struct SetObject {
 	uint8 b11;
 	uint8 name[4];
 	uint8 b16;
-	uint8 b17;
+	uint8 index;
 	uint8 b18[13]; // NB: Don't know the size yet
 	uint8 b31;
 	uint8 b32;
@@ -114,23 +114,19 @@ struct SetObject {
 	uint8 b55;
 	uint8 b56;
 	uint8 b57;
-	uint8 b58[5];
+	uint8 mapad[5];
 	uint8 b63;
 };
 
 struct DynObject {
-	uint8 b0;
+	uint8 currentLocation;
 	uint8 index;
-	uint8 b2;
-	uint8 b3;
-	uint8 b4;
-	uint8 b5;
-	uint8 b6;
+	uint8 mapad[5];
 	uint8 b7;
 	uint8 b8;
 	uint8 b9;
 	uint8 b10;
-	uint8 location;
+	uint8 initialLocation;
 	uint8 id[4];
 };
 
@@ -168,6 +164,8 @@ struct ReelRoutine {
 	uint8 mapY;
 	uint8 b3;
 	uint8 b4;
+	uint16 reelPointer() const { return READ_LE_UINT16(&b3); }
+	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b3, v); }
 	uint8 b5;
 	uint8 b6;
 	uint8 b7;
@@ -176,12 +174,12 @@ struct ReelRoutine {
 struct People {
 	uint8 b0;
 	uint8 b1;
-	uint16 w0() const { return READ_LE_UINT16(&b0); }
-	void setW0(uint16 v) { WRITE_LE_UINT16(&b0, v); }
+	uint16 reelPointer() const { return READ_LE_UINT16(&b0); }
+	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b0, v); }
 	uint8 b2;
 	uint8 b3;
-	uint16 w2() const { return READ_LE_UINT16(&b2); }
-	void setW2(uint16 v) { WRITE_LE_UINT16(&b2, v); }
+	uint16 routinePointer() const { return READ_LE_UINT16(&b2); }
+	void setRoutinePointer(uint16 v) { WRITE_LE_UINT16(&b2, v); }
 	uint8 b4;
 
 };
@@ -230,4 +228,24 @@ struct Change {
 	uint8 type;
 };
 
+struct PathNode {
+	uint8 x;
+	uint8 y;
+	uint8 b2;
+	uint8 b3;
+	uint8 b4;
+	uint8 b5;
+	uint8 on;
+	uint8 dir;
+};
+
+struct PathSegment {
+	uint8 b0;
+	uint8 b1;
+};
+
+struct RoomPaths {
+	PathNode    nodes[12];
+	PathSegment segments[24];
+};
 

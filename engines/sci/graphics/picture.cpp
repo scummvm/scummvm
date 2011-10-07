@@ -740,7 +740,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 							// Left-Over VGA palette, we simply ignore it
 							curPos += 256 + 4 + 1024;
 						} else {
-							// Setting half of the amiga palette
+							// Setting half of the Amiga palette
 							_palette->modifyAmigaPalette(&data[curPos]);
 							curPos += 32;
 						}

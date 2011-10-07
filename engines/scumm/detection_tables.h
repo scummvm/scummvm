@@ -49,7 +49,7 @@ namespace Scumm {
  * This table contains list of directories which could contain game data
  * and which should be looked into during detection.
  */
-static const char *directoryGlobs[] = {
+static const char *const directoryGlobs[] = {
 	"rooms *",  // Mac version of indy3/loom
 	0
 };

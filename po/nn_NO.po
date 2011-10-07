@@ -2,19 +2,19 @@
 # Copyright (C) 2010 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Einar Johan T. Sømåen <einarjohants@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-20 15:12+0100\n"
+"POT-Creation-Date: 2011-10-04 20:43+0200\n"
 "PO-Revision-Date: 2011-04-25 23:07+0100\n"
 "Last-Translator: Einar Johan T. Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: somaen <einarjohants@gmail.com>\n"
+"Language: Norsk (nynorsk)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Norsk (nynorsk)\n"
 "X-Poedit-Language: Norwegian Nynorsk\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -72,11 +72,11 @@ msgstr "Steng"
 msgid "Mouse click"
 msgstr "Musklikk"
 
-#: gui/gui-manager.cpp:122 base/main.cpp:286
+#: gui/gui-manager.cpp:122 base/main.cpp:283
 msgid "Display keyboard"
 msgstr "Syn Tastatur"
 
-#: gui/gui-manager.cpp:125 base/main.cpp:289
+#: gui/gui-manager.cpp:125 base/main.cpp:286
 msgid "Remap keys"
 msgstr "Omkople tastar"
 
@@ -91,7 +91,7 @@ msgstr "Kople"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:91 gui/options.cpp:1179
 #: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1770 engines/agos/animation.cpp:545
+#: engines/scumm/scumm.cpp:1776 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:344
 #: engines/sword1/animation.cpp:354 engines/sword1/animation.cpp:360
@@ -601,8 +601,8 @@ msgid "Special dithering modes supported by some games"
 msgstr "Spesielle dithering-modus som støttast av nokre spel"
 
 #: gui/options.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2247
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:476
 msgid "Fullscreen mode"
 msgstr "Fullskjermsmodus"
 
@@ -984,35 +984,35 @@ msgstr "Antialiased Teiknar (16bpp)"
 msgid "Antialiased (16bpp)"
 msgstr "Antialiased (16bpp)"
 
-#: base/main.cpp:206
+#: base/main.cpp:203
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motoren støttar ikkje debug-nivå '%s'"
 
-#: base/main.cpp:274
+#: base/main.cpp:271
 msgid "Menu"
 msgstr "Meny"
 
-#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Hopp over"
 
-#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Pause"
 
-#: base/main.cpp:283
+#: base/main.cpp:280
 msgid "Skip line"
 msgstr "Hopp over linje"
 
-#: base/main.cpp:442
+#: base/main.cpp:439
 msgid "Error running game:"
 msgstr "Feil under køyring av spel:"
 
-#: base/main.cpp:466
+#: base/main.cpp:463
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikkje finne nokon motor som kunne køyre det velde spelet."
 
@@ -1170,17 +1170,17 @@ msgid ""
 "further assistance."
 msgstr ""
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:109
+#: engines/dialogs.cpp:316 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:309 engines/mohawk/dialogs.cpp:110
+#: engines/dialogs.cpp:317 engines/mohawk/dialogs.cpp:110
 #: engines/mohawk/dialogs.cpp:175
 msgid "~C~ancel"
 msgstr "~A~vbryt"
 
-#: engines/dialogs.cpp:312
+#: engines/dialogs.cpp:320
 msgid "~K~eys"
 msgstr "~T~astar"
 
@@ -1258,7 +1258,7 @@ msgstr ""
 msgid "Are you sure you want to restart?  (Y/N)"
 msgstr "Er du sikker på at du vil avslutte?"
 
-#. I18N: you may specify 'Yes' symbol at the endo fo the line. See previous comment
+#. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
 #, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)"
@@ -1866,14 +1866,14 @@ msgstr "Fly til høgre"
 msgid "Fly to lower right"
 msgstr "Fly til nedre høgre"
 
-#: engines/scumm/scumm.cpp:1768
+#: engines/scumm/scumm.cpp:1774
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2258 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2264 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1881,7 +1881,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2265 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1889,7 +1889,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2277 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2283 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1897,7 +1897,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2492
+#: engines/scumm/scumm.cpp:2498
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1934,15 +1934,15 @@ msgstr "ScummVM Hovudmeny"
 msgid "~W~ater Effect Enabled"
 msgstr "~V~anneffekt aktivert"
 
-#: engines/sci/engine/kfile.cpp:678
+#: engines/sci/engine/kfile.cpp:682
 msgid "Restore game:"
 msgstr "Gjenopprett spel:"
 
-#: engines/sci/engine/kfile.cpp:678
+#: engines/sci/engine/kfile.cpp:682
 msgid "Restore"
 msgstr "Gjenopprett"
 
-#: engines/agos/animation.cpp:544
+#: engines/agos/animation.cpp:550
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr ""
@@ -2291,25 +2291,25 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (inga skalering)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2146
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:537
 #, fuzzy
 msgid "Enabled aspect ratio correction"
 msgstr "Veksle aspekt-korrigering"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2152
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
 #, fuzzy
 msgid "Disabled aspect ratio correction"
 msgstr "Veksle aspekt-korrigering"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2207
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2208
 #, fuzzy
 msgid "Active graphics filter:"
 msgstr "Veksle grafikkfiltre"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2249
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:481
 #, fuzzy
 msgid "Windowed mode"
 msgstr "Teiknemodus:"
@@ -2335,11 +2335,11 @@ msgstr "Gjeldende videomodus:"
 msgid "Current scale"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:562
 msgid "Active filter mode: Linear"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
 msgid "Active filter mode: Nearest"
 msgstr ""
 
@@ -2366,11 +2366,13 @@ msgstr "Høgre"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/bada/form.cpp:282
 msgid "Left Click"
 msgstr "Venstreklikk"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/bada/form.cpp:274
 msgid "Right Click"
 msgstr "Høgreklikk"
 
@@ -2678,44 +2680,80 @@ msgstr "Slå"
 msgid "Do you really want to quit?"
 msgstr "Vil du avslutte?"
 
-#: backends/events/gph/gph-events.cpp:366
-#: backends/events/gph/gph-events.cpp:409
+#: backends/events/gph/gph-events.cpp:338
+#: backends/events/gph/gph-events.cpp:381
 #: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:368
-#: backends/events/gph/gph-events.cpp:411
+#: backends/events/gph/gph-events.cpp:340
+#: backends/events/gph/gph-events.cpp:383
 #: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:370
-#: backends/events/gph/gph-events.cpp:413
+#: backends/events/gph/gph-events.cpp:342
+#: backends/events/gph/gph-events.cpp:385
 #: backends/events/openpandora/op-events.cpp:145
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:390
+#: backends/events/gph/gph-events.cpp:362
 #, fuzzy
 msgid "Maximum Volume"
 msgstr "Volum"
 
-#: backends/events/gph/gph-events.cpp:392
+#: backends/events/gph/gph-events.cpp:364
 msgid "Increasing Volume"
 msgstr ""
 
-#: backends/events/gph/gph-events.cpp:398
+#: backends/events/gph/gph-events.cpp:370
 #, fuzzy
 msgid "Minimal Volume"
 msgstr "Volum"
 
-#: backends/events/gph/gph-events.cpp:400
+#: backends/events/gph/gph-events.cpp:372
 msgid "Decreasing Volume"
 msgstr ""
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
+msgstr ""
+
+#: backends/platform/bada/form.cpp:270
+#, fuzzy
+msgid "Right Click Once"
+msgstr "Høgreklikk"
+
+#: backends/platform/bada/form.cpp:278
+#, fuzzy
+msgid "Move Only"
+msgstr "Tale"
+
+#: backends/platform/bada/form.cpp:292
+msgid "Escape Key"
+msgstr ""
+
+#: backends/platform/bada/form.cpp:297
+#, fuzzy
+msgid "Game Menu"
+msgstr "Spel"
+
+#: backends/platform/bada/form.cpp:302
+#, fuzzy
+msgid "Show Keypad"
+msgstr "Syn tastatur"
+
+#: backends/platform/bada/form.cpp:310
+msgid "Control Mouse"
+msgstr ""
+
+#: backends/events/maemosdl/maemosdl-events.cpp:92
+msgid "Clicking Enabled"
+msgstr ""
+
+#: backends/events/maemosdl/maemosdl-events.cpp:92
+msgid "Clicking Disabled"
 msgstr ""
 
 #~ msgctxt "lowres"

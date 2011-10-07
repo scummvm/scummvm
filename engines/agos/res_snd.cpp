@@ -413,7 +413,7 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	return true;
 }
 
-static const char *dimpSoundList[32] = {
+static const char *const dimpSoundList[32] = {
 	"Beep",
 	"Birth",
 	"Boiling",
@@ -450,17 +450,17 @@ static const char *dimpSoundList[32] = {
 
 
 void AGOSEngine::loadSoundFile(const char* filename) {
-	Common::File in;
+	Common::SeekableReadStream *in;
 
-	in.open(filename);
-	if (in.isOpen() == false)
+	in = _archives.open(filename);
+	if (!in)
 		error("loadSound: Can't load %s", filename);
 
-	uint32 dstSize = in.size();
+	uint32 dstSize = in->size();
 	byte *dst = (byte *)malloc(dstSize);
-	if (in.read(dst, dstSize) != dstSize)
+	if (in->read(dst, dstSize) != dstSize)
 		error("loadSound: Read failed");
-	in.close();
+	delete in;
 
 	_sound->playSfxData(dst, 0, 0, 0);
 }
@@ -469,21 +469,21 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 	byte *dst;
 
 	if (getGameId() == GID_DIMP) {
-		Common::File in;
+		Common::SeekableReadStream *in;
 		char filename[15];
 
 		assert(sound >= 1 && sound <= 32);
 		sprintf(filename, "%s.wav", dimpSoundList[sound - 1]);
 
-		in.open(filename);
-		if (in.isOpen() == false)
+		in = _archives.open(filename);
+		if (!in)
 			error("loadSound: Can't load %s", filename);
 
-		uint32 dstSize = in.size();
+		uint32 dstSize = in->size();
 		dst = (byte *)malloc(dstSize);
-		if (in.read(dst, dstSize) != dstSize)
+		if (in->read(dst, dstSize) != dstSize)
 			error("loadSound: Read failed");
-		in.close();
+		delete in;
 	} else if (getFeatures() & GF_ZLIBCOMP) {
 		char filename[15];
 

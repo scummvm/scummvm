@@ -2358,7 +2358,7 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 		_wiz->_rectOverrideEnabled = false;
 		break;
 	case 714:
-		debug(5, "o90_kernelSetFunctions: case 714: type %d resId %d unk1 %d", args[1], args[2], args[3]);
+		setResourceOffHeap(args[1], args[2], args[3]);
 		break;
 	case 1492:
 		// Remote start script function

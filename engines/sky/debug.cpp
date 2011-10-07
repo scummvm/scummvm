@@ -35,7 +35,7 @@
 
 namespace Sky {
 
-static const char *logic_table_names[] = {
+static const char *const logic_table_names[] = {
 	"return",
 	"Logic::script",
 	"Logic::auto_route",
@@ -79,7 +79,7 @@ static const char opcode_par[] = {
 	0
 };
 
-static const char *opcodes[] = {
+static const char *const opcodes[] = {
 	"push_variable",
 	"less_than",
 	"push_number",
@@ -103,7 +103,7 @@ static const char *opcodes[] = {
 	"restart_script"
 };
 
-static const char *mcodes[] = {
+static const char *const mcodes[] = {
 	"fn_cache_chip",
 	"fn_cache_fast",
 	"fn_draw_screen",
@@ -221,7 +221,7 @@ static const char *mcodes[] = {
 	"fn_printf"
 };
 
-static const char *scriptVars[] = {
+static const char *const scriptVars[] = {
 	"result",
 	"screen",
 	"logic_list_no",
@@ -1121,12 +1121,12 @@ bool Debugger::Cmd_ReloadGrid(int argc, const char **argv) {
 	return true;
 }
 
-static const char *logicTypes[] = {
+static const char *const logicTypes[] = {
 	"(none)", "SCRIPT", "AUTOROUTE", "AR_ANIM", "AR_TURNING", "ALT", "MOD_ANIM", "TURNING", "CURSOR", "TALK", "LISTEN",
 	"STOPPED", "CHOOSE", "FRAMES", "PAUSE", "WAIT_SYNC", "SIMPLE MOD"
 };
 
-static const char *noYes[] = { "no", "yes" };
+static const char *const noYes[] = { "no", "yes" };
 
 void Debugger::dumpCompact(uint16 cptId) {
 	uint16 type, size;

@@ -626,12 +626,8 @@ void SoundCommandParser::reconstructPlayList() {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
-			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
-			_music->soundInitSnd(*i);
-		} else {
-			(*i)->soundRes = 0;
-		}
+		initSoundResource(*i);
+
 		if ((*i)->status == kSoundPlaying) {
 			// Sync the sound object's selectors related to playing with the stored
 			// ones in the playlist, as they may have been invalidated when loading.

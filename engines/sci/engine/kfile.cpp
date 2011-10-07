@@ -578,11 +578,15 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		game_description = dialog->getResultString();
 		if (game_description.empty()) {
 			// create our own description for the saved game, the user didnt enter it
+			#if defined(USE_SAVEGAME_TIMESTAMP)
 			TimeDate curTime;
 			g_system->getTimeAndDate(curTime);
 			curTime.tm_year += 1900; // fixup year
 			curTime.tm_mon++; // fixup month
-			game_description = Common::String::format("%02d.%02d.%04d / %02d:%02d:%02d", curTime.tm_mday, curTime.tm_mon, curTime.tm_year, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			game_description = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			#else
+			game_description = Common::String::format("Save %d", savegameId + 1);
+			#endif
 		}
 		delete dialog;
 		g_sci->_soundCmd->pauseAll(false); // unpause music ( we can't have it paused during save)

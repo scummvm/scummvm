@@ -150,7 +150,6 @@ void MickeyEngine::printStr(char *buffer) {
 
 	// Show the string on screen
 	_gfx->doUpdate();
-	_system->updateScreen();
 }
 
 void MickeyEngine::printLine(const char *buffer) {
@@ -160,7 +159,6 @@ void MickeyEngine::printLine(const char *buffer) {
 
 	// Show the string on screen
 	_gfx->doUpdate();
-	_system->updateScreen();
 
 	waitAnyKey(true);
 }
@@ -284,7 +282,6 @@ void MickeyEngine::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 
 	// Menu created, show it on screen
 	_gfx->doUpdate();
-	_system->updateScreen();
 }
 
 void MickeyEngine::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, int x, int y) {
@@ -1364,7 +1361,6 @@ void MickeyEngine::flipSwitch() {
 			strcpy(_gameStateMickey.szAddr, (char *)IDS_MSA_ADDR_PLANET[_gameStateMickey.iPlanetXtal[_gameStateMickey.nXtals]]);
 			_gameStateMickey.nButtons = strlen(_gameStateMickey.szAddr);
 			_gfx->doUpdate();
-			_system->updateScreen();	// TODO: this should go in the game's main loop
 #endif
 
 			waitAnyKey(true);
@@ -1452,14 +1448,12 @@ void MickeyEngine::intro() {
 		//Set screen to white
 		_gfx->clearScreen(15);
 		_gfx->doUpdate();
-		_system->updateScreen();
 
 		_system->delayMillis(IDI_MSA_ANIM_DELAY);
 
 		//Set back to black
 		_gfx->clearScreen(0);
 		_gfx->doUpdate();
-		_system->updateScreen();
 
 		drawRoom();
 		printDesc(_gameStateMickey.iRoom);

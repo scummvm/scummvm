@@ -114,7 +114,7 @@ bool GfxPalette::isMerging() {
 void GfxPalette::setDefault() {
 	if (_resMan->getViewType() == kViewEga)
 		setEGA();
-	else if (_resMan->getViewType() == kViewAmiga)
+	else if (_resMan->getViewType() == kViewAmiga || _resMan->getViewType() == kViewAmiga64)
 		setAmiga();
 	else
 		kernelSetFromResource(999, true);
@@ -206,6 +206,14 @@ bool GfxPalette::setAmiga() {
 			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+
+			if (_totalScreenColors == 64) {
+				// Set the associated color from the Amiga halfbrite colors
+				_sysPalette.colors[curColor + 32].used = 1;
+				_sysPalette.colors[curColor + 32].r = _sysPalette.colors[curColor].r >> 1;
+				_sysPalette.colors[curColor + 32].g = _sysPalette.colors[curColor].g >> 1;
+				_sysPalette.colors[curColor + 32].b = _sysPalette.colors[curColor].b >> 1;
+			}
 		}
 
 		// Directly set the palette, because setOnScreen() wont do a thing for amiga
@@ -226,6 +234,13 @@ void GfxPalette::modifyAmigaPalette(byte *data) {
 		_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 		_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+
+		if (_totalScreenColors == 64) {
+			// Set the associated color from the Amiga halfbrite colors
+			_sysPalette.colors[curColor + 32].r = _sysPalette.colors[curColor].r >> 1;
+			_sysPalette.colors[curColor + 32].g = _sysPalette.colors[curColor].g >> 1;
+			_sysPalette.colors[curColor + 32].b = _sysPalette.colors[curColor].b >> 1;
+		}
 	}
 
 	copySysPaletteToScreen();

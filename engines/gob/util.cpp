@@ -20,6 +20,10 @@
  *
  */
 
+#include "common/stream.h"
+#include "common/events.h"
+
+#include "graphics/palette.h"
 
 #include "gob/gob.h"
 #include "gob/util.h"
@@ -30,10 +34,6 @@
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
-
-#include "common/events.h"
-
-#include "graphics/palette.h"
 
 namespace Gob {
 
@@ -255,6 +255,18 @@ bool Util::checkKey(int16 &key) {
 	key = translateKey(keyS);
 
 	return true;
+}
+
+bool Util::keyPressed() {
+	int16 key = checkKey();
+	if (key)
+		return true;
+
+	int16 x, y;
+	MouseButtons buttons;
+
+	getMouseState(&x, &y, &buttons);
+	return buttons != kMouseButtonsNone;
 }
 
 void Util::getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons) {
@@ -518,6 +530,11 @@ void Util::deleteList(List *list) {
 }
 
 char *Util::setExtension(char *str, const char *ext) {
+	assert(str && ext);
+
+	if (str[0] == '\0')
+		return str;
+
 	char *dot = strrchr(str, '.');
 	if (dot)
 		*dot = '\0';
@@ -527,11 +544,31 @@ char *Util::setExtension(char *str, const char *ext) {
 }
 
 Common::String Util::setExtension(const Common::String &str, const Common::String &ext) {
+	if (str.empty())
+		return str;
+
 	const char *dot = strrchr(str.c_str(), '.');
 	if (dot)
 		return Common::String(str.c_str(), dot - str.c_str()) + ext;
 
 	return str + ext;
+}
+
+Common::String Util::readString(Common::SeekableReadStream &stream, int n) {
+	Common::String str;
+
+	char c;
+	while (n-- > 0) {
+		if ((c = stream.readByte()) == '\0')
+			break;
+
+		str += c;
+	}
+
+	if (n > 0)
+		stream.skip(n);
+
+	return str;
 }
 
 /* NOT IMPLEMENTED */

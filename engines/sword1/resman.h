@@ -33,11 +33,11 @@ namespace Sword1 {
 #define MAX_LABEL_SIZE (31+1)
 
 #if defined(__PSP__)
-#define MAX_OPEN_CLUS 4	// the PSP can't have more than 8 files open simultaneously
-			// since we also need filehandles for music and sometimes savegames
-			// set the maximum number of open clusters to 4.
+#define MAX_OPEN_CLUS 4 // the PSP can't have more than 8 files open simultaneously
+                        // since we also need filehandles for music and sometimes savegames
+                        // set the maximum number of open clusters to 4.
 #else
-#define MAX_OPEN_CLUS 8	// don't open more than 8 files at once
+#define MAX_OPEN_CLUS 8 // don't open more than 8 files at once
 #endif
 
 struct Grp {
@@ -77,10 +77,10 @@ public:
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);
 
 	uint16 getUint16(uint16 value) {
-		return (_isBigEndian) ? FROM_BE_16(value): FROM_LE_16(value);
+		return (_isBigEndian) ? FROM_BE_16(value) : FROM_LE_16(value);
 	}
 	uint32 getUint32(uint32 value) {
-		return (_isBigEndian) ? FROM_BE_32(value): FROM_LE_32(value);
+		return (_isBigEndian) ? FROM_BE_32(value) : FROM_LE_32(value);
 	}
 	uint16 getLEUint16(uint16 value) {
 		return FROM_LE_16(value);
@@ -89,24 +89,24 @@ public:
 		return FROM_LE_32(value);
 	}
 	uint16 readUint16(const void *ptr) {
-		return (_isBigEndian) ? READ_BE_UINT16(ptr): READ_LE_UINT16(ptr);
+		return (_isBigEndian) ? READ_BE_UINT16(ptr) : READ_LE_UINT16(ptr);
 	}
 	uint32 readUint32(const void *ptr) {
-		return (_isBigEndian) ? READ_BE_UINT32(ptr):READ_LE_UINT32(ptr);
+		return (_isBigEndian) ? READ_BE_UINT32(ptr) : READ_LE_UINT32(ptr);
 	}
 	uint32 readLEUint32(const void *ptr) {
 		return READ_LE_UINT32(ptr);
 	}
 	uint16 toUint16(uint16 value) {
-		return (_isBigEndian) ? TO_BE_16(value): TO_LE_16(value);
+		return (_isBigEndian) ? TO_BE_16(value) : TO_LE_16(value);
 	}
 	uint32 toUint32(uint32 value) {
-		return (_isBigEndian) ? TO_BE_32(value): TO_LE_32(value);
+		return (_isBigEndian) ? TO_BE_32(value) : TO_LE_32(value);
 	}
 
 
 private:
-	uint32	   resLength(uint32 id);
+	uint32     resLength(uint32 id);
 	MemHandle *resHandle(uint32 id);
 	uint32     resOffset(uint32 id);
 	Common::File      *resFile(uint32 id);
@@ -120,7 +120,7 @@ private:
 	void freeCluDescript();
 	Prj _prj;
 	MemMan *_memMan;
-	static const uint32 _scriptList[TOTAL_SECTIONS];	//a table of resource tags
+	static const uint32 _scriptList[TOTAL_SECTIONS];    //a table of resource tags
 	static uint32 _srIdList[29];
 	Clu *_openCluStart, *_openCluEnd;
 	int  _openClus;

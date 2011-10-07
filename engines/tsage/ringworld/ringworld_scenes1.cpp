@@ -35,14 +35,14 @@ namespace Ringworld {
  *--------------------------------------------------------------------------*/
 
 void Scene10::Action1::signal() {
-	Scene10 *scene = (Scene10 *)_globals->_sceneManager._scene;
+	Scene10 *scene = (Scene10 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(6);
 		break;
 	case 1:
-		_globals->_scenePalette.addRotation(240, 254, -1);
+		g_globals->_scenePalette.addRotation(240, 254, -1);
 		scene->_stripManager.start(10, this);
 		break;
 	case 2:
@@ -100,21 +100,21 @@ void Scene10::Action1::signal() {
 		scene->_object4.animate(ANIM_MODE_6, this);
 		break;
 	case 10:
-		_globals->_soundHandler.fadeOut(this);
+		g_globals->_soundHandler.fadeOut(this);
 		break;
 	case 11:
-		_globals->_scenePalette.clearListeners();
-		_globals->_sceneManager.changeScene(15);
+		g_globals->_scenePalette.clearListeners();
+		g_globals->_sceneManager.changeScene(15);
 		break;
 	}
 }
 
 void Scene10::Action2::signal() {
-	Scene10 *scene = (Scene10 *)_globals->_sceneManager._scene;
+	Scene10 *scene = (Scene10 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(179));
+		setDelay(g_globals->_randomSource.getRandomNumber(179));
 		break;
 	case 1:
 		scene->_object3.setFrame(1);
@@ -183,11 +183,11 @@ void Scene10::postInit(SceneObjectList *OwnerList) {
 	_object6.animate(ANIM_MODE_2, NULL);
 	_object6._numFrames = 5;
 
-	_globals->_sceneManager._scene->_sceneBounds.contain(_globals->_sceneManager._scene->_backgroundBounds);
-	_globals->_sceneOffset.x = (_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
+	g_globals->_sceneManager._scene->_sceneBounds.contain(g_globals->_sceneManager._scene->_backgroundBounds);
+	g_globals->_sceneOffset.x = (g_globals->_sceneManager._scene->_sceneBounds.left / 160) * 160;
 
 	setAction(&_action1);
-	_globals->_soundHandler.play(5);
+	g_globals->_soundHandler.play(5);
 }
 
 void Scene10::stripCallback(int v) {
@@ -213,7 +213,7 @@ void Scene10::stripCallback(int v) {
  *--------------------------------------------------------------------------*/
 
 void Scene15::Action1::signal() {
-	Scene15 *scene = (Scene15 *)_globals->_sceneManager._scene;
+	Scene15 *scene = (Scene15 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -239,13 +239,13 @@ void Scene15::Action1::signal() {
 	}
 	case 3:
 		SceneItem::display(0, 0);
-		_globals->_sceneManager.changeScene(20);
+		g_globals->_sceneManager.changeScene(20);
 		break;
 	}
 }
 
 void Scene15::Action1::dispatch() {
-	Scene15 *scene = (Scene15 *)_globals->_sceneManager._scene;
+	Scene15 *scene = (Scene15 *)g_globals->_sceneManager._scene;
 
 	if (scene->_object1._position.y < 100)
 		scene->_object1.changeZoom(100 - scene->_object1._position.y);
@@ -258,7 +258,7 @@ void Scene15::postInit(SceneObjectList *OwnerList) {
 	loadScene(15);
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
-	_globals->_soundHandler.play(6);
+	g_globals->_soundHandler.play(6);
 	setAction(&_action1);
 }
 
@@ -268,7 +268,7 @@ void Scene15::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene20::Action1::signal() {
-	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
+	Scene20 *scene = (Scene20 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -278,11 +278,11 @@ void Scene20::Action1::signal() {
 		scene->_stripManager.start(20, this);
 		break;
 	case 2:
-		_globals->_soundHandler.fadeOut(this);
+		g_globals->_soundHandler.fadeOut(this);
 		break;
 	case 3:
-		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
-		_globals->_sceneManager.changeScene(30);	// First game scene
+		g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		g_globals->_sceneManager.changeScene(30);	// First game scene
 		break;
 	default:
 		break;
@@ -290,7 +290,7 @@ void Scene20::Action1::signal() {
 }
 
 void Scene20::Action2::signal() {
-	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
+	Scene20 *scene = (Scene20 *)g_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
 	switch (_actionIndex++) {
@@ -305,51 +305,51 @@ void Scene20::Action2::signal() {
 	case 2: {
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(455, 77);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		ObjectMover2 *mover2 = new ObjectMover2();
-		scene->_SceneObjectExt.addMover(mover2, 5, 10, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover2, 5, 10, &g_globals->_player);
 		ObjectMover2 *mover3 = new ObjectMover2();
-		scene->_sceneObject3.addMover(mover3, 10, 15, &_globals->_player);
+		scene->_sceneObject3.addMover(mover3, 10, 15, &g_globals->_player);
 		break;
 	}
 	case 3: {
 		npcMover = new NpcMover();
 		Common::Point pt(557, 100);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 4: {
 		npcMover = new NpcMover();
 		Common::Point pt(602, 90);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 5: {
 		npcMover = new NpcMover();
 		Common::Point pt(618, 90);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 6: {
 		npcMover = new NpcMover();
 		Common::Point pt(615, 81);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 7: {
 		npcMover = new NpcMover();
 		Common::Point pt(588, 79);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 8:
 		scene->_sound.release();
-		_globals->_soundHandler.fadeOut(this);
+		g_globals->_soundHandler.fadeOut(this);
 		break;
 	case 9:
 		SceneItem::display(0, 0, LIST_END);
-		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
-		_globals->_sceneManager.changeScene(40);
+		g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		g_globals->_sceneManager.changeScene(40);
 		break;
 	default:
 		break;
@@ -357,7 +357,7 @@ void Scene20::Action2::signal() {
 }
 
 void Scene20::Action3::signal() {
-	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
+	Scene20 *scene = (Scene20 *)g_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
 	switch (_actionIndex++) {
@@ -367,47 +367,47 @@ void Scene20::Action3::signal() {
 	case 1: {
 		npcMover = new NpcMover();
 		Common::Point pt(615, 81);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		ObjectMover2 *mover1 = new ObjectMover2();
-		scene->_SceneObjectExt.addMover(mover1, 5, 10, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover1, 5, 10, &g_globals->_player);
 		ObjectMover2 *mover2 = new ObjectMover2();
-		scene->_sceneObject3.addMover(mover2, 20, 25, &_globals->_player);
+		scene->_sceneObject3.addMover(mover2, 20, 25, &g_globals->_player);
 		break;
 	}
 	case 2: {
 		npcMover = new NpcMover();
 		Common::Point pt(618, 90);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 3: {
-		_globals->_player._moveDiff = Common::Point(10, 10);
+		g_globals->_player._moveDiff = Common::Point(10, 10);
 		scene->_SceneObjectExt._moveDiff = Common::Point(10, 10);
 		scene->_sceneObject3._moveDiff = Common::Point(10, 10);
 		npcMover = new NpcMover();
 		Common::Point pt(445, 132);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 4: {
 		npcMover = new NpcMover();
 		Common::Point pt(151, 137);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 5: {
 		npcMover = new NpcMover();
 		Common::Point pt(-15, 137);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 6:
 		scene->_sound.play(60, this, 127);
-		_globals->_soundHandler.release();
+		g_globals->_soundHandler.release();
 		break;
 	case 7:
-		_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
-		_globals->_sceneManager.changeScene(90);
+		g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+		g_globals->_sceneManager.changeScene(90);
 		break;
 	default:
 		break;
@@ -415,7 +415,7 @@ void Scene20::Action3::signal() {
 }
 
 void Scene20::Action4::signal() {
-	Scene20 *scene = (Scene20 *)_globals->_sceneManager._scene;
+	Scene20 *scene = (Scene20 *)g_globals->_sceneManager._scene;
 	NpcMover *npcMover;
 
 	switch (_actionIndex++) {
@@ -425,20 +425,20 @@ void Scene20::Action4::signal() {
 	case 1: {
 		npcMover = new NpcMover();
 		Common::Point pt(486, 134);
-		_globals->_player.addMover(npcMover, &pt, this);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		ObjectMover2 *mover1 = new ObjectMover2();
-		scene->_SceneObjectExt.addMover(mover1, 20, 35, &_globals->_player);
+		scene->_SceneObjectExt.addMover(mover1, 20, 35, &g_globals->_player);
 		break;
 	}
 	case 2: {
-		_globals->_player._moveDiff = Common::Point(12, 12);
+		g_globals->_player._moveDiff = Common::Point(12, 12);
 		scene->_SceneObjectExt._moveDiff = Common::Point(12, 12);
 		NpcMover *mover1 = new NpcMover();
 		Common::Point pt(486, 134);
 		scene->_sceneObject3.addMover(mover1, &pt, this);
 		NpcMover *mover2 = new NpcMover();
 		pt = Common::Point(-15, 134);
-		_globals->_player.addMover(mover2, &pt, NULL);
+		g_globals->_player.addMover(mover2, &pt, NULL);
 		NpcMover *mover3 = new NpcMover();
 		pt = Common::Point(-15, 134);
 		scene->_SceneObjectExt.addMover(mover3, &pt, NULL);
@@ -485,7 +485,7 @@ void Scene20::Action4::signal() {
 		scene->_sceneObject5._moveDiff.x = 48;
 
 		ObjectMover3 *mover = new ObjectMover3();
-		scene->_sceneObject5.addMover(mover, &_globals->_player, 4, this);
+		scene->_sceneObject5.addMover(mover, &g_globals->_player, 4, this);
 		break;
 	}
 	case 6: {
@@ -494,24 +494,24 @@ void Scene20::Action4::signal() {
 		scene->_SceneObjectExt.animate(ANIM_MODE_2, NULL);
 
 		scene->_sceneObject5.remove();
-		_globals->_player.setVisage(21);
-		_globals->_player.setStrip(1);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_5, this);
-		_globals->_player._moveDiff.x = 4;
+		g_globals->_player.setVisage(21);
+		g_globals->_player.setStrip(1);
+		g_globals->_player.setFrame(1);
+		g_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player._moveDiff.x = 4;
 
 		npcMover = new NpcMover();
-		Common::Point pt(_globals->_player._position.x - 25, _globals->_player._position.y + 5);
-		_globals->_player.addMover(npcMover, &pt, this);
+		Common::Point pt(g_globals->_player._position.x - 25, g_globals->_player._position.y + 5);
+		g_globals->_player.addMover(npcMover, &pt, this);
 		break;
 	}
 	case 7:
-		_globals->_player.setStrip(2);
-		_globals->_player.animate(ANIM_MODE_2, NULL);
+		g_globals->_player.setStrip(2);
+		g_globals->_player.animate(ANIM_MODE_2, NULL);
 		scene->_sound.play(77, this, 127);
 		break;
 	case 8:
-		_globals->_game->endGame(20, 0);
+		g_globals->_game->endGame(20, 0);
 		break;
 	default:
 		break;
@@ -529,15 +529,15 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerGameText);
-	_speakerQText._npc = &_globals->_player;
+	_speakerQText._npc = &g_globals->_player;
 
-	if (_globals->_sceneManager._previousScene == 30) {
+	if (g_globals->_sceneManager._previousScene == 30) {
 		// Cut scene: Assassins are coming
-		_globals->_player.postInit();
-		_globals->_player.setVisage(20);
-		_globals->_player.setPosition(Common::Point(405, 69));
-		_globals->_player._moveDiff = Common::Point(10, 10);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.postInit();
+		g_globals->_player.setVisage(20);
+		g_globals->_player.setPosition(Common::Point(405, 69));
+		g_globals->_player._moveDiff = Common::Point(10, 10);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
 
 		_SceneObjectExt.postInit();
 		_SceneObjectExt.setVisage(20);
@@ -551,21 +551,21 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 
 		_SceneObjectExt._moveDiff = Common::Point(10, 10);
 		_sceneObject3._moveDiff = Common::Point(10, 10);
-		_globals->_soundHandler.play(20);
+		g_globals->_soundHandler.play(20);
 		_sound.play(21);
 		_sound.holdAt(true);
 		setAction(&_action2);
 
 		_sceneBounds = Rect(320, 0, 640, 200);
-	} else if (_globals->_sceneManager._previousScene == 60) {
+	} else if (g_globals->_sceneManager._previousScene == 60) {
 		// Evasion
 		_sound.play(30);
-		_globals->_player.postInit();
-		_globals->_player.setVisage(20);
-		_globals->_player.setPosition(Common::Point(588, 79));
-		_globals->_player._moveDiff = Common::Point(5, 5);
-		_globals->_player.fixPriority(50);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.postInit();
+		g_globals->_player.setVisage(20);
+		g_globals->_player.setPosition(Common::Point(588, 79));
+		g_globals->_player._moveDiff = Common::Point(5, 5);
+		g_globals->_player.fixPriority(50);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
 
 		_SceneObjectExt.postInit();
 		_SceneObjectExt.setVisage(20);
@@ -578,28 +578,28 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_sceneObject3.setPosition(Common::Point(595, 79));
 		_sceneObject3.animate(ANIM_MODE_1, NULL);
 
-		if ((_globals->getFlag(120) && _globals->getFlag(116)) ||
-				(_globals->getFlag(117) && _globals->getFlag(119))) {
+		if ((g_globals->getFlag(120) && g_globals->getFlag(116)) ||
+				(g_globals->getFlag(117) && g_globals->getFlag(119))) {
 			// Successful evasion
 			setAction(&_action3);
-		} else if (_globals->getFlag(104)) {
+		} else if (g_globals->getFlag(104)) {
 			_sceneMode = 21;
-			setAction(&_sequenceManager, this, 21, &_globals->_player, &_SceneObjectExt, NULL);
+			setAction(&_sequenceManager, this, 21, &g_globals->_player, &_SceneObjectExt, NULL);
 		} else {
 			// Failed evasion
 			_sceneObject3._moveDiff = Common::Point(8, 8);
 			setAction(&_action4);
 		}
-		_sceneBounds.center(_globals->_player._position.x, _globals->_player._position.y);
+		_sceneBounds.center(g_globals->_player._position.x, g_globals->_player._position.y);
 	} else {
 		// Intro: Quinn looking at the monaster
-		_globals->_player.postInit();
-		_globals->_player.setVisage(2640);
-		_globals->_player.animate(ANIM_MODE_NONE, NULL);
-		_globals->_player.setStrip2(1);
-		_globals->_player.setFrame2(4);
-		_globals->_player.fixPriority(200);
-		_globals->_player.setPosition(Common::Point(425, 233));
+		g_globals->_player.postInit();
+		g_globals->_player.setVisage(2640);
+		g_globals->_player.animate(ANIM_MODE_NONE, NULL);
+		g_globals->_player.setStrip2(1);
+		g_globals->_player.setFrame2(4);
+		g_globals->_player.fixPriority(200);
+		g_globals->_player.setPosition(Common::Point(425, 233));
 
 		setAction(&_action1);
 		_speakerQText.setTextPos(Common::Point(350, 20));
@@ -607,17 +607,17 @@ void Scene20::postInit(SceneObjectList *OwnerList) {
 		_speakerGameText.setTextPos(Common::Point(350, 20));
 		_speakerGameText._textWidth = 260;
 
-		_globals->_soundHandler.play(8);
+		g_globals->_soundHandler.play(8);
 		_sceneBounds = Rect(320, 0, 640, 200);
 	}
 
-	_globals->_player.disableControl();
+	g_globals->_player.disableControl();
 	loadScene(20);
 }
 
 void Scene20::signal() {
 	if (_sceneMode == 21)
-		_globals->_sceneManager.changeScene(90);
+		g_globals->_sceneManager.changeScene(90);
 }
 
 /*--------------------------------------------------------------------------
@@ -631,7 +631,7 @@ void Scene30::BeamObject::doAction(int action) {
 	else if (action == CURSOR_LOOK)
 		display2(30, 2);
 	else if (action == CURSOR_USE) {
-		Scene30 *parent = (Scene30 *)_globals->_sceneManager._scene;
+		Scene30 *parent = (Scene30 *)g_globals->_sceneManager._scene;
 		parent->setAction(&parent->_beamAction);
 	} else
 		SceneObject::doAction(action);
@@ -649,38 +649,38 @@ void Scene30::DoorObject::doAction(int action) {
 }
 
 void Scene30::BeamAction::signal() {
-	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
+	Scene30 *scene = (Scene30 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
 		// Disable control and move player to the doorway beam
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(114, 198);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 
 	case 1:
 		// Perform the animation of player raising hand
-		_globals->_player.setVisage(31);
-		_globals->_player.setStrip(1);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player.setVisage(31);
+		g_globals->_player.setStrip(1);
+		g_globals->_player.setFrame(1);
+		g_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 
 	case 2:
 		// Hide the beam and lower the player's hand
 		scene->_sound.play(10, NULL, 127);
-		_globals->_player.animate(ANIM_MODE_6, this);
+		g_globals->_player.animate(ANIM_MODE_6, this);
 		scene->_beam.remove();
 		break;
 
 	case 3: {
 		// Bring the Kzin to the doorway
-		_globals->_player.setVisage(0);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
-		_globals->_player.setStrip(7);
+		g_globals->_player.setVisage(0);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.setStrip(7);
 		scene->_kzin.postInit();
 		scene->_kzin.setVisage(2801);
 		scene->_kzin.animate(ANIM_MODE_1, NULL);
@@ -689,7 +689,7 @@ void Scene30::BeamAction::signal() {
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(158, 170);
 		scene->_kzin.addMover(mover, &pt, this);
-		_globals->_sceneItems.push_front(&scene->_kzin);
+		g_globals->_sceneItems.push_front(&scene->_kzin);
 		break;
 	}
 
@@ -702,7 +702,7 @@ void Scene30::BeamAction::signal() {
 	case 5:
 		// Run the Kzin's talk sequence
 		scene->_sound.play(13, NULL, 127);
-		_globals->_soundHandler.play(12, NULL, 127);
+		g_globals->_soundHandler.play(12, NULL, 127);
 		scene->_stripManager.start((scene->_sceneMode == 0) ? 30 : 37, this);
 		break;
 
@@ -715,7 +715,7 @@ void Scene30::BeamAction::signal() {
 		// Re-activate player control
 		scene->_sceneMode = 31;
 		scene->_kzin.setAction(&scene->_kzinAction);
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 
 		// End this action
 		remove();
@@ -727,19 +727,19 @@ void Scene30::BeamAction::signal() {
 }
 
 void Scene30::KzinAction::signal() {
-	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
+	Scene30 *scene = (Scene30 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(1200);
 		break;
 	case 1:
-		_globals->_soundHandler.fadeOut(NULL);
-		_globals->_player.disableControl();
-		setAction(&scene->_sequenceManager, _globals->_sceneManager._scene, 31, &scene->_kzin, &scene->_door, NULL);
+		g_globals->_soundHandler.fadeOut(NULL);
+		g_globals->_player.disableControl();
+		setAction(&scene->_sequenceManager, g_globals->_sceneManager._scene, 31, &scene->_kzin, &scene->_door, NULL);
 		break;
 	case 2:
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 		remove();
 		break;
 	default:
@@ -748,28 +748,28 @@ void Scene30::KzinAction::signal() {
 }
 
 void Scene30::RingAction::signal() {
-	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
+	Scene30 *scene = (Scene30 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_kzin.setAction(NULL);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(114, 198);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 
 	case 1:
-		_globals->_player.checkAngle(&scene->_kzin);
+		g_globals->_player.checkAngle(&scene->_kzin);
 		scene->_stripManager.start(32, this);
 		break;
 
 	case 2: {
-		_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(143, 177);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 
@@ -785,7 +785,7 @@ void Scene30::RingAction::signal() {
 		scene->_kzin.addMover(kzinMover, &pt, this);
 		NpcMover *playerMover = new NpcMover();
 		pt = Common::Point(335, 36);
-		_globals->_player.addMover(playerMover, &pt, this);
+		g_globals->_player.addMover(playerMover, &pt, this);
 		break;
 	}
 
@@ -793,7 +793,7 @@ void Scene30::RingAction::signal() {
 		break;
 
 	case 6:
-		_globals->_sceneManager.changeScene(20);
+		g_globals->_sceneManager.changeScene(20);
 		break;
 
 	default:
@@ -802,19 +802,19 @@ void Scene30::RingAction::signal() {
 }
 
 void Scene30::TalkAction::signal() {
-	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
+	Scene30 *scene = (Scene30 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_kzin.setAction(NULL);
 		NpcMover *mover = new NpcMover();
 		Common::Point pt(114, 198);
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 1:
-		_globals->_player.checkAngle(&scene->_kzin);
+		g_globals->_player.checkAngle(&scene->_kzin);
 		scene->_stripManager.start(34, this);
 		break;
 	case 2:
@@ -822,7 +822,7 @@ void Scene30::TalkAction::signal() {
 		break;
 	case 3:
 		scene->_kzin.setAction(&scene->_kzinAction);
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 		remove();
 		break;
 	default:
@@ -833,7 +833,7 @@ void Scene30::TalkAction::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene30::KzinObject::doAction(int action) {
-	Scene30 *scene = (Scene30 *)_globals->_sceneManager._scene;
+	Scene30 *scene = (Scene30 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
@@ -853,7 +853,7 @@ void Scene30::KzinObject::doAction(int action) {
 		display2(30, 10);
 		break;
 	case CURSOR_TALK:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->setAction(&scene->_talkAction);
 		break;
 	default:
@@ -881,19 +881,19 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerSText);
 	_stripManager.addSpeaker(&_speakerQText);
 	_speakerSText._npc = &_kzin;
-	_speakerQText._npc = &_globals->_player;
+	_speakerQText._npc = &g_globals->_player;
 
 
 	// Setup player
-	_globals->_player.postInit();
-	_globals->_player.setVisage(0);
-	_globals->_player.animate(ANIM_MODE_1);
-	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
-	_globals->_player.setStrip(7);
-	_globals->_player.setFrame(1);
-	_globals->_player.setPosition(Common::Point(114, 198));
-	_globals->_player.changeZoom(75);
-	_globals->_player.enableControl();
+	g_globals->_player.postInit();
+	g_globals->_player.setVisage(0);
+	g_globals->_player.animate(ANIM_MODE_1);
+	g_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+	g_globals->_player.setStrip(7);
+	g_globals->_player.setFrame(1);
+	g_globals->_player.setPosition(Common::Point(114, 198));
+	g_globals->_player.changeZoom(75);
+	g_globals->_player.enableControl();
 
 	// Set up beam object
 	_beam.postInit();
@@ -911,7 +911,7 @@ void Scene30::postInit(SceneObjectList *OwnerList) {
 	_courtyardHotspot.setBounds(Rect(0, 0, 320, 200));
 
 	// Add the objects and hotspots to the scene
-	_globals->_sceneItems.addItems(&_beam, &_wallsHotspot, &_door, &_treeHotspot, &_groundHotspot,
+	g_globals->_sceneItems.addItems(&_beam, &_wallsHotspot, &_door, &_treeHotspot, &_groundHotspot,
 		&_courtyardHotspot, NULL);
 
 	// Load the scene data
@@ -927,12 +927,12 @@ void Scene30::signal() {
 		_beam.setStrip(2);
 		_beam.setPosition(Common::Point(124, 178));
 		_beam.fixPriority(188);
-		_globals->_sceneItems.push_front(&_beam);
-		_globals->_player.enableControl();
+		g_globals->_sceneItems.push_front(&_beam);
+		g_globals->_player.enableControl();
 	} else if (_sceneMode == 32) {
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		_sceneMode = 31;
-		setAction(&_sequenceManager, _globals->_sceneManager._scene, 31, &_kzin, &_door, NULL);
+		setAction(&_sequenceManager, g_globals->_sceneManager._scene, 31, &_kzin, &_door, NULL);
 	}
 }
 
@@ -942,14 +942,14 @@ void Scene30::signal() {
  *--------------------------------------------------------------------------*/
 
 void Scene40::Action1::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(120);
 		break;
 	case 1:
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(40, this);
 		break;
 	case 2:
@@ -962,7 +962,7 @@ void Scene40::Action1::signal() {
 	case 3:
 		scene->_doorway.hide();
 		scene->_dyingKzin.setPosition(Common::Point(296, 62));
-		_globals->_player.animate(ANIM_MODE_5, NULL);
+		g_globals->_player.animate(ANIM_MODE_5, NULL);
 		scene->_object1.setVisage(43);
 		scene->_object1.setStrip(3);
 		scene->_object1.animate(ANIM_MODE_5, NULL);
@@ -1026,8 +1026,8 @@ void Scene40::Action1::signal() {
 		break;
 	}
 	case 12: {
-		_globals->_soundHandler.play(26);
-		_globals->_player._uiEnabled = true;
+		g_globals->_soundHandler.play(26);
+		g_globals->_player._uiEnabled = true;
 		scene->_assassin.setVisage(42);
 		scene->_assassin.setPosition(Common::Point(4, 191));
 		scene->_assassin.setStrip(1);
@@ -1048,41 +1048,41 @@ void Scene40::Action1::signal() {
 		scene->_soundHandler.play(28);
 		break;
 	case 15:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_object1.setVisage(40);
 		scene->_object1.setStrip(4);
 		scene->_object1.setFrame(1);
 		scene->_object1.animate(ANIM_MODE_5, NULL);
-		_globals->_player.setVisage(40);
-		_globals->_player.setStrip(2);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player.setVisage(40);
+		g_globals->_player.setStrip(2);
+		g_globals->_player.setFrame(1);
+		g_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 16:
-		_globals->_soundHandler.play(77, this);
+		g_globals->_soundHandler.play(77, this);
 		break;
 	case 17:
-		_globals->_game->endGame(40, 20);
+		g_globals->_game->endGame(40, 20);
 		remove();
 		break;
 	}
 }
 
 void Scene40::Action2::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		if (scene->_assassin._position.x < 229)
 			_actionIndex = 0;
 		setDelay(1);
 		break;
 	case 1:
 		scene->_assassin.animate(ANIM_MODE_NONE, NULL);
-		_globals->_player.setStrip(2);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player.setStrip(2);
+		g_globals->_player.setFrame(1);
+		g_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 2: {
 		scene->_soundHandler.play(28);
@@ -1109,19 +1109,19 @@ void Scene40::Action2::signal() {
 		RING_INVENTORY._infoDisk._sceneNumber = 40;
 		break;
 	case 4:
-		_globals->_player.animate(ANIM_MODE_6, this);
+		g_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 5: {
-		_globals->_player.setVisage(0);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
-		_globals->_player.setStrip(1);
+		g_globals->_player.setVisage(0);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.setStrip(1);
 		Common::Point pt(230, 195);
 		PlayerMover *mover = new PlayerMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 6: {
-		_globals->_player.setStrip(7);
+		g_globals->_player.setStrip(7);
 		scene->_object1.setVisage(2806);
 		scene->_object1.animate(ANIM_MODE_1, NULL);
 		SceneObjectWrapper *wrapper = new SceneObjectWrapper();
@@ -1143,45 +1143,45 @@ void Scene40::Action2::signal() {
 	case 9:
 		scene->_dyingKzin.setAction(&scene->_action7);
 		scene->_object1.remove();
-		_globals->_stripNum = 88;
-		_globals->_events.setCursor(CURSOR_WALK);
-		_globals->_player.enableControl();
+		g_globals->_stripNum = 88;
+		g_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_player.enableControl();
 		scene->_assassin.setAction(&scene->_action8);
 		break;
 	}
 }
 
 void Scene40::Action3::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
-		_globals->_player.setAction(NULL);
-		_globals->_stripNum = 99;
-		_globals->_player.disableControl();
+		g_globals->_player.setAction(NULL);
+		g_globals->_stripNum = 99;
+		g_globals->_player.disableControl();
 		Common::Point pt(240, 195);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 1:
-		_globals->_player.setVisage(5010);
-		_globals->_player._strip = 2;
-		_globals->_player._frame = 1;
-		_globals->_player.animate(ANIM_MODE_4, 5, 1, this);
+		g_globals->_player.setVisage(5010);
+		g_globals->_player._strip = 2;
+		g_globals->_player._frame = 1;
+		g_globals->_player.animate(ANIM_MODE_4, 5, 1, this);
 		break;
 	case 2:
 		scene->_assassin.setStrip(2);
 		scene->_assassin.setFrame(1);
 		RING_INVENTORY._infoDisk._sceneNumber = 1;
-		_globals->_player.animate(ANIM_MODE_6, this);
+		g_globals->_player.animate(ANIM_MODE_6, this);
 		break;
 	case 3:
-		_globals->_player.setVisage(0);
-		_globals->_player.animate(ANIM_MODE_1, NULL);
-		_globals->_player.setStrip(7);
-		_globals->_stripNum = 88;
-		_globals->_player.enableControl();
+		g_globals->_player.setVisage(0);
+		g_globals->_player.animate(ANIM_MODE_1, NULL);
+		g_globals->_player.setStrip(7);
+		g_globals->_stripNum = 88;
+		g_globals->_player.enableControl();
 		remove();
 		break;
 	}
@@ -1192,22 +1192,22 @@ void Scene40::Action4::signal() {
 	case 0: {
 		Common::Point pt(178, 190);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 1:
-		_globals->_stripNum = 88;
-		_globals->_player.enableControl();
+		g_globals->_stripNum = 88;
+		g_globals->_player.enableControl();
 		break;
 	}
 }
 
 void Scene40::Action5::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(119) + 120);
+		setDelay(g_globals->_randomSource.getRandomNumber(119) + 120);
 		break;
 	case 1:
 		scene->_object2.animate(ANIM_MODE_8, 1, this);
@@ -1216,7 +1216,7 @@ void Scene40::Action5::signal() {
 }
 
 void Scene40::Action6::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
@@ -1253,17 +1253,17 @@ void Scene40::Action6::signal() {
 }
 
 void Scene40::Action7::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		setDelay(_globals->_randomSource.getRandomNumber(499) + 500);
+		setDelay(g_globals->_randomSource.getRandomNumber(499) + 500);
 		break;
 	case 1:
 		scene->_object7.postInit();
 		scene->_object7.setVisage(46);
 
-		if (_globals->_randomSource.getRandomNumber(32767) >= 16384) {
+		if (g_globals->_randomSource.getRandomNumber(32767) >= 16384) {
 			scene->_object7.setStrip(3);
 			scene->_object7.setPosition(Common::Point(15, 185));
 		} else {
@@ -1282,16 +1282,16 @@ void Scene40::Action7::signal() {
 }
 
 void Scene40::Action8::signal() {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(300);
 		break;
 	case 1:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 
-		if ((_globals->_player._position.y >= 197) || (_globals->_player._visage)) {
+		if ((g_globals->_player._position.y >= 197) || (g_globals->_player._visage)) {
 			_actionIndex = 1;
 			setDelay(30);
 		} else {
@@ -1301,7 +1301,7 @@ void Scene40::Action8::signal() {
 			scene->_doorway.fixPriority(200);
 			scene->_doorway._moveRate = 60;
 
-			if (_globals->_player._position.x >= 145) {
+			if (g_globals->_player._position.x >= 145) {
 				scene->_doorway.fixPriority(-1);
 				scene->_doorway.setPosition(Common::Point(6, 157));
 			} else {
@@ -1309,7 +1309,7 @@ void Scene40::Action8::signal() {
 			}
 
 			scene->_doorway._moveDiff = Common::Point(40, 40);
-			Common::Point pt(_globals->_player._position.x, _globals->_player._position.y - 18);
+			Common::Point pt(g_globals->_player._position.x, g_globals->_player._position.y - 18);
 			NpcMover *mover = new NpcMover();
 			scene->_doorway.addMover(mover, &pt, this);
 			scene->_doorway.animate(ANIM_MODE_5, NULL);
@@ -1317,16 +1317,16 @@ void Scene40::Action8::signal() {
 		break;
 	case 2:
 		scene->_doorway.remove();
-		_globals->_player.setVisage(40);
-		_globals->_player.setStrip(2);
-		_globals->_player.setFrame(1);
-		_globals->_player.animate(ANIM_MODE_5, this);
+		g_globals->_player.setVisage(40);
+		g_globals->_player.setStrip(2);
+		g_globals->_player.setFrame(1);
+		g_globals->_player.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
-		_globals->_soundHandler.play(77, this);
+		g_globals->_soundHandler.play(77, this);
 		break;
 	case 4:
-		_globals->_game->endGame(40, 45);
+		g_globals->_game->endGame(40, 45);
 		remove();
 		break;
 	}
@@ -1337,7 +1337,7 @@ void Scene40::Action8::dispatch() {
 		_action->dispatch();
 
 	if (_delayFrames) {
-		uint32 frameNumber = _globals->_events.getFrameNumber();
+		uint32 frameNumber = g_globals->_events.getFrameNumber();
 		if ((_startFrame + 60) < frameNumber) {
 			--_delayFrames;
 			_startFrame = frameNumber;
@@ -1373,14 +1373,14 @@ void Scene40::DyingKzin::doAction(int action) {
 }
 
 void Scene40::Assassin::doAction(int action) {
-	Scene40 *scene = (Scene40 *)_globals->_sceneManager._scene;
+	Scene40 *scene = (Scene40 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
 		if (scene->_assassin._visage == 44)
 			SceneItem::display2(40, 21);
 		else {
-			_globals->_player.disableControl();
+			g_globals->_player.disableControl();
 			Common::Point pt(230, 187);
 			NpcMover *mover = new NpcMover();
 			addMover(mover, &pt, NULL);
@@ -1402,7 +1402,7 @@ void Scene40::Assassin::doAction(int action) {
 		else if (RING_INVENTORY._infoDisk._sceneNumber == 1)
 			SceneItem::display2(40, 19);
 		else {
-			_globals->_player.disableControl();
+			g_globals->_player.disableControl();
 			setAction(&scene->_action3);
 		}
 		break;
@@ -1421,7 +1421,7 @@ void Scene40::Item2::doAction(int action) {
 	switch (action) {
 	case OBJECT_STUNNER:
 		SceneItem::display2(40, 35);
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	case OBJECT_SCANNER:
 		SceneItem::display2(40, 34);
@@ -1445,7 +1445,7 @@ void Scene40::Item6::doAction(int action) {
 	switch (action) {
 	case OBJECT_STUNNER:
 		SceneItem::display2(40, 25);
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		break;
 	case OBJECT_SCANNER:
 		SceneItem::display2(40, 42);
@@ -1478,7 +1478,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 
 	setZoomPercents(0, 100, 200, 100);
-	_globals->_stripNum = 99;
+	g_globals->_stripNum = 99;
 
 	_stripManager.addSpeaker(&_speakerQR);
 	_stripManager.addSpeaker(&_speakerSL);
@@ -1488,19 +1488,19 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 
 	_speakerGameText._color1 = 9;
 	_speakerGameText.setTextPos(Common::Point(160, 30));
-	_speakerQText._npc = &_globals->_player;
+	_speakerQText._npc = &g_globals->_player;
 	_speakerSText._npc = &_object1;
 
-	_globals->_player.postInit();
-	_globals->_player.setVisage(0);
-	_globals->_player.animate(ANIM_MODE_1, NULL);
-	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
-	_globals->_player.setPosition(Common::Point(130, 220));
-	_globals->_player.disableControl();
+	g_globals->_player.postInit();
+	g_globals->_player.setVisage(0);
+	g_globals->_player.animate(ANIM_MODE_1, NULL);
+	g_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+	g_globals->_player.setPosition(Common::Point(130, 220));
+	g_globals->_player.disableControl();
 
-	if (_globals->_sceneManager._previousScene == 20) {
-		_globals->_soundHandler.play(24);
-		_globals->_player.setVisage(43);
+	if (g_globals->_sceneManager._previousScene == 20) {
+		g_globals->_soundHandler.play(24);
+		g_globals->_player.setVisage(43);
 
 		_object1.postInit();
 		_object1.setVisage(41);
@@ -1522,7 +1522,7 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 
 		_assassin.postInit();
 		_assassin.setPosition(Common::Point(-40, 191));
-		_globals->_sceneItems.push_back(&_assassin);
+		g_globals->_sceneItems.push_back(&_assassin);
 
 		_dyingKzin.postInit();
 		_dyingKzin.setVisage(40);
@@ -1557,8 +1557,8 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 			_assassin.setStrip(2);
 		}
 
-		_globals->_sceneItems.push_back(&_assassin);
-		_globals->_player.setPosition(Common::Point(170, 220));
+		g_globals->_sceneItems.push_back(&_assassin);
+		g_globals->_player.setPosition(Common::Point(170, 220));
 
 		setAction(&_action4);
 	}
@@ -1567,24 +1567,24 @@ void Scene40::postInit(SceneObjectList *OwnerList) {
 	_item6._sceneRegionId = 3;
 	_item2._sceneRegionId = 7;
 
-	_globals->_sceneItems.addItems(&_dyingKzin, &_item8, &_item1, &_item2, &_item3, &_item4,
+	g_globals->_sceneItems.addItems(&_dyingKzin, &_item8, &_item1, &_item2, &_item3, &_item4,
 			&_item6, &_item7, &_item5, NULL);
 }
 
 void Scene40::signal() {
 	if (_sceneMode == 41)
-		_globals->_sceneManager.changeScene(50);
+		g_globals->_sceneManager.changeScene(50);
 }
 
 void Scene40::dispatch() {
-	if ((_globals->_stripNum == 88) && (_globals->_player._position.y >= 197)) {
-		_globals->_player.disableControl();
-		_globals->_stripNum = 0;
-		_globals->_player.setAction(NULL);
+	if ((g_globals->_stripNum == 88) && (g_globals->_player._position.y >= 197)) {
+		g_globals->_player.disableControl();
+		g_globals->_stripNum = 0;
+		g_globals->_player.setAction(NULL);
 		_sceneMode = 41;
-		setAction(&_sequenceManager, this, 41, &_globals->_player, NULL);
+		setAction(&_sequenceManager, this, 41, &g_globals->_player, NULL);
 
-		if (_globals->_sceneManager._previousScene == 20) {
+		if (g_globals->_sceneManager._previousScene == 20) {
 			_dyingKzin.setAction(&_action6);
 		}
 	}
@@ -1598,49 +1598,49 @@ void Scene40::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene50::Action1::signal() {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		setAction(&scene->_sequenceManager, this, 54, &_globals->_player, NULL);
+		setAction(&scene->_sequenceManager, this, 54, &g_globals->_player, NULL);
 		break;
 	case 1:
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(63, this);
 		break;
 	case 2:
 		if (scene->_stripManager._field2E8 != 107) {
-			_globals->_player.enableControl();
+			g_globals->_player.enableControl();
 			remove();
 		} else {
 			Common::Point pt(282, 139);
 			NpcMover *mover = new NpcMover();
-			_globals->_player.addMover(mover, &pt, this);
+			g_globals->_player.addMover(mover, &pt, this);
 		}
 		break;
 	case 3:
-		_globals->_stripNum = -1;
-		_globals->_sceneManager.changeScene(60);
+		g_globals->_stripNum = -1;
+		g_globals->_sceneManager.changeScene(60);
 		break;
 	}
 }
 
 void Scene50::Action2::signal() {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_stripManager.start(66, this);
 		break;
 	case 1: {
 		Common::Point pt(141, 142);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 2:
-		_globals->_sceneManager.changeScene(40);
+		g_globals->_sceneManager.changeScene(40);
 		remove();
 		break;
 	}
@@ -1649,14 +1649,14 @@ void Scene50::Action2::signal() {
 void Scene50::Action3::signal() {
 	switch (_actionIndex++) {
 	case 0: {
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		Common::Point pt(136, 185);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 		break;
 	}
 	case 1:
-		_globals->_sceneManager.changeScene(60);
+		g_globals->_sceneManager.changeScene(60);
 		remove();
 		break;
 	}
@@ -1665,7 +1665,7 @@ void Scene50::Action3::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene50::Object1::doAction(int action) {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
@@ -1681,7 +1681,7 @@ void Scene50::Object1::doAction(int action) {
 		SceneItem::display2(50, 21);
 		break;
 	case CURSOR_TALK:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_sceneMode = 52;
 		scene->setAction(&scene->_sequenceManager, scene, 52, NULL);
 		break;
@@ -1692,7 +1692,7 @@ void Scene50::Object1::doAction(int action) {
 }
 
 void Scene50::Object2::doAction(int action) {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
@@ -1706,7 +1706,7 @@ void Scene50::Object2::doAction(int action) {
 		break;
 	case OBJECT_INFODISK:
 	case CURSOR_USE:
-		_globals->_stripNum = 50;
+		g_globals->_stripNum = 50;
 		scene->setAction(&scene->_action3);
 		break;
 	default:
@@ -1716,7 +1716,7 @@ void Scene50::Object2::doAction(int action) {
 }
 
 void Scene50::Object3::doAction(int action) {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
@@ -1733,7 +1733,7 @@ void Scene50::Object3::doAction(int action) {
 		SceneItem::display2(50, 8);
 		break;
 	case CURSOR_TALK:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_sceneMode = 52;
 		scene->setAction(&scene->_sequenceManager, scene, 52, NULL);
 		break;
@@ -1744,7 +1744,7 @@ void Scene50::Object3::doAction(int action) {
 }
 
 void Scene50::Object4::doAction(int action) {
-	Scene50 *scene = (Scene50 *)_globals->_sceneManager._scene;
+	Scene50 *scene = (Scene50 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
@@ -1758,10 +1758,10 @@ void Scene50::Object4::doAction(int action) {
 		break;
 	case OBJECT_INFODISK:
 	case CURSOR_USE:
-		_globals->_player.disableControl();
-		_globals->_stripNum = 0;
+		g_globals->_player.disableControl();
+		g_globals->_stripNum = 0;
 		scene->_sceneMode = 51;
-		scene->setAction(&scene->_sequenceManager, scene, 51, &_globals->_player, NULL);
+		scene->setAction(&scene->_sequenceManager, scene, 51, &g_globals->_player, NULL);
 		break;
 	default:
 		SceneHotspot::doAction(action);
@@ -1790,20 +1790,20 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerSText);
 
-	_globals->_player.postInit();
-	_globals->_player.setVisage(0);
-	_globals->_player.animate(ANIM_MODE_1, NULL);
-	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
-	_globals->_player._canWalk = false;
-	_globals->_player.changeZoom(75);
-	_globals->_player._moveDiff.y = 3;
+	g_globals->_player.postInit();
+	g_globals->_player.setVisage(0);
+	g_globals->_player.animate(ANIM_MODE_1, NULL);
+	g_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+	g_globals->_player._canWalk = false;
+	g_globals->_player.changeZoom(75);
+	g_globals->_player._moveDiff.y = 3;
 
-	if (_globals->_sceneManager._previousScene == 40) {
-		_globals->_player.setPosition(Common::Point(128, 123));
-	} else if (_globals->_stripNum == 50) {
-		_globals->_player.setPosition(Common::Point(136, 185));
+	if (g_globals->_sceneManager._previousScene == 40) {
+		g_globals->_player.setPosition(Common::Point(128, 123));
+	} else if (g_globals->_stripNum == 50) {
+		g_globals->_player.setPosition(Common::Point(136, 185));
 	} else {
-		_globals->_player.setPosition(Common::Point(270, 143));
+		g_globals->_player.setPosition(Common::Point(270, 143));
 	}
 
 	_object2.postInit();
@@ -1824,37 +1824,37 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	_object4.setPosition(Common::Point(295, 144));
 	_object4.fixPriority(178);
 
-	_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
+	g_globals->_sceneItems.addItems(&_object2, &_object3, &_object4, NULL);
 
-	if (!_globals->getFlag(101)) {
-		_globals->_player.disableControl();
-		_globals->setFlag(101);
+	if (!g_globals->getFlag(101)) {
+		g_globals->_player.disableControl();
+		g_globals->setFlag(101);
 		setAction(&_action1);
 	} else {
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 
-		if (_globals->_sceneManager._previousScene == 40) {
-			_globals->_player.disableControl();
+		if (g_globals->_sceneManager._previousScene == 40) {
+			g_globals->_player.disableControl();
 			_sceneMode = 54;
-			setAction(&_sequenceManager, this, 54, &_globals->_player, NULL);
+			setAction(&_sequenceManager, this, 54, &g_globals->_player, NULL);
 		}
 	}
 
 	_item0.setBounds(Rect(200, 0, 320, 200));
-	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
+	g_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item0, NULL);
 }
 
 void Scene50::signal() {
 	switch (_sceneMode) {
 	case 51:
-		_globals->_sceneManager.changeScene(60);
+		g_globals->_sceneManager.changeScene(60);
 		break;
 	case 55:
-		_globals->_sceneManager.changeScene(40);
+		g_globals->_sceneManager.changeScene(40);
 		break;
 	case 52:
 	case 54:
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 		break;
 	}
 }
@@ -1862,13 +1862,13 @@ void Scene50::signal() {
 void Scene50::dispatch() {
 	Scene::dispatch();
 
-	if ((_sceneMode != 55) && _doorwayRect.contains(_globals->_player._position)) {
+	if ((_sceneMode != 55) && _doorwayRect.contains(g_globals->_player._position)) {
 		// Player in house doorway, start player moving to within
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		_sceneMode = 55;
 		Common::Point pt(89, 111);
 		NpcMover *mover = new NpcMover();
-		_globals->_player.addMover(mover, &pt, this);
+		g_globals->_player.addMover(mover, &pt, this);
 	}
 }
 
@@ -1878,7 +1878,7 @@ void Scene50::dispatch() {
  *--------------------------------------------------------------------------*/
 
 void Scene60::Action1::signal() {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -1902,7 +1902,7 @@ void Scene60::Action1::signal() {
 
 		scene->_controlButton.animate(ANIM_MODE_2, NULL);
 
-		if (!_globals->getFlag(83)) {
+		if (!g_globals->getFlag(83)) {
 			scene->_message.postInit();
 			scene->_message.setVisage(60);
 			scene->_message.setStrip2(3);
@@ -1911,18 +1911,18 @@ void Scene60::Action1::signal() {
 			scene->_message.animate(ANIM_MODE_2, NULL);
 			scene->_message._numFrames = 5;
 
-			_globals->_sceneItems.push_front(&scene->_message);
+			g_globals->_sceneItems.push_front(&scene->_message);
 			scene->_soundHandler2.play(38);
 		}
 
-		_globals->_events.setCursor(CURSOR_USE);
+		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 3:
 		scene->_soundHandler2.play(37);
 		scene->loadScene(65);
 		scene->_message.remove();
 
-		if (_globals->_sceneObjects->contains(&scene->_redLights))
+		if (g_globals->_sceneObjects->contains(&scene->_redLights))
 			scene->_redLights.remove();
 
 		scene->_controlButton.remove();
@@ -1951,15 +1951,15 @@ void Scene60::Action1::signal() {
 		scene->_rose.setFrame(1);
 		scene->_rose.setPosition(Common::Point(145, 165));
 
-		_globals->_sceneItems.push_front(&scene->_nextButton);
-		_globals->_sceneItems.push_front(&scene->_prevButton);
-		_globals->_sceneItems.push_front(&scene->_exitButton);
+		g_globals->_sceneItems.push_front(&scene->_nextButton);
+		g_globals->_sceneItems.push_front(&scene->_prevButton);
+		g_globals->_sceneItems.push_front(&scene->_exitButton);
 		setDelay(10);
 
-		_globals->_events.setCursor(CURSOR_USE);
+		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 4:
-		_globals->setFlag(90);
+		g_globals->setFlag(90);
 		// Deliberate fall-through
 	case 5:
 	case 6:
@@ -1967,13 +1967,13 @@ void Scene60::Action1::signal() {
 		SceneItem::display(60, _actionIndex - 4, SET_Y, 40, SET_X, 25, SET_FONT, 75,
 			SET_EXT_BGCOLOR, -1, SET_FG_COLOR, 34, SET_POS_MODE, 0,
 			SET_WIDTH, 280, SET_KEEP_ONSCREEN, 1, LIST_END);
-		_globals->_events.setCursor(CURSOR_USE);
+		g_globals->_events.setCursor(CURSOR_USE);
 		break;
 	case 9:
-		_globals->_player._uiEnabled = false;
+		g_globals->_player._uiEnabled = false;
 		RING_INVENTORY._infoDisk._sceneNumber = 1;
 
-		if (_globals->_sceneObjects->contains(&scene->_message))
+		if (g_globals->_sceneObjects->contains(&scene->_message))
 			scene->_message.remove();
 
 		scene->_controlButton.animate(ANIM_MODE_NONE);
@@ -1993,14 +1993,14 @@ void Scene60::Action1::signal() {
 		scene->_masterButton.setFrame(1);
 		scene->_masterButton._state = 0;
 
-		_globals->clearFlag(103);
-		_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
+		g_globals->clearFlag(103);
+		g_globals->clearFlag(!g_globals->_stripNum ? 116 : 119);
 		break;
 	case 10:
 		setDelay(60);
 		break;
 	case 11:
-		_globals->_player._uiEnabled = true;
+		g_globals->_player._uiEnabled = true;
 		scene->_floppyDrive.remove();
 		remove();
 		break;
@@ -2011,7 +2011,7 @@ void Scene60::Action1::signal() {
 }
 
 void Scene60::Action2::signal() {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2022,7 +2022,7 @@ void Scene60::Action2::signal() {
 		scene->_stripManager.start(66, this);
 		break;
 	case 3:
-		_globals->_sceneManager.changeScene(50);
+		g_globals->_sceneManager.changeScene(50);
 		break;
 	}
 }
@@ -2030,7 +2030,7 @@ void Scene60::Action2::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene60::PrevObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 16);
@@ -2048,7 +2048,7 @@ void Scene60::PrevObject::doAction(int action) {
 }
 
 void Scene60::NextObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 17);
@@ -2065,7 +2065,7 @@ void Scene60::NextObject::doAction(int action) {
 }
 
 void Scene60::ExitObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 18);
@@ -2096,8 +2096,8 @@ void Scene60::ExitObject::doAction(int action) {
 		scene->_masterButton.setStrip(8);
 		scene->_masterButton.setPosition(Common::Point(143, 105));
 
-		_globals->_sceneItems.push_front(&scene->_masterButton);
-		_globals->_sceneItems.push_front(&scene->_slaveButton);
+		g_globals->_sceneItems.push_front(&scene->_masterButton);
+		g_globals->_sceneItems.push_front(&scene->_slaveButton);
 
 		scene->_redLights.postInit();
 		scene->_redLights.setVisage(60);
@@ -2111,14 +2111,14 @@ void Scene60::ExitObject::doAction(int action) {
 		if (scene->_masterButton._state)
 			scene->_masterButton.setFrame(2);
 
-		_globals->_sceneItems.push_front(&scene->_item1);
-		_globals->_sceneItems.push_front(&scene->_controlButton);
-		_globals->_sceneItems.push_front(&scene->_slaveButton);
-		_globals->_sceneItems.push_front(&scene->_masterButton);
-		_globals->_sceneItems.push_back(&scene->_item2);
+		g_globals->_sceneItems.push_front(&scene->_item1);
+		g_globals->_sceneItems.push_front(&scene->_controlButton);
+		g_globals->_sceneItems.push_front(&scene->_slaveButton);
+		g_globals->_sceneItems.push_front(&scene->_masterButton);
+		g_globals->_sceneItems.push_back(&scene->_item2);
 
-		_globals->gfxManager()._font.setFontNumber(2);
-		_globals->_sceneText._fontNumber = 2;
+		g_globals->gfxManager()._font.setFontNumber(2);
+		g_globals->_sceneText._fontNumber = 2;
 
 		scene->_action1.setActionIndex(2);
 		scene->_action1.setDelay(1);
@@ -2130,20 +2130,20 @@ void Scene60::ExitObject::doAction(int action) {
 }
 
 void Scene60::MessageObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 9);
 	} else if (action == CURSOR_USE) {
 		scene->_action1.setDelay(1);
-		_globals->setFlag(83);
+		g_globals->setFlag(83);
 	} else {
 		SceneHotspot::doAction(action);
 	}
 }
 
 void Scene60::ControlObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 11);
@@ -2151,9 +2151,9 @@ void Scene60::ControlObject::doAction(int action) {
 		if (_animateMode == ANIM_MODE_NONE)
 			SceneItem::display2(60, 14);
 		else if (!scene->_slaveButton._state) {
-			_globals->_soundHandler.play(40);
-			_globals->_soundHandler.holdAt(true);
-			_globals->_sceneManager.changeScene(20);
+			g_globals->_soundHandler.play(40);
+			g_globals->_soundHandler.holdAt(true);
+			g_globals->_sceneManager.changeScene(20);
 		} else {
 			scene->_sceneMode = 15;
 			setAction(&scene->_sequenceManager, scene, 62, NULL);
@@ -2164,7 +2164,7 @@ void Scene60::ControlObject::doAction(int action) {
 }
 
 void Scene60::SlaveObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 8);
@@ -2174,14 +2174,14 @@ void Scene60::SlaveObject::doAction(int action) {
 		else if (_state) {
 			scene->_soundHandler3.stop();
 			animate(ANIM_MODE_6, NULL);
-			_globals->clearFlag(102);
-			_globals->clearFlag(!_globals->_stripNum ? 117 : 120);
+			g_globals->clearFlag(102);
+			g_globals->clearFlag(!g_globals->_stripNum ? 117 : 120);
 			_state = 0;
 			scene->_sceneMode = 9998;
 		} else {
 			scene->_soundHandler3.play(39);
-			_globals->setFlag(102);
-			_globals->setFlag(!_globals->_stripNum ? 117 : 120);
+			g_globals->setFlag(102);
+			g_globals->setFlag(!g_globals->_stripNum ? 117 : 120);
 			animate(ANIM_MODE_5, NULL);
 			_state = 1;
 			scene->_sceneMode = 9998;
@@ -2194,7 +2194,7 @@ void Scene60::SlaveObject::doAction(int action) {
 }
 
 void Scene60::MasterObject::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 7);
@@ -2207,15 +2207,15 @@ void Scene60::MasterObject::doAction(int action) {
 			scene->_soundHandler3.stop();
 			animate(ANIM_MODE_6, NULL);
 			_state = 0;
-			_globals->clearFlag(103);
-			_globals->clearFlag(!_globals->_stripNum ? 116 : 119);
+			g_globals->clearFlag(103);
+			g_globals->clearFlag(!g_globals->_stripNum ? 116 : 119);
 			scene->_sceneMode = 9998;
 		} else {
 			scene->_soundHandler3.play(39);
 			animate(ANIM_MODE_5, NULL);
 			_state = 1;
-			_globals->setFlag(103);
-			_globals->setFlag(!_globals->_stripNum ? 116 : 119);
+			g_globals->setFlag(103);
+			g_globals->setFlag(!g_globals->_stripNum ? 116 : 119);
 			scene->_sceneMode = 9998;
 		}
 
@@ -2226,12 +2226,12 @@ void Scene60::MasterObject::doAction(int action) {
 }
 
 void Scene60::FloppyDrive::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	if (action == CURSOR_LOOK) {
 		SceneItem::display2(60, 13);
 	} else if (action == CURSOR_USE) {
-		_globals->setFlag(!_globals->_stripNum ? 118 : 121);
+		g_globals->setFlag(!g_globals->_stripNum ? 118 : 121);
 		scene->setAction(&scene->_action1);
 	} else {
 		SceneHotspot::doAction(action);
@@ -2241,12 +2241,12 @@ void Scene60::FloppyDrive::doAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 void Scene60::Item1::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_INFODISK:
 		RING_INVENTORY._infoDisk._sceneNumber = 60;
-		_globals->setFlag(!_globals->_stripNum ? 118 : 121);
+		g_globals->setFlag(!g_globals->_stripNum ? 118 : 121);
 		scene->_sceneMode = 0;
 		scene->setAction(&scene->_action1);
 		break;
@@ -2255,14 +2255,14 @@ void Scene60::Item1::doAction(int action) {
 		break;
 	case CURSOR_USE:
 		if (RING_INVENTORY._infoDisk._sceneNumber == 60) {
-			if (_globals->getFlag(118) && !_globals->_stripNum) {
-				_globals->clearFlag(118);
+			if (g_globals->getFlag(118) && !g_globals->_stripNum) {
+				g_globals->clearFlag(118);
 				scene->setAction(&scene->_action1);
 				scene->_action1.setActionIndex(9);
 				scene->_action1.setDelay(1);
 			}
-			if (_globals->getFlag(121) && !_globals->_stripNum) {
-				_globals->clearFlag(121);
+			if (g_globals->getFlag(121) && !g_globals->_stripNum) {
+				g_globals->clearFlag(121);
 				scene->setAction(&scene->_action1);
 				scene->_action1.setActionIndex(9);
 				scene->_action1.setDelay(1);
@@ -2280,7 +2280,7 @@ void Scene60::Item1::doAction(int action) {
 }
 
 void Scene60::Item::doAction(int action) {
-	Scene60 *scene = (Scene60 *)_globals->_sceneManager._scene;
+	Scene60 *scene = (Scene60 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
@@ -2312,8 +2312,8 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_speakerQText);
 	_stripManager.addSpeaker(&_speakerSText);
 
-	_globals->_player._uiEnabled = true;
-	_globals->_events.setCursor(CURSOR_USE);
+	g_globals->_player._uiEnabled = true;
+	g_globals->_events.setCursor(CURSOR_USE);
 
 	_slaveButton.postInit();
 	_slaveButton.setVisage(60);
@@ -2327,19 +2327,19 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	_masterButton.setPosition(Common::Point(143, 105));
 	_masterButton._state = 0;
 
-	_globals->_sceneItems.push_back(&_masterButton);
-	_globals->_sceneItems.push_back(&_slaveButton);
+	g_globals->_sceneItems.push_back(&_masterButton);
+	g_globals->_sceneItems.push_back(&_slaveButton);
 
 	_controlButton.postInit();
 	_controlButton.setVisage(60);
 	_controlButton.setStrip(5);
 	_controlButton.setPosition(Common::Point(233, 143));
-	_globals->_sceneItems.push_back(&_controlButton);
+	g_globals->_sceneItems.push_back(&_controlButton);
 
-	if (_globals->_stripNum == -1) {
-		_globals->_stripNum = 0;
+	if (g_globals->_stripNum == -1) {
+		g_globals->_stripNum = 0;
 	} else {
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		_sceneMode = 9999;
 		setAction(&_sequenceManager, this, 61, NULL);
 	}
@@ -2347,18 +2347,18 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 	_item1.setBounds(Rect(130, 55, 174, 70));
 	_item2.setBounds(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 
-	if (_globals->_stripNum == 0) {
-		if (_globals->getFlag(117)) {
+	if (g_globals->_stripNum == 0) {
+		if (g_globals->getFlag(117)) {
 			_slaveButton._state = 1;
 			_slaveButton.setFrame(2);
 		}
 
-		if (_globals->getFlag(116)) {
+		if (g_globals->getFlag(116)) {
 			_masterButton._state = 1;
 			_masterButton.setFrame(2);
 		}
 
-		if (_globals->getFlag(118)) {
+		if (g_globals->getFlag(118)) {
 			_controlButton.animate(ANIM_MODE_2, NULL);
 
 			_redLights.postInit();
@@ -2368,7 +2368,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 			_soundHandler1.play(35);
 
-			if (!_globals->getFlag(83)) {
+			if (!g_globals->getFlag(83)) {
 				_message.postInit();
 				_message.setVisage(60);
 				_message.setStrip2(3);
@@ -2376,23 +2376,23 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 				_message.setPosition(Common::Point(148, 85));
 				_message.animate(ANIM_MODE_2, NULL);
 				_message._numFrames = 5;
-				_globals->_sceneItems.push_front(&_message);
+				g_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.play(38);
 			}
 		}
 	} else {
-		if (_globals->getFlag(120)) {
+		if (g_globals->getFlag(120)) {
 			_slaveButton._state = 1;
 			_slaveButton.setFrame(2);
 		}
 
-		if (_globals->getFlag(119)) {
+		if (g_globals->getFlag(119)) {
 			_masterButton._state = 1;
 			_masterButton.setFrame(2);
 		}
 
-		if (_globals->getFlag(121)) {
+		if (g_globals->getFlag(121)) {
 			_controlButton.animate(ANIM_MODE_2, NULL);
 
 			_redLights.postInit();
@@ -2403,7 +2403,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 			_soundHandler1.play(35);
 
-			if (!_globals->getFlag(83)) {
+			if (!g_globals->getFlag(83)) {
 				_message.postInit();
 				_message.setVisage(60);
 				_message.setStrip2(3);
@@ -2411,24 +2411,24 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 				_message.setPosition(Common::Point(148, 85));
 				_message.animate(ANIM_MODE_2, NULL);
 				_message._numFrames = 5;
-				_globals->_sceneItems.push_front(&_message);
+				g_globals->_sceneItems.push_front(&_message);
 
 				_soundHandler2.play(38);
 			}
 		}
 	}
 
-	_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item6,
+	g_globals->_sceneItems.addItems(&_item3, &_item4, &_item5, &_item6,
 		&_item1, &_item2, NULL);
 }
 
 void Scene60::signal() {
 	if (_sceneMode != 0) {
 		if (_sceneMode == 9998) {
-			_globals->_events.setCursor(CURSOR_USE);
+			g_globals->_events.setCursor(CURSOR_USE);
 		} else if (_sceneMode == 9999) {
-			_globals->_player._uiEnabled = true;
-			_globals->_events.setCursor(CURSOR_USE);
+			g_globals->_player._uiEnabled = true;
+			g_globals->_events.setCursor(CURSOR_USE);
 
 			_gfxButton.setText(EXIT_MSG);
 			_gfxButton._bounds.center(160, 193);
@@ -2436,7 +2436,7 @@ void Scene60::signal() {
 			_gfxButton._bounds.expandPanes();
 		} else {
 			SceneItem::display2(60, _sceneMode);
-			_globals->_events.setCursor(CURSOR_USE);
+			g_globals->_events.setCursor(CURSOR_USE);
 		}
 	}
 }
@@ -2446,7 +2446,7 @@ void Scene60::process(Event &event) {
 
 	if (_screenNumber == 60) {
 		if (_gfxButton.process(event))
-			_globals->_sceneManager.changeScene(50);
+			g_globals->_sceneManager.changeScene(50);
 	}
 }
 
@@ -2456,15 +2456,15 @@ void Scene60::process(Event &event) {
  *--------------------------------------------------------------------------*/
 
 void Scene90::Action1::signal() {
-	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
+	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
 		setDelay(10);
 		break;
 	case 1:
-		_globals->_scenePalette.addRotation(64, 72, -1);
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_scenePalette.addRotation(64, 72, -1);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(90, this);
 		break;
 	case 2:
@@ -2486,17 +2486,17 @@ void Scene90::Action1::signal() {
 		if (scene->_stripManager._field2E8 == 220)
 			scene->_stripManager.start(91, this, scene);
 		else {
-			scene->_stripManager.start(_globals->getFlag(104) ? 93 : 92, this, scene);
+			scene->_stripManager.start(g_globals->getFlag(104) ? 93 : 92, this, scene);
 			_actionIndex = 7;
 		}
 		break;
 	case 6:
 		scene->_object2.animate(ANIM_MODE_NONE);
-		_globals->_player._uiEnabled = true;
+		g_globals->_player._uiEnabled = true;
 		break;
 	case 7:
 		scene->_object2.animate(ANIM_MODE_NONE);
-		_globals->_soundHandler.play(56);
+		g_globals->_soundHandler.play(56);
 		scene->_object3.animate(ANIM_MODE_5, this);
 		break;
 	case 8: {
@@ -2518,7 +2518,7 @@ void Scene90::Action1::signal() {
 		PlayerMover2 *mover = new PlayerMover2();
 		scene->_object1.addMover(mover, 10, 15, &scene->_object5);
 
-		if (!_globals->getFlag(104)) {
+		if (!g_globals->getFlag(104)) {
 			mover = new PlayerMover2();
 			scene->_object4.addMover(mover, 10, 15, &scene->_object1);
 		}
@@ -2526,17 +2526,17 @@ void Scene90::Action1::signal() {
 		break;
 	}
 	case 11:
-		_globals->_soundHandler.play(57);
-		_globals->_soundHandler.play(68);
+		g_globals->_soundHandler.play(57);
+		g_globals->_soundHandler.play(68);
 		scene->_object3.animate(ANIM_MODE_6, NULL);
 
-		SceneItem::display(90, _globals->getFlag(104) ? 15 : 14,
+		SceneItem::display(90, g_globals->getFlag(104) ? 15 : 14,
 			SET_EXT_BGCOLOR, 13, SET_KEEP_ONSCREEN, -1, SET_X, 120, SET_Y, 20, LIST_END);
 		break;
 	case 12:
 		SceneItem::display(0, 0);
-		_globals->_scenePalette.clearListeners();
-		_globals->_sceneManager.changeScene(95);
+		g_globals->_scenePalette.clearListeners();
+		g_globals->_sceneManager.changeScene(95);
 		break;
 	}
 }
@@ -2544,14 +2544,14 @@ void Scene90::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 void Scene90::Object1::doAction(int action) {
-	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
+	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(90, 7);
 		break;
 	case CURSOR_USE:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_sceneMode = 97;
 		setAction(&scene->_sequenceManager, scene, 97, this, NULL);
 		break;
@@ -2562,12 +2562,12 @@ void Scene90::Object1::doAction(int action) {
 }
 
 void Scene90::Object2::doAction(int action) {
-	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
+	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	switch (action) {
 	case OBJECT_STUNNER:
 	case CURSOR_USE:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		scene->_object6.postInit();
 		scene->_object6.setVisage(90);
 		scene->_object6.setStrip(6);
@@ -2583,7 +2583,7 @@ void Scene90::Object2::doAction(int action) {
 		SceneItem::display2(90, 8);
 		break;
 	case CURSOR_TALK:
-		_globals->_player.disableControl();
+		g_globals->_player.disableControl();
 		setAction(&scene->_sequenceManager, scene, 96, this, NULL);
 		break;
 	default:
@@ -2604,7 +2604,7 @@ Scene90::Scene90() :
 }
 
 void Scene90::stripCallback(int v) {
-	Scene90 *scene = (Scene90 *)_globals->_sceneManager._scene;
+	Scene90 *scene = (Scene90 *)g_globals->_sceneManager._scene;
 
 	if (v == 1)
 		scene->_object2.animate(ANIM_MODE_7, NULL);
@@ -2635,7 +2635,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object5._moveDiff = Common::Point(22, 22);
 	_object5.setPosition(Common::Point(151, 177));
 	_object5.changeZoom(-1);
-	_globals->_sceneItems.push_back(&_object5);
+	g_globals->_sceneItems.push_back(&_object5);
 
 	_object1.postInit();
 	_object1.setVisage(2337);
@@ -2644,9 +2644,9 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object1._moveDiff = Common::Point(20, 20);
 	_object1.setPosition(Common::Point(212, 183));
 	_object1.changeZoom(-1);
-	_globals->_sceneItems.push_back(&_object1);
+	g_globals->_sceneItems.push_back(&_object1);
 
-	if (!_globals->getFlag(104)) {
+	if (!g_globals->getFlag(104)) {
 		_object4.postInit();
 		_object4.setVisage(2331);
 		_object4.setObjectWrapper(new SceneObjectWrapper());
@@ -2654,7 +2654,7 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 		_object4._moveDiff = Common::Point(20, 20);
 		_object4.setPosition(Common::Point(251, 207));
 		_object4.changeZoom(-1);
-		_globals->_sceneItems.push_back(&_object4);
+		g_globals->_sceneItems.push_back(&_object4);
 	}
 
 	_object2.postInit();
@@ -2662,17 +2662,17 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_object2.animate(ANIM_MODE_1, NULL);
 	_object2.setPosition(Common::Point(315, 185));
 	_object2._strip = 2;
-	_globals->_sceneItems.push_back(&_object2);
+	g_globals->_sceneItems.push_back(&_object2);
 
 	_object3.postInit();
 	_object3.setVisage(90);
 	_object3.animate(ANIM_MODE_1, NULL);
 	_object3.setPosition(Common::Point(196, 181));
 	_object3.fixPriority(175);
-	_globals->_sceneItems.push_back(&_object3);
+	g_globals->_sceneItems.push_back(&_object3);
 
-	_globals->_player.disableControl();
-	_globals->_soundHandler.play(55);
+	g_globals->_player.disableControl();
+	g_globals->_soundHandler.play(55);
 	_soundHandler1.play(52);
 	_soundHandler1.holdAt(true);
 
@@ -2682,21 +2682,21 @@ void Scene90::postInit(SceneObjectList *OwnerList) {
 	_item1.setBounds(Rect(271, 65, 271, 186));
 	_item2.setBounds(Rect(0, 17, 124, 77));
 
-	_globals->_sceneItems.addItems(&_item1, &_item2, &_item3, NULL);
+	g_globals->_sceneItems.addItems(&_item1, &_item2, &_item3, NULL);
 }
 
 void Scene90::signal() {
 	switch (_sceneMode) {
 	case 91:
 		_sceneMode = 92;
-		_globals->_soundHandler.play(77, this);
+		g_globals->_soundHandler.play(77, this);
 		break;
 	case 92:
-		_globals->_scenePalette.clearListeners();
-		_globals->_game->endGame(90, 6);
+		g_globals->_scenePalette.clearListeners();
+		g_globals->_game->endGame(90, 6);
 		break;
 	case 96:
-		_globals->_player.enableControl();
+		g_globals->_player.enableControl();
 		break;
 	case 97:
 		_stripManager._field2E8 = 0;
@@ -2714,7 +2714,7 @@ void Scene90::signal() {
  *--------------------------------------------------------------------------*/
 
 void Scene95::Action1::signal() {
-	Scene95 *scene = (Scene95 *)_globals->_sceneManager._scene;
+	Scene95 *scene = (Scene95 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2739,7 +2739,7 @@ void Scene95::Action1::signal() {
 
 		Common::Point pt1(5, 198);
 		NpcMover *mover1 = new NpcMover();
-		_globals->_player.addMover(mover1, &pt1, this);
+		g_globals->_player.addMover(mover1, &pt1, this);
 
 		Common::Point pt2(9, 190);
 		NpcMover *mover2 = new NpcMover();
@@ -2751,7 +2751,7 @@ void Scene95::Action1::signal() {
 
 		Common::Point pt1(235, 72);
 		PlayerMover *mover1 = new PlayerMover();
-		_globals->_player.addMover(mover1, &pt1, NULL);
+		g_globals->_player.addMover(mover1, &pt1, NULL);
 
 		Common::Point pt2(235, 72);
 		PlayerMover *mover2 = new PlayerMover();
@@ -2782,8 +2782,8 @@ void Scene95::Action1::signal() {
 		break;
 	case 7: {
 		SceneItem::display(0, 0);
-		_globals->_player.setVisage(92);
-		_globals->_player.setPosition(Common::Point(-25, 200));
+		g_globals->_player.setVisage(92);
+		g_globals->_player.setPosition(Common::Point(-25, 200));
 		scene->_object1.setVisage(91);
 		scene->_object1.setPosition(Common::Point(-22, 220));
 
@@ -2791,7 +2791,7 @@ void Scene95::Action1::signal() {
 
 		Common::Point pt1(5, 198);
 		NpcMover *mover1 = new NpcMover();
-		_globals->_player.addMover(mover1, &pt1, this);
+		g_globals->_player.addMover(mover1, &pt1, this);
 
 		Common::Point pt2(9, 190);
 		NpcMover *mover2 = new NpcMover();
@@ -2801,7 +2801,7 @@ void Scene95::Action1::signal() {
 	case 8: {
 		Common::Point pt1(108, 112);
 		PlayerMover *mover1 = new PlayerMover();
-		_globals->_player.addMover(mover1, &pt1, this);
+		g_globals->_player.addMover(mover1, &pt1, this);
 
 		Common::Point pt2(108, 112);
 		PlayerMover *mover2 = new PlayerMover();
@@ -2809,7 +2809,7 @@ void Scene95::Action1::signal() {
 		break;
 	}
 	case 9:
-		_globals->_sceneManager.changeScene(2300);
+		g_globals->_sceneManager.changeScene(2300);
 		break;
 	}
 }
@@ -2824,14 +2824,14 @@ void Scene95::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(100, 10, 200, 100);
 
-	_globals->_player.postInit();
-	_globals->_player.setVisage(2337);
-	_globals->_player.setObjectWrapper(new SceneObjectWrapper());
-	_globals->_player._strip = 4;
-	_globals->_player._moveDiff = Common::Point(30, 30);
-	_globals->_player.setPosition(Common::Point(-35, 200));
-	_globals->_player.changeZoom(-1);
-	_globals->_player.disableControl();
+	g_globals->_player.postInit();
+	g_globals->_player.setVisage(2337);
+	g_globals->_player.setObjectWrapper(new SceneObjectWrapper());
+	g_globals->_player._strip = 4;
+	g_globals->_player._moveDiff = Common::Point(30, 30);
+	g_globals->_player.setPosition(Common::Point(-35, 200));
+	g_globals->_player.changeZoom(-1);
+	g_globals->_player.disableControl();
 
 	_object1.postInit();
 	_object1.setVisage(2333);
@@ -2855,7 +2855,7 @@ void Scene95::postInit(SceneObjectList *OwnerList) {
  *--------------------------------------------------------------------------*/
 
 void Scene6100::Action1::signal() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2872,7 +2872,7 @@ void Scene6100::Action1::signal() {
 }
 
 void Scene6100::Action2::signal() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2889,7 +2889,7 @@ void Scene6100::Action2::signal() {
 }
 
 void Scene6100::Action3::signal() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2897,9 +2897,9 @@ void Scene6100::Action3::signal() {
 		setDelay(60);
 		break;
 	case 1:
-		_globals->_scenePalette.clearListeners();
+		g_globals->_scenePalette.clearListeners();
 		scene->_fadePercent = 100;
-		_globals->_scenePalette.refresh();
+		g_globals->_scenePalette.refresh();
 		scene->loadScene(9997);
 		scene->_object1.hide();
 		scene->_object2.hide();
@@ -2910,7 +2910,7 @@ void Scene6100::Action3::signal() {
 		scene->_rocks.hide();
 		scene->_sceneText.hide();
 
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8120, this);
 		break;
 	case 2:
@@ -2918,12 +2918,12 @@ void Scene6100::Action3::signal() {
 		break;
 	case 3:
 		scene->showMessage(NULL, 0, NULL);
-		_globals->_events.setCursor(CURSOR_WALK);
+		g_globals->_events.setCursor(CURSOR_WALK);
 		scene->_stripManager.start(8130, this);
 		break;
 	case 4:
-		_globals->setFlag(76);
-		_globals->_sceneManager.changeScene(
+		g_globals->setFlag(76);
+		g_globals->_sceneManager.changeScene(
 			(scene->_stripManager._field2E8 == 135) ? 6100 : 2320);
 		remove();
 		break;
@@ -2931,7 +2931,7 @@ void Scene6100::Action3::signal() {
 }
 
 void Scene6100::Action4::signal() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0:
@@ -2948,7 +2948,7 @@ void Scene6100::Action4::signal() {
 }
 
 void Scene6100::Action5::dispatch() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 	FloatSet zeroSet;
 	const double MULTIPLY_FACTOR = 0.01744;		// 2 * pi / 360
 
@@ -2998,9 +2998,9 @@ void Scene6100::Action5::dispatch() {
 
 			if (idx != 3) {
 				scene->_objList[idx]->_floats._float1 =
-					_globals->_randomSource.getRandomNumber(199);
+					g_globals->_randomSource.getRandomNumber(199);
 				scene->_objList[idx]->_floats._float2 =
-					_globals->_randomSource.getRandomNumber(999) + 750.0;
+					g_globals->_randomSource.getRandomNumber(999) + 750.0;
 
 				scene->_objList[idx]->_floats.proc1(
 					-(scene->_turnAmount * 10 + scene->_angle) * MULTIPLY_FACTOR);
@@ -3022,34 +3022,34 @@ void Scene6100::Action5::dispatch() {
 				scene->_soundHandler.play(233);
 				scene->showMessage(NULL, 0, NULL);
 
-				if (!_globals->getFlag(76))
+				if (!g_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action1);
 				break;
 			case 1:
 				scene->_soundHandler.play(233);
 				scene->showMessage(NULL, 0, NULL);
 
-				if (!_globals->getFlag(76))
+				if (!g_globals->getFlag(76))
 					scene->_probe.setAction(&scene->_action2);
 				break;
 			case 2:
 				scene->_soundHandler.play(234);
 				scene->showMessage(NULL, 0, NULL);
 
-				if (!_globals->getFlag(76))
+				if (!g_globals->getFlag(76))
 					scene->_probe.setAction(NULL);
 				scene->setAction(&scene->_action3);
 				break;
 			}
 
-			_globals->_scenePalette.clearListeners();
+			g_globals->_scenePalette.clearListeners();
 			scene->_fadePercent = 0;
 		}
 	}
 }
 
 void Scene6100::GetBoxAction::signal() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	switch (_actionIndex++) {
 	case 0: {
@@ -3062,7 +3062,7 @@ void Scene6100::GetBoxAction::signal() {
 	}
 	case 1: {
 		scene->showMessage(SCENE6100_TAKE_CONTROLS, 35, this);
-		_globals->_scenePalette.clearListeners();
+		g_globals->_scenePalette.clearListeners();
 
 		Common::Point pt(scene->_rocks._position.x, scene->_rocks._position.y - 10);
 		NpcMover *mover = new NpcMover();
@@ -3081,13 +3081,13 @@ void Scene6100::GetBoxAction::signal() {
 		break;
 	case 5:
 		scene->showMessage(NULL, 0, NULL);
-		_globals->_sceneManager.changeScene(2320);
+		g_globals->_sceneManager.changeScene(2320);
 		remove();
 	}
 }
 
 void Scene6100::GetBoxAction::dispatch() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	if (!scene->_probe._mover && (scene->_getBoxAction._actionIndex >= 1)) {
 		if (scene->_getBoxAction._actionIndex == 1) {
@@ -3113,7 +3113,7 @@ void Scene6100::Action7::signal() {
 		setDelay(90);
 		break;
 	case 2:
-		_globals->_sceneManager.changeScene(2100);
+		g_globals->_sceneManager.changeScene(2100);
 		remove();
 		break;
 	}
@@ -3134,7 +3134,7 @@ void Scene6100::Object::synchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 void Scene6100::ProbeMover::dispatch() {
-	Scene6100 *scene = (Scene6100 *)_globals->_sceneManager._scene;
+	Scene6100 *scene = (Scene6100 *)g_globals->_sceneManager._scene;
 
 	if (!dontMove()) {
 		if (scene->_speed > 0) {
@@ -3168,10 +3168,10 @@ Scene6100::Scene6100(): Scene() {
 	_angle = 0;
 	_msgActive = false;
 
-	_globals->_sceneHandler->_delayTicks = 8;
+	g_globals->_sceneHandler->_delayTicks = 8;
 
-	_globals->_player.disableControl();
-	_globals->_events.setCursor(CURSOR_WALK);
+	g_globals->_player.disableControl();
+	g_globals->_events.setCursor(CURSOR_WALK);
 }
 
 void Scene6100::synchronize(Serializer &s) {
@@ -3240,10 +3240,10 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 
 	int baseVal = 2000;
 	for (int idx = 0; idx < 3; ++idx) {
-		_objList[idx]->_floats._float1 = _globals->_randomSource.getRandomNumber(999);
+		_objList[idx]->_floats._float1 = g_globals->_randomSource.getRandomNumber(999);
 		_objList[idx]->_floats._float2 = baseVal;
 		_objList[idx]->_floats._float3 = 0.0;
-		baseVal += _globals->_randomSource.getRandomNumber(499);
+		baseVal += g_globals->_randomSource.getRandomNumber(499);
 
 		_objList[idx]->postInit();
 		_objList[idx]->setVisage(6100);
@@ -3251,23 +3251,23 @@ void Scene6100::postInit(SceneObjectList *OwnerList) {
 		_objList[idx]->_strip = 2;
 
 		_objList[idx]->setPosition(Common::Point(
-			_globals->_randomSource.getRandomNumber(319), 60));
+			g_globals->_randomSource.getRandomNumber(319), 60));
 		_objList[idx]->fixPriority(1);
 		_objList[idx]->changeZoom(-1);
 	}
 
 	setAction(&_action5);
-	_globals->_scenePalette.addRotation(96, 143, -1);
+	g_globals->_scenePalette.addRotation(96, 143, -1);
 
-	if (!_globals->getFlag(76))
+	if (!g_globals->getFlag(76))
 		_probe.setAction(&_action4);
 
-	_globals->_soundHandler.play(231);
+	g_globals->_soundHandler.play(231);
 }
 
 void Scene6100::remove() {
-	_globals->_player.disableControl();
-	_globals->_scenePalette.clearListeners();
+	g_globals->_player.disableControl();
+	g_globals->_scenePalette.clearListeners();
 	Scene::remove();
 }
 
@@ -3294,18 +3294,18 @@ void Scene6100::dispatch() {
 		_probe._action->dispatch();
 
 	// Handle mouse controlling the turning
-	int changeAmount = (_globals->_events._mousePos.x - 160) / -20;
+	int changeAmount = (g_globals->_events._mousePos.x - 160) / -20;
 	_turnAmount += (changeAmount - _turnAmount) / 2;
 
 	if (_fadePercent < 100) {
 		_fadePercent += 10;
 		if (_fadePercent >= 100) {
-			_globals->_scenePalette.addRotation(96, 143, -1);
+			g_globals->_scenePalette.addRotation(96, 143, -1);
 			_fadePercent = 100;
 		}
 
 		byte adjustData[] = {0xff, 0xff, 0xff, 0};
-		_globals->_scenePalette.fade(adjustData, false, _fadePercent);
+		g_globals->_scenePalette.fade(adjustData, false, _fadePercent);
 	}
 
 	if (_action != &_action3) {

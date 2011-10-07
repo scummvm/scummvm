@@ -49,6 +49,35 @@ bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long
 	return Z_OK == ::uncompress(dst, dstLen, src, srcLen);
 }
 
+bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen) {
+	if (!dst || !dstLen || !src || !srcLen)
+		return false;
+
+	// Initialize zlib
+	z_stream stream;
+	stream.next_in = const_cast<byte *>(src);
+	stream.avail_in = srcLen;
+	stream.next_out = dst;
+	stream.avail_out = dstLen;
+	stream.zalloc = Z_NULL;
+	stream.zfree = Z_NULL;
+	stream.opaque = Z_NULL;
+
+	// Negative MAX_WBITS tells zlib there's no zlib header
+	int err = inflateInit2(&stream, -MAX_WBITS);
+	if (err != Z_OK)
+		return false;
+
+	err = inflate(&stream, Z_SYNC_FLUSH);
+	if (err != Z_OK && err != Z_STREAM_END) {
+		inflateEnd(&stream);
+		return false;
+	}
+
+	inflateEnd(&stream);
+	return true;
+}
+
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
  * other SeekableReadStream and will then provide on-the-fly decompression support.

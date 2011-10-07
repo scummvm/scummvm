@@ -472,7 +472,6 @@ fbpack	Fatty Bear's Fun Pack
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
 	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
-	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 71	-	-	Karl Ove Hufthammer
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
@@ -485,6 +484,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
 	af2bd1a43b50b55915d87994e093203d	34829	de	Windows	HE 99	Updated	-	Lightkey
+	e63a0b9249b5ca4cc4d3ac34305ae360	-1	nb	Windows	HE 99	-	-	Karl Ove Hufthammer
 	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	-	-	sanguinehearts
 	56b5922751be7ffd771b38dda56b028b	34837	nl	Wii	HE 100	-	-	George Kormendi
 	3ae7f002d9256b8bdf76aaf8a3a069f8	34837	gb	Wii	HE 100	-	-	George Kormendi

@@ -201,8 +201,8 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	char xfer;
 	int i;
 	int startarg;
-	int str_leng = 0; /* Used for stuff like "%13s" */
-	int unsigned_var = 0;
+	int strLength = 0; /* Used for stuff like "%13s" */
+	bool unsignedVar = false;
 
 	if (position.segment)
 		startarg = 2;
@@ -236,7 +236,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				mode = 0;
 			} else {
 				mode = 1;
-				str_leng = 0;
+				strLength = 0;
 			}
 		} else if (mode == 1) { /* xfer != '%' */
 			char fillchar = ' ';
@@ -256,22 +256,22 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				else if (isdigit(static_cast<unsigned char>(xfer)) || (xfer == '-'))
 					source--; // Go to start of length argument
 
-				str_leng = strtol(source, &destp, 10);
+				strLength = strtol(source, &destp, 10);
 
 				if (destp > source)
 					source = destp;
 
-				if (str_leng < 0) {
+				if (strLength < 0) {
 					align = ALIGN_LEFT;
-					str_leng = -str_leng;
+					strLength = -strLength;
 				} else if (align != ALIGN_CENTER)
 					align = ALIGN_RIGHT;
 
 				xfer = *source++;
 			} else
-				str_leng = 0;
+				strLength = 0;
 
-			assert((target - targetbuf) + str_leng + 1 <= maxsize);
+			assert((target - targetbuf) + strLength + 1 <= maxsize);
 
 			switch (xfer) {
 			case 's': { /* Copy string */
@@ -286,7 +286,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
-				int extralen = str_leng - slen;
+				int extralen = strLength - slen;
 				assert((target - targetbuf) + extralen <= maxsize);
 				if (extralen < 0)
 					extralen = 0;
@@ -342,7 +342,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 'c': { /* insert character */
 				assert((target - targetbuf) + 2 <= maxsize);
 				if (align >= 0)
-					while (str_leng-- > 1)
+					while (strLength-- > 1)
 						*target++ = ' '; /* Format into the text */
 				char argchar = arguments[paramindex++];
 				if (argchar)
@@ -353,8 +353,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			case 'x':
 			case 'u':
-				unsigned_var = 1;
+				unsignedVar = true;
 			case 'd': { /* Copy decimal */
+				// In the new SCI2 kString function, %d is used for unsigned
+				// integers. An example is script 962 in Shivers - it uses %d
+				// to create file names.
+				if (getSciVersion() >= SCI_VERSION_2)
+					unsignedVar = true;
+
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
 
@@ -362,14 +368,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					format_string = "%x";
 
 				int val = arguments[paramindex];
-				if (!unsigned_var)
+				if (!unsignedVar)
 					val = (int16)arguments[paramindex];
 
 				target += sprintf(target, format_string, val);
 				paramindex++;
 				assert((target - targetbuf) <= maxsize);
 
-				unsigned_var = 0;
+				unsignedVar = false;
 
 				mode = 0;
 			}
@@ -384,7 +390,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			if (align) {
 				int written = target - writestart;
-				int padding = str_leng - written;
+				int padding = strLength - written;
 
 				if (padding > 0) {
 					if (align > 0) {

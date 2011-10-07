@@ -2,21 +2,21 @@
 # Copyright (C) 2010-2011 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Eugene Sandulenko <sev@scummvm.org>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-08-20 15:12+0100\n"
+"POT-Creation-Date: 2011-10-04 20:43+0200\n"
 "PO-Revision-Date: 2011-08-20 13:22+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
+"Language: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Russian\n"
-"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%"
-"10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: gui/about.cpp:91
 #, c-format
@@ -70,11 +70,11 @@ msgstr "Закрыть"
 msgid "Mouse click"
 msgstr "Клик мышью"
 
-#: gui/gui-manager.cpp:122 base/main.cpp:286
+#: gui/gui-manager.cpp:122 base/main.cpp:283
 msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
-#: gui/gui-manager.cpp:125 base/main.cpp:289
+#: gui/gui-manager.cpp:125 base/main.cpp:286
 msgid "Remap keys"
 msgstr "Переназначить клавиши"
 
@@ -89,7 +89,7 @@ msgstr "Назначить"
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:313 gui/launcher.cpp:936
 #: gui/launcher.cpp:940 gui/massadd.cpp:91 gui/options.cpp:1179
 #: engines/engine.cpp:359 engines/engine.cpp:370 engines/scumm/dialogs.cpp:192
-#: engines/scumm/scumm.cpp:1770 engines/agos/animation.cpp:545
+#: engines/scumm/scumm.cpp:1776 engines/agos/animation.cpp:551
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:344
 #: engines/sword1/animation.cpp:354 engines/sword1/animation.cpp:360
@@ -598,8 +598,8 @@ msgid "Special dithering modes supported by some games"
 msgstr "Специальные режимы рендеринга, поддерживаемые некоторыми играми"
 
 #: gui/options.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2247
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:472
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2248
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:476
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -992,35 +992,35 @@ msgstr "Растеризатор со сглаживанием (16bpp)"
 msgid "Antialiased (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
-#: base/main.cpp:206
+#: base/main.cpp:203
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Движок не поддерживает уровень отладки '%s'"
 
-#: base/main.cpp:274
+#: base/main.cpp:271
 msgid "Menu"
 msgstr "Меню"
 
-#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:274 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Пропустить"
 
-#: base/main.cpp:280 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:277 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Пауза"
 
-#: base/main.cpp:283
+#: base/main.cpp:280
 msgid "Skip line"
 msgstr "Пропустить строку"
 
-#: base/main.cpp:442
+#: base/main.cpp:439
 msgid "Error running game:"
 msgstr "Ошибка запуска игры:"
 
-#: base/main.cpp:466
+#: base/main.cpp:463
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не могу найти движок для запуска выбранной игры"
 
@@ -1179,17 +1179,17 @@ msgstr ""
 "Пожалуйста, обратитесь в файл README за базовой информацией, а также "
 "инструкциями о том, как получить дальнейшую помощь."
 
-#: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:109
+#: engines/dialogs.cpp:316 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:174
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:309 engines/mohawk/dialogs.cpp:110
+#: engines/dialogs.cpp:317 engines/mohawk/dialogs.cpp:110
 #: engines/mohawk/dialogs.cpp:175
 msgid "~C~ancel"
 msgstr "О~т~мена"
 
-#: engines/dialogs.cpp:312
+#: engines/dialogs.cpp:320
 msgid "~K~eys"
 msgstr "~К~лавиши"
 
@@ -1278,7 +1278,7 @@ msgstr "Игра остановлена.  Нажмите пробел чтобы продолжить."
 msgid "Are you sure you want to restart?  (Y/N)"
 msgstr "Вы уверены, что хотите начать снова?  (Y/N)"
 
-#. I18N: you may specify 'Yes' symbol at the endo fo the line. See previous comment
+#. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:184
 msgid "Are you sure you want to quit?  (Y/N)"
 msgstr "Вы уверены, что хотите выйти?  (Y/N)"
@@ -1879,7 +1879,7 @@ msgstr "Лететь вправо"
 msgid "Fly to lower right"
 msgstr "Лететь вправо-вниз"
 
-#: engines/scumm/scumm.cpp:1768
+#: engines/scumm/scumm.cpp:1774
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -1888,7 +1888,7 @@ msgstr ""
 "Режим \"родного\" MIDI требует обновление Roland Upgrade от\n"
 "LucasArts, но не хватает %s. Переключаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2258 engines/agos/saveload.cpp:189
+#: engines/scumm/scumm.cpp:2264 engines/agos/saveload.cpp:189
 #, c-format
 msgid ""
 "Failed to save game state to file:\n"
@@ -1899,7 +1899,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2265 engines/agos/saveload.cpp:154
+#: engines/scumm/scumm.cpp:2271 engines/agos/saveload.cpp:154
 #, c-format
 msgid ""
 "Failed to load game state from file:\n"
@@ -1910,7 +1910,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2277 engines/agos/saveload.cpp:197
+#: engines/scumm/scumm.cpp:2283 engines/agos/saveload.cpp:197
 #, c-format
 msgid ""
 "Successfully saved game state in file:\n"
@@ -1921,7 +1921,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/scumm/scumm.cpp:2492
+#: engines/scumm/scumm.cpp:2498
 msgid ""
 "Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To "
 "play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' "
@@ -1957,15 +1957,15 @@ msgstr "Главное меню"
 msgid "~W~ater Effect Enabled"
 msgstr "Эффекты воды включены"
 
-#: engines/sci/engine/kfile.cpp:678
+#: engines/sci/engine/kfile.cpp:682
 msgid "Restore game:"
 msgstr "Восстановить игру:"
 
-#: engines/sci/engine/kfile.cpp:678
+#: engines/sci/engine/kfile.cpp:682
 msgid "Restore"
 msgstr "Восствновить"
 
-#: engines/agos/animation.cpp:544
+#: engines/agos/animation.cpp:550
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr "Файл заставки '%s' не найден!"
@@ -2346,22 +2346,22 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2146
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:533
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2147
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:537
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2152
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:538
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2153
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:542
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2207
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2208
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2249
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:477
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2250
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:481
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
@@ -2385,11 +2385,11 @@ msgstr "Текущий видеорежим"
 msgid "Current scale"
 msgstr "Текущий масштаб"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:558
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:562
 msgid "Active filter mode: Linear"
 msgstr "Активный режим фильтра: Линейный"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:560
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
 msgid "Active filter mode: Nearest"
 msgstr "Активный режим фильтра: Ближайший"
 
@@ -2416,11 +2416,13 @@ msgstr "Вправо"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
+#: backends/platform/bada/form.cpp:282
 msgid "Left Click"
 msgstr "Левый щелчок"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/bada/form.cpp:274
 msgid "Right Click"
 msgstr "Правый щелчок"
 
@@ -2722,43 +2724,79 @@ msgstr "Главное меню"
 msgid "Do you really want to quit?"
 msgstr "Вы действительно хотите выйти?"
 
-#: backends/events/gph/gph-events.cpp:366
-#: backends/events/gph/gph-events.cpp:409
+#: backends/events/gph/gph-events.cpp:338
+#: backends/events/gph/gph-events.cpp:381
 #: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Режим 'касаний' тачскрина - Левый клик"
 
-#: backends/events/gph/gph-events.cpp:368
-#: backends/events/gph/gph-events.cpp:411
+#: backends/events/gph/gph-events.cpp:340
+#: backends/events/gph/gph-events.cpp:383
 #: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Режим 'касаний' тачскрина - Правый клик"
 
-#: backends/events/gph/gph-events.cpp:370
-#: backends/events/gph/gph-events.cpp:413
+#: backends/events/gph/gph-events.cpp:342
+#: backends/events/gph/gph-events.cpp:385
 #: backends/events/openpandora/op-events.cpp:145
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Режим 'касаний' тачскрина - Пролёт (без клика)"
 
-#: backends/events/gph/gph-events.cpp:390
+#: backends/events/gph/gph-events.cpp:362
 msgid "Maximum Volume"
 msgstr "Максимальная громкость"
 
-#: backends/events/gph/gph-events.cpp:392
+#: backends/events/gph/gph-events.cpp:364
 msgid "Increasing Volume"
 msgstr "Увеличение громкости"
 
-#: backends/events/gph/gph-events.cpp:398
+#: backends/events/gph/gph-events.cpp:370
 msgid "Minimal Volume"
 msgstr "Минимальная громкость"
 
-#: backends/events/gph/gph-events.cpp:400
+#: backends/events/gph/gph-events.cpp:372
 msgid "Decreasing Volume"
 msgstr "Уменьшение громкости"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
 msgstr "Проверяю обновления..."
+
+#: backends/platform/bada/form.cpp:270
+#, fuzzy
+msgid "Right Click Once"
+msgstr "Правый щелчок"
+
+#: backends/platform/bada/form.cpp:278
+#, fuzzy
+msgid "Move Only"
+msgstr "Только озвучка"
+
+#: backends/platform/bada/form.cpp:292
+msgid "Escape Key"
+msgstr ""
+
+#: backends/platform/bada/form.cpp:297
+#, fuzzy
+msgid "Game Menu"
+msgstr "Игра"
+
+#: backends/platform/bada/form.cpp:302
+#, fuzzy
+msgid "Show Keypad"
+msgstr "Показать клавиатуру"
+
+#: backends/platform/bada/form.cpp:310
+msgid "Control Mouse"
+msgstr ""
+
+#: backends/events/maemosdl/maemosdl-events.cpp:92
+msgid "Clicking Enabled"
+msgstr ""
+
+#: backends/events/maemosdl/maemosdl-events.cpp:92
+msgid "Clicking Disabled"
+msgstr ""
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."

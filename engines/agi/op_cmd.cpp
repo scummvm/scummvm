@@ -73,9 +73,9 @@ void cmdDecrement(AgiGame *state, uint8 *p) {
 void cmdAssignN(AgiGame *state, uint8 *p) {
 	_v[p0] = p1;
 
-	// WORKAROUND for a bug in fan _game "Get outta SQ"
+	// WORKAROUND for a bug in fan game "Get outta SQ"
 	// Total number of points is stored in variable 7, which
-	// is then incorrectly assigned to 0. Thus, when the _game
+	// is then incorrectly assigned to 0. Thus, when the game
 	// is restarted, "Points 0 of 0" is shown. We set the
 	// variable to the correct value here
 	// Fixes bug #1942476 - "AGI: Fan(Get Outta SQ) - Score
@@ -184,10 +184,10 @@ void cmdNewRoom(AgiGame *state, uint8 *p) {
 	// of the copy protection string (Copy protection is in logic.128) was
 	// left over to the intro scene (Starts with room 73 i.e. logic.073).
 	// The intro scene checks for any keys pressed and if it finds any it
-	// jumps to the _game's start (Room 1 i.e. logic.001). We clear the
+	// jumps to the game's start (Room 1 i.e. logic.001). We clear the
 	// keyboard buffer when the intro sequence's first room (Room 73) is
 	// loaded so that no keys from the copy protection scene can be left
-	// over to cause the intro to skip to the _game's start.
+	// over to cause the intro to skip to the game's start.
 	if (getGameID() == GID_GOLDRUSH && p0 == 73)
 		state->keypress = 0;
 }
@@ -275,9 +275,9 @@ void cmdSetPriority(AgiGame *state, uint8 *p) {
 	// It seems that in this scene, ego's priority is set to 8, but the priority of
 	// the last dwarf with the soup bowls (view 152) is also set to 8, which causes
 	// the dwarf to be drawn behind ego
-	// With this workaround, when the _game scripts set the priority of view 152
+	// With this workaround, when the game scripts set the priority of view 152
 	// (seventh dwarf with soup bowls), ego's priority is set to 7
-	// The _game script itself sets priotity 8 for ego before she starts walking,
+	// The game script itself sets priotity 8 for ego before she starts walking,
 	// and then releases the fixed priority set on ego after ego is seated
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
@@ -902,7 +902,7 @@ void cmdDraw(AgiGame *state, uint8 *p) {
 	state->_vm->_sprites->eraseUpdSprites();
 	vt.flags |= fDrawn;
 
-	// WORKAROUND: This fixes a bug with AGI Fanmade _game Space Trek.
+	// WORKAROUND: This fixes a bug with AGI Fanmade game Space Trek.
 	// The original workaround checked if AGI version was <= 2.440, which could
 	// cause regressions with some AGI games. The original workaround no longer
 	// works for Space Trek in ScummVM, as all fanmade games are set to use
@@ -1259,7 +1259,6 @@ void cmdSetMenuItem(AgiGame *state, uint8 *p) {
 }
 
 void cmdVersion(AgiGame *state, uint8 *p) {
-	char verMsg[64];
 	char ver2Msg[] =
 	    "\n"
 	    "                               \n\n"
@@ -1269,33 +1268,17 @@ void cmdVersion(AgiGame *state, uint8 *p) {
 	    "                             \n\n"
 	    "  Emulating AGI v%x.002.%03x\n";
 	// no Sierra as it wraps textbox
-	char *r, *q;
-	int ver, maj, min;
-	char msg[256];
-	int gap;
-	int len;
 
-	sprintf(verMsg, TITLE " v%s", gScummVMVersion);
+	Common::String verMsg = TITLE " v%s";
+	
+	int ver = getVersion();
+	int maj = (ver >> 12) & 0xf;
+	int min = ver & 0xfff;
 
-	ver = getVersion();
-	maj = (ver >> 12) & 0xf;
-	min = ver & 0xfff;
+	verMsg += (maj == 2 ? ver2Msg : ver3Msg);
+	verMsg = Common::String::format(verMsg.c_str(), gScummVMVersion, maj, min);
 
-	q = maj == 2 ? ver2Msg : ver3Msg;
-	r = strchr(q + 1, '\n');
-
-	// insert our version into the other version
-	len = strlen(verMsg);
-	gap = r - q;
-
-	if (gap < 0)
-		gap = 0;
-	else
-		gap = (gap - len) / 2;
-
-	strncpy(q + 1 + gap, verMsg, strlen(verMsg));
-	sprintf(msg, q, maj, min);
-	state->_vm->messageBox(msg);
+	state->_vm->messageBox(verMsg.c_str());
 }
 
 void cmdConfigureScreen(AgiGame *state, uint8 *p) {
@@ -1368,7 +1351,7 @@ void cmdRestartGame(AgiGame *state, uint8 *p) {
 
 	state->_vm->_sound->stopSound();
 	sel = getflag(fAutoRestart) ? 0 :
-		state->_vm->selectionBox(" Restart _game, or continue? \n\n\n", buttons);
+		state->_vm->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
 		state->_vm->_restartGame = true;
@@ -1442,7 +1425,8 @@ void cmdPreventInput(AgiGame *state, uint8 *p) {
 	state->_vm->newInputMode(INPUT_NONE);
 	state->inputEnabled = false;
 
-	state->_vm->clearPrompt();
+	// Always clear with black background. Fixes bug #3080041.
+	state->_vm->clearPrompt(true);
 }
 
 void cmdGetString(AgiGame *state, uint8 *p) {
@@ -1515,20 +1499,25 @@ void cmdSetCursorChar(AgiGame *state, uint8 *p) {
 }
 
 void cmdSetKey(AgiGame *state, uint8 *p) {
-	int key;
+	int key = 256 * p1 + p0;
+	int slot = -1;
 
-	if (state->lastController >= MAX_CONTROLLERS) {
+	for (int i = 0; i < MAX_CONTROLLERS; i++) {
+		if (slot == -1 && !state->controllers[i].keycode)
+			slot = i;
+
+		if (state->controllers[i].keycode == key && state->controllers[i].controller == p2)
+			return;
+	}
+
+	if (slot == -1) {
 		warning("Number of set.keys exceeded %d", MAX_CONTROLLERS);
 		return;
 	}
 
-	debugC(4, kDebugLevelScripts, "%d %d %d", p0, p1, p2);
-
-	key = 256 * p1 + p0;
-
-	state->controllers[state->lastController].keycode = key;
-	state->controllers[state->lastController].controller = p2;
-	state->lastController++;
+	debugC(4, kDebugLevelScripts, "cmdSetKey: %d %d %d", p0, p1, p2);
+	state->controllers[slot].keycode = key;
+	state->controllers[slot].controller = p2;
 
 	state->controllerOccured[p2] = false;
 }

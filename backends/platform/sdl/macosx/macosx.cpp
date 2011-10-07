@@ -118,4 +118,51 @@ bool OSystem_MacOSX::displayLogFile() {
 	return err != noErr;
 }
 
+Common::String OSystem_MacOSX::getSystemLanguage() const {
+#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+	CFArrayRef availableLocalizations = CFBundleCopyBundleLocalizations(CFBundleGetMainBundle());
+	if (availableLocalizations) {
+		CFArrayRef preferredLocalizations = CFBundleCopyPreferredLocalizationsFromArray(availableLocalizations);
+		CFRelease(availableLocalizations);
+		if (preferredLocalizations) {
+			CFIndex localizationsSize = CFArrayGetCount(preferredLocalizations);
+			// Since we have a list of sorted preferred localization, I would like here to
+			// check that they are supported by the TranslationManager and take the first
+			// one that is supported. The listed localizations are taken from the Bundle
+			// plist file, so they should all be supported, unless the plist file is not
+			// synchronized with the translations.dat file. So this is not really a big
+			// issue. And because getSystemLanguage() is called from the constructor of
+			// TranslationManager (therefore before the instance pointer is set), calling
+			// TransMan here results in an infinite loop and creation of a lot of TransMan
+			// instances.
+			/*
+			for (CFIndex i = 0 ; i < localizationsSize ; ++i) {
+				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, i);
+				char buffer[10];
+				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				int32 languageId = TransMan.findMatchingLanguage(buffer);
+				if (languageId != -1) {
+					CFRelease(preferredLocalizations);
+					return TransMan.getLangById(languageId);
+				}
+			}
+			*/
+			if (localizationsSize > 0) {
+				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, 0);
+				char buffer[10];
+				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFRelease(preferredLocalizations);
+				return buffer;
+			}
+			CFRelease(preferredLocalizations);
+		}
+		
+	}
+	// Falback to POSIX implementation
+	return OSystem_POSIX::getSystemLanguage();
+#else // USE_DETECTLANG
+	return OSystem_POSIX::getSystemLanguage();
+#endif // USE_DETECTLANG
+}
+
 #endif

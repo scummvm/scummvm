@@ -94,11 +94,11 @@ public:
 	void deinitialize();
 };
 
-extern TSageEngine *_vm;
+extern TSageEngine *g_vm;
 
-#define ALLOCATE_HANDLE(x) _vm->_memoryManager.allocate(x)
-#define ALLOCATE(x) _vm->_memoryManager.allocate2(x)
-#define DEALLOCATE(x) _vm->_memoryManager.deallocate(x)
+#define ALLOCATE_HANDLE(x) g_vm->_memoryManager.allocate(x)
+#define ALLOCATE(x) g_vm->_memoryManager.allocate2(x)
+#define DEALLOCATE(x) g_vm->_memoryManager.deallocate(x)
 
 } // End of namespace TsAGE
 

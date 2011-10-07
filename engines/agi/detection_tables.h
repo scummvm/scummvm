@@ -299,8 +299,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_P("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS),
 
-	// King's Quest 2 (Amiga) 2.0J (Broken)
-	GAME_P("kq2", "2.0J 1987-01-29 [OBJECT decrypted]", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
+	// King's Quest 2 (Amiga) 2.0J
+	GAME_P("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
 
 	// King's Quest 2 (Mac) 2.0R
 	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
@@ -708,39 +708,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
-	{
-		// Groza
-		{
-			"agi-fanmade",
-			"Groza (russian) [AGDS sample]",
-			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
-		},
-		GID_FANMADE,
-		GType_V2,
-		GF_AGDS,
-		0x2440
-	},
+	GAME_LVFPNF("agi-fanmade", "Groza (russian) [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1, 
+		Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformPC,GType_V2),
 
-	{
-		// Get Outta SQ
-		{
-			"agi-fanmade",
-			"Get Outta Space Quest",
-			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
-		},
-		GID_GETOUTTASQ,
-		GType_V2,
-		0,
-		0x2440
-	},
+	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1, 
+		Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformPC,GType_V2),
 
 	FANMADE_F("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),

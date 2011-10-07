@@ -57,7 +57,7 @@ void KyraEngine_MR::showBadConscience() {
 		talkObject.x = 30;
 	talkObject.y = 30;
 
-	static const char *animFilenames[] = {
+	static const char *const animFilenames[] = {
 		"GUNFL00.WSA", "GUNFL01.WSA", "GUNFL02.WSA", "GUNFL03.WSA", "GUNFL04.WSA", "GUNFL05.WSA", "GUNFL06.WSA", "GUNFL07.WSA",
 		"GUNFR00.WSA", "GUNFR01.WSA", "GUNFR02.WSA", "GUNFR03.WSA", "GUNFR04.WSA", "GUNFR05.WSA", "GUNFR06.WSA", "GUNFR07.WSA"
 	};
@@ -128,7 +128,7 @@ void KyraEngine_MR::showGoodConscience() {
 		talkObject.x = 30;
 	talkObject.y = 30;
 
-	static const char *animFilenames[] = {
+	static const char *const animFilenames[] = {
 		"STUFL00.WSA", "STUFL02.WSA", "STUFL04.WSA", "STUFL03.WSA", "STUFL01.WSA",
 		"STUFR00.WSA", "STUFR02.WSA", "STUFR04.WSA", "STUFR03.WSA", "STUFR01.WSA"
 	};

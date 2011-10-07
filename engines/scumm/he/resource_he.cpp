@@ -386,6 +386,40 @@ int ScummEngine_v72he::getSoundResourceSize(ResId id) {
 	return size;
 }
 
+void ScummEngine_v90he::setResourceOffHeap(int typeId, int resId, int val) {
+	debug(0, "setResourceOffHeap: type %d resId %d toggle %d", typeId, resId, val);
+	ResType type;
+
+	switch (typeId) {
+	case 1:
+		type = rtRoom;
+		break;
+	case 2:
+		type = rtScript;
+		break;
+	case 3:
+		type = rtCostume;
+		break;
+	case 4:
+		type = rtSound;
+		break;
+	case 6:
+		type = rtCharset;
+		break;
+	case 19:
+		type = rtImage;
+		break;
+	default:
+		error("setResourceOffHeap: default case %d", typeId);
+	}
+
+	if (val == 1) {
+		_res->setOffHeap(type, resId);
+	} else {
+		_res->setOnHeap(type, resId);
+	}
+}
+
 #endif
 
 } // End of namespace Scumm

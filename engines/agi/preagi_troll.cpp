@@ -362,7 +362,6 @@ void TrollEngine::intro() {
 	drawStr(9, 10, kColorDefault, IDS_TRO_INTRO_0);
 	drawStr(14, 15, kColorDefault, IDS_TRO_INTRO_1);
 	_gfx->doUpdate();
-	_system->updateScreen();
 	_system->delayMillis(3200);
 
 	CursorMan.showMouse(true);

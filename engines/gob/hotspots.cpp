@@ -202,6 +202,8 @@ Hotspots::Hotspots(GobEngine *vm) : _vm(vm) {
 	_currentKey   = 0;
 	_currentIndex = 0;
 	_currentId    = 0;
+	_currentX     = 0;
+	_currentY     = 0;
 }
 
 Hotspots::~Hotspots() {
@@ -385,6 +387,8 @@ void Hotspots::push(uint8 all, bool force) {
 	backup.key        = _currentKey;
 	backup.id         = _currentId;
 	backup.index      = _currentIndex;
+	backup.x          = _currentX;
+	backup.y          = _currentY;
 
 	backup.hotspots = new Hotspot[size];
 
@@ -415,6 +419,8 @@ void Hotspots::push(uint8 all, bool force) {
 	_currentKey   = 0;
 	_currentId    = 0;
 	_currentIndex = 0;
+	_currentX     = 0;
+	_currentY     = 0;
 
 	_stack.push(backup);
 }
@@ -445,6 +451,8 @@ void Hotspots::pop() {
 	_currentKey   = backup.key;
 	_currentId    = backup.id;
 	_currentIndex = backup.index;
+	_currentX     = backup.x;
+	_currentY     = backup.y;
 
 	delete[] backup.hotspots;
 }
@@ -497,6 +505,9 @@ void Hotspots::enter(uint16 index) {
 	if ((spot.getState() == (kStateFilled | kStateType1)) ||
 	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, -(spot.id & 0x0FFF));
+
+	_currentX = _vm->_global->_inter_mouseX;
+	_currentY = _vm->_global->_inter_mouseY;
 
 	if (spot.funcEnter != 0)
 		call(spot.funcEnter);
@@ -649,9 +660,22 @@ bool Hotspots::checkHotspotChanged() {
 	// Get the current hotspot
 	key = checkMouse(kTypeMove, id, index);
 
-	if (key == _currentKey)
-		// Nothing changed => nothing to do
+	uint16 mouseX = _vm->_global->_inter_mouseX;
+	uint16 mouseY = _vm->_global->_inter_mouseY;
+
+	if (key == _currentKey) {
+		// Still the same hotspot, just update the mouse position
+
+		_currentX = mouseX;
+		_currentY = mouseY;
 		return false;
+	}
+
+	// In Geisha, no move hotspot changes should occur when
+	// we didn't actually move the mouse
+	if (_vm->getGameType() == kGameTypeGeisha)
+		if ((mouseX == _currentX) && (mouseY == _currentY))
+			return false;
 
 	// Leave the old area
 	if (isValid(_currentKey, _currentId,_currentIndex))
@@ -660,6 +684,8 @@ bool Hotspots::checkHotspotChanged() {
 	_currentKey   = key;
 	_currentId    = id;
 	_currentIndex = index;
+	_currentX     = mouseX;
+	_currentY     = mouseY;
 
 	// Enter the new one
 	if (isValid(key, id, index))
@@ -775,7 +801,8 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 							_vm->_draw->blitCursor();
 
 
-						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination))
+						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination) &&
+						                            (_vm->getGameType() != kGameTypeGeisha))
 						// If the hotspot changed, leave the old one
 						// Code not present in Fascination executables
 								leave(_currentIndex);
@@ -1348,12 +1375,12 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		inputs[inputCount].str        = 0;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
-			uint16 length = _vm->_game->_script->readUint16();
+			inputs[inputCount].length = _vm->_game->_script->readUint16();
 
 			inputs[inputCount].str =
 				(const char *)(_vm->_game->_script->getData() + _vm->_game->_script->pos());
 
-			_vm->_game->_script->skip(length);
+			_vm->_game->_script->skip(inputs[inputCount].length);
 		}
 
 		if (left == 0xFFFF) {

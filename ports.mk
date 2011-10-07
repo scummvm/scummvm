@@ -129,8 +129,7 @@ scummvm-static: $(OBJS)
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB) \
-		$(OSX_ICONV) \
-		-lSystemStubs
+		$(OSX_ICONV)
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -158,10 +157,13 @@ osxsnap: bundle
 	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
 	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
 	mkdir ScummVM-snapshot/doc/fr
-	cp $(srcdir)/doc/fr/QuickStart_fr ./ScummVM-snapshot/doc/fr/QuickStart_fr
+	cp $(srcdir)/doc/fr/DemarrageRapide ./ScummVM-snapshot/doc/fr/DemarrageRapide
+	mkdir ScummVM-snapshot/doc/no-nb
+	cp $(srcdir)doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/no-nb/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
@@ -187,6 +189,7 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)/doc
 	mkdir -p $(WIN32PATH)/doc/de
 	mkdir -p $(WIN32PATH)/doc/fr
+	mkdir -p $(WIN32PATH)/doc/no-nb
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -197,11 +200,13 @@ endif
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
-	cp $(srcdir)/README $(WIN32PATH)/README.txt
+	cp $(srcdir)/doc/de/Neues $(WIN32PATH)/doc/de/Neues.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
+	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
+	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
+	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp $(srcdir)/doc/de/Liesmich $(WIN32PATH)/doc/de/Liesmich.txt
-	cp $(srcdir)/doc/fr/QuickStart_fr $(WIN32PATH)/doc/fr/QuickStart_fr.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
@@ -255,6 +260,12 @@ endif
 	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
 	package_finalize scummvm-ps3.pkg
+
+ps3run: $(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE)
+	sprxlinker $(EXECUTABLE)
+	make_self $(EXECUTABLE) $(EXECUTABLE).self
+	ps3load $(EXECUTABLE).self
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg

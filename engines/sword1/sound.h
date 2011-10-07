@@ -36,9 +36,9 @@ class Mixer;
 
 namespace Sword1 {
 
-#define	TOTAL_FX_PER_ROOM	7		// total loop & random fx per room (see fx_list.c)
-#define	MAX_ROOMS_PER_FX	7		// max no. of rooms in the fx's room,vol list
-#define	MAX_FXQ_LENGTH		32		// max length of sound queue - ie. max number of fx that can be stored up/playing together
+#define TOTAL_FX_PER_ROOM   7       // total loop & random fx per room (see fx_list.c)
+#define MAX_ROOMS_PER_FX    7       // max no. of rooms in the fx's room,vol list
+#define MAX_FXQ_LENGTH      32      // max length of sound queue - ie. max number of fx that can be stored up/playing together
 
 #define FX_SPOT 1
 #define FX_LOOP 2
@@ -105,15 +105,15 @@ private:
 	bool _waveVolume[WAVE_VOL_TAB_LENGTH];
 	uint16 _waveVolPos;
 	Common::File _cowFile;
-	uint32		 *_cowHeader;
-	uint32		 _cowHeaderSize;
-	uint8		 _currentCowFile;
-	CowMode		 _cowMode;
+	uint32       *_cowHeader;
+	uint32       _cowHeaderSize;
+	uint8        _currentCowFile;
+	CowMode      _cowMode;
 	Audio::SoundHandle _speechHandle, _fxHandle;
 	Common::RandomSource _rnd;
 
 	QueueElement _fxQueue[MAX_FXQ_LENGTH];
-	uint8		 _endOfQueue;
+	uint8        _endOfQueue;
 	Audio::Mixer *_mixer;
 	ResMan *_resMan;
 	bool _bigEndianSpeech;

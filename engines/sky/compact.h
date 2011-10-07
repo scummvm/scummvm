@@ -88,7 +88,7 @@ private:
 	uint16  **_cptTypes;
 	Common::File	*_cptFile;
 	uint32	_resetDataPos;
-	static const char *_typeNames[NUM_CPT_TYPES];
+	static const char *const _typeNames[NUM_CPT_TYPES];
 };
 
 } // End of namespace Sky

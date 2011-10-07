@@ -21,6 +21,10 @@
  */
 
 #include "common/endian.h"
+#include "common/str.h"
+#include "common/translation.h"
+
+#include "gui/message.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"
@@ -30,8 +34,12 @@
 #include "gob/game.h"
 #include "gob/draw.h"
 #include "gob/video.h"
+#include "gob/save/saveload.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
+
+#include "gob/minigames/geisha/diving.h"
+#include "gob/minigames/geisha/penetration.h"
 
 namespace Gob {
 
@@ -40,7 +48,16 @@ namespace Gob {
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 #define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
-Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm) {
+Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
+	_diving(0), _penetration(0) {
+
+	_diving      = new Geisha::Diving(vm);
+	_penetration = new Geisha::Penetration(vm);
+}
+
+Inter_Geisha::~Inter_Geisha() {
+	delete _penetration;
+	delete _diving;
 }
 
 void Inter_Geisha::setupOpcodesDraw() {
@@ -51,9 +68,12 @@ void Inter_Geisha::setupOpcodesFunc() {
 	Inter_v1::setupOpcodesFunc();
 
 	OPCODEFUNC(0x03, oGeisha_loadCursor);
+	OPCODEFUNC(0x12, oGeisha_loadTot);
 	OPCODEFUNC(0x25, oGeisha_goblinFunc);
 	OPCODEFUNC(0x3A, oGeisha_loadSound);
 	OPCODEFUNC(0x3F, oGeisha_checkData);
+	OPCODEFUNC(0x4D, oGeisha_readData);
+	OPCODEFUNC(0x4E, oGeisha_writeData);
 
 	OPCODEGOB(0, oGeisha_gamePenetration);
 	OPCODEGOB(1, oGeisha_gameDiving);
@@ -72,6 +92,50 @@ void Inter_Geisha::oGeisha_loadCursor(OpFuncParams &params) {
 		warning("Geisha Stub: oGeisha_loadCursor: script[1] & 0x80");
 
 	o1_loadCursor(params);
+}
+
+struct TOTTransition {
+	const char *to;
+	const char *from;
+	int32 offset;
+};
+
+static const TOTTransition kTOTTransitions[] = {
+	{"chambre.tot", "photo.tot"  ,  1801},
+	{"mo.tot"     , "chambre.tot", 13580},
+	{"chambre.tot", "mo.tot"     ,   564},
+	{"hard.tot"   , "chambre.tot", 13917},
+	{"carte.tot"  , "hard.tot"   , 17926},
+	{"chambre.tot", "carte.tot"  , 14609},
+	{"chambre.tot", "mo.tot"     ,  3658},
+	{"streap.tot" , "chambre.tot", 14652},
+	{"bonsai.tot" , "porte.tot"  ,  2858},
+	{"lit.tot"    , "napa.tot"   ,  3380},
+	{"oko.tot"    , "chambre.tot", 14146},
+	{"chambre.tot", "oko.tot"    ,  2334}
+};
+
+void Inter_Geisha::oGeisha_loadTot(OpFuncParams &params) {
+	o1_loadTot(params);
+
+	// WORKAROUND: Geisha often displays text while it loads a new TOT.
+	//             Back in the days, this took long enough so that the text
+	//             could be read. Since this isn't the case anymore, we'll
+	//             wait for the user to press a key or click the mouse.
+	bool needWait = false;
+
+	for (int i = 0; i < ARRAYSIZE(kTOTTransitions); i++)
+		if ((_vm->_game->_script->pos() == kTOTTransitions[i].offset) &&
+		    (_vm->_game->_totToLoad     == kTOTTransitions[i].to) &&
+		    (_vm->_game->_curTotFile    == kTOTTransitions[i].from)) {
+
+			needWait = true;
+			break;
+		}
+
+	if (needWait)
+		while (!_vm->_util->keyPressed())
+			_vm->_util->longDelay(1);
 }
 
 void Inter_Geisha::oGeisha_loadSound(OpFuncParams &params) {
@@ -114,47 +178,109 @@ int16 Inter_Geisha::loadSound(int16 slot) {
 }
 
 void Inter_Geisha::oGeisha_checkData(OpFuncParams &params) {
-	const char *file   = _vm->_game->_script->evalString();
-	      int16 varOff = _vm->_game->_script->readVarIndex();
+	Common::String file = _vm->_game->_script->evalString();
+	int16 varOff = _vm->_game->_script->readVarIndex();
 
-	Common::String fileName(file);
+	file.toLowercase();
+	if (file.hasSuffix(".0ot"))
+		file.setChar('t', file.size() - 3);
 
-	fileName.toLowercase();
-	if (fileName.hasSuffix(".0ot"))
-		fileName.setChar('t', fileName.size() - 3);
+	bool exists = false;
 
-	if (!_vm->_dataIO->hasFile(fileName)) {
-		warning("File \"%s\" not found", fileName.c_str());
-		WRITE_VAR_OFFSET(varOff, (uint32) -1);
-	} else
-		WRITE_VAR_OFFSET(varOff, 50); // "handle" between 50 and 128 = in archive
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	if (mode == SaveLoad::kSaveModeNone) {
+
+		exists = _vm->_dataIO->hasFile(file);
+		if (!exists)
+			warning("File \"%s\" not found", file.c_str());
+
+	} else if (mode == SaveLoad::kSaveModeSave)
+		exists = _vm->_saveLoad->getSize(file.c_str()) >= 0;
+	else if (mode == SaveLoad::kSaveModeExists)
+		exists = true;
+
+	WRITE_VAR_OFFSET(varOff, exists ? 50 : (uint32)-1);
+}
+
+void Inter_Geisha::oGeisha_readData(OpFuncParams &params) {
+	const char *file = _vm->_game->_script->evalString();
+
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d)", file, dataVar);
+
+	WRITE_VAR(1, 1);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->load(file, dataVar, 0, 0)) {
+
+			GUI::MessageDialog dialog(_("Failed to load game state from file."));
+			dialog.runModal();
+
+		} else
+			WRITE_VAR(1, 0);
+
+		return;
+
+	} else if (mode == SaveLoad::kSaveModeIgnore) {
+		WRITE_VAR(1, 0);
+		return;
+	}
+
+	warning("Attempted to read from file \"%s\"", file);
+}
+
+void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
+	const char *file = _vm->_game->_script->evalString();
+
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int32 size    = _vm->_game->_script->readValExpr();
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes)", file, dataVar, size);
+
+	WRITE_VAR(1, 1);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->save(file, dataVar, size, 0)) {
+
+			GUI::MessageDialog dialog(_("Failed to save game state to file."));
+			dialog.runModal();
+
+		} else
+			WRITE_VAR(1, 0);
+
+	} else if (mode == SaveLoad::kSaveModeIgnore) {
+		WRITE_VAR(1, 0);
+		return;
+	} else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", file);
+
+	WRITE_VAR(1, 0);
 }
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
-	uint16 var1 = _vm->_game->_script->readUint16();
-	uint16 var2 = _vm->_game->_script->readUint16();
-	uint16 var3 = _vm->_game->_script->readUint16();
-	uint16 var4 = _vm->_game->_script->readUint16();
+	uint16 var1      = _vm->_game->_script->readUint16();
+	uint16 var2      = _vm->_game->_script->readUint16();
+	uint16 var3      = _vm->_game->_script->readUint16();
+	uint16 resultVar = _vm->_game->_script->readUint16();
 
-	WRITE_VAR_UINT32(var4, 0);
+	bool result = _penetration->play(var1, var2, var3);
 
-	warning("Geisha Stub: Minigame \"Penetration\": %d, %d, %d, %d", var1, var2, var3, var4);
-
-	// Fudge a win for now
-	WRITE_VAR_UINT32(var4, 1);
+	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
 }
 
 void Inter_Geisha::oGeisha_gameDiving(OpGobParams &params) {
-	uint16 var1 = _vm->_game->_script->readUint16();
-	uint16 var2 = _vm->_game->_script->readUint16();
-	uint16 var3 = _vm->_game->_script->readUint16();
+	uint16 playerCount      = _vm->_game->_script->readUint16();
+	uint16 hasPearlLocation = _vm->_game->_script->readUint16();
+	uint16 resultVar        = _vm->_game->_script->readUint16();
 
-	WRITE_VAR_UINT32(var3, 1);
+	bool result = _diving->play(playerCount, hasPearlLocation);
 
-	warning("Geisha Stub: Minigame \"Diving\": %d, %d, %d", var1, var2, var3);
-
-	// Fudge a win for now
-	WRITE_VAR_UINT32(var3, 0);
+	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
 }
 
 void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
