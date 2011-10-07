@@ -66,7 +66,7 @@ void Scene600::Action1::signal() {
 		scene->_object3.remove();
 
 		for (int percent = 100; percent >= 0; percent -= 5) {
-			BF_GLOBALS._scenePalette.fade((byte *)&black, false, percent);
+			BF_GLOBALS._scenePalette.fade((const byte *)&black, false, percent);
 			g_system->delayMillis(10);
 		}
 
