@@ -62,6 +62,7 @@ MidiPlayer::~MidiPlayer() {
 
 	Common::StackLock lock(_mutex);
 	if (_driver) {
+		_driver->setTimerCallback(0, 0);
 		_driver->close();
 		delete _driver;
 	}
