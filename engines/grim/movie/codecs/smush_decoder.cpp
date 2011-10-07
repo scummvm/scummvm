@@ -53,9 +53,10 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 static uint16 smushDestTable[5786];
 
 SmushDecoder::SmushDecoder() {
-	// Set colour-format statically here for SMUSH (5650), to allow for differing PixelFormat in engine and renderer (and conversion from Surface there)
+	// Set colour-format statically here for SMUSH (5650), to allow for differing
+	// PixelFormat in engine and renderer (and conversion from Surface there)
 	// Which means 16 bpp, 565, shift of 11, 5, 0, 0 for RGBA
-	_format = Graphics::PixelFormat(16, 5, 6, 5, 0, 11, 5, 0, 0);
+	_format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	_nbframes = 0;
 	_file = 0;
 	_width = 0;
@@ -68,7 +69,7 @@ SmushDecoder::SmushDecoder() {
 	_y = 0;
 	_blocky8 = new Blocky8();
 	_blocky16 = new Blocky16();
-	init();
+	_stream = NULL;
 }
 
 SmushDecoder::~SmushDecoder() {
@@ -78,7 +79,6 @@ SmushDecoder::~SmushDecoder() {
 
 void SmushDecoder::init() {
 	_IACTpos = 0;
-	_stream = NULL;
 	_curFrame = 0;
 	_videoPause = false;
 

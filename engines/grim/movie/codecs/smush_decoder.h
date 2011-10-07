@@ -68,6 +68,7 @@ private:
 	bool _videoPause;
 	bool _videoLooping;
 	bool _demo;
+
 public:
 	SmushDecoder();
 	~SmushDecoder();

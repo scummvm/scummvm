@@ -47,7 +47,7 @@ MoviePlayer::MoviePlayer() {
 	_x = 0;
 	_y = 0;
 	_videoDecoder = NULL;
-	_surface = new Graphics::Surface();
+	_internalSurface = NULL;
 	_externalSurface = new Graphics::Surface();
 }
 
@@ -89,15 +89,8 @@ bool MoviePlayer::prepareFrame() {
 	if (_videoDecoder->getTimeToNextFrame() > 0)
 		return false;
 
-	_surface->copyFrom(*_videoDecoder->decodeNextFrame());
-
-	// Avoid updating the _externalBuffer if it's flagged as updateNeeded
-	// since the draw-loop might access it then. This way, any late frames
-	// will be dropped, and the sound will continue, in synch.
-	if (!_updateNeeded) {
-		_externalSurface->copyFrom(*_surface);
-		_updateNeeded = true;
-	}
+	_internalSurface = _videoDecoder->decodeNextFrame();
+	_updateNeeded = true;
 
 	_movieTime = _videoDecoder->getElapsedTime();
 	_frame = _videoDecoder->getCurFrame();
@@ -106,6 +99,12 @@ bool MoviePlayer::prepareFrame() {
 }
 
 Graphics::Surface *MoviePlayer::getDstSurface() {
+	_frameMutex.lock();
+	if (_updateNeeded && _internalSurface) {
+		_externalSurface->copyFrom(*_internalSurface);
+	}
+	_frameMutex.unlock();
+
 	return _externalSurface;
 }
 
@@ -114,15 +113,13 @@ void MoviePlayer::init() {
 	_movieTime = 0;
 	_updateNeeded = false;
 	_videoFinished = false;
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void MoviePlayer::deinit() {
 	_frameMutex.unlock();
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 	_videoDecoder->close();
-	_surface->free();
+	_internalSurface = NULL;
 	_externalSurface->free();
 
 	_videoPause = false;
@@ -143,6 +140,9 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 		warning("Playing video '%s'.\n", filename.c_str());
 
 	init();
+
+	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
+	_internalSurface = NULL;
 
 	return true;
 }

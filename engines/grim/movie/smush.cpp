@@ -48,16 +48,17 @@ bool SmushPlayer::loadFile(Common::String filename) {
 		return _videoDecoder->loadFile(filename);
 }
 
-SmushDecoder* SmushPlayer::getDecoder() {
-	return dynamic_cast<SmushDecoder*>(_videoDecoder);
+SmushDecoder *SmushPlayer::getDecoder() {
+	return dynamic_cast<SmushDecoder *>(_videoDecoder);
 }
 
 void SmushPlayer::init() {
+	SmushDecoder *decoder = getDecoder();
 	if (_demo) {
-		_x = getDecoder()->getX();
-		_y = getDecoder()->getY();
+		_x = decoder->getX();
+		_y = decoder->getY();
 	} else {
-		getDecoder()->setLooping(_videoLooping);
+		decoder->setLooping(_videoLooping);
 	}
 	MoviePlayer::init();
 }

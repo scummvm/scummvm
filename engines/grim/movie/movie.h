@@ -37,7 +37,8 @@ protected:
 	Common::String _fname;
 	Common::Mutex _frameMutex;
 	Video::VideoDecoder *_videoDecoder;		//< Initialize this to your needed subclass of VideoDecoder in the constructor
-	Graphics::Surface *_surface, *_externalSurface;
+	const Graphics::Surface *_internalSurface;
+	Graphics::Surface *_externalSurface;
 	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
@@ -87,7 +88,7 @@ public:
 	 */
 	virtual void saveState(SaveGame *state);
 	virtual void restoreState(SaveGame *state);
-	
+
 protected:
 	static void timerCallback(void *ptr);
 	/**
