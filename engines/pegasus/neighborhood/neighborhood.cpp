@@ -36,6 +36,7 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/neighborhood/neighborhood.h"
+#include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
 
 namespace Pegasus {

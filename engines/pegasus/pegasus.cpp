@@ -61,6 +61,7 @@
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
+#include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
 
 namespace Pegasus {
@@ -1360,6 +1361,9 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 		break;
 	case kPrehistoricID:
 		neighborhood = new Prehistoric(g_AIArea, this);
+		break;
+	case kFullTSAID:
+		neighborhood = new FullTSA(g_AIArea, this);
 		break;
 	case kTinyTSAID:
 		neighborhood = new TinyTSA(g_AIArea, this);

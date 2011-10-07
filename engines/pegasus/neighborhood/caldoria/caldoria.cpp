@@ -37,6 +37,7 @@
 #include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
 #include "pegasus/neighborhood/caldoria/caldoriamessages.h"
 #include "pegasus/neighborhood/caldoria/caldoriamirror.h"
+#include "pegasus/neighborhood/tsa/fulltsa.h"
 
 namespace Pegasus {
 
