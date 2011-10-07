@@ -1522,18 +1522,14 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	// argv[1] - view (used with view 23602 in Shivers 1)
 	// argv[2] - loop
 	// argv[3] - cel
-	// argv[4] - unknown (row?)
-	// argv[5] - unknown (column?)
+	// argv[4] - x (subfunction 4 only)
+	// argv[5] - y (subfunction 4 only)
 
 	// Subops:
 	// 0 - return the view
 	// 1 - return the loop
 	// 2, 3 - nop
-	// 4 - returns some kind of hash (?) based on the view and the two last params
-
-	// This seems to be a debug function, but it could be used to check if
-	// the jigsaw pieces "stick" together (they currently don't, unless I'm missing
-	// something)
+	// 4 - return value of pixel at x, y
 
 	return s->r_acc;
 }
