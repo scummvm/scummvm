@@ -150,41 +150,41 @@ void L1_new_dofile() {
 // Debugging message functions
 
 void L1_PrintDebug() {
-	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
+	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Debug: ");
 		lua_Object strObj = lua_getparam(1);
 		if (lua_isnil(strObj))
 			msg += "(nil)";
 		if (!lua_isstring(strObj))
 			return;
-		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf("%s", msg.c_str());
+		msg += Common::String(lua_getstring(strObj));
+		debug(msg.c_str());
 	}
 }
 
 void L1_PrintError() {
-	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
+	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Error: ");
 		lua_Object strObj = lua_getparam(1);
 		if (lua_isnil(strObj))
 			msg += "(nil)";
 		if (!lua_isstring(strObj))
 			return;
-		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf("%s", msg.c_str());
+		msg += Common::String(lua_getstring(strObj));
+		debug(msg.c_str());
 	}
 }
 
 void L1_PrintWarning() {
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL) {
+	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Warning: ");
 		lua_Object strObj = lua_getparam(1);
 		if (lua_isnil(strObj))
 			msg += "(nil)";
 		if (!lua_isstring(strObj))
 			return;
-		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf("%s", msg.c_str());
+		msg += Common::String(lua_getstring(strObj));
+		debug(msg.c_str());
 	}
 }
 
@@ -685,8 +685,7 @@ void L1_MakeCurrentSet() {
 	}
 
 	const char *name = lua_getstring(nameObj);
-	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-		printf("Entered new scene '%s'.\n", name);
+	Debug::debug(Debug::Engine, "Entered new scene '%s'.", name);
 	g_grim->setSet(name);
 }
 
@@ -1169,13 +1168,11 @@ void L1_LightMgrStartup() {
 }
 
 void L1_JustLoaded() {
-	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-		error("OPCODE USAGE VERIFICATION: JustLoaded");
+	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
 void L1_SetEmergencyFont() {
-	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
+	Debug::error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
 void L1_typeOverride() {

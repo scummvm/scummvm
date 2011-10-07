@@ -128,8 +128,8 @@ void Sector::load(TextSplitter &ts) {
 		_type = SpecialType;
 	else if (strstr(buf, "chernobyl"))
 		_type = HotType;
-	else if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-		error("Unknown sector type '%s' in room setup", buf);
+	else
+		Debug::error(Debug::Sets, "Unknown sector type '%s' in room setup", buf);
 
 	ts.scanString(" default visibility %256s", 1, buf);
 	if (strcmp(buf, "visible") == 0)

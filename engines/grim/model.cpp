@@ -241,8 +241,8 @@ void Model::loadText(TextSplitter *ts, CMap *cmap) {
 		_rootHierNode[num]._sprite = NULL;
 	}
 
-	if (!ts->isEof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-		warning("Unexpected junk at end of model text");
+	if (!ts->isEof())
+		Debug::warning(Debug::Models, "Unexpected junk at end of model text");
 }
 
 void Model::draw() const {

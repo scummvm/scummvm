@@ -159,13 +159,11 @@ void SmushDecoder::handleFrame() {
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;100;0;0;0;0;0;2;0;
 			//  Lola engine room (loops a limited number of times?):
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;90;1;0;0;0;0;2;0;
-			if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				debug("Announcement data: %s\n", anno);
+			Debug::debug(Debug::Movie, "Announcement data: %s\n", anno);
 			// It looks like the announcement data is actually for setting some of the
 			// header parameters, not for any looping purpose
 		} else {
-			if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				debug("Announcement header not understood: %s\n", anno);
+			Debug::debug(Debug::Movie, "Announcement header not understood: %s\n", anno);
 		}
 		delete[] anno;
 		tag = _file->readUint32BE();
@@ -187,8 +185,8 @@ void SmushDecoder::handleFrame() {
 			else
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
-			error("SmushDecoder::handleFrame() unknown tag");
+		} else {
+			Debug::error(Debug::Movie, "SmushDecoder::handleFrame() unknown tag");
 		}
 	} while (pos < size);
 	delete[] frame;
@@ -445,7 +443,7 @@ bool SmushDecoder::setupAnim() {
 
 	flags = READ_LE_UINT16(s_header + 18);
 	// Output information for checking out the flags
-	if (gDebugLevel == DEBUG_MOVIE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
+	if (Debug::isChannelEnabled(Debug::Movie | Debug::Info)) {
 		warning("SMUSH Flags:");
 		for (int i = 0; i < 16; i++)
 			warning(" %d", (flags & (1 << i)) != 0);

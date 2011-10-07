@@ -327,7 +327,7 @@ void TextObject::draw() {
 		_created = true;
 	}
 
-	if ((_justify > 3 || _justify < 0) && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+	if (_justify > 3 || _justify < 0)
 		warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
 	g_driver->drawTextObject(this);
