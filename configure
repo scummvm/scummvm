@@ -150,6 +150,7 @@ _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
+_release_optimization=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -173,6 +174,7 @@ _plugins_default=static
 _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
+_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -769,6 +771,8 @@ Optional Features:
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
+  --enable-release-mode    enable building in release mode (without optimizations)
+  --enable-release-optimization enable release optimizations
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -996,11 +1000,25 @@ for ac_option in $@; do
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
 		;;
+	--enable-release-mode)
+		_release_build=yes
+		;;
+	--disable-release-mode)
+		_release_build=no
+		;;
 	--enable-release)
 		_release_build=yes
+		_release_optimization=yes
 		;;
 	--disable-release)
 		_release_build=no
+		_release_optimization=no
+		;;
+	--enable-release-optimization)
+		_release_optimization=yes
+		;;
+	--disable-release-optimization)
+		_release_optimization=no
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -1271,6 +1289,11 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 		# Enable release build by default.
 		_release_build=yes
 	fi
+
+	if test "$_release_optimization" = auto; then
+		# Enable release optimization by default.
+		_release_optimization=yes
+	fi
 	;;
 esac
 
@@ -1280,12 +1303,8 @@ if test "$_debug_build" != no; then
 fi
 
 if test "$_release_build" = yes; then
-	# Release mode enabled: enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
-	# We will also add a define, which indicates we are doing
+	# Add a define, which indicates we are doing
 	# an build for a release version.
-	CXXFLAGS="$CXXFLAGS -O2"
-	CXXFLAGS="$CXXFLAGS -Wuninitialized"
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
@@ -1799,7 +1818,7 @@ case $_host_os in
 			CXXFLAGS="$CXXFLAGS -fstrict-aliasing"
 		fi
 		CXXFLAGS="$CXXFLAGS -finline-limit=300"
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mthumb-interwork"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D__ARM_ARCH_5__"
@@ -1902,7 +1921,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		;;
 	gamecube)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mogc"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -1988,7 +2007,7 @@ case $_host_os in
 		fi
 		LDFLAGS="$LDFLAGS -L$PSPSDK/lib"
 		LDFLAGS="$LDFLAGS -specs=$_srcdir/backends/platform/psp/psp.spec"
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		CXXFLAGS="$CXXFLAGS -D_PSP_FW_VERSION=150"
@@ -2015,7 +2034,7 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	wii)
-		CXXFLAGS="$CXXFLAGS -Os"
+		_optimization_level=-Os
 		CXXFLAGS="$CXXFLAGS -mrvl"
 		CXXFLAGS="$CXXFLAGS -mcpu=750"
 		CXXFLAGS="$CXXFLAGS -meabi"
@@ -2036,7 +2055,7 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3"
+		_optimization_level=-O3
 		CXXFLAGS="$CXXFLAGS -fno-inline-functions"
 		CXXFLAGS="$CXXFLAGS -march=armv4"
 		CXXFLAGS="$CXXFLAGS -mtune=xscale"
@@ -2101,7 +2120,7 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DGPH_DEBUG"
 			else
 				# Use -O3 on the Caanoo for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -mtune=arm926ej-s"
@@ -2144,7 +2163,7 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes; then
 				DEFINES="$DEFINES -DNOSERIAL"
 			fi
-			CXXFLAGS="$CXXFLAGS -O3"
+			_optimization_level=-O3
 			CXXFLAGS="$CXXFLAGS -funroll-loops"
 			CXXFLAGS="$CXXFLAGS -fschedule-insns2"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
@@ -2239,7 +2258,7 @@ if test -n "$_host"; then
 			_seq_midi=no
 			;;
 		maemo)
-			CXXFLAGS="$CXXFLAGS -Os"
+			_optimization_level=-Os
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s"
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			INCLUDES="$INCLUDES -I/usr/X11R6/include"
@@ -2329,7 +2348,7 @@ if test -n "$_host"; then
 				DEFINES="$DEFINES -DOP_DEBUG"
 			else
 				# Use -O3 on the OpenPandora for non-debug builds.
-				CXXFLAGS="$CXXFLAGS -O3"
+				_optimization_level=-O3
 			fi
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
@@ -2688,6 +2707,16 @@ fi
 echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
+
+#
+# Check whether to enable release optimization
+#
+if test "$_release_optimization" = yes; then
+	# Enable optimizations. This also
+	# makes it possible to use -Wuninitialized, so let's do that.
+	CXXFLAGS="$CXXFLAGS $_optimization_level"
+	CXXFLAGS="$CXXFLAGS -Wuninitialized"
+fi
 
 #
 # Check whether plugin support is requested and possible
