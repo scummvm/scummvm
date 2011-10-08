@@ -130,7 +130,13 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 		else
 			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
 
-		writeSelector(_segMan, obj, SELECTOR(handle), obj);
+		// When Shivers first inits the sound slots they don't actually have sounds to play
+		// so setting the handle selector causes the in-game sound manager to report all slots
+		// as being used, 0 is being reported as a valid sound resource file for Shivers so
+		// even though newSound->soundRes is 0, newSound->pStreamAud is not
+		if (!g_sci->getGameId() == GID_SHIVERS) {
+			writeSelector(_segMan, obj, SELECTOR(handle), obj);
+		}
 	}
 }
 
