@@ -368,7 +368,10 @@ void GfxFrameout::kernelFrameout() {
 			continue;
 		}
 
-		if (it->planeBack)
+		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
+		// Since I first wrote the patch, the race has stopped occurring for me though.
+		// I'll leave this for investigation later, when someone can reproduce.
+		if (it->pictureId == 0xffff)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		GuiResourceId planeMainPictureId = it->pictureId;
