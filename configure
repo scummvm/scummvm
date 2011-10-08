@@ -174,7 +174,8 @@ _plugins_default=static
 _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
-_optimization_level=-O2
+_optimization_level=
+_default_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -2708,10 +2709,23 @@ echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
+
+#
+# If a specific optimization level was requested, enable release optimization
+#
+if test -n "$_optimization_level" ; then
+	# Ports will specify an optimization level and expect that to be enabled
+	if test "$_release_optimization" != no ; then
+		_release_optimization=yes
+	fi
+else
+	_optimization_level=$_default_optimization_level
+fi
+
 #
 # Check whether to enable release optimization
 #
-if test "$_release_optimization" = yes; then
+if test "$_release_optimization" = yes ; then
 	# Enable optimizations. This also
 	# makes it possible to use -Wuninitialized, so let's do that.
 	CXXFLAGS="$CXXFLAGS $_optimization_level"
