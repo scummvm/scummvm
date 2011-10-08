@@ -579,7 +579,7 @@ begin_credits("Credits");
 	begin_section("Lastexpress");
 			add_person("Matthew Hoops", "clone2727", "");
 			add_person("Jordi Vilalta Prat", "jvprat", "");
-			add_person("Julien Templier", "littleboy", "");			
+			add_person("Julien Templier", "littleboy", "");
 	end_section();
 
 	  begin_section("Lure");
@@ -667,7 +667,6 @@ begin_credits("Credits");
 		  add_person("Vladimir Menshakov", "whoozle", "");
 	  end_section();
 
-
 	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
@@ -679,7 +678,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Toon");
-	  	add_person("Sylvain Dupont", "SylvainTV", "");
+		add_person("Sylvain Dupont", "SylvainTV", "");
 	  end_section();
 
 	  begin_section("Touch&eacute;");
