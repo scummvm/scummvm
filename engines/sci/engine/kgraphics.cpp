@@ -379,8 +379,13 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	debugC(kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
-	dest[2] = make_reg(0, textHeight);
-	dest[3] = make_reg(0, textWidth);
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		dest[2] = make_reg(0, textHeight);
+		dest[3] = make_reg(0, textWidth);
+	} else {
+		dest[2] = make_reg(0, textWidth);
+		dest[3] = make_reg(0, textHeight);
+	}
 
 	return s->r_acc;
 }

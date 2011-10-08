@@ -94,15 +94,8 @@ void GfxText32::drawTextBitmap(reg_t textObject, uint16 textX, uint16 textY, uin
 
 	while (*txt) {
 		charCount = GetLongest(txt, maxWidth, font);
-		if (charCount == 0) {
-			// If the text does not fit inside the given plane, use the
-			// whole screen.
-			// TODO/FIXME: Is this really needed? Perhaps some other
-			// functionality is missing instead?
-			charCount = GetLongest(txt, _screen->getWidth() - textX, font);
-			if (charCount == 0)
-				break;
-		}
+		if (charCount == 0)
+			break;
 
 		uint16 curX = textX;
 
@@ -248,11 +241,6 @@ void GfxText32::kernelTextSize(const char *text, int16 font, int16 maxWidth, int
 	Size(rect, text, font, maxWidth);
 	*textWidth = rect.width();
 	*textHeight = rect.height();
-
-	// TODO: Setting textWidth properly changes the subtitle plane top to 0.
-	// I have no idea why, so we currently hack in the old behavior here.
-	*textWidth = 0;
-	*textHeight = 0;
 }
 
 void GfxText32::StringWidth(const char *str, GuiResourceId fontId, int16 &textWidth, int16 &textHeight) {
