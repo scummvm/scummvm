@@ -239,6 +239,37 @@ public:
 	virtual void dispatch();
 };
 
+class Scene820: public SceneExt {
+	/* Objects */
+	class PowerButton: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class ForwardButton: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class BackButton: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	ASoundExt _sound1;
+	SpeakerGameText _gameTextSpeaker;
+	PowerButton _powerButton;
+	BackButton _backButton;
+	ForwardButton _forwardButton;
+	NamedObject _object4, _object5;
+	NamedHotspot _item1;
+	int _pageNumber;
+
+	Scene820();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene830: public PalettedScene {
 	/* Items */
 	class SouthEastExit: public NamedHotspot {

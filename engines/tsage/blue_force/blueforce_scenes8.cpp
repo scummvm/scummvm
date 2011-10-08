@@ -1297,6 +1297,179 @@ void Scene810::dispatch() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 820 - Microfiche Reader
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene820::PowerButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 5);
+		return true;
+	case CURSOR_USE:
+		scene->_sound1.play(69);
+		if (_flags & OBJFLAG_HIDING) {
+			scene->_pageNumber = 0;
+			show();
+			BF_GLOBALS._scenePalette.loadPalette(821);
+			BF_GLOBALS._scenePalette.refresh();
+
+			SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+				SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		} else {
+			BF_GLOBALS._scenePalette.loadPalette(820);
+			BF_GLOBALS._scenePalette.refresh();
+
+			scene->_object4.remove();
+			scene->_object5.remove();
+
+			SceneItem::display(0, 0);
+			hide();
+
+			BF_GLOBALS._sceneManager.changeScene(810);
+		}
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene820::BackButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 7);
+		return true;
+	case CURSOR_USE:
+		// WORKAROUND: The original game had a bug where you could see the microfiche text by directly
+		// using the paging buttons, but then you had to use the power button twice to 'turn on' the
+		// reader and then off again. This check prevents the paging buttons being used until the
+		// reader is properly turned on.
+		if (scene->_powerButton._flags & OBJFLAG_HIDING)
+			return true;
+
+		scene->_sound1.play(72);
+		show();
+		scene->_sceneMode = 8200;
+		scene->setAction(&scene->_sequenceManager, scene, 8200, NULL);
+
+		if (scene->_pageNumber)
+			--scene->_pageNumber;
+		if (scene->_pageNumber == 3) {
+			scene->_object4.hide();
+			scene->_object5.hide();
+		}
+
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene820::ForwardButton::startAction(CursorType action, Event &event) {
+	Scene820 *scene = (Scene820 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_LOOK:
+		SceneItem::display2(820, 6);
+		return true;
+	case CURSOR_USE:
+		// WORKAROUND: The original game had a bug where you could see the microfiche text by directly
+		// using the paging buttons, but then you had to use the power button twice to 'turn on' the
+		// reader and then off again. This check prevents the paging buttons being used until the
+		// reader is properly turned on.
+		if (scene->_powerButton._flags & OBJFLAG_HIDING)
+			return true;
+
+		scene->_sound1.play(72);
+		show();
+		scene->_sceneMode = 8200;
+		scene->setAction(&scene->_sequenceManager, scene, 8200, NULL);
+
+		if (scene->_pageNumber < 4)
+			++scene->_pageNumber;
+
+		SceneItem::display(820, scene->_pageNumber, SET_WIDTH, 240, SET_X, 41, SET_Y, 0, 
+			SET_FONT, 50, SET_FG_COLOR, 18, SET_EXT_BGCOLOR, 12, SET_KEEP_ONSCREEN, true, LIST_END);
+
+		if (scene->_pageNumber == 4) {
+			scene->_object4.show();
+			scene->_object5.show();
+		}
+
+		return true;
+	default:
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene820::Scene820(): SceneExt() {
+	_pageNumber = 0;
+}
+
+void Scene820::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_pageNumber);
+}
+
+void Scene820::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(820);
+	
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+
+	_powerButton.postInit();
+	_powerButton.setVisage(820);
+	_powerButton.setPosition(Common::Point(42, 163));
+	_powerButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_powerButton);
+
+	_backButton.postInit();
+	_backButton.setVisage(820);
+	_backButton.setStrip(2);
+	_backButton.setPosition(Common::Point(278, 155));
+	_backButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_backButton);
+
+	_forwardButton.postInit();
+	_forwardButton.setVisage(820);
+	_forwardButton.setStrip(3);
+	_forwardButton.setPosition(Common::Point(278, 164));
+	_forwardButton.hide();
+	BF_GLOBALS._sceneItems.push_back(&_forwardButton);
+
+	_object4.postInit();
+	_object4.setVisage(821);
+	_object4.setPosition(Common::Point(96, 130));
+	_object4.hide();
+
+	_object5.postInit();
+	_object5.setVisage(821);
+	_object5.setStrip(2);
+	_object5.setPosition(Common::Point(223, 130));
+	_object5.hide();
+
+	BF_GLOBALS._player.enableControl();
+	BF_GLOBALS._player._canWalk = false;
+
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 820, -1, -1, -1, 1, NULL);
+}
+
+void Scene820::signal() {
+	if (_sceneMode == 8200) {
+		_forwardButton.hide();
+		_backButton.hide();
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 830 - Outside Boat Rentals
  *
  *--------------------------------------------------------------------------*/

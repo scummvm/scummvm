@@ -193,7 +193,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Lyle's Office
 		return new Scene810();
 	case 820:
-		error("Scene group 8 not implemented");
+		// Microfiche Reader
+		return new Scene820();
 	case 830:
 		// Outside Boat Rentals
 		return new Scene830();
