@@ -544,9 +544,9 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("DreamWeb");
-		  add_person("Vladimir Menshakov", "whoozle", "");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Bertrand Augereau", "Tramb", "");
+		  add_person("Vladimir Menshakov", "whoozle", "");
 	  end_section();
 
 	  begin_section("Gob");
@@ -655,11 +655,11 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Sword25");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Max Horn", "Fingolfin", "(retired)");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
 	  begin_section("TeenAgent");
@@ -687,8 +687,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("TsAGE");
-		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
 	  begin_section("Tucker");
@@ -734,8 +734,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Nintendo DS");
-		  add_person("Neil Millstone", "agent-q", "");
 		  add_person("Bertrand Augereau", "Tramb", "HQ software scaler");
+		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
 
 	  begin_section("OpenPandora");
@@ -754,8 +754,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("PSP (PlayStation Portable)");
-		  add_person("Joost Peters", "joostp", "");
 		  add_person("Yotam Barnoy", "bluddy", "");
+		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("SDL (Win/Linux/OS X/etc.)");
@@ -970,11 +970,11 @@ begin_credits("Credits");
 	begin_section("Websites (design)");
 	  begin_persons();
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
-		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
-		  add_person("David Jensen", "Tyst", "SVG logo conversion");
-		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
-		  add_person("", "Raina", "ScummVM forum buttons");
 		  add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
+		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
+		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
+		  add_person("David Jensen", "Tyst", "SVG logo conversion");
+		  add_person("", "Raina", "ScummVM forum buttons");
 	  end_persons();
 	end_section();
 
@@ -1008,42 +1008,42 @@ begin_credits("Credits");
 
 	begin_section("FreeSCI Contributors");
 	  begin_persons();
-		add_person("Anders Baden Nielsen", "", "PPC testing");
-		add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
-		add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
-		add_person("Chris Kehler", "", "Makefile enhancements");
-		add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
-		add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
-		add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
-		add_person("Dark Minister", "", "SCI research (bytecode and parser)");
-		add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
-		add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
 		add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
-		add_person("George Reid", "", "FreeBSD package management");
-		add_person("Hubert Maier", "", "AmigaOS 4 port");
-		add_person("Hugues Valois", "", "Game selection menu");
-		add_person("Johannes Manhave", "", "Document format translation");
-		add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
-		add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
-		add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
+		add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
+		add_person("Xiaojun Chen", "", "");
+		add_person("Paul David Doherty", "", "Game version information");
+		add_person("Vyacheslav Dikonov", "", "Config script improvements");
+		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
 		add_person("Matt Hargett", "", "Clean-ups, bugfixes, Hardcore QA, Win32");
 		add_person("Max Horn", "", "SetJump implementation");
-		add_person("Paul David Doherty", "", "Game version information");
-		add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
-		add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
-		add_person("Rainer De Temple", "", "SCI research");
 		add_person("Ravi I.", "", "SCI0 sound resource specification");
-		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
-		add_person("Rune Orsval", "", "Configuration file editor");
-		add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
-		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
-		add_person("Robey Pointer", "", "Bug tracking system hosting");
+		add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
+		add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
+		add_person("Chris Kehler", "", "Makefile enhancements");
+		add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
 		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
-		add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
-		add_person("Vyacheslav Dikonov", "", "Config script improvements");
+		add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
+		add_person("Hubert Maier", "", "AmigaOS 4 port");
+		add_person("Johannes Manhave", "", "Document format translation");
+		add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
+		add_person("Dark Minister", "", "SCI research (bytecode and parser)");
+		add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
+		add_person("Anders Baden Nielsen", "", "PPC testing");
 		add_person("Walter van Niftrik", "", "Ports to the Dreamcast and GP32 platforms");
-		add_person("Xiaojun Chen", "", "");
+		add_person("Rune Orsval", "", "Configuration file editor");
+		add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
+		add_person("Robey Pointer", "", "Bug tracking system hosting");
+		add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
+		add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
+		add_person("George Reid", "", "FreeBSD package management");
+		add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
+		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
+		add_person("Rainer De Temple", "", "SCI research");
 		add_person("Sean Terrell", "", "");
+		add_person("Hugues Valois", "", "Game selection menu");
+		add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
+		add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
+		add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
 	  end_persons();
 	  add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
 	                "for allowing the FreeSCI VM extension as a ".

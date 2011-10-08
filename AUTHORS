@@ -84,9 +84,9 @@ ScummVM Team
        Pawel Kolodziejski
 
     DreamWeb:
-       Vladimir Menshakov
        Torbjorn Andersson
        Bertrand Augereau
+       Vladimir Menshakov
 
     Gob:
        Torbjorn Andersson
@@ -178,11 +178,11 @@ ScummVM Team
        Jonathan Gray         - (retired)
 
     Sword25:
-       Eugene Sandulenko
-       Filippos Karapetis
-       Max Horn              - (retired)
-       Paul Gilbert
        Torbjorn Andersson
+       Paul Gilbert
+       Max Horn              - (retired)
+       Filippos Karapetis
+       Eugene Sandulenko
 
     TeenAgent:
        Robert Megone         - Help with callback rewriting
@@ -204,8 +204,8 @@ ScummVM Team
        Gregory Montoir
 
     TsAGE:
-       Paul Gilbert
        Arnaud Boutonne
+       Paul Gilbert
 
     Tucker:
        Gregory Montoir
@@ -239,8 +239,8 @@ ScummVM Team
        Fabio Battaglia
 
     Nintendo DS:
-       Neil Millstone
        Bertrand Augereau     - HQ software scaler
+       Neil Millstone
 
     OpenPandora:
        John Willis
@@ -255,8 +255,8 @@ ScummVM Team
        Max Lingua
 
     PSP (PlayStation Portable):
-       Joost Peters
        Yotam Barnoy
+       Joost Peters
 
     SDL (Win/Linux/OS X/etc.):
        Max Horn              - (retired)
@@ -442,11 +442,11 @@ Other contributions
   Websites (design)
   -----------------
      Dobo Balazs           - Website design
-     Yaroslav Fedevych     - HTML/CSS for the website
-     David Jensen          - SVG logo conversion
-     Jean Marc Gimenez     - ScummVM logo
-     Raina                 - ScummVM forum buttons
      William Claydon       - Skins for doxygen, buildbot and wiki
+     Yaroslav Fedevych     - HTML/CSS for the website
+     Jean Marc Gimenez     - ScummVM logo
+     David Jensen          - SVG logo conversion
+     Raina                 - ScummVM forum buttons
 
   Code contributions
   ------------------
@@ -482,50 +482,50 @@ Other contributions
 
   FreeSCI Contributors
   --------------------
-     Anders Baden Nielsen  - PPC testing
-     Bas Zoetekouw         - Man pages, debian package management, CVS
-                             maintenance
-     Carl Muckenhoupt      - Sources to the SCI resource viewer tools that
-                             started it all
+     Francois-R Boyer      - MT-32 information and mapping code
+     Rainer Canavan        - IRIX MIDI driver and bug fixes
+     Xiaojun Chen
+     Paul David Doherty    - Game version information
+     Vyacheslav Dikonov    - Config script improvements
+     Ruediger Hanke        - Port to the MorphOS platform
+     Matt Hargett          - Clean-ups, bugfixes, Hardcore QA, Win32
+     Max Horn              - SetJump implementation
+     Ravi I.               - SCI0 sound resource specification
+     Emmanuel Jeandel      - Bugfixes and bug reports
+     Dmitry Jemerov        - Port to the Win32 platform, numerous bugfixes
      Chris Kehler          - Makefile enhancements
-     Christoph Reichenbach - UN*X code, VM/Graphics/Sound/other
-                             infrastructure
      Christopher T. Lansdo - Original CVS maintainer, Alpha compatibility
                              fixes
+     Sergey Lapin          - Port of Carl's type 2 decompression code
+     Rickard Lind          - MT-32->GM MIDI mapping magic, sound research
+     Hubert Maier          - AmigaOS 4 port
+     Johannes Manhave      - Document format translation
      Claudio Matsuoka      - CVS snapshots, daily builds, BeOS and cygwin
                              ports
      Dark Minister         - SCI research (bytecode and parser)
-     Dmitry Jemerov        - Port to the Win32 platform, numerous bugfixes
-     Emmanuel Jeandel      - Bugfixes and bug reports
-     Francois-R Boyer      - MT-32 information and mapping code
-     George Reid           - FreeBSD package management
-     Hubert Maier          - AmigaOS 4 port
-     Hugues Valois         - Game selection menu
-     Johannes Manhave      - Document format translation
-     Jordi Vilalta         - Numerous code and website clean-up patches
-     Lars Skovlund         - Project maintenance, most documentation,
-                             bugfixes, SCI1 support
+     Carl Muckenhoupt      - Sources to the SCI resource viewer tools that
+                             started it all
+     Anders Baden Nielsen  - PPC testing
+     Walter van Niftrik    - Ports to the Dreamcast and GP32 platforms
+     Rune Orsval           - Configuration file editor
+     Solomon Peachy        - SDL ports and much of the sound subsystem
+     Robey Pointer         - Bug tracking system hosting
      Magnus Reftel         - Heap implementation, Python class viewer,
                              bugfixes
-     Matt Hargett          - Clean-ups, bugfixes, Hardcore QA, Win32
-     Max Horn              - SetJump implementation
-     Paul David Doherty    - Game version information
+     Christoph Reichenbach - UN*X code, VM/Graphics/Sound/other
+                             infrastructure
+     George Reid           - FreeBSD package management
+     Lars Skovlund         - Project maintenance, most documentation,
+                             bugfixes, SCI1 support
+     Rink Springer         - Port to the DOS platform, several bug fixes
+     Rainer De Temple      - SCI research
+     Sean Terrell
+     Hugues Valois         - Game selection menu
+     Jordi Vilalta         - Numerous code and website clean-up patches
      Petr Vyhnak           - The DCL-INFLATE algorithm, many Win32
                              improvements
-     Rainer Canavan        - IRIX MIDI driver and bug fixes
-     Rainer De Temple      - SCI research
-     Ravi I.               - SCI0 sound resource specification
-     Ruediger Hanke        - Port to the MorphOS platform
-     Rune Orsval           - Configuration file editor
-     Rickard Lind          - MT-32->GM MIDI mapping magic, sound research
-     Rink Springer         - Port to the DOS platform, several bug fixes
-     Robey Pointer         - Bug tracking system hosting
-     Sergey Lapin          - Port of Carl's type 2 decompression code
-     Solomon Peachy        - SDL ports and much of the sound subsystem
-     Vyacheslav Dikonov    - Config script improvements
-     Walter van Niftrik    - Ports to the Dreamcast and GP32 platforms
-     Xiaojun Chen
-     Sean Terrell
+     Bas Zoetekouw         - Man pages, debian package management, CVS
+                             maintenance
 
      Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM
      extension as a course project in his Advanced OS course.
