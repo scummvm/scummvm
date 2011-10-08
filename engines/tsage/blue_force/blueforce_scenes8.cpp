@@ -2556,6 +2556,231 @@ void Scene850::signal() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 860 - Boat Entering Cove
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene860::Action1::signal() {
+	Scene860 *scene = (Scene860 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_sound1.play(88);
+		scene->_sound1.holdAt(1);
+
+		if (scene->_field888 == scene->_field886) {
+			++_actionIndex;
+			signal();
+		} else {
+			BF_GLOBALS._player.addMover(NULL);
+			BF_GLOBALS._player.setStrip((scene->_field886 == 1) ? 4 : 5);
+			scene->_field888 = scene->_field886;
+
+			BF_GLOBALS._player.setFrame(1);
+			BF_GLOBALS._player._numFrames = 9;
+			BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		}
+		break;
+	case 1:
+		if (scene->_field886 == 1) {
+			BF_GLOBALS._player._position.x += 5;
+			BF_GLOBALS._player.setStrip(3);
+		} else {
+			BF_GLOBALS._player._position.x -= 5;
+			BF_GLOBALS._player.setStrip(2);
+		}
+		signal();
+		// Deliberate fall-through
+	case 2:
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		ADD_MOVER_NULL(BF_GLOBALS._player, scene->_destPos.x, scene->_destPos.y);
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene860::Scene860(): SceneExt() {
+	_field87E = _field880 = 0;
+	_destPos.x = _destPos.y = 0;
+	_field886 = _field888 = 0;
+
+	_swRect = Rect(37, 102, 175, 128);
+	_neRect = Rect(259, 50, 320, 84);
+}
+
+void Scene860::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field87E);
+	s.syncAsSint16LE(_field880);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
+	s.syncAsSint16LE(_field886);
+	s.syncAsSint16LE(_field888);
+}
+
+void Scene860::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(880);
+
+	BF_GLOBALS._sound1.changeSound(90);
+	if (BF_GLOBALS._dayNumber == 0) {
+		BF_GLOBALS._dayNumber = 1;
+		BF_GLOBALS.setFlag(fBlowUpGoon);
+	}
+
+	if (BF_GLOBALS.getFlag(fBlowUpGoon)) {
+		_deadBody.postInit();
+		_deadBody.setVisage(875);
+		_deadBody.setStrip(7);
+		_deadBody.setFrame2(_deadBody.getFrameCount());
+		_deadBody.fixPriority(130);
+		_deadBody.setPosition(Common::Point(255, 148));
+	}
+
+	if (BF_GLOBALS._dayNumber == 5) {
+		_object2.postInit();
+		_object2.setVisage(880);
+		_object2.setPosition(Common::Point(196, 81));
+		BF_GLOBALS._sceneItems.push_back(&_object2);
+		_object2.setDetails(860, 0, 1, -1, 1, NULL);
+		_object2.fixPriority(20);
+
+		_neRect = Rect(0, 0, 0, 0);
+		_yachtRect = Rect(180, 66, 219, 79);
+	}
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(880);
+	BF_GLOBALS._player._moveDiff = Common::Point(1, 1);
+	BF_GLOBALS._player._moveRate = 20;
+
+	BF_GLOBALS._events.setCursor(CURSOR_WALK);
+	BF_GLOBALS._player.disableControl();
+	BF_GLOBALS._player._canWalk = false;
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 355:
+		if (BF_INVENTORY.getObjectScene(INV_GRENADES) == 860) {
+			_sceneMode = 8610;
+			setAction(&_sequenceManager, this, 8610, &BF_GLOBALS._player, NULL);
+		} else {
+			_sceneMode = 8609;
+			setAction(&_sequenceManager, this, 8609, &BF_GLOBALS._player, NULL);
+			_field87E = 0;
+			_field880 = 1;
+			_field888 = 1;
+		}
+		break;
+	case 870:
+		_sound1.play(89);
+		_sound1.holdAt(1);
+		_sceneMode = 8608;
+		setAction(&_sequenceManager, this, 8608, &BF_GLOBALS._player, NULL);
+		_field880 = 0;
+		_field87E = 2;
+		_field888 = 1;
+		break;
+	default:
+		_sound1.play(89);
+		_sound1.holdAt(1);
+		_sceneMode = 8607;
+		setAction(&_sequenceManager, this, 8607, &BF_GLOBALS._player, NULL);
+		_field87E = 0;
+		_field880 = 2;
+		_field888 = 1;
+		break;
+	}
+}
+
+void Scene860::signal() {
+	switch (_sceneMode) {
+	case 8601:
+	case 8606:
+		BF_GLOBALS._sceneManager.changeScene(870);
+		break;
+	case 8602:
+	case 8604:
+		BF_GLOBALS._sceneManager.changeScene(355);
+		break;
+	case 8603:
+	case 8605:
+		BF_GLOBALS._sceneManager.changeScene(850);
+		break;
+	case 8607:
+	case 8608:
+	case 8609:
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._player._canWalk = false;
+		break;
+	case 8610:
+		BF_GLOBALS._deathReason = 22;
+		BF_GLOBALS._sceneManager.changeScene(866);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene860::process(Event &event) {
+	if (_swRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_SW);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = 2;
+			_destPos = Common::Point(119, 126);
+			_field87E = 0;
+			setAction(&_action1);
+		}
+	} else if (_neRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_NE);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = 1;
+			_destPos = Common::Point(266, 56);
+			_field87E = 2;
+			setAction(&_action1);
+		}
+	} else if (_yachtRect.contains(event.mousePos)) {
+		GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_NW);
+		BF_GLOBALS._events.setCursor(cursor);
+
+		if ((event.eventType == EVENT_BUTTON_DOWN) && !_action) {
+			event.handled = true;
+			_field886 = (BF_GLOBALS._player._position.y <= 78) ? 2 : 1;
+			_destPos = Common::Point(212, 78);
+			_field87E = 1;
+			setAction(&_action1);
+		}
+	} else {
+		CursorType cursorId = BF_GLOBALS._events.getCursor();
+		BF_GLOBALS._events.setCursor(cursorId);
+	}
+}
+
+void Scene860::dispatch() {
+	if (_action) {
+		_action->dispatch();
+	} else if (_swRect.contains(BF_GLOBALS._player._position) && (_field87E == 0)) {
+		_sound1.play(88);
+		BF_GLOBALS._sceneManager.changeScene(870);
+	} else if (_neRect.contains(BF_GLOBALS._player._position) && (_field87E == 2)) {
+		_sound1.release();
+		BF_GLOBALS._sceneManager.changeScene(850);
+	} else if (_yachtRect.contains(BF_GLOBALS._player._position) && (_field87E == 1)) {
+		_sound1.play(88);
+		BF_GLOBALS._sceneManager.changeScene(355);
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

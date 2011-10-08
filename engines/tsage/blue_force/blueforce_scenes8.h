@@ -410,6 +410,30 @@ public:
 	virtual void signal();
 };
 
+class Scene860: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	NamedObject _deadBody, _object2;
+	NamedHotspot _item1;
+	Action1 _action1;
+	Rect _swRect, _neRect, _yachtRect;
+	ASoundExt _sound1;
+	int _field87E, _field880, _field886, _field888;
+	Common::Point _destPos;
+
+	Scene860();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
