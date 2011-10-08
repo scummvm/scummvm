@@ -354,11 +354,9 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
 
 #ifdef ENABLE_SCI32
-	if (!g_sci->_gfxText16) {
-		// TODO: Implement this
-		textWidth = 0; textHeight = 0;
-		warning("TODO: implement kTextSize for SCI32");
-	} else
+	if (g_sci->_gfxText32)
+		g_sci->_gfxText32->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	else
 #endif
 		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 

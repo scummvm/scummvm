@@ -554,21 +554,13 @@ void GfxFrameout::kernelFrameout() {
 					TextEntry *textEntry = g_sci->_gfxText32->getTextEntry(itemEntry->object);
 					uint16 startX = ((textEntry->x * _screen->getWidth()) / scriptsRunningWidth) + it->planeRect.left;
 					uint16 startY = ((textEntry->y * _screen->getHeight()) / scriptsRunningHeight) + it->planeRect.top;
-					// HACK. The plane sometimes doesn't contain the correct width. This
-					// hack breaks the dialog options when speaking with Grace, but it's
-					// the best we got up to now. This happens because of the unimplemented
-					// kTextWidth function in SCI32.
-					// TODO: Remove this once kTextWidth has been implemented.
-					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
-
 					// Upscale the coordinates/width if the fonts are already upscaled
 					if (_screen->fontIsUpscaled()) {
 						startX = startX * _screen->getDisplayWidth() / _screen->getWidth();
 						startY = startY * _screen->getDisplayHeight() / _screen->getHeight();
-						w  = w * _screen->getDisplayWidth() / _screen->getWidth();
 					}
 
-					g_sci->_gfxText32->drawTextBitmap(itemEntry->object, startX, startY, w);
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->object, startX, startY, it->planeRect.width());
 				}
 			}
 		}
