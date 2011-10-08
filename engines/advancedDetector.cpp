@@ -207,7 +207,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	}
 	Common::FSNode dir(path);
 	Common::FSList files;
-	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll)) {
+	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll, true)) {
 		warning("Game data path does not exist or is not a directory (%s)", path.c_str());
 		return Common::kNoGameDataFoundError;
 	}
