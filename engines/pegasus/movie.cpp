@@ -34,7 +34,6 @@ namespace Pegasus {
 
 Movie::Movie(const tDisplayElementID id) : Animation(id) {
 	_video = 0;
-	_directDraw = false;
 	setScale(600);
 }
 
@@ -50,7 +49,6 @@ void Movie::releaseMovie() {
 		_video = 0;
 		disposeAllCallBacks();
 		deallocateSurface();
-		// TODO: Decrease global direct draw counter
 	}
 }
 
@@ -75,11 +73,6 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 	setStop(_video->getDuration() * getScale() / 1000, getScale());
 }
 
-void Movie::setDirectDraw(const bool flag) {
-	_directDraw = flag;
-	// TODO: Increase/decrease the global direct draw counter
-}
-
 void Movie::redrawMovieWorld() {
 	if (_video) {
 		const Graphics::Surface *frame = _video->decodeNextFrame();
@@ -87,19 +80,12 @@ void Movie::redrawMovieWorld() {
 		if (!frame)
 			return;
 
-		if (_directDraw) {
-			// Copy to the screen
-			Common::Rect bounds;
-			getBounds(bounds);
-			g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, bounds.left, bounds.top, frame->w, frame->h);
-		} else {
-			// Copy to the surface using _movieBox
-			uint16 width = MIN<int>(frame->w, _movieBox.width());
-			uint16 height = MIN<int>(frame->h, _movieBox.height());
+		// Copy to the surface using _movieBox
+		uint16 width = MIN<int>(frame->w, _movieBox.width());
+		uint16 height = MIN<int>(frame->h, _movieBox.height());
 
-			for (uint16 y = 0; y < height; y++)
-				memcpy((byte *)_surface->getBasePtr(_movieBox.left, _movieBox.top + y), (const byte *)frame->getBasePtr(0, y), width * frame->format.bytesPerPixel);
-		}
+		for (uint16 y = 0; y < height; y++)
+			memcpy((byte *)_surface->getBasePtr(_movieBox.left, _movieBox.top + y), (const byte *)frame->getBasePtr(0, y), width * frame->format.bytesPerPixel);
 
 		triggerRedraw();
 	}

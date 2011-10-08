@@ -45,18 +45,16 @@ public:
 	virtual void initFromMovieFile(const Common::String &fileName, bool transparent = false);
 
 	bool isMovieValid() { return _video != 0; }
-	
+
 	virtual void releaseMovie();
-	
+
 	virtual void draw(const Common::Rect &);
 	virtual void redrawMovieWorld();
-	
-	void setDirectDraw(const bool);
-	
+
 	virtual void setTime(const TimeValue, const TimeScale = 0);
-	
+
 	virtual void setRate(const Common::Rational);
-	
+
 	virtual void start();
 	virtual void stop();
 	virtual void resume();
@@ -74,7 +72,6 @@ public:
 
 protected:
 	Video::SeekableVideoDecoder *_video;
-	bool _directDraw;
 	Common::Rect _movieBox;
 };
 
