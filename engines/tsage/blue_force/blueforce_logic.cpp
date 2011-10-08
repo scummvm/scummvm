@@ -202,6 +202,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Boat Rentals
 		return new Scene840();
 	case 850:
+		// Boat Leaving/Entering Marina
+		return new Scene850();
 	case 860:
 	case 870:
 	case 880:

@@ -393,6 +393,22 @@ public:
 	virtual void dispatch();
 };
 
+class Scene850: public SceneExt {
+	/* Timers */
+	class Timer1: public Timer {
+	public:
+		virtual void signal();
+	};
+public:
+	SequenceManager _sequenceManager;
+	Timer1 _timer;
+	NamedObject _object1;
+	ASoundExt _sound1;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+};
 
 } // End of namespace BlueForce
 

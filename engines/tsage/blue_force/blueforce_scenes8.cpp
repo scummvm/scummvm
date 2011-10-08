@@ -2505,6 +2505,57 @@ void Scene840::dispatch() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 850 - Boat Leaving/Entering Marina
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene850::Timer1::signal() {
+	PaletteRotation *rot = BF_GLOBALS._scenePalette.addRotation(240, 254, 1);
+	rot->setDelay(25);
+
+	remove();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene850::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(850);
+	BF_GLOBALS._sound1.fadeSound(35);
+
+	BF_GLOBALS._player.disableControl();
+	_timer.set(2, NULL);
+
+	_object1.postInit();
+	if (BF_GLOBALS._sceneManager._previousScene == 830) {
+		_sceneMode = 8500;
+		setAction(&_sequenceManager, this, 8500, &_object1, NULL);
+	} else {
+		BF_GLOBALS._sound1.changeSound(10);
+		_sceneMode = 8501;
+		setAction(&_sequenceManager, this, 8501, &_object1, NULL);
+	}
+}
+
+void Scene850::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+void Scene850::signal() {
+	switch (_sceneMode) {
+	case 8500:
+		BF_GLOBALS._sceneManager.changeScene(860);
+		break;
+	case 8501:
+		BF_GLOBALS._sceneManager.changeScene(830);
+		break;
+	default:
+		break;
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
