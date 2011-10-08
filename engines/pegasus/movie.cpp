@@ -177,6 +177,17 @@ void Movie::pause() {
 	TimeBase::pause();
 }
 
+TimeValue Movie::getDuration(const TimeScale scale) const {
+	// Unlike TimeBase::getDuration(), this returns the whole duration of the movie
+	// The original source has a TODO to make this behave like TimeBase::getDuration(),
+	// but the problem is that too much code requires this function to behave this way...
+
+	if (_video)
+		return _video->getDuration() * ((scale == 0) ? getScale() : scale) / 1000;
+
+	return 0;
+}
+
 void Movie::checkCallBacks() {
 	TimeBase::checkCallBacks();
 

@@ -64,6 +64,8 @@ public:
 
 	virtual void moveMovieBoxTo(const tCoordType, const tCoordType);
 
+	virtual TimeValue getDuration(const TimeScale = 0) const;
+
 	// *** HACK ALERT
 	Video::SeekableVideoDecoder *getMovie() { return _video; }
 	void setVolume(uint16);
