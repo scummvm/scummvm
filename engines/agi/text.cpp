@@ -224,7 +224,8 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
  * Based on GBAGI implementation with permission from the author
  */
 char *AgiEngine::wordWrapString(const char *s, int *len) {
-	char *outStr, *msgBuf, maxWidth = *len;
+	char *outStr, *msgBuf;
+	int maxWidth = *len;
 	const char *pWord;
 	int lnLen, wLen;
 
