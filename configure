@@ -3707,13 +3707,9 @@ done
 for engine in $_engines; do
 	engine_build=`get_engine_build $engine`
 	engine_build_default=`get_engine_build_default $engine`
-	engine_wip=false
 	if test $engine_build != no -a $engine_build_default = no ; then
-		engine_wip=true
 		set_var _tainted_build "yes"
 	fi
-	engine_wip_defname="ENGINE_WIP_`echo $engine | tr '[a-z]' '[A-Z]'`"
-	add_line_to_config_h "#define $engine_wip_defname $engine_wip"
 done
 
 add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
