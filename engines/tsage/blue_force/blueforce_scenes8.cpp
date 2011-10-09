@@ -3550,6 +3550,8 @@ void Scene880::process(Event &event) {
 				setAction(&_sequenceManager1, this, 8812, &BF_GLOBALS._player, NULL);
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
