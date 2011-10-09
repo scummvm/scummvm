@@ -563,7 +563,7 @@ void Scene300::dispatch() {
 			setAction(&_action2);
 
 		if (BF_GLOBALS._player._position.x >= 315) {
-			if (BF_GLOBALS.getFlag(onDuty) || (BF_GLOBALS._bookmark == bNone) || !BF_GLOBALS.getFlag(fWithLyle)) {
+			if (BF_GLOBALS.getFlag(onDuty) || (BF_GLOBALS._bookmark == bNone) || BF_GLOBALS.getFlag(fWithLyle)) {
 				setAction(&_action1);
 			} else {
 				BF_GLOBALS._player.disableControl();
