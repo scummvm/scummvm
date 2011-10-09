@@ -123,6 +123,15 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
+		if (ConfMan.hasKey("antialiasing") && ConfMan.getInt("antialiasing")) {
+			// Antialiasing works without setting MULTISAMPLEBUFFERS, but as SDL's official
+			// tests set both values, this seems to be the standard way to do it. It could
+			// just be that in current OpenGL implementations setting SDL_GL_MULTISAMPLESAMPLES
+			// implicitly sets SDL_GL_MULTISAMPLEBUFFERS as well.
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, ConfMan.getInt("antialiasing"));
+		}
+
 		sdlflags = SDL_OPENGL;
 		bpp = 24;
 	} else
