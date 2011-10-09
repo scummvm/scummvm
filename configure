@@ -150,7 +150,7 @@ _libunity=auto
 # Default option behaviour yes/no
 _debug_build=auto
 _release_build=auto
-_release_optimization=auto
+_optimizations=auto
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -773,7 +773,7 @@ Optional Features:
   --enable-release         enable building in release mode (this activates
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
-  --enable-release-optimization enable release optimizations
+  --enable-optimizations   enable optimizations
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1009,17 +1009,17 @@ for ac_option in $@; do
 		;;
 	--enable-release)
 		_release_build=yes
-		_release_optimization=yes
+		_optimizations=yes
 		;;
 	--disable-release)
 		_release_build=no
-		_release_optimization=no
+		_optimizations=no
 		;;
-	--enable-release-optimization)
-		_release_optimization=yes
+	--enable-optimizations)
+		_optimizations=yes
 		;;
-	--disable-release-optimization)
-		_release_optimization=no
+	--disable-optimizations)
+		_optimizations=no
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -1291,9 +1291,9 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2)
 		_release_build=yes
 	fi
 
-	if test "$_release_optimization" = auto; then
-		# Enable release optimization by default.
-		_release_optimization=yes
+	if test "$_optimizations" = auto; then
+		# Enable optimizations by default.
+		_optimizations=yes
 	fi
 	;;
 esac
@@ -2711,21 +2711,21 @@ add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
 
 #
-# If a specific optimization level was requested, enable release optimization
+# If a specific optimization level was requested, enable optimizations
 #
 if test -n "$_optimization_level" ; then
 	# Ports will specify an optimization level and expect that to be enabled
-	if test "$_release_optimization" != no ; then
-		_release_optimization=yes
+	if test "$_optimizations" != no ; then
+		_optimizations=yes
 	fi
 else
 	_optimization_level=$_default_optimization_level
 fi
 
 #
-# Check whether to enable release optimization
+# Check whether to enable optimizations
 #
-if test "$_release_optimization" = yes ; then
+if test "$_optimizations" = yes ; then
 	# Enable optimizations. This also
 	# makes it possible to use -Wuninitialized, so let's do that.
 	CXXFLAGS="$CXXFLAGS $_optimization_level"
