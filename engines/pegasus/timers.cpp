@@ -230,16 +230,25 @@ void TimeBase::checkCallBacks() {
 
 	// Check if we've triggered any callbacks
 	for (TimeBaseCallBack *runner = _callBackList; runner != 0; runner = runner->_nextCallBack) {
+		if (runner->_hasBeenTriggered)
+			continue;
+
 		if (runner->_type == kCallBackAtTime && runner->_trigger == kTriggerTimeFwd) {
-			if (getTime() >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0)
+			if (getTime() >= (runner->_param2 * _preferredScale / runner->_param3) && getRate() > 0) {
 				runner->callBack();
+				runner->_hasBeenTriggered = true;
+			}
 		} else if (runner->_type == kCallBackAtExtremes) {
 			if (runner->_trigger == kTriggerAtStop) {
-				if (time == stopTime)
+				if (time == stopTime) {
 					runner->callBack();
+					runner->_hasBeenTriggered = true;
+				}
 			} else if (runner->_trigger == kTriggerAtStart) {
-				if (time == startTime)
+				if (time == startTime) {
 					runner->callBack();
+					runner->_hasBeenTriggered = true;
+				}
 			}
 		}
 	}
@@ -292,6 +301,7 @@ TimeBaseCallBack::TimeBaseCallBack() {
 	_nextCallBack = 0;
 	_trigger = kTriggerNone;
 	_type = kCallBackNone;
+	_hasBeenTriggered = false;
 }
 
 TimeBaseCallBack::~TimeBaseCallBack() {
@@ -313,6 +323,7 @@ void TimeBaseCallBack::releaseCallBack() {
 
 void TimeBaseCallBack::disposeCallBack() {
 	_timeBase = 0;
+	_hasBeenTriggered = false;
 }
 
 void TimeBaseCallBack::scheduleCallBack(CallBackTrigger trigger, uint32 param2, uint32 param3) {
@@ -320,10 +331,12 @@ void TimeBaseCallBack::scheduleCallBack(CallBackTrigger trigger, uint32 param2, 
 	_trigger = trigger;
 	_param2 = param2;
 	_param3 = param3;
+	_hasBeenTriggered = false;
 }
 
 void TimeBaseCallBack::cancelCallBack() {
 	_trigger = kTriggerNone;
+	_hasBeenTriggered = false;
 }
 
 IdlerTimeBase::IdlerTimeBase() {

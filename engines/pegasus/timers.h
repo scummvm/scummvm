@@ -172,6 +172,7 @@ protected:
 	CallBackType _type;
 	CallBackTrigger _trigger;
 	uint32 _param2, _param3;
+	bool _hasBeenTriggered;
 
 private:
 	void disposeCallBack();
