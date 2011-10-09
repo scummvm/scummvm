@@ -379,7 +379,7 @@ public:
 	Object3 _boots;
 	Object4 _bootsWindow;
 	Object5 _object5;
-	
+
 	Item1 _item1;
 	NamedHotspot _item2;
 	NamedHotspot _item3;

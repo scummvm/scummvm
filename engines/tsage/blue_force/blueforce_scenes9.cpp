@@ -728,30 +728,30 @@ void Scene900::synchronize(Serializer &s) {
 void Scene910::Action1::signal() {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
-	switch(_actionIndex - 1) {
-		case 0:
-			scene->_object6.setStrip(1);
-			scene->_object6.animate(ANIM_MODE_5, this);
-			break;
-		case 1:
-			if (scene->_object6._strip == 2)
-				scene->_object6.setFrame(4);
-			scene->_object6.setStrip(1);
-			scene->_object6.animate(ANIM_MODE_6, NULL);
-			break;
-		case 2:
-			scene->_object6.setStrip(2);
-			scene->_object6.animate(ANIM_MODE_2, NULL);
-			break;
-		default:
-			break;
+	switch (_actionIndex - 1) {
+	case 0:
+		scene->_object6.setStrip(1);
+		scene->_object6.animate(ANIM_MODE_5, this);
+		break;
+	case 1:
+		if (scene->_object6._strip == 2)
+			scene->_object6.setFrame(4);
+		scene->_object6.setStrip(1);
+		scene->_object6.animate(ANIM_MODE_6, NULL);
+		break;
+	case 2:
+		scene->_object6.setStrip(2);
+		scene->_object6.animate(ANIM_MODE_2, NULL);
+		break;
+	default:
+		break;
 	}
 }
 
 void Scene910::Action2::signal() {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
-	switch(_actionIndex++) {
+	switch (_actionIndex++) {
 	case 0:
 		scene->_object7.postInit();
 		scene->_object7.setVisage(919);
@@ -802,7 +802,7 @@ bool Scene910::Object1::startAction(CursorType action, Event &event) {
 			else
 				setAction(&scene->_sequenceManager1, scene, 9130, &BF_GLOBALS._player, &scene->_object1, NULL);
 			return true;
-		}	
+		}
 	} else {
 			return NamedObject::startAction(action, event);
 	}
@@ -825,7 +825,7 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 	case CURSOR_TALK:
 		if (BF_GLOBALS._v4CEE2 >= 4)
 			return NamedObject::startAction(action, event);
-		
+
 		if (BF_GLOBALS._v4CEE6 < 4)
 			BF_GLOBALS._v4CEE6++;
 
@@ -846,7 +846,7 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 						scene->setAction(&scene->_sequenceManager1, scene, 9126, &scene->_object2, NULL);
 						return NamedObject::startAction(action, event);
 					} else {
-						scene->_stripManager.start(9117, &BF_GLOBALS._stripProxy);						
+						scene->_stripManager.start(9117, &BF_GLOBALS._stripProxy);
 						return NamedObject::startAction(action, event);
 					}
 				} else
@@ -872,15 +872,15 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 	case 53:
 		if (BF_GLOBALS._v4CEE2 >= 4)
 			return NamedObject::startAction(action, event);
-		
+
 		if (BF_GLOBALS._v4CEE6 < 4)
 			BF_GLOBALS._v4CEE6++;
 
 		if (BF_GLOBALS._v4CEE6 == 2) {
 			scene->_sceneMode = 13;
-			scene->_stripManager.start(9105, scene);						
+			scene->_stripManager.start(9105, scene);
 		} else
-			scene->_stripManager.start(9103 + BF_GLOBALS._v4CEE6, &BF_GLOBALS._stripProxy);						
+			scene->_stripManager.start(9103 + BF_GLOBALS._v4CEE6, &BF_GLOBALS._stripProxy);
 
 		return true;
 		break;
@@ -1094,13 +1094,13 @@ bool Scene910::Object8::startAction(CursorType action, Event &event) {
 			return false;
 		else
 			return true;
-	} else 
+	} else
 		return NamedObject::startAction(action, event);
 }
 
 void Scene910::Object8::init(int val) {
 	NamedObject::postInit();
-	
+
 	_field92 = val;
 	_field90 = 0;
 }
@@ -1681,7 +1681,7 @@ bool Scene910::Object28::startAction(CursorType action, Event &event) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForBlackCord)) {
 					BF_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForBlackCord);
-				}				
+				}
 			} else {
 				if (!BF_GLOBALS.getFlag(fGotPointsForGeneratorPlug)) {
 					BF_GLOBALS._uiElements.addScore(30);
@@ -1897,7 +1897,7 @@ bool Scene910::Item15::startAction(CursorType action, Event &event) {
 
 	if ((action == CURSOR_LOOK) || (action == CURSOR_USE) || (action == CURSOR_TALK))
 		return NamedHotspot::startAction(action, event);
-	
+
 	if (action >= CURSOR_WALK)
 		return false;
 
@@ -2009,7 +2009,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 
 	if (BF_GLOBALS._dayNumber < 5)
 		_item17.setDetails(Rect(0, 149, 29, 167), 910, -1, -1, -1, 1, NULL);
-	
+
 	if (BF_GLOBALS._v4CEE2 == 0)
 		_item16.setDetails(Rect(265, 18, 319, 102), 910, -1, -1, -1, 1, NULL);
 
@@ -2038,8 +2038,8 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS.setFlag(7);
 	}
 
-	if (   (BF_GLOBALS._sceneManager._previousScene == 910) 
-		|| (BF_GLOBALS._sceneManager._previousScene == 190) 
+	if (   (BF_GLOBALS._sceneManager._previousScene == 910)
+		|| (BF_GLOBALS._sceneManager._previousScene == 190)
 		|| (BF_GLOBALS._sceneManager._previousScene == 300)) {
 		BF_GLOBALS._sceneManager._previousScene = 900;
 		BF_GLOBALS._v4CEE2 = 0;
@@ -2203,7 +2203,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_sound1.play(100);
 		_sound1.holdAt(1);
 	}
-	
+
 	if (BF_GLOBALS._sceneManager._previousScene != 935) {
 		_sceneMode = 11;
 		if (BF_GLOBALS._v4CEC8 == 0)
@@ -2297,7 +2297,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 		if ((BF_GLOBALS.getFlag(fCrateOpen)) && (BF_GLOBALS._player._visage == 921)) {
 			BF_GLOBALS._player.disableControl();
 			scene->_object2.postInit();
-		
+
 	scene->_sceneMode = 9204;
 			if (!BF_GLOBALS.getFlag(fGotPointsForBoots)) {
 				BF_GLOBALS._uiElements.addScore(30);
@@ -2480,7 +2480,7 @@ bool Scene930::Object1::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_USE) && (!BF_GLOBALS.getFlag(93))) {
 		scene->setAction(&scene->_action2);
 		result = true;
-	} else 
+	} else
 		result = NamedObject::startAction(action, event);
 
 	return result;
@@ -2989,7 +2989,7 @@ void Scene935::signal() {
 		_sceneMode = 3;
 		setAction(&_sequenceManager, this, 9353, &_object1, &_object2, NULL);
 		break;
-	default:	
+	default:
 		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._sceneManager._previousScene);
 		break;
 	}
@@ -3066,7 +3066,7 @@ void Scene940::Action1::signal() {
 		break;
 	case 946:
 		_actionIndex = 942;
-		setAction(&scene->_sequenceManager1, this, 946, &scene->_object7, &scene->_object8, NULL); 
+		setAction(&scene->_sequenceManager1, this, 946, &scene->_object7, &scene->_object8, NULL);
 		break;
 	case 947:
 		_actionIndex = 5;
