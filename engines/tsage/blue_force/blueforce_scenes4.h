@@ -71,38 +71,38 @@ class Scene410: public SceneExt {
 	};
 
 	/* Objects */
-	class Object1: public NamedObject {
+	class Driver: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObject {
+	class Passenger: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public NamedObject {
+	class Harrison: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Items */
-	class Item2: public NamedHotspot {
+	class Motorcycle: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4: public NamedHotspot {
+	class TruckFront: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
-	Object1 _object1;
-	Object2 _object2;
-	Object3 _object3;
-	NamedObject _object4, _object5, _object6;
-	NamedHotspot _item1;
-	Item2 _item2;
-	NamedHotspot _item3;
-	Item4 _item4;
+	Driver _driver;
+	Passenger _passenger;
+	Harrison _harrison;
+	NamedObject _patrolCar, _object5, _object6;
+	NamedHotspot _background;
+	Motorcycle _motorcycle;
+	NamedHotspot _truckBack;
+	TruckFront _truckFront;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
@@ -116,7 +116,7 @@ public:
 	SpeakerDriver _driverSpeaker;
 	SpeakerShooter _shooterSpeaker;
 	ASoundExt _sound1;
-	int _field1FB6, _field1FB8, _field1FBA;
+	int _field1FB6, _talkCount, _field1FBA;
 	int _field1FBC, _field1FBE;
 	int _field1FC0, _field1FC2, _field1FC4;
 
