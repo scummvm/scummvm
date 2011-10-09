@@ -365,9 +365,12 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
-	// TODO: SCI32 uses a parameter here.
-	if (argc > 0)
-		warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
+	// SCI32 uses a parameter here. It is used to modify a string, stored in a
+	// global variable, so that game scripts store the save directory. We
+	// don't really set a save game directory, thus not setting the string to
+	// anything is the correct thing to do here.
+	//if (argc > 0)
+	//	warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
 #endif
 		return s->_segMan->getSaveDirPtr();
 }
