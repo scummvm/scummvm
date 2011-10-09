@@ -300,26 +300,6 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 	return currentBlock;
 }
 
-AudioStream *makeVOCDiskStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
-	const int MAX_AUDIO_BLOCKS = 256;
-
-	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
-	int rate, loops, begin_loop, end_loop;
-
-	int numBlocks = parseVOCFormat(*stream, block, rate, loops, begin_loop, end_loop);
-
-	AudioStream *audioStream = 0;
-
-	// Create an audiostream from the data. Note the numBlocks may be 0,
-	// e.g. when invalid data is encountered. See bug #2890038.
-	if (numBlocks)
-		audioStream = makeRawDiskStream_OLD(stream, block, numBlocks, rate, flags, disposeAfterUse/*, begin_loop, end_loop*/);
-
-	delete[] block;
-
-	return audioStream;
-}
-
 SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
@@ -341,47 +321,6 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream *stream,
 }
 
 #endif
-
-
-AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, uint loopStart, uint loopEnd, DisposeAfterUse::Flag disposeAfterUse) {
-#ifdef STREAM_AUDIO_FROM_DISK
-	return makeVOCDiskStream(stream, flags, disposeAfterUse);
-#else
-	int size, rate;
-
-	byte *data = loadVOCFromStream(*stream, size, rate);
-
-	if (!data) {
-		if (disposeAfterUse == DisposeAfterUse::YES)
-			delete stream;
-		return 0;
-	}
-
-	SeekableAudioStream *s = Audio::makeRawStream(data, size, rate, flags);
-
-	if (loopStart != loopEnd) {
-		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-
-		if (loopEnd == 0)
-			loopEnd = size;
-		assert(loopStart <= loopEnd);
-		assert(loopEnd <= (uint)size);
-
-		// Verify the buffer sizes are sane
-		if (is16Bit && isStereo)
-			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
-		else if (is16Bit || isStereo)
-			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
-
-		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
-
-		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
-	} else {
-		return s;
-	}
-#endif
-}
 
 SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 #ifdef STREAM_AUDIO_FROM_DISK

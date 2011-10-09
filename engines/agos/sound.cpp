@@ -255,7 +255,7 @@ public:
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 	assert(_offsets);
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeVOCStream(_file.get(), _flags);
+	return Audio::makeVOCStream(_file.get(), _flags, DisposeAfterUse::NO);
 }
 
 void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
