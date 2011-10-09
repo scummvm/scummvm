@@ -717,7 +717,8 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 			scene->_stripNumber = 3174;
 			scene->setAction(&scene->_action1);
 		} else {
-			if (!scene->_field1B6C & (scene->_field1B66 == 1)) {
+			++scene->_field1B66;
+			if (!scene->_field1B6C && (scene->_field1B66 == 1)) {
 				scene->_field1B6C = 1;
 				scene->_stripNumber = 3169;
 			} else {
@@ -737,6 +738,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 
 bool Scene315::SutterSlot::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
+	scene->_currentCursor = action;
 
 	switch (action) {
 	case INV_GREENS_GUN:
@@ -1175,6 +1177,7 @@ void Scene315::signal() {
 		if (ctr == 1) {
 			BF_GLOBALS._deathReason = 20;
 			BF_GLOBALS._sound1.fadeOut2(NULL);
+			BF_GLOBALS._sceneManager.changeScene(666);
 		} else if ((BF_GLOBALS._bookmark != bBookedFrankie) || !BF_GLOBALS.getFlag(onDuty)) {
 			BF_GLOBALS._sound1.fadeOut2(NULL);
 			BF_GLOBALS._sceneManager.changeScene(190);
