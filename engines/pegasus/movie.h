@@ -68,9 +68,9 @@ public:
 	Video::SeekableVideoDecoder *getMovie() { return _video; }
 	void setVolume(uint16);
 
-	virtual void checkCallBacks();
-
 protected:
+	void updateTime();
+
 	Video::SeekableVideoDecoder *_video;
 	Common::Rect _movieBox;
 };

@@ -174,10 +174,8 @@ TimeValue Movie::getDuration(const TimeScale scale) const {
 	return 0;
 }
 
-void Movie::checkCallBacks() {
-	TimeBase::checkCallBacks();
-
-	// The reason why we overrode TimeBase's checkCallBacks():
+void Movie::updateTime() {
+	// The reason why we overrode TimeBase's updateTime():
 	// Again, avoiding timers and handling it here
 	if (_video && !_video->isPaused()) {
 		if (_video->needsUpdate())
@@ -187,17 +185,6 @@ void Movie::checkCallBacks() {
 		uint32 stopTime = _stopTime * getScale() / _stopScale;
 		uint32 actualTime = CLIP<int>(_video->getElapsedTime() * getScale() / 1000, startTime, stopTime);
 		_time = Common::Rational(actualTime, getScale());
-
-		// Stop the video when we go past our end
-		// TODO: Check if this should really be -1
-		if (actualTime >= stopTime - 1) {
-			// HACK: Handle looping here as well
-			// Should be handled like the rest of TimeBases
-			if (getFlags() & kLoopTimeBase)
-				setTime(_startTime, _startScale);
-			else
-				stop();
-		}
 	}
 }
 

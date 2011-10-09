@@ -198,15 +198,7 @@ void TimeBase::setMasterTimeBase(TimeBase *tb) {
 		_master->_slaves.push_back(this);
 }
 
-void TimeBase::checkCallBacks() {
-	// Nothing to do if we're paused or not running
-	if (_paused || !isRunning())
-		return;
-
-	Common::Rational startTime = Common::Rational(_startTime, _startScale);
-	Common::Rational stopTime = Common::Rational(_stopTime, _stopScale);
-
-	// First step: update the times
+void TimeBase::updateTime() {
 	if (_lastMillis == 0) {
 		_lastMillis = g_engine->getTotalPlayTime();
 	} else {
@@ -216,13 +208,25 @@ void TimeBase::checkCallBacks() {
 
 		_time += Common::Rational(curTime - _lastMillis, 1000) * getEffectiveRate();
 		_lastMillis = curTime;
-
-		// Clip time to the boundaries
-		if (_time >= stopTime)
-			_time = stopTime;
-		else if (_time <= startTime)
-			_time = startTime;
 	}
+}
+
+void TimeBase::checkCallBacks() {
+	// Nothing to do if we're paused or not running
+	if (_paused || !isRunning())
+		return;
+
+	Common::Rational startTime = Common::Rational(_startTime, _startScale);
+	Common::Rational stopTime = Common::Rational(_stopTime, _stopScale);
+
+	// First step: update the times
+	updateTime();
+
+	// Clip time to the boundaries
+	if (_time >= stopTime)
+		_time = stopTime;
+	else if (_time <= startTime)
+		_time = startTime;
 
 	// TODO: Update the slaves?
 
@@ -253,12 +257,16 @@ void TimeBase::checkCallBacks() {
 		}
 	}
 
-	// Loop if necessary
 	if (getFlags() & kLoopTimeBase) {
+		// Loop if necessary
 		if (getRate() < 0 && time == startTime)
 			setTime(_stopTime, _stopScale);
 		else if (getRate() > 0 && time == stopTime)
 			setTime(_startTime, _startScale);
+	} else {
+		// Stop at the end
+		if ((getRate() > 0 && time == stopTime) || (getRate() < 0 && time == startTime))
+			stop();
 	}
 }
 

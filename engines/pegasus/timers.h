@@ -108,6 +108,7 @@ public:
 protected:
 	void addCallBack(TimeBaseCallBack *);
 	void removeCallBack(TimeBaseCallBack *);
+	virtual void updateTime();
 
 	TimeBase *_master;
 	TimeScale _preferredScale;
