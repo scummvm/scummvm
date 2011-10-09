@@ -208,6 +208,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Boat Entering Cove
 		return new Scene860();
 	case 870:
+		// Cove Beach
+		return new Scene870();
 	case 880:
 		error("Scene group 8 not implemented");
 	case 900:

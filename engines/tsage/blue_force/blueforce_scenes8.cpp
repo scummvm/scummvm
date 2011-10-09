@@ -2781,6 +2781,411 @@ void Scene860::dispatch() {
 	}
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 870 - Cove Beach
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene870::Lyle::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		if (BF_GLOBALS.getFlag(fTookTrailerAmmo)) {
+			scene->startStrip((BF_GLOBALS._bookmark >= bFinishedWGreen) ? 8704 : 8701);
+		} else {
+			scene->startStrip(8700);
+		}
+		return true;
+	} else {
+		return NamedObjectExt::startAction(action, event);
+	}
+}
+
+bool Scene870::Green::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_TALK) {
+		if (!BF_GLOBALS.getFlag(fLyleOnIsland) && !scene->_field1664 && (BF_GLOBALS._bookmark == bFinishedWGreen)) {
+			scene->startStrip(8703);
+			++scene->_field1664;
+		} else {
+			scene->startStrip(8705);
+		}
+		return true;
+	} else {
+		return NamedObjectExt::startAction(action, event);
+	}
+}
+
+void Scene870::CrateInset::postInit(SceneObjectList *OwnerList) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	FocusObject::postInit();
+	setVisage(870);
+	setStrip(5);
+	setFrame(scene->_field1662);
+	setPosition(Common::Point(160, 130));
+	fixPriority(250);
+
+	if (scene->_field1662  == 3) {
+		initContents();
+	}
+}
+
+void Scene870::CrateInset::initContents() {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (BF_INVENTORY.getObjectScene(INV_JAR) == 870) {
+		// Jar still in crate, so display it
+		_jar.postInit();
+		_jar.setVisage(870);
+		_jar.setStrip(4);
+		_jar.setFrame(5);
+		_jar.setPosition(Common::Point(scene->_crateInset._position.x + 5,
+			scene->_crateInset._position.y - 26));
+		_jar.fixPriority(251);
+		_jar.setDetails(870, 39, 40, 41, 1, NULL);
+		BF_GLOBALS._sceneItems.remove(&_jar);
+		BF_GLOBALS._sceneItems.push_front(&_jar);
+	}
+
+	if (BF_INVENTORY.getObjectScene(INV_RAGS) == 870) {
+		// Rags still in crate, so display it
+		_rags.postInit();
+		_rags.setVisage(870);
+		_rags.setStrip(4);
+		_rags.setFrame(6);
+		_rags.setPosition(Common::Point(scene->_crateInset._position.x - 18,
+			scene->_crateInset._position.y - 18));
+		_rags.fixPriority(251);
+		_rags.setDetails(870, 42, 43, 44, 1, NULL);
+		BF_GLOBALS._sceneItems.remove(&_rags);
+		BF_GLOBALS._sceneItems.push_front(&_rags);
+	}
+}
+
+void Scene870::CrateInset::remove() {
+	_jar.remove();
+	_rags.remove();
+	FocusObject::remove();
+}
+
+bool Scene870::CrateInset::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_WALK:
+		return true;
+	case CURSOR_LOOK:
+		if (scene->_field1662 != 2)
+			break;
+
+		scene->_field1662 = 3;
+		setFrame(3);
+		initContents();
+		return true;
+	case CURSOR_USE:
+		if (scene->_field1662 == 2) {
+			setFrame(1);
+			scene->_field1662 = 1;
+		} else {
+			setFrame(2);
+			scene->_field1662 = 2;
+			_jar.remove();
+			_rags.remove();
+		}
+		return true;
+	default:
+		break;
+	}
+
+	return FocusObject::startAction(action, event);
+}
+
+bool Scene870::CrateInset::Jar::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_INVENTORY.setObjectScene(INV_JAR, 1);
+		remove();
+		BF_GLOBALS._uiElements.addScore(30);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+bool Scene870::CrateInset::Rags::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_INVENTORY.setObjectScene(INV_RAGS, 1);
+		remove();
+		BF_GLOBALS._uiElements.addScore(30);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene870::Boat::startAction(CursorType action, Event &event) {
+	if (action == INV_RENTAL_KEYS) {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._sceneManager.changeScene(860);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+bool Scene870::Crate::startAction(CursorType action, Event &event) {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 1;
+		Common::Point destPos(163, 164);
+		PlayerMover *mover = new PlayerMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, scene);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+bool Scene870::Exit::startAction(CursorType action, Event &event) {
+	ADD_PLAYER_MOVER(event.mousePos.x, event.mousePos.y);
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene870::Action1::signal() {
+	Scene870 *scene = (Scene870 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1:
+		scene->_yacht.setStrip(6);
+		scene->_yacht.setFrame(1);
+		scene->_yacht._numFrames = 6;
+		scene->_yacht.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	default:
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene870::Scene870(): SceneExt() {
+	_field1662 = 1;
+	_field1664 = 0;
+}
+
+void Scene870::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_field1662);
+	s.syncAsSint16LE(_field1664);
+}
+
+void Scene870::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(870);
+	BF_GLOBALS._sound1.changeSound(90);
+
+	PaletteRotation *rot;
+	rot = BF_GLOBALS._scenePalette.addRotation(235, 235, 1);
+	rot->setDelay(10);
+	rot = BF_GLOBALS._scenePalette.addRotation(237, 238, 1);
+	rot->setDelay(40);
+	rot = BF_GLOBALS._scenePalette.addRotation(242, 243, 1);
+	rot->setDelay(30);
+
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	_stripManager.addSpeaker(&_greenSpeaker);
+	_stripManager.addSpeaker(&_jakeJacketSpeaker);
+	_stripManager.addSpeaker(&_lyleHatSpeaker);
+
+	if (BF_GLOBALS._dayNumber == 0)
+		BF_GLOBALS._dayNumber = 5;
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(831);
+	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	BF_GLOBALS._player._moveDiff = Common::Point(2, 1);
+
+	_exit.setDetails(Rect(305, 150, 320, 168), 870, -1, -1, -1, 1, NULL);
+	_lumber.setDetails(9, 870, 36, 37, 38, 1);
+	_firePit.setDetails(8, 870, 9, 10, 11, 1);
+
+	if (BF_GLOBALS._dayNumber == 5) {
+		if (!BF_GLOBALS.getFlag(fLyleOnIsland) && (BF_GLOBALS._bookmark != bFinishedWGreen) &&
+				(!BF_GLOBALS.getFlag(fTookTrailerAmmo) || (BF_GLOBALS._bookmark >= bInvestigateBoat))) {
+			_lyle.postInit();
+			_lyle.setVisage(835);
+			_lyle.setObjectWrapper(new SceneObjectWrapper());
+			_lyle.animate(ANIM_MODE_1, NULL);
+			_lyle._moveDiff = Common::Point(2, 1);
+			_lyle.setDetails(870, 27, 28, 29, 1, NULL);
+		}
+
+		_yacht.postInit();
+		_yacht.setVisage(870);
+		_yacht.setStrip(4);
+		_yacht.setFrame(4);
+		_yacht.setPosition(Common::Point(232, 19));
+		_yacht.setDetails(870, 30, 31, 32, 1, NULL);
+
+		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_FLARE) == 0) &&
+				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 355)) {
+			_green.postInit();
+			_green.setVisage(870);
+			_green.setStrip(7);
+			_green.setPosition(Common::Point(127, 109));
+
+			if (BF_GLOBALS._bookmark == bFinishedWGreen) {
+				_green.setDetails(870, 51, 54, 53, 1, NULL);
+			} else {
+				_green.setDetails(870, 51, 52, 53, 1, NULL);
+			}
+		}
+	}
+
+	switch (BF_GLOBALS._sceneManager._previousScene) {
+	case 355:
+		_object6.postInit();
+		_object6.setVisage(870);
+		_object6.setPosition(Common::Point(142, 154));
+		_object6.fixPriority(148);
+
+		BF_GLOBALS._player.remove();
+		_lyle.remove();
+		setAction(&_action1);
+		break;
+	case 880:
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.setPosition(Common::Point(330, 169));
+			ADD_PLAYER_MOVER_NULL(_lyle, 303, 169);
+		}
+
+		BF_GLOBALS._player.setPosition(Common::Point(330, 139));
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8700;
+		setAction(&_sequenceManager, this, 8700, &BF_GLOBALS._player, NULL);
+		break;
+	default:
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.setPosition(Common::Point(156, 148));
+			_lyle.fixPriority(149);
+		}
+	
+		if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) &&
+				(BF_INVENTORY.getObjectScene(INV_GRENADES) == 355)) {
+			_object4.postInit();
+			_object4.hide();
+			_object5.postInit();
+			_object5.hide();
+
+			BF_GLOBALS._deathReason = 7;
+			BF_GLOBALS._player.disableControl();
+			_sceneMode = 2;
+			setAction(&_sequenceManager, this, 8703, &BF_GLOBALS._player, &_lyle, &_green,
+				&_object4, &_object5, NULL);
+		} else {
+			BF_GLOBALS._player.changeAngle(135);
+			BF_GLOBALS._player.setPosition(Common::Point(214, 139));
+			BF_GLOBALS._player.enableControl();
+		}
+		break;
+	}
+	
+	_boat.setDetails(7, 870, 3, 4, 5, 1);
+	_crate.setDetails(14, 870, 12, 13, 14, 1);
+	_water.setDetails(5, 870, 24, 25, 26, 1);
+	_palmTrees.setDetails(4, 870, 45, 46, 47, 1);
+	_sand.setDetails(3, 870, 21, 22, 23, 1);
+	_boulders.setDetails(2, 870, 18, 19, 20, 1);
+	_farShore.setDetails(1, 870, 48, 49, 50, 1);
+}
+
+void Scene870::startStrip(int stripNumber) {
+	_sceneMode = 3;
+	BF_GLOBALS._player.disableControl();
+	_stripManager.start(stripNumber, this);
+}
+
+void Scene870::remove() {
+	BF_GLOBALS._scenePalette.clearListeners();
+	SceneExt::remove();
+}
+
+void Scene870::signal() {
+	switch (_sceneMode) {
+	case 0:
+	case 3:
+	case 8700:
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 1:
+		_crateInset.postInit();
+		_crateInset.setDetails(870, -1, -1, -1);
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 2:
+		_yacht.setStrip(6);
+		_yacht.setFrame(1);
+		_yacht._numFrames = 6;
+		_yacht.animate(ANIM_MODE_5, this);
+		BF_GLOBALS._sceneManager.changeScene(666);
+		break;
+	case 8701:
+		BF_GLOBALS._sceneManager.changeScene(880);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene870::process(Event &event) {
+	SceneExt::process(event);
+
+	if (!event.handled && BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		// Check if the cursor is on an exit
+		if (_exit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene870::dispatch() {
+	SceneExt::dispatch();
+
+	if (BF_GLOBALS._sceneObjects->contains(&_lyle) && _lyle.isNoMover()) {
+		_lyle.updateAngle(BF_GLOBALS._player._position);
+	}
+
+	if (!_action && (BF_GLOBALS._player._position.x > 305)) {
+		if (BF_GLOBALS._sceneObjects->contains(&_lyle)) {
+			_lyle.animate(ANIM_MODE_1, NULL);
+			ADD_PLAYER_MOVER_NULL(_lyle, BF_GLOBALS._player._position.x, BF_GLOBALS._player._position.y + 5);
+		}
+
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 8701;
+		setAction(&_sequenceManager, this, 701, &BF_GLOBALS._player, NULL);
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

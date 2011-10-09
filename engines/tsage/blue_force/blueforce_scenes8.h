@@ -434,6 +434,85 @@ public:
 	virtual void dispatch();
 };
 
+class Scene870: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Objects */
+	class Lyle: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Green: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class CrateInset: public FocusObject {
+		class Jar: public NamedObjectExt {
+		public:
+			virtual bool startAction(CursorType action, Event &event);
+		};
+		class Rags: public NamedObjectExt {
+		public:
+			virtual bool startAction(CursorType action, Event &event);
+		};
+	private:
+		void initContents();
+	public:
+		Jar _jar;
+		Rags _rags;
+
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void remove();
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class Boat: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Crate: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Exit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	SpeakerGreen _greenSpeaker;
+	Boat _boat;
+	Crate _crate;
+	Exit _exit;
+	NamedObject _yacht;
+	Lyle _lyle;
+	Green _green;
+	NamedObject _object4, _object5, _object6;
+	CrateInset _crateInset;
+	NamedHotspot _lumber, _firePit, _water, _boulders;
+	NamedHotspot _palmTrees, _sand, _farShore, _item11;
+	Action1 _action1;
+	int _field1662, _field1664;
+
+	Scene870();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+
+	void startStrip(int stripNumber);
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
