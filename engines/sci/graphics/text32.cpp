@@ -56,7 +56,7 @@ void GfxText32::purgeCache() {
 	_textCache.clear();
 }
 
-void GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
+reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
 	if (_textCache.size() >= MAX_CACHED_TEXTS)
 		purgeCache();
 
@@ -71,6 +71,9 @@ void GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHe
 	}
 
 	_textCache[textId] = createTextEntry(textObject, maxWidth, maxHeight);
+
+	// TODO: Create a new hunk pointer with the created surface
+	return NULL_REG;
 }
 
 // TODO: Finish this!
@@ -176,7 +179,7 @@ TextEntry *GfxText32::createTextEntry(reg_t textObject, uint16 maxWidth, uint16 
 	memset(newEntry->surface, 0, newEntry->width * newEntry->height);
 	newEntry->text = _segMan->getString(stringObject);
 
-	int16 maxTextWidth = 0, charCount = 0;
+	int16 /*maxTextWidth = 0,*/ charCount = 0;
 	uint16 curX = 0, curY = 0;
 
 	while (*text) {

@@ -51,7 +51,7 @@ class GfxText32 {
 public:
 	GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen);
 	~GfxText32();
-	void createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0);
+	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0);
 	void drawTextBitmap(reg_t textObject, uint16 textX, uint16 textY, uint16 planeWidth);
 	int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font);
 	TextEntry *getTextEntry(reg_t textObject);

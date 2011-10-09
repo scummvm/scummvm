@@ -1391,8 +1391,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "%s", text.c_str());
 		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
 		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
-		g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
-		break;
+		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
 	}
 	case 1: {
 		if (argc != 2) {
@@ -1403,14 +1402,12 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
 		debugC(kDebugLevelStrings, "kCreateTextBitmap case 1 (%04x:%04x)", PRINT_REG(argv[1]));
 		debugC(kDebugLevelStrings, "%s", text.c_str());
-		g_sci->_gfxText32->createTextBitmap(object);
-		break;
+		return g_sci->_gfxText32->createTextBitmap(object);
 	}
 	default:
 		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+		return NULL_REG;
 	}
-
-	return NULL_REG;
 }
 
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
