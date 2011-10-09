@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	dreamweb.o \
 	dreamgen.o \
+	object.o \
 	pathfind.o \
 	print.o \
 	saveload.o \

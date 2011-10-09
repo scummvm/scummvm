@@ -1696,28 +1696,6 @@ void DreamGenContext::printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWid
 	printdirect(&string, x, &y, maxWidth, centered);
 }
 
-void DreamGenContext::obpicture() {
-	if (data.byte(kObjecttype) == 1)
-		return;
-	Frame *frames;
-	if (data.byte(kObjecttype) == 4)
-		frames = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
-	else
-		frames = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
-	uint8 frame = 3 * data.byte(kCommand) + 1;
-	showframe(frames, 160, 68, frame, 0x80);
-}
-
-void DreamGenContext::obicons() {
-	uint8 value1, value2;
-	getanyad(&value1, &value2);
-	if (value1 == 0xff) {
-		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
-	} else {
-		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
-	}
-}
-
 void DreamGenContext::compare() {
 	char id[4] = { cl, ch, dl, dh };
 	flags._z = compare(al, ah, id);
@@ -1775,43 +1753,6 @@ bool DreamGenContext::checkifset(uint8 x, uint8 y) {
 	return false;
 }
 
-void DreamGenContext::isitworn() {
-	flags._z = isitworn((const DynObject *)es.ptr(bx, sizeof(DynObject)));
-}
-
-bool DreamGenContext::isitworn(const DynObject *object) {
-	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
-}
-
-void DreamGenContext::makeworn() {
-	makeworn((DynObject *)es.ptr(bx, sizeof(DynObject)));
-}
-
-void DreamGenContext::makeworn(DynObject *object) {
-	object->id[0] = 'W'-'A';
-	object->id[1] = 'E'-'A';
-}
-
-void DreamGenContext::obtoinv() {
-	obtoinv(al, ah, di, bx);
-}
-
-void DreamGenContext::obtoinv(uint8 index, uint8 flag, uint16 x, uint16 y) {
-	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
-	showframe(icons1, x - 2, y - 1, 10, 0);
-	if (index == 0xff)
-		return;
-
-	Frame *extras = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
-	Frame *frees = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
-	Frame *frames = (flag == 4) ? extras : frees;
-	showframe(frames, x + 18, y + 19, 3 * index + 1, 128);
-	const DynObject *object = (const DynObject *)getanyaddir(index, flag);
-	bool worn = isitworn(object);
-	if (worn)
-		showframe(icons1, x - 3, y - 2, 7, 0);
-}
-
 void DreamGenContext::showryanpage() {
 	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
 	showframe(icons1, kInventx + 167, kInventy - 12, 12, 0);
@@ -1835,20 +1776,6 @@ void DreamGenContext::findallryan(uint8 *inv) {
 		inv[2 * slot + 0] = i;
 		inv[2 * slot + 1] = 4;
 	}
-}
-
-void DreamGenContext::fillryan() {
-	uint8 *inv = segRef(data.word(kBuffers)).ptr(kRyaninvlist, 60);
-	findallryan(inv);
-	inv += data.byte(kRyanpage) * 2 * 10;
-	for (size_t i = 0; i < 2; ++i) {
-		for (size_t j = 0; j < 5; ++j) {
-			uint8 objIndex = *inv++;
-			uint8 objType = *inv++;
-			obtoinv(objIndex, objType, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
-		}
-	}
-	showryanpage();
 }
 
 void DreamGenContext::hangon() {
