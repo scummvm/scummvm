@@ -176,6 +176,14 @@ public:
 	int _v4CEC2;
 	int _v4CEC4;
 	int _v4CEC8;
+	int _v4CECA;
+	int _v4CECC;
+	int8 _v4CECE[18];
+	int _v4CEE0;
+	int _v4CEE2;
+	int _v4CEE4;
+	int _v4CEE6;
+	int _v4CEE8;
 	int _deziTopic;
 	int _deathReason;
 	int _driveFromScene;
