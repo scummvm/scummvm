@@ -64,8 +64,10 @@ protected:
 template<int dim>
 void MatrixType<dim, 1>::normalize() {
 	float mag = getMagnitude();
-	for (int i = 0; i < dim; ++i) {
-		this->operator()(i, 0) /= mag;
+	if (mag > 0.f) {
+		for (int i = 0; i < dim; ++i) {
+			this->operator()(i, 0) /= mag;
+		}
 	}
 }
 
