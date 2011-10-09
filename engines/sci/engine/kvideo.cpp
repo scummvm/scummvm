@@ -233,44 +233,43 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
-
 	int16 subop = argv[0].toUint16();
 
 	switch (subop) {
-		case 0: { // init
-			int id = argv[1].toUint16();
-			reg_t obj = argv[2];
-			int16 flag = argv[3].toSint16();
-			int16 x = argv[4].toUint16();
-			int16 y = argv[5].toUint16();
-			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-			g_sci->_robotDecoder->load(id);
-			g_sci->_robotDecoder->setPos(x, y);
-			}
-			break;
-		case 1:	// LSL6 hires (startup)
-			// TODO
-			return NULL_REG;	// an integer is expected
-		case 4: {	// start - we don't really have a use for this one
-				//int id = argv[1].toUint16();
-				//warning("kRobot(start), id %d", id);
-			}
-			break;
-		case 7:	// unknown, called e.g. by Phantasmagoria
-			warning("kRobot(%d)", subop);
-			break;
-		case 8: // sync
-			if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
-				writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
-			} else {
-				g_sci->_robotDecoder->close();
-				// Signal the engine scripts that the video is done
-				writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
-			}
-			break;
-		default:
-			warning("kRobot(%d)", subop);
-			break;
+	case 0: { // init
+		int id = argv[1].toUint16();
+		reg_t obj = argv[2];
+		int16 flag = argv[3].toSint16();
+		int16 x = argv[4].toUint16();
+		int16 y = argv[5].toUint16();
+		warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
+		g_sci->_robotDecoder->load(id);
+		g_sci->_robotDecoder->setPos(x, y);
+		}
+		break;
+	case 1:	// LSL6 hires (startup)
+		// TODO
+		return NULL_REG;	// an integer is expected
+	case 4: {	// start - we don't really have a use for this one
+			//int id = argv[1].toUint16();
+			//warning("kRobot(start), id %d", id);
+		}
+		break;
+	case 7:	// unknown, called e.g. by Phantasmagoria
+		warning("kRobot(%d)", subop);
+		break;
+	case 8: // sync
+		if ((uint32)g_sci->_robotDecoder->getCurFrame() !=  g_sci->_robotDecoder->getFrameCount() - 1) {
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
+		} else {
+			g_sci->_robotDecoder->close();
+			// Signal the engine scripts that the video is done
+			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
+		}
+		break;
+	default:
+		warning("kRobot(%d)", subop);
+		break;
 	}
 
 	return s->r_acc;
