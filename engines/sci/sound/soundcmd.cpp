@@ -81,8 +81,14 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 	// on soundblaster. FIXME: check, why this is
 
 	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
-		// Found a relevant audio resource, create an audio stream
-		if (_bMultiMidi || !newSound->soundRes) {
+		// Found a relevant audio resource, create an audio stream if there is
+		// no associated sound resource, or if both resources exist and the
+		// user wants the digital version. In SCI2 and later games, this check
+		// doesn't apply - there was always only one version of each sound
+		// effect or digital music track (e.g. the menu music in GK1 - there is
+		// a sound effect with the same resource number, but it's totally
+		// unrelated to the menu music).
+		if (_bMultiMidi || !newSound->soundRes || getSciVersion() >= SCI_VERSION_2) {
 			int sampleLen;
 			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
 			newSound->soundType = Audio::Mixer::kSpeechSoundType;
