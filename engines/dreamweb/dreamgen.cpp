@@ -5029,25 +5029,6 @@ void DreamGenContext::cantdrop() {
 	worktoscreenm();
 }
 
-void DreamGenContext::wornerror() {
-	STACK_CHECK;
-	data.byte(kCommandtype) = 255;
-	delpointer();
-	di = 76;
-	bx = 21;
-	al = 57;
-	dl = 240;
-	printmessage();
-	worktoscreenm();
-	cx = 50;
-	hangonp();
-	showpanel();
-	showman();
-	examicon();
-	data.byte(kCommandtype) = 255;
-	worktoscreenm();
-}
-
 void DreamGenContext::removeobfrominv() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommand), 100);
@@ -16866,7 +16847,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dropobject: dropobject(); break;
 		case addr_droperror: droperror(); break;
 		case addr_cantdrop: cantdrop(); break;
-		case addr_wornerror: wornerror(); break;
 		case addr_removeobfrominv: removeobfrominv(); break;
 		case addr_selectopenob: selectopenob(); break;
 		case addr_useopened: useopened(); break;

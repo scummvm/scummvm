@@ -452,7 +452,6 @@ public:
 	static const uint16 addr_useopened = 0xc3e0;
 	static const uint16 addr_selectopenob = 0xc3dc;
 	static const uint16 addr_removeobfrominv = 0xc3d8;
-	static const uint16 addr_wornerror = 0xc3d4;
 	static const uint16 addr_cantdrop = 0xc3d0;
 	static const uint16 addr_droperror = 0xc3cc;
 	static const uint16 addr_dropobject = 0xc3c8;
@@ -1286,7 +1285,7 @@ public:
 	void showbyte();
 	void screenupdate();
 	//void addlength();
-	void wornerror();
+	//void usetimedtext();
 	void putundercentre();
 	void checkobjectsize();
 	//void commandonly();
@@ -1433,7 +1432,6 @@ public:
 	//void showallex();
 	void openpoolboss();
 	void buttontwo();
-	//void usetimedtext();
 	//void delsprite();
 	//void getroomspaths();
 	//void dumptextline();
@@ -1491,6 +1489,7 @@ public:
 	void saveload();
 	void monitorlogo();
 	void loadposition();
+	//void wornerror();
 	void entersymbol();
 	void showword();
 	void dirfile();

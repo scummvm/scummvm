@@ -46,6 +46,19 @@ bool DreamGenContext::isitworn(const DynObject *object) {
 	return (object->id[0] == 'W'-'A') && (object->id[1] == 'E'-'A');
 }
 
+void DreamGenContext::wornerror() {
+	data.byte(kCommandtype) = 255;
+	delpointer();
+	printmessage(76, 21, 57, 240, false);
+	worktoscreenm();
+	hangonp(50);
+	showpanel();
+	showman();
+	examicon();
+	data.byte(kCommandtype) = 255;
+	worktoscreenm();
+}
+
 void DreamGenContext::makeworn() {
 	makeworn((DynObject *)es.ptr(bx, sizeof(DynObject)));
 }
