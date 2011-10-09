@@ -21,9 +21,19 @@
  */
 
 #include "made/pmvplayer.h"
+#include "made/made.h"
 #include "made/screen.h"
+#include "made/graphics.h"
+
+#include "common/file.h"
+#include "common/debug.h"
+#include "common/system.h"
+#include "common/events.h"
 
 #include "audio/decoders/raw.h"
+#include "audio/audiostream.h"
+
+#include "graphics/surface.h"
 
 namespace Made {
 

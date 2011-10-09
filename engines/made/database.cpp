@@ -20,13 +20,15 @@
  *
  */
 
-#include "common/system.h"
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
-
 #include "made/database.h"
+#include "made/redreader.h"
+
+#include "common/endian.h"
+#include "common/stream.h"
+#include "common/debug.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace Made {
 

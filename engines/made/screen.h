@@ -23,15 +23,9 @@
 #ifndef MADE_SCREEN_H
 #define MADE_SCREEN_H
 
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/rect.h"
-
-#include "graphics/surface.h"
-#include "graphics/cursorman.h"
-
 #include "made/resource.h"
-#include "made/screenfx.h"
+
+#include "common/rect.h"
 
 namespace Made {
 
@@ -56,6 +50,7 @@ struct SpriteListItem {
 };
 
 class MadeEngine;
+class ScreenEffects;
 
 static const byte defaultMouseCursor[256] = {
 	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

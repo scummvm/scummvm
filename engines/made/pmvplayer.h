@@ -23,19 +23,23 @@
 #ifndef MADE_PMVPLAYER_H
 #define MADE_PMVPLAYER_H
 
-#include "common/system.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/endian.h"
-#include "graphics/surface.h"
 #include "audio/mixer.h"
-#include "audio/audiostream.h"
 
-#include "made/graphics.h"
-#include "made/sound.h"
-#include "made/made.h"
+namespace Common {
+class File;
+}
+
+namespace Graphics {
+class Surface;
+}
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Made {
+
+class MadeEngine;
 
 class PmvPlayer {
 public:

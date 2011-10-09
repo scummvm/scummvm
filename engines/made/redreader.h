@@ -23,9 +23,12 @@
 #ifndef MADE_REDREADER_H
 #define MADE_REDREADER_H
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
+#include "common/scummsys.h"
+
+namespace Common {
+class SeekableReadStream;
+class File;
+}
 
 namespace Made {
 

@@ -23,15 +23,23 @@
 #ifndef MADE_RESOURCE_H
 #define MADE_RESOURCE_H
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
-#include "common/hashmap.h"
-#include "common/textconsole.h"
-#include "graphics/surface.h"
-#include "audio/audiostream.h"
-
 #include "made/sound.h"
+
+#include "common/endian.h"
+#include "common/array.h"
+#include "common/hashmap.h"
+
+namespace Common {
+class File;
+}
+
+namespace Audio {
+class AudioStream;
+}
+
+namespace Graphics {
+class Surface;
+}
 
 namespace Made {
 

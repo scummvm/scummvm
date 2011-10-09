@@ -26,12 +26,10 @@
 #define MADE_MUSIC_H
 
 #include "audio/midiplayer.h"
-#include "audio/midiparser.h"
-#include "common/mutex.h"
-
-#include "made/resource.h"
 
 namespace Made {
+
+class GenericResource;
 
 enum MusicFlags {
 	MUSIC_NORMAL = 0,

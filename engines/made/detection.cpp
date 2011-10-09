@@ -20,13 +20,9 @@
  *
  */
 
-#include "base/plugins.h"
-
-#include "engines/advancedDetector.h"
-#include "common/file.h"
-
 #include "made/made.h"
 
+#include "engines/advancedDetector.h"
 
 namespace Made {
 
