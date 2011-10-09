@@ -591,7 +591,7 @@ void ToucheEngine::res_loadSound(int priority, int num) {
 		uint32 size;
 		const uint32 offs = res_getDataOffset(kResourceTypeSound, num, &size);
 		_fData.seek(offs);
-		Audio::AudioStream *stream = Audio::makeVOCStream(&_fData, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+		Audio::AudioStream *stream = Audio::makeVOCStream(&_fData, Audio::FLAG_UNSIGNED);
 		if (stream) {
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
@@ -649,7 +649,7 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 				return;
 			}
 			_fSpeech[i].seek(offs);
-			stream = Audio::makeVOCStream(&_fSpeech[i], Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+			stream = Audio::makeVOCStream(&_fSpeech[i], Audio::FLAG_UNSIGNED);
 		} else {
 			if (num >= 750) {
 				num -= 750;
