@@ -23,7 +23,6 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/voc.h"
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"

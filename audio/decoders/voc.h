@@ -24,9 +24,7 @@
  * @file
  * Sound decoder used in engines:
  *  - agos
- *  - drascula
  *  - kyra
- *  - made
  *  - saga
  *  - scumm
  *  - touche
