@@ -1389,13 +1389,14 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
 				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
 		debugC(kDebugLevelStrings, "%s", text.c_str());
-		// TODO: arguments 1 and 2
-		g_sci->_gfxText32->createTextBitmap(object);
+		uint16 maxWidth = argv[1].toUint16();	// nsRight - nsLeft + 1
+		uint16 maxHeight = argv[2].toUint16();	// nsBottom - nsTop + 1
+		g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
 		break;
 	}
 	case 1: {
 		if (argc != 2) {
-			warning("kCreateTextBitmap(0): expected 2 arguments, got %i", argc);
+			warning("kCreateTextBitmap(1): expected 2 arguments, got %i", argc);
 			return NULL_REG;
 		}
 		reg_t object = argv[1];

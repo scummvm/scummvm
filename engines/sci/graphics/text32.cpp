@@ -56,7 +56,7 @@ void GfxText32::purgeCache() {
 	_textCache.clear();
 }
 
-void GfxText32::createTextBitmap(reg_t textObject) {
+void GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
 	if (_textCache.size() >= MAX_CACHED_TEXTS)
 		purgeCache();
 
@@ -70,7 +70,7 @@ void GfxText32::createTextBitmap(reg_t textObject) {
 		_textCache.erase(textId);
 	}
 
-	_textCache[textId] = createTextEntry(textObject);
+	_textCache[textId] = createTextEntry(textObject, maxWidth, maxHeight);
 }
 
 // TODO: Finish this!
@@ -133,8 +133,10 @@ TextEntry *GfxText32::getTextEntry(reg_t textObject) {
 }
 
 // TODO: Finish this! Currently buggy.
-TextEntry *GfxText32::createTextEntry(reg_t textObject) {
+TextEntry *GfxText32::createTextEntry(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
+
+	// TODO: maxWidth, maxHeight (if > 0)
 
 	// The object in the text selector of the item can be either a raw string
 	// or a Str object. In the latter case, we need to access the object's data
@@ -174,10 +176,9 @@ TextEntry *GfxText32::createTextEntry(reg_t textObject) {
 	memset(newEntry->surface, 0, newEntry->width * newEntry->height);
 	newEntry->text = _segMan->getString(stringObject);
 
-	int16 maxTextWidth, charCount;
+	int16 maxTextWidth = 0, charCount = 0;
 	uint16 curX = 0, curY = 0;
 
-	maxTextWidth = 0;
 	while (*text) {
 		charCount = GetLongest(text, planeRect.width(), font);
 		if (charCount == 0)
