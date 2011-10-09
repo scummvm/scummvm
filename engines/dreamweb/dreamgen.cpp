@@ -12360,47 +12360,6 @@ void DreamGenContext::findtext1() {
 	si = ax;
 }
 
-void DreamGenContext::zoomonoff() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kPointermode), 2);
-	if (flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadyonoff;
-	data.byte(kCommandtype) = 222;
-	al = 39;
-	commandonly();
-alreadyonoff:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nozoomonoff) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto dozoomonoff;
-	return;
-dozoomonoff:
-	al = data.byte(kZoomon);
-	_xor(al, 1);
-	data.byte(kZoomon) = al;
-	createpanel();
-	data.byte(kNewobs) = 0;
-	drawfloor();
-	printsprites();
-	reelsonscreen();
-	showicon();
-	getunderzoom();
-	undertextline();
-	al = 39;
-	commandonly();
-	readmouse();
-	worktoscreenm();
-}
-
 void DreamGenContext::saveload() {
 	STACK_CHECK;
 	_cmp(data.word(kWatchingtime), 0);

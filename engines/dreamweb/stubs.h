@@ -246,4 +246,3 @@
 	void bresenhams();
 	void examineobtext();
 
-

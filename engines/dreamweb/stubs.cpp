@@ -1927,5 +1927,36 @@ uint8 *DreamGenContext::getobtextstartCPP() {
 	return result;
 }
 
+void DreamGenContext::zoomonoff() {
+	if (data.word(kWatchingtime) != 0) {
+		blank();
+		return;
+	}
+	if (data.byte(kPointermode) == 2) {
+		blank();
+		return;
+	}
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandonly(39);
+	}
+	if (data.word(kMousebutton) == data.word(kOldbutton))
+		return;
+	if ((data.word(kMousebutton) & 1) == 0)
+		return;
+	data.byte(kZoomon) ^= 1;
+	createpanel();
+	data.byte(kNewobs) = 0;
+	drawfloor();
+	printsprites();
+	reelsonscreen();
+	showicon();
+	getunderzoom();
+	undertextline();
+	commandonly(39);
+	readmouse();
+	worktoscreenm();
+}
+
 } /*namespace dreamgen */
 
