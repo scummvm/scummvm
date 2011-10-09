@@ -85,6 +85,8 @@ public:
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
+	byte getColorAtCoordinate(int16 loopNo, int16 celNo, int16 x, int16 y);
+
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount);
