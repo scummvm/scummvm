@@ -211,6 +211,7 @@ public:
 
 	virtual Common::String getClassName() { return "SceneExt"; }
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);

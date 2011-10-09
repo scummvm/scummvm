@@ -681,6 +681,21 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	}
 }
 
+void SceneExt::remove() {
+	BF_GLOBALS._uiElements.hide();
+	BF_GLOBALS._uiElements.resetClear();
+
+	// Below code originally in Blue Force Scene::remove(). Placed here to avoid contaminating
+	// core class with Blue Force specific code
+	if (_action) {
+		if (_action->_endHandler)
+			_action->_endHandler = NULL;
+		_action->remove();
+	}
+	
+	_focusObject = NULL;
+}
+
 void SceneExt::process(Event &event) {
 	_objArray2.process(event);
 	if (!event.handled)
