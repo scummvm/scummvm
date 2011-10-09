@@ -837,4 +837,13 @@ void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
 	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
 }
 
+byte GfxView::getColorAtCoordinate(int16 loopNo, int16 celNo, int16 x, int16 y) {
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const byte *bitmap = getBitmap(loopNo, celNo);
+	const int16 celWidth = celInfo->width;
+
+	bitmap += (celWidth * y);
+	return bitmap[x];
+}
+
 } // End of namespace Sci

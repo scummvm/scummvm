@@ -1471,10 +1471,8 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
-
-	// Used by Shivers 1, room 23601
+	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
+	// are occupied by pieces already
 
 	// 6 arguments, all integers:
 	// argv[0] - subop (0 - 4). It's constantly called with 4 in Shivers 1
@@ -1490,7 +1488,21 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	// 2, 3 - nop
 	// 4 - return value of pixel at x, y
 
-	return s->r_acc;
+	switch (argv[0].toUint16()) {
+		case 4: {
+			GuiResourceId viewId = argv[1].toSint16();
+			int16 loopNo = argv[2].toSint16();
+			int16 celNo = argv[3].toSint16();
+			int16 x = argv[4].toUint16();
+			int16 y = argv[5].toUint16();
+			byte color = g_sci->_gfxCache->kernelViewGetColorAtCoordinate(viewId, loopNo, celNo, x, y);
+			return make_reg(0, color);
+		}
+		default: {
+			kStub(s, argc, argv);
+			return s->r_acc;
+		}
+	}
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
