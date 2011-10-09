@@ -689,7 +689,7 @@ void Scene900::process(Event &event) {
 
 	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		if (_item4.contains(event.mousePos)) {
-			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
 			BF_GLOBALS._events.setCursor(surface);
 		} else {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();

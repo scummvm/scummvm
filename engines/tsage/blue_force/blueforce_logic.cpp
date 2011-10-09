@@ -211,7 +211,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Cove Beach
 		return new Scene870();
 	case 880:
-		error("Scene group 8 not implemented");
+		// Beach Path
+		return new Scene880();
 	case 900:
 		// Outside Warehouse
 		return new Scene900();

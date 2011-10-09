@@ -513,6 +513,54 @@ public:
 	void startStrip(int stripNumber);
 };
 
+class Scene880: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	private:
+		static void SequenceManager_callbackProc(int v1, int v2);
+	public:
+		virtual void signal();
+	};
+
+	/* Objects */
+	class Object4: public NamedObjectExt {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class NorthExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SouthEastExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+private:
+	static void handleAction(Action *action);
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	Action1 _action1;
+	NamedObject _object1, _object2, _object3;
+	Object4 _object4;
+	NamedObject _object5, _object6, _object7;
+	NamedHotspot _background;
+	NorthExit _northExit;
+	SouthEastExit _seExit;
+	int _seqNumber;
+
+	Scene880();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
