@@ -231,11 +231,9 @@ M4InterfaceView::M4InterfaceView(MadsM4Engine *vm):
 	_selected = false;
 
 	Common::SeekableReadStream *data = _vm->res()->get(INTERFACE_SERIES);
-	RGB8 *palette;
-
 	_sprites = new SpriteAsset(_vm, data, data->size(), INTERFACE_SERIES);
-	palette = _sprites->getPalette();
 
+	//RGB8 *palette = _sprites->getPalette();
 	//Palette.setPalette(palette, 0, _sprites->getColorCount());
 
 	_vm->res()->toss(INTERFACE_SERIES);
