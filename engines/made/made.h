@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MADE_H
-#define MADE_H
+#ifndef MADE_MADE_H
+#define MADE_MADE_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"
