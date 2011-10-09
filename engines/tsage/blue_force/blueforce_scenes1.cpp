@@ -623,6 +623,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		default:
 			BF_GLOBALS.setFlag(onBike);
 			BF_GLOBALS._player.disableControl();
+			BF_GLOBALS._uiElements._active = true;
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 192 : 190;
 			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
 			break;
