@@ -140,6 +140,7 @@ void Scene100::Action2::signal() {
 		} else {
 			// Prompt user for whether to start play or watch introduction
 			g_globals->_player.enableControl();
+			g_globals->_events.setCursor(CURSOR_WALK);
 
 			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
 				// Signal to start the game

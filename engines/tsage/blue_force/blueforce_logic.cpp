@@ -43,9 +43,7 @@ namespace BlueForce {
 
 void BlueForceGame::start() {
 	// Start the game
-	g_globals->_sceneManager.changeScene(300);
-
-	g_globals->_events.setCursor(CURSOR_WALK);
+	g_globals->_sceneManager.changeScene(20);
 }
 
 Scene *BlueForceGame::createScene(int sceneNumber) {

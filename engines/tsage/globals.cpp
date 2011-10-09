@@ -230,6 +230,7 @@ void BlueForceGlobals::reset() {
 	((BlueForceInvObjectList *)_inventory)->reset();
 	BF_GLOBALS._uiElements.updateInventory();
 	BF_GLOBALS._uiElements._scoreValue = 0;
+	BF_GLOBALS._uiElements._active = false;
 
 	_mapLocationId = 1;
 	_driveFromScene = 300;
