@@ -613,15 +613,23 @@ int CGEEngine::findPocket(Sprite *spr) {
 	return -1;
 }
 
+/**
+ * Check if an item is in the inventory, and returns its position
+ * @param Inventory slot number		Sprite pointer
+ */
 void CGEEngine::selectPocket(int n) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::selectPocket(%d)", n);
 
 	if (n < 0 || (_pocLight->_seqPtr && _pocPtr == n)) {
+		// If no slot specified, or another slot already selected
+		// stop the blinking animation
 		_pocLight->step(0);
 		n = findPocket(NULL);
 		if (n >= 0)
 			_pocPtr = n;
 	} else {
+		// If slot specified, check if the slot if used.
+		// Is so, start the blinking animation
 		if (_pocket[n] != NULL) {
 			_pocPtr = n;
 			_pocLight->step(1);
@@ -630,13 +638,18 @@ void CGEEngine::selectPocket(int n) {
 	_pocLight->gotoxy(kPocketX + _pocPtr * kPocketDX + kPocketSX, kPocketY + kPocketSY);
 }
 
+/**
+ * Logic used when all the inventory slots are full and the user tries to pick
+ * another object.
+ * @param Inventory slot number		Sprite pointer
+ */
 void CGEEngine::pocFul() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::pocFul()");
 
 	_hero->park();
 	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
 	_commandHandler->addCommand(kCmdSeq, -1, kSeqPocketFull, _hero);
-	_commandHandler->addCommand(kCmdSound, -1, 2, _hero);
+	_commandHandler->addCommand(kCmdSound, -1, 2, _hero); // Play the 'hum-hum" sound (fx00002)
 	_commandHandler->addCommand(kCmdWait, -1, -1, _hero);
 	_commandHandler->addCommand(kCmdSay,  1, kPocketFull, _hero);
 }

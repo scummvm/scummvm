@@ -908,6 +908,23 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
+	// If the user clicks the button whislt the introduction is active, prompt for playing the game
+	if ((BF_GLOBALS._dayNumber == 0) && (event.eventType == EVENT_BUTTON_DOWN)) {
+		// Prompt user for whether to start play or watch introduction
+		BF_GLOBALS._player.enableControl();
+		BF_GLOBALS._events.setCursor(CURSOR_WALK);
+
+		if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
+			// Start the game
+			BF_GLOBALS._dayNumber = 1;
+			BF_GLOBALS._sceneManager.changeScene(190);
+		} else {
+			BF_GLOBALS._player.disableControl();
+		}
+
+		event.handled = true;
+	}
+
 	SceneHandler::process(event);
 }
 
