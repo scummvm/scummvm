@@ -694,7 +694,7 @@ void FullTSA::flushGameState() {
 }
 
 Common::String FullTSA::getBriefingMovie() {	
-	Common::String movieName = getBriefingMovie();
+	Common::String movieName = Neighborhood::getBriefingMovie();
 
 	if (movieName.empty()) {
 		tRoomID room = GameState.getCurrentRoom();
