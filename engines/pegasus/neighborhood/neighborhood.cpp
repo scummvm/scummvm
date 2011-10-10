@@ -75,6 +75,13 @@ Neighborhood::~Neighborhood() {
 
 	_neighborhoodHotspots.deleteHotspots();
 	g_neighborhood = 0;
+
+	loadLoopSound1("");
+	loadLoopSound2("");
+	newInteraction(kNoInteractionID);
+
+	if (g_AIArea)
+		g_AIArea->removeAllRules();
 }
 
 void Neighborhood::init() {
