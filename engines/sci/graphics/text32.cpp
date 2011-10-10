@@ -58,8 +58,6 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
-	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
-	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
 
 	Common::Rect planeRect = getPlaneRect(textObject);
 	uint16 width = planeRect.width();
