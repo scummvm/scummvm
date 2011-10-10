@@ -354,6 +354,9 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	_currentItemID = kNoItemID;
 	_currentBiochipID = kNoItemID;
 
+	if (!g_interface)
+		createInterface();
+
 	// Signature
 	uint32 creator = stream->readUint32BE();
 	if (creator != kPegasusPrimeCreator) {
@@ -395,9 +398,6 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 
 	// Death reason
 	setEnergyDeathReason(stream->readByte());
-
-	// TODO: This is as far as we can go right now (until I implement the mapping biochip and AI rules loading)
-	return true;
 
 	// Items
 	g_allItems.readFromStream(stream);
@@ -448,9 +448,6 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 }
 
 bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
-	// Not ready yet! :P
-	return false;
-
 	// Signature
 	stream->writeUint32BE(kPegasusPrimeCreator);
 
