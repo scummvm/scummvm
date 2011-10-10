@@ -46,6 +46,7 @@
 #include "video/codecs/qtrle.h"
 #include "video/codecs/rpza.h"
 #include "video/codecs/smc.h"
+#include "video/codecs/svq1.h"
 #include "video/codecs/cdtoons.h"
 
 
@@ -471,7 +472,7 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 		break;
 	case MKTAG('S','V','Q','1'):
 		// Sorenson Video 1: Used by some Myst ME videos.
-		warning("Sorenson Video 1 not yet supported");
+		_videoCodec = new SVQ1Decoder(_parentTrack->width, _parentTrack->height);
 		break;
 	case MKTAG('S','V','Q','3'):
 		// Sorenson Video 3: Used by some Myst ME videos.
