@@ -35,6 +35,7 @@
 #include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/mapchip.h"
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
@@ -208,7 +209,8 @@ void Neighborhood::receiveNotification(Notification *, const tNotificationFlags 
 }
 
 void Neighborhood::arriveAt(tRoomID room, tDirectionConstant direction) {
-	// TODO: Map
+	if (g_map)
+		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), room, direction);
 
 	GameState.setCurrentNeighborhood(getObjectID());
 
@@ -565,7 +567,9 @@ bool Neighborhood::stillMoveForward() {
 void Neighborhood::keepStriding(ExitTable::Entry &nextExitEntry) {
 	FaderMoveSpec compassMove;
 
-	// TODO: Map
+	if (g_map)
+		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getNextRoom(), GameState.getNextDirection());
+
 	if (g_compass)
 		getExitCompassMove(nextExitEntry, compassMove);
 
@@ -719,7 +723,8 @@ void Neighborhood::cantOpenDoor(tCanOpenDoorReason) {
 }
 
 void Neighborhood::turnTo(const tDirectionConstant direction) {
-	// TODO: Map
+	if (g_map)
+		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getCurrentRoom(), direction);
 
 	_pushIn.copyToCurrentPort();
 	
@@ -779,7 +784,8 @@ void Neighborhood::doorOpened() {
 
 	loadAmbientLoops();
 
-	// TODO: Map
+	if (g_map)
+		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getNextRoom(), GameState.getNextDirection());
 
 	if (g_AIArea)
 		g_AIArea->checkMiddleArea();

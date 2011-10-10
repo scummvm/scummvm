@@ -50,6 +50,7 @@
 #include "pegasus/items/itemlist.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/biochipitem.h"
+#include "pegasus/items/biochips/mapchip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/pegasuschip.h"
 #include "pegasus/items/biochips/retscanchip.h"
@@ -228,8 +229,7 @@ void PegasusEngine::createItem(tItemID itemID, tNeighborhoodID neighborhoodID, t
 		new OpticalChip(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kMapBiochip:
-		// TODO: Implement this biochip
-		new BiochipItem(itemID, neighborhoodID, roomID, direction);
+		new MapChip(itemID, neighborhoodID, roomID, direction);
 		break;
 	case kRetinalScanBiochip:
 		new RetScanChip(itemID, neighborhoodID, roomID, direction);

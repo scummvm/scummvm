@@ -739,6 +739,11 @@ static const tGameMode kModeInfoScreen = kModeBiochipPick + 1;
 // TODO: Remove me
 static const tRoomID kNorad01 = 0;
 static const tRoomID kMars0A = 0;
+const tRoomID kMars35 = 38;
+const tRoomID kMars39 = 42;
+const tRoomID kMars60 = 58;
+const tRoomID kMarsMaze004 = 60;
+const tRoomID kMarsMaze200 = 224;
 static const tRoomID kWSC01 = 0;
 
 } // End of namespace Pegasus
