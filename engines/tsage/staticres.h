@@ -138,6 +138,9 @@ extern const char *SCENE570_WACKYDATA;
 // Scene 60 radio dispatch buttons
 extern const char *RADIO_BTN_LIST[8];
 
+// Scene 180 message
+extern const char *THE_NEXT_DAY;
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

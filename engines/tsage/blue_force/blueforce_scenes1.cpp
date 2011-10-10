@@ -434,6 +434,378 @@ void Scene109::signal() {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 180 - Front of Home
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene180::Vechile::startAction(CursorType action, Event &event) {
+	if (action == CURSOR_USE) {
+		BF_GLOBALS._sceneManager.changeScene(60);
+		return true;
+	} else {
+		return NamedObject::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+bool Scene180::GarageExit::startAction(CursorType action, Event &event) {
+	Scene180 *scene = (Scene180 *)BF_GLOBALS._sceneManager._scene;
+
+	if (scene->_garageExit.contains(event.mousePos)) {
+		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 256, 114);
+		return true;
+	} else {
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+Scene180::Scene180(): SceneExt() {
+	_fieldC56 = 0;
+}
+
+void Scene180::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_fieldC56);
+}
+
+void Scene180::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	if (((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) ||
+			((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
+			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4)))
+		loadScene(999);
+	else
+		loadScene(1180);
+	setZoomPercents(121, 60, 125, 70);
+
+	_gameTextSpeaker._textPos.y = 180;
+	_stripManager.addSpeaker(&_gameTextSpeaker);
+	
+	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
+		BF_GLOBALS._v501FC = 87;
+		BF_GLOBALS._v501FA = _sceneBounds.left;
+//		_unk.setupText(THE_NEXT_DAY);
+		_sceneMode = 6;
+//		setAction(&_unk);
+		BF_GLOBALS._driveFromScene = 4;
+		BF_GLOBALS._driveToScene = 4;
+		BF_GLOBALS._mapLocationId = 4;
+	} else if (((BF_GLOBALS._bookmark == bDroppedOffLyle) && (BF_GLOBALS._dayNumber == 3)) ||
+			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
+		BF_GLOBALS._v501FC = 87;
+		BF_GLOBALS._v501FA = _sceneBounds.left;
+//		_unk.setupText(THE_NEXT_DAY);
+		_sceneMode = 6;
+//		setAction(&_unk);
+	} else if (BF_GLOBALS._dayNumber == 0) {
+		BF_GLOBALS._player.setPosition(Common::Point(0, 150));
+		_garageExit.postInit();
+
+		BF_GLOBALS._driveToScene = 190;
+		BF_GLOBALS._sound1.play(31);
+		BF_GLOBALS._sound1.holdAt(1);
+		_sceneMode = 1800;
+
+		setAction(&_sequenceManager, this, 1800, &_vechile, &_object1, NULL);
+	} else if (BF_GLOBALS._driveFromScene == 180) {
+		BF_GLOBALS._player.postInit();
+		BF_GLOBALS._player.setVisage(831);
+		BF_GLOBALS._player.setPosition(Common::Point(285, 125));
+		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
+		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+		BF_GLOBALS._player._strip = 3;
+		BF_GLOBALS._player.changeZoom(-1);
+
+		_vechile.postInit();
+		_vechile.setVisage(580);
+		_vechile.setStrip(2);
+		_vechile.setPosition(Common::Point(262, 131));
+		_vechile.setZoom(65);
+		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+
+		_object1.postInit();
+		_object1.setVisage(182);
+		_object1.setStrip(2);
+		_object1.setPosition(Common::Point(258, 122));
+		_object1.setFrame(6);
+
+		BF_GLOBALS._driveFromScene = 0;
+		BF_GLOBALS._player.enableControl();
+	} else if (BF_GLOBALS._driveToScene != 180) {
+		BF_GLOBALS._player.postInit();
+		BF_GLOBALS._player.disableControl();
+
+		_vechile.postInit();
+		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+
+		_object1.postInit();
+
+		BF_GLOBALS._driveFromScene = 4;
+		BF_GLOBALS._driveToScene = 4;
+		BF_GLOBALS._mapLocationId = 4;
+
+		BF_GLOBALS._sound1.fadeSound(33);
+		_sceneMode = 1801;
+		setAction(&_sequenceManager, this, 1801, &BF_GLOBALS._player, &_vechile, &_object1, NULL);
+	} else if (!BF_GLOBALS.getFlag(onDuty) && !BF_GLOBALS.getFlag(fWithLyle)) {
+		BF_GLOBALS._player.setPosition(Common::Point(0, 150));
+
+		_object1.postInit();
+		_object1.setVisage(182);
+		_object1.setStrip(2);
+		_object1.setPosition(Common::Point(258, 122));
+
+		_vechile.postInit();
+		_vechile.setVisage(181);
+		_vechile.setStrip(2);
+		_vechile.changeZoom(80);
+		_vechile.fixPriority(150);
+		_vechile._moveDiff = Common::Point(40, 5);
+		_vechile.setPosition(Common::Point(-25, 171));
+
+		_fieldC56 = 1;
+		BF_GLOBALS._sound1.play(29);
+		_sceneMode = 1;
+		ADD_MOVER(_vechile, 259, 150);
+	} else {
+		BF_GLOBALS._player.setPosition(Common::Point(0, 150));
+
+		_object1.postInit();
+		_object1.setVisage(182);
+		_object1.setStrip(2);
+		_object1.setPosition(Common::Point(258, 122));
+
+		_vechile.postInit();
+		if (BF_GLOBALS.getFlag(onDuty)) {
+			BF_GLOBALS._sound1.play(29);
+
+			_vechile.setVisage(191);
+			_vechile.setStrip(3);
+			_vechile._frame = 5;
+			_vechile.changeZoom(75);
+
+			_fieldC56 = 1;
+			_vechile._moveDiff.x = 45;
+		} else {
+			_vechile.setVisage(444);
+			_vechile.setStrip(2);
+			_vechile.changeZoom(85);
+
+			_fieldC56 = 3;
+			_vechile._moveDiff.x = 30;
+		}
+
+		_vechile.fixPriority(150);
+		_vechile._moveDiff.y = 5;
+		_vechile.setPosition(Common::Point(-25, 171));
+
+		_sceneMode = 3;
+		ADD_MOVER(_vechile, 258, 145);
+	}
+
+	if (_sceneMode != 6) {
+		_frontDoor.setDetails(Rect(183, 92, 218, 122), 180, 27, 28, 29, 1, NULL);
+		_driveway.setDetails(8, 180, 36, 37, 38, 1);
+		_street.setDetails(1, 180, 21, 22, 23, 1);
+		_lawn.setDetails(3, 180, 18, 19, 20, 1);
+		_bushes.setDetails(4, 180, 15, 16, 17, 1);
+		_palms.setDetails(6, 180, 12, 13, 14, 1);
+		_garage.setDetails(Rect(241, 85, 319, 121), 180, 30, 31, 32, 1, NULL);
+		_fence.setDetails(Rect(0, 109, 21, 125), 180, 9, 10, 11, 1, NULL);
+		_house.setDetails(5, 180, 24, 25, 26, 1);
+		_steps.setDetails(7, 180, 6, 7, 8, 1);
+		_curb.setDetails(2, 180, 3, 4, 5, 1);
+		_sky.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 180, 0, 1, 2, 1, NULL);
+	}
+}
+
+void Scene180::signal() {
+	switch (_sceneMode) {
+	case 1:
+		_fieldC56 = 0;
+		switch (BF_GLOBALS._bookmark) {
+		case bFlashBackThree:
+			BF_GLOBALS._bookmark = bDroppedOffLyle;
+			_sceneMode = 7;
+			break;
+		case bDoneWithIsland:
+			BF_GLOBALS._bookmark = bDoneAtLyles;
+			_sceneMode = 8;
+			break;
+		default:
+			_sceneMode = 1802;
+			break;
+		}
+
+		setAction(&_sequenceManager, this, 1802, &_vechile, &_object1, NULL);
+		break;
+	case 2:
+		_fieldC56 = 0;
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._driveToScene);
+		break;
+	case 3:
+		_fieldC56 = 0;
+		BF_GLOBALS._sound1.stop();
+		_stripManager.start(1800, this);
+		_sceneMode = 4;
+		break;
+	case 4:
+		_sceneMode = 5;
+		BF_GLOBALS._sound1.fadeSound(29);
+		ADD_MOVER(_vechile, 340, 140);
+		_vechile._moveDiff.y = 1;
+		break;
+	case 5:
+		BF_GLOBALS._sceneManager.changeScene(50);
+		break;
+	case 6:
+		loadScene(1180);
+		BF_GLOBALS._sound1.fadeSound(33);
+
+		switch (BF_GLOBALS._bookmark) {
+		case bLyleStoppedBy:
+			BF_GLOBALS._dayNumber = 2;
+			BF_INVENTORY.alterInventory(2);
+			break;
+		case bDroppedOffLyle:
+			BF_GLOBALS._dayNumber = 4;
+			BF_INVENTORY.alterInventory(4);
+			break;
+		case bDoneAtLyles:
+			BF_GLOBALS._dayNumber = 5;
+			BF_INVENTORY.alterInventory(5);
+			break;
+		default:
+			break;
+		}
+
+		BF_GLOBALS._player.postInit();
+		BF_GLOBALS._player.disableControl();
+
+		_vechile.postInit();
+		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+
+		_object1.postInit();
+		_sceneMode = 1801;
+		setAction(&_sequenceManager, this, 1801, &BF_GLOBALS._player, &_vechile, &_object1, NULL);
+
+		_frontDoor.setDetails(Rect(183, 92, 218, 122), 180, 27, 28, 29, 1, NULL);
+		_driveway.setDetails(8, 180, 36, 37, 38, 1);
+		_street.setDetails(1, 180, 21, 22, 23, 1);
+		_lawn.setDetails(3, 180, 18, 19, 20, 1);
+		_bushes.setDetails(4, 180, 15, 16, 17, 1);
+		_palms.setDetails(6, 180, 12, 13, 14, 1);
+		_garage.setDetails(Rect(241, 85, 319, 121), 180, 30, 31, 32, 1, NULL);
+		_fence.setDetails(Rect(0, 109, 21, 125), 180, 9, 10, 11, 1, NULL);
+		_house.setDetails(4, 180, 24, 25, 26, 1);
+		_steps.setDetails(7, 180, 6, 7, 8, 1);
+		_curb.setDetails(2, 180, 3, 4, 5, 1);
+		_sky.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 180, 0, 1, 2, 1, NULL);
+		break;
+	case 7:
+		BF_INVENTORY.setObjectScene(INV_COBB_RAP, 0);
+		BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 0);
+		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 0);
+		BF_INVENTORY.setObjectScene(INV_LYLE_CARD, 0);
+		BF_INVENTORY.setObjectScene(INV_NAPKIN, 0);
+		BF_INVENTORY.setObjectScene(INV_9MM_BULLETS, 0);
+		BF_INVENTORY.setObjectScene(INV_SCHEDULE, 0);
+		BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 0);
+		break;
+	case 8:
+		if (BF_GLOBALS.getFlag(fLeftTraceIn900) || BF_GLOBALS.getFlag(fGotPointsForSearchingDA) ||
+				BF_GLOBALS.getFlag(fLeftTraceIn920)) {
+			BF_GLOBALS._sound1.fadeOut2(NULL);
+			BF_GLOBALS._driveToScene = 0;
+			BF_GLOBALS._driveFromScene = 0;
+			BF_GLOBALS._sceneManager.changeScene(271);
+		} else {
+			BF_GLOBALS._sceneManager.changeScene(180);
+		}
+		break;
+	case 1800:
+		_fieldC56 = 2;
+		_vechile._moveDiff.x = 10;
+		ADD_MOVER(_vechile, -25, 171);
+		break;
+	case 1801:
+		BF_GLOBALS._player._strip = 3;
+		BF_GLOBALS._player.enableControl();
+		break;
+	case 1802:
+		BF_GLOBALS._sound1.release();
+		BF_GLOBALS._driveToScene = 0;
+		BF_GLOBALS._driveFromScene = 0;
+		BF_GLOBALS._sceneManager.changeScene(270);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene180::process(Event &event) {
+	SceneExt::process(event);
+
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+		if (_vechile.contains(event.mousePos)) {
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		} else if (_garageExit.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NW);
+			BF_GLOBALS._events.setCursor(surface);
+		} else {
+			// In case an exit cursor was being shown, restore the previously selected cursor
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		}
+	}
+}
+
+void Scene180::dispatch() {
+	switch (_fieldC56) {
+	case 1:
+		if (_vechile._mover && (_vechile._percent > 50))
+			_vechile.changeZoom(_vechile._percent);
+		if (_vechile._moveDiff.x > 15)
+			--_vechile._moveDiff.x;
+		break;
+	case 2:
+		if (_vechile._mover && (_vechile._percent < 100))
+			_vechile.changeZoom(_vechile._percent);
+		if (_vechile._moveDiff.x < 35)
+			++_vechile._moveDiff.x;
+		break;
+	case 3:
+		if (_vechile._mover && (_vechile._percent > 70))
+			_vechile.changeZoom(_vechile._percent);
+		if (_vechile._moveDiff.x > 15)
+			--_vechile._moveDiff.x;
+		break;
+	default:
+		break;
+	}
+
+	SceneExt::dispatch();
+
+	if (!_action && (BF_GLOBALS._player._position.y < 120)) {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS._sound1.fadeOut2(NULL);
+		BF_GLOBALS._driveToScene = 0;
+		BF_GLOBALS._driveFromScene = 0;
+
+		if (BF_GLOBALS.getFlag(fLeftTraceIn900) || BF_GLOBALS.getFlag(fGotPointsForSearchingDA) ||
+				BF_GLOBALS.getFlag(fLeftTraceIn920))
+			BF_GLOBALS._sceneManager.changeScene(271);
+		else
+			BF_GLOBALS._sceneManager.changeScene(270);
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 190 - Front of Police Station
  *
  *--------------------------------------------------------------------------*/

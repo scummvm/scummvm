@@ -175,6 +175,9 @@ const char *SCENE570_PROTODATA = "PROTODATA";
 const char *SCENE570_WACKYEXE = "WACKYEXE";
 const char *SCENE570_WACKYDATA = "WACKYDATA";
 
+// Scene 180 messages
+const char *THE_NEXT_DAY = "The Next Day";
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

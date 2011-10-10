@@ -124,6 +124,38 @@ public:
 	virtual void signal();
 };
 
+class Scene180: public SceneExt {
+	/* Objects */
+	class Vechile: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Items */
+	class GarageExit: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager;
+	SpeakerGameText _gameTextSpeaker;
+	NamedObject _object1;
+	Vechile _vechile;
+	NamedHotspot _driveway, _garage, _frontDoor, _house, _street;
+	NamedHotspot _lawn, _bushes, _palms, _fence, _steps;
+	NamedHotspot _curb, _sky;
+	GarageExit _garageExit;
+	ASoundExt _sound1;
+	int _fieldC56;
+
+	Scene180();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+};
+
 class Scene190: public SceneExt {
 	/* Objects */
 	class Object4: public NamedObject {

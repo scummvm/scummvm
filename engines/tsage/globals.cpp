@@ -211,6 +211,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
+	s.syncAsSint16LE(_v501FA);
 	s.syncAsSint16LE(_v501FC);
 	s.syncAsSint16LE(_v50696);
 	s.syncAsSint16LE(_v5098C);
