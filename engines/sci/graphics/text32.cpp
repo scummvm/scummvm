@@ -100,6 +100,15 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	return memoryId;
 }
 
+reg_t GfxText32::createTextBitmapSci21(uint16 width, uint16 height, byte skip, byte back, uint16 width2, uint16 height2, byte transparentFlag) {
+	// TODO: skip, width2, height2, transparentFlag
+	int entrySize = width * height;
+	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
+	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
+	memset(memoryPtr, back, entrySize);
+	return memoryId;
+}
+
 void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
@@ -119,11 +128,17 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	uint16 width = nsRect.width();
 	uint16 height = nsRect.height();
 
+	// Upscale the coordinates/width if the fonts are already upscaled
+	if (_screen->fontIsUpscaled()) {
+		textX = textX * _screen->getDisplayWidth() / _screen->getWidth();
+		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
+	}
+
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			byte pixel = surface[curByte++];
 			if (pixel)
-				_screen->putPixel(x + textX, y + textY, 1, pixel, 0, 0);
+				_screen->putFontPixel(textY, x + textX, y, pixel);
 		}
 	}
 }

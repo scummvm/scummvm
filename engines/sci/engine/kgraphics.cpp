@@ -1637,10 +1637,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		uint16 back = argv[4].toUint16();
 		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
 		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		uint16 transparent = (argc >= 8) ? argv[7].toUint16() : 0;
-		warning("kBitmap(0): width %d, height %d, skip %d, back %d, width2 %d, height2 %d, transparent %d",
-				width, height, skip, back, width2, height2, transparent);
-		return NULL_REG;	// TODO: return a hunk handle for the new bitmap surface
+		uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+		return g_sci->_gfxText32->createTextBitmapSci21(width, height, skip, back, width2, height2, transparentFlag);
 		}
 		break;
 	case 1:	// dispose text bitmap surface
