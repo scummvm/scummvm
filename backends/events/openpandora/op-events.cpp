@@ -38,23 +38,23 @@
 #include "common/events.h"
 
 /* Quick default button states for modifiers. */
-int BUTTON_STATE_L					=	false;
+int BUTTON_STATE_L                  =   false;
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT		= 0,
-	TAPMODE_RIGHT		= 1,
-	TAPMODE_HOVER		= 2
+	TAPMODE_LEFT        = 0,
+	TAPMODE_RIGHT       = 1,
+	TAPMODE_HOVER       = 2
 };
 
 OPEventSource::OPEventSource()
-	: _buttonStateL(false){
+	: _buttonStateL(false) {
 }
 
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT){
+	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONDOWN;
 		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
@@ -65,8 +65,7 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-	}
-	else if (ev.button.button == SDL_BUTTON_RIGHT)
+	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONDOWN;
 #if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
 	else if (ev.button.button == SDL_BUTTON_WHEELUP)
@@ -87,7 +86,7 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 }
 
 bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT){
+	if (ev.button.button == SDL_BUTTON_LEFT) {
 		if (BUTTON_STATE_L == true) /* BUTTON_STATE_L = Left Trigger Held, force Right Click */
 			event.type = Common::EVENT_RBUTTONUP;
 		else if (OP::tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
@@ -98,8 +97,7 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
-	}
-	else if (ev.button.button == SDL_BUTTON_RIGHT)
+	} else if (ev.button.button == SDL_BUTTON_RIGHT)
 		event.type = Common::EVENT_RBUTTONUP;
 #if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
