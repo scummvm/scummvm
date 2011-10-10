@@ -1178,6 +1178,8 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
+
+	fade(Animation::None, 0);
 }
 
 void Costume::Chore::playLooping() {
@@ -1185,6 +1187,8 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
+
+	fade(Animation::None, 0);
 }
 
 void Costume::Chore::stop() {
@@ -1258,6 +1262,16 @@ void Costume::Chore::update(float time) {
 	_currTime = newTime;
 }
 
+void Costume::Chore::fade(Animation::FadeMode mode, int msecs) {
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
+			kf->fade(mode, msecs);
+		}
+	}
+}
+
 void Costume::Chore::fadeIn(int msecs) {
 	if (!_playing) {
 		_playing = true;
@@ -1265,31 +1279,13 @@ void Costume::Chore::fadeIn(int msecs) {
 		_currTime = -1;
 	}
 
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		if (!comp)
-			continue;
-
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
-			kf->fade(Animation::FadeIn, msecs);
-		}
-	}
+	fade(Animation::FadeIn, msecs);
 }
 
 void Costume::Chore::fadeOut(int msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		if (!comp)
-			continue;
-
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent* kf = static_cast<KeyframeComponent*>(comp);
-			kf->fade(Animation::FadeOut, msecs);
-		}
-	}
+	fade(Animation::FadeOut, msecs);
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {

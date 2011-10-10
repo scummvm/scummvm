@@ -28,6 +28,7 @@
 #include "math/matrix4.h"
 
 #include "engines/grim/object.h"
+#include "engines/grim/animation.h"
 
 
 namespace Grim {
@@ -169,6 +170,9 @@ private:
 		void cleanup();
 
 	private:
+		void setKeys(int startTime, int stopTime);
+		void fade(Animation::FadeMode, int msecs);
+
 		Costume *_owner;
 
 		int _id;
@@ -179,8 +183,6 @@ private:
 
 		bool _hasPlayed, _playing, _looping;
 		int _currTime;
-
-		void setKeys(int startTime, int stopTime);
 
 		friend class Costume;
 	};
