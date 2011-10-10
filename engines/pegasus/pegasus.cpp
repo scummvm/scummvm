@@ -143,16 +143,25 @@ Common::Error PegasusEngine::run() {
 	_biochips.setWeightLimit(8);
 	_biochips.setOwnerID(kPlayerID);
 
-	// Start up the first notification
-	_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
-	_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
-
 	_returnHotspot.setArea(Common::Rect(kNavAreaLeft, kNavAreaTop, 512 + kNavAreaLeft, 256 + kNavAreaTop));
 	_returnHotspot.setHotspotFlags(kInfoReturnSpotFlag);
 	g_allHotspots.push_back(&_returnHotspot);
 
 	_screenDimmer.setBounds(Common::Rect(0, 0, 640, 480));
 	_screenDimmer.setDisplayOrder(kScreenDimmerOrder);
+
+	// Load from the launcher/cli if requested (and don't show the intro in those cases)
+	bool doIntro = true;
+	if (ConfMan.hasKey("save_slot")) {
+		uint32 gameToLoad = ConfMan.getInt("save_slot");
+		doIntro = (loadGameState(gameToLoad).getCode() != Common::kNoError);
+	}
+
+	if (doIntro) {
+		// Start up the first notification
+		_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
+		_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
+	}
 
 	while (!shouldQuit()) {
 		processShell();

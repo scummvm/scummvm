@@ -111,6 +111,7 @@ public:
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves)
+		|| (f == kSupportsLoadingDuringStartup)
 		|| (f == kSupportsDeleteSave);
 }
 
