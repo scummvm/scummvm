@@ -47,13 +47,7 @@ KeyframeAnim::KeyframeAnim(const Common::String &fname, const char *data, int le
 void KeyframeAnim::loadBinary(const char *data, int len) {
 	// First four bytes are the FYEK Keyframe identifier code
 	// Next 36 bytes are the filename
-	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
-		char filebuf[37];
-
-		memcpy(filebuf, data + 4, 36);
-		filebuf[36] = 0;
-		printf("Loading Keyframe '%s'.", filebuf);
-	}
+	Debug::debug(Debug::Keyframes, "Loading Keyframe '%s'.", _fname.c_str());
 	// Next four bytes are the flags
 	_flags = READ_LE_UINT32(data + 40);
 	// Next four bytes are a duplicate of _numJoints (?)
@@ -98,9 +92,7 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 		// else is still wrong but it should now load correctly in
 		// all cases
 		if (nodeNum >= _numJoints) {
-			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL) {
-				warning("A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
-			}
+			Debug::warning(Debug::Keyframes, "A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
 			return;
 		}
 		if (_nodes[nodeNum]) {

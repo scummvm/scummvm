@@ -41,8 +41,7 @@ void Imuse::setMusicState(int stateId) {
 	}
 	assert(num != -1);
 
-	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		debug("Imuse::setMusicState(): SoundId %d, filename: %s", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
+	Debug::debug(Debug::Imuse, "Imuse::setMusicState(): SoundId %d, filename: %s", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
 
 	if (_curMusicState == num)
 		return;
@@ -72,8 +71,7 @@ int Imuse::setMusicSequence(int seqId) {
 
 	assert(num != -1);
 
-	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		debug("Imuse::setMusicSequence(): SoundId %d, filename: %s", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
+	Debug::debug(Debug::Imuse, "Imuse::setMusicSequence(): SoundId %d, filename: %s", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
 
 	if (_curMusicSeq == num)
 		return _seqMusicTable[_curMusicSeq].soundId;

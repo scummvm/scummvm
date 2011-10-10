@@ -228,8 +228,7 @@ void BitmapComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("Missing scene bitmap: %s", bitmap);
+	Debug::warning(Debug::Bitmaps | Debug::Costumes, "Missing scene bitmap: %s", bitmap);
 
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
@@ -294,8 +293,8 @@ void SpriteComponent::init() {
 			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
 			if (mc)
 				mc->getNode()->addSprite(_sprite);
-			else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Parent of sprite %s wasn't a mesh", _filename.c_str());
+			else
+				Debug::warning(Debug::Costumes, "Parent of sprite %s wasn't a mesh", _filename.c_str());
 		}
 	}
 }
@@ -364,8 +363,7 @@ void ModelComponent::init() {
 		if (!cm && g_grim->getCurrSet())
 			cm = g_grim->getCurrSet()->getCMap();
 		if (!cm) {
-			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
+			Debug::warning(Debug::Costumes, "No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
@@ -380,8 +378,7 @@ void ModelComponent::init() {
 		} else {
 			_obj = g_resourceloader->loadModel(_filename, cm);
 			_hier = _obj->copyHierarchy();
-			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Parent of model %s wasn't a mesh", _filename.c_str());
+			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _filename.c_str());
 		}
 
 		// Use parent availablity to decide whether to default the
@@ -662,8 +659,7 @@ void KeyframeComponent::setKey(int val) {
 		fade(Animation::FadeOut, 125);
 		break;
 	default:
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for keyframe %s", val, _fname.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", val, _fname.c_str());
 	}
 }
 
@@ -685,8 +681,7 @@ void KeyframeComponent::init() {
 	if (mc) {
 		_anim = new Animation(_fname, mc->getAnimManager(), _priority1, _priority2);
 	} else {
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of %s was not a model", _fname.c_str());
+		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _fname.c_str());
 		_anim = NULL;
 	}
 }
@@ -712,8 +707,7 @@ void MeshComponent::init() {
 		_node = mc->getHierarchy() + _num;
 		_model = mc->getModel();
 	} else {
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of mesh %d was not a model", _num);
+		Debug::warning(Debug::Costumes, "Parent of mesh %d was not a model", _num);
 		_node = NULL;
 		_model = NULL;
 	}
@@ -747,8 +741,7 @@ void MeshComponent::restoreState(SaveGame *state) {
 MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
 		Costume::Component(p, parentID, t), _filename(filename) {
 
-	if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("Constructing MaterialComponent %s", filename);
+	Debug::debug(Debug::Costumes, "Constructing MaterialComponent %s", filename);
 }
 
 void MaterialComponent::init() {
@@ -851,8 +844,7 @@ void SoundComponent::setKey(int val) {
 		g_imuse->setHookId(_soundName.c_str(), 0x80);
 		break;
 	default:
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for sound %s", val, _soundName.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for sound %s", val, _soundName.c_str());
 	}
 }
 
@@ -959,8 +951,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 		_chores[id]._length = length;
 		_chores[id]._numTracks = tracks;
 		memcpy(_chores[id]._name, name, 32);
-		if (gDebugLevel == DEBUG_ALL || gDebugLevel == DEBUG_CHORES)
-			printf("Loaded chore: %s\n", name);
+		Debug::debug(Debug::Chores, "Loaded chore: %s\n", name);
 	}
 
 	ts.expectString("section keys");
@@ -1390,8 +1381,7 @@ Model *Costume::getModel() {
 
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].playLooping();
@@ -1412,8 +1402,7 @@ void Costume::playChore(const char *name) {
 
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].play();
@@ -1423,8 +1412,7 @@ void Costume::playChore(int num) {
 
 void Costume::stopChore(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].stop();
@@ -1451,8 +1439,7 @@ void Costume::stopChores() {
 void Costume::fadeChoreIn(int chore, int msecs) {
 	if (chore >= _numChores) {
 		if (chore < 0 || chore >= _numChores) {
-			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 			return;
 		}
 	}
@@ -1464,8 +1451,7 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 void Costume::fadeChoreOut(int chore, int msecs) {
 	if (chore >= _numChores) {
 		if (chore < 0 || chore >= _numChores) {
-			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 			return;
 		}
 	}

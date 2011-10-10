@@ -90,8 +90,7 @@ void L1_ImSetVoiceEffect() {
 	const char *effectName;
 
 	effectName = luaL_check_string(1);
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
+	Debug::warning(Debug::Imuse, "ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
 }
 
 void L1_ImSetMusicVol() {

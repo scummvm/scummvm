@@ -172,6 +172,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	// Add 'movies' subdirectory for the demo
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
+
+	Debug::registerDebugChannels();
 }
 
 GrimEngine::~GrimEngine() {
@@ -311,8 +313,8 @@ int GrimEngine::bundle_dofile(const char *filename) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\") && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-			warning("Cannot find script %s", filename);
+		if (!strstr(filename, "Scripts\\"))
+			Debug::warning(Debug::Engine, "Cannot find script %s", filename);
 
 		return 2;
 	}
@@ -327,8 +329,7 @@ int GrimEngine::single_dofile(const char *filename) {
 
 	if (!f->open(filename)) {
 		delete f;
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Cannot find script %s", filename);
+		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
 
 		return 2;
 	}
@@ -900,7 +901,7 @@ void GrimEngine::loadGame(const Common::String &file) {
 }
 
 void GrimEngine::savegameRestore() {
-	debug("GrimEngine::savegameRestore() started.\n");
+	debug("GrimEngine::savegameRestore() started.");
 	_savegameLoadRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -923,20 +924,46 @@ void GrimEngine::savegameRestore() {
 	_currSet = NULL;
 
 	PoolColor::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Colors restored succesfully.");
+
 	Bitmap::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Bitmaps restored succesfully.");
+
 	Font::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Fonts restored succesfully.");
+
 	ObjectState::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "ObjectStates restored succesfully.");
+
 	Set::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Sets restored succesfully.");
+
 	TextObject::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "TextObjects restored succesfully.");
+
 	PrimitiveObject::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "PrimitiveObjects restored succesfully.");
+
 	Actor::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Actors restored succesfully.");
+
 	restoreGRIM();
+	Debug::debug(Debug::Engine, "Engine restored succesfully.");
 
 	g_driver->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Renderer restored succesfully.");
+
 	g_imuse->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "iMuse restored succesfully.");
+
 	g_movie->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Movie restored succesfully.");
+
 	_iris->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Iris restored succesfully.");
+
 	lua_Restore(_savedState);
+	Debug::debug(Debug::Engine, "Lua restored succesfully.");
 
 	delete _savedState;
 
@@ -959,7 +986,7 @@ void GrimEngine::savegameRestore() {
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameRestore() finished.\n");
+	debug("GrimEngine::savegameRestore() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -999,7 +1026,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	debug("GrimEngine::StoreSaveGameImage() started.\n");
+	debug("GrimEngine::StoreSaveGameImage() started.");
 
 	EngineMode mode = g_grim->getMode();
 	g_grim->setMode(_previousMode);
@@ -1020,11 +1047,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	}
 	state->endSection();
 	delete screenshot;
-	debug("GrimEngine::StoreSaveGameImage() finished.\n");
+	debug("GrimEngine::StoreSaveGameImage() finished.");
 }
 
 void GrimEngine::savegameSave() {
-	debug("GrimEngine::savegameSave() started.\n");
+	debug("GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
 	char filename[200];
 	if (_savegameFileName.size() == 0) {
@@ -1047,26 +1074,51 @@ void GrimEngine::savegameSave() {
 	savegameCallback();
 
 	PoolColor::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Colors saved succesfully.");
+
 	Bitmap::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Bitmaps saved succesfully.");
+
 	Font::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Fonts saved succesfully.");
+
 	ObjectState::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "ObjectStates saved succesfully.");
+
 	Set::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Sets saved succesfully.");
+
 	TextObject::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "TextObjects saved succesfully.");
+
 	PrimitiveObject::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "PrimitiveObjects saved succesfully.");
+
 	Actor::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Actors saved succesfully.");
+
 	saveGRIM();
+	Debug::debug(Debug::Engine, "Engine saved succesfully.");
 
 	g_driver->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Renderer saved succesfully.");
+
 	g_imuse->saveState(_savedState);
+	Debug::debug(Debug::Engine, "iMuse saved succesfully.");
+
 	g_movie->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Movie saved succesfully.");
+
 	_iris->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Iris saved succesfully.");
+
 	lua_Save(_savedState);
 
 	delete _savedState;
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameSave() finished.\n");
+	debug("GrimEngine::savegameSave() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1148,8 +1200,7 @@ void GrimEngine::setSetLock(const char *name, bool lockStatus) {
 	Set *scene = findSet(name);
 
 	if (!scene) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Set object '%s' not found in list", name);
+		Debug::warning(Debug::Engine, "Set object '%s' not found in list", name);
 		return;
 	}
 	// Change the locking status

@@ -136,8 +136,7 @@ bool MoviePlayer::play(Common::String filename, bool looping, int x, int y) {
 	if (!loadFile(_fname))
 		return false;
 
-	if (gDebugLevel == DEBUG_MOVIE)
-		warning("Playing video '%s'.\n", filename.c_str());
+	Debug::debug(Debug::Movie, "Playing video '%s'.\n", filename.c_str());
 
 	init();
 
