@@ -132,6 +132,7 @@ struct SelectorCache {
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
+	Selector bitmap; // Used to hold the text bitmap for SCI32 texts
 
 	Selector plane;
 	Selector top;

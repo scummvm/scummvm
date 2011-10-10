@@ -43,103 +43,10 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 }
 
 GfxText32::~GfxText32() {
-	purgeCache();
-}
-
-void GfxText32::purgeCache() {
-	for (TextCache::iterator cacheIterator = _textCache.begin(); cacheIterator != _textCache.end(); cacheIterator++) {
-		delete[] cacheIterator->_value->surface;
-		delete cacheIterator->_value;
-		cacheIterator->_value = 0;
-	}
-
-	_textCache.clear();
 }
 
 reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
-	if (_textCache.size() >= MAX_CACHED_TEXTS)
-		purgeCache();
-
-	uint32 textId = (textObject.segment << 16) | textObject.offset;
-
-	if (_textCache.contains(textId)) {
-		// Delete the old entry
-		TextEntry *oldEntry = _textCache[textId];
-		delete[] oldEntry->surface;
-		delete oldEntry;
-		_textCache.erase(textId);
-	}
-
-	_textCache[textId] = createTextEntry(textObject, maxWidth, maxHeight);
-
-	// TODO: Create a new hunk pointer with the created surface
-	return NULL_REG;
-}
-
-// TODO: Finish this!
-void GfxText32::drawTextBitmap(reg_t textObject, uint16 textX, uint16 textY, uint16 planeWidth) {
-	uint32 textId = (textObject.segment << 16) | textObject.offset;
-
-	if (!_textCache.contains(textId))
-		createTextBitmap(textObject);
-
-	TextEntry *entry = _textCache[textId];
-
-	// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
-	// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
-	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
-	bool dimmed = readSelectorValue(_segMan,textObject, SELECTOR(dimmed));
-	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
-
-	const char *txt = entry->text.c_str();
-	int16 charCount;
-	uint16 maxWidth = (planeWidth > 0) ? planeWidth : _screen->getWidth() - textX;
-
-	while (*txt) {
-		charCount = GetLongest(txt, maxWidth, font);
-		if (charCount == 0)
-			break;
-
-		uint16 curX = textX;
-
-		for (int i = 0; i < charCount; i++) {
-			unsigned char curChar = txt[i];
-			font->draw(curChar, textY, curX, foreColor, dimmed);
-			curX += font->getCharWidth(curChar);
-		}
-
-		textY += font->getHeight();
-		txt += charCount;
-		while (*txt == ' ')
-			txt++; // skip over breaking spaces
-	}
-
-	// TODO: The "SCI2" way of font drawing. Currently buggy
-	/*
-	for (int x = textX; x < entry->width; x++) {
-		for (int y = textY; y < entry->height; y++) {
-			byte pixel = entry->surface[y * entry->width + x];
-			if (pixel)
-				_screen->putPixel(x, y, 1, pixel, 0, 0);
-		}
-	}
-	*/
-}
-
-TextEntry *GfxText32::getTextEntry(reg_t textObject) {
-	uint32 textId = (textObject.segment << 16) | textObject.offset;
-
-	if (!_textCache.contains(textId))
-		createTextBitmap(textObject);
-
-	return _textCache[textId];
-}
-
-// TODO: Finish this! Currently buggy.
-TextEntry *GfxText32::createTextEntry(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
-
-	// TODO: maxWidth, maxHeight (if > 0)
 
 	// The object in the text selector of the item can be either a raw string
 	// or a Str object. In the latter case, we need to access the object's data
@@ -147,59 +54,103 @@ TextEntry *GfxText32::createTextEntry(reg_t textObject, uint16 maxWidth, uint16 
 	if (_segMan->isHeapObject(stringObject))
 		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
 
-	const char *text = _segMan->getString(stringObject).c_str();
+	Common::String text = _segMan->getString(stringObject);
 	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
 	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
 	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
 
-	// Now get the bounding box from the associated plane
+	Common::Rect planeRect = getPlaneRect(textObject);
+	uint16 width = planeRect.width();
+	uint16 height = planeRect.height();
+
+	// Limit rectangle dimensions, if requested
+	if (maxWidth > 0)
+		width = maxWidth;
+	if (maxHeight > 0)
+		height = maxHeight;
+
+	int entrySize = width * height;
+	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
+	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
+	memset(memoryPtr, 0, entrySize);
+
+	int16 charCount = 0;
+	uint16 curX = 0, curY = 0;
+	const char *txt = text.c_str();
+
+	while (*txt) {
+		charCount = GetLongest(txt, width, font);
+		if (charCount == 0)
+			break;
+
+		for (int i = 0; i < charCount; i++) {
+			unsigned char curChar = txt[i];
+			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, memoryPtr, width, height);
+			curX += font->getCharWidth(curChar);
+		}
+
+		curX = 0;
+		curY += font->getHeight();
+		txt += charCount;
+		while (*txt == ' ')
+			txt++; // skip over breaking spaces
+	}
+
+	return memoryId;
+}
+
+void GfxText32::disposeTextBitmap(reg_t hunkId) {
+	_segMan->freeHunkEntry(hunkId);
+}
+
+void GfxText32::drawTextBitmap(reg_t textObject) {
+	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	byte *surface = _segMan->getHunkPointer(hunkId);
+
+	if (!surface)
+		error("Attempt to draw an invalid text bitmap");
+
+	int curByte = 0;
+	Common::Rect nsRect = getNSRect(textObject);
+	Common::Rect planeRect = getPlaneRect(textObject);
+	uint16 textX = planeRect.left + nsRect.left;
+	uint16 textY = planeRect.top + nsRect.top;
+	uint16 width = nsRect.width();
+	uint16 height = nsRect.height();
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			byte pixel = surface[curByte++];
+			if (pixel)
+				_screen->putPixel(x + textX, y + textY, 1, pixel, 0, 0);
+		}
+	}
+}
+
+Common::Rect GfxText32::getPlaneRect(reg_t textObject) {
+	Common::Rect planeRect(0, 0, _screen->getWidth(), _screen->getHeight());
+
 	reg_t planeObject = readSelector(_segMan, textObject, SELECTOR(plane));
-	Common::Rect planeRect;
 	if (!planeObject.isNull()) {
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
 		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom)) + 1;
 		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right)) + 1;
-	} else {
-		planeRect.top = 0;
-		planeRect.left = 0;
-		planeRect.bottom = _screen->getHeight();
-		planeRect.right = _screen->getWidth();
 	}
 
-	TextEntry *newEntry = new TextEntry();
-	newEntry->object = stringObject;
-	newEntry->x = x;
-	newEntry->y = y;
-	newEntry->width = planeRect.width();
-	newEntry->height = planeRect.height();
-	newEntry->surface = new byte[newEntry->width * newEntry->height];
-	memset(newEntry->surface, 0, newEntry->width * newEntry->height);
-	newEntry->text = _segMan->getString(stringObject);
+	return planeRect;
+}
 
-	int16 /*maxTextWidth = 0,*/ charCount = 0;
-	uint16 curX = 0, curY = 0;
-
-	while (*text) {
-		charCount = GetLongest(text, planeRect.width(), font);
-		if (charCount == 0)
-			break;
-
-		for (int i = 0; i < charCount; i++) {
-			unsigned char curChar = text[i];
-			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, newEntry->surface, newEntry->width, newEntry->height);
-			curX += font->getCharWidth(curChar);
-		}
-
-		curY += font->getHeight();
-		text += charCount;
-		while (*text == ' ')
-			text++; // skip over breaking spaces
-	}
-
-	return newEntry;
+Common::Rect GfxText32::getNSRect(reg_t textObject) {
+	Common::Rect nsRect;
+	nsRect.top = readSelectorValue(_segMan, textObject, SELECTOR(nsTop));
+	nsRect.left = readSelectorValue(_segMan, textObject, SELECTOR(nsLeft));
+	nsRect.bottom = readSelectorValue(_segMan, textObject, SELECTOR(nsBottom)) + 1;
+	nsRect.right = readSelectorValue(_segMan, textObject, SELECTOR(nsRight)) + 1;
+	return nsRect;
 }
 
 int16 GfxText32::GetLongest(const char *text, int16 maxWidth, GfxFont *font) {

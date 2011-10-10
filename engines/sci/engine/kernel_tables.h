@@ -477,6 +477,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
@@ -501,7 +502,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// SCI2 unmapped functions - TODO!
 
 	// SetScroll - called by script 64909, Styler::doit()
-	// DisposeTextBitmap
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
 	// VibrateMouse - used in QFG4
 	// ObjectIntersect - used in QFG4

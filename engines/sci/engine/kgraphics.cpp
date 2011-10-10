@@ -1405,6 +1405,11 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->disposeTextBitmap(argv[0]);
+	return s->r_acc;
+}
+
 reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
 	uint16 windowsOption = argv[0].toUint16();
 	switch (windowsOption) {

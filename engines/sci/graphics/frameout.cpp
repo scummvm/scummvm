@@ -547,16 +547,7 @@ void GfxFrameout::kernelFrameout() {
 			} else {
 				// Most likely a text entry
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					TextEntry *textEntry = g_sci->_gfxText32->getTextEntry(itemEntry->object);
-					uint16 startX = ((textEntry->x * _screen->getWidth()) / scriptsRunningWidth) + it->planeRect.left;
-					uint16 startY = ((textEntry->y * _screen->getHeight()) / scriptsRunningHeight) + it->planeRect.top;
-					// Upscale the coordinates/width if the fonts are already upscaled
-					if (_screen->fontIsUpscaled()) {
-						startX = startX * _screen->getDisplayWidth() / _screen->getWidth();
-						startY = startY * _screen->getDisplayHeight() / _screen->getHeight();
-					}
-
-					g_sci->_gfxText32->drawTextBitmap(itemEntry->object, startX, startY, it->planeRect.width());
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->object);
 				}
 			}
 		}
