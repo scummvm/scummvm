@@ -1316,11 +1316,6 @@ reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->kernelRepaintPlane(argv[0]);
-	return s->r_acc;
-}
-
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();

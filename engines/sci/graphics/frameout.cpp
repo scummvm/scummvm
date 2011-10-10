@@ -170,10 +170,6 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 	error("kUpdatePlane called on plane that wasn't added before");
 }
 
-void GfxFrameout::kernelRepaintPlane(reg_t object) {
-	// TODO
-}
-
 void GfxFrameout::kernelDeletePlane(reg_t object) {
 	deletePlanePictures(object);
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {

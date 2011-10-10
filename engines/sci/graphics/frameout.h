@@ -89,7 +89,6 @@ public:
 
 	void kernelAddPlane(reg_t object);
 	void kernelUpdatePlane(reg_t object);
-	void kernelRepaintPlane(reg_t object);
 	void kernelDeletePlane(reg_t object);
 	void kernelAddScreenItem(reg_t object);
 	void kernelUpdateScreenItem(reg_t object);

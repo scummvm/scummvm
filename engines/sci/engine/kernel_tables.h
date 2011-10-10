@@ -493,7 +493,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// our own memory manager and garbage collector, thus we simply call FlushResources, which in turn invokes
 	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
 	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -540,7 +539,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// are marked as dummy, so if they're ever used the engine will error out.
 	{ MAP_DUMMY(AddMagnify),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(DeleteMagnify),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-
+	{ MAP_DUMMY(RepaintPlane),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_DUMMY(InspectObject),    SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	// Profiler (same as SCI0-SCI1.1)
 	// Record (same as SCI0-SCI1.1)
@@ -812,7 +811,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x19*/ "AddPlane",
 	/*0x1a*/ "DeletePlane",
 	/*0x1b*/ "UpdatePlane",
-	/*0x1c*/ "RepaintPlane",
+	/*0x1c*/ "RepaintPlane",		// unused function
 	/*0x1d*/ "SetShowStyle",
 	/*0x1e*/ "ShowStylePercent",	// unused function
 	/*0x1f*/ "SetScroll",
@@ -828,7 +827,7 @@ static const char *const sci2_default_knames[] = {
 	/*0x29*/ "Dummy",
 	/*0x2a*/ "SetQuitStr",
 	/*0x2b*/ "EditText",
-	/*0x2c*/ "InputText",	// unused function
+	/*0x2c*/ "InputText",			// unused function
 	/*0x2d*/ "CreateTextBitmap",
 	/*0x2e*/ "DisposeTextBitmap",
 	/*0x2f*/ "GetEvent",
@@ -1024,7 +1023,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x48*/ "Message",
 	/*0x49*/ "Font",
 	/*0x4a*/ "EditText",
-	/*0x4b*/ "InputText",
+	/*0x4b*/ "InputText",		// unused function
 	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
