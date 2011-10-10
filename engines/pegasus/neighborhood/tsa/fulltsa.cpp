@@ -2876,35 +2876,40 @@ void FullTSA::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			case kRobotsAtCommandCenter:
 			case kRobotsAtFrontDoor:
 			case kRobotsAtReadyRoom:
-				switch (cursorSpot->getObjectID()) {
-				case kTSA0BEastCompareNoradSpotID:
-					_sprite1.setCurrentFrameIndex(0);
-					_sprite2.setCurrentFrameIndex(0);
-					_sprite1.show();
-					_sprite2.show();
-					break;
-				case kTSA0BEastCompareMarsSpotID:
-					_sprite1.setCurrentFrameIndex(1);
-					_sprite2.setCurrentFrameIndex(1);
-					_sprite1.show();
-					_sprite2.show();
-					break;
-				case kTSA0BEastCompareCaldoriaSpotID:
-					_sprite1.setCurrentFrameIndex(2);
-					_sprite2.setCurrentFrameIndex(2);
-					_sprite1.show();
-					_sprite2.show();
-					break;
-				case kTSA0BEastCompareWSCSpotID:
-					_sprite1.setCurrentFrameIndex(3);
-					_sprite2.setCurrentFrameIndex(3);
-					_sprite1.show();
-					_sprite2.show();
-					break;
-				default:
+				if (cursorSpot) {
+					switch (cursorSpot->getObjectID()) {
+					case kTSA0BEastCompareNoradSpotID:
+						_sprite1.setCurrentFrameIndex(0);
+						_sprite2.setCurrentFrameIndex(0);
+						_sprite1.show();
+						_sprite2.show();
+						break;
+					case kTSA0BEastCompareMarsSpotID:
+						_sprite1.setCurrentFrameIndex(1);
+						_sprite2.setCurrentFrameIndex(1);
+						_sprite1.show();
+						_sprite2.show();
+						break;
+					case kTSA0BEastCompareCaldoriaSpotID:
+						_sprite1.setCurrentFrameIndex(2);
+						_sprite2.setCurrentFrameIndex(2);
+						_sprite1.show();
+						_sprite2.show();
+						break;
+					case kTSA0BEastCompareWSCSpotID:
+						_sprite1.setCurrentFrameIndex(3);
+						_sprite2.setCurrentFrameIndex(3);
+						_sprite1.show();
+						_sprite2.show();
+						break;
+					default:
+						_sprite1.hide();
+						_sprite2.hide();
+						break;
+					}
+				} else {
 					_sprite1.hide();
 					_sprite2.hide();
-					break;
 				}
 				break;
 			}
@@ -2916,22 +2921,26 @@ void FullTSA::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			case kRobotsAtCommandCenter:
 			case kRobotsAtFrontDoor:
 			case kRobotsAtReadyRoom:
-				switch (cursorSpot->getObjectID()) {
-				case kTSA0BNorthRobotsToCommandCenterSpotID:
-					_sprite1.setCurrentFrameIndex(kRedirectionCCRolloverSprite);
-					_sprite1.show();
-					break;
-				case kTSA0BNorthRobotsToReadyRoomSpotID:
-					_sprite1.setCurrentFrameIndex(kRedirectionRRRolloverSprite);
-					_sprite1.show();
-					break;
-				case kTSA0BNorthRobotsToFrontDoorSpotID:
-					_sprite1.setCurrentFrameIndex(kRedirectionFDRolloverSprite);
-					_sprite1.show();
-					break;
-				default:
+				if (cursorSpot) {
+					switch (cursorSpot->getObjectID()) {
+					case kTSA0BNorthRobotsToCommandCenterSpotID:
+						_sprite1.setCurrentFrameIndex(kRedirectionCCRolloverSprite);
+						_sprite1.show();
+						break;
+					case kTSA0BNorthRobotsToReadyRoomSpotID:
+						_sprite1.setCurrentFrameIndex(kRedirectionRRRolloverSprite);
+						_sprite1.show();
+						break;
+					case kTSA0BNorthRobotsToFrontDoorSpotID:
+						_sprite1.setCurrentFrameIndex(kRedirectionFDRolloverSprite);
+						_sprite1.show();
+						break;
+					default:
+						_sprite1.hide();
+						break;
+					}
+				} else {
 					_sprite1.hide();
-					break;
 				}
 				break;
 			}
