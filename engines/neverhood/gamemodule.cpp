@@ -37,6 +37,7 @@
 #include "neverhood/module2100.h"
 #include "neverhood/module2200.h"
 #include "neverhood/module2300.h"
+#include "neverhood/module2600.h"
 #include "neverhood/module3000.h"
 
 namespace Neverhood {
