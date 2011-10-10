@@ -32,26 +32,24 @@ class Debug {
 public:
 	enum DebugChannel {
 		Info = 1,
-		Warning = Info * 2,
-		Error = Warning * 2,
-		Engine = Error * 2,
-		Lua = Engine * 2,
-		Bitmaps = Lua * 2,
-		Models = Bitmaps * 2,
-		Actors = Models * 2,
-		Costumes = Actors * 2,
-		Chores = Costumes * 2,
-		Fonts = Chores * 2,
-		Keyframes = Fonts * 2,
-		Materials = Keyframes * 2,
-		Movie = Materials * 2,
-		Imuse = Movie * 2,
-		Scripts = Imuse * 2,
-		Sets = Scripts * 2,
-		TextObjects = Sets * 2,
-		All = Info | Warning | Error | Engine | Lua | Bitmaps | Models |
-		      Actors | Costumes | Chores | Fonts | Keyframes | Materials | Movie | Imuse |
-		      Scripts | Sets | TextObjects
+		Warning = 2 << 0,
+		Error = 2 << 1,
+		Engine = 2 << 2,
+		Lua = 2 << 3,
+		Bitmaps = 2 << 4,
+		Models = 2 << 5,
+		Actors = 2 << 6,
+		Costumes = 2 << 7,
+		Chores = 2 << 8,
+		Fonts = 2 << 9,
+		Keyframes = 2 << 10,
+		Materials = 2 << 11,
+		Movie = 2 << 12,
+		Imuse = 2 << 13,
+		Scripts = 2 << 14,
+		Sets = 2 << 15,
+		TextObjects = 2 << 16,
+		All = 0xFFFFFF
 	};
 
 	static void registerDebugChannels();
