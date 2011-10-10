@@ -27,6 +27,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/fs.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
@@ -302,9 +303,8 @@ void PegasusEngine::showLoadDialog() {
 
 	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 
-	if (slot >= 0) {
-		warning("TODO: Load game");
-	}
+	if (slot >= 0)
+		loadGameState(slot);
 
 	slc.close();
 }
@@ -394,7 +394,7 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	GameState.readGameState(stream);
 
 	// Energy
-	setLastEnergyValue(stream->readUint32BE() >> 16);
+	setLastEnergyValue(stream->readUint32BE());
 
 	// Death reason
 	setEnergyDeathReason(stream->readByte());
@@ -403,10 +403,10 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	g_allItems.readFromStream(stream);
 
 	// Inventory
-	uint32 itemCount = stream->readUint32BE();
+	byte itemCount = stream->readByte();
 
 	if (itemCount > 0) {
-		for (uint32 i = 0; i < itemCount; i++) {
+		for (byte i = 0; i < itemCount; i++) {
 			InventoryItem *inv = (InventoryItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
 			addItemToInventory(inv);
 		}
@@ -415,10 +415,10 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 	}
 
 	// Biochips
-	uint32 biochipCount = stream->readUint32BE();
+	byte biochipCount = stream->readByte();
 
 	if (biochipCount > 0) {
-		for (uint32 i = 0; i < biochipCount; i++) {
+		for (byte i = 0; i < biochipCount; i++) {
 			BiochipItem *biochip = (BiochipItem *)g_allItems.findItemByID((tItemID)stream->readUint16BE());
 			addItemToBiochips(biochip);
 		}
@@ -448,6 +448,9 @@ bool PegasusEngine::loadFromStream(Common::ReadStream *stream) {
 }
 
 bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
+	if (g_neighborhood)
+		g_neighborhood->flushGameState();
+
 	// Signature
 	stream->writeUint32BE(kPegasusPrimeCreator);
 
@@ -464,7 +467,7 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	GameState.writeGameState(stream);
 
 	// Energy
-	stream->writeUint32BE(getSavedEnergyValue() << 16);
+	stream->writeUint32BE(getSavedEnergyValue());
 
 	// Death reason
 	stream->writeByte(getEnergyDeathReason());
@@ -473,8 +476,8 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	g_allItems.writeToStream(stream);
 
 	// Inventory
-	uint32 itemCount = _items.getNumItems();
-	stream->writeUint32BE(itemCount);
+	byte itemCount = _items.getNumItems();
+	stream->writeByte(itemCount);
 
 	if (itemCount > 0) {
 		for (uint32 i = 0; i < itemCount; i++)
@@ -484,8 +487,8 @@ bool PegasusEngine::writeToStream(Common::WriteStream *stream, int saveType) {
 	}
 
 	// Biochips
-	uint32 biochipCount = _biochips.getNumItems();
-	stream->writeUint32BE(biochipCount);
+	byte biochipCount = _biochips.getNumItems();
+	stream->writeByte(biochipCount);
 
 	if (itemCount > 0) {
 		for (uint32 i = 0; i < biochipCount; i++)
@@ -659,7 +662,7 @@ void PegasusEngine::doGameMenuCommand(const tGameMenuCommand command) {
 		break;
 	case kMenuCmdRestore:
 	case kMenuCmdDeathRestore:
-		error("Load game");
+		showLoadDialog();
 		break;
 	case kMenuCmdCreditsMainMenu:
 		_gfx->doFadeOutSync();
