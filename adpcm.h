@@ -28,7 +28,7 @@
 
 #include "common/stream.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 namespace Stark {
 

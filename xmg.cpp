@@ -26,6 +26,7 @@
 #include "engines/stark/xmg.h"
 #include "engines/stark/debug.h"
 
+#include "graphics/pixelformat.h"
 #include "common/stream.h"
 
 namespace Stark {
@@ -93,7 +94,9 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (!surface)
 		return NULL;
-	surface->create(width, height, 4);
+	// Placeholder pixelformat
+	Graphics::PixelFormat pixFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0);
+	surface->create(width, height, pixFormat);
 
 	_pixels = (uint32 *)surface->pixels;
 	uint32 currX = 0, currY = 0;

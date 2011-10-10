@@ -26,8 +26,10 @@
 // ADPCM .cpp/.h files are based upon files of the same name from ScummVM
 
 #include "engines/stark/adpcm.h"
+#include "common/textconsole.h"
+#include "common/util.h"
 
-#include "sound/audiostream.h"
+#include "audio/audiostream.h"
 
 
 namespace Stark {

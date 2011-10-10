@@ -26,6 +26,7 @@
 #ifndef STARK_SKELETON_H
 #define STARK_SKELETON_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "engines/stark/gfx/coordinate.h"
 

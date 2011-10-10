@@ -26,6 +26,7 @@
 #ifndef STARK_XRC_H
 #define STARK_XRC_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "common/stream.h"
 

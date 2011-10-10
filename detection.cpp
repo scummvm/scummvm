@@ -23,6 +23,7 @@
  *
  */
 
+#include "engines/advancedDetector.h"
 #include "engines/stark/stark.h"
 
 
@@ -120,7 +121,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		Common::GUIO_NONE
 	},
-
+	
+	// The Longest Journey
+	// Norwegian DLC-edition (DVD?)
+	{
+		"tlj", "DVD", {
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
+			{"chapters.ini", 0, "f358f604abd1aa1476ed05d6d271ac70", 473},
+			{NULL, 0, NULL, 0}
+		},
+		Common::NB_NOR,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		Common::GUIO_NONE
+	},
+	
 	// The Longest Journey
 	// Spanish 4CD
 	{
@@ -170,31 +185,13 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{NULL, {NULL}}
 };
 
-static const ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)gameDescriptions,
-	// Size of that superset structure
-	sizeof(ADGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	starkGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"stark",
-	// List of files for file-based fallback detection (optional)
-	fileBasedFallback,
-	// Flags
-	0,
-	// GUI Options
-	Common::GUIO_NOMIDI
-};
-
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
-	StarkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-
+	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames) {
+		_singleid = "stark";
+		_guioptions = Common::GUIO_NOMIDI;
+	}
+	
 	virtual const char *getName() const {
 		return "Stark Engine";
 	}
