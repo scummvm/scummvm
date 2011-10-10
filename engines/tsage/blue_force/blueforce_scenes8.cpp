@@ -1867,6 +1867,8 @@ void Scene830::process(Event &event) {
 		event.handled = true;
 	}
 
+	SceneExt::process(event);
+
 	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_seExit.contains(event.mousePos)) {
