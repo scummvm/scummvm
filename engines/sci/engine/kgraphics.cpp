@@ -1640,14 +1640,11 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		uint16 transparent = (argc >= 8) ? argv[7].toUint16() : 0;
 		warning("kBitmap(0): width %d, height %d, skip %d, back %d, width2 %d, height2 %d, transparent %d",
 				width, height, skip, back, width2, height2, transparent);
-		// returns a pointer to a bitmap
+		return NULL_REG;	// TODO: return a hunk handle for the new bitmap surface
 		}
 		break;
-	case 1:	// dispose bitmap surface
-		// 1 param, bitmap pointer, called e.g. from MenuItem::dispose
-		// in Torin's Passage, script 64893
-		warning("kBitmap(1), bitmap ptr %04x:%04x", PRINT_REG(argv[1]));
-		break;
+	case 1:	// dispose text bitmap surface
+		return kDisposeTextBitmap(s, argc - 1, argv + 1);
 	case 2:	// dispose bitmap surface, with extra param
 		// 2 params, called e.g. from MenuItem::dispose in Torin's Passage,
 		// script 64893
