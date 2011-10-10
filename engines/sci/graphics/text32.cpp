@@ -123,8 +123,10 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	int curByte = 0;
 	Common::Rect nsRect = getNSRect(textObject);
 	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 textX = planeRect.left + nsRect.left;
-	uint16 textY = planeRect.top + nsRect.top;
+	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
+	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
+	uint16 textX = planeRect.left + x;
+	uint16 textY = planeRect.top + y;
 	uint16 width = nsRect.width();
 	uint16 height = nsRect.height();
 
