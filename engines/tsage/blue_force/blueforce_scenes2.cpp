@@ -1577,7 +1577,8 @@ void Scene271::signal() {
 			break;
 		case 590:
 			_sceneMode = 2704;
-			setAction(&_sequenceManager1, this, 2707, &BF_GLOBALS._player, &_object12, &_object7, &_object8, NULL);
+			setAction(&_sequenceManager1, this, 2704, &BF_GLOBALS._player, &_object12, &_object7, &_object8, NULL);
+			break;
 		default:
 			_object11.postInit();
 			_object11.setPosition(Common::Point(340, 100));
