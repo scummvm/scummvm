@@ -33,6 +33,8 @@
 
 #include "common/list.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Audio {
 class SeekableAudioStream;
 } // End of namespace Audio
@@ -306,6 +308,8 @@ friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
+
+	virtual void initKeymap();
 
 	Screen *screen();
 	GUI *gui() const;
