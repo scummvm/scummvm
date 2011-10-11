@@ -27,6 +27,8 @@
 #include "backends/events/maemosdl/maemosdl-events.h"
 #include "common/translation.h"
 
+namespace Maemo {
+
 MaemoSdlEventSource::MaemoSdlEventSource() : SdlEventSource(), _clickEnabled(true) {
 
 }
@@ -120,4 +122,6 @@ bool MaemoSdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &even
 	return SdlEventSource::handleMouseButtonUp(ev, event);
 }
 
-#endif
+} // namespace Maemo
+
+#endif // if defined(MAEMO)

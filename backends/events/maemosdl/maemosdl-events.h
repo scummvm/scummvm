@@ -29,6 +29,8 @@
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
+namespace Maemo {
+
 /**
  * SDL events manager for Maemo
  */
@@ -43,6 +45,8 @@ protected:
 	bool _clickEnabled;
 };
 
-#endif
+} // namespace Maemo
 
-#endif
+#endif // include guard
+
+#endif // if defined(MAEMO)
