@@ -421,6 +421,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 void Scene50::remove() {
 	// Blank out the screen
 	clearScreen();
+	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
 
 	SceneExt::remove();
 	BF_GLOBALS._uiElements._active = true;
