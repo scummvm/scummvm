@@ -1287,7 +1287,10 @@ reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
+	if (g_sci->_gfxFrameout->findScreenItem(argv[0]) == NULL)
+		g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
+	else
+		g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
 	return s->r_acc;
 }
 

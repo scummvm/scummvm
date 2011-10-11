@@ -93,6 +93,7 @@ public:
 	void kernelAddScreenItem(reg_t object);
 	void kernelUpdateScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
+	FrameoutEntry *findScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
 	void kernelAddPicAt(reg_t planeObj, GuiResourceId pictureId, int16 pictureX, int16 pictureY);
 	void kernelFrameout();

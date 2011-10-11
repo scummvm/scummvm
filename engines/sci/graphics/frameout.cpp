@@ -235,36 +235,45 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 	if (!_segMan->isObject(object))
 		return;
 
-	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
-		FrameoutEntry *itemEntry = *listIterator;
-
-		if (itemEntry->object == object) {
-			itemEntry->viewId = readSelectorValue(_segMan, object, SELECTOR(view));
-			itemEntry->loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
-			itemEntry->celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
-			itemEntry->x = readSelectorValue(_segMan, object, SELECTOR(x));
-			itemEntry->y = readSelectorValue(_segMan, object, SELECTOR(y));
-			itemEntry->z = readSelectorValue(_segMan, object, SELECTOR(z));
-			itemEntry->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
-			if (readSelectorValue(_segMan, object, SELECTOR(fixPriority)) == 0)
-				itemEntry->priority = itemEntry->y;
-
-			itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
-			itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
-			itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
-			return;
-		}
+	FrameoutEntry *itemEntry = findScreenItem(object);
+	if (!itemEntry) {
+		warning("kernelUpdateScreenItem: invalid object %04x:%04x", PRINT_REG(object));
+		return;
 	}
+
+	itemEntry->viewId = readSelectorValue(_segMan, object, SELECTOR(view));
+	itemEntry->loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
+	itemEntry->celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
+	itemEntry->x = readSelectorValue(_segMan, object, SELECTOR(x));
+	itemEntry->y = readSelectorValue(_segMan, object, SELECTOR(y));
+	itemEntry->z = readSelectorValue(_segMan, object, SELECTOR(z));
+	itemEntry->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
+	if (readSelectorValue(_segMan, object, SELECTOR(fixPriority)) == 0)
+		itemEntry->priority = itemEntry->y;
+
+	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
+	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
+	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
+	FrameoutEntry *itemEntry = findScreenItem(object);
+	if (!itemEntry) {
+		warning("kernelDeleteScreenItem: invalid object %04x:%04x", PRINT_REG(object));
+		return;
+	}
+
+	_screenItems.remove(itemEntry);
+}
+
+FrameoutEntry *GfxFrameout::findScreenItem(reg_t object) {
 	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
 		FrameoutEntry *itemEntry = *listIterator;
-		if (itemEntry->object == object) {
-			_screenItems.remove(itemEntry);
-			return;
-		}
+		if (itemEntry->object == object)
+			return itemEntry;
 	}
+
+	return NULL;
 }
 
 int16 GfxFrameout::kernelGetHighPlanePri() {
