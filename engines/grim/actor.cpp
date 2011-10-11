@@ -144,7 +144,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeString(_talkSoundName);
 
 	savedState->writeLEUint32((uint32)_collisionMode);
-	savedState->writeLESint32(_collisionScale);
+	savedState->writeFloat(_collisionScale);
 
 	if (_lipSync) {
 		savedState->writeLEUint32(1);
@@ -259,7 +259,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_talkSoundName 		= savedState->readString();
 
 	_collisionMode      = (CollisionMode)savedState->readLEUint32();
-	_collisionScale     = savedState->readLESint32();
+	_collisionScale     = savedState->readFloat();
 
 	if (savedState->readLEUint32()) {
 		Common::String fn = savedState->readString();
