@@ -80,12 +80,12 @@ public:
 	SceneObject _object4;
 	SceneObject _object5;
 	SceneObject _object6;
-	SceneHotspot1  _sceneHotspot1;
-	NamedHotspot _sceneHotspot2;
-	NamedHotspot _sceneHotspot3;
-	NamedHotspot _sceneHotspot4;
-	NamedHotspot _sceneHotspot5;
-	NamedHotspot _sceneHotspot6;
+	SceneHotspot1  _hotspotSlave;
+	NamedHotspot _hotspotSoiledClothes;
+	NamedHotspot _hotspotCleanedClothes;
+	NamedHotspot _hotspotIsland;
+	NamedHotspot _hotspotBoulders;
+	NamedHotspot _hotspotTrees;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
