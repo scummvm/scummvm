@@ -307,7 +307,7 @@
 		#define scumm_va_copy va_copy
 	#elif defined(__va_copy)
 		#define scumm_va_copy __va_copy
-	#elif defined(_MSC_VER)
+	#elif defined(_MSC_VER) || defined (__SYMBIAN32__)
 		#define scumm_va_copy(dst, src)       ((dst) = (src))
 	#else
 		#error scumm_va_copy undefined for this port
