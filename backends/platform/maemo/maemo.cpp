@@ -35,6 +35,8 @@
 #include <SDL/SDL_syswm.h>
 #include <X11/Xutil.h>
 
+namespace Maemo {
+
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	:
 	OSystem_POSIX() {
@@ -47,7 +49,7 @@ void OSystem_SDL_Maemo::initBackend() {
 
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
-	_model = Maemo::Model(detectModel());
+	_model = Model(detectModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -98,13 +100,14 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 
 const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
-	const Maemo::Model *model;
-	for (model = Maemo::models; model->hwId; model++) {
+	const Model *model;
+	for (model = models; model->hwId; model++) {
 		if (deviceHwId.equals(model->hwId))
 			return *model;
 	}
 	return *model;
 }
 
+} //namespace Maemo
 
 #endif
