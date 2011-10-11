@@ -1742,22 +1742,31 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 		// Nothing
 		return false;
 	case CURSOR_LOOK:
-		if ((g_vm->getGameID() == GType_Ringworld) || (_lookLineNum == -1))
-			doAction(action);
-		else 
+		if (g_vm->getGameID() == GType_Ringworld) {
+			if (_lookLineNum == -1)
+				doAction(action);
+			else
+				SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		} else
 			SceneItem::display2(_resNum, _lookLineNum);
 		return true;
 	case CURSOR_USE:
-		if ((g_vm->getGameID() == GType_Ringworld) || (_useLineNum == -1))
-			doAction(action);
-		else 
+		if (g_vm->getGameID() == GType_Ringworld) {
+			if (_useLineNum == -1)
+				doAction(action);
+			else
+				SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		} else
 			SceneItem::display2(_resNum, _useLineNum);
 		return true;
 	case CURSOR_TALK:
-		if ((g_vm->getGameID() == GType_Ringworld) || (_talkLineNum == -1))
-			doAction(action);
-		else 
-			SceneItem::display2(_resNum, _talkLineNum);
+		if (g_vm->getGameID() == GType_Ringworld) {
+			if (_talkLineNum == -1)
+				doAction(action);
+			else 
+				SceneItem::display2(_resNum, _talkLineNum);
+		} else 
+			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	default:
 		return SceneHotspot::startAction(action, event);
