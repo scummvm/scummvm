@@ -47,7 +47,7 @@ void OSystem_SDL_Maemo::initBackend() {
 
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
-	_maemoModel = MaemoModel(detectMaemoModel());
+	_model = Maemo::Model(detectModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -96,10 +96,10 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 	setXWindowName(cap.c_str());
 }
 
-const MaemoModel OSystem_SDL_Maemo::detectMaemoModel() {
+const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
-	const MaemoModel *model;
-	for (model = maemoModels; model->hwId; model++) {
+	const Maemo::Model *model;
+	for (model = Maemo::models; model->hwId; model++) {
 		if (deviceHwId.equals(model->hwId))
 			return *model;
 	}

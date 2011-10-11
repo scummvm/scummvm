@@ -38,13 +38,13 @@ public:
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
 
-	MaemoModel getMaemoModel() { return _maemoModel; }
+	Maemo::Model getModel() { return _model; }
 
 private:
 	virtual void setXWindowName(const char *caption);
 
-	const MaemoModel detectMaemoModel();
-	MaemoModel _maemoModel;
+	const Maemo::Model detectModel();
+	Maemo::Model _model;
 
 };
 
