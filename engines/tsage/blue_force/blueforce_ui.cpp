@@ -255,6 +255,10 @@ void UICollection::resetClear() {
 
 void UICollection::draw() {
 	if (_visible) {
+		// Temporarily reset the sceneBounds when drawing UI elements to force them on-screen
+		Rect savedBounds = g_globals->_sceneManager._scene->_sceneBounds;
+		g_globals->_sceneManager._scene->_sceneBounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 		// Draw the elements onto the background
 		for (uint idx = 0; idx < _objList.size(); ++idx)
 			_objList[idx]->draw();
@@ -265,6 +269,7 @@ void UICollection::draw() {
 			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 		_clearScreen = 1;
+		g_globals->_sceneManager._scene->_sceneBounds = savedBounds;
 	}
 }
 
