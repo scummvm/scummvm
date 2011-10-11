@@ -72,7 +72,7 @@ Actor::Actor(const Common::String &actorName) :
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
-	_collisionScale = 1.f;
+	_collisionScale = 0.f;
 	_puckOrient = false;
 
 	for (int i = 0; i < 5; i++) {
