@@ -35,19 +35,16 @@ enum MaemoModelType {
 struct MaemoModel {
 	const char *hwId;
 	MaemoModelType modelType;
+	const char *hwAlias;
 	bool hwKeyboard;
 };
 
 static const MaemoModel maemoModels[] = {
-// N800
-	{"RX-34", kMaemoModelTypeN800, false},
-// N810
-	{"RX-44", kMaemoModelTypeN810, true},
-// N810W
-	{"RX-48", kMaemoModelTypeN810, true},
-// N900
-	{"RX-51", kMaemoModelTypeN900, true},
-	{0, kMaemoModelTypeInvalid, true}
+	{"RX-34", kMaemoModelTypeN800, "N800", false},
+	{"RX-44", kMaemoModelTypeN810, "N810", true},
+	{"RX-48", kMaemoModelTypeN810, "N810W", true},
+	{"RX-51", kMaemoModelTypeN900, "N900", true},
+	{0, kMaemoModelTypeInvalid, 0, true}
 };
 
 
