@@ -157,11 +157,11 @@ Common::Error PegasusEngine::run() {
 		doIntro = (loadGameState(gameToLoad).getCode() != Common::kNoError);
 	}
 
-	if (doIntro) {
+	_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
+
+	if (doIntro)
 		// Start up the first notification
-		_shellNotification.notifyMe(this, kJMPShellNotificationFlags, kJMPShellNotificationFlags);
 		_shellNotification.setNotificationFlags(kGameStartingFlag, kGameStartingFlag);
-	}
 
 	while (!shouldQuit()) {
 		processShell();
