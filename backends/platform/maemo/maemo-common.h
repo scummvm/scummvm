@@ -22,32 +22,35 @@
 
 #if defined(MAEMO)
 
-#ifndef PLATFORM_SDL_MAEMO_H
-#define PLATFORM_SDL_MAEMO_H
+#ifndef PLATFORM_SDL_MAEMO_COMMON_H
+#define PLATFORM_SDL_MAEMO_COMMON_H
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/platform/maemo/maemo-common.h"
-
-
-class OSystem_SDL_Maemo : public OSystem_POSIX {
-public:
-	OSystem_SDL_Maemo();
-
-	virtual void initBackend();
-	virtual void quit();
-	virtual void fatalError();
-	virtual void setWindowCaption(const char *caption);
-
-	MaemoModel getMaemoModel() { return _maemoModel; }
-
-private:
-	virtual void setXWindowName(const char *caption);
-
-	const MaemoModel detectMaemoModel();
-	MaemoModel _maemoModel;
-
+enum MaemoModelType {
+	kMaemoModelTypeN800 = 1,
+	kMaemoModelTypeN810 = 2,
+	kMaemoModelTypeN900 = 4,
+	kMaemoModelTypeInvalid = 0
 };
 
-#endif // ifndef PLATFORM_SDL_MAEMO_H
+struct MaemoModel {
+	const char *hwId;
+	MaemoModelType modelType;
+	bool hwKeyboard;
+};
+
+static const MaemoModel maemoModels[] = {
+// N800
+	{"RX-34", kMaemoModelTypeN800, false},
+// N810
+	{"RX-44", kMaemoModelTypeN810, true},
+// N810W
+	{"RX-48", kMaemoModelTypeN810, true},
+// N900
+	{"RX-51", kMaemoModelTypeN900, true},
+	{0, kMaemoModelTypeInvalid, true}
+};
+
+
+#endif // ifndef PLATFORM_SDL_MAEMO_COMMON_H
 
 #endif // if defined(MAEMO)

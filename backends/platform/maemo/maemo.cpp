@@ -22,6 +22,8 @@
 
 #if defined(MAEMO)
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 
@@ -44,6 +46,8 @@ void OSystem_SDL_Maemo::initBackend() {
 		_eventSource = new MaemoSdlEventSource();
 
 	ConfMan.set("vkeybdpath", DATA_PATH);
+
+	_maemoModel = MaemoModel(detectMaemoModel());
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -92,6 +96,15 @@ void OSystem_SDL_Maemo::setWindowCaption(const char *caption) {
 	setXWindowName(cap.c_str());
 }
 
+const MaemoModel OSystem_SDL_Maemo::detectMaemoModel() {
+	Common::String deviceHwId = Common::String(getenv("SCUMMVM_MAEMO_DEVICE"));
+	const MaemoModel *model;
+	for (model = maemoModels; model->hwId; model++) {
+		if (deviceHwId.equals(model->hwId))
+			return *model;
+	}
+	return *model;
+}
 
 
 #endif
