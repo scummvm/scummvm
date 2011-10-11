@@ -1742,27 +1742,21 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 		// Nothing
 		return false;
 	case CURSOR_LOOK:
-		if (_lookLineNum == -1)
-			SceneHotspot::doAction(action);
-		else if (g_vm->getGameID() == GType_BlueForce)
+		if ((g_vm->getGameID() == GType_Ringworld) || (_lookLineNum == -1))
+			doAction(action);
+		else 
 			SceneItem::display2(_resNum, _lookLineNum);
-		else
-			SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	case CURSOR_USE:
-		if (_useLineNum == -1)
-			SceneHotspot::doAction(action);
-		else if (g_vm->getGameID() == GType_BlueForce)
+		if ((g_vm->getGameID() == GType_Ringworld) || (_useLineNum == -1))
+			doAction(action);
+		else 
 			SceneItem::display2(_resNum, _useLineNum);
-		else
-			SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		return true;
 	case CURSOR_TALK:
-		if (_talkLineNum == -1)
-			SceneHotspot::doAction(action);
-		else if (g_vm->getGameID() == GType_BlueForce)
-			SceneItem::display2(_resNum, _talkLineNum);
-		else
+		if ((g_vm->getGameID() == GType_Ringworld) || (_talkLineNum == -1))
+			doAction(action);
+		else 
 			SceneItem::display2(_resNum, _talkLineNum);
 		return true;
 	default:
