@@ -48,7 +48,7 @@ ALWAYS_BUILD_AS_ARM
 
 // *** Include paths
 
-USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\audio
+USERINCLUDE	    ..\..\..\.. ..\..\..\..\gui ..\..\..\..\audio
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
 SYSTEMINCLUDE	\epoc32\include\ESDL
