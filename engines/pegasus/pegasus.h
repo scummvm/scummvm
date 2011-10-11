@@ -241,6 +241,8 @@ private:
 	void throwAwayEverything();
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
 	Common::RandomSource *_rnd;
+	void doSubChase();
+	void drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y);
 
 	// Menu
 	GameMenu *_gameMenu;

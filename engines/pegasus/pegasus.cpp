@@ -1091,34 +1091,8 @@ bool PegasusEngine::playMovieScaled(Video::SeekableVideoDecoder *video, uint16 x
 		if (video->needsUpdate()) {
 			const Graphics::Surface *frame = video->decodeNextFrame();
 
-			// Scale up the frame doing some simple scaling
-			Graphics::Surface scaledFrame;
-			scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
-			const byte *src = (const byte *)frame->pixels;
-			byte *dst1 = (byte *)scaledFrame.pixels;
-			byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
-
-			for (int i = 0; i < frame->h; i++) {
-				for (int j = 0; j < frame->w; j++) {
-					memcpy(dst1, src, frame->format.bytesPerPixel);
-					dst1 += frame->format.bytesPerPixel;
-					memcpy(dst1, src, frame->format.bytesPerPixel);
-					dst1 += frame->format.bytesPerPixel;
-					memcpy(dst2, src, frame->format.bytesPerPixel);
-					dst2 += frame->format.bytesPerPixel;
-					memcpy(dst2, src, frame->format.bytesPerPixel);
-					dst2 += frame->format.bytesPerPixel;
-					src += frame->format.bytesPerPixel;
-				}
-
-				src += frame->pitch - frame->format.bytesPerPixel * frame->w;
-				dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-				dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
-			}
-
-			_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
-			_system->updateScreen();
-			scaledFrame.free();
+			if (frame)
+				drawScaledFrame(frame, x, y);
 		}
 
 		Input input;
@@ -1280,8 +1254,13 @@ void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
 }
 
 void PegasusEngine::performJump(const tNeighborhoodID neighborhoodID) {
-	if (neighborhoodID == kNoradSubChaseID)
-		error("TODO: Sub chase");
+	// Sub chase is special
+	if (neighborhoodID == kNoradSubChaseID) {
+		throwAwayEverything();
+		doSubChase();
+		jumpToNewEnvironment(kNoradDeltaID, kNorad41, kEast);
+		return;
+	}
 
 	if (_neighborhood)
 		useNeighborhood(0);
@@ -1377,6 +1356,8 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 	case kTinyTSAID:
 		neighborhood = new TinyTSA(g_AIArea, this);
 		break;
+	default:
+		error("Unhandled neighborhood %d", neighborhoodID);
 	}
 }
 
@@ -1884,6 +1865,62 @@ void PegasusEngine::playEndMessage() {
 	}
 
 	die(kPlayerWonGame);
+}
+
+void PegasusEngine::doSubChase() {
+	static const uint32 endTime = 133200 * 1000 / 600;
+
+	Video::SeekableVideoDecoder *video = new Video::QuickTimeDecoder();
+	if (!video->loadFile("Images/Norad Alpha/Sub Chase Movie"))
+		error("Failed to load sub chase");
+
+	while (!shouldQuit() && !video->endOfVideo() && video->getElapsedTime() < endTime) {
+		if (video->needsUpdate()) {
+			const Graphics::Surface *frame = video->decodeNextFrame();
+
+			if (frame)
+				drawScaledFrame(frame, 0, 0);
+		}
+
+		Common::Event event;
+		while (_eventMan->pollEvent(event))
+			;
+
+		_system->delayMillis(10);
+	}
+
+	delete video;
+}
+
+void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y) {
+	// Scale up the frame doing some simple scaling
+	Graphics::Surface scaledFrame;
+	scaledFrame.create(frame->w * 2, frame->h * 2, frame->format);
+	const byte *src = (const byte *)frame->pixels;
+	byte *dst1 = (byte *)scaledFrame.pixels;
+	byte *dst2 = (byte *)scaledFrame.pixels + scaledFrame.pitch;
+
+	for (int i = 0; i < frame->h; i++) {
+		for (int j = 0; j < frame->w; j++) {
+			memcpy(dst1, src, frame->format.bytesPerPixel);
+			dst1 += frame->format.bytesPerPixel;
+			memcpy(dst1, src, frame->format.bytesPerPixel);
+			dst1 += frame->format.bytesPerPixel;
+			memcpy(dst2, src, frame->format.bytesPerPixel);
+			dst2 += frame->format.bytesPerPixel;
+			memcpy(dst2, src, frame->format.bytesPerPixel);
+			dst2 += frame->format.bytesPerPixel;
+			src += frame->format.bytesPerPixel;
+		}
+
+		src += frame->pitch - frame->format.bytesPerPixel * frame->w;
+		dst1 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+		dst2 += scaledFrame.pitch * 2 - scaledFrame.format.bytesPerPixel * scaledFrame.w;
+	}
+
+	_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
+	_system->updateScreen();
+	scaledFrame.free();
 }
 
 } // End of namespace Pegasus

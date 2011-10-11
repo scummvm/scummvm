@@ -738,6 +738,7 @@ static const tGameMode kModeInfoScreen = kModeBiochipPick + 1;
 
 // TODO: Remove me
 static const tRoomID kNorad01 = 0;
+static const tRoomID kNorad41 = 0;
 static const tRoomID kMars0A = 0;
 const tRoomID kMars35 = 38;
 const tRoomID kMars39 = 42;

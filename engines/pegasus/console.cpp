@@ -83,7 +83,8 @@ bool PegasusConsole::Cmd_Jump(int argc, const char **argv) {
 	tRoomID room = (tRoomID)atoi(argv[2]);
 	tDirectionConstant direction = (tDirectionConstant)atoi(argv[3]);
 
-	if (neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) {
+	if ((neighborhood < kCaldoriaID || neighborhood > kNoradDeltaID || neighborhood == kFinalTSAID) &&
+			neighborhood != kNoradSubChaseID) {
 		DebugPrintf("Invalid neighborhood %d", neighborhood);
 		return true;
 	}
