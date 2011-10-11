@@ -32,7 +32,7 @@
 #include <e32def.h>
 
 #include <e32std.h>
-#include <math.h>
+#include <libc\math.h>
 
 /* define pi */
 #ifndef M_PI
