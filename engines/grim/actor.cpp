@@ -551,6 +551,11 @@ bool Actor::isTurning() const {
 void Actor::moveTo(const Math::Vector3d &pos) {
 	// This is necessary for collisions in set hl to work, since
 	// Manny's collision mode isn't set.
+	if (_collisionScale == 0.f) {
+		_pos = pos;
+		return;
+	}
+
 	if (_collisionMode == CollisionOff) {
 		_collisionMode = CollisionSphere;
 	}
