@@ -31,9 +31,10 @@ namespace TsAGE {
 namespace BlueForce {
 
 /*--------------------------------------------------------------------------
- * Scene 710 - 
+ * Scene 710 - Beach
  *
  *--------------------------------------------------------------------------*/
+
 void Scene710::Timer1::signal() {
 	PaletteRotation *rotation = BF_GLOBALS._scenePalette.addRotation(136, 138, -1);
 	rotation->setDelay(25);
@@ -58,8 +59,7 @@ void Scene710::Action1::signal() {
 		setDelay(3);
 		break;
 	case 1: {
-		PlayerMover *mover = new PlayerMover();
-		BF_GLOBALS._player.addMover(mover, &scene->_laura._position, scene);
+		ADD_MOVER(BF_GLOBALS._player, scene->_laura._position.x + 8, scene->_laura._position.y + 8);
 		break;
 		}
 	case 2:
@@ -67,7 +67,7 @@ void Scene710::Action1::signal() {
 		scene->_stripManager.start(_state, this);
 		break;
 	case 3:
-		if (_state == 7105)
+		if (_state != 7105)
 			BF_GLOBALS._player.enableControl();
 		else {
 			BF_GLOBALS._player.disableControl();
@@ -76,7 +76,7 @@ void Scene710::Action1::signal() {
 		}
 		if (_state < 7104) {
 			_state++;
-			if ((_state != 7104) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1))
+			if ((_state == 7104) && (BF_INVENTORY.getObjectScene(INV_CRATE1) == 1))
 					_state = 7105;
 		}
 		remove();
@@ -101,7 +101,7 @@ bool Scene710::Object4::startAction(CursorType action, Event &event) {
 	Scene710 *scene = (Scene710 *)BF_GLOBALS._sceneManager._scene;
 
 	if ((action == CURSOR_LOOK) && (scene->_kid._position.x < 0)) {
-		SceneItem::display(710, 13);
+		SceneItem::display2(710, 13);
 		return true;
 	} else
 		return NamedObject::startAction(action, event);
@@ -116,7 +116,7 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 		if (scene->_v1D64 <= 2)
 			return NamedObject::startAction(action, event);
 		else {
-			SceneItem::display(710, 3);
+			SceneItem::display2(710, 3);
 			scene->_v1D66 = 1;
 			return true;
 		}
@@ -144,8 +144,8 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 void Scene710::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(710);
-
 	_sceneBounds.moveTo(320, 0);
+
 	BF_GLOBALS._sound1.fadeSound(14);
 	_soundExt1.fadeSound(48);
 	_v51C34.set(40, 0, 280, 240);
@@ -195,7 +195,7 @@ void Scene710::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene710::signal() {
-	switch (_sceneMode++) {
+	switch (_sceneMode) {
 	case 0:
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -206,7 +206,7 @@ void Scene710::signal() {
 		break;
 	case 7101:
 		BF_GLOBALS._player.enableControl();
-		BF_INVENTORY.setObjectScene(288, 36);
+		BF_INVENTORY.setObjectScene(INV_CRATE1, 1);
 		_stick.remove();
 		BF_GLOBALS._walkRegions.proc2(2);
 		break;

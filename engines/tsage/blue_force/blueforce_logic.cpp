@@ -185,6 +185,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Decking
 		return new Scene690();
 	case 710:
+		// Beach
 		return new Scene710();
 	case 800:
 		// Jamison & Ryan

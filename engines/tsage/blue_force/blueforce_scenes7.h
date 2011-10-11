@@ -91,10 +91,10 @@ public:
 	NamedHotspot _item9;
 	int _v1D62, _v1D64, _v1D66, _v1D68;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void signal();
-	void dispatch();
-	void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace BlueForce
