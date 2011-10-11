@@ -397,6 +397,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void process(Event &event);
+	virtual void dispatch();
 };
 
 } // End of namespace BlueForce

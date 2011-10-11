@@ -2542,6 +2542,14 @@ void Scene590::process(Event &event) {
 	}
 }
 
+void Scene590::dispatch() {
+	if (!_action && (BF_GLOBALS._player._position.x < 182) && (BF_GLOBALS._player._position.y > 158)) {
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 2;
+		setAction(&_sequenceManager, this, 5901, &BF_GLOBALS._player, NULL);
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
