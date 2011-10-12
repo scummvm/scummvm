@@ -76,7 +76,7 @@
 "..\..\..\..\dists\engine-data\toon.dat"-"c:\data\scummvm\toon.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
-"..\..\..\..\gui\themes\scummclassic.zip"-"c:\data\scummvm\scummclassic.zip"
+"..\..\..\..\gui\themes\scummmodern.zip"-"c:\data\scummvm\scummmodern.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL
