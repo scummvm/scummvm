@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	module2200.o \
 	module2300.o \
 	module2600.o \
+	module2700.o \
 	module3000.o \
 	mouse.o \
 	navigationscene.o \
