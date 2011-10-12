@@ -40,6 +40,37 @@ protected:
 	void updateScene();
 };
 
+class SsScene2609Button : public StaticSprite {
+public:
+	SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene);
+protected:
+	Scene *_parentScene;
+	SoundResource _soundResource1;
+	SoundResource _soundResource2;
+	SoundResource _soundResource3;
+	SoundResource _soundResource4;
+	int _countdown;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class AsScene2609Water : public AnimatedSprite {
+public:
+	AsScene2609Water(NeverhoodEngine *vm);
+protected:
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2609 : public Scene {
+public:
+	Scene2609(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	bool _isBusy;
+	Sprite *_asWater;
+	Sprite *_ssButton;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 } // End of namespace Neverhood
 
 #endif /* NEVERHOOD_MODULE2600_H */

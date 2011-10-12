@@ -76,7 +76,7 @@ void Module2600::createScene(int sceneNum, int which) {
 		createSmackerScene(0x30090001, true, true, false);
 		break;
 	case 8:
-//TODO		_childObject = new Scene2609(_vm, this, which);
+		_childObject = new Scene2609(_vm, this, which);
 		break;
 	case 1002:
 		if (getGlobalVar(0x40040831) == 1) {
@@ -196,4 +196,138 @@ void Module2600::updateScene() {
 	}
 }
 			
+SsScene2609Button::SsScene2609Button(NeverhoodEngine *vm, Scene *parentScene)
+	: StaticSprite(vm, 1400), _soundResource1(vm), _soundResource2(vm),
+	_soundResource3(vm), _soundResource4(vm), _parentScene(parentScene),
+	_countdown(0) {
+	
+	_spriteResource.load2(0x825A6923);
+	createSurface(400, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	if (!getGlobalVar(0x4E0BE910))
+		setVisible(false);
+
+	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_deltaRect = _drawRect;
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	processDelta();
+	_needRefresh = true;
+
+	_soundResource1.load(0x10267160);
+	_soundResource2.load(0x7027FD64);
+	_soundResource3.load(0x44043000);
+	_soundResource4.load(0x44045000);
+
+	SetUpdateHandler(&SsScene2609Button::update);
+	SetMessageHandler(&SsScene2609Button::handleMessage);
+
+}
+
+void SsScene2609Button::update() {
+	StaticSprite::update();
+	if (_countdown != 0 && (--_countdown == 0)) {
+		if (getGlobalVar(0x4E0BE910)) {
+			setGlobalVar(0x4E0BE910, 0);
+			sendMessage(_parentScene, 0x2001, 0);
+		} else {
+			setGlobalVar(0x4E0BE910, 1);
+			sendMessage(_parentScene, 0x2002, 0);
+		}
+	}
+}
+
+uint32 SsScene2609Button::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x1011:
+		if (_countdown == 0) {
+			sendMessage(_parentScene, 0x2000, 0);
+			if (getGlobalVar(0x4E0BE910)) {
+				setVisible(false);
+				_soundResource4.play();
+				_soundResource2.play();
+				_countdown = 12;
+			} else {
+				setVisible(true);
+				_soundResource3.play();
+				_soundResource1.play();
+				_countdown = 96;
+			}
+		}
+		messageResult = 1;
+		break;
+	}
+	return messageResult;
+}
+
+AsScene2609Water::AsScene2609Water(NeverhoodEngine *vm)
+	: AnimatedSprite(vm, 1000) {
+	
+	_x = 240;
+	_y = 420;
+	setDoDeltaX(1);
+	createSurface1(0x9C210C90, 1200);
+	setClipRect(260, 260, 400, 368);
+	// TODO Sound1ChList_addSoundResource(0xDC2769B0, true);
+	SetUpdateHandler(&AnimatedSprite::update);
+	SetMessageHandler(&AsScene2609Water::handleMessage);
+	if (getGlobalVar(0x4E0BE910))
+		sendMessage(this, 0x2002, 0);
+}
+
+uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2001:
+		setFileHash1();
+		setVisible(false);
+		// TODO Sound1ChList_stop(0xDC2769B0);
+		break;
+	case 0x2002:
+		setFileHash(0x9C210C90, 0, -1);
+		setVisible(true);
+		// TODO Sound1ChList_playLooping(0xDC2769B0);
+		break;
+	}
+	return messageResult;
+}
+
+Scene2609::Scene2609(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _isBusy(false) {
+	
+	_surfaceFlag = true;
+	setBackground(0x51409A16);
+	setPalette(0x51409A16);
+	_asWater = insertSprite<AsScene2609Water>();
+	_ssButton = insertSprite<SsScene2609Button>(this);
+	_vm->_collisionMan->addSprite(_ssButton);
+	insertMouse435(0x09A1251C, 20, 620);
+	insertStaticSprite(0x02138002, 1200);
+	insertStaticSprite(0x825E2827, 1200);
+	SetMessageHandler(&Scene2609::handleMessage);
+	SetUpdateHandler(&Scene::update);
+}
+
+uint32 Scene2609::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if ((param.asPoint().x <= 20 || param.asPoint().x >= 620) && !_isBusy)
+			leaveScene(0);
+		break;
+	case 0x2000:
+		_isBusy = true;
+		break;
+	case 0x2001:
+		_isBusy = false;
+		sendMessage(_asWater, 0x2001, 0);
+		break;
+	case 0x2002:
+		_isBusy = false;
+		sendMessage(_asWater, 0x2002, 0);
+		break;
+	}
+	return 0;
+}
+
 } // End of namespace Neverhood

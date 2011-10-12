@@ -292,8 +292,8 @@ void GameModule::startup() {
 	createModule(2100, 3);
 #endif
 #if 1
-	_vm->gameState().sceneNum = 0;
-	createModule(1400, -1);
+	_vm->gameState().sceneNum = 8;
+	createModule(2600, -1);
 #endif
 }
 
@@ -357,6 +357,10 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 2300:
 		setGlobalVar(0x91080831, 0x1A214010);
 		_childObject = new Module2300(_vm, this, which);
+		break;
+	case 2600:
+		setGlobalVar(0x91080831, 0x40271018);
+		_childObject = new Module2600(_vm, this, which);
 		break;
 	case 3000:
 		setGlobalVar(0x91080831, 0x81293110);
@@ -463,6 +467,13 @@ void GameModule::updateModule() {
 				createModule(3000, 0);
 			} else {
 				createModule(1000, 1);
+			}
+			break;
+		case 2600:
+			if (_moduleResult == 1) {
+				createModule(2500, 0);
+			} else {
+				createModule(1200, 1);
 			}
 			break;
 		case 3000:
