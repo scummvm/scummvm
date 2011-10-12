@@ -277,6 +277,54 @@ struct SceneInfo140Item {
 
 };
 
+struct SceneInfo2700Item {
+	uint32 id;
+	uint32 bgFilename;
+	uint32 class437Filename;
+	uint32 dataResourceFilename;
+	uint32 pointListName;
+	uint32 rectListName;
+	uint32 exPaletteFilename2;
+	uint32 exPaletteFilename1;
+	uint32 mouseCursorFilename;
+	int16 which1;
+	int16 which2;
+	uint32 field24;
+
+	void load(uint32 offset) {
+		byte *item = getData(offset);
+		id = offset;
+		// Only save the hashes instead of the full names
+		bgFilename = calcHash(getStringP(READ_LE_UINT32(item + 0)));
+		class437Filename = calcHash(getStringP(READ_LE_UINT32(item + 4)));
+		dataResourceFilename = calcHash(getStringP(READ_LE_UINT32(item + 8)));
+		pointListName = calcHash(getStringP(READ_LE_UINT32(item + 12)));
+		rectListName = calcHash(getStringP(READ_LE_UINT32(item + 16)));
+		exPaletteFilename2 = calcHash(getStringP(READ_LE_UINT32(item + 20)));
+		exPaletteFilename1 = calcHash(getStringP(READ_LE_UINT32(item + 24)));
+		mouseCursorFilename = calcHash(getStringP(READ_LE_UINT32(item + 28)));
+		which1 = READ_LE_UINT16(item + 32);
+		which2 = READ_LE_UINT16(item + 34);
+		field24 = READ_LE_UINT16(item + 36);
+	}
+
+	void save(FILE *fd) {
+		writeUint32LE(fd, id);
+		writeUint32LE(fd, bgFilename);
+		writeUint32LE(fd, class437Filename);
+		writeUint32LE(fd, dataResourceFilename);
+		writeUint32LE(fd, pointListName);
+		writeUint32LE(fd, rectListName);
+		writeUint32LE(fd, exPaletteFilename2);
+		writeUint32LE(fd, exPaletteFilename1);
+		writeUint32LE(fd, mouseCursorFilename);
+		writeUint16LE(fd, which1);
+		writeUint16LE(fd, which2);
+		writeUint32LE(fd, field24);
+	}
+
+};
+
 template<class ITEMCLASS>
 class StaticDataList {
 public:
@@ -456,6 +504,7 @@ StaticDataListVector<RectList> rectLists;
 StaticDataListVector<MessageList> messageLists;
 StaticDataListVector<NavigationList> navigationLists;
 StaticDataVector<SceneInfo140Item> sceneInfo140Items; 
+StaticDataVector<SceneInfo2700Item> sceneInfo2700Items; 
 
 void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 	MessageList *messageList = new MessageList();
@@ -474,6 +523,7 @@ int main(int argc, char *argv[]) {
 	messageLists.loadListVector(messageListOffsets);
 	navigationLists.loadListVector(navigationListOffsets);
 	sceneInfo140Items.loadVector(sceneInfo140Offsets);
+	sceneInfo2700Items.loadVector(sceneInfo2700Offsets);
 	    
 	datFile = fopen("neverhood.dat", "wb");
 
@@ -485,6 +535,7 @@ int main(int argc, char *argv[]) {
 	hitRectLists.saveListVector(datFile);
 	navigationLists.saveListVector(datFile);
 	sceneInfo140Items.saveVector(datFile);
+	sceneInfo2700Items.saveVector(datFile);
 
 	fclose(datFile);
 
