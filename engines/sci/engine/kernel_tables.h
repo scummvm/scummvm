@@ -618,7 +618,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SCI2.1 unmapped functions - TODO!
 
-	// Bitmap
 	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
 	// AddLine - used by Torin's Passage to highlight the chapter buttons
 	// DeleteLine - used by Torin's Passage to delete the highlight from the chapter buttons
@@ -972,8 +971,8 @@ static const char *const sci21_default_knames[] = {
 	/*0x15*/ "NumLoops",
 	/*0x16*/ "NumCels",
 	/*0x17*/ "IsOnMe",
-	/*0x18*/ "AddMagnify",
-	/*0x19*/ "DeleteMagnify",
+	/*0x18*/ "AddMagnify",		// dummy in SCI3
+	/*0x19*/ "DeleteMagnify",	// dummy in SCI3
 	/*0x1a*/ "CelRect",
 	/*0x1b*/ "BaseLineSpan",
 	/*0x1c*/ "CelWide",
@@ -996,7 +995,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x2d*/ "GetHighItemPri",		// unused function
 	/*0x2e*/ "SetShowStyle",
 	/*0x2f*/ "ShowStylePercent",	// unused function
-	/*0x30*/ "SetScroll",
+	/*0x30*/ "SetScroll",			// dummy in SCI3
 	/*0x31*/ "MovePlaneItems",
 	/*0x32*/ "ShakeScreen",
 	/*0x33*/ "Dummy",
@@ -1005,7 +1004,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x36*/ "Dummy",
 	/*0x37*/ "IsHiRes",
 	/*0x38*/ "SetVideoMode",
-	/*0x39*/ "ShowMovie",
+	/*0x39*/ "ShowMovie",			// dummy in SCI3
 	/*0x3a*/ "Robot",
 	/*0x3b*/ "CreateTextBitmap",
 	/*0x3c*/ "Random",
@@ -1048,9 +1047,9 @@ static const char *const sci21_default_knames[] = {
 	/*0x61*/ "InitBresen",
 	/*0x62*/ "DoBresen",
 	/*0x63*/ "SetJump",
-	/*0x64*/ "AvoidPath",
+	/*0x64*/ "AvoidPath",		// dummy in SCI3
 	/*0x65*/ "InPolygon",
-	/*0x66*/ "MergePoly",
+	/*0x66*/ "MergePoly",		// dummy in SCI3
 	/*0x67*/ "ObjectIntersect",
 	/*0x68*/ "Dummy",
 	/*0x69*/ "MemoryInfo",
@@ -1079,7 +1078,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",		// called when changing rooms in most SCI2.1 games (e.g. KQ7, GK2, MUMG deluxe, Phant1)
 	/*0x82*/ "Dummy",
-	/*0x83*/ "PrintDebug",	// debug function, used by Shivers 2 (demo and full)
+	/*0x83*/ "PrintDebug",	// debug function, used by Shivers (demo and full)
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
