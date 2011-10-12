@@ -133,8 +133,6 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 			writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
 		else
 			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
-
-		writeSelector(_segMan, obj, SELECTOR(handle), obj);
 	}
 }
 
