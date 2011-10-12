@@ -221,6 +221,14 @@ void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	if (!_segMan->isObject(object))
 		return;
 
+	// Workaround for bug in Script 991 in Shivers, a screen item (spBrochure) is added twice but only removed once
+	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
+		FrameoutEntry *itemEntry = *listIterator;
+		if (itemEntry->object == object) {
+			return;
+		}
+	}
+
 	FrameoutEntry *itemEntry = new FrameoutEntry();
 	memset(itemEntry, 0, sizeof(FrameoutEntry));
 	itemEntry->object = object;
