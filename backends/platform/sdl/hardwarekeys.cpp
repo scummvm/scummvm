@@ -218,17 +218,7 @@ Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 				snprintf(fullKeyDesc, 100, "%s%s", mod->desc, key->desc);
 			}
 
-			// Set ascii to keycode when keymapper is enabled.
-			// This is so we capture events from non-ascii keycodes.
-			// Events coming in for non-ascii keycodes (e.g. KEYCODE_LEFT) will have the ascii set
-			// to be equal to the keycode.
-			// This also matches the behavior of KeyState::KeyState(KeyCode)
-			// TODO: Maybe we should change the keycodes defined in keys[] above or maybe do this in the KeyState ctor
-			if (!ascii)
-				ascii = (uint16)key->keycode;
-
 			keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, mod->flag), fullKeyDesc, key->preferredAction ));
-			// debug(15, "added key: %s %d, %d", fullKeyId, key->keycode, ascii);
 		}
 	}
 
