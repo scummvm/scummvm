@@ -63,9 +63,11 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Tsnunami Title Screen #2
 		return new Scene100();
 	case 109:
-		// Introduction Bar Room
+		// Introduction - Bar Room
 		return new Scene109();
 	case 110:
+		// Introduction - Outside the bar
+		return new Scene110();
 	case 114:
 	case 115:
 	case 125:

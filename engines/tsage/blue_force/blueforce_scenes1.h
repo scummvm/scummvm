@@ -124,6 +124,42 @@ public:
 	virtual void signal();
 };
 
+class Scene110: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+public:
+	NamedObject _object1, _object2, _object3, _object4, _object5, _object6, _object7, _object8, _object9, _object10; 
+	ASound _sound;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
