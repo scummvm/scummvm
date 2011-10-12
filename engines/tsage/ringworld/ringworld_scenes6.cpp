@@ -1562,7 +1562,7 @@ void Scene5200::Hotspot9::doAction(int action) {
 		SceneItem::display2(5200, 14);
 		break;
 	default:
-		SceneItem::doAction(action);
+		SceneHotspot::doAction(action);
 		break;
 	}
 }
