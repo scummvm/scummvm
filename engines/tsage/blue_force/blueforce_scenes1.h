@@ -160,6 +160,27 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
 
+class Scene114: public SceneExt {
+	/* Objects */
+	class Object1: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager1;
+	Object1 _object1;
+	Object2 _object2;
+	NamedObject _object3;
+	NamedHotspot _item1;
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
