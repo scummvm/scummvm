@@ -755,7 +755,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	assert(msgId);
 
 	char id[50];
-	Common::String msg = parseMsgText(msgId, id);
+	Common::String msg = LuaBase::instance()->parseMsgText(msgId, id);
 
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text");

@@ -60,6 +60,7 @@ MODULE_OBJS := \
 	lab.o \
 	lipsync.o \
 	localize.o \
+	lua.o \
 	lua_v1.o \
 	lua_v1_actor.o \
 	lua_v1_graphics.o \
