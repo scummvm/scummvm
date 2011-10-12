@@ -348,7 +348,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 4127;
-			scene->setAction(&scene->_sequenceManager1, scene, 4127, &scene->_driver, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 4127, &BF_GLOBALS._player, &scene->_driver, NULL);
 		}
 		return true;
 	case INV_MIRANDA_CARD:
