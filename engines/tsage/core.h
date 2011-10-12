@@ -445,32 +445,6 @@ public:
 	virtual void doAction(int action);
 };
 
-class NamedHotspot : public SceneHotspot {
-public:
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
-	NamedHotspot();
-
-
-	virtual bool startAction(CursorType action, Event &event);
-	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s);
-	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
-	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
-};
-
-class NamedHotspotExt : public NamedHotspot {
-public:
-	int _flag;
-	NamedHotspotExt() { _flag = 0; }
-
-	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s) {
-		NamedHotspot::synchronize(s);
-		s.syncAsSint16LE(_flag);
-	}
-};
-
 enum AnimateMode {ANIM_MODE_NONE = 0, ANIM_MODE_1 = 1, ANIM_MODE_2 = 2, ANIM_MODE_3 = 3,
 		ANIM_MODE_4 = 4, ANIM_MODE_5 = 5, ANIM_MODE_6 = 6, ANIM_MODE_7 = 7, ANIM_MODE_8 = 8,
 		// Introduced in Blue Force

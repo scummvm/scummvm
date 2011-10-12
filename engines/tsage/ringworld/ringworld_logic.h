@@ -157,6 +157,31 @@ public:
 	virtual void rightClick();
 };
 
+class NamedHotspot : public SceneHotspot {
+public:
+	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
+	NamedHotspot();
+
+	virtual void doAction(int action);
+	virtual Common::String getClassName() { return "NamedHotspot"; }
+	virtual void synchronize(Serializer &s);
+	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
+	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
+	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
+};
+
+class NamedHotspotExt : public NamedHotspot {
+public:
+	int _flag;
+	NamedHotspotExt() { _flag = 0; }
+
+	virtual Common::String getClassName() { return "NamedHotspot"; }
+	virtual void synchronize(Serializer &s) {
+		NamedHotspot::synchronize(s);
+		s.syncAsSint16LE(_flag);
+	}
+};
+
 } // End of namespace Ringworld
 
 } // End of namespace TsAGE

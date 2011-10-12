@@ -1278,6 +1278,101 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 
 /*--------------------------------------------------------------------------*/
 
+NamedHotspot::NamedHotspot() : SceneHotspot() {
+	_resNum = 0;
+	_lookLineNum = _useLineNum = _talkLineNum = -1;
+}
+
+bool NamedHotspot::startAction(CursorType action, Event &event) {
+	switch (action) {
+	case CURSOR_WALK:
+		// Nothing
+		return false;
+	case CURSOR_LOOK:
+		if (_lookLineNum == -1)
+			return SceneHotspot::startAction(action, event);
+
+		SceneItem::display2(_resNum, _lookLineNum);
+		return true;
+	case CURSOR_USE:
+		if (_useLineNum == -1)
+			return SceneHotspot::startAction(action, event);
+
+		SceneItem::display2(_resNum, _useLineNum);
+		return true;
+	case CURSOR_TALK:
+		if (_talkLineNum == -1)
+			return SceneHotspot::startAction(action, event);
+
+		SceneItem::display2(_resNum, _talkLineNum);
+		return true;
+	default:
+		return SceneHotspot::startAction(action, event);
+	}
+}
+
+void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
+	setBounds(ys, xe, ye, xs);
+	_resNum = resnum;
+	_lookLineNum = lookLineNum;
+	_useLineNum = useLineNum;
+	_talkLineNum = -1;
+	g_globals->_sceneItems.addItems(this, NULL);
+}
+
+void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
+	setBounds(bounds);
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	switch (mode) {
+	case 2:
+		g_globals->_sceneItems.push_front(this);
+		break;
+	case 4:
+		g_globals->_sceneItems.addBefore(item, this);
+		break;
+	case 5:
+		g_globals->_sceneItems.addAfter(item, this);
+		break;
+	default:
+		g_globals->_sceneItems.push_back(this);
+		break;
+	}
+}
+
+void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
+	_sceneRegionId = sceneRegionId;
+	_resNum = resNum;
+	_lookLineNum = lookLineNum;
+	_talkLineNum = talkLineNum;
+	_useLineNum = useLineNum;
+
+	// Handle adding hotspot to scene items list as necessary
+	switch (mode) {
+	case 2:
+		GLOBALS._sceneItems.push_front(this);
+		break;
+	case 3:
+		break;
+	default:
+		GLOBALS._sceneItems.push_back(this);
+		break;
+	}
+}
+
+void NamedHotspot::synchronize(Serializer &s) {
+	SceneHotspot::synchronize(s);
+	s.syncAsSint16LE(_resNum);
+	s.syncAsSint16LE(_lookLineNum);
+	s.syncAsSint16LE(_useLineNum);
+
+	if (g_vm->getGameID() == GType_BlueForce)
+		s.syncAsSint16LE(_talkLineNum);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
