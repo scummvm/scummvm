@@ -1167,8 +1167,17 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 		return kRestoreGame(s, argc - 1,argv + 1);
 	case 2:
 		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 3:
+		return kCheckSaveGame(s, argc - 1, argv + 1);
 	case 5:
 		return kGetSaveFiles(s, argc - 1, argv + 1);
+	case 6:
+		// This is used in Shivers to delete saved games, however it
+		// always passes the same file name (SHIVER), so it doesn't
+		// actually delete anything...
+		// TODO: Check why this happens
+		// argv[1] is a string (most likely the save game directory)
+		return kFileIOUnlink(s, argc - 2, argv + 2);
 	case 8:
 		// TODO
 		// This is a timer callback, with 1 parameter: the timer object
@@ -1179,10 +1188,9 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 		// This function has to return something other than 0 to proceed
 		return s->r_acc;
 	default:
-		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
+		kStub(s, argc, argv);
+		return NULL_REG;
 	}
-
-	return NULL_REG;
 }
 
 #endif
