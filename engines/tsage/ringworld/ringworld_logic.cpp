@@ -603,9 +603,10 @@ void NamedHotspot::doAction(int action) {
 		SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
 		break;
 	default:
-		SceneHotspot::doAction(action);
 		break;
 	}
+
+	SceneHotspot::doAction(action);
 }
 
 void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
