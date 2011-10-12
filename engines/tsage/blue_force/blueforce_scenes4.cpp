@@ -742,6 +742,7 @@ void Scene410::signal() {
 		BF_GLOBALS._walkRegions.proc1(16);
 		break;
 	case 4101:
+		// Driver gets out of the car
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 4101, &_driver, &_object6, NULL);
@@ -749,17 +750,20 @@ void Scene410::signal() {
 		BF_GLOBALS._walkRegions.proc1(7);
 		break;
 	case 4103:
+		// Click on moto to ask for backup
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 1;
 		setAction(&_sequenceManager1, this, 4103, &BF_GLOBALS._player, NULL);
 		break;
 	case 4104:
+		// After call for backup, patrol car is coming
 		_field1FC4 = 1;
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 4104, &_patrolCar, &_harrison, NULL);
 		break;
 	case 4105:
+		// Second guy gets nervous
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 4105, &_passenger, NULL);
@@ -795,6 +799,7 @@ void Scene410::signal() {
 		setAction(&_sequenceManager1, this, 4109, &_driver, &_harrison, NULL);
 		break;
 	case 4110:
+		// Harrisson takes care of the driver
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 4110, &_harrison, &_driver, NULL);
