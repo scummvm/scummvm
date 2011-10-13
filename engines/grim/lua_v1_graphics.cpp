@@ -27,7 +27,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 
 #include "engines/grim/grim.h"
-#include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/bitmap.h"
@@ -51,7 +51,7 @@ void killBitmapPrimitives(Bitmap *bitmap) {
 }
 #endif
 
-void L1_GetImage() {
+void Lua_V1::GetImage() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj)) {
 		lua_pushnil();
@@ -62,7 +62,7 @@ void L1_GetImage() {
 	lua_pushusertag(b->getId(), MKTAG('V','B','U','F'));
 }
 
-void L1_FreeImage() {
+void Lua_V1::FreeImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
@@ -70,7 +70,7 @@ void L1_FreeImage() {
 	delete bitmap;
 }
 
-void L1_BlastImage() {
+void Lua_V1::BlastImage() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('V','B','U','F'))
 		return;
@@ -88,17 +88,17 @@ void L1_BlastImage() {
 	g_driver->drawBitmap(bitmap);
 }
 
-void L1_CleanBuffer() {
+void Lua_V1::CleanBuffer() {
 	g_driver->copyStoredToDisplay();
 }
 
-void L1_StartFullscreenMovie() {
+void Lua_V1::StartFullscreenMovie() {
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
-	L1_CleanBuffer();
+	Lua_V1::CleanBuffer();
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
@@ -109,7 +109,7 @@ void L1_StartFullscreenMovie() {
 	pushbool(result);
 }
 
-void L1_StartMovie() {
+void Lua_V1::StartMovie() {
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
@@ -135,30 +135,30 @@ void L1_StartMovie() {
  * query should actually detect correctly and not
  * just return true whenever ANY movie is playing
  */
-void L1_IsFullscreenMoviePlaying() {
+void Lua_V1::IsFullscreenMoviePlaying() {
 	pushbool(g_movie->isPlaying());
 }
 
-void L1_IsMoviePlaying() {
+void Lua_V1::IsMoviePlaying() {
 	// Previously, if the game was *not* the demo, this checked also if the mode
 	// was GrimEngine::NormalMode. This doesn't seem to be what original does, and causes
 	// bug #301 because the movie eldepot.snm is played before legslide.snm ends.
 	pushbool(g_movie->isPlaying());
 }
 
-void L1_StopMovie() {
+void Lua_V1::StopMovie() {
 	g_movie->stop();
 }
 
-void L1_PauseMovie() {
+void Lua_V1::PauseMovie() {
 	g_movie->pause(lua_isnil(lua_getparam(1)) == 0);
 }
 
-void L1_PurgePrimitiveQueue() {
+void Lua_V1::PurgePrimitiveQueue() {
 	PrimitiveObject::getPool()->deleteObjects();
 }
 
-void L1_DrawPolygon() {
+void Lua_V1::DrawPolygon() {
 	lua_Object pointObj;
 	Common::Point p1, p2, p3, p4;
 	PoolColor *color = NULL;
@@ -225,7 +225,7 @@ void L1_DrawPolygon() {
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
-void L1_DrawLine() {
+void Lua_V1::DrawLine() {
 	Common::Point p1, p2;
 	PoolColor *color = NULL;;
 	lua_Object x1Obj = lua_getparam(1);
@@ -264,7 +264,7 @@ void L1_DrawLine() {
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M'));
 }
 
-void L1_ChangePrimitive() {
+void Lua_V1::ChangePrimitive() {
 	PrimitiveObject *psearch, *pmodify = NULL;
 	PoolColor *color = NULL;
 
@@ -373,7 +373,7 @@ void L1_ChangePrimitive() {
 	}
 }
 
-void L1_DrawRectangle() {
+void Lua_V1::DrawRectangle() {
 	Common::Point p1, p2;
 	PoolColor *color = NULL;
 	lua_Object objX1 = lua_getparam(1);
@@ -412,7 +412,7 @@ void L1_DrawRectangle() {
 	lua_pushusertag(p->getId(), MKTAG('P','R','I','M')); // FIXME: we use PRIM usetag here
 }
 
-void L1_BlastRect() {
+void Lua_V1::BlastRect() {
 	Common::Point p1, p2;
 	PoolColor *color = NULL;
 	lua_Object objX1 = lua_getparam(1);
@@ -452,7 +452,7 @@ void L1_BlastRect() {
 	delete p;
 }
 
-void L1_KillPrimitive() {
+void Lua_V1::KillPrimitive() {
 	lua_Object primObj = lua_getparam(1);
 
 	if (!lua_isuserdata(primObj) || lua_tag(primObj) != MKTAG('P','R','I','M'))
@@ -462,12 +462,12 @@ void L1_KillPrimitive() {
 	delete prim;
 }
 
-void L1_DimScreen() {
+void Lua_V1::DimScreen() {
 	g_driver->storeDisplay();
 	g_driver->dimScreen();
 }
 
-void L1_DimRegion() {
+void Lua_V1::DimRegion() {
 	int x = (int)lua_getnumber(lua_getparam(1));
 	int y = (int)lua_getnumber(lua_getparam(2));
 	int w = (int)lua_getnumber(lua_getparam(3));
@@ -476,7 +476,7 @@ void L1_DimRegion() {
 	g_driver->dimRegion(x, y, w, h, level);
 }
 
-void L1_ScreenShot() {
+void Lua_V1::ScreenShot() {
 	int width = (int)lua_getnumber(lua_getparam(1));
 	int height = (int)lua_getnumber(lua_getparam(2));
 	GrimEngine::EngineMode mode = g_grim->getMode();
@@ -492,7 +492,7 @@ void L1_ScreenShot() {
 	}
 }
 
-void L1_SetGamma() {
+void Lua_V1::SetGamma() {
 	lua_Object levelObj = lua_getparam(1);
 
 	if (!lua_isnumber(levelObj))
@@ -500,16 +500,16 @@ void L1_SetGamma() {
 	int level = (int)lua_getnumber(levelObj);
 
 	// FIXME: func(level)
-	warning("L1_SetGamma, implement opcode, level: %d", level);
+	warning("Lua_V1::SetGamma, implement opcode, level: %d", level);
 }
 
-void L1_Display() {
+void Lua_V1::Display() {
 	if (g_grim->getFlipEnable()) {
 		g_driver->flipBuffer();
 	}
 }
 
-void L1_EngineDisplay() {
+void Lua_V1::EngineDisplay() {
 	// it enable/disable updating display
 	bool mode = (int)lua_getnumber(lua_getparam(1)) != 0;
 	if (mode) {
@@ -519,11 +519,11 @@ void L1_EngineDisplay() {
 	}
 }
 
-void L1_ForceRefresh() {
+void Lua_V1::ForceRefresh() {
 	g_grim->refreshDrawMode();
 }
 
-void L1_RenderModeUser() {
+void Lua_V1::RenderModeUser() {
 	lua_Object param1 = lua_getparam(1);
 	if (!lua_isnil(param1) && g_grim->getMode() != GrimEngine::DrawMode) {
 		g_grim->setPreviousMode(g_grim->getMode());
@@ -536,7 +536,7 @@ void L1_RenderModeUser() {
 	}
 }
 
-void L1_IrisUp() {
+void Lua_V1::IrisUp() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
 	lua_Object timeObj = lua_getparam(3);
@@ -544,7 +544,7 @@ void L1_IrisUp() {
 	g_grim->playIrisAnimation(Iris::Open, (int)lua_getnumber(xObj), (int)lua_getnumber(yObj), (int)lua_getnumber(timeObj));
 }
 
-void L1_IrisDown() {
+void Lua_V1::IrisDown() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
 	lua_Object timeObj = lua_getparam(3);
@@ -552,7 +552,7 @@ void L1_IrisDown() {
 	g_grim->playIrisAnimation(Iris::Close, (int)lua_getnumber(xObj), (int)lua_getnumber(yObj), (int)lua_getnumber(timeObj));
 }
 
-void L1_PreRender() {
+void Lua_V1::PreRender() {
 	g_driver->renderBitmaps(getbool(1));
 	g_driver->renderZBitmaps(getbool(2));
 }

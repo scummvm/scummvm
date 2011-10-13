@@ -22,7 +22,7 @@
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
-#include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/savegame.h"
@@ -44,7 +44,7 @@ enum ImuseParam {
 	IM_SOUND_PAN = 0x700
 };
 
-void L1_ImStartSound() {
+void Lua_V1::ImStartSound() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object priorityObj = lua_getparam(2);
 	lua_Object groupObj = lua_getparam(3);
@@ -65,7 +65,7 @@ void L1_ImStartSound() {
 	}
 }
 
-void L1_ImStopSound() {
+void Lua_V1::ImStopSound() {
 	lua_Object nameObj = lua_getparam(1);
 	if (lua_isnumber(nameObj))
 		error("ImStopsound: name from value not supported");
@@ -74,59 +74,59 @@ void L1_ImStopSound() {
 	g_imuse->stopSound(soundName);
 }
 
-void L1_ImStopAllSounds() {
+void Lua_V1::ImStopAllSounds() {
 	g_imuse->stopAllSounds();
 }
 
-void L1_ImPause() {
+void Lua_V1::ImPause() {
 	g_imuse->pause(true);
 }
 
-void L1_ImResume() {
+void Lua_V1::ImResume() {
 	g_imuse->pause(false);
 }
 
-void L1_ImSetVoiceEffect() {
+void Lua_V1::ImSetVoiceEffect() {
 	const char *effectName;
 
 	effectName = luaL_check_string(1);
 	Debug::warning(Debug::Imuse, "ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
 }
 
-void L1_ImSetMusicVol() {
+void Lua_V1::ImSetMusicVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (int)lua_getnumber(volObj));
 }
 
-void L1_ImGetMusicVol() {
+void Lua_V1::ImGetMusicVol() {
 	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
-void L1_ImSetVoiceVol() {
+void Lua_V1::ImSetVoiceVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (int)lua_getnumber(volObj));
 }
 
-void L1_ImGetVoiceVol() {
+void Lua_V1::ImGetVoiceVol() {
 	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 }
 
-void L1_ImSetSfxVol() {
+void Lua_V1::ImSetSfxVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (int)lua_getnumber(volObj));
 }
 
-void L1_ImGetSfxVol() {
+void Lua_V1::ImGetSfxVol() {
 	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 }
 
-void L1_ImSetParam() {
+void Lua_V1::ImSetParam() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object paramObj = lua_getparam(2);
 	lua_Object valueObj = lua_getparam(3);
@@ -155,7 +155,7 @@ void L1_ImSetParam() {
 	}
 }
 
-void L1_ImGetParam() {
+void Lua_V1::ImGetParam() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object paramObj = lua_getparam(2);
 
@@ -180,7 +180,7 @@ void L1_ImGetParam() {
 	}
 }
 
-void L1_ImFadeParam() {
+void Lua_V1::ImFadeParam() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object opcodeObj = lua_getparam(2);
 	lua_Object valueObj = lua_getparam(3);
@@ -212,7 +212,7 @@ void L1_ImFadeParam() {
 	}
 }
 
-void L1_ImSetState() {
+void Lua_V1::ImSetState() {
 	lua_Object stateObj = lua_getparam(1);
 	if (!lua_isnumber(stateObj))
 		return;
@@ -220,7 +220,7 @@ void L1_ImSetState() {
 	g_imuseState = (int)lua_getnumber(stateObj);
 }
 
-void L1_ImSetSequence() {
+void Lua_V1::ImSetSequence() {
 	lua_Object stateObj = lua_getparam(1);
 	if (!lua_isnumber(stateObj))
 		return;
@@ -229,7 +229,7 @@ void L1_ImSetSequence() {
 	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
-void L1_SaveIMuse() {
+void Lua_V1::SaveIMuse() {
 	SaveGame *savedIMuse = SaveGame::openForSaving("grim.tmp");
 	if (!savedIMuse)
 		return;
@@ -237,7 +237,7 @@ void L1_SaveIMuse() {
 	delete savedIMuse;
 }
 
-void L1_RestoreIMuse() {
+void Lua_V1::RestoreIMuse() {
 	SaveGame *savedIMuse = SaveGame::openForLoading("grim.tmp");
 	if (!savedIMuse)
 		return;
@@ -248,7 +248,7 @@ void L1_RestoreIMuse() {
 	g_system->getSavefileManager()->removeSavefile("grim.tmp");
 }
 
-void L1_SetSoundPosition() {
+void Lua_V1::SetSoundPosition() {
 	Math::Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
@@ -309,19 +309,19 @@ void L1_SetSoundPosition() {
 	}
 }
 
-void L1_IsSoundPlaying() {
+void Lua_V1::IsSoundPlaying() {
 	// dummy
 }
 
-void L1_PlaySoundAt() {
+void Lua_V1::PlaySoundAt() {
 	// dummy
 }
 
-void L1_LoadBundle() {
+void Lua_V1::LoadBundle() {
 	// loading grimdemo.mus is allready handled
 }
 
-void L1_PlaySound() {
+void Lua_V1::PlaySound() {
 	// dummy
 }
 

@@ -28,7 +28,7 @@
 #include "math/matrix3.h"
 
 #include "engines/grim/debug.h"
-#include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
 #include "engines/grim/costume.h"
@@ -50,66 +50,7 @@
 
 namespace Grim {
 
-int refSystemTable;
-int refTypeOverride;
-int refOldConcatFallback;
-int refTextObjectX;
-int refTextObjectY;
-int refTextObjectFont;
-int refTextObjectWidth;
-int refTextObjectHeight;
-int refTextObjectFGColor;
-int refTextObjectBGColor;
-int refTextObjectFXColor;
-int refTextObjectHIColor;
-int refTextObjectDuration;
-int refTextObjectCenter;
-int refTextObjectLJustify;
-int refTextObjectRJustify;
-int refTextObjectVolume;
-int refTextObjectBackground;
-int refTextObjectPan;
-
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
-
-bool getbool(int num) {
-	return !lua_isnil(lua_getparam(num));
-}
-
-void pushbool(bool val) {
-	if (val)
-		lua_pushnumber(1);
-	else
-		lua_pushnil();
-}
-
-void pushobject(PoolObjectBase *o) {
-	lua_pushusertag(o->getId(), o->getTag());
-}
-
-Actor *getactor(lua_Object obj) {
-	return Actor::getPool()->getObject(lua_getuserdata(obj));
-}
-
-TextObject *gettextobject(lua_Object obj) {
-	return TextObject::getPool()->getObject(lua_getuserdata(obj));
-}
-
-Font *getfont(lua_Object obj) {
-	return Font::getPool()->getObject(lua_getuserdata(obj));
-}
-
-PoolColor *getcolor(lua_Object obj) {
-	return PoolColor::getPool()->getObject(lua_getuserdata(obj));
-}
-
-PrimitiveObject *getprimitive(lua_Object obj) {
-	return PrimitiveObject::getPool()->getObject(lua_getuserdata(obj));
-}
-
-ObjectState *getobjectstate(lua_Object obj) {
-	return ObjectState::getPool()->getObject(lua_getuserdata(obj));
-}
 
 byte clamp_color(int c) {
 	if (c < 0)
@@ -120,27 +61,9 @@ byte clamp_color(int c) {
 		return c;
 }
 
-bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) {
-	*costume = actor->getCurrentCostume(); // should be root of list I think
-	if (lua_isnil(costumeObj))
-		return true;
-	if (lua_isnumber(costumeObj)) {
-/*		int num = (int)lua_getnumber(costumeObj);*/
-		error("findCostume: search by Id not implemented");
-		// TODO get costume by ID ?
-	}
-	if (lua_isstring(costumeObj)) {
-		*costume = actor->findCostume(lua_getstring(costumeObj));
-		return *costume != 0;
-	}
-
-	return false;
-}
-
-
 int luaA_passresults();
 
-void L1_new_dofile() {
+void Lua_V1::new_dofile() {
 	const char *fname_str = luaL_check_string(1);
 	if (g_grim->bundle_dofile(fname_str) == 0)
 		if (luaA_passresults() == 0)
@@ -149,7 +72,7 @@ void L1_new_dofile() {
 
 // Debugging message functions
 
-void L1_PrintDebug() {
+void Lua_V1::PrintDebug() {
 	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Debug: ");
 		lua_Object strObj = lua_getparam(1);
@@ -162,7 +85,7 @@ void L1_PrintDebug() {
 	}
 }
 
-void L1_PrintError() {
+void Lua_V1::PrintError() {
 	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Error: ");
 		lua_Object strObj = lua_getparam(1);
@@ -175,7 +98,7 @@ void L1_PrintError() {
 	}
 }
 
-void L1_PrintWarning() {
+void Lua_V1::PrintWarning() {
 	if (Debug::isChannelEnabled(Debug::Scripts | Debug::Info)) {
 		Common::String msg("Warning: ");
 		lua_Object strObj = lua_getparam(1);
@@ -188,7 +111,7 @@ void L1_PrintWarning() {
 	}
 }
 
-void L1_FunctionName() {
+void Lua_V1::FunctionName() {
 	const char *name;
 	char buf[256];
 	const char *filename = 0;
@@ -230,7 +153,7 @@ void L1_FunctionName() {
 	lua_pushstring(buf);
 }
 
-void L1_CheckForFile() {
+void Lua_V1::CheckForFile() {
 	lua_Object strObj = lua_getparam(1);
 
 	if (!lua_isstring(strObj))
@@ -240,7 +163,7 @@ void L1_CheckForFile() {
 	pushbool(g_resourceloader->getFileExists(filename));
 }
 
-void L1_MakeColor() {
+void Lua_V1::MakeColor() {
 	lua_Object rObj = lua_getparam(1);
 	lua_Object gObj = lua_getparam(2);
 	lua_Object bObj = lua_getparam(3);
@@ -265,7 +188,7 @@ void L1_MakeColor() {
 	lua_pushusertag(c->getId(), MKTAG('C','O','L','R'));
 }
 
-void L1_GetColorComponents() {
+void Lua_V1::GetColorComponents() {
 	lua_Object colorObj = lua_getparam(1);
 	Color *c = getcolor(colorObj);
 	lua_pushnumber(c->getRed());
@@ -273,7 +196,7 @@ void L1_GetColorComponents() {
 	lua_pushnumber(c->getBlue());
 }
 
-void L1_ReadRegistryValue() {
+void Lua_V1::ReadRegistryValue() {
 	lua_Object keyObj = lua_getparam(1);
 
 	if (!lua_isstring(keyObj)) {
@@ -289,7 +212,7 @@ void L1_ReadRegistryValue() {
 		lua_pushstring(const_cast<char *>(val));
 }
 
-void L1_WriteRegistryValue() {
+void Lua_V1::WriteRegistryValue() {
 	lua_Object keyObj = lua_getparam(1);
 	lua_Object valObj = lua_getparam(2);
 
@@ -305,7 +228,7 @@ void L1_WriteRegistryValue() {
 	g_registry->set(key, val);
 }
 
-void L1_GetAngleBetweenVectors() {
+void Lua_V1::GetAngleBetweenVectors() {
 	lua_Object vec1Obj = lua_getparam(1);
 	lua_Object vec2Obj = lua_getparam(2);
 
@@ -351,11 +274,11 @@ void L1_GetAngleBetweenVectors() {
 	lua_pushnumber(angle);
 }
 
-void L1_Is3DHardwareEnabled() {
+void Lua_V1::Is3DHardwareEnabled() {
 	pushbool(g_driver->isHardwareAccelerated());
 }
 
-void L1_SetHardwareState() {
+void Lua_V1::SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
 	bool accel = getbool(1);
 	if (accel)
@@ -364,7 +287,7 @@ void L1_SetHardwareState() {
 		g_registry->set("soft_renderer", "true");
 }
 
-void L1_SetVideoDevices() {
+void Lua_V1::SetVideoDevices() {
 	int devId;
 	int modeId;
 
@@ -373,12 +296,12 @@ void L1_SetVideoDevices() {
 	// ignore setting video devices
 }
 
-void L1_GetVideoDevices() {
+void Lua_V1::GetVideoDevices() {
 	lua_pushnumber(0.0);
 	lua_pushnumber(-1.0);
 }
 
-void L1_EnumerateVideoDevices() {
+void Lua_V1::EnumerateVideoDevices() {
 	lua_Object result = lua_createtable();
 	lua_pushobject(result);
 	lua_pushnumber(0.0); // id of device
@@ -387,7 +310,7 @@ void L1_EnumerateVideoDevices() {
 	lua_pushobject(result);
 }
 
-void L1_Enumerate3DDevices() {
+void Lua_V1::Enumerate3DDevices() {
 	lua_Object result = lua_createtable();
 	lua_Object numObj = lua_getparam(1);
 	if (!lua_isnumber(numObj))
@@ -410,7 +333,7 @@ void L1_Enumerate3DDevices() {
  * getting on and off of the Bone Wagon and for going up
  * and down the slide with the chain at the end of the world.
  */
-void L1_RotateVector() {
+void Lua_V1::RotateVector() {
 	lua_Object vecObj = lua_getparam(1);
 	lua_Object rotObj = lua_getparam(2);
 
@@ -465,7 +388,7 @@ void L1_RotateVector() {
 /* Find the sector (of any type) which contains
  * the requested coordinate (x,y,z).
  */
-void L1_GetPointSector() {
+void Lua_V1::GetPointSector() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
 	lua_Object zObj = lua_getparam(3);
@@ -496,7 +419,7 @@ void L1_GetPointSector() {
 	}
 }
 
-void L1_GetActorSector() {
+void Lua_V1::GetActorSector() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object typeObj = lua_getparam(2);
 
@@ -518,7 +441,7 @@ void L1_GetActorSector() {
 	}
 }
 
-void L1_IsActorInSector() {
+void Lua_V1::IsActorInSector() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object nameObj = lua_getparam(2);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -546,7 +469,7 @@ void L1_IsActorInSector() {
 	lua_pushnil();
 }
 
-void L1_IsPointInSector() {
+void Lua_V1::IsPointInSector() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
 	lua_Object zObj = lua_getparam(3);
@@ -578,7 +501,7 @@ void L1_IsPointInSector() {
 	lua_pushnil();
 }
 
-void L1_GetSectorOppositeEdge() {
+void Lua_V1::GetSectorOppositeEdge() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object nameObj = lua_getparam(2);
 
@@ -620,7 +543,7 @@ void L1_GetSectorOppositeEdge() {
 	lua_pushnil();
 }
 
-void L1_MakeSectorActive() {
+void Lua_V1::MakeSectorActive() {
 	lua_Object sectorObj = lua_getparam(1);
 
 	if (!lua_isnumber(sectorObj) && !lua_isstring(sectorObj))
@@ -656,7 +579,7 @@ void L1_MakeSectorActive() {
 }
 
 // Set functions
-void L1_LockSet() {
+void Lua_V1::LockSet() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj))
 		return;
@@ -666,7 +589,7 @@ void L1_LockSet() {
 	g_grim->setSetLock(name, true);
 }
 
-void L1_UnLockSet() {
+void Lua_V1::UnLockSet() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj))
 		return;
@@ -676,11 +599,11 @@ void L1_UnLockSet() {
 	g_grim->setSetLock(name, false);
 }
 
-void L1_MakeCurrentSet() {
+void Lua_V1::MakeCurrentSet() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj)) {
 		// TODO setting current set null
-		warning("L1_MakeCurrentSet: implement missing case");
+		warning("Lua_V1::MakeCurrentSet: implement missing case");
 		return;
 	}
 
@@ -689,7 +612,7 @@ void L1_MakeCurrentSet() {
 	g_grim->setSet(name);
 }
 
-void L1_MakeCurrentSetup() {
+void Lua_V1::MakeCurrentSetup() {
 	lua_Object setupObj = lua_getparam(1);
 	if (!lua_isnumber(setupObj))
 		return;
@@ -704,7 +627,7 @@ void L1_MakeCurrentSetup() {
  * gets lost, such as the position for the demon beavors
  * in the Petrified Forest.
  */
-void L1_GetCurrentSetup() {
+void Lua_V1::GetCurrentSetup() {
 	lua_Object nameObj = lua_getparam(1);
 	if (!lua_isstring(nameObj))
 		return;
@@ -728,7 +651,7 @@ void L1_GetCurrentSetup() {
  * have a margin which prevents manny to go too close to the
  * sectors edges.
  */
-void L1_ShrinkBoxes() {
+void Lua_V1::ShrinkBoxes() {
 	lua_Object sizeObj = lua_getparam(1);
 
 	if (lua_isnumber(sizeObj)) {
@@ -737,7 +660,7 @@ void L1_ShrinkBoxes() {
 	}
 }
 
-void L1_UnShrinkBoxes() {
+void Lua_V1::UnShrinkBoxes() {
 	g_grim->getCurrSet()->unshrinkBoxes();
 }
 
@@ -745,7 +668,7 @@ void L1_UnShrinkBoxes() {
  * the nearest point to that which will be valid if the boxes are
  * shrunk by the amount specified.
  */
-void L1_GetShrinkPos() {
+void Lua_V1::GetShrinkPos() {
 	lua_Object xObj = lua_getparam(1);
 	lua_Object yObj = lua_getparam(2);
 	lua_Object zObj = lua_getparam(3);
@@ -775,29 +698,29 @@ void L1_GetShrinkPos() {
 	}
 }
 
-void L1_FileFindDispose() {
+void Lua_V1::FileFindDispose() {
 	g_grim->_listFiles.clear();
 	g_grim->_listFilesIter = NULL;
 }
 
-void L1_FileFindNext() {
+void Lua_V1::FileFindNext() {
 	if (g_grim->_listFilesIter == g_grim->_listFiles.end()) {
 		lua_pushnil();
-		L1_FileFindDispose();
+		Lua_V1::FileFindDispose();
 	} else {
 		lua_pushstring(g_grim->_listFilesIter->c_str());
 		g_grim->_listFilesIter++;
 	}
 }
 
-void L1_FileFindFirst() {
+void Lua_V1::FileFindFirst() {
 	lua_Object extObj = lua_getparam(1);
 	if (!lua_isstring(extObj)) {
 		lua_pushnil();
 		return;
 	}
 
-	L1_FileFindDispose();
+	Lua_V1::FileFindDispose();
 
 	const char *extension = lua_getstring(extObj);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -807,10 +730,10 @@ void L1_FileFindFirst() {
 	if (g_grim->_listFilesIter == g_grim->_listFiles.end())
 		lua_pushnil();
 	else
-		L1_FileFindNext();
+		Lua_V1::FileFindNext();
 }
 
-void L1_PerSecond() {
+void Lua_V1::PerSecond() {
 	lua_Object rateObj = lua_getparam(1);
 
 	if (!lua_isnumber(rateObj)) {
@@ -821,7 +744,7 @@ void L1_PerSecond() {
 	lua_pushnumber(g_grim->getPerSecond(rate));
 }
 
-void L1_EnableControl() {
+void Lua_V1::EnableControl() {
 	lua_Object numObj = lua_getparam(1);
 
 	if (!lua_isnumber(numObj)) {
@@ -835,7 +758,7 @@ void L1_EnableControl() {
 	g_grim->enableControl(num);
 }
 
-void L1_DisableControl() {
+void Lua_V1::DisableControl() {
 	lua_Object numObj = lua_getparam(1);
 
 	if (!lua_isnumber(numObj)) {
@@ -849,7 +772,7 @@ void L1_DisableControl() {
 	g_grim->disableControl(num);
 }
 
-void L1_GetControlState() {
+void Lua_V1::GetControlState() {
 	lua_Object numObj = lua_getparam(1);
 
 	if (!lua_isnumber(numObj))
@@ -866,26 +789,26 @@ void L1_GetControlState() {
 	}
 }
 
-void L1_Exit() {
+void Lua_V1::Exit() {
 	g_grim->quitGame();
 }
 
-void L1_SetSpeechMode() {
+void Lua_V1::SetSpeechMode() {
 	GrimEngine::SpeechMode mode = (GrimEngine::SpeechMode)((int)lua_getnumber(lua_getparam(1)));
 	if (mode >= 1 && mode <= 3)
 		g_grim->setSpeechMode(mode);
 }
 
-void L1_GetSpeechMode() {
+void Lua_V1::GetSpeechMode() {
 	lua_pushnumber(g_grim->getSpeechMode());
 }
 
-void L1_GetDiskFreeSpace() {
+void Lua_V1::GetDiskFreeSpace() {
 	// amount of free space in MB, used for creating saves
 	lua_pushnumber(50);
 }
 
-void L1_NewObjectState() {
+void Lua_V1::NewObjectState() {
 	int setupID = (int)lua_getnumber(lua_getparam(1));
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
@@ -900,7 +823,7 @@ void L1_NewObjectState() {
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 
-void L1_FreeObjectState() {
+void Lua_V1::FreeObjectState() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
@@ -909,7 +832,7 @@ void L1_FreeObjectState() {
 	delete state;
 }
 
-void L1_SendObjectToBack() {
+void Lua_V1::SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
@@ -917,7 +840,7 @@ void L1_SendObjectToBack() {
 	}
 }
 
-void L1_SendObjectToFront() {
+void Lua_V1::SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKTAG('S','T','A','T')) {
 		ObjectState *state =  getobjectstate(param);
@@ -925,7 +848,7 @@ void L1_SendObjectToFront() {
 	}
 }
 
-void L1_SetObjectType() {
+void Lua_V1::SetObjectType() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isuserdata(param) || lua_tag(param) != MKTAG('S','T','A','T'))
 		return;
@@ -935,11 +858,11 @@ void L1_SetObjectType() {
 	state->setPos(pos);
 }
 
-void L1_GetCurrentScript() {
+void Lua_V1::GetCurrentScript() {
 	current_script();
 }
 
-void L1_GetSaveGameImage() {
+void Lua_V1::GetSaveGameImage() {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 	int dataSize;
@@ -973,7 +896,7 @@ void L1_GetSaveGameImage() {
 	delete savedState;
 }
 
-void L1_SubmitSaveGameData() {
+void Lua_V1::SubmitSaveGameData() {
 	lua_Object table, table2;
 	SaveGame *savedState;
 	const char *str;
@@ -999,7 +922,7 @@ void L1_SubmitSaveGameData() {
 	savedState->endSection();
 }
 
-void L1_GetSaveGameData() {
+void Lua_V1::GetSaveGameData() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isstring(param))
 		return;
@@ -1043,7 +966,7 @@ void L1_GetSaveGameData() {
 	delete savedState;
 }
 
-void L1_Load() {
+void Lua_V1::Load() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_grim->loadGame("");
@@ -1055,7 +978,7 @@ void L1_Load() {
 	}
 }
 
-void L1_Save() {
+void Lua_V1::Save() {
 	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_grim->saveGame("");
@@ -1067,7 +990,7 @@ void L1_Save() {
 	}
 }
 
-void L1_Remove() {
+void Lua_V1::Remove() {
 	if (g_system->getSavefileManager()->removeSavefile(luaL_check_string(1)))
 		lua_pushuserdata(0);
 	else {
@@ -1076,7 +999,7 @@ void L1_Remove() {
 	}
 }
 
-void L1_LockFont() {
+void Lua_V1::LockFont() {
 	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
 		const char *fontName = lua_getstring(param1);
@@ -1090,14 +1013,14 @@ void L1_LockFont() {
 	lua_pushnil();
 }
 
-void L1_EnableDebugKeys() {
+void Lua_V1::EnableDebugKeys() {
 }
 
-void L1_LightMgrSetChange() {
+void Lua_V1::LightMgrSetChange() {
 	// that seems only used when some control panel is opened
 }
 
-void L1_SetAmbientLight() {
+void Lua_V1::SetAmbientLight() {
 	int mode = (int)lua_getnumber(lua_getparam(1));
 	if (mode == 0) {
 		if (g_grim->getCurrSet()) {
@@ -1110,7 +1033,7 @@ void L1_SetAmbientLight() {
 	}
 }
 
-void L1_SetLightIntensity() {
+void Lua_V1::SetLightIntensity() {
 	lua_Object lightObj = lua_getparam(1);
 	lua_Object intensityObj = lua_getparam(2);
 
@@ -1128,7 +1051,7 @@ void L1_SetLightIntensity() {
 	}
 }
 
-void L1_SetLightPosition() {
+void Lua_V1::SetLightPosition() {
 	lua_Object lightObj = lua_getparam(1);
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
@@ -1151,7 +1074,7 @@ void L1_SetLightPosition() {
 	}
 }
 
-void L1_TurnLightOn() {
+void Lua_V1::TurnLightOn() {
 	lua_Object lightObj = lua_getparam(1);
 
 	Set *scene = g_grim->getCurrSet();
@@ -1163,110 +1086,18 @@ void L1_TurnLightOn() {
 	}
 }
 
-void L1_LightMgrStartup() {
+void Lua_V1::LightMgrStartup() {
 	// we will not implement this opcode
 }
 
-void L1_JustLoaded() {
+void Lua_V1::JustLoaded() {
 	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
-void L1_SetEmergencyFont() {
+void Lua_V1::SetEmergencyFont() {
 	Debug::error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
-void L1_typeOverride() {
-	lua_Object data = lua_getparam(1);
-
-	if (lua_isuserdata(data)) {
-		switch (lua_tag(data)) {
-		case MKTAG('A','C','T','R'):
-			lua_pushstring("actor");
-			lua_pushnumber(lua_tag(data));
-			return;
-		case MKTAG('C','O','S','T'):
-			lua_pushstring("costume");
-			lua_pushnumber(lua_tag(data));
-			return;
-		case MKTAG('S','E','T',' '):
-			lua_pushstring("set");
-			lua_pushnumber(lua_tag(data));
-			return;
-		case MKTAG('K','E','Y','F'):
-			lua_pushstring("keyframe");
-			lua_pushnumber(lua_tag(data));
-			return;
-		default:
-			break;
-		}
-	}
-
-	lua_pushobject(data);
-	lua_callfunction(lua_getref(refTypeOverride));
-	lua_Object param1 = lua_getresult(1);
-	lua_Object param2 = lua_getresult(2);
-	lua_pushobject(param1);
-	lua_pushobject(param2);
-}
-
-void L1_concatFallback() {
-	lua_Object params[2];
-	char result[200];
-	char *strPtr;
-
-	params[0] = lua_getparam(1);
-	params[1] = lua_getparam(2);
-	result[0] = 0;
-
-	for (int i = 0; i < 2; i++) {
-		if (!lua_isnil(params[i]) && !lua_isuserdata(params[i]) && !lua_isstring(params[i])) {
-			lua_pushobject(params[0]);
-			lua_pushobject(params[1]);
-			lua_callfunction(lua_getref(refOldConcatFallback));
-			lua_pushobject(lua_getresult(1));
-			return;
-		}
-
-		int pos = strlen(result);
-		strPtr = &result[pos];
-
-		if (lua_isnil(params[i]))
-			sprintf(strPtr, "(nil)");
-		else if (lua_isstring(params[i]))
-			sprintf(strPtr, "%s", lua_getstring(params[i]));
-		else if (lua_tag(params[i]) == MKTAG('A','C','T','R')) {
-			Actor *a = getactor(params[i]);
-			sprintf(strPtr, "(actor%p:%s)", (void *)a,
-				(a->getCurrentCostume() && a->getCurrentCostume()->getModelNodes()) ?
-				a->getCurrentCostume()->getModelNodes()->_name : "");
-		} else {
-			lua_pushobject(params[0]);
-			lua_pushobject(params[1]);
-			lua_callfunction(lua_getref(refOldConcatFallback));
-			lua_pushobject(lua_getresult(1));
-			return;
-		}
-	}
-
-	lua_pushstring(result);
-}
-
-void setFrameTime(float frameTime) {
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("frameTime");
-	lua_pushnumber(frameTime);
-	lua_settable();
-}
-
-void setMovieTime(float movieTime) {
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("movieTime");
-	lua_pushnumber(movieTime);
-	lua_settable();
-}
-
-void dummyHandler() {
-}
 
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
@@ -1274,422 +1105,306 @@ static void stubWarning(const char *funcName) {
 }
 
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
-STUB_FUNC(L1_SetActorInvClipNode)
-STUB_FUNC(L1_NukeResources)
-STUB_FUNC(L1_ResetTextures)
-STUB_FUNC(L1_AttachToResources)
-STUB_FUNC(L1_DetachFromResources)
-STUB_FUNC(L1_SetActorClipPlane)
-STUB_FUNC(L1_SetActorClipActive)
-STUB_FUNC(L1_FlushControls)
-STUB_FUNC(L1_GetCameraLookVector)
-STUB_FUNC(L1_SetCameraRoll)
-STUB_FUNC(L1_SetCameraInterest)
-STUB_FUNC(L1_GetCameraPosition)
-STUB_FUNC(L1_SpewStartup)
-STUB_FUNC(L1_PreviousSetup)
-STUB_FUNC(L1_NextSetup)
-STUB_FUNC(L1_WorldToScreen)
-STUB_FUNC(L1_SetActorRoll)
-STUB_FUNC(L1_SetActorFrustrumCull)
-STUB_FUNC(L1_DriveActorTo)
-STUB_FUNC(L1_GetActorRect)
-STUB_FUNC(L1_GetTranslationMode)
-STUB_FUNC(L1_SetTranslationMode)
-STUB_FUNC(L1_WalkActorToAvoiding)
-STUB_FUNC(L1_GetActorChores)
-STUB_FUNC(L1_SetCameraPosition)
-STUB_FUNC(L1_GetCameraFOV)
-STUB_FUNC(L1_SetCameraFOV)
-STUB_FUNC(L1_GetCameraRoll)
-STUB_FUNC(L1_GetMemoryUsage)
-STUB_FUNC(L1_GetFontDimensions)
-STUB_FUNC(L1_PurgeText)
 
-// Entries in the system table
-static struct {
-	const char *name;
-	int key;
-} system_defaults[] = {
-	{ "frameTime", 0 },
-	{ "movieTime", 0 }
-};
+STUB_FUNC(Lua_V1::SetActorInvClipNode)
+STUB_FUNC(Lua_V1::NukeResources)
+STUB_FUNC(Lua_V1::ResetTextures)
+STUB_FUNC(Lua_V1::AttachToResources)
+STUB_FUNC(Lua_V1::DetachFromResources)
+STUB_FUNC(Lua_V1::SetActorClipPlane)
+STUB_FUNC(Lua_V1::SetActorClipActive)
+STUB_FUNC(Lua_V1::FlushControls)
+STUB_FUNC(Lua_V1::GetCameraLookVector)
+STUB_FUNC(Lua_V1::SetCameraRoll)
+STUB_FUNC(Lua_V1::SetCameraInterest)
+STUB_FUNC(Lua_V1::GetCameraPosition)
+STUB_FUNC(Lua_V1::SpewStartup)
+STUB_FUNC(Lua_V1::PreviousSetup)
+STUB_FUNC(Lua_V1::NextSetup)
+STUB_FUNC(Lua_V1::WorldToScreen)
+STUB_FUNC(Lua_V1::SetActorRoll)
+STUB_FUNC(Lua_V1::SetActorFrustrumCull)
+STUB_FUNC(Lua_V1::DriveActorTo)
+STUB_FUNC(Lua_V1::GetActorRect)
+STUB_FUNC(Lua_V1::GetTranslationMode)
+STUB_FUNC(Lua_V1::SetTranslationMode)
+STUB_FUNC(Lua_V1::WalkActorToAvoiding)
+STUB_FUNC(Lua_V1::GetActorChores)
+STUB_FUNC(Lua_V1::SetCameraPosition)
+STUB_FUNC(Lua_V1::GetCameraFOV)
+STUB_FUNC(Lua_V1::SetCameraFOV)
+STUB_FUNC(Lua_V1::GetCameraRoll)
+STUB_FUNC(Lua_V1::GetMemoryUsage)
+STUB_FUNC(Lua_V1::GetFontDimensions)
+STUB_FUNC(Lua_V1::PurgeText)
 
 struct luaL_reg grimMainOpcodes[] = {
-	{ "EngineDisplay", L1_EngineDisplay },
-	{ "CheckForFile", L1_CheckForFile },
-	{ "Load", L1_Load },
-	{ "Save", L1_Save },
-	{ "remove", L1_Remove },
-	{ "SetActorColormap", L1_SetActorColormap },
-	{ "GetActorCostume", L1_GetActorCostume },
-	{ "SetActorCostume", L1_SetActorCostume },
-	{ "SetActorScale", L1_SetActorScale },
-	{ "GetActorTimeScale", L1_GetActorTimeScale },
-	{ "SetActorTimeScale", L1_SetActorTimeScale },
-	{ "GetActorNodeLocation", L1_GetActorNodeLocation },
-	{ "SetActorWalkChore", L1_SetActorWalkChore },
-	{ "SetActorTurnChores", L1_SetActorTurnChores },
-	{ "SetActorRestChore", L1_SetActorRestChore },
-	{ "SetActorMumblechore", L1_SetActorMumblechore },
-	{ "SetActorTalkChore", L1_SetActorTalkChore },
-	{ "SetActorWalkRate", L1_SetActorWalkRate },
-	{ "GetActorWalkRate", L1_GetActorWalkRate },
-	{ "SetActorTurnRate", L1_SetActorTurnRate },
-	{ "SetSelectedActor", L1_SetSelectedActor },
-	{ "LoadActor", L1_LoadActor },
-	{ "GetActorPos", L1_GetActorPos },
-	{ "GetActorRect", L1_GetActorRect },
-	{ "GetActorPuckVector", L1_GetActorPuckVector },
-	{ "GetActorYawToPoint", L1_GetActorYawToPoint },
-	{ "SetActorReflection", L1_SetActorReflection },
-	{ "PutActorAtInterest", L1_PutActorAtInterest },
-	{ "PutActorAt", L1_PutActorAt },
-	{ "PutActorInSet", L1_PutActorInSet },
-	{ "WalkActorVector", L1_WalkActorVector },
-	{ "WalkActorForward", L1_WalkActorForward },
-	{ "DriveActorTo", L1_DriveActorTo },
-	{ "WalkActorTo", L1_WalkActorTo },
-	{ "WalkActorToAvoiding", L1_WalkActorToAvoiding },
-	{ "ActorLookAt", L1_ActorLookAt },
-	{ "SetActorLookRate", L1_SetActorLookRate },
-	{ "GetActorLookRate", L1_GetActorLookRate },
-	{ "GetVisibleThings", L1_GetVisibleThings },
-	{ "GetCameraActor", L1_GetCameraActor },
-	{ "SetActorHead", L1_SetActorHead },
-	{ "SetActorVisibility", L1_SetActorVisibility },
-	{ "SetActorFollowBoxes", L1_SetActorFollowBoxes },
-	{ "ShutUpActor", L1_ShutUpActor },
-	{ "SetActorFrustrumCull", L1_SetActorFrustrumCull },
-	{ "IsActorInSector", L1_IsActorInSector },
-	{ "GetActorSector", L1_GetActorSector },
-	{ "IsPointInSector", L1_IsPointInSector },
-	{ "GetPointSector", L1_GetPointSector },
-	{ "TurnActor", L1_TurnActor },
-	{ "GetActorRot", L1_GetActorRot },
-	{ "SetActorRot", L1_SetActorRot },
-	{ "SetActorPitch", L1_SetActorPitch },
-	{ "SetActorRoll", L1_SetActorRoll },
-	{ "IsActorTurning", L1_IsActorTurning },
-	{ "PlayActorChore", L1_PlayActorChore },
-	{ "PlayActorChoreLooping", L1_PlayActorChoreLooping },
-	{ "StopActorChore", L1_StopActorChore },
-	{ "CompleteActorChore", L1_CompleteActorChore },
-	{ "IsActorMoving", L1_IsActorMoving },
-	{ "IsActorChoring", L1_IsActorChoring },
-	{ "IsActorResting", L1_IsActorResting },
-	{ "SetActorChoreLooping", L1_SetActorChoreLooping },
-	{ "GetActorChores", L1_GetActorChores },
-	{ "GetActorCostumeDepth", L1_GetActorCostumeDepth },
-	{ "WorldToScreen", L1_WorldToScreen },
-	{ "exit", L1_Exit },
-	{ "FunctionName", L1_FunctionName },
-	{ "EnableDebugKeys", L1_EnableDebugKeys },
-	{ "LockFont", L1_LockFont },
-	{ "EnableControl", L1_EnableControl },
-	{ "DisableControl", L1_DisableControl },
-	{ "GetControlState", L1_GetControlState },
-	{ "PrintError", L1_PrintError },
-	{ "PrintWarning", L1_PrintWarning },
-	{ "PrintDebug", L1_PrintDebug },
-	{ "MakeCurrentSet", L1_MakeCurrentSet },
-	{ "LockSet", L1_LockSet },
-	{ "UnLockSet", L1_UnLockSet },
-	{ "MakeCurrentSetup", L1_MakeCurrentSetup },
-	{ "GetCurrentSetup", L1_GetCurrentSetup },
-	{ "NextSetup", L1_NextSetup },
-	{ "PreviousSetup", L1_PreviousSetup },
-	{ "StartFullscreenMovie", L1_StartFullscreenMovie },
-	{ "IsFullscreenMoviePlaying", L1_IsFullscreenMoviePlaying },
-	{ "StartMovie", L1_StartMovie },
-	{ "StopMovie", L1_StopMovie },
-	{ "PauseMovie", L1_PauseMovie },
-	{ "IsMoviePlaying", L1_IsMoviePlaying },
-	{ "PlaySound", L1_PlaySound },
-	{ "PlaySoundAt", L1_PlaySoundAt },
-	{ "IsSoundPlaying", L1_IsSoundPlaying },
-	{ "SetSoundPosition", L1_SetSoundPosition },
-	{ "FileFindFirst", L1_FileFindFirst },
-	{ "FileFindNext", L1_FileFindNext },
-	{ "FileFindDispose", L1_FileFindDispose },
-	{ "InputDialog", L1_InputDialog },
-	{ "WriteRegistryValue", L1_WriteRegistryValue },
-	{ "ReadRegistryValue", L1_ReadRegistryValue },
-	{ "GetSectorOppositeEdge", L1_GetSectorOppositeEdge },
-	{ "MakeSectorActive", L1_MakeSectorActive },
-	{ "PreRender", L1_PreRender },
-	{ "SpewStartup", L1_SpewStartup },
-	{ "GetCurrentScript", L1_GetCurrentScript },
-	{ "PrintActorCostumes", L1_PrintActorCostumes },
-	{ "PushActorCostume", L1_PushActorCostume },
-	{ "PopActorCostume", L1_PopActorCostume },
-	{ "LoadCostume", L1_LoadCostume },
-	{ "RotateVector", L1_RotateVector },
-	{ "GetCameraPosition", L1_GetCameraPosition },
-	{ "SetCameraPosition", L1_SetCameraPosition },
-	{ "SetCameraInterest", L1_SetCameraInterest },
-	{ "GetCameraFOV", L1_GetCameraFOV },
-	{ "SetCameraFOV", L1_SetCameraFOV },
-	{ "GetCameraRoll", L1_GetCameraRoll },
-	{ "SetCameraRoll", L1_SetCameraRoll },
-	{ "GetCameraLookVector", L1_GetCameraLookVector },
-	{ "PointActorAt", L1_PointActorAt },
-	{ "TurnActorTo", L1_TurnActorTo },
-	{ "PerSecond", L1_PerSecond },
-	{ "GetAngleBetweenVectors", L1_GetAngleBetweenVectors },
-	{ "GetAngleBetweenActors", L1_GetAngleBetweenActors },
-	{ "SetAmbientLight", L1_SetAmbientLight },
-	{ "TurnLightOn", L1_TurnLightOn },
-	{ "SetLightPosition", L1_SetLightPosition },
-	{ "SetLightIntensity", L1_SetLightIntensity },
-	{ "LightMgrSetChange", L1_LightMgrSetChange },
-	{ "LightMgrStartup", L1_LightMgrStartup },
-	{ "ImStartSound", L1_ImStartSound },
-	{ "ImStopSound", L1_ImStopSound },
-	{ "ImStopAllSounds", L1_ImStopAllSounds },
-	{ "ImGetParam", L1_ImGetParam },
-	{ "ImSetParam", L1_ImSetParam },
-	{ "ImFadeParam", L1_ImFadeParam },
-	{ "ImGetSfxVol", L1_ImGetSfxVol },
-	{ "ImSetSfxVol", L1_ImSetSfxVol },
-	{ "ImGetVoiceVol", L1_ImGetVoiceVol },
-	{ "ImSetVoiceVol", L1_ImSetVoiceVol },
-	{ "ImGetMusicVol", L1_ImGetMusicVol },
-	{ "ImSetMusicVol", L1_ImSetMusicVol },
-	{ "ImSetState", L1_ImSetState },
-	{ "ImSetSequence", L1_ImSetSequence },
-	{ "ImPause", L1_ImPause },
-	{ "ImResume", L1_ImResume },
-	{ "ImSetVoiceEffect", L1_ImSetVoiceEffect },
-	{ "LoadBundle", L1_LoadBundle },
-	{ "SetGamma", L1_SetGamma },
-	{ "SetActorWalkDominate", L1_SetActorWalkDominate },
-	{ "SetActorConstrain", L1_SetActorConstrain },
-	{ "RenderModeUser", L1_RenderModeUser },
-	{ "ForceRefresh", L1_ForceRefresh },
-	{ "DimScreen", L1_DimScreen },
-	{ "DimRegion", L1_DimRegion },
-	{ "CleanBuffer", L1_CleanBuffer },
-	{ "Display", L1_Display },
-	{ "SetSpeechMode", L1_SetSpeechMode },
-	{ "GetSpeechMode", L1_GetSpeechMode },
-	{ "SetShadowColor", L1_SetShadowColor },
-	{ "ActivateActorShadow", L1_ActivateActorShadow },
-	{ "SetActorShadowPlane", L1_SetActorShadowPlane },
-	{ "SetActorShadowPoint", L1_SetActorShadowPoint },
-	{ "SetActiveShadow", L1_SetActiveShadow },
-	{ "KillActorShadows", L1_KillActorShadows },
-	{ "AddShadowPlane", L1_AddShadowPlane },
-	{ "SetActorShadowValid", L1_SetActorShadowValid },
-	{ "FreeObjectState", L1_FreeObjectState },
-	{ "NewObjectState", L1_NewObjectState },
-	{ "SetObjectType", L1_SetObjectType },
-	{ "SendObjectToBack", L1_SendObjectToBack },
-	{ "SendObjectToFront", L1_SendObjectToFront },
-	{ "ActorToClean", L1_ActorToClean },
-	{ "FlushControls", L1_FlushControls },
-	{ "SetActorCollisionMode", L1_SetActorCollisionMode },
-	{ "SetActorCollisionScale", L1_SetActorCollisionScale },
-	{ "SetActorClipActive", L1_SetActorClipActive },
-	{ "SetActorClipPlane", L1_SetActorClipPlane },
-	{ "FadeOutChore", L1_FadeOutChore },
-	{ "FadeInChore", L1_FadeInChore },
-	{ "IrisDown", L1_IrisDown },
-	{ "IrisUp", L1_IrisUp },
-	{ "TextFileGetLineCount", L1_TextFileGetLineCount },
-	{ "TextFileGetLine", L1_TextFileGetLine },
-	{ "ScreenShot", L1_ScreenShot },
-	{ "GetSaveGameImage", L1_GetSaveGameImage },
-	{ "GetImage", L1_GetImage },
-	{ "FreeImage", L1_FreeImage },
-	{ "BlastImage", L1_BlastImage },
-	{ "BlastRect", L1_BlastRect },
-	{ "SubmitSaveGameData", L1_SubmitSaveGameData },
-	{ "GetSaveGameData", L1_GetSaveGameData },
-	{ "SetTextSpeed", L1_SetTextSpeed },
-	{ "GetTextSpeed", L1_GetTextSpeed },
-	{ "DetachFromResources", L1_DetachFromResources },
-	{ "AttachToResources", L1_AttachToResources },
-	{ "ActorPuckOrient", L1_ActorPuckOrient },
-	{ "JustLoaded", L1_JustLoaded },
-	{ "ResetTextures", L1_ResetTextures },
-	{ "ShrinkBoxes", L1_ShrinkBoxes },
-	{ "UnShrinkBoxes", L1_UnShrinkBoxes },
-	{ "GetShrinkPos", L1_GetShrinkPos },
-	{ "NukeResources", L1_NukeResources },
-	{ "SetActorInvClipNode", L1_SetActorInvClipNode },
-	{ "GetDiskFreeSpace", L1_GetDiskFreeSpace },
-	{ "SaveIMuse", L1_SaveIMuse },
-	{ "RestoreIMuse", L1_RestoreIMuse },
-	{ "GetMemoryUsage", L1_GetMemoryUsage },
-	{ "dofile", L1_new_dofile },
+	{ "EngineDisplay", LUA_OPCODE(Lua_V1, EngineDisplay) },
+	{ "CheckForFile", LUA_OPCODE(Lua_V1, CheckForFile) },
+	{ "Load", LUA_OPCODE(Lua_V1, Load) },
+	{ "Save", LUA_OPCODE(Lua_V1, Save) },
+	{ "remove", LUA_OPCODE(Lua_V1, Remove) },
+	{ "SetActorColormap", LUA_OPCODE(Lua_V1, SetActorColormap) },
+	{ "GetActorCostume", LUA_OPCODE(Lua_V1, GetActorCostume) },
+	{ "SetActorCostume", LUA_OPCODE(Lua_V1, SetActorCostume) },
+	{ "SetActorScale", LUA_OPCODE(Lua_V1, SetActorScale) },
+	{ "GetActorTimeScale", LUA_OPCODE(Lua_V1, GetActorTimeScale) },
+	{ "SetActorTimeScale", LUA_OPCODE(Lua_V1, SetActorTimeScale) },
+	{ "GetActorNodeLocation", LUA_OPCODE(Lua_V1, GetActorNodeLocation) },
+	{ "SetActorWalkChore", LUA_OPCODE(Lua_V1, SetActorWalkChore) },
+	{ "SetActorTurnChores", LUA_OPCODE(Lua_V1, SetActorTurnChores) },
+	{ "SetActorRestChore", LUA_OPCODE(Lua_V1, SetActorRestChore) },
+	{ "SetActorMumblechore", LUA_OPCODE(Lua_V1, SetActorMumblechore) },
+	{ "SetActorTalkChore", LUA_OPCODE(Lua_V1, SetActorTalkChore) },
+	{ "SetActorWalkRate", LUA_OPCODE(Lua_V1, SetActorWalkRate) },
+	{ "GetActorWalkRate", LUA_OPCODE(Lua_V1, GetActorWalkRate) },
+	{ "SetActorTurnRate", LUA_OPCODE(Lua_V1, SetActorTurnRate) },
+	{ "SetSelectedActor", LUA_OPCODE(Lua_V1, SetSelectedActor) },
+	{ "LoadActor", LUA_OPCODE(Lua_V1, LoadActor) },
+	{ "GetActorPos", LUA_OPCODE(Lua_V1, GetActorPos) },
+	{ "GetActorRect", LUA_OPCODE(Lua_V1, GetActorRect) },
+	{ "GetActorPuckVector", LUA_OPCODE(Lua_V1, GetActorPuckVector) },
+	{ "GetActorYawToPoint", LUA_OPCODE(Lua_V1, GetActorYawToPoint) },
+	{ "SetActorReflection", LUA_OPCODE(Lua_V1, SetActorReflection) },
+	{ "PutActorAtInterest", LUA_OPCODE(Lua_V1, PutActorAtInterest) },
+	{ "PutActorAt", LUA_OPCODE(Lua_V1, PutActorAt) },
+	{ "PutActorInSet", LUA_OPCODE(Lua_V1, PutActorInSet) },
+	{ "WalkActorVector", LUA_OPCODE(Lua_V1, WalkActorVector) },
+	{ "WalkActorForward", LUA_OPCODE(Lua_V1, WalkActorForward) },
+	{ "DriveActorTo", LUA_OPCODE(Lua_V1, DriveActorTo) },
+	{ "WalkActorTo", LUA_OPCODE(Lua_V1, WalkActorTo) },
+	{ "WalkActorToAvoiding", LUA_OPCODE(Lua_V1, WalkActorToAvoiding) },
+	{ "ActorLookAt", LUA_OPCODE(Lua_V1, ActorLookAt) },
+	{ "SetActorLookRate", LUA_OPCODE(Lua_V1, SetActorLookRate) },
+	{ "GetActorLookRate", LUA_OPCODE(Lua_V1, GetActorLookRate) },
+	{ "GetVisibleThings", LUA_OPCODE(Lua_V1, GetVisibleThings) },
+	{ "GetCameraActor", LUA_OPCODE(Lua_V1, GetCameraActor) },
+	{ "SetActorHead", LUA_OPCODE(Lua_V1, SetActorHead) },
+	{ "SetActorVisibility", LUA_OPCODE(Lua_V1, SetActorVisibility) },
+	{ "SetActorFollowBoxes", LUA_OPCODE(Lua_V1, SetActorFollowBoxes) },
+	{ "ShutUpActor", LUA_OPCODE(Lua_V1, ShutUpActor) },
+	{ "SetActorFrustrumCull", LUA_OPCODE(Lua_V1, SetActorFrustrumCull) },
+	{ "IsActorInSector", LUA_OPCODE(Lua_V1, IsActorInSector) },
+	{ "GetActorSector", LUA_OPCODE(Lua_V1, GetActorSector) },
+	{ "IsPointInSector", LUA_OPCODE(Lua_V1, IsPointInSector) },
+	{ "GetPointSector", LUA_OPCODE(Lua_V1, GetPointSector) },
+	{ "TurnActor", LUA_OPCODE(Lua_V1, TurnActor) },
+	{ "GetActorRot", LUA_OPCODE(Lua_V1, GetActorRot) },
+	{ "SetActorRot", LUA_OPCODE(Lua_V1, SetActorRot) },
+	{ "SetActorPitch", LUA_OPCODE(Lua_V1, SetActorPitch) },
+	{ "SetActorRoll", LUA_OPCODE(Lua_V1, SetActorRoll) },
+	{ "IsActorTurning", LUA_OPCODE(Lua_V1, IsActorTurning) },
+	{ "PlayActorChore", LUA_OPCODE(Lua_V1, PlayActorChore) },
+	{ "PlayActorChoreLooping", LUA_OPCODE(Lua_V1, PlayActorChoreLooping) },
+	{ "StopActorChore", LUA_OPCODE(Lua_V1, StopActorChore) },
+	{ "CompleteActorChore", LUA_OPCODE(Lua_V1, CompleteActorChore) },
+	{ "IsActorMoving", LUA_OPCODE(Lua_V1, IsActorMoving) },
+	{ "IsActorChoring", LUA_OPCODE(Lua_V1, IsActorChoring) },
+	{ "IsActorResting", LUA_OPCODE(Lua_V1, IsActorResting) },
+	{ "SetActorChoreLooping", LUA_OPCODE(Lua_V1, SetActorChoreLooping) },
+	{ "GetActorChores", LUA_OPCODE(Lua_V1, GetActorChores) },
+	{ "GetActorCostumeDepth", LUA_OPCODE(Lua_V1, GetActorCostumeDepth) },
+	{ "WorldToScreen", LUA_OPCODE(Lua_V1, WorldToScreen) },
+	{ "exit", LUA_OPCODE(Lua_V1, Exit) },
+	{ "FunctionName", LUA_OPCODE(Lua_V1, FunctionName) },
+	{ "EnableDebugKeys", LUA_OPCODE(Lua_V1, EnableDebugKeys) },
+	{ "LockFont", LUA_OPCODE(Lua_V1, LockFont) },
+	{ "EnableControl", LUA_OPCODE(Lua_V1, EnableControl) },
+	{ "DisableControl", LUA_OPCODE(Lua_V1, DisableControl) },
+	{ "GetControlState", LUA_OPCODE(Lua_V1, GetControlState) },
+	{ "PrintError", LUA_OPCODE(Lua_V1, PrintError) },
+	{ "PrintWarning", LUA_OPCODE(Lua_V1, PrintWarning) },
+	{ "PrintDebug", LUA_OPCODE(Lua_V1, PrintDebug) },
+	{ "MakeCurrentSet", LUA_OPCODE(Lua_V1, MakeCurrentSet) },
+	{ "LockSet", LUA_OPCODE(Lua_V1, LockSet) },
+	{ "UnLockSet", LUA_OPCODE(Lua_V1, UnLockSet) },
+	{ "MakeCurrentSetup", LUA_OPCODE(Lua_V1, MakeCurrentSetup) },
+	{ "GetCurrentSetup", LUA_OPCODE(Lua_V1, GetCurrentSetup) },
+	{ "NextSetup", LUA_OPCODE(Lua_V1, NextSetup) },
+	{ "PreviousSetup", LUA_OPCODE(Lua_V1, PreviousSetup) },
+	{ "StartFullscreenMovie", LUA_OPCODE(Lua_V1, StartFullscreenMovie) },
+	{ "IsFullscreenMoviePlaying", LUA_OPCODE(Lua_V1, IsFullscreenMoviePlaying) },
+	{ "StartMovie", LUA_OPCODE(Lua_V1, StartMovie) },
+	{ "StopMovie", LUA_OPCODE(Lua_V1, StopMovie) },
+	{ "PauseMovie", LUA_OPCODE(Lua_V1, PauseMovie) },
+	{ "IsMoviePlaying", LUA_OPCODE(Lua_V1, IsMoviePlaying) },
+	{ "PlaySound", LUA_OPCODE(Lua_V1, PlaySound) },
+	{ "PlaySoundAt", LUA_OPCODE(Lua_V1, PlaySoundAt) },
+	{ "IsSoundPlaying", LUA_OPCODE(Lua_V1, IsSoundPlaying) },
+	{ "SetSoundPosition", LUA_OPCODE(Lua_V1, SetSoundPosition) },
+	{ "FileFindFirst", LUA_OPCODE(Lua_V1, FileFindFirst) },
+	{ "FileFindNext", LUA_OPCODE(Lua_V1, FileFindNext) },
+	{ "FileFindDispose", LUA_OPCODE(Lua_V1, FileFindDispose) },
+	{ "InputDialog", LUA_OPCODE(Lua_V1, InputDialog) },
+	{ "WriteRegistryValue", LUA_OPCODE(Lua_V1, WriteRegistryValue) },
+	{ "ReadRegistryValue", LUA_OPCODE(Lua_V1, ReadRegistryValue) },
+	{ "GetSectorOppositeEdge", LUA_OPCODE(Lua_V1, GetSectorOppositeEdge) },
+	{ "MakeSectorActive", LUA_OPCODE(Lua_V1, MakeSectorActive) },
+	{ "PreRender", LUA_OPCODE(Lua_V1, PreRender) },
+	{ "SpewStartup", LUA_OPCODE(Lua_V1, SpewStartup) },
+	{ "GetCurrentScript", LUA_OPCODE(Lua_V1, GetCurrentScript) },
+	{ "PrintActorCostumes", LUA_OPCODE(Lua_V1, PrintActorCostumes) },
+	{ "PushActorCostume", LUA_OPCODE(Lua_V1, PushActorCostume) },
+	{ "PopActorCostume", LUA_OPCODE(Lua_V1, PopActorCostume) },
+	{ "LoadCostume", LUA_OPCODE(Lua_V1, LoadCostume) },
+	{ "RotateVector", LUA_OPCODE(Lua_V1, RotateVector) },
+	{ "GetCameraPosition", LUA_OPCODE(Lua_V1, GetCameraPosition) },
+	{ "SetCameraPosition", LUA_OPCODE(Lua_V1, SetCameraPosition) },
+	{ "SetCameraInterest", LUA_OPCODE(Lua_V1, SetCameraInterest) },
+	{ "GetCameraFOV", LUA_OPCODE(Lua_V1, GetCameraFOV) },
+	{ "SetCameraFOV", LUA_OPCODE(Lua_V1, SetCameraFOV) },
+	{ "GetCameraRoll", LUA_OPCODE(Lua_V1, GetCameraRoll) },
+	{ "SetCameraRoll", LUA_OPCODE(Lua_V1, SetCameraRoll) },
+	{ "GetCameraLookVector", LUA_OPCODE(Lua_V1, GetCameraLookVector) },
+	{ "PointActorAt", LUA_OPCODE(Lua_V1, PointActorAt) },
+	{ "TurnActorTo", LUA_OPCODE(Lua_V1, TurnActorTo) },
+	{ "PerSecond", LUA_OPCODE(Lua_V1, PerSecond) },
+	{ "GetAngleBetweenVectors", LUA_OPCODE(Lua_V1, GetAngleBetweenVectors) },
+	{ "GetAngleBetweenActors", LUA_OPCODE(Lua_V1, GetAngleBetweenActors) },
+	{ "SetAmbientLight", LUA_OPCODE(Lua_V1, SetAmbientLight) },
+	{ "TurnLightOn", LUA_OPCODE(Lua_V1, TurnLightOn) },
+	{ "SetLightPosition", LUA_OPCODE(Lua_V1, SetLightPosition) },
+	{ "SetLightIntensity", LUA_OPCODE(Lua_V1, SetLightIntensity) },
+	{ "LightMgrSetChange", LUA_OPCODE(Lua_V1, LightMgrSetChange) },
+	{ "LightMgrStartup", LUA_OPCODE(Lua_V1, LightMgrStartup) },
+	{ "ImStartSound", LUA_OPCODE(Lua_V1, ImStartSound) },
+	{ "ImStopSound", LUA_OPCODE(Lua_V1, ImStopSound) },
+	{ "ImStopAllSounds", LUA_OPCODE(Lua_V1, ImStopAllSounds) },
+	{ "ImGetParam", LUA_OPCODE(Lua_V1, ImGetParam) },
+	{ "ImSetParam", LUA_OPCODE(Lua_V1, ImSetParam) },
+	{ "ImFadeParam", LUA_OPCODE(Lua_V1, ImFadeParam) },
+	{ "ImGetSfxVol", LUA_OPCODE(Lua_V1, ImGetSfxVol) },
+	{ "ImSetSfxVol", LUA_OPCODE(Lua_V1, ImSetSfxVol) },
+	{ "ImGetVoiceVol", LUA_OPCODE(Lua_V1, ImGetVoiceVol) },
+	{ "ImSetVoiceVol", LUA_OPCODE(Lua_V1, ImSetVoiceVol) },
+	{ "ImGetMusicVol", LUA_OPCODE(Lua_V1, ImGetMusicVol) },
+	{ "ImSetMusicVol", LUA_OPCODE(Lua_V1, ImSetMusicVol) },
+	{ "ImSetState", LUA_OPCODE(Lua_V1, ImSetState) },
+	{ "ImSetSequence", LUA_OPCODE(Lua_V1, ImSetSequence) },
+	{ "ImPause", LUA_OPCODE(Lua_V1, ImPause) },
+	{ "ImResume", LUA_OPCODE(Lua_V1, ImResume) },
+	{ "ImSetVoiceEffect", LUA_OPCODE(Lua_V1, ImSetVoiceEffect) },
+	{ "LoadBundle", LUA_OPCODE(Lua_V1, LoadBundle) },
+	{ "SetGamma", LUA_OPCODE(Lua_V1, SetGamma) },
+	{ "SetActorWalkDominate", LUA_OPCODE(Lua_V1, SetActorWalkDominate) },
+	{ "SetActorConstrain", LUA_OPCODE(Lua_V1, SetActorConstrain) },
+	{ "RenderModeUser", LUA_OPCODE(Lua_V1, RenderModeUser) },
+	{ "ForceRefresh", LUA_OPCODE(Lua_V1, ForceRefresh) },
+	{ "DimScreen", LUA_OPCODE(Lua_V1, DimScreen) },
+	{ "DimRegion", LUA_OPCODE(Lua_V1, DimRegion) },
+	{ "CleanBuffer", LUA_OPCODE(Lua_V1, CleanBuffer) },
+	{ "Display", LUA_OPCODE(Lua_V1, Display) },
+	{ "SetSpeechMode", LUA_OPCODE(Lua_V1, SetSpeechMode) },
+	{ "GetSpeechMode", LUA_OPCODE(Lua_V1, GetSpeechMode) },
+	{ "SetShadowColor", LUA_OPCODE(Lua_V1, SetShadowColor) },
+	{ "ActivateActorShadow", LUA_OPCODE(Lua_V1, ActivateActorShadow) },
+	{ "SetActorShadowPlane", LUA_OPCODE(Lua_V1, SetActorShadowPlane) },
+	{ "SetActorShadowPoint", LUA_OPCODE(Lua_V1, SetActorShadowPoint) },
+	{ "SetActiveShadow", LUA_OPCODE(Lua_V1, SetActiveShadow) },
+	{ "KillActorShadows", LUA_OPCODE(Lua_V1, KillActorShadows) },
+	{ "AddShadowPlane", LUA_OPCODE(Lua_V1, AddShadowPlane) },
+	{ "SetActorShadowValid", LUA_OPCODE(Lua_V1, SetActorShadowValid) },
+	{ "FreeObjectState", LUA_OPCODE(Lua_V1, FreeObjectState) },
+	{ "NewObjectState", LUA_OPCODE(Lua_V1, NewObjectState) },
+	{ "SetObjectType", LUA_OPCODE(Lua_V1, SetObjectType) },
+	{ "SendObjectToBack", LUA_OPCODE(Lua_V1, SendObjectToBack) },
+	{ "SendObjectToFront", LUA_OPCODE(Lua_V1, SendObjectToFront) },
+	{ "ActorToClean", LUA_OPCODE(Lua_V1, ActorToClean) },
+	{ "FlushControls", LUA_OPCODE(Lua_V1, FlushControls) },
+	{ "SetActorCollisionMode", LUA_OPCODE(Lua_V1, SetActorCollisionMode) },
+	{ "SetActorCollisionScale", LUA_OPCODE(Lua_V1, SetActorCollisionScale) },
+	{ "SetActorClipActive", LUA_OPCODE(Lua_V1, SetActorClipActive) },
+	{ "SetActorClipPlane", LUA_OPCODE(Lua_V1, SetActorClipPlane) },
+	{ "FadeOutChore", LUA_OPCODE(Lua_V1, FadeOutChore) },
+	{ "FadeInChore", LUA_OPCODE(Lua_V1, FadeInChore) },
+	{ "IrisDown", LUA_OPCODE(Lua_V1, IrisDown) },
+	{ "IrisUp", LUA_OPCODE(Lua_V1, IrisUp) },
+	{ "TextFileGetLineCount", LUA_OPCODE(Lua_V1, TextFileGetLineCount) },
+	{ "TextFileGetLine", LUA_OPCODE(Lua_V1, TextFileGetLine) },
+	{ "ScreenShot", LUA_OPCODE(Lua_V1, ScreenShot) },
+	{ "GetSaveGameImage", LUA_OPCODE(Lua_V1, GetSaveGameImage) },
+	{ "GetImage", LUA_OPCODE(Lua_V1, GetImage) },
+	{ "FreeImage", LUA_OPCODE(Lua_V1, FreeImage) },
+	{ "BlastImage", LUA_OPCODE(Lua_V1, BlastImage) },
+	{ "BlastRect", LUA_OPCODE(Lua_V1, BlastRect) },
+	{ "SubmitSaveGameData", LUA_OPCODE(Lua_V1, SubmitSaveGameData) },
+	{ "GetSaveGameData", LUA_OPCODE(Lua_V1, GetSaveGameData) },
+	{ "SetTextSpeed", LUA_OPCODE(Lua_V1, SetTextSpeed) },
+	{ "GetTextSpeed", LUA_OPCODE(Lua_V1, GetTextSpeed) },
+	{ "DetachFromResources", LUA_OPCODE(Lua_V1, DetachFromResources) },
+	{ "AttachToResources", LUA_OPCODE(Lua_V1, AttachToResources) },
+	{ "ActorPuckOrient", LUA_OPCODE(Lua_V1, ActorPuckOrient) },
+	{ "JustLoaded", LUA_OPCODE(Lua_V1, JustLoaded) },
+	{ "ResetTextures", LUA_OPCODE(Lua_V1, ResetTextures) },
+	{ "ShrinkBoxes", LUA_OPCODE(Lua_V1, ShrinkBoxes) },
+	{ "UnShrinkBoxes", LUA_OPCODE(Lua_V1, UnShrinkBoxes) },
+	{ "GetShrinkPos", LUA_OPCODE(Lua_V1, GetShrinkPos) },
+	{ "NukeResources", LUA_OPCODE(Lua_V1, NukeResources) },
+	{ "SetActorInvClipNode", LUA_OPCODE(Lua_V1, SetActorInvClipNode) },
+	{ "GetDiskFreeSpace", LUA_OPCODE(Lua_V1, GetDiskFreeSpace) },
+	{ "SaveIMuse", LUA_OPCODE(Lua_V1, SaveIMuse) },
+	{ "RestoreIMuse", LUA_OPCODE(Lua_V1, RestoreIMuse) },
+	{ "GetMemoryUsage", LUA_OPCODE(Lua_V1, GetMemoryUsage) },
+	{ "dofile", LUA_OPCODE(Lua_V1, new_dofile) },
 };
 
 static struct luaL_reg grimTextOpcodes[] = {
-	{ "IsMessageGoing", L1_IsMessageGoing },
-	{ "SetSayLineDefaults", L1_SetSayLineDefaults },
-	{ "SetActorTalkColor", L1_SetActorTalkColor },
-	{ "GetActorTalkColor", L1_GetActorTalkColor },
-	{ "SayLine", L1_SayLine },
-	{ "PrintLine", L1_PrintLine },
-	{ "MakeTextObject", L1_MakeTextObject },
-	{ "GetTextObjectDimensions", L1_GetTextObjectDimensions },
-	{ "GetFontDimensions", L1_GetFontDimensions },
-	{ "ChangeTextObject", L1_ChangeTextObject },
-	{ "KillTextObject", L1_KillTextObject },
-	{ "BlastText", L1_BlastText },
-	{ "ExpireText", L1_ExpireText },
-	{ "PurgeText", L1_PurgeText },
-	{ "MakeColor", L1_MakeColor },
-	{ "GetColorComponents", L1_GetColorComponents },
-	{ "SetTranslationMode", L1_SetTranslationMode },
-	{ "GetTranslationMode", L1_GetTranslationMode },
-	{ "GetTextCharPosition", L1_GetTextCharPosition },
-	{ "LocalizeString", L1_LocalizeString },
-	{ "SetEmergencyFont", L1_SetEmergencyFont },
-	{ "SetOffscreenTextPos", L1_SetOffscreenTextPos }
+	{ "IsMessageGoing", LUA_OPCODE(Lua_V1, IsMessageGoing) },
+	{ "SetSayLineDefaults", LUA_OPCODE(Lua_V1, SetSayLineDefaults) },
+	{ "SetActorTalkColor", LUA_OPCODE(Lua_V1, SetActorTalkColor) },
+	{ "GetActorTalkColor", LUA_OPCODE(Lua_V1, GetActorTalkColor) },
+	{ "SayLine", LUA_OPCODE(Lua_V1, SayLine) },
+	{ "PrintLine", LUA_OPCODE(Lua_V1, PrintLine) },
+	{ "MakeTextObject", LUA_OPCODE(Lua_V1, MakeTextObject) },
+	{ "GetTextObjectDimensions", LUA_OPCODE(Lua_V1, GetTextObjectDimensions) },
+	{ "GetFontDimensions", LUA_OPCODE(Lua_V1, GetFontDimensions) },
+	{ "ChangeTextObject", LUA_OPCODE(Lua_V1, ChangeTextObject) },
+	{ "KillTextObject", LUA_OPCODE(Lua_V1, KillTextObject) },
+	{ "BlastText", LUA_OPCODE(Lua_V1, BlastText) },
+	{ "ExpireText", LUA_OPCODE(Lua_V1, ExpireText) },
+	{ "PurgeText", LUA_OPCODE(Lua_V1, PurgeText) },
+	{ "MakeColor", LUA_OPCODE(Lua_V1, MakeColor) },
+	{ "GetColorComponents", LUA_OPCODE(Lua_V1, GetColorComponents) },
+	{ "SetTranslationMode", LUA_OPCODE(Lua_V1, SetTranslationMode) },
+	{ "GetTranslationMode", LUA_OPCODE(Lua_V1, GetTranslationMode) },
+	{ "GetTextCharPosition", LUA_OPCODE(Lua_V1, GetTextCharPosition) },
+	{ "LocalizeString", LUA_OPCODE(Lua_V1, LocalizeString) },
+	{ "SetEmergencyFont", LUA_OPCODE(Lua_V1, SetEmergencyFont) },
+	{ "SetOffscreenTextPos", LUA_OPCODE(Lua_V1, SetOffscreenTextPos) }
 };
 
 struct luaL_reg grimPrimitivesOpcodes[] = {
-	{ "DrawLine", L1_DrawLine },
-	{ "DrawPolygon", L1_DrawPolygon },
-	{ "DrawRectangle", L1_DrawRectangle },
-	{ "ChangePrimitive", L1_ChangePrimitive },
-	{ "KillPrimitive", L1_KillPrimitive },
-	{ "PurgePrimitiveQueue", L1_PurgePrimitiveQueue }
+	{ "DrawLine", LUA_OPCODE(Lua_V1, DrawLine) },
+	{ "DrawPolygon", LUA_OPCODE(Lua_V1, DrawPolygon) },
+	{ "DrawRectangle", LUA_OPCODE(Lua_V1, DrawRectangle) },
+	{ "ChangePrimitive", LUA_OPCODE(Lua_V1, ChangePrimitive) },
+	{ "KillPrimitive", LUA_OPCODE(Lua_V1, KillPrimitive) },
+	{ "PurgePrimitiveQueue", LUA_OPCODE(Lua_V1, PurgePrimitiveQueue) }
 };
 
 struct luaL_reg grimHardwareOpcodes[] = {
-	{ "Is3DHardwareEnabled", L1_Is3DHardwareEnabled },
-	{ "GetVideoDevices", L1_GetVideoDevices },
-	{ "SetVideoDevices", L1_SetVideoDevices },
-	{ "SetHardwareState", L1_SetHardwareState },
-	{ "Enumerate3DDevices", L1_Enumerate3DDevices },
-	{ "EnumerateVideoDevices", L1_EnumerateVideoDevices }
+	{ "Is3DHardwareEnabled", LUA_OPCODE(Lua_V1, Is3DHardwareEnabled) },
+	{ "GetVideoDevices", LUA_OPCODE(Lua_V1, GetVideoDevices) },
+	{ "SetVideoDevices", LUA_OPCODE(Lua_V1, SetVideoDevices) },
+	{ "SetHardwareState", LUA_OPCODE(Lua_V1, SetHardwareState) },
+	{ "Enumerate3DDevices", LUA_OPCODE(Lua_V1, Enumerate3DDevices) },
+	{ "EnumerateVideoDevices", LUA_OPCODE(Lua_V1, EnumerateVideoDevices) }
 };
 
-struct luaL_reg grimMiscOpcodes[] = {
-	{ "  concatfallback", L1_concatFallback },
-	{ "  typeoverride", L1_typeOverride },
-	{ "  dfltcamera", dummyHandler },
-	{ "  dfltcontrol", dummyHandler },
-};
-
-void registerGrimOpcodes() {
+void Lua_V1::registerOpcodes() {
 	// Register main opcodes functions
 	luaL_openlib(grimMainOpcodes, ARRAYSIZE(grimMainOpcodes));
 
 	// Register text opcodes functions
 	luaL_openlib(grimTextOpcodes, ARRAYSIZE(grimTextOpcodes));
 
-	// Register primitives opcodes functions
+	// Register primitives opcodeEs functions
 	luaL_openlib(grimPrimitivesOpcodes, ARRAYSIZE(grimPrimitivesOpcodes));
 
-	// Register hardware opcodes functions
+	// Register hardware opcode functions
 	luaL_openlib(grimHardwareOpcodes, ARRAYSIZE(grimHardwareOpcodes));
 
-	// Register miscOpcodes opcodes functions
-	luaL_openlib(grimMiscOpcodes, ARRAYSIZE(grimMiscOpcodes));
-}
-
-void registerLua() {
-	// Register system table
-	lua_Object system_table = lua_createtable();
-	lua_pushobject(system_table);
-	lua_setglobal("system");
-
-	lua_pushobject(system_table);
-	refSystemTable = lua_ref(1);
-
-	for (unsigned i = 0; i < ARRAYSIZE(system_defaults); i++) {
-		lua_pushobject(lua_getref(refSystemTable));
-		lua_pushstring(system_defaults[i].name);
-		lua_pushnumber(system_defaults[i].key);
-		lua_settable();
-	}
-
-	// Create and populate system.controls table
-	lua_Object controls_table = lua_createtable();
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("controls");
-	lua_pushobject(controls_table);
-	lua_settable();
-
-	for (int i = 0; controls[i].name; i++) {
-		lua_pushobject(controls_table);
-		lua_pushstring(controls[i].name);
-		lua_pushnumber(controls[i].key);
-		lua_settable();
-	}
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("camChangeHandler");
-	lua_pushcfunction(dummyHandler);
-	lua_settable();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("axisHandler");
-	lua_pushcfunction(dummyHandler);
-	lua_settable();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("buttonHandler");
-	lua_pushcfunction(dummyHandler);
-	lua_settable();
-
-	lua_pushobject(lua_getglobal("type"));
-	refTypeOverride = lua_ref(true);
-	lua_pushCclosure(L1_typeOverride, 0);
-	lua_setglobal("type");
-
-	// Register constants for box types
-	lua_pushnumber(Sector::NoneType);
-	lua_setglobal("NONE");
-	lua_pushnumber(Sector::WalkType);
-	lua_setglobal("WALK");
-	lua_pushnumber(Sector::CameraType);
-	lua_setglobal("CAMERA");
-	lua_pushnumber(Sector::SpecialType);
-	lua_setglobal("SPECIAL");
-	lua_pushnumber(Sector::HotType);
-	lua_setglobal("HOT");
-
-	lua_pushobject(lua_setfallback("concat", L1_concatFallback));
-	refOldConcatFallback = lua_ref(1);
-
-	// initialize Text globals
-	lua_pushstring("x");
-	refTextObjectX = lua_ref(true);
-	lua_pushstring("y");
-	refTextObjectY = lua_ref(true);
-	lua_pushstring("font");
-	refTextObjectFont = lua_ref(true);
-	lua_pushstring("width");
-	refTextObjectWidth = lua_ref(true);
-	lua_pushstring("height");
-	refTextObjectHeight = lua_ref(true);
-	lua_pushstring("fgcolor");
-	refTextObjectFGColor = lua_ref(true);
-	lua_pushstring("bgcolor");
-	refTextObjectBGColor = lua_ref(true);
-	lua_pushstring("fxcolor");
-	refTextObjectFXColor = lua_ref(true);
-	lua_pushstring("hicolor");
-	refTextObjectHIColor = lua_ref(true);
-	lua_pushstring("duration");
-	refTextObjectDuration = lua_ref(true);
-	lua_pushstring("center");
-	refTextObjectCenter = lua_ref(true);
-	lua_pushstring("ljustify");
-	refTextObjectLJustify = lua_ref(true);
-	lua_pushstring("rjustify");
-	refTextObjectRJustify = lua_ref(true);
-	lua_pushstring("volume");
-	refTextObjectVolume = lua_ref(true);
-	lua_pushstring("pan");
-	refTextObjectPan = lua_ref(true);
-	lua_pushstring("background");
-	refTextObjectBackground = lua_ref(true);
+	LuaBase::registerOpcodes();
 }
 
 } // end of namespace Grim

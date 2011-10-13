@@ -51,6 +51,8 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
+#include "engines/grim/lua_v2.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"
@@ -73,8 +75,6 @@
 #include "lua/lstate.h"
 
 namespace Grim {
-
-static bool g_lua_initialized = false;
 
 // CHAR_KEY tests to see whether a keycode is for
 // a "character" handler or a "button" handler
@@ -189,12 +189,7 @@ GrimEngine::~GrimEngine() {
 	ObjectState::getPool()->deleteObjects();
 	PoolColor::getPool()->deleteObjects();
 
-	if (g_lua_initialized) {
-		lua_removelibslists();
-		lua_close();
-		lua_iolibclose();
-		g_lua_initialized = false;
-	}
+	delete LuaBase::instance();
 	if (g_registry) {
 		g_registry->save();
 		delete g_registry;
@@ -261,28 +256,23 @@ Common::Error GrimEngine::run() {
 
 	g_driver->flipBuffer();
 
-	lua_iolibopen();
-	lua_strlibopen();
-	lua_mathlibopen();
-
+	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
-		registerGrimOpcodes();
+		lua = new Lua_V1();
 
 		// FIXME/HACK: see PutActorInSet
 		const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
 		lua_pushstring(func);
 		lua_call("dostring");
-	} else
-		registerMonkeyOpcodes();
+	} else {
+		lua = new Lua_V2();
+	}
 
-	registerLua();
-	g_lua_initialized = true;
+	lua->registerOpcodes();
+	lua->registerLua();
 
-	bundle_dofile("_system.lua");
-
-	lua_pushnil();		// resumeSave
-	lua_pushnil();		// bootParam - not used in scripts
-	lua_call("BOOT");
+	bundle_dofile("_system.lua"); // TODO: Move in LuaBase.
+	lua->boot();
 
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
@@ -649,11 +639,11 @@ void GrimEngine::luaUpdate() {
 	}
 
 	lua_beginblock();
-	setFrameTime(_frameTime);
+	LuaBase::instance()->setFrameTime(_frameTime);
 	lua_endblock();
 
 	lua_beginblock();
-	setMovieTime(_movieTime);
+	LuaBase::instance()->setMovieTime(_movieTime);
 	lua_endblock();
 
 	// Run asynchronous tasks

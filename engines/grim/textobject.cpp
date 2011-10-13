@@ -31,8 +31,6 @@
 
 namespace Grim {
 
-Common::String parseMsgText(const char *msg, char *msgId);
-
 TextObjectCommon::TextObjectCommon() :
 	_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
 	_disabled(false), _font(NULL), _duration(0) {
@@ -133,7 +131,7 @@ int TextObject::getBitmapHeight() {
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
-	Common::String msg = parseMsgText(_textID.c_str(), NULL);
+	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
 		width += _font->getCharWidth(msg[i]);
 	}
@@ -148,7 +146,7 @@ void TextObject::destroy() {
 }
 
 void TextObject::setupText() {
-	Common::String msg = parseMsgText(_textID.c_str(), NULL);
+	Common::String msg = LuaBase::instance()->parseMsgText(_textID.c_str(), NULL);
 	Common::String message;
 
 	// remove spaces (NULL_TEXT) from the end of the string,
