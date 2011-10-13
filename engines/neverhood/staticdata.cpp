@@ -140,6 +140,26 @@ void StaticData::load(const char *filename) {
 		_sceneInfo140Items[id] = sceneInfo140;
 	}
 
+	// Load SceneInfo2700 items
+	uint32 sceneInfo2700ItemsCount = fd.readUint32LE();
+	debug("sceneInfo2700ItemsCount: %d", sceneInfo2700ItemsCount);
+	for (uint32 i = 0; i < sceneInfo2700ItemsCount; i++) {
+		SceneInfo2700 *sceneInfo2700 = new SceneInfo2700();
+		uint32 id = fd.readUint32LE();
+		sceneInfo2700->bgFilename = fd.readUint32LE();
+		sceneInfo2700->class437Filename = fd.readUint32LE();
+		sceneInfo2700->dataResourceFilename = fd.readUint32LE();
+		sceneInfo2700->pointListName = fd.readUint32LE();
+		sceneInfo2700->rectListName = fd.readUint32LE();
+		sceneInfo2700->exPaletteFilename2 = fd.readUint32LE();
+		sceneInfo2700->exPaletteFilename1 = fd.readUint32LE();
+		sceneInfo2700->mouseCursorFilename = fd.readUint32LE();
+		sceneInfo2700->which1 = fd.readUint16LE();
+		sceneInfo2700->which2 = fd.readUint16LE();
+		sceneInfo2700->field24 = fd.readUint32LE();
+		_sceneInfo2700Items[id] = sceneInfo2700;
+	}
+
 }
 
 HitRectList *StaticData::getHitRectList(uint32 id) {
@@ -170,6 +190,12 @@ SceneInfo140 *StaticData::getSceneInfo140Item(uint32 id) {
 	if (!_sceneInfo140Items[id])
 		error("StaticData::getSceneInfo140Item() SceneInfo140 with id %08X not found", id);
 	return _sceneInfo140Items[id];
+}
+
+SceneInfo2700 *StaticData::getSceneInfo2700(uint32 id) {
+	if (!_sceneInfo2700Items[id])
+		error("StaticData::getSceneInfo2700() SceneInfo2700 with id %08X not found", id);
+	return _sceneInfo2700Items[id];
 }
 
 } // End of namespace Neverhood

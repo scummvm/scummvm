@@ -396,6 +396,8 @@ void Module2200::updateScene() {
 		}
 	}
 }
+
+#undef HallOfRecordsSceneLink
 			
 // Scene2201
 

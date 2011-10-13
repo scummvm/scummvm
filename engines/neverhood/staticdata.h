@@ -77,6 +77,21 @@ struct SceneInfo140 {
 	byte count;
 };
 
+struct SceneInfo2700 {
+	uint32 id;
+	uint32 bgFilename;
+	uint32 class437Filename;
+	uint32 dataResourceFilename;
+	uint32 pointListName;
+	uint32 rectListName;
+	uint32 exPaletteFilename2;
+	uint32 exPaletteFilename1;
+	uint32 mouseCursorFilename;
+	int16 which1;
+	int16 which2;
+	uint32 field24;
+};
+
 class StaticData {
 public:
 	StaticData();
@@ -87,12 +102,14 @@ public:
 	MessageList *getMessageList(uint32 id);
 	NavigationList *getNavigationList(uint32 id);
 	SceneInfo140 *getSceneInfo140Item(uint32 id);
+	SceneInfo2700 *getSceneInfo2700(uint32 id);
 protected:
 	Common::HashMap<uint32, HitRectList*> _hitRectLists;
 	Common::HashMap<uint32, RectList*> _rectLists;
 	Common::HashMap<uint32, MessageList*> _messageLists;
 	Common::HashMap<uint32, NavigationList*> _navigationLists;
 	Common::HashMap<uint32, SceneInfo140*> _sceneInfo140Items;
+	Common::HashMap<uint32, SceneInfo2700*> _sceneInfo2700Items;
 };
 
 } // End of namespace Neverhood

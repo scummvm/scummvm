@@ -166,7 +166,7 @@ void Module2700::createScene(int sceneNum, int which) {
 		}
 		break;
 	case 9:
-		createScene2704(which, 0x004B18F0, 150, kScene2710StaticSprites, &kScene2710ClipRect);
+		createScene2704(which, 0x004B1918, 150, kScene2710StaticSprites, &kScene2710ClipRect);
 		break;
 	case 10:
 		// TODO _vm->gameModule()->initScene2808Vars2();
@@ -279,14 +279,196 @@ void Module2700::createScene(int sceneNum, int which) {
 	_childObject->handleUpdate();
 }
 
+#define SceneLinkIf(moduleResult, sceneNum, which) \
+	if (_moduleResult == moduleResult) { createScene(sceneNum, which); break; }
+
 void Module2700::updateScene() {
 	if (!updateChild()) {
+	
+		debug("sceneNum = %d; _moduleResult = %d", _vm->gameState().sceneNum, _moduleResult);
+	
 		switch (_vm->gameState().sceneNum) {
 		case 0:
-			if (_moduleResult == 1) {
-				createScene(1, 3);
-			} else {
-				leaveModule(0);
+			SceneLinkIf(1, 1, 0);
+			leaveModule(0);
+			break;
+		case 1:
+			SceneLinkIf(1, 14, 1);
+			SceneLinkIf(2,  2, 2);
+			SceneLinkIf(3, 14, 3);
+			SceneLinkIf(4,  2, 6);
+			SceneLinkIf(5,  2, 4);
+			createScene(0, 1);
+			break;
+		case 2:
+			SceneLinkIf(1,  5, 0);
+			SceneLinkIf(2,  1, 2);
+			SceneLinkIf(3,  5, 2);
+			SceneLinkIf(4,  1, 5);
+			SceneLinkIf(5,  5, 4);
+			SceneLinkIf(6,  1, 4);
+			SceneLinkIf(7, 11, 0);
+			createScene(3, 0);
+			break;
+		case 3:
+			createScene(2, 0);
+			break;
+		case 4:
+			SceneLinkIf(1, 7, 2);
+			createScene(5, 5);
+			break;
+		case 5:
+			SceneLinkIf(1, 6, 0);
+			SceneLinkIf(2, 2, 3);
+			SceneLinkIf(3, 8, 2);
+			SceneLinkIf(4, 2, 5);
+			SceneLinkIf(5, 4, 0);
+			SceneLinkIf(6, 7, 0);
+			createScene(2, 1);
+			break;
+		case 6:
+			SceneLinkIf(1, 8, 0);
+			createScene(5, 1);
+			break;
+		case 7:
+			SceneLinkIf(1, 8, 3);
+			SceneLinkIf(2, 4, 1);
+			SceneLinkIf(3, 9, 0);
+			createScene(5, 6);
+			break;
+		case 8:
+			SceneLinkIf(1, 10, 0);
+			SceneLinkIf(2,  5, 3);
+			SceneLinkIf(3,  7, 1);
+			createScene(6, 1);
+			break;
+		case 9:
+			SceneLinkIf(1, 10, 1);
+			createScene(7, 3);
+			break;
+		case 10:
+			SceneLinkIf(1, 9, 1);
+			createScene(8, 1);
+			break;
+		case 11:
+			SceneLinkIf(1, 12, 0);
+			createScene(2, 7);
+			break;
+		case 12:
+			SceneLinkIf(1, 13, 0);
+			createScene(11, 1);
+			break;
+		case 13:
+			SceneLinkIf(1, 30, 0);
+			createScene(12, 1);
+			break;
+		case 14:
+			SceneLinkIf(1, 1, 1);
+			SceneLinkIf(2, 15, 3);
+			SceneLinkIf(3, 1, 3);
+			SceneLinkIf(4, 15, 5);
+			SceneLinkIf(5, 22, 0);
+			createScene(15, 1);
+			break;
+		case 15:
+			SceneLinkIf(1, 14, 0);
+			SceneLinkIf(2, 16, 3);
+			SceneLinkIf(3, 14, 2);
+			SceneLinkIf(4, 16, 5);
+			SceneLinkIf(5, 14, 4);
+			createScene(16, 1);
+			break;
+		case 16:
+			SceneLinkIf(1, 15, 0);
+			SceneLinkIf(2, 17, 3);
+			SceneLinkIf(3, 15, 2);
+			SceneLinkIf(4, 17, 5);
+			SceneLinkIf(5, 15, 4);
+			createScene(17, 1);
+			break;
+		case 17:
+			SceneLinkIf(1, 16, 0);
+			SceneLinkIf(2, 18, 3);
+			SceneLinkIf(3, 16, 2);
+			SceneLinkIf(4, 20, 1);
+			SceneLinkIf(5, 16, 4);
+			createScene(18, 1);
+			break;
+		case 18:
+			SceneLinkIf(1, 17, 0);
+			SceneLinkIf(2, 19, 2);
+			SceneLinkIf(3, 17, 2);
+			createScene(19, 0);
+			break;
+		case 19:
+			SceneLinkIf(1, 20, 2);
+			SceneLinkIf(2, 18, 2);
+			SceneLinkIf(3, 20, 0);
+			createScene(18, 0);
+			break;
+		case 20:
+			SceneLinkIf(1, 17, 4);
+			SceneLinkIf(2, 19, 1);
+			SceneLinkIf(3, 21, 0);
+			createScene(19, 3);
+			break;
+		case 21:
+			// TODO? GameState_sub_469C50(&field_52, 0);
+			// TODO MusicMan_stopAll (if field_52 above = 1)
+			// TODO Music18hList_delete(_musicFileHash);
+			// TODO Music18hList_play(0x04020210, 0, 2, 1);
+			// TODO Sound1ChList_sub_407AF0(0x42212411);
+			createScene(20, 3);
+			break;
+		case 22:
+			SceneLinkIf(1, 23, 0);
+			createScene(14, 5);
+			break;
+		case 23:
+			SceneLinkIf(1, 24, 0);
+			createScene(22, 1);
+			break;
+		case 24:
+			SceneLinkIf(1, 25, 0);
+			createScene(23, 1);
+			break;
+		case 25:
+			SceneLinkIf(1, 26, 0);
+			createScene(24, 1);
+			break;
+		case 26:
+			SceneLinkIf(1, 27, 0);
+			createScene(25, 1);
+			break;
+		case 27:
+			SceneLinkIf(1, 28, 0);
+			createScene(26, 1);
+			break;
+		case 28:
+			SceneLinkIf(1, 31, 0);
+			createScene(27, 1);
+			break;
+		case 29:
+			createScene(13, 1);
+			break;
+		case 30:
+			createScene(28, 1);
+			break;
+		}
+	} else {
+		switch (_vm->gameState().sceneNum) {
+		case 21:
+			if (!_flag1) {
+				// TODO Music18hList_stop(0x04020210, 0, 1);
+				// TODO _vm->gameModule()->initScene2801Vars();
+				_musicFileHash = getGlobalVar(0x89A82A15);
+				// TODO? GameState_sub_469C50(&field_52, 0);
+				// TODO MusicMan_create();
+				// TODO Music18hList_add2(0x42212411, _musicFileHash);
+				// TODO Music18hList_play2(_musicFileHash, 0, /*TODO */???, 1);
+				// TODO Sound1ChList_addSoundResource(0x42212411, 0x44014282, true);
+				// TODO Sound1ChList_setSoundValues(0x44014282, true, 120, 360, 72, 0);
+				_flag1 = true;
 			}
 			break;
 		}
@@ -294,6 +476,7 @@ void Module2700::updateScene() {
 }
 
 void Module2700::update() {
+
 }
 
 uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -327,7 +510,113 @@ void Module2700::createScene2703(int which, uint32 sceneInfoId, const uint32 *st
 }
 
 void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
-	// TODO
+	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
+}
+
+Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
+	const uint32 *staticSprites, const NRect *clipRect)
+	: Scene(vm, parentModule, true) {
+
+	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2704::handleMessage);
+	SetUpdateHandler(&Scene2704::update);
+	
+	setBackground(sceneInfo->bgFilename);
+	setPalette(sceneInfo->bgFilename);
+	
+	if (sceneInfo->exPaletteFilename1)
+		_palette->addPalette(sceneInfo->exPaletteFilename1, 0, 65, 0);
+	
+	if (sceneInfo->exPaletteFilename2)
+		_palette->addPalette(sceneInfo->exPaletteFilename2, 65, 31, 65);
+	
+	while (staticSprites && *staticSprites)
+		insertStaticSprite(*staticSprites++, 1100);
+
+	insertMouse433(sceneInfo->mouseCursorFilename);
+	
+	if (sceneInfo->class437Filename) {
+//TODO		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+		_class521 = insertSprite<Class521>(this, 320, 240);
+//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	} else {
+//TODO		_class437 = NULL;
+//TODO		_class517 = NULL;
+		_class521 = insertSprite<Class521>(this, 320, 240);
+	}
+
+//TODO	_class518 = insertSprite<Class518>(_class521);
+	
+	_which1 = sceneInfo->which1;
+	_which2 = sceneInfo->which2;
+
+	_dataResource.load(sceneInfo->dataResourceFilename);
+	_pointList = _dataResource.getPointArray(sceneInfo->pointListName);
+	_class521->setPathPoints(_pointList);
+	
+	if (sceneInfo->rectListName) {
+		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
+		// TODO _class521->setPathRects(_rectList);
+	}
+
+	if (which == _which2) {
+		NPoint testPoint = (*_pointList)[_pointList->size() - 1];
+		sendMessage(_class521, 0x2002, _pointList->size() - 1);
+		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
+			sendMessage(_class521, 0x2009, 0);
+		else
+			sendMessage(_class521, 0x2007, 0);
+	} else {
+		NPoint testPoint = (*_pointList)[0];
+		sendMessage(_class521, 0x2002, 0);
+		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
+			sendMessage(_class521, 0x2009, 0);
+		else
+			sendMessage(_class521, 0x2008, 0);
+	}
+	
+	if (clipRect) {
+		_class521->getClipRect() = *clipRect;
+		if (_class517)
+			_class517->getClipRect() = *clipRect; 
+		if (_class520)
+			_class520->getClipRect() = *clipRect; 
+		if (_class519)
+			_class519->getClipRect() = *clipRect; 
+		if (_class518)
+			_class518->getClipRect() = *clipRect; 
+	}
+
+}
+		
+void Scene2704::update() {
+	Scene::update();
+	if (_mouseClicked) {
+		sendPointMessage(_class521, 0x2004, _mouseClickPos);
+		_mouseClicked = false;
+	}
+}
+
+uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2005:
+		if (_which1 >= 0)
+			leaveScene(_which1);
+		break;
+	case 0x2006:
+		if (_which2 >= 0)
+			leaveScene(_which2);
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
 }
 
 } // End of namespace Neverhood

@@ -154,6 +154,7 @@ public:
 	void unload();
 	NPoint getPoint(uint32 nameHash);
 	NPointArray *getPointArray(uint32 nameHash);
+	NRectArray *getRectArray(uint32 nameHash);
 	HitRectList *getHitRectList();
 	MessageList *getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY);
 protected:

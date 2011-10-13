@@ -38,6 +38,7 @@
 #include "neverhood/module2200.h"
 #include "neverhood/module2300.h"
 #include "neverhood/module2600.h"
+#include "neverhood/module2700.h"
 #include "neverhood/module3000.h"
 
 namespace Neverhood {
@@ -291,9 +292,14 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule(2100, 3);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 8;
 	createModule(2600, -1);
+#endif
+#if 1
+	_vm->gameState().which = 0;
+	_vm->gameState().sceneNum = 5;
+	createModule(2700, -1);
 #endif
 }
 
@@ -361,6 +367,10 @@ void GameModule::createModule(int moduleNum, int which) {
 	case 2600:
 		setGlobalVar(0x91080831, 0x40271018);
 		_childObject = new Module2600(_vm, this, which);
+		break;
+	case 2700:
+		setGlobalVar(0x91080831, 0x42212411);
+		_childObject = new Module2700(_vm, this, which);
 		break;
 	case 3000:
 		setGlobalVar(0x91080831, 0x81293110);
@@ -475,6 +485,9 @@ void GameModule::updateModule() {
 			} else {
 				createModule(1200, 1);
 			}
+			break;
+		case 2700:
+			createModule(1800, 2);
 			break;
 		case 3000:
 			if (_moduleResult == 1) {

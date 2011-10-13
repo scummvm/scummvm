@@ -601,6 +601,13 @@ NPointArray *DataResource::getPointArray(uint32 nameHash) {
 	return NULL;
 }
 
+NRectArray *DataResource::getRectArray(uint32 nameHash) {
+	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(nameHash, 3);
+	if (drDirectoryItem)
+		return _rectArrays[drDirectoryItem->offset];
+	return NULL;
+}
+
 HitRectList *DataResource::getHitRectList() {
 	DataResource::DRDirectoryItem *drDirectoryItem = findDRDirectoryItem(calcHash("HitArray"), 3);
 	if (drDirectoryItem)
