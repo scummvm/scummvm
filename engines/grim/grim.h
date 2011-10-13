@@ -112,9 +112,6 @@ public:
 	unsigned getFrameStart() const { return _frameStart; }
 	unsigned getFrameTime() const { return _frameTime; }
 
-	int bundle_dofile(const char *filename);
-	int single_dofile(const char *filename);
-
 	// perSecond should allow rates of zero, some actors will accelerate
 	// up to their normal speed (such as the bone wagon) so handling
 	// a walking rate of zero should happen in the default actor creation
@@ -158,9 +155,12 @@ public:
 private:
 	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
 	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
-	void handleUserPaint();
 	void handleExit();
 	void handlePause();
+	void handleUserPaint();
+	void cameraChangeHandle(int prev, int next);
+	void cameraPostChangeHandle(int num);
+	void savegameCallback();
 
 	void savegameSave();
 	void saveGRIM();
@@ -168,7 +168,6 @@ private:
 	void savegameRestore();
 	void restoreGRIM();
 
-	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
@@ -188,7 +187,6 @@ private:
 	bool _shortFrame;
 
 	unsigned _frameStart, _frameTime, _movieTime;
-	unsigned int _frameTimeCollection;
 	int _prevSmushFrame;
 	unsigned int _frameCounter;
 	unsigned int _lastFrameTime;

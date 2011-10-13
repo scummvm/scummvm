@@ -1551,58 +1551,20 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 	return false;
 }
 
-extern int refSystemTable;
-
 void Actor::costumeMarkerCallback(int marker) {
-	lua_beginblock();
+	LuaObjects objects;
+	objects.add(this);
+	objects.add(marker);
 
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("costumeMarkerHandler");
-	lua_Object table = lua_gettable();
-
-	if (lua_istable(table)) {
-		lua_pushobject(table);
-		lua_pushstring("costumeMarkerHandler");
-		lua_Object func = lua_gettable();
-		if (lua_isfunction(func)) {
-			lua_pushobject(func);
-			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushnumber(marker);
-			lua_callfunction(func);
-		}
-	} else if (lua_isfunction(table)) {
-		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushnumber(marker);
-		lua_callfunction(table);
-	}
-
-	lua_endblock();
+	LuaBase::instance()->callback("costumeMarkerHandler", objects);
 }
 
 void Actor::collisionHandlerCallback(Actor *other) const {
-	lua_beginblock();
+	LuaObjects objects;
+	objects.add(this);
+	objects.add(other);
 
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("collisionHandler");
-	lua_Object table = lua_gettable();
-
-	if (lua_istable(table)) {
-		lua_pushobject(table);
-		lua_pushstring("collisionHandler");
-		lua_Object func = lua_gettable();
-		if (lua_isfunction(func)) {
-			lua_pushobject(func);
-			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
-			lua_callfunction(func);
-		}
-	} else if (lua_isfunction(table)) {
-		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
-		lua_callfunction(table);
-	}
-
-	lua_endblock();
+	LuaBase::instance()->callback("collisionHandler", objects);
 }
 
 

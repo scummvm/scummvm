@@ -37,6 +37,8 @@
 
 #include "engines/grim/movie/movie.h"
 
+#include "engines/grim/lua/lua.h"
+
 namespace Grim {
 
 #if 0

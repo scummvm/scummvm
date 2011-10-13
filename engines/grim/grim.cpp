@@ -67,12 +67,9 @@
 #include "engines/grim/objectstate.h"
 #include "engines/grim/set.h"
 
-#include "engines/grim/lua/lualib.h"
-
 #include "engines/grim/imuse/imuse.h"
 
-#include "lua/lobject.h"
-#include "lua/lstate.h"
+#include "engines/grim/lua/lua.h"
 
 namespace Grim {
 
@@ -270,8 +267,6 @@ Common::Error GrimEngine::run() {
 
 	lua->registerOpcodes();
 	lua->registerLua();
-
-	bundle_dofile("_system.lua"); // TODO: Move in LuaBase.
 	lua->boot();
 
 	_savegameLoadRequest = false;
@@ -297,239 +292,85 @@ Common::Error GrimEngine::run() {
 	return Common::kNoError;
 }
 
-int GrimEngine::bundle_dofile(const char *filename) {
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b) {
-		delete b;
-		// Don't print warnings on Scripts\foo.lua,
-		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\"))
-			Debug::warning(Debug::Engine, "Cannot find script %s", filename);
-
-		return 2;
-	}
-
-	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
-	delete b;
-	return result;
-}
-
-int GrimEngine::single_dofile(const char *filename) {
-	Common::File *f = new Common::File();
-
-	if (!f->open(filename)) {
-		delete f;
-		Debug::warning(Debug::Engine, "Cannot find script %s", filename);
-
-		return 2;
-	}
-
-	int32 size = f->size();
-	char *data = new char[size];
-	f->read(data, size);
-
-	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
-	delete f;
-	delete[] data;
-
-	return result;
-}
-
-extern int refSystemTable;
-
 void GrimEngine::handlePause() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("pauseHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("pauseHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handlePause: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("pauseHandler")) {
 		error("handlePause: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleExit() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("exitHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("exitHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleExit: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("exitHandler")) {
 		error("handleExit: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleUserPaint() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("userPaintHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("userPaintHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleUserPaint: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("userPaintHandler")) {
 		error("handleUserPaint: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	lua_Object func;
-	char keychar[2];
-
 	if (!CHAR_KEY(ascii))
 		return;
 
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("characterHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("characterHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleChars: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
-		error("handleChars: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
-	}
-
+	char keychar[2];
 	keychar[0] = ascii;
 	keychar[1] = 0;
-	lua_pushstring(keychar);
-	lua_callfunction(func);
 
-	lua_endblock();
+	LuaObjects objects;
+	objects.add(keychar);
+
+	if (!LuaBase::instance()->callback("characterHandler", objects)) {
+		error("handleChars: invalid handler");
+	}
 }
 
 void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	lua_Object buttonFunc, joyFunc;
-	bool buttonFuncIsTable;
-
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
 		return;
 
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("buttonHandler");
-	lua_Object buttonHandler = lua_gettable();
-	if (lua_istable(buttonHandler)) {
-		lua_pushobject(buttonHandler);
-		lua_pushstring("buttonHandler");
-		buttonFunc = lua_gettable();
-		if (!lua_isfunction(buttonFunc)) {
-			error("handleControls: button handler not a function");
-			return;
-		}
-		buttonFuncIsTable = true;
-	} else if (lua_isfunction(buttonHandler)) {
-		buttonFunc = buttonHandler;
-		buttonFuncIsTable = false;
-	} else {
-		error("handleControls: invalid keys handler");
-		return;
-	}
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("axisHandler");
-	lua_Object joyHandler = lua_gettable();
-	if (lua_istable(joyHandler)) {
-		lua_pushobject(joyHandler);
-		lua_pushstring("axisHandler");
-		joyFunc = lua_gettable();
-		if (!lua_isfunction(joyFunc)) {
-			error("handleControls: joystick handler not a function");
-			return;
-		}
-	} else if (lua_isfunction(joyHandler)) {
-		joyFunc = joyHandler;
-	} else {
-		error("handleControls: invalid joystick handler");
-		return;
-	}
-	if (buttonFuncIsTable)
-		lua_pushobject(buttonHandler);
-	lua_pushnumber(key);
+	LuaObjects objects;
+	objects.add(key);
 	if (operation == Common::EVENT_KEYDOWN) {
-		lua_pushnumber(1);
-		lua_pushnumber(1);
+		objects.add(1);
+		objects.add(1);
 	} else {
-		lua_pushnil();
-		lua_pushnumber(0);
+		objects.addNil();
+		objects.add(0);
 	}
-	lua_pushnumber(0);
-	lua_callfunction(buttonFunc);
+	objects.add(0);
+	if (!LuaBase::instance()->callback("buttonHandler", objects)) {
+		error("handleControls: invalid keys handler");
+	}
+// 	if (!LuaBase::instance()->callback("axisHandler", objects)) {
+// 		error("handleControls: invalid joystick handler");
+// 	}
 
 	if (operation == Common::EVENT_KEYDOWN)
 		_controlsState[key] = true;
 	else if (operation == Common::EVENT_KEYUP)
 		_controlsState[key] = false;
+}
 
-	lua_endblock();
+void GrimEngine::cameraChangeHandle(int prev, int next) {
+	LuaObjects objects;
+	objects.add(prev);
+	objects.add(next);
+	LuaBase::instance()->callback("camChangeHandler", objects);
+}
+
+void GrimEngine::cameraPostChangeHandle(int num) {
+	LuaObjects objects;
+	objects.add(num);
+	LuaBase::instance()->callback("postCamChangeHandler", objects);
+}
+
+void GrimEngine::savegameCallback() {
+	if (!LuaBase::instance()->callback("saveGameCallback")) {
+		error("GrimEngine::savegameCallback: invalid handler");
+	}
 }
 
 void GrimEngine::handleDebugLoadResource() {
@@ -570,37 +411,6 @@ void GrimEngine::handleDebugLoadResource() {
 		warning("Requested resouce (%s) not found", buf);
 }
 
-static void cameraChangeHandle(int prev, int next) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("camChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(prev);
-		lua_pushnumber(next);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
-static void cameraPostChangeHandle(int num) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("postCamChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(num);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
 void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
@@ -632,22 +442,7 @@ void GrimEngine::luaUpdate() {
 		_frameTime = 0;
 	}
 
-	_frameTimeCollection += _frameTime;
-	if (_frameTimeCollection > 10000) {
-		_frameTimeCollection = 0;
-		lua_collectgarbage(0);
-	}
-
-	lua_beginblock();
-	LuaBase::instance()->setFrameTime(_frameTime);
-	lua_endblock();
-
-	lua_beginblock();
-	LuaBase::instance()->setMovieTime(_movieTime);
-	lua_endblock();
-
-	// Run asynchronous tasks
-	lua_runtasks();
+	LuaBase::instance()->update(_frameTime, _movieTime);
 
 	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
@@ -801,7 +596,6 @@ void GrimEngine::mainLoop() {
 	_frameStart = g_system->getMillis();
 	_frameCounter = 0;
 	_lastFrameTime = 0;
-	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
 	_refreshShadowMask = false;
 	_shortFrame = false;
@@ -830,21 +624,22 @@ void GrimEngine::mainLoop() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
-			if (event.type == Common::EVENT_KEYDOWN) {
+			Common::EventType type = event.type;
+			if (type == Common::EVENT_KEYDOWN) {
 				if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
 					handleExit();
 					break;
 				} else {
-					handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+					handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
 			}
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
-				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+				handleControls(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 			}
 			// Check for "Hard" quit"
-			if (event.type == Common::EVENT_QUIT)
+			if (type == Common::EVENT_QUIT)
 				return;
-			if (event.type == Common::EVENT_SCREEN_CHANGED)
+			if (type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
 
 			// Allow lua to react to the event.
@@ -957,23 +752,7 @@ void GrimEngine::savegameRestore() {
 
 	delete _savedState;
 
-	// Apply the patch, only if it wasn't applied already.
-	if (lua_isnil(lua_getglobal("  service_release.lua"))) {
-		if (bundle_dofile("patch05.bin") == 2)
-			single_dofile("patch05.bin");
-	}
-	const char *devMode = g_registry->get("good_times", "");
-	lua_beginblock();
-	// Set the developerMode, since the save contains the value of
-	// the installation it was made with.
-	lua_pushobject(lua_getglobal("developerMode"));
-	if (devMode[0] == 0)
-		lua_pushnil();
-	else
-		lua_pushstring(devMode);
-	lua_setglobal("developerMode");
-	lua_endblock();
-
+	LuaBase::instance()->postRestoreHandle();
 	g_imuse->pause(false);
 	g_movie->pause(false);
 	debug("GrimEngine::savegameRestore() finished.");
@@ -1147,34 +926,6 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLEUint32(_currSet->getId());
 
 	_savedState->endSection();
-}
-
-void GrimEngine::savegameCallback() {
-	lua_Object funcParam1;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("saveGameCallback");
-	lua_Object funcParam2 = lua_gettable();
-
-	if (lua_istable(funcParam2)) {
-		lua_pushobject(funcParam2);
-		lua_pushstring("saveGameCallback");
-		funcParam1 = lua_gettable();
-		if (lua_isfunction(funcParam1)) {
-			lua_pushobject(funcParam2);
-			lua_callfunction(funcParam1);
-		} else {
-			error("GrimEngine::savegameCallback: handler is not a function");
-		}
-	} else if (lua_isfunction(funcParam2)) {
-		funcParam1 = funcParam2;
-		lua_callfunction(funcParam1);
-	} else if (!lua_isnil(funcParam2)) {
-		error("GrimEngine::savegameCallback: invalid handler");
-	}
-	lua_endblock();
 }
 
 Set *GrimEngine::findSet(const Common::String &name) {

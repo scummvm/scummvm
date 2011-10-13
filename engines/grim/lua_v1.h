@@ -31,6 +31,7 @@ class Lua_V1 : public LuaBase {
 public:
 	typedef Lua_V1 LuaClass;
 	void registerOpcodes();
+	void postRestoreHandle();
 
 	// Opcodes
 	DECLARE_LUA_OPCODE(new_dofile);

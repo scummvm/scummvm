@@ -23,9 +23,12 @@
 #ifndef GRIM_LUA_HH
 #define GRIM_LUA_HH
 
-#include "engines/grim/lua/lua.h"
+#include "common/str.h"
+#include "common/list.h"
 
 namespace Grim {
+
+typedef uint32 lua_Object; // from lua/lua.h
 
 class Actor;
 class PoolColor;
@@ -38,26 +41,6 @@ class TextObjectDefaults;
 class TextObjectCommon;
 class PoolObjectBase;
 
-extern int refSystemTable;
-extern int refTypeOverride;
-extern int refOldConcatFallback;
-extern int refTextObjectX;
-extern int refTextObjectY;
-extern int refTextObjectFont;
-extern int refTextObjectWidth;
-extern int refTextObjectHeight;
-extern int refTextObjectFGColor;
-extern int refTextObjectBGColor;
-extern int refTextObjectFXColor;
-extern int refTextObjectHIColor;
-extern int refTextObjectDuration;
-extern int refTextObjectCenter;
-extern int refTextObjectLJustify;
-extern int refTextObjectRJustify;
-extern int refTextObjectVolume;
-extern int refTextObjectBackground;
-extern int refTextObjectPan;
-
 #define DECLARE_LUA_OPCODE(func) \
 	inline static void static_##func() {\
 		static_cast<LuaClass *>(LuaBase::instance())->func();\
@@ -67,6 +50,33 @@ extern int refTextObjectPan;
 #define LUA_OPCODE(class, func) \
 	class::static_##func
 
+class LuaObjects {
+public:
+	void add(float number);
+	void add(int number);
+	void add(const PoolObjectBase *obj);
+	void add(const char *str);
+	void addNil();
+
+	void pushObjects() const;
+
+private:
+	struct Obj {
+		enum {
+			Nil,
+			Number,
+			Object,
+			String
+		} _type;
+		union {
+			float number;
+			const PoolObjectBase *object;
+			const char *string;
+		} _value;
+	};
+	Common::List<Obj> _objects;
+};
+
 class LuaBase {
 public:
 	typedef LuaBase LuaClass;
@@ -75,9 +85,12 @@ public:
 	virtual ~LuaBase();
 	inline static LuaBase *instance() { return s_instance; }
 
+	int bundle_dofile(const char *filename);
+	int single_dofile(const char *filename);
+
 	bool getbool(int num);
 	void pushbool(bool val);
-	void pushobject(PoolObjectBase *o);
+	void pushobject(const PoolObjectBase *o);
 	int getobject(lua_Object obj);
 	Actor *getactor(lua_Object obj);
 	TextObject *gettextobject(lua_Object obj);
@@ -91,11 +104,17 @@ public:
 	virtual void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y);
 	virtual void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj);
 
+	void update(int frameTime, int movieTime);
 	void setFrameTime(float frameTime);
 	void setMovieTime(float movieTime);
 	virtual void registerLua();
 	virtual void registerOpcodes();
 	virtual void boot();
+
+	bool callback(const char *name);
+	bool callback(const char *name, const LuaObjects &objects);
+
+	virtual void postRestoreHandle() { }
 
 	DECLARE_LUA_OPCODE(dummyHandler);
 	DECLARE_LUA_OPCODE(typeOverride);
@@ -106,6 +125,27 @@ private:
 	// 1 - don't translate - message after '/msgId'
 	// 2 - return '/msgId/'
 	int _translationMode;
+	unsigned int _frameTimeCollection;
+
+	int refSystemTable;
+	int refTypeOverride;
+	int refOldConcatFallback;
+	int refTextObjectX;
+	int refTextObjectY;
+	int refTextObjectFont;
+	int refTextObjectWidth;
+	int refTextObjectHeight;
+	int refTextObjectFGColor;
+	int refTextObjectBGColor;
+	int refTextObjectFXColor;
+	int refTextObjectHIColor;
+	int refTextObjectDuration;
+	int refTextObjectCenter;
+	int refTextObjectLJustify;
+	int refTextObjectRJustify;
+	int refTextObjectVolume;
+	int refTextObjectBackground;
+	int refTextObjectPan;
 
 	static LuaBase *s_instance;
 };

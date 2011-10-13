@@ -65,7 +65,7 @@ int luaA_passresults();
 
 void Lua_V1::new_dofile() {
 	const char *fname_str = luaL_check_string(1);
-	if (g_grim->bundle_dofile(fname_str) == 0)
+	if (bundle_dofile(fname_str) == 0)
 		if (luaA_passresults() == 0)
 			lua_pushuserdata(0);
 }
@@ -1405,6 +1405,27 @@ void Lua_V1::registerOpcodes() {
 	luaL_openlib(grimHardwareOpcodes, ARRAYSIZE(grimHardwareOpcodes));
 
 	LuaBase::registerOpcodes();
+}
+
+void Lua_V1::postRestoreHandle() {
+	// Apply the patch, only if it wasn't applied already.
+	if (lua_isnil(lua_getglobal("  service_release.lua"))) {
+		if (bundle_dofile("patch05.bin") == 2)
+			single_dofile("patch05.bin");
+	}
+
+
+	lua_beginblock();
+	// Set the developerMode, since the save contains the value of
+	// the installation it was made with.
+	lua_pushobject(lua_getglobal("developerMode"));
+	const char *devMode = g_registry->get("good_times", "");
+	if (devMode[0] == 0)
+		lua_pushnil();
+	else
+		lua_pushstring(devMode);
+	lua_setglobal("developerMode");
+	lua_endblock();
 }
 
 } // end of namespace Grim
