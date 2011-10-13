@@ -100,15 +100,6 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	return memoryId;
 }
 
-reg_t GfxText32::createTextBitmapSci21(uint16 width, uint16 height, byte skip, byte back, uint16 width2, uint16 height2, byte transparentFlag) {
-	// TODO: skip, width2, height2, transparentFlag
-	int entrySize = width * height;
-	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
-	memset(memoryPtr, back, entrySize);
-	return memoryId;
-}
-
 void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }

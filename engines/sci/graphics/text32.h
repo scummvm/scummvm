@@ -26,8 +26,6 @@
 #ifndef SCI_GRAPHICS_TEXT32_H
 #define SCI_GRAPHICS_TEXT32_H
 
-#include "common/hashmap.h"
-
 namespace Sci {
 
 /**
@@ -38,7 +36,6 @@ public:
 	GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen);
 	~GfxText32();
 	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0);
-	reg_t createTextBitmapSci21(uint16 width, uint16 height, byte skip, byte back, uint16 width2, uint16 height2, byte transparentFlag);
 	void disposeTextBitmap(reg_t hunkId);
 	void drawTextBitmap(reg_t textObject);
 	int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font);

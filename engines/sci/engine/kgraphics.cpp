@@ -1648,12 +1648,18 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		// script 64890 and TransView::init() in script 64884
 		uint16 width = argv[1].toUint16();
 		uint16 height = argv[2].toUint16();
-		uint16 skip = argv[3].toUint16();
+		//uint16 skip = argv[3].toUint16();
 		uint16 back = argv[4].toUint16();
-		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
-		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
-		return g_sci->_gfxText32->createTextBitmapSci21(width, height, skip, back, width2, height2, transparentFlag);
+		//uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
+		//uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
+		//uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+
+		// TODO: skip, width2, height2, transparentFlag
+		int entrySize = width * height;
+		reg_t memoryId = s->_segMan->allocateHunkEntry("TextBitmap()", entrySize);
+		byte *memoryPtr = s->_segMan->getHunkPointer(memoryId);
+		memset(memoryPtr, back, entrySize);
+		return memoryId;
 		}
 		break;
 	case 1:	// dispose text bitmap surface
@@ -1667,16 +1673,29 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		{
 		// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
 		// script 64869
-		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
 		// The tiled view seems to always have 2 loops.
 		// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
-		uint16 view = argv[2].toUint16();	// vTiles selector
+		uint16 viewNum = argv[2].toUint16();	// vTiles selector
 		uint16 loop = argv[3].toUint16();
 		uint16 cel = argv[4].toUint16();
 		uint16 x = argv[5].toUint16();
 		uint16 y = argv[6].toUint16();
-		warning("kBitmap(3): bitmap ptr %04x:%04x, view %d, loop %d, cel %d, x %d, y %d",
-				PRINT_REG(bitmapPtr), view, loop, cel, x, y);
+
+		byte *bitmap = s->_segMan->getHunkPointer(hunkId);
+
+		GfxView *view = g_sci->_gfxCache->getView(viewNum);
+		uint16 width = view->getWidth(loop, cel);
+		uint16 height = view->getHeight(loop, cel);
+		const byte *viewBitmap = view->getBitmap(loop, cel);
+		uint32 curPixel = 0;
+
+		for (uint16 curY = y; curY < y + height; curY++) {
+			for (uint16 curX = x; curX < x + width; curX++) {
+				bitmap[curY + curX] = viewBitmap[curPixel++];
+			}
+		}
+
 		}
 		break;
 	case 4:	// process text
@@ -1699,18 +1718,25 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 				PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
 		}
 		break;
-	case 5:
+	case 5:	// fill with color
 		{
 		// 6 params, called e.g. from TextView::init() and TextView::draw()
 		// in Torin's Passage, script 64890
-		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
-		uint16 unk1 = argv[2].toUint16();	// unknown, usually 0, judging from scripts?
-		uint16 unk2 = argv[3].toUint16();	// unknown, usually 0, judging from scripts?
+		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
+		uint16 x = argv[2].toUint16();
+		uint16 y = argv[3].toUint16();
 		uint16 width = argv[4].toUint16();	// width - 1
 		uint16 height = argv[5].toUint16();	// height - 1
 		uint16 back = argv[6].toUint16();
-		warning("kBitmap(5): bitmap ptr %04x:%04x, unk1 %d, unk2 %d, width %d, height %d, back %d",
-				PRINT_REG(bitmapPtr), unk1, unk2, width, height, back);
+
+		byte *bitmap = s->_segMan->getHunkPointer(hunkId);
+
+		for (uint16 curY = y; curY < y + height; curY++) {
+			for (uint16 curX = x; curX < x + width; curX++) {
+				bitmap[curY + curX] = back;
+			}
+		}
+
 		}
 		break;
 	default:
