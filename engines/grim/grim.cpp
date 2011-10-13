@@ -258,14 +258,14 @@ Common::Error GrimEngine::run() {
 
 	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
-		lua = new Lua_L1();
+		lua = new Lua_V1();
 
 		// FIXME/HACK: see PutActorInSet
 		const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
 		lua_pushstring(func);
 		lua_call("dostring");
 	} else {
-		lua = new Lua_L2();
+		lua = new Lua_V2();
 	}
 
 	lua->registerOpcodes();

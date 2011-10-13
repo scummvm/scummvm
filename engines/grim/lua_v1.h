@@ -27,9 +27,9 @@
 
 namespace Grim {
 
-class Lua_L1 : public LuaBase {
+class Lua_V1 : public LuaBase {
 public:
-	typedef Lua_L1 LuaClass;
+	typedef Lua_V1 LuaClass;
 	void registerOpcodes();
 
 	// Opcodes

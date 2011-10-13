@@ -41,11 +41,11 @@
 
 namespace Grim {
 
-void Lua_L2::UndimAll() {
-	warning("Lua_L2::UndimAll: stub");
+void Lua_V2::UndimAll() {
+	warning("Lua_V2::UndimAll: stub");
 }
 
-void Lua_L2::SetActorLocalAlpha() {
+void Lua_V2::SetActorLocalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -56,32 +56,32 @@ void Lua_L2::SetActorLocalAlpha() {
 		return;
 
 	// FIXME: implement missing code
-	warning("Lua_L2::SetActorLocalAlpha: stub, actor: %s", actor->getName().c_str());
+	warning("Lua_V2::SetActorLocalAlpha: stub, actor: %s", actor->getName().c_str());
 }
 
-void Lua_L2::UndimRegion() {
+void Lua_V2::UndimRegion() {
 	lua_Object regionObj = lua_getparam(1);
 
 	if (lua_isnumber(regionObj)) {
 		int region = (int)lua_getnumber(regionObj);
 		// FIXME func(region);
-		warning("Lua_L2::UndimRegion: region: %d", region);
+		warning("Lua_V2::UndimRegion: region: %d", region);
 	} else {
 		lua_pushnil();
 	}
 }
 
-void Lua_L2::SleepFor() {
+void Lua_V2::SleepFor() {
 	lua_Object msObj = lua_getparam(1);
 
 	if (lua_isnumber(msObj)) {
 		int ms = (int)lua_getnumber(msObj);
 		// FIXME func(ms);
-		warning("Lua_L2::SleepFor: ms: %d", ms);
+		warning("Lua_V2::SleepFor: ms: %d", ms);
 	}
 }
 
-void Lua_L2::DimScreen() {
+void Lua_V2::DimScreen() {
 	lua_Object dimObj = lua_getparam(1);
 	float dim = 0.6999f;
 
@@ -89,21 +89,21 @@ void Lua_L2::DimScreen() {
 		dim = lua_getnumber(dimObj);
 
 	// FIXME func(dim);
-	warning("Lua_L2::DimScreen: dim: %f", dim);
+	warning("Lua_V2::DimScreen: dim: %f", dim);
 }
 
-void Lua_L2::MakeCurrentSetup() {
+void Lua_V2::MakeCurrentSetup() {
 	lua_Object setupObj = lua_getparam(1);
 	if (lua_isnumber(setupObj)) {
 		int num = (int)lua_getnumber(setupObj);
 		g_grim->makeCurrentSetup(num);
 	} else if (lua_isstring(setupObj)) {
 		const char *setupName = lua_getstring(setupObj);
-		error("Lua_L2::MakeCurrentSetup: Not implemented case: setup: %s", setupName);
+		error("Lua_V2::MakeCurrentSetup: Not implemented case: setup: %s", setupName);
 	}
 }
 
-void Lua_L2::SetActorGlobalAlpha() {
+void Lua_V2::SetActorGlobalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
 //	lua_Object alphaModeObj = lua_getparam(2);
 //	lua_Object valueObj = lua_getparam(3);
@@ -115,7 +115,7 @@ void Lua_L2::SetActorGlobalAlpha() {
 	if (!actor)
 		return;
 
-	warning("Lua_L2::SetActorGlobalAlpha: actor: %s", actor->getName().c_str());
+	warning("Lua_V2::SetActorGlobalAlpha: actor: %s", actor->getName().c_str());
 
 	/* Only when actor has primitives
 	if (!actor->primities)
@@ -130,7 +130,7 @@ void Lua_L2::SetActorGlobalAlpha() {
 	*/
 }
 
-void Lua_L2::ImGetMillisecondPosition() {
+void Lua_V2::ImGetMillisecondPosition() {
 	lua_Object soundObj = lua_getparam(1);
 
 	if (lua_isnumber(soundObj)) {
@@ -138,12 +138,12 @@ void Lua_L2::ImGetMillisecondPosition() {
 		// FIXME int ms = func(sound);
 		// lua_pushnumber(ms);
 		// push -1 for now
-		warning("Lua_L2::ImGetMillisecondPosition: sound: %d", sound);
+		warning("Lua_V2::ImGetMillisecondPosition: sound: %d", sound);
 		lua_pushnumber(-1);
 	}
 }
 
-void Lua_L2::RemoveActorFromOverworld() {
+void Lua_V2::RemoveActorFromOverworld() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -153,11 +153,11 @@ void Lua_L2::RemoveActorFromOverworld() {
 	if (!actor)
 		return;
 
-	warning("Lua_L2::RemoveActorFromOverworld: actor: %s", actor->getName().c_str());
+	warning("Lua_V2::RemoveActorFromOverworld: actor: %s", actor->getName().c_str());
 	// FIXME actor->func();
 }
 
-void Lua_L2::UnloadActor() {
+void Lua_V2::UnloadActor() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -167,11 +167,11 @@ void Lua_L2::UnloadActor() {
 	if (!actor)
 		return;
 
-	warning("Lua_L2::UnloadActor: actor: %s", actor->getName().c_str());
+	warning("Lua_V2::UnloadActor: actor: %s", actor->getName().c_str());
 	// FIXME actor->func();
 }
 
-void Lua_L2::SetActorWalkRate() {
+void Lua_V2::SetActorWalkRate() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object rateObj = lua_getparam(2);
 
@@ -186,7 +186,7 @@ void Lua_L2::SetActorWalkRate() {
 	actor->setWalkRate(rate * 3.279999971389771);
 }
 
-void Lua_L2::GetActorWalkRate() {
+void Lua_V2::GetActorWalkRate() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -196,7 +196,7 @@ void Lua_L2::GetActorWalkRate() {
 	lua_pushnumber(actor->getWalkRate() * 0.3048780560493469);
 }
 
-void Lua_L2::SetReverb() {
+void Lua_V2::SetReverb() {
 	lua_Object eaxObj = lua_getparam(1);
 	lua_Object decayObj = lua_getparam(2);
 	lua_Object mixObj = lua_getparam(3);
@@ -233,11 +233,11 @@ void Lua_L2::SetReverb() {
 	if (lua_isnumber(dampingObj))
 		damping = lua_getnumber(dampingObj);
 
-	warning("Lua_L2::SetReverb, eax: %d, decay: %f, mix: %f, predelay: %f, damping: %f", param, decay, mix, predelay, damping);
+	warning("Lua_V2::SetReverb, eax: %d, decay: %f, mix: %f, predelay: %f, damping: %f", param, decay, mix, predelay, damping);
 	// FIXME: func(param, decay, mix, predelay, damping);
 }
 
-void Lua_L2::LockBackground() {
+void Lua_V2::LockBackground() {
 	lua_Object filenameObj = lua_getparam(1);
 
 	if (!lua_isstring(filenameObj)) {
@@ -245,11 +245,11 @@ void Lua_L2::LockBackground() {
 		return;
 	}
 	const char *filename = lua_getstring(filenameObj);
-	warning("Lua_L2::LockBackground, filename: %s", filename);
+	warning("Lua_V2::LockBackground, filename: %s", filename);
 	// FIXME: implement missing rest part of code
 }
 
-void Lua_L2::UnLockBackground() {
+void Lua_V2::UnLockBackground() {
 	lua_Object filenameObj = lua_getparam(1);
 
 	if (!lua_isstring(filenameObj)) {
@@ -259,10 +259,10 @@ void Lua_L2::UnLockBackground() {
 
 	const char *filename = lua_getstring(filenameObj);
 	// FIXME: implement missin code
-	warning("Lua_L2::UnLockBackground: stub, filename: %s", filename);
+	warning("Lua_V2::UnLockBackground: stub, filename: %s", filename);
 }
 
-void Lua_L2::LockChore() {
+void Lua_V2::LockChore() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object filenameObj = lua_getparam(2);
 
@@ -273,35 +273,35 @@ void Lua_L2::LockChore() {
 
 	const char *name = lua_getstring(nameObj);
 	const char *filename = lua_getstring(filenameObj);
-	warning("Lua_L2::LockChore, name: %s, filename: %s", name, filename);
+	warning("Lua_V2::LockChore, name: %s, filename: %s", name, filename);
 	// FIXME: implement missing rest part of code
 }
 
-void Lua_L2::IsChoreValid() {
+void Lua_V2::IsChoreValid() {
 	lua_Object paramObj = lua_getparam(1);
 
 	if (!lua_isnumber(paramObj))
 		return;
 
 	int num = (int)lua_getnumber(paramObj);
-	warning("Lua_L2::IsChoreValid: stub, got %d, returns true", num);
+	warning("Lua_V2::IsChoreValid: stub, got %d, returns true", num);
 	// FIXME: implement missing rest part of code
 	pushbool(true);
 }
 
-void Lua_L2::IsChorePlaying() {
+void Lua_V2::IsChorePlaying() {
 	lua_Object paramObj = lua_getparam(1);
 
 	if (!lua_isnumber(paramObj))
 		return;
 
 	int num = (int)lua_getnumber(paramObj);
-	warning("Lua_L2::IsChorePlaying: stub, got %d, returns true", num);
+	warning("Lua_V2::IsChorePlaying: stub, got %d, returns true", num);
 	// FIXME: implement missing rest part of code
 	pushbool(true);
 }
 
-void Lua_L2::StopChore() {
+void Lua_V2::StopChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
 
@@ -311,10 +311,10 @@ void Lua_L2::StopChore() {
 	int chore = (int)lua_getnumber(choreObj);
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missing rest part of code
-	warning("Lua_L2::StopChore: stub, chore: %d time: %f", chore, time);
+	warning("Lua_V2::StopChore: stub, chore: %d time: %f", chore, time);
 }
 
-void Lua_L2::AdvanceChore() {
+void Lua_V2::AdvanceChore() {
 	lua_Object choreObj = lua_getparam(1);
 	lua_Object timeObj = lua_getparam(2);
 
@@ -324,10 +324,10 @@ void Lua_L2::AdvanceChore() {
 	int chore = (int)lua_getnumber(choreObj);
 	float time = lua_getnumber(timeObj);
 	// FIXME: implement missong code
-	warning("Lua_L2::AdvanceChore: stub, chore: %d time: %f", chore, time);
+	warning("Lua_V2::AdvanceChore: stub, chore: %d time: %f", chore, time);
 }
 
-void Lua_L2::SetActorSortOrder() {
+void Lua_V2::SetActorSortOrder() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object modeObj = lua_getparam(2);
 
@@ -339,11 +339,11 @@ void Lua_L2::SetActorSortOrder() {
 
 	Actor *actor = getactor(actorObj);
 	int mode = (int)lua_getnumber(modeObj);
-	warning("Lua_L2::SetActorSortOrder, actor: %s, mode: %d", actor->getName().c_str(), mode);
+	warning("Lua_V2::SetActorSortOrder, actor: %s, mode: %d", actor->getName().c_str(), mode);
 	// FIXME: actor->func(mode);
 }
 
-void Lua_L2::ActorActivateShadow() {
+void Lua_V2::ActorActivateShadow() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object qualityObj = lua_getparam(2);
 	lua_Object planeObj = lua_getparam(3);
@@ -358,11 +358,11 @@ void Lua_L2::ActorActivateShadow() {
 	const char *plane = "NULL";
 	if (lua_isstring(planeObj))
 		plane = lua_getstring(planeObj);
-	warning("Lua_L2::ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
+	warning("Lua_V2::ActorActivateShadow, actor: %s, aquality: %d, plane: %s", actor->getName().c_str(), quality, plane);
 	// FIXME: implement missing rest part of code
 }
 
-void Lua_L2::ActorStopMoving() {
+void Lua_V2::ActorStopMoving() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -370,11 +370,11 @@ void Lua_L2::ActorStopMoving() {
 
 	Actor *actor = getactor(actorObj);
 
-	warning("Lua_L2::ActorStopMoving, actor: %s", actor->getName().c_str());
+	warning("Lua_V2::ActorStopMoving, actor: %s", actor->getName().c_str());
 	// FIXME: implement missing rest part of code
 }
 
-void Lua_L2::PutActorInOverworld() {
+void Lua_V2::PutActorInOverworld() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -382,23 +382,23 @@ void Lua_L2::PutActorInOverworld() {
 
 	Actor *actor = getactor(actorObj);
 
-	warning("Lua_L2::PutActorInOverworld, actor: %s", actor->getName().c_str());
+	warning("Lua_V2::PutActorInOverworld, actor: %s", actor->getName().c_str());
 	// FIXME: implement missing func
 	//actor->func();
 }
 
-void Lua_L2::GetActorWorldPos() {
-	Lua_L1::GetActorPos();
+void Lua_V2::GetActorWorldPos() {
+	Lua_V1::GetActorPos();
 	// FIXME: verify
-	warning("Lua_L2::GetActorWorldPos: Currently just calls Lua_L1::GetActorPos, probably wrong");
+	warning("Lua_V2::GetActorWorldPos: Currently just calls Lua_V1::GetActorPos, probably wrong");
 }
 
-void Lua_L2::MakeScreenTextures() {
+void Lua_V2::MakeScreenTextures() {
 	lua_Object indexObj = lua_getparam(1);
 
 	if (!lua_isnil(indexObj) && lua_isnumber(indexObj)) {
 		int index = (int)lua_getnumber(indexObj);
-		warning("Lua_L2::MakeScreenTextures, index: %d", index);
+		warning("Lua_V2::MakeScreenTextures, index: %d", index);
 		// FIXME: implement missing function
 //		if (func(index)) {
 			lua_pushnumber(1.0);
@@ -408,7 +408,7 @@ void Lua_L2::MakeScreenTextures() {
 	lua_pushnil();
 }
 
-void Lua_L2::PutActorInSet() {
+void Lua_V2::PutActorInSet() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object setObj = lua_getparam(2);
 
@@ -435,7 +435,7 @@ void Lua_L2::PutActorInSet() {
 	lua_pushnil();
 }
 
-void Lua_L2::LoadBundle() {
+void Lua_V2::LoadBundle() {
 	lua_Object paramObj = lua_getparam(1);
 	if (lua_isstring(paramObj) || lua_isnil(paramObj)) {
 		const char *name = lua_getstring(paramObj);
@@ -444,25 +444,25 @@ void Lua_L2::LoadBundle() {
 			lua_pushnil();
 		else*/
 			lua_pushnumber(1.0);
-		warning("Lua_L2::LoadBundle: stub, name: %s", name);
+		warning("Lua_V2::LoadBundle: stub, name: %s", name);
 	}
 }
 
-void Lua_L2::AreWeInternational() {
+void Lua_V2::AreWeInternational() {
 	if (g_grim->getGameLanguage() != Common::EN_ANY)
 		lua_pushnumber(1.0);
 }
 
-void Lua_L2::ImSetState() {
+void Lua_V2::ImSetState() {
 	lua_Object stateObj = lua_getparam(1);
 	if (!lua_isnumber(stateObj))
 		return;
 
 	int state = (int)lua_getnumber(stateObj);
-	warning("Lua_L2::ImSetState: stub, state: %d", state);
+	warning("Lua_V2::ImSetState: stub, state: %d", state);
 }
 
-void Lua_L2::EnableVoiceFX() {
+void Lua_V2::EnableVoiceFX() {
 	lua_Object stateObj = lua_getparam(1);
 
 	bool state = false;
@@ -470,10 +470,10 @@ void Lua_L2::EnableVoiceFX() {
 		state = true;
 
 	// FIXME: func(state);
-	warning("Lua_L2::EnableVoiceFX: implement opcode, state: %d", (int)state);
+	warning("Lua_V2::EnableVoiceFX: implement opcode, state: %d", (int)state);
 }
 
-void Lua_L2::SetGroupVolume() {
+void Lua_V2::SetGroupVolume() {
 	lua_Object groupObj = lua_getparam(1);
 	lua_Object volumeObj = lua_getparam(2);
 
@@ -486,10 +486,10 @@ void Lua_L2::SetGroupVolume() {
 		volume = (int)lua_getnumber(volumeObj);
 
 	// FIXME: func(group, volume);
-	warning("Lua_L2::SetGroupVolume: implement opcode, group: %d, volume %d", group, volume);
+	warning("Lua_V2::SetGroupVolume: implement opcode, group: %d, volume %d", group, volume);
 }
 
-void Lua_L2::EnableAudioGroup() {
+void Lua_V2::EnableAudioGroup() {
 	lua_Object groupObj = lua_getparam(1);
 	lua_Object stateObj = lua_getparam(2);
 
@@ -502,20 +502,20 @@ void Lua_L2::EnableAudioGroup() {
 		state = true;
 
 	// FIXME: func(group, state);
-	warning("Lua_L2::EnableAudioGroup: implement opcode, group: %d, state %d", group, (int)state);
+	warning("Lua_V2::EnableAudioGroup: implement opcode, group: %d, state %d", group, (int)state);
 }
 
-void Lua_L2::ImSelectSet() {
+void Lua_V2::ImSelectSet() {
 	lua_Object qualityObj = lua_getparam(1);
 
 	if (lua_isnumber(qualityObj)) {
 		int quality = (int)lua_getnumber(qualityObj);
 		// FIXME: func(quality);
-		warning("Lua_L2::ImSelectSet: implement opcode, quality mode: %d", quality);
+		warning("Lua_V2::ImSelectSet: implement opcode, quality mode: %d", quality);
 	}
 }
 
-void Lua_L2::PlayActorChore() {
+void Lua_V2::PlayActorChore() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
 	lua_Object costumeObj = lua_getparam(3);
@@ -544,7 +544,7 @@ void Lua_L2::PlayActorChore() {
 	const char *choreName = lua_getstring(choreObj);
 	const char *costumeName = lua_getstring(costumeObj);
 
-	warning("Lua_L2::PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f",
+	warning("Lua_V2::PlayActorChore: implement opcode actor: %s, chore: %s, costume: %s, mode bool: %d, param: %f",
 			actor->getName().c_str(), choreName, costumeName, (int)mode, param);
 	// FIXME. code below is a hack, need proper implementation
 	actor->setCostume(costumeName);
@@ -553,7 +553,7 @@ void Lua_L2::PlayActorChore() {
 	pushbool(true);
 }
 
-void Lua_L2::StopActorChores() {
+void Lua_V2::StopActorChores() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object paramObj = lua_getparam(2);
 
@@ -567,10 +567,10 @@ void Lua_L2::StopActorChores() {
 	bool p = lua_isnil(paramObj) != 0;
 	// I'm not fully sure about bool logic here
 	//actor->func(p);
-	warning("Lua_L2::StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName().c_str());
+	warning("Lua_V2::StopActorChores: implement opcode... bool param: %d, actor: %s", (int)p, actor->getName().c_str());
 }
 
-void Lua_L2::SetActorLighting() {
+void Lua_V2::SetActorLighting() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object lightModeObj = lua_getparam(2);
 
@@ -588,21 +588,21 @@ void Lua_L2::SetActorLighting() {
 	if (lightMode != 0) {
 		if (lightMode == 1) {
 			//FIXME actor->
-			warning("Lua_L2::SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName().c_str());
+			warning("Lua_V2::SetActorLighting: case param 1(LIGHT_FASTDYN), actor: %s", actor->getName().c_str());
 		} else if (lightMode == 2) {
 			//FIXME actor->
-			warning("Lua_L2::SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName().c_str());
+			warning("Lua_V2::SetActorLighting: case param 2(LIGHT_NORMDYN), actor: %s", actor->getName().c_str());
 		} else {
 			//FIXME actor->
-			warning("Lua_L2::SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName().c_str());
+			warning("Lua_V2::SetActorLighting: case param %d(LIGHT_NONE), actor: %s", lightMode, actor->getName().c_str());
 		}
 	} else {
 		//FIXME actor->
-		warning("Lua_L2::SetActorLighting: case param 0(LIGHT_STATIC), actor: %s", actor->getName().c_str());
+		warning("Lua_V2::SetActorLighting: case param 0(LIGHT_STATIC), actor: %s", actor->getName().c_str());
 	}
 }
 
-void Lua_L2::SetActorCollisionMode() {
+void Lua_V2::SetActorCollisionMode() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object modeObj = lua_getparam(2);
 
@@ -619,10 +619,10 @@ void Lua_L2::SetActorCollisionMode() {
 
 	// FIXME: set collision mode
 	//actor->func(mode);
-	warning("Lua_L2::SetActorCollisionMode: implement opcode. Mode %d", mode);
+	warning("Lua_V2::SetActorCollisionMode: implement opcode. Mode %d", mode);
 }
 
-void Lua_L2::SetActorCollisionScale() {
+void Lua_V2::SetActorCollisionScale() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object scaleObj = lua_getparam(2);
 
@@ -635,16 +635,16 @@ void Lua_L2::SetActorCollisionScale() {
 	float scale = lua_getnumber(scaleObj);
 	// FIXME: set collision scale
 	//actor->func(scale);
-	warning("Lua_L2::SetActorCollisionScale: implement opcode. Scale %f", scale);
+	warning("Lua_V2::SetActorCollisionScale: implement opcode. Scale %f", scale);
 }
 
-void Lua_L2::GetActorPuckVector() {
+void Lua_V2::GetActorPuckVector() {
 	// stub this for now as the regular one crashes.
-	warning("Lua_L2::GetActorPuckVector: stubbed to L2 for now, L1 crashes");
+	warning("Lua_V2::GetActorPuckVector: stubbed to L2 for now, L1 crashes");
 	lua_pushnil();
 }
 
-void Lua_L2::SetActorHeadLimits() {
+void Lua_V2::SetActorHeadLimits() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object param2Obj = lua_getparam(2);
 	lua_Object param3Obj = lua_getparam(3);
@@ -663,11 +663,11 @@ void Lua_L2::SetActorHeadLimits() {
 		float param4 = lua_getnumber(param4Obj);
 		// FIXME: implement missing func
 		//actor->func(param2, param3, param4);
-		warning("Lua_L2::SetActorHeadLimits: implement opcode. actor: %s, params: %f, %f, %f", actor->getName().c_str(), param2, param3, param4);
+		warning("Lua_V2::SetActorHeadLimits: implement opcode. actor: %s, params: %f, %f, %f", actor->getName().c_str(), param2, param3, param4);
 	}
 }
 
-void Lua_L2::SetActorFOV() {
+void Lua_V2::SetActorFOV() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object fovObj = lua_getparam(2);
 
@@ -682,33 +682,33 @@ void Lua_L2::SetActorFOV() {
 		float fov = lua_getnumber(fovObj);
 		// FIXME: implement missing code
 		//actor->func(fov); // cos(fov * some tuntime val * 0.5)
-		warning("Lua_L2::SetActorFOV: implement opcode. actor: %s, param: %f", actor->getName().c_str(), fov);
+		warning("Lua_V2::SetActorFOV: implement opcode. actor: %s, param: %f", actor->getName().c_str(), fov);
 	}
 }
 
-void Lua_L2::AttachActor() {
+void Lua_V2::AttachActor() {
 	// Missing lua parts
-	warning("Lua_L2::AttachActor: implement opcode");
+	warning("Lua_V2::AttachActor: implement opcode");
 }
 
-void Lua_L2::DetachActor() {
+void Lua_V2::DetachActor() {
 	// Missing lua parts
-	warning("Lua_L2::DetachActor: implement opcode");
+	warning("Lua_V2::DetachActor: implement opcode");
 }
 
-void Lua_L2::GetCPUSpeed() {
+void Lua_V2::GetCPUSpeed() {
 	lua_pushnumber(500); // anything above 333 make best configuration
 }
 
 // This should be correct, judging by the Demo
 // the only real difference from L1 is the lack of looping
-void Lua_L2::StartMovie() {
+void Lua_V2::StartMovie() {
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();
 		return;
 	}
-	Lua_L1::CleanBuffer();
+	Lua_V1::CleanBuffer();
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
@@ -719,38 +719,38 @@ void Lua_L2::StartMovie() {
 	g_grim->setMode(GrimEngine::SmushMode);
 }
 
-void Lua_L2::IsMoviePlaying() {
+void Lua_V2::IsMoviePlaying() {
 	pushbool(g_movie->isPlaying());
 }
 
-void Lua_L2::SetActiveCD() {
+void Lua_V2::SetActiveCD() {
 	lua_Object cdObj = lua_getparam(1);
 	int cd = (int)lua_getnumber(cdObj);
 
 	if (cd == 1 || cd == 2) {
-		warning("Lua_L2::GetActiveCD: set to CD: %d", cd);
+		warning("Lua_V2::GetActiveCD: set to CD: %d", cd);
 		// FIXME
 		lua_pushnumber(1.0);
 	}
 }
 
-void Lua_L2::GetActiveCD() {
+void Lua_V2::GetActiveCD() {
 	// FIXME: return current CD number 1 or 2, original can also avoid push any numer
-	warning("Lua_L2::GetActiveCD: return const CD 1");
+	warning("Lua_V2::GetActiveCD: return const CD 1");
 	lua_pushnumber(1);
 }
 
-void Lua_L2::PurgeText() {
+void Lua_V2::PurgeText() {
 	// FIXME
-	warning("Lua_L2::PurgeText: implement opcode");
+	warning("Lua_V2::PurgeText: implement opcode");
 }
 
-void Lua_L2::ImFlushStack() {
+void Lua_V2::ImFlushStack() {
 	// FIXME
-	warning("Lua_L2::ImFlushStack: implement opcode");
+	warning("Lua_V2::ImFlushStack: implement opcode");
 }
 
-void Lua_L2::LoadSound() {
+void Lua_V2::LoadSound() {
 	lua_Object strObj = lua_getparam(1);
 
 	if (!lua_isstring(strObj))
@@ -758,42 +758,42 @@ void Lua_L2::LoadSound() {
 
 	const char *str = lua_getstring(strObj);
 	// FIXME: implement code
-	warning("Lua_L2::LoadSound: stub, wants to load %s", str);
+	warning("Lua_V2::LoadSound: stub, wants to load %s", str);
 }
 
-void Lua_L2::ImSetMusicVol() {
-	warning("Lua_L2::ImSetMusicVol: implement opcode");
+void Lua_V2::ImSetMusicVol() {
+	warning("Lua_V2::ImSetMusicVol: implement opcode");
 }
 
-void Lua_L2::ImSetSfxVol() {
-	warning("Lua_L2::ImSetSfxVol: implement opcode");
+void Lua_V2::ImSetSfxVol() {
+	warning("Lua_V2::ImSetSfxVol: implement opcode");
 }
 
-void Lua_L2::ImSetVoiceVol() {
-	warning("Lua_L2::ImSetVoiceVol: implement opcode");
+void Lua_V2::ImSetVoiceVol() {
+	warning("Lua_V2::ImSetVoiceVol: implement opcode");
 }
 
-void Lua_L2::ImSetVoiceEffect() {
-	warning("Lua_L2::ImSetVoiceEffect: implement opcode");
+void Lua_V2::ImSetVoiceEffect() {
+	warning("Lua_V2::ImSetVoiceEffect: implement opcode");
 }
 
-void Lua_L2::ToggleOverworld() {
-	warning("Lua_L2::ToggleOverworld: implement opcode");
+void Lua_V2::ToggleOverworld() {
+	warning("Lua_V2::ToggleOverworld: implement opcode");
 }
 
-void Lua_L2::ScreenshotForSavegame() {
-	warning("Lua_L2::ScreenshotForSavegame: implement opcode");
+void Lua_V2::ScreenshotForSavegame() {
+	warning("Lua_V2::ScreenshotForSavegame: implement opcode");
 }
 
-void Lua_L2::EngineDisplay() {
+void Lua_V2::EngineDisplay() {
 	// dummy
 }
 
-void Lua_L2::SetAmbientLight() {
+void Lua_V2::SetAmbientLight() {
 	// dummy
 }
 
-void Lua_L2::Display() {
+void Lua_V2::Display() {
 	// dummy
 }
 
@@ -809,196 +809,196 @@ static void stubError(const char *funcName) {
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
 #define STUB_FUNC2(name) void name() { stubError(#name); }
 
-// Opcodes more or less differ to Grim Lua_L1::* LUA_OPCODEs
-// STUB_FUNC2(Lua_L2::SetActorWalkChore)
-// STUB_FUNC2(Lua_L2::SetActorTurnChores)
-// STUB_FUNC2(Lua_L2::SetActorRestChore)
-// STUB_FUNC2(Lua_L2::SetActorMumblechore)
-// STUB_FUNC2(Lua_L2::SetActorTalkChore)
-// STUB_FUNC2(Lua_L2::WalkActorVector)
-// STUB_FUNC2(Lua_L2::SetActorLookRate)
-// STUB_FUNC2(Lua_L2::GetActorLookRate)
-// STUB_FUNC2(Lua_L2::GetVisibleThings)
-// STUB_FUNC2(Lua_L2::GetActorRot)
-// STUB_FUNC2(Lua_L2::LockSet)
-// STUB_FUNC2(Lua_L2::UnLockSet)
-// STUB_FUNC2(Lua_L2::PlaySound)
-// STUB_FUNC2(Lua_L2::IsSoundPlaying)
-// STUB_FUNC2(Lua_L2::MakeSectorActive)
-// STUB_FUNC2(Lua_L2::TurnActorTo)
-// STUB_FUNC2(Lua_L2::GetAngleBetweenActors)
-// STUB_FUNC2(Lua_L2::ImStartSound)
-// STUB_FUNC2(Lua_L2::ImGetSfxVol)
-// STUB_FUNC2(Lua_L2::ImGetVoiceVol)
-// STUB_FUNC2(Lua_L2::ImGetMusicVol)
-// STUB_FUNC2(Lua_L2::ImSetSequence)
-// STUB_FUNC2(Lua_L2::ChangeTextObject)
-// STUB_FUNC2(Lua_L2::GetTextCharPosition)
-// STUB_FUNC2(Lua_L2::SetOffscreenTextPos)
-// STUB_FUNC2(Lua_L2::FadeInChore)
-// STUB_FUNC2(Lua_L2::FadeOutChore)
-// STUB_FUNC2(Lua_L2::SetLightPosition)
-// STUB_FUNC2(Lua_L2::GetAngleBetweenVectors)
-// STUB_FUNC2(Lua_L2::IsPointInSector)
+// Opcodes more or less differ to Grim Lua_V1::* LUA_OPCODEs
+// STUB_FUNC2(Lua_V2::SetActorWalkChore)
+// STUB_FUNC2(Lua_V2::SetActorTurnChores)
+// STUB_FUNC2(Lua_V2::SetActorRestChore)
+// STUB_FUNC2(Lua_V2::SetActorMumblechore)
+// STUB_FUNC2(Lua_V2::SetActorTalkChore)
+// STUB_FUNC2(Lua_V2::WalkActorVector)
+// STUB_FUNC2(Lua_V2::SetActorLookRate)
+// STUB_FUNC2(Lua_V2::GetActorLookRate)
+// STUB_FUNC2(Lua_V2::GetVisibleThings)
+// STUB_FUNC2(Lua_V2::GetActorRot)
+// STUB_FUNC2(Lua_V2::LockSet)
+// STUB_FUNC2(Lua_V2::UnLockSet)
+// STUB_FUNC2(Lua_V2::PlaySound)
+// STUB_FUNC2(Lua_V2::IsSoundPlaying)
+// STUB_FUNC2(Lua_V2::MakeSectorActive)
+// STUB_FUNC2(Lua_V2::TurnActorTo)
+// STUB_FUNC2(Lua_V2::GetAngleBetweenActors)
+// STUB_FUNC2(Lua_V2::ImStartSound)
+// STUB_FUNC2(Lua_V2::ImGetSfxVol)
+// STUB_FUNC2(Lua_V2::ImGetVoiceVol)
+// STUB_FUNC2(Lua_V2::ImGetMusicVol)
+// STUB_FUNC2(Lua_V2::ImSetSequence)
+// STUB_FUNC2(Lua_V2::ChangeTextObject)
+// STUB_FUNC2(Lua_V2::GetTextCharPosition)
+// STUB_FUNC2(Lua_V2::SetOffscreenTextPos)
+// STUB_FUNC2(Lua_V2::FadeInChore)
+// STUB_FUNC2(Lua_V2::FadeOutChore)
+// STUB_FUNC2(Lua_V2::SetLightPosition)
+// STUB_FUNC2(Lua_V2::GetAngleBetweenVectors)
+// STUB_FUNC2(Lua_V2::IsPointInSector)
 
 // Monkey specific LUA_OPCODEs
-STUB_FUNC2(Lua_L2::ThumbnailFromFile)
-STUB_FUNC2(Lua_L2::ClearSpecialtyTexture)
-STUB_FUNC2(Lua_L2::ClearOverworld)
-STUB_FUNC2(Lua_L2::EnableActorPuck)
-STUB_FUNC2(Lua_L2::GetActorSortOrder)
-STUB_FUNC2(Lua_L2::IsChoreLooping)
-STUB_FUNC2(Lua_L2::PlayChore)
-STUB_FUNC2(Lua_L2::PauseChore)
-STUB_FUNC2(Lua_L2::CompleteChore)
-STUB_FUNC2(Lua_L2::UnlockChore)
-STUB_FUNC2(Lua_L2::LockChoreSet)
-STUB_FUNC2(Lua_L2::UnlockChoreSet)
-STUB_FUNC2(Lua_L2::EscapeMovie)
-STUB_FUNC2(Lua_L2::StopAllSounds)
-STUB_FUNC2(Lua_L2::FreeSound)
-STUB_FUNC2(Lua_L2::PlayLoadedSound)
-STUB_FUNC2(Lua_L2::GetSoundVolume)
-STUB_FUNC2(Lua_L2::SetSoundVolume)
-STUB_FUNC2(Lua_L2::PlaySoundFrom)
-STUB_FUNC2(Lua_L2::PlayLoadedSoundFrom)
-STUB_FUNC2(Lua_L2::UpdateSoundPosition)
-STUB_FUNC2(Lua_L2::ImStateHasLooped)
-STUB_FUNC2(Lua_L2::ImStateHasEnded)
-STUB_FUNC2(Lua_L2::ImPushState)
-STUB_FUNC2(Lua_L2::ImPopState)
-STUB_FUNC2(Lua_L2::GetSectorName)
-STUB_FUNC2(Lua_L2::GetCameraYaw)
-STUB_FUNC2(Lua_L2::YawCamera)
-STUB_FUNC2(Lua_L2::GetCameraPitch)
-STUB_FUNC2(Lua_L2::PitchCamera)
-STUB_FUNC2(Lua_L2::RollCamera)
-STUB_FUNC2(Lua_L2::NewLayer)
-STUB_FUNC2(Lua_L2::FreeLayer)
-STUB_FUNC2(Lua_L2::SetLayerSortOrder)
-STUB_FUNC2(Lua_L2::SetLayerFrame)
-STUB_FUNC2(Lua_L2::AdvanceLayerFrame)
-STUB_FUNC2(Lua_L2::PushText)
-STUB_FUNC2(Lua_L2::PopText)
-STUB_FUNC2(Lua_L2::NukeAllScriptLocks)
-STUB_FUNC2(Lua_L2::ToggleDebugDraw)
-STUB_FUNC2(Lua_L2::ToggleDrawCameras)
-STUB_FUNC2(Lua_L2::ToggleDrawLights)
-STUB_FUNC2(Lua_L2::ToggleDrawSectors)
-STUB_FUNC2(Lua_L2::ToggleDrawBBoxes)
-STUB_FUNC2(Lua_L2::ToggleDrawFPS)
-STUB_FUNC2(Lua_L2::ToggleDrawPerformance)
-STUB_FUNC2(Lua_L2::ToggleDrawActorStats)
-STUB_FUNC2(Lua_L2::SectEditSelect)
-STUB_FUNC2(Lua_L2::SectEditPlace)
-STUB_FUNC2(Lua_L2::SectEditDelete)
-STUB_FUNC2(Lua_L2::SectEditInsert)
-STUB_FUNC2(Lua_L2::SectEditSortAdd)
-STUB_FUNC2(Lua_L2::SectEditForgetIt)
-STUB_FUNC2(Lua_L2::FRUTEY_Begin)
-STUB_FUNC2(Lua_L2::FRUTEY_End)
+STUB_FUNC2(Lua_V2::ThumbnailFromFile)
+STUB_FUNC2(Lua_V2::ClearSpecialtyTexture)
+STUB_FUNC2(Lua_V2::ClearOverworld)
+STUB_FUNC2(Lua_V2::EnableActorPuck)
+STUB_FUNC2(Lua_V2::GetActorSortOrder)
+STUB_FUNC2(Lua_V2::IsChoreLooping)
+STUB_FUNC2(Lua_V2::PlayChore)
+STUB_FUNC2(Lua_V2::PauseChore)
+STUB_FUNC2(Lua_V2::CompleteChore)
+STUB_FUNC2(Lua_V2::UnlockChore)
+STUB_FUNC2(Lua_V2::LockChoreSet)
+STUB_FUNC2(Lua_V2::UnlockChoreSet)
+STUB_FUNC2(Lua_V2::EscapeMovie)
+STUB_FUNC2(Lua_V2::StopAllSounds)
+STUB_FUNC2(Lua_V2::FreeSound)
+STUB_FUNC2(Lua_V2::PlayLoadedSound)
+STUB_FUNC2(Lua_V2::GetSoundVolume)
+STUB_FUNC2(Lua_V2::SetSoundVolume)
+STUB_FUNC2(Lua_V2::PlaySoundFrom)
+STUB_FUNC2(Lua_V2::PlayLoadedSoundFrom)
+STUB_FUNC2(Lua_V2::UpdateSoundPosition)
+STUB_FUNC2(Lua_V2::ImStateHasLooped)
+STUB_FUNC2(Lua_V2::ImStateHasEnded)
+STUB_FUNC2(Lua_V2::ImPushState)
+STUB_FUNC2(Lua_V2::ImPopState)
+STUB_FUNC2(Lua_V2::GetSectorName)
+STUB_FUNC2(Lua_V2::GetCameraYaw)
+STUB_FUNC2(Lua_V2::YawCamera)
+STUB_FUNC2(Lua_V2::GetCameraPitch)
+STUB_FUNC2(Lua_V2::PitchCamera)
+STUB_FUNC2(Lua_V2::RollCamera)
+STUB_FUNC2(Lua_V2::NewLayer)
+STUB_FUNC2(Lua_V2::FreeLayer)
+STUB_FUNC2(Lua_V2::SetLayerSortOrder)
+STUB_FUNC2(Lua_V2::SetLayerFrame)
+STUB_FUNC2(Lua_V2::AdvanceLayerFrame)
+STUB_FUNC2(Lua_V2::PushText)
+STUB_FUNC2(Lua_V2::PopText)
+STUB_FUNC2(Lua_V2::NukeAllScriptLocks)
+STUB_FUNC2(Lua_V2::ToggleDebugDraw)
+STUB_FUNC2(Lua_V2::ToggleDrawCameras)
+STUB_FUNC2(Lua_V2::ToggleDrawLights)
+STUB_FUNC2(Lua_V2::ToggleDrawSectors)
+STUB_FUNC2(Lua_V2::ToggleDrawBBoxes)
+STUB_FUNC2(Lua_V2::ToggleDrawFPS)
+STUB_FUNC2(Lua_V2::ToggleDrawPerformance)
+STUB_FUNC2(Lua_V2::ToggleDrawActorStats)
+STUB_FUNC2(Lua_V2::SectEditSelect)
+STUB_FUNC2(Lua_V2::SectEditPlace)
+STUB_FUNC2(Lua_V2::SectEditDelete)
+STUB_FUNC2(Lua_V2::SectEditInsert)
+STUB_FUNC2(Lua_V2::SectEditSortAdd)
+STUB_FUNC2(Lua_V2::SectEditForgetIt)
+STUB_FUNC2(Lua_V2::FRUTEY_Begin)
+STUB_FUNC2(Lua_V2::FRUTEY_End)
 
 struct luaL_reg monkeyMainOpcodes[] = {
 	// Monkey specific LUA_OPCODEs:
-	{ "ScreenshotForSavegame", LUA_OPCODE(Lua_L2, ScreenshotForSavegame) },
-	{ "GetActorWorldPos", LUA_OPCODE(Lua_L2, GetActorWorldPos) },
-	{ "SetActiveCD", LUA_OPCODE(Lua_L2, SetActiveCD) },
-	{ "GetActiveCD", LUA_OPCODE(Lua_L2, GetActiveCD) },
-	{ "AreWeInternational", LUA_OPCODE(Lua_L2, AreWeInternational) },
-	{ "MakeScreenTextures", LUA_OPCODE(Lua_L2, MakeScreenTextures) },
-	{ "ThumbnailFromFile", LUA_OPCODE(Lua_L2, ThumbnailFromFile) },
-	{ "ClearSpecialtyTexture", LUA_OPCODE(Lua_L2, ClearSpecialtyTexture) },
-	{ "UnloadActor", LUA_OPCODE(Lua_L2, UnloadActor) },
-	{ "PutActorInOverworld", LUA_OPCODE(Lua_L2, PutActorInOverworld) },
-	{ "RemoveActorFromOverworld", LUA_OPCODE(Lua_L2, RemoveActorFromOverworld) },
-	{ "ClearOverworld", LUA_OPCODE(Lua_L2, ClearOverworld) },
-	{ "ToggleOverworld", LUA_OPCODE(Lua_L2, ToggleOverworld) },
-	{ "ActorStopMoving", LUA_OPCODE(Lua_L2, ActorStopMoving) },
-	{ "SetActorFOV", LUA_OPCODE(Lua_L2, SetActorFOV) },
-	{ "SetActorLighting", LUA_OPCODE(Lua_L2, SetActorLighting) },
-	{ "SetActorHeadLimits", LUA_OPCODE(Lua_L2, SetActorHeadLimits) },
-	{ "ActorActivateShadow", LUA_OPCODE(Lua_L2, ActorActivateShadow) },
-	{ "EnableActorPuck", LUA_OPCODE(Lua_L2, EnableActorPuck) },
-	{ "SetActorGlobalAlpha", LUA_OPCODE(Lua_L2, SetActorGlobalAlpha) },
-	{ "SetActorLocalAlpha", LUA_OPCODE(Lua_L2, SetActorLocalAlpha) },
-	{ "SetActorSortOrder", LUA_OPCODE(Lua_L2, SetActorSortOrder) },
-	{ "GetActorSortOrder", LUA_OPCODE(Lua_L2, GetActorSortOrder) },
-	{ "AttachActor", LUA_OPCODE(Lua_L2, AttachActor) },
-	{ "DetachActor", LUA_OPCODE(Lua_L2, DetachActor) },
-	{ "IsChoreValid", LUA_OPCODE(Lua_L2, IsChoreValid) },
-	{ "IsChorePlaying", LUA_OPCODE(Lua_L2, IsChorePlaying) },
-	{ "IsChoreLooping", LUA_OPCODE(Lua_L2, IsChoreLooping) },
-	{ "StopActorChores", LUA_OPCODE(Lua_L2, StopActorChores) },
-	{ "PlayChore", LUA_OPCODE(Lua_L2, PlayChore) },
-	{ "StopChore", LUA_OPCODE(Lua_L2, StopChore) },
-	{ "PauseChore", LUA_OPCODE(Lua_L2, PauseChore) },
-	{ "AdvanceChore", LUA_OPCODE(Lua_L2, AdvanceChore) },
-	{ "CompleteChore", LUA_OPCODE(Lua_L2, CompleteChore) },
-	{ "LockChore", LUA_OPCODE(Lua_L2, LockChore) },
-	{ "UnlockChore", LUA_OPCODE(Lua_L2, UnlockChore) },
-	{ "LockChoreSet", LUA_OPCODE(Lua_L2, LockChoreSet) },
-	{ "UnlockChoreSet", LUA_OPCODE(Lua_L2, UnlockChoreSet) },
-	{ "LockBackground", LUA_OPCODE(Lua_L2, LockBackground) },
-	{ "UnLockBackground", LUA_OPCODE(Lua_L2, UnLockBackground) },
-	{ "EscapeMovie", LUA_OPCODE(Lua_L2, EscapeMovie) },
-	{ "StopAllSounds", LUA_OPCODE(Lua_L2, StopAllSounds) },
-	{ "LoadSound", LUA_OPCODE(Lua_L2, LoadSound) },
-	{ "FreeSound", LUA_OPCODE(Lua_L2, FreeSound) },
-	{ "PlayLoadedSound", LUA_OPCODE(Lua_L2, PlayLoadedSound) },
-	{ "SetGroupVolume", LUA_OPCODE(Lua_L2, SetGroupVolume) },
-	{ "GetSoundVolume", LUA_OPCODE(Lua_L2, GetSoundVolume) },
-	{ "SetSoundVolume", LUA_OPCODE(Lua_L2, SetSoundVolume) },
-	{ "EnableAudioGroup", LUA_OPCODE(Lua_L2, EnableAudioGroup) },
-	{ "EnableVoiceFX", LUA_OPCODE(Lua_L2, EnableVoiceFX) },
-	{ "PlaySoundFrom", LUA_OPCODE(Lua_L2, PlaySoundFrom) },
-	{ "PlayLoadedSoundFrom", LUA_OPCODE(Lua_L2, PlayLoadedSoundFrom) },
-	{ "SetReverb", LUA_OPCODE(Lua_L2, SetReverb) },
-	{ "UpdateSoundPosition", LUA_OPCODE(Lua_L2, UpdateSoundPosition) },
-	{ "ImSelectSet", LUA_OPCODE(Lua_L2, ImSelectSet) },
-	{ "ImStateHasLooped", LUA_OPCODE(Lua_L2, ImStateHasLooped) },
-	{ "ImStateHasEnded", LUA_OPCODE(Lua_L2, ImStateHasEnded) },
-	{ "ImPushState", LUA_OPCODE(Lua_L2, ImPushState) },
-	{ "ImPopState", LUA_OPCODE(Lua_L2, ImPopState) },
-	{ "ImFlushStack", LUA_OPCODE(Lua_L2, ImFlushStack) },
-	{ "ImGetMillisecondPosition", LUA_OPCODE(Lua_L2, ImGetMillisecondPosition) },
-	{ "GetSectorName", LUA_OPCODE(Lua_L2, GetSectorName) },
-	{ "GetCameraYaw", LUA_OPCODE(Lua_L2, GetCameraYaw) },
-	{ "YawCamera", LUA_OPCODE(Lua_L2, YawCamera) },
-	{ "GetCameraPitch", LUA_OPCODE(Lua_L2, GetCameraPitch) },
-	{ "PitchCamera", LUA_OPCODE(Lua_L2, PitchCamera) },
-	{ "RollCamera", LUA_OPCODE(Lua_L2, RollCamera) },
-	{ "UndimAll", LUA_OPCODE(Lua_L2, UndimAll) },
-	{ "UndimRegion", LUA_OPCODE(Lua_L2, UndimRegion) },
-	{ "GetCPUSpeed", LUA_OPCODE(Lua_L2, GetCPUSpeed) },
-	{ "NewLayer", LUA_OPCODE(Lua_L2, NewLayer) },
-	{ "FreeLayer", LUA_OPCODE(Lua_L2, FreeLayer) },
-	{ "SetLayerSortOrder", LUA_OPCODE(Lua_L2, SetLayerSortOrder) },
-	{ "SetLayerFrame", LUA_OPCODE(Lua_L2, SetLayerFrame) },
-	{ "AdvanceLayerFrame", LUA_OPCODE(Lua_L2, AdvanceLayerFrame) },
-	{ "PushText", LUA_OPCODE(Lua_L2, PushText) },
-	{ "PopText", LUA_OPCODE(Lua_L2, PopText) },
-	{ "NukeAllScriptLocks", LUA_OPCODE(Lua_L2, NukeAllScriptLocks) },
-	{ "ToggleDebugDraw", LUA_OPCODE(Lua_L2, ToggleDebugDraw) },
-	{ "ToggleDrawCameras", LUA_OPCODE(Lua_L2, ToggleDrawCameras) },
-	{ "ToggleDrawLights", LUA_OPCODE(Lua_L2, ToggleDrawLights) },
-	{ "ToggleDrawSectors", LUA_OPCODE(Lua_L2, ToggleDrawSectors) },
-	{ "ToggleDrawBBoxes", LUA_OPCODE(Lua_L2, ToggleDrawBBoxes) },
-	{ "ToggleDrawFPS", LUA_OPCODE(Lua_L2, ToggleDrawFPS) },
-	{ "ToggleDrawPerformance", LUA_OPCODE(Lua_L2, ToggleDrawPerformance) },
-	{ "ToggleDrawActorStats", LUA_OPCODE(Lua_L2, ToggleDrawActorStats) },
-	{ "SectEditSelect", LUA_OPCODE(Lua_L2, SectEditSelect) },
-	{ "SectEditPlace", LUA_OPCODE(Lua_L2, SectEditPlace) },
-	{ "SectEditDelete", LUA_OPCODE(Lua_L2, SectEditDelete) },
-	{ "SectEditInsert", LUA_OPCODE(Lua_L2, SectEditInsert) },
-	{ "SectEditSortAdd", LUA_OPCODE(Lua_L2, SectEditSortAdd) },
-	{ "SectEditForgetIt", LUA_OPCODE(Lua_L2, SectEditForgetIt) },
-	{ "FRUTEY_Begin", LUA_OPCODE(Lua_L2, FRUTEY_Begin) },
-	{ "FRUTEY_End", LUA_OPCODE(Lua_L2, FRUTEY_End) },
-	{ "sleep_for", LUA_OPCODE(Lua_L2, SleepFor) }
+	{ "ScreenshotForSavegame", LUA_OPCODE(Lua_V2, ScreenshotForSavegame) },
+	{ "GetActorWorldPos", LUA_OPCODE(Lua_V2, GetActorWorldPos) },
+	{ "SetActiveCD", LUA_OPCODE(Lua_V2, SetActiveCD) },
+	{ "GetActiveCD", LUA_OPCODE(Lua_V2, GetActiveCD) },
+	{ "AreWeInternational", LUA_OPCODE(Lua_V2, AreWeInternational) },
+	{ "MakeScreenTextures", LUA_OPCODE(Lua_V2, MakeScreenTextures) },
+	{ "ThumbnailFromFile", LUA_OPCODE(Lua_V2, ThumbnailFromFile) },
+	{ "ClearSpecialtyTexture", LUA_OPCODE(Lua_V2, ClearSpecialtyTexture) },
+	{ "UnloadActor", LUA_OPCODE(Lua_V2, UnloadActor) },
+	{ "PutActorInOverworld", LUA_OPCODE(Lua_V2, PutActorInOverworld) },
+	{ "RemoveActorFromOverworld", LUA_OPCODE(Lua_V2, RemoveActorFromOverworld) },
+	{ "ClearOverworld", LUA_OPCODE(Lua_V2, ClearOverworld) },
+	{ "ToggleOverworld", LUA_OPCODE(Lua_V2, ToggleOverworld) },
+	{ "ActorStopMoving", LUA_OPCODE(Lua_V2, ActorStopMoving) },
+	{ "SetActorFOV", LUA_OPCODE(Lua_V2, SetActorFOV) },
+	{ "SetActorLighting", LUA_OPCODE(Lua_V2, SetActorLighting) },
+	{ "SetActorHeadLimits", LUA_OPCODE(Lua_V2, SetActorHeadLimits) },
+	{ "ActorActivateShadow", LUA_OPCODE(Lua_V2, ActorActivateShadow) },
+	{ "EnableActorPuck", LUA_OPCODE(Lua_V2, EnableActorPuck) },
+	{ "SetActorGlobalAlpha", LUA_OPCODE(Lua_V2, SetActorGlobalAlpha) },
+	{ "SetActorLocalAlpha", LUA_OPCODE(Lua_V2, SetActorLocalAlpha) },
+	{ "SetActorSortOrder", LUA_OPCODE(Lua_V2, SetActorSortOrder) },
+	{ "GetActorSortOrder", LUA_OPCODE(Lua_V2, GetActorSortOrder) },
+	{ "AttachActor", LUA_OPCODE(Lua_V2, AttachActor) },
+	{ "DetachActor", LUA_OPCODE(Lua_V2, DetachActor) },
+	{ "IsChoreValid", LUA_OPCODE(Lua_V2, IsChoreValid) },
+	{ "IsChorePlaying", LUA_OPCODE(Lua_V2, IsChorePlaying) },
+	{ "IsChoreLooping", LUA_OPCODE(Lua_V2, IsChoreLooping) },
+	{ "StopActorChores", LUA_OPCODE(Lua_V2, StopActorChores) },
+	{ "PlayChore", LUA_OPCODE(Lua_V2, PlayChore) },
+	{ "StopChore", LUA_OPCODE(Lua_V2, StopChore) },
+	{ "PauseChore", LUA_OPCODE(Lua_V2, PauseChore) },
+	{ "AdvanceChore", LUA_OPCODE(Lua_V2, AdvanceChore) },
+	{ "CompleteChore", LUA_OPCODE(Lua_V2, CompleteChore) },
+	{ "LockChore", LUA_OPCODE(Lua_V2, LockChore) },
+	{ "UnlockChore", LUA_OPCODE(Lua_V2, UnlockChore) },
+	{ "LockChoreSet", LUA_OPCODE(Lua_V2, LockChoreSet) },
+	{ "UnlockChoreSet", LUA_OPCODE(Lua_V2, UnlockChoreSet) },
+	{ "LockBackground", LUA_OPCODE(Lua_V2, LockBackground) },
+	{ "UnLockBackground", LUA_OPCODE(Lua_V2, UnLockBackground) },
+	{ "EscapeMovie", LUA_OPCODE(Lua_V2, EscapeMovie) },
+	{ "StopAllSounds", LUA_OPCODE(Lua_V2, StopAllSounds) },
+	{ "LoadSound", LUA_OPCODE(Lua_V2, LoadSound) },
+	{ "FreeSound", LUA_OPCODE(Lua_V2, FreeSound) },
+	{ "PlayLoadedSound", LUA_OPCODE(Lua_V2, PlayLoadedSound) },
+	{ "SetGroupVolume", LUA_OPCODE(Lua_V2, SetGroupVolume) },
+	{ "GetSoundVolume", LUA_OPCODE(Lua_V2, GetSoundVolume) },
+	{ "SetSoundVolume", LUA_OPCODE(Lua_V2, SetSoundVolume) },
+	{ "EnableAudioGroup", LUA_OPCODE(Lua_V2, EnableAudioGroup) },
+	{ "EnableVoiceFX", LUA_OPCODE(Lua_V2, EnableVoiceFX) },
+	{ "PlaySoundFrom", LUA_OPCODE(Lua_V2, PlaySoundFrom) },
+	{ "PlayLoadedSoundFrom", LUA_OPCODE(Lua_V2, PlayLoadedSoundFrom) },
+	{ "SetReverb", LUA_OPCODE(Lua_V2, SetReverb) },
+	{ "UpdateSoundPosition", LUA_OPCODE(Lua_V2, UpdateSoundPosition) },
+	{ "ImSelectSet", LUA_OPCODE(Lua_V2, ImSelectSet) },
+	{ "ImStateHasLooped", LUA_OPCODE(Lua_V2, ImStateHasLooped) },
+	{ "ImStateHasEnded", LUA_OPCODE(Lua_V2, ImStateHasEnded) },
+	{ "ImPushState", LUA_OPCODE(Lua_V2, ImPushState) },
+	{ "ImPopState", LUA_OPCODE(Lua_V2, ImPopState) },
+	{ "ImFlushStack", LUA_OPCODE(Lua_V2, ImFlushStack) },
+	{ "ImGetMillisecondPosition", LUA_OPCODE(Lua_V2, ImGetMillisecondPosition) },
+	{ "GetSectorName", LUA_OPCODE(Lua_V2, GetSectorName) },
+	{ "GetCameraYaw", LUA_OPCODE(Lua_V2, GetCameraYaw) },
+	{ "YawCamera", LUA_OPCODE(Lua_V2, YawCamera) },
+	{ "GetCameraPitch", LUA_OPCODE(Lua_V2, GetCameraPitch) },
+	{ "PitchCamera", LUA_OPCODE(Lua_V2, PitchCamera) },
+	{ "RollCamera", LUA_OPCODE(Lua_V2, RollCamera) },
+	{ "UndimAll", LUA_OPCODE(Lua_V2, UndimAll) },
+	{ "UndimRegion", LUA_OPCODE(Lua_V2, UndimRegion) },
+	{ "GetCPUSpeed", LUA_OPCODE(Lua_V2, GetCPUSpeed) },
+	{ "NewLayer", LUA_OPCODE(Lua_V2, NewLayer) },
+	{ "FreeLayer", LUA_OPCODE(Lua_V2, FreeLayer) },
+	{ "SetLayerSortOrder", LUA_OPCODE(Lua_V2, SetLayerSortOrder) },
+	{ "SetLayerFrame", LUA_OPCODE(Lua_V2, SetLayerFrame) },
+	{ "AdvanceLayerFrame", LUA_OPCODE(Lua_V2, AdvanceLayerFrame) },
+	{ "PushText", LUA_OPCODE(Lua_V2, PushText) },
+	{ "PopText", LUA_OPCODE(Lua_V2, PopText) },
+	{ "NukeAllScriptLocks", LUA_OPCODE(Lua_V2, NukeAllScriptLocks) },
+	{ "ToggleDebugDraw", LUA_OPCODE(Lua_V2, ToggleDebugDraw) },
+	{ "ToggleDrawCameras", LUA_OPCODE(Lua_V2, ToggleDrawCameras) },
+	{ "ToggleDrawLights", LUA_OPCODE(Lua_V2, ToggleDrawLights) },
+	{ "ToggleDrawSectors", LUA_OPCODE(Lua_V2, ToggleDrawSectors) },
+	{ "ToggleDrawBBoxes", LUA_OPCODE(Lua_V2, ToggleDrawBBoxes) },
+	{ "ToggleDrawFPS", LUA_OPCODE(Lua_V2, ToggleDrawFPS) },
+	{ "ToggleDrawPerformance", LUA_OPCODE(Lua_V2, ToggleDrawPerformance) },
+	{ "ToggleDrawActorStats", LUA_OPCODE(Lua_V2, ToggleDrawActorStats) },
+	{ "SectEditSelect", LUA_OPCODE(Lua_V2, SectEditSelect) },
+	{ "SectEditPlace", LUA_OPCODE(Lua_V2, SectEditPlace) },
+	{ "SectEditDelete", LUA_OPCODE(Lua_V2, SectEditDelete) },
+	{ "SectEditInsert", LUA_OPCODE(Lua_V2, SectEditInsert) },
+	{ "SectEditSortAdd", LUA_OPCODE(Lua_V2, SectEditSortAdd) },
+	{ "SectEditForgetIt", LUA_OPCODE(Lua_V2, SectEditForgetIt) },
+	{ "FRUTEY_Begin", LUA_OPCODE(Lua_V2, FRUTEY_Begin) },
+	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) },
+	{ "sleep_for", LUA_OPCODE(Lua_V2, SleepFor) }
 };
 
-void Lua_L2::registerOpcodes() {
-	Lua_L1::registerOpcodes();
+void Lua_V2::registerOpcodes() {
+	Lua_V1::registerOpcodes();
 
 	// Register main opcodes functions
 	luaL_openlib(monkeyMainOpcodes, ARRAYSIZE(monkeyMainOpcodes));
