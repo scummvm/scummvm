@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRIM_LUA_HH
-#define GRIM_LUA_HH
+#ifndef GRIM_LUABASE_H
+#define GRIM_LUABASE_H
 
 #include "common/str.h"
 #include "common/list.h"
@@ -41,15 +41,28 @@ class TextObjectDefaults;
 class TextObjectCommon;
 class PoolObjectBase;
 
+/**
+ * Declare a Lua opcode in the current class.
+ */
 #define DECLARE_LUA_OPCODE(func) \
+	public:\
 	inline static void static_##func() {\
 		static_cast<LuaClass *>(LuaBase::instance())->func();\
 	}\
+	protected:\
 	virtual void func()
-
+/**
+ * Retrieve the opcode "func" of the class "class".
+ */
 #define LUA_OPCODE(class, func) \
 	class::static_##func
 
+/**
+ * @brief A list of arguments to be passed to a Lua function.
+ *
+ * This is a convenience class to pass arguments to a Lua function, using
+ * LuaBase::callback(const char *name, const LuaObjects &objects).
+ */
 class LuaObjects {
 public:
 	void add(float number);
@@ -58,9 +71,15 @@ public:
 	void add(const char *str);
 	void addNil();
 
+private:
+	/**
+	 * Pushes all the objects to Lua, in the same order as they were added.
+	 */
 	void pushObjects() const;
 
-private:
+	/**
+	 * The struct wrapping the value and the type of the objects.
+	 */
 	struct Obj {
 		enum {
 			Nil,
@@ -75,6 +94,8 @@ private:
 		} _value;
 	};
 	Common::List<Obj> _objects;
+
+	friend class LuaBase;
 };
 
 class LuaBase {
@@ -88,17 +109,6 @@ public:
 	int bundle_dofile(const char *filename);
 	int single_dofile(const char *filename);
 
-	bool getbool(int num);
-	void pushbool(bool val);
-	void pushobject(const PoolObjectBase *o);
-	int getobject(lua_Object obj);
-	Actor *getactor(lua_Object obj);
-	TextObject *gettextobject(lua_Object obj);
-	Font *getfont(lua_Object obj);
-	PoolColor *getcolor(lua_Object obj);
-	PrimitiveObject *getprimitive(lua_Object obj);
-	ObjectState *getobjectstate(lua_Object obj);
-
 	virtual bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume);
 	virtual Common::String parseMsgText(const char *msg, char *msgId);
 	virtual void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y);
@@ -110,11 +120,33 @@ public:
 	virtual void registerLua();
 	virtual void registerOpcodes();
 	virtual void boot();
+	virtual void postRestoreHandle() { }
 
+	/**
+	 * Call a Lua function in the system table.
+	 *
+	 * @param name The name of the function.
+	 */
 	bool callback(const char *name);
+	/**
+	 * Call a Lua function in the system table passing the specified arguments.
+	 *
+	 * @param name The name of the function;
+	 * @param objects The arguments to be passed to the function.
+	 */
 	bool callback(const char *name, const LuaObjects &objects);
 
-	virtual void postRestoreHandle() { }
+protected:
+	bool getbool(int num);
+	void pushbool(bool val);
+	void pushobject(const PoolObjectBase *o);
+	int getobject(lua_Object obj);
+	Actor *getactor(lua_Object obj);
+	TextObject *gettextobject(lua_Object obj);
+	Font *getfont(lua_Object obj);
+	PoolColor *getcolor(lua_Object obj);
+	PrimitiveObject *getprimitive(lua_Object obj);
+	ObjectState *getobjectstate(lua_Object obj);
 
 	DECLARE_LUA_OPCODE(dummyHandler);
 	DECLARE_LUA_OPCODE(typeOverride);
@@ -148,6 +180,8 @@ private:
 	int refTextObjectPan;
 
 	static LuaBase *s_instance;
+
+	friend class LuaObjects;
 };
 
 } // end of namespace Grim

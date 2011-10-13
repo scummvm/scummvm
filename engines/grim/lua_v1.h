@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRIM_LUA_L1
-#define GRIM_LUA_L1
+#ifndef GRIM_LUA_V1
+#define GRIM_LUA_V1
 
 #include "engines/grim/lua.h"
 
@@ -33,6 +33,7 @@ public:
 	void registerOpcodes();
 	void postRestoreHandle();
 
+protected:
 	// Opcodes
 	DECLARE_LUA_OPCODE(new_dofile);
 	DECLARE_LUA_OPCODE(PrintDebug);

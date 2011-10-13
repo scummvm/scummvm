@@ -32,6 +32,7 @@ public:
 	typedef Lua_V2 LuaClass;
 	void registerOpcodes();
 
+protected:
 	DECLARE_LUA_OPCODE(UndimAll);
 	DECLARE_LUA_OPCODE(SetActorLocalAlpha);
 	DECLARE_LUA_OPCODE(UndimRegion);
