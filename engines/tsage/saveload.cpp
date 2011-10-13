@@ -129,8 +129,12 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_macroSaveFlag = true;
 	_saveSlot = slot;
 
-	// Set up the serializer
+	// Try and create the save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
+	// Set up the serializer
 	Serializer serializer(NULL, saveFile);
 	serializer.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
@@ -177,6 +181,9 @@ Common::Error Saver::restore(int slot) {
 
 	// Set up the serializer
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
 	Serializer serializer(saveFile, NULL);
 
 	// Read in the savegame header
