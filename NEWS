@@ -61,6 +61,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Fixed a regression that made Discworld uncompletable.
+   - The US version of Discworld II now shows the correct title screen and
+     language flag.
 
  SAGA:
    - Fixed a regression in Inherit the Earth's dragon walk code which
