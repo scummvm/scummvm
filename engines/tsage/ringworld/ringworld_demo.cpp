@@ -41,6 +41,14 @@ Scene *RingworldDemoGame::createScene(int sceneNumber) {
 	return new RingworldDemoScene();
 }
 
+bool RingworldDemoGame::canLoadGameStateCurrently() {
+	return false;
+}
+
+bool RingworldDemoGame::canSaveGameStateCurrently() {
+	return false;
+}
+
 void RingworldDemoGame::quitGame() {
 	if (MessageDialog::show(DEMO_EXIT_MSG, EXIT_BTN_STRING, DEMO_BTN_STRING) == 0)
 		g_vm->quitGame();

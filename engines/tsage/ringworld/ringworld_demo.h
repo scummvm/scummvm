@@ -44,6 +44,8 @@ public:
 	virtual Scene *createScene(int sceneNumber);
 	virtual void quitGame();
 	virtual void processEvent(Event &event);
+	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
 };
 
 class RingworldDemoScene: public Scene {

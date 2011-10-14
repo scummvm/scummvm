@@ -133,6 +133,8 @@ public:
 	virtual Scene *createScene(int sceneNumber) = 0;
 	virtual void processEvent(Event &event) {}
 	virtual void rightClick() {}
+	virtual bool canSaveGameStateCurrently() = 0;
+	virtual bool canLoadGameStateCurrently() = 0;
 };
 
 } // End of namespace TsAGE

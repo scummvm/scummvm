@@ -43,6 +43,8 @@ public:
 	virtual Scene *createScene(int sceneNumber);
 	virtual void rightClick();
 	virtual void processEvent(Event &event);
+	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
 };
 
 #define OBJ_ARRAY_SIZE 10

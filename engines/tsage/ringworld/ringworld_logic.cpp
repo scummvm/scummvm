@@ -192,6 +192,20 @@ Scene *RingworldGame::createScene(int sceneNumber) {
 	}
 }
 
+/**
+ * Returns true if it is currently okay to restore a game
+ */
+bool RingworldGame::canLoadGameStateCurrently() {
+	return !g_globals->getFlag(50);
+}
+
+/**
+ * Returns true if it is currently okay to save the game
+ */
+bool RingworldGame::canSaveGameStateCurrently() {
+	return !g_globals->getFlag(50);
+}
+
 /*--------------------------------------------------------------------------*/
 
 DisplayHotspot::DisplayHotspot(int regionId, ...) {

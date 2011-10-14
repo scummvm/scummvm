@@ -155,6 +155,8 @@ public:
 	virtual Scene *createScene(int sceneNumber);
 	virtual void processEvent(Event &event);
 	virtual void rightClick();
+	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
 };
 
 class NamedHotspot : public SceneHotspot {

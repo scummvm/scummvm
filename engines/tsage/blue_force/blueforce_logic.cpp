@@ -240,6 +240,20 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 	}
 }
 
+/**
+ * Returns true if it is currently okay to restore a game
+ */
+bool BlueForceGame::canLoadGameStateCurrently() {
+	return true;
+}
+
+/**
+ * Returns true if it is currently okay to save the game
+ */
+bool BlueForceGame::canSaveGameStateCurrently() {
+	return true;
+}
+
 void BlueForceGame::rightClick() {
 	RightClickDialog *dlg = new RightClickDialog();
 	dlg->execute();
