@@ -57,6 +57,7 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoria4dsystem.o \
 	neighborhood/caldoria/caldoriamessages.o \
 	neighborhood/caldoria/caldoriamirror.o \
+	neighborhood/mars/reactor.o \
 	neighborhood/prehistoric/prehistoric.o \
 	neighborhood/tsa/fulltsa.o \
 	neighborhood/tsa/tinytsa.o \
