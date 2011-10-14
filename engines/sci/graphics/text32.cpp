@@ -71,6 +71,12 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	if (maxHeight > 0)
 		height = maxHeight;
 
+	// Upscale the coordinates/width if the fonts are already upscaled
+	if (_screen->fontIsUpscaled()) {
+		width = width * _screen->getDisplayWidth() / _screen->getWidth();
+		height = height * _screen->getDisplayHeight() / _screen->getHeight();
+	}
+
 	int entrySize = width * height + BITMAP_HEADER_SIZE;
 	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
 	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
@@ -130,6 +136,8 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	if (_screen->fontIsUpscaled()) {
 		textX = textX * _screen->getDisplayWidth() / _screen->getWidth();
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
+		width = width * _screen->getDisplayWidth() / _screen->getWidth();
+		height = height * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
 	for (int curY = 0; curY < height; curY++) {
@@ -161,6 +169,7 @@ Common::Rect GfxText32::getNSRect(reg_t textObject) {
 	nsRect.left = readSelectorValue(_segMan, textObject, SELECTOR(nsLeft));
 	nsRect.bottom = readSelectorValue(_segMan, textObject, SELECTOR(nsBottom)) + 1;
 	nsRect.right = readSelectorValue(_segMan, textObject, SELECTOR(nsRight)) + 1;
+
 	return nsRect;
 }
 
