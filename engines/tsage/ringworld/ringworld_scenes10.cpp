@@ -1182,7 +1182,7 @@ void Scene9500::postInit(SceneObjectList *OwnerList) {
 		_object2.setFrame(_object2.getFrameCount());
 		_object2.setPosition(Common::Point(303, 130));
 		_object2.fixPriority(132);
-		if (RING_INVENTORY._helmet._sceneNumber == 1) {
+		if (RING_INVENTORY._helmet._sceneNumber != 1) {
 			_hotspot2.setDetails(87, 294, 104, 314, 9400, 17, -1);
 		} else {
 			_object2.setStrip(2);

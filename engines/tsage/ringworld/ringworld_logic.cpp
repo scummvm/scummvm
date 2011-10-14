@@ -603,19 +603,19 @@ void NamedHotspot::doAction(int action) {
 			break;
 
 		SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return;
 	case CURSOR_USE:
 		if (_useLineNum == -1)
 			break;
 		
 		SceneItem::display(_resNum, _useLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return;
 	case CURSOR_TALK:
 		if (_talkLineNum == -1)
 			break;
 
 		SceneItem::display(_resNum, _lookLineNum, SET_Y, 20, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
-		break;
+		return;
 	default:
 		break;
 	}
