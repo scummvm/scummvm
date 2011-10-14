@@ -965,6 +965,59 @@ SpeakerLyleText::SpeakerLyleText(): VisualSpeaker() {
 	_speakerName = "LYLETEXT";
 }
 
+/*--------------------------------------------------------------------------*/
+
+SpeakerKate::SpeakerKate(): VisualSpeaker() {
+	_color1 = 108;
+	
+	_speakerName = "KATE";
+}
+
+void SpeakerKate::setText(const Common::String &msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(122);
+	_object1.setStrip2(8);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 270,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+	
+	_object2.postInit();
+	_object2.setVisage(122);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 270,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2._numFrames = 7;
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerTony::SpeakerTony(): VisualSpeaker() {
+	_color1 = 108;
+	_color2 = 8;
+	
+	_speakerName = "TONY";
+}
+
+void SpeakerTony::setText(const Common::String &msg) {
+	_removeObject2 = true;
+
+	_object2.postInit();
+	_object2.setVisage(132);
+	_object2.setStrip2(1);
+	_object2.fixPriority(255);
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 62,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
