@@ -90,6 +90,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
+	newPlane.planeOffsetY = 0;
 	newPlane.pictureId = 0xFFFF;
 	newPlane.planePictureMirrored = false;
 	newPlane.planeBack = 0;
@@ -132,9 +133,14 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			} else {
 				it->planeOffsetX = 0;
 			}
-
-			if (it->planeRect.top < 0)
+			
+			if (it->planeRect.top < 0) {
+				it->planeOffsetY = -it->planeRect.top;
 				it->planeRect.top = 0;
+			} else {
+				it->planeOffsetY = 0;
+			}
+
 			// We get bad plane-bottom in sq6
 			if (it->planeRect.right > _screen->getWidth())
 				it->planeRect.right = _screen->getWidth();
@@ -447,7 +453,14 @@ void GfxFrameout::kernelFrameout() {
 					continue;
 
 				// Out of view vertically (sanity checks)
-				// TODO
+				int16 pictureCelStartY = itemEntry->picStartY + itemEntry->y;
+				int16 pictureCelEndY = pictureCelStartY + itemEntry->picture->getSci32celHeight(itemEntry->celNo);
+				int16 planeStartY = it->planeOffsetY;
+				int16 planeEndY = planeStartY + it->planeRect.height();
+				if (pictureCelEndY < planeStartY)
+					continue;
+				if (pictureCelStartY > planeEndY)
+					continue;
 
 				int16 pictureOffsetX = it->planeOffsetX;
 				int16 pictureX = itemEntry->x;
@@ -460,8 +473,18 @@ void GfxFrameout::kernelFrameout() {
 					}
 				}
 
-				// TODO: pictureOffsetY
-				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, it->planePictureMirrored);
+				int16 pictureOffsetY = it->planeOffsetY;
+				int16 pictureY = itemEntry->y;
+				if ((it->planeOffsetY) || (itemEntry->picStartY)) {
+					if (it->planeOffsetY <= itemEntry->picStartY) {
+						pictureY += itemEntry->picStartY - it->planeOffsetY;
+						pictureOffsetY = 0;
+					} else {
+						pictureOffsetY = it->planeOffsetY - itemEntry->picStartY;
+					}
+				}
+
+				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, pictureOffsetY, it->planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
@@ -482,6 +505,7 @@ void GfxFrameout::kernelFrameout() {
 
 				// Adjust according to current scroll position
 				itemEntry->x -= it->planeOffsetX;
+				itemEntry->y -= it->planeOffsetY;
 
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
@@ -504,7 +528,7 @@ void GfxFrameout::kernelFrameout() {
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
-					nsRect.translate(it->planeOffsetX, 0);
+					nsRect.translate(it->planeOffsetX, it->planeOffsetY);
 
 					if (view->isSci2Hires()) {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);

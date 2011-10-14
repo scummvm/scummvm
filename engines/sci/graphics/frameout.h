@@ -32,6 +32,7 @@ struct PlaneEntry {
 	uint16 priority;
 	uint16 lastPriority;
 	int16 planeOffsetX;
+	int16 planeOffsetY;
 	GuiResourceId pictureId;
 	Common::Rect planeRect;
 	Common::Rect planeClipRect;
