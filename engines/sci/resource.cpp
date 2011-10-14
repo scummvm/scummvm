@@ -2181,15 +2181,16 @@ void ResourceManager::detectSciVersion() {
 	}
 
 	if (_volVersion == kResVersionSci11Mac) {
-		// SCI32 doesn't have the resource.cfg file, so we can figure out
-		// which of the games are SCI1.1. Note that there are no Mac SCI2 games.
-		// Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
+		Resource *res = testResource(ResourceId(kResourceTypeScript, 64920));
+		// Distinguish between SCI1.1 and SCI32 games here. SCI32 games will
+		// always include script 64920 (the Array class). Note that there are
+		// no Mac SCI2 games. Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
 
 		// TODO: Decide between SCI2.1 and SCI3
-		if (Common::File::exists("resource.cfg"))
-			s_sciVersion = SCI_VERSION_1_1;
-		else
+		if (res)
 			s_sciVersion = SCI_VERSION_2_1;
+		else
+			s_sciVersion = SCI_VERSION_1_1;
 		return;
 	}
 
