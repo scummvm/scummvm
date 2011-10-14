@@ -133,11 +133,11 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
+	for (int curY = 0; curY < height; curY++) {
+		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
 			if (pixel)
-				_screen->putFontPixel(textY, x + textX, y, pixel);
+				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
 }

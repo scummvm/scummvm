@@ -1654,11 +1654,11 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		// script 64890 and TransView::init() in script 64884
 		uint16 width = argv[1].toUint16();
 		uint16 height = argv[2].toUint16();
-		uint16 skip = argv[3].toUint16();
+		//uint16 skip = argv[3].toUint16();
 		uint16 back = argv[4].toUint16();	// usually equals skip
-		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
-		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+		//uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
+		//uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
+		//uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
 
 		// TODO: skip, width2, height2, transparentFlag
 		// (used for transparent bitmaps)
