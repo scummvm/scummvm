@@ -89,7 +89,6 @@ struct SceneInfo2700 {
 	uint32 mouseCursorFilename;
 	int16 which1;
 	int16 which2;
-	uint32 field24;
 };
 
 class StaticData {

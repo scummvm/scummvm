@@ -156,7 +156,6 @@ void StaticData::load(const char *filename) {
 		sceneInfo2700->mouseCursorFilename = fd.readUint32LE();
 		sceneInfo2700->which1 = fd.readUint16LE();
 		sceneInfo2700->which2 = fd.readUint16LE();
-		sceneInfo2700->field24 = fd.readUint32LE();
 		_sceneInfo2700Items[id] = sceneInfo2700;
 	}
 

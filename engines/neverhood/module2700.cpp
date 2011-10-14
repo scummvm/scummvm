@@ -118,7 +118,7 @@ void Module2700::createScene(int sceneNum, int which) {
 	_vm->gameState().sceneNum = sceneNum;
 	switch (_vm->gameState().sceneNum) {
 	case 0:
-//TODO		_childObject = new Scene2701(_vm, this, which);
+		_childObject = new Scene2701(_vm, this, which);
 		break;
 	case 1:
 //TODO		_childObject = new Scene2702(_vm, this, which);
@@ -513,6 +513,110 @@ void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
+Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true) {
+	
+	NRect clipRect;
+	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
+	setGlobalVar(0x21E60190, 1);
+	
+	_surfaceFlag = true;
+	
+	setBackground(sceneInfo->bgFilename);
+	setPalette(sceneInfo->bgFilename);
+
+	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
+	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
+	
+	insertMouse433(0x08B08180);
+	
+	_sprite1 = insertStaticSprite(0x1E086325, 1200);
+	
+	clipRect.set(0, 0, 640, _sprite1->getDrawRect().x2());
+
+	if (sceneInfo->class437Filename) {
+//TODO		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+		_class521 = insertSprite<Class521>(this, 320, 240);
+//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+	} else {
+		_class437 = NULL;
+		_class521 = insertSprite<Class521>(this, 320, 240);
+	}
+
+//TODO	_class518 = insertSprite<Class518>(_class521);
+	
+	_which1 = sceneInfo->which1;
+	_which2 = sceneInfo->which2;
+
+	_dataResource.load(sceneInfo->dataResourceFilename);
+	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_class521->setPathPoints(_trackPoints);
+
+	if (which == _which2) {
+		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
+			sendMessage(_class521, 0x2007, 150);
+	} else {
+		NPoint testPoint = (*_trackPoints)[0];
+		sendMessage(_class521, 0x2002, 0);
+		if (testPoint.x < 0 || testPoint.x >= 640 || testPoint.y < 0 || testPoint.y >= 480)
+			sendMessage(_class521, 0x2008, 150);
+	}
+	
+	_class521->setClipRect(clipRect);
+	// TODO _class518->setClipRect(clipRect);
+
+	if (which == 1) {
+		SetMessageHandler(&Scene2701::handleMessage42F500);
+	} else {
+		sendMessage(_class521, 0x2009, 0);
+		SetMessageHandler(&Scene2701::handleMessage42F600);
+	}
+
+}
+
+uint32 Scene2701::handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		sendPointMessage(_class521, 0x2004, param.asPoint());
+		break;
+	case 0x2005:
+		if (_which1 >= 0)
+			SetMessageHandler(&Scene2701::handleMessage42F600);
+		break;
+	case 0x2006:
+		if (_which2 >= 0)
+			leaveScene(_which2);
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
+}
+
+uint32 Scene2701::handleMessage42F600(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		if (param.asPoint().x >= 385) {
+			leaveScene(0);
+		} else {
+			sendPointMessage(_class521, 0x2004, param.asPoint());
+			SetMessageHandler(&Scene2701::handleMessage42F500);
+		}
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
+}
+
 Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
 	const uint32 *staticSprites, const NRect *clipRect)
 	: Scene(vm, parentModule, true) {
@@ -621,6 +725,7 @@ uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
+static const int kSceneInfo2706Count = 3;
 static const struct { const char *pointListName; int which1, which2; } kSceneInfo2706[] = {
 	{"me06slotSlotPath2", 4, -1},
 	{"me06slotSlotPath3", -1, 6},
@@ -628,7 +733,7 @@ static const struct { const char *pointListName; int which1, which2; } kSceneInf
 };
 
 Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule, true), _newTrackIndex(-1), _count(3) {
+	: Scene(vm, parentModule, true), _newTrackIndex(-1) {
 	
 	_surfaceFlag = true;
 	SetMessageHandler(&Scene2706::handleMessage);
@@ -707,7 +812,7 @@ void Scene2706::findClosestTrack(NPoint pt) {
 	int minMatchTrackIndex = -1;
 	int minMatchDistance = 640;
 	// Find the track which contains a point closest to pt
-	for (int infoIndex = 0; infoIndex < _count; infoIndex++) {
+	for (int infoIndex = 0; infoIndex < kSceneInfo2706Count; infoIndex++) {
 		NPointArray *pointList = _dataResource.getPointArray(calcHash(kSceneInfo2706[infoIndex].pointListName));
 		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
 			NPoint testPt = (*pointList)[pointIndex];

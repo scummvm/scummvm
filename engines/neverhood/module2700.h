@@ -53,6 +53,24 @@ protected:
 	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
+class Scene2701 : public Scene {
+public:
+	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Class521 *_class521;
+	Sprite *_class437;
+	Sprite *_class517;
+	Sprite *_class520;
+	Sprite *_class519;
+	Sprite *_class518;
+	Sprite *_sprite1;
+	//NRect _rect;
+	int _which1, _which2;
+	NPointArray *_trackPoints;
+	uint32 handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 handleMessage42F600(int messageNum, const MessageParam &param, Entity *sender);
+};
+
 class Scene2704 : public Scene {
 public:
 	Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
@@ -78,7 +96,6 @@ protected:
 	Sprite *_class519;
 	int16 _newTrackDestX;
 	int _currTrackIndex, _newTrackIndex;
-	int _count;
 	NPointArray *_trackPoints;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void findClosestTrack(NPoint pt);
