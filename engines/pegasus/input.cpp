@@ -44,6 +44,7 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 
 	tInputBits currentBits = 0;
 	bool consoleRequested = false;
+	bool altDown = false;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -104,13 +105,13 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 				break;
 			}
 
-#if 0
-			// FIXME: This is disabled for now because it interferes with
-			// the ScummVM alt combinations. It's only used for one easter egg
-			// anyway, so I'll come up with something when I get around to that.
+			// WORKAROUND: The original had a specific key for this, but
+			// pressing alt would count as an event (and mess up someone
+			// trying to do alt+enter or something). Since it's only used
+			// as an easter egg, I'm just going to handle it as a separate
+			// bool value.
 			if (event.kbd.flags & Common::KBD_ALT)
-				currentBits |= (kRawButtonDown << kMod2ButtonShift);
-#endif
+				altDown = true;
 		}
 	}
 
@@ -133,6 +134,9 @@ void InputDevice::getInput(Input &input, const tInputBits filter) {
 
 	// Set the console to be requested or not
 	input.setConsoleRequested(consoleRequested);
+
+	// Same for alt
+	input.setAltDown(altDown);
 }
 
 //	Wait until the input device stops returning input allowed by filter...

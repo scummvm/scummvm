@@ -65,6 +65,7 @@
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
+#include "pegasus/neighborhood/wsc/wsc.h"
 
 namespace Pegasus {
 
@@ -1356,6 +1357,9 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 	case kTinyTSAID:
 		neighborhood = new TinyTSA(g_AIArea, this);
 		break;
+	case kWSCID:
+		neighborhood = new WSC(g_AIArea, this);
+		break;
 	default:
 		error("Unhandled neighborhood %d", neighborhoodID);
 	}
@@ -1855,6 +1859,20 @@ void PegasusEngine::pauseEngineIntern(bool pause) {
 
 uint PegasusEngine::getRandomBit() {
 	return _rnd->getRandomBit();
+}
+
+uint PegasusEngine::getRandomNumber(uint max) {
+	return _rnd->getRandomNumber(max);
+}
+
+void PegasusEngine::shuffleArray(int32 *arr, int32 count) {	
+	if (count > 1) {
+		for (int32 i = 1; i < count; ++i) {
+			int32 j = _rnd->getRandomNumber(i);
+			if (j != i)
+				SWAP(arr[i], arr[j]);
+		}
+	}
 }
 
 void PegasusEngine::playEndMessage() {

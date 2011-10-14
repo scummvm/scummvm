@@ -358,6 +358,7 @@ public:
 	
 	bool anyInputBitSet(const tInputBits bits) const { return (_inputState & bits) != 0; }
 
+	bool isAltDown() const { return _altDown; }
 	bool isConsoleRequested() const { return _consoleRequested; }
 
 	void clearInput() {
@@ -365,16 +366,19 @@ public:
 		_inputLocation.x = 0;
 		_inputLocation.y = 0;
 		_consoleRequested = false;
+		_altDown = false;
 	}
 
 protected:
 	void setInputBits(const tInputBits state) { _inputState = state; }
 	void setInputLocation(const Common::Point &where) { _inputLocation = where; }
 	void setConsoleRequested(bool consoleRequested) { _consoleRequested = consoleRequested; }
+	void setAltDown(bool altDown) { _altDown = altDown; }
 	
 	tInputBits _inputState;
 	Common::Point _inputLocation;
 	bool _consoleRequested;
+	bool _altDown;
 };
 
 class InputHandler {
@@ -476,7 +480,7 @@ public:
 	static bool isToggleInfoInput(const Input &input) { return input.fourButtonDown(); }
 
 	// Hmmmmm....
-	static bool isEasterEggModifierInput(const Input &input) { return input.mod2ButtonAnyDown(); }
+	static bool isEasterEggModifierInput(const Input &input) { return input.isAltDown(); }
 	
 	static bool isTogglePauseInput(const Input &input) { return input.mod3ButtonDown(); }
 };

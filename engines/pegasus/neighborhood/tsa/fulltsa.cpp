@@ -33,6 +33,7 @@
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
+#include "pegasus/neighborhood/wsc/wsc.h"
 
 namespace Pegasus {
 

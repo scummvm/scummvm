@@ -87,14 +87,4 @@ int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, 
 		return start2 + pegasusRound((current1 - start1) * (stop2 - start2), (stop1 - start1));
 }
 
-void shuffleArray(int32 *arr, int32 count, Common::RandomSource &random) {	
-	if (count > 1) {
-		for (int32 i = 1; i < count; ++i) {
-			int32 j = random.getRandomNumber(i);
-			if (j != i)
-				SWAP(arr[i], arr[j]);
-		}
-	}
-}
-
 } // End of namespace Pegasus

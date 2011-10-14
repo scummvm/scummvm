@@ -745,7 +745,6 @@ const tRoomID kMars39 = 42;
 const tRoomID kMars60 = 58;
 const tRoomID kMarsMaze004 = 60;
 const tRoomID kMarsMaze200 = 224;
-static const tRoomID kWSC01 = 0;
 
 } // End of namespace Pegasus
 

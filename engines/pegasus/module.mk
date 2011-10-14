@@ -59,7 +59,9 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoriamirror.o \
 	neighborhood/prehistoric/prehistoric.o \
 	neighborhood/tsa/fulltsa.o \
-	neighborhood/tsa/tinytsa.o
+	neighborhood/tsa/tinytsa.o \
+	neighborhood/wsc/moleculebin.o \
+	neighborhood/wsc/wsc.o
 
 
 # This module can be built as a plugin

@@ -126,8 +126,6 @@ private:
 
 int32 linearInterp(const int32 start1, const int32 stop1, const int32 current1, const int32 start2, const int32 stop2);
 
-void shuffleArray(int32 *arr, int32 count, Common::RandomSource &random);
-
 int32 pegasusRound(const int32 a, const int32 b);
 
 } // End of namespace Pegasus

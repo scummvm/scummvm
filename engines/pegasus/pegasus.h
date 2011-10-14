@@ -107,6 +107,8 @@ public:
 	void setGameMode(const tGameMode);
 	tGameMode getGameMode() const { return _gameMode; }
 	uint getRandomBit();
+	uint getRandomNumber(uint max);
+	void shuffleArray(int32 *arr, int32 count);
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
