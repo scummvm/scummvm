@@ -289,7 +289,6 @@ struct SceneInfo2700Item {
 	uint32 mouseCursorFilename;
 	int16 which1;
 	int16 which2;
-	uint32 field24;
 
 	void load(uint32 offset) {
 		byte *item = getData(offset);
@@ -305,7 +304,6 @@ struct SceneInfo2700Item {
 		mouseCursorFilename = calcHash(getStringP(READ_LE_UINT32(item + 28)));
 		which1 = READ_LE_UINT16(item + 32);
 		which2 = READ_LE_UINT16(item + 34);
-		field24 = READ_LE_UINT16(item + 36);
 	}
 
 	void save(FILE *fd) {
@@ -320,7 +318,6 @@ struct SceneInfo2700Item {
 		writeUint32LE(fd, mouseCursorFilename);
 		writeUint16LE(fd, which1);
 		writeUint16LE(fd, which2);
-		writeUint32LE(fd, field24);
 	}
 
 };

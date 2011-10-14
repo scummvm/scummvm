@@ -537,5 +537,7 @@ static const uint32 sceneInfo2700Offsets[] = {
 	//
 	0x004B1950,
 	//
+	0x004B2240,
+	//
 	0
 };
