@@ -394,7 +394,7 @@ INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric) {
 
 	memcpy(ic, ric, sizeof(INT_CONTEXT));
 	ic->pProc = g_scheduler->getCurrentProcess();
-	ic->resumeState = RES_NOT;
+	ic->resumeState = TinselV2 ? RES_1 : RES_NOT;
 
 	LockCode(ic);
 
