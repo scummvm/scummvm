@@ -127,6 +127,7 @@ void parseBitmapResource(byte *sprite, bool *rle, NDimensions *dimensions, NPoin
 void unpackSpriteRle(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
 void unpackSpriteRleRepl(byte *source, int width, int height, byte *dest, int destPitch, byte oldColor, byte newColor, bool flipX, bool flipY);
 void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY);
+int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2);
 
 } // End of namespace Neverhood
 

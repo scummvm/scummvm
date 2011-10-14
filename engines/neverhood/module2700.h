@@ -60,10 +60,29 @@ public:
 protected:
 	Class521 *_class521;
 	int _which1, _which2;
-	NPointArray *_pointList;
+	NPointArray *_trackPoints;
 	NRectArray *_rectList;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2706 : public Scene {
+public:
+	Scene2706(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Class521 *_class521;
+	Sprite *_class437;
+	Sprite *_class517;
+	Sprite *_class518;
+	Sprite *_class520;
+	Sprite *_class519;
+	int16 _newTrackDestX;
+	int _currTrackIndex, _newTrackIndex;
+	int _count;
+	NPointArray *_trackPoints;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void findClosestTrack(NPoint pt);
+	void changeTrack();
 };
 
 } // End of namespace Neverhood

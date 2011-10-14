@@ -973,12 +973,6 @@ void Class521::sub45E0A0() {
 	// TODO
 }
 
-int Class521::calcDistance(int16 x1, int16 y1, int16 x2, int16 y2) {
-	int16 deltaX = ABS(x1 - x2);
-	int16 deltaY = ABS(y1 - y2);
-	return sqrt(deltaX * deltaX + deltaY * deltaY);
-}
-
 Class546::Class546(NeverhoodEngine *vm, Scene *parentScene)
 	: AnimatedSprite(vm, 0x08C80144, 900, 320, 240), _soundResource(vm),
 	_parentScene(parentScene) {

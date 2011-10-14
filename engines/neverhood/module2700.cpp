@@ -141,7 +141,7 @@ void Module2700::createScene(int sceneNum, int which) {
 		break;
 	case 5:
 		if (which >= 4) {
-//TODO		_childObject = new Scene2706(_vm, this, which);
+			_childObject = new Scene2706(_vm, this, which);
 		} else if (which == 2 || which == 3) {
 			createScene2704(which, 0x004B1828, 150);
 		} else {
@@ -555,8 +555,8 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	_which2 = sceneInfo->which2;
 
 	_dataResource.load(sceneInfo->dataResourceFilename);
-	_pointList = _dataResource.getPointArray(sceneInfo->pointListName);
-	_class521->setPathPoints(_pointList);
+	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_class521->setPathPoints(_trackPoints);
 	
 	if (sceneInfo->rectListName) {
 		_rectList = _dataResource.getRectArray(sceneInfo->rectListName);
@@ -564,14 +564,14 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	}
 
 	if (which == _which2) {
-		NPoint testPoint = (*_pointList)[_pointList->size() - 1];
-		sendMessage(_class521, 0x2002, _pointList->size() - 1);
+		NPoint testPoint = (*_trackPoints)[_trackPoints->size() - 1];
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
 			sendMessage(_class521, 0x2009, 0);
 		else
 			sendMessage(_class521, 0x2007, 0);
 	} else {
-		NPoint testPoint = (*_pointList)[0];
+		NPoint testPoint = (*_trackPoints)[0];
 		sendMessage(_class521, 0x2002, 0);
 		if (testPoint.x > 0 && testPoint.x < 640 && testPoint.y > 0 && testPoint.y < 480)
 			sendMessage(_class521, 0x2009, 0);
@@ -581,6 +581,7 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	
 	if (clipRect) {
 		_class521->getClipRect() = *clipRect;
+#if 0		
 		if (_class517)
 			_class517->getClipRect() = *clipRect; 
 		if (_class520)
@@ -588,7 +589,8 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 		if (_class519)
 			_class519->getClipRect() = *clipRect; 
 		if (_class518)
-			_class518->getClipRect() = *clipRect; 
+			_class518->getClipRect() = *clipRect;
+#endif			 
 	}
 
 }
@@ -617,6 +619,128 @@ uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return 0;
+}
+
+static const struct { const char *pointListName; int which1, which2; } kSceneInfo2706[] = {
+	{"me06slotSlotPath2", 4, -1},
+	{"me06slotSlotPath3", -1, 6},
+	{"me06slotSlotPath4", -1, 5}
+};
+
+Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _newTrackIndex(-1), _count(3) {
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2706::handleMessage);
+	
+	setBackground(0x18808B88);
+	setPalette(0x18808B88);
+	
+	_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+	_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+	
+	insertMouse433(0x08B8C180);
+
+//TODO	_class437 = insertSprite<Class437>(0x18808B88);
+	_class521 = insertSprite<Class521>(this, 320, 240);
+//TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+//TODO		_class518 = insertSprite<Class518>(_class521);
+//TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+//TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+
+	_dataResource.load(0x06000162);
+	
+	if (which == 5)
+		_currTrackIndex = 2;
+	else if (which == 6)		
+		_currTrackIndex = 1;
+	else
+		_currTrackIndex = 0;
+
+	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
+	_class521->setPathPoints(_trackPoints);
+
+	if (which == kSceneInfo2706[_currTrackIndex].which2) {
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		if (which == 5)
+			sendMessage(_class521, 0x2007, 50);
+		else			
+			sendMessage(_class521, 0x2007, 150);
+	} else {
+		sendMessage(_class521, 0x2002, 0);
+		if (which == 5)
+			sendMessage(_class521, 0x2008, 50);
+		else			
+			sendMessage(_class521, 0x2008, 150);
+	}
+	
+}
+
+uint32 Scene2706::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		findClosestTrack(param.asPoint());
+		break;
+	case 0x2005:
+		if (_newTrackIndex >= 0) {
+			if (kSceneInfo2706[_currTrackIndex].which1 < 0)
+				changeTrack();
+		} else if (kSceneInfo2706[_currTrackIndex].which1 >= 0)
+			leaveScene(kSceneInfo2706[_currTrackIndex].which1);
+		break;
+	case 0x2006:
+		if (_newTrackIndex >= 0) {
+			if (kSceneInfo2706[_currTrackIndex].which2 < 0)
+				changeTrack();
+		} else if (kSceneInfo2706[_currTrackIndex].which2 >= 0)
+			leaveScene(kSceneInfo2706[_currTrackIndex].which2);
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
+}
+
+void Scene2706::findClosestTrack(NPoint pt) {
+	int minMatchTrackIndex = -1;
+	int minMatchDistance = 640;
+	// Find the track which contains a point closest to pt
+	for (int infoIndex = 0; infoIndex < _count; infoIndex++) {
+		NPointArray *pointList = _dataResource.getPointArray(calcHash(kSceneInfo2706[infoIndex].pointListName));
+		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
+			NPoint testPt = (*pointList)[pointIndex];
+			int distance = calcDistance(testPt.x, testPt.y, pt.x, pt.y);
+			if (distance < minMatchDistance) {
+				minMatchTrackIndex = infoIndex;
+				minMatchDistance = distance;
+			}
+		}
+	}
+	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
+		_newTrackIndex = minMatchTrackIndex;
+		_newTrackDestX = pt.x;
+		if (_currTrackIndex == 0)
+			sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+		else
+			sendMessage(_class521, 0x2003, 0);
+	} else {
+		_newTrackIndex = -1;
+		sendMessage(_class521, 0x2004, pt.x);
+	}
+}
+
+void Scene2706::changeTrack() {
+	_currTrackIndex = _newTrackIndex;
+	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
+	_class521->setPathPoints(_trackPoints);
+	if (_currTrackIndex == 0)
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+	else
+		sendMessage(_class521, 0x2002, 0);
+	sendMessage(_class521, 0x2004, _newTrackDestX);
+	_newTrackIndex = -1;
 }
 
 } // End of namespace Neverhood

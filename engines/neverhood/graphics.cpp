@@ -312,4 +312,10 @@ void unpackSpriteNormal(byte *source, int width, int height, byte *dest, int des
 
 }
 
+int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2) {
+	int16 deltaX = ABS(x1 - x2);
+	int16 deltaY = ABS(y1 - y2);
+	return sqrt((double)(deltaX * deltaX + deltaY * deltaY));
+}
+
 } // End of namespace Neverhood
