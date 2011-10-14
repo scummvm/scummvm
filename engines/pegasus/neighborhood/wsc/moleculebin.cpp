@@ -106,7 +106,7 @@ void MoleculeBin::draw(const Common::Rect &) {
 		if (_moleculeFlags.getFlag(_binLayout[i]))
 			r1.translate(kMoleculeWidth, 0);
 
-		r1.moveTo((_binLayout[i] & 1) * (kMoleculeWidth + 2) + _bounds.left + 2,
+		r2.moveTo((_binLayout[i] & 1) * (kMoleculeWidth + 2) + _bounds.left + 2,
 				(_binLayout[i] >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
 
 		_binImages.copyToCurrentPort(r1, r2);
