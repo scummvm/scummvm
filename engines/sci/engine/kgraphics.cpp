@@ -49,6 +49,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #endif
@@ -1637,6 +1638,11 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// TODO: Eventually, all of the kBitmap operations should be put
+// in a separate class
+
+#define BITMAP_HEADER_SIZE 46
+
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 	// Used for bitmap operations in SCI2.1 and SCI3.
 	// This is the SCI2.1 version, the functionality seems to have changed in SCI3.
@@ -1648,17 +1654,23 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		// script 64890 and TransView::init() in script 64884
 		uint16 width = argv[1].toUint16();
 		uint16 height = argv[2].toUint16();
-		//uint16 skip = argv[3].toUint16();
-		uint16 back = argv[4].toUint16();
-		//uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
-		//uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		//uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+		uint16 skip = argv[3].toUint16();
+		uint16 back = argv[4].toUint16();	// usually equals skip
+		uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
+		uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
+		uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
 
 		// TODO: skip, width2, height2, transparentFlag
-		int entrySize = width * height;
-		reg_t memoryId = s->_segMan->allocateHunkEntry("TextBitmap()", entrySize);
+		// (used for transparent bitmaps)
+		int entrySize = width * height + BITMAP_HEADER_SIZE;
+		reg_t memoryId = s->_segMan->allocateHunkEntry("Bitmap()", entrySize);
 		byte *memoryPtr = s->_segMan->getHunkPointer(memoryId);
-		memset(memoryPtr, back, entrySize);
+		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);	// zero out the bitmap header
+		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
+		// Save totalWidth, totalHeight
+		// TODO: Save the whole bitmap header, like SSCI does
+		WRITE_LE_UINT16((void *)memoryPtr, width);
+		WRITE_LE_UINT16((void *)(memoryPtr + 2), height);
 		return memoryId;
 		}
 		break;
@@ -1682,40 +1694,77 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		uint16 x = argv[5].toUint16();
 		uint16 y = argv[6].toUint16();
 
-		byte *bitmap = s->_segMan->getHunkPointer(hunkId);
+		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
+		// Get totalWidth, totalHeight
+		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 		GfxView *view = g_sci->_gfxCache->getView(viewNum);
-		uint16 width = view->getWidth(loop, cel);
-		uint16 height = view->getHeight(loop, cel);
-		const byte *viewBitmap = view->getBitmap(loop, cel);
-		uint32 curPixel = 0;
+		uint16 tileWidth = view->getWidth(loop, cel);
+		uint16 tileHeight = view->getHeight(loop, cel);
+		const byte *tileBitmap = view->getBitmap(loop, cel);
+		uint16 width = MIN<uint16>(totalWidth - x, tileWidth);
+		uint16 height = MIN<uint16>(totalHeight - y, tileHeight);
 
-		for (uint16 curY = y; curY < y + height; curY++) {
-			for (uint16 curX = x; curX < x + width; curX++) {
-				bitmap[curY + curX] = viewBitmap[curPixel++];
+		for (uint16 curY = 0; curY < height; curY++) {
+			for (uint16 curX = 0; curX < width; curX++) {
+				bitmap[(curY + y) * totalWidth + (curX + x)] = tileBitmap[curY * tileWidth + curX];
 			}
 		}
 
 		}
 		break;
-	case 4:	// process text
+	case 4:	// add text to bitmap
 		{
 		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
 		// script 64894
-		reg_t bitmapPtr = argv[1];	// obtained from kBitmap(0)
+		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
 		Common::String text = s->_segMan->getString(argv[2]);
-		// unk3
-		// unk4
-		// unk5
-		// unk6
-		// skip?
-		// back?
-		uint16 font = argv[9].toUint16();
-		uint16 mode = argv[10].toUint16();
-		// unk
+		uint16 textX = argv[3].toUint16();
+		uint16 textY = argv[4].toUint16();
+		//reg_t unk5 = argv[5];
+		//reg_t unk6 = argv[6];
+		//reg_t unk7 = argv[7];	// skip?
+		//reg_t unk8 = argv[8];	// back?
+		//reg_t unk9 = argv[9];
+		uint16 fontId = argv[10].toUint16();
+		//uint16 mode = argv[11].toUint16();
 		uint16 dimmed = argv[12].toUint16();
-		warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
-				PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
+		//warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
+		//		PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
+		uint16 foreColor = 255;	// TODO
+
+		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
+		// Get totalWidth, totalHeight
+		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+
+		GfxFont *font = g_sci->_gfxCache->getFont(fontId);
+
+		int16 charCount = 0;
+		uint16 curX = textX, curY = textY;
+		const char *txt = text.c_str();
+
+		while (*txt) {
+			charCount = g_sci->_gfxText32->GetLongest(txt, totalWidth, font);
+			if (charCount == 0)
+				break;
+
+			for (int i = 0; i < charCount; i++) {
+				unsigned char curChar = txt[i];
+				font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, totalWidth, totalHeight);
+				curX += font->getCharWidth(curChar);
+			}
+
+			curX = textX;
+			curY += font->getHeight();
+			txt += charCount;
+			while (*txt == ' ')
+				txt++; // skip over breaking spaces
+		}
+
 		}
 		break;
 	case 5:	// fill with color
@@ -1725,15 +1774,21 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
 		uint16 x = argv[2].toUint16();
 		uint16 y = argv[3].toUint16();
-		uint16 width = argv[4].toUint16();	// width - 1
-		uint16 height = argv[5].toUint16();	// height - 1
+		uint16 fillWidth = argv[4].toUint16();	// width - 1
+		uint16 fillHeight = argv[5].toUint16();	// height - 1
 		uint16 back = argv[6].toUint16();
 
-		byte *bitmap = s->_segMan->getHunkPointer(hunkId);
+		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
+		// Get totalWidth, totalHeight
+		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
+		uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
+		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
-		for (uint16 curY = y; curY < y + height; curY++) {
-			for (uint16 curX = x; curX < x + width; curX++) {
-				bitmap[curY + curX] = back;
+		for (uint16 curY = 0; curY < height; curY++) {
+			for (uint16 curX = 0; curX < width; curX++) {
+				bitmap[(curY + y) * totalWidth + (curX + x)] = back;
 			}
 		}
 

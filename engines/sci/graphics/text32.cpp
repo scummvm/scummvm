@@ -104,12 +104,18 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
+#define BITMAP_HEADER_SIZE 46
+
 void GfxText32::drawTextBitmap(reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
 	byte *surface = _segMan->getHunkPointer(hunkId);
 
 	if (!surface)
 		error("Attempt to draw an invalid text bitmap");
+
+	// Skip the bitmap header in SCI21 - SCI3
+	if (getSciVersion() >= SCI_VERSION_2_1)
+		surface += BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
 	Common::Rect nsRect = getNSRect(textObject);
