@@ -38,6 +38,8 @@
 
 namespace Sci {
 
+#define BITMAP_HEADER_SIZE 46
+
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 	: _segMan(segMan), _cache(fonts), _screen(screen) {
 }
@@ -69,11 +71,12 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	if (maxHeight > 0)
 		height = maxHeight;
 
-	int entrySize = width * height;
+	int entrySize = width * height + BITMAP_HEADER_SIZE;
 	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
 	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
 	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
 	memset(memoryPtr, 0, entrySize);
+	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
@@ -86,7 +89,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 
 		for (int i = 0; i < charCount; i++) {
 			unsigned char curChar = txt[i];
-			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, memoryPtr, width, height);
+			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, width, height);
 			curX += font->getCharWidth(curChar);
 		}
 
@@ -104,18 +107,14 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-#define BITMAP_HEADER_SIZE 46
-
 void GfxText32::drawTextBitmap(reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
-	byte *surface = _segMan->getHunkPointer(hunkId);
+	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
 
-	if (!surface)
+	if (!memoryPtr)
 		error("Attempt to draw an invalid text bitmap");
 
-	// Skip the bitmap header in SCI21 - SCI3
-	if (getSciVersion() >= SCI_VERSION_2_1)
-		surface += BITMAP_HEADER_SIZE;
+	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
 	Common::Rect nsRect = getNSRect(textObject);
