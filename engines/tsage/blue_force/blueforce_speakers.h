@@ -341,7 +341,7 @@ class SpeakerKate: public VisualSpeaker {
 public:
 	SpeakerKate();
 	
-	virtual Common::String getClassName() { return "SpeakerLyle"; }
+	virtual Common::String getClassName() { return "SpeakerKate"; }
 	virtual void setText(const Common::String &msg);
 };
 
