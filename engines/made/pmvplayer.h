@@ -30,7 +30,7 @@ class File;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Audio {
