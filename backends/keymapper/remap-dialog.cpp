@@ -84,7 +84,7 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->size();
 	}
 
-	debug(3, "keymaps: %d", keymapCount);
+	debug(3, "RemapDialog::open keymaps: %d", keymapCount);
 
 	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
 
@@ -192,7 +192,7 @@ void RemapDialog::reflowLayout() {
 }
 
 void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	debug(0, "Command!");
+	debug(3, "RemapDialog::handleCommand");
 
 	if (cmd >= kRemapCmd && cmd < kRemapCmd + _keymapWidgets.size()) {
 		startRemapping(cmd - kRemapCmd);
@@ -240,7 +240,7 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
 
-		debug(0, "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
+		debug(4, "RemapDialog::handleKeyUp Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
 
 		if (hwkey) {
 			_activeRemapAction->mapKey(hwkey);
@@ -270,6 +270,8 @@ void RemapDialog::loadKeymap() {
 	_currentActions.clear();
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
+	debug(3, "RemapDialog::loadKeymap active keymaps: %u", activeKeymaps.size());
+
 	if (!activeKeymaps.empty() && _kmPopUp->getSelected() == 0) {
 		// load active keymaps
 
@@ -278,7 +280,7 @@ void RemapDialog::loadKeymap() {
 		// add most active keymap's keys
 		Keymapper::MapRecord top = activeKeymaps.top();
 		List<Action*>::iterator actIt;
-
+		debug(3, "RemapDialog::loadKeymap top keymap: %s", top.keymap->getName().c_str());
 		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
 			Action *act = *actIt;
 			ActionInfo info = {act, false, act->description};
@@ -293,6 +295,7 @@ void RemapDialog::loadKeymap() {
 		if (top.inherit) {
 			for (int i = activeKeymaps.size() - 2; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
+				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
 				List<const HardwareKey*>::iterator keyIt = freeKeys.begin();
 
 				while (keyIt != freeKeys.end()) {
