@@ -89,7 +89,7 @@ private:
 	Script *_scriptEngine;
 	Database *_db;
 
-	Common::Array<Movie *> _movies;
+	Common::Array<ScriptedMovie *> _movies;
 
 	ViewType _viewType;
 

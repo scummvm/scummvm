@@ -27,24 +27,7 @@
 namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
-	_vm(vm),
-	_condition(0),
-	_conditionBit(0),
-	_startFrame(0),
-	_startFrameVar(0),
-	_endFrame(0),
-	_endFrameVar(0),
-	_posU(0),
-	_posUVar(0),
-	_posV(0),
-	_posVVar(0),
-	_nextFrameReadVar(0),
-	_nextFrameWriteVar(0),
-	_playingVar(0),
-	_enabled(false),
-	_disableWhenComplete(false),
-	_scriptDriven(false),
-	_isLastFrame(false) {
+	_vm(vm) {
 
 	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
 
@@ -103,7 +86,7 @@ void Movie::initTexture() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-void Movie::update() {
+void ScriptedMovie::update() {
 	if (_startFrameVar) {
 		_startFrame = _vm->_vars->get(_startFrameVar);
 	}
@@ -201,7 +184,7 @@ void Movie::update() {
 	}
 }
 
-void Movie::draw() {
+void ScriptedMovie::draw() {
 	if (!_enabled)
 		return;
 
@@ -234,6 +217,31 @@ void Movie::drawNextFrameToTexture() {
 
 Movie::~Movie() {
 	glDeleteTextures(1, &_texture);
+}
+
+ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
+	Movie(vm, archive, id),
+	_condition(0),
+	_conditionBit(0),
+	_startFrame(0),
+	_startFrameVar(0),
+	_endFrame(0),
+	_endFrameVar(0),
+	_posU(0),
+	_posUVar(0),
+	_posV(0),
+	_posVVar(0),
+	_nextFrameReadVar(0),
+	_nextFrameWriteVar(0),
+	_playingVar(0),
+	_enabled(false),
+	_disableWhenComplete(false),
+	_scriptDriven(false),
+	_isLastFrame(false) {
+
+}
+
+ScriptedMovie::~ScriptedMovie() {
 }
 
 } /* namespace Myst3 */

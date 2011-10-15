@@ -36,6 +36,28 @@ class Movie {
 public:
 	Movie(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~Movie();
+
+protected:
+	static const int _movieTextureSize = 1024;
+
+	Myst3Engine *_vm;
+
+	Math::Vector3d _pTopLeft;
+	Math::Vector3d _pBottomLeft;
+	Math::Vector3d _pBottomRight;
+	Math::Vector3d _pTopRight;
+	Video::BinkDecoder _bink;
+	GLuint _texture;
+
+	void loadPosition(const VideoData &videoData);
+	void initTexture();
+	void drawNextFrameToTexture();
+};
+
+class ScriptedMovie : public Movie {
+public:
+	ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id);
+	virtual ~ScriptedMovie();
 	void draw();
 	void update();
 
@@ -55,18 +77,8 @@ public:
 	void setDisableWhenComplete(bool upd) { _disableWhenComplete = upd; }
 	void setLoop(bool loop) { _loop = loop; }
 	void setScriptDriven(bool b) { _scriptDriven = b; }
+
 private:
-	static const int _movieTextureSize = 1024;
-
-	Myst3Engine *_vm;
-
-	Math::Vector3d _pTopLeft;
-	Math::Vector3d _pBottomLeft;
-	Math::Vector3d _pBottomRight;
-	Math::Vector3d _pTopRight;
-	Video::BinkDecoder _bink;
-	GLuint _texture;
-
 	bool _enabled;
 	bool _loop;
 	bool _disableWhenComplete;
@@ -89,10 +101,6 @@ private:
 	uint16 _nextFrameWriteVar;
 
 	uint16 _playingVar;
-
-	void loadPosition(const VideoData &videoData);
-	void initTexture();
-	void drawNextFrameToTexture();
 };
 
 } /* namespace Myst3 */
