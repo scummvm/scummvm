@@ -601,7 +601,7 @@ void FollowerObject::reposition() {
 	assert(_object);
 	setStrip(_object->_strip);
 	setPosition(_object->_position, _object->_yDiff);
-	reposition();
+	NamedObject::reposition();
 }
 
 void FollowerObject::setup(SceneObject *object, int visage, int frameNum, int yDiff) {
