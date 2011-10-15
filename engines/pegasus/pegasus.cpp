@@ -62,6 +62,7 @@
 #include "pegasus/items/inventory/keycard.h"
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/neighborhood/mars/mars.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
@@ -1347,6 +1348,9 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 	switch (neighborhoodID) {
 	case kCaldoriaID:
 		neighborhood = new Caldoria(g_AIArea, this);
+		break;
+	case kMarsID:
+		neighborhood = new Mars(g_AIArea, this);
 		break;
 	case kPrehistoricID:
 		neighborhood = new Prehistoric(g_AIArea, this);
