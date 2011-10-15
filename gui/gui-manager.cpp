@@ -277,7 +277,7 @@ void GuiManager::runLoop() {
 	// map is already existing
 	initKeymap();
 
-	eventMan->getKeymapper()->pushKeymap("gui");
+	eventMan->getKeymapper()->pushKeymap("gui", true);
 #endif
 
 	bool tooltipCheck = false;
