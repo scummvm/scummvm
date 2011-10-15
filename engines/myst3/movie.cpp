@@ -88,6 +88,65 @@ void Movie::initTexture() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
+void Movie::draw() {
+	const float w = _bink.getWidth() / (float)(_movieTextureSize);
+	const float h = _bink.getHeight() / (float)(_movieTextureSize);
+
+	glBindTexture(GL_TEXTURE_2D, _texture);
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(0, 0);
+		glVertex3f(-_pTopLeft.x(), _pTopLeft.y(), _pTopLeft.z());
+
+		glTexCoord2f(0, h);
+		glVertex3f(-_pBottomLeft.x(), _pBottomLeft.y(), _pBottomLeft.z());
+
+		glTexCoord2f(w, 0);
+		glVertex3f(-_pTopRight.x(), _pTopRight.y(), _pTopRight.z());
+
+		glTexCoord2f(w, h);
+		glVertex3f(-_pBottomRight.x(), _pBottomRight.y(), _pBottomRight.z());
+	glEnd();
+}
+
+void Movie::drawNextFrameToTexture() {
+	const Graphics::Surface *frame = _bink.decodeNextFrame();
+
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
+}
+
+Movie::~Movie() {
+	glDeleteTextures(1, &_texture);
+}
+
+ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
+	Movie(vm, archive, id),
+	_condition(0),
+	_conditionBit(0),
+	_startFrameVar(0),
+	_endFrameVar(0),
+	_posU(0),
+	_posUVar(0),
+	_posV(0),
+	_posVVar(0),
+	_nextFrameReadVar(0),
+	_nextFrameWriteVar(0),
+	_playingVar(0),
+	_enabled(false),
+	_disableWhenComplete(false),
+	_scriptDriven(false),
+	_isLastFrame(false) {
+
+}
+
+void ScriptedMovie::draw() {
+	if (!_enabled)
+		return;
+
+	Movie::draw();
+}
+
 void ScriptedMovie::update() {
 	if (_startFrameVar) {
 		_startFrame = _vm->_vars->get(_startFrameVar);
@@ -184,65 +243,6 @@ void ScriptedMovie::update() {
 
 		}
 	}
-}
-
-void Movie::draw() {
-	const float w = _bink.getWidth() / (float)(_movieTextureSize);
-	const float h = _bink.getHeight() / (float)(_movieTextureSize);
-
-	glBindTexture(GL_TEXTURE_2D, _texture);
-
-	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(0, 0);
-		glVertex3f(-_pTopLeft.x(), _pTopLeft.y(), _pTopLeft.z());
-
-		glTexCoord2f(0, h);
-		glVertex3f(-_pBottomLeft.x(), _pBottomLeft.y(), _pBottomLeft.z());
-
-		glTexCoord2f(w, 0);
-		glVertex3f(-_pTopRight.x(), _pTopRight.y(), _pTopRight.z());
-
-		glTexCoord2f(w, h);
-		glVertex3f(-_pBottomRight.x(), _pBottomRight.y(), _pBottomRight.z());
-	glEnd();
-}
-
-void ScriptedMovie::draw() {
-	if (!_enabled)
-		return;
-
-	Movie::draw();
-}
-
-void Movie::drawNextFrameToTexture() {
-	const Graphics::Surface *frame = _bink.decodeNextFrame();
-
-	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->w, frame->h, GL_RGBA, GL_UNSIGNED_BYTE, frame->pixels);
-}
-
-Movie::~Movie() {
-	glDeleteTextures(1, &_texture);
-}
-
-ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
-	Movie(vm, archive, id),
-	_condition(0),
-	_conditionBit(0),
-	_startFrameVar(0),
-	_endFrameVar(0),
-	_posU(0),
-	_posUVar(0),
-	_posV(0),
-	_posVVar(0),
-	_nextFrameReadVar(0),
-	_nextFrameWriteVar(0),
-	_playingVar(0),
-	_enabled(false),
-	_disableWhenComplete(false),
-	_scriptDriven(false),
-	_isLastFrame(false) {
-
 }
 
 ScriptedMovie::~ScriptedMovie() {
