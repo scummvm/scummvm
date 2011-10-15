@@ -422,7 +422,7 @@ void Scene810::Action2::signal() {
 		}
 		break;
 	case 2:
-		scene->setAction(&scene->_sequenceManager1, this, 8117, &scene->_lyle, &scene->_chair, NULL);
+		setAction(&scene->_sequenceManager1, this, 8117, &scene->_lyle, &scene->_chair, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._walkRegions.proc2(4);
@@ -1283,11 +1283,13 @@ void Scene810::dispatch() {
 				SceneItem::display2(810, 35);
 				_sceneMode = 8100;
 				setAction(&_sequenceManager1, this, 8100, &BF_GLOBALS._player, NULL);
-			} else if (BF_GLOBALS.getFlag(fWithLyle)) {
-				BF_GLOBALS._walkRegions.proc2(4);
-				BF_GLOBALS._walkRegions.proc2(13);
+			} else {
+				if (BF_GLOBALS.getFlag(fWithLyle)) {
+					BF_GLOBALS._walkRegions.proc2(4);
+					BF_GLOBALS._walkRegions.proc2(13);
 
-				ADD_MOVER_NULL(_lyle, 320, 155);
+					ADD_MOVER_NULL(_lyle, 320, 155);
+				}
 
 				_sceneMode = 8101;
 				setAction(&_sequenceManager1, this, 8101, &BF_GLOBALS._player, NULL);
