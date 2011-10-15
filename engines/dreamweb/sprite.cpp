@@ -243,7 +243,7 @@ void DreamGenContext::aboutturn(Sprite *sprite) {
 		data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
 		sprite->b29 = 0;
 	} else {
-		data.byte(kTurndirection) = -1;
+		data.byte(kTurndirection) = (uint8)-1;
 		data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
 		sprite->b29 = 0;
 	}
@@ -295,17 +295,17 @@ void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::doorway(Sprite *sprite, SetObject *objData) {
-	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck1) = (uint8)-24;
 	data.byte(kDoorcheck2) = 10;
-	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck3) = (uint8)-30;
 	data.byte(kDoorcheck4) = 10;
 	dodoor(sprite, objData);
 }
 
 void DreamGenContext::widedoor(Sprite *sprite, SetObject *objData) {
-	data.byte(kDoorcheck1) = -24;
+	data.byte(kDoorcheck1) = (uint8)-24;
 	data.byte(kDoorcheck2) = 24;
-	data.byte(kDoorcheck3) = -30;
+	data.byte(kDoorcheck3) = (uint8)-30;
 	data.byte(kDoorcheck4) = 24;
 	dodoor(sprite, objData);
 }
@@ -782,7 +782,7 @@ void DreamGenContext::madman() {
 			ax = pop();
 			bx = pop();
 			es = pop();
-			data.byte(kCombatcount) = -1;
+			data.byte(kCombatcount) = (uint8)-1;
 			data.byte(kSpeechcount) = 0;
 		}
 		++ax;
@@ -811,7 +811,7 @@ void DreamGenContext::madman() {
 				else {
 					if (data.byte(kLastweapon) == 8) {
 						data.byte(kCombatcount) = isCD() ? 72 : 70;
-						data.byte(kLastweapon) = -1;
+						data.byte(kLastweapon) = (uint8)-1;
 						data.byte(kMadmanflag) = 1;
 						ax = 67;
 					}

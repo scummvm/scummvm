@@ -127,7 +127,7 @@ void DreamGenContext::dreamweb() {
 			data.byte(kLastflag) = 32;
 			startup1();
 			data.byte(kVolumeto) = 0;
-			data.byte(kVolumedirection) = -1;
+			data.byte(kVolumedirection) = (uint8)-1;
 			data.byte(kCommandtype) = 255;
 
 		}
@@ -769,7 +769,7 @@ void DreamGenContext::startloading(const Room *room) {
 	data.byte(kCounttoopen) = room->countToOpen;
 	data.byte(kLiftpath) = room->liftPath;
 	data.byte(kDoorpath) = room->doorPath;
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (uint8)-1;
 	al = room->b27;
 	push(ax);
 	al = room->b31;
@@ -867,7 +867,7 @@ void DreamGenContext::startloading(const Room *room) {
 	autoappear();
 	al = data.byte(kNewlocation);
 	getroomdata();
-	data.byte(kLastweapon) = -1;
+	data.byte(kLastweapon) = (uint8)-1;
 	data.byte(kMandead) = 0;
 	data.word(kLookcounter) = 160;
 	data.byte(kNewlocation) = 255;
@@ -973,7 +973,7 @@ void DreamGenContext::commandonly(uint8 command) {
 }
 
 void DreamGenContext::checkifperson() {
-	flags._z = not checkifperson(al, ah);
+	flags._z = !checkifperson(al, ah);
 }
 
 bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
@@ -1007,7 +1007,7 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 }
 
 void DreamGenContext::checkiffree() {
-	flags._z = not checkiffree(al, ah);
+	flags._z = !checkiffree(al, ah);
 }
 
 bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
@@ -1031,7 +1031,7 @@ bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
 }
 
 void DreamGenContext::checkifex() {
-	flags._z = not checkifex(al, ah);
+	flags._z = !checkifex(al, ah);
 }
 
 bool DreamGenContext::checkifex(uint8 x, uint8 y) {
@@ -1807,7 +1807,8 @@ void DreamGenContext::hangonp(uint16 count) {
 	showpointer();
 	vsync();
 	dumppointer();
-	for (size_t i = 0; i < count * 3; ++i) {
+	uint32 counter = count;	// silence a signed/unsigned MSVC warning below
+	for (uint32 i = 0; i < counter * 3; ++i) {
 		delpointer();
 		readmouse();
 		animpointer();
