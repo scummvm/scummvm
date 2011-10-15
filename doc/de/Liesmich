@@ -949,7 +949,7 @@ Die unterstützten Plattformen beinhalten (aber beschränken sich nicht auf):
         Dreamcast
         GP2x
         iPhone          (einschließlich iPod Touch und iPad)
-        Maemo           (Nokia-Internet-Tablets 770, N800, N810, N900)
+        Maemo           (Nokia-Internet-Tablet N810)
         Nintendo 64
         Nintendo DS
         Nintendo GameCube
@@ -2283,21 +2283,18 @@ Debug-Nachrichten zu durchsuchen
     * Überprüfen Sie die Datei „config.mk“ und wenn alles in Ordnung
       zu sein scheint:
     * Rufen Sie „make“ auf.
-    * Cross-Kompilation mit Linux ist womöglich genau so einfach.
+    * Cross-Kompilation mit Linux ist womöglich genauso einfach.
 
   iPhone:
     * Bitte lesen Sie:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
   Maemo:
-    * Besorgen Sie sich die Scratchbox-Umgebung mit Maemo 2.2 rootstrap
-      (2.2 ist für 770 und höher).
+    * Installieren Sie Maemo SDK mit rootstrap 4.1.2.
     * Installieren Sie libmad, Tremor und FLAC mittels Quellcode.
-    * Patchen Sie den ScummVM-Quellcode (einige Dinge sind momentan zu unsauber,
-      um direkt in Git eingebunden zu sein):
-      patch -p1 < backends/platform/maemo/scummvm-[currentversion]-maemo.patch
+    * Rufen Sie „ln -s backends/platform/maemo/debian“ auf.
     * Aktualisieren Sie debian/changelog.
-    * Rufen Sie „fakeroot dpkg-buildpackage -b -d“ auf.
+    * Rufen Sie „sb2 dpkg-buildpackage -b“ auf.
 
 ------------------------------------------------------------------------
 Viel Glück und viel Spaß beim Spielen wünscht
@@ -2306,5 +2303,5 @@ http://www.scummvm.org/
 ------------------------------------------------------------------------
 
 
-(Deutscher Text basiert auf README mit SHA1 ID:
-0e8840568bed09c8baa670f079a6fe438fffad56)
+(Deutscher Text basiert auf README mit SHA1-ID:
+264240eb5da43b8b1fbe309bbafb00aff7e1b51b)
