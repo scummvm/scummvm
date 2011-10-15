@@ -27,7 +27,9 @@
 namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, Archive *archive, uint16 id) :
-	_vm(vm) {
+	_vm(vm),
+	_startFrame(0),
+	_endFrame(0) {
 
 	const DirectorySubEntry *binkDesc = archive->getDescription(id, 0, DirectorySubEntry::kMovie);
 
@@ -184,10 +186,7 @@ void ScriptedMovie::update() {
 	}
 }
 
-void ScriptedMovie::draw() {
-	if (!_enabled)
-		return;
-
+void Movie::draw() {
 	const float w = _bink.getWidth() / (float)(_movieTextureSize);
 	const float h = _bink.getHeight() / (float)(_movieTextureSize);
 
@@ -208,6 +207,13 @@ void ScriptedMovie::draw() {
 	glEnd();
 }
 
+void ScriptedMovie::draw() {
+	if (!_enabled)
+		return;
+
+	Movie::draw();
+}
+
 void Movie::drawNextFrameToTexture() {
 	const Graphics::Surface *frame = _bink.decodeNextFrame();
 
@@ -223,9 +229,7 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
 	Movie(vm, archive, id),
 	_condition(0),
 	_conditionBit(0),
-	_startFrame(0),
 	_startFrameVar(0),
-	_endFrame(0),
 	_endFrameVar(0),
 	_posU(0),
 	_posUVar(0),
@@ -242,6 +246,39 @@ ScriptedMovie::ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
 }
 
 ScriptedMovie::~ScriptedMovie() {
+}
+
+SimpleMovie::SimpleMovie(Myst3Engine *vm, Archive *archive, uint16 id) :
+	Movie(vm, archive, id),
+	_synchronized(false) {
+	_startFrame = 1;
+	_endFrame = _bink.getFrameCount();
+}
+
+bool SimpleMovie::update() {
+	if (_bink.getCurFrame() < (_startFrame - 1)) {
+		_bink.seekToFrame(_startFrame - 1);
+	}
+
+	uint startEngineFrame = _vm->getFrameCount();
+
+	if (!_synchronized) {
+		// Play the movie according to the bink file framerate
+		if (_bink.needsUpdate()) {
+			drawNextFrameToTexture();
+		}
+	} else {
+		// Draw a movie frame each two engine frames
+		int targetFrame = (_vm->getFrameCount() - startEngineFrame) >> 2;
+		if (_bink.getCurFrame() < targetFrame) {
+			drawNextFrameToTexture();
+		}
+	}
+
+	return !_bink.endOfVideo() && _bink.getCurFrame() < _endFrame;
+}
+
+SimpleMovie::~SimpleMovie() {
 }
 
 } /* namespace Myst3 */

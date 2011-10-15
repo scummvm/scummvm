@@ -23,6 +23,7 @@
 #ifndef MOVIE_H_
 #define MOVIE_H_
 
+#include "engines/myst3/gfx.h"
 #include "engines/myst3/node.h"
 
 #include "math/vector3d.h"
@@ -32,11 +33,15 @@ namespace Myst3 {
 
 class Myst3Engine;
 
-class Movie {
+class Movie : public Drawable {
 public:
 	Movie(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~Movie();
 
+	virtual void draw();
+
+	void setStartFrame(int32 v) { _startFrame = v; }
+	void setEndFrame(int32 v) { _endFrame = v; }
 protected:
 	static const int _movieTextureSize = 1024;
 
@@ -49,6 +54,9 @@ protected:
 	Video::BinkDecoder _bink;
 	GLuint _texture;
 
+	int32 _startFrame;
+	int32 _endFrame;
+
 	void loadPosition(const VideoData &videoData);
 	void initTexture();
 	void drawNextFrameToTexture();
@@ -58,10 +66,10 @@ class ScriptedMovie : public Movie {
 public:
 	ScriptedMovie(Myst3Engine *vm, Archive *archive, uint16 id);
 	virtual ~ScriptedMovie();
+
 	void draw();
 	void update();
 
-	void setEndFrame(int32 v) { _endFrame = v; }
 	void setEndFrameVar(uint16 v) { _endFrameVar = v; }
 	void setNextFrameReadVar(uint16 v) { _nextFrameReadVar = v; }
 	void setNextFrameWriteVar(uint16 v) { _nextFrameWriteVar = v; }
@@ -70,7 +78,6 @@ public:
 	void setPosUVar(uint16 v) { _posUVar = v; }
 	void setPosV(int32 v) { _posV = v; }
 	void setPosVVar(uint16 v) { _posVVar = v; }
-	void setStartFrame(int32 v) { _startFrame = v; }
 	void setStartFrameVar(uint16 v) { _startFrameVar = v; }
 	void setCondition(int16 condition) { _condition = condition; }
 	void setConditionBit(int16 cb) { _conditionBit = cb; }
@@ -88,9 +95,7 @@ private:
 	int16 _condition;
 	uint16 _conditionBit;
 
-	int32 _startFrame;
 	uint16 _startFrameVar;
-	int32 _endFrame;
 	uint16 _endFrameVar;
 	int32 _posU;
 	uint16 _posUVar;
@@ -101,6 +106,18 @@ private:
 	uint16 _nextFrameWriteVar;
 
 	uint16 _playingVar;
+};
+
+class SimpleMovie : public Movie {
+public:
+	SimpleMovie(Myst3Engine *vm, Archive *archive, uint16 id);
+	virtual ~SimpleMovie();
+
+	bool update();
+
+	void setSynchronized(bool b) { _synchronized = b; }
+private:
+	bool _synchronized;
 };
 
 } /* namespace Myst3 */

@@ -51,7 +51,7 @@ Variables::Variables(Myst3Engine *vm):
 	VAR(157, MovieVolumeVar, true)
 	VAR(158, MovieSoundHeading, true)
 	VAR(159, MoviePanningStrenght, true)
-	VAR(160, MovieForcePause, true)
+	VAR(160, MovieSynchronized, true)
 	VAR(161, MovieUnk161, true)
 	VAR(162, MovieUnk162, true)
 	VAR(163, MovieOverrideCondition, true)

@@ -175,6 +175,8 @@ private:
 	DECLARE_OPCODE(ifVarHasSomeBitsSet);
 	DECLARE_OPCODE(goToNode);
 	DECLARE_OPCODE(goToRoomNode);
+	DECLARE_OPCODE(moviePlay);
+	DECLARE_OPCODE(moviePlaySynchronized);
 	DECLARE_OPCODE(runScriptForVar);
 	DECLARE_OPCODE(runScriptForVarEachXFrames);
 	DECLARE_OPCODE(runScriptForVarStartVar);

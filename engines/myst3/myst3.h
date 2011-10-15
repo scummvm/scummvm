@@ -76,6 +76,7 @@ public:
 	void runNodeInitScripts();
 
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
+	void playSimpleMovie(uint16 id);
 
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
@@ -90,6 +91,7 @@ private:
 	Database *_db;
 
 	Common::Array<ScriptedMovie *> _movies;
+	Common::Array<Drawable *> _drawables;
 
 	ViewType _viewType;
 

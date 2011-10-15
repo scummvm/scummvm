@@ -178,6 +178,10 @@ void Myst3Engine::drawFrame() {
 		_movies[i]->draw();
 	}
 
+	for (uint i = 0; i < _drawables.size(); i++) {
+		_drawables[i]->draw();
+	}
+
 	_system->updateScreen();
 	_system->delayMillis(10);
 	_frameCount++;
@@ -353,6 +357,33 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 	}
 
 	_movies.push_back(movie);
+}
+
+void Myst3Engine::playSimpleMovie(uint16 id) {
+	SimpleMovie movie = SimpleMovie(this, _archive, id);
+
+	if (_vars->getMovieSynchronized()) {
+		movie.setSynchronized(_vars->getMovieSynchronized());
+		_vars->setMovieSynchronized(0);
+	}
+
+	if (_vars->getMovieStartFrame()) {
+		movie.setStartFrame(_vars->getMovieStartFrame());
+		_vars->setMovieStartFrame(0);
+	}
+
+	if (_vars->getMovieEndFrame()) {
+		movie.setEndFrame(_vars->getMovieEndFrame());
+		_vars->setMovieEndFrame(0);
+	}
+
+	_drawables.push_back(&movie);
+
+	while (movie.update()) {
+		drawFrame();
+	}
+
+	_drawables.pop_back();
 }
 
 } // end of namespace Myst3

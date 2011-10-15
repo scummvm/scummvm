@@ -120,6 +120,8 @@ Script::Script(Myst3Engine *vm):
 	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
 	OP_1(138, goToNode,						kValue														);
 	OP_2(139, goToRoomNode,					kValue,		kValue											);
+	OP_1(147, moviePlay, 					kEvalValue													);
+	OP_1(148, moviePlaySynchronized,		kEvalValue													);
 	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
 	OP_5(177, runScriptForVarEachXFrames,	kVar,		kValue,		kValue,		kValue,		kValue		);
 	OP_4(178, runScriptForVarStartVar,		kVar,		kVar,		kValue,		kValue					);
@@ -1072,6 +1074,19 @@ void Script::goToRoomNode(Context &c, const Opcode &cmd) {
 	debugC(kDebugScript, "Opcode %d: Go to room %d, node %d", cmd.op, cmd.args[0], cmd.args[1]);
 
 	_vm->goToNode(cmd.args[1], cmd.args[0]);
+}
+
+void Script::moviePlay(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play movie %d", cmd.op, cmd.args[0]);
+
+	_vm->playSimpleMovie(_vm->_vars->valueOrVarValue(cmd.args[0]));
+}
+
+void Script::moviePlaySynchronized(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Play movie %d, synchronized with framerate", cmd.op, cmd.args[0]);
+
+	_vm->_vars->setMovieSynchronized(1);
+	_vm->playSimpleMovie(_vm->_vars->valueOrVarValue(cmd.args[0]));
 }
 
 void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {
