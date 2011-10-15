@@ -113,6 +113,8 @@ void Keymapper::initKeymap(Domain &domain, Keymap *map) {
 }
 
 void Keymapper::cleanupGameKeymaps() {
+
+	debug(4, "Keymapper::cleanupGameKeymaps");
 	// Flush all game specific keymaps
 	_gameDomain.deleteAllKeyMaps();
 
@@ -161,6 +163,7 @@ void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
 }
 
 void Keymapper::popKeymap() {
+	debug(10, "Keymapper::popKeymap()");
 	if (!_activeMaps.empty())
 		_activeMaps.pop();
 }
@@ -189,13 +192,16 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	Action *action = 0;
 
 	if (keyDown) {
+
+		debug(4, "Keymapper::mapKey activeMaps: %u", _activeMaps.size());
+
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
-
+			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
 			action = mr.keymap->getMappedAction(key);
 
-			if (action || mr.inherit == false)
+			if (action || !mr.inherit)
 				break;
 		}
 
