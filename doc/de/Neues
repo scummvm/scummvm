@@ -7,6 +7,8 @@ Sie auf Englisch unter:
    - Unterstützung für Lands of Lore: The Throne of Chaos hinzugefügt.
    - Unterstützung für Blue's Birthday Adventure hinzugefügt.
    - Unterstützung für Ringworld: Revenge Of The Patriarch hinzugefügt.
+   - Unterstützung für die Amiga-Version von Conquests of the Longbow
+     hinzugefügt.
 
  Neue Portierungen:
    - Portierung für PlayStation 3 hinzugefügt.
@@ -28,6 +30,13 @@ Sie auf Englisch unter:
  Lure:
    - Absturz beseitigt, wenn man versucht, gleichzeitig zu sprechen und etwas zu
      fragen.
+
+ SCI:
+   - Bessere Handhabung der Auswahl zwischen digitalen und synthetisierten
+     Sound-Effekten hinzugefügt. Wenn das Kontrollkästchen „AdLib-/MIDI-Modus“
+     markiert ist, wird die Engine digitale Sound-Effekte bevorzugen, ansonsten
+     werden stattdessen deren synthetisierten Gegenstücke bevorzugt, wenn beide
+     Versionen des gleichen Effekts existieren.
 
  SCUMM:
    - PC-Lautsprecher-Unterstützung für V5-Spiele integriert.
@@ -1596,4 +1605,4 @@ Sie auf Englisch unter:
 
 
 (Deutscher Text basiert auf NEWS mit SHA1-ID:
-c5615d7f58b7cde17c6f7693cc848f23278ca4ed)
+1e78aa73bb1e54873bb195ab80e7fb773c0a48dd)
