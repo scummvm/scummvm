@@ -203,6 +203,7 @@ public:
 	NamedHotspot _curb, _sky;
 	GarageExit _garageExit;
 	ASoundExt _sound1;
+	SceneMessage _sceneMessage;
 	int _fieldC56;
 
 	Scene180();

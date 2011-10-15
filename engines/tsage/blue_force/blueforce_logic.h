@@ -204,7 +204,7 @@ public:
 	bool _savedCanWalk;
 	int _field37A;
 
-	FocusObject *_focusObject;
+	EventHandler *_focusObject;
 	Visage _cursorVisage;
 
 	Rect _v51C34;
@@ -354,6 +354,21 @@ public:
 		NamedHotspot::synchronize(s);
 		s.syncAsSint16LE(_flag);
 	}
+};
+
+class SceneMessage: public Action {
+private:
+	Common::String _message;
+
+	void draw();
+	void clear();
+public:
+	void setup(const Common::String &msg) { _message = msg; }
+
+	virtual Common::String getClassName() { return "SceneMessage"; }
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
 };
 
 } // End of namespace BlueForce

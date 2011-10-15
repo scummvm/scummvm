@@ -1095,9 +1095,9 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
 		BF_GLOBALS._v501FC = 87;
 		BF_GLOBALS._v501FA = _sceneBounds.left;
-//		_unk.setupText(THE_NEXT_DAY);
+		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
-//		setAction(&_unk);
+		setAction(&_sceneMessage, this);
 		BF_GLOBALS._driveFromScene = 4;
 		BF_GLOBALS._driveToScene = 4;
 		BF_GLOBALS._mapLocationId = 4;
@@ -1105,9 +1105,9 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 			((BF_GLOBALS._bookmark == bDoneAtLyles) && (BF_GLOBALS._dayNumber == 4))) {
 		BF_GLOBALS._v501FC = 87;
 		BF_GLOBALS._v501FA = _sceneBounds.left;
-//		_unk.setupText(THE_NEXT_DAY);
+		_sceneMessage.setup(THE_NEXT_DAY);
 		_sceneMode = 6;
-//		setAction(&_unk);
+		setAction(&_sceneMessage, this);
 	} else if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._player.setPosition(Common::Point(0, 150));
 		_garageExit.postInit();

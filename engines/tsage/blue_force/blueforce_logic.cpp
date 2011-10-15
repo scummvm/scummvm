@@ -1391,6 +1391,78 @@ void NamedHotspot::synchronize(Serializer &s) {
 		s.syncAsSint16LE(_talkLineNum);
 }
 
+/*--------------------------------------------------------------------------*/
+
+void SceneMessage::remove() {
+	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+	if (scene->_focusObject == this)
+		scene->_focusObject = NULL;
+
+	Action::remove();
+}
+
+void SceneMessage::signal() {
+	SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_focusObject = this;
+		BF_GLOBALS._events.setCursor(CURSOR_WALK);
+		draw();
+		setDelay(180);
+		break;
+	case 1:
+		clear();
+		remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void SceneMessage::process(Event &event) {
+	if ((event.eventType == EVENT_BUTTON_DOWN) || 
+		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
+		signal();
+	}
+}
+
+
+void SceneMessage::draw() {
+	GfxSurface &surface = BF_GLOBALS._screenSurface;
+
+	// Clear the game area
+	surface.fillRect(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 0);
+
+	// Disable scene fade in
+	BF_GLOBALS._paneRefreshFlag[0] = 0;
+
+	// Set up the font
+	GfxFont &font = BF_GLOBALS._gfxManagerInstance._font;
+	BF_GLOBALS._scenePalette.setEntry(font._colors.foreground, 255, 255, 255);
+	BF_GLOBALS._scenePalette.setPalette(font._colors.foreground, 1);
+
+	// Write out the message
+	Rect textRect(0, BF_INTERFACE_Y / 2 - (font.getHeight() / 2), SCREEN_WIDTH,
+			BF_INTERFACE_Y / 2 + (font.getHeight() / 2));
+	BF_GLOBALS._gfxManagerInstance._font.writeLines(_message.c_str(), textRect, ALIGN_CENTER);
+
+	// TODO: Ideally, saving and loading should be disabled here until the message display is complete
+}
+
+void SceneMessage::clear() {
+	// Fade out the text display
+	static const uint32 black = 0;	
+	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
+
+	// Refresh the background
+	BF_GLOBALS._paneRefreshFlag[0] = 0;
+
+	// Set up to fade in the game scene
+	g_globals->_sceneManager._fadeMode = FADEMODE_GRADUAL;
+	g_globals->_sceneManager._hasPalette = true;
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
