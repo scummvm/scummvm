@@ -995,6 +995,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From Torsten in bug#3422652
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTB.LB", "9a80b66e7d95c7f59bdfd2c280e03e6e"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From afholman in bug#3309308
 	{
 		{
@@ -1011,12 +1027,44 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// From Torsten in bug#3422652
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTD.LB", "5d4d830116fe965ee35e328db85743b7"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
 	// From afholman in bug#3309308
 	{
 		{
 			"tortoise",
 			"",
 			AD_ENTRY1("TORTF.LB", "9693043df217ffc0667a1f45f2849aa7"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"tortoise",
+			"",
+			AD_ENTRY1("TORTF.LB", "89f23bc3a1d1797bfe07dd0eaa7c13c4"),
 			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -1276,6 +1324,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		GF_LB_10,
 		"GRANDMA.EXE"
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"grandma",
+			"",
+			AD_ENTRY1("JGMB.LB", "400b68a6f23b88ca23a01cfd11c6ef9f"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"grandma",
+			"",
+			AD_ENTRY1("JGMD.LB", "c4fbfd73f805a2266cf9e15caa1b7462"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"grandma",
+			"",
+			AD_ENTRY1("JGMF.LB", "0c3305e109a027f8b62a6bd8c5d2addb"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
 	},
 
 	{
@@ -1619,6 +1715,54 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GType_LIVINGBOOKSV1,
 		0,
 		"Living Books Player"
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("AB16B.LB", "54223967c507a48e572902802650412f"),
+			Common::EN_GRB,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("AB16D.LB", "1154bfdb9fe8c42ad8692e68071ec175"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	// From Torsten in bug#3422652
+	{
+		{
+			"arthurbday",
+			"",
+			AD_ENTRY1("AB16F.LB", "60f439aa56c22a400bda27c9574115a9"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV2,
+		0,
+		0,
 	},
 
 	// Arthur Birthday (English) Version 2.0 Windows(R) August 8, 1997
