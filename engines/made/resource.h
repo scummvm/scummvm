@@ -38,7 +38,7 @@ class AudioStream;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Made {
