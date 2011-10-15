@@ -247,6 +247,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
 
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->cleanupGameKeymaps();
+#endif
+
 	delete[] _landsFile;
 	delete[] _levelLangFile;
 
