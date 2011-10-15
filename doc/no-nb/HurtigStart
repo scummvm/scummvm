@@ -127,7 +127,7 @@ så andre språk bør unngås.
 For å rapportere en bug, må du lage deg en SourceForge-konto, og følge
 «Bug Tracker»-lenken på hjemmesiden vår. Vennligst forsikre deg om at
 buggen du skal rapportere kan reproduseres, og at den fortsatt opptrer
-i den ferskeste SVN/Daily-versjonen. Sjekk også listen over kjente feil
+i den ferskeste git/Daily-versjonen. Sjekk også listen over kjente feil
 lenger ned i dette dokumentet, og kompatibilitetslisten på hjemmesiden
 vår angående spillet det gjelder, for å forsikre deg om at problemet ikke
 allerede har blitt rapportert:
@@ -139,7 +139,7 @@ Vennligst ikke rapporter bugs om spill som ikke står listet som
 Vi VET at de spillene har bugs.
 
 Vennligst inkluder følgende informasjon:
-    - ScummVM-versjon (VÆR SÅ SNILL; test den ferskeste SVN/Daily-builden)
+    - ScummVM-versjon (VÆR SÅ SNILL; test den ferskeste git/Daily-builden)
     - Bug-detaljer, inkludert instruksjoner om hvordan man reproduserer buggen.
     - Spillets språk (Engelsk, Tysk, ...)
     - Spillversjon (med tale, diskettversjon, ...)

@@ -145,7 +145,7 @@ sollte.
 Um einen Fehler zu berichten, erstellen Sie bitte ein SourceForge-Konto und
 folgen Sie dem Link „Bug Tracker“ auf der ScummVM-Website. Bitte stellen Sie
 sicher, dass sich der Bug wiedererzeugen lässt und immer noch in der neusten
-Version von SVN oder des Daily Builds auftritt. Bitte sehen Sie auch auf der
+Version von git oder des Daily Builds auftritt. Bitte sehen Sie auch auf der
 Kompatibilitätsliste der ScummVM-Website für dieses Spiel nach, um
 sicherzustellen, dass das Problem nicht bereits bekannt ist:
 
@@ -156,7 +156,7 @@ Bereich „Supported Games“ oder der Kompatibilitätsliste aufgelistet sind.
 Wir -wissen-, dass diese Spiele Fehler aufweisen.
 
 Bitte liefern Sie folgende Informationen:
-    - ScummVM-Version (BITTE mit neuster Version von SVN oder des Daily Builds
+    - ScummVM-Version (BITTE mit neuster Version von git oder des Daily Builds
       testen)
     - Einzelheiten zum Fehler, einschließlich Anweisungen, um den Fehler
       hervorzurufen
