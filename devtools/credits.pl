@@ -957,6 +957,7 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Spanish");
 					add_person("Tom&aacute;s Maidagan", "", "");
+					add_person("Jordi Vilalta Prat", "jvprat", "");
 				end_section();
 				begin_section("Swedish");
 					add_person("Hampus Flink", "", "");
