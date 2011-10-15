@@ -20,17 +20,16 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 
 #include "common/timer.h"
 
-#include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/debug.h"
 
 #include "engines/grim/imuse/imuse.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -51,9 +50,10 @@ void Imuse::timerHandler(void *refCon) {
 	imuse->callback();
 }
 
-Imuse::Imuse(int fps) {
+Imuse::Imuse(int fps, bool demo) {
+	_demo = demo;
 	_pause = false;
-	_sound = new ImuseSndMgr();
+	_sound = new ImuseSndMgr(_demo);
 	assert(_sound);
 	_callbackFps = fps;
 	resetState();
@@ -64,7 +64,7 @@ Imuse::Imuse(int fps) {
 		_track[l]->trackId = l;
 	}
 	vimaInit(imuseDestTable);
-	if (g_grim->getGameFlags() & ADGF_DEMO) {
+	if (_demo) {
 		_stateMusicTable = grimDemoStateMusicTable;
 		_seqMusicTable = grimDemoSeqMusicTable;
 	} else {
@@ -91,7 +91,6 @@ void Imuse::resetState() {
 
 void Imuse::restoreState(SaveGame *savedState) {
 	Common::StackLock lock(_mutex);
-	printf("Imuse::restoreState() started.\n");
 
 	savedState->beginSection('IMUS');
 	_curMusicState = savedState->readLESint32();
@@ -153,13 +152,10 @@ void Imuse::restoreState(SaveGame *savedState) {
 	}
 	savedState->endSection();
 	g_system->getMixer()->pauseAll(false);
-
-	printf("Imuse::restoreState() finished.\n");
 }
 
 void Imuse::saveState(SaveGame *savedState) {
 	Common::StackLock lock(_mutex);
-	printf("Imuse::saveState() started.\n");
 
 	savedState->beginSection('IMUS');
 	savedState->writeLESint32(_curMusicState);
@@ -191,7 +187,6 @@ void Imuse::saveState(SaveGame *savedState) {
 		savedState->writeLESint32(track->mixerFlags);
 	}
 	savedState->endSection();
-	printf("Imuse::saveState() finished.\n");
 }
 
 int32 Imuse::makeMixerFlags(int32 flags) {
@@ -334,8 +329,7 @@ void Imuse::switchToNextRegion(Track *track) {
 	assert(track);
 
 	if (track->trackId >= MAX_IMUSE_TRACKS) {
-		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-			printf("Imuse::switchToNextRegion(): fadeTrack end: soundName:%s\n", track->soundName);
+		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): fadeTrack end: soundName:%s", track->soundName);
 		flushTrack(track);
 		return;
 	}
@@ -343,19 +337,20 @@ void Imuse::switchToNextRegion(Track *track) {
 	int numRegions = _sound->getNumRegions(track->soundDesc);
 
 	if (++track->curRegion == numRegions) {
-		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-			printf("Imuse::switchToNextRegion(): end of tracks: soundName:%s\n", track->soundName);
+		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): end of tracks: soundName:%s", track->soundName);
 		flushTrack(track);
 		return;
 	}
 
 	ImuseSndMgr::SoundDesc *soundDesc = track->soundDesc;
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if (jumpId == -1)
+	// It seems 128 is a special value meaning it should not force the 0 hookId,
+	// otherwise the sound hkwine.imu when glottis drinks the wine in the barrel
+	// in hk won't stop.
+	if (jumpId == -1 && track->curHookId != 128)
 		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
-		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-			printf("Imuse::switchToNextRegion(): JUMP: soundName:%s\n", track->soundName);
+		Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): JUMP: soundName:%s", track->soundName);
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
@@ -377,8 +372,7 @@ void Imuse::switchToNextRegion(Track *track) {
 				track->curHookId = 0;
 	}
 
-	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
-		printf("Imuse::switchToNextRegion(): REGION %d: soundName:%s\n", (int)track->curRegion, track->soundName);
+	Debug::debug(Debug::Imuse, "Imuse::switchToNextRegion(): REGION %d: soundName:%s", (int)track->curRegion, track->soundName);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
 }

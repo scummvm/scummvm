@@ -35,7 +35,7 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/objectstate.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/animation.h"
@@ -97,7 +97,7 @@ namespace Grim {
 // easier to move objects Manny is holding when his hands move, for
 // example.)
 //
-// For bitmaps, the actual drawing is handled by the Scene class.  The
+// For bitmaps, the actual drawing is handled by the Set class.  The
 // bitmaps to be drawn are associated to the needed camera setups
 // using NewObjectState; bitmaps marked OBJSTATE_UNDERLAY and
 // OBJSTATE_STATE are drawn first, then the 3D objects, then bitmaps
@@ -217,10 +217,10 @@ BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char
 
 void BitmapComponent::setKey(int val) {
 	const char *bitmap = _filename.c_str();
-	ObjectState *state = g_grim->getCurrScene()->findState(bitmap);
+	ObjectState *state = g_grim->getCurrSet()->findState(bitmap);
 
 	if (state) {
-		state->setNumber(val);
+		state->setActiveImage(val);
 		return;
 	}
 	// Complain that we couldn't find the bitmap.  This means we probably
@@ -228,8 +228,7 @@ void BitmapComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("Missing scene bitmap: %s", bitmap);
+	Debug::warning(Debug::Bitmaps | Debug::Costumes, "Missing scene bitmap: %s", bitmap);
 
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
@@ -239,7 +238,7 @@ void BitmapComponent::setKey(int val) {
 			warning("Couldn't find bitmap %s in current scene", _filename.c_str());
 		return;
 	}
-	g_grim->getCurrScene()->addObjectState(state);
+	g_grim->getCurrSet()->addObjectState(state);
 	state->setNumber(val);
 */
 }
@@ -294,8 +293,8 @@ void SpriteComponent::init() {
 			MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
 			if (mc)
 				mc->getNode()->addSprite(_sprite);
-			else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Parent of sprite %s wasn't a mesh", _filename.c_str());
+			else
+				Debug::warning(Debug::Costumes, "Parent of sprite %s wasn't a mesh", _filename.c_str());
 		}
 	}
 }
@@ -308,7 +307,7 @@ void SpriteComponent::setKey(int val) {
 		_sprite->_visible = false;
 	} else {
 		_sprite->_visible = true;
-		_sprite->_material->setNumber(val - 1);
+		_sprite->_material->setActiveTexture(val - 1);
 	}
 }
 
@@ -319,12 +318,12 @@ void SpriteComponent::reset() {
 
 void SpriteComponent::saveState(SaveGame *state) {
 	state->writeLEBool(_sprite->_visible);
-	state->writeLESint32(_sprite->_material->getCurrentImage());
+	state->writeLESint32(_sprite->_material->getActiveTexture());
 }
 
 void SpriteComponent::restoreState(SaveGame *state) {
 	_sprite->_visible = state->readLEBool();
-	_sprite->_material->setNumber(state->readLESint32());
+	_sprite->_material->setActiveTexture(state->readLESint32());
 }
 
 ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
@@ -361,11 +360,10 @@ void ModelComponent::init() {
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
-		if (!cm && g_grim->getCurrScene())
-			cm = g_grim->getCurrScene()->getCMap();
+		if (!cm && g_grim->getCurrSet())
+			cm = g_grim->getCurrSet()->getCMap();
 		if (!cm) {
-			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
+			Debug::warning(Debug::Costumes, "No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
 			cm = g_resourceloader->getColormap(DEFAULT_COLORMAP);
 		}
@@ -380,8 +378,7 @@ void ModelComponent::init() {
 		} else {
 			_obj = g_resourceloader->loadModel(_filename, cm);
 			_hier = _obj->copyHierarchy();
-			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Parent of model %s wasn't a mesh", _filename.c_str());
+			Debug::warning(Debug::Costumes, "Parent of model %s wasn't a mesh", _filename.c_str());
 		}
 
 		// Use parent availablity to decide whether to default the
@@ -451,9 +448,9 @@ void translateObject(ModelNode *node, bool reset) {
 		g_driver->translateViewpointFinish();
 	} else {
 		Math::Vector3d animPos = node->_pos + node->_animPos;
-		float animPitch = node->_pitch + node->_animPitch;
-		float animYaw = node->_yaw + node->_animYaw;
-		float animRoll = node->_roll + node->_animRoll;
+		Math::Angle animPitch = node->_pitch + node->_animPitch;
+		Math::Angle animYaw = node->_yaw + node->_animYaw;
+		Math::Angle animRoll = node->_roll + node->_animRoll;
 		g_driver->translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	}
 }
@@ -543,7 +540,6 @@ public:
 	MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag);
 	void init();
 	void setKey(int val);
-	void setupTexture();
 	void reset();
 	void resetColormap();
 	void saveState(SaveGame *state);
@@ -553,7 +549,6 @@ public:
 private:
 	Material *_mat;
 	Common::String _filename;
-	int _num;
 };
 
 ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
@@ -664,8 +659,7 @@ void KeyframeComponent::setKey(int val) {
 		fade(Animation::FadeOut, 125);
 		break;
 	default:
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for keyframe %s", val, _fname.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for component %s", val, _fname.c_str());
 	}
 }
 
@@ -687,8 +681,7 @@ void KeyframeComponent::init() {
 	if (mc) {
 		_anim = new Animation(_fname, mc->getAnimManager(), _priority1, _priority2);
 	} else {
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of %s was not a model", _fname.c_str());
+		Debug::warning(Debug::Costumes, "Parent of %s was not a model", _fname.c_str());
 		_anim = NULL;
 	}
 }
@@ -714,8 +707,7 @@ void MeshComponent::init() {
 		_node = mc->getHierarchy() + _num;
 		_model = mc->getModel();
 	} else {
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Parent of mesh %d was not a model", _num);
+		Debug::warning(Debug::Costumes, "Parent of mesh %d was not a model", _num);
 		_node = NULL;
 		_model = NULL;
 	}
@@ -747,11 +739,9 @@ void MeshComponent::restoreState(SaveGame *state) {
 }
 
 MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
-		Costume::Component(p, parentID, t), _filename(filename),
-		_num(0) {
+		Costume::Component(p, parentID, t), _filename(filename) {
 
-	if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("Constructing MaterialComponent %s", filename);
+	Debug::debug(Debug::Costumes, "Constructing MaterialComponent %s", filename);
 }
 
 void MaterialComponent::init() {
@@ -774,15 +764,11 @@ void MaterialComponent::init() {
 }
 
 void MaterialComponent::setKey(int val) {
-	_num = val;
-}
-
-void MaterialComponent::setupTexture() {
-	_mat->setNumber(_num);
+	_mat->setActiveTexture(val);
 }
 
 void MaterialComponent::reset() {
-	_num = 0;
+	_mat->setActiveTexture(0);
 }
 
 void MaterialComponent::resetColormap() {
@@ -790,11 +776,11 @@ void MaterialComponent::resetColormap() {
 }
 
 void MaterialComponent::saveState(SaveGame *state) {
-	state->writeLESint32(_num);
+	state->writeLESint32(_mat->getActiveTexture());
 }
 
 void MaterialComponent::restoreState(SaveGame *state) {
-	_num = state->readLESint32();
+	_mat->setActiveTexture(state->readLESint32());
 }
 
 class LuaVarComponent : public Costume::Component {
@@ -846,9 +832,9 @@ void SoundComponent::setKey(int val) {
 		// No longer a need to check the sound status, if it's already playing
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
-		if (g_grim->getCurrScene()) {
+		if (g_grim->getCurrSet()) {
 			Math::Vector3d pos = _cost->getMatrix().getPosition();
-			g_grim->getCurrScene()->setSoundPosition(_soundName.c_str(), pos);
+			g_grim->getCurrSet()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
 	case 1: // "Stop"
@@ -858,8 +844,7 @@ void SoundComponent::setKey(int val) {
 		g_imuse->setHookId(_soundName.c_str(), 0x80);
 		break;
 	default:
-		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Unknown key %d for sound %s", val, _soundName.c_str());
+		Debug::warning(Debug::Costumes, "Unknown key %d for sound %s", val, _soundName.c_str());
 	}
 }
 
@@ -966,8 +951,7 @@ void Costume::loadGRIM(TextSplitter &ts, Costume *prevCost) {
 		_chores[id]._length = length;
 		_chores[id]._numTracks = tracks;
 		memcpy(_chores[id]._name, name, 32);
-		if (gDebugLevel == DEBUG_ALL || gDebugLevel == DEBUG_CHORES)
-			printf("Loaded chore: %s\n", name);
+		Debug::debug(Debug::Chores, "Loaded chore: %s\n", name);
 	}
 
 	ts.expectString("section keys");
@@ -1185,6 +1169,8 @@ void Costume::Chore::play() {
 	_hasPlayed = true;
 	_looping = false;
 	_currTime = -1;
+
+	fade(Animation::None, 0);
 }
 
 void Costume::Chore::playLooping() {
@@ -1192,6 +1178,8 @@ void Costume::Chore::playLooping() {
 	_hasPlayed = true;
 	_looping = true;
 	_currTime = -1;
+
+	fade(Animation::None, 0);
 }
 
 void Costume::Chore::stop() {
@@ -1265,6 +1253,16 @@ void Costume::Chore::update(float time) {
 	_currTime = newTime;
 }
 
+void Costume::Chore::fade(Animation::FadeMode mode, int msecs) {
+	for (int i = 0; i < _numTracks; i++) {
+		Component *comp = _owner->_components[_tracks[i].compID];
+		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
+			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
+			kf->fade(mode, msecs);
+		}
+	}
+}
+
 void Costume::Chore::fadeIn(int msecs) {
 	if (!_playing) {
 		_playing = true;
@@ -1272,31 +1270,13 @@ void Costume::Chore::fadeIn(int msecs) {
 		_currTime = -1;
 	}
 
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		if (!comp)
-			continue;
-
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent *kf = static_cast<KeyframeComponent *>(comp);
-			kf->fade(Animation::FadeIn, msecs);
-		}
-	}
+	fade(Animation::FadeIn, msecs);
 }
 
 void Costume::Chore::fadeOut(int msecs) {
 	// Note: It doesn't matter whether the chore is playing or not. The keyframe
 	// components should fade out in either case.
-	for (int i = 0; i < _numTracks; i++) {
-		Component *comp = _owner->_components[_tracks[i].compID];
-		if (!comp)
-			continue;
-
-		if (FROM_BE_32(comp->getTag()) == MKTAG('K','E','Y','F')) {
-			KeyframeComponent* kf = static_cast<KeyframeComponent*>(comp);
-			kf->fade(Animation::FadeOut, msecs);
-		}
-	}
+	fade(Animation::FadeOut, msecs);
 }
 
 Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *parent, int parentID, const char *name, Costume::Component *prevComponent) {
@@ -1401,8 +1381,7 @@ Model *Costume::getModel() {
 
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].playLooping();
@@ -1423,8 +1402,7 @@ void Costume::playChore(const char *name) {
 
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].play();
@@ -1434,8 +1412,7 @@ void Costume::playChore(int num) {
 
 void Costume::stopChore(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
+		Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].stop();
@@ -1462,8 +1439,7 @@ void Costume::stopChores() {
 void Costume::fadeChoreIn(int chore, int msecs) {
 	if (chore >= _numChores) {
 		if (chore < 0 || chore >= _numChores) {
-			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 			return;
 		}
 	}
@@ -1475,8 +1451,7 @@ void Costume::fadeChoreIn(int chore, int msecs) {
 void Costume::fadeChoreOut(int chore, int msecs) {
 	if (chore >= _numChores) {
 		if (chore < 0 || chore >= _numChores) {
-			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
+			Debug::warning(Debug::Chores, "Requested chore number %d is outside the range of chores (0-%d)", chore, _numChores);
 			return;
 		}
 	}
@@ -1578,11 +1553,12 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 				_headPitch = 0;
 			}
 			_joint1Node->_animYaw = _headYaw;
-			float pi = _headPitch / 3.f;
+			Math::Angle pi = _headPitch / 3.f;
 			_joint1Node->_animPitch += pi;
 			_joint2Node->_animPitch += pi;
 			_joint3Node->_animPitch += pi;
-			_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.f) * -_headPitch / 5.f;
+			_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+										_headPitch.getDegrees() / -5.f;
 
 			if (_joint1Node->_animRoll > _head.maxRoll)
 				_joint1Node->_animRoll = _head.maxRoll;
@@ -1611,7 +1587,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (b < 0.0f)
 			yaw = 360.0f - yaw;
 
-		float bodyYaw = _matrix.getYaw();
+		Math::Angle bodyYaw = _matrix.getYaw();
 		p = _joint1Node->_parent;
 		while (p) {
 			bodyYaw += p->_yaw + p->_animYaw;
@@ -1641,7 +1617,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		magnitude = sqrt(v.z() * v.z() + h * h);
 		a = h / magnitude;
 		b = v.z() / magnitude;
-		float pitch;
+		Math::Angle pitch;
 		pitch = acos(a) * (180.0f / LOCAL_PI);
 
 		if (b < 0.0f)
@@ -1667,7 +1643,7 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (_headPitch - pitch > pitchStep)
 			pitch = _headPitch - pitchStep;
 
-		float pi = pitch / 3.f;
+		Math::Angle pi = pitch / 3.f;
 		_joint1Node->_animPitch += pi;
 		_joint2Node->_animPitch += pi;
 		_joint3Node->_animPitch += pi;
@@ -1678,7 +1654,8 @@ void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rat
 		if (_headYaw - _joint1Node->_animYaw > yawStep)
 			_joint1Node->_animYaw = _headYaw - yawStep;
 
-		_joint1Node->_animRoll = (_joint1Node->_animYaw / 20.f) * -pitch / 5.f;
+		_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+								pitch.getDegrees() / -5.f;
 
 		if (_joint1Node->_animRoll > _head.maxRoll)
 			_joint1Node->_animRoll = _head.maxRoll;
@@ -1708,7 +1685,8 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	}
 }
 
-void Costume::setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void Costume::setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
+						   const Math::Angle &yaw, const Math::Angle &roll) {
 	_matrix.setPosition(pos);
 	_matrix.buildFromPitchYawRoll(pitch, yaw, roll);
 }
@@ -1759,8 +1737,8 @@ void Costume::saveState(SaveGame *state) const {
 	state->writeFloat(_head.maxPitch);
 	state->writeFloat(_head.maxYaw);
 	state->writeFloat(_head.maxRoll);
-	state->writeFloat(_headPitch);
-	state->writeFloat(_headYaw);
+	state->writeFloat(_headPitch.getDegrees());
+	state->writeFloat(_headYaw.getDegrees());
 }
 
 bool Costume::restoreState(SaveGame *state) {

@@ -23,6 +23,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/material.h"
@@ -33,7 +35,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 namespace Grim {
 
@@ -356,7 +358,8 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+							   const Math::Angle &pitch, const Math::Angle &roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -377,9 +380,9 @@ void GfxTinyGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
 	tglScalef(scale, scale, scale);
-	tglRotatef(yaw, 0, 0, 1);
-	tglRotatef(pitch, 1, 0, 0);
-	tglRotatef(roll, 0, 1, 0);
+	tglRotatef(yaw.getDegrees(), 0, 0, 1);
+	tglRotatef(pitch.getDegrees(), 1, 0, 0);
+	tglRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxTinyGL::finishActorDraw() {
@@ -516,13 +519,14 @@ void GfxTinyGL::drawSprite(const Sprite *sprite) {
 	tglPopMatrix();
 }
 
-void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+										const Math::Angle &yaw, const Math::Angle &roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
-	tglRotatef(yaw, 0, 0, 1);
-	tglRotatef(pitch, 1, 0, 0);
-	tglRotatef(roll, 0, 1, 0);
+	tglRotatef(yaw.getDegrees(), 0, 0, 1);
+	tglRotatef(pitch.getDegrees(), 1, 0, 0);
+	tglRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxTinyGL::translateViewpointFinish() {
@@ -531,9 +535,9 @@ void GfxTinyGL::translateViewpointFinish() {
 
 void GfxTinyGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
 	Math::Vector3d animPos = node->_pos + node->_animPos;
-	float animPitch = node->_pitch + node->_animPitch;
-	float animYaw = node->_yaw + node->_animYaw;
-	float animRoll = node->_roll + node->_animRoll;
+	Math::Angle animPitch = node->_pitch + node->_animPitch;
+	Math::Angle animYaw = node->_yaw + node->_animYaw;
+	Math::Angle animRoll = node->_roll + node->_animRoll;
 	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	if (node->_hierVisible) {
 		tglPushMatrix();
@@ -608,7 +612,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		   and walk along left wall under the lamp. */
 		cutoff = 90.0f;
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
+		error("Set::setupLights() Unknown type of light: %s", light->_type.c_str());
 		return;
 	}
 	tglDisable(TGL_LIGHT0 + lightId);
@@ -693,12 +697,12 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 		return;
 	}
 
-	assert(bitmap->getCurrentImage() > 0);
+	assert(bitmap->getActiveImage() > 0);
 	if (bitmap->getFormat() == 1)
-		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
+		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), true);
 	else
-		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getCurrentImage() - 1),
+		TinyGLBlit((byte *)_zb->zbuf, (byte *)bitmap->getData(bitmap->getActiveImage() - 1),
 			bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), false);
 }
 
@@ -855,10 +859,10 @@ void GfxTinyGL::destroyMaterial(Texture *material) {
 	delete[] (TGLuint *)material->_texture;
 }
 
-void GfxTinyGL::prepareMovieFrame(int width, int height, byte *bitmap) {
-	_smushWidth = width;
-	_smushHeight = height;
-	_smushBitmap = bitmap;
+void GfxTinyGL::prepareMovieFrame(Graphics::Surface* frame) {
+	_smushWidth = frame->w;
+	_smushHeight = frame->h;
+	_smushBitmap = (byte *)frame->pixels;
 }
 
 void GfxTinyGL::drawMovieFrame(int offsetX, int offsetY) {

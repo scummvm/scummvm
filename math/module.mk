@@ -1,6 +1,7 @@
 MODULE := math
 
 MODULE_OBJS := \
+	angle.o \
 	matrix3.o \
 	matrix4.o \
 	line3d.o \

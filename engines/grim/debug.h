@@ -28,21 +28,66 @@
 
 namespace Grim {
 
-enum enDebugLevels {
-	DEBUG_NONE = 0,
-	DEBUG_NORMAL = 1,
-	DEBUG_WARN = 2,
-	DEBUG_ERROR = 4,
-	DEBUG_LUA = 8,
-	DEBUG_BITMAPS = 16,
-	DEBUG_MODEL = 32,
-	DEBUG_STUB = 64,
-	DEBUG_SMUSH = 128,
-	DEBUG_IMUSE = 256,
-	DEBUG_CHORES = 512,
-	DEBUG_ALL = DEBUG_NORMAL | DEBUG_WARN | DEBUG_ERROR | DEBUG_LUA | DEBUG_BITMAPS |
-	            DEBUG_MODEL | DEBUG_STUB | DEBUG_SMUSH | DEBUG_IMUSE | DEBUG_CHORES
+class Debug {
+public:
+	enum DebugChannel {
+		Info = 1,
+		Warning = 2 << 0,
+		Error = 2 << 1,
+		Engine = 2 << 2,
+		Lua = 2 << 3,
+		Bitmaps = 2 << 4,
+		Models = 2 << 5,
+		Actors = 2 << 6,
+		Costumes = 2 << 7,
+		Chores = 2 << 8,
+		Fonts = 2 << 9,
+		Keyframes = 2 << 10,
+		Materials = 2 << 11,
+		Movie = 2 << 12,
+		Imuse = 2 << 13,
+		Scripts = 2 << 14,
+		Sets = 2 << 15,
+		TextObjects = 2 << 16,
+		All = 0xFFFFFF
+	};
+
+	static void registerDebugChannels();
+	static bool isChannelEnabled(DebugChannel chan);
+
+	/**
+	 * Prints a message to the console (stdout), only if the specified debug channel
+	 * or the channel Info are active.
+	 *
+	 * @param channel The debug channel to use.
+	 */
+	static void debug(DebugChannel channel, const char *s, ...);
+	/**
+	 * Prints a message to the console (sterr), only if the specified debug channel
+	 * or the channel Warning are active.
+	 *
+	 * @param channel The debug channel to use.
+	 */
+	static void warning(DebugChannel channel, const char *s, ...);
+	/**
+	 * Prints a message to the console (stderr) and exit the program immediately,
+	 * only if the specified debug channel or the channel Error are active.
+	 *
+	 * @param channel The debug channel to use.
+	 */
+	static void error(DebugChannel channel, const char *s, ...);
+	/**
+	 * Prints a message to the console (stderr) and exit the program immediately,
+	 * only if the debug channel Error is active.
+	 *
+	 * @param channel The debug channel to use.
+	 */
+	static void error(const char *s, ...);
 };
+
+inline Debug::DebugChannel operator|(Debug::DebugChannel a, Debug::DebugChannel b) {
+	return (Debug::DebugChannel)((int)a | (int) b);
+}
 
 }
 

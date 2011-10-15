@@ -31,7 +31,7 @@ class Color {
 public:
 	byte _vals[3];
 
-	Color() {}
+	Color();
 	Color(byte r, byte g, byte b);
 	Color(const Color& c);
 

@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	movie/codecs/blocky8.o \
 	movie/codecs/blocky16.o \
 	movie/codecs/vima.o \
+	movie/codecs/smush_decoder.o \
 	movie/bink.o \
 	movie/mpeg.o \
 	movie/smush.o \
@@ -45,18 +46,21 @@ MODULE_OBJS := \
 	costume.o \
 	color.o \
 	colormap.o \
+	debug.o \
 	detection.o \
 	font.o \
 	gfx_base.o \
 	gfx_opengl.o \
 	gfx_tinygl.o \
 	grim.o \
+	grim_controls.o \
 	inputdialog.o \
 	iris.o \
 	keyframe.o \
 	lab.o \
 	lipsync.o \
 	localize.o \
+	lua.o \
 	lua_v1.o \
 	lua_v1_actor.o \
 	lua_v1_graphics.o \
@@ -70,7 +74,7 @@ MODULE_OBJS := \
 	registry.o \
 	resource.o \
 	savegame.o \
-	scene.o \
+	set.o \
 	scx.o \
 	sector.o \
 	textobject.o \

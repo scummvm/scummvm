@@ -29,7 +29,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/colormap.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 namespace Grim {
 
@@ -128,8 +128,8 @@ void Sector::load(TextSplitter &ts) {
 		_type = SpecialType;
 	else if (strstr(buf, "chernobyl"))
 		_type = HotType;
-	else if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-		error("Unknown sector type '%s' in room setup", buf);
+	else
+		Debug::error(Debug::Sets, "Unknown sector type '%s' in room setup", buf);
 
 	ts.scanString(" default visibility %256s", 1, buf);
 	if (strcmp(buf, "visible") == 0)
@@ -149,7 +149,8 @@ void Sector::load(TextSplitter &ts) {
 	// Repeat the last vertex for convenience
 	_vertices[_numVertices] = _vertices[0];
 
-	_normal = cross(_vertices[1] - _vertices[0], _vertices[_numVertices - 1] - _vertices[0]);
+	_normal = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],
+										   _vertices[_numVertices - 1] - _vertices[0]);
 	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
@@ -198,8 +199,8 @@ void Sector::shrink(float radius) {
 	for (int j = 0; j < _numVertices; j++) {
 		Math::Vector3d shrinkDir;
 
-		for (int k = 0; k < g_grim->getCurrScene()->getSectorCount(); k++) {
-			Sector *other = g_grim->getCurrScene()->getSectorBase(k);
+		for (int k = 0; k < g_grim->getCurrSet()->getSectorCount(); k++) {
+			Sector *other = g_grim->getCurrSet()->getSectorBase(k);
 			if ((other->getType() & WalkType) == 0)
 				continue;
 
@@ -266,45 +267,25 @@ void Sector::unshrink() {
 }
 
 bool Sector::isPointInSector(const Math::Vector3d &point) const {
-	// The algorithm: for each edge A->B, check whether the z-component
-	// of (B-A) x (P-A) is >= 0.  Then the point is at least in the
-	// cylinder above&below the polygon.  (This works because the polygons'
-	// vertices are always given in counterclockwise order, and the
-	// polygons are always convex.)
-	//
-	// Checking the box height on the first point fixes problems with Manny
-	// changing sectors outside Velasco's storeroom.  We make an exceptions
-	// for heights of 0 and 9999 since these appear to have special meaning.
-	// In order to have the entrance to the Blue Casket work we need to
-	// handle the vertices having different z-coordinates.
-	// TODO: Improve height checking for when vertices have different
-	// z-coordinates so the railing in Cafe Calavera works properly.
-	if (_height != 0.0f && _height != 9999.0f) {
-		bool heightOK = false;
-		// Handle height above Z
-		if ((point.z() >= _vertices[0].z()) && (point.z() <= _vertices[0].z() + _height))
-			heightOK = true;
-		// Handle height below Z
-		if ((point.z() <= _vertices[0].z()) && (point.z() >= _vertices[0].z() - _height))
-			heightOK = true;
+	// Calculate the distance of the point from the plane of the sector.
+	// Return false if it isn't within a margin.
+	if (_height < 9000.f) { // No need to check when height is 9999.
+		// The plane has equation ax + by + cz + d = 0
+		float a = _normal.x();
+		float b = _normal.y();
+		float c = _normal.z();
+		float d = -_vertices[0].x() * a - _vertices[0].y() * b - _vertices[0].z() * c;
 
-		for (int i = 0; i < _numVertices; i++) {
-			if (_vertices[i + 1].z() != _vertices[i].z())
-				heightOK = true;
-		}
-		if (!heightOK) {
-/* Use this for debugging problems at height interfaces
-			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
-				printf("Rejected trigger due to height: %s (%f)\n", _name.c_str(), _height);
-				printf("Actor Z: %f\n", point.z());
-				for (int i = 0; i < _numVertices; i++)
-					printf("(%d) Z: %f\n", i, _vertices[i].z());
-			}
-*/
+		float dist = (a * point.x() + b * point.y() + c * point.z() + d) /
+					sqrt(a * a + b * b + c * c);
+		// dist is positive if it is above the plain, negative if it is
+		// below and 0 if it is on the plane.
+
+		if (fabsf(dist) > _height + 0.01) // Add an error margin
 			return false;
-		}
 	}
 
+	// On the plane, so check if it is inside the polygon.
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
@@ -384,7 +365,7 @@ Math::Vector3d Sector::getProjectionToPlane(const Math::Vector3d &point) const {
 
 	// Formula: return p - (n . (p - v_0))/(n . k) k
 	Math::Vector3d result = point;
-	result.z() -= dot(_normal, point - _vertices[0]) / _normal.z();
+	result.z() -= Math::Vector3d::dotProduct(_normal, point - _vertices[0]) / _normal.z();
 	return result;
 }
 
@@ -393,7 +374,7 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 		error("Trying to walk along vertical plane");
 
 	Math::Vector3d result = v;
-	result.z() -= dot(_normal, v) / _normal.z();
+	result.z() -= Math::Vector3d::dotProduct(_normal, v) / _normal.z();
 	return result;
 }
 
@@ -401,7 +382,7 @@ Math::Vector3d Sector::getProjectionToPuckVector(const Math::Vector3d &v) const 
 Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	// First try to project to the plane
 	Math::Vector3d p2 = point;
-	p2 -= (dot(_normal, p2 - _vertices[0])) * _normal;
+	p2 -= (Math::Vector3d::dotProduct(_normal, p2 - _vertices[0])) * _normal;
 	if (isPointInSector(p2))
 		return p2;
 
@@ -409,7 +390,7 @@ Math::Vector3d Sector::getClosestPoint(const Math::Vector3d &point) const {
 	for (int i = 0; i < _numVertices; i++) {
 		Math::Vector3d edge = _vertices[i + 1] - _vertices[i];
 		Math::Vector3d delta = point - _vertices[i];
-		float scalar = dot(delta, edge) / dot(edge, edge);
+		float scalar = Math::Vector3d::dotProduct(delta, edge) / Math::Vector3d::dotProduct(edge, edge);
 		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
 			// That last test is just whether the z-component
 			// of delta cross edge is positive; we don't
@@ -457,15 +438,15 @@ void Sector::getExitInfo(const Math::Vector3d &s, const Math::Vector3d &dirVec, 
 	}
 
 	result->edgeDir = _vertices[i] - _vertices[i - 1];
-	result->angleWithEdge = angle(dir, result->edgeDir);
+	result->angleWithEdge = Math::Vector3d::angle(dir, result->edgeDir);
 	result->edgeVertex = i - 1;
 
 	Math::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
-	float d = dot(dir, edgeNormal);
+	float d = Math::Vector3d::dotProduct(dir, edgeNormal);
 	// This is 0 for the albinizod monster in the at set
 	if (!d)
 		d = 1.f;
-	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / d ) * dir;
+	result->exitPoint = start + (Math::Vector3d::dotProduct(_vertices[i] - start, edgeNormal) / d ) * dir;
 }
 
 Sector &Sector::operator=(const Sector &other) {

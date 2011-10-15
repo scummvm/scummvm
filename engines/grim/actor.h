@@ -26,6 +26,7 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "math/vector3d.h"
+#include "math/angle.h"
 
 namespace Grim {
 
@@ -35,7 +36,7 @@ class Costume;
 class LipSync;
 class Font;
 class PoolColor;
-class Scene;
+class Set;
 
 struct Plane {
 	Common::String setName;
@@ -121,7 +122,7 @@ public:
 	 * @param position The position.
 	 * @see getPos
 	 */
-	void setPos(Math::Vector3d position);
+	void setPos(const Math::Vector3d &position);
 	/**
 	 * Returns the position of the actor on the 3D scene.
 	 *
@@ -169,7 +170,7 @@ public:
 	 * @see turn
 	 * @see isTurning
 	 */
-	void turnTo(float pitch, float yaw, float roll);
+	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
 	 * Returns true if the actor is turning.
 	 *
@@ -190,7 +191,7 @@ public:
 	 * @see turn
 	 * @see isTurning
 	 */
-	void setRot(float pitch, float yaw, float roll);
+	void setRot(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
 	 * Turns the actor by the given parameter on the z axis.
 	 * The actual movement depends also on the turn rate.
@@ -214,7 +215,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getPitch() const { return _pitch; }
+	Math::Angle getPitch() const { return _pitch; }
 	/**
 	 * Returns the yaw of the actor, which is the rotation
 	 * on the z axis.
@@ -225,7 +226,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getYaw() const { return _yaw; }
+	Math::Angle getYaw() const { return _yaw; }
 	/**
 	 * Returns the roll of the actor, which is the rotation
 	 * on the y axis.
@@ -236,7 +237,7 @@ public:
 	 * @see turnTo
 	 * @see isTurning
 	 */
-	float getRoll() const { return _roll; }
+	Math::Angle getRoll() const { return _roll; }
 
 	/**
 	 * Calculates and returns the angle between the direction the
@@ -244,14 +245,14 @@ public:
 	 *
 	 * @param actor The actor to look at.
 	 */
-	float getYawTo(const Actor &actor) const;
+	Math::Angle  getYawTo(Actor *actor) const;
 	/**
 	 * Calculates and returns the angle between the direction the
 	 * actor is facing and the direction towards a point.
 	 *
 	 * @param actor The point to look at.
 	 */
-	float getYawTo(Math::Vector3d p) const;
+	Math::Angle  getYawTo(const Math::Vector3d &p) const;
 
 	/**
 	 * Sets the actor visibility.
@@ -355,6 +356,8 @@ public:
 	 */
 	Math::Vector3d getPuckVector() const;
 
+	void setPuckOrient(bool orient);
+
 	/**
 	 * Makes the actor say the given line.
 	 * It will show a subtitle and/or play the voice, depending
@@ -385,12 +388,12 @@ public:
 	bool isTalking();
 
 	void setRestChore(int choreNumber, Costume *cost);
-	int getRestChore() const { return _restChore; }
+	int getRestChore() const;
 	void setWalkChore(int choreNumber, Costume *cost);
 	void setTurnChores(int left_chore, int right_chore, Costume *cost);
 	void setTalkChore(int index, int choreNumber, Costume *cost);
-	int getTalkChore(int index) const { return _talkChore[index]; }
-	Costume* getTalkCostume(int index) const { return _talkCostume[index]; }
+	int getTalkChore(int index) const;
+	Costume *getTalkCostume(int index) const;
 	void setMumbleChore(int choreNumber, Costume *cost);
 
 	void setColormap(const char *map);
@@ -410,7 +413,7 @@ public:
 	}
 
 	void setActiveShadow(int shadowId);
-	void setShadowPoint(Math::Vector3d pos);
+	void setShadowPoint(const Math::Vector3d &pos);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
@@ -455,17 +458,28 @@ private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
 	void updateWalk();
-	void addShadowPlane(const char *n, Scene *scene, int shadowId);
+	void addShadowPlane(const char *n, Set *scene, int shadowId);
 	bool shouldDrawShadow(int shadowId);
 	void stopTalking();
 	bool stopMumbleChore();
+	/**
+	 * Given a start point and a destination this function returns a position
+	 * that doesn't collide with any actor.
+	 */
+	Math::Vector3d handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const;
+	/**
+	 * Check if the line from pos to dest collides with this actor's bounding
+	 * box, and if yes return a point that, together with pos, defines a line
+	 * tangent with the bounding box.
+	 */
+	Math::Vector3d getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const;
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 
 	PoolColor *_talkColor;
 	Math::Vector3d _pos;
-	float _pitch, _yaw, _roll;
+	Math::Angle _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
 	bool _constrain;	// Constrain to walkboxes
@@ -480,31 +494,51 @@ private:
 
 	// Variables for gradual turning
 	bool _turning;
-	float _destYaw;
+	Math::Angle _destYaw;
 
 	// Variables for walking to a point
 	bool _walking;
 	Math::Vector3d _destPos;
 
 	// chores
-	Costume *_restCostume;
-	int _restChore;
+	class Chore {
+	public:
+		Chore();
+		Chore(Costume *cost, int chore);
 
-	Costume *_walkCostume;
-	int _walkChore;
+		void play(bool fade = false, unsigned int time = fadeTime);
+		void playLooping(bool fade = false, unsigned int time = fadeTime);
+		void stop(bool fade = false, unsigned int time = fadeTime);
+		void setLastFrame();
+
+		inline bool isValid() const { return _chore > -1; }
+		bool isPlaying() const;
+		inline bool equals(Costume *cost, int chore) const {
+			return (_costume == cost && _chore == chore);
+		}
+
+		void saveState(SaveGame *state) const;
+		void restoreState(SaveGame *state, Actor *actor);
+
+
+		Costume *_costume;
+		int _chore;
+
+		static const unsigned int fadeTime;
+	};
+	Chore _restChore;
+
+	Chore _walkChore;
 	bool _walkedLast, _walkedCur;
 	bool _running;
 
-	Costume *_turnCostume;
-	int _leftTurnChore, _rightTurnChore;
+	Chore _leftTurnChore, _rightTurnChore;
 	int _lastTurnDir, _currTurnDir;
 
-	Costume *_talkCostume[10];
-	int _talkChore[10];
+	Chore _talkChore[10];
 	int _talkAnim;
 
-	Costume *_mumbleCostume;
-	int _mumbleChore;
+	Chore _mumbleChore;
 
 	Shadow *_shadowArray;
 	int _activeShadowSlot;
@@ -514,19 +548,17 @@ private:
 	bool _mustPlaceText;
 
 	// Validate a yaw angle then set it appropriately
-	void setYaw(float yaw);
+	void setYaw(const Math::Angle &yaw);
 
-	int getTurnChore(int dir) {
-		return (dir > 0 ? _rightTurnChore : _leftTurnChore);
+	Chore *getTurnChore(int dir) {
+		return (dir > 0 ? &_rightTurnChore : &_leftTurnChore);
 	}
 
-	void freeCostumeChore(Costume *toFree, Costume *&cost, int &chore);
+	void freeCostumeChore(Costume *toFree, Chore *chore);
 
 	// lookAt
 	Math::Vector3d _lookAtVector;
 	float _lookAtRate;
-
-	int _winX1, _winY1, _winX2, _winY2;
 
 	// struct used for path finding
 	struct PathNode {
@@ -540,6 +572,8 @@ private:
 
 	CollisionMode _collisionMode;
 	float _collisionScale;
+
+	bool _puckOrient;
 
 	friend class GrimEngine;
 };

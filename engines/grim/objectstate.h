@@ -52,7 +52,7 @@ public:
 
 	const Common::String &getBitmapFilename() const;
 
-	void setNumber(int val);
+	void setActiveImage(int val);
 	void draw();
 
 private:

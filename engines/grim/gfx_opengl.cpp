@@ -29,6 +29,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/surface.h"
+
 #include "engines/grim/actor.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/font.h"
@@ -39,7 +41,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/model.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 
 #ifdef USE_OPENGL
 
@@ -315,7 +317,8 @@ void GfxOpenGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll) {
+void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+							   const Math::Angle &pitch, const Math::Angle &roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -335,9 +338,9 @@ void GfxOpenGL::startActorDraw(Math::Vector3d pos, float scale, float yaw, float
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glScalef(scale, scale, scale);
-	glRotatef(yaw, 0, 0, 1);
-	glRotatef(pitch, 1, 0, 0);
-	glRotatef(roll, 0, 1, 0);
+	glRotatef(yaw.getDegrees(), 0, 0, 1);
+	glRotatef(pitch.getDegrees(), 1, 0, 0);
+	glRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxOpenGL::finishActorDraw() {
@@ -480,14 +483,15 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 	glPopMatrix();
 }
 
-void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxOpenGL::translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+										const Math::Angle &yaw, const Math::Angle &roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
 	glTranslatef(pos.x(), pos.y(), pos.z());
-	glRotatef(yaw, 0, 0, 1);
-	glRotatef(pitch, 1, 0, 0);
-	glRotatef(roll, 0, 1, 0);
+	glRotatef(yaw.getDegrees(), 0, 0, 1);
+	glRotatef(pitch.getDegrees(), 1, 0, 0);
+	glRotatef(roll.getDegrees(), 0, 1, 0);
 }
 
 void GfxOpenGL::translateViewpointFinish() {
@@ -496,9 +500,9 @@ void GfxOpenGL::translateViewpointFinish() {
 
 void GfxOpenGL::drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2) {
 	Math::Vector3d animPos = node->_pos + node->_animPos;
-	float animPitch = node->_pitch + node->_animPitch;
-	float animYaw = node->_yaw + node->_animYaw;
-	float animRoll = node->_roll + node->_animRoll;
+	Math::Angle animPitch = node->_pitch + node->_animPitch;
+	Math::Angle animYaw = node->_yaw + node->_animYaw;
+	Math::Angle animRoll = node->_roll + node->_animRoll;
 	translateViewpointStart(animPos, animPitch, animYaw, animRoll);
 	if (node->_hierVisible) {
 		glPushMatrix();
@@ -568,7 +572,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[2] = light->_dir.z();
 		cutoff = light->_penumbraangle;
 	} else {
-		error("Scene::setupLights() Unknown type of light: %s", light->_type.c_str());
+		error("Set::setupLights() Unknown type of light: %s", light->_type.c_str());
 		return;
 	}
 	glDisable(GL_LIGHT0 + lightId);
@@ -715,10 +719,10 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	// If drawing a Z-buffer image, but no shaders are available, fall back to the glDrawPixels method.
 	if (bitmap->getFormat() == 5 && !_useDepthShader) {
 		// Only draw the manual zbuffer when enabled
-		if (bitmap->getCurrentImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getCurrentImage() - 1));
+		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
+			drawDepthBitmap(bitmap->getX(), bitmap->getY(), bitmap->getWidth(), bitmap->getHeight(), bitmap->getData(bitmap->getActiveImage() - 1));
 		} else {
-			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getCurrentImage(), bitmap->getNumImages());
+			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
 		glEnable(GL_LIGHTING);
 		return;
@@ -739,7 +743,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(bitmap->getX(), _screenHeight - (bitmap->getY() + bitmap->getHeight()), bitmap->getWidth(), bitmap->getHeight());
-	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getCurrentImage() - 1);
+	int cur_tex_idx = bitmap->getNumTex() * (bitmap->getActiveImage() - 1);
 	for (int y = bitmap->getY(); y < (bitmap->getY() + bitmap->getHeight()); y += BITMAP_TEXTURE_SIZE) {
 		for (int x = bitmap->getX(); x < (bitmap->getX() + bitmap->getWidth()); x += BITMAP_TEXTURE_SIZE) {
 			textures = (GLuint *)bitmap->getTexIds();
@@ -1038,7 +1042,11 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::prepareMovieFrame(int width, int height, byte *bitmap) {
+void GfxOpenGL::prepareMovieFrame(Graphics::Surface* frame) {
+	int height = frame->h;
+	int width = frame->w;
+	byte *bitmap = (byte *)frame->pixels;
+
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);

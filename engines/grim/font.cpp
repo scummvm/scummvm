@@ -127,8 +127,7 @@ uint16 Font::getCharIndex(unsigned char c) const {
 		if (_charIndex[i] == c2)
 			return i;
 	}
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!", c2);
+	Debug::warning(Debug::Fonts, "The requsted character (code 0x%x) does not correspond to anything in the font data!", c2);
 	// If we couldn't find the character then default to
 	// the first character in the font so that something
 	// gets loaded to prevent the game from crashing

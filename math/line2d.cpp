@@ -54,6 +54,15 @@ Vector2d Line2d::getDirection() const {
 	return Vector2d(1, _a);
 }
 
+float Line2d::getDistanceTo(const Vector2d &point, Vector2d *intersection) const {
+	float dist = fabsf(_a * point.getX() + _b * point.getY() + _c) / sqrt(_a * _a + _b * _b);
+
+	if (intersection) {
+		intersectsLine(getPerpendicular(point), intersection);
+	}
+	return dist;
+}
+
 bool Line2d::intersectsLine(const Line2d &line, Vector2d *pos) const {
 	// 	if (*this == line) {
 	// 		return false;
@@ -189,9 +198,11 @@ bool Segment2d::containsPoint(const Vector2d &point) const {
 	return false;
 }
 
-void Segment2d::operator=(const Segment2d &other) {
+Segment2d &Segment2d::operator=(const Segment2d &other) {
 	_begin = other._begin;
 	_end = other._end;
+
+	return *this;
 }
 
 }

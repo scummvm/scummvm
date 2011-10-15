@@ -68,7 +68,7 @@ void Movie::loadPosition(const VideoData &videoData) {
 	u.set(planeDirection.z(), 0.0f, -planeDirection.x());
 	u.normalize();
 
-	Math::Vector3d v = Math::cross(planeDirection, u);
+	Math::Vector3d v = Math::Vector3d::crossProduct(planeDirection, u);
 	v.normalize();
 
 	Math::Vector3d planeOrigin = planeDirection * scale;

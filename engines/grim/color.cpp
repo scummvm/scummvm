@@ -25,6 +25,10 @@
 
 namespace Grim {
 
+Color::Color() {
+	_vals[0] = _vals[1] = _vals[2] = 0;
+}
+
 Color::Color(byte r, byte g, byte b) {
 	_vals[0] = r;
 	_vals[1] = g;

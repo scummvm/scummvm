@@ -28,6 +28,7 @@
 #include "math/matrix4.h"
 
 #include "engines/grim/object.h"
+#include "engines/grim/animation.h"
 
 
 namespace Grim {
@@ -44,7 +45,6 @@ class TextSplitter;
 class Costume : public Object {
 public:
 	Costume(const Common::String &filename, const char *data, int len, Costume *prevCost);
-    Costume() : Object() { _chores = 0; }
 
 	void loadGRIM(TextSplitter &ts, Costume *prevCost);
 	void loadEMI(Common::MemoryReadStream &ms, Costume *prevCost);
@@ -77,7 +77,8 @@ public:
 	void setupTextures();
 	void draw();
 	void draw(int *x1, int *y1, int *x2, int *y2);
-	void setPosRotate(Math::Vector3d pos, float pitch, float yaw, float roll);
+	void setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
+					  const Math::Angle &yaw, const Math::Angle &roll);
 	Math::Matrix4 getMatrix() const;
 
 	Costume *getPreviousCostume() const;
@@ -169,6 +170,9 @@ private:
 		void cleanup();
 
 	private:
+		void setKeys(int startTime, int stopTime);
+		void fade(Animation::FadeMode, int msecs);
+
 		Costume *_owner;
 
 		int _id;
@@ -179,8 +183,6 @@ private:
 
 		bool _hasPlayed, _playing, _looping;
 		int _currTime;
-
-		void setKeys(int startTime, int stopTime);
 
 		friend class Costume;
 	};
@@ -194,8 +196,8 @@ private:
 	ModelNode *_joint2Node;
 	ModelNode *_joint3Node;
 
-	float _headPitch;
-	float _headYaw;
+	Math::Angle _headPitch;
+	Math::Angle _headYaw;
 };
 
 } // end of namespace Grim

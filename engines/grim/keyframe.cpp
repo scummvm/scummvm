@@ -47,13 +47,7 @@ KeyframeAnim::KeyframeAnim(const Common::String &fname, const char *data, int le
 void KeyframeAnim::loadBinary(const char *data, int len) {
 	// First four bytes are the FYEK Keyframe identifier code
 	// Next 36 bytes are the filename
-	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
-		char filebuf[37];
-
-		memcpy(filebuf, data + 4, 36);
-		filebuf[36] = 0;
-		printf("Loading Keyframe '%s'.", filebuf);
-	}
+	Debug::debug(Debug::Keyframes, "Loading Keyframe '%s'.", _fname.c_str());
 	// Next four bytes are the flags
 	_flags = READ_LE_UINT32(data + 40);
 	// Next four bytes are a duplicate of _numJoints (?)
@@ -98,9 +92,7 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 		// else is still wrong but it should now load correctly in
 		// all cases
 		if (nodeNum >= _numJoints) {
-			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL) {
-				warning("A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
-			}
+			Debug::warning(Debug::Keyframes, "A node number was greater than the maximum number of nodes (%d/%d)", nodeNum, _numJoints);
 			return;
 		}
 		if (_nodes[nodeNum]) {
@@ -191,11 +183,11 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);
-	_pos = Math::get_vector3d(data + 8);
+	_pos = Math::Vector3d::get_vector3d(data + 8);
 	_pitch = get_float(data + 20);
 	_yaw = get_float(data + 24);
 	_roll = get_float(data + 28);
-	_dpos = Math::get_vector3d(data + 32);
+	_dpos = Math::Vector3d::get_vector3d(data + 32);
 	_dpitch = get_float(data + 44);
 	_dyaw = get_float(data + 48);
 	_droll = get_float(data + 52);
@@ -260,9 +252,9 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	float dt = frame - _entries[low]._frame;
 	Math::Vector3d pos = _entries[low]._pos;
-	float pitch = _entries[low]._pitch;
-	float yaw = _entries[low]._yaw;
-	float roll = _entries[low]._roll;
+	Math::Angle pitch = _entries[low]._pitch;
+	Math::Angle yaw = _entries[low]._yaw;
+	Math::Angle roll = _entries[low]._roll;
 	if (useDelta) {
 		pos += dt * _entries[low]._dpos;
 		pitch += dt * _entries[low]._dpitch;
@@ -272,26 +264,14 @@ bool KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 
 	node._animPos += (pos - node._pos) * fade;
 
-	float dpitch = pitch - node._pitch;
-	while (dpitch > 180)
-		dpitch -= 360;
-	while (dpitch < -180)
-		dpitch += 360;
-	node._animPitch += dpitch * fade;
+	Math::Angle dpitch = pitch - node._pitch;
+	node._animPitch += dpitch.normalize(-180) * fade;
 
-	float dyaw = yaw - node._yaw;
-	while (dyaw > 180)
-		dyaw -= 360;
-	while (dyaw < -180)
-		dyaw += 360;
-	node._animYaw += dyaw * fade;
+	Math::Angle dyaw = yaw - node._yaw;
+	node._animYaw += dyaw.normalize(-180) * fade;
 
-	float droll = roll - node._roll;
-	while (droll > 180)
-		droll -= 360;
-	while (droll < -180)
-		droll += 360;
-	node._animRoll += droll * fade;
+	Math::Angle droll = roll - node._roll;
+	node._animRoll += droll.normalize(-180) * fade;
 
 	return true;
 }

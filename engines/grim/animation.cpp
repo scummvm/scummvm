@@ -69,11 +69,10 @@ void Animation::play(RepeatMode repeatMode) {
 void Animation::fade(FadeMode fadeMode, int fadeLength) {
 	if (!_active) {
 		if (fadeMode == FadeIn) {
-			_repeatMode = Once;
+			_repeatMode = PauseAtEnd;
 			_time = -1;
 			_fade = 0.f;
-		} else {
-			return;
+			_paused = false;
 		}
 	}
 	_fadeMode = fadeMode;
@@ -88,6 +87,7 @@ void Animation::stop() {
 	_fadeMode = None;
 	_time = -1;
 	_fade = 1.f;
+	_paused = false;
 	deactivate();
 }
 
@@ -125,8 +125,10 @@ int Animation::update(int time) {
 		} else {
 			_fade -= (float)time / (float)_fadeLength;
 			if (_fade <= 0.f) {
-				_fade = 1.f;
-				_fadeMode = None;
+				_fade = 0.f;
+				// Don't reset the _fadeMode here. This way if fadeOut() was called
+				// on a looping chore its keyframe animations will remain faded out
+				// when it calls play() again.
 				deactivate();
 				return 0;
 			}
@@ -158,8 +160,7 @@ int Animation::update(int time) {
 				_time = animLength;
 				break;
 			default:
-				if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyframe->getFilename().c_str());
+				Debug::warning(Debug::Keyframes, "Unknown repeat mode %d for keyframe %s", _repeatMode, _keyframe->getFilename().c_str());
 		}
 	}
 
@@ -233,7 +234,7 @@ void AnimManager::removeAnimation(Animation *anim) {
 	for (i = _activeAnims.begin(); i != _activeAnims.end(); ++i) {
 		if (i->_anim == anim) {
 			i = _activeAnims.erase(i);
-			i--;
+			--i;
 		}
 	}
 }
@@ -242,7 +243,7 @@ void AnimManager::animate(ModelNode *hier, int numNodes) {
 	// Apply animation to each hierarchy node separately.
 	for (int i = 0; i < numNodes; i++) {
 		Math::Vector3d tempPos;
-		float tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
+		Math::Angle tempYaw = 0.0f, tempPitch = 0.0f, tempRoll = 0.0f;
 		float totalWeight = 0.0f;
 		float remainingWeight = 1.0f;
 		int currPriority = -1;

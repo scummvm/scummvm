@@ -22,13 +22,11 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_fgetc
 #define FORBIDDEN_SYMBOL_EXCEPTION_chdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
 #define FORBIDDEN_SYMBOL_EXCEPTION_getwd
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #define FORBIDDEN_SYMBOL_EXCEPTION_unlink
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdin
@@ -53,6 +51,8 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
+#include "engines/grim/lua_v2.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/movie/movie.h"
 #include "engines/grim/savegame.h"
@@ -65,259 +65,13 @@
 #include "engines/grim/font.h"
 #include "engines/grim/primitives.h"
 #include "engines/grim/objectstate.h"
-#include "engines/grim/scene.h"
-
-#include "engines/grim/lua/lualib.h"
+#include "engines/grim/set.h"
 
 #include "engines/grim/imuse/imuse.h"
 
-#include "lua/lobject.h"
-#include "lua/lstate.h"
+#include "engines/grim/lua/lua.h"
 
 namespace Grim {
-
-static bool g_lua_initialized = false;
-
-// Entries in the system.controls table
-
-const ControlDescriptor controls[] = {
-	{ "KEY_ESCAPE", Common::KEYCODE_ESCAPE },
-	{ "KEY_1", Common::KEYCODE_1 },
-	{ "KEY_2", Common::KEYCODE_2 },
-	{ "KEY_3", Common::KEYCODE_3 },
-	{ "KEY_4", Common::KEYCODE_4 },
-	{ "KEY_5", Common::KEYCODE_5 },
-	{ "KEY_6", Common::KEYCODE_6 },
-	{ "KEY_7", Common::KEYCODE_7 },
-	{ "KEY_8", Common::KEYCODE_8 },
-	{ "KEY_9", Common::KEYCODE_9 },
-	{ "KEY_0", Common::KEYCODE_0 },
-	{ "KEY_MINUS", Common::KEYCODE_MINUS },
-	{ "KEY_EQUALS", Common::KEYCODE_EQUALS },
-	{ "KEY_BACK", Common::KEYCODE_BACKSPACE },
-	{ "KEY_TAB", Common::KEYCODE_TAB },
-	{ "KEY_Q", Common::KEYCODE_q },
-	{ "KEY_W", Common::KEYCODE_w },
-	{ "KEY_E", Common::KEYCODE_e },
-	{ "KEY_R", Common::KEYCODE_r },
-	{ "KEY_T", Common::KEYCODE_t },
-	{ "KEY_Y", Common::KEYCODE_y },
-	{ "KEY_U", Common::KEYCODE_u },
-	{ "KEY_I", Common::KEYCODE_i },
-	{ "KEY_O", Common::KEYCODE_o },
-	{ "KEY_P", Common::KEYCODE_p },
-	{ "KEY_LBRACKET", Common::KEYCODE_LEFTBRACKET },
-	{ "KEY_RBRACKET", Common::KEYCODE_RIGHTBRACKET },
-	{ "KEY_RETURN", Common::KEYCODE_RETURN },
-	{ "KEY_LCONTROL", Common::KEYCODE_LCTRL },
-	{ "KEY_A", Common::KEYCODE_a },
-	{ "KEY_S", Common::KEYCODE_s },
-	{ "KEY_D", Common::KEYCODE_d },
-	{ "KEY_F", Common::KEYCODE_f },
-	{ "KEY_G", Common::KEYCODE_g },
-	{ "KEY_H", Common::KEYCODE_h },
-	{ "KEY_J", Common::KEYCODE_j },
-	{ "KEY_K", Common::KEYCODE_k },
-	{ "KEY_L", Common::KEYCODE_l },
-	{ "KEY_SEMICOLON", Common::KEYCODE_SEMICOLON },
-	{ "KEY_APOSTROPHE", Common::KEYCODE_QUOTEDBL },
-	{ "KEY_GRAVE", Common::KEYCODE_BACKQUOTE },
-	{ "KEY_LSHIFT", Common::KEYCODE_LSHIFT },
-	{ "KEY_BACKSLASH", Common::KEYCODE_BACKSLASH },
-	{ "KEY_Z", Common::KEYCODE_z },
-	{ "KEY_X", Common::KEYCODE_x },
-	{ "KEY_C", Common::KEYCODE_c },
-	{ "KEY_V", Common::KEYCODE_v },
-	{ "KEY_B", Common::KEYCODE_b },
-	{ "KEY_N", Common::KEYCODE_n },
-	{ "KEY_M", Common::KEYCODE_m },
-	{ "KEY_COMMA", Common::KEYCODE_COMMA },
-	{ "KEY_PERIOD", Common::KEYCODE_PERIOD },
-	{ "KEY_SLASH", Common::KEYCODE_SLASH },
-	{ "KEY_RSHIFT", Common::KEYCODE_RSHIFT },
-	{ "KEY_MULTIPLY", Common::KEYCODE_ASTERISK },
-	{ "KEY_LMENU", Common::KEYCODE_LALT },
-	{ "KEY_SPACE", Common::KEYCODE_SPACE },
-	{ "KEY_CAPITAL", Common::KEYCODE_CAPSLOCK },
-	{ "KEY_F1", Common::KEYCODE_F1 },
-	{ "KEY_F2", Common::KEYCODE_F2 },
-	{ "KEY_F3", Common::KEYCODE_F3 },
-	{ "KEY_F4", Common::KEYCODE_F4 },
-	{ "KEY_F5", Common::KEYCODE_F5 },
-	{ "KEY_F6", Common::KEYCODE_F6 },
-	{ "KEY_F7", Common::KEYCODE_F7 },
-	{ "KEY_F8", Common::KEYCODE_F8 },
-	{ "KEY_F9", Common::KEYCODE_F9 },
-	{ "KEY_F10", Common::KEYCODE_F10 },
-	{ "KEY_NUMLOCK", Common::KEYCODE_NUMLOCK },
-	{ "KEY_SCROLL", Common::KEYCODE_SCROLLOCK },
-	{ "KEY_NUMPAD7", Common::KEYCODE_KP7 },
-	{ "KEY_NUMPAD8", Common::KEYCODE_KP8 },
-	{ "KEY_NUMPAD9", Common::KEYCODE_KP9 },
-	{ "KEY_SUBTRACT", Common::KEYCODE_KP_MINUS },
-	{ "KEY_NUMPAD4", Common::KEYCODE_KP4 },
-	{ "KEY_NUMPAD5", Common::KEYCODE_KP5 },
-	{ "KEY_NUMPAD6", Common::KEYCODE_KP6 },
-	{ "KEY_ADD", Common::KEYCODE_KP_PLUS },
-	{ "KEY_NUMPAD1", Common::KEYCODE_KP1 },
-	{ "KEY_NUMPAD2", Common::KEYCODE_KP2 },
-	{ "KEY_NUMPAD3", Common::KEYCODE_KP3 },
-	{ "KEY_NUMPAD0", Common::KEYCODE_KP0 },
-	{ "KEY_DECIMAL", Common::KEYCODE_KP_PERIOD },
-	{ "KEY_F11", Common::KEYCODE_F11 },
-	{ "KEY_F12", Common::KEYCODE_F12 },
-	{ "KEY_F13", Common::KEYCODE_F13 },
-	{ "KEY_F14", Common::KEYCODE_F14 },
-	{ "KEY_F15", Common::KEYCODE_F15 },
-	{ "KEY_NUMPADEQUALS", Common::KEYCODE_KP_EQUALS },
-	{ "KEY_AT", Common::KEYCODE_AT },
-	{ "KEY_COLON", Common::KEYCODE_COLON },
-	{ "KEY_UNDERLINE", Common::KEYCODE_UNDERSCORE },
-	{ "KEY_STOP", Common::KEYCODE_BREAK },
-	{ "KEY_NUMPADENTER", Common::KEYCODE_KP_ENTER },
-	{ "KEY_RCONTROL", Common::KEYCODE_RCTRL },
-	{ "KEY_NUMPADCOMMA", Common::KEYCODE_KP_PERIOD },
-	{ "KEY_DIVIDE", Common::KEYCODE_KP_DIVIDE },
-	{ "KEY_SYSRQ", Common::KEYCODE_SYSREQ },
-	{ "KEY_RMENU", Common::KEYCODE_RALT },
-	{ "KEY_HOME", Common::KEYCODE_HOME },
-	{ "KEY_UP", Common::KEYCODE_UP },
-	{ "KEY_PRIOR", Common::KEYCODE_PAGEUP },
-	{ "KEY_LEFT", Common::KEYCODE_LEFT },
-	{ "KEY_RIGHT", Common::KEYCODE_RIGHT },
-	{ "KEY_END", Common::KEYCODE_END },
-	{ "KEY_DOWN", Common::KEYCODE_DOWN },
-	{ "KEY_NEXT", Common::KEYCODE_PAGEDOWN },
-	{ "KEY_INSERT", Common::KEYCODE_INSERT },
-	{ "KEY_DELETE", Common::KEYCODE_DELETE },
-	{ "KEY_LWIN", Common::KEYCODE_LSUPER },
-	{ "KEY_RWIN", Common::KEYCODE_RSUPER },
-	{ "KEY_APPS", Common::KEYCODE_MENU },
-	{ "KEY_EQUAL", Common::KEYCODE_EQUALS },
-	{ "KEY_CONTROL", Common::KEYCODE_LCTRL },
-	{ "KEY_SHIFT", Common::KEYCODE_LSHIFT },
-	{ "KEY_ALT", Common::KEYCODE_LALT },
-	{ "KEY_BACKSPACE", Common::KEYCODE_BACKSPACE },
-	{ "KEY_NP9", Common::KEYCODE_KP9 },
-	{ "KEY_NP8", Common::KEYCODE_KP8 },
-	{ "KEY_NP7", Common::KEYCODE_KP7 },
-	{ "KEY_NP6", Common::KEYCODE_KP6 },
-	{ "KEY_NP5", Common::KEYCODE_KP5 },
-	{ "KEY_NP4", Common::KEYCODE_KP4 },
-	{ "KEY_NP3", Common::KEYCODE_KP3 },
-	{ "KEY_NP2", Common::KEYCODE_KP2 },
-	{ "KEY_NP1", Common::KEYCODE_KP1 },
-	{ "KEY_NP0", Common::KEYCODE_KP0 },
-	{ "KEY_NPENTER", Common::KEYCODE_KP_ENTER },
-	{ "KEY_PAGEUP", Common::KEYCODE_PAGEUP },
-	{ "KEY_PAGEDOWN", Common::KEYCODE_PAGEDOWN },
-	{ "KEY_SCROLL", Common::KEYCODE_SCROLLOCK },
-	{ "KEY_CAPSLOCK", Common::KEYCODE_CAPSLOCK },
-	{ "KEY_LEFTBRACKET", Common::KEYCODE_LEFTBRACKET },
-	{ "KEY_RIGHTBRACKET", Common::KEYCODE_RIGHTBRACKET },
-	{ "KEY_TILDE", Common::KEYCODE_TILDE },
-	{ "KEY_QUOTE", Common::KEYCODE_QUOTE },
-	{ "KEY_PAUSE", Common::KEYCODE_PAUSE },
-	{ "KEY_CLEAR", Common::KEYCODE_CLEAR },
-
-	{ "KEY_JOY1_B1", KEYCODE_JOY1_B1 },
-	{ "KEY_JOY1_B2", KEYCODE_JOY1_B2 },
-	{ "KEY_JOY1_B3", KEYCODE_JOY1_B3 },
-	{ "KEY_JOY1_B4", KEYCODE_JOY1_B4 },
-	{ "KEY_JOY1_B5", KEYCODE_JOY1_B5 },
-	{ "KEY_JOY1_B6", KEYCODE_JOY1_B6 },
-	{ "KEY_JOY1_B7", KEYCODE_JOY1_B7 },
-	{ "KEY_JOY1_B8", KEYCODE_JOY1_B8 },
-	{ "KEY_JOY1_B9", KEYCODE_JOY1_B9 },
-	{ "KEY_JOY1_B10", KEYCODE_JOY1_B10 },
-	{ "KEY_JOY1_B11", KEYCODE_JOY1_B11 },
-	{ "KEY_JOY1_B12", KEYCODE_JOY1_B12 },
-	{ "KEY_JOY1_B13", KEYCODE_JOY1_B13 },
-	{ "KEY_JOY1_B14", KEYCODE_JOY1_B14 },
-	{ "KEY_JOY1_B15", KEYCODE_JOY1_B15 },
-	{ "KEY_JOY1_B16", KEYCODE_JOY1_B16 },
-	{ "KEY_JOY1_B17", KEYCODE_JOY1_B17 },
-	{ "KEY_JOY1_B18", KEYCODE_JOY1_B18 },
-	{ "KEY_JOY1_B19", KEYCODE_JOY1_B19 },
-	{ "KEY_JOY1_B20", KEYCODE_JOY1_B20 },
-	{ "KEY_JOY1_HLEFT", KEYCODE_JOY1_HLEFT },
-	{ "KEY_JOY1_HUP", KEYCODE_JOY1_HUP },
-	{ "KEY_JOY1_HRIGHT", KEYCODE_JOY1_HRIGHT },
-	{ "KEY_JOY1_HDOWN", KEYCODE_JOY1_HDOWN },
-	{ "KEY_JOY2_B1", KEYCODE_JOY2_B1 },
-	{ "KEY_JOY2_B2", KEYCODE_JOY2_B2 },
-	{ "KEY_JOY2_B3", KEYCODE_JOY2_B3 },
-	{ "KEY_JOY2_B4", KEYCODE_JOY2_B4 },
-	{ "KEY_JOY2_B5", KEYCODE_JOY2_B5 },
-	{ "KEY_JOY2_B6", KEYCODE_JOY2_B6 },
-	{ "KEY_JOY2_B7", KEYCODE_JOY2_B7 },
-	{ "KEY_JOY2_B8", KEYCODE_JOY2_B8 },
-	{ "KEY_JOY2_B9", KEYCODE_JOY2_B9 },
-	{ "KEY_JOY2_B10", KEYCODE_JOY2_B10 },
-	{ "KEY_JOY2_HLEFT", KEYCODE_JOY1_HLEFT },
-	{ "KEY_JOY2_HUP", KEYCODE_JOY2_HUP },
-	{ "KEY_JOY2_HRIGHT", KEYCODE_JOY2_HRIGHT },
-	{ "KEY_JOY2_HDOWN", KEYCODE_JOY2_HDOWN },
-	{ "KEY_MOUSE_B1", KEYCODE_MOUSE_B1 },
-	{ "KEY_MOUSE_B2", KEYCODE_MOUSE_B2 },
-	{ "KEY_MOUSE_B3", KEYCODE_MOUSE_B3 },
-	{ "KEY_MOUSE_B4", KEYCODE_MOUSE_B4 },
-	{ "AXIS_JOY1_X", KEYCODE_AXIS_JOY1_X },
-	{ "AXIS_JOY1_Y", KEYCODE_AXIS_JOY1_Y },
-	{ "AXIS_JOY1_Z", KEYCODE_AXIS_JOY1_Z },
-	{ "AXIS_JOY1_R", KEYCODE_AXIS_JOY1_R },
-	{ "AXIS_JOY1_U", KEYCODE_AXIS_JOY1_U },
-	{ "AXIS_JOY1_V", KEYCODE_AXIS_JOY1_V },
-	{ "AXIS_JOY2_X", KEYCODE_AXIS_JOY2_X },
-	{ "AXIS_JOY2_Y", KEYCODE_AXIS_JOY2_Y },
-	{ "AXIS_JOY2_Z", KEYCODE_AXIS_JOY2_Z },
-	{ "AXIS_JOY2_R", KEYCODE_AXIS_JOY2_R },
-	{ "AXIS_JOY2_U", KEYCODE_AXIS_JOY2_U },
-	{ "AXIS_JOY2_V", KEYCODE_AXIS_JOY2_V },
-	{ "AXIS_MOUSE_X", KEYCODE_AXIS_MOUSE_X },
-	{ "AXIS_MOUSE_Y", KEYCODE_AXIS_MOUSE_Y },
-	{ "AXIS_MOUSE_Z", KEYCODE_AXIS_MOUSE_Z },
-
-//PS2
-	{ "KEY_JOY1_SQUARE", KEYCODE_JOY1_B1 },
-	{ "KEY_JOY1_TRIANGLE", KEYCODE_JOY1_B2 },
-	{ "KEY_JOY1_CIRCLE", KEYCODE_JOY1_B3 },
-	{ "KEY_JOY1_X", KEYCODE_JOY1_B4 },
-	{ "KEY_JOY1_R1", KEYCODE_JOY1_B5 },
-	{ "KEY_JOY1_L1", KEYCODE_JOY1_B6 },
-	{ "KEY_JOY1_R2", KEYCODE_JOY1_B7 },
-	{ "KEY_JOY1_L2", KEYCODE_JOY1_B8 },
-	{ "KEY_JOY1_START", KEYCODE_JOY1_B9 },
-	{ "KEY_JOY1_SELECT", KEYCODE_JOY1_B10 },
-	{ "KEY_JOY1_DPAD_U", KEYCODE_JOY1_B11 },
-	{ "KEY_JOY1_DPAD_D", KEYCODE_JOY1_B12 },
-	{ "KEY_JOY1_DPAD_L", KEYCODE_JOY1_B13 },
-	{ "KEY_JOY1_DPAD_R", KEYCODE_JOY1_B14 },
-	{ "KEY_JOY1_LMUSHROOM", KEYCODE_JOY1_B15 },
-	{ "KEY_JOY1_RMUSHROOM", KEYCODE_JOY1_B16 },
-// Joy2
-	{ "KEY_JOY2_SQUARE", KEYCODE_JOY2_B1 },
-	{ "KEY_JOY2_TRIANGLE", KEYCODE_JOY2_B2 },
-	{ "KEY_JOY2_CIRCLE", KEYCODE_JOY2_B3 },
-	{ "KEY_JOY2_X", KEYCODE_JOY2_B4 },
-	{ "KEY_JOY2_R1", KEYCODE_JOY2_B5 },
-	{ "KEY_JOY2_L1", KEYCODE_JOY2_B6 },
-	{ "KEY_JOY2_R2", KEYCODE_JOY2_B7 },
-	{ "KEY_JOY2_L2", KEYCODE_JOY2_B8 },
-	{ "KEY_JOY2_START", KEYCODE_JOY2_B9 },
-	{ "KEY_JOY2_SELECT", KEYCODE_JOY2_B10 },
-	{ "KEY_JOY2_DPAD_U", KEYCODE_JOY2_B11 },
-	{ "KEY_JOY2_DPAD_D", KEYCODE_JOY2_B12 },
-	{ "KEY_JOY2_DPAD_L", KEYCODE_JOY2_B13 },
-	{ "KEY_JOY2_DPAD_R", KEYCODE_JOY2_B14 },
-	{ "KEY_JOY2_LMUSHROOM", KEYCODE_JOY2_B15 },
-	{ "KEY_JOY2_RMUSHROOM", KEYCODE_JOY2_B16 },
-
-// tell EMI there is no joystick selected
-	{ "joy_selected", -1 },
-
-	{ NULL, 0 }
-};
 
 // CHAR_KEY tests to see whether a keycode is for
 // a "character" handler or a "button" handler
@@ -328,7 +82,7 @@ GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
+		Engine(syst), _currSet(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
 	_gameType = gameType;
@@ -355,7 +109,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	_currScene = NULL;
+	_currSet = NULL;
 	_selectedActor = NULL;
 	_talkingActor = NULL;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
@@ -366,7 +120,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	}
 	_speechMode = TextAndVoice;
 	_textSpeed = 7;
-	_mode = _previousMode = ENGINE_MODE_NORMAL;
+	_mode = _previousMode = NormalMode;
 	_flipEnable = true;
 	int speed = atol(g_registry->get("engine_speed", "30"));
 	if (speed <= 0 || speed > 100)
@@ -415,13 +169,15 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	// Add 'movies' subdirectory for the demo
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
+
+	Debug::registerDebugChannels();
 }
 
 GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	Scene::getPool()->deleteObjects();
+	Set::getPool()->deleteObjects();
 	Actor::getPool()->deleteObjects();
 	PrimitiveObject::getPool()->deleteObjects();
 	TextObject::getPool()->deleteObjects();
@@ -430,12 +186,7 @@ GrimEngine::~GrimEngine() {
 	ObjectState::getPool()->deleteObjects();
 	PoolColor::getPool()->deleteObjects();
 
-	if (g_lua_initialized) {
-		lua_removelibslists();
-		lua_close();
-		lua_iolibclose();
-		g_lua_initialized = false;
-	}
+	delete LuaBase::instance();
 	if (g_registry) {
 		g_registry->save();
 		delete g_registry;
@@ -457,15 +208,16 @@ GrimEngine::~GrimEngine() {
 Common::Error GrimEngine::run() {
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
+	bool demo = getGameFlags() & ADGF_DEMO;
 	if (getGameType() == GType_GRIM)
-		g_movie = CreateSmushPlayer();
+		g_movie = CreateSmushPlayer(demo);
 	else if (getGameType() == GType_MONKEY4) {
 		if (_gamePlatform == Common::kPlatformPS2)
 			g_movie = CreateMpegPlayer();
 		else
-			g_movie = CreateBinkPlayer();
+			g_movie = CreateBinkPlayer(demo);
 	}
-	g_imuse = new Imuse(20);
+	g_imuse = new Imuse(20, demo);
 
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
 
@@ -501,28 +253,21 @@ Common::Error GrimEngine::run() {
 
 	g_driver->flipBuffer();
 
-	lua_iolibopen();
-	lua_strlibopen();
-	lua_mathlibopen();
-
+	LuaBase *lua = NULL;
 	if (getGameType() == GType_GRIM) {
-		registerGrimOpcodes();
+		lua = new Lua_V1();
 
 		// FIXME/HACK: see PutActorInSet
 		const char *func = "function reset_doorman() doorman_in_hot_box = FALSE end";
 		lua_pushstring(func);
 		lua_call("dostring");
-	} else
-		registerMonkeyOpcodes();
+	} else {
+		lua = new Lua_V2();
+	}
 
-	registerLua();
-	g_lua_initialized = true;
-
-	bundle_dofile("_system.lua");
-
-	lua_pushnil();		// resumeSave
-	lua_pushnil();		// bootParam - not used in scripts
-	lua_call("BOOT");
+	lua->registerOpcodes();
+	lua->registerLua();
+	lua->boot();
 
 	_savegameLoadRequest = false;
 	_savegameSaveRequest = false;
@@ -539,7 +284,7 @@ Common::Error GrimEngine::run() {
 		_savegameFileName = saveName;
 	}
 
-	g_grim->setMode(ENGINE_MODE_NORMAL);
+	g_grim->setMode(NormalMode);
 	if (splash_bm)
 		delete splash_bm;
 	g_grim->mainLoop();
@@ -547,240 +292,85 @@ Common::Error GrimEngine::run() {
 	return Common::kNoError;
 }
 
-int GrimEngine::bundle_dofile(const char *filename) {
-	Block *b = g_resourceloader->getFileBlock(filename);
-	if (!b) {
-		delete b;
-		// Don't print warnings on Scripts\foo.lua,
-		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\") && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-			warning("Cannot find script %s", filename);
-
-		return 2;
-	}
-
-	int result = lua_dobuffer(const_cast<char *>(b->getData()), b->getLen(), const_cast<char *>(filename));
-	delete b;
-	return result;
-}
-
-int GrimEngine::single_dofile(const char *filename) {
-	Common::File *f = new Common::File();
-
-	if (!f->open(filename)) {
-		delete f;
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Cannot find script %s", filename);
-
-		return 2;
-	}
-
-	int32 size = f->size();
-	char *data = new char[size];
-	f->read(data, size);
-
-	int result = lua_dobuffer(data, size, const_cast<char *>(filename));
-	delete f;
-	delete[] data;
-
-	return result;
-}
-
-extern int refSystemTable;
-
 void GrimEngine::handlePause() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("pauseHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("pauseHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handlePause: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("pauseHandler")) {
 		error("handlePause: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleExit() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("exitHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("exitHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleExit: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("exitHandler")) {
 		error("handleExit: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleUserPaint() {
-	lua_Object func;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("userPaintHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("userPaintHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleUserPaint: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
+	if (!LuaBase::instance()->callback("userPaintHandler")) {
 		error("handleUserPaint: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
 	}
-
-	lua_callfunction(func);
-
-	lua_endblock();
 }
 
 void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	lua_Object func;
-	char keychar[2];
-
 	if (!CHAR_KEY(ascii))
 		return;
 
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("characterHandler");
-	lua_Object handler = lua_gettable();
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);
-		lua_pushstring("characterHandler");
-		func = lua_gettable();
-		if (!lua_isfunction(func))
-			error("handleChars: handler not a function");
-		lua_pushobject(handler);
-	} else if (lua_isfunction(handler)) {
-		func = handler;
-	} else if (!lua_isnil(handler)) {
-		error("handleChars: invalid handler");
-		return;
-	} else {
-		lua_endblock();
-		return;
-	}
-
+	char keychar[2];
 	keychar[0] = ascii;
 	keychar[1] = 0;
-	lua_pushstring(keychar);
-	lua_callfunction(func);
 
-	lua_endblock();
+	LuaObjects objects;
+	objects.add(keychar);
+
+	if (!LuaBase::instance()->callback("characterHandler", objects)) {
+		error("handleChars: invalid handler");
+	}
 }
 
 void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uint16 ascii) {
-	lua_Object buttonFunc, joyFunc;
-	bool buttonFuncIsTable;
-
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
 		return;
 
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("buttonHandler");
-	lua_Object buttonHandler = lua_gettable();
-	if (lua_istable(buttonHandler)) {
-		lua_pushobject(buttonHandler);
-		lua_pushstring("buttonHandler");
-		buttonFunc = lua_gettable();
-		if (!lua_isfunction(buttonFunc)) {
-			error("handleControls: button handler not a function");
-			return;
-		}
-		buttonFuncIsTable = true;
-	} else if (lua_isfunction(buttonHandler)) {
-		buttonFunc = buttonHandler;
-		buttonFuncIsTable = false;
-	} else {
-		error("handleControls: invalid keys handler");
-		return;
-	}
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("axisHandler");
-	lua_Object joyHandler = lua_gettable();
-	if (lua_istable(joyHandler)) {
-		lua_pushobject(joyHandler);
-		lua_pushstring("axisHandler");
-		joyFunc = lua_gettable();
-		if (!lua_isfunction(joyFunc)) {
-			error("handleControls: joystick handler not a function");
-			return;
-		}
-	} else if (lua_isfunction(joyHandler)) {
-		joyFunc = joyHandler;
-	} else {
-		error("handleControls: invalid joystick handler");
-		return;
-	}
-	if (buttonFuncIsTable)
-		lua_pushobject(buttonHandler);
-	lua_pushnumber(key);
+	LuaObjects objects;
+	objects.add(key);
 	if (operation == Common::EVENT_KEYDOWN) {
-		lua_pushnumber(1);
-		lua_pushnumber(1);
+		objects.add(1);
+		objects.add(1);
 	} else {
-		lua_pushnil();
-		lua_pushnumber(0);
+		objects.addNil();
+		objects.add(0);
 	}
-	lua_pushnumber(0);
-	lua_callfunction(buttonFunc);
+	objects.add(0);
+	if (!LuaBase::instance()->callback("buttonHandler", objects)) {
+		error("handleControls: invalid keys handler");
+	}
+// 	if (!LuaBase::instance()->callback("axisHandler", objects)) {
+// 		error("handleControls: invalid joystick handler");
+// 	}
 
 	if (operation == Common::EVENT_KEYDOWN)
 		_controlsState[key] = true;
 	else if (operation == Common::EVENT_KEYUP)
 		_controlsState[key] = false;
+}
 
-	lua_endblock();
+void GrimEngine::cameraChangeHandle(int prev, int next) {
+	LuaObjects objects;
+	objects.add(prev);
+	objects.add(next);
+	LuaBase::instance()->callback("camChangeHandler", objects);
+}
+
+void GrimEngine::cameraPostChangeHandle(int num) {
+	LuaObjects objects;
+	objects.add(num);
+	LuaBase::instance()->callback("postCamChangeHandler", objects);
+}
+
+void GrimEngine::savegameCallback() {
+	if (!LuaBase::instance()->callback("saveGameCallback")) {
+		error("GrimEngine::savegameCallback: invalid handler");
+	}
 }
 
 void GrimEngine::handleDebugLoadResource() {
@@ -821,37 +411,6 @@ void GrimEngine::handleDebugLoadResource() {
 		warning("Requested resouce (%s) not found", buf);
 }
 
-static void cameraChangeHandle(int prev, int next) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("camChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(prev);
-		lua_pushnumber(next);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
-static void cameraPostChangeHandle(int num) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("postCamChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(num);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
 void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
@@ -879,28 +438,13 @@ void GrimEngine::luaUpdate() {
 	_frameTime = newStart - _frameStart;
 	_frameStart = newStart;
 
-	if (_mode == ENGINE_MODE_PAUSE || _shortFrame) {
+	if (_mode == PauseMode || _shortFrame) {
 		_frameTime = 0;
 	}
 
-	_frameTimeCollection += _frameTime;
-	if (_frameTimeCollection > 10000) {
-		_frameTimeCollection = 0;
-		lua_collectgarbage(0);
-	}
+	LuaBase::instance()->update(_frameTime, _movieTime);
 
-	lua_beginblock();
-	setFrameTime(_frameTime);
-	lua_endblock();
-
-	lua_beginblock();
-	setMovieTime(_movieTime);
-	lua_endblock();
-
-	// Run asynchronous tasks
-	lua_runtasks();
-
-	if (_currScene && (_mode == ENGINE_MODE_NORMAL || _mode == ENGINE_MODE_SMUSH)) {
+	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
 		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
@@ -909,7 +453,7 @@ void GrimEngine::luaUpdate() {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
-			if (a->isInSet(_currScene->getName()))
+			if (a->isInSet(_currSet->getName()))
 				a->update(_frameTime);
 		}
 
@@ -925,15 +469,15 @@ void GrimEngine::luaUpdate() {
 void GrimEngine::updateDisplayScene() {
 	_doFlip = true;
 
-	if (_mode == ENGINE_MODE_SMUSH) {
+	if (_mode == SmushMode) {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getDstSurface());
 				g_movie->clearUpdateNeeded();
 			}
 			int frame = g_movie->getFrame();
-			if (frame > 0) {
+			if (frame >= 0) {
 				if (frame != _prevSmushFrame) {
 					_prevSmushFrame = g_movie->getFrame();
 					g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
@@ -950,30 +494,30 @@ void GrimEngine::updateDisplayScene() {
 			i->_value->draw();
 		}
 		drawPrimitives();
-	} else if (_mode == ENGINE_MODE_NORMAL) {
-		if (!_currScene)
+	} else if (_mode == NormalMode) {
+		if (!_currSet)
 			return;
 
-		cameraPostChangeHandle(_currScene->getSetup());
+		cameraPostChangeHandle(_currSet->getSetup());
 
 		g_driver->clearScreen();
 
 		_prevSmushFrame = 0;
 		_movieTime = 0;
 
-		_currScene->drawBackground();
+		_currSet->drawBackground();
 
 		// Draw underlying scene components
 		// Background objects are drawn underneath everything except the background
 		// There are a bunch of these, especially in the tube-switcher room
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
 
 		// Underlay objects are just above the background
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 
 		// State objects are drawn on top of other things, such as the flag
 		// on Manny's message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_STATE);
 
 		// Play SMUSH Animations
 		// This should occur on top of all underlying scene objects,
@@ -984,10 +528,10 @@ void GrimEngine::updateDisplayScene() {
 		if (g_movie->isPlaying()) {
 			_movieTime = g_movie->getMovieTime();
 			if (g_movie->isUpdateNeeded()) {
-				g_driver->prepareMovieFrame(g_movie->getWidth(), g_movie->getHeight(), g_movie->getDstPtr());
+				g_driver->prepareMovieFrame(g_movie->getDstSurface());
 				g_movie->clearUpdateNeeded();
 			}
-			if (g_movie->getFrame() > 0)
+			if (g_movie->getFrame() >= 0)
 				g_driver->drawMovieFrame(g_movie->getX(), g_movie->getY());
 			else
 				g_driver->releaseMovieFrame();
@@ -999,28 +543,28 @@ void GrimEngine::updateDisplayScene() {
 			i->_value->draw();
 		}
 
-		_currScene->setupCamera();
+		_currSet->setupCamera();
 
 		g_driver->set3DMode();
 
-		_currScene->setupLights();
+		_currSet->setupLights();
 
 		// Draw actors
 		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
 			Actor *a = i->_value;
-			if (a->isInSet(_currScene->getName()) && a->isVisible())
+			if (a->isInSet(_currSet->getName()) && a->isVisible())
 				a->draw();
-			a->undraw(a->isInSet(_currScene->getName()) && a->isVisible());
+			a->undraw(a->isInSet(_currSet->getName()) && a->isVisible());
 		}
 		flagRefreshShadowMask(false);
 
 		// Draw overlying scene components
 		// The overlay objects should be drawn on top of everything else,
 		// including 3D objects such as Manny and the message tube
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
+		_currSet->drawBitmaps(ObjectState::OBJSTATE_OVERLAY);
 
 		drawPrimitives();
-	} else if (_mode == ENGINE_MODE_DRAW) {
+	} else if (_mode == DrawMode) {
 		_doFlip = false;
 		_prevSmushFrame = 0;
 		_movieTime = 0;
@@ -1034,7 +578,7 @@ void GrimEngine::doFlip() {
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
-	if (_showFps && _doFlip && _mode != ENGINE_MODE_DRAW) {
+	if (_showFps && _doFlip && _mode != DrawMode) {
 		_frameCounter++;
 		unsigned int currentTime = g_system->getMillis();
 		unsigned int delta = currentTime - _lastFrameTime;
@@ -1052,7 +596,6 @@ void GrimEngine::mainLoop() {
 	_frameStart = g_system->getMillis();
 	_frameCounter = 0;
 	_lastFrameTime = 0;
-	_frameTimeCollection = 0;
 	_prevSmushFrame = 0;
 	_refreshShadowMask = false;
 	_shortFrame = false;
@@ -1081,21 +624,22 @@ void GrimEngine::mainLoop() {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
-			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_mode != ENGINE_MODE_DRAW && _mode != ENGINE_MODE_SMUSH && (event.kbd.ascii == 'q')) {
+			Common::EventType type = event.type;
+			if (type == Common::EVENT_KEYDOWN) {
+				if (_mode != DrawMode && _mode != SmushMode && (event.kbd.ascii == 'q')) {
 					handleExit();
 					break;
 				} else {
-					handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+					handleChars(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
 			}
-			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
-				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+			if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+				handleControls(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 			}
 			// Check for "Hard" quit"
-			if (event.type == Common::EVENT_QUIT)
+			if (type == Common::EVENT_QUIT)
 				return;
-			if (event.type == Common::EVENT_SCREEN_CHANGED)
+			if (type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;
 
 			// Allow lua to react to the event.
@@ -1108,7 +652,7 @@ void GrimEngine::mainLoop() {
 
 		luaUpdate();
 
-		if (_mode != ENGINE_MODE_PAUSE) {
+		if (_mode != PauseMode) {
 			updateDisplayScene();
 			doFlip();
 		}
@@ -1142,7 +686,7 @@ void GrimEngine::loadGame(const Common::String &file) {
 }
 
 void GrimEngine::savegameRestore() {
-	printf("GrimEngine::savegameRestore() started.\n");
+	debug("GrimEngine::savegameRestore() started.");
 	_savegameLoadRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1161,47 +705,57 @@ void GrimEngine::savegameRestore() {
 
 	_selectedActor = NULL;
 	_talkingActor = NULL;
-	delete _currScene;
-	_currScene = NULL;
+	delete _currSet;
+	_currSet = NULL;
 
 	PoolColor::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Colors restored succesfully.");
+
 	Bitmap::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Bitmaps restored succesfully.");
+
 	Font::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Fonts restored succesfully.");
+
 	ObjectState::getPool()->restoreObjects(_savedState);
-	Scene::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "ObjectStates restored succesfully.");
+
+	Set::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Sets restored succesfully.");
+
 	TextObject::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "TextObjects restored succesfully.");
+
 	PrimitiveObject::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "PrimitiveObjects restored succesfully.");
+
 	Actor::getPool()->restoreObjects(_savedState);
+	Debug::debug(Debug::Engine, "Actors restored succesfully.");
+
 	restoreGRIM();
+	Debug::debug(Debug::Engine, "Engine restored succesfully.");
 
 	g_driver->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Renderer restored succesfully.");
+
 	g_imuse->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "iMuse restored succesfully.");
+
 	g_movie->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Movie restored succesfully.");
+
 	_iris->restoreState(_savedState);
+	Debug::debug(Debug::Engine, "Iris restored succesfully.");
+
 	lua_Restore(_savedState);
+	Debug::debug(Debug::Engine, "Lua restored succesfully.");
 
 	delete _savedState;
 
-	// Apply the patch, only if it wasn't applied already.
-	if (lua_isnil(lua_getglobal("  service_release.lua"))) {
-		if (bundle_dofile("patch05.bin") == 2)
-			single_dofile("patch05.bin");
-	}
-	const char *devMode = g_registry->get("good_times", "");
-	lua_beginblock();
-	// Set the developerMode, since the save contains the value of
-	// the installation it was made with.
-	lua_pushobject(lua_getglobal("developerMode"));
-	if (devMode[0] == 0)
-		lua_pushnil();
-	else
-		lua_pushstring(devMode);
-	lua_setglobal("developerMode");
-	lua_endblock();
-
+	LuaBase::instance()->postRestoreHandle();
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	printf("GrimEngine::savegameRestore() finished.\n");
+	debug("GrimEngine::savegameRestore() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1209,6 +763,9 @@ void GrimEngine::savegameRestore() {
 
 void GrimEngine::restoreGRIM() {
 	_savedState->beginSection('GRIM');
+
+	_mode = (EngineMode)_savedState->readLEUint32();
+	_previousMode = (EngineMode)_savedState->readLEUint32();
 
 	// Actor stuff
 	int32 id = _savedState->readLEUint32();
@@ -1228,8 +785,8 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setY(_savedState->readLESint32());
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
 
-	// Scene stuff
-	_currScene = Scene::getPool()->getObject(_savedState->readLEUint32());
+	// Set stuff
+	_currSet = Set::getPool()->getObject(_savedState->readLEUint32());
 
 	_savedState->endSection();
 }
@@ -1238,9 +795,9 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	printf("GrimEngine::StoreSaveGameImage() started.\n");
+	debug("GrimEngine::StoreSaveGameImage() started.");
 
-	int mode = g_grim->getMode();
+	EngineMode mode = g_grim->getMode();
 	g_grim->setMode(_previousMode);
 	g_grim->updateDisplayScene();
 	g_driver->storeDisplay();
@@ -1249,7 +806,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	state->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->getWidth() * screenshot->getHeight();
-		screenshot->setNumber(0);
+		screenshot->setActiveImage(0);
 		uint16 *data = (uint16 *)screenshot->getData();
 		for (int l = 0; l < size; l++) {
 			state->writeLEUint16(data[l]);
@@ -1259,11 +816,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	}
 	state->endSection();
 	delete screenshot;
-	printf("GrimEngine::StoreSaveGameImage() finished.\n");
+	debug("GrimEngine::StoreSaveGameImage() finished.");
 }
 
 void GrimEngine::savegameSave() {
-	printf("GrimEngine::savegameSave() started.\n");
+	debug("GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
 	char filename[200];
 	if (_savegameFileName.size() == 0) {
@@ -1286,26 +843,51 @@ void GrimEngine::savegameSave() {
 	savegameCallback();
 
 	PoolColor::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Colors saved succesfully.");
+
 	Bitmap::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Bitmaps saved succesfully.");
+
 	Font::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Fonts saved succesfully.");
+
 	ObjectState::getPool()->saveObjects(_savedState);
-	Scene::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "ObjectStates saved succesfully.");
+
+	Set::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Sets saved succesfully.");
+
 	TextObject::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "TextObjects saved succesfully.");
+
 	PrimitiveObject::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "PrimitiveObjects saved succesfully.");
+
 	Actor::getPool()->saveObjects(_savedState);
+	Debug::debug(Debug::Engine, "Actors saved succesfully.");
+
 	saveGRIM();
+	Debug::debug(Debug::Engine, "Engine saved succesfully.");
 
 	g_driver->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Renderer saved succesfully.");
+
 	g_imuse->saveState(_savedState);
+	Debug::debug(Debug::Engine, "iMuse saved succesfully.");
+
 	g_movie->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Movie saved succesfully.");
+
 	_iris->saveState(_savedState);
+	Debug::debug(Debug::Engine, "Iris saved succesfully.");
+
 	lua_Save(_savedState);
 
 	delete _savedState;
 
 	g_imuse->pause(false);
 	g_movie->pause(false);
-	printf("GrimEngine::savegameSave() finished.\n");
+	debug("GrimEngine::savegameSave() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1313,6 +895,9 @@ void GrimEngine::savegameSave() {
 
 void GrimEngine::saveGRIM() {
 	_savedState->beginSection('GRIM');
+
+	_savedState->writeLEUint32((uint32)_mode);
+	_savedState->writeLEUint32((uint32)_previousMode);
 
 	//Actor stuff
 	if (_selectedActor) {
@@ -1337,63 +922,34 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLESint32(_sayLineDefaults.getY());
 	_savedState->writeLESint32(_sayLineDefaults.getDuration());
 
-	//Scene stuff
-	_savedState->writeLEUint32(_currScene->getId());
+	//Set stuff
+	_savedState->writeLEUint32(_currSet->getId());
 
 	_savedState->endSection();
 }
 
-void GrimEngine::savegameCallback() {
-	lua_Object funcParam1;
-
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("saveGameCallback");
-	lua_Object funcParam2 = lua_gettable();
-
-	if (lua_istable(funcParam2)) {
-		lua_pushobject(funcParam2);
-		lua_pushstring("saveGameCallback");
-		funcParam1 = lua_gettable();
-		if (lua_isfunction(funcParam1)) {
-			lua_pushobject(funcParam2);
-			lua_callfunction(funcParam1);
-		} else {
-			error("GrimEngine::savegameCallback: handler is not a function");
-		}
-	} else if (lua_isfunction(funcParam2)) {
-		funcParam1 = funcParam2;
-		lua_callfunction(funcParam1);
-	} else if (!lua_isnil(funcParam2)) {
-		error("GrimEngine::savegameCallback: invalid handler");
-	}
-	lua_endblock();
-}
-
-Scene *GrimEngine::findScene(const Common::String &name) {
+Set *GrimEngine::findSet(const Common::String &name) {
 	// Find scene object
-	for (Scene::Pool::Iterator i = Scene::getPool()->getBegin(); i != Scene::getPool()->getEnd(); ++i) {
+	for (Set::Pool::Iterator i = Set::getPool()->getBegin(); i != Set::getPool()->getEnd(); ++i) {
 		if (i->_value->getName() == name)
 			return i->_value;
 	}
 	return NULL;
 }
 
-void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
-	Scene *scene = findScene(name);
+void GrimEngine::setSetLock(const char *name, bool lockStatus) {
+	Set *scene = findSet(name);
 
 	if (!scene) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Scene object '%s' not found in list", name);
+		Debug::warning(Debug::Engine, "Set object '%s' not found in list", name);
 		return;
 	}
 	// Change the locking status
 	scene->_locked = lockStatus;
 }
 
-Scene *GrimEngine::loadScene(const Common::String &name) {
-	Scene *s = findScene(name);
+Set *GrimEngine::loadSet(const Common::String &name) {
+	Set *s = findSet(name);
 
 	if (!s) {
 		Common::String filename(name);
@@ -1404,19 +960,19 @@ Scene *GrimEngine::loadScene(const Common::String &name) {
 		Block *b = g_resourceloader->getFileBlock(filename);
 		if (!b)
 			warning("Could not find scene file %s", name.c_str());
-		s = new Scene(name, b->getData(), b->getLen());
+		s = new Set(name, b->getData(), b->getLen());
 		delete b;
 	}
 
 	return s;
 }
 
-void GrimEngine::setScene(const char *name) {
-	setScene(loadScene(name));
+void GrimEngine::setSet(const char *name) {
+	setSet(loadSet(name));
 }
 
-void GrimEngine::setScene(Scene *scene) {
-	if (scene == _currScene)
+void GrimEngine::setSet(Set *scene) {
+	if (scene == _currSet)
 		return;
 
 	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
@@ -1427,22 +983,22 @@ void GrimEngine::setScene(Scene *scene) {
 		a->stopWalking();
 	}
 
-	Scene *lastScene = _currScene;
-	_currScene = scene;
-	_currScene->setSoundParameters(20, 127);
-	_currScene->setLightsDirty();
+	Set *lastSet = _currSet;
+	_currSet = scene;
+	_currSet->setSoundParameters(20, 127);
+	_currSet->setLightsDirty();
 	// should delete the old scene after setting the new one
-	if (lastScene && !lastScene->_locked) {
-		delete lastScene;
+	if (lastSet && !lastSet->_locked) {
+		delete lastSet;
 	}
 	_shortFrame = true;
 }
 
 void GrimEngine::makeCurrentSetup(int num) {
-	int prevSetup = g_grim->getCurrScene()->getSetup();
+	int prevSetup = g_grim->getCurrSet()->getSetup();
 	if (prevSetup != num) {
-		getCurrScene()->setSetup(num);
-		getCurrScene()->setSoundParameters(20, 127);
+		getCurrSet()->setSetup(num);
+		getCurrSet()->setSoundParameters(20, 127);
 		cameraChangeHandle(prevSetup, num);
 		// here should be set sound position
 	}
@@ -1476,8 +1032,8 @@ void GrimEngine::setTalkingActor(Actor *a) {
 	_talkingActor = a;
 }
 
-const Common::String &GrimEngine::getSceneName() const {
-	return _currScene->getName();
+const Common::String &GrimEngine::getSetName() const {
+	return _currSet->getName();
 }
 
 void GrimEngine::clearEventQueue() {

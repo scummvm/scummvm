@@ -52,7 +52,8 @@ public:
 
 	void getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(Math::Vector3d pos, float scale, float yaw, float pitch, float roll);
+	void startActorDraw(Math::Vector3d pos, float scale, const Math::Angle &yaw,
+						const Math::Angle &pitch, const Math::Angle &roll);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -63,7 +64,8 @@ public:
 
 	void set3DMode();
 
-	void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointStart(Math::Vector3d pos, const Math::Angle &pitch,
+								 const Math::Angle &yaw, const Math::Angle &roll);
 	void translateViewpointFinish();
 
 	void drawHierachyNode(const ModelNode *node, int *x1, int *y1, int *x2, int *y2);
@@ -104,7 +106,7 @@ public:
 	void drawLine(PrimitiveObject *primitive);
 	void drawPolygon(PrimitiveObject *primitive);
 
-	void prepareMovieFrame(int width, int height, byte *bitmap);
+	void prepareMovieFrame(Graphics::Surface* frame);
 	void drawMovieFrame(int offsetX, int offsetY);
 	void releaseMovieFrame();
 

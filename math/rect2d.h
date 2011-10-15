@@ -39,8 +39,8 @@ public:
 	Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
 		   const Vector2d &bottomLeft, const Vector2d &bottomRight);
 
-	void rotateAround(const Vector2d &point, float angle);
-	void rotateAroundCenter(float angle);
+	void rotateAround(const Vector2d &point, const Angle &angle);
+	void rotateAroundCenter(const Angle &angle);
 	bool intersectsRect(const Rect2d &rect) const;
 	bool intersectsCircle(const Vector2d &center, float radius) const;
 	bool containsPoint(const Vector2d &point) const;

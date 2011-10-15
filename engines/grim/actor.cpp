@@ -41,13 +41,11 @@
 #include "engines/grim/lua.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/savegame.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
 namespace Grim {
-
-int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
@@ -59,26 +57,23 @@ Actor::Actor(const Common::String &actorName) :
 		_pitch(0), _yaw(0), _roll(0), _walkRate(0.3f), _turnRate(100.0f),
 		_reflectionAngle(80),
 		_visible(true), _lipSync(NULL), _turning(false), _walking(false),
-		_restCostume(NULL), _restChore(-1),
-		_walkCostume(NULL), _walkChore(-1), _walkedLast(false), _walkedCur(false),
-		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
+		_walkedLast(false), _walkedCur(false),
 		_lastTurnDir(0), _currTurnDir(0),
-		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(0) {
+		_sayLineText(0) {
 	_lookingMode = false;
 	_lookAtRate = 200;
 	_constrain = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
-	_winX1 = _winY1 = 1000;
-	_winX2 = _winY2 = -1000;
 	_toClean = false;
 	_running = false;
 	_scale = 1.f;
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
-	_collisionScale = 1.f;
+	_collisionScale = 0.f;
+	_puckOrient = false;
 
 	for (int i = 0; i < 5; i++) {
 		_shadowArray[i].active = false;
@@ -86,19 +81,12 @@ Actor::Actor(const Common::String &actorName) :
 		_shadowArray[i].shadowMask = NULL;
 		_shadowArray[i].shadowMaskSize = 0;
 	}
-
-	for (int i = 0; i < 10; i++) {
-		_talkCostume[i] = NULL;
-		_talkChore[i] = -1;
-	}
 }
 
 Actor::Actor() :
 	PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>() {
 
 	_shadowArray = new Shadow[5];
-	_winX1 = _winY1 = 1000;
-	_winX2 = _winY2 = -1000;
 	_toClean = false;
 	_running = false;
 	_scale = 1.f;
@@ -140,9 +128,9 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	savedState->writeVector3d(_pos);
 
-	savedState->writeFloat(_pitch);
-	savedState->writeFloat(_yaw);
-	savedState->writeFloat(_roll);
+	savedState->writeFloat(_pitch.getDegrees());
+	savedState->writeFloat(_yaw.getDegrees());
+	savedState->writeFloat(_roll.getDegrees());
 	savedState->writeFloat(_walkRate);
 	savedState->writeFloat(_turnRate);
 	savedState->writeLESint32(_constrain);
@@ -151,8 +139,12 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLESint32(_lookingMode),
 	savedState->writeFloat(_scale);
 	savedState->writeFloat(_timeScale);
+	savedState->writeLEBool(_puckOrient);
 
 	savedState->writeString(_talkSoundName);
+
+	savedState->writeLEUint32((uint32)_collisionMode);
+	savedState->writeFloat(_collisionScale);
 
 	if (_lipSync) {
 		savedState->writeLEUint32(1);
@@ -181,58 +173,28 @@ void Actor::saveState(SaveGame *savedState) const {
 	}
 
 	savedState->writeLESint32(_turning);
-	savedState->writeFloat(_destYaw);
+	savedState->writeFloat(_destYaw.getDegrees());
 
 	savedState->writeLESint32(_walking);
 	savedState->writeVector3d(_destPos);
 
-	if (_restCostume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_restCostume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_restChore);
+	_restChore.saveState(savedState);
 
-	if (_walkCostume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_walkCostume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_walkChore);
+	_walkChore.saveState(savedState);
 	savedState->writeLESint32(_walkedLast);
 	savedState->writeLESint32(_walkedCur);
 
-	if (_turnCostume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_turnCostume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_leftTurnChore);
-	savedState->writeLESint32(_rightTurnChore);
+	_leftTurnChore.saveState(savedState);
+	_rightTurnChore.saveState(savedState);
 	savedState->writeLESint32(_lastTurnDir);
 	savedState->writeLESint32(_currTurnDir);
 
 	for (int i = 0; i < 10; ++i) {
-		if (_talkCostume[i]) {
-			savedState->writeLEUint32(1);
-			savedState->writeString(_talkCostume[i]->getFilename());
-		} else {
-			savedState->writeLEUint32(0);
-		}
-		savedState->writeLESint32(_talkChore[i]);
+		_talkChore[i].saveState(savedState);
 	}
 	savedState->writeLESint32(_talkAnim);
 
-	if (_mumbleCostume) {
-		savedState->writeLEUint32(1);
-		savedState->writeString(_mumbleCostume->getFilename());
-	} else {
-		savedState->writeLEUint32(0);
-	}
-	savedState->writeLESint32(_mumbleChore);
+	_mumbleChore.saveState(savedState);
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -241,7 +203,7 @@ void Actor::saveState(SaveGame *savedState) const {
 		savedState->writeVector3d(shadow.pos);
 
 		savedState->writeLESint32(shadow.planeList.size());
-		// Cannot use g_grim->getCurrScene() here because an actor can have walk planes
+		// Cannot use g_grim->getCurrSet() here because an actor can have walk planes
 		// from other scenes. It happens e.g. when Membrillo calls Velasco to tell him
 		// Naranja is dead.
 		for (SectorListType::iterator j = shadow.planeList.begin(); j != shadow.planeList.end(); ++j) {
@@ -261,11 +223,6 @@ void Actor::saveState(SaveGame *savedState) const {
 
 	savedState->writeVector3d(_lookAtVector);
 	savedState->writeFloat(_lookAtRate);
-
-	savedState->writeLESint32(_winX1);
-	savedState->writeLESint32(_winY1);
-	savedState->writeLESint32(_winX2);
-	savedState->writeLESint32(_winY2);
 
 	savedState->writeLESint32(_path.size());
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
@@ -297,8 +254,12 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_lookingMode        = savedState->readLESint32();
 	_scale              = savedState->readFloat();
 	_timeScale          = savedState->readFloat();
+	_puckOrient         = savedState->readLEBool();
 
 	_talkSoundName 		= savedState->readString();
+
+	_collisionMode      = (CollisionMode)savedState->readLEUint32();
+	_collisionScale     = savedState->readFloat();
 
 	if (savedState->readLEUint32()) {
 		Common::String fn = savedState->readString();
@@ -337,54 +298,23 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_walking = savedState->readLESint32();
 	_destPos = savedState->readVector3d();
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		_restCostume = findCostume(fname);
-	} else {
-		_restCostume = NULL;
-	}
-	_restChore = savedState->readLESint32();
+	_restChore.restoreState(savedState, this);
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		_walkCostume = findCostume(fname);
-	} else {
-		_walkCostume = NULL;
-	}
-
-	_walkChore = savedState->readLESint32();
+	_walkChore.restoreState(savedState, this);
 	_walkedLast = savedState->readLESint32();
 	_walkedCur = savedState->readLESint32();
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		_turnCostume = findCostume(fname);
-	} else {
-		_turnCostume = NULL;
-	}
-	_leftTurnChore = savedState->readLESint32();
-	_rightTurnChore = savedState->readLESint32();
+	_leftTurnChore.restoreState(savedState, this);
+	_rightTurnChore.restoreState(savedState, this);
 	_lastTurnDir = savedState->readLESint32();
 	_currTurnDir = savedState->readLESint32();
 
 	for (int i = 0; i < 10; ++i) {
-		if (savedState->readLEUint32()) {
-			Common::String fname = savedState->readString();
-			_talkCostume[i] = findCostume(fname);
-		} else {
-			_talkCostume[i] = NULL;
-		}
-		_talkChore[i] = savedState->readLESint32();
+		_talkChore[i].restoreState(savedState, this);
 	}
 	_talkAnim = savedState->readLESint32();
 
-	if (savedState->readLEUint32()) {
-		Common::String fname = savedState->readString();
-		_mumbleCostume = findCostume(fname);
-	} else {
-		_mumbleCostume = NULL;
-	}
-	_mumbleChore = savedState->readLESint32();
+	_mumbleChore.restoreState(savedState, this);
 
 	for (int i = 0; i < 5; ++i) {
 		Shadow &shadow = _shadowArray[i];
@@ -394,12 +324,12 @@ bool Actor::restoreState(SaveGame *savedState) {
 
 		size = savedState->readLESint32();
 		shadow.planeList.clear();
-		Scene *scene = NULL;
+		Set *scene = NULL;
 		for (int j = 0; j < size; ++j) {
 			Common::String setName = savedState->readString();
 			Common::String secName = savedState->readString();
 			if (!scene || scene->getName() != setName) {
-				scene = g_grim->findScene(setName);
+				scene = g_grim->findSet(setName);
 			}
 			if (scene) {
 				addShadowPlane(secName.c_str(), scene, i);
@@ -426,11 +356,6 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_lookAtVector = savedState->readVector3d();
 	_lookAtRate = savedState->readFloat();
 
-	_winX1 = savedState->readLESint32();
-	_winY1 = savedState->readLESint32();
-	_winX2 = savedState->readLESint32();
-	_winY2 = savedState->readLESint32();
-
 	size = savedState->readLESint32();
 	for (int i = 0; i < size; ++i) {
 		_path.push_back(savedState->readVector3d());
@@ -439,26 +364,18 @@ bool Actor::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Actor::setYaw(float yawParam) {
-	// While the program correctly handle yaw angles outside
-	// of the range [0, 360), proper convention is to roll
-	// these values over correctly
-	if (yawParam >= 360.0)
-		_yaw = yawParam - 360;
-	else if (yawParam < 0.0)
-		_yaw = yawParam + 360;
-	else
-		_yaw = yawParam;
+void Actor::setYaw(const Math::Angle &yawParam) {
+	_yaw = yawParam;
 }
 
-void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
+void Actor::setRot(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	setYaw(yawParam);
 	_roll = rollParam;
 	_turning = false;
 }
 
-void Actor::setPos(Math::Vector3d position) {
+void Actor::setPos(const Math::Vector3d &position) {
 	_walking = false;
 	_pos = position;
 
@@ -466,11 +383,11 @@ void Actor::setPos(Math::Vector3d position) {
 	// This is necessary after solving the tree pump puzzle, when the bone
 	// wagon returns to the signopost set.
 	if (_constrain && !_walking) {
-		g_grim->getCurrScene()->findClosestSector(_pos, NULL, &_pos);
+		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 }
 
-void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
+void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
 	_pitch = pitchParam;
 	_roll = rollParam;
 	if (_yaw != yawParam) {
@@ -489,7 +406,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 		_path.clear();
 
 		if (_constrain) {
-			g_grim->getCurrScene()->findClosestSector(p, NULL, &_destPos);
+			g_grim->getCurrSet()->findClosestSector(p, NULL, &_destPos);
 
 			Common::List<PathNode *> openList;
 			Common::List<PathNode *> closedList;
@@ -500,11 +417,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			start->dist = 0.f;
 			start->cost = 0.f;
 			openList.push_back(start);
-			g_grim->getCurrScene()->findClosestSector(_pos, &start->sect, NULL);
+			g_grim->getCurrSet()->findClosestSector(_pos, &start->sect, NULL);
 
 			Common::List<Sector *> sectors;
-			for (int i = 0; i < g_grim->getCurrScene()->getSectorCount(); ++i) {
-				Sector *s = g_grim->getCurrScene()->getSectorBase(i);
+			for (int i = 0; i < g_grim->getCurrSet()->getSectorCount(); ++i) {
+				Sector *s = g_grim->getCurrSet()->getSectorBase(i);
 				int type = s->getType();
 				if ((type == Sector::WalkType || type == Sector::HotType || type == Sector::FunnelType) && s->isVisible()) {
 					sectors.push_back(s);
@@ -512,7 +429,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 			}
 
 			Sector *endSec = NULL;
-			g_grim->getCurrScene()->findClosestSector(_destPos, &endSec, NULL);
+			g_grim->getCurrSet()->findClosestSector(_destPos, &endSec, NULL);
 
 			do {
 				PathNode *node = NULL;
@@ -531,13 +448,11 @@ void Actor::walkTo(const Math::Vector3d &p) {
 
 				if (sector == endSec) {
 					PathNode *n = closedList.back();
-					while (n) {
-						// Don't put the start position in the list, or else
-						// the first angle calculated in updateWalk() will be
-						// meaningless.
-						if (n->pos == _pos) {
-							break;
-						}
+					// Don't put the start position in the list, or else
+					// the first angle calculated in updateWalk() will be
+					// meaningless. The only node without parent is the start
+					// one.
+					while (n->parent) {
 						_path.push_back(n->pos);
 						n = n->parent;
 					}
@@ -578,6 +493,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 						}
 						bridges.pop_back();
 					}
+					best = handleCollisionTo(node->pos, best);
 
 					PathNode *n = NULL;
 					for (Common::List<PathNode *>::iterator j = openList.begin(); j != openList.end(); ++j) {
@@ -635,6 +551,11 @@ bool Actor::isTurning() const {
 void Actor::moveTo(const Math::Vector3d &pos) {
 	// This is necessary for collisions in set hl to work, since
 	// Manny's collision mode isn't set.
+	if (_collisionScale == 0.f) {
+		_pos = pos;
+		return;
+	}
+
 	if (_collisionMode == CollisionOff) {
 		_collisionMode = CollisionSphere;
 	}
@@ -651,12 +572,15 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 
 void Actor::walkForward() {
 	float dist = g_grim->getPerSecond(_walkRate);
+	// Limit the amount of the movement per frame, otherwise with low fps
+	// scripts that use WalkActorForward and proximity may break.
+	if ((dist > 0 && dist > _walkRate / 5.f) || (dist < 0 && dist < _walkRate / 5.f))
+		dist = _walkRate / 5.f;
+
 	_walking = false;
 
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f), pitch_rad = _pitch * (LOCAL_PI / 180.f);
-	//float yaw;
-	Math::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
-		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
+	Math::Vector3d forwardVec(-_yaw.getSine() * _pitch.getCosine(),
+		_yaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
 	if (! _constrain) {
 		_pos += forwardVec * dist;
@@ -672,7 +596,7 @@ void Actor::walkForward() {
 	Sector *currSector = NULL, *prevSector = NULL;
 	Sector::ExitInfo ei;
 
-	g_grim->getCurrScene()->findClosestSector(_pos, &currSector, &_pos);
+	g_grim->getCurrSet()->findClosestSector(_pos, &currSector, &_pos);
 	if (!currSector) { // Shouldn't happen...
 		moveTo(_pos + forwardVec * dist);
 		_walkedCur = true;
@@ -697,12 +621,11 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_grim->getCurrScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
+		currSector = g_grim->getCurrSet()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, Sector::WalkType);
 		if (currSector == prevSector)
 			break;
 	}
 
-	ei.angleWithEdge *= (float)(180.f / LOCAL_PI);
 	int turnDir = 1;
 	if (ei.angleWithEdge > 90) {
 		ei.angleWithEdge = 180 - ei.angleWithEdge;
@@ -713,67 +636,64 @@ void Actor::walkForward() {
 		return;
 
 	ei.angleWithEdge += (float)0.1;
-	float turnAmt = g_grim->getPerSecond(_turnRate) * 5.;
+	Math::Angle turnAmt = g_grim->getPerSecond(_turnRate) * 5.;
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
 }
 
 Math::Vector3d Actor::getPuckVector() const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Math::Vector3d forwardVec(-_yaw.getSine(), _yaw.getCosine(), 0);
 
-	Sector *sector = g_grim->getCurrScene()->findPointSector(_pos, Sector::WalkType);
+	Sector *sector = g_grim->getCurrSet()->findPointSector(_pos, Sector::WalkType);
 	if (!sector)
 		return forwardVec;
 	else
 		return sector->getProjectionToPuckVector(forwardVec);
 }
 
+void Actor::setPuckOrient(bool orient) {
+	_puckOrient = orient;
+	warning("Actor::setPuckOrient() not implemented");
+}
+
 void Actor::setRestChore(int chore, Costume *cost) {
-	if (_restCostume == cost && _restChore == chore)
+	if (_restChore.equals(cost, chore))
 		return;
 
-	if (_restChore >= 0)
-		_restCostume->stopChore(_restChore);
+	_restChore.stop(true);
 
-	_restCostume = cost;
-	_restChore = chore;
+	_restChore = Chore(cost, chore);
 
-	if (_restChore >= 0)
-		_restCostume->playChoreLooping(_restChore);
+	_restChore.playLooping(true);
+}
+
+int Actor::getRestChore() const {
+	return _restChore._chore;
 }
 
 void Actor::setWalkChore(int chore, Costume *cost) {
-	if (_walkCostume == cost && _walkChore == chore)
+	if (_walkChore.equals(cost, chore))
 		return;
 
-	if (_walkChore >= 0 && _walkCostume->isChoring(_walkChore, false) >= 0) {
-		_walkCostume->fadeChoreOut(_walkChore, 150);
-		_walkCostume->stopChore(_walkChore);
-		if (_restChore >= 0) {
-			_restCostume->playChoreLooping(_restChore);
-			_restCostume->fadeChoreIn(_restChore, 150);
-		}
+	if (_walkedLast && _walkChore.isPlaying()) {
+		_walkChore.stop(true);
+
+		_restChore.playLooping(true);
 	}
 
-	_walkCostume = cost;
-	_walkChore = chore;
+	_walkChore = Chore(cost, chore);
 }
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
-	if (_turnCostume == cost && _leftTurnChore == left_chore &&
-		_rightTurnChore == right_chore)
+	if (_leftTurnChore.equals(cost, left_chore) && _rightTurnChore.equals(cost, right_chore))
 		return;
 
-	if (_leftTurnChore >= 0) {
-		_turnCostume->stopChore(_leftTurnChore);
-		_turnCostume->stopChore(_rightTurnChore);
-	}
+	_leftTurnChore.stop(true);
+	_rightTurnChore.stop(true);
 
-	_turnCostume = cost;
-	_leftTurnChore = left_chore;
-	_rightTurnChore = right_chore;
+	_leftTurnChore = Chore(cost, left_chore);
+	_rightTurnChore = Chore(cost, right_chore);
 
 	if ((left_chore >= 0 && right_chore < 0) || (left_chore < 0 && right_chore >= 0))
 		error("Unexpectedly got only one turn chore");
@@ -785,22 +705,26 @@ void Actor::setTalkChore(int index, int chore, Costume *cost) {
 
 	index--;
 
-	if (_talkCostume[index] == cost && _talkChore[index] == chore)
+	if (_talkChore[index].equals(cost, chore))
 		return;
 
-	if (_talkChore[index] >= 0)
-		_talkCostume[index]->stopChore(_talkChore[index]);
+	_talkChore[index].stop();
 
-	_talkCostume[index] = cost;
-	_talkChore[index] = chore;
+	_talkChore[index] = Chore(cost, chore);
+}
+
+int Actor::getTalkChore(int index) const {
+	return _talkChore[index]._chore;
+}
+
+Costume *Actor::getTalkCostume(int index) const {
+	return _talkChore[index]._costume;
 }
 
 void Actor::setMumbleChore(int chore, Costume *cost) {
-	if (_mumbleChore >= 0)
-		_mumbleCostume->stopChore(_mumbleChore);
+	_mumbleChore.stop();
 
-	_mumbleCostume = cost;
-	_mumbleChore = chore;
+	_mumbleChore = Chore(cost, chore);
 }
 
 void Actor::turn(int dir) {
@@ -810,29 +734,28 @@ void Actor::turn(int dir) {
 	_currTurnDir = dir;
 }
 
-float Actor::getYawTo(const Actor &a) const {
-	float yaw_rad = _yaw * (LOCAL_PI / 180.f);
-	Math::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
-	Math::Vector3d delta = a.getPos() - _pos;
+Math::Angle Actor::getYawTo(Actor *a) const {
+	Math::Vector3d forwardVec(-_yaw.getSine(), _yaw.getCosine(), 0);
+	Math::Vector3d delta = a->getPos() - _pos;
 	delta.z() = 0;
 
-	return angle(forwardVec, delta) * (180.f / LOCAL_PI);
+	return Math::Vector3d::angle(forwardVec, delta);
 }
 
-float Actor::getYawTo(Math::Vector3d p) const {
+Math::Angle Actor::getYawTo(const Math::Vector3d &p) const {
 	Math::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
 	else
-		return atan2(-dpos.x(), dpos.y()) * (180.f / LOCAL_PI);
+		return Math::Angle::arcTangent2(-dpos.x(), dpos.y());
 }
 
 void Actor::sayLine(const char *msgId, bool background) {
 	assert(msgId);
 
 	char id[50];
-	Common::String msg = parseMsgText(msgId, id);
+	Common::String msg = LuaBase::instance()->parseMsgText(msgId, id);
 
 	if (msgId[0] == 0) {
 		error("Actor::sayLine: No message ID for text");
@@ -857,19 +780,19 @@ void Actor::sayLine(const char *msgId, bool background) {
 
 	_talkSoundName = soundName;
 	if (g_grim->getSpeechMode() != GrimEngine::TextOnly) {
-		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrScene()) {
-			g_grim->getCurrScene()->setSoundPosition(_talkSoundName.c_str(), _pos);
+		if (g_imuse->startVoice(_talkSoundName.c_str()) && g_grim->getCurrSet()) {
+			g_grim->getCurrSet()->setSoundPosition(_talkSoundName.c_str(), _pos);
 		}
 	}
 
 	// If the actor is clearly not visible then don't try to play the lip sync
-	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == ENGINE_MODE_NORMAL)) {
+	if (_visible && (!g_movie->isPlaying() || g_grim->getMode() == GrimEngine::NormalMode)) {
 		Common::String soundLip = id;
 		soundLip += ".lip";
 
-		if (_talkChore[0] >= 0 && _talkCostume[0]->isChoring(_talkChore[0], true) < 0) {
+		if (!_talkChore[0].isPlaying()) {
 			// _talkChore[0] is *_stop_talk
-			_talkCostume[0]->setChoreLastFrame(_talkChore[0]);
+			_talkChore[0].setLastFrame();
 		}
 		// Sometimes actors speak offscreen before they, including their
 		// talk chores are initialized.
@@ -880,8 +803,8 @@ void Actor::sayLine(const char *msgId, bool background) {
 			_lipSync = g_resourceloader->getLipSync(soundLip);
 		// If there's no lip sync file then load the mumble chore if it exists
 		// (the mumble chore doesn't exist with the cat races announcer)
-		if (!_lipSync && _mumbleChore != -1)
-			_mumbleCostume->playChoreLooping(_mumbleChore);
+		if (!_lipSync)
+			_mumbleChore.playLooping();
 
 		_talkAnim = -1;
 	}
@@ -898,20 +821,20 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH)
+		if (g_grim->getMode() == GrimEngine::SmushMode)
 			TextObject::getPool()->deleteObjects();
 
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
-		if (m == GrimEngine::TextOnly || g_grim->getMode() == ENGINE_MODE_SMUSH) {
+		if (m == GrimEngine::TextOnly || g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setDuration(500 + msg.size() * 15 * (11 - g_grim->getTextSpeed()));
 		}
-		if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
+		if (g_grim->getMode() == GrimEngine::SmushMode) {
 			textObject->setX(640 / 2);
 			textObject->setY(456);
 		} else {
-			if (_visible && isInSet(g_grim->getCurrScene()->getName())) {
+			if (_visible && isInSet(g_grim->getCurrSet()->getName())) {
 				_mustPlaceText = true;
 			} else {
 				_mustPlaceText = false;
@@ -920,7 +843,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			}
 		}
 		textObject->setText(msgId);
-		if (g_grim->getMode() != ENGINE_MODE_SMUSH)
+		if (g_grim->getMode() != GrimEngine::SmushMode)
 			_sayLineText = textObject->getId();
 	}
 }
@@ -949,8 +872,8 @@ void Actor::shutUp() {
 		_talkSoundName = "";
 	}
 	if (_lipSync) {
-		if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-			_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+		if (_talkAnim != -1)
+			_talkChore[_talkAnim].stop();
 		_lipSync = NULL;
 		stopTalking();
 	} else if (stopMumbleChore()) {
@@ -991,28 +914,25 @@ void Actor::setCostume(const char *n) {
 
 void Actor::popCostume() {
 	if (!_costumeStack.empty()) {
-		freeCostumeChore(_costumeStack.back(), _restCostume, _restChore);
-		freeCostumeChore(_costumeStack.back(), _walkCostume, _walkChore);
+		freeCostumeChore(_costumeStack.back(), &_restChore);
+		freeCostumeChore(_costumeStack.back(), &_walkChore);
 
-		if (_turnCostume == _costumeStack.back()) {
-			_turnCostume = NULL;
-			_leftTurnChore = -1;
-			_rightTurnChore = -1;
+		if (_leftTurnChore._costume == _costumeStack.back()) {
+			_leftTurnChore = Chore();
+			_rightTurnChore = Chore();
 		}
 
-		freeCostumeChore(_costumeStack.back(), _mumbleCostume, _mumbleChore);
+		freeCostumeChore(_costumeStack.back(), &_mumbleChore);
 		for (int i = 0; i < 10; i++)
-			freeCostumeChore(_costumeStack.back(), _talkCostume[i], _talkChore[i]);
+			freeCostumeChore(_costumeStack.back(), &_talkChore[i]);
 		delete _costumeStack.back();
 		_costumeStack.pop_back();
 
 		if (_costumeStack.empty()) {
-			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				printf("Popped (freed) the last costume for an actor.\n");
+			Debug::debug(Debug::Actors, "Popped (freed) the last costume for an actor.\n");
 		}
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Attempted to pop (free) a costume when the stack is empty!");
+		Debug::warning(Debug::Actors, "Attempted to pop (free) a costume when the stack is empty!");
 	}
 }
 
@@ -1043,34 +963,30 @@ void Actor::updateWalk() {
 	}
 
 	Math::Vector3d destPos = _path.back();
-	float y = getYawTo(destPos);
-	if (y < 0.f) {
-		y += 360.f;
-	}
-	turnTo(_pitch, y, _roll);
-
 	Math::Vector3d dir = destPos - _pos;
 	float dist = dir.getMagnitude();
 
-	if (dist > 0)
-		dir /= dist;
-
+	_walkedCur = true;
 	float walkAmt = g_grim->getPerSecond(_walkRate);
-
 	if (walkAmt >= dist) {
-		_pos = destPos;
 		_path.pop_back();
 		if (_path.empty()) {
 			_walking = false;
+			_pos = destPos;
 // It seems that we need to allow an already active turning motion to
 // continue or else turning actors away from barriers won't work right
 			_turning = false;
+			return;
 		}
-	} else {
-		_pos += dir * walkAmt;
 	}
 
-	_walkedCur = true;
+	destPos = handleCollisionTo(_pos, destPos);
+	Math::Angle y = getYawTo(destPos);
+	turnTo(_pitch, y, _roll);
+
+	dir = destPos - _pos;
+	dir.normalize();
+	_pos += dir * walkAmt;
 }
 
 void Actor::update(float frameTime) {
@@ -1078,21 +994,18 @@ void Actor::update(float frameTime) {
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_constrain && !_walking) {
-		g_grim->getCurrScene()->findClosestSector(_pos, NULL, &_pos);
+		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 
 	if (_turning) {
 		float turnAmt = g_grim->getPerSecond(_turnRate) * 5.f;
-		float dyaw = _destYaw - _yaw;
-		while (dyaw > 180)
-			dyaw -= 360;
-		while (dyaw < -180)
-			dyaw += 360;
+		Math::Angle dyaw = _destYaw - _yaw;
+		dyaw.normalize(-180);
 		// If the actor won't turn because the rate is set to zero then
 		// have the actor turn all the way to the destination yaw.
 		// Without this some actors will lock the interface on changing
 		// scenes, this affects the Bone Wagon in particular.
-		if (turnAmt == 0 || turnAmt >= fabs(dyaw)) {
+		if (turnAmt == 0 || turnAmt >= fabsf(dyaw.getDegrees())) {
 			setYaw(_destYaw);
 			_turning = false;
 		} else if (dyaw > 0) {
@@ -1107,66 +1020,55 @@ void Actor::update(float frameTime) {
 		updateWalk();
 	}
 
-	if (_walkChore >= 0) {
+	if (_walkChore.isValid()) {
 		if (_walkedCur) {
-			if (_walkCostume->isChoring(_walkChore, false) < 0) {
-				_walkCostume->stopChore(_walkChore);
-				_walkCostume->playChoreLooping(_walkChore);
-				_walkCostume->fadeChoreIn(_walkChore, 150);
+			if (!_walkChore.isPlaying()) {
+				_walkChore.playLooping(true);
 			}
-
-			if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) >= 0) {
-				_restCostume->fadeChoreOut(_restChore, 150);
-				_restCostume->stopChore(_restChore);
+			if (_restChore.isPlaying()) {
+				_restChore.stop(true);
 			}
 		} else {
-			if (_walkedLast && _walkCostume->isChoring(_walkChore, false) >= 0) {
-				_walkCostume->fadeChoreOut(_walkChore, 150);
-				_walkCostume->stopChore(_walkChore);
-
-				if (_restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0) {
-					_restCostume->playChoreLooping(_restChore);
-					_restCostume->fadeChoreIn(_restChore, 150);
+			if (_walkedLast && _walkChore.isPlaying()) {
+				_walkChore.stop(true);
+				if (!_restChore.isPlaying()) {
+					_restChore.playLooping(true);
 				}
 			}
 		}
 	}
 
-	if (_leftTurnChore >= 0) {
+	if (_leftTurnChore.isValid()) {
 		if (_walkedCur || _walkedLast)
 			_currTurnDir = 0;
 
-		if (_restChore >= 0) {
+		if (_restChore.isValid()) {
 			if (_currTurnDir != 0) {
-				if (_turnCostume->isChoring(getTurnChore(_currTurnDir), false) >= 0 &&
-					_restChore >= 0 && _restCostume->isChoring(_restChore, false) >= 0) {
-					_restCostume->fadeChoreOut(_restChore, 500);
-					_restCostume->stopChore(_restChore);
+				if (getTurnChore(_currTurnDir)->isPlaying() && _restChore.isPlaying()) {
+					_restChore.stop(true, 500);
 				}
-			}
-			else if (_lastTurnDir != 0) {
-				if (!_walkedCur && _turnCostume->isChoring(getTurnChore(_lastTurnDir), false) >= 0) {
-					_restCostume->playChoreLooping(_restChore);
-					_restCostume->fadeChoreIn(_restChore, 150);
+			} else if (_lastTurnDir != 0) {
+				if (!_walkedCur && getTurnChore(_lastTurnDir)->isPlaying()) {
+					_restChore.playLooping(true);
 				}
 			}
 		}
 
 		if (_lastTurnDir != 0 && _lastTurnDir != _currTurnDir) {
-			_turnCostume->fadeChoreOut(getTurnChore(_lastTurnDir), 150);
-			_turnCostume->stopChore(getTurnChore(_lastTurnDir));
+			getTurnChore(_lastTurnDir)->stop(true);
 		}
 		if (_currTurnDir != 0 && _currTurnDir != _lastTurnDir) {
-			_turnCostume->playChoreLooping(getTurnChore(_currTurnDir));
-			_turnCostume->fadeChoreIn(getTurnChore(_currTurnDir), 500);
+			getTurnChore(_currTurnDir)->playLooping(true, 500);
 		}
-	} else
+	} else {
 		_currTurnDir = 0;
+	}
 
 	// The rest chore might have been stopped because of a
 	// StopActorChore(nil).  Restart it if so.
-	if (!_walkedCur && _currTurnDir == 0 && _restChore >= 0 && _restCostume->isChoring(_restChore, false) < 0)
-		_restCostume->playChoreLooping(_restChore);
+	if (!_walkedCur && _currTurnDir == 0 && !_restChore.isPlaying()) {
+		_restChore.playLooping(true);
+	}
 
 	_walkedLast = _walkedCur;
 	_walkedCur = false;
@@ -1187,24 +1089,25 @@ void Actor::update(float frameTime) {
 			int anim = _lipSync->getAnim(posSound);
 			if (_talkAnim != anim) {
 				if (anim != -1) {
-					if (_talkChore[anim] >= 0) {
+					if (_talkChore[anim].isValid()) {
 						stopMumbleChore();
-						if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-							_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+						if (_talkAnim != -1) {
+							_talkChore[_talkAnim].stop();
+						}
 
 						// Run the stop_talk chore so that it resets the components
 						// to the right visibility.
 						stopTalking();
 						_talkAnim = anim;
-						_talkCostume[_talkAnim]->playChore(_talkChore[_talkAnim]);
-					} else if (_mumbleChore != -1 && _mumbleCostume->isChoring(_mumbleChore, false) < 0) {
-						_mumbleCostume->playChoreLooping(_mumbleChore);
+						_talkChore[_talkAnim].play();
+					} else if (_mumbleChore.isValid() && !_mumbleChore.isPlaying()) {
+						_mumbleChore.playLooping();
 						_talkAnim = -1;
 					}
 				} else {
 					stopMumbleChore();
-					if (_talkAnim != -1 && _talkChore[_talkAnim] >= 0)
-						_talkCostume[_talkAnim]->stopChore(_talkChore[_talkAnim]);
+					if (_talkAnim != -1)
+						_talkChore[_talkAnim].stop();
 
 					_talkAnim = 0;
 					stopTalking();
@@ -1331,13 +1234,13 @@ void Actor::setShadowPlane(const char *n) {
 	_shadowArray[_activeShadowSlot].name = n;
 }
 
-void Actor::addShadowPlane(const char *n, Scene *scene, int shadowId) {
+void Actor::addShadowPlane(const char *n, Set *scene, int shadowId) {
 	assert(shadowId != -1);
 
 	int numSectors = scene->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
-		// Create a copy so we are sure it will not be deleted by the Scene destructor
+		// Create a copy so we are sure it will not be deleted by the Set destructor
 		// behind our back. This is important when Membrillo phones Velasco to tell him
 		// Naranja is dead, because the scene changes back and forth few times and so
 		// the scenes' sectors are deleted while they are still keeped by the actors.
@@ -1370,7 +1273,7 @@ bool Actor::shouldDrawShadow(int shadowId) {
 }
 
 void Actor::addShadowPlane(const char *n) {
-	addShadowPlane(n, g_grim->getCurrScene(), _activeShadowSlot);
+	addShadowPlane(n, g_grim->getCurrSet(), _activeShadowSlot);
 }
 
 void Actor::setActiveShadow(int shadowId) {
@@ -1393,7 +1296,7 @@ void Actor::setActivateShadow(int shadowId, bool state) {
 	_shadowArray[shadowId].active = state;
 }
 
-void Actor::setShadowPoint(Math::Vector3d p) {
+void Actor::setShadowPoint(const Math::Vector3d &p) {
 	assert(_activeShadowSlot != -1);
 
 	_shadowArray[_activeShadowSlot].pos = p;
@@ -1424,24 +1327,21 @@ bool Actor::isInSet(const Common::String &setName) const {
 	return _setName == setName;
 }
 
-void Actor::freeCostumeChore(Costume *toFree, Costume *&cost, int &chore) {
-	if (cost == toFree) {
-		cost = NULL;
-		chore = -1;
+void Actor::freeCostumeChore(Costume *toFree, Chore *chore) {
+	if (chore->_costume == toFree) {
+		*chore = Chore();
 	}
 }
 
 void Actor::stopTalking() {
-	if (_talkChore[0] >= 0) {
-		// _talkChore[0] is *_stop_talk
-		// Don't playLooping it, or else manny's mouth will flicker when he smokes.
-		_talkCostume[0]->playChore(_talkChore[0]);
-	}
+	// _talkChore[0] is *_stop_talk
+	// Don't playLooping it, or else manny's mouth will flicker when he smokes.
+	_talkChore[0].play();
 }
 
 bool Actor::stopMumbleChore() {
-	if (_mumbleChore >= 0 && _mumbleCostume->isChoring(_mumbleChore, false) >= 0) {
-		_mumbleCostume->stopChore(_mumbleChore);
+	if (_mumbleChore.isPlaying()) {
+		_mumbleChore.stop();
 		return true;
 	}
 
@@ -1454,6 +1354,56 @@ void Actor::setCollisionMode(CollisionMode mode) {
 
 void Actor::setCollisionScale(float scale) {
 	_collisionScale = scale;
+}
+
+Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::Vector3d &pos) const {
+	if (_collisionMode == CollisionOff) {
+		return pos;
+	}
+
+	Math::Vector3d p = pos;
+	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
+		Actor *a = i->_value;
+		if (a != this && a->isInSet(_setName) && a->isVisible()) {
+			p = a->getTangentPos(from, p);
+		}
+	}
+	return p;
+}
+
+Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const {
+	if (_collisionMode == CollisionOff) {
+		return dest;
+	}
+
+	Model *model = getCurrentCostume()->getModel();
+	Math::Vector3d p = _pos + model->_insertOffset;
+	float size = model->_radius * _collisionScale;
+
+	Math::Vector2d p1(pos.x(), pos.y());
+	Math::Vector2d p2(dest.x(), dest.y());
+	Math::Segment2d segment(p1, p2);
+
+	// TODO: collision with Box
+// 	if (_collisionMode == CollisionSphere) {
+		Math::Vector2d center(p.x(), p.y());
+
+		Math::Vector2d inter;
+		float distance = segment.getLine().getDistanceTo(center, &inter);
+
+		if (distance < size && segment.containsPoint(inter)) {
+			Math::Vector2d v(inter - center);
+			v.normalize();
+			v *= size;
+			v += center;
+
+			return Math::Vector3d(v.getX(), v.getY(), dest.z());
+		}
+// 	} else {
+
+// 	}
+
+	return dest;
 }
 
 bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
@@ -1497,7 +1447,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		Math::Vector3d size;
 		Math::Vector3d pos;
 		Math::Vector3d circlePos;
-		float yaw;
+		Math::Angle yaw;
 
 		Math::Vector2d circle;
 		float radius;
@@ -1601,58 +1551,92 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 	return false;
 }
 
-extern int refSystemTable;
-
 void Actor::costumeMarkerCallback(int marker) {
-	lua_beginblock();
+	LuaObjects objects;
+	objects.add(this);
+	objects.add(marker);
 
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("costumeMarkerHandler");
-	lua_Object table = lua_gettable();
-
-	if (lua_istable(table)) {
-		lua_pushobject(table);
-		lua_pushstring("costumeMarkerHandler");
-		lua_Object func = lua_gettable();
-		if (lua_isfunction(func)) {
-			lua_pushobject(func);
-			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushnumber(marker);
-			lua_callfunction(func);
-		}
-	} else if (lua_isfunction(table)) {
-		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushnumber(marker);
-		lua_callfunction(table);
-	}
-
-	lua_endblock();
+	LuaBase::instance()->callback("costumeMarkerHandler", objects);
 }
 
 void Actor::collisionHandlerCallback(Actor *other) const {
-	lua_beginblock();
+	LuaObjects objects;
+	objects.add(this);
+	objects.add(other);
 
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("collisionHandler");
-	lua_Object table = lua_gettable();
+	LuaBase::instance()->callback("collisionHandler", objects);
+}
 
-	if (lua_istable(table)) {
-		lua_pushobject(table);
-		lua_pushstring("collisionHandler");
-		lua_Object func = lua_gettable();
-		if (lua_isfunction(func)) {
-			lua_pushobject(func);
-			lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-			lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
-			lua_callfunction(func);
+
+unsigned const int Actor::Chore::fadeTime = 150;
+
+Actor::Chore::Chore() :
+	_costume(NULL),
+	_chore(-1) {
+
+}
+
+Actor::Chore::Chore(Costume *cost, int chore) :
+	_costume(cost),
+	_chore(chore) {
+
+}
+
+void Actor::Chore::play(bool fade, unsigned int time) {
+	if (isValid()) {
+		_costume->playChore(_chore);
+		if (fade) {
+			_costume->fadeChoreIn(_chore, time);
 		}
-	} else if (lua_isfunction(table)) {
-		lua_pushusertag(getId(), MKTAG('A','C','T','R'));
-		lua_pushusertag(other->getId(), MKTAG('A','C','T','R'));
-		lua_callfunction(table);
 	}
+}
 
-	lua_endblock();
+void Actor::Chore::playLooping(bool fade, unsigned int time) {
+	if (isValid()) {
+		_costume->playChoreLooping(_chore);
+		if (fade) {
+			_costume->fadeChoreIn(_chore, time);
+		}
+	}
+}
+
+void Actor::Chore::stop(bool fade, unsigned int time) {
+	if (isValid()) {
+		if (fade) {
+			_costume->fadeChoreOut(_chore, time);
+		}
+		_costume->stopChore(_chore);
+	}
+}
+
+void Actor::Chore::setLastFrame() {
+	if (isValid()) {
+		_costume->setChoreLastFrame(_chore);
+	}
+}
+
+bool Actor::Chore::isPlaying() const {
+	return (isValid() && _costume->isChoring(_chore, false) >= 0);
+}
+
+void Actor::Chore::saveState(SaveGame *savedState) const {
+	if (_costume) {
+		savedState->writeLEUint32(1);
+		savedState->writeString(_costume->getFilename());
+	} else {
+		savedState->writeLEUint32(0);
+	}
+	savedState->writeLESint32(_chore);
+}
+
+void Actor::Chore::restoreState(SaveGame *savedState, Actor *actor) {
+	if (savedState->readLEUint32()) {
+		Common::String fname = savedState->readString();
+		_costume = actor->findCostume(fname);
+	} else {
+		_costume = NULL;
+	}
+	_chore = savedState->readLESint32();
 }
 
 } // end of namespace Grim

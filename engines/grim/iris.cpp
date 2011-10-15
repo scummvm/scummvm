@@ -47,7 +47,7 @@ void Iris::play(Iris::Direction dir, int x, int y, int lenght) {
 
 void Iris::draw() {
 	if (!_playing) {
-		if (_direction == Close && g_grim->getMode() != ENGINE_MODE_SMUSH) {
+		if (_direction == Close && g_grim->getMode() != GrimEngine::SmushMode) {
 			g_driver->irisAroundRegion(320, 240, 320, 240);
 		}
 		return;
@@ -85,8 +85,8 @@ void Iris::saveState(SaveGame *state) const {
 	state->writeLEUint32((uint32)_direction);
 	state->writeLEUint32(_x1);
 	state->writeLEUint32(_y1);
-// 	state->writeLEUint32(_x2);
-// 	state->writeLEUint32(_y2);
+	state->writeLEUint32(_x2);
+	state->writeLEUint32(_y2);
 	state->writeLEUint32(_lenght);
 	state->writeLEUint32(_currTime);
 
@@ -100,8 +100,8 @@ void Iris::restoreState(SaveGame *state) {
 	_direction = (Direction)state->readLEUint32();
 	_x1 = state->readLEUint32();
 	_y1 = state->readLEUint32();
-// 	_x2 = state->readLEUint32();
-// 	_y2 = state->readLEUint32();
+	_x2 = state->readLEUint32();
+	_y2 = state->readLEUint32();
 	_lenght = state->readLEUint32();
 	_currTime = state->readLEUint32();
 

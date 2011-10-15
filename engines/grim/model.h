@@ -156,9 +156,9 @@ public:
 	int _depth, _numChildren;
 	ModelNode *_parent, *_child, *_sibling;
 	Math::Vector3d _pos, _pivot;
-	float _pitch, _yaw, _roll;
+	Math::Angle _pitch, _yaw, _roll;
 	Math::Vector3d _animPos;
-	float _animPitch, _animYaw, _animRoll;
+	Math::Angle _animPitch, _animYaw, _animRoll;
 	bool _meshVisible, _hierVisible;
 	bool _initialized;
 	Math::Matrix4 _matrix;

@@ -22,10 +22,10 @@
 
 #include "common/file.h"
 
-#include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
+#include "engines/grim/movie/codecs/vima.h"
 
 namespace Grim {
 

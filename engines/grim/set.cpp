@@ -25,7 +25,7 @@
 #include "common/memstream.h"
 
 #include "engines/grim/debug.h"
-#include "engines/grim/scene.h"
+#include "engines/grim/set.h"
 #include "engines/grim/textsplit.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
@@ -38,8 +38,8 @@
 
 namespace Grim {
 
-Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
-		PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
+Set::Set(const Common::String &sceneName, const char *buf, int len) :
+		PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _locked(false), _name(sceneName), _enableLights(false),
 		_lightsConfigured(false) {
 
 	if (len >= 7 && memcmp(buf, "section", 7) == 0) {
@@ -51,12 +51,12 @@ Scene::Scene(const Common::String &sceneName, const char *buf, int len) :
 	}
 }
 
-Scene::Scene() :
-	PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')>(), _cmaps(NULL) {
+Set::Set() :
+	PoolObject<Set, MKTAG('S', 'E', 'T', ' ')>(), _cmaps(NULL) {
 
 }
 
-Scene::~Scene() {
+Set::~Set() {
 	if (_cmaps) {
 		delete[] _cmaps;
 		for (int i = 0; i < _numSetups; ++i) {
@@ -74,14 +74,14 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::resetInternalData() {
+void Set::resetInternalData() {
 	for (int i = 0; i < _numSetups; ++i) {
 		_setups[i]._bkgndBm = NULL;
 		_setups[i]._bkgndZBm = NULL;
 	}
 }
 
-void Scene::loadText(TextSplitter &ts){
+void Set::loadText(TextSplitter &ts){
 	char tempBuf[256];
 
 	ts.expectString("section: colormaps");
@@ -158,7 +158,7 @@ void Scene::loadText(TextSplitter &ts){
 	}
 }
 
-void Scene::loadBinary(Common::MemoryReadStream *ms)
+void Set::loadBinary(Common::MemoryReadStream *ms)
 {
 	// yes, an array of size 0
 	_cmaps = NULL;//new CMapPtr[0];
@@ -198,7 +198,7 @@ void Scene::loadBinary(Common::MemoryReadStream *ms)
 }
 
 
-void Scene::saveState(SaveGame *savedState) const {
+void Set::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeLESint32(_numCmaps);
 	for (int i = 0; i < _numCmaps; ++i) {
@@ -274,7 +274,7 @@ void Scene::saveState(SaveGame *savedState) const {
     }
 }
 
-bool Scene::restoreState(SaveGame *savedState) {
+bool Set::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_numCmaps = savedState->readLESint32();
 	_cmaps = new CMapPtr[_numCmaps];
@@ -353,7 +353,7 @@ bool Scene::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-void Scene::Setup::load(TextSplitter &ts) {
+void Set::Setup::load(TextSplitter &ts) {
 	char buf[256];
 
 	ts.scanString(" setup %256s", 1, buf);
@@ -362,11 +362,11 @@ void Scene::Setup::load(TextSplitter &ts) {
 	ts.scanString(" background %256s", 1, buf);
 	_bkgndBm = g_resourceloader->loadBitmap(buf);
 	if (!_bkgndBm) {
-		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			warning("Unable to load scene bitmap: %s\n", buf);
+		Debug::warning(Debug::Bitmaps | Debug::Sets,
+					   "Unable to load scene bitmap: %s\n", buf);
 	} else {
-		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-			warning("Loaded scene bitmap: %s\n", buf);
+		Debug::debug(Debug::Bitmaps | Debug::Sets,
+					 "Loaded scene bitmap: %s\n", buf);
 	}
 
 	// ZBuffer is optional
@@ -376,8 +376,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 		// Don't even try to load if it's the "none" bitmap
 		if (strcmp(buf, "<none>.lbm") != 0) {
 			_bkgndZBm = g_resourceloader->loadBitmap(buf);
-			if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-				printf("Loading scene z-buffer bitmap: %s\n", buf);
+			Debug::debug(Debug::Bitmaps | Debug::Sets,
+						 "Loading scene z-buffer bitmap: %s\n", buf);
 		}
 	}
 
@@ -397,7 +397,7 @@ void Scene::Setup::load(TextSplitter &ts) {
 	}
 }
 
-void Scene::Setup::loadBinary(Common::MemoryReadStream *ms) {
+void Set::Setup::loadBinary(Common::MemoryReadStream *ms) {
 	char name[128];
 	ms->read(name, 128);
 	_name = Common::String(name);
@@ -459,7 +459,7 @@ void Light::loadBinary(Common::MemoryReadStream *ms) {
 	ms->seek(100, SEEK_CUR);
 }
 
-void Scene::Setup::setupCamera() const {
+void Set::Setup::setupCamera() const {
 	// Ignore nclip_ and fclip_ for now.  This fixes:
 	// (a) Nothing was being displayed in the Land of the Living
 	// diner because lr.set set nclip to 0.
@@ -472,7 +472,7 @@ void Scene::Setup::setupCamera() const {
 	g_driver->positionCamera(_pos, _interest);
 }
 
-void Scene::setupLights() {
+void Set::setupLights() {
 	if (_lightsConfigured)
 		return;
 	_lightsConfigured = true;
@@ -491,7 +491,7 @@ void Scene::setupLights() {
 	}
 }
 
-void Scene::setSetup(int num) {
+void Set::setSetup(int num) {
 	// Looks like num is zero-based so >= should work to find values
 	// that are out of the range of valid setups
 	if (num >= _numSetups || num < 0) {
@@ -503,7 +503,7 @@ void Scene::setSetup(int num) {
 	_lightsConfigured = false;
 }
 
-void Scene::drawBackground() const {
+void Set::drawBackground() const {
 	if (_currSetup->_bkgndZBm) // Some screens have no zbuffer mask (eg, Alley)
 		_currSetup->_bkgndZBm->draw();
 
@@ -516,14 +516,14 @@ void Scene::drawBackground() const {
 	}
 }
 
-void Scene::drawBitmaps(ObjectState::Position stage) {
+void Set::drawBitmaps(ObjectState::Position stage) {
 	for (StateList::iterator i = _states.reverse_begin(); i != _states.end(); --i) {
 		if ((*i)->getPos() == stage && _currSetup == _setups + (*i)->getSetupID())
 			(*i)->draw();
 	}
 }
 
-Sector *Scene::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
+Sector *Set::findPointSector(const Math::Vector3d &p, Sector::SectorType type) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
 		if (sector && (sector->getType() & type) && sector->isVisible() && sector->isPointInSector(p))
@@ -532,7 +532,7 @@ Sector *Scene::findPointSector(const Math::Vector3d &p, Sector::SectorType type)
 	return NULL;
 }
 
-void Scene::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPoint) {
+void Set::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vector3d *closestPoint) {
 	Sector *resultSect = NULL;
 	Math::Vector3d resultPt = p;
 	float minDist = 0.0;
@@ -557,21 +557,21 @@ void Scene::findClosestSector(const Math::Vector3d &p, Sector **sect, Math::Vect
 		*closestPoint = resultPt;
 }
 
-void Scene::shrinkBoxes(float radius) {
+void Set::shrinkBoxes(float radius) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
 		sector->shrink(radius);
 	}
 }
 
-void Scene::unshrinkBoxes() {
+void Set::unshrinkBoxes() {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors[i];
 		sector->unshrink();
 	}
 }
 
-ObjectState *Scene::findState(const char *filename) {
+ObjectState *Set::findState(const char *filename) {
 	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
 		const Common::String &file = (*i)->getBitmapFilename();
@@ -579,19 +579,18 @@ ObjectState *Scene::findState(const char *filename) {
 		if (file == filename)
 			return *i;
 		if (file.compareToIgnoreCase(filename) == 0) {
-			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("State object request '%s' matches object '%s' but is the wrong case", filename, file.c_str());
+			Debug::warning(Debug::Sets, "State object request '%s' matches object '%s' but is the wrong case", filename, file.c_str());
 			return *i;
 		}
 	}
 	return NULL;
 }
 
-void Scene::setLightsDirty() {
+void Set::setLightsDirty() {
 	_lightsConfigured = false;
 }
 
-void Scene::setLightIntensity(const char *light, float intensity) {
+void Set::setLightIntensity(const char *light, float intensity) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
@@ -602,13 +601,13 @@ void Scene::setLightIntensity(const char *light, float intensity) {
 	}
 }
 
-void Scene::setLightIntensity(int light, float intensity) {
+void Set::setLightIntensity(int light, float intensity) {
 	Light &l = _lights[light];
 	l._intensity = intensity;
 	_lightsConfigured = false;
 }
 
-void Scene::setLightEnabled(const char *light, bool enabled) {
+void Set::setLightEnabled(const char *light, bool enabled) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
@@ -619,13 +618,13 @@ void Scene::setLightEnabled(const char *light, bool enabled) {
 	}
 }
 
-void Scene::setLightEnabled(int light, bool enabled) {
+void Set::setLightEnabled(int light, bool enabled) {
 	Light &l = _lights[light];
 	l._enabled = enabled;
 	_lightsConfigured = false;
 }
 
-void Scene::setLightPosition(const char *light, const Math::Vector3d &pos) {
+void Set::setLightPosition(const char *light, const Math::Vector3d &pos) {
 	for (int i = 0; i < _numLights; ++i) {
 		Light &l = _lights[i];
 		if (l._name == light) {
@@ -636,17 +635,17 @@ void Scene::setLightPosition(const char *light, const Math::Vector3d &pos) {
 	}
 }
 
-void Scene::setLightPosition(int light, const Math::Vector3d &pos) {
+void Set::setLightPosition(int light, const Math::Vector3d &pos) {
 	Light &l = _lights[light];
 	l._pos = pos;
 	_lightsConfigured = false;
 }
 
-void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos) {
+void Set::setSoundPosition(const char *soundName, Math::Vector3d pos) {
 	setSoundPosition(soundName, pos, _minVolume, _maxVolume);
 }
 
-void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol) {
+void Set::setSoundPosition(const char *soundName, Math::Vector3d pos, int minVol, int maxVol) {
 	// TODO: The volume and pan needs to be updated when the setup changes.
 	Math::Vector3d cameraPos = _currSetup->_pos;
 	Math::Vector3d vector = pos - cameraPos;
@@ -666,45 +665,46 @@ void Scene::setSoundPosition(const char *soundName, Math::Vector3d pos, int minV
 	float roll = -_currSetup->_roll * LOCAL_PI / 180.f;
 	float cosr = cos(roll);
 	// Rotate the up vector by roll.
-	up = up * cosr + Math::cross(cameraVector, up) * sin(roll) +
-		cameraVector * Math::dot(cameraVector, up) * (1 - cosr);
-	right = Math::cross(cameraVector, up);
+	up = up * cosr + Math::Vector3d::crossProduct(cameraVector, up) * sin(roll) +
+		cameraVector * Math::Vector3d::dotProduct(cameraVector, up) * (1 - cosr);
+	right = Math::Vector3d::crossProduct(cameraVector, up);
 	right.normalize();
-	float angle = atan2(Math::dot(vector, right), Math::dot(vector, cameraVector));
+	float angle = atan2(Math::Vector3d::dotProduct(vector, right),
+						Math::Vector3d::dotProduct(vector, cameraVector));
 	float pan = sin(angle);
 	g_imuse->setPan(soundName, (int)((pan + 1.f) / 2.f * 127.f + 0.5f));
 }
 
-Sector *Scene::getSectorBase(int id) {
+Sector *Set::getSectorBase(int id) {
 	if ((_numSectors >= 0) && (id < _numSectors))
 		return _sectors[id];
 	else
 		return NULL;
 }
 
-void Scene::setSoundParameters(int minVolume, int maxVolume) {
+void Set::setSoundParameters(int minVolume, int maxVolume) {
 	_minVolume = minVolume;
 	_maxVolume = maxVolume;
 }
 
-void Scene::getSoundParameters(int *minVolume, int *maxVolume) {
+void Set::getSoundParameters(int *minVolume, int *maxVolume) {
 	*minVolume = _minVolume;
 	*maxVolume = _maxVolume;
 }
 
-void Scene::addObjectState(ObjectState *s) {
+void Set::addObjectState(ObjectState *s) {
 	_states.push_front(s);
 }
 
-void Scene::moveObjectStateToFront(ObjectState *s) {
+void Set::moveObjectStateToFront(ObjectState *s) {
 	_states.remove(s);
 	_states.push_front(s);
 	// Make the state invisible. This hides the deadbolt when brennis closes the switcher door
 	// in the server room (tu), and therefore fixes https://github.com/residual/residual/issues/24
-	s->setNumber(0);
+	s->setActiveImage(0);
 }
 
-void Scene::moveObjectStateToBack(ObjectState *s) {
+void Set::moveObjectStateToBack(ObjectState *s) {
 	_states.remove(s);
 	_states.push_back(s);
 }

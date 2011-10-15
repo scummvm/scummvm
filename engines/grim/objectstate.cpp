@@ -53,21 +53,22 @@ const Common::String &ObjectState::getBitmapFilename() const {
 	return _bitmap->getFilename();
 }
 
-void ObjectState::setNumber(int val) {
+void ObjectState::setActiveImage(int val) {
 	if (val) {
 		assert(_bitmap);
-		_bitmap->setNumber(val);
+		_bitmap->setActiveImage(val);
 		if (_zbitmap) {
 			if (val > _zbitmap->getNumImages()) {
-				_zbitmap->setNumber(0);
+				_zbitmap->setActiveImage(0);
 			} else {
-				_zbitmap->setNumber(val);
+				_zbitmap->setActiveImage(val);
 			}
 		}
 	}
 
 	_visibility = val != 0;
 }
+
 void ObjectState::draw() {
 	if (!_visibility)
 		return;

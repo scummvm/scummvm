@@ -117,8 +117,7 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 		loadTile(data, len);
 		return;
 	} else if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
-		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			error("Invalid magic loading bitmap");
+		Debug::error(Debug::Bitmaps, "Invalid magic loading bitmap");
 	}
 
 	int codec = READ_LE_UINT32(data + 8);
@@ -166,8 +165,7 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fname) {
 	_fname = fname;
 	_refCount = 1;
-	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-		printf("New bitmap loaded: %s\n", fname);
+	Debug::debug(Debug::Bitmaps, "New bitmap loaded: %s\n", fname);
 	_numImages = 1;
 	_x = 0;
 	_y = 0;
@@ -300,7 +298,7 @@ Bitmap::Bitmap() :
 void Bitmap::saveState(SaveGame *state) const {
 	state->writeString(getFilename());
 
-	state->writeLESint32(getCurrentImage());
+	state->writeLESint32(getActiveImage());
 	state->writeLESint32(getX());
 	state->writeLESint32(getY());
 }
@@ -324,7 +322,7 @@ void Bitmap::draw() const {
 	g_driver->drawBitmap(this);
 }
 
-void Bitmap::setNumber(int n) {
+void Bitmap::setActiveImage(int n) {
 	if ((n - 1) >= _data->_numImages) {
 		warning("Bitmap::setNumber: no anim image: %d. (%s)", n, _data->_fname.c_str());
 	} else {

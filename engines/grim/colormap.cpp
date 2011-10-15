@@ -32,7 +32,7 @@ CMap::CMap(const Common::String &fileName, const char *data, int len) :
 		error("Invalid magic loading colormap");
 	memcpy(_colors, data + 64, sizeof(_colors));
 }
-CMap::CMap() : Object() {}
+
 CMap::~CMap() {
 	if (g_resourceloader)
 		g_resourceloader->uncacheColormap(this);

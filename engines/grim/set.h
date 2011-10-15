@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRIM_SCENE_H
-#define GRIM_SCENE_H
+#ifndef GRIM_SET_H
+#define GRIM_SET_H
 
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
@@ -38,11 +38,11 @@ class SaveGame;
 class CMap;
 class Light;
 
-class Scene : public PoolObject<Scene, MKTAG('S', 'E', 'T', ' ')> {
+class Set : public PoolObject<Set, MKTAG('S', 'E', 'T', ' ')> {
 public:
-	Scene(const Common::String &name, const char *buf, int len);
-	Scene();
-	~Scene();
+	Set(const Common::String &name, const char *buf, int len);
+	Set();
+	~Set();
 
 	void loadText(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);
@@ -143,7 +143,7 @@ private:
 	friend class GrimEngine;
 };
 
-class Light {		// Scene lighting data
+class Light {		// Set lighting data
 public:
 	void load(TextSplitter &ts);
 	void loadBinary(Common::MemoryReadStream *ms);

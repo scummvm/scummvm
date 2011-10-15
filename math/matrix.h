@@ -127,7 +127,8 @@ public:
 	inline float &operator()(int row, int col);
 	inline float operator()(int row, int col) const;
 
-	operator Matrix<rows, cols>&() { return *_this; }
+	inline operator const Matrix<rows, cols>&() const { return getThis(); }
+	inline operator Matrix<rows, cols>&() { return getThis(); }
 
 	static Matrix<rows, cols> sum(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
 	static Matrix<rows, cols> difference(const Matrix<rows, cols> &m1, const Matrix<rows, cols> &m2);
@@ -145,11 +146,13 @@ protected:
 	MatrixBase(float *data);
 	MatrixBase(const MatrixBase<rows, cols> &m);
 
-	inline Matrix<rows, cols> *getThis() const { return _this; }
+	inline const Matrix<rows, cols> &getThis() const {
+		return *static_cast<const Matrix<rows, cols> *>(this); }
+	inline Matrix<rows, cols> &getThis() {
+		return *static_cast<Matrix<rows, cols> *>(this); }
 
 private:
 	float _values[rows][cols];
-	Matrix<rows, cols> *_this;
 };
 
 /**
@@ -208,18 +211,15 @@ bool operator==(const Matrix<r, c> &m1, const Matrix<r, c> &m2);
 // Constructors
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase() {
-	_this = static_cast<Matrix<rows, cols> *>(this);
 }
 
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase(float *data) {
 	setData(data);
-	_this = static_cast<Matrix<rows, cols> *>(this);
 }
 
 template<int rows, int cols>
 MatrixBase<rows, cols>::MatrixBase(const MatrixBase<rows, cols> &m) {
-	_this = static_cast<Matrix<rows, cols> *>(this);
 	*this = m;
 }
 
@@ -349,7 +349,7 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator=(const Matrix<rows, cols> &
 		}
 	}
 
-	return *_this;
+	return getThis();
 }
 
 template<int rows, int cols>
@@ -360,7 +360,7 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator+=(const Matrix<rows, cols> 
 		}
 	}
 
-	return *_this;
+	return getThis();
 }
 
 template<int rows, int cols>
@@ -371,7 +371,7 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator-=(const Matrix<rows, cols> 
 		}
 	}
 
-	return *_this;
+	return getThis();
 }
 
 template<int rows, int cols>
@@ -382,7 +382,7 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator*=(float factor) {
 		}
 	}
 
-	return *_this;
+	return getThis();
 }
 
 template<int rows, int cols>
@@ -393,7 +393,7 @@ Matrix<rows, cols> &MatrixBase<rows, cols>::operator/=(float factor) {
 		}
 	}
 
-	return *_this;
+	return getThis();
 }
 
 

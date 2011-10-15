@@ -45,11 +45,10 @@ Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
 
 }
 
-void Vector2d::rotateAround(const Vector2d &point, float angle) {
+void Vector2d::rotateAround(const Vector2d &point, const Angle &angle) {
 	*this -= point;
-	float a = degreeToRadian(angle);
-	float cosa = cos(a);
-	float sina = sin(a);
+	float cosa = angle.getCosine();
+	float sina = angle.getSine();;
 
 	float x  = value(0) * cosa - value(1) * sina;
 	value(1) = value(0) * sina + value(1) * cosa;
@@ -58,20 +57,8 @@ void Vector2d::rotateAround(const Vector2d &point, float angle) {
 	*this += point;
 }
 
-float Vector2d::getAngle() const {
-	const float mag = getMagnitude();
-	float a = value(0) / mag;
-	float b = value(1) / mag;
-	float yaw;
-
-	// find the angle on the upper half of the unit circle
-	yaw = acos(a) * (180.0f / LOCAL_PI);
-	if (b < 0.0f)
-		// adjust for the lower half of the unit circle
-	return 360.0f - yaw;
-	else
-		// no adjustment, angle is on the upper half
-		return yaw;
+Angle Vector2d::getAngle() const {
+	return Angle::arcTangent2(getY(), getX());
 }
 
 Vector3d Vector2d::toVector3d() const {

@@ -46,6 +46,11 @@ public:
 	inline void setValue(int i, float val) { value(i) = val; }
 	inline float getValue(int i) const { return value(i); }
 
+	template<int d>
+	inline static float dotProduct(const Vector(d) &v1, const Vector(d) &v2) {
+		return v1.getDotProduct(v2);
+	}
+
 protected:
 	MatrixType() : MatrixBase<dim, 1>() { }
 	MatrixType(float *data) : MatrixBase<dim, 1>(data) { }
@@ -59,8 +64,10 @@ protected:
 template<int dim>
 void MatrixType<dim, 1>::normalize() {
 	float mag = getMagnitude();
-	for (int i = 0; i < dim; ++i) {
-		this->operator()(i, 0) /= mag;
+	if (mag > 0.f) {
+		for (int i = 0; i < dim; ++i) {
+			this->operator()(i, 0) /= mag;
+		}
 	}
 }
 
@@ -82,11 +89,11 @@ float MatrixType<dim, 1>::getMagnitude() const {
 
 template<int dim>
 float MatrixType<dim, 1>::getDistanceTo(const Vector(dim) &point) const {
-	float sum = 0;
+	float result = 0;
 	for (int i = 0; i < dim; ++i) {
-		sum += square(getValue(i) - point.getValue(i));
+		result += square(getValue(i) - point.getValue(i));
 	}
-	return sqrt(sum);
+	return sqrt(result);
 }
 
 template<int dim>
@@ -96,11 +103,6 @@ float MatrixType<dim, 1>::getDotProduct(const Vector(dim) &v) const {
 		result += value(i) * v.value(i);
 	}
 	return result;
-}
-
-template<int dim>
-inline float dot(const Vector(dim) &v1, const Vector(dim) &v2) {
-	return v1.getDotProduct(v2);
 }
 
 }

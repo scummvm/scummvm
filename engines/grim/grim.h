@@ -41,14 +41,9 @@ class Bitmap;
 class Font;
 class Color;
 class ObjectState;
-class Scene;
+class Set;
 class TextObject;
 class PrimitiveObject;
-
-#define ENGINE_MODE_PAUSE	1
-#define ENGINE_MODE_NORMAL	2
-#define ENGINE_MODE_SMUSH	3
-#define ENGINE_MODE_DRAW	4
 
 enum GrimGameType {
 	GType_GRIM,
@@ -71,6 +66,12 @@ protected:
 	virtual Common::Error run();
 
 public:
+	enum EngineMode {
+		PauseMode = 1,
+		NormalMode = 2,
+		SmushMode = 3,
+		DrawMode = 4
+	};
 	enum SpeechMode {
 		TextOnly = 1,
 		VoiceOnly = 2,
@@ -89,10 +90,10 @@ public:
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 
-	void setMode(int mode) { _mode = mode; }
-	int getMode() { return _mode; }
-	void setPreviousMode(int mode) { _previousMode = mode; }
-	int getPreviousMode() { return _previousMode; }
+	void setMode(EngineMode mode) { _mode = mode; }
+	EngineMode getMode() { return _mode; }
+	void setPreviousMode(EngineMode mode) { _previousMode = mode; }
+	EngineMode getPreviousMode() { return _previousMode; }
 	void setSpeechMode(SpeechMode mode) { _speechMode = mode; }
 	SpeechMode getSpeechMode() { return _speechMode; }
 	SaveGame *savedState() { return _savedState; }
@@ -111,9 +112,6 @@ public:
 	unsigned getFrameStart() const { return _frameStart; }
 	unsigned getFrameTime() const { return _frameTime; }
 
-	int bundle_dofile(const char *filename);
-	int single_dofile(const char *filename);
-
 	// perSecond should allow rates of zero, some actors will accelerate
 	// up to their normal speed (such as the bone wagon) so handling
 	// a walking rate of zero should happen in the default actor creation
@@ -128,13 +126,13 @@ public:
 	bool getControlState(int num);
 	void clearEventQueue();
 
-	Scene *findScene(const Common::String &name);
-	void setSceneLock(const char *name, bool lockStatus);
-	Scene *loadScene(const Common::String &name);
-	void setScene(const char *name);
-	void setScene(Scene *scene);
-	Scene *getCurrScene() { return _currScene; }
-	const Common::String &getSceneName() const;
+	Set *findSet(const Common::String &name);
+	void setSetLock(const char *name, bool lockStatus);
+	Set *loadSet(const Common::String &name);
+	void setSet(const char *name);
+	void setSet(Set *scene);
+	Set *getCurrSet() { return _currSet; }
+	const Common::String &getSetName() const;
 	void makeCurrentSetup(int num);
 
 	void flagRefreshShadowMask(bool flag) { _refreshShadowMask = flag; }
@@ -157,9 +155,12 @@ public:
 private:
 	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
 	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
-	void handleUserPaint();
 	void handleExit();
 	void handlePause();
+	void handleUserPaint();
+	void cameraChangeHandle(int prev, int next);
+	void cameraPostChangeHandle(int num);
+	void savegameCallback();
 
 	void savegameSave();
 	void saveGRIM();
@@ -167,7 +168,6 @@ private:
 	void savegameRestore();
 	void restoreGRIM();
 
-	void savegameCallback();
 	void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
@@ -175,8 +175,8 @@ private:
 	Common::String _savegameFileName;
 	SaveGame *_savedState;
 
-	Scene *_currScene;
-	int _mode, _previousMode;
+	Set *_currSet;
+	EngineMode _mode, _previousMode;
 	SpeechMode _speechMode;
 	int _textSpeed;
 	bool _flipEnable;
@@ -187,7 +187,6 @@ private:
 	bool _shortFrame;
 
 	unsigned _frameStart, _frameTime, _movieTime;
-	unsigned int _frameTimeCollection;
 	int _prevSmushFrame;
 	unsigned int _frameCounter;
 	unsigned int _lastFrameTime;
@@ -211,9 +210,6 @@ private:
 extern GrimEngine *g_grim;
 
 extern int g_imuseState;
-
-void vimaInit(uint16 *destTable);
-void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable);
 
 // Fake KEYCODE_* values for joystick and mouse events
 

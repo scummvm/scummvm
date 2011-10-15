@@ -26,7 +26,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_stdin
 
 #include "engines/grim/grim.h"
-#include "engines/grim/lua.h"
+#include "engines/grim/lua_v1.h"
 #include "engines/grim/localize.h"
 #include "engines/grim/actor.h"
 #include "engines/grim/lipsync.h"
@@ -45,7 +45,7 @@ namespace Grim {
  * note that the menu creates more objects than it needs,
  * so it deletes some objects right after creating them
  */
-void L1_KillTextObject() {
+void Lua_V1::KillTextObject() {
 	lua_Object textObj = lua_getparam(1);
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
@@ -56,7 +56,7 @@ void L1_KillTextObject() {
 /* Make changes to a text object based on the parameters passed
  * in the table in the LUA parameter 2.
  */
-void L1_ChangeTextObject() {
+void Lua_V1::ChangeTextObject() {
 	const char *line;
 	lua_Object textObj = lua_getparam(1);
 	int paramId = 2;
@@ -88,11 +88,11 @@ void L1_ChangeTextObject() {
  * to prevent errors in the "Options" menu even though
  * we're not currently using the value
  */
-void L1_GetTextSpeed() {
+void Lua_V1::GetTextSpeed() {
 	lua_pushnumber(g_grim->getTextSpeed());
 }
 
-void L1_SetTextSpeed() {
+void Lua_V1::SetTextSpeed() {
 	lua_Object speedObj = lua_getparam(1);
 	if (!lua_isnumber(speedObj))
 		return;
@@ -101,7 +101,7 @@ void L1_SetTextSpeed() {
 	g_grim->setTextSpeed(speed);
 }
 
-void L1_MakeTextObject() {
+void Lua_V1::MakeTextObject() {
 	lua_Object textObj = lua_getparam(1);
 	if (!lua_isstring(textObj)) {
 		return;
@@ -125,7 +125,7 @@ void L1_MakeTextObject() {
 	}
 }
 
-void L1_GetTextObjectDimensions() {
+void Lua_V1::GetTextObjectDimensions() {
 	lua_Object textObj = lua_getparam(1);
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
@@ -135,7 +135,7 @@ void L1_GetTextObjectDimensions() {
 	}
 }
 
-void L1_ExpireText() {
+void Lua_V1::ExpireText() {
 	// Expire all the text objects
 	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
 		 i != TextObject::getPool()->getEnd(); ++i)
@@ -146,7 +146,7 @@ void L1_ExpireText() {
 		i->_value->lineCleanup();
 }
 
-void L1_GetTextCharPosition() {
+void Lua_V1::GetTextCharPosition() {
 	lua_Object textObj = lua_getparam(1);
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
@@ -155,7 +155,7 @@ void L1_GetTextCharPosition() {
 	}
 }
 
-void L1_BlastText() {
+void Lua_V1::BlastText() {
 	lua_Object textObj = lua_getparam(1);
 	if (!lua_isstring(textObj)) {
 		return;
@@ -176,164 +176,12 @@ void L1_BlastText() {
 	delete textObject;
 }
 
-void L1_SetOffscreenTextPos() {
-	warning("L1_SetOffscreenTextPos: implement opcode");
+void Lua_V1::SetOffscreenTextPos() {
+	warning("Lua_V1::SetOffscreenTextPos: implement opcode");
 	// this sets where we shouldn't put dialog maybe?
 }
 
-void setTextObjectParams(TextObjectCommon *textObject, lua_Object tableObj) {
-	lua_Object keyObj;
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectX));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			float num = lua_getnumber(keyObj);
-			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setX((int)(num * 640));
-			else
-				textObject->setX((int)num);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectY));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			float num = lua_getnumber(keyObj);
-			if (g_grim->getGameType() == GType_MONKEY4)
-				textObject->setY((int)(num * 480));
-			else
-				textObject->setY((int)num);
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFont));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (g_grim->getGameType() == GType_MONKEY4 && lua_isstring(keyObj)) {
-			textObject->setFont(g_resourceloader->loadFont(lua_getstring(keyObj)));
-		} else if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('F','O','N','T')) {
-			textObject->setFont(getfont(keyObj));
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectWidth));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			textObject->setWidth((int)lua_getnumber(keyObj));
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectHeight));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			textObject->setHeight((int)lua_getnumber(keyObj));
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFGColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			textObject->setFGColor(getcolor(keyObj));
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectBGColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			//textObject->setBGColor(static_cast<Color *>(lua_getuserdata(keyObj)));
-			warning("setTextObjectParams: dummy BGColor");
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectFXColor));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKTAG('C','O','L','R')) {
-			//textObject->setFXColor(static_cast<Color *>(lua_getuserdata(keyObj)));
-			warning("setTextObjectParams: dummy FXColor");
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectCenter));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			textObject->setJustify(1); //5
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectLJustify));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			textObject->setJustify(2); //4
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectRJustify));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (!lua_isnil(keyObj)) {
-			textObject->setJustify(3); //6
-		}
-	}
-
-	lua_pushobject(tableObj);
-	lua_pushobject(lua_getref(refTextObjectDuration));
-	keyObj = lua_gettable();
-	if (keyObj) {
-		if (lua_isnumber(keyObj)) {
-			textObject->setDuration((int)lua_getnumber(keyObj));
-		}
-	}
-}
-
-// 0 - translate from '/msgId/'
-// 1 - don't translate - message after '/msgId'
-// 2 - return '/msgId/'
-int translationMode = 0;
-
-Common::String parseMsgText(const char *msg, char *msgId) {
-	Common::String translation = g_localizer->localize(msg);
-	const char *secondSlash = NULL;
-
-	if (msg[0] == '/' && msgId) {
-		secondSlash = strchr(msg + 1, '/');
-		if (secondSlash) {
-			strncpy(msgId, msg + 1, secondSlash - msg - 1);
-			msgId[secondSlash - msg - 1] = 0;
-		} else {
-			msgId[0] = 0;
-		}
-	}
-
-	if (translationMode == 1)
-		return secondSlash;
-
-	if (translationMode == 2)
-		return msg;
-
-	return translation;
-}
-
-void L1_TextFileGetLine() {
+void Lua_V1::TextFileGetLine() {
 	char textBuf[1000];
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object posObj = lua_getparam(2);
@@ -361,7 +209,7 @@ void L1_TextFileGetLine() {
 	lua_pushstring(textBuf);
 }
 
-void L1_TextFileGetLineCount() {
+void Lua_V1::TextFileGetLineCount() {
 	char textBuf[1000];
 	lua_Object nameObj = lua_getparam(1);
 
@@ -403,7 +251,7 @@ void L1_TextFileGetLineCount() {
 
 // Localization function
 
-void L1_LocalizeString() {
+void Lua_V1::LocalizeString() {
 	char msgId[50], buf[1000];
 	lua_Object strObj = lua_getparam(1);
 
@@ -421,57 +269,13 @@ void L1_LocalizeString() {
 	}
 }
 
-void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y) {
-	lua_Object tableObj;
-
-	lua_pushobject(paramObj);
-	lua_pushobject(lua_getref(refTextObjectX));
-	tableObj = lua_gettable();
-	if (lua_isnumber(tableObj)) {
-		if (*x)
-			*x = (int)lua_getnumber(tableObj);
-	}
-
-	lua_pushobject(paramObj);
-	lua_pushobject(lua_getref(refTextObjectY));
-	tableObj = lua_gettable();
-	if (lua_isnumber(tableObj)) {
-		if (*y)
-			*y = (int)lua_getnumber(tableObj);
-	}
-
-	lua_pushobject(paramObj);
-	lua_pushobject(lua_getref(refTextObjectBackground));
-	tableObj = lua_gettable();
-	if (tableObj) {
-		if (*background)
-			*background = (int)lua_getnumber(tableObj);
-	}
-
-	lua_pushobject(paramObj);
-	lua_pushobject(lua_getref(refTextObjectVolume));
-	tableObj = lua_gettable();
-	if (lua_isnumber(tableObj)) {
-		if (*vol)
-			*vol = (int)lua_getnumber(tableObj);
-	}
-
-	lua_pushobject(paramObj);
-	lua_pushobject(lua_getref(refTextObjectPan));
-	tableObj = lua_gettable();
-	if (lua_isnumber(tableObj)) {
-		if (*pan)
-			*pan = (int)lua_getnumber(tableObj);
-	}
-}
-
-void L1_SetSayLineDefaults() {
+void Lua_V1::SetSayLineDefaults() {
 	lua_Object tableObj = lua_getparam(1);
 	if (tableObj && lua_istable(tableObj))
 		setTextObjectParams(&g_grim->_sayLineDefaults, tableObj);
 }
 
-void L1_SayLine() {
+void Lua_V1::SayLine() {
 	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
 	bool background = true;
 	const char *msgId = NULL;;
@@ -506,7 +310,7 @@ void L1_SayLine() {
 	}
 }
 
-void L1_ShutUpActor() {
+void Lua_V1::ShutUpActor() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
@@ -516,7 +320,7 @@ void L1_ShutUpActor() {
 		actor->shutUp();
 }
 
-void L1_PrintLine() {
+void Lua_V1::PrintLine() {
 	int vol = 127, buffer = 64, /*paramId = 1, */x = -1, y = -1;
 	bool background = true;
 	char msgId[50];
@@ -539,7 +343,7 @@ void L1_PrintLine() {
 	}
 }
 
-void L1_InputDialog() {
+void Lua_V1::InputDialog() {
 	lua_Object titleObj = lua_getparam(1);
 	lua_Object messageObj = lua_getparam(2);
 	lua_Object defaultObj = lua_getparam(3);
@@ -552,7 +356,7 @@ void L1_InputDialog() {
 	Common::String str = lua_getstring(titleObj);
 	str += ": ";
 	str += lua_getstring(messageObj);
-	InputDialog d(str, lua_getstring(defaultObj));
+	Grim::InputDialog d(str, lua_getstring(defaultObj));
 	int res = d.runModal();
 	// The KeyUp event for CTRL has been eat by the gui loop, so we
 	// need to reset it manually.
@@ -564,7 +368,7 @@ void L1_InputDialog() {
 	}
 }
 
-void L1_IsMessageGoing() {
+void Lua_V1::IsMessageGoing() {
 	lua_Object actorObj = lua_getparam(1);
 
 	if (!actorObj || (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKTAG('A','C','T','R')) || lua_isnil(actorObj)) {
