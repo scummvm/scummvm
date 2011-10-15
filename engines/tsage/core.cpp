@@ -2814,6 +2814,11 @@ void Visage::setVisage(int resNum, int rlbNum) {
 				if (rlbNum == 0)
 					rlbNum = 1;
 
+				// Check how many slots there are
+				uint16 count = READ_LE_UINT16(indexData);
+				if (rlbNum > count)
+					rlbNum = count;
+
 				// Get the flags/rlbNum to use
 				uint32 v = READ_LE_UINT32(indexData + (rlbNum - 1) * 4 + 2);
 				int flags = v >> 30;
