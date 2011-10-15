@@ -140,4 +140,26 @@ void Variables::engineSet(uint16 var, uint32 value) {
 	_vars[var] = value;
 }
 
+const Common::String Variables::describeVar(uint16 var) {
+	if (_descriptions.contains(var)) {
+		const Description &d = _descriptions.getVal(var);
+
+		return Common::String::format("v%s", d.name);
+	} else {
+		return Common::String::format("v%d", var);
+	}
+}
+
+const Common::String Variables::describeCondition(int16 condition) {
+	uint16 unsignedCond = abs(condition);
+	uint16 var = unsignedCond & 2047;
+	int16 value = (unsignedCond >> 11) - 1;
+
+	if (value < 0)
+		value = 1;
+
+	return Common::String::format("c[%s %s %d]",
+			describeVar(var).c_str(), condition > 0 ? "==" : "!=", value);
+}
+
 } /* namespace Myst3 */

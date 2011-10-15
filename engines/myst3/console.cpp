@@ -39,35 +39,9 @@ Console::~Console() {
 }
 
 void Console::describeScript(const Common::Array<Opcode> &script) {
-	Common::String d;
-
 	for(uint j = 0; j < script.size(); j++) {
-		const Opcode &opcode = script[j];
-
-		d = Common::String::format("    op %s ( ",
-				_vm->_scriptEngine->describeCommand(opcode.op).c_str());
-
-		for(uint k = 0; k < opcode.args.size(); k++) {
-			d += Common::String::format("%d ", opcode.args[k]);
-		}
-
-		d += ")\n";
-
-		DebugPrintf("%s", d.c_str());
+		DebugPrintf("%s", _vm->_scriptEngine->describeOpcode(script[j]).c_str());
 	}
-}
-
-Common::String Console::describeCondition(int16 condition) {
-	uint16 unsignedCond = abs(condition);
-	uint16 var = unsignedCond & 2047;
-	int16 value = (unsignedCond >> 11) - 1;
-
-	if (value < 0)
-		value = 1;
-
-	return Common::String::format("var[%d] %s %d (%s)",
-			var, condition > 0 ? "==" : "!=", value,
-			_vm->_vars->evaluate(condition) ? "true" : "false");
 }
 
 bool Console::Cmd_Infos(int argc, const char **argv) {
@@ -101,8 +75,9 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	DebugPrintf("node: %s %d    ", roomName, nodeId);
 
 	for (uint i = 0; i < nodeData->hotspots.size(); i++) {
-		DebugPrintf("\nhotspot %d > condition: %s\n",
-				i, describeCondition(nodeData->hotspots[i].condition).c_str());
+		DebugPrintf("\nhotspot %d > %s (%s)\n", i,
+				_vm->_vars->describeCondition(nodeData->hotspots[i].condition).c_str(),
+				_vm->_vars->evaluate(nodeData->hotspots[i].condition) ? "true" : "false");
 
 		for(uint j = 0; j < nodeData->hotspots[i].rects.size(); j++) {
 			PolarRect &rect = nodeData->hotspots[i].rects[j];
@@ -115,8 +90,9 @@ bool Console::Cmd_Infos(int argc, const char **argv) {
 	}
 
 	for (uint i = 0; i < nodeData->scripts.size(); i++) {
-		DebugPrintf("\nscript %d > condition: %s\n",
-				i, describeCondition(nodeData->scripts[i].condition).c_str());
+		DebugPrintf("\nscript %d > %s (%s)\n", i,
+				_vm->_vars->describeCondition(nodeData->scripts[i].condition).c_str(),
+				_vm->_vars->evaluate(nodeData->scripts[i].condition) ? "true" : "false");
 
 		describeScript(nodeData->scripts[i].script);
 	}
@@ -167,7 +143,8 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 		_vm->_vars->set(var, value);
 	}
 
-	DebugPrintf("var[%d] : %d\n", var, value);
+	DebugPrintf("%s: %d\n", _vm->_vars->describeVar(var).c_str(), value);
+
 	return true;
 }
 

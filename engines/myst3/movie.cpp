@@ -113,7 +113,7 @@ void Movie::update() {
 	}
 
 	if (!_endFrame) {
-		_endFrame = _bink.getFrameCount() - 1;
+		_endFrame = _bink.getFrameCount();
 	}
 
 	if (_posUVar) {
@@ -179,7 +179,7 @@ void Movie::update() {
 				}
 			} else {
 				drawNextFrameToTexture();
-				_isLastFrame = _bink.getCurFrame() == _endFrame;
+				_isLastFrame = _bink.getCurFrame() == (_endFrame - 1);
 			}
 
 			if (_nextFrameWriteVar) {

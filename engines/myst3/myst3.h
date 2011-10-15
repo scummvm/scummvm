@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 
 #include "common/system.h"
+#include "common/random.h"
 
 #include "engines/myst3/archive.h"
 #include "engines/myst3/console.h"
@@ -62,6 +63,7 @@ protected:
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
 public:
 	Variables *_vars;
+	Common::RandomSource *_rnd;
 
 	Myst3Engine(OSystem *syst, int gameFlags);
 	virtual ~Myst3Engine();

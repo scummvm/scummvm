@@ -29,103 +29,116 @@ namespace Myst3 {
 
 Script::Script(Myst3Engine *vm):
 	_vm(vm) {
-#define OPCODE(op, x) _commands.push_back(Command(op, &Script::x, #x))
 
-	OPCODE(4, nodeCubeInit);
-	OPCODE(6, nodeCubeInitIndex);
-	OPCODE(7, nodeFrameInit);
-	OPCODE(8, nodeFrameInitCond);
-	OPCODE(9, nodeFrameInitIndex);
-	OPCODE(11, stopWholeScript);
-	OPCODE(17, movieInitLooping);
-	OPCODE(18, movieInitCondLooping);
-	OPCODE(19, movieInitCond);
-	OPCODE(20, movieInitPreloadLooping);
-	OPCODE(21, movieInitCondPreloadLooping);
-	OPCODE(22, movieInitCondPreload);
-	OPCODE(23, movieInitFrameVar);
-	OPCODE(24, movieInitFrameVarPreload);
-	OPCODE(25, movieInitOverrridePosition);
-	OPCODE(26, movieInitScriptedPosition);
-	OPCODE(35, sunspotAdd);
-	OPCODE(49, varSetZero);
-	OPCODE(50, varSetOne);
-	OPCODE(51, varSetTwo);
-	OPCODE(52, varSetOneHundred);
-	OPCODE(53, varSetValue);
-	OPCODE(54, varToggle);
-	OPCODE(55, varSetOneIfZero);
-	OPCODE(67, varRemoveBits);
-	OPCODE(68, varToggleBits);
-	OPCODE(69, varCopy);
-	OPCODE(70, varSetBitsFromVar);
-	OPCODE(71, varSetBits);
-	OPCODE(72, varApplyMask);
-	OPCODE(73, varSwap);
-	OPCODE(74, varIncrement);
-	OPCODE(75, varIncrementMax);
-	OPCODE(76, varIncrementMaxLooping);
-	OPCODE(77, varAddValueMaxLooping);
-	OPCODE(78, varDecrement);
-	OPCODE(79, varDecrementMin);
-	OPCODE(80, varAddValueMax);
-	OPCODE(81, varSubValueMin);
-	OPCODE(82, varZeroRange);
-	OPCODE(83, varCopyRange);
-	OPCODE(84, varSetRange);
-	OPCODE(85, varIncrementMaxTen);
-	OPCODE(86, varAddValue);
-	OPCODE(87, varArrayAddValue);
-	OPCODE(88, varAddVarValue);
-	OPCODE(89, varSubValue);
-	OPCODE(90, varSubVarValue);
-	OPCODE(91, varModValue);
-	OPCODE(92, varMultValue);
-	OPCODE(93, varMultVarValue);
-	OPCODE(94, varDivValue);
-	OPCODE(95, varDivVarValue);
-	OPCODE(97, varMinValue);
-	OPCODE(98, varClipValue);
-	OPCODE(99, varClipChangeBound);
-	OPCODE(100, varAbsoluteSubValue);
-	OPCODE(101, varAbsoluteSubVar);
-	OPCODE(102, varRatioToPercents);
-	OPCODE(103, varRotateValue3);
-	OPCODE(104, ifElse);
-	OPCODE(105, ifCondition);
-	OPCODE(106, ifCond1AndCond2);
-	OPCODE(107, ifCond1OrCond2);
-	OPCODE(108, ifOneVarSetInRange);
-	OPCODE(109, ifVarEqualsValue);
-	OPCODE(110, ifVarNotEqualsValue);
-	OPCODE(111, ifVar1EqualsVar2);
-	OPCODE(112, ifVar1NotEqualsVar2);
-	OPCODE(113, ifVarSupEqValue);
-	OPCODE(114, ifVarInfEqValue);
-	OPCODE(115, ifVarInRange);
-	OPCODE(116, ifVarNotInRange);
-	OPCODE(117, ifVar1SupEqVar2);
-	OPCODE(118, ifVar1SupVar2);
-	OPCODE(119, ifVar1InfEqVar2);
-	OPCODE(120, ifVarHasAllBitsSet);
-	OPCODE(121, ifVarHasNoBitsSet);
-	OPCODE(122, ifVarHasSomeBitsSet);
-	OPCODE(138, goToNode);
-	OPCODE(139, goToRoomNode);
-	OPCODE(176, runScriptForVar);
-	OPCODE(177, runScriptForVarEachXFrames);
-	OPCODE(178, runScriptForVarStartVar);
-	OPCODE(179, runScriptForVarStartVarEachXFrames);
-	OPCODE(180, runScriptForVarEndVar);
-	OPCODE(181, runScriptForVarEndVarEachXFrames);
-	OPCODE(182, runScriptForVarStartEndVar);
-	OPCODE(183, runScriptForVarStartEndVarEachXFrames);
-	OPCODE(184, drawFramesForVar);
-	OPCODE(185, drawFramesForVarEachTwoFrames);
-	OPCODE(186, drawFramesForVarStartEndVarEachTwoFrames);
-	OPCODE(187, runScript);
+#define OP_0(op, x) _commands.push_back(Command(op, &Script::x, #x, 0))
+#define OP_1(op, x, type1) _commands.push_back(Command(op, &Script::x, #x, 1, type1))
+#define OP_2(op, x, type1, type2) _commands.push_back(Command(op, &Script::x, #x, 2, type1, type2))
+#define OP_3(op, x, type1, type2, type3) _commands.push_back(Command(op, &Script::x, #x, 3, type1, type2, type3))
+#define OP_4(op, x, type1, type2, type3, type4) _commands.push_back(Command(op, &Script::x, #x, 4, type1, type2, type3, type4))
+#define OP_5(op, x, type1, type2, type3, type4, type5) _commands.push_back(Command(op, &Script::x, #x, 5, type1, type2, type3, type4, type5))
 
-#undef OPCODE
+	OP_0(  0, badOpcode																					);
+	OP_1(  4, nodeCubeInit, 				kEvalValue													);
+	OP_5(  6, nodeCubeInitIndex, 			kVar, 		kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
+	OP_1(  7, nodeFrameInit, 				kEvalValue													);
+	OP_3(  8, nodeFrameInitCond, 			kCondition,	kEvalValue,	kEvalValue							);
+	OP_5(  9, nodeFrameInitIndex,			kVar,		kEvalValue,	kEvalValue,	kEvalValue,	kEvalValue	);
+	OP_0( 11, stopWholeScript																			);
+	OP_1( 17, movieInitLooping, 			kEvalValue													);
+	OP_2( 18, movieInitCondLooping,			kEvalValue,	kCondition										);
+	OP_2( 19, movieInitCond,				kEvalValue,	kCondition										);
+	OP_1( 20, movieInitPreloadLooping,		kEvalValue													);
+	OP_2( 21, movieInitCondPreloadLooping,	kEvalValue,	kCondition										);
+	OP_2( 22, movieInitCondPreload, 		kEvalValue,	kCondition										);
+	OP_2( 23, movieInitFrameVar, 			kEvalValue,	kVar											);
+	OP_2( 24, movieInitFrameVarPreload,		kEvalValue,	kVar											);
+	OP_4( 25, movieInitOverrridePosition,	kEvalValue,	kCondition,	kValue,		kValue					);
+	OP_3( 26, movieInitScriptedPosition,	kEvalValue,	kVar,		kVar								);
+	OP_2( 35, sunspotAdd,					kValue,		kValue											);
+	OP_1( 49, varSetZero,					kVar														);
+	OP_1( 50, varSetOne,					kVar														);
+	OP_1( 51, varSetTwo,					kVar														);
+	OP_1( 52, varSetOneHundred,				kVar														);
+	OP_2( 53, varSetValue,					kVar,		kValue											);
+	OP_1( 54, varToggle,					kVar														);
+	OP_1( 55, varSetOneIfZero,				kVar														);
+	OP_3( 61, varRandRange,					kVar,		kValue,		kValue								);
+	OP_2( 67, varRemoveBits,				kVar,		kValue											);
+	OP_2( 68, varToggleBits,				kVar,		kValue											);
+	OP_2( 69, varCopy,						kVar,		kVar											);
+	OP_2( 70, varSetBitsFromVar,			kVar,		kVar											);
+	OP_2( 71, varSetBits,					kVar,		kValue											);
+	OP_2( 72, varApplyMask,					kVar,		kValue											);
+	OP_2( 73, varSwap,						kVar,		kVar											);
+	OP_1( 74, varIncrement,					kVar														);
+	OP_2( 75, varIncrementMax,				kVar,		kValue											);
+	OP_3( 76, varIncrementMaxLooping,		kVar,		kValue,		kValue								);
+	OP_4( 77, varAddValueMaxLooping,		kValue,		kVar,		kValue,		kValue					);
+	OP_1( 78, varDecrement,					kVar														);
+	OP_2( 79, varDecrementMin,				kVar,		kValue											);
+	OP_3( 80, varAddValueMax,				kValue,		kVar,		kValue								);
+	OP_3( 81, varSubValueMin,				kValue,		kVar,		kValue								);
+	OP_2( 82, varZeroRange,					kVar,		kVar											);
+	OP_3( 83, varCopyRange,					kVar,		kVar,		kValue								);
+	OP_3( 84, varSetRange,					kVar,		kVar,		kValue								);
+	OP_1( 85, varIncrementMaxTen,			kVar														);
+	OP_2( 86, varAddValue,					kVar,		kValue											);
+	OP_3( 87, varArrayAddValue, 			kValue, 	kVar, 		kVar								);
+	OP_2( 88, varAddVarValue,				kVar,		kVar											);
+	OP_2( 89, varSubValue,					kVar,		kValue											);
+	OP_2( 90, varSubVarValue,				kVar,		kVar											);
+	OP_2( 91, varModValue,					kVar,		kValue											);
+	OP_2( 92, varMultValue,					kVar,		kValue											);
+	OP_2( 93, varMultVarValue,				kVar,		kVar											);
+	OP_2( 94, varDivValue,					kVar,		kValue											);
+	OP_2( 95, varDivVarValue,				kVar,		kVar											);
+	OP_2( 97, varMinValue,					kVar,		kValue											);
+	OP_3( 98, varClipValue,					kVar,		kValue,		kValue								);
+	OP_3( 99, varClipChangeBound,			kVar,		kValue,		kValue								);
+	OP_2(100, varAbsoluteSubValue,			kVar,		kValue											);
+	OP_2(101, varAbsoluteSubVar,			kVar,		kVar											);
+	OP_3(102, varRatioToPercents,			kVar,		kVar,		kValue								);
+	OP_4(103, varRotateValue3,				kVar,		kValue,		kValue, 	kValue					);
+	OP_0(104, ifElse																					);
+	OP_1(105, ifCondition, 					kCondition													);
+	OP_2(106, ifCond1AndCond2, 				kCondition,	kCondition										);
+	OP_2(107, ifCond1OrCond2, 				kCondition,	kCondition										);
+	OP_2(108, ifOneVarSetInRange,			kVar,		kVar											);
+	OP_2(109, ifVarEqualsValue,				kVar,		kValue											);
+	OP_2(110, ifVarNotEqualsValue,			kVar,		kValue											);
+	OP_2(111, ifVar1EqualsVar2,				kVar,		kVar											);
+	OP_2(112, ifVar1NotEqualsVar2,			kVar,		kVar											);
+	OP_2(113, ifVarSupEqValue,				kVar,		kValue											);
+	OP_2(114, ifVarInfEqValue,				kVar,		kValue											);
+	OP_3(115, ifVarInRange,					kVar,		kValue,		kValue								);
+	OP_3(116, ifVarNotInRange,				kVar,		kValue,		kValue								);
+	OP_2(117, ifVar1SupEqVar2,				kVar,		kVar											);
+	OP_2(118, ifVar1SupVar2,				kVar,		kVar											);
+	OP_2(119, ifVar1InfEqVar2,				kVar,		kVar											);
+	OP_2(120, ifVarHasAllBitsSet,			kVar,		kValue											);
+	OP_2(121, ifVarHasNoBitsSet,			kVar,		kValue											);
+	OP_3(122, ifVarHasSomeBitsSet,			kVar,		kValue,		kValue								);
+	OP_1(138, goToNode,						kValue														);
+	OP_2(139, goToRoomNode,					kValue,		kValue											);
+	OP_4(176, runScriptForVar,				kVar,		kValue,		kValue,		kValue					);
+	OP_5(177, runScriptForVarEachXFrames,	kVar,		kValue,		kValue,		kValue,		kValue		);
+	OP_4(178, runScriptForVarStartVar,		kVar,		kVar,		kValue,		kValue					);
+	OP_5(179, runScriptForVarStartVarEachXFrames, kVar,	kVar,		kValue,		kValue,		kValue		);
+	OP_4(180, runScriptForVarEndVar,		kVar,		kValue,		kVar,		kValue					);
+	OP_5(181, runScriptForVarEndVarEachXFrames,	kVar,	kValue,		kVar,		kValue,		kValue		);
+	OP_4(182, runScriptForVarStartEndVar,	kVar,		kVar,		kVar,		kValue					);
+	OP_5(183, runScriptForVarStartEndVarEachXFrames, kVar, kVar,	kVar,		kValue,		kValue		);
+	OP_4(184, drawFramesForVar,				kVar,		kValue,		kValue,		kValue					);
+	OP_3(185, drawFramesForVarEachTwoFrames,			kVar,		kValue,		kValue					);
+	OP_3(186, drawFramesForVarStartEndVarEachTwoFrames, kVar, 		kVar,		kVar					);
+	OP_1(187, runScript,					kValue														);
+
+#undef OP_0
+#undef OP_1
+#undef OP_2
+#undef OP_3
+#undef OP_4
+#undef OP_5
 }
 
 Script::~Script() {
@@ -154,26 +167,74 @@ bool Script::run(const Common::Array<Opcode> *script) {
 	return c.result;
 }
 
-void Script::runOp(Context &c, const Opcode &op) {
-	bool ranOpcode = false;
-
+const Script::Command &Script::findCommand(uint16 op) {
 	for (uint16 i = 0; i < _commands.size(); i++)
-		if (_commands[i].op == op.op) {
-			(this->*(_commands[i].proc)) (c, op);
-			ranOpcode = true;
-			break;
-		}
+		if (_commands[i].op == op)
+			return _commands[i];
 
-	if (!ranOpcode)
+	// Return the invalid opcode if not found
+	return findCommand(0);
+}
+
+void Script::runOp(Context &c, const Opcode &op) {
+	const Script::Command &cmd = findCommand(op.op);
+
+	if (cmd.op != 0)
+		(this->*(cmd.proc))(c, op);
+	else
 		warning("Trying to run invalid opcode %d", op.op);
 }
 
 const Common::String Script::describeCommand(uint16 op) {
-	for (uint16 i = 0; i < _commands.size(); i++)
-		if (_commands[i].op == op)
-			return Common::String::format("%d, %s", op, _commands[i].desc);
+	const Script::Command &cmd = findCommand(op);
 
-	return Common::String::format("%d", op);
+	if (cmd.op != 0)
+		return Common::String::format("%d, %s", cmd.op, cmd.desc);
+	else
+		return Common::String::format("%d", op);
+}
+
+const Common::String Script::describeOpcode(const Opcode &opcode) {
+	const Script::Command &cmd = findCommand(opcode.op);
+
+	Common::String d = Common::String::format("    op %s ( ",
+			describeCommand(opcode.op).c_str());
+
+	for(uint k = 0; k < opcode.args.size(); k++) {
+		if (cmd.op != 0 && k < 5)
+			d += describeArgument(cmd.argType[k], opcode.args[k]) + " ";
+		else
+			d += Common::String::format("%d ", opcode.args[k]);
+	}
+
+	d += ")\n";
+
+	return d;
+}
+
+const Common::String Script::describeArgument(ArgumentType type, int16 value) {
+	switch (type) {
+	case kVar:
+		return _vm->_vars->describeVar(value);
+	case kValue:
+		return Common::String::format("%d", value);
+	case kEvalValue:
+		if (value > 0)
+			return Common::String::format("%d", value);
+		else
+			return _vm->_vars->describeVar(-value);
+	case kCondition:
+		return _vm->_vars->describeCondition(value);
+	case kUnknown:
+	default:
+		return Common::String::format("unk%d", value);
+	}
+}
+
+void Script::badOpcode(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Invalid opcode", cmd.op);
+
+	error("Trying to run invalid opcode %d", cmd.op);
 }
 
 void Script::nodeCubeInit(Context &c, const Opcode &cmd) {
@@ -404,6 +465,19 @@ void Script::varSetOneIfZero(Context &c, const Opcode &cmd) {
 	int32 value = _vm->_vars->get(cmd.args[0]);
 	if (!value)
 		_vm->_vars->set(cmd.args[0], 1);
+}
+
+void Script::varRandRange(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Randomize var %d value between %d and %d", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	int32 value;
+
+	if (cmd.args[2] - cmd.args[1] > 0)
+		value = _vm->_rnd->getRandomNumberRng(cmd.args[1], cmd.args[2]);
+	else
+		value = cmd.args[1];
+
+	_vm->_vars->set(cmd.args[0], value);
 }
 
 void Script::varRemoveBits(Context &c, const Opcode &cmd) {

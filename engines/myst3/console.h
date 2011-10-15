@@ -41,7 +41,6 @@ private:
 	Myst3Engine *_vm;
 
 	void describeScript(const Common::Array<Opcode> &script);
-	Common::String describeCondition(int16 condition);
 
 	bool Cmd_Infos(int argc, const char **argv);
 	bool Cmd_LookAt(int argc, const char **argv);

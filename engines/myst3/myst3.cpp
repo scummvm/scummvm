@@ -54,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
-		_frameCount(0) {
+		_frameCount(0), _rnd(0) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -70,12 +70,14 @@ Myst3Engine::~Myst3Engine() {
 	delete _scriptEngine;
 	delete _console;
 	delete _vars;
+	delete _rnd;
 }
 
 Common::Error Myst3Engine::run() {
 	const int w = 800;
 	const int h = 600;
 
+	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
 	_db = new Database("M3.exe");

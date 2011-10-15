@@ -38,7 +38,7 @@ public:
 	virtual ~Script();
 
 	bool run(const Common::Array<Opcode> *script);
-	const Common::String describeCommand(uint16 op);
+	const Common::String describeOpcode(const Opcode &opcode);
 
 private:
 	struct Context {
@@ -50,22 +50,48 @@ private:
 
 	typedef void (Script::*CommandProc)(Context &c, const Opcode &cmd);
 
+	enum ArgumentType {
+		kUnknown,
+		kVar,
+		kValue,
+		kEvalValue,
+		kCondition
+	};
+
 	struct Command {
 		Command() {}
-		Command(uint16 o, CommandProc p, const char *d) : op(o), proc(p), desc(d) {}
+		Command(uint16 o, CommandProc p, const char *d, uint8 argc, ...) : op(o), proc(p), desc(d) {
+			va_list types;
+
+			for(int j = 0; j < 5; j++)
+				argType[j] = kUnknown;
+
+			va_start(types, argc);
+			for(int j = 0; j < argc; j++)
+				argType[j] = (ArgumentType) va_arg(types, int);
+			va_end(types);
+		}
 
 		uint16 op;
 		CommandProc proc;
 		const char *desc;
+
+		ArgumentType argType[5];
 	};
 
 	Myst3Engine *_vm;
 	Common::Array<Command> _commands;
 
+	const Command &findCommand(uint16 op);
+	const Common::String describeCommand(uint16 op);
+	const Common::String describeArgument(ArgumentType type, int16 value);
+
 	void runOp(Context &c, const Opcode &op);
 	void goToElse(Context &c);
 
 	void runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames);
+
+	DECLARE_OPCODE(badOpcode);
 
 	DECLARE_OPCODE(nodeCubeInit);
 	DECLARE_OPCODE(nodeCubeInitIndex);
@@ -91,6 +117,7 @@ private:
 	DECLARE_OPCODE(varSetValue);
 	DECLARE_OPCODE(varToggle);
 	DECLARE_OPCODE(varSetOneIfZero);
+	DECLARE_OPCODE(varRandRange);
 	DECLARE_OPCODE(varRemoveBits);
 	DECLARE_OPCODE(varToggleBits);
 	DECLARE_OPCODE(varCopy);

@@ -43,6 +43,9 @@ public:
 	bool evaluate(int16 condition);
 	uint32 valueOrVarValue(int16 value);
 
+	const Common::String describeVar(uint16 var);
+	const Common::String describeCondition(int16 condition);
+
 	DECLARE_VAR(61, LocationAge)
 	DECLARE_VAR(62, LocationRoom)
 	DECLARE_VAR(63, LocationNode)
