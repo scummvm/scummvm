@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/blue_force/blueforce_speakers.h"
 #include "tsage/converse.h"
 #include "tsage/events.h"
 #include "tsage/core.h"
