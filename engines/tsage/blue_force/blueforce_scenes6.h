@@ -55,6 +55,7 @@ public:
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
+	virtual void remove();
 };
 
 class Scene620 : public PalettedScene {

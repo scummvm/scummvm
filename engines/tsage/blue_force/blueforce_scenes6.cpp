@@ -131,6 +131,14 @@ void Scene600::signal() {
 	BF_GLOBALS._sceneManager.changeScene(620);
 }
 
+// WORKAROUND: Fix for original game bug where the global scrolling object follower
+// remains set to an object within the scene that is no longer active
+void Scene600::remove() {
+	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
+
+	SceneExt::remove();
+}
+
 /*--------------------------------------------------------------------------
  * Scene 620 - Hospital cut-scene
  *
