@@ -185,7 +185,7 @@ class Scene810: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object4: public NamedObject {
+	class FaxMachineInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -208,7 +208,7 @@ public:
 	Lyle _lyle;
 	Chair _chair;
 	Object3 _object3;
-	Object4 _object4;
+	FaxMachineInset _faxMachineInset;
 	Object5 _object5;
 	NamedObject _object6;
 	Object7 _object7;

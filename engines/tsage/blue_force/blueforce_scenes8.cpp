@@ -638,7 +638,7 @@ bool Scene810::Object3::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene810::Object4::startAction(CursorType action, Event &event) {
+bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
 	Scene810 *scene = (Scene810 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -775,19 +775,27 @@ bool Scene810::FaxMachine::startAction(CursorType action, Event &event) {
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 8105;
-			ADD_PLAYER_MOVER(67, 111);
+
+			Common::Point destPos(67, 111);
+			PlayerMover *mover = new PlayerMover();
+			BF_GLOBALS._player.addMover(mover, &destPos, scene);
 		}
 		return true;
 	case INV_PRINT_OUT:
-		BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 811);
-		BF_GLOBALS._player.disableControl();
-		scene->_sceneMode = 811;
+		if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1)
+			SceneItem::display2(810, 31);
+		else {
+			BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 811);
+			BF_GLOBALS._player.disableControl();
+			scene->_sceneMode = 811;
 
-		if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
-			scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105,
-				&scene->_object6, NULL);
-		} else {
-			scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player, &scene->_object6, NULL);
+			if (BF_GLOBALS._sceneObjects->contains(&scene->_lyle)) {
+				scene->setAction(&scene->_sequenceManager1, scene, BF_GLOBALS.getFlag(onDuty) ? 8108 : 8105, 
+					&BF_GLOBALS._player, &scene->_object6, NULL);
+			} else {
+				scene->setAction(&scene->_sequenceManager1, scene, 8111, &BF_GLOBALS._player,
+					&scene->_object6, NULL);
+			}
 		}
 		return true;
 	default:
@@ -1108,12 +1116,13 @@ void Scene810::signal() {
 	switch (_sceneMode) {
 	case 811:
 	case 8105:
-		_object4.postInit();
-		_object4.setVisage(810);
-		_object4.setPosition(Common::Point(77, 94));
-		_object4.setStrip(8);
-		_object4.fixPriority(250);
-		BF_GLOBALS._sceneItems.push_back(&_object4);
+		_faxMachineInset.postInit();
+		_faxMachineInset.setVisage(810);
+		_faxMachineInset.setPosition(Common::Point(77, 94));
+		_faxMachineInset.setStrip(8);
+		_faxMachineInset.fixPriority(250);
+		BF_GLOBALS._sceneItems.push_back(&_faxMachineInset);
+		BF_GLOBALS._player.enableControl();
 		break;
 	case 8100:
 		if (BF_GLOBALS.getFlag(examinedFile810)) {
@@ -1230,7 +1239,7 @@ void Scene810::signal() {
 }
 
 void Scene810::process(Event &event) {
-	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
@@ -1253,9 +1262,9 @@ void Scene810::dispatch() {
 		_lyle.updateAngle(BF_GLOBALS._player._position);
 	}
 
-	if (BF_GLOBALS._sceneObjects->contains(&_object4) && (BF_GLOBALS._player._position.x != 67) && 
+	if (BF_GLOBALS._sceneObjects->contains(&_faxMachineInset) && (BF_GLOBALS._player._position.x != 67) && 
 			(BF_GLOBALS._player._position.y != 111)) {
-		_object4.remove();
+		_faxMachineInset.remove();
 	}
 
 	if (!_action) {
