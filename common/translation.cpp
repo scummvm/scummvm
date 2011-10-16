@@ -227,6 +227,10 @@ bool TranslationManager::openTranslationsFile(File& inFile) {
 	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
 		return true;
 
+	// Then try extrapath
+	if (ConfMan.hasKey("extrapath") && openTranslationsFile(FSNode(ConfMan.get("extrapath")), inFile))
+		return true;
+
 	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");

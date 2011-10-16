@@ -200,8 +200,7 @@ bool BadaAppForm::pollEvent(Common::Event &event) {
 	return result;
 }
 
-void BadaAppForm::pushEvent(Common::EventType type,
-														const Point &currentPosition) {
+void BadaAppForm::pushEvent(Common::EventType type, const Point &currentPosition) {
 	BadaSystem *system = (BadaSystem *)g_system;
 	BadaGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
@@ -438,6 +437,7 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 			break;
 
 		case GameMenu:
+			_buttonState = LeftButton;
 			pushKey(Common::KEYCODE_F5);
 			break;
 

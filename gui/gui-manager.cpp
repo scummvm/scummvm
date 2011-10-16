@@ -331,7 +331,9 @@ void GuiManager::runLoop() {
 					_lastMousePosition.time = _system->getMillis();
 				}
 
-				tooltipCheck = true;
+				if (!ConfMan.getBool("gui_no_tooltips")) {
+					tooltipCheck = true;
+				}
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case Common::EVENT_LBUTTONDOWN:
