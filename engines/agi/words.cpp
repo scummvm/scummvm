@@ -134,8 +134,9 @@ int AgiEngine::findWord(const char *word, int *flen) {
 	
 	for (int i = 0; i < (int)a.size(); i++) {
 		int wlen = strlen(a[i]->word);
-		// Keep looking till we find the word itself, or the whole phrase
-		if (!strncmp(a[i]->word, word, wlen) && (word[wlen] == 0 || word[wlen] == 0x20)) {
+		// Keep looking till we find the word itself, or the whole phrase.
+		// Try to find the best match (i.e. the longest matching phrase).
+		if (!strncmp(a[i]->word, word, wlen) && (word[wlen] == 0 || word[wlen] == 0x20) && wlen >= *flen) {
 			*flen = wlen;
 			result = a[i]->id;
 		}
