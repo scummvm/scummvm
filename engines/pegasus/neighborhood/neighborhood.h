@@ -125,9 +125,9 @@ public:
 	virtual void activateHotspots();
 	virtual void clickInHotspot(const Input &, const Hotspot *);
 
-	tCanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
-	tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
-	tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
+	virtual tCanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
+	virtual tCanTurnReason canTurn(tTurnDirection turn, tDirectionConstant &nextDir);
+	virtual tCanOpenDoorReason canOpenDoor(DoorTable::Entry &entry);
 
 	virtual void cantMoveThatWay(tCanMoveForwardReason);
 	virtual void cantTurnThatWay(tCanTurnReason) {}
