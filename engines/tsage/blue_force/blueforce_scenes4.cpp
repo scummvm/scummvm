@@ -1486,7 +1486,7 @@ bool Scene450::Object4::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
-bool Scene450::Item1::startAction(CursorType action, Event &event) {
+bool Scene450::Exit::startAction(CursorType action, Event &event) {
 	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
 
 	if (event.eventType == EVENT_BUTTON_DOWN) {
@@ -1609,8 +1609,10 @@ void Scene450::signal() {
 		break;
 	case 4501:
 		if (BF_GLOBALS._sceneObjects->contains(&_object2)) {
+			_sceneMode = 450;
 			ADD_MOVER(_object2, -20, 135);
 		} else {
+			_sceneMode = 451;
 			ADD_PLAYER_MOVER(0, 160);
 		}
 		break;

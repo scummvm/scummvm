@@ -232,7 +232,7 @@ class Scene450: public SceneExt {
 	};
 
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Exit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -250,7 +250,8 @@ public:
 	Object3 _object3;
 	Object4 _object4;
 	NamedObject _door, _counterDoor;
-	NamedHotspot _exit, _interior, _shelf, _counter;
+	Exit _exit;
+	NamedHotspot _interior, _shelf, _counter;
 	int _field19AC, _field19AE;
 
 	Scene450();
