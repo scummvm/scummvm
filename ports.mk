@@ -196,6 +196,7 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)/doc/de
 	mkdir -p $(WIN32PATH)/doc/es
 	mkdir -p $(WIN32PATH)/doc/fr
+	mkdir -p $(WIN32PATH)/doc/it
 	mkdir -p $(WIN32PATH)/doc/no-nb
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
@@ -225,6 +226,7 @@ endif
 	unix2dos $(WIN32PATH)/doc/de/*.txt
 	unix2dos $(WIN32PATH)/doc/es/*.txt
 	unix2dos $(WIN32PATH)/doc/fr/*.txt
+	unix2dos $(WIN32PATH)/doc/it/*.txt
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
 
 # Special target to create a win32 NSIS installer
