@@ -232,11 +232,10 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	if (!temp) {
 #ifdef ENABLE_SCI32
-		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
-		// an invalid exported function.
-		if (getSciVersion() >= SCI_VERSION_2)
-			warning("Request for invalid exported function 0x%x of script %d", pubfunct, script);
-		else
+		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
+			// Script 64036 in Torin's Passage is empty and contains an invalid
+			// (empty) export
+		} else
 #endif
 			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		return NULL;
