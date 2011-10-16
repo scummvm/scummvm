@@ -1804,6 +1804,8 @@ void CruiseEngine::mainLoop() {
 			bool skipEvents = false;
 
 			do {
+				g_system->updateScreen();
+
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 
@@ -1976,9 +1978,6 @@ void CruiseEngine::mainLoop() {
 				removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen);
 				autoMsg = -1;
 			}
-		} else {
-			// Keep ScummVM being responsive even when displayOn is false
-			g_system->updateScreen();
 		}
 
 	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
