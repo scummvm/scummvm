@@ -1918,14 +1918,18 @@ void WSC::receiveNotification(Notification *notification, const tNotificationFla
 					372 + kNavAreaLeft, 149 + kNavAreaTop));
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
-			g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
+
+			// Unused?
+			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotGassed:
 			item = (Item *)g_allItems.findItemByID(kArgonCanister);
 			_vm->addItemToInventory((InventoryItem *)item);
 			setCurrentActivation(kActivationRobotDead);
 			GameState.setWSCRobotDead(true);
-			g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
+
+			// Unused?
+			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotHeadOpensLight:
 		case kW98RobotHeadOpensDark:
