@@ -1618,7 +1618,7 @@ void Scene271::signal() {
 
 		_object1.remove();
 		_field796 = 0;
-		ADD_PLAYER_MOVER(_tempPos.x, _tempPos.y);
+		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, _tempPos.x, _tempPos.y);
 		break;
 	case 2707:
 		BF_GLOBALS._player.enableControl();
