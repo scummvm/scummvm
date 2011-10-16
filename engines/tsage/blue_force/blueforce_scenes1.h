@@ -163,19 +163,19 @@ public:
 
 class Scene114: public SceneExt {
 	/* Objects */
-	class Object1: public NamedObject {
+	class Vechile: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObject {
+	class Door: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
 public:
 	SequenceManager _sequenceManager1;
-	Object1 _object1;
-	Object2 _object2;
-	NamedObject _object3;
+	Vechile _vechile;
+	Door _door;
+	NamedObject _lyle;
 	NamedHotspot _item1;
 public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

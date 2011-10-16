@@ -898,23 +898,19 @@ void Scene110::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene114::Object1::startAction(CursorType action, Event &event) {
+bool Scene114::Vechile::startAction(CursorType action, Event &event) {
 	Scene114 *scene = (Scene114 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(114, 0, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+		SceneItem::display2(114, 0);
 		return true;
 	case CURSOR_USE:
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 1142;
 		if (BF_GLOBALS.getFlag(fWithLyle)) {
-			scene->_object3.fixPriority(-1);
-			scene->setAction(&scene->_sequenceManager1, this, 1142, &BF_GLOBALS._player, &scene->_object3, NULL);
+			scene->_lyle.fixPriority(-1);
+			scene->setAction(&scene->_sequenceManager1, scene, 1142, &BF_GLOBALS._player, &scene->_lyle, NULL);
 		} else {
 			Common::Point pt(155, 111);
 			PlayerMover *mover = new PlayerMover();
@@ -926,23 +922,19 @@ bool Scene114::Object1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene114::Object2::startAction(CursorType action, Event &event) {
+bool Scene114::Door::startAction(CursorType action, Event &event) {
 	Scene114 *scene = (Scene114 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
-		SceneItem::display(114, 1, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+		SceneItem::display2(114, 1);
 		return true;
 	case CURSOR_USE:
 		BF_GLOBALS._walkRegions.proc2(2);
 		BF_GLOBALS._player.disableControl();
-		scene->_object3.fixPriority(-1);
+		scene->_lyle.fixPriority(-1);
 		scene->_sceneMode = 1140;
-		setAction(&scene->_sequenceManager1, this, 1140, &BF_GLOBALS._player, this, &scene->_object3, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 1140, &BF_GLOBALS._player, this, &scene->_lyle, NULL);
 		return true;
 	default:
 		return NamedObject::startAction(action, event);
@@ -959,10 +951,10 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._walkRegions.proc1(9);
 	BF_GLOBALS._walkRegions.proc1(22);
 
-	_object2.postInit();
-	_object2.setVisage(110);
-	_object2.setPosition(Common::Point(216, 88));
-	BF_GLOBALS._sceneItems.push_front(&_object2);
+	_door.postInit();
+	_door.setVisage(110);
+	_door.setPosition(Common::Point(216, 88));
+	BF_GLOBALS._sceneItems.push_front(&_door);
 
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(1358);
@@ -973,52 +965,52 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.y = 2;
 	BF_GLOBALS._player.changeZoom(-1);
 
-	_object3.postInit();
-	_object3.setVisage(1359);
-	_object3.setObjectWrapper(new SceneObjectWrapper());
-	_object3.animate(ANIM_MODE_1, NULL);
-	_object3.setPosition(Common::Point(-118, -146));
-	_object3.changeZoom(-1);
-	_object3._moveDiff.x = 2;
-	_object3._moveDiff.y = 1;
-	_object3.hide();
-	_object3.setDetails(114, 2, -1, -1, 1, NULL);
+	_lyle.postInit();
+	_lyle.setVisage(1359);
+	_lyle.setObjectWrapper(new SceneObjectWrapper());
+	_lyle.animate(ANIM_MODE_1, NULL);
+	_lyle.setPosition(Common::Point(-118, -146));
+	_lyle.changeZoom(-1);
+	_lyle._moveDiff.x = 2;
+	_lyle._moveDiff.y = 1;
+	_lyle.hide();
+	_lyle.setDetails(114, 2, -1, -1, 1, NULL);
 
-	_object1.postInit();
+	_vechile.postInit();
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
-		_object1.setVisage(444);
-		_object1.setPosition(Common::Point(127, 78));
-		_object1.fixPriority(20);
+		_vechile.setVisage(444);
+		_vechile.setPosition(Common::Point(127, 78));
+		_vechile.fixPriority(20);
 		BF_GLOBALS._player.setPosition(Common::Point(139, 79));
-		_object3.setPosition(Common::Point(86, 79));
-		_object3.show();
+		_lyle.setPosition(Common::Point(86, 79));
+		_lyle.show();
 	} else {
-		_object1.setVisage(380);
-		_object1.setPosition(Common::Point(128, 125));
-		_object1.setFrame(1);
+		_vechile.setVisage(380);
+		_vechile.setPosition(Common::Point(128, 125));
+		_vechile.setFrame(1);
 		if (BF_GLOBALS.getFlag(onDuty)) {
-			_object1.setStrip(2);
-			_object1.changeZoom(70);
+			_vechile.setStrip(2);
+			_vechile.changeZoom(70);
 			BF_GLOBALS._player.setVisage(352);
 		} else {
-			_object1.setStrip(1);
-			_object1.changeZoom(77);
+			_vechile.setStrip(1);
+			_vechile.changeZoom(77);
 		}
 		BF_GLOBALS._walkRegions.proc1(17);
 	}
-	BF_GLOBALS._sceneItems.push_front(&_object1);
+	BF_GLOBALS._sceneItems.push_front(&_vechile);
 	BF_GLOBALS._walkRegions.proc1(2);
 
 	if (BF_GLOBALS._sceneManager._previousScene == 115) {
 		BF_GLOBALS._player.setPosition(Common::Point(219, 100));
 		BF_GLOBALS._player.setStrip(6);
-		_object3.setPosition(Common::Point(253, 110));
-		_object3.fixPriority(108);
-		_object3.setStrip(6);
+		_lyle.setPosition(Common::Point(253, 110));
+		_lyle.fixPriority(108);
+		_lyle.setStrip(6);
 		BF_GLOBALS._player.enableControl();
 	} else if (BF_GLOBALS.getFlag(fWithLyle)) {
 		_sceneMode = 1141;
-		setAction(&_sequenceManager1, this, 1141, &_object3, NULL);
+		setAction(&_sequenceManager1, this, 1141, &_lyle, NULL);
 	} else {
 		BF_GLOBALS._player.enableControl();
 	}
