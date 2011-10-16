@@ -55,7 +55,7 @@ void Scene550::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-bool Scene550::Object1::startAction(CursorType action, Event &event) {
+bool Scene550::Lyle::startAction(CursorType action, Event &event) {
 	Scene550 *scene = (Scene550 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -77,7 +77,7 @@ bool Scene550::Object1::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_action1);
 		} else {
 			scene->_sceneMode = BF_INVENTORY.getObjectScene(BF_ITEM_67) == 1 ? 5513 : 5512;
-			scene->_stripManager.setAction(&scene->_action1);
+			scene->setAction(&scene->_action1);
 		}
 		return true;
 	case INV_SCHEDULE:
@@ -198,15 +198,15 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 		_vechile.setPosition(Common::Point(110, 85));
 		_vechile.fixPriority(76);
 
-		_object1.postInit();
-		_object1.setVisage(835);
-		_object1.setPosition(Common::Point(139, 83));
-		_object1.setDetails(550, 29, 30, 31, 1, NULL);
-		_object1.setStrip(8);
+		_lyle.postInit();
+		_lyle.setVisage(835);
+		_lyle.setPosition(Common::Point(139, 83));
+		_lyle.setDetails(550, 29, 30, 31, 1, NULL);
+		_lyle.setStrip(8);
 
 		BF_GLOBALS._player.setVisage(303);
 		BF_GLOBALS._player.setPosition(Common::Point(89, 76));
-		BF_GLOBALS._player.updateAngle(_object1._position);
+		BF_GLOBALS._player.updateAngle(_lyle._position);
 	} else {
 		BF_GLOBALS._walkRegions.proc1(12);
 
@@ -225,28 +225,28 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 
 			BF_GLOBALS._player.setVisage(303);
 		}		
+	}
 
-		BF_GLOBALS._sceneItems.push_back(&_vechile);
+	BF_GLOBALS._sceneItems.push_back(&_vechile);
 
-		if (BF_GLOBALS._sceneManager._previousScene == 930) {
-			_caravanDoor.setFrame(_caravanDoor.getFrameCount());
-			BF_GLOBALS._player.disableControl();
+	if (BF_GLOBALS._sceneManager._previousScene == 930) {
+		_caravanDoor.setFrame(_caravanDoor.getFrameCount());
+		BF_GLOBALS._player.disableControl();
 
-			_sceneMode = 0;
-			setAction(&_sequenceManager, this, 5512, &BF_GLOBALS._player, &_caravanDoor, NULL);
-		} else if (BF_GLOBALS.getFlag(onDuty)) {
-			BF_GLOBALS._player.disableControl();
-			_sceneMode = 0;
-			setAction(&_sequenceManager, this, 5502, &BF_GLOBALS._player, &_vechile, NULL);
-		} else if (!BF_GLOBALS.getFlag(fWithLyle)) {
-			BF_GLOBALS._player.setPosition(Common::Point(185, 70));
-		} else if (BF_GLOBALS._bookmark == bFlashBackOne) {
-			BF_GLOBALS._player.disableControl();
-			_sceneMode = 0;
-			setAction(&_sequenceManager, this, 5513, &_object1, NULL);
-		} else {
-			_sceneMode = 0;
-		}
+		_sceneMode = 0;
+		setAction(&_sequenceManager, this, 5512, &BF_GLOBALS._player, &_caravanDoor, NULL);
+	} else if (BF_GLOBALS.getFlag(onDuty)) {
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 0;
+		setAction(&_sequenceManager, this, 5502, &BF_GLOBALS._player, &_vechile, NULL);
+	} else if (!BF_GLOBALS.getFlag(fWithLyle)) {
+		BF_GLOBALS._player.setPosition(Common::Point(185, 70));
+	} else if (BF_GLOBALS._bookmark == bFlashBackOne) {
+		BF_GLOBALS._player.disableControl();
+		_sceneMode = 0;
+		setAction(&_sequenceManager, this, 5513, &_lyle, NULL);
+	} else {
+		_sceneMode = 0;
 	}
 
 	_item2.setDetails(Rect(0, 26, 53, 67), 550, 1, -1, 2, 1, NULL);

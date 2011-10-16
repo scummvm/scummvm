@@ -41,7 +41,7 @@ using namespace TsAGE;
 
 class Scene550: public SceneExt {
 	/* Objects */
-	class Object1: public NamedObject {
+	class Lyle: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -61,7 +61,7 @@ class Scene550: public SceneExt {
 	};
 public:
 	SequenceManager _sequenceManager;
-	Object1 _object1;
+	Lyle _lyle;
 	CaravanDoor _caravanDoor;
 	Vechile _vechile;
 	NamedHotspot _item1, _item2, _item3;
