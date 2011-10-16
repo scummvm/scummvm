@@ -106,7 +106,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
-	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
+	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out! Hires version"},
 	{"mothergoosehires","Mixed-Up Mother Goose Deluxe"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
