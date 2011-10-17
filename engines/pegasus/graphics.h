@@ -57,6 +57,7 @@ public:
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
 	DisplayElement *findDisplayElement(const tDisplayElementID id);
+	void shakeTheWorld(TimeValue time, TimeScale scale);
 
 	// These default to black
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
@@ -73,6 +74,11 @@ private:
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
 	Graphics::Surface _workArea;
+
+	// Shake Shake Shake!
+	static const int kMaxShakeOffsets = 17;
+	Common::Point _shakeOffsets[kMaxShakeOffsets];
+	void newShakePoint(int32 index1, int32 index2, int32 maxRadius);
 };
 
 } // End of namespace Pegasus

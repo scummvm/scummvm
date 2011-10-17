@@ -212,5 +212,104 @@ void GraphicsManager::doFadeInSync(const TimeValue, const TimeValue, uint32) {
 void GraphicsManager::markCursorAsDirty() {
 	_modifiedScreen = true;
 }
+
+void GraphicsManager::newShakePoint(int32 index1, int32 index2, int32 maxRadius) {
+	int32 index3 = (index1 + index2) >> 1;
+
+	if (maxRadius == 0) {
+		_shakeOffsets[index3].x = ((_shakeOffsets[index1].x + _shakeOffsets[index2].x) >> 1);
+		_shakeOffsets[index3].y = ((_shakeOffsets[index1].y + _shakeOffsets[index2].y) >> 1);
+	} else {
+		double angle = (int32)(_vm->getRandomNumber(360 - 1) * 3.1415926535 / 180);
+		int32 radius = maxRadius;
+		_shakeOffsets[index3].x = (int32)(((_shakeOffsets[index1].x + _shakeOffsets[index2].x) >> 1) +
+				cos(angle) / 2 * radius);
+		_shakeOffsets[index3].y = (int32)(((_shakeOffsets[index1].y + _shakeOffsets[index2].y) >> 1) +
+				sin(angle) * radius);
+	}
+
+	if (index1 < index3 - 1)
+		newShakePoint(index1, index3, maxRadius * 2 / 3);
+
+	if (index3 < index2 - 1)
+		newShakePoint(index3, index2, maxRadius * 2 / 3);
+}
+
+void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
+	if (duration == 0 || scale == 0)
+		return;
+
+	_shakeOffsets[0].x = 0;
+	_shakeOffsets[0].y = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) / 4].x = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) / 4].y = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) / 2].x = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) / 2].y = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) * 3 / 4].x = 0;
+	_shakeOffsets[(kMaxShakeOffsets - 1) * 3 / 4].y = 0;
+	_shakeOffsets[kMaxShakeOffsets - 1].x = 0;
+	_shakeOffsets[kMaxShakeOffsets - 1].y = 0;
+
+	newShakePoint(0, (kMaxShakeOffsets - 1) / 4, 8);
+	newShakePoint((kMaxShakeOffsets - 1) / 4, (kMaxShakeOffsets - 1) / 2, 6);
+	newShakePoint((kMaxShakeOffsets - 1) / 2, (kMaxShakeOffsets - 1) * 3 / 4, 4);
+	newShakePoint((kMaxShakeOffsets - 1) * 3 / 4, kMaxShakeOffsets - 1, 3);
+
+	Common::Point lastOffset(0, 0);
+
+	// Convert to millis
+	duration = duration * 1000 / scale;
+	
+	uint32 startTime = g_system->getMillis();
+
+	while (g_system->getMillis() < startTime + duration) {
+		Common::Point thisOffset = _shakeOffsets[(g_system->getMillis() - startTime) * (kMaxShakeOffsets - 1) / duration];
+		if (thisOffset != lastOffset) {
+			// Fill the screen with black
+			Graphics::Surface *screen = g_system->lockScreen();
+			screen->fillRect(Common::Rect(0, 0, 640, 480), g_system->getScreenFormat().RGBToColor(0, 0, 0));
+			g_system->unlockScreen();
+
+			// Calculate the src/dst offsets and the width/height
+			int32 srcOffsetX, dstOffsetX, width;
+
+			if (thisOffset.x > 0) {
+				srcOffsetX = 0;
+				dstOffsetX = thisOffset.x;
+				width = 640 - dstOffsetX;
+			} else {
+				srcOffsetX = -thisOffset.x;
+				dstOffsetX = 0;
+				width = 640 - srcOffsetX;
+			}
+
+			int32 srcOffsetY, dstOffsetY, height;
+
+			if (thisOffset.y > 0) {
+				srcOffsetY = 0;
+				dstOffsetY = thisOffset.y;
+				height = 480 - dstOffsetY;
+			} else {
+				srcOffsetY = -thisOffset.y;
+				dstOffsetY = 0;
+				height = 480 - srcOffsetY;
+			}
+
+			// Now copy to the screen
+			g_system->copyRectToScreen((byte *)_workArea.getBasePtr(srcOffsetX, srcOffsetY), _workArea.pitch,
+					dstOffsetX, dstOffsetY, width, height);
+			g_system->updateScreen();
+
+			lastOffset = thisOffset;
+		}
+
+		g_system->delayMillis(10);
+	}
+
+	if (lastOffset.x != 0 || lastOffset.y != 0) {
+		g_system->copyRectToScreen((byte *)_workArea.pixels, _workArea.pitch, 0, 0, 640, 480);
+		g_system->updateScreen();
+	}
+}
 	
 } // End of namespace Pegasus

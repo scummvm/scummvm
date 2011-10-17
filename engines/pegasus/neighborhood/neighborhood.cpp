@@ -30,6 +30,7 @@
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
+#include "pegasus/graphics.h"
 #include "pegasus/input.h"
 #include "pegasus/interaction.h"
 #include "pegasus/interface.h"
@@ -726,7 +727,8 @@ void Neighborhood::turnTo(const tDirectionConstant direction) {
 	if (g_map)
 		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getCurrentRoom(), direction);
 
-	_pushIn.copyToCurrentPort();
+	// FIXME: This isn't right. Crazy TGWorldSaver stuff
+	//_pushIn.copyToCurrentPort();
 	
 	// Added 2/10/97. Shouldn't this be here? Shouldn't we set the current activation to
 	// always when turning to a new view?
@@ -1419,8 +1421,7 @@ void Neighborhood::newInteraction(const tInteractionID interactionID) {
 }
 
 void Neighborhood::bumpIntoWall() {
-	// TODO
-	warning("bump");
+	_vm->_gfx->shakeTheWorld(15, 30);
 }
 
 void Neighborhood::zoomUpOrBump() {
