@@ -31,17 +31,32 @@
 //
 
 bool scanInt(const char **in, va_list *ap, int max) {
-	while (**in && (**in == ' ' || **in == '0')) {
+	// skip leading space characters
+	while (**in && **in == ' ') {
+		(*in)++;
+	}
+
+	// number optionally preceeded with a + or - sign.
+	bool negate = false;
+	if (**in == '-') {
+		(*in)++;
+		negate = true;
+	}
+
+	if (**in == '+') {
 		(*in)++;
 	}
 
 	int *arg = va_arg(*ap, int*);
 	char *end;
-	long n = strtol(*in, &end, 0);
+	long n = strtol(*in, &end, 10);
+	if (negate) {
+		n = -n;
+	}
 
 	bool err = false;
 	if (end == *in || (max > 0 && (end - *in) > max)) {
-		err = true;
+		err = true; 
 	} else {
 		*arg = (int)n;
 		*in = end;
@@ -162,21 +177,37 @@ extern "C" int simple_sscanf(const char *input, const char *format, ...) {
 
 #if defined(TEST)
 int main(int argc, char *pArgv[]) {
-	int x,y,h;
+	int x,y,xx,yy,h;
 	char buffer[100];
 	unsigned u;
 	char c;
 	strcpy(buffer, "hello");
 	char *b = buffer;
 
-	//	strcpy(buffer, "in the buffer something");
-	if (simple_sscanf("CAT 123x-10 0x100 FONT large 1 enough\n	 123456.AUD $",
-										"CAT %dx%d %x FONT %[^\n] %06u.AUD %c",
-										&x, &y, &h, b, &u, &c) != 6) {
+	if (simple_sscanf("BBX 00009 -1 +10 000",
+										"BBX %d %d %d %d",
+										&x, &y, &xx, &yy) != 4) {
 		printf("Failed\n");
 	} else {
-		printf("Success %d %d %d %s %d '%c'\n", x, y, h, buffer, u, c);
+		printf("Success %d %d %d %d\n", x, y, xx, yy);
 	}
+
+	if (simple_sscanf("CAT 123x-10 0x100h 123456.AUD $ ",
+										"CAT %dx%d %xh %06u.AUD %c",
+										&x, &y, &h, &u, &c) != 5) {
+		printf("Failed\n");
+	} else {
+		printf("Success %d %d %d %d '%c' \n", x, y, h, u, c);
+	}
+
+	if (simple_sscanf("COPYRIGHT \"Copyright (c) 1984, 1987 Foo Systems Incorporated",
+										"COPYRIGHT \"%[^\"]",
+										b) != 1) {
+		printf("Failed\n");
+	} else {
+		printf("Success %s\n", buffer);
+	}
+
 	return 0;
 }
 #endif

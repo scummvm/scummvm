@@ -38,7 +38,6 @@ BadaGraphicsManager::BadaGraphicsManager(BadaAppForm *appForm) :
 	_initState(true) {
 	assert(appForm != NULL);
 	_videoMode.fullscreen = true;
-	_videoMode.antialiasing = true;
 }
 
 const Graphics::Font *BadaGraphicsManager::getFontOSD() {
@@ -195,7 +194,6 @@ void BadaGraphicsManager::loadTextures() {
 
 	// prevent image skew in some games, see:
 	// http://www.opengl.org/resources/features/KilgardTechniques/oglpitfall
-	// note: this did not solve the pixel border problem in refreshGameScreen()
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
@@ -232,58 +230,6 @@ void BadaGraphicsManager::unloadGFXMode() {
 
 	OpenGLGraphicsManager::unloadGFXMode();
 	logLeaving();
-}
-
-void BadaGraphicsManager::refreshGameScreen() {
-	if (_screenNeedsRedraw)
-		_screenDirtyRect = Common::Rect(0, 0, _screenData.w, _screenData.h);
-
-	int x = _screenDirtyRect.left;
-	int y = _screenDirtyRect.top;
-	int w = _screenDirtyRect.width();
-	int h = _screenDirtyRect.height();
-
-	if (_screenData.format.bytesPerPixel == 1) {
-		// Create a temporary RGB888 surface
-		int sw = w;
-		int sh = h;
-
-		if (_videoMode.screenWidth == w && _videoMode.screenHeight == h) {
-			// The extra border prevents random pixels from appearing in the right and bottom
-			// screen column/row. Not sure whether this should be applied to opengl-graphics.cpp
-			sw = w + 1;
-			sh = h + 1;
-		}
-
-		byte *surface = new byte[sw * sh * 3];
-
-		// Convert the paletted buffer to RGB888
-		const byte *src = (byte *)_screenData.pixels + y * _screenData.pitch;
-		src += x * _screenData.format.bytesPerPixel;
-		byte *dst = surface;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 3];
-				dst[1] = _gamePalette[src[j] * 3 + 1];
-				dst[2] = _gamePalette[src[j] * 3 + 2];
-				dst += 3;
-			}
-			src += _screenData.pitch;
-		}
-
-		// Update the texture
-		_gameTexture->updateBuffer(surface, w * 3, x, y, sw, sh);
-
-		// Free the temp surface
-		delete[] surface;
-	} else {
-		// Update the texture
-		_gameTexture->updateBuffer((byte *)_screenData.pixels + y * _screenData.pitch +
-			x * _screenData.format.bytesPerPixel, _screenData.pitch, x, y, w, h);
-	}
-
-	_screenNeedsRedraw = false;
-	_screenDirtyRect = Common::Rect();
 }
 
 // display a simple splash screen until launcher is ready

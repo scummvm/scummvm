@@ -345,7 +345,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 
 		// open directory
 		if (IsFailed(pDir->Construct(_unicodePath))) {
-			AppLog("Failed to open directory");
+			AppLog("Failed to open directory: %S", _unicodePath.GetPointer());
 		} else {
 			// read all directory entries
 			pDirEnum = pDir->ReadN();
@@ -365,8 +365,7 @@ bool BadaFilesystemNode::getChildren(AbstractFSList &myList,
 				}
 
 				// skip '.' and '..' to avoid cycles
-				if ((fileName[0] == '.' && fileName[1] == 0) ||
-						(fileName[0] == '.' && fileName[1] == '.')) {
+				if (fileName == L"." || fileName == L"..") {
 					continue;
 				}
 
