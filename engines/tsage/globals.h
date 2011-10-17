@@ -169,7 +169,9 @@ public:
 	StripProxy _stripProxy;
 	int _dayNumber;
 	int _v4CEA4;
+	int _v4CEAA;
 	int _marinaWomanCtr;
+	int _v4CEB0;
 	int _v4CEB6;
 	int _safeCombination;
 	int _v4CEC0;

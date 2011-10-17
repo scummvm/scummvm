@@ -182,6 +182,135 @@ public:
 	virtual void signal();
 };
 
+class Scene115: public SceneExt {
+	/* Objects */
+	class Object1: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object2: public NamedObject {
+	public:
+		int _field15F8;
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object3: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Object4: public NamedObject {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Custom class */
+	class EventHandler1: public EventHandler {
+	public:
+		virtual Common::String getClassName() { return "Scene115_EventHandler1"; }
+		virtual void dispatch();
+	};
+
+	/* Items */
+	class Item1: public NamedHotspot {
+		SequenceManager _sequenceManager6;
+	public:
+		int _field1F8A;
+
+		Item1();
+		virtual bool startAction(CursorType action, Event &event);
+		virtual void signal();
+		virtual void synchronize(Serializer &s);
+	};
+	class Item10: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Item14: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action7: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action8: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action9: public Action {
+	public:
+		virtual void signal();
+	};
+
+	SequenceManager _sequenceManager1;
+	SequenceManager _sequenceManager2;
+	SequenceManager _sequenceManager3;
+	SequenceManager _sequenceManager4;
+	SequenceManager _sequenceManager5;
+	Object1 _object1;
+	Object2 _object2;
+	Object3 _object3;
+	Object4 _object4;
+	SceneObject _object5,  _object6,  _object7,  _object8,  _object9;
+	SceneObject _object10, _object11, _object12, _object13;
+	Item1 _item1;
+	EventHandler1 _eventHandler1;
+	NamedHotspot _item2, _item3, _item4, _item5, _item6, _item7, _item8, _item9;
+	Item10 _item10;
+	NamedHotspot _item11, _item12, _item13;
+	Item14 _item14;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	Action7 _action7;
+	Action8 _action8;
+	Action9 _action9;
+	SpeakerGameText _gameTextSpeaker;
+	SpeakerKate _kateSpeaker;
+	SpeakerTony _tonySpeaker;
+	SpeakerJakeJacket _jakeJacketSpeaker;
+	SpeakerJakeUniform _jakeUniformSpeaker;
+	SpeakerLyleHat _lyleHatSpeaker;
+	ASound _sound1;
+	int _field168A;
+	int _field31E8;
+	int _field31EA;
+public:
+	Scene115();
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
