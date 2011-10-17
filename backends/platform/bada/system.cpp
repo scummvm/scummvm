@@ -152,17 +152,17 @@ OSystem::MutexRef BadaMutexManager::createMutex() {
 }
 
 void BadaMutexManager::lockMutex(OSystem::MutexRef mutex) {
-	Mutex *m = (Mutex*)mutex;
+	Mutex *m = (Mutex *)mutex;
 	m->Acquire();
 }
 
 void BadaMutexManager::unlockMutex(OSystem::MutexRef mutex) {
-	Mutex *m = (Mutex*)mutex;
+	Mutex *m = (Mutex *)mutex;
 	m->Release();
 }
 
 void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
-	Mutex *m = (Mutex*)mutex;
+	Mutex *m = (Mutex *)mutex;
 
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
 		if (buffer[i] == m) {
@@ -245,7 +245,7 @@ result BadaSystem::initModules() {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_graphicsManager = (GraphicsManager*) new BadaGraphicsManager(_appForm);
+	_graphicsManager = (GraphicsManager *)new BadaGraphicsManager(_appForm);
 	if (!_graphicsManager) {
 		return E_OUT_OF_MEMORY;
 	}
@@ -266,7 +266,7 @@ result BadaSystem::initModules() {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_audiocdManager = (AudioCDManager*) new DefaultAudioCDManager();
+	_audiocdManager = (AudioCDManager *)new DefaultAudioCDManager();
 	if (!_audiocdManager) {
 		return E_OUT_OF_MEMORY;
 	}
@@ -283,11 +283,17 @@ result BadaSystem::initModules() {
 void BadaSystem::initBackend() {
 	logEntered();
 
-	// allow translations and game .DAT files to be found
+	// allow game .DAT files to be found
 	ConfMan.set("extrapath", "/Res");
+
+	// find translations.dat
+	ConfMan.set("themepath", "/Res");
 
 	// use the mobile device theme
 	ConfMan.set("gui_theme", "/Res/scummmobile");
+
+	// unuset any themepath since this can slow startup
+	ConfMan.set("themepath", null);
 
 	// allow bada virtual keypad pack to be found
 	ConfMan.set("vkeybdpath", "/Res/vkeybd_bada");
@@ -304,7 +310,7 @@ void BadaSystem::initBackend() {
 	}
 
 	ConfMan.registerDefault("fullscreen", true);
-	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.setBool("confirm_exit", false);
 
 	Osp::System::SystemTime::GetTicks(_epoch);
@@ -317,7 +323,7 @@ void BadaSystem::initBackend() {
 
 	// replace kBigGUIFont using the large font from the scummmobile theme
 	Common::File fontFile;
-	Common::String fileName = "/Res/scummmobile/helvB14-ASCII.fcc";
+	Common::String fileName = "/Res/scummmobile/helvB14-iso-8859-1.fcc";
 	BadaFilesystemNode file(fileName);
 	if (file.exists()) {
 		Common::SeekableReadStream *stream = file.createReadStream();
@@ -446,8 +452,12 @@ void BadaSystem::closeGraphics() {
 }
 
 void BadaSystem::setMute(bool on) {
+	// only change mute after eventManager init() has completed
 	if (_audioThread) {
-		_audioThread->setMute(on);
+		BadaGraphicsManager *graphics = getGraphics();
+		if (graphics && graphics->isReady()) {
+			_audioThread->setMute(on);
+		}
 	}
 }
 
