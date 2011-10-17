@@ -50,6 +50,7 @@ protected:
 //	Room IDs.
 
 const tRoomID kTSA00 = 0;
+const tRoomID kTSA22Red = 28;
 const tRoomID kTSA37 = 42;
 
 class FullTSA : public Neighborhood {

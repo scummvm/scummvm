@@ -53,8 +53,11 @@ enum tShuttleWeaponSelection {
 };
 
 const tRoomID kMars0A = 0;
+const tRoomID kMars31South = 33;
+const tRoomID kMars34 = 37;
 const tRoomID kMars35 = 38;
 const tRoomID kMars39 = 42;
+const tRoomID kMars49 = 51;
 const tRoomID kMars60 = 58;
 const tRoomID kMarsMaze004 = 60;
 const tRoomID kMarsMaze200 = 224;

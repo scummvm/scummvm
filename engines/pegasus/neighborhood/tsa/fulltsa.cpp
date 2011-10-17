@@ -112,7 +112,6 @@ const tRoomID kTSA23Cyan = 24;
 const tRoomID kTSA24Cyan = 25;
 const tRoomID kTSA25Cyan = 26;
 const tRoomID kTSA21Red = 27;
-const tRoomID kTSA22Red = 28;
 const tRoomID kTSA23Red = 29;
 const tRoomID kTSA24Red = 30;
 const tRoomID kTSA25Red = 31;

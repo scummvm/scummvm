@@ -35,6 +35,9 @@ const tDisplayOrder kWSCMoleculeBinOrder = kMonitorLayer;
 const tDisplayOrder kWSCMoleculesMovieOrder = kWSCMoleculeBinOrder + 1;
 
 const tRoomID kWSC01 = 0;
+const tRoomID kWSC02Morph = 2;
+const tRoomID kWSC02Messages = 3;
+const tRoomID kWSC62 = 62;
 
 class WSC : public Neighborhood {
 public:

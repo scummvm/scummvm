@@ -1227,9 +1227,8 @@ tInventoryResult PegasusEngine::addItemToInventory(InventoryItem *item) {
 		else
 			result = _items.addItem(item);
 
-		// TODO
 		if (result == kTooMuchWeight)
-			error("Out of inventory space");
+			destroyInventoryItem(pickItemToDestroy());
 	} while (result != kInventoryOK);
 
 	GameState.setTakenItem(item, true);
@@ -1943,6 +1942,131 @@ void PegasusEngine::drawScaledFrame(const Graphics::Surface *frame, uint16 x, ui
 	_system->copyRectToScreen((byte *)scaledFrame.pixels, scaledFrame.pitch, x, y, scaledFrame.w, scaledFrame.h);
 	_system->updateScreen();
 	scaledFrame.free();
+}
+
+void PegasusEngine::destroyInventoryItem(const tItemID itemID) {
+	InventoryItem *item = (InventoryItem *)g_allItems.findItemByID(itemID);
+
+	ItemExtraEntry entry;
+
+	switch (itemID) {
+	case kAirMask:
+		item->findItemExtra(kRemoveAirMask, entry);
+		item->setItemRoom(kMarsID, kMars49, kSouth);
+		break;
+	case kArgonCanister:
+		item->findItemExtra(kRemoveArgon, entry);
+		item->setItemRoom(kWSCID, kWSC02Morph, kSouth);
+		break;
+	case kCrowbar:
+		item->findItemExtra(kRemoveCrowbar, entry);
+		item->setItemRoom(kMarsID, kMars34, kSouth);
+		break;
+	case kJourneymanKey:
+		item->findItemExtra(kRemoveJourneymanKey, entry);
+		item->setItemRoom(kFullTSAID, kTSA22Red, kEast);
+		break;
+	case kMarsCard:
+		item->findItemExtra(kRemoveMarsCard, entry);
+		item->setItemRoom(kMarsID, kMars31South, kSouth);
+		break;
+	case kNitrogenCanister:
+		item->findItemExtra(kRemoveNitrogen, entry);
+		item->setItemRoom(kWSCID, kWSC02Messages, kSouth);
+		break;
+	case kOrangeJuiceGlassEmpty:
+		item->findItemExtra(kRemoveGlass, entry);
+		item->setItemRoom(kCaldoriaID, kCaldoriaReplicator, kNorth);
+		break;
+	case kPoisonDart:
+		item->findItemExtra(kRemoveDart, entry);
+		item->setItemRoom(kWSCID, kWSC01, kWest);
+		break;
+	case kSinclairKey:
+		item->findItemExtra(kRemoveSinclairKey, entry);
+		item->setItemRoom(kWSCID, kWSC02Morph, kSouth);
+		break;
+	default:
+		return;
+	}
+
+	g_interface->setCurrentInventoryItemID(itemID);
+	g_AIArea->playAIAreaSequence(kInventorySignature, kMiddleAreaSignature, entry.extraStart, entry.extraStop);
+	removeItemFromInventory(item);
+}
+
+tItemID PegasusEngine::pickItemToDestroy() {
+/*
+	Must pick an item to destroy
+	
+	Part I: Polite -- try to find an item that's been used
+	Part II: Desperate -- return the first available item.
+*/
+
+	// Polite:
+	if (playerHasItemID(kOrangeJuiceGlassEmpty))
+		return kOrangeJuiceGlassEmpty;
+	if (playerHasItemID(kPoisonDart)) {
+		if (GameState.getCurrentNeighborhood() != kWSCID ||
+				GameState.getWSCAnalyzedDart())
+			return kPoisonDart;
+	}
+	if (playerHasItemID(kJourneymanKey)) {
+		if (GameState.getTSAState() >= kTSAPlayerGotHistoricalLog &&
+				GameState.getTSAState() != kPlayerOnWayToPrehistoric &&
+				GameState.getTSAState() != kPlayerWentToPrehistoric)
+			return kJourneymanKey;
+	}
+	if (playerHasItemID(kMarsCard)) {
+		if (GameState.getCurrentNeighborhood() != kMarsID || GameState.getMarsArrivedBelow())
+			return kMarsCard;
+	}
+
+	// Don't want to deal with deleting the sinclair key and argon canister, since it's
+	// impossible to pick them up one at a time.
+
+	if (playerHasItemID(kNitrogenCanister)) {
+		if (GameState.getScoringGotCardBomb() && GameState.getCurrentNeighborhood() != kMarsID)
+			return kNitrogenCanister;
+	}
+	if (playerHasItemID(kCrowbar)) {
+		if (GameState.getCurrentNeighborhood() == kWSCID) {
+			if (GameState.getCurrentRoom() >= kWSC62)
+				return kCrowbar;
+		} else if (GameState.getCurrentNeighborhood() == kMarsID) {
+			if (GameState.getScoringGotCardBomb())
+				return kCrowbar;
+		} else
+			return kCrowbar;
+	}
+	if (playerHasItemID(kAirMask)) {
+		if (GameState.getCurrentNeighborhood() == kMarsID) {
+			if (g_neighborhood->getAirQuality(GameState.getCurrentRoom()) == kAirQualityGood)
+				return kAirMask;
+		} else if (GameState.getCurrentNeighborhood() != kNoradAlphaID &&
+				GameState.getCurrentNeighborhood() != kNoradDeltaID) {
+			return kAirMask;
+		}
+	}
+
+	// Desperate:
+	if (playerHasItemID(kPoisonDart))
+		return kPoisonDart;
+	if (playerHasItemID(kJourneymanKey))
+		return kJourneymanKey;
+	if (playerHasItemID(kMarsCard))
+		return kMarsCard;
+	if (playerHasItemID(kNitrogenCanister))
+		return kNitrogenCanister;
+	if (playerHasItemID(kCrowbar))
+		return kCrowbar;
+	if (playerHasItemID(kAirMask))
+		return kAirMask;
+
+	// Should never get this far...
+	error("Could not find item to delete");
+
+	return kNoItemID;
 }
 
 } // End of namespace Pegasus

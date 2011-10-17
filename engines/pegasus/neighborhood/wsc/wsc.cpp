@@ -173,8 +173,6 @@ const tAlternateID kAltWSCPeopleAtW19North = 3;
 //	Room IDs.
 
 const tRoomID kWSC02 = 1;
-const tRoomID kWSC02Morph = 2;
-const tRoomID kWSC02Messages = 3;
 const tRoomID kWSC03 = 4;
 const tRoomID kWSC04 = 5;
 const tRoomID kWSC06 = 6;
@@ -233,7 +231,6 @@ const tRoomID kWSC60North = 58;
 const tRoomID kWSC61 = 59;
 const tRoomID kWSC61South = 60;
 const tRoomID kWSC61West = 61;
-const tRoomID kWSC62 = 62;
 const tRoomID kWSC63 = 63;
 const tRoomID kWSC64 = 64;
 const tRoomID kWSC65 = 65;

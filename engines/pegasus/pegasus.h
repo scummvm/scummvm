@@ -223,6 +223,8 @@ private:
 	Inventory _biochips;
 	tItemID _currentItemID;
 	tItemID _currentBiochipID;
+	void destroyInventoryItem(const tItemID itemID);
+	tItemID pickItemToDestroy();
 
 	// TimeBases
 	Common::List<TimeBase *> _timeBases;
