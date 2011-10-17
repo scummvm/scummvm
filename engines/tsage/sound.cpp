@@ -2432,7 +2432,7 @@ void ASound::dispatch() {
 	}
 }
 
-void ASound::play(int soundNum, Action *action, int volume) {
+void ASound::play(int soundNum, EventHandler *action, int volume) {
 	_action = action;
 	_cueValue = 0;
 

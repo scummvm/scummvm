@@ -373,7 +373,7 @@ public:
 	virtual void synchronize(Serializer &s);
 	virtual void dispatch();
 
-	void play(int soundNum, Action *action = NULL, int volume = 127);
+	void play(int soundNum, EventHandler *action = NULL, int volume = 127);
 	void stop();
 	void prime(int soundNum, Action *action = NULL);
 	void unPrime();
