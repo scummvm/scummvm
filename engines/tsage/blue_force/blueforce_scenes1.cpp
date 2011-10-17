@@ -1523,11 +1523,11 @@ void Scene115::Action6::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, BF_GLOBALS._player, NULL);
+		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		if (scene->_sceneMode == 9999) {
-			setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, BF_GLOBALS._player, NULL);
+			setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
 			_actionIndex--;
 			scene->_sceneMode = 1166;
 		} else {
