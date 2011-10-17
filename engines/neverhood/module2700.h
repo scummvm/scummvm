@@ -64,11 +64,32 @@ protected:
 	Sprite *_class519;
 	Sprite *_class518;
 	Sprite *_sprite1;
-	//NRect _rect;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
 	uint32 handleMessage42F500(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage42F600(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class Scene2702 : public Scene {
+public:
+	Scene2702(NeverhoodEngine *vm, Module *parentModule, int which);
+protected:
+	Class521 *_class521;
+	Sprite *_class437;
+	Sprite *_class517;
+	Sprite *_class520;
+	Sprite *_class519;
+	int16 _newTrackDestX;
+	int _currTrackIndex, _newTrackIndex;
+	int _count;
+	bool _flag1;
+	SceneInfo2700 *_sceneInfos[2][3];
+	SceneInfo2700 **_currSceneInfos;
+	NPointArray *_trackPoints;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void findClosestTrack(NPoint pt);
+	void changeTrack();
 };
 
 class Scene2704 : public Scene {

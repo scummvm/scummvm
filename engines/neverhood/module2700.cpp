@@ -121,7 +121,7 @@ void Module2700::createScene(int sceneNum, int which) {
 		_childObject = new Scene2701(_vm, this, which);
 		break;
 	case 1:
-//TODO		_childObject = new Scene2702(_vm, this, which);
+		_childObject = new Scene2702(_vm, this, which);
 		break;
 	case 2:
 		if (which == 6 || which == 7)
@@ -615,6 +615,181 @@ uint32 Scene2701::handleMessage42F600(int messageNum, const MessageParam &param,
 		break;
 	}
 	return 0;
+}
+
+static const uint32 kScene2702Infos[2][3] = {
+	{0x004B5F68, 0x004B5F8C, 0x004B5FB0},
+	{0x004B5FD8, 0x004B5FFC, 0x004B6020}
+};
+
+
+Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
+	: Scene(vm, parentModule, true), _flag1(true), _newTrackIndex(-1), _count(3) {
+	
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 3; j++)
+			_sceneInfos[i][j] = _vm->_staticData->getSceneInfo2700(kScene2702Infos[i][j]);
+	
+	_surfaceFlag = true;
+	SetMessageHandler(&Scene2702::handleMessage);
+	SetUpdateHandler(&Scene2702::update);
+	
+	setBackground(0x18808B00);
+	setPalette(0x18808B00);
+	
+	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
+	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
+	addEntity(_palette);
+	
+	insertMouse433(0x08B04180);
+
+	//TODO	_class437 = insertSprite<Class437>(0x12002035);
+	_class521 = insertSprite<Class521>(this, 320, 240);
+	//TODO	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
+	//TODO	insertSprite<Class518>(_class521);
+	//TODO	_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
+	//TODO	_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
+
+	_dataResource.load(0x04310014);
+	
+	if (which == 1) {
+		_currSceneInfos = _sceneInfos[1];
+		_currTrackIndex = 1;
+	} else if (which == 2) {
+		_currSceneInfos = _sceneInfos[1];
+		_currTrackIndex = 2;
+		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+		_flag1 = false;
+	} else if (which == 3) {
+		_currSceneInfos = _sceneInfos[0];
+		_currTrackIndex = 0;
+	} else if (which == 4) {
+		_currSceneInfos = _sceneInfos[0];
+		_currTrackIndex = 2;
+		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+		_flag1 = false;
+	} else if (which == 5) {
+		_currSceneInfos = _sceneInfos[0];
+		_currTrackIndex = 1;
+		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
+		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
+		_flag1 = false;
+	} else {
+		_currSceneInfos = _sceneInfos[1];
+		_currTrackIndex = 0;
+	}
+
+	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
+	_class521->setPathPoints(_trackPoints);
+
+	if (which == _currSceneInfos[_currTrackIndex]->which2) {
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		sendMessage(_class521, 0x2007, 150);
+	} else {
+		sendMessage(_class521, 0x2002, 0);
+		sendMessage(_class521, 0x2008, 150);
+	}
+
+	_palette->copyBasePalette(0, 256, 0);
+
+}
+
+void Scene2702::update() {
+	Scene::update();
+	if (_flag1 && _class521->getX() > 422) {
+		debug("fade #1");
+		_palette->addBasePalette(calcHash("paPodShade"), 65, 31, 65);
+		_palette->addBasePalette(calcHash("paKlayShade"), 0, 65, 0);
+		_palette->startFadeToPalette(12);
+		_flag1 = false;
+	} else if (!_flag1 && _class521->getX() <= 422) {
+		debug("fade #2");
+		_palette->addBasePalette(calcHash("paPodFloor"), 65, 31, 65);
+		_palette->addBasePalette(calcHash("paKlayFloor"), 0, 65, 0);
+		_palette->startFadeToPalette(12);
+		_flag1 = true;
+	}
+}
+
+uint32 Scene2702::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x0001:
+		findClosestTrack(param.asPoint());
+		break;
+	case 0x2005:
+		if (_newTrackIndex >= 0) {
+			if (_currSceneInfos[_currTrackIndex]->which1 < 0)
+				changeTrack();
+		} else if (_currSceneInfos[_currTrackIndex]->which1 >= 0)
+			leaveScene(_currSceneInfos[_currTrackIndex]->which1);
+		break;
+	case 0x2006:
+		if (_newTrackIndex >= 0) {
+			if (_currSceneInfos[_currTrackIndex]->which2 < 0)
+				changeTrack();
+		} else if (_currSceneInfos[_currTrackIndex]->which2 >= 0)
+			leaveScene(_currSceneInfos[_currTrackIndex]->which2);
+		break;
+	case 0x200D:
+		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	}
+	return 0;
+}
+
+void Scene2702::findClosestTrack(NPoint pt) {
+	int minMatchTrackIndex = -1;
+	int minMatchDistance = 640;
+	// Find the track which contains a point closest to pt
+	for (int infoIndex = 0; infoIndex < _count; infoIndex++) {
+		NPointArray *pointList = _dataResource.getPointArray(_currSceneInfos[infoIndex]->pointListName);
+		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
+			NPoint testPt = (*pointList)[pointIndex];
+			int distance = calcDistance(testPt.x, testPt.y, pt.x, pt.y);
+			if (distance < minMatchDistance) {
+				minMatchTrackIndex = infoIndex;
+				minMatchDistance = distance;
+			}
+		}
+	}
+	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
+		_newTrackIndex = minMatchTrackIndex;
+		_newTrackDestX = pt.x;
+		if (_currSceneInfos == _sceneInfos[0]) {
+			if (_currTrackIndex == 0)
+				sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+			else
+				sendMessage(_class521, 0x2003, 0);
+		} else if (_currTrackIndex == 2) {
+			sendMessage(_class521, 0x2003, 0);
+		} else {
+			sendMessage(_class521, 0x2003, _trackPoints->size() - 1);
+		}
+	} else {
+		_newTrackIndex = -1;
+		sendMessage(_class521, 0x2004, pt.x);
+	}
+}
+
+void Scene2702::changeTrack() {
+	_currTrackIndex = _newTrackIndex;
+	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
+	_class521->setPathPoints(_trackPoints);
+	if (_currSceneInfos == _sceneInfos[0]) {
+		if (_currTrackIndex == 0)
+			sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+		else
+			sendMessage(_class521, 0x2002, 0);
+	} else if (_currTrackIndex == 2) {
+		sendMessage(_class521, 0x2002, 0);
+	} else {
+		sendMessage(_class521, 0x2002, _trackPoints->size() - 1);
+	}
+	sendMessage(_class521, 0x2004, _newTrackDestX);
+	_newTrackIndex = -1;
 }
 
 Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
