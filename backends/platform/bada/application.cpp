@@ -99,11 +99,13 @@ void BadaScummVM::OnLowMemory(void) {
 }
 
 void BadaScummVM::pauseGame(bool pause) {
-	if (pause && _appForm && g_engine && !g_engine->isPaused()) {
-		_appForm->pushKey(Common::KEYCODE_SPACE);
-	}
-
-	if (g_system) {
-		((BadaSystem *)g_system)->setMute(pause);
+	if (_appForm) {
+		if (pause && g_engine && !g_engine->isPaused()) {
+			_appForm->pushKey(Common::KEYCODE_SPACE);
+		}
+		
+		if (g_system) {
+			((BadaSystem *)g_system)->setMute(pause);
+		}
 	}
 }

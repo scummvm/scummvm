@@ -100,9 +100,9 @@ private:
 	Osp::Base::Runtime::Thread *_gameThread;
 	Osp::Base::Runtime::Mutex *_eventQueueLock;
 	Common::Queue<Common::Event> _eventQueue;
-	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
-	enum {LeftButton, RightButtonOnce, RightButton, MoveOnly} _buttonState;
-	enum {ControlMouse, EscapeKey, GameMenu, ShowKeypad, SetVolume} _shortcut;
+	enum { InitState, ActiveState, ClosingState, DoneState, ErrorState } _state;
+	enum { LeftButton, RightButtonOnce, RightButton, MoveOnly } _buttonState;
+	enum { ControlMouse, EscapeKey, GameMenu, ShowKeypad, SetVolume } _shortcut;
 };
 
 #endif
