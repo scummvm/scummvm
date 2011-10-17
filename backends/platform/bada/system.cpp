@@ -292,9 +292,6 @@ void BadaSystem::initBackend() {
 	// use the mobile device theme
 	ConfMan.set("gui_theme", "/Res/scummmobile");
 
-	// unuset any themepath since this can slow startup
-	ConfMan.set("themepath", null);
-
 	// allow bada virtual keypad pack to be found
 	ConfMan.set("vkeybdpath", "/Res/vkeybd_bada");
 	ConfMan.set("vkeybd_pack_name", "vkeybd_bada");
