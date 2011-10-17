@@ -660,6 +660,8 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 void ThemeEngine::loadTheme(const Common::String &themeId) {
 	unloadTheme();
 
+	debug(6, "Loading theme %s", themeId.c_str());
+
 	if (themeId == "builtin") {
 		_themeOk = loadDefaultXML();
 	} else {
