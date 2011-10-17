@@ -477,6 +477,9 @@ reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv);
 reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
+
+// SCI3 Kernel functions
+reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

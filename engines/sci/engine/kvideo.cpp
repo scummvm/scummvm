@@ -376,6 +376,40 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+	Video::VideoDecoder *videoDecoder = 0;
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
+
+	switch (operation) {
+	case 1:	// Play
+		// 6 params
+		s->_videoState.reset();
+		s->_videoState.fileName = Common::String::format("%d.duk", argv[1].toUint16());
+
+		videoDecoder = new Video::AviDecoder(g_system->getMixer());
+
+		if (!videoDecoder->loadFile(s->_videoState.fileName)) {
+			warning("Could not open Duck %s", s->_videoState.fileName.c_str());
+			break;
+		}
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelHide();
+
+		playVideo(videoDecoder, s->_videoState);
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelShow();
+		break;
+	default:
+		kStub(s, argc, argv);
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
