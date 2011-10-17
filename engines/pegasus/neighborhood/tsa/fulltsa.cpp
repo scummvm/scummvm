@@ -1267,12 +1267,15 @@ tCanOpenDoorReason FullTSA::canOpenDoor(DoorTable::Entry &entry) {
 	case MakeRoomView(kTSA02, kNorth):
 		if (!GameState.getTSAFrontDoorUnlockedOutside())
 			return kCantOpenLocked;
+		break;
 	case MakeRoomView(kTSA03, kSouth):
 		if (!GameState.getTSAFrontDoorUnlockedInside())
 			return kCantOpenLocked;
+		break;
 	case MakeRoomView(kTSA16, kNorth):
 		if (GameState.getTSACommandCenterLocked())
 			return kCantOpenLocked;
+		break;
 	}
 
 	return Neighborhood::canOpenDoor(entry);
