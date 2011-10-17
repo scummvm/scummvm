@@ -53,6 +53,11 @@ protected:
 	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
+class Class437 : public StaticSprite {
+public:
+	Class437(NeverhoodEngine *vm, uint32 fileHash);
+};
+
 class Scene2701 : public Scene {
 public:
 	Scene2701(NeverhoodEngine *vm, Module *parentModule, int which);
@@ -98,6 +103,7 @@ public:
 		const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 protected:
 	Class521 *_class521;
+	Sprite *_class437;
 	int _which1, _which2;
 	NPointArray *_trackPoints;
 	NRectArray *_rectList;

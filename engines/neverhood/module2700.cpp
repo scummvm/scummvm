@@ -513,6 +513,18 @@ void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
 }
 
+Class437::Class437(NeverhoodEngine *vm, uint32 fileHash)
+	: StaticSprite(vm, 0) {
+	
+	_spriteResource.load2(fileHash);
+	createSurface(0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_x = _spriteResource.getPosition().x;
+	_y = _spriteResource.getPosition().y;
+	_drawRect.set(0, 0, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
+	_needRefresh = true;
+	StaticSprite::update();
+}
+
 Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule, true) {
 	
@@ -535,7 +547,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	clipRect.set(0, 0, 640, _sprite1->getDrawRect().x2());
 
 	if (sceneInfo->class437Filename) {
-//TODO		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
 		_class521 = insertSprite<Class521>(this, 320, 240);
 //TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
 //TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
@@ -643,7 +655,7 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B04180);
 
-	//TODO	_class437 = insertSprite<Class437>(0x12002035);
+	_class437 = insertSprite<Class437>(0x12002035);
 	_class521 = insertSprite<Class521>(this, 320, 240);
 	//TODO	_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
 	//TODO	insertSprite<Class518>(_class521);
@@ -817,13 +829,13 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	insertMouse433(sceneInfo->mouseCursorFilename);
 	
 	if (sceneInfo->class437Filename) {
-//TODO		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
+		_class437 = insertSprite<Class437>(sceneInfo->class437Filename);
 		_class521 = insertSprite<Class521>(this, 320, 240);
 //TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
 //TODO		_class520 = insertSprite<Class520>(_class521, _class437->getSurface(), 4);
 //TODO		_class519 = insertSprite<Class519>(_class521, _class437->getSurface(), 4);
 	} else {
-//TODO		_class437 = NULL;
+		_class437 = NULL;
 //TODO		_class517 = NULL;
 		_class521 = insertSprite<Class521>(this, 320, 240);
 	}
@@ -921,7 +933,7 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	insertMouse433(0x08B8C180);
 
-//TODO	_class437 = insertSprite<Class437>(0x18808B88);
+	_class437 = insertSprite<Class437>(0x18808B88);
 	_class521 = insertSprite<Class521>(this, 320, 240);
 //TODO		_class517 = insertSprite<Class517>(_class521, _class437->getSurface(), 4);
 //TODO		_class518 = insertSprite<Class518>(_class521);
