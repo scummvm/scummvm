@@ -298,9 +298,17 @@ bool QuickTimeDecoder::endOfVideo() const {
 }
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
-	if (_audStream)
-		return g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.msecs();
+	if (_audStream) {
+		// Use the audio time if present and the audio track's time is less than the
+		// total length of the audio track. The audio track can end before the video
+		// track, so we need to fall back on the getMillis() time tracking in that
+		// case.
+		uint32 time = g_system->getMixer()->getSoundElapsedTime(_audHandle) + _audioStartOffset.msecs();
+		if (time < _tracks[_audioTrackIndex]->duration * 1000 / _tracks[_audioTrackIndex]->timeScale)
+			return time;
+	}
 
+	// Just use time elapsed since the beginning
 	return SeekableVideoDecoder::getElapsedTime();
 }
 
