@@ -828,7 +828,8 @@ void Kernel::setDefaultKernelNames(GameFeatures *features) {
 enum {
 	kKernelEntriesSci2 = 0x8b,
 	kKernelEntriesGk2Demo = 0xa0,
-	kKernelEntriesSci21 = 0x9d
+	kKernelEntriesSci21 = 0x9d,
+	kKernelEntriesSci3 = 0xa1
 };
 
 void Kernel::setKernelNamesSci2() {
@@ -856,8 +857,11 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
 		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
-	} else
+	} else if (getSciVersion() != SCI_VERSION_3) {
 		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
+	}
 }
 
 #endif
