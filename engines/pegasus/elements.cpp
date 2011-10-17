@@ -166,7 +166,7 @@ bool DisplayElement::validToDraw(tDisplayOrder backLayer, tDisplayOrder frontLay
 }
 
 DropHighlight::DropHighlight(const tDisplayElementID id) : DisplayElement(id) {
-	_highlightColor = g_system->getScreenFormat().RGBToColor(0x48, 0x80, 0xD8);
+	_highlightColor = 0;
 	_thickness = 2;
 	_cornerDiameter = 0;
 }

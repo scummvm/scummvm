@@ -183,8 +183,11 @@ void ItemDragger::exitHotspot(Hotspot *spot) {
 }
 
 void ItemDragger::setHighlightBounds() {
+	uint32 color = g_system->getScreenFormat().RGBToColor(0x48, 0x80, 0xD8);
 	_inventoryHighlight.setBounds(Common::Rect(76, 334, 172, 430));
+	_inventoryHighlight.setHighlightColor(color);
 	_biochipHighlight.setBounds(Common::Rect(364, 334, 460, 430));
+	_biochipHighlight.setHighlightColor(color);
 }
 
 } // End of namespace Pegasus
