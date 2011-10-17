@@ -736,6 +736,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO_NOSPEECH	},
 
+	// Gabriel Knight 2 - English DOS (GOG version) - ressci.* merged in ressci.000
+	// using Enrico Rolfi's HD/DVD installer: http://gkpatches.vogons.zetafleet.com/
+	{"gk2", "", {
+		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
+		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
+
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
 	{"gk2", "", {
@@ -752,7 +760,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.006", 0, "ce9359037277b7d7976da185c2fa0aad", 2977},
 		{"ressci.006", 0, "8e44e03890205a7be12f45aaba9644b4", 60659424},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Gabriel Knight 2 - French DOS (6-CDs Sierra Originals reedition)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
@@ -770,8 +778,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.006", 0, "11b2e722170b8c93fdaa5428e2c7676f", 3001},
 		{"ressci.006", 0, "4037d941aec39d2e654e20960429aefc", 60568486},
 		AD_LISTEND},
-		Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE,
-		GUIO_NOSPEECH	},
+		Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE, GUIO_NONE	},
 
 	// Gabriel Knight 2 - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the persistent file:
