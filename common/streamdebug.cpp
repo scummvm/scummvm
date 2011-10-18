@@ -97,6 +97,16 @@ Debug &Debug::operator<<(int num) {
 	return maybeSpace();
 }
 
+Debug &Debug::operator<<(unsigned int num) {
+	_stream->msg += String::format("%d", num);
+	return maybeSpace();
+}
+
+Debug &Debug::operator<<(double num) {
+	_stream->msg += String::format("%g", num);
+	return maybeSpace();
+}
+
 Debug &Debug::operator<<(float num) {
 	_stream->msg += String::format("%g", num);
 	return maybeSpace();
