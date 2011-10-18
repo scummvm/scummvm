@@ -336,7 +336,7 @@ class Scene840: public PalettedScene {
 	};
 
 	/* Objects */
-	class Object2: public FocusObject {
+	class BoatKeysInset: public FocusObject {
 		class RentalKeys: public NamedObject {
 		public:
 			virtual bool startAction(CursorType action, Event &event);
@@ -355,7 +355,7 @@ class Scene840: public PalettedScene {
 		virtual void process(Event &event);
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object6: public NamedObject {
+	class BoatKeys: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -367,9 +367,9 @@ class Scene840: public PalettedScene {
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	NamedObject _object1;
-	Object2 _object2;
+	BoatKeysInset _boatKeysInset;
 	NamedObject _doors;
-	Object6 _object6;
+	BoatKeys _boatKeys;
 	Carter _carter;
 	NamedObject _lyle;
 	Coins _coins;

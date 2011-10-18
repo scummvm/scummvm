@@ -1928,7 +1928,7 @@ void Scene830::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-void Scene840::Object2::postInit(SceneObjectList *OwnerList) {
+void Scene840::BoatKeysInset::postInit(SceneObjectList *OwnerList) {
 	FocusObject::postInit(OwnerList);
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) != 1) {
@@ -1954,18 +1954,19 @@ void Scene840::Object2::postInit(SceneObjectList *OwnerList) {
 	_v1B4 = _v1B6 = 0;
 }
 
-void Scene840::Object2::remove() {
+void Scene840::BoatKeysInset::remove() {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	_rentalKeys.remove();
 	_waveKeys.remove();
+	FocusObject::remove();
 	BF_GLOBALS._player.disableControl();
 
 	scene->_sceneMode = 8412;
 	scene->setAction(&scene->_sequenceManager1, scene, 8412, &BF_GLOBALS._player, NULL);
 }
 
-void Scene840::Object2::process(Event &event) {
+void Scene840::BoatKeysInset::process(Event &event) {
 	if (BF_GLOBALS._player._enabled) {
 		if (_bounds.contains(event.mousePos)) {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();
@@ -1987,7 +1988,7 @@ void Scene840::Object2::process(Event &event) {
 	FocusObject::process(event);
 }
 
-bool Scene840::Object2::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if ((event.mousePos.y > 43) && (event.mousePos.y < 92)) {
@@ -2047,7 +2048,7 @@ bool Scene840::Object2::startAction(CursorType action, Event &event) {
 	return FocusObject::startAction(action, event);
 }
 
-bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::RentalKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -2059,7 +2060,7 @@ bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event)
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
 			BF_GLOBALS._uiElements.addScore(30);
 
-			scene->_object2._v1B4 = 1;
+			scene->_boatKeysInset._v1B4 = 1;
 			remove();
 		}
 		return true;
@@ -2068,7 +2069,7 @@ bool Scene840::Object2::RentalKeys::startAction(CursorType action, Event &event)
 	}
 }
 
-bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -2077,7 +2078,7 @@ bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
 			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
 			BF_GLOBALS._uiElements.addScore(50);
-			scene->_object2._v1B6 = 1;
+			scene->_boatKeysInset._v1B6 = 1;
 			remove();
 		} else {
 			SceneItem::display2(840, 9);
@@ -2088,7 +2089,7 @@ bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene840::Object6::startAction(CursorType action, Event &event) {
+bool Scene840::BoatKeys::startAction(CursorType action, Event &event) {
 	Scene840 *scene = (Scene840 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -2276,13 +2277,13 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, BF_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
-		_object6.postInit();
-		_object6.setVisage(840);
-		_object6.setStrip(4);
-		_object6.setFrame(1);
-		_object6.setPosition(Common::Point(250, 83));
-		_object6.fixPriority(120);
-		_object6.setDetails(840, -1, 8, 9, 2, NULL);
+		_boatKeys.postInit();
+		_boatKeys.setVisage(840);
+		_boatKeys.setStrip(4);
+		_boatKeys.setFrame(1);
+		_boatKeys.setPosition(Common::Point(250, 83));
+		_boatKeys.fixPriority(120);
+		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
 		_field1AC0 = 1;
 	}
 
@@ -2373,9 +2374,9 @@ void Scene840::signal() {
 		break;
 	case 4:
 		_sceneMode = 8403;
-		_object6.postInit();
-		_object6.setDetails(840, -1, 8, 9, 2, NULL);
-		setAction(&_sequenceManager1, this, 8403, &_carter, &_object6, NULL);
+		_boatKeys.postInit();
+		_boatKeys.setDetails(840, -1, 8, 9, 2, NULL);
+		setAction(&_sequenceManager1, this, 8403, &_carter, &_boatKeys, NULL);
 		break;
 	case 5:
 		_sceneMode = 8408;
@@ -2389,7 +2390,7 @@ void Scene840::signal() {
 		if ((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark >= bEndDayThree)) {
 			_stripManager.start(8440, this);
 			_sceneMode = 3;
-		} else if (BF_GLOBALS._sceneObjects->contains(&_object6)) {
+		} else if (BF_GLOBALS._sceneObjects->contains(&_boatKeys)) {
 			_stripManager.start(8442, this);
 			_sceneMode = 3;
 		} else if (_field1AC6) {
@@ -2451,18 +2452,18 @@ void Scene840::signal() {
 		break;
 	case 8411:
 		BF_GLOBALS._player.enableControl();
-		_object2.postInit();
-		_object2.setVisage(840);
-		_object2.setStrip(2);
-		_object2.setPosition(Common::Point(160, 140));
-		_object2.fixPriority(254);
-		_object2.setDetails(840, 50, 8, 51);
+		_boatKeysInset.postInit();
+		_boatKeysInset.setVisage(840);
+		_boatKeysInset.setStrip(2);
+		_boatKeysInset.setPosition(Common::Point(160, 140));
+		_boatKeysInset.fixPriority(254);
+		_boatKeysInset.setDetails(840, 50, 8, 51);
 		break;
 	case 8412:
-		if (_object2._v1B6) {
+		if (_boatKeysInset._v1B6) {
 			_sceneMode = 8409;
 			setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
-		} else if (!_object2._v1B4) {
+		} else if (!_boatKeysInset._v1B4) {
 			BF_GLOBALS._player.enableControl();
 		} else {
 			_sceneMode = 3;
