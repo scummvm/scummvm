@@ -583,6 +583,10 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glEnable(GL_LIGHT0 + lightId);
 }
 
+void GfxOpenGL::turnOffLight(int lightId) {
+	glDisable(GL_LIGHT0 + lightId);
+}
+
 #define BITMAP_TEXTURE_SIZE 256
 
 void GfxOpenGL::createBitmap(BitmapData *bitmap) {

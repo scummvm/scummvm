@@ -111,6 +111,7 @@ public:
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;
 	virtual void setupLight(Light *light, int lightId) = 0;
+	virtual void turnOffLight(int lightId) = 0;
 
 	virtual void createMaterial(Texture *material, const char *data, const CMap *cmap) = 0;
 	virtual void selectMaterial(const Texture *material) = 0;

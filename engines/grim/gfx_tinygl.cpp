@@ -623,6 +623,10 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	tglEnable(TGL_LIGHT0 + lightId);
 }
 
+void GfxTinyGL::turnOffLight(int lightId) {
+	tglDisable(TGL_LIGHT0 + lightId);
+}
+
 void GfxTinyGL::createBitmap(BitmapData *bitmap) {
 	// We want an RGB565-bitmap in TinyGL.
 	if (bitmap->_colorFormat != BM_RGB565) {

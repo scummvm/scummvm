@@ -79,6 +79,7 @@ public:
 	void setLightPosition(int light, const Math::Vector3d &pos);
 	void setLightEnabled(const char *light, bool enabled);
 	void setLightEnabled(int light, bool enabled);
+	void turnOffLights();
 
 	void setSetup(int num);
 	int getSetup() const { return _currSetup - _setups; }
