@@ -1553,7 +1553,7 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 		_pinBoy.setFrame(_pinBoy.getFrameCount());
 		BF_GLOBALS._sceneItems.push_back(&_pinBoy);
 	} else if (!BF_GLOBALS.getFlag(fWithLyle) || !BF_GLOBALS.getFlag(fGivenNapkin) ||
-			(BF_INVENTORY.getObjectScene(BF_ITEM_67) == 1)) {
+			(BF_INVENTORY.getObjectScene(INV_CARAVAN_KEY) == 1)) {
 		_pinBoy.postInit();
 		_pinBoy.setVisage(463);
 		_pinBoy.setPosition(Common::Point(138, 121));
@@ -1643,7 +1643,7 @@ void Scene450::signal() {
 		break;
 	case 4517:
 		BF_GLOBALS.setFlag(gotTrailer450);
-		BF_INVENTORY.setObjectScene(BF_ITEM_67, 1);
+		BF_INVENTORY.setObjectScene(INV_CARAVAN_KEY, 1);
 		_sceneMode = 4508;
 		setAction(&_sequenceManager, this, 4508, &BF_GLOBALS._player, &_manager, &_door, NULL);
 		break;

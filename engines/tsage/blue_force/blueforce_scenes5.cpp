@@ -76,7 +76,7 @@ bool Scene550::Lyle::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 5512;
 			scene->setAction(&scene->_action1);
 		} else {
-			scene->_sceneMode = BF_INVENTORY.getObjectScene(BF_ITEM_67) == 1 ? 5513 : 5512;
+			scene->_sceneMode = BF_INVENTORY.getObjectScene(INV_CARAVAN_KEY) == 1 ? 5513 : 5512;
 			scene->setAction(&scene->_action1);
 		}
 		return true;
@@ -101,8 +101,8 @@ bool Scene550::CaravanDoor::startAction(CursorType action, Event &event) {
 	case CURSOR_USE:
 		SceneItem::display2(550, 7);
 		return true;
-	case BF_ITEM_67:
-		if ((BF_GLOBALS._dayNumber == 3) || !BF_GLOBALS.getFlag(fWithLyle))
+	case INV_CARAVAN_KEY:
+		if ((BF_GLOBALS._dayNumber != 3) || !BF_GLOBALS.getFlag(fWithLyle))
 			SceneItem::display2(550, 33);
 		else {
 			BF_GLOBALS._player.disableControl();
