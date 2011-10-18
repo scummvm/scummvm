@@ -45,6 +45,7 @@ using namespace Osp::Base::Runtime;
 using namespace Osp::Ui::Controls;
 
 #define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
+#define RESOURCE_PATH       "/Res"
 #define MUTEX_BUFFER_SIZE 5
 
 //
@@ -283,12 +284,6 @@ result BadaSystem::initModules() {
 void BadaSystem::initBackend() {
 	logEntered();
 
-	// allow game .DAT files to be found
-	ConfMan.set("extrapath", "/Res");
-
-	// find translations.dat
-	ConfMan.set("themepath", "/Res");
-
 	// use the mobile device theme
 	ConfMan.set("gui_theme", "/Res/scummmobile");
 
@@ -336,6 +331,11 @@ void BadaSystem::initBackend() {
 	}
 
 	logLeaving();
+}
+
+void BadaSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	// allow translations.dat and game .DAT files to be found
+	s.add("BADA_RES_FOLDER", new Common::FSDirectory(RESOURCE_PATH, priority));
 }
 
 void BadaSystem::destroyBackend() {

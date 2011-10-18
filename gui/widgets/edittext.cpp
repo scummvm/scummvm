@@ -19,8 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "common/events.h"
-#include "common/system.h"
 #include "gui/widgets/edittext.h"
 #include "gui/gui-manager.h"
 
@@ -76,14 +74,6 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	}
 	if (setCaretPos(i))
 		draw();
-
-	if (g_system->hasFeature(OSystem::kFeatureVirtualKeyboard)) {
-		// display the virtual keypad to allow text entry
-		Common::Event eventVKB;
-		eventVKB.type = Common::EVENT_KEYDOWN;
-		eventVKB.kbd.keycode = Common::KEYCODE_F7;
-		g_system->getEventManager()->pushEvent(eventVKB);
-	}
 }
 
 

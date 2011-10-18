@@ -103,8 +103,7 @@ void SmushChannel::processBuffer() {
 				if (!_tbuffer) {
 					if (new_size)
 						error("smush channel failed to allocate memory");
-				}
-				else {
+				} else {
 					memcpy(_tbuffer, old + offset, new_size);
 				}
 				_tbufferSize = new_size;

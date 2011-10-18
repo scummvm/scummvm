@@ -88,6 +88,7 @@ private:
 	void getTimeAndDate(TimeDate &t) const;
 	void fatalError();
 	void logMessage(LogMessageType::Type type, const char *message);
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
 	Common::EventSource *getDefaultEventSource() { return this; }
 	Common::SeekableReadStream *createConfigReadStream();
