@@ -213,8 +213,10 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_deathReason);
 	s.syncAsSint16LE(_driveFromScene);
 	s.syncAsSint16LE(_driveToScene);
+	s.syncAsSint16LE(_v501F8);
 	s.syncAsSint16LE(_v501FA);
 	s.syncAsSint16LE(_v501FC);
+	s.syncAsSint16LE(_v5020C);
 	s.syncAsSint16LE(_v50696);
 	s.syncAsSint16LE(_v5098C);
 	s.syncAsSint16LE(_v5098D);
@@ -287,7 +289,10 @@ void BlueForceGlobals::reset() {
 	_v4CEE8 = 0;
 	_deziTopic = 0;
 	_deathReason = 0;
+	_v501F8 = 0;
+	_v501FA = 0;
 	_v501FC = 0;
+	_v5020C = 0;
 	_v50696 = 0;
 	_v5098C = 0;
 	_v5098D = 0;

@@ -75,8 +75,11 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Inside Tony's Bar
 		return new Scene115();
 	case 125:
+		// Chase in the city
 		return new Scene125();
 	case 140:
+		// Near the House
+		return new Scene140();
 	case 150:
 	case 160:
 		error("Scene group 1 not implemented");

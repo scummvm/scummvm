@@ -1836,7 +1836,7 @@ void Scene115::synchronize(Serializer &s) {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 125 - 
+ * Scene 125 - Intro - Chase in the city
  *
  *--------------------------------------------------------------------------*/
 void Scene125::Action1::signal() {
@@ -2287,6 +2287,168 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	_object8.setAction(&_action4);
 	_object9.setAction(&_action5);
 }
+
+/*--------------------------------------------------------------------------
+ * Scene 140 - Intro - Near the house
+ *
+ *--------------------------------------------------------------------------*/
+
+void Scene140::Action1::signal() {
+	Scene140 *scene = (Scene140 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->loadScene(999);
+		setDelay(2);
+		break;
+	case 1:
+		BF_GLOBALS._scenePalette.loadPalette(2);
+		BF_GLOBALS._scenePalette.refresh();
+		scene->_text.setup(BF_19840518, this);
+		break;
+	case 2:
+		scene->_object1.show();
+		scene->loadScene(140);
+		setDelay(1);
+		break;
+	case 3: {
+		Common::Point destPos(236, 144);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		owner->_numFrames = 7;
+		break;
+		}
+	case 4:
+		owner->setStrip(3);
+		owner->setFrame(1);
+		owner->_numFrames = 5;
+		owner->setPosition(Common::Point(226, 143));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 5:
+		owner->setStrip(4);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 6:
+		scene->_object1.animate(ANIM_MODE_5, this);
+		owner->setStrip(1);
+		owner->setFrame(1);
+		break;
+	case 7:
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x, owner->_position.y + 1));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 8:
+		owner->animate(ANIM_MODE_6, this);
+		owner->_numFrames = 10;
+		break;
+	case 9:
+		owner->_numFrames = 5;
+		owner->setPosition(Common::Point(217, 117));
+		owner->setStrip(2);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 10:
+		owner->setPosition(Common::Point(212, 117));
+		setDelay(10);
+	// No break on purpose
+	case 11:
+		owner->setPosition(owner->_position, 1000);
+		setDelay(60);
+		break;
+	case 12:
+		BF_GLOBALS._sound1.play(8);
+		setDelay(60);
+	// No break on purpose
+	case 13:
+		BF_GLOBALS._v51C44 = 1;
+		BF_GLOBALS._sceneManager.changeScene(150);
+	default:
+		break;
+	}
+}
+
+Scene140::Text::Text(): SceneText() {
+	_action = NULL;
+	_frameNumber = 0;
+	_diff = 0;
+}
+
+void Scene140::Text::setup(const Common::String &msg, Action *action) {
+	_frameNumber = BF_GLOBALS._events.getFrameNumber();
+	_diff = 180;
+	_action = action;
+	_fontNumber = 4;
+	_width = 300;
+	_textMode = ALIGN_CENTER;
+	_color1 = BF_GLOBALS._scenePalette._colors.background;
+	_color2 = _color3 = 0;
+
+	SceneText::setup(msg);
+
+	// Center the text on-screen
+	reposition();
+	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Set the new position
+	_position.x = _bounds.left;
+	_position.y = _bounds.top;
+}
+
+void Scene140::Text::synchronize(Serializer &s) {
+	SceneText::synchronize(s);
+	SYNC_POINTER(_action);
+	s.syncAsUint32LE(_frameNumber);
+	s.syncAsSint16LE(_diff);
+}
+
+void Scene140::Text::dispatch() {
+	if (_diff) {
+		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
+		if (_frameNumber < frameNumber) {
+			_diff -= frameNumber - _frameNumber;
+			_frameNumber = frameNumber;
+
+			if (_diff <= 0) {
+				// Time has expired, so remove the text and signal the designated action
+				remove();
+				if (_action)
+					_action->signal();
+			}
+		}
+	}
+}
+
+void Scene140::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(999);
+
+	_object2.postInit();
+	_object2.setVisage(141);
+	_object2.setPosition(Common::Point(333, 149));
+	_object2.setStrip(5);
+	_object2.animate(ANIM_MODE_1, NULL);
+	_object2._moveDiff.x = 3;
+
+	_object1.postInit();
+	_object1.setVisage(141);
+	_object1.setPosition(Common::Point(202, 115));
+	_object1.setFrame(1);
+	_object1.setStrip(6);
+	_object1.changeZoom(100);
+	_object1.hide();
+
+	BF_GLOBALS._v5020C = 0;
+	BF_GLOBALS._v501F8 = 300;
+	BF_GLOBALS._v501FC = 90;
+	BF_GLOBALS._sound1.play(7);
+
+	_object2.setAction(&_action1);
+}
+
 /*--------------------------------------------------------------------------
  * Scene 180 - Front of Home
  *

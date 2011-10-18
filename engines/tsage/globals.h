@@ -190,8 +190,10 @@ public:
 	int _deathReason;
 	int _driveFromScene;
 	int _driveToScene;
+	int _v501F8;
 	int _v501FA;
 	int _v501FC;
+	int _v5020C;
 	int _v50696;
 	uint8 _v5098C;
 	uint8 _v5098D;
