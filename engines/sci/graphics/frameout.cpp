@@ -492,7 +492,6 @@ void GfxFrameout::kernelFrameout() {
 
 //				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
 
-
 				if (view->isSci2Hires()) {
 					int16 dummyX = 0;
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
@@ -538,6 +537,13 @@ void GfxFrameout::kernelFrameout() {
 						nsRect.left = (nsRect.left * scriptsRunningWidth) / _screen->getWidth();
 						nsRect.bottom = (nsRect.bottom * scriptsRunningHeight) / _screen->getHeight();
 						nsRect.right = (nsRect.right * scriptsRunningWidth) / _screen->getWidth();
+					}
+
+					if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+						// HACK: Some (?) objects in Phantasmagoria 2 have no NS rect. Skip them for now.
+						// TODO: Remove once we figure out how Phantasmagoria 2 draws objects on screen.
+						if (lookupSelector(_segMan, itemEntry->object, SELECTOR(nsLeft), NULL, NULL) != kSelectorVariable)
+							continue;
 					}
 
 					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
