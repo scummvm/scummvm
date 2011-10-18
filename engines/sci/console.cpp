@@ -1498,10 +1498,22 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 resourceId = atoi(argv[1]);
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// If a graphical debugger overlay is used, hide it here, so that the
+	// results can be drawn.
+	g_system->hideOverlay();
+#endif
 
+	uint16 resourceId = atoi(argv[1]);
 	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
 	_engine->_gfxScreen->copyToScreen();
+	_engine->sleep(2000);
+
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+	// Show the graphical debugger overlay
+	g_system->showOverlay();
+#endif
+
 	return true;
 }
 

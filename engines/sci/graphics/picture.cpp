@@ -77,7 +77,7 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 #ifdef ENABLE_SCI32
 	case 0x0e: // SCI32 VGA picture
 		_resourceType = SCI_PICTURE_TYPE_SCI32;
-		//drawSci32Vga();
+		drawSci32Vga(0, 0, 0, 0, 0, false);
 		break;
 #endif
 	default:
