@@ -1438,6 +1438,7 @@ void Scene115::Action2::signal() {
 				scene->_stripManager.start(1152, this);
 			}
 		}
+		break;
 	case 2:
 		if (BF_GLOBALS._v4CEAA == 3)
 			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_object2, NULL);
@@ -1603,6 +1604,7 @@ void Scene115::Action8::signal() {
 		scene->_object1.setStrip(1);
 		scene->_object1.setFrame(1);
 		scene->_object1.setPosition(Common::Point(122, 97));
+		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
 	default:
