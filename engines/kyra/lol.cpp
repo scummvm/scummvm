@@ -556,16 +556,15 @@ void LoLEngine::initKeymap() {
 
 	using namespace Common;
 
-	const char *const keymapName = "lol";
 	bool tmp;
 	Keymapper *mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(keymapName, tmp) != 0)
+	if (mapper->getKeymap(kKeymapName, tmp) != 0)
 		return;
 
 	Action *act;
-	Keymap *engineKeyMap = new Keymap(keymapName);
+	Keymap *engineKeyMap = new Keymap(kKeymapName);
 
 	act = new Action(engineKeyMap, "AT1", _("Attack 1"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_F1, ASCII_F1 , 0));
@@ -605,7 +604,7 @@ void LoLEngine::initKeymap() {
 
 	mapper->addGameKeymap(engineKeyMap);
 
-	mapper->pushKeymap(keymapName, true);
+	mapper->pushKeymap(kKeymapName, true);
 
 #endif
 }
