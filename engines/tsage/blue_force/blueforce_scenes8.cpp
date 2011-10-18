@@ -69,7 +69,7 @@ bool Scene800::Doorway::startAction(CursorType action, Event &event) {
 			SceneItem::display2(800, BF_GLOBALS.getFlag(onDuty) ? 6 : 15);
 		else if (((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._dayNumber == 3)) ||
 				(BF_GLOBALS._bookmark == bDoneWithIsland))
-			SceneItem::display(800, 5);
+			SceneItem::display2(800, 5);
 		else {
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
 				ADD_PLAYER_MOVER_NULL(scene->_lyle, 277, 145);
@@ -305,7 +305,7 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 			_sceneMode = 8001;
 			setAction(&_sequenceManager, this, 8001, &BF_GLOBALS._player, &_doorway, NULL);
 		}
-	} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._bookmark == bFlashBackThree)) {
+	} else if ((BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) && (BF_GLOBALS._bookmark < bFlashBackThree)) {
 		BF_GLOBALS._bookmark = bFlashBackThree;
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS._player.setPosition(Common::Point(231, 150));
@@ -314,7 +314,7 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 		_lyle.setPosition(Common::Point(244, 162));
 		_lyle.setStrip(4);
 		_sceneMode = 8004;
-		setAction(&_sequenceManager, this, 8001, &_lyle, &_doorway, NULL);
+		setAction(&_sequenceManager, this, 8004, &_lyle, &_doorway, NULL);
 	} else {
 		BF_GLOBALS._player.updateAngle(_motorcycle._position);
 		BF_GLOBALS._player.enableControl();
@@ -344,6 +344,8 @@ void Scene800::signal() {
 	case 8004:
 		BF_GLOBALS.clearFlag(fWithLyle);
 		_lyle.remove();
+		BF_GLOBALS._player.enableControl();
+		break;
 	}
 }
 
@@ -2008,7 +2010,7 @@ bool Scene840::Object2::startAction(CursorType action, Event &event) {
 		break;
 	case INV_WAVE_KEYS:
 		if ((BF_GLOBALS._dayNumber != 4) || (BF_GLOBALS._bookmark != bEndDayThree))
-			SceneItem::display(840, 47);
+			SceneItem::display2(840, 47);
 		else {
 			BF_GLOBALS._uiElements.addScore(50);
 
@@ -2072,7 +2074,7 @@ bool Scene840::Object2::WaveKeys::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (scene->_field1AC2) {
-			SceneItem::display(840, 56);
+			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
 			BF_GLOBALS._uiElements.addScore(50);
 			scene->_object2._v1B6 = 1;
