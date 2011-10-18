@@ -57,7 +57,6 @@ private:
 	bool loadGFXMode();
 	void loadTextures();
 	void unloadGFXMode();
-	void refreshGameScreen();
 	void setInternalMousePosition(int x, int y) {}
 	void showSplash();
 

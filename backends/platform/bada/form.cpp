@@ -49,9 +49,9 @@ using namespace Osp::Ui::Controls;
 //
 BadaAppForm::BadaAppForm() :
 	_gameThread(0),
-	_state(InitState),
-	_buttonState(LeftButton),
-	_shortcut(SetVolume) {
+	_state(kInitState),
+	_buttonState(kLeftButton),
+	_shortcut(kSetVolume) {
 	_eventQueueLock = new Mutex();
 	_eventQueueLock->Create();
 }
@@ -99,11 +99,11 @@ result BadaAppForm::Construct() {
 BadaAppForm::~BadaAppForm() {
 	logEntered();
 
-	if (_gameThread && _state != ErrorState) {
+	if (_gameThread && _state != kErrorState) {
 		terminate();
 
 		_gameThread->Stop();
-		if (_state != ErrorState) {
+		if (_state != kErrorState) {
 			_gameThread->Join();
 		}
 
@@ -123,7 +123,7 @@ BadaAppForm::~BadaAppForm() {
 // abort the game thread
 //
 void BadaAppForm::terminate() {
-	if (_state == ActiveState) {
+	if (_state == kActiveState) {
 		((BadaSystem *)g_system)->setMute(true);
 
 		_eventQueueLock->Acquire();
@@ -131,25 +131,25 @@ void BadaAppForm::terminate() {
 		Common::Event e;
 		e.type = Common::EVENT_QUIT;
 		_eventQueue.push(e);
-		_state = ClosingState;
+		_state = kClosingState;
 
 		_eventQueueLock->Release();
 
 		// block while thread ends
 		AppLog("waiting for shutdown");
-		for (int i = 0; i < EXIT_SLEEP_STEP && _state == ClosingState; i++) {
+		for (int i = 0; i < EXIT_SLEEP_STEP && _state == kClosingState; i++) {
 			Thread::Sleep(EXIT_SLEEP);
 		}
 
-		if (_state == ClosingState) {
+		if (_state == kClosingState) {
 			// failed to terminate - Join() will freeze
-			_state = ErrorState;
+			_state = kErrorState;
 		}
 	}
 }
 
 void BadaAppForm::exitSystem() {
-	_state = ErrorState;
+	_state = kErrorState;
 
 	if (_gameThread) {
 		_gameThread->Stop();
@@ -200,8 +200,7 @@ bool BadaAppForm::pollEvent(Common::Event &event) {
 	return result;
 }
 
-void BadaAppForm::pushEvent(Common::EventType type,
-														const Point &currentPosition) {
+void BadaAppForm::pushEvent(Common::EventType type, const Point &currentPosition) {
 	BadaSystem *system = (BadaSystem *)g_system;
 	BadaGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
@@ -248,8 +247,8 @@ void BadaAppForm::pushKey(Common::KeyCode keycode) {
 void BadaAppForm::OnOrientationChanged(const Control &source,
 																			 OrientationStatus orientationStatus) {
 	logEntered();
-	if (_state == InitState) {
-		_state = ActiveState;
+	if (_state == kInitState) {
+		_state = kActiveState;
 		_gameThread->Start();
 	}
 }
@@ -257,30 +256,30 @@ void BadaAppForm::OnOrientationChanged(const Control &source,
 Object *BadaAppForm::Run(void) {
 	scummvm_main(0, 0);
 
-	if (_state == ActiveState) {
+	if (_state == kActiveState) {
 		Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT, NULL);
 	}
-	_state = DoneState;
+	_state = kDoneState;
 	return NULL;
 }
 
 void BadaAppForm::setButtonShortcut() {
 	switch (_buttonState) {
-	case LeftButton:
+	case kLeftButton:
 		g_system->displayMessageOnOSD(_("Right Click Once"));
-		_buttonState = RightButtonOnce;
+		_buttonState = kRightButtonOnce;
 		break;
-	case RightButtonOnce:
+	case kRightButtonOnce:
 		g_system->displayMessageOnOSD(_("Right Click"));
-		_buttonState = RightButton;
+		_buttonState = kRightButton;
 		break;
-	case RightButton:
+	case kRightButton:
 		g_system->displayMessageOnOSD(_("Move Only"));
-		_buttonState = MoveOnly;
+		_buttonState = kMoveOnly;
 		break;
-	case MoveOnly:
+	case kMoveOnly:
 		g_system->displayMessageOnOSD(_("Left Click"));
-		_buttonState = LeftButton;
+		_buttonState = kLeftButton;
 		break;
 	}
 }
@@ -288,27 +287,27 @@ void BadaAppForm::setButtonShortcut() {
 void BadaAppForm::setShortcut() {
 	// cycle to the next shortcut
 	switch (_shortcut) {
-	case ControlMouse:
+	case kControlMouse:
 		g_system->displayMessageOnOSD(_("Escape Key"));
-		_shortcut = EscapeKey;
+		_shortcut = kEscapeKey;
 		break;
 
-	case EscapeKey:
+	case kEscapeKey:
 		g_system->displayMessageOnOSD(_("Game Menu"));
-		_shortcut = GameMenu;
+		_shortcut = kGameMenu;
 		break;
 
-	case GameMenu:
+	case kGameMenu:
 		g_system->displayMessageOnOSD(_("Show Keypad"));
-		_shortcut = ShowKeypad;
+		_shortcut = kShowKeypad;
 		break;
 
-	case SetVolume:
+	case kSetVolume:
 		// fallthru
 
-	case ShowKeypad:
+	case kShowKeypad:
 		g_system->displayMessageOnOSD(_("Control Mouse"));
-		_shortcut = ControlMouse;
+		_shortcut = kControlMouse;
 		break;
 	}
 }
@@ -330,17 +329,17 @@ void BadaAppForm::setVolume(bool up, bool minMax) {
 
 void BadaAppForm::showKeypad() {
 	// display the soft keyboard
-	_buttonState = LeftButton;
+	_buttonState = kLeftButton;
 	pushKey(Common::KEYCODE_F7);
 }
 
 void BadaAppForm::OnTouchDoublePressed(const Control &source,
 																			 const Point &currentPosition,
 																			 const TouchEventInfo &touchInfo) {
-	if (_buttonState != MoveOnly) {
-		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+	if (_buttonState != kMoveOnly) {
+		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
-		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 	}
 }
@@ -358,7 +357,7 @@ void BadaAppForm::OnTouchFocusOut(const Control &source,
 void BadaAppForm::OnTouchLongPressed(const Control &source,
 																		 const Point &currentPosition,
 																		 const TouchEventInfo &touchInfo) {
-	if (_buttonState != LeftButton) {
+	if (_buttonState != kLeftButton) {
 		pushKey(Common::KEYCODE_RETURN);
 	}
 }
@@ -372,8 +371,8 @@ void BadaAppForm::OnTouchMoved(const Control &source,
 void BadaAppForm::OnTouchPressed(const Control &source,
 																 const Point &currentPosition,
 																 const TouchEventInfo &touchInfo) {
-	if (_buttonState != MoveOnly) {
-		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
+	if (_buttonState != kMoveOnly) {
+		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONDOWN : Common::EVENT_RBUTTONDOWN,
 							currentPosition);
 	}
 }
@@ -381,11 +380,11 @@ void BadaAppForm::OnTouchPressed(const Control &source,
 void BadaAppForm::OnTouchReleased(const Control &source,
 																	const Point &currentPosition,
 																	const TouchEventInfo &touchInfo) {
-	if (_buttonState != MoveOnly) {
-		pushEvent(_buttonState == LeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
+	if (_buttonState != kMoveOnly) {
+		pushEvent(_buttonState == kLeftButton ? Common::EVENT_LBUTTONUP : Common::EVENT_RBUTTONUP,
 							currentPosition);
-		if (_buttonState == RightButtonOnce) {
-			_buttonState = LeftButton;
+		if (_buttonState == kRightButtonOnce) {
+			_buttonState = kLeftButton;
 		}
 		// flick to skip dialog
 		if (touchInfo.IsFlicked()) {
@@ -398,17 +397,17 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 	logEntered();
 	switch (keyCode) {
 	case KEY_SIDE_UP:
-		_shortcut = SetVolume;
+		_shortcut = kSetVolume;
 		setVolume(true, true);
 		return;
 
 	case KEY_SIDE_DOWN:
-		_shortcut = SetVolume;
+		_shortcut = kSetVolume;
 		setVolume(false, true);
 		return;
 
 	case KEY_CAMERA:
-		_shortcut = ShowKeypad;
+		_shortcut = kShowKeypad;
 		showKeypad();
 		return;
 
@@ -420,8 +419,8 @@ void BadaAppForm::OnKeyLongPressed(const Control &source, KeyCode keyCode) {
 void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 	switch (keyCode) {
 	case KEY_SIDE_UP:
-		if (_shortcut != SetVolume) {
-			_shortcut = SetVolume;
+		if (_shortcut != kSetVolume) {
+			_shortcut = kSetVolume;
 		} else {
 			setVolume(true, false);
 		}
@@ -429,19 +428,20 @@ void BadaAppForm::OnKeyPressed(const Control &source, KeyCode keyCode) {
 
 	case KEY_SIDE_DOWN:
 		switch (_shortcut) {
-		case ControlMouse:
+		case kControlMouse:
 			setButtonShortcut();
 			break;
 
-		case EscapeKey:
+		case kEscapeKey:
 			pushKey(Common::KEYCODE_ESCAPE);
 			break;
 
-		case GameMenu:
+		case kGameMenu:
+			_buttonState = kLeftButton;
 			pushKey(Common::KEYCODE_F5);
 			break;
 
-		case ShowKeypad:
+		case kShowKeypad:
 			showKeypad();
 			break;
 
