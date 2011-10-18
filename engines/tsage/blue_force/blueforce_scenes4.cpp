@@ -1326,7 +1326,7 @@ void Scene440::signal() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene450::Object1::startAction(CursorType action, Event &event) {
+bool Scene450::Weasel::startAction(CursorType action, Event &event) {
 	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1361,7 +1361,7 @@ bool Scene450::Object1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene450::Object3::startAction(CursorType action, Event &event) {
+bool Scene450::PinBoy::startAction(CursorType action, Event &event) {
 	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1390,7 +1390,7 @@ bool Scene450::Object3::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene450::Object4::startAction(CursorType action, Event &event) {
+bool Scene450::Manager::startAction(CursorType action, Event &event) {
 	Scene450 *scene = (Scene450 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -1546,26 +1546,27 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 	_counterDoor.setDetails(450, 12, -1, 13, 1, NULL);
 
 	if (BF_GLOBALS._dayNumber != 3) {
-		_object3.postInit();
-		_object3.setVisage(463);
-		_object3.setPosition(Common::Point(138, 121));
-		_object3.fixPriority(100);
-		_object3.setFrame(_object3.getFrameCount());
-		BF_GLOBALS._sceneItems.push_back(&_object3);
+		_pinBoy.postInit();
+		_pinBoy.setVisage(463);
+		_pinBoy.setPosition(Common::Point(138, 121));
+		_pinBoy.fixPriority(100);
+		_pinBoy.setFrame(_pinBoy.getFrameCount());
+		BF_GLOBALS._sceneItems.push_back(&_pinBoy);
 	} else if (!BF_GLOBALS.getFlag(fWithLyle) || !BF_GLOBALS.getFlag(fGivenNapkin) ||
 			(BF_INVENTORY.getObjectScene(BF_ITEM_67) == 1)) {
-		_object3.postInit();
-		_object3.setVisage(463);
-		_object3.setPosition(Common::Point(138, 121));
-		_object3.fixPriority(100);
-		_object3.setFrame(_object3.getFrameCount());
-		BF_GLOBALS._sceneItems.push_back(&_object3);
+		_pinBoy.postInit();
+		_pinBoy.setVisage(463);
+		_pinBoy.setPosition(Common::Point(138, 121));
+		_pinBoy.fixPriority(100);
+		_pinBoy.setFrame(_pinBoy.getFrameCount());
+		BF_GLOBALS._sceneItems.push_back(&_pinBoy);
 	} else {
-		_object4.postInit();
-		_object4.setVisage(467);
-		_object4.setPosition(Common::Point(138, 121));
-		_object4.changeZoom(-1);
-		BF_GLOBALS._sceneItems.push_back(&_object4);
+		_manager.postInit();
+		_manager.setVisage(467);
+		_manager.setPosition(Common::Point(138, 121));
+		_manager.changeZoom(-1);
+		_manager.fixPriority(100);
+		BF_GLOBALS._sceneItems.push_back(&_manager);
 
 		if (!BF_GLOBALS.getFlag(takenWeasel)) {
 			_object2.postInit();
@@ -1579,16 +1580,16 @@ void Scene450::postInit(SceneObjectList *OwnerList) {
 
 			BF_GLOBALS._walkRegions.proc1(4);
 
-			_object1.postInit();
-			_object1.setVisage(466);
-			_object1.animate(ANIM_MODE_1, NULL);
-			_object1.setObjectWrapper(new SceneObjectWrapper());
-			_object1.setPosition(Common::Point(70, 80));
-			_object1.setStrip(5);
-			_object1.changeZoom(90);
-			_object1.fixPriority(65);
-			_object1._flag = 0;
-			BF_GLOBALS._sceneItems.push_back(&_object1);
+			_weasel.postInit();
+			_weasel.setVisage(466);
+			_weasel.animate(ANIM_MODE_1, NULL);
+			_weasel.setObjectWrapper(new SceneObjectWrapper());
+			_weasel.setPosition(Common::Point(70, 80));
+			_weasel.setStrip(5);
+			_weasel.changeZoom(90);
+			_weasel.fixPriority(65);
+			_weasel._flag = 0;
+			BF_GLOBALS._sceneItems.push_back(&_weasel);
 		}
 	}
 
@@ -1617,12 +1618,12 @@ void Scene450::signal() {
 		}
 		break;
 	case 4503:
-		_object1.fixPriority(100);
+		_weasel.fixPriority(100);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 4505:
 		BF_GLOBALS.setFlag(takenWeasel);
-		_object1.remove();
+		_weasel.remove();
 		_object2.remove();
 		BF_GLOBALS._walkRegions.proc2(4);
 		BF_GLOBALS._player.enableControl();
@@ -1633,10 +1634,10 @@ void Scene450::signal() {
 		BF_GLOBALS.setFlag(fMgrCallsWeasel);
 		_field19AC = 1;
 		_sceneMode = 4503;
-		setAction(&_sequenceManager, this, 4503, &_object1, &_door, &_object4, NULL);
+		setAction(&_sequenceManager, this, 4503, &_weasel, &_door, &_manager, NULL);
 		break;
 	case 4508:
-		_object4.remove();
+		_manager.remove();
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 		break;
@@ -1644,7 +1645,7 @@ void Scene450::signal() {
 		BF_GLOBALS.setFlag(gotTrailer450);
 		BF_INVENTORY.setObjectScene(BF_ITEM_67, 1);
 		_sceneMode = 4508;
-		setAction(&_sequenceManager, this, 4508, &BF_GLOBALS._player, &_object4, &_door, NULL);
+		setAction(&_sequenceManager, this, 4508, &BF_GLOBALS._player, &_manager, &_door, NULL);
 		break;
 	default:
 		BF_GLOBALS._player.enableControl();

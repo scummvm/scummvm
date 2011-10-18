@@ -214,7 +214,7 @@ public:
 
 class Scene450: public SceneExt {
 	/* Objects */
-	class Object1: public NamedObjectExt {
+	class Weasel: public NamedObjectExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -222,11 +222,11 @@ class Scene450: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public NamedObject {
+	class PinBoy: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object4: public NamedObject {
+	class Manager: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -245,10 +245,10 @@ public:
 	SpeakerEugene _eugeneSpeaker;
 	SpeakerWeasel _weaselSpeaker;
 	SpeakerBilly _billySpeaker;
-	Object1 _object1;
+	Weasel _weasel;
 	NamedObject _object2;
-	Object3 _object3;
-	Object4 _object4;
+	PinBoy _pinBoy;
+	Manager _manager;
 	NamedObject _door, _counterDoor;
 	Exit _exit;
 	NamedHotspot _interior, _shelf, _counter;
