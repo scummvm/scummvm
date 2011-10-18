@@ -335,7 +335,7 @@ void BadaSystem::initBackend() {
 
 void BadaSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// allow translations.dat and game .DAT files to be found
-	s.add("BADA_RES_FOLDER", new Common::FSDirectory(RESOURCE_PATH, priority));
+	s.addDirectory(RESOURCE_PATH, RESOURCE_PATH, priority);
 }
 
 void BadaSystem::destroyBackend() {
