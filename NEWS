@@ -45,9 +45,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
- TINSEL:
+ Tinsel:
    - Fixed deleting saved games from the list of saved games (from the launcher
      and the in-game ScummVM menu).
+   - The US version of Discworld II now shows the correct title screen and
+     language flag.
 
 1.3.1 (2011-07-12)
  General:
@@ -61,8 +63,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Fixed a regression that made Discworld uncompletable.
-   - The US version of Discworld II now shows the correct title screen and
-     language flag.
 
  SAGA:
    - Fixed a regression in Inherit the Earth's dragon walk code which
