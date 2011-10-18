@@ -1547,7 +1547,7 @@ bool Scene830::Door::startAction(CursorType action, Event &event) {
 	return NamedObject::startAction(action, event);
 }
 
-bool Scene830::Object4::startAction(CursorType action, Event &event) {
+bool Scene830::RentalBoat::startAction(CursorType action, Event &event) {
 	Scene830 *scene = (Scene830 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == INV_RENTAL_KEYS) {
@@ -1557,7 +1557,7 @@ bool Scene830::Object4::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager, scene, 8300, &BF_GLOBALS._player, &scene->_lyle, NULL);
 		} else {
 			scene->_sceneMode = 834;
-			scene->setAction(&scene->_sequenceManager, scene, 8300, &BF_GLOBALS._player, &scene->_object4, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 834, &BF_GLOBALS._player, &scene->_rentalBoat, NULL);
 		}
 		return true;
 	} else {
@@ -1655,12 +1655,12 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.disableControl();
 
 	if (_field18A8) {
-		_object4.postInit();
-		_object4.setVisage(830);
-		_object4.setStrip(1);
-		_object4.setPosition(Common::Point(271, 146));
-		_object4.fixPriority(90);
-		_object4.setDetails(830, 0, 1, 2, 1, NULL);
+		_rentalBoat.postInit();
+		_rentalBoat.setVisage(830);
+		_rentalBoat.setStrip(1);
+		_rentalBoat.setPosition(Common::Point(271, 146));
+		_rentalBoat.fixPriority(90);
+		_rentalBoat.setDetails(830, 0, 1, 2, 1, NULL);
 	}
 
 	_door.postInit();

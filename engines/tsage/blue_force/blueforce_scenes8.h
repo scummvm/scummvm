@@ -290,7 +290,7 @@ class Scene830: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object4: public NamedObject {
+	class RentalBoat: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -306,7 +306,7 @@ public:
 	SpeakerLyleHat _lyleHatSpeaker;
 	NamedObject _object1, _lyle, _object6;
 	Door _door;
-	Object4 _object4;
+	RentalBoat _rentalBoat;
 	Object5 _object5;
 	SouthEastExit _seExit;
 	NoteBoard _noteBoard;
