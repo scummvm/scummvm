@@ -83,7 +83,7 @@ extern SRSTATE SRstate;
 
 // FIXME: Avoid non-const global vars
 
-static bool ASceneIsSaved = false;
+bool ASceneIsSaved = false;
 
 static int savedSceneCount = 0;
 
