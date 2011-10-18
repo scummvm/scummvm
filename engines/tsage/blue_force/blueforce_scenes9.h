@@ -43,50 +43,50 @@ class Scene900: public PalettedScene {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item4: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public NamedObjectExt {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObjectExt {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object6: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object7: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action2 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action3 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action4 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 
 public:
@@ -125,44 +125,44 @@ class Scene910: public PalettedScene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action2 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
 		int _field90;
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object4: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object8: public NamedObject {
 	public:
 		int _field90, _field92;
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 		void init(int val);
 
 	};
 	class Object10: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object11: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	class Object13: public NamedObject {
@@ -177,7 +177,7 @@ class Scene910: public PalettedScene {
 	class Object28: public Object13 {
 	public:
 		void subEBD26(int x, int y, int arg8, int8 argA);
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 		void remove();
 	};
 
@@ -185,7 +185,7 @@ class Scene910: public PalettedScene {
 		int _field90, _field92;
 	public:
 		void subEBBDC(int x, int y, int arg8, int argA);
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 		void remove();
 	};
 
@@ -205,7 +205,7 @@ class Scene910: public PalettedScene {
 	public:
 		NamedObject _object32;
 		void remove();
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 		void subED6EA(int frame);
 	};
 
@@ -221,31 +221,31 @@ class Scene910: public PalettedScene {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item2: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item3: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item9: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item15: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item16: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item17: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 	int _field2DDA, _field2DDC, _field2DDE, _field2DD8, _field2DE0, _field2DE2, _field2DE4;
@@ -296,11 +296,11 @@ class Scene920: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Item8: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 
 public:
@@ -332,41 +332,43 @@ class Scene930: public PalettedScene {
 	/* Objects */
 	class Object1: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public FocusObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object4: public FocusObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	class Object5: public FocusObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action2 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 	class Action3 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 
 	void showBootWindow();
@@ -421,7 +423,7 @@ class Scene935: public PalettedScene {
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 
 public:
@@ -442,12 +444,12 @@ class Scene940: public SceneExt {
 	/* Items */
 	class Item1: public NamedHotspot {
 	public:
-		bool startAction(CursorType action, Event &event);
+		virtual bool startAction(CursorType action, Event &event);
 	};
 	/* Actions */
 	class Action1 : public Action {
 	public:
-		void signal();
+		virtual void signal();
 	};
 
 public:

@@ -3164,6 +3164,16 @@ bool Scene930::Object4::startAction(CursorType action, Event &event) {
 	}
 }
 
+void Scene930::Object4::remove() {
+	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
+
+	if (scene->_v141C && !BF_GLOBALS._sceneObjects->contains(&scene->_object5)) {
+		scene->_boots.setAction(&scene->_action3);
+	}
+
+	FocusObject::remove();
+}
+
 bool Scene930::Object5::startAction(CursorType action, Event &event) {
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 
@@ -3191,6 +3201,14 @@ bool Scene930::Object5::startAction(CursorType action, Event &event) {
 		break;
 	}
 }
+
+void Scene930::Object5::remove() {
+	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
+	scene->_boots.setAction(&scene->_action3);
+
+	FocusObject::remove();
+}
+
 /* Items */
 bool Scene930::Item1::startAction(CursorType action, Event &event) {
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
@@ -3440,7 +3458,7 @@ void Scene930::subF3D6F() {
 	_object5.postInit();
 	_object5.setVisage(930);
 	_object5.setStrip(3);
-	if (BF_INVENTORY.getObjectScene(55) == 1) {
+	if (BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) {
 		_object5.setFrame(_object5.getFrameCount());
 		_object5.setDetails(930, 92, 77, -1);
 	} else if (_v141A == 0) {
