@@ -2117,6 +2117,8 @@ void Scene180::signal() {
 		BF_INVENTORY.setObjectScene(INV_9MM_BULLETS, 0);
 		BF_INVENTORY.setObjectScene(INV_SCHEDULE, 0);
 		BF_INVENTORY.setObjectScene(INV_PRINT_OUT, 0);
+
+		BF_GLOBALS._sceneManager.changeScene(180);
 		break;
 	case 8:
 		if (BF_GLOBALS.getFlag(fLeftTraceIn900) || BF_GLOBALS.getFlag(fGotPointsForSearchingDA) ||
