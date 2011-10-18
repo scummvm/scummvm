@@ -2450,6 +2450,89 @@ void Scene140::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 150 - Intro - Burglar inside the house
+ *
+ *--------------------------------------------------------------------------*/
+void Scene150::Action1::signal() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+	static uint32 v50B96 = 0;
+
+	switch (_actionIndex++) {
+	case 0:
+		_actionIndex = 5;
+		_object2.postInit();
+		_object2.setVisage(150);
+		_object2.setStrip(3);
+		_object2._frame = 1;
+		_object2.setPosition(Common::Point(148, 126));
+		_object2.changeZoom(100);
+		setDelay(10);
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+		owner->_frame = 1;
+		owner->setStrip(4);
+		owner->animate(ANIM_MODE_4, 3, 1, this);
+		break;
+	case 3:
+		owner->animate(ANIM_MODE_5, this);
+		_object2.animate(ANIM_MODE_5, this);
+		break;
+	case 4:
+		_object2.remove();
+		break;
+	case 5:
+		owner->_numFrames = 8;
+		owner->_frame = 1;
+		owner->setStrip(2);
+		owner->animate(ANIM_MODE_4, 14, 1, this);
+		break;
+	case 6:
+		owner->fixPriority(119);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 7:
+		setDelay(60);
+		break;
+	case 8:
+		BF_GLOBALS._sound1.stop();
+	// No break on purpose
+	case 9:
+		_sound1.play(8);
+		setDelay(30);
+		break;
+	case 10:
+		BF_GLOBALS._scenePalette.addFader((const byte *)&v50B96, 1, 2, this);
+		break;
+	case 11:
+		BF_GLOBALS._sound1.play(9);
+		BF_GLOBALS._sceneManager.changeScene(160);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene150::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(150);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
+	BF_GLOBALS._player._moveDiff.x = 15;
+	BF_GLOBALS._player.hide();
+
+	_object1.postInit();
+	_object1.setVisage(150);
+	_object1.setPosition(Common::Point(158, 119));
+	_object1._numFrames = 5;
+	_object1.fixPriority(121);
+	_object1.setAction(&_action1);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 180 - Front of Home
  *
  *--------------------------------------------------------------------------*/

@@ -385,6 +385,20 @@ public:
 	void postInit(SceneObjectList *OwnerList);
 };
 
+class Scene150: public SceneExt {
+	class Action1: public Action {
+		NamedObject _object2;
+		ASound _sound1;
+	public:
+		virtual void signal();
+	};
+public:
+	NamedObject _object1;
+	Action1 _action1;
+
+	void postInit(SceneObjectList *OwnerList);
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
