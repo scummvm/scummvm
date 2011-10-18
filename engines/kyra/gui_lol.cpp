@@ -1582,9 +1582,6 @@ int LoLEngine::clickedSceneThrowItem(Button *button) {
 }
 
 int LoLEngine::clickedOptions(Button *button) {
-	// pop the keymap
-	_eventMan->getKeymapper()->popKeymap();
-
 	removeInputTop();
 	gui_toggleButtonDisplayMode(_flags.isTalkie ? 76 : 74, 1);
 
@@ -2729,8 +2726,6 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		break;
 	case 0x4005:
 		_displayMenu = false;
-		// push the keymap
-		_vm->getEventManager()->getKeymapper()->pushKeymap(kKeymapName, true);
 		break;
 	}
 	return 1;
