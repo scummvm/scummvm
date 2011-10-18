@@ -41,6 +41,9 @@ public:
 
 	void rotateAround(const Vector2d &point, const Angle &angle);
 	void rotateAroundCenter(const Angle &angle);
+	void moveCenterTo(const Vector2d &pos);
+	void scale(float amount);
+	void translate(const Vector2d &vec);
 	bool intersectsRect(const Rect2d &rect) const;
 	bool intersectsCircle(const Vector2d &center, float radius) const;
 	bool containsPoint(const Vector2d &point) const;

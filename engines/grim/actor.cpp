@@ -1445,6 +1445,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 
 		Math::Vector3d bboxPos;
 		Math::Vector3d size;
+		float scale;
 		Math::Vector3d pos;
 		Math::Vector3d circlePos;
 		Math::Angle yaw;
@@ -1455,7 +1456,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		if (mode1 == CollisionBox) {
 			pos = p1 + *vec;
 			bboxPos = pos + model1->_bboxPos;
-			size = model1->_bboxSize * _collisionScale;
+			size = model1->_bboxSize;
+			scale = _collisionScale;
 			yaw = _yaw;
 
 			circle.setX(p2.x());
@@ -1465,7 +1467,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		} else {
 			pos = p2;
 			bboxPos = p2 + model2->_bboxPos;
-			size = model2->_bboxSize * actor->_collisionScale;
+			size = model2->_bboxSize;
+			scale = actor->_collisionScale;
 			yaw = actor->_yaw;
 
 			circle.setX(p1.x() + vec->x());
@@ -1478,6 +1481,8 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 		rect._topRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y() + size.y());
 		rect._bottomLeft = Math::Vector2d(bboxPos.x(), bboxPos.y());
 		rect._bottomRight = Math::Vector2d(bboxPos.x() + size.x(), bboxPos.y());
+
+		rect.scale(scale);
 		rect.rotateAround(Math::Vector2d(pos.x(), pos.y()), yaw);
 
 		if (rect.intersectsCircle(circle, radius)) {

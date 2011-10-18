@@ -65,28 +65,23 @@ Model::Model(const Common::String &filename, const char *data, int len, CMap *cm
 		ModelNode &node = _rootHierNode[i];
 		if (node._mesh) {
 			Mesh &mesh = *node._mesh;
-			//NOTE: Setting p to mesh._matrix._pos seems more similar to original
-			// but, as in original, it also stops manny quite far away from the
-			// bone wagon when approaching it from behind in set sg.
-			// Using the node position looks instead more realistic, but, on the
-			// other hand, it may not work right in all cases.
-			Math::Vector3d p = node._matrix.getPosition();
+			Math::Vector3d p = mesh._matrix.getPosition();
 			float x = p.x();
 			float y = p.y();
 			float z = p.z();
 			for (int k = 0; k < mesh._numVertices * 3; k += 3) {
 				if (first || mesh._vertices[k] + x < _bboxPos.x())
 					_bboxPos.x() = mesh._vertices[k] + x;
-				if (mesh._vertices[k + 1] + y < _bboxPos.y())
+				if (first || mesh._vertices[k + 1] + y < _bboxPos.y())
 					_bboxPos.y() = mesh._vertices[k + 1] + y;
-				if (mesh._vertices[k + 2] + z < _bboxPos.z())
+				if (first || mesh._vertices[k + 2] + z < _bboxPos.z())
 					_bboxPos.z() = mesh._vertices[k + 2] + z;
 
 				if (first || mesh._vertices[k] + x > max.x())
 					max.x() = mesh._vertices[k] + x;
-				if (mesh._vertices[k + 1] + y > max.y())
+				if (first || mesh._vertices[k + 1] + y > max.y())
 					max.y() = mesh._vertices[k + 1] + y;
-				if (mesh._vertices[k + 2] + z > max.z())
+				if (first || mesh._vertices[k + 2] + z > max.z())
 					max.z() = mesh._vertices[k + 2] + z;
 
 				first = false;
@@ -653,36 +648,40 @@ void ModelNode::removeChild(ModelNode *child) {
 
 void ModelNode::setMatrix(Math::Matrix4 matrix) {
 	_matrix = matrix;
+	if (_sibling)
+		_sibling->setMatrix(matrix);
 }
 
 void ModelNode::update() {
 	if (!_initialized)
 		return;
 
-	Math::Vector3d animPos = _pos + _animPos;
-	Math::Angle animPitch = _pitch + _animPitch;
-	Math::Angle animYaw = _yaw + _animYaw;
-	Math::Angle animRoll = _roll + _animRoll;
+	if (_hierVisible) {
+		Math::Vector3d animPos = _pos + _animPos;
+		Math::Angle animPitch = _pitch + _animPitch;
+		Math::Angle animYaw = _yaw + _animYaw;
+		Math::Angle animRoll = _roll + _animRoll;
 
-	_localMatrix.setPosition(animPos);
-	_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
+		_localMatrix.setPosition(animPos);
+		_localMatrix.buildFromPitchYawRoll(animPitch, animYaw, animRoll);
 
-	_matrix = _localMatrix * _matrix;
+		_matrix = _matrix * _localMatrix;
 
-	_pivotMatrix = _matrix;
+		_pivotMatrix = _matrix;
+		_pivotMatrix.translate(_pivot);
 
-	_pivotMatrix.translate(_pivot);
+		if (_mesh) {
+			_mesh->_matrix = _pivotMatrix;
+		}
 
-	if (_mesh) {
-		_mesh->_matrix = _pivotMatrix;
+		if (_child) {
+			_child->setMatrix(_matrix);
+			_child->update();
+		}
 	}
 
-	ModelNode *child = _child;
-	while (child) {
-		child->setMatrix(_matrix);
-		child->update();
-
-		child = child->_sibling;
+	if (_sibling) {
+		_sibling->update();
 	}
 }
 
