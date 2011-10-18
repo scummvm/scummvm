@@ -2484,7 +2484,7 @@ void Scene342::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene350::Item5::startAction(CursorType action, Event &event) {
+bool Scene350::FireBox::startAction(CursorType action, Event &event) {
 	Scene350 *scene = (Scene350 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -2571,7 +2571,7 @@ bool Scene350::Hook::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene350::Object5::startAction(CursorType action, Event &event) {
+bool Scene350::FireboxInset::startAction(CursorType action, Event &event) {
 	Scene350 *scene = (Scene350 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -2579,7 +2579,7 @@ bool Scene350::Object5::startAction(CursorType action, Event &event) {
 		SceneItem::display2(350, BF_INVENTORY.getObjectScene(INV_HOOK) ? 29 : 28);
 		return true;
 	case CURSOR_USE:
-		scene->_object5.remove();
+		scene->_fireBoxInset.remove();
 		return true;
 	case INV_HOOK:
 		BF_INVENTORY.setObjectScene(INV_HOOK, 350);
@@ -2592,7 +2592,7 @@ bool Scene350::Object5::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._sceneItems.push_front(&scene->_hook);
 		return true;
 	default:
-		return NamedObject::startAction(action, event);
+		return FocusObject::startAction(action, event);
 	}
 }
 
@@ -2672,8 +2672,8 @@ void Scene350::postInit(SceneObjectList *OwnerList) {
 		}
 	}
 
-	_item5._sceneRegionId = 5;
-	BF_GLOBALS._sceneItems.push_back(&_item5);
+	_fireBox._sceneRegionId = 5;
+	BF_GLOBALS._sceneItems.push_back(&_fireBox);
 	_item4.setDetails(15, 350, 0, 1, 2, 1);
 	BF_GLOBALS._sceneItems.push_back(&_yacht);
 
@@ -2729,12 +2729,12 @@ void Scene350::signal() {
 	case 3:
 		BF_GLOBALS._player.setStrip(8);
 
-		_object5.postInit();
-		_object5.setVisage(350);
-		_object5.setStrip(4);
-		_object5.fixPriority(200);
-		_object5.setPosition(Common::Point(85, 166));
-		BF_GLOBALS._sceneItems.push_front(&_object5);
+		_fireBoxInset.postInit();
+		_fireBoxInset.setVisage(350);
+		_fireBoxInset.setStrip(4);
+		_fireBoxInset.fixPriority(200);
+		_fireBoxInset.setPosition(Common::Point(85, 166));
+		BF_GLOBALS._sceneItems.push_front(&_fireBoxInset);
 
 		if (BF_INVENTORY.getObjectScene(INV_HOOK) == 350) {
 			_hook.postInit();

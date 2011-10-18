@@ -432,7 +432,7 @@ public:
 
 class Scene350: public SceneExt {
 	/* Items */
-	class Item5: public NamedHotspot {
+	class FireBox: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -454,7 +454,7 @@ class Scene350: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object5: public NamedObject {
+	class FireboxInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -470,9 +470,9 @@ public:
 	SceneObject _yachtDoor;
 	BackgroundSceneObject _yachtBody;
 	Hook _hook;
-	Object5 _object5;
+	FireboxInset _fireBoxInset;
 	NamedHotspot _item1, _item2, _item3, _item4;
-	Item5 _item5;
+	FireBox _fireBox;
 	Yacht _yacht;
 	SouthWestExit _swExit;
 	SpeakerGameText _gameTextSpeaker;
