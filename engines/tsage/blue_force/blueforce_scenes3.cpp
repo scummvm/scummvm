@@ -3140,7 +3140,7 @@ bool Scene355::Object8::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 9997;
 			scene->_stripManager.start(3561, scene);
 		} else {
-			SceneItem::display(1, 4);
+			SceneItem::display2(1, 4);
 		}
 		return true;
 	default:
@@ -3741,7 +3741,7 @@ void Scene355::signal() {
 			BF_GLOBALS._uiElements.addScore(10);
 		}
 
-		SceneItem::display(355, !_doorway._v3 ? 24 : 25);
+		SceneItem::display2(355, !_doorway._v3 ? 24 : 25);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 4550:
