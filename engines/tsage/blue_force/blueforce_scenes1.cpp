@@ -1836,6 +1836,458 @@ void Scene115::synchronize(Serializer &s) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 125 - 
+ *
+ *--------------------------------------------------------------------------*/
+void Scene125::Action1::signal() {
+	Scene125 *scene = (Scene125 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 1: {
+		Common::Point destPos(214, 105);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 2:
+		owner->animate(ANIM_MODE_4, 4, 1, this);
+		break;
+	case 3:
+		owner->setFrame(5);
+		scene->_object2.show();
+		setDelay(180);
+		break;
+	case 4: {
+		Common::Point destPos(311, 85);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 5:
+		owner->remove();
+		break;
+	case 0:
+	// No break on purpose
+	default:
+		break;		
+	}
+}
+
+void Scene125::Action2::signal() {
+	Scene125 *scene = (Scene125 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(30);
+		break;
+	case 1:
+		scene->_action1.signal();
+		setDelay(20);
+		break;
+	case 2: {
+		BF_GLOBALS._v501FA = 10;
+		BF_GLOBALS._v51C44 = 1;
+		Common::Point destPos(202, 94);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 3: {
+		scene->_action3.signal();
+		Common::Point destPos(280, 84);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 4:
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	case 5: {
+		Common::Point destPos(375, 111);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 6:
+		BF_GLOBALS._player.setStrip(2);
+		BF_GLOBALS._player.setFrame(1);
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	case 7: {
+		Common::Point destPos(347, 139);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 8:
+		BF_GLOBALS._player.setStrip(3);
+		BF_GLOBALS._player.setFrame(1);
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	case 9: {
+		Common::Point destPos(107, 75);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		BF_GLOBALS._player.setPriority(80);
+		break;
+		}
+	case 10:
+		BF_GLOBALS._player.setStrip(4);
+		BF_GLOBALS._player.setFrame(1);
+		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
+		break;
+	case 11: {
+		BF_GLOBALS._player.setPriority(64);
+		Common::Point destPos(229, 61);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 12:
+		scene->_action3.signal();
+		BF_GLOBALS._player.remove();
+	default:
+		break;
+	}
+}
+
+void Scene125::Action2::dispatch() {
+	Action::dispatch();
+
+	if ((_actionIndex == 10) && (BF_GLOBALS._player._percent > 80))
+		BF_GLOBALS._player.changeZoom(BF_GLOBALS._player._percent - 1);
+
+	if ((_actionIndex == 12) && (BF_GLOBALS._player._percent > 50))
+		BF_GLOBALS._player.changeZoom(BF_GLOBALS._player._percent - 1);
+}
+
+void Scene125::Action3::signal() {
+	Scene125 *scene = (Scene125 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1: {
+		Common::Point destPos(202, 94);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 2: {
+		Common::Point destPos(275, 84);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 3:
+		scene->_soundExt2.fadeSound(20);
+		owner->fixPriority(70);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 4: {
+		Common::Point destPos(375, 111);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 5:
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 6: {
+		Common::Point destPos(347, 145);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 7:
+		owner->setStrip(3);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 8: {
+		Common::Point destPos(96, 71);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		owner->_moveDiff.x = 6;
+		owner->_moveDiff.y = 6;
+		owner->setPriority(80);
+		break;
+		}
+	case 9:
+		owner->setPosition(Common::Point(85, 76));
+		owner->setStrip(4);
+		owner->setFrame(1);
+		owner->changeZoom(100);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 10: {
+		scene->_action5.signal();
+		scene->_soundExt1.play(25);
+		Common::Point destPos(154, 94);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 11:
+		break;
+	case 12:
+		scene->_object1.setPosition(owner->_position);
+		scene->_object1.changeZoom(2);
+		scene->_object1.show();
+		setDelay(1);
+	case 13:
+		BF_GLOBALS._sound1.play(6);
+		scene->_object1.changeZoom(4);
+		scene->_object1.setPosition(Common::Point(148, 88));
+		setDelay(1);
+		break;
+	case 14:
+		scene->_object1.changeZoom(8);
+		scene->_object1.setPosition(Common::Point(167, 97));
+		setDelay(1);
+		break;
+	case 15:
+		scene->_object1.changeZoom(16);
+		scene->_object1.setPosition(Common::Point(197, 104));
+		scene->_object4.show();
+		scene->_object3.show();
+		scene->_object4.changeZoom(16);
+		scene->_object4.setPosition(Common::Point(scene->_object1._position.x - 9, scene->_object1._position.y - 8));
+		scene->_object3.changeZoom(16);
+		scene->_object3.setPosition(Common::Point(scene->_object1._position.x + 5, scene->_object1._position.y - 8));
+		setDelay(1);
+		break;
+	case 16:
+		scene->_object1.changeZoom(32);
+		scene->_object1.setPosition(Common::Point(197, 104));
+		scene->_object4.changeZoom(32);
+		scene->_object4.setPosition(Common::Point(scene->_object1._position.x - 17, scene->_object1._position.y - 15));
+		scene->_object3.changeZoom(32);
+		scene->_object3.setPosition(Common::Point(scene->_object1._position.x + 12, scene->_object1._position.y - 15));
+		setDelay(1);
+		break;
+	case 17:
+		scene->_object1.changeZoom(64);
+		scene->_object1.setPosition(Common::Point(198, 114));
+		scene->_object4.changeZoom(64);
+		scene->_object4.setPosition(Common::Point(scene->_object1._position.x - 34, scene->_object1._position.y - 29));
+		scene->_object3.changeZoom(64);
+		scene->_object3.setPosition(Common::Point(scene->_object1._position.x + 23, scene->_object1._position.y - 29));
+		setDelay(1);
+		break;
+	case 18:
+		scene->_object1.changeZoom(100);
+		scene->_object1.setPosition(Common::Point(160, 112));
+		scene->_object4.changeZoom(100);
+		scene->_object4.setPosition(Common::Point(scene->_object1._position.x - 51, scene->_object1._position.y - 45));
+		scene->_object3.changeZoom(100);
+		scene->_object3.setPosition(Common::Point(scene->_object1._position.x + 42, scene->_object1._position.y - 45));
+		scene->_object4.animate(ANIM_MODE_5, this);
+		scene->_object3.animate(ANIM_MODE_5, this);
+		setDelay(1);
+		break;
+	case 19:
+		break;
+	case 20:
+		setDelay(30);
+		break;
+	case 21:
+		BF_GLOBALS._sceneManager.changeScene(140);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene125::Action3::dispatch() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	Action::dispatch();
+	
+	if ((_actionIndex == 9) && (owner->_percent > 70))
+		owner->changeZoom(owner->_percent - 1);
+}
+
+void Scene125::Action4::signal() {
+	Scene125 *scene = (Scene125 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(180);
+		break;
+	case 1: {
+		owner->setPriority(scene->_object2._priority - 1);
+		Common::Point destPos(66, 168);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 2:
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 3: {
+		Common::Point destPos(307, 106);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 4:
+		owner->remove();
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene125::Action4::dispatch() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	Action::dispatch();
+	
+	if ((_actionIndex == 4) && (owner->_percent > 80))
+		owner->changeZoom(owner->_percent - 1);
+}
+
+void Scene125::Action5::signal() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	if (_actionIndex++ == 1) {
+		Common::Point destPos(162, 103);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+	}
+}
+
+void Scene125::Action6::signal() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(60);
+		break;
+	case 1: {
+		Common::Point destPos(410, 181);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 2:
+		owner->remove();
+	default:
+		break;
+	}
+}
+
+void Scene125::Action6::dispatch() {
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+
+	Action::dispatch();
+	
+	if ((_actionIndex == 2) && (owner->_percent < 100))
+		owner->changeZoom(owner->_percent + 1);
+}
+
+void Scene125::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(120);
+
+	_object4.postInit();
+	_object4.setVisage(124);
+	_object4.setPosition(Common::Point(0, 0));
+	_object4.setStrip(1);
+	_object4.setFrame(1);
+	_object4.fixPriority(251);
+	_object4.hide();
+
+	_object3.postInit();
+	_object3.setVisage(124);
+	_object3.setPosition(Common::Point(0, 0));
+	_object3.setStrip(2);
+	_object3.setFrame(1);
+	_object3.fixPriority(251);
+	_object3.hide();
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setVisage(127);
+	BF_GLOBALS._player.setPosition(Common::Point(160, 110));
+	BF_GLOBALS._player.setStrip(1);
+	BF_GLOBALS._player.setFrame(1);
+	BF_GLOBALS._player.changeZoom(100);
+	BF_GLOBALS._player.fixPriority(68);
+	BF_GLOBALS._player._moveDiff.x = 6;
+	BF_GLOBALS._player._moveDiff.y = 6;
+	BF_GLOBALS._player.disableControl();
+	
+	_object5.postInit();
+	_object5.setVisage(128);
+	_object5.setPosition(Common::Point(150, 117));
+	_object5.fixPriority(68);
+	_object5._moveDiff.x = 6;
+	_object5._moveDiff.y = 6;
+
+	_object9.postInit();
+	_object9.setVisage(126);
+	_object9.setPosition(Common::Point(124, 106));
+	_object9.setStrip(4);
+	_object9.fixPriority(90);
+	_object9._moveDiff.x = 3;
+	_object9._moveDiff.y = 3;
+
+	_object1.postInit();
+	_object1.setVisage(130);
+	_object1.setPosition(Common::Point(139, 88));
+	_object1.setStrip(1);
+	_object1.setFrame(1);
+	_object1.changeZoom(100);
+	_object1.fixPriority(250);
+	_object1.hide();
+
+	_object8.postInit();
+	_object8.setVisage(126);
+	_object8.setPosition(Common::Point(89, 181));
+	_object8.setStrip(3);
+	_object8._moveDiff.x = 6;
+	_object8._moveDiff.y = 6;
+
+	_object6.postInit();
+	_object6.setVisage(126);
+	_object6.setPosition(Common::Point(289, 128));
+	_object6.fixPriority(69);
+	_object6._moveDiff.x = 6;
+	_object6._moveDiff.y = 6;
+	_object6.setAction(&_action1);
+
+	_object2.postInit();
+	_object2.setVisage(126);
+	_object2.setPosition(Common::Point(214, 105));
+	_object2.setStrip(2);
+	_object2.setFrame(1);
+	_object2.changeZoom(100);
+	_object2.fixPriority(63);
+	_object2.hide();
+
+	_object7.postInit();
+	_object7.setVisage(126);
+	_object7.setPosition(Common::Point(87, 76));
+	_object7.setStrip(6);
+	_object7.setFrame(6);
+	_object7.changeZoom(80);
+	_object7._moveDiff.x = 4;
+	_object7._moveDiff.y = 4;
+	_object7.setAction(&_action6);
+
+	BF_GLOBALS._sound1.play(5);
+	setAction(&_action2);
+	_object5.setAction(&_action3);
+	_object8.setAction(&_action4);
+	_object9.setAction(&_action5);
+}
+/*--------------------------------------------------------------------------
  * Scene 180 - Front of Home
  *
  *--------------------------------------------------------------------------*/

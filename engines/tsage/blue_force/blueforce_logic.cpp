@@ -75,6 +75,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Inside Tony's Bar
 		return new Scene115();
 	case 125:
+		return new Scene125();
 	case 140:
 	case 150:
 	case 160:

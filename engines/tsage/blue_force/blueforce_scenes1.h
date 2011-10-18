@@ -311,6 +311,51 @@ public:
 	virtual void process(Event &event);
 };
 
+class Scene125: public SceneExt {
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+	class Action5: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action6: public Action {
+	public:
+		virtual void signal();
+		virtual void dispatch();
+	};
+
+public:
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	Action5 _action5;
+	Action6 _action6;
+	NamedObject _object1, _object2, _object3, _object4, _object5;
+	NamedObject _object6, _object7, _object8, _object9;
+	ASoundExt _soundExt1;
+	ASoundExt _soundExt2;
+
+	void postInit(SceneObjectList *OwnerList);
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
