@@ -397,7 +397,22 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelHide();
 
+		{
+		// Duck videos are 16bpp, so we need to change the active pixel format
+		int oldWidth = g_system->getWidth();
+		int oldHeight = g_system->getHeight();
+		Common::List<Graphics::PixelFormat> formats;
+		formats.push_back(videoDecoder->getPixelFormat());
+		initGraphics(640, 480, true, formats);
+
+		if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
+			error("Could not switch screen format for the duck video");
+
 		playVideo(videoDecoder, s->_videoState);
+
+		// Switch back to 8bpp
+		initGraphics(oldWidth, oldHeight, oldWidth > 320);
+		}
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelShow();
