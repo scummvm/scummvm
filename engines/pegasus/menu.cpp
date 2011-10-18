@@ -676,8 +676,11 @@ DeathMenu::DeathMenu(const tDeathReason deathReason) : GameMenu(kDeathMenuID), _
 	_deathBackground.initFromPICTFile(imageName);
 	_deathReason = deathReason;
 
-	if (!isDemo)
+	if (!isDemo) {
+		vm->_gfx->setCurSurface(_deathBackground.getSurface());
 		drawAllScores();
+		vm->_gfx->setCurSurface(vm->_gfx->getWorkArea());
+	}
 
 	_deathBackground.setDisplayOrder(0);
 	_deathBackground.startDisplaying();
@@ -993,8 +996,10 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 	if (!vm->isDemo()) {
 		Surface numbers;
 		numbers.getImageFromPICTFile("Images/Pause Screen/Numbers.pict");
+		vm->_gfx->setCurSurface(_pauseBackground.getSurface());
 		drawScore(GameState.getTotalScore(), kMaxTotalScore,
 				Common::Rect(kPauseScoreLeft, kPauseScoreTop, kPauseScoreRight, kPauseScoreBottom), &numbers);
+		vm->_gfx->setCurSurface(vm->_gfx->getWorkArea());
 	}
 
 	_pauseBackground.setDisplayOrder(kPauseMenuOrder);

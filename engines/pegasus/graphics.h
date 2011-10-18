@@ -54,6 +54,8 @@ public:
 	tDisplayOrder getBackOfActiveLayer() const { return _backLayer; }
 	tDisplayOrder getFrontOfActiveLayer() const { return _frontLayer; }
 	void updateDisplay();
+	Graphics::Surface *getCurSurface() { return _curSurface; }
+	void setCurSurface(Graphics::Surface *surface) { _curSurface = surface; }
 	Graphics::Surface *getWorkArea() { return &_workArea; }
 	void clearScreen();
 	DisplayElement *findDisplayElement(const tDisplayElementID id);
@@ -73,7 +75,7 @@ private:
 	Common::Rect _dirtyRect;
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;
-	Graphics::Surface _workArea;
+	Graphics::Surface _workArea, *_curSurface;
 
 	// Shake Shake Shake!
 	static const int kMaxShakeOffsets = 17;

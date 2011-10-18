@@ -164,7 +164,7 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &rect) const {
 }
 
 void Surface::copyToCurrentPort(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 
@@ -182,7 +182,7 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Co
 	uint32 transColor1 = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
 	uint32 transColor2 = g_system->getScreenFormat().RGBToColor(0xf8, 0xf8, 0xf8);
 
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 

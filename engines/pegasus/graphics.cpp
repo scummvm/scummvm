@@ -44,6 +44,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_firstDisplayElement = _lastDisplayElement = 0;
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
 	_modifiedScreen = false;
+	_curSurface = &_workArea;
 }
 	
 GraphicsManager::~GraphicsManager() {

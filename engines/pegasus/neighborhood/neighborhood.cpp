@@ -727,8 +727,10 @@ void Neighborhood::turnTo(const tDirectionConstant direction) {
 	if (g_map)
 		g_map->moveToMapLocation(GameState.getCurrentNeighborhood(), GameState.getCurrentRoom(), direction);
 
-	// FIXME: This isn't right. Crazy TGWorldSaver stuff
-	//_pushIn.copyToCurrentPort();
+	// clone2727 says: Is this necessary?
+	_vm->_gfx->setCurSurface(_navMovie.getSurface());
+	_pushIn.copyToCurrentPort();
+	_vm->_gfx->setCurSurface(_vm->_gfx->getWorkArea());
 	
 	// Added 2/10/97. Shouldn't this be here? Shouldn't we set the current activation to
 	// always when turning to a new view?
