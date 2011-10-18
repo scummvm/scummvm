@@ -1,18 +1,23 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-07-20
-Release version: x.x.x
+Last updated: 2011-10-15
+Release version: 1.4.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
-x.x.x:
-- Changed default values for "high_sample_rate" & "FM_high_quality" to "true" as
-  most devices today are fast enough to handle this. It's still possible to set
-  this to "false" if you have a slower device.
+1.4.0:
+- Changed the memory management so that it is finally possible to break the
+  32MB per process barrier on Windows CE. It should be possible now (finally)
+  to play nearly every game with the "big" binary (scummvm.exe, which includes
+  all game engines).
+- Changed default values for "high_sample_rate" & "FM_high_quality" to "true"
+  as most devices today are fast enough to handle this. It's still possible to
+  set this to "false" if you have a slower device.
 - Fix for TeenAgent & Hugo engines (both weren't running at all, crashed right
   at the beginning)
-- Replaced the game mass-adding functionality with the functionality used on all
-  other platforms. It now shows progress while searching for games.
+- Discworld 2 is now playable (works now because of the new memory management)
+- Replaced the game mass-adding functionality with the functionality used on
+  all other platforms. It now shows progress while searching for games.
 
 1.3.1:
 - Fix for Normal2xAspect scaler which was causing screen update issues in some

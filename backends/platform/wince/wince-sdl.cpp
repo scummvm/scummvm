@@ -72,6 +72,50 @@
 extern "C" _CRTIMP FILE *__cdecl   _wfreopen(const wchar_t *, const wchar_t *, FILE *);
 #endif
 
+#ifdef WRAP_MALLOC
+
+extern "C" void *__real_malloc(size_t size);
+extern "C" void __real_free(void *ptr);
+
+extern "C" void *__wrap_malloc(size_t size) {
+/*
+	void *ptr = __real_malloc(size);
+	printf("malloc(%d) = %p\n", size, ptr);
+	return ptr;
+*/
+	if (size < 64 * 1024) {
+		void *ptr = __real_malloc(size+4);
+//		printf("malloc(%d) = %p\n", size, ptr);
+		if (ptr != NULL) {
+			*((HANDLE*)ptr) = 0;
+			return 4+(char*)ptr;
+		}
+		return NULL;
+	}
+	HANDLE H = CreateFileMapping((HANDLE)INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size+4, 0);
+	void *ptr = MapViewOfFile(H, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	*((HANDLE*)ptr) = H;
+	return 4+(char*)ptr;
+}
+
+extern "C" void __wrap_free(void *ptr) {
+/*
+	__real_free(ptr);
+	printf("free(%p)\n", ptr);
+*/
+	if (ptr != NULL) {
+		HANDLE H = *(HANDLE*)((char *)ptr-4);
+		if (H == 0) {
+			__real_free((char*)ptr-4);
+			return;
+		}
+		UnmapViewOfFile((char *)ptr-4);
+		CloseHandle(H);
+	}
+}
+
+#endif
+
 using namespace CEGUI;
 
 // ********************************************************************************************
