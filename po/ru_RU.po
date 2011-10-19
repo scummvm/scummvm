@@ -2763,40 +2763,36 @@ msgid "Check for Updates..."
 msgstr "Проверяю обновления..."
 
 #: backends/platform/bada/form.cpp:269
-#, fuzzy
 msgid "Right Click Once"
-msgstr "Правый щелчок"
+msgstr "Один правый щелчок"
 
 #: backends/platform/bada/form.cpp:277
-#, fuzzy
 msgid "Move Only"
-msgstr "Только озвучка"
+msgstr "Только переместить"
 
 #: backends/platform/bada/form.cpp:291
 msgid "Escape Key"
-msgstr ""
+msgstr "Клавиша ESC"
 
 #: backends/platform/bada/form.cpp:296
-#, fuzzy
 msgid "Game Menu"
-msgstr "Игра"
+msgstr "Меню игры"
 
 #: backends/platform/bada/form.cpp:301
-#, fuzzy
 msgid "Show Keypad"
 msgstr "Показать клавиатуру"
 
 #: backends/platform/bada/form.cpp:309
 msgid "Control Mouse"
-msgstr ""
+msgstr "Управление мышью"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Enabled"
-msgstr ""
+msgstr "Щелчки включены"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Disabled"
-msgstr ""
+msgstr "Щелчки выключены"
 
 #~ msgctxt "lowres"
 #~ msgid "Add Game..."
