@@ -153,6 +153,8 @@ osxsnap: bundle
 	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
 	mkdir ScummVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/QuickStart
+	mkdir ScummVM-snapshot/doc/cz
+	cp $(srcdir)/doc/cz/PrectiMe ./ScummVM-snapshot/doc/cz/PrectiMe
 	mkdir ScummVM-snapshot/doc/de
 	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
 	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
@@ -165,6 +167,7 @@ osxsnap: bundle
 	mkdir ScummVM-snapshot/doc/no-nb
 	cp $(srcdir)doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/es/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
@@ -193,6 +196,7 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	mkdir -p $(WIN32PATH)/graphics
 	mkdir -p $(WIN32PATH)/doc
+	mkdir -p $(WIN32PATH)/doc/cz
 	mkdir -p $(WIN32PATH)/doc/de
 	mkdir -p $(WIN32PATH)/doc/es
 	mkdir -p $(WIN32PATH)/doc/fr
@@ -208,6 +212,7 @@ endif
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
+	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/de/Neues $(WIN32PATH)/doc/de/Neues.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/es/"Inicio Rápido" $(WIN32PATH)/doc/es/"Inicio Rápido".txt
@@ -223,6 +228,7 @@ endif
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/doc/cz/*.txt
 	unix2dos $(WIN32PATH)/doc/de/*.txt
 	unix2dos $(WIN32PATH)/doc/es/*.txt
 	unix2dos $(WIN32PATH)/doc/fr/*.txt
