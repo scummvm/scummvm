@@ -84,7 +84,8 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Intro - Burglar inside the house
 		return new Scene150();
 	case 160:
-		error("Scene group 1 not implemented");
+		// Intro - Burial
+		return new Scene160();
 	case 180:
 		// Front of Home
 		return new Scene180();

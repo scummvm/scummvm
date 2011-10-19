@@ -2533,6 +2533,355 @@ void Scene150::postInit(SceneObjectList *OwnerList) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 160 - Intro - Burial
+ *
+ *--------------------------------------------------------------------------*/
+void Scene160::Action1::signal() {
+	Scene160 *scene = (Scene160 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		scene->_kid.animate(ANIM_MODE_5, this);
+		break;
+	case 2:
+	// No break on purpose
+	case 10:
+		scene->_grandma.animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+	// No break on purpose
+	case 6:
+		scene->_kid.animate(ANIM_MODE_6, this);
+		break;
+	case 4:
+		scene->_kid.setPosition(Common::Point(scene->_kid._position.x - 2, scene->_kid._position.y + 19));
+		scene->_kid.setFrame(1);
+		scene->_kid.setStrip(2);
+		scene->_kid.animate(ANIM_MODE_5, this);
+
+		scene->_kidBody.setPosition(scene->_kid._position); 
+		scene->_kidBody.setFrame(1);
+		scene->_kidBody.setStrip(3);
+		break;
+	case 5:
+		setDelay(60);
+		break;
+	case 7:
+		scene->_kidBody.remove();
+		scene->_kid.setStrip(6);
+		scene->_kid.setFrame(1);
+		scene->_kid.setPosition(Common::Point(scene->_kid._position.x - 4, scene->_kid._position.y + 19));
+		scene->_grandma.animate(ANIM_MODE_6, this);
+		scene->_grandma._numFrames = 7;
+		break;
+	case 8:
+		scene->_grandma.setStrip(2);
+		scene->_grandma.setFrame(1);
+		scene->_grandma.animate(ANIM_MODE_5, this);
+		break;
+	case 9:
+		setDelay(120);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene160::Action2::signal() {
+	Scene160 *scene = (Scene160 *)BF_GLOBALS._sceneManager._scene;
+	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
+	static uint32 v50BAB = 0;
+	static uint32 v50BC3 = 0;
+
+	switch (_actionIndex++) {
+	case 0:
+		break;
+	case 1:
+		owner->animate(ANIM_MODE_5, this);
+		owner->_numFrames = 8;
+		break;
+	case 2:
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(scene->_flag._position.x + 56, scene->_flag._position.y + 2));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 3:
+		owner->setStrip(3);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(scene->_flag._position.x + 26, scene->_flag._position.y - 8));
+		owner->animate(ANIM_MODE_4, 8, 1, this);
+		break;
+	case 4:
+		scene->_flag.remove();
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 5:
+		owner->setVisage(162);
+		owner->setStrip(1);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x + 27, owner->_position.y + 11));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 6:
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x - 42, owner->_position.y + 15));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 7:
+		owner->setStrip(3);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x + 1, owner->_position.y));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 8:
+		owner->setStrip(4);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x - 3, owner->_position.y - 1));
+
+		scene->_leftOfficer.show();
+		scene->_leftOfficer.setStrip(1);
+		scene->_leftOfficer.setFrame(1);
+		scene->_leftOfficer.setPosition(Common::Point(owner->_position.x + 8, owner->_position.y - 39));
+		scene->_leftOfficer._numFrames = 5;
+		scene->_leftOfficer.animate(ANIM_MODE_5, this);
+		break;
+	case 9:
+		setDelay(30);
+		break;
+	case 10:
+		scene->_leftOfficer.hide();
+		owner->setVisage(163);
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x + 39, owner->_position.y));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 11:
+		scene->_leftOfficer.fixPriority(owner->_priority + 1);
+		setDelay(60);
+		break;
+	case 12:
+		scene->_leftOfficer.show();
+		scene->_leftOfficer.setPosition(Common::Point(owner->_position.x - 32, owner->_position.y - 38));
+		scene->_leftOfficer.setStrip(3);
+		scene->_leftOfficer.setFrame(1);
+
+		owner->setVisage(165);
+		owner->setPosition(Common::Point(owner->_position.x + 6, owner->_position.y - 3));
+		owner->setStrip(1);
+		owner->setFrame(1);
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 13: {
+		owner->setStrip(2);
+		owner->setFrame(1);
+		owner->changeZoom(110);
+		owner->animate(ANIM_MODE_1, NULL);
+		Common::Point destPos(scene->_kid._position.x - 25, scene->_kid._position.y + 15);
+		NpcMover *mover = new NpcMover();
+		owner->addMover(mover, &destPos, this);
+		break;
+		}
+	case 14:
+		owner->changeZoom(100);
+		owner->setStrip(5);
+		owner->setFrame(1);
+		scene->_kid.animate(ANIM_MODE_4, 5, 1, this);
+		break;
+	case 15:
+		owner->animate(ANIM_MODE_5, this);
+		scene->_kid.animate(ANIM_MODE_5, NULL);
+		break;
+	case 16:
+		owner->setStrip(6);
+		owner->setFrame(1);
+		owner->setPosition(Common::Point(owner->_position.x - 8, owner->_position.y + 3));
+		owner->animate(ANIM_MODE_5, this);
+		break;
+	case 17:
+		setDelay(70);
+		break;
+	case 18:
+		owner->animate(ANIM_MODE_6, this);
+		break;
+	case 19:
+		setDelay(120);
+		break;
+	case 20:
+		BF_GLOBALS._sound1.changeSound(10);
+		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BAB, 1, 2, this);
+		break;
+	case 21:
+		BF_GLOBALS._scenePalette.loadPalette(2);
+		scene->loadScene(999);
+		setDelay(2);
+		break;
+	case 22:
+		scene->_sceneBounds.set(0, 0, 320, 200);
+		scene->_text.setup(BF_11_YEARS, this);
+		break;
+	case 23:
+		BF_GLOBALS._scenePalette.loadPalette(2);
+		scene->loadScene(165);
+		BF_GLOBALS._scenePalette.addFader((const byte *)&v50BC3, 1, -5, this);
+		break;
+	case 24:
+		setDelay(900);
+		break;
+	case 25:
+		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
+		break;
+	case 26:
+		BF_GLOBALS._v51C44 = 1;
+		BF_GLOBALS._sceneManager.changeScene(200);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene160::Action2::process(Event &event) {
+	if ((event.handled) || (event.eventType == 5))
+		return;
+
+	if (_actionIndex == 25) {
+		event.handled = true;
+		setDelay(1);
+	}
+}
+
+void Scene160::Action3::signal() {
+	Scene160 *scene = (Scene160 *)BF_GLOBALS._sceneManager._scene;
+
+	switch (_actionIndex++) {
+	case 0:
+		scene->_text.setup(BF_3_DAYS, this);
+		break;
+	case 1: {
+		Common::Point destPos(720, 100);
+		NpcMover *mover = new NpcMover();
+		BF_GLOBALS._player.addMover(mover, &destPos, this);
+		break;
+		}
+	case 2:
+		scene->_action1.signal();
+		scene->_action2.signal();
+		break;
+	default:
+		break;
+	}
+}
+
+Scene160::Text::Text(): SceneText() {
+	_action = NULL;
+	_frameNumber = 0;
+	_diff = 0;
+}
+
+void Scene160::Text::setup(const Common::String &msg, Action *action) {
+	_frameNumber = BF_GLOBALS._events.getFrameNumber();
+	_diff = 180;
+	_action = action;
+	_fontNumber = 4;
+	_width = 300;
+	_textMode = ALIGN_CENTER;
+	_color1 = BF_GLOBALS._scenePalette._colors.background;
+	_color2 = _color3 = 0;
+
+	SceneText::setup(msg);
+
+	// Center the text on-screen
+	reposition();
+	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Set the new position
+	_position.x = _bounds.left;
+	_position.y = _bounds.top;
+}
+
+void Scene160::Text::synchronize(Serializer &s) {
+	SceneText::synchronize(s);
+	SYNC_POINTER(_action);
+	s.syncAsUint32LE(_frameNumber);
+	s.syncAsSint16LE(_diff);
+}
+
+void Scene160::Text::dispatch() {
+	if (_diff) {
+		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
+		if (_frameNumber < frameNumber) {
+			_diff -= frameNumber - _frameNumber;
+			_frameNumber = frameNumber;
+
+			if (_diff <= 0) {
+				// Time has expired, so remove the text and signal the designated action
+				remove();
+				if (_action)
+					_action->signal();
+			}
+		}
+	}
+}
+
+void Scene160::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(160);
+	_sceneBounds.moveTo(0, 0);
+
+	BF_GLOBALS._scenePalette.loadPalette(2);
+
+	BF_GLOBALS._player.postInit();
+	BF_GLOBALS._player.setPosition(Common::Point(160, 100));
+	BF_GLOBALS._player._moveDiff.x = 15;
+	BF_GLOBALS._player.hide();
+
+	_grandma.postInit();
+	_grandma.setVisage(54);
+	_grandma.setPosition(Common::Point(712, 97));
+	_grandma.fixPriority(66);
+
+	_kid.postInit();
+	_kid.setPosition(Common::Point(732, 65));
+	_kid.setVisage(164);
+	_kid.setStrip(4);
+	_kid.fixPriority(68);
+
+	_kidBody.postInit();
+	_kidBody.setPosition(Common::Point(_kid._position.x, _kid._position.y));
+	_kidBody.setVisage(164);
+	_kidBody.setStrip(5);
+	_kidBody.fixPriority(68);
+
+	_flag.postInit();
+	_flag.setPosition(Common::Point(645, 116));
+	_flag.setVisage(161);
+	_flag.setStrip(4);
+	_flag.fixPriority(80);
+
+	_rightOfficer.postInit();
+	_rightOfficer.setVisage(161);
+	_rightOfficer.setPosition(Common::Point(_flag._position.x + 58, _flag._position.y + 11));
+	_rightOfficer.fixPriority(81);
+
+	_leftOfficer.postInit();
+	_leftOfficer.setVisage(163);
+	_leftOfficer.setPosition(Common::Point(620, 79));
+	_leftOfficer.setStrip(3);
+	_leftOfficer.fixPriority(81);
+	_leftOfficer.hide();
+
+	_rightOfficer.setAction(&_action2);
+	_grandma.setAction(&_action1);
+	setAction(&_action3);
+
+	_sceneBounds.center(BF_GLOBALS._player._position.x, BF_GLOBALS._player._position.y);
+}
+
+/*--------------------------------------------------------------------------
  * Scene 180 - Front of Home
  *
  *--------------------------------------------------------------------------*/

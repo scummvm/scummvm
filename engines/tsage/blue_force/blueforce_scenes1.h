@@ -399,6 +399,45 @@ public:
 	void postInit(SceneObjectList *OwnerList);
 };
 
+class Scene160: public SceneExt {
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+		virtual void process(Event &event);
+	};
+	class Action3: public ActionExt {
+	public:
+		virtual void signal();
+	};
+	/* Texts */
+	class Text: public SceneText {
+	public:
+		Action *_action;
+		uint32 _frameNumber;
+		int _diff;
+	public:
+		Text();
+		void setup(const Common::String &msg, Action *action);
+
+		virtual Common::String getClassName() { return "BF160Text"; }
+		virtual void synchronize(Serializer &s);
+		virtual void dispatch();
+	};
+public:
+	NamedObject _flag, _kid, _kidBody, _leftOfficer, _grandma, _rightOfficer;
+	ASound _sound1;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Text _text;
+
+	void postInit(SceneObjectList *OwnerList);
+};
+
 class Scene180: public SceneExt {
 	/* Objects */
 	class Vechile: public NamedObject {
