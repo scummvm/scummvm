@@ -50,7 +50,7 @@ public:
 
 	result Construct();
 	bool pollEvent(Common::Event &event);
-	bool isClosing() { return _state == ClosingState; }
+	bool isClosing() { return _state == kClosingState; }
 	void pushKey(Common::KeyCode keycode);
 	void exitSystem();
 
@@ -100,9 +100,9 @@ private:
 	Osp::Base::Runtime::Thread *_gameThread;
 	Osp::Base::Runtime::Mutex *_eventQueueLock;
 	Common::Queue<Common::Event> _eventQueue;
-	enum {InitState, ActiveState, ClosingState, DoneState, ErrorState} _state;
-	enum {LeftButton, RightButtonOnce, RightButton, MoveOnly} _buttonState;
-	enum {ControlMouse, EscapeKey, GameMenu, ShowKeypad, SetVolume} _shortcut;
+	enum { kInitState, kActiveState, kClosingState, kDoneState, kErrorState } _state;
+	enum { kLeftButton, kRightButtonOnce, kRightButton, kMoveOnly } _buttonState;
+	enum { kControlMouse, kEscapeKey, kGameMenu, kShowKeypad, kSetVolume } _shortcut;
 };
 
 #endif
