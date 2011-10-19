@@ -86,12 +86,14 @@ void Scene200::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 1:
-		owner->setPosition(owner->_position);
+		owner->setPosition(owner->_position, 0);
 		owner->animate(ANIM_MODE_5, this);
 		break;
 	case 2:
-		owner->setPosition(owner->_position);
+		owner->setPosition(owner->_position, 1000);
 		owner->setFrame(1);
+		_actionIndex = 0;
+		setDelay(1);
 		break;
 	default:
 		break;
