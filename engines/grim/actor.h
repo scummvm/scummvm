@@ -450,7 +450,7 @@ public:
 	void setCollisionMode(CollisionMode mode);
 	void setCollisionScale(float scale);
 
-	bool collidesWith(Actor *actor, Math::Vector3d *vec) const;
+	bool handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const;
 
 	bool _toClean;
 

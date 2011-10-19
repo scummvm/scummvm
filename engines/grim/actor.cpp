@@ -72,7 +72,7 @@ Actor::Actor(const Common::String &actorName) :
 	_timeScale = 1.f;
 	_mustPlaceText = false;
 	_collisionMode = CollisionOff;
-	_collisionScale = 0.f;
+	_collisionScale = 1.f;
 	_puckOrient = false;
 
 	for (int i = 0; i < 5; i++) {
@@ -549,22 +549,24 @@ bool Actor::isTurning() const {
 }
 
 void Actor::moveTo(const Math::Vector3d &pos) {
-	// This is necessary for collisions in set hl to work, since
-	// Manny's collision mode isn't set.
-	if (_collisionScale == 0.f) {
-		_pos = pos;
-		return;
-	}
-
+	// The walking actor doesn't always have the collision mode set, but it must however check
+	// the collisions. E.g. the set hl doesn't set Manny's mode, but it must check for
+	// collisions with Raoul.
+	// On the other hand, it must not *set* the sphere mode, it must just use it for this call:
+	// the set xb sets Manny's collision scale as 1 and mode as Off. If you then go to set tb
+	// and talk to Doug at the photo window, Manny's mode *must be* Off, otherwise Doug will
+	// collide, miss the target point and will walk away, leaving Manny waiting for him at
+	// the window forever.
+	CollisionMode mode = _collisionMode;
 	if (_collisionMode == CollisionOff) {
-		_collisionMode = CollisionSphere;
+		mode = CollisionSphere;
 	}
 
 	Math::Vector3d v = pos - _pos;
 	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
 		Actor *a = i->_value;
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
-			collidesWith(a, &v);
+			handleCollisionWith(a, mode, &v);
 		}
 	}
 	_pos += v;
@@ -1406,7 +1408,7 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 	return dest;
 }
 
-bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
+bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const {
 	if (actor->_collisionMode == CollisionOff) {
 		return false;
 	}
@@ -1420,7 +1422,7 @@ bool Actor::collidesWith(Actor *actor, Math::Vector3d *vec) const {
 	float size1 = model1->_radius * _collisionScale;
 	float size2 = model2->_radius * actor->_collisionScale;
 
-	CollisionMode mode1 = _collisionMode;
+	CollisionMode mode1 = mode;
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
