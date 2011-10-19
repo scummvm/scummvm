@@ -309,7 +309,7 @@ void Scene900::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		scene->_field1976 = 1;
-		if (scene->_dog._action->getActionIndex() == 8)
+		if (scene->_dog._action->getActionIndex() != 8)
 			_actionIndex = 0;
 		setDelay(5);
 		break;
