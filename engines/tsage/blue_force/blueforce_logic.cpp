@@ -897,6 +897,8 @@ void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNu
 
 void PalettedScene::sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
 	byte tmpPalette[768];
+	warning("sub15E4F");
+	return;
 
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);

@@ -315,9 +315,9 @@ public:
 	NamedHotspot _item5;
 	NamedHotspot _item6;
 	NamedHotspot _item7;
-	NamedObject _object1;
-	NamedObject _object2;
-	NamedObject _object3;
+	NamedObject _crateTop;
+	NamedObject _crateWindow;
+	NamedObject _doorway;
 	Item8 _exitN;
 	Common::Point _oldCoord;
 

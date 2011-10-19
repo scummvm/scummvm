@@ -422,7 +422,7 @@ Scene900::Scene900(): PalettedScene() {
 }
 
 void Scene900::postInit(SceneObjectList *OwnerList) {
-	PalettedScene::postInit();
+	PalettedScene::postInit(OwnerList);
 	loadScene(900);
 
 	if (BF_GLOBALS._sceneManager._previousScene == 910)
@@ -1947,7 +1947,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	uint32 unk_50E94 = 0, unk_50E90 = 0;
 	uint32 unk_50E98 = 0, unk_50E9C = 0;
 
-	PalettedScene::postInit();
+	PalettedScene::postInit(OwnerList);
 	loadScene(910);
 
 	BF_GLOBALS._sound1.changeSound(99);
@@ -2806,7 +2806,7 @@ void Scene910::dispatch() {
 		}
 	}
 
-	if ((BF_GLOBALS._player._position.x > 265) && (BF_GLOBALS._player._position.y < 102) && (BF_GLOBALS._v4CEE0 == 0) && (_sceneMode == 9143)) {
+	if ((BF_GLOBALS._player._position.x > 265) && (BF_GLOBALS._player._position.y < 102) && (BF_GLOBALS._v4CEE0 != 0) && (_sceneMode != 9143)) {
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			_field2DDA = 3;
@@ -2912,14 +2912,13 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 	case CURSOR_LOOK:
 		if ((BF_GLOBALS.getFlag(fCrateOpen)) && (BF_GLOBALS._player._visage == 921)) {
 			BF_GLOBALS._player.disableControl();
-			scene->_object2.postInit();
-
-	scene->_sceneMode = 9204;
+			scene->_crateWindow.postInit();
+			scene->_sceneMode = 9204;
 			if (!BF_GLOBALS.getFlag(fGotPointsForBoots)) {
 				BF_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fGotPointsForBoots);
 			}
-			scene->setAction(&scene->_sequenceManager1, scene, 9204, &BF_GLOBALS._player, &scene->_object2, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 9204, &BF_GLOBALS._player, &scene->_crateWindow, NULL);
 			return true;
 		} else
 			return NamedHotspot::startAction(action, event);
@@ -2933,7 +2932,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_sequenceManager1, scene, 9207, &BF_GLOBALS._player, NULL);
 				} else {
 					scene->_sceneMode = 9203;
-					scene->setAction(&scene->_sequenceManager1, scene, 9203, &BF_GLOBALS._player, &scene->_object1, NULL);
+					scene->setAction(&scene->_sequenceManager1, scene, 9203, &BF_GLOBALS._player, &scene->_crateTop, NULL);
 					BF_GLOBALS.clearFlag(fCrateOpen);
 				}
 			} else {
@@ -2942,7 +2941,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 			}
 		} else {
 			scene->_sceneMode = 9202;
-			scene->setAction(&scene->_sequenceManager1, scene, 9202, &BF_GLOBALS._player, &scene->_object1, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 9202, &BF_GLOBALS._player, &scene->_crateTop, NULL);
 			BF_GLOBALS.setFlag(fCrateOpen);
 		}
 		return true;
@@ -2984,22 +2983,23 @@ void Scene920::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._dayNumber = 4;
 	BF_GLOBALS._player.postInit();
 	if (BF_GLOBALS._v4CEC8 != 0) {
-		_object3.postInit();
-		_object3.setVisage(922);
-		_object3.setStrip(2);
-		_object3.fixPriority(1);
-		_object3.setPosition(Common::Point(145, 82));
+		_doorway.postInit();
+		_doorway.setVisage(922);
+		_doorway.setStrip(2);
+		_doorway.fixPriority(1);
+		_doorway.setPosition(Common::Point(145, 82));
 	}
 
-	_object1.postInit();
-	_object1.setVisage(922);
+	_crateTop.postInit();
+	_crateTop.setVisage(922);
 	if (BF_GLOBALS.getFlag(fCrateOpen)) {
-		_object1.setStrip(3);
-		_object1.setFrame(5);
+		_crateTop.setStrip(3);
+		_crateTop.setFrame(5);
 	}
 
-	_object1.setPosition(Common::Point(158, 107));
-	_object1.setPriority(130);
+	_crateTop.setPosition(Common::Point(158, 107));
+	_crateTop.fixPriority(130);
+
 	_exitN.setDetails(Rect(116, 12, 165, 81), 920, -1, -1, -1, 1, NULL);
 	_item6.setDetails(6, 920, 15, 16, 17, 1);
 	_item4.setDetails(5, 920, 12, 13, 14, 1);
@@ -3028,7 +3028,7 @@ void Scene920::signal() {
 		BF_GLOBALS._sceneManager.changeScene(910);
 		break;
 	case 9204:
-		_object2.remove();
+		_crateWindow.remove();
 		BF_GLOBALS.setFlag(fSawGuns);
 		BF_GLOBALS._player.enableControl();
 		break;
