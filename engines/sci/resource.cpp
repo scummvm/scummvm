@@ -2355,7 +2355,7 @@ bool ResourceManager::detectFontExtended() {
 }
 
 // detects, if SCI1.1 game uses palette merging or copying - this is supposed to only get used on SCI1.1 games
-bool ResourceManager::detectForPaletteMergingForSci11() {
+bool ResourceManager::detectPaletteMergingSci11() {
 	// Load palette 999 (default palette)
 	Resource *res = findResource(ResourceId(kResourceTypePalette, 999), false);
 

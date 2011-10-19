@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -65,7 +65,14 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	// the real merging done in earlier games. If we use the copying over, we
 	// will get issues because some views have marked all colors as being used
 	// and those will overwrite the current palette in that case
-	_useMerging = useMerging;
+	if (getSciVersion() < SCI_VERSION_1_1)
+		_useMerging = true;
+	else if (getSciVersion() == SCI_VERSION_1_1)
+		// there are some games that use inbetween SCI1.1 interpreter, so we have
+		// to detect if the current game is merging or copying
+		_useMerging = _resMan->detectPaletteMergingSci11();
+	else	// SCI32
+		_useMerging = false;
 
 	palVaryInit();
 

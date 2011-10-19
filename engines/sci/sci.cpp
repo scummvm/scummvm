@@ -609,16 +609,7 @@ void SciEngine::initGraphics() {
 	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 
-	bool paletteMerging = true;
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		// there are some games that use inbetween SCI1.1 interpreter, so we have to detect if it's merging or copying
-		if (getSciVersion() == SCI_VERSION_1_1)
-			paletteMerging = _resMan->detectForPaletteMergingForSci11();
-		else
-			paletteMerging = false;
-	}
-
-	_gfxPalette = new GfxPalette(_resMan, _gfxScreen, paletteMerging);
+	_gfxPalette = new GfxPalette(_resMan, _gfxScreen);
 	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
 	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
 

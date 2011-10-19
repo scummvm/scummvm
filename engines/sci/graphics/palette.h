@@ -36,7 +36,7 @@ class GfxScreen;
  */
 class GfxPalette : public Common::Serializable {
 public:
-	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging);
+	GfxPalette(ResourceManager *resMan, GfxScreen *screen);
 	~GfxPalette();
 
 	bool isMerging();
