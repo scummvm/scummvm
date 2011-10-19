@@ -336,6 +336,14 @@ void PictureEngine::updateInput() {
 			case Common::KEYCODE_F9:
 				loadgame("toltecs.001");
 				break;
+			case Common::KEYCODE_ESCAPE:
+				// Skip current dialog line, if a dialog is active
+				if (_screen->getTalkTextDuration() > 0) {
+					_sound->stopSpeech();
+					_screen->finishTalkTextItems();
+					_keyState.reset();	// event consumed
+				}
+				break;
 			default:
 				break;
 			}
