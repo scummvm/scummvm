@@ -1450,22 +1450,21 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 }
 
 /**
- * Used to programmatically mass set properties of the target plane
+ * Used for scene transitions, replacing (but reusing parts of) the old
+ * transition code.
  */
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
-
 	// Can be called with 7 or 8 parameters
-	// showStyle matches the style selector of the associated plane object
+	// The style defines which transition to perform. Related to the transition
+	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
-	reg_t planeObj = argv[1];
-	//argv[2]	// seconds
-	//argv[3]	// back
+	reg_t planeObj = argv[1];	// the affected plane
+	//argv[2]	// seconds that the transition lasts
+	//argv[3]	// back color to be used(?)
 	//int16 priority = argv[4].toSint16();
-	//argv[5]	// animate
+	//argv[5]	// boolean, animate or not while the transition lasts
 	//argv[6]	// refFrame
-	//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions
+	//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions (transition steps?)
 
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
@@ -1474,6 +1473,9 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 
 	// TODO: Check if the plane is in the list of planes to draw
 
+	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+	kStub(s, argc, argv);
+
 	return s->r_acc;
 }
 
@@ -1481,21 +1483,10 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
 	// are occupied by pieces already
 
-	// 6 arguments, all integers:
-	// argv[0] - subop (0 - 4). It's constantly called with 4 in Shivers 1
-	// argv[1] - view (used with view 23602 in Shivers 1)
-	// argv[2] - loop
-	// argv[3] - cel
-	// argv[4] - x (subfunction 4 only)
-	// argv[5] - y (subfunction 4 only)
-
-	// Subops:
-	// 0 - return the view
-	// 1 - return the loop
-	// 2, 3 - nop
-	// 4 - return value of pixel at x, y
-
-	switch (argv[0].toUint16()) {
+	switch (argv[0].toUint16()) {	// subops 0 - 4
+		// 0 - return the view
+		// 1 - return the loop
+		// 2, 3 - nop
 		case 4: {
 			GuiResourceId viewId = argv[1].toSint16();
 			int16 loopNo = argv[2].toSint16();
