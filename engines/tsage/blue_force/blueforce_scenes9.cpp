@@ -112,7 +112,7 @@ bool Scene900::Gate::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene900::Object2::startAction(CursorType action, Event &event) {
+bool Scene900::Door::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -124,7 +124,7 @@ bool Scene900::Object2::startAction(CursorType action, Event &event) {
 				BF_GLOBALS._player.disableControl();
 				BF_GLOBALS._walkRegions.proc2(26);
 				scene->_sceneMode = 9007;
-				scene->setAction(&scene->_sequenceManager1, scene, 9007, &BF_GLOBALS._player, &scene->_object2, this, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 9007, &BF_GLOBALS._player, &scene->_door, this, NULL);
 			}
 			return true;
 		} else
@@ -134,7 +134,7 @@ bool Scene900::Object2::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CEC0 == 2) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 9012;
-			scene->setAction(&scene->_sequenceManager1, scene, 9012, &BF_GLOBALS._player, &scene->_object2, NULL);
+			scene->setAction(&scene->_sequenceManager1, scene, 9012, &BF_GLOBALS._player, &scene->_door, NULL);
 		} else
 			SceneItem::display2(900, 5);
 		return true;
@@ -184,7 +184,7 @@ bool Scene900::Object6::startAction(CursorType action, Event &event) {
 					if (BF_GLOBALS._v4CEC0 == 0)
 						scene->_stripManager.start(9004, &BF_GLOBALS._stripProxy);
 					else {
-						if (scene->_object2._flag == 1) {
+						if (scene->_door._flag == 1) {
 							if (BF_GLOBALS._v4CEC0 == 2)
 								scene->_stripManager.start(9005, &BF_GLOBALS._stripProxy);
 							else
@@ -504,16 +504,16 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_object4.setPosition(Common::Point(866, 117));
 	}
 
-	_object2.postInit();
-	_object2.setVisage(900);
+	_door.postInit();
+	_door.setVisage(900);
 
 	if (BF_GLOBALS._v4CEC8 == 0)
-		_object2.setStrip(4);
+		_door.setStrip(4);
 	else
-		_object2.setStrip(1);
+		_door.setStrip(1);
 
-	_object2.setPosition(Common::Point(847, 45));
-	_object2._flag = 1;
+	_door.setPosition(Common::Point(847, 45));
+	_door._flag = 1;
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 880) || (BF_GLOBALS._sceneManager._previousScene != 910)) {
 		BF_GLOBALS._walkRegions.proc1(26);
@@ -542,21 +542,21 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 9000;
 		setAction(&_sequenceManager1, this, 9000, &BF_GLOBALS._player, NULL);
 	} else {
-		_object2._flag = 0;
-		_object2.setFrame(_object2.getFrameCount());
+		_door._flag = 0;
+		_door.setFrame(_door.getFrameCount());
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9002;
 		if (BF_GLOBALS.getFlag(fWithLyle)) {
 			_lyle.postInit();
 			_lyle._flags |= 0x1000;
 			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
-			setAction(&_sequenceManager1, this, 9014, &BF_GLOBALS._player, &_object2, &_lyle, NULL);
+			setAction(&_sequenceManager1, this, 9014, &BF_GLOBALS._player, &_door, &_lyle, NULL);
 		} else
-			setAction(&_sequenceManager1, this, 9002, &BF_GLOBALS._player, &_object2, NULL);
+			setAction(&_sequenceManager1, this, 9002, &BF_GLOBALS._player, &_door, NULL);
 	}
 
 	_gate.setDetails(900, 0, -1, 1, 1, 0);
-	_object2.setDetails(900, 2, -1, 5, 1, 0);
+	_door.setDetails(900, 2, -1, 5, 1, 0);
 	_item2.setDetails(Rect(0, 0, 225, 21), 666, 25, -1, -1, 1, NULL);
 	_item3.setDetails(Rect(37, 21, 324, 50), 666, 26, -1, -1, 1, NULL);
 	_item1.setDetails(Rect(0, 0, 960, 200), 900, 7, -1, -1, 1, NULL);
@@ -579,7 +579,7 @@ void Scene900::signal() {
 		break;
 	case 9001:
 		if ((BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900) || (BF_GLOBALS._v4CEC0 != 0) ||
-				(_object2._flag == 0))
+				(_door._flag == 0))
 			BF_GLOBALS.setFlag(fLeftTraceIn900);
 		else
 			BF_GLOBALS.clearFlag(fLeftTraceIn900);
@@ -640,16 +640,16 @@ void Scene900::signal() {
 		}
 		break;
 	case 9012:
-		if (_object2._flag == 0) {
+		if (_door._flag == 0) {
 			SceneItem::display2(900, 12);
-			_object2._flag = 1;
+			_door._flag = 1;
 			if ((!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
 				BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
 				BF_GLOBALS._uiElements.addScore(30);
 			}
 		} else {
 			SceneItem::display2(900, 13);
-			_object2._flag = 0;
+			_door._flag = 0;
 			if (!BF_GLOBALS.getFlag(fGotPointsForUnlockWarehouse)) {
 				BF_GLOBALS.setFlag(fGotPointsForUnlockWarehouse);
 				BF_GLOBALS._uiElements.addScore(30);

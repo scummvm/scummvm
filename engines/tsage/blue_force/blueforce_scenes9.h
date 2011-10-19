@@ -54,7 +54,7 @@ class Scene900: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObjectExt {
+	class Door: public NamedObjectExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -96,7 +96,7 @@ public:
 	SpeakerLyleHat _lyleHatSpeaker;
 	Item1 _item1;
 	Gate _gate;
-	Object2 _object2;
+	Door _door;
 	Dog _dog;
 	NamedHotspot _item2;
 	NamedHotspot _item3;
