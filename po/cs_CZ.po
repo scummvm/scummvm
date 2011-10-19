@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-10-04 20:43+0200\n"
+"POT-Creation-Date: 2011-10-19 13:42+0100\n"
 "PO-Revision-Date: 2011-10-05 18:43+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
+"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
@@ -1147,12 +1147,12 @@ msgid "~R~eturn to Launcher"
 msgstr "~N~ávrat do Spou¹tìèe"
 
 #: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
-#: engines/sci/engine/kfile.cpp:575
+#: engines/sci/engine/kfile.cpp:578
 msgid "Save game:"
 msgstr "Ulo¾it hru:"
 
 #: engines/dialogs.cpp:116 engines/scumm/dialogs.cpp:187
-#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:575
+#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:578
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1948,11 +1948,11 @@ msgstr "~H~lavní Menu"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fekt Vody Zapnut"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore game:"
 msgstr "Obnovit hru"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -1962,11 +1962,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Soubor videa '%s' nenalezen'"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:475
+#: engines/tinsel/saveload.cpp:482
 msgid "Failed to load game state from file."
 msgstr "Nelze naèíst stav hry ze souboru."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:560
 msgid "Failed to save game state to file."
 msgstr "Nelze ulo¾it stav hry do souboru."
 
@@ -2406,13 +2406,13 @@ msgstr "Doprava"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:282
+#: backends/platform/bada/form.cpp:281
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:274
+#: backends/platform/bada/form.cpp:273
 msgid "Right Click"
 msgstr "Pravé kliknutí"
 
@@ -2671,35 +2671,35 @@ msgstr "Displej"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Chcete provést automatické hledání ?"
 
-#: backends/platform/wince/wince-sdl.cpp:471
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map right click action"
 msgstr "Mapovat èinnost pravé kliknutí"
 
-#: backends/platform/wince/wince-sdl.cpp:475
+#: backends/platform/wince/wince-sdl.cpp:519
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Pravé Kliknutí', abyste tuto hru mohli "
 "hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:484
+#: backends/platform/wince/wince-sdl.cpp:528
 msgid "Map hide toolbar action"
 msgstr "Mapovat èinnost skrýt panel nástrojù"
 
-#: backends/platform/wince/wince-sdl.cpp:488
+#: backends/platform/wince/wince-sdl.cpp:532
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Musíte namapovat klávesu pro èinnost 'Skrýt Panel nástrojù', abyste tuto hru "
 "mohli hrát"
 
-#: backends/platform/wince/wince-sdl.cpp:497
+#: backends/platform/wince/wince-sdl.cpp:541
 msgid "Map Zoom Up action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Nahoru (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:500
+#: backends/platform/wince/wince-sdl.cpp:544
 msgid "Map Zoom Down action (optional)"
 msgstr "Namapovat èinnost Pøiblí¾it Dolù (nepovinné)"
 
-#: backends/platform/wince/wince-sdl.cpp:508
+#: backends/platform/wince/wince-sdl.cpp:552
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
@@ -2720,19 +2720,19 @@ msgstr "Opravdu chcete skonèit?"
 
 #: backends/events/gph/gph-events.cpp:338
 #: backends/events/gph/gph-events.cpp:381
-#: backends/events/openpandora/op-events.cpp:141
+#: backends/events/openpandora/op-events.cpp:139
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Levé Kliknutí"
 
 #: backends/events/gph/gph-events.cpp:340
 #: backends/events/gph/gph-events.cpp:383
-#: backends/events/openpandora/op-events.cpp:143
+#: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Pravé Kliknutí"
 
 #: backends/events/gph/gph-events.cpp:342
 #: backends/events/gph/gph-events.cpp:385
-#: backends/events/openpandora/op-events.cpp:145
+#: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Najetí (Bez Kliknutí)"
 
@@ -2756,35 +2756,35 @@ msgstr "Sni¾uji Hlasitost"
 msgid "Check for Updates..."
 msgstr "Zkontrolovat Aktualizace..."
 
-#: backends/platform/bada/form.cpp:270
+#: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
 msgstr "Pravé kliknutí jednou"
 
-#: backends/platform/bada/form.cpp:278
+#: backends/platform/bada/form.cpp:277
 msgid "Move Only"
 msgstr "Pouze Pohyb"
 
-#: backends/platform/bada/form.cpp:292
+#: backends/platform/bada/form.cpp:291
 msgid "Escape Key"
 msgstr "Klávesa Escape"
 
-#: backends/platform/bada/form.cpp:297
+#: backends/platform/bada/form.cpp:296
 msgid "Game Menu"
 msgstr "Menu Hry"
 
-#: backends/platform/bada/form.cpp:302
+#: backends/platform/bada/form.cpp:301
 msgid "Show Keypad"
 msgstr "Zobrazit Klávesnici"
 
-#: backends/platform/bada/form.cpp:310
+#: backends/platform/bada/form.cpp:309
 msgid "Control Mouse"
 msgstr "Ovládání My¹i"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Enabled"
 msgstr "Kliknutí Povoleno"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Disabled"
 msgstr "Kliknutí Zakázáno"
 

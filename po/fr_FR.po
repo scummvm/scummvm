@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-10-04 20:43+0200\n"
+"POT-Creation-Date: 2011-10-19 13:42+0100\n"
 "PO-Revision-Date: 2011-08-22 22:27+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -1160,12 +1160,12 @@ msgid "~R~eturn to Launcher"
 msgstr "Retour au ~L~anceur"
 
 #: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
-#: engines/sci/engine/kfile.cpp:575
+#: engines/sci/engine/kfile.cpp:578
 msgid "Save game:"
 msgstr "Sauvegarde:"
 
 #: engines/dialogs.cpp:116 engines/scumm/dialogs.cpp:187
-#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:575
+#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:578
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1962,11 +1962,11 @@ msgstr "~M~enu Principal"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~ffets de l'Eau Activés"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore game:"
 msgstr "Charger le jeu:"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore"
 msgstr "Charger"
 
@@ -1976,11 +1976,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Fichier de séquence '%s' non trouvé!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:475
+#: engines/tinsel/saveload.cpp:482
 msgid "Failed to load game state from file."
 msgstr "Échec du chargement de l'état du jeu depuis le disque."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:560
 msgid "Failed to save game state to file."
 msgstr "Échec de l'enregistrement de l'état du jeu sur le disque."
 
@@ -2411,13 +2411,13 @@ msgstr "Droite"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:282
+#: backends/platform/bada/form.cpp:281
 msgid "Left Click"
 msgstr "Clic Gauche"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:274
+#: backends/platform/bada/form.cpp:273
 msgid "Right Click"
 msgstr "Clic Droit"
 
@@ -2676,35 +2676,35 @@ msgstr "Affichage"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Voulez-vous exécuter une recherche automatique?"
 
-#: backends/platform/wince/wince-sdl.cpp:471
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map right click action"
 msgstr "Affecter l'action 'Clic Droit'"
 
-#: backends/platform/wince/wince-sdl.cpp:475
+#: backends/platform/wince/wince-sdl.cpp:519
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Vous devez affecter une touche à l'action de 'Clic Droit' pour pouvoir jouer "
 "à ce jeu"
 
-#: backends/platform/wince/wince-sdl.cpp:484
+#: backends/platform/wince/wince-sdl.cpp:528
 msgid "Map hide toolbar action"
 msgstr "Affecter l'action 'Cacher Bar d'Outils'"
 
-#: backends/platform/wince/wince-sdl.cpp:488
+#: backends/platform/wince/wince-sdl.cpp:532
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Vous devez affecter une touche à l'action 'Cacher Bar d'Outils' pour pouvoir "
 "jouer à ce jeu"
 
-#: backends/platform/wince/wince-sdl.cpp:497
+#: backends/platform/wince/wince-sdl.cpp:541
 msgid "Map Zoom Up action (optional)"
 msgstr "Affecter l'action 'Dézoomer' (optionnelle)"
 
-#: backends/platform/wince/wince-sdl.cpp:500
+#: backends/platform/wince/wince-sdl.cpp:544
 msgid "Map Zoom Down action (optional)"
 msgstr "Affecter l'action 'Zoomer' (optionnelle)"
 
-#: backends/platform/wince/wince-sdl.cpp:508
+#: backends/platform/wince/wince-sdl.cpp:552
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
@@ -2725,19 +2725,19 @@ msgstr "Voulez-vous vraiment quitter?"
 
 #: backends/events/gph/gph-events.cpp:338
 #: backends/events/gph/gph-events.cpp:381
-#: backends/events/openpandora/op-events.cpp:141
+#: backends/events/openpandora/op-events.cpp:139
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:340
 #: backends/events/gph/gph-events.cpp:383
-#: backends/events/openpandora/op-events.cpp:143
+#: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr ""
 
 #: backends/events/gph/gph-events.cpp:342
 #: backends/events/gph/gph-events.cpp:385
-#: backends/events/openpandora/op-events.cpp:145
+#: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr ""
 
@@ -2761,39 +2761,39 @@ msgstr "Diminution Volume"
 msgid "Check for Updates..."
 msgstr "Recherche des mises à jour..."
 
-#: backends/platform/bada/form.cpp:270
+#: backends/platform/bada/form.cpp:269
 #, fuzzy
 msgid "Right Click Once"
 msgstr "Clic Droit"
 
-#: backends/platform/bada/form.cpp:278
+#: backends/platform/bada/form.cpp:277
 #, fuzzy
 msgid "Move Only"
 msgstr "Voix"
 
-#: backends/platform/bada/form.cpp:292
+#: backends/platform/bada/form.cpp:291
 msgid "Escape Key"
 msgstr ""
 
-#: backends/platform/bada/form.cpp:297
+#: backends/platform/bada/form.cpp:296
 #, fuzzy
 msgid "Game Menu"
 msgstr "Jeu"
 
-#: backends/platform/bada/form.cpp:302
+#: backends/platform/bada/form.cpp:301
 #, fuzzy
 msgid "Show Keypad"
 msgstr "Afficher le clavier"
 
-#: backends/platform/bada/form.cpp:310
+#: backends/platform/bada/form.cpp:309
 msgid "Control Mouse"
 msgstr ""
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Enabled"
 msgstr ""
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Disabled"
 msgstr ""
 

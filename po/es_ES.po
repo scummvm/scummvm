@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-10-16 00:06+0200\n"
+"POT-Creation-Date: 2011-10-19 13:42+0100\n"
 "PO-Revision-Date: 2011-10-15 13:40+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
@@ -1971,11 +1971,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "No se ha encontrado el vídeo '%s'"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:475
+#: engines/tinsel/saveload.cpp:482
 msgid "Failed to load game state from file."
 msgstr "Fallo al cargar el estado del juego desde el archivo."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:560
 msgid "Failed to save game state to file."
 msgstr "Fallo al guardar el estado del juego en el archivo."
 
@@ -2417,13 +2417,13 @@ msgstr "Derecha"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:282
+#: backends/platform/bada/form.cpp:281
 msgid "Left Click"
 msgstr "Clic izquierdo"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:274
+#: backends/platform/bada/form.cpp:273
 msgid "Right Click"
 msgstr "Clic derecho"
 
@@ -2682,34 +2682,34 @@ msgstr "Pantalla"
 msgid "Do you want to perform an automatic scan ?"
 msgstr "¿Quieres realizar una búsqueda automática?"
 
-#: backends/platform/wince/wince-sdl.cpp:471
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map right click action"
 msgstr "Asignar acción 'Clic derecho'"
 
-#: backends/platform/wince/wince-sdl.cpp:475
+#: backends/platform/wince/wince-sdl.cpp:519
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Debes asignar una tecla a la acción 'Clic derecho' para jugar a este juego"
 
-#: backends/platform/wince/wince-sdl.cpp:484
+#: backends/platform/wince/wince-sdl.cpp:528
 msgid "Map hide toolbar action"
 msgstr "Asignar acción 'Ocultar barra de tareas'"
 
-#: backends/platform/wince/wince-sdl.cpp:488
+#: backends/platform/wince/wince-sdl.cpp:532
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Debes asignar una tecla a la acción 'Ocultar barra de tareas' para jugar a "
 "este juego"
 
-#: backends/platform/wince/wince-sdl.cpp:497
+#: backends/platform/wince/wince-sdl.cpp:541
 msgid "Map Zoom Up action (optional)"
 msgstr "Asignar acción 'Zoom' (opcional)"
 
-#: backends/platform/wince/wince-sdl.cpp:500
+#: backends/platform/wince/wince-sdl.cpp:544
 msgid "Map Zoom Down action (optional)"
 msgstr "Asignar acción 'Disminuir zoom' (opcional)"
 
-#: backends/platform/wince/wince-sdl.cpp:508
+#: backends/platform/wince/wince-sdl.cpp:552
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
@@ -2766,27 +2766,27 @@ msgstr "Bajando el volumen"
 msgid "Check for Updates..."
 msgstr "Comprobando las actualizaciones..."
 
-#: backends/platform/bada/form.cpp:270
+#: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
 msgstr "Un clic derecho"
 
-#: backends/platform/bada/form.cpp:278
+#: backends/platform/bada/form.cpp:277
 msgid "Move Only"
 msgstr "Solo mover"
 
-#: backends/platform/bada/form.cpp:292
+#: backends/platform/bada/form.cpp:291
 msgid "Escape Key"
 msgstr "Tecla Escape"
 
-#: backends/platform/bada/form.cpp:297
+#: backends/platform/bada/form.cpp:296
 msgid "Game Menu"
 msgstr "Menú del juego"
 
-#: backends/platform/bada/form.cpp:302
+#: backends/platform/bada/form.cpp:301
 msgid "Show Keypad"
 msgstr "Mostrar el teclado numérico"
 
-#: backends/platform/bada/form.cpp:310
+#: backends/platform/bada/form.cpp:309
 msgid "Control Mouse"
 msgstr "Control del ratón"
 

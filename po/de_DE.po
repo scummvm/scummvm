@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2011-10-04 20:43+0200\n"
+"POT-Creation-Date: 2011-10-19 13:42+0100\n"
 "PO-Revision-Date: 2011-10-15 18:15+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
-"Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari <Lothar@Windowsbase.de> (Contributor)\n"
+"Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
+"<Lothar@Windowsbase.de> (Contributor)\n"
 "Language: Deutsch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1165,12 +1166,12 @@ msgid "~R~eturn to Launcher"
 msgstr "Zur Spiele~l~iste"
 
 #: engines/dialogs.cpp:116 engines/cruise/menu.cpp:214
-#: engines/sci/engine/kfile.cpp:575
+#: engines/sci/engine/kfile.cpp:578
 msgid "Save game:"
 msgstr "Speichern:"
 
 #: engines/dialogs.cpp:116 engines/scumm/dialogs.cpp:187
-#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:575
+#: engines/cruise/menu.cpp:214 engines/sci/engine/kfile.cpp:578
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -1971,11 +1972,11 @@ msgstr "Haupt~m~enü"
 msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore game:"
 msgstr "Spiel laden:"
 
-#: engines/sci/engine/kfile.cpp:682
+#: engines/sci/engine/kfile.cpp:685
 msgid "Restore"
 msgstr "Laden"
 
@@ -1985,11 +1986,11 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 
 #: engines/gob/inter_playtoons.cpp:256 engines/gob/inter_v2.cpp:1283
-#: engines/tinsel/saveload.cpp:475
+#: engines/tinsel/saveload.cpp:482
 msgid "Failed to load game state from file."
 msgstr "Konnte Spielstand aus Datei nicht laden."
 
-#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_v2.cpp:1353 engines/tinsel/saveload.cpp:560
 msgid "Failed to save game state to file."
 msgstr "Konnte Spielstand nicht in Datei speichern."
 
@@ -2435,13 +2436,13 @@ msgstr "Rechts"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
-#: backends/platform/bada/form.cpp:282
+#: backends/platform/bada/form.cpp:281
 msgid "Left Click"
 msgstr "Linksklick"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/bada/form.cpp:274
+#: backends/platform/bada/form.cpp:273
 msgid "Right Click"
 msgstr "Rechtsklick"
 
@@ -2700,35 +2701,35 @@ msgstr "Anzeige "
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Möchten Sie eine automatische Suche durchführen?"
 
-#: backends/platform/wince/wince-sdl.cpp:471
+#: backends/platform/wince/wince-sdl.cpp:515
 msgid "Map right click action"
 msgstr "Aktion \"Rechtsklick\" zuweisen"
 
-#: backends/platform/wince/wince-sdl.cpp:475
+#: backends/platform/wince/wince-sdl.cpp:519
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
 "Sie müssen der Aktion \"Rechtsklick\" eine Taste zuweisen, um dieses Spiel "
 "spielen zu können."
 
-#: backends/platform/wince/wince-sdl.cpp:484
+#: backends/platform/wince/wince-sdl.cpp:528
 msgid "Map hide toolbar action"
 msgstr "Aktion \"Werkzeugleiste verbergen\" zuweisen"
 
-#: backends/platform/wince/wince-sdl.cpp:488
+#: backends/platform/wince/wince-sdl.cpp:532
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
 "Sie müssen der Aktion \"Werkzeugleiste verbergen\" eine Taste zuweisen, um "
 "dieses Spiel spielen zu können."
 
-#: backends/platform/wince/wince-sdl.cpp:497
+#: backends/platform/wince/wince-sdl.cpp:541
 msgid "Map Zoom Up action (optional)"
 msgstr "Aktion \"Herauszoomen\" zuweisen (optional)"
 
-#: backends/platform/wince/wince-sdl.cpp:500
+#: backends/platform/wince/wince-sdl.cpp:544
 msgid "Map Zoom Down action (optional)"
 msgstr "Aktion \"Hineinzoomen\" zuweisen (optional)"
 
-#: backends/platform/wince/wince-sdl.cpp:508
+#: backends/platform/wince/wince-sdl.cpp:552
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
@@ -2749,19 +2750,19 @@ msgstr "Möchten Sie wirklich beenden?"
 
 #: backends/events/gph/gph-events.cpp:338
 #: backends/events/gph/gph-events.cpp:381
-#: backends/events/openpandora/op-events.cpp:141
+#: backends/events/openpandora/op-events.cpp:139
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Berührungsbildschirm-Tipp-Modus - Linksklick"
 
 #: backends/events/gph/gph-events.cpp:340
 #: backends/events/gph/gph-events.cpp:383
-#: backends/events/openpandora/op-events.cpp:143
+#: backends/events/openpandora/op-events.cpp:141
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Berührungsbildschirm-Tipp-Modus - Rechtsklick"
 
 #: backends/events/gph/gph-events.cpp:342
 #: backends/events/gph/gph-events.cpp:385
-#: backends/events/openpandora/op-events.cpp:145
+#: backends/events/openpandora/op-events.cpp:143
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Berührungsbildschirm-Tipp-Modus - schweben (kein Klick)"
 
@@ -2785,35 +2786,35 @@ msgstr "Lautstärke niedriger"
 msgid "Check for Updates..."
 msgstr "Suche nach Aktualisierungen..."
 
-#: backends/platform/bada/form.cpp:270
+#: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
 msgstr "Einmal Rechtsklick"
 
-#: backends/platform/bada/form.cpp:278
+#: backends/platform/bada/form.cpp:277
 msgid "Move Only"
 msgstr "Nur bewegen"
 
-#: backends/platform/bada/form.cpp:292
+#: backends/platform/bada/form.cpp:291
 msgid "Escape Key"
 msgstr "Escape-Taste"
 
-#: backends/platform/bada/form.cpp:297
+#: backends/platform/bada/form.cpp:296
 msgid "Game Menu"
 msgstr "Spielmenü"
 
-#: backends/platform/bada/form.cpp:302
+#: backends/platform/bada/form.cpp:301
 msgid "Show Keypad"
 msgstr "Ziffernblock zeigen"
 
-#: backends/platform/bada/form.cpp:310
+#: backends/platform/bada/form.cpp:309
 msgid "Control Mouse"
 msgstr "Maus steuern"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Enabled"
 msgstr "Klicken aktiviert"
 
-#: backends/events/maemosdl/maemosdl-events.cpp:92
+#: backends/events/maemosdl/maemosdl-events.cpp:121
 msgid "Clicking Disabled"
 msgstr "Klicken deaktiviert"
 
