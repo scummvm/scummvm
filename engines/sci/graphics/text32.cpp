@@ -116,6 +116,11 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 
 void GfxText32::drawTextBitmap(reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	// Sanity check: Check if the hunk is set. If not, either the game scripts
+	// didn't set it, or an old saved game has been loaded, where it wasn't set.
+	if (hunkId.isNull())
+		return;
+
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
 
 	if (!memoryPtr)
