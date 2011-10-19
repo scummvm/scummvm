@@ -1339,6 +1339,12 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect objRect1 = g_sci->_gfxCompare->getNSRect(argv[0]);
+	Common::Rect objRect2 = g_sci->_gfxCompare->getNSRect(argv[1]);
+	return make_reg(0, objRect1.intersects(objRect2));
+}
+
 // Tests if the coordinate is on the passed object
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();

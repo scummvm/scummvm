@@ -498,13 +498,13 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
 	// SetScroll - called by script 64909, Styler::doit()
 	// PalCycle - called by Game::newRoom. Related to RemapColors.
 	// VibrateMouse - used in QFG4
-	// ObjectIntersect - used in QFG4
 
 	// SCI2 Empty functions
 	
