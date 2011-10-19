@@ -1474,6 +1474,57 @@ void SceneMessage::clear() {
 	g_globals->_sceneManager._hasPalette = true;
 }
 
+IntroSceneText::IntroSceneText(): SceneText() {
+	_action = NULL;
+	_frameNumber = 0;
+	_diff = 0;
+}
+
+void IntroSceneText::setup(const Common::String &msg, Action *action) {
+	_frameNumber = BF_GLOBALS._events.getFrameNumber();
+	_diff = 180;
+	_action = action;
+	_fontNumber = 4;
+	_width = 300;
+	_textMode = ALIGN_CENTER;
+	_color1 = BF_GLOBALS._scenePalette._colors.background;
+	_color2 = _color3 = 0;
+
+	SceneText::setup(msg);
+
+	// Center the text on-screen
+	reposition();
+	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+
+	// Set the new position
+	_position.x = _bounds.left;
+	_position.y = _bounds.top;
+}
+
+void IntroSceneText::synchronize(Serializer &s) {
+	SceneText::synchronize(s);
+	SYNC_POINTER(_action);
+	s.syncAsUint32LE(_frameNumber);
+	s.syncAsSint16LE(_diff);
+}
+
+void IntroSceneText::dispatch() {
+	if (_diff) {
+		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
+		if (_frameNumber < frameNumber) {
+			_diff -= frameNumber - _frameNumber;
+			_frameNumber = frameNumber;
+
+			if (_diff <= 0) {
+				// Time has expired, so remove the text and signal the designated action
+				remove();
+				if (_action)
+					_action->signal();
+			}
+		}
+	}
+}
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE

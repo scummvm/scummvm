@@ -95,27 +95,13 @@ class Scene109: public PalettedScene {
 		virtual void signal();
 	};
 
-	/* Texts */
-	class Text: public SceneText {
-	public:
-		Action *_action;
-		uint32 _frameNumber;
-		int _diff;
-	public:
-		Text();
-		void setup(const Common::String &msg, Action *action);
-
-		virtual Common::String getClassName() { return "BF109Text"; }
-		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-	};
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3;
 	SequenceManager _sequenceManager4, _sequenceManager5, _sequenceManager6;
 	SequenceManager _sequenceManager7, _sequenceManager8;
 	SceneObject _object1, _object2, _protaginist2, _protaginist1, _object5;
 	SceneObject _drunk, _object7, _bartender, _object9, _object10;
-	Text _text;
+	IntroSceneText _text;
 	Action1 _action1;
 	Action _action2, _action3;
 public:
@@ -361,26 +347,12 @@ class Scene140: public SceneExt {
 	public:
 		virtual void signal();
 	};
-	/* Texts */
-	class Text: public SceneText {
-	public:
-		Action *_action;
-		uint32 _frameNumber;
-		int _diff;
-	public:
-		Text();
-		void setup(const Common::String &msg, Action *action);
-
-		virtual Common::String getClassName() { return "BF140Text"; }
-		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-	};
 public:
 	Action1 _action1;
 	ASoundExt _soundExt1;
 	NamedObject _object1;
 	NamedObject _object2;
-	Text _text;
+	IntroSceneText _text;
 	
 	void postInit(SceneObjectList *OwnerList);
 };
@@ -413,27 +385,13 @@ class Scene160: public SceneExt {
 	public:
 		virtual void signal();
 	};
-	/* Texts */
-	class Text: public SceneText {
-	public:
-		Action *_action;
-		uint32 _frameNumber;
-		int _diff;
-	public:
-		Text();
-		void setup(const Common::String &msg, Action *action);
-
-		virtual Common::String getClassName() { return "BF160Text"; }
-		virtual void synchronize(Serializer &s);
-		virtual void dispatch();
-	};
 public:
 	NamedObject _flag, _kid, _kidBody, _leftOfficer, _grandma, _rightOfficer;
 	ASound _sound1;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
-	Text _text;
+	IntroSceneText _text;
 
 	void postInit(SceneObjectList *OwnerList);
 };

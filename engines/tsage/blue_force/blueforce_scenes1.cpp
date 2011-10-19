@@ -299,59 +299,6 @@ void Scene109::Action3::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene109::Text::Text(): SceneText() {
-	_action = NULL;
-	_frameNumber = 0;
-	_diff = 0;
-}
-
-void Scene109::Text::setup(const Common::String &msg, Action *action) {
-	_frameNumber = BF_GLOBALS._events.getFrameNumber();
-	_diff = 180;
-	_action = action;
-	_fontNumber = 4;
-	_width = 300;
-	_textMode = ALIGN_CENTER;
-	_color1 = BF_GLOBALS._scenePalette._colors.background;
-	_color2 = _color3 = 0;
-
-	SceneText::setup(msg);
-
-	// Center the text on-screen
-	reposition();
-	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-
-	// Set the new position
-	_position.x = _bounds.left;
-	_position.y = _bounds.top;
-}
-
-void Scene109::Text::synchronize(Serializer &s) {
-	SceneText::synchronize(s);
-	SYNC_POINTER(_action);
-	s.syncAsUint32LE(_frameNumber);
-	s.syncAsSint16LE(_diff);
-}
-
-void Scene109::Text::dispatch() {
-	if (_diff) {
-		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (_frameNumber < frameNumber) {
-			_diff -= frameNumber - _frameNumber;
-			_frameNumber = frameNumber;
-
-			if (_diff <= 0) {
-				// Time has expired, so remove the text and signal the designated action
-				remove();
-				if (_action)
-					_action->signal();
-			}
-		}
-	}
-}
-
-/*--------------------------------------------------------------------------*/
-
 Scene109::Scene109(): PalettedScene() {
 }
 
@@ -2371,57 +2318,6 @@ void Scene140::Action1::signal() {
 	}
 }
 
-Scene140::Text::Text(): SceneText() {
-	_action = NULL;
-	_frameNumber = 0;
-	_diff = 0;
-}
-
-void Scene140::Text::setup(const Common::String &msg, Action *action) {
-	_frameNumber = BF_GLOBALS._events.getFrameNumber();
-	_diff = 180;
-	_action = action;
-	_fontNumber = 4;
-	_width = 300;
-	_textMode = ALIGN_CENTER;
-	_color1 = BF_GLOBALS._scenePalette._colors.background;
-	_color2 = _color3 = 0;
-
-	SceneText::setup(msg);
-
-	// Center the text on-screen
-	reposition();
-	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-
-	// Set the new position
-	_position.x = _bounds.left;
-	_position.y = _bounds.top;
-}
-
-void Scene140::Text::synchronize(Serializer &s) {
-	SceneText::synchronize(s);
-	SYNC_POINTER(_action);
-	s.syncAsUint32LE(_frameNumber);
-	s.syncAsSint16LE(_diff);
-}
-
-void Scene140::Text::dispatch() {
-	if (_diff) {
-		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (_frameNumber < frameNumber) {
-			_diff -= frameNumber - _frameNumber;
-			_frameNumber = frameNumber;
-
-			if (_diff <= 0) {
-				// Time has expired, so remove the text and signal the designated action
-				remove();
-				if (_action)
-					_action->signal();
-			}
-		}
-	}
-}
-
 void Scene140::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(999);
@@ -2773,57 +2669,6 @@ void Scene160::Action3::signal() {
 		break;
 	default:
 		break;
-	}
-}
-
-Scene160::Text::Text(): SceneText() {
-	_action = NULL;
-	_frameNumber = 0;
-	_diff = 0;
-}
-
-void Scene160::Text::setup(const Common::String &msg, Action *action) {
-	_frameNumber = BF_GLOBALS._events.getFrameNumber();
-	_diff = 180;
-	_action = action;
-	_fontNumber = 4;
-	_width = 300;
-	_textMode = ALIGN_CENTER;
-	_color1 = BF_GLOBALS._scenePalette._colors.background;
-	_color2 = _color3 = 0;
-
-	SceneText::setup(msg);
-
-	// Center the text on-screen
-	reposition();
-	_bounds.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-
-	// Set the new position
-	_position.x = _bounds.left;
-	_position.y = _bounds.top;
-}
-
-void Scene160::Text::synchronize(Serializer &s) {
-	SceneText::synchronize(s);
-	SYNC_POINTER(_action);
-	s.syncAsUint32LE(_frameNumber);
-	s.syncAsSint16LE(_diff);
-}
-
-void Scene160::Text::dispatch() {
-	if (_diff) {
-		uint32 frameNumber = BF_GLOBALS._events.getFrameNumber();
-		if (_frameNumber < frameNumber) {
-			_diff -= frameNumber - _frameNumber;
-			_frameNumber = frameNumber;
-
-			if (_diff <= 0) {
-				// Time has expired, so remove the text and signal the designated action
-				remove();
-				if (_action)
-					_action->signal();
-			}
-		}
 	}
 }
 

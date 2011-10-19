@@ -371,6 +371,20 @@ public:
 	virtual void process(Event &event);
 };
 
+class IntroSceneText: public SceneText {
+public:
+	Action *_action;
+	uint32 _frameNumber;
+	int _diff;
+public:
+	IntroSceneText();
+	void setup(const Common::String &msg, Action *action);
+
+	virtual Common::String getClassName() { return "BFIntroText"; }
+	virtual void synchronize(Serializer &s);
+	virtual void dispatch();
+};
+
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
