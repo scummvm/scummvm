@@ -327,7 +327,9 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 
 	for (int i = 1; i < 255; i++) {
 		if (newPalette->colors[i].used) {
-			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) ||
+				(newPalette->colors[i].g != destPalette->colors[i].g) ||
+				(newPalette->colors[i].b != destPalette->colors[i].b)) {
 				destPalette->colors[i].r = newPalette->colors[i].r;
 				destPalette->colors[i].g = newPalette->colors[i].g;
 				destPalette->colors[i].b = newPalette->colors[i].b;
@@ -354,7 +356,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
-			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) ||
+				(newPalette->colors[i].g != _sysPalette.colors[i].g) ||
+				(newPalette->colors[i].b != _sysPalette.colors[i].b)) {
 				_sysPalette.colors[i].r = newPalette->colors[i].r;
 				_sysPalette.colors[i].g = newPalette->colors[i].g;
 				_sysPalette.colors[i].b = newPalette->colors[i].b;
@@ -367,7 +371,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) &&
+			(_sysPalette.colors[i].g == newPalette->colors[i].g) &&
+			(_sysPalette.colors[i].b == newPalette->colors[i].b)) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
