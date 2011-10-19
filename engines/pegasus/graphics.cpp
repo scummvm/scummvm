@@ -258,6 +258,12 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 
 	Common::Point lastOffset(0, 0);
 
+	// Store the current screen for later use
+	Graphics::Surface oldScreen;
+	Graphics::Surface *curScreen = g_system->lockScreen();
+	oldScreen.copyFrom(*curScreen);
+	g_system->unlockScreen();
+
 	// Convert to millis
 	duration = duration * 1000 / scale;
 	
@@ -297,7 +303,7 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 			}
 
 			// Now copy to the screen
-			g_system->copyRectToScreen((byte *)_workArea.getBasePtr(srcOffsetX, srcOffsetY), _workArea.pitch,
+			g_system->copyRectToScreen((byte *)oldScreen.getBasePtr(srcOffsetX, srcOffsetY), oldScreen.pitch,
 					dstOffsetX, dstOffsetY, width, height);
 			g_system->updateScreen();
 
@@ -308,9 +314,11 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 	}
 
 	if (lastOffset.x != 0 || lastOffset.y != 0) {
-		g_system->copyRectToScreen((byte *)_workArea.pixels, _workArea.pitch, 0, 0, 640, 480);
+		g_system->copyRectToScreen((byte *)oldScreen.pixels, oldScreen.pitch, 0, 0, 640, 480);
 		g_system->updateScreen();
 	}
+
+	oldScreen.free();
 }
 	
 } // End of namespace Pegasus
