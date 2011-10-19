@@ -63,8 +63,8 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
 
 	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 width = planeRect.width();
-	uint16 height = planeRect.height();
+	uint16 width = planeRect.width() + 1;
+	uint16 height = planeRect.height() + 1;
 
 	// Limit rectangle dimensions, if requested
 	if (maxWidth > 0)
@@ -162,8 +162,8 @@ Common::Rect GfxText32::getPlaneRect(reg_t textObject) {
 	if (!planeObject.isNull()) {
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
-		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom)) + 1;
-		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right)) + 1;
+		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
+		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
 	}
 
 	return planeRect;
