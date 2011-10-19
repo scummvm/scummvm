@@ -57,7 +57,7 @@ bool Scene900::Item4::startAction(CursorType action, Event &event) {
 }
 
 /*--------------------------------------------------------------------------*/
-bool Scene900::Object1::startAction(CursorType action, Event &event) {
+bool Scene900::Gate::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -72,7 +72,7 @@ bool Scene900::Object1::startAction(CursorType action, Event &event) {
 				scene->setAction(&scene->_sequenceManager1, scene, 9006, &BF_GLOBALS._player, this, NULL);
 			} else {
 				BF_GLOBALS._v4CEC0 = 2;
-				if (scene->_object3._flag == false) {
+				if (scene->_dog._flag == false) {
 					BF_GLOBALS._player.setAction(&scene->_action4);
 				} else {
 					scene->_sceneMode = 9005;
@@ -143,7 +143,7 @@ bool Scene900::Object2::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene900::Object3::startAction(CursorType action, Event &event) {
+bool Scene900::Dog::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -180,7 +180,7 @@ bool Scene900::Object6::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_TALK) {
 		if (BF_GLOBALS._sceneManager._sceneLoadCount == 0) {
 			if (!_action) {
-				if (scene->_object3._flag) {
+				if (scene->_dog._flag) {
 					if (BF_GLOBALS._v4CEC0 == 0)
 						scene->_stripManager.start(9004, &BF_GLOBALS._stripProxy);
 					else {
@@ -225,25 +225,25 @@ void Scene900::Action1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if (scene->_object3._flag == 0) {
-			scene->_object3.setStrip(3);
+		if (scene->_dog._flag == 0) {
+			scene->_dog.setStrip(3);
 			if ((BF_GLOBALS._randomSource.getRandomNumber(3) == 1) || (BF_GLOBALS._player._position.x > 790) || (scene->_field1976 != 0)) {
 				Common::Point pt(864, 130);
 				NpcMover *mover = new NpcMover();
-				scene->_object3.addMover(mover, &pt, this);
+				scene->_dog.addMover(mover, &pt, this);
 			} else {
 				_actionIndex = 4;
 				Common::Point pt(775, 107);
 				NpcMover *mover = new NpcMover();
-				scene->_object3.addMover(mover, &pt, this);
+				scene->_dog.addMover(mover, &pt, this);
 			}
 		}
 		break;
 	case 1:
-		scene->_object3.setPosition(Common::Point(864, 117));
-		scene->_object3.setStrip(7);
-		scene->_object3.setFrame(1);
-		scene->_object3.animate(ANIM_MODE_5, this);
+		scene->_dog.setPosition(Common::Point(864, 117));
+		scene->_dog.setStrip(7);
+		scene->_dog.setFrame(1);
+		scene->_dog.animate(ANIM_MODE_5, this);
 		if (BF_GLOBALS._randomSource.getRandomNumber(3) == 1)
 			scene->_sound1.play(92);
 		else
@@ -252,16 +252,16 @@ void Scene900::Action1::signal() {
 			_actionIndex = 7;
 		break;
 	case 2:
-		scene->_object3.animate(ANIM_MODE_6, this);
+		scene->_dog.animate(ANIM_MODE_6, this);
 		break;
 	case 3: {
-		scene->_object3.setStrip(3);
-		scene->_object3.setPosition(Common::Point(864, 130));
-		scene->_object3.fixPriority(122);
-		scene->_object3.animate(ANIM_MODE_1, NULL);
+		scene->_dog.setStrip(3);
+		scene->_dog.setPosition(Common::Point(864, 130));
+		scene->_dog.fixPriority(122);
+		scene->_dog.animate(ANIM_MODE_1, NULL);
 		Common::Point pt(775, 107);
 		NpcMover *mover = new NpcMover();
-		scene->_object3.addMover(mover, &pt, this);
+		scene->_dog.addMover(mover, &pt, this);
 		break;
 		}
 	case 6:
@@ -271,10 +271,10 @@ void Scene900::Action1::signal() {
 		setDelay(30);
 		break;
 	case 5: {
-		scene->_object3.setStrip(4);
+		scene->_dog.setStrip(4);
 		Common::Point pt(940, 145);
 		NpcMover *mover = new NpcMover();
-		scene->_object3.addMover(mover, &pt, this);
+		scene->_dog.addMover(mover, &pt, this);
 		break;
 		}
 	case 7:
@@ -286,17 +286,17 @@ void Scene900::Action1::signal() {
 			_actionIndex = 8;
 		break;
 	case 8:
-		scene->_object3.setStrip(1);
-		scene->_object3.setFrame(7);
-		scene->_object3.animate(ANIM_MODE_6, NULL);
+		scene->_dog.setStrip(1);
+		scene->_dog.setFrame(7);
+		scene->_dog.animate(ANIM_MODE_6, NULL);
 		break;
 	case 9:
 		scene->_field1976 = 0;
-		scene->_object3._flag = 0;
+		scene->_dog._flag = 0;
 		_actionIndex = 7;
-		scene->_object3.setStrip(1);
-		scene->_object3.setFrame(1);
-		scene->_object3.animate(ANIM_MODE_5, this);
+		scene->_dog.setStrip(1);
+		scene->_dog.setFrame(1);
+		scene->_dog.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		break;
@@ -309,7 +309,7 @@ void Scene900::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		scene->_field1976 = 1;
-		if (scene->_object3._action->getActionIndex() == 8)
+		if (scene->_dog._action->getActionIndex() == 8)
 			_actionIndex = 0;
 		setDelay(5);
 		break;
@@ -319,7 +319,7 @@ void Scene900::Action2::signal() {
 		scene->_object5.setStrip(2);
 		scene->_object5.setPosition(Common::Point(-20, -20));
 		scene->_object5._moveDiff.y = 10;
-		setAction(&scene->_sequenceManager1, this, 9009, &BF_GLOBALS._player, &scene->_object5, &scene->_object3, NULL);
+		setAction(&scene->_sequenceManager1, this, 9009, &BF_GLOBALS._player, &scene->_object5, &scene->_dog, NULL);
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 900);
 		break;
 	case 2:
@@ -329,8 +329,8 @@ void Scene900::Action2::signal() {
 			BF_GLOBALS._uiElements.addScore(50);
 		}
 		SceneItem::display2(900, 10);
-		scene->_object3._flag = 1;
-		scene->_object3.fixPriority(130);
+		scene->_dog._flag = 1;
+		scene->_dog.fixPriority(130);
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -349,33 +349,33 @@ void Scene900::Action3::signal() {
 			PlayerMover *mover = new PlayerMover();
 			BF_GLOBALS._player.addMover(mover, &pt, 0);
 		}
-		if (scene->_object3._action->getActionIndex() != 7) {
+		if (scene->_dog._action->getActionIndex() != 7) {
 			_actionIndex = 0;
 		}
 		setDelay(5);
 		break;
 	case 1:
-		if (scene->_object3._strip == 3) {
+		if (scene->_dog._strip == 3) {
 			_actionIndex = 3;
 			Common::Point pt(775, 107);
 			NpcMover *mover = new NpcMover();
-			scene->_object3.addMover(mover, &pt, this);
+			scene->_dog.addMover(mover, &pt, this);
 		} else
-			scene->_object3.animate(ANIM_MODE_6, this);
+			scene->_dog.animate(ANIM_MODE_6, this);
 		break;
 	case 2: {
-		scene->_object3.setStrip(3);
-		scene->_object3.setPosition(Common::Point(864, 130));
-		scene->_object3.fixPriority(122);
-		scene->_object3.animate(ANIM_MODE_1, NULL);
+		scene->_dog.setStrip(3);
+		scene->_dog.setPosition(Common::Point(864, 130));
+		scene->_dog.fixPriority(122);
+		scene->_dog.animate(ANIM_MODE_1, NULL);
 		Common::Point pt(775, 107);
 		NpcMover *mover = new NpcMover();
-		scene->_object3.addMover(mover, &pt, this);
+		scene->_dog.addMover(mover, &pt, this);
 		break;
 		}
 	case 3:
-		scene->_object3.remove();
-		scene->_object3._flag = 1;
+		scene->_dog.remove();
+		scene->_dog._flag = 1;
 		SceneItem::display2(900, 24);
 		if (!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) {
 			BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
@@ -386,7 +386,7 @@ void Scene900::Action3::signal() {
 		break;
 	default:
 		break;
-	}
+	} 
 }
 
 void Scene900::Action4::signal() {
@@ -395,15 +395,15 @@ void Scene900::Action4::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		scene->_field1976 = 1;
-		if (scene->_object3._action->getActionIndex() != 8)
+		if (scene->_dog._action->getActionIndex() != 8)
 			_actionIndex = 0;
 		setDelay(5);
 		break;
 	case 1:
-		scene->setAction(&scene->_sequenceManager1, scene, 9005, &BF_GLOBALS._player, &scene->_object1, NULL);
+		scene->setAction(&scene->_sequenceManager1, this, 9005, &BF_GLOBALS._player, &scene->_gate, NULL);
 		break;
 	case 2:
-		scene->setAction(&scene->_sequenceManager1, scene, 9008, &BF_GLOBALS._player, &scene->_object3, NULL);
+		scene->setAction(&scene->_sequenceManager1, this, 9008, &BF_GLOBALS._player, &scene->_dog, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._deathReason = 5;
@@ -436,7 +436,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
 		BF_INVENTORY.setObjectScene(INV_HOOK, 1);
 	}
-	_object3._flag = 0;
+	_dog._flag = 0;
 	if (BF_GLOBALS._bookmark >= bFinishedWGreen) {
 		_object7.postInit();
 		_object7.fixPriority(120);
@@ -448,10 +448,10 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_sceneBounds.moveTo(640, 0);
 		BF_GLOBALS._v4CEC0 = 2;
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 900);
-		_object3._flag = 1;
+		_dog._flag = 1;
 	}
 	if (BF_INVENTORY.getObjectScene(INV_FISHING_NET) == 900)
-		_object3._flag = 1;
+		_dog._flag = 1;
 
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_jakeJacketSpeaker);
@@ -460,37 +460,37 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_item4.setDetails(Rect(0, 85, 20, 130), 900, -1, -1, -1, 1, 0);
 	BF_GLOBALS._player.postInit();
 
-	_object3.postInit();
-	_object3.setVisage(902);
-	_object3.setPosition(Common::Point(845, 135));
-	_object3.fixPriority(122);
-	_object3.setDetails(900, 8, -1, 9, 1, NULL);
+	_dog.postInit();
+	_dog.setVisage(902);
+	_dog.setPosition(Common::Point(845, 135));
+	_dog.fixPriority(122);
+	_dog.setDetails(900, 8, -1, 9, 1, NULL);
 
-	if (_object3._flag == 0) {
-		_object3.animate(ANIM_MODE_1, NULL);
-		_object3.setAction(&_action1);
+	if (_dog._flag == 0) {
+		_dog.animate(ANIM_MODE_1, NULL);
+		_dog.setAction(&_action1);
 	} else {
-		_object3.setAction(&_action1);
-		_object3.fixPriority(130);
+		_dog.setAction(&_action1);
+		_dog.fixPriority(130);
 		if (BF_GLOBALS._dayNumber == 4) {
-			_object3.setPosition(Common::Point(879, 120));
-			_object3.setStrip(2);
+			_dog.setPosition(Common::Point(879, 120));
+			_dog.setStrip(2);
 		} else {
-			_object3.setPosition(Common::Point(864, 117));
-			_object3.setStrip(6);
-			_object3.setFrame(6);
+			_dog.setPosition(Common::Point(864, 117));
+			_dog.setStrip(6);
+			_dog.setFrame(6);
 		}
 	}
 
-	_object1.postInit();
-	_object1.setVisage(900);
-	_object1.setStrip(2);
+	_gate.postInit();
+	_gate.setVisage(900);
+	_gate.setStrip(2);
 
 	if (BF_GLOBALS._v4CEC0 == 2)
-		_object1.setPosition(Common::Point(758, 127));
+		_gate.setPosition(Common::Point(758, 127));
 	else {
 		BF_GLOBALS._walkRegions.proc1(24);
-		_object1.setPosition(Common::Point(804, 132));
+		_gate.setPosition(Common::Point(804, 132));
 	}
 
 	if (BF_GLOBALS._dayNumber == 5)
@@ -555,7 +555,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager1, this, 9002, &BF_GLOBALS._player, &_object2, NULL);
 	}
 
-	_object1.setDetails(900, 0, -1, 1, 1, 0);
+	_gate.setDetails(900, 0, -1, 1, 1, 0);
 	_object2.setDetails(900, 2, -1, 5, 1, 0);
 	_item2.setDetails(Rect(0, 0, 225, 21), 666, 25, -1, -1, 1, NULL);
 	_item3.setDetails(Rect(37, 21, 324, 50), 666, 26, -1, -1, 1, NULL);
@@ -572,7 +572,7 @@ void Scene900::signal() {
 	case 3:
 		BF_GLOBALS._walkRegions.proc1(24);
 		_sceneMode = 9004;
-		setAction(&_sequenceManager1, this, 9006, &BF_GLOBALS._player, &_object1, NULL);
+		setAction(&_sequenceManager1, this, 9006, &BF_GLOBALS._player, &_gate, NULL);
 		break;
 	case 9000:
 		BF_GLOBALS._player.enableControl();
@@ -598,7 +598,7 @@ void Scene900::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9005:
-		if (_object3._flag == 0)
+		if (_dog._flag == 0)
 			BF_GLOBALS._player.setAction(&_action4);
 		else
 			BF_GLOBALS._player.enableControl();
@@ -625,11 +625,11 @@ void Scene900::signal() {
 		_sound1.play(92);
 		if (BF_GLOBALS._v4CEC0 == 2) {
 			_sceneMode = 9008;
-			setAction(&_sequenceManager1, this, 9008, &BF_GLOBALS._player, &_object3, NULL);
+			setAction(&_sequenceManager1, this, 9008, &BF_GLOBALS._player, &_dog, NULL);
 		} else {
 			BF_GLOBALS._player._strip = 7;
 			_action1.setActionIndex(9);
-			_object3.signal();
+			_dog.signal();
 			if ((!BF_GLOBALS.getFlag(fGotPointsForFreeDog)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
 				BF_GLOBALS.setFlag(fGotPointsForFreeDog);
 				BF_GLOBALS._uiElements.addScore(50);
