@@ -898,6 +898,7 @@ void ScriptInterpreter::sfLoadAddPalette() {
 void ScriptInterpreter::sfLoadScene() {
 	if (arg8(3) == 0) {
 		_vm->_sound->stopSpeech();
+		_vm->_res->purgeCache();
 		_vm->loadScene(arg16(4));
 	} else {
 		_vm->_screen->loadMouseCursor(arg16(4));

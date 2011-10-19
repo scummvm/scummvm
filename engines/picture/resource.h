@@ -70,6 +70,7 @@ public:
 	~ResourceCache();
 
 	Resource *load(uint resIndex);
+	void purgeCache();
 
 protected:
 	typedef Common::HashMap<uint, Resource*> ResourceMap;

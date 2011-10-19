@@ -92,7 +92,17 @@ ResourceCache::ResourceCache(PictureEngine *vm) : _vm(vm) {
 }
 
 ResourceCache::~ResourceCache() {
-	// TODO: Delete resources
+	purgeCache();
+}
+
+void ResourceCache::purgeCache() {
+	for (ResourceMap::iterator iter = _cache.begin(); iter != _cache.end(); ++iter) {
+		delete[] iter->_value->data;
+		delete iter->_value;
+		iter->_value = 0;
+	}
+
+	_cache.clear();
 }
 
 Resource *ResourceCache::load(uint resIndex) {
