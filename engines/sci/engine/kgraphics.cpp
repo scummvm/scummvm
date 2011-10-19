@@ -1451,7 +1451,16 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	//int16 priority = argv[4].toSint16();
 	//argv[5]	// boolean, animate or not while the transition lasts
 	//argv[6]	// refFrame
-	//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions (transition steps?)
+
+	// If the game has the pFadeArray selector, another parameter is used here,
+	// before the optional last parameter
+	/*bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
+	if (hasFadeArray) {
+		// argv[7]
+		//int16 unk7 = (argc >= 9) ? argv[8].toSint16() : 0;	// divisions (transition steps?)
+	} else {
+		//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions (transition steps?)
+	}*/
 
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
