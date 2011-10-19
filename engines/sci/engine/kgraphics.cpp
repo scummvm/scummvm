@@ -1351,24 +1351,11 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
 	uint16 illegalBits = argv[3].offset;
-	Common::Rect nsRect;
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject, true);
 
 	// we assume that x, y are local coordinates
 
-	// Get the bounding rectangle of the object
-	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
-	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
-	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
-	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
-
-	// nsRect top/left may be negative, adjust accordingly
-	Common::Rect checkRect = nsRect;
-	if (checkRect.top < 0)
-		checkRect.top = 0;
-	if (checkRect.left < 0)
-		checkRect.left = 0;
-
-	bool contained = checkRect.contains(x, y);
+	bool contained = nsRect.contains(x, y);
 	if (contained && illegalBits) {
 		// If illegalbits are set, we check the color of the pixel that got clicked on
 		//  for now, we return false if the pixel is transparent

@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text32.h"
@@ -123,14 +124,14 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	Common::Rect nsRect = getNSRect(textObject);
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
 	Common::Rect planeRect = getPlaneRect(textObject);
 	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
 	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
-	uint16 width = nsRect.width();
-	uint16 height = nsRect.height();
+	uint16 width = nsRect.width() + 1;
+	uint16 height = nsRect.height() + 1;
 
 	// Upscale the coordinates/width if the fonts are already upscaled
 	if (_screen->fontIsUpscaled()) {
@@ -161,16 +162,6 @@ Common::Rect GfxText32::getPlaneRect(reg_t textObject) {
 	}
 
 	return planeRect;
-}
-
-Common::Rect GfxText32::getNSRect(reg_t textObject) {
-	Common::Rect nsRect;
-	nsRect.top = readSelectorValue(_segMan, textObject, SELECTOR(nsTop));
-	nsRect.left = readSelectorValue(_segMan, textObject, SELECTOR(nsLeft));
-	nsRect.bottom = readSelectorValue(_segMan, textObject, SELECTOR(nsBottom)) + 1;
-	nsRect.right = readSelectorValue(_segMan, textObject, SELECTOR(nsRight)) + 1;
-
-	return nsRect;
 }
 
 int16 GfxText32::GetLongest(const char *text, int16 maxWidth, GfxFont *font) {

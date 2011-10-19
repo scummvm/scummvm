@@ -37,6 +37,7 @@
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
@@ -546,10 +547,7 @@ void GfxFrameout::kernelFrameout() {
 							continue;
 					}
 
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsBottom), nsRect.bottom);
+					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
 				int16 screenHeight = _screen->getHeight();

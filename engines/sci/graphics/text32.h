@@ -47,7 +47,6 @@ private:
 	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
 	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
 	Common::Rect getPlaneRect(reg_t textObject);
-	Common::Rect getNSRect(reg_t textObject);
 
 	SegManager *_segMan;
 	GfxCache *_cache;
