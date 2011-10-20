@@ -219,8 +219,8 @@ public:
 	virtual void loadScene(int sceneNum);
 	virtual void checkGun();
 
-	void addTimer(Timer *timer) { _timerList.add(timer); }
-	void removeTimer(Timer *timer) { _timerList.remove(timer); }
+	void addTimer(EventHandler *timer) { _timerList.add(timer); }
+	void removeTimer(EventHandler *timer) { _timerList.remove(timer); }
 	bool display(CursorType action);
 	void fadeOut();
 	void gunDisplay();

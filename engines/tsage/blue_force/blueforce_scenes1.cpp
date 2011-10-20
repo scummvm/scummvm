@@ -1260,7 +1260,7 @@ void Scene115::EventHandler1::dispatch() {
 
 	if (BF_GLOBALS._player.getRegionIndex() == 27) {
 		scene->_object1.setAction(&scene->_action5);
-		scene->removeTimer((Timer *)this);
+		scene->removeTimer(this);
 	}
 }
 
@@ -1705,7 +1705,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 			_object1.fixPriority(95);
 			BF_GLOBALS._sceneItems.push_front(&_object1);
 		}
-		addTimer((Timer *)&_eventHandler1);
+		addTimer(&_eventHandler1);
 	}
 	BF_GLOBALS._sceneItems.push_front(&_object2);
 
@@ -1716,7 +1716,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sceneItems.push_front(&_item14);
 	_item10.setDetails(Rect(0, 147, 30, 167), 115, -1, -1, -1, 1, NULL);
 	// SUB_177B8
-	addTimer((Timer *)&_item1);
+	addTimer(&_item1);
 	_item1.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
 	//
 	_item6.setDetails(Rect(107, 43, 122,  61), 115, 28, 29, 30, 1, NULL);
