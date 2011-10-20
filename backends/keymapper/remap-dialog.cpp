@@ -369,8 +369,6 @@ void RemapDialog::loadKeymap() {
 }
 
 void RemapDialog::refreshKeymap() {
-
-	debug(8, "RemapDialog::refreshKeymap");
 	int newTopAction = _scrollBar->_currentPos * _colCount;
 
 	if (newTopAction == _topAction)
