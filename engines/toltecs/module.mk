@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	menu.o \
 	microtiles.o \
 	movie.o \
+	music.o \
 	palette.o \
 	toltecs.o \
 	render.o \

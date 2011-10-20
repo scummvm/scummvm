@@ -31,6 +31,7 @@
 #include "toltecs/animation.h"
 #include "toltecs/menu.h"
 #include "toltecs/movie.h"
+#include "toltecs/music.h"
 #include "toltecs/palette.h"
 #include "toltecs/resource.h"
 #include "toltecs/script.h"
@@ -1037,17 +1038,32 @@ void ScriptInterpreter::sfStopShakeScreen() {
 }
 
 void ScriptInterpreter::sfStartSequence() {
-	// TODO
-	// DEBUG: Dump music so we know what's in there
 	int16 sequenceResIndex = arg16(3);
-	debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
-	if (sequenceResIndex >= 0)
-		_vm->_arc->dump(sequenceResIndex, "music");
+	//debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+	if (sequenceResIndex >= 0) {
+		//_vm->_arc->dump(sequenceResIndex, "music");	// DEBUG: Dump music so we know what's in there
+
+		int32 resourceSize = _vm->_arc->getResourceSize(sequenceResIndex);
+		byte *data = new byte[resourceSize];
+		_vm->_arc->openResource(sequenceResIndex);
+		_vm->_arc->read(data, resourceSize);
+		_vm->_arc->closeResource();
+
+		if (!memcmp(data, "FORM", 4)) {
+			// TODO: Looping flag
+			_vm->_musicPlayer->playXMIDI(data, resourceSize);
+		} else {
+			// TODO: Where does this occur? Are these SMF MIDI files?
+			warning("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
+		}
+
+		delete[] data;
+	}
 }
 
 void ScriptInterpreter::sfEndSequence() {
-	// TODO
-	debug("ScriptInterpreter::sfEndSequence");
+	//debug("ScriptInterpreter::sfEndSequence");
+	_vm->_musicPlayer->stopAndClear();
 }
 
 void ScriptInterpreter::sfSetSequenceVolume() {

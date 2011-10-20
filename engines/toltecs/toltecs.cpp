@@ -41,6 +41,7 @@
 #include "toltecs/animation.h"
 #include "toltecs/menu.h"
 #include "toltecs/movie.h"
+#include "toltecs/music.h"
 #include "toltecs/palette.h"
 #include "toltecs/render.h"
 #include "toltecs/resource.h"
@@ -133,6 +134,7 @@ Common::Error ToltecsEngine::run() {
 	_palette = new Palette(this);
 	_segmap = new SegmentMap(this);
 	_moviePlayer = new MoviePlayer(this);
+	_musicPlayer = new MusicPlayer();
 	_menuSystem = new MenuSystem(this);
 	
 	_sound = new Sound(this);
@@ -182,6 +184,7 @@ Common::Error ToltecsEngine::run() {
 	delete _anim;
 	delete _palette;
 	delete _segmap;
+	delete _musicPlayer;
 	delete _moviePlayer;
 	delete _menuSystem;
 	

@@ -45,6 +45,7 @@ class ArchiveReader;
 class Input;
 class MenuSystem;
 class MoviePlayer;
+class MusicPlayer;
 class Palette;
 class ResourceCache;
 class ScriptInterpreter;
@@ -134,6 +135,7 @@ public:
 	Input *_input;
 	MenuSystem *_menuSystem;
 	MoviePlayer *_moviePlayer;
+	MusicPlayer *_musicPlayer;
 	Palette *_palette;
 	ResourceCache *_res;
 	ScriptInterpreter *_script;
