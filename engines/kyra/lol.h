@@ -33,6 +33,8 @@
 
 #include "common/list.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Audio {
 class SeekableAudioStream;
 } // End of namespace Audio
@@ -296,6 +298,8 @@ struct MistOfDoomAnimData {
 	uint8 sound;
 };
 
+static const char *const kKeymapName = "lol";
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -306,6 +310,8 @@ friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
+
+	virtual void initKeymap();
 
 	Screen *screen();
 	GUI *gui() const;

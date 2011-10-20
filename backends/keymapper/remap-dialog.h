@@ -55,6 +55,7 @@ protected:
 	struct ActionWidgets {
 		GUI::StaticTextWidget *actionText;
 		GUI::ButtonWidget *keyButton;
+		GUI::ButtonWidget *clearButton;
 	};
 	struct ActionInfo {
 		Action *action;
@@ -64,6 +65,7 @@ protected:
 
 	void loadKeymap();
 	void refreshKeymap();
+	void clearMapping(uint i);
 	void startRemapping(uint i);
 	void stopRemapping();
 
