@@ -2265,9 +2265,9 @@ void Scene910::signal() {
 				NpcMover *mover = new NpcMover();
 				Common::Point destPos(22, 157);
 				_object1.addMover(mover, &destPos, NULL);
-
-				_sceneMode = 9100;
 			}
+
+			_sceneMode = 9100;
 			setAction(&_sequenceManager1, this, 9100, &BF_GLOBALS._player, NULL);
 		} else if (BF_GLOBALS._sceneManager._previousScene == 935) {
 			_sceneMode = 9146;
@@ -2790,8 +2790,9 @@ void Scene910::process(Event &event) {
 
 void Scene910::dispatch() {
 	SceneExt::dispatch();
-	if (!_action)
+	if (_action)
 		return;
+
 	if ((_sceneMode != 14) && (BF_GLOBALS._player._position.x < 30) && (BF_GLOBALS._player._position.y > 148)) {
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS._dayNumber != 5) {
