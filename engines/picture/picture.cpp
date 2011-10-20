@@ -43,6 +43,7 @@
 #include "picture/animation.h"
 #include "picture/menu.h"
 #include "picture/movie.h"
+#include "picture/music.h"
 #include "picture/palette.h"
 #include "picture/render.h"
 #include "picture/resource.h"
@@ -135,6 +136,7 @@ Common::Error PictureEngine::run() {
 	_palette = new Palette(this);
 	_segmap = new SegmentMap(this);
 	_moviePlayer = new MoviePlayer(this);
+	_musicPlayer = new MusicPlayer();
 	_menuSystem = new MenuSystem(this);
 	
 	_sound = new Sound(this);
@@ -184,6 +186,7 @@ Common::Error PictureEngine::run() {
 	delete _anim;
 	delete _palette;
 	delete _segmap;
+	delete _musicPlayer;
 	delete _moviePlayer;
 	delete _menuSystem;
 	

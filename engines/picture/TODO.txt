@@ -5,7 +5,7 @@ NOTES
 
 TODO
 ------
-- Add music support (game seems to use XMIDI, MIDI and headerless music...figure out more)
+- Finish music support (game seems to use XMIDI, MIDI and headerless music...figure out more)
 - When saving a game, save the whole screen when an animation is playing
    e.g. when playing animations (the script controlled ones, not the movies) it should save
    the whole screen when the game is saved when such an animation is running since it uses

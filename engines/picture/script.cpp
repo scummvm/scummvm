@@ -33,6 +33,7 @@
 #include "picture/animation.h"
 #include "picture/menu.h"
 #include "picture/movie.h"
+#include "picture/music.h"
 #include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/script.h"
@@ -1039,17 +1040,32 @@ void ScriptInterpreter::sfStopShakeScreen() {
 }
 
 void ScriptInterpreter::sfStartSequence() {
-	// TODO
-	// DEBUG: Dump music so we know what's in there
 	int16 sequenceResIndex = arg16(3);
-	debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
-	if (sequenceResIndex >= 0)
-		_vm->_arc->dump(sequenceResIndex, "music");
+	//debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+	if (sequenceResIndex >= 0) {
+		//_vm->_arc->dump(sequenceResIndex, "music");	// DEBUG: Dump music so we know what's in there
+
+		int32 resourceSize = _vm->_arc->getResourceSize(sequenceResIndex);
+		byte *data = new byte[resourceSize];
+		_vm->_arc->openResource(sequenceResIndex);
+		_vm->_arc->read(data, resourceSize);
+		_vm->_arc->closeResource();
+
+		if (!memcmp(data, "FORM", 4)) {
+			// TODO: Looping flag
+			_vm->_musicPlayer->playXMIDI(data, resourceSize);
+		} else {
+			// TODO: Where does this occur? Are these SMF MIDI files?
+			warning("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
+		}
+
+		delete[] data;
+	}
 }
 
 void ScriptInterpreter::sfEndSequence() {
-	// TODO
-	debug("ScriptInterpreter::sfEndSequence");
+	//debug("ScriptInterpreter::sfEndSequence");
+	_vm->_musicPlayer->stopAndClear();
 }
 
 void ScriptInterpreter::sfSetSequenceVolume() {
