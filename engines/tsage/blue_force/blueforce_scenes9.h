@@ -114,10 +114,10 @@ public:
 	int _field1976;
 
 	Scene900();
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void signal();
-	void process(Event &event);
-	void dispatch();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
 	void synchronize(Serializer &s);
 };
 
@@ -156,7 +156,7 @@ class Scene910: public PalettedScene {
 		void init(int val);
 
 	};
-	class Object10: public NamedObject {
+	class BreakerBox: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -169,7 +169,7 @@ class Scene910: public PalettedScene {
 	protected:
 		int _field90, _field92;
 	public:
-		void subEBB05(int x, int y, int arg8, int8 argA);
+		void setupBreaker(int x, int y, int mode, int8 frameNumber);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
@@ -178,7 +178,7 @@ class Scene910: public PalettedScene {
 	public:
 		void subEBD26(int x, int y, int arg8, int8 argA);
 		virtual bool startAction(CursorType action, Event &event);
-		void remove();
+		virtual void remove();
 	};
 
 	class Object25: public NamedObject {
@@ -186,25 +186,25 @@ class Scene910: public PalettedScene {
 	public:
 		void subEBBDC(int x, int y, int arg8, int argA);
 		virtual bool startAction(CursorType action, Event &event);
-		void remove();
+		virtual void remove();
 	};
 
-	class Object12: public FocusObject {
+	class BreakerBoxInset: public FocusObject {
 		Object13 _object13, _object14, _object15, _object16, _object17, _object18;
 		Object13 _object19, _object20, _object21, _object22, _object23, _object24;
 		Object25 _object25, _object26;
 	public:
 		Object13 _object27;
 		Object28 _object28;
-		Common::String getClassName() { return "Scene910_object12"; }
-		void postInit(SceneObjectList *OwnerList = NULL);
-		void remove();
+		virtual Common::String getClassName() { return "Scene910_object12"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void remove();
 	};
 
 	class Object31: public NamedObject {
 	public:
 		NamedObject _object32;
-		void remove();
+		virtual void remove();
 		virtual bool startAction(CursorType action, Event &event);
 		void subED6EA(int frame);
 	};
@@ -213,9 +213,9 @@ class Scene910: public PalettedScene {
 		Object28 _object30;
 		Object31 _object31;
 	public:
-		Common::String getClassName() { return "Scene910_object29"; }
-		void postInit(SceneObjectList *OwnerList = NULL);
-		void remove();
+		virtual Common::String getClassName() { return "Scene910_object29"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void remove();
 	};
 
 	/* Items */
@@ -266,9 +266,9 @@ public:
 	Object4 _object4;
 	NamedObject _object5,  _object6, _object7;
 	Object8 _object8,  _object9;
-	Object10 _object10;
+	BreakerBox _breakerBox;
 	Object11 _object11;
-	Object12 _object12;
+	BreakerBoxInset _breakerBoxInset;
 	FocusObject _object29;
 	NamedObject _object30, _object31, _object32;
 	Item1 _item1;
@@ -282,12 +282,12 @@ public:
 	Item17 _item17;
 	ASoundExt _sound1, _sound2;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
-	void signal();
-	void process(Event &event);
-	void dispatch();
-	void checkGun();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+	virtual void checkGun();
 	void subE82BD();
 	void subE83E1();
 };
@@ -321,10 +321,10 @@ public:
 	Item8 _exitN;
 	Common::Point _oldCoord;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void signal();
-	void process(Event &event);
-	void dispatch();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
 	void synchronize(Serializer &s);
 };
 
@@ -413,9 +413,9 @@ public:
 	int _v141A;
 	int _v141C;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void signal();
-	void dispatch();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+	virtual void dispatch();
 	void synchronize(Serializer &s);
 };
 
@@ -434,10 +434,10 @@ public:
 	Action1 _action1;
 	VisualSpeaker _visualSpeaker;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
-	void signal();
-	void dispatch();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void dispatch();
 };
 
 class Scene940: public SceneExt {
@@ -481,8 +481,8 @@ public:
 	SpeakerGameText _gameTextSpeaker1;
 	SpeakerGameText _gameTextSpeaker2;
 
-	void postInit(SceneObjectList *OwnerList = NULL);
-	void remove();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
 };
 
 } // End of namespace BlueForce

@@ -1105,32 +1105,20 @@ void Scene910::Object8::init(int val) {
 	_field90 = 0;
 }
 
-bool Scene910::Object10::startAction(CursorType action, Event &event) {
+bool Scene910::BreakerBox::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_LOOK:
 		if (BF_GLOBALS._v4CEC8 == 0)
-			SceneItem::display(910, 7, SET_WIDTH, 312,
-					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-					SET_EXT_FGCOLOR, 13, LIST_END);
+			SceneItem::display2(910, 7);
 		else
-			SceneItem::display(910, 6, SET_WIDTH, 312,
-					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-					SET_EXT_FGCOLOR, 13, LIST_END);
+			SceneItem::display2(910, 6);
 		return true;
 		break;
 	case CURSOR_USE:
 		if (scene->_object1._position.x == 115) {
-			SceneItem::display(910, 62, SET_WIDTH, 312,
-					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-					SET_EXT_FGCOLOR, 13, LIST_END);
+			SceneItem::display2(910, 62);
 			return true;
 		} else if (scene->_sceneMode != 9120) {
 			if (BF_GLOBALS._v4CEE2 == 1) {
@@ -1141,7 +1129,7 @@ bool Scene910::Object10::startAction(CursorType action, Event &event) {
 			} else {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 9102;
-				if (BF_GLOBALS.getFlag(8)) {
+				if (BF_GLOBALS.getFlag(gunDrawn)) {
 					scene->_field2DDA = 1;
 					scene->_sceneMode = 9123;
 					scene->setAction(&scene->_sequenceManager1, scene, 9123, &BF_GLOBALS._player, NULL);
@@ -1184,32 +1172,35 @@ bool Scene910::Object11::startAction(CursorType action, Event &event) {
 		return NamedObject::startAction(action, event);
 }
 
-void Scene910::Object12::postInit(SceneObjectList *OwnerList) {
+void Scene910::BreakerBoxInset::postInit(SceneObjectList *OwnerList) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	FocusObject::postInit();
 	_resNum = 910;
 	_lookLineNum = 7;
 	_useLineNum = 8;
-	BF_GLOBALS._sceneItems.addItems(this);
+	BF_GLOBALS._sceneItems.push_back(this);
 	scene->_field2DD8 = 0;
-	_object13.subEBB05(115,  44, 1, BF_GLOBALS._v4CECE[0]);
-	_object14.subEBB05(116,  63, 2, BF_GLOBALS._v4CECE[1]);
-	_object15.subEBB05(116,  69, 2, BF_GLOBALS._v4CECE[2]);
-	_object16.subEBB05(115,  76, 1, BF_GLOBALS._v4CECE[3]);
-	_object17.subEBB05(115,  95, 1, BF_GLOBALS._v4CECE[4]);
-	_object18.subEBB05(116, 114, 2, BF_GLOBALS._v4CECE[5]);
-	_object19.subEBB05(116, 120, 2, BF_GLOBALS._v4CECE[6]);
-	_object20.subEBB05(188,  45, 2, BF_GLOBALS._v4CECE[7]);
-	_object21.subEBB05(188,  51, 2, BF_GLOBALS._v4CECE[8]);
-	_object22.subEBB05(179,  59, 1, BF_GLOBALS._v4CECE[9]);
-	_object23.subEBB05(187,  78, 2, BF_GLOBALS._v4CECE[10]);
-	_object24.subEBB05(187,  84, 2, BF_GLOBALS._v4CECE[11]);
+
+	_object13.setupBreaker(115,  44, 1, BF_GLOBALS._v4CECE[0]);
+	_object14.setupBreaker(116,  63, 2, BF_GLOBALS._v4CECE[1]);
+	_object15.setupBreaker(116,  69, 2, BF_GLOBALS._v4CECE[2]);
+	_object16.setupBreaker(115,  76, 1, BF_GLOBALS._v4CECE[3]);
+	_object17.setupBreaker(115,  95, 1, BF_GLOBALS._v4CECE[4]);
+	_object18.setupBreaker(116, 114, 2, BF_GLOBALS._v4CECE[5]);
+	_object19.setupBreaker(116, 120, 2, BF_GLOBALS._v4CECE[6]);
+	_object20.setupBreaker(188,  45, 2, BF_GLOBALS._v4CECE[7]);
+	_object21.setupBreaker(188,  51, 2, BF_GLOBALS._v4CECE[8]);
+	_object22.setupBreaker(179,  59, 1, BF_GLOBALS._v4CECE[9]);
+	_object23.setupBreaker(187,  78, 2, BF_GLOBALS._v4CECE[10]);
+	_object24.setupBreaker(187,  84, 2, BF_GLOBALS._v4CECE[11]);
+/*
 	_object25.subEBBDC(178,  90, 1, BF_GLOBALS._v4CECE[12]);
 	_object26.subEBBDC(178, 108, 2, BF_GLOBALS._v4CECE[13]);
+*/
 }
 
-void Scene910::Object12::remove() {
+void Scene910::BreakerBoxInset::remove() {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	_object13.remove();
@@ -1229,14 +1220,14 @@ void Scene910::Object12::remove() {
 	_object27.remove();
 	_object28.remove();
 
-	if ((BF_GLOBALS._v4CECE[13] < 4) && (scene->_object10._frame > 1))
-		scene->_object10.animate(ANIM_MODE_6, NULL);
+	if ((BF_GLOBALS._v4CECE[13] < 4) && (scene->_breakerBox._frame > 1))
+		scene->_breakerBox.animate(ANIM_MODE_6, NULL);
 
 	FocusObject::remove();
 }
 
 bool Scene910::Object13::startAction(CursorType action, Event &event) {
-	static uint32 v50EC0 = 0, v50EBC = 0;
+	static uint32 black = 0;
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	int8 var2;
@@ -1290,7 +1281,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 					scene->_sceneMode = 0;
 					if (BF_GLOBALS._dayNumber == 5) {
 						if (BF_GLOBALS._v4CEE2 == 0) {
-							scene->_object12.remove();
+							scene->_breakerBoxInset.remove();
 							// _objectList.draw();
 							BF_GLOBALS._player.disableControl();
 							scene->_object1.setVisage(912);
@@ -1300,7 +1291,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 							scene->_sceneMode = 9129;
 							scene->setAction(&scene->_sequenceManager1, scene, 9129, &BF_GLOBALS._player, &scene->_object2, NULL);
 						} else if (BF_GLOBALS._v4CEE2 == 2) {
-							scene->_object12.remove();
+							scene->_breakerBoxInset.remove();
 							// _objectList.draw();
 							BF_GLOBALS._player.disableControl();
 							scene->_object1.setVisage(911);
@@ -1319,7 +1310,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 						BF_GLOBALS._player.setVisage(911);
 						scene->_object1.setVisage(912);
 					}
-					scene->sub15E4F((const byte *)&v50EBC, 25, 910, NULL, 0, 111, 112, 255, 0);
+					scene->transition((const byte *)&black, 25, 910, NULL, 0, 111, 112, 255, 0);
 					BF_GLOBALS._scenePalette.signalListeners();
 					// _objectList.draw();
 				} else {
@@ -1331,7 +1322,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 						BF_GLOBALS._player.disableControl();
 						BF_GLOBALS._v4CEC8 = 0;
 						scene->_sceneMode = 2;
-						scene->sub15E4F((const byte *)&v50EC0, 30, 910, scene, 0, 111, 112, 255, 0);
+						scene->transition((const byte *)&black, 30, 910, scene, 0, 111, 112, 255, 0);
 					}
 				}
 			} else
@@ -1385,19 +1376,19 @@ void Scene910::Object13::remove() {
 	SceneObject::remove();
 }
 
-void Scene910::Object13::subEBB05(int x, int y, int arg8, int8 argA) {
+void Scene910::Object13::setupBreaker(int x, int y, int mode, int8 frameNumber) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	NamedObject::postInit();
-	_field92 = arg8;
+	_field92 = mode;
 	scene->_field2DD8++;
 	_field90 = scene->_field2DD8;
 	setVisage(910);
 
-	if (arg8 == 1) {
+	if (mode == 1) {
 		setStrip(8);
-		setFrame(argA);
-	} else if (arg8 == 2) {
+		setFrame(frameNumber);
+	} else if (mode == 2) {
 		setStrip(7);
 		setFrame(5);
 	}
@@ -1434,10 +1425,10 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 			setFrame(1);
 			if (_field90 == 1) {
 				scene->_field2DD8 = 14;
-				scene->_object12._object27.subEBB05(182, 92, 2, BF_GLOBALS._v4CECE[14]);
+				scene->_breakerBoxInset._object27.setupBreaker(182, 92, 2, BF_GLOBALS._v4CECE[14]);
 			} else {
 				scene->_field2DD8 = 15;
-				scene->_object12._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
+				scene->_breakerBoxInset._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
 			}
 			SceneItem::display(910, 12, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
@@ -1451,9 +1442,9 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 			setStrip(6);
 			setFrame(3);
 			if (_field90 == 1)
-				scene->_object12._object27.remove();
+				scene->_breakerBoxInset._object27.remove();
 			else
-				scene->_object12._object28.remove();
+				scene->_breakerBoxInset._object28.remove();
 			BF_GLOBALS._v4CECE[_field90] = _field92;
 			return true;
 		case 2:
@@ -1462,10 +1453,10 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 			setFrame(1);
 			if (_field90 == 1) {
 				scene->_field2DD8 = 14;
-				scene->_object12._object27.subEBB05(182, 96, 2, BF_GLOBALS._v4CECE[14]);
+				scene->_breakerBoxInset._object27.setupBreaker(182, 96, 2, BF_GLOBALS._v4CECE[14]);
 			} else {
 				scene->_field2DD8 = 15;
-				scene->_object12._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
+				scene->_breakerBoxInset._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
 			}
 			BF_GLOBALS._v4CECE[_field90] = _field92;
 			return true;
@@ -1510,10 +1501,10 @@ void Scene910::Object25::subEBBDC(int x, int y, int arg8, int argA) {
 		setFrame(1);
 		if (_field90 == 1) {
 			scene->_field2DD8 = 14;
-			scene->_object12._object27.subEBB05(182, 96, 2, BF_GLOBALS._v4CECE[14]);
+			scene->_breakerBoxInset._object27.setupBreaker(182, 96, 2, BF_GLOBALS._v4CECE[14]);
 		} else {
 			scene->_field2DD8 = 15;
-			scene->_object12._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
+			scene->_breakerBoxInset._object28.subEBD26(178, 108, 0, BF_GLOBALS._v4CECE[15]);
 		}
 	}
 
@@ -1982,11 +1973,11 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_object6.setPosition(Common::Point(98, 34));
 	_object6.setAction(&_action1);
 
-	_object10.postInit();
-	_object10.setVisage(910);
-	_object10.setStrip(5);
-	_object10.setFrame(1);
-	_object10.setPosition(Common::Point(91, 66));
+	_breakerBox.postInit();
+	_breakerBox.setVisage(910);
+	_breakerBox.setStrip(5);
+	_breakerBox.setFrame(1);
+	_breakerBox.setPosition(Common::Point(91, 66));
 
 	_object11.postInit();
 	_object11.setVisage(910);
@@ -2013,7 +2004,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._v4CEE2 == 0)
 		_item16.setDetails(Rect(265, 18, 319, 102), 910, -1, -1, -1, 1, NULL);
 
-	_object10.setDetails(910, 6, -1, -1, 1, NULL);
+	_breakerBox.setDetails(910, 6, -1, -1, 1, NULL);
 	_item15.setDetails(Rect(0, 0, 320, 170), 910, 0, 1, 2, 1, NULL);
 	_object9.setDetails(910, 52, 53, -1, 1, NULL);
 	_object8.setDetails(910, 54, 55, -1, 1, NULL);
@@ -2163,7 +2154,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_object9.setPosition(Common::Point(135, 93));
 		_object9.setPriority(50);
 		_object9._field90 = 1;
-		_object10.setFrame(3);
+		_breakerBox.setFrame(3);
 	}
 
 	if (BF_GLOBALS._v4CECA == 2) {
@@ -2172,7 +2163,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_object8.setPosition(Common::Point(135, 93));
 		_object8.fixPriority(50);
 		_object8._field90 = 1;
-		_object10.setFrame(3);
+		_breakerBox.setFrame(3);
 	}
 
 	_object5.postInit();
@@ -2214,7 +2205,8 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene910::signal() {
-	static uint32 v50EA0 = 0, v50EA4 = 0, v50EA8 = 0,v50EAC = 0, v50EB0 = 0, v50EB4 = 0, v50EB8 = 0;
+	static uint32 black = 0;
+
 	switch (_sceneMode) {
 	case 2:
 		_sceneMode = 3;
@@ -2222,7 +2214,7 @@ void Scene910::signal() {
 		break;
 	case 3:
 		_sceneMode = 4;
-		sub15E4F((const byte *)&v50EAC, 35, 910, this, 0, 111, 112, 255, false);
+		transition((const byte *)&black, 35, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 4:
 		_sceneMode = 5;
@@ -2230,7 +2222,7 @@ void Scene910::signal() {
 		break;
 	case 5:
 		_sceneMode = 6;
-		sub15E4F((const byte *)&v50EB0, 40, 910, this, 0, 111, 112, 255, false);
+		transition((const byte *)&black, 40, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 6:
 		_sceneMode = 7;
@@ -2241,7 +2233,7 @@ void Scene910::signal() {
 		_object1.setVisage(811);
 		_object5.hide();
 		_sceneMode = 8;
-		sub15E4F((const byte *)&v50EB4, 95, 910, this, 0, 111, 112, 255, false);
+		transition((const byte *)&black, 95, 910, this, 0, 111, 112, 255, false);
 		break;
 	case 8:
 		_sceneMode = 9;
@@ -2249,7 +2241,7 @@ void Scene910::signal() {
 		break;
 	case 9:
 		_sceneMode = 0;
-		sub15E4F((const byte *)&v50EB8, 100, 910, this, 0, 111, 112, 255, false);
+		transition((const byte *)&black, 100, 910, this, 0, 111, 112, 255, false);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 10:
@@ -2260,7 +2252,7 @@ void Scene910::signal() {
 	case 11:
 		if (BF_GLOBALS._sceneManager._previousScene == 900) {
 			if (BF_GLOBALS._v4CEC8 != 0)
-				sub15E4F((const byte *)&v50EA4, 25, 910, NULL, 0, 111, 112, 255, false);
+				transition((const byte *)&black, 25, 910, NULL, 0, 111, 112, 255, false);
 			if (BF_GLOBALS.getFlag(fWithLyle)) {
 				NpcMover *mover = new NpcMover();
 				Common::Point destPos(22, 157);
@@ -2299,7 +2291,7 @@ void Scene910::signal() {
 	case 16:
 		_object1._field90 = 1;
 		_sceneMode = 10;
-		addFader((const byte *)&v50EA8, 2, this);
+		addFader((const byte *)&black, 2, this);
 		BF_GLOBALS._v4CEE2 = 1;
 		BF_GLOBALS._walkRegions.proc1(16);
 		BF_GLOBALS._walkRegions.proc1(14);
@@ -2373,16 +2365,16 @@ void Scene910::signal() {
 		BF_GLOBALS._sceneManager.changeScene(900);
 		break;
 	case 9102:
-		if ((BF_GLOBALS._v4CECE[13] < 4) && (_object10._frame == 1))
-			_object10.animate(ANIM_MODE_5, NULL);
+		if ((BF_GLOBALS._v4CECE[13] < 4) && (_breakerBox._frame == 1))
+			_breakerBox.animate(ANIM_MODE_5, NULL);
 
 		BF_GLOBALS._player.enableControl();
-		_object12.postInit();
-		_object12.setVisage(910);
-		_object12.setStrip(3);
-		_object12.setFrame(2);
-		_object12.setPosition(Common::Point(160, 130));
-		_object12.fixPriority(250);
+		_breakerBoxInset.postInit();
+		_breakerBoxInset.setVisage(910);
+		_breakerBoxInset.setStrip(3);
+		_breakerBoxInset.setFrame(1);
+		_breakerBoxInset.setPosition(Common::Point(160, 130));
+		_breakerBoxInset.fixPriority(250);
 		break;
 	case 9103:
 		BF_GLOBALS._player.enableControl();
@@ -2647,7 +2639,7 @@ void Scene910::signal() {
 		break;
 	case 9140:
 		_sceneMode = 14;
-		addFader((const byte *)&v50EA0, 2, this);
+		addFader((const byte *)&black, 2, this);
 		break;
 	case 9141:
 		BF_INVENTORY.setObjectScene(INV_22_SNUB, 1);
@@ -2712,22 +2704,24 @@ void Scene910::process(Event &event) {
 	if ((!BF_GLOBALS._player._enabled) || (event.mousePos.y >= 167))
 		return;
 
-	if (_item7._bounds.contains(event.mousePos)) {
-		GfxSurface surface = _cursorVisage.getFrame(6);
-		BF_GLOBALS._events.setCursor(surface);
-	}
-
-	if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
-		if (!_item16._bounds.contains(event.mousePos)) {
-			CursorType cursorId = BF_GLOBALS._events.getCursor();
-			BF_GLOBALS._events.setCursor(cursorId);
-		} else {
-			GfxSurface surface = _cursorVisage.getFrame(8);
+	if (!_focusObject) {
+		if (_item7._bounds.contains(event.mousePos)) {
+			GfxSurface surface = _cursorVisage.getFrame(6);
 			BF_GLOBALS._events.setCursor(surface);
+		}
+
+		if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
+			if (!_item16._bounds.contains(event.mousePos)) {
+				CursorType cursorId = BF_GLOBALS._events.getCursor();
+				BF_GLOBALS._events.setCursor(cursorId);
+			} else {
+				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NW);
+				BF_GLOBALS._events.setCursor(surface);
+			}
 		}
 	}
 
-	if (event.eventType != 1)
+	if (event.eventType != EVENT_BUTTON_DOWN)
 		return;
 
 	switch (BF_GLOBALS._events.getCursor()) {
@@ -2889,8 +2883,8 @@ void Scene910::subE83E1() {
 
 	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._v4CEE2 == 0)) {
 		// _objectList.draw();
-		if (BF_GLOBALS._sceneObjects->contains(&_object12))
-			_object12.remove();
+		if (BF_GLOBALS._sceneObjects->contains(&_breakerBoxInset))
+			_breakerBoxInset.remove();
 		if (BF_GLOBALS._sceneObjects->contains(&_object29))
 			_object29.remove();
 
@@ -3496,7 +3490,7 @@ void Scene935::Action1::signal() {
 	case 1:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		for (int i = 1; i < 21; i++)
-			scene->sub15E4F((const byte *)&v50EEA, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition((const byte *)&v50EEA, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 2:
@@ -3513,7 +3507,7 @@ void Scene935::Action1::signal() {
 	case 4:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		for (int i = 1; i < 21; i++)
-			scene->sub15E4F((const byte *)&v50F26, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition((const byte *)&v50F26, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 5:
@@ -3530,7 +3524,7 @@ void Scene935::Action1::signal() {
 	case 7:
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		for (int i = 1; i < 21; i++)
-			scene->sub15E4F((const byte *)&v50F62, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
+			scene->transition((const byte *)&v50F62, 5 * i, 935, NULL, 0, 255, 249, 255, 1);
 		setDelay(3);
 		break;
 	case 8:
