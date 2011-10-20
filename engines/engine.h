@@ -183,7 +183,7 @@ public:
 	/*
 	 * Initialize the engine-specific keymap
 	 */
-	virtual void initKeymap() {};
+	virtual void initKeymap() {}
 
 	/**
 	 * Flip mute all sound option.
