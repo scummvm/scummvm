@@ -228,12 +228,13 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Beach Path
 		return new Scene880();
 	case 900:
-		// Outside Warehouse
+		// Outside the Warehouse
 		return new Scene900();
 	case 910:
+		// Inside the Warehouse
 		return new Scene910();
 	case 920:
-		// Inside Warehouse: Secret room
+		// Inside the Warehouse: Secret room
 		return new Scene920();
 	case 930:
 		// Inside the caravan
@@ -242,6 +243,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Hidden in the wardrobe
 		return new Scene935();
 	case 940:
+		// Jail ending animation
 		return new Scene940();
 	default:
 		error("Unknown scene number - %d", sceneNumber);
