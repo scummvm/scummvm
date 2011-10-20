@@ -64,7 +64,7 @@ public:
 	/** Read a multi-bit value from the bit stream, without changing the stream's position. */
 	virtual uint32 peekBits(uint8 n) = 0;
 
-	/** Add a bit to the value x, making it an n-bit value. */
+	/** Add a bit to the value x, making it an n+1-bit value. */
 	virtual void addBit(uint32 &x, uint32 n) = 0;
 
 protected:
@@ -76,7 +76,7 @@ protected:
  * A template implementing a bit stream for different data memory layouts.
  *
  * Such a bit stream reads valueBits-wide values from the data stream and
- * gives * access to their bits, one at a time.
+ * gives access to their bits, one at a time.
  *
  * For example, a bit stream with the layout parameters 32, true, false
  * for valueBits, isLE and isMSB2LSB, reads 32bit little-endian values
@@ -174,7 +174,16 @@ public:
 		return b;
 	}
 
-	/** Read a multi-bit value from the bit stream. */
+	/**
+	 * Read a multi-bit value from the bit stream.
+	 *
+	 * The value is read as if just taken as a whole from the bitstream.
+	 *
+	 * For example:
+	 * Reading a 4-bit value from an 8-bit bitstream with the contents 01010011:
+	 * If the bitstream is MSB2LSB, the 4-bit value would be 0101.
+	 * If the bitstream is LSB2MSB, the 4-bit value would be 0011.
+	 */
 	uint32 getBits(uint8 n) {
 		if (n == 0)
 			return 0;
@@ -198,6 +207,7 @@ public:
 		return v;
 	}
 
+	/** Read a bit from the bit stream, without changing the stream's position. */
 	uint32 peekBit() {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
@@ -212,6 +222,11 @@ public:
 		return v;
 	}
 
+	/**
+	 * Read a multi-bit value from the bit stream, without changing the stream's position.
+	 *
+	 * The bit order is the same as in getBits().
+	 */
 	uint32 peekBits(uint8 n) {
 		uint32 value   = _value;
 		uint8  inValue = _inValue;
@@ -226,7 +241,17 @@ public:
 		return v;
 	}
 
-	/** Add a bit to the value x, making it an n-bit value. */
+	/**
+	 * Add a bit to the value x, making it an n+1-bit value.
+	 *
+	 * The current value is shifted and the bit is added to the
+	 * appropriate place, dependant on the stream's bitorder.
+	 *
+	 * For example:
+	 * A bit y is added to the value 00001100 with size 4.
+	 * If the stream's bitorder is MSB2LSB, the resulting value is 0001100y.
+	 * If the stream's bitorder is LSB2MSB, the resulting value is 000y1100.
+	 */
 	void addBit(uint32 &x, uint32 n) {
 		if (n >= 32)
 			error("BitStreamImpl::addBit(): Too many bits requested to be read");
