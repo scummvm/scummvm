@@ -186,6 +186,12 @@ void Scene210::Action1::signal() {
 void Scene210::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(210);
+
+// FIXME: This fixes an obvious glitch during scene transition.
+//        Shouldn't it be included in the 2 previous functions?
+	clearScreen();
+//
+
 	BF_GLOBALS._scenePalette.loadPalette(235);
 	BF_GLOBALS._scenePalette.refresh();
 
@@ -350,6 +356,11 @@ void Scene220::Action2::signal() {
 void Scene220::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(220);
+
+// FIXME: This fixes an obvious glitch during scene transition.
+//        Shouldn't it be included in the 2 previous functions?
+	clearScreen();
+//
 
 	_object2.postInit();
 	_object2.setVisage(220);
