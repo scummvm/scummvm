@@ -271,7 +271,7 @@ public:
 	BreakerBoxInset _breakerBoxInset;
 	FocusObject _object29;
 	NamedObject _object30, _object31, _object32;
-	Item1 _item1;
+	Item1 _generator;
 	Item2 _item2;
 	Item3 _item3;
 	NamedHotspot _item4,  _item5,  _item6,  _item7,  _item8;

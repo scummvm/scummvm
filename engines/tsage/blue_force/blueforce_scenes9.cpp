@@ -2013,7 +2013,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_item8.setDetails(4, 910, 25, 26, 27, 1);
 	_item6.setDetails(Rect(37, 58, 42, 67), 910, 34, 35, 36, 1, NULL);
 	_item7.setDetails(Rect(114, 53, 135, 87), 910, 37, 38, 39, 1, NULL);
-	_item1.setDetails(Rect(146, 67, 184, 93), 910, 40, 41, 42, 1, NULL);
+	_generator.setDetails(Rect(146, 67, 184, 93), 910, 40, 41, 42, 1, NULL);
 	_item9.setDetails(Rect(266, 39, 274, 70), 910, 43, 44, 45, 1, NULL);
 	_item10.setDetails(Rect(276, 27, 288, 83), 910, 46, 47, 48, 1, NULL);
 	_item11.setDetails(Rect(295, 42, 312, 87), 910, 49, 50, 51, 1, NULL);
@@ -2712,19 +2712,18 @@ void Scene910::process(Event &event) {
 		return;
 
 	if (!_focusObject) {
-		if (_item7._bounds.contains(event.mousePos)) {
-			GfxSurface surface = _cursorVisage.getFrame(6);
-			BF_GLOBALS._events.setCursor(surface);
-		}
-
-		if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
-			if (!_item16._bounds.contains(event.mousePos)) {
-				CursorType cursorId = BF_GLOBALS._events.getCursor();
-				BF_GLOBALS._events.setCursor(cursorId);
-			} else {
-				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NW);
+		if (_item17._bounds.contains(event.mousePos)) {
+				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
 				BF_GLOBALS._events.setCursor(surface);
-			}
+		} else if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		} else if (!_item16._bounds.contains(event.mousePos)) {
+			CursorType cursorId = BF_GLOBALS._events.getCursor();
+			BF_GLOBALS._events.setCursor(cursorId);
+		} else {
+			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_NW);
+			BF_GLOBALS._events.setCursor(surface);
 		}
 	}
 
@@ -2768,7 +2767,7 @@ void Scene910::process(Event &event) {
 				BF_GLOBALS._player.disableControl();
 				_field2DDC = event.mousePos.x;
 				_field2DDE = event.mousePos.y;
-				_field2DDA = 6;
+				_field2DDA = 0;
 				_sceneMode = 9123;
 				setAction(&_sequenceManager1, this, 9123, &BF_GLOBALS._player, NULL);
 			} else {
