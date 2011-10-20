@@ -354,7 +354,8 @@ void MenuSystem::clickItem(ItemID id) {
 		_running = false;
 		break;
 	case kItemIdQuit:
-		debug("kItemIdQuit");
+		_running = false;
+		_vm->quitGame();
 		break;
 	// Volumes menu
 	case kItemIdMasterUp:
