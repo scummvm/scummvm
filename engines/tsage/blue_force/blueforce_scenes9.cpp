@@ -797,7 +797,7 @@ bool Scene910::Object1::startAction(CursorType action, Event &event) {
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 9130;
-			if (BF_GLOBALS.getFlag(8))
+			if (BF_GLOBALS.getFlag(gunDrawn))
 				setAction(&scene->_sequenceManager1, scene, 9138, &BF_GLOBALS._player, &scene->_lyle, NULL);
 			else
 				setAction(&scene->_sequenceManager1, scene, 9130, &BF_GLOBALS._player, &scene->_lyle, NULL);
@@ -839,7 +839,7 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 	case 1:
 		if (BF_GLOBALS._v4CEE2 > 1) {
 			if (BF_GLOBALS._v4CEE2 != 4) {
-				if ((BF_GLOBALS.getFlag(8)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
+				if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
 					if (scene->_field2DE0 == 0) {
 						BF_GLOBALS._player.disableControl();
 						scene->_sceneMode = 9126;
@@ -860,7 +860,7 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 				return true;
 			}
 		} else {
-			if ((BF_GLOBALS.getFlag(8)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
+			if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 9125;
 				scene->setAction(&scene->_sequenceManager1, scene, 9125, &scene->_nico, NULL);
@@ -958,7 +958,7 @@ bool Scene910::Object3::startAction(CursorType action, Event &event) {
 		return true;
 		break;
 	case 1:
-		if ((BF_GLOBALS.getFlag(8)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())){
+		if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())){
 			BF_GLOBALS._player.disableControl();
 			if (BF_GLOBALS._v4CEE4 == 2) {
 				scene->_sceneMode = 9132;
@@ -1832,9 +1832,10 @@ bool Scene910::Item1::startAction(CursorType action, Event &event) {
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 9103;
-			if (BF_GLOBALS.getFlag(8))
+			if (BF_GLOBALS.getFlag(gunDrawn)) {
+				scene->_sceneMode = 9123;
 				scene->setAction(&scene->_sequenceManager1, scene, 9123, &BF_GLOBALS._player, NULL);
-			else
+			} else
 				scene->setAction(&scene->_sequenceManager1, scene, 9103, &BF_GLOBALS._player, NULL);
 		}
 		return true;
@@ -2114,7 +2115,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._walkRegions.proc1(16);
 		BF_GLOBALS._walkRegions.proc1(14);
 		BF_GLOBALS._walkRegions.proc1(10);
-		if (BF_GLOBALS.getFlag(8)) {
+		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			BF_GLOBALS._player.setVisage(1911);
 			BF_GLOBALS._player.animate(ANIM_MODE_NONE, 0, NULL);
 			BF_GLOBALS._player.setFrame(7);
