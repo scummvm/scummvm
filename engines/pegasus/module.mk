@@ -59,6 +59,12 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoriamirror.o \
 	neighborhood/mars/reactor.o \
 	neighborhood/mars/mars.o \
+	neighborhood/norad/norad.o \
+	neighborhood/norad/noradelevator.o \
+	neighborhood/norad/pressuredoor.o \
+	neighborhood/norad/pressuretracker.o \
+	neighborhood/norad/subcontrolroom.o \
+	neighborhood/norad/subplatform.o \
 	neighborhood/prehistoric/prehistoric.o \
 	neighborhood/tsa/fulltsa.o \
 	neighborhood/tsa/tinytsa.o \
