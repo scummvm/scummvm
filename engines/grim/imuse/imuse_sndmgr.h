@@ -41,10 +41,10 @@ public:
 // and it also allows Manny to get the info for Mercedes
 // Colomar, without this the game hangs at these points!
 #define IMUSE_VOLGRP_BGND   0
-#define IMUSE_VOLGRP_ACTION 1
-#define IMUSE_VOLGRP_SFX    2
+#define IMUSE_VOLGRP_SFX    1
+#define IMUSE_VOLGRP_VOICE  2
 #define IMUSE_VOLGRP_MUSIC  3
-#define IMUSE_VOLGRP_VOICE  4
+#define IMUSE_VOLGRP_ACTION 4
 
 private:
 	struct Region {
