@@ -36,6 +36,8 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Kyra {
 
 LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {

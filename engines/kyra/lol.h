@@ -33,8 +33,6 @@
 
 #include "common/list.h"
 
-#include "backends/keymapper/keymapper.h"
-
 namespace Audio {
 class SeekableAudioStream;
 } // End of namespace Audio
