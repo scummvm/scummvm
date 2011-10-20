@@ -176,6 +176,9 @@ public:
 
 	/** Read a multi-bit value from the bit stream. */
 	uint32 getBits(uint8 n) {
+		if (n == 0)
+			return 0;
+
 		if (n > 32)
 			error("BitStreamImpl::getBits(): Too many bits requested to be read");
 
@@ -225,6 +228,9 @@ public:
 
 	/** Add a bit to the value x, making it an n-bit value. */
 	void addBit(uint32 &x, uint32 n) {
+		if (n >= 32)
+			error("BitStreamImpl::addBit(): Too many bits requested to be read");
+
 		if (isMSB2LSB)
 			x = (x << 1) | getBit();
 		else
