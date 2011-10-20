@@ -105,7 +105,7 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
 		// Credits - Gun Training
 		return new Scene225();
 	case 265:
-		// Graduation Article
+		// Intro - Graduation Article
 		return new Scene265();
 	case 270:
 		// Living Room & Kitchen

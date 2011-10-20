@@ -710,7 +710,7 @@ void Scene225::remove() {
 }
 
 /*--------------------------------------------------------------------------
- * Scene 265 - Graduation Article
+ * Scene 265 - Intro - Graduation Article
  *
  *--------------------------------------------------------------------------*/
 
@@ -756,7 +756,7 @@ void Scene265::postInit(SceneObjectList *OwnerList) {
 
 void Scene265::remove() {
 	clearScreen();
-	remove();
+	SceneExt::remove();
 }
 
 /*--------------------------------------------------------------------------
