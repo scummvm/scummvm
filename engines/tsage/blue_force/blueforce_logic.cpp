@@ -895,14 +895,12 @@ void PalettedScene::add2Faders(const byte *arrBufferRGB, int step, int paletteNu
 	BF_GLOBALS._scenePalette.addFader(_palette._palette, 256, step, action);
 }
 
-void PalettedScene::sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
+void PalettedScene::transition(const byte *arrBufferRGB, int percent, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag) {
 	byte tmpPalette[768];
-	warning("sub15E4F");
-	return;
 
 	_palette.loadPalette(paletteNum);
 	_palette.loadPalette(2);
-	if (!flag) {
+	if (flag) {
 		for (int i = fromColor1; i <= fromColor2; i++) {
 			tmpPalette[(3 * i)]     = BF_GLOBALS._scenePalette._palette[(3 * i)];
 			tmpPalette[(3 * i) + 1] = BF_GLOBALS._scenePalette._palette[(3 * i) + 1];
@@ -917,9 +915,9 @@ void PalettedScene::sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum,
 	}
 
 	for (int i = toColor1; i <= toColor2; i++) {
-		tmpPalette[i] = _palette._palette[i] - ((_palette._palette[i] - arrBufferRGB[0]) * (100 - arg8)) / 100;
-		tmpPalette[i + 1] = _palette._palette[i + 1] - ((_palette._palette[i + 1] - arrBufferRGB[1]) * (100 - arg8)) / 100;
-		tmpPalette[i + 2] = _palette._palette[i + 2] - ((_palette._palette[i + 2] - arrBufferRGB[2]) * (100 - arg8)) / 100;
+		tmpPalette[i * 3] = _palette._palette[i * 3] - ((_palette._palette[i * 3] - arrBufferRGB[i * 3]) * (100 - percent)) / 100;
+		tmpPalette[i * 3 + 1] = _palette._palette[i * 3 + 1] - ((_palette._palette[i * 3 + 1] - arrBufferRGB[i * 3 + 1]) * (100 - percent)) / 100;
+		tmpPalette[i * 3 + 2] = _palette._palette[i * 3 + 2] - ((_palette._palette[i * 3 + 2] - arrBufferRGB[i * 3 + 2]) * (100 - percent)) / 100;
 	}
 
 	BF_GLOBALS._scenePalette.addFader((const byte *)tmpPalette, 256, 100, action);

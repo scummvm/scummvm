@@ -239,7 +239,7 @@ public:
 	virtual void remove();
 	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
 	void add2Faders(const byte *arrBufferRGB, int step, int paletteNum, Action *action);
-	void sub15E4F(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
+	void transition(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
 };
 
 class SceneHandlerExt: public SceneHandler {
