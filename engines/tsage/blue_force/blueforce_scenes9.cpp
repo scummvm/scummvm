@@ -1194,10 +1194,9 @@ void Scene910::BreakerBoxInset::postInit(SceneObjectList *OwnerList) {
 	_object22.setupBreaker(179,  59, 1, BF_GLOBALS._v4CECE[9]);
 	_object23.setupBreaker(187,  78, 2, BF_GLOBALS._v4CECE[10]);
 	_object24.setupBreaker(187,  84, 2, BF_GLOBALS._v4CECE[11]);
-/*
+
 	_object25.subEBBDC(178,  90, 1, BF_GLOBALS._v4CECE[12]);
 	_object26.subEBBDC(178, 108, 2, BF_GLOBALS._v4CECE[13]);
-*/
 }
 
 void Scene910::BreakerBoxInset::remove() {
@@ -1390,7 +1389,7 @@ void Scene910::Object13::setupBreaker(int x, int y, int mode, int8 frameNumber) 
 		setFrame(frameNumber);
 	} else if (mode == 2) {
 		setStrip(7);
-		setFrame(5);
+		setFrame(frameNumber + 5);
 	}
 
 	fixPriority(252);
