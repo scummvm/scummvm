@@ -112,6 +112,7 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	_anim->saveState(out);
 	_screen->saveState(out);
 
+	out->finalize();
 	delete out;
 
 }
