@@ -11,7 +11,6 @@ TODO
    the whole screen when the game is saved when such an animation is running since it uses
    delta-frames so currently, once restored, the screen is wrong. This is only observed in
    a few places.
-- Add "Quit game" functionality to the menu
 
 BUGS
 ------
