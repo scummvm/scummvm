@@ -81,6 +81,7 @@ void ArchiveReader::dump(uint resIndex, const char *prefix) {
 	Common::DumpFile o;
 	o.open(fn);
 	o.write(data, resourceSize);
+	o.finalize();
 	o.close();
 
 	delete[] data;
