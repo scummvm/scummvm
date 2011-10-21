@@ -870,7 +870,7 @@ bool Scene270::Item::startAction(CursorType action, Event &event) {
 		scene->_object2.postInit();
 		scene->_object2.hide();
 		scene->_sceneMode = 2705;
-		scene->setAction(&scene->_sequenceManager1, this, 2705, &BF_GLOBALS._player, &scene->_object2, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 2705, &BF_GLOBALS._player, &scene->_object2, NULL);
 		return true;
 	} else {
 		return NamedHotspot::startAction(action, event);
