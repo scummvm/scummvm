@@ -3666,9 +3666,11 @@ void Scene940::Action1::signal() {
 		break;
 	case 2:
 		_actionIndex = 941;
-		if (BF_GLOBALS.getFlag(fBackupAt340))
+		if (BF_GLOBALS.getFlag(fBackupAt340)) {
+			// WORKAROUND: If the player shot Nico, the alternate text was previously going off-screen
+			scene->_gameTextSpeaker1._offsetPos.y -= 10;
 			scene->_stripManager.start(9408, this);
-		else
+		} else
 			scene->_stripManager.start(9400, this);
 		break;
 	case 5:
