@@ -171,6 +171,9 @@ public:
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
+	void setGlobalKeymap(Keymap *keymap) { _globalKeymap = keymap; }
+	Keymap* getGlobalKeymap() const { return _globalKeymap; }
+
 private:
 
 	void initKeymap(Domain &domain, Keymap *keymap);
@@ -190,6 +193,7 @@ private:
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
+	Keymap *_globalKeymap;
 	HashMap<KeyState, Action*> _keysDown;
 
 };

@@ -54,7 +54,7 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0) {
+	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0), _globalKeymap(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
@@ -198,6 +198,10 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 			if (action || !mr.inherit)
 				break;
 		}
+
+		// fallback to the global keymap
+		if (!action && _globalKeymap)
+			action = _globalKeymap->getMappedAction(key);
 
 		if (action)
 			_keysDown[key] = action;
