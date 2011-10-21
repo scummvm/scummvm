@@ -1154,7 +1154,7 @@ bool Scene910::BreakerBox::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene910::Object11::startAction(CursorType action, Event &event) {
+bool Scene910::FakeWall::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == 57) {
@@ -1731,7 +1731,7 @@ void Scene910::Object28::remove() {
 	SceneObject::remove();
 }
 
-void Scene910::Object29::postInit(SceneObjectList *OwnerList) {
+void Scene910::GeneratorInset::postInit(SceneObjectList *OwnerList) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	FocusObject::postInit();
@@ -1747,7 +1747,7 @@ void Scene910::Object29::postInit(SceneObjectList *OwnerList) {
 	_object31.subED6EA(BF_GLOBALS._v4CECE[17]);
 }
 
-void Scene910::Object29::remove() {
+void Scene910::GeneratorInset::remove() {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	BF_GLOBALS._player.disableControl();
@@ -1983,20 +1983,20 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_fakeWall.setVisage(910);
 	_fakeWall.setStrip(8);
 	_fakeWall.setFrame(4);
-	_fakeWall.setPriority(48);
+	_fakeWall.fixPriority(48);
 
 	_yellowCord.init(1);
 	_yellowCord.setVisage(910);
 	_yellowCord.setStrip(6);
 	_yellowCord.setFrame(2);
-	_yellowCord.setPriority(50);
+	_yellowCord.fixPriority(50);
 
 	_blackCord.init(2);
 	_blackCord.setVisage(910);
 	_blackCord.setStrip(6);
 	_blackCord.setFrame(1);
 	_blackCord.setPosition(Common::Point(114, 149));
-	_blackCord.setPriority(246);
+	_blackCord.fixPriority(246);
 
 	if (BF_GLOBALS._dayNumber < 5)
 		_item17.setDetails(Rect(0, 149, 29, 167), 910, -1, -1, -1, 1, NULL);
@@ -2020,7 +2020,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_fakeWall.setDetails(910, 28, -1, 30, 1, NULL);
 	_item3.setDetails(7, 910, 59, 60, 61, 1);
 	_item5.setDetails(2, 910, 19, 20, 21, 1);
-	_item12.setDetails(6, 910, 28, 29, 30, 1);
+	_backWall.setDetails(6, 910, 28, 29, 30, 1);
 	_item13.setDetails(5, 910, 31, 32, 33, 1);
 	_item14.setDetails(Rect(0, 0, 320, 170), 910, 3, 4, 5, 1, NULL);
 	if (BF_GLOBALS._dayNumber == 0) {
@@ -2147,10 +2147,10 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_object7.setAction(&_action2);
 	}
 
-	if (BF_INVENTORY.getObjectScene(57) == 1)
+	if (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 1)
 		_yellowCord.setPosition(Common::Point(540, 100));
 
-	if (BF_INVENTORY.getObjectScene(59) == 1)
+	if (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == 1)
 		_blackCord.setPosition(Common::Point(540, 100));
 
 	if (BF_GLOBALS._v4CECC == 2) {
@@ -2385,12 +2385,12 @@ void Scene910::signal() {
 		break;
 	case 9103:
 		BF_GLOBALS._player.enableControl();
-		_object29.postInit();
-		_object29.setVisage(910);
-		_object29.setStrip(3);
-		_object29.setFrame(2);
-		_object29.setPosition(Common::Point(160, 130));
-		_object29.fixPriority(250);
+		_generatorInset.postInit();
+		_generatorInset.setVisage(910);
+		_generatorInset.setStrip(3);
+		_generatorInset.setFrame(2);
+		_generatorInset.setPosition(Common::Point(160, 130));
+		_generatorInset.fixPriority(250);
 		break;
 	case 9110:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCrate)) {
@@ -2891,8 +2891,8 @@ void Scene910::subE83E1() {
 		// _objectList.draw();
 		if (BF_GLOBALS._sceneObjects->contains(&_breakerBoxInset))
 			_breakerBoxInset.remove();
-		if (BF_GLOBALS._sceneObjects->contains(&_object29))
-			_object29.remove();
+		if (BF_GLOBALS._sceneObjects->contains(&_generatorInset))
+			_generatorInset.remove();
 
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9120;

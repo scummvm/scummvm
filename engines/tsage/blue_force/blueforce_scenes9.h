@@ -160,7 +160,7 @@ class Scene910: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object11: public NamedObject {
+	class FakeWall: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -209,7 +209,7 @@ class Scene910: public PalettedScene {
 		void subED6EA(int frame);
 	};
 
-	class Object29: public FocusObject {
+	class GeneratorInset: public FocusObject {
 		Object28 _object30;
 		Object31 _object31;
 	public:
@@ -267,16 +267,16 @@ public:
 	NamedObject _object5,  _vent, _object7;
 	Object8 _blackCord, _yellowCord;
 	BreakerBox _breakerBox;
-	Object11 _fakeWall;
+	FakeWall _fakeWall;
 	BreakerBoxInset _breakerBoxInset;
-	FocusObject _object29;
+	GeneratorInset _generatorInset;
 	NamedObject _object30, _object31, _object32;
 	Item1 _generator;
 	Item2 _item2;
 	Item3 _item3;
 	NamedHotspot _item4,  _item5,  _item6,  _item7,  _item8;
 	Item9 _item9, _item10;
-	NamedHotspot _item11, _item12, _item13, _item14;
+	NamedHotspot _item11, _backWall, _item13, _item14;
 	Item15 _item15;
 	Item16 _item16;
 	Item17 _item17;
