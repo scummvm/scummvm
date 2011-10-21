@@ -36,10 +36,9 @@ enum MusicFlags {
 
 class MusicPlayer : public Audio::MidiPlayer {
 public:
-	MusicPlayer();
+	MusicPlayer(bool isGM = true);
 
-	void playXMIDI(const byte *data, uint32 size, MusicFlags flags = MUSIC_NORMAL);
-	void playSMF(const byte *data, uint32 size, MusicFlags flags = MUSIC_NORMAL);
+	void playMIDI(const byte *data, uint32 size, MusicFlags flags = MUSIC_NORMAL);
 	void pause();
 	void resume();
 	void stopAndClear();

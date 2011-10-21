@@ -1053,7 +1053,7 @@ void ScriptInterpreter::sfStartSequence() {
 
 		if (!memcmp(data, "FORM", 4)) {
 			// TODO: Looping flag
-			_vm->_musicPlayer->playXMIDI(data, resourceSize);
+			_vm->_musicPlayer->playMIDI(data, resourceSize);
 		} else {
 			// TODO: Where does this occur? Are these SMF MIDI files?
 			warning("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);

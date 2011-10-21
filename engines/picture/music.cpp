@@ -28,7 +28,7 @@
 
 namespace Picture {
 
-MusicPlayer::MusicPlayer() : _isGM(false), _buffer(NULL) {
+MusicPlayer::MusicPlayer(bool isGM) : _isGM(isGM), _buffer(NULL) {
 	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
@@ -50,61 +50,27 @@ void MusicPlayer::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
-void MusicPlayer::playXMIDI(const byte *data, uint32 size, MusicFlags flags) {
+void MusicPlayer::playMIDI(const byte *data, uint32 size, MusicFlags flags) {
 	Common::StackLock lock(_mutex);
-
-	if (_isPlaying)
-		return;
 
 	stopAndClear();
 
 	_buffer = new byte[size];
 	memcpy(_buffer, data, size);
 
-	// Load XMID resource data
+	MidiParser *parser;
+	
+	if (!memcmp(data, "FORM", 4))
+		parser = MidiParser::createParser_XMIDI(NULL);
+	else
+		parser = MidiParser::createParser_SMF();
 
-	_isGM = true;
-
-	MidiParser *parser = MidiParser::createParser_XMIDI(NULL);
 	if (parser->loadMusic(_buffer, size)) {
 		parser->setTrack(0);
 		parser->setMidiDriver(this);
 		parser->setTimerRate(_driver->getBaseTempo());
 		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
-
-		_parser = parser;
-
-		setVolume(127);
-
-		_isLooping = flags & MUSIC_LOOP;
-		_isPlaying = true;
-	} else {
-		delete parser;
-	}
-}
-
-void MusicPlayer::playSMF(const byte *data, uint32 size, MusicFlags flags) {
-	Common::StackLock lock(_mutex);
-
-	if (_isPlaying)
-		return;
-
-	stopAndClear();
-
-	_buffer = new byte[size];
-	memcpy(_buffer, data, size);
-
-	// Load MIDI resource data
-
-	_isGM = true;
-
-	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(_buffer, size)) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 		_parser = parser;
 
