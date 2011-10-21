@@ -175,7 +175,7 @@ public:
 	int _v4CEB6;
 	int _safeCombination;
 	int _v4CEC0;
-	int _v4CEC2;
+	int _greenDay5TalkCtr;
 	int _v4CEC4;
 	int _v4CEC8;
 	int _v4CECA;

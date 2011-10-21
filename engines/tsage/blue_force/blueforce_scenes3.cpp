@@ -3016,7 +3016,7 @@ bool Scene355::Green::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player._regionBitList |= 0x10;
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 9985;
-			scene->setAction(&scene->_sequenceManager, scene, 3357, &BF_GLOBALS._player, this, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 3557, &BF_GLOBALS._player, this, NULL);
 		}
 		return true;
 	case CURSOR_TALK:
@@ -3026,14 +3026,14 @@ bool Scene355::Green::startAction(CursorType action, Event &event) {
 		} else if (BF_INVENTORY.getObjectScene(INV_HANDCUFFS) != 1) {
 			return false;
 		} else {
-			switch (BF_GLOBALS._v4CEC2) {
+			switch (BF_GLOBALS._greenDay5TalkCtr++) {
 			case 0:
 				scene->_stripManager.start(3565, scene);
 				break;
 			case 1:
 				scene->_stripManager.start(3567, scene);
 				break;
-			case 2:
+			default:
 				scene->_stripManager.start(3571, scene);
 				break;
 			}
@@ -3066,7 +3066,7 @@ bool Scene355::Green::startAction(CursorType action, Event &event) {
 			}
 			return true;
 		case INV_HANDCUFFS:
-			if (BF_GLOBALS._v4CEC2 <= 1)
+			if (BF_GLOBALS._greenDay5TalkCtr <= 1)
 				SceneItem::display2(355, 38);
 			else {
 				BF_GLOBALS._player.disableControl();
