@@ -847,6 +847,9 @@ void System::tick() {
 	_time = kSystemRate;
 }
 
+/**
+ * Switch greyscale mode on/off
+ */
 void CGEEngine::switchColorMode() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchColorMode()");
 
@@ -855,6 +858,9 @@ void CGEEngine::switchColorMode() {
 	_vga->setColors(_vga->_sysPal, 64);
 }
 
+/**
+ * Switch music on/off
+ */
 void CGEEngine::switchMusic() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::switchMusic()");
 
@@ -867,6 +873,9 @@ void CGEEngine::switchMusic() {
 		_midiPlayer->killMidi();
 }
 
+/**
+ * Shutdown game
+ */
 void CGEEngine::startCountDown() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::startCountDown()");
 

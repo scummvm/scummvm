@@ -126,7 +126,10 @@ int Walk::distance(Sprite *spr) {
 
 	return dz - 1;
 }
-
+/**
+ * Turn the character to a given direction
+ * @param d			  Direction
+ */
 void Walk::turn(Dir d) {
 	Dir dir = (_dir == kDirNone) ? kDirSouth : _dir;
 	if (d != _dir) {
@@ -135,6 +138,9 @@ void Walk::turn(Dir d) {
 	}
 }
 
+/**
+ * Stop the character and reset his direction
+ */
 void Walk::park() {
 	if (_time == 0)
 		_time++;

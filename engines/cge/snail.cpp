@@ -1002,7 +1002,6 @@ void CGEEngine::snSetZ(Sprite *spr, int z) {
 
 	if (spr) {
 		spr->_z = z;
-		//SNPOST_(SNZTRIM, -1, 0, spr);
 		snZTrim(spr);
 	}
 }
@@ -1098,6 +1097,11 @@ void CGEEngine::snKeep(Sprite *spr, int stp) {
 	selectPocket(-1);
 }
 
+/**
+ * Remove an object from the inventory and (if specified) trigger an animation
+ * @param spr			Inventory item
+ * @param stp			Animation
+ */
 void CGEEngine::snGive(Sprite *spr, int stp) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snGive(spr, %d)", stp);
 
@@ -1149,8 +1153,13 @@ void CGEEngine::snLevel(Sprite *spr, int lev) {
 	_maxScene = _maxSceneArr[_lev];
 }
 
-void CGEEngine::snFlag(int indx, bool v) {
-	_flag[indx] = v;
+/**
+ * Set a flag to a value
+ * @param indx			Flag index
+ * @param val			Flag value
+ */
+void CGEEngine::snFlag(int indx, bool val) {
+	_flag[indx] = val;
 }
 
 void CGEEngine::snSetRef(Sprite *spr, int nr) {
@@ -1193,12 +1202,22 @@ void CGEEngine::snLight(bool in) {
 	_dark = !in;
 }
 
+/**
+ * Set an horizontal boundary
+ * @param scene			Scene number
+ * @param barX			Horizontal boundary value
+ */
 void CGEEngine::snHBarrier(const int scene, const int barX) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snHBarrier(%d, %d)", scene, barX);
 
 	_barriers[(scene > 0) ? scene : _now]._horz = barX;
 }
 
+/**
+ * Set a vertical boundary
+ * @param scene			Scene number
+ * @param barY			Vertical boundary value
+ */
 void CGEEngine::snVBarrier(const int scene, const int barY) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::snVBarrier(%d, %d)", scene, barY);
 
