@@ -940,7 +940,7 @@ bool Scene810::Desk::startAction(CursorType action, Event &event) {
 }
 
 bool Scene810::Exit::startAction(CursorType action, Event &event) {
-	ADD_PLAYER_MOVER(event.mousePos.x, event.mousePos.y);
+	ADD_PLAYER_MOVER(event.mousePos.x + 30, event.mousePos.y);
 	return true;
 }
 
