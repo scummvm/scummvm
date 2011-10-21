@@ -68,6 +68,8 @@ public:
 	void unloadResource(int resourceHandle);
 	void freeResource(Resource *resource);
 	Common::SeekableReadStream *createStream(uint32 fileHash);
+	const ResourceFileEntry& getEntry(uint index) { return _entries[index]; }
+	uint getEntryCount() { return _entries.size(); }
 private:
 	Common::Array<BlbArchive*> _archives;
 	Common::Array<ResourceFileEntry> _entries;

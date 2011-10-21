@@ -124,6 +124,8 @@ public:
 	int16 getMouseY() const { return _mouseY; }
 	NPoint getMousePos();
 
+	void dumpAllResources();
+
 public:
 
 };

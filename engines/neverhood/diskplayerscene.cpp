@@ -179,7 +179,7 @@ uint32 Class494::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class494::sub43BE00() {
-	setFileHash1();
+	stopAnimation();
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Sprite::handleMessage);
 	_surface->setVisible(false);
@@ -189,7 +189,7 @@ void Class494::sub43BE20() {
 	setFileHash(0x100B90B4, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class494::handleMessage);
-	SetAnimationCallback3(&Class494::sub43BE00);
+	NextState(&Class494::sub43BE00);
 	_surface->setVisible(true);
 }
 

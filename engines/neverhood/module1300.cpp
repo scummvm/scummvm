@@ -324,7 +324,7 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 
 void AsScene1302Bridge::stLowerBridge() {
 	setFileHash(0x88148150, 0, -1);
-	SetAnimationCallback3(&AsScene1302Bridge::cbLowerBridgeEvent);
+	NextState(&AsScene1302Bridge::cbLowerBridgeEvent);
 	_soundResource2.play();
 }
 
@@ -618,7 +618,7 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 		break;
 	case 0x3002:
 		_soundResource.play(0x470007EE);
-		setFileHash1();
+		stopAnimation();
 		SetMessageHandler(NULL);
 		setVisible(false);
 		break;
@@ -849,7 +849,7 @@ void AsScene1306Elevator::stGoingUp() {
 	_isDown = false;
 	SetUpdateHandler(&AsScene1306Elevator::update);
 	setFileHash(0x043B0270, 0, -1);
-	SetAnimationCallback3(&AsScene1306Elevator::cbGoingUpEvent);
+	NextState(&AsScene1306Elevator::cbGoingUpEvent);
 	_soundResource1.play();
 }
 
@@ -858,7 +858,7 @@ void AsScene1306Elevator::cbGoingUpEvent() {
 	sendMessage(_parentScene, 0x4808, 0);
 	_isUp = true;
 	_countdown = 144;
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
@@ -868,7 +868,7 @@ void AsScene1306Elevator::stGoingDown() {
 	setVisible(true);
 	setFileHash(0x043B0270, -1, -1);
 	_playBackwards = true;
-	SetAnimationCallback3(&AsScene1306Elevator::cbGoingDownEvent);
+	NextState(&AsScene1306Elevator::cbGoingDownEvent);
 	_soundResource2.play();
 }
 
@@ -876,7 +876,7 @@ void AsScene1306Elevator::cbGoingDownEvent() {
 	_isDown = true;
 	sendMessage(_parentScene, 0x4809, 0);
 	SetUpdateHandler(&AsScene1306Elevator::update);
-	setFileHash1();
+	stopAnimation();
 }
 
 Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1433,7 +1433,7 @@ Class549::Class549(NeverhoodEngine *vm, Scene *parentScene)
 	
 	SetMessageHandler(&Class549::handleMessage);
 	setVisible(false);
-	setFileHash1();
+	stopAnimation();
 }
 
 uint32 Class549::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1455,13 +1455,13 @@ uint32 Class549::handleMessage(int messageNum, const MessageParam &param, Entity
 void Class549::sub455470() {
 	setFileHash(0xBA0AE050, 0, -1);
 	setVisible(true);
-	SetAnimationCallback3(&Class549::hide);
+	NextState(&Class549::hide);
 	_soundResource.play(calcHash("fxDoorOpen38"));
 }
 
 void Class549::hide() {
 	sendMessage(_parentScene, 0x2000, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
@@ -1469,13 +1469,13 @@ void Class549::sub4554F0() {
 	setFileHash(0xBA0AE050, -1, -1);
 	_playBackwards = true;
 	setVisible(true);
-	SetAnimationCallback3(&Class549::sub455550);
+	NextState(&Class549::sub455550);
 	_soundResource.play(calcHash("fxDoorClose38"));
 }
 
 void Class549::sub455550() {
 	sendMessage(_parentScene, 0x2001, 0);
-	setFileHash1();
+	stopAnimation();
 }
 
 Class592::Class592(NeverhoodEngine *vm, Scene *parentScene)
@@ -1483,7 +1483,7 @@ Class592::Class592(NeverhoodEngine *vm, Scene *parentScene)
 	_parentScene(parentScene) {
 	
 	SetMessageHandler(&Class592::handleMessage);
-	SetAnimationCallback3(&Class592::sub455710);
+	NextState(&Class592::sub455710);
 	_soundResource.play(0x51456049);
 }
  
@@ -1499,14 +1499,14 @@ uint32 Class592::handleMessage(int messageNum, const MessageParam &param, Entity
 
 void Class592::sub455710() {
 	setFileHash(0x6238B191, 0, -1);
-	SetAnimationCallback3(&Class592::sub455740);
+	NextState(&Class592::sub455740);
 	_x = 580;
 	_y = 383;
 }
 
 void Class592::sub455740() {
 	sendMessage(_parentScene, 0x2004, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
@@ -1515,7 +1515,7 @@ Class593::Class593(NeverhoodEngine *vm, Scene *parentScene)
 	
 	SetMessageHandler(&Class593::handleMessage);
 	setVisible(false);
-	setFileHash1();
+	stopAnimation();
 	Entity::_priority = 1200;
 }
 
@@ -1543,12 +1543,12 @@ void Class593::sub4558F0() {
 void Class593::sub455920() {
 	setFileHash(0x80180A10, -1, -1);
 	_playBackwards = true;
-	SetAnimationCallback3(&Class593::sub455950);
+	NextState(&Class593::sub455950);
 }
 
 void Class593::sub455950() {
 	sendMessage(_parentScene, 0x2003, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 

@@ -278,7 +278,7 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 		_newHashListIndex = -2;
 		_countdown = 25;
 	} else {
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 	}
 }
@@ -315,11 +315,11 @@ void AsScene1201RightDoor::sub40D830() {
 	_playBackwards = true;
 	setVisible(true);
 	_soundResource.play(calcHash("fxDoorClose20"));
-	SetAnimationCallback3(&AsScene1201RightDoor::sub40D880);
+	NextState(&AsScene1201RightDoor::sub40D880);
 }
 
 void AsScene1201RightDoor::sub40D880() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 		
@@ -343,7 +343,7 @@ uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity
 		setVisible(true);
 		break;
 	case 0x3002:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		removeCallbacks();
 		break;
@@ -422,7 +422,7 @@ void AsScene1201TntMan::sub40CD60() {
 	setFileHash(0x356803D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage40CCD0);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
-	SetAnimationCallback3(&AsScene1201TntMan::sub40CD30);
+	NextState(&AsScene1201TntMan::sub40CD30);
 }
 
 void AsScene1201TntMan::sub40CD90() {
@@ -547,9 +547,9 @@ void AsScene1201Match::sub40C3E0() {
 	setFileHash(0x00842374, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
 	if (_status == 0) {
-		SetAnimationCallback3(&AsScene1201Match::sub40C420);
+		NextState(&AsScene1201Match::sub40C420);
 	} else {
-		SetAnimationCallback3(&AsScene1201Match::sub40C470);
+		NextState(&AsScene1201Match::sub40C470);
 	}
 }
 
@@ -559,7 +559,7 @@ void AsScene1201Match::sub40C420() {
 	_y += 119;
 	setFileHash(0x018D0240, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
-	SetAnimationCallback3(&AsScene1201Match::sub40C4F0);
+	NextState(&AsScene1201Match::sub40C4F0);
 }
 
 void AsScene1201Match::sub40C470() {
@@ -569,7 +569,7 @@ void AsScene1201Match::sub40C470() {
 	if (_status != 0) {
 		_countdown = 36;
 		_status--;
-		SetAnimationCallback3(&AsScene1201Match::sub40C3E0);
+		NextState(&AsScene1201Match::sub40C3E0);
 	}
 }
 
@@ -623,10 +623,10 @@ uint32 AsScene1201Creature::handleMessage40C710(int messageNum, const MessagePar
 		}
 		break;
 	case 0x2004:
-		setCallback2(AnimationCallback(&AsScene1201Creature::sub40C960));
+		GotoState(&AsScene1201Creature::sub40C960);
 		break;
 	case 0x2006:
-		setCallback2(AnimationCallback(&AsScene1201Creature::sub40C9B0));
+		GotoState(&AsScene1201Creature::sub40C9B0);
 		break;
 	}
 	return messageResult;
@@ -672,7 +672,7 @@ void AsScene1201Creature::sub40C8E0() {
 		_countdown3 = 3;
 	setFileHash(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
-	SetAnimationCallback3(&AsScene1201Creature::sub40C930);
+	NextState(&AsScene1201Creature::sub40C930);
 	_countdown1 = 36;
 }
 
@@ -680,14 +680,14 @@ void AsScene1201Creature::sub40C930() {
 	if (!_flag) {
 		setFileHash(0xCA287133, 0, -1);
 		SetMessageHandler(&AsScene1201Creature::handleMessage40C7B0);
-		SetAnimationCallback3(&AsScene1201Creature::sub40C8E0);
+		NextState(&AsScene1201Creature::sub40C8E0);
 	}
 }
 
 void AsScene1201Creature::sub40C960() {
 	setFileHash(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
-	SetAnimationCallback3(&AsScene1201Creature::sub40C9E0);
+	NextState(&AsScene1201Creature::sub40C9E0);
 	_countdown1 = 48;
 }
 
@@ -698,7 +698,7 @@ void AsScene1201Creature::sub40C990() {
 void AsScene1201Creature::sub40C9B0() {
 	setFileHash(0xCA287133, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C830);
-	SetAnimationCallback3(&AsScene1201Creature::sub40C8E0);
+	NextState(&AsScene1201Creature::sub40C8E0);
 	_countdown1 = 0;
 }
 
@@ -1091,7 +1091,7 @@ void AsScene1202TntItem::sub4540A0() {
 void AsScene1202TntItem::sub4540D0() {
 	setFileHash(kScene1202FileHashes[_index], 0, -1);
 	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
-	SetAnimationCallback3(&AsScene1202TntItem::sub454100);
+	NextState(&AsScene1202TntItem::sub454100);
 }
 
 void AsScene1202TntItem::sub454100() {
@@ -1099,7 +1099,7 @@ void AsScene1202TntItem::sub454100() {
 	_y = kScene1202Points[_index2].y;
 	setFileHash(kScene1202FileHashes[_index], 6, -1);
 	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
-	SetAnimationCallback3(&AsScene1202TntItem::sub454160);
+	NextState(&AsScene1202TntItem::sub454160);
 	_playBackwards = true;
 }
 

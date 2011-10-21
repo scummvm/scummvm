@@ -237,9 +237,9 @@ void AnimatedSprite::init() {
 	_frameIndex3 = 0;
 	_frameIndex = 0;
 	_hashListIndex = -1;
-	_callback1Cb = NULL;
-	_callback2Cb = NULL;
-	_callback3Cb = NULL;
+	_finalizeStateCb = NULL;
+	_currStateCb = NULL;
+	_nextStateCb = NULL;
 	_newHashListIndex = -1;
 	_fileHash4 = 0;
 	_flag = false;
@@ -458,7 +458,7 @@ void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frame
 	_hashListIndex = -1;
 }
 
-void AnimatedSprite::setFileHash1() {
+void AnimatedSprite::stopAnimation() {
 	_fileHash1 = 1;
 	_animStatus = 2;
 }
@@ -486,52 +486,43 @@ void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fil
 	_hashListIndex = -1;
 }
 
-void AnimatedSprite::setCallback1(AnimationCb callback1) {
-	if (_callback1Cb) {
-		(this->*_callback1Cb)();
-	}
-	_callback1Cb = callback1;
+void AnimatedSprite::setFinalizeState(AnimationCb finalizeStateCb) {
+	if (_finalizeStateCb)
+		(this->*_finalizeStateCb)();
+	_finalizeStateCb = finalizeStateCb;
 }
 
-void AnimatedSprite::setCallback2(AnimationCb callback2) {
-
-	if (_callback1Cb) {
-		AnimationCb cb = _callback1Cb;
-		_callback1Cb = NULL;
+void AnimatedSprite::gotoState(AnimationCb currStateCb) {
+	if (_finalizeStateCb) {
+		AnimationCb cb = _finalizeStateCb;
+		_finalizeStateCb = NULL;
 		(this->*cb)();
 	}
-
 	// TODO _callbackList = NULL;
-	_callback3Cb = NULL;
-	_callback2Cb = callback2;
-	
-	if (_callback2Cb) {
-		(this->*_callback2Cb)();
-	}
-
+	_nextStateCb = NULL;
+	_currStateCb = currStateCb;
+	if (_currStateCb)
+		(this->*_currStateCb)();
 }
 
 void AnimatedSprite::removeCallbacks() {
-
-	if (_callback1Cb) {
-		AnimationCb cb = _callback1Cb;
-		_callback1Cb = NULL;
+	if (_finalizeStateCb) {
+		AnimationCb cb = _finalizeStateCb;
+		_finalizeStateCb = NULL;
 		(this->*cb)();
 	}
-
-	if (_callback3Cb) {
-		_callback2Cb = _callback3Cb;
-		_callback3Cb = NULL;
-		debug("Fire _callback3Cb '%s'", _callback3CbName.c_str());
-		(this->*_callback2Cb)();
+	if (_nextStateCb) {
+		_currStateCb = _nextStateCb;
+		_nextStateCb = NULL;
+		debug("Fire _nextStateCb '%s'", _nextStateCbName.c_str());
+		(this->*_currStateCb)();
 #if 0 // TODO		
 	} else if (_callbackList) {
 		removeCallbackList();
 #endif		
 	} else {
-		_callback2Cb = NULL;
+		_currStateCb = NULL;
 	}
-
 }
 
 } // End of namespace Neverhood

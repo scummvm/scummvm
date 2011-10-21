@@ -279,7 +279,7 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2001:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		// TODO Sound1ChList_stop(0xDC2769B0);
 		break;

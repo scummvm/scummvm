@@ -1200,7 +1200,7 @@ uint32 AsScene3010DeadBolt::hmAnimation(int messageNum, const MessageParam &para
 }
 
 void AsScene3010DeadBolt::stIdle() {
-	setFileHash1();
+	stopAnimation();
 	SetUpdateHandler(&AsScene3010DeadBolt::update);
 	SetMessageHandler(&Sprite::handleMessage);
 	_locked = false;
@@ -1215,8 +1215,8 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 		} else {
 			setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 			SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
-			setCallback1(AnimationCallback(&AsScene3010DeadBolt::stIdleMessage));
-			SetAnimationCallback3(&AsScene3010DeadBolt::stIdle);
+			FinalizeState(&AsScene3010DeadBolt::stIdleMessage);
+			NextState(&AsScene3010DeadBolt::stIdle);
 			_soundResource1.play();
 		}
 		_unlocked = true;
@@ -1225,7 +1225,7 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 }
 
 void AsScene3010DeadBolt::stIdleMessage() {
-	setFileHash1();
+	stopAnimation();
 	SetMessageHandler(&Sprite::handleMessage);
 	sendMessage(_parentScene, 0x2001, _boltIndex);
 }
@@ -1236,8 +1236,8 @@ void AsScene3010DeadBolt::lock() {
 		setVisible(true);
 		setFileHash(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
 		SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
-		setCallback1(AnimationCallback(&AsScene3010DeadBolt::stDisabledMessage));
-		SetAnimationCallback3(&AsScene3010DeadBolt::stIdle);
+		FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
+		NextState(&AsScene3010DeadBolt::stIdle);
 		if (_soundToggle) {
 			_soundResource1.play();
 		} else {
@@ -1255,8 +1255,8 @@ void AsScene3010DeadBolt::stDisabled() {
 	setVisible(true);
 	setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 	SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
-	setCallback1(AnimationCallback(&AsScene3010DeadBolt::stDisabledMessage));
-	SetAnimationCallback3(&AsScene3010DeadBolt::stIdle);
+	FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
+	NextState(&AsScene3010DeadBolt::stIdle);
 	_playBackwards = true;
 	_soundResource3.play();
 }
@@ -1493,7 +1493,7 @@ void AsScene3011Symbol::show(bool flag) {
 }
 
 void AsScene3011Symbol::hide() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 

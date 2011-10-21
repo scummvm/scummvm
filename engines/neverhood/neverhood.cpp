@@ -92,63 +92,8 @@ Common::Error NeverhoodEngine::run() {
 	}
 
 #if 0
-	BlbArchive *blb = new BlbArchive();
-	blb->open("m.blb");
-	delete blb;
-#endif
-
-#if 0
-	ResourceFileEntry *r = _res->findEntry(0x50A80517);
-#endif
-
-#if 0
-	int resourceHandle = _res->useResource(0x0CA04202);
-	debug("resourceHandle = %d", resourceHandle);
-	byte *data = _res->loadResource(resourceHandle);
-	bool rle;
-	NDimensions dimensions;
-	NUnknown unknown;
-	byte *palette, *pixels;
-	parseBitmapResource(data, &rle, &dimensions, &unknown, &palette, &pixels);
-	debug("%d, %d", dimensions.width, dimensions.height);
-	byte *rawpixels = new byte[dimensions.width * dimensions.height];
-	memset(rawpixels, 0, dimensions.width * dimensions.height);
-	debug("rle = %d", rle);
-	unpackSpriteRle(pixels, dimensions.width, dimensions.height, rawpixels, dimensions.width, false, false);
-	Common::DumpFile d;
-	d.open("dump.0");
-	d.write(rawpixels, dimensions.width * dimensions.height);
-	d.close();
-	delete[] rawpixels;
-	_res->unloadResource(resourceHandle);
-	_res->unuseResource(resourceHandle);
-#endif
-	
-#if 0
-	{ // Create a new scope
-		SpriteResource r(this);
-		BaseSurface *surf = new BaseSurface(this, 0, 640, 480);
-		r.load(0x0CA04202);
-		debug("r: width = %d; height = %d", r.getDimensions().width, r.getDimensions().height);
-		surf->drawSpriteResource(r);
-		delete surf;
-	}
-#endif
-	
-#if 0
-	{ // Create a new scope
-		AnimResource r(this);
-		r.load(0x000540B0);
-	}
-#endif
-
-#if 0
-	{ // Create a new scope
-		DataResource dataResource(this);
-		//dataResource.load(0x01801002);
-		//dataResource.load(0x84500132);
-		dataResource.load(0x81120132);
-	}
+	// TODO: This should probably be implemented as debug command later 
+	dumpAllResources();
 #endif
 
 #if 1
@@ -219,6 +164,85 @@ NPoint NeverhoodEngine::getMousePos() {
 	pt.x = _mouseX;
 	pt.y = _mouseY;
 	return pt;
+}
+
+void writeTga(const char *filename, byte *pixels, byte *palette, int16 width, int16 height) {
+	byte identsize = 0;
+	byte colourmaptype = 1;
+	byte imagetype = 1;
+	uint16 colourmapstart = 0;
+	uint16 colourmaplength = 256;
+	byte colourmapbits = 24;
+	uint16 xstart = 0;
+	uint16 ystart = 0;
+	byte bits = 8;
+	byte descriptor = 0x20;
+	Common::DumpFile tga;
+	tga.open(filename);
+	tga.writeByte(identsize);
+	tga.writeByte(colourmaptype);
+	tga.writeByte(imagetype);
+	tga.writeUint16LE(colourmapstart);
+	tga.writeUint16LE(colourmaplength);
+	tga.writeByte(colourmapbits);
+	tga.writeUint16LE(xstart);
+	tga.writeUint16LE(ystart);
+	tga.writeUint16LE(width);
+	tga.writeUint16LE(height);
+	tga.writeByte(bits);
+	tga.writeByte(descriptor);
+	tga.write(palette, 768);
+	tga.write(pixels, width * height);
+	tga.close();
+}
+
+void NeverhoodEngine::dumpAllResources() {
+
+	PaletteResource paletteResource(this);
+	byte *vgaPalette = new byte[768];
+	paletteResource.load(0x4086520E);
+	byte *srcpalette = paletteResource.palette();
+	for (int i = 0; i < 256; i++) {
+		vgaPalette[i * 3 + 2] = srcpalette[i * 4 + 0];
+		vgaPalette[i * 3 + 1] = srcpalette[i * 4 + 1];
+		vgaPalette[i * 3 + 0] = srcpalette[i * 4 + 2];
+	}
+
+#if 0
+	for (int i = 0; i < 768; i++)
+		vgaPalette[i] <<= 2;
+#endif
+
+	uint entriesCount = _res->getEntryCount();
+	debug("%d entries", entriesCount);
+
+	for (uint i = 0; i < entriesCount; i++) {
+		const ResourceFileEntry &entry = _res->getEntry(i);
+		int type = _res->getResourceTypeByHash(entry.fileHash);
+		debug("hash: %08X; type: %d", entry.fileHash, type);
+		if (type == 4) {
+			AnimResource anim(this);
+			anim.load(entry.fileHash);
+			for (uint frameIndex = 0; frameIndex < anim.getFrameCount(); frameIndex++) {
+				const AnimFrameInfo &frameInfo = anim.getFrameInfo(frameIndex);
+				int16 width = (frameInfo.rect.width + 3) & 0xFFFC;
+				byte *pixels = new byte[width * frameInfo.rect.height];
+				memset(pixels, 0, width * frameInfo.rect.height);
+				anim.draw(frameIndex, pixels, width, false, false);
+				Common::String filename = 
+					frameInfo.frameHash != 0
+					? Common::String::format("%08X_%03d_%08X.tga", entry.fileHash, frameIndex, frameInfo.frameHash) 
+					: Common::String::format("%08X_%03d.tga", entry.fileHash, frameIndex);
+				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.rect.height);
+				delete[] pixels;
+			}
+			static int n = 0;
+			//if (n++ == 25) break;
+		}
+	}
+	
+	delete[] vgaPalette;
+
 }
 	
 } // End of namespace Neverhood

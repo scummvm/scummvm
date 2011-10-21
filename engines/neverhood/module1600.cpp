@@ -206,7 +206,7 @@ Class521::Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 }
 
 Class521::~Class521() {
-	if (_callback1Cb == AnimationCallback(&Class521::sub45D620)) {
+	if (_finalizeStateCb == AnimationCallback(&Class521::sub45D620)) {
 		setGlobalVar(0x21E60190, !getGlobalVar(0x21E60190));
 	}
 }
@@ -407,11 +407,11 @@ void Class521::sub45CD00() {
 	_flag11A = 0;
 	_rectList = NULL;
 	SetMessageHandler(&Class521::handleMessage45CC30);
-	SetAnimationCallback3(&Class521::sub45CFE0);
+	NextState(&Class521::sub45CFE0);
 	setFileHash(0x35698F78, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update45C790);
-	setCallback1(AnimationCallback(&Class521::sub45D040));
+	FinalizeState(&Class521::sub45D040);
 	setDoDeltaX(doDeltaX ? 1 : 0);
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
@@ -442,14 +442,14 @@ void Class521::sub45CE10() {
 		setFileHash(0x192ADD30, 0, -1);
 		SetMessageHandler(&Class521::handleMessage45CC30);
 		SetUpdateHandler(&Class521::update);
-		SetAnimationCallback3(&Class521::sub45CFE0);
+		NextState(&Class521::sub45CFE0);
 	} else if (!_flag10E && _steps && _flag113) {
 		removeCallbacks();
 		_flag113 = 0;
 		setFileHash(0x9966B138, 0, -1);
 		SetMessageHandler(&Class521::handleMessage45CC30);
 		SetUpdateHandler(&Class521::update);
-		SetAnimationCallback3(&Class521::sub45D100);
+		NextState(&Class521::sub45D100);
 	} else {
 		bool flag = false;
 		uint index = 0;
@@ -478,7 +478,7 @@ void Class521::sub45CF80() {
 	setFileHash(0xA86A9538, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	SetAnimationCallback3(&Class521::sub45CFE0);
+	NextState(&Class521::sub45CFE0);
 }
 
 void Class521::sub45CFB0() {
@@ -492,7 +492,7 @@ void Class521::sub45CFE0() {
 	setFileHash(0x35698F78, 0, -1);
 	SetMessageHandler(&Class521::handleMessage);
 	SetUpdateHandler(&Class521::update45C790);
-	setCallback1(AnimationCallback(&Class521::sub45D040));
+	FinalizeState(&Class521::sub45D040);
 	_idleCounter = 0;
 	_currMoveDirection = 0;
 	_newMoveDirection = 0;
@@ -508,7 +508,7 @@ void Class521::sub45D050() {
 	setFileHash(0xB579A77C, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	SetAnimationCallback3(&Class521::sub45CFE0);
+	NextState(&Class521::sub45CFE0);
 	_idleCounter = 0;
 	_idleCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
@@ -519,7 +519,7 @@ void Class521::sub45D0A0() {
 	setFileHash(0x9C220DA4, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	setCallback1(AnimationCallback(&Class521::sub45D0E0));
+	FinalizeState(&Class521::sub45D0E0);
 }
 
 void Class521::sub45D0E0() {
@@ -549,7 +549,7 @@ void Class521::sub45D180() {
 	_value112 = 0;
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	setCallback1(AnimationCallback(&Class521::sub45D620));
+	FinalizeState(&Class521::sub45D620);
 	sub45CDC0();
 }
 
@@ -578,7 +578,7 @@ void Class521::moveToNextPoint() {
 				setFileHash(0x9966B138, 0, -1);
 				SetMessageHandler(&Class521::handleMessage45CC30);
 				SetUpdateHandler(&Class521::update);
-				SetAnimationCallback3(&Class521::sub45D100);
+				NextState(&Class521::sub45D100);
 			}
 			_flag10E = 0;
 			SetSpriteCallback(&Class521::suMoveToNextPoint);
@@ -594,7 +594,7 @@ void Class521::sub45D350() {
 	setFileHash(0x192ADD30, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	SetAnimationCallback3(&Class521::sub45D390);
+	NextState(&Class521::sub45D390);
 }
 
 void Class521::sub45D390() {
@@ -603,7 +603,7 @@ void Class521::sub45D390() {
 	setFileHash(0xF46A0324, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	setCallback1(AnimationCallback(&Class521::sub45D620));
+	FinalizeState(&Class521::sub45D620);
 	_value112 = 1;
 	sub45CDC0();
 }
@@ -640,7 +640,7 @@ void Class521::moveToPrevPoint() {
 				setFileHash(0x9966B138, 0, -1);
 				SetMessageHandler(&Class521::handleMessage45CC30);
 				SetUpdateHandler(&Class521::update);
-				SetAnimationCallback3(&Class521::sub45D100);
+				NextState(&Class521::sub45D100);
 			}
 			_flag10E = 0;
 			SetSpriteCallback(&Class521::suMoveToPrevPoint);
@@ -652,20 +652,20 @@ void Class521::moveToPrevPoint() {
 void Class521::sub45D580() {
 	_flag10F = 1;
 	_flag10E = 1;
-	setCallback1(NULL);
+	FinalizeState(NULL);
 	setFileHash(0x192ADD30, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	SetAnimationCallback3(&Class521::sub45D5D0);
+	NextState(&Class521::sub45D5D0);
 }
 
 void Class521::sub45D5D0() {
 	_flag10F = 1;
-	setCallback1(NULL);
+	FinalizeState(NULL);
 	setFileHash(0xF46A0324, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
-	setCallback1(AnimationCallback(&Class521::sub45D620));
+	FinalizeState(&Class521::sub45D620);
 	_value112 = 2;
 	sub45CDC0();
 }
@@ -979,7 +979,7 @@ Class546::Class546(NeverhoodEngine *vm, Scene *parentScene)
 
 	setVisible(false);
 	SetMessageHandler(&Class546::handleMessage);
-	setFileHash1();
+	stopAnimation();
 }
 
 uint32 Class546::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1001,26 +1001,26 @@ uint32 Class546::handleMessage(int messageNum, const MessageParam &param, Entity
 void Class546::sub44D710() {
 	setFileHash(0x08C80144, 0, -1);
 	setVisible(true);
-	SetAnimationCallback3(&Class546::sub44D760);
+	NextState(&Class546::sub44D760);
 	_soundResource.play(calcHash("fxDoorOpen23"));
 }
 
 void Class546::sub44D760() {
 	sendMessage(_parentScene, 0x2033, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
 void Class546::sub44D790() {
 	setFileHash(0x08C80144, -1, -1);
 	setVisible(true);
-	SetAnimationCallback3(&Class546::sub44D7F0);
+	NextState(&Class546::sub44D7F0);
 	_soundResource.play(calcHash("fxDoorClose23"));
 }
 
 void Class546::sub44D7F0() {
 	sendMessage(_parentScene, 0x2034, 0);
-	setFileHash1();
+	stopAnimation();
 }
 
 Class547::Class547(NeverhoodEngine *vm, int16 x, int16 y)

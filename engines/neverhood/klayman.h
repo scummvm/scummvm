@@ -47,25 +47,25 @@ public:
 
 	void update();
 
-	void sub41FD30();
+	void stDoIdlePickEar();
 	void sub41FDA0();
 	void sub41FDF0();
-	void sub41FE60();
+	void stDoIdleChest();
 	void sub41FEB0();
-	void sub41FC80();
-	void sub4211F0();
-	void sub4211B0();
-	void sub41FF80();
-	void sub420120();
-	void sub420170();
-	void sub4200D0();
-	void sub41FBC0();
-	void sub420870();
-	void sub4208B0();
-	void sub4208F0();
-	void sub420930();
-	void sub420830();
-	void sub41FC40();
+	void stTryStandIdle();
+	void stWakeUp();
+	void stSleeping();
+	void stPickUpGeneric();
+	void stTurnPressButton();
+	void stStampFloorButton();
+	void stPressButtonSide();
+	void stLargeStep();
+	void stWonderAboutHalf();
+	void stWonderAboutAfter();
+	void stTurnToUseHalf();
+	void stTurnAwayFromUse();
+	void stWonderAbout();
+	void stPeekWall();
 	void sub420210();
 	void sub4201C0();
 	void sub420340();
@@ -82,45 +82,43 @@ public:
 	void sub420FE0();
 	void sub4210C0();
 	void sub421070();
-	void sub420420();
+	void stLandOnFeet();
 	void sub420ED0();
 	void sub420750();
-	void sub4207A0();
+	void stTurnToUse();
 	void sub4207F0();
 	void sub420F20();
 	void sub421350();
-	void sub4213F0();
-	void sub4213B0();
-	void sub420060();
+	void stIdleSitBlink();
+	void stIdleSitBlinkSecond();
+	void stPickUpNeedle();
 	void sub41FFF0();
 	void sub4214D0();
 	void sub421510();
-	void sub421160();
-	void sub4212C0();
+	void stStepOver();
+	void stSitInTeleporter();
 	void sub421310();
-	void sub420600();
+	void stMoveObjectSkipTurnFaceObject();
 	void sub420660();
-	void sub4205C0();
-	void sub420550();
+	void stMoveObjectSkipTurn();
+	void stMoveObjectFaceObject();
 	void sub420C50();
-	void sub420CD0();
-	void sub420D10();
-	void sub420D50();
-	void sub420DA0();
-	void sub420DE0();
+	void stPullLeverDown();
+	void stHoldLeverDown();
+	void stReleaseLeverUp();
 	void sub420E20();
 	void sub420E90();
 	void sub420EB0();
 	void sub420680();
-	void sub41F9E0();
+	void stWalking();
 	void sub41FA40();
-	void sub41FB30();
+	void stStartWalkingDone();
 
 	void sub41CE70();
 	
 	void spriteUpdate41F250();
 	void spriteUpdate41F5F0();
-	void spriteUpdate41F780();
+	void suLargeStep();
 	void spriteUpdate41F230();
 	void spriteUpdate41F5A0();
 	void spriteUpdate41F300();
@@ -140,7 +138,7 @@ public:
 
 protected:
 	Entity *_parentScene;
-	Entity *_attachedSprite;
+	Sprite *_attachedSprite;
 	int _statusE0;
 	bool _flagE1;
 	bool _flagE2;
@@ -172,9 +170,9 @@ protected:
 	virtual void xUpdate();
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
-	void sub41FD40();
-	void sub41FD90();
-	uint32 handleMessage41EB10(int messageNum, const MessageParam &param, Entity *sender);
+	void stIdlePickEar();
+	void evIdlePickEarDone();
+	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
 
 	void sub41FDB0();
 	uint32 handleMessage41E980(int messageNum, const MessageParam &param, Entity *sender);
@@ -183,8 +181,8 @@ protected:
 	void sub41FE50();
 	uint32 handleMessage41E9E0(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub41FE70();
-	uint32 handleMessage41EF80(int messageNum, const MessageParam &param, Entity *sender);
+	void stIdleChest();
+	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void sub41FEC0();
 	uint32 handleMessage41EFE0(int messageNum, const MessageParam &param, Entity *sender);
@@ -192,45 +190,44 @@ protected:
 	void sub41D320(uint32 fileHash, AnimationCb callback);
 	void update41D2B0();
 
-	bool sub41CF10(AnimationCb callback);
+	bool stStartActionFromIdle(AnimationCb callback);
 	void sub41C7B0();
 	void sub41C770();
 	void sub41C790();
 	
 	void update41D0F0();
 
-	void sub41FF00();
-	
-	void sub41FCF0();
+	void stStand();
+	void stStandAround();
 	
 	uint32 handleMessage41F140(int messageNum, const MessageParam &param, Entity *sender);
 
 	void sub41C930(int16 x, bool flag);
 
-	uint32 handleMessage41E920(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 	
-	bool sub41CEB0(AnimationCb callback3);
+	bool stStartAction(AnimationCb callback3);
 	
-	void sub41FB40();
-	void sub41FBB0();
+	void stSneak();
+	void stSneakDone();
 	uint32 handleMessage41DD80(int messageNum, const MessageParam &param, Entity *sender);
 	void sub41CD70(int16 x);
-	void sub41F950();
+	void stStartWalking();
 	uint32 handleMessage41EC70(int messageNum, const MessageParam &param, Entity *sender);
 
-	uint32 handleMessage41D4C0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPickUpGeneric(int messageNum, const MessageParam &param, Entity *sender);
 	
-	uint32 handleMessage41DAD0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPressButton(int messageNum, const MessageParam &param, Entity *sender);
 	
 	void sub41CD00(int16 x);
 	void sub41CC40(int16 x1, int16 x2);
 	void sub41CAC0(int16 x);
 	void sub41CCE0(int16 x);
-	void sub41FC30();
+	void stLargeStepDone();
 	
-	uint32 handleMessage41DF10(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmLargeStep(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41EEF0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41E3C0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPeekWall(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D790(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D880(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41DAA0(int messageNum, const MessageParam &param, Entity *sender);
@@ -272,28 +269,28 @@ protected:
 	void update4497D0();
 	uint32 handleMessage449800(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage4498E0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449990(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449A30(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449BA0(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate449DC0();
+	void suFallDown();
 	void sub449E20();
 	void sub449E90();
 	void sub449EF0();
 	void sub449F70();
-	void sub44A050();
+	void stSpitOutFall();
 	void sub44A0D0();
 	void sub44A150();
 	void sub44A230();
-	void sub44A250();
-	void sub44A2C0();
-	void sub44A330();
-	void sub44A370();
-	void sub44A3C0();
-	void sub44A3E0();
-	void sub44A460();
-	void sub44A4B0();
+	void stJumpAndFall();
+	void stDropFromRing();
+	void stPressDoorButton();
+	void stHitByBoxingGlove();
+	void stHitByBoxingGloveDone();
+	void stMoveVenusFlyTrap();
+	void stContinueMovingVenusFlyTrap();
+	void stMoveVenusFlyTrapDone();
 };
 
 class KmScene1004 : public Klayman {
@@ -301,8 +298,8 @@ public:
 	KmScene1004(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage478110(int messageNum, const MessageParam &param, Entity *sender);
-	void sub478170();
+	uint32 hmReadNote(int messageNum, const MessageParam &param, Entity *sender);
+	void stReadNote();
 };
 
 class KmScene1109 : public Klayman {
@@ -324,14 +321,14 @@ protected:
 	int _countdown;
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	void update40DBE0();
-	uint32 handleMessage40DC00(int messageNum, const MessageParam &param, Entity *sender);
-	void sub40DD20();
-	void sub40DD90();
+	uint32 hmMatch(int messageNum, const MessageParam &param, Entity *sender);
+	void stFetchMatch();
+	void stLightMatch();
 	uint32 handleMessage40DDF0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage40DEA0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmTumbleHeadless(int messageNum, const MessageParam &param, Entity *sender);
 	void sub40DF00();
-	void sub40DF60();
-	void sub40DFA0();
+	void stMoveObjectSkipTurn();
+	void stTumbleHeadless();
 	void sub40E040();
 };
 
@@ -340,12 +337,12 @@ public:
 	KmScene1303(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	uint32 handleMessage4160A0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPeekWallReturn(int messageNum, const MessageParam &param, Entity *sender);
 	void update4161A0();
-	void sub4161D0();
-	void sub416210();
-	void sub416250();
-	void sub4162B0();
+	void stPeekWall1();
+	void stPeekWall2();
+	void stPeekWall3();
+	void stPeekWallReturn();
 };
 
 class KmScene1304 : public Klayman {
@@ -360,8 +357,8 @@ public:
 	KmScene1305(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
-	void sub46BEF0();
-	void sub46BF60();
+	void stCrashDown();
+	void cbCrashDownEvent();
 };
 
 class KmScene1306 : public Klayman {
@@ -429,7 +426,7 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 handleMessage4689A0(int messageNum, const MessageParam &param, Entity *sender);
 	void spriteUpdate468A30();
-	void sub468A80();
+	void stFallSkipJump();
 	void sub468AD0();
 	void sub468B10();
 };
@@ -449,7 +446,7 @@ protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 	uint32 handleMessage4401A0(int messageNum, const MessageParam &param, Entity *sender);
 	void sub440230();
-	void sub440270();
+	void stDoTeleport();
 };
 
 class KmScene2101 : public Klayman {

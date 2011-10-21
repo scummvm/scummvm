@@ -371,7 +371,7 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 		break;
 	case 0x3002:
 		sendMessage(_parentScene, 0x2003, 0);
-		setFileHash1();
+		stopAnimation();
 		break;
 	}
 	return messageResult;

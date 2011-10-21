@@ -107,10 +107,10 @@ protected:
 	void init(uint32 fileHash, int surfacePriority, int16 x = kDefPosition, int16 y = kDefPosition, int16 width = 0, int16 height = 0);
 };
 
-#define SetAnimationCallback1(callback) _callback1Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback1(" #callback ")"); _callback1CbName = #callback
-#define SetAnimationCallback2(callback) _callback2Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback2(" #callback ")"); _callback2CbName = #callback
-#define SetAnimationCallback3(callback) _callback3Cb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "SetAnimationCallback3(" #callback ")"); _callback3CbName = #callback
 #define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
+#define GotoState(callback) gotoState(static_cast <void (AnimatedSprite::*)()> (callback))
+#define NextState(callback) _nextStateCb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "NextState(" #callback ")"); _nextStateCbName = #callback
+#define FinalizeState(callback) setFinalizeState(static_cast <void (AnimatedSprite::*)()> (callback));
 
 class AnimatedSprite : public Sprite {
 public:
@@ -152,24 +152,24 @@ protected:
 	callbackListCount dw ?
 	callbackList	dd ?
 	*/
-	AnimationCb _callback1Cb;
-	AnimationCb _callback2Cb;
-	AnimationCb _callback3Cb;
+	AnimationCb _finalizeStateCb;
+	AnimationCb _currStateCb;
+	AnimationCb _nextStateCb;
 	// For debugging purposes
-	Common::String _callback1CbName;
-	Common::String _callback2CbName;
-	Common::String _callback3CbName;
+	Common::String _finalizeStateCbName;
+	Common::String _currStateCbName;
+	Common::String _nextStateCbName;
 	void init();
 	void updateAnim();
 	void updatePosition();
 	void updateFrameIndex();
 	void updateFrameInfo();
 	void createSurface1(uint32 fileHash, int surfacePriority);
-	void setFileHash1();
+	void stopAnimation();
 	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
 	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
-	void setCallback1(AnimationCb callback1);
-	void setCallback2(AnimationCb callback2);
+	void setFinalizeState(AnimationCb finalizeStateCb);
+	void gotoState(AnimationCb currStateCb);
 	void removeCallbacks();
 };
 

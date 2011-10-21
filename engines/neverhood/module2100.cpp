@@ -121,12 +121,12 @@ void Class538::closeDoor() {
 	setFileHash(0xC222A8D4, 0, -1);
 	_newHashListIndex = -2;
 	setVisible(true);
-	SetAnimationCallback3(&Class538::hide);
+	NextState(&Class538::hide);
 	_soundResource.play(calcHash("fxDoorClose32"));
 }
 
 void Class538::hide() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
@@ -149,7 +149,7 @@ uint32 Class539::handleMessage(int messageNum, const MessageParam &param, Entity
 		setVisible(true);
 		break;
 	case 0x3002:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		break;
 	}

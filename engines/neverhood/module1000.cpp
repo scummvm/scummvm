@@ -145,12 +145,12 @@ void AsScene1001Door::handleMessage2000h() {
 	case 1:
 		_soundResource1.play(0x65482F03);
 		setFileHash(0x624C0498, 1, 3);
-		SetAnimationCallback3(&AsScene1001Door::callback1);		
+		NextState(&AsScene1001Door::callback1);		
 		break;
 	case 2:
 		_soundResource2.play();
 		setFileHash(0x624C0498, 6, 6);
-		SetAnimationCallback3(&AsScene1001Door::callback2);		
+		NextState(&AsScene1001Door::callback2);		
 		break;
 	default:
 		// Nothing
@@ -170,7 +170,7 @@ void AsScene1001Door::callback1() {
 		_newHashListIndex = 1;
 		break;
 	case 3:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		break;
 	default:
@@ -183,13 +183,13 @@ void AsScene1001Door::callback1() {
 void AsScene1001Door::callback2() {
 	setGlobalVar(0xD217189D, 1);
 	setFileHash(0x624C0498, 6, 6);
-	SetAnimationCallback3(&AsScene1001Door::callback3);
+	NextState(&AsScene1001Door::callback3);
 	_x = 30;
 }
 
 void AsScene1001Door::callback3() {
 	_soundResource1.play();
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);	
 }
 	
@@ -734,7 +734,7 @@ uint32 Class505::handleMessage(int messageNum, const MessageParam &param, Entity
 		setVisible(true);
 		break;
 	case 0x3002:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		break;
 	}
@@ -799,7 +799,7 @@ void AsScene1002DoorSpy::sub448B10() {
 	_parentScene->setSurfacePriority(getSurface(), 1200);
 	setFileHash(0x586C1D48, 1, -1);
 	SetMessageHandler(&AsScene1002DoorSpy::handleMessage448A60);
-	SetAnimationCallback3(&AsScene1002DoorSpy::sub448AC0);
+	NextState(&AsScene1002DoorSpy::sub448AC0);
 }
 
 Class426::Class426(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
@@ -1071,14 +1071,14 @@ void AsScene1002VenusFlyTrap::sub4484F0() {
 	setFileHash(0xC4080034, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448660);
+	NextState(&AsScene1002VenusFlyTrap::sub448660);
 }
 
 void AsScene1002VenusFlyTrap::sub448530() {
 	setFileHash(0xC4080034, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage4482E0);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448660);
+	NextState(&AsScene1002VenusFlyTrap::sub448660);
 }
 
 void AsScene1002VenusFlyTrap::sub448560() {
@@ -1086,7 +1086,7 @@ void AsScene1002VenusFlyTrap::sub448560() {
 	setFileHash(0x82292851, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage4482E0);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448660);
+	NextState(&AsScene1002VenusFlyTrap::sub448660);
 }
 
 void AsScene1002VenusFlyTrap::sub4485B0() {
@@ -1094,7 +1094,7 @@ void AsScene1002VenusFlyTrap::sub4485B0() {
 	setFileHash(0x86A82A11, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage4482E0);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub4485F0);
+	NextState(&AsScene1002VenusFlyTrap::sub4485F0);
 }
 
 void AsScene1002VenusFlyTrap::sub4485F0() {
@@ -1107,7 +1107,7 @@ void AsScene1002VenusFlyTrap::sub448620() {
 	setFileHash(0x31303094, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(NULL);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448720);
+	NextState(&AsScene1002VenusFlyTrap::sub448720);
 	_countdown = 24;
 }
 
@@ -1119,14 +1119,14 @@ void AsScene1002VenusFlyTrap::sub448660() {
 		if (_x >= 154 && _x <= 346) {
 			setGlobalVar(0x86341E88, (_x - 186) / 32);
 		} else {
-			SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub4484F0);
+			NextState(&AsScene1002VenusFlyTrap::sub4484F0);
 			_countdown = 12;
 		}
 	} else {
 		if (_x >= 174 && _x <= 430) {
 			setGlobalVar(0x1B144052, (_x - 174) / 32);
 		} else {
-			SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub4484F0);
+			NextState(&AsScene1002VenusFlyTrap::sub4484F0);
 			_countdown = 12;
 		}
 	}
@@ -1136,14 +1136,14 @@ void AsScene1002VenusFlyTrap::sub448720() {
 	setFileHash(0x152920C4, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448750);
+	NextState(&AsScene1002VenusFlyTrap::sub448750);
 }
 
 void AsScene1002VenusFlyTrap::sub448750() {
 	setFileHash(0x84001117, 0, -1);
 	SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 	SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
-	SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448660);
+	NextState(&AsScene1002VenusFlyTrap::sub448660);
 }
 
 void AsScene1002VenusFlyTrap::sub448780() {
@@ -1157,7 +1157,7 @@ void AsScene1002VenusFlyTrap::sub448780() {
 		setFileHash(0x8C2C80D4, 0, -1);
 		SetUpdateHandler(&AsScene1002VenusFlyTrap::update);
 		SetMessageHandler(&AsScene1002VenusFlyTrap::handleMessage448320);
-		SetAnimationCallback3(&AsScene1002VenusFlyTrap::sub448620);
+		NextState(&AsScene1002VenusFlyTrap::sub448620);
 	}
 }
 
@@ -1224,13 +1224,13 @@ void Class506::sub449280() {
 	setFileHash(0x004A4495, -1, -1);
 	_playBackwards = true;
 	SetMessageHandler(&Class506::handleMessage449210);
-	SetAnimationCallback3(&Class506::sub4492C0);
+	NextState(&Class506::sub4492C0);
 	setVisible(true);
 }
 
 void Class506::sub4492C0() {
 	setVisible(false);
-	setFileHash1();
+	stopAnimation();
 }
 
 Class478::Class478(NeverhoodEngine *vm, Klayman *klayman)
@@ -1610,7 +1610,7 @@ uint32 AsScene1004TrashCan::handleMessage(int messageNum, const MessageParam &pa
 		setVisible(true);
 		break;
 	case 0x3002:
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 		break;
 	}

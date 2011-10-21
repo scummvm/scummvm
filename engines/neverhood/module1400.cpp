@@ -257,7 +257,7 @@ void Class526::spriteUpdate466720() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
 		_soundResource.play(0x0E32247F);
-		setFileHash1();
+		stopAnimation();
 		SetSpriteCallback(NULL);
 		SetMessageHandler(NULL);
 		setVisible(false);
@@ -295,7 +295,7 @@ void Class527::spriteUpdate466920() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
 		_soundResource.play(0x18020439);
-		setFileHash1();
+		stopAnimation();
 		SetSpriteCallback(NULL);
 		SetMessageHandler(NULL);
 		setVisible(false);
@@ -322,7 +322,7 @@ Class528::Class528(NeverhoodEngine *vm, Sprite *klayman, bool flag)
 		_countdown = 48;
 	} else {
 		_flag = false;
-		setFileHash1();
+		stopAnimation();
 		setVisible(false);
 	}
 }
@@ -369,11 +369,11 @@ void Class528::sub466C50() {
 	setFileHash(0x04551900, -1, -1);
 	_soundResource.play(calcHash("fxDoorClose24"));
 	_playBackwards = true;
-	SetAnimationCallback3(&Class528::sub466CB0);
+	NextState(&Class528::sub466CB0);
 }
 
 void Class528::sub466CB0() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
@@ -575,7 +575,7 @@ void Class489::sub434D80() {
 	AnimatedSprite::updateDeltaXY();
 	if (_rect.y1 <= 150) {
 		sendMessage(_class525, 0x483A, 0);
-		setFileHash1();
+		stopAnimation();
 		SetMessageHandler(&Sprite::handleMessage);
 		SetSpriteCallback(NULL);
 		setVisible(false);
@@ -600,7 +600,7 @@ void Class489::sub434E60() {
 	SetSpriteCallback(NULL);
 	SetMessageHandler(&Class489::handleMessage434B20);
 	setFileHash(0x80C32213, 0, -1);
-	SetAnimationCallback3(&Class489::sub434E90);
+	NextState(&Class489::sub434E90);
 }
 
 void Class489::sub434E90() {
@@ -613,7 +613,7 @@ void Class489::sub434EC0() {
 	setFileHash(0x50A80517, 0, -1);
 	SetMessageHandler(&Class489::handleMessage434B20);
 	SetSpriteCallback(NULL);
-	SetAnimationCallback3(&Class489::sub434F40);
+	NextState(&Class489::sub434F40);
 	setGlobalVar(0x12A10DB3, 1);
 	_soundResource1.play(0xCC4A8456);
 	// TODO Sound1ChList_addSoundResource(0x05331081, 0xCE428854, true);
@@ -631,7 +631,7 @@ void Class489::sub434F80() {
 	setFileHash(0x50A94417, 0, -1);
 	SetSpriteCallback(NULL);
 	SetMessageHandler(&Class489::handleMessage434B20);
-	SetAnimationCallback3(&Class489::sub434E90);
+	NextState(&Class489::sub434E90);
 	setGlobalVar(0x12A10DB3, 0);
 	_soundResource1.play(0xCC4A8456);
 	// TODO Sound1ChList_deleteSoundByHash(0xCE428854);
@@ -642,7 +642,7 @@ void Class489::sub434FF0() {
 	setFileHash(0x22CB4A33, 0, -1);
 	SetSpriteCallback(&Class489::spriteUpdate434B60);
 	SetMessageHandler(&Class489::handleMessage434B20);
-	SetAnimationCallback3(&Class489::sub434DF0);
+	NextState(&Class489::sub434DF0);
 }
 
 void Class489::sub435040() {
@@ -845,7 +845,7 @@ uint32 Class482::handleMessage(int messageNum, const MessageParam &param, Entity
 		_soundResource2.play();
 		setFileHash(0x20060259, -1, -1);
 		_playBackwards = true;
-		SetAnimationCallback3(&Class482::sub428530);
+		NextState(&Class482::sub428530);
 		break;
 	case 0x3002:
 		removeCallbacks();
@@ -856,19 +856,19 @@ uint32 Class482::handleMessage(int messageNum, const MessageParam &param, Entity
 
 void Class482::sub428500() {
 	sendMessage(_parentScene, 0x2000, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
 void Class482::sub428530() {
 	sendMessage(_parentScene, 0x2001, 0);
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 }
 
 void Class482::sub428560() {
 	sendMessage(_parentScene, 0x2003, 0);
-	setFileHash1();
+	stopAnimation();
 }
 
 Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1218,7 +1218,7 @@ void AsScene1407Mouse::stWalkToDest() {
 		setFileHash(0x22291510, 0, -1);
 		SetSpriteCallback(&AsScene1407Mouse::suWalkTo);
 		SetMessageHandler(&AsScene1407Mouse::handleMessage);
-		SetAnimationCallback3(&AsScene1407Mouse::stIdleLookAtGoodHole);
+		NextState(&AsScene1407Mouse::stIdleLookAtGoodHole);
 	}
 }
 
@@ -1227,7 +1227,7 @@ void AsScene1407Mouse::stWalkToHole() {
 	setFileHash(0x22291510, 0, -1);
 	SetSpriteCallback(&AsScene1407Mouse::suWalkTo);
 	SetMessageHandler(&AsScene1407Mouse::handleMessage);
-	SetAnimationCallback3(&AsScene1407Mouse::stGoThroughHole);
+	NextState(&AsScene1407Mouse::stGoThroughHole);
 }
 
 void AsScene1407Mouse::stGoThroughHole() {
@@ -1235,7 +1235,7 @@ void AsScene1407Mouse::stGoThroughHole() {
 	SetSpriteCallback(NULL);
 	SetMessageHandler(NULL);
 	SetUpdateHandler(&AsScene1407Mouse::upGoThroughHole);
-	SetAnimationCallback3(&AsScene1407Mouse::stArriveAtHole);
+	NextState(&AsScene1407Mouse::stArriveAtHole);
 	setVisible(false);
 	_countdown = 12;
 }

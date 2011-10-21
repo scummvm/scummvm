@@ -1088,7 +1088,7 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 	case 0x3002:
 		if (_index == getGlobalVar(0x9A500914))
 			sendMessage(_parentScene, 0x4808, 0);
-		setFileHash1();
+		stopAnimation();
 		break;
 	case 0x4808:
 		setGlobalVar(0x9A500914, _index);
@@ -1832,7 +1832,7 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 		break;
 	case 0x3002:
 		removeCallbacks();
-		setFileHash1();
+		stopAnimation();
 		break;
 	case 0x4807:
 		stLeverUp();
@@ -1852,7 +1852,7 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 
 void AsScene2207Lever::stLeverDown() {
 	setFileHash(0x80880090, 1, -1);
-	setCallback1(AnimationCallback(&AsScene2207Lever::stLeverDownEvent));
+	FinalizeState(&AsScene2207Lever::stLeverDownEvent);
 	_soundResource.play(0x40581882);
 }
 
@@ -1862,7 +1862,7 @@ void AsScene2207Lever::stLeverDownEvent() {
 
 void AsScene2207Lever::stLeverUp() {
 	setFileHash(0x80880090, 6, -1);
-	setCallback1(AnimationCallback(&AsScene2207Lever::stLeverUpEvent));
+	FinalizeState(&AsScene2207Lever::stLeverUpEvent);
 	_playBackwards = true;
 	_soundResource.play(0x40581882);
 }
@@ -1931,7 +1931,7 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 
 void AsScene2207WallRobotAnimation::stStartAnimation() {
 	if (!_idle) {
-		SetAnimationCallback3(NULL);
+		NextState(NULL);
 	} else {
 		setFileHash(0xCCFD6090, 0, -1);
 		_idle = false;
@@ -1940,11 +1940,11 @@ void AsScene2207WallRobotAnimation::stStartAnimation() {
 }
 
 void AsScene2207WallRobotAnimation::stStopAnimation() {
-	SetAnimationCallback3(&AsScene2207WallRobotAnimation::cbStopAnimation);
+	NextState(&AsScene2207WallRobotAnimation::cbStopAnimation);
 }
 
 void AsScene2207WallRobotAnimation::cbStopAnimation() {
-	setFileHash1();
+	stopAnimation();
 	_soundResource1.stop();
 	_soundResource2.stop();
 	_soundResource3.stop();
@@ -1984,7 +1984,7 @@ uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const Messa
 
 void AsScene2207WallCannonAnimation::stStartAnimation() {
 	if (!_idle) {
-		SetAnimationCallback3(NULL);
+		NextState(NULL);
 	} else {
 		setVisible(true);
 		setFileHash(0x8CAA0099, 0, -1);
@@ -1993,11 +1993,11 @@ void AsScene2207WallCannonAnimation::stStartAnimation() {
 }
 
 void AsScene2207WallCannonAnimation::stStopAnimation() {
-	SetAnimationCallback3(&AsScene2207WallCannonAnimation::cbStopAnimation);
+	NextState(&AsScene2207WallCannonAnimation::cbStopAnimation);
 }
 
 void AsScene2207WallCannonAnimation::cbStopAnimation() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 	_idle = true;
 }

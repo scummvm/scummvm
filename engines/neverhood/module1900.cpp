@@ -355,10 +355,10 @@ void AsScene1907Symbol::tryToPlugIn() {
 	_deltaY = (_y - kAsScene1907SymbolPluggedInPositions[_newPositionIndex].y) / 16;
 	_smallDeltaY = _y - _deltaY * 16 - kAsScene1907SymbolPluggedInPositions[_newPositionIndex].y;
 	if (_elementIndex == _newPositionIndex) {
-		SetAnimationCallback3(&AsScene1907Symbol::stPlugIn);
+		NextState(&AsScene1907Symbol::stPlugIn);
 	} else {
 		_symbolFlag1 = 1;
-		SetAnimationCallback3(&AsScene1907Symbol::stPlugInFail);
+		NextState(&AsScene1907Symbol::stPlugInFail);
 	}
 }
 
@@ -389,7 +389,7 @@ void AsScene1907Symbol::stFallOffHitGround() {
 	_vm->_collisionMan->removeSprite(this);
 	_vm->_collisionMan->addSprite(this);
 	SetSpriteCallback(&AsScene1907Symbol::suFallOffHitGround);
-	SetAnimationCallback3(&AsScene1907Symbol::cbFallOffHitGroundEvent);
+	NextState(&AsScene1907Symbol::cbFallOffHitGroundEvent);
 	_newHashListIndex = 0;
 	_currStep = 0;
 	_yAccel = 30;
@@ -417,7 +417,7 @@ void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 void AsScene1907Symbol::stPlugIn() {
 	_soundResource1.play();
 	_currPositionIndex = _newPositionIndex;
-	setFileHash1();
+	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(NULL);
 	if (_elementIndex == 8)
@@ -426,13 +426,13 @@ void AsScene1907Symbol::stPlugIn() {
 
 void AsScene1907Symbol::stPlugInFail() {
 	_currPositionIndex = _newPositionIndex;
-	setFileHash1();
+	stopAnimation();
 	_parentScene->plugInFailed();
 }
 
 void AsScene1907Symbol::moveUp() {
 	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
-	setFileHash1();
+	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(&AsScene1907Symbol::suMoveUp);
 	_yIncr = 1;
@@ -441,7 +441,7 @@ void AsScene1907Symbol::moveUp() {
 
 void AsScene1907Symbol::moveDown() {
 	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
-	setFileHash1();
+	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(&AsScene1907Symbol::suMoveDown);
 	_yIncr = 4;
@@ -541,11 +541,11 @@ void AsScene1907WaterHint::show() {
 	setVisible(true);
 	setFileHash(0x110A1061, 0, -1);
 	SetMessageHandler(&AsScene1907WaterHint::handleMessage46BA20);
-	SetAnimationCallback3(&AsScene1907WaterHint::hide);
+	NextState(&AsScene1907WaterHint::hide);
 }
 
 void AsScene1907WaterHint::hide() {
-	setFileHash1();
+	stopAnimation();
 	setVisible(false);
 	SetMessageHandler(&Sprite::handleMessage);
 }
