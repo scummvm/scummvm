@@ -1425,17 +1425,9 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if (_field92 == 1)
-			SceneItem::display(910, 10, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+			SceneItem::display2(910, 10);
 		else
-			SceneItem::display(910, 11, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
+			SceneItem::display2(910, 11);
 		return true;
 	case CURSOR_USE:
 		_field92 = BF_GLOBALS._v4CECE[_field90 + 11];
@@ -1451,13 +1443,8 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 				scene->_field2DD8 = 15;
 				scene->_breakerBoxInset._object28.init(178, 108, 0, BF_GLOBALS._v4CECE[15]);
 			}
-			SceneItem::display(910, 12, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
-			BF_GLOBALS._v4CECE[_field90] = _field92;
-			return true;
+			SceneItem::display2(910, 12);
+			break;
 		case 1:
 			_field92 = 3;
 			setStrip(6);
@@ -1466,8 +1453,7 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 				scene->_breakerBoxInset._object27.remove();
 			else
 				scene->_breakerBoxInset._object28.remove();
-			BF_GLOBALS._v4CECE[_field90] = _field92;
-			return true;
+			break;
 		case 2:
 			_field92 = 2;
 			setStrip(7);
@@ -1479,21 +1465,16 @@ bool Scene910::Object25::startAction(CursorType action, Event &event) {
 				scene->_field2DD8 = 15;
 				scene->_breakerBoxInset._object28.init(178, 108, 0, BF_GLOBALS._v4CECE[15]);
 			}
-			BF_GLOBALS._v4CECE[_field90] = _field92;
-			return true;
+			break;
 		case 3:
-			SceneItem::display(910, 13, SET_WIDTH, 312,
-				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
-				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
-				SET_EXT_FGCOLOR, 13, LIST_END);
-			BF_GLOBALS._v4CECE[_field90] = _field92;
-			return true;
+			SceneItem::display2(910, 13);
+			break;
 		default:
-			BF_GLOBALS._v4CECE[_field90] = _field92;
-			return true;
+			break;
 		}
-		break;
+
+		BF_GLOBALS._v4CECE[_field90 + 11] = _field92;
+		return true;
 	default:
 		return NamedObject::startAction(action, event);
 		break;
