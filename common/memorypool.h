@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-
+#include "common/memory.h"
 
 namespace Common {
 
@@ -139,6 +139,62 @@ public:
 		ptr->~T();
 		this->freeChunk(ptr);
 	}
+};
+
+template<class T, size_t NUM_INTERNAL_CHUNKS = 32>
+class FixedPoolAllocator {
+public:
+	typedef T ValueType;
+
+	typedef size_t SizeType;
+
+	typedef T *Pointer;
+	typedef const T *ConstPointer;
+
+	/**
+	 * Allocate memory for n objects of type T.
+	 *
+	 * This does *not* initialize the memory.
+	 */
+	Pointer allocate(SizeType n) {
+		if (n == 1)
+			return (Pointer)_pool.allocChunk();
+		else
+			return (Pointer)malloc(sizeof(T) * n);
+	}
+
+	/**
+	 * Free the memory of n objects.
+	 *
+	 * This does *not* destroy the objects.
+	 */
+	void deallocate(Pointer p, SizeType n) {
+		if (n == 1)
+			_pool.freeChunk(p);
+		else
+			free(p);
+	}
+
+	/**
+	 * Construct one object T at the location p with the value value.
+	 */
+	void construct(Pointer p, const T &value) { new (p) T(value); }
+
+	/**
+	 * Destroy one object at location p.
+	 */
+	void destroy(Pointer p) { p->~T(); }
+
+	/**
+	 * Create an allocator for another type U.
+	 */
+	template<class U>
+	struct Rebind {
+		typedef FixedPoolAllocator<U, NUM_INTERNAL_CHUNKS> Other;
+	};
+private:
+	typedef FixedSizeMemoryPool<sizeof(T), NUM_INTERNAL_CHUNKS> FixedPool;
+	FixedPool _pool;
 };
 
 }	// End of namespace Common
