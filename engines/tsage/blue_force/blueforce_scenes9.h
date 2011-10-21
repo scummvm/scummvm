@@ -146,7 +146,7 @@ class Scene910: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object4: public NamedObject {
+	class Forbes: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -269,7 +269,7 @@ public:
 	Lyle _lyle;
 	Nico _nico;
 	Stuart _stuart;
-	Object4 _object4;
+	Forbes _forbes;
 	NamedObject _object5,  _vent, _object7;
 	PowerCord _blackCord, _yellowCord;
 	BreakerBox _breakerBox;

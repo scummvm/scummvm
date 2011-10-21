@@ -1046,7 +1046,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene910::Object4::startAction(CursorType action, Event &event) {
+bool Scene910::Forbes::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_TALK) {
@@ -1054,7 +1054,7 @@ bool Scene910::Object4::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._walkRegions.proc2(1);
 		BF_GLOBALS._walkRegions.proc2(16);
 		scene->_sceneMode = 9140;
-		scene->setAction(&scene->_sequenceManager1, scene, 9140, &scene->_object4, &BF_GLOBALS._player, &scene->_lyle, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 9140, &scene->_forbes, &BF_GLOBALS._player, &scene->_lyle, NULL);
 		return true;
 	} else
 		return NamedObject::startAction(action, event);
@@ -2649,10 +2649,10 @@ void Scene910::signal() {
 			BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 0);
 		else
 			BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 910);
-		_object4.postInit();
-		_object4.setDetails(910, 86, 87, 88, 4, &_item8);
+		_forbes.postInit();
+		_forbes.setDetails(910, 86, 87, 88, 4, &_item8);
 		_sceneMode = 9139;
-		setAction(&_sequenceManager1, this, 9139, &_object4, &BF_GLOBALS._player, NULL);
+		setAction(&_sequenceManager1, this, 9139, &_forbes, &BF_GLOBALS._player, NULL);
 		break;
 	case 9139:
 		BF_GLOBALS._walkRegions.proc1(4);
