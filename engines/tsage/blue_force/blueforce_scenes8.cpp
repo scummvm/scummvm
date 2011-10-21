@@ -1699,7 +1699,7 @@ void Scene830::postInit(SceneObjectList *OwnerList) {
 			_field18A4 = 0;
 
 			_lyle.postInit();
-			_lyle._flags = OBJFLAG_CHECK_REGION;
+//			_lyle._flags = OBJFLAG_CHECK_REGION;
 			_lyle.setVisage(835);
 			_lyle.setObjectWrapper(new SceneObjectWrapper());
 			_lyle.animate(ANIM_MODE_1, NULL);
