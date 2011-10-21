@@ -118,7 +118,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene910: public PalettedScene {
@@ -135,6 +135,7 @@ class Scene910: public PalettedScene {
 	class Object1: public NamedObject {
 	public:
 		int _field90;
+		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object2: public NamedObject {
@@ -149,9 +150,11 @@ class Scene910: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object8: public NamedObject {
+	class PowerCord: public NamedObject {
 	public:
 		int _field90, _field92;
+
+		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 		void init(int val);
 
@@ -170,13 +173,14 @@ class Scene910: public PalettedScene {
 		int _field90, _field92;
 	public:
 		void setupBreaker(int x, int y, int mode, int8 frameNumber);
+		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
 
-	class Object28: public Object13 {
+	class BlackPlug: public Object13 {
 	public:
-		void subEBD26(int x, int y, int arg8, int8 argA);
+		void init(int x, int y, int arg8, int8 argA);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
@@ -185,6 +189,7 @@ class Scene910: public PalettedScene {
 		int _field90, _field92;
 	public:
 		void subEBBDC(int x, int y, int arg8, int argA);
+		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
@@ -195,23 +200,23 @@ class Scene910: public PalettedScene {
 		Object25 _object25, _object26;
 	public:
 		Object13 _object27;
-		Object28 _object28;
+		BlackPlug _object28;
 		virtual Common::String getClassName() { return "Scene910_object12"; }
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void remove();
 	};
 
-	class Object31: public NamedObject {
+	class PowerButton: public NamedObject {
 	public:
 		NamedObject _object32;
 		virtual void remove();
 		virtual bool startAction(CursorType action, Event &event);
-		void subED6EA(int frame);
+		void init(int frame);
 	};
 
 	class GeneratorInset: public FocusObject {
-		Object28 _object30;
-		Object31 _object31;
+		BlackPlug _blackPlug;
+		PowerButton _powerButton;
 	public:
 		virtual Common::String getClassName() { return "Scene910_object29"; }
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
@@ -266,7 +271,7 @@ public:
 	Object3 _stuart;
 	Object4 _object4;
 	NamedObject _object5,  _vent, _object7;
-	Object8 _blackCord, _yellowCord;
+	PowerCord _blackCord, _yellowCord;
 	BreakerBox _breakerBox;
 	FakeWall _fakeWall;
 	BreakerBoxInset _breakerBoxInset;
@@ -284,7 +289,7 @@ public:
 	ASoundExt _sound1, _sound2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
@@ -327,7 +332,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene930: public PalettedScene {
@@ -418,7 +423,7 @@ public:
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
 	virtual void dispatch();
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 };
 
 class Scene935: public PalettedScene {
