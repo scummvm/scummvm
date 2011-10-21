@@ -445,7 +445,8 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		_object7.setDetails(900, 15, 16, 17, ANIM_MODE_1, NULL);
 	}
 	if (BF_GLOBALS._sceneManager._previousScene == 910) {
-		_sceneBounds.moveTo(640, 0);
+		_sceneBounds.moveTo(639, 0);
+
 		BF_GLOBALS._v4CEC0 = 2;
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 900);
 		_dog._flag = 1;
