@@ -505,7 +505,7 @@ class Scene355: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class LockerDoor: public NamedObject {
+	class LockerInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -513,11 +513,11 @@ class Scene355: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object6: public NamedObjectExt {
+	class Green: public NamedObjectExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object7: public NamedObjectExt {
+	class Lyle: public NamedObjectExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -543,7 +543,7 @@ class Scene355: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item5: public NamedHotspot {
+	class Pouch: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -551,7 +551,7 @@ class Scene355: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item12: public NamedHotspot {
+	class RentalExit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -576,21 +576,21 @@ public:
 	NamedObject _harrison;
 	Doorway _doorway;
 	Locker _locker;
-	LockerDoor _lockerDoor;
+	LockerInset _lockerInset;
 	Object5 _object5;
-	Object6 _object6;
-	Object7 _object7;
+	Green _green;
+	Lyle _lyle;
 	Object8 _object8;
 	NamedObject _object9, _object10, _object11;
 	Item1 _item1;
 	Item2 _item2;
 	Item3 _item3;
 	Item4 _item4;
-	Item5 _item5;
+	Pouch _pouch;
 	NamedHotspot _item6, _item7, _item8;
 	NamedHotspot _item9, _item10;
 	Item11 _item11;
-	Item12 _item12;
+	RentalExit _rentalExit;
 	ASoundExt _sound1, _sound2, _sound3;
 	Action1 _action1;
 	Action2 _action2;
