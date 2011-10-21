@@ -1,6 +1,10 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+1.5.0 (????-??-??)
+ SDL ports:
+   - Added support for OpenGL (GSoC Task).
+
 1.4.0 (2011-11-11)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
@@ -41,9 +45,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      Indiana Jones and the Last Crusade.
    - Improved palette handling for the Amiga version of Indiana Jones and the
      Fate of Atlantis.
-
- SDL ports:
-   - Added support for OpenGL (GSoC Task).
 
  Tinsel:
    - Fixed deleting saved games from the list of saved games (from the launcher
