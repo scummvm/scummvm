@@ -2637,6 +2637,10 @@ void Scene860::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_destPos.y);
 	s.syncAsSint16LE(_field886);
 	s.syncAsSint16LE(_field888);
+
+	_swRect.synchronize(s);
+	_neRect.synchronize(s);
+	_yachtRect.synchronize(s);
 }
 
 void Scene860::postInit(SceneObjectList *OwnerList) {
