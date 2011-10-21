@@ -62,11 +62,11 @@ class Scene900: public PalettedScene {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object6: public NamedObject {
+	class Lyle: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object7: public NamedObject {
+	class Body: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -102,8 +102,8 @@ public:
 	NamedHotspot _item3;
 	NamedObject _object4;
 	NamedObject _object5;
-	Object6 _lyle;
-	Object7 _object7;
+	Lyle _lyle;
+	Body _body;
 	Item4 _item4;
 	ASoundExt _sound1;
 	Action1 _action1;

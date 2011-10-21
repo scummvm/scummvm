@@ -174,31 +174,29 @@ bool Scene900::Dog::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene900::Object6::startAction(CursorType action, Event &event) {
+bool Scene900::Lyle::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_TALK) {
-		if (BF_GLOBALS._sceneManager._sceneLoadCount == 0) {
-			if (!_action) {
-				if (scene->_dog._flag) {
-					if (BF_GLOBALS._v4CEC0 == 0)
-						scene->_stripManager.start(9004, &BF_GLOBALS._stripProxy);
-					else {
-						if (scene->_door._flag == 1) {
-							if (BF_GLOBALS._v4CEC0 == 2)
-								scene->_stripManager.start(9005, &BF_GLOBALS._stripProxy);
-							else
-								scene->_stripManager.start(9001, &BF_GLOBALS._stripProxy);
-						} else
+		if (!_action) {
+			if (scene->_dog._flag) {
+				if (BF_GLOBALS._v4CEC0 == 0)
+					scene->_stripManager.start(9004, &BF_GLOBALS._stripProxy);
+				else {
+					if (scene->_door._flag == 1) {
+						if (BF_GLOBALS._v4CEC0 == 2)
+							scene->_stripManager.start(9005, &BF_GLOBALS._stripProxy);
+						else
 							scene->_stripManager.start(9001, &BF_GLOBALS._stripProxy);
-					}
-				} else {
-					if (scene->_field1974)
-						scene->_stripManager.start(9003, &BF_GLOBALS._stripProxy);
-					else {
-						++scene->_field1974;
-						scene->_stripManager.start(9002, &BF_GLOBALS._stripProxy);
-					}
+					} else
+						scene->_stripManager.start(9001, &BF_GLOBALS._stripProxy);
+				}
+			} else {
+				if (scene->_field1974)
+					scene->_stripManager.start(9003, &BF_GLOBALS._stripProxy);
+				else {
+					++scene->_field1974;
+					scene->_stripManager.start(9002, &BF_GLOBALS._stripProxy);
 				}
 			}
 		}
@@ -207,7 +205,7 @@ bool Scene900::Object6::startAction(CursorType action, Event &event) {
 		return NamedObject::startAction(action, event);
 }
 
-bool Scene900::Object7::startAction(CursorType action, Event &event) {
+bool Scene900::Body::startAction(CursorType action, Event &event) {
 	Scene900 *scene = (Scene900 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
@@ -438,11 +436,11 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	}
 	_dog._flag = 0;
 	if (BF_GLOBALS._bookmark >= bFinishedWGreen) {
-		_object7.postInit();
-		_object7.fixPriority(120);
-		_object7.setVisage(901);
-		_object7.setPosition(Common::Point(159,128));
-		_object7.setDetails(900, 15, 16, 17, ANIM_MODE_1, NULL);
+		_body.postInit();
+		_body.fixPriority(120);
+		_body.setVisage(901);
+		_body.setPosition(Common::Point(159,128));
+		_body.setDetails(900, 15, 16, 17, ANIM_MODE_1, NULL);
 	}
 	if (BF_GLOBALS._sceneManager._previousScene == 910) {
 		_sceneBounds.moveTo(639, 0);
@@ -530,18 +528,21 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager1, this, 9013, &BF_GLOBALS._player, &_lyle, NULL);
 			BF_GLOBALS._bookmark = bAmbushed;
 			BF_GLOBALS.setFlag(fWithLyle);
-		} else if (BF_GLOBALS._bookmark > bFinishedWGreen) {
-			_lyle.postInit();
-			_lyle.setVisage(811);
-			_lyle.setPosition(Common::Point(780, 153));
-			_lyle._moveDiff.y = 7;
-			_lyle._flags |= 0x1000;
-			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
-			_lyle.animate(ANIM_MODE_1, NULL);
-			_lyle.setObjectWrapper(new SceneObjectWrapper());
-		} // no else on purpose
-		_sceneMode = 9000;
-		setAction(&_sequenceManager1, this, 9000, &BF_GLOBALS._player, NULL);
+		} else {
+			if (BF_GLOBALS._bookmark > bFinishedWGreen) {
+				_lyle.postInit();
+				_lyle.setVisage(811);
+				_lyle.setPosition(Common::Point(780, 153));
+				_lyle._moveDiff.y = 7;
+				_lyle._flags |= 0x1000;
+				_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
+				_lyle.animate(ANIM_MODE_1, NULL);
+				_lyle.setObjectWrapper(new SceneObjectWrapper());
+			} 
+
+			_sceneMode = 9000;
+			setAction(&_sequenceManager1, this, 9000, &BF_GLOBALS._player, NULL);
+		}
 	} else {
 		_door._flag = 0;
 		_door.setFrame(_door.getFrameCount());
