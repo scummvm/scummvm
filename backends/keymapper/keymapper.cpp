@@ -210,6 +210,8 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		}
 	}
 
+	if (!action && _globalKeymap)
+		action = _globalKeymap->getMappedAction(key);
 	if (!action)
 		return false;
 
