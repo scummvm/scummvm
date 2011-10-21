@@ -783,12 +783,12 @@ void Scene910::Action2::signal() {
 
 /* Objects */
 
-void Scene910::Object1::synchronize(Serializer &s) {
+void Scene910::Lyle::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
 	s.syncAsSint16LE(_field90);
 }
 
-bool Scene910::Object1::startAction(CursorType action, Event &event) {
+bool Scene910::Lyle::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
@@ -806,9 +806,9 @@ bool Scene910::Object1::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 9130;
 			if (BF_GLOBALS.getFlag(gunDrawn))
-				setAction(&scene->_sequenceManager1, scene, 9138, &BF_GLOBALS._player, &scene->_lyle, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 9138, &BF_GLOBALS._player, &scene->_lyle, NULL);
 			else
-				setAction(&scene->_sequenceManager1, scene, 9130, &BF_GLOBALS._player, &scene->_lyle, NULL);
+				scene->setAction(&scene->_sequenceManager1, scene, 9130, &BF_GLOBALS._player, &scene->_lyle, NULL);
 			return true;
 		}
 	} else {
@@ -816,7 +816,7 @@ bool Scene910::Object1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene910::Object2::startAction(CursorType action, Event &event) {
+bool Scene910::Nico::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -944,7 +944,7 @@ bool Scene910::Object2::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene910::Object3::startAction(CursorType action, Event &event) {
+bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {

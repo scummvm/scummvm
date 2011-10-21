@@ -132,17 +132,17 @@ class Scene910: public PalettedScene {
 		virtual void signal();
 	};
 	/* Objects */
-	class Object1: public NamedObject {
+	class Lyle: public NamedObject {
 	public:
 		int _field90;
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObject {
+	class Nico: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object3: public NamedObject {
+	class Stuart: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -266,9 +266,9 @@ public:
 	Action1 _action1;
 	Action2 _action2;
 	Timer _timer1;
-	Object1 _lyle;
-	Object2 _nico;
-	Object3 _stuart;
+	Lyle _lyle;
+	Nico _nico;
+	Stuart _stuart;
 	Object4 _object4;
 	NamedObject _object5,  _vent, _object7;
 	PowerCord _blackCord, _yellowCord;
