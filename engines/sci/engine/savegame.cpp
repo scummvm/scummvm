@@ -545,8 +545,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
-	Common::StackLock lock(_mutex);
-
 	int songcount = 0;
 	byte masterVolume = soundGetMasterVolume();
 	byte reverb = _pMidiDrv->getReverb();
@@ -576,9 +574,12 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);
 
-	if (s.isLoading()) {
+	if (s.isLoading())
 		clearPlayList();
 
+	Common::StackLock lock(_mutex);
+
+	if (s.isLoading()) {
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			curSong->saveLoadWithSerializer(s);
