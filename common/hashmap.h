@@ -399,8 +399,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc, Alloc>::clear(bool shrinkArray) {
 		_storage[ctr] = NULL;
 	}
 
-	// TODO: Formerly we reduced the memory taken by the pool based allocation
-	// here by freeing all unused pages. We should add that again.
+	_allocator.freeReservedMemory();
 
 	if (shrinkArray && _mask >= HASHMAP_MIN_CAPACITY) {
 		delete[] _storage;

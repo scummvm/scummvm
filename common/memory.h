@@ -77,6 +77,11 @@ public:
 	void destroy(Pointer p) { p->~T(); }
 
 	/**
+	 * Try to free up as much space as possible.
+	 */
+	void freeReservedMemory() {}
+
+	/**
 	 * Create an allocator for another type U.
 	 */
 	template<class U>
