@@ -2773,6 +2773,7 @@ void Scene910::process(Event &event) {
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
+		event.handled = true;
 		break;
 	case CURSOR_WALK:
 		if (BF_GLOBALS._v4CEE2 == 1) {
