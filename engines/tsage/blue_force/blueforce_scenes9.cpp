@@ -1077,8 +1077,7 @@ bool Scene910::Object8::startAction(CursorType action, Event &event) {
 					_field90 = 1;
 					return true;
 				} else {
-					scene->_field2DDC = 151;
-					scene->_field2DDE = 186;
+					scene->_destPos = Common::Point(151, 186);
 					scene->_field2DDA = 4;
 					scene->_sceneMode = 9123;
 					if (BF_GLOBALS._player._visage == 1911)
@@ -1159,8 +1158,7 @@ bool Scene910::FakeWall::startAction(CursorType action, Event &event) {
 
 	if (action == 57) {
 		BF_GLOBALS._player.disableControl();
-		scene->_field2DDC = 285;
-		scene->_field2DDE = 114;
+		scene->_destPos = Common::Point(285, 114);
 		scene->_field2DDA = 9;
 		scene->_sceneMode = 9123;
 		if (BF_GLOBALS._player._visage == 1911)
@@ -1815,7 +1813,7 @@ void Scene910::Object31::subED6EA(int frame) {
 	BF_GLOBALS._sceneItems.push_front(this);
 }
 
-bool Scene910::Item1::startAction(CursorType action, Event &event) {
+bool Scene910::Generator::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
@@ -1849,8 +1847,7 @@ bool Scene910::Item2::startAction(CursorType action, Event &event) {
 
 	if (action == 59) {
 		BF_GLOBALS._player.disableControl();
-		scene->_field2DDC = 151;
-		scene->_field2DDE = 186;
+		scene->_destPos = Common::Point(151, 186);
 		scene->_field2DDA = 5;
 		scene->_sceneMode = 9123;
 		if (BF_GLOBALS._player._visage == 1911)
@@ -1908,8 +1905,7 @@ bool Scene910::Item16::startAction(CursorType action, Event &event) {
 
 	if (BF_GLOBALS._player._visage == 1911) {
 		BF_GLOBALS._player.disableControl();
-		scene->_field2DDC = 292;
-		scene->_field2DDE = 100;
+		scene->_destPos = Common::Point(292, 100);
 		scene->_field2DDA = 0;
 		scene->_sceneMode = 9123;
 		scene->setAction(&scene->_sequenceManager1, scene, 9123, &BF_GLOBALS._player, NULL);
@@ -1932,6 +1928,18 @@ bool Scene910::Item17::startAction(CursorType action, Event &event) {
 
 void Scene910::remove() {
 	PalettedScene::remove();
+}
+
+void Scene910::synchronize(Serializer &s) {
+	PalettedScene::synchronize(s);
+
+	s.syncAsSint16LE(_field2DDA);
+	s.syncAsSint16LE(_field2DD8);
+	s.syncAsSint16LE(_field2DE0);
+	s.syncAsSint16LE(_field2DE2);
+	s.syncAsSint16LE(_field2DE4);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
 }
 
 void Scene910::postInit(SceneObjectList *OwnerList) {
@@ -2573,10 +2581,10 @@ void Scene910::signal() {
 		default:
 			BF_GLOBALS._player.enableControl();
 			PlayerMover *mover = new PlayerMover();
-			Common::Point destPos(_field2DDC, _field2DDE);
-			BF_GLOBALS._player.addMover(mover, &destPos, NULL);
+			BF_GLOBALS._player.addMover(mover, &_destPos, NULL);
 			break;
 		}
+		break;
 	case 9124:
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS.setFlag(gunDrawn);
@@ -2736,8 +2744,7 @@ void Scene910::process(Event &event) {
 			break;
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			BF_GLOBALS._player.disableControl();
-			_field2DDC = BF_GLOBALS._player._position.x;
-			_field2DDE = BF_GLOBALS._player._position.y;
+			_destPos = BF_GLOBALS._player._position;
 			_sceneMode = 9123;
 			setAction(&_sequenceManager1, this, 9123, &BF_GLOBALS._player, NULL);
 			event.handled = true;
@@ -2765,8 +2772,7 @@ void Scene910::process(Event &event) {
 			BF_GLOBALS._player.disableControl();
 			if (BF_GLOBALS._player._visage == 1911) {
 				BF_GLOBALS._player.disableControl();
-				_field2DDC = event.mousePos.x;
-				_field2DDE = event.mousePos.y;
+				_destPos = event.mousePos;
 				_field2DDA = 0;
 				_sceneMode = 9123;
 				setAction(&_sequenceManager1, this, 9123, &BF_GLOBALS._player, NULL);
@@ -2777,8 +2783,7 @@ void Scene910::process(Event &event) {
 			}
 		} else if (BF_GLOBALS._player._visage == 1911) {
 			BF_GLOBALS._player.disableControl();
-			_field2DDC = event.mousePos.x;
-			_field2DDE = event.mousePos.y;
+			_destPos = event.mousePos;
 			_field2DDA = 0;
 			_sceneMode = 9123;
 			setAction(&_sequenceManager1, this, 9123, &BF_GLOBALS._player, NULL);

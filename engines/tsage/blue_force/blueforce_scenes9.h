@@ -219,7 +219,7 @@ class Scene910: public PalettedScene {
 	};
 
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Generator: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -248,7 +248,8 @@ class Scene910: public PalettedScene {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	int _field2DDA, _field2DDC, _field2DDE, _field2DD8, _field2DE0, _field2DE2, _field2DE4;
+	int _field2DDA, _field2DD8, _field2DE0, _field2DE2, _field2DE4;
+	Common::Point _destPos;
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SpeakerGameText _gameTextSpeaker;
@@ -271,7 +272,7 @@ public:
 	BreakerBoxInset _breakerBoxInset;
 	GeneratorInset _generatorInset;
 	NamedObject _object30, _object31, _object32;
-	Item1 _generator;
+	Generator _generator;
 	Item2 _item2;
 	Item3 _item3;
 	NamedHotspot _item4,  _item5,  _item6,  _item7,  _item8;
@@ -283,6 +284,7 @@ public:
 	ASoundExt _sound1, _sound2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void synchronize(Serializer &s);
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
