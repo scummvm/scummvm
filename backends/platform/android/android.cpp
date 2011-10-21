@@ -174,6 +174,8 @@ OSystem_Android::~OSystem_Android() {
 	_mixer = 0;
 	delete _fsFactory;
 	_fsFactory = 0;
+	delete _timerManager;
+	_timerManager = 0;
 
 	deleteMutex(_event_queue_lock);
 }
