@@ -2032,7 +2032,7 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 			if ((objYDiff >= yPos) && (objYDiff <= newY) &&
 				((*i)->_xs < tempRect.right) && ((*i)->_xe > tempRect.left)) {
 				// Found index
-				regionIndex = -1; //****DEBUG*** = *i;
+				regionIndex = (*i)->_regionIndex;
 				break;
 			}
 		}

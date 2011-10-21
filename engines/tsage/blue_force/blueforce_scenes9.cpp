@@ -521,7 +521,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 			_sceneMode = 9013;
 			_lyle.postInit();
 			_lyle._moveDiff.y = 7;
-			_lyle._flags |= 0x1000;
+			_lyle._flags |= OBJFLAG_CHECK_REGION;
 			_lyle.setDetails(900, 19, 20, 21, ANIM_MODE_1, NULL);
 			_lyleHatSpeaker._xp = 210;
 			_jakeJacketSpeaker._xp = 75;
