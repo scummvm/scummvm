@@ -224,8 +224,7 @@ void RemapDialog::clearMapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
 		return;
 
-	debug("clear the mapping %u", i);
-	//TODO: clear the mapping here
+	debug(3, "clear the mapping %u", i);
 	_activeRemapAction = _currentActions[_topAction + i].action;
 	_activeRemapAction->mapKey(0);
 	_activeRemapAction->getParent()->saveMappings();
