@@ -61,6 +61,7 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "tsage", "Tsunami TsAGE-based Game" },
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
+	{ "ringworld2", "Return to Ringworld" },
 	{ 0, 0 }
 };
 
