@@ -57,6 +57,7 @@ public:
 	void playSoundAtPos(int16 resIndex, int16 x, int16 y);
 	void updateSpeech();
 	void stopSpeech();
+	void stopAll();
 
 protected:
 	ToltecsEngine *_vm;
