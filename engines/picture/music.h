@@ -29,16 +29,11 @@
 
 namespace Picture {
 
-enum MusicFlags {
-	MUSIC_NORMAL = 0,
-	MUSIC_LOOP = 1
-};
-
 class MusicPlayer : public Audio::MidiPlayer {
 public:
 	MusicPlayer(bool isGM = true);
 
-	void playMIDI(const byte *data, uint32 size, MusicFlags flags = MUSIC_NORMAL);
+	void playMIDI(const byte *data, uint32 size, bool loop = false);
 	void pause();
 	void resume();
 	void stopAndClear();

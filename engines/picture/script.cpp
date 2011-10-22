@@ -1052,8 +1052,8 @@ void ScriptInterpreter::sfStartSequence() {
 		_vm->_arc->closeResource();
 
 		if (!memcmp(data, "FORM", 4)) {
-			// TODO: Looping flag
-			_vm->_musicPlayer->playMIDI(data, resourceSize);
+			// TODO: It seems that music is always looping?
+			_vm->_musicPlayer->playMIDI(data, resourceSize, true);
 		} else {
 			// TODO: Where does this occur? Are these SMF MIDI files?
 			warning("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
