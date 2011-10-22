@@ -307,8 +307,14 @@ void RemapDialog::loadKeymap() {
 
 		List<const HardwareKey*> freeKeys(_keymapper->getHardwareKeys());
 
+		int topIndex = activeKeymaps.size() - 1;
+		// skip all gui maps
+		// TODO: Don't use the keymap name as a way to discriminate GUI maps
+		while (topIndex > 0 && activeKeymaps[topIndex].keymap->getName().equals(kGuiKeymapName))
+			--topIndex;
+
 		// add most active keymap's keys
-		Keymapper::MapRecord top = activeKeymaps.top();
+		Keymapper::MapRecord top = activeKeymaps[topIndex];
 		List<Action*>::iterator actIt;
 		debug(3, "RemapDialog::loadKeymap top keymap: %s", top.keymap->getName().c_str());
 		for (actIt = top.keymap->getActions().begin(); actIt != top.keymap->getActions().end(); ++actIt) {
@@ -322,8 +328,8 @@ void RemapDialog::loadKeymap() {
 		}
 
 		// loop through remaining finding mappings for unmapped keys
-		if (top.inherit) {
-			for (int i = activeKeymaps.size() - 2; i >= 0; --i) {
+		if (top.inherit && topIndex >= 0) {
+			for (int i = topIndex - 1; i >= 0; --i) {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
 				List<const HardwareKey*>::iterator keyIt = freeKeys.begin();

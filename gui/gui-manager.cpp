@@ -107,11 +107,11 @@ void GuiManager::initKeymap() {
 	Keymapper *mapper = _system->getEventManager()->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap("gui", tmp) != 0)
+	if (mapper->getKeymap(kGuiKeymapName, tmp) != 0)
 		return;
 
 	Action *act;
-	Keymap *guiMap = new Keymap("gui");
+	Keymap *guiMap = new Keymap(kGuiKeymapName);
 
 	act = new Action(guiMap, "CLOS", _("Close"), kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
@@ -126,6 +126,14 @@ void GuiManager::initKeymap() {
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(guiMap);
+}
+
+void GuiManager::pushKeymap() {
+	_system->getEventManager()->getKeymapper()->pushKeymap(Common::kGuiKeymapName);
+}
+
+void GuiManager::popKeymap() {
+	_system->getEventManager()->getKeymapper()->popKeymap();
 }
 #endif
 
@@ -270,16 +278,6 @@ void GuiManager::runLoop() {
 	uint32 lastRedraw = 0;
 	const uint32 waitTime = 1000 / 45;
 
-#ifdef ENABLE_KEYMAPPER
-	// Due to circular reference with event manager and GUI
-	// we cannot init keymap on the GUI creation. Thus, let's
-	// try to do it on every launch, checking whether the
-	// map is already existing
-	initKeymap();
-
-	eventMan->getKeymapper()->pushKeymap("gui");
-#endif
-
 	bool tooltipCheck = false;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
@@ -390,10 +388,6 @@ void GuiManager::runLoop() {
 		// Delay for a moment
 		_system->delayMillis(10);
 	}
-
-#ifdef ENABLE_KEYMAPPER
-	eventMan->getKeymapper()->popKeymap();
-#endif
 
 	if (didSaveState) {
 		_theme->disable();
