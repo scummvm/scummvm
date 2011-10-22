@@ -50,7 +50,7 @@ void MusicPlayer::send(uint32 b) {
 	Audio::MidiPlayer::send(b);
 }
 
-void MusicPlayer::playMIDI(const byte *data, uint32 size, MusicFlags flags) {
+void MusicPlayer::playMIDI(const byte *data, uint32 size, bool loop) {
 	Common::StackLock lock(_mutex);
 
 	stopAndClear();
@@ -76,7 +76,7 @@ void MusicPlayer::playMIDI(const byte *data, uint32 size, MusicFlags flags) {
 
 		setVolume(127);
 
-		_isLooping = flags & MUSIC_LOOP;
+		_isLooping = loop;
 		_isPlaying = true;
 	} else {
 		delete parser;
