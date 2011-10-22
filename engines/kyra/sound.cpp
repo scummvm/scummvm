@@ -109,8 +109,14 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 	while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
 		++h;
 
-	if (h >= kNumChannelHandles)
+	if (h >= kNumChannelHandles) {
+		// When we run out of handles we need to destroy the stream object,
+		// this is to avoid memory leaks in some scenes where too many sfx
+		// are started.
+		// See bug #3427240 "LOL-CD: Memory leak in caves level 3".
+		delete stream;
 		return false;
+	}
 
 	_mixer->playStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h], stream, -1, volume);
 	if (handle)
