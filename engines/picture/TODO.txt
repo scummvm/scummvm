@@ -5,21 +5,36 @@ NOTES
 
 TODO
 ------
-- Finish music support (game seems to use XMIDI, MIDI and headerless music...figure out more)
+- Finish music support (volume, looping perhaps?)
+- Check if background resources are used before purging them when changing scenes - check
+  the comments inside sfLoadScene.
+- Sometimes, some stray lines are drawn below fonts - probably because the text doesn't
+  fit inside the screen and the surface is cut off incorrectly.
+- Load/start sound and music of the saved scene when loading.
+- The animation changes in commit 105 (probably) seem to be insufficient - some animations
+  exceed the screen height (together with the interface) - perhaps the interface height 
+  should not be saved?
+- Some sounds are cut off prematurely (e.g. when an animation finishes before the sound
+  sample, when changing scenes and a dialog is immediately started afterwards).
 - When saving a game, save the whole screen when an animation is playing
    e.g. when playing animations (the script controlled ones, not the movies) it should save
    the whole screen when the game is saved when such an animation is running since it uses
    delta-frames so currently, once restored, the screen is wrong. This is only observed in
    a few places.
+ 
 
 BUGS
 ------
-- Crashes sometimes on scene changes
-  (I guess because some talktext is still running although the slot used by it has changed)
-- Crashes sometimes (e.g. when inside the barn and going up the ladder)
+None known (see TODO).
 
 DONE
 ------
+- Crashes sometimes on scene changes
+  (I guess because some talktext is still running although the slot used by it has changed)
+  Crashes sometimes (e.g. when inside the barn and going up the ladder)
+  These crashes are caused by non-stopping background sounds, see TODO above.
+- The game music is in XMIDI. I'm assuming that the rest of the formats were because of badly
+  dumped resources - finalize() Calls were missing and the resulting music could contain anything.
 - Implement dirty rectangles (low priority)
 - Optimize segment mask redrawing (only redraw what's neccessary)
 - Add movie playback functionality (movie format is known, needs implementing)

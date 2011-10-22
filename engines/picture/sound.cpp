@@ -178,4 +178,13 @@ void Sound::stopSpeech() {
 	}
 }
 
+void Sound::stopAll() {
+	for (int i = 0; i < kMaxChannels; i++) {
+		_vm->_mixer->stopHandle(channels[i].handle);
+		_vm->_screen->keepTalkTextItemsAlive();
+		channels[i].type = kChannelTypeEmpty;
+		channels[i].resIndex = -1;
+	}
+}
+
 } // End of namespace Picture

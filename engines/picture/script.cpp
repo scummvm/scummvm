@@ -898,7 +898,17 @@ void ScriptInterpreter::sfLoadAddPalette() {
 
 void ScriptInterpreter::sfLoadScene() {
 	if (arg8(3) == 0) {
-		_vm->_sound->stopSpeech();
+		// FIXME: Originally, this was stopSpeech(). However, we need to stop
+		// ALL sounds here (including sound effects and background sounds)
+		// before purgeCache() is called, otherwise the sound buffers will be
+		// invalidated. This is apparent when moving from a scene that has
+		// background sounds (such as the canyon at the beginning), to another
+		// one that doesn't (such as the map), and does not stop the sounds
+		// already playing. In this case, the engine will either crash or
+		// garbage will be heard through the speakers.
+		// TODO: We should either move purgeCache() elsewhere, or monitor
+		// which resources are still used before purging the cache.
+		_vm->_sound->stopAll();
 		_vm->_res->purgeCache();
 		_vm->loadScene(arg16(4));
 	} else {
@@ -1055,8 +1065,8 @@ void ScriptInterpreter::sfStartSequence() {
 			// TODO: It seems that music is always looping?
 			_vm->_musicPlayer->playMIDI(data, resourceSize, true);
 		} else {
-			// TODO: Where does this occur? Are these SMF MIDI files?
-			warning("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
+			// Sanity check: this should never occur
+			error("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
 		}
 
 		delete[] data;
@@ -1082,8 +1092,8 @@ void ScriptInterpreter::sfPlaySound2() {
 }
 
 void ScriptInterpreter::sfClearScreen() {
-	// TODO
-	debug("ScriptInterpreter::sfClearScreen");
+	// TODO: Occurs on every scene change, but seems unneeded
+	//debug("ScriptInterpreter::sfClearScreen");
 }
 
 void ScriptInterpreter::sfHandleInput() {
