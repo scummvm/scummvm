@@ -30,7 +30,7 @@
 #include "tsage/events.h"
 #include "tsage/sound.h"
 #include "tsage/saveload.h"
-#include "tsage/blue_force/blueforce_ui.h"
+#include "tsage/user_interface.h"
 
 namespace TsAGE {
 
@@ -97,10 +97,25 @@ public:
 	void dispatchSounds();
 };
 
+typedef bool (*SelectItemProc)(int objectNumber);
+
+/**
+ * The following class represents common globals that were introduced after the release of Ringworld.
+ */
+class TsAGE2Globals: public Globals {
+public:
+	UIElements _uiElements;
+	SelectItemProc _onSelectItem;
+
+	TsAGE2Globals() { _onSelectItem = NULL; }
+};
+
 extern Globals *g_globals;
 
-#define GLOBALS (*g_globals)
+#define GLOBALS (*::TsAGE::g_globals)
+#define T2_GLOBALS (*((::TsAGE::TsAGE2Globals *)g_globals))
 #define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)g_globals))
+#define R2_GLOBALS (*((::TsAGE::Ringworld2::Ringworld2Globals *)g_globals))
 
 // Note: Currently this can't be part of the g_globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
@@ -162,10 +177,9 @@ enum Flag {
 	hookPoints
 };
 
-class BlueForceGlobals: public Globals {
+class BlueForceGlobals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3;
-	UIElements _uiElements;
 	StripProxy _stripProxy;
 	int _dayNumber;
 	int _v4CEA4;
@@ -219,6 +233,15 @@ public:
 };
 
 } // End of namespace BlueForce
+
+namespace Ringworld2 {
+
+class Ringworld2Globals: public TsAGE2Globals {
+public:
+	ASoundExt _sound1, _sound2, _sound3, _sound4;
+};
+
+} // End of namespace Ringworld2
 
 } // End of namespace TsAGE
 

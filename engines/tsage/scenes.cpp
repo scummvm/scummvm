@@ -316,11 +316,39 @@ void Scene::loadScene(int sceneNum) {
 void Scene::loadSceneData(int sceneNum) {
 	_activeScreenNumber = sceneNum;
 
-	// Get the basic scene size
-	byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
-	_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// Most scenes in Ringworld 2 don't have a scene size resource, but rather just have 
+		// a standard 320x200 size. Only read the scene size data for the specific few scenes
+		switch (sceneNum) {
+		case 700:
+		case 1020:
+		case 1100:
+		case 1700:
+		case 2600:
+		case 2950:
+		case 3100:
+		case 3101:
+		case 3275:
+		case 3600: {
+			// Get the basic scene size from the resource
+			byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
+			_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+			DEALLOCATE(data);
+			break;
+		}
+		default:
+			// For all other scenes, use a standard screen size
+			_backgroundBounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			break;
+		}
+	} else {
+		// Get the basic scene size
+		byte *data = g_resourceManager->getResource(RES_BITMAP, sceneNum, 9999);
+		_backgroundBounds = Rect(0, 0, READ_LE_UINT16(data), READ_LE_UINT16(data + 2));
+		DEALLOCATE(data);
+	}
+
 	g_globals->_sceneManager._scene->_sceneBounds.contain(_backgroundBounds);
-	DEALLOCATE(data);
 
 	// Set up a surface for storing the scene background
 	SceneManager::setBackSurface();

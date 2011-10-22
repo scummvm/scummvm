@@ -226,7 +226,7 @@ void Scene410::Action7::signal() {
 			&scene->_harrison, NULL);
 		break;
 	case 5:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		setAction(&scene->_sequenceManager1, this, 4118, &BF_GLOBALS._player, NULL);
 		BF_GLOBALS._player.disableControl();
 		break;
@@ -274,7 +274,7 @@ bool Scene410::TruckFront::startAction(CursorType action, Event &event) {
 		else if (BF_GLOBALS.getFlag(fSearchedTruck))
 			SceneItem::display2(410, 13);
 		else if (BF_GLOBALS.getFlag(fGangInCar)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			scene->_sceneMode = 4118;
 			scene->signal();
 		} else {
@@ -307,7 +307,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 		} else if (!scene->_field1FC0) {
 			scene->_sceneMode = 4124;
 			scene->_field1FC0 = 1;
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			scene->signal();
 		} else {
 			break;
@@ -325,7 +325,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 4123;
 			scene->_stripManager.start(4125, scene);
 			scene->_field1FBC = 1;
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 		} else {
 			if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
 				scene->setAction(&scene->_action4);
@@ -345,7 +345,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			break;
 		} else {
 			scene->_field1FC2 = 1;
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 4127;
 			scene->setAction(&scene->_sequenceManager1, scene, 4127, &BF_GLOBALS._player, &scene->_driver, NULL);
@@ -359,7 +359,7 @@ bool Scene410::Driver::startAction(CursorType action, Event &event) {
 			SceneItem::display2(390, 15);
 		} else {
 			BF_GLOBALS.setFlag(readFrankRights);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
 
@@ -390,7 +390,7 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 		} else if (!scene->_field1FBE) {
 			scene->_sceneMode = 4121;
 			scene->_field1FBE = 1;
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 			scene->signal();
 		} else {
 			break;
@@ -423,7 +423,7 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 			SceneItem::display2(390, 15);
 		} else {
 			BF_GLOBALS.setFlag(readFrankRights);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 
 			scene->_sceneMode = 0;
@@ -729,7 +729,7 @@ void Scene410::signal() {
 		_stripManager.start(4111, this);
 		_field1FBA = 1;
 		BF_GLOBALS.setFlag(fCuffedFrankie);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		break;
 	case 10:
 		BF_GLOBALS._player.updateAngle(_harrison._position);
@@ -932,7 +932,7 @@ bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
 		BF_INVENTORY.setObjectScene(INV_AUTO_RIFLE, 1);
 		BF_INVENTORY.setObjectScene(INV_WIG, 1);
 		BF_GLOBALS.setFlag(fGotAutoWeapon);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 
 		remove();
 		return true;
@@ -943,7 +943,7 @@ bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 0;
 		scene->_stripManager.start(4126, scene);
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		scene->_fieldE14 = true;
 		return true;
 	default:
@@ -988,7 +988,7 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 		NamedObject::startAction(action, event);
 		BF_INVENTORY.setObjectScene(INV_22_BULLET, 1);
 		BF_GLOBALS.setFlag(fGotBulletsFromDash);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 
 		remove();
 		scene->_dashDrawer.remove();
@@ -1001,7 +1001,7 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
 			scene->_stripManager.start(4122, scene);
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 			scene->_fieldE16 = true;
 		}
 		break;
@@ -1350,7 +1350,7 @@ bool Scene450::Weasel::startAction(CursorType action, Event &event) {
 	case INV_FOREST_RAP:
 		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 450);
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 
 		scene->_sceneMode = 4505;
 		scene->setAction(&scene->_sequenceManager, scene, 4505, &BF_GLOBALS._player, this, 
@@ -1450,7 +1450,7 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 				SceneItem::display2(450, 16);
 				BF_GLOBALS._player.enableControl();
 			} else {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				scene->_sceneMode = 4510;
 				BF_INVENTORY.setObjectScene(INV_NAPKIN, 450);
 				scene->setAction(&scene->_sequenceManager, scene, 4510, &BF_GLOBALS._player, this, NULL);
@@ -1465,12 +1465,12 @@ bool Scene450::Manager::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			
 			if (!BF_GLOBALS.getFlag(showEugeneID))
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(showEugeneID);
 			
 			if ((BF_GLOBALS.getFlag(showRapEugene) || BF_GLOBALS.getFlag(showEugeneNapkin)) &&
 					!BF_GLOBALS.getFlag(fMgrCallsWeasel)) {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				scene->_sceneMode = 4511;
 				scene->setAction(&scene->_sequenceManager, scene, 4511, &BF_GLOBALS._player, this, NULL);
 			} else {

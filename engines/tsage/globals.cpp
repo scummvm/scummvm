@@ -25,6 +25,7 @@
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -70,6 +71,14 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	} else if (g_vm->getGameID() == GType_BlueForce) {
 		// Blue Force
 		_gfxFontNumber = 0;
+		_gfxColors.background = 89;
+		_gfxColors.foreground = 83;
+		_fontColors.background = 88;
+		_fontColors.foreground = 92;
+		_dialogCenter.y = 140;
+	} else if (g_vm->getGameID() == GType_Ringworld2) {
+		// Return to Ringworld
+		_gfxFontNumber = 2;
 		_gfxColors.background = 89;
 		_gfxColors.foreground = 83;
 		_fontColors.background = 88;
@@ -123,6 +132,12 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_game = new BlueForce::BlueForceGame();
 		_inventory = new BlueForce::BlueForceInvObjectList();
 		_sceneHandler = new BlueForce::SceneHandlerExt();
+		break;
+
+	case GType_Ringworld2:
+		_inventory = new Ringworld2::Ringworld2InvObjectList();
+		_game = new Ringworld2::Ringworld2Game();
+		_sceneHandler = new SceneHandler();
 		break;
 	}
 }
@@ -183,7 +198,7 @@ void Globals::dispatchSounds() {
 
 namespace BlueForce {
 
-BlueForceGlobals::BlueForceGlobals(): Globals() {
+BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
@@ -242,9 +257,9 @@ void BlueForceGlobals::reset() {
 
 	// Reset the inventory
 	((BlueForceInvObjectList *)_inventory)->reset();
-	BF_GLOBALS._uiElements.updateInventory();
-	BF_GLOBALS._uiElements._scoreValue = 0;
-	BF_GLOBALS._uiElements._active = false;
+	T2_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements._scoreValue = 0;
+	T2_GLOBALS._uiElements._active = false;
 
 	_mapLocationId = 1;
 	_driveFromScene = 300;

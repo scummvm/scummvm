@@ -156,7 +156,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// No cursor
 		g_globals->setFlag(122);
 
-		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() == GType_BlueForce))  {
+		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() != GType_Ringworld))  {
 			CursorMan.showMouse(false);
 			return;
 		}
@@ -246,7 +246,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	// For Blue Force, enable the question button when an inventory icon is selected
 	if (g_vm->getGameID() == GType_BlueForce)
-		BF_GLOBALS._uiElements._question.setEnabled(questionEnabled);
+		T2_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 
 void EventsClass::pushCursor(CursorType cursorType) {

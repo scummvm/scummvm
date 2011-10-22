@@ -862,7 +862,7 @@ bool Scene315::BulletinMemo::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_USE:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCleaningGun)) {
-			BF_GLOBALS._uiElements.addScore(10);
+			T2_GLOBALS._uiElements.addScore(10);
 			BF_GLOBALS.setFlag(fGotPointsForCleaningGun);
 		}
 		BF_GLOBALS._player.addMover(NULL);
@@ -906,7 +906,7 @@ bool Scene315::ATFMemo::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_USE:
 		if (!BF_GLOBALS.getFlag(fGotPointsForMemo)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForMemo);
 		}
 
@@ -937,7 +937,7 @@ void Scene315::Action1::signal() {
 		break;
 	case 3:
 		if (scene->_sceneMode == 3169) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
 		}
 
@@ -1088,7 +1088,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
 		break;
 	case 325:
-		BF_GLOBALS._uiElements._active = false;
+		T2_GLOBALS._uiElements._active = false;
 		_object6.postInit();
 		_object7.postInit();
 		_object8.setFrame(8);
@@ -1192,7 +1192,7 @@ void Scene315::signal() {
 		}
 		break;
 	case 12:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene((int)_currentCursor, 315);
 
 		if (!_field1B64 || (_field1B66 != _field1B64))
@@ -1221,11 +1221,11 @@ void Scene315::signal() {
 		BF_GLOBALS._player.enableControl();
 		_field1B68 = false;
 		BF_GLOBALS._walkRegions.proc1(4);
-		BF_GLOBALS._uiElements._active = true;
-		BF_GLOBALS._uiElements.show();
+		T2_GLOBALS._uiElements._active = true;
+		T2_GLOBALS._uiElements.show();
 		break;
 	case 3153:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene((int)_currentCursor, 315);
 
 		if (_stripNumber != 0)
@@ -1242,11 +1242,11 @@ void Scene315::signal() {
 		BF_GLOBALS._player.enableControl();
 		_field1B68 = false;
 		BF_GLOBALS._walkRegions.proc1(4);
-		BF_GLOBALS._uiElements._active = true;
-		BF_GLOBALS._uiElements.show();
+		T2_GLOBALS._uiElements._active = true;
+		T2_GLOBALS._uiElements.show();
 		break;
 	case 3156:
-		BF_GLOBALS._uiElements.addScore(10);
+		T2_GLOBALS._uiElements.addScore(10);
 		BF_INVENTORY.setObjectScene(INV_DA_NOTE, 1);
 		_object2.remove();
 		BF_GLOBALS._player.enableControl();
@@ -1257,12 +1257,12 @@ void Scene315::signal() {
 		break;
 	case 3158:
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._uiElements.addScore(10);
+		T2_GLOBALS._uiElements.addScore(10);
 		BF_INVENTORY.setObjectScene(INV_FOREST_RAP, 1);
 		break;
 	case 3159:
 		if (!BF_GLOBALS.getFlag(fBookedGreenEvidence)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fBookedGreenEvidence);
 		}
 		BF_GLOBALS.setFlag(gunClean);
@@ -2562,7 +2562,7 @@ bool Scene350::Hook::startAction(CursorType action, Event &event) {
 		BF_INVENTORY.setObjectScene(INV_HOOK, 1);
 		if (!BF_GLOBALS.getFlag(hookPoints)) {
 			BF_GLOBALS.setFlag(hookPoints);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 		}
 		remove();
 		return true;
@@ -2684,8 +2684,8 @@ void Scene350::postInit(SceneObjectList *OwnerList) {
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 370:
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._uiElements._active = true;
-		BF_GLOBALS._uiElements.show();
+		T2_GLOBALS._uiElements._active = true;
+		T2_GLOBALS._uiElements.show();
 		// Deliberate fall-through
 	case 355:
 		if (BF_GLOBALS.getFlag(onDuty) && BF_GLOBALS.getFlag(gunDrawn))
@@ -2988,7 +2988,7 @@ bool Scene355::Object5::startAction(CursorType action, Event &event) {
 		return true;
 	case CURSOR_USE:
 		BF_INVENTORY.setObjectScene(INV_FLARE, 1);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 
 		scene->_object9.remove();
 		remove();
@@ -3073,7 +3073,7 @@ bool Scene355::Green::startAction(CursorType action, Event &event) {
 				scene->_sceneMode = 9979;
 				scene->setAction(&scene->_sequenceManager, scene, 4551, &BF_GLOBALS._player, this, NULL);
 				BF_INVENTORY.setObjectScene(INV_HANDCUFFS, 355);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				_flag = 1;
 				BF_GLOBALS._bookmark = bInvestigateBoat;
 			}
@@ -3748,14 +3748,14 @@ void Scene355::signal() {
 	case 3562:
 		if (!BF_GLOBALS.getFlag(unlockBoat)) {
 			BF_GLOBALS.setFlag(unlockBoat);
-			BF_GLOBALS._uiElements.addScore(10);
+			T2_GLOBALS._uiElements.addScore(10);
 		}
 
 		SceneItem::display2(355, !_doorway._v3 ? 24 : 25);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 4550:
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		_object10.remove();
 		BF_GLOBALS._sound1.play(90);
 		BF_GLOBALS._player._regionBitList |= 0x10;
@@ -3871,7 +3871,7 @@ void Scene355::signal() {
 		_sceneMode = 0;
 		_stripManager.start(3569, this);
 		BF_INVENTORY.setObjectScene(INV_GRENADES, 1);
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_GLOBALS._player._regionBitList |= 0x10;
 		break;
 	case 9986:
@@ -3898,7 +3898,7 @@ void Scene355::signal() {
 		}
 		break;
 	case 9988:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		if ((BF_INVENTORY.getObjectScene(INV_RAGS) == 0) && (BF_INVENTORY.getObjectScene(INV_JAR) == 0) &&
 				(BF_INVENTORY.getObjectScene(INV_FLARE) == 0)) {
 			_green.postInit();
@@ -3962,7 +3962,7 @@ void Scene355::signal() {
 	case 9993:
 		BF_INVENTORY.setObjectScene(INV_SCREWDRIVER, 1);
 		SceneItem::display2(355, 29);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		_sceneMode = 0;
 		signal();
 		break;
@@ -4304,7 +4304,7 @@ void Scene360::Action1::signal() {
 		if (BF_INVENTORY.getObjectScene(INV_WAREHOUSE_KEYS) == 360) {
 			SceneItem::display2(360, 20);
 			BF_INVENTORY.setObjectScene(INV_WAREHOUSE_KEYS, 1);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 		} else {
 			SceneItem::display2(360, 5);
 		}
@@ -4671,7 +4671,7 @@ bool Scene370::Green::startAction(CursorType action, Event &event) {
 		if (_v2 != 3)
 			SceneItem::display2(370, 2);
 		else {
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 3704;
 			scene->setAction(&scene->_sequenceManager, scene, 3704, &BF_GLOBALS._player, this, &scene->_harrison, NULL);
@@ -4954,7 +4954,7 @@ void Scene370::signal() {
 		_sound1.play(6);
 		BF_GLOBALS._sound1.changeSound(35);
 		BF_INVENTORY.setObjectScene(INV_GREENS_GUN, 370);
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_GLOBALS._sceneItems.push_front(&_greensGun);
 
 		BF_GLOBALS._player.enableControl();
@@ -4980,13 +4980,13 @@ void Scene370::signal() {
 	case 3711:
 		BF_GLOBALS._walkRegions.proc1(3);
 		BF_INVENTORY.setObjectScene(INV_GREENS_GUN, 1);
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		_greensGun.remove();
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3712:
-		BF_GLOBALS._uiElements._active = false;
-		BF_GLOBALS._uiElements.hide();
+		T2_GLOBALS._uiElements._active = false;
+		T2_GLOBALS._uiElements.hide();
 
 		if (BF_GLOBALS._sceneObjects->contains(&_greensGun))
 			_greensGun.remove();
@@ -4998,7 +4998,7 @@ void Scene370::signal() {
 		BF_GLOBALS._player._canWalk = false;
 		break;
 	case 3715:
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_INVENTORY.setObjectScene(INV_GREEN_ID, 1);
 		BF_INVENTORY.setObjectScene(INV_GREENS_KNIFE, 1);
 		BF_GLOBALS._walkRegions.proc1(3);
@@ -5316,7 +5316,7 @@ bool Scene385::Jim::startAction(CursorType action, Event &event) {
 		return true;
 	case INV_PRINT_OUT:
 		if (!BF_GLOBALS.getFlag(fGotPointsForMCard)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.getFlag(fGotPointsForMCard);
 
 			scene->setAction(&scene->_action2);
@@ -5612,7 +5612,7 @@ bool Scene390::Green::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS.getFlag(readGreenRights)) {
 			SceneItem::display2(390, 15);
 		} else {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(readGreenRights);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 3904;
@@ -5738,7 +5738,7 @@ bool Scene390::GangMember1::startAction(CursorType action, Event &event) {
 			SceneItem::display2(390, 15);
 		} else {
 			BF_GLOBALS.setFlag(readFrankRights);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS._player.disableControl();
 
 			scene->_sceneMode = 3904;
@@ -5762,7 +5762,7 @@ bool Scene390::GangMember2::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS.getFlag(readFrankRights)) {
 			SceneItem::display2(390, 15);
 		} else {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(readFrankRights);
 			BF_GLOBALS._player.disableControl();
 
@@ -5913,7 +5913,7 @@ void Scene390::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3905:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		_object2.remove();
 		BF_INVENTORY.setObjectScene(INV_HANDCUFFS, 1);
 		BF_GLOBALS._player.enableControl();

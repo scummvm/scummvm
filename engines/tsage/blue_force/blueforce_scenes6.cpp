@@ -281,7 +281,7 @@ void Scene666::postInit(SceneObjectList *OwnerList) {
 	}
 
 	BF_GLOBALS._scenePalette.loadPalette(BF_GLOBALS._sceneManager._previousScene);
-	BF_GLOBALS._uiElements._active = false;
+	T2_GLOBALS._uiElements._active = false;
 
 	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 666, -1, -1, -1, 1, NULL);
 	BF_GLOBALS._player.postInit();
@@ -350,7 +350,7 @@ void Scene666::remove() {
 	BF_GLOBALS._sound1.fadeOut2(NULL);
 	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
 	SceneExt::remove();
-	BF_GLOBALS._uiElements._active = true;
+	T2_GLOBALS._uiElements._active = true;
 }
 
 void Scene666::signal() {

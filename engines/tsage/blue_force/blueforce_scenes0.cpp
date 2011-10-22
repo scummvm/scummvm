@@ -332,7 +332,7 @@ void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 
 	BF_GLOBALS._interfaceY = 200;
-	BF_GLOBALS._uiElements._active = false;
+	T2_GLOBALS._uiElements._active = false;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setVisage(830);
 	BF_GLOBALS._player.setStrip(3);
@@ -424,7 +424,7 @@ void Scene50::remove() {
 	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
 
 	SceneExt::remove();
-	BF_GLOBALS._uiElements._active = true;
+	T2_GLOBALS._uiElements._active = true;
 }
 
 void Scene50::signal() {
@@ -683,7 +683,7 @@ bool Scene60::MirandaCard::startAction(CursorType action, Event &event) {
 			SceneItem::display2(60, 6);
 			BF_INVENTORY.setObjectScene(INV_MIRANDA_CARD, 1);
 			if (!BF_GLOBALS.getFlag(fGotPointsForTktBook)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				BF_GLOBALS.setFlag(fGotPointsForTktBook);
 			}
 
@@ -714,7 +714,7 @@ bool Scene60::TicketBook::startAction(CursorType action, Event &event) {
 			SceneItem::display2(60, 3);
 			BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 1);
 			if (!BF_GLOBALS.getFlag(fShotNicoIn910)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				BF_GLOBALS.setFlag(fShotNicoIn910);
 			}
 		}
@@ -779,10 +779,10 @@ void Scene60::Action1::signal() {
 		switch (_state) {
 		case 1:
 			if (BF_GLOBALS.removeFlag(fCan1004Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 606;
 			} else if (BF_GLOBALS.removeFlag(fCan1004Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 606;
 			} else {
 				_state = 611;
@@ -793,13 +793,13 @@ void Scene60::Action1::signal() {
 			break;
 		case 3:
 			if (BF_GLOBALS.removeFlag(f1015Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 613;
 			} else if (BF_GLOBALS.removeFlag(f1015Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 614;
 			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 615;
 			} else {
 				_state = 616;
@@ -807,15 +807,15 @@ void Scene60::Action1::signal() {
 			break;
 		case 4:
 			if (BF_GLOBALS.removeFlag(f1027Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 617;
 			} else if (BF_GLOBALS.removeFlag(f1027Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 618;
 			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 619;
 			} else {
@@ -825,15 +825,15 @@ void Scene60::Action1::signal() {
 		case 5:
 			if (BF_GLOBALS.removeFlag(f1035Marina)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				_state = 621;
 			} else if (BF_GLOBALS.removeFlag(f1035Frankie)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				_actionIndex = 5;
 				_state = 622;
 			} else if (BF_GLOBALS.removeFlag(f1035Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 623;
 			} else {
 				_state = 624;
@@ -841,14 +841,14 @@ void Scene60::Action1::signal() {
 			break;
 		case 6:
 			if (BF_GLOBALS.removeFlag(f1097Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 625;
 			} else if (BF_GLOBALS.removeFlag(f1097Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 626;
 			} else if (BF_GLOBALS.removeFlag(f1097Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 627;
 			} else {
 				_state = 628;
@@ -856,13 +856,13 @@ void Scene60::Action1::signal() {
 			break;
 		case 7:
 			if (BF_GLOBALS.removeFlag(f1098Marina)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 629;
 			} else if (BF_GLOBALS.removeFlag(f1098Frankie)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 630;
 			} else if (BF_GLOBALS.removeFlag(f1098Drunk)) {
-				BF_GLOBALS._uiElements.addScore(10);
+				T2_GLOBALS._uiElements.addScore(10);
 				_state = 631;
 			} else {
 				_state = 632;

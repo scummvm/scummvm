@@ -354,6 +354,8 @@ void TLib::loadIndex() {
 		se.resNum = resNum;
 		se.resType = (ResourceType)(configId & 0x1f);
 		se.fileOffset = (((configId >> 5) & 0x7ff) << 16) | fileOffset;
+		if (g_vm->getGameID() == GType_Ringworld2)
+			se.fileOffset <<= 4;
 
 		_sections.push_back(se);
 	}

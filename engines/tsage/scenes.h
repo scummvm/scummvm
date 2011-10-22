@@ -63,10 +63,11 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);
+	virtual void refreshBackground(int xAmount, int yAmount);
 
 	void setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent);
 	void loadBackground(int xAmount, int yAmount);
-	void refreshBackground(int xAmount, int yAmount);
+	
 	void loadSceneData(int sceneNum);
 };
 

@@ -714,8 +714,8 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 }
 
 void SceneExt::remove() {
-	BF_GLOBALS._uiElements.hide();
-	BF_GLOBALS._uiElements.resetClear();
+	T2_GLOBALS._uiElements.hide();
+	T2_GLOBALS._uiElements.resetClear();
 
 	// Below code originally in Blue Force Scene::remove(). Placed here to avoid contaminating
 	// core class with Blue Force specific code
@@ -739,8 +739,8 @@ void SceneExt::dispatch() {
 
 	if (_field37A) {
 		if ((--_field37A == 0) && BF_GLOBALS._dayNumber) {
-			if (BF_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
-				BF_GLOBALS._uiElements.show();
+			if (T2_GLOBALS._uiElements._active && BF_GLOBALS._player._enabled) {
+				T2_GLOBALS._uiElements.show();
 			}
 
 			_field37A = 0;
@@ -829,8 +829,8 @@ void SceneExt::startStrip() {
 		scene->_savedCanWalk = BF_GLOBALS._player._canWalk;
 		BF_GLOBALS._player.disableControl();
 
-		if (!BF_GLOBALS._v50696 && BF_GLOBALS._uiElements._active)
-			BF_GLOBALS._uiElements.hide();
+		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+			T2_GLOBALS._uiElements.hide();
 	}
 }
 
@@ -843,8 +843,8 @@ void SceneExt::endStrip() {
 		BF_GLOBALS._player._uiEnabled = scene->_savedUiEnabled;
 		BF_GLOBALS._player._canWalk = scene->_savedCanWalk;
 
-		if (!BF_GLOBALS._v50696 && BF_GLOBALS._uiElements._active)
-			BF_GLOBALS._uiElements.show();
+		if (!BF_GLOBALS._v50696 && T2_GLOBALS._uiElements._active)
+			T2_GLOBALS._uiElements.show();
 	}
 }
 
@@ -941,8 +941,8 @@ void SceneHandlerExt::process(Event &event) {
 	if (scene && scene->_focusObject)
 		scene->_focusObject->process(event);
 
-	if (BF_GLOBALS._uiElements._active) {
-		BF_GLOBALS._uiElements.process(event);
+	if (T2_GLOBALS._uiElements._active) {
+		T2_GLOBALS._uiElements.process(event);
 		if (event.handled)
 			return;
 	}
@@ -1199,6 +1199,9 @@ void BlueForceInvObjectList::reset() {
 	setObjectScene(INV_DOG_WHISTLE, 880);
 	setObjectScene(INV_YELLOW_CORD, 910);
 	setObjectScene(INV_BLACK_CORD, 910);
+
+	// Set up the select item handler method
+	T2_GLOBALS._onSelectItem = SelectItem;
 }
 
 void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
@@ -1213,7 +1216,7 @@ void BlueForceInvObjectList::setObjectScene(int objectNum, int sceneNumber) {
 		BF_GLOBALS._events.setCursor(CURSOR_USE);
 
 	// Update the user interface if necessary
-	BF_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements.updateInventory();
 }
 
 void BlueForceInvObjectList::alterInventory(int mode) {
@@ -1303,6 +1306,21 @@ void BlueForceInvObjectList::alterInventory(int mode) {
 	default:
 		break;
 	}
+}
+
+/**
+ * When an inventory item is selected, check if it's the gun belt, since that has a specific dialog
+ */
+bool BlueForceInvObjectList::SelectItem(int objectNumber) {
+	if (objectNumber == INV_AMMO_BELT) {
+		AmmoBeltDialog *dlg = new AmmoBeltDialog();
+		dlg->execute();
+		delete dlg;
+	
+		return true;
+	}
+
+	return false;
 }
 
 /*--------------------------------------------------------------------------*/

@@ -140,6 +140,22 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
+
+	// Return to Ringworld
+	{
+		{
+			"ringworld2",
+			"CD",
+			AD_ENTRY1s("r2rw.rlb", "df6c25622387007788ca36d99362c1f0", 47586928),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_CD | ADGF_UNSTABLE,
+			Common::GUIO_NOSPEECH | Common::GUIO_NOSFX
+		},
+		GType_Ringworld2,
+		GF_CD | GF_ALT_REGIONS
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

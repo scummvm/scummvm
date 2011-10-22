@@ -90,14 +90,14 @@ bool Scene900::Gate::startAction(CursorType action, Event &event) {
 			if (BF_GLOBALS._v4CEC0 == 0) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForUnlockGate)) {
 					BF_GLOBALS.setFlag(fGotPointsForUnlockGate);
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 				}
 				BF_GLOBALS._v4CEC0 = 1;
 			} else {
 				if (!BF_GLOBALS.getFlag(fGotPointsForLockGate)) {
 					if (BF_GLOBALS._bookmark == bEndDayThree) {
 						BF_GLOBALS.setFlag(fGotPointsForLockGate);
-						BF_GLOBALS._uiElements.addScore(30);
+						T2_GLOBALS._uiElements.addScore(30);
 					}
 				}
 				BF_GLOBALS._v4CEC0 = 0;
@@ -324,7 +324,7 @@ void Scene900::Action2::signal() {
 		BF_GLOBALS._player._strip = 7;
 		if (!BF_GLOBALS.getFlag(fGotPointsForTrapDog)) {
 			BF_GLOBALS.setFlag(fGotPointsForTrapDog);
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 		}
 		SceneItem::display2(900, 10);
 		scene->_dog._flag = 1;
@@ -377,7 +377,7 @@ void Scene900::Action3::signal() {
 		SceneItem::display2(900, 24);
 		if (!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) {
 			BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
-			BF_GLOBALS._uiElements.addScore(10);
+			T2_GLOBALS._uiElements.addScore(10);
 		}
 		BF_GLOBALS._player.enableControl();
 		remove();
@@ -427,7 +427,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._sound1.changeSound(91);
 	_field1974 = 0;
 	_field1976 = 0;
-	BF_GLOBALS._uiElements._active = true;
+	T2_GLOBALS._uiElements._active = true;
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 	if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._dayNumber = 4;
@@ -634,7 +634,7 @@ void Scene900::signal() {
 			_dog.signal();
 			if ((!BF_GLOBALS.getFlag(fGotPointsForFreeDog)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
 				BF_GLOBALS.setFlag(fGotPointsForFreeDog);
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 			}
 			BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
 			SceneItem::display2(900, 11);
@@ -647,14 +647,14 @@ void Scene900::signal() {
 			_door._flag = 1;
 			if ((!BF_GLOBALS.getFlag(fGotPointsForLockWarehouse)) && (BF_GLOBALS._bookmark == bEndDayThree)) {
 				BF_GLOBALS.setFlag(fGotPointsForLockWarehouse);
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 			}
 		} else {
 			SceneItem::display2(900, 13);
 			_door._flag = 0;
 			if (!BF_GLOBALS.getFlag(fGotPointsForUnlockWarehouse)) {
 				BF_GLOBALS.setFlag(fGotPointsForUnlockWarehouse);
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 			}
 		}
 		BF_GLOBALS._player.enableControl();
@@ -1292,7 +1292,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 			if (BF_GLOBALS._v4CEE2 < 1) {
 				if (_frame == 2) {
 					if (!BF_GLOBALS.getFlag(81)) {
-						BF_GLOBALS._uiElements.addScore(30);
+						T2_GLOBALS._uiElements.addScore(30);
 						BF_GLOBALS.setFlag(81);
 					}
 					scene->_sceneMode = 0;
@@ -1333,7 +1333,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 				} else {
 					if (BF_GLOBALS._v4CEC8 == 1) {
 						if (!BF_GLOBALS.getFlag(78)) {
-							BF_GLOBALS._uiElements.addScore(30);
+							T2_GLOBALS._uiElements.addScore(30);
 							BF_GLOBALS.setFlag(78);
 						}
 						BF_GLOBALS._player.disableControl();
@@ -1659,12 +1659,12 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CECA == 0) {
 			if (_field90 == 1) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForBlackCord)) {
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForBlackCord);
 				}
 			} else {
 				if (!BF_GLOBALS.getFlag(fGotPointsForGeneratorPlug)) {
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForGeneratorPlug);
 				}
 			}
@@ -1674,12 +1674,12 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		} else if (BF_GLOBALS._v4CECA == 1) {
 			if (_field90 == 1) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForBlackCord)) {
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForBlackCord);
 				}
 			} else {
 				if (!BF_GLOBALS.getFlag(fGotPointsForGeneratorPlug)) {
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForGeneratorPlug);
 				}
 			}
@@ -1771,7 +1771,7 @@ bool Scene910::PowerButton::startAction(CursorType action, Event &event) {
 			scene->_sound1.play(100);
 			scene->_sound1.holdAt(1);
 			if (!BF_GLOBALS.getFlag(77)) {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(77);
 			}
 			setFrame(5);
@@ -1786,7 +1786,7 @@ bool Scene910::PowerButton::startAction(CursorType action, Event &event) {
 			scene->_sound1.release();
 			if (BF_GLOBALS._bookmark == 21) {
 				if (!BF_GLOBALS.getFlag(82)) {
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(82);
 				}
 			}
@@ -2409,7 +2409,7 @@ void Scene910::signal() {
 		break;
 	case 9110:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCrate)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForCrate);
 		}
 		BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 1);
@@ -2418,7 +2418,7 @@ void Scene910::signal() {
 		break;
 	case 9111:
 		if ((BF_GLOBALS._bookmark == bEndDayThree) && (!BF_GLOBALS.getFlag(fGotPointsForGeneratorOff))) {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fGotPointsForGeneratorOff);
 		}
 		BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 910);
@@ -2482,7 +2482,7 @@ void Scene910::signal() {
 		break;
 	case 9119:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCordOnForklift)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForCordOnForklift);
 		}
 		BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 0);
@@ -2640,7 +2640,7 @@ void Scene910::signal() {
 		break;
 	case 9136:
 		if (!BF_GLOBALS.getFlag(fGotPointsForCuffingNico)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForCuffingNico);
 		}
 		_lyle.setAction(&_sequenceManager2, NULL, 9131, &_lyle, NULL);
@@ -2666,7 +2666,7 @@ void Scene910::signal() {
 	case 9141:
 		BF_INVENTORY.setObjectScene(INV_22_SNUB, 1);
 		if (!BF_GLOBALS.getFlag(fGotPointsForCuffingDA)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForCuffingDA);
 		}
 		BF_GLOBALS._player.enableControl();
@@ -2674,7 +2674,7 @@ void Scene910::signal() {
 	case 9142:
 		BF_GLOBALS._player.enableControl();
 		if (!BF_GLOBALS.getFlag(fGotPointsForSearchingNico)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForSearchingNico);
 		}
 		break;
@@ -2868,7 +2868,7 @@ void Scene910::subE82BD() {
 		return;
 
 	if (! BF_GLOBALS.getFlag(fGotPointsForLightsOn)) {
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_GLOBALS.setFlag(fGotPointsForLightsOn);
 	}
 	BF_GLOBALS._v4CEE0 = 1;
@@ -2886,7 +2886,7 @@ void Scene910::subE83E1() {
 	if (BF_GLOBALS._v4CEE0 != 0) {
 		_fakeWall.show();
 		if ((BF_GLOBALS._bookmark == 21) && (!BF_GLOBALS.getFlag(80))) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(80);
 		}
 		BF_GLOBALS._v4CEE0 = 0;
@@ -2929,7 +2929,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 			scene->_crateWindow.postInit();
 			scene->_sceneMode = 9204;
 			if (!BF_GLOBALS.getFlag(fGotPointsForBoots)) {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fGotPointsForBoots);
 			}
 			scene->setAction(&scene->_sequenceManager1, scene, 9204, &BF_GLOBALS._player, &scene->_crateWindow, NULL);
@@ -3054,7 +3054,7 @@ void Scene920::signal() {
 		}
 	case 9207:
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(15, 1);
 		BF_GLOBALS._bookmark = bEndDayThree;
 		break;
@@ -3123,7 +3123,7 @@ bool Scene930::Object2::startAction(CursorType action, Event &event) {
 		return NamedObject::startAction(action, event);
 
 	NamedObject::startAction(action, event);
-	BF_GLOBALS._uiElements.addScore(30);
+	T2_GLOBALS._uiElements.addScore(30);
 	BF_INVENTORY.setObjectScene(54, 1);
 	BF_GLOBALS.setFlag(93);
 	remove();
@@ -3203,7 +3203,7 @@ bool Scene930::Object5::startAction(CursorType action, Event &event) {
 			_lookLineNum = 76;
 			_useLineNum = 78;
 		} else {
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 			BF_INVENTORY.setObjectScene(55, 1);
 			setFrame2(getFrameCount());
 			_lookLineNum = 92;
@@ -3270,7 +3270,7 @@ void Scene930::Action1::signal() {
 	case 5:
 		scene->showBootWindow();
 		if (!BF_GLOBALS.getFlag(72)) {
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(72);
 		}
 		SceneItem::display(0, 312);
@@ -3803,7 +3803,7 @@ void Scene940::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sound1.play(115);
 	BF_GLOBALS._dayNumber = 6;
 	BF_GLOBALS._interfaceY = 200;
-	BF_GLOBALS._uiElements._active = false;
+	T2_GLOBALS._uiElements._active = false;
 
 	_gameTextSpeaker2._speakerName = "SENTTEXT";
 	_gameTextSpeaker2._color1 = 104;
@@ -3885,7 +3885,7 @@ void Scene940::remove() {
 	// clearScren();
 	BF_GLOBALS._scrollFollower = &BF_GLOBALS._player;
 	SceneExt::remove();
-	BF_GLOBALS._uiElements._active = true;
+	T2_GLOBALS._uiElements._active = true;
 }
 
 } // End of namespace BlueForce

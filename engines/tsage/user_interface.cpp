@@ -20,15 +20,13 @@
  *
  */
 
-#include "tsage/blue_force/blueforce_ui.h"
+#include "tsage/user_interface.h"
+#include "tsage/core.h"
+#include "tsage/tsage.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_logic.h"
-#include "tsage/tsage.h"
-#include "tsage/core.h"
 
 namespace TsAGE {
-
-namespace BlueForce {
 
 void StripProxy::process(Event &event) {
 	if (_action)
@@ -84,7 +82,7 @@ void UIQuestion::showDescription(CursorType cursor) {
 void UIQuestion::setEnabled(bool flag) {
 	if (_enabled != flag) {
 		UIElement::setEnabled(flag);
-		BF_GLOBALS._uiElements.draw();
+		T2_GLOBALS._uiElements.draw();
 	}
 }
 
@@ -136,7 +134,7 @@ void UIScore::draw() {
 }
 
 void UIScore::updateScore() {
-	int score = BF_GLOBALS._uiElements._scoreValue;
+	int score = T2_GLOBALS._uiElements._scoreValue;
 
 	_digit3.setFrame(score / 1000 + 1); score %= 1000;
 	_digit2.setFrame(score / 100 + 1); score %= 100;
@@ -161,20 +159,11 @@ void UIInventorySlot::process(Event &event) {
 	if (event.eventType == EVENT_BUTTON_DOWN) {
 		event.handled = true;
 
-		if (_objIndex == INV_AMMO_BELT) {
-			// Handle showing ammo belt
-			showAmmoBelt();
-
-		} else if (_objIndex != INV_NONE) {
+		// Check if game has a select item handler, and if so, give it a chance to check
+		// whether something special happens when the item is selected
+		if (!T2_GLOBALS._onSelectItem || !T2_GLOBALS._onSelectItem((CursorType)_objIndex))
 			_object->setCursor();
-		}
 	}
-}
-
-void UIInventorySlot::showAmmoBelt() {
-	AmmoBeltDialog *dlg = new AmmoBeltDialog();
-	dlg->execute();
-	delete dlg;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -201,7 +190,7 @@ void UIInventoryScroll::process(Event &event) {
 		toggle(false);
 
 		// Scroll the inventory as necessary
-		BF_GLOBALS._uiElements.scrollInventory(_isLeft);
+		T2_GLOBALS._uiElements.scrollInventory(_isLeft);
 		event.handled = true;
 		break;
 	default:
@@ -212,7 +201,7 @@ void UIInventoryScroll::process(Event &event) {
 void UIInventoryScroll::toggle(bool pressed) {
 	if (_enabled) {
 		setFrame(pressed ? (_frameNum + 1) : _frameNum);
-		BF_GLOBALS._uiElements.draw();
+		T2_GLOBALS._uiElements.draw();
 	}
 }
 
@@ -338,12 +327,13 @@ void UIElements::process(Event &event) {
 			// Cursor outside UI area, so reset as necessary
 			BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
 			_cursorChanged = false;
-
+/*
 			SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
 			if (scene->_focusObject) {
 				GfxSurface surface = _cursorVisage.getFrame(7);
 				BF_GLOBALS._events.setCursor(surface);
 			}
+*/
 		}
 	}
 }
@@ -513,10 +503,8 @@ void UIElements::scrollInventory(bool isLeft) {
 }
 
 void UIElements::loadNotifierProc(bool postFlag) {
-	if (postFlag && BF_GLOBALS._uiElements._active)
-		BF_GLOBALS._uiElements.show();
+	if (postFlag && T2_GLOBALS._uiElements._active)
+		T2_GLOBALS._uiElements.show();
 }
-
-} // End of namespace BlueForce
 
 } // End of namespace TsAGE

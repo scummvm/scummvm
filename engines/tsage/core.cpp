@@ -66,6 +66,16 @@ InvObject::InvObject(int visage, int strip, int frame) {
 	_iconResNum = 10;
 }
 
+InvObject::InvObject(int strip, int frame) {
+	assert(g_vm->getGameID() == GType_Ringworld2);
+	_strip = strip;
+	_frame = frame;
+
+	_visage = 0;
+	_sceneNumber = 0;
+	_iconResNum = 10;
+}
+
 void InvObject::setCursor() {
 	if (g_vm->getGameID() == GType_BlueForce) {
 		// Blue Force cursor handling
@@ -1523,8 +1533,8 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() :
 		g_resourceManager->getMessage(resNum, lineNum);
 
-	if ((g_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
-		BF_GLOBALS._uiElements.hide();
+	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active)
+		T2_GLOBALS._uiElements.hide();
 
 	if (g_globals->_sceneObjects->contains(&g_globals->_sceneText)) {
 		g_globals->_sceneText.remove();
@@ -1655,9 +1665,9 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.remove();
 	}
 
-	if ((g_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active) {
+	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active) {
 		// Show user interface
-		BF_GLOBALS._uiElements.show();
+		T2_GLOBALS._uiElements.show();
 
 		// Re-show the cursor
 		BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
@@ -1689,12 +1699,14 @@ void SceneItem::display(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 bool SceneHotspot::startAction(CursorType action, Event &event) {
-	if (g_vm->getGameID() != GType_BlueForce)
-		return SceneItem::startAction(action, event);
-	else {
+	switch (action) {
+	case GType_BlueForce: {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
 		return scene->display(action);
+	}
+	default:
+		return SceneItem::startAction(action, event);
 	}
 }
 
@@ -2423,6 +2435,13 @@ void SceneObject::setup(int visage, int stripFrameNum, int frameNum, int posX, i
 	fixPriority(priority);
 }
 
+void SceneObject::setup(int visage, int stripFrameNum, int frameNum) {
+	postInit();
+	setVisage(visage);
+	setStrip(stripFrameNum);
+	setFrame(frameNum);
+}
+
 /*--------------------------------------------------------------------------*/
 
 void BackgroundSceneObject::postInit(SceneObjectList *OwnerList) {
@@ -2765,7 +2784,7 @@ void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
 	if ((g_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
-			!BF_GLOBALS._uiElements._visible)
+			!T2_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
 
@@ -2898,16 +2917,38 @@ void Player::disableControl() {
 	g_globals->_events.setCursor(CURSOR_NONE);
 	_enabled = false;
 
-	if ((g_vm->getGameID() == GType_BlueForce) && BF_GLOBALS._uiElements._active)
-		BF_GLOBALS._uiElements.hide();
+	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active)
+		T2_GLOBALS._uiElements.hide();
 }
 
 void Player::enableControl() {
+	CursorType cursor;
+
 	_canWalk = true;
 	_uiEnabled = true;
 	_enabled = true;
 
-	if (g_vm->getGameID() == GType_Ringworld) {
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		cursor = g_globals->_events.getCursor();
+		g_globals->_events.setCursor(cursor);
+
+		if (T2_GLOBALS._uiElements._active)
+			T2_GLOBALS._uiElements.show();
+		break;
+
+	case GType_Ringworld2:
+		cursor = g_globals->_events.getCursor();
+		g_globals->_events.setCursor(cursor);
+
+		/*
+		if (R2_GLOBALS._uiElements._active)
+			R2_GLOBALS._uiElements.show();
+		*/
+		break;
+
+	default:
+		// Ringworld
 		g_globals->_events.setCursor(CURSOR_WALK);
 
 		switch (g_globals->_events.getCursor()) {
@@ -2921,12 +2962,7 @@ void Player::enableControl() {
 			g_globals->_events.setCursor(CURSOR_WALK);
 			break;
 		}
-	} else {
-		CursorType cursor = g_globals->_events.getCursor();
-		g_globals->_events.setCursor(cursor);
-
-		if (BF_GLOBALS._uiElements._active)
-			BF_GLOBALS._uiElements.show();
+		break;
 	}
 }
 

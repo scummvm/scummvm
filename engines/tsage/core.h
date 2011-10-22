@@ -62,6 +62,7 @@ public:
 public:
 	InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType cursorId, const Common::String description);
 	InvObject(int visage, int strip, int frame);
+	InvObject(int visage, int strip);
 
 	bool inInventory() const { return _sceneNumber == 1; }
 	void setCursor();
@@ -578,6 +579,7 @@ public:
 	virtual void changeAngle(int angle);
 
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
+	void setup(int visage, int stripFrameNum, int frameNum);
 };
 
 class BackgroundSceneObject: public SceneObject {

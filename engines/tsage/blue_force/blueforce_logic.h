@@ -252,6 +252,8 @@ public:
 };
 
 class BlueForceInvObjectList : public InvObjectList {
+private:
+	static bool SelectItem(int objectNumber);
 public:
 	InvObject _none;
 	InvObject _colt45;

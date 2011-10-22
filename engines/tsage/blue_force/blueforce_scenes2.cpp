@@ -1104,7 +1104,7 @@ void Scene270::signal() {
 				SceneItem::display2(270, 37);
 				BF_GLOBALS._player.enableControl();
 			} else {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(shownLyleCrate1Day1);
 				_sceneMode = 12;
 				ADD_PLAYER_MOVER(192, 135);

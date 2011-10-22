@@ -103,7 +103,7 @@ bool Scene800::Car1::startAction(CursorType action, Event &event) {
 		else {
 			BF_GLOBALS.setFlag(ticketVW);
 			BF_GLOBALS._player.disableControl();
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 			scene->_sceneMode = 8005;
 			scene->setAction(&scene->_action1);
 		}
@@ -398,7 +398,7 @@ void Scene810::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		if (!BF_GLOBALS.getFlag(shownLyleCrate1Day1))
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 
 		if (scene->_lyle._position.x == 115) {
 			ADD_PLAYER_MOVER(174, 142);
@@ -652,7 +652,7 @@ bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
 	case CURSOR_USE:
 		if (scene->_rect3.contains(event.mousePos)) {
 			if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 811) {
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				scene->_sound1.play(77);
 				BF_GLOBALS._player.disableControl();
 
@@ -1164,7 +1164,7 @@ void Scene810::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 8106:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_MICROFILM, 820);
 		BF_GLOBALS._sceneManager.changeScene(820);
 		break;
@@ -1194,7 +1194,7 @@ void Scene810::signal() {
 		BF_GLOBALS._sceneManager.changeScene(935);
 		break;
 	case 8114:
-		BF_GLOBALS._uiElements.addScore(10);
+		T2_GLOBALS._uiElements.addScore(10);
 		BF_INVENTORY.setObjectScene(INV_MICROFILM, 1);
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -1853,13 +1853,13 @@ void Scene830::signal() {
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		BF_GLOBALS._player._strip = 7;
 
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_CARTER_NOTE, 1);
 		break;
 	case 8307:
 		BF_GLOBALS._player.enableControl();
 		_object5.remove();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_FISHING_NET, 1);
 		break;
 	case 8309:
@@ -2013,7 +2013,7 @@ bool Scene840::BoatKeysInset::startAction(CursorType action, Event &event) {
 		if ((BF_GLOBALS._dayNumber != 4) || (BF_GLOBALS._bookmark != bEndDayThree))
 			SceneItem::display2(840, 47);
 		else {
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 
 			if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
 				// Replace rental keys
@@ -2058,7 +2058,7 @@ bool Scene840::BoatKeysInset::RentalKeys::startAction(CursorType action, Event &
 		} else {
 			SceneItem::display2(840, 55);
 			BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 1);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 
 			scene->_boatKeysInset._v1B4 = 1;
 			remove();
@@ -2077,7 +2077,7 @@ bool Scene840::BoatKeysInset::WaveKeys::startAction(CursorType action, Event &ev
 		if (scene->_field1AC2) {
 			SceneItem::display2(840, 56);
 			BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 1);
-			BF_GLOBALS._uiElements.addScore(50);
+			T2_GLOBALS._uiElements.addScore(50);
 			scene->_boatKeysInset._v1B6 = 1;
 			remove();
 		} else {
@@ -2150,7 +2150,7 @@ bool Scene840::Carter::startAction(CursorType action, Event &event) {
 
 		if (BF_INVENTORY.getObjectScene(INV_WAVE_KEYS) == 1) {
 			if (!BF_GLOBALS.getFlag(fGotPointsForCombo)) {
-				BF_GLOBALS._uiElements.addScore(50);
+				T2_GLOBALS._uiElements.addScore(50);
 				BF_GLOBALS.setFlag(fGotPointsForCombo);
 			}
 		}
@@ -2409,13 +2409,13 @@ void Scene840::signal() {
 		break;
 	case 8402:
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene(INV_CARTER_NOTE, 3);
 		BF_INVENTORY.setObjectScene(INV_BASEBALL_CARD, 1);
 		BF_INVENTORY.setObjectScene(INV_RENTAL_COUPON, 1);
 		break;
 	case 8403:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		_sceneMode = 3;
 		_field1AC0 = 1;
 		_stripManager.start(8441, this);
@@ -2477,13 +2477,13 @@ void Scene840::signal() {
 		}
 		break;
 	case 8413:
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		_sceneMode = 8409;
 		setAction(&_sequenceManager1, this, 8409, &BF_GLOBALS._player, &_carter, &_doors, NULL);
 		break;
 	case 8417:
 		_field1ABA = 1;
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_INVENTORY.setObjectScene(INV_WAVE_KEYS, 0);
 		BF_INVENTORY.setObjectScene(INV_RENTAL_KEYS, 0);
 		BF_GLOBALS._player.enableControl();
@@ -2926,7 +2926,7 @@ bool Scene870::CrateInset::Jar::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE) {
 		BF_INVENTORY.setObjectScene(INV_JAR, 1);
 		remove();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		return true;
 	} else {
 		return NamedObject::startAction(action, event);
@@ -2937,7 +2937,7 @@ bool Scene870::CrateInset::Rags::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE) {
 		BF_INVENTORY.setObjectScene(INV_RAGS, 1);
 		remove();
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		return true;
 	} else {
 		return NamedObject::startAction(action, event);
@@ -3443,14 +3443,14 @@ void Scene880::signal() {
 		BF_GLOBALS._sceneManager.changeScene(666);
 		break;
 	case 3:
-		BF_GLOBALS._uiElements.addScore(50);
+		T2_GLOBALS._uiElements.addScore(50);
 		BF_GLOBALS.clearFlag(gunDrawn);
 		BF_INVENTORY.setObjectScene(INV_GRENADES, 880);
 		_sceneMode = 0;
 		signal();
 		break;
 	case 4:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		BF_GLOBALS.clearFlag(gunDrawn);
 		_sceneMode = 0;
 		signal();
@@ -3489,7 +3489,7 @@ void Scene880::signal() {
 	case 8815:
 		if (BF_INVENTORY.getObjectScene(INV_DOG_WHISTLE) == 880) {
 			BF_INVENTORY.setObjectScene(INV_DOG_WHISTLE, 1);
-			BF_GLOBALS._uiElements.addScore(30);
+			T2_GLOBALS._uiElements.addScore(30);
 
 			SceneItem::display2(880, 13);
 		} else {

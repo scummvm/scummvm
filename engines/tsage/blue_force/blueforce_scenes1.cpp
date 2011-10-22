@@ -1130,7 +1130,7 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 				scene->_sceneMode = 1151;
 				scene->setAction(&scene->_action9);
 			} else {
-				BF_GLOBALS._uiElements.addScore(30);
+				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fTalkedToTony);
 				if (BF_GLOBALS._v4CEAA == 0) {
 					scene->_sceneMode = 1150;
@@ -1354,7 +1354,7 @@ void Scene115::Action2::signal() {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
 				switch (BF_GLOBALS._v4CEAA) {
 				case 1:
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1181, this);
 					break;
 				case 2:
@@ -1371,7 +1371,7 @@ void Scene115::Action2::signal() {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
 				switch (BF_GLOBALS._v4CEAA) {
 				case 1:
-					BF_GLOBALS._uiElements.addScore(30);
+					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1153, this);
 					break;
 				case 2:
@@ -1531,7 +1531,7 @@ void Scene115::Action8::signal() {
 		setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
-		BF_GLOBALS._uiElements.addScore(30);
+		T2_GLOBALS._uiElements.addScore(30);
 		setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
 		break;
 	case 2:
@@ -1546,7 +1546,7 @@ void Scene115::Action8::signal() {
 		break;
 	case 5:
 		BF_INVENTORY.setObjectScene(INV_NAPKIN, 1);
-		BF_GLOBALS._uiElements.addScore(10);
+		T2_GLOBALS._uiElements.addScore(10);
 		scene->_object1.setVisage(131);
 		scene->_object1.setStrip(1);
 		scene->_object1.setFrame(1);
@@ -3298,7 +3298,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		default:
 			BF_GLOBALS.setFlag(onBike);
 			BF_GLOBALS._player.disableControl();
-			BF_GLOBALS._uiElements._active = true;
+			T2_GLOBALS._uiElements._active = true;
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 192 : 190;
 			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
 			break;
