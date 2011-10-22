@@ -126,7 +126,6 @@ void GuiManager::initKeymap() {
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(guiMap);
-	mapper->setGUIKeymap(guiMap);
 }
 #endif
 
@@ -278,7 +277,7 @@ void GuiManager::runLoop() {
 	// map is already existing
 	initKeymap();
 
-	eventMan->getKeymapper()->setGUIKeymapActive(true);
+	eventMan->getKeymapper()->pushKeymap("gui");
 #endif
 
 	bool tooltipCheck = false;
@@ -393,7 +392,7 @@ void GuiManager::runLoop() {
 	}
 
 #ifdef ENABLE_KEYMAPPER
-	eventMan->getKeymapper()->setGUIKeymapActive(false);
+	eventMan->getKeymapper()->popKeymap();
 #endif
 
 	if (didSaveState) {

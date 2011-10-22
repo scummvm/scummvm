@@ -54,7 +54,7 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0), _globalKeymap(0), _guiKeymap(0), _guiKeymapActive(false) {
+	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0), _globalKeymap(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
@@ -183,27 +183,20 @@ bool Keymapper::mapKeyUp(const KeyState& key) {
 }
 
 bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
-	if (!_enabled || (_activeMaps.empty() && !_globalKeymap && !_guiKeymap))
+	if (!_enabled || _activeMaps.empty())
 		return false;
 
 	Action *action = 0;
 
 	if (keyDown) {
-
-		// First search in the GUI keymap if it is active
-		if (_guiKeymapActive && _guiKeymap)
-			action = _guiKeymap->getMappedAction(key);
-
 		// Search for key in active keymap stack
-		if (!action && !_activeMaps.empty()) {
-			for (int i = _activeMaps.size() - 1; i >= 0; --i) {
-				MapRecord mr = _activeMaps[i];
-				debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
-				action = mr.keymap->getMappedAction(key);
+		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
+			MapRecord mr = _activeMaps[i];
+			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
+			action = mr.keymap->getMappedAction(key);
 
-				if (action || !mr.inherit)
-					break;
-			}
+			if (action || !mr.inherit)
+				break;
 		}
 
 		// fallback to the global keymap
