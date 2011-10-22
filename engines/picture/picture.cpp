@@ -309,7 +309,7 @@ void PictureEngine::drawScreen() {
 
 	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
 		// Update the GUI when needed and it's visible
-		if (_cameraHeight + _guiHeight > 400) 
+		if (_cameraHeight + _guiHeight > 400) {
 			// HACK: Sanity check - happens when smoking the peace pipe in the
 			// Indian village.
 			// FIXME: why does this happen? Fix the actual cause.
