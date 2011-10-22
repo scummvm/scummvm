@@ -173,6 +173,10 @@ public:
 
 	void setGlobalKeymap(Keymap *keymap) { _globalKeymap = keymap; }
 	Keymap* getGlobalKeymap() const { return _globalKeymap; }
+	void setGUIKeymap(Keymap *keymap) { _guiKeymap = keymap; }
+	Keymap* getGUIKeymap() const { return _guiKeymap; }
+	void setGUIKeymapActive(bool guiKeymapActive) { _guiKeymapActive = guiKeymapActive; }
+	bool isGUIKeymapActive() const { return _guiKeymapActive; }
 
 private:
 
@@ -194,6 +198,8 @@ private:
 
 	Stack<MapRecord> _activeMaps;
 	Keymap *_globalKeymap;
+	Keymap *_guiKeymap;
+	bool _guiKeymapActive;
 	HashMap<KeyState, Action*> _keysDown;
 
 };

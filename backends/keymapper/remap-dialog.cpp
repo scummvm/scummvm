@@ -62,7 +62,7 @@ void RemapDialog::open() {
 	const Stack<Keymapper::MapRecord> &activeKeymaps = _keymapper->getActiveStack();
 
 	if (activeKeymaps.size() > 0) {
-		_kmPopUp->appendEntry(activeKeymaps.top().keymap->getName() + _(" (Active)"));
+		_kmPopUp->appendEntry("Effective Keymap");
 		divider = true;
 	}
 
