@@ -165,10 +165,13 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_LOOK:
 		// Look cursor
-		if (g_vm->getGameID() == GType_BlueForce)
+		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 3, &size);
-		else
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 5, &size);
+		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 5, &size);
+		}
 		_currentCursor = CURSOR_LOOK;
 		break;
 
@@ -176,6 +179,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// Use cursor
 		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 2, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 4, &size);
 		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 4, &size);
 		}
@@ -186,6 +191,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 		// Talk cursor
 		if (g_vm->getGameID() == GType_BlueForce) {
 			cursor = g_resourceManager->getSubResource(1, 5, 4, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 6, &size);
 		} else {
 			cursor = g_resourceManager->getSubResource(4, 1, 3, &size);
 		}
