@@ -1117,6 +1117,7 @@ void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32
 					}
 				}
 
+				_vm->processInput(true);
 				_vm->drawFrame();
 				currentFrame = _vm->getFrameCount();
 

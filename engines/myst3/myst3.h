@@ -78,6 +78,7 @@ public:
 	void loadMovie(uint16 id, uint16 condition, bool resetCond, bool loop);
 	void playSimpleMovie(uint16 id);
 
+	void processInput(bool lookOnly);
 	void drawFrame();
 	uint getFrameCount() { return _frameCount; }
 private:
@@ -96,6 +97,7 @@ private:
 	ViewType _viewType;
 
 	uint _frameCount;
+	bool _shouldQuit;
 
 	friend class Console;
 };

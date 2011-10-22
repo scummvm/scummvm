@@ -54,7 +54,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
 		Engine(syst), _system(syst),
 		_db(0), _console(0), _scriptEngine(0),
 		_vars(0), _node(0), _scene(0), _archive(0),
-		_frameCount(0), _rnd(0) {
+		_frameCount(0), _rnd(0), _shouldQuit(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -94,59 +94,8 @@ Common::Error Myst3Engine::run() {
 
 	goToNode(1, 245); // LEIS
 	
-	for(;;) {
-		// Process events
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			// Check for "Hard" quit"
-			if (event.type == Common::EVENT_QUIT) {
-				return Common::kNoError;
-			} else if (event.type == Common::EVENT_MOUSEMOVE) {
-				if (_viewType == kCube) {
-					_scene->updateCamera(event.relMouse);
-				}
-			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-				NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
-				if (_viewType == kCube) {
-					Common::Point mouse = _scene->getMousePos();
-
-					for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-						if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
-							_scriptEngine->run(&nodeData->hotspots[j].script);
-
-						}
-					}
-				} else if (_viewType == kFrame) {
-					static const uint originalWidth = 640;
-					static const uint originalHeight = 480;
-					static const uint frameHeight = 360;
-
-					Common::Point mouse = _system->getEventManager()->getMousePos();
-					Common::Point scaledMouse = Common::Point(
-							mouse.x * originalWidth / _system->getWidth(),
-							CLIP<uint>(mouse.y * originalHeight / _system->getHeight()
-									- (originalHeight - 360) / 2, 0, frameHeight));
-
-					for (uint j = 0; j < nodeData->hotspots.size(); j++) {
-						if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
-							_scriptEngine->run(&nodeData->hotspots[j].script);
-						}
-					}
-				}
-			} else if (event.type == Common::EVENT_KEYDOWN) {
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		
+	while (!_shouldQuit) {
+		processInput(false);
 		drawFrame();
 	}
 
@@ -161,6 +110,63 @@ Common::Error Myst3Engine::run() {
 	_archive->close();
 
 	return Common::kNoError;
+}
+
+void Myst3Engine::processInput(bool lookOnly) {
+	// Process events
+	Common::Event event;
+	while (_system->getEventManager()->pollEvent(event)) {
+		// Check for "Hard" quit"
+		if (event.type == Common::EVENT_QUIT) {
+			_shouldQuit = true;
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			if (_viewType == kCube) {
+				_scene->updateCamera(event.relMouse);
+			}
+		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+			// Skip the event when in look only mode
+			if (lookOnly) continue;
+
+			NodePtr nodeData = _db->getNodeData(_vars->getLocationNode());
+			if (_viewType == kCube) {
+				Common::Point mouse = _scene->getMousePos();
+
+				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+					if (nodeData->hotspots[j].isPointInRectsCube(mouse)) {
+						_scriptEngine->run(&nodeData->hotspots[j].script);
+
+					}
+				}
+			} else if (_viewType == kFrame) {
+				static const uint originalWidth = 640;
+				static const uint originalHeight = 480;
+				static const uint frameHeight = 360;
+
+				Common::Point mouse = _system->getEventManager()->getMousePos();
+				Common::Point scaledMouse = Common::Point(
+						mouse.x * originalWidth / _system->getWidth(),
+						CLIP<uint>(mouse.y * originalHeight / _system->getHeight()
+								- (originalHeight - 360) / 2, 0, frameHeight));
+
+				for (uint j = 0; j < nodeData->hotspots.size(); j++) {
+					if (nodeData->hotspots[j].isPointInRectsFrame(scaledMouse)) {
+						_scriptEngine->run(&nodeData->hotspots[j].script);
+					}
+				}
+			}
+		} else if (event.type == Common::EVENT_KEYDOWN) {
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_d:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					_console->attach();
+					_console->onFrame();
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 void Myst3Engine::drawFrame() {
@@ -380,6 +386,7 @@ void Myst3Engine::playSimpleMovie(uint16 id) {
 	_drawables.push_back(&movie);
 
 	while (movie.update()) {
+		processInput(true);
 		drawFrame();
 	}
 
