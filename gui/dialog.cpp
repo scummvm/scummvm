@@ -75,7 +75,6 @@ int Dialog::runModal() {
 }
 
 void Dialog::open() {
-
 	_result = 0;
 	_visible = true;
 	g_gui.openDialog(this);
@@ -87,6 +86,10 @@ void Dialog::open() {
 	}
 
 	setFocusWidget(w);
+#ifdef ENABLE_KEYMAPPER
+	g_gui.initKeymap();
+	g_gui.pushKeymap();
+#endif
 }
 
 void Dialog::close() {
@@ -98,6 +101,10 @@ void Dialog::close() {
 	}
 	releaseFocus();
 	g_gui.closeTopDialog();
+#ifdef ENABLE_KEYMAPPER
+	g_gui.popKeymap();
+#endif
+
 }
 
 void Dialog::reflowLayout() {
