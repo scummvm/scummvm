@@ -10,6 +10,8 @@ TODO
   the comments inside sfLoadScene.
 - Sometimes, some stray lines are drawn below fonts - probably because the text doesn't
   fit inside the screen and the surface is cut off incorrectly.
+- Fix some occasional artifacts on screen (e.g. when text is shown over an animation)
+  sometimes.
 - Load/start sound and music of the saved scene when loading.
 - The animation changes in commit 105 (probably) seem to be insufficient - some animations
   exceed the screen height (together with the interface) - perhaps the interface height 
