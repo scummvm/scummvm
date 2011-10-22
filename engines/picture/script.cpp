@@ -545,82 +545,33 @@ const char *getVarName(uint variable) {
 int16 ScriptInterpreter::getGameVar(uint variable) {
 	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, getVarName(variable));
 	
-	int16 value = 0;
-	
 	switch (variable) {
-		case 0:
-			value = _vm->_mouseDisabled;
-			break;
-		case 1:
-			value = _vm->_mouseY;
-			break;
-		case 2:
-			value = _vm->_mouseX;
-			break;
-		case 3:
-			value = _vm->_mouseButton;
-			break;
-		case 4:
-			value = _vm->_screen->_verbLineY;
-			break;
-		case 5:
-			value = _vm->_screen->_verbLineX;
-			break;
-		case 6:
-			value = _vm->_screen->_verbLineWidth;
-			break;
-		case 7:
-			value = _vm->_screen->_verbLineCount;
-			break;
-		case 8:
-			value = _vm->_screen->_verbLineNum;
-			break;
-		case 9:
-			value = _vm->_screen->_talkTextItemNum;
-			break;
-		case 10:
-			value = _vm->_screen->_talkTextY;
-			break;
-		case 11:
-			value = _vm->_screen->_talkTextX;
-			break;
-		case 12:
-			value = _vm->_screen->_talkTextFontColor;
-			break;
-		case 13:
-			value = _vm->_cameraY;
-			break;
-		case 14:
-			value = _vm->_cameraX;
-			break;
-		case 15:
-			value = _vm->_walkSpeedY;
-			break;
-		case 16:
-			value = _vm->_walkSpeedX;
-			break;
-		case 17:
-			value = _vm->_flag01;
-			break;
-		case 18:
-			value = _vm->_sceneResIndex;
-			break;
-		case 19:
-			value = _vm->_guiHeight;
-			break;
-		case 20:
-			value = _vm->_sceneHeight;
-			break;
-		case 21:
-			value = _vm->_sceneWidth;
-			break;
+		case  0: return _vm->_mouseDisabled;
+		case  1: return _vm->_mouseY;
+		case  2: return _vm->_mouseX;
+		case  3: return _vm->_mouseButton;
+		case  4: return _vm->_screen->_verbLineY;
+		case  5: return _vm->_screen->_verbLineX;
+		case  6: return _vm->_screen->_verbLineWidth;
+		case  7: return _vm->_screen->_verbLineCount;
+		case  8: return _vm->_screen->_verbLineNum;
+		case  9: return _vm->_screen->_talkTextItemNum;
+		case 10: return _vm->_screen->_talkTextY;
+		case 11: return _vm->_screen->_talkTextX;
+		case 12: return _vm->_screen->_talkTextFontColor;
+		case 13: return _vm->_cameraY;
+		case 14: return _vm->_cameraX;
+		case 15: return _vm->_walkSpeedY;
+		case 16: return _vm->_walkSpeedX;
+		case 17: return _vm->_flag01;
+		case 18: return _vm->_sceneResIndex;
+		case 19: return _vm->_guiHeight;
+		case 20: return _vm->_sceneHeight;
+		case 21: return _vm->_sceneWidth;
 		default:
 			warning("Getting unimplemented game variable %s (%d)", getVarName(variable), variable);
-			break;
+			return 0;
 	}
-	
-	return value;
-
 }
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
