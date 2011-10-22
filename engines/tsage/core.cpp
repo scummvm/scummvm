@@ -3777,6 +3777,30 @@ void SceneHandler::process(Event &event) {
 			g_vm->_debugger->onFrame();
 		}
 
+		if ((event.eventType == EVENT_KEYPRESS) && g_globals->_player._enabled && g_globals->_player._canWalk) {
+			// Keyboard shortcuts for different actions
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_w:
+				g_globals->_events.setCursor(CURSOR_WALK);
+				event.handled = true;
+				break;
+			case Common::KEYCODE_l:
+				g_globals->_events.setCursor(CURSOR_LOOK);
+				event.handled = true;
+				break;
+			case Common::KEYCODE_u:
+				g_globals->_events.setCursor(CURSOR_USE);
+				event.handled = true;
+				break;
+			case Common::KEYCODE_t:
+				g_globals->_events.setCursor(CURSOR_TALK);
+				event.handled = true;
+				break;
+			default:
+				break;
+			}
+		}
+
 		// Mouse press handling
 		bool enabled = (g_vm->getGameID() == GType_BlueForce) ? g_globals->_player._enabled :
 			g_globals->_player._uiEnabled;
