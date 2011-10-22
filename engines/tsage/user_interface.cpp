@@ -267,6 +267,7 @@ void UICollection::draw() {
 UIElements::UIElements(): UICollection() {
 	_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
+	_characterIndex = 0;
 }
 
 void UIElements::synchronize(Serializer &s) {
@@ -294,6 +295,9 @@ void UIElements::synchronize(Serializer &s) {
 			s.syncAsSint16LE(itemId);
 		}
 	}
+
+	if (g_vm->getGameID() == GType_Ringworld2)
+		s.syncAsSint16LE(_characterIndex);
 }
 
 void UIElements::process(Event &event) {
@@ -394,10 +398,18 @@ void UIElements::setup(const Common::Point &pt) {
 	add(&_scrollRight);
 	_scrollRight._isLeft = false;
 
-	// Set up the score
-	if (g_vm->getGameID() == GType_BlueForce) {
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		// Set up the score
 		_score.postInit();
 		add(&_score);
+	case GType_Ringworld2:
+		// Set up the character display
+		_character.setup(1, 5, _characterIndex, 285, 11, 255);
+		add(&_character);
+		break;
+	default:
+		break;
 	}
 
 	// Set interface area
