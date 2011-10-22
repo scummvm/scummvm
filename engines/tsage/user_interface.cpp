@@ -231,7 +231,7 @@ void UICollection::show() {
 
 void UICollection::erase() {
 	if (_clearScreen) {
-		Rect tempRect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
+		Rect tempRect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
 		BF_GLOBALS._screenSurface.fillRect(tempRect, 0);
 		BF_GLOBALS._sceneManager._scene->_backSurface.fillRect(tempRect, 0);
 		_clearScreen = false;
@@ -254,8 +254,8 @@ void UICollection::draw() {
 
 		// Draw the resulting UI onto the screen
 		BF_GLOBALS._screenSurface.copyFrom(BF_GLOBALS._sceneManager._scene->_backSurface,
-			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
-			Rect(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
+			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
+			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
 		_clearScreen = 1;
 		g_globals->_sceneManager._scene->_sceneBounds = savedBounds;
@@ -346,8 +346,8 @@ void UIElements::setup(const Common::Point &pt) {
 	UICollection::setup(pt);
 	hide();
 
-	_object1.setup(1, 3, 1, 0, 0, 255);
-	add(&_object1);
+	_background.setup(1, 3, 1, 0, 0, 255);
+	add(&_background);
 
 	// Set up the inventory slots
 	int xp = 0;
@@ -369,32 +369,39 @@ void UIElements::setup(const Common::Point &pt) {
 		}
 
 		xp = idx * 63 + 2;
-		item->setup(9, 1, idx, xp, 4, 255);
+		if (g_vm->getGameID() == GType_BlueForce) {
+			item->setup(9, 1, idx, xp, 4, 255);
+		} else {
+			item->setup(7, 1, idx, xp, 4, 255);
+		}
 		add(item);
 	}
 
 	// Setup bottom-right hand buttons
 	xp += 62;
-	_question.setup(1, 4, 7, xp, 16, 255);
+	int yp = (g_vm->getGameID() == GType_BlueForce) ? 16 : 17;
+	_question.setup(1, 4, 7, xp, yp, 255);
 	_question.setEnabled(false);
 	add(&_question);
 
 	xp += 21;
-	_scrollLeft.setup(1, 4, 1, xp, 16, 255);
+	_scrollLeft.setup(1, 4, 1, xp, yp, 255);
 	add(&_scrollLeft);
 	_scrollLeft._isLeft = true;
 
 	xp += 22;
-	_scrollRight.setup(1, 4, 4, xp, 16, 255);
+	_scrollRight.setup(1, 4, 4, xp, yp, 255);
 	add(&_scrollRight);
 	_scrollRight._isLeft = false;
 
 	// Set up the score
-	_score.postInit();
-	add(&_score);
+	if (g_vm->getGameID() == GType_BlueForce) {
+		_score.postInit();
+		add(&_score);
+	}
 
 	// Set interface area
-	_bounds = Rect(0, BF_INTERFACE_Y - 1, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_bounds = Rect(0, UI_INTERFACE_Y - 1, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	updateInventory();
 }

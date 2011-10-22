@@ -706,9 +706,9 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit(OwnerList);
 	if (BF_GLOBALS._dayNumber) {
 		// Blank out the bottom portion of the screen
-		BF_GLOBALS._interfaceY = BF_INTERFACE_Y;
+		BF_GLOBALS._interfaceY = UI_INTERFACE_Y;
 
-		Rect r(0, BF_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
+		Rect r(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
 		BF_GLOBALS.gfxManager().getSurface().fillRect(r, 0);
 	}
 }
@@ -1461,7 +1461,7 @@ void SceneMessage::draw() {
 	GfxSurface &surface = BF_GLOBALS._screenSurface;
 
 	// Clear the game area
-	surface.fillRect(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 0);
+	surface.fillRect(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 0);
 
 	// Disable scene fade in
 	BF_GLOBALS._paneRefreshFlag[0] = 0;
@@ -1472,8 +1472,8 @@ void SceneMessage::draw() {
 	BF_GLOBALS._scenePalette.setPalette(font._colors.foreground, 1);
 
 	// Write out the message
-	Rect textRect(0, BF_INTERFACE_Y / 2 - (font.getHeight() / 2), SCREEN_WIDTH,
-			BF_INTERFACE_Y / 2 + (font.getHeight() / 2));
+	Rect textRect(0, UI_INTERFACE_Y / 2 - (font.getHeight() / 2), SCREEN_WIDTH,
+			UI_INTERFACE_Y / 2 + (font.getHeight() / 2));
 	BF_GLOBALS._gfxManagerInstance._font.writeLines(_message.c_str(), textRect, ALIGN_CENTER);
 
 	// TODO: Ideally, saving and loading should be disabled here until the message display is complete

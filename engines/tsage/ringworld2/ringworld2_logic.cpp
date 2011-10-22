@@ -72,6 +72,9 @@ SceneExt::SceneExt(): Scene() {
 
 void SceneExt::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit(OwnerList);
+
+	// Exclude the bottom area of the screen to allow room for the UI
+	T2_GLOBALS._interfaceY = UI_INTERFACE_Y;
 }
 
 void SceneExt::remove() {
@@ -481,6 +484,7 @@ void Ringworld2Game::start() {
 	else {
 		// Switch to the first game scene
 		g_globals->_events.setCursor(CURSOR_WALK);
+		T2_GLOBALS._uiElements._active = true;
 		g_globals->_sceneManager.setNewScene(100);
 	}
 

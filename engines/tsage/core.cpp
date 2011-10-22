@@ -1434,7 +1434,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	}
 
 	Rect tempRect = bounds;
-	if (g_vm->getGameID() == GType_BlueForce)
+	if (g_vm->getGameID() != GType_Ringworld)
 		tempRect.setHeight(BF_GLOBALS._interfaceY);
 
 	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
@@ -1533,7 +1533,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	Common::String msg = (!resNum || (resNum == -1)) ? Common::String() :
 		g_resourceManager->getMessage(resNum, lineNum);
 
-	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active)
+	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active)
 		T2_GLOBALS._uiElements.hide();
 
 	if (g_globals->_sceneObjects->contains(&g_globals->_sceneText)) {
@@ -1665,7 +1665,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		g_globals->_sceneText.remove();
 	}
 
-	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active) {
+	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active) {
 		// Show user interface
 		T2_GLOBALS._uiElements.show();
 
@@ -1678,7 +1678,7 @@ void SceneItem::display2(int resNum, int lineNum) {
 	if (g_vm->getGameID() == GType_BlueForce)
 		display(resNum, lineNum, SET_WIDTH, 312,
 			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 			SET_EXT_FGCOLOR, 13, LIST_END);
 	else
@@ -1691,7 +1691,7 @@ void SceneItem::display(const Common::String &msg) {
 	display(-1, -1, msg.c_str(),
 		SET_WIDTH, 312,
 		SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
-		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 		SET_EXT_FGCOLOR, 13, LIST_END);
 }
@@ -2783,7 +2783,7 @@ void SceneText::synchronize(Serializer &s) {
 void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
-	if ((g_vm->getGameID() != GType_BlueForce) || (_bounds.top < BF_INTERFACE_Y) ||
+	if ((g_vm->getGameID() != GType_BlueForce) || (_bounds.top < UI_INTERFACE_Y) ||
 			!T2_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
@@ -2825,7 +2825,7 @@ void Visage::setVisage(int resNum, int rlbNum) {
 			// In Ringworld, we immediately get the data
 			_data = g_resourceManager->getResource(RES_VISAGE, resNum, rlbNum);
 		} else {
-			// Blue Force has an extra indirection via the visage index file
+			// Games after Ringworld have an extra indirection via the visage index file
 			byte *indexData = g_resourceManager->getResource(RES_VISAGE, resNum, 9999);
 			if (rlbNum == 9999) {
 				_data = indexData;
@@ -2930,21 +2930,12 @@ void Player::enableControl() {
 
 	switch (g_vm->getGameID()) {
 	case GType_BlueForce:
+	case GType_Ringworld2:
 		cursor = g_globals->_events.getCursor();
 		g_globals->_events.setCursor(cursor);
 
 		if (T2_GLOBALS._uiElements._active)
 			T2_GLOBALS._uiElements.show();
-		break;
-
-	case GType_Ringworld2:
-		cursor = g_globals->_events.getCursor();
-		g_globals->_events.setCursor(cursor);
-
-		/*
-		if (R2_GLOBALS._uiElements._active)
-			R2_GLOBALS._uiElements.show();
-		*/
 		break;
 
 	default:

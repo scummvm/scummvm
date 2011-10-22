@@ -118,7 +118,7 @@ private:
 	void add(UIElement *obj);
 	void updateInvList();
 public:
-	UIElement _object1;
+	UIElement _background;
 	UIQuestion _question;
 	UIScore _score;
 	UIInventorySlot _slot1, _slot2, _slot3, _slot4;

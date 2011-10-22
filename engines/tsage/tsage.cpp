@@ -84,13 +84,19 @@ void TSageEngine::initialize() {
 		g_globals = new BlueForce::BlueForceGlobals();
 		
 		// Setup the user interface
-		T2_GLOBALS._uiElements.setup(Common::Point(0, BF_INTERFACE_Y - 2));
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
 
 		// Reset all global variables
 		BF_GLOBALS.reset();
 	} else if (g_vm->getGameID() == GType_Ringworld2) {
 		g_resourceManager->addLib("R2RW.RLB");
 		g_globals = new Ringworld2::Ringworld2Globals();
+
+		// Setup the user interface
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+
+		// Reset all global variables
+		R2_GLOBALS.reset();
 	}
 
 	g_globals->gfxManager().setDefaults();

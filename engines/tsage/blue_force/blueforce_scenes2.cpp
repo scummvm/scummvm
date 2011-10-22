@@ -1182,7 +1182,7 @@ void Scene270::process(Event &event) {
 
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1)) &&
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1)) &&
 			!_field384 && !_field386) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
@@ -1432,7 +1432,7 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 	_item6.setDetails(Rect(278, 50, 318, 72), 270, 21, 22, 23, 1, NULL);
 	_item2.setDetails(3, 270, 24, 25, 26, 1);
 	_item4.setDetails(2, 270, 30, 31, 32, 1);
-	_item11.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 270, 0, 1, 2, 1, NULL);
+	_item11.setDetails(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 270, 0, 1, 2, 1, NULL);
 	
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player._moveDiff.x = 8;
@@ -1685,7 +1685,7 @@ void Scene271::process(Event &event) {
 
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < BF_INTERFACE_Y)) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < UI_INTERFACE_Y)) {
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface cursor = _cursorVisage.getFrame(EXITFRAME_E);
 			BF_GLOBALS._events.setCursor(cursor);

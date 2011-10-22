@@ -1228,7 +1228,7 @@ void Scene560::SafeInset::process(Event &event) {
 		GfxSurface cursor = _cursorVisage.getFrame(7);
 		BF_GLOBALS._events.setCursor(cursor);
 
-		if ((event.mousePos.y < BF_INTERFACE_Y) && (event.eventType == EVENT_BUTTON_DOWN)) {
+		if ((event.mousePos.y < UI_INTERFACE_Y) && (event.eventType == EVENT_BUTTON_DOWN)) {
 			// Leave the safe view
 			event.handled = true;
 			remove();
@@ -2529,7 +2529,7 @@ void Scene590::signal() {
 void Scene590::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);

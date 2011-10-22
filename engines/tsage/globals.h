@@ -77,7 +77,6 @@ public:
 	Globals();
 	~Globals();
 
-	void reset();
 	void setFlag(int flagNum) {
 		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
 		_flags[flagNum] = true;
@@ -94,6 +93,8 @@ public:
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
 	virtual Common::String getClassName() { return "Globals"; }
 	virtual void synchronize(Serializer &s);
+	virtual void reset();
+
 	void dispatchSounds();
 };
 
@@ -106,8 +107,10 @@ class TsAGE2Globals: public Globals {
 public:
 	UIElements _uiElements;
 	SelectItemProc _onSelectItem;
+	int _interfaceY;
 
 	TsAGE2Globals() { _onSelectItem = NULL; }
+	virtual void reset();
 };
 
 extern Globals *g_globals;
@@ -217,17 +220,16 @@ public:
 	int _v50CC8;
 	int _v51C42;
 	int _v51C44;
-	int _interfaceY;
 	Bookmark _bookmark;
 	int _mapLocationId;
 	int _clip1Bullets, _clip2Bullets;
 
 	BlueForceGlobals();
-	void reset();
 	bool getHasBullets();
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
 	virtual void synchronize(Serializer &s);
+	virtual void reset();
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };

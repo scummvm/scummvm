@@ -1111,7 +1111,7 @@ void Scene810::postInit(SceneObjectList *OwnerList) {
 
 	BF_GLOBALS._sceneItems.addItems(&_microficheReader, &_map, &_window, &_bookcase, &_garbageCan, 
 		&_fileCabinets, &_coffeeMaker, &_shelves, &_background, NULL);
-	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y));
+	_background.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y));
 }
 
 void Scene810::signal() {
@@ -1241,7 +1241,7 @@ void Scene810::signal() {
 }
 
 void Scene810::process(Event &event) {
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
@@ -1472,7 +1472,7 @@ void Scene820::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.enableControl();
 	BF_GLOBALS._player._canWalk = false;
 
-	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 820, -1, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 820, -1, -1, -1, 1, NULL);
 }
 
 void Scene820::signal() {
@@ -1882,7 +1882,7 @@ void Scene830::process(Event &event) {
 
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_seExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SE);
@@ -2274,7 +2274,7 @@ void Scene840::postInit(SceneObjectList *OwnerList) {
 	_item16.setDetails(4, 840, 44, 45, 46, 1);
 	_item17.setDetails(5, 840, 26, 27, 28, 1);
 	_item12.setDetails(7, 840, 35, 36, 37, 1);
-	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, BF_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
+	_item13.setDetails(Rect(0, 0, SCREEN_WIDTH - 1, UI_INTERFACE_Y), 840, 41, 42, 43, 1, NULL);
 
 	if (BF_INVENTORY.getObjectScene(INV_RENTAL_KEYS) == 1) {
 		_boatKeys.postInit();
@@ -2494,7 +2494,7 @@ void Scene840::signal() {
 void Scene840::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
 			BF_GLOBALS._events.setCursor(surface);
@@ -3174,7 +3174,7 @@ void Scene870::signal() {
 void Scene870::process(Event &event) {
 	SceneExt::process(event);
 
-	if (!event.handled && BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (!event.handled && BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_E);
@@ -3503,7 +3503,7 @@ void Scene880::signal() {
 }
 
 void Scene880::process(Event &event) {
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_northExit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);

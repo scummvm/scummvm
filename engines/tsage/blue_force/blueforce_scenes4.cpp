@@ -90,7 +90,7 @@ void Scene410::Action2::signal() {
 	default:
 		SceneItem::display(410, 11, SET_WIDTH, 300,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 10,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 13, SET_EXT_BGCOLOR, 82,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		BF_GLOBALS._player.enableControl();
@@ -675,7 +675,7 @@ void Scene410::postInit(SceneObjectList *OwnerList) {
 
 	signal();
 
-	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 410, 0, 1, 2, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 410, 0, 1, 2, 1, NULL);
 }
 
 void Scene410::signal() {
@@ -1070,7 +1070,7 @@ void Scene415::postInit(SceneObjectList *OwnerList) {
 	_dashboard.setDetails(20, 415, 11, 12, 19, 1);
 	_steeringWheel.setDetails(15, 415, 5, 6, 7, 1);
 	_horn.setDetails(31, 415, 8, 9, 10, 1);
-	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y), 415, 0, 1, 2, 1, NULL);
+	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y), 415, 0, 1, 2, 1, NULL);
 
 	BF_GLOBALS._player.enableControl();
 	BF_GLOBALS._player._canWalk = false;
@@ -1299,7 +1299,7 @@ void Scene440::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.enableControl();
 	}
 
-	_item1.setBounds(Rect(0, 0, SCREEN_WIDTH, BF_INTERFACE_Y - 1));
+	_item1.setBounds(Rect(0, 0, SCREEN_WIDTH, UI_INTERFACE_Y - 1));
 	BF_GLOBALS._sceneItems.push_back(&_item1);
 }
 
@@ -1656,7 +1656,7 @@ void Scene450::signal() {
 void Scene450::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		// Check if the cursor is on an exit
 		if (_exit.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);

@@ -196,6 +196,17 @@ void Globals::dispatchSounds() {
 
 /*--------------------------------------------------------------------------*/
 
+void TsAGE2Globals::reset() {
+	Globals::reset();
+	
+	// Reset the inventory
+	T2_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements._scoreValue = 0;
+	T2_GLOBALS._uiElements._active = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
 namespace BlueForce {
 
 BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
@@ -249,7 +260,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 }
 
 void BlueForceGlobals::reset() {
-	Globals::reset();
+	TsAGE2Globals::reset();
 	_scenePalette.clearListeners();
 	
 	_scrollFollower = &_player;
@@ -257,15 +268,12 @@ void BlueForceGlobals::reset() {
 
 	// Reset the inventory
 	((BlueForceInvObjectList *)_inventory)->reset();
-	T2_GLOBALS._uiElements.updateInventory();
-	T2_GLOBALS._uiElements._scoreValue = 0;
-	T2_GLOBALS._uiElements._active = false;
 
 	_mapLocationId = 1;
 	_driveFromScene = 300;
 	_driveToScene = 0;
 
-	_interfaceY = BF_INTERFACE_Y;
+	_interfaceY = UI_INTERFACE_Y;
 	_dayNumber = 0;
 	_v4CEA4 = 0;
 	_v4CEAA = 0;

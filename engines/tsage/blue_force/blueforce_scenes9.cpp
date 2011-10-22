@@ -689,7 +689,7 @@ void Scene900::signal() {
 void Scene900::process(Event &event) {
 	SceneExt::process(event);
 
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		if (_item4.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_W);
 			BF_GLOBALS._events.setCursor(surface);
@@ -862,7 +862,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 			} else {
 				SceneItem::display(910, 90, SET_WIDTH, 312,
 						SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-						SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+						SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 						SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 						SET_EXT_FGCOLOR, 13, LIST_END);
 				return true;
@@ -907,7 +907,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 		} else {
 			SceneItem::display(910, 95, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 
@@ -918,13 +918,13 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CECC == 1)
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		else
 			SceneItem::display(910, 82, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
@@ -933,7 +933,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 	case 61:
 		SceneItem::display(910, 83, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
@@ -987,7 +987,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CECC == 1) {
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1016,7 +1016,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CECC == 1) {
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1035,7 +1035,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 	case 61:
 		SceneItem::display(910, 83, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
@@ -1155,7 +1155,7 @@ bool Scene910::BreakerBox::startAction(CursorType action, Event &event) {
 		} else {
 			SceneItem::display(910, 62, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1258,7 +1258,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 	case CURSOR_LOOK:
 		SceneItem::display(910, 9, SET_WIDTH, 312,
 			SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 			SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
@@ -1345,7 +1345,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 			} else
 				SceneItem::display(910, 97, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1524,7 +1524,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 	case CURSOR_LOOK:
 		SceneItem::display(910, 14, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
@@ -1533,7 +1533,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		case 0:
 			SceneItem::display(910, 15, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			break;
@@ -1605,7 +1605,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		if (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == _field90 + 2) {
 			SceneItem::display(910, 85, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1613,7 +1613,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._v4CEE2 == 3) {
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1649,7 +1649,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		if (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == _field90 + 2) {
 			SceneItem::display(910, 85, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
@@ -1827,7 +1827,7 @@ bool Scene910::Generator::startAction(CursorType action, Event &event) {
 		if (scene->_lyle._position.x == 115)
 			SceneItem::display(910, 62, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		else if (BF_GLOBALS._v4CEE2 == 1) {
@@ -1898,7 +1898,7 @@ bool Scene910::Item15::startAction(CursorType action, Event &event) {
 
 	SceneItem::display(910, 2, SET_WIDTH, 312,
 		SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+		SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 		SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 		SET_EXT_FGCOLOR, 13, LIST_END);
 	return true;
@@ -2334,7 +2334,7 @@ void Scene910::signal() {
 		} else {
 			SceneItem::display(910, 91, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			BF_GLOBALS._player.enableControl();
@@ -2351,7 +2351,7 @@ void Scene910::signal() {
 			} else {
 				SceneItem::display(910, 92, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 				BF_GLOBALS._player.enableControl();
@@ -2359,7 +2359,7 @@ void Scene910::signal() {
 		} else {
 			SceneItem::display(910, 94, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			BF_GLOBALS._player.enableControl();
@@ -2685,7 +2685,7 @@ void Scene910::signal() {
 		} else {
 			SceneItem::display(910, 89, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 			_sceneMode = 9144;
@@ -2705,7 +2705,7 @@ void Scene910::signal() {
 	case 9149:
 		SceneItem::display(910, 74, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		BF_INVENTORY.setObjectScene(INV_22_SNUB, 1);
@@ -2764,13 +2764,13 @@ void Scene910::process(Event &event) {
 			} else
 				SceneItem::display(1, 4, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		} else
 			SceneItem::display(910, 81, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		event.handled = true;
@@ -2832,7 +2832,7 @@ void Scene910::dispatch() {
 		} else {
 			SceneItem::display(910, 98, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			_sceneMode = 9144;
@@ -2856,7 +2856,7 @@ void Scene910::checkGun() {
 	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._v4CEE2 == 0) && (BF_GLOBALS._v4CEE0 != 0))
 		SceneItem::display(910, 70, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 	else
@@ -3065,7 +3065,7 @@ void Scene920::signal() {
 }
 void Scene920::process(Event &event) {
 	SceneExt::process(event);
-	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (BF_INTERFACE_Y - 1))) {
+	if (BF_GLOBALS._player._enabled && !_focusObject && (event.mousePos.y < (UI_INTERFACE_Y - 1))) {
 		if (_exitN.contains(event.mousePos)) {
 			GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_N);
 			BF_GLOBALS._events.setCursor(surface);
@@ -3301,7 +3301,7 @@ void Scene930::Action2::signal() {
 	case 3:
 		SceneItem::display(930, scene->_box._useLineNum, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		scene->subF3C07();
@@ -3426,7 +3426,7 @@ void Scene930::signal() {
 		_sceneMode = 3;
 		SceneItem::display(930, 95, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
-				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + BF_INTERFACE_Y + 2,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		signal();
