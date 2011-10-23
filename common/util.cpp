@@ -338,6 +338,8 @@ const struct GameOpt {
 	{ GUIO_MIDIMT32,     "midiMt32" },
 	{ GUIO_MIDIGM,       "midiGM" },
 
+  { GUIO_NOASPECT,     "noAspect" },
+  
 	{ GUIO_NONE, 0 }
 };
 

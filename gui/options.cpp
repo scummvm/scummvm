@@ -195,13 +195,18 @@ void OptionsDialog::open() {
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
+		_aspectCheckbox->setState(false);
 		_aspectCheckbox->setEnabled(false);
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
 		// Aspect ratio setting
-		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		if (_guioptions.contains(GUIO_NOASPECT)) {
+			_aspectCheckbox->setState(false);
+			_aspectCheckbox->setEnabled(false);
+		} else
+			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 #endif // SMALL_SCREEN_DEVICE
 		_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
 	}
@@ -585,7 +590,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-	_aspectCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_NOASPECT))
+		_aspectCheckbox->setEnabled(false);
+	else
+		_aspectCheckbox->setEnabled(enabled);
 #endif
 	_disableDitheringCheckbox->setEnabled(enabled);
 }
