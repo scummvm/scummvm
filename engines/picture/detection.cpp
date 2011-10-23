@@ -68,7 +68,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -81,7 +81,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -94,7 +94,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -107,7 +107,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -120,7 +120,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -133,7 +133,7 @@ static const PictureGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
