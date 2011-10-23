@@ -3082,19 +3082,19 @@ void Scene180::dispatch() {
 	switch (_fieldC56) {
 	case 1:
 		if (_vechile._mover && (_vechile._percent > 50))
-			_vechile.changeZoom(_vechile._percent);
+			_vechile.changeZoom(_vechile._percent - 1);
 		if (_vechile._moveDiff.x > 15)
 			--_vechile._moveDiff.x;
 		break;
 	case 2:
 		if (_vechile._mover && (_vechile._percent < 100))
-			_vechile.changeZoom(_vechile._percent);
+			_vechile.changeZoom(_vechile._percent + 1);
 		if (_vechile._moveDiff.x < 35)
 			++_vechile._moveDiff.x;
 		break;
 	case 3:
 		if (_vechile._mover && (_vechile._percent > 70))
-			_vechile.changeZoom(_vechile._percent);
+			_vechile.changeZoom(_vechile._percent - 1);
 		if (_vechile._moveDiff.x > 15)
 			--_vechile._moveDiff.x;
 		break;
