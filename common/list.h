@@ -231,6 +231,9 @@ public:
 
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
+
+		// Free up reserved memory
+		_allocator.freeReservedMemory();
 	}
 
 	bool empty() const {
