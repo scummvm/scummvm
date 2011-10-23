@@ -179,6 +179,9 @@ Common::Error PictureEngine::run() {
 	}
 	_script->runScript();
 
+	_musicPlayer->stopAndClear();
+	_sound->stopAll();
+
 	delete _arc;
 	delete _res;
 	delete _screen;
