@@ -1079,6 +1079,8 @@ begin_credits("Credits");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
 		end_persons();
 
+	add_paragraph("Some icons by Yusuke Kamiyamane");
+
 	add_paragraph(
     "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
     "with us the source of some of their brilliant games, allowing us to ".
