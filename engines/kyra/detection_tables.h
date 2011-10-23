@@ -275,7 +275,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_MIDITOWNS)
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_NOASPECT)
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -294,7 +294,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_MIDIPC98)
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_NOASPECT)
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -714,7 +714,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_MIDITOWNS)
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_NOASPECT)
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -738,7 +738,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO2(GUIO_NOSPEECH, GUIO_MIDIPC98)
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_NOASPECT)
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -1401,7 +1401,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GUIO_MIDIPC98)
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_NOASPECT)
 		},
 		LOL_PC98_SJIS_FLAGS
 	},
