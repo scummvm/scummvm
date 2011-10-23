@@ -35,6 +35,18 @@
 
 namespace Picture {
 
+enum ChunkTypes {
+	kChunkFirstImage = 0,
+	kChunkSubsequentImages = 1,
+	kChunkPalette = 2,
+	kChunkUnused = 3,
+	kChunkAudio = 4,
+	kChunkShowSubtitle = 5,
+	kChunkShakeScreen = 6,
+	kChunkSetupSubtitles = 7,
+	kChunkStopSubtitles = 8
+};
+
 MoviePlayer::MoviePlayer(PictureEngine *vm) : _vm(vm) {
 }
 
@@ -83,31 +95,34 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	_soundChunkFramesLeft = 0;
 	_lastPrefetchOfs = 0;
+
 	fetchAudioChunks();
 
 	uint32 lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
 
 	while (_chunkCount--) {
 
-		byte chunkType;
-		uint32 chunkSize;
-		byte *chunkBuffer;
+		byte chunkType = _vm->_arc->readByte();
+		uint32 chunkSize = _vm->_arc->readUint32LE();
+		byte *chunkBuffer = NULL;
 		uint32 movieOffset;
 
-		chunkType = _vm->_arc->readByte();
-		chunkSize = _vm->_arc->readUint32LE();
-
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
-
-		chunkBuffer = new byte[chunkSize];
-		_vm->_arc->read(chunkBuffer, chunkSize);
+		
+		// Skip audio chunks - we've already queued them in
+		// fetchAudioChunks() above
+		if (chunkType == kChunkAudio) {
+			_vm->_arc->skip(chunkSize);
+		} else {
+			chunkBuffer = new byte[chunkSize];
+			_vm->_arc->read(chunkBuffer, chunkSize);
+		}
 
 		movieOffset = _vm->_arc->pos();
 
 		switch (chunkType) {
-		case 0: // image data
-		case 1:
-		
+		case kChunkFirstImage:
+		case kChunkSubsequentImages:
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
 			// TODO: Rework this
 			_vm->_screen->updateShakeScreen();
@@ -121,39 +136,41 @@ void MoviePlayer::playMovie(uint resIndex) {
 			}
 
 			while (_vm->_mixer->getSoundElapsedTime(_audioStreamHandle) < lastTime + 111) {
-				g_system->delayMillis(0);
+				g_system->delayMillis(10);
 			}
 
 			lastTime = _vm->_mixer->getSoundElapsedTime(_audioStreamHandle);
 
 			break;
-		case 2: // palette data
+		case kChunkPalette:
 			unpackPalette(chunkBuffer, moviePalette, 256, 3);
 			_vm->_palette->setFullPalette(moviePalette);
 			break;
-		//case 3: -- what is this type
-		case 4: // audio data
+		case kChunkUnused:
+			error("Chunk considered to be unused has been encountered");
+		case kChunkAudio:
+			// Already processed
 			break;
-		case 5:
+		case kChunkShowSubtitle:
 			// TODO: Check if the text is a subtitle (last character == 0xFE).
 			//	   If so, don't show it if text display is disabled.
 			memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
 			_vm->_screen->updateTalkText(subtitleSlot, 0);
 			break;
-		case 6: // start/stop shakescreen effect
+		case kChunkShakeScreen: // start/stop shakescreen effect
 			if (chunkBuffer[0] == 0xFF)
 				_vm->_screen->stopShakeScreen();
 			else
 				_vm->_screen->startShakeScreen(chunkBuffer[0]);
 			break;
-		case 7: // setup subtitle parameters
+		case kChunkSetupSubtitles: // setup subtitle parameters
 			_vm->_screen->_talkTextY = READ_LE_UINT16(chunkBuffer + 0);
 			_vm->_screen->_talkTextX = READ_LE_UINT16(chunkBuffer + 2);
 			_vm->_screen->_talkTextFontColor = ((chunkBuffer[4] << 4) & 0xF0) | ((chunkBuffer[4] >> 4) & 0x0F);
 			debug(0, "_talkTextX = %d; _talkTextY = %d; _talkTextFontColor = %d",
 				_vm->_screen->_talkTextX, _vm->_screen->_talkTextY, _vm->_screen->_talkTextFontColor);
 			break;
-		case 8: // stop subtitles
+		case kChunkStopSubtitles:
 			_vm->_script->getSlotData(subtitleSlot)[0] = 0xFF;
 			_vm->_screen->finishTalkTextItems();
 			break;
@@ -185,7 +202,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_guiHeight = savedGuiHeight;
 
 	_vm->_isSaveAllowed = true;
-
 }
 
 void MoviePlayer::fetchAudioChunks() {
