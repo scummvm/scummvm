@@ -381,7 +381,7 @@ String parseGameGUIOptions(const String &str) {
 }
 
 const String getGameGUIOptionsDescription(const String &options) {
-	String res = "";
+	String res;
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (options.contains(g_gameOptions[i].option[0]))

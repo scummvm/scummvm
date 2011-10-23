@@ -141,7 +141,7 @@ void OptionsDialog::init() {
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
-	_guioptions = "";
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -155,7 +155,7 @@ void OptionsDialog::open() {
 	setResult(0);
 
 	// Retrieve game GUI options
-	_guioptions = "";
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);

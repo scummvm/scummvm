@@ -74,7 +74,7 @@ static const struct {
 };
 
 Common::String MidiDriver::musicType2GUIO(uint32 musicType) {
-	Common::String res = "";
+	Common::String res;
 
 	for (int i = 0; GUIOMapping[i].guio; i++) {
 		if (musicType == GUIOMapping[i].type || musicType == (uint32)-1)
