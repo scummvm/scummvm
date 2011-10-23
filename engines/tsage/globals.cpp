@@ -350,4 +350,19 @@ bool BlueForceGlobals::removeFlag(int flagNum) {
 
 } // end of namespace BlueForce
 
+namespace Ringworld2 {
+
+void Ringworld2Globals::reset() {
+	Globals::reset();
+	
+	// Reset the inventory
+	R2_INVENTORY.reset();
+	T2_GLOBALS._uiElements.updateInventory();
+	T2_GLOBALS._uiElements._active = false;
+}
+
+
+
+} // end of namespace Ringworld2
+
 } // end of namespace TsAGE
