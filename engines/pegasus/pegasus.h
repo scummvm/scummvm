@@ -109,6 +109,7 @@ public:
 	uint getRandomBit();
 	uint getRandomNumber(uint max);
 	void shuffleArray(int32 *arr, int32 count);
+	void drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y);
 
 	// Energy
 	void setLastEnergyValue(const int32 value) { _savedEnergyValue = value; }
@@ -246,7 +247,6 @@ private:
 	void shellGameInput(const Input &input, const Hotspot *cursorSpot);
 	Common::RandomSource *_rnd;
 	void doSubChase();
-	void drawScaledFrame(const Graphics::Surface *frame, uint16 x, uint16 y);
 
 	// Menu
 	GameMenu *_gameMenu;
