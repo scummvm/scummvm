@@ -22,8 +22,6 @@
 
 namespace Agi {
 
-using Common::GUIO_NONE;
-
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp) { \
 		{ \
 			id, \
@@ -32,7 +30,7 @@ using Common::GUIO_NONE;
 			lang, \
 			platform, \
 			ADGF_NO_FLAGS,					\
-			GUIO_NONE	\
+			GUIO1(GUIO_NONE)			\
 		}, \
 		gid, \
 		interp, \
@@ -48,7 +46,7 @@ using Common::GUIO_NONE;
 			lang, \
 			platform, \
 			ADGF_USEEXTRAASTITLE,					\
-			GUIO_NONE	\
+			GUIO1(GUIO_NONE)					\
 		}, \
 		gid, \
 		interp, \
@@ -132,7 +130,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_BC,
 		GType_V1,
@@ -153,7 +151,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_BC,
 		GType_V1,
@@ -174,7 +172,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_BC,
 		GType_V1,
@@ -254,7 +252,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_GOLDRUSH,
 		GType_V3,
@@ -572,7 +570,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_SQ2,
 		GType_V2,
@@ -861,7 +859,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_FANMADE,
 		GType_V3,
@@ -889,7 +887,7 @@ static AGIGameDescription g_fallbackDesc = {
 		Common::UNK_LANG,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	GID_FANMADE,
 	GType_V2,

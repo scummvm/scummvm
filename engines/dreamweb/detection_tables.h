@@ -25,8 +25,6 @@
 
 namespace DreamWeb {
 
-using Common::GUIO_NONE;
-
 static const DreamWebGameDescription gameDescriptions[] = {
 	// International floppy release
 	{
@@ -41,7 +39,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -58,7 +56,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -75,7 +73,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::EN_USA,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -92,7 +90,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -109,7 +107,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -126,7 +124,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -143,7 +141,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -160,7 +158,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_CD | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -177,7 +175,7 @@ static const DreamWebGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 

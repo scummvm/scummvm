@@ -40,7 +40,7 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
 		_singleid = "dreamweb";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {

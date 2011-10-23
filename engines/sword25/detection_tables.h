@@ -22,11 +22,6 @@
 
 namespace Sword25 {
 
-using Common::GUIO_NONE;
-using Common::GUIO_NOSPEECH;
-using Common::GUIO_NOSFX;
-using Common::GUIO_NOMUSIC;
-
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"sword25",
@@ -35,7 +30,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -44,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -53,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -62,7 +57,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::HU_HUN,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -71,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -80,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -89,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -98,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"sword25",
@@ -107,7 +102,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	// Extracted version
@@ -121,7 +116,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		GF_EXTRACTED | ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };

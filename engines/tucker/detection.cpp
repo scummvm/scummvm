@@ -43,7 +43,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformPC,
 		Tucker::kGameFlagNoSubtitles,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -52,7 +52,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		Tucker::kGameFlagEncodedData,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -61,7 +61,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformPC,
 		Tucker::kGameFlagEncodedData,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -70,7 +70,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformPC,
 		Tucker::kGameFlagEncodedData,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -79,7 +79,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformPC,
 		0,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -88,7 +88,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		Tucker::kGameFlagEncodedData,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"tucker",
@@ -97,7 +97,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_DEMO | Tucker::kGameFlagDemo,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -109,7 +109,7 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	Common::EN_ANY,
 	Common::kPlatformPC,
 	ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly,
-	Common::GUIO_NONE
+	GUIO1(GUIO_NONE)
 };
 
 class TuckerMetaEngine : public AdvancedMetaEngine {

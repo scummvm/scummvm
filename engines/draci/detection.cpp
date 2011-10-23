@@ -35,8 +35,6 @@ static const PlainGameDescriptor draciGames[] = {
 
 namespace Draci {
 
-using Common::GUIO_NONE;
-
 const ADGameDescription gameDescriptions[] = {
 	{
 		"draci",
@@ -45,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -55,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -65,7 +63,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -75,7 +73,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	AD_TABLE_END_MARKER

@@ -35,8 +35,6 @@ static const PlainGameDescriptor toonGames[] = {
 
 namespace Toon {
 
-using Common::GUIO_NONE;
-
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"toon", "",
@@ -46,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "281efa3f33f6712c0f641a605f4d40fd", 2511090},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"toon", "",
@@ -56,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "df056b94ea83f1ed92a539cf636053ab", 2542668},
 			AD_LISTEND
 		},
-		Common::FR_FRA, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::FR_FRA, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"toon", "",
@@ -66,7 +64,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "72fe96a9e10967d3138e918295babc42", 2910283},
 			AD_LISTEND
 		},
-		Common::DE_DEU, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::DE_DEU, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"toon", "",
@@ -76,7 +74,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"study.svl", 0, "b6b1ee2d9d94d53d305856039ab7bde7", 2634620},
 			AD_LISTEND
 		},
-		Common::ES_ESP, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::ES_ESP, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"toon", "",
@@ -86,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "5eb99850ada22f0b8cf6392262d4dd07", 9404599},
 			AD_LISTEND
 		},
-		Common::DE_DEU, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
+		Common::DE_DEU, Common::kPlatformPC, ADGF_DEMO, GUIO1(GUIO_NONE)
 	},
 	{
 		"toon", "",
@@ -95,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"generic.svl", 0, "5c42724bb93b360dca7044d6b7ef26e5", 7739319},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO1(GUIO_NONE)
 	},
 
 	AD_TABLE_END_MARKER

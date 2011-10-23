@@ -35,8 +35,6 @@ static const PlainGameDescriptor CGEGames[] = {
 
 namespace CGE {
 
-using Common::GUIO_NONE;
-
 static const ADGameDescription gameDescriptions[] = {
 
 	{
@@ -46,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437572},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"soltys", "Soltys Freeware",
@@ -55,7 +53,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8437676},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	// English ScummVM version
 	{
@@ -65,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8428832},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"soltys", "Soltys Demo (not supported)",
@@ -74,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "75d385a6074c58b69f7730481f256051", 1796710},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO , GUIO1(GUIO_NONE)
 	},
 	{
 		"soltys", "Soltys Demo (not supported)",
@@ -83,7 +81,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "c5d9b15863cab61dc125551576dece04", 1075272},
 			AD_LISTEND
 		},
-		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO_NONE
+		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };

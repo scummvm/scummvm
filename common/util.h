@@ -98,10 +98,11 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_MIDIMT32		"\017"
 #define GUIO_MIDIGM			"\020"
 
-#define GUIO1(a) (a "\0")
-#define GUIO2(a,b) (a b "\0")
-#define GUIO3(a,b,c) (a b c "\0")
-#define GUIO4(a,b,c,d) (a b c d "\0")
+#define GUIO1(a) (a)
+#define GUIO2(a,b) (a b)
+#define GUIO3(a,b,c) (a b c)
+#define GUIO4(a,b,c,d) (a b c d)
+#define GUIO5(a,b,c,d,e) (a b c d e)
 
 namespace Common {
 
