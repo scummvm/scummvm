@@ -345,7 +345,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_RTZ,
 		0,
