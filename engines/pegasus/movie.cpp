@@ -202,4 +202,48 @@ void Movie::updateTime() {
 	}
 }
 
+GlowingMovie::GlowingMovie(const tDisplayElementID id) : Movie(id) {
+	_glowing = false;
+}
+
+void GlowingMovie::draw(const Common::Rect &r) {
+	// Make sure the rectangles are clipped properly, OR guarantee that _bounds will
+	// never fall off the screen.
+	if (_glowing) {
+		Common::Rect bounds;
+		getBounds(bounds);
+
+		copyToCurrentPortTransparentGlow(_movieBox, bounds);
+	} else {
+		Movie::draw(r);
+	}
+}
+
+void GlowingMovie::setBounds(const Common::Rect &r) {
+	Common::Rect bounds;
+	getBounds(bounds);
+
+	if (r != bounds) {
+		// Avoid Movie::setBounds.
+		// clone2727 asks why, but goes along with it
+		Animation::setBounds(r);
+	}
+}
+
+ScalingMovie::ScalingMovie(const tDisplayElementID id) : GlowingMovie(id) {
+}
+
+void ScalingMovie::draw(const Common::Rect &) {
+	// Make sure the rectangles are clipped properly, OR guarantee that _bounds will
+	// never fall off the screen.
+
+	Common::Rect bounds;
+	getBounds(bounds);
+
+	if (_glowing)
+		scaleTransparentCopyGlow(_movieBox, bounds);
+	else
+		scaleTransparentCopy(_movieBox, bounds);
+}
+
 } // End of namespace Pegasus

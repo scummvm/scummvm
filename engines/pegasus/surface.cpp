@@ -178,9 +178,36 @@ void Surface::copyToCurrentPort(const Common::Rect &srcRect, const Common::Rect 
 }
 
 void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
-	// HACK: Seems we're truncating some color data somewhere...
-	uint32 transColor1 = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
-	uint32 transColor2 = g_system->getScreenFormat().RGBToColor(0xf8, 0xf8, 0xf8);
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
+	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
+
+	int lineSize = srcRect.width() * _surface->format.bytesPerPixel;
+
+	for (int y = 0; y < srcRect.height(); y++) {
+		for (int x = 0; x < srcRect.width(); x++) {
+			if (g_system->getScreenFormat().bytesPerPixel == 2) {
+				uint16 color = READ_UINT16(src);
+				if (!isTransparent(color))
+					memcpy(dst, src, 2);
+			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
+				uint32 color = READ_UINT32(src);
+				if (!isTransparent(color))
+					memcpy(dst, src, 4);
+			}
+
+			src += g_system->getScreenFormat().bytesPerPixel;
+			dst += g_system->getScreenFormat().bytesPerPixel;
+		}
+
+		src += _surface->pitch - lineSize;
+		dst += screen->pitch - lineSize;
+	}
+}
+
+void Surface::copyToCurrentPortTransparentGlow(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+	// This is the same as copyToCurrentPortTransparent(), but turns the red value of each
+	// pixel all the way up.
 
 	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
@@ -192,12 +219,12 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Co
 		for (int x = 0; x < srcRect.width(); x++) {
 			if (g_system->getScreenFormat().bytesPerPixel == 2) {
 				uint16 color = READ_UINT16(src);
-				if (color != transColor1 && color != transColor2)
-					memcpy(dst, src, 2);
+				if (!isTransparent(color))
+					WRITE_UINT16(dst, getGlowColor(color));
 			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
 				uint32 color = READ_UINT32(src);
-				if (color != transColor1 && color != transColor2)
-					memcpy(dst, src, 4);
+				if (!isTransparent(color))
+					WRITE_UINT32(dst, getGlowColor(color));
 			}
 
 			src += g_system->getScreenFormat().bytesPerPixel;
@@ -207,6 +234,81 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Co
 		src += _surface->pitch - lineSize;
 		dst += screen->pitch - lineSize;
 	}
+}
+
+void Surface::scaleTransparentCopy(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+	// I'm doing simple linear scaling here
+	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
+
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+
+	int srcW = srcRect.width();
+	int srcH = srcRect.height();
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			if (g_system->getScreenFormat().bytesPerPixel == 2) {
+				uint16 color = READ_UINT16((byte *)_surface->getBasePtr(
+						x * srcW / dstW + srcRect.left,
+						y * srcH / dstH + srcRect.top));
+				if (!isTransparent(color))
+					WRITE_UINT16((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), color);
+			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
+				uint32 color = READ_UINT32((byte *)_surface->getBasePtr(
+						x * srcW / dstW + srcRect.left,
+						y * srcH / dstH + srcRect.top));
+				if (!isTransparent(color))
+					WRITE_UINT32((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), color);
+			}
+		}
+	}
+}
+
+void Surface::scaleTransparentCopyGlow(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
+	// This is the same as scaleTransparentCopy(), but turns the red value of each
+	// pixel all the way up.
+
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+
+	int srcW = srcRect.width();
+	int srcH = srcRect.height();
+	int dstW = dstRect.width();
+	int dstH = dstRect.height();
+
+	for (int y = 0; y < dstH; y++) {
+		for (int x = 0; x < dstW; x++) {
+			if (g_system->getScreenFormat().bytesPerPixel == 2) {
+				uint16 color = READ_UINT16((byte *)_surface->getBasePtr(
+						x * srcW / dstW + srcRect.left,
+						y * srcH / dstH + srcRect.top));
+				if (!isTransparent(color))
+					WRITE_UINT16((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), getGlowColor(color));
+			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
+				uint32 color = READ_UINT32((byte *)_surface->getBasePtr(
+						x * srcW / dstW + srcRect.left,
+						y * srcH / dstH + srcRect.top));
+				if (!isTransparent(color))
+					WRITE_UINT32((byte *)screen->getBasePtr(x + dstRect.left, y + dstRect.top), getGlowColor(color));
+			}
+		}
+	}
+}
+
+uint32 Surface::getGlowColor(uint32 color) const {
+	// Can't just 'or' it on like the original did :P
+	byte r, g, b;
+	g_system->getScreenFormat().colorToRGB(color, r, g, b);
+	return g_system->getScreenFormat().RGBToColor(0xff, g, b);
+}
+
+bool Surface::isTransparent(uint32 color) const {
+	// HACK: Seems we're truncating some color data somewhere...
+	uint32 transColor1 = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
+	uint32 transColor2 = g_system->getScreenFormat().RGBToColor(0xf8, 0xf8, 0xf8);
+
+	return color == transColor1 || color == transColor2;
 }
 
 PixelImage::PixelImage() {

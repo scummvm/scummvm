@@ -75,6 +75,29 @@ protected:
 	Common::Rect _movieBox;
 };
 
+class GlowingMovie : public Movie {
+public:
+	GlowingMovie(tDisplayElementID);
+	virtual ~GlowingMovie() {}
+
+	virtual void draw(const Common::Rect &);
+
+	void setBounds(const Common::Rect &);
+
+	void setGlowing(const bool);
+
+protected:
+	bool _glowing;
+};
+
+class ScalingMovie : public GlowingMovie {
+public:
+	ScalingMovie(tDisplayElementID);
+	virtual ~ScalingMovie() {}
+
+	virtual void draw(const Common::Rect &);
+};
+
 } // End of namespace Pegasus
 
 #endif

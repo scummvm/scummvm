@@ -70,6 +70,9 @@ public:
 	void copyToCurrentPortTransparent(const Common::Rect &) const;
 	void copyToCurrentPort(const Common::Rect &, const Common::Rect &) const;
 	void copyToCurrentPortTransparent(const Common::Rect &, const Common::Rect &) const;
+	void copyToCurrentPortTransparentGlow(const Common::Rect &, const Common::Rect &) const;
+	void scaleTransparentCopy(const Common::Rect &, const Common::Rect &) const;
+	void scaleTransparentCopyGlow(const Common::Rect &, const Common::Rect &) const;
 
 	virtual void getImageFromPICTFile(const Common::String &fileName);
 	virtual void getImageFromPICTResource(Common::MacResManager *resFork, uint16 id);
@@ -82,6 +85,9 @@ protected:
 
 private:
 	void getImageFromPICTStream(Common::SeekableReadStream *stream);
+
+	uint32 getGlowColor(uint32 color) const;
+	bool isTransparent(uint32 color) const;
 };
 
 class PixelImage : public Surface {
