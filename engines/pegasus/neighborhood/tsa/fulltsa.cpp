@@ -31,6 +31,7 @@
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
+#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/mars/mars.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"

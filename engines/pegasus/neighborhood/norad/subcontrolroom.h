@@ -98,7 +98,7 @@ protected:
 	uint32 _clawStartPosition;
 	uint32 _clawPosition;
 	uint32 _clawNextPosition;
-	uint32 *_clawExtraIDs;
+	const uint32 *_clawExtraIDs;
 
 	int _currentAction;
 	int _nextAction;

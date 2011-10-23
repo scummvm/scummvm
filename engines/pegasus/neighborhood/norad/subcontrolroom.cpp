@@ -538,7 +538,8 @@ void SubControlRoom::initInteraction() {
 		playClawMonitorSection(kAlphaClawSplashStart, kAlphaClawSplashStop, kAlphaSplashFinished, _gameState, false);
 	}
 
-	// TODO: MoviesTask call. Needed?
+	_subControlMovie.redrawMovieWorld();
+	_clawMonitorMovie.redrawMovieWorld();
 
 	GameState.setScoringPlayedWithClaw(true);
 }									

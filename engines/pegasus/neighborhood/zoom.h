@@ -49,6 +49,7 @@ public:
 
 	struct Entry {
 		Entry();
+		void clear();
 		bool isEmpty() { return movieStart == 0xffffffff; }
 
 		tHotSpotID hotspot;

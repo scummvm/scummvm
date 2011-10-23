@@ -276,7 +276,103 @@ const tDisplayOrder kGlobeLowerNamesLayer = kGlobeUpperNamesLayer + 1;
 const tDisplayOrder kGlobeCountdownLayer = kGlobeLowerNamesLayer + 1;
 
 
-//	Norad Alpha Extra sequence IDs.
+//	Norad Alpha constants
+
+const TimeScale kNoradAlphaMovieScale = 600;
+const TimeScale kNoradAlphaFramesPerSecond = 15;
+const TimeScale kNoradAlphaFrameDuration = 40;
+
+//	Alternate IDs.
+
+const tAlternateID kAltNoradAlphaNormal = 0;
+
+//	Room IDs.
+
+const tRoomID kNorad01 = 0;
+const tRoomID kNorad01East = 1;
+const tRoomID kNorad01West = 2;
+const tRoomID kNorad02 = 3;
+const tRoomID kNorad03 = 4;
+const tRoomID kNorad04 = 5;
+const tRoomID kNorad05 = 6;
+const tRoomID kNorad06 = 7;
+const tRoomID kNorad07 = 8;
+const tRoomID kNorad07North = 9;
+const tRoomID kNorad08 = 10;
+const tRoomID kNorad09 = 11;
+const tRoomID kNorad10 = 12;
+const tRoomID kNorad10East = 13;
+const tRoomID kNorad11 = 14;
+const tRoomID kNorad11South = 15;
+const tRoomID kNorad12 = 16;
+const tRoomID kNorad12South = 17;
+const tRoomID kNorad13 = 18;
+const tRoomID kNorad14 = 19;
+const tRoomID kNorad15 = 20;
+const tRoomID kNorad16 = 21;
+const tRoomID kNorad17 = 22;
+const tRoomID kNorad18 = 23;
+const tRoomID kNorad19 = 24;
+const tRoomID kNorad19West = 25;
+const tRoomID kNorad21 = 26;
+const tRoomID kNorad21West = 27;
+const tRoomID kNorad22 = 28;
+const tRoomID kNorad22West = 29;
+
+//	Hot Spot Activation IDs.
+
+
+//	Hot Spot IDs.
+
+const tHotSpotID kNorad01ECRSpotID = 5000;
+const tHotSpotID kNorad01GasSpotID = 5001;
+const tHotSpotID kNorad01ECROutSpotID = 5002;
+const tHotSpotID kNorad01GasOutSpotID = 5003;
+const tHotSpotID kNorad01MonitorSpotID = 5004;
+const tHotSpotID kNorad01IntakeSpotID = 5005;
+const tHotSpotID kNorad01DispenseSpotID = 5006;
+const tHotSpotID kNorad01ArSpotID = 5007;
+const tHotSpotID kNorad01CO2SpotID = 5008;
+const tHotSpotID kNorad01HeSpotID = 5009;
+const tHotSpotID kNorad01OSpotID = 5010;
+const tHotSpotID kNorad01NSpotID = 5011;
+const tHotSpotID kN01GasCanisterSpotID = 5012;
+const tHotSpotID kN01ArgonCanisterSpotID = 5013;
+const tHotSpotID kN01AirMaskSpotID = 5014;
+const tHotSpotID kN01NitrogenCanisterSpotID = 5015;
+const tHotSpotID kN01GasOutletSpotID = 5016;
+const tHotSpotID kNorad07DoorSpotID = 5017;
+const tHotSpotID kNorad07DoorOutSpotID = 5018;
+const tHotSpotID kNorad10DoorSpotID = 5019;
+const tHotSpotID kNorad10EastOutSpotID = 5020;
+const tHotSpotID kAlphaUpperPressureDoorUpSpotID = 5021;
+const tHotSpotID kAlphaUpperPressureDoorDownSpotID = 5022;
+const tHotSpotID kNorad11ElevatorSpotID = 5023;
+const tHotSpotID kNorad11ElevatorOutSpotID = 5024;
+const tHotSpotID kNorad11ElevatorDownSpotID = 5025;
+const tHotSpotID kNorad12ElevatorSpotID = 5026;
+const tHotSpotID kNorad12ElevatorOutSpotID = 5027;
+const tHotSpotID kNorad12ElevatorUpSpotID = 5028;
+const tHotSpotID kNorad19MonitorSpotID = 5029;
+const tHotSpotID kNorad19MonitorOutSpotID = 5030;
+const tHotSpotID kNorad19ActivateMonitorSpotID = 5031;
+const tHotSpotID kNorad21WestSpotID = 5032;
+const tHotSpotID kNorad21WestOutSpotID = 5033;
+const tHotSpotID kAlphaLowerPressureDoorUpSpotID = 5034;
+const tHotSpotID kAlphaLowerPressureDoorDownSpotID = 5035;
+const tHotSpotID kNorad22MonitorSpotID = 5036;
+const tHotSpotID kNorad22MonitorOutSpotID = 5037;
+const tHotSpotID kNorad22LaunchPrepSpotID = 5038;
+const tHotSpotID kNorad22ClawControlSpotID = 5039;
+const tHotSpotID kNorad22ClawPinchSpotID = 5040;
+const tHotSpotID kNorad22ClawDownSpotID = 5041;
+const tHotSpotID kNorad22ClawRightSpotID = 5042;
+const tHotSpotID kNorad22ClawLeftSpotID = 5043;
+const tHotSpotID kNorad22ClawUpSpotID = 5044;
+const tHotSpotID kNorad22ClawCCWSpotID = 5045;
+const tHotSpotID kNorad22ClawCWSpotID = 5046;
+
+//	Extra sequence IDs.
 
 const tExtraID kNoradArriveFromTSA = 0;
 const tExtraID kNorad01RobotTaunt = 1;
@@ -320,6 +416,7 @@ const tExtraID kN22ClawDLoop = 38;
 const tExtraID kN22ClawDPinch = 39;
 const tExtraID kN22ClawDCounterclockwise = 40;
 const tExtraID kN22ClawDClockwise = 41;
+
 
 //	Norad Delta Extra sequence IDs.
 
@@ -386,13 +483,8 @@ const tExtraID kNoradDeltaRetinalScanBad = 59;
 const tExtraID kNoradDeltaRetinalScanGood = 60;
 const tExtraID kN79BrightView = 61;
 
-const TimeScale kNoradAlphaMovieScale = 600;
-const TimeScale kNoradAlphaFramesPerSecond = 15;
-const TimeScale kNoradAlphaFrameDuration = 40;
-
 const tRoomID kNorad59West = 23;
 const tRoomID kNorad60West = 25;
-const tHotSpotID kNorad19ActivateMonitorSpotID = 5031;
 
 // This is the code common to both Norad Alpha and Norad Delta
 
@@ -409,7 +501,7 @@ public:
 			tHotSpotID &clawControlSpotID, tHotSpotID &pinchClawSpotID,
 			tHotSpotID &moveClawDownSpotID, tHotSpotID &moveClawRightSpotID,
 			tHotSpotID &moveClawLeftSpotID,tHotSpotID &moveClawUpSpotID,
-			tHotSpotID &clawCCWSpotID, tHotSpotID &clawCWSpotID, uint32 &, uint32 *&) = 0;
+			tHotSpotID &clawCCWSpotID, tHotSpotID &clawCWSpotID, uint32 &, const uint32 *&) = 0;
 	void checkAirMask();
 
 	virtual uint16 getDateResID() const;

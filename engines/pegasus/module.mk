@@ -65,6 +65,8 @@ MODULE_OBJS = \
 	neighborhood/norad/pressuretracker.o \
 	neighborhood/norad/subcontrolroom.o \
 	neighborhood/norad/subplatform.o \
+	neighborhood/norad/alpha/fillingstation.o \
+	neighborhood/norad/alpha/noradalpha.o \
 	neighborhood/prehistoric/prehistoric.o \
 	neighborhood/tsa/fulltsa.o \
 	neighborhood/tsa/tinytsa.o \

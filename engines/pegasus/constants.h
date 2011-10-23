@@ -737,7 +737,6 @@ static const tGameMode kModeBiochipPick = kModeInventoryPick + 1;
 static const tGameMode kModeInfoScreen = kModeBiochipPick + 1;
 
 // TODO: Remove me
-static const tRoomID kNorad01 = 0;
 static const tRoomID kNorad41 = 0;
 
 } // End of namespace Pegasus

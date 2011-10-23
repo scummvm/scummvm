@@ -28,6 +28,7 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subplatform.h"
+#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 
 namespace Pegasus {
 
@@ -150,8 +151,7 @@ void SubPlatform::receiveNotification(Notification *notification, const tNotific
 			owner->startLoop2Fader(loop2Spec);
 			break;
 		case kPrepIncompleteFinished:
-			// TODO
-			//((NoradAlpha *)owner)->setSubPrepFailed(true);
+			((NoradAlpha *)owner)->setSubPrepFailed(true);
 			g_AIArea->checkMiddleArea();
 			// Fall through...
 		case kDamagedFinished:
@@ -191,8 +191,7 @@ void SubPlatform::clickInHotspot(const Input &input, const Hotspot *spot) {
 
 		_platformMovie.show();
 		_platformMovie.start();
-
-		// TODO: MoviesTask call? I don't think it's needed
+		_platformMovie.redrawMovieWorld();
 
 		_stateBits &= ~kWaitingForPlayerBit;
 		

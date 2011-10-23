@@ -63,6 +63,7 @@
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
@@ -1362,6 +1363,9 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 		break;
 	case kWSCID:
 		neighborhood = new WSC(g_AIArea, this);
+		break;
+	case kNoradAlphaID:
+		neighborhood = new NoradAlpha(g_AIArea, this);
 		break;
 	default:
 		error("Unhandled neighborhood %d", neighborhoodID);

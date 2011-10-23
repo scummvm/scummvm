@@ -243,7 +243,7 @@ void PressureDoor::initInteraction() {
 		_robotState = kPlayingRobotApproaching;
 	}
 
-	// TODO: MoviesTask call -- needed?
+	_levelsMovie.redrawMovieWorld();
 }
 
 void PressureDoor::closeInteraction() {	

@@ -52,6 +52,10 @@ void ZoomTable::clear() {
 }
 
 ZoomTable::Entry::Entry() {
+	clear();
+}
+
+void ZoomTable::Entry::clear() {
 	hotspot = kNoHotSpotID;
 	movieStart = 0xffffffff;
 	movieEnd = 0xffffffff;
