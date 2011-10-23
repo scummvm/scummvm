@@ -18,9 +18,6 @@ TODO
 - When getting the piano player off the well, he walks up facing to the left (his side
   animation is shown).
 - Load/start sound and music of the saved scene when loading.
-- The animation changes in commit 105 (probably) seem to be insufficient - some animations
-  exceed the screen height (together with the interface) - perhaps the interface height 
-  should not be saved?
 - Some sounds are cut off prematurely (e.g. when an animation finishes before the sound
   sample, when changing scenes and a dialog is immediately started afterwards).
 - When saving a game, save the whole screen when an animation is playing

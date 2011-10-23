@@ -49,6 +49,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	int16 savedCameraHeight = _vm->_cameraHeight;
 	int16 savedCameraX = _vm->_cameraX;
 	int16 savedCameraY = _vm->_cameraY;
+	int16 savedGuiHeight = _vm->_guiHeight;
 	byte moviePalette[768];
 	
 	_vm->_isSaveAllowed = false;
@@ -74,6 +75,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_cameraHeight = 400;
 	_vm->_cameraX = 0;
 	_vm->_cameraY = 0;
+	_vm->_guiHeight = 0;
 
 	_audioStream = Audio::makeQueuingAudioStream(22050, false);
 
@@ -180,6 +182,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_cameraHeight = savedCameraHeight;
 	_vm->_cameraX = savedCameraX;
 	_vm->_cameraY = savedCameraY;
+	_vm->_guiHeight = savedGuiHeight;
 
 	_vm->_isSaveAllowed = true;
 

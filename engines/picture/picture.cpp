@@ -312,16 +312,6 @@ void PictureEngine::drawScreen() {
 
 	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
 		// Update the GUI when needed and it's visible
-		if (_cameraHeight + _guiHeight > 400) {
-			// HACK: Sanity check - happens when smoking the peace pipe in the
-			// Indian village, when cheating at the game of cards and when
-			// the ladies find out that the sergeant is drinking again.
-			// FIXME: why does this happen? Fix the actual cause.
-			warning("Scene height (%d) and GUI height (%d) exceed the screen "
-					"height, cutting off the screen", _cameraHeight, _guiHeight);
-			_cameraHeight = 400 - _guiHeight;
-		}
-
 		_system->copyRectToScreen((const byte *)_screen->_frontScreen + _cameraHeight * 640,
 			640, 0, _cameraHeight, 640, _guiHeight);
 		_screen->_guiRefresh = false;
