@@ -22,8 +22,6 @@
 
 #include "graphics/png.h"
 
-#ifdef GRAPHICS_PNG_H
-
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -487,5 +485,3 @@ void PNG::readTransparencyChunk(uint32 chunkLength) {
 }
 
 } // End of Graphics namespace
-
-#endif // GRAPHICS_PNG_H
