@@ -104,7 +104,7 @@ void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGame
 	if (_flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
 
-	desc.setGUIOptions(realDesc->guioptions | _guioptions);
+	desc.setGUIOptions(realDesc->guioptions + _guioptions);
 	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
 
 	if (realDesc->flags & ADGF_ADDENGLISH)
@@ -257,7 +257,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	if (agdDesc->flags & ADGF_ADDENGLISH)
 		lang += " " + getGameGUIOptionsDescriptionLanguage(Common::EN_ANY);
 
-	Common::updateGameGUIOptions(agdDesc->guioptions | _guioptions, lang);
+	Common::updateGameGUIOptions(agdDesc->guioptions + _guioptions, lang);
 
 	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, _gameids);
 
@@ -568,7 +568,7 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	_md5Bytes = 5000;
 	_singleid = NULL;
 	_flags = 0;
-	_guioptions = Common::GUIO_NONE;
+	_guioptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
 }

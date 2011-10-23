@@ -315,7 +315,7 @@ const char *getRenderModeDescription(RenderMode id) {
 }
 
 const struct GameOpt {
-	uint32 option;
+	const char *option;
 	const char *desc;
 } g_gameOptions[] = {
 	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
@@ -341,9 +341,9 @@ const struct GameOpt {
 	{ GUIO_NONE, 0 }
 };
 
-bool checkGameGUIOption(GameGUIOption option, const String &str) {
+bool checkGameGUIOption(const String &option, const String &str) {
 	for (int i = 0; g_gameOptions[i].desc; i++) {
-		if (g_gameOptions[i].option & option) {
+		if (option.contains(g_gameOptions[i].option)) {
 			if (str.contains(g_gameOptions[i].desc))
 				return true;
 			else
@@ -370,21 +370,21 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang) {
 	return String(String("lang_") + getLanguageDescription(lang));
 }
 
-uint32 parseGameGUIOptions(const String &str) {
-	uint32 res = 0;
+String parseGameGUIOptions(const String &str) {
+	Common::String res;
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (str.contains(g_gameOptions[i].desc))
-			res |= g_gameOptions[i].option;
+			res += g_gameOptions[i].option;
 
 	return res;
 }
 
-const String getGameGUIOptionsDescription(uint32 options) {
+const String getGameGUIOptionsDescription(const String &options) {
 	String res = "";
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (options & g_gameOptions[i].option)
+		if (options.contains(g_gameOptions[i].option[0]))
 			res += String(g_gameOptions[i].desc) + " ";
 
 	res.trim();
@@ -392,10 +392,10 @@ const String getGameGUIOptionsDescription(uint32 options) {
 	return res;
 }
 
-void updateGameGUIOptions(const uint32 options, const String &langOption) {
+void updateGameGUIOptions(const String &options, const String &langOption) {
 	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
 
-	if ((options && !ConfMan.hasKey("guioptions")) ||
+	if ((!options.empty() && !ConfMan.hasKey("guioptions")) ||
 	    (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
 		ConfMan.set("guioptions", newOptionString);
 		ConfMan.flushToDisk();
