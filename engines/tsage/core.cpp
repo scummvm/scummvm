@@ -1675,14 +1675,21 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 }
 
 void SceneItem::display2(int resNum, int lineNum) {
-	if (g_vm->getGameID() == GType_BlueForce)
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
 		display(resNum, lineNum, SET_WIDTH, 312,
 			SET_X, 4 + GLOBALS._sceneManager._scene->_sceneBounds.left,
 			SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 			SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 			SET_EXT_FGCOLOR, 13, LIST_END);
-	else
+		break;
+	case GType_Ringworld2:
+		display(resNum, lineNum, SET_WIDTH, 280, SET_X, 20, SET_Y, 20, SET_EXT_BGCOLOR, 60, LIST_END);
+		break;
+	default:
 		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
+		break;
+	}
 }
 
 void SceneItem::display(const Common::String &msg) {
