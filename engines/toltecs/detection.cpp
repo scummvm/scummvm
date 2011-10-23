@@ -66,7 +66,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -79,7 +79,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -92,7 +92,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -105,7 +105,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -118,7 +118,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
@@ -131,7 +131,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 	},
 
