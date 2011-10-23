@@ -245,32 +245,35 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 5) The MIDI tab
 	//
-	tab->addTab(_("MIDI"));
+	if (!_guioptions.contains(GUIO_NOMIDI)) {
+		tab->addTab(_("MIDI"));
 
-	if (g_system->getOverlayWidth() > 320)
-		_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
-	else
-		_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
+		if (g_system->getOverlayWidth() > 320)
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
+		else
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
 
-	if (_guioptions.contains(GUIO_NOMIDI))
 		_globalMIDIOverride->setEnabled(false);
 
-	addMIDIControls(tab, "GameOptions_MIDI.");
+		addMIDIControls(tab, "GameOptions_MIDI.");
+	}
 
 	//
 	// 6) The MT-32 tab
 	//
-	tab->addTab(_("MT-32"));
+	if (!_guioptions.contains(GUIO_NOMIDI)) {
+		tab->addTab(_("MT-32"));
 
-	if (g_system->getOverlayWidth() > 320)
-		_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
-	else
-		_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
+		if (g_system->getOverlayWidth() > 320)
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+		else
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
 
-	//if (_guioptions.contains(GUIO_NOMIDI))
-	//	_globalMT32Override->setEnabled(false);
+		//if (_guioptions.contains(GUIO_NOMIDI))
+		//	_globalMT32Override->setEnabled(false);
 
-	addMT32Controls(tab, "GameOptions_MT32.");
+		addMT32Controls(tab, "GameOptions_MT32.");
+	}
 
 	//
 	// 7) The Paths tab
@@ -350,14 +353,18 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
-	e = ConfMan.hasKey("soundfont", _domain) ||
-		ConfMan.hasKey("multi_midi", _domain) ||
-		ConfMan.hasKey("midi_gain", _domain);
-	_globalMIDIOverride->setState(e);
+	if (!_guioptions.contains(GUIO_NOMIDI)) {
+		e = ConfMan.hasKey("soundfont", _domain) ||
+			ConfMan.hasKey("multi_midi", _domain) ||
+			ConfMan.hasKey("midi_gain", _domain);
+		_globalMIDIOverride->setState(e);
+	}
 
-	e = ConfMan.hasKey("native_mt32", _domain) ||
-		ConfMan.hasKey("enable_gs", _domain);
-	_globalMT32Override->setState(e);
+	if (!_guioptions.contains(GUIO_NOMIDI)) {
+		e = ConfMan.hasKey("native_mt32", _domain) ||
+			ConfMan.hasKey("enable_gs", _domain);
+		_globalMT32Override->setState(e);
+	}
 
 	// TODO: game path
 
