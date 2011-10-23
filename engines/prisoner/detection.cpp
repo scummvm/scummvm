@@ -67,9 +67,6 @@ static const PlainGameDescriptor prisonerGames[] = {
 
 namespace Prisoner {
 
-using Common::GUIO_NONE;
-using Common::GUIO_NOSPEECH;
-
 static const PrisonerGameDescription gameDescriptions[] = {
 
 	{
@@ -81,7 +78,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -98,7 +95,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -115,7 +112,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -132,7 +129,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -149,7 +146,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::NL_NLD,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -166,7 +163,7 @@ static const PrisonerGameDescription gameDescriptions[] = {
 			Common::SE_SWE,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,
@@ -189,7 +186,7 @@ static PrisonerGameDescription g_fallbackDesc = {
 		Common::UNK_LANG,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	0,
 	0,
