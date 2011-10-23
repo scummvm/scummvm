@@ -203,6 +203,10 @@ public:
 
 	void clear() {
 		freeStorage(_storage, _size, _capacity);
+
+		// Free up reserved memory
+		_allocator.freeReservedMemory();
+
 		_storage = 0;
 		_size = 0;
 		_capacity = 0;
