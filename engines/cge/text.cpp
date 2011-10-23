@@ -38,7 +38,7 @@ namespace CGE {
 Text::Text(CGEEngine *vm, const char *fname) : _vm(vm) {
 	_vm->mergeExt(_fileName, fname, kSayExt);
 	if (!_vm->_resman->exist(_fileName))
-		error("No talk (%s)\n", _fileName);
+		error("No talk (%s)", _fileName);
 	int16 txtCount = count() + 1;
 	if (!txtCount)
 		error("Unable to read dialog file %s", _fileName);
