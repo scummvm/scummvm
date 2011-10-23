@@ -2757,7 +2757,7 @@ bool Scene180::GarageExit::startAction(CursorType action, Event &event) {
 		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 256, 114);
 		return true;
 	} else {
-		return NamedHotspot::startAction(action, event);
+		return false;
 	}
 }
 
