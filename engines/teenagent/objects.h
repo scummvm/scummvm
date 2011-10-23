@@ -74,7 +74,7 @@ struct Rect {
 		return x >= left && x <= right && y1 <= bottom && y2 >= top;
 	}
 
-	inline bool contains(const Rect & rect) const {
+	inline bool contains(const Rect &rect) const {
 		return rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 	}
 
@@ -120,7 +120,7 @@ struct Rect {
 	}
 
 	void side(Common::Point &p1, Common::Point &p2, int o, const Common::Point &nearest) const {
-		switch(o) {
+		switch (o) {
 		case kActorLeft:
 			p1 = Common::Point(left, top);
 			p2 = Common::Point(left, bottom);
@@ -150,7 +150,7 @@ struct Rect {
 	}
 
 protected:
-	byte * _base;
+	byte *_base;
 };
 
 struct Object {
@@ -172,7 +172,7 @@ struct Object {
 	static Common::String parse_description(const char *name);
 
 protected:
-	byte * _base;
+	byte *_base;
 };
 
 struct InventoryObject {
@@ -184,7 +184,7 @@ struct InventoryObject {
 	void load(byte *addr);
 
 protected:
-	byte * _base;
+	byte *_base;
 };
 
 struct UseHotspot {
@@ -209,7 +209,7 @@ struct Walkbox {
 	void save() const;
 
 protected:
-	byte * _base;
+	byte *_base;
 };
 
 struct FadeType {
@@ -220,7 +220,7 @@ struct FadeType {
 };
 
 //\todo move it to util.h?
-template<typename T> inline T SIGN (T x) { return (x > 0)? 1: ((x < 0)? -1: 0); }
+template<typename T> inline T SIGN(T x) { return (x > 0) ? 1 : ((x < 0) ? -1 : 0); }
 
 } // End of namespace TeenAgent
 

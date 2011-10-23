@@ -26,7 +26,7 @@
 #include "graphics/surface.h"
 
 namespace Common {
-   class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace TeenAgent {
@@ -40,7 +40,7 @@ public:
 
 	Surface();
 	~Surface();
-	void load(Common::SeekableReadStream&, Type type);
+	void load(Common::SeekableReadStream &, Type type);
 	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect src_rect = Common::Rect(), uint zoom = 256) const;
 
 	bool empty() const { return pixels == NULL; }

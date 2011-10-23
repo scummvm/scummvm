@@ -80,7 +80,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 };
 
 enum {
-	MAX_SAVES = 20
+    MAX_SAVES = 20
 };
 
 class TeenAgentMetaEngine : public AdvancedMetaEngine {

@@ -38,9 +38,9 @@
 namespace TeenAgent {
 
 Scene::Scene(TeenAgentEngine *engine, OSystem *system) : intro(false), _id(0), ons(0),
-		orientation(kActorRight), actor_talking(false),
-		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
-		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
+	orientation(kActorRight), actor_talking(false),
+	message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
+	current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), _idle_timer(0) {
 	_engine = engine;
 	_system = system;
 
@@ -100,13 +100,13 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	p.push_back(dst);
 
 	Common::List<uint> boxes;
-	for(uint i = 0; i < scene_walkboxes.size(); ++i) {
-		const Walkbox & w = scene_walkboxes[i];
+	for (uint i = 0; i < scene_walkboxes.size(); ++i) {
+		const Walkbox &w = scene_walkboxes[i];
 		if (!w.rect.in(src) && !w.rect.in(dst))
 			boxes.push_back(i);
 	}
 
-	for(Path::iterator i = p.begin(); i != p.end() && !boxes.empty(); ) {
+	for (Path::iterator i = p.begin(); i != p.end() && !boxes.empty();) {
 		Path::iterator next = i;
 		++next;
 		if (next == p.end())
@@ -116,8 +116,8 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
 
 		Common::List<uint>::iterator wi;
-		for(wi = boxes.begin(); wi != boxes.end(); ++wi) {
-			const Walkbox & w = scene_walkboxes[*wi];
+		for (wi = boxes.begin(); wi != boxes.end(); ++wi) {
+			const Walkbox &w = scene_walkboxes[*wi];
 			int mask = w.rect.intersects_line(p1, p2);
 			if (mask == 0) {
 				continue;
@@ -279,7 +279,7 @@ void Scene::loadObjectData() {
 
 		byte *fade_table = res->dseg.ptr(res->dseg.get_word(0x663e + i * 2));
 		Common::Array<FadeType> &scene_fades = fades[i];
-		while(READ_LE_UINT16(fade_table) != 0xffff) {
+		while (READ_LE_UINT16(fade_table) != 0xffff) {
 			FadeType fade;
 			fade.load(fade_table);
 			fade_table += 9;
@@ -402,14 +402,14 @@ void Scene::init(int id, const Common::Point &pos) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(res->on.getStream(id));
 	int sub_hack = 0;
 	if (id == 7) { //something patched in the captains room
-		switch(res->dseg.get_byte(0xdbe6)) {
-			case 2:
-				break;
-			case 1:
-				sub_hack = 1;
-				break;
-			default:
-				sub_hack = 2;
+		switch (res->dseg.get_byte(0xdbe6)) {
+		case 2:
+			break;
+		case 1:
+			sub_hack = 1;
+			break;
+		default:
+			sub_hack = 2;
 		}
 	}
 	on.load(*stream, SurfaceList::kTypeOn, sub_hack);
@@ -428,7 +428,7 @@ void Scene::init(int id, const Common::Point &pos) {
 }
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
-	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
+	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop ? "true" : "false", paused ? "true" : "false", ignore ? "true" : "false");
 	assert(idx < 4);
 	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
 	if (!s)
@@ -441,7 +441,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 }
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
-	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop?"true":"false", ignore?"true":"false");
+	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop ? "true" : "false", ignore ? "true" : "false");
 	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
 	if (!s)
 		error("playing animation %u failed", id);
@@ -452,13 +452,13 @@ void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	actor_animation.id = id;
 }
 
-Animation * Scene::getAnimation(byte slot) {
+Animation *Scene::getAnimation(byte slot) {
 	assert(slot < 4);
 	return custom_animation + slot;
 }
 
 byte Scene::peekFlagEvent(uint16 addr) const {
-	for(EventList::const_iterator i = events.reverse_begin(); i != events.end(); --i) {
+	for (EventList::const_iterator i = events.reverse_begin(); i != events.end(); --i) {
 		const SceneEvent &e = *i;
 		if (e.type == SceneEvent::kSetFlag && e.callback == addr)
 			return e.color;
@@ -497,7 +497,7 @@ bool Scene::processEvent(const Common::Event &event) {
 		return false;
 
 	case Common::EVENT_KEYDOWN:
-		switch(event.kbd.keycode) {
+		switch (event.kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 		case Common::KEYCODE_SPACE: {
 			if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -535,7 +535,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				uint feature = event.kbd.keycode - '1';
 				if (feature < DebugFeatures::kMax) {
 					debug_features.feature[feature] = !debug_features.feature[feature];
-					debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on": "off");
+					debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on" : "off");
 				}
 			}
 			break;
@@ -557,10 +557,9 @@ struct ZOrderCmp {
 
 int Scene::lookupZoom(uint y) const {
 	Resources *res = Resources::instance();
-	for(byte *zoom_table = res->dseg.ptr(res->dseg.get_word(0x70f4 + (_id - 1) * 2));
-		zoom_table[0] != 0xff && zoom_table[1] != 0xff;
-		zoom_table += 2
-	) {
+	for (byte *zoom_table = res->dseg.ptr(res->dseg.get_word(0x70f4 + (_id - 1) * 2));
+	        zoom_table[0] != 0xff && zoom_table[1] != 0xff;
+	        zoom_table += 2) {
 		//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
 		if (y <= zoom_table[0]) {
 			//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
@@ -575,9 +574,9 @@ void Scene::paletteEffect(byte step) {
 	Resources *res = Resources::instance();
 	byte *src = res->dseg.ptr(0x6609);
 	byte *dst = palette + 3 * 0xf2;
-	for(byte i = 0; i < 0xd; ++i) {
-		for(byte c = 0; c < 3; ++c, ++src)
-			*dst++ = *src > step? *src - step: 0;
+	for (byte i = 0; i < 0xd; ++i) {
+		for (byte c = 0; c < 3; ++c, ++src)
+			*dst++ = *src > step ? *src - step : 0;
 	}
 }
 
@@ -586,7 +585,7 @@ byte Scene::findFade() const {
 		return 0;
 
 	const Common::Array<FadeType> &scene_fades = fades[_id - 1];
-	for(uint i = 0; i < scene_fades.size(); ++i) {
+	for (uint i = 0; i < scene_fades.size(); ++i) {
 		const FadeType &fade = scene_fades[i];
 		if (fade.rect.in(position)) {
 			return fade.value;
@@ -599,8 +598,8 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
-	uint32 game_delta = tick_game? 1: 0;
-	uint32 mark_delta = tick_mark? 1: 0;
+	uint32 game_delta = tick_game ? 1 : 0;
+	uint32 mark_delta = tick_mark ? 1 : 0;
 
 	do {
 		restart = false;
@@ -616,7 +615,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			}
 		}
 
-		switch(current_event.type) {
+		switch (current_event.type) {
 		case SceneEvent::kCredits: {
 			_system->fillScreen(0);
 			///\todo: optimize me
@@ -729,7 +728,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		Surface *mark = actor_animation.currentFrame(game_delta);
 		int horizon = position.y;
 
-		for(z_order_it = z_order.begin(); z_order_it != z_order.end(); ++z_order_it) {
+		for (z_order_it = z_order.begin(); z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
 			if (s->y + s->h > horizon)
 				break;
@@ -770,16 +769,16 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 
 				if (tick_mark) {
 					int speed_x = zoom / 32; //8 * zoom / 256
-					int speed_y = (o == kActorDown || o == kActorUp? 2: 1) * zoom / 256;
+					int speed_y = (o == kActorDown || o == kActorUp ? 2 : 1) * zoom / 256;
 					if (speed_x == 0)
 						speed_x = 1;
 					if (speed_y == 0)
 						speed_y = 1;
 
-					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
-					position.x += (o == kActorDown || o == kActorUp)?
-						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
-						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
+					position.y += (ABS(dp.y) < speed_y ? dp.y : SIGN(dp.y) * speed_y);
+					position.x += (o == kActorDown || o == kActorUp) ?
+					              (ABS(dp.x) < speed_y ? dp.x : SIGN(dp.x) * speed_y) :
+					              (ABS(dp.x) < speed_x ? dp.x : SIGN(dp.x) * speed_x);
 				}
 
 				_idle_timer = 0;
@@ -815,11 +814,11 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		//removed mark == null. In final scene of chapter 2 mark rendered above table.
 		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL)
 		if (on_enabled &&
-			debug_features.feature[DebugFeatures::kShowOn]) {
+		        debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}
 
-		for(; z_order_it != z_order.end(); ++z_order_it) {
+		for (; z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
 			s->render(surface);
 		}
@@ -862,7 +861,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			}
 
 			Common::Point last_p = position;
-			for(Path::const_iterator p = path.begin(); p != path.end(); ++p) {
+			for (Path::const_iterator p = path.begin(); p != path.end(); ++p) {
 				const Common::Point dp(p->x - last_p.x, p->y - last_p.y);
 				if (dp.x != 0) {
 					surface->hLine(last_p.x, last_p.y, p->x, 0xfe);
@@ -929,7 +928,7 @@ bool Scene::processEventQueue() {
 				ptr[on_id] = current_event.color;
 			} else {
 				on_enabled = current_event.color != 0;
-				debug(0, "%s on rendering", on_enabled? "enabling": "disabling");
+				debug(0, "%s on rendering", on_enabled ? "enabling" : "disabling");
 			}
 			loadOns();
 			current_event.clear();
@@ -983,85 +982,85 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
-				message = current_event.message;
-				message_animation = NULL;
-				if (current_event.first_frame) {
-					message_timer = 0;
-					message_first_frame = current_event.first_frame;
-					message_last_frame = current_event.last_frame;
-					if (current_event.slot > 0) {
-						message_animation = custom_animation + (current_event.slot - 1);
-						//else if (!animation[current_event.slot].empty())
-						//	message_animation = animation + current_event.slot;
-					} else
-						message_animation = &actor_animation;
-					debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
-				} else {
-					message_timer = current_event.timer? current_event.timer * 110: messageDuration(message);
-					message_first_frame = message_last_frame = 0;
-				}
-				Common::Point p;
-				if (current_event.dst.x == 0 && current_event.dst.y == 0) {
-					p = Common::Point((actor_animation_position.left + actor_animation_position.right) / 2,
-					actor_animation_position.top);
-				} else {
-					p = current_event.dst;
-				}
+			message = current_event.message;
+			message_animation = NULL;
+			if (current_event.first_frame) {
+				message_timer = 0;
+				message_first_frame = current_event.first_frame;
+				message_last_frame = current_event.last_frame;
+				if (current_event.slot > 0) {
+					message_animation = custom_animation + (current_event.slot - 1);
+					//else if (!animation[current_event.slot].empty())
+					//  message_animation = animation + current_event.slot;
+				} else
+					message_animation = &actor_animation;
+				debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
+			} else {
+				message_timer = current_event.timer ? current_event.timer * 110 : messageDuration(message);
+				message_first_frame = message_last_frame = 0;
+			}
+			Common::Point p;
+			if (current_event.dst.x == 0 && current_event.dst.y == 0) {
+				p = Common::Point((actor_animation_position.left + actor_animation_position.right) / 2,
+				                  actor_animation_position.top);
+			} else {
+				p = current_event.dst;
+			}
 
-				byte message_slot = current_event.slot;
-				if (message_slot != 0) {
-					--message_slot;
-					assert(message_slot < 4);
-					const Surface *s = custom_animation[message_slot].currentFrame(0);
-					if (s == NULL)
-						s = animation[message_slot].currentFrame(0);
-					if (s != NULL) {
-						p.x = s->x + s->w / 2;
-						p.y = s->y;
-					} else
-						warning("no animation in slot %u", message_slot);
-				}
-				message_pos = messagePosition(message, p);
-				message_color = current_event.color;
+			byte message_slot = current_event.slot;
+			if (message_slot != 0) {
+				--message_slot;
+				assert(message_slot < 4);
+				const Surface *s = custom_animation[message_slot].currentFrame(0);
+				if (s == NULL)
+					s = animation[message_slot].currentFrame(0);
+				if (s != NULL) {
+					p.x = s->x + s->w / 2;
+					p.y = s->y;
+				} else
+					warning("no animation in slot %u", message_slot);
+			}
+			message_pos = messagePosition(message, p);
+			message_color = current_event.color;
 
-				if (message_first_frame)
-					current_event.clear(); //async message, clearing event
+			if (message_first_frame)
+				current_event.clear(); //async message, clearing event
 			}
 			break;
 
 		case SceneEvent::kPlayAnimation: {
-				byte slot = current_event.slot & 7; //0 - mark's
-				if (current_event.animation != 0) {
-					debug(0, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
-					if (slot != 0) {
-						--slot;
-						assert(slot < 4);
-						playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
-					} else
-						actor_talking = true;
-				} else {
-					if (slot != 0) {
-						--slot;
-						debug(0, "cancelling animation in slot %u", slot);
-						assert(slot < 4);
-						custom_animation[slot].free();
-					} else
-						actor_talking = true;
-				}
-				current_event.clear();
+			byte slot = current_event.slot & 7; //0 - mark's
+			if (current_event.animation != 0) {
+				debug(0, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
+				if (slot != 0) {
+					--slot;
+					assert(slot < 4);
+					playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
+				} else
+					actor_talking = true;
+			} else {
+				if (slot != 0) {
+					--slot;
+					debug(0, "cancelling animation in slot %u", slot);
+					assert(slot < 4);
+					custom_animation[slot].free();
+				} else
+					actor_talking = true;
+			}
+			current_event.clear();
 			}
 			break;
 
 		case SceneEvent::kPauseAnimation: {
-				byte slot = current_event.slot & 7; //0 - mark's
-				if (slot != 0) {
-					--slot;
-					debug(1, "pause animation in slot %u", slot);
-					custom_animation[slot].paused = (current_event.slot & 0x80) != 0;
-				} else {
-					actor_talking = false;
-				}
-				current_event.clear();
+			byte slot = current_event.slot & 7; //0 - mark's
+			if (slot != 0) {
+				--slot;
+				debug(1, "pause animation in slot %u", slot);
+				custom_animation[slot].paused = (current_event.slot & 0x80) != 0;
+			} else {
+				actor_talking = false;
+			}
+			current_event.clear();
 			}
 			break;
 
@@ -1097,8 +1096,8 @@ bool Scene::processEventQueue() {
 			obj->enabled = current_event.color;
 			obj->save();
 			current_event.clear();
-		}
-		break;
+			}
+			break;
 
 		case SceneEvent::kHideActor:
 			hide_actor = current_event.color != 0;
@@ -1141,7 +1140,7 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kFade:
-			_fade_timer = current_event.orientation != 0? 5: -5;
+			_fade_timer = current_event.orientation != 0 ? 5 : -5;
 			current_event.clear();
 			break;
 
@@ -1177,9 +1176,9 @@ bool Scene::processEventQueue() {
 
 void Scene::setPalette(unsigned mul) {
 	//debug(0, "setPalette(%u)", mul);
-	byte p[3*256];
+	byte p[3 * 256];
 
-	for (int i = 0; i < 3*256; ++i) {
+	for (int i = 0; i < 3 * 256; ++i) {
 		p[i] = (unsigned)palette[i] * mul;
 	}
 
@@ -1206,7 +1205,7 @@ Object *Scene::getObject(int id, int scene_id) {
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point message_position) {
 	Resources *res = Resources::instance();
 	int lines = 1;
-	for(uint i = 0; i < str.size(); ++i)
+	for (uint i = 0; i < str.size(); ++i)
 		if (str[i] == '\n')
 			++lines;
 
@@ -1247,7 +1246,7 @@ void Scene::displayMessage(const Common::String &str, byte color, const Common::
 	//assert(!str.empty());
 	//debug(0, "displayMessage: %s", str.c_str());
 	message = str;
-	message_pos = (pos.x | pos.y)? pos: messagePosition(str, position);
+	message_pos = (pos.x | pos.y) ? pos : messagePosition(str, position);
 	message_color = color;
 	message_timer = messageDuration(message);
 }
@@ -1256,7 +1255,7 @@ void Scene::clear() {
 	clearMessage();
 	events.clear();
 	current_event.clear();
-	for(int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		animation[i].free();
 		custom_animation[i].free();
 	}

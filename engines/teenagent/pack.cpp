@@ -179,7 +179,7 @@ bool MemoryPack::open(const Common::String &filename) {
 
 uint32 MemoryPack::getSize(uint32 id) const {
 	--id;
-	return id < chunks.size()? chunks[id].size: 0;
+	return id < chunks.size() ? chunks[id].size : 0;
 }
 
 uint32 MemoryPack::read(uint32 id, byte *dst, uint32 size) const {
