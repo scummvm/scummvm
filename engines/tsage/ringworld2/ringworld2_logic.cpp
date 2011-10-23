@@ -25,6 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_dialogs.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
 
 namespace TsAGE {
@@ -277,6 +278,7 @@ bool DisplayObject::performAction(int action) {
 /*--------------------------------------------------------------------------*/
 
 Ringworld2InvObjectList::Ringworld2InvObjectList():
+		_none(1, 1),
 		_inv1(1, 2),
 		_inv2(1, 3),
 		_inv3(1, 4),
@@ -331,6 +333,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_inv52(4, 2) {
 
 	// Add the items to the list
+	_itemList.push_back(&_none);
 	_itemList.push_back(&_inv1);
 	_itemList.push_back(&_inv2);
 	_itemList.push_back(&_inv3);
@@ -484,7 +487,6 @@ void Ringworld2Game::start() {
 	else {
 		// Switch to the first game scene
 		g_globals->_events.setCursor(CURSOR_WALK);
-		T2_GLOBALS._uiElements._active = true;
 		g_globals->_sceneManager.setNewScene(100);
 	}
 
@@ -574,11 +576,9 @@ void Ringworld2Game::processEvent(Event &event) {
 }
 
 void Ringworld2Game::rightClick() {
-/*
 	RightClickDialog *dlg = new RightClickDialog();
 	dlg->execute();
 	delete dlg;
-*/
 }
 
 /*--------------------------------------------------------------------------*/

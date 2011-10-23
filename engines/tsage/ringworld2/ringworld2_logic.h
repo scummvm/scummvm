@@ -114,6 +114,7 @@ public:
 
 class Ringworld2InvObjectList : public InvObjectList {
 public:
+	InvObject _none;
 	InvObject _inv1;
 	InvObject _inv2;
 	InvObject _inv3;
