@@ -515,7 +515,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "Putt-Putt's Demo", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttputt", "Putt-Putt Parade", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttputt", "Putt-Putt", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
-#endif
+
 #ifdef ENABLE_HE
 #ifdef USE_RGB_COLOR
 	{ "arttime", "arttime", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -890,6 +890,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "water", "water", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "water", "Water", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "water", "Water Worries", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+#endif
 	{ NULL, NULL, kGenUnchanged, UNK_LANG, UNK, 0 }
 };
 
