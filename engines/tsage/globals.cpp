@@ -205,6 +205,12 @@ void TsAGE2Globals::reset() {
 	T2_GLOBALS._uiElements._active = false;
 }
 
+void TsAGE2Globals::synchronize(Serializer &s) {
+	Globals::synchronize(s);
+
+	s.syncAsSint16LE(_interfaceY);
+}
+
 /*--------------------------------------------------------------------------*/
 
 namespace BlueForce {
@@ -213,7 +219,7 @@ BlueForceGlobals::BlueForceGlobals(): TsAGE2Globals() {
 }
 
 void BlueForceGlobals::synchronize(Serializer &s) {
-	Globals::synchronize(s);
+	TsAGE2Globals::synchronize(s);
 
 	s.syncAsSint16LE(_dayNumber);
 	s.syncAsSint16LE(_v4CEA4);
@@ -252,7 +258,6 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v50CC8);
 	s.syncAsSint16LE(_v51C42);
 	s.syncAsSint16LE(_v51C44);
-	s.syncAsSint16LE(_interfaceY);
 	s.syncAsSint16LE(_bookmark);
 	s.syncAsSint16LE(_mapLocationId);
 	s.syncAsSint16LE(_clip1Bullets);
@@ -361,7 +366,9 @@ void Ringworld2Globals::reset() {
 	T2_GLOBALS._uiElements._active = false;
 }
 
-
+void Ringworld2Globals::synchronize(Serializer &s) {
+	TsAGE2Globals::synchronize(s);
+}
 
 } // end of namespace Ringworld2
 

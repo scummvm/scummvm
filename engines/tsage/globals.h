@@ -108,9 +108,11 @@ public:
 	UIElements _uiElements;
 	SelectItemProc _onSelectItem;
 	int _interfaceY;
+	ASoundExt _inventorySound;
 
 	TsAGE2Globals() { _onSelectItem = NULL; }
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 };
 
 extern Globals *g_globals;
@@ -182,7 +184,7 @@ enum Flag {
 
 class BlueForceGlobals: public TsAGE2Globals {
 public:
-	ASoundExt _sound1, _sound2, _sound3;
+	ASoundExt _sound1, _sound3;
 	StripProxy _stripProxy;
 	int _dayNumber;
 	int _v4CEA4;
@@ -228,8 +230,8 @@ public:
 	bool getHasBullets();
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
-	virtual void synchronize(Serializer &s);
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };
@@ -243,6 +245,7 @@ public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Ringworld2

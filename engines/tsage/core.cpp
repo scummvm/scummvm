@@ -71,7 +71,7 @@ InvObject::InvObject(int strip, int frame) {
 	_strip = strip;
 	_frame = frame;
 
-	_visage = 0;
+	_visage = 7;
 	_sceneNumber = 0;
 	_iconResNum = 10;
 }
