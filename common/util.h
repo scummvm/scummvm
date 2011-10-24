@@ -98,7 +98,8 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_MIDIMT32		"\017"
 #define GUIO_MIDIGM			"\020"
 
-#define GUIO_NOASPECT   "\021"
+#define GUIO_NOASPECT		"\021"
+#define GUIO_EGAUNDITHER	"\022"
 
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)

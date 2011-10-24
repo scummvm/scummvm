@@ -210,7 +210,15 @@ void OptionsDialog::open() {
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
 #endif // SMALL_SCREEN_DEVICE
-		_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+
+		// EGA undithering setting
+		if (_guioptions.contains(GUIO_EGAUNDITHER)) {
+			_disableDitheringCheckbox->setEnabled(true);
+			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+		} else {
+			_disableDitheringCheckbox->setState(false);
+			_disableDitheringCheckbox->setEnabled(false);
+		}
 	}
 
 	// Audio options
@@ -597,7 +605,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	else
 		_aspectCheckbox->setEnabled(enabled);
 #endif
-	_disableDitheringCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_EGAUNDITHER))
+		_disableDitheringCheckbox->setEnabled(true);
+	else
+		_disableDitheringCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
