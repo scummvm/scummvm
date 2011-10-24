@@ -71,8 +71,10 @@ enum {
 	kCmdChooseSoundFontCmd = 'chsf',
 
 	kCmdExtraBrowser = 'PEXT',
+	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
-	kCmdSaveBrowser = 'PSAV'
+	kCmdSaveBrowser = 'PSAV',
+	kCmdSavePathClear = 'PSAC'
 };
 
 /*
@@ -129,6 +131,8 @@ protected:
 	StaticTextWidget *_gamePathWidget;
 	StaticTextWidget *_extraPathWidget;
 	StaticTextWidget *_savePathWidget;
+	ButtonWidget *_extraPathClearButton;
+	ButtonWidget *_savePathClearButton;
 
 	StaticTextWidget *_langPopUpDesc;
 	PopUpWidget *_langPopUp;
@@ -300,12 +304,31 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
 
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_extraPathClearButton = new PicButtonWidget(tab, "GameOptions_Paths.ExtraPathClearButton", _("Clear value"), kCmdExtraPathClear);
+		((PicButtonWidget *)_extraPathClearButton)->useThemeTransparency(true);
+		((PicButtonWidget *)_extraPathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		_extraPathClearButton = new ButtonWidget(tab, "GameOptions_Paths.ExtraPathClearButton", "C", _("Clear value"), kCmdExtraPathClear);
+
 	// GUI:  Button + Label for the save path
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_savePathClearButton = new PicButtonWidget(tab, "GameOptions_Paths.SavePathClearButton", _("Clear value"), kCmdSavePathClear);
+		((PicButtonWidget *)_savePathClearButton)->useThemeTransparency(true);
+		((PicButtonWidget *)_savePathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		_savePathClearButton = new ButtonWidget(tab, "GameOptions_Paths.SavePathClearButton", "C", _("Clear value"), kCmdSavePathClear);
+
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -410,10 +433,14 @@ void EditGameDialog::close() {
 		String extraPath(_extraPathWidget->getLabel());
 		if (!extraPath.empty() && (extraPath != _c("None", "path")))
 			ConfMan.set("extrapath", extraPath, _domain);
+		else
+			ConfMan.removeKey("extrapath", _domain);
 
 		String savePath(_savePathWidget->getLabel());
 		if (!savePath.empty() && (savePath != _("Default")))
 			ConfMan.set("savepath", savePath, _domain);
+		else
+			ConfMan.removeKey("savepath", _domain);
 
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 		if (platform < 0)
@@ -509,6 +536,14 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		draw();
 		break;
 	}
+
+	case kCmdExtraPathClear:
+		_extraPathWidget->setLabel(_c("None", "path"));
+		break;
+
+	case kCmdSavePathClear:
+		_savePathWidget->setLabel(_("Default"));
+		break;
 
 	case kOKCmd: {
 		// Write back changes made to config object

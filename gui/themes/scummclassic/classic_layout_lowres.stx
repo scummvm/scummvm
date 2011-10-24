@@ -385,6 +385,10 @@
 				<widget name = 'SavePath'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'SavePathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'ThemeButton'
@@ -393,6 +397,10 @@
 				<widget name = 'ThemePath'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'ThemePathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'ExtraButton'
@@ -400,6 +408,10 @@
 				/>
 				<widget name = 'ExtraPath'
 						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'ExtraPathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
@@ -599,6 +611,10 @@
 				<widget name = 'SavepathText'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'SavePathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
 				<widget name = 'Extrapath'
@@ -606,6 +622,10 @@
 				/>
 				<widget name = 'ExtrapathText'
 						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'ExtraPathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
