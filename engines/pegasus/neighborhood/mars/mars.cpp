@@ -778,7 +778,7 @@ Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextH
 		_leftShuttleMovie(kNoDisplayElement), _rightShuttleMovie(kNoDisplayElement), _lowerLeftShuttleMovie(kNoDisplayElement),
 		_lowerRightShuttleMovie(kNoDisplayElement), _centerShuttleMovie(kNoDisplayElement),
 		_upperLeftShuttleMovie(kNoDisplayElement), _upperRightShuttleMovie(kNoDisplayElement),
-		_leftDamageShuttleMovie(kNoDisplayElement), _rightDamageShuttleMovie(kNoDisplayElement) {
+		_leftDamageShuttleMovie(kNoDisplayElement), _rightDamageShuttleMovie(kNoDisplayElement), _explosions(kNoDisplayElement) {
 	_noAirFuse.setFunctionPtr(&airStageExpiredFunction, this);
 	setIsItemTaken(kMarsCard);
 	setIsItemTaken(kAirMask);
@@ -2991,6 +2991,8 @@ void Mars::receiveNotification(Notification *notification, const tNotificationFl
 	} else if ((flag & kTimeForCanyonChaseFlag) != 0) {
 		doCanyonChase();
 	} else if ((flag & kExplosionFinishedFlag) != 0) {
+		_explosions.stop();
+		_explosions.hide();
 		// TODO
 	} else if ((flag & kTimeToTransportFlag) != 0) {
 		// TODO
@@ -3170,7 +3172,8 @@ void Mars::setSoundFXLevel(const uint16 level) {
 	if (_canyonChaseMovie.isMovieValid())
 		_canyonChaseMovie.setVolume(level);
 
-	// TODO: Explosions
+	if (_explosions.isMovieValid())
+		_explosions.setVolume(level);
 }
 
 void Mars::startMarsTimer(TimeValue time, TimeScale scale, MarsTimerCode code) {
@@ -3181,7 +3184,10 @@ void Mars::startMarsTimer(TimeValue time, TimeScale scale, MarsTimerCode code) {
 	_utilityFuse.lightFuse();
 }
 
-void Mars::marsTimerExpired(MarsTimerEvent &event) {	
+void Mars::marsTimerExpired(MarsTimerEvent &event) {
+	Common::Rect r;
+	uint16 x, y;
+
 	switch (event.event) {
 	case kMarsLaunchTubeReached:
 		_lowerLeftShuttleMovie.setTime(kShuttleLowerLeftTubeTime);
@@ -3205,13 +3211,130 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		break;			
 	case kMarsSpaceChaseFinished:
 		// Player failed to stop the robot in time...
-		// TODO
+		_interruptionFilter = kFilterNoInput;
+
+		_rightShuttleMovie.setTime(kShuttleRightTargetLockTime);
+		_rightShuttleMovie.redrawMovieWorld();
+
+		_upperRightShuttleMovie.show();
+		_upperRightShuttleMovie.setTime(kShuttleUpperRightLockedTime);
+		_upperRightShuttleMovie.redrawMovieWorld();
+
+		_rightShuttleMovie.setTime(kShuttleRightGravitonTime);
+		_rightShuttleMovie.redrawMovieWorld();
+		_upperRightShuttleMovie.setTime(kShuttleUpperRightArmedTime);
+		_upperRightShuttleMovie.redrawMovieWorld();
+
+		_vm->delayShell(3, 1);
+
+		x = _vm->getRandomNumber(19);
+		y = _vm->getRandomNumber(19);
+
+		r = Common::Rect(kShuttleWindowMidH - x, kShuttleWindowMidV - y,
+				kShuttleWindowMidH - x + 20, kShuttleWindowMidV - y + 20);
+		showBigExplosion(r, kShuttleAlienShipOrder);
+			
+		while (_explosions.isRunning()) {
+			_vm->checkCallBacks();
+			_vm->refreshDisplay();
+			g_system->delayMillis(10);
+		}
+
+		throwAwayMarsShuttle();
+		reinstateMonocleInterface();
+		recallToTSAFailure();
 		break;
 	default:
 		break;
 	}
 
 	_interruptionFilter = kFilterAllInput;
+}
+
+void Mars::throwAwayMarsShuttle() {
+	_shuttleInterface1.deallocateSurface();
+	_shuttleInterface1.stopDisplaying();
+	_shuttleInterface2.deallocateSurface();
+	_shuttleInterface2.stopDisplaying();
+	_shuttleInterface3.deallocateSurface();
+	_shuttleInterface3.stopDisplaying();
+	_shuttleInterface4.deallocateSurface();
+	_shuttleInterface4.stopDisplaying();
+
+	_spotSounds.disposeSound();
+	
+	_canyonChaseMovie.releaseMovie();
+	_canyonChaseMovie.stopDisplaying();
+	_leftShuttleMovie.releaseMovie();
+	_leftShuttleMovie.stopDisplaying();
+	_rightShuttleMovie.releaseMovie();
+	_rightShuttleMovie.stopDisplaying();
+	_lowerLeftShuttleMovie.releaseMovie();
+	_lowerLeftShuttleMovie.stopDisplaying();
+	_lowerRightShuttleMovie.releaseMovie();
+	_lowerRightShuttleMovie.stopDisplaying();
+	_centerShuttleMovie.releaseMovie();
+	_centerShuttleMovie.stopDisplaying();
+	_upperLeftShuttleMovie.releaseMovie();
+	_upperLeftShuttleMovie.stopDisplaying();
+	_upperRightShuttleMovie.releaseMovie();
+	_upperRightShuttleMovie.stopDisplaying();
+	_leftDamageShuttleMovie.releaseMovie();
+	_leftDamageShuttleMovie.stopDisplaying();
+	_rightDamageShuttleMovie.releaseMovie();
+	_rightDamageShuttleMovie.stopDisplaying();
+	
+	// TODO: Some more to do here
+
+	_explosions.releaseMovie();
+	_explosions.stopDisplaying();
+
+	loadLoopSound1("");
+}
+
+void Mars::showBigExplosion(const Common::Rect &r, const tDisplayOrder order) {
+	if (_explosions.isMovieValid()) {
+		_explosions.setDisplayOrder(order);
+
+		Common::Rect r2 = r;
+		int dx = r.width() / 2;
+		int dy = r.height() / 2;
+		r2.left -= dx;
+		r2.right += dx;
+		r2.top -= dy;
+		r2.bottom += dy;		
+
+		_explosions.setBounds(r2);
+		_explosions.show();
+		_explosions.stop();
+		_explosions.setSegment(kBigExplosionStart, kBigExplosionStop);
+		_explosions.setTime(kBigExplosionStart);
+		_explosionCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+		_explosions.start();
+	}
+}
+
+void Mars::hitByJunk() {	
+	_leftDamageShuttleMovie.setTime(_leftDamageShuttleMovie.getTime() - 40);
+	playSpotSoundSync(kMarsJunkCollisionIn, kMarsJunkCollisionOut);
+
+	if (_leftDamageShuttleMovie.getTime() == 0) {
+		die(kDeathRanIntoSpaceJunk);
+	} else {
+		TimeValue t = _leftDamageShuttleMovie.getTime() / 40;
+
+		if (t == 1)
+			playSpotSoundSync(kShuttleHullBreachIn, kShuttleHullBreachOut);
+
+		t = _leftShuttleMovie.getTime();
+		_leftShuttleMovie.setTime(kShuttleLeftDamagedTime);
+		_vm->delayShell(1, 3);
+		_leftShuttleMovie.setTime(t);
+	}
+}
+
+void Mars::setUpNextDropTime() {
+	// TODO
 }
 
 tAirQuality Mars::getAirQuality(const tRoomID room) {

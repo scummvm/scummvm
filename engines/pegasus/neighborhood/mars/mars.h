@@ -312,6 +312,10 @@ public:
 
 	void checkAirMask();
 
+	void showBigExplosion(const Common::Rect &, const tDisplayOrder);
+	void hitByJunk();
+	void setUpNextDropTime();
+
 	Common::String getBriefingMovie();
 	Common::String getEnvScanMovie();
 	uint getNumHints();
@@ -406,6 +410,7 @@ protected:
 	void doCanyonChase(void);
 	void startMarsTimer(TimeValue, TimeScale, MarsTimerCode);
 	void marsTimerExpired(MarsTimerEvent &);
+	void throwAwayMarsShuttle();
 
 	// TODO: Space chase functions
 
@@ -442,6 +447,8 @@ protected:
 	Movie _leftDamageShuttleMovie;
 	Movie _rightDamageShuttleMovie;
 	ShuttleEnergyMeter _shuttleEnergyMeter;
+	ScalingMovie _explosions;
+	NotificationCallBack _explosionCallBack;
 
 	// TODO: Space chase variables
 };
