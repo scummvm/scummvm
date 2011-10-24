@@ -2,7 +2,7 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.4.0 (??.??.????)
+1.4.0 (11.11.2011)
  Neue Spiele:
    - Unterstützung für Lands of Lore: The Throne of Chaos hinzugefügt.
    - Unterstützung für Blue's Birthday Adventure hinzugefügt.
@@ -46,10 +46,6 @@ Sie auf Englisch unter:
      Indiana Jones and the Last Crusade.
    - Palettenhandhabung in der Amiga-Version von Indiana Jones and the
      Fate of Atlantis verbessert.
-
-
- SDL-Portierungen:
-   - Unterstützung für OpenGL hinzugefügt. (GSoC-Aufgabe)
 
  Tinsel:
    - Löschen von Spielständen aus der Liste der Speicherstände korrigiert (im
@@ -1604,7 +1600,3 @@ Sie auf Englisch unter:
 
 0.0.1 (08.10.2001)
 - Erste Version
-
-
-(Deutscher Text basiert auf NEWS mit SHA1-ID:
-744f8507d714da5710c020bf56aa49dd0662acf6)
