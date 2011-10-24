@@ -205,8 +205,10 @@ void OptionsDialog::open() {
 		if (_guioptions.contains(GUIO_NOASPECT)) {
 			_aspectCheckbox->setState(false);
 			_aspectCheckbox->setEnabled(false);
-		} else
+		} else {
+			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		}
 #endif // SMALL_SCREEN_DEVICE
 		_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
 	}
