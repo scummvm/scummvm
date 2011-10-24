@@ -1249,7 +1249,7 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(_c("None", "path"));
+		_savePath->setLabel(_("Default"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
@@ -1293,7 +1293,7 @@ void GlobalOptionsDialog::open() {
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		Common::String savePath(_savePath->getLabel());
-		if (!savePath.empty() && (savePath != _c("None", "path")))
+		if (!savePath.empty() && (savePath != _("Default")))
 			ConfMan.set("savepath", savePath, _domain);
 		else
 			ConfMan.removeKey("savepath", _domain);
@@ -1411,7 +1411,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		_extraPath->setLabel(_c("None", "path"));
 		break;
 	case kSavePathClearCmd:
-		_savePath->setLabel(_c("None", "path"));
+		_savePath->setLabel(_("Default"));
 		break;
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
