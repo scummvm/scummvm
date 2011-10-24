@@ -851,14 +851,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_soundFontClearButton = new PicButtonWidget(boss, prefix + "mcFontClearButton", _("Clear value"), kClearSoundFontCmd);
-		((PicButtonWidget *)_soundFontClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_soundFontClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
+	_soundFontClearButton = addClearButton(boss, prefix + "mcFontClearButton", kClearSoundFontCmd);
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
@@ -1031,6 +1024,22 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		ConfMan.removeKey(setting, _domain);
 }
 
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+
+	return button;
+}
+
+
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		return kSubtitlesSpeech; // Speech only
@@ -1116,14 +1125,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_savePathClearButton = new PicButtonWidget(tab, "GlobalOptions_Paths.SavePathClearButton", _("Clear value"), kSavePathClearCmd);
-		((PicButtonWidget *)_savePathClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_savePathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_savePathClearButton = new ButtonWidget(tab, "GlobalOptions_Paths.SavePathClearButton", "C", _("Clear value"), kSavePathClearCmd);
+	_savePathClearButton = addClearButton(tab, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
 
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
@@ -1131,14 +1133,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), 0, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_themePathClearButton = new PicButtonWidget(tab, "GlobalOptions_Paths.ThemePathClearButton", _("Clear value"), kThemePathClearCmd);
-		((PicButtonWidget *)_themePathClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_themePathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_themePathClearButton = new ButtonWidget(tab, "GlobalOptions_Paths.ThemePathClearButton", "C", _("Clear value"), kThemePathClearCmd);
+	_themePathClearButton = addClearButton(tab, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
 
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
@@ -1146,14 +1141,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_extraPathClearButton = new PicButtonWidget(tab, "GlobalOptions_Paths.ExtraPathClearButton", _("Clear value"), kExtraPathClearCmd);
-		((PicButtonWidget *)_extraPathClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_extraPathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_extraPathClearButton = new ButtonWidget(tab, "GlobalOptions_Paths.ExtraPathClearButton", "C", _("Clear value"), kExtraPathClearCmd);
+	_extraPathClearButton = addClearButton(tab, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)

@@ -304,14 +304,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_extraPathClearButton = new PicButtonWidget(tab, "GameOptions_Paths.ExtraPathClearButton", _("Clear value"), kCmdExtraPathClear);
-		((PicButtonWidget *)_extraPathClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_extraPathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_extraPathClearButton = new ButtonWidget(tab, "GameOptions_Paths.ExtraPathClearButton", "C", _("Clear value"), kCmdExtraPathClear);
+	_extraPathClearButton = addClearButton(tab, "GameOptions_Paths.ExtraPathClearButton", kCmdExtraPathClear);
 
 	// GUI:  Button + Label for the save path
 	if (g_system->getOverlayWidth() > 320)
@@ -320,14 +313,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
 
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_savePathClearButton = new PicButtonWidget(tab, "GameOptions_Paths.SavePathClearButton", _("Clear value"), kCmdSavePathClear);
-		((PicButtonWidget *)_savePathClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_savePathClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_savePathClearButton = new ButtonWidget(tab, "GameOptions_Paths.SavePathClearButton", "C", _("Clear value"), kCmdSavePathClear);
+	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
 
 	// Activate the first tab
@@ -632,14 +618,7 @@ LauncherDialog::LauncherDialog()
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
-#ifndef DISABLE_FANCY_THEMES
-	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_searchClearButton = new PicButtonWidget(this, "Launcher.SearchClearButton", _("Clear value"), kSearchClearCmd);
-		((PicButtonWidget *)_searchClearButton)->useThemeTransparency(true);
-		((PicButtonWidget *)_searchClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-	} else
-#endif
-		_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", _("Clear value"), kSearchClearCmd);
+	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
