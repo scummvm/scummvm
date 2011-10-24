@@ -61,6 +61,7 @@ MODULE_OBJS = \
 	neighborhood/mars/mars.o \
 	neighborhood/mars/planetmover.o \
 	neighborhood/mars/reactor.o \
+	neighborhood/mars/robotship.o \
 	neighborhood/mars/shuttleenergymeter.o \
 	neighborhood/mars/spacechase3d.o \
 	neighborhood/mars/spacejunk.o \

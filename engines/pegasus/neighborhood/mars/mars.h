@@ -28,6 +28,7 @@
 
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/mars/reactor.h"
+#include "pegasus/neighborhood/mars/robotship.h"
 #include "pegasus/neighborhood/mars/shuttleenergymeter.h"
 
 namespace Pegasus {
@@ -313,7 +314,9 @@ public:
 	void checkAirMask();
 
 	void showBigExplosion(const Common::Rect &, const tDisplayOrder);
+	void showLittleExplosion(const Common::Rect &, const tDisplayOrder);
 	void hitByJunk();
+	void decreaseRobotShuttleEnergy(const int, Common::Point impactPoint);
 	void setUpNextDropTime();
 
 	Common::String getBriefingMovie();
@@ -447,6 +450,7 @@ protected:
 	Movie _leftDamageShuttleMovie;
 	Movie _rightDamageShuttleMovie;
 	ShuttleEnergyMeter _shuttleEnergyMeter;
+	RobotShip _robotShip;
 	ScalingMovie _explosions;
 	NotificationCallBack _explosionCallBack;
 

@@ -2993,7 +2993,19 @@ void Mars::receiveNotification(Notification *notification, const tNotificationFl
 	} else if ((flag & kExplosionFinishedFlag) != 0) {
 		_explosions.stop();
 		_explosions.hide();
-		// TODO
+		if (g_robotShip->isDead()) {
+			GameState.setMarsFinished(true);
+			_centerShuttleMovie.hide();
+			_upperRightShuttleMovie.show();
+			_upperRightShuttleMovie.setTime(kShuttleUpperRightTargetDestroyedTime);
+			_upperRightShuttleMovie.redrawMovieWorld();
+			_rightDamageShuttleMovie.hide();
+			playMovieSegment(&_rightShuttleMovie, kShuttleRightDestroyedStart, kShuttleRightDestroyedStop);
+			playSpotSoundSync(kShuttleDestroyedIn, kShuttleDestroyedOut);
+			throwAwayMarsShuttle();
+			reinstateMonocleInterface();
+			recallToTSASuccess();
+		}
 	} else if ((flag & kTimeToTransportFlag) != 0) {
 		// TODO
 	}
@@ -3285,7 +3297,8 @@ void Mars::throwAwayMarsShuttle() {
 	_rightDamageShuttleMovie.stopDisplaying();
 	
 	// TODO: Some more to do here
-
+	_shuttleEnergyMeter.disposeShuttleEnergyMeter();
+	_robotShip.cleanUpRobotShip();
 	_explosions.releaseMovie();
 	_explosions.stopDisplaying();
 
@@ -3314,6 +3327,28 @@ void Mars::showBigExplosion(const Common::Rect &r, const tDisplayOrder order) {
 	}
 }
 
+void Mars::showLittleExplosion(const Common::Rect &r, const tDisplayOrder order) {	
+	if (_explosions.isMovieValid()) {
+		_explosions.setDisplayOrder(order);
+
+		Common::Rect r2 = r;
+		int dx = r.width() / 2;
+		int dy = r.height() / 2;
+		r2.left -= dx;
+		r2.right += dx;
+		r2.top -= dy;
+		r2.bottom += dy;
+		_explosions.setBounds(r2);
+
+		_explosions.show();
+		_explosions.stop();
+		_explosions.setSegment(kLittleExplosionStart, kLittleExplosionStop);
+		_explosions.setTime(kLittleExplosionStart);
+		_explosionCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+		_explosions.start();
+	}
+}
+
 void Mars::hitByJunk() {	
 	_leftDamageShuttleMovie.setTime(_leftDamageShuttleMovie.getTime() - 40);
 	playSpotSoundSync(kMarsJunkCollisionIn, kMarsJunkCollisionOut);
@@ -3334,7 +3369,39 @@ void Mars::hitByJunk() {
 }
 
 void Mars::setUpNextDropTime() {
-	// TODO
+	_robotShip.setUpNextDropTime();
+}
+
+void Mars::decreaseRobotShuttleEnergy(const int delta, Common::Point impactPoint) {	
+	_rightDamageShuttleMovie.setTime(_rightDamageShuttleMovie.getTime() - 40 * delta);
+	_rightDamageShuttleMovie.redrawMovieWorld();
+
+	if (_rightDamageShuttleMovie.getTime() == 0) {
+		Common::Rect r;
+		_robotShip.getShuttleBounds(r);
+		int size = MAX(r.width(), r.height());
+		r = Common::Rect::center(impactPoint.x, impactPoint.y, size, size);
+		_robotShip.killRobotShip();
+		showBigExplosion(r, kShuttleRobotShipOrder);
+	} else if (delta > 1) {
+		Common::Rect r;
+		_robotShip.getShuttleBounds(r);
+		int size = MIN(r.width(), r.height());
+		r = Common::Rect::center(impactPoint.x, impactPoint.y, size, size);
+		showLittleExplosion(r, kShuttleWeaponBackOrder);
+		TimeValue t = _rightShuttleMovie.getTime();
+		_rightShuttleMovie.setTime(kShuttleRightDamagedTime);
+		_rightShuttleMovie.redrawMovieWorld();
+		_vm->delayShell(1, 3);
+		_rightShuttleMovie.setTime(t);
+		_rightShuttleMovie.redrawMovieWorld();
+	}
+
+	if (_rightDamageShuttleMovie.getTime() <= 40) {
+		GameState.setScoringStoppedRobotsShuttle();
+		if (!GameState.getMarsHitRobotWithCannon())
+			GameState.setScoringMarsGandhi();
+	}
 }
 
 tAirQuality Mars::getAirQuality(const tRoomID room) {

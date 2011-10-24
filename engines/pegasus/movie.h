@@ -84,7 +84,7 @@ public:
 
 	void setBounds(const Common::Rect &);
 
-	void setGlowing(const bool);
+	void setGlowing(const bool glowing) { _glowing = glowing; }
 
 protected:
 	bool _glowing;

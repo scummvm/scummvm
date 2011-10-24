@@ -87,4 +87,20 @@ float linearInterp(const float arg1, const float arg2, const float t) {
 	return arg1 + (arg2 - arg1) * t;
 }
 
+bool isNegative(int a) {
+	return a < 0;
+}
+
+bool isPositive(int a) {
+	return a > 0;
+}
+
+int sign(int a) {
+	return isNegative(a) ? -1 : isPositive(a) ? 1 : 0;
+}
+
+bool sameSign(int a, int b) {
+	return sign(a) == sign(b);
+}
+
 } // End of namespace Pegasus
