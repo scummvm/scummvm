@@ -59,6 +59,7 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoriamirror.o \
 	neighborhood/mars/hermite.o \
 	neighborhood/mars/mars.o \
+	neighborhood/mars/planetmover.o \
 	neighborhood/mars/reactor.o \
 	neighborhood/mars/shuttleenergymeter.o \
 	neighborhood/mars/spacechase3d.o \
