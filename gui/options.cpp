@@ -616,11 +616,8 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	char opt[256];
-
-	strncpy(opt, _guioptions.c_str(), 256);
-	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
 		hasMidiDefined && // No flags are specified
@@ -766,11 +763,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
-	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	char opt[256];
-
-	strncpy(opt, _guioptions.c_str(), 256);
-	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
