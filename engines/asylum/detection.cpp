@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_DEMO|ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"asylum",
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"asylum",
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"asylum",
@@ -89,7 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"asylum",
@@ -103,7 +103,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformPC,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	{
 		"asylum",
@@ -117,7 +117,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformPC,
 		ADGF_UNSTABLE,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };
@@ -134,7 +134,7 @@ public:
 	AsylumMetaEngine() : AdvancedMetaEngine(Asylum::gameDescriptions, sizeof(ADGameDescription), asylumGames) {
 		_singleid = "asylum";
 		_md5Bytes = 0;
-		_guioptions = Common::GUIO_NONE;
+		_guioptions = GUIO1(GUIO_NONE);
 	}
 
 	virtual const char *getName() const {
