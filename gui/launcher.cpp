@@ -257,8 +257,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		else
 			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
 
-		_globalMIDIOverride->setEnabled(false);
-
 		addMIDIControls(tab, "GameOptions_MIDI.");
 	}
 
@@ -272,9 +270,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
 		else
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
-
-		//if (_guioptions.contains(GUIO_NOMIDI))
-		//	_globalMT32Override->setEnabled(false);
 
 		addMT32Controls(tab, "GameOptions_MT32.");
 	}
