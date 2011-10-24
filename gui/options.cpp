@@ -26,6 +26,7 @@
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
+#include "gui/ThemeEval.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"
@@ -846,7 +847,14 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	else
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
-	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_soundFontClearButton = new PicButtonWidget(boss, prefix + "mcFontClearButton", _("Clear value"), kClearSoundFontCmd);
+		((PicButtonWidget *)_soundFontClearButton)->useThemeTransparency(true);
+		((PicButtonWidget *)_soundFontClearButton)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
