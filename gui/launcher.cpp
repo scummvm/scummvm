@@ -598,12 +598,13 @@ LauncherDialog::LauncherDialog()
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
 #ifndef DISABLE_FANCY_THEMES
-	_searchClearPicButton = new PicButtonWidget(this, "Launcher.SearchClearButton", _("Clear value"), kSearchClearCmd);
-	_searchClearPicButton->useThemeTransparency(true);
-	_searchClearPicButton->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
-#else
-	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", _("Clear value"), kSearchClearCmd);
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_searchClearPicButton = new PicButtonWidget(this, "Launcher.SearchClearButton", _("Clear value"), kSearchClearCmd);
+		_searchClearPicButton->useThemeTransparency(true);
+		_searchClearPicButton->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
 #endif
+		_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", _("Clear value"), kSearchClearCmd);
 
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
