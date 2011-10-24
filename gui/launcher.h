@@ -31,6 +31,7 @@ class BrowserDialog;
 class CommandSender;
 class ListWidget;
 class ButtonWidget;
+class PicButtonWidget;
 class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
@@ -63,6 +64,7 @@ protected:
 	GraphicsWidget		*_searchPic;
 #endif
 	StaticTextWidget	*_searchDesc;
+	PicButtonWidget	*_searchClearPicButton;
 	ButtonWidget	*_searchClearButton;
 	StringArray		_domains;
 	BrowserDialog	*_browser;

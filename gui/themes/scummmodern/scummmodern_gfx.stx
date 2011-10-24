@@ -98,7 +98,8 @@
 		<bitmap filename = 'radiobutton.bmp'/>
 		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
-		<bitmap filename = 'search.png'/>
+		<bitmap filename = 'search.bmp'/>
+		<bitmap filename = 'eraser.bmp'/>
 	</bitmaps>
 
 	<fonts>

@@ -31,7 +31,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/imagedec.h"
-#include "graphics/png.h"
 #include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
@@ -45,7 +44,8 @@ namespace GUI {
 
 const char * const ThemeEngine::kImageLogo = "logo.bmp";
 const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
-const char * const ThemeEngine::kImageSearch = "search.png";
+const char * const ThemeEngine::kImageSearch = "search.bmp";
+const char * const ThemeEngine::kImageEraser = "eraser.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
@@ -621,32 +621,14 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	Graphics::Surface *surf = _bitmaps[filename];
 	if (surf)
 		return true;
-	if (filename.hasSuffix(".png") || filename.hasSuffix(".PNG")) {
-		Graphics::PNG png;
-		Common::SeekableReadStream *stream;
-		Common::File file;
 
-		if (!file.open(filename)) {
-			stream = _themeArchive->createReadStreamForMember(filename);
-		} else {
-			stream = &file;
-		}
-
+	// If not, try to load the bitmap via the ImageDecoder class.
+	surf = Graphics::ImageDecoder::loadFile(filename, _overlayFormat);
+	if (!surf && _themeArchive) {
+		Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
 		if (stream) {
-			if (png.read(stream))
-				surf = png.getSurface(_overlayFormat);
-			else
-				error("Cannot read png image: %s", filename.c_str());
-		}
-	} else {
-		// If not, try to load the bitmap via the ImageDecoder class.
-		surf = Graphics::ImageDecoder::loadFile(filename, _overlayFormat);
-		if (!surf && _themeArchive) {
-			Common::SeekableReadStream *stream = _themeArchive->createReadStreamForMember(filename);
-			if (stream) {
-				surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
-				delete stream;
-			}
+			surf = Graphics::ImageDecoder::loadFile(*stream, _overlayFormat);
+			delete stream;
 		}
 	}
 
