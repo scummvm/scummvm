@@ -281,7 +281,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 		_none(1, 1),
 		_inv1(1, 2),
 		_inv2(1, 3),
-		_inv3(1, 4),
+		_negatorGun(1, 4),
 		_steppingDisks(1, 5),
 		_inv5(1, 6),
 		_inv6(1, 7),
@@ -336,7 +336,7 @@ Ringworld2InvObjectList::Ringworld2InvObjectList():
 	_itemList.push_back(&_none);
 	_itemList.push_back(&_inv1);
 	_itemList.push_back(&_inv2);
-	_itemList.push_back(&_inv3);
+	_itemList.push_back(&_negatorGun);
 	_itemList.push_back(&_steppingDisks);
 	_itemList.push_back(&_inv5);
 	_itemList.push_back(&_inv6);
@@ -400,7 +400,7 @@ void Ringworld2InvObjectList::reset() {
 	// Set up default inventory
 	setObjectScene(R2_1, 800);
 	setObjectScene(R2_2, 400);
-	setObjectScene(R2_3, 100);
+	setObjectScene(R2_NEGATOR_GUN, 100);
 	setObjectScene(R2_STEPPING_DISKS, 100);
 	setObjectScene(R2_5, 400);
 	setObjectScene(R2_6, 400);
@@ -483,11 +483,12 @@ void Ringworld2Game::start() {
 	}
 
 	if (slot >= 0)
-		g_globals->_sceneHandler->_loadGameSlot = slot;
+		R2_GLOBALS._sceneHandler->_loadGameSlot = slot;
 	else {
 		// Switch to the first game scene
-		g_globals->_events.setCursor(CURSOR_WALK);
-		g_globals->_sceneManager.setNewScene(100);
+		R2_GLOBALS._events.setCursor(CURSOR_WALK);
+		R2_GLOBALS._uiElements._active = true;
+		R2_GLOBALS._sceneManager.setNewScene(100);
 	}
 
 	g_globals->_events.showCursor();

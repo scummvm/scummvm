@@ -44,11 +44,11 @@ class Scene100: public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Object8: public SceneActor {
+	class Table: public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
-	class Object9: public SceneActor {
+	class StasisNegator: public SceneActor {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -65,8 +65,8 @@ public:
 	SceneActor _object1, _object2, _object3, _object4, _object5;
 	SceneActor _object6;
 	Object7 _object7;
-	Object8 _object8;
-	Object9 _object9;
+	Table _table;
+	StasisNegator _stasisNegator;
 	Object10 _object10;
 	SteppingDisks _steppingDisks;
 	SequenceManager _sequenceManager1, _sequenceManager2;

@@ -63,7 +63,7 @@ bool Scene100::Object7::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene100::Object8::startAction(CursorType action, Event &event) {
+bool Scene100::Table::startAction(CursorType action, Event &event) {
 	Scene100 *scene = (Scene100 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -72,21 +72,21 @@ bool Scene100::Object8::startAction(CursorType action, Event &event) {
 		if (_strip == 2) {
 			scene->_sceneMode = 108;
 			scene->_object3.postInit();
-			scene->_object9.postInit();
+			scene->_stasisNegator.postInit();
 
-			if (R2_INVENTORY.getObjectScene(R2_3) == 1) {
-				scene->_object9.setup(100, 7, 2);
+			if (R2_INVENTORY.getObjectScene(R2_NEGATOR_GUN) == 1) {
+				scene->_stasisNegator.setup(100, 7, 2);
 			} else {
-				scene->_object9.setup(100, 7, 1);
-				scene->_object9.setDetails(100, 21, 22, 23, 2, NULL);
+				scene->_stasisNegator.setup(100, 7, 1);
+				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, NULL);
 			}
 
 			scene->setAction(&scene->_sequenceManager2, scene, 108, this, &scene->_object3, 
-				&scene->_object9, &R2_GLOBALS._player, NULL);
+				&scene->_stasisNegator, &R2_GLOBALS._player, NULL);
 		} else {
 			scene->_sceneMode = 109;
 			scene->setAction(&scene->_sequenceManager2, scene, 109, this, &scene->_object3, 
-				&scene->_object9, &R2_GLOBALS._player, NULL);
+				&scene->_stasisNegator, &R2_GLOBALS._player, NULL);
 		}
 		return true;
 	case CURSOR_TALK:
@@ -96,22 +96,22 @@ bool Scene100::Object8::startAction(CursorType action, Event &event) {
 			SceneItem::display2(100, 18);
 			scene->_sceneMode = 102;
 			scene->_object3.postInit();
-			scene->_object9.postInit();
+			scene->_stasisNegator.postInit();
 
-			if (R2_INVENTORY.getObjectScene(R2_3) == 1) {
-				scene->_object9.setup(100, 7, 2);
+			if (R2_INVENTORY.getObjectScene(R2_NEGATOR_GUN) == 1) {
+				scene->_stasisNegator.setup(100, 7, 2);
 			} else {
-				scene->_object9.setup(100, 7, 1);
-				scene->_object9.setDetails(100, 21, 22, 23, 2, NULL);
+				scene->_stasisNegator.setup(100, 7, 1);
+				scene->_stasisNegator.setDetails(100, 21, 22, 23, 2, NULL);
 			}
 
 			scene->setAction(&scene->_sequenceManager2, scene, 102, this, &scene->_object3, 
-				&scene->_object9, NULL);
+				&scene->_stasisNegator, NULL);
 		} else {
 			SceneItem::display2(100, 19);
 			scene->_sceneMode = 103;
 			scene->setAction(&scene->_sequenceManager2, scene, 103, this, &scene->_object3, 
-				&scene->_object9, NULL);
+				&scene->_stasisNegator, NULL);
 		}
 		return true;
 	default:
@@ -119,14 +119,14 @@ bool Scene100::Object8::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene100::Object9::startAction(CursorType action, Event &event) {
+bool Scene100::StasisNegator::startAction(CursorType action, Event &event) {
 	Scene100 *scene = (Scene100 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
 	case CURSOR_USE:
 		R2_GLOBALS._player.disableControl();
 		scene->_sceneMode = 107;
-		scene->setAction(&scene->_sequenceManager1, scene, 107, &R2_GLOBALS._player, &scene->_object9, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 107, &R2_GLOBALS._player, &scene->_stasisNegator, NULL);
 		return true;
 	default:
 		return SceneActor::startAction(action, event);
@@ -187,10 +187,10 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	_object10.setup(100, 2, 1);
 	_object10.setDetails(100, -1, -1, -1, 1, NULL);
 
-	_object8.postInit();
-	_object8.setup(100, 2, 3);
-	_object8.setPosition(Common::Point(175, 157));
-	_object8.setDetails(100, 17, 18, 20, 1, NULL);
+	_table.postInit();
+	_table.setup(100, 2, 3);
+	_table.setPosition(Common::Point(175, 157));
+	_table.setDetails(100, 17, 18, 20, 1, NULL);
 
 	_object1.postInit();
 	_object1.setup(100, 3, 1);
@@ -267,11 +267,11 @@ void Scene100::signal() {
 		break;
 	case 103:
 	case 109:
-		_object8.setStrip(2);
-		_object8.setFrame(3);
+		_table.setStrip(2);
+		_table.setFrame(3);
 		
 		_object3.remove();
-		_object9.remove();
+		_stasisNegator.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 104:
@@ -288,10 +288,10 @@ void Scene100::signal() {
 		R2_GLOBALS._sceneManager.changeScene(125);
 		break;
 	case 107:
-		R2_GLOBALS._sceneItems.remove(&_object9);
+		R2_GLOBALS._sceneItems.remove(&_stasisNegator);
 
-		_object9.setFrame(2);
-		R2_INVENTORY.setObjectScene(3, 1);
+		_stasisNegator.setFrame(2);
+		R2_INVENTORY.setObjectScene(R2_NEGATOR_GUN, 1);
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 110:
@@ -302,6 +302,11 @@ void Scene100::signal() {
 			_object7._state = 1;
 			_object10.setFrame(2);
 		}
+		R2_GLOBALS._player.enableControl();
+		break;
+	case 111:
+		R2_INVENTORY.setObjectScene(R2_STEPPING_DISKS, 1);
+		_steppingDisks.remove();
 		R2_GLOBALS._player.enableControl();
 		break;
 	default:
@@ -321,8 +326,8 @@ void Scene100::dispatch() {
 */
 	SceneExt::dispatch();
 
-	if ((_sceneMode == 101) && (_object7._frame == 2) && (_object8._strip == 5)) {
-		_object8.setAction(&_sequenceManager2, NULL, 103, &_object8, &_object3, &_object9, NULL);
+	if ((_sceneMode == 101) && (_object7._frame == 2) && (_table._strip == 5)) {
+		_table.setAction(&_sequenceManager2, NULL, 103, &_table, &_object3, &_stasisNegator, NULL);
 	}
 }
 

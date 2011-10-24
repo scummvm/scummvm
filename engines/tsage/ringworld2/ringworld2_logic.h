@@ -117,7 +117,7 @@ public:
 	InvObject _none;
 	InvObject _inv1;
 	InvObject _inv2;
-	InvObject _inv3;
+	InvObject _negatorGun;
 	InvObject _steppingDisks;
 	InvObject _inv5;
 	InvObject _inv6;
