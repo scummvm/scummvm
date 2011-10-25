@@ -63,7 +63,7 @@ PATH_BUILD_CLASSES_PLUGIN_TOP = $(PATH_BUILD)/classes.plugin
 PATH_STAGE_PREFIX = build.stage
 PATH_STAGE_MAIN = $(PATH_STAGE_PREFIX).main
 
-PATH_REL = org/inodes/gus/scummvm
+PATH_REL = org/scummvm/scummvm
 PATH_SRC_TOP = $(srcdir)/backends/platform/android
 PATH_SRC = $(PATH_SRC_TOP)/$(PATH_REL)
 
@@ -172,13 +172,13 @@ androidrelease: $(addprefix release/, $(APK_MAIN) $(APK_PLUGINS))
 
 androidtestmain: $(APK_MAIN)
 	$(ADB) install -r $(APK_MAIN)
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
 
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
 	done
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.inodes.gus.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
 
 # used by buildbot!
 androiddistdebug: all

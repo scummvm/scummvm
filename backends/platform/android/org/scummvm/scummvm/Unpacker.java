@@ -1,4 +1,4 @@
-package org.inodes.gus.scummvm;
+package org.scummvm.scummvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,7 +38,7 @@ public class Unpacker extends Activity {
 	// TODO don't hardcode this
 	private final static boolean PLUGINS_ENABLED = false;
 	private final static String META_NEXT_ACTIVITY =
-		"org.inodes.gus.unpacker.nextActivity";
+		"org.scummvm.unpacker.nextActivity";
 	private ProgressBar mProgress;
 	private File mUnpackDest;  // location to unpack into
 	private AsyncTask<String, Integer, Void> mUnpacker;

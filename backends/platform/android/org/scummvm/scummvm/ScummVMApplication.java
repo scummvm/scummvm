@@ -1,12 +1,12 @@
-package org.inodes.gus.scummvm;
+package org.scummvm.scummvm;
 
 import android.app.Application;
 
 import java.io.File;
 
 public class ScummVMApplication extends Application {
-	public final static String ACTION_PLUGIN_QUERY = "org.inodes.gus.scummvm.action.PLUGIN_QUERY";
-	public final static String EXTRA_UNPACK_LIBS = "org.inodes.gus.scummvm.extra.UNPACK_LIBS";
+	public final static String ACTION_PLUGIN_QUERY = "org.scummvm.scummvm.action.PLUGIN_QUERY";
+	public final static String EXTRA_UNPACK_LIBS = "org.scummvm.scummvm.extra.UNPACK_LIBS";
 
 	private static File _cache_dir;
 
