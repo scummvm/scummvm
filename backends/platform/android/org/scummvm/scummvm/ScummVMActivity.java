@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class ScummVMActivity extends Activity {
 
 	private class MyScummVM extends ScummVM {
@@ -128,6 +130,15 @@ public class ScummVMActivity extends Activity {
 
 		getFilesDir().mkdirs();
 
+		// Store savegames on external storage if we can, which means they're
+		// world-readable and don't get deleted on uninstall.
+		String savePath = Environment.getExternalStorageDirectory() + "/ScummVM/Saves/";
+		File saveDir = new File(savePath);
+		if (!saveDir.isDirectory()) {
+			// If it doesn't work, resort to the internal app path.
+			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
+		}
+
 		// Start ScummVM
 		_scummvm = new MyScummVM(main_surface.getHolder());
 
@@ -136,7 +147,7 @@ public class ScummVMActivity extends Activity {
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
 			"--gui-theme=scummmodern",
-			"--savepath=" + getDir("saves", 0).getPath()
+			"--savepath=" + savePath
 		});
 
 		_events = new ScummVMEvents(this, _scummvm);
