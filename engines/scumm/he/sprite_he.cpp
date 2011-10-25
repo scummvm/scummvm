@@ -33,7 +33,12 @@
 
 namespace Scumm {
 
-Sprite::Sprite(ScummEngine_v90he *vm) : _vm(vm) {
+Sprite::Sprite(ScummEngine_v90he *vm)
+	:
+	_vm(vm),
+	_spriteGroups(0),
+	_spriteTable(0),
+	_activeSpritesTable(0) {
 }
 
 Sprite::~Sprite() {
