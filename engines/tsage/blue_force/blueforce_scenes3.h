@@ -621,7 +621,7 @@ class Scene360: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class BsseballCards: public NamedObject {
+	class BaseballCards: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -667,7 +667,7 @@ public:
 	SceneObject _object2;
 	Window _window;
 	Object4 _object4;
-	BsseballCards _baseballCards;
+	BaseballCards _baseballCards;
 	Object6 _object6;
 	Object7 _object7;
 	Item1 _item1;

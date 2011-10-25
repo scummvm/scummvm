@@ -4156,7 +4156,7 @@ bool Scene360::Item1::startAction(CursorType action, Event &event) {
 	case CURSOR_TALK:
 		scene->_sceneMode = 3607;
 		BF_GLOBALS._player.disableControl();
-		scene->_stripManager.start(3550, this);
+		scene->_stripManager.start(3550, scene);
 		return true;
 	case INV_COLT45:
 		SceneItem::display2(1, 4);
@@ -4265,7 +4265,7 @@ bool Scene360::Object4::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene360::BsseballCards::startAction(CursorType action, Event &event) {
+bool Scene360::BaseballCards::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		if (event.mousePos.x >= (_bounds.left + _bounds.width() / 2))
@@ -4422,9 +4422,8 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.y = 4;
 	BF_GLOBALS._player.enableControl();
 
-	if (BF_GLOBALS._sceneManager._previousScene == 370) {
-		BF_GLOBALS._player.setPosition(Common::Point(62, 122));
-	} else {
+	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
+		_field380 = 0;
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 
@@ -4450,6 +4449,9 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 			_slidingDoor.setPosition(Common::Point(6, 130));
 			_slidingDoor.setAction(&_sequenceManager1, this, 3606, &_slidingDoor, &_object7, NULL);
 		}
+	} else {
+		BF_GLOBALS._player.setPosition(Common::Point(62, 122));
+		BF_GLOBALS._player.enableControl();
 	}
 
 	_barometer._sceneRegionId = 9;
@@ -4470,7 +4472,7 @@ void Scene360::signal() {
 		BF_GLOBALS.setFlag(gunDrawn);
 		BF_GLOBALS._deathReason = BF_GLOBALS.getFlag(fBackupIn350) ? 2 : 1;
 		BF_GLOBALS._player.setPosition(Common::Point(BF_GLOBALS._player._position.x - 20,
-			BF_GLOBALS._player._position.y));
+			BF_GLOBALS._player._position.y + 1));
 		_sceneMode = 3610;
 		setAction(&_sequenceManager1, this, 3610, &_slidingDoor, &_object2, &BF_GLOBALS._player, NULL);
 		break;
@@ -4479,8 +4481,13 @@ void Scene360::signal() {
 		setAction(&_sequenceManager1, this, 3605, &BF_GLOBALS._player, &_slidingDoor, NULL);
 		break;
 	case 3604:
-		_sceneMode = BF_GLOBALS.getFlag(fBackupIn350) ? 3603 : 3605;
-		setAction(&_sequenceManager1, this, _sceneMode, &_object6, NULL);
+		if (BF_GLOBALS.getFlag(fBackupIn350)) {
+			_sceneMode = 3603;
+			setAction(&_sequenceManager1, this, _sceneMode, &_object6, NULL);
+		} else {
+			_sceneMode = 3605;
+			setAction(&_sequenceManager1, this, _sceneMode, &BF_GLOBALS._player, &_slidingDoor, NULL);
+		}
 		break;
 	case 3605:
 		if (BF_GLOBALS.getFlag(fBackupIn350)) {
@@ -4498,7 +4505,7 @@ void Scene360::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3608:
-		BF_GLOBALS._sceneManager.changeScene(355);
+ 		BF_GLOBALS._sceneManager.changeScene(355);
 		break;
 	case 3610:
 		BF_GLOBALS._sceneManager.changeScene(666);
