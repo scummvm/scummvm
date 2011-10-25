@@ -1,4 +1,4 @@
-package org.inodes.gus.scummvm;
+package org.scummvm.scummvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;

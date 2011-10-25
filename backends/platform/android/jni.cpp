@@ -125,7 +125,7 @@ jint JNI::onLoad(JavaVM *vm) {
 	if (_vm->GetEnv((void **)&env, JNI_VERSION_1_2))
 		return JNI_ERR;
 
-	jclass cls = env->FindClass("org/inodes/gus/scummvm/ScummVM");
+	jclass cls = env->FindClass("org/scummvm/scummvm/ScummVM");
 	if (cls == 0)
 		return JNI_ERR;
 

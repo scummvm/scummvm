@@ -1,4 +1,4 @@
-package org.inodes.gus.scummvm;
+package org.scummvm.scummvm;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -16,7 +16,7 @@ public class PluginProvider extends BroadcastReceiver {
 	private final static String LOG_TAG = "ScummVM";
 
 	public final static String META_UNPACK_LIB =
-		"org.inodes.gus.scummvm.meta.UNPACK_LIB";
+		"org.scummvm.scummvm.meta.UNPACK_LIB";
 
 	public void onReceive(Context context, Intent intent) {
 		if (!intent.getAction().equals(ScummVMApplication.ACTION_PLUGIN_QUERY))
