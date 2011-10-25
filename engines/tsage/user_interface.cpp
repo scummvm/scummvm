@@ -477,6 +477,8 @@ void UIElements::updateInventory() {
 				slot->setVisage(obj->_visage);
 				slot->setStrip(obj->_strip);
 				slot->setFrame(obj->_frame);
+
+				slot->reposition();
 			}
 		}
 	}
