@@ -4783,37 +4783,36 @@ bool Scene370::Laura::startAction(CursorType action, Event &event) {
 bool Scene370::Item1::startAction(CursorType action, Event &event) {
 	Scene370 *scene = (Scene370 *)BF_GLOBALS._sceneManager._scene;
 
-	switch (action) {
-	case CURSOR_LOOK:
+	if (action == CURSOR_LOOK) {
 		SceneItem::display2(370, 15);
 		return true;
-	case CURSOR_USE:
+	} else if (action == CURSOR_USE) {
 		SceneItem::display2(370, 16);
 		return true;
-	case INV_COLT45:
+	} else if (action == INV_COLT45) {
 		if (BF_GLOBALS._sceneObjects->contains(&scene->_green) && (BF_INVENTORY.getObjectScene(INV_GREENS_GUN) != 370)) {
 			scene->_green.setAction(NULL);
 			scene->_sceneMode = 3703;
 			scene->setAction(&scene->_sequenceManager, scene, 3703, &BF_GLOBALS._player, &scene->_green, &scene->_harrison, NULL);
 			return true;
 		}
-		// Deliberate fall-through
-	default:
+		return false;
+	} else if (action < CURSOR_WALK) // If any other inventory item used
+		return false;
+	else // If any other action is used
 		return NamedHotspot::startAction(action, event);
-	}
 }
 
 bool Scene370::Item6::startAction(CursorType action, Event &event) {
 	Scene370 *scene = (Scene370 *)BF_GLOBALS._sceneManager._scene;
 
-	switch (action) {
-	case CURSOR_LOOK:
+	if (action == CURSOR_LOOK) {
 		SceneItem::display2(370, 14);
 		return true;
-	case CURSOR_USE:
+	} else if (action == CURSOR_USE) {
 		SceneItem::display2(370, 29);
 		return true;
-	case INV_COLT45:
+	} else if (action == INV_COLT45) {
 		if (BF_GLOBALS._sceneObjects->contains(&scene->_green) && (BF_INVENTORY.getObjectScene(INV_GREENS_GUN) != 370) &&
 				(BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1)) {
 			BF_GLOBALS._player.disableControl();
@@ -4822,10 +4821,11 @@ bool Scene370::Item6::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_sequenceManager, scene, 3703, &BF_GLOBALS._player, &scene->_green, &scene->_harrison, NULL);
 			return true;
 		}
-		// Deliberate fall-through
-	default:
 		return SceneHotspot::startAction(action, event);
-	}
+	} else if (action < CURSOR_WALK) // If any other inventory item used
+		return false;
+	else // If any other action
+		return SceneHotspot::startAction(action, event);
 }
 
 
