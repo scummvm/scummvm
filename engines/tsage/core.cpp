@@ -2810,7 +2810,7 @@ void SceneText::synchronize(Serializer &s) {
 void SceneText::updateScreen() {
 	// FIXME: Hack for Blue Force to handle not refreshing the screen if the user interface
 	// has been re-activated after showing some scene text
-	if ((g_vm->getGameID() != GType_BlueForce) || (_bounds.top < UI_INTERFACE_Y) ||
+	if ((g_vm->getGameID() == GType_Ringworld) || (_bounds.top < UI_INTERFACE_Y) ||
 			!T2_GLOBALS._uiElements._visible)
 		SceneObject::updateScreen();
 }
@@ -2944,7 +2944,7 @@ void Player::disableControl() {
 	g_globals->_events.setCursor(CURSOR_NONE);
 	_enabled = false;
 
-	if ((g_vm->getGameID() == GType_BlueForce) && T2_GLOBALS._uiElements._active)
+	if ((g_vm->getGameID() != GType_Ringworld) && T2_GLOBALS._uiElements._active)
 		T2_GLOBALS._uiElements.hide();
 }
 
@@ -2992,7 +2992,7 @@ void Player::process(Event &event) {
 			(g_globals->_events.getCursor() == CURSOR_WALK) && g_globals->_player._canWalk &&
 			(_position != event.mousePos) && g_globals->_sceneObjects->contains(this)) {
 
-		if ((g_vm->getGameID() == GType_BlueForce) && !BF_GLOBALS._player._enabled)
+		if ((g_vm->getGameID() != GType_Ringworld) && !BF_GLOBALS._player._enabled)
 			return;
 
 		PlayerMover *newMover = new PlayerMover();
@@ -3011,7 +3011,7 @@ void Player::synchronize(Serializer &s) {
 	s.syncAsByte(_uiEnabled);
 	s.syncAsSint16LE(_field8C);
 
-	if (g_vm->getGameID() == GType_BlueForce)
+	if (g_vm->getGameID() != GType_Ringworld)
 		s.syncAsByte(_enabled);
 }
 
@@ -3829,7 +3829,7 @@ void SceneHandler::process(Event &event) {
 		}
 
 		// Mouse press handling
-		bool enabled = (g_vm->getGameID() == GType_BlueForce) ? g_globals->_player._enabled :
+		bool enabled = (g_vm->getGameID() != GType_Ringworld) ? g_globals->_player._enabled :
 			g_globals->_player._uiEnabled;
 		if (enabled && (event.eventType == EVENT_BUTTON_DOWN) && !g_globals->_sceneItems.empty()) {
 			// Check if the mouse is on the player
@@ -3861,7 +3861,7 @@ void SceneHandler::process(Event &event) {
 							g_globals->_events.setCursor(CURSOR_USE);
 						}
 
-						if (g_vm->getGameID() == GType_BlueForce)
+						if (g_vm->getGameID() != GType_Ringworld)
 							event.handled = true;
 					} else if (g_vm->getGameID() != GType_Ringworld) {
 						event.handled = true;
@@ -3917,7 +3917,7 @@ void SceneHandler::dispatch() {
 		do {
 			process(event);
 		} while (g_globals->_events.getEvent(event));
-	} else if (g_vm->getGameID() == GType_BlueForce) {
+	} else if (g_vm->getGameID() != GType_Ringworld) {
 		// For Blue Force, 'none' events need to be generated in the absence of any
 		event.eventType = EVENT_NONE;
 		event.mousePos = g_globals->_events._mousePos;
