@@ -1706,7 +1706,7 @@ void SceneItem::display(const Common::String &msg) {
 /*--------------------------------------------------------------------------*/
 
 bool SceneHotspot::startAction(CursorType action, Event &event) {
-	switch (action) {
+	switch (g_vm->getGameID()) {
 	case GType_BlueForce: {
 		BlueForce::SceneExt *scene = (BlueForce::SceneExt *)BF_GLOBALS._sceneManager._scene;
 		assert(scene);
