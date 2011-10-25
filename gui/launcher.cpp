@@ -1131,6 +1131,11 @@ void LauncherDialog::reflowLayout() {
 			_searchPic = 0;
 		}
 	}
+
+	removeWidget(_searchClearButton);
+	_searchClearButton->setNext(0);
+	delete _searchClearButton;
+	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif
 
 	_w = g_system->getOverlayWidth();
