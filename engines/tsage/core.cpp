@@ -2412,6 +2412,11 @@ void SceneObject::updateScreen() {
 	srcRect.right = ((srcRect.right + 3) / 4) * 4;
 	srcRect.clip(g_globals->_sceneManager._scene->_sceneBounds);
 
+	if (g_vm->getGameID() != GType_Ringworld) {
+		if (T2_GLOBALS._uiElements._visible)
+			srcRect.bottom = MIN<int16>(srcRect.bottom, T2_GLOBALS._interfaceY);
+	}
+
 	if (srcRect.isValidRect()) {
 		Rect destRect  = srcRect;
 		destRect.translate(-sceneBounds.left, -sceneBounds.top);
