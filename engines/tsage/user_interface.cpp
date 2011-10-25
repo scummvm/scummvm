@@ -404,6 +404,7 @@ void UIElements::setup(const Common::Point &pt) {
 		// Set up the score
 		_score.postInit();
 		add(&_score);
+		break;
 	case GType_Ringworld2:
 		// Set up the character display
 		_character.setup(1, 5, _characterIndex, 285, 11, 255);
