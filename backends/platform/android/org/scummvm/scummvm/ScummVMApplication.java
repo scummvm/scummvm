@@ -7,6 +7,7 @@ import java.io.File;
 public class ScummVMApplication extends Application {
 	public final static String ACTION_PLUGIN_QUERY = "org.scummvm.scummvm.action.PLUGIN_QUERY";
 	public final static String EXTRA_UNPACK_LIBS = "org.scummvm.scummvm.extra.UNPACK_LIBS";
+	public final static String EXTRA_VERSION = "org.scummvm.scummvm.extra.VERSION";
 
 	private static File _cache_dir;
 
