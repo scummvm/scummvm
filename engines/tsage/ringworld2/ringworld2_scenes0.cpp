@@ -316,14 +316,13 @@ void Scene100::signal() {
 }
 
 void Scene100::dispatch() {
-/*
 	int regionIndex = R2_GLOBALS._player.getRegionIndex();
 	if (regionIndex == 13)
 		R2_GLOBALS._player._shade = 4;
 
 	if ((R2_GLOBALS._player._visage == 13) || (R2_GLOBALS._player._visage == 101))
-	(R2_GLOBALS._player._shade = 0;
-*/
+	R2_GLOBALS._player._shade = 0;
+
 	SceneExt::dispatch();
 
 	if ((_sceneMode == 101) && (_object7._frame == 2) && (_table._strip == 5)) {

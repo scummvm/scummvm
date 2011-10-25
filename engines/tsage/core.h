@@ -530,6 +530,10 @@ public:
 	int _moveRate;
 	Action *_endAction;
 	uint32 _regionBitList;
+
+	// Ringworld 2 specific fields
+	int _shade;
+	int _effect;
 public:
 	SceneObject();
 	SceneObject(const SceneObject &so);
@@ -577,6 +581,8 @@ public:
 	// New methods introduced by Blue Force
 	virtual void updateAngle(const Common::Point &pt);
 	virtual void changeAngle(int angle);
+	// New methods introduced by Ringworld 2
+	virtual void copy(SceneObject *src);
 
 	void setup(int visage, int stripFrameNum, int frameNum, int posX, int posY, int priority);
 	void setup(int visage, int stripFrameNum, int frameNum);

@@ -690,9 +690,6 @@ void SceneActor::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_lookLineNum);
 	s.syncAsSint16LE(_talkLineNum);
 	s.syncAsSint16LE(_useLineNum);
-
-	s.syncAsSint16LE(_effect);
-	s.syncAsSint16LE(_shade);
 }
 
 bool SceneActor::startAction(CursorType action, Event &event) {

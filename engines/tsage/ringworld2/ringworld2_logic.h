@@ -219,7 +219,6 @@ class SceneActor: public SceneObject {
 public:
 	int _resNum;
 	int _lookLineNum, _talkLineNum, _useLineNum;
-	int _effect, _shade;
 
 	virtual Common::String getClassName() { return "SceneActor"; }
 	virtual void synchronize(Serializer &s);

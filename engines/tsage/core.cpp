@@ -1835,6 +1835,8 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_visage = 0;
 	_strip = 0;
 	_frame = 0;
+	_effect = 0;
+	_shade = 0;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2137,6 +2139,14 @@ SceneObject *SceneObject::clone() const {
 	return obj;
 }
 
+void SceneObject::copy(SceneObject *src) {
+	*this = *src;
+
+	_objectWrapper = NULL;
+	_mover = NULL;
+	_endAction = NULL;
+}
+
 void SceneObject::checkAngle(const SceneObject *obj) {
 	checkAngle(obj->_position);
 }
@@ -2203,6 +2213,11 @@ void SceneObject::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_moveRate);
 	SYNC_POINTER(_endAction);
 	s.syncAsUint32LE(_regionBitList);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_effect);
+		s.syncAsSint16LE(_shade);
+	}
 }
 
 void SceneObject::postInit(SceneObjectList *OwnerList) {
