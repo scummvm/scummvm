@@ -10,6 +10,7 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -274,6 +275,15 @@ public class Unpacker extends Activity {
 						.toString());
 		extras.putStringArrayList(ScummVMApplication.EXTRA_UNPACK_LIBS,
 								  unpack_libs);
+
+		final PackageInfo info;
+		try {
+			info = getPackageManager().getPackageInfo(getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			Log.e(LOG_TAG, "Error finding my own info?", e);
+			return;
+		}
+		extras.putString(ScummVMApplication.EXTRA_VERSION, info.versionName);
 
 		Intent intent = new Intent(ScummVMApplication.ACTION_PLUGIN_QUERY);
 		// Android 3.1 defaults to FLAG_EXCLUDE_STOPPED_PACKAGES, and since
