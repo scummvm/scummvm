@@ -4501,7 +4501,13 @@ void Scene360::signal() {
 		break;
 	case 3607:
 	case 3609:
-		_harrison.setVisage(1363);
+		// Original game was only using at this place visage 1363. 
+		// This workaround allow Harrison to keep his gun handy
+		// when entering the romm (if required)
+		if (! BF_GLOBALS.getFlag(gunDrawn))
+			_harrison.setVisage(1363);
+		else 
+			_harrison.setVisage(363);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3608:
