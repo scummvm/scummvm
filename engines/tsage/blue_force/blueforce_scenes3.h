@@ -625,7 +625,7 @@ class Scene360: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object6: public NamedObject {
+	class Harrison: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -668,7 +668,7 @@ public:
 	Window _window;
 	Object4 _object4;
 	BaseballCards _baseballCards;
-	Object6 _object6;
+	Harrison _harrison;
 	Object7 _object7;
 	Item1 _item1;
 	Item2 _item2;
@@ -676,7 +676,7 @@ public:
 	Barometer _barometer;
 	Action1 _action1;
 	ASound _sound1;
-	int _field380;
+	int _uselessVariable;
 
 	Scene360();
 	virtual void synchronize(Serializer &s);

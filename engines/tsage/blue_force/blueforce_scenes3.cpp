@@ -4281,7 +4281,7 @@ bool Scene360::BaseballCards::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene360::Object6::startAction(CursorType action, Event &event) {
+bool Scene360::Harrison::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display2(360, 6);
@@ -4339,12 +4339,12 @@ void Scene360::Action1::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene360::Scene360() {
-	_field380 = 0;
+	_uselessVariable = 0;
 }
 
 void Scene360::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field380);
+	s.syncAsSint16LE(_uselessVariable);
 }
 
 void Scene360::postInit(SceneObjectList *OwnerList) {
@@ -4423,18 +4423,18 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.enableControl();
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
-		_field380 = 0;
+		_uselessVariable = 0;
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 
 		if (BF_GLOBALS.getFlag(fBackupIn350)) {
-			_object6.postInit();
-			_object6.setVisage(BF_GLOBALS.getFlag(gunDrawn) ? 363 : 1363);
-			_object6.animate(ANIM_MODE_1, NULL);
-			_object6.setObjectWrapper(new SceneObjectWrapper());
-			_object6.setPosition(Common::Point(235, 150));
-			_object6.setStrip(2);
-			BF_GLOBALS._sceneItems.push_back(&_object6);
+			_harrison.postInit();
+			_harrison.setVisage(BF_GLOBALS.getFlag(gunDrawn) ? 363 : 1363);
+			_harrison.animate(ANIM_MODE_1, NULL);
+			_harrison.setObjectWrapper(new SceneObjectWrapper());
+			_harrison.setPosition(Common::Point(235, 150));
+			_harrison.setStrip(2);
+			BF_GLOBALS._sceneItems.push_back(&_harrison);
 		}
 
 		_sceneMode = 3607;
@@ -4483,7 +4483,7 @@ void Scene360::signal() {
 	case 3604:
 		if (BF_GLOBALS.getFlag(fBackupIn350)) {
 			_sceneMode = 3603;
-			setAction(&_sequenceManager1, this, _sceneMode, &_object6, NULL);
+			setAction(&_sequenceManager1, this, _sceneMode, &_harrison, NULL);
 		} else {
 			_sceneMode = 3605;
 			setAction(&_sequenceManager1, this, _sceneMode, &BF_GLOBALS._player, &_slidingDoor, NULL);
@@ -4501,7 +4501,7 @@ void Scene360::signal() {
 		break;
 	case 3607:
 	case 3609:
-		_object6.setVisage(1363);
+		_harrison.setVisage(1363);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 3608:
@@ -4549,7 +4549,7 @@ void Scene360::process(Event &event) {
 				BF_GLOBALS._player.setFrame(BF_GLOBALS._player.getFrameCount());
 				BF_GLOBALS._player.animate(ANIM_MODE_6, this);
 
-				_object6.setVisage(1363);
+				_harrison.setVisage(1363);
 			}
 		} else {
 			// Handle drawing gun
@@ -4564,7 +4564,7 @@ void Scene360::process(Event &event) {
 
 			BF_GLOBALS.setFlag(gunDrawn);
 			_sceneMode = 9998;
-			_object6.setVisage(363);
+			_harrison.setVisage(363);
 		}
 
 		event.handled = true;
