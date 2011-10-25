@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_CONTROLS_H
-#define SCI_GRAPHICS_CONTROLS_H
+#ifndef SCI_GRAPHICS_CONTROLS16_H
+#define SCI_GRAPHICS_CONTROLS16_H
 
 namespace Sci {
 
@@ -50,10 +50,10 @@ class GfxScreen;
 /**
  * Controls class, handles drawing of controls in SCI16 (SCI0-SCI1.1) games
  */
-class GfxControls {
+class GfxControls16 {
 public:
-	GfxControls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen);
-	~GfxControls();
+	GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen);
+	~GfxControls16();
 
 	void kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
 	void kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 alignment, int16 style, bool hilite);

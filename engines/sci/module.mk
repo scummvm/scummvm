@@ -43,7 +43,7 @@ MODULE_OBJS := \
 	graphics/animate.o \
 	graphics/cache.o \
 	graphics/compare.o \
-	graphics/controls.o \
+	graphics/controls16.o \
 	graphics/coordadjuster.o \
 	graphics/cursor.o \
 	graphics/font.o \

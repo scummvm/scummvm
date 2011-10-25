@@ -59,7 +59,7 @@ class SegManager;
 class GfxAnimate;
 class GfxCache;
 class GfxCompare;
-class GfxControls;
+class GfxControls16;
 class GfxCoordAdjuster;
 class GfxCursor;
 class GfxMacIconBar;
@@ -303,7 +303,7 @@ public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;
 	GfxCompare *_gfxCompare;
-	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxControls16 *_gfxControls16; // Controls for 16-bit gfx
 	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx

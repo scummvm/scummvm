@@ -36,26 +36,26 @@
 #include "sci/graphics/font.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
-#include "sci/graphics/controls.h"
+#include "sci/graphics/controls16.h"
 
 namespace Sci {
 
-GfxControls::GfxControls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen)
+GfxControls16::GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen)
 	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen) {
 	init();
 }
 
-GfxControls::~GfxControls() {
+GfxControls16::~GfxControls16() {
 }
 
-void GfxControls::init() {
+void GfxControls16::init() {
 	_texteditCursorVisible = false;
 }
 
 const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
-void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text16->GetFontId();
 	int16 oldPenColor = _ports->_curPort->penClr;
@@ -112,7 +112,7 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	_text16->SetFont(oldFontId);
 }
 
-void GfxControls::texteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
+void GfxControls16::texteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
 	int16 textWidth, i;
 	if (!_texteditCursorVisible) {
 		textWidth = 0;
@@ -130,7 +130,7 @@ void GfxControls::texteditCursorDraw(Common::Rect rect, const char *text, uint16
 	}
 }
 
-void GfxControls::texteditCursorErase() {
+void GfxControls16::texteditCursorErase() {
 	if (_texteditCursorVisible) {
 		_paint16->invertRect(_texteditCursorRect);
 		_paint16->bitsShow(_texteditCursorRect);
@@ -139,11 +139,11 @@ void GfxControls::texteditCursorErase() {
 	texteditSetBlinkTime();
 }
 
-void GfxControls::texteditSetBlinkTime() {
+void GfxControls16::texteditSetBlinkTime() {
 	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
 }
 
-void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
+void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 cursorPos = readSelectorValue(_segMan, controlObject, SELECTOR(cursor));
 	uint16 maxChars = readSelectorValue(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = readSelector(_segMan, controlObject, SELECTOR(text));
@@ -277,13 +277,13 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	writeSelectorValue(_segMan, controlObject, SELECTOR(cursor), cursorPos);
 }
 
-int GfxControls::getPicNotValid() {
+int GfxControls16::getPicNotValid() {
 	if (getSciVersion() >= SCI_VERSION_1_1)
 		return _screen->_picNotValidSci11;
 	return _screen->_picNotValid;
 }
 
-void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
+void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
 	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
@@ -321,7 +321,7 @@ void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *tex
 	}
 }
 
-void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
+void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
 		_paint16->eraseRect(rect);
@@ -338,7 +338,7 @@ void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text,
 	}
 }
 
-void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
+void GfxControls16::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
 	Common::Rect textRect = rect;
 	uint16 oldFontId = _text16->GetFontId();
 
@@ -359,7 +359,7 @@ void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *t
 		_paint16->bitsShow(rect);
 }
 
-void GfxControls::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
+void GfxControls16::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
 	if (!hilite) {
 		_paint16->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
 		if (style & 0x20) {
@@ -373,7 +373,7 @@ void GfxControls::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId vie
 	}
 }
 
-void GfxControls::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
+void GfxControls16::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
 	if (!hilite) {
 		drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
 		rect.grow(1);

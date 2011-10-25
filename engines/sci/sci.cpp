@@ -46,7 +46,7 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/controls.h"
+#include "sci/graphics/controls16.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
@@ -152,7 +152,7 @@ SciEngine::~SciEngine() {
 	delete _gfxFrameout;
 #endif
 	delete _gfxMenu;
-	delete _gfxControls;
+	delete _gfxControls16;
 	delete _gfxText16;
 	delete _gfxAnimate;
 	delete _gfxPaint;
@@ -588,7 +588,7 @@ void SciEngine::initGraphics() {
 	_gfxAnimate = 0;
 	_gfxCache = 0;
 	_gfxCompare = 0;
-	_gfxControls = 0;
+	_gfxControls16 = 0;
 	_gfxCoordAdjuster = 0;
 	_gfxCursor = 0;
 	_gfxMacIconBar = 0;
@@ -636,7 +636,7 @@ void SciEngine::initGraphics() {
 		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_resMan, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
-		_gfxControls = new GfxControls(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
+		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
 		_gfxMenu->reset();
