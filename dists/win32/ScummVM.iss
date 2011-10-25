@@ -52,7 +52,7 @@ Name: {group}\Neues; Filename: {app}\Neues.txt; WorkingDir: {app}; Comment: Neue
 ;QUICKSTART
 Name: {group}\QuickStart; Filename: {app}\QUICKSTART.txt; WorkingDir: {app}; Comment: QUICKSTART; Flags: createonlyiffileexists; Languages: not (de or es or fr or it or nb)
 Name: {group}\Schnellstart; Filename: {app}\Schnellstart.txt; WorkingDir: {app}; Comment: Schnellstart; Flags: createonlyiffileexists; Languages: de
-Name: {group}\Inicio Rápido; Filename: {app}\Inicio Rápido.txt; WorkingDir: {app}; Comment: Inicio Rápido; Flags: createonlyiffileexists; Languages: es
+Name: {group}\InicioRapido; Filename: {app}\InicioRapido.txt; WorkingDir: {app}; Comment: InicioRapido; Flags: createonlyiffileexists; Languages: es
 Name: {group}\DemarrageRapide; Filename: {app}\DemarrageRapide.txt; WorkingDir: {app}; Comment: DemarrageRapide; Flags: createonlyiffileexists; Languages: fr
 Name: {group}\GuidaRapida; Filename: {app}\GuidaRapida.txt; WorkingDir: {app}; Comment: GuidaRapida; Flags: createonlyiffileexists; Languages: it
 Name: {group}\HurtigStart; Filename: {app}\HurtigStart.txt; WorkingDir: {app}; Comment: HurtigStart; Flags: createonlyiffileexists; Languages: nb
@@ -78,7 +78,7 @@ Source: doc/de/Neues.txt; DestDir: {app}; Flags: ignoreversion; Languages: de
 ;QUICKSTART
 Source: doc/QUICKSTART.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: not (de or es or fr or it or nb)
 Source: doc/de/Schnellstart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: de
-Source: doc/es/Inicio Rápido.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: es
+Source: doc/es/InicioRapido.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: es
 Source: doc/fr/DemarrageRapide.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: fr
 Source: doc/it/GuidaRapida.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: it
 Source: doc/no-nb/HurtigStart.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: nb
