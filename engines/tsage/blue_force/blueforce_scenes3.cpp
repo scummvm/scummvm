@@ -1721,7 +1721,7 @@ void Scene340::Action1::signal() {
 			++BF_GLOBALS._marinaWomanCtr;
 
 		if (BF_GLOBALS.getFlag(fBackupArrived340)) {
-			scene->_field2654 = 1;
+			scene->_backupPresent = 1;
 			scene->_harrison.setPosition(Common::Point(46, 154));
 			BF_GLOBALS._walkRegions.proc1(19);
 		} else if (BF_GLOBALS.getFlag(fCalledBackup)) {
@@ -1732,6 +1732,8 @@ void Scene340::Action1::signal() {
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1740,6 +1742,7 @@ void Scene340::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
+		BF_GLOBALS._player.disableControl();
 		ADD_PLAYER_MOVER(64, 155);
 		break;
 	}
@@ -1757,6 +1760,8 @@ void Scene340::Action2::signal() {
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1765,6 +1770,7 @@ void Scene340::Action3::signal() {
 
 	switch (_actionIndex++) {
 	case 0: {
+		BF_GLOBALS._player.disableControl();
 		ADD_PLAYER_MOVER(64, 155);
 		break;
 	}
@@ -1773,17 +1779,19 @@ void Scene340::Action3::signal() {
 		setDelay(3);
 		break;
 	case 2:
-		scene->_stripManager.start(scene->_field2652 + 3404, this);
+		scene->_stripManager.start(scene->_womanDialogCount + 3404, this);
 		break;
 	case 3:
-		if (++scene->_field2652 > 2) {
+		if (++scene->_womanDialogCount > 2) {
 			if (!BF_GLOBALS.getFlag(fGotAllSkip340))
 				BF_GLOBALS.setFlag(fGotAllSkip340);
-			scene->_field2652 = 0;
+			scene->_womanDialogCount = 0;
 		}
 
 		BF_GLOBALS._player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1803,7 +1811,7 @@ void Scene340::Action4::signal() {
 		break;
 	case 1:
 		BF_GLOBALS.setFlag(fBackupArrived340);
-		scene->_field2654 = 1;
+		scene->_backupPresent = 1;
 		setDelay(3);
 		break;
 	case 2:
@@ -1814,6 +1822,8 @@ void Scene340::Action4::signal() {
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1823,7 +1833,7 @@ void Scene340::Action5::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		if (scene->_field2654) {
+		if (scene->_backupPresent) {
 			ADD_PLAYER_MOVER(64, 155);
 		} else {
 			BF_GLOBALS._player.changeAngle(45);
@@ -1848,6 +1858,8 @@ void Scene340::Action5::signal() {
 	case 4:
 		BF_GLOBALS._player.enableControl();
 		remove();
+		break;
+	default:
 		break;
 	}
 }
@@ -1892,6 +1904,8 @@ void Scene340::Action7::signal() {
 	case 2:
 		BF_GLOBALS.setFlag(fBackupIn350);
 		BF_GLOBALS._sceneManager.changeScene(350);
+		break;
+	default:
 		break;
 	}
 }
@@ -1945,6 +1959,11 @@ void Scene340::Action8::signal() {
 	case 4:
 		remove();
 		break;
+	default:
+		// This is present in the original game
+		warning("Bugs");
+		remove();
+		break;
 	}
 }
 
@@ -1977,15 +1996,15 @@ void Scene340::Timer2::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene340::Scene340(): PalettedScene() {
-	_seqNumber1 = _field2652 = _field2654 = 0;
+	_seqNumber1 = _womanDialogCount = _backupPresent = 0;
 }
 
 void Scene340::synchronize(Serializer &s) {
 	PalettedScene::synchronize(s);
 
 	s.syncAsSint16LE(_seqNumber1);
-	s.syncAsSint16LE(_field2652);
-	s.syncAsSint16LE(_field2654);
+	s.syncAsSint16LE(_womanDialogCount);
+	s.syncAsSint16LE(_backupPresent);
 }
 
 void Scene340::postInit(SceneObjectList *OwnerList) {
@@ -2000,7 +2019,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_jakeUniformSpeaker);
 
-	_field2652 = 0;
+	_womanDialogCount = 0;
 	BF_GLOBALS._player.postInit();
 	BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 	BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
@@ -2009,7 +2028,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 	_swExit.setDetails(15, 340, -1, -1, -1, 1);
 	_northExit.setDetails(16, 340, -1, -1, -1, 1);
 
-	BF_GLOBALS._player._regionBitList = 0x10000;
+	BF_GLOBALS._player._regionBitList |= 0x10000;
 	BF_GLOBALS._player.setVisage(BF_GLOBALS.getFlag(onDuty) ? 1341 : 129);
 	BF_GLOBALS._player._moveDiff = Common::Point(5, 2);
 
@@ -2057,7 +2076,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 
 		_stripManager.addSpeaker(&_harrisonSpeaker);
 		if (BF_GLOBALS.getFlag(fBackupIn350)) {
-			_field2654 = 0;
+			_backupPresent = 0;
 			_harrison.setVisage(1355);
 			_harrison.setPosition(Common::Point(289, 112));
 			_harrison.changeAngle(225);
@@ -2066,7 +2085,7 @@ void Scene340::postInit(SceneObjectList *OwnerList) {
 
 			BF_GLOBALS._walkRegions.proc1(23);
 		} else if (BF_GLOBALS.getFlag(fBackupArrived340)) {
-			_field2654 = 1;
+			_backupPresent = 1;
 			_harrison.setPosition(Common::Point(46, 154));
 			BF_GLOBALS._walkRegions.proc1(19);
 		} else if (BF_GLOBALS.getFlag(fCalledBackup) && (BF_GLOBALS._marinaWomanCtr > 0)) {

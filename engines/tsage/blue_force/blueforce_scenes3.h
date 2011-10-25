@@ -363,7 +363,7 @@ public:
 	ASoundExt _sound1, _sound2;
 	TimerExt _timer1;
 	Timer2 _timer2;
-	int _seqNumber1, _field2652, _field2654;
+	int _seqNumber1, _womanDialogCount, _backupPresent;
 
 	Scene340();
 	virtual void synchronize(Serializer &s);
