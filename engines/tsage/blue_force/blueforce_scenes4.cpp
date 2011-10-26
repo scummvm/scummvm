@@ -119,7 +119,7 @@ void Scene410::Action4::signal() {
 	if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2;
-		scene->setAction(&scene->_sequenceManager1, scene, 4120, &scene->_passenger, BF_GLOBALS._player, NULL);
+		scene->setAction(&scene->_sequenceManager1, scene, 4120, &scene->_passenger, &BF_GLOBALS._player, NULL);
 	} else {
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS.setFlag(fTalkedDriverNoBkup);
