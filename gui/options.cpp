@@ -216,7 +216,7 @@ void OptionsDialog::open() {
 #endif // SMALL_SCREEN_DEVICE
 
 		// EGA undithering setting
-		if (_guioptions.contains(GUIO_EGAUNDITHER)) {
+		if (_guioptions.contains(GUIO_EGAUNDITHER)  || _domain == Common::ConfigManager::kApplicationDomain) {
 			_disableDitheringCheckbox->setEnabled(true);
 			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
 		} else {
@@ -609,7 +609,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	else
 		_aspectCheckbox->setEnabled(enabled);
 #endif
-	if (_guioptions.contains(GUIO_EGAUNDITHER))
+	if (_guioptions.contains(GUIO_EGAUNDITHER) && enabled)
 		_disableDitheringCheckbox->setEnabled(true);
 	else
 		_disableDitheringCheckbox->setEnabled(false);
