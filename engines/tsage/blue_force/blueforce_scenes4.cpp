@@ -114,30 +114,17 @@ void Scene410::Action3::signal() {
 void Scene410::Action4::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
-	switch (_actionIndex++) {
-	case 0:
-		if (scene->_field1FC4 == 0) {
-			ADD_PLAYER_MOVER(114, 133);
-		} else {
-			ADD_PLAYER_MOVER(195, 139);
-		}
-		break;
-	case 1:
-		BF_GLOBALS._player.updateAngle(scene->_passenger._position);
-		setDelay(3);
-		break;
-	case 2:
-		setDelay(3);
-		break;
-	case 3:
-		if (BF_GLOBALS.getFlag(fCalledBackup))
-			scene->setAction(&scene->_action2);
-		else
-			scene->setAction(&scene->_action3);
-		remove();
-		break;
-	default:
-		break;
+	warning("Action4");
+
+	if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 2;
+		scene->setAction(&scene->_sequenceManager1, scene, 4120, &scene->_passenger, BF_GLOBALS._player, NULL);
+	} else {
+		BF_GLOBALS._player.disableControl();
+		BF_GLOBALS.setFlag(fTalkedDriverNoBkup);
+		scene->_sceneMode = 4101;
+		scene->_stripManager.start(4103, scene);
 	}
 }
 
@@ -222,7 +209,7 @@ void Scene410::Action7::signal() {
 	case 3:
 		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 		BF_GLOBALS._player.updateAngle(Common::Point(100, 170));
-		scene->setAction(&scene->_sequenceManager1, this, 4112, &scene->_driver, &scene->_passenger,
+		setAction(&scene->_sequenceManager1, this, 4112, &scene->_driver, &scene->_passenger,
 			&scene->_harrison, NULL);
 		break;
 	case 5:
