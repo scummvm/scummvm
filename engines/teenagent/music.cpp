@@ -51,6 +51,7 @@ bool MusicPlayer::load(int id) {
 	stream->read(header, 4);
 	//check header?
 
+	Common::StackLock lock(_mutex);
 	// Load the samples
 	sampleCount = stream->readByte();
 
