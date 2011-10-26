@@ -94,7 +94,7 @@ class Scene300: public SceneExt {
 		virtual void signal();
 	};
 private:
-	void setup();
+	void setupInspection();
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SequenceManager _sequenceManager3, _sequenceManager4;

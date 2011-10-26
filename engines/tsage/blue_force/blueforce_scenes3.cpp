@@ -308,7 +308,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, 123, 71);
 
 			if ((BF_GLOBALS._dayNumber == 2) && (BF_GLOBALS._bookmark < bEndDayOne))
-				setup();
+				setupInspection();
 		} else if (!BF_GLOBALS.getFlag(3)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 300;
@@ -328,7 +328,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			setAction(&_sequenceManager1, this, 306, &BF_GLOBALS._player, &_object8, NULL);
 		} else {
 			BF_GLOBALS._player.setVisage(1304);
-			setup();
+			setupInspection();
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 0;
 			setAction(&_sequenceManager1, this, 306, &BF_GLOBALS._player, &_object8, NULL);
@@ -574,7 +574,7 @@ void Scene300::dispatch() {
 	}
 }
 
-void Scene300::setup() {
+void Scene300::setupInspection() {
 	_object13.postInit();
 	_object13.setVisage(307);
 	_object13.setStrip(6);
@@ -618,7 +618,7 @@ void Scene300::setup() {
 	_object1._moveDiff = Common::Point(3, 1);
 	_object1.setObjectWrapper(new SceneObjectWrapper());
 	_object1.animate(ANIM_MODE_1, NULL);
-	_object2.setup(&_object1, 306, 4, 9);
+	_object2.setup(&_object1, 306, 4, 29);
 
 	BF_GLOBALS._sceneItems.addItems(&_object13, &_object14, &_object15, &_object16, NULL);
 	_timer.set(3600, this, &_action5);

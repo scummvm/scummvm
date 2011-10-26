@@ -604,14 +604,14 @@ void FollowerObject::dispatch() {
 	} else if ((_object->_visage != 308) || (_object->_strip != 1)) {
 		show();
 		setStrip(_object->_strip);
-		setPosition(_object->_position, _object->_yDiff);
+		setPosition(Common::Point(_object->_position.x + 1, _object->_position.y), _yDiff);
 	}
 }
 
 void FollowerObject::reposition() {
 	assert(_object);
 	setStrip(_object->_strip);
-	setPosition(_object->_position, _object->_yDiff);
+	setPosition(_object->_position, _yDiff);
 	NamedObject::reposition();
 }
 
