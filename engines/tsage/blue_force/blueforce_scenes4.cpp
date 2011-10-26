@@ -35,6 +35,7 @@ namespace BlueForce {
  *
  *--------------------------------------------------------------------------*/
 
+// Talk to driver with backup
 void Scene410::Action1::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
@@ -62,6 +63,7 @@ void Scene410::Action1::signal() {
 	}
 }
 
+// Talk to passenger with backup
 void Scene410::Action2::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 	BF_GLOBALS._player.disableControl();
@@ -98,6 +100,7 @@ void Scene410::Action2::signal() {
 	}
 }
 
+// Talk to passenger without backup
 void Scene410::Action3::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 	if (BF_GLOBALS.getFlag(fTalkedShooterNoBkup)) {
@@ -111,6 +114,7 @@ void Scene410::Action3::signal() {
 	}
 }
 
+// Talk to driver without backup
 void Scene410::Action4::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
@@ -128,6 +132,7 @@ void Scene410::Action4::signal() {
 	}
 }
 
+// Talk to passenger
 void Scene410::Action5::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
@@ -158,6 +163,7 @@ void Scene410::Action5::signal() {
 	}
 }
 
+// Talk to driver
 void Scene410::Action6::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
@@ -780,9 +786,10 @@ void Scene410::signal() {
 		setAction(&_sequenceManager1, this, 4108, &_harrison, NULL);
 		break;
 	case 4109:
+		// Harrison puts handcuffs to driver
 		if ((BF_GLOBALS._player._position.x > 116) && (BF_GLOBALS._player._position.x != 195) &&
 				(BF_GLOBALS._player._position.y != 139)) {
-			ADD_PLAYER_MOVER(195, 139);
+			ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 195, 139);
 		}
 
 		BF_GLOBALS._walkRegions.proc2(22);
