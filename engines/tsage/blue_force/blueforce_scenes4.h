@@ -171,7 +171,7 @@ public:
 	NamedHotspot _seat, _windowLever, _item7, _seatBelt;
 	Lever _lever;
 	SpeakerJakeRadio _jakeRadioSpeaker;
-	bool _fieldE14, _fieldE16;
+	bool _scoreWigRapFlag, _scoreBulletRapFlag;
 
 	Scene415();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

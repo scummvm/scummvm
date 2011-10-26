@@ -936,14 +936,14 @@ bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
 		remove();
 		return true;
 	case INV_FOREST_RAP:
-		if (scene->_fieldE14)
+		if (scene->_scoreWigRapFlag)
 			break;
 
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 0;
 		scene->_stripManager.start(4126, scene);
 		T2_GLOBALS._uiElements.addScore(50);
-		scene->_fieldE14 = true;
+		scene->_scoreWigRapFlag = true;
 		return true;
 	default:
 		break;
@@ -993,7 +993,7 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 		scene->_dashDrawer.remove();
 		return true;
 	case INV_FOREST_RAP:
-		if (scene->_fieldE16) {
+		if (scene->_scoreBulletRapFlag) {
 			SceneItem::display2(415, 35);
 			return true;
 		} else {
@@ -1001,7 +1001,7 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 			scene->_sceneMode = 0;
 			scene->_stripManager.start(4122, scene);
 			T2_GLOBALS._uiElements.addScore(50);
-			scene->_fieldE16 = true;
+			scene->_scoreBulletRapFlag = true;
 		}
 		break;
 	default:
@@ -1034,13 +1034,13 @@ bool Scene415::Lever::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene415::Scene415(): SceneExt() {
-	_fieldE14 = _fieldE16 = false;
+	_scoreWigRapFlag = _scoreBulletRapFlag = false;
 }
 
 void Scene415::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_fieldE14);
-	s.syncAsSint16LE(_fieldE16);
+	s.syncAsSint16LE(_scoreWigRapFlag);
+	s.syncAsSint16LE(_scoreBulletRapFlag);
 }
 
 void Scene415::postInit(SceneObjectList *OwnerList) {
