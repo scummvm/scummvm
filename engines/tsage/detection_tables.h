@@ -112,6 +112,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_FLOPPY
 	},
 #endif
+#if 0
 	// Blue Force
 	{
 		{
@@ -140,6 +141,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
