@@ -40,7 +40,7 @@ using namespace TsAGE;
 
 class Scene100: public SceneExt {
 	/* Objects */
-	class Object7: public SceneActorExt {
+	class Door: public SceneActorExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
@@ -60,11 +60,19 @@ class Scene100: public SceneExt {
 	public:
 		bool startAction(CursorType action, Event &event);
 	};
+
+	/* Items */
+	class Terminal: public NamedHotspot{
+	public:
+		bool startAction(CursorType action, Event &event);
+	};
+
 public:
-	NamedHotspot _item1, _item2, _item3, _item4, _item5;
+	NamedHotspot _background, _duct, _bed, _desk;
+	Terminal _terminal;
 	SceneActor _object1, _object2, _object3, _object4, _object5;
 	SceneActor _object6;
-	Object7 _object7;
+	Door _door;
 	Table _table;
 	StasisNegator _stasisNegator;
 	Object10 _object10;

@@ -34,7 +34,7 @@ namespace Ringworld2 {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene100::Object7::startAction(CursorType action, Event &event) {
+bool Scene100::Door::startAction(CursorType action, Event &event) {
 	Scene100 *scene = (Scene100 *)R2_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -169,6 +169,22 @@ bool Scene100::SteppingDisks::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
+bool Scene100::Terminal::startAction(CursorType action, Event &event) {
+	Scene100 *scene = (Scene100 *)R2_GLOBALS._sceneManager._scene;
+
+	switch (action) {
+	case CURSOR_USE:
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 105;
+		scene->setAction(&scene->_sequenceManager1, scene, 105, &R2_GLOBALS._player, this, NULL);
+		return true;
+	default:
+		return NamedHotspot::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
 void Scene100::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(100);
@@ -177,11 +193,11 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene != 125)
 		R2_GLOBALS._sound1.play(10);
 
-	_object7.postInit();
-	_object7._state = 0;
-	_object7.setVisage(100);
-	_object7.setPosition(Common::Point(160, 84));
-	_object7.setDetails(100, 3, 4, 5, 1, NULL);
+	_door.postInit();
+	_door._state = 0;
+	_door.setVisage(100);
+	_door.setPosition(Common::Point(160, 84));
+	_door.setDetails(100, 3, 4, 5, 1, NULL);
 
 	_object10.postInit();
 	_object10.setup(100, 2, 1);
@@ -219,17 +235,17 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		_steppingDisks.setDetails(100, 40, -1, 42, 1, NULL);
 	}
 
-	_item5.setDetails(11, 100, 14, 15, 16);
-	_item4.setDetails(12, 100, 11, -1, 13);
-	_item3.setDetails(13, 100, 8, 9, 10);
-	_item2.setDetails(14, 100, 34, -1, 36);
+	_terminal.setDetails(11, 100, 14, 15, 16);
+	_desk.setDetails(12, 100, 11, -1, 13);
+	_bed.setDetails(13, 100, 8, 9, 10);
+	_duct.setDetails(14, 100, 34, -1, 36);
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.setVisage(10);
 	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 	R2_GLOBALS._player.disableControl();
 	
-	_item1.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 100, 0, 1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 100, 0, 1, -1, 1, NULL);
 
 	switch (R2_GLOBALS._sceneManager._previousScene) {
 	case 50:
@@ -245,7 +261,7 @@ void Scene100::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 200:
 		_sceneMode = 100;
-		setAction(&_sequenceManager1, this, 100, &R2_GLOBALS._player, &_object7, NULL);
+		setAction(&_sequenceManager1, this, 100, &R2_GLOBALS._player, &_door, NULL);
 		break;
 	default:
 		R2_GLOBALS._player.setStrip(3);
@@ -295,11 +311,11 @@ void Scene100::signal() {
 		R2_GLOBALS._player.enableControl();
 		break;
 	case 110:
-		if (_object7._state) {
-			_object7._state = 0;
+		if (_door._state) {
+			_door._state = 0;
 			_object10.setFrame(1);
 		} else {
-			_object7._state = 1;
+			_door._state = 1;
 			_object10.setFrame(2);
 		}
 		R2_GLOBALS._player.enableControl();
@@ -325,7 +341,7 @@ void Scene100::dispatch() {
 
 	SceneExt::dispatch();
 
-	if ((_sceneMode == 101) && (_object7._frame == 2) && (_table._strip == 5)) {
+	if ((_sceneMode == 101) && (_door._frame == 2) && (_table._strip == 5)) {
 		_table.setAction(&_sequenceManager2, NULL, 103, &_table, &_object3, &_stasisNegator, NULL);
 	}
 }
