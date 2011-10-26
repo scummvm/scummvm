@@ -439,7 +439,11 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 				PlayerMover *mover = new PlayerMover();
 				BF_GLOBALS._player.addMover(mover, &destPos, scene);
 			} else {
-				SceneItem::display2(350, 13);
+				SceneItem::display(350, 13, SET_WIDTH, 300,
+					SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 32, SET_EXT_BGCOLOR, 49,
+					SET_EXT_FGCOLOR, 13, LIST_END);
 			}
 		} else if ((scene->_field1FBA != 0) && (scene->_field1FBC != 0)) {
 			BF_GLOBALS._player.disableControl();
@@ -450,11 +454,12 @@ bool Scene410::Harrison::startAction(CursorType action, Event &event) {
 			BF_GLOBALS.clearFlag(f1098Marina);
 		} else if ((BF_INVENTORY.getObjectScene(INV_HANDCUFFS) == 1) ||
 				(!scene->_field1FBA && (scene->_talkCount < 5))) {
-			SceneItem::display2(350, 13);
+			SceneItem::display(350, 13, SET_WIDTH, 300,
+				SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 32, SET_EXT_BGCOLOR, 49,
+				SET_EXT_FGCOLOR, 13, LIST_END);
 		} else if (!scene->_field1FBA) {
-			if (scene->_field1FBA)
-				error("Error - want to cuff shooter, but he's cuffed already");
-
 			BF_GLOBALS._player.disableControl();
 			scene->_field1FBA = 1;
 			scene->_field1FBE = 1;
