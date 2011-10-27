@@ -877,7 +877,7 @@ bool Scene114::Door::startAction(CursorType action, Event &event) {
 		SceneItem::display2(114, 1);
 		return true;
 	case CURSOR_USE:
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		BF_GLOBALS._player.disableControl();
 		scene->_lyle.fixPriority(-1);
 		scene->_sceneMode = 1140;
@@ -895,8 +895,8 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	loadScene(110);
 
 	setZoomPercents(85, 80, 105, 100);
-	BF_GLOBALS._walkRegions.proc1(9);
-	BF_GLOBALS._walkRegions.proc1(22);
+	BF_GLOBALS._walkRegions.disableRegion(9);
+	BF_GLOBALS._walkRegions.disableRegion(22);
 
 	_door.postInit();
 	_door.setVisage(110);
@@ -943,10 +943,10 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 			_vechile.setStrip(1);
 			_vechile.changeZoom(77);
 		}
-		BF_GLOBALS._walkRegions.proc1(17);
+		BF_GLOBALS._walkRegions.disableRegion(17);
 	}
 	BF_GLOBALS._sceneItems.push_front(&_vechile);
-	BF_GLOBALS._walkRegions.proc1(2);
+	BF_GLOBALS._walkRegions.disableRegion(2);
 
 	if (BF_GLOBALS._sceneManager._previousScene == 115) {
 		BF_GLOBALS._player.setPosition(Common::Point(219, 100));
@@ -1665,7 +1665,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		NpcMover *mover = new NpcMover();
 		_object4.addMover(mover, &destPos, NULL);
 		BF_GLOBALS._sceneItems.push_front(&_object4);
-		BF_GLOBALS._walkRegions.proc1(1);
+		BF_GLOBALS._walkRegions.disableRegion(1);
 	} else if (BF_GLOBALS.getFlag(onDuty))
 		BF_GLOBALS._player.setVisage(1341);
 

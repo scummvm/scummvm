@@ -189,8 +189,8 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 	_vechile.fixPriority(70);
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
-		BF_GLOBALS._walkRegions.proc1(10);
-		BF_GLOBALS._walkRegions.proc1(11);
+		BF_GLOBALS._walkRegions.disableRegion(10);
+		BF_GLOBALS._walkRegions.disableRegion(11);
 
 		_vechile.setVisage(444);
 		_vechile.setStrip(4);
@@ -208,7 +208,7 @@ void Scene550::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.setPosition(Common::Point(89, 76));
 		BF_GLOBALS._player.updateAngle(_lyle._position);
 	} else {
-		BF_GLOBALS._walkRegions.proc1(12);
+		BF_GLOBALS._walkRegions.disableRegion(12);
 
 		_vechile.setPosition(Common::Point(205, 77));
 		_vechile.changeZoom(80);
@@ -296,8 +296,8 @@ void Scene551::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		BF_GLOBALS._walkRegions.proc2(18);
-		BF_GLOBALS._walkRegions.proc2(4);
+		BF_GLOBALS._walkRegions.enableRegion(18);
+		BF_GLOBALS._walkRegions.enableRegion(4);
 		scene->_field1CD2 = 1;
 		
 		scene->_harrison.setObjectWrapper(new SceneObjectWrapper());
@@ -316,7 +316,7 @@ void Scene551::Action2::signal() {
 		scene->_harrison.updateAngle(BF_GLOBALS._player._position);
 
 		if (scene->_drunkStanding._flag == 1) {
-			BF_GLOBALS._walkRegions.proc1(4);
+			BF_GLOBALS._walkRegions.disableRegion(4);
 			ADD_PLAYER_MOVER(71, 97);
 		} else {
 			ADD_PLAYER_MOVER(141, 87);
@@ -486,7 +486,7 @@ bool Scene551::PatrolCarTrunk::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (BF_INVENTORY.getObjectScene(INV_CENTER_PUNCH) != 1) {
-			BF_GLOBALS._walkRegions.proc2(18);
+			BF_GLOBALS._walkRegions.enableRegion(18);
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2;
 			scene->setAction(&scene->_sequenceManager, scene, 5503, &BF_GLOBALS._player, &scene->_harrison, this, NULL);
@@ -681,7 +681,7 @@ void Scene551::postInit(SceneObjectList *OwnerList) {
 	_vechile2.changeZoom(80);
 	BF_GLOBALS._sceneItems.push_back(&_vechile2);
 
-	BF_GLOBALS._walkRegions.proc1(14);
+	BF_GLOBALS._walkRegions.disableRegion(14);
 
 	_drunk.postInit();
 	_drunk.setVisage(550);
@@ -812,7 +812,7 @@ void Scene551::signal() {
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
 	case 2:
-		BF_GLOBALS._walkRegions.proc1(18);
+		BF_GLOBALS._walkRegions.disableRegion(18);
 
 		_trunkInset.postInit();
 		_trunkInset.setVisage(553);
@@ -850,8 +850,8 @@ void Scene551::signal() {
 		setAction(&_sequenceManager, this, 5507, &BF_GLOBALS._player, &_drunk, &_drunkStanding, NULL);
 		break;
 	case 5507:
-		BF_GLOBALS._walkRegions.proc1(2);
-		BF_GLOBALS._walkRegions.proc1(4);
+		BF_GLOBALS._walkRegions.disableRegion(2);
+		BF_GLOBALS._walkRegions.disableRegion(4);
 
 		_drunkStanding._flag = 1;
 		BF_GLOBALS._sceneItems.push_front(&_drunkStanding);
@@ -2224,10 +2224,10 @@ void Scene580::postInit(SceneObjectList *OwnerList) {
 
 		BF_GLOBALS._player.setVisage(303);
 
-		BF_GLOBALS._walkRegions.proc1(8);
-		BF_GLOBALS._walkRegions.proc1(9);
-		BF_GLOBALS._walkRegions.proc1(10);
-		BF_GLOBALS._walkRegions.proc1(11);
+		BF_GLOBALS._walkRegions.disableRegion(8);
+		BF_GLOBALS._walkRegions.disableRegion(9);
+		BF_GLOBALS._walkRegions.disableRegion(10);
+		BF_GLOBALS._walkRegions.disableRegion(11);
 	} else {
 		_vechile.setPosition(Common::Point(159, 72));
 

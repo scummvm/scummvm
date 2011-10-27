@@ -77,7 +77,7 @@ bool Scene900::Gate::startAction(CursorType action, Event &event) {
 				} else {
 					scene->_sceneMode = 9005;
 					scene->setAction(&scene->_sequenceManager1, scene, 9005, &BF_GLOBALS._player, this, NULL);
-					BF_GLOBALS._walkRegions.proc2(24);
+					BF_GLOBALS._walkRegions.enableRegion(24);
 				}
 			}
 			return true;
@@ -122,7 +122,7 @@ bool Scene900::Door::startAction(CursorType action, Event &event) {
 				SceneItem::display2(900, 1);
 			} else {
 				BF_GLOBALS._player.disableControl();
-				BF_GLOBALS._walkRegions.proc2(26);
+				BF_GLOBALS._walkRegions.enableRegion(26);
 				scene->_sceneMode = 9007;
 				scene->setAction(&scene->_sequenceManager1, scene, 9007, &BF_GLOBALS._player, &scene->_door, this, NULL);
 			}
@@ -488,7 +488,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._v4CEC0 == 2)
 		_gate.setPosition(Common::Point(758, 127));
 	else {
-		BF_GLOBALS._walkRegions.proc1(24);
+		BF_GLOBALS._walkRegions.disableRegion(24);
 		_gate.setPosition(Common::Point(804, 132));
 	}
 
@@ -515,7 +515,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 	_door._flag = 1;
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 880) || (BF_GLOBALS._sceneManager._previousScene != 910)) {
-		BF_GLOBALS._walkRegions.proc1(26);
+		BF_GLOBALS._walkRegions.disableRegion(26);
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS._bookmark == bFinishedWGreen) {
 			_sceneMode = 9013;
@@ -572,7 +572,7 @@ void Scene900::signal() {
 		BF_GLOBALS._sceneManager.changeScene(910);
 		break;
 	case 3:
-		BF_GLOBALS._walkRegions.proc1(24);
+		BF_GLOBALS._walkRegions.disableRegion(24);
 		_sceneMode = 9004;
 		setAction(&_sequenceManager1, this, 9006, &BF_GLOBALS._player, &_gate, NULL);
 		break;
@@ -589,7 +589,7 @@ void Scene900::signal() {
 		BF_GLOBALS._sceneManager.changeScene(880);
 		break;
 	case 9002:
-		BF_GLOBALS._walkRegions.proc1(26);
+		BF_GLOBALS._walkRegions.disableRegion(26);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9004:
@@ -606,7 +606,7 @@ void Scene900::signal() {
 			BF_GLOBALS._player.enableControl();
 		break;
 	case 9006:
-		BF_GLOBALS._walkRegions.proc1(24);
+		BF_GLOBALS._walkRegions.disableRegion(24);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9007:
@@ -1051,8 +1051,8 @@ bool Scene910::Forbes::startAction(CursorType action, Event &event) {
 
 	if (action == CURSOR_TALK) {
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._walkRegions.proc2(1);
-		BF_GLOBALS._walkRegions.proc2(16);
+		BF_GLOBALS._walkRegions.enableRegion(1);
+		BF_GLOBALS._walkRegions.enableRegion(16);
 		scene->_sceneMode = 9140;
 		scene->setAction(&scene->_sequenceManager1, scene, 9140, &scene->_forbes, &BF_GLOBALS._player, &scene->_lyle, NULL);
 		return true;
@@ -2126,10 +2126,10 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_lyle._field90 = 1;
 		_lyle.setDetails(910, 69, 70 ,71 , 5, &_item4);
 	
-		BF_GLOBALS._walkRegions.proc1(15);
-		BF_GLOBALS._walkRegions.proc1(16);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(10);
+		BF_GLOBALS._walkRegions.disableRegion(15);
+		BF_GLOBALS._walkRegions.disableRegion(16);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(10);
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			BF_GLOBALS._player.setVisage(1911);
 			BF_GLOBALS._player.animate(ANIM_MODE_NONE, 0, NULL);
@@ -2202,14 +2202,14 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		_fakeWall.setPosition(Common::Point(292, 107));
 		if (BF_GLOBALS._v4CECC != 2)
 			_yellowCord.setPosition(Common::Point(288, 57));
-		BF_GLOBALS._walkRegions.proc1(10);
+		BF_GLOBALS._walkRegions.disableRegion(10);
 	} else {
 		_object5.setFrame(6);
 		_fakeWall.setPosition(Common::Point(295, 20));
 		_fakeWall.hide();
 		if (BF_GLOBALS._v4CECC != 2)
 			_yellowCord.setPosition(Common::Point(291, -30));
-		BF_GLOBALS._walkRegions.proc1(10);
+		BF_GLOBALS._walkRegions.disableRegion(10);
 	}
 
 	if (BF_GLOBALS._v4CECE[17] != 0) {
@@ -2315,8 +2315,8 @@ void Scene910::signal() {
 		_sceneMode = 10;
 		addFader((const byte *)&black, 2, this);
 		BF_GLOBALS._v4CEE2 = 1;
-		BF_GLOBALS._walkRegions.proc1(16);
-		BF_GLOBALS._walkRegions.proc1(14);
+		BF_GLOBALS._walkRegions.disableRegion(16);
+		BF_GLOBALS._walkRegions.disableRegion(14);
 		BF_GLOBALS._sceneItems.remove(&_item16);
 		break;
 	case 17:
@@ -2375,7 +2375,7 @@ void Scene910::signal() {
 		break;
 	case 9100:
 		if (BF_GLOBALS._dayNumber == 5)
-			BF_GLOBALS._walkRegions.proc1(1);
+			BF_GLOBALS._walkRegions.disableRegion(1);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9101:
@@ -2490,7 +2490,7 @@ void Scene910::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9120:
-		BF_GLOBALS._walkRegions.proc1(7);
+		BF_GLOBALS._walkRegions.disableRegion(7);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9121:
@@ -2624,7 +2624,7 @@ void Scene910::signal() {
 		_lyle.setAction(&_sequenceManager2, NULL, 9133, &_lyle, NULL);
 		BF_GLOBALS._v4CECE[14] = 3;
 		subE82BD();
-		BF_GLOBALS._walkRegions.proc1(15);
+		BF_GLOBALS._walkRegions.disableRegion(15);
 		break;
 	case 9132:
 		BF_GLOBALS._player.enableControl();
@@ -2644,7 +2644,7 @@ void Scene910::signal() {
 			BF_GLOBALS.setFlag(fGotPointsForCuffingNico);
 		}
 		_lyle.setAction(&_sequenceManager2, NULL, 9131, &_lyle, NULL);
-		BF_GLOBALS._walkRegions.proc2(16);
+		BF_GLOBALS._walkRegions.enableRegion(16);
 		if (BF_GLOBALS._v4CEE2 == 4)
 			BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 0);
 		else
@@ -2655,7 +2655,7 @@ void Scene910::signal() {
 		setAction(&_sequenceManager1, this, 9139, &_forbes, &BF_GLOBALS._player, NULL);
 		break;
 	case 9139:
-		BF_GLOBALS._walkRegions.proc1(4);
+		BF_GLOBALS._walkRegions.disableRegion(4);
 		_field2DE0 = 1;
 		BF_GLOBALS._player.enableControl();
 		break;
@@ -2873,7 +2873,7 @@ void Scene910::subE82BD() {
 	}
 	BF_GLOBALS._v4CEE0 = 1;
 	BF_GLOBALS._player.disableControl();
-	BF_GLOBALS._walkRegions.proc2(10);
+	BF_GLOBALS._walkRegions.enableRegion(10);
 	_sceneMode = 9114;
 	_sound2.play(42);
 	if ((BF_GLOBALS._v4CECC == 0) && (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 910))
@@ -2890,7 +2890,7 @@ void Scene910::subE83E1() {
 			BF_GLOBALS.setFlag(80);
 		}
 		BF_GLOBALS._v4CEE0 = 0;
-		BF_GLOBALS._walkRegions.proc1(10);
+		BF_GLOBALS._walkRegions.disableRegion(10);
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9115;
 		_sound2.play(42);
@@ -2910,7 +2910,7 @@ void Scene910::subE83E1() {
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9120;
 		BF_GLOBALS._player.setAction(&_sequenceManager2, NULL, 9120, &BF_GLOBALS._player, &_lyle, NULL);
-		BF_GLOBALS._walkRegions.proc2(1);
+		BF_GLOBALS._walkRegions.enableRegion(1);
 	}
 }
 

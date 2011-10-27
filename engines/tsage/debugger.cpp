@@ -95,6 +95,10 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 	for (uint regionIndex = 0; regionIndex < g_globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
 		WalkRegion &wr = g_globals->_walkRegions._regionList[regionIndex];
 
+		// Skip the region if it's in the list of explicitly disabled regions
+		if (contains(g_globals->_walkRegions._disabledRegions, (int)regionIndex + 1))
+			continue;
+
 		for (int yp = wr._bounds.top; yp < wr._bounds.bottom; ++yp) {
 			LineSliceSet sliceSet = wr.getLineSlices(yp);
 

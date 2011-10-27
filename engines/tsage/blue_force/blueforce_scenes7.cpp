@@ -208,7 +208,7 @@ void Scene710::signal() {
 		BF_GLOBALS._player.enableControl();
 		BF_INVENTORY.setObjectScene(INV_CRATE1, 1);
 		_stick.remove();
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		break;
 	case 7102:
 		_stick.setPosition(Common::Point(100, 122));
@@ -225,7 +225,7 @@ void Scene710::signal() {
 			_stick._frame = 1;
 		}
 		_v1D62 = 1;
-		BF_GLOBALS._walkRegions.proc1(2);
+		BF_GLOBALS._walkRegions.disableRegion(2);
 		if ((_v1D68 != 0) && (_sceneMode != 0))
 			BF_GLOBALS._player.enableControl();
 		break;
@@ -244,7 +244,7 @@ void Scene710::signal() {
 	case 7104:
 		_sceneMode = 7102;
 		setAction(&_sequenceManager1, this, 7102, &_dog, NULL);
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		break;
 	case 7106:
 		BF_GLOBALS._sound1.fadeOut2(NULL);

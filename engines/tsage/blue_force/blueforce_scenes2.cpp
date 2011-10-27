@@ -937,9 +937,9 @@ void Scene270::postInit(SceneObjectList *OwnerList) {
 				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 2) &&
 				(BF_INVENTORY.getObjectScene(INV_BASEBALL_CARD) != 1)) ||
 			((BF_GLOBALS._dayNumber == 3) && BF_GLOBALS.getFlag(fGotGreen355fTalkedToGrannyDay3))) {
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 
 		_grandma.postInit();
 		_grandma.setVisage(274);
@@ -1142,9 +1142,9 @@ void Scene270::signal() {
 			&_lyle, &_grandma, NULL);
 		break;
 	case 2718:
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 
 		_field219A = 1;
 		BF_GLOBALS._bookmark = bTalkedToGrannyAboutSkipsCard;
@@ -1450,9 +1450,9 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 180:
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 
 		BF_GLOBALS._player.setVisage(151);
 		BF_GLOBALS._player.setPosition(Common::Point(348, 151));
@@ -1481,9 +1481,9 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 		_object6.postInit();
 		_object6.hide();
 
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 
 		_object12.postInit();
 		_object12.setVisage(274);
@@ -1509,9 +1509,9 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 		_object7.setStrip(7);
 		_object7.setPosition(Common::Point(48, 149));
 		
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 		
 		_object12.postInit();
 		_object12.setVisage(276);
@@ -1543,9 +1543,9 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.setFrame(1);
 		BF_GLOBALS._player.setPosition(Common::Point(239, 145));
 
-		BF_GLOBALS._walkRegions.proc1(6);
-		BF_GLOBALS._walkRegions.proc1(14);
-		BF_GLOBALS._walkRegions.proc1(19);
+		BF_GLOBALS._walkRegions.disableRegion(6);
+		BF_GLOBALS._walkRegions.disableRegion(14);
+		BF_GLOBALS._walkRegions.disableRegion(19);
 
 		_object12.postInit();
 		_object12.setVisage(274);

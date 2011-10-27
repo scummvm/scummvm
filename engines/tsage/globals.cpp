@@ -184,6 +184,9 @@ void Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_prevSceneOffset.x); s.syncAsSint16LE(_prevSceneOffset.y);
 	SYNC_POINTER(_scrollFollower);
 	s.syncAsSint32LE(_stripNum);
+
+	if (s.getVersion() >= 8)
+		_walkRegions.synchronize(s);
 }
 
 void Globals::dispatchSound(ASound *obj) {

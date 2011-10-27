@@ -896,24 +896,28 @@ int PlayerMover::calculateRestOfRoute(int *routeList, int srcRegion, int destReg
 		// Check every connected region until we find a route to the destination (or we have no more to check).
 		int bestDistance = 31990;
 		while (((currDest = g_globals->_walkRegions._idxList[srcWalkRegion._idxListIndex + foundIndex]) != 0) && (!foundRoute)) {
-			int newDistance = calculateRestOfRoute(tempList, currDest, destRegion, foundRoute);
+			// Only check the region if it isn't in the list of explicitly disabled regions
+			if (!contains(g_globals->_walkRegions._disabledRegions, (int)currDest)) {
+				int newDistance = calculateRestOfRoute(tempList, currDest, destRegion, foundRoute);
 
-			if ((newDistance <= bestDistance) || foundRoute) {
-				// We found a shorter possible route, or one leading to the destination.
+				if ((newDistance <= bestDistance) || foundRoute) {
+					// We found a shorter possible route, or one leading to the destination.
 
-				// Overwrite the route with this new one.
-				routeList[0] = ourListSize - 1;
+					// Overwrite the route with this new one.
+					routeList[0] = ourListSize - 1;
 
-				for (int i = ourListSize; i <= tempList[0]; ++i) {
-					routeList[i] = tempList[i];
-					++routeList[0];
+					for (int i = ourListSize; i <= tempList[0]; ++i) {
+						routeList[i] = tempList[i];
+						++routeList[0];
+					}
+
+					bestDistance = newDistance;
 				}
 
-				bestDistance = newDistance;
+				// Truncate our local list to the size it was before the call.
+				tempList[0] = ourListSize;
 			}
 
-			// Truncate our local list to the size it was before the call.
-			tempList[0] = ourListSize;
 			++foundIndex;
 		}
 
@@ -3625,6 +3629,39 @@ int WalkRegions::indexOf(const Common::Point &pt, const Common::List<int> *index
 
 	return -1;
 }
+
+void WalkRegions::synchronize(Serializer &s) {
+	// Synchronise the list of disabled regions as a list of values terminated with a '-1'
+	int regionId;
+	if (s.isLoading()) {
+		_disabledRegions.clear();
+
+		s.syncAsSint16LE(regionId);
+		while (regionId != -1) {
+			_disabledRegions.push_back(regionId);
+			s.syncAsSint16LE(regionId);
+		}
+	} else {
+		Common::List<int>::iterator i;
+		for (i = _disabledRegions.begin(); i != _disabledRegions.end(); ++i) {
+			regionId = *i;
+			s.syncAsSint16LE(regionId);
+		}
+
+		regionId = -1;
+		s.syncAsSint16LE(regionId);
+	}
+}
+
+void WalkRegions::disableRegion(int regionId) {
+	if (!contains(_disabledRegions, regionId))
+		_disabledRegions.push_back(regionId);
+}
+
+void WalkRegions::enableRegion(int regionId) {
+	_disabledRegions.remove(regionId);
+}
+
 
 /*--------------------------------------------------------------------------*/
 

@@ -386,8 +386,8 @@ bool Scene690::Object1::startAction(CursorType action, Event &event) {
 
 	if ((action == CURSOR_USE) && (scene->_object2._strip == 1)) {
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._walkRegions.proc2(1);
-		BF_GLOBALS._walkRegions.proc2(6);
+		BF_GLOBALS._walkRegions.enableRegion(1);
+		BF_GLOBALS._walkRegions.enableRegion(6);
 		scene->_sceneMode = 6901;
 		scene->setAction(&scene->_sequenceManager, scene, 6901, &BF_GLOBALS._player,
 			&scene->_object2, &scene->_object1, &scene->_object4, &scene->_object5, NULL);
@@ -500,8 +500,8 @@ void Scene690::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 6903:
-		BF_GLOBALS._walkRegions.proc1(1);
-		BF_GLOBALS._walkRegions.proc1(6);
+		BF_GLOBALS._walkRegions.disableRegion(1);
+		BF_GLOBALS._walkRegions.disableRegion(6);
 		BF_GLOBALS._player.enableControl();
 		break;
 	default:

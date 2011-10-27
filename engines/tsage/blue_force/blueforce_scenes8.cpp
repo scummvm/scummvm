@@ -252,12 +252,12 @@ void Scene800::postInit(SceneObjectList *OwnerList) {
 		_car2.fixPriority(158);
 		BF_GLOBALS._sceneItems.push_back(&_car2);
 
-		BF_GLOBALS._walkRegions.proc1(8);
+		BF_GLOBALS._walkRegions.disableRegion(8);
 	}
 
 	if ((BF_GLOBALS._dayNumber == 4) && (BF_GLOBALS._bookmark < bEndDayThree)) {
 		_car2.remove();
-		BF_GLOBALS._walkRegions.proc2(8);
+		BF_GLOBALS._walkRegions.enableRegion(8);
 	}
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -427,7 +427,7 @@ void Scene810::Action2::signal() {
 		setAction(&scene->_sequenceManager1, this, 8117, &scene->_lyle, &scene->_chair, NULL);
 		break;
 	case 3:
-		BF_GLOBALS._walkRegions.proc2(4);
+		BF_GLOBALS._walkRegions.enableRegion(4);
 		ADD_PLAYER_MOVER_THIS(scene->_lyle, 27, 124);
 		break;
 	case 4:
@@ -454,7 +454,7 @@ void Scene810::Action2::signal() {
 		scene->_stripManager.start(BF_GLOBALS.getFlag(onDuty) ? 8137 : 8112, this);
 		break;
 	case 8:
-		BF_GLOBALS._walkRegions.proc1(13);
+		BF_GLOBALS._walkRegions.disableRegion(13);
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -1172,7 +1172,7 @@ void Scene810::signal() {
 		if (BF_GLOBALS.getFlag(shownFax)) {
 			BF_GLOBALS.setFlag(showMugAround);
 		} else {
-			BF_GLOBALS._walkRegions.proc1(4);
+			BF_GLOBALS._walkRegions.disableRegion(4);
 			BF_GLOBALS._player.enableControl();
 		}
 		break;
@@ -1225,7 +1225,7 @@ void Scene810::signal() {
 		_object5.setFrame(1);
 		break;
 	case 8196:
-		BF_GLOBALS._walkRegions.proc1(4);
+		BF_GLOBALS._walkRegions.disableRegion(4);
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 8198:
@@ -1279,8 +1279,8 @@ void Scene810::dispatch() {
 			} else {
 				BF_GLOBALS.clearFlag(showMugAround);
 				BF_GLOBALS._player.disableControl();
-				BF_GLOBALS._walkRegions.proc2(4);
-				BF_GLOBALS._walkRegions.proc2(13);
+				BF_GLOBALS._walkRegions.enableRegion(4);
+				BF_GLOBALS._walkRegions.enableRegion(13);
 
 				_sceneMode = 8112;
 				setAction(&_sequenceManager1, this, 8112, &BF_GLOBALS._player,  &_lyle, NULL);
@@ -1296,8 +1296,8 @@ void Scene810::dispatch() {
 				setAction(&_sequenceManager1, this, 8100, &BF_GLOBALS._player, NULL);
 			} else {
 				if (BF_GLOBALS.getFlag(fWithLyle)) {
-					BF_GLOBALS._walkRegions.proc2(4);
-					BF_GLOBALS._walkRegions.proc2(13);
+					BF_GLOBALS._walkRegions.enableRegion(4);
+					BF_GLOBALS._walkRegions.enableRegion(13);
 
 					ADD_MOVER_NULL(_lyle, 320, 155);
 				}

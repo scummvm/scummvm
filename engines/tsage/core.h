@@ -807,8 +807,10 @@ public:
 	Common::Array<WRField18> _field18;
 	Common::Array<int> _idxList;
 	Common::Array<int> _idxList2;
+	Common::List<int> _disabledRegions;
 public:
 	WalkRegions() { _resNum = -1; }
+	virtual void synchronize(Serializer &s);
 
 	void clear();
 	void load(int sceneNum);
@@ -817,8 +819,8 @@ public:
 		assert((idx >= 1) && (idx <= (int)_regionList.size()));
 		return _regionList[idx - 1];
 	}
-	void proc1(int v) { warning("TODO: WalkRegions::proc1"); }
-	void proc2(int v) { warning("TODO: WalkRegions::proc2"); }
+	void disableRegion(int regionId);
+	void enableRegion(int regionId);
 };
 
 /*--------------------------------------------------------------------------*/
