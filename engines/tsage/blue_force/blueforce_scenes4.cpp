@@ -118,8 +118,6 @@ void Scene410::Action3::signal() {
 void Scene410::Action4::signal() {
 	Scene410 *scene = (Scene410 *)BF_GLOBALS._sceneManager._scene;
 
-	warning("Action4");
-
 	if (BF_GLOBALS.getFlag(fTalkedDriverNoBkup)) {
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 2;
