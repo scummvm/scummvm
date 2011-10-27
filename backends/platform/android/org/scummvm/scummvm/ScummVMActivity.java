@@ -134,6 +134,7 @@ public class ScummVMActivity extends Activity {
 		// world-readable and don't get deleted on uninstall.
 		String savePath = Environment.getExternalStorageDirectory() + "/ScummVM/Saves/";
 		File saveDir = new File(savePath);
+		saveDir.mkdirs();
 		if (!saveDir.isDirectory()) {
 			// If it doesn't work, resort to the internal app path.
 			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
