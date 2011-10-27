@@ -223,26 +223,26 @@ AnimatedSprite::AnimatedSprite(NeverhoodEngine *vm, uint32 fileHash, int surface
 	createSurface1(fileHash, surfacePriority);
 	_x = x;
 	_y = y;
-	setFileHash(fileHash, 0, -1);
+	startAnimation(fileHash, 0, -1);
 }
 
 void AnimatedSprite::init() {
 	_name = "AnimatedSprite"; 
-	_counter = 0;
-	_fileHash1 = 0;
+	_currFrameTicks = 0;
+	_newAnimFileHash = 0;
 	_deltaX = 0;
 	_deltaY = 0;
-	_fileHash2 = 0;
+	_nextAnimFileHash = 0;
 	// TODO _callbackList = 0;
-	_frameIndex3 = 0;
-	_frameIndex = 0;
-	_hashListIndex = -1;
+	_plFirstFrameIndex = 0;
+	_currFrameIndex = 0;
+	_currStickFrameIndex = -1;
 	_finalizeStateCb = NULL;
 	_currStateCb = NULL;
 	_nextStateCb = NULL;
-	_newHashListIndex = -1;
-	_fileHash4 = 0;
-	_flag = false;
+	_newStickFrameIndex = -1;
+	_newStickFrameHash = 0;
+	_frameChanged = false;
 	_replOldColor = 0;
 	_replNewColor = 0;
 	_animResource.setReplEnabled(false);
@@ -285,24 +285,22 @@ void AnimatedSprite::clearRepl() {
 
 void AnimatedSprite::updateAnim() {
 
-	_flag = false;
+	_frameChanged = false;
 
-	if (_fileHash1 == 0) {
-		if (_newHashListIndex != -1) {
-			_hashListIndex = _newHashListIndex == -2 ? _animResource.getFrameCount() - 1 : _newHashListIndex;
-			_newHashListIndex = -1;
-		} else if (_fileHash4 != 0) {
-			_hashListIndex = MAX<int16>(0, _animResource.getFrameIndex(_fileHash4));
-			_fileHash4 = 0;
+	if (_newAnimFileHash == 0) {
+		if (_newStickFrameIndex != -1) {
+			_currStickFrameIndex = _newStickFrameIndex == -2 ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
+			_newStickFrameIndex = -1;
+		} else if (_newStickFrameHash != 0) {
+			_currStickFrameIndex = MAX<int16>(0, _animResource.getFrameIndex(_newStickFrameHash));
+			_newStickFrameHash = 0;
 		}
-		if (_fileHash1 == 0 && _frameIndex != _hashListIndex) {
-			if (_counter != 0)
-				_counter--;
-			if (_counter == 0 && _animResource.getFrameCount() != 0) {
+		if (_newAnimFileHash == 0 && _currFrameIndex != _currStickFrameIndex) {
+			if (_currFrameTicks != 0 && (--_currFrameTicks == 0) && _animResource.getFrameCount() != 0) {
 				
-				if (_fileHash2 != 0) {
-					if (_animResource.loadInternal(_fileHash2)) {
-						_currAnimFileHash = _fileHash2;
+				if (_nextAnimFileHash != 0) {
+					if (_animResource.loadInternal(_nextAnimFileHash)) {
+						_currAnimFileHash = _nextAnimFileHash;
 					} else {
 						_animResource.loadInternal(calcHash("sqDefault"));
 						_currAnimFileHash = 0;
@@ -310,30 +308,30 @@ void AnimatedSprite::updateAnim() {
 					if (_replOldColor != _replNewColor) {
 						_animResource.setRepl(_replOldColor, _replNewColor);	
 					}
-					_fileHash2 = 0;
+					_nextAnimFileHash = 0;
 					if (_animStatus != 0) {
-						_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
-						_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
+						_currFrameIndex = _plFirstFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plFirstFrameHash)) : 0;
+						_lastFrameIndex = _plLastFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plLastFrameHash)) : _animResource.getFrameCount() - 1;
 					} else {
-						_frameIndex = _frameIndex3 != -1 ? _frameIndex3 : _animResource.getFrameCount() - 1;
-						_frameIndex2 = _frameIndex4 != -1 ? _frameIndex4 : _animResource.getFrameCount() - 1; 
+						_currFrameIndex = _plFirstFrameIndex != -1 ? _plFirstFrameIndex : _animResource.getFrameCount() - 1;
+						_lastFrameIndex = _plLastFrameIndex != -1 ? _plLastFrameIndex : _animResource.getFrameCount() - 1; 
 					}
 				} else {
 					updateFrameIndex();
 				}
-				if (_fileHash1 == 0)
+				if (_newAnimFileHash == 0)
 					updateFrameInfo();
 			}				
 		}
 	}
 	
-	if (_fileHash1 != 0) {
+	if (_newAnimFileHash != 0) {
 		if (_animStatus == 2) {
-			_hashListIndex = _frameIndex;
+			_currStickFrameIndex = _currFrameIndex;
 		} else {
 			if (_animStatus == 1) {
-				if (_animResource.loadInternal(_fileHash1)) {
-					_currAnimFileHash = _fileHash1;
+				if (_animResource.loadInternal(_newAnimFileHash)) {
+					_currAnimFileHash = _newAnimFileHash;
 				} else {
 					_animResource.loadInternal(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
@@ -341,12 +339,12 @@ void AnimatedSprite::updateAnim() {
 				if (_replOldColor != _replNewColor) {
 					_animResource.setRepl(_replOldColor, _replNewColor);	
 				}
-				_fileHash1 = 0;
-				_frameIndex = _fileHash6 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash6)) : 0;
-				_frameIndex2 = _fileHash5 != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_fileHash5)) : _animResource.getFrameCount() - 1;
+				_newAnimFileHash = 0;
+				_currFrameIndex = _plFirstFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plFirstFrameHash)) : 0;
+				_lastFrameIndex = _plLastFrameHash != 0 ? MAX<int16>(0, _animResource.getFrameIndex(_plLastFrameHash)) : _animResource.getFrameCount() - 1;
 			} else {
-				if (_animResource.loadInternal(_fileHash1)) {
-					_currAnimFileHash = _fileHash1;
+				if (_animResource.loadInternal(_newAnimFileHash)) {
+					_currAnimFileHash = _newAnimFileHash;
 				} else {
 					_animResource.loadInternal(calcHash("sqDefault"));
 					_currAnimFileHash = 0;
@@ -354,19 +352,19 @@ void AnimatedSprite::updateAnim() {
 				if (_replOldColor != _replNewColor) {
 					_animResource.setRepl(_replOldColor, _replNewColor);	
 				}
-				_fileHash1 = 0;
-				_frameIndex = _frameIndex3 != -1 ? _frameIndex3 : _animResource.getFrameCount() - 1;
-				_frameIndex2 = _frameIndex4 != -1 ? _frameIndex4 : _animResource.getFrameCount() - 1;
+				_newAnimFileHash = 0;
+				_currFrameIndex = _plFirstFrameIndex != -1 ? _plFirstFrameIndex : _animResource.getFrameCount() - 1;
+				_lastFrameIndex = _plLastFrameIndex != -1 ? _plLastFrameIndex : _animResource.getFrameCount() - 1;
 			}
 			updateFrameInfo();
 		}
 
-		if (_newHashListIndex != -1) {
-			_hashListIndex = _newHashListIndex == -2 ? _animResource.getFrameCount() - 1 : _newHashListIndex;
-			_newHashListIndex = -1;
-		} else if (_fileHash4 != 0) {
-			_hashListIndex = MAX<int16>(0, _animResource.getFrameIndex(_fileHash4));
-			_fileHash4 = 0;
+		if (_newStickFrameIndex != -1) {
+			_currStickFrameIndex = _newStickFrameIndex == -2 ? _animResource.getFrameCount() - 1 : _newStickFrameIndex;
+			_newStickFrameIndex = -1;
+		} else if (_newStickFrameHash != 0) {
+			_currStickFrameIndex = MAX<int16>(0, _animResource.getFrameIndex(_newStickFrameHash));
+			_newStickFrameHash = 0;
 		}
 
 	}
@@ -391,7 +389,7 @@ void AnimatedSprite::updatePosition() {
 	}
 
 	if (_needRefresh) {
-		_surface->drawAnimResource(_animResource, _frameIndex, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
+		_surface->drawAnimResource(_animResource, _currFrameIndex, _doDeltaX, _doDeltaY, _drawRect.width, _drawRect.height);
 		_needRefresh = false;
 	}
 
@@ -399,46 +397,40 @@ void AnimatedSprite::updatePosition() {
 
 void AnimatedSprite::updateFrameIndex() {
 	if (!_playBackwards) {
-		if (_frameIndex < _frameIndex2) {
-			_frameIndex++;
+		if (_currFrameIndex < _lastFrameIndex) {
+			_currFrameIndex++;
 		} else {
 			// Inform self about end of current animation
 			// The caller can then e.g. set a new animation fileHash
 			sendMessage(this, 0x3002, 0);
-			if (_fileHash1 == 0)
-				_frameIndex = 0;
+			if (_newAnimFileHash == 0)
+				_currFrameIndex = 0;
 		}
 	} else {
-		if (_frameIndex > 0) {
-			_frameIndex--;
+		if (_currFrameIndex > 0) {
+			_currFrameIndex--;
 		} else {
 			sendMessage(this, 0x3002, 0);
-			if (_fileHash1 == 0)
-				_frameIndex = _frameIndex2;
+			if (_newAnimFileHash == 0)
+				_currFrameIndex = _lastFrameIndex;
 		}
 	}
 }
 
 void AnimatedSprite::updateFrameInfo() {
 	debug(8, "AnimatedSprite::updateFrameInfo()");
-
-	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_frameIndex);
-	
-	_flag = true;
+	const AnimFrameInfo &frameInfo = _animResource.getFrameInfo(_currFrameIndex);
+	_frameChanged = true;
 	_drawRect = frameInfo.rect;
 	_deltaX = frameInfo.deltaX;
 	_deltaY = frameInfo.deltaY;
 	_deltaRect = frameInfo.deltaRect;
-	_counter = frameInfo.counter;
-
+	_currFrameTicks = frameInfo.counter;
 	processDelta();
-
 	_needRefresh = true;
-
 	if (frameInfo.frameHash != 0) {
 		sendMessage(this, 0x100D, frameInfo.frameHash);
 	}
-
 }
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
@@ -446,44 +438,44 @@ void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height);
 }
 
-void AnimatedSprite::setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4) {
-	debug(2, "AnimatedSprite::setFileHash(%08X, %d, %d)", fileHash, frameIndex3, frameIndex4);
-	_fileHash1 = fileHash;
-	_frameIndex3 = frameIndex3;
-	_frameIndex4 = frameIndex4;
-	_fileHash4 = 0;
+void AnimatedSprite::startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex) {
+	debug(2, "AnimatedSprite::startAnimation(%08X, %d, %d)", fileHash, plFirstFrameIndex, plLastFrameIndex);
+	_newAnimFileHash = fileHash;
+	_plFirstFrameIndex = plFirstFrameIndex;
+	_plLastFrameIndex = plLastFrameIndex;
+	_newStickFrameHash = 0;
 	_animStatus = 0;
 	_playBackwards = false;
-	_newHashListIndex = -1;
-	_hashListIndex = -1;
+	_newStickFrameIndex = -1;
+	_currStickFrameIndex = -1;
 }
 
 void AnimatedSprite::stopAnimation() {
-	_fileHash1 = 1;
+	_newAnimFileHash = 1;
 	_animStatus = 2;
 }
 
-void AnimatedSprite::setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5) {
-	debug(2, "AnimatedSprite::setFileHash2(%08X, %08X, %08X)", fileHash, fileHash6, fileHash5);
-	_fileHash1 = fileHash;
-	_fileHash6 = fileHash6;
-	_fileHash5 = fileHash5;
-	_fileHash4 = 0;
+void AnimatedSprite::startAnimationByHash(uint32 fileHash, uint32 plFirstFrameHash, uint32 plLastFrameHash) {
+	debug(2, "AnimatedSprite::startAnimationByHash(%08X, %08X, %08X)", fileHash, plFirstFrameHash, plLastFrameHash);
+	_newAnimFileHash = fileHash;
+	_plFirstFrameHash = plFirstFrameHash;
+	_plLastFrameHash = plLastFrameHash;
+	_newStickFrameHash = 0;
 	_animStatus = 1;
 	_playBackwards = false;
-	_newHashListIndex = -1;
-	_hashListIndex = -1;
+	_newStickFrameIndex = -1;
+	_currStickFrameIndex = -1;
 }
 
-void AnimatedSprite::setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5) {
-	_fileHash2 = fileHash2;
-	_fileHash6 = fileHash6;
-	_fileHash5 = fileHash5;
-	_fileHash4 = 0;
+void AnimatedSprite::nextAnimationByHash(uint32 fileHash2, uint32 plFirstFrameHash, uint32 plLastFrameHash) {
+	_nextAnimFileHash = fileHash2;
+	_plFirstFrameHash = plFirstFrameHash;
+	_plLastFrameHash = plLastFrameHash;
+	_newStickFrameHash = 0;
 	_animStatus = 1;
 	_playBackwards = false;
-	_newHashListIndex = -1;
-	_hashListIndex = -1;
+	_newStickFrameIndex = -1;
+	_currStickFrameIndex = -1;
 }
 
 void AnimatedSprite::setFinalizeState(AnimationCb finalizeStateCb) {
@@ -505,7 +497,7 @@ void AnimatedSprite::gotoState(AnimationCb currStateCb) {
 		(this->*_currStateCb)();
 }
 
-void AnimatedSprite::removeCallbacks() {
+void AnimatedSprite::gotoNextState() {
 	if (_finalizeStateCb) {
 		AnimationCb cb = _finalizeStateCb;
 		_finalizeStateCb = NULL;

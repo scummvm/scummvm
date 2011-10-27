@@ -200,7 +200,7 @@ Class521::Class521(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	_pathPoints = NULL;
 	_rectList = NULL;
 	
-	setFileHash(0xD4220027, 0, -1);
+	startAnimation(0xD4220027, 0, -1);
 	setDoDeltaX(getGlobalVar(0x21E60190));
 
 }
@@ -372,11 +372,11 @@ uint32 Class521::handleMessage45CC30(int messageNum, const MessageParam &param, 
 	switch (messageNum) {
 	case 0x100D:
 		if (_flag10F && param.asInteger() == 0x025424A2) {
-			removeCallbacks();
+			gotoNextState();
 		}
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -408,7 +408,7 @@ void Class521::sub45CD00() {
 	_rectList = NULL;
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	NextState(&Class521::sub45CFE0);
-	setFileHash(0x35698F78, 0, -1);
+	startAnimation(0x35698F78, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update45C790);
 	FinalizeState(&Class521::sub45D040);
@@ -436,17 +436,17 @@ void Class521::sub45CDC0() {
 
 void Class521::sub45CE10() {
 	if (_flag10E && !_flag113 && !_flag10F) {
-		removeCallbacks();
+		gotoNextState();
 		_flag114 = 0;
 		_flag113 = 1;
-		setFileHash(0x192ADD30, 0, -1);
+		startAnimation(0x192ADD30, 0, -1);
 		SetMessageHandler(&Class521::handleMessage45CC30);
 		SetUpdateHandler(&Class521::update);
 		NextState(&Class521::sub45CFE0);
 	} else if (!_flag10E && _steps && _flag113) {
-		removeCallbacks();
+		gotoNextState();
 		_flag113 = 0;
-		setFileHash(0x9966B138, 0, -1);
+		startAnimation(0x9966B138, 0, -1);
 		SetMessageHandler(&Class521::handleMessage45CC30);
 		SetUpdateHandler(&Class521::update);
 		NextState(&Class521::sub45D100);
@@ -464,10 +464,10 @@ void Class521::sub45CE10() {
 			_flag11A = index < _rectList->size();
 		}
 		if (flag) {
-			removeCallbacks();
+			gotoNextState();
 			sub45D0A0();
 		} else if (_newMoveDirection != _currMoveDirection && _flag114 && !_flag10F) {
-			removeCallbacks();
+			gotoNextState();
 			_currMoveDirection = _newMoveDirection;
 			sub45D100();
 		}
@@ -475,21 +475,21 @@ void Class521::sub45CE10() {
 }
 
 void Class521::sub45CF80() {
-	setFileHash(0xA86A9538, 0, -1);
+	startAnimation(0xA86A9538, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	NextState(&Class521::sub45CFE0);
 }
 
 void Class521::sub45CFB0() {
-	setFileHash(0xA86A9538, -1, -1);
+	startAnimation(0xA86A9538, -1, -1);
 	_playBackwards = true;
 	SetMessageHandler(&Class521::handleMessage45CCA0);
 	SetUpdateHandler(&Class521::update);
 }
 
 void Class521::sub45CFE0() {
-	setFileHash(0x35698F78, 0, -1);
+	startAnimation(0x35698F78, 0, -1);
 	SetMessageHandler(&Class521::handleMessage);
 	SetUpdateHandler(&Class521::update45C790);
 	FinalizeState(&Class521::sub45D040);
@@ -505,7 +505,7 @@ void Class521::sub45D040() {
 }
 
 void Class521::sub45D050() {
-	setFileHash(0xB579A77C, 0, -1);
+	startAnimation(0xB579A77C, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	NextState(&Class521::sub45CFE0);
@@ -515,8 +515,8 @@ void Class521::sub45D050() {
 
 void Class521::sub45D0A0() {
 	_flag10F = 1;
-	removeCallbacks();
-	setFileHash(0x9C220DA4, 0, -1);
+	gotoNextState();
+	startAnimation(0x9C220DA4, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	FinalizeState(&Class521::sub45D0E0);
@@ -531,21 +531,21 @@ void Class521::sub45D0E0() {
 void Class521::sub45D100() {
 	_flag114 = 1;
 	if (_currMoveDirection == 1) {
-		setFileHash(0xD4AA03A4, 0, -1);
+		startAnimation(0xD4AA03A4, 0, -1);
 	} else if (_currMoveDirection == 3) {
-		setFileHash(0xD00A1364, 0, -1);
+		startAnimation(0xD00A1364, 0, -1);
 	} else if ((_currMoveDirection == 2 && _doDeltaX) || (_currMoveDirection == 4 && !_doDeltaX)) {
 		sub45D180();
 	} else {
-		setFileHash(0xD4220027, 0, -1);
+		startAnimation(0xD4220027, 0, -1);
 	}
 	setGlobalVar(0x21E60190, _doDeltaX ? 1 : 0);
 }
 
 void Class521::sub45D180() {
 	_flag10F = 1;
-	removeCallbacks();
-	setFileHash(0xF46A0324, 0, -1);
+	gotoNextState();
+	startAnimation(0xF46A0324, 0, -1);
 	_value112 = 0;
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
@@ -573,9 +573,9 @@ void Class521::moveToNextPoint() {
 				sub45D350();
 		} else {
 			if (_steps == 0) {
-				removeCallbacks();
+				gotoNextState();
 				_flag113 = 0;
-				setFileHash(0x9966B138, 0, -1);
+				startAnimation(0x9966B138, 0, -1);
 				SetMessageHandler(&Class521::handleMessage45CC30);
 				SetUpdateHandler(&Class521::update);
 				NextState(&Class521::sub45D100);
@@ -588,19 +588,19 @@ void Class521::moveToNextPoint() {
 }
 
 void Class521::sub45D350() {
-	removeCallbacks();
+	gotoNextState();
 	_flag10F = 1;
 	_flag10E = 1;
-	setFileHash(0x192ADD30, 0, -1);
+	startAnimation(0x192ADD30, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	NextState(&Class521::sub45D390);
 }
 
 void Class521::sub45D390() {
-	removeCallbacks();
+	gotoNextState();
 	_flag10F = 1;
-	setFileHash(0xF46A0324, 0, -1);
+	startAnimation(0xF46A0324, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	FinalizeState(&Class521::sub45D620);
@@ -635,9 +635,9 @@ void Class521::moveToPrevPoint() {
 				sub45D580();
 		} else {
 			if (_steps == 0) {
-				removeCallbacks();
+				gotoNextState();
 				_flag113 = 0;
-				setFileHash(0x9966B138, 0, -1);
+				startAnimation(0x9966B138, 0, -1);
 				SetMessageHandler(&Class521::handleMessage45CC30);
 				SetUpdateHandler(&Class521::update);
 				NextState(&Class521::sub45D100);
@@ -653,7 +653,7 @@ void Class521::sub45D580() {
 	_flag10F = 1;
 	_flag10E = 1;
 	FinalizeState(NULL);
-	setFileHash(0x192ADD30, 0, -1);
+	startAnimation(0x192ADD30, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	NextState(&Class521::sub45D5D0);
@@ -662,7 +662,7 @@ void Class521::sub45D580() {
 void Class521::sub45D5D0() {
 	_flag10F = 1;
 	FinalizeState(NULL);
-	setFileHash(0xF46A0324, 0, -1);
+	startAnimation(0xF46A0324, 0, -1);
 	SetMessageHandler(&Class521::handleMessage45CC30);
 	SetUpdateHandler(&Class521::update);
 	FinalizeState(&Class521::sub45D620);
@@ -986,7 +986,7 @@ uint32 Class546::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		sub44D710();
@@ -999,7 +999,7 @@ uint32 Class546::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class546::sub44D710() {
-	setFileHash(0x08C80144, 0, -1);
+	startAnimation(0x08C80144, 0, -1);
 	setVisible(true);
 	NextState(&Class546::sub44D760);
 	_soundResource.play(calcHash("fxDoorOpen23"));
@@ -1012,7 +1012,7 @@ void Class546::sub44D760() {
 }
 
 void Class546::sub44D790() {
-	setFileHash(0x08C80144, -1, -1);
+	startAnimation(0x08C80144, -1, -1);
 	setVisible(true);
 	NextState(&Class546::sub44D7F0);
 	_soundResource.play(calcHash("fxDoorClose23"));
@@ -1027,15 +1027,15 @@ Class547::Class547(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 1100, x, y) {
 
 	setDoDeltaX(1);
-	setFileHash(0x1209E09F, 1, -1);
-	_newHashListIndex = 1;
+	startAnimation(0x1209E09F, 1, -1);
+	_newStickFrameIndex = 1;
 }
 
 Class548::Class548(NeverhoodEngine *vm, int16 x, int16 y)
 	: AnimatedSprite(vm, 0x1209E09F, 100, x, y) {
 
 	setDoDeltaX(1);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 Class518::Class518(NeverhoodEngine *vm, Class521 *class521)
@@ -1043,8 +1043,8 @@ Class518::Class518(NeverhoodEngine *vm, Class521 *class521)
 	
 	SetUpdateHandler(&Class518::update);
 	createSurface1(0x60281C10, 150);
-	setFileHash(0x60281C10, -1, -1);
-	_newHashListIndex = -2;
+	startAnimation(0x60281C10, -1, -1);
+	_newStickFrameIndex = -2;
 }
 
 void Class518::update() {

@@ -639,7 +639,7 @@ AsScene3009VerticalIndicator::AsScene3009VerticalIndicator(NeverhoodEngine *vm, 
 }
 
 void AsScene3009VerticalIndicator::show() {
-	setFileHash(0xC2463913, 0, -1);
+	startAnimation(0xC2463913, 0, -1);
 	setVisible(true);
 	updatePosition();
 	_enabled = true;
@@ -705,7 +705,7 @@ void AsScene3009HorizontalIndicator::suMoveRight() {
 }
 
 void AsScene3009HorizontalIndicator::show() {
-	setFileHash(0xC0C12954, 0, -1);
+	startAnimation(0xC0C12954, 0, -1);
 	setVisible(true);
 	updatePosition();
 	_enabled = true;
@@ -729,8 +729,8 @@ AsScene3009Symbol::AsScene3009Symbol(NeverhoodEngine *vm, Scene3009 *parentScene
 	_x = kAsScene3009SymbolPoints[_index].x;
 	_y = kAsScene3009SymbolPoints[_index].y;
 	createSurface1(kAsScene3009SymbolFileHashes[_index / 3], 1200);
-	setFileHash(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
-	_newHashListIndex = _symbolIndex;
+	startAnimation(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+	_newStickFrameIndex = _symbolIndex;
 	_needRefresh = true;
 	updatePosition();
 	SetUpdateHandler(&AnimatedSprite::update);
@@ -756,8 +756,8 @@ uint32 AsScene3009Symbol::handleMessage(int messageNum, const MessageParam &para
 			else
 				_symbolIndex--;
 		}
-		setFileHash(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
-		_newHashListIndex = _symbolIndex;
+		startAnimation(kAsScene3009SymbolFileHashes[_index / 3], _symbolIndex, -1);
+		_newStickFrameIndex = _symbolIndex;
 		setSubVar(0x00000914, _index, _symbolIndex);
 		if (_index / 3 == 0) {
 			sendMessage(_parentScene, 0x2001, 0);
@@ -1162,11 +1162,11 @@ AsScene3010DeadBolt::AsScene3010DeadBolt(NeverhoodEngine *vm, Scene *parentScene
 
 	if (getSubVar(0x14800353, kScene3010ButtonNameHashes[_boltIndex])) {
 		createSurface1(kAsScene3010DeadBoltFileHashes1[_boltIndex], 1200);
-		setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
+		startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 		_soundResource1.load(0x46005BC4);
 	} else {
 		createSurface1(kAsScene3010DeadBoltFileHashes2[_boltIndex], 1200);
-		setFileHash(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
+		startAnimation(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
 		_soundResource1.load(0x420073DC);
 		_soundResource2.load(0x420073DC);
 	}
@@ -1193,7 +1193,7 @@ uint32 AsScene3010DeadBolt::hmAnimation(int messageNum, const MessageParam &para
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -1210,10 +1210,10 @@ void AsScene3010DeadBolt::unlock(bool skipAnim) {
 	if (!_unlocked) {
 		setVisible(true);
 		if (skipAnim) {
-			setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], -1, 0);
-			_newHashListIndex = -2;
+			startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], -1, 0);
+			_newStickFrameIndex = -2;
 		} else {
-			setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
+			startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 			SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 			FinalizeState(&AsScene3010DeadBolt::stIdleMessage);
 			NextState(&AsScene3010DeadBolt::stIdle);
@@ -1234,7 +1234,7 @@ void AsScene3010DeadBolt::lock() {
 	if (!_locked) {
 		_locked = true;
 		setVisible(true);
-		setFileHash(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
+		startAnimation(kAsScene3010DeadBoltFileHashes2[_boltIndex], 0, -1);
 		SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 		FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
 		NextState(&AsScene3010DeadBolt::stIdle);
@@ -1253,7 +1253,7 @@ void AsScene3010DeadBolt::setCountdown(int count) {
 
 void AsScene3010DeadBolt::stDisabled() {
 	setVisible(true);
-	setFileHash(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
+	startAnimation(kAsScene3010DeadBoltFileHashes1[_boltIndex], 0, -1);
 	SetMessageHandler(&AsScene3010DeadBolt::hmAnimation);
 	FinalizeState(&AsScene3010DeadBolt::stDisabledMessage);
 	NextState(&AsScene3010DeadBolt::stIdle);
@@ -1483,7 +1483,7 @@ AsScene3011Symbol::AsScene3011Symbol(NeverhoodEngine *vm, int index, bool flag)
 
 void AsScene3011Symbol::show(bool flag) {
 	_flag2 = flag;
-	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
+	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
 	setVisible(true);
 	if (flag) {
 		_soundResource2.play();
@@ -1508,7 +1508,7 @@ void AsScene3011Symbol::stopSound() {
 void AsScene3011Symbol::change(int index, bool flag) {
 	_index = index;
 	_flag2 = flag;
-	setFileHash(kAsScene3011SymbolFileHashes[_index], 0, -1);
+	startAnimation(kAsScene3011SymbolFileHashes[_index], 0, -1);
 	setVisible(true);
 	if (flag) {
 		_soundResource2.play();

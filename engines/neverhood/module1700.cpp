@@ -259,10 +259,10 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004B6B40);
-			_klayman->setKlaymanTable3();
+			_klayman->setKlaymanIdleTable3();
 		} else {
 			setRectList(0x004B6B30);
-			_klayman->setKlaymanTable1();
+			_klayman->setKlaymanIdleTable1();
 		}
 		break;
 	case 0x4826:

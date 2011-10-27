@@ -200,8 +200,8 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 			_y = kAsScene1907SymbolPluggedInDownPositions[_currPositionIndex].y;
 		}
 		createSurface1(kAsScene1907SymbolFileHashes[_elementIndex], 1000 + _currPositionIndex);
-		setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);
+		_newStickFrameIndex = -2;
 	} else {
 		_isPluggedIn = false;
 		_currPositionIndex = positionIndex;
@@ -212,8 +212,8 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 		_x = kAsScene1907SymbolGroundPositions[_currPositionIndex].x;
 		_y = kAsScene1907SymbolGroundPositions[_currPositionIndex].y;
 		createSurface1(kAsScene1907SymbolFileHashes[_elementIndex], 1000 + _currPositionIndex);
-		setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
-		_newHashListIndex = 0;
+		startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
+		_newStickFrameIndex = 0;
 	}
 	_deltaRect.set(0, 0, 80, 80);
 	Sprite::processDelta();
@@ -249,7 +249,7 @@ uint32 AsScene1907Symbol::hmTryToPlugIn(int messageNum, const MessageParam &para
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -345,7 +345,7 @@ void AsScene1907Symbol::tryToPlugIn() {
 	_newPositionIndex = _parentScene->getNextPosition();
 	_parentScene->setPositionFree(_currPositionIndex, true);
 	sendMessage(_parentScene, 0x1022, 1100 + _newPositionIndex);
-	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
 	SetUpdateHandler(&AsScene1907Symbol::update);
 	SetMessageHandler(&AsScene1907Symbol::hmTryToPlugIn);
 	SetSpriteCallback(&AsScene1907Symbol::suTryToPlugIn);
@@ -371,9 +371,9 @@ void AsScene1907Symbol::fallOff(int newPositionIndex, int fallOffDelay) {
 	_y = kAsScene1907SymbolPluggedInPositions[_currPositionIndex].y;
 	_someX = _x;
 	_someY = _y;
-	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, 0);
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, 0);
 	_playBackwards = true;
-	_newHashListIndex = -2;
+	_newStickFrameIndex = -2;
 	_currStep = 0;
 	_yAccel = 1;
 	SetUpdateHandler(&AsScene1907Symbol::update);
@@ -390,7 +390,7 @@ void AsScene1907Symbol::stFallOffHitGround() {
 	_vm->_collisionMan->addSprite(this);
 	SetSpriteCallback(&AsScene1907Symbol::suFallOffHitGround);
 	NextState(&AsScene1907Symbol::cbFallOffHitGroundEvent);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 	_currStep = 0;
 	_yAccel = 30;
 	_deltaX = (_x - kAsScene1907SymbolGroundPositions[_newPositionIndex].x) / 15;
@@ -405,8 +405,8 @@ void AsScene1907Symbol::cbFallOffHitGroundEvent() {
 	_currPositionIndex = _newPositionIndex;
 	if (_symbolFlag2)
 		_symbolFlag2--;
-	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], 0, -1);
+	_newStickFrameIndex = 0;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(NULL);
@@ -431,7 +431,7 @@ void AsScene1907Symbol::stPlugInFail() {
 }
 
 void AsScene1907Symbol::moveUp() {
-	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(&AsScene1907Symbol::suMoveUp);
@@ -440,7 +440,7 @@ void AsScene1907Symbol::moveUp() {
 }
 
 void AsScene1907Symbol::moveDown() {
-	setFileHash(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
+	startAnimation(kAsScene1907SymbolFileHashes[_elementIndex], -1, -1);//????
 	stopAnimation();
 	SetMessageHandler(&AsScene1907Symbol::handleMessage);
 	SetSpriteCallback(&AsScene1907Symbol::suMoveDown);
@@ -513,8 +513,8 @@ AsScene1907WaterHint::AsScene1907WaterHint(NeverhoodEngine *vm)
 	createSurface1(0x110A1061, 1500);
 	_x = 320;
 	_y = 240;
-	setFileHash(0x110A1061, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x110A1061, 0, -1);
+	_newStickFrameIndex = 0;
 	setVisible(false);
 	_needRefresh = true;
 	AnimatedSprite::updatePosition();
@@ -531,7 +531,7 @@ uint32 AsScene1907WaterHint::handleMessage46BA20(int messageNum, const MessagePa
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -539,7 +539,7 @@ uint32 AsScene1907WaterHint::handleMessage46BA20(int messageNum, const MessagePa
 
 void AsScene1907WaterHint::show() {
 	setVisible(true);
-	setFileHash(0x110A1061, 0, -1);
+	startAnimation(0x110A1061, 0, -1);
 	SetMessageHandler(&AsScene1907WaterHint::handleMessage46BA20);
 	NextState(&AsScene1907WaterHint::hide);
 }

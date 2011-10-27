@@ -87,8 +87,8 @@ Class538::Class538(NeverhoodEngine *vm, bool flag)
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class538::handleMessage);
 	if (flag) {
-		setFileHash(0x0C202B9C, -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(0x0C202B9C, -1, -1);
+		_newStickFrameIndex = -2;
 	} else {
 		setVisible(false);
 	}
@@ -98,7 +98,7 @@ uint32 Class538::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		openDoor();
@@ -111,15 +111,15 @@ uint32 Class538::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class538::openDoor() {
-	setFileHash(0x0C202B9C, 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(0x0C202B9C, 0, -1);
+	_newStickFrameIndex = -2;
 	setVisible(true);
 	_soundResource.play(calcHash("fxDoorOpen32"));
 }
 
 void Class538::closeDoor() {
-	setFileHash(0xC222A8D4, 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(0xC222A8D4, 0, -1);
+	_newStickFrameIndex = -2;
 	setVisible(true);
 	NextState(&Class538::hide);
 	_soundResource.play(calcHash("fxDoorClose32"));
@@ -145,7 +145,7 @@ uint32 Class539::handleMessage(int messageNum, const MessageParam &param, Entity
 	case 0x2001:
 		_x = _klayman->getX();
 		_y = _klayman->getY() - 132;
-		setFileHash(0x0422255A, 0, -1);
+		startAnimation(0x0422255A, 0, -1);
 		setVisible(true);
 		break;
 	case 0x3002:
@@ -311,10 +311,10 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger() != 0) {
 			setRectList(0x004B9008);
-			_klayman->setKlaymanTable3();
+			_klayman->setKlaymanIdleTable3();
 		} else {
 			setRectList(0x004B8FF8);
-			_klayman->setKlaymanTable1();
+			_klayman->setKlaymanIdleTable1();
 		}
 		break;
 	case 0x480B:

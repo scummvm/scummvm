@@ -296,11 +296,11 @@ AsScene1302Bridge::AsScene1302Bridge(NeverhoodEngine *vm, Scene *parentScene)
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1302Bridge::handleMessage);
 	if (!getGlobalVar(0x13206309)) {
-		setFileHash(0x88148150, 0, -1);
-		_newHashListIndex = 0;
+		startAnimation(0x88148150, 0, -1);
+		_newStickFrameIndex = 0;
 	} else {
-		setFileHash(0x88148150, -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(0x88148150, -1, -1);
+		_newStickFrameIndex = -2;
 	}
 	_soundResource1.load(0x68895082);
 	_soundResource2.load(0x689BD0C1);
@@ -310,7 +310,7 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		stLowerBridge();
@@ -323,22 +323,22 @@ uint32 AsScene1302Bridge::handleMessage(int messageNum, const MessageParam &para
 }
 
 void AsScene1302Bridge::stLowerBridge() {
-	setFileHash(0x88148150, 0, -1);
+	startAnimation(0x88148150, 0, -1);
 	NextState(&AsScene1302Bridge::cbLowerBridgeEvent);
 	_soundResource2.play();
 }
 
 void AsScene1302Bridge::stRaiseBridge() {
-	setFileHash(0x88148150, 7, -1);
+	startAnimation(0x88148150, 7, -1);
 	_playBackwards = true;
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 	_soundResource1.play();
 }
 
 void AsScene1302Bridge::cbLowerBridgeEvent() {
 	sendMessage(_parentScene, 0x2032, 0);
-	setFileHash(0x88148150, -1, -1);
-	_newHashListIndex = -2;
+	startAnimation(0x88148150, -1, -1);
+	_newStickFrameIndex = -2;
 }
 
 SsScene1302Fence::SsScene1302Fence(NeverhoodEngine *vm)
@@ -591,7 +591,7 @@ AsScene1303Balloon::AsScene1303Balloon(NeverhoodEngine *vm, Scene *parentScene)
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1303Balloon::handleMessage);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
-	setFileHash(0x800278D2, 0, -1);
+	startAnimation(0x800278D2, 0, -1);
 }
 
 uint32 AsScene1303Balloon::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -627,7 +627,7 @@ uint32 AsScene1303Balloon::hmBalloonPopped(int messageNum, const MessageParam &p
 }
 
 void AsScene1303Balloon::stPopBalloon() {
-	setFileHash(0xAC004CD0, 0, -1);
+	startAnimation(0xAC004CD0, 0, -1);
 	SetMessageHandler(&AsScene1303Balloon::hmBalloonPopped);
 }
 
@@ -799,8 +799,8 @@ AsScene1306Elevator::AsScene1306Elevator(NeverhoodEngine *vm, Scene *parentScene
 	_x = 320;
 	_y = 240;
 	createSurface1(0x043B0270, 100);
-	setFileHash(0x043B0270, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x043B0270, 0, -1);
+	_newStickFrameIndex = 0;
 	SetMessageHandler(&AsScene1306Elevator::handleMessage);
 	_soundResource1.load(0x1C100E83);
 	_soundResource2.load(0x1C08CEC5);
@@ -812,7 +812,7 @@ void AsScene1306Elevator::update() {
 		stGoingDown();
 	}
 	AnimatedSprite::update();
-	if (_frameIndex == 7) {
+	if (_currFrameIndex == 7) {
 		_soundResource3.play();
 		_asElevatorDoor->setVisible(false);
 	}
@@ -820,7 +820,7 @@ void AsScene1306Elevator::update() {
 
 void AsScene1306Elevator::upGoingDown() {
 	AnimatedSprite::update();
-	if (_frameIndex == 5) {
+	if (_currFrameIndex == 5) {
 		_asElevatorDoor->setVisible(true);
 	}
 }
@@ -834,7 +834,7 @@ uint32 AsScene1306Elevator::handleMessage(int messageNum, const MessageParam &pa
 		messageResult = _isUp ? 1 : 0;
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		if (_isDown)
@@ -848,7 +848,7 @@ void AsScene1306Elevator::stGoingUp() {
 	setVisible(true);
 	_isDown = false;
 	SetUpdateHandler(&AsScene1306Elevator::update);
-	setFileHash(0x043B0270, 0, -1);
+	startAnimation(0x043B0270, 0, -1);
 	NextState(&AsScene1306Elevator::cbGoingUpEvent);
 	_soundResource1.play();
 }
@@ -866,7 +866,7 @@ void AsScene1306Elevator::stGoingDown() {
 	SetUpdateHandler(&AsScene1306Elevator::upGoingDown);
 	_isUp = false;
 	setVisible(true);
-	setFileHash(0x043B0270, -1, -1);
+	startAnimation(0x043B0270, -1, -1);
 	_playBackwards = true;
 	NextState(&AsScene1306Elevator::cbGoingDownEvent);
 	_soundResource2.play();
@@ -902,7 +902,7 @@ Scene1306::Scene1306(NeverhoodEngine *vm, Module *parentModule, int which)
 	_asTape = insertSprite<AsScene1201Tape>(this, 19, 1100, 359, 445, 0x9148A011);
 
 	_asElevatorDoor = insertSprite<AnimatedSprite>(0x043B0270, 90, 320, 240);
-	_asElevatorDoor->setFileHash(0x043B0270, 6, -1);
+	_asElevatorDoor->startAnimation(0x043B0270, 6, -1);
 	_asElevatorDoor->setNewHashListIndex(6);
 
 	_asElevator = insertSprite<AsScene1306Elevator>(this, _asElevatorDoor);
@@ -987,10 +987,10 @@ uint32 Scene1306::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger() != 0) {
 			setRectList(0x004AFD28);
-			_klayman->setKlaymanTable3();
+			_klayman->setKlaymanIdleTable3();
 		} else {
 			setRectList(0x004AFD18);
-			_klayman->setKlaymanTable1();
+			_klayman->setKlaymanIdleTable1();
 		}
 		break;
 	case 0x480B:
@@ -1134,7 +1134,7 @@ AsScene1307Key::AsScene1307Key(NeverhoodEngine *vm, Scene *parentScene, uint ind
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1307Key::handleMessage);
 	
-	setFileHash(fileHashes[0], 0, -1);
+	startAnimation(fileHashes[0], 0, -1);
 	
 	_soundResource1.load(0xDC4A1280);
 	_soundResource2.load(0xCC021233);
@@ -1199,9 +1199,9 @@ void AsScene1307Key::suInsertKey() {
 
 void AsScene1307Key::suMoveKey() {
 	if (_pointIndex < kAsScene1307KeyFrameIndicesCount) {
-		_frameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
-		_x = _prevX + (_deltaX * _frameIndex) / kAsScene1307KeyDivValue;
-		_y = _prevY + (_deltaY * _frameIndex) / kAsScene1307KeyDivValue;
+		_currFrameIndex += kAsScene1307KeyFrameIndices[_pointIndex];
+		_x = _prevX + (_deltaX * _currFrameIndex) / kAsScene1307KeyDivValue;
+		_y = _prevY + (_deltaY * _currFrameIndex) / kAsScene1307KeyDivValue;
 		processDelta();
 		_pointIndex++;
 	} else {
@@ -1216,7 +1216,7 @@ void AsScene1307Key::stRemoveKey() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 	_pointIndex = 0;
 	SetSpriteCallback(&AsScene1307Key::suRemoveKey);
-	setFileHash(fileHashes[0], 0, -1);
+	startAnimation(fileHashes[0], 0, -1);
 	_soundResource2.play();
 }
 
@@ -1225,7 +1225,7 @@ void AsScene1307Key::stInsertKey() {
 	sendMessage(_parentScene, 0x1022, kAsScene1307KeySurfacePriorities[getSubVar(0xA010B810, _index) % 4]);
 	setClipRect(_clipRects[getSubVar(0xA010B810, _index) % 4]);
 	SetSpriteCallback(&AsScene1307Key::suInsertKey);
-	_newHashListIndex = -2;
+	_newStickFrameIndex = -2;
 }
 
 void AsScene1307Key::stMoveKey() {
@@ -1241,24 +1241,24 @@ void AsScene1307Key::stMoveKey() {
 	} else {
 		const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
 		_pointIndex = 0;
-		_frameIndex = 0;
+		_currFrameIndex = 0;
 		_deltaX = newX - _x;
 		_deltaY = newY - _y;
 		SetSpriteCallback(&AsScene1307Key::suMoveKey);
-		setFileHash(fileHashes[0], 0, -1);
+		startAnimation(fileHashes[0], 0, -1);
 	}
 }
 
 void AsScene1307Key::stUnlock() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
-	setFileHash(fileHashes[1], 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(fileHashes[1], 0, -1);
+	_newStickFrameIndex = -2;
 }
 
 void AsScene1307Key::stInsert() {
 	const uint32 *fileHashes = kAsScene1307KeyResourceLists[_index]; 
-	setFileHash(fileHashes[2], 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(fileHashes[2], 0, -1);
+	_newStickFrameIndex = -2;
 }
 
 Scene1307::Scene1307(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1440,7 +1440,7 @@ uint32 Class549::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		sub455470();
@@ -1453,7 +1453,7 @@ uint32 Class549::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class549::sub455470() {
-	setFileHash(0xBA0AE050, 0, -1);
+	startAnimation(0xBA0AE050, 0, -1);
 	setVisible(true);
 	NextState(&Class549::hide);
 	_soundResource.play(calcHash("fxDoorOpen38"));
@@ -1466,7 +1466,7 @@ void Class549::hide() {
 }
 
 void Class549::sub4554F0() {
-	setFileHash(0xBA0AE050, -1, -1);
+	startAnimation(0xBA0AE050, -1, -1);
 	_playBackwards = true;
 	setVisible(true);
 	NextState(&Class549::sub455550);
@@ -1491,14 +1491,14 @@ uint32 Class592::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
 }
 
 void Class592::sub455710() {
-	setFileHash(0x6238B191, 0, -1);
+	startAnimation(0x6238B191, 0, -1);
 	NextState(&Class592::sub455740);
 	_x = 580;
 	_y = 383;
@@ -1528,20 +1528,20 @@ uint32 Class593::handleMessage(int messageNum, const MessageParam &param, Entity
 	case 0x2003:
 		sub455920();
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
 }
 
 void Class593::sub4558F0() {
-	setFileHash(0x80180A10, 0, -1);
+	startAnimation(0x80180A10, 0, -1);
 	setVisible(false);
-	_newHashListIndex = -2;
+	_newStickFrameIndex = -2;
 }
 
 void Class593::sub455920() {
-	setFileHash(0x80180A10, -1, -1);
+	startAnimation(0x80180A10, -1, -1);
 	_playBackwards = true;
 	NextState(&Class593::sub455950);
 }
@@ -1568,7 +1568,7 @@ Class513::Class513(NeverhoodEngine *vm)
 	_x = 286;
 	_y = 429;
 	createSurface1(0xA282C472, 100);
-	setFileHash(0xA282C472, 0, -1);
+	startAnimation(0xA282C472, 0, -1);
 }
 
 uint32 Class513::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {

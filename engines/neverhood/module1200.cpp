@@ -250,18 +250,18 @@ uint32 Class466::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 void Class466::sub40D340() {
-	setFileHash(0x928F0C10, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x928F0C10, 0, -1);
+	_newStickFrameIndex = 0;
 }
 
 void Class466::sub40D360() {
-	setFileHash(0x928F0C10, 1, -1);
-	_newHashListIndex = -2;
+	startAnimation(0x928F0C10, 1, -1);
+	_newStickFrameIndex = -2;
 }
 
 void Class466::sub40D380() {
-	setFileHash(0x928F0C10, 15, -1);
-	_newHashListIndex = -2;
+	startAnimation(0x928F0C10, 15, -1);
+	_newStickFrameIndex = -2;
 }
 
 AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool flag)
@@ -272,10 +272,10 @@ AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman,
 	_y = 240;
 	SetUpdateHandler(&AsScene1201RightDoor::update);
 	SetMessageHandler(&AsScene1201RightDoor::handleMessage);
-	_newHashListIndex = -2;
+	_newStickFrameIndex = -2;
 	if (flag) {
-		setFileHash(0xD088AC30, -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(0xD088AC30, -1, -1);
+		_newStickFrameIndex = -2;
 		_countdown = 25;
 	} else {
 		stopAnimation();
@@ -294,7 +294,7 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4829:
 		sub40D7E0();
@@ -304,14 +304,14 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 }
 
 void AsScene1201RightDoor::sub40D7E0() {
-	setFileHash(0xD088AC30, 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(0xD088AC30, 0, -1);
+	_newStickFrameIndex = -2;
 	setVisible(true);
 	_soundResource.play(calcHash("fxDoorOpen20"));
 }
 
 void AsScene1201RightDoor::sub40D830() {
-	setFileHash(0xD088AC30, -1, -1);
+	startAnimation(0xD088AC30, -1, -1);
 	_playBackwards = true;
 	setVisible(true);
 	_soundResource.play(calcHash("fxDoorClose20"));
@@ -339,13 +339,13 @@ uint32 Class464::handleMessage(int messageNum, const MessageParam &param, Entity
 	case 0x2006:
 		_x = 436;
 		_y = 339;
-		setFileHash(0xA060C599, 0, -1);
+		startAnimation(0xA060C599, 0, -1);
 		setVisible(true);
 		break;
 	case 0x3002:
 		stopAnimation();
 		setVisible(false);
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -402,7 +402,7 @@ uint32 AsScene1201TntMan::handleMessage40CCD0(int messageNum, const MessageParam
 	uint32 messageResult = AsScene1201TntMan::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -413,13 +413,13 @@ void AsScene1201TntMan::spriteUpdate40CD10() {
 }
 
 void AsScene1201TntMan::sub40CD30() {
-	setFileHash(0x654913D0, 0, -1);
+	startAnimation(0x654913D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	SetSpriteCallback(NULL);
 }
 
 void AsScene1201TntMan::sub40CD60() {
-	setFileHash(0x356803D0, 0, -1);
+	startAnimation(0x356803D0, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage40CCD0);
 	SetSpriteCallback(&AnimatedSprite::updateDeltaXY);
 	NextState(&AsScene1201TntMan::sub40CD30);
@@ -429,10 +429,10 @@ void AsScene1201TntMan::sub40CD90() {
 	// TODO Sound1ChList_addSoundResource(0x01D00560, 0x4B044624, true);
 	// TODO Sound1ChList_playLooping(0x4B044624);
 	_flag = true;
-	setFileHash(0x85084190, 0, -1);
+	startAnimation(0x85084190, 0, -1);
 	SetMessageHandler(&AsScene1201TntMan::handleMessage);
 	SetSpriteCallback(&AsScene1201TntMan::spriteUpdate40CD10);
-	_newHashListIndex = -2;
+	_newStickFrameIndex = -2;
 }
 
 Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
@@ -442,7 +442,7 @@ Class465::Class465(NeverhoodEngine *vm, Sprite *asTntMan)
 	SetUpdateHandler(&Class465::update);
 	SetMessageHandler(&Sprite::handleMessage);
 	SetSpriteCallback(&Class465::spriteUpdate40D150);
-	setFileHash(0x828C0411, 0, -1);
+	startAnimation(0x828C0411, 0, -1);
 	setVisible(false);
 }
 
@@ -499,7 +499,7 @@ AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 
 void AsScene1201Match::update() {
 	if (_countdown != 0 && (--_countdown == 0)) {
-		removeCallbacks();
+		gotoNextState();
 	}
 	updateAnim();
 	handleSpriteUpdate();
@@ -522,7 +522,7 @@ uint32 AsScene1201Match::handleMessage40C320(int messageNum, const MessageParam 
 	uint32 messageResult = handleMessage40C2D0(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -544,7 +544,7 @@ uint32 AsScene1201Match::handleMessage40C360(int messageNum, const MessageParam 
 }
 
 void AsScene1201Match::sub40C3E0() {
-	setFileHash(0x00842374, 0, -1);
+	startAnimation(0x00842374, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
 	if (_status == 0) {
 		NextState(&AsScene1201Match::sub40C420);
@@ -557,15 +557,15 @@ void AsScene1201Match::sub40C420() {
 	setGlobalVar(0x0112090A, 2);
 	_x -= 199;
 	_y += 119;
-	setFileHash(0x018D0240, 0, -1);
+	startAnimation(0x018D0240, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C320);
 	NextState(&AsScene1201Match::sub40C4F0);
 }
 
 void AsScene1201Match::sub40C470() {
-	setFileHash(0x00842374, 0, -1);
+	startAnimation(0x00842374, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C2D0);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 	if (_status != 0) {
 		_countdown = 36;
 		_status--;
@@ -574,18 +574,18 @@ void AsScene1201Match::sub40C470() {
 }
 
 void AsScene1201Match::sub40C4C0() {
-	setFileHash(0x00842374, 0, -1);
+	startAnimation(0x00842374, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 void AsScene1201Match::sub40C4F0() {
 	setDoDeltaX(1);
 	_x = 403;
 	_y = 337;
-	setFileHash(0x00842374, 0, -1);
+	startAnimation(0x00842374, 0, -1);
 	SetMessageHandler(&AsScene1201Match::handleMessage40C360);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman)
@@ -607,7 +607,7 @@ void AsScene1201Creature::update() {
 	if (_flag != oldFlag)
 		sub40C8E0();
 	if (_countdown1 != 0 && (--_countdown1 == 0)) {
-		removeCallbacks();
+		gotoNextState();
 	}
 	updateAnim();
 	handleSpriteUpdate();
@@ -643,7 +643,7 @@ uint32 AsScene1201Creature::handleMessage40C7B0(int messageNum, const MessagePar
 		}
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -660,7 +660,7 @@ uint32 AsScene1201Creature::handleMessage40C830(int messageNum, const MessagePar
 		}
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -670,7 +670,7 @@ void AsScene1201Creature::sub40C8E0() {
 	_countdown3--;
 	if (_countdown3 == 0)
 		_countdown3 = 3;
-	setFileHash(0x08081513, 0, -1);
+	startAnimation(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
 	NextState(&AsScene1201Creature::sub40C930);
 	_countdown1 = 36;
@@ -678,32 +678,32 @@ void AsScene1201Creature::sub40C8E0() {
 
 void AsScene1201Creature::sub40C930() {
 	if (!_flag) {
-		setFileHash(0xCA287133, 0, -1);
+		startAnimation(0xCA287133, 0, -1);
 		SetMessageHandler(&AsScene1201Creature::handleMessage40C7B0);
 		NextState(&AsScene1201Creature::sub40C8E0);
 	}
 }
 
 void AsScene1201Creature::sub40C960() {
-	setFileHash(0x08081513, 0, -1);
+	startAnimation(0x08081513, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
 	NextState(&AsScene1201Creature::sub40C9E0);
 	_countdown1 = 48;
 }
 
 void AsScene1201Creature::sub40C990() {
-	setFileHash2(0x0B6E13FB, 0x01084280, 0);
+	startAnimationByHash(0x0B6E13FB, 0x01084280, 0);
 }
 
 void AsScene1201Creature::sub40C9B0() {
-	setFileHash(0xCA287133, 0, -1);
+	startAnimation(0xCA287133, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C830);
 	NextState(&AsScene1201Creature::sub40C8E0);
 	_countdown1 = 0;
 }
 
 void AsScene1201Creature::sub40C9E0() {
-	setFileHash(0x5A201453, 0, -1);
+	startAnimation(0x5A201453, 0, -1);
 	SetMessageHandler(&AsScene1201Creature::handleMessage40C710);
 	_countdown1 = 0;
 }
@@ -715,12 +715,12 @@ AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
 	_y = 240;
 	createSurface(800, 55, 199);
 	if (_klayman->getX() < 100) {
-		setFileHash(0x508A111B, 0, -1);
-		_newHashListIndex = -2;
+		startAnimation(0x508A111B, 0, -1);
+		_newStickFrameIndex = -2;
 		_soundResource.play(calcHash("fxDoorOpen03"));
 	} else {
-		setFileHash(0x508A111B, -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(0x508A111B, -1, -1);
+		_newStickFrameIndex = -2;
 	}
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1201LeftDoor::handleMessage);
@@ -737,9 +737,9 @@ uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &pa
 }
 
 void AsScene1201LeftDoor::sub40D590() {
-	setFileHash(0x508A111B, -1, -1);
+	startAnimation(0x508A111B, -1, -1);
 	_playBackwards = true;
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1076,20 +1076,20 @@ uint32 AsScene1202TntItem::handleMessage454060(int messageNum, const MessagePara
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
 }
 
 void AsScene1202TntItem::sub4540A0() {
-	setFileHash(kScene1202FileHashes[_index], 0, -1);
+	startAnimation(kScene1202FileHashes[_index], 0, -1);
 	SetMessageHandler(&AsScene1202TntItem::handleMessage453FE0);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 void AsScene1202TntItem::sub4540D0() {
-	setFileHash(kScene1202FileHashes[_index], 0, -1);
+	startAnimation(kScene1202FileHashes[_index], 0, -1);
 	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
 	NextState(&AsScene1202TntItem::sub454100);
 }
@@ -1097,7 +1097,7 @@ void AsScene1202TntItem::sub4540D0() {
 void AsScene1202TntItem::sub454100() {
 	_x = kScene1202Points[_index2].x;
 	_y = kScene1202Points[_index2].y;
-	setFileHash(kScene1202FileHashes[_index], 6, -1);
+	startAnimation(kScene1202FileHashes[_index], 6, -1);
 	SetMessageHandler(&AsScene1202TntItem::handleMessage454060);
 	NextState(&AsScene1202TntItem::sub454160);
 	_playBackwards = true;

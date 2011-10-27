@@ -161,8 +161,8 @@ Class494::Class494(NeverhoodEngine *vm)
 	createSurface1(0x100B90B4, 1200);
 	_x = 211;
 	_y = 195;
-	setFileHash(0x100B90B4, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x100B90B4, 0, -1);
+	_newStickFrameIndex = 0;
 	_needRefresh = true;
 	updatePosition();
 	_surface->setVisible(false);
@@ -172,7 +172,7 @@ uint32 Class494::handleMessage(int messageNum, const MessageParam &param, Entity
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -186,7 +186,7 @@ void Class494::sub43BE00() {
 }
 
 void Class494::sub43BE20() {
-	setFileHash(0x100B90B4, 0, -1);
+	startAnimation(0x100B90B4, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&Class494::handleMessage);
 	NextState(&Class494::sub43BE00);

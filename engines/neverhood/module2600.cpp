@@ -284,7 +284,7 @@ uint32 AsScene2609Water::handleMessage(int messageNum, const MessageParam &param
 		// TODO Sound1ChList_stop(0xDC2769B0);
 		break;
 	case 0x2002:
-		setFileHash(0x9C210C90, 0, -1);
+		startAnimation(0x9C210C90, 0, -1);
 		setVisible(true);
 		// TODO Sound1ChList_playLooping(0xDC2769B0);
 		break;

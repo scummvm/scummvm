@@ -143,10 +143,10 @@ uint32 Scene2001::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004B3680);
-			_klayman->setKlaymanTable3();
+			_klayman->setKlaymanIdleTable3();
 		} else {
 			setRectList(0x004B3670);
-			_klayman->setKlaymanTable1();
+			_klayman->setKlaymanIdleTable1();
 		}
 	}	
 	return 0;

@@ -121,32 +121,24 @@ public:
 	void setRepl(byte oldColor, byte newColor);
 	void clearRepl();
 	uint32 getCurrAnimFileHash() const { return _currAnimFileHash; }
-	int16 getFrameIndex() const { return _frameIndex; }
+	int16 getFrameIndex() const { return _currFrameIndex; }
 	int16 getFrameIndex(uint32 frameHash) { return _animResource.getFrameIndex(frameHash); }
-	void setNewHashListIndex(int value) { _newHashListIndex = value; }
-	void setFileHash(uint32 fileHash, int16 frameIndex3, int16 frameIndex4);
+	void setNewHashListIndex(int value) { _newStickFrameIndex = value; }
+	void startAnimation(uint32 fileHash, int16 plFirstFrameIndex, int16 plLastFrameIndex);
 protected:
 	typedef void (AnimatedSprite::*AnimationCb)();
 	AnimResource _animResource;
-	uint32 _currAnimFileHash;
-	uint32 _fileHash1;
-	uint32 _fileHash2;
-	int16 _frameIndex;
-	int16 _frameIndex3;
-	int16 _frameIndex2;
-	int16 _frameIndex4;
-	uint32 _fileHash6;
-	uint32 _fileHash5;
+	uint32 _currAnimFileHash, _newAnimFileHash, _nextAnimFileHash;
+	int16 _currFrameIndex, _lastFrameIndex;
+	int16 _plFirstFrameIndex, _plLastFrameIndex;
+	uint32 _plFirstFrameHash, _plLastFrameHash;
 	int16 _animStatus;
-	int16 _counter;
-	int _hashListIndex;
-	int _newHashListIndex;
-	uint32 _fileHash4;
+	int16 _currFrameTicks;
+	int _currStickFrameIndex, _newStickFrameIndex;
+	uint32 _newStickFrameHash;
 	int16 _deltaX, _deltaY;
-	byte _replOldColor;
-	byte _replNewColor;
-	bool _playBackwards;
-	bool _flag;
+	byte _replOldColor, _replNewColor;
+	bool _playBackwards, _frameChanged;
 	/* TODO
 	callbackListIndex dw ?
 	callbackListCount dw ?
@@ -166,11 +158,11 @@ protected:
 	void updateFrameInfo();
 	void createSurface1(uint32 fileHash, int surfacePriority);
 	void stopAnimation();
-	void setFileHash2(uint32 fileHash, uint32 fileHash6, uint32 fileHash5);
-	void setFileHash3(uint32 fileHash2, uint32 fileHash6, uint32 fileHash5);
+	void startAnimationByHash(uint32 fileHash, uint32 plFirstFrameHash, uint32 plLastFrameHash);
+	void nextAnimationByHash(uint32 fileHash2, uint32 plFirstFrameHash, uint32 plLastFrameHash);
 	void setFinalizeState(AnimationCb finalizeStateCb);
 	void gotoState(AnimationCb currStateCb);
-	void removeCallbacks();
+	void gotoNextState();
 };
 
 } // End of namespace Neverhood

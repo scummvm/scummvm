@@ -407,7 +407,7 @@ AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
 	_x = 403;
 	_y = 259;
 	createSurface(100, 233, 96);
-	setFileHash(0x8600866, 0, -1);
+	startAnimation(0x8600866, 0, -1);
 	SetUpdateHandler(&AnimatedSprite::update);
 }
 
@@ -421,12 +421,12 @@ AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *
 	SetUpdateHandler(&AsScene2201Door::update);
 	SetMessageHandler(&AsScene2201Door::handleMessage);
 	if (_doorOpen) {
-		setFileHash(0xE2CB0412, -1, -1);
+		startAnimation(0xE2CB0412, -1, -1);
 		_countdown = 48;
-		_newHashListIndex = -2;
+		_newStickFrameIndex = -2;
 	} else {
-		setFileHash(0xE2CB0412, 0, -1);
-		_newHashListIndex = 0;
+		startAnimation(0xE2CB0412, 0, -1);
+		_newStickFrameIndex = 0;
 		_doorLightSprite->setVisible(false);
 	}
 }
@@ -456,7 +456,7 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 		messageResult = _doorOpen ? 1 : 0;
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	case 0x4808:
 		_countdown = 144;
@@ -469,16 +469,16 @@ uint32 AsScene2201Door::handleMessage(int messageNum, const MessageParam &param,
 
 void AsScene2201Door::stOpenDoor() {
 	_doorOpen = true;
-	setFileHash(0xE2CB0412, 0, -1);
-	_newHashListIndex = -2;
+	startAnimation(0xE2CB0412, 0, -1);
+	_newStickFrameIndex = -2;
 	_soundResource.play(calcHash("fxDoorOpen33"));
 }
 
 void AsScene2201Door::stCloseDoor() {
 	_doorOpen = false;
-	setFileHash(0xE2CB0412, -1, -1);
+	startAnimation(0xE2CB0412, -1, -1);
 	_playBackwards = true;
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 	_soundResource.play(calcHash("fxDoorClose33"));
 }
 
@@ -1064,11 +1064,11 @@ AsScene2203Door::AsScene2203Door(NeverhoodEngine *vm, Scene *parentScene, uint i
 	_y = 240;
 	createSurface1(kAsScene2203DoorFileHashes[_index], 900);
 	if (getGlobalVar(0x9A500914) == _index) {
-		setFileHash(kAsScene2203DoorFileHashes[_index], -1, -1);
-		_newHashListIndex = -2;
+		startAnimation(kAsScene2203DoorFileHashes[_index], -1, -1);
+		_newStickFrameIndex = -2;
 	} else {
-		setFileHash(kAsScene2203DoorFileHashes[_index], 0, -1);
-		_newHashListIndex = 0;
+		startAnimation(kAsScene2203DoorFileHashes[_index], 0, -1);
+		_newStickFrameIndex = 0;
 	}
 }
 
@@ -1105,13 +1105,13 @@ uint32 AsScene2203Door::handleMessage(int messageNum, const MessageParam &param,
 
 void AsScene2203Door::openDoor() {
 	_soundResource.play(0x341014C4);
-	setFileHash(kAsScene2203DoorFileHashes[_index], 1, -1);
+	startAnimation(kAsScene2203DoorFileHashes[_index], 1, -1);
 }
 
 void AsScene2203Door::closeDoor() {
-	setFileHash(kAsScene2203DoorFileHashes[_index], -1, -1);
+	startAnimation(kAsScene2203DoorFileHashes[_index], -1, -1);
 	_playBackwards = true;
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
@@ -1592,7 +1592,7 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_klayman->setSoundFlag(true);
-	_klayman->setKlaymanTable2();
+	_klayman->setKlaymanIdleTable2();
 
 }
 
@@ -1706,11 +1706,11 @@ AsScene2207Elevator::AsScene2207Elevator(NeverhoodEngine *vm, Scene *parentScene
 	_x = pt.x;
 	_y = pt.y;
 	createSurface(1100, 129, 103);
-	setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, 0, 0);
+	startAnimation(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, 0, 0);
 	SetUpdateHandler(&AsScene2207Elevator::update);
 	SetSpriteCallback(&AsScene2207Elevator::suSetPosition);
 	SetMessageHandler(&AsScene2207Elevator::handleMessage);
-	_newHashListIndex = 0;
+	_newStickFrameIndex = 0;
 }
 
 AsScene2207Elevator::~AsScene2207Elevator() {
@@ -1721,8 +1721,8 @@ void AsScene2207Elevator::update() {
 
 	if (_destPointIndex + _destPointIndexDelta > _pointIndex) {
 		_pointIndex++;
-		setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
-		_newHashListIndex = _pointIndex;		
+		startAnimation(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
+		_newStickFrameIndex = _pointIndex;		
 		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
 			if (_destPointIndexDelta != 0) {
 				_destPointIndexDelta = 0;
@@ -1737,8 +1737,8 @@ void AsScene2207Elevator::update() {
 		_pointIndex--;
 		if (_pointIndex == 0)
 			sendMessage(_parentScene, 0x2003, 0);
-		setFileHash(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
-		_newHashListIndex = _pointIndex;		
+		startAnimation(getGlobalVar(0x4D080E54) ? 0xC858CC19 : 0x294B3377, _pointIndex, _pointIndex);
+		_newStickFrameIndex = _pointIndex;		
 		if (_destPointIndex + _destPointIndexDelta == _pointIndex) {
 			if (_destPointIndexDelta != 0) {
 				_destPointIndexDelta = 0;
@@ -1817,8 +1817,8 @@ AsScene2207Lever::AsScene2207Lever(NeverhoodEngine *vm, Scene *parentScene, int1
 	SetMessageHandler(&AsScene2207Lever::handleMessage);
 	createSurface(1010, 71, 73);
 	setDoDeltaX(doDeltaX);
-	setFileHash(0x80880090, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x80880090, 0, -1);
+	_newStickFrameIndex = 0;
 	_x = x;
 	_y = y;
 }
@@ -1831,7 +1831,7 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 		messageResult = 1;
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		stopAnimation();
 		break;
 	case 0x4807:
@@ -1851,7 +1851,7 @@ uint32 AsScene2207Lever::handleMessage(int messageNum, const MessageParam &param
 }
 
 void AsScene2207Lever::stLeverDown() {
-	setFileHash(0x80880090, 1, -1);
+	startAnimation(0x80880090, 1, -1);
 	FinalizeState(&AsScene2207Lever::stLeverDownEvent);
 	_soundResource.play(0x40581882);
 }
@@ -1861,7 +1861,7 @@ void AsScene2207Lever::stLeverDownEvent() {
 }
 
 void AsScene2207Lever::stLeverUp() {
-	setFileHash(0x80880090, 6, -1);
+	startAnimation(0x80880090, 6, -1);
 	FinalizeState(&AsScene2207Lever::stLeverUpEvent);
 	_playBackwards = true;
 	_soundResource.play(0x40581882);
@@ -1880,8 +1880,8 @@ AsScene2207WallRobotAnimation::AsScene2207WallRobotAnimation(NeverhoodEngine *vm
 	createSurface1(0xCCFD6090, 100);
 	_x = 309;
 	_y = 320;
-	setFileHash(0xCCFD6090, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0xCCFD6090, 0, -1);
+	_newStickFrameIndex = 0;
 	_soundResource2.load(0x40330872);
 	_soundResource3.load(0x72A2914A);
 	_soundResource4.load(0xD4226080);
@@ -1923,7 +1923,7 @@ uint32 AsScene2207WallRobotAnimation::handleMessage(int messageNum, const Messag
 		stStopAnimation();
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -1933,7 +1933,7 @@ void AsScene2207WallRobotAnimation::stStartAnimation() {
 	if (!_idle) {
 		NextState(NULL);
 	} else {
-		setFileHash(0xCCFD6090, 0, -1);
+		startAnimation(0xCCFD6090, 0, -1);
 		_idle = false;
 		setVisible(true);
 	}
@@ -1962,8 +1962,8 @@ AsScene2207WallCannonAnimation::AsScene2207WallCannonAnimation(NeverhoodEngine *
 	createSurface1(0x8CAA0099, 100);
 	_x = 309;
 	_y = 320;
-	setFileHash(0x8CAA0099, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x8CAA0099, 0, -1);
+	_newStickFrameIndex = 0;
 }
 
 uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1976,7 +1976,7 @@ uint32 AsScene2207WallCannonAnimation::handleMessage(int messageNum, const Messa
 		stStopAnimation();
 		break;
 	case 0x3002:
-		removeCallbacks();
+		gotoNextState();
 		break;
 	}
 	return messageResult;
@@ -1987,7 +1987,7 @@ void AsScene2207WallCannonAnimation::stStartAnimation() {
 		NextState(NULL);
 	} else {
 		setVisible(true);
-		setFileHash(0x8CAA0099, 0, -1);
+		startAnimation(0x8CAA0099, 0, -1);
 		_idle = false;
 	}
 }
@@ -2593,7 +2593,7 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 	}
 
 	_klayman->setSoundFlag(true);
-	_klayman->setKlaymanTable2();
+	_klayman->setKlaymanIdleTable2();
 
 }
 

@@ -348,8 +348,8 @@ AsScene1105TeddyBear::AsScene1105TeddyBear(NeverhoodEngine *vm, Scene *parentSce
 	_y = 240;
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene1105TeddyBear::handleMessage);
-	setFileHash(0x65084002, 0, -1);
-	_newHashListIndex = 0;
+	startAnimation(0x65084002, 0, -1);
+	_newStickFrameIndex = 0;
 	setVisible(false);
 	_needRefresh = true;
 	updatePosition();
@@ -362,10 +362,10 @@ uint32 AsScene1105TeddyBear::handleMessage(int messageNum, const MessageParam &p
 	switch (messageNum) {
 	case 0x2002:
 		if (getGlobalVar(0x610210B7)) {
-			setFileHash(0x6B0C0432, 0, -1);
+			startAnimation(0x6B0C0432, 0, -1);
 			_soundResource1.play();
 		} else {
-			setFileHash(0x65084002, 0, -1);
+			startAnimation(0x65084002, 0, -1);
 			_soundResource2.play();
 		}
 		break;
@@ -706,10 +706,10 @@ uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004B63A8);
-			_klayman->setKlaymanTable3();
+			_klayman->setKlaymanIdleTable3();
 		} else {
 			setRectList(0x004B6398);
-			_klayman->setKlaymanTable1();
+			_klayman->setKlaymanIdleTable1();
 		}
 		break;
 	}
