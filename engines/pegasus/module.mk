@@ -57,6 +57,7 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoria4dsystem.o \
 	neighborhood/caldoria/caldoriamessages.o \
 	neighborhood/caldoria/caldoriamirror.o \
+	neighborhood/mars/energybeam.o \
 	neighborhood/mars/gravitoncannon.o \
 	neighborhood/mars/hermite.o \
 	neighborhood/mars/mars.o \
