@@ -67,7 +67,7 @@ private:
 
 class MoviePlayer {
 public:
-	MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType);
+	MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
 	bool load(uint32 id);
 	void play();
@@ -75,6 +75,7 @@ public:
 protected:
 	SwordEngine *_vm;
 	Text *_textMan;
+	ResMan *_resMan;
 	Audio::Mixer *_snd;
 	OSystem *_system;
 	Common::List<MovieText> _movieTexts;
@@ -93,7 +94,7 @@ protected:
 	byte findWhitePalIndex();
 };
 
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system);
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system);
 
 } // End of namespace Sword1
 

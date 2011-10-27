@@ -28,6 +28,7 @@
 #include "sword1/sword1.h"
 #include "sword1/animation.h"
 #include "sword1/text.h"
+#include "sword1/resman.h"
 
 #include "common/str.h"
 #include "common/system.h"
@@ -65,8 +66,8 @@ static const char *const sequenceList[20] = {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
+MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType)
+	: _vm(vm), _textMan(textMan), _resMan(resMan), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
 	_bgSoundStream = NULL;
 	_decoderType = decoderType;
 	_decoder = decoder;
@@ -183,8 +184,8 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_textMan->makeTextSprite(2, (const uint8 *)_movieTexts.front()._text.c_str(), 600, LETTER_COL);
 
 			FrameHeader *frame = _textMan->giveSpriteData(2);
-			_textWidth = frame->width;
-			_textHeight = frame->height;
+			_textWidth = _resMan->toUint16(frame->width);
+			_textHeight = _resMan->toUint16(frame->height);
 			_textX = 320 - _textWidth / 2;
 			_textY = 420 - _textHeight;
 		}
@@ -323,7 +324,7 @@ uint32 DXADecoderWithSound::getElapsedTime() const {
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system) {
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system) {
 	Common::String filename;
 	Audio::SoundHandle *bgSoundHandle = new Audio::SoundHandle;
 
@@ -331,7 +332,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 
 	if (Common::File::exists(filename)) {
 		Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(snd);
-		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
+		return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, smkDecoder, kVideoDecoderSMK);
 	}
 
 	filename = Common::String::format("%s.dxa", sequenceList[id]);
@@ -339,7 +340,7 @@ MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::M
 	if (Common::File::exists(filename)) {
 #ifdef USE_ZLIB
 		DXADecoderWithSound *dxaDecoder = new DXADecoderWithSound(snd, bgSoundHandle);
-		return new MoviePlayer(vm, textMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
+		return new MoviePlayer(vm, textMan, resMan, snd, system, bgSoundHandle, dxaDecoder, kVideoDecoderDXA);
 #else
 		GUI::MessageDialog dialog(_("DXA cutscenes found but ScummVM has been built without zlib support"), _("OK"));
 		dialog.runModal();
