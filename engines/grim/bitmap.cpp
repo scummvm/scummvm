@@ -264,8 +264,8 @@ bool BitmapData::loadTile(const char *data, int len) {
 	}
 
 	g_driver->createBitmap(this);
-	return true;
 #endif // ENABLE_MONKEY4
+    return true;
 }
 
 char *BitmapData::getImageData(int num) const {
