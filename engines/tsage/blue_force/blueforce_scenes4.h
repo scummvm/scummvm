@@ -168,7 +168,7 @@ public:
 	BulletsInset _bulletsInset;
 	DashDrawer _dashDrawer;
 	TheBullets _theBullets;
-	NamedObject _object6;
+	NamedObject _animatedSeat;
 	NamedHotspot _item1, _steeringWheel, _horn, _dashboard;
 	NamedHotspot _seat, _windowLever, _item7, _seatBelt;
 	Lever _lever;

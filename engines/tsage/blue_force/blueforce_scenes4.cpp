@@ -936,7 +936,7 @@ void Scene415::GunInset::remove() {
 	FocusObject::remove();
 
 	scene->_sceneMode = 0;
-	scene->_object6.animate(ANIM_MODE_6, scene);
+	scene->_animatedSeat.animate(ANIM_MODE_6, scene);
 }
 
 bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
@@ -1046,7 +1046,7 @@ bool Scene415::Lever::startAction(CursorType action, Event &event) {
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 2;
-			scene->setAction(&scene->_sequenceManager, scene, 4150, &scene->_object6, NULL);
+			scene->setAction(&scene->_sequenceManager, scene, 4150, &scene->_animatedSeat, NULL);
 		}
 		return true;
 	default:
@@ -1078,11 +1078,11 @@ void Scene415::postInit(SceneObjectList *OwnerList) {
 	_dashDrawer.setPosition(Common::Point(151, 97));
 	_dashDrawer.setDetails(415, 22, -1, -1, 1, NULL);
 
-	_object6.postInit();
-	_object6.setVisage(419);
-	_object6.setStrip(1);
-	_object6.setPosition(Common::Point(306, 116));
-	_object6.fixPriority(80);
+	_animatedSeat.postInit();
+	_animatedSeat.setVisage(419);
+	_animatedSeat.setStrip(1);
+	_animatedSeat.setPosition(Common::Point(306, 116));
+	_animatedSeat.fixPriority(80);
 	
 	_windowLever.setDetails(16, 415, 25, -1, 26, 1);
 	_item7.setDetails(17, 415, 32, -1, 33, 1);
