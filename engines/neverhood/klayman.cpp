@@ -59,17 +59,17 @@ static const KlaymanIdleTableItem klaymanTable4[] = {
 
 Klayman::Klayman(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
 	: AnimatedSprite(vm, objectPriority), _soundResource1(vm), _soundResource2(vm),
-	_counterMax(0), _counter(0), _flagE4(false), _counter3Max(0), _flagF8(false), _counter1(0),
-	_counter2(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _flagE1(false),
-	_status3(1), _parentScene(parentScene), _flagE2(false), _flagE3(false), _flagF6(false), _isLeverDown(false),
-	_flagFA(false), _statusE0(0), _field114(0), _resourceHandle(-1), _soundFlag(false) {
+	_counterMax(0), _counter(0), _isMoveObjectRequested(false), _counter3Max(0), _isWalkingOpenDoorNotified(false), _counter1(0),
+	_counter2(0), /*_field118(0), */_status2(0), _acceptInput(true), _attachedSprite(NULL), _isWalking(false),
+	_status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false), _flagF6(false), _isLeverDown(false),
+	_flagFA(false), _ladderStatus(0), _field114(0), _resourceHandle(-1), _soundFlag(false) {
 	
 	// TODO DirtySurface
 	createSurface(surfacePriority, 320, 200);
 	_x = x;
 	_y = y;
-	_x4 = x;
-	_y4 = y;
+	_destX = x;
+	_destY = y;
 	_flags = 2;
 	setKlaymanIdleTable1();
 	stTryStandIdle();
@@ -84,13 +84,13 @@ uint32 Klayman::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4818:
-		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	}
 	return 0;
@@ -123,7 +123,7 @@ void Klayman::setKlaymanIdleTable3() {
 }
 
 void Klayman::stDoIdlePickEar() {
-	sub41D320(0x5B20C814, AnimationCallback(&Klayman::stIdlePickEar));
+	startIdleAnimation(0x5B20C814, AnimationCallback(&Klayman::stIdlePickEar));
 }
 
 void Klayman::stIdlePickEar() {
@@ -154,7 +154,7 @@ void Klayman::evIdlePickEarDone() {
 }
 
 void Klayman::sub41FDA0() {
-	sub41D320(0xD122C137, AnimationCallback(&Klayman::sub41FDB0));
+	startIdleAnimation(0xD122C137, AnimationCallback(&Klayman::sub41FDB0));
 }
 
 void Klayman::sub41FDB0() {
@@ -180,7 +180,7 @@ uint32 Klayman::handleMessage41E980(int messageNum, const MessageParam &param, E
 }
 
 void Klayman::sub41FDF0() {
-	sub41D320(0x543CD054, AnimationCallback(&Klayman::sub41FE00));
+	startIdleAnimation(0x543CD054, AnimationCallback(&Klayman::sub41FE00));
 }
 
 void Klayman::sub41FE00() {
@@ -215,7 +215,7 @@ uint32 Klayman::handleMessage41E9E0(int messageNum, const MessageParam &param, E
 }
 
 void Klayman::stDoIdleChest() {
-	sub41D320(0x40A0C034, AnimationCallback(&Klayman::stIdleChest));
+	startIdleAnimation(0x40A0C034, AnimationCallback(&Klayman::stIdleChest));
 }
 
 void Klayman::stIdleChest() {
@@ -241,7 +241,7 @@ uint32 Klayman::hmIdleChest(int messageNum, const MessageParam &param, Entity *s
 }
 
 void Klayman::sub41FEB0() {
-	sub41D320(0x5120E137, AnimationCallback(&Klayman::sub41FEC0));
+	startIdleAnimation(0x5120E137, AnimationCallback(&Klayman::sub41FEC0));
 }
 
 void Klayman::sub41FEC0() {
@@ -441,26 +441,26 @@ void Klayman::stGetUpFromTeleporter() {
 /////////////////////////////////////////////////////////////////
 
 void Klayman::sub41CE70() {
-	_x4 = _x;
-	if (!_flagE1 && !_flagE2 && !_flagE3) {
+	_destX = _x;
+	if (!_isWalking && !_isSneaking && !_isLargeStep) {
 		gotoState(NULL);
-		sub41C7B0();
+		gotoNextStateExt();
 	}
 }
 
-void Klayman::sub41D320(uint32 fileHash, AnimationCb callback) {
+void Klayman::startIdleAnimation(uint32 fileHash, AnimationCb callback) {
 	_resourceHandle = _vm->_res->useResource(fileHash);
 	if (_resourceHandle != -1) {
 		// TODO _vm->_res->moveToFront(_resourceHandle);
 		NextState(callback);
-		SetUpdateHandler(&Klayman::update41D2B0);
+		SetUpdateHandler(&Klayman::upIdleAnimation);
 	}
 }
 
-void Klayman::update41D2B0() {
+void Klayman::upIdleAnimation() {
 	// TODO Check if this odd stuff is needed or just some cache optimization
 	if (_vm->_res->isResourceDataValid(_resourceHandle)) {
-		sub41C7B0();
+		gotoNextStateExt();
 		// TODO _vm->_res->moveToBack(_resourceHandle);
 		_vm->_res->unuseResource(_resourceHandle);
 		_resourceHandle = -1;
@@ -484,7 +484,7 @@ bool Klayman::stStartActionFromIdle(AnimationCb callback) {
 	return false;
 }
 
-void Klayman::sub41C7B0() {
+void Klayman::gotoNextStateExt() {
 	if (_finalizeStateCb) {
 		AnimationCb cb = _finalizeStateCb;
 		_finalizeStateCb = NULL;
@@ -559,7 +559,7 @@ uint32 Klayman::handleMessage41D360(int messageNum, const MessageParam &param, E
 		_attachedSprite = (Sprite*)(param.asEntity());
 		break;
 	case 0x1019:
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x101C:
 		sub41C770();
@@ -599,7 +599,7 @@ uint32 Klayman::handleMessage41D480(int messageNum, const MessageParam &param, E
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x3002:
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	}
 	return messageResult;
@@ -629,33 +629,33 @@ uint32 Klayman::hmStartAction(int messageNum, const MessageParam &param, Entity 
 }
 
 
-void Klayman::sub41C930(int16 x, bool flag) {
+void Klayman::startWalkToX(int16 x, bool flag) {
 	int16 xdiff = ABS(x - _x);
 	if (x == _x) {
-		_x4 = x;
-		if (!_flagE1 && !_flagE2 && !_flagE3) {
+		_destX = x;
+		if (!_isWalking && !_isSneaking && !_isLargeStep) {
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		}
-	} else if (xdiff <= 36 && !_flagE1 && !_flagE2 && !_flagE3) {
-		_x4 = x;
+	} else if (xdiff <= 36 && !_isWalking && !_isSneaking && !_isLargeStep) {
+		_destX = x;
 		gotoState(NULL);
-		sub41C7B0();
+		gotoNextStateExt();
 	} else if (xdiff <= 42 && _status3 != 3) {
-		if (_flagE2 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_x4 - _x) > xdiff) {
-			_x4 = x;
+		if (_isSneaking && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_destX - _x) > xdiff) {
+			_destX = x;
 		} else {
-			_x4 = x;
+			_destX = x;
 			GotoState(&Klayman::stSneak);
 		}
-	} else if (_flagE1 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
-		_x4 = x;
+	} else if (_isWalking && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
+		_destX = x;
 	} else if (flag) {
-		_x4 = x;
+		_destX = x;
 		error("// TODO AnimatedSprite_GotoState(&Klayman::sub421550));");
 		// TODO AnimatedSprite_GotoState(&Klayman::sub421550);
 	} else {
-		_x4 = x;
+		_destX = x;
 		GotoState(&Klayman::stStartWalking);
 	}
 }
@@ -701,14 +701,14 @@ bool Klayman::stStartAction(AnimationCb callback3) {
 		NextState(callback3);
 		return true;
 	} else {
-		_x = _x4;
+		_x = _destX;
 		return false;
 	}
 }
 
 void Klayman::spriteUpdate41F250() {
 
-	int16 xdiff = _x4 - _x;
+	int16 xdiff = _destX - _x;
 
 	if (_doDeltaX) {
 		_x -= _deltaX;
@@ -730,7 +730,7 @@ void Klayman::spriteUpdate41F250() {
 		else if (xdiff < -6)
 			_x -= 6;
 		else
-			_x = _x4;				
+			_x = _destX;				
 	}
 	
 	processDelta();
@@ -739,7 +739,7 @@ void Klayman::spriteUpdate41F250() {
 
 void Klayman::suWalking() {
 	
-	int16 xdiff = _x4 - _x;
+	int16 xdiff = _destX - _x;
 	
 	if (_currFrameIndex == 9) {
 		if (xdiff > 26)
@@ -754,7 +754,7 @@ void Klayman::suWalking() {
 		xdiff = -_deltaX;
 	_deltaX = 0;				
 
-	if (_x4 != _x) {
+	if (_destX != _x) {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdiff;
 		if (_field114) {
@@ -787,9 +787,9 @@ void Klayman::suWalking() {
 
 void Klayman::stSneak() {
 	_status2 = 1;
-	_flagE2 = true;
+	_isSneaking = true;
 	_acceptInput = true;
-	setDoDeltaX(_x4 < _x ? 1 : 0);
+	setDoDeltaX(_destX < _x ? 1 : 0);
 	startAnimation(0x5C48C506, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmWalking);
@@ -798,7 +798,7 @@ void Klayman::stSneak() {
 }
 
 void Klayman::stWalkingDone() {
-	_flagE2 = false;
+	_isSneaking = false;
 }
 
 uint32 Klayman::hmWalking(int messageNum, const MessageParam &param, Entity *sender) {
@@ -810,60 +810,36 @@ uint32 Klayman::hmWalking(int messageNum, const MessageParam &param, Entity *sen
 		} else if (param.asInteger() == 0x0A2A9098) {
 			_soundResource1.play(0x0A2AA8E0);
 		} else if (param.asInteger() == 0x32188010) {
-			if (_soundFlag) {
-				_soundResource1.play(0x48498E46);
-			} else {
-				_soundResource1.play(0x405002D8);
-			}
+			_soundResource1.play(_soundFlag ? 0x48498E46 : 0x405002D8);
 		} else if (param.asInteger() == 0x02A2909C) {
-			if (_soundFlag) {
-				_soundResource1.play(0x50399F64);
-			} else {
-				_soundResource1.play(0x0460E2FA);
-			}
+			_soundResource1.play(_soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
 	case 0x3002:
-		_x = _x4;
-		sub41C7B0();
+		_x = _destX;
+		gotoNextStateExt();
 		break;
 	}
 	return messageResult;
 }
 
-void Klayman::sub41CD70(int16 x) {
-	if (x > _x) {
-		if (ABS(x - _x) <= 105) {
-			sub41CAC0(x);
-		} else {
-			sub41C930(x, false);
-		}
-	} else if (x == _x) {
-		_x4 = x;
-		gotoState(NULL);
-		sub41C7B0();
-	} else {
-		sub41C930(x, false);
-	}
-}
-
 void Klayman::stStartWalking() {
 	if (!stStartActionFromIdle(AnimationCallback(&Klayman::stStartWalking))) {
 		_status2 = 0;
-		_flagE1 = true;
+		_isWalking = true;
 		_acceptInput = true;
-		setDoDeltaX(_x4 < _x ? 1 : 0);
+		setDoDeltaX(_destX < _x ? 1 : 0);
 		startAnimation(0x242C0198, 0, -1);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::hmStartWalking);
-		SetSpriteCallback(&Klayman::spriteUpdate41F320);
+		SetSpriteCallback(&Klayman::suWalkingTestExit);
 		FinalizeState(&Klayman::stStartWalkingDone);	
 		NextState(&Klayman::stWalking);
 	}
 }
 
 void Klayman::stStartWalkingDone() {
-	_flagE1 = false;
+	_isWalking = false;
 }
 
 uint32 Klayman::hmStartWalking(int messageNum, const MessageParam &param, Entity *sender) {
@@ -871,17 +847,9 @@ uint32 Klayman::hmStartWalking(int messageNum, const MessageParam &param, Entity
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x32180101) {
-			if (_soundFlag) {
-				_soundResource1.play(0x48498E46);
-			} else {
-				_soundResource1.play(0x405002D8);
-			}
+			_soundResource1.play(_soundFlag ? 0x48498E46 : 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
-			if (_soundFlag) {
-				_soundResource1.play(0x50399F64);
-			} else {
-				_soundResource1.play(0x0460E2FA);
-			}
+			_soundResource1.play(_soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
 	}
@@ -890,7 +858,7 @@ uint32 Klayman::hmStartWalking(int messageNum, const MessageParam &param, Entity
 
 void Klayman::stWalking() {
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, 0, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -901,7 +869,7 @@ void Klayman::stWalking() {
 }
 
 void Klayman::spriteUpdate41F300() {
-	SetSpriteCallback(&Klayman::spriteUpdate41F320);
+	SetSpriteCallback(&Klayman::suWalkingTestExit);
 	_deltaX = 0;
 }
 
@@ -910,17 +878,9 @@ uint32 Klayman::handleMessage41EB70(int messageNum, const MessageParam &param, E
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x32180101) {
-			if (_soundFlag) {
-				_soundResource1.play(0x48498E46);
-			} else {
-				_soundResource1.play(0x405002D8);
-			}
+			_soundResource1.play(_soundFlag ? 0x48498E46 : 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
-			if (_soundFlag) {
-				_soundResource1.play(0x50399F64);
-			} else {
-				_soundResource1.play(0x0460E2FA);
-			}
+			_soundResource1.play(_soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
 	}
@@ -929,13 +889,13 @@ uint32 Klayman::handleMessage41EB70(int messageNum, const MessageParam &param, E
 
 void Klayman::stUpdateWalking() {
 	if (_status3 == 2) {
-		sub41C7B0();
+		gotoNextStateExt();
 	} else if (_status3 == 3) {
 		stWalkingOpenDoor();
 	} else {
-		_flagE2 = true;
+		_isSneaking = true;
 		_acceptInput = true;
-		if (ABS(_x4 - _x) <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) {
+		if (ABS(_destX - _x) <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) {
 			if (_status3 == 0) {
 				_status2 = 1;
 				startAnimation(0xF234EE31, 0, -1);
@@ -943,7 +903,7 @@ void Klayman::stUpdateWalking() {
 				_status2 = 2;
 				startAnimation(0xF135CC21, 0, -1);
 			}
-		} else if (ABS(_x4 - _x) <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) {
+		} else if (ABS(_destX - _x) <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) {
 			if (_status3 == 0) {
 				_status2 = 1;
 				startAnimation(0x8604A152, 0, -1);
@@ -959,9 +919,9 @@ void Klayman::stUpdateWalking() {
 	}
 }
 
-void Klayman::spriteUpdate41F320() {
-	int16 xdiff = ABS(_x4 - _x);
-	int16 xdelta = _x4 - _x;
+void Klayman::suWalkingTestExit() {
+	int16 xdiff = ABS(_destX - _x);
+	int16 xdelta = _destX - _x;
 	
 	if (xdelta > _deltaX)
 		xdelta = _deltaX;
@@ -970,15 +930,11 @@ void Klayman::spriteUpdate41F320() {
 		
 	_deltaX = 0;		
 
-	if (xdiff == 0) {
-		sendMessage(this, 0x1019, 0);
-	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) {
-		sendMessage(this, 0x1019, 0);
-	} else if (_status3 != 2 && _status3 != 3 && xdiff <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) {
-		sendMessage(this, 0x1019, 0);
-	} else if (_status3 == 3 && xdiff < 30) {
-		sendMessage(this, 0x1019, 0);
-	} else if (_status3 == 3 && xdiff < 150 && _currFrameIndex >= 6) {
+	if (xdiff == 0 ||
+		(_status3 != 2 && _status3 != 3 && xdiff <= 42 && _currFrameIndex >= 5 && _currFrameIndex <= 11) ||
+		(_status3 != 2 && _status3 != 3 && xdiff <= 10 && (_currFrameIndex >= 12 || _currFrameIndex <= 4)) ||
+		(_status3 == 3 && xdiff < 30) ||
+		(_status3 == 3 && xdiff < 150 && _currFrameIndex >= 6)) {
 		sendMessage(this, 0x1019, 0);
 	} else {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
@@ -993,17 +949,9 @@ void Klayman::spriteUpdate41F320() {
 			} else if (hitRectNext->type == 0x5003) {
 				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (_x - hitRectNext->rect.x1) / 2);
 			} else if (hitRectPrev->type == 0x5002) {
-				if (xdelta > 0) {
-					_y = hitRectPrev->rect.y2;
-				} else {
-					_y = hitRectPrev->rect.y1;
-				}
+				_y = xdelta > 0 ? hitRectPrev->rect.y2 : hitRectPrev->rect.y1;
 			} else if (hitRectPrev->type == 0x5003) {
-				if (xdelta < 0) {
-					_y = hitRectPrev->rect.y2;
-				} else {
-					_y = hitRectPrev->rect.y1;
-				}
+				_y = xdelta < 0 ? hitRectPrev->rect.y2 : hitRectPrev->rect.y1;
 			} else if (_flagF6 && xdelta != 0) {
 				if (hitRectNext->type == 0x5000) {
 					_y++;
@@ -1120,42 +1068,54 @@ void Klayman::stPressButtonSide() {
 	}
 }
 
-void Klayman::sub41CD00(int16 x) {
-	if (_x > x) {
-		if (_x - x <= 105) {
-			sub41CAC0(x);
-		} else {
-			sub41C930(x, false);
-		}
-	} else if (_x < x) {
-		sub41C930(x, false);
-	} else {
-		_x4 = x;
+void Klayman::startSpecialWalkRight(int16 x) {
+	if (_x == x) {
+		_destX = x;
 		gotoState(NULL);
-		sub41C7B0();
+		gotoNextStateExt();
+	} else if (_x < x) {
+		startWalkToX(x, false);
+	} else if (_x - x <= 105) {
+		sub41CAC0(x);
+	} else {
+		startWalkToX(x, false);
+	}
+}
+
+void Klayman::startSpecialWalkLeft(int16 x) {
+	if (x == _x) {
+		_destX = x;
+		gotoState(NULL);
+		gotoNextStateExt();
+	} else if (x < _x) {
+		startWalkToX(x, false);
+	} else if (x - _x <= 105) {
+		sub41CAC0(x);
+	} else {
+		startWalkToX(x, false);
 	}
 }
 
 void Klayman::sub41CC40(int16 x1, int16 x2) {
 	if (_x > x1) {
 		if (_x == x1 + x2) {
-			_x4 = x1 + x2;
+			_destX = x1 + x2;
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		} else if (_x < x1 + x2) {
 			sub41CAC0(x1 + x2);
 		} else {
-			sub41C930(x1 + x2, false);
+			startWalkToX(x1 + x2, false);
 		}
 	} else {
 		if (_x == x1 - x2) {
-			_x4 = x1 - x2;
+			_destX = x1 - x2;
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		} else if (_x > x1 - x2) {
 			sub41CAC0(x1 - x2);
 		} else {
-			sub41C930(x1 - x2, false);
+			startWalkToX(x1 - x2, false);
 		}
 	}
 }
@@ -1163,35 +1123,35 @@ void Klayman::sub41CC40(int16 x1, int16 x2) {
 void Klayman::sub41CAC0(int16 x) {
 	int16 xdiff = ABS(x - _x);
 	if (x == _x) {
-		_x4 = x;
-		if (!_flagE1 && !_flagE2 && !_flagE3) {
+		_destX = x;
+		if (!_isWalking && !_isSneaking && !_isLargeStep) {
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		}
-	} else if (xdiff <= 36 && !_flagE1 && !_flagE2 && !_flagE3) {
-		_x4 = x;
+	} else if (xdiff <= 36 && !_isWalking && !_isSneaking && !_isLargeStep) {
+		_destX = x;
 		gotoState(NULL);
-		sub41C7B0();
+		gotoNextStateExt();
 	} else if (xdiff <= 42 && _status3 != 3) {
-		if (_flagE2 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_x4 - _x) > xdiff) {
-			_x4 = x;
+		if (_isSneaking && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0)) && ABS(_destX - _x) > xdiff) {
+			_destX = x;
 		} else {
-			_x4 = x;
+			_destX = x;
 			GotoState(&Klayman::stSneak);
 		}
-	} else if (_flagE3 && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
-		_x4 = x;
+	} else if (_isLargeStep && ((!_doDeltaX && x - _x > 0) || (_doDeltaX && x - _x < 0))) {
+		_destX = x;
 	} else {
-		_x4 = x;
+		_destX = x;
 		GotoState(&Klayman::stLargeStep);
 	}
 }
 
 void Klayman::stLargeStep() {
 	_status2 = 2;
-	_flagE3 = true;
+	_isLargeStep = true;
 	_acceptInput = true;
-	setDoDeltaX(_x4 >= _x ? 1 : 0);
+	setDoDeltaX(_destX >= _x ? 1 : 0);
 	startAnimation(0x08B28116, 0, -1);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::hmLargeStep);
@@ -1200,11 +1160,11 @@ void Klayman::stLargeStep() {
 }
 
 void Klayman::stLargeStepDone() {
-	_flagE3 = false;
+	_isLargeStep = false;
 }
 
 void Klayman::suLargeStep() {
-	int16 xdiff = _x4 - _x;
+	int16 xdiff = _destX - _x;
 	
 	if (_doDeltaX) {
 		_deltaX = -_deltaX;
@@ -1219,7 +1179,7 @@ void Klayman::suLargeStep() {
 
 	_deltaX = 0;
 	
-	if (_x != _x4) {
+	if (_x != _destX) {
 		HitRect *hitRectPrev = _vm->_collisionMan->findHitRectAtPos(_x, _y);
 		_x += xdiff;
 		if (_field114) {
@@ -1232,17 +1192,9 @@ void Klayman::suLargeStep() {
 			} else if (hitRectNext->type == 0x5003) {
 				_y = MAX<int16>(hitRectNext->rect.y1, hitRectNext->rect.y2 - (_x - hitRectNext->rect.x1) / 2);
 			} else if (hitRectPrev->type == 0x5002) {
-				if (xdiff > 0) {
-					_y = hitRectPrev->rect.y2;
-				} else {
-					_y = hitRectPrev->rect.y1;
-				}
+				_y = xdiff > 0 ? hitRectPrev->rect.y2 : hitRectPrev->rect.y1;
 			} else if (hitRectPrev->type == 0x5003) {
-				if (xdiff < 0) {
-					_y = hitRectPrev->rect.y2;
-				} else {
-					_y = hitRectPrev->rect.y1;
-				}
+				_y = xdiff < 0 ? hitRectPrev->rect.y2 : hitRectPrev->rect.y1;
 			}
 		}
 		processDelta();
@@ -1260,8 +1212,8 @@ uint32 Klayman::hmLargeStep(int messageNum, const MessageParam &param, Entity *s
 		}
 		break;
 	case 0x3002:
-		_x = _x4;
-		sub41C7B0();
+		_x = _destX;
+		gotoNextStateExt();
 		break;		
 	}
 	return messageResult;
@@ -1394,7 +1346,7 @@ uint32 Klayman::hmJumpToRing(int messageNum, const MessageParam &param, Entity *
 
 void Klayman::spriteUpdate41F230() {
 	AnimatedSprite::updateDeltaXY();
-	_x4 = _x;
+	_destX = _x;
 }
 
 void Klayman::sub420340() {
@@ -1492,65 +1444,65 @@ void Klayman::sub41CCE0(int16 x) {
 void Klayman::stContinueClimbLadderUp() {
 	_status2 = 0;
 	_acceptInput = true;
-	_statusE0 = 3;
+	_ladderStatus = 3;
 	startAnimationByHash(0x3A292504, 0x01084280, 0);
 	_newStickFrameHash = 0x01084280;
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&Klayman::handleMessage41D360);
 	SetSpriteCallback(NULL);
-	sub41C7B0();
+	gotoNextStateExt();
 }
 
-void Klayman::sub4209D0() {
-	if (!stStartAction(AnimationCallback(&Klayman::sub4209D0))) {
+void Klayman::stStartClimbLadderDown() {
+	if (!stStartAction(AnimationCallback(&Klayman::stStartClimbLadderDown))) {
 		_status2 = 0;
-		if (_y4 < _y) {
-			if (_statusE0 == 1) {
-				_statusE0 = 2;
-				sub420BC0();
+		if (_destY < _y) {
+			if (_ladderStatus == 1) {
+				_ladderStatus = 2;
+				stClimbLadderHalf();
 			} else {
-				sub41C7B0();
+				gotoNextStateExt();
 			}
-		} else if (_statusE0 == 0) {
-			_statusE0 = 2;
+		} else if (_ladderStatus == 0) {
+			_ladderStatus = 2;
 			_acceptInput = false;
 			startAnimation(0x122D1505, 0, -1);
 			SetUpdateHandler(&Klayman::update);
-			SetMessageHandler(&Klayman::handleMessage41E0D0);
+			SetMessageHandler(&Klayman::hmClimbLadderUpDown);
 			SetSpriteCallback(&Klayman::spriteUpdate41F230);
-		} else if (_statusE0 == 3) {
-			_statusE0 = 2;
-			_acceptInput = false;
+		} else if (_ladderStatus == 3) {
+			_ladderStatus = 2;
+			_acceptInput = true;
 			startAnimationByHash(0x122D1505, 0x01084280, 0);
 			SetUpdateHandler(&Klayman::update);
-			SetMessageHandler(&Klayman::handleMessage41E0D0);
+			SetMessageHandler(&Klayman::hmClimbLadderUpDown);
 			SetSpriteCallback(&Klayman::spriteUpdate41F230);
-		} else if (_statusE0 == 1) {
-			_statusE0 = 2;
+		} else if (_ladderStatus == 1) {
+			_ladderStatus = 2;
 			_acceptInput = true;
 			startAnimation(0x122D1505, 29 - _currFrameIndex, -1);
 		} 
 	}
 }
 
-void Klayman::sub420BC0() {
+void Klayman::stClimbLadderHalf() {
 	_status2 = 2;
-	if (_statusE0 == 1) {
-		_statusE0 = 0;
+	if (_ladderStatus == 1) {
+		_ladderStatus = 0;
 		_acceptInput = false;
 		startAnimationByHash(0x3A292504, 0x02421405, 0);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::handleMessage41DFD0);
 		SetSpriteCallback(&Klayman::spriteUpdate41F230);
-	} else if (_statusE0 == 1) {
-		_statusE0 = 0;
+	} else if (_ladderStatus == 2) {
+		_ladderStatus = 0;
 		_acceptInput = false;
 		startAnimationByHash(0x122D1505, 0x02421405, 0);
 		SetUpdateHandler(&Klayman::update);
 		SetMessageHandler(&Klayman::handleMessage41DFD0);
 		SetSpriteCallback(&Klayman::spriteUpdate41F230);
 	} else {
-		sub41C7B0();
+		gotoNextStateExt();
 	}
 }
 
@@ -1572,7 +1524,7 @@ uint32 Klayman::handleMessage41DFD0(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
-uint32 Klayman::handleMessage41E0D0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 Klayman::hmClimbLadderUpDown(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D360(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -1583,19 +1535,14 @@ uint32 Klayman::handleMessage41E0D0(int messageNum, const MessageParam &param, E
 		} else if (param.asInteger() == 0x400A0E64) {
 			_soundResource1.play(0x50E081D9);
 		} else if (param.asInteger() == 0x02421405) {
-			if (_statusE0 == 1) {
+			if (_ladderStatus == 1) {
 				startAnimationByHash(0x3A292504, 0x01084280, 0);
+				if (_destY >= _y - 30)
+					sendMessage(this, 0x1019, 0);
 			} else {
 				startAnimationByHash(0x122D1505, 0x01084280, 0);
-			}
-			if (_statusE0 == 1) {
-				if (_y4 >= _y - 30) {
+				if (_destY <= _y)
 					sendMessage(this, 0x1019, 0);
-				}
-			} else {
-				if (_y4 <= _y) {
-					sendMessage(this, 0x1019, 0);
-				}
 			}
 		}
 		break;
@@ -1603,27 +1550,27 @@ uint32 Klayman::handleMessage41E0D0(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
-void Klayman::sub420AD0() {
-	if (!stStartAction(AnimationCallback(&Klayman::sub420AD0))) {
+void Klayman::stStartClimbLadderUp() {
+	if (!stStartAction(AnimationCallback(&Klayman::stStartClimbLadderUp))) {
 		_status2 = 0;
-		if (_y4 >= _y - 30) {
-			sub41C7B0();
-		} else if (_statusE0 == 0) {
-			_statusE0 = 1;
+		if (_destY >= _y - 30) {
+			gotoNextStateExt();
+		} else if (_ladderStatus == 0) {
+			_ladderStatus = 1;
 			_acceptInput = false;
 			startAnimation(0x3A292504, 0, -1);
 			SetUpdateHandler(&Klayman::update);
-			SetMessageHandler(&Klayman::handleMessage41E0D0);
+			SetMessageHandler(&Klayman::hmClimbLadderUpDown);
 			SetSpriteCallback(&Klayman::spriteUpdate41F230);
-		} else if (_statusE0 == 3) {
-			_statusE0 = 1;
+		} else if (_ladderStatus == 3) {
+			_ladderStatus = 1;
 			_acceptInput = true;
 			startAnimationByHash(0x3A292504, 0x01084280, 0);
 			SetUpdateHandler(&Klayman::update);
-			SetMessageHandler(&Klayman::handleMessage41E0D0);
+			SetMessageHandler(&Klayman::hmClimbLadderUpDown);
 			SetSpriteCallback(&Klayman::spriteUpdate41F230);
-		} else if (_statusE0 == 2) {
-			_statusE0 = 1;
+		} else if (_ladderStatus == 2) {
+			_ladderStatus = 1;
 			_acceptInput = true;
 			startAnimation(0x3A292504, 29 - _currFrameIndex, -1);
 		}
@@ -1648,17 +1595,9 @@ uint32 Klayman::hmWalkToFront(int messageNum, const MessageParam &param, Entity 
 		} else if (param.asInteger() == 0x110010D1) {
 			sendMessage(_parentScene, 0x482B, 0);
 		} else if (param.asInteger() == 0x32180101) {
-			if (_soundFlag) {
-				_soundResource1.play(0x48498E46);
-			} else {
-				_soundResource1.play(0x405002D8);
-			}
+			_soundResource1.play(_soundFlag ? 0x48498E46 : 0x405002D8);
 		} else if (param.asInteger() == 0x0A2A9098) {
-			if (_soundFlag) {
-				_soundResource1.play(0x50399F64);
-			} else {
-				_soundResource1.play(0x0460E2FA);
-			}
+			_soundResource1.play(_soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
 	}
@@ -1792,7 +1731,7 @@ void Klayman::stReturnFromUse() {
 }
 
 void Klayman::stWalkingOpenDoor() {
-	_flagF8 = false;
+	_isWalkingOpenDoorNotified = false;
 	_acceptInput = false;
 	startAnimation(0x11A8E012, 0, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -1801,16 +1740,16 @@ void Klayman::stWalkingOpenDoor() {
 }
 
 void Klayman::suWalkingOpenDoor() {
-	if (!_flagF8 && ABS(_x4 - _x) < 80) {
+	if (!_isWalkingOpenDoorNotified && ABS(_destX - _x) < 80) {
 		sendMessage(_parentScene, 0x4829, 0);
-		_flagF8 = true;
+		_isWalkingOpenDoorNotified = true;
 	}
 	AnimatedSprite::updateDeltaXY();
 }
 
 void Klayman::stMoveObjectSkipTurnFaceObject() {
 	setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
-	_flagE4 = false;
+	_isMoveObjectRequested = false;
 	_acceptInput = true;
 	startAnimationByHash(0x0C1CA072, 0x01084280, 0);
 	SetUpdateHandler(&Klayman::update);
@@ -1829,7 +1768,7 @@ uint32 Klayman::hmMoveObjectTurn(int messageNum, const MessageParam &param, Enti
 			if (_attachedSprite)
 				sendMessage(_attachedSprite, 0x480B, _doDeltaX ? 1 : 0);
 		} else if (param.asInteger() == 0x02421405) {
-			if (_flagE4 && sendMessage(_attachedSprite, 0x480C, _doDeltaX ? 1 : 0) != 0) {
+			if (_isMoveObjectRequested && sendMessage(_attachedSprite, 0x480C, _doDeltaX ? 1 : 0) != 0) {
 				stMoveObjectSkipTurn();
 			} else {
 				FinalizeState(&Klayman::sub420660);
@@ -1842,14 +1781,14 @@ uint32 Klayman::hmMoveObjectTurn(int messageNum, const MessageParam &param, Enti
 		}
 		break;
 	case 0x480A:
-		_flagE4 = true;
+		_isMoveObjectRequested = true;
 		return 0;		
 	}
 	return handleMessage41D480(messageNum, param, sender);
 }
 
 void Klayman::stMoveObjectSkipTurn() {
-	_flagE4 = false;
+	_isMoveObjectRequested = false;
 	_acceptInput = true;
 	startAnimationByHash(0x0C1CA072, 0x01084280, 0);
 	SetUpdateHandler(&Klayman::update);
@@ -1861,7 +1800,7 @@ void Klayman::stMoveObjectFaceObject() {
 	setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
 	if (!stStartAction(AnimationCallback(&Klayman::stMoveObjectFaceObject))) {
 		_status2 = 2;
-		_flagE4 = false;
+		_isMoveObjectRequested = false;
 		_acceptInput = true;
 		startAnimation(0x0C1CA072, 0, -1);
 		SetUpdateHandler(&Klayman::update);
@@ -1925,7 +1864,7 @@ void Klayman::stReleaseLever() {
 		_acceptInput = false;
 		_isLeverDown = false;
 	} else {
-		sub41C7B0();
+		gotoNextStateExt();
 	}
 }
 
@@ -1951,7 +1890,7 @@ void Klayman::stInsertDisk() {
 		}
 		if (_counter2 == 0) {
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		} else {
 			startAnimation(0xD8C8D100, 0, -1);
 			SetUpdateHandler(&Klayman::update);
@@ -2001,7 +1940,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -2027,7 +1966,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		// TODO: It's not really a point but an x1/x2 pair
@@ -2052,7 +1991,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4836:
 		if (param.asInteger() == 1) {
@@ -2061,10 +2000,10 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;		
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -2125,7 +2064,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004: 
 		GotoState(&Klayman::stTryStandIdle);
@@ -2169,7 +2108,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:				  
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:				
 		sub41CCE0(param.asInteger());
@@ -2180,17 +2119,17 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4821:	
 		sendMessage(_parentScene, 0x2005, 0);
-		_y4 = param.asInteger();
-		GotoState(&Klayman::sub4209D0);	 
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderDown);	 
 		break;
 	case 0x4822:  
 		sendMessage(_parentScene, 0x2005, 0);
-		_y4 = param.asInteger();
-		GotoState(&Klayman::sub420AD0);	 
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderUp);	 
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2006, 0);
-		GotoState(&Klayman::sub420BC0);	 
+		GotoState(&Klayman::stClimbLadderHalf);	 
 		break;
 	case 0x482E:	 
 		if (param.asInteger() == 1) {
@@ -2207,10 +2146,10 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;
 	case 0x4840: 
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -2295,18 +2234,13 @@ uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x01084280) {
-			if (_attachedSprite) {
-				sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
-			}
+			sendMessage(_attachedSprite, 0x480B, (uint32)_doDeltaX);
 		} else if (param.asInteger() == 0x02421405) {
-			if (_flagE4) {
-				if (_attachedSprite) {
-					if (sendMessage(_attachedSprite, 0x480C, (uint32)_doDeltaX) != 0) {
-						stContinueMovingVenusFlyTrap();
-					}
-				}
+			if (_isMoveObjectRequested) {
+				if (sendMessage(_attachedSprite, 0x480C, (uint32)_doDeltaX) != 0)
+					stContinueMovingVenusFlyTrap();
 			} else {
-				SetMessageHandler(&KmScene1002::handleMessage449BA0);
+				SetMessageHandler(&KmScene1002::hmFirstMoveVenusFlyTrap);
 			}
 		} else if (param.asInteger() == 0x4AB28209) {
 			sendMessage(_attachedSprite, 0x482A, 0);
@@ -2319,13 +2253,13 @@ uint32 KmScene1002::hmMoveVenusFlyTrap(int messageNum, const MessageParam &param
 		}
 		break;
 	case 0x480A:
-		_flagE4 = true;
+		_isMoveObjectRequested = true;
 		return 0;
 	}
 	return handleMessage41D480(messageNum, param, sender);
 }
 
-uint32 KmScene1002::handleMessage449BA0(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 KmScene1002::hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = handleMessage41D480(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
@@ -2433,7 +2367,7 @@ void KmScene1002::sub449F70() {
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
 	_acceptInput = false;
-	_flagE1 = false;
+	_isWalking = false;
 	startAnimationByHash(0x000BAB02, 0x88003000, 0);
 	SetUpdateHandler(&Klayman::update);
 	SetSpriteCallback(NULL);
@@ -2477,7 +2411,7 @@ void KmScene1002::sub44A150() {
 	_soundResource1.play(0x41648271);
 	_status2 = 1;
 	_acceptInput = false;
-	_flagE1 = false;
+	_isWalking = false;
 	startAnimationByHash(0x0013A206, 0x88003000, 0);
 	SetUpdateHandler(&Klayman::update);
 	SetMessageHandler(&KmScene1002::handleMessage41D480);
@@ -2550,7 +2484,7 @@ void KmScene1002::stHitByBoxingGloveDone() {
 void KmScene1002::stMoveVenusFlyTrap() {
 	if (!stStartAction(AnimationCallback(&KmScene1002::stMoveVenusFlyTrap))) {
 		_status2 = 2;
-		_flagE4 = false;
+		_isMoveObjectRequested = false;
 		_acceptInput = true;
 		setDoDeltaX(_attachedSprite->getX() < _x ? 1 : 0);
 		startAnimation(0x5C01A870, 0, -1);
@@ -2562,7 +2496,7 @@ void KmScene1002::stMoveVenusFlyTrap() {
 }
 
 void KmScene1002::stContinueMovingVenusFlyTrap() {
-	_flagE4 = false;
+	_isMoveObjectRequested = false;
 	_acceptInput = true;
 	startAnimationByHash(0x5C01A870, 0x01084280, 0);
 	SetUpdateHandler(&Klayman::update);
@@ -2587,17 +2521,17 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4818:
-		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x481E:
 		GotoState(&KmScene1004::stReadNote);
@@ -2608,36 +2542,36 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4821:
 		sendMessage(_parentScene, 0x2000, 0);
-		_y4 = param.asInteger();
-		GotoState(&Klayman::sub4209D0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderDown);
 		break;
 	case 0x4822:
 		sendMessage(_parentScene, 0x2000, 0);
-		_y4 = param.asInteger();
-		GotoState(&Klayman::sub420AD0);
+		_destY = param.asInteger();
+		GotoState(&Klayman::stStartClimbLadderUp);
 		break;
 	case 0x4823:
 		sendMessage(_parentScene, 0x2001, 0);
-		GotoState(&Klayman::sub420BC0);
+		GotoState(&Klayman::stClimbLadderHalf);
 		break;
 	case 0x4824:
 		sendMessage(_parentScene, 0x2000, 0);
-		_y4 = _dataResource.getPoint(param.asInteger()).y;
-		GotoState(&Klayman::sub4209D0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klayman::stStartClimbLadderDown);
 		break;
 	case 0x4825:
 		sendMessage(_parentScene, 0x2000, 0);
-		_y4 = _dataResource.getPoint(param.asInteger()).y;
-		GotoState(&Klayman::sub420AD0);
+		_destY = _dataResource.getPoint(param.asInteger()).y;
+		GotoState(&Klayman::stStartClimbLadderUp);
 		break;
 	case 0x4828:
 		GotoState(&Klayman::stTurnToBackToUse);
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -2678,7 +2612,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter)
@@ -2688,7 +2622,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&Klayman::stWalking);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -2696,7 +2630,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481D:
 		if (_isSittingInTeleporter)
@@ -2775,7 +2709,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -2802,7 +2736,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -2822,13 +2756,13 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -2836,7 +2770,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 
 void KmScene1201::update40DBE0() {
 	if (_x >= 380)
-		sub41C7B0();
+		gotoNextStateExt();
 	Klayman::update();		
 }
 
@@ -3059,7 +2993,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3075,7 +3009,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3094,10 +3028,10 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3113,7 +3047,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3123,7 +3057,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;		
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	}
 	return 0;
@@ -3159,7 +3093,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter)
@@ -3187,7 +3121,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481A:
 		GotoState(&Klayman::stInsertDisk);		
@@ -3226,7 +3160,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x482E:
 		if (param.asInteger() == 1) {
@@ -3262,10 +3196,10 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		sub417D80();
 		break;																				
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return messageResult;
@@ -3312,7 +3246,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3338,7 +3272,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481A:
 		if (param.asInteger() == 1) {
@@ -3367,10 +3301,10 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stStepOver);
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3425,7 +3359,7 @@ void KmScene1308::sub456150() {
 		}
 		if (!_flag1) {
 			gotoState(NULL);
-			sub41C7B0();
+			gotoNextStateExt();
 		} else {
 			_acceptInput = false;
 			startAnimation(0xDC409440, 0, -1);
@@ -3449,7 +3383,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3472,7 +3406,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3492,7 +3426,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x482E:
 		if (param.asInteger() == 1) {
@@ -3524,7 +3458,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3538,7 +3472,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;		
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3569,7 +3503,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3595,7 +3529,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3608,10 +3542,10 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stReleaseLever);
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3629,7 +3563,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -3652,7 +3586,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481A:
 		GotoState(&Klayman::stInsertDisk);		
@@ -3685,13 +3619,13 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3708,7 +3642,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter)
@@ -3727,7 +3661,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3759,7 +3693,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4834:
 		GotoState(&Klayman::stStepOver);
@@ -3775,10 +3709,10 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klayman::stGetUpFromTeleporter);
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3801,7 +3735,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter) {
@@ -3824,7 +3758,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -3941,14 +3875,14 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481D:
 		GotoState(&Klayman::stTurnToUse);
@@ -3958,13 +3892,13 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -3983,7 +3917,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter) {
@@ -3994,7 +3928,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&Klayman::stWalking);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4002,7 +3936,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x481D:
 		if (_isSittingInTeleporter) {
@@ -4084,7 +4018,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		if (_isSittingInTeleporter)
@@ -4115,7 +4049,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -4232,7 +4166,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -4247,10 +4181,10 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4818:
-		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -4267,7 +4201,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x482E:	 
 		if (param.asInteger() == 1) {
@@ -4284,10 +4218,10 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;	
@@ -4302,7 +4236,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -4327,10 +4261,10 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x4818:
-		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x4819:
 		GotoState(&Klayman::stClayDoorOpen);
@@ -4353,13 +4287,13 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -4378,14 +4312,14 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&KmScene2205::sub423980);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4398,16 +4332,16 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x4818:
-		sub41C930(_dataResource.getPoint(param.asInteger()).x, false);
+		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -4418,7 +4352,7 @@ void KmScene2205::sub423980() {
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -4446,7 +4380,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -4456,7 +4390,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&KmScene2206::sub482530);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4480,7 +4414,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -4504,7 +4438,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x482E:	 
 		if (param.asInteger() == 1) {
@@ -4524,10 +4458,10 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		sub41CE70();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -4536,9 +4470,8 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 void KmScene2206::spriteUpdate482450() {
 	_yDelta++;
 	_y += _yDelta;
-	if (_y > 600) {
+	if (_y > 600)
 		sendMessage(this, 0x1019, 0);
-	}
 }
 
 void KmScene2206::sub482490() {
@@ -4560,7 +4493,7 @@ void KmScene2206::sub482530() {
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -4586,7 +4519,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
@@ -4608,7 +4541,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -4622,13 +4555,13 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x483F:
-		sub41CD00(param.asInteger());
+		startSpecialWalkRight(param.asInteger());
 		break;		
 	case 0x4840:
-		sub41CD70(param.asInteger());
+		startSpecialWalkLeft(param.asInteger());
 		break;
 	}
 	return 0;
@@ -4704,14 +4637,14 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&KmScene2242::sub444D20);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4728,7 +4661,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481B:
 		if (param.asPoint().y != 0) {
@@ -4752,7 +4685,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4837:
 		sub41CE70();
@@ -4766,7 +4699,7 @@ void KmScene2242::sub444D20() {
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -4789,14 +4722,14 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&KmHallOfRecords::sub43B130);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4804,7 +4737,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481F:
 		if (param.asInteger() == 0) {
@@ -4821,7 +4754,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4837:
 		sub41CE70();
@@ -4835,7 +4768,7 @@ void KmHallOfRecords::sub43B130() {
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);
@@ -4858,14 +4791,14 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 	switch (messageNum) {
 	case 0x4001:
 	case 0x4800:
-		sub41C930(param.asPoint().x, false);
+		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
 		GotoState(&Klayman::stTryStandIdle);
 		break;
 	case 0x4804:
 		if (param.asInteger() != 0) {
-			_x4 = param.asInteger();
+			_destX = param.asInteger();
 			GotoState(&KmScene2247::sub453520);
 		} else {
 			GotoState(&Klayman::stPeekWall);
@@ -4873,7 +4806,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
-		sub41C7B0();
+		gotoNextStateExt();
 		break;		
 	case 0x481F:
 		if (param.asInteger() == 0) {
@@ -4890,7 +4823,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
-		sub41C7B0();
+		gotoNextStateExt();
 		break;
 	case 0x4837:
 		sub41CE70();
@@ -4904,7 +4837,7 @@ void KmScene2247::sub453520() {
 	if (frameIndex < 0 || frameIndex > 13)
 		frameIndex = 0;
 	_status2 = 0;
-	_flagE1 = true;
+	_isWalking = true;
 	_acceptInput = true;
 	startAnimation(0x1A249001, frameIndex, -1);
 	SetUpdateHandler(&Klayman::update);

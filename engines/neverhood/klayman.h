@@ -75,9 +75,9 @@ public:
 	void stReleaseRing();
 	void stJumpToRing4();
 	void stContinueClimbLadderUp();
-	void sub4209D0();
-	void sub420BC0();
-	void sub420AD0();
+	void stStartClimbLadderDown();
+	void stClimbLadderHalf();
+	void stStartClimbLadderUp();
 	void stWalkToFrontNoStep();
 	void stWalkToFront();
 	void stTurnToFront();
@@ -122,7 +122,7 @@ public:
 	void spriteUpdate41F230();
 	void suWalkingOpenDoor();
 	void spriteUpdate41F300();
-	void spriteUpdate41F320();
+	void suWalkingTestExit();
 
 	uint32 handleMessage41D360(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41D480(int messageNum, const MessageParam &param, Entity *sender);
@@ -139,20 +139,20 @@ public:
 protected:
 	Entity *_parentScene;
 	Sprite *_attachedSprite;
-	int _statusE0;
-	bool _flagE1;
-	bool _flagE2;
-	bool _flagE3;
-	bool _flagE4;
+	int _ladderStatus;
+	bool _isWalking;
+	bool _isSneaking;
+	bool _isLargeStep;
+	bool _isMoveObjectRequested;
 	bool _acceptInput;
-	int16 _x4, _y4;
+	int16 _destX, _destY;
 	int16 _counter, _counterMax;
 	int16 _counter3, _counter3Max;
 	int16 _counter1;
 	int16 _counter2;
 	bool _flagF6;
 	bool _isLeverDown;
-	bool _flagF8;
+	bool _isWalkingOpenDoorNotified;
 	int _status2;
 	bool _flagFA;
 	SoundResource _soundResource1;
@@ -187,11 +187,11 @@ protected:
 	void sub41FEC0();
 	uint32 handleMessage41EFE0(int messageNum, const MessageParam &param, Entity *sender);
 
-	void sub41D320(uint32 fileHash, AnimationCb callback);
-	void update41D2B0();
+	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
+	void upIdleAnimation();
 
 	bool stStartActionFromIdle(AnimationCb callback);
-	void sub41C7B0();
+	void gotoNextStateExt();
 	void sub41C770();
 	void sub41C790();
 	
@@ -202,7 +202,7 @@ protected:
 	
 	uint32 hmStartAction(int messageNum, const MessageParam &param, Entity *sender);
 
-	void sub41C930(int16 x, bool flag);
+	void startWalkToX(int16 x, bool flag);
 
 	uint32 hmSleeping(int messageNum, const MessageParam &param, Entity *sender);
 	
@@ -211,7 +211,7 @@ protected:
 	void stSneak();
 	void stWalkingDone();
 	uint32 hmWalking(int messageNum, const MessageParam &param, Entity *sender);
-	void sub41CD70(int16 x);
+	void startSpecialWalkLeft(int16 x);
 	void stStartWalking();
 	uint32 hmStartWalking(int messageNum, const MessageParam &param, Entity *sender);
 
@@ -219,7 +219,7 @@ protected:
 	
 	uint32 hmPressButton(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void sub41CD00(int16 x);
+	void startSpecialWalkRight(int16 x);
 	void sub41CC40(int16 x1, int16 x2);
 	void sub41CAC0(int16 x);
 	void sub41CCE0(int16 x);
@@ -232,7 +232,7 @@ protected:
 	uint32 hmJumpToRing3(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmHoldRing(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage41DFD0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage41E0D0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmClimbLadderUpDown(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmWalkToFront(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmLandOnFeet(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmTurnToBackToUse(int messageNum, const MessageParam &param, Entity *sender);
@@ -271,7 +271,7 @@ protected:
 	uint32 handleMessage4498E0(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPressDoorButton(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449BA0(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmFirstMoveVenusFlyTrap(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449C90(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage449D60(int messageNum, const MessageParam &param, Entity *sender);
 	void suFallDown();
