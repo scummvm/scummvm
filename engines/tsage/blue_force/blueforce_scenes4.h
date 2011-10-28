@@ -133,6 +133,7 @@ class Scene415: public SceneExt {
 	class GunInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	class GunAndWig: public NamedObject {
 	public:
@@ -141,6 +142,7 @@ class Scene415: public SceneExt {
 	class BulletsInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	class DashDrawer: public NamedObject {
 	public:

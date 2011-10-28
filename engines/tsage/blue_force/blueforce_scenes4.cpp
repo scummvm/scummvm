@@ -928,6 +928,17 @@ bool Scene415::GunInset::startAction(CursorType action, Event &event) {
 	}
 }
 
+void Scene415::GunInset::remove() {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	BF_GLOBALS._player.disableControl();
+	scene->_gunAndWig.remove();
+	FocusObject::remove();
+
+	scene->_sceneMode = 0;
+	scene->_object6.animate(ANIM_MODE_6, scene);
+}
+
 bool Scene415::GunAndWig::startAction(CursorType action, Event &event) {
 	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
 
@@ -972,6 +983,13 @@ bool Scene415::BulletsInset::startAction(CursorType action, Event &event) {
 	} else {
 		return FocusObject::startAction(action, event);
 	}
+}
+
+void Scene415::BulletsInset::remove() {
+	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
+
+	scene->_theBullets.remove();
+	FocusObject::remove();
 }
 
 bool Scene415::DashDrawer::startAction(CursorType action, Event &event) {
