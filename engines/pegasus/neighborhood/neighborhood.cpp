@@ -473,6 +473,7 @@ void Neighborhood::requestSpotSound(const TimeValue in, const TimeValue out, con
 void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	// Let the action queue play out first...
 	while (!actionQueueEmpty()) {
+		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->checkNotifications();
 		_vm->_system->delayMillis(10);
@@ -482,6 +483,7 @@ void Neighborhood::playSpotSoundSync(const TimeValue in, const TimeValue out) {
 	_spotSounds.playSoundSegment(in, out);
 
 	while (_spotSounds.isPlaying()) {
+		_vm->checkCallBacks();
 		_vm->refreshDisplay();
 		_vm->_system->delayMillis(10);
 	}
