@@ -63,9 +63,9 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
 	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 
-	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 width = planeRect.width() + 1;
-	uint16 height = planeRect.height() + 1;
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
+	uint16 width = nsRect.width() + 1;
+	uint16 height = nsRect.height() + 1;
 
 	// Limit rectangle dimensions, if requested
 	if (maxWidth > 0)
@@ -119,7 +119,7 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-void GfxText32::drawTextBitmap(reg_t textObject) {
+void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
@@ -134,13 +134,10 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
-	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
 	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
+	// Get totalWidth, totalHeight
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
-	// Get totalWidth, totalHeight
 	uint16 width = READ_LE_UINT16(memoryPtr);
 	uint16 height = READ_LE_UINT16(memoryPtr + 2);
 
@@ -157,20 +154,6 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
-}
-
-Common::Rect GfxText32::getPlaneRect(reg_t textObject) {
-	Common::Rect planeRect(0, 0, _screen->getWidth(), _screen->getHeight());
-
-	reg_t planeObject = readSelector(_segMan, textObject, SELECTOR(plane));
-	if (!planeObject.isNull()) {
-		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
-		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
-		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
-		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
-	}
-
-	return planeRect;
 }
 
 int16 GfxText32::GetLongest(const char *text, int16 maxWidth, GfxFont *font) {

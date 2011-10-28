@@ -488,12 +488,10 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, pictureOffsetY, it->planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
-			} else if (itemEntry->viewId != 0xFFFF) {
-				GfxView *view = _cache->getView(itemEntry->viewId);
-
-//				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
-
-				if (view->isSci2Hires()) {
+			} else {
+				GfxView *view = (itemEntry->viewId != 0xFFFF) ? _cache->getView(itemEntry->viewId) : NULL;
+				
+				if (view && view->isSci2Hires()) {
 					int16 dummyX = 0;
 					view->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 					view->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
@@ -513,24 +511,27 @@ void GfxFrameout::kernelFrameout() {
 					itemEntry->celRect.left = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inLeft));
 					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom)) + 1;
 					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight)) + 1;
-					if (view->isSci2Hires()) {
+					if (view && view->isSci2Hires()) {
 						view->adjustToUpscaledCoordinates(itemEntry->celRect.top, itemEntry->celRect.left);
 						view->adjustToUpscaledCoordinates(itemEntry->celRect.bottom, itemEntry->celRect.right);
 					}
 					itemEntry->celRect.translate(itemEntry->x, itemEntry->y);
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
 					//  the only currently known usage is game menu of gk1
-				} else {
-					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-						view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
-					else
-						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
+				} else if (view) {
+						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+							view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
+								itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
+						else
+							view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, 
+								itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX,
+								itemEntry->scaleY, itemEntry->celRect);
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
 					nsRect.translate(it->planeOffsetX, it->planeOffsetY);
 
-					if (view->isSci2Hires()) {
+					if (view && view->isSci2Hires()) {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
 						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
 					} else if (getSciVersion() == SCI_VERSION_2_1) {
@@ -552,7 +553,7 @@ void GfxFrameout::kernelFrameout() {
 
 				int16 screenHeight = _screen->getHeight();
 				int16 screenWidth = _screen->getWidth();
-				if (view->isSci2Hires()) {
+				if (view && view->isSci2Hires()) {
 					screenHeight = _screen->getDisplayHeight();
 					screenWidth = _screen->getDisplayWidth();
 				}
@@ -565,7 +566,8 @@ void GfxFrameout::kernelFrameout() {
 
 				Common::Rect clipRect, translatedClipRect;
 				clipRect = itemEntry->celRect;
-				if (view->isSci2Hires()) {
+
+				if (view && view->isSci2Hires()) {
 					clipRect.clip(it->upscaledPlaneClipRect);
 					translatedClipRect = clipRect;
 					translatedClipRect.translate(it->upscaledPlaneRect.left, it->upscaledPlaneRect.top);
@@ -575,21 +577,20 @@ void GfxFrameout::kernelFrameout() {
 					translatedClipRect.translate(it->planeRect.left, it->planeRect.top);
 				}
 
-				if (!clipRect.isEmpty()) {
-					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-						view->draw(itemEntry->celRect, clipRect, translatedClipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
-					else
-						view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
+				if (view) {
+					if (!clipRect.isEmpty()) {
+						if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+							view->draw(itemEntry->celRect, clipRect, translatedClipRect, 
+								itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
+						else
+							view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, 
+								itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
+					}
 				}
 
-				// Draw overlay text, if it exists (e.g. on buttons)
+				// Draw text, if it exists
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					g_sci->_gfxText32->drawTextBitmap(itemEntry->object);
-				}
-			} else {
-				// Most likely a text entry
-				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					g_sci->_gfxText32->drawTextBitmap(itemEntry->object);
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->x, itemEntry->y, it->planeRect, itemEntry->object);
 				}
 			}
 		}

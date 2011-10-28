@@ -37,7 +37,7 @@ public:
 	~GfxText32();
 	reg_t createTextBitmap(reg_t textObject, uint16 maxWidth = 0, uint16 maxHeight = 0);
 	void disposeTextBitmap(reg_t hunkId);
-	void drawTextBitmap(reg_t textObject);
+	void drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t textObject);
 	int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font);
 
 	void kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
@@ -46,7 +46,6 @@ private:
 	int16 Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth);
 	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
 	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
-	Common::Rect getPlaneRect(reg_t textObject);
 
 	SegManager *_segMan;
 	GfxCache *_cache;
