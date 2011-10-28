@@ -810,6 +810,7 @@ public:
 	Common::List<int> _disabledRegions;
 public:
 	WalkRegions() { _resNum = -1; }
+	virtual ~WalkRegions() {}
 	virtual void synchronize(Serializer &s);
 
 	void clear();
