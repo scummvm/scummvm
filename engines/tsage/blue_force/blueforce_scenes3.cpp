@@ -638,7 +638,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 
 	switch (action) {
 	case CURSOR_USE:
-		if (scene->_field1B60 || scene->_field1B64)
+		if (scene->_invGreenCount || scene->_invGangCount)
 			SceneItem::display2(320, 51);
 		else
 			NamedHotspot::startAction(action, event);
@@ -667,7 +667,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 			scene->_stripNumber = 3174;
 			scene->setAction(&scene->_action1);
 		} else {
-			++scene->_field1B62;
+			++scene->_bookGreenCount;
 			scene->_stripNumber = (action == INV_GREENS_GUN) ? 3168 : 0;
 			scene->_sceneMode = 3153;
 			scene->setAction(&scene->_sequenceManager, scene, 3153, &BF_GLOBALS._player, NULL);
@@ -717,8 +717,8 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 			scene->_stripNumber = 3174;
 			scene->setAction(&scene->_action1);
 		} else {
-			++scene->_field1B66;
-			if (!scene->_field1B6C && (scene->_field1B66 == 1)) {
+			++scene->_bookGangCount;
+			if (!scene->_field1B6C && (scene->_bookGangCount == 1)) {
 				scene->_field1B6C = 1;
 				scene->_stripNumber = 3169;
 			} else {
@@ -759,9 +759,9 @@ bool Scene315::SutterSlot::startAction(CursorType action, Event &event) {
 	case INV_BOOKING_FRANKIE:
 	case INV_BOOKING_GANG:
 		if (action == INV_BOOKING_GREEN)
-			++scene->_field1B62;
+			++scene->_bookGreenCount;
 		else
-			++scene->_field1B66;
+			++scene->_bookGangCount;
 
 		BF_GLOBALS._player.disableControl();
 		scene->_sceneMode = 12;
@@ -958,8 +958,8 @@ Scene315::Scene315() {
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 	_field1B68 = true;
 	_field1B6A = false;
-	_field1B60 = _field1B62 = 0;
-	_field1B64 = _field1B66 = 0;
+	_invGreenCount = _bookGreenCount = 0;
+	_invGangCount = _bookGangCount = 0;
 }
 
 void Scene315::synchronize(Serializer &s) {
@@ -968,10 +968,10 @@ void Scene315::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1390);
 	s.syncAsSint16LE(_stripNumber);
 	s.syncAsSint16LE(_field1398);
-	s.syncAsSint16LE(_field1B60);
-	s.syncAsSint16LE(_field1B62);
-	s.syncAsSint16LE(_field1B64);
-	s.syncAsSint16LE(_field1B66);
+	s.syncAsSint16LE(_invGreenCount);
+	s.syncAsSint16LE(_bookGreenCount);
+	s.syncAsSint16LE(_invGangCount);
+	s.syncAsSint16LE(_bookGangCount);
 	s.syncAsSint16LE(_field1B6C);
 	s.syncAsSint16LE(_field139C);
 	s.syncAsByte(_field1B68);
@@ -980,6 +980,7 @@ void Scene315::synchronize(Serializer &s) {
 }
 
 void Scene315::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit(OwnerList);
 	loadScene(315);
 
 	if (BF_GLOBALS._sceneManager._previousScene != 325)
@@ -1061,24 +1062,24 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 
 	// Set up evidence objects in inventory
 	if (BF_INVENTORY._bookingGreen.inInventory())
-		++_field1B60;
+		++_invGreenCount;
 	if (BF_INVENTORY._greensGun.inInventory())
-		++_field1B60;
+		++_invGreenCount;
 	if (BF_INVENTORY._greensKnife.inInventory())
-		++_field1B60;
+		++_invGreenCount;
 
 	if (BF_INVENTORY._bullet22.inInventory())
-		++_field1B64;
+		++_invGangCount;
 	if (BF_INVENTORY._autoRifle.inInventory())
-		++_field1B64;
+		++_invGangCount;
 	if (BF_INVENTORY._wig.inInventory())
-		++_field1B64;
+		++_invGangCount;
 	if (BF_INVENTORY._bookingFrankie.inInventory())
-		++_field1B64;
+		++_invGangCount;
 	if (BF_INVENTORY._bookingGang.inInventory())
-		++_field1B64;
+		++_invGangCount;
 	if (BF_INVENTORY._snub22.inInventory())
-		++_field1B64;
+		++_invGangCount;
 
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 190:
@@ -1135,15 +1136,15 @@ void Scene315::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 10:
-		if (_field1B62) {
-			if (_field1B62 >= _field1B60)
+		if (_bookGreenCount) {
+			if (_bookGreenCount >= _invGreenCount)
 				BF_GLOBALS.setFlag(fLeftTraceIn910);
 			else
 				++ctr;
 		}
 
-		if (_field1B66) {
-			if (_field1B66 < _field1B64)
+		if (_bookGangCount) {
+			if (_bookGangCount < _invGangCount)
 				++ctr;
 			else if (BF_GLOBALS._bookmark < bBookedFrankieEvidence)
 				BF_GLOBALS._bookmark = bBookedFrankieEvidence;
@@ -1158,15 +1159,15 @@ void Scene315::signal() {
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		break;
 	case 11:
-		if (_field1B62) {
-			if (_field1B62 >= _field1B60)
+		if (_bookGreenCount) {
+			if (_bookGreenCount >= _invGreenCount)
 				BF_GLOBALS.setFlag(fLeftTraceIn910);
 			else
 				++ctr;
 		}
 
-		if (_field1B66) {
-			if (_field1B66 < _field1B64)
+		if (_bookGangCount) {
+			if (_bookGangCount < _invGangCount)
 				++ctr;
 			else if (BF_GLOBALS._bookmark < bBookedFrankie)
 				BF_GLOBALS._bookmark = bBookedFrankie;
@@ -1195,7 +1196,7 @@ void Scene315::signal() {
 		T2_GLOBALS._uiElements.addScore(30);
 		BF_INVENTORY.setObjectScene((int)_currentCursor, 315);
 
-		if (!_field1B64 || (_field1B66 != _field1B64))
+		if (!_invGangCount || (_bookGangCount != _invGangCount))
 			BF_GLOBALS._player.enableControl();
 		else {
 			_field139C = 1;
@@ -1217,7 +1218,8 @@ void Scene315::signal() {
 		BF_GLOBALS._walkRegions.disableRegion(4);
 		_object7.remove();
 		_object6.remove();
-
+	// No break on purpose
+	case 3155:
 		BF_GLOBALS._player.enableControl();
 		_field1B68 = false;
 		BF_GLOBALS._walkRegions.disableRegion(4);
@@ -1230,20 +1232,13 @@ void Scene315::signal() {
 
 		if (_stripNumber != 0)
 			setAction(&_action1);
-		else if (!_field1B64 || (_field1B66 != _field1B64))
+		else if (!_invGangCount || (_bookGangCount != _invGangCount))
 			BF_GLOBALS._player.enableControl();
 		else {
 			_stripNumber = 3171;
 			setAction(&_action1);
 			_field139C = 1;
 		}
-		break;
-	case 3155:
-		BF_GLOBALS._player.enableControl();
-		_field1B68 = false;
-		BF_GLOBALS._walkRegions.disableRegion(4);
-		T2_GLOBALS._uiElements._active = true;
-		T2_GLOBALS._uiElements.show();
 		break;
 	case 3156:
 		T2_GLOBALS._uiElements.addScore(10);

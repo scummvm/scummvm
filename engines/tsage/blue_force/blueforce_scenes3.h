@@ -213,8 +213,8 @@ public:
 	int _field1390;
 	int _stripNumber;
 	int _field1398;
-	int _field1B60, _field1B62, _field1B64;
-	int _field1B66, _field1B6C, _field139C;
+	int _invGreenCount, _bookGreenCount, _invGangCount;
+	int _bookGangCount, _field1B6C, _field139C;
 	bool _field1B68, _field1B6A;
 	CursorType _currentCursor;
 
