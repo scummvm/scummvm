@@ -717,6 +717,7 @@ void Scene410::signal() {
 		break;
 	case 7:
 		BF_INVENTORY.setObjectScene(INV_TYRONE_ID, 1);
+		_sceneMode = 0;
 		signal();
 		break;
 	case 8:
@@ -784,6 +785,7 @@ void Scene410::signal() {
 		BF_GLOBALS._player.setObjectWrapper(new SceneObjectWrapper());
 		BF_GLOBALS._player.updateAngle(Common::Point(100, 170));
 		BF_GLOBALS._walkRegions.enableRegion(22);
+		BF_GLOBALS._walkRegions.enableRegion(7);
 		BF_GLOBALS._walkRegions.enableRegion(16);
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 0;
