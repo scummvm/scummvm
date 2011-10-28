@@ -251,34 +251,34 @@ private:
 
 class MixedSoundDriver : public Sound {
 public:
-	MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
-	~MixedSoundDriver() { delete _music; delete _sfx; }
+	MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx);
+	~MixedSoundDriver();
 
-	kType getMusicType() const { return _music->getMusicType(); }
-	kType getSfxType() const { return _sfx->getSfxType(); }
+	virtual kType getMusicType() const;
+	virtual kType getSfxType() const;
 
-	bool init() { return (_music->init() && _sfx->init()); }
-	void process() { _music->process(); _sfx->process(); }
+	virtual bool init();
+	virtual void process();
 
-	void updateVolumeSettings() { _music->updateVolumeSettings(); _sfx->updateVolumeSettings(); }
+	virtual void updateVolumeSettings();
 
-	void setSoundList(const AudioDataStruct * list) { _music->setSoundList(list); _sfx->setSoundList(list); }
-	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
-	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
-	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
+	virtual void setSoundList(const AudioDataStruct *list);
+	virtual bool hasSoundFile(uint file) const;
+	virtual void loadSoundFile(uint file);
+	virtual void loadSoundFile(Common::String file);
 
-	void loadSfxFile(Common::String file) { _sfx->loadSoundFile(file); }
+	virtual void loadSfxFile(Common::String file);
 
-	void playTrack(uint8 track) { _music->playTrack(track); }
-	void haltTrack() { _music->haltTrack(); }
-	bool isPlaying() const { return _music->isPlaying() | _sfx->isPlaying(); }
+	virtual void playTrack(uint8 track);
+	virtual void haltTrack();
+	virtual bool isPlaying() const;
 
-	void playSoundEffect(uint8 track) { _sfx->playSoundEffect(track); }
+	virtual void playSoundEffect(uint8 track);
 
-	void stopAllSoundEffects() { _sfx->stopAllSoundEffects(); }
+	virtual void stopAllSoundEffects();
 
-	void beginFadeOut() { _music->beginFadeOut(); }
-	void pause(bool paused) { _music->pause(paused); _sfx->pause(paused); }
+	virtual void beginFadeOut();
+	virtual void pause(bool paused);
 private:
 	Sound *_music, *_sfx;
 };

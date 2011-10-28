@@ -163,6 +163,91 @@ bool Sound::allVoiceChannelsPlaying() const {
 
 #pragma mark -
 
+MixedSoundDriver::MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx)
+    : Sound(vm, mixer), _music(music), _sfx(sfx) {
+}
+
+MixedSoundDriver::~MixedSoundDriver() {
+	delete _music;
+	delete _sfx;
+}
+
+Sound::kType MixedSoundDriver::getMusicType() const {
+	return _music->getMusicType();
+}
+
+Sound::kType MixedSoundDriver::getSfxType() const {
+	return _sfx->getSfxType();
+}
+
+bool MixedSoundDriver::init() {
+	return (_music->init() && _sfx->init());
+}
+
+void MixedSoundDriver::process() {
+	_music->process();
+	_sfx->process();
+}
+
+void MixedSoundDriver::updateVolumeSettings() {
+	_music->updateVolumeSettings();
+	_sfx->updateVolumeSettings();
+}
+
+void MixedSoundDriver::setSoundList(const AudioDataStruct *list) {
+	_music->setSoundList(list);
+	_sfx->setSoundList(list);
+}
+
+bool MixedSoundDriver::hasSoundFile(uint file) const {
+	return _music->hasSoundFile(file) && _sfx->hasSoundFile(file);
+}
+
+void MixedSoundDriver::loadSoundFile(uint file) {
+	_music->loadSoundFile(file);
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::loadSoundFile(Common::String file) {
+	_music->loadSoundFile(file);
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::loadSfxFile(Common::String file) {
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::playTrack(uint8 track) {
+	_music->playTrack(track);
+}
+
+void MixedSoundDriver::haltTrack() {
+	_music->haltTrack();
+}
+
+bool MixedSoundDriver::isPlaying() const {
+	return _music->isPlaying() | _sfx->isPlaying();
+}
+
+void MixedSoundDriver::playSoundEffect(uint8 track) {
+	_sfx->playSoundEffect(track);
+}
+
+void MixedSoundDriver::stopAllSoundEffects() {
+	_sfx->stopAllSoundEffects();
+}
+
+void MixedSoundDriver::beginFadeOut() {
+	_music->beginFadeOut();
+}
+
+void MixedSoundDriver::pause(bool paused) {
+	_music->pause(paused);
+	_sfx->pause(paused);
+}
+
+#pragma mark -
+
 void KyraEngine_v1::snd_playTheme(int file, int track) {
 	if (_curMusicTheme == file)
 		return;
