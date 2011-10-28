@@ -218,14 +218,14 @@ void ShuttleHUD::draw(const Common::Rect &) {
 		}
 	}
 
-	drawOneBitImageOr(screen, s_RS232Data, 4, Common::Rect(kHUDRS232Left, kHUDRS232Top,
+	drawOneBitImageOr(screen, s_RS232Data, 2, Common::Rect(kHUDRS232Left, kHUDRS232Top,
 			kHUDRS232Left + 29, kHUDRS232Top + 8), _gridDarkGreen);
 
 	if (_targetLocked) {
 		drawHUDLockArrows(0, _lockDarkGreen2);
 		drawHUDLockArrows(12, _lockDarkGreen1);
 		drawHUDLockArrows(24, _lightGreen);
-		drawOneBitImageOr(screen, s_lockData, 8, Common::Rect(kHUDLockLeft, kHUDLockTop + 115,
+		drawOneBitImageOr(screen, s_lockData, 4, Common::Rect(kHUDLockLeft, kHUDLockTop + 115,
 				kHUDLockLeft + 52, kHUDLockTop + 115 + 9), _lightGreen);
 	}
 }
