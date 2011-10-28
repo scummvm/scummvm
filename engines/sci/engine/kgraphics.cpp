@@ -49,6 +49,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
@@ -1793,6 +1794,20 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 	default:
 		kStub(s, argc, argv);
 		break;
+	}
+
+	return s->r_acc;
+}
+
+// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
+// but it handles events on its own, using an internal loop, instead of using SCI
+// scripts for event management like kEditControl does. Called by script 64914,
+// DEdit::hilite().
+reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
+	reg_t controlObject = argv[0];
+
+	if (!controlObject.isNull()) {
+		g_sci->_gfxControls32->kernelTexteditChange(controlObject);
 	}
 
 	return s->r_acc;

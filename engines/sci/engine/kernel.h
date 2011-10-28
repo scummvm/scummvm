@@ -457,6 +457,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
+reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);

@@ -499,6 +499,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
+	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
@@ -522,13 +523,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// Creates the name of the save file to save into
 	// TODO: Implement once the original save/load menus are implemented.
 	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-
-	// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
-	// but it handles events on its own, using an internal loop, instead of using SCI
-	// scripts for event management like kEditControl does. Called by script 64914,
-	// DEdit::hilite().
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(EditText),            SIG_EVERYWHERE,          "o",                     NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
