@@ -135,9 +135,9 @@ void GfxText32::drawTextBitmap(uint16 x, uint16 y, Common::Rect planeRect, reg_t
 
 	int curByte = 0;
 	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
-	// Get totalWidth, totalHeight
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
+	// Get totalWidth, totalHeight
 	uint16 width = READ_LE_UINT16(memoryPtr);
 	uint16 height = READ_LE_UINT16(memoryPtr + 2);
 
