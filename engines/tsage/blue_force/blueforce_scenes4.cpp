@@ -962,7 +962,7 @@ bool Scene415::BulletsInset::startAction(CursorType action, Event &event) {
 	Scene415 *scene = (Scene415 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action == CURSOR_USE) {
-		if (BF_GLOBALS.getFlag(fGotAutoWeapon)) {
+		if (BF_GLOBALS.getFlag(fGotBulletsFromDash)) {
 			FocusObject::startAction(action, event);
 		} else {
 			remove();
@@ -1001,7 +1001,6 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 	case INV_FOREST_RAP:
 		if (scene->_scoreBulletRapFlag) {
 			SceneItem::display2(415, 35);
-			return true;
 		} else {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
@@ -1009,7 +1008,7 @@ bool Scene415::TheBullets::startAction(CursorType action, Event &event) {
 			T2_GLOBALS._uiElements.addScore(50);
 			scene->_scoreBulletRapFlag = true;
 		}
-		break;
+		return true;
 	default:
 		break;
 	}
