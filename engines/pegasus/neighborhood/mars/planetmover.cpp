@@ -76,10 +76,7 @@ void PlanetMover::newDestination() {
 	_p1 = _p4;
 	_r1 = _r4;
 
-	// Slightly worked differently than the original to work into our random number stuff
-	uint diff = ABS(kPlanetStopTop - kPlanetStartTop);
-	_p4 = kPlanetStopTop + (diff != 0) ? ((PegasusEngine *)g_engine)->getRandomNumber(diff - 1) : 0;
-
+	_p4 = kPlanetStopTop + ((PegasusEngine *)g_engine)->getRandomNumber(kPlanetStartTop - kPlanetStopTop - 1);
 	_r4 = ((PegasusEngine *)g_engine)->getRandomNumber(kMaxVelocity - 1);
 
 	if (_r4 + _p4 < kPlanetStopTop)
