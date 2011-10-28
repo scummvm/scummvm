@@ -169,7 +169,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	cicnStream->readUint16BE(); // always 0
 	cursorInfo.colorCount = cicnStream->readUint16BE() + 1;
 	
-	cursorInfo.palette = new byte[256 * cursorInfo.colorCount];
+	cursorInfo.palette = new byte[cursorInfo.colorCount * 3];
 	for (uint16 i = 0; i < cursorInfo.colorCount; i++) {
 		cicnStream->readUint16BE();
 		cursorInfo.palette[i * 3] = cicnStream->readUint16BE() >> 8;
@@ -178,8 +178,34 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	}
 	
 	// PixMap data
-	cursorInfo.surface->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
-	cicnStream->read(cursorInfo.surface->pixels, pixMap.rowBytes * pixMap.bounds.height());
+	if (pixMap.pixelSize == 8) {
+		cursorInfo.surface->create(pixMap.rowBytes, pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+		cicnStream->read(cursorInfo.surface->pixels, pixMap.rowBytes * pixMap.bounds.height());
+
+		// While this looks sensible, it actually doesn't work for some cursors
+		// (ie. the 'can grab' hand)
+		//cursorInfo.surface->w = pixMap.bounds.width();
+	} else if (pixMap.pixelSize == 1) {
+		cursorInfo.surface->create(pixMap.bounds.width(), pixMap.bounds.height(), Graphics::PixelFormat::createFormatCLUT8());
+
+		for (int y = 0; y < pixMap.bounds.height(); y++) {
+			byte *line = (byte *)cursorInfo.surface->getBasePtr(0, y);
+
+			for (int x = 0; x < pixMap.bounds.width();) {
+				byte b = cicnStream->readByte();
+
+				for (int i = 0; i < 8; i++) {
+					*line++ = ((b & (1 << (7 - i))) != 0) ? 1 : 0;
+
+					if (++x == pixMap.bounds.width())
+						break;
+				}
+			}
+		}
+	} else {
+		error("Unhandled %dbpp cicn images", pixMap.pixelSize);
+	}
+
 	delete cicnStream;
 }
 
