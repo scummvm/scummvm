@@ -36,10 +36,14 @@ class Klayman;
 
 const uint32 kKlaymanSpeedUpHash = 0x004A2148;
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct KlaymanIdleTableItem {
 	int value;
 	void (Klayman::*callback)();
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 class Klayman : public AnimatedSprite {
 public:
