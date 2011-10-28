@@ -220,6 +220,7 @@ void ListWidget::scrollBarRecalc() {
 void ListWidget::handleTickle() {
 	if (_editMode)
 		EditableWidget::handleTickle();
+	_scrollBar->handleTickle();
 }
 
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
