@@ -1718,7 +1718,7 @@ void Neighborhood::initOneMovie(Movie *movie, const Common::String &movieName, t
 }
 
 void Neighborhood::reinstateMonocleInterface() {
-	// TODO: Disable erase?
+	_vm->_gfx->disableErase();
 
 	_vm->createInterface();
 
