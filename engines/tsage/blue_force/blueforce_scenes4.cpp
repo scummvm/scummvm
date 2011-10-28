@@ -371,21 +371,27 @@ bool Scene410::Passenger::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_USE:
 		if (!BF_GLOBALS.getFlag(fCalledBackup)) {
-			if (BF_GLOBALS.getFlag(fTalkedShooterNoBkup)) {
+			if (BF_GLOBALS.getFlag(fTalkedShooterNoBkup))
 				scene->setAction(&scene->_action3);
-			} else {
-				SceneItem::display2(410, 5);
-			}
+			else
+				SceneItem::display(410, 5, SET_WIDTH, 300,
+					SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+					SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+					SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 96, SET_EXT_BGCOLOR, 99,
+					SET_EXT_FGCOLOR, 13, LIST_END);
 		} else if (!scene->_field1FBA) {
-			SceneItem::display2(410, 5);
+			SceneItem::display(410, 5, SET_WIDTH, 300,
+				SET_X, 10 + GLOBALS._sceneManager._scene->_sceneBounds.left,
+				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
+				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 96, SET_EXT_BGCOLOR, 99,
+				SET_EXT_FGCOLOR, 13, LIST_END);
 		} else if (!scene->_field1FBE) {
 			scene->_sceneMode = 4121;
 			scene->_field1FBE = 1;
 			T2_GLOBALS._uiElements.addScore(50);
 			scene->signal();
-		} else {
+		} else
 			break;
-		}
 		return true;
 	case CURSOR_TALK:
 		scene->setAction(&scene->_action5);
