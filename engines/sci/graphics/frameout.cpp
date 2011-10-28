@@ -581,6 +581,11 @@ void GfxFrameout::kernelFrameout() {
 					else
 						view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 				}
+
+				// Draw overlay text, if it exists (e.g. on buttons)
+				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->object);
+				}
 			} else {
 				// Most likely a text entry
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
