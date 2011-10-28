@@ -66,7 +66,7 @@ void glopLight(GLContext *c, GLParam *p) {
 	V4 v;
 	GLLight *l;
 	int i;
-  
+
 	assert(light >= TGL_LIGHT0 && light < TGL_LIGHT0 + T_MAX_LIGHTS);
 
 	l = &c->lights[light - TGL_LIGHT0];
@@ -132,7 +132,7 @@ void glopLight(GLContext *c, GLParam *p) {
 		assert(0);
 	}
 }
-  
+
 void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
 	float v[4] = { p[2].f, p[3].f, p[4].f, p[5].f };
@@ -140,7 +140,7 @@ void glopLightModel(GLContext *c, GLParam *p) {
 
 	switch (pname) {
 	case TGL_LIGHT_MODEL_AMBIENT:
-		for (i = 0; i < 4; i++) 
+		for (i = 0; i < 4; i++)
 			c->ambient_light_model.v[i] = v[i];
 		break;
 	case TGL_LIGHT_MODEL_LOCAL_VIEWER:
@@ -169,9 +169,13 @@ void gl_enable_disable_light(GLContext *c, int light, int v) {
 	GLLight *l = &c->lights[light];
 	if (v && !l->enabled) {
 		l->enabled = 1;
-		l->next = c->first_light;
-		c->first_light = l;
-		l->prev = NULL;
+		if (c->first_light != l) {
+			l->next = c->first_light;
+			if (c->first_light)
+				c->first_light->prev = l;
+			c->first_light = l;
+			l->prev = NULL;
+		}
 	} else if (!v && l->enabled) {
 		l->enabled = 0;
 		if (!l->prev)
@@ -205,7 +209,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 
 	for (l = c->first_light; l != NULL; l = l->next) {
 		float lR, lB, lG;
-    
+
 		// ambient
 		lR = l->ambient.v[0] * m->ambient.v[0];
 		lG = l->ambient.v[1] * m->ambient.v[1];
@@ -260,7 +264,7 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 			}
 
 			// specular light
-      
+
 			if (c->local_light_model) {
 				V3 vcoord;
 				vcoord.X = v->ec.X;
