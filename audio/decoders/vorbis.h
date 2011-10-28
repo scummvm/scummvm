@@ -38,8 +38,8 @@
  *  - tucker
  */
 
-#ifndef SOUND_VORBIS_H
-#define SOUND_VORBIS_H
+#ifndef AUDIO_VORBIS_H
+#define AUDIO_VORBIS_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -69,4 +69,4 @@ SeekableAudioStream *makeVorbisStream(
 } // End of namespace Audio
 
 #endif // #ifdef USE_VORBIS
-#endif // #ifndef SOUND_VORBIS_H
+#endif // #ifndef AUDIO_VORBIS_H

@@ -27,8 +27,8 @@
  *  - parallaction
  */
 
-#ifndef SOUND_MODS_PROTRACKER_H
-#define SOUND_MODS_PROTRACKER_H
+#ifndef AUDIO_MODS_PROTRACKER_H
+#define AUDIO_MODS_PROTRACKER_H
 
 namespace Common {
 class SeekableReadStream;

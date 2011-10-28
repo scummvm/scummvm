@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MIDIDRV_H
-#define SOUND_MIDIDRV_H
+#ifndef AUDIO_MIDIDRV_H
+#define AUDIO_MIDIDRV_H
 
 #include "common/scummsys.h"
 #include "common/str.h"

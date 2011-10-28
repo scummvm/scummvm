@@ -26,8 +26,8 @@
  *  - cine
  */
 
-#ifndef SOUND_MODS_SOUNDFX_H
-#define SOUND_MODS_SOUNDFX_H
+#ifndef AUDIO_MODS_SOUNDFX_H
+#define AUDIO_MODS_SOUNDFX_H
 
 namespace Common {
 class SeekableReadStream;

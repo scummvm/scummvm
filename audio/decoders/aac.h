@@ -26,8 +26,8 @@
  *  - groovie
  */
 
-#ifndef SOUND_AAC_H
-#define SOUND_AAC_H
+#ifndef AUDIO_AAC_H
+#define AUDIO_AAC_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -59,4 +59,4 @@ Codec *makeAACDecoder(
 } // End of namespace Audio
 
 #endif // #ifdef USE_FAAD
-#endif // #ifndef SOUND_AAC_H
+#endif // #ifndef AUDIO_AAC_H

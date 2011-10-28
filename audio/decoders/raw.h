@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_RAW_H
-#define SOUND_RAW_H
+#ifndef AUDIO_RAW_H
+#define AUDIO_RAW_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

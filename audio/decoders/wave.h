@@ -34,8 +34,8 @@
  *  - tucker
  */
 
-#ifndef SOUND_WAVE_H
-#define SOUND_WAVE_H
+#ifndef AUDIO_WAVE_H
+#define AUDIO_WAVE_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

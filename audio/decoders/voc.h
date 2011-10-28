@@ -30,8 +30,8 @@
  *  - touche
  */
 
-#ifndef SOUND_VOC_H
-#define SOUND_VOC_H
+#ifndef AUDIO_VOC_H
+#define AUDIO_VOC_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

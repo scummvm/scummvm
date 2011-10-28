@@ -18,8 +18,8 @@
 
 // Last synch with DOSBox SVN trunk r3752
 
-#ifndef SOUND_SOFTSYNTH_OPL_DBOPL_H
-#define SOUND_SOFTSYNTH_OPL_DBOPL_H
+#ifndef AUDIO_SOFTSYNTH_OPL_DBOPL_H
+#define AUDIO_SOFTSYNTH_OPL_DBOPL_H
 
 #include "common/scummsys.h"
 

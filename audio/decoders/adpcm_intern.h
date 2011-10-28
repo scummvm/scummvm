@@ -28,8 +28,8 @@
  * ADPCM decoder implementations.
  */
 
-#ifndef SOUND_ADPCM_INTERN_H
-#define SOUND_ADPCM_INTERN_H
+#ifndef AUDIO_ADPCM_INTERN_H
+#define AUDIO_ADPCM_INTERN_H
 
 #include "audio/audiostream.h"
 #include "common/endian.h"

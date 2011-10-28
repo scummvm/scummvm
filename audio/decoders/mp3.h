@@ -38,8 +38,8 @@
  *  - tucker
  */
 
-#ifndef SOUND_MP3_H
-#define SOUND_MP3_H
+#ifndef AUDIO_MP3_H
+#define AUDIO_MP3_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -69,4 +69,4 @@ SeekableAudioStream *makeMP3Stream(
 } // End of namespace Audio
 
 #endif // #ifdef USE_MAD
-#endif // #ifndef SOUND_MP3_H
+#endif // #ifndef AUDIO_MP3_H

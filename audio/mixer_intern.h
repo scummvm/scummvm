@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MIXER_INTERN_H
-#define SOUND_MIXER_INTERN_H
+#ifndef AUDIO_MIXER_INTERN_H
+#define AUDIO_MIXER_INTERN_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"

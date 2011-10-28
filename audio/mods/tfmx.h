@@ -25,7 +25,7 @@
 
 // normal Header Guard
 #elif !defined(SOUND_MODS_TFMX_H)
-#define SOUND_MODS_TFMX_H
+#define AUDIO_MODS_TFMX_H
 
 #include "audio/mods/paula.h"
 
