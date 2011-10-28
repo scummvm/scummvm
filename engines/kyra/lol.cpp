@@ -40,6 +40,8 @@
 
 namespace Kyra {
 
+const char *const LoLEngine::kKeymapName = "lol";
+
 LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {
 	_screen = 0;
 	_gui = 0;

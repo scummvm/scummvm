@@ -296,8 +296,6 @@ struct MistOfDoomAnimData {
 	uint8 sound;
 };
 
-static const char *const kKeymapName = "lol";
-
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -336,6 +334,8 @@ private:
 	void registerDefaultSettings();
 	void writeSettings();
 	void readSettings();
+
+	static const char *const kKeymapName;
 
 	const char *const *_pakFileList;
 	int _pakFileListSize;
