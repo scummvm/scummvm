@@ -144,6 +144,7 @@ struct SelectorCache {
 
 	Selector fore;
 	Selector back;
+	Selector skip;
 	Selector dimmed;
 
 	Selector fixPriority;

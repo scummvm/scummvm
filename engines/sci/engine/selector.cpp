@@ -178,6 +178,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
+	FIND_SELECTOR(skip);
 	FIND_SELECTOR(fixPriority);
 	FIND_SELECTOR(mirrored);
 	FIND_SELECTOR(useInsetRect);

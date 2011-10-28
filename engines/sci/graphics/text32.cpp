@@ -61,6 +61,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
+	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 
 	Common::Rect planeRect = getPlaneRect(textObject);
 	uint16 width = planeRect.width() + 1;
@@ -82,7 +83,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
 	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
 	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
-	memset(memoryPtr, 0, entrySize);
+	memset(memoryPtr, backColor, entrySize);
 	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int16 charCount = 0;
@@ -133,6 +134,7 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	Common::Rect planeRect = getPlaneRect(textObject);
 	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
 	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
+	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
 	uint16 width = nsRect.width() + 1;
@@ -149,7 +151,7 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel)
+			if (pixel != skipColor)
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
