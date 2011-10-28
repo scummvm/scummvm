@@ -59,7 +59,7 @@ bool Sound::isPlaying() const {
 	return false;
 }
 
-bool Sound::voiceFileIsPresent(const char *file) {
+bool Sound::voiceFileIsPresent(const char *file) const {
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		Common::String f = file;
 		f += _supportedCodecs[i].fileext;
@@ -70,7 +70,7 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-bool Sound::isVoicePresent(const char *file) {
+bool Sound::isVoicePresent(const char *file) const {
 	char filenamebuffer[25];
 
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
@@ -96,7 +96,7 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 	return playTime;
 }
 
-Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) {
+Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
 	char filenamebuffer[25];
 
 	Audio::SeekableAudioStream *audioStream = 0;
@@ -152,7 +152,7 @@ void Sound::voiceStop(const Audio::SoundHandle *handle) {
 	}
 }
 
-bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
+bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) const {
 	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; ++h) {
 			if (_mixer->isSoundHandleActive(_soundChannels[h]))
@@ -165,7 +165,7 @@ bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
 	return false;
 }
 
-bool Sound::allVoiceChannelsPlaying() {
+bool Sound::allVoiceChannelsPlaying() const {
 	for (int i = 0; i < kNumChannelHandles; ++i)
 		if (!_mixer->isSoundHandleActive(_soundChannels[i]))
 			return false;

@@ -163,7 +163,7 @@ public:
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }
 
-	virtual bool voiceFileIsPresent(const char *file);
+	virtual bool voiceFileIsPresent(const char *file) const;
 
 	/**
 	 * Checks whether a voice file with the given name is present
@@ -171,7 +171,7 @@ public:
 	 * @param file     file name
 	 * @return true if available, false otherwise
 	 */
-	bool isVoicePresent(const char *file);
+	bool isVoicePresent(const char *file) const;
 
 	/**
 	 * Plays the specified voice file.
@@ -188,7 +188,7 @@ public:
 	 */
 	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 
-	Audio::SeekableAudioStream *getVoiceStream(const char *file);
+	Audio::SeekableAudioStream *getVoiceStream(const char *file) const;
 
 	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 
@@ -197,21 +197,21 @@ public:
 	 *
 	 * @return true when playing, else false
 	 */
-	bool voiceIsPlaying(const Audio::SoundHandle *handle = 0);
+	bool voiceIsPlaying(const Audio::SoundHandle *handle = 0) const;
 
 	/**
 	 * Checks if all voice handles are used.
 	 *
 	 * @return false when a handle is free, else true
 	 */
-	bool allVoiceChannelsPlaying();
+	bool allVoiceChannelsPlaying() const;
 
 	/**
 	 * Checks how long a voice has been playing
 	 *
 	 * @return time in milliseconds
 	 */
-	uint32 voicePlayedTime(const Audio::SoundHandle &handle) {
+	uint32 voicePlayedTime(const Audio::SoundHandle &handle) const {
 		return _mixer->getSoundElapsedTime(handle);
 	}
 
