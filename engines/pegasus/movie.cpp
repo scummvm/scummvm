@@ -50,6 +50,8 @@ void Movie::releaseMovie() {
 		disposeAllCallBacks();
 		deallocateSurface();
 	}
+
+	setBounds(Common::Rect(0, 0, 0, 0));
 }
 
 void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) {
