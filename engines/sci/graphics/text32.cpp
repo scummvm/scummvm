@@ -87,8 +87,8 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 	// Save totalWidth, totalHeight
-	WRITE_LE_UINT16((void *)memoryPtr, width);
-	WRITE_LE_UINT16((void *)(memoryPtr + 2), height);
+	WRITE_LE_UINT16(memoryPtr, width);
+	WRITE_LE_UINT16(memoryPtr + 2, height);
 
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
@@ -141,8 +141,8 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
 	// Get totalWidth, totalHeight
-	uint16 width = READ_LE_UINT16((void *)memoryPtr);
-	uint16 height = READ_LE_UINT16((void *)(memoryPtr + 2));
+	uint16 width = READ_LE_UINT16(memoryPtr);
+	uint16 height = READ_LE_UINT16(memoryPtr + 2);
 
 	// Upscale the coordinates/width if the fonts are already upscaled
 	if (_screen->fontIsUpscaled()) {

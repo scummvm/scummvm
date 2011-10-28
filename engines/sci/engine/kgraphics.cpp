@@ -1666,8 +1666,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
 		// Save totalWidth, totalHeight
 		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_LE_UINT16((void *)memoryPtr, width);
-		WRITE_LE_UINT16((void *)(memoryPtr + 2), height);
+		WRITE_LE_UINT16(memoryPtr, width);
+		WRITE_LE_UINT16(memoryPtr + 2, height);
 		return memoryId;
 		}
 		break;
@@ -1693,8 +1693,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 		GfxView *view = g_sci->_gfxCache->getView(viewNum);
@@ -1734,8 +1734,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 		GfxFont *font = g_sci->_gfxCache->getFont(fontId);
@@ -1777,8 +1777,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
 		uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
