@@ -168,7 +168,7 @@ protected:
 
 class AsScene1002DoorSpy : public AnimatedSprite {
 public:
-	AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *AsScene1002BoxingGloveHitEffect);
+	AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *asScene1002BoxingGloveHitEffect);
 protected:
 	Scene *_parentScene;
 	Sprite *_asDoor;

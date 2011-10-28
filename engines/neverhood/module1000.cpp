@@ -741,8 +741,8 @@ uint32 AsScene1002BoxingGloveHitEffect::handleMessage(int messageNum, const Mess
 	return messageResult;
 }
 
-AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *AsScene1002BoxingGloveHitEffect)
-	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(AsScene1002BoxingGloveHitEffect),
+AsScene1002DoorSpy::AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *asScene1002BoxingGloveHitEffect)
+	: AnimatedSprite(vm, 1300), _clipRect(clipRect), _parentScene(parentScene), _asDoor(asDoor), _asBoxingGloveHitEffect(asScene1002BoxingGloveHitEffect),
 	_soundResource(vm) {
 
 	SetUpdateHandler(&AnimatedSprite::update);

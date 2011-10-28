@@ -448,8 +448,8 @@ void AsScene1907Symbol::moveDown() {
 	_isMoving = true;
 }
 
-SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *AsScene1907Symbol)
-	: StaticSprite(vm, 1400), _soundResource(vm), _parentScene(parentScene), _AsScene1907Symbol(AsScene1907Symbol),
+SsScene1907UpDownButton::SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol)
+	: StaticSprite(vm, 1400), _soundResource(vm), _parentScene(parentScene), _asScene1907Symbol(asScene1907Symbol),
 	_countdown1(0) {
 	
 	_spriteResource.load2(0x64516424);
@@ -484,7 +484,7 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x1011:
-		if (_countdown1 == 0 && !_AsScene1907Symbol->isMoving() && getGlobalVar(0xA9035F60)) {
+		if (_countdown1 == 0 && !_asScene1907Symbol->isMoving() && getGlobalVar(0xA9035F60)) {
 			setVisible(true);
 			_countdown1 = 4;
 			StaticSprite::update();

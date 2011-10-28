@@ -107,13 +107,13 @@ protected:
 
 class SsScene1907UpDownButton : public StaticSprite {
 public:
-	SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *AsScene1907Symbol);
+	SsScene1907UpDownButton(NeverhoodEngine *vm, Scene1907 *parentScene, AsScene1907Symbol *asScene1907Symbol);
 	void setToUpPosition();
 	void setToDownPosition();
 protected:
 	SoundResource _soundResource;
 	Scene1907 *_parentScene;
-	AsScene1907Symbol *_AsScene1907Symbol;
+	AsScene1907Symbol *_asScene1907Symbol;
 	int _countdown1;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
