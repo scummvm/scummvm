@@ -86,6 +86,10 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	memset(memoryPtr, backColor, entrySize);
 	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
+	// Save totalWidth, totalHeight
+	WRITE_LE_UINT16((void *)memoryPtr, width);
+	WRITE_LE_UINT16((void *)(memoryPtr + 2), height);
+
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
 	const char *txt = text.c_str();
@@ -130,22 +134,20 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
 	Common::Rect planeRect = getPlaneRect(textObject);
 	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
 	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
 	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
-	uint16 width = nsRect.width() + 1;
-	uint16 height = nsRect.height() + 1;
+	// Get totalWidth, totalHeight
+	uint16 width = READ_LE_UINT16((void *)memoryPtr);
+	uint16 height = READ_LE_UINT16((void *)(memoryPtr + 2));
 
 	// Upscale the coordinates/width if the fonts are already upscaled
 	if (_screen->fontIsUpscaled()) {
 		textX = textX * _screen->getDisplayWidth() / _screen->getWidth();
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
-		width = width * _screen->getDisplayWidth() / _screen->getWidth();
-		height = height * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
 	for (int curY = 0; curY < height; curY++) {
