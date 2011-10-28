@@ -200,7 +200,8 @@ void NeverhoodEngine::dumpAllResources() {
 
 	PaletteResource paletteResource(this);
 	byte *vgaPalette = new byte[768];
-	paletteResource.load(0x4086520E);
+	//paletteResource.load(0x4086520E);
+	paletteResource.load(0x12C23307);
 	byte *srcpalette = paletteResource.palette();
 	for (int i = 0; i < 256; i++) {
 		vgaPalette[i * 3 + 2] = srcpalette[i * 4 + 0];
@@ -236,8 +237,6 @@ void NeverhoodEngine::dumpAllResources() {
 				writeTga(filename.c_str(), pixels, vgaPalette, width, frameInfo.rect.height);
 				delete[] pixels;
 			}
-			static int n = 0;
-			//if (n++ == 25) break;
 		}
 	}
 	

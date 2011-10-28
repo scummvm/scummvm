@@ -50,10 +50,10 @@ protected:
 	SoundResource _soundResource1;	
 	SoundResource _soundResource2;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void handleMessage2000h();
-	void callback1();
-	void callback2();
-	void callback3();
+	void hammerHitsDoor();
+	void stShowIdleDoor();
+	void stBustedDoorMove();
+	void stBustedDoorGone();
 };
 
 class AsScene1001Hammer : public AnimatedSprite {
@@ -104,8 +104,6 @@ protected:
 	Sprite *_asWindow;
 	Sprite *_asLever;
 	Sprite *_ssButton;
-	int16 _fieldE4;
-	int16 _fieldE6;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -115,9 +113,6 @@ class Class152 : public Scene {
 public:
 	Class152(NeverhoodEngine *vm, Module *parentModule, uint32 backgroundFileHash, uint32 cursorFileHash);
 protected:
-	// TODO: Are these used?
-	int16 _fieldD0;	
-	int16 _fieldD2;	
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
@@ -147,11 +142,11 @@ protected:
 	bool _flag1;
 	SoundResource _soundResource;
 	void update();
-	uint32 handleMessage4475E0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage447760(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage447890(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage447930(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage447A00(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRingIdle(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRingPulled1(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRingPulled2(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRingHangingLow(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmRingReleased(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene1002Door : public StaticSprite {
@@ -164,27 +159,27 @@ protected:
 	void suCloseDoor();
 };
 
-class Class505 : public AnimatedSprite {
+class AsScene1002BoxingGloveHitEffect : public AnimatedSprite {
 public:
-	Class505(NeverhoodEngine *vm);
+	AsScene1002BoxingGloveHitEffect(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 
 class AsScene1002DoorSpy : public AnimatedSprite {
 public:
-	AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *class505);
+	AsScene1002DoorSpy(NeverhoodEngine *vm, NRect &clipRect, Scene *parentScene, Sprite *asDoor, Sprite *AsScene1002BoxingGloveHitEffect);
 protected:
 	Scene *_parentScene;
 	Sprite *_asDoor;
-	Sprite *_class505;
+	Sprite *_asBoxingGloveHitEffect;
 	SoundResource _soundResource;
-	NRect _rect;
-	uint32 handleMessage4489D0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage448A60(int messageNum, const MessageParam &param, Entity *sender);
-	void spriteUpdate448AA0();
-	void sub448AC0();
-	void sub448B10();
+	NRect _clipRect;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmDoorSpyAnimation(int messageNum, const MessageParam &param, Entity *sender);
+	void suDoorSpy();
+	void stDoorSpyIdle();
+	void stDoorSpyBoxingGlove();
 };
 
 class Class426 : public StaticSprite {
@@ -212,51 +207,51 @@ protected:
 	SoundResource _soundResource;
 	bool _flag;
 	void update();
-	void update447FB0();
-	uint32 handleMessage448000(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage4482E0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage448320(int messageNum, const MessageParam &param, Entity *sender);
-	void sub4484F0();
-	void sub448530();
-	void sub448560();
-	void sub4485B0();
-	void sub4485F0();
-	void sub448620();
-	void sub448660();
-	void sub448720();
-	void sub448750();
-	void sub448780();
+	void upIdle();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmAnimationSimple(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmAnimationExt(int messageNum, const MessageParam &param, Entity *sender);
+	void stWalkBack();
+	void stWalk();
+	void stRelease();
+	void stGrabRing();
+	void stRingGrabbed();
+	void stKlaymanInside();
+	void stIdle();
+	void stKlaymanInsideMoving();
+	void stSpitOutKlayman();
+	void swallowKlayman();
 };
 
-class Class506 : public AnimatedSprite {
+class AsScene1002OutsideDoorBackground : public AnimatedSprite {
 public:
-	Class506(NeverhoodEngine *vm);
+	AsScene1002OutsideDoorBackground(NeverhoodEngine *vm);
 protected:
 	int _countdown;
-	bool _flag;
+	bool _isDoorClosed;
 	void update();
-	uint32 handleMessage4491B0(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 handleMessage449210(int messageNum, const MessageParam &param, Entity *sender);
-	void sub449250();
-	void sub449280();
-	void sub4492C0();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmAnimation(int messageNum, const MessageParam &param, Entity *sender);
+	void stOpenDoor();
+	void stCloseDoor();
+	void stDoorClosed();
 };
 
-class Class478 : public AnimatedSprite {
+class AsScene1002KlaymanLadderHands : public AnimatedSprite {
 public:
-	Class478(NeverhoodEngine *vm, Klayman *klayman);
+	AsScene1002KlaymanLadderHands(NeverhoodEngine *vm, Klayman *klayman);
 protected:
 	Klayman *_klayman;
 	void update();
 };
 
-class Class479 : public AnimatedSprite {
+class AsScene1002KlaymanPeekHand : public AnimatedSprite {
 public:
-	Class479(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman);
+	AsScene1002KlaymanPeekHand(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman);
 protected:
 	Scene *_parentScene;
 	Klayman *_klayman;
-	bool _flag1;
+	bool _isClipRectSaved;
 	NRect _savedClipRect;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -280,9 +275,9 @@ protected:
 	Sprite *_ssLadderArchPart2;
 	Sprite *_ssLadderArchPart3;
 	Sprite *_class599;
-	Sprite *_class478;
-	Sprite *_class479;
-	Sprite *_class506;
+	Sprite *_asKlaymanLadderHands;
+	Sprite *_asKlaymanPeekHand;
+	Sprite *_asOutsideDoorBackground;
 	Sprite *_class426;
 	SoundResource _soundResource1;
 	SoundResource _soundResource2;
@@ -308,7 +303,7 @@ class Scene1004 : public Scene {
 public:
 	Scene1004(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_class478;
+	Sprite *_asKlaymanLadderHands;
 	Sprite *_asTrashCan;
 	int _paletteAreaStatus;
 	void update();
