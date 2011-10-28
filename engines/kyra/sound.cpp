@@ -60,13 +60,13 @@ bool Sound::isPlaying() const {
 }
 
 bool Sound::isVoicePresent(const char *file) const {
-	char filenamebuffer[25];
+	Common::String filename;
 
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodecs[i].fileext);
+		filename = file;
+		filename += _supportedCodecs[i].fileext;
 
-		if (_vm->resource()->exists(filenamebuffer))
+		if (_vm->resource()->exists(filename.c_str()))
 			return true;
 	}
 
@@ -86,14 +86,14 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 }
 
 Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
-	char filenamebuffer[25];
+	Common::String filename;
 
 	Audio::SeekableAudioStream *audioStream = 0;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodecs[i].fileext);
+		filename = file;
+		filename += _supportedCodecs[i].fileext;
 
-		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filenamebuffer);
+		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 		if (!stream)
 			continue;
 
