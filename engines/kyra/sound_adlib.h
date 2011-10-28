@@ -62,23 +62,23 @@ public:
 	SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAdLibPC();
 
-	kType getMusicType() const { return kAdLib; }
+	virtual kType getMusicType() const { return kAdLib; }
 
-	bool init();
-	void process();
+	virtual bool init();
+	virtual void process();
 
 	virtual void updateVolumeSettings();
 
-	void loadSoundFile(uint file);
-	void loadSoundFile(Common::String file);
+	virtual void loadSoundFile(uint file);
+	virtual void loadSoundFile(Common::String file);
 
-	void playTrack(uint8 track);
-	void haltTrack();
-	bool isPlaying() const;
+	virtual void playTrack(uint8 track);
+	virtual void haltTrack();
+	virtual bool isPlaying() const;
 
-	void playSoundEffect(uint8 track);
+	virtual void playSoundEffect(uint8 track);
 
-	void beginFadeOut();
+	virtual void beginFadeOut();
 private:
 	void internalLoadFile(Common::String file);
 
