@@ -45,6 +45,7 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
 	_modifiedScreen = false;
 	_curSurface = &_workArea;
+	_erase = false;
 }
 	
 GraphicsManager::~GraphicsManager() {
@@ -150,6 +151,10 @@ void GraphicsManager::updateDisplay() {
 	bool screenDirty = false;
 
 	if (!_dirtyRect.isEmpty()) {
+		// Fill the dirty area with black if erase mode is enabled
+		if (_erase)
+			_workArea.fillRect(_dirtyRect, _workArea.format.RGBToColor(0, 0, 0));
+
 		for (DisplayElement *runner = _firstDisplayElement; runner != 0; runner = runner->_nextElement) {
 			Common::Rect bounds;
 			runner->getBounds(bounds);
@@ -319,6 +324,14 @@ void GraphicsManager::shakeTheWorld(TimeValue duration, TimeScale scale) {
 	}
 
 	oldScreen.free();
+}
+
+void GraphicsManager::enableErase() {
+	_erase = true;
+}
+
+void GraphicsManager::disableErase() {
+	_erase = false;
 }
 	
 } // End of namespace Pegasus

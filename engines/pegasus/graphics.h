@@ -60,6 +60,8 @@ public:
 	void clearScreen();
 	DisplayElement *findDisplayElement(const tDisplayElementID id);
 	void shakeTheWorld(TimeValue time, TimeScale scale);
+	void enableErase();
+	void disableErase();
 
 	// These default to black
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, uint32 color = 0);
@@ -71,7 +73,7 @@ protected:
 private:		
 	PegasusEngine *_vm;
 
-	bool _modifiedScreen;
+	bool _modifiedScreen, _erase;
 	Common::Rect _dirtyRect;
 	tDisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;

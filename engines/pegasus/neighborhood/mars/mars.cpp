@@ -2822,6 +2822,8 @@ void Mars::marsTimerExpired(MarsTimerEvent &event) {
 		_canyonChaseMovie.stopDisplaying();
 		_canyonChaseMovie.releaseMovie();
 
+		_vm->_gfx->enableErase();
+
 		loadLoopSound1("Sounds/Mars/Space Ambient.22K.8.AIFF");
 
 		playSpotSoundSync(kShuttleConfiguringIn, kShuttleConfiguringOut);
