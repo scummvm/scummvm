@@ -42,6 +42,7 @@
 
 #include "common/system.h"
 #include "common/mutex.h"
+#include "common/config-manager.h"
 
 #include "audio/mixer.h"
 #include "audio/fmopl.h"
@@ -91,6 +92,9 @@ public:
 	int getRate() const { return _mixer->getOutputRate(); }
 
 	void setSyncJumpMask(uint16 mask) { _syncJumpMask = mask; }
+
+	void setMusicVolume(uint8 volume);
+	void setSfxVolume(uint8 volume);
 
 private:
 	struct OpcodeEntry {
@@ -195,6 +199,7 @@ private:
 		uint8 tempoReset;
 		uint8 rawNote;
 		int8 unk16;
+		uint8 volumeModifier;
 	};
 
 	void primaryEffect1(Channel &channel);
@@ -406,6 +411,8 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 
+	uint8 _musicVolume, _sfxVolume;
+
 	bool _v2;
 };
 
@@ -441,14 +448,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 
 	_tablePtr1 = _tablePtr2 = 0;
 
-	// HACK: We use MusicSoundType here for now so we can adjust the volume in the launcher dialog.
-	// This affects SFX too, but if we want to support different volumes for SFX and music we would
-	// have to change our player implementation, currently we setup the volume for an AdLib channel
-	// in AdLibDriver::adjustVolume, so if that would be called, we would have to know if the channel
-	// is used by SFX or music, and then adjust the volume accordingly. Since Kyrandia 2 supports
-	// different volumes for SFX and music, looking at the disasm and checking how the original does it
-	// would be a good idea.
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
@@ -456,12 +456,69 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 	_samplesTillCallbackRemainder = 0;
 
 	_syncJumpMask = 0;
+
+	_musicVolume = 0;
+	_sfxVolume = 0;
 }
 
 AdLibDriver::~AdLibDriver() {
 	_mixer->stopHandle(_soundHandle);
 	OPLDestroy(_adlib);
 	_adlib = 0;
+}
+
+void AdLibDriver::setMusicVolume(uint8 volume) {
+	Common::StackLock lock(_mutex);
+
+	_musicVolume = volume;
+
+	for (uint i = 0; i < 6; ++i) {
+		Channel &chan = _channels[i];
+		chan.volumeModifier = volume;
+
+		const uint8 regOffset = _regOffset[i];
+
+		// Level Key Scaling / Total Level
+		writeOPL(0x40 + regOffset, calculateOpLevel1(chan));
+		writeOPL(0x43 + regOffset, calculateOpLevel2(chan));
+	}
+
+	// For now we use the music volume for both sfx and music in Kyra1.
+	if (!_v2) {
+		_sfxVolume = volume;
+
+		for (uint i = 6; i < 9; ++i) {
+			Channel &chan = _channels[i];
+			chan.volumeModifier = volume;
+
+			const uint8 regOffset = _regOffset[i];
+
+			// Level Key Scaling / Total Level
+			writeOPL(0x40 + regOffset, calculateOpLevel1(chan));
+			writeOPL(0x43 + regOffset, calculateOpLevel2(chan));
+		}
+	}
+}
+
+void AdLibDriver::setSfxVolume(uint8 volume) {
+	// We only support sfx volume in v2 games.
+	if (!_v2)
+		return;
+
+	Common::StackLock lock(_mutex);
+
+	_sfxVolume = volume;
+
+	for (uint i = 6; i < 9; ++i) {
+		Channel &chan = _channels[i];
+		chan.volumeModifier = volume;
+
+		const uint8 regOffset = _regOffset[i];
+
+		// Level Key Scaling / Total Level
+		writeOPL(0x40 + regOffset, calculateOpLevel1(chan));
+		writeOPL(0x43 + regOffset, calculateOpLevel2(chan));
+	}
 }
 
 int AdLibDriver::callback(int opcode, ...) {
@@ -662,6 +719,12 @@ void AdLibDriver::setupPrograms() {
 			channel.tempo = 0xFF;
 			channel.position = 0xFF;
 			channel.duration = 1;
+
+			if (chan <= 5)
+				channel.volumeModifier = _musicVolume;
+			else
+				channel.volumeModifier = _sfxVolume;
+
 			unkOutput2(chan);
 		}
 
@@ -1273,8 +1336,20 @@ uint8 AdLibDriver::calculateOpLevel1(Channel &channel) {
 	if (channel.twoChan) {
 		value += channel.opExtraLevel1;
 		value += channel.opExtraLevel2;
-		value += channel.opExtraLevel3;
+
+		uint16 level3 = (channel.opExtraLevel3 ^ 0x3F) * channel.volumeModifier;
+		if (level3) {
+			level3 += 0x3F;
+			level3 >>= 8;
+		}
+
+		value += level3 ^ 0x3F;
 	}
+
+	value = CLIP<int8>(value, 0, 0x3F);
+
+	if (!channel.volumeModifier)
+		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel1
 
@@ -1286,7 +1361,19 @@ uint8 AdLibDriver::calculateOpLevel2(Channel &channel) {
 
 	value += channel.opExtraLevel1;
 	value += channel.opExtraLevel2;
-	value += channel.opExtraLevel3;
+
+	uint16 level3 = (channel.opExtraLevel3 ^ 0x3F) * channel.volumeModifier;
+	if (level3) {
+		level3 += 0x3F;
+		level3 >>= 8;
+	}
+
+	value += level3 ^ 0x3F;
+
+	value = CLIP<int8>(value, 0, 0x3F);
+
+	if (!channel.volumeModifier)
+		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel2
 
@@ -1331,6 +1418,12 @@ int AdLibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 		channel2.tempo = 0xFF;
 		channel2.position = 0xFF;
 		channel2.duration = 1;
+
+		if (chan <= 5)
+			channel2.volumeModifier = _musicVolume;
+		else
+			channel2.volumeModifier = _sfxVolume;
+
 		unkOutput2(chan);
 	}
 
@@ -2283,6 +2376,22 @@ void SoundAdLibPC::process() {
 		warning("Unknown sound trigger %d", trigger);
 		// TODO: At this point, we really want to clear the trigger...
 	}
+}
+
+void SoundAdLibPC::updateVolumeSettings() {
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	int newMusicVolume = mute ? 0 : ConfMan.getInt("music_volume");
+	//newMusicVolume = (newMusicVolume * 145) / Audio::Mixer::kMaxMixerVolume + 110;
+	newMusicVolume = CLIP(newMusicVolume, 0, 255);
+	int newSfxVolume = mute ? 0 : ConfMan.getInt("sfx_volume");
+	//newSfxVolume = (newSfxVolume * 200) / Audio::Mixer::kMaxMixerVolume + 55;
+	newSfxVolume = CLIP(newSfxVolume, 0, 255);
+
+	_driver->setMusicVolume(newMusicVolume);
+	_driver->setSfxVolume(newSfxVolume);
 }
 
 void SoundAdLibPC::playTrack(uint8 track) {

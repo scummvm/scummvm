@@ -67,6 +67,8 @@ public:
 	bool init();
 	void process();
 
+	virtual void updateVolumeSettings();
+
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 	void loadSoundFile(const uint8 *soundData, int dataSize) {}
