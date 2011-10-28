@@ -163,8 +163,6 @@ public:
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }
 
-	virtual bool voiceFileIsPresent(const char *file) const;
-
 	/**
 	 * Checks whether a voice file with the given name is present
 	 *

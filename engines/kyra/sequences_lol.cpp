@@ -788,7 +788,7 @@ void HistoryPlayer::play() {
 
 	for (; voiceFilename[3] <= '9' && !_vm->shouldQuit() && !_vm->skipFlag(); ++voiceFilename[3], voiceFilename[4] = 'a') {
 		while (!_vm->shouldQuit() && !_vm->skipFlag()) {
-			if (!sound->voiceFileIsPresent(voiceFilename))
+			if (!sound->isVoicePresent(voiceFilename))
 				break;
 
 			if (data[part * 15] == voiceFilename[3] && data[part * 15 + 1] == voiceFilename[4]) {

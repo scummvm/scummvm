@@ -1473,7 +1473,7 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
-	if (_sound->voiceFileIsPresent(vocFile)) {
+	if (_sound->isVoicePresent(vocFile)) {
 		snd_stopVoice();
 
 		while (!_sound->voicePlay(vocFile, &_speechHandle)) {

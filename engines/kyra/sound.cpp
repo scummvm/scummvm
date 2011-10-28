@@ -59,17 +59,6 @@ bool Sound::isPlaying() const {
 	return false;
 }
 
-bool Sound::voiceFileIsPresent(const char *file) const {
-	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		Common::String f = file;
-		f += _supportedCodecs[i].fileext;
-		if (_vm->resource()->getFileSize(f.c_str()) > 0)
-			return true;
-	}
-
-	return false;
-}
-
 bool Sound::isVoicePresent(const char *file) const {
 	char filenamebuffer[25];
 
