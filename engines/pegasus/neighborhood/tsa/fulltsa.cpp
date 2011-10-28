@@ -33,7 +33,7 @@
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
 

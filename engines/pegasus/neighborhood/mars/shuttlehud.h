@@ -34,7 +34,7 @@ namespace Pegasus {
 class ShuttleHUD : public DisplayElement, public Idler {
 public:
 	ShuttleHUD();
-	virtual ~ShuttleHUD();
+	virtual ~ShuttleHUD() {}
 
 	void showTargetGrid();
 	void hideTargetGrid();

@@ -23,6 +23,8 @@
  *
  */
 
+#include "pegasus/neighborhood/mars/constants.h"
+#include "pegasus/neighborhood/mars/robotship.h"
 #include "pegasus/neighborhood/mars/shuttleweapon.h"
 #include "pegasus/neighborhood/mars/spacejunk.h"
 

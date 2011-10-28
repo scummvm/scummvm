@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/mars/mars.h"
 #include "pegasus/neighborhood/mars/spacejunk.h"
 
 namespace Pegasus {

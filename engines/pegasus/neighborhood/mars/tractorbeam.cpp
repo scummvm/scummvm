@@ -24,7 +24,7 @@
  */
 
 #include "pegasus/pegasus.h"
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/tractorbeam.h"
 
 namespace Pegasus {

@@ -26,6 +26,8 @@
 #ifndef PEGASUS_NEIGHBORHOOD_MARS_SPACEJUNK_H
 #define PEGASUS_NEIGHBORHOOD_MARS_SPACEJUNK_H
 
+#include "pegasus/movie.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/spacechase3d.h"
 
 namespace Pegasus {

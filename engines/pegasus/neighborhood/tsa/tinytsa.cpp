@@ -29,7 +29,7 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/aichip.h"
 #include "pegasus/items/biochips/opticalchip.h"
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 #include "pegasus/neighborhood/tsa/tinytsa.h"
 #include "pegasus/neighborhood/wsc/wsc.h"

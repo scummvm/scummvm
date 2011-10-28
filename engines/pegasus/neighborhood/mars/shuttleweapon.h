@@ -26,7 +26,7 @@
 #ifndef PEGASUS_NEIGHBORHOOD_MARS_SHUTTLEWEAPON_H
 #define PEGASUS_NEIGHBORHOOD_MARS_SHUTTLEWEAPON_H
 
-#include "pegasus/timers.h"
+#include "pegasus/elements.h"
 #include "pegasus/neighborhood/mars/spacechase3d.h"
 
 namespace Pegasus {

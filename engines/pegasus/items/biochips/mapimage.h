@@ -28,7 +28,7 @@
 
 #include "pegasus/elements.h"
 #include "pegasus/util.h"
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 
 namespace Common {
 	class ReadStream;

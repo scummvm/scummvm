@@ -23,7 +23,7 @@
  *
  */
 
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/shuttleenergymeter.h"
 
 namespace Pegasus {

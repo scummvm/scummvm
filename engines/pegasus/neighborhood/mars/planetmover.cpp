@@ -25,9 +25,10 @@
 
 #include "pegasus/movie.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/mars/hermite.h"
-#include "pegasus/neighborhood/mars/mars.h"
 #include "pegasus/neighborhood/mars/planetmover.h"
+#include "pegasus/neighborhood/mars/shuttleenergymeter.h"
 
 namespace Pegasus {
 

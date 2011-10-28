@@ -26,11 +26,13 @@
 #ifndef PEGASUS_NEIGHBORHOOD_MARS_GRAVITONCANNON_H
 #define PEGASUS_NEIGHBORHOOD_MARS_GRAVITONCANNON_H
 
+#include "pegasus/surface.h"
 #include "pegasus/neighborhood/mars/shuttleweapon.h"
 
 namespace Pegasus {
 
 class GravitonCannon : public ShuttleWeapon {
+public:
 	GravitonCannon();
 	virtual ~GravitonCannon() {}
 

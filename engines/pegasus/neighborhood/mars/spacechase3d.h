@@ -26,7 +26,7 @@
 #ifndef PEGASUS_NEIGHBORHOOD_MARS_SPACECHASE3D_H
 #define PEGASUS_NEIGHBORHOOD_MARS_SPACECHASE3D_H
 
-#include "pegasus/neighborhood/mars/mars.h"
+#include "pegasus/neighborhood/mars/constants.h"
 
 namespace Pegasus {
 

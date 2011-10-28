@@ -194,6 +194,7 @@ void RobotShip::moveRobotTo(tCoordType x, tCoordType y) {
 		y = kNumSpriteRows * y / _shipRange.height();
 
 		_spritesMovie.setTime(40 * (x + y * kNumSpriteColumns));
+		_spritesMovie.redrawMovieWorld();
 	}
 }
 
