@@ -43,6 +43,22 @@ Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 Sound::~Sound() {
 }
 
+Sound::kType Sound::getSfxType() const {
+	return getMusicType();
+}
+
+void Sound::setSoundList(const AudioDataStruct *list) {
+	_soundDataList = list;
+}
+
+bool Sound::hasSoundFile(uint file) const {
+	return (fileListEntry(file) != 0);
+}
+
+bool Sound::isPlaying() const {
+	return false;
+}
+
 bool Sound::voiceFileIsPresent(const char *file) {
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		Common::String f = file;

@@ -58,7 +58,7 @@ public:
 	};
 
 	virtual kType getMusicType() const = 0;
-	virtual kType getSfxType() const { return getMusicType(); }
+	virtual kType getSfxType() const;
 
 	/**
 	 * Initializes the output device.
@@ -83,7 +83,7 @@ public:
 	 *
 	 * @param list soundfile list
 	 */
-	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
+	virtual void setSoundList(const AudioDataStruct *list);
 
 	/**
 	 * Checks if a given sound file is present.
@@ -91,7 +91,7 @@ public:
 	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasSoundFile(uint file) const { return (fileListEntry(file) != 0); }
+	virtual bool hasSoundFile(uint file) const;
 
 	/**
 	 * Load a specifc sound file for use of
@@ -140,7 +140,7 @@ public:
 	 *
 	 * @return true if playing, false otherwise
 	 */
-	virtual bool isPlaying() const { return false; }
+	virtual bool isPlaying() const;
 
 	/**
 	 * Starts fading out the volume.
