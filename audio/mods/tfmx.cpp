@@ -29,7 +29,7 @@
 #include "audio/mods/tfmx.h"
 
 // test for engines using this class.
-#if defined(SOUND_MODS_TFMX_H)
+#if defined(AUDIO_MODS_TFMX_H)
 
 // couple debug-functions
 namespace {
@@ -1187,4 +1187,4 @@ void displayPatternstep(const void * const vptr) {
 } // End of anonymous namespace
 #endif
 
-#endif // #if defined(SOUND_MODS_TFMX_H)
+#endif // #if defined(AUDIO_MODS_TFMX_H)
