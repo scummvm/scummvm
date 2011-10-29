@@ -174,7 +174,7 @@ void RemapDialog::reflowLayout() {
 			widg.keyButton =
 				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", 0, kRemapCmd + i);
 			widg.clearButton =
-				new GUI::ButtonWidget(this, 0, 0, 0, 0, "C", 0, kClearCmd + i);
+				new GUI::ButtonWidget(this, 0, 0, 0, 0, "C", _("Clear value"), kClearCmd + i);
 
 			_keymapWidgets.push_back(widg);
 		} else {
