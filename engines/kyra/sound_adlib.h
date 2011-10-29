@@ -93,9 +93,6 @@ private:
 
 	Common::String _soundFileLoaded;
 
-	uint8 _sfxPriority;
-	uint8 _sfxFourthByteOfSong;
-
 	int _numSoundTriggers;
 	const int *_soundTriggers;
 

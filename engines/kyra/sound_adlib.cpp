@@ -60,7 +60,13 @@ public:
 	AdLibDriver(Audio::Mixer *mixer, bool v2);
 	~AdLibDriver();
 
-	int callback(int opcode, ...);
+	void initDriver();
+	void setSoundData(uint8 *data);
+	void queueTrack(int track);
+	bool isChannelPlaying(int channel) const;
+	void stopAllChannels();
+	int getSoundTrigger() const { return _soundTrigger; }
+
 	void callback();
 
 	// AudioStream API
@@ -97,35 +103,6 @@ public:
 	void setSfxVolume(uint8 volume);
 
 private:
-	struct OpcodeEntry {
-		typedef int (AdLibDriver::*DriverOpcode)(va_list &list);
-		DriverOpcode function;
-		const char *name;
-	};
-
-	void setupOpcodeList();
-	const OpcodeEntry *_opcodeList;
-	int _opcodesEntries;
-
-	int snd_ret0x100(va_list &list);
-	int snd_ret0x1983(va_list &list);
-	int snd_initDriver(va_list &list);
-	int snd_deinitDriver(va_list &list);
-	int snd_setSoundData(va_list &list);
-	int snd_unkOpcode1(va_list &list);
-	int snd_startSong(va_list &list);
-	int snd_isChannelPlaying(va_list &list);
-	int snd_stopChannel(va_list &list);
-	int snd_readByte(va_list &list);
-	int snd_writeByte(va_list &list);
-	int snd_getSoundTrigger(va_list &list);
-	int snd_unkOpcode4(va_list &list);
-	int snd_dummy(va_list &list);
-	int snd_getNullvar4(va_list &list);
-	int snd_setNullvar3(va_list &list);
-	int snd_setFlag(va_list &list);
-	int snd_clearFlag(va_list &list);
-
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
@@ -351,11 +328,8 @@ private:
 	int32 _samplesTillCallback;
 	int32 _samplesTillCallbackRemainder;
 
-	int _lastProcessed;
-	int8 _flagTrigger;
 	int _curChannel;
 	uint8 _soundTrigger;
-	int _soundsPlaying;
 
 	uint16 _rnd;
 
@@ -380,12 +354,19 @@ private:
 	uint8 _unkValue19;
 	uint8 _unkValue20;
 
-	int _flags;
 	FM_OPL *_adlib;
 
 	uint8 *_soundData;
 
-	uint8 _soundIdTable[0x10];
+	int _programStartTimeout;
+	uint8 *_programQueue[16];
+	int _programQueueStart, _programQueueEnd;
+
+	void adjustSfxData(uint8 *data);
+	uint8 *_sfxPointer;
+	int _sfxPriority;
+	int _sfxVelocity;
+
 	Channel _channels[10];
 
 	uint8 _vibratoAndAMDepthBits;
@@ -417,14 +398,12 @@ private:
 };
 
 AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
-	setupOpcodeList();
 	setupParserOpcodeTable();
 
 	_v2 = v2;
 
 	_mixer = mixer;
 
-	_flags = 0;
 	_adlib = makeAdLibOPL(getRate());
 	assert(_adlib);
 
@@ -433,12 +412,12 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 
 	_vibratoAndAMDepthBits = _curRegOffset = 0;
 
-	_lastProcessed = _flagTrigger = _curChannel = _rhythmSectionBits = 0;
-	_soundsPlaying = 0;
+	_curChannel = _rhythmSectionBits = 0;
 	_rnd = 0x1234;
 
 	_tempo = 0;
 	_soundTrigger = 0;
+	_programStartTimeout = 0;
 
 	_callbackTimer = 0xFF;
 	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
@@ -459,6 +438,10 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, bool v2) {
 
 	_musicVolume = 0;
 	_sfxVolume = 0;
+
+	_sfxPointer = 0;
+
+	_programQueueStart = _programQueueEnd = 0;
 }
 
 AdLibDriver::~AdLibDriver() {
@@ -521,100 +504,54 @@ void AdLibDriver::setSfxVolume(uint8 volume) {
 	}
 }
 
-int AdLibDriver::callback(int opcode, ...) {
+void AdLibDriver::initDriver() {
 	Common::StackLock lock(_mutex);
-	if (opcode >= _opcodesEntries || opcode < 0) {
-		warning("AdLibDriver: calling unknown opcode '%d'", opcode);
-		return 0;
-	}
-
-	debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d)", _opcodeList[opcode].name, opcode);
-
-	va_list args;
-	va_start(args, opcode);
-	int returnValue = (this->*(_opcodeList[opcode].function))(args);
-	va_end(args);
-	return returnValue;
-}
-
-// Opcodes
-
-int AdLibDriver::snd_ret0x100(va_list &list) {
-	return 0x100;
-}
-
-int AdLibDriver::snd_ret0x1983(va_list &list) {
-	return 0x1983;
-}
-
-int AdLibDriver::snd_initDriver(va_list &list) {
-	_lastProcessed = _soundsPlaying = 0;
 	resetAdLibState();
-	return 0;
 }
 
-int AdLibDriver::snd_deinitDriver(va_list &list) {
-	resetAdLibState();
-	return 0;
-}
+void AdLibDriver::setSoundData(uint8 *data) {
+	Common::StackLock lock(_mutex);
 
-int AdLibDriver::snd_setSoundData(va_list &list) {
+	// Drop all tracks that are still queued. These would point to the old
+	// sound data.
+	_programQueueStart = _programQueueEnd = 0;
+	memset(_programQueue, 0, sizeof(_programQueue));
+
 	if (_soundData) {
 		delete[] _soundData;
 		_soundData = 0;
 	}
-	_soundData = va_arg(list, uint8 *);
-	return 0;
+
+	_soundData = data;
 }
 
-int AdLibDriver::snd_unkOpcode1(va_list &list) {
-	warning("unimplemented snd_unkOpcode1");
-	return 0;
-}
+void AdLibDriver::queueTrack(int track) {
+	Common::StackLock lock(_mutex);
 
-int AdLibDriver::snd_startSong(va_list &list) {
-	int songId = va_arg(list, int);
-	_flags |= 8;
-	_flagTrigger = 1;
+	uint8 *trackData = getProgram(track);
+	if (!trackData)
+		return;
 
-	uint8 *ptr = getProgram(songId);
-	assert(ptr);
-	uint8 chan = *ptr;
-
-	if ((songId << 1) != 0) {
-		if (chan == 9) {
-			if (_flags & 2)
-				return 0;
-		} else {
-			if (_flags & 1)
-				return 0;
-		}
+	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd] != 0) {
+		warning("AdLibDriver: Program queue full, dropping track %d", track);
+		return;
 	}
 
-	_soundIdTable[_soundsPlaying++] = songId;
-	_soundsPlaying &= 0x0F;
-
-	return 0;
+	_programQueue[_programQueueEnd++] = trackData;
+	_programQueueEnd &= 15;
 }
 
-int AdLibDriver::snd_isChannelPlaying(va_list &list) {
-	int channel = va_arg(list, int);
+bool AdLibDriver::isChannelPlaying(int channel) const {
+	Common::StackLock lock(_mutex);
+
 	assert(channel >= 0 && channel <= 9);
-	return (_channels[channel].dataptr != 0) ? 1 : 0;
+	return (_channels[channel].dataptr != 0);
 }
 
-int AdLibDriver::snd_stopChannel(va_list &list) {
-	int channel = va_arg(list, int);
+void AdLibDriver::stopAllChannels() {
+	Common::StackLock lock(_mutex);
 
-	int maxChannel;
-	if (channel < 0) {
-		channel = 0;
-		maxChannel = 9;
-	} else {
-		maxChannel = channel;
-	}
-
-	for (; channel <= maxChannel; ++channel) {
+	for (int channel = 0; channel <= 9; ++channel) {
 		_curChannel = channel;
 
 		Channel &chan = _channels[_curChannel];
@@ -624,71 +561,16 @@ int AdLibDriver::snd_stopChannel(va_list &list) {
 		if (channel != 9)
 			noteOff(chan);
 	}
-
-	return 0;
-}
-
-int AdLibDriver::snd_readByte(va_list &list) {
-	int a = va_arg(list, int);
-	int b = va_arg(list, int);
-	uint8 *ptr = getProgram(a) + b;
-	assert(ptr);
-	return *ptr;
-}
-
-int AdLibDriver::snd_writeByte(va_list &list) {
-	int a = va_arg(list, int);
-	int b = va_arg(list, int);
-	uint8 value = va_arg(list, int);
-	uint8 *ptr = getProgram(a) + b;
-	assert(ptr);
-	SWAP(*ptr, value);
-	return value;
-}
-
-int AdLibDriver::snd_getSoundTrigger(va_list &list) {
-	return _soundTrigger;
-}
-
-int AdLibDriver::snd_unkOpcode4(va_list &list) {
-	warning("unimplemented snd_unkOpcode4");
-	return 0;
-}
-
-int AdLibDriver::snd_dummy(va_list &list) {
-	return 0;
-}
-
-int AdLibDriver::snd_getNullvar4(va_list &list) {
-	warning("unimplemented snd_getNullvar4");
-	return 0;
-}
-
-int AdLibDriver::snd_setNullvar3(va_list &list) {
-	warning("unimplemented snd_setNullvar3");
-	return 0;
-}
-
-int AdLibDriver::snd_setFlag(va_list &list) {
-	int oldFlags = _flags;
-	_flags |= va_arg(list, int);
-	return oldFlags;
-}
-
-int AdLibDriver::snd_clearFlag(va_list &list) {
-	int oldFlags = _flags;
-	_flags &= ~(va_arg(list, int));
-	return oldFlags;
 }
 
 // timer callback
 
 void AdLibDriver::callback() {
 	Common::StackLock lock(_mutex);
-	--_flagTrigger;
-	if (_flagTrigger < 0)
-		_flags &= ~8;
-	setupPrograms();
+	if (_programStartTimeout)
+		--_programStartTimeout;
+	else
+		setupPrograms();
 	executePrograms();
 
 	uint8 temp = _callbackTimer;
@@ -702,40 +584,79 @@ void AdLibDriver::callback() {
 }
 
 void AdLibDriver::setupPrograms() {
-	while (_lastProcessed != _soundsPlaying) {
-		uint8 *ptr = getProgram(_soundIdTable[_lastProcessed]);
-		uint8 chan = *ptr++;
-		uint8 priority = *ptr++;
+	// If there is no program queued, we skip this.
+	if (_programQueueStart == _programQueueEnd)
+		return;
 
-		// Only start this sound if its priority is higher than the one
-		// already playing.
+	uint8 *ptr = _programQueue[_programQueueStart];
+	// Clear the queue entry
+	_programQueue[_programQueueStart] = 0;
+	_programQueueStart = (_programQueueStart + 1) & 15;
 
-		Channel &channel = _channels[chan];
+	// Adjust data in case we hit a sound effect.
+	adjustSfxData(ptr);
 
-		if (priority >= channel.priority) {
-			initChannel(channel);
-			channel.priority = priority;
-			channel.dataptr = ptr;
-			channel.tempo = 0xFF;
-			channel.position = 0xFF;
-			channel.duration = 1;
+	const int chan = *ptr++;
+	const int priority = *ptr++;
 
-			if (chan <= 5)
-				channel.volumeModifier = _musicVolume;
-			else
-				channel.volumeModifier = _sfxVolume;
+	// Only start this sound if its priority is higher than the one
+	// already playing.
 
-			unkOutput2(chan);
-		}
+	Channel &channel = _channels[chan];
 
-		// What we have set up now is, probably, the controlling
-		// channel for the sound. It is assumed that this program will
-		// set up all the other channels it needs, clearing their locks
-		// along the way.
+	if (priority >= channel.priority) {
+		initChannel(channel);
+		channel.priority = priority;
+		channel.dataptr = ptr;
+		channel.tempo = 0xFF;
+		channel.position = 0xFF;
+		channel.duration = 1;
 
-		++_lastProcessed;
-		_lastProcessed &= 0x0F;
+		if (chan <= 5)
+			channel.volumeModifier = _musicVolume;
+		else
+			channel.volumeModifier = _sfxVolume;
+
+		unkOutput2(chan);
 	}
+}
+
+void AdLibDriver::adjustSfxData(uint8 *ptr) {
+	// Check whether we need to reset the data of an old sfx which has been
+	// started.
+	if (_sfxPointer) {
+		_sfxPointer[1] = _sfxPriority;
+		_sfxPointer[3] = _sfxVelocity;
+		_sfxPointer = 0;
+	}
+
+	// Only music tracks are started on channel 9, thus we need to make sure
+	// we do not have a music track here.
+	if (*ptr == 9)
+		return;
+
+	// Store the pointer so we can reset the data when a new program is started.
+	_sfxPointer = ptr;
+
+	// Store the old values.
+	_sfxPriority = ptr[1];
+	_sfxVelocity = ptr[3];
+
+	// In the cases I've seen, the mysterious fourth byte has been
+	// the parameter for the update_setExtraLevel3() callback.
+	//
+	// The extra level is part of the channels "total level", which
+	// is a six-bit value where larger values means softer volume.
+	//
+	// So what seems to be happening here is that sounds which are
+	// started by this function are given a slightly lower priority
+	// and a slightly higher (i.e. softer) extra level 3 than they
+	// would have if they were started from anywhere else. Strange.
+
+	// Adjust the values.
+	int newVal = ((((ptr[3]) + 63) * 0xFF) >> 8) & 0xFF;
+	ptr[3] = -newVal + 63;
+	ptr[1] = ((ptr[1] * 0xFF) >> 8) & 0xFF;
 }
 
 // A few words on opcode parsing and timing:
@@ -1410,8 +1331,7 @@ int AdLibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 	Channel &channel2 = _channels[chan];
 
 	if (priority >= channel2.priority) {
-		_flagTrigger = 1;
-		_flags |= 8;
+		_programStartTimeout = 2;
 		initChannel(channel2);
 		channel2.priority = priority;
 		channel2.dataptr = ptr;
@@ -2004,32 +1924,6 @@ int AdLibDriver::updateCallback56(uint8 *&dataptr, Channel &channel, uint8 value
 
 #define COMMAND(x) { &AdLibDriver::x, #x }
 
-void AdLibDriver::setupOpcodeList() {
-	static const OpcodeEntry opcodeList[] = {
-		COMMAND(snd_ret0x100),
-		COMMAND(snd_ret0x1983),
-		COMMAND(snd_initDriver),
-		COMMAND(snd_deinitDriver),
-		COMMAND(snd_setSoundData),
-		COMMAND(snd_unkOpcode1),
-		COMMAND(snd_startSong),
-		COMMAND(snd_isChannelPlaying),
-		COMMAND(snd_stopChannel),
-		COMMAND(snd_readByte),
-		COMMAND(snd_writeByte),
-		COMMAND(snd_getSoundTrigger),
-		COMMAND(snd_unkOpcode4),
-		COMMAND(snd_dummy),
-		COMMAND(snd_getNullvar4),
-		COMMAND(snd_setNullvar3),
-		COMMAND(snd_setFlag),
-		COMMAND(snd_clearFlag)
-	};
-
-	_opcodeList = opcodeList;
-	_opcodesEntries = ARRAYSIZE(opcodeList);
-}
-
 void AdLibDriver::setupParserOpcodeTable() {
 	static const ParserOpcode parserOpcodeTable[] = {
 		// 0
@@ -2359,13 +2253,12 @@ SoundAdLibPC::~SoundAdLibPC() {
 }
 
 bool SoundAdLibPC::init() {
-	_driver->callback(2);
-	_driver->callback(16, int(4));
+	_driver->initDriver();
 	return true;
 }
 
 void SoundAdLibPC::process() {
-	uint8 trigger = _driver->callback(11);
+	int trigger = _driver->getSoundTrigger();
 
 	if (trigger < _numSoundTriggers) {
 		int soundId = _soundTriggers[trigger];
@@ -2386,6 +2279,7 @@ void SoundAdLibPC::updateVolumeSettings() {
 	int newMusicVolume = mute ? 0 : ConfMan.getInt("music_volume");
 	//newMusicVolume = (newMusicVolume * 145) / Audio::Mixer::kMaxMixerVolume + 110;
 	newMusicVolume = CLIP(newMusicVolume, 0, 255);
+
 	int newSfxVolume = mute ? 0 : ConfMan.getInt("sfx_volume");
 	//newSfxVolume = (newSfxVolume * 200) / Audio::Mixer::kMaxMixerVolume + 55;
 	newSfxVolume = CLIP(newSfxVolume, 0, 255);
@@ -2416,7 +2310,7 @@ void SoundAdLibPC::haltTrack() {
 }
 
 bool SoundAdLibPC::isPlaying() const {
-	return _driver->callback(7, int(0)) != 0;
+	return _driver->isChannelPlaying(0);
 }
 
 void SoundAdLibPC::playSoundEffect(uint8 track) {
@@ -2435,56 +2329,7 @@ void SoundAdLibPC::play(uint8 track) {
 	if ((soundId == 0xFFFF && _v2) || (soundId == 0xFF && !_v2) || !_soundDataPtr)
 		return;
 
-	// HACK: Since we might call this when the engines is paused (on game load via GMM)
-	// we must unpause the engine here, so this will work properly
-
-	int pauseCount = 0;
-	while (_vm->isPaused()) {
-		++pauseCount;
-		_vm->pauseEngine(false);
-	}
-
-	while ((_driver->callback(16, 0) & 8)) {
-		// We call the system delay and not the game delay to avoid concurrency issues.
-		_vm->_system->delayMillis(10);
-	}
-
-	while (pauseCount--)
-		_vm->pauseEngine(true);
-
-	if (_sfxPlayingSound != -1) {
-		// Restore the sounds's normal values.
-		_driver->callback(10, _sfxPlayingSound, int(1), int(_sfxPriority));
-		_driver->callback(10, _sfxPlayingSound, int(3), int(_sfxFourthByteOfSong));
-		_sfxPlayingSound = -1;
-	}
-
-	int chan = _driver->callback(9, soundId, int(0));
-
-	if (chan != 9) {
-		_sfxPlayingSound = soundId;
-		_sfxPriority = _driver->callback(9, soundId, int(1));
-		_sfxFourthByteOfSong = _driver->callback(9, soundId, int(3));
-
-		// In the cases I've seen, the mysterious fourth byte has been
-		// the parameter for the update_setExtraLevel3() callback.
-		//
-		// The extra level is part of the channels "total level", which
-		// is a six-bit value where larger values means softer volume.
-		//
-		// So what seems to be happening here is that sounds which are
-		// started by this function are given a slightly lower priority
-		// and a slightly higher (i.e. softer) extra level 3 than they
-		// would have if they were started from anywhere else. Strange.
-
-		int newVal = ((((-_sfxFourthByteOfSong) + 63) * 0xFF) >> 8) & 0xFF;
-		newVal = -newVal + 63;
-		_driver->callback(10, soundId, int(3), newVal);
-		newVal = ((_sfxPriority * 0xFF) >> 8) & 0xFF;
-		_driver->callback(10, soundId, int(1), newVal);
-	}
-
-	_driver->callback(6, soundId);
+	_driver->queueTrack(soundId);
 }
 
 void SoundAdLibPC::beginFadeOut() {
@@ -2518,7 +2363,7 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	playSoundEffect(0);
 	playSoundEffect(0);
 
-	_driver->callback(8, int(-1));
+	_driver->stopAllChannels();
 	_soundDataPtr = 0;
 
 	int soundDataSize = fileSize;
@@ -2543,7 +2388,7 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	fileData = p = 0;
 	fileSize = 0;
 
-	_driver->callback(4, _soundDataPtr);
+	_driver->setSoundData(_soundDataPtr);
 
 	_soundFileLoaded = file;
 }
