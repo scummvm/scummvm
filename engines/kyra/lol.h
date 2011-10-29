@@ -759,7 +759,7 @@ private:
 	int olol_distanceAttack(EMCState *script);
 	int olol_removeCharacterEffects(EMCState *script);
 	int olol_checkInventoryFull(EMCState *script);
-	int olol_objectLeavesLevel(EMCState *script);
+	int olol_moveBlockObjects(EMCState *script);
 	int olol_addSpellToScroll(EMCState *script);
 	int olol_playDialogueText(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);

@@ -286,13 +286,13 @@ int LoLEngine::olol_makeItem(EMCState *script) {
 }
 
 int LoLEngine::olol_placeMoveLevelItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_placeMoveLevelItem(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	placeMoveLevelItem(stackPos(0), stackPos(1), stackPos(2), stackPos(3) & 0xff, stackPos(4) & 0xff, stackPos(5));
 	return 1;
 }
 
 int LoLEngine::olol_createLevelItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_createLevelItem(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));
 	if (item == -1)
 		return item;
@@ -1538,12 +1538,12 @@ int LoLEngine::olol_checkInventoryFull(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_objectLeavesLevel(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+int LoLEngine::olol_moveBlockObjects(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveBlockObjects(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int o = _levelBlockProperties[stackPos(0)].assignedObjects;
 	int res = 0;
 	int level = stackPos(2);
-	int block = stackPos(1);
+	int destBlock = stackPos(1);
 	int runScript = stackPos(4);
 	int includeMonsters = stackPos(3);
 	int includeItems = stackPos(5);
@@ -1551,9 +1551,9 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 	// WORKAROUND for script bug
 	// Items would vanish when thrown towards the stairs
 	// in white tower level 3.
-	if (_currentLevel == 21 && level == 21 && block == 0x3e0) {
+	if (_currentLevel == 21 && level == 21 && destBlock == 0x3e0) {
 		level = 20;
-		block = 0x0247;
+		destBlock = 0x0247;
 	}
 
 	while (o) {
@@ -1577,15 +1577,13 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 			if (!(_itemsInPlay[l].shpCurFrame_flg & 0x4000) || !includeItems)
 				continue;
 
-			placeMoveLevelItem(l, level, block, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
-
-			if (!runScript || level != _currentLevel) {
-				res = 1;
-				continue;
-			}
-
-			runLevelScriptCustom(block, 0x80, -1, l, 0, 0);
+			placeMoveLevelItem(l, level, destBlock, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
 			res = 1;
+
+			if (!runScript || level != _currentLevel)				
+				continue;			
+
+			runLevelScriptCustom(destBlock, 0x80, -1, l, 0, 0);
 		}
 	}
 
@@ -2881,7 +2879,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x74
 	Opcode(olol_checkInventoryFull);
-	Opcode(olol_objectLeavesLevel);
+	Opcode(olol_moveBlockObjects);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
