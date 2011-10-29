@@ -82,7 +82,7 @@ void SpaceJunk::setCenter(const tCoordType centerX, const tCoordType centerY) {
 
 	Common::Rect r;
 	getBounds(r);
-	r.moveTo(centerX - (r.width() >> 1), centerY - (r.height() >> 1));
+	r.moveTo(MAX<int>(centerX - (r.width() >> 1), 0), MAX<int>(centerY - (r.height() >> 1), 0));
 	setBounds(r);
 }
 
@@ -170,7 +170,7 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 		_bounceStop.y = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetVRange - 1);
 		break;
 	}
-	
+
 	_bounceSizeStart = bounds.width();
 	_bounceSizeStop = MIN(_bounceSizeStart, kMaxBounceSize);
 
