@@ -24,11 +24,11 @@
 #define GRIM_OSTATE_H
 
 #include "engines/grim/pool.h"
+#include "engines/grim/bitmap.h"
 
 namespace Grim {
 
 class SaveGame;
-class Bitmap;
 
 class ObjectState : public PoolObject<ObjectState, MKTAG('S', 'T', 'A', 'T')> {
 public:
@@ -59,7 +59,7 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	Bitmap *_bitmap, *_zbitmap;
+	Bitmap::Ptr _bitmap, _zbitmap;
 
 	friend class GrimEngine;
 };

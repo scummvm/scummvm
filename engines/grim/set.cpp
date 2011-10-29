@@ -75,13 +75,6 @@ Set::~Set() {
 	}
 }
 
-void Set::resetInternalData() {
-	for (int i = 0; i < _numSetups; ++i) {
-		_setups[i]._bkgndBm = NULL;
-		_setups[i]._bkgndZBm = NULL;
-	}
-}
-
 void Set::loadText(TextSplitter &ts){
 	char tempBuf[256];
 
@@ -705,11 +698,11 @@ void Set::getSoundParameters(int *minVolume, int *maxVolume) {
 	*maxVolume = _maxVolume;
 }
 
-void Set::addObjectState(ObjectState *s) {
+void Set::addObjectState(const ObjectState::Ptr &s) {
 	_states.push_front(s);
 }
 
-void Set::moveObjectStateToFront(ObjectState *s) {
+void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_front(s);
 	// Make the state invisible. This hides the deadbolt when brennis closes the switcher door
@@ -717,7 +710,7 @@ void Set::moveObjectStateToFront(ObjectState *s) {
 	s->setActiveImage(0);
 }
 
-void Set::moveObjectStateToBack(ObjectState *s) {
+void Set::moveObjectStateToBack(const ObjectState::Ptr &s) {
 	_states.remove(s);
 	_states.push_back(s);
 }

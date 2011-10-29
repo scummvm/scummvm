@@ -94,13 +94,13 @@ public:
 	void shrinkBoxes(float radius);
 	void unshrinkBoxes();
 
-	void addObjectState(ObjectState *s);
-	void deleteObjectState(ObjectState *s) {
+	void addObjectState(const ObjectState::Ptr &s);
+	void deleteObjectState(const ObjectState::Ptr &s) {
 		_states.remove(s);
 	}
 
-	void moveObjectStateToFront(ObjectState *s);
-	void moveObjectStateToBack(ObjectState *s);
+	void moveObjectStateToFront(const ObjectState::Ptr &s);
+	void moveObjectStateToBack(const ObjectState::Ptr &s);
 
 	ObjectState *findState(const char *filename);
 
@@ -109,7 +109,7 @@ public:
 		void loadBinary(Common::MemoryReadStream *ms);
 		void setupCamera() const;
 		Common::String _name;
-		Bitmap *_bkgndBm, *_bkgndZBm;
+		Bitmap::Ptr _bkgndBm, _bkgndZBm;
 		Math::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
@@ -121,9 +121,6 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
-
-protected:
-	void resetInternalData();
 
 private:
 	bool _locked;
@@ -138,7 +135,7 @@ private:
 	bool _lightsConfigured;
 
 	Setup *_currSetup;
-	typedef Common::List<ObjectState*> StateList;
+	typedef Common::List<ObjectState::Ptr> StateList;
 	StateList _states;
 
 	friend class GrimEngine;

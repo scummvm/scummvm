@@ -3,6 +3,7 @@
 #define GRIM_POOL_H
 
 #include "common/hashmap.h"
+#include "common/list.h"
 
 #include "engines/grim/savegame.h"
 
@@ -43,6 +44,48 @@ public:
 		Common::HashMap<int32, T*> _map;
 	};
 
+	/**
+	 * @short Smart pointer class
+	 * This class wraps a C pointer to T, subclass of PoolObject, which gets reset to NULL as soon as
+	 * the object is deleted, e.g by Pool::restoreObjects().
+	 * Its operator overloads allows the Ptr class to be used as if it was a raw C pointer.
+	 */
+	class Ptr {
+	public:
+		Ptr() : _obj(NULL) { }
+		Ptr(T *obj) : _obj(obj) {
+			if (_obj)
+				_obj->addPointer(this);
+		}
+		Ptr(const Ptr &ptr) : _obj(ptr._obj) {
+			if (_obj)
+				_obj->addPointer(this);
+		}
+		~Ptr() {
+			if (_obj)
+				_obj->removePointer(this);
+		}
+
+		Ptr &operator=(T *obj);
+		Ptr &operator=(const Ptr &ptr);
+
+		inline operator bool() const { return _obj; }
+		inline bool operator!() const { return !_obj; }
+		inline bool operator==(T *obj) const { return _obj == obj; }
+		inline bool operator!=(T *obj) const { return _obj != obj; }
+
+		inline T *operator->() const { return _obj; }
+		inline T &operator*() const { return *_obj; }
+		inline operator T*() const { return _obj; }
+
+	private:
+		inline void reset() { _obj = NULL; }
+
+		T *_obj;
+
+		friend class PoolObject;
+	};
+
 	virtual ~PoolObject();
 
 	int getId() const;
@@ -54,17 +97,30 @@ public:
 protected:
 	PoolObject();
 
-	virtual void resetInternalData();
-
 private:
 	void setId(int id);
+	void addPointer(Ptr *pointer) { _pointers.push_back(pointer); }
+	void removePointer(Ptr *pointer) { _pointers.remove(pointer); }
 
 	int _id;
 	static int s_id;
 	static Pool *s_pool;
 
+	Common::List<Ptr *> _pointers;
+
 	friend class Pool;
+	friend class Ptr;
 };
+
+template <class T, int32 tag>
+bool operator==(T *obj, const typename PoolObject<T, tag>::Ptr &ptr) {
+	return obj == ptr._obj;
+}
+
+template <class T, int32 tag>
+bool operator!=(T *obj, const typename PoolObject<T, tag>::Ptr &ptr) {
+	return obj != ptr._obj;
+}
 
 template <class T, int32 tag>
 int PoolObject<T, tag>::s_id = 0;
@@ -86,6 +142,10 @@ PoolObject<T, tag>::PoolObject() {
 template <class T, int32 tag>
 PoolObject<T, tag>::~PoolObject() {
 	s_pool->removeObject(_id);
+
+	for (typename Common::List<Ptr *>::iterator i = _pointers.begin(); i != _pointers.end(); ++i) {
+		(*i)->reset();
+	}
 }
 
 template <class T, int32 tag>
@@ -99,11 +159,6 @@ void PoolObject<T, tag>::setId(int id) {
 template <class T, int32 tag>
 int PoolObject<T, tag>::getId() const {
 	return _id;
-}
-
-template <class T, int32 tag>
-void PoolObject<T, tag>::resetInternalData() {
-
 }
 
 template <class T, int32 tag>
@@ -213,16 +268,38 @@ void PoolObject<T, tag>::Pool::restoreObjects(SaveGame *state) {
 		t->restoreState(state);
 	}
 	for (Iterator i = getBegin(); i != getEnd(); i++) {
-		// Can't use T directly here, since resetInternalData() is protected and
-		// Pool is friend of PoolObject, not of T.
-		PoolObject<T, tag> *t = i->_value;
-		t->resetInternalData();
-		delete t;
+		delete i->_value;
 	}
 	_map = tempMap;
 	_restoring = false;
 
 	state->endSection();
+}
+
+template<class T, int32 tag>
+typename PoolObject<T, tag>::Ptr &PoolObject<T, tag>::Ptr::operator=(T *obj) {
+	if (_obj) {
+		_obj->removePointer(this);
+	}
+	_obj = obj;
+	if (obj) {
+		obj->addPointer(this);
+	}
+
+	return *this;
+}
+
+template<class T, int32 tag>
+typename PoolObject<T, tag>::Ptr &PoolObject<T, tag>::Ptr::operator=(const Ptr &ptr) {
+	if (_obj) {
+		_obj->removePointer(this);
+	}
+	_obj = ptr._obj;
+	if (_obj) {
+		_obj->addPointer(this);
+	}
+
+	return *this;
 }
 
 }
