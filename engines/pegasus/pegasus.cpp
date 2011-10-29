@@ -1127,12 +1127,12 @@ void PegasusEngine::doDeath() {
 }
 
 void PegasusEngine::throwAwayEverything() {
-	if (_items.getNumItems() != 0)
+	if (_items.getNumItems() != 0 && g_interface)
 		_currentItemID = g_interface->getCurrentInventoryItem()->getObjectID();
 	else
 		_currentItemID = kNoItemID;
 
-	if (_biochips.getNumItems() != 0)
+	if (_biochips.getNumItems() != 0 && g_interface)
 		_currentItemID = g_interface->getCurrentBiochip()->getObjectID();
 	else
 		_currentItemID = kNoItemID;
