@@ -355,13 +355,13 @@ void Lua_V1::RotateVector() {
 
 	lua_pushobject(rotObj);
 	lua_pushstring("x");
-	Math::Angle roll = lua_getnumber(lua_gettable());
+	Math::Angle pitch = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("y");
 	Math::Angle yaw = lua_getnumber(lua_gettable());
 	lua_pushobject(rotObj);
 	lua_pushstring("z");
-	Math::Angle pitch = lua_getnumber(lua_gettable());
+	Math::Angle roll = lua_getnumber(lua_gettable());
 
 	Math::Matrix3 mat;
 	mat.buildFromPitchYawRoll(pitch, yaw, roll);
