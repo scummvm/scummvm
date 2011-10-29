@@ -130,7 +130,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 			break;
 		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
 
-		switch (alignment) {
+		switch ((int)alignment) {
 		case SCI_TEXT32_ALIGNMENT_RIGHT:
 			offsetX = width - textWidth;
 			break;
