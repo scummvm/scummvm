@@ -70,7 +70,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	GuiResourceId fontId = readSelectorValue(_segMan, textObject, SELECTOR(font));
 	GfxFont *font = _cache->getFont(fontId);
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
-	uint16 alignment = readSelectorValue(_segMan, textObject, SELECTOR(mode));
+	int16 alignment = readSelectorValue(_segMan, textObject, SELECTOR(mode));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
 	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 
@@ -130,7 +130,7 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 			break;
 		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
 
-		switch ((int)alignment) {
+		switch (alignment) {
 		case SCI_TEXT32_ALIGNMENT_RIGHT:
 			offsetX = width - textWidth;
 			break;
