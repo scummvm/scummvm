@@ -1081,7 +1081,7 @@ void PaletteRotation::signal() {
 		uint32 frameNumber = g_globals->_events.getFrameNumber();
 
 		if (frameNumber >= _frameNumber) {
-			_delayCtr = frameNumber - _frameNumber;
+			_delayCtr -= frameNumber - _frameNumber;
 			_frameNumber = frameNumber;
 
 			if (_delayCtr < 0)
