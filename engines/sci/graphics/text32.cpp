@@ -41,6 +41,10 @@ namespace Sci {
 
 #define BITMAP_HEADER_SIZE 46
 
+#define SCI_TEXT32_ALIGNMENT_RIGHT -1
+#define SCI_TEXT32_ALIGNMENT_CENTER 1
+#define SCI_TEXT32_ALIGNMENT_LEFT	0
+
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 	: _segMan(segMan), _cache(fonts), _screen(screen) {
 }
@@ -58,8 +62,10 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
 
 	Common::String text = _segMan->getString(stringObject);
-	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
+	GuiResourceId fontId = readSelectorValue(_segMan, textObject, SELECTOR(font));
+	GfxFont *font = _cache->getFont(fontId);
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
+	uint16 alignment = readSelectorValue(_segMan, textObject, SELECTOR(mode));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
 	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 
@@ -93,15 +99,52 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
 	const char *txt = text.c_str();
+	int16 textWidth, textHeight, totalHeight = 0, offsetX = 0, offsetY = 0;
+	uint16 start = 0;
 
+	// Calculate total text height
 	while (*txt) {
 		charCount = GetLongest(txt, width, font);
 		if (charCount == 0)
 			break;
 
+		Width(txt, 0, (int16)strlen(txt), fontId, textWidth, textHeight, true);
+
+		totalHeight += textHeight;
+		txt += charCount;
+		while (*txt == ' ')
+			txt++; // skip over breaking spaces
+	}
+
+	txt = text.c_str();
+
+	// Draw text in buffer
+	while (*txt) {
+		charCount = GetLongest(txt, width, font);
+		if (charCount == 0)
+			break;
+		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
+
+		switch (alignment) {
+		case SCI_TEXT32_ALIGNMENT_RIGHT:
+			offsetX = width - textWidth;
+			break;
+		case SCI_TEXT32_ALIGNMENT_CENTER:
+			// Center text both horizontally and vertically
+			offsetX = (width - textWidth) / 2;
+			offsetY = (height - totalHeight) / 2;
+			break;
+		case SCI_TEXT32_ALIGNMENT_LEFT:
+			offsetX = 0;
+			break;
+
+		default:
+			warning("Invalid alignment %d used in TextBox()", alignment);
+		}
+
 		for (int i = 0; i < charCount; i++) {
 			unsigned char curChar = txt[i];
-			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, width, height);
+			font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
 			curX += font->getCharWidth(curChar);
 		}
 
