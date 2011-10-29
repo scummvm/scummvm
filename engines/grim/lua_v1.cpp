@@ -48,6 +48,15 @@
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
+// Windows.h badness: Remove #defines to the following Win32 API MultiByte/Unicode functions.
+#ifdef GetDiskFreeSpace
+#undef GetDiskFreeSpace
+#endif
+
+#ifdef PlaySound
+#undef PlaySound
+#endif
+
 namespace Grim {
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)

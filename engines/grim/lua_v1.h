@@ -25,6 +25,15 @@
 
 #include "engines/grim/lua.h"
 
+// Windows.h badness: Remove #defines to the following Win32 API MultiByte/Unicode functions.
+#ifdef GetDiskFreeSpace
+#undef GetDiskFreeSpace
+#endif
+
+#ifdef PlaySound
+#undef PlaySound
+#endif
+
 namespace Grim {
 
 class Lua_V1 : public LuaBase {
