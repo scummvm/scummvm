@@ -145,6 +145,9 @@ void Mars::init() {
 	forceStridingStop(kMars08, kNorth, kAltMarsNormal);
 
 	_neighborhoodNotification.notifyMe(this, kMarsNotificationFlags, kMarsNotificationFlags);
+
+	_explosionCallBack.setNotification(&_neighborhoodNotification);
+	_explosionCallBack.setCallBackFlag(kExplosionFinishedFlag);
 }
 
 void Mars::flushGameState() {
