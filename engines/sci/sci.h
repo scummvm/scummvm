@@ -102,7 +102,8 @@ enum kDebugLevels {
 	kDebugLevelScripts    = 1 << 17,
 	kDebugLevelGC         = 1 << 18,
 	kDebugLevelResMan     = 1 << 19,
-	kDebugLevelOnStartup  = 1 << 20
+	kDebugLevelOnStartup  = 1 << 20,
+	kDebugLevelDebugMode  = 1 << 21
 };
 
 enum SciGameId {

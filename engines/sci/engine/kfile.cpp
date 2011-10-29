@@ -22,6 +22,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/savefile.h"
@@ -1058,6 +1059,18 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 	const Common::String wrappedName = g_sci->wrapFilename(name);
 	if (!exists) {
 		exists = !saveFileMan->listSavefiles(wrappedName).empty();
+	}
+
+	// SCI2+ debug mode
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelDebugMode)) {
+		if (!exists && name == "1.scr")		// PQ4
+			exists = true;
+		if (!exists && name == "18.scr")	// QFG4
+			exists = true;
+		if (!exists && name == "99.scr")	// GK1, KQ7
+			exists = true;
+		if (!exists && name == "classes")	// GK2, SQ6, LSL7
+			exists = true;
 	}
 
 	// Special case for non-English versions of LSL5: The English version of
