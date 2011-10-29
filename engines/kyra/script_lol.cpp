@@ -842,7 +842,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->direction = l->facing << 1;
 		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
 
-		if (_currentLevel == 12 && l->type == 2)
+		if (_currentLevel != 12 || l->type != 2)
 			l->hitPoints = (l->hitPoints * (rollDice(1, 128) + 192)) >> 8;
 
 		l->numDistAttacks = l->properties->numDistAttacks;
@@ -859,7 +859,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
-			l->equipmentShapes[ii] = stackPos(7 + ii);
+			l->equipmentShapes[ii] = stackPos(7 + ii) & 0xff;
 
 		checkSceneUpdateNeed(l->block);
 		return i;
