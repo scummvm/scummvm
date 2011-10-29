@@ -215,7 +215,7 @@ public:
 	int _field1398;
 	int _invGreenCount, _bookGreenCount, _invGangCount;
 	int _bookGangCount, _field1B6C, _field139C;
-	bool _field1B68, _field1B6A;
+	bool _field1B68, _doorOpened;
 	CursorType _currentCursor;
 
 	Scene315();

@@ -957,7 +957,7 @@ Scene315::Scene315() {
 
 	BF_GLOBALS.clearFlag(fCanDrawGun);
 	_field1B68 = true;
-	_field1B6A = false;
+	_doorOpened = false;
 	_invGreenCount = _bookGreenCount = 0;
 	_invGangCount = _bookGangCount = 0;
 }
@@ -975,7 +975,7 @@ void Scene315::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_field1B6C);
 	s.syncAsSint16LE(_field139C);
 	s.syncAsByte(_field1B68);
-	s.syncAsByte(_field1B6A);
+	s.syncAsByte(_doorOpened);
 	s.syncAsSint16LE(_currentCursor);
 }
 
@@ -1084,7 +1084,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 	switch (BF_GLOBALS._sceneManager._previousScene) {
 	case 190:
 		if (_field1398)
-			_field1B6A = true;
+			_doorOpened = true;
 		_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 3150 : 3165;
 		setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
 		break;
@@ -1100,7 +1100,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 	case 300:
 	default:
 		if (_field1398)
-			_field1B6A = true;
+			_doorOpened = true;
 		if (!BF_GLOBALS.getFlag(onDuty))
 			_sceneMode = 3166;
 		else if (!_field1398)
@@ -1112,7 +1112,7 @@ void Scene315::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
-	if (_field1B6A) {
+	if (_doorOpened) {
 		_object8.setFrame(8);
 	} else {
 		BF_GLOBALS._walkRegions.disableRegion(4);
@@ -1313,7 +1313,7 @@ void Scene315::dispatch() {
 	if (_field1B68)
 		return;
 
-	if (_field1B6A) {
+	if (_doorOpened) {
 		if (BF_GLOBALS._player._position.y < 69) {
 			BF_GLOBALS._player.disableControl();
 			_field1B68 = true;
