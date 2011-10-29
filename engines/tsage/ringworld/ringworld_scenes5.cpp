@@ -2173,7 +2173,7 @@ void Scene4050::Action4::signal() {
 	case 5:
 		scene->_hotspot16.setStrip2(4);
 		scene->_hotspot16.setFrame(1);
-		scene->_hotspot16.animate(ANIM_MODE_4, 4, 1, this);;
+		scene->_hotspot16.animate(ANIM_MODE_4, 4, 1, this);
 		break;
 	case 6:
 		scene->_hotspot16.animate(ANIM_MODE_5, NULL);

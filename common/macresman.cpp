@@ -110,7 +110,7 @@ bool MacResManager::open(String filename) {
 	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = filename;
@@ -173,7 +173,7 @@ bool MacResManager::open(FSNode path, String filename) {
 	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = filename;
