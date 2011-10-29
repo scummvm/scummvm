@@ -169,8 +169,11 @@ ResourceType ResourceManager::convertResType(byte type) {
 		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
 			// LSL6 hires doesn't have the chunk resource type, to match
 			// the resource types of the lowres version, thus we use the
-			// older resource types here
-			if (g_sci && g_sci->getGameId() == GID_LSL6HIRES)
+			// older resource types here.
+			// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
+			// corresponding SCI2 floppy disk versions.
+			if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
+				g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
 				return s_resTypeMapSci0[type];
 			else
 				return s_resTypeMapSci21[type];
