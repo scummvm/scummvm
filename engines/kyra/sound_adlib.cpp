@@ -2304,8 +2304,8 @@ void SoundAdLibPC::playTrack(uint8 track) {
 }
 
 void SoundAdLibPC::haltTrack() {
-	playSoundEffect(0);
-	playSoundEffect(0);
+	play(0);
+	play(0);
 	//_vm->_system->delayMillis(3 * 60);
 }
 
@@ -2333,7 +2333,7 @@ void SoundAdLibPC::play(uint8 track) {
 }
 
 void SoundAdLibPC::beginFadeOut() {
-	playSoundEffect(1);
+	play(1);
 }
 
 void SoundAdLibPC::loadSoundFile(uint file) {
