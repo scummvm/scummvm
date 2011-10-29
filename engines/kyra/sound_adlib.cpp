@@ -618,6 +618,11 @@ void AdLibDriver::setupPrograms() {
 			channel.volumeModifier = _sfxVolume;
 
 		unkOutput2(chan);
+
+		// We need to wait two callback calls till we can start another track.
+		// This is (probably) required to assure that the sfx are started with
+		// the correct priority and velocity.
+		_programStartTimeout = 2;
 	}
 }
 
@@ -1331,6 +1336,9 @@ int AdLibDriver::update_setupProgram(uint8 *&dataptr, Channel &channel, uint8 va
 	Channel &channel2 = _channels[chan];
 
 	if (priority >= channel2.priority) {
+		// We keep new tracks from being started for two further iterations of
+		// the callback. This assures the correct velocity is used for this
+		// program.
 		_programStartTimeout = 2;
 		initChannel(channel2);
 		channel2.priority = priority;
