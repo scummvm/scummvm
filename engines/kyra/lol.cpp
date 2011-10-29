@@ -558,53 +558,51 @@ Common::Error LoLEngine::init() {
 void LoLEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
 
-	using namespace Common;
-
 	bool tmp;
-	Keymapper *mapper = _eventMan->getKeymapper();
+	Common::Keymapper *mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
 	if (mapper->getKeymap(kKeymapName, tmp) != 0)
 		return;
 
-	Action *act;
-	Keymap *engineKeyMap = new Keymap(kKeymapName);
+	Common::Action *act;
+	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
 
-	act = new Action(engineKeyMap, "AT1", _("Attack 1"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_F1, ASCII_F1 , 0));
+	act = new Common::Action(engineKeyMap, "AT1", _("Attack 1"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
 
-	act = new Action(engineKeyMap, "AT2", _("Attack 2"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_F1, ASCII_F1 , 0));
+	act = new Common::Action(engineKeyMap, "AT2", _("Attack 2"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
 
-	act = new Action(engineKeyMap, "AT3", _("Attack 3"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_F1, ASCII_F1 , 0));
+	act = new Common::Action(engineKeyMap, "AT3", _("Attack 3"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
 
-	act = new Action(engineKeyMap, "MVF", _("Move Forward"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_UP));
+	act = new Common::Action(engineKeyMap, "MVF", _("Move Forward"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_UP));
 
-	act = new Action(engineKeyMap, "MVB", _("Move Back"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_DOWN));
+	act = new Common::Action(engineKeyMap, "MVB", _("Move Back"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
 
-	act = new Action(engineKeyMap, "SLL", _("Slide Left"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_LEFT));
+	act = new Common::Action(engineKeyMap, "SLL", _("Slide Left"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
 
-	act = new Action(engineKeyMap, "SLR", _("Slide Right"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_RIGHT));
+	act = new Common::Action(engineKeyMap, "SLR", _("Slide Right"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
 
-	act = new Action(engineKeyMap, "TL", _("Turn Left"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_HOME));
+	act = new Common::Action(engineKeyMap, "TL", _("Turn Left"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
 
-	act = new Action(engineKeyMap, "TR", _("Turn Right"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_PAGEUP));
+	act = new Common::Action(engineKeyMap, "TR", _("Turn Right"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
 
-	act = new Action(engineKeyMap, "RST", _("Rest"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_r));
+	act = new Common::Action(engineKeyMap, "RST", _("Rest"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_r));
 
-	act = new Action(engineKeyMap, "OPT", _("Options"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_o));
+	act = new Common::Action(engineKeyMap, "OPT", _("Options"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_o));
 
-	act = new Action(engineKeyMap, "SPL", _("Choose Spell"), kGenericActionType, kActionKeyType);
-	act->addKeyEvent(KeyState(KEYCODE_SLASH));
+	act = new Common::Action(engineKeyMap, "SPL", _("Choose Spell"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_SLASH));
 
 	mapper->addGameKeymap(engineKeyMap);
 
