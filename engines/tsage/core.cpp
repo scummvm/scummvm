@@ -3458,6 +3458,7 @@ void WalkRegions::clear() {
 	_field18.clear();
 	_idxList.clear();
 	_idxList2.clear();
+	_disabledRegions.clear();
 }
 
 void WalkRegions::load(int sceneNum) {
