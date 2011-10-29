@@ -28,7 +28,6 @@
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollbar.h"
 #include "gui/ThemeEval.h"
-
 #include "common/translation.h"
 
 namespace Common {
@@ -173,8 +172,15 @@ void RemapDialog::reflowLayout() {
 				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignRight);
 			widg.keyButton =
 				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", 0, kRemapCmd + i);
-			widg.clearButton =
-				new GUI::ButtonWidget(this, 0, 0, 0, 0, "C", _("Clear value"), kClearCmd + i);
+#ifndef DISABLE_FANCY_THEMES
+			if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+				widg.clearButton = new GUI::PicButtonWidget(this, 0, 0, clearButtonWidth, clearButtonHeight, _("Clear value"), kClearCmd + i);
+				((GUI::PicButtonWidget *)widg.clearButton)->useThemeTransparency(true);
+				((GUI::PicButtonWidget *)widg.clearButton)->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageEraser));
+			}
+			else
+#endif
+				widg.clearButton = new GUI::ButtonWidget(this, 0, 0, 0, 0, "C", _("Clear value"), kClearCmd + i);
 
 			_keymapWidgets.push_back(widg);
 		} else {
