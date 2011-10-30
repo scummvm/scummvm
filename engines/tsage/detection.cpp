@@ -62,6 +62,7 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
 	{ "ringworld2", "Return to Ringworld" },
+	{ "geekwad", "The Geekwad: Games Of The Galaxy" },
 	{ 0, 0 }
 };
 

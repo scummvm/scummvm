@@ -121,6 +121,7 @@ extern Globals *g_globals;
 #define T2_GLOBALS (*((::TsAGE::TsAGE2Globals *)g_globals))
 #define BF_GLOBALS (*((::TsAGE::BlueForce::BlueForceGlobals *)g_globals))
 #define R2_GLOBALS (*((::TsAGE::Ringworld2::Ringworld2Globals *)g_globals))
+#define GW_GLOBALS (*((::TsAGE::Geekwad::GeekwadGlobals *)g_globals))
 
 // Note: Currently this can't be part of the g_globals structure, since it needs to be constructed
 // prior to many of the fields in Globals execute their constructors
@@ -254,6 +255,15 @@ public:
 };
 
 } // End of namespace Ringworld2
+
+namespace Geekwad {
+
+class GeekwadGlobals: public Globals {
+public:
+	ASoundExt _sound1;
+};
+
+} // End of namespace Geekwad
 
 } // End of namespace TsAGE
 

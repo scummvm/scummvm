@@ -23,6 +23,7 @@
 #include "tsage/globals.h"
 #include "tsage/tsage.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/geekwad/geekwad_logic.h"
 #include "tsage/ringworld/ringworld_demo.h"
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
@@ -84,6 +85,14 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_fontColors.background = 88;
 		_fontColors.foreground = 92;
 		_dialogCenter.y = 140;
+	} else if (g_vm->getGameID() == GType_Geekwad) {
+		// Blue Force
+		_gfxFontNumber = 0;
+		_gfxColors.background = 89;
+		_gfxColors.foreground = 83;
+		_fontColors.background = 88;
+		_fontColors.foreground = 92;
+		_dialogCenter.y = 140;
 	} else if ((g_vm->getGameID() == GType_Ringworld) &&  (g_vm->getFeatures() & GF_CD)) {
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
@@ -94,6 +103,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_color2 = 18;
 		_color3 = 18;
 	} else {
+		// Ringworld
 		_gfxFontNumber = 50;
 		_gfxColors.background = 53;
 		_gfxColors.foreground = 18;
@@ -137,6 +147,12 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	case GType_Ringworld2:
 		_inventory = new Ringworld2::Ringworld2InvObjectList();
 		_game = new Ringworld2::Ringworld2Game();
+		_sceneHandler = new SceneHandler();
+		break;
+
+	case GType_Geekwad:
+		_game = new Geekwad::GeekwadGame();
+		_inventory = NULL;
 		_sceneHandler = new SceneHandler();
 		break;
 	}
