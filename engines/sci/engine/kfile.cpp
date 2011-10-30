@@ -53,9 +53,10 @@ struct SavegameDesc {
  * arbitrary data files, simply because many of our target platforms do not
  * support this. The only files one can create are savestates. But SCI has an
  * opcode to create and write to seemingly 'arbitrary' files. This is mainly
- * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver) and
- * in LSL5 for MEMORY.DRV (which is again a game data file and contains the
- * game's password).
+ * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver, used
+ * for persisting the results of the "age quiz" across restarts) and in LSL5
+ * for MEMORY.DRV (which is again a game data file and contains the game's
+ * password, XOR encrypted).
  * To implement that opcode, we combine the SaveFileManager with regular file
  * code, similarly to how the SCUMM HE engine does it.
  *
@@ -115,20 +116,6 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		// file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
-
-		// Special case for LSL3: It tries to create a new dummy file,
-		// LARRY3.DRV. Apparently, if the file doesn't exist here, it should be
-		// created. The game scripts then go ahead and fill its contents with
-		// data. It seems to be a similar case as the dummy MEMORY.DRV file in
-		// LSL5, but LSL5 creates the file if it can't find it with a separate
-		// call to file_open().
-		if (!inFile && englishName == "LARRY3.DRV") {
-			outFile = saveFileMan->openForSaving(wrappedName);
-			outFile->finalize();
-			delete outFile;
-			outFile = 0;
-			inFile = SearchMan.createReadStreamForMember(wrappedName);
-		}
 
 		if (!inFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
