@@ -924,7 +924,7 @@ void Scene560::Action1::signal() {
 		scene->_deskChair.setStrip(BF_GLOBALS._player._strip);
 		scene->_deskChair.setPosition(BF_GLOBALS._player._position);
 
-		scene->_field380 = 1;
+		scene->_field380 = true;
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -950,7 +950,7 @@ void Scene560::Action2::signal() {
 		BF_GLOBALS._player.animate(ANIM_MODE_6, this);
 		break;
 	case 2:
-		scene->_field380 = 0;
+		scene->_field380 = false;
 		scene->_deskChair.setPosition(Common::Point(81, 149));
 		scene->_deskChair.setVisage(561);
 		scene->_deskChair.setStrip(3);
@@ -1378,7 +1378,7 @@ bool Scene560::Computer::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene560::Scene560(): SceneExt() {
-	_field380 = _field11EA = 0;
+	_field380 = _field11EA = false;
 }
 
 void Scene560::postInit(SceneObjectList *OwnerList) {
@@ -1433,12 +1433,12 @@ void Scene560::postInit(SceneObjectList *OwnerList) {
 		_deskChair.setStrip(BF_GLOBALS._player._strip);
 		_deskChair.setPosition(BF_GLOBALS._player._position);
 
-		_field11EA = 0;
-		_field380 = 1;
+		_field11EA = false;
+		_field380 = true;
 	} else {
 		// Entering study through doorway
-		_field11EA = 0;
-		_field380 = 0;
+		_field11EA = false;
+		_field380 = false;
 
 		BF_GLOBALS._player.postInit();
 		BF_GLOBALS._player.setVisage(563);
@@ -1529,7 +1529,7 @@ void Scene560::signal() {
 		}
 		break;
 	case 10:
-		_field11EA = 0;
+		_field11EA = false;
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 11:
@@ -1540,7 +1540,7 @@ void Scene560::signal() {
 
 void Scene560::process(Event &event) {
 	if ((event.eventType == EVENT_BUTTON_DOWN) && (BF_GLOBALS._events.getCursor() == CURSOR_WALK) &&
-			(_field380 == 1) && !_action) {
+			(_field380) && !_action) {
 		_destPosition = event.mousePos;
 		BF_GLOBALS._player.disableControl();
 		setAction(&_action2);
@@ -1553,7 +1553,7 @@ void Scene560::process(Event &event) {
 
 void Scene560::dispatch() {
 	if (!_field11EA && (BF_GLOBALS._player._position.y < 105)) {
-		_field11EA = 1;
+		_field11EA = true;
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS._sceneManager.changeScene(270);
 	}
