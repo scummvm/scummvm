@@ -121,7 +121,7 @@ void Scene20::Action1::signal() {
 
 void Scene20::postInit(SceneObjectList *OwnerList) {
 	loadScene(20);
-	Scene::postInit();
+	SceneExt::postInit();
 	setZoomPercents(60, 85, 200, 100);
 	BF_GLOBALS._interfaceY = SCREEN_HEIGHT;
 
