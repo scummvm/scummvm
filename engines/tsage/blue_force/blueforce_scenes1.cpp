@@ -243,8 +243,8 @@ void Scene109::Action1::signal() {
 		scene->_drunk.show();
 		scene->_drunk.setAction(&scene->_action3);
 		scene->_object2.show();
-		scene->_object9.show();
-		scene->_object9.setAction(&scene->_action2);
+		scene->_beerSign.show();
+		scene->_beerSign.setAction(&scene->_action2);
 
 		BF_GLOBALS._v501FC = 170;
 		setDelay(60);
@@ -257,27 +257,27 @@ void Scene109::Action1::signal() {
 		break;
 	case 5:
 		// Open briefcase and pass over disk
-		setAction(&scene->_sequenceManager6, this, 105, &scene->_object10, NULL);
+		setAction(&scene->_sequenceManager6, this, 105, &scene->_animationInset, NULL);
 		break;
 	case 6:
 		// Protaginist 2 walk to the bar
-		scene->_object10.remove();
+		scene->_animationInset.remove();
 		setAction(&scene->_sequenceManager6, this, 100, &scene->_protaginist2, NULL);
 		break;
 	case 7:
 		// Two thugs enter and walk to table
-		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 103, &scene->_object7, NULL);
-		scene->_object5.setAction(&scene->_sequenceManager8, this, 102, &scene->_object5, NULL);
+		scene->_cop2.setAction(&scene->_sequenceManager7, NULL, 103, &scene->_cop2, NULL);
+		scene->_cop1.setAction(&scene->_sequenceManager8, this, 102, &scene->_cop1, NULL);
 		scene->_protaginist2.setAction(&scene->_sequenceManager6, NULL, 104, &scene->_protaginist2, &scene->_bartender, NULL);
 		break;
 	case 8:
 		// Protaginist 1 leaves, protaginist 2 stands up
-		setAction(&scene->_sequenceManager8, this, 101, &scene->_object5, &scene->_protaginist1, NULL);
+		setAction(&scene->_sequenceManager8, this, 101, &scene->_cop1, &scene->_protaginist1, NULL);
 		break;
 	case 9:
 		// Shots fired!
 		scene->_protaginist1.setAction(&scene->_sequenceManager5, this, 98, &scene->_protaginist1, NULL);
-		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 99, &scene->_object7, NULL);
+		scene->_cop2.setAction(&scene->_sequenceManager7, NULL, 99, &scene->_cop2, NULL);
 		break;
 	case 10:
 		// End scene
@@ -289,12 +289,12 @@ void Scene109::Action1::signal() {
 
 void Scene109::Action2::signal() {
 	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
-	scene->setAction(&scene->_sequenceManager2, this, 3117, &scene->_object9, NULL);
+	setAction(&scene->_sequenceManager2, this, 3117, &scene->_beerSign, NULL);
 }
 
 void Scene109::Action3::signal() {
 	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
-	scene->setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
+	setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -353,21 +353,21 @@ void Scene109::postInit(SceneObjectList *OwnerList) {
 	_object2.setPosition(Common::Point(104, 64));
 	_object2.hide();
 
-	_object9.postInit();
-	_object9.setVisage(115);
-	_object9.setStrip(4);
-	_object9.setFrame(1);
-	_object9.setPosition(Common::Point(262, 29));
-	_object9.hide();
+	_beerSign.postInit();
+	_beerSign.setVisage(115);
+	_beerSign.setStrip(4);
+	_beerSign.setFrame(1);
+	_beerSign.setPosition(Common::Point(262, 29));
+	_beerSign.hide();
 
-	_object5.postInit();
-	_object5.hide();
+	_cop1.postInit();
+	_cop1.hide();
 
-	_object7.postInit();
-	_object7.hide();
+	_cop2.postInit();
+	_cop2.hide();
 
-	_object10.postInit();
-	_object10.hide();
+	_animationInset.postInit();
+	_animationInset.hide();
 
 	BF_GLOBALS._player.disableControl();
 	setAction(&_action1, this);
