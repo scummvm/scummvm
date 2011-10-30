@@ -1206,14 +1206,14 @@ private:
 	Item makeItem(int itemType, int curFrame, int flags);
 	void placeMoveLevelItem(Item itemIndex, int level, int block, int xOffs, int yOffs, int flyingHeight);
 	bool addItemToInventory(Item itemIndex);
-	bool testUnkItemFlags(Item itemIndex);
+	bool isItemMoveable(Item itemIndex);
 	void deleteItem(Item itemIndex);
 	ItemInPlay *findObject(uint16 index);
 	void runItemScript(int charNum, Item item, int flags, int next, int reg4);
 	void setHandItem(Item itemIndex);
 	bool itemEquipped(int charNum, uint16 itemType);
 
-	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int b);
+	void setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int moveable);
 	void removeLevelItem(Item item, int block);
 	bool launchObject(int objectType, Item item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c);
 	void endObjectFlight(FlyingObject *t, int x, int y, int collisionObject);

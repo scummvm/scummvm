@@ -2056,17 +2056,16 @@ int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
 		return 0;
 
 	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
-	int r = stackPos(2) & 0x1fff;
+	int16 val = stackPos(2);
 
-	if (stackPos(1) == 4) {
-		i->itemPropertyIndex = r;
-		return r;
-	} else if (stackPos(1) == 15) {
-		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | r;
-		return r;
-	}
+	if (stackPos(1) == 4)
+		i->itemPropertyIndex = val;
+	else if (stackPos(1) == 15)
+		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | (val & 0x1fff);
+	else
+		val = -1;
 
-	return -1;
+	return val;
 }
 
 int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
