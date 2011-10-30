@@ -414,6 +414,15 @@ public:
 	virtual void signal();
 };
 
+class PlayStream {
+public:
+	Sound _sound;
+
+	void setFile(const Common::String &filename) {}
+	void play(int soundNum, EventHandler *endAction) {}
+	void stop() {}
+	void proc1() {}
+};
 
 #define ADLIB_CHANNEL_COUNT 9
 

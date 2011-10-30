@@ -85,6 +85,62 @@ public:
 	virtual void dispatch();
 };
 
+class Scene125: public SceneExt {
+	/* Objects */
+	class Object5: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class Icon: public SceneActor {
+	public:
+		int _lookLineNum, _field98;
+		bool _pressed;
+		SceneObject _object1, _object2;
+		SceneText _sceneText1, _sceneText2;
+
+		virtual Common::String getClassName() { return "Scene125_Icon"; }
+		virtual void postInit(SceneObjectList *OwnerList = NULL);
+		virtual void synchronize(Serializer &s);
+		virtual void process(Event &event);
+
+		void setIcon(int id);
+		void showIcon();
+		void hideIcon();
+	};
+
+	/* Items */
+	class Item4: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+public:
+	ScenePalette _palette;
+	ASoundExt _sound1;
+	NamedHotspot _background, _item2, _item3;
+	Item4 _item4;
+	SceneActor _object1, _object2, _object3, _object4, _object5, _object6, _object7;
+	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
+	SequenceManager _sequenceManager;
+	SceneText _sceneText;
+	int _field412, _iconFontNumber, _field416, _field418, _field41A;
+	int _soundCount, _soundIndex;
+	int _soundIndexes[10];
+
+	Scene125();
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void synchronize(Serializer &s);
+	virtual void signal();
+	virtual void process(Event &event);
+	virtual void dispatch();
+
+	void consoleAction(int id);
+	void setDetails(int resNum, int lineNum);
+	void stop();
+	Common::String parseMessage(const Common::String &msg);
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

@@ -2929,6 +2929,16 @@ Player::Player(): SceneObject() {
 	_enabled = false;
 	_uiEnabled = false;
 	_field8C = 0;
+
+	// Return to Ringworld specific fields
+	_characterIndex = 0;
+	_oldSceneNumber = 0;
+
+	for (int i = 0; i < MAX_CHARACTERS; ++i) {
+		_characterScene[i] = 0;
+		_characterStrip[i] = 0;
+		_characterFrame[i] = 0;
+	}
 }
 
 void Player::postInit(SceneObjectList *OwnerList) {
@@ -3017,6 +3027,19 @@ void Player::synchronize(Serializer &s) {
 
 	if (g_vm->getGameID() != GType_Ringworld)
 		s.syncAsByte(_enabled);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_characterIndex);
+		s.syncAsSint16LE(_oldSceneNumber);
+
+		for (int i = 0; i < MAX_CHARACTERS; ++i) {
+			s.syncAsSint16LE(_characterScene[i]);
+			s.syncAsSint16LE(_characterPos[i].x);
+			s.syncAsSint16LE(_characterPos[i].y);
+			s.syncAsSint16LE(_characterStrip[i]);
+			s.syncAsSint16LE(_characterFrame[i]);
+		}
+	}
 }
 
 /*--------------------------------------------------------------------------*/

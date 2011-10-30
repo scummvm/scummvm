@@ -180,4 +180,17 @@ const char *THE_NEXT_DAY = "The Next Day";
 
 } // End of namespace BlueForce
 
+namespace Ringworld2 {
+
+const char *CONSOLE_MESSAGES[] = {
+	NULL, "Select Language", "Computer Services", "Food Services", "Entertainment Services",
+	"Main Menu", "Exit Menu", "Previous Menu", "Interworld", "Hero's Tongue", "Personal Log",
+	"Database", "Starchart", "Iso-Opto Disk Reader", "Eject Disk", "Meals", "Snacks",
+	"Beverages", "Human Basic Snacks", "Kzin Basic Snacks", "Hot Beverages", "Cold Beverages",
+	"Music", "Outpost Alpha", " ", " ", "Done", "A-G", "H-O", "P-S", "T-Z", "Tchaikovsky",
+	"Mozart", "Bach", "Rossini"
+};
+
+} // End of namespace Ringworld2
+
 } // End of namespace TsAGE

@@ -38,6 +38,9 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	// Quinn's room
 	case 100: return new Scene100();
 
+	// Computer console
+	case 125: return new Scene125();
+
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;
@@ -398,7 +401,7 @@ void Ringworld2InvObjectList::reset() {
 	}
 
 	// Set up default inventory
-	setObjectScene(R2_1, 800);
+	setObjectScene(R2_OPTO_DISK, 800);
 	setObjectScene(R2_2, 400);
 	setObjectScene(R2_NEGATOR_GUN, 100);
 	setObjectScene(R2_STEPPING_DISKS, 100);

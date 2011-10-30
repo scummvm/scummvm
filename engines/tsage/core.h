@@ -616,12 +616,22 @@ public:
 	virtual void updateScreen();
 };
 
+#define MAX_CHARACTERS 4
+
 class Player : public SceneObject {
 public:
 	bool _canWalk;
 	bool _uiEnabled;
 	int _field8C;
 	bool _enabled;
+
+	// Return to Ringworld specific fields
+	int _characterIndex;
+	int _oldSceneNumber;
+	int _characterScene[MAX_CHARACTERS];
+	Common::Point _characterPos[MAX_CHARACTERS];
+	int _characterStrip[MAX_CHARACTERS];
+	int _characterFrame[MAX_CHARACTERS];
 public:
 	Player();
 

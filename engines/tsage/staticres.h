@@ -143,6 +143,13 @@ extern const char *THE_NEXT_DAY;
 
 } // End of namespace BlueForce
 
+namespace Ringworld2 {
+
+// Scene 125 - Console messages
+extern const char *CONSOLE_MESSAGES[];
+
+} // End of namespace Ringworld2
+
 } // End of namespace TsAGE
 
 #endif
