@@ -127,14 +127,8 @@ Item LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 			continue;
 
 		bool t = false;
-		Item ii = i;
-		while (ii && !t) {
-			t = testUnkItemFlags(ii);
-			if (t)
-				break;
-			else
-				ii = _itemsInPlay[ii - 1].nextAssignedObject;
-		}
+		for (Item ii = i; ii && !t; ii = _itemsInPlay[ii].nextAssignedObject)
+			t = isItemMoveable(ii);
 
 		if (t) {
 			cnt = diff;
@@ -144,24 +138,20 @@ Item LoLEngine::makeItem(int itemType, int curFrame, int flags) {
 
 	Item slot = i;
 	if (cnt) {
-		slot = r;
-		if (testUnkItemFlags(r)) {
+		slot = 0;
+		if (isItemMoveable(r)) {
 			if (_itemsInPlay[r].nextAssignedObject)
 				_itemsInPlay[_itemsInPlay[r].nextAssignedObject].level = _itemsInPlay[r].level;
 			deleteItem(r);
 			slot = r;
 		} else {
-			uint16 ii = _itemsInPlay[slot].nextAssignedObject;
-			while (ii) {
-				if (testUnkItemFlags(ii)) {
-					_itemsInPlay[slot].nextAssignedObject = _itemsInPlay[ii].nextAssignedObject;
-					deleteItem(ii);
-					slot = ii;
-					break;
-				} else {
-					slot = ii;
-				}
-				ii = _itemsInPlay[slot].nextAssignedObject;
+			for (uint16 ii = _itemsInPlay[r].nextAssignedObject; ii; ii = _itemsInPlay[ii].nextAssignedObject) {
+				if (!isItemMoveable(ii))
+					continue;
+				_itemsInPlay[r].nextAssignedObject = _itemsInPlay[ii].nextAssignedObject;
+				deleteItem(ii);
+				slot = ii;
+				break;
 			}
 		}
 	}
@@ -219,7 +209,7 @@ bool LoLEngine::addItemToInventory(Item itemIndex) {
 	return true;
 }
 
-bool LoLEngine::testUnkItemFlags(Item itemIndex) {
+bool LoLEngine::isItemMoveable(Item itemIndex) {
 	if (!(_itemsInPlay[itemIndex].shpCurFrame_flg & 0x4000))
 		return false;
 
@@ -304,7 +294,7 @@ bool LoLEngine::itemEquipped(int charNum, uint16 itemType) {
 	return false;
 }
 
-void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int b) {
+void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight, int moveable) {
 	if (!flyingHeight) {
 		x = (x & 0xffc0) | 0x40;
 		y = (y & 0xffc0) | 0x40;
@@ -316,7 +306,7 @@ void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight,
 	_itemsInPlay[item].block = block;
 	_itemsInPlay[item].flyingHeight = flyingHeight;
 
-	if (b)
+	if (moveable)
 		_itemsInPlay[item].shpCurFrame_flg |= 0x4000;
 	else
 		_itemsInPlay[item].shpCurFrame_flg &= 0xbfff;
@@ -325,7 +315,7 @@ void LoLEngine::setItemPosition(Item item, uint16 x, uint16 y, int flyingHeight,
 	assignItemToBlock(&_levelBlockProperties[block].assignedObjects, item);
 	reassignDrawObjects(_currentDirection, item, &_levelBlockProperties[block], false);
 
-	if (b)
+	if (moveable)
 		runLevelScriptCustom(block, 0x80, -1, item, 0, 0);
 
 	checkSceneUpdateNeed(block);
