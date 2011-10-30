@@ -118,9 +118,14 @@ void MoviePlayer::init() {
 void MoviePlayer::deinit() {
 	_frameMutex.unlock();
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-	_videoDecoder->close();
+	
+	if (_videoDecoder)
+		_videoDecoder->close();
+	
 	_internalSurface = NULL;
-	_externalSurface->free();
+	
+	if (_externalSurface)
+		_externalSurface->free();
 
 	_videoPause = false;
 	_videoFinished = true;
@@ -202,13 +207,16 @@ public:
 		_videoFinished = true; // Rigs all movies to be completed.
 	}
 	~NullPlayer() {}
-	bool play(const char* filename, bool looping, int x, int y) {return true;}
+	bool play(Common::String filename, bool looping, int x, int y) {return true;}
+	bool loadFile(Common::String filename) { return true; }
 	void stop() {}
+	void pause(bool p) {}
 	void saveState(SaveGame *state) {}
 	void restoreState(SaveGame *state) {}
 private:
 	static void timerCallback(void *ptr) {}
 	void handleFrame() {}
+	bool prepareFrame() { return false; }
 	void init() {}
 	void deinit() {}
 };
@@ -221,13 +229,13 @@ MoviePlayer *CreateMpegPlayer() {
 #endif
 
 #ifndef USE_SMUSH
-MoviePlayer *CreateSmushPlayer() {
+MoviePlayer *CreateSmushPlayer(bool demo) {
 	return new NullPlayer("SMUSH");
 }
 #endif
 
 #ifndef USE_BINK
-MoviePlayer *CreateBinkPlayer() {
+MoviePlayer *CreateBinkPlayer(bool demo) {
 	return new NullPlayer("BINK");
 }
 #endif
