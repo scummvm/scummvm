@@ -103,7 +103,8 @@ public:
 	SceneObject _drunk, _cop2, _bartender, _beerSign, _animationInset;
 	IntroSceneText _text;
 	Action1 _action1;
-	Action _action2, _action3;
+	Action2 _action2;
+	Action3 _action3;
 public:
 	Scene109();
 
