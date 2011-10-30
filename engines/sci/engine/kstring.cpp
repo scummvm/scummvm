@@ -697,13 +697,15 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 6: { // Cpy
 		const char *string2 = 0;
 		uint32 string2Size = 0;
+		Common::String string;
 
 		if (argv[3].segment == s->_segMan->getStringSegmentId()) {
-			SciString *string = s->_segMan->lookupString(argv[3]);
-			string2 = string->getRawData();
-			string2Size = string->getSize();
+			SciString *sstr;
+			sstr = s->_segMan->lookupString(argv[3]);
+			string2 = sstr->getRawData();
+			string2Size = sstr->getSize();
 		} else {
-			Common::String string = s->_segMan->getString(argv[3]);
+			string = s->_segMan->getString(argv[3]);
 			string2 = string.c_str();
 			string2Size = string.size() + 1;
 		}
