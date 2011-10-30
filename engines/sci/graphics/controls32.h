@@ -27,12 +27,14 @@ namespace Sci {
 
 class GfxCache;
 class GfxScreen;
+class GfxText32;
+
 /**
  * Controls class, handles drawing of controls in SCI32 (SCI2, SCI2.1, SCI3) games
  */
 class GfxControls32 {
 public:
-	GfxControls32(SegManager *segMan, GfxCache *cache, GfxScreen *screen);
+	GfxControls32(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxText32 *text);
 	~GfxControls32();
 
 	void kernelTexteditChange(reg_t controlObject);
@@ -41,6 +43,7 @@ private:
 	SegManager *_segMan;
 	GfxCache *_cache;
 	GfxScreen *_screen;
+	GfxText32 *_text;
 };
 
 } // End of namespace Sci

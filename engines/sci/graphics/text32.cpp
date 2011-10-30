@@ -52,7 +52,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 GfxText32::~GfxText32() {
 }
 
-reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
+reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
 
 	// The object in the text selector of the item can be either a raw string
@@ -91,11 +91,20 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	}
 
 	int entrySize = width * height + BITMAP_HEADER_SIZE;
-	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+	reg_t memoryId = NULL_REG;
+	if (prevHunk.isNull()) {
+		memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
+		writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+	} else {
+		memoryId = prevHunk;
+	}
 	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
-	memset(memoryPtr, backColor, entrySize);
+
+	if (prevHunk.isNull())
+		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);
+
 	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+	memset(bitmap, backColor, width * height);
 
 	// Save totalWidth, totalHeight
 	WRITE_LE_UINT16(memoryPtr, width);
