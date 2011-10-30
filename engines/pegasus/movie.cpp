@@ -87,7 +87,7 @@ void Movie::initFromMovieFile(const Common::String &fileName, bool transparent) 
 }
 
 void Movie::redrawMovieWorld() {
-	if (_video) {
+	if (_video && _video->needsUpdate()) {
 		const Graphics::Surface *frame = _video->decodeNextFrame();
 
 		if (!frame)
@@ -194,8 +194,7 @@ void Movie::updateTime() {
 	// The reason why we overrode TimeBase's updateTime():
 	// Again, avoiding timers and handling it here
 	if (_video && !_video->isPaused()) {
-		if (_video->needsUpdate())
-			redrawMovieWorld();
+		redrawMovieWorld();
 
 		uint32 startTime = _startTime * getScale() / _startScale;
 		uint32 stopTime = _stopTime * getScale() / _stopScale;
