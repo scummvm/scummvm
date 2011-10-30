@@ -58,7 +58,7 @@ bool Scene300::Object19::startAction(CursorType action, Event &event) {
 
 	return true;
 }
-
+// entrance door
 bool Scene300::Item1::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_USE) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
@@ -75,6 +75,8 @@ bool Scene300::Item1::startAction(CursorType action, Event &event) {
 bool Scene300::Item2::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_LOOK) || (action == CURSOR_USE)) {
 		Scene300 *scene = (Scene300 *)BF_GLOBALS._sceneManager._scene;
+		BF_GLOBALS._player.disableControl();
+		scene->_sceneMode = 0;
 		scene->setAction(&scene->_sequenceManager1, scene, 304, &scene->_object11, NULL);
 		return true;
 	} else {
@@ -108,7 +110,7 @@ void Scene300::Action1::signal() {
 		setDelay(1);
 		break;
 	case 2: {
-		ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 8,
+		ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x - 8,
 			BF_GLOBALS._player._position.y);
 		break;
 	}
@@ -183,12 +185,13 @@ void Scene300::Action4::signal() {
 		break;
 	case 2:
 		BF_GLOBALS._sceneManager.changeScene(60);
+		setDelay(15);
 		break;
 	case 3:
 		setAction(&scene->_sequenceManager1, this, 319, &scene->_object19, NULL);
 		break;
 	case 4:
-		BF_GLOBALS.setFlag(2);
+		BF_GLOBALS.setFlag(onBike);
 		BF_GLOBALS._sceneManager.changeScene(190);
 		break;
 	default:
@@ -213,6 +216,7 @@ void Scene300::Action5::signal() {
 		break;
 	case 3: {
 		ADD_PLAYER_MOVER_NULL(BF_GLOBALS._player, 186, 140);
+		setDelay(3);
 		break;
 	}
 	case 4:
@@ -474,10 +478,10 @@ void Scene300::signal() {
 		_object10.postInit();
 		_object10.hide();
 
-		if (BF_GLOBALS.getFlag(1)) {
+		if (BF_GLOBALS.getFlag(gunClean)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 4308;
-			setAction(&_sequenceManager1, this, 6307, &_object2, &_object1, &_object9, &_object10, NULL);
+			setAction(&_sequenceManager1, this, 6307, &_object12, &_object1, &_object9, &_object10, NULL);
 		} else {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 4308;
@@ -874,6 +878,7 @@ bool Scene315::BulletinMemo::startAction(CursorType action, Event &event) {
 	}
 }
 
+// Own Mail Slot
 bool Scene315::Object2::startAction(CursorType action, Event &event) {
 	Scene315 *scene = (Scene315 *)BF_GLOBALS._sceneManager._scene;
 
