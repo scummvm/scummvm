@@ -1546,7 +1546,7 @@ fi
 echo "$cxx_version"
 
 #
-# Bail out now if now useable compiler was found.
+# Bail out now if no useable compiler was found.
 #
 if test "$cxx_verc_fail" = yes ; then
 	echo
@@ -2468,7 +2468,7 @@ case $_backend in
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
 		;;
-  bada)
+	bada)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
 		DEFINES="$DEFINES -DBADA -DDISABLE_STDIO_FILESTREAM -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DNO_STDERR_STDOUT"
