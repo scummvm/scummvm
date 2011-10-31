@@ -67,7 +67,9 @@ GfxBase *CreateGfxOpenGL() {
 // Simple ARB fragment program that writes the value from a texture to the Z-buffer.
 static char fragSrc[] =
 	"!!ARBfp1.0\n\
-	TEX result.depth, fragment.texcoord[0], texture[0], 2D;\n\
+	TEMP d;\n\
+	TEX d, fragment.texcoord[0], texture[0], 2D;\n\
+	MOV result.depth, d.r;\n\
 	END\n";
 
 GfxOpenGL::GfxOpenGL() {
