@@ -245,7 +245,6 @@ class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
 	PlayStream _playStream;
-	int _diskScene;
 	int _v565F5;
 	int _v5657C;
 	int _v57C2C;

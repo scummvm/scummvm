@@ -387,7 +387,6 @@ void Ringworld2Globals::reset() {
 	// Reset fields
 	_v5657C = 0;
 	_v565F5 = 0;
-	_diskScene = 0;
 	_v57C2C = 0;
 }
 
@@ -396,7 +395,6 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_v565F5);
-	s.syncAsSint16LE(_diskScene);
 	s.syncAsSint16LE(_v57C2C);
 }
 

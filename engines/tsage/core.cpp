@@ -2998,6 +2998,11 @@ void Player::enableControl() {
 	}
 }
 
+void Player::enableControl(CursorType cursor) {
+	enableControl();
+	R2_GLOBALS._events.setCursor(cursor);
+}
+
 void Player::process(Event &event) {
 	if ((g_vm->getGameID() != GType_Ringworld) && _action)
 		_action->process(event);

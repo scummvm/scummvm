@@ -99,6 +99,7 @@ class Scene125: public SceneExt {
 		SceneObject _object1, _object2;
 		SceneText _sceneText1, _sceneText2;
 
+		Icon();
 		virtual Common::String getClassName() { return "Scene125_Icon"; }
 		virtual void postInit(SceneObjectList *OwnerList = NULL);
 		virtual void synchronize(Serializer &s);

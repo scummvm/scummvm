@@ -360,12 +360,17 @@ bool Scene125::Object5::startAction(CursorType action, Event &event) {
 
 /*--------------------------------------------------------------------------*/
 
+Scene125::Icon::Icon(): SceneActor()  {
+	_lookLineNum = 0;
+	_field98 = 0;
+	_pressed = false;
+}
+
 void Scene125::Icon::postInit(SceneObjectList *OwnerList) {
 	SceneObject::postInit();
-	_lookLineNum = 0;
-	_pressed = false;
 	
 	_object1.postInit();
+	_object1.fixPriority(255);
 	_object1.hide();
 
 	_sceneText1._color1 = 92;
@@ -387,52 +392,55 @@ void Scene125::Icon::synchronize(Serializer &s) {
 void Scene125::Icon::process(Event &event) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 
-	if (!event.handled && !(_flags & OBJFLAG_HIDING) && R2_GLOBALS._player._uiEnabled &&
-			(event.eventType == EVENT_BUTTON_DOWN)) {
+	if (!event.handled && !(_flags & OBJFLAG_HIDING) && R2_GLOBALS._player._uiEnabled) {
 
-		int regionIndex = R2_GLOBALS._sceneRegions.indexOf(event.mousePos);
+		if (event.eventType == EVENT_BUTTON_DOWN) {
+			int regionIndex = R2_GLOBALS._sceneRegions.indexOf(event.mousePos);
 
-		switch (R2_GLOBALS._events.getCursor()) {
-		case CURSOR_LOOK:
-			if (regionIndex == _sceneRegionId) {
-				event.handled = true;
-				if (_lookLineNum == 26) {
-					SceneItem::display2(130, 7);
-				} else {
-					SceneItem::display2(130, _lookLineNum);
+			switch (R2_GLOBALS._events.getCursor()) {
+			case CURSOR_LOOK:
+				if (regionIndex == _sceneRegionId) {
+					event.handled = true;
+					if (_lookLineNum == 26) {
+						SceneItem::display2(130, 7);
+					} else {
+						SceneItem::display2(130, _lookLineNum);
+					}
 				}
-			}
-			break;
+				break;
 
-		case CURSOR_USE:
-			if ((regionIndex == _sceneRegionId) && !_pressed) {
-				scene->_sound1.play(14);
-				setFrame(2);
+			case CURSOR_USE:
+				if ((regionIndex == _sceneRegionId) && !_pressed) {
+					scene->_sound1.play(14);
+					setFrame(2);
 
-				switch (_object1._strip) {
-				case 1:
-					_object1.setStrip(2);
-					break;
-				case 3:
-					_object1.setStrip(4);
-					break;
-				case 5:
-					_object1.setStrip(6);
-					break;
-				default:
-					break;
+					switch (_object1._strip) {
+					case 1:
+						_object1.setStrip(2);
+						break;
+					case 3:
+						_object1.setStrip(4);
+						break;
+					case 5:
+						_object1.setStrip(6);
+						break;
+					default:
+						break;
+					}
+
+					_pressed = true;
+					event.handled = true;
 				}
+				break;
 
-				_pressed = true;
-				event.handled = true;
+			default:
+				break;
 			}
-			break;
-
-		default:
-			break;
 		}
 
 		if ((event.eventType == EVENT_BUTTON_UP) && _pressed) {
+			setFrame(1);
+
 			switch (_object1._strip) {
 			case 2:
 				_object1.setStrip(1);
@@ -528,7 +536,7 @@ bool Scene125::Item4::startAction(CursorType action, Event &event) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._diskScene) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldSceneNumber) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 126;
 			scene->setAction(&scene->_sequenceManager, scene, 126, &scene->_object7, NULL);
@@ -564,14 +572,15 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	loadScene(160);
 	_palette.loadPalette(0);
 
-	if (R2_GLOBALS._v5657C == 125) 
-		R2_GLOBALS._diskScene = R2_GLOBALS._sceneManager._previousScene;
+	if (R2_GLOBALS._sceneManager._previousScene != 125) 
+		// Save the prior scene to return to when the console is turned off
+		R2_GLOBALS._player._oldSceneNumber = R2_GLOBALS._sceneManager._previousScene;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._diskScene) {
+	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldSceneNumber) {
 		_object7.postInit();
 		_object7.setup(160, 3, 5);
 		_object7.setPosition(Common::Point(47, 167));
@@ -602,6 +611,7 @@ void Scene125::signal() {
 		_icon4.postInit();
 		_icon4._sceneRegionId = 5;
 
+		_sceneMode = 2;
 		setAction(&_sequenceManager, this, 127, &_icon1, &_icon2, &_icon3, &_icon4, &R2_GLOBALS._player, NULL);
 		break;
 	case 2:
@@ -637,10 +647,12 @@ void Scene125::signal() {
 		_icon5._sceneRegionId = 7;
 
 		_icon6.postInit();
+		_icon6.setup(160, 1, 1);
 		_icon6.setPosition(Common::Point(106, 110));
 		_icon6.setIcon(5);
 		_icon6._sceneRegionId = 8;
 
+		consoleAction(5);
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 		break;
@@ -724,7 +736,7 @@ void Scene125::signal() {
 		}
 		break;
 	case 125:
-		warning("TODO: Scene125::signal #125");
+		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldSceneNumber);
 		break;
 	case 126:
 		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 1);
@@ -768,12 +780,15 @@ void Scene125::dispatch() {
 	Scene::dispatch();
 }
 
+/**
+ * Handles actions on the console screen.
+ */
 void Scene125::consoleAction(int id) {
 	_icon3.setIcon(0);
 	_icon4.setIcon(0);
 
 	if (id == 5)
-		_icon5.setIcon(5);
+		_icon5.setIcon(6);
 	else {
 		switch (_field412) {
 		case 10:
@@ -791,29 +806,29 @@ void Scene125::consoleAction(int id) {
 	}
 
 	switch (id) {
-	case 0:
+	case 1:
 		_icon1.setIcon(8);
 		_icon2.setIcon(9);
 		break;
-	case 1:
+	case 2:
 		_icon1.setIcon(10);
 		_icon2.setIcon(11);
 		_icon3.setIcon(12);
 		_icon4.setIcon(13);
 		break;
-	case 2:
+	case 3:
 		_icon1.setIcon(15);
 		_icon2.setIcon(16);
 		_icon3.setIcon(17);
 		break;
-	case 3:
+	case 4:
 		_icon1.setIcon(22);
 		_icon2.setIcon(23);
 		break;
-	case 5:
+	case 6:
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldSceneNumber);
 		break;
-	case 6:
+	case 7:
 		if (_field412 == 11)
 			consoleAction(2);
 		else if (_field412 == 22)
@@ -821,19 +836,19 @@ void Scene125::consoleAction(int id) {
 		else
 			consoleAction(5);
 		break;
-	case 7:
+	case 8:
 		_iconFontNumber = 50;
 		stop();
 		_icon6.setIcon(5);
 		consoleAction(1);
 		break;
-	case 8:
+	case 9:
 		_iconFontNumber = 52;
 		stop();
 		_icon6.setIcon(5);
 		consoleAction(1);
 		break;
-	case 9:
+	case 10:
 		R2_GLOBALS._player.disableControl();
 		consoleAction(2);
 		_icon1.hideIcon();
@@ -852,13 +867,13 @@ void Scene125::consoleAction(int id) {
 		_palette.loadPalette(161);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
-	case 10:
+	case 11:
 		_icon1.setIcon(27);
 		_icon2.setIcon(28);
 		_icon3.setIcon(29);
 		_icon4.setIcon(30);
 		break;
-	case 11:
+	case 12:
 		R2_GLOBALS._player.disableControl();
 		consoleAction(2);
 		_icon1.hideIcon();
@@ -870,7 +885,7 @@ void Scene125::consoleAction(int id) {
 		_icon6.setIcon(26);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
-	case 12:
+	case 13:
 		consoleAction(2);
 		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != R2_GLOBALS._player._oldSceneNumber) {
 			SceneItem::display2(126, 17);
@@ -894,7 +909,7 @@ void Scene125::consoleAction(int id) {
 			R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		}
 		break;
-	case 14:
+	case 15:
 		consoleAction(3);
 
 		if (R2_GLOBALS._v565F5 < 3) {
@@ -910,7 +925,7 @@ void Scene125::consoleAction(int id) {
 			SceneItem::display2(126, 14);
 		}
 		break;
-	case 15:
+	case 16:
 		consoleAction(3);
 
 		if (R2_GLOBALS._v565F5 < 4) {
@@ -924,7 +939,7 @@ void Scene125::consoleAction(int id) {
 			SceneItem::display2(126, 15);
 		}
 		break;
-	case 16:
+	case 17:
 		consoleAction(3);
 
 		if (R2_GLOBALS._v565F5 < 4) {
@@ -938,13 +953,13 @@ void Scene125::consoleAction(int id) {
 			SceneItem::display2(126, 16);
 		}
 		break;
-	case 21:
+	case 22:
 		_icon1.setIcon(31);
 		_icon2.setIcon(32);
 		_icon3.setIcon(33);
 		_icon4.setIcon(34);
 		break;
-	case 22:
+	case 23:
 		R2_GLOBALS._player.disableControl();
 		consoleAction(4);
 		_icon1.hideIcon();
@@ -957,7 +972,7 @@ void Scene125::consoleAction(int id) {
 		_sceneMode = 10;
 		_palette.loadPalette(161);
 		break;
-	case 23:
+	case 24:
 		_icon4.setIcon(25);
 		_icon4._object2.hide();
 
@@ -969,7 +984,7 @@ void Scene125::consoleAction(int id) {
 			setDetails(128, --_field418);
 		}
 		break;
-	case 24:
+	case 25:
 		_icon4.setIcon(25);
 		_icon4._object2.hide();
 
@@ -981,7 +996,7 @@ void Scene125::consoleAction(int id) {
 			setDetails(128, ++_field418);
 		}
 		break;
-	case 25:
+	case 26:
 		R2_GLOBALS._player.disableControl();
 		stop();
 		_icon4.setPosition(Common::Point(80, 62));
@@ -998,10 +1013,10 @@ void Scene125::consoleAction(int id) {
 		_palette.loadPalette(160);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
-	case 26:
 	case 27:
 	case 28:
 	case 29:
+	case 30:
 		R2_GLOBALS._player.disableControl();
 		consoleAction(11);
 		_field412 = id;
@@ -1023,19 +1038,19 @@ void Scene125::consoleAction(int id) {
 		_palette.loadPalette(161);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
-	case 30:
+	case 31:
 		consoleAction(22);
 		R2_GLOBALS._sound1.play((R2_GLOBALS._sound1.getSoundNum() == 10) ? 63 : 10);
 		break;
-	case 31:
+	case 32:
 		consoleAction(22);
 		R2_GLOBALS._sound1.play((R2_GLOBALS._sound1.getSoundNum() == 10) ? 64 : 10);
 		break;
-	case 32:
+	case 33:
 		consoleAction(22);
 		R2_GLOBALS._sound1.play((R2_GLOBALS._sound1.getSoundNum() == 10) ? 65 : 10);
 		break;
-	case 33:
+	case 34:
 		consoleAction(22);
 		R2_GLOBALS._sound1.play((R2_GLOBALS._sound1.getSoundNum() == 10) ? 66 : 10);
 		break;
@@ -1051,6 +1066,9 @@ void Scene125::consoleAction(int id) {
 		_field412 = id;
 }
 
+/**
+ * Sets the message to be displayed on the console screen.
+ */
 void Scene125::setDetails(int resNum, int lineNum) {
 	stop();
 	
@@ -1089,6 +1107,9 @@ void Scene125::setDetails(int resNum, int lineNum) {
 	}
 }
 
+/**
+ * Stops any playing console sounds and hides any current console message.
+ */
 void Scene125::stop() {
 	_sceneText.remove();
 	_soundIndex = 0;
@@ -1097,6 +1118,9 @@ void Scene125::stop() {
 	R2_GLOBALS._playStream.stop();
 }
 
+/**
+ * Parses a message to be displayed on the console to see whether there are any sounds to be played.
+ */
 Common::String Scene125::parseMessage(const Common::String &msg) {
 	_soundIndex = 0;
 	_soundCount = 0;

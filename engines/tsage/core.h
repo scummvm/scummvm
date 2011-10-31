@@ -643,6 +643,7 @@ public:
 
 	void disableControl();
 	void enableControl();
+	void enableControl(CursorType cursor);
 };
 
 /*--------------------------------------------------------------------------*/
