@@ -320,7 +320,6 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 }
 
 void EventsClass::setCursor(GfxSurface &cursor) {
-	// TODO: Find proper parameters for this form in Blue Force
 	Graphics::Surface s = cursor.lockSurface();
 
 	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);

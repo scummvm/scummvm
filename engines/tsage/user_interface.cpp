@@ -266,7 +266,10 @@ void UICollection::draw() {
 /*--------------------------------------------------------------------------*/
 
 UIElements::UIElements(): UICollection() {
-	_cursorVisage.setVisage(1, 5);
+	if (g_vm->getGameID() == GType_Ringworld2)
+		_cursorVisage.setVisage(5, 1);
+	else
+		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
 	_characterIndex = 0;
 }
@@ -302,7 +305,8 @@ void UIElements::synchronize(Serializer &s) {
 }
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && GLOBALS._player._enabled && (GLOBALS._sceneManager._sceneNumber != 50)) {
+	if (_clearScreen && GLOBALS._player._enabled && 
+			((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
 		if (_bounds.contains(event.mousePos)) {
 			// Cursor inside UI area
 			if (!_cursorChanged) {
@@ -310,7 +314,8 @@ void UIElements::process(Event &event) {
 					// Inventory icon being displayed, so leave alone
 				} else {
 					// Change to the inventory use cursor
-					GfxSurface surface = _cursorVisage.getFrame(6);
+					int cursorId = (g_vm->getGameID() == GType_Ringworld2) ? 11 : 6;
+					GfxSurface surface = _cursorVisage.getFrame(cursorId);
 					GLOBALS._events.setCursor(surface);
 				}
 				_cursorChanged = true;

@@ -147,7 +147,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 	case GType_Ringworld2:
 		_inventory = new Ringworld2::Ringworld2InvObjectList();
 		_game = new Ringworld2::Ringworld2Game();
-		_sceneHandler = new SceneHandler();
+		_sceneHandler = new Ringworld2::SceneHandlerExt();
 		break;
 
 	case GType_Geekwad:

@@ -224,6 +224,22 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 
 /*--------------------------------------------------------------------------*/
 
+void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {
+	SceneHandler::postInit(OwnerList);
+}
+
+void SceneHandlerExt::process(Event &event) {
+	if (T2_GLOBALS._uiElements._active) {
+		T2_GLOBALS._uiElements.process(event);
+		if (event.handled)
+			return;
+	}
+
+	SceneHandler::process(event);
+}
+
+/*--------------------------------------------------------------------------*/
+
 DisplayHotspot::DisplayHotspot(int regionId, ...) {
 	_sceneRegionId = regionId;
 

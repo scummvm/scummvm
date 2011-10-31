@@ -955,7 +955,7 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
-	// If the user clicks the button whislt the introduction is active, prompt for playing the game
+	// If the user clicks the button whilst the introduction is active, prompt for playing the game
 	if ((BF_GLOBALS._dayNumber == 0) && (event.eventType == EVENT_BUTTON_DOWN)) {
 		// Prompt user for whether to start play or watch introduction
 		BF_GLOBALS._player.enableControl();

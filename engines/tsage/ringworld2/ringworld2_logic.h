@@ -73,6 +73,13 @@ public:
 	void clearScreen();
 };
 
+class SceneHandlerExt: public SceneHandler {
+public:
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void process(Event &event);
+};
+
+
 class DisplayHotspot : public SceneObject {
 private:
 	Common::Array<int> _actions;
