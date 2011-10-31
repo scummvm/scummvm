@@ -46,6 +46,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved palette handling for the Amiga version of Indiana Jones and the
      Fate of Atlantis.
 
+ Broken Sword 1:
+   - Fix freeze in Windows demo.
+   - Fix crash when using cutscene subtitles pack with the Macintosh version.
+
  Tinsel:
    - Fixed deleting saved games from the list of saved games (from the launcher
      and the in-game ScummVM menu).
