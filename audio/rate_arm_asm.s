@@ -615,7 +615,7 @@ LinearRate_R_read_return:
         SUBS    r8, r8, #65536          @ r8 = opos--
         STRH    r10,[r2,#22]            @ ilast[0] = icur[0]
         MOV     r10,r10,LSR #16
-        STRH    r10,[r2,#22]            @ ilast[1] = icur[1]
+        STRH    r10,[r2,#26]            @ ilast[1] = icur[1]
         STRH    r5, [r2,#16]            @ icur[0] = tmp0
         STRH    r6, [r2,#18]            @ icur[1] = tmp1
         BGE     LinearRate_R_loop
