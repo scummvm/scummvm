@@ -4847,4 +4847,76 @@ void KmScene2247::sub453520() {
 	FinalizeState(&Klayman::stStartWalkingDone);
 }
 
+KmScene2801::KmScene2801(NeverhoodEngine *vm, Entity *parentScene, int16 x, int16 y)
+	: Klayman(vm, parentScene, x, y, 1000, 1000) {
+	// Empty
+}
+
+uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
+	switch (messageNum) {
+	case 0x4001:
+	case 0x4800:
+		startWalkToX(param.asPoint().x, false);
+		break;
+	case 0x4004:
+		GotoState(&Klayman::stTryStandIdle);
+		break;
+	case 0x4812:
+		GotoState(&Klayman::stPickUpGeneric);
+		break;
+	case 0x4817:
+		setDoDeltaX(param.asInteger());
+		gotoNextStateExt();
+		break;		
+	case 0x481B:
+		if (param.asPoint().y != 0) {
+			sub41CC40(param.asPoint().y, param.asPoint().x);
+		} else {
+			sub41CCE0(param.asPoint().x);
+		}
+		break;						
+	case 0x481D:
+		GotoState(&Klayman::stTurnToUse);
+		break;
+	case 0x481E:
+		GotoState(&Klayman::stReturnFromUse);
+		break;
+	case 0x481F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWonderAboutAfter);
+		} else if (param.asInteger() == 0) {
+			GotoState(&Klayman::stWonderAboutHalf);
+		} else if (param.asInteger() == 4) {
+			GotoState(&Klayman::stTurnAwayFromUse);
+		} else if (param.asInteger() == 3) {
+			GotoState(&Klayman::stTurnToUseHalf);
+		} else {
+			GotoState(&Klayman::stWonderAbout);
+		}
+		break;
+	case 0x482D:
+		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
+		gotoNextStateExt();
+		break;
+	case 0x482E:	 
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stWalkToFrontNoStep);
+		} else {
+			GotoState(&Klayman::stWalkToFront);
+		}
+		break;
+	case 0x482F:
+		if (param.asInteger() == 1) {
+			GotoState(&Klayman::stTurnToFront);
+		} else {
+			GotoState(&Klayman::stTurnToBack);
+		}
+		break;
+	case 0x4837:
+		sub41CE70();
+		break;
+	}
+	return 0;
+}
+
 } // End of namespace Neverhood
