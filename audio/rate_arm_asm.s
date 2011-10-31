@@ -69,7 +69,7 @@ CopyRate_M_loop:
         SUBS    r0,r0,#1                @ len--
         BGT     CopyRate_M_loop         @ and loop
 
-	MOV	r0, r1			@ return obuf
+        MOV     r0, r1                  @ return obuf
 
         LDMFD   r13!,{r4-r7,PC}
 
@@ -90,8 +90,8 @@ CopyRate_S_loop:
         LDRSH   r5, [r12],#2            @ r5 = tmp1 = *ptr++
         LDRSH   r6, [r1]                @ r6 = obuf[0]
         LDRSH   r7, [r1,#2]             @ r7 = obuf[1]
-        MUL     r4, r2, r4              @ r5 = tmp0*vol_l
-        MUL     r5, r3, r5              @ r6 = tmp1*vol_r
+        MUL     r4, r2, r4              @ r4 = tmp0*vol_l
+        MUL     r5, r3, r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
         RSCVS   r6, r14,#0x80000000     @ Clamp r6
@@ -107,7 +107,7 @@ CopyRate_S_loop:
         SUBS    r0,r0,#2                @ len -= 2
         BGT     CopyRate_S_loop         @ and loop
 
-	MOV	r0, r1			@ return obuf
+        MOV     r0, r1                  @ return obuf
 
         LDMFD   r13!,{r4-r7,PC}
 
@@ -128,8 +128,8 @@ CopyRate_R_loop:
         LDRSH   r5, [r12],#2            @ r5 = tmp1 = *ptr++
         LDRSH   r6, [r1]                @ r6 = obuf[0]
         LDRSH   r7, [r1,#2]             @ r7 = obuf[1]
-        MUL     r4, r2, r4              @ r5 = tmp0*vol_l
-        MUL     r5, r3, r5              @ r6 = tmp1*vol_r
+        MUL     r4, r2, r4              @ r4 = tmp0*vol_l
+        MUL     r5, r3, r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r5, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp1*vol_r
         RSCVS   r6, r14,#0x80000000     @ Clamp r6
@@ -145,7 +145,7 @@ CopyRate_R_loop:
         SUBS    r0,r0,#2                @ len -= 2
         BGT     CopyRate_R_loop         @ and loop
 
-	MOV	r0, r1			@ return obuf
+        MOV     r0, r1                  @ return obuf
 
         LDMFD   r13!,{r4-r7,PC}
 
@@ -203,7 +203,7 @@ SimpleRate_M_end:
         ADD     r13,r13,#12             @ Skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ Store back updated values
 
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
 
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_M_read:
@@ -212,14 +212,14 @@ SimpleRate_M_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 3+8+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_M_end
@@ -263,8 +263,8 @@ SimpleRate_S_read_return:
         LDRSH   r6, [r3]                @ r6 = obuf[0]
         LDRSH   r7, [r3,#2]             @ r7 = obuf[1]
         ADD     r2, r2, r8              @ r2 = opos += opos_inc
-        MUL     r4, r12,r4              @ r5 = tmp0*vol_l
-        MUL     r5, r14,r5              @ r6 = tmp1*vol_r
+        MUL     r4, r12,r4              @ r4 = tmp0*vol_l
+        MUL     r5, r14,r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
         RSCVS   r6, r10,#0x80000000     @ Clamp r6
@@ -283,7 +283,7 @@ SimpleRate_S_end:
         LDR     r14,[r13,#8]            @ r14 = sr
         ADD     r13,r13,#12             @ skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ store back updated values
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_S_read:
         LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
@@ -342,8 +342,8 @@ SimpleRate_R_read_return:
         LDRSH   r6, [r3]                @ r6 = obuf[0]
         LDRSH   r7, [r3,#2]             @ r7 = obuf[1]
         ADD     r2, r2, r8              @ r2 = opos += opos_inc
-        MUL     r4, r12,r4              @ r5 = tmp0*vol_l
-        MUL     r5, r14,r5              @ r6 = tmp1*vol_r
+        MUL     r4, r12,r4              @ r4 = tmp0*vol_l
+        MUL     r5, r14,r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r5, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp1*vol_r
         RSCVS   r6, r10,#0x80000000     @ Clamp r6
@@ -362,7 +362,7 @@ SimpleRate_R_end:
         LDR     r14,[r13,#8]            @ r14 = sr
         ADD     r13,r13,#12             @ skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ store back updated values
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_R_read:
         LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
@@ -458,7 +458,7 @@ LinearRate_M_part2:
 LinearRate_M_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_M_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
@@ -472,7 +472,7 @@ LinearRate_M_read:
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_M_end
@@ -508,7 +508,7 @@ LinearRate_S_loop:
 LinearRate_S_read_return:
         LDR     r10,[r2, #16]           @ r10= icur[0,1]
         LDRSH   r5, [r0],#2             @ r5 = tmp0 = *inPtr++
-        LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
+        LDRSH   r6, [r0],#2             @ r6 = tmp1 = *inPtr++
         SUBS    r8, r8, #65536          @ r8 = opos--
         STRH    r10,[r2,#22]            @      ilast[0] = icur[0]
         MOV     r10,r10,LSR #16
@@ -560,21 +560,21 @@ LinearRate_S_part2:
 LinearRate_S_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_S_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_S_end
@@ -610,7 +610,7 @@ LinearRate_R_loop:
 LinearRate_R_read_return:
         LDR     r10,[r2, #16]           @ r10= icur[0,1]
         LDRSH   r5, [r0],#2             @ r5 = tmp0 = *inPtr++
-        LDRSH   r6, [r0],#2             @ r5 = tmp1 = *inPtr++
+        LDRSH   r6, [r0],#2             @ r6 = tmp1 = *inPtr++
         SUBS    r8, r8, #65536          @ r8 = opos--
         STRH    r10,[r2,#22]            @      ilast[0] = icur[0]
         MOV     r10,r10,LSR #16
@@ -662,21 +662,21 @@ LinearRate_R_part2:
 LinearRate_R_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
-	MOV	r0, r3			@ return obuf
+        MOV     r0, r3                  @ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_R_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_R_end
