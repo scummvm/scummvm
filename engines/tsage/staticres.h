@@ -44,7 +44,6 @@ extern const char *RESTORING_NOT_ALLOWED_MSG;
 extern const char *QUIT_CONFIRM_MSG;
 extern const char *RESTART_MSG;
 extern const char *GAME_PAUSED_MSG;
-extern const char *OPTIONS_MSG;
 extern const char *OK_BTN_STRING;
 extern const char *CANCEL_BTN_STRING;
 extern const char *QUIT_BTN_STRING;
@@ -64,6 +63,7 @@ extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
+extern const char *OPTIONS_MSG;
 
 // Scene specific resources
 extern const char *EXIT_MSG;
@@ -98,6 +98,7 @@ extern const char *HELP_MSG;
 extern const char *WATCH_INTRO_MSG;
 extern const char *START_PLAY_BTN_STRING;
 extern const char *INTRODUCTION_BTN_STRING;
+extern const char *OPTIONS_MSG;
 
 // Blue Force messages
 extern const char *BF_NAME;
@@ -147,6 +148,9 @@ namespace Ringworld2 {
 
 // Scene 125 - Console messages
 extern const char *CONSOLE_MESSAGES[];
+
+// Dialog messages
+extern const char *HELP_MSG;
 
 } // End of namespace Ringworld2
 

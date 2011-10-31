@@ -63,6 +63,45 @@ public:
 	void execute();
 };
 
+class OptionsDialog : public ModalDialog {
+private:
+	GfxButton _btnSave, _btnRestore, _btnRestart;
+	GfxButton _btnQuit, _btnResume;
+	GfxButton _btnSound;
+	GfxMessage _gfxMessage;
+public:
+	OptionsDialog();
+	virtual ~OptionsDialog() {}
+	GfxButton *execute() { return GfxDialog::execute(&_btnResume); }
+
+	static void show();
+};
+
+/*--------------------------------------------------------------------------*/
+
+class GfxInvImage : public GfxImage {
+public:
+	InvObject *_invObject;
+public:
+	GfxInvImage() : GfxImage(), _invObject(NULL) {}
+
+	virtual bool process(Event &event);
+};
+
+#define MAX_INVOBJECT_DISPLAY 20
+
+class InventoryDialog : public ModalDialog {
+private:
+	Common::Array<GfxInvImage *> _images;
+	GfxButton _btnOk, _btnLook;
+public:
+	InventoryDialog();
+	virtual ~InventoryDialog();
+	void execute();
+
+	static void show();
+};
+
 } // End of namespace Ringworld
 
 } // End of namespace TsAGE

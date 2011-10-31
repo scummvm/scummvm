@@ -77,7 +77,6 @@ const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
 const char *RESTART_MSG = "Do you want to restart this game?";
 const char *GAME_PAUSED_MSG = "Game is paused.";
-const char *OPTIONS_MSG = "\x01Options...";
 const char *OK_BTN_STRING = " Ok ";
 const char *CANCEL_BTN_STRING = "Cancel";
 const char *QUIT_BTN_STRING = " Quit ";
@@ -99,6 +98,7 @@ F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Start Play ";
 const char *INTRODUCTION_BTN_STRING = "Introduction";
+const char *OPTIONS_MSG = "\x01Options...";
 
 // Scene specific resources
 const char *EXIT_MSG = "   EXIT   ";
@@ -134,6 +134,7 @@ F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Play ";
 const char *INTRODUCTION_BTN_STRING = " Watch ";
+const char *OPTIONS_MSG = "Options...";
 
 // Blue Force general messages
 const char *BF_NAME = "Blue Force";
@@ -190,6 +191,8 @@ const char *CONSOLE_MESSAGES[] = {
 	"Music", "Outpost Alpha", " ", " ", "Done", "A-G", "H-O", "P-S", "T-Z", "Tchaikovsky",
 	"Mozart", "Bach", "Rossini"
 };
+
+const char *HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
 
 } // End of namespace Ringworld2
 
