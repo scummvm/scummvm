@@ -572,10 +572,10 @@ void LoLEngine::initKeymap() {
 	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
 
 	act = new Common::Action(engineKeyMap, "AT2", _("Attack 2"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2 , 0));
 
 	act = new Common::Action(engineKeyMap, "AT3", _("Attack 3"), Common::kGenericActionType, Common::kActionKeyType);
-	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3 , 0));
 
 	act = new Common::Action(engineKeyMap, "MVF", _("Move Forward"), Common::kGenericActionType, Common::kActionKeyType);
 	act->addKeyEvent(Common::KeyState(Common::KEYCODE_UP));
