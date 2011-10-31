@@ -67,35 +67,35 @@ void Route::setDirection(const uint16 keyCode) {
 	switch (keyCode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
-		obj->currImagePtr = obj->seqList[__UP].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 		break;
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_KP2:
-		obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 		break;
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_KP6:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_HOME:
 	case Common::KEYCODE_KP7:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP1:
-		obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEUP:
 	case Common::KEYCODE_KP9:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	case Common::KEYCODE_PAGEDOWN:
 	case Common::KEYCODE_KP3:
-		obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+		obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 		break;
 	}
 }
