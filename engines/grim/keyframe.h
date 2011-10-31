@@ -47,7 +47,14 @@ public:
 
 private:
 	Common::String _fname;
-	unsigned int _flags, _type;
+	unsigned int _flags;
+	/**
+	 * A bitfield ID which specifies which joints of the skeleton hierarchy this
+	 * KeyFrameAnim can animate on. This is ANDed against the _type of the ModelNode
+	 * to test whether this KeyFrameAnim can animate that ModelNode, or if it is to 
+	 * be ignored.
+	 */
+	unsigned int _type;
 	int _numFrames, _numJoints;
 	float _fps;
 	int _numMarkers;
