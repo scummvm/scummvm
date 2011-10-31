@@ -1076,14 +1076,14 @@ void Scene125::setDetails(int resNum, int lineNum) {
 
 	if (msg.empty()) {
 		// Check for any specified sound numbers embedded in the message
-		Common::String msg = parseMessage(msg);
+		Common::String msg2 = parseMessage(msg);
 
 		_sceneText._fontNumber = _iconFontNumber;
 		_sceneText._color1 = 92;
 		_sceneText._color2 = 0;
 		_sceneText._width = 221;
 		_sceneText.fixPriority(20);
-		_sceneText.setup(msg);
+		_sceneText.setup(msg2);
 		_sceneText.setPosition(Common::Point(49, 19));
 
 		R2_GLOBALS._sceneObjects->draw();
