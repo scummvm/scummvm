@@ -137,6 +137,7 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 	_width = READ_LE_UINT32(data + 128);
 	_height = READ_LE_UINT32(data + 132);
 	_colorFormat = BM_RGB565;
+	_hasTransparency = false;
 
 	_data = new char *[_numImages];
 	int pos = 0x88;
@@ -167,6 +168,11 @@ BitmapData::BitmapData(const Common::String &fname, const char *data, int len) {
 #endif
 	}
 
+	// Initially, no GPU-side textures created. the createBitmap
+	// function will allocate some if necessary (and successful)
+	_numTex = 0;
+	_texIds = NULL;
+
 	g_driver->createBitmap(this);
 }
 
@@ -193,8 +199,8 @@ BitmapData::BitmapData(const char *data, int w, int h, int bpp, const char *fnam
 }
 
 BitmapData::BitmapData() :
-		_data(NULL), _refCount(1) {
-
+	_numImages(0), _width(0), _height(0), _x(0), _y(0), _format(0), _numTex(0), 
+	_bpp(0), _colorFormat(0), _texIds(0), _hasTransparency(false), _data(NULL), _refCount(1) {
 }
 
 BitmapData::~BitmapData() {
@@ -345,6 +351,7 @@ void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {
 		delete _data;
+		_data = 0;
 	}
 }
 
