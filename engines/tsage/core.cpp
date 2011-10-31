@@ -1551,6 +1551,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 	int maxWidth = 120;
 	bool keepOnscreen = false;
 	bool centerText = g_vm->getGameID() == GType_Ringworld;
+	Common::List<int> playList;
 
 	if (resNum != 0) {
 		va_list va;
@@ -1558,6 +1559,17 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 
 		if (resNum == -1)
 			msg = Common::String(va_arg(va, const char *));
+
+		if (g_vm->getGameID() == GType_Ringworld2) {
+			// Pre-process the string for any sound information
+			while (msg.hasPrefix("!")) {
+				msg.deleteChar(0);
+				playList.push_back(atoi(msg.c_str()));
+
+				while (!msg.empty() && (*msg.c_str() >= '0' && *msg.c_str() <= '9'))
+					msg.deleteChar(0);
+			}
+		}
 
 		int mode;
 		do {
@@ -1666,6 +1678,12 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 			g_system->delayMillis(10);
 		}
 
+		// For Return to Ringworld, play the voice overs in sequence
+		if ((g_vm->getGameID() == GType_Ringworld2) && !playList.empty() && !R2_GLOBALS._playStream.isPlaying()) {
+			R2_GLOBALS._playStream.play(*playList.begin(), NULL);
+			playList.pop_front();
+		}
+
 		g_globals->_sceneText.remove();
 	}
 
@@ -1688,7 +1706,8 @@ void SceneItem::display2(int resNum, int lineNum) {
 			SET_EXT_FGCOLOR, 13, LIST_END);
 		break;
 	case GType_Ringworld2:
-		display(resNum, lineNum, SET_WIDTH, 280, SET_X, 20, SET_Y, 20, SET_EXT_BGCOLOR, 60, LIST_END);
+		display(resNum, lineNum, SET_WIDTH, 280, SET_X, 160, SET_Y, 20, SET_POS_MODE, ALIGN_CENTER,
+			SET_EXT_BGCOLOR, 60, LIST_END);
 		break;
 	default:
 		display(resNum, lineNum, SET_WIDTH, 200, SET_EXT_BGCOLOR, 7, LIST_END);
@@ -2754,6 +2773,7 @@ SceneText::SceneText() : SceneObject() {
 	_fontNumber = 2;
 	_width = 160;
 	_textMode = ALIGN_LEFT;
+	_color1 = 0;
 	_color2 = 0;
 	_color3 = 0;
 }

@@ -422,6 +422,7 @@ public:
 	void play(int soundNum, EventHandler *endAction) {}
 	void stop() {}
 	void proc1() {}
+	bool isPlaying() const { return false; }
 };
 
 #define ADLIB_CHANNEL_COUNT 9
