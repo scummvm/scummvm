@@ -61,6 +61,9 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 }
 
 void TSageEngine::initialize() {
+	// Set up the correct graphics mode
+	init();
+
 	g_saver = new Saver();
 
 	// Set up the resource manager
