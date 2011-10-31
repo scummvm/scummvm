@@ -71,12 +71,27 @@ void UIQuestion::process(Event &event) {
 }
 
 void UIQuestion::showDescription(CursorType cursor) {
-	if (cursor == INV_FOREST_RAP) {
-		// Forest rap item has a graphical display
-		showItem(5, 1, 1);
-	} else {
-		// Display object description
-		SceneItem::display2(9001, (int)cursor);
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		if (cursor == INV_FOREST_RAP) {
+			// Forest rap item has a graphical display
+			showItem(5, 1, 1);
+		} else {
+			// Display object description
+			SceneItem::display2(9001, (int)cursor);
+		}
+		break;
+	case GType_Ringworld2:
+		if ((cursor == R2_9) || (cursor == R2_39)) {
+			// Show communicator
+			warning("TODO: Communicator");
+		} else {
+			// Show object description
+			SceneItem::display2(3, (int)cursor);
+		}
+		break;
+	default:
+		break;
 	}
 }
 
