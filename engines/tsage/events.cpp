@@ -221,7 +221,8 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_WALK:
 	default:
-		if (g_vm->getGameID() == GType_BlueForce) {
+		switch (g_vm->getGameID()) {
+		case GType_BlueForce:
 			if (cursorType == CURSOR_WALK) {
 				cursor = g_resourceManager->getSubResource(1, 5, 1, &size);
 			} else {
@@ -231,11 +232,25 @@ void EventsClass::setCursor(CursorType cursorType) {
 				questionEnabled = true;
 			}
 			_currentCursor = cursorType;
-		} else {
+			break;
+		case GType_Ringworld2:
+			if (cursorType == CURSOR_WALK) {
+				cursor = CURSOR_WALK_DATA;
+				delFlag = false;
+			} else {
+				// Inventory icon
+				InvObject *invObject = g_globals->_inventory->getItem((int)cursorType);
+				cursor = g_resourceManager->getSubResource(6, invObject->_strip, invObject->_frame, &size);
+				questionEnabled = true;
+			}
+			_currentCursor = cursorType;
+			break;
+		default:
 			// For Ringworld, always treat as the walk cursor
 			cursor = CURSOR_WALK_DATA;
 			_currentCursor = CURSOR_WALK;
 			delFlag = false;
+			break;
 		}
 		break;
 	}
