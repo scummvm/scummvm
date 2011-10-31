@@ -94,7 +94,7 @@ void ObjectHandler_v3d::moveObjects() {
 							if (dy >= 0)
 								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[_UP].seqPtr;
+								obj->currImagePtr = obj->seqList[__UP].seqPtr;
 						}
 					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
@@ -138,7 +138,7 @@ void ObjectHandler_v3d::moveObjects() {
 								if (obj->vy > 0)
 									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
 								else
-									obj->currImagePtr = obj->seqList[_UP].seqPtr;
+									obj->currImagePtr = obj->seqList[__UP].seqPtr;
 							}
 						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)

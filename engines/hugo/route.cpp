@@ -67,7 +67,7 @@ void Route::setDirection(const uint16 keyCode) {
 	switch (keyCode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
-		obj->currImagePtr = obj->seqList[_UP].seqPtr;
+		obj->currImagePtr = obj->seqList[__UP].seqPtr;
 		break;
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_KP2:

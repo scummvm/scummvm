@@ -1501,7 +1501,7 @@ enum objid_3d {
 };
 
 // Enumerate sequence index matching direction of travel
-enum {RIGHT, LEFT, DOWN, _UP};
+enum {RIGHT, LEFT, DOWN, __UP};
 
 enum sound_t_1w {
 //Hugo 1 Win
