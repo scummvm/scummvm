@@ -154,6 +154,7 @@ void GfxOpenGL::initExtensions()
 		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errorPos);
 		if (errorPos != -1) {
 			warning("Error compiling fragment program:\n%s", glGetString(GL_PROGRAM_ERROR_STRING_ARB));
+			_useDepthShader = false;
 		}
 	}
 #endif
