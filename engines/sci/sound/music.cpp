@@ -78,7 +78,7 @@ void SciMusic::init() {
 	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
-	if (g_sci->getPlatform() == Common::kPlatformFMTowns)
+	if (g_sci->getPlatform() == Common::kPlatformFMTowns && g_sci->getGameId() == GID_KQ5)
 		deviceFlags = MDT_TOWNS;
 
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
