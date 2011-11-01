@@ -193,6 +193,11 @@ const char *CONSOLE_MESSAGES[] = {
 };
 
 const char *HELP_MSG = "\x1\rRETURN TO\r RINGWORLD\x14";
+const char *CHAR_TITLE = "\x01Select Character:";
+const char *CHAR_QUINN_MSG = "  Quinn  ";
+const char *CHAR_SEEKER_MSG = "  Seeker  ";
+const char *CHAR_MIRANDA_MSG = "Miranda";
+const char *CHAR_CANCEL_MSG = "  Cancel  ";
 
 } // End of namespace Ringworld2
 

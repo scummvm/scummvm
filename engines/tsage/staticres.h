@@ -151,6 +151,11 @@ extern const char *CONSOLE_MESSAGES[];
 
 // Dialog messages
 extern const char *HELP_MSG;
+extern const char *CHAR_TITLE;
+extern const char *CHAR_QUINN_MSG;
+extern const char *CHAR_SEEKER_MSG;
+extern const char *CHAR_MIRANDA_MSG;
+extern const char *CHAR_CANCEL_MSG;
 
 } // End of namespace Ringworld2
 

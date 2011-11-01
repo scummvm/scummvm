@@ -176,6 +176,7 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Change player
+		CharacterDialog::show();
 		break;
 	case 5:
 		// Options dialog
@@ -186,6 +187,43 @@ void RightClickDialog::execute() {
 		BF_GLOBALS._events.setCursor(cursorNum);
 
 	_gfxManager.deactivate();
+}
+
+/*--------------------------------------------------------------------------*/
+
+void CharacterDialog::show() {
+	CharacterDialog *dlg = new CharacterDialog();
+	dlg->draw();
+
+	GfxButton *btn = dlg->execute(&dlg->_btnCancel);
+
+
+	dlg->remove();
+	delete dlg;
+}
+
+CharacterDialog::CharacterDialog() {
+	// Set the element text
+	_msgTitle.set(CHAR_TITLE, 140, ALIGN_LEFT);
+	_btnQuinn.setText(CHAR_QUINN_MSG);
+	_btnSeeker.setText(CHAR_SEEKER_MSG);
+	_btnMiranda.setText(CHAR_MIRANDA_MSG);
+	_btnCancel.setText(CHAR_CANCEL_MSG);
+
+	// Set position of the elements
+	_msgTitle._bounds.moveTo(5, 5);
+	_btnQuinn._bounds.moveTo(25, _msgTitle._bounds.bottom + 1);
+	_btnSeeker._bounds.moveTo(25, _btnQuinn._bounds.bottom + 1);
+	_btnMiranda._bounds.moveTo(25, _btnSeeker._bounds.bottom + 1);
+	_btnCancel._bounds.moveTo(25, _btnMiranda._bounds.bottom + 1);
+
+	// Add the items to the dialog
+	addElements(&_msgTitle, &_btnQuinn, &_btnSeeker, &_btnMiranda, &_btnCancel, NULL);
+
+	// Set the dialog size and position
+	frame();
+	_bounds.collapse(-6, -6);
+	setCenter(160, 100);
 }
 
 } // End of namespace Ringworld2

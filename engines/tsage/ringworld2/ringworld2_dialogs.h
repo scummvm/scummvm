@@ -59,6 +59,18 @@ public:
 	void execute();
 };
 
+class CharacterDialog: public GfxDialog {
+private:
+	GfxMessage _msgTitle;
+	GfxButton _btnQuinn, _btnMiranda, _btnSeeker;
+	GfxButton _btnCancel;
+public:
+	CharacterDialog();
+	virtual ~CharacterDialog() {}
+
+	static void show();
+};
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
