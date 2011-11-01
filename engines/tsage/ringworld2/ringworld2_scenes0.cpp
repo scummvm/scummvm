@@ -562,9 +562,13 @@ bool Scene125::Item4::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene125::Scene125(): SceneExt() {
-	_soundCount = _soundIndex = 0;
 	_iconFontNumber = 50;
-	_field412 = 5;
+	_consoleMode = 5;
+	_logIndex = _databaseIndex = _infodiskIndex = 0;
+
+	_soundCount = _soundIndex = 0;
+	for (int i = 0; i < 10; ++i)
+		_soundIndexes[i] = 0;
 }
 
 void Scene125::postInit(SceneObjectList *OwnerList) {
@@ -657,7 +661,7 @@ void Scene125::signal() {
 		R2_GLOBALS._player._canWalk = false;
 		break;
 	case 10:
-		switch (_field412) {
+ 		switch (_consoleMode) {
 		case 12:
 			_sceneMode = 129;
 
@@ -676,7 +680,7 @@ void Scene125::signal() {
 		case 13:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field41A = 0;
+			_infodiskIndex = 0;
 			setDetails(129, 0);
 			break;
 		case 23:
@@ -685,31 +689,31 @@ void Scene125::signal() {
 		case 27:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field418 = 0;
+			_databaseIndex = 0;
 			setDetails(128, 0);
 			break;
 		case 28:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field418 = 37;
+			_databaseIndex = 37;
 			setDetails(128, 37);
 			break;
 		case 29:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field418 = 68;
+			_databaseIndex = 68;
 			setDetails(128, 68);
 			break;
 		case 30:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field418 = 105;
+			_databaseIndex = 105;
 			setDetails(128, 105);
 			break;
 		default:
 			R2_GLOBALS._player.enableControl();
 			R2_GLOBALS._player._canWalk = false;
-			_field416 = 0;
+			_logIndex = 0;
 			setDetails(127, 0);
 			break;
 		}
@@ -718,7 +722,7 @@ void Scene125::signal() {
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;
 		
-		if ((_field412 >= 27) && (_field412 <= 30)) {
+		if ((_consoleMode >= 27) && (_consoleMode <= 30)) {
 			consoleAction(11);
 		}
 		consoleAction(2);
@@ -757,7 +761,18 @@ void Scene125::signal() {
 }
 
 void Scene125::synchronize(Serializer &s) {
-	error("TODO");
+	SceneExt::synchronize(s);
+
+	s.syncAsSint16LE(_consoleMode);
+	s.syncAsSint16LE(_iconFontNumber);
+	s.syncAsSint16LE(_logIndex);
+	s.syncAsSint16LE(_databaseIndex);
+	s.syncAsSint16LE(_infodiskIndex);
+	s.syncAsSint16LE(_soundCount);
+	s.syncAsSint16LE(_soundIndex);
+
+	for (int i = 0; i < 10; ++i)
+		s.syncAsSint16LE(_soundIndexes[i]);
 }
 
 void Scene125::process(Event &event) {
@@ -790,7 +805,7 @@ void Scene125::consoleAction(int id) {
 	if (id == 5)
 		_icon5.setIcon(6);
 	else {
-		switch (_field412) {
+		switch (_consoleMode) {
 		case 10:
 		case 12:
 		case 13:
@@ -829,9 +844,9 @@ void Scene125::consoleAction(int id) {
 		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldSceneNumber);
 		break;
 	case 7:
-		if (_field412 == 11)
+		if (_consoleMode == 11)
 			consoleAction(2);
-		else if (_field412 == 22)
+		else if (_consoleMode == 22)
 			consoleAction(4);
 		else
 			consoleAction(5);
@@ -883,6 +898,8 @@ void Scene125::consoleAction(int id) {
 		_icon5.hideIcon();
 
 		_icon6.setIcon(26);
+		_sceneMode = 10;
+		_palette.loadPalette(161);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);
 		break;
 	case 13:
@@ -976,24 +993,24 @@ void Scene125::consoleAction(int id) {
 		_icon4.setIcon(25);
 		_icon4._object2.hide();
 
-		if (_field412 == 10) {
-			setDetails(127, --_field416);
-		} else if (_field412 == 13) {
-			setDetails(129, --_field41A);
+		if (_consoleMode == 10) {
+			setDetails(127, --_logIndex);
+		} else if (_consoleMode == 13) {
+			setDetails(129, --_infodiskIndex);
 		} else {
-			setDetails(128, --_field418);
+			setDetails(128, --_databaseIndex);
 		}
 		break;
 	case 25:
 		_icon4.setIcon(25);
 		_icon4._object2.hide();
 
-		if (_field412 == 10) {
-			setDetails(127, ++_field416);
-		} else if (_field412 == 13) {
-			setDetails(129, ++_field41A);
+		if (_consoleMode == 10) {
+			setDetails(127, ++_logIndex);
+		} else if (_consoleMode == 13) {
+			setDetails(129, ++_infodiskIndex);
 		} else {
-			setDetails(128, ++_field418);
+			setDetails(128, ++_databaseIndex);
 		}
 		break;
 	case 26:
@@ -1019,7 +1036,7 @@ void Scene125::consoleAction(int id) {
 	case 30:
 		R2_GLOBALS._player.disableControl();
 		consoleAction(11);
-		_field412 = id;
+		_consoleMode = id;
 
 		_icon1.hideIcon();
 		_icon2.hideIcon();
@@ -1062,8 +1079,8 @@ void Scene125::consoleAction(int id) {
 		break;
 	}
 
-	if ((id != 6) && (id != 7) && (id != 23) && (id != 24))
-		_field412 = id;
+	if ((id != 6) && (id != 7) && (id != 24) && (id != 25))
+		_consoleMode = id;
 }
 
 /**
@@ -1072,18 +1089,18 @@ void Scene125::consoleAction(int id) {
 void Scene125::setDetails(int resNum, int lineNum) {
 	stop();
 	
-	Common::String msg = g_resourceManager->getMessage(resNum, lineNum);
+	Common::String msg = g_resourceManager->getMessage(resNum, lineNum, true);
 
-	if (msg.empty()) {
+	if (!msg.empty()) {
 		// Check for any specified sound numbers embedded in the message
-		Common::String msg2 = parseMessage(msg);
+		msg = parseMessage(msg);
 
 		_sceneText._fontNumber = _iconFontNumber;
 		_sceneText._color1 = 92;
 		_sceneText._color2 = 0;
 		_sceneText._width = 221;
 		_sceneText.fixPriority(20);
-		_sceneText.setup(msg2);
+		_sceneText.setup(msg);
 		_sceneText.setPosition(Common::Point(49, 19));
 
 		R2_GLOBALS._sceneObjects->draw();
@@ -1093,6 +1110,7 @@ void Scene125::setDetails(int resNum, int lineNum) {
 			R2_GLOBALS._playStream.play(_soundIndexes[_soundIndex], this);
 		}
 	} else {
+		// Passed the start or end of the message set, so return to the menu
 		R2_GLOBALS._player.disableControl();
 		R2_GLOBALS._player.hide();
 
@@ -1100,7 +1118,7 @@ void Scene125::setDetails(int resNum, int lineNum) {
 		_icon4._sceneRegionId = 5;
 		_icon4.hideIcon();
 
-		_field412 = 0;
+		_consoleMode = 0;
 		_palette.loadPalette(160);
 		_sceneMode = 11;
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 5, this);

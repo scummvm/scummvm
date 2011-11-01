@@ -125,7 +125,7 @@ public:
 	Icon _icon1, _icon2, _icon3, _icon4, _icon5,  _icon6;
 	SequenceManager _sequenceManager;
 	SceneText _sceneText;
-	int _field412, _iconFontNumber, _field416, _field418, _field41A;
+	int _consoleMode, _iconFontNumber, _logIndex, _databaseIndex, _infodiskIndex;
 	int _soundCount, _soundIndex;
 	int _soundIndexes[10];
 
