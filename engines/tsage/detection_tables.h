@@ -156,21 +156,6 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_CD | GF_ALT_REGIONS
 	},
 
-	// Geekwad
-	{
-		{
-			"geekwad",
-			"CD",
-			AD_ENTRY1s("geekwad.rlb", "0a441f7c4c7ce20fd3ac7707a5d64ee5", 5570365),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_CD | ADGF_UNSTABLE,
-			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
-		},
-		GType_Geekwad,
-		GF_CD | GF_ALT_REGIONS
-	},
-
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 

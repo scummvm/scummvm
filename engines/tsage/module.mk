@@ -20,8 +20,6 @@ MODULE_OBJS := \
 	detection.o \
 	dialogs.o \
 	events.o \
-	geekwad/geekwad_logic.o \
-	geekwad/geekwad_scenes0.o \
 	globals.o \
 	graphics.o \
 	resources.o \
