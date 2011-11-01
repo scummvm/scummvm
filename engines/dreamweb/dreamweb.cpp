@@ -442,9 +442,9 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 			sample.size, 22050, Audio::FLAG_UNSIGNED);
 	} else {
 		uint8 *buffer = (uint8 *)malloc(_speechData.size());
-		memcpy(buffer, _speechData.begin(), _speechData.size());
 		if (!buffer)
 			error("out of memory: cannot allocate memory for sound(%u bytes)", _speechData.size());
+		memcpy(buffer, _speechData.begin(), _speechData.size());
 		raw = Audio::makeRawStream(
 			buffer,
 			_speechData.size(), 22050, Audio::FLAG_UNSIGNED);
