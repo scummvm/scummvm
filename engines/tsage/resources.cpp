@@ -414,16 +414,27 @@ byte *TLib::getSubResource(int resNum, int rlbNum, int index, uint *size, bool s
  */
 bool TLib::getMessage(int resNum, int lineNum, Common::String &result, bool suppressErrors) {
 	byte *msgData = getResource(RES_MESSAGE, resNum, 0, true);
-	if (!msgData) {
+	if (!msgData || (lineNum < 0)) {
 		if (suppressErrors)
 			return false;
 
 		error("Unknown message %d line %d", resNum, lineNum);
 	}
 
+	int msgSize = _memoryManager.getSize(msgData);
 	const char *srcP = (const char *)msgData;
-	while (lineNum-- > 0)
+	const char *endP = srcP + msgSize;
+
+	while (lineNum-- > 0) {
 		srcP += strlen(srcP) + 1;
+		
+		if (srcP >= endP) {
+			if (suppressErrors)
+				return false;
+
+			error("Unknown message %d line %d", resNum, lineNum);
+		}
+	}
 
 	result = Common::String(srcP);
 	_memoryManager.deallocate(msgData);
@@ -503,7 +514,7 @@ Common::String ResourceManager::getMessage(int resNum, int lineNum, bool suppres
 
 	if (!suppressErrors)
 		error("Unknown message %d line %d", resNum, lineNum);
-	return result;
+	return Common::String();
 }
 
 } // end of namespace TsAGE
