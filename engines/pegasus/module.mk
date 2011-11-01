@@ -79,6 +79,7 @@ MODULE_OBJS = \
 	neighborhood/norad/alpha/fillingstation.o \
 	neighborhood/norad/alpha/noradalpha.o \
 	neighborhood/norad/alpha/panorama.o \
+	neighborhood/norad/alpha/panoramascroll.o \
 	neighborhood/prehistoric/prehistoric.o \
 	neighborhood/tsa/fulltsa.o \
 	neighborhood/tsa/tinytsa.o \
