@@ -79,12 +79,15 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_dialogCenter.y = 140;
 	} else if (g_vm->getGameID() == GType_Ringworld2) {
 		// Return to Ringworld
-		_gfxFontNumber = 2;
-		_gfxColors.background = 89;
-		_gfxColors.foreground = 83;
-		_fontColors.background = 88;
-		_fontColors.foreground = 92;
-		_dialogCenter.y = 140;
+		_gfxFontNumber = 50;
+		_gfxColors.background = 0;
+		_gfxColors.foreground = 59;
+		_fontColors.background = 4;
+		_fontColors.foreground = 15;
+		_color1 = 59;
+		_color2 = 15;
+		_color3 = 4;
+		_dialogCenter.y = 100;
 	} else if (g_vm->getGameID() == GType_Geekwad) {
 		// Blue Force
 		_gfxFontNumber = 0;

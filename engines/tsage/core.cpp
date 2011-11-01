@@ -1299,6 +1299,15 @@ void ScenePalette::setPalette(int index, int count) {
 }
 
 /**
+ * Get a palette entry
+ */
+void ScenePalette::getEntry(int index, uint *r, uint *g, uint *b) {
+	*r = _palette[index * 3];
+	*g = _palette[index * 3 + 1];
+	*b = _palette[index * 3 + 2];
+}
+
+/**
  * Set a palette entry
  */
 void ScenePalette::setEntry(int index, uint r, uint g, uint b) {

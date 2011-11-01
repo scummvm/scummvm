@@ -676,7 +676,36 @@ void GfxElement::drawFrame() {
 	Rect tempRect = _bounds;
 	tempRect.collapse(g_globals->_gfxEdgeAdjust, g_globals->_gfxEdgeAdjust);
 	tempRect.collapse(-1, -1);
-	gfxManager.fillRect(tempRect, _colors.background);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		// For Return to Ringworld, use palette shading
+
+		// Get the current palette and determining a shading translation list
+		ScenePalette tempPalette;
+		tempPalette.getPalette(0, 256);
+		int transList[256];
+
+		for (int i = 0; i < 256; ++i) {
+			uint r, g, b, v;
+			tempPalette.getEntry(i, &r, &g, &b);
+			v = ((r >> 1) + (g >> 1) + (b >> 1)) / 4;
+
+			transList[i] = tempPalette.indexOf(v, v, v);
+		}
+
+		// Loop through the surface area to replace each pixel with it's proper shaded replacement
+		Graphics::Surface surface = gfxManager.lockSurface();
+		for (int y = tempRect.top; y < tempRect.bottom; ++y) {
+			byte *lineP = (byte *)surface.getBasePtr(tempRect.left, y);
+			for (int x = 0; x < tempRect.width(); ++x)
+				*lineP++ = transList[*lineP];
+		}
+		gfxManager.unlockSurface();
+
+	} else {
+		// Fill dialog content with specified background colour
+		gfxManager.fillRect(tempRect, _colors.background);
+	}
 
 	--tempRect.bottom; --tempRect.right;
 	gfxManager.fillArea(tempRect.left, tempRect.top, bgColor);

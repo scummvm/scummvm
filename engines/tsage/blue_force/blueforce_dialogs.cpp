@@ -496,7 +496,6 @@ OptionsDialog::OptionsDialog() {
 	setCenter(160, 90);
 }
 
-
 } // End of namespace BlueForce
 
 } // End of namespace TsAGE
