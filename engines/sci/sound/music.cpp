@@ -472,9 +472,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				// volume of the sound channels that the faded song occupies..
 				// Fixes bug #3266480 and partially fixes bug #3041738.
 				for (uint i = 0; i < playListCount; i++) {
-					// Is another MIDI song being faded? If yes, stop it
+					// Is another MIDI song being faded down? If yes, stop it
 					// immediately instead
-					if (_playList[i]->fadeStep && _playList[i]->pMidiParser) {
+					if (_playList[i]->fadeStep < 0 && _playList[i]->pMidiParser) {
 						_playList[i]->status = kSoundStopped;
 						if (_soundVersion <= SCI_VERSION_0_LATE)
 							_playList[i]->isQueued = false;
