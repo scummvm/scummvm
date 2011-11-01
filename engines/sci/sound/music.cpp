@@ -44,8 +44,10 @@ SciMusic::SciMusic(SciVersion soundVersion)
 	// operations
 	_playList.reserve(10);
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++) {
 		_usedChannel[i] = 0;
+		_channelRemap[i] = -1;
+	}
 
 	_queuedCommands.reserve(1000);
 }
@@ -355,6 +357,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	if (!_usedChannel[bestChannel]) {
 		// currently unused, so give it to caller directly
 		_usedChannel[bestChannel] = caller;
+		_channelRemap[bestChannel] = bestChannel;
 		return bestChannel;
 	}
 	// otherwise look for unused channel
@@ -363,6 +366,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 			continue;
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
+			_channelRemap[bestChannel] = channelNr;
 			return channelNr;
 		}
 	}
@@ -375,8 +379,24 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 void SciMusic::freeChannels(MusicEntry *caller) {
 	// Remove used channels
 	for (int i = 0; i < 15; i++) {
-		if (_usedChannel[i] == caller)
+		if (_usedChannel[i] == caller) {
+			if (_channelRemap[i] != -1) {
+				// athrxx: The original handles this differently. It seems to be checking for (and effecting) necessary
+				// remaps / resets etc. more or less all the time. There are several more tables to keep track of everything.
+				// I don't know whether all of that is needed and to which SCI versions it applies, though.
+				// At least it is necessary to release the allocated channels inside the driver. Otherwise these channels
+				// won't be available any more (e.g. after half of the KQ5 FM-Towns intro there will be no more music
+				// since the driver can't pick up any more channels). The channels also have to be reset to
+				// default values, since the original does the same (although in a different manny) and the music will be wrong
+				// otherwise (at least KQ5 FM-Towns).
+
+				sendMidiCommand(0x4000e0 | _channelRemap[i]);	// Reset pitch wheel
+				sendMidiCommand(0x0040b0 | _channelRemap[i]);	// Release pedal
+				sendMidiCommand(0x004bb0 | _channelRemap[i]);	// Release assigned driver channels
+			}
 			_usedChannel[i] = 0;
+			_channelRemap[i] = -1;
+		}
 	}
 	// Also tell midiparser, that he lost ownership
 	caller->pMidiParser->lostChannels();

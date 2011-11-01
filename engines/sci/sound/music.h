@@ -219,6 +219,7 @@ private:
 	bool _soundOn;
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
+	int8 _channelRemap[16];
 	int8 _globalReverb;
 
 	MidiCommandQueue _queuedCommands;
