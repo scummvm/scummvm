@@ -37,7 +37,7 @@ namespace BlueForce {
 
 void Scene600::Action1::signal() {
 	Scene600 *scene = (Scene600 *)BF_GLOBALS._sceneManager._scene;
-	static const uint32 black = 0;
+	static byte red[3] = {220, 0, 0};
 
 	switch (_actionIndex++) {
 	case 0:
@@ -49,8 +49,8 @@ void Scene600::Action1::signal() {
 		break;
 	case 2:
 		scene->_sound1.play(59);
-		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_object1, 
-			&BF_GLOBALS._player, &scene->_object3, NULL);
+		setAction(&scene->_sequenceManager, this, 600, &scene->_object2, &scene->_ryan, 
+			&BF_GLOBALS._player, &scene->_skidMarks, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._sound1.play(61);
@@ -61,13 +61,13 @@ void Scene600::Action1::signal() {
 		break;
 	case 5: {
 		BF_GLOBALS._player.remove();
-		scene->_object1.remove();
+		scene->_ryan.remove();
 		scene->_object2.remove();
-		scene->_object3.remove();
+		scene->_skidMarks.remove();
 
-		for (int percent = 100; percent >= 0; percent -= 5) {
-			BF_GLOBALS._scenePalette.fade((const byte *)&black, false, percent);
-			g_system->delayMillis(10);
+		for (int percent = 100; percent >= 0; percent -= 2) {
+			BF_GLOBALS._scenePalette.fade((const byte *)&red, false, percent);
+			g_system->delayMillis(5);
 		}
 
 		SynchronizedList<SceneObject *>::iterator i;
@@ -91,6 +91,8 @@ void Scene600::Action1::signal() {
 		BF_GLOBALS._v51C44 = 0;
 		remove();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -110,14 +112,14 @@ void Scene600::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.setPosition(Common::Point(639, 0));
 	BF_GLOBALS._player.disableControl();
 
-	_object3.postInit();
-	_object3.hide();
+	_skidMarks.postInit();
+	_skidMarks.hide();
 	_object2.postInit();
-	
-	_object1.postInit();
-	_object1.setVisage(600);
-	_object1.setStrip(7);
-	_object1.setPosition(Common::Point(417, 82));
+
+	_ryan.postInit();
+	_ryan.setVisage(600);
+	_ryan.setStrip(7);
+	_ryan.setPosition(Common::Point(417, 82));
 
 	BF_GLOBALS.clearFlag(onDuty);
 	BF_INVENTORY.setObjectScene(INV_TICKET_BOOK, 60);
