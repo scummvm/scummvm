@@ -1914,8 +1914,10 @@ void Player_V2A::startSound(int nr) {
 	}
 	stopSound(nr);
 	int i = getSoundSlot();
-	if (i == -1)
+	if (i == -1) {
+		delete snd;
 		return;
+	}
 	_slot[i].id = nr;
 	_slot[i].sound = snd;
 	_slot[i].sound->start(_mod, nr, data);
