@@ -61,9 +61,8 @@ public:
 	Graphics::Surface *getSurface() const { return _surface; }
 	void getSurfaceBounds(Common::Rect &r) { r = _bounds; }
 
-	//	None of the CopyToCurrentPort functions do any sanity checks.
-	//	For speed, they just call CopyBits.
-	//	It's up to clients to make sure that the GWorld is valid.
+	// None of the copyToCurrentPort* functions do any sanity checks.
+	// It's up to clients to make sure that the Surface is valid.
 	void copyToCurrentPort() const;
 	void copyToCurrentPortTransparent() const;
 	void copyToCurrentPort(const Common::Rect &) const;
