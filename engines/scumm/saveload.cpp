@@ -1293,7 +1293,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
-	if (s->getVersion() >= VER(82)) {
+	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(87) || (s->getVersion() >= VER(82) && s->getVersion() < VER(87))) {
 		const SaveLoadEntry townsFields[] = {
 			MKLINE(Common::Rect, left, sleInt16, VER(82)),
 			MKLINE(Common::Rect, top, sleInt16, VER(82)),
