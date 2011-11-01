@@ -1293,7 +1293,10 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
-	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(87) || (s->getVersion() >= VER(82) && s->getVersion() < VER(87))) {
+	// In earlier save game versions (below 87) the FM-Towns specific data would get saved (and loaded) even in non FM-Towns games.
+	// This would cause an unnecessary save file incompatibility between DS (which uses the DISABLE_TOWNS_DUAL_LAYER_MODE setting)
+	// and other ports.
+	if (((_game.platform == Common::kPlatformFMTowns) && (s->getVersion() >= VER(87))) || ((s->getVersion() >= VER(82)) && (s->getVersion() < VER(87)))) {
 		const SaveLoadEntry townsFields[] = {
 			MKLINE(Common::Rect, left, sleInt16, VER(82)),
 			MKLINE(Common::Rect, top, sleInt16, VER(82)),
