@@ -27,6 +27,7 @@
 #define PEGASUS_ITEMS_BIOCHIPS_MAPIMAGE_H
 
 #include "pegasus/elements.h"
+#include "pegasus/surface.h"
 #include "pegasus/util.h"
 #include "pegasus/neighborhood/mars/constants.h"
 
@@ -59,7 +60,7 @@ public:
 	static const uint32 kNumMappingFlags = kNumMappingRooms * 4;
 
 protected:
-	enum tMapArea {
+	enum MapArea {
 		kMapNoArea,
 		kMapMaze,
 		kMapGearRoom
@@ -69,11 +70,13 @@ protected:
 	void getRevealedRects(const uint32, Common::Rect &);
 	void drawPlayer();
 
-	tMapArea _whichArea;
+	MapArea _whichArea;
 
 	FlagsArray<byte, kNumMappingFlags> _mappedRooms;
 
 	uint32 _darkGreen, _lightGreen;
+
+	Surface _mapImage, _mapMask;
 };
 
 } // End of namespace Pegasus

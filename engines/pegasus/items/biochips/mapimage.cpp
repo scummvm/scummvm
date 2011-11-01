@@ -23,6 +23,8 @@
  *
  */
 
+#include "pegasus/gamestate.h"
+#include "pegasus/pegasus.h"
 #include "pegasus/items/biochips/mapimage.h"
 
 namespace Pegasus {
@@ -47,11 +49,11 @@ namespace Pegasus {
 
 #define FLAG_TO_DIRECTION(flag) ((flag) & 3)
 
-static const long kGearRoomFlagLow = ROOM_TO_FLAG(kMars35, kNorth);
-static const long kGearRoomFlagHigh = ROOM_TO_FLAG(kMars39, kWest);
+static const int kGearRoomFlagLow = ROOM_TO_FLAG(kMars35, kNorth);
+static const int kGearRoomFlagHigh = ROOM_TO_FLAG(kMars39, kWest);
 
-static const long kMazeFlagLow = ROOM_TO_FLAG(kMars60, kNorth);
-static const long kMazeFlagHigh = ROOM_TO_FLAG(kMarsMaze200, kWest);
+static const int kMazeFlagLow = ROOM_TO_FLAG(kMars60, kNorth);
+static const int kMazeFlagHigh = ROOM_TO_FLAG(kMarsMaze200, kWest);
 
 static const tCoordType kGearRoomScreenOffsetX = 49;
 static const tCoordType kGearRoomScreenOffsetY = 47;
@@ -67,6 +69,9 @@ static const tCoordType kMazeGridOriginY = 1;
 
 static const tCoordType kGridWidth = 4;
 static const tCoordType kGridHeight = 4;
+
+static const uint16 kMapOfMazePICTID = 906;
+static const uint16 kMapOfGearRoomPICTID = 907;
 
 static const int s_mapCoords[MapImage::kNumMappingRooms][2] = {
 	/* kMars35 */      { 0, 0 },
@@ -260,42 +265,178 @@ void MapImage::readFromStream(Common::ReadStream *stream) {
 	_mappedRooms.readFromStream(stream);
 }
 
-void MapImage::loadGearRoomIfNecessary() {
-	// TODO
+void MapImage::loadGearRoomIfNecessary() {	
+	if (_whichArea != kMapGearRoom) {
+		_mapImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMapOfGearRoomPICTID);
+
+		Common::Rect bounds;
+		_mapImage.getSurfaceBounds(bounds);
+		_mapMask.allocateSurface(bounds);
+		_whichArea = kMapGearRoom;
+
+		GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
+		gfx->setCurSurface(_mapMask.getSurface());
+
+		gfx->getCurSurface()->fillRect(bounds, g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff));
+
+		for (int i = kGearRoomFlagLow; i <= kGearRoomFlagHigh; i++)
+			if (_mappedRooms.getFlag(i))
+				addFlagToMask(i);
+
+		gfx->setCurSurface(gfx->getWorkArea());
+		show();
+	}
 }
 
-void MapImage::loadMazeIfNecessary() {
-	// TODO
+void MapImage::loadMazeIfNecessary() {	
+	if (_whichArea != kMapMaze) {
+		_mapImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMapOfMazePICTID);
+
+		Common::Rect bounds;
+		_mapImage.getSurfaceBounds(bounds);
+		_mapMask.allocateSurface(bounds);
+		_whichArea = kMapMaze;
+
+		GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
+		gfx->setCurSurface(_mapMask.getSurface());
+
+		gfx->getCurSurface()->fillRect(bounds, g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff));
+
+		for (int i = kMazeFlagLow; i <= kMazeFlagHigh; i++)
+			if (_mappedRooms.getFlag(i))
+				addFlagToMask(i);
+
+		gfx->setCurSurface(gfx->getWorkArea());
+		show();
+	}
 }
 
 void MapImage::unloadImage() {
-	// TODO: Unload surfaces
+	_mapImage.deallocateSurface();
+	_mapMask.deallocateSurface();
 	hide();
 	_whichArea = kMapNoArea;
 }
 
 void MapImage::moveToMapLocation(const tNeighborhoodID, const tRoomID room, const tDirectionConstant dir) {
-	// TODO
+	GraphicsManager *gfx = ((PegasusEngine *)g_engine)->_gfx;
+
+	int flag = ROOM_TO_FLAG(room, dir);
+
+	if (!_mappedRooms.getFlag(flag)) {
+		_mappedRooms.setFlag(flag, true);
+
+		if (_mapMask.isSurfaceValid()) {
+			gfx->setCurSurface(_mapMask.getSurface());
+			addFlagToMask(flag);
+			gfx->setCurSurface(gfx->getWorkArea());
+		}
+	}
 
 	if (isDisplaying())
 		triggerRedraw();
 }
 
 void MapImage::addFlagToMask(const int flag) {
-	// TODO
+	Common::Rect r1;
+	getRevealedRects(flag, r1);
+	((PegasusEngine *)g_engine)->_gfx->getCurSurface()->fillRect(r1, g_system->getScreenFormat().RGBToColor(0, 0, 0));
 }
 
 // This function can even be sensitive to open doors.
+// clone2727 notices that it's not, though
 void MapImage::getRevealedRects(const uint32 flag, Common::Rect &r1) {	
-	// TODO
+	tCoordType gridX, gridY;
+
+	switch (_whichArea) {
+	case kMapMaze:
+		gridX = kMazeGridOriginX;
+		gridY = kMazeGridOriginY;
+		break;
+	case kMapGearRoom:
+		gridX = kGearRoomGridOriginX;
+		gridY = kGearRoomGridOriginY;
+		break;
+	default:
+		return;
+	}
+
+	int index = FLAG_TO_INDEX(flag);
+	gridX += s_mapCoords[index][0] * kGridWidth;
+	gridY += s_mapCoords[index][1] * kGridHeight;
+
+	r1 = Common::Rect(gridX - 1, gridY - 1, gridX + kGridWidth + 1, gridY + kGridHeight + 1);
 }
 
 void MapImage::drawPlayer() {
-	// TODO
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+
+	tCoordType gridX, gridY;
+
+	switch (_whichArea) {
+	case kMapMaze:
+		gridX = _bounds.left + kMazeScreenOffsetX + kMazeGridOriginX;
+		gridY = _bounds.top + kMazeScreenOffsetY + kMazeGridOriginY;
+		break;
+	case kMapGearRoom:
+		gridX = _bounds.left + kGearRoomScreenOffsetX + kGearRoomGridOriginX;
+		gridY = _bounds.top + kGearRoomScreenOffsetY + kGearRoomGridOriginY;
+		break;
+	default:
+		return;
+	}
+
+	int index = ROOM_TO_INDEX(GameState.getCurrentRoom());
+	gridX += s_mapCoords[index][0] * kGridWidth;
+	gridY += s_mapCoords[index][1] * kGridHeight;
+
+	// This was intended to make little arrows
+	switch (GameState.getCurrentDirection()) {
+	case kNorth:
+		screen->drawLine(gridX + 1, gridY, gridX + 2, gridY, _darkGreen);
+		screen->drawLine(gridX, gridY + 1, gridX + 3, gridY + 1, _darkGreen);
+		screen->drawLine(gridX + 1, gridY + 1, gridX + 2, gridY + 1, _lightGreen);
+		screen->drawLine(gridX, gridY + 2, gridX + 3, gridY + 2, _lightGreen);
+		break;
+	case kSouth:
+		screen->drawLine(gridX + 1, gridY + 3, gridX + 2, gridY + 3, _darkGreen);
+		screen->drawLine(gridX, gridY + 2, gridX + 3, gridY + 2, _darkGreen);
+		screen->drawLine(gridX + 1, gridY + 2, gridX + 2, gridY + 2, _lightGreen);
+		screen->drawLine(gridX, gridY + 1, gridX + 3, gridY + 1, _lightGreen);
+		break;
+	case kEast:
+		screen->drawLine(gridX + 3, gridY + 1, gridX + 3, gridY + 2, _darkGreen);
+		screen->drawLine(gridX + 2, gridY, gridX + 2, gridY + 3, _darkGreen);
+		screen->drawLine(gridX + 2, gridY + 1, gridX + 2, gridY + 2, _lightGreen);
+		screen->drawLine(gridX + 1, gridY, gridX + 1, gridY + 3, _lightGreen);
+		break;
+	case kWest:
+		screen->drawLine(gridX, gridY + 1, gridX, gridY + 2, _darkGreen);
+		screen->drawLine(gridX + 1, gridY, gridX + 1, gridY + 3, _darkGreen);
+		screen->drawLine(gridX + 1, gridY + 1, gridX + 1, gridY + 2, _lightGreen);
+		screen->drawLine(gridX + 2, gridY, gridX + 2, gridY + 3, _lightGreen);
+		break;
+	}
 }
 
 void MapImage::draw(const Common::Rect &) {
-	// TODO
+	Common::Rect r1;
+	_mapImage.getSurfaceBounds(r1);
+
+	Common::Rect r2 = r1;
+	switch (_whichArea) {
+	case kMapMaze:
+		r2.moveTo(_bounds.left + kMazeScreenOffsetX, _bounds.top + kMazeScreenOffsetY);
+		break;
+	case kMapGearRoom:
+		r2.moveTo(_bounds.left + kGearRoomScreenOffsetX, _bounds.top + kGearRoomScreenOffsetY);
+		break;
+	default:
+		return;
+	}
+
+	_mapImage.copyToCurrentPortMasked(r1, r2, &_mapMask);
+
 	drawPlayer();
 }
 
