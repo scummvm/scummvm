@@ -227,7 +227,8 @@ void Caldoria4DSystem::setSpritesMovie() {
 		_4DSpritesMovie.setTime(_4DSpritesScale * _videoChoice);
 	else if (_whichMenu == k4DAudioMenu)
 		_4DSpritesMovie.setTime(_4DSpritesScale * _audioChoice);
-	_4DSpritesMovie.triggerRedraw();
+
+	_4DSpritesMovie.redrawMovieWorld();
 }
 
 void Caldoria4DSystem::handleInput(const Input &input, const Hotspot *cursorSpot) {
