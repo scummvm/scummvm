@@ -183,7 +183,7 @@ void Scene620::signal() {
 		_object1.postInit();
 		_object1.setVisage(622);
 		_object1.setPosition(Common::Point(101, 41));
-		addFader((const byte *)&black, 2, this);	
+		add2Faders((const byte *)&black, 2, 622, this);	
 		break;
 	case 5:
 		_object1.remove();
@@ -241,6 +241,8 @@ void Scene620::signal() {
 		BF_GLOBALS._v4CEB6 = 0;
 		BF_GLOBALS._dayNumber = 3;
 		BF_GLOBALS._sceneManager.changeScene(271);
+		break;
+	default:
 		break;
 	}
 }
