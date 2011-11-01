@@ -915,7 +915,7 @@ bool ResourceManager::addAudioSources() {
 
 void ResourceManager::changeAudioDirectory(Common::String path) {
 	// Remove all of the audio map resource sources, as well as the audio resource sources
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
 		ResourceSource *source = *it;
 		ResSourceType sourceType = source->getSourceType();
 
@@ -925,8 +925,11 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX")
 				continue;
 
+			// erase() will move the iterator to the next element
 			it = _sources.erase(it);
 			delete source;
+		} else {
+			++it;
 		}
 	}
 
