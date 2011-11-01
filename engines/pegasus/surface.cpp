@@ -205,6 +205,37 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Co
 	}
 }
 
+void Surface::copyToCurrentPortMasked(const Common::Rect &srcRect, const Common::Rect &dstRect, const Surface *mask) const {
+	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
+	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
+
+	int lineSize = srcRect.width() * _surface->format.bytesPerPixel;
+
+	for (int y = 0; y < srcRect.height(); y++) {
+		byte *maskSrc = (byte *)mask->getSurface()->getBasePtr(0, y);
+
+		for (int x = 0; x < srcRect.width(); x++) {
+			if (g_system->getScreenFormat().bytesPerPixel == 2) {
+				uint16 color = READ_UINT16(maskSrc);
+				if (!isTransparent(color))
+					memcpy(dst, src, 2);
+			} else if (g_system->getScreenFormat().bytesPerPixel == 4) {
+				uint32 color = READ_UINT32(maskSrc);
+				if (!isTransparent(color))
+					memcpy(dst, src, 4);
+			}
+
+			src += g_system->getScreenFormat().bytesPerPixel;
+			maskSrc += g_system->getScreenFormat().bytesPerPixel;
+			dst += g_system->getScreenFormat().bytesPerPixel;
+		}
+
+		src += _surface->pitch - lineSize;
+		dst += screen->pitch - lineSize;
+	}
+}
+
 void Surface::copyToCurrentPortTransparentGlow(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
 	// This is the same as copyToCurrentPortTransparent(), but turns the red value of each
 	// pixel all the way up.

@@ -70,6 +70,7 @@ public:
 	void copyToCurrentPortTransparent(const Common::Rect &) const;
 	void copyToCurrentPort(const Common::Rect &, const Common::Rect &) const;
 	void copyToCurrentPortTransparent(const Common::Rect &, const Common::Rect &) const;
+	void copyToCurrentPortMasked(const Common::Rect &, const Common::Rect &, const Surface *) const;
 	void copyToCurrentPortTransparentGlow(const Common::Rect &, const Common::Rect &) const;
 	void scaleTransparentCopy(const Common::Rect &, const Common::Rect &) const;
 	void scaleTransparentCopyGlow(const Common::Rect &, const Common::Rect &) const;
