@@ -71,6 +71,7 @@ MODULE_OBJS := \
 	sound/drivers/amigamac.o \
 	sound/drivers/cms.o \
 	sound/drivers/fb01.o \
+	sound/drivers/fmtowns.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
 	video/seq_decoder.o

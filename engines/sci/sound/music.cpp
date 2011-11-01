@@ -76,6 +76,9 @@ void SciMusic::init() {
 	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
+	if (g_sci->getPlatform() == Common::kPlatformFMTowns)
+		deviceFlags = MDT_TOWNS;
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -95,6 +98,9 @@ void SciMusic::init() {
 		break;
 	case MT_CMS:
 		_pMidiDrv = MidiPlayer_CMS_create(_soundVersion);
+		break;
+	case MT_TOWNS:
+		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
