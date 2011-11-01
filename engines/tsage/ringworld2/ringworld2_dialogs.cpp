@@ -195,7 +195,7 @@ void CharacterDialog::show() {
 	CharacterDialog *dlg = new CharacterDialog();
 	dlg->draw();
 
-	GfxButton *btn = dlg->execute(&dlg->_btnCancel);
+	/*GfxButton *btn = */dlg->execute(&dlg->_btnCancel);
 
 
 	dlg->remove();
