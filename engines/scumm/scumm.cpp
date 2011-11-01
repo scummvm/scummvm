@@ -1169,15 +1169,13 @@ Common::Error ScummEngine::init() {
 					return Common::kUnsupportedColorMode;
 			} else {
 				Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
-				for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ) {
+				for (Common::List<Graphics::PixelFormat>::iterator g = tryModes.begin(); g != tryModes.end(); ++g) {
 					if (g->bytesPerPixel != 2 || g->aBits()) {
-						g = tryModes.erase(g);
+						g = tryModes.reverse_erase(g);
 					} else if (*g == _outputPixelFormat) {
 						tryModes.clear();
 						tryModes.push_back(_outputPixelFormat);
 						break;
-					} else {
-						++g;
 					}
 				}
 
