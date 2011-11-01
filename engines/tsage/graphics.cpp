@@ -693,12 +693,15 @@ void GfxElement::drawFrame() {
 			transList[i] = tempPalette.indexOf(v, v, v);
 		}
 
-		// Loop through the surface area to replace each pixel with it's proper shaded replacement
+		// Loop through the surface area to replace each pixel
+		// with its proper shaded replacement
 		Graphics::Surface surface = gfxManager.lockSurface();
 		for (int y = tempRect.top; y < tempRect.bottom; ++y) {
 			byte *lineP = (byte *)surface.getBasePtr(tempRect.left, y);
-			for (int x = 0; x < tempRect.width(); ++x)
-				*lineP++ = transList[*lineP];
+			for (int x = 0; x < tempRect.width(); ++x) {
+				*lineP = transList[*lineP];
+				lineP++;
+			}
 		}
 		gfxManager.unlockSurface();
 
