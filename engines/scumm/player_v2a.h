@@ -63,7 +63,7 @@ private:
 	Player_MOD *_mod;
 	soundSlot _slot[V2A_MAXSLOTS];
 
-	int getSoundSlot (int id = 0) const;
+	int getSoundSlot(int id = 0) const;
 	static void update_proc(void *param);
 	void updateSound();
 };
