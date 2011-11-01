@@ -1382,7 +1382,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
 		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO1(GUIO_NOASPECT)	},
+	 	Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO2(GUIO_NOASPECT, GUIO_MIDITOWNS) },
+	{"kq5", "", {
+		{"resource.map", 0, "20c7cd248ff1a349ed354568eebd972b", 12733},
+		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
+		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
+		AD_LISTEND},
+		Common::JA_JPN, Common::kPlatformFMTowns, 0, GUIO2(GUIO_NOASPECT, GUIO_MIDITOWNS) },
 
 	// King's Quest 5 - Japanese PC-98 Floppy 0.000.015 (supplied by omer_mor in bug report #3073583)
 	{"kq5", "", {
