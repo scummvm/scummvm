@@ -922,8 +922,10 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		// Remove the resource source, if it's an audio map or an audio file
 		if (sourceType == kSourceIntMap || sourceType == kSourceAudioVolume) {
 			// Don't remove 65535.map (the SFX map) or resource.sfx
-			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX")
+			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX") {
+				++it;
 				continue;
+			}
 
 			// erase() will move the iterator to the next element
 			it = _sources.erase(it);
