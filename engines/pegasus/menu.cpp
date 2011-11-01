@@ -489,37 +489,37 @@ CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _cred
 void CreditsMenu::newMenuSelection(const int newSelection) {
 	if (newSelection != _menuSelection) {
 		switch (newSelection) {
-			case kCreditsMenuCoreTeam:
-				_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
-				_creditsMovie.setTime(kCoreTeamTime);
-				_creditsMovie.redrawMovieWorld();
-				break;
-			case kCreditsMenuSupportTeam:
-				_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
-				_creditsMovie.setTime(kSupportTeamTime);
-				_creditsMovie.redrawMovieWorld();
-				break;
-			case kCreditsMenuOriginalTeam:
-				_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
-				_creditsMovie.setTime(kOriginalTeamTime);
-				_creditsMovie.redrawMovieWorld();
-				break;
-			case kCreditsMenuTalent:
-				_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
-				_creditsMovie.setTime(kTalentTime);
-				_creditsMovie.redrawMovieWorld();
-				break;
-			case kCreditsMenuOtherTitles:
-				_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
-				_smallSelect.show();
-				_largeSelect.hide();
-				_creditsMovie.setTime(kOtherTitlesTime);
-				_creditsMovie.redrawMovieWorld();
-				break;
-			case kCreditsMenuMainMenu:
-				_smallSelect.hide();
-				_largeSelect.show();
-				break;
+		case kCreditsMenuCoreTeam:
+			_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
+			_creditsMovie.setTime(kCoreTeamTime);
+			_creditsMovie.redrawMovieWorld();
+			break;
+		case kCreditsMenuSupportTeam:
+			_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
+			_creditsMovie.setTime(kSupportTeamTime);
+			_creditsMovie.redrawMovieWorld();
+			break;
+		case kCreditsMenuOriginalTeam:
+			_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
+			_creditsMovie.setTime(kOriginalTeamTime);
+			_creditsMovie.redrawMovieWorld();
+			break;
+		case kCreditsMenuTalent:
+			_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
+			_creditsMovie.setTime(kTalentTime);
+			_creditsMovie.redrawMovieWorld();
+			break;
+		case kCreditsMenuOtherTitles:
+			_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
+			_smallSelect.show();
+			_largeSelect.hide();
+			_creditsMovie.setTime(kOtherTitlesTime);
+			_creditsMovie.redrawMovieWorld();
+			break;
+		case kCreditsMenuMainMenu:
+			_smallSelect.hide();
+			_largeSelect.show();
+			break;
 		}
 
 		_menuSelection = newSelection;
