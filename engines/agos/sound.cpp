@@ -799,12 +799,12 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	Common::File *file = new Common::File();
 
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d", gss->speech_filename, disc);
+		sprintf(filename, "%s%u", gss->speech_filename, disc);
 		_voice = makeCompressedSound(_mixer, file, filename);
 		_hasVoiceFile = (_voice != 0);
 	}
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.wav", gss->speech_filename, disc);
+		sprintf(filename, "%s%u.wav", gss->speech_filename, disc);
 		file->open(filename);
 		if (file->isOpen() == false) {
 			error("switchVoiceFile: Can't load voice file %s", filename);

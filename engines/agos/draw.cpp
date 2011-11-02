@@ -776,7 +776,7 @@ void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
 void AGOSEngine::displayScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
-		if (memcmp(_displayPalette, _currentPalette, sizeof(_currentPalette))) {
+		if (memcmp(_displayPalette, _currentPalette, sizeof(_currentPalette)) != 0) {
 			memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
 			_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
 		}
