@@ -233,7 +233,7 @@ void Panorama::loadStrips(tCoordType stripLeft, tCoordType stripRight) {
 
 void Panorama::loadOneStrip(tCoordType stripToLoad, tCoordType leftStrip) {
 	_panoramaMovie.moveMovieBoxTo((stripToLoad - leftStrip) * _stripWidth, 0);
-	_panoramaMovie.setTime(stripToLoad);
+	_panoramaMovie.setTime(stripToLoad, 1);
 	_panoramaMovie.redrawMovieWorld();
 }
 
