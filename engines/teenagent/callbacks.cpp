@@ -3177,7 +3177,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 5);
 			playActorAnimation(688);
 			SET_FLAG(0xdbbc, 0);
-		} else if (CHECK_FLAG(0xdbbc, 1)) {
+		} else if (CHECK_FLAG(0xdbbb, 1)) {
 			processCallback(0x6b86);
 		} else {
 			playSound(66, 6);
