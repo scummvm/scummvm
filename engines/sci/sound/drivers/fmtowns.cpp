@@ -555,7 +555,7 @@ int MidiDriver_FMTowns::getChannelVolume(uint8 midiPart) {
 	static const uint8 volumeTable[] = { 0x00, 0x0D, 0x1B, 0x28, 0x36, 0x43, 0x51, 0x5F, 0x63, 0x67, 0x6B, 0x6F, 0x73, 0x77, 0x7B, 0x7F };
 	int tableIndex = (_parts[midiPart]->_volume * (_masterVolume + 1)) >> 6;
 	assert(tableIndex < 16);
-	return volumeTable[tableIndex];;
+	return volumeTable[tableIndex];
 }
 
 void MidiDriver_FMTowns::addMissingChannels() {
