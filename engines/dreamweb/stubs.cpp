@@ -1477,8 +1477,6 @@ void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 				dropobject();
 			else if(callback == addr_useopened)
 				useopened();
-			else if(callback == addr_setpickup)
-				setpickup();
 			else if(callback == addr_intoinv)
 				intoinv();
 			// withlist1
@@ -1542,8 +1540,6 @@ void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 				diarykeyn();
 			else if(callback == addr_diarykeyp)
 				diarykeyp();
-			else if(callback == addr_quitkey)
-				quitkey();
 			// opslist
 			else if(callback == addr_getbackfromops)
 				getbackfromops();
