@@ -34,6 +34,7 @@ public:
 	int _height;
 	bool _hasAlpha;
 	void *_texture;
+	char *_data;
 };
 
 class MaterialData {
