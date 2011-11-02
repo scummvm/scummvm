@@ -29,6 +29,7 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/subcontrolroom.h"
+#include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
 #include "pegasus/neighborhood/norad/alpha/fillingstation.h"
 #include "pegasus/neighborhood/norad/alpha/noradalpha.h"
 
@@ -212,9 +213,7 @@ void NoradAlpha::playClawMonitorIntro() {
 GameInteraction *NoradAlpha::makeInteraction(const tInteractionID interactionID) {
 	switch (interactionID) {
 	case kNoradECRMonitorInteractionID:
-		// TODO
-		warning("Unhandled ECR monitor interaction");
-		break;
+		return new NoradAlphaECRMonitor(this);
 	case kNoradFillingStationInteractionID:
 		return new NoradAlphaFillingStation(this);
 	}

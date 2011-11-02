@@ -76,6 +76,7 @@ MODULE_OBJS = \
 	neighborhood/norad/pressuretracker.o \
 	neighborhood/norad/subcontrolroom.o \
 	neighborhood/norad/subplatform.o \
+	neighborhood/norad/alpha/ecrmonitor.o \
 	neighborhood/norad/alpha/fillingstation.o \
 	neighborhood/norad/alpha/noradalpha.o \
 	neighborhood/norad/alpha/panorama.o \
