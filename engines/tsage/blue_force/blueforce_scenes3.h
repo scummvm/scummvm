@@ -815,7 +815,8 @@ public:
 	SpeakerJake385 _jake385Speaker;
 	NamedHotspot _item1, _item2, _item3, _item4, _item5;
 	Exit _exit;
-	int _talkAction, _jimFlag;
+	int _talkAction;
+	bool _jimFlag;
 
 	Scene385();
 	virtual void synchronize(Serializer &s);

@@ -5317,8 +5317,7 @@ bool Scene385::Door::startAction(CursorType action, Event &event) {
 bool Scene385::Jim::startAction(CursorType action, Event &event) {
 	Scene385 *scene = (Scene385 *)BF_GLOBALS._sceneManager._scene;
 
-	switch (action) {
-	case CURSOR_TALK:
+	if (action == CURSOR_TALK) {
 		if (scene->_jimFlag) {
 			scene->_talkAction = 3867;
 			scene->setAction(&scene->_action1);
@@ -5342,24 +5341,24 @@ bool Scene385::Jim::startAction(CursorType action, Event &event) {
 				break;
 			}
 
-			scene->_jimFlag = 1;
+			scene->_jimFlag = true;
 			scene->setAction(&scene->_action1);
 		}
 		return true;
-	case INV_PRINT_OUT:
+	} else if (action == INV_PRINT_OUT) {
 		if (!BF_GLOBALS.getFlag(fGotPointsForMCard)) {
 			T2_GLOBALS._uiElements.addScore(30);
-			BF_GLOBALS.getFlag(fGotPointsForMCard);
+			BF_GLOBALS.setFlag(fGotPointsForMCard);
 
 			scene->setAction(&scene->_action2);
 			return true;
-		}
-		break;
-	default:
-		break;
-	}
-
-	return NamedObject::startAction(action, event);
+		} else
+			return false;
+	} else if (action < CURSOR_WALK)
+		// Any other inventory item
+		return false;
+	else 
+		return NamedObject::startAction(action, event);
 }
 
 bool Scene385::Dezi::startAction(CursorType action, Event &event) {
@@ -5430,7 +5429,8 @@ bool Scene385::Exit::startAction(CursorType action, Event &event) {
 
 
 Scene385::Scene385(): SceneExt() {
-	_talkAction = _jimFlag = 0;
+	_talkAction = 0;
+	_jimFlag = false;
 }
 
 void Scene385::synchronize(Serializer &s) {
