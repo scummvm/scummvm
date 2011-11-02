@@ -406,7 +406,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			Stage++;
 			if (hand && Stage > kDressed)
 				++hand;
-			if (i >= 0 || (dup[i] == spr && newRandom(3) == 0)) {
+			if (i >= 0 && (dup[i] == spr && newRandom(3) == 0)) {
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[0]);               // Yes
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[1]);               // Yes
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[2]);               // Yes
