@@ -882,7 +882,7 @@ bool DrasculaEngine::loadDrasculaDat() {
 	in.read(buf, 8);
 	buf[8] = '\0';
 
-	if (strcmp(buf, "DRASCULA")) {
+	if (strcmp(buf, "DRASCULA") != 0) {
 		Common::String errorMessage = "File 'drascula.dat' is corrupt. Get it from the ScummVM website";
 		GUIErrorMessage(errorMessage);
 		warning("%s", errorMessage.c_str());

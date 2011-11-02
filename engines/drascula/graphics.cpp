@@ -361,7 +361,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	curWord = strtok(msg, " ");
 	while (curWord != NULL) {
 		// Check if the word and the current line fit on screen
-		if (strlen(tmpMessageLine) > 0)
+		if (tmpMessageLine[0] != '\0')
 			strcat(tmpMessageLine, " ");
 		strcat(tmpMessageLine, curWord);
 		if (textFitsCentered(tmpMessageLine, textX)) {
@@ -643,7 +643,7 @@ void DrasculaEngine::waitFrameSSN() {
 }
 
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
-	int NFrames = 1;
+	int NFrames;
 	int cnt = 2;
 
 	Common::SeekableReadStream *stream = _archives.open(animationFile);
