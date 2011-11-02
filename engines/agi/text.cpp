@@ -240,7 +240,6 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 
 	while (*s) {
 		pWord = s;
-		wLen = 0;
 
 		while (*s != '\0' && *s != ' ' && *s != '\n' && *s != '\r')
 			s++;
