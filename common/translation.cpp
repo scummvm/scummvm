@@ -390,7 +390,7 @@ bool TranslationManager::checkHeader(File &in) {
 	buf[12] = '\0';
 
 	// Check header
-	if (strcmp(buf, "TRANSLATIONS")) {
+	if (strcmp(buf, "TRANSLATIONS") != 0) {
 		warning("File '%s' is not a valid translations data file. Skipping this file", in.getName());
 		return false;
 	}
