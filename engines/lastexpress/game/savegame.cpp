@@ -158,7 +158,7 @@ void SaveLoad::loadStream(GameId id) {
 	while (!save->eos() && !save->err()) {
 		_engine->pollEvents();
 
-		uint32 count = save->read(buf, sizeof(buf));
+		uint32 count = save->read(buf, sizeof(*buf));
 		if (count) {
 			uint32 w = _savegame->write(buf, count);
 			assert (w == count);
