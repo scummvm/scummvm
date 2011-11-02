@@ -847,13 +847,6 @@ void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
 	_talk_sound_mode |= mode;
 }
 
-/* The sound code currently only supports General Midi.
- * General Midi is used in Day Of The Tentacle.
- * Roland music is also playable, but doesn't sound well.
- * A mapping between roland instruments and GM instruments
- * is needed.
- */
-
 void Sound::setupSound() {
 	delete _sfxFile;
 
