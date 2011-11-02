@@ -360,7 +360,7 @@ AgiInstruction insV2[] = {
 
 void AgiEngine::setupOpcodes() {
 	if (getVersion() >= 0x2000) {
-		for (int i = 0; i <= ARRAYSIZE(insV2Test); ++i)
+		for (int i = 0; i < ARRAYSIZE(insV2Test); ++i)
 			_agiCondCommands[i] = insV2Test[i].func;
 		for (int i = 0; i < ARRAYSIZE(insV2); ++i)
 			_agiCommands[i] = insV2[i].func;
@@ -368,7 +368,7 @@ void AgiEngine::setupOpcodes() {
 		logicNamesTest = insV2Test;
 		logicNamesCmd = insV2;
 	} else {
-		for (int i = 0; i <= ARRAYSIZE(insV1Test); ++i)
+		for (int i = 0; i < ARRAYSIZE(insV1Test); ++i)
 			_agiCondCommands[i] = insV1Test[i].func;
 		for (int i = 0; i < ARRAYSIZE(insV1); ++i)
 			_agiCommands[i] = insV1[i].func;
