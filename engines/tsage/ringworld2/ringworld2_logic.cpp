@@ -222,6 +222,15 @@ void SceneExt::refreshBackground(int xAmount, int yAmount) {
 	DEALLOCATE(dataP);
 }
 
+/**
+ * Saves the current player position and view in the details for the specified character index
+ */
+void SceneExt::saveCharacter(int characterIndex) {
+	R2_GLOBALS._player._characterPos[characterIndex] = R2_GLOBALS._player._position;
+	R2_GLOBALS._player._characterStrip[characterIndex] = R2_GLOBALS._player._strip;
+	R2_GLOBALS._player._characterFrame[characterIndex] = R2_GLOBALS._player._frame;
+}
+
 /*--------------------------------------------------------------------------*/
 
 void SceneHandlerExt::postInit(SceneObjectList *OwnerList) {

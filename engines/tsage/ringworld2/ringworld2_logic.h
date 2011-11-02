@@ -67,6 +67,7 @@ public:
 	virtual void dispatch();
 	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
+	virtual void saveCharacter(int characterIndex);
 
 	bool display(CursorType action);
 	void fadeOut();

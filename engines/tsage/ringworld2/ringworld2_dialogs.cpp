@@ -31,6 +31,7 @@
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
 #include "tsage/ringworld2/ringworld2_dialogs.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -195,11 +196,125 @@ void CharacterDialog::show() {
 	CharacterDialog *dlg = new CharacterDialog();
 	dlg->draw();
 
-	/*GfxButton *btn = */dlg->execute(&dlg->_btnCancel);
+	// Make the default button the currently active character
+	GfxButton *btn = NULL;
+	int oldCharacter = R2_GLOBALS._player._characterIndex;
+	switch (oldCharacter) {
+	case 1:
+		btn = &dlg->_btnQuinn;
+		break;
+	case 2:
+		btn = &dlg->_btnSeeker;
+		break;
+	case 3:
+		btn = &dlg->_btnMiranda;
+		break;
+	default:
+		break;
+	}
 
+	// Show the character selection dialog
+	btn = dlg->execute(btn);
 
+	// Figure out the new selected character
+	if (btn == &dlg->_btnQuinn)
+		R2_GLOBALS._player._characterIndex = 1;
+	else if (btn == &dlg->_btnSeeker)
+		R2_GLOBALS._player._characterIndex = 2;
+	else if (btn == &dlg->_btnMiranda)
+		R2_GLOBALS._player._characterIndex = 3;
+
+	// Remove the dialog
 	dlg->remove();
 	delete dlg;
+
+	// Only do transfer if a different character was selected
+	if (R2_GLOBALS._player._characterIndex != oldCharacter) {
+		// Save the details of the previously active character
+		SceneExt *scene = (SceneExt *)R2_GLOBALS._sceneManager._scene;
+		scene->saveCharacter(oldCharacter);
+
+		// Play a transition sound as the character is changed
+		if (R2_GLOBALS._player._characterScene[0] != 300) {
+			switch (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex]) {
+			case 0:
+				R2_GLOBALS._sound4.stop();
+				break;
+			case 1:
+				R2_GLOBALS._sound4.play(45);
+				break;
+			case 2:
+				R2_GLOBALS._sound4.play(4);
+				break;
+			case 3:
+				R2_GLOBALS._sound4.play(5);
+				break;
+			case 4:
+				R2_GLOBALS._sound4.play(6);
+				break;
+			default:
+				break;
+			}
+		} else if (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex] > 1) {
+			switch (R2_GLOBALS._v565F1[R2_GLOBALS._player._characterIndex]) {
+			case 2:
+				R2_GLOBALS._sound4.play(45);
+				break;
+			case 3:
+				R2_GLOBALS._sound4.play(4);
+				break;
+			case 4:
+				R2_GLOBALS._sound4.play(5);
+				break;
+			case 5:
+				R2_GLOBALS._sound4.play(6);
+				break;
+			default:
+				break;
+			}
+		} else if ((R2_GLOBALS._player._characterScene[1] == 300) && (R2_GLOBALS._v565F1[1] != 1)) {
+			switch (R2_GLOBALS._v565F1[1]) {
+			case 2:
+				R2_GLOBALS._sound4.play(45);
+				break;
+			case 3:
+				R2_GLOBALS._sound4.play(4);
+				break;
+			case 4:
+				R2_GLOBALS._sound4.play(5);
+				break;
+			case 5:
+				R2_GLOBALS._sound4.play(6);
+				break;
+			default:
+				break;
+			}
+		} else if (R2_GLOBALS._player._characterScene[2] != 300) {
+			R2_GLOBALS._sound4.stop();
+		} else if (R2_GLOBALS._v565F1[2] == 1) {
+			R2_GLOBALS._sound4.stop();
+		} else {
+			switch (R2_GLOBALS._v565F1[1]) {
+			case 2:
+				R2_GLOBALS._sound4.play(45);
+				break;
+			case 3:
+				R2_GLOBALS._sound4.play(4);
+				break;
+			case 4:
+				R2_GLOBALS._sound4.play(5);
+				break;
+			case 5:
+				R2_GLOBALS._sound4.play(6);
+				break;
+			default:
+				break;
+			}
+		}
+
+		// Change to whichever scene the newly selected character is in
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex]);
+	}
 }
 
 CharacterDialog::CharacterDialog() {

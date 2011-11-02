@@ -247,6 +247,7 @@ public:
 	int _v565F5;
 	int _v5657C;
 	int _v57C2C;
+	int _v565F1[4];
 
 	virtual void reset();
 	virtual void synchronize(Serializer &s);
