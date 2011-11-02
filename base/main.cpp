@@ -287,7 +287,8 @@ static void setupKeymapper(OSystem &system) {
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(globalMap);
-	mapper->setGlobalKeymap(globalMap);
+
+	mapper->pushKeymap("global", true);
 #endif
 
 }

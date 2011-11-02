@@ -357,26 +357,6 @@ void RemapDialog::loadKeymap() {
 			}
 		}
 
-		// get the mapping out of the global keymap
-		if (_keymapper->getGlobalKeymap()) {
-			List<const HardwareKey*>::iterator keyIt = freeKeys.begin();
-			Keymap *globalKeymap = _keymapper->getGlobalKeymap();
-			while (keyIt != freeKeys.end()) {
-				Action *act = globalKeymap->getMappedAction((*keyIt)->key);
-
-				if (act) {
-					ActionInfo info = {act, true, act->description + " (" + globalKeymap->getName() + ")"};
-					_currentActions.push_back(info);
-					freeKeys.erase(keyIt++);
-				} else {
-					++keyIt;
-				}
-				if (freeKeys.empty())
-					break;
-			}
-
-		}
-
 	} else if (_kmPopUp->getSelected() != -1) {
 		Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 
