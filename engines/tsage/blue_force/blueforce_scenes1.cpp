@@ -3220,9 +3220,11 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 			(BF_GLOBALS._sceneManager._previousScene == 20)) {
 //		clearScreen();
 	}
-	if (BF_GLOBALS._dayNumber == 0)
+	if (BF_GLOBALS._dayNumber == 0) {
 		// If at start of game, change to first day
 		BF_GLOBALS._dayNumber = 1;
+		g_globals->_sceneManager._previousScene = 100;
+	}
 
 	// Load the scene data
 	loadScene(190);

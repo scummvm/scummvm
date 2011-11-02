@@ -315,6 +315,24 @@ void BlueForceGame::processEvent(Event &event) {
 	}
 }
 
+void BlueForceGame::restart() {
+	g_globals->_scenePalette.clearListeners();
+	g_globals->_soundHandler.stop();
+
+	// Reset the globals
+	g_globals->reset();
+
+	// Clear save/load slots
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
+
+	g_globals->_stripNum = 0;
+	g_globals->_events.setCursor(CURSOR_WALK);
+
+	// Change to the first game scene
+	g_globals->_sceneManager.changeScene(190);
+}
+
 /*--------------------------------------------------------------------------*/
 
 AObjectArray::AObjectArray(): EventHandler() {

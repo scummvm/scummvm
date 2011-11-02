@@ -45,6 +45,7 @@ public:
 	virtual void processEvent(Event &event);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
+	virtual void restart();
 };
 
 #define OBJ_ARRAY_SIZE 10
