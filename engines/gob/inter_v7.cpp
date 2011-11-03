@@ -135,7 +135,7 @@ void Inter_v7::o7_intToString() {
 	uint16 valueIndex = _vm->_game->_script->readVarIndex();
 	uint16 destIndex  = _vm->_game->_script->readVarIndex();
 
-	sprintf(GET_VARO_STR(destIndex), "%d", READ_VARO_UINT32(valueIndex));
+	sprintf(GET_VARO_STR(destIndex), "%d", (int32)READ_VARO_UINT32(valueIndex));
 }
 
 void Inter_v7::o7_callFunction() {
