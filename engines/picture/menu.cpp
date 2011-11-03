@@ -55,7 +55,6 @@ int MenuSystem::run() {
 	_newMenuID = kMenuIdMain;
 	_currItemID = kItemIdNone;
 	_editingDescription = false;
-	_needRedraw = false;
 	_cfgText = true;
 	_cfgVoices = true;
 	_cfgMasterVolume = 10;
