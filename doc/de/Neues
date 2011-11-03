@@ -13,6 +13,11 @@ Sie auf Englisch unter:
  Neue Portierungen:
    - Portierung für PlayStation 3 hinzugefügt.
 
+ Allgemein:
+   - ARM-Assembler-Routinen für Stereo-Umkehr bei Audio repariert.
+   - Unterstützung für unkomplizierte Zusammenstellung mit MacPorts
+     hinzugefügt.
+
  AGI:
    - Sound-Unterstützung für die DOS-Version von Winnie the Pooh in the
      Hundred Acre Wood integriert.
@@ -47,11 +52,20 @@ Sie auf Englisch unter:
    - Palettenhandhabung in der Amiga-Version von Indiana Jones and the
      Fate of Atlantis verbessert.
 
+ Sword1:
+   - Aufhängen in Windows-Demo beseitigt.
+   - Absturz beseitigt, wenn Untertitelpaket für Zwischensequenzen in
+     Macintosh-Version verwendet wird.
+
  Tinsel:
    - Löschen von Spielständen aus der Liste der Speicherstände korrigiert (im
      Startmenü und im ScummVM-Menü innerhalb des Spiels).
    - Die US-Version von Discworld II zeigt nun den korrekten Titelbildschirm und
      die richtige Sprachenflagge.
+
+ Android-Portierung:
+   - Plugins bei Android 3.x repariert.
+   - Standardmäßigen Speicherort für Spielstände auf SD-Karte verschoben.
 
 1.3.1 (12.07.2011)
  Allgemein:
