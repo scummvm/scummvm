@@ -606,8 +606,6 @@ void Sound::playVoice(uint sound) {
 			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, true, -1500);
 		else
 			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, true);
-	} else if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
-		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	} else {
 		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	}
