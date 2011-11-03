@@ -200,10 +200,11 @@ int AgiEngine::mainCycle() {
 	// vars in every interpreter cycle.
 	//
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || true) {
+	//if (getFeatures() & GF_AGIMOUSE) {
 		_game.vars[28] = _mouse.x / 2;
 		_game.vars[29] = _mouse.y;
-	}
+	//}
+
 	if (key == KEY_PRIORITY) {
 		_sprites->eraseBoth();
 		_debug.priority = !_debug.priority;
@@ -315,7 +316,7 @@ int AgiEngine::playGame() {
 	_game.lineUserInput = 22;
 
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || true)
+	//if (getFeatures() & GF_AGIMOUSE)
 		debug(1, "Using AGI Mouse 1.0 protocol");
 
 	if (getFeatures() & GF_AGIPAL)
