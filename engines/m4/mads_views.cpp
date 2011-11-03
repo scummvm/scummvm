@@ -228,7 +228,7 @@ void MadsAction::refresh() {
 		_statusTextIndex = -1;
 	}
 
-	if (strlen(_statusText) != 0) {
+	if (_statusText[0] != '\0') {
 		if ((_owner._screenObjects._v832EC == 0) || (_owner._screenObjects._v832EC == 2)) {
 			Font *font = _madsVm->_font->getFont(FONT_MAIN_MADS);
 			int textSpacing = -1;

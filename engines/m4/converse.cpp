@@ -116,7 +116,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 			// Add node to active items list
 			_activeItems.push_back(node->entries[i]);
 
-			if (node->entries[i]->autoSelect || strlen(node->entries[i]->text) == 0) {
+			if (node->entries[i]->autoSelect || node->entries[i]->text[0] == '\0') {
 				//warning(kDebugConversations, "Auto selecting entry %i of node %i\n", i, nodeIndex);
 				selectEntry(i);
 				return;
@@ -217,7 +217,7 @@ void ConversationView::selectEntry(int entryIndex) {
 	_highlightedIndex = entryIndex;
 
 	// Play the selected entry's voice
-	if (strlen(_activeItems[entryIndex]->voiceFile) > 0) {
+	if (_activeItems[entryIndex]->voiceFile[0] != '\0') {
 		_currentHandle = _vm->_sound->getHandle();
 		_vm->_sound->playVoice(buffer, 255);
 	} else {
@@ -273,7 +273,7 @@ void ConversationView::playNextReply() {
 
 		if (currentEntry->entryType != kWeightedReply) {
 			sprintf(buffer, "%s.raw", currentEntry->voiceFile);
-			if (strlen(currentEntry->voiceFile) > 0) {
+			if (currentEntry->voiceFile[0] != '\0') {
 				_currentHandle = _vm->_sound->getHandle();
 				_vm->_sound->playVoice(buffer, 255);
 				// Remove reply from the list of replies
@@ -293,7 +293,7 @@ void ConversationView::playNextReply() {
 				currentWeight += currentEntry->entries[j]->weight;
 				if (selectedWeight >= previousWeight && selectedWeight <= currentWeight) {
 					sprintf(buffer, "%s.raw", currentEntry->entries[j]->voiceFile);
-					if (strlen(currentEntry->entries[j]->voiceFile) > 0) {
+					if (currentEntry->entries[j]->voiceFile[0] != '\0') {
 						_currentHandle = _vm->_sound->getHandle();
 						_vm->_sound->playVoice(buffer, 255);
 						// Remove reply from the list of replies

@@ -117,8 +117,6 @@ void Dialog::writeChars(const char *srcLine) {
 			destP = &wordStr[0];
 		*destP = '\0';
 
-		lineLen = strlen(wordStr);
-
 		strcpy(line, "");
 		if (_lineX > 0)
 			strcat(line, " ");

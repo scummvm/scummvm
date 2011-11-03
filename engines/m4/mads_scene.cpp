@@ -176,7 +176,7 @@ void MadsScene::loadScene(int sceneNumber) {
 		_sceneLogic.doEnterScene();
 
 	// Miscellaneous player setup
-	_madsVm->_player._destPos = _madsVm->_player._destPos;
+	//_madsVm->_player._destPos = _madsVm->_player._destPos;
 	_madsVm->_player._newDirection = _madsVm->_player._direction;
 	_madsVm->_player.setupFrame();
 	_madsVm->_player.updateFrame();
