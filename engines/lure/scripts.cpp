@@ -499,7 +499,7 @@ void Script::fixGoewin(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->currentActions().clear();
 	hotspot->currentActions().addFront(DISPATCH_ACTION, entry, hotspot->roomNumber());
 
-	hotspot->setActions(hotspot->resource()->actions & !(1 << (TELL - 1)));
+	hotspot->setActions(hotspot->resource()->actions & ~(1 << (TELL - 1)));
 	hotspot->setActionCtr(0);
 	hotspot->setDelayCtr(0);
 	hotspot->setCharacterMode(CHARMODE_NONE);
