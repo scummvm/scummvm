@@ -49,11 +49,11 @@ JAVACFLAGS = -source 1.5 -target 1.5
 
 # This is a bit silly.  I want to compile against the 1.6 android.jar,
 # to make the compiler check that I don't use something that requires
-# a newer Android.  However, in order to use android:installLocation,
-# we need to give aapt a version >=8 android.jar - even though the
+# a newer Android.  However, in order to use android:xlargeScreens,
+# we need to give aapt a version >=10 android.jar - even though the
 # result will work ok on 1.5+.
 ANDROID_JAR = $(ANDROID_SDK)/platforms/android-4/android.jar
-ANDROID_JAR8 = $(ANDROID_SDK)/platforms/android-8/android.jar
+ANDROID_JAR10 = $(ANDROID_SDK)/platforms/android-10/android.jar
 
 PATH_BUILD = build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
@@ -92,9 +92,9 @@ $(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
 	@$(MKDIR) -p $(@D)
 	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
-$(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR8)
+$(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR10)
 	@$(MKDIR) -p $(PATH_GEN_TOP)
-	$(AAPT) package -m -J $(PATH_GEN_TOP) -M $< -S $(PATH_RESOURCES) -I $(ANDROID_JAR8)
+	$(AAPT) package -m -J $(PATH_GEN_TOP) -M $< -S $(PATH_RESOURCES) -I $(ANDROID_JAR10)
 
 $(PATH_CLASSES_MAIN)/%.class: $(PATH_GEN)/%.java $(SRC_GEN)
 	@$(MKDIR) -p $(@D)
@@ -127,7 +127,7 @@ $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png: $(PATH_RESOURCES)/drawable/scum
 	@$(MKDIR) -p $(@D)
 	$(CP) $< $@
 
-$(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
+$(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR10) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(PATH_BUILD_ASSETS)/
 	work_dir=`pwd`; \
@@ -141,10 +141,10 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FIL
 		zip -r ../`basename $$i` *; \
 	done
 	@$(RM) -rf $(PATH_BUILD_ASSETS)/tmp
-	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR8) -F $@
+	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR10) -F $@
 
-$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png plugins/lib%.so $(ANDROID_JAR8)
-	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR8) -F $@
+$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png plugins/lib%.so $(ANDROID_JAR10)
+	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR10) -F $@
 
 # Package installer won't delete old libscummvm.so on upgrade so
 # replace it with a zero size file

@@ -7,7 +7,7 @@
 		android:installLocation="preferExternal"
 		android:sharedUserId="org.scummvm.scummvm">
 
-	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="8" />
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="10" />
 
 	<application android:label="@string/app_name"
 			android:description="@string/app_desc"
@@ -24,12 +24,12 @@
 	</application>
 
 	<uses-permission android:name="org.scummvm.scummvm.permission.SCUMMVM_PLUGIN"/>
-	<uses-configuration android:reqFiveWayNav="true"
+	<!-- <uses-configuration android:reqFiveWayNav="true"
 			android:reqKeyboardType="qwerty"/>
 
 	<uses-configuration android:reqTouchScreen="finger"
 			android:reqKeyboardType="qwerty"/>
 
 	<uses-configuration android:reqTouchScreen="stylus"
-			android:reqKeyboardType="qwerty"/>
+			android:reqKeyboardType="qwerty"/> -->
 </manifest>
