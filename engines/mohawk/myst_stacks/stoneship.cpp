@@ -655,7 +655,7 @@ void Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_state.generatorPowerAvailable = 2;
 		_state.lightState = 0;
 		_state.generatorDepletionTime = 0;
-		_state.generatorDepletionTime = 0;
+		_state.generatorDuration = 0;
 
 		_batteryDepleting = false;
 	}
