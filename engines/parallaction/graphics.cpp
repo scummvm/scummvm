@@ -596,20 +596,22 @@ void Gfx::updateFloatingLabel() {
 	Common::Rect r;
 	_floatingLabel->getRect(0, r);
 
+	FloatingLabelTraits traits_NS = {
+		Common::Point(16 - r.width()/2, 34),
+		Common::Point(8 - r.width()/2, 21),
+		0, 0, _vm->_screenWidth - r.width(), 190
+	};
+
+	// FIXME: _maxY for BRA is not constant (390), but depends on _vm->_subtitleY
+	FloatingLabelTraits traits_BR = {
+		Common::Point(34 - r.width()/2, 70),
+		Common::Point(16 - r.width()/2, 37),
+		0, 0, _vm->_screenWidth - r.width(), 390
+	};
+
 	if (_gameType == GType_Nippon) {
-		FloatingLabelTraits traits_NS = {
-			Common::Point(16 - r.width()/2, 34),
-			Common::Point(8 - r.width()/2, 21),
-			0, 0, _vm->_screenWidth - r.width(), 190
-		};
 		traits = &traits_NS;
 	} else {
-		// FIXME: _maxY for BRA is not constant (390), but depends on _vm->_subtitleY
-		FloatingLabelTraits traits_BR = {
-			Common::Point(34 - r.width()/2, 70),
-			Common::Point(16 - r.width()/2, 37),
-			0, 0, _vm->_screenWidth - r.width(), 390
-		};
 		traits = &traits_BR;
 	}
 

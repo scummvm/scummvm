@@ -49,7 +49,7 @@ Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
 	char s[20];
-	sprintf(s, "%s.%.3d", _saveFilePrefix.c_str(), slot);
+	sprintf(s, "%s.%.3u", _saveFilePrefix.c_str(), slot);
 
 	return Common::String(s);
 }
