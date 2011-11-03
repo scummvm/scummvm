@@ -292,7 +292,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 		if (_vm->_game.features & GF_SMALL_HEADER) {
 			size = file.readUint16LE();
 			file.seek(-2, SEEK_CUR);
-		} else if (_vm->_game.features & GF_SMALL_HEADER) {
+		} else if (_vm->_game.features & GF_SMALL_HEADER) { // FIXME: This never was executed
 			if (_vm->_game.version == 4)
 				file.seek(8, SEEK_CUR);
 			size = file.readUint32LE();
