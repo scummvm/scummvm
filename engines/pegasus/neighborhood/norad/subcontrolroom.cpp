@@ -928,6 +928,7 @@ void SubControlRoom::setControlMonitorToTime(const TimeValue newTime, const int 
 	_subControlMovie.stop();
 	_subControlMovie.setSegment(0, _subControlMovie.getDuration());
 	_subControlMovie.setTime(newTime);
+	_subControlMovie.redrawMovieWorld();
 	_gameState = newState;
 	allowInput(shouldAllowInput);
 }
@@ -969,6 +970,7 @@ void SubControlRoom::setClawMonitorToTime(const TimeValue newTime) {
 	_clawMonitorMovie.stop();
 	_clawMonitorMovie.setSegment(0, _clawMonitorMovie.getDuration());
 	_clawMonitorMovie.setTime(newTime);
+	_clawMonitorMovie.redrawMovieWorld();
 }
 
 void SubControlRoom::playClawMonitorSection(const TimeValue in, const TimeValue out, const tNotificationFlags flags,
