@@ -1842,7 +1842,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	if (_dumpScripts) {
 		char buf[32];
 		const byte *ptr = foir.obcd;
-		sprintf(buf, "roomobj-%d-", room);
+		sprintf(buf, "roomobj-%u-", room);
 		ptr = findResource(MKTAG('V','E','R','B'), ptr);
 		dumpResource(buf, object, ptr);
 	}

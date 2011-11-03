@@ -524,14 +524,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 
 		_sfxFile->close();
-		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
+		sprintf(filename, "audio/%s.%u/%u.voc", roomname, offset, b);
 		_vm->openFile(*_sfxFile, filename);
 		if (!_sfxFile->isOpen()) {
-			sprintf(filename, "audio/%s_%d/%d.voc", roomname, offset, b);
+			sprintf(filename, "audio/%s_%u/%u.voc", roomname, offset, b);
 			_vm->openFile(*_sfxFile, filename);
 		}
 		if (!_sfxFile->isOpen()) {
-			sprintf(filename, "%d.%d.voc", offset, b);
+			sprintf(filename, "%u.%u.voc", offset, b);
 			_vm->openFile(*_sfxFile, filename);
 		}
 		if (!_sfxFile->isOpen()) {
