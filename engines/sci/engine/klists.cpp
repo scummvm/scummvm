@@ -409,7 +409,7 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 	const sort_temp_t *st1 = (const sort_temp_t *)p1;
 	const sort_temp_t *st2 = (const sort_temp_t *)p2;
 
-	if (st1->order.segment < st1->order.segment || (st1->order.segment == st1->order.segment && st1->order.offset < st2->order.offset))
+	if (st1->order.segment < st2->order.segment || (st1->order.segment == st2->order.segment && st1->order.offset < st2->order.offset))
 		return -1;
 
 	if (st1->order.segment > st2->order.segment || (st1->order.segment == st2->order.segment && st1->order.offset > st2->order.offset))
