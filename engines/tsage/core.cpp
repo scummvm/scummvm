@@ -1855,7 +1855,6 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_moveDiff.x = 5;
 	_moveDiff.y = 3;
 	_numFrames = 10;
-	_numFrames = 10;
 	_moveRate = 10;
 	_regionBitList = 0;
 	_sceneRegionId = 0;

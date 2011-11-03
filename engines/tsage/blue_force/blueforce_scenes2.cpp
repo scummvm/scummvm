@@ -1152,7 +1152,6 @@ void Scene270::signal() {
 		_grandma.setStrip(8);
 		_grandma._frame = 5;
 		_field384 = 1;
-		_field384 = 1;
 
 		BF_GLOBALS._player._moveDiff.x = 8;
 		BF_GLOBALS._player.enableControl();
