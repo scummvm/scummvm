@@ -1255,17 +1255,22 @@ void PegasusEngine::useNeighborhood(Neighborhood *neighborhood) {
 	}
 }
 
-void PegasusEngine::performJump(const tNeighborhoodID neighborhoodID) {
+void PegasusEngine::performJump(tNeighborhoodID neighborhoodID) {
+	if (_neighborhood)
+		useNeighborhood(0);
+
 	// Sub chase is special
 	if (neighborhoodID == kNoradSubChaseID) {
 		throwAwayEverything();
 		doSubChase();
-		jumpToNewEnvironment(kNoradDeltaID, kNorad41, kEast);
-		return;
-	}
 
-	if (_neighborhood)
-		useNeighborhood(0);
+		if (shouldQuit())
+			return;
+
+		neighborhoodID = kNoradDeltaID;
+		GameState.setNextRoom(kNorad41);
+		GameState.setNextDirection(kEast);
+	}
 
 	Neighborhood *neighborhood;
 	makeNeighborhood(neighborhoodID, neighborhood);
@@ -1273,10 +1278,10 @@ void PegasusEngine::performJump(const tNeighborhoodID neighborhoodID) {
 }
 
 void PegasusEngine::startNeighborhood() {
-	if (_currentItemID != kNoItemID)
+	if (g_interface && _currentItemID != kNoItemID)
 		g_interface->setCurrentInventoryItemID(_currentItemID);
 	
-	if (_currentBiochipID != kNoItemID)
+	if (g_interface && _currentBiochipID != kNoItemID)
 		g_interface->setCurrentBiochipID(_currentBiochipID);
 	
 	setGameMode(kModeNavigation);
@@ -1344,7 +1349,7 @@ void PegasusEngine::startNewGame() {
 
 void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhood *&neighborhood) {
 	// TODO: CD check
-	
+
 	switch (neighborhoodID) {
 	case kCaldoriaID:
 		neighborhood = new Caldoria(g_AIArea, this);
@@ -1367,8 +1372,12 @@ void PegasusEngine::makeNeighborhood(tNeighborhoodID neighborhoodID, Neighborhoo
 	case kNoradAlphaID:
 		neighborhood = new NoradAlpha(g_AIArea, this);
 		break;
+	case kNoradDeltaID:
+		createInterface();
+		error("TODO: Norad Delta");
+		break;
 	default:
-		error("Unhandled neighborhood %d", neighborhoodID);
+		error("Unknown neighborhood %d", neighborhoodID);
 	}
 }
 

@@ -265,7 +265,7 @@ private:
 	// Neighborhood
 	Neighborhood *_neighborhood;
 	void useNeighborhood(Neighborhood *neighborhood);
-	void performJump(const tNeighborhoodID start);
+	void performJump(tNeighborhoodID start);
 	void startNewGame();
 	void startNeighborhood();
 	void makeNeighborhood(tNeighborhoodID, Neighborhood *&);
