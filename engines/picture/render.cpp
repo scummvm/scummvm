@@ -249,7 +249,7 @@ RenderQueueItem *RenderQueue::findItemInQueue(RenderQueueArray *queue, const Ren
 
 bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueueItem &item2) {
 
-	if (item1.type != item1.type)
+	if (item1.type != item2.type)
 		return true;
 		
 	if (item1.rect.left != item2.rect.left ||
