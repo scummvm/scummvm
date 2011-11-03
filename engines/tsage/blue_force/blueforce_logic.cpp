@@ -773,6 +773,7 @@ void SceneExt::loadScene(int sceneNum) {
 
 	_v51C34.top = 0;
 	_v51C34.bottom = 300;
+	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 
 void SceneExt::checkGun() {
