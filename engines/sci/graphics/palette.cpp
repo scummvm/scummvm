@@ -966,7 +966,7 @@ void GfxPalette::loadMacIconBarPalette() {
 }
 
 bool GfxPalette::colorIsFromMacClut(byte index) {
-	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 1] != 0);
+	return index != 0 && _macClut && (_macClut[index * 3] != 0 || _macClut[index * 3 + 1] != 0 || _macClut[index * 3 + 2] != 0);
 }
 
 #ifdef ENABLE_SCI32
