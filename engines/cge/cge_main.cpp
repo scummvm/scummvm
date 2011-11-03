@@ -185,7 +185,7 @@ void CGEEngine::syncHeader(Common::Serializer &s) {
 		s.syncAsUint16LE(checksum);
 	} else {
 		// Read checksum and validate it
-		uint16 checksum;
+		uint16 checksum = 0;
 		s.syncAsUint16LE(checksum);
 		if (checksum != kSavegameCheckSum)
 			error("%s", _text->getText(kBadSVG));
