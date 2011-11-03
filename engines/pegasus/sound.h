@@ -28,6 +28,7 @@
 
 #include "audio/mixer.h"
 #include "common/str.h"
+#include "pegasus/timers.h"
 
 namespace Audio {
 	class SeekableAudioStream;
@@ -67,7 +68,6 @@ public:
 	void playSound();
 	void loopSound();
 	void playSoundSegment(uint32 start, uint32 end);
-	void loopSoundSegment(uint32 start, uint32 end);
 	void stopSound();
 	void setVolume(const uint16 volume);
 	bool isPlaying();
@@ -80,6 +80,27 @@ protected:
 	byte _volume;
 
 	SoundFader *_fader;
+};
+
+// TODO: Make this class follow TimeBase better
+// Right now it's just a loose wrapper to plug callbacks
+// into sounds. Since this is only used for spot sounds,
+// I'm not too worried about it right now as its usage
+// is very limited.
+// At the very least, the regular TimeBase functions for
+// setting/getting should be neutered.
+class SoundTimeBase : public Sound, public TimeBase {
+public:
+	SoundTimeBase();
+	~SoundTimeBase() {}
+
+	void playSoundSegment(uint32 start, uint32 end);
+
+protected:
+	void updateTime();
+
+private:
+	bool _setToStart;
 };
 
 } // End of namespace Pegasus

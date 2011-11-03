@@ -116,17 +116,6 @@ void Sound::playSoundSegment(uint32 start, uint32 end) {
 	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, subStream, -1, _volume, 0, DisposeAfterUse::YES);
 }
 
-void Sound::loopSoundSegment(uint32 start, uint32 end) {
-	if (!isSoundLoaded())
-		return;
-
-	stopSound();
-
-	Audio::AudioStream *subLoopStream = new Audio::SubLoopingAudioStream(_stream, 0, Audio::Timestamp(0, start, 600), Audio::Timestamp(0, end, 600), DisposeAfterUse::NO);
-
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, subLoopStream, -1, _volume, 0, DisposeAfterUse::YES);
-}
-
 void Sound::stopSound() {
 	g_system->getMixer()->stopHandle(_handle);
 }
@@ -145,6 +134,44 @@ bool Sound::isPlaying() {
 
 bool Sound::isSoundLoaded() const {
 	return _stream != 0;
+}
+
+SoundTimeBase::SoundTimeBase() {
+	setScale(600);
+	_startScale = 600;
+	_stopScale = 600;
+	_setToStart = false;
+}
+
+void SoundTimeBase::playSoundSegment(uint32 startTime, uint32 endTime) {
+	_startTime = startTime;
+	_stopTime = endTime;
+	_setToStart = true;
+	_time = Common::Rational(startTime, getScale());
+	setRate(1);
+	Sound::playSoundSegment(startTime, endTime);
+}
+
+void SoundTimeBase::updateTime() {
+	if (_setToStart) {
+		if (isPlaying()) {
+			// Not at the end, let's get the time
+			uint numFrames = g_system->getMixer()->getSoundElapsedTime(_handle) * 600 / 1000;
+
+			// WORKAROUND: Our mixer is woefully inaccurate and quite often returns
+			// times that exceed the actual length of the clip. We'll just fake times
+			// that are under the final time to ensure any trigger for the end time is
+			// only sent when the sound has actually stopped.
+			if (numFrames >= (_stopTime - _startTime))
+				numFrames = _stopTime - _startTime - 1;
+
+			_time = Common::Rational(_startTime + numFrames, getScale());
+		} else {
+			// Assume we reached the end
+			_setToStart = false;
+			_time = Common::Rational(_stopTime, getScale());
+		}
+	}
 }
 
 } // End of namespace Pegasus
