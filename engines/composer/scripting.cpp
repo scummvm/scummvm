@@ -122,6 +122,11 @@ void ComposerEngine::runEvent(uint16 id, int16 param1, int16 param2, int16 param
 }
 
 int16 ComposerEngine::runScript(uint16 id, int16 param1, int16 param2, int16 param3) {
+	if (getGameType() == GType_ComposerV1) {
+		runOldScript(id, param1);
+		return 0;
+	}
+
 	_vars[1] = param1;
 	_vars[2] = param2;
 	_vars[3] = param3;
@@ -155,10 +160,14 @@ void ComposerEngine::setArg(uint16 arg, uint16 type, uint16 val) {
 	default:
 		error("invalid argument type %d (setting arg %d)", type, arg);
 	}
-
 }
 
 void ComposerEngine::runScript(uint16 id) {
+	if (getGameType() == GType_ComposerV1) {
+		runOldScript(id, 0);
+		return;
+	}
+
 	if (!hasResource(ID_SCRP, id)) {
 		debug(1, "ignoring attempt to run script %d, because it doesn't exist", id);
 		return;
@@ -724,6 +733,123 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	default:
 		error("unknown scriptFuncCall %d(%d, %d, %d)", (uint32)id, param1, param2, param3);
 	}
+}
+
+OldScript::OldScript(uint16 id, Common::SeekableReadStream *stream) : _id(id), _stream(stream) {
+	_size = _stream->readUint32LE();
+	_stream->skip(2);
+	_currDelay = 0;
+}
+
+OldScript::~OldScript() {
+	delete _stream;
+}
+
+void ComposerEngine::runOldScript(uint16 id, uint16 wait) {
+	// FIXME: kill any old script
+
+	Common::SeekableReadStream *stream = getResource(ID_SCRP, id);
+	OldScript *script = new OldScript(id, stream);
+	script->_currDelay = wait;
+	_oldScripts.push_back(script);
+}
+
+void ComposerEngine::tickOldScripts() {
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
+		if (!tickOldScript(*i)) {
+			delete *i;
+			i = _oldScripts.reverse_erase(i);
+		}
+	}
+}
+
+enum {
+	kOldOpNoOp = 0,
+	kOldOpDrawSprite = 1,
+	kOldOpPlayWav = 2,
+	kOldOpRunScript = 3,
+	// FIXME
+	kOldOpDisableMouseInput = 9,
+	kOldOpEnableMouseInput = 10,
+	kOldOpWait = 11,
+	kOldOpPlayPipe = 16,
+	// FIXME
+	kOldOpNewScreen = 20
+	// FIXME
+};
+
+bool ComposerEngine::tickOldScript(OldScript *script) {
+	if (script->_currDelay) {
+		script->_currDelay--;
+		return true;
+	}
+
+	script->_stream->skip(0);
+	bool running = true;
+	while (running && script->_stream->pos() < (int)script->_size) {
+		byte op = script->_stream->readByte();
+		switch (op) {
+		case kOldOpNoOp:
+			debug(3, "kOldOpNoOp");
+			running = false;
+			break;
+		case kOldOpDrawSprite:
+			uint16 spriteId, x, y;
+			spriteId = script->_stream->readUint16LE();
+			x = script->_stream->readUint16LE();
+			y = script->_stream->readUint16LE();
+			// FIXME
+			break;
+		case kOldOpRunScript:
+			uint16 newScriptId;
+			newScriptId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRunScript(%d)", newScriptId);
+			if (newScriptId == script->_id) {
+				// reset ourselves
+				// FIXME: erase sprite
+				script->_stream->seek(6);
+			} else {
+				runScript(newScriptId);
+			}
+			break;
+		case kOldOpDisableMouseInput:
+			debug(3, "kOldOpDisableMouseInput");
+			setCursorVisible(false);
+			break;
+		case kOldOpEnableMouseInput:
+			debug(3, "kOldOpEnableMouseInput");
+			setCursorVisible(true);
+			break;
+		case kOldOpWait:
+			script->_currDelay = script->_stream->readUint16LE();
+			debug(3, "kOldOpWait(%d)", script->_currDelay);
+			break;
+		case kOldOpPlayPipe:
+			uint16 pipeId;
+			pipeId = script->_stream->readUint16LE();
+			debug(3, "kOldOpPlayPipe(%d)", pipeId);
+			// FIXME
+			break;
+		case kOldOpNewScreen:
+			uint16 newScreenId;
+			newScreenId = script->_stream->readUint16LE();
+			debug(3, "kOldOpNewScreen(%d)", newScreenId);
+			if (!newScreenId) {
+				quitGame();
+			} else {
+				_pendingPageChanges.clear();
+				_pendingPageChanges.push_back(PendingPageChange(newScreenId, false));
+			}
+			break;
+		default:
+			// FIXME: error
+			warning("unknown oldScript op %d", op);
+		}
+	}
+
+	// FIXME: EraseSprite and give up if we exceded size
+
+	return true;
 }
 
 } // End of namespace Composer

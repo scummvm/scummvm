@@ -116,6 +116,18 @@ struct PendingPageChange {
 	bool _remove;
 };
 
+struct OldScript {
+	OldScript(uint16 id, Common::SeekableReadStream *stream);
+	~OldScript();
+
+	uint16 _id;
+
+	uint32 _size;
+	Common::SeekableReadStream *_stream;
+
+	uint32 _currDelay;
+};
+
 class ComposerEngine : public Engine {
 protected:
 	Common::Error run();
@@ -156,6 +168,7 @@ private:
 	Common::Array<uint16> _stack;
 	Common::Array<uint16> _vars;
 
+	Common::List<OldScript *> _oldScripts;
 	Common::Array<QueuedScript> _queuedScripts;
 	Common::List<Animation *> _anims;
 	Common::List<Pipe *> _pipes;
@@ -189,6 +202,9 @@ private:
 	void setArg(uint16 arg, uint16 type, uint16 val);
 	void runScript(uint16 id);
 	int16 scriptFuncCall(uint16 id, int16 param1, int16 param2, int16 param3);
+	void runOldScript(uint16 id, uint16 wait);
+	void tickOldScripts();
+	bool tickOldScript(OldScript *script);
 
 	void playAnimation(uint16 animId, int16 param1, int16 param2, int16 param3);
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);

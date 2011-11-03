@@ -53,6 +53,8 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 ComposerEngine::~ComposerEngine() {
 	DebugMan.clearAllDebugChannels();
 
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
+		delete *i;
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		delete i->_archive;
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++)
@@ -156,6 +158,7 @@ Common::Error ComposerEngine::run() {
 
 			redraw();
 
+			tickOldScripts();
 			processAnimFrame();
 		} else if (_needsUpdate) {
 			redraw();
@@ -326,6 +329,17 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 }
 
 void ComposerEngine::loadLibrary(uint id) {
+	if (getGameType() == GType_ComposerV1 && !_libraries.empty()) {
+		// kill the previous page, starting with any scripts running on it
+
+		for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
+			delete *i;
+		_oldScripts.clear();
+
+		Library *library = &_libraries.front();
+		unloadLibrary(library->_id);
+	}
+
 	Common::String filename;
 
 	if (getGameType() == GType_ComposerV1) {
