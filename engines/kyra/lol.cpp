@@ -1922,8 +1922,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	stopPortraitSpeechAnim();
 
 	if (charId < 0) {
-		charId = ch = (_rnd.getRandomNumber(0x7fff) * countActiveCharacters()) / 0x8000;
-		ch = _rnd.getRandomNumber(countActiveCharacters() - 1);
+		charId = ch = _rnd.getRandomNumber(countActiveCharacters() - 1);
 	} else if (charId > 0) {
 		int i = 0;
 
