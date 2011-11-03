@@ -135,6 +135,7 @@ void PressureDoor::openInteraction() {
 	_levelsMovie.startDisplaying();
 	_levelsMovie.setSegment(kLevelsSplashStart * _levelsScale, kLevelsSplashStop * _levelsScale);
 	_levelsMovie.setTime(kLevelsSplashStart * _levelsScale);
+	_levelsMovie.redrawMovieWorld();
 	_levelsMovie.show();
 	
 	_pressureCallBack.setNotification(&_pressureNotification);
@@ -156,6 +157,7 @@ void PressureDoor::openInteraction() {
 	_typeMovie.setDisplayOrder(kPressureTypeOrder);
 	_typeMovie.startDisplaying();
 	_typeMovie.setTime(kDoorSealedTime * _typeScale);
+	_typeMovie.redrawMovieWorld();
 
 	SpriteFrame *frame = new SpriteFrame();
 	if (_isUpperDoor)
@@ -326,6 +328,7 @@ void PressureDoor::receiveNotification(Notification *notification, const tNotifi
 				_typeMovie.stop();
 				_typeMovie.setSegment(0, _typeMovie.getDuration());
 				_typeMovie.setTime(kDecreasingPressureTime * _typeScale);
+				_typeMovie.redrawMovieWorld();
 				_typeMovie.show();
 				_downButton.show();
 				_downButton.setCurrentFrameIndex(1);
@@ -346,6 +349,7 @@ void PressureDoor::receiveNotification(Notification *notification, const tNotifi
 			switch (_gameState) {
 			case kPlayingPressureMessage:
 				_typeMovie.setTime(kEqualizeTime * _typeScale);
+				_typeMovie.redrawMovieWorld();
 				owner->requestDelay(1, 5, kFilterNoInput, 0);
 				owner->requestSpotSound(_equalizeSoundIn, _equalizeSoundOut, kFilterNoInput, 0);
 				owner->requestDelay(1, 5, kFilterNoInput, kDelayCompletedFlag);
@@ -371,6 +375,7 @@ void PressureDoor::receiveNotification(Notification *notification, const tNotifi
 			_levelsMovie.stop();
 			_levelsMovie.setSegment(0, _levelsMovie.getDuration());
 			_levelsMovie.setTime((GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
+			_levelsMovie.redrawMovieWorld();
 
 			if (GameState.getNoradSubRoomPressure() != kNormalSubRoomPressure) {
 				_typeMovie.show();
@@ -460,7 +465,9 @@ void PressureDoor::incrementPressure(const tHotSpotID id) {
 		if (GameState.getNoradSubRoomPressure() < kMaxPressure) {
 			GameState.setNoradSubRoomPressure(GameState.getNoradSubRoomPressure() + 1);
 			_levelsMovie.setTime((GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
+			_levelsMovie.redrawMovieWorld();
 			_typeMovie.setTime(kIncreasingPressureTime * _typeScale);
+			_typeMovie.redrawMovieWorld();
 			_typeMovie.show();
 			g_AIArea->checkMiddleArea();
 		} else {
@@ -470,7 +477,9 @@ void PressureDoor::incrementPressure(const tHotSpotID id) {
 		if (GameState.getNoradSubRoomPressure() > kMinPressure) {
 			GameState.setNoradSubRoomPressure(GameState.getNoradSubRoomPressure() - 1);
 			_levelsMovie.setTime((GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
+			_levelsMovie.redrawMovieWorld();
 			_typeMovie.setTime(kDecreasingPressureTime * _typeScale);
+			_typeMovie.redrawMovieWorld();
 			_typeMovie.show();
 			g_AIArea->checkMiddleArea();
 		} else {
@@ -521,6 +530,7 @@ void PressureDoor::doSolve() {
 	if (_playingAgainstRobot) {
 		GameState.setNoradSubRoomPressure(11);
 		_levelsMovie.setTime((11 + kPressureBase) * _levelsScale);
+		_levelsMovie.redrawMovieWorld();
 		_typeMovie.setSegment(kMaxPressureLoopStart * _typeScale, kMaxPressureLoopStop * _typeScale);
 		_typeMovie.setFlags(kLoopTimeBase);
 		_typeMovie.show();
@@ -529,6 +539,7 @@ void PressureDoor::doSolve() {
 	} else {
 		GameState.setNoradSubRoomPressure(kNormalSubRoomPressure);
 		_levelsMovie.setTime((kNormalSubRoomPressure + kPressureBase) * _levelsScale);
+		_levelsMovie.redrawMovieWorld();
 		_typeMovie.setSegment(kOpeningDoorLoopStart * _typeScale, kOpeningDoorLoopStop * _typeScale);
 		_typeMovie.setFlags(kLoopTimeBase);
 		_typeMovie.show();
