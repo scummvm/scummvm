@@ -621,11 +621,9 @@ void buildSegment() {
 
 unsigned char *drawPolyMode1(unsigned char *dataPointer, int linesToDraw) {
 	int index;
-	int16 *pBufferDest;
+	int16 *pBufferDest = polyBuffer4 + nbseg * 2;
 
-	pBufferDest = polyBuffer4 + nbseg * 2;
 	nbseg = linesToDraw;
-	A2ptr = polyBuffer4;
 	index = *(dataPointer++);
 
 	polyXMin = polyXMax = pBufferDest[-2] = pBufferDest[-2 + linesToDraw * 2] = polyBuffer2[index * 2];
