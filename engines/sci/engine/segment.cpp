@@ -143,6 +143,7 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
+		// FIXME: Second 660 has to be either fixed or removed
 		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
 			&& g_sci->getGameId() == GID_LAURABOW2) {
 			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
