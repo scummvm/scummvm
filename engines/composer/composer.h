@@ -149,6 +149,7 @@ private:
 
 	uint _directoriesToStrip;
 	Common::ConfigFile _bookIni;
+	Common::String _bookGroup;
 	Common::List<Library> _libraries;
 	Common::Array<PendingPageChange> _pendingPageChanges;
 

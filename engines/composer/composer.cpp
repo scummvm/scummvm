@@ -316,9 +316,31 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 }
 
 void ComposerEngine::loadLibrary(uint id) {
-	if (!id)
-		id = atoi(getStringFromConfig("Common", "StartUp").c_str());
-	Common::String filename = getFilename("Libs", id);
+	Common::String filename;
+
+	if (getGameType() == GType_ComposerV1) {
+		if (!id || _bookGroup.empty())
+			filename = getStringFromConfig("Common", "StartPage");
+		else
+			filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
+		filename = mangleFilename(filename);
+
+		_bookGroup.clear();
+		for (uint i = 0; i < filename.size(); i++) {
+			if (filename[i] == '\\' || filename[i] == ':')
+				continue;
+			for (uint j = 0; j < filename.size(); j++) {
+				if (filename[j] == '.')
+					break;
+				_bookGroup += filename[j];
+			}
+			break;
+		}
+	} else {
+		if (!id)
+			id = atoi(getStringFromConfig("Common", "StartUp").c_str());
+		filename = getFilename("Libs", id);
+	}
 
 	Library library;
 
