@@ -17,6 +17,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Fixed the ARM assembly routine for reverse stereo audio.
+   - Added support for building with MacPorts out of the box.
 
  AGI:
    - Implemented sound support for the DOS version of Winnie the Pooh in the
