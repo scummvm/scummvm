@@ -2185,6 +2185,7 @@ void TuckerEngine::updateSprite_locationNum48(int i) {
 		_spritesTable[i].needUpdate = 1;
 		state = 2;
 	} else if (getRandomNumber() < 30000) {
+		// FIXME: This case is similar to the case below.
 		_spritesTable[i].needUpdate = 0;
 		state = 2;
 		_spritesTable[i].updateDelay = 5;
@@ -2858,6 +2859,7 @@ void TuckerEngine::updateSprite_locationNum66_1(int i) {
 			_spritesTable[i].needUpdate = 1;
 			state = 8;
 		} else if (getRandomNumber() > 30000) {
+			// FIXME: This case is the same as the one below
 			state = 10;
 			_spritesTable[i].needUpdate = 0;
 		} else {
