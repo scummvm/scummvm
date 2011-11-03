@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/timer.h"
 #include "common/util.h"
+#include "common/ptr.h"
+#include "common/substream.h"
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
@@ -62,7 +64,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_mixer(mixer),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
-	_sfxFile(0),
+	_sfxFilename(),
+	_sfxFileEncByte(0),
 	_offsetTable(0),
 	_numSoundEffects(0),
 	_soundMode(kVOCMode),
@@ -91,7 +94,6 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 Sound::~Sound() {
 	stopCDTimer();
 	g_system->getAudioCDManager()->stop();
-	delete _sfxFile;
 }
 
 void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
@@ -490,6 +492,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	int num = 0, i;
 	int size = 0;
 	int id = -1;
+	Common::ScopedPtr<ScummFile> file;
 
 	if (_vm->_game.id == GID_CMI) {
 		_sfxMode |= mode;
@@ -523,25 +526,29 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			return;
 		}
 
-		_sfxFile->close();
+		file.reset(new ScummFile());
+		if (!file)
+			error("startTalkSound: Out of memory");
+
 		sprintf(filename, "audio/%s.%d/%d.voc", roomname, offset, b);
-		_vm->openFile(*_sfxFile, filename);
-		if (!_sfxFile->isOpen()) {
+		if (!_vm->openFile(*file, filename)) {
 			sprintf(filename, "audio/%s_%d/%d.voc", roomname, offset, b);
-			_vm->openFile(*_sfxFile, filename);
+			_vm->openFile(*file, filename);
 		}
-		if (!_sfxFile->isOpen()) {
+
+		if (!file->isOpen()) {
 			sprintf(filename, "%d.%d.voc", offset, b);
-			_vm->openFile(*_sfxFile, filename);
+			_vm->openFile(*file, filename);
 		}
-		if (!_sfxFile->isOpen()) {
+
+		if (!file->isOpen()) {
 			warning("startTalkSound: dig demo: voc file not found");
 			return;
 		}
 	} else {
 
-		if (!_sfxFile->isOpen()) {
-			warning("startTalkSound: SFX file is not open");
+		if (_sfxFilename.empty()) {
+			warning("startTalkSound: SFX file not found");
 			return;
 		}
 
@@ -581,11 +588,28 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			size = -1;
 		}
 
-		_sfxFile->seek(offset, SEEK_SET);
+		file.reset(new ScummFile());
+		if (!file)
+			error("startTalkSound: Out of memory");
+
+		if (!_vm->openFile(*file, _sfxFilename)) {
+			warning("startTalkSound: could not open sfx file %s", _sfxFilename.c_str());
+			return;
+		}
+
+		file->setEnc(_sfxFileEncByte);
+		file->seek(offset, SEEK_SET);
 
 		assert(num + 1 < (int)ARRAYSIZE(_mouthSyncTimes));
 		for (i = 0; i < num; i++)
-			_mouthSyncTimes[i] = _sfxFile->readUint16BE();
+			_mouthSyncTimes[i] = file->readUint16BE();
+
+		// Adjust offset to account for the mouth sync times. It is noteworthy
+		// that we do not adjust the size here for compressed streams, since
+		// they only set size to the size of the compressed sound data.
+		offset += num * 2;
+		//if (_soundMode == kVOCMode)
+		//	size -= num * 2;
 
 		_mouthSyncTimes[i] = 0xFFFF;
 		_sfxMode |= mode;
@@ -601,9 +625,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_MAD
 			{
 			assert(size > 0);
-			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
-			assert(tmp);
-			input = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
+			input = Audio::makeMP3Stream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), DisposeAfterUse::YES);
 			}
 #endif
 			break;
@@ -611,9 +633,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_VORBIS
 			{
 			assert(size > 0);
-			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
-			assert(tmp);
-			input = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
+			input = Audio::makeVorbisStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), DisposeAfterUse::YES);
 			}
 #endif
 			break;
@@ -621,14 +641,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #ifdef USE_FLAC
 			{
 			assert(size > 0);
-			Common::SeekableReadStream *tmp = _sfxFile->readStream(size);
-			assert(tmp);
-			input = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
+			input = Audio::makeFLACStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), DisposeAfterUse::YES);
 			}
 #endif
 			break;
 		default:
-			input = Audio::makeVOCStream(_sfxFile, Audio::FLAG_UNSIGNED);
+			input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 			break;
 		}
 
@@ -848,12 +866,10 @@ void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
 }
 
 void Sound::setupSound() {
-	delete _sfxFile;
-
-	_sfxFile = openSfxFile();
+	setupSfxFile();
 
 	if (_vm->_game.id == GID_FT) {
-		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFile->isOpen();
+		_vm->VAR(_vm->VAR_VOICE_BUNDLE_LOADED) = _sfxFilename.empty() ? 0 : 1;
 	}
 }
 
@@ -885,7 +901,7 @@ void Sound::pauseSounds(bool pause) {
 	}
 }
 
-BaseScummFile *Sound::openSfxFile() {
+void Sound::setupSfxFile() {
 	struct SoundFileExtensions {
 		const char *ext;
 		SoundMode mode;
@@ -905,8 +921,10 @@ BaseScummFile *Sound::openSfxFile() {
 		{ 0, kVOCMode }
 	};
 
-	ScummFile *file = new ScummFile();
+	ScummFile file;
 	_offsetTable = NULL;
+	_sfxFileEncByte = 0;
+	_sfxFilename.clear();
 
 	/* Try opening the file <baseName>.sou first, e.g. tentacle.sou.
 	 * That way, you can keep .sou files for multiple games in the
@@ -931,15 +949,20 @@ BaseScummFile *Sound::openSfxFile() {
 			tmp = basename[0] + "tlk";
 		}
 
-		if (file->open(tmp) && _vm->_game.heversion <= 74)
-			file->setEnc(0x69);
+		if (file.open(tmp))
+			_sfxFilename = tmp;
+	
+		if (_vm->_game.heversion <= 74)
+			_sfxFileEncByte = 0x69;
+
 		_soundMode = kVOCMode;
 	} else {
-		for (uint j = 0; j < 2 && !file->isOpen(); ++j) {
+		for (uint j = 0; j < 2 && !file.isOpen(); ++j) {
 			for (int i = 0; extensions[i].ext; ++i) {
 				tmp = basename[j] + extensions[i].ext;
-				if (_vm->openFile(*file, tmp)) {
+				if (_vm->openFile(file, tmp)) {
 					_soundMode = extensions[i].mode;
+					_sfxFilename = tmp;
 					break;
 				}
 			}
@@ -963,23 +986,21 @@ BaseScummFile *Sound::openSfxFile() {
 		 */
 		int size, compressed_offset;
 		MP3OffsetTable *cur;
-		compressed_offset = file->readUint32BE();
+		compressed_offset = file.readUint32BE();
 		_offsetTable = (MP3OffsetTable *) malloc(compressed_offset);
 		_numSoundEffects = compressed_offset / 16;
 
 		size = compressed_offset;
 		cur = _offsetTable;
 		while (size > 0) {
-			cur->org_offset = file->readUint32BE();
-			cur->new_offset = file->readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
-			cur->num_tags = file->readUint32BE();
-			cur->compressed_size = file->readUint32BE();
+			cur->org_offset = file.readUint32BE();
+			cur->new_offset = file.readUint32BE() + compressed_offset + 4; /* The + 4 is to take into accound the 'size' field */
+			cur->num_tags = file.readUint32BE();
+			cur->compressed_size = file.readUint32BE();
 			size -= 4 * 4;
 			cur++;
 		}
 	}
-
-	return file;
 }
 
 bool Sound::isSfxFinished() const {

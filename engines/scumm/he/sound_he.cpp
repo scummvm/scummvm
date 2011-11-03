@@ -770,24 +770,30 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	if (ConfMan.getBool("speech_mute"))
 		return;
 
-	assert(_sfxFile);
-	if (!_sfxFile->isOpen()) {
+	if (_sfxFilename.empty()) {
 		// This happens in the Pajama Sam's Lost & Found demo, on the
 		// main menu screen, so don't make it a fatal error.
-		warning("startHETalkSound: Speech file is not open");
+		warning("startHETalkSound: Speech file is not found");
 		return;
 	}
+
+	ScummFile file;
+	if (!_vm->openFile(file, _sfxFilename)) {
+		warning("startHETalkSound: Could not open speech file %s", _sfxFilename.c_str());
+		return;
+	}
+	file.setEnc(_sfxFileEncByte);
 
 	_sfxMode |= 2;
 	_vm->_res->nukeResource(rtSound, 1);
 
-	_sfxFile->seek(offset + 4, SEEK_SET);
-	 size = _sfxFile->readUint32BE();
-	_sfxFile->seek(offset, SEEK_SET);
+	file.seek(offset + 4, SEEK_SET);
+	 size = file.readUint32BE();
+	file.seek(offset, SEEK_SET);
 
 	_vm->_res->createResource(rtSound, 1, size);
 	ptr = _vm->getResourceAddress(rtSound, 1);
-	_sfxFile->read(ptr, size);
+	file.read(ptr, size);
 
 	int channel = (_vm->VAR_TALK_CHANNEL != 0xFF) ? _vm->VAR(_vm->VAR_TALK_CHANNEL) : 0;
 	addSoundToQueue2(1, 0, channel, 0);
