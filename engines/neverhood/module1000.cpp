@@ -1042,6 +1042,8 @@ uint32 AsScene1002VenusFlyTrap::hmAnimationExt(int messageNum, const MessagePara
 				if (_x > 330) {
 					sendMessage(_klayman, 0x4811, 2);
 				} else if (_x > 265) {
+					// FIXME: This check is the same as the one below.
+					// Perhaps the third parameter should be 1 here?
 					sendMessage(_klayman, 0x4811, 0);
 				} else {
 					sendMessage(_klayman, 0x4811, 0);
