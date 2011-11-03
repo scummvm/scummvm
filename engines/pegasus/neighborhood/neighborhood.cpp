@@ -91,9 +91,7 @@ void Neighborhood::init() {
 	_navMovieCallBack.setNotification(&_neighborhoodNotification);
 	_turnPushCallBack.setNotification(&_neighborhoodNotification);
 	_delayCallBack.setNotification(&_neighborhoodNotification);
-
-	// TODO
-	//_spotSoundCallBack.setNotification(&_neighborhoodNotification);
+	_spotSoundCallBack.setNotification(&_neighborhoodNotification);
 
 	debug(0, "Loading '%s' neighborhood resources", _resName.c_str());
 
@@ -172,9 +170,7 @@ void Neighborhood::init() {
 	_stridingCallBack.initCallBack(&_navMovie, kCallBackAtTime);
 	_turnPushCallBack.initCallBack(&_turnPush, kCallBackAtExtremes);
 	_delayCallBack.initCallBack(&_delayTimer, kCallBackAtExtremes);
-
-	// TODO
-	//_spotSoundCallBack.initCallBack(&_spotSounds, kCallBackAtExtremes);
+	_spotSoundCallBack.initCallBack(&_spotSounds, kCallBackAtExtremes);
 
 	setUpAIRules();
 
@@ -426,7 +422,8 @@ void Neighborhood::serviceActionQueue() {
 				_spotSounds.stopSound();
 				_spotSounds.playSoundSegment(topRequest.start, topRequest.stop);
 				_interruptionFilter = topRequest.interruptionFilter;
-				// TODO: stop trigger
+				_spotSoundCallBack.setCallBackFlag(topRequest.flags);
+				_spotSoundCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
 				break;
 			case kDelayRequest:
 				_delayTimer.stop();

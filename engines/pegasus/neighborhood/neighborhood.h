@@ -372,7 +372,7 @@ protected:
 	HotspotList _neighborhoodHotspots;
 
 	// Sounds
-	Sound _spotSounds;
+	SoundTimeBase _spotSounds;
 
 	// Action queue
 	NeighborhoodActionQueue _actionQueue;
