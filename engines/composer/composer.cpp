@@ -32,6 +32,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "graphics/wincursor.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -98,6 +99,11 @@ Common::Error ComposerEngine::run() {
 	initGraphics(width, height, true);
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_needsUpdate = true;
+
+	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(),
+		cursor->getHotspotY(), cursor->getKeyColor());
+	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
 
 	loadLibrary(0);
 
@@ -241,8 +247,8 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 
 	if (_mouseSpriteId) {
 		addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
-		_needsUpdate = true;
 	}
+	_needsUpdate = true;
 }
 
 void ComposerEngine::onKeyDown(uint16 keyCode) {
@@ -269,11 +275,15 @@ void ComposerEngine::setCursorVisible(bool visible) {
 		_mouseVisible = true;
 		if (_mouseSpriteId)
 			addSprite(_mouseSpriteId, 0, 0, _lastMousePos - _mouseOffset);
+		else
+			CursorMan.showMouse(true);
 		onMouseMove(_lastMousePos);
 	} else if (!visible && _mouseVisible) {
 		_mouseVisible = false;
 		if (_mouseSpriteId)
 			removeSprite(_mouseSpriteId, 0);
+		else
+			CursorMan.showMouse(false);
 	}
 }
 
