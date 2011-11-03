@@ -231,48 +231,48 @@ void Route::segment(int16 x, int16 y) {
 	if (_vm->_hero->x < x1) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
 		// Find all segments below current
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 	} else if (_vm->_hero->x + kHeroMaxWidth > x2) {
 		// Hero x not in segment, search x1..x2
 		// Find all segments above current
-		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
+		for (x = x2; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x >= x1; x--) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
 		// Find all segments below current
-		for (x = x2; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x >= x1; x--) {
+		for (x = x2; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x >= x1; x--) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 	} else {
 		// Organize search around hero x position - this gives
 		// better chance for more direct route.
-		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y - 1][x] == 0)
 				segment(x, y - 1);
 		}
 
-		for (x = _vm->_hero->x; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x <= x2; x++) {
+		for (x = _vm->_hero->x; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x <= x2; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
 
-		for (x = x1; !(_routeFoundFl | _fullStackFl | _fullSegmentFl) && x < _vm->_hero->x; x++) {
+		for (x = x1; !(_routeFoundFl || _fullStackFl || _fullSegmentFl) && x < _vm->_hero->x; x++) {
 			if (_boundaryMap[y + 1][x] == 0)
 				segment(x, y + 1);
 		}
