@@ -45,7 +45,7 @@ Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
 }
 
 Vector2d::Matrix(float *data) :
-	MatrixType(data) {
+	MatrixType<2, 1>(data) {
 }
 
 void Vector2d::rotateAround(const Vector2d &point, const Angle &angle) {

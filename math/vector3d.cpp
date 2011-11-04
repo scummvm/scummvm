@@ -45,7 +45,7 @@ Vector3d::Matrix(const MatrixBase<3, 1> &vec) :
 }
 
 Vector3d::Matrix(float *data) :
-	MatrixType(data) {
+	MatrixType<3, 1>(data) {
 }
 
 void Vector3d::set(float lx, float ly, float lz) {
