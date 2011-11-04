@@ -896,7 +896,7 @@ void LoLEngine::startupNew() {
 	_availableSpells[0] = 0;
 	setupScreenDims();
 
-	memset(_globalScriptVars2, 0x100, 8);
+	Common::set_to(_globalScriptVars2, ARRAYEND(_globalScriptVars2), 0x100);
 
 	static const int selectIds[] = { -9, -1, -8, -5 };
 	assert(_charSelection >= 0);
@@ -993,6 +993,10 @@ void LoLEngine::writeSettings() {
 
 void LoLEngine::readSettings() {
 	_monsterDifficulty = ConfMan.getInt("monster_difficulty");
+	if (_monsterDifficulty < 0 || _monsterDifficulty > 2) {
+		_monsterDifficulty = CLIP(_monsterDifficulty, 0, 2);
+		warning("LoLEngine: Config file contains invalid difficulty setting.");
+	}
 	_smoothScrollingEnabled = ConfMan.getBool("smooth_scrolling");
 	_floatingCursorsEnabled = ConfMan.getBool("floating_cursors");
 
