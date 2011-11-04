@@ -385,9 +385,17 @@ void OldPipe::nextFrame() {
 		spriteResMap[spriteIds[i]].entries.push_back(entry);
 	}
 
-	// FIXME
-	uint32 audioDataOffset = _stream->pos();
-	_stream->skip(audioSize);
+	ResourceMap &audioResMap = _types[ID_WAVE];
+	audioResMap.clear();
+
+	if (audioSize > 0) {
+		PipeResourceEntry entry;
+		entry.size = audioSize;
+		entry.offset = _stream->pos();
+		// we use 0xffff for per-frame pipe audio
+		audioResMap[0xffff].entries.push_back(entry);
+		_stream->skip(audioSize);
+	}
 
 	_offset = _stream->pos();
 	_currFrame++;

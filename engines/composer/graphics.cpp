@@ -352,6 +352,10 @@ void ComposerEngine::processAnimFrame() {
 	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
 		Pipe *pipe = *j;
 		pipe->nextFrame();
+
+		// V1 pipe audio; see OldPipe
+		if (pipe->hasResource(ID_WAVE, 0xffff))
+			playWaveForAnim(0xffff, 0, false);
 	}
 }
 
