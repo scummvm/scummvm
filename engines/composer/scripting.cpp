@@ -816,10 +816,11 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 			addSprite(spriteId, script->_id, script->_zorder, spritePos);
 			break;
 		case kOldOpPlayWav:
-			uint16 wavId;
+			uint16 wavId, prio;
 			wavId = script->_stream->readUint16LE();
-			debug(3, "kOldOpPlayWav(%d)", wavId);
-			playWaveForAnim(wavId, 0, false);
+			prio = script->_stream->readUint16LE();
+			debug(3, "kOldOpPlayWav(%d, %d)", wavId, prio);
+			playWaveForAnim(wavId, prio, false);
 			break;
 		case kOldOpRunScript:
 			scriptId = script->_stream->readUint16LE();
