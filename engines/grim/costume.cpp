@@ -858,15 +858,7 @@ Costume::Costume(const Common::String &fname, const char *data, int len, Costume
 		Object() {
 
 	_fname = fname;
-	_head.maxPitch = 0;
-	_head.joint1 = -1;
-	_head.joint2 = -1;
-	_head.joint3 = -1;
-	_joint1Node = NULL;
-	_joint2Node = NULL;
-	_joint3Node = NULL;
-	_headYaw = 0;
-	_headPitch = 0;
+	_lookAtRate = 200;
 	_prevCostume = prevCost;
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		Common::MemoryReadStream ms((const byte *)data, len);
@@ -1530,159 +1522,22 @@ void Costume::animate() {
 	}
 }
 
-void Costume::moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rate) {
-	if (_joint1Node) {
-		float step = g_grim->getPerSecond(rate);
-		float yawStep = step;
-		float pitchStep = step / 3.f;
-		if (!lookingMode) {
-			//animate yaw
-			if (_headYaw > yawStep) {
-				_headYaw -= yawStep;
-			} else if (_headYaw < -yawStep) {
-				_headYaw += yawStep;
-			} else {
-				_headYaw = 0;
-			}
-			//animate pitch
-			if (_headPitch > pitchStep) {
-				_headPitch -= pitchStep;
-			} else if (_headPitch < -pitchStep) {
-				_headPitch += pitchStep;
-			} else {
-				_headPitch = 0;
-			}
-			_joint1Node->_animYaw = _headYaw;
-			Math::Angle pi = _headPitch / 3.f;
-			_joint1Node->_animPitch += pi;
-			_joint2Node->_animPitch += pi;
-			_joint3Node->_animPitch += pi;
-			_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
-										_headPitch.getDegrees() / -5.f;
-
-			if (_joint1Node->_animRoll > _head.maxRoll)
-				_joint1Node->_animRoll = _head.maxRoll;
-			if (_joint1Node->_animRoll < -_head.maxRoll)
-				_joint1Node->_animRoll = -_head.maxRoll;
-			return;
-		}
-
-		ModelNode *p = _joint3Node;
-		while (p->_parent) {
-			p = p->_parent;
-		}
-		p->setMatrix(_matrix);
-		p->update();
-
-		Math::Vector3d v =  lookAt - _joint3Node->_matrix.getPosition();
-		if (v.isZero()) {
-			return;
-		}
-
-		float magnitude = sqrt(v.x() * v.x() + v.y() * v.y());
-		float a = v.x() / magnitude;
-		float b = v.y() / magnitude;
-		float yaw;
-		yaw = acos(a) * (180.0f / LOCAL_PI);
-		if (b < 0.0f)
-			yaw = 360.0f - yaw;
-
-		Math::Angle bodyYaw = _matrix.getYaw();
-		p = _joint1Node->_parent;
-		while (p) {
-			bodyYaw += p->_yaw + p->_animYaw;
-			p = p->_parent;
-		}
-
-		_joint1Node->_animYaw = (- 90 + yaw - bodyYaw);
-		if (_joint1Node->_animYaw < -180.) {
-			_joint1Node->_animYaw += 360;
-		}
-		if (_joint1Node->_animYaw > 180.) {
-			_joint1Node->_animYaw -= 360;
-		}
-
-		if (_joint1Node->_animYaw > _head.maxYaw)
-			_joint1Node->_animYaw = _head.maxYaw;
-		if (_joint1Node->_animYaw < -_head.maxYaw)
-			_joint1Node->_animYaw = -_head.maxYaw;
-
-		float sqLenght = v.x() * v.x() + v.y() * v.y();
-		float h;
-		if (sqLenght > 0) {
-			h = sqrt(sqLenght);
-		} else {
-			h = -sqrt(sqLenght);
-		}
-		magnitude = sqrt(v.z() * v.z() + h * h);
-		a = h / magnitude;
-		b = v.z() / magnitude;
-		Math::Angle pitch;
-		pitch = acos(a) * (180.0f / LOCAL_PI);
-
-		if (b < 0.0f)
-			pitch = 360.0f - pitch;
-
-		if (pitch > 180)
-			pitch -= 360;
-
-		if (pitch > _head.maxPitch)
-			pitch = _head.maxPitch;
-		if (pitch < -_head.maxPitch)
-			pitch = -_head.maxPitch;
-
-		if ((_joint1Node->_animYaw > 0 && pitch < 0) || (_joint1Node->_animYaw < 0 && pitch > 0)) {
-			pitch += _joint1Node->_animYaw / 10.f;
-		} else {
-			pitch -= _joint1Node->_animYaw / 10.f;
-		}
-
-		//animate pitch
-		if (pitch - _headPitch > pitchStep)
-			pitch = _headPitch + pitchStep;
-		if (_headPitch - pitch > pitchStep)
-			pitch = _headPitch - pitchStep;
-
-		Math::Angle pi = pitch / 3.f;
-		_joint1Node->_animPitch += pi;
-		_joint2Node->_animPitch += pi;
-		_joint3Node->_animPitch += pi;
-
-		//animate yaw
-		if (_joint1Node->_animYaw - _headYaw > yawStep)
-			_joint1Node->_animYaw = _headYaw + yawStep;
-		if (_headYaw - _joint1Node->_animYaw > yawStep)
-			_joint1Node->_animYaw = _headYaw - yawStep;
-
-		_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
-								pitch.getDegrees() / -5.f;
-
-		if (_joint1Node->_animRoll > _head.maxRoll)
-			_joint1Node->_animRoll = _head.maxRoll;
-		if (_joint1Node->_animRoll < -_head.maxRoll)
-			_joint1Node->_animRoll = -_head.maxRoll;
-
-		_headPitch = pitch;
-		_headYaw = _joint1Node->_animYaw;
-	}
+void Costume::moveHead(bool entering, const Math::Vector3d &lookAt) {
+	_head.lookAt(entering, lookAt, _lookAtRate, _matrix);
 }
 
 void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
-	_head.joint1 = joint1;
-	_head.joint2 = joint2;
-	_head.joint3 = joint3;
-	_head.maxRoll = maxRoll;
-	_head.maxPitch = maxPitch;
-	_head.maxYaw = maxYaw;
+	_head.setJoints(joint1, joint2, joint3);
+	_head.loadJoints(getModelNodes());
+	_head.setMaxAngles(maxPitch, maxYaw, maxRoll);
+}
 
-	if (joint1 >= 0 && joint2 >= 0 && joint3 >= 0) {
-		ModelNode *nodes = getModelNodes();
-		if (nodes) {
-			_joint1Node = nodes + joint1;
-			_joint2Node = nodes + joint2;
-			_joint3Node = nodes + joint3;
-		}
-	}
+void Costume::setLookAtRate(float rate) {
+	_lookAtRate = rate;
+}
+
+float Costume::getLookAtRate() const {
+	return _lookAtRate;
 }
 
 void Costume::setPosRotate(Math::Vector3d pos, const Math::Angle &pitch,
@@ -1731,14 +1586,9 @@ void Costume::saveState(SaveGame *state) const {
 		state->writeLESint32((*i)->_id);
 	}
 
-	state->writeLESint32(_head.joint1);
-	state->writeLESint32(_head.joint2);
-	state->writeLESint32(_head.joint3);
-	state->writeFloat(_head.maxPitch);
-	state->writeFloat(_head.maxYaw);
-	state->writeFloat(_head.maxRoll);
-	state->writeFloat(_headPitch.getDegrees());
-	state->writeFloat(_headYaw.getDegrees());
+	// FIXME: Decomment this!!
+// 	state.writeFloat(_lookAtRate);
+	_head.saveState(state);
 }
 
 bool Costume::restoreState(SaveGame *state) {
@@ -1771,17 +1621,200 @@ bool Costume::restoreState(SaveGame *state) {
 		_playingChores.push_back(&_chores[id]);
 	}
 
-	int j1 = state->readLESint32();
-	int j2 = state->readLESint32();
-	int j3 = state->readLESint32();
-	float mP = state->readFloat();
-	float mY = state->readFloat();
-	float mR = state->readFloat();
-	setHead(j1, j2, j3, mR, mP, mY);
-	_headPitch = state->readFloat();
-	_headYaw = state->readFloat();
+	// FIXME: Decomment this!!
+// 	_lookAtRate = state->readFloat();
+	_head.restoreState(state);
+	_head.loadJoints(getModelNodes());
 
 	return true;
+}
+
+Costume::Head::Head() :
+	_maxPitch(0),
+	_joint1(-1), _joint2(-1), _joint3(-1),
+	_joint1Node(NULL), _joint2Node(NULL), _joint3Node(NULL),
+	_headYaw(0), _headPitch(0) {
+
+}
+
+void Costume::Head::setJoints(int joint1, int joint2, int joint3) {
+	_joint1 = joint1;
+	_joint2 = joint2;
+	_joint3 = joint3;
+}
+
+void Costume::Head::loadJoints(ModelNode *nodes) {
+	if (_joint1 >= 0 && _joint2 >= 0 && _joint3 >= 0 && nodes) {
+		_joint1Node = nodes + _joint1;
+		_joint2Node = nodes + _joint2;
+		_joint3Node = nodes + _joint3;
+	}
+}
+
+void Costume::Head::setMaxAngles(float maxPitch, float maxYaw, float maxRoll) {
+	_maxRoll = maxRoll;
+	_maxPitch = maxPitch;
+	_maxYaw = maxYaw;
+}
+
+void Costume::Head::lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix) {
+	if (_joint1Node) {
+		float step = g_grim->getPerSecond(rate);
+		float yawStep = step;
+		float pitchStep = step / 3.f;
+		if (!entering) {
+			//animate yaw
+			if (_headYaw > yawStep) {
+				_headYaw -= yawStep;
+			} else if (_headYaw < -yawStep) {
+				_headYaw += yawStep;
+			} else {
+				_headYaw = 0;
+			}
+			//animate pitch
+			if (_headPitch > pitchStep) {
+				_headPitch -= pitchStep;
+			} else if (_headPitch < -pitchStep) {
+				_headPitch += pitchStep;
+			} else {
+				_headPitch = 0;
+			}
+			_joint1Node->_animYaw = _headYaw;
+			Math::Angle pi = _headPitch / 3.f;
+			_joint1Node->_animPitch += pi;
+			_joint2Node->_animPitch += pi;
+			_joint3Node->_animPitch += pi;
+			_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+			_headPitch.getDegrees() / -5.f;
+
+			if (_joint1Node->_animRoll > _maxRoll)
+				_joint1Node->_animRoll = _maxRoll;
+			if (_joint1Node->_animRoll < -_maxRoll)
+				_joint1Node->_animRoll = -_maxRoll;
+			return;
+		}
+
+		ModelNode *p = _joint3Node;
+		while (p->_parent) {
+			p = p->_parent;
+		}
+		p->setMatrix(matrix);
+		p->update();
+
+		Math::Vector3d v = point - _joint3Node->_matrix.getPosition();
+		if (v.isZero()) {
+			return;
+		}
+
+		float magnitude = sqrt(v.x() * v.x() + v.y() * v.y());
+		float a = v.x() / magnitude;
+		float b = v.y() / magnitude;
+		float yaw;
+		yaw = acos(a) * (180.0f / LOCAL_PI);
+		if (b < 0.0f)
+			yaw = 360.0f - yaw;
+
+		Math::Angle bodyYaw = matrix.getYaw();
+		p = _joint1Node->_parent;
+		while (p) {
+			bodyYaw += p->_yaw + p->_animYaw;
+			p = p->_parent;
+		}
+
+		_joint1Node->_animYaw = (- 90 + yaw - bodyYaw);
+		if (_joint1Node->_animYaw < -180.) {
+			_joint1Node->_animYaw += 360;
+		}
+		if (_joint1Node->_animYaw > 180.) {
+			_joint1Node->_animYaw -= 360;
+		}
+
+		if (_joint1Node->_animYaw > _maxYaw)
+			_joint1Node->_animYaw = _maxYaw;
+		if (_joint1Node->_animYaw < -_maxYaw)
+			_joint1Node->_animYaw = -_maxYaw;
+
+		float sqLenght = v.x() * v.x() + v.y() * v.y();
+		float h;
+		if (sqLenght > 0) {
+			h = sqrt(sqLenght);
+		} else {
+			h = -sqrt(sqLenght);
+		}
+		magnitude = sqrt(v.z() * v.z() + h * h);
+		a = h / magnitude;
+		b = v.z() / magnitude;
+		Math::Angle pitch;
+		pitch = acos(a) * (180.0f / LOCAL_PI);
+
+		if (b < 0.0f)
+			pitch = 360.0f - pitch;
+
+		if (pitch > 180)
+			pitch -= 360;
+
+		if (pitch > _maxPitch)
+			pitch = _maxPitch;
+		if (pitch < -_maxPitch)
+			pitch = -_maxPitch;
+
+		if ((_joint1Node->_animYaw > 0 && pitch < 0) || (_joint1Node->_animYaw < 0 && pitch > 0)) {
+			pitch += _joint1Node->_animYaw / 10.f;
+		} else {
+			pitch -= _joint1Node->_animYaw / 10.f;
+		}
+
+		//animate pitch
+		if (pitch - _headPitch > pitchStep)
+			pitch = _headPitch + pitchStep;
+		if (_headPitch - pitch > pitchStep)
+			pitch = _headPitch - pitchStep;
+
+		Math::Angle pi = pitch / 3.f;
+		_joint1Node->_animPitch += pi;
+		_joint2Node->_animPitch += pi;
+		_joint3Node->_animPitch += pi;
+
+		//animate yaw
+		if (_joint1Node->_animYaw - _headYaw > yawStep)
+			_joint1Node->_animYaw = _headYaw + yawStep;
+		if (_headYaw - _joint1Node->_animYaw > yawStep)
+			_joint1Node->_animYaw = _headYaw - yawStep;
+
+		_joint1Node->_animRoll = (_joint1Node->_animYaw.getDegrees() / 20.f) *
+		pitch.getDegrees() / -5.f;
+
+		if (_joint1Node->_animRoll > _maxRoll)
+			_joint1Node->_animRoll = _maxRoll;
+		if (_joint1Node->_animRoll < -_maxRoll)
+			_joint1Node->_animRoll = -_maxRoll;
+
+		_headPitch = pitch;
+		_headYaw = _joint1Node->_animYaw;
+	}
+}
+
+void Costume::Head::saveState(SaveGame *state) const {
+	state->writeLESint32(_joint1);
+	state->writeLESint32(_joint2);
+	state->writeLESint32(_joint3);
+	state->writeFloat(_maxPitch);
+	state->writeFloat(_maxYaw);
+	state->writeFloat(_maxRoll);
+	state->writeFloat(_headPitch.getDegrees());
+	state->writeFloat(_headYaw.getDegrees());
+}
+
+void Costume::Head::restoreState(SaveGame *state) {
+	_joint1 = state->readLESint32();
+	_joint2 = state->readLESint32();
+	_joint3 = state->readLESint32();
+	_maxPitch = state->readFloat();
+	_maxYaw = state->readFloat();
+	_maxRoll = state->readFloat();
+
+	_headPitch = state->readFloat();
+	_headYaw = state->readFloat();
 }
 
 } // end of namespace Grim

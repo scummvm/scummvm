@@ -70,7 +70,9 @@ public:
 	int getNumChores() const { return _numChores; }
 
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
-	void moveHead(bool lookingMode, const Math::Vector3d &lookAt, float rate);
+	void setLookAtRate(float rate);
+	float getLookAtRate() const;
+	void moveHead(bool entering, const Math::Vector3d &lookAt);
 
 	int update(float frameTime);
 	void animate();
@@ -145,13 +147,33 @@ private:
 		TrackKey *keys;
 	};
 
-	struct Head {
-		int joint1;
-		int joint2;
-		int joint3;
-		float maxRoll;
-		float maxPitch;
-		float maxYaw;
+	class Head {
+	public:
+		Head();
+
+		void setJoints(int joint1, int joint2, int joint3);
+		void loadJoints(ModelNode *nodes);
+		void setMaxAngles(float maxPitch, float maxYaw, float maxRoll);
+
+		void lookAt(bool entering, const Math::Vector3d &point, float rate, const Math::Matrix4 &matrix);
+
+		void saveState(SaveGame *state) const;
+		void restoreState(SaveGame *state);
+
+	private:
+		int _joint1;
+		int _joint2;
+		int _joint3;
+		float _maxRoll;
+		float _maxPitch;
+		float _maxYaw;
+
+		ModelNode *_joint1Node;
+		ModelNode *_joint2Node;
+		ModelNode *_joint3Node;
+
+		Math::Angle _headPitch;
+		Math::Angle _headYaw;
 	} _head;
 
 	class Chore {
@@ -192,12 +214,8 @@ private:
 	Chore *_chores;
 	Common::List<Chore*> _playingChores;
 	Math::Matrix4 _matrix;
-	ModelNode *_joint1Node;
-	ModelNode *_joint2Node;
-	ModelNode *_joint3Node;
 
-	Math::Angle _headPitch;
-	Math::Angle _headYaw;
+	float _lookAtRate;
 };
 
 } // end of namespace Grim

@@ -61,7 +61,6 @@ Actor::Actor(const Common::String &actorName) :
 		_lastTurnDir(0), _currTurnDir(0),
 		_sayLineText(0) {
 	_lookingMode = false;
-	_lookAtRate = 200;
 	_constrain = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
@@ -222,7 +221,8 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeLEUint32(_sayLineText);
 
 	savedState->writeVector3d(_lookAtVector);
-	savedState->writeFloat(_lookAtRate);
+	// FIXME Remove this!!
+	savedState->writeFloat(0);
 
 	savedState->writeLESint32(_path.size());
 	for (Common::List<Math::Vector3d>::const_iterator i = _path.begin(); i != _path.end(); ++i) {
@@ -354,7 +354,8 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_sayLineText = savedState->readLEUint32();
 
 	_lookAtVector = savedState->readVector3d();
-	_lookAtRate = savedState->readFloat();
+	// FIXME: Remove this!!
+	savedState->readFloat();
 
 	size = savedState->readLESint32();
 	for (int i = 0; i < size; ++i) {
@@ -950,6 +951,14 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
+void Actor::setLookAtRate(float rate) {
+	_costumeStack.back()->setLookAtRate(rate);
+}
+
+float Actor::getLookAtRate() const {
+	return _costumeStack.back()->getLookAtRate();
+}
+
 Costume *Actor::findCostume(const Common::String &n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if ((*i)->getFilename().compareToIgnoreCase(n) == 0)
@@ -1135,7 +1144,7 @@ void Actor::update(float frameTime) {
 
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		Costume *c = *i;
-		c->moveHead(_lookingMode, _lookAtVector, _lookAtRate);
+		c->moveHead(_lookingMode, _lookAtVector);
 	}
 }
 

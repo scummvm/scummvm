@@ -439,12 +439,8 @@ public:
 	Math::Vector3d getLookAtVector() {
 		return _lookAtVector;
 	}
-	void setLookAtRate(float rate) {
-		_lookAtRate = rate;
-	}
-	float getLookAtRate() {
-		return _lookAtRate;
-	}
+	void setLookAtRate(float rate);
+	float getLookAtRate() const;
 	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 	void setCollisionMode(CollisionMode mode);
@@ -558,7 +554,6 @@ private:
 
 	// lookAt
 	Math::Vector3d _lookAtVector;
-	float _lookAtRate;
 
 	// struct used for path finding
 	struct PathNode {
