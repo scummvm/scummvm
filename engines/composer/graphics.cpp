@@ -499,8 +499,8 @@ void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 	uint16 numEntries = stream->readUint16LE();
 	debug(1, "CTBL: %d entries", numEntries);
 
-	assert(numEntries <= 256);
-	assert(stream->size() == 2 + (numEntries * 3));
+	if ((numEntries > 256) || (stream->size() < 2 + (numEntries * 3)))
+		error("CTBL %d was invalid (%d entries, size %d)", id, numEntries, stream->size());
 
 	byte buffer[256 * 3];
 	stream->read(buffer, numEntries * 3);
