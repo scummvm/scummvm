@@ -222,11 +222,13 @@ void ComposerEngine::onMouseDown(const Common::Point &pos) {
 	if (!button)
 		return;
 
+	debug(3, "mouseDown on button id %d", button->_id);
+
 	// TODO: other buttons?
 	uint16 buttonsDown = 1; // MK_LBUTTON
 
 	uint16 spriteId = sprite ? sprite->_id : 0;
-	runScript(button->_scriptId, button->_id, buttonsDown, spriteId);
+	runScript(button->_scriptId, (getGameType() == GType_ComposerV1) ? 0 : button->_id, buttonsDown, spriteId);
 }
 
 void ComposerEngine::onMouseMove(const Common::Point &pos) {
@@ -242,10 +244,10 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 	const Button *button = getButtonFor(sprite, pos);
 	if (_lastButton != button) {
 		if (_lastButton && _lastButton->_scriptIdRollOff)
-			runScript(_lastButton->_scriptIdRollOff, _lastButton->_id, buttonsDown, 0);
+			runScript(_lastButton->_scriptIdRollOff, (getGameType() == GType_ComposerV1) ? 0 : _lastButton->_id, buttonsDown, 0);
 		_lastButton = button;
 		if (_lastButton && _lastButton->_scriptIdRollOn)
-			runScript(_lastButton->_scriptIdRollOn, _lastButton->_id, buttonsDown, 0);
+			runScript(_lastButton->_scriptIdRollOn, (getGameType() == GType_ComposerV1) ? 0 : _lastButton->_id, buttonsDown, 0);
 	}
 
 	if (_mouseSpriteId) {
