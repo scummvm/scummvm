@@ -125,6 +125,7 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		if (type != 1) {
 			newPipe = new Pipe(stream);
 			_pipes.push_front(newPipe);
+			newPipe->nextFrame();
 			stream = newPipe->getResource(ID_ANIM, animId, false);
 		}
 	}

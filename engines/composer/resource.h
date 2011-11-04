@@ -45,6 +45,8 @@ struct Animation;
 #define ID_VARI MKTAG('V','A','R','I') // Variables
 #define ID_WAVE MKTAG('W','A','V','E') // Wave
 
+#define ID_FRME MKTAG('F','R','M','E') // Frame
+
 class Archive {
 public:
 	Archive();
@@ -102,12 +104,15 @@ struct PipeResource {
 class Pipe {
 public:
 	Pipe(Common::SeekableReadStream *stream);
-	void nextFrame();
+	virtual ~Pipe();
+	virtual void nextFrame();
 
 	Animation *_anim;
 
 	bool hasResource(uint32 tag, uint16 id) const;
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id, bool buffering);
+
+	virtual const Common::Array<uint16> *getScripts() { return NULL; }
 
 protected:
 	Common::SeekableReadStream *_stream;
@@ -117,6 +122,18 @@ protected:
 	TypeMap _types;
 
 	uint32 _offset;
+};
+
+class OldPipe : public Pipe {
+public:
+	OldPipe(Common::SeekableReadStream *stream);
+	void nextFrame();
+
+	const Common::Array<uint16> *getScripts() { return &_scripts; }
+
+protected:
+	uint32 _currFrame, _numFrames;
+	Common::Array<uint16> _scripts;
 };
 
 } // End of namespace Composer
