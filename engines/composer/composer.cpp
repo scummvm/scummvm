@@ -571,4 +571,16 @@ const Button *ComposerEngine::getButtonFor(const Sprite *sprite, const Common::P
 	return NULL;
 }
 
+void ComposerEngine::setButtonActive(uint16 id, bool active) {
+	for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
+		for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
+			if (i->_id != id)
+				continue;
+			i->_active = active;
+		}
+	}
+
+	onMouseMove(_lastMousePos);
+}
+
 } // End of namespace Composer

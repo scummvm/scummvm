@@ -216,6 +216,7 @@ private:
 	void removeSprite(uint16 id, uint16 animId);
 	const Sprite *getSpriteAtPos(const Common::Point &pos);
 	const Button *getButtonFor(const Sprite *sprite, const Common::Point &pos);
+	void setButtonActive(uint16 id, bool active);
 
 	void dirtySprite(const Sprite &sprite);
 	void redraw();
