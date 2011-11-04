@@ -125,6 +125,7 @@ struct OldScript {
 	uint32 _size;
 	Common::SeekableReadStream *_stream;
 
+	uint16 _zorder;
 	uint32 _currDelay;
 };
 

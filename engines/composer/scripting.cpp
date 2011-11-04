@@ -725,6 +725,7 @@ OldScript::OldScript(uint16 id, Common::SeekableReadStream *stream) : _id(id), _
 	_size = _stream->readUint32LE();
 	_stream->skip(2);
 	_currDelay = 0;
+	_zorder = 10;
 }
 
 OldScript::~OldScript() {
@@ -751,17 +752,25 @@ void ComposerEngine::tickOldScripts() {
 
 enum {
 	kOldOpNoOp = 0,
-	kOldOpDrawSprite = 1,
+	kOldOpReplaceSprite = 1,
 	kOldOpPlayWav = 2,
 	kOldOpRunScript = 3,
-	// FIXME
+	kOldOpStopScript = 4,
+	kOldOpActivateButton = 5,
+	kOldOpDeactivateButton = 6,
+	kOldOpDrawSprite = 7,
+	kOldOpRemoveSprite = 8,
 	kOldOpDisableMouseInput = 9,
 	kOldOpEnableMouseInput = 10,
 	kOldOpWait = 11,
+	kOldOpRandWait = 12,
+	kOldOpDrawGlobalSprite = 13,
+	kOldOpRemoveGlobalSprite = 14,
+	kOldOpSetZOrder = 15,
 	kOldOpPlayPipe = 16,
-	// FIXME
-	kOldOpNewScreen = 20
-	// FIXME
+	kOldOpStopPipe = 17,
+	kOldOpNewScreen = 20,
+	kOldOpRunRandom = 22
 };
 
 bool ComposerEngine::tickOldScript(OldScript *script) {
@@ -770,51 +779,115 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 		return true;
 	}
 
-	script->_stream->skip(0);
 	bool running = true;
-	while (running && script->_stream->pos() < (int)script->_size) {
+	while (running && script->_stream->pos() + 1 < (int)script->_size) {
+		uint16 spriteId, scriptId, buttonId, pipeId;
+		Common::Point spritePos;
+
+		script->_stream->skip(0);
 		byte op = script->_stream->readByte();
 		switch (op) {
 		case kOldOpNoOp:
-			debug(3, "kOldOpNoOp");
+			debug(3, "kOldOpNoOp()");
 			running = false;
 			break;
-		case kOldOpDrawSprite:
-			uint16 spriteId, x, y;
+		case kOldOpReplaceSprite:
+			removeSprite(0, script->_id);
+
 			spriteId = script->_stream->readUint16LE();
-			x = script->_stream->readUint16LE();
-			y = script->_stream->readUint16LE();
-			// FIXME
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpReplaceSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, script->_id, script->_zorder, spritePos);
+			break;
+		case kOldOpPlayWav:
+			uint16 wavId;
+			wavId = script->_stream->readUint16LE();
+			debug(3, "kOldOpPlayWav(%d)", wavId);
+			playWaveForAnim(wavId, 0, false);
 			break;
 		case kOldOpRunScript:
-			uint16 newScriptId;
-			newScriptId = script->_stream->readUint16LE();
-			debug(3, "kOldOpRunScript(%d)", newScriptId);
-			if (newScriptId == script->_id) {
+			scriptId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRunScript(%d)", scriptId);
+			if (scriptId == script->_id) {
 				// reset ourselves
-				// FIXME: erase sprite
+				removeSprite(0, script->_id);
 				script->_stream->seek(6);
 			} else {
-				runScript(newScriptId);
+				runScript(scriptId);
 			}
 			break;
+		case kOldOpStopScript:
+			scriptId = script->_stream->readUint16LE();
+			debug(3, "kOldOpStopScript(%d)", scriptId);
+			warning("kOldOpStopScript not yet implemented"); // FIXME
+			break;
+		case kOldOpActivateButton:
+			buttonId = script->_stream->readUint16LE();
+			debug(3, "kOldOpActivateButton(%d)", buttonId);
+			setButtonActive(buttonId, true);
+			break;
+		case kOldOpDeactivateButton:
+			buttonId = script->_stream->readUint16LE();
+			debug(3, "kOldOpDeactivateButton(%d)", buttonId);
+			setButtonActive(buttonId, false);
+			break;
+		case kOldOpDrawSprite:
+			spriteId = script->_stream->readUint16LE();
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpDrawSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, script->_id, script->_zorder, spritePos);
+			break;
+		case kOldOpRemoveSprite:
+			spriteId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRemoveSprite(%d)", spriteId);
+			removeSprite(spriteId, script->_id);
+			break;
 		case kOldOpDisableMouseInput:
-			debug(3, "kOldOpDisableMouseInput");
+			debug(3, "kOldOpDisableMouseInput()");
 			setCursorVisible(false);
 			break;
 		case kOldOpEnableMouseInput:
-			debug(3, "kOldOpEnableMouseInput");
+			debug(3, "kOldOpEnableMouseInput()");
 			setCursorVisible(true);
 			break;
 		case kOldOpWait:
 			script->_currDelay = script->_stream->readUint16LE();
 			debug(3, "kOldOpWait(%d)", script->_currDelay);
 			break;
+		case kOldOpRandWait:
+			uint16 min, max;
+			min = script->_stream->readUint16LE();
+			max = script->_stream->readUint16LE();
+			debug(3, "kOldOpRandWait(%d, %d)", min, max);
+			script->_currDelay = _rnd->getRandomNumberRng(min, max);
+			break;
+		case kOldOpDrawGlobalSprite:
+			spriteId = script->_stream->readUint16LE();
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpDrawGlobalSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, 0, script->_zorder, spritePos);
+			break;
+		case kOldOpRemoveGlobalSprite:
+			spriteId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRemoveGlobalSprite(%d)", spriteId);
+			removeSprite(spriteId, 0);
+			break;
+		case kOldOpSetZOrder:
+			script->_zorder = script->_stream->readUint16LE();
+			debug(3, "kOldOpSetZOrder(%d)", script->_zorder);
+			break;
 		case kOldOpPlayPipe:
-			uint16 pipeId;
 			pipeId = script->_stream->readUint16LE();
 			debug(3, "kOldOpPlayPipe(%d)", pipeId);
-			// FIXME
+			warning("V1 pipes not yet implemented"); // FIXME
+			break;
+		case kOldOpStopPipe:
+			pipeId = script->_stream->readUint16LE();
+			debug(3, "kOldOpStopPipe(%d)", pipeId);
+			warning("V1 pipes not yet implemented"); // FIXME
 			break;
 		case kOldOpNewScreen:
 			uint16 newScreenId;
@@ -827,13 +900,22 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 				_pendingPageChanges.push_back(PendingPageChange(newScreenId, false));
 			}
 			break;
+		case kOldOpRunRandom:
+			uint16 randomId;
+			randomId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRunRandom(%d)", randomId);
+			warning("V1 random not yet implemented"); // FIXME
+			break;
 		default:
-			// FIXME: error
-			warning("unknown oldScript op %d", op);
+			error("unknown oldScript op %d", op);
 		}
 	}
 
-	// FIXME: EraseSprite and give up if we exceded size
+	if (script->_stream->pos() >= (int)script->_size) {
+		// stop running if we ran out of script
+		removeSprite(0, script->_id);
+		return false;
+	}
 
 	return true;
 }
