@@ -733,12 +733,23 @@ OldScript::~OldScript() {
 }
 
 void ComposerEngine::runOldScript(uint16 id, uint16 wait) {
-	// FIXME: kill any old script
+	stopOldScript(id);
 
 	Common::SeekableReadStream *stream = getResource(ID_SCRP, id);
 	OldScript *script = new OldScript(id, stream);
 	script->_currDelay = wait;
 	_oldScripts.push_back(script);
+}
+
+void ComposerEngine::stopOldScript(uint16 id) {
+	// FIXME: this could potentially (in the case of buggy script) be called on an in-use script
+
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
+		if ((*i)->_id == id) {
+			delete *i;
+			i = _oldScripts.reverse_erase(i);
+		}
+	}
 }
 
 void ComposerEngine::tickOldScripts() {
@@ -780,7 +791,8 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 	}
 
 	bool running = true;
-	while (running && script->_stream->pos() + 1 < (int)script->_size) {
+	bool erasedOldSprite = false;
+	while (running && script->_stream->pos() < (int)script->_size) {
 		uint16 spriteId, scriptId, buttonId, pipeId;
 		Common::Point spritePos;
 
@@ -792,7 +804,10 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 			running = false;
 			break;
 		case kOldOpReplaceSprite:
-			removeSprite(0, script->_id);
+			if (!erasedOldSprite) {
+				removeSprite(0, script->_id);
+				erasedOldSprite = true;
+			}
 
 			spriteId = script->_stream->readUint16LE();
 			spritePos.x = script->_stream->readSint16LE();
@@ -820,7 +835,8 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 		case kOldOpStopScript:
 			scriptId = script->_stream->readUint16LE();
 			debug(3, "kOldOpStopScript(%d)", scriptId);
-			warning("kOldOpStopScript not yet implemented"); // FIXME
+			removeSprite(0, scriptId);
+			stopOldScript(scriptId);
 			break;
 		case kOldOpActivateButton:
 			buttonId = script->_stream->readUint16LE();
@@ -882,12 +898,13 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 		case kOldOpPlayPipe:
 			pipeId = script->_stream->readUint16LE();
 			debug(3, "kOldOpPlayPipe(%d)", pipeId);
-			warning("V1 pipes not yet implemented"); // FIXME
+			playPipe(pipeId);
 			break;
 		case kOldOpStopPipe:
 			pipeId = script->_stream->readUint16LE();
 			debug(3, "kOldOpStopPipe(%d)", pipeId);
-			warning("V1 pipes not yet implemented"); // FIXME
+			// yes, pipeId is ignored here..
+			stopPipes();
 			break;
 		case kOldOpNewScreen:
 			uint16 newScreenId;

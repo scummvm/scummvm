@@ -204,6 +204,7 @@ private:
 	void runScript(uint16 id);
 	int16 scriptFuncCall(uint16 id, int16 param1, int16 param2, int16 param3);
 	void runOldScript(uint16 id, uint16 wait);
+	void stopOldScript(uint16 id);
 	void tickOldScripts();
 	bool tickOldScript(OldScript *script);
 
@@ -211,6 +212,9 @@ private:
 	void stopAnimation(Animation *anim, bool localOnly = false, bool pipesOnly = false);
 	void playWaveForAnim(uint16 id, uint16 priority, bool bufferingOnly);
 	void processAnimFrame();
+
+	void playPipe(uint16 id);
+	void stopPipes();
 
 	bool spriteVisible(uint16 id, uint16 animId);
 	Sprite *addSprite(uint16 id, uint16 animId, uint16 zorder, const Common::Point &pos);

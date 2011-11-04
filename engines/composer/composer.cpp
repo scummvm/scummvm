@@ -53,7 +53,10 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 ComposerEngine::~ComposerEngine() {
 	DebugMan.clearAllDebugChannels();
 
+	stopPipes();
 	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
+		delete *i;
+	for (Common::List<Animation *>::iterator i = _anims.begin(); i != _anims.end(); i++)
 		delete *i;
 	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		delete i->_archive;
@@ -421,10 +424,7 @@ void ComposerEngine::unloadLibrary(uint id) {
 			delete *j;
 		}
 		_anims.clear();
-		for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
-			delete *j;
-		}
-		_pipes.clear();
+		stopPipes();
 
 		for (Common::List<Sprite>::iterator j = _sprites.begin(); j != _sprites.end(); j++) {
 			j->_surface.free();

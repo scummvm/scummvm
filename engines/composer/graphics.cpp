@@ -355,6 +355,38 @@ void ComposerEngine::processAnimFrame() {
 	}
 }
 
+void ComposerEngine::playPipe(uint16 id) {
+	stopPipes();
+
+	if (!hasResource(ID_PIPE, id)) {
+		error("couldn't find pipe %d", id);
+	}
+
+	Common::SeekableReadStream *stream = getResource(ID_PIPE, id);
+	OldPipe *pipe = new OldPipe(stream);
+	_pipes.push_front(pipe);
+	//pipe->nextFrame();
+
+	const Common::Array<uint16> *scripts = pipe->getScripts();
+	if (scripts && !scripts->empty())
+		runScript((*scripts)[0], 1, 0, 0);
+}
+
+void ComposerEngine::stopPipes() {
+	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+		const Common::Array<uint16> *scripts = (*j)->getScripts();
+		if (scripts) {
+			for (uint i = 0; i < scripts->size(); i++) {
+				removeSprite((*scripts)[i], 0);
+				stopOldScript((*scripts)[i]);
+			}
+		}
+		delete *j;
+	}
+
+	_pipes.clear();
+}
+
 bool ComposerEngine::spriteVisible(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (i->_id != id)
@@ -376,7 +408,10 @@ Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (i->_id != id)
 			continue;
-		if (i->_animId && animId && (i->_animId != animId))
+		if (getGameType() == GType_ComposerV1) {
+			if (i->_animId != animId)
+				continue;
+		} else if (i->_animId && animId && (i->_animId != animId))
 			continue;
 
 		dirtySprite(*i);
@@ -426,7 +461,10 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (!i->_id || (id && i->_id != id))
 			continue;
-		if (i->_animId && animId && (i->_animId != animId))
+		if (getGameType() == GType_ComposerV1) {
+			if (i->_animId != animId)
+				continue;
+		} else if (i->_animId && animId && (i->_animId != animId))
 			continue;
 		dirtySprite(*i);
 		i->_surface.free();
