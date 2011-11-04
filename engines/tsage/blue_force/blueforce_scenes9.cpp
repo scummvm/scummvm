@@ -666,8 +666,9 @@ void Scene900::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9016:
-		if ((BF_GLOBALS._clip1Bullets == 0) && (BF_GLOBALS._clip2Bullets == 0)){
+		if ((BF_GLOBALS._clip1Bullets == 0) && (BF_GLOBALS._clip2Bullets == 0)) {
 			BF_GLOBALS._clip1Bullets = 8;
+			BF_GLOBALS._clip2Bullets = 8;
 			SceneItem::display2(900, 25);
 		} else if (BF_GLOBALS._clip1Bullets == 0) {
 			BF_GLOBALS._clip1Bullets = 8;
