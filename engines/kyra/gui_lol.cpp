@@ -184,7 +184,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 
 	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
 
-	memset(_charStatusFlags, 0xffff, sizeof(_charStatusFlags));
+	memset(_charStatusFlags, 0xFF, sizeof(_charStatusFlags));
 	int x = 0;
 	int32 c = 0;
 

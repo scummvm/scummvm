@@ -254,7 +254,7 @@ Common::Error KyraEngine_LoK::init() {
 	_poisonDeathCounter = 0;
 
 	memset(_itemHtDat, 0, sizeof(_itemHtDat));
-	memset(_exitList, 0xFFFF, sizeof(_exitList));
+	memset(_exitList, 0xFF, sizeof(_exitList));
 	_exitListPtr = 0;
 	_pathfinderFlag = _pathfinderFlag2 = 0;
 	_lastFindWayRet = 0;
