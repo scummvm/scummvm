@@ -2220,7 +2220,6 @@ void Scene580::postInit(SceneObjectList *OwnerList) {
 		_vechile.setStrip(3);
 		_vechile.setPosition(Common::Point(165, 76));
 		_vechile.setDetails(580, 2, 3, -1, 1, NULL);
-		_vechile.setVisage(303);
 
 		BF_GLOBALS._player.setVisage(303);
 
