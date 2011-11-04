@@ -313,7 +313,6 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 			}
 
 			if (tempPosition == moveTable && *tempPosition == 9) {
-				// FIXME: This check is odd. Perhaps it should check if *tempPosition == 9 ?
 				while (*tempPosition == 9)
 					++tempPosition;
 
