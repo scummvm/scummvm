@@ -676,6 +676,8 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 		return _drainMagic;
 	case 13:
 		return getVolume(kVolumeSpeech) - 2;
+	case 14:
+		return _tim->_abortFlag;
 	default:
 		break;
 	}
