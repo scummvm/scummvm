@@ -472,13 +472,14 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 
 	_type = stream->readUint16LE();
 	_active = (_type & 0x8000) ? true : false;
+	bool hasRollover = (gameType == GType_ComposerV1) && (_type & 0x4000);
 	_type &= 0xfff;
 	debug(9, "button %d: type %d, active %d", id, _type, _active);
 
-	uint16 flags = 0;
 	uint16 size = 4;
 	if (gameType == GType_ComposerV1) {
-		flags = stream->readUint16LE();
+		stream->skip(2);
+
 		_zorder = 0;
 		_scriptId = stream->readUint16LE();
 		_scriptIdRollOn = 0;
@@ -515,7 +516,7 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 		error("unknown button type %d", _type);
 	}
 
-	if (flags & 0x40) {
+	if (hasRollover) {
 		_scriptIdRollOn = stream->readUint16LE();
 		_scriptIdRollOff = stream->readUint16LE();
 	}
