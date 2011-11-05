@@ -224,6 +224,8 @@ private:
 	DECLARE_OPCODE(zipToRoomNode);
 	DECLARE_OPCODE(moviePlay);
 	DECLARE_OPCODE(moviePlaySynchronized);
+	DECLARE_OPCODE(lootAt);
+	DECLARE_OPCODE(lootAtInXFrames);
 	DECLARE_OPCODE(cameraLimitMovement);
 	DECLARE_OPCODE(cameraFreeMovement);
 	DECLARE_OPCODE(cameraLookAt);

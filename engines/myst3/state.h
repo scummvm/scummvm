@@ -111,6 +111,8 @@ public:
 
 	DECLARE_VAR(178, MovieUseBackground)
 
+	DECLARE_VAR(185, CameraMoveSpeed)
+
 	DECLARE_VAR(189, LocationNextNode)
 	DECLARE_VAR(190, LocationNextRoom)
 	DECLARE_VAR(191, LocationNextAge)

@@ -117,6 +117,8 @@ public:
 	void setMenuAction(uint16 action) { _menuAction = action; }
 	void setShouldQuit() { _shouldQuit = true; }
 
+	void animateDirectionChange(float pitch, float heading, uint16 speed);
+
 	void processInput(bool lookOnly);
 	void drawFrame();
 private:

@@ -174,6 +174,8 @@ Script::Script(Myst3Engine *vm):
 	OP_2(141, zipToRoomNode,				kValue,		kValue											);
 	OP_1(147, moviePlay, 					kEvalValue													);
 	OP_1(148, moviePlaySynchronized,		kEvalValue													);
+	OP_2(153, lootAt,						kValue, 	kValue											);
+	OP_3(154, lootAtInXFrames,				kValue, 	kValue, 	kValue								);
 	OP_4(157, cameraLimitMovement,			kValue,		kValue,		kValue,		kValue					);
 	OP_0(158, cameraFreeMovement																		);
 	OP_2(159, cameraLookAt,					kValue,		kValue											);
@@ -1887,6 +1889,18 @@ void Script::runScriptWhileCondEachXFrames(Context &c, const Opcode &cmd) {
 
 	_vm->processInput(true);
 	_vm->drawFrame();
+}
+
+void Script::lootAt(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Look at %d, %d", cmd.op, cmd.args[0], cmd.args[1]);
+
+	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], 0);
+}
+
+void Script::lootAtInXFrames(Context &c, const Opcode &cmd) {
+	debugC(kDebugScript, "Opcode %d: Look at %d, %d in %d frames", cmd.op, cmd.args[0], cmd.args[1], cmd.args[2]);
+
+	_vm->animateDirectionChange(cmd.args[0], cmd.args[1], cmd.args[2]);
 }
 
 void Script::runScriptForVarDrawFramesHelper(uint16 var, int32 startValue, int32 endValue, uint16 script, int32 numFrames) {

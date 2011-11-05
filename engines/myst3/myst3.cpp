@@ -809,4 +809,61 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 	return Common::kUnknownError;
 }
 
+void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading, uint16 scriptFrames) {
+	float startPitch = _state->getLookAtPitch();
+	float startHeading = _state->getLookAtHeading();
+
+	if (startPitch == targetPitch && startHeading == targetHeading)
+		return; // Fast path
+
+	float pitchDistance = targetPitch - startPitch;
+	float headingDistance = targetHeading - startHeading;
+
+	// Compute animation duration in frames
+	float numFrames;
+	if (scriptFrames) {
+		numFrames = scriptFrames;
+	} else {
+		numFrames = sqrt(pitchDistance * pitchDistance + headingDistance * headingDistance)
+				* 30.0f / _state->getCameraMoveSpeed();
+
+		if (numFrames > 0.0f)
+			numFrames += 10.0f;
+	}
+
+	uint startFrame = _state->getFrameCount();
+
+	// Draw animation
+	if (numFrames != 0.0f) {
+		while (1) {
+			uint elapsedFrames = _state->getFrameCount() - startFrame;
+			if (elapsedFrames >= numFrames)
+				break;
+
+			float step;
+			if (numFrames >= 15) {
+				// Fast then slow movement
+				if (elapsedFrames > numFrames / 2.0f)
+					step = 1.0f - (numFrames - elapsedFrames) * (numFrames - elapsedFrames)
+								/ (numFrames / 2.0f * numFrames / 2.0f) / 2.0f;
+				else
+					step = elapsedFrames * elapsedFrames / (numFrames / 2.0f * numFrames / 2.0f) / 2.0f;
+
+			} else {
+				// Constant speed movement
+				step = elapsedFrames / numFrames;
+			}
+
+			float nextPitch = startPitch + pitchDistance * step;
+			float nextHeading = startHeading + headingDistance * step;
+
+			_state->lookAt(nextPitch, nextHeading);
+			drawFrame();
+		}
+	}
+
+	_state->lookAt(targetPitch, targetHeading);
+	drawFrame();
+}
+
 } // end of namespace Myst3
