@@ -101,6 +101,11 @@ struct KeyboardHandler {
 	uint16 scriptId;
 };
 
+struct RandomEvent {
+	uint16 weight;
+	uint16 scriptId;
+};
+
 struct Library {
 	uint _id;
 	Archive *_archive;
@@ -181,6 +186,8 @@ private:
 	Common::Array<QueuedScript> _queuedScripts;
 	Common::List<Animation *> _anims;
 	Common::List<Pipe *> _pipes;
+
+	Common::HashMap<uint16, Common::Array<RandomEvent> > _randomEvents;
 
 	void onMouseDown(const Common::Point &pos);
 	void onMouseMove(const Common::Point &pos);

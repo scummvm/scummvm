@@ -443,6 +443,20 @@ void ComposerEngine::loadLibrary(uint id) {
 		newLib._keyboardHandlers.push_back(handler);
 	}
 
+	Common::Array<uint16> randResources = library._archive->getResourceIDList(ID_RAND);
+	for (uint i = 0; i < randResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_RAND, randResources[i]);
+		Common::Array<RandomEvent> &events = _randomEvents[randResources[i]];
+		uint16 count = stream->readUint16LE();
+		for (uint j = 0; j < count; j++) {
+			RandomEvent random;
+			random.scriptId = stream->readUint16LE();
+			random.weight = stream->readUint16LE();
+			events.push_back(random);
+		}
+		delete stream;
+	}
+
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
 		setBackground(1000);
@@ -469,6 +483,8 @@ void ComposerEngine::unloadLibrary(uint id) {
 		}
 		_anims.clear();
 		stopPipes();
+
+		_randomEvents.clear();
 
 		for (Common::List<Sprite>::iterator j = _sprites.begin(); j != _sprites.end(); j++) {
 			j->_surface.free();

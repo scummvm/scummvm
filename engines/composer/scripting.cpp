@@ -922,7 +922,21 @@ bool ComposerEngine::tickOldScript(OldScript *script) {
 			uint16 randomId;
 			randomId = script->_stream->readUint16LE();
 			debug(3, "kOldOpRunRandom(%d)", randomId);
-			warning("V1 random not yet implemented"); // FIXME
+			if (!_randomEvents.contains(randomId)) {
+				warning("kOldOpRunRandom found no entries for id %d", randomId);
+			} else {
+				uint32 randValue = _rnd->getRandomNumberRng(0, 32767);
+				const Common::Array<RandomEvent> &events = _randomEvents[randomId];
+				uint i = 0;
+				for (i = 0; i < events.size(); i++) {
+					if ((i + 1 == events.size()) || (randValue <= events[i].weight)) {
+						runScript(events[i].scriptId);
+						break;
+					} else {
+						randValue -= events[i].weight;
+					}
+				}
+			}
 			break;
 		default:
 			error("unknown oldScript op %d", op);

@@ -43,6 +43,7 @@ struct Animation;
 #define ID_CTBL MKTAG('C','T','B','L') // Color Table
 #define ID_EVNT MKTAG('E','V','N','T') // Event
 #define ID_PIPE MKTAG('P','I','P','E') // Pipe
+#define ID_RAND MKTAG('R','A','N','D') // Random Object
 #define ID_SCRP MKTAG('S','C','R','P') // Script
 #define ID_VARI MKTAG('V','A','R','I') // Variables
 #define ID_WAVE MKTAG('W','A','V','E') // Wave
