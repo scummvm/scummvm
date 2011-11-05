@@ -87,7 +87,7 @@ public:
 	SegmentId getLocalsSegment() const { return _localsSegment; }
 	reg_t *getLocalsBegin() { return _localsBlock ? _localsBlock->_locals.begin() : NULL; }
 	void syncLocalsBlock(SegManager *segMan);
-	ObjMap getObjectMap() const { return _objects; }
+	ObjMap &getObjectMap() { return _objects; }
 
 public:
 	Script();

@@ -269,7 +269,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 
 		if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			// It's a script, scan all objects in it
-			const Script *scr = (const Script *)mobj;
+			Script *scr = (Script *)mobj;
 			ObjMap objects = scr->getObjectMap();
 			for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
 				objpos.offset = it->_value.getPos().offset;
