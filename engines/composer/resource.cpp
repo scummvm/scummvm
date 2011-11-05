@@ -255,7 +255,6 @@ Pipe::Pipe(Common::SeekableReadStream *stream) {
 }
 
 Pipe::~Pipe() {
-	delete _stream;
 }
 
 void Pipe::nextFrame() {

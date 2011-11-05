@@ -123,6 +123,7 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		// If the resource is a pipe itself, then load the pipe
 		// and then fish the requested animation out of it.
 		if (type != 1) {
+			_pipeStreams.push_back(stream);
 			newPipe = new Pipe(stream);
 			_pipes.push_front(newPipe);
 			newPipe->nextFrame();
@@ -397,6 +398,11 @@ void ComposerEngine::stopPipes() {
 	}
 
 	_pipes.clear();
+
+	// substreams may need to remain valid until the end of a page
+	for (uint i = 0; i < _pipeStreams.size(); i++)
+		delete _pipeStreams[i];
+	_pipeStreams.clear();
 }
 
 bool ComposerEngine::spriteVisible(uint16 id, uint16 animId) {

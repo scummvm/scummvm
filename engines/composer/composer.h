@@ -186,6 +186,7 @@ private:
 	Common::Array<QueuedScript> _queuedScripts;
 	Common::List<Animation *> _anims;
 	Common::List<Pipe *> _pipes;
+	Common::Array<Common::SeekableReadStream *> _pipeStreams;
 
 	Common::HashMap<uint16, Common::Array<RandomEvent> > _randomEvents;
 
