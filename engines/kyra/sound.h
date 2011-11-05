@@ -128,7 +128,7 @@ public:
 	 *
 	 * @param track sound effect id
 	 */
-	virtual void playSoundEffect(uint8 track) = 0;
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff) = 0;
 
 	/**
 	 * Stop playback of all sfx tracks.
@@ -273,7 +273,7 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	virtual void stopAllSoundEffects();
 
