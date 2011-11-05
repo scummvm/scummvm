@@ -262,6 +262,33 @@ void ComposerEngine::onMouseMove(const Common::Point &pos) {
 void ComposerEngine::onKeyDown(uint16 keyCode) {
 	runEvent(kEventKeyDown, keyCode, 0, 0);
 	runEvent(kEventChar, keyCode, 0, 0);
+
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) {
+		for (Common::List<KeyboardHandler>::iterator j = i->_keyboardHandlers.begin(); j != i->_keyboardHandlers.end(); j++) {
+			const KeyboardHandler &handler = *j;
+			if (keyCode != handler.keyId)
+				continue;
+
+			int modifiers = g_system->getEventManager()->getModifierState();
+			switch (handler.modifierId) {
+			case 0x10: // shift
+				if (!(modifiers & Common::KBD_SHIFT))
+					continue;
+				break;
+			case 0x11: // control
+				if (!(modifiers & Common::KBD_CTRL))
+					continue;
+				break;
+			case 0:
+				break;
+			default:
+				warning("unknown keyb modifier %d", handler.modifierId);
+				continue;
+			}
+
+			runScript(handler.scriptId);
+		}
+	}
 }
 
 void ComposerEngine::setCursor(uint16 id, const Common::Point &offset) {
@@ -404,6 +431,16 @@ void ComposerEngine::loadLibrary(uint id) {
 		Common::SeekableReadStream *stream = library._archive->getResource(ID_AMBI, ambientResources[i]);
 		Button button(stream);
 		newLib._buttons.insert(newLib._buttons.begin(), button);
+	}
+
+	Common::Array<uint16> accelResources = library._archive->getResourceIDList(ID_ACEL);
+	for (uint i = 0; i < accelResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_ACEL, accelResources[i]);
+		KeyboardHandler handler;
+		handler.keyId = stream->readUint16LE();
+		handler.modifierId = stream->readUint16LE();
+		handler.scriptId = stream->readUint16LE();
+		newLib._keyboardHandlers.push_back(handler);
 	}
 
 	// add background sprite, if it exists

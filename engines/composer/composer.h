@@ -95,11 +95,18 @@ enum {
 	kEventKeyUp = 7
 };
 
+struct KeyboardHandler {
+	uint16 keyId;
+	uint16 modifierId;
+	uint16 scriptId;
+};
+
 struct Library {
 	uint _id;
 	Archive *_archive;
 
 	Common::List<Button> _buttons;
+	Common::List<KeyboardHandler> _keyboardHandlers;
 };
 
 struct QueuedScript {
