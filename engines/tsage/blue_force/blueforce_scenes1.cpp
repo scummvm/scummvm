@@ -3123,7 +3123,7 @@ void Scene180::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene190::Object4::startAction(CursorType action, Event &event) {
+bool Scene190::LyleCar::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -3191,14 +3191,14 @@ void Scene190::Action1::signal() {
 	}
 	case 2:
 		scene->_sound.play(82);
-		scene->_object2.animate(ANIM_MODE_5, this);
+		scene->_door.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		ADD_MOVER(BF_GLOBALS._player, 180, 86);
 		break;
 	case 4:
 		scene->_sound.play(82);
-		scene->_object2.animate(ANIM_MODE_6, this);
+		scene->_door.animate(ANIM_MODE_6, this);
 		break;
 	case 5:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -3223,11 +3223,14 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._dayNumber == 0) {
 		// If at start of game, change to first day
 		BF_GLOBALS._dayNumber = 1;
+		// To be checked: Not present in the original
 		g_globals->_sceneManager._previousScene = 100;
 	}
 
+	SceneExt::postInit();
 	// Load the scene data
 	loadScene(190);
+
 	BF_GLOBALS._scenePalette.loadPalette(2);
 
 	_stripManager.addSpeaker(&_speaker);
@@ -3235,18 +3238,20 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.disableControl();
 
 	// Initialise objects
-	_object2.postInit();
-	_object2.setVisage(190);
-	_object2.setStrip(1);
-	_object2.setPosition(Common::Point(179, 88));
+	_door.postInit();
+	_door.setVisage(190);
+	_door.setStrip(1);
+	_door.setPosition(Common::Point(179, 88));
 
-	_object3.postInit();
-	_object3.setVisage(190);
-	_object3.setStrip(2);
-	_object3.fixPriority(200);
-	_object3.setPosition(Common::Point(170, 31));
-	_object3.animate(ANIM_MODE_7, 0, NULL);
-	_object3.setDetails(190, 8, 26, 19, 1, NULL);
+	_flag.postInit();
+	_flag.setVisage(190);
+	_flag.setStrip(2);
+	_flag.fixPriority(200);
+	_flag.setPosition(Common::Point(170, 31));
+	_flag.animate(ANIM_MODE_7, 0, NULL);
+	_flag.setDetails(190, 8, 26, 19, 1, NULL);
+
+	_fieldB52 = true;
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		BF_GLOBALS._player.setVisage(303);
@@ -3254,11 +3259,11 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
 
-		_object4.postInit();
-		_object4.setVisage(444);
-		_object4.setFrame(2);
-		_object4.setPosition(Common::Point(54, 114));
-		_object4.setDetails(190, -1, -1, -1, 1, NULL);
+		_lyleCar.postInit();
+		_lyleCar.setVisage(444);
+		_lyleCar.setFrame(2);
+		_lyleCar.setPosition(Common::Point(54, 114));
+		_lyleCar.setDetails(190, -1, -1, -1, 1, NULL);
 
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {
@@ -3269,7 +3274,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		}
 		case 315:
 			_sceneMode = 1901;
-			setAction(&_sequenceManager, this, 1901, &BF_GLOBALS._player, &_object2, NULL);
+			setAction(&_sequenceManager, this, 1901, &BF_GLOBALS._player, &_door, NULL);
 			break;
 		case 50:
 		case 60:
@@ -3303,13 +3308,14 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		case 315:
 			BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 1900 : 1901;
-			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_object2, NULL);
+			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_door, NULL);
 			break;
 		case 50:
 		case 60:
 		default:
 			BF_GLOBALS.setFlag(onBike);
 			BF_GLOBALS._player.disableControl();
+			// To be checked: Not present in the original
 			T2_GLOBALS._uiElements._active = true;
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 192 : 190;
 			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);

@@ -432,7 +432,7 @@ public:
 
 class Scene190: public SceneExt {
 	/* Objects */
-	class Object4: public NamedObject {
+	class LyleCar: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -459,8 +459,8 @@ class Scene190: public SceneExt {
 public:
 	SequenceManager _sequenceManager;
 	FollowerObject _object1;
-	NamedObject _object2, _object3;
-	Object4 _object4;
+	NamedObject _door, _flag;
+	LyleCar _lyleCar;
 	Item1 _item1;
 	Item2 _item2;
 	NamedHotspot _item3, _item4, _item5, _item6;
