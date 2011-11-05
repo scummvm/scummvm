@@ -399,6 +399,13 @@ void ComposerEngine::loadLibrary(uint id) {
 			newLib._buttons.push_back(button);
 	}
 
+	Common::Array<uint16> ambientResources = library._archive->getResourceIDList(ID_AMBI);
+	for (uint i = 0; i < ambientResources.size(); i++) {
+		Common::SeekableReadStream *stream = library._archive->getResource(ID_AMBI, ambientResources[i]);
+		Button button(stream);
+		newLib._buttons.insert(newLib._buttons.begin(), button);
+	}
+
 	// add background sprite, if it exists
 	if (hasResource(ID_BMAP, 1000))
 		setBackground(1000);
@@ -521,6 +528,26 @@ Button::Button(Common::SeekableReadStream *stream, uint16 id, uint gameType) {
 	if (hasRollover) {
 		_scriptIdRollOn = stream->readUint16LE();
 		_scriptIdRollOff = stream->readUint16LE();
+	}
+
+	delete stream;
+}
+
+// AMBI-style button
+Button::Button(Common::SeekableReadStream *stream) {
+	_id = 0;
+	_zorder = 0;
+	_active = true;
+	_type = kButtonSprites;
+	_scriptIdRollOn = 0;
+	_scriptIdRollOff = 0;
+
+	_scriptId = stream->readUint16LE();
+
+	uint16 count = stream->readUint16LE();
+	for (uint j = 0; j < count; j++) {
+		uint16 spriteId = stream->readUint16LE();
+		_spriteIds.push_back(spriteId);
 	}
 
 	delete stream;

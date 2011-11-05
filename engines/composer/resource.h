@@ -35,6 +35,7 @@ struct Animation;
 
 #define ID_LBRC MKTAG('L','B','R','C') // Main FourCC
 
+#define ID_AMBI MKTAG('A','M','B','I') // Ambient (v1 sprite button)
 #define ID_ANIM MKTAG('A','N','I','M') // Animation
 #define ID_BMAP MKTAG('B','M','A','P') // Bitmap
 #define ID_BUTN MKTAG('B','U','T','N') // Button

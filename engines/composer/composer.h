@@ -69,6 +69,7 @@ class Button {
 public:
 	Button() { }
 	Button(Common::SeekableReadStream *stream, uint16 id, uint gameType);
+	Button(Common::SeekableReadStream *stream);
 
 	bool contains(const Common::Point &pos) const;
 
