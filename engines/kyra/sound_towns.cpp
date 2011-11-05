@@ -125,7 +125,7 @@ void SoundTowns::loadSoundFile(uint file) {
 	_sfxFileData = _vm->resource()->fileData(fileListEntry(file), 0);
 }
 
-void SoundTowns::playSoundEffect(uint8 track) {
+void SoundTowns::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxEnabled || !_sfxFileData)
 		return;
 
@@ -446,7 +446,7 @@ void SoundPC98::beginFadeOut() {
 	haltTrack();
 }
 
-void SoundPC98::playSoundEffect(uint8 track) {
+void SoundPC98::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxTrackData)
 		return;
 
@@ -650,7 +650,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	return 1;
 }
 
-void SoundTownsPC98_v2::playSoundEffect(uint8 track) {
+void SoundTownsPC98_v2::playSoundEffect(uint8 track, uint8) {
 	if (!_useFmSfx || !_sfxTrackData)
 		return;
 
