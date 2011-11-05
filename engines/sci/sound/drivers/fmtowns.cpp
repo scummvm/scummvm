@@ -97,7 +97,7 @@ class MidiDriver_FMTowns : public MidiDriver, public TownsAudioInterfacePluginDr
 friend class TownsChannel;
 friend class TownsMidiPart;
 public:
-	MidiDriver_FMTowns(Audio::Mixer *mixer);
+	MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version);
 	~MidiDriver_FMTowns();
 
 	int open();
@@ -141,6 +141,7 @@ private:
 	bool _ready;
 
 	const uint16 _baseTempo;
+	SciVersion _version;
 
 	TownsAudioInterface *_intf;
 };
@@ -167,9 +168,11 @@ TownsChannel::TownsChannel(MidiDriver_FMTowns *driver, uint8 id) : _drv(driver),
 void TownsChannel::noteOn(uint8 note, uint8 velo) {
 	_duration = 0;
 
-	if (_program != _drv->_parts[_assign]->currentProgram() && _drv->_soundOn) {
-		_program = _drv->_parts[_assign]->currentProgram();
-		_drv->_intf->callback(4, _id, _program);
+	if (_drv->_version != SCI_VERSION_1_EARLY) {
+		if (_program != _drv->_parts[_assign]->currentProgram() && _drv->_soundOn) {
+			_program = _drv->_parts[_assign]->currentProgram();
+			_drv->_intf->callback(4, _id, _program);
+		}
 	}
 
 	_note = note;
@@ -191,9 +194,9 @@ void TownsChannel::pitchBend(int16 val) {
 }
 
 void TownsChannel::updateVolume() {
-	if (_assign > 15)
+	if (_assign > 15 && _drv->_version != SCI_VERSION_1_EARLY)
 		return;
-	_drv->_intf->callback(8, _id, _drv->getChannelVolume(_assign));
+	_drv->_intf->callback(8, _id, _drv->getChannelVolume((_drv->_version == SCI_VERSION_1_EARLY) ? 0 : _assign));
 }
 
 void TownsChannel::updateDuration() {
@@ -206,7 +209,7 @@ TownsMidiPart::TownsMidiPart(MidiDriver_FMTowns *driver, uint8 id) : _drv(driver
 
 void TownsMidiPart::noteOff(uint8 note) {
 	for (int i = 0; i < 6; i++) {
-		if (_drv->_out[i]->_assign != _id || _drv->_out[i]->_note != note)
+		if ((_drv->_out[i]->_assign != _id && _drv->_version != SCI_VERSION_1_EARLY) || _drv->_out[i]->_note != note)
 			continue;
 		if (_sustain)
 			_drv->_out[i]->_sustain = 1;
@@ -225,10 +228,11 @@ void TownsMidiPart::noteOn(uint8 note, uint8 velo) {
 		return;
 	}
 
-	velo >>= 1;
+	if (_drv->_version != SCI_VERSION_1_EARLY)
+		velo >>= 1;
 
 	for (int i = 0; i < 6; i++) {
-		if (_drv->_out[i]->_assign != _id || _drv->_out[i]->_note != note)
+		if ((_drv->_out[i]->_assign != _id && _drv->_version != SCI_VERSION_1_EARLY) || _drv->_out[i]->_note != note)
 			continue;
 		_drv->_out[i]->_sustain = 0;
 		_drv->_out[i]->noteOff();
@@ -242,6 +246,9 @@ void TownsMidiPart::noteOn(uint8 note, uint8 velo) {
 }
 
 void TownsMidiPart::controlChangeVolume(uint8 vol) {
+	if (_drv->_version == SCI_VERSION_1_EARLY)
+		return;
+
 	_volume = vol >> 1;
 	for (int i = 0; i < 6; i++) {
 		if (_drv->_out[i]->_assign == _id)
@@ -250,6 +257,9 @@ void TownsMidiPart::controlChangeVolume(uint8 vol) {
 }
 
 void TownsMidiPart::controlChangeSustain(uint8 sus) {
+	if (_drv->_version == SCI_VERSION_1_EARLY)
+		return;
+
 	_sustain = sus;
 	if (_sustain)
 		return;
@@ -263,6 +273,9 @@ void TownsMidiPart::controlChangeSustain(uint8 sus) {
 }
 
 void TownsMidiPart::controlChangePolyphony(uint8 numChan) {
+	if (_drv->_version == SCI_VERSION_1_EARLY)
+		return;
+
 	uint8 numAssigned = 0;
 	for (int i = 0; i < 6; i++) {
 		if (_drv->_out[i]->_assign == _id)
@@ -280,7 +293,7 @@ void TownsMidiPart::controlChangePolyphony(uint8 numChan) {
 
 void TownsMidiPart::controlChangeAllNotesOff() {
 	for (int i = 0; i < 6; i++) {
-		if (_drv->_out[i]->_assign == _id && _drv->_out[i]->_note != 0xff)
+		if ((_drv->_out[i]->_assign == _id || _drv->_version == SCI_VERSION_1_EARLY) && _drv->_out[i]->_note != 0xff)
 			_drv->_out[i]->noteOff();
 	}
 }
@@ -293,7 +306,8 @@ void TownsMidiPart::pitchBend(int16 val) {
 	_pitchBend = val;
 	val -= 0x2000;
 	for (int i = 0; i < 6; i++) {
-		if (_drv->_out[i]->_assign == _id)
+		// Strangely, the early version driver applies the setting to channel 0 only.
+		if (_drv->_out[i]->_assign == _id || (_drv->_version == SCI_VERSION_1_EARLY && i == 0))
 			_drv->_out[i]->pitchBend(val);
 	}
 }
@@ -365,7 +379,7 @@ int TownsMidiPart::allocateChannel() {
 		if (chan == _outChan)
 			loop = false;
 
-		if (_id == _drv->_out[chan]->_assign) {
+		if (_id == _drv->_out[chan]->_assign || _drv->_version == SCI_VERSION_1_EARLY) {
 			if (_drv->_out[chan]->_note == 0xff) {
 				found = true;
 				break;
@@ -390,7 +404,7 @@ int TownsMidiPart::allocateChannel() {
 	return chan;
 }
 
-MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer) : _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true) {
+MidiDriver_FMTowns::MidiDriver_FMTowns(Audio::Mixer *mixer, SciVersion version) : _version(version), _timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f), _soundOn(true) {
 	_intf = new TownsAudioInterface(mixer, this, true);
 	_out = new TownsChannel*[6];
 	for (int i = 0; i < 6; i++)
@@ -553,7 +567,7 @@ void MidiDriver_FMTowns::timerCallback(int timerId) {
 
 int MidiDriver_FMTowns::getChannelVolume(uint8 midiPart) {
 	static const uint8 volumeTable[] = { 0x00, 0x0D, 0x1B, 0x28, 0x36, 0x43, 0x51, 0x5F, 0x63, 0x67, 0x6B, 0x6F, 0x73, 0x77, 0x7B, 0x7F };
-	int tableIndex = (_parts[midiPart]->_volume * (_masterVolume + 1)) >> 6;
+	int tableIndex = (_version == SCI_VERSION_1_EARLY) ? _masterVolume : (_parts[midiPart]->_volume * (_masterVolume + 1)) >> 6;
 	assert(tableIndex < 16);
 	return volumeTable[tableIndex];
 }
@@ -596,7 +610,7 @@ void MidiDriver_FMTowns::updateChannels() {
 }
 
 MidiPlayer_FMTowns::MidiPlayer_FMTowns(SciVersion version) : MidiPlayer(version) {
-	_driver = _townsDriver = new MidiDriver_FMTowns(g_system->getMixer());
+	_driver = _townsDriver = new MidiDriver_FMTowns(g_system->getMixer(), version);
 }
 
 MidiPlayer_FMTowns::~MidiPlayer_FMTowns() {
@@ -607,7 +621,7 @@ int MidiPlayer_FMTowns::open(ResourceManager *resMan) {
 	int result = MidiDriver::MERR_DEVICE_NOT_AVAILABLE;
 	if (_townsDriver) {
 		result = _townsDriver->open();
-		if (!result)			
+		if (!result && _version == SCI_VERSION_1_LATE)
 			_townsDriver->loadInstruments((resMan->findResource(ResourceId(kResourceTypePatch, 8), true))->data);
 	}
 	return result;
@@ -618,11 +632,11 @@ bool MidiPlayer_FMTowns::hasRhythmChannel() const {
 }
 
 byte MidiPlayer_FMTowns::getPlayId() const {
-	return 0x16;
+	return (_version == SCI_VERSION_1_EARLY) ? 0x00 : 0x16;
 }
 
 int MidiPlayer_FMTowns::getPolyphony() const {
-	return 6;
+	return (_version == SCI_VERSION_1_EARLY) ? 1 : 6;
 }
 
 void MidiPlayer_FMTowns::playSwitch(bool play) {
@@ -635,3 +649,4 @@ MidiPlayer *MidiPlayer_FMTowns_create(SciVersion _soundVersion) {
 }
 
 } // End of namespace Sci
+

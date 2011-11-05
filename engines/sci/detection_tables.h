@@ -2351,6 +2351,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO1(GUIO_NOASPECT)	},
+	{"mothergoose256", "", {
+		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
+		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
+		AD_LISTEND},
+	 	Common::JA_JPN, Common::kPlatformFMTowns, 0, GUIO1(GUIO_NOASPECT)	},
 
 #ifdef ENABLE_SCI32
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
