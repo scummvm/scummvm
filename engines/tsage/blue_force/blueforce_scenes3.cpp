@@ -679,7 +679,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 		break;
 	case INV_FOREST_RAP:
 		BF_GLOBALS._player.disableControl();
-		scene->_stripNumber = BF_GLOBALS.getFlag(onDuty) ? 3178 : 3173;
+		scene->_stripNumber = BF_GLOBALS.getFlag(onDuty) ? 3173 : 3178;
 		scene->setAction(&scene->_action1);
 		break;
 	case INV_GREEN_ID:
@@ -697,7 +697,7 @@ bool Scene315::Barry::startAction(CursorType action, Event &event) {
 		scene->setAction(&scene->_action1);
 		break;
 	case INV_COBB_RAP:
-		if (BF_INVENTORY._mugshot._sceneNumber == 1)
+		if (BF_INVENTORY.getObjectScene(INV_MUG_SHOT) == 1)
 			NamedHotspot::startAction(action, event);
 		else {
 			BF_GLOBALS._player.disableControl();
