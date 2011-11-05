@@ -188,8 +188,10 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 		}
 	}
 	Common::SeekableReadStream *stream = NULL;
+	bool fromPipe = true;
 	if (!bufferingOnly && hasResource(ID_WAVE, id)) {
 		stream = getResource(ID_WAVE, id);
+		fromPipe = false;
 	} else {
 		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
 			Pipe *pipe = *k;
@@ -201,12 +203,18 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 	}
 	if (!stream)
 		return;
-	// FIXME: non-pipe buffers have fixed wav header (data at +44, size at +40)
-	byte *buffer = (byte *)malloc(stream->size());
-	stream->read(buffer, stream->size());
+
+	uint32 size = stream->size();
+	if (!fromPipe) {
+		// non-pipe buffers have fixed wav header (data at +44, size at +40)
+		stream->skip(40);
+		size = stream->readUint32LE();
+	}
+	byte *buffer = (byte *)malloc(size);
+	stream->read(buffer, size);
 	if (!_audioStream)
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
-	_audioStream->queueBuffer(buffer, stream->size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	_currSoundPriority = priority;
 	delete stream;
 	if (!_mixer->isSoundHandleActive(_soundHandle))
