@@ -1540,6 +1540,8 @@ void Scheduler_v1d::promptAction(act *action) {
 
 	char resp[256];
 	strncpy(resp, response.c_str(), 256);
+	if (response.size() > 256)
+		resp[255] = '\0';
 
 	if (action->a3.encodedFl)
 		decodeString(resp);
@@ -1587,6 +1589,8 @@ void Scheduler_v2d::promptAction(act *action) {
 
 	char resp[256];
 	strncpy(resp, response.c_str(), 256);
+	if (response.size() > 256)
+		resp[255] = '\0';
 
 	for (int dx = 0; !found && (action->a3.responsePtr[dx] != -1); dx++) {
 		tmpStr = _vm->_file->fetchString(action->a3.responsePtr[dx]);
