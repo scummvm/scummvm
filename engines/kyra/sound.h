@@ -217,6 +217,16 @@ public:
 	 * Stops playback of the current voice.
 	 */
 	void voiceStop(const Audio::SoundHandle *handle = 0);
+
+	/**
+	 * Receive notifications from a song at certain points.
+	 */
+	virtual int checkTrigger() { return 0; }
+
+	/**
+	 * Reset sound trigger.
+	 */
+	virtual void resetTrigger() {}
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->fileListLen) ? _soundDataList->fileList[file] : ""; }
 	int fileListLen() const { return _soundDataList->fileListLen; }

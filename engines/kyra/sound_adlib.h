@@ -79,6 +79,9 @@ public:
 	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
 
 	virtual void beginFadeOut();
+
+	virtual int checkTrigger();
+	virtual void resetTrigger();
 private:
 	void internalLoadFile(Common::String file);
 

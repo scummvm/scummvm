@@ -66,6 +66,7 @@ public:
 	bool isChannelPlaying(int channel) const;
 	void stopAllChannels();
 	int getSoundTrigger() const { return _soundTrigger; }
+	void resetSoundTrigger() { _soundTrigger = 0; }
 
 	void callback();
 
@@ -2343,6 +2344,14 @@ void SoundAdLibPC::play(uint8 track, uint8 volume) {
 
 void SoundAdLibPC::beginFadeOut() {
 	play(1, 0xff);
+}
+
+int SoundAdLibPC::checkTrigger() {
+	return _driver->getSoundTrigger();
+}
+
+void SoundAdLibPC::resetTrigger() {
+	_driver->resetSoundTrigger();
 }
 
 void SoundAdLibPC::loadSoundFile(uint file) {
