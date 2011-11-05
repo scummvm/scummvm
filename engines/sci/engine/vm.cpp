@@ -593,15 +593,9 @@ void run_vm(EngineState *s) {
 			if (!local_script) {
 				error("Could not find local script from segment %x", s->xs->local_segment);
 			} else {
-				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
-				if (local_script->_localsBlock)
-					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
-				else
-					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-				if (local_script->_localsBlock)
-					s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
-				else
-					s->variablesMax[VAR_LOCAL] = 0;
+				s->variablesSegment[VAR_LOCAL] = local_script->getLocalsSegment();
+				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->getLocalsBegin();
+				s->variablesMax[VAR_LOCAL] = local_script->getLocalsCount();
 				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}

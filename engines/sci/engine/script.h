@@ -69,6 +69,8 @@ private:
 	uint16 _localsCount;
 
 	bool _markedAsDeleted;
+	SegmentId _localsSegment; /**< The local variable segment */
+	LocalVariables *_localsBlock;
 
 public:
 	/**
@@ -76,8 +78,6 @@ public:
 	 * Indexed by the TODO offset.
 	 */
 	ObjMap _objects;
-	SegmentId _localsSegment; /**< The local variable segment */
-	LocalVariables *_localsBlock;
 
 public:
 	int getLocalsOffset() const { return _localsOffset; }
@@ -89,6 +89,9 @@ public:
 	const byte *getBuf(uint offset = 0) const { return _buf + offset; }
 
 	int getScriptNumber() const { return _nr; }
+	SegmentId getLocalsSegment() const { return _localsSegment; }
+	reg_t *getLocalsBegin() { return _localsBlock ? _localsBlock->_locals.begin() : NULL; }
+	void syncLocalsBlock(SegManager *segMan);
 
 public:
 	Script();
@@ -295,6 +298,8 @@ private:
 	 * @param segmentId	The script's segment id
 	 */
 	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
+
+	LocalVariables *allocLocalsSegment(SegManager *segMan);
 };
 
 } // End of namespace Sci

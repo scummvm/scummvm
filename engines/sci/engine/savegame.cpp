@@ -226,7 +226,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			continue;
 
 		Script *scr = (Script *)_heap[i];
-		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
+		scr->syncLocalsBlock(this);
 
 		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
 			reg_t addr = it->_value.getPos();

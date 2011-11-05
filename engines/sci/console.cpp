@@ -1876,8 +1876,8 @@ bool Console::segmentInfo(int nr) {
 
 		DebugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
 
-		if (scr->_localsBlock)
-			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);
+		if (scr->getLocalsCount() > 0)
+			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->getLocalsCount(), scr->getLocalsSegment());
 		else
 			DebugPrintf("  Locals : none\n");
 
