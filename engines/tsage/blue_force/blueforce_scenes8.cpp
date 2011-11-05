@@ -562,24 +562,36 @@ bool Scene810::Lyle::startAction(CursorType action, Event &event) {
 	case INV_PRINT_OUT:
 		if (BF_GLOBALS.getFlag(shownLylePO)) {
 			scene->_sceneMode = 8149;
-		} else if (!BF_GLOBALS.getFlag(shownLylePO)) {
-			if (!BF_GLOBALS.getFlag(shownFax)) {
-				// WORKAROUND: Original did not do a 'not', but I think this is correct
-				BF_GLOBALS.setFlag(shownFax);
-				scene->_sceneMode = 8125;
-			} else if (BF_GLOBALS.getFlag(shownLyleRapsheet)) {
-				scene->_sceneMode = 8104;
-			} else {
-				scene->_sceneMode = 8121;
-			}
-		} else if (BF_GLOBALS.getFlag(onDuty)) {
-			scene->_sceneMode = 8141;
 		} else {
-			if (BF_GLOBALS.getFlag(shownLyleRapsheet) || BF_GLOBALS.getFlag(shownLyleCrate1))
-				scene->_sceneMode = 8129;
-			else
-				scene->_sceneMode = 8121;
+			BF_GLOBALS.setFlag(shownLylePO);
+			if (BF_GLOBALS._dayNumber == 3) {
+				if (BF_GLOBALS.getFlag(shownFax)) {
+					BF_GLOBALS.setFlag(shownFax);
+					scene->_sceneMode = 8125;
+				} else if (BF_GLOBALS.getFlag(shownLyleRapsheet)) {
+					scene->_sceneMode = 8104;
+				} else {
+					scene->_sceneMode = 8121;
+				}
+			} else if (BF_GLOBALS.getFlag(onDuty)) {
+				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))){
+					scene->_sceneMode = 8141;
+				} else {
+					// Doublecheck on shownLyleCrate1 removed: useless
+					scene->_sceneMode = 8144;
+				}
+			} else {
+				if ((BF_GLOBALS.getFlag(shownLyleRapsheet)) || (BF_GLOBALS.getFlag(shownLyleCrate1))) {
+					scene->_sceneMode = 8129;
+				} else { // if (BF_GLOBALS.getFlag(shownLyleCrate1)) {
+					scene->_sceneMode = 8132;
+				// doublecheck Present in the original, may hide a bug in the original
+				//} else
+				//	scene->_sceneMode = 8121;
+				}
+			}
 		}
+
 		BF_GLOBALS._player.disableControl();
 		scene->setAction(&scene->_action1);
 		return true;
@@ -654,12 +666,12 @@ bool Scene810::FaxMachineInset::startAction(CursorType action, Event &event) {
 			if (BF_INVENTORY.getObjectScene(INV_PRINT_OUT) == 811) {
 				T2_GLOBALS._uiElements.addScore(50);
 				scene->_sound1.play(77);
+				scene->_fieldA70 = 1;
 				BF_GLOBALS._player.disableControl();
 
 				scene->_sceneMode = 8109;
 				scene->setAction(&scene->_sequenceManager1, scene, 8109, &BF_GLOBALS._player,
 					&scene->_object6, &scene->_object5, NULL);
-				scene->_fieldA70 = 1;
 				scene->_fieldA74 = 1;
 				remove();
 			} else {
