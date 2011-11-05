@@ -97,7 +97,6 @@ public:
 	static const uint16 addr_roomname = 0xca74;
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
-	static const uint16 addr_showicon = 0xca64;
 	static const uint16 addr_workoutframes = 0xca54;
 	static const uint16 addr_setwalk = 0xca44;
 	static const uint16 addr_printmessage2 = 0xca30;
@@ -1652,7 +1651,7 @@ public:
 	void startup();
 	void savegame();
 	void startpaltoend();
-	void showicon();
+	//void showicon();
 	void findopenpos();
 	void describeob();
 	void deleteexframe();

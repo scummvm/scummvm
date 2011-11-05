@@ -1721,6 +1721,25 @@ bool DreamGenContext::isCD() {
 	return (data.byte(kSpeechloaded) == 1);
 }
 
+void DreamGenContext::showicon() {
+	if (data.byte(kReallocation) < 50) {
+		showpanel();
+		showman();
+		roomname();
+		panelicons1();
+		zoomicon();
+	} else {
+		Frame *tempSprites = (Frame *)segRef(data.word(kTempsprites)).ptr(0, 0);
+		showframe(tempSprites, 72, 2, 45, 0);
+		showframe(tempSprites, 72+47, 2, 46, 0);
+		showframe(tempSprites, 69-10, 21, 49, 0);
+		showframe(tempSprites, 160+88, 2, 45, 4 & 0xfe);
+		showframe(tempSprites, 160+43, 2, 46, 4 & 0xfe);
+		showframe(tempSprites, 160+101, 21, 49, 4 & 0xfe);
+		middlepanel();
+	}
+}
+
 void DreamGenContext::checkifset() {
 	flags._z = !checkifset(al, ah);
 }

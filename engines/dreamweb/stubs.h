@@ -235,6 +235,7 @@
 	void hangon(uint16 frameCount);
 	void hangonp();
 	void hangonp(uint16 count);
+	void showicon();
 	uint8 findnextcolon(uint8 **string);
 	void findnextcolon();
 	uint8 *getobtextstartCPP();

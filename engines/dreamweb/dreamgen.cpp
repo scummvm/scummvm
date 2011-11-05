@@ -14708,57 +14708,6 @@ success:
 	data.byte(kTurndirection) = 0;
 }
 
-void DreamGenContext::showicon() {
-	STACK_CHECK;
-	_cmp(data.byte(kReallocation), 50);
-	if (!flags.c())
-		goto isdream1;
-	showpanel();
-	showman();
-	roomname();
-	panelicons1();
-	zoomicon();
-	return;
-isdream1:
-	ds = data.word(kTempsprites);
-	di = 72;
-	bx = 2;
-	al = 45;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempsprites);
-	di = 72+47;
-	bx = 2;
-	al = 46;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempsprites);
-	di = 69-10;
-	bx = 21;
-	al = 49;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempsprites);
-	di = 160+88;
-	bx = 2;
-	al = 45;
-	ah = 4;
-	showframe();
-	ds = data.word(kTempsprites);
-	di = 160+43;
-	bx = 2;
-	al = 46;
-	ah = 4;
-	showframe();
-	ds = data.word(kTempsprites);
-	di = 160+101;
-	bx = 21;
-	al = 49;
-	ah = 4;
-	showframe();
-	middlepanel();
-}
-
 void DreamGenContext::middlepanel() {
 	STACK_CHECK;
 	ds = data.word(kTempsprites);
@@ -17131,7 +17080,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_printmessage2: printmessage2(); break;
 		case addr_setwalk: setwalk(); break;
 		case addr_workoutframes: workoutframes(); break;
-		case addr_showicon: showicon(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;
 		case addr_roomname: roomname(); break;

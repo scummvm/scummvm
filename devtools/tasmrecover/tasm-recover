@@ -158,6 +158,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'dumppointer',
 	'showpointer',
 	'animpointer',
+	'showicon',
 	'checkcoords',
 	'readmouse',
 	'readmouse1',
