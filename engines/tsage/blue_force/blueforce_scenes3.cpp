@@ -1287,6 +1287,10 @@ void Scene315::signal() {
 		BF_GLOBALS._player.enableControl();
 		_object9.remove();
 		break;
+	case 3169:
+		T2_GLOBALS._uiElements.addScore(30);
+		BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
+		BF_GLOBALS._player.enableControl();
 	case 3154:
 	default:
 		break;
