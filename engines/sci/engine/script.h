@@ -62,7 +62,7 @@ private:
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
 
-	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	const byte *_synonyms; /**< Synonyms block or 0 if not present */
 	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
 
 	int _localsOffset;
@@ -72,12 +72,7 @@ private:
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
-public:
-	/**
-	 * Table for objects, contains property variables.
-	 * Indexed by the TODO offset.
-	 */
-	ObjMap _objects;
+	ObjMap _objects;	/**< Table for objects, contains property variables */
 
 public:
 	int getLocalsOffset() const { return _localsOffset; }
@@ -92,6 +87,7 @@ public:
 	SegmentId getLocalsSegment() const { return _localsSegment; }
 	reg_t *getLocalsBegin() { return _localsBlock ? _localsBlock->_locals.begin() : NULL; }
 	void syncLocalsBlock(SegManager *segMan);
+	ObjMap getObjectMap() const { return _objects; }
 
 public:
 	Script();

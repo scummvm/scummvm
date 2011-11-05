@@ -203,7 +203,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 				// Now, load the script itself
 				scr->load(g_sci->getResMan());
 
-				for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+				ObjMap objects = scr->getObjectMap();
+				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
 					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().offset));
 
 			}
@@ -228,7 +229,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		Script *scr = (Script *)_heap[i];
 		scr->syncLocalsBlock(this);
 
-		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+		ObjMap objects = scr->getObjectMap();
+		for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
 			reg_t addr = it->_value.getPos();
 			Object *obj = scr->scriptObjInit(addr, false);
 
@@ -237,7 +239,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
 					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
 					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->_objects.erase(addr.toUint16());
+					objects.erase(addr.toUint16());
 				}
 			}
 		}

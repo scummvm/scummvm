@@ -1881,11 +1881,12 @@ bool Console::segmentInfo(int nr) {
 		else
 			DebugPrintf("  Locals : none\n");
 
-		DebugPrintf("  Objects: %4d\n", scr->_objects.size());
+		ObjMap objects = scr->getObjectMap();
+		DebugPrintf("  Objects: %4d\n", objects.size());
 
 		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
 			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
@@ -2942,9 +2943,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		script = customSegMan->getScript(scriptSegment);
 
 		// Iterate through all the script's objects
+		ObjMap objects = script->getObjectMap();
 		ObjMap::iterator it;
-		const ObjMap::iterator end = script->_objects.end();
-		for (it = script->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			const Object *obj = customSegMan->getObject(it->_value.getPos());
 			const char *objName = customSegMan->getObjectName(it->_value.getPos());
 
