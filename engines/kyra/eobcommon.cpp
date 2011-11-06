@@ -157,7 +157,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 
 	_mainMenuStrings = _levelGainStrings = _monsterSpecAttStrings = _characterGuiStringsHp = _characterGuiStringsWp = _characterGuiStringsWr = _characterGuiStringsSt =
 		_characterGuiStringsIn = _characterStatusStrings7 = _characterStatusStrings8 = _characterStatusStrings9 = _characterStatusStrings12 = _characterStatusStrings13 = 0;
-	_classModifierFlags = _constModLevelIndex = _constModDiv = _constModExt = _wandTypes = _drawObjPosIndex = _flightObjFlipIndex = _expObjectTblIndex =
+	_classModifierFlags = _saveThrowLevelIndex = _saveThrowModDiv = _saveThrowModExt = _wandTypes = _drawObjPosIndex = _flightObjFlipIndex = _expObjectTblIndex =
 		_expObjectShpStart = _expObjectTlMode = _expObjectAnimTbl1 = _expObjectAnimTbl2 = _expObjectAnimTbl3 = 0;
 	_monsterStepTable0 = _monsterStepTable1 = _monsterStepTable2 = _monsterStepTable3 = _projectileWeaponAmmoTypes = _flightObjShpMap = _flightObjSclIndex = 0;
 	_monsterCloseAttPosTable1 = _monsterCloseAttPosTable2 = _monsterCloseAttChkTable1 = _monsterCloseAttChkTable2 = _monsterCloseAttDstTable1 = _monsterCloseAttDstTable2 = 0;
@@ -190,7 +190,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
-	memset(_constModTables, 0, sizeof(_constModTables));
+	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
 	memset(_doorType, 0, sizeof(_doorType));
 	memset(_noDoorSwitch, 0, sizeof(_noDoorSwitch));
 	memset(_scriptTimers, 0, sizeof(_scriptTimers));
@@ -1867,7 +1867,7 @@ int EobCoreEngine::calcCharacterDamage(int charIndex, int times, int itemOrPips,
 	EobCharacter *c = &_characters[charIndex];
 
 	if (savingThrowType != 5) {
-		if (trySavingThrow(c, _charClassModUnk[c->cClass], c->level[0], savingThrowType, c->raceSex >> 1 /*fix bug in original code by adding a right shift*/))
+		if (trySavingThrow(c, _charClassModifier[c->cClass], c->level[0], savingThrowType, c->raceSex >> 1 /*fix bug in original code by adding a right shift*/))
 			s = savingThrowReduceDamage(savingThrowEffect, s);
 	}
 
@@ -2197,7 +2197,7 @@ bool EobCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int 
 	if (type == 5)
 		return false;
 
-	int s = getConstModifierTableValue(hpModifier, level, type);
+	int s = getSaveThrowModifier(hpModifier, level, type);
 	if (((race == 3 || race == 5) && (type == 4 || type == 1 || type == 0)) || (race == 4 && (type == 4 || type == 1))) {
 		EobCharacter *c = (EobCharacter*)target;
 		s -= constMod[c->constitutionCur];
@@ -2207,15 +2207,15 @@ bool EobCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int 
 }
 
 bool EobCoreEngine::specialAttackSavingThrow(int charIndex, int type) {
-	return trySavingThrow(&_characters[charIndex], _charClassModUnk[_characters[charIndex].cClass], _characters[charIndex].level[0], type, _characters[charIndex].raceSex >> 1);
+	return trySavingThrow(&_characters[charIndex], _charClassModifier[_characters[charIndex].cClass], _characters[charIndex].level[0], type, _characters[charIndex].raceSex >> 1);
 }
 
-int EobCoreEngine::getConstModifierTableValue(int hpModifier, int level, int b) {
-	const uint8 *tbl = _constModTables[hpModifier];
-	if (_constModLevelIndex[hpModifier] < level)
-		level = _constModLevelIndex[hpModifier];
-	level /= _constModDiv[hpModifier];
-	level += (_constModExt[hpModifier] * b);
+int EobCoreEngine::getSaveThrowModifier(int hpModifier, int level, int type) {
+	const uint8 *tbl = _saveThrowTables[hpModifier];
+	if (_saveThrowLevelIndex[hpModifier] < level)
+		level = _saveThrowLevelIndex[hpModifier];
+	level /= _saveThrowModDiv[hpModifier];
+	level += (_saveThrowModExt[hpModifier] * type);
 
 	return tbl[level];
 }
@@ -2281,7 +2281,7 @@ int EobCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
 	static const uint8 mod2[] = { 1, 1, 2, 1 };
 
 	int l = _characters[charIndex].level[0] - 1;
-	int cm = _charClassModUnk[_characters[charIndex].cClass];
+	int cm = _charClassModifier[_characters[charIndex].cClass];
 
 	return (20 - ((l / mod1[cm]) * mod2[cm])) - monsterAc;
 }

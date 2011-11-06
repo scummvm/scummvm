@@ -274,7 +274,7 @@ const int8 EobCoreEngine::_characterClassType[] = {
 
 const int16 EobCoreEngine::_hpConstModifiers[] = { -1, -3, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 7, 7 };
 
-const uint8 EobCoreEngine::_charClassModUnk[] = {
+const uint8 EobCoreEngine::_charClassModifier[] = {
 	0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x02,
 	0x00, 0x00, 0x02
 };
@@ -436,13 +436,13 @@ void EobCoreEngine::initStaticResource() {
 
 	_classModifierFlags = _staticres->loadRawData(kEobBaseClassModifierFlags, temp);
 
-	_constModTables[0] = _constModTables[4] = _constModTables[5] = _staticres->loadRawData(kEobBaseConstModTable1, temp);
-	_constModTables[1] = _staticres->loadRawData(kEobBaseConstModTable2, temp);
-	_constModTables[2] = _staticres->loadRawData(kEobBaseConstModTable3, temp);
-	_constModTables[3] = _staticres->loadRawData(kEobBaseConstModTable4, temp);
-	_constModLevelIndex = _staticres->loadRawData(kEobBaseConstModLvlIndex, temp);
-	_constModDiv = _staticres->loadRawData(kEobBaseConstModDiv, temp);
-	_constModExt = _staticres->loadRawData(kEobBaseConstModExt, temp);
+	_saveThrowTables[0] = _saveThrowTables[4] = _saveThrowTables[5] = _staticres->loadRawData(kEobBaseSaveThrowTable1, temp);
+	_saveThrowTables[1] = _staticres->loadRawData(kEobBaseSaveThrowTable2, temp);
+	_saveThrowTables[2] = _staticres->loadRawData(kEobBaseSaveThrowTable3, temp);
+	_saveThrowTables[3] = _staticres->loadRawData(kEobBaseSaveThrowTable4, temp);
+	_saveThrowLevelIndex = _staticres->loadRawData(kEobBaseSaveThrwLvlIndex, temp);
+	_saveThrowModDiv = _staticres->loadRawData(kEobBaseSaveThrwModDiv, temp);
+	_saveThrowModExt = _staticres->loadRawData(kEobBaseSaveThrwModExt, temp);
 
 	_encodeMonsterShpTable = _staticres->loadRawDataBe16(kEobBaseEncodeMonsterDefs, temp);
 	_npcPreset = _staticres->loadEobNpcData(kEobBaseNpcPresets, temp);
