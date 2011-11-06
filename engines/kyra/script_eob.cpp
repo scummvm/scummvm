@@ -133,7 +133,7 @@ EobInfProcessor::EobInfProcessor(EobCoreEngine *engine, Screen_Eob *screen) : _v
 	_preventRest = 0;
 
 	_lastScriptFunc = 0;
-	_lastScriptSub = 0;
+	_lastScriptFlags = 0;
 
 	_subroutineStack = new int8*[10];
 	memset(_subroutineStack, 0, 10 * sizeof(int8*));
@@ -171,7 +171,7 @@ void EobInfProcessor::loadData(const uint8 *data, uint32 dataSize) {
 	memcpy(_scriptData, data, _scriptSize);
 }
 
-void EobInfProcessor::run(int func, int sub) {
+void EobInfProcessor::run(int func, int flags) {
 	int o = _vm->_levelBlockProperties[func].assignedObjects;
 	if (!o)
 		return;
@@ -179,7 +179,7 @@ void EobInfProcessor::run(int func, int sub) {
 	uint16 f = _vm->_levelBlockProperties[func].flags;
 
 	uint16 subFlags = ((f & 0xfff8) >> 3) | 0xe0;
-	if (!(sub & subFlags))
+	if (!(flags & subFlags))
 		return;
 
 	_abortScript = 0;
@@ -188,9 +188,7 @@ void EobInfProcessor::run(int func, int sub) {
 	_activeCharacter = -1;
 
 	_lastScriptFunc = func;
-	_lastScriptSub = sub;
-
-	_vm->resetSkipFlag(true);
+	_lastScriptFlags = flags;
 
 	int8 *pos = (int8*)(_scriptData + o);
 
@@ -198,7 +196,7 @@ void EobInfProcessor::run(int func, int sub) {
 		int8 cmd = *pos++;
 		if (cmd <= _commandMin || cmd >= 0)
 			continue;
-		debugC(5, kDebugLevelScript, "[0x%.08X] EobInfProcessor::%s()", (uint32)(pos - _scriptData), _opcodes[-(cmd + 1)]->desc.c_str());
+		debugC(3, kDebugLevelScript, "[0x%.04X] EobInfProcessor::%s()", (uint32)(pos - _scriptData), _opcodes[-(cmd + 1)]->desc.c_str());
 		pos += (*_opcodes[-(cmd + 1)]->proc)(pos);
 	} while (!_abortScript && !_abortAfterSubroutine);
 }
@@ -379,21 +377,23 @@ int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
 				continue;
 			_vm->placeMonster(&_vm->_monsters[i], d, _vm->_monsters[i].pos);
 		}
+		debugC(5, kDebugLevelScript, "         - move monsters on block '0x%.04X' to block '0x%.04X'", c, d);
 
 	} else if (a == -24) {
 		// move party to block d
 		int ba = _dlgResult;
 		int bb = _lastScriptFunc;
-		int bc = _lastScriptSub;
+		int bc = _lastScriptFlags;
 		int bd = _abortScript;
 		int be = _activeCharacter;
 		int bf = _subroutineStackPos;
 
 		_vm->moveParty(d);
+		debugC(5, kDebugLevelScript, "         - move party to block '0x%.04X'", d);
 
 		_dlgResult = ba;
 		_lastScriptFunc = bb;
-		_lastScriptSub = bc;
+		_lastScriptFlags = bc;
 		_abortScript = bd;
 		_activeCharacter = be;
 		if (!_abortAfterSubroutine)
@@ -447,6 +447,7 @@ int EobInfProcessor::oeob_movePartyOrObject(int8 *data) {
 				_vm->_items[i].block = d;
 			}
 		}
+		debugC(5, kDebugLevelScript, "         - move items from level '%d', block '0x%.04X' to level '%d', block '0x%.04X'", c, e, d, f);
 	}
 
 	_vm->_sceneUpdateRequired = true;
@@ -550,24 +551,29 @@ int EobInfProcessor::oeob_setFlags(int8 *data) {
 	switch (*pos++) {
 	case -47:
 		_preventRest = 0;
+		debugC(5, kDebugLevelScript, "         - set preventRest to 0");
 		break;
 
 	case -28:
 		_dlgResult = 1;
+		debugC(5, kDebugLevelScript, "         - set dlgResult to 1");
 		break;
 
 	case -17:
 		_flagTable[_vm->_currentLevel] |= (1 << (*pos++));
+		debugC(5, kDebugLevelScript, "         - set level flag '%d' for current level (current level = '%d')", *(pos - 1), _vm->_currentLevel);
 		break;
 
 	case -16:
 		_flagTable[17] |= (1 << (*pos++));
+		debugC(5, kDebugLevelScript, "         - set global flag '%d'", *(pos - 1));
 		break;
 
 	case -13:
 		b = *pos++;
 		_vm->_monsters[b].flags |= (1 << (*pos++));
 		_vm->_monsters[b].mode = 0;
+		debugC(5, kDebugLevelScript, "         - set monster flag '%d' for monster '%d'", *(pos - 1), b);
 		break;
 
 	default:
@@ -598,18 +604,22 @@ int EobInfProcessor::oeob_removeFlags(int8 *data) {
 	switch (a) {
 	case -47:
 		_preventRest = 1;
+		debugC(5, kDebugLevelScript, "         - set preventRest to 1");
 		break;
 
 	case -28:
 		_dlgResult = 0;
+		debugC(5, kDebugLevelScript, "         - set dlgResult to 0");
 		break;
 
 	case -17:
 		_flagTable[_vm->_currentLevel] &= ~(1 << (*pos++));
+		debugC(5, kDebugLevelScript, "         - clear level flag '%d' for current level (current level = '%d')", *(pos - 1), _vm->_currentLevel);
 		break;
 
 	case -16:
 		_flagTable[17] &= ~(1 << (*pos++));
+		debugC(5, kDebugLevelScript, "         - clear global flag '%d'", *(pos - 1));
 		break;
 
 	default:
@@ -724,10 +734,12 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 				break;
 			}
 			_stack[_stackIndex++] = a;
+			debugC(5, kDebugLevelScript, "         - check if whole party is invisible - PUSH result: '%d'", a);
 			break;
 
-		case 1:
+		case 1:			
 			_stack[_stackIndex++] = _vm->rollDice(pos[0], pos[1], pos[2]);
+			debugC(9, kDebugLevelScript, "         - throw dice(s): num = '%d', pips = '%d', offset = '%d' - PUSH result: '%d'", pos[0], pos[1], pos[2], _stack[_stackIndex - 1]);
 			pos += 3;
 			break;
 
@@ -743,6 +755,7 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 				}
 			}
 			_stack[_stackIndex++] = b;
+			debugC(5, kDebugLevelScript, "         - check if character with class flags '0x%.02X' is present - PUSH result: '%d'", cmd, b);
 			break;
 
 		case 3:
@@ -757,10 +770,12 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 				}
 			}
 			_stack[_stackIndex++] = b;
+			debugC(5, kDebugLevelScript, "         - check if character with race '%d' is present - PUSH result: '%d'", cmd, b);
 			break;
 
 		case 6:
-			_stack[_stackIndex++] = _lastScriptSub;
+			_stack[_stackIndex++] = _lastScriptFlags;
+			debugC(5, kDebugLevelScript, "         - get script execution flags - PUSH result: '%d'", _lastScriptFlags);
 			break;
 
 		case 13:
@@ -768,37 +783,45 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			switch (*pos++) {
 			case -31:
 				_stack[_stackIndex++] = itm->type;
+				debugC(5, kDebugLevelScript, "         - get hand item type (hand item number = '%d') - PUSH result: '%d'", _vm->_itemInHand, itm->type);
 				break;
 
 			case -11:
 				_stack[_stackIndex++] = _vm->_itemInHand;
+				debugC(5, kDebugLevelScript, "         - get hand item number - PUSH result: '%d'", _vm->_itemInHand);
 				break;
 
 			default:
 				_stack[_stackIndex++] = itm->value;
+				debugC(5, kDebugLevelScript, "         - get hand item value (hand item number = '%d') - PUSH result: '%d'", _vm->_itemInHand, itm->value);
 				break;
 			}
 			break;
 
 		case 15:
 			_stack[_stackIndex++] = _vm->_levelBlockProperties[READ_LE_UINT16(pos + 1)].walls[pos[0]];
+			debugC(5, kDebugLevelScript, "         - get wall index for block '0x%.04X', direction '%d' - PUSH result: '%d'", READ_LE_UINT16(pos + 1), pos[0], _stack[_stackIndex - 1]);
 			pos += 3;
 			break;
 
 		case 19:
 			_stack[_stackIndex++] = _vm->_currentDirection;
+			debugC(5, kDebugLevelScript, "         - get current direction - PUSH result: '%d'", _vm->_currentDirection);
 			break;
 
 		case 21:
 			_stack[_stackIndex++] = (_flagTable[_vm->_currentLevel] & (1 << (*pos++))) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - test level flag '%d' (current level = '%d') - PUSH result: '%d'", *(pos - 1), _vm->_currentLevel, _stack[_stackIndex - 1]);
 			break;
 
 		case 22:
 			_stack[_stackIndex++] = (_flagTable[17] & (1 << (*pos++))) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - test global flag '%d' - PUSH result: '%d'", *(pos - 1), _stack[_stackIndex - 1]);
 			break;
 
 		case 23:
 			_stack[_stackIndex++] = (_vm->_currentBlock == READ_LE_UINT16(pos)) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - compare current block with block '0x%.04X' (current block = '0x%.04X') - PUSH result: '%d'", _vm->_currentBlock, READ_LE_UINT16(pos), _stack[_stackIndex - 1]);
 			pos += 2;
 			break;
 
@@ -808,10 +831,12 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			b = READ_LE_UINT16(pos);
 			pos += 2;
 			_stack[_stackIndex++] = _vm->countQueuedItems(_vm->_levelBlockProperties[b].drawObjects, a, -1, 0, 1);
+			debugC(5, kDebugLevelScript, "         - find item number '%d' on block '0x%.04X' - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 25:
 			_stack[_stackIndex++] = (_vm->_levelBlockProperties[READ_LE_UINT16(pos)].flags & 1) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - test block flag '1' for block '0x%.04X' - PUSH result: '%d'", READ_LE_UINT16(pos), _stack[_stackIndex - 1]);
 			pos += 2;
 			break;
 
@@ -820,10 +845,12 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			i = READ_LE_UINT16(pos);
 			pos += 2;
 			_stack[_stackIndex++] = _vm->countQueuedItems(_vm->_levelBlockProperties[i].drawObjects, -1, b, 1, 1);
+			debugC(5, kDebugLevelScript, "         - count items of type '%d' on block '0x%.04X' - PUSH result: '%d'", b, i, _stack[_stackIndex - 1]);
 			break;
 
 		case 29:
 			_stack[_stackIndex++] = _vm->_levelBlockProperties[READ_LE_UINT16(pos)].walls[0];
+			debugC(5, kDebugLevelScript, "         - get wall index 0 for block '0x%.04X' - PUSH result: '%d'", READ_LE_UINT16(pos), _stack[_stackIndex - 1]);
 			pos += 2;
 			break;
 
@@ -831,54 +858,63 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a || b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') || POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 31:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a && b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') && POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 32:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a <= b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') <= POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 33:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a < b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') < POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 34:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a >= b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') >= POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 35:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a > b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') > POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 36:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a != b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') != POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		case 37:
 			a = _stack[--_stackIndex];
 			b = _stack[--_stackIndex];
 			_stack[_stackIndex++] = (a == b) ? 1 : 0;
+			debugC(5, kDebugLevelScript, "         - evaluate: POP('%d') == POP('%d') - PUSH result: '%d'", a, b, _stack[_stackIndex - 1]);
 			break;
 
 		default:
 			a = cmd;
 			if (a >= 0 && a < 128)
 				_stack[_stackIndex++] = a;
+			debugC(5, kDebugLevelScript, "         - PUSH value: '%d'", a);
 			break;
 		}
 		cmd = *pos++;
@@ -889,6 +925,7 @@ int EobInfProcessor::oeob_eval_v1(int8 *data) {
 		pos += 2;
 	else
 		pos = _scriptData + READ_LE_UINT16(pos);
+	debugC(5, kDebugLevelScript, "         - conditional jump depending on POP('%d')", cmd);
 
 	return pos - data;
 }
@@ -1005,7 +1042,7 @@ int EobInfProcessor::oeob_eval_v2(int8 *data) {
 			break;
 
 		case 18:
-			_stack[_stackIndex++] = _lastScriptSub;
+			_stack[_stackIndex++] = _lastScriptFlags;
 			break;
 
 		case 22:
@@ -1193,10 +1230,13 @@ int EobInfProcessor::oeob_eval_v2(int8 *data) {
 int EobInfProcessor::oeob_deleteItem(int8 *data) {
 	int8 *pos = data;
 	int8 c = *pos++;
+
 	if (c == -1) {
 		_vm->deleteInventoryItem(0, -1);
+		debugC(5, kDebugLevelScript, "         - delete hand item");
 	} else {
 		_vm->deleteBlockItem(READ_LE_UINT16(pos), (c == -2) ? -1 : c);
+		debugC(5, kDebugLevelScript, "         - delete item(s) of type '%d' on block '0x%.04X'", (c == -2) ? -1 : c, READ_LE_UINT16(pos));
 		pos += 2;
 	}
 
@@ -1239,6 +1279,7 @@ int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_screen->setScreenDim(7);
 
 		_vm->loadLevel(index, cmd);
+		debugC(5, kDebugLevelScript, "         - entering level '%d', sub level '%d', start block '0x%.04X', start direction '%d'", index, cmd, _vm->_currentBlock, _vm->_currentDirection);
 
 		if (_vm->_dialogueField)
 			_vm->restoreAfterDialogueSequence();
@@ -1256,6 +1297,7 @@ int EobInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		cmd = *pos++;
 		_vm->releaseMonsterShapes(cmd * 18, 18);
 		_vm->loadMonsterShapes((const char*)pos, cmd * 18, true, index * 18);
+		debugC(5, kDebugLevelScript, "         - loading monster shapes '%s', monster number '%d', encode type '%d'", (const char*)pos, cmd, index);
 		pos += 13;
 		_vm->gui_restorePlayField();
 		res = pos - data;
@@ -1268,6 +1310,7 @@ int EobInfProcessor::oeob_increasePartyExperience(int8 *data) {
 	int8 *pos = data;
 	if (*pos++ == -30) {
 		_vm->increasePartyExperience((int16)READ_LE_UINT16(pos));
+		debugC(5, kDebugLevelScript, "         - award '%d' experience points", READ_LE_UINT16(pos));
 		pos += 2;
 	}
 	return pos - data;
@@ -1282,10 +1325,13 @@ int EobInfProcessor::oeob_createItem_v1(int8 *data) {
 	uint8 itmPos = *pos++;
 
 	if (itm) {
-		if (block == 0xffff && !_vm->_itemInHand)
+		if (block == 0xffff && !_vm->_itemInHand) {
 			_vm->setHandItem(itm);
-		else if (block != 0xffff )
+			debugC(5, kDebugLevelScript, "         - create hand item '%d'", itm);
+		} else if (block != 0xffff) {
 			_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+			debugC(5, kDebugLevelScript, "         - create item '%d' on block '0x%.04X', position '%d'", itm, block, itmPos);
+		}
 	}
 
 	return pos - data;
@@ -1315,14 +1361,19 @@ int EobInfProcessor::oeob_createItem_v2(int8 *data) {
 		return pos - data;
 
 	if (block == 0xffff) {
-		if (!_vm->_itemInHand)
+		if (!_vm->_itemInHand) {
 			_vm->setHandItem(itm);
-		else
+			debugC(5, kDebugLevelScript, "         - create hand item '%d' (value '%d', flags '0x%X', icon number '%d')", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
+		} else {
 			_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[_vm->rollDice(1, 2, -1)]);
+			debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
+		}
 	} else if (block == 0xfffe) {
 		_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[(_vm->_currentDirection << 2) + _vm->rollDice(1, 2, -1)]);
+		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 	} else {
 		_vm->setItemPosition((Item*)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on block '0x%.04X', position '%d'", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon, block, itmPos);
 	}
 
 	return pos - data;

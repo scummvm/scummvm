@@ -708,8 +708,6 @@ Common::String EobCoreEngine::initLevelData(int sub){
 
 	int slen = (_flags.gameID == GI_EOB1) ? 12 : 13;
 
-	_sound->playTrack(0);
-
 	for (int i = 0; i < sub; i++)
 		pos = data + READ_LE_UINT16(pos);
 
@@ -762,7 +760,7 @@ Common::String EobCoreEngine::initLevelData(int sub){
 	}
 
 	if (_flags.gameID == GI_EOB2) {
-		delay(_tickLength);
+		delay(3 * _tickLength);
 		_sound->loadSoundFile((const char*) pos);
 		pos += 13;
 	}
@@ -1029,10 +1027,8 @@ void EobCoreEngine::drawScene(int refresh) {
 		}
 	}
 
-	if (_sceneDefaultUpdate) {
+	if (_sceneDefaultUpdate)
 		delayUntil(_drawSceneTimer);
-		removeInputTop();
-	}
 
 	if (refresh && !_partyResting)
 		_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);

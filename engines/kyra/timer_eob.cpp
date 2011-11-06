@@ -304,6 +304,10 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 			continue;
 		}
 
+		int od = _screen->curDimIndex();
+		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		_screen->setScreenDim(7);
+
 		switch (evt) {
 		case 2:
 		case 3:
@@ -363,7 +367,10 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		default:
 			break;
 		}
-	}
+
+		_screen->setScreenDim(od);
+		_screen->setFont(of);
+	}	
 
 	uint32 nextTimer = 0xffffffff;
 	for (int i = 0; i < 10; i++) {

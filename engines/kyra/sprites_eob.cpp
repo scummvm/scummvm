@@ -438,7 +438,7 @@ void EobCoreEngine::drawBlockItems(int index) {
 			}
 
 			int8 scaleSteps = (int8)_dscItemScaleIndex[(_dscDimMap[index] << 2) + ps];
-			if (flg & 8 && ps < 2 && scaleSteps) {
+			if ((flg & 8) && ps < 2 && scaleSteps) {
 				tile2 = _dscItemTileIndex[index];
 				if (tile2 != -1)
 					setLevelShapesDim(tile2, _shpDmX1, _shpDmX2, 5);
@@ -447,7 +447,7 @@ void EobCoreEngine::drawBlockItems(int index) {
 
 			if (scaleSteps >= 0) {
 				const uint8 *shp = _screen->scaleShape(_dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapes[_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapes[_dscItemShapeMap[itm->icon] - 15]), scaleSteps);
-				x = x + itemPosFin[o & 7] - (shp[2] << 2);
+				x = x + (itemPosFin[o & 7] << 1) - ((shp[2] << 3) >> 1);
 				y -= shp[1];
 
 				if (itm->pos != 8)

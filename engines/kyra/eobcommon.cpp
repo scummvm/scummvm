@@ -27,6 +27,7 @@
 #include "kyra/sound_intern.h"
 #include "kyra/script_eob.h"
 #include "kyra/timer.h"
+#include "kyra/debugger.h"
 
 #include "common/config-manager.h"
 
@@ -40,6 +41,7 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 	_screen = 0;
 	_gui = 0;
+	_debugger = 0;
 
 	_playFinale = false;
 	_runFlag = true;
@@ -220,8 +222,11 @@ EobCoreEngine::~EobCoreEngine() {
 	_menuDefs = 0;
 
 	delete _inf;
+	_inf = 0;
 	delete _timer;
 	_timer = 0;
+	delete _debugger;
+	_debugger = 0;
 }
 
 Common::Error EobCoreEngine::init() {
@@ -241,6 +246,7 @@ Common::Error EobCoreEngine::init() {
 
 	//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
 	_sound = new SoundAdLibPC(this, _mixer);
+	_sound->init();
 	assert(_sound);
 
 	if (_sound)
@@ -266,8 +272,13 @@ Common::Error EobCoreEngine::init() {
 
 	setupKeyMap();
 	_gui = new GUI_Eob(this);
+	assert(_gui);
 	_txt = new TextDisplayer_Eob(this, _screen);
+	assert(_txt);
 	_inf = new EobInfProcessor(this, _screen);
+	assert(_inf);
+	_debugger = new Debugger_Eob(this);
+	assert(_debugger);
 
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -682,7 +693,7 @@ void EobCoreEngine::setHandItem(Item itemIndex) {
 	int icon = _items[_itemInHand].icon;
 	const uint8 *shp = _itemIconShapes[icon];
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && ((_flags.gameID == GI_EOB2 && (_partyEffectFlags & 2)) || (_flags.gameID == GI_EOB1 && (_partyEffectFlags & 0x10000)))) {
+	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
 		memcpy(_tempIconShape, shp, 300);
 		if (_flags.gameID == GI_EOB1)
 			_screen->replaceShapePalette(_tempIconShape, &_itemsOverlay[icon << 4]);
@@ -1246,7 +1257,7 @@ void EobCoreEngine::initDialogueSequence() {
 	gui_updateControls();
 	//_allowSkip = true;
 
-	_sound->playTrack(0);
+	snd_stopSound();
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
 	_screen->loadFileDataToPage(s, 5, 32000);
 	_txt->setupField(9, 0);
@@ -2244,6 +2255,10 @@ void EobCoreEngine::snd_playSoundEffect(int id, int volume) {
 		return;
 
 	_sound->playSoundEffect(id, volume);
+}
+
+void EobCoreEngine::snd_stopSound() {
+	_sound->playSoundEffect(0);
 }
 
 }	// End of namespace Kyra

@@ -65,8 +65,8 @@ private:
 
 	void seq_xdeath();
 
+	void loadSetIntroPalette(const char *filename);
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
-
 	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH);
 	void whirlTransition();
 	

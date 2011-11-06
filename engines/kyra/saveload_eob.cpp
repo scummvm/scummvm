@@ -411,9 +411,13 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 	completeDoorOperations();
 	generateTempData();
+	advanceTimers(_restPartyElapsedTime);
+	_restPartyElapsedTime = 0;
+
+	for (int i = 0; i < 6; i++)
+		timerSpecialCharacterUpdate(0x30 + i);
 
 	for (int i = 0; i < 6; i++) {
-		timerSpecialCharacterUpdate(0x30 + i);
 		EobCharacter *c = &_characters[i];
 
 		out->writeByte(c->id);

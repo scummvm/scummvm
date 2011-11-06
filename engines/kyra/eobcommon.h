@@ -1139,6 +1139,7 @@ protected:
 
 	// sound
 	void snd_playSoundEffect(int id, int volume=0xFF);
+	void snd_stopSound();
 };
 
 }	// End of namespace Kyra

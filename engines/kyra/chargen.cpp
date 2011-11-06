@@ -47,6 +47,7 @@ private:
 	int raceSexMenu();
 	int classMenu(int raceSex);
 	int alignmentMenu(int cClass);
+	int getInput(Button *buttonList);
 	void updateMagicShapes();
 	void generateStats(int index);
 	void modifyMenu();
@@ -153,8 +154,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 	_characters = characters;
 	_faceShapes = *faceShapes;
 
-	_vm->sound()->playTrack(0);
-
+	_vm->snd_stopSound();
 	_vm->delay(_vm->_tickLength);
 
 	init();
@@ -169,8 +169,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 
 	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
-		_vm->sound()->process();
-		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
+		int inputFlag = getInput(_vm->_activeButtons);		
 		_vm->removeInputTop();
 
 		if (inputFlag) {
@@ -381,9 +380,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 	int res = 0;
 	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit(); ) {
 		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
-		_vm->sound()->process();
-
-		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
+		int inputFlag =getInput(_vm->_activeButtons);
 		int cbx = _activeBox;
 		_vm->removeInputTop();
 
@@ -520,8 +517,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-
-		int in = _vm->checkInput(0, false, 0) & 0xff;
+		int in = getInput(_vm->_activeButtons) & 0xff;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
@@ -569,8 +565,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 
 	while (res == -1 && !_vm->shouldQuit()) {
 		updateMagicShapes();
-
-		int in = _vm->checkInput(0, false, 0) & 0xff;
+		int in = getInput(_vm->_activeButtons) & 0xff;
 		Common::Point mp = _vm->getMousePos();
 
 		if (in == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_ESCAPE] || _vm->_gui->_menuLastInFlags == _vm->_keyMap[Common::KEYCODE_b]) {
@@ -593,9 +588,21 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	return res;
 }
 
-void CharacterGenerator::updateMagicShapes() {
-	_vm->sound()->process();
+int CharacterGenerator::getInput(Button *buttonList) {
+	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
+		_vm->sound()->resetTrigger();
+		_vm->sound()->playTrack(20);
+	// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
+	// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
+	// so that the music will not loop. We simply check whether the sound driver is still playing.
+	} else if (_vm->game() == GI_EOB2 && !_vm->sound()->isPlaying()) {
+		_vm->delay(3 * _vm->_tickLength);
+		_vm->sound()->playTrack(13);
+	}
+	return _vm->checkInput(buttonList, false, 0);
+}
 
+void CharacterGenerator::updateMagicShapes() {
 	if (_magicShapesBox != _activeBox) {
 		_chargenMagicShapeTimer = 0;
 		_magicShapesBox = _activeBox;
@@ -719,7 +726,7 @@ void CharacterGenerator::statsAndFacesMenu() {
 
 	while (!in && !_vm->shouldQuit()) {
 		updateMagicShapes();
-		in = _vm->checkInput(_vm->_activeButtons, false, 0);
+		in = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
 
 		if (in == 0x8001) {
@@ -786,7 +793,7 @@ void CharacterGenerator::faceSelectMenu() {
 
 		while (!in && !_vm->shouldQuit()) {
 			updateMagicShapes();
-			in = _vm->checkInput(_vm->_activeButtons, false, 0);
+			in = getInput(_vm->_activeButtons);
 			_vm->removeInputTop();
 
 			_vm->_gui->updateBoxFrameHighLight(box + 10);
@@ -978,7 +985,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	for (bool loop = true; loop && !_vm->shouldQuit(); ) {
 		uint8 v1 = *s1;
 		updateMagicShapes();
-		int	inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
+		int	inputFlag = getInput(_vm->_activeButtons);
 		_vm->removeInputTop();
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == 0x8009) {
