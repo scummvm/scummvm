@@ -545,7 +545,9 @@ void AdLibDriver::queueTrack(int track, int volume) {
 	if (!trackData)
 		return;
 
-	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0) {
+	// Don't drop tracks in Eob. The queue is always full there if a couple of monsters are around.
+	// If we drop the incoming tracks we get no sound effects, but tons of warnings instead.
+	if (_version >= 3 && _programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0) {
 		warning("AdLibDriver: Program queue full, dropping track %d", track);
 		return;
 	}
