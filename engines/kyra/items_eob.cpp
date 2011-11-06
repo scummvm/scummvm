@@ -569,8 +569,69 @@ bool EobCoreEngine::updateFlyingObjectHitTest(EobFlyingObject *fo, int block, in
 	return false;
 }
 
-void EobCoreEngine::updateFlyingObject_s3(EobFlyingObject *fo) {
+void EobCoreEngine::explodeObject(EobFlyingObject *fo, int block, Item item) {
+	if (_partyResting) {
+		snd_processEnvironmentalSoundEffect(35, _currentBlock);
+		return;
+	}
 
+	const uint8 *table = (_expObjectTblIndex[item] == 0) ? _expObjectAnimTbl1 : ((_expObjectTblIndex[item] == 1) ? _expObjectAnimTbl2 : _expObjectAnimTbl3);
+	int tableSize = (_expObjectTblIndex[item] == 0) ? _expObjectAnimTbl1Size : ((_expObjectTblIndex[item] == 1) ? _expObjectAnimTbl2Size : _expObjectAnimTbl3Size);
+
+	int tl = 0;
+	for (; tl < 18; tl++) {
+		if (_visibleBlockIndex[tl] == block)
+			break;
+	}
+
+	if (tl == 18)
+		return;
+
+	int b = _expObjectTlMode ? _expObjectTlMode[tl] : 2;
+
+	if (b == 0 || (b == 1 && (fo->direction & 1) == (_currentDirection & 1))) {
+		snd_processEnvironmentalSoundEffect(35, _currentBlock);
+		return;
+	}
+
+	uint8 dm = _dscDimMap[tl];
+	int16 x1 = 0;
+	int16 x2 = 0;
+
+	setLevelShapesDim(tl, x1, x2, 5);
+	
+	if (x2 < x1)
+		return;
+
+	if (fo)
+		fo->enable = 0;
+
+	drawScene(1);
+
+	if (fo)
+		fo->enable = 2;
+
+	_screen->fillRect(0, 0, 176, 120, 0, 2);
+	uint8 col = _screen->getPagePixel(2, 0, 0);
+	drawSceneShapes(_expObjectShpStart[dm]);
+
+	setLevelShapesDim(tl, x1, x2, 5);
+	_screen->updateScreen();
+
+	_screen->setGfxParameters(_dscShapeCoords[(tl * 5 + 4) << 1] + 88, 48, col);
+	snd_processEnvironmentalSoundEffect(35, _currentBlock);
+
+	disableSysTimer(2);
+	if (dm == 0) {
+		_screen->drawExplosion(3, 147, 35, 20, 7, table, tableSize);
+	} else if (dm == 1) {
+		_screen->drawExplosion(2, 147, 35, 20, 7, table, tableSize);
+	} else if (dm == 2) {
+		_screen->drawExplosion(1, 147, 35, 20, 7, table, tableSize);
+	} else if (dm == 3) {
+		_screen->drawExplosion(0, 460, 50, 20, 4, table, tableSize);
+	}
+	enableSysTimer(2);
 }
 
 void EobCoreEngine::endObjectFlight(EobFlyingObject *fo) {

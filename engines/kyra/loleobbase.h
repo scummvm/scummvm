@@ -113,7 +113,7 @@ protected:
 	void timerProcessDoors(int timerNum);
 
 	// mouse
-	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
+	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
 	virtual void setHandItem(Item itemIndex) = 0;
 
 	// Characters
@@ -143,7 +143,7 @@ protected:
 	virtual void loadBlockProperties(const char *file) = 0;
 
 	virtual void drawScene(int pageNum) = 0;
-	virtual void drawSceneShapes() = 0;
+	virtual void drawSceneShapes(int start) = 0;
 	virtual void drawDecorations(int index) = 0;
 
 	void setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim);

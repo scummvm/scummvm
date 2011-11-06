@@ -61,20 +61,32 @@ public:
 	void replaceShapePalette(uint8 *shp, const uint8 *pal);
 	void applyShapeOverlay(uint8 *shp, int ovlIndex);
 
-	void setShapeFrame(int x1, int y1, int x2, int y2) { _dsX1 = x1; _dsY1 = y1; _dsX2 = x2; _dsY2 = y2; }
-	void setShapeFadeMode (uint8 i, bool b) { if (!i || i == 1) _shapeFadeMode[i] = b; }
+	void setShapeFrame(int x1, int y1, int x2, int y2);
+	void setShapeFadeMode (uint8 i, bool b);
+
+	void setGfxParameters(int x, int y, int col);
+	void drawExplosion(int scale, int radius, int numSteps, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
 
 	void fadeTextColor(Palette *pal, int color1, int fadeTextColor);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);
 
 	void setTextColorMap(const uint8 *cmap) {}
-	int getRectSize(int w, int h) { return w * h; }
+	int getRectSize(int w, int h);
 
-	void setFadeTableIndex(int index) { _fadeDataIndex = (CLIP(index, 0, 7) << 8); }
+	void setFadeTableIndex(int index);
 	void createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
-	uint8 *getFadeTable(int index) { return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0; }
+	uint8 *getFadeTable(int index);
 
-protected:
+private:
+	void drawShapeSetPixel(uint8 *dst, uint8 c);
+	void scaleShapeProcessLine(uint8 *&dst, const uint8 *&src);
+	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
+
+	int _dsDiv, _dsRem, _dsScaleTmp;
+	int16 _gfxX, _gfxY;
+	uint8 _gfxCol;
+	const uint8 *_gfxMaxY;
+
 	int16 _dsX1, _dsX2, _dsY1, _dsY2;
 	bool _shapeFadeMode[2];
 	uint16 _shapeFadeInternal;
@@ -87,13 +99,7 @@ protected:
 	static const int _screenDimTableCount;
 
 	ScreenDim **_customDimTable;
-	int _curDimIndex;
-
-private:
-	void drawShapeSetPixel(uint8 *dst, uint8 c);
-	void scaleShapeProcessLine(uint8 *&dst, const uint8 *&src);
-
-	int _dsDiv, _dsRem, _dsScaleTmp;
+	int _curDimIndex;	
 };
 
 }	// End of namespace Kyra

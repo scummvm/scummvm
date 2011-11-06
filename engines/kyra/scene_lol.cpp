@@ -1386,7 +1386,7 @@ void LoLEngine::setDefaultButtonState() {
 	_lampStatusSuspended = false;
 }
 
-void LoLEngine::drawSceneShapes() {
+void LoLEngine::drawSceneShapes(int) {
 	for (int i = 0; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
 		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];

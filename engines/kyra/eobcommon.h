@@ -413,7 +413,7 @@ protected:
 	void launchMagicObject(int charIndex, int type, uint16 startBlock, int startPos, int dir);
 	bool updateObjectFlight(EobFlyingObject *fo, int block, int pos);
 	bool updateFlyingObjectHitTest(EobFlyingObject *fo, int block, int pos);
-	void updateFlyingObject_s3(EobFlyingObject *fo);
+	void explodeObject(EobFlyingObject *fo, int block, Item item);
 	void endObjectFlight(EobFlyingObject *fo);
 	void checkFlyingObjects();
 
@@ -435,12 +435,15 @@ protected:
 	const int8 *_flightObjShpMap;
 	const int8 *_flightObjSclIndex;
 
-	const uint8 *_flightObjAnimTiles;
-	const uint8 *_flightObjAnimIndex;
-	const uint8 *_flightObjAnimDim;
-	const uint8 *_flightObjAnimTbl1;
-	const uint8 *_flightObjAnimTbl2;
-	const uint8 *_flightObjAnimTbl3;
+	const uint8 *_expObjectTlMode;
+	const uint8 *_expObjectTblIndex;
+	const uint8 *_expObjectShpStart;
+	const uint8 *_expObjectAnimTbl1;
+	int _expObjectAnimTbl1Size;
+	const uint8 *_expObjectAnimTbl2;
+	int _expObjectAnimTbl2Size;
+	const uint8 *_expObjectAnimTbl3;
+	int _expObjectAnimTbl3Size;
 
 	// Monsters
 	void loadMonsterShapes(const char *filename, int monsterIndex, bool hasDecorations, int encodeTableIndex);
@@ -545,7 +548,7 @@ protected:
 	virtual const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8*shapeDefs) { return (const uint8*)filename; }
 
 	void drawScene(int update);
-	void drawSceneShapes();
+	void drawSceneShapes(int start = 0);
 	void drawDecorations(int index);
 
 	int calcNewBlockPositionAndTestPassability(uint16 curBlock, uint16 direction);
@@ -802,8 +805,8 @@ protected:
 	int getStrDamageModifier(int charIndex);
 	int getDexHitChanceModifier(int charIndex);
 	int getMonsterAcHitChanceModifier(int charIndex, int monsterAc);
-	void inflictMonsterDamage_s1(EobMonsterInPlay *m);
-
+	void explodeMonster(EobMonsterInPlay *m);
+	
 	int _dstMonsterIndex;
 	int _inflictMonsterDamageUnk;
 	int16 _foundMonstersArray[5];
@@ -933,7 +936,6 @@ protected:
 	const char *const *_magicStrings2;
 	const char *const *_magicStrings3;
 	const char *const *_magicStrings4;
-	const char *const *_magicStrings5;
 	const char *const *_magicStrings6;
 	const char *const *_magicStrings7;
 	const char *const *_magicStrings8;

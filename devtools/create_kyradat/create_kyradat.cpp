@@ -318,17 +318,17 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseMagicStrings2, kTypeStringList, true },
 	{ kEobBaseMagicStrings3, kTypeStringList, true },
 	{ kEobBaseMagicStrings4, kTypeStringList, true },
-	{ kEobBaseMagicStrings5, kTypeStringList, false },
 	{ kEobBaseMagicStrings6, kTypeStringList, true },
 	{ kEobBaseMagicStrings7, kTypeStringList, true },
 	{ kEobBaseMagicStrings8, kTypeStringList, true },
 	
-	{ kEobBaseFlightObjAnimTiles, kTypeRawData, false },
-	{ kEobBaseFlightObjAnimIndex, kTypeRawData, false },
-	{ kEobBaseFlightObjAnimDim, kTypeRawData, false },
-	{ kEobBaseFlightObjAnimTbl1, kTypeRawData, false },
-	{ kEobBaseFlightObjAnimTbl2, kTypeRawData, false },
-	{ kEobBaseFlightObjAnimTbl3, kTypeRawData, false },
+	{ kEobBaseExpObjectTlMode, kTypeRawData, false },
+	{ kEobBaseExpObjectTblIndex, kTypeRawData, false },
+	{ kEobBaseExpObjectShpStart, kTypeRawData, false },
+	{ kEobBaseExpObjectTbl1, kTypeRawData, false },
+	{ kEobBaseExpObjectTbl2, kTypeRawData, false },
+	{ kEobBaseExpObjectTbl3, kTypeRawData, false },
+	{ kEobBaseExpObjectY, k3TypeRaw16to8, false },
 
 	{ kEobBaseSparkDefSteps, kTypeRawData, false },
 	{ kEobBaseSparkDefSubSteps, kTypeRawData, false },
@@ -1411,26 +1411,26 @@ const char *getIdString(const int id) {
 		return "kEobBaseMagicStrings3";
 	case kEobBaseMagicStrings4:
 		return "kEobBaseMagicStrings4";
-	case kEobBaseMagicStrings5:
-		return "kEobBaseMagicStrings5";
 	case kEobBaseMagicStrings6:
 		return "kEobBaseMagicStrings6";
 	case kEobBaseMagicStrings7:
 		return "kEobBaseMagicStrings7";
 	case kEobBaseMagicStrings8:
 		return "kEobBaseMagicStrings8";
-	case kEobBaseFlightObjAnimTiles:
-		return "kEobBaseFlightObjAnimTiles";
-	case kEobBaseFlightObjAnimIndex:
-		return "kEobBaseFlightObjAnimIndex";
-	case kEobBaseFlightObjAnimDim:
-		return "kEobBaseFlightObjAnimDim";
-	case kEobBaseFlightObjAnimTbl1:
-		return "kEobBaseFlightObjAnimTbl1";
-	case kEobBaseFlightObjAnimTbl2:
-		return "kEobBaseFlightObjAnimTbl2";
-	case kEobBaseFlightObjAnimTbl3:
-		return "kEobBaseFlightObjAnimTbl3";
+	case kEobBaseExpObjectTlMode:
+		return "kEobBaseExpObjectTlMode";
+	case kEobBaseExpObjectTblIndex:
+		return "kEobBaseExpObjectTblIndex";
+	case kEobBaseExpObjectShpStart:
+		return "kEobBaseExpObjectShpStart";
+	case kEobBaseExpObjectTbl1:
+		return "kEobBaseExpObjectTbl1";
+	case kEobBaseExpObjectTbl2:
+		return "kEobBaseExpObjectTbl2";
+	case kEobBaseExpObjectTbl3:
+		return "kEobBaseExpObjectTbl3";
+	case kEobBaseExpObjectY:
+		return "kEobBaseExpObjectY";
 	case kEobBaseSparkDefSteps:
 		return "kEobBaseSparkDefSteps";
 	case kEobBaseSparkDefSubSteps:

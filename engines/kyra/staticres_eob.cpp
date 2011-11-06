@@ -454,17 +454,16 @@ void EobCoreEngine::initStaticResource() {
 	_magicStrings2 = _staticres->loadStrings(kEobBaseMagicStrings2, temp);
 	_magicStrings3 = _staticres->loadStrings(kEobBaseMagicStrings3, temp);
 	_magicStrings4 = _staticres->loadStrings(kEobBaseMagicStrings4, temp);
-	_magicStrings5 = _staticres->loadStrings(kEobBaseMagicStrings5, temp);
 	_magicStrings6 = _staticres->loadStrings(kEobBaseMagicStrings6, temp);
 	_magicStrings7 = _staticres->loadStrings(kEobBaseMagicStrings7, temp);
 	_magicStrings8 = _staticres->loadStrings(kEobBaseMagicStrings8, temp);
 
-	_flightObjAnimTiles = _staticres->loadRawData(kEobBaseFlightObjAnimTiles, temp);
-	_flightObjAnimIndex = _staticres->loadRawData(kEobBaseFlightObjAnimIndex, temp);
-	_flightObjAnimDim = _staticres->loadRawData(kEobBaseFlightObjAnimDim, temp);
-	_flightObjAnimTbl1 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl1, temp);
-	_flightObjAnimTbl2 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl2, temp);
-	_flightObjAnimTbl3 = _staticres->loadRawData(kEobBaseFlightObjAnimTbl3, temp);
+	_expObjectTlMode = _staticres->loadRawData(kEobBaseExpObjectTlMode, temp);
+	_expObjectTblIndex = _staticres->loadRawData(kEobBaseExpObjectTblIndex, temp);
+	_expObjectShpStart = _staticres->loadRawData(kEobBaseExpObjectShpStart, temp);
+	_expObjectAnimTbl1 = _staticres->loadRawData(kEobBaseExpObjectTbl1, _expObjectAnimTbl1Size);
+	_expObjectAnimTbl2 = _staticres->loadRawData(kEobBaseExpObjectTbl2, _expObjectAnimTbl2Size);
+	_expObjectAnimTbl3 = _staticres->loadRawData(kEobBaseExpObjectTbl3, _expObjectAnimTbl3Size);
 
 	_sparkEffectDefSteps = _staticres->loadRawData(kEobBaseSparkDefSteps, temp);
 	_sparkEffectDefSubSteps = _staticres->loadRawData(kEobBaseSparkDefSubSteps, temp);
