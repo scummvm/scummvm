@@ -60,21 +60,6 @@ enum RawFlags {
 	FLAG_STEREO = 1 << 3
 };
 
-
-/**
- * Struct used to define the audio data to be played by a RawStream.
- */
-struct RawStreamBlock {
-	int32 pos;   ///< Position in stream of the block (in bytes of course!)
-	int32 len;   ///< Length of the block (in raw samples, not sample pairs!)
-};
-
-/**
- * List containing all blocks of a raw stream.
- * @see RawStreamBlock
- */
-typedef Common::List<RawStreamBlock> RawStreamBlockList;
-
 /**
  * Creates an audio stream, which plays from the given buffer.
  *
@@ -102,25 +87,6 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
  */
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
-/**
- * Creates an audio stream, which plays from the given stream.
- *
- * @param stream Stream object to play from.
- * @param blockList List of blocks to play.
- * @see RawDiskStreamAudioBlock
- * @see RawStreamBlockList
- * @param rate Rate of the sound data.
- * @param flags Audio flags combination.
- * @see RawFlags
- * @param disposeAfterUse Whether to delete the stream after use.
- * @return The new SeekableAudioStream (or 0 on failure).
- */
-SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   const RawStreamBlockList &blockList,
-                                   int rate,
-                                   byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 } // End of namespace Audio
