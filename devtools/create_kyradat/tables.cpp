@@ -1401,37 +1401,37 @@ const ExtractEntrySearchData kEobBaseChargenRaceMaxStatsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModTable1Provider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrowTable1Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000032, 0x00000214, { { 0x3D, 0x89, 0x30, 0x0A, 0x5C, 0x4A, 0x0F, 0xC3, 0xC7, 0x6B, 0x72, 0x7C, 0x12, 0x51, 0x8D, 0x8E } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModTable2Provider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrowTable2Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000019, 0x000000E7, { { 0xF4, 0x0D, 0xDF, 0xA3, 0x23, 0x71, 0x76, 0x2A, 0xC5, 0x6F, 0xF1, 0x59, 0x5F, 0x45, 0x73, 0x05 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModTable3Provider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrowTable3Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000023, 0x00000155, { { 0x42, 0x98, 0x84, 0x00, 0x70, 0x8A, 0x7B, 0x26, 0xC0, 0x96, 0xA3, 0x28, 0x41, 0x36, 0x4B, 0x21 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModTable4Provider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrowTable4Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000001E, 0x0000013B, { { 0xAB, 0x84, 0x2B, 0x0A, 0xC2, 0x46, 0xFF, 0x83, 0x03, 0xF8, 0x3F, 0x32, 0x53, 0xA2, 0x95, 0x65 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModLvlIndexProvider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrwLvlIndexProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000006, 0x00000070, { { 0x57, 0x48, 0x5F, 0x75, 0x79, 0xD4, 0xAA, 0x7D, 0xB7, 0xEB, 0x19, 0x9F, 0xCF, 0x99, 0x29, 0x29 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModDivProvider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrwModDivProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000006, 0x00000012, { { 0x50, 0x29, 0x51, 0x65, 0x0B, 0xF1, 0xCC, 0xDA, 0x2C, 0xA4, 0x7E, 0xEE, 0x20, 0xB0, 0x29, 0xB1 } } } },
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseConstModExtProvider[] = {
+const ExtractEntrySearchData kEobBaseSaveThrwModExtProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000006, 0x00000030, { { 0x07, 0x7D, 0x61, 0x1C, 0x95, 0xEC, 0x9A, 0xCE, 0xA1, 0x29, 0x83, 0x2F, 0xCA, 0x95, 0x95, 0xF5 } } } },
 	EXTRACT_END_ENTRY
 };
@@ -3860,13 +3860,13 @@ const ExtractEntry extractProviders[] = {
 	{ kEobBaseChargenRaceMinStats, kEobBaseChargenRaceMinStatsProvider },
 	{ kEobBaseChargenRaceMaxStats, kEobBaseChargenRaceMaxStatsProvider },
 
-	{ kEobBaseConstModTable1, kEobBaseConstModTable1Provider },
-	{ kEobBaseConstModTable2, kEobBaseConstModTable2Provider },
-	{ kEobBaseConstModTable3, kEobBaseConstModTable3Provider },
-	{ kEobBaseConstModTable4, kEobBaseConstModTable4Provider },
-	{ kEobBaseConstModLvlIndex, kEobBaseConstModLvlIndexProvider },
-	{ kEobBaseConstModDiv, kEobBaseConstModDivProvider },
-	{ kEobBaseConstModExt, kEobBaseConstModExtProvider },
+	{ kEobBaseSaveThrowTable1, kEobBaseSaveThrowTable1Provider },
+	{ kEobBaseSaveThrowTable2, kEobBaseSaveThrowTable2Provider },
+	{ kEobBaseSaveThrowTable3, kEobBaseSaveThrowTable3Provider },
+	{ kEobBaseSaveThrowTable4, kEobBaseSaveThrowTable4Provider },
+	{ kEobBaseSaveThrwLvlIndex, kEobBaseSaveThrwLvlIndexProvider },
+	{ kEobBaseSaveThrwModDiv, kEobBaseSaveThrwModDivProvider },
+	{ kEobBaseSaveThrwModExt, kEobBaseSaveThrwModExtProvider },
 	
 	{ kEobBasePryDoorStrings, kEobBasePryDoorStringsProvider },
 	{ kEobBaseWarningStrings, kEobBaseWarningStringsProvider },

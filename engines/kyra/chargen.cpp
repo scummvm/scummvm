@@ -639,7 +639,7 @@ void CharacterGenerator::generateStats(int index) {
 		_chargenMaxStats[i] = _chargenRaceMaxStats[rc * 6 + i];
 	}
 
-	if (_vm->_charClassModUnk[c->cClass])
+	if (_vm->_charClassModifier[c->cClass])
 		_chargenMaxStats[0] = 18;
 
 	uint16 sv[6];

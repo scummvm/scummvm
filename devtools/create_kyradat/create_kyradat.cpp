@@ -228,13 +228,13 @@ const ExtractFilename extractFilenames[] = {
 	{ kEobBaseChargenRaceMinStats, k3TypeRaw16to8, false },
 	{ kEobBaseChargenRaceMaxStats, kLolTypeRaw16, false },
 
-	{ kEobBaseConstModTable1, kTypeRawData, false },
-	{ kEobBaseConstModTable2, kTypeRawData, false },
-	{ kEobBaseConstModTable3, kTypeRawData, false },
-	{ kEobBaseConstModTable4, kTypeRawData, false },
-	{ kEobBaseConstModLvlIndex, kTypeRawData, false },
-	{ kEobBaseConstModDiv, kTypeRawData, false },
-	{ kEobBaseConstModExt, kTypeRawData, false },
+	{ kEobBaseSaveThrowTable1, kTypeRawData, false },
+	{ kEobBaseSaveThrowTable2, kTypeRawData, false },
+	{ kEobBaseSaveThrowTable3, kTypeRawData, false },
+	{ kEobBaseSaveThrowTable4, kTypeRawData, false },
+	{ kEobBaseSaveThrwLvlIndex, kTypeRawData, false },
+	{ kEobBaseSaveThrwModDiv, kTypeRawData, false },
+	{ kEobBaseSaveThrwModExt, kTypeRawData, false },
 
 	{ kEobBasePryDoorStrings, kTypeStringList, true },
 	{ kEobBaseWarningStrings, kTypeStringList, true },
@@ -1369,20 +1369,20 @@ const char *getIdString(const int id) {
 		return "kEobBaseChargenRaceMinStats";
 	case kEobBaseChargenRaceMaxStats:
 		return "kEobBaseChargenRaceMaxStats";
-	case kEobBaseConstModTable1:
-		return "kEobBaseConstModTable1";
-	case kEobBaseConstModTable2:
-		return "kEobBaseConstModTable2";
-	case kEobBaseConstModTable3:
-		return "kEobBaseConstModTable3";
-	case kEobBaseConstModTable4:
-		return "kEobBaseConstModTable4";
-	case kEobBaseConstModLvlIndex:
-		return "kEobBaseConstModLvlIndex";
-	case kEobBaseConstModDiv:
-		return "kEobBaseConstModDiv";
-	case kEobBaseConstModExt:
-		return "kEobBaseConstModExt";
+	case kEobBaseSaveThrowTable1:
+		return "kEobBaseSaveThrowTable1";
+	case kEobBaseSaveThrowTable2:
+		return "kEobBaseSaveThrowTable2";
+	case kEobBaseSaveThrowTable3:
+		return "kEobBaseSaveThrowTable3";
+	case kEobBaseSaveThrowTable4:
+		return "kEobBaseSaveThrowTable4";
+	case kEobBaseSaveThrwLvlIndex:
+		return "kEobBaseSaveThrwLvlIndex";
+	case kEobBaseSaveThrwModDiv:
+		return "kEobBaseSaveThrwModDiv";
+	case kEobBaseSaveThrwModExt:
+		return "kEobBaseSaveThrwModExt";
 	case kEobBasePryDoorStrings:
 		return "kEobBasePryDoorStrings";
 	case kEobBaseWarningStrings:

@@ -326,7 +326,7 @@ protected:
 	static const uint8 _hpIncrPerLevel[];
 	static const uint8 _numLevelsPerClass[];
 	static const int16 _hpConstModifiers[];
-	static const uint8 _charClassModUnk[];
+	static const uint8 _charClassModifier[];
 
 	const uint8 *_classModifierFlags;
 	
@@ -406,10 +406,10 @@ protected:
 	const char *const *_levelGainStrings;
 	const uint32 *_expRequirementTables[6];
 
-	const uint8 *_constModTables[6];
-	const uint8 *_constModLevelIndex;
-	const uint8 *_constModDiv;
-	const uint8 *_constModExt;
+	const uint8 *_saveThrowTables[6];
+	const uint8 *_saveThrowLevelIndex;
+	const uint8 *_saveThrowModDiv;
+	const uint8 *_saveThrowModExt;
 
 	const EobCharacter *_npcPreset;
 	int _npcSequenceSub;
@@ -891,7 +891,7 @@ protected:
 	int calcDamageModifers(int charIndex, EobMonsterInPlay *m, int item, int itemType, int useStrModifier);
 	bool trySavingThrow(void *target, int hpModifier, int level, int type, int race);
 	bool specialAttackSavingThrow(int charIndex, int type);
-	int getConstModifierTableValue(int hpModifier, int level, int b);
+	int getSaveThrowModifier(int hpModifier, int level, int type);
 	bool calcDamageCheckItemType(int itemType);
 	int savingThrowReduceDamage(int savingThrowEffect, int damage);
 	bool tryMonsterAttackEvasion(EobMonsterInPlay *m);
