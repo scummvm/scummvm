@@ -1878,11 +1878,6 @@ const ExtractEntrySearchData kEobBaseMagicStrings4Provider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseMagicStrings5Provider[] = {
-	{ UNK_LANG, kPlatformPC, { 0x00000008, 0x0000016C, { { 0xCF, 0x5B, 0x04, 0xAB, 0x1A, 0xAF, 0xDD, 0x56, 0xAC, 0xF6, 0x23, 0x86, 0x33, 0x06, 0x5A, 0xC6 } } } },
-	EXTRACT_END_ENTRY
-};
-
 const ExtractEntrySearchData kEobBaseMagicStrings6Provider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000029, 0x00000DA4, { { 0x5C, 0x6F, 0xA1, 0xC2, 0x56, 0xDE, 0xFE, 0xD5, 0x01, 0xFB, 0x65, 0x00, 0x24, 0xD1, 0x49, 0x7B } } } },
 	{ DE_DEU, kPlatformPC, { 0x00000032, 0x00001211, { { 0x13, 0xBC, 0xF1, 0x03, 0x49, 0xDB, 0x16, 0xA5, 0xC3, 0x7C, 0xBF, 0x14, 0x8F, 0x40, 0x07, 0x8E } } } },
@@ -1907,33 +1902,36 @@ const ExtractEntrySearchData kEobBaseMagicStrings8Provider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kEobBaseFlightObjAnimTilesProvider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectTlModeProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000012, 0x0000000C, { { 0x98, 0x29, 0x54, 0xCD, 0xED, 0xAC, 0x7B, 0x61, 0x8D, 0x4F, 0x19, 0xE8, 0xA6, 0xB1, 0x51, 0x80 } } } },
 	EXTRACT_END_ENTRY
 };
-const ExtractEntrySearchData kEobBaseFlightObjAnimIndexProvider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectTblIndexProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000009, 0x00000005, { { 0xFE, 0xEA, 0xC4, 0x54, 0x62, 0x7E, 0x43, 0x6E, 0x89, 0x48, 0x03, 0xE7, 0x47, 0xBF, 0x7D, 0x9D } } } }, // EOB 1
 	{ UNK_LANG, kPlatformPC, { 0x0000000E, 0x00000004, { { 0x63, 0x27, 0x19, 0x17, 0xBD, 0xC3, 0x8A, 0xA7, 0x1E, 0xF7, 0xD1, 0x78, 0x39, 0x3B, 0xD4, 0x4F } } } }, // EOB 2
 	EXTRACT_END_ENTRY
 };
-const ExtractEntrySearchData kEobBaseFlightObjAnimDimProvider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectShpStartProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000004, 0x00000034, { { 0x27, 0xC5, 0x09, 0x97, 0x8E, 0xD4, 0xF1, 0x8D, 0x77, 0xEB, 0x1D, 0x34, 0x55, 0xB2, 0x48, 0x38 } } } },
 	EXTRACT_END_ENTRY
 };
-const ExtractEntrySearchData kEobBaseFlightObjAnimTbl1Provider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectTbl1Provider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000000D, 0x0000005D, { { 0x49, 0xC4, 0x47, 0x55, 0xDC, 0x25, 0x08, 0x03, 0x3D, 0x23, 0xAD, 0x09, 0x5F, 0x9C, 0x34, 0x06 } } } },
 	EXTRACT_END_ENTRY
 };
-const ExtractEntrySearchData kEobBaseFlightObjAnimTbl2Provider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectTbl2Provider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000000A, 0x0000005C, { { 0xAB, 0x6A, 0x97, 0x35, 0xCC, 0x13, 0xC4, 0x17, 0x0B, 0xF2, 0xD3, 0xFD, 0xA2, 0x1C, 0x6C, 0xA8 } } } },
 	EXTRACT_END_ENTRY
 };
-const ExtractEntrySearchData kEobBaseFlightObjAnimTbl3Provider[] = {
+const ExtractEntrySearchData kEobBaseExpObjectTbl3Provider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000000B, 0x00000032, { { 0x59, 0x23, 0xB9, 0xBE, 0x0E, 0xFA, 0xEB, 0xDD, 0x82, 0x68, 0x5B, 0xB0, 0xBE, 0x9B, 0x1D, 0x8E } } } },
 	EXTRACT_END_ENTRY
 };
 
-
+const ExtractEntrySearchData kEobBaseExpObjectYProvider[] = {
+	{ UNK_LANG, kPlatformPC, { 0x00000008, 0x0000016C, { { 0xCF, 0x5B, 0x04, 0xAB, 0x1A, 0xAF, 0xDD, 0x56, 0xAC, 0xF6, 0x23, 0x86, 0x33, 0x06, 0x5A, 0xC6 } } } },
+	EXTRACT_END_ENTRY
+};
 
 const ExtractEntrySearchData kEobBaseSparkDefStepsProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000008, 0x000002FD, { { 0xB5, 0x6F, 0x31, 0x5F, 0xC6, 0x47, 0xE9, 0x23, 0x0E, 0x73, 0xBF, 0x77, 0xC7, 0xEE, 0xDB, 0x27 } } } },
@@ -3296,17 +3294,17 @@ const ExtractEntry extractProviders[] = {
 	{ kEobBaseMagicStrings2, kEobBaseMagicStrings2Provider },
 	{ kEobBaseMagicStrings3, kEobBaseMagicStrings3Provider },
 	{ kEobBaseMagicStrings4, kEobBaseMagicStrings4Provider },
-	{ kEobBaseMagicStrings5, kEobBaseMagicStrings5Provider },
 	{ kEobBaseMagicStrings6, kEobBaseMagicStrings6Provider },
 	{ kEobBaseMagicStrings7, kEobBaseMagicStrings7Provider },
 	{ kEobBaseMagicStrings8, kEobBaseMagicStrings8Provider },
 
-	{ kEobBaseFlightObjAnimTiles, kEobBaseFlightObjAnimTilesProvider },
-	{ kEobBaseFlightObjAnimIndex, kEobBaseFlightObjAnimIndexProvider },
-	{ kEobBaseFlightObjAnimDim, kEobBaseFlightObjAnimDimProvider },
-	{ kEobBaseFlightObjAnimTbl1, kEobBaseFlightObjAnimTbl1Provider },
-	{ kEobBaseFlightObjAnimTbl2, kEobBaseFlightObjAnimTbl2Provider },
-	{ kEobBaseFlightObjAnimTbl3, kEobBaseFlightObjAnimTbl3Provider },
+	{ kEobBaseExpObjectTlMode, kEobBaseExpObjectTlModeProvider },
+	{ kEobBaseExpObjectTblIndex, kEobBaseExpObjectTblIndexProvider },
+	{ kEobBaseExpObjectShpStart, kEobBaseExpObjectShpStartProvider },
+	{ kEobBaseExpObjectTbl1, kEobBaseExpObjectTbl1Provider },
+	{ kEobBaseExpObjectTbl2, kEobBaseExpObjectTbl2Provider },
+	{ kEobBaseExpObjectTbl3, kEobBaseExpObjectTbl3Provider },
+	{ kEobBaseExpObjectY, kEobBaseExpObjectYProvider },
 	
 	{ kEobBaseSparkDefSteps, kEobBaseSparkDefStepsProvider },
 	{ kEobBaseSparkDefSubSteps, kEobBaseSparkDefSubStepsProvider },

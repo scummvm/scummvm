@@ -1037,8 +1037,8 @@ void EobCoreEngine::drawScene(int update) {
 	_sceneUpdateRequired = false;
 }
 
-void EobCoreEngine::drawSceneShapes() {
-	for (int i = 0; i < 18; i++) {
+void EobCoreEngine::drawSceneShapes(int start) {
+	for (int i = start; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
 		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];
 

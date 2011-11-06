@@ -232,7 +232,7 @@ void EobCoreEngine::timerProcessFlyingObjects(int timerNum) {
 		} else {
 			if (fo->flags & 0x20) {
 				if (!updateFlyingObjectHitTest(fo, fo->curBlock, fo->curPos))
-					updateFlyingObject_s3(fo);
+					explodeObject(fo, fo->curBlock, fo->item);
 			}
 			endFlight = true;
 		}

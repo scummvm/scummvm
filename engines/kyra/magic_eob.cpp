@@ -482,7 +482,7 @@ bool EobCoreEngine::magicObjectHit(EobFlyingObject *fo, int dcTimes, int dcPips,
 	}
 
 	if (res && (fo->flags & 0x40))
-		updateFlyingObject_s3(fo);
+		explodeObject(fo, fo->curBlock, fo->item);
 	else if ((_flags.gameID == GI_EOB1 && fo->item == 5) || (_flags.gameID == GI_EOB2 && fo->item == 4))
 		res = false;
 

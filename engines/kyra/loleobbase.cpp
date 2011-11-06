@@ -195,8 +195,8 @@ Common::Error LolEobBaseEngine::init() {
 	return Common::kNoError;
 }
 
-bool LolEobBaseEngine::posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2) {
-	if (mouseX < x1 || mouseX > x2 || mouseY < y1 || mouseY > y2)
+bool LolEobBaseEngine::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
+	if (posX < x1 || posX > x2 || posY < y1 || posY > y2)
 		return false;
 	return true;
 }

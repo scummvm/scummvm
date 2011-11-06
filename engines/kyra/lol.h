@@ -928,7 +928,7 @@ private:
 
 	void drawScene(int pageNum);
 
-	void drawSceneShapes();
+	void drawSceneShapes(int start = 0);
 	void drawDecorations(int index);
 	void drawBlockEffects(int index, int type);
 	void drawSpecialGuiShape(int pageNum);

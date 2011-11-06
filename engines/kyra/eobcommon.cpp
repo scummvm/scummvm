@@ -22,16 +22,16 @@
 
 #ifdef ENABLE_EOB
 
-#include "common/config-manager.h"
-
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "kyra/loleobbase.h"
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 #include "kyra/script_eob.h"
 #include "kyra/timer.h"
+
+#include "common/config-manager.h"
+
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 namespace Kyra {
 
@@ -229,6 +229,11 @@ Common::Error EobCoreEngine::init() {
 	assert(_res);
 	_res->reset();
 
+	_staticres = new StaticResource(this);
+	assert(_staticres);
+	if (!_staticres->init())
+		error("_staticres->init() failed");
+
 	if (!screen()->init())
 		error("screen()->init() failed");
 
@@ -245,11 +250,6 @@ Common::Error EobCoreEngine::init() {
 
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
-
-	_staticres = new StaticResource(this);
-	assert(_staticres);
-	if (!_staticres->init())
-		error("_staticres->init() failed");
 
 	Common::Error err = LolEobBaseEngine::init();
 	if (err.getCode() != Common::kNoError)
@@ -1383,7 +1383,7 @@ void EobCoreEngine::inflictMonsterDamage(EobMonsterInPlay *m, int damage, bool g
 	m->flags = (m->flags & 0xf7) | 1;
 
 	if (_monsterProps[m->type].flags & 0x2000) {
-		inflictMonsterDamage_s1(m);
+		explodeMonster(m);
 		checkSceneUpdateNeed(m->block);
 		m->hitPointsCur = 0;
 	} else {
@@ -1827,8 +1827,16 @@ int EobCoreEngine::getMonsterAcHitChanceModifier(int charIndex, int monsterAc) {
 	return (20 - ((l / mod1[cm]) * mod2[cm])) - monsterAc;
 }
 
-void EobCoreEngine::inflictMonsterDamage_s1(EobMonsterInPlay *m) {
-
+void EobCoreEngine::explodeMonster(EobMonsterInPlay *m) {
+	m->flags |= 2;
+	if (getBlockDistance(m->block, _currentBlock) < 2) {
+		explodeObject(0, _currentBlock, 2);
+		for (int i = 0; i < 6; i++)
+			calcAndInflictCharacterDamage(i, 6, 6, 0, 8, 1, 0);
+	} else {
+		explodeObject(0, m->block, 2);
+	}
+	m->flags &= ~2;
 }
 
 void EobCoreEngine::snd_playSoundEffect(int id, int volume) {

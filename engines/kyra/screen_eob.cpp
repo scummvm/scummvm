@@ -42,6 +42,8 @@ Screen_Eob::Screen_Eob(EobCoreEngine *vm, OSystem *system) : Screen(vm, system) 
 	_fadeData = 0;
 	_fadeDataIndex = 0;
 	_dsX1 = _dsX2 = _dsY1 = _dsY2 = 0;
+	_gfxX = _gfxY = 0;
+	_gfxCol = 0;
 	_customDimTable = 0;
 	_dsTempPage = 0;
 }
@@ -57,6 +59,8 @@ bool Screen_Eob::init() {
 		_customDimTable = new ScreenDim*[_screenDimTableCount];
 		memset(_customDimTable, 0, sizeof(ScreenDim *)* _screenDimTableCount);
 
+		int temp;
+		_gfxMaxY = _vm->staticres()->loadRawData(kEobBaseExpObjectY, temp);
 		_fadeData = _vm->resource()->fileData("FADING.DAT", 0);
 
 		if (!_fadeData) {
@@ -605,25 +609,6 @@ void Screen_Eob::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, 
 	}
 }
 
-void Screen_Eob::drawShapeSetPixel(uint8 * dst, uint8 c) {
-	if (_shapeFadeMode[0]) {
-		if (_shapeFadeMode[1]) {
-			c = *dst;
-		} else {
-			_shapeFadeInternal &= 7;
-            c = *(dst + _shapeFadeInternal++);
-		}
-	}
-
-	if (_shapeFadeMode[1]) {
-		uint8 cnt = _shapeFadeMode[1];
-		while (cnt--)
-			c = _fadeData[_fadeDataIndex + c];
-	}
-
-	*dst = c;
-}
-
 const uint8 *Screen_Eob::scaleShape(const uint8 *shapeData, int steps) {
 	setShapeFadeMode(1, steps ? true : false);
 
@@ -700,24 +685,133 @@ void Screen_Eob::applyShapeOverlay(uint8 *shp, int ovlIndex) {
 		shp[i] = ovl[shp[i]];
 }
 
-void Screen_Eob::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
-	for (int i = 0; i < _dsDiv; i++) {
-		*dst++ = *src++;
-		*dst++ = READ_BE_UINT16(src) >> 4;
-		src += 2;
+void Screen_Eob::setShapeFrame(int x1, int y1, int x2, int y2) {
+	_dsX1 = x1;
+	_dsY1 = y1;
+	_dsX2 = x2;
+	_dsY2 = y2;
+}
+
+void Screen_Eob::setShapeFadeMode (uint8 i, bool b) {
+	if (!i || i == 1)
+		_shapeFadeMode[i] = b;
+}
+
+void Screen_Eob::setGfxParameters(int x, int y, int col) {
+	_gfxX = x;
+	_gfxY = y;
+	_gfxCol = col;
+}
+
+void Screen_Eob::drawExplosion(int scale, int radius, int numSteps, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize) {
+	int ymin = 0;
+	int ymax = _gfxMaxY[scale];
+	int xmin = -100;
+	int xmax = 276;
+
+	if (scale)
+		--scale;
+
+	hideMouse();
+
+	const ScreenDim *dm = getScreenDim(5);
+	int rX1 = dm->sx << 3;
+	int rY1 = dm->sy;
+	int rX2 = rX1 + (dm->w << 3);
+	int rY2 = rY1 + dm->h - 1;
+	
+	int16 gx2 = _gfxX;
+	int16 gy2 = _gfxY;
+
+	uint8 *ptr1 = _dsTempPage;
+	int16 *ptr2 = (int16*)_dsTempPage;
+	int16 *ptr3 = (int16*)&_dsTempPage[300];
+	int16 *ptr4 = (int16*)&_dsTempPage[600];
+	int16 *ptr5 = (int16*)&_dsTempPage[900];
+	int16 *ptr6 = (int16*)&_dsTempPage[1200];
+	int16 *ptr7 = (int16*)&_dsTempPage[1500];
+	int16 *ptr8 = (int16*)&_dsTempPage[1800];
+
+	if (numSteps > 150)
+		numSteps = 150;
+
+	for (int i = 0; i < numSteps; i++) {
+		ptr2[i] = ptr3[i] = 0;
+		ptr4[i] = _vm->_rnd.getRandomNumberRng(0, radius) - (radius >> 1);
+		ptr5[i] = _vm->_rnd.getRandomNumberRng(0, radius) - (radius >> 1) - (radius >> (8 - aspectRatio));
+		ptr7[i] = _vm->_rnd.getRandomNumberRng(1024/stepSize, 2048/stepSize);
+		ptr8[i] = scale << 8;
 	}
 
-	if (_dsRem == 1) {
-		*dst++ = *src++;
-		*dst++ = _dsScaleTmp;
+	for (int l = 2; l;) {
+		if (l != 2) {
+			for (int i = numSteps - 1; i >= 0; i--) {
+				uint32 end = _system->getMillis() + 1;
+				int16 px = ((ptr2[i] >> 6) >> scale) + gx2;
+				int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
+				if (py > ymax)
+					py = ymax;
+				if (posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
+					setPagePixel(0, px, py, ptr6[i]);
+					if (i % 5 == 0)  {
+						updateScreen();
+						uint32 cur = _system->getMillis();
+						if (end > cur)
+						_system->delayMillis(end - cur);
+					}
+				}
+			}			
+		}
 
-	} if (_dsRem == 2) {
-		*dst++ = (src[0] & 0xf0) | (src[1] >> 4);
-		src += 2;
-		*dst++ = _dsScaleTmp;
-		*dst++ = _dsScaleTmp;
-		*dst++ = _dsScaleTmp;
+		l = 0;
+
+		for (int i = 0; i < numSteps; i++) {
+			uint32 end = _system->getMillis() + 1;
+			if (ptr4[i] <= 0)
+				ptr4[i]++;
+			else
+				ptr4[i]--;
+			ptr2[i] += ptr4[i];
+			ptr5[i] += 5;
+			ptr3[i] += ptr5[i];
+			ptr8[i] += ptr7[i];
+				
+			int16 px = ((ptr2[i] >> 6) >> scale) + gx2;
+			int16 py = ((ptr3[i] >> 6) >> scale) + gy2;
+			if (py >= ymax || py < ymin)
+				ptr5[i] = -(ptr5[i] >> 1);
+			if (px >= xmax || px < xmin)
+				ptr4[i] = -(ptr4[i] >> 1);
+
+			if (py > ymax)
+				py = ymax;
+			
+			int pxVal1 = 0;
+			if (posWithinRect(px, py, 0, 0, 319, 199)) {
+				pxVal1 = getPagePixel(2, px, py);
+				ptr6[i] = getPagePixel(0, px, py);
+			}
+
+			assert((ptr8[i] >> 8) < colorTableSize);
+			int pxVal2 = colorTable[ptr8[i] >> 8];
+			if (pxVal2) {
+				l = 1;
+				if (pxVal1 == _gfxCol && posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
+					setPagePixel(0, px, py, pxVal2);
+					if (i % 5 == 0)  {
+						updateScreen();
+						uint32 cur = _system->getMillis();
+						if (end > cur)
+						_system->delayMillis(end - cur);
+					}
+				}
+			} else {
+				ptr7[i] = 0;
+			}
+		}
 	}
+	
+	showMouse();
 }
 
 void Screen_Eob::fadeTextColor(Palette *pal, int color1, int rate) {
@@ -778,6 +872,14 @@ bool Screen_Eob::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate
 	return res;
 }
 
+int Screen_Eob::getRectSize(int w, int h) {
+	return w * h;
+}
+
+void Screen_Eob::setFadeTableIndex(int index) {
+	_fadeDataIndex = (CLIP(index, 0, 7) << 8);
+}
+
 void Screen_Eob::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight) {
 	if (!palData)
 		return;
@@ -819,6 +921,55 @@ void Screen_Eob::createFadeTable(uint8 *palData, uint8 *dst, uint8 rootColor, ui
 		}
         *dst++ = col;
 	}
+}
+
+uint8 *Screen_Eob::getFadeTable(int index) {
+	return (index >= 0 && index < 5) ? &_fadeData[index << 8] : 0;
+}
+
+void Screen_Eob::drawShapeSetPixel(uint8 * dst, uint8 c) {
+	if (_shapeFadeMode[0]) {
+		if (_shapeFadeMode[1]) {
+			c = *dst;
+		} else {
+			_shapeFadeInternal &= 7;
+            c = *(dst + _shapeFadeInternal++);
+		}
+	}
+
+	if (_shapeFadeMode[1]) {
+		uint8 cnt = _shapeFadeMode[1];
+		while (cnt--)
+			c = _fadeData[_fadeDataIndex + c];
+	}
+
+	*dst = c;
+}
+
+void Screen_Eob::scaleShapeProcessLine(uint8 *&dst, const uint8 *&src) {
+	for (int i = 0; i < _dsDiv; i++) {
+		*dst++ = *src++;
+		*dst++ = READ_BE_UINT16(src) >> 4;
+		src += 2;
+	}
+
+	if (_dsRem == 1) {
+		*dst++ = *src++;
+		*dst++ = _dsScaleTmp;
+
+	} if (_dsRem == 2) {
+		*dst++ = (src[0] & 0xf0) | (src[1] >> 4);
+		src += 2;
+		*dst++ = _dsScaleTmp;
+		*dst++ = _dsScaleTmp;
+		*dst++ = _dsScaleTmp;
+	}
+}
+
+bool Screen_Eob::posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2) {
+	if (posX < x1 || posX > x2 || posY < y1 || posY > y2)
+		return false;
+	return true;
 }
 
 OldDOSFont::OldDOSFont() {
