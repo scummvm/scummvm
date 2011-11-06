@@ -107,7 +107,7 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// unk16 - Sound-related. Possibly some sort of pitch bend.
+	// pitchBend - Sound-related. Possibly some sort of pitch bend.
 	// unk18 - Sound-effect. Used for secondaryEffect1()
 	// unk19 - Sound-effect. Used for secondaryEffect1()
 	// unk20 - Sound-effect. Used for secondaryEffect1()
@@ -176,7 +176,7 @@ private:
 		uint16 offset;
 		uint8 tempoReset;
 		uint8 rawNote;
-		int8 unk16;
+		int8 pitchBend;
 		uint8 volumeModifier;
 	};
 
@@ -280,7 +280,7 @@ private:
 	int updateCallback38(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback39(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removePrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback41(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_pitchBend(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -318,7 +318,7 @@ private:
 	// _unkValue18     - Unknown. Rhythm section volume?
 	// _unkValue19     - Unknown. Rhythm section volume?
 	// _unkValue20     - Unknown. Rhythm section volume?
-	// _unkTable[]     - Probably frequences for the 12-tone scale.
+	// _freqTable[]     - Probably frequences for the 12-tone scale.
 	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
 	// _unkTable2_1[]  - One of the tables in _unkTable2[]
 	// _unkTable2_2[]  - One of the tables in _unkTable2[]
@@ -385,12 +385,12 @@ private:
 	const uint8 *_tablePtr2;
 
 	static const uint8 _regOffset[];
-	static const uint16 _unkTable[];
+	static const uint16 _freqTable[];
 	static const uint8 *const _unkTable2[];
 	static const uint8 _unkTable2_1[];
 	static const uint8 _unkTable2_2[];
 	static const uint8 _unkTable2_3[];
-	static const uint8 _unkTables[][32];
+	static const uint8 _pitchBendTables[][32];
 
 	uint16 _syncJumpMask;
 
@@ -975,20 +975,20 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 	// octave bits, and that could possibly have been used in some sound.
 	// But as it is now, I can't see any way it would happen.
 
-	uint16 freq = _unkTable[note] + channel.baseFreq;
+	uint16 freq = _freqTable[note] + channel.baseFreq;
 
 	// When called from callback 41, the behavior is slightly different:
-	// We adjust the frequency, even when channel.unk16 is 0.
+	// We adjust the frequency, even when channel.pitchBend is 0.
 
-	if (channel.unk16 || flag) {
+	if (channel.pitchBend || flag) {
 		const uint8 *table;
 
-		if (channel.unk16 >= 0) {
-			table = _unkTables[(channel.rawNote & 0x0F) + 2];
-			freq += table[channel.unk16];
+		if (channel.pitchBend >= 0) {
+			table = _pitchBendTables[(channel.rawNote & 0x0F) + 2];
+			freq += table[channel.pitchBend];
 		} else {
-			table = _unkTables[channel.rawNote & 0x0F];
-			freq -= table[-channel.unk16];
+			table = _pitchBendTables[channel.rawNote & 0x0F];
+			freq -= table[-channel.pitchBend];
 		}
 	}
 
@@ -1670,8 +1670,8 @@ int AdLibDriver::update_removePrimaryEffect2(uint8 *&dataptr, Channel &channel, 
 	return 0;
 }
 
-int AdLibDriver::updateCallback41(uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk16 = value;
+int AdLibDriver::update_pitchBend(uint8 *&dataptr, Channel &channel, uint8 value) {
+	channel.pitchBend = value;
 	setupNote(channel.rawNote, channel, true);
 	return 0;
 }
@@ -2022,7 +2022,7 @@ void AdLibDriver::setupParserOpcodeTable() {
 
 		// 56
 		COMMAND(update_stopChannel),
-		COMMAND(updateCallback41),
+		COMMAND(update_pitchBend),
 		COMMAND(update_resetToGlobalTempo),
 		COMMAND(update_nop),
 
@@ -2063,11 +2063,10 @@ const uint8 AdLibDriver::_regOffset[] = {
 	0x12
 };
 
-// Given the size of this table, and the range of its values, it's probably the
-// F-Numbers (10 bits) for the notes of the 12-tone scale. However, it does not
-// match the table in the AdLib documentation I've seen.
+//These are the F-Numbers (10 bits) for the notes of the 12-tone scale.
+// However, it does not match the table in the AdLib documentation I've seen.
 
-const uint16 AdLibDriver::_unkTable[] = {
+const uint16 AdLibDriver::_freqTable[] = {
 	0x0134, 0x0147, 0x015A, 0x016F, 0x0184, 0x019C, 0x01B4, 0x01CE, 0x01E9,
 	0x0207, 0x0225, 0x0246
 };
@@ -2145,13 +2144,11 @@ const uint8 AdLibDriver::_unkTable2_3[] = {
 };
 
 // This table is used to modify the frequency of the notes, depending on the
-// note value and unk16. In theory, we could very well try to access memory
-// outside this table, but in reality that probably won't happen.
+// note value and the pitch bend value. In theory, we could very well try to
+// access memory outside this table, but in reality that probably won't happen.
 //
-// This could be some sort of pitch bend, but I have yet to see it used for
-// anything so it's hard to say.
 
-const uint8 AdLibDriver::_unkTables[][32] = {
+const uint8 AdLibDriver::_pitchBendTables[][32] = {
 	// 0
 	{ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x08,
 	  0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
