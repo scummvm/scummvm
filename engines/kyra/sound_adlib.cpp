@@ -224,7 +224,7 @@ private:
 	}
 
 	uint8 *getInstrument(int instrumentId) {
-		return _soundData + READ_LE_UINT16(_soundData + ((_version == 2) ? 1000 : 500) + 2 * instrumentId);
+		return getProgram(_numPrograms + instrumentId);
 	}
 
 	void setupPrograms();
@@ -400,6 +400,7 @@ private:
 
 	uint8 _musicVolume, _sfxVolume;
 
+	int _numPrograms;
 	int _version;
 };
 
@@ -407,6 +408,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 	setupParserOpcodeTable();
 
 	_version = version;
+	_numPrograms = (_version == 1) ? 150 : ((_version == 4) ? 500 : 250);
 
 	_mixer = mixer;
 
@@ -472,8 +474,8 @@ void AdLibDriver::setMusicVolume(uint8 volume) {
 		writeOPL(0x43 + regOffset, calculateOpLevel2(chan));
 	}
 
-	// For now we use the music volume for both sfx and music in Kyra1.
-	if (_version < 2) {
+	// For now we use the music volume for both sfx and music in Kyra1 and Eob
+	if (_version < 4) {
 		_sfxVolume = volume;
 
 		for (uint i = 6; i < 9; ++i) {
@@ -490,8 +492,8 @@ void AdLibDriver::setMusicVolume(uint8 volume) {
 }
 
 void AdLibDriver::setSfxVolume(uint8 volume) {
-	// We only support sfx volume in version 2 games.
-	if (_version < 2)
+	// We only support sfx volume in version 4 games.
+	if (_version < 4)
 		return;
 
 	Common::StackLock lock(_mutex);
@@ -655,15 +657,17 @@ void AdLibDriver::adjustSfxData(uint8 *ptr, int volume) {
 	_sfxVelocity = ptr[3];
 
 	// Adjust the values.
-	if (_version >= 1) {
-		int newVal = ((((ptr[3]) + 63) * volume) >> 8) & 0xFF;
-		ptr[3] = -newVal + 63;
-		ptr[1] = ((ptr[1] * volume) >> 8) & 0xFF;
-	} else {
-		int newVal = ((_sfxVelocity << 2) ^ 0xff) * volume;
-		ptr[3] = (newVal >> 10) ^ 0x3f;
-		ptr[1] = newVal >> 11;
-	}	
+	if (volume != 0xff) {
+		if (_version >= 3) {
+			int newVal = ((((ptr[3]) + 63) * volume) >> 8) & 0xFF;
+			ptr[3] = -newVal + 63;
+			ptr[1] = ((ptr[1] * volume) >> 8) & 0xFF;
+		} else {
+			int newVal = ((_sfxVelocity << 2) ^ 0xff) * volume;
+			ptr[3] = (newVal >> 10) ^ 0x3f;
+			ptr[1] = newVal >> 11;
+		}
+	}
 }
 
 // A few words on opcode parsing and timing:
@@ -1368,7 +1372,10 @@ int AdLibDriver::update_setNoteSpacing(uint8 *&dataptr, Channel &channel, uint8 
 int AdLibDriver::update_jump(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
-	dataptr += add;
+	if (_version == 1)
+		dataptr = _soundData + add - 191;
+	else
+		dataptr += add;
 	if (_syncJumpMask & (1 << (&channel - _channels)))
 		channel.lock = true;
 	return 0;
@@ -1378,7 +1385,10 @@ int AdLibDriver::update_jumpToSubroutine(uint8 *&dataptr, Channel &channel, uint
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
-	dataptr += add;
+	if (_version < 3)
+		dataptr = _soundData + add - 191;
+	else
+		dataptr += add;
 	return 0;
 }
 
@@ -2251,21 +2261,36 @@ const int SoundAdLibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdLibPC::_kyra1S
 SoundAdLibPC::SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
-	_version = ((_vm->game() == GI_KYRA2) || (_vm->game() == GI_LOL && !_vm->gameFlags().isDemo)) ? 2 : 1;
-	_driver = new AdLibDriver(mixer, _version);
-	assert(_driver);
 
+	_soundTriggers = 0;
+	_numSoundTriggers = 0;
 	_sfxPlayingSound = -1;
 	_soundFileLoaded.clear();
 
-	if (_version == 1) {
+	switch (vm->game()) {
+	case GI_LOL:
+		_version = _vm->gameFlags().isDemo ? 3 : 4;
+		break;
+	case GI_KYRA2:
+		_version = 4;
+		break;
+	case GI_KYRA1:
+		_version = 3;
 		_soundTriggers = _kyra1SoundTriggers;
 		_numSoundTriggers = _kyra1NumSoundTriggers;
-	} else {
-		// TODO: Figure out if Kyra 2 uses sound triggers at all.
-		_soundTriggers = 0;
-		_numSoundTriggers = 0;
+		break;
+	case GI_EOB2:
+		_version = 2;
+		break;
+	case GI_EOB1:
+		_version = 1;
+		break;
+	default:
+		break;
 	}
+
+	_driver = new AdLibDriver(mixer, _version);
+	assert(_driver);
 }
 
 SoundAdLibPC::~SoundAdLibPC() {
@@ -2342,12 +2367,12 @@ void SoundAdLibPC::playSoundEffect(uint8 track, uint8 volume) {
 void SoundAdLibPC::play(uint8 track, uint8 volume) {
 	uint16 soundId = 0;
 
-	if (_version == 2)
+	if (_version == 4)
 		soundId = READ_LE_UINT16(&_trackEntries[track<<1]);
 	else
 		soundId = _trackEntries[track];
 
-	if ((soundId == 0xFFFF && _version == 2) || (soundId == 0xFF && _version < 2) || !_soundDataPtr)
+	if ((soundId == 0xFFFF && _version == 4) || (soundId == 0xFF && _version < 4) || !_soundDataPtr)
 		return;
 
 	_driver->queueTrack(soundId, volume);
@@ -2374,7 +2399,7 @@ void SoundAdLibPC::loadSoundFile(Common::String file) {
 }
 
 void SoundAdLibPC::internalLoadFile(Common::String file) {
-	file += ".ADL";
+	file += ((_version == 1) ? ".DAT" : ".ADL");
 	if (_soundFileLoaded == file)
 		return;
 
@@ -2398,7 +2423,7 @@ void SoundAdLibPC::internalLoadFile(Common::String file) {
 	int soundDataSize = fileSize;
 	uint8 *p = fileData;
 
-	if (_version == 2) {
+	if (_version == 4) {
 		memcpy(_trackEntries, p, 500);
 		p += 500;
 		soundDataSize -= 500;
