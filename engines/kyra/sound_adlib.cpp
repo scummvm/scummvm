@@ -360,13 +360,17 @@ private:
 	uint8 *_soundData;
 
 	struct QueueEntry {
+		QueueEntry() : data(0), id(0), volume(0) {}
+		QueueEntry(uint8 *ptr, uint8 track, uint8 vol) : data(ptr), id(track), volume(vol) {}
 		uint8 *data;
+		uint8 id;
 		uint8 volume;
 	};
 
 	QueueEntry _programQueue[16];
 	int _programStartTimeout;
 	int _programQueueStart, _programQueueEnd;
+	bool _retrySounds;
 
 	void adjustSfxData(uint8 *data, int volume);
 	uint8 *_sfxPointer;
@@ -450,6 +454,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 	_sfxPointer = 0;
 
 	_programQueueStart = _programQueueEnd = 0;
+	_retrySounds = false;
 }
 
 AdLibDriver::~AdLibDriver() {
@@ -545,8 +550,7 @@ void AdLibDriver::queueTrack(int track, int volume) {
 		return;
 	}
 
-	_programQueue[_programQueueEnd].data = trackData;
-	_programQueue[_programQueueEnd].volume = volume;
+	_programQueue[_programQueueEnd] = QueueEntry(trackData, track, volume);
 	_programQueueEnd = (_programQueueEnd + 1) & 15;
 }
 
@@ -570,6 +574,7 @@ void AdLibDriver::stopAllChannels() {
 		if (channel != 9)
 			noteOff(chan);
 	}
+	_retrySounds = false;
 }
 
 // timer callback
@@ -598,12 +603,24 @@ void AdLibDriver::setupPrograms() {
 		return;
 
 	uint8 *ptr = _programQueue[_programQueueStart].data;
-	// Clear the queue entry
-	_programQueue[_programQueueStart].data = 0;
-	_programQueueStart = (_programQueueStart + 1) & 15;
+
+	// The AdLib driver (in its old versions used for EOB) is not suitable for modern (fast) CPUs.
+	// The stop sound track (track 0 which has a priority of 50) will often still be busy when the
+	// next sound (with a lower priority) starts which will cause that sound to be skipped. We simply
+	// restart incoming sounds during stop sound execution.
+	// UPDATE: This stilly applies after introduction of the _programQueue.
+	QueueEntry retrySound;
+	if (_version < 3 && _programQueue[_programQueueStart].id == 0)
+		_retrySounds = true;
+	else if (_retrySounds)
+		retrySound = _programQueue[_programQueueStart];
 
 	// Adjust data in case we hit a sound effect.
 	adjustSfxData(ptr, _programQueue[_programQueueStart].volume);
+
+	// Clear the queue entry
+	_programQueue[_programQueueStart].data = 0;
+	_programQueueStart = (_programQueueStart + 1) & 15;
 
 	const int chan = *ptr++;
 	const int priority = *ptr++;
@@ -632,6 +649,13 @@ void AdLibDriver::setupPrograms() {
 		// This is (probably) required to assure that the sfx are started with
 		// the correct priority and velocity.
 		_programStartTimeout = 2;
+
+		retrySound = QueueEntry();
+	}
+
+	if (retrySound.data) {
+		debugC(9, kDebugLevelSound, "AdLibDriver::setupPrograms(): WORKAROUND - Restarting skipped sound %d)", retrySound.id);
+		queueTrack(retrySound.id, retrySound.volume);
 	}
 }
 
