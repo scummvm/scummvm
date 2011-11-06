@@ -388,12 +388,12 @@ void EobCoreEngine::initStaticResource() {
 	_menuStringsSpec = _staticres->loadStrings(kEobBaseMenuStringsSpec, temp);
 	_menuStringsSpellNo = _staticres->loadStrings(kEobBaseMenuStringsSpellNo, temp);
 
-	_spellLevelsMage = _staticres->loadRawData(kEobBaseSpellLevelsMage, temp);
-	_spellLevelsCleric = _staticres->loadRawData(kEobBaseSpellLevelsCleric, temp);
-	_spellLevelsMps1 = _staticres->loadRawData(kEobBaseSpellMps1, temp);
-	_spellLevelsMps2 = _staticres->loadRawData(kEobBaseSpellMps2, temp);
-	_spellLevelsMps3 = _staticres->loadRawData(kEobBaseSpellMps3, temp);
-	_spellLevelsMps4 = _staticres->loadRawData(kEobBaseSpellMps4, temp);
+	_spellLevelsMage = _staticres->loadRawData(kEobBaseSpellLevelsMage, _spellLevelsMageSize);
+	_spellLevelsCleric = _staticres->loadRawData(kEobBaseSpellLevelsCleric, _spellLevelsClericSize);
+	_numSpellsCleric = _staticres->loadRawData(kEobBaseNumSpellsCleric, temp);
+	_numSpellsWisAdj = _staticres->loadRawData(kEobBaseNumSpellsWisAdj, temp);
+	_numSpellsPal = _staticres->loadRawData(kEobBaseNumSpellsPal, temp);
+	_numSpellsMage = _staticres->loadRawData(kEobBaseNumSpellsMage, temp);
 
 	_characterGuiStringsHp = _staticres->loadStrings(kEobBaseCharGuiStringsHp, temp);
 	_characterGuiStringsWp = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharGuiStringsWp2 : kEobBaseCharGuiStringsWp1, temp);
@@ -656,7 +656,17 @@ void EobCoreEngine::initMenus() {
 		{  38,  16,  57,  32,  14,  22,  7  },
 		{  39, 128,  57,  32,  14,  51,  7  },
 		{  8,  128, 126,  40,  14,  19,  7  },
-		{  0,    0,  50, 168,  72,  61,  0  }
+		{  0,    0,  50, 168,  72,  61,  0  },
+		// EOB 1 memorize/pray menu:
+		{  36,   8, 126,  48,  14,  48,  5  },
+		{  8,  128, 126,  40,  14,  19,  5  },
+		{  0,    0,  50, 168,  72,  61,  0  },
+		{  31,   8,  16,  24,  20,   2,  5  },
+		{  32,  40,  16,  24,  20,   3,  5  },
+		{  33,  72,  16,  24,  20,   4,  5  },
+		{  34, 104,  16,  24,  20,   5,  5  },
+		{  35, 136,  16,  24,  20,   6,  5  },
+		{  31,   8,  16,  24,  20,   2,  5  }
 	};
 
 	_menuButtonDefs = buttonDefs;
@@ -674,6 +684,12 @@ void EobCoreEngine::initMenus() {
 	delete[] _menuDefs;
 	_menuDefs = new EobMenuDef[ARRAYSIZE(menuDefs)];
 	memcpy(_menuDefs, menuDefs, sizeof(menuDefs));
+	
+	if (_flags.gameID == GI_EOB1) {
+		// assign EOB 1 style memorize/pray menu
+		_menuDefs[4].numButtons = 8;
+		_menuDefs[4].firstButtonStrId = 36;
+	}
 }
 
 

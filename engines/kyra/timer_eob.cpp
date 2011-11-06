@@ -264,7 +264,7 @@ void EobCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		int evt = c->events[i];
 
 		if (evt < 0) {
-			removeCharacterEffect(evt, charIndex, 1);
+			removeCharacterEffect(-evt, charIndex, 1);
 			continue;
 		}
 

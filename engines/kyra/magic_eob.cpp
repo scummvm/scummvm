@@ -201,6 +201,7 @@ void EobCoreEngine::castSpell(int spell, int weaponSlot) {
 }
 
 void EobCoreEngine::removeCharacterEffect(int spell, int charIndex, int showWarning) {
+	assert(spell >= 0);
 	EobCharacter *c = &_characters[charIndex];
 	EobSpell *s = &_spells[spell];
 

@@ -172,7 +172,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 	_activeBox = 0;
 
 	for (bool loop = true; loop && (!_vm->shouldQuit()); ) {
-		_vm->_gui->highLightBoxFrame(_activeBox + 6);
+		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		_vm->sound()->process();
 		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
 		_vm->removeInputTop();
@@ -187,7 +187,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 				_vm->sound()->haltTrack();
 				return false;
 			}
-			_vm->_gui->highLightBoxFrame(-1);
+			_vm->_gui->updateBoxFrameHighLight(-1);
 		}
 
 		if (inputFlag & 0x8000) {
@@ -201,7 +201,7 @@ bool CharacterGenerator::start(EobCharacter *characters, uint8 ***faceShapes) {
 		}
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5]) {
-			_vm->_gui->highLightBoxFrame(-1);
+			_vm->_gui->updateBoxFrameHighLight(-1);
 			if (_characters[_activeBox].name[0]) {
 				int b = _activeBox;
 				if (viewDeleteCharacter())
@@ -379,12 +379,12 @@ int CharacterGenerator::viewDeleteCharacter() {
 	initButtonsFromList(0, 7);
 	_vm->removeInputTop();
 
-	_vm->_gui->highLightBoxFrame(-1);
+	_vm->_gui->updateBoxFrameHighLight(-1);
 	printStats(_activeBox, 2);
 
 	int res = 0;
 	for (bool loop = true; loop && _characters[_activeBox].name[0] && !_vm->shouldQuit(); ) {
-		_vm->_gui->highLightBoxFrame(_activeBox + 6);
+		_vm->_gui->updateBoxFrameHighLight(_activeBox + 6);
 		_vm->sound()->process();
 
 		int inputFlag = _vm->checkInput(_vm->_activeButtons, false, 0);
@@ -423,14 +423,14 @@ int CharacterGenerator::viewDeleteCharacter() {
 		}
 
 		if (loop == false)
-			_vm->_gui->highLightBoxFrame(-1);
+			_vm->_gui->updateBoxFrameHighLight(-1);
 
 		if (!_characters[cbx].name[0])
 			loop = false;
 
 		if (cbx != _activeBox) {
 			_activeBox = cbx;
-			_vm->_gui->highLightBoxFrame(-1);
+			_vm->_gui->updateBoxFrameHighLight(-1);
 			if (loop)
 				printStats(_activeBox, 2);
 		}
@@ -753,8 +753,8 @@ void CharacterGenerator::statsAndFacesMenu() {
 		}
 	}
 
-	_vm->_gui->highLightBoxFrame(6 + _activeBox);
-	_vm->_gui->highLightBoxFrame(-1);
+	_vm->_gui->updateBoxFrameHighLight(6 + _activeBox);
+	_vm->_gui->updateBoxFrameHighLight(-1);
 }
 
 void CharacterGenerator::faceSelectMenu() {
@@ -769,7 +769,7 @@ void CharacterGenerator::faceSelectMenu() {
 	printStats(_activeBox, 4);
 	toggleSpecialButton(12, 0, 0);
 	toggleSpecialButton(13, 0, 0);
-	_vm->_gui->highLightBoxFrame(-1);
+	_vm->_gui->updateBoxFrameHighLight(-1);
 
 	shp = getNextFreeFaceShape(shp, charSex, 1, _chargenSelectedPortraits);
 
@@ -793,7 +793,7 @@ void CharacterGenerator::faceSelectMenu() {
 			in = _vm->checkInput(_vm->_activeButtons, false, 0);
 			_vm->removeInputTop();
 
-			_vm->_gui->highLightBoxFrame(box + 10);
+			_vm->_gui->updateBoxFrameHighLight(box + 10);
 
 			if (in == 0x8002 || in == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
 				processSpecialButton(13);
@@ -813,7 +813,7 @@ void CharacterGenerator::faceSelectMenu() {
 			}
 		}
 
-		_vm->_gui->highLightBoxFrame(-1);
+		_vm->_gui->updateBoxFrameHighLight(-1);
 
 		if (in == 1)
 			shp = getNextFreeFaceShape(shp - 1, charSex, -1, _chargenSelectedPortraits);
@@ -824,7 +824,7 @@ void CharacterGenerator::faceSelectMenu() {
 	}
 
 	if (!_vm->shouldQuit()) {
-		_vm->_gui->highLightBoxFrame(-1);
+		_vm->_gui->updateBoxFrameHighLight(-1);
 		updateMagicShapes();
 
 		_chargenSelectedPortraits[_activeBox] = sp[res];
@@ -859,7 +859,7 @@ int CharacterGenerator::getNextFreeFaceShape(int shpIndex, int charSex, int step
 }
 
 void CharacterGenerator::processFaceMenuSelection(int index) {
-	_vm->_gui->highLightBoxFrame(-1);
+	_vm->_gui->updateBoxFrameHighLight(-1);
 	if (index <= 48)
 		_screen->drawShape(0, _characters[_activeBox].faceShape, _chargenBoxX[_activeBox], _chargenBoxY[_activeBox] + 1, 0);
 	else
@@ -1403,7 +1403,7 @@ const EobRect8 CharacterGenerator::_chargenButtonBodyCoords[] = {
 	{ 0x14, 0x90, 0x0B, 0x10 }
 };
 
-const EobRect16 GUI_Eob::_highLightBoxFrames[] = {
+const EobRect16 GUI_Eob::_updateBoxFrameHighLights[] = {
 	{ 0x00B7, 0x0001, 0x00F7, 0x0034 },
 	{ 0x00FF, 0x0001, 0x013F, 0x0034 },
 	{ 0x00B7, 0x0035, 0x00F7, 0x0068 },

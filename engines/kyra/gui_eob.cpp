@@ -1445,10 +1445,17 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) 
 	_cflag = 0xffff;
 	
 	_menuLineSpacing = 0;
-	_menuUnk1 = 0;
+	//_menuUnk1 = 0;
 	_menuLastInFlags = 0;
 	_menuCur = 0;
 	_menuNumItems = 0;
+
+	_numPages = (_vm->game() == GI_EOB2) ? 8 : 5;
+	_numVisPages = (_vm->game() == GI_EOB2) ? 6 : 5;
+	_clericSpellAvltyFlags = (_vm->game() == GI_EOB2) ? 0xf7ffffff : 0x7bffff;
+	_paladinSpellAvltyFlags = (_vm->game() == GI_EOB2) ? 0xa9bbd1d : 0x800ff2;
+	_numAssignedSpellsOfType = new int8[72];
+	memset(_numAssignedSpellsOfType, 0, 72);
 
 	_charSelectRedraw = false;
 	
@@ -1463,6 +1470,8 @@ GUI_Eob::~GUI_Eob() {
 			delete _menuStringsPrefsTemp[i];
 		delete[] _menuStringsPrefsTemp;
 	}
+
+	delete[] _numAssignedSpellsOfType;
 }
 
 void GUI_Eob::processButton(Button *button) {
@@ -1970,7 +1979,7 @@ void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 
 	_screen->updateScreen();
 	_menuLineSpacing = lineSpacing;
-	_menuUnk1 = 0;
+	//_menuUnk1 = 0;
 	_menuLastInFlags = 0;
 	_vm->removeInputTop();
 }
@@ -2284,7 +2293,7 @@ int GUI_Eob::runLoadMenu(int x, int y) {
 	return 0;
 }
 
-void GUI_Eob::highLightBoxFrame(int box) {
+void GUI_Eob::updateBoxFrameHighLight(int box) {
 	static const uint8 colorTable[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6,
 		0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00
 	};
@@ -2299,7 +2308,7 @@ void GUI_Eob::highLightBoxFrame(int box) {
 		if (!colorTable[_updateBoxColorIndex])
 			_updateBoxColorIndex = 0;
 
-		const EobRect16 *r = &_highLightBoxFrames[_updateBoxIndex];
+		const EobRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
 		_screen->drawBox(r->x1, r->y1, r->x2, r->y2, colorTable[_updateBoxColorIndex++]);
 		_screen->updateScreen();
 
@@ -2307,7 +2316,7 @@ void GUI_Eob::highLightBoxFrame(int box) {
 
 	} else {
 		if (_updateBoxIndex != -1) {
-			const EobRect16 *r = &_highLightBoxFrames[_updateBoxIndex];
+			const EobRect16 *r = &_updateBoxFrameHighLights[_updateBoxIndex];
 			_screen->drawBox(r->x1, r->y1, r->x2, r->y2, 12);
 			_screen->updateScreen();
 		}
@@ -2458,8 +2467,282 @@ void GUI_Eob::runSaveMenu() {
 }
 
 void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
+	if (charIndex == -1)
+		return;
 
+	uint8 np[8];
+	memset(np, 0, sizeof(np));
+	uint32 avltyFlags = 0;
+	int li = 0;
+	int lv = 0;
+	
+	EobCharacter *c = &_vm->_characters[charIndex];
+	int8 wm = c->wisdomCur - 12;
+	if (wm < 0)
+		wm = 0;
+
+	if (spellType) {
+		li = _vm->getCharacterLevelIndex(2, c->cClass);
+		
+		if (li == -1) {
+			li = _vm->getCharacterLevelIndex(4, c->cClass);
+			
+			if (li != -1) {
+				lv = c->level[li] - 1;
+				if (lv < 0)
+					lv = 0;
+
+				for (int i = 0; i < _numPages; i++)
+					np[i] = _vm->_numSpellsPal[lv * _numPages + i];
+				
+				avltyFlags = _paladinSpellAvltyFlags;
+			}
+
+		} else {
+			lv = c->level[li] - 1;
+			for (int i = 0; i < _numPages; i++) {
+				np[i] = _vm->_numSpellsCleric[lv * _numPages + i];
+				if (np[i])
+					np[i] += _vm->_numSpellsWisAdj[wm * _numPages + i];
+			}
+			avltyFlags = _clericSpellAvltyFlags;
+		}
+
+	} else {
+		li = _vm->getCharacterLevelIndex(1, c->cClass);
+
+		if (li == -1) {
+			if (_vm->checkInventoryForRings(charIndex, 1)) {
+				np[3] <<= 1;
+				np[4] <<= 1;
+			}
+
+		} else {
+			lv = c->level[li] - 1;
+			for (int i = 0; i < _numPages; i++)
+				np[i] = _vm->_numSpellsMage[lv * _numPages + i];
+
+			avltyFlags = c->mageSpellsAvailabilityFlags;
+		}
+	}
+
+	int8 *menuSpellMap = new int8[88];
+	memset(menuSpellMap, 0, 88);
+	int8 *numAssignedSpellsPerBookPage = new int8[8];
+	memset(numAssignedSpellsPerBookPage, 0, 8);
+	memset(_numAssignedSpellsOfType, 0, 72);
+	int8 *lh = new int8[40];
+	memset(lh, 0, 40);
+
+	memcpy(lh, spellType ? _vm->_spellLevelsCleric : _vm->_spellLevelsMage, spellType ? _vm->_spellLevelsClericSize : _vm->_spellLevelsMageSize);
+	int8 *charSpellList = spellType ? c->clericSpells : c->mageSpells;
+
+	for (int i = 0; i < 80; i++) {
+		int8 s = charSpellList[i];
+		if (s == 0 || s == _vm->_spellLevelsClericSize)
+			continue;
+
+		if (s < 0)
+			s = -s;
+		else
+			_numAssignedSpellsOfType[s * 2 - 1]++;
+
+		s--;
+		_numAssignedSpellsOfType[s * 2]++;
+		numAssignedSpellsPerBookPage[lh[s] - 1]++;
+	}
+
+	for (int i = 0; i < 32; i++) {
+		if (!(avltyFlags & (1 << i)))
+			continue;
+		
+		int d = lh[i] - 1;
+		if (d < 0)
+			continue;
+
+		if (!spellType || (spellType && np[d])) {
+			menuSpellMap[d * 11]++;
+			menuSpellMap[d * 11 + menuSpellMap[d * 11]] = i + 1;
+		}
+	}
+
+	Button *buttonList = initMenu(4);
+
+	int lastHighLightText = -1;
+	int lastHighLightButton = -1;
+	int newHighLightButton = 0;
+	int newHighLightText = 0;
+	bool updateDesc = true;
+	bool updateList = true;
+
+	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
+		updateBoxFrameHighLight(charIndex);
+
+		if (newHighLightButton < 0)
+			newHighLightButton = 7;
+		if (newHighLightButton > 7)
+			newHighLightButton = 0;
+
+		Button *b = 0;
+
+		if (lastHighLightButton != newHighLightButton) {
+			if (lastHighLightButton >= 0)
+				drawMenuButton(_vm->gui_getButton(buttonList, lastHighLightButton + 26), false, false, true);
+			drawMenuButton(_vm->gui_getButton(buttonList, newHighLightButton + 26), false, true, true);
+			newHighLightText = 0;
+			lastHighLightText = -1;
+			lastHighLightButton = newHighLightButton;
+			updateDesc = updateList = true;
+		}
+
+		if (updateList) {
+			updateList = false;
+			_screen->setCurPage(2);
+			for (int ii = 1; ii < 9; ii++)
+				memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + ii], ii - 1, spellType, false, false);
+
+			_screen->setCurPage(0);
+			_screen->copyRegion(0, 50, 0, 50, 176, 72, 2, 0, Screen::CR_NO_P_CHECK);
+			lastHighLightText = -1;
+		}
+
+		if (updateDesc) {
+			updateDesc = false;
+			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->_bkgColor_1);		
+		}
+
+		if (newHighLightText < 0)
+			newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
+
+		if (menuSpellMap[lastHighLightButton * 11] <= newHighLightText)
+			newHighLightText = 0;
+		
+		if (newHighLightText != lastHighLightText) {
+			memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1], lastHighLightText, spellType, true, false);
+			memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + newHighLightText + 1], newHighLightText, spellType, true, true);
+			lastHighLightText = newHighLightText;
+		}
+		
+		int inputFlag = _vm->checkInput(buttonList, false, 0) & 0x80ff;
+		_vm->removeInputTop();
+
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT]) {
+			inputFlag = 0x801a + ((lastHighLightButton + 1) % _numVisPages);
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT]) {
+			inputFlag = lastHighLightButton ? 0x8019 + lastHighLightButton : 0x8019 + _numVisPages;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+			inputFlag = 0x8018;
+		} else {
+			Common::Point p = _vm->getMousePos();
+			if (_vm->posWithinRect(p.x, p.y, 8, 50, 168, 122)) {
+				newHighLightText = (p.y - 50 ) / 9;
+				if (menuSpellMap[lastHighLightButton * 11] - 1 < newHighLightText)
+					newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
+			}			
+		}
+
+		if (inputFlag & 0x8000) {
+			Button *b = _vm->gui_getButton(buttonList, inputFlag & 0x7fff);
+			drawMenuButton(b, true, true, true);
+			_screen->updateScreen();
+			_vm->_system->delayMillis(80);
+			drawMenuButton(b, false, false, true);
+			_screen->updateScreen();
+		}
+
+		if (inputFlag == 0x8019 || inputFlag == _vm->_keyMap[Common::KEYCODE_KP_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_PLUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			if (np[lastHighLightButton] > numAssignedSpellsPerBookPage[lastHighLightButton] && lastHighLightText != -1) {
+				_numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]++;
+				numAssignedSpellsPerBookPage[lastHighLightButton]++;
+				memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1], lastHighLightText, spellType, false, true);
+				updateDesc = true;
+			}
+
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP_MINUS] || inputFlag == _vm->_keyMap[Common::KEYCODE_MINUS] /*|| inputFlag == _vm->_keyMap[Common::KEYCODE_*/) {
+			if (np[lastHighLightButton] && _numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]) {
+				_numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1] * 2 - 2]--;
+				numAssignedSpellsPerBookPage[lastHighLightButton]--;
+				memorizePrayMenuPrintString(menuSpellMap[lastHighLightButton * 11 + lastHighLightText + 1], lastHighLightText, spellType, false, true);
+				updateDesc = true;
+			}
+
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
+			newHighLightText = lastHighLightText - 1;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
+			newHighLightText = lastHighLightText + 1;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_END] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP1]) {
+			newHighLightText = menuSpellMap[lastHighLightButton * 11] - 1;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_HOME] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP7]) {
+			newHighLightText = 0;
+		} else if (inputFlag == 0x8017) {
+			if (numAssignedSpellsPerBookPage[lastHighLightButton]) {
+				for (int i = 1; i <= menuSpellMap[lastHighLightButton * 11]; i++) {				
+					numAssignedSpellsPerBookPage[lastHighLightButton] -= _numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + i] * 2 - 2];
+					_numAssignedSpellsOfType[menuSpellMap[lastHighLightButton * 11 + i] * 2 - 2] = 0;
+				}
+
+				updateDesc = updateList = true;
+			}
+
+		} else if (inputFlag == 0x8018) {
+			_vm->gui_drawAllCharPortraitsWithStats();
+			runLoop = false;
+
+		} else if (inputFlag & 0x8000) {
+			newHighLightButton = inputFlag - 0x801a;
+			if (newHighLightButton == lastHighLightButton)
+				drawMenuButton(_vm->gui_getButton(buttonList, inputFlag & 0x7fff), false, true, true);
+		}
+	}
+
+	releaseButtons(buttonList);
+	updateBoxFrameHighLight(-1);
+
+	_screen->setFont(Screen::FID_6_FNT);
+	_vm->gui_drawCharPortraitWithStats(charIndex);
+	_screen->setFont(Screen::FID_8_FNT);
+
+	memset(charSpellList, 0, 80);
+	if (spellType)
+		charSpellList[0] = _vm->_spellLevelsClericSize;
+
+	for (int i = 0; i < 32; i++) {
+		if (_numAssignedSpellsOfType[i * 2] < _numAssignedSpellsOfType[i * 2 + 1])
+			_numAssignedSpellsOfType[i * 2 + 1] = _numAssignedSpellsOfType[i * 2];
+
+		if (_numAssignedSpellsOfType[i * 2 + 1]) {
+			_numAssignedSpellsOfType[i * 2]--;
+			_numAssignedSpellsOfType[i * 2 + 1]--;
+
+			int pg = lh[i] - 1;
+			for (int ii = 0; ii < 10; ii++) {
+				if (!charSpellList[pg * 10 + ii]) {
+					charSpellList[pg * 10 + ii] = i + 1;
+					break;
+				}
+			}
+			i--;
+
+		} else if (_numAssignedSpellsOfType[i * 2]) {
+			_numAssignedSpellsOfType[i * 2]--;
+
+			_vm->_resting = true;
+			int pg = lh[i] - 1;
+			for (int ii = 0; ii < 10; ii++) {
+				if (!charSpellList[pg * 10 + ii]) {
+					charSpellList[pg * 10 + ii] = -(i + 1);
+					break;
+				}
+			}
+			i--;
+		}
+	}
+
+	delete[] menuSpellMap;
+	delete[] numAssignedSpellsPerBookPage;
+	delete[] lh;
 }
+
 
 void GUI_Eob::scribeScrollDialogue() {
 	
@@ -2606,10 +2889,10 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 		int inputFlag = _vm->checkInput(buttonList, false, 0);
 		_vm->removeInputTop();
 		
-		highLightBoxFrame(hlCur);
+		updateBoxFrameHighLight(hlCur);
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP4] || inputFlag == _vm->_keyMap[Common::KEYCODE_LEFT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8] || inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_a] || inputFlag == _vm->_keyMap[Common::KEYCODE_w]) {
-			highLightBoxFrame(-1);
+			updateBoxFrameHighLight(-1);
 			_vm->gui_drawCharPortraitWithStats(hlCur--);
 			if (hlCur < 0)
 				hlCur = 5;
@@ -2619,7 +2902,7 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 			}
 
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP6] || inputFlag == _vm->_keyMap[Common::KEYCODE_RIGHT] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_z] || inputFlag == _vm->_keyMap[Common::KEYCODE_s]) {
-			highLightBoxFrame(-1);
+			updateBoxFrameHighLight(-1);
 			_vm->gui_drawCharPortraitWithStats(hlCur++);
 			if (hlCur == 6)
 				hlCur = 0;
@@ -2649,7 +2932,7 @@ int GUI_Eob::selectCharacterDialogue(int id) {
 		}
 	}
 
-	highLightBoxFrame(-1);
+	updateBoxFrameHighLight(-1);
 	if (hlCur >= 0)
 		_vm->gui_drawCharPortraitWithStats(hlCur);
 
@@ -2718,7 +3001,10 @@ Button *GUI_Eob::initMenu(int id) {
 	for (int i = 0; i < m->numButtons; i++) {
 		const EobMenuButtonDef *df = &_vm->_menuButtonDefs[m->firstButtonStrId + i];
 		Button *b = new Button;
-		b->index = m->firstButtonStrId + i + 1;		
+		b->index = m->firstButtonStrId + i + 1;
+		if (id == 4 && _vm->game() == GI_EOB1)
+			b->index -= 14;
+
 		b->data0Val2 = 12;
 		b->data1Val2 = b->data2Val2 = 15;
 		b->data3Val2 = 8;
@@ -2780,6 +3066,24 @@ void GUI_Eob::drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool n
 
 	_vm->gui_drawBox(x, y, w, h, col1, col2, -1);
 	_vm->gui_drawBox(x + 1, y + 1, w - 2, h - 2, _vm->_color1_1, _vm->_color2_1, noFill ? -1 : _vm->_bkgColor_1);
+}
+
+void GUI_Eob::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight) {
+	if (bookPageIndex < 0)
+		return;
+
+	int y = bookPageIndex * 9 + 50;
+
+	if (spellId) {
+		Common::String s(Common::String::format(_vm->_menuStringsMgc[0], spellType ? _vm->_clericSpellList[spellId] : _vm->_mageSpellList[spellId], _numAssignedSpellsOfType[spellId * 2 - 2]));
+		if (noFill)
+			_screen->printText(s.c_str(), 8, y, highLight ? 6 : 15, 0);
+		else
+			_screen->printShadedText(s.c_str(), 8, y, highLight ? 6 : 15, _vm->_bkgColor_1);
+
+	} else {
+		_screen->fillRect(6, y, 168, y + 8,  _vm->_bkgColor_1);
+	}
 }
 
 void GUI_Eob::updateOptionsStrings() {
