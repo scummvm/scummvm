@@ -1428,7 +1428,21 @@ int AdLibDriver::update_setupSecondaryEffect1(uint8 *&dataptr, Channel &channel,
 	channel.unk19 = value;
 	channel.unk20 = channel.unk21 = *dataptr++;
 	channel.unk22 = *dataptr++;
-	channel.offset = READ_LE_UINT16(dataptr); dataptr += 2;
+	// WORKAROUND: The original code reads a true offset which later gets translated via xlat (in
+	// the current segment). This means that the outcome depends on the sound data offset.
+	// Unfortunately this offset is different in most implementations of the audio driver and
+	// probably also different from the offset assumed by the sequencer.
+	// It seems that the driver assumes an offset of 191 which is wrong for all the game driver
+	// implementations.
+	// This bug has probably not been noticed, since the effect is hardly used and the sounds are
+	// not necessarily worse. I noticed the difference between ScummVM and DOSBox for the EOB II
+	// teleporter sound. I also found the location of the table which is supposed to be used here
+	// (simple enough: it is located at the end of the track after the 0x88 ending opcode).
+	// Teleporters in EOB I and II now sound exactly the same which I am sure was the intended way,
+	// since the sound data is exactly the same.
+	// In DOSBox the teleporters will sound different in EOB I and II, due to different sound
+	// data offsets.
+	channel.offset = READ_LE_UINT16(dataptr) - 191; dataptr += 2;
 	channel.secondaryEffect = &AdLibDriver::secondaryEffect1;
 	return 0;
 }
