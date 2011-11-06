@@ -275,10 +275,10 @@ const ExtractFilename extractFilenames[] = {
 
 	{ kEobBaseSpellLevelsMage, kTypeRawData, false },
 	{ kEobBaseSpellLevelsCleric, kTypeRawData, false },
-	{ kEobBaseSpellMps1, kTypeRawData, false },
-	{ kEobBaseSpellMps2, kTypeRawData, false },
-	{ kEobBaseSpellMps3, kTypeRawData, false },
-	{ kEobBaseSpellMps4, kTypeRawData, false },
+	{ kEobBaseNumSpellsCleric, kTypeRawData, false },
+	{ kEobBaseNumSpellsWisAdj, kTypeRawData, false },
+	{ kEobBaseNumSpellsPal, kTypeRawData, false },
+	{ kEobBaseNumSpellsMage, kTypeRawData, false },
 	
 	{ kEobBaseCharGuiStringsHp, kTypeStringList, true },
 	{ kEobBaseCharGuiStringsWp1, kTypeStringList, true },
@@ -1367,14 +1367,14 @@ const char *getIdString(const int id) {
 		return "kEobBaseSpellLevelsMage";
 	case kEobBaseSpellLevelsCleric:
 		return "kEobBaseSpellLevelsCleric";
-	case kEobBaseSpellMps1:
-		return "kEobBaseSpellMps1";
-	case kEobBaseSpellMps2:
-		return "kEobBaseSpellMps2";
-	case kEobBaseSpellMps3:
-		return "kEobBaseSpellMps3";
-	case kEobBaseSpellMps4:
-		return "kEobBaseSpellMps4";
+	case kEobBaseNumSpellsCleric:
+		return "kEobBaseNumSpellsCleric";
+	case kEobBaseNumSpellsWisAdj:
+		return "kEobBaseNumSpellsWisAdj";
+	case kEobBaseNumSpellsPal:
+		return "kEobBaseNumSpellsPal";
+	case kEobBaseNumSpellsMage:
+		return "kEobBaseNumSpellsMage";
 	case kEobBaseCharGuiStringsHp:
 		return "kEobBaseCharGuiStringsHp";
 	case kEobBaseCharGuiStringsWp1:

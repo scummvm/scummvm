@@ -344,8 +344,6 @@ Common::Error EobCoreEngine::go() {
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 	_screen->showMouse();
 
-	//initPlayBuffers
-
 	loadItemDefs();
 	int action = 0;
 

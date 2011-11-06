@@ -323,10 +323,10 @@ enum KyraResources {
 
 	kEobBaseSpellLevelsMage,
 	kEobBaseSpellLevelsCleric,
-	kEobBaseSpellMps1,
-	kEobBaseSpellMps2,
-	kEobBaseSpellMps3,
-	kEobBaseSpellMps4,
+	kEobBaseNumSpellsCleric,
+	kEobBaseNumSpellsWisAdj,
+	kEobBaseNumSpellsPal,
+	kEobBaseNumSpellsMage,
 
 	kEobBaseCharGuiStringsHp,
 	kEobBaseCharGuiStringsWp1,

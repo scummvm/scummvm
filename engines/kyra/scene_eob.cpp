@@ -740,10 +740,9 @@ Common::String EobCoreEngine::initLevelData(int sub){
 			pos += 11;
 			_screen->setShapeFadeMode(0, false);
 			_screen->setShapeFadeMode(1, false);
-		} ////////////////////
+		}
 		else
 			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
-		////////////////////7
 
 		Palette backupPal(256);
 		backupPal.copy(_screen->getPalette(0), 224, 32, 224);

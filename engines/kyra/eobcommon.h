@@ -1006,11 +1006,13 @@ protected:
 	const char *const *_menuStringsSpellNo;
 
 	const uint8 *_spellLevelsMage;
+	int _spellLevelsMageSize;
 	const uint8 *_spellLevelsCleric;
-	const uint8 *_spellLevelsMps1;
-	const uint8 *_spellLevelsMps2;
-	const uint8 *_spellLevelsMps3;
-	const uint8 *_spellLevelsMps4;
+	int _spellLevelsClericSize;
+	const uint8 *_numSpellsCleric;
+	const uint8 *_numSpellsWisAdj;
+	const uint8 *_numSpellsPal;
+	const uint8 *_numSpellsMage;
 
 	// sound
 	void snd_playSoundEffect(int id, int volume=0xFF);

@@ -352,6 +352,8 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 	}
 
 	if (_saveLoadMode != -1) {
+		if (_flags.gameID == GI_EOB1)
+			_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
 		loadLevel(_currentLevel, _currentSub);
 		_sceneUpdateRequired = true;
 		_screen->setFont(Screen::FID_6_FNT);
@@ -395,7 +397,6 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 
 	for (int i = 0; i < 6; i++) {
 		timerSpecialCharacterUpdate(0x30 + i);
-		uint32 ct = _system->getMillis();
 		EobCharacter *c = &_characters[i];
 
 		out->writeByte(c->id);
@@ -432,8 +433,9 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 		out->writeUint32BE(c->mageSpellsAvailabilityFlags);
 		for (int ii = 0; ii < 27; ii++)
 			out->writeSint16BE(c->inventory[ii]);
+		uint32 ct = _system->getMillis();
 		for (int ii = 0; ii < 10; ii++)
-			out->writeUint32BE(c->timers[ii] ? c->timers[ii] - ct : 0);
+			out->writeUint32BE((c->timers[ii] && c->timers[ii] > ct) ? c->timers[ii] - ct : 0);
 
 		out->write(c->events, 10);
 		out->write(c->effectsRemainder, 4);

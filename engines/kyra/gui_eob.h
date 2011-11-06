@@ -62,7 +62,7 @@ public:
 	void runCampMenu();
 	int runLoadMenu(int x, int y);
 
-	void highLightBoxFrame(int box);
+	void updateBoxFrameHighLight(int box);
 
 	int getTextInput(char *dest, int x, int y, int destMaxLen, int textColor1, int textColor2, int cursorColor);
 
@@ -89,6 +89,7 @@ private:
 	Button *initMenu(int id);	
 	void drawMenuButton(Button *b, bool clicked, bool highlight, bool noFill);
 	void drawMenuButtonBox(int x, int y, int w, int h, bool clicked, bool noFill);
+	void memorizePrayMenuPrintString(int spellId, int bookPageIndex, int spellType, bool noFill, bool highLight);
 	void updateOptionsStrings();
 	const char *getMenuString(int id);
 
@@ -118,8 +119,14 @@ private:
 	Button::Callback _scrollDownFunctor;
 
 	int _menuLineSpacing;
-	int _menuUnk1;
+	//int _menuUnk1;
 	int _menuLastInFlags;
+
+	uint8 _numPages;
+	uint8 _numVisPages;
+	int8 *_numAssignedSpellsOfType;
+	uint32 _clericSpellAvltyFlags;
+	uint32 _paladinSpellAvltyFlags;
 
 	int _menuCur;
 	int _menuNumItems;
@@ -128,7 +135,7 @@ private:
 	int _updateBoxIndex;
 	int _updateBoxColorIndex;
 	uint32 _highLightBoxTimer;
-	static const EobRect16 _highLightBoxFrames[];
+	static const EobRect16 _updateBoxFrameHighLights[];
 
 	// unused
 	Button *getButtonListData() { return 0; }
