@@ -123,28 +123,6 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-/**
- * NOTE:
- * This API is considered deprecated.
- *
- * Creates a audio stream, which plays from given stream.
- *
- * @param stream Stream to play from
- * @param block Pointer to an RawStreamBlock array
- * @see RawStreamBlock
- * @param numBlocks Number of blocks.
- * @param rate The rate
- * @param flags Flags combination.
- * @see RawFlags
- * @param disposeStream Whether the "stream" object should be destroyed after playback.
- * @return The new SeekableAudioStream (or 0 on failure).
- */
-SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
-		RawStreamBlock *block, int numBlocks,
-		int rate, byte flags,
-		DisposeAfterUse::Flag disposeStream);
-
-
 } // End of namespace Audio
 
 #endif

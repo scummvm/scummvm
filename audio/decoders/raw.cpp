@@ -337,14 +337,4 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
 }
 
-SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawStreamBlock *block, int numBlocks,
-                                           int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
-	assert(numBlocks > 0);
-	RawStreamBlockList blocks;
-	for (int i = 0; i < numBlocks; ++i)
-		blocks.push_back(block[i]);
-
-	return makeRawStream(stream, blocks, rate, flags, disposeStream);
-}
-
 } // End of namespace Audio
