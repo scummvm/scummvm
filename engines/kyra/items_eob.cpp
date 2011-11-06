@@ -303,7 +303,7 @@ int EobCoreEngine::countQueuedItems(Item itemQueue, int16 id, int16 type, int co
 		EobItem *itm = &_items[o1];
 		forceLoop = false;
 		if (id != -1 || type != -1) {
-			if (((id != -1 ) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))
+			if (((id != -1) || (id == -1 && type != itm->type)) && ((type != -1) || (type == -1 && id != o1)))
 				continue;			
 		}
 

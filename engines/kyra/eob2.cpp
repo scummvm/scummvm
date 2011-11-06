@@ -115,7 +115,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		int r = runDialogue(-1, 0, _npc1Strings[0], _npc1Strings[1], 0) - 1;
 
 		if (r == 0) {
-			_sound->playTrack(0);
+			snd_stopSound();
 			delay(3 * _tickLength);
 			snd_playSoundEffect(91);
 			npcJoinDialogue(1, 5, 6, 7);

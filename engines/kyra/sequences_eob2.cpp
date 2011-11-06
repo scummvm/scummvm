@@ -169,11 +169,10 @@ void DarkMoonEngine::seq_playIntro() {
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
 
-	_sound->playTrack(0);
+	snd_stopSound();
 
 	sq.loadScene(4, 2);
 	sq.loadScene(0, 2);
-
 	sq.delay(1);
 
 	if (!skipFlag() && !shouldQuit())
@@ -469,8 +468,7 @@ void DarkMoonEngine::seq_playFinale() {
 	_screen->setFont(Screen::FID_8_FNT);
 
 	_sound->loadSoundFile("FINALE1");
-	_sound->playTrack(0);
-
+	snd_stopSound();
 	sq.delay(3);
 
 	_screen->clearCurPage();
@@ -741,7 +739,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(10, 2);
 	sq.loadScene(9, 2);
-	_sound->playTrack(0);
+	snd_stopSound();
 	sq.delay(3);
 
 	_sound->loadSoundFile("FINALE2");
@@ -780,7 +778,7 @@ void DarkMoonEngine::seq_playFinale() {
 	while (!skipFlag() && !shouldQuit())
 		delay(_tickLength);
 
-	_sound->playTrack(0);
+	snd_stopSound();
 	sq.fadePalette(9, 10);
 }
 

@@ -26,6 +26,7 @@
 #include "kyra/timer.h"
 #include "kyra/resource.h"
 #include "kyra/lol.h"
+#include "kyra/eobcommon.h"
 
 #include "common/system.h"
 
@@ -469,5 +470,10 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 }
 #endif // ENABLE_LOL
+
+#ifdef ENABLE_EOB
+Debugger_Eob::Debugger_Eob(EobCoreEngine *vm) : Debugger(vm), _vm(vm) {
+}
+#endif // ENABLE_EOB
 
 } // End of namespace Kyra

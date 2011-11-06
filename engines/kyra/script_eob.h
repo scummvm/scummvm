@@ -40,7 +40,7 @@ public:
 	~EobInfProcessor();
 
 	void loadData(const uint8 *data, uint32 dataSize);
-	void run(int func, int sub);
+	void run(int func, int flags);
 
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
@@ -107,7 +107,7 @@ private:
 	uint8 _preventRest;
 
 	uint16 _lastScriptFunc;
-	uint16 _lastScriptSub;
+	uint16 _lastScriptFlags;
 
 	int8 **_subroutineStack;
 	int _subroutineStackPos;

@@ -105,9 +105,8 @@ int EobEngine::mainMenuLoop() {
 
 void EobEngine::seq_playOpeningCredits() {
 	_allowSkip = true;
-	_screen->loadPalette(_introFilesOpening[5], _screen->getPalette(0));
-	_screen->setScreenPalette(_screen->getPalette(0));
 
+	loadSetIntroPalette(_introFilesOpening[5]);
 	_screen->loadBitmap(_introFilesOpening[4], 5, 3, 0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -135,7 +134,14 @@ void EobEngine::seq_playIntro() {
 		delay(120 * _tickLength);
 	}
 
-	_screen->loadBitmap("TEXT.CMP", 3, 6, 0);
+	Common::SeekableReadStream *s = _res->createReadStream("TEXT.RAW");
+	if (s) {
+		s->seek(768);
+		_screen->loadFileDataToPage(s, 6, s->size() - 768);
+		delete s;
+	} else {
+		_screen->loadBitmap("TEXT.CMP", 3, 6, 0);
+	}
 
 	seq_tower();
 	seq_orb();
@@ -194,8 +200,7 @@ void EobEngine::seq_playFinale() {
 void EobEngine::seq_tower() {
 	if (shouldQuit() || skipFlag())
 		return;
-
-	_screen->loadPalette(_introFilesTower[0], _screen->getPalette(0));
+	
 	_screen->loadBitmap(_introFilesTower[1], 5, 3, 0);
 	_screen->setCurPage(2);
 	uint8 *shp = _screen->encodeShape(0, 0, 16, 56, true);
@@ -208,7 +213,8 @@ void EobEngine::seq_tower() {
 	_screen->fillRect(0, 184, 319, 199, 12);
 	int cp = _screen->setCurPage(0);
 	whirlTransition();
-	_screen->setScreenPalette(_screen->getPalette(0));
+	loadSetIntroPalette(_introFilesTower[0]);
+
 	_screen->setCurPage(cp);
 	_screen->clearCurPage();
 
@@ -331,8 +337,7 @@ void EobEngine::seq_waterdeepEntry() {
 	uint8 *shp2[31];
 	uint8 *shp3[3];
 
-	_screen->loadPalette(_introFilesWdEntry[0], _screen->getPalette(0));
-	_screen->setScreenPalette(_screen->getPalette(0));
+	loadSetIntroPalette(_introFilesWdEntry[0]);
 	_screen->loadBitmap(_introFilesWdEntry[1], 5, 3, 0);
 	_screen->setCurPage(2);
 	shp[3] = _screen->encodeShape(0, 0, 20, 136, true);
@@ -712,8 +717,7 @@ void EobEngine::seq_waterdeepExit() {
 	_screen->fillRect(0, 168, 319, 199, 12, 0);
 	_screen->copyRegion(0, 136, 0, 0, 48, 36, 0, 4, Screen::CR_NO_P_CHECK);
 
-	_screen->loadPalette(_introFilesWdExit[1], _screen->getPalette(0));
-	_screen->setScreenPalette(_screen->getPalette(0));
+	loadSetIntroPalette(_introFilesWdExit[1]);
 	_screen->loadBitmap(_introFilesWdExit[2], 3, 5, 0);
 	_screen->copyPage(5, 2);
 	whirlTransition();
@@ -762,8 +766,7 @@ void EobEngine::seq_waterdeepExit() {
 	_screen->fillRect(0, 16, 319, 31, 12);
 	_screen->fillRect(0, 136, 319, 199, 12);
 	_screen->copyRegion(0, 0, 80, 32, 160, 120, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->loadPalette(_introFilesWdExit[4], _screen->getPalette(0));
-	_screen->setScreenPalette(_screen->getPalette(0));
+	loadSetIntroPalette(_introFilesWdExit[4]);
 	_screen->updateScreen();
 	delay(50 * _tickLength);
 }
@@ -916,6 +919,15 @@ void EobEngine::seq_xdeath() {
 	for (int i = 0; i < 4; i++)
 		delete[] shapes1[i];
 	delete[] shapes2;
+
+	gui_drawPlayField(false);
+	gui_drawAllCharPortraitsWithStats();
+}
+
+void EobEngine::loadSetIntroPalette(const char *filename) {
+	_screen->loadPalette(filename, _screen->getPalette(0));
+	_screen->getPalette(0).fill(0, 1, 0);
+	_screen->setScreenPalette(_screen->getPalette(0));
 }
 
 void EobEngine::copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step) {

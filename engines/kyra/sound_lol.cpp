@@ -167,8 +167,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	volume &= 0xff;
 	int16 volIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
 
-	volume = (volIndex > 0) ? (volIndex * volume) >> 8 : -volIndex;
-	volume = CLIP(volume >> 4, 2, 13) * 7 + 164;
+	uint16 vocLevel = (volIndex > 0) ? (volIndex * volume) >> 8 : -volIndex;
+	vocLevel = CLIP(volume >> 4, 2, 13) * 7 + 164;
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 
@@ -180,7 +180,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 
 	if (hasVocFile) {
 		if (_sound->isVoicePresent(_ingameSoundList[vocIndex]))
-			_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume & 0xff, true);
+			_sound->voicePlay(_ingameSoundList[vocIndex], 0, vocLevel & 0xff, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = (track < _ingameMT32SoundIndexSize) ? (_ingameMT32SoundIndex[track] - 1) : -1;
