@@ -1290,7 +1290,7 @@ void Scene270::dispatch() {
 void Scene271::Action1::signal() {
 	Scene271 *scene = (Scene271 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
+	setAction(&scene->_sequenceManager2, this, 2703, &scene->_tv, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1454,7 +1454,7 @@ void Scene271::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._walkRegions.disableRegion(14);
 		BF_GLOBALS._walkRegions.disableRegion(19);
 
-		BF_GLOBALS._player.setVisage(151);
+		BF_GLOBALS._player.setVisage(275);
 		BF_GLOBALS._player.setPosition(Common::Point(348, 151));
 
 		_object12.postInit();
