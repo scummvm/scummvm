@@ -72,7 +72,7 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::
 	_decoderType = decoderType;
 	_decoder = decoder;
 
-	_white = 255;
+	_c1Color = _c2Color = _c3Color = _c4Color = 255;
 	_black = 0;
 }
 
@@ -127,8 +127,16 @@ bool MoviePlayer::load(uint32 id) {
 					warning("%s:%d startFrame (%d) <= lastEnd (%d)", filename.c_str(), lineNo, startFrame, lastEnd);
 					continue;
 				}
+				
+				int color = 0;
+				if (*ptr == '@') {
+					++ptr;
+					color = strtoul(ptr, const_cast<char **>(&ptr), 10);
+					while (*ptr && isspace(static_cast<unsigned char>(*ptr)))
+						ptr++;
+				} 
 
-				_movieTexts.push_back(MovieText(startFrame, endFrame, ptr));
+				_movieTexts.push_back(MovieText(startFrame, endFrame, ptr, color));
 				lastEnd = endFrame;
 			}
 			f.close();
@@ -188,6 +196,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_textHeight = _resMan->toUint16(frame->height);
 			_textX = 320 - _textWidth / 2;
 			_textY = 420 - _textHeight;
+			_textColor = _movieTexts.front()._color;
 		}
 		if (_decoder->getCurFrame() == _movieTexts.front()._endFrame) {
 			_textMan->releaseText(2, false);
@@ -209,7 +218,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 					dst[x] = findBlackPalIndex();
 					break;
 				case LETTER_COL:
-					dst[x] = findWhitePalIndex();
+					dst[x] = findTextColorPalIndex();
 					break;
 				}
 			}
@@ -258,12 +267,29 @@ bool MoviePlayer::playVideo() {
 			if (_decoder->hasDirtyPalette()) {
 				_decoder->setSystemPalette();
 
-				uint32 maxWeight = 0;
 				uint32 minWeight = 0xFFFFFFFF;
 				uint32 weight;
+				float c1Weight = 1e+30;
+				float c2Weight = 1e+30;
+				float c3Weight = 1e+30;
+				float c4Weight = 1e+30;
 				byte r, g, b;
+				float h, s, v, hd, hsvWeight;
 
 				const byte *palette = _decoder->getPalette();
+				
+				// Color comparaison for the subtitles colors is done in HSL
+				// C1 color is used for George and is almost white (R = 248, G = 252, B = 248)
+				float h1 = 0.333333f, s1 = 0.02f, v1 = 0.99f;
+
+				// C2 color is used for George as a narrator and is grey (R = 184, G = 188, B = 184)
+				float h2 = 0.333333f, s2 = 0.02f, v2 = 0.74f;
+
+				// C3 color is used for Nicole and is rose (R = 200, G = 120, B = 184)
+				float h3 = 0.866667f, s3 = 0.4f, v3 = 0.78f;
+
+				// C4 color is used for Maguire and is blue (R = 80, G = 152, B = 184)
+				float h4 = 0.55f, s4 = 0.57f, v4 = 0.72f;
 
 				for (int i = 0; i < 256; i++) {
 					r = *palette++;
@@ -272,14 +298,47 @@ bool MoviePlayer::playVideo() {
 
 					weight = 3 * r * r + 6 * g * g + 2 * b * b;
 
-					if (weight >= maxWeight) {
-						maxWeight = weight;
-						_white = i;
-					}
-
 					if (weight <= minWeight) {
 						minWeight = weight;
 						_black = i;
+					}
+
+					convertColor(r, g, b, h, s, v);
+
+					// C1 color
+					hd = h - h1;
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
+					hsvWeight = 1.f * hd * hd + 4.f * (s - s1) * (s - s1) + 3.f * (v - v1) * (v - v1);
+					if (hsvWeight <= c1Weight) {
+						c1Weight = hsvWeight;
+						_c1Color = i;
+					}
+
+					// C2 color
+					hd = h - h2;
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
+					hsvWeight = 1.f * hd * hd + 4.f * (s - s2) * (s - s2) + 3.f * (v - v2) * (v - v2);
+					if (hsvWeight <= c2Weight) {
+						c2Weight = hsvWeight;
+						_c2Color = i;
+					}
+
+					// C3 color
+					hd = h - h3;
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
+					hsvWeight = 4.f * hd * hd + 1.f * (s - s3) * (s - s3) + 2.f * (v - v3) * (v - v3);
+					if (hsvWeight <= c3Weight) {
+						c3Weight = hsvWeight;
+						_c3Color = i;
+					}
+
+					// C4 color
+					hd = h - h4;
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
+					hsvWeight = 5.f * hd * hd + 3.f * (s - s4) * (s - s4) + 2.f * (v - v4) * (v - v4);
+					if (hsvWeight <= c4Weight) {
+						c4Weight = hsvWeight;
+						_c4Color = i;
 					}
 				}
 			}
@@ -304,9 +363,45 @@ bool MoviePlayer::playVideo() {
 byte MoviePlayer::findBlackPalIndex() {
 	return _black;
 }
+	
+byte MoviePlayer::findTextColorPalIndex() {
+	switch (_textColor) {
+	case 1:
+		return _c1Color;
+	case 2:
+		return _c2Color;
+	case 3:
+		return _c3Color;
+	case 4:
+		return _c4Color;
+	}
+	return _c1Color;
+}
 
-byte MoviePlayer::findWhitePalIndex() {
-	return _white;
+void MoviePlayer::convertColor(byte r, byte g, byte b, float &h, float &s, float &v) {
+	// First do color correction
+	float varR = r / 255.f;
+	float varG = g / 255.f;
+	float varB = b / 255.f;
+
+	float min = varR < varG ? (varR < varB ? varR : varB) : (varG < varB ? varG : varB);
+	float max = varR > varG ? (varR > varB ? varR : varB) : (varG > varB ? varG : varB);
+
+	v = max;
+	float d = max - min;
+	s = max == 0.f ? 0.f : d / max;
+
+	if (min == max) {
+		h = 0; // achromati
+	} else {
+		if (max == varR)
+			h = (varG - varB) / d + (varG < varB ? 6.f : 0.f);
+		else if (max == varG)
+			h = (varB - varR) / d + 2.f;
+		else
+			h = (varR - varG) / d + 4.f;
+		h /= 6.f;
+	}
 }
 
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
