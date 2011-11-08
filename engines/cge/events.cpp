@@ -113,7 +113,6 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 		return true;
 	}
 	if (keycode == Common::KEYCODE_F5) {
-		warning("keycode %d", event.kbd.ascii);
 		if (_vm->canSaveGameStateCurrently()) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
@@ -123,7 +122,9 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
-			_vm->saveGameState(savegameId, savegameDescription);
+
+			if (savegameId != -1)
+				_vm->saveGameState(savegameId, savegameDescription);
 		}
 		return false;
 	} else if (keycode == Common::KEYCODE_F7) {
@@ -135,7 +136,9 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 			dialog->setSaveMode(false);
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
-			_vm->loadGameState(savegameId);
+
+			if (savegameId != -1)
+				_vm->loadGameState(savegameId);
 		}
 		return false;
 	}
