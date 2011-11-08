@@ -29,6 +29,48 @@ namespace TsAGE {
 
 namespace Ringworld2 {
 
+void Scene50::Action1::signal() {
+	switch (_actionIndex++) {
+	case 0:
+		setDelay(2);
+		break;
+	case 1:
+		setDelay(180);
+		break;
+	case 2:
+		R2_GLOBALS._sceneManager.changeScene(100);
+		break;
+	default:
+		break;
+	}
+}
+
+void Scene50::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit(OwnerList);
+	loadScene(110);
+
+	R2_GLOBALS._v58CE2 = 0;
+	R2_GLOBALS._scenePalette.loadPalette(0);
+
+	R2_GLOBALS._sound2.play(10);
+	R2_GLOBALS._player.disableControl();
+
+	setAction(&_action1);
+}
+
+void Scene50::process(Event &event) {
+	if ((event.eventType != EVENT_BUTTON_DOWN) && (event.eventType != EVENT_KEYPRESS) && (event.eventType == 27)) {
+		event.handled = true;
+		warning("TODO: incomplete Scene50::process()");
+		// CursorType _oldCursorId = _cursorId;
+		g_globals->_events.setCursor(R2_2);
+		// _cursorManager.sub_1D474(2, 0);
+		// sub_5566A(1);
+		// _cursorManager._fieldE = _oldCursorId;
+		R2_GLOBALS._sceneManager.changeScene(100);
+	}
+}
+
 /*--------------------------------------------------------------------------
  * Scene 100 - Quinn's Room
  *

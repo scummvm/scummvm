@@ -38,6 +38,20 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
+class Scene50: public SceneExt {
+
+	class Action1: public Action {
+	public:
+		void signal();
+	};
+	
+public:
+	Action1 _action1;	
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void process(Event &event);
+};
+
 class Scene100: public SceneExt {
 	/* Objects */
 	class Door: public SceneActorExt {

@@ -36,7 +36,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group #0 */
 	//
-	case 50: error("Scene number %d - Not yet implemented", sceneNumber);
+	case 50: return new Scene50();
 	// Quinn's room
 	case 100: return new Scene100();
 	// Computer console

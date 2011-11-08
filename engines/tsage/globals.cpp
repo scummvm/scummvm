@@ -376,6 +376,7 @@ void Ringworld2Globals::reset() {
 	_v5657C = 0;
 	_v565F5 = 0;
 	_v57C2C = 0;
+	_v58CE2 = 0;
 	Common::set_to(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
 
 	_player._characterIndex = 1;
@@ -390,6 +391,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_v565F5);
 	s.syncAsSint16LE(_v57C2C);
+	s.syncAsSint16LE(_v58CE2);
 	for (int i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsSint16LE(_v565F1[i]);
 }
