@@ -214,7 +214,8 @@ bool CGEEngine::canLoadGameStateCurrently() {
 }
 
 bool CGEEngine::canSaveGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active;
+	return (_startupMode == 0) && _mouse->_active &&
+				_commandHandler->idle() && !_hero->_flags._hide;
 }
 
 } // End of namespace CGE
