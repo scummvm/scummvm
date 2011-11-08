@@ -2980,8 +2980,8 @@ bool Scene355::LockerInset::startAction(CursorType action, Event &event) {
 		if (_frame == 1) {
 			SceneItem::display2(355, 23);
 			return true;
-		}
-		return true;
+		} else
+			return NamedObject::startAction(action, event);
 	case INV_SCREWDRIVER:
 		scene->_sound2.play(104);
 		BF_INVENTORY.setObjectScene(INV_SCREWDRIVER, 999);
