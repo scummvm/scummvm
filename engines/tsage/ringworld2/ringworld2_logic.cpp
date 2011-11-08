@@ -35,12 +35,106 @@ namespace Ringworld2 {
 Scene *Ringworld2Game::createScene(int sceneNumber) {
 	switch (sceneNumber) {
 	/* Scene group #0 */
+	//
+	case 50: error("Scene number %d - Not yet implemented", sceneNumber);
 	// Quinn's room
 	case 100: return new Scene100();
-
 	// Computer console
 	case 125: return new Scene125();
-
+	//
+	case 150:
+	case 160:
+	case 175:
+	case 180:
+	case 200:
+	case 205:
+	case 250:
+	case 300:
+	case 325:
+	case 400:
+	case 500:
+	case 525:
+	case 600:
+	case 700:
+	case 800:
+	case 825:
+	case 850:
+	case 900:
+		error("Missing scene %d from group 0", sceneNumber);
+	/* Scene group #1 */
+	//
+	case 1000:
+	case 1010:
+	case 1020:
+	case 1100:
+	case 1200:
+	case 1330:
+	case 1500:
+	case 1525:
+	case 1530:
+	case 1550:
+	case 1575:
+	case 1580:
+	case 1625:
+	case 1700:
+	case 1750:
+	case 1800:
+	case 1850:
+	case 1875:
+	case 1900:
+	case 1925:
+	case 1945:
+	case 1950:
+		error("Missing scene %d from group 1", sceneNumber);
+	/* Scene group #2 */
+	//
+	case 2000:
+	case 2350:
+	case 2400:
+	case 2425:
+	case 2430:
+	case 2435:
+	case 2440:
+	case 2445:
+	case 2450:
+	case 2455:
+	case 2500:
+	case 2525:
+	case 2530:
+	case 2535:
+	case 2600:
+	case 2700:
+	case 2750:
+	case 2800:
+	case 2900:
+		error("Missing scene %d from group 2", sceneNumber);
+	/* Scene group #3 */
+	//
+	case 3100:
+	case 3125:
+	case 3150:
+	case 3175:
+	case 3200:
+	case 3210:
+	case 3220:
+	case 3230:
+	case 3240:
+	case 3245:
+	case 3250:
+	case 3255:
+	case 3260:
+	case 3275:
+	case 3350:
+	case 3375:
+	case 3385:
+	case 3395:
+	case 3400:
+	case 3500:
+	case 3600:
+	case 3700:
+	case 3800:
+	case 3900:
+		error("Missing scene %d from group 3", sceneNumber);
 	default:
 		error("Unknown scene number - %d", sceneNumber);
 		break;
@@ -91,7 +185,7 @@ void SceneExt::remove() {
 			_action->_endHandler = NULL;
 		_action->remove();
 	}
-	
+
 	_focusObject = NULL;
 */
 }
