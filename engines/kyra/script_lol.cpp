@@ -124,7 +124,7 @@ int LoLEngine::olol_setWallType(EMCState *script) {
 
 int LoLEngine::olol_getWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getWallType(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return _levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3];
+	return (int8)_levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3];
 }
 
 int LoLEngine::olol_drawScene(EMCState *script) {
