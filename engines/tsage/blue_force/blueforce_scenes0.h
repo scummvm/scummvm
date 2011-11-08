@@ -50,8 +50,8 @@ class Scene20 : public SceneExt {
 public:
 	Action1 _action1;
 	ScenePalette _scenePalette;
-	SceneObject _object1, _object2, _object3, _object4;
-	SceneObject _object5, _object6, _object7, _object8;
+	SceneObject _tsunamiWave, _letterT, _letterS, _letterU;
+	SceneObject _letterN, _letterA, _letterM, _letterI;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 };
