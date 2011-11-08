@@ -524,7 +524,7 @@ void AdLibDriver::setSoundData(uint8 *data) {
 
 	if (_soundData) {
 		delete[] _soundData;
-		_soundData = 0;
+		_soundData = _sfxPointer = 0;
 	}
 
 	_soundData = data;
