@@ -5,6 +5,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
+ Broken Sword 1:
+   - Fixed incorrect sound effects in the DOS/Windows demo.
+
 1.4.0 (2011-11-11)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
