@@ -239,11 +239,11 @@ void Scene50::Tooltip2::dispatch() {
 	}
 }
 
-void Scene50::Tooltip::set(const Rect &bounds, int v60, const Common::String &msg, int v62) {
+void Scene50::Tooltip::set(const Rect &bounds, int sceneNum, const Common::String &msg, int locationId) {
 	_bounds = bounds;
-	_newSceneNumber = v60;
+	_newSceneNumber = sceneNum;
 	_msg = msg;
-	_locationId = v62;
+	_locationId = locationId;
 }
 
 void Scene50::Tooltip::update() {
@@ -261,8 +261,8 @@ void Scene50::Tooltip::update() {
 void Scene50::Tooltip::highlight(bool btnDown) {
 	Scene50 *scene = (Scene50 *)BF_GLOBALS._sceneManager._scene;
 
-	scene->_field382 = _newSceneNumber;
-	if ((scene->_field380 != 0) || (scene->_field380 != _newSceneNumber))
+	// In the original, a variable was used, always set to 0. The check is simplified
+	if (_newSceneNumber != 0)
 		update();
 
 	if (btnDown) {
@@ -322,11 +322,6 @@ void Scene50::Tooltip::highlight(bool btnDown) {
 }
 
 /*--------------------------------------------------------------------------*/
-
-Scene50::Scene50(): SceneExt() {
-	_field382 = 0;
-	_field380 = 0;
-}
 
 void Scene50::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
@@ -469,7 +464,6 @@ void Scene50::signal() {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._events.setCursor(CURSOR_WALK);
 		_sceneMode = 0;
-		_field380 = 0;
 	}
 }
 
@@ -477,7 +471,6 @@ void Scene50::process(Event &event) {
 	SceneExt::process(event);
 	Common::Point pt(event.mousePos.x + _sceneBounds.left, event.mousePos.y + _sceneBounds.top);
 	bool mouseDown = false;
-	_field382 = 0;
 
 	if ((event.mousePos.x > 270 && (_sceneBounds.right < (SCREEN_WIDTH * 2))))
 		loadBackground(4, 0);
