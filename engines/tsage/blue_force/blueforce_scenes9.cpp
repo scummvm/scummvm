@@ -755,26 +755,26 @@ void Scene910::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->_object7.postInit();
-		scene->_object7.setVisage(919);
-		scene->_object7.setPosition(Common::Point(267, 51));
-		scene->_object7.fixPriority(40);
+		scene->_shadow.postInit();
+		scene->_shadow.setVisage(919);
+		scene->_shadow.setPosition(Common::Point(267, 51));
+		scene->_shadow.fixPriority(40);
 		signal();
 		break;
 	case 1:
-		scene->_object7.hide();
+		scene->_shadow.hide();
 		setDelay(600);
 		break;
 	case 2:
-		scene->_object7.setStrip(BF_GLOBALS._randomSource.getRandomNumber(3) + 2);
-		scene->_object7.setFrame(1);
-		scene->_object7.show();
+		scene->_shadow.setStrip(BF_GLOBALS._randomSource.getRandomNumber(2) + 2);
+		scene->_shadow.setFrame(1);
+		scene->_shadow.show();
 		setDelay(6);
 		break;
 	case 3:
 		_actionIndex = 1;
-		scene->_object7.setStrip(BF_GLOBALS._randomSource.getRandomNumber(3) + 2);
-		scene->_object7.animate(ANIM_MODE_5, this);
+		scene->_shadow.setStrip(BF_GLOBALS._randomSource.getRandomNumber(2) + 2);
+		scene->_shadow.animate(ANIM_MODE_5, this);
 		break;
 	default:
 		break;
@@ -1302,7 +1302,7 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 							// _objectList.draw();
 							BF_GLOBALS._player.disableControl();
 							scene->_lyle.setVisage(912);
-							scene->_object7.remove();
+							scene->_shadow.remove();
 							scene->_action2.remove();
 							scene->_nico.postInit();
 							scene->_sceneMode = 9129;
@@ -2158,8 +2158,8 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._v4CEE2 == 0)){
-		_object7.postInit();
-		_object7.setAction(&_action2);
+		_shadow.postInit();
+		_shadow.setAction(&_action2);
 	}
 
 	if (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 1)
@@ -2457,7 +2457,7 @@ void Scene910::signal() {
 			_nico.postInit();
 			_nico.setDetails(910, 63, 64, 65, 5, &_item4);
 			BF_GLOBALS._v4CEE6 = 0;
-			_object7.postInit();
+			_shadow.postInit();
 			_action2.remove();
 			_sceneMode = 9116;
 			setAction(&_sequenceManager1, this, 9116, &_nico, NULL);
@@ -2842,7 +2842,7 @@ void Scene910::dispatch() {
 
 	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._player._position.x > 250) && (_sceneMode != 9135) && (_sceneMode != 11) && (BF_GLOBALS._v4CEE0 != 0) && (BF_GLOBALS._v4CEE2 == 0)) {
 		BF_GLOBALS._player.disableControl();
-		_object7.remove();
+		_shadow.remove();
 		_nico.remove();
 		_nico.postInit();
 		_nico.setDetails(910, 63, 64, 65, 5, &_item4);

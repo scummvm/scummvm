@@ -270,7 +270,7 @@ public:
 	Nico _nico;
 	Stuart _stuart;
 	Forbes _forbes;
-	NamedObject _object5,  _vent, _object7;
+	NamedObject _object5,  _vent, _shadow;
 	PowerCord _blackCord, _yellowCord;
 	BreakerBox _breakerBox;
 	FakeWall _fakeWall;
