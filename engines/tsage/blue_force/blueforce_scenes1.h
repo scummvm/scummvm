@@ -175,7 +175,7 @@ class Scene115: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object2: public NamedObject {
+	class Tony: public NamedObject {
 	public:
 		int _field15F8;
 		virtual bool startAction(CursorType action, Event &event);
@@ -260,10 +260,10 @@ class Scene115: public SceneExt {
 	SequenceManager _sequenceManager4;
 	SequenceManager _sequenceManager5;
 	Object1 _object1;
-	Object2 _object2;
+	Tony _tony;
 	Object3 _object3;
 	Object4 _object4;
-	SceneObject _object5,  _object6,  _object7,  _object8,  _object9;
+	SceneObject _object5,  _object6,  _neonSign,  _object8,  _object9;
 	SceneObject _object10, _object11, _object12, _object13;
 	Item1 _item1;
 	EventHandler1 _eventHandler1;
@@ -287,9 +287,9 @@ class Scene115: public SceneExt {
 	SpeakerJakeUniform _jakeUniformSpeaker;
 	SpeakerLyleHat _lyleHatSpeaker;
 	ASound _sound1;
-	int _field168A;
+	int _lineNumModifier;
 	int _field31E8;
-	int _field31EA;
+	int _talkToTonyCtr;
 public:
 	Scene115();
 	virtual void synchronize(Serializer &s);

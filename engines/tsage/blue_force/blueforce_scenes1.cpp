@@ -1059,7 +1059,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene115::Object2::startAction(CursorType action, Event &event) {
+bool Scene115::Tony::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 	
 	switch (action) {
@@ -1088,14 +1088,14 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 			} else
 				scene->_sceneMode = 1172;
 		} else if (BF_GLOBALS.getFlag(onDuty)) {
-			if (scene->_field31EA == 0) {
-				scene->_field31EA = 1;
+			if (scene->_talkToTonyCtr == 0) {
+				scene->_talkToTonyCtr = 1;
 				scene->_sceneMode = 1169;
 			} else
 				scene->_sceneMode = 1170;
-		} else if (scene->_field31EA == 0) {
+		} else if (scene->_talkToTonyCtr == 0) {
 			scene->_sceneMode = 1171;
-			scene->_field31EA = 1;
+			scene->_talkToTonyCtr = 1;
 		} else
 			scene->_sceneMode = 1172;
 
@@ -1340,10 +1340,10 @@ void Scene115::Action2::signal() {
 	case 0:
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS._tonyDialogCtr < 3) {
-			if (scene->_object2._position.x > 67) {
-				scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_object2, NULL);
-			} else if (scene->_object2._position.x != 67) {
-				scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_object2, NULL);
+			if (scene->_tony._position.x > 67) {
+				scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_tony, NULL);
+			} else if (scene->_tony._position.x != 67) {
+				scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_tony, NULL);
 			}
 		}
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 1117, &BF_GLOBALS._player);
@@ -1388,7 +1388,7 @@ void Scene115::Action2::signal() {
 		break;
 	case 2:
 		if (BF_GLOBALS._tonyDialogCtr == 3)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_object2, NULL);
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_tony, NULL);
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1399,7 +1399,7 @@ void Scene115::Action2::signal() {
 void Scene115::Action3::signal() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 
-	setAction(&scene->_sequenceManager4, this, 3117, &scene->_object7, NULL);
+	setAction(&scene->_sequenceManager4, this, 3117, &scene->_neonSign, NULL);
 }
 
 void Scene115::Action4::signal() {
@@ -1442,7 +1442,7 @@ void Scene115::Action5::signal() {
 		if (scene->_item1._field1F8A == 0) {
 			setAction(&scene->_sequenceManager5, this, 1115, &scene->_object1, NULL);
 		} else {
-			_actionIndex--;
+			--_actionIndex;
 			setDelay(120);
 		}
 		break;
@@ -1476,7 +1476,7 @@ void Scene115::Action6::signal() {
 	case 1:
 		if (scene->_sceneMode == 9999) {
 			setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
-			_actionIndex--;
+			--_actionIndex;
 			scene->_sceneMode = 1166;
 		} else {
 			scene->_stripManager.start(scene->_sceneMode, this);
@@ -1565,17 +1565,17 @@ void Scene115::Action9::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		if (scene->_object2._position.x > 67)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_object2, NULL);
-		else if (scene->_object2._position.x != 67)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_object2, NULL);
+		if (scene->_tony._position.x > 67)
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_tony, NULL);
+		else if (scene->_tony._position.x != 67)
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_tony, NULL);
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 1117, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		scene->_stripManager.start(scene->_sceneMode, this);
 		break;
 	case 2:
-		scene->_object2.setAction(&scene->_sequenceManager3, this, 3119, &scene->_object2, NULL);
+		scene->_tony.setAction(&scene->_sequenceManager3, this, 3119, &scene->_tony, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._player.enableControl();
@@ -1586,7 +1586,7 @@ void Scene115::Action9::signal() {
 }
 
 Scene115::Scene115() : SceneExt () {
-	_field168A = _field31E8 = _field31EA = 0;
+	_lineNumModifier = _field31E8 = _talkToTonyCtr = 0;
 }
 
 void Scene115::postInit(SceneObjectList *OwnerList) {
@@ -1620,24 +1620,24 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	_object5.fixPriority(95);
 
 	// Bartender
-	_object2.postInit();
-	_object2.setVisage(132);
-	_object2.setPosition(Common::Point(74, 66));
-	_object2.setStrip(3);
-	_object2.setFrame(1);
-	_object2.fixPriority(95);
-	_object2.animate(ANIM_MODE_2, NULL);
-	_object2._numFrames = 5;
-	_object2._field15F8 = 0;
-	_field31EA = 0;
+	_tony.postInit();
+	_tony.setVisage(132);
+	_tony.setPosition(Common::Point(74, 66));
+	_tony.setStrip(3);
+	_tony.setFrame(1);
+	_tony.fixPriority(95);
+	_tony.animate(ANIM_MODE_2, NULL);
+	_tony._numFrames = 5;
+	_tony._field15F8 = 0;
+	_talkToTonyCtr = 0;
 
 	//Neon sign
-	_object7.postInit();
-	_object7.setVisage(115);
-	_object7.setStrip(4);
-	_object7.setFrame(1);
-	_object7.setPosition(Common::Point(262, 29));
-	_object7.setAction(&_action3);
+	_neonSign.postInit();
+	_neonSign.setVisage(115);
+	_neonSign.setStrip(4);
+	_neonSign.setFrame(1);
+	_neonSign.setPosition(Common::Point(262, 29));
+	_neonSign.setAction(&_action3);
 
 	_object11.postInit();
 	_object11.hide();
@@ -1674,7 +1674,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		_object3.setVisage(123);
 		_object3.setPosition(Common::Point(212, 108));
 		_object3.setAction(&_action1);
-		_field168A = 0;
+		_lineNumModifier = 0;
 		BF_GLOBALS._sceneItems.push_front(&_object3);
 
 		_object8.postInit();
@@ -1707,7 +1707,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		}
 		addTimer(&_eventHandler1);
 	}
-	BF_GLOBALS._sceneItems.push_front(&_object2);
+	BF_GLOBALS._sceneItems.push_front(&_tony);
 
 	_item11.setDetails(16, 115, 4, 15, 21, 1);
 	_item12.setDetails(20, 115, 5, 15, 21, 1);
@@ -1741,14 +1741,14 @@ void Scene115::signal() {
 		break;
 	case 1:
 		BF_GLOBALS._player.updateAngle(_object3._position);
-		SceneItem::display(115, 38 + _field168A, SET_WIDTH, 312,
+		SceneItem::display(115, 38 + _lineNumModifier, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		_field168A++;
-		if (_field168A >= 4)
-			_field168A = 0;
+		++_lineNumModifier;
+		if (_lineNumModifier >= 4)
+			_lineNumModifier = 0;
 	// No break on purpose
 	case 0:
 	// No break on purpose
@@ -1777,9 +1777,9 @@ void Scene115::process(Event &event) {
 
 void Scene115::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field168A);
+	s.syncAsSint16LE(_lineNumModifier);
 	s.syncAsSint16LE(_field31E8);
-	s.syncAsSint16LE(_field31EA);
+	s.syncAsSint16LE(_talkToTonyCtr);
 }
 
 /*--------------------------------------------------------------------------
