@@ -103,6 +103,11 @@ public:
 	GLuint getHeight() const { return _realHeight; }
 
 	/**
+	 * Get the bytes per pixel.
+	 */
+	uint getBytesPerPixel() const { return _bytesPerPixel; }
+
+	/**
 	 * Set the texture filter.
 	 * @filter the filter type, GL_NEAREST or GL_LINEAR
 	 */
