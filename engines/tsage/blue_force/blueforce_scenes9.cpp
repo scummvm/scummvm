@@ -847,7 +847,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 	case 1:
 		if (BF_GLOBALS._v4CEE2 > 1) {
 			if (BF_GLOBALS._v4CEE2 != 4) {
-				if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
+				if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(fGunLoaded)) && (BF_GLOBALS.getHasBullets())) {
 					if (scene->_field2DE0 == 0) {
 						BF_GLOBALS._player.disableControl();
 						scene->_sceneMode = 9126;
@@ -868,7 +868,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 				return true;
 			}
 		} else {
-			if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())) {
+			if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(fGunLoaded)) && (BF_GLOBALS.getHasBullets())) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 9125;
 				scene->setAction(&scene->_sequenceManager1, scene, 9125, &scene->_nico, NULL);
@@ -966,7 +966,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 		return true;
 		break;
 	case 1:
-		if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(25)) && (BF_GLOBALS.getHasBullets())){
+		if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(fGunLoaded)) && (BF_GLOBALS.getHasBullets())){
 			BF_GLOBALS._player.disableControl();
 			if (BF_GLOBALS._v4CEE4 == 2) {
 				scene->_sceneMode = 9132;
@@ -1291,9 +1291,9 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 		case 1:
 			if (BF_GLOBALS._v4CEE2 < 1) {
 				if (_frame == 2) {
-					if (!BF_GLOBALS.getFlag(81)) {
+					if (!BF_GLOBALS.getFlag(fGotPointsForClosingDoor)) {
 						T2_GLOBALS._uiElements.addScore(30);
-						BF_GLOBALS.setFlag(81);
+						BF_GLOBALS.setFlag(fGotPointsForClosingDoor);
 					}
 					scene->_sceneMode = 0;
 					if (BF_GLOBALS._dayNumber == 5) {
@@ -1332,9 +1332,9 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 					// _objectList.draw();
 				} else {
 					if (BF_GLOBALS._v4CEC8 == 1) {
-						if (!BF_GLOBALS.getFlag(78)) {
+						if (!BF_GLOBALS.getFlag(fGotPointsForStartGenerator)) {
 							T2_GLOBALS._uiElements.addScore(30);
-							BF_GLOBALS.setFlag(78);
+							BF_GLOBALS.setFlag(fGotPointsForStartGenerator);
 						}
 						BF_GLOBALS._player.disableControl();
 						BF_GLOBALS._v4CEC8 = 0;
@@ -1770,9 +1770,9 @@ bool Scene910::PowerButton::startAction(CursorType action, Event &event) {
 		if (_frame == 4) {
 			scene->_sound1.play(100);
 			scene->_sound1.holdAt(1);
-			if (!BF_GLOBALS.getFlag(77)) {
+			if (!BF_GLOBALS.getFlag(fGotPointsForFuseBoxPlug)) {
 				T2_GLOBALS._uiElements.addScore(30);
-				BF_GLOBALS.setFlag(77);
+				BF_GLOBALS.setFlag(fGotPointsForFuseBoxPlug);
 			}
 			setFrame(5);
 			_object32.setFrame(7);
@@ -1784,10 +1784,10 @@ bool Scene910::PowerButton::startAction(CursorType action, Event &event) {
 			}
 		} else {
 			scene->_sound1.release();
-			if (BF_GLOBALS._bookmark == 21) {
-				if (!BF_GLOBALS.getFlag(82)) {
+			if (BF_GLOBALS._bookmark == bEndDayThree) {
+				if (!BF_GLOBALS.getFlag(fGotPointsForLightsOff)) {
 					T2_GLOBALS._uiElements.addScore(30);
-					BF_GLOBALS.setFlag(82);
+					BF_GLOBALS.setFlag(fGotPointsForLightsOff);
 				}
 			}
 			setFrame(4);
@@ -2041,7 +2041,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._dayNumber == 0) {
 		BF_GLOBALS._dayNumber = 5;
 		BF_GLOBALS._sceneManager._previousScene = 900;
-		BF_GLOBALS.setFlag(7);
+		BF_GLOBALS.setFlag(fWithLyle);
 	}
 
 	if (   (BF_GLOBALS._sceneManager._previousScene == 910)
@@ -2055,11 +2055,11 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	_field2DE0 = 0;
 	_field2DE2 = 0;
 	_field2DE4 = 0;
-	BF_GLOBALS.clearFlag(34);
+	BF_GLOBALS.clearFlag(fCanDrawGun);
 	_lyle._position.x = 0;
 
 	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._sceneManager._previousScene == 900)){
-		BF_GLOBALS.setFlag(34);
+		BF_GLOBALS.setFlag(fCanDrawGun);
 		BF_GLOBALS._v4CEC8 = 0;
 		BF_GLOBALS._player.setVisage(129);
 
@@ -2085,7 +2085,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	}
 
 	if (BF_GLOBALS._sceneManager._previousScene == 920) {
-		BF_GLOBALS.setFlag(34);
+		BF_GLOBALS.setFlag(fCanDrawGun);
 		BF_GLOBALS._player.setPosition(Common::Point(276, 119));
 		BF_GLOBALS._player.setStrip(6);
 		if (BF_GLOBALS._v4CECC == 0)
@@ -2116,7 +2116,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		}
 		BF_GLOBALS._player.enableControl();
 	} else if (BF_GLOBALS._sceneManager._previousScene == 935) {
-		BF_GLOBALS.setFlag(34);
+		BF_GLOBALS.setFlag(fCanDrawGun);
 		BF_GLOBALS._v4CEC8 = 0;
 		_lyle.postInit();
 		_lyle.setVisage(916);
@@ -2153,7 +2153,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		else
 			add2Faders((const byte *)&unk_50E90, 2, 911, this);
 	} else {
-		BF_GLOBALS.clearFlag(8);
+		BF_GLOBALS.clearFlag(gunDrawn);
 		BF_GLOBALS._player.disableControl();
 	}
 
@@ -2885,9 +2885,9 @@ void Scene910::subE82BD() {
 void Scene910::subE83E1() {
 	if (BF_GLOBALS._v4CEE0 != 0) {
 		_fakeWall.show();
-		if ((BF_GLOBALS._bookmark == 21) && (!BF_GLOBALS.getFlag(80))) {
+		if ((BF_GLOBALS._bookmark == 21) && (!BF_GLOBALS.getFlag(fGotPointsForOpeningDoor))) {
 			T2_GLOBALS._uiElements.addScore(30);
-			BF_GLOBALS.setFlag(80);
+			BF_GLOBALS.setFlag(fGotPointsForOpeningDoor);
 		}
 		BF_GLOBALS._v4CEE0 = 0;
 		BF_GLOBALS._walkRegions.disableRegion(10);
@@ -3107,7 +3107,7 @@ bool Scene930::Object1::startAction(CursorType action, Event &event) {
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 	bool result;
 
-	if ((action == CURSOR_USE) && (!BF_GLOBALS.getFlag(93))) {
+	if ((action == CURSOR_USE) && (!BF_GLOBALS.getFlag(fGotPointsForFBI))) {
 		scene->setAction(&scene->_action2);
 		result = true;
 	} else
@@ -3125,7 +3125,7 @@ bool Scene930::Object2::startAction(CursorType action, Event &event) {
 	NamedObject::startAction(action, event);
 	T2_GLOBALS._uiElements.addScore(30);
 	BF_INVENTORY.setObjectScene(54, 1);
-	BF_GLOBALS.setFlag(93);
+	BF_GLOBALS.setFlag(fGotPointsForFBI);
 	remove();
 	scene->_box.remove();
 	return true;
@@ -3269,9 +3269,9 @@ void Scene930::Action1::signal() {
 		break;
 	case 5:
 		scene->showBootWindow();
-		if (!BF_GLOBALS.getFlag(72)) {
+		if (!BF_GLOBALS.getFlag(fGotPointsForCPU)) {
 			T2_GLOBALS._uiElements.addScore(30);
-			BF_GLOBALS.setFlag(72);
+			BF_GLOBALS.setFlag(fGotPointsForCPU);
 		}
 		SceneItem::display(0, 312);
 		BF_GLOBALS._player.enableControl();

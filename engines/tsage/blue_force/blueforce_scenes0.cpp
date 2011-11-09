@@ -434,11 +434,11 @@ void Scene50::signal() {
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 410) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(125);
+			BF_GLOBALS.setFlag(f1097Frankie);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 340) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(123);
+			BF_GLOBALS.setFlag(f1097Marina);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 380) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {

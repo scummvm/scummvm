@@ -306,14 +306,14 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		break;
 	case 190:
 		_sceneMode = 0;
-		if (!BF_GLOBALS.getFlag(2)) {
+		if (!BF_GLOBALS.getFlag(onBike)) {
 			_sceneMode = 7308;
 			BF_GLOBALS._player.setPosition(Common::Point(175, 50));
 			ADD_PLAYER_MOVER_THIS(BF_GLOBALS._player, 123, 71);
 
 			if ((BF_GLOBALS._dayNumber == 2) && (BF_GLOBALS._bookmark < bEndDayOne))
 				setupInspection();
-		} else if (!BF_GLOBALS.getFlag(3)) {
+		} else if (!BF_GLOBALS.getFlag(onDuty)) {
 			BF_GLOBALS._player.disableControl();
 			_sceneMode = 300;
 			setAction(&_sequenceManager1, this, 300, &BF_GLOBALS._player, NULL);
@@ -424,7 +424,7 @@ void Scene300::signal() {
 		setAction(&_sequenceManager1, this, 312, &_object1, &_object16, NULL);
 		break;
 	case 317:
-		BF_GLOBALS.setFlag(2);
+		BF_GLOBALS.setFlag(onBike);
 		BF_GLOBALS._sceneManager.changeScene(60);
 		break;
 	case 318:
