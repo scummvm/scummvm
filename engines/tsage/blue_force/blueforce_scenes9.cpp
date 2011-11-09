@@ -2885,7 +2885,7 @@ void Scene910::subE82BD() {
 void Scene910::subE83E1() {
 	if (BF_GLOBALS._v4CEE0 != 0) {
 		_fakeWall.show();
-		if ((BF_GLOBALS._bookmark == 21) && (!BF_GLOBALS.getFlag(fGotPointsForOpeningDoor))) {
+		if ((BF_GLOBALS._bookmark == bEndDayThree) && (!BF_GLOBALS.getFlag(fGotPointsForOpeningDoor))) {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForOpeningDoor);
 		}
