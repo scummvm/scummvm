@@ -1441,6 +1441,7 @@ void Scene115::Action5::signal() {
 	case 0:
 		if (scene->_item1._field1F8A == 0) {
 			setAction(&scene->_sequenceManager5, this, 1115, &scene->_object1, NULL);
+			scene->_field31E8 = 1;
 		} else {
 			--_actionIndex;
 			setDelay(120);
