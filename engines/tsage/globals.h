@@ -187,9 +187,9 @@ public:
 	ASoundExt _sound1, _sound3;
 	StripProxy _stripProxy;
 	int _dayNumber;
-	int _v4CEAA;
+	int _tonyDialogCtr;
 	int _marinaWomanCtr;
-	int _v4CEB0;
+	int _kateDialogCtr;
 	int _v4CEB6;
 	int _safeCombination;
 	int _v4CEC0;

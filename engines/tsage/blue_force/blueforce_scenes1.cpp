@@ -1017,7 +1017,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 		if (scene->_field31E8 == 0) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
-			if (BF_GLOBALS._v4CEAA == 0)
+			if (BF_GLOBALS._tonyDialogCtr == 0)
 				scene->_stripManager.start(1167, scene);
 			else if (BF_GLOBALS.getFlag(fShowedIdToKate))
 				scene->_stripManager.start(1159, scene);
@@ -1036,7 +1036,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 		return true;
 	case INV_ID:
 		if (scene->_field31E8 == 0) {
-			if (BF_GLOBALS._v4CEAA == 0) {
+			if (BF_GLOBALS._tonyDialogCtr == 0) {
 				scene->_sceneMode = 1167;
 				scene->setAction(&scene->_action6);
 			} else if (BF_GLOBALS.getFlag(fShowedIdToKate)) {
@@ -1077,7 +1077,7 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 			else if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1) {
 				if (BF_GLOBALS.getFlag(fTalkedToTony))
 					scene->_sceneMode = 1151;
-				else if (BF_GLOBALS._v4CEAA == 0) {
+				else if (BF_GLOBALS._tonyDialogCtr == 0) {
 					scene->_sceneMode = 1150;
 					BF_GLOBALS.setFlag(fTalkedToTony);
 				} else
@@ -1111,7 +1111,7 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 	case INV_COBB_RAP:
 		if (BF_GLOBALS.getFlag(onDuty))
 			scene->_sceneMode = 1177;
-		else if (BF_GLOBALS._v4CEAA == 0)
+		else if (BF_GLOBALS._tonyDialogCtr == 0)
 			scene->_sceneMode = 1179;
 		else
 			scene->_sceneMode = 1154;
@@ -1132,11 +1132,11 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 			} else {
 				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fTalkedToTony);
-				if (BF_GLOBALS._v4CEAA == 0) {
+				if (BF_GLOBALS._tonyDialogCtr == 0) {
 					scene->_sceneMode = 1150;
 					scene->setAction(&scene->_action9);
 				} else {
-					BF_GLOBALS._v4CEAA = 1;
+					BF_GLOBALS._tonyDialogCtr = 1;
 					scene->setAction(&scene->_action2);
 				}
 			}
@@ -1339,7 +1339,7 @@ void Scene115::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		if (BF_GLOBALS._v4CEAA < 3) {
+		if (BF_GLOBALS._tonyDialogCtr < 3) {
 			if (scene->_object2._position.x > 67) {
 				scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_object2, NULL);
 			} else if (scene->_object2._position.x != 67) {
@@ -1349,10 +1349,10 @@ void Scene115::Action2::signal() {
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 1117, &BF_GLOBALS._player);
 		break;
 	case 1:
-		BF_GLOBALS._v4CEAA++;
+		++BF_GLOBALS._tonyDialogCtr;
 		if (BF_GLOBALS.getFlag(onDuty)) {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
-				switch (BF_GLOBALS._v4CEAA) {
+				switch (BF_GLOBALS._tonyDialogCtr) {
 				case 1:
 					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1181, this);
@@ -1369,7 +1369,7 @@ void Scene115::Action2::signal() {
 			}
 		} else {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
-				switch (BF_GLOBALS._v4CEAA) {
+				switch (BF_GLOBALS._tonyDialogCtr) {
 				case 1:
 					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1153, this);
@@ -1387,7 +1387,7 @@ void Scene115::Action2::signal() {
 		}
 		break;
 	case 2:
-		if (BF_GLOBALS._v4CEAA == 3)
+		if (BF_GLOBALS._tonyDialogCtr == 3)
 			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_object2, NULL);
 		BF_GLOBALS._player.enableControl();
 		remove();
@@ -1507,11 +1507,11 @@ void Scene115::Action7::signal() {
 		break;
 	case 1:
 		BF_GLOBALS._player.setStrip(4);
-		if (BF_GLOBALS._v4CEB0 == 0)
+		if (BF_GLOBALS._kateDialogCtr == 0)
 			scene->_stripManager.start(1156, this);
 		else
 			scene->_stripManager.start(1157, this);
-		BF_GLOBALS._v4CEB0++;
+		++BF_GLOBALS._kateDialogCtr;
 		break;
 	case 2:
 		BF_GLOBALS._player.enableControl();

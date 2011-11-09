@@ -233,9 +233,9 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 		int tmpVar;
 		s.syncAsSint16LE(tmpVar);
 	}
-	s.syncAsSint16LE(_v4CEAA);
+	s.syncAsSint16LE(_tonyDialogCtr);
 	s.syncAsSint16LE(_marinaWomanCtr);
-	s.syncAsSint16LE(_v4CEB0);
+	s.syncAsSint16LE(_kateDialogCtr);
 	s.syncAsSint16LE(_v4CEB6);
 	s.syncAsSint16LE(_safeCombination);
 	s.syncAsSint16LE(_v4CEC0);
@@ -290,9 +290,9 @@ void BlueForceGlobals::reset() {
 
 	_interfaceY = UI_INTERFACE_Y;
 	_dayNumber = 0;
-	_v4CEAA = 0;
+	_tonyDialogCtr = 0;
 	_marinaWomanCtr = 0;
-	_v4CEB0 = 0;
+	_kateDialogCtr = 0;
 	_v4CEB6 = 0;
 	_safeCombination = 0;
 	_v4CEC0 = 0;
