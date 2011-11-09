@@ -277,6 +277,7 @@ Common::String CGEEngine::generateSaveName(int slot) {
 Common::Error CGEEngine::loadGameState(int slot) {
 	// Clear current game activity
 	sceneDown();
+	_hero->park();
 	resetGame();
 
 	// Load the game
@@ -295,6 +296,7 @@ void CGEEngine::resetGame() {
 
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
 	sceneDown();
+	_hero->park();
 	_oldLev = _lev;
 
 	// Write out the user's progress
@@ -692,6 +694,7 @@ void CGEEngine::qGame() {
 	debugC(1, kCGEDebugEngine, "CGEEngine::qGame()");
 
 	sceneDown();
+	_hero->park();
 	_oldLev = _lev;
 
 	// Write out the user's progress
