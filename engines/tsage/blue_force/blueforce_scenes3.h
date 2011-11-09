@@ -676,9 +676,7 @@ public:
 	Barometer _barometer;
 	Action1 _action1;
 	ASound _sound1;
-	int _uselessVariable;
 
-	Scene360();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

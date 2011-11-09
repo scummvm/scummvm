@@ -4347,13 +4347,12 @@ void Scene360::Action1::signal() {
 
 /*--------------------------------------------------------------------------*/
 
-Scene360::Scene360() {
-	_uselessVariable = 0;
-}
-
 void Scene360::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_uselessVariable);
+	if (s.getVersion() < 9) {
+		int tmpVar;
+		s.syncAsSint16LE(tmpVar);
+	}
 }
 
 void Scene360::postInit(SceneObjectList *OwnerList) {
@@ -4432,7 +4431,7 @@ void Scene360::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.enableControl();
 
 	if ((BF_GLOBALS._sceneManager._previousScene == 355) || (BF_GLOBALS._sceneManager._previousScene != 370)) {
-		_uselessVariable = 0;
+		// The original was using there a useless variable (now removed)
 		BF_GLOBALS._player.setPosition(Common::Point(253, 135));
 		BF_GLOBALS._player.setStrip(2);
 
