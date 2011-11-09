@@ -985,7 +985,7 @@ void Scene114::signal() {
  * Scene 115 - Inside Tony's bar
  *
  *--------------------------------------------------------------------------*/
-bool Scene115::Object1::startAction(CursorType action, Event &event) {
+bool Scene115::Kate::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 	
 	switch (action) {
@@ -1001,7 +1001,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
 			scene->_stripManager.start(1174, scene);
-		} else if (scene->_field31E8 == 0) {
+		} else if (scene->_jukeboxPlaying == 0) {
 			if (BF_GLOBALS.getFlag(fShowedIdToKate)) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 0;
@@ -1014,7 +1014,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_action7);
 		return true;
 	case INV_MUG_SHOT:
-		if (scene->_field31E8 == 0) {
+		if (scene->_jukeboxPlaying == 0) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
 			if (BF_GLOBALS._tonyDialogCtr == 0)
@@ -1035,7 +1035,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case INV_ID:
-		if (scene->_field31E8 == 0) {
+		if (scene->_jukeboxPlaying == 0) {
 			if (BF_GLOBALS._tonyDialogCtr == 0) {
 				scene->_sceneMode = 1167;
 				scene->setAction(&scene->_action6);
@@ -1215,24 +1215,23 @@ bool Scene115::Object4::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene115::Item1::signal() {
+void Scene115::Jukebox::signal() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 	
-	if (_field1F8A == 2)
-		_field1F8A = 0;
-
-	if (_field1F8A == 1) {
-		_field1F8A = 2;
+	if (_jokeboxPlayingCtr == 2)
+		_jokeboxPlayingCtr = 0;
+	else if (_jokeboxPlayingCtr == 1) {
+		_jokeboxPlayingCtr = 2;
 		setAction(&_sequenceManager6, this, 118, &scene->_object12, &scene->_object11, NULL);
 	}
 }
 
-bool Scene115::Item1::startAction(CursorType action, Event &event) {
+bool Scene115::Jukebox::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 	
 	if (action == CURSOR_USE) {
-		if (_field1F8A == 0) {
-			_field1F8A = 1;
+		if (_jokeboxPlayingCtr == 0) {
+			_jokeboxPlayingCtr = 1;
 			BF_GLOBALS._player.disableControl();
 			scene->setAction(&scene->_action4);
 		} else
@@ -1246,20 +1245,20 @@ bool Scene115::Item1::startAction(CursorType action, Event &event) {
 		return NamedHotspot::startAction(action, event);
 }
 
-void Scene115::Item1::synchronize(Serializer &s) {
+void Scene115::Jukebox::synchronize(Serializer &s) {
 	NamedHotspot::synchronize(s);
-	s.syncAsSint16LE(_field1F8A);
+	s.syncAsSint16LE(_jokeboxPlayingCtr);
 }
 
-Scene115::Item1::Item1() {
-	_field1F8A = 0;
+Scene115::Jukebox::Jukebox() {
+	_jokeboxPlayingCtr = 0;
 }
 
 void Scene115::EventHandler1::dispatch() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 
 	if (BF_GLOBALS._player.getRegionIndex() == 27) {
-		scene->_object1.setAction(&scene->_action5);
+		scene->_kate.setAction(&scene->_action5);
 		scene->removeTimer(this);
 	}
 }
@@ -1426,7 +1425,7 @@ void Scene115::Action4::signal() {
 		setAction(&scene->_sequenceManager1, this, 117, &scene->_object12, &scene->_object11, NULL);
 		break;
 	case 3:
-		scene->_sound1.play(81, &scene->_item1, 127);
+		scene->_sound1.play(81, &scene->_itemJukebox, 127);
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1439,9 +1438,9 @@ void Scene115::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if (scene->_item1._field1F8A == 0) {
-			setAction(&scene->_sequenceManager5, this, 1115, &scene->_object1, NULL);
-			scene->_field31E8 = 1;
+		if (scene->_itemJukebox._jokeboxPlayingCtr == 0) {
+			setAction(&scene->_sequenceManager5, this, 1115, &scene->_kate, NULL);
+			scene->_jukeboxPlaying = 1;
 		} else {
 			--_actionIndex;
 			setDelay(120);
@@ -1451,15 +1450,15 @@ void Scene115::Action5::signal() {
 		setAction(&scene->_sequenceManager5, this, 117, &scene->_object12, &scene->_object11, NULL);
 		break;
 	case 2:
-		scene->_sound1.play(81, &scene->_item1, 127);
-		scene->_item1._field1F8A = 1;
+		scene->_sound1.play(81, &scene->_itemJukebox, 127);
+		scene->_itemJukebox._jokeboxPlayingCtr = 1;
 		setDelay(3);
 		break;
 	case 3:
-		setAction(&scene->_sequenceManager5, this, 1116, &scene->_object1, NULL);
+		setAction(&scene->_sequenceManager5, this, 1116, &scene->_kate, NULL);
 		break;
 	case 4:
-		scene->_field31E8 = 0;
+		scene->_jukeboxPlaying = 0;
 		remove();
 	default:
 		break;
@@ -1472,11 +1471,11 @@ void Scene115::Action6::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		if (scene->_sceneMode == 9999) {
-			setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
+			setAction(&scene->_sequenceManager1, this, 4115, &scene->_kate, &BF_GLOBALS._player, NULL);
 			--_actionIndex;
 			scene->_sceneMode = 1166;
 		} else {
@@ -1484,10 +1483,10 @@ void Scene115::Action6::signal() {
 		}
 		break;
 	case 2:
-		scene->_object1.setVisage(131);
-		scene->_object1.setStrip(1);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(122, 97));
+		scene->_kate.setVisage(131);
+		scene->_kate.setStrip(1);
+		scene->_kate.setFrame(1);
+		scene->_kate.setPosition(Common::Point(122, 97));
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1529,11 +1528,11 @@ void Scene115::Action8::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		setAction(&scene->_sequenceManager1, this, 2115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		T2_GLOBALS._uiElements.addScore(30);
-		setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		setAction(&scene->_sequenceManager1, this, 4115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 2:
 		scene->_stripManager.start(1160, this);
@@ -1543,15 +1542,15 @@ void Scene115::Action8::signal() {
 		break;
 	case 4:
 		BF_GLOBALS.setFlag(fGivenNapkin);
-		setAction(&scene->_sequenceManager1, this, 2117, &scene->_object1, &BF_GLOBALS._player, &scene->_object13, NULL);
+		setAction(&scene->_sequenceManager1, this, 2117, &scene->_kate, &BF_GLOBALS._player, &scene->_object13, NULL);
 		break;
 	case 5:
 		BF_INVENTORY.setObjectScene(INV_NAPKIN, 1);
 		T2_GLOBALS._uiElements.addScore(10);
-		scene->_object1.setVisage(131);
-		scene->_object1.setStrip(1);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(122, 97));
+		scene->_kate.setVisage(131);
+		scene->_kate.setStrip(1);
+		scene->_kate.setFrame(1);
+		scene->_kate.setPosition(Common::Point(122, 97));
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -1587,7 +1586,7 @@ void Scene115::Action9::signal() {
 }
 
 Scene115::Scene115() : SceneExt () {
-	_lineNumModifier = _field31E8 = _talkToTonyCtr = 0;
+	_lineNumModifier = _jukeboxPlaying = _talkToTonyCtr = 0;
 }
 
 void Scene115::postInit(SceneObjectList *OwnerList) {
@@ -1596,7 +1595,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sound1.fadeSound(15);
 	loadScene(115);
 	setZoomPercents(98, 85, 115, 100);
-	_field31E8 = 0;
+	_jukeboxPlaying = 0;
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_kateSpeaker);
 	_stripManager.addSpeaker(&_tonySpeaker);
@@ -1697,14 +1696,14 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		_object10.fixPriority(112);
 
 		if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1) {
-			_object1.postInit();
-			_object1.setVisage(131);
-			_object1.setPosition(Common::Point(122, 97));
-			_object1.setStrip(1);
-			_object1.setFrame(1);
-			_object1.changeZoom(100);
-			_object1.fixPriority(95);
-			BF_GLOBALS._sceneItems.push_front(&_object1);
+			_kate.postInit();
+			_kate.setVisage(131);
+			_kate.setPosition(Common::Point(122, 97));
+			_kate.setStrip(1);
+			_kate.setFrame(1);
+			_kate.changeZoom(100);
+			_kate.fixPriority(95);
+			BF_GLOBALS._sceneItems.push_front(&_kate);
 		}
 		addTimer(&_eventHandler1);
 	}
@@ -1717,8 +1716,8 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sceneItems.push_front(&_item14);
 	_item10.setDetails(Rect(0, 147, 30, 167), 115, -1, -1, -1, 1, NULL);
 	// SUB_177B8
-	addTimer(&_item1);
-	_item1.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
+	addTimer(&_itemJukebox);
+	_itemJukebox.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
 	//
 	_item6.setDetails(Rect(107, 43, 122,  61), 115, 28, 29, 30, 1, NULL);
 	_item7.setDetails(Rect(180, 33, 230,  63), 115, 31, 32, 33, 1, NULL);
@@ -1779,7 +1778,7 @@ void Scene115::process(Event &event) {
 void Scene115::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 	s.syncAsSint16LE(_lineNumModifier);
-	s.syncAsSint16LE(_field31E8);
+	s.syncAsSint16LE(_jukeboxPlaying);
 	s.syncAsSint16LE(_talkToTonyCtr);
 }
 
