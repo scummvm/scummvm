@@ -78,6 +78,8 @@ void DrasculaEngine::volumeControls() {
 			;
 
 		if (rightMouseButton == 1) {
+			// Clear this to avoid going straight to the inventory
+			rightMouseButton = 0;
 			delay(100);
 			break;
 		}
