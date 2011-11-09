@@ -530,7 +530,7 @@ bool Scene60::Ignition::startAction(CursorType action, Event &event) {
 
 bool Scene60::Ignition::check1() {
 	if (BF_GLOBALS._bookmark >= bStoppedFrankie) {
-		BF_GLOBALS._v5098C |= 1;
+		BF_GLOBALS._subFlagBitArr1 |= 1;
 		return false;
 	} else {
 		if ((BF_GLOBALS._bookmark == bBookedGreen) && BF_GLOBALS.getFlag(fArrivedAtGangStop)) {
@@ -557,13 +557,13 @@ bool Scene60::Ignition::check1() {
 		} else if (BF_GLOBALS._bookmark < bStartOfGame) {
 			// Should never reach here
 		} else if (BF_GLOBALS._bookmark < bCalledToDomesticViolence) {
-			if ((BF_GLOBALS._v5098C >> 1) & 1)
+			if ((BF_GLOBALS._subFlagBitArr1 >> 1) & 1)
 				BF_GLOBALS.setFlag(fLateToMarina);
 			else
-				BF_GLOBALS._v5098C |= 2;
+				BF_GLOBALS._subFlagBitArr1 |= 2;
 		} else {
-			int v = (((BF_GLOBALS._v5098C >> 2) & 15) + 1) & 15;
-			BF_GLOBALS._v5098C = (BF_GLOBALS._v5098C & 0xC3) | (v << 2);
+			int v = (((BF_GLOBALS._subFlagBitArr1 >> 2) & 15) + 1) & 15;
+			BF_GLOBALS._subFlagBitArr1 = (BF_GLOBALS._subFlagBitArr1 & 0xC3) | (v << 2);
 
 			if ((v != 1) && (v != 2)) {
 				BF_GLOBALS._deathReason = 19;
@@ -573,17 +573,17 @@ bool Scene60::Ignition::check1() {
 		}
 	}
 
-	BF_GLOBALS._v5098C |= 1;
+	BF_GLOBALS._subFlagBitArr1 |= 1;
 	return false;
 }
 
 bool Scene60::Ignition::check2() {
 	switch (BF_GLOBALS._bookmark) {
 	case bInspectionDone:
-		if (BF_GLOBALS._v5098D & 1) {
+		if (BF_GLOBALS._subFlagBitArr2 & 1) {
 			BF_GLOBALS.setFlag(fLateToDrunkStop);
 		} else {
-			BF_GLOBALS._v5098D |= 1;
+			BF_GLOBALS._subFlagBitArr2 |= 1;
 		}
 		break;
 	case bCalledToDrunkStop:
@@ -593,7 +593,7 @@ bool Scene60::Ignition::check2() {
 		break;
 	}
 
-	BF_GLOBALS._v5098C |= 0x80;
+	BF_GLOBALS._subFlagBitArr1 |= 0x80;
 	return false;
 }
 
@@ -1076,7 +1076,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 
 	switch (BF_GLOBALS._dayNumber) {
 	case 1:
-		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._v5098C & 1) &&
+		if (BF_GLOBALS.getFlag(onDuty) && (BF_GLOBALS._subFlagBitArr1 & 1) &&
 				(BF_GLOBALS._bookmark < bStartOfGame) && (BF_GLOBALS._sceneManager._previousScene != 342)) {
 			setAction(&_action2);
 			if (BF_GLOBALS._sceneManager._previousScene == 342)
@@ -1084,7 +1084,7 @@ void Scene60::postInit(SceneObjectList *OwnerList) {
 		}
 		break;
 	case 2:
-		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._v5098C >> 7) & 1) &&
+		if (BF_GLOBALS.getFlag(onDuty) && ((BF_GLOBALS._subFlagBitArr1 >> 7) & 1) &&
 				(BF_GLOBALS._sceneManager._previousScene != 550) &&
 				(BF_GLOBALS._bookmark < bInspectionDone)) {
 			setAction(&_action3);

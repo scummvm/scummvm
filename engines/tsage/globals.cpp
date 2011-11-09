@@ -229,7 +229,10 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
 
 	s.syncAsSint16LE(_dayNumber);
-	s.syncAsSint16LE(_v4CEA4);
+	if (s.getVersion() < 9) {
+		int tmpVar;
+		s.syncAsSint16LE(tmpVar);
+	}
 	s.syncAsSint16LE(_v4CEAA);
 	s.syncAsSint16LE(_marinaWomanCtr);
 	s.syncAsSint16LE(_v4CEB0);
@@ -257,8 +260,8 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v501FC);
 	s.syncAsSint16LE(_v5020C);
 	s.syncAsSint16LE(_v50696);
-	s.syncAsSint16LE(_v5098C);
-	s.syncAsSint16LE(_v5098D);
+	s.syncAsSint16LE(_subFlagBitArr1);
+	s.syncAsSint16LE(_subFlagBitArr2);
 	s.syncAsSint16LE(_v50CC2);
 	s.syncAsSint16LE(_v50CC4);
 	s.syncAsSint16LE(_v50CC6);
@@ -287,7 +290,6 @@ void BlueForceGlobals::reset() {
 
 	_interfaceY = UI_INTERFACE_Y;
 	_dayNumber = 0;
-	_v4CEA4 = 0;
 	_v4CEAA = 0;
 	_marinaWomanCtr = 0;
 	_v4CEB0 = 0;
@@ -329,8 +331,8 @@ void BlueForceGlobals::reset() {
 	_v501FC = 0;
 	_v5020C = 0;
 	_v50696 = 0;
-	_v5098C = 0;
-	_v5098D = 0;
+	_subFlagBitArr1 = 0;
+	_subFlagBitArr2 = 0;
 	_v50CC2 = 0;
 	_v50CC4 = 0;
 	_v50CC6 = 0;

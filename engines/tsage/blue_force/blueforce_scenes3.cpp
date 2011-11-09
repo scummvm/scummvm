@@ -556,7 +556,7 @@ void Scene300::dispatch() {
 
 		if ((BF_GLOBALS._player._position.y < 59) && (BF_GLOBALS._player._position.x > 137) &&
 				(_sceneMode != 6308) && (_sceneMode != 7308)) {
-			BF_GLOBALS._v4CEA4 = 3;
+			// The original was setting a useless global variable (removed)
 			_sceneMode = 6308;
 			BF_GLOBALS._player.disableControl();
 			ADD_MOVER(BF_GLOBALS._player, BF_GLOBALS._player._position.x + 20,

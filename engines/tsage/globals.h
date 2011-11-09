@@ -187,7 +187,6 @@ public:
 	ASoundExt _sound1, _sound3;
 	StripProxy _stripProxy;
 	int _dayNumber;
-	int _v4CEA4;
 	int _v4CEAA;
 	int _marinaWomanCtr;
 	int _v4CEB0;
@@ -214,8 +213,8 @@ public:
 	int _v501FC;
 	int _v5020C;
 	int _v50696;
-	uint8 _v5098C;
-	uint8 _v5098D;
+	uint8 _subFlagBitArr1;
+	uint8 _subFlagBitArr2;
 	int _v50CC2;
 	int _v50CC4;
 	int _v50CC6;
