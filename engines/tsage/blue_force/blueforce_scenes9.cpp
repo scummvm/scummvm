@@ -2894,7 +2894,7 @@ void Scene910::subE83E1() {
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9115;
 		_sound2.play(42);
-		if ((BF_GLOBALS._v4CECC == 0) && (BF_INVENTORY.getObjectScene(57) == 910))
+		if ((BF_GLOBALS._v4CECC == 0) && (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 910))
 			setAction(&_sequenceManager1, this, 9128, &_fakeWall, &_yellowCord, &_object5, NULL);
 		else
 			setAction(&_sequenceManager1, this, 9115, &_fakeWall, &_object5, NULL);
@@ -2941,7 +2941,7 @@ bool Scene920::Item1::startAction(CursorType action, Event &event) {
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS.getFlag(fCrateOpen)) {
 			if (BF_GLOBALS._player._visage == 921) {
-				if ((BF_INVENTORY.getObjectScene(15) != 1) && (BF_GLOBALS.getFlag(fSawGuns))) {
+				if ((BF_INVENTORY.getObjectScene(INV_AUTO_RIFLE) != 1) && (BF_GLOBALS.getFlag(fSawGuns))) {
 					scene->_sceneMode = 9207;
 					scene->setAction(&scene->_sequenceManager1, scene, 9207, &BF_GLOBALS._player, NULL);
 				} else {
@@ -3055,7 +3055,7 @@ void Scene920::signal() {
 	case 9207:
 		BF_GLOBALS._player.enableControl();
 		T2_GLOBALS._uiElements.addScore(30);
-		BF_INVENTORY.setObjectScene(15, 1);
+		BF_INVENTORY.setObjectScene(INV_AUTO_RIFLE, 1);
 		BF_GLOBALS._bookmark = bEndDayThree;
 		break;
 	default:
@@ -3124,7 +3124,7 @@ bool Scene930::Object2::startAction(CursorType action, Event &event) {
 
 	NamedObject::startAction(action, event);
 	T2_GLOBALS._uiElements.addScore(30);
-	BF_INVENTORY.setObjectScene(54, 1);
+	BF_INVENTORY.setObjectScene(INV_9MM_BULLETS, 1);
 	BF_GLOBALS.setFlag(fGotPointsForFBI);
 	remove();
 	scene->_box.remove();
@@ -3195,7 +3195,7 @@ bool Scene930::Object5::startAction(CursorType action, Event &event) {
 	case CURSOR_WALK:
 		return true;
 	case CURSOR_USE:
-		if (BF_INVENTORY.getObjectScene(55) == 1)
+		if (BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1)
 			return NamedObject::startAction(action, event);
 		if (scene->_v141A == 0) {
 			animate(ANIM_MODE_4, getFrameCount() - 1, 1, NULL);
@@ -3204,7 +3204,7 @@ bool Scene930::Object5::startAction(CursorType action, Event &event) {
 			_useLineNum = 78;
 		} else {
 			T2_GLOBALS._uiElements.addScore(50);
-			BF_INVENTORY.setObjectScene(55, 1);
+			BF_INVENTORY.setObjectScene(INV_SCHEDULE, 1);
 			setFrame2(getFrameCount());
 			_lookLineNum = 92;
 			_useLineNum = -1;
@@ -3350,7 +3350,7 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 	setZoomPercents(83, 75, 140, 100);
 	_v141A = 0;
 	_v141C = 0;
-	if (BF_INVENTORY.getObjectScene(54) != 1) {
+	if (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) != 1) {
 		_box.postInit();
 		_box.setVisage(930);
 		_box.setStrip(1);
