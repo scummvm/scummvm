@@ -199,6 +199,23 @@ const char *CHAR_SEEKER_MSG = "  Seeker  ";
 const char *CHAR_MIRANDA_MSG = "Miranda";
 const char *CHAR_CANCEL_MSG = "  Cancel  ";
 
+const char *GAME_VERSION = "ScummVM Version";
+const char *SOUND_OPTIONS = "Sound options";
+const char *QUIT_GAME = "Quit";
+const char *RESTART_GAME = "Restart";
+const char *SAVE_GAME = "Save game";
+const char *RESTORE_GAME = "Restore game";
+const char *SHOW_CREDITS = "Show credits";
+const char *PAUSE_GAME = "Pause game";
+const char *RESUME_PLAY = "  Resume play  ";
+const char *F2 = "F2";
+const char *F3 = "F3";
+const char *F4 = "F4";
+const char *F5 = "F5";
+const char *F7 = "F7";
+const char *F8 = "F8";
+const char *F10 = "F10";
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

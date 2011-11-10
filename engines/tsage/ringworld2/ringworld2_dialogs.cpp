@@ -341,6 +341,103 @@ CharacterDialog::CharacterDialog() {
 	setCenter(160, 100);
 }
 
+/*--------------------------------------------------------------------------*/
+
+void HelpDialog::show() {
+	HelpDialog *dlg = new HelpDialog();
+	dlg->draw();
+
+	// Show the character selection dialog
+	GfxButton *btn = dlg->execute(&dlg->_btnResume);
+
+	// If a function button was selected, take care of it
+	Event evt;
+	evt.eventType = EVENT_KEYPRESS;
+	evt.kbd.keycode = Common::KEYCODE_INVALID;
+	if (btn == &dlg->_btnList[0]) {
+		evt.kbd.keycode = Common::KEYCODE_F2;
+	} else if (btn == &dlg->_btnList[1]) {
+		evt.kbd.keycode = Common::KEYCODE_F3;
+	} else if (btn == &dlg->_btnList[2]) {
+		evt.kbd.keycode = Common::KEYCODE_F4;
+	} else if (btn == &dlg->_btnList[3]) {
+		evt.kbd.keycode = Common::KEYCODE_F5;
+	} else if (btn == &dlg->_btnList[4]) {
+		evt.kbd.keycode = Common::KEYCODE_F7;
+	} else if (btn == &dlg->_btnList[5]) {
+		evt.kbd.keycode = Common::KEYCODE_F8;
+	} else if (btn == &dlg->_btnList[6]) {
+		evt.kbd.keycode = Common::KEYCODE_F10;
+	}
+
+	// Remove the dialog
+	dlg->remove();
+	delete dlg;
+
+	// If a action button was selected, dispatch to handle it
+	if (evt.kbd.keycode != Common::KEYCODE_INVALID)
+		R2_GLOBALS._game->processEvent(evt);
+}
+
+HelpDialog::HelpDialog() {
+	// Set the title and game version
+	_msgTitle.set(HELP_MSG, 172, ALIGN_CENTER);
+	_msgTitle._bounds.moveTo(5, 0);
+	_msgVersion.set(GAME_VERSION, 172, ALIGN_CENTER);
+	_msgVersion._bounds.moveTo(5, _msgTitle._bounds.bottom + 3);
+	addElements(&_msgTitle, &_msgVersion, NULL);	
+
+	// Set buttons
+	_btnList[0].setText(F2);
+	_btnList[0]._bounds.moveTo(5, _msgVersion._bounds.bottom + 2);
+	_btnDescription[0].set(SOUND_OPTIONS, 140, ALIGN_LEFT);
+	_btnDescription[0]._bounds.moveTo(_btnList[0]._bounds.right + 2, _btnList[0]._bounds.top + 4);
+
+	_btnList[1].setText(F3);
+	_btnList[1]._bounds.moveTo(5, _btnList[0]._bounds.bottom);
+	_btnDescription[1].set(QUIT_GAME, 140, ALIGN_LEFT);
+	_btnDescription[1]._bounds.moveTo(_btnList[1]._bounds.right + 2, _btnList[1]._bounds.top + 4);
+
+	_btnList[2].setText(F4);
+	_btnList[2]._bounds.moveTo(5, _btnList[1]._bounds.bottom);
+	_btnDescription[2].set(RESTART_GAME, 140, ALIGN_LEFT);
+	_btnDescription[2]._bounds.moveTo(_btnList[2]._bounds.right + 2, _btnList[2]._bounds.top + 4);
+
+	_btnList[3].setText(F5);
+	_btnList[3]._bounds.moveTo(5, _btnList[2]._bounds.bottom);
+	_btnDescription[3].set(SAVE_GAME, 140, ALIGN_LEFT);
+	_btnDescription[3]._bounds.moveTo(_btnList[3]._bounds.right + 2, _btnList[3]._bounds.top + 4);
+
+	_btnList[4].setText(F7);
+	_btnList[4]._bounds.moveTo(5, _btnList[3]._bounds.bottom);
+	_btnDescription[4].set(RESTORE_GAME, 140, ALIGN_LEFT);
+	_btnDescription[4]._bounds.moveTo(_btnList[4]._bounds.right + 2, _btnList[4]._bounds.top + 4);
+
+	_btnList[5].setText(F8);
+	_btnList[5]._bounds.moveTo(5, _btnList[4]._bounds.bottom);
+	_btnDescription[5].set(SHOW_CREDITS, 140, ALIGN_LEFT);
+	_btnDescription[5]._bounds.moveTo(_btnList[5]._bounds.right + 2, _btnList[5]._bounds.top + 4);
+
+	_btnList[6].setText(F10);
+	_btnList[6]._bounds.moveTo(5, _btnList[5]._bounds.bottom);
+	_btnDescription[6].set(PAUSE_GAME, 140, ALIGN_LEFT);
+	_btnDescription[6]._bounds.moveTo(_btnList[6]._bounds.right + 2, _btnList[6]._bounds.top + 4);
+
+	for (int i = 0; i < 7; ++i) {
+		addElements(&_btnList[i], &_btnDescription[i], NULL);
+	}
+
+	// Add 'Resume' button
+	_btnResume.setText(RESUME_PLAY);
+	_btnResume._bounds.moveTo(5, _btnList[6]._bounds.bottom + 2);
+	addElements(&_btnResume, NULL);
+
+	// Set the dialog size and position
+	frame();
+	_bounds.collapse(-6, -6);
+	setCenter(160, 100);
+}
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE

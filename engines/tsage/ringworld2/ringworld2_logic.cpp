@@ -659,7 +659,7 @@ void Ringworld2Game::processEvent(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
-//			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			HelpDialog::show();
 			break;
 
 		case Common::KEYCODE_F2:
@@ -683,6 +683,11 @@ void Ringworld2Game::processEvent(Event &event) {
 			// F7 - Restore
 			restoreGame();
 			g_globals->_events.setCursorFromFlag();
+			break;
+
+		case Common::KEYCODE_F8:
+			// F8 - Credits
+			warning("TODO: Show Credits");
 			break;
 
 		case Common::KEYCODE_F10:

@@ -157,6 +157,23 @@ extern const char *CHAR_SEEKER_MSG;
 extern const char *CHAR_MIRANDA_MSG;
 extern const char *CHAR_CANCEL_MSG;
 
+extern const char *GAME_VERSION;
+extern const char *SOUND_OPTIONS;
+extern const char *QUIT_GAME;
+extern const char *RESTART_GAME;
+extern const char *SAVE_GAME;
+extern const char *RESTORE_GAME;
+extern const char *SHOW_CREDITS;
+extern const char *PAUSE_GAME;
+extern const char *RESUME_PLAY;
+extern const char *F2;
+extern const char *F3;
+extern const char *F4;
+extern const char *F5;
+extern const char *F7;
+extern const char *F8;
+extern const char *F10;
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
