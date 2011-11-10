@@ -344,6 +344,10 @@ CharacterDialog::CharacterDialog() {
 /*--------------------------------------------------------------------------*/
 
 void HelpDialog::show() {
+	// Set the palette and change the cursor
+	BF_GLOBALS._events.setCursor(CURSOR_ARROW);
+
+	// Create the dialog and draw it
 	HelpDialog *dlg = new HelpDialog();
 	dlg->draw();
 
