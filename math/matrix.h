@@ -25,6 +25,7 @@
 #ifndef MATH_MATRIX_H
 #define MATH_MATRIX_H
 
+#include <string.h>
 #include <assert.h>
 
 #include "common/streamdebug.h"
@@ -242,7 +243,7 @@ const float *MatrixBase<rows, cols>::getData() const {
 
 template<int rows, int cols>
 void MatrixBase<rows, cols>::setData(float *data) {
-	memcpy(_values[0], data, rows * cols * sizeof(float));
+	::memcpy(_values[0], data, rows * cols * sizeof(float));
 }
 
 template<int rows, int cols>
