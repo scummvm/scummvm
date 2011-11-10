@@ -118,8 +118,8 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			}
 			it->planeRect.top = readSelectorValue(_segMan, object, SELECTOR(top));
 			it->planeRect.left = readSelectorValue(_segMan, object, SELECTOR(left));
-			it->planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
-			it->planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
+			it->planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom));
+			it->planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right));
 
 			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
 			it->planeRect.top = (it->planeRect.top * screenRect.height()) / scriptsRunningHeight;
@@ -185,8 +185,8 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			Common::Rect planeRect;
 			planeRect.top = readSelectorValue(_segMan, object, SELECTOR(top));
 			planeRect.left = readSelectorValue(_segMan, object, SELECTOR(left));
-			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
-			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
+			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom));
+			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right));
 
 			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
 			planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
@@ -194,6 +194,9 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
 			planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
 			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
+			// FIXME: The code above incorrectly added 1 pixel to the plane's
+			// bottom and right, so probably the plane clipping code is no
+			// longer necessary
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -509,8 +512,8 @@ void GfxFrameout::kernelFrameout() {
 				if (useInsetRect) {
 					itemEntry->celRect.top = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inTop));
 					itemEntry->celRect.left = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inLeft));
-					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom)) + 1;
-					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight)) + 1;
+					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom));
+					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight));
 					if (view && view->isSci2Hires()) {
 						view->adjustToUpscaledCoordinates(itemEntry->celRect.top, itemEntry->celRect.left);
 						view->adjustToUpscaledCoordinates(itemEntry->celRect.bottom, itemEntry->celRect.right);
