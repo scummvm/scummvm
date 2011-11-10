@@ -88,6 +88,7 @@ public:
 	reg_t *getLocalsBegin() { return _localsBlock ? _localsBlock->_locals.begin() : NULL; }
 	void syncLocalsBlock(SegManager *segMan);
 	ObjMap &getObjectMap() { return _objects; }
+	const ObjMap &getObjectMap() const { return _objects; }
 
 public:
 	Script();
