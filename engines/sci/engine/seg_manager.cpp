@@ -270,13 +270,13 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 		if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			// It's a script, scan all objects in it
 			const Script *scr = (const Script *)mobj;
-			const ObjMap& objects = scr->getObjectMap();
+			const ObjMap &objects = scr->getObjectMap();
 			for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
 				objpos.offset = it->_value.getPos().offset;
 				if (name == getObjectName(objpos))
 					result.push_back(objpos);
 			}
-		} else  if (mobj->getType() == SEG_TYPE_CLONES) {
+		} else if (mobj->getType() == SEG_TYPE_CLONES) {
 			// It's clone table, scan all objects in it
 			const CloneTable *ct = (const CloneTable *)mobj;
 			for (uint idx = 0; idx < ct->_table.size(); ++idx) {
