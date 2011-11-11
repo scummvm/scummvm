@@ -192,13 +192,13 @@ public:
 	int _kateDialogCtr;
 	int _v4CEB6;
 	int _safeCombination;
-	int _v4CEC0;
+	int _gateStatus;
 	int _greenDay5TalkCtr;
 	int _v4CEC4;
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
-	int8 _v4CECE[18];
+	int8 _breakerBoxStatusArr[18];
 	int _v4CEE0;
 	int _v4CEE2;
 	int _v4CEE4;

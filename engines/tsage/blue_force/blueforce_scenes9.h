@@ -170,7 +170,7 @@ class Scene910: public PalettedScene {
 
 	class Object13: public NamedObject {
 	protected:
-		int _field90, _field92;
+		int _field90, _mode;
 	public:
 		void setupBreaker(int x, int y, int mode, int8 frameNumber);
 		virtual void synchronize(Serializer &s);
@@ -180,7 +180,7 @@ class Scene910: public PalettedScene {
 
 	class BlackPlug: public Object13 {
 	public:
-		void init(int x, int y, int arg8, int8 argA);
+		void init(int x, int y, int arg8, int8 mode);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
@@ -188,7 +188,7 @@ class Scene910: public PalettedScene {
 	class Object25: public NamedObject {
 		int _field90, _field92;
 	public:
-		void subEBBDC(int x, int y, int arg8, int argA);
+		void setupHiddenSwitch(int x, int y, int arg8, int argA);
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
@@ -253,7 +253,7 @@ class Scene910: public PalettedScene {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	int _field2DDA, _field2DD8, _field2DE0, _field2DE2, _field2DE4;
+	int _sceneSubMode, _breakerButtonCtr, _field2DE0, _field2DE2, _field2DE4;
 	Common::Point _destPos;
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
