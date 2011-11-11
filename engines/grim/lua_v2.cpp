@@ -549,7 +549,9 @@ void Lua_V2::PlayActorChore() {
 	// FIXME. code below is a hack, need proper implementation
 	actor->setCostume(costumeName);
 	Costume *costume = actor->getCurrentCostume();
-	costume->playChore(choreName);
+	warning("Lua_V2::PlayActorChore: Semi-stubbed, to allow movies to play for now");
+	// Uncomment the line below when we have gotten chores to work for EMI.
+	//costume->playChore(choreName);
 	pushbool(true);
 }
 

@@ -1318,24 +1318,24 @@ Costume::Component *Costume::loadComponentEMI(Costume::Component *parent, int pa
 	name += 4;
 
 	if (FROM_BE_32(tag) == MKTAG('m','e','s','h')) {
-		warning("Actor::loadComponentEMI Implement MESH-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement MESH-handling: %s" , name);
 		//return new MainModelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','k','e','l')) {
-		warning("Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SKEL-handling: %s" , name);
 		//return new ModelComponent(parent, parentID, name, prevComponent, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('t','e','x','i')) {
-		warning("Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement TEXI-handling: %s" , name);
 		//return new MaterialComponent(parent, parentID, name, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('a','n','i','m')) {
-		warning("Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement ANIM-handling: %s" , name);
 		//return new KeyframeComponent(parent, parentID, name, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','c')) {
-		warning("Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAC-handling: %s" , name);
 	} else if (FROM_BE_32(tag) == MKTAG('l','u','a','v')) {
-		warning("Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement LUAV-handling: %s" , name);
 		//return new LuaVarComponent(parent, parentID, name, tag);
 	} else if (FROM_BE_32(tag) == MKTAG('s','p','r','t')) {
-		warning("Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
+		Debug::warning(Debug::Costumes, "Actor::loadComponentEMI Implement SPRT-handling: %s" , name);
 		//return new SpriteComponent(parent, parentID, name, tag);
 	} else {
 		error("Actor::loadComponentEMI missing tag: %s for %s", name, type);
