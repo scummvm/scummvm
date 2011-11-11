@@ -56,7 +56,7 @@ ResourceLoader::ResourceLoader() {
 		l = new Lab();
 
 		if (l->open(filename)) {
-			if (filename.equalsIgnoreCase("data005.lab"))
+			if (filename.equalsIgnoreCase("data005.lab") || filename.equalsIgnoreCase("datausr.lab"))
 				_labs.push_front(l);
 			else
 				_labs.push_back(l);
