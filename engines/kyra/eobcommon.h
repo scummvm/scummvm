@@ -314,7 +314,6 @@ protected:
 	bool checkPartyStatus(bool handleDeath);
 
 	bool _runFlag;
-	//int _runLoopUnk2;
 
 	// Character generation / party transfer
 	bool startCharacterGeneration();
