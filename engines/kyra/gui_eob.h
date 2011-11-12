@@ -106,9 +106,6 @@ private:
 
 	void restParty_updateRestTime(int hours, bool init);
 
-	Button _scrollUpButton;//////////////////77
-	Button _scrollDownButton;
-
 	char **_menuStringsPrefsTemp;
 	char **_saveSlotStringsTemp;
 	int16 *_saveSlotIdTemp;
@@ -130,9 +127,6 @@ private:
 	uint16 _prcButtonUnk3;
 	uint16 _cflag;
 
-	//Button::Callback _scrollUpFunctor;
-	//Button::Callback _scrollDownFunctor;
-
 	int _menuLineSpacing;
 	int _menuLastInFlags;
 
@@ -150,6 +144,7 @@ private:
 	int _updateBoxIndex;
 	int _updateBoxColorIndex;
 	uint32 _highLightBoxTimer;
+
 	static const EobRect16 _updateBoxFrameHighLights[];
 };
 

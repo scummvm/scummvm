@@ -620,6 +620,7 @@ namespace Kyra {
 void EobCoreEngine::loadLevel(int level, int sub) {
 	_currentLevel = level;
 	_currentSub = sub;
+	uint32 end = _system->getMillis() + 500;
 
 	Common::String file;
 	Common::SeekableReadStream *s = 0;
@@ -695,6 +696,8 @@ void EobCoreEngine::loadLevel(int level, int sub) {
 
 	loadVcnData(gfxFile.c_str(), 0);
 	_screen->loadEobBitmap("INVENT", 0, 5, 3, 2);
+	delayUntil(end);
+	snd_stopSound();
 
 	enableSysTimer(2);
 	_sceneDrawPage1 = 2;
