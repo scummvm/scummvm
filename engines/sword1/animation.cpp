@@ -306,6 +306,8 @@ bool MoviePlayer::playVideo() {
 					convertColor(r, g, b, h, s, v);
 
 					// C1 color
+					// It is almost achromatic (very low saturation) so the hue as litle impact on the color.
+					// Therefore use a low weight on hue and high weight on saturation.
 					hd = h - h1;
 					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
 					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s1) * (s - s1) + 3.0f * (v - v1) * (v - v1);
@@ -315,6 +317,7 @@ bool MoviePlayer::playVideo() {
 					}
 
 					// C2 color
+					// Also an almost achromatic color so use the same weights as for C1 color.
 					hd = h - h2;
 					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.0f : 0.0f;
 					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s2) * (s - s2) + 3.0f * (v - v2) * (v - v2);
@@ -324,6 +327,8 @@ bool MoviePlayer::playVideo() {
 					}
 
 					// C3 color
+					// A light rose. Use a high weight on the hue to get a rose.
+					// The color is a bit gray and the saturation has not much impact so use a low weight.
 					hd = h - h3;
 					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.0f : 0.0f;
 					hsvWeight = 4.0f * hd * hd + 1.0f * (s - s3) * (s - s3) + 2.0f * (v - v3) * (v - v3);
@@ -333,6 +338,8 @@ bool MoviePlayer::playVideo() {
 					}
 
 					// C4 color
+					// Blue. Use a hight weight on the hue to get a blue.
+					// The color is darker and more saturated than C3 and the saturation has more impact.
 					hd = h - h4;
 					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
 					hsvWeight = 5.0f * hd * hd + 3.0f * (s - s4) * (s - s4) + 2.0f * (v - v4) * (v - v4);
