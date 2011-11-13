@@ -307,8 +307,8 @@ bool MoviePlayer::playVideo() {
 
 					// C1 color
 					hd = h - h1;
-					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
-					hsvWeight = 1.f * hd * hd + 4.f * (s - s1) * (s - s1) + 3.f * (v - v1) * (v - v1);
+					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s1) * (s - s1) + 3.0f * (v - v1) * (v - v1);
 					if (hsvWeight <= c1Weight) {
 						c1Weight = hsvWeight;
 						_c1Color = i;
@@ -316,8 +316,8 @@ bool MoviePlayer::playVideo() {
 
 					// C2 color
 					hd = h - h2;
-					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
-					hsvWeight = 1.f * hd * hd + 4.f * (s - s2) * (s - s2) + 3.f * (v - v2) * (v - v2);
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.0f : 0.0f;
+					hsvWeight = 1.0f * hd * hd + 4.0f * (s - s2) * (s - s2) + 3.0f * (v - v2) * (v - v2);
 					if (hsvWeight <= c2Weight) {
 						c2Weight = hsvWeight;
 						_c2Color = i;
@@ -325,8 +325,8 @@ bool MoviePlayer::playVideo() {
 
 					// C3 color
 					hd = h - h3;
-					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
-					hsvWeight = 4.f * hd * hd + 1.f * (s - s3) * (s - s3) + 2.f * (v - v3) * (v - v3);
+					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.0f : 0.0f;
+					hsvWeight = 4.0f * hd * hd + 1.0f * (s - s3) * (s - s3) + 2.0f * (v - v3) * (v - v3);
 					if (hsvWeight <= c3Weight) {
 						c3Weight = hsvWeight;
 						_c3Color = i;
@@ -334,8 +334,8 @@ bool MoviePlayer::playVideo() {
 
 					// C4 color
 					hd = h - h4;
-					hd += hd < -0.5f ? 1.f : hd > 0.5f ? -1.f : 0.f;
-					hsvWeight = 5.f * hd * hd + 3.f * (s - s4) * (s - s4) + 2.f * (v - v4) * (v - v4);
+					hd += hd < -0.5f ? 1.0f : hd > 0.5f ? -1.0f : 0.0f;
+					hsvWeight = 5.0f * hd * hd + 3.0f * (s - s4) * (s - s4) + 2.0f * (v - v4) * (v - v4);
 					if (hsvWeight <= c4Weight) {
 						c4Weight = hsvWeight;
 						_c4Color = i;
@@ -379,27 +379,27 @@ byte MoviePlayer::findTextColorPalIndex() {
 }
 
 void MoviePlayer::convertColor(byte r, byte g, byte b, float &h, float &s, float &v) {
-	float varR = r / 255.f;
-	float varG = g / 255.f;
-	float varB = b / 255.f;
+	float varR = r / 255.0f;
+	float varG = g / 255.0f;
+	float varB = b / 255.0f;
 
 	float min = MIN(varR, MIN(varG, varB));
 	float max = MAX(varR, MAX(varG, varB));
 
 	v = max;
 	float d = max - min;
-	s = max == 0.f ? 0.f : d / max;
+	s = max == 0.0f ? 0.0f : d / max;
 
 	if (min == max) {
-		h = 0; // achromatic
+		h = 0.0f; // achromatic
 	} else {
 		if (max == varR)
-			h = (varG - varB) / d + (varG < varB ? 6.f : 0.f);
+			h = (varG - varB) / d + (varG < varB ? 6.0f : 0.0f);
 		else if (max == varG)
-			h = (varB - varR) / d + 2.f;
+			h = (varB - varR) / d + 2.0f;
 		else
-			h = (varR - varG) / d + 4.f;
-		h /= 6.f;
+			h = (varR - varG) / d + 4.0f;
+		h /= 6.0f;
 	}
 }
 
