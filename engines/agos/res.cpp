@@ -47,6 +47,13 @@ void ArchiveMan::registerArchive(const Common::String &filename, int priority) {
 }
 #endif
 
+bool ArchiveMan::hasFile(const Common::String &name) {
+	if (_fallBack && SearchMan.hasFile(name))
+		return true;
+
+	return Common::SearchSet::hasFile(name);
+}
+
 Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
 	if (_fallBack && SearchMan.hasFile(filename)) {
 		return SearchMan.createReadStreamForMember(filename);

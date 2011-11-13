@@ -162,7 +162,6 @@ InstallShieldCabinet::InstallShieldCabinet(const Common::String &filename) : _in
 }
 
 bool InstallShieldCabinet::hasFile(const Common::String &name) {
-	warning("hasFile: Filename %s", name.c_str());
 	return _map.contains(name);
 }
 
