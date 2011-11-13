@@ -200,7 +200,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 
 	if (slotNumber == -1) {
 		// Loading the data for the initial game state
-		kSavegame0File file = kSavegame0File(this, kSavegame0Name);
+		EncryptedStream file = EncryptedStream(this, kSavegame0Name);
 		int size = file.size();
 		byte *dataBuffer = (byte *)malloc(size);
 		file.read(dataBuffer, size);
