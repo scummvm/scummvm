@@ -197,6 +197,7 @@ public:
 	void registerArchive(const Common::String &filename, int priority);
 #endif
 
+	bool hasFile(const Common::String &name);
 	Common::SeekableReadStream *open(const Common::String &filename);
 
 private:
