@@ -570,6 +570,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
 		break;
+	case kSubtitleToggle:
+		// We update the slider settings here, when there are sliders, to
+		// disable the speech volume in case we are in subtitle only mode.
+		if (_musicVolumeSlider)
+			setVolumeSettingsState(true);
+		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
 		_subSpeedLabel->draw();
@@ -691,6 +697,9 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
+	// Disable speech volume slider, when we are in subtitle only mode.
+	if (_subToggleGroup)
+		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
 	if (_guioptions.contains(GUIO_NOSPEECH))
 		ena = false;
 
