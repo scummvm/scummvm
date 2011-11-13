@@ -100,9 +100,18 @@ bool DrasculaEngine::confirmExit() {
 		key = getScan();
 		if (key != 0)
 			break;
+
+		// This gives a better feedback to the user when he is asked to
+		// confirm whether he wants to quit. It now still updates the room and
+		// shows mouse cursor movement. Hopefully it will work in all
+		// locations of the game.
+		updateRoom();
+		color_abc(kColorRed);
+		centerText(_textsys[1], 160, 87);
+		updateScreen();
 	}
 
-	if (key == Common::KEYCODE_ESCAPE) {
+	if (key == Common::KEYCODE_ESCAPE || shouldQuit()) {
 		stopMusic();
 		return false;
 	}
