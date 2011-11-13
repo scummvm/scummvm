@@ -280,16 +280,16 @@ bool MoviePlayer::playVideo() {
 				
 				// Color comparaison for the subtitles colors is done in HSL
 				// C1 color is used for George and is almost white (R = 248, G = 252, B = 248)
-				float h1 = 0.333333f, s1 = 0.02f, v1 = 0.99f;
+				const float h1 = 0.333333f, s1 = 0.02f, v1 = 0.99f;
 
 				// C2 color is used for George as a narrator and is grey (R = 184, G = 188, B = 184)
-				float h2 = 0.333333f, s2 = 0.02f, v2 = 0.74f;
+				const float h2 = 0.333333f, s2 = 0.02f, v2 = 0.74f;
 
 				// C3 color is used for Nicole and is rose (R = 200, G = 120, B = 184)
-				float h3 = 0.866667f, s3 = 0.4f, v3 = 0.78f;
+				const float h3 = 0.866667f, s3 = 0.4f, v3 = 0.78f;
 
 				// C4 color is used for Maguire and is blue (R = 80, G = 152, B = 184)
-				float h4 = 0.55f, s4 = 0.57f, v4 = 0.72f;
+				const float h4 = 0.55f, s4 = 0.57f, v4 = 0.72f;
 
 				for (int i = 0; i < 256; i++) {
 					r = *palette++;
@@ -379,20 +379,19 @@ byte MoviePlayer::findTextColorPalIndex() {
 }
 
 void MoviePlayer::convertColor(byte r, byte g, byte b, float &h, float &s, float &v) {
-	// First do color correction
 	float varR = r / 255.f;
 	float varG = g / 255.f;
 	float varB = b / 255.f;
 
-	float min = varR < varG ? (varR < varB ? varR : varB) : (varG < varB ? varG : varB);
-	float max = varR > varG ? (varR > varB ? varR : varB) : (varG > varB ? varG : varB);
+	float min = MIN(varR, MIN(varG, varB));
+	float max = MAX(varR, MAX(varG, varB));
 
 	v = max;
 	float d = max - min;
 	s = max == 0.f ? 0.f : d / max;
 
 	if (min == max) {
-		h = 0; // achromati
+		h = 0; // achromatic
 	} else {
 		if (max == varR)
 			h = (varG - varB) / d + (varG < varB ? 6.f : 0.f);
