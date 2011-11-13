@@ -34,6 +34,11 @@ void DrasculaEngine::talkInit(const char *filename) {
 }
 
 bool DrasculaEngine::isTalkFinished() {
+	if (shouldQuit()) {
+		stopSound();
+		return true;
+	}
+
 	if (getScan() != 0)
 		stopSound();
 	if (soundIsActive())

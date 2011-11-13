@@ -197,7 +197,7 @@ void DrasculaEngine::converse(int index) {
 	// from 1(top) to 31
 	color_abc(kColorLightGreen);
 
-	while (breakOut == 0) {
+	while (breakOut == 0 && !shouldQuit()) {
 		updateRoom();
 
 		if (musicStatus() == 0 && roomMusic != 0) {

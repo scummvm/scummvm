@@ -789,7 +789,7 @@ void DrasculaEngine::delay(int ms) {
 		_system->delayMillis(10);
 		updateEvents();
 		_system->updateScreen();
-	} while (_system->getMillis() < end);
+	} while (_system->getMillis() < end && !shouldQuit());
 }
 
 void DrasculaEngine::pause(int duration) {
