@@ -112,7 +112,14 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 		cgeCode = 28;
 		return true;
 	}
-	if (keycode == Common::KEYCODE_F5) {
+	if (keycode == Common::KEYCODE_F1) {
+		if (event.type == Common::EVENT_KEYUP)
+			return false;
+		// Display ScummVM version and translation strings
+		for (int i = 0; i < 5; i++)
+			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
+		return false;
+	} else if (keycode == Common::KEYCODE_F5) {
 		if (_vm->canSaveGameStateCurrently()) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);

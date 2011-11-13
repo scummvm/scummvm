@@ -56,6 +56,7 @@ namespace CGE {
 #define kSystemRate    6   // 12 Hz
 #define kHeroFun0      (40 * 12)
 #define kHeroFun1      ( 2 * 12)
+#define kShowScummVMVersion 15
 #define kGetNamePrompt 50
 #define kGetNameTitle  51
 #define kTSeq          96

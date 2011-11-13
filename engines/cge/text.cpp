@@ -177,6 +177,8 @@ void Text::say(const char *text, Sprite *spr) {
 
 void CGEEngine::inf(const char *text) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
+	if (!text)
+		return;
 
 	killText();
 	_talk = new Talk(this, text, kTBRect);
