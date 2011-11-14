@@ -388,6 +388,10 @@ void GUI::updateSaveList(bool excludeQuickSaves) {
 	if (_saveSlots.begin() == _saveSlots.end())
 		return;
 
+	sortSaveSlots();
+}
+
+void GUI::sortSaveSlots() {
 	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
 	if (_saveSlots.size() > 2)
 		Common::sort(_saveSlots.begin()+1, _saveSlots.end(), Common::Greater<int>());

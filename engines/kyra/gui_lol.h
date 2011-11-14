@@ -175,6 +175,8 @@ private:
 	char **_savegameList;
 	int _savegameListSize;
 	bool _savegameListUpdateNeeded;
+
+	virtual void sortSaveSlots();
 };
 
 } // End of namespace Kyra

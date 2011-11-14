@@ -207,6 +207,8 @@ protected:
 	void updateSaveList(bool excludeQuickSaves = false);
 	int getNextSavegameSlot();
 
+	virtual void sortSaveSlots();
+
 	uint32 _lastScreenUpdate;
 	Common::KeyState _keyPressed;
 	void checkTextfieldInput();

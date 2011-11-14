@@ -2618,8 +2618,6 @@ void GUI_LoL::updateSavegameList() {
 	_savegameListSize = _saveSlots.size();
 
 	if (_savegameListSize) {
-		Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
-
 		LoLEngine::SaveHeader header;
 		Common::InSaveFile *in;
 
@@ -2640,6 +2638,10 @@ void GUI_LoL::updateSavegameList() {
 	} else {
 		_savegameList = 0;
 	}
+}
+
+void GUI_LoL::sortSaveSlots() {
+	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) {
