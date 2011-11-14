@@ -268,9 +268,9 @@ Common::Error SkyEngine::init() {
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"))
-			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _skyDisk);
+			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _mixer, _skyDisk);
 		else
-			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _skyDisk);
+			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _mixer, _skyDisk);
 	}
 
 	if (isCDVersion()) {
