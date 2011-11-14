@@ -96,7 +96,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	int16 oldLevel = 0;
-	bool personWalking = false;
+	bool personWalking = false; // FIXME: unused
 
 	// Lines 828-846 in talk.c
 	for (i = 1; i <= 4; i++) {
@@ -373,7 +373,7 @@ byte *Talk::loadDialogFile(const char *filename) {
 void Talk::load(const char *filename) {
 	int i;
 	byte *ptr = _fileData = loadDialogFile(filename);
-	bool canQuit;
+	bool canQuit; // FIXME: unused
 
 	// Load talk header
 
