@@ -3851,81 +3851,6 @@ findopen2a:
 		goto findopen1a;
 }
 
-void DreamGenContext::examineob() {
-	STACK_CHECK;
-	data.byte(kPointermode) = 0;
-	data.word(kTimecount) = 0;
-examineagain:
-	data.byte(kInmaparea) = 0;
-	data.byte(kExamagain) = 0;
-	data.byte(kOpenedob) = 255;
-	data.byte(kOpenedtype) = 255;
-	data.byte(kInvopen) = 0;
-	al = data.byte(kCommandtype);
-	data.byte(kObjecttype) = al;
-	data.byte(kItemframe) = 0;
-	data.byte(kPointerframe) = 0;
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	obpicture();
-	describeob();
-	undertextline();
-	data.byte(kCommandtype) = 255;
-	readmouse();
-	showpointer();
-	worktoscreen();
-	delpointer();
-waitexam:
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	dumptextline();
-	delpointer();
-	data.byte(kGetback) = 0;
-	bx = offset_examlist;
-	_cmp(data.byte(kInvopen), 0);
-	if (flags.z())
-		goto notuseinv;
-	bx = offset_invlist1;
-	_cmp(data.byte(kInvopen), 1);
-	if (flags.z())
-		goto notuseinv;
-	bx = offset_withlist1;
-notuseinv:
-	checkcoords();
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		goto stopwaiting;
-	_cmp(data.byte(kExamagain), 0);
-	if (flags.z())
-		goto norex;
-	goto examineagain;
-norex:
-	_cmp(data.byte(kGetback), 0);
-	if (flags.z())
-		goto waitexam;
-stopwaiting:
-	data.byte(kPickup) = 0;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		goto iswatching;
-	_cmp(data.byte(kNewlocation), 255);
-	if (!flags.z())
-		goto justgetback;
-iswatching:
-	makemainscreen();
-	data.byte(kInvopen) = 0;
-	data.byte(kOpenedob) = 255;
-	return;
-justgetback:
-	data.byte(kInvopen) = 0;
-	data.byte(kOpenedob) = 255;
-}
-
 void DreamGenContext::makemainscreen() {
 	STACK_CHECK;
 	createpanel();
@@ -16698,7 +16623,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_monprint: monprint(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallopen: findallopen(); break;
-		case addr_examineob: examineob(); break;
 		case addr_makemainscreen: makemainscreen(); break;
 		case addr_getbackfromob: getbackfromob(); break;
 		case addr_incryanpage: incryanpage(); break;
