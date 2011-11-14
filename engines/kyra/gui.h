@@ -108,6 +108,8 @@ public:
 	// utilities for thumbnail creation
 	virtual void createScreenThumbnail(Graphics::Surface &dst) = 0;
 
+	void notifyUpdateSaveSlotsList() { _saveSlotsListUpdateNeeded = true; }
+
 protected:
 	KyraEngine_v1 *_vm;
 	Screen *_screen;
@@ -116,16 +118,16 @@ protected:
 	// Since ScummVM's savegame indices aren't, we re-index them.
 	// The integers stored in _saveSlots are ScummVM savegame indices.
 	Common::Array<int> _saveSlots;
-	void updateSaveList(bool excludeQuickSaves = false);
+	void updateSaveFileList(bool excludeQuickSaves = false);
 	int getNextSavegameSlot();
-	void updateSavegameList();
+	void updateSaveSlotsList();
 
 	virtual void sortSaveSlots();
 
 	uint32 _lastScreenUpdate;
 	char **_savegameList;
 	int _savegameListSize;
-	bool _savegameListUpdateNeeded;
+	bool _saveSlotsListUpdateNeeded;
 
 	Common::KeyState _keyPressed;
 };

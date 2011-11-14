@@ -2222,13 +2222,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// Instead, the respevtive struct entry is used to determine whether
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
-	_savegameListUpdateNeeded = true;
+	_saveSlotsListUpdateNeeded = true;
 
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
 		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
-			updateSavegameList();
+			updateSaveSlotsList();
 			setupSaveMenuSlots(*_currentMenu, 4);
 		}
 
@@ -2837,7 +2837,7 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 				_vm->_saveFileMan->renameSavefile(oldName, newName);
 			}
 			_newMenu = &_mainMenu;
-			_savegameListUpdateNeeded = true;
+			_saveSlotsListUpdateNeeded = true;
 		}
 	} else if (button->arg == _choiceMenu.item[1].itemId) {
 		_newMenu = &_mainMenu;

@@ -391,6 +391,7 @@ Common::Error EobCoreEngine::loadGameState(int slot) {
 
 	_loading = false;
 	_screen->fadeFromBlack(20);
+	removeInputTop();
 
 	return Common::kNoError;
 }
@@ -589,6 +590,9 @@ Common::Error EobCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 	}
 
 	delete out;
+
+	_gui->notifyUpdateSaveSlotsList();
+
 	return Common::kNoError;
 }
 

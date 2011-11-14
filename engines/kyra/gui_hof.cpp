@@ -1148,7 +1148,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 }
 
 int GUI_HoF::loadMenu(Button *caller) {
-	updateSaveList();
+	updateSaveFileList();
 
 	if (!_vm->_menuDirectlyToLoad) {
 		updateMenuButton(caller);
