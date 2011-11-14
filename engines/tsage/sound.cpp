@@ -36,7 +36,7 @@ static SoundManager *_soundManager = NULL;
 
 SoundManager::SoundManager() {
 	_soundManager = this;
-	__sndmgrReady = false;
+	_sndmgrReady = false;
 	_ourSndResVersion = 0x102;
 	_ourDrvResVersion = 0x10A;
 
@@ -52,7 +52,7 @@ SoundManager::SoundManager() {
 }
 
 SoundManager::~SoundManager() {
-	if (__sndmgrReady) {
+	if (_sndmgrReady) {
 		Common::StackLock slock(_serverDisabledMutex);
 		g_vm->_mixer->stopAll();
 
@@ -83,7 +83,7 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::postInit() {
-	if (!__sndmgrReady) {
+	if (!_sndmgrReady) {
 		g_saver->addSaveNotifier(&SoundManager::saveNotifier);
 		g_saver->addLoadNotifier(&SoundManager::loadNotifier);
 		g_saver->addListener(this);
@@ -94,7 +94,7 @@ void SoundManager::postInit() {
 //	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to
 //	call the update method, rather than having it be called separately
 //		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL, "tsageSoundUpdate");
-		__sndmgrReady = true;
+		_sndmgrReady = true;
 	}
 }
 
@@ -136,7 +136,7 @@ void SoundManager::update() {
 }
 
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
-	assert(__sndmgrReady);
+	assert(_sndmgrReady);
 	_availableDrivers.clear();
 
 	// Build up a list of available drivers. Currently we only implement an Adlib music
@@ -549,7 +549,7 @@ void SoundManager::loadNotifier(bool postFlag) {
 void SoundManager::loadNotifierProc(bool postFlag) {
 	if (!postFlag) {
 		// Stop any currently playing sounds
-		if (__sndmgrReady) {
+		if (_sndmgrReady) {
 			Common::StackLock slock(_serverDisabledMutex);
 
 			for (Common::List<Sound *>::iterator i = _soundList.begin(); i != _soundList.end(); ) {
@@ -569,7 +569,7 @@ void SoundManager::loadNotifierProc(bool postFlag) {
 
 void SoundManager::listenerSynchronize(Serializer &s) {
 	s.validate("SoundManager");
-	assert(__sndmgrReady && _driversDetected);
+	assert(_sndmgrReady && _driversDetected);
 
 	if (s.getVersion() < 6)
 		return;

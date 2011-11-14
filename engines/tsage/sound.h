@@ -169,7 +169,7 @@ class SoundManager : public SaveListener {
 private:
 	SoundDriver *instantiateDriver(int driverNum);
 public:
-	bool __sndmgrReady;
+	bool _sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
 	SynchronizedList<Sound *> _playList;
 	Common::List<SoundDriver *> _installedDrivers;
