@@ -55,16 +55,6 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
-	// English ScummVM version
-	{
-		"soltys", "",
-		{
-			{"vol.cat", 0, "bd08969b5f1acea0f92d195f750c17d5", 50176},
-			{"vol.dat", 0, "f9ae2e7f8f7cac91378cdafca43faf1e", 8428832},
-			AD_LISTEND
-		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
-	},
 	{
 		"soltys", "Soltys Demo (not supported)",
 		{
@@ -82,6 +72,24 @@ static const ADGameDescription gameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::PL_POL, Common::kPlatformPC, ADGF_DEMO , GUIO1(GUIO_NONE)
+	},
+	{
+		"soltys", "Soltys Freeware v1.0",
+		{
+			{"vol.cat", 0, "f1675684c68ab90272f5776f8f2c3974", 50176},
+			{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS , GUIO_NONE
+	},
+	{
+		"soltys", "Soltys Freeware v1.0",
+		{
+			{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
+			{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };
