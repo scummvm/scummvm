@@ -716,7 +716,7 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
 	static bool word_7F28C = false;
 	int word_7FED2 = 0;
-	int word_8502A = 0;
+	//int word_8502A = 0;
 
 	// If it's a keypress, handle it immediately
 	if (eventType == KEVENT_KEY) {
@@ -789,7 +789,7 @@ bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, b
 		if (!word_7F28C || (objIndex <= 18))
 			_selectedLine = objIndex;
 
-		word_8502A = -1;
+		//word_8502A = -1;
 	}
 
 	return true;

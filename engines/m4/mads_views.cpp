@@ -77,7 +77,7 @@ void MadsAction::appendVocab(int vocabId, bool capitalise) {
 
 void MadsAction::set() {
 	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
-	bool flag = false;
+	bool flag = false; // FIXME: unused
 	strcpy(_statusText, "");
 
 	_currentAction = -1;

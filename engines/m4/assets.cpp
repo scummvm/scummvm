@@ -301,11 +301,11 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 
 int32 SpriteAsset::parseSprite(bool isBigEndian) {
 
-	uint32 format, chunkType, chunkSize = 0;
+	uint32 chunkType, chunkSize = 0;
 
 	_colorCount = 0;
 
-	format = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
+	/*format = (!isBigEndian) ? _stream->readUint32LE() : */_stream->readUint32BE();
 
 	chunkType = (!isBigEndian) ? _stream->readUint32LE() : _stream->readUint32BE();
 
