@@ -1434,155 +1434,159 @@ void DreamGenContext::dumppointer() {
 }
 
 void DreamGenContext::checkcoords() {
-	checkcoords((const RectWithCallback *)cs.ptr(bx, 0));
+
+	// FIXME: Move all these lists to the callers
+
+	switch ((uint16)bx) {
+	case offset_talklist: {
+		RectWithCallback talklist[] = {
+			{ 273,320,157,198,&DreamGenContext::getback1 },
+			{ 240,290,2,44,&DreamGenContext::moretalk },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(talklist);
+		break;
+	}
+	case offset_quitlist: {
+		RectWithCallback quitlist[] = {
+			{ 273,320,157,198,&DreamGenContext::getback1 },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(quitlist);
+		break;
+	}
+	case offset_destlist: {
+		RectWithCallback destlist[] = {
+			{ 238,258,4,44,&DreamGenContext::nextdest },
+			{ 104,124,4,44,&DreamGenContext::lastdest },
+			{ 280,308,4,44,&DreamGenContext::lookatplace },
+			{ 104,216,138,192,&DreamGenContext::destselect },
+			{ 273,320,157,198,&DreamGenContext::getback1 },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(destlist);
+		break;
+	}
+	case offset_keypadlist: {
+		RectWithCallback keypadlist[] = {
+			{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonone },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttontwo },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonthree },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonfour },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonfive },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonsix },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonseven },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttoneight },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonnine },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonnought },
+			{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonenter },
+			{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitkey },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(keypadlist);
+		break;
+	}
+	case offset_menulist: {
+		RectWithCallback menulist[] = {
+			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitkey },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(menulist);
+		break;
+	}
+	case offset_folderlist: {
+		RectWithCallback folderlist[] = {
+			{ 280,320,160,200,&DreamGenContext::quitkey },
+			{ 143,300,6,194,&DreamGenContext::nextfolder },
+			{ 0,143,6,194,&DreamGenContext::lastfolder },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(folderlist);
+		break;
+	}
+	case offset_symbollist: {
+		RectWithCallback symbollist[] = {
+			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitsymbol },
+			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::settopleft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::settopright },
+			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setbotleft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setbotright },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(symbollist);
+
+		break;
+	}
+	case offset_diarylist: {
+		RectWithCallback diarylist[] = {
+			{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diarykeyn },
+			{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diarykeyp },
+			{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitkey },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(diarylist);
+		break;
+	}
+	case offset_opslist: {
+		RectWithCallback opslist[] = {
+			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getbackfromops },
+			{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::dosreturn },
+			{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discops },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(opslist);
+		break;
+	}
+	case offset_discopslist: {
+		RectWithCallback discopslist[] = {
+			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadgame },
+			{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::savegame },
+			{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(discopslist);
+		break;
+	}
+	case offset_decidelist: {
+		RectWithCallback decidelist[] = {
+			{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newgame },
+			{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::dosreturn },
+			{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadold },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(decidelist);
+		break;
+	}
+	default:
+		::error("Unimplemented checkcoords() call");
+	}
 }
+
 
 void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 	if (data.byte(kNewlocation) != 0xff)
 		return;
 
-	const RectWithCallback *rectWithCallback = rectWithCallbacks;
-	while (rectWithCallback->xMin() != 0xffff) {
-		if (rectWithCallback->contains(data.word(kMousex), data.word(kMousey))) {
-			uint16 callback = rectWithCallback->callback();
-
-			// common
-			if(callback == addr_blank)
-				blank();
-			else if(callback == addr_getbackfromob)
-				getbackfromob();
-			else if(callback == addr_incryanpage)
-				incryanpage();
-			else if(callback == addr_getback1)
-				getback1();
-			else if(callback == addr_quitkey)
-				quitkey();
-			else if(callback == addr_dosreturn)
-				dosreturn();
-			else if(callback == addr_getbacktoops)
-				getbacktoops();
-			else if(callback == addr_selectslot)
-				selectslot();
-			// examlist
-			else if(callback == addr_useobject)
-				useobject();
-			else if(callback == addr_selectopenob)
-				selectopenob();
-			else if(callback == addr_setpickup)
-				setpickup();
-			else if(callback == addr_examinventory)
-				examinventory();
-			// invlist1
-			else if(callback == addr_dropobject)
-				dropobject();
-			else if(callback == addr_useopened)
-				useopened();
-			else if(callback == addr_intoinv)
-				intoinv();
-			// withlist1
-			else if(callback == addr_selectob)
-				selectob();
-			// talklist
-			else if(callback == addr_moretalk)
-				moretalk();
-			// quitlist
-			// destlist
-			else if(callback == addr_nextdest)
-				nextdest();
-			else if(callback == addr_lastdest)
-				lastdest();
-			else if(callback == addr_lookatplace)
-				lookatplace();
-			else if(callback == addr_destselect)
-				destselect();
-			// keypadlist
-			else if(callback == addr_buttonone)
-				buttonone();
-			else if(callback == addr_buttontwo)
-				buttontwo();
-			else if(callback == addr_buttonthree)
-				buttonthree();
-			else if(callback == addr_buttonfour)
-				buttonfour();
-			else if(callback == addr_buttonfive)
-				buttonfive();
-			else if(callback == addr_buttonsix)
-				buttonsix();
-			else if(callback == addr_buttonseven)
-				buttonseven();
-			else if(callback == addr_buttoneight)
-				buttoneight();
-			else if(callback == addr_buttonnine)
-				buttonnine();
-			else if(callback == addr_buttonnought)
-				buttonnought();
-			else if(callback == addr_buttonenter)
-				buttonenter();
-			// menulist
-			// folderlist
-			else if(callback == addr_nextfolder)
-				nextfolder();
-			else if(callback == addr_lastfolder)
-				lastfolder();
-			// symbollist
-			else if(callback == addr_quitsymbol)
-				quitsymbol();
-			else if(callback == addr_settopleft)
-				settopleft();
-			else if(callback == addr_settopright)
-				settopright();
-			else if(callback == addr_setbotleft)
-				setbotleft();
-			else if(callback == addr_setbotright)
-				setbotright();
-			// diarylist
-			else if(callback == addr_diarykeyn)
-				diarykeyn();
-			else if(callback == addr_diarykeyp)
-				diarykeyp();
-			// opslist
-			else if(callback == addr_getbackfromops)
-				getbackfromops();
-			else if(callback == addr_discops)
-				discops();
-			// discopslist
-			else if(callback == addr_loadgame)
-				loadgame();
-			else if(callback == addr_savegame)
-				savegame();
-			// mainlist, mainlist2
-			else if(callback == addr_look)
-				look();
-			else if(callback == addr_inventory)
-				inventory();
-			else if(callback == addr_zoomonoff)
-				zoomonoff();
-			else if(callback == addr_saveload)
-				saveload();
-			else if(callback == addr_madmanrun)
-				madmanrun();
-			else if(callback == addr_identifyob)
-				identifyob();
-			// decidelist
-			else if(callback == addr_newgame)
-				newgame();
-			else if(callback == addr_loadold)
-				loadold();
-			// loadlist
-			else if(callback == addr_actualload)
-				actualload();
-			// savelist
-			else if(callback == addr_actualsave)
-				actualsave();
-			else {
-				debug("__dispatch_call remaining in checkcoords! %d", (int)callback);
-				__dispatch_call(callback);
-			}
+	const RectWithCallback *r;
+	for (r = rectWithCallbacks; r->_xMin != 0xffff; ++r) {
+		if (r->contains(data.word(kMousex), data.word(kMousey))) {
+			(this->*(r->_callback))();
 			return;
 		}
-		++rectWithCallback;
 	}
 }
+
 
 void DreamGenContext::showpointer() {
 	showblink();
@@ -1921,11 +1925,27 @@ void DreamGenContext::showcity() {
 void DreamGenContext::mainscreen() {
 	data.byte(kInmaparea) = 0;
 	if (data.byte(kWatchon) == 1) {
-		bx = offset_mainlist;
-		checkcoords();
+		RectWithCallback mainlist[] = {
+			{ 44,70,32,46,&DreamGenContext::look },
+			{ 0,50,0,180,&DreamGenContext::inventory },
+			{ 226,244,10,26,&DreamGenContext::zoomonoff },
+			{ 226,244,26,40,&DreamGenContext::saveload },
+			{ 240,260,100,124,&DreamGenContext::madmanrun },
+			{ 0,320,0,200,&DreamGenContext::identifyob },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(mainlist);
 	} else {
-		bx = offset_mainlist2;
-		checkcoords();
+		RectWithCallback mainlist2[] = {
+			{ 44,70,32,46,&DreamGenContext::look },
+			{ 0,50,0,180,&DreamGenContext::inventory },
+			{ 226+48,244+48,10,26,&DreamGenContext::zoomonoff },
+			{ 226+48,244+48,26,40,&DreamGenContext::saveload },
+			{ 240,260,100,124,&DreamGenContext::madmanrun },
+			{ 0,320,0,200,&DreamGenContext::identifyob },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(mainlist2);
 	}
 
 	if (data.byte(kWalkandexam) != 0)

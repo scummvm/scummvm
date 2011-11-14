@@ -72,8 +72,14 @@ void DreamGenContext::doload() {
 			vsync();
 			dumppointer();
 			dumptextline();
-			bx = offset_loadlist;
-			checkcoords();
+			RectWithCallback loadlist[] = {
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualload },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectslot },
+				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0xFFFF,0,0,0,0 }
+			};
+			checkcoords(loadlist);
 			if (data.byte(kGetback) == 1)
 				break;
 			if (data.byte(kGetback) == 2)
@@ -213,8 +219,15 @@ void DreamGenContext::savegame() {
 			vsync();
 			dumppointer();
 			dumptextline();
-			bx = offset_savelist;
-			checkcoords();
+
+			RectWithCallback savelist[] = {
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualsave },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectslot },
+				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0xFFFF,0,0,0,0 }
+			};
+			checkcoords(savelist);
 			_cmp(data.byte(kGetback), 0);
 			if (flags.z())
 				continue;

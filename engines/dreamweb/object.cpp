@@ -148,18 +148,44 @@ void DreamGenContext::examineob(bool examineAgain) {
 		delpointer();
 		data.byte(kGetback) = 0;
 		switch (data.byte(kInvopen)) {
-		case 0:
-			bx = offset_examlist;
-			checkcoords();
+		case 0: {
+			RectWithCallback examlist[] = {
+				{ 273,320,157,198,&DreamGenContext::getbackfromob },
+				{ 260,300,0,44,&DreamGenContext::useobject },
+				{ 210,254,0,44,&DreamGenContext::selectopenob },
+				{ 144,176,64,96,&DreamGenContext::setpickup },
+				{ 0,50,50,200,&DreamGenContext::examinventory },
+				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0xFFFF,0,0,0,0 }
+			};
+			checkcoords(examlist);
 			break;
-		case 1:
-			bx = offset_invlist1;
-			checkcoords();
+		}
+		case 1: {
+			// NB: This table contains the non-constant openchangesize!
+			RectWithCallback invlist1[] = {
+				{ 273,320,157,198,&DreamGenContext::getbackfromob },
+				{ 255,294,0,24,&DreamGenContext::dropobject },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incryanpage },
+				{ kInventx, cs.word(offset_openchangesize),kInventy+100,kInventy+100+kItempicsize,&DreamGenContext::useopened },
+				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::intoinv },
+				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0xFFFF,0,0,0,0 }
+			};
+			checkcoords(invlist1);
 			break;
-		default:
-			bx = offset_withlist1;
-			checkcoords();
+		}
+		default: {
+			RectWithCallback withlist1[] = {
+				{ 273,320,157,198,&DreamGenContext::getbackfromob },
+				{ kInventx+167,kInventx+167+(18*3),kInventy-18,kInventy-2,&DreamGenContext::incryanpage },
+				{ kInventx,kInventx+(5*kItempicsize), kInventy,kInventy+(2*kItempicsize),&DreamGenContext::selectob },
+				{ 0,320,0,200,&DreamGenContext::blank },
+				{ 0xFFFF,0,0,0,0 }
+			};
+			checkcoords(withlist1);
 			break;
+		}
 		}
 		if (data.byte(kQuitrequested) != 0)
 			break;
