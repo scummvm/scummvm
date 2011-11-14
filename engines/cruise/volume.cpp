@@ -326,7 +326,7 @@ int closeCnf() {
 int16 readVolCnf() {
 	int i;
 	Common::File fileHandle;
-	short int sizeHEntry;
+	//short int sizeHEntry;
 
 	volumeDataLoaded = 0;
 
@@ -344,7 +344,7 @@ int16 readVolCnf() {
 	}
 
 	numOfDisks = fileHandle.readSint16BE();
-	sizeHEntry = fileHandle.readSint16BE();		// size of one header entry - 20 bytes
+	/*sizeHEntry =*/ fileHandle.readSint16BE();		// size of one header entry - 20 bytes
 
 	for (i = 0; i < numOfDisks; i++) {
 		//      fread(&volumeData[i],20,1,fileHandle);
