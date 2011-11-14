@@ -2575,8 +2575,8 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');	
 			
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
-		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
-			Common::strlcpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
+		if (_savegameList[i + _savegameOffset - slotOffs]) {
+			Common::strlcpy(s, _savegameList[i + _savegameOffset - slotOffs], 80);
 
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
@@ -2626,7 +2626,7 @@ void GUI_LoL::updateSavegameList() {
 		_savegameList = new char *[_savegameListSize];
 
 		for (int i = 0; i < _savegameListSize; i++) {
-			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
+			in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i]), header);
 			if (in) {
 				_savegameList[i] = new char[header.description.size() + 1];
 				Common::strlcpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
@@ -2634,10 +2634,9 @@ void GUI_LoL::updateSavegameList() {
 				delete in;
 			} else {
 				_savegameList[i] = 0;
-				error("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", i);
+				error("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
 			}
 		}
-
 	} else {
 		_savegameList = 0;
 	}
