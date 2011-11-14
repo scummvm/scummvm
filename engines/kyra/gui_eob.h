@@ -102,6 +102,7 @@ private:
 
 	void setupSaveMenuSlots();
 	int getHighlightSlot();
+	void sortSaveSlots();
 
 	void restParty_updateRestTime(int hours, bool init);
 

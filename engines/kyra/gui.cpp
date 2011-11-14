@@ -32,7 +32,7 @@
 namespace Kyra {
 
 GUI::GUI(KyraEngine_v1 *kyra) : _vm(kyra), _screen(kyra->screen()) {
-	_savegameListUpdateNeeded = false;
+	_saveSlotsListUpdateNeeded = true;
 	_savegameListSize = 0;
 	_savegameList = 0;
 }
@@ -46,7 +46,7 @@ GUI::~GUI() {
 	}
 }
 
-void GUI::updateSaveList(bool excludeQuickSaves) {
+void GUI::updateSaveFileList(bool excludeQuickSaves) {
 	Common::String pattern = _vm->_targetName + ".???";
 	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
@@ -93,11 +93,11 @@ int GUI::getNextSavegameSlot() {
 	return 0;
 }
 
-void GUI::updateSavegameList() {
-	if (!_savegameListUpdateNeeded)
+void GUI::updateSaveSlotsList() {
+	if (!_saveSlotsListUpdateNeeded)
 		return;
 
-	_savegameListUpdateNeeded = false;
+	_saveSlotsListUpdateNeeded = false;
 
 	if (_savegameList) {
 		for (int i = 0; i < _savegameListSize; i++)
@@ -105,31 +105,31 @@ void GUI::updateSavegameList() {
 		delete[] _savegameList;
 	}
 
-	updateSaveList(true);
-	_savegameListSize = _saveSlots.size();
+	updateSaveFileList(true);
+	int numSaves = _savegameListSize = _saveSlots.size();
+	bool allowEmptySlots = (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2);
 
 	if (_savegameListSize) {
-		if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2) {
-			Common::sort(_saveSlots.begin(), _saveSlots.end(),  Common::Less<int>());
-			_savegameListSize = _saveSlots.back() + 1;
-		} else {
-			Common::sort(_saveSlots.begin(), _saveSlots.end(),  Common::Greater<int>());
-		}
+		if (allowEmptySlots)
+			_savegameListSize = 990;
 
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
 
-		_savegameList = new char *[_savegameListSize];
+		_savegameList = new char*[_savegameListSize];
+		memset(_savegameList, 0, _savegameListSize * sizeof(char*));
 
-		for (int i = 0; i < _savegameListSize; i++) {
-			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
+		for (int i = 0; i < numSaves; i++) {
+			in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i]), header);
+			char **listEntry = &_savegameList[allowEmptySlots? _saveSlots[i] : i];
 			if (in) {
-				_savegameList[i] = new char[header.description.size() + 1];
-				Common::strlcpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
-				Util::convertISOToDOS(_savegameList[i]);
+				*listEntry = new char[header.description.size() + 1];
+				Common::strlcpy(*listEntry, header.description.c_str(), header.description.size() + 1);
+				Util::convertISOToDOS(*listEntry);
 				delete in;
 			} else {
-				_savegameList[i] = 0;
+				*listEntry = 0;
+				error("GUI::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
 			}
 		}
 

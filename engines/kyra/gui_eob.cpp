@@ -1609,7 +1609,9 @@ int GUI_Eob::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	_flagsMouseRight = (_vm->_mouseClick == 2) ? 2 : 4;
 	_vm->_mouseClick = 0;
 
-	if (in >= 199 && in <= 202) {
+	if (mouseWheel) {
+		return 204 + mouseWheel;
+	} else if (in >= 199 && in <= 202) {
 		buttonReleaseFlag = (inputFlags & 0x800) ? 3 : 1;
 		if (in < 201)
 			_flagsMouseLeft = buttonReleaseFlag;
@@ -2318,7 +2320,6 @@ bool GUI_Eob::runLoadMenu(int x, int y) {
 	int xo = dm->sx;
 	int yo = dm->sy;
 	bool result = false;
-	_savegameListUpdateNeeded = true;
 	
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 	
@@ -2629,7 +2630,6 @@ bool GUI_Eob::runSaveMenu(int x, int y) {
 	int xo = dm->sx;
 	int yo = dm->sy;
 	bool result = false;
-	_savegameListUpdateNeeded = true;
 	
 	_screen->modifyScreenDim(11, dm->sx + (x >> 3), dm->sy + y, dm->w, dm->h);
 	
@@ -2667,12 +2667,11 @@ bool GUI_Eob::runSaveMenu(int x, int y) {
 			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, _saveSlotStringsTemp[slot], &thumb);
 			thumb.free();
 
-			if (err.getCode() == Common::kNoError) {
-				_savegameListUpdateNeeded = true;			
+			if (err.getCode() == Common::kNoError)			
 				result = true;
-			} else {
+			else
 				messageDialogue(11, 15, 6);
-			}
+
 			runLoop = false;			
 		}
 	}
@@ -2687,14 +2686,11 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 	_saveSlotX = _saveSlotY = 0;
 	_screen->setCurPage(2);
 	
-	updateSavegameList();
-	setupSaveMenuSlots();
+	updateSaveSlotsList();
+	_savegameOffset = 0;
 
 	drawMenuButtonBox(0, 0, 176, 144, false, false);
 	_screen->printShadedText(_vm->_saveLoadStrings[2 + id], 52, 5, 15, 0);
-	
-	for (int i = 0; i < 7; i++)
-		drawSaveSlotButton(i, 1, 15);
 
 	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->setCurPage(0);
@@ -2703,6 +2699,7 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 	_saveSlotX = x;
 	_saveSlotY = y;
 	int lastHighlight = -1;
+	int lastOffset = -1;
 	int newHighlight = 0;
 	int slot = -1;
 
@@ -2712,12 +2709,47 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
 			runLoop = false;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
+			newHighlight = 6;
+			runLoop = false;
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP2]) {
-			if (++newHighlight > 6)
-				newHighlight = 0;
+			if (++newHighlight > 5) {
+				newHighlight = 5;
+				if (++_savegameOffset > 984)
+					_savegameOffset = 984;
+				else
+					lastOffset = -1;
+			}
 		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP8]) {
-			if (--newHighlight < 0)
-				newHighlight = 6;
+			if (--newHighlight < 0) {
+				newHighlight = 0;
+				if (--_savegameOffset < 0)
+					_savegameOffset = 0;
+				else
+					lastOffset = -1;
+			}
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEDOWN] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP1]) {
+			_savegameOffset += 6;
+			if (_savegameOffset > 984)
+				_savegameOffset = 984;
+			else
+				lastOffset = -1;
+		} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_PAGEUP] || inputFlag == _vm->_keyMap[Common::KEYCODE_KP7]) {
+			_savegameOffset -= 6;
+			if (_savegameOffset < 0)
+				_savegameOffset = 0;
+			else
+				lastOffset = -1;
+		} else if (inputFlag == 205) {
+			if (++_savegameOffset > 984)
+				_savegameOffset = 984;
+			else
+				lastOffset = -1;
+		} else if (inputFlag == 203) {
+			if (--_savegameOffset < 0)
+				_savegameOffset = 0;
+			else
+				lastOffset = -1;
 		} else {
 			slot = getHighlightSlot();
 			if (slot != -1) {
@@ -2727,9 +2759,25 @@ int GUI_Eob::selectSaveSlotDialogue(int x, int y, int id) {
 			}
 		}
 
+		if (lastOffset != _savegameOffset) {
+			lastHighlight = -1;
+			setupSaveMenuSlots();
+			for (int i = 0; i < 7; i++)
+				drawSaveSlotButton(i, 1, 15);
+			lastOffset = _savegameOffset;
+		}
+
 		if (lastHighlight != newHighlight) {
 			drawSaveSlotButton(lastHighlight, 0, 15);
 			drawSaveSlotButton(newHighlight, 0, 6);
+			
+			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
+			_screen->setFont(Screen::FID_6_FNT);
+			_screen->fillRect(_saveSlotX + 5, _saveSlotY + 135, _saveSlotX + 46, _saveSlotY + 140, _vm->_bkgColor_1);
+			int sli = (newHighlight == 6) ?  _savegameOffset : (_savegameOffset + newHighlight);
+			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->_color2_1, _vm->_bkgColor_1);
+			_screen->setFont(Screen::FID_8_FNT);
+
 			_screen->updateScreen();
 			lastHighlight = newHighlight;
 		}
@@ -3964,6 +4012,10 @@ int GUI_Eob::getHighlightSlot() {
 		res = 6;
 
 	return res;
+}
+
+void GUI_Eob::sortSaveSlots() {
+	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
 }
 
 void GUI_Eob::restParty_updateRestTime(int hours, bool init) {

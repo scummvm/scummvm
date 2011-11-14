@@ -573,7 +573,7 @@ void TextDisplayer_Eob::textPageBreak() {
 		int inputFlag = vm()->checkInput(0, false) & 0xFF;
 		vm()->removeInputTop();
 
-		while (!inputFlag) {
+		while (!inputFlag && !_vm->shouldQuit()) {
 			vm()->update();
 
 			if (vm()->speechEnabled()) {
@@ -603,7 +603,7 @@ void TextDisplayer_Eob::textPageBreak() {
 			if (target)
 				loop = false;
 		}
-	} while (loop);
+	} while (loop && !_vm->shouldQuit());
 
 	if (vm()->gameFlags().use16ColorMode)
 		screen()->fillRect(x + 8, y, x + 57, y + 9, _textDimData[screen()->curDimIndex()].color2);
