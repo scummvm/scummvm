@@ -14550,42 +14550,6 @@ void DreamGenContext::showman() {
 	showframe();
 }
 
-void DreamGenContext::roomname() {
-	STACK_CHECK;
-	di = 88;
-	bx = 18;
-	al = 53;
-	dl = 240;
-	printmessage();
-	bl = data.byte(kRoomnum);
-	_cmp(bl, 32);
-	if (flags.c())
-		goto notover32;
-	_sub(bl, 32);
-notover32:
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kRoomdesc);
-	_add(bx, (0));
-	ax = es.word(bx);
-	_add(ax, (0+(38*2)));
-	si = ax;
-	data.word(kLinespacing) = 7;
-	di = 88;
-	bx = 25;
-	dl = 120;
-	_cmp(data.byte(kWatchon), 1);
-	if (flags.z())
-		goto gotpl;
-	dl = 160;
-gotpl:
-	al = 0;
-	ah = 0;
-	printdirect();
-	data.word(kLinespacing) = 10;
-	usecharset1();
-}
-
 void DreamGenContext::usecharset1() {
 	STACK_CHECK;
 	ax = data.word(kCharset1);
@@ -16856,7 +16820,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_workoutframes: workoutframes(); break;
 		case addr_middlepanel: middlepanel(); break;
 		case addr_showman: showman(); break;
-		case addr_roomname: roomname(); break;
 		case addr_usecharset1: usecharset1(); break;
 		case addr_usetempcharset: usetempcharset(); break;
 		case addr_showexit: showexit(); break;

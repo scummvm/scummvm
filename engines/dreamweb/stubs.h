@@ -251,4 +251,5 @@
 	void convicons();
 	void examineob(bool examineAgain = true);
 	void showwatch();
+	void roomname();
 

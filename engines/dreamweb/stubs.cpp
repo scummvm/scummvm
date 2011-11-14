@@ -1959,5 +1959,19 @@ void DreamGenContext::showwatch() {
 	}
 }
 
+void DreamGenContext::roomname() {
+	printmessage(88, 18, 53, 240, false);
+	uint16 textIndex = data.byte(kRoomnum);
+	if (textIndex >= 32)
+		textIndex -= 32;
+	data.word(kLinespacing) = 7;
+	uint8 maxWidth = (data.byte(kWatchon) == 1) ? 120 : 160;
+	uint16 descOffset = segRef(data.word(kRoomdesc)).word(kIntextdat + textIndex * 2);
+	const uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext + descOffset, 0);
+	printdirect(string, 88, 25, maxWidth, false);
+	data.word(kLinespacing) = 10;
+	usecharset1();
+}
+
 } /*namespace dreamgen */
 

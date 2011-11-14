@@ -93,7 +93,6 @@ public:
 	static const uint16 addr_showexit = 0xca80;
 	static const uint16 addr_usetempcharset = 0xca7c;
 	static const uint16 addr_usecharset1 = 0xca78;
-	static const uint16 addr_roomname = 0xca74;
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_workoutframes = 0xca54;
@@ -1873,7 +1872,7 @@ public:
 	void clearrest();
 	//void getreelframeax();
 	void barwoman();
-	void roomname();
+	//void roomname();
 	void credits();
 	void madmanrun();
 	void randomnum1();
