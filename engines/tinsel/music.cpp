@@ -485,6 +485,7 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 PCMMusicPlayer::~PCMMusicPlayer() {
 	_vm->_mixer->stopHandle(_handle);
+	delete _curChunk;
 }
 
 void PCMMusicPlayer::startPlay(int id) {
