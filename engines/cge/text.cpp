@@ -135,6 +135,13 @@ char *Text::getText(int ref) {
 
 void Text::say(const char *text, Sprite *spr) {
 	_vm->killText();
+
+	if (!text)
+		return;
+
+	if (*text == 0)
+		return;
+
 	_vm->_talk = new Talk(_vm, text, kTBRound);
 	if (!_vm->_talk)
 		return;
@@ -178,6 +185,9 @@ void Text::say(const char *text, Sprite *spr) {
 void CGEEngine::inf(const char *text) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
 	if (!text)
+		return;
+
+	if (*text == 0)
 		return;
 
 	killText();
