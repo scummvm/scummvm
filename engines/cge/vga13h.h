@@ -91,7 +91,7 @@ public:
 		uint16 _near : 1;       // Near action lock
 		uint16 _drag : 1;       // sprite is moveable
 		uint16 _hold : 1;       // sprite is held with mouse
-		uint16 _____ : 1;       // intrrupt driven animation
+		uint16 _dummy : 1;       // intrrupt driven animation
 		uint16 _slav : 1;       // slave object
 		uint16 _syst : 1;       // system object
 		uint16 _kill : 1;       // dispose memory after remove

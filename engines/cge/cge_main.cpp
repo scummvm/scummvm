@@ -1339,9 +1339,7 @@ void CGEEngine::runGame() {
 
 	_vga->_showQ->append(_mouse);
 
-//    ___________
 	loadUser();
-//    ~~~~~~~~~~~
 
 	if ((_sprite = _vga->_spareQ->locate(121)) != NULL)
 		_commandHandlerTurbo->addCommand(kCmdSeq, -1, _vga->_mono, _sprite);

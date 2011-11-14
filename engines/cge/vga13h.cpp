@@ -492,7 +492,7 @@ void Sprite::sync(Common::Serializer &s) {
 		_flags._near = flags & 0x0002 ? true : false;
 		_flags._drag = flags & 0x0004 ? true : false;
 		_flags._hold = flags & 0x0008 ? true : false;
-		_flags._____ = flags & 0x0010 ? true : false;
+		_flags._dummy = flags & 0x0010 ? true : false;
 		_flags._slav = flags & 0x0020 ? true : false;
 		_flags._syst = flags & 0x0040 ? true : false;
 		_flags._kill = flags & 0x0080 ? true : false;
@@ -516,7 +516,7 @@ void Sprite::sync(Common::Serializer &s) {
 		flags = (flags << 1) | _flags._kill;
 		flags = (flags << 1) | _flags._syst;
 		flags = (flags << 1) | _flags._slav;
-		flags = (flags << 1) | _flags._____;
+		flags = (flags << 1) | _flags._dummy;
 		flags = (flags << 1) | _flags._hold;
 		flags = (flags << 1) | _flags._drag;
 		flags = (flags << 1) | _flags._near;
