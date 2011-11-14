@@ -77,7 +77,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	HELPER MACROS for Bresenham's circle drawing algorithm
 	Note the proper spelling on this header.
 */
-#define __BE_ALGORITHM() { \
+#define BE_ALGORITHM() { \
 	if (f >= 0) { \
 		y--; \
 		ddF_y += 2; \
@@ -89,7 +89,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	f += ddF_x + 1; \
 }
 
-#define __BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+#define BE_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
 	*(ptr1 + (y) - (px)) = color; \
 	*(ptr1 + (x) - (py)) = color; \
 	*(ptr2 - (x) - (py)) = color; \
@@ -100,7 +100,7 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr4 + (y) + (px)) = color; \
 }
 
-#define __BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
+#define BE_DRAWCIRCLE_XCOLOR(ptr1,ptr2,ptr3,ptr4,x,y,px,py) { \
 	*(ptr1 + (y) - (px)) = color1; \
 	*(ptr1 + (x) - (py)) = color2; \
 	*(ptr2 - (x) - (py)) = color2; \
@@ -111,13 +111,13 @@ inline frac_t fp_sqroot(uint32 x) {
 	*(ptr4 + (y) + (px)) = color3; \
 }
 
-#define __BE_RESET() { \
+#define BE_RESET() { \
 	f = 1 - r; \
 	ddF_x = 0; ddF_y = -2 * r; \
 	x = 0; y = r; px = 0; py = pitch * r; \
 }
 
-#define __TRIANGLE_MAINX() \
+#define TRIANGLE_MAINX() \
 		if (error_term >= 0) { \
 			ptr_right += pitch; \
 			ptr_left += pitch; \
@@ -128,7 +128,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		ptr_right++; \
 		ptr_left--;
 
-#define __TRIANGLE_MAINY() \
+#define TRIANGLE_MAINY() \
 		if (error_term >= 0) { \
 			ptr_right++; \
 			ptr_left--; \
@@ -140,7 +140,7 @@ inline frac_t fp_sqroot(uint32 x) {
 		ptr_left += pitch;
 
 /** HELPER MACROS for WU's circle drawing algorithm **/
-#define __WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
+#define WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
 	this->blendPixelPtr(ptr1 + (y) - (px), color, a); \
 	this->blendPixelPtr(ptr1 + (x) - (py), color, a); \
 	this->blendPixelPtr(ptr2 - (x) - (py), color, a); \
@@ -152,7 +152,7 @@ inline frac_t fp_sqroot(uint32 x) {
 }
 
 // optimized Wu's algorithm
-#define __WU_ALGORITHM() { \
+#define WU_ALGORITHM() { \
 	oldT = T; \
 	T = fp_sqroot(rsq - y*y) ^ 0xFFFF; \
 	py += pitch; \
@@ -746,11 +746,11 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 			colorFill<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
 			sp += pitch;
 
-			__BE_RESET();
+			BE_RESET();
 			r--;
 
 			while (x++ < y) {
-				__BE_ALGORITHM();
+				BE_ALGORITHM();
 				*(ptr_tr + (y) - (px)) = color;
 				*(ptr_tr + (x) - (py)) = color;
 				*(ptr_tl - (x) - (py)) = color;
@@ -790,13 +790,13 @@ drawTabAlg(int x1, int y1, int w, int h, int r, PixelType color, VectorRenderer:
 			}
 		}
 	} else {
-		__BE_RESET();
+		BE_RESET();
 
 		PixelType color1, color2;
 		color1 = color2 = color;
 
 		while (x++ < y) {
-			__BE_ALGORITHM();
+			BE_ALGORITHM();
 
 			if (fill_m == kFillGradient) {
 				color1 = calcGradient(real_radius - x, long_h);
@@ -1027,7 +1027,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		switch (fill_m) {
 		case kFillDisabled:
 			while (dx--) {
-				__TRIANGLE_MAINX();
+				TRIANGLE_MAINX();
 				*ptr_right = color;
 				*ptr_left = color;
 			}
@@ -1037,7 +1037,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		case kFillForeground:
 		case kFillBackground:
 			while (dx--) {
-				__TRIANGLE_MAINX();
+				TRIANGLE_MAINX();
 				if (inverted) colorFill<PixelType>(ptr_right, ptr_left, color);
 				else colorFill<PixelType>(ptr_left, ptr_right, color);
 			}
@@ -1045,7 +1045,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 
 		case kFillGradient:
 			while (dx--) {
-				__TRIANGLE_MAINX();
+				TRIANGLE_MAINX();
 				if (inverted) colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 				else colorFill<PixelType>(ptr_left, ptr_right, calcGradient(gradient_h++, h));
 			}
@@ -1059,7 +1059,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		switch (fill_m) {
 		case kFillDisabled:
 			while (dy--) {
-				__TRIANGLE_MAINY();
+				TRIANGLE_MAINY();
 				*ptr_right = color;
 				*ptr_left = color;
 			}
@@ -1069,14 +1069,14 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		case kFillForeground:
 		case kFillBackground:
 			while (dy--) {
-				__TRIANGLE_MAINY();
+				TRIANGLE_MAINY();
 				if (inverted) colorFill<PixelType>(ptr_right, ptr_left, color);
 				else colorFill<PixelType>(ptr_left, ptr_right, color);
 			}
 			break;
 		case kFillGradient:
 			while (dy--) {
-				__TRIANGLE_MAINY();
+				TRIANGLE_MAINY();
 				if (inverted) colorFill<PixelType>(ptr_right, ptr_left, calcGradient(gradient_h++, h));
 				else colorFill<PixelType>(ptr_left, ptr_right, calcGradient(gradient_h++, h));
 			}
@@ -1158,16 +1158,16 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			colorFill<PixelType>(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color);
 			sp += pitch;
 
-			__BE_RESET();
+			BE_RESET();
 			r--;
 
 			while (x++ < y) {
-				__BE_ALGORITHM();
-				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				BE_ALGORITHM();
+				BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 
 				if (Base::_strokeWidth > 1) {
-					__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
-					__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
+					BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x - 1, y, px, py);
+					BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px - pitch, py);
 				}
 			}
 		}
@@ -1179,12 +1179,12 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			ptr_fill += pitch;
 		}
 	} else {
-		__BE_RESET();
+		BE_RESET();
 		PixelType color1, color2, color3, color4;
 
 		if (fill_m == kFillGradient) {
 			while (x++ < y) {
-				__BE_ALGORITHM();
+				BE_ALGORITHM();
 
 				color1 = calcGradient(real_radius - x, long_h);
 				color2 = calcGradient(real_radius - y, long_h);
@@ -1197,11 +1197,11 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				colorFill<PixelType>(ptr_bl - x + py, ptr_br + x + py, color4);
 				colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color3);
 
-				__BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				BE_DRAWCIRCLE_XCOLOR(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		} else {
 			while (x++ < y) {
-				__BE_ALGORITHM();
+				BE_ALGORITHM();
 
 				colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color);
 				colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color);
@@ -1210,7 +1210,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 				colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color);
 
 				// do not remove - messes up the drawing at lower resolutions
-				__BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
+				BE_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py);
 			}
 		}
 
@@ -1235,7 +1235,7 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 
 	if (fill_m == kFillDisabled) {
 		while (sw++ < Base::_strokeWidth) {
-			__BE_RESET();
+			BE_RESET();
 			r--;
 
 			*(ptr + y) = color;
@@ -1244,21 +1244,21 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 			*(ptr - py) = color;
 
 			while (x++ < y) {
-				__BE_ALGORITHM();
-				__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py);
+				BE_ALGORITHM();
+				BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py);
 
 				if (Base::_strokeWidth > 1) {
-					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x - 1, y, px, py);
-					__BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px - pitch, py);
+					BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x - 1, y, px, py);
+					BE_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px - pitch, py);
 				}
 			}
 		}
 	} else {
 		colorFill<PixelType>(ptr - r, ptr + r, color);
-		__BE_RESET();
+		BE_RESET();
 
 		while (x++ < y) {
-			__BE_ALGORITHM();
+			BE_ALGORITHM();
 			colorFill<PixelType>(ptr - x + py, ptr + x + py, color);
 			colorFill<PixelType>(ptr - x - py, ptr + x - py, color);
 			colorFill<PixelType>(ptr - y + px, ptr + y + px, color);
@@ -1330,7 +1330,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 
 	int short_h = h - (2 * r) + 1;
 
-	__BE_RESET();
+	BE_RESET();
 
 	// HACK: As we are drawing circles exploting 8-axis symmetry,
 	// there are 4 pixels on each circle which are drawn twice.
@@ -1339,7 +1339,7 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int blur) {
 	uint32 hb = 0;
 
 	while (x++ < y) {
-		__BE_ALGORITHM();
+		BE_ALGORITHM();
 
 		if (((1 << x) & hb) == 0) {
 			blendFill(ptr_tr - px - r, ptr_tr + y - px, 0, alpha);
@@ -1392,7 +1392,7 @@ drawRoundedSquareFakeBevel(int x1, int y1, int r, int w, int h, int amount) {
 		py = 0;
 
 		while (x > y++) {
-			__WU_ALGORITHM();
+			WU_ALGORITHM();
 
 			blendPixelPtr(ptr_tr + (y) - (px - pitch), color, a2);
 			blendPixelPtr(ptr_tr + (x - 1) - (py), color, a2);
@@ -1514,13 +1514,13 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			py = 0;
 
 			while (x > y++) {
-				__WU_ALGORITHM();
+				WU_ALGORITHM();
 
 				if (sw != 1 && sw != Base::_strokeWidth)
 					a2 = a1 = 255;
 
-				__WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, (x - 1), y, (px - pitch), py, a2);
-				__WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
+				WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, (x - 1), y, (px - pitch), py, a2);
+				WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
 			}
 		}
 
@@ -1538,7 +1538,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 		py = 0;
 
 		while (x > 1 + y++) {
-			__WU_ALGORITHM();
+			WU_ALGORITHM();
 
 			colorFill<PixelType>(ptr_tl - x - py, ptr_tr + x - py, color);
 			colorFill<PixelType>(ptr_tl - y - px, ptr_tr + y - px, color);
@@ -1546,7 +1546,7 @@ drawRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color, Vecto
 			colorFill<PixelType>(ptr_bl - x + py, ptr_br + x + py, color);
 			colorFill<PixelType>(ptr_bl - y + px, ptr_br + y + px, color);
 
-			__WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
+			WU_DRAWCIRCLE(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py, a1);
 		}
 
 		ptr_fill += pitch * r;
@@ -1585,13 +1585,13 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 			*(ptr - px) = (PixelType)color;
 
 			while (x > y++) {
-				__WU_ALGORITHM();
+				WU_ALGORITHM();
 
 				if (sw != 1 && sw != Base::_strokeWidth)
 					a2 = a1 = 255;
 
-				__WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, (x - 1), y, (px - pitch), py, a2);
-				__WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py, a1);
+				WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, (x - 1), y, (px - pitch), py, a2);
+				WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py, a1);
 			}
 		}
 	} else {
@@ -1603,14 +1603,14 @@ drawCircleAlg(int x1, int y1, int r, PixelType color, VectorRenderer::FillMode f
 		py = 0;
 
 		while (x > y++) {
-			__WU_ALGORITHM();
+			WU_ALGORITHM();
 
 			colorFill<PixelType>(ptr - x + py, ptr + x + py, color);
 			colorFill<PixelType>(ptr - x - py, ptr + x - py, color);
 			colorFill<PixelType>(ptr - y + px, ptr + y + px, color);
 			colorFill<PixelType>(ptr - y - px, ptr + y - px, color);
 
-			__WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py, a1);
+			WU_DRAWCIRCLE(ptr, ptr, ptr, ptr, x, y, px, py, a1);
 		}
 	}
 }
