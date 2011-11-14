@@ -1918,5 +1918,22 @@ void DreamGenContext::showcity() {
 	showframe(tempGraphics, 120+57, 32, 1, 0);
 }
 
+void DreamGenContext::mainscreen() {
+	STACK_CHECK;
+	data.byte(kInmaparea) = 0;
+	bx = offset_mainlist;
+	_cmp(data.byte(kWatchon), 1);
+	if (flags.z())
+		goto checkmain;
+	bx = offset_mainlist2;
+checkmain:
+	checkcoords();
+	_cmp(data.byte(kWalkandexam), 0);
+	if (flags.z())
+		return /* (finishmain) */;
+	walkandexamine();
+}
+
+
 } /*namespace dreamgen */
 

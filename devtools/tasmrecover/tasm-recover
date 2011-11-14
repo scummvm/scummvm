@@ -216,6 +216,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'savegame',
 	'zoomonoff',
 	'inventory',
+	'mainscreen',
 	'doload'
 	])
 generator.generate('dreamweb') #start routine

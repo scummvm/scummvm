@@ -14008,22 +14008,6 @@ notzeronum:
 	ch = 1;
 }
 
-void DreamGenContext::mainscreen() {
-	STACK_CHECK;
-	data.byte(kInmaparea) = 0;
-	bx = offset_mainlist;
-	_cmp(data.byte(kWatchon), 1);
-	if (flags.z())
-		goto checkmain;
-	bx = offset_mainlist2;
-checkmain:
-	checkcoords();
-	_cmp(data.byte(kWalkandexam), 0);
-	if (flags.z())
-		return /* (finishmain) */;
-	walkandexamine();
-}
-
 void DreamGenContext::madmanrun() {
 	STACK_CHECK;
 	_cmp(data.byte(kLocation), 14);
