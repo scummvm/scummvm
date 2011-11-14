@@ -1,6 +1,12 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+1.4.1 (????-??-??)
+ AGOS:
+   - Fixed bug breaking support for loading data directly from 
+     InstallShield cabinets in The Feeble Files and Simon the 
+     Sorcerer's Puzzle Pack.
+
 1.4.0 (2011-11-11)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
