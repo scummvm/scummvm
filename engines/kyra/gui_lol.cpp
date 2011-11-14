@@ -2572,8 +2572,8 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
-	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');	
-			
+	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');
+
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[i + _savegameOffset - slotOffs]) {
 			Common::strlcpy(s, _savegameList[i + _savegameOffset - slotOffs], 80);
