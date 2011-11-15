@@ -589,6 +589,10 @@ void DreamGenContext::updatepeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(segRef(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
+
+	// The callbacks are called with es:bx pointing to their reelRoutine entry.
+	// They use some of the fields in it to store state.
+
 	es = cs;
 	bx = kReelroutines;
 	const ReelRoutine *reelRoutine = (const ReelRoutine *)cs.ptr(bx, 0);
