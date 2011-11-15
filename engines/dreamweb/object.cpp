@@ -249,14 +249,12 @@ void DreamGenContext::transfertext() {
 	segRef(data.word(kExtras)).word(kExtextdat + data.byte(kExpos) * 2) = data.word(kExtextpos);
 	uint16 freeTextOffset = data.byte(kItemtotran) * 2;
 	uint16 srcOffset = segRef(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
-	const uint8 *src = segRef(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
-	uint8 *dst = segRef(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
-	uint8 c;
-	do {
-		c = *src++;
-		*dst++ = c;
-		++data.word(kExtextpos);
-	} while (c);
+	const char *src = (const char *)segRef(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
+	char *dst = (char *)segRef(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
+
+	strcpy(dst, src);
+
+	data.word(kExtextpos) += strlen(src) + 1;
 }
 
 
