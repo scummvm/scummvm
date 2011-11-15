@@ -938,8 +938,7 @@ struct RainLocation {
 	uint8 rainSpacing;
 };
 
-const RainLocation rainLocationList[] = 
-{
+static const RainLocation rainLocationList[] = {
 	{ 1,44,10,16 },
 	{ 4,11,30,14 },
 	{ 4,22,30,14 },
