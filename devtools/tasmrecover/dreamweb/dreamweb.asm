@@ -1129,6 +1129,8 @@ Screenupdate	proc	near
 
 	call	newplace
 	call	mainscreen
+	cmp quitrequested, 0
+	jnz finishearly
 	call	animpointer
 	call	showpointer
 	cmp	watchingtime,0

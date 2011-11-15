@@ -140,6 +140,9 @@ void DreamGenContext::dreamweb() {
 
 			screenupdate();
 
+			if (data.byte(kQuitrequested))
+				return; // exit game
+
 			if (data.byte(kWongame) != 0) {
 				// "endofgame"
 				clearbeforeload();

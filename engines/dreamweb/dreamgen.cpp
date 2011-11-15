@@ -13491,6 +13491,9 @@ void DreamGenContext::screenupdate() {
 	STACK_CHECK;
 	newplace();
 	mainscreen();
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (finishearly) */;
 	animpointer();
 	showpointer();
 	_cmp(data.word(kWatchingtime), 0);
