@@ -669,7 +669,7 @@ void DreamGenContext::eraseoldobs() {
 		return;
 
 	Sprite *sprites = spritetable();
-	for (size_t i=0; i < 16; ++i) {
+	for (size_t i = 0; i < 16; ++i) {
 		Sprite &sprite = sprites[i];
 		if (sprite.objData() != 0xffff) {
 			memset(&sprite, 0xff, sizeof(Sprite));
@@ -917,11 +917,7 @@ void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
 
 void DreamGenContext::plotreel() {
 	Reel *reel = getreelstart();
-	while (true) {
-		if (reel->x < 220)
-			break;
-		if (reel->x == 255)
-			break;
+	while (reel->x >= 220 && reel->x != 255) {
 		dealwithspecial(reel->x, reel->y);
 		++data.word(kReelpointer);
 		reel += 8;
@@ -1144,29 +1140,24 @@ void DreamGenContext::findormake() {
 
 void DreamGenContext::findormake(uint8 index, uint8 value, uint8 type) {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
-	while (true) {
-		if (change->index == 0xff) {
-			change->index = index;
-			change->location = data.byte(kReallocation);
-			change->value = value;
-			change->type = type;
-			return;
-		}
-		if ((index == change->index) && (data.byte(kReallocation) == change->location) && (type == change->type)) {
+	for (; change->index != 0xff; ++change) {
+		if (index == change->index && data.byte(kReallocation) == change->location && type == change->type) {
 			change->value = value;
 			return;
 		}
-		++change;
 	}
+
+	change->index = index;
+	change->location = data.byte(kReallocation);
+	change->value = value;
+	change->type = type;
 }
 
 void DreamGenContext::setallchanges() {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
-	while (change->index != 0xff) {
+	for (; change->index != 0xff; ++change)
 		if (change->location == data.byte(kReallocation))
 			dochange(change->index, change->value, change->type);
-		++change;
-	}
 }
 
 DynObject *DreamGenContext::getfreead(uint8 index) {
@@ -1301,7 +1292,7 @@ void DreamGenContext::getflagunderp(uint8 *flag, uint8 *flagEx) {
 }
 
 void DreamGenContext::walkandexamine() {
-	if (! finishedwalkingCPP())
+	if (!finishedwalkingCPP())
 		return;
 	data.byte(kCommandtype) = data.byte(kWalkexamtype);
 	data.byte(kCommand) = data.byte(kWalkexamnum);
