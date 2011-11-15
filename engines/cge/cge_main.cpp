@@ -923,7 +923,7 @@ void CGEEngine::optionTouch(int opt, uint16 mask) {
 		if (mask & kMouseLeftUp)
 			switchMusic();
 		else if (mask & kMouseRightUp)
-			warning("TODO: Use ScummVM sound dialog");
+			openMainMenuDialog();
 		break;
 	case 3:
 		if (mask & kMouseLeftUp)
@@ -1255,12 +1255,15 @@ void CGEEngine::mainLoop() {
 
 	// Handle any pending events
 	_eventManager->poll();
+
+	// Check shouldQuit()
+	_quitFlag = shouldQuit();
 }
 
 void CGEEngine::handleFrame() {
 	// Game frame delay
 	uint32 millis = g_system->getMillis();
-	while (!_eventManager->_quitFlag && (millis < (_lastFrame + kGameFrameDelay))) {
+	while (!_quitFlag && (millis < (_lastFrame + kGameFrameDelay))) {
 		// Handle any pending events
 		_eventManager->poll();
 
@@ -1309,7 +1312,7 @@ void CGEEngine::loadUser() {
 }
 
 void CGEEngine::runGame() {
-	if (_eventManager->_quitFlag)
+	if (_quitFlag)
 		return;
 
 	loadHeroXY();
@@ -1407,7 +1410,7 @@ void CGEEngine::runGame() {
 
 	_keyboard->setClient(_sys);
 	// main loop
-	while (!_finis && !_eventManager->_quitFlag) {
+	while (!_finis && !_quitFlag) {
 		if (_flag[3])
 			_commandHandler->addCallback(kCmdExec,  -1, 0, kQGame);
 		mainLoop();
@@ -1430,7 +1433,7 @@ void CGEEngine::runGame() {
 void CGEEngine::movie(const char *ext) {
 	assert(ext);
 
-	if (_eventManager->_quitFlag)
+	if (_quitFlag)
 		return;
 
 	char fn[12];
@@ -1442,7 +1445,7 @@ void CGEEngine::movie(const char *ext) {
 		feedSnail(_vga->_showQ->locate(999), kTake);
 		_vga->_showQ->append(_mouse);
 		_keyboard->setClient(_sys);
-		while (!_commandHandler->idle() && !_eventManager->_quitFlag)
+		while (!_commandHandler->idle() && !_quitFlag)
 			mainLoop();
 
 		_keyboard->setClient(NULL);
@@ -1454,7 +1457,7 @@ void CGEEngine::movie(const char *ext) {
 }
 
 bool CGEEngine::showTitle(const char *name) {
-	if (_eventManager->_quitFlag)
+	if (_quitFlag)
 		return false;
 
 	_bitmapPalette = _vga->_sysPal;
@@ -1487,7 +1490,7 @@ bool CGEEngine::showTitle(const char *name) {
 		_mouse->on();
 		for (; !_commandHandler->idle() || Vmenu::_addr;) {
 			mainLoop();
-			if (_eventManager->_quitFlag)
+			if (_quitFlag)
 				return false;
 		}
 

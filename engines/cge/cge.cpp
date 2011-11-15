@@ -53,9 +53,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_oldLev      = 0;
 	_pocPtr      = 0;
 	_bitmapPalette = NULL;
-
-
-
+	_quitFlag = false;
 }
 
 void CGEEngine::initSceneValues() {
@@ -144,7 +142,6 @@ void CGEEngine::deinit() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _console;
-	_midiPlayer->killMidi();
 
 	// Delete engine objects
 	delete _vga;
@@ -161,8 +158,9 @@ void CGEEngine::deinit() {
 	delete _keyboard;
 	delete _mouse;
 	delete _eventManager;
-	delete _fx;
 	delete _sound;
+	delete _fx;
+	delete _midiPlayer;
 	delete _font;
 	delete _commandHandler;
 	delete _commandHandlerTurbo;

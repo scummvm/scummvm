@@ -282,7 +282,6 @@ void Mouse::newMouse(Common::Event &event) {
 /*----------------- EventManager interface -----------------*/
 
 EventManager::EventManager(CGEEngine *vm) : _vm(vm){
-	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
 	memset(&_eventQueue, 0, kEventMax * sizeof(CGEEvent));
@@ -292,10 +291,6 @@ EventManager::EventManager(CGEEngine *vm) : _vm(vm){
 void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
-		case Common::EVENT_QUIT:
-			// Signal to quit
-			_quitFlag = true;
-			return;
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			// Handle keyboard events

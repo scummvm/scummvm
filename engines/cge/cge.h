@@ -140,6 +140,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	static const int _maxSceneArr[5];
+	bool _quitFlag;
 
 	const   ADGameDescription *_gameDescription;
 	int    _startupMode;

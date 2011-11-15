@@ -140,8 +140,6 @@ private:
 
 	void handleEvents();
 public:
-	bool _quitFlag;
-
 	EventManager(CGEEngine *vm);
 	void poll();	
 	void clearEvent(Sprite *spr);
