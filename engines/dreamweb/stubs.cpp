@@ -1952,6 +1952,12 @@ void DreamGenContext::mainscreen() {
 		walkandexamine();
 }
 
+void DreamGenContext::showwatch() {
+	if (data.byte(kWatchon)) {
+		showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 250, 1, 6, 0);
+		showtime();
+	}
+}
 
 } /*namespace dreamgen */
 

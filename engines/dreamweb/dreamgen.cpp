@@ -14639,20 +14639,6 @@ zoomisoff:
 	showwatch();
 }
 
-void DreamGenContext::showwatch() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchon), 0);
-	if (flags.z())
-		return /* (nowristwatch) */;
-	ds = data.word(kIcons1);
-	di = 250;
-	bx = 1;
-	al = 6;
-	ah = 0;
-	showframe();
-	showtime();
-}
-
 void DreamGenContext::zoomicon() {
 	STACK_CHECK;
 	_cmp(data.byte(kZoomon), 0);
@@ -16875,7 +16861,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_usetempcharset: usetempcharset(); break;
 		case addr_showexit: showexit(); break;
 		case addr_panelicons1: panelicons1(); break;
-		case addr_showwatch: showwatch(); break;
 		case addr_gettime: gettime(); break;
 		case addr_zoomicon: zoomicon(); break;
 		case addr_worktoscreenm: worktoscreenm(); break;

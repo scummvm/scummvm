@@ -89,7 +89,6 @@ public:
 	static const uint16 addr_worktoscreenm = 0xca9c;
 	static const uint16 addr_zoomicon = 0xca90;
 	static const uint16 addr_gettime = 0xca8c;
-	static const uint16 addr_showwatch = 0xca88;
 	static const uint16 addr_panelicons1 = 0xca84;
 	static const uint16 addr_showexit = 0xca80;
 	static const uint16 addr_usetempcharset = 0xca7c;
@@ -1262,7 +1261,7 @@ public:
 	//void frameoutbh();
 	void getobtextstart();
 	void loadfolder();
-	void decide();
+	void dumpdiarykeys();
 	//void dumppointer();
 	void reelsonscreen();
 	void getridofreels();
@@ -1420,7 +1419,7 @@ public:
 	void getridoftemp2();
 	void usebalcony();
 	void runendseq();
-	void dumpdiarykeys();
+	void decide();
 	void disablesoundint();
 	void priesttext();
 	//void showallex();
@@ -1797,7 +1796,7 @@ public:
 	void checkinside();
 	void gates();
 	void newgame();
-	void showwatch();
+	//void showwatch();
 	//void turnanypathon();
 	void restorereels();
 	void setwalk();

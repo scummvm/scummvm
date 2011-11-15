@@ -250,4 +250,5 @@
 	uint16 getpersframe(uint8 index);
 	void convicons();
 	void examineob(bool examineAgain = true);
+	void showwatch();
 
