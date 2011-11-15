@@ -103,11 +103,12 @@ void DreamGenContext::obpicture() {
 void DreamGenContext::obicons() {
 	uint8 value1, value2;
 	getanyad(&value1, &value2);
-	if (value1 == 0xff) {
-		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
-	} else {
+	if (value1 != 0xff) {
+		// can open it
 		showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
 	}
+
+	showframe((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
 }
 
 void DreamGenContext::examineob(bool examineAgain) {
