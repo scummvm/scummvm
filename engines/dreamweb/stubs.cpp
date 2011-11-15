@@ -203,12 +203,8 @@ void DreamGenContext::dreamweb() {
 }
 
 static Common::String getFilename(Context &context) {
-	uint16 name_ptr = context.dx;
-	Common::String name;
-	uint8 c;
-	while((c = context.cs.byte(name_ptr++)) != 0)
-		name += (char)c;
-	return name;
+	const char *name = (const char *)context.cs.ptr(context.dx, 0);
+	return Common::String(name);
 }
 
 void DreamGenContext::seecommandtail() {
