@@ -932,5 +932,55 @@ Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 	return rain;
 }
 
+struct RainLocation {
+	uint8 location;
+	uint8 x, y;
+	uint8 rainSpace;
+};
+
+void DreamGenContext::initrain() {
+	Rain *rainList = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
+	Rain *rain = rainList;
+	const RainLocation *rainLocationList = (const RainLocation *)cs.ptr(offset_rainlocations, 0);
+	const RainLocation *rainLocation = rainLocationList;
+
+	do {
+		if (rainLocation->location == 0xff) {
+			rain->x = 0xff;
+			return;
+		}
+		if ((rainLocation->location == data.byte(kReallocation)) &&
+		    (rainLocation->x == data.byte(kMapx)) &&
+  		    (rainLocation->y == data.byte(kMapy))) {
+			data.byte(kRainspace) = rainLocation->rainSpace;
+			break;
+		}
+		++rainLocation;
+	} while (true);
+
+	uint8 x = 4;
+	do {
+		uint8 delta = (engine->randomNumber() & 31) + 3;
+		if (delta >= data.byte(kRainspace))
+			continue;
+		x += delta;
+		if (x >= data.byte(kMapxsize))
+			break;
+		rain = splitintolines(x, 0, rain);
+	} while (true);
+	uint8 y = 0;
+	do {
+		uint8 delta = (engine->randomNumber() & 31) + 3;
+		if (delta >= data.byte(kRainspace))
+			continue;
+		y += delta;
+		if (y >= data.byte(kMapysize))
+			break;
+		rain = splitintolines(data.byte(kMapxsize) - 1, y, rain);
+	} while (true);
+
+	rain->x = 0xff;
+}
+
 } /*namespace dreamgen */
 
