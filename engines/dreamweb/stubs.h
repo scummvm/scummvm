@@ -253,4 +253,6 @@
 	void showwatch();
 	void roomname();
 	void transfertext();
+	void splitintolines();
+	Rain *splitintolines(uint8 x, uint8 y, Rain *rain);
 

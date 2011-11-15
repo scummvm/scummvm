@@ -890,5 +890,58 @@ void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
 	data.word(kListpos) += sizeof(People);
 }
 
+void DreamGenContext::splitintolines() {
+	uint8 x = cl;
+	uint8 y = ch;
+	Rain *rain = (Rain *)es.ptr(di, 0);
+	Rain *newRain = splitintolines(x, y, rain);
+	di += (newRain - rain) * sizeof(Rain);
+}
+
+Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
+	do {
+		// Look for line start
+		do {
+			if (getblockofpixel(x, y))
+				break;
+			--x;
+			++y;
+			if (x == 0)
+				return rain;
+			if (y >= data.byte(kMapysize))
+				return rain;
+		} while (true);
+
+		rain->x = x;
+		rain->y = y;
+
+		uint8 length = 1;
+
+		// Look for line end
+		do {
+			if (! getblockofpixel(x, y))
+				break;
+			--x;
+			++y;
+			if (x == 0)
+				break;
+			if (y >= data.byte(kMapysize))
+				break;
+			++length;
+		} while (true);
+
+		rain->size = length;
+		rain->w3_lo = engine->randomNumber();
+		rain->w3_hi = engine->randomNumber();
+		rain->b5 = (engine->randomNumber() & 3) + 4;
+		++rain;
+		if (x == 0)
+			return rain;
+		if (y >= data.byte(kMapysize))
+			return rain;
+	} while (true);
+	return rain;
+}
+
 } /*namespace dreamgen */
 

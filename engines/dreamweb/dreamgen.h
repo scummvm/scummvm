@@ -541,7 +541,6 @@ public:
 	static const uint16 addr_random = 0xc17c;
 	static const uint16 addr_liftnoise = 0xc178;
 	static const uint16 addr_backobject = 0xc170;
-	static const uint16 addr_splitintolines = 0xc164;
 	static const uint16 addr_initrain = 0xc160;
 	static const uint16 addr_reminders = 0xc15c;
 	static const uint16 addr_adjustright = 0xc158;
@@ -1360,7 +1359,7 @@ public:
 	void watchcount();
 	void fadedownmon();
 	void loadcart();
-	//void calcfrframe();
+	//void splitintolines();
 	void bartender();
 	void eden();
 	void showdiary();
@@ -1882,7 +1881,7 @@ public:
 	void closefile();
 	void delcurs();
 	void randomaccess();
-	void splitintolines();
+	//void calcfrframe();
 	//void checkifex();
 	//void findobname();
 	void initialmoncols();

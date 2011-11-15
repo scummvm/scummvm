@@ -2329,62 +2329,6 @@ finishinitrain:
 	_stosb();
 }
 
-void DreamGenContext::splitintolines() {
-	STACK_CHECK;
-lookforlinestart:
-	getblockofpixel();
-	_cmp(al, 0);
-	if (!flags.z())
-		goto foundlinestart;
-	_dec(cl);
-	_inc(ch);
-	_cmp(cl, 0);
-	if (flags.z())
-		return /* (endofthisline) */;
-	_cmp(ch, data.byte(kMapysize));
-	if (!flags.c())
-		return /* (endofthisline) */;
-	goto lookforlinestart;
-foundlinestart:
-	es.word(di) = cx;
-	bh = 1;
-lookforlineend:
-	getblockofpixel();
-	_cmp(al, 0);
-	if (flags.z())
-		goto foundlineend;
-	_dec(cl);
-	_inc(ch);
-	_cmp(cl, 0);
-	if (flags.z())
-		goto foundlineend;
-	_cmp(ch, data.byte(kMapysize));
-	if (!flags.c())
-		goto foundlineend;
-	_inc(bh);
-	goto lookforlineend;
-foundlineend:
-	push(cx);
-	es.byte(di+2) = bh;
-	randomnumber();
-	es.byte(di+3) = al;
-	randomnumber();
-	es.byte(di+4) = al;
-	randomnumber();
-	_and(al, 3);
-	_add(al, 4);
-	es.byte(di+5) = al;
-	_add(di, 6);
-	cx = pop();
-	_cmp(cl, 0);
-	if (flags.z())
-		return /* (endofthisline) */;
-	_cmp(ch, data.byte(kMapysize));
-	if (!flags.c())
-		return /* (endofthisline) */;
-	goto lookforlinestart;
-}
-
 void DreamGenContext::liftnoise() {
 	STACK_CHECK;
 	_cmp(data.byte(kReallocation), 5);
@@ -16342,7 +16286,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_adjustright: adjustright(); break;
 		case addr_reminders: reminders(); break;
 		case addr_initrain: initrain(); break;
-		case addr_splitintolines: splitintolines(); break;
 		case addr_backobject: backobject(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;
