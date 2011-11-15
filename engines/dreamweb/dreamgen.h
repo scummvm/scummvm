@@ -433,7 +433,6 @@ public:
 	static const uint16 addr_purgeanitem = 0xc414;
 	static const uint16 addr_emergencypurge = 0xc410;
 	static const uint16 addr_purgealocation = 0xc40c;
-	static const uint16 addr_transfertext = 0xc404;
 	static const uint16 addr_transfercontoex = 0xc400;
 	static const uint16 addr_pickupconts = 0xc3fc;
 	static const uint16 addr_transfertoex = 0xc3f8;
@@ -1603,7 +1602,6 @@ public:
 	void checkbasemem();
 	void lastfolder();
 	void transfermap();
-	//void showreelframe();
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
@@ -1658,7 +1656,7 @@ public:
 	void actualsave();
 	void autolook();
 	void playguitar();
-	void transfertext();
+	//void showreelframe();
 	void searchforsame();
 	void showmainops();
 	void getback1();
@@ -1788,6 +1786,7 @@ public:
 	//void plotreel();
 	void swapwithopen();
 	//void makesprite();
+	//void transfertext();
 	void dreamweb();
 	void droperror();
 	void edenscdplayer();

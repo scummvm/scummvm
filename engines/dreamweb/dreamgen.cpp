@@ -5284,35 +5284,6 @@ void DreamGenContext::transfercontoex() {
 	ds.byte(si+2) = 255;
 }
 
-void DreamGenContext::transfertext() {
-	STACK_CHECK;
-	es = data.word(kExtras);
-	al = data.byte(kExpos);
-	ah = 0;
-	_add(ax, ax);
-	bx = (0+2080+30000+(16*114));
-	_add(bx, ax);
-	di = data.word(kExtextpos);
-	es.word(bx) = di;
-	_add(di, (0+2080+30000+(16*114)+((114+2)*2)));
-	al = data.byte(kItemtotran);
-	ah = 0;
-	_add(ax, ax);
-	ds = data.word(kFreedesc);
-	bx = (0);
-	_add(bx, ax);
-	si = (0+(82*2));
-	ax = ds.word(bx);
-	_add(si, ax);
-moretext:
-	_lodsb();
-	_stosb();
-	_inc(data.word(kExtextpos));
-	_cmp(al, 0);
-	if (!flags.z())
-		goto moretext;
-}
-
 void DreamGenContext::purgealocation() {
 	STACK_CHECK;
 	push(ax);
@@ -16480,7 +16451,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_transfertoex: transfertoex(); break;
 		case addr_pickupconts: pickupconts(); break;
 		case addr_transfercontoex: transfercontoex(); break;
-		case addr_transfertext: transfertext(); break;
 		case addr_purgealocation: purgealocation(); break;
 		case addr_emergencypurge: emergencypurge(); break;
 		case addr_purgeanitem: purgeanitem(); break;
