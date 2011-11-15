@@ -28,6 +28,16 @@ namespace DreamGen {
 
 void DreamGenContext::dreamweb() {
 	STACK_CHECK;
+
+	switch(engine->getLanguage()) {
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		return;
+	default:
+		data.byte(kForeignrelease) = 1;
+	}
+
 	seecommandtail();
 	checkbasemem();
 	soundstartup();
@@ -505,15 +515,6 @@ void DreamGenContext::removeemm() {
 }
 
 void DreamGenContext::setupemm() {
-	//good place for early initialization
-	switch(engine->getLanguage()) {
-	case Common::EN_ANY:
-	case Common::EN_GRB:
-	case Common::EN_USA:
-		return;
-	default:
-		data.byte(kForeignrelease) = 1;
-	}
 }
 
 void DreamGenContext::pitinterupt() {
