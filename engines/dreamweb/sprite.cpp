@@ -935,47 +935,90 @@ Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 struct RainLocation {
 	uint8 location;
 	uint8 x, y;
-	uint8 rainSpace;
+	uint8 rainSpacing;
+};
+
+const RainLocation rainLocationList[] = 
+{
+	{ 1,44,10,16 },
+	{ 4,11,30,14 },
+	{ 4,22,30,14 },
+	{ 3,33,10,14 },
+	{ 10,33,30,14 },
+	{ 10,22,30,24 },
+	{ 9,22,10,14 },
+	{ 2,33,0,14 },
+	{ 2,22,0,14 },
+	{ 6,11,30,14 },
+	{ 7,11,20,18 },
+	{ 7,0,20,18 },
+	{ 7,0,30,18 },
+	{ 55,44,0,14 },
+	{ 5,22,30,14 },
+
+	{ 8,0,10,18 },
+	{ 8,11,10,18 },
+	{ 8,22,10,18 },
+	{ 8,33,10,18 },
+	{ 8,33,20,18 },
+	{ 8,33,30,18 },
+	{ 8,33,40,18 },
+	{ 8,22,40,18 },
+	{ 8,11,40,18 },
+
+	{ 21,44,20,18 },
+	{ 255,0,0,0 }
 };
 
 void DreamGenContext::initrain() {
+	const RainLocation *r = rainLocationList;
 	Rain *rainList = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
 	Rain *rain = rainList;
-	const RainLocation *rainLocationList = (const RainLocation *)cs.ptr(offset_rainlocations, 0);
-	const RainLocation *rainLocation = rainLocationList;
 
-	do {
-		if (rainLocation->location == 0xff) {
-			rain->x = 0xff;
-			return;
-		}
-		if ((rainLocation->location == data.byte(kReallocation)) &&
-		    (rainLocation->x == data.byte(kMapx)) &&
-  		    (rainLocation->y == data.byte(kMapy))) {
-			data.byte(kRainspace) = rainLocation->rainSpace;
+	uint8 rainSpacing = 0;
+
+	// look up location in rainLocationList to determine rainSpacing
+	for (r = rainLocationList; r->location != 0xff; ++r) {
+		if (r->location == data.byte(kReallocation) &&
+		        r->x == data.byte(kMapx) && r->y == data.byte(kMapy)) {
+			rainSpacing = r->rainSpacing;
 			break;
 		}
-		++rainLocation;
-	} while (true);
+	}
 
+	if (rainSpacing == 0) {
+		// location not found in rainLocationList: no rain
+		rain->x = 0xff;
+		return;
+	}
+
+	// start lines of rain from top of screen
 	uint8 x = 4;
 	do {
-		uint8 delta = (engine->randomNumber() & 31) + 3;
-		if (delta >= data.byte(kRainspace))
-			continue;
+		uint8 delta;
+		do {
+			delta = (engine->randomNumber() & 31) + 3;
+		} while (delta >= rainSpacing);
+
 		x += delta;
 		if (x >= data.byte(kMapxsize))
 			break;
+
 		rain = splitintolines(x, 0, rain);
 	} while (true);
+
+	// start lines of rain from side of screen
 	uint8 y = 0;
 	do {
-		uint8 delta = (engine->randomNumber() & 31) + 3;
-		if (delta >= data.byte(kRainspace))
-			continue;
+		uint8 delta;
+		do {
+			delta = (engine->randomNumber() & 31) + 3;
+		} while (delta >= rainSpacing);
+
 		y += delta;
 		if (y >= data.byte(kMapysize))
 			break;
+
 		rain = splitintolines(data.byte(kMapxsize) - 1, y, rain);
 	} while (true);
 
