@@ -80,7 +80,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"vol.dat", 0, "4ffeff4abc99ac5999b55ccfc56ab1df", 8430868},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS , GUIO_NONE
+		Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS , GUIO1(GUIO_NONE)
 	},
 	{
 		"soltys", "Soltys Freeware v1.0",
