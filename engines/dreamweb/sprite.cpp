@@ -901,16 +901,12 @@ void DreamGenContext::splitintolines() {
 Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 	do {
 		// Look for line start
-		do {
-			if (getblockofpixel(x, y))
-				break;
+		while (!getblockofpixel(x, y)) {
 			--x;
 			++y;
-			if (x == 0)
+			if (x == 0 || y >= data.byte(kMapysize))
 				return rain;
-			if (y >= data.byte(kMapysize))
-				return rain;
-		} while (true);
+		}
 
 		rain->x = x;
 		rain->y = y;
@@ -918,28 +914,21 @@ Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 		uint8 length = 1;
 
 		// Look for line end
-		do {
-			if (! getblockofpixel(x, y))
-				break;
+		while (getblockofpixel(x, y)) {
 			--x;
 			++y;
-			if (x == 0)
-				break;
-			if (y >= data.byte(kMapysize))
+			if (x == 0 || y >= data.byte(kMapysize))
 				break;
 			++length;
-		} while (true);
+		}
 
 		rain->size = length;
 		rain->w3_lo = engine->randomNumber();
 		rain->w3_hi = engine->randomNumber();
 		rain->b5 = (engine->randomNumber() & 3) + 4;
 		++rain;
-		if (x == 0)
-			return rain;
-		if (y >= data.byte(kMapysize))
-			return rain;
-	} while (true);
+	} while (x > 0 && y < data.byte(kMapysize));
+
 	return rain;
 }
 
