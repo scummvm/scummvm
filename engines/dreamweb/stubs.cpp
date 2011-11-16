@@ -422,6 +422,7 @@ void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 		dh = voiceIndex;
 		cl = 'T';
 		ah = 0;
+		al = textIndex;
 		loadspeech();
 		if (data.byte(kSpeechloaded) == 1) {
 			al = 50+12;
