@@ -47,7 +47,6 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	_runFlag = true;
 	_saveLoadMode = 0;
 	_configMouse = true;
-	_resting = false;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = _itemIconShapes =
 		_wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;

@@ -23,7 +23,7 @@
 #ifndef KYRA_GUI_V2_H
 #define KYRA_GUI_V2_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 
 namespace Kyra {
 

@@ -1848,8 +1848,6 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
 	_sliderSfx = 11;
-	_savegameList = 0;
-	_savegameListSize = 0;
 }
 
 void GUI_LoL::processButton(Button *button) {
@@ -2527,44 +2525,6 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			menu.item[0].saveSlot = -3;
 			menu.item[0].enabled = true;
 		}
-	}
-}
-
-void GUI_LoL::updateSavegameList() {
-	if (!_savegameListUpdateNeeded)
-		return;
-
-	_savegameListUpdateNeeded = false;
-
-	if (_savegameList) {
-		for (int i = 0; i < _savegameListSize; i++)
-			delete[] _savegameList[i];
-		delete[] _savegameList;
-	}
-
-	updateSaveList(true);
-	_savegameListSize = _saveSlots.size();
-
-	if (_savegameListSize) {
-		LoLEngine::SaveHeader header;
-		Common::InSaveFile *in;
-
-		_savegameList = new char *[_savegameListSize];
-
-		for (int i = 0; i < _savegameListSize; i++) {
-			in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i]), header);
-			if (in) {
-				_savegameList[i] = new char[header.description.size() + 1];
-				Common::strlcpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
-				Util::convertISOToDOS(_savegameList[i]);
-				delete in;
-			} else {
-				_savegameList[i] = 0;
-				warning("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
-			}
-		}
-	} else {
-		_savegameList = 0;
 	}
 }
 

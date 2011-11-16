@@ -24,7 +24,7 @@
 #define KYRA_KYRA_V2_H
 
 #include "kyra/kyra_v1.h"
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 #include "kyra/wsamovie.h"
 #include "kyra/item.h"
 

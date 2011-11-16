@@ -23,7 +23,7 @@
 #ifndef KYRA_GUI_LOK_H
 #define KYRA_GUI_LOK_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 #include "kyra/screen_lok.h"
 
 namespace Kyra {

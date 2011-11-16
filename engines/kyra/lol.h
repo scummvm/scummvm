@@ -279,7 +279,7 @@ public:
 	virtual void initKeymap();
 
 	Screen *screen();
-	GUI_v1 *gui() const;
+	GUI *gui() const;
 
 private:
 	Screen_LoL *_screen;
