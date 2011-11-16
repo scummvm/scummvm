@@ -85,7 +85,8 @@ private:
 
 public:
 	Stack<T>() {}
-	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
+	template<class A>
+	Stack<T>(const Array<T, A> &stackContent) : _stack(stackContent) {}
 
 	bool empty() const {
 		return _stack.empty();

@@ -23,10 +23,7 @@
 #define GRAPHICS_FONT_H
 
 #include "common/str.h"
-
-namespace Common {
-template<class T> class Array;
-}
+#include "common/array.h"
 
 namespace Graphics {
 

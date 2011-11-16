@@ -26,7 +26,7 @@
 
 namespace Common {
 
-template<typename T> class List;
+template<typename T, class A> class List;
 
 
 namespace ListInternal {

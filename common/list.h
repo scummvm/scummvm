@@ -23,6 +23,7 @@
 #define COMMON_LIST_H
 
 #include "common/list_intern.h"
+#include "common/memory.h"
 
 namespace Common {
 
@@ -30,13 +31,14 @@ namespace Common {
  * Simple double linked list, modeled after the list template of the standard
  * C++ library.
  */
-template<typename t_T>
+template<typename t_T, class A = Allocator<t_T> >
 class List {
 protected:
 	typedef ListInternal::NodeBase		NodeBase;
 	typedef ListInternal::Node<t_T>		Node;
 
 	NodeBase _anchor;
+	typename A::template Rebind<Node>::Other _allocator;
 
 public:
 	typedef ListInternal::Iterator<t_T>		iterator;
@@ -49,7 +51,16 @@ public:
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 	}
-	List(const List<t_T> &list) {
+
+	List(const List<t_T, A> &list) {
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
+
+		insert(begin(), list.begin(), list.end());
+	}
+
+	template<class A2>
+	List(const List<t_T, A2> &list) {
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
 
@@ -181,6 +192,27 @@ public:
 		return *this;
 	}
 
+	template<class A2>
+	List<t_T, A> &operator=(const List<t_T, A2> &list) {
+		if (this != &list) {
+			iterator i;
+			const iterator e = end();
+			const_iterator i2;
+			const_iterator e2 = list.end();
+
+			for (i = begin(), i2 = list.begin();  (i != e) && (i2 != e2) ; ++i, ++i2) {
+				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(i2._node)->_data;
+			}
+
+			if (i == e)
+				insert(i, i2, e2);
+			else
+				erase(i, e);
+		}
+
+		return *this;
+	}
+
 	uint size() const {
 		uint n = 0;
 		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
@@ -193,11 +225,15 @@ public:
 		while (pos != &_anchor) {
 			Node *node = static_cast<Node *>(pos);
 			pos = pos->_next;
-			delete node;
+			_allocator.destroy(node);
+			_allocator.deallocate(node, 1);
 		}
 
 		_anchor._prev = &_anchor;
 		_anchor._next = &_anchor;
+
+		// Free up reserved memory
+		_allocator.freeReservedMemory();
 	}
 
 	bool empty() const {
@@ -235,7 +271,8 @@ protected:
 		Node *node = static_cast<Node *>(pos);
 		n._prev->_next = n._next;
 		n._next->_prev = n._prev;
-		delete node;
+		_allocator.destroy(node);
+		_allocator.deallocate(node, 1);
 		return n;
 	}
 
@@ -243,8 +280,9 @@ protected:
 	 * Inserts element before pos.
 	 */
 	void insert(NodeBase *pos, const t_T &element) {
-		ListInternal::NodeBase *newNode = new Node(element);
+		ListInternal::NodeBase *newNode = _allocator.allocate(1);
 		assert(newNode);
+		_allocator.construct(static_cast<Node *>(newNode), Node(element));
 
 		newNode->_next = pos;
 		newNode->_prev = pos->_prev;
