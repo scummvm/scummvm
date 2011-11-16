@@ -7,6 +7,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      InstallShield cabinets in The Feeble Files and Simon the 
      Sorcerer's Puzzle Pack.
 
+ KYRA:
+   - Fixed bug in the original Lands of Lore GUI which made ScummVM error out
+     in the case the user did not have a contiguous save slot usage.
+
 1.4.0 (2011-11-11)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
