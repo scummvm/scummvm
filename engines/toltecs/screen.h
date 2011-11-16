@@ -117,6 +117,7 @@ class SpriteFilter {
 public:
 	SpriteFilter(const SpriteDrawItem &sprite) : _sprite(&sprite) {
 	}
+	virtual ~SpriteFilter() {}
 	virtual SpriteReaderStatus readPacket(PixelPacket &packet) = 0;
 protected:
 	const SpriteDrawItem *_sprite;
