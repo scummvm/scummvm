@@ -541,7 +541,6 @@ public:
 	static const uint16 addr_random = 0xc17c;
 	static const uint16 addr_liftnoise = 0xc178;
 	static const uint16 addr_backobject = 0xc170;
-	static const uint16 addr_initrain = 0xc160;
 	static const uint16 addr_reminders = 0xc15c;
 	static const uint16 addr_adjustright = 0xc158;
 	static const uint16 addr_adjustleft = 0xc154;
@@ -650,12 +649,11 @@ public:
 	static const uint16 offset_speechfilename = 0x13eb;
 	static const uint16 offset_rootdir = 0x0b8c;
 	static const uint16 offset_gameerror3 = 0x1003;
-	static const uint16 offset_rainlocations = 0x0459;
+	static const uint16 offset_facelist = 0x0451;
 	static const uint16 offset_diarylist = 0x0e9c;
 	static const uint16 offset_decidelist = 0x13c1;
 	static const uint16 offset_symbollist = 0x0e5e;
 	static const uint16 offset_folderlist = 0x0e34;
-	static const uint16 offset_facelist = 0x0451;
 	static const uint16 offset_operand1 = 0x0b7e;
 	static const uint16 offset_keypadlist = 0x0d9a;
 	static const uint16 kStartvars = 0;
@@ -1512,7 +1510,7 @@ public:
 	void placefreeobject();
 	void allpalette();
 	//void loopchannel0();
-	void initrain();
+	//void initrain();
 	void showleftpage();
 	void rockstar();
 	void adjustright();

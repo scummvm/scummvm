@@ -210,6 +210,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'roomname',
 	'transfertext',
 	'splitintolines',
+	'initrain',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
@@ -222,6 +223,5 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'inventory',
 	'mainscreen',
 	'doload',
-	'initrain',
 	])
 generator.generate('dreamweb') #start routine

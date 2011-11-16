@@ -894,14 +894,6 @@ void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
 	data.word(kListpos) += sizeof(People);
 }
 
-void DreamGenContext::splitintolines() {
-	uint8 x = cl;
-	uint8 y = ch;
-	Rain *rain = (Rain *)es.ptr(di, 0);
-	Rain *newRain = splitintolines(x, y, rain);
-	di += (newRain - rain) * sizeof(Rain);
-}
-
 Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 	do {
 		// Look for line start

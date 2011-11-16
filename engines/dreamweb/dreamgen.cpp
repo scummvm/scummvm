@@ -16221,7 +16221,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_adjustleft: adjustleft(); break;
 		case addr_adjustright: adjustright(); break;
 		case addr_reminders: reminders(); break;
-		case addr_initrain: initrain(); break;
 		case addr_backobject: backobject(); break;
 		case addr_liftnoise: liftnoise(); break;
 		case addr_random: random(); break;
