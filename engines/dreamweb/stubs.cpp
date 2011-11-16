@@ -2055,22 +2055,15 @@ void DreamGenContext::twodigitnum() {
 }
 
 void DreamGenContext::loadroomssample() {
-	STACK_CHECK;
-	al = data.byte(kRoomssample);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (loadedalready) */;
-	_cmp(al, data.byte(kCurrentsample));
-	if (flags.z())
-		return /* (loadedalready) */;
-	data.byte(kCurrentsample) = al;
-	al = data.byte(kCurrentsample);
-	cl = '0';
-	twodigitnum();
-	di = 1896;
-	_xchg(al, ah);
-	cs.word(di+10) = ax;
-	dx = di;
+	uint8 sample = data.byte(kRoomssample);
+
+	if (sample == 255 || data.byte(kCurrentsample) == sample)
+		return; // loaded already
+
+	data.byte(kCurrentsample) = sample;
+	cs.byte(kSamplename+10) = '0' + sample / 10;
+	cs.byte(kSamplename+11) = '0' + sample % 10;
+	dx = kSamplename;
 	loadsecondsample();
 }
 
