@@ -100,7 +100,7 @@ char *fill(char *first, char *last, Value val) {
  * Sets all elements in the range [first, last) to val.
  */
 template<class In, class Value>
-In fill(In first, In last, Value val) {
+In fill(In first, In last, const Value &val) {
 	while (first != last)
 		*first++ = val;
 	return first;
