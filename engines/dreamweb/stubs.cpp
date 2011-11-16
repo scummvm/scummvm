@@ -1956,6 +1956,25 @@ void DreamGenContext::showwatch() {
 	}
 }
 
+void DreamGenContext::showtime() {
+	if (data.byte(kWatchon) == 0)
+		return;
+	Frame *charset = (Frame *)segRef(data.word(kCharset1)).ptr(0, 0);
+
+	uint8 mod1, mod10;
+	twodigitnum(data.byte(kSecondcount), 0, &mod10, &mod1);
+	showframe(charset, 282+5, 21, 91*3+10 + mod10, 0);
+	showframe(charset, 282+9, 21, 91*3+10 + mod1, 0);
+	twodigitnum(data.byte(kMinutecount), 0, &mod10, &mod1);
+	showframe(charset, 270+5, 21, 91*3 + mod10, 0);
+	showframe(charset, 270+11, 21, 91*3 + mod1, 0);
+	twodigitnum(data.byte(kHourcount), 0, &mod10, &mod1);
+	showframe(charset, 256+5, 21, 91*3 + mod10, 0);
+	showframe(charset, 256+11, 21, 91*3 + mod1, 0);
+
+	showframe(charset, 267+5, 21, 91*3+20, 0);
+}
+
 void DreamGenContext::watchcount() {
 	if (data.byte(kWatchon) == 0)
 		return;
@@ -2021,16 +2040,16 @@ void DreamGenContext::loadroom() {
 }
 
 void DreamGenContext::twodigitnum(uint8 num, uint8 baseChar,
-                                  uint8 &digit1, uint8 &digit2) {
-	digit1 = baseChar + num/10;
-	digit2 = baseChar + num%10;
+                                  uint8 *digit1, uint8 *digit2) {
+	*digit1 = baseChar + num/10;
+	*digit2 = baseChar + num%10;
 }
 
 // Convert a number between 0 and 99 into its two digits, either
 // ASCII (if cl/basechar == '0'), or raw (if cl/basechar == 0).
 void DreamGenContext::twodigitnum() {
 	uint8 digit1, digit2;
-	twodigitnum(al, cl, digit1, digit2);
+	twodigitnum(al, cl, &digit1, &digit2);
 	ah = digit1;
 	al = digit2;
 }

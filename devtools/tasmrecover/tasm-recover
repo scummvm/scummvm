@@ -207,6 +207,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'convicons',
 	'examineob',
 	'showwatch',
+	'showtime',
 	'roomname',
 	'transfertext',
 	'splitintolines',

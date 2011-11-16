@@ -13298,72 +13298,6 @@ void DreamGenContext::checkforshake() {
 	data.byte(kShakecounter) = -1;
 }
 
-void DreamGenContext::showtime() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchon), 0);
-	if (flags.z())
-		return /* (nowatch) */;
-	al = data.byte(kSecondcount);
-	cl = 0;
-	twodigitnum();
-	push(ax);
-	al = ah;
-	ah = 0;
-	_add(ax, 91*3+10);
-	ds = data.word(kCharset1);
-	di = 282+5;
-	bx = 21;
-	showframe();
-	ax = pop();
-	ah = 0;
-	_add(ax, 91*3+10);
-	ds = data.word(kCharset1);
-	di = 282+9;
-	bx = 21;
-	showframe();
-	al = data.byte(kMinutecount);
-	cl = 0;
-	twodigitnum();
-	push(ax);
-	al = ah;
-	ah = 0;
-	_add(ax, 91*3);
-	ds = data.word(kCharset1);
-	di = 270+5;
-	bx = 21;
-	showframe();
-	ax = pop();
-	ah = 0;
-	_add(ax, 91*3);
-	ds = data.word(kCharset1);
-	di = 270+11;
-	bx = 21;
-	showframe();
-	al = data.byte(kHourcount);
-	cl = 0;
-	twodigitnum();
-	push(ax);
-	al = ah;
-	ah = 0;
-	_add(ax, 91*3);
-	ds = data.word(kCharset1);
-	di = 256+5;
-	bx = 21;
-	showframe();
-	ax = pop();
-	ah = 0;
-	_add(ax, 91*3);
-	ds = data.word(kCharset1);
-	di = 256+11;
-	bx = 21;
-	showframe();
-	ax = 91*3+20;
-	ds = data.word(kCharset1);
-	di = 267+5;
-	bx = 21;
-	showframe();
-}
-
 void DreamGenContext::dumpwatch() {
 	STACK_CHECK;
 	_cmp(data.byte(kWatchdump), 1);
@@ -16209,7 +16143,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_screenupdate: screenupdate(); break;
 		case addr_watchreel: watchreel(); break;
 		case addr_checkforshake: checkforshake(); break;
-		case addr_showtime: showtime(); break;
 		case addr_dumpwatch: dumpwatch(); break;
 		case addr_showbyte: showbyte(); break;
 		case addr_onedigit: onedigit(); break;

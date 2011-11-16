@@ -251,6 +251,7 @@
 	void convicons();
 	void examineob(bool examineAgain = true);
 	void showwatch();
+	void showtime();
 	void roomname();
 	void transfertext();
 	void initrain();
@@ -272,6 +273,6 @@
 	void putundermenu();
 	void textformonk();
 	void textforend();
-	void twodigitnum(uint8 num, uint8 baseChar, uint8 &digit1, uint8 &digit2);
+	void twodigitnum(uint8 num, uint8 baseChar, uint8 *digit1, uint8 *digit2);
 	void twodigitnum();
 
