@@ -432,6 +432,10 @@ void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 		cx = pop();
 		bx = pop();
 		ax = pop();
+
+		// FIXME: This fallthrough does not properly support subtitles+speech
+		// mode. The parameters to setuptimedtemp() are sometimes different
+		// for speech and for subtitles. See e.g., madmantext()
 		if ((data.byte(kSpeechloaded) == 1) && (data.byte(kSubtitles) != 1))
 			return;
 	}
