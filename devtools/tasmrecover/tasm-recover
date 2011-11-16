@@ -213,6 +213,10 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'initrain',
 	'checkbasemem',
 	'clearstartpal',
+	'paltostartpal',
+	'endpaltostart',
+	'startpaltoend',
+	'paltoendpal',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

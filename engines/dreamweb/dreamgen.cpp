@@ -2940,46 +2940,6 @@ noaddb:
 		goto greysumloop1;
 }
 
-void DreamGenContext::paltostartpal() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	cx = 768/2;
-	_movsw(cx, true);
-}
-
-void DreamGenContext::endpaltostart() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	cx = 768/2;
-	_movsw(cx, true);
-}
-
-void DreamGenContext::startpaltoend() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	ds = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	cx = 768/2;
-	_movsw(cx, true);
-}
-
-void DreamGenContext::paltoendpal() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	ds = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
-	cx = 768/2;
-	_movsw(cx, true);
-}
-
 void DreamGenContext::allpalette() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -16232,10 +16192,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_fadecalculation: fadecalculation(); break;
 		case addr_greyscalesum: greyscalesum(); break;
 		case addr_showgroup: showgroup(); break;
-		case addr_paltostartpal: paltostartpal(); break;
-		case addr_endpaltostart: endpaltostart(); break;
-		case addr_startpaltoend: startpaltoend(); break;
-		case addr_paltoendpal: paltoendpal(); break;
 		case addr_allpalette: allpalette(); break;
 		case addr_dumpcurrent: dumpcurrent(); break;
 		case addr_fadedownmon: fadedownmon(); break;

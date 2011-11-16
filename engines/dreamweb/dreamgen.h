@@ -500,10 +500,6 @@ public:
 	static const uint16 addr_fadedownmon = 0xc2ac;
 	static const uint16 addr_dumpcurrent = 0xc2a8;
 	static const uint16 addr_allpalette = 0xc2a4;
-	static const uint16 addr_paltoendpal = 0xc2a0;
-	static const uint16 addr_startpaltoend = 0xc29c;
-	static const uint16 addr_endpaltostart = 0xc298;
-	static const uint16 addr_paltostartpal = 0xc294;
 	static const uint16 addr_showgroup = 0xc290;
 	static const uint16 addr_greyscalesum = 0xc28c;
 	static const uint16 addr_fadecalculation = 0xc288;
@@ -1459,7 +1455,7 @@ public:
 	void fadescreenuphalf();
 	void getridoftempcharset();
 	void heavy();
-	void endpaltostart();
+	//void endpaltostart();
 	void showkeys();
 	void usekey();
 	void locklighton();
@@ -1551,7 +1547,7 @@ public:
 	void openfilenocheck();
 	//void readoneblock();
 	void fadeupmon();
-	void paltoendpal();
+	//void paltoendpal();
 	void fadetowhite();
 	void loadsavebox();
 	void soundend();
@@ -1611,7 +1607,7 @@ public:
 	void constant();
 	void loadroomssample();
 	void sparkydrip();
-	void paltostartpal();
+	//void paltostartpal();
 	void bossman();
 	void getridofpit();
 	void convnum();
@@ -1640,7 +1636,7 @@ public:
 	void hangonpq();
 	void startup();
 	void savegame();
-	void startpaltoend();
+	//void startpaltoend();
 	//void showicon();
 	void findopenpos();
 	void describeob();

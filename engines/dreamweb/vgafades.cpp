@@ -24,9 +24,36 @@
 
 namespace DreamGen {
 
+uint8 *DreamGenContext::mainPalette() {
+	return segRef(data.word(kBuffers)).ptr(kMaingamepal, 256*3);
+}
+
+uint8 *DreamGenContext::startPalette() {
+	return segRef(data.word(kBuffers)).ptr(kStartpal, 256*3);
+}
+
+uint8 *DreamGenContext::endPalette() {
+	return segRef(data.word(kBuffers)).ptr(kEndpal, 256*3);
+}
+
 void DreamGenContext::clearstartpal() {
-	uint8 *startPalette = segRef(data.word(kBuffers)).ptr(kStartpal, 256*3);
-	memset(startPalette, 0, 256*3);
+	memset(startPalette(), 0, 256*3);
+}
+
+void DreamGenContext::paltostartpal() {
+	memcpy(startPalette(), mainPalette(), 256*3);
+}
+
+void DreamGenContext::endpaltostart() {
+	memcpy(startPalette(), endPalette(), 256*3);
+}
+
+void DreamGenContext::startpaltoend() {
+	memcpy(endPalette(), startPalette(), 256*3);
+}
+
+void DreamGenContext::paltoendpal() {
+	memcpy(endPalette(), mainPalette(), 256*3);
 }
 
 } /*namespace dreamgen */

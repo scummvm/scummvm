@@ -255,6 +255,13 @@
 	void transfertext();
 	void initrain();
 	Rain *splitintolines(uint8 x, uint8 y, Rain *rain);
+	uint8 *mainPalette();
+	uint8 *startPalette();
+	uint8 *endPalette();
 	void clearstartpal();
+	void paltostartpal();
+	void endpaltostart();
+	void startpaltoend();
+	void paltoendpal();
 
 
