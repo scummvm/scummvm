@@ -33,9 +33,11 @@ void DreamGenContext::dreamweb() {
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::EN_USA:
-		return;
+		// Implicit data.byte(kForeignrelease) = 0
+		break;
 	default:
 		data.byte(kForeignrelease) = 1;
+		break;
 	}
 
 	seecommandtail();
