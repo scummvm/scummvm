@@ -1031,7 +1031,7 @@ void DreamGenContext::textforend() {
 	cx = 60;
 	goto gotendtext;
 notendtext1:
-	_cmp(data.byte(kIntrocount), 50);
+	_cmp(data.byte(kIntrocount), (isCD() ? 50 : 65));
 	if (!flags.z())
 		goto notendtext2;
 	al = 1;
@@ -1040,7 +1040,7 @@ notendtext1:
 	cx = 60;
 	goto gotendtext;
 notendtext2:
-	_cmp(data.byte(kIntrocount), 85);
+	_cmp(data.byte(kIntrocount), (isCD() ? 85 : 110));
 	if (!flags.z())
 		return /* (notendtext3) */;
 	al = 2;
@@ -1093,7 +1093,7 @@ notmonktext3:
 	cx = 120;
 	goto gotmonktext;
 notmonktext4:
-	_cmp(data.byte(kIntrocount), 15);
+	_cmp(data.byte(kIntrocount), (isCD() ? 15 : 17));
 	if (!flags.z())
 		goto notmonktext5;
 	al = 23;
@@ -1165,7 +1165,7 @@ notmonktext11:
 	cx = 120;
 	goto gotmonktext;
 notmonktext12:
-	_cmp(data.byte(kIntrocount), 52);
+	_cmp(data.byte(kIntrocount), (isCD() ? 52 : 49));
 	if (!flags.z())
 		goto notmonktext13;
 	al = 31;
@@ -1178,17 +1178,21 @@ notmonktext13:
 	if (!flags.z())
 		return /* (notendtitles) */;
 	fadescreendowns();
-	data.byte(kVolumeto) = 7;
-	data.byte(kVolumedirection) = 1;
+	if (isCD()) {
+		data.byte(kVolumeto) = 7;
+		data.byte(kVolumedirection) = 1;
+	}
 	return;
 gotmonktext:
 	dx = 1;
 	ah = 82;
-	_cmp(data.byte(kCh1playing), 255);
-	if (flags.z())
-		goto oktalk;
-	_dec(data.byte(kIntrocount));
-	return;
+	if (isCD()) {
+		_cmp(data.byte(kCh1playing), 255);
+		if (flags.z())
+			goto oktalk;
+		_dec(data.byte(kIntrocount));
+		return;
+	}
 oktalk:
 	setuptimedtemp();
 }
