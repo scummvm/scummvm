@@ -80,7 +80,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -98,7 +98,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -115,7 +115,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -132,7 +132,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -150,7 +150,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -167,7 +167,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -185,7 +185,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -203,7 +203,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -221,7 +221,7 @@ static const MadeGameDescription gameDescriptions[] = {
  			Common::IT_ITA,
  			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
  		},
  		GID_RTZ,
  		0,
@@ -239,7 +239,7 @@ static const MadeGameDescription gameDescriptions[] = {
  			Common::IT_ITA,
  			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
  		},
  		GID_RTZ,
  		0,
@@ -257,7 +257,7 @@ static const MadeGameDescription gameDescriptions[] = {
  			Common::FR_FRA,
  			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
  		},
  		GID_RTZ,
  		0,
@@ -275,7 +275,7 @@ static const MadeGameDescription gameDescriptions[] = {
  			Common::FR_FRA,
  			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
  		},
  		GID_RTZ,
  		0,
@@ -309,7 +309,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -327,7 +327,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -363,7 +363,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_RTZ,
 		0,
@@ -508,7 +508,7 @@ static MadeGameDescription g_fallbackDesc = {
 		Common::UNK_LANG,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	0,
 	0,

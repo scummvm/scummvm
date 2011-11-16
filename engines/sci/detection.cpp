@@ -373,7 +373,7 @@ static ADGameDescription s_fallbackDesc = {
 	Common::UNK_LANG,
 	Common::kPlatformPC,
 	ADGF_NO_FLAGS,
-	GUIO1(GUIO_NONE)
+	GUIO0()
 };
 
 static char s_fallbackGameIdBuf[256];
@@ -435,7 +435,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
 	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
 	s_fallbackDesc.gameid = "sci";
-	s_fallbackDesc.guioptions = GUIO1(GUIO_NONE);
+	s_fallbackDesc.guioptions = GUIO0();
 
 	if (allFiles.contains("resource.map") || allFiles.contains("Data1")
 	    || allFiles.contains("resmap.001") || allFiles.contains("resmap.001")) {

@@ -269,7 +269,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GType_RexNebular,
 		kFeaturesDemo
@@ -302,7 +302,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GType_DragonSphere,
 		kFeaturesCD
@@ -318,7 +318,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GType_DragonSphere,
 		kFeaturesDemo
@@ -350,7 +350,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GType_Phantom,
 		kFeaturesCD
@@ -366,7 +366,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GType_Phantom,
 		kFeaturesDemo

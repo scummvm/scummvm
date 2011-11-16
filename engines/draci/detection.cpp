@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 
 	{
@@ -53,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 
 	{
@@ -63,7 +63,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 
 	{
@@ -73,7 +73,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 
 	AD_TABLE_END_MARKER

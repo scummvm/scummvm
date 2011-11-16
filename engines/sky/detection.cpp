@@ -55,9 +55,9 @@ static const SkyVersion skyVersions[] = {
 	{ 1413, -1, "floppy", 303, GUIO1(GUIO_NOSPEECH) },
 	{ 1445, 8830435, "floppy", 348, GUIO1(GUIO_NOSPEECH) },
 	{ 1445, -1, "floppy", 331, GUIO1(GUIO_NOSPEECH) },
-	{ 1711, -1, "cd demo", 365, GUIO1(GUIO_NONE) },
-	{ 5099, -1, "cd", 368, GUIO1(GUIO_NONE) },
-	{ 5097, -1, "cd", 372, GUIO1(GUIO_NONE) },
+	{ 1711, -1, "cd demo", 365, GUIO0() },
+	{ 5099, -1, "cd", 368, GUIO0() },
+	{ 5097, -1, "cd", 372, GUIO0() },
 	{ 0, 0, 0, 0, 0 }
 };
 

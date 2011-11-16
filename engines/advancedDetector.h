@@ -101,7 +101,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * terminate a list to be passed to the AdvancedDetector API.
  */
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO1(GUIO_NONE) }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO0() }
 
 struct ADFileBasedFallback {
 	/**

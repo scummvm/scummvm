@@ -4299,7 +4299,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdi2,
 		kFeaturesNone,
@@ -4341,7 +4341,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdi2,
 		kFeaturesNone,
@@ -4669,7 +4669,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4683,7 +4683,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4697,7 +4697,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4711,7 +4711,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4725,7 +4725,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4739,7 +4739,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4753,7 +4753,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4767,7 +4767,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4781,7 +4781,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,
@@ -4795,7 +4795,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		kGameTypeAdibou2,
 		kFeaturesNone,

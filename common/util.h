@@ -101,6 +101,7 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_NOASPECT		"\021"
 #define GUIO_EGAUNDITHER	"\022"
 
+#define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)
 #define GUIO3(a,b,c) (a b c)

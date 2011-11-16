@@ -653,7 +653,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 				if (strchr(dr.game.guioptions, GUIO_NOSPEECH[0]) != NULL) {
 					if (g->id == GID_MONKEY || g->id == GID_MONKEY2)
 						// TODO: This may need to be updated if something important gets added in the top detection table for these game ids
-						dr.game.guioptions = GUIO1(GUIO_NONE);
+						dr.game.guioptions = GUIO0();
 					else
 						warning("FIXME: fix NOSPEECH fallback");
 				}
