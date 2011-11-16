@@ -114,7 +114,6 @@ public:
 	static const uint16 addr_showbyte = 0xc9b4;
 	static const uint16 addr_dumpwatch = 0xc9b0;
 	static const uint16 addr_showtime = 0xc9ac;
-	static const uint16 addr_watchcount = 0xc9a8;
 	static const uint16 addr_checkforshake = 0xc9a4;
 	static const uint16 addr_watchreel = 0xc9a0;
 	static const uint16 addr_screenupdate = 0xc99c;
@@ -1346,7 +1345,7 @@ public:
 	//void showblink();
 	void mousecall();
 	void train();
-	void watchcount();
+	//void checkiffree();
 	void fadedownmon();
 	void loadcart();
 	//void splitintolines();
@@ -1973,7 +1972,7 @@ public:
 	void usehole();
 	void useobject();
 	void volumeadjust();
-	//void checkiffree();
+	//void watchcount();
 };
 }
 

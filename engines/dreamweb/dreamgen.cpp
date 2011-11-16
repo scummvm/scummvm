@@ -13521,49 +13521,6 @@ void DreamGenContext::checkforshake() {
 	data.byte(kShakecounter) = -1;
 }
 
-void DreamGenContext::watchcount() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchon), 0);
-	if (flags.z())
-		return /* (nowatchworn) */;
-	_inc(data.byte(kTimercount));
-	_cmp(data.byte(kTimercount), 9);
-	if (flags.z())
-		goto flashdots;
-	_cmp(data.byte(kTimercount), 18);
-	if (flags.z())
-		goto uptime;
-	return;
-flashdots:
-	ax = 91*3+21;
-	di = 268+4;
-	bx = 21;
-	ds = data.word(kCharset1);
-	showframe();
-	goto finishwatch;
-uptime:
-	data.byte(kTimercount) = 0;
-	_add(data.byte(kSecondcount), 1);
-	_cmp(data.byte(kSecondcount), 60);
-	if (!flags.z())
-		goto finishtime;
-	data.byte(kSecondcount) = 0;
-	_inc(data.byte(kMinutecount));
-	_cmp(data.byte(kMinutecount), 60);
-	if (!flags.z())
-		goto finishtime;
-	data.byte(kMinutecount) = 0;
-	_inc(data.byte(kHourcount));
-	_cmp(data.byte(kHourcount), 24);
-	if (!flags.z())
-		goto finishtime;
-	data.byte(kHourcount) = 0;
-finishtime:
-	showtime();
-finishwatch:
-	data.byte(kWatchdump) = 1;
-}
-
 void DreamGenContext::showtime() {
 	STACK_CHECK;
 	_cmp(data.byte(kWatchon), 0);
@@ -16526,7 +16483,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_screenupdate: screenupdate(); break;
 		case addr_watchreel: watchreel(); break;
 		case addr_checkforshake: checkforshake(); break;
-		case addr_watchcount: watchcount(); break;
 		case addr_showtime: showtime(); break;
 		case addr_dumpwatch: dumpwatch(); break;
 		case addr_showbyte: showbyte(); break;

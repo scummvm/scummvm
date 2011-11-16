@@ -219,6 +219,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'startpaltoend',
 	'paltoendpal',
 	'fadecalculation',
+	'watchcount',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

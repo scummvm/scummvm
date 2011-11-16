@@ -265,4 +265,6 @@
 	void startpaltoend();
 	void paltoendpal();
 	void fadecalculation();
+	void watchcount();
+
 

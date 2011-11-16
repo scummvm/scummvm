@@ -1951,6 +1951,31 @@ void DreamGenContext::showwatch() {
 	}
 }
 
+void DreamGenContext::watchcount() {
+	if (data.byte(kWatchon) == 0)
+		return;
+	++data.byte(kTimercount);
+	if (data.byte(kTimercount) == 9) {
+		showframe((Frame *)segRef(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
+		data.byte(kWatchdump) = 1;
+	} else if (data.byte(kTimercount) == 18) {
+		data.byte(kTimercount) = 0;
+		++data.byte(kSecondcount);
+		if (data.byte(kSecondcount) == 60) {
+			data.byte(kSecondcount) = 0;
+			++data.byte(kMinutecount);
+			if (data.byte(kMinutecount) == 60) {
+				data.byte(kMinutecount) = 0;
+				++data.byte(kHourcount);
+				if (data.byte(kHourcount) == 24)
+					data.byte(kHourcount) = 0;
+			}
+		}
+		showtime();
+		data.byte(kWatchdump) = 1;
+	}
+}
+
 void DreamGenContext::roomname() {
 	printmessage(88, 18, 53, 240, false);
 	uint16 textIndex = data.byte(kRoomnum);
