@@ -224,6 +224,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'loadroom',
 	'getundermenu',
 	'putundermenu',
+	'showoutermenu',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

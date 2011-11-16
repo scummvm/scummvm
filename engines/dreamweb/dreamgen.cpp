@@ -10757,34 +10757,6 @@ void DreamGenContext::dumpmenu() {
 	multidump();
 }
 
-void DreamGenContext::showoutermenu() {
-	STACK_CHECK;
-	al = 40;
-	ah = 0;
-	di = (80+40)-34;
-	bx = (60)-40;
-	ds = data.word(kTempgraphics);
-	showframe();
-	al = 41;
-	ah = 0;
-	di = (80+40)+64-34;
-	bx = (60)-40;
-	ds = data.word(kTempgraphics);
-	showframe();
-	al = 42;
-	ah = 0;
-	di = (80+40)-26;
-	bx = (60)+57-40;
-	ds = data.word(kTempgraphics);
-	showframe();
-	al = 43;
-	ah = 0;
-	di = (80+40)+64-26;
-	bx = (60)+57-40;
-	ds = data.word(kTempgraphics);
-	showframe();
-}
-
 void DreamGenContext::showmenu() {
 	STACK_CHECK;
 	_inc(data.byte(kMenucount));
@@ -16308,7 +16280,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumpkeypad: dumpkeypad(); break;
 		case addr_usemenu: usemenu(); break;
 		case addr_dumpmenu: dumpmenu(); break;
-		case addr_showoutermenu: showoutermenu(); break;
 		case addr_showmenu: showmenu(); break;
 		case addr_loadmenu: loadmenu(); break;
 		case addr_viewfolder: viewfolder(); break;

@@ -230,7 +230,6 @@ public:
 	static const uint16 addr_viewfolder = 0xc7b4;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
-	static const uint16 addr_showoutermenu = 0xc7a8;
 	static const uint16 addr_dumpmenu = 0xc79c;
 	static const uint16 addr_usemenu = 0xc798;
 	static const uint16 addr_dumpkeypad = 0xc794;
@@ -1749,7 +1748,7 @@ public:
 	void inventory();
 	void powerlightoff();
 	void fillopen();
-	void showoutermenu();
+	//void showoutermenu();
 	void signon();
 	void deleteextext();
 	void foghornsound();
