@@ -166,14 +166,7 @@ void DrasculaEngine::MusicFadeout() {
 void DrasculaEngine::playFile(const char *fname) {
 	Common::SeekableReadStream *stream = _archives.open(fname);
 	if (stream) {
-		// TODO: I don't really see a reason why we have this offset here. The
-		// file "S3.ALS" for example does not contain any silence at the start
-		// nor end. Thus it looks like this cuts off part of the sound.
-		//
-		// Would be good if someone could double check this and clarify why
-		// the code is working like this if it is fine and otherwise just fix
-		// it.
-		int startOffset = 32;
+		int startOffset = 0;
 		int soundSize = stream->size() - startOffset;
 
 		if (!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish) {
@@ -182,12 +175,7 @@ void DrasculaEngine::playFile(const char *fname) {
 			// and ignore the silence at the end
 			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
 			startOffset = 73959;
-			// TODO: The old code also subtracted 64 later on when creating
-			// the RAW audio stream. It would be good if someone could check
-			// whether this has been properly taking into account when
-			// calculating the soundSize. If it hasn't been taken into account
-			// when it is probably better to remove the minus 64 here.
-			soundSize = 117158 - 73959 - 64;
+			soundSize = soundSize - startOffset - 26306;
 		}
 
 		Common::SeekableReadStream *subStream = new Common::SeekableSubReadStream(
@@ -197,8 +185,6 @@ void DrasculaEngine::playFile(const char *fname) {
 			delete stream;
 			return;
 		}
-
-		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 
 		Audio::AudioStream *sound = Audio::makeRawStream(subStream, 11025,
 		                                                 Audio::FLAG_UNSIGNED);
