@@ -14510,26 +14510,6 @@ void DreamGenContext::loadtemptext() {
 	data.word(kTextfile1) = ax;
 }
 
-void DreamGenContext::loadroom() {
-	STACK_CHECK;
-	data.byte(kRoomloaded) = 1;
-	data.word(kTimecount) = 0;
-	data.word(kMaintimer) = 0;
-	data.word(kMapoffsetx) = 104;
-	data.word(kMapoffsety) = 38;
-	data.word(kTextaddressx) = 13;
-	data.word(kTextaddressy) = 182;
-	data.byte(kTextlen) = 240;
-	al = data.byte(kNewlocation);
-	data.byte(kLocation) = al;
-	getroomdata();
-	startloading();
-	loadroomssample();
-	switchryanon();
-	drawflags();
-	getdimension();
-}
-
 void DreamGenContext::loadroomssample() {
 	STACK_CHECK;
 	al = data.byte(kRoomssample);
@@ -16517,7 +16497,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadtempcharset: loadtempcharset(); break;
 		case addr_standardload: standardload(); break;
 		case addr_loadtemptext: loadtemptext(); break;
-		case addr_loadroom: loadroom(); break;
 		case addr_loadroomssample: loadroomssample(); break;
 		case addr_getridofreels: getridofreels(); break;
 		case addr_getridofall: getridofall(); break;

@@ -1996,5 +1996,23 @@ void DreamGenContext::zoomicon() {
 	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
 }
 
+void DreamGenContext::loadroom() {
+	data.byte(kRoomloaded) = 1;
+	data.word(kTimecount) = 0;
+	data.word(kMaintimer) = 0;
+	data.word(kMapoffsetx) = 104;
+	data.word(kMapoffsety) = 38;
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	data.byte(kLocation) = data.byte(kNewlocation);
+	getroomdata();
+	startloading();
+	loadroomssample();
+	switchryanon();
+	drawflags();
+	getdimension();
+}
+
 } /*namespace dreamgen */
 

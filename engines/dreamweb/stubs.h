@@ -267,4 +267,6 @@
 	void fadecalculation();
 	void watchcount();
 	void zoomicon();
+	void loadroom();
+
 

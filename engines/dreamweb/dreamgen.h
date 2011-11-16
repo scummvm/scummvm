@@ -65,7 +65,6 @@ public:
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
 	static const uint16 addr_loadroomssample = 0xcb34;
-	static const uint16 addr_loadroom = 0xcb30;
 	static const uint16 addr_loadtemptext = 0xcb2c;
 	static const uint16 addr_standardload = 0xcb28;
 	static const uint16 addr_loadtempcharset = 0xcb24;
@@ -1382,7 +1381,7 @@ public:
 	void manasleep2();
 	void moretalk();
 	//void printslow();
-	void loadroom();
+	//void loadroom();
 	void starttalk();
 	void delchar();
 	void getanyad();
