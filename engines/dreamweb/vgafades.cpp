@@ -56,5 +56,28 @@ void DreamGenContext::paltoendpal() {
 	memcpy(endPalette(), mainPalette(), 256*3);
 }
 
+void DreamGenContext::fadecalculation() {
+	if (data.byte(kFadecount) == 0) {
+		data.byte(kFadedirection) = 0;
+		return;
+	}
+
+	uint8 *startPal = startPalette();
+	const uint8 *endPal = endPalette();
+	for (size_t i = 0; i < 256 * 3; ++i, ++si, ++di) {
+		uint8 s = startPal[i];
+		uint8 e = endPal[i];
+		if (s == e)
+			continue;
+		else if (s > e)
+			--startPal[i];
+		else {
+			if (data.byte(kFadecount) <= e)
+				++startPal[i];
+		}
+	}
+	--data.byte(kFadecount);
+}
+
 } /*namespace dreamgen */
 

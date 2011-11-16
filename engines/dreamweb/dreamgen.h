@@ -502,7 +502,6 @@ public:
 	static const uint16 addr_allpalette = 0xc2a4;
 	static const uint16 addr_showgroup = 0xc290;
 	static const uint16 addr_greyscalesum = 0xc28c;
-	static const uint16 addr_fadecalculation = 0xc288;
 	static const uint16 addr_rollem = 0xc284;
 	static const uint16 addr_rollendcredits2 = 0xc280;
 	static const uint16 addr_showgun = 0xc27c;
@@ -1857,7 +1856,7 @@ public:
 	void usechurchhole();
 	void searchforfiles();
 	void monkspeaking();
-	void fadecalculation();
+	//void fadecalculation();
 	//void waitframes();
 	void clearrest();
 	//void getreelframeax();

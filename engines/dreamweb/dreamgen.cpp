@@ -2843,45 +2843,6 @@ endearly2:
 	cx = pop();
 }
 
-void DreamGenContext::fadecalculation() {
-	STACK_CHECK;
-	_cmp(data.byte(kFadecount), 0);
-	if (flags.z())
-		goto nomorefading;
-	bl = data.byte(kFadecount);
-	es = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	cx = 768;
-fadecolloop:
-	al = es.byte(si);
-	ah = es.byte(di);
-	_cmp(al, ah);
-	if (flags.z())
-		goto gotthere;
-	if (flags.c())
-		goto lesscolour;
-	_dec(es.byte(si));
-	goto gotthere;
-lesscolour:
-	_cmp(bl, ah);
-	if (flags.z())
-		goto withit;
-	if (!flags.c())
-		goto gotthere;
-withit:
-	_inc(es.byte(si));
-gotthere:
-	_inc(si);
-	_inc(di);
-	if (--cx)
-		goto fadecolloop;
-	_dec(data.byte(kFadecount));
-	return;
-nomorefading:
-	data.byte(kFadedirection) = 0;
-}
-
 void DreamGenContext::greyscalesum() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
@@ -16189,7 +16150,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showgun: showgun(); break;
 		case addr_rollendcredits2: rollendcredits2(); break;
 		case addr_rollem: rollem(); break;
-		case addr_fadecalculation: fadecalculation(); break;
 		case addr_greyscalesum: greyscalesum(); break;
 		case addr_showgroup: showgroup(); break;
 		case addr_allpalette: allpalette(); break;

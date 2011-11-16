@@ -263,5 +263,5 @@
 	void endpaltostart();
 	void startpaltoend();
 	void paltoendpal();
-
+	void fadecalculation();
 
