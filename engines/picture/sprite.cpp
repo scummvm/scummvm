@@ -469,7 +469,7 @@ void Screen::drawSpriteCore(byte *dest, SpriteFilter &reader, const SpriteDrawIt
 
 		if (((sprite.flags & 0x40) && (packet.pixel != 0)) ||
 			((sprite.flags & 0x10) && (packet.pixel != 0xFF)) ||
-			!(sprite.flags & 0x10) && (packet.pixel != 0))
+			(!(sprite.flags & 0x10) && (packet.pixel != 0)))
 		{
 			if (sprite.flags & 0x40) {
 				while (packet.count--) {
