@@ -42,6 +42,38 @@ public:
 	static Scene *createScene(int sceneNumber);
 };
 
+class SceneArea: public EventHandler {
+public:
+	Rect _bounds;
+	bool _enabled;
+	bool _insideArea;
+	CursorType _cursorNum;
+	CursorType _savedCursorNum;
+	int _cursorState;
+public:
+	SceneArea();
+	void setDetails(const Rect &bounds, CursorType cursor);
+
+	virtual void synchronize(Serializer &s);
+	virtual void remove();
+	virtual void process(Event &event);
+};
+
+class SceneExit: public SceneArea {
+public:
+	bool _moving;
+	int _sceneNumber;
+	Common::Point _destPos;
+public:
+	SceneExit();
+	void setDetails(const Rect &bounds, CursorType cursor, int sceneNumber);
+	void setDest(const Common::Point &p) { _destPos = p; }
+	void changeScene();
+
+	virtual void synchronize(Serializer &s);
+	virtual void process(Event &event);
+};
+
 class SceneExt: public Scene {
 private:
 	static void startStrip();
@@ -55,6 +87,7 @@ public:
 
 	SceneObject *_focusObject;
 	Visage _cursorVisage;
+	SynchronizedList<SceneArea *> _sceneAreas;
 
 	Rect _v51C34;
 public:
@@ -248,7 +281,6 @@ public:
 		s.syncAsSint16LE(_state);
 	}
 };
-
 
 } // End of namespace Ringworld2
 

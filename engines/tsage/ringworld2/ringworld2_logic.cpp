@@ -176,18 +176,8 @@ void SceneExt::postInit(SceneObjectList *OwnerList) {
 }
 
 void SceneExt::remove() {
-/*
-	R2_GLOBALS._uiElements.hide();
-	R2_GLOBALS._uiElements.resetClear();
-
-	if (_action) {
-		if (_action->_endHandler)
-			_action->_endHandler = NULL;
-		_action->remove();
-	}
-
-	_focusObject = NULL;
-*/
+	_sceneAreas.clear();
+	Scene::remove();
 }
 
 void SceneExt::process(Event &event) {
@@ -338,7 +328,17 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
-	SceneHandler::process(event);
+	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
+	if (scene) {
+		// Handle any scene areas that have been registered
+		SynchronizedList<SceneArea *>::iterator saIter;
+		for (saIter = scene->_sceneAreas.begin(); saIter != scene->_sceneAreas.end() && !event.handled; ++saIter) {
+			(*saIter)->process(event);
+		}
+	}
+
+	if (!event.handled)
+		SceneHandler::process(event);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -880,6 +880,103 @@ void SceneActor::setDetails(int resNum, int lookLineNum, int talkLineNum, int us
 	_useLineNum = useLineNum;
 }
 
+/*--------------------------------------------------------------------------*/
+
+SceneArea::SceneArea(): EventHandler() {
+	_enabled = true;
+	_insideArea = false;
+	_savedCursorNum = CURSOR_NONE;
+	_cursorState = 0;
+}
+
+void SceneArea::synchronize(Serializer &s) {
+	EventHandler::synchronize(s);
+
+	_bounds.synchronize(s);
+	s.syncAsSint16LE(_enabled);
+	s.syncAsSint16LE(_insideArea);
+	s.syncAsSint16LE(_cursorNum);
+	s.syncAsSint16LE(_savedCursorNum);
+	s.syncAsSint16LE(_cursorState);
+}
+
+void SceneArea::remove() {
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.remove(this);
+}
+
+void SceneArea::process(Event &event) {
+	if (!R2_GLOBALS._insetUp && _enabled && R2_GLOBALS._events.isCursorVisible()) {
+		CursorType cursor = R2_GLOBALS._events.getCursor();
+
+		if (_bounds.contains(event.mousePos)) {
+			// Cursor moving in bounded area
+			if (cursor != _cursorNum) {
+				_savedCursorNum = cursor;
+				_cursorState = 0;
+				R2_GLOBALS._events.setCursor(_cursorNum);
+			}
+			_insideArea = true;
+		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum != cursor) &&
+				(_savedCursorNum != CURSOR_NONE)) {
+			// Cursor moved outside bounded area
+			R2_GLOBALS._events.setCursor(_savedCursorNum);
+		}
+	}
+}
+
+void SceneArea::setDetails(const Rect &bounds, CursorType cursor) {
+	_bounds = bounds;
+	_cursorNum = cursor;
+
+	static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene)->_sceneAreas.push_front(this);
+}
+
+/*--------------------------------------------------------------------------*/
+
+SceneExit::SceneExit(): SceneArea() {
+	_moving = false;
+	_destPos = Common::Point(-1, -1);
+}
+
+void SceneExit::synchronize(Serializer &s) {
+	SceneArea::synchronize(s);
+
+	s.syncAsSint16LE(_moving);
+	s.syncAsSint16LE(_destPos.x);
+	s.syncAsSint16LE(_destPos.y);
+}
+
+void SceneExit::setDetails(const Rect &bounds, CursorType cursor, int sceneNumber) {
+	_sceneNumber = sceneNumber;
+	SceneArea::setDetails(bounds, cursor);
+}
+
+void SceneExit::changeScene() {
+	R2_GLOBALS._sceneManager.setNewScene(_sceneNumber);
+}
+
+void SceneExit::process(Event &event) {
+	if (!R2_GLOBALS._insetUp) {
+		SceneArea::process(event);
+
+		if (_enabled && (event.eventType == EVENT_BUTTON_DOWN)) {
+			if (!_bounds.contains(event.mousePos))
+				_moving = 0;
+			else if (!R2_GLOBALS._player._canWalk) {
+				_moving = 0;
+				changeScene();
+				event.handled = true;
+			} else {
+				Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
+					(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
+				ADD_PLAYER_MOVER(dest.x, dest.y);
+
+				_moving = true;
+				event.handled = true;
+			}
+		}
+	}
+}
 
 } // End of namespace Ringworld2
 

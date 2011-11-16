@@ -380,7 +380,9 @@ void Ringworld2Globals::reset() {
 	_v57C2C = 0;
 	_v58CE2 = 0;
 	Common::set_to(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
+	_insetUp = 0;
 
+	// Reset fields stored in the player class
 	_player._characterIndex = 1;
 	_player._characterScene[1] = 100;
 	_player._characterScene[2] = 300;
@@ -396,6 +398,7 @@ void Ringworld2Globals::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_v58CE2);
 	for (int i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsSint16LE(_v565F1[i]);
+	s.syncAsSint16LE(_insetUp);
 }
 
 } // end of namespace Ringworld2
