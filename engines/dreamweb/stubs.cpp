@@ -2015,13 +2015,5 @@ void DreamGenContext::loadroom() {
 	getdimension();
 }
 
-void DreamGenContext::getundermenu() {
-	multiget(segRef(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
-}
-
-void DreamGenContext::putundermenu() {
-	multiput(segRef(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
-}
-
 } /*namespace dreamgen */
 
