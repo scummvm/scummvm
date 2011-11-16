@@ -259,6 +259,7 @@
 	uint8 *startPalette();
 	uint8 *endPalette();
 	void clearstartpal();
+	void clearendpal();
 	void paltostartpal();
 	void endpaltostart();
 	void startpaltoend();

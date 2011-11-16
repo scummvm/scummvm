@@ -514,7 +514,6 @@ public:
 	static const uint16 addr_fadetowhite = 0xc25c;
 	static const uint16 addr_fadescreenup = 0xc258;
 	static const uint16 addr_clearpalette = 0xc254;
-	static const uint16 addr_clearendpal = 0xc250;
 	static const uint16 addr_dofade = 0xc24c;
 	static const uint16 addr_fadedos = 0xc248;
 	static const uint16 addr_transfermap = 0xc244;
@@ -1291,7 +1290,7 @@ public:
 	void drawfloor();
 	void loadkeypad();
 	//void findsource();
-	void clearendpal();
+	//void clearendpal();
 	void findtext1();
 	void isryanholding();
 	void showslots();

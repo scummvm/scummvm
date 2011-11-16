@@ -2560,15 +2560,6 @@ void DreamGenContext::dofade() {
 	fadecalculation();
 }
 
-void DreamGenContext::clearendpal() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768);
-	cx = 768;
-	al = 0;
-	_stosb(cx, true);
-}
-
 void DreamGenContext::clearpalette() {
 	STACK_CHECK;
 	data.byte(kFadedirection) = 0;
@@ -16137,7 +16128,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_transfermap: transfermap(); break;
 		case addr_fadedos: fadedos(); break;
 		case addr_dofade: dofade(); break;
-		case addr_clearendpal: clearendpal(); break;
 		case addr_clearpalette: clearpalette(); break;
 		case addr_fadescreenup: fadescreenup(); break;
 		case addr_fadetowhite: fadetowhite(); break;

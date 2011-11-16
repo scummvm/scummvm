@@ -40,6 +40,10 @@ void DreamGenContext::clearstartpal() {
 	memset(startPalette(), 0, 256*3);
 }
 
+void DreamGenContext::clearendpal() {
+	memset(endPalette(), 0, 256*3);
+}
+
 void DreamGenContext::paltostartpal() {
 	memcpy(startPalette(), mainPalette(), 256*3);
 }

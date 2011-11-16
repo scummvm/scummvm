@@ -213,6 +213,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'initrain',
 	'checkbasemem',
 	'clearstartpal',
+	'clearendpal',
 	'paltostartpal',
 	'endpaltostart',
 	'startpaltoend',
