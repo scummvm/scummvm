@@ -295,76 +295,61 @@ void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::doorway(Sprite *sprite, SetObject *objData) {
-	data.byte(kDoorcheck1) = (uint8)-24;
-	data.byte(kDoorcheck2) = 10;
-	data.byte(kDoorcheck3) = (uint8)-30;
-	data.byte(kDoorcheck4) = 10;
-	dodoor(sprite, objData);
+	Common::Rect check(-24, -30, 10, 10);
+	dodoor(sprite, objData, check);
 }
 
 void DreamGenContext::widedoor(Sprite *sprite, SetObject *objData) {
-	data.byte(kDoorcheck1) = (uint8)-24;
-	data.byte(kDoorcheck2) = 24;
-	data.byte(kDoorcheck3) = (uint8)-30;
-	data.byte(kDoorcheck4) = 24;
-	dodoor(sprite, objData);
+	Common::Rect check(-24, -30, 24, 24);
+	dodoor(sprite, objData, check);
 }
 
-void DreamGenContext::dodoor() {
-	Sprite *sprite = (Sprite *)es.ptr(bx, sizeof(Sprite));
-	SetObject *objData = (SetObject *)ds.ptr(di, 0);
-	dodoor(sprite, objData);
-}
+void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 
-void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData) {
-	uint8 ryanx = data.byte(kRyanx);
-	uint8 ryany = data.byte(kRyany);
-	if (ryanx < sprite->x) {
-		if (ryanx < sprite->x + (int8)data.byte(kDoorcheck1))
-			goto shutdoor;
-	} else {
-		if (ryanx >= sprite->x + data.byte(kDoorcheck2))
-			goto shutdoor;
-	}
-	if (ryany < sprite->y) {
-		if (ryany < sprite->y + (int8)data.byte(kDoorcheck3))
-			goto shutdoor;
-	} else {
-		if (ryany >= sprite->y + data.byte(kDoorcheck4))
-			goto shutdoor;
-	}
-//opendoor:
-	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0))
-		sprite->frame = 6;
+	int ryanx = data.byte(kRyanx);
+	int ryany = data.byte(kRyany);
 
-	++sprite->frame;
-	if (sprite->frame == 1) { //doorsound2
-		if (data.byte(kReallocation) == 5) //hoteldoor2
-			al = 13;
-		else
-			al = 0;
-		playchannel1();
+	// Automatically opening doors: check if Ryan is in range
+
+	check.translate(sprite->x, sprite->y);
+	bool openDoor = check.contains(ryanx, ryany);
+
+	if (openDoor) {
+
+		if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0))
+			sprite->frame = 6;
+
+		++sprite->frame;
+		if (sprite->frame == 1) { // doorsound2
+			if (data.byte(kReallocation) == 5) // hoteldoor2
+				al = 13;
+			else
+				al = 0;
+			playchannel1();
+		}
+		if (objData->b18[sprite->frame] == 255)
+			--sprite->frame;
+
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		data.byte(kThroughdoor) = 1;
+
+	} else {
+		// shut door
+
+		if (sprite->frame == 5) { // doorsound1;
+			if (data.byte(kReallocation) == 5) // hoteldoor1
+				al = 13;
+			else
+				al = 1;
+			playchannel1();
+		}
+		if (sprite->frame != 0)
+			--sprite->frame;
+
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		if (sprite->frame == 5) // nearly
+			data.byte(kThroughdoor) = 0;
 	}
-	if (objData->b18[sprite->frame] == 255) {
-		--sprite->frame;
-	}
-	sprite->b15 = objData->index = objData->b18[sprite->frame];
-	data.byte(kThroughdoor) = 1;
-	return;
-shutdoor:
-	if (sprite->frame == 5) { //doorsound1;
-		if (data.byte(kReallocation) == 5) //hoteldoor1
-			al = 13;
-		else
-			al = 1;
-		playchannel1();
-	}
-	if (sprite->frame != 0) {
-		--sprite->frame;
-	}
-	sprite->b15 = objData->index = objData->b18[sprite->frame];
-	if (sprite->frame == 5) //nearly
-		data.byte(kThroughdoor) = 0;
 }
 
 void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {

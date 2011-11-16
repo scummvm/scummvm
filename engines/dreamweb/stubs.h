@@ -90,8 +90,7 @@
 	void constant(Sprite *sprite, SetObject *objData);
 	void steady(Sprite *sprite, SetObject *objData);
 	void random(Sprite *sprite, SetObject *objData);
-	void dodoor();
-	void dodoor(Sprite *sprite, SetObject *objData);
+	void dodoor(Sprite *sprite, SetObject *objData, Common::Rect check);
 	void doorway(Sprite *sprite, SetObject *objData);
 	void widedoor(Sprite *sprite, SetObject *objData);
 	void lockeddoorway(Sprite *sprite, SetObject *objData);

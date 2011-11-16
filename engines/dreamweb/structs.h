@@ -21,6 +21,7 @@
  */
 
 #include "common/endian.h"
+#include "common/rect.h"
 
 struct Sprite {
 	uint16 _updateCallback;
