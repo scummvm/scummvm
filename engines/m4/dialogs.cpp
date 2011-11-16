@@ -80,7 +80,7 @@ void Dialog::writeChars(const char *srcLine) {
 	while (*srcP) {
 		bool wordEndedP = false, newlineP = false;
 		char *destP = &wordStr[0];
-		Common::set_to(&wordStr[0], &wordStr[80], 0);
+		Common::fill(&wordStr[0], &wordStr[80], 0);
 
 		// Try and get the next word
 		for (;;) {

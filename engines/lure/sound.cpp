@@ -53,7 +53,7 @@ SoundManager::SoundManager() {
 	_isRoland = MidiDriver::getMusicType(dev) != MT_ADLIB;
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-	Common::set_to(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
+	Common::fill(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 
 	_driver = MidiDriver::createMidi(dev);
 	int statusCode = _driver->open();
@@ -182,7 +182,7 @@ void SoundManager::killSounds() {
 
 	// Clear the active sounds
 	_activeSounds.clear();
-	Common::set_to(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
+	Common::fill(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 }
 
 void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
@@ -221,7 +221,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	}
 
 	// Mark the found channels as in use
-	Common::set_to(_channelsInUse+channelCtr, _channelsInUse+channelCtr + numChannels, true);
+	Common::fill(_channelsInUse+channelCtr, _channelsInUse+channelCtr + numChannels, true);
 
 	SoundDescResource *newEntry = new SoundDescResource();
 	newEntry->soundNumber = rec.soundNumber;
@@ -342,7 +342,7 @@ void SoundManager::tidySounds() {
 			++i;
 		else {
 			// Mark the channels that it used as now being free
-			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, false);
+			Common::fill(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, false);
 
 			i = _activeSounds.erase(i);
 		}
@@ -373,7 +373,7 @@ void SoundManager::restoreSounds() {
 		SoundDescResource *rec = (*i).get();
 
 		if ((rec->numChannels != 0) && ((rec->flags & SF_RESTORE) != 0)) {
-			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
+			Common::fill(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
 
 			musicInterface_Play(rec->soundNumber, rec->channel, rec->numChannels);
 			musicInterface_SetVolume(rec->channel, rec->volume);

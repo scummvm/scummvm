@@ -87,7 +87,7 @@ void TextviewView::reset() {
 	_panY = 0;
 	_panSpeed = 0;
 	_soundDriverLoaded = false;
-	Common::set_to(&_spareScreens[0], &_spareScreens[10], 0);
+	Common::fill(&_spareScreens[0], &_spareScreens[10], 0);
 	_scrollCount = 0;
 	_lineY = -1;
 	_scrollTimeout = 0;
@@ -211,7 +211,7 @@ void TextviewView::updateState() {
 	byte *pixelsP = _textSurface.getBasePtr(0, 0);
 	Common::copy(pixelsP + width(),  pixelsP + _textSurface.width() * _textSurface.height(), pixelsP);
 	pixelsP = _textSurface.getBasePtr(0, _textSurface.height() - 1);
-	Common::set_to(pixelsP, pixelsP + _textSurface.width(), _vm->_palette->BLACK);
+	Common::fill(pixelsP, pixelsP + _textSurface.width(), _vm->_palette->BLACK);
 
 	if (_scrollCount > 0) {
 		// Handling final scrolling of text off of screen

@@ -81,7 +81,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 	if (!rleEncoded) {
 		Common::copy(srcP, srcP + (r.width() * r.height()), destP);
 	} else {
-		Common::set_to(destP, destP + (r.width() * r.height()), s._transColor);
+		Common::fill(destP, destP + (r.width() * r.height()), s._transColor);
 
 		for (int yp = 0; yp < r.height(); ++yp) {
 			int width = r.width();
@@ -105,7 +105,7 @@ GfxSurface surfaceFromRes(const byte *imgData) {
 					controlVal &= 0x3f;
 					int pixel = *srcP++;
 
-					Common::set_to(destP, destP + controlVal, pixel);
+					Common::fill(destP, destP + controlVal, pixel);
 					destP += controlVal;
 					width -= controlVal;
 				}
@@ -261,7 +261,7 @@ void GfxSurface::create(int width, int height) {
 	}
 	_customSurface = new Graphics::Surface();
 	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	Common::set_to((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
+	Common::fill((byte *)_customSurface->pixels, (byte *)_customSurface->pixels + (width * height), 0);
 	_bounds = Rect(0, 0, width, height);
 }
 
@@ -455,7 +455,7 @@ static int *scaleLine(int size, int srcSize) {
 	int scale = PRECISION_FACTOR * size / srcSize;
 	assert(scale >= 0);
 	int *v = new int[size];
-	Common::set_to(v, &v[size], -1);
+	Common::fill(v, &v[size], -1);
 
 	int distCtr = PRECISION_FACTOR / 2;
 	int *destP = v;
@@ -493,7 +493,7 @@ static GfxSurface ResizeSurface(GfxSurface &src, int xSize, int ySize, int trans
 		byte *destP = (byte *)destImage.getBasePtr(0, yp);
 
 		if (vertUsage[yp] == -1) {
-			Common::set_to(destP, destP + xSize, transIndex);
+			Common::fill(destP, destP + xSize, transIndex);
 		} else {
 			const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
 

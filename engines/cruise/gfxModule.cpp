@@ -326,7 +326,7 @@ void flip() {
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
 	for (int y = y1; y < y2; ++y) {
 		byte *p = &gfxModuleData.pPage00[y * 320 + x1];
-		Common::set_to(p, p + (x2 - x1), color);
+		Common::fill(p, p + (x2 - x1), color);
 	}
 }
 

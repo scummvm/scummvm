@@ -233,7 +233,7 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	RGB8 *palData = Palette::decodeMadsPalette(spriteStream, &numColors);
 	Common::copy(palData, &palData[numColors], &_palette[0]);
 	if (numColors < 256)
-		Common::set_to((byte *)&_palette[numColors], (byte *)&_palette[256], 0);
+		Common::fill((byte *)&_palette[numColors], (byte *)&_palette[256], 0);
 	_colorCount = numColors;
 	delete[] palData;
 	delete spriteStream;

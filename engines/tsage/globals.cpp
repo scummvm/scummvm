@@ -155,7 +155,7 @@ Globals::~Globals() {
 }
 
 void Globals::reset() {
-	Common::set_to(&_flags[0], &_flags[MAX_FLAGS], false);
+	Common::fill(&_flags[0], &_flags[MAX_FLAGS], false);
 	g_saver->addFactory(classFactoryProc);
 }
 
@@ -379,7 +379,7 @@ void Ringworld2Globals::reset() {
 	_v565F5 = 0;
 	_v57C2C = 0;
 	_v58CE2 = 0;
-	Common::set_to(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
+	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
 	_insetUp = 0;
 
 	// Reset fields stored in the player class

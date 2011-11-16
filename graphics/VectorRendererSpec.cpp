@@ -169,7 +169,7 @@ namespace Graphics {
 /**
  * Fills several pixels in a row with a given color.
  *
- * This is a replacement function for Common::set_to, using an unrolled
+ * This is a replacement function for Common::fill, using an unrolled
  * loop to maximize performance on most architectures.
  * This function may (and should) be overloaded in any child renderers
  * for portable platforms with platform-specific assembly code.

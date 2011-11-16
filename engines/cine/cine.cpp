@@ -141,11 +141,11 @@ void CineEngine::initialize() {
 
 	// Resize zone data table to its correct size and reset all its elements
 	g_cine->_zoneData.resize(NUM_MAX_ZONE);
-	Common::set_to(g_cine->_zoneData.begin(), g_cine->_zoneData.end(), 0);
+	Common::fill(g_cine->_zoneData.begin(), g_cine->_zoneData.end(), 0);
 
 	// Resize zone query table to its correct size and reset all its elements
 	g_cine->_zoneQuery.resize(NUM_MAX_ZONE);
-	Common::set_to(g_cine->_zoneQuery.begin(), g_cine->_zoneQuery.end(), 0);
+	Common::fill(g_cine->_zoneQuery.begin(), g_cine->_zoneQuery.end(), 0);
 
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();

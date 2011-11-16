@@ -798,7 +798,7 @@ void SoundManager::_sfRethinkVoiceTypes() {
 			continue;
 
 		_sfUpdateVoiceStructs();
-		Common::set_to(sound->_chWork, sound->_chWork + SOUND_ARR_SIZE, false);
+		Common::fill(sound->_chWork, sound->_chWork + SOUND_ARR_SIZE, false);
 
 		for (;;) {
 			// Scan for sub priority
@@ -1485,7 +1485,7 @@ Sound::Sound() {
 	memset(_chNumVoices, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_chSubPriority, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_chFlags, 0, SOUND_ARR_SIZE * sizeof(int));
-	Common::set_to(_chWork, _chWork + SOUND_ARR_SIZE, false);
+	Common::fill(_chWork, _chWork + SOUND_ARR_SIZE, false);
 	memset(_channelData, 0, SOUND_ARR_SIZE * sizeof(byte *));
 	memset(_trkChannel, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_trkState, 0, SOUND_ARR_SIZE * sizeof(int));
@@ -2557,7 +2557,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-	Common::set_to(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
+	Common::fill(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v4405E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v44067, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2565,7 +2565,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	memset(_v44079, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v44082, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	_v44082[ADLIB_CHANNEL_COUNT] = 0x90;
-	Common::set_to(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
+	Common::fill(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
 	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	_patchData = NULL;
 }

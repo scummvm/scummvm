@@ -86,7 +86,7 @@ const uint16 Keyboard::_scummVmCodes[0x60] = {
 };
 
 Keyboard::Keyboard(CGEEngine *vm) : _client(NULL), _vm(vm) {
-	Common::set_to(&_key[0], &_key[0x60], false);
+	Common::fill(&_key[0], &_key[0x60], false);
 	_current = 0;
 }
 

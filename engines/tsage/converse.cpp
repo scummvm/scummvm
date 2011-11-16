@@ -32,7 +32,7 @@ namespace TsAGE {
 
 
 SequenceManager::SequenceManager() : Action() {
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	_sequenceData.clear();
 	_fontNum = 0;
 	_sequenceOffset = 0;
@@ -81,7 +81,7 @@ void SequenceManager::remove() {
 	if (g_globals->_sceneObjects->contains(&_sceneText))
 		_sceneText.remove();
 
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	Action::remove();
 }
 
@@ -342,7 +342,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler,
 
 	DEALLOCATE(seqData);
 
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	for (int idx = 0; idx < 6; ++idx) {
 		_objectList[idx] = va_arg(va, SceneObject *);
 		if (!_objectList[idx])

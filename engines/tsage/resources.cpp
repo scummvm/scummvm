@@ -33,7 +33,7 @@ namespace TsAGE {
 
 MemoryManager::MemoryManager() {
 	_memoryPool = new MemoryHeader*[MEMORY_POOL_SIZE];
-	Common::set_to(&_memoryPool[0], &_memoryPool[MEMORY_POOL_SIZE], (MemoryHeader *)NULL);
+	Common::fill(&_memoryPool[0], &_memoryPool[MEMORY_POOL_SIZE], (MemoryHeader *)NULL);
 }
 
 MemoryManager::~MemoryManager() {
@@ -67,7 +67,7 @@ uint16 MemoryManager::allocate(uint32 size) {
 byte *MemoryManager::allocate2(uint32 size) {
 	uint32 idx = allocate(size);
 	byte *result = lock(idx);
-	Common::set_to(result, result + size, 0);
+	Common::fill(result, result + size, 0);
 	return result;
 }
 

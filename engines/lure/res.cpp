@@ -408,7 +408,7 @@ byte *Resources::getCursor(uint8 cursorNum) {
 	if (!LureEngine::getReference().isEGA())
 		return _cursors->data() + (cursorNum * CURSOR_SIZE);
 
-	Common::set_to(&_cursor[0], &_cursor[0] + CURSOR_SIZE, 0);
+	Common::fill(&_cursor[0], &_cursor[0] + CURSOR_SIZE, 0);
 	byte *pSrc = _cursors->data() + (cursorNum * 64);
 	byte *pDest = &_cursor[0];
 

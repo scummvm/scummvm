@@ -729,7 +729,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 				}
 			} else {
 				// 8-bit depth pixels
-				Common::set_to(destP, destP + runLength, *srcP++);
+				Common::fill(destP, destP + runLength, *srcP++);
 				destP += runLength;
 			}
 		}

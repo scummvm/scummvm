@@ -896,7 +896,7 @@ void LoLEngine::startupNew() {
 	_availableSpells[0] = 0;
 	setupScreenDims();
 
-	Common::set_to(_globalScriptVars2, ARRAYEND(_globalScriptVars2), 0x100);
+	Common::fill(_globalScriptVars2, ARRAYEND(_globalScriptVars2), 0x100);
 
 	static const int selectIds[] = { -9, -1, -8, -5 };
 	assert(_charSelection >= 0);

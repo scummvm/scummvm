@@ -292,7 +292,7 @@ public:
 		Common::copy(src, src + size, dest);
 	}
 	virtual void set(byte *dest, int size, byte val) {
-		Common::set_to(dest, dest + size, val);
+		Common::fill(dest, dest + size, val);
 	}
 	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
 		_surface.setBounds(_bounds);

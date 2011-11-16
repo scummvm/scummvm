@@ -33,7 +33,7 @@ namespace M4 {
 
 void MadsGameLogic::initializeGlobals() {
 	// Clear the entire globals list
-	Common::set_to(&_madsVm->globals()->_globals[0], &_madsVm->globals()->_globals[TOTAL_NUM_VARIABLES], 0);
+	Common::fill(&_madsVm->globals()->_globals[0], &_madsVm->globals()->_globals[TOTAL_NUM_VARIABLES], 0);
 
 	SET_GLOBAL(4, 8);
 	SET_GLOBAL(33, 1);
@@ -479,7 +479,7 @@ void MadsSceneLogic::selectScene(int sceneNum) {
 	assert(sceneNum == 101);
 	_sceneNumber = sceneNum;
 
-	Common::set_to(&_spriteIndexes[0], &_spriteIndexes[50], 0);
+	Common::fill(&_spriteIndexes[0], &_spriteIndexes[50], 0);
 
 	// If debugging is turned on, show a debug warning if any of the scene methods aren't present
 	if (gDebugLevel > 0) {

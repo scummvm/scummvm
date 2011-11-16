@@ -259,7 +259,7 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_sceneMode = 0;
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
-	Common::set_to(&_zoomPercents[0], &_zoomPercents[256], 0);
+	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
 }
 
 Scene::~Scene() {
@@ -363,7 +363,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_priorities.load(sceneNum);
 
 	// Initialize the section enabled list
-	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
+	Common::fill(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
 	g_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
 	g_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;

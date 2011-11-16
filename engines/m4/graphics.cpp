@@ -48,7 +48,7 @@ RGBList::RGBList(int numEntries, RGB8 *srcData, bool freeData) {
 	}
 
 	_palIndexes = new byte[numEntries];
-	Common::set_to(&_palIndexes[0], &_palIndexes[numEntries], 0);
+	Common::fill(&_palIndexes[0], &_palIndexes[numEntries], 0);
 }
 
 RGBList::~RGBList() {
@@ -337,7 +337,7 @@ void M4Surface::freeData() {
 }
 
 void M4Surface::clear() {
-	Common::set_to((byte *)pixels, (byte *)pixels + w * h, _vm->_palette->BLACK);
+	Common::fill((byte *)pixels, (byte *)pixels + w * h, _vm->_palette->BLACK);
 }
 
 void M4Surface::reset() {
@@ -1029,7 +1029,7 @@ static void fadeRange(MadsM4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startI
 Palette::Palette(MadsM4Engine *vm) : _vm(vm) {
 	reset();
 	_fading_in_progress = false;
-	Common::set_to(&_usageCount[0], &_usageCount[256], 0);
+	Common::fill(&_usageCount[0], &_usageCount[256], 0);
 }
 
 void Palette::setPalette(const byte *colors, uint start, uint num) {
@@ -1166,7 +1166,7 @@ void Palette::fadeFromGreen(int numSteps, uint delayAmount, bool fadeToBlack) {
 	RGB8 *destPalette = (RGB8 *) &_originalPalette[0];
 
 	if (fadeToBlack) {
-		Common::set_to((byte *)&blackPalette[0], (byte *)&blackPalette[256], 0);
+		Common::fill((byte *)&blackPalette[0], (byte *)&blackPalette[256], 0);
 		destPalette = &blackPalette[0];
 	}
 
@@ -1193,7 +1193,7 @@ void Palette::fadeIn(int numSteps, uint delayAmount, RGB8 *destPalette, int numC
 
 	_fading_in_progress = true;
 	RGB8 blackPalette[256];
-	Common::set_to((byte *)&blackPalette[0], (byte *)&blackPalette[256], 0);
+	Common::fill((byte *)&blackPalette[0], (byte *)&blackPalette[256], 0);
 
 	// Initially set the black palette
 	_vm->_palette->setPalette(blackPalette, 0, numColors);
@@ -1209,7 +1209,7 @@ RGB8 *Palette::decodeMadsPalette(Common::SeekableReadStream *palStream, int *num
 	assert(*numColors <= 252);
 
 	RGB8 *palData = new RGB8[*numColors];
-	Common::set_to((byte *)&palData[0], (byte *)&palData[*numColors], 0);
+	Common::fill((byte *)&palData[0], (byte *)&palData[*numColors], 0);
 
 	for (int i = 0; i < *numColors; ++i) {
 		byte r = palStream->readByte();
@@ -1249,12 +1249,12 @@ void Palette::setMadsSystemPalette() {
 }
 
 void Palette::resetColorCounts() {
-	Common::set_to(&_usageCount[0], &_usageCount[256], 0);
+	Common::fill(&_usageCount[0], &_usageCount[256], 0);
 }
 
 void Palette::blockRange(int startIndex, int size) {
 	// Use a reference count of -1 to signal a palette index shouldn't be used
-	Common::set_to(&_usageCount[startIndex], &_usageCount[startIndex + size], -1);
+	Common::fill(&_usageCount[startIndex], &_usageCount[startIndex + size], -1);
 }
 
 void Palette::addRange(RGBList *list) {
