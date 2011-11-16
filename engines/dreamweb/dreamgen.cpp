@@ -13405,19 +13405,6 @@ morethan10:
 	_add(dl, 'A');
 }
 
-void DreamGenContext::twodigitnum() {
-	STACK_CHECK;
-	ah = cl;
-	_dec(ah);
-numloop1:
-	_inc(ah);
-	_sub(al, 10);
-	if (!flags.c())
-		goto numloop1;
-	_add(al, 10);
-	_add(al, cl);
-}
-
 void DreamGenContext::showword() {
 	STACK_CHECK;
 	ch = 0;
@@ -16226,7 +16213,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumpwatch: dumpwatch(); break;
 		case addr_showbyte: showbyte(); break;
 		case addr_onedigit: onedigit(); break;
-		case addr_twodigitnum: twodigitnum(); break;
 		case addr_showword: showword(); break;
 		case addr_convnum: convnum(); break;
 		case addr_mainscreen: mainscreen(); break;

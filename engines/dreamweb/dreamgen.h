@@ -107,7 +107,6 @@ public:
 	static const uint16 addr_mainscreen = 0xc9c8;
 	static const uint16 addr_convnum = 0xc9c4;
 	static const uint16 addr_showword = 0xc9c0;
-	static const uint16 addr_twodigitnum = 0xc9bc;
 	static const uint16 addr_onedigit = 0xc9b8;
 	static const uint16 addr_showbyte = 0xc9b4;
 	static const uint16 addr_dumpwatch = 0xc9b0;
@@ -1731,7 +1730,7 @@ public:
 	//void walkandexamine();
 	void dmaend();
 	//void quickquit2();
-	void twodigitnum();
+	//void twodigitnum();
 	//void madmantext();
 	void dumpcurrent();
 	//void textforend();

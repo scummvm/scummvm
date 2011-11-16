@@ -2016,5 +2016,22 @@ void DreamGenContext::loadroom() {
 	getdimension();
 }
 
+void DreamGenContext::twodigitnum(uint8 in1, uint8 in2, uint8 *out1, uint8 *out2) {
+	*out1 = in1;
+	*out2 = in2;
+	while (*out1 >= 10) {
+		++(*out2);
+		*out1 -= 10;
+	}
+	*out1 += in2;
+}
+
+void DreamGenContext::twodigitnum() {
+	uint8 out1, out2;
+	twodigitnum(al, cl, &out1, &out2);
+	al = out1;
+	ah = out2;
+}
+
 } /*namespace dreamgen */
 

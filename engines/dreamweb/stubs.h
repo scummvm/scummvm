@@ -272,5 +272,6 @@
 	void putundermenu();
 	void textformonk();
 	void textforend();
-
+	void twodigitnum(uint8 in1, uint8 in2, uint8 *out1, uint8 *out2);
+	void twodigitnum();
 

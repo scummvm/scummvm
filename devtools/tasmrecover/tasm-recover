@@ -227,6 +227,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showoutermenu',
 	'textforend',
 	'textformonk',
+	'twodigitnum',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
