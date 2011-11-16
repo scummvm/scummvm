@@ -1021,179 +1021,107 @@ void DreamGenContext::initrain() {
 }
 
 void DreamGenContext::textforend() {
-	STACK_CHECK;
-	_cmp(data.byte(kIntrocount), 20);
-	if (!flags.z())
-		goto notendtext1;
-	al = 0;
+	if (data.byte(kIntrocount) == 20)
+		al = 0;
+	else if (data.byte(kIntrocount) == (isCD() ? 50 : 65))
+		al = 1;
+	else if (data.byte(kIntrocount) == (isCD() ? 85 : 110))
+		al = 2;
+	else
+		return;
+
 	bl = 34;
 	bh = 20;
 	cx = 60;
-	goto gotendtext;
-notendtext1:
-	_cmp(data.byte(kIntrocount), (isCD() ? 50 : 65));
-	if (!flags.z())
-		goto notendtext2;
-	al = 1;
-	bl = 34;
-	bh = 20;
-	cx = 60;
-	goto gotendtext;
-notendtext2:
-	_cmp(data.byte(kIntrocount), (isCD() ? 85 : 110));
-	if (!flags.z())
-		return /* (notendtext3) */;
-	al = 2;
-	bl = 34;
-	bh = 20;
-	cx = 60;
-	goto gotendtext;
-	return;
-gotendtext:
 	dx = 1;
 	ah = 83;
 	setuptimedtemp();
 }
 
 void DreamGenContext::textformonk() {
-	STACK_CHECK;
-	_cmp(data.byte(kIntrocount), 1);
-	if (!flags.z())
-		goto notmonktext1;
-	al = 19;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext1:
-	_cmp(data.byte(kIntrocount), 5);
-	if (!flags.z())
-		goto notmonktext2;
-	al = 20;
-	bl = 68;
-	bh = 38;
-	cx = 120;
-	goto gotmonktext;
-notmonktext2:
-	_cmp(data.byte(kIntrocount), 9);
-	if (!flags.z())
-		goto notmonktext3;
-	al = 21;
-	bl = 48;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext3:
-	_cmp(data.byte(kIntrocount), 13);
-	if (!flags.z())
-		goto notmonktext4;
-	al = 22;
-	bl = 68;
-	bh = 38;
-	cx = 120;
-	goto gotmonktext;
-notmonktext4:
-	_cmp(data.byte(kIntrocount), (isCD() ? 15 : 17));
-	if (!flags.z())
-		goto notmonktext5;
-	al = 23;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext5:
-	_cmp(data.byte(kIntrocount), 21);
-	if (!flags.z())
-		goto notmonktext6;
-	al = 24;
-	bl = 68;
-	bh = 38;
-	cx = 120;
-	goto gotmonktext;
-notmonktext6:
-	_cmp(data.byte(kIntrocount), 25);
-	if (!flags.z())
-		goto notmonktext7;
-	al = 25;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext7:
-	_cmp(data.byte(kIntrocount), 29);
-	if (!flags.z())
-		goto notmonktext8;
-	al = 26;
-	bl = 68;
-	bh = 38;
-	cx = 120;
-	goto gotmonktext;
-notmonktext8:
-	_cmp(data.byte(kIntrocount), 33);
-	if (!flags.z())
-		goto notmonktext9;
-	al = 27;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext9:
-	_cmp(data.byte(kIntrocount), 37);
-	if (!flags.z())
-		goto notmonktext10;
-	al = 28;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext10:
-	_cmp(data.byte(kIntrocount), 41);
-	if (!flags.z())
-		goto notmonktext11;
-	al = 29;
-	bl = 68;
-	bh = 38;
-	cx = 120;
-	goto gotmonktext;
-notmonktext11:
-	_cmp(data.byte(kIntrocount), 45);
-	if (!flags.z())
-		goto notmonktext12;
-	al = 30;
-	bl = 68;
-	bh = 154;
-	cx = 120;
-	goto gotmonktext;
-notmonktext12:
-	_cmp(data.byte(kIntrocount), (isCD() ? 52 : 49));
-	if (!flags.z())
-		goto notmonktext13;
-	al = 31;
-	bl = 68;
-	bh = 154;
-	cx = 220;
-	goto gotmonktext;
-notmonktext13:
-	_cmp(data.byte(kIntrocount), 53);
-	if (!flags.z())
-		return /* (notendtitles) */;
-	fadescreendowns();
-	if (isCD()) {
-		data.byte(kVolumeto) = 7;
-		data.byte(kVolumedirection) = 1;
+	if (data.byte(kIntrocount) == 1) {
+		al = 19;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 5) {
+		al = 20;
+		bl = 68;
+		bh = 38;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 9) {
+		al = 21;
+		bl = 48;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 13) {
+		al = 22;
+		bl = 68;
+		bh = 38;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == (isCD() ? 15 : 17)) {
+		al = 23;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 21) {
+		al = 24;
+		bl = 68;
+		bh = 38;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 25) {
+		al = 25;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 29) {
+		al = 26;
+		bl = 68;
+		bh = 38;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 33) {
+		al = 27;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 37) {
+		al = 28;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 41) {
+		al = 29;
+		bl = 68;
+		bh = 38;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == 45) {
+		al = 30;
+		bl = 68;
+		bh = 154;
+		cx = 120;
+	} else if (data.byte(kIntrocount) == (isCD() ? 52 : 49)) {
+		al = 31;
+		bl = 68;
+		bh = 154;
+		cx = 220;
+	} else if (data.byte(kIntrocount) == 53) {
+		fadescreendowns();
+		if (isCD()) {
+			data.byte(kVolumeto) = 7;
+			data.byte(kVolumedirection) = 1;
+		}
+		return;
+	} else {
+		return;	
 	}
-	return;
-gotmonktext:
+
 	dx = 1;
 	ah = 82;
-	if (isCD()) {
-		_cmp(data.byte(kCh1playing), 255);
-		if (flags.z())
-			goto oktalk;
-		_dec(data.byte(kIntrocount));
+	if (isCD() && data.byte(kCh1playing) != 255) {
+		data.byte(kIntrocount)--;
 		return;
 	}
-oktalk:
+
 	setuptimedtemp();
 }
 
