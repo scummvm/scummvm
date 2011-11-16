@@ -540,8 +540,6 @@ public:
 	static const uint16 addr_copper = 0xc0fc;
 	static const uint16 addr_advisor = 0xc0f8;
 	static const uint16 addr_drunk = 0xc0f4;
-	static const uint16 addr_textformonk = 0xc0f0;
-	static const uint16 addr_textforend = 0xc0ec;
 	static const uint16 addr_priesttext = 0xc0e8;
 	static const uint16 addr_madman = 0xc0dc;
 	static const uint16 addr_madmanstelly = 0xc0d8;
@@ -1227,7 +1225,6 @@ public:
 	void startdmablock();
 	void useopenbox();
 	void clearbuffers();
-	//void getyad();
 	void neterror();
 	void storeit();
 	//void lockeddoorway();
@@ -1541,6 +1538,7 @@ public:
 	void fadeupmon();
 	//void paltoendpal();
 	void fadetowhite();
+	//void textformonk();
 	void loadsavebox();
 	void soundend();
 	void redes();
@@ -1607,7 +1605,7 @@ public:
 	void nothelderror();
 	//void readheader();
 	void getsetad();
-	void textformonk();
+	//void getyad();
 	void reconstruct();
 	void soldier1();
 	//void animpointer();
@@ -1736,7 +1734,7 @@ public:
 	void twodigitnum();
 	//void madmantext();
 	void dumpcurrent();
-	void textforend();
+	//void textforend();
 	void showdiarykeys();
 	void dontloadseg();
 	//void madmode();

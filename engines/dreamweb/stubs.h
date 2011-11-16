@@ -270,4 +270,7 @@
 	void loadroom();
 	void getundermenu();
 	void putundermenu();
+	void textformonk();
+	void textforend();
+
 
