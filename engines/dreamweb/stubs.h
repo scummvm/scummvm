@@ -268,5 +268,6 @@
 	void watchcount();
 	void zoomicon();
 	void loadroom();
-
+	void getundermenu();
+	void putundermenu();
 

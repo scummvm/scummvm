@@ -231,8 +231,6 @@ public:
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
 	static const uint16 addr_showoutermenu = 0xc7a8;
-	static const uint16 addr_putundermenu = 0xc7a4;
-	static const uint16 addr_getundermenu = 0xc7a0;
 	static const uint16 addr_dumpmenu = 0xc79c;
 	static const uint16 addr_usemenu = 0xc798;
 	static const uint16 addr_dumpkeypad = 0xc794;
@@ -1551,7 +1549,7 @@ public:
 	void clearchanges();
 	void errormessage3();
 	//void deletetaken();
-	void putundermenu();
+	//void putundermenu();
 	void intromonks2();
 	void intromagic2();
 	void intromagic3();
@@ -1700,7 +1698,7 @@ public:
 	void trapdoor();
 	void openlouis();
 	void buttonthree();
-	void getundermenu();
+	//void getundermenu();
 	//void randomnumber();
 	void lookatcard();
 	void helicopter();

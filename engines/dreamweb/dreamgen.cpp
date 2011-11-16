@@ -10757,28 +10757,6 @@ void DreamGenContext::dumpmenu() {
 	multidump();
 }
 
-void DreamGenContext::getundermenu() {
-	STACK_CHECK;
-	di = (80+40);
-	bx = (60);
-	cl = 48;
-	ch = 48;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiget();
-}
-
-void DreamGenContext::putundermenu() {
-	STACK_CHECK;
-	di = (80+40);
-	bx = (60);
-	cl = 48;
-	ch = 48;
-	ds = data.word(kBuffers);
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4));
-	multiput();
-}
-
 void DreamGenContext::showoutermenu() {
 	STACK_CHECK;
 	al = 40;
@@ -16330,8 +16308,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_dumpkeypad: dumpkeypad(); break;
 		case addr_usemenu: usemenu(); break;
 		case addr_dumpmenu: dumpmenu(); break;
-		case addr_getundermenu: getundermenu(); break;
-		case addr_putundermenu: putundermenu(); break;
 		case addr_showoutermenu: showoutermenu(); break;
 		case addr_showmenu: showmenu(); break;
 		case addr_loadmenu: loadmenu(); break;
