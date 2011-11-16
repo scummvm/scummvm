@@ -41,7 +41,6 @@ void DreamGenContext::dreamweb() {
 	}
 
 	seecommandtail();
-	checkbasemem();
 	soundstartup();
 	setkeyboardint();
 	setupemm();

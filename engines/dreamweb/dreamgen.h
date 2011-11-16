@@ -128,7 +128,6 @@ public:
 	static const uint16 addr_clearchanges = 0xc974;
 	static const uint16 addr_clearbuffers = 0xc970;
 	static const uint16 addr_allocatebuffers = 0xc96c;
-	static const uint16 addr_checkbasemem = 0xc968;
 	static const uint16 addr_checkforemm = 0xc964;
 	static const uint16 addr_removeemm = 0xc960;
 	static const uint16 addr_setupemm = 0xc95c;
@@ -1596,7 +1595,7 @@ public:
 	void mainman();
 	void mansatstill();
 	void channel1only();
-	void checkbasemem();
+	//void checkbasemem();
 	void lastfolder();
 	void transfermap();
 	void showmonk();

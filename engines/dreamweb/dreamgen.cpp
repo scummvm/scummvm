@@ -13293,16 +13293,6 @@ void DreamGenContext::checkforemm() {
 	STACK_CHECK;
 }
 
-void DreamGenContext::checkbasemem() {
-	STACK_CHECK;
-	bx = data.word(kHowmuchalloc);
-	_cmp(bx, 0x9360);
-	if (!flags.c())
-		return /* (enoughmem) */;
-	data.byte(kGameerror) = 5;
-	{ quickquit(); return; };
-}
-
 void DreamGenContext::allocatebuffers() {
 	STACK_CHECK;
 	bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
@@ -16632,7 +16622,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_setupemm: setupemm(); break;
 		case addr_removeemm: removeemm(); break;
 		case addr_checkforemm: checkforemm(); break;
-		case addr_checkbasemem: checkbasemem(); break;
 		case addr_allocatebuffers: allocatebuffers(); break;
 		case addr_clearbuffers: clearbuffers(); break;
 		case addr_clearchanges: clearchanges(); break;
