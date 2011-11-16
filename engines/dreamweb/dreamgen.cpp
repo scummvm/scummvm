@@ -2690,20 +2690,6 @@ void DreamGenContext::fadescreendowns() {
 	data.byte(kNumtofade) = 64;
 }
 
-void DreamGenContext::clearstartpal() {
-	STACK_CHECK;
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3));
-	cx = 256;
-wholeloop1:
-	ax = 0;
-	_stosw();
-	al = 0;
-	_stosb();
-	if (--cx)
-		goto wholeloop1;
-}
-
 void DreamGenContext::showgun() {
 	STACK_CHECK;
 	data.byte(kAddtored) = 0;
@@ -16240,7 +16226,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_fadescreenuphalf: fadescreenuphalf(); break;
 		case addr_fadescreendown: fadescreendown(); break;
 		case addr_fadescreendowns: fadescreendowns(); break;
-		case addr_clearstartpal: clearstartpal(); break;
 		case addr_showgun: showgun(); break;
 		case addr_rollendcredits2: rollendcredits2(); break;
 		case addr_rollem: rollem(); break;

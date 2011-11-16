@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	stubs.o \
 	talk.o \
 	use.o \
+	vgafades.o \
 	vgagrafx.o
 
 # This module can be built as a plugin

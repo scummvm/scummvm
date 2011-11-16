@@ -510,7 +510,6 @@ public:
 	static const uint16 addr_rollem = 0xc284;
 	static const uint16 addr_rollendcredits2 = 0xc280;
 	static const uint16 addr_showgun = 0xc27c;
-	static const uint16 addr_clearstartpal = 0xc278;
 	static const uint16 addr_fadescreendowns = 0xc274;
 	static const uint16 addr_fadescreendown = 0xc270;
 	static const uint16 addr_fadescreenuphalf = 0xc26c;
@@ -1229,7 +1228,7 @@ public:
 	void usewire();
 	void getnamepos();
 	void loadtemptext();
-	void clearstartpal();
+	//void clearstartpal();
 	void femalefan();
 	//void showgamereel();
 	void identifyob();
