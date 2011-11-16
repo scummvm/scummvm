@@ -25,7 +25,7 @@
 #ifndef KYRA_GUI_LOL_H
 #define KYRA_GUI_LOL_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 
 namespace Kyra {
 #define GUI_LOL_MENU(menu, a, b, c, d, e, f, g, i) \
@@ -112,7 +112,6 @@ private:
 	void restorePage0();
 
 	void setupSaveMenuSlots(Menu &menu, int num);
-	void updateSavegameList();
 
 	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags);
 	int getMenuCenterStringX(const char *str, int x1, int x2);
@@ -169,10 +168,6 @@ private:
 
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
-
-	char **_savegameList;
-	int _savegameListSize;
-	bool _savegameListUpdateNeeded;
 
 	virtual void sortSaveSlots();
 };

@@ -29,6 +29,7 @@
 #include "kyra/util.h"
 
 #include "common/system.h"
+#include "common/savefile.h"
 
 namespace Kyra {
 
@@ -1428,11 +1429,8 @@ void EobCoreEngine::gui_processInventorySlotClick(int slot) {
 	}
 }
 
-GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
+GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = _scrollDownFunctor = BUTTON_FUNCTOR(GUI_Eob, this, 0);
-
-	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
-	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
 
 	_menuStringsPrefsTemp = new char*[4];
 	memset(_menuStringsPrefsTemp, 0, 4 * sizeof(char*));
@@ -1445,7 +1443,6 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) 
 	_cflag = 0xffff;
 	
 	_menuLineSpacing = 0;
-	//_menuUnk1 = 0;
 	_menuLastInFlags = 0;
 	_menuCur = 0;
 	_menuNumItems = 0;
@@ -1462,6 +1459,7 @@ GUI_Eob::GUI_Eob(EobCoreEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) 
 	_updateBoxIndex = -1;
 	_highLightBoxTimer = 0;
 	_updateBoxColorIndex = 0;
+	_needRest = false;
 }
 
 GUI_Eob::~GUI_Eob() {
@@ -1979,7 +1977,6 @@ void GUI_Eob::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 
 	_screen->updateScreen();
 	_menuLineSpacing = lineSpacing;
-	//_menuUnk1 = 0;
 	_menuLastInFlags = 0;
 	_vm->removeInputTop();
 }
@@ -2081,7 +2078,7 @@ void GUI_Eob::runCampMenu() {
 	bool redrawPortraits = false;
 	bool res = false;
 	_charSelectRedraw = false;
-	_vm->_resting = false;
+	_needRest = false;
 	Button *buttonList = 0;
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit(); ) {
@@ -2164,7 +2161,7 @@ void GUI_Eob::runCampMenu() {
 				if (_vm->restParty())
 					runLoop = false;
 				else
-					_vm->_resting = false;
+					_needRest = false;
 				redrawPortraits = true;
 				break;
 
@@ -2192,7 +2189,7 @@ void GUI_Eob::runCampMenu() {
 				break;
 
 			case 0x8007:
-				if (_vm->_resting)
+				if (_needRest)
 					displayTextBox(44);
 				// fall through
 
@@ -2207,11 +2204,17 @@ void GUI_Eob::runCampMenu() {
 				break;
 
 			case 0x8008:
-				// load
+				if (runLoadMenu(0, 0))
+					runLoop = false;
+				else
+					newMenu = 1;
 				break;
 
 			case 0x8009:
-				// save
+				if (runSaveMenu(0, 0))
+					displayTextBox(14);
+				else
+					newMenu = 1;
 				break;
 
 			case 0x800a:
@@ -2289,8 +2292,21 @@ void GUI_Eob::runCampMenu() {
 	_screen->setFont(of);
 }
 
-int GUI_Eob::runLoadMenu(int x, int y) {
-	return 0;
+bool GUI_Eob::runLoadMenu(int x, int y) {
+	const ScreenDim *dm = _screen->getScreenDim(11);
+	int xo = dm->sx;
+	int yo = dm->sy;
+	bool result = false;
+	_savegameListUpdateNeeded = true;
+	
+	_screen->modifyScreenDim(11, dm->sx + (x >> 8), dm->sy + y, dm->w, dm->sy);
+	
+	updateSavegameList();
+	setupSaveMenuSlots();
+
+	_screen->modifyScreenDim(11, xo, yo, dm->w, dm->sy);
+
+	return result;
 }
 
 void GUI_Eob::updateBoxFrameHighLight(int box) {
@@ -2462,8 +2478,8 @@ void GUI_Eob::simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuIt
 	_menuCur = 0;
 }
 
-void GUI_Eob::runSaveMenu() {
-
+bool GUI_Eob::runSaveMenu(int x, int y) {
+	return true;
 }
 
 void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
@@ -2642,7 +2658,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 		}
 
 		if (inputFlag & 0x8000) {
-			Button *b = _vm->gui_getButton(buttonList, inputFlag & 0x7fff);
+			b = _vm->gui_getButton(buttonList, inputFlag & 0x7fff);
 			drawMenuButton(b, true, true, true);
 			_screen->updateScreen();
 			_vm->_system->delayMillis(80);
@@ -2726,7 +2742,7 @@ void GUI_Eob::runMemorizePrayMenu(int charIndex, int spellType) {
 		} else if (_numAssignedSpellsOfType[i * 2]) {
 			_numAssignedSpellsOfType[i * 2]--;
 
-			_vm->_resting = true;
+			_needRest = true;
 			int pg = lh[i] - 1;
 			for (int ii = 0; ii < 10; ii++) {
 				if (!charSpellList[pg * 10 + ii]) {
@@ -3162,6 +3178,10 @@ void GUI_Eob::releaseButtons(Button *list) {
 		delete list;
 		list = n;
 	}
+}
+
+void GUI_Eob::setupSaveMenuSlots() {
+
 }
 
 #endif // ENABLE_EOB

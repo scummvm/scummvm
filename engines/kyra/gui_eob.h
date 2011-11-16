@@ -41,7 +41,7 @@ struct EobRect16 {
 class DarkMoonEngine;
 class Screen_Eob;
 
-class GUI_Eob : public GUI_v1 {
+class GUI_Eob : public GUI {
 	friend class EobCoreEngine;
 	friend class CharacterGenerator;
 public:
@@ -58,9 +58,9 @@ public:
 	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int unk, int lineSpacing);
 	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int unk);	
 
-	// Button based menus (camp menu, options, save/load)
+	// Button based menus (camp menu, load menu)
 	void runCampMenu();
-	int runLoadMenu(int x, int y);
+	bool runLoadMenu(int x, int y);
 
 	void updateBoxFrameHighLight(int box);
 
@@ -78,7 +78,7 @@ private:
 	void simpleMenu_flashSelection(const char *str, int x, int y, int color1, int color2, int color3);
 	void simpleMenu_initMenuItemsMask(int menuId, int maxItem, int32 menuItemsMask, int unk);
 
-	void runSaveMenu();
+	bool runSaveMenu(int x, int y);
 	void runMemorizePrayMenu(int charIndex, int spellType);
 	void scribeScrollDialogue();
 
@@ -95,6 +95,8 @@ private:
 
 	Button *linkButton(Button *list, Button *newbt);
 	void releaseButtons(Button *list);
+
+	void setupSaveMenuSlots();
 
 	Button _scrollUpButton;//////////////////77
 	Button _scrollDownButton;
@@ -119,7 +121,6 @@ private:
 	Button::Callback _scrollDownFunctor;
 
 	int _menuLineSpacing;
-	//int _menuUnk1;
 	int _menuLastInFlags;
 
 	uint8 _numPages;
@@ -127,6 +128,7 @@ private:
 	int8 *_numAssignedSpellsOfType;
 	uint32 _clericSpellAvltyFlags;
 	uint32 _paladinSpellAvltyFlags;
+	bool _needRest;
 
 	int _menuCur;
 	int _menuNumItems;
@@ -136,21 +138,6 @@ private:
 	int _updateBoxColorIndex;
 	uint32 _highLightBoxTimer;
 	static const EobRect16 _updateBoxFrameHighLights[];
-
-	// unused
-	Button *getButtonListData() { return 0; }
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
-
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
-
-	uint8 defaultColor1() const { return 0xFE; }
-	uint8 defaultColor2() const { return 0x00; }
-
-	const char *getMenuTitle(const Menu &menu) { return 0; }
-	const char *getMenuItemTitle(const MenuItem &menuItem) { return 0; }
-	const char *getMenuItemLabel(const MenuItem &menuItem) { return 0; }
 };
 
 }	// End of namespace Kyra

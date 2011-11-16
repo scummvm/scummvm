@@ -345,7 +345,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		_eventList.erase(_eventList.begin());
 	}
 
-	GUI_v1 *guiInstance = gui();
+	GUI *guiInstance = gui();
 	if (guiInstance) {
 		if (keys)
 			return guiInstance->processButtonList(buttonList, keys | eventFlag, mouseWheel);

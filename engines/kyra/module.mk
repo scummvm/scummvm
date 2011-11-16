@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	gui.o \
+	gui_v1.o \
 	gui_lok.o \
 	gui_v2.o \
 	gui_hof.o \

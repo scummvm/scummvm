@@ -251,7 +251,7 @@ public:
 	virtual ~EobCoreEngine();
 
 	Screen *screen() { return _screen; }
-	GUI_v1 *gui() const { return _gui; }
+	GUI *gui() const { return _gui; }
 
 protected:
 	// Startup
@@ -786,8 +786,7 @@ protected:
 	void releaseMonsterTempData(LevelTempData *tmp);
 
 	int _saveLoadMode;
-	bool _resting;
-
+	
 	Screen_Eob *_screen;
 	GUI_Eob *_gui;
 
