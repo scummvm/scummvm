@@ -14208,26 +14208,6 @@ void DreamGenContext::loadtemptext() {
 	data.word(kTextfile1) = ax;
 }
 
-void DreamGenContext::loadroomssample() {
-	STACK_CHECK;
-	al = data.byte(kRoomssample);
-	_cmp(al, 255);
-	if (flags.z())
-		return /* (loadedalready) */;
-	_cmp(al, data.byte(kCurrentsample));
-	if (flags.z())
-		return /* (loadedalready) */;
-	data.byte(kCurrentsample) = al;
-	al = data.byte(kCurrentsample);
-	cl = '0';
-	twodigitnum();
-	di = 1896;
-	_xchg(al, ah);
-	cs.word(di+10) = ax;
-	dx = di;
-	loadsecondsample();
-}
-
 void DreamGenContext::getridofreels() {
 	STACK_CHECK;
 	_cmp(data.byte(kRoomloaded), 0);
@@ -16188,7 +16168,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadtempcharset: loadtempcharset(); break;
 		case addr_standardload: standardload(); break;
 		case addr_loadtemptext: loadtemptext(); break;
-		case addr_loadroomssample: loadroomssample(); break;
 		case addr_getridofreels: getridofreels(); break;
 		case addr_getridofall: getridofall(); break;
 		case addr_restorereels: restorereels(); break;

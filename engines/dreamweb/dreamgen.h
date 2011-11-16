@@ -64,7 +64,6 @@ public:
 	static const uint16 addr_restorereels = 0xcb40;
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
-	static const uint16 addr_loadroomssample = 0xcb34;
 	static const uint16 addr_loadtemptext = 0xcb2c;
 	static const uint16 addr_standardload = 0xcb28;
 	static const uint16 addr_loadtempcharset = 0xcb24;
@@ -1342,7 +1341,7 @@ public:
 	void bartender();
 	void eden();
 	void showdiary();
-	void purgealocation();
+	//void loadroomssample();
 	//void updatepeople();
 	//void addtopeoplelist();
 	void hangoncurs();
@@ -1593,7 +1592,7 @@ public:
 	void enablesoundint();
 	void madmanstelly();
 	void constant();
-	void loadroomssample();
+	void purgealocation();
 	void sparkydrip();
 	//void paltostartpal();
 	void bossman();

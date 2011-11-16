@@ -275,4 +275,5 @@
 	void textforend();
 	void twodigitnum(uint8 num, uint8 baseChar, uint8 *digit1, uint8 *digit2);
 	void twodigitnum();
+	void loadroomssample();
 
