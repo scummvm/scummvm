@@ -2634,7 +2634,7 @@ void GUI_LoL::updateSavegameList() {
 				delete in;
 			} else {
 				_savegameList[i] = 0;
-				error("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
+				warning("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", _saveSlots[i]);
 			}
 		}
 	} else {
