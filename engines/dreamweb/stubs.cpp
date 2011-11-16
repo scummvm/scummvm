@@ -2006,6 +2006,7 @@ void DreamGenContext::loadroom() {
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
 	data.byte(kLocation) = data.byte(kNewlocation);
+	al = data.byte(kNewlocation);
 	getroomdata();
 	startloading();
 	loadroomssample();
