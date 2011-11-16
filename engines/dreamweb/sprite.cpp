@@ -359,66 +359,56 @@ void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
-	if (data.byte(kRyanx) < sprite->x) {
-		if (sprite->x - data.byte(kRyanx) > 24)
-			goto shutdoor2;
+
+	int ryanx = data.byte(kRyanx);
+	int ryany = data.byte(kRyany);
+
+	Common::Rect check(-24, -30, 10, 12);
+	check.translate(sprite->x, sprite->y);
+	bool openDoor = check.contains(ryanx, ryany);
+
+	if (data.byte(kThroughdoor) != 1 && data.byte(kLockstatus) == 1)
+		openDoor = false;
+
+	if (openDoor) {
+
+		if (sprite->frame == 1) {
+			al = 0;
+			playchannel1();
+		}
+
+		if (sprite->frame == 6)
+			turnpathon(data.byte(kDoorpath));
+
+		if (data.byte(kThroughdoor) == 1 && sprite->frame == 0)
+			sprite->frame = 6;
+
+		++sprite->frame;
+		if (objData->b18[sprite->frame] == 255)
+			--sprite->frame;
+
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		if (sprite->frame == 5)
+			data.byte(kThroughdoor) = 1;
+
 	} else {
-		if (data.byte(kRyanx) - sprite->x >= 10)
-			goto shutdoor2;
-	}
+		// shut door
 
-	if (data.byte(kRyany) < sprite->y) {
-		if (sprite->y - data.byte(kRyany) > 30)
-			goto shutdoor2;
-	} else {
-		if (data.byte(kRyany) - sprite->y >= 12)
-			goto shutdoor2;
-	}
+		if (sprite->frame == 5) {
+			al = 1;
+			playchannel1();
+		}
 
-	if (data.byte(kThroughdoor) != 1) {
-		if (data.byte(kLockstatus) == 1)
-			goto shutdoor2;
-	}
+		if (sprite->frame != 0)
+			--sprite->frame;
+	
+		data.byte(kThroughdoor) = 0;
+		sprite->b15 = objData->index = objData->b18[sprite->frame];
 
-	if (sprite->frame == 1) {
-		al = 0;
-		playchannel1();
-	}
-
-	if (sprite->frame == 6) {
-		turnpathon(data.byte(kDoorpath));
-	}
-
-	if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0)) {
-		sprite->frame = 6;
-	}
-
-	++sprite->frame;
-	if (objData->b18[sprite->frame] == 255) {
-		--sprite->frame;
-	}
-
-	sprite->b15 = objData->index = objData->b18[sprite->frame];
-	if (sprite->frame == 5)
-		data.byte(kThroughdoor) = 1;
-	return;
-
-shutdoor2:
-	if (sprite->frame == 5) {
-		al = 1;
-		playchannel1();
-	}
-
-	if (sprite->frame != 0) {
-		--sprite->frame;
-	}
-
-	data.byte(kThroughdoor) = 0;
-	sprite->b15 = objData->index = objData->b18[sprite->frame];
-
-	if (sprite->frame == 0) {
-		turnpathoff(data.byte(kDoorpath));
-		data.byte(kLockstatus) = 1;
+		if (sprite->frame == 0) {
+			turnpathoff(data.byte(kDoorpath));
+			data.byte(kLockstatus) = 1;
+		}
 	}
 }
 
