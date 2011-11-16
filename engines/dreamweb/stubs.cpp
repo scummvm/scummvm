@@ -2020,21 +2020,19 @@ void DreamGenContext::loadroom() {
 	getdimension();
 }
 
-void DreamGenContext::twodigitnum(uint8 in1, uint8 in2, uint8 *out1, uint8 *out2) {
-	*out1 = in1;
-	*out2 = in2;
-	while (*out1 >= 10) {
-		++(*out2);
-		*out1 -= 10;
-	}
-	*out1 += in2;
+void DreamGenContext::twodigitnum(uint8 num, uint8 baseChar,
+                                  uint8 &digit1, uint8 &digit2) {
+	digit1 = baseChar + num/10;
+	digit2 = baseChar + num%10;
 }
 
+// Convert a number between 0 and 99 into its two digits, either
+// ASCII (if cl/basechar == '0'), or raw (if cl/basechar == 0).
 void DreamGenContext::twodigitnum() {
-	uint8 out1, out2;
-	twodigitnum(al, cl, &out1, &out2);
-	al = out1;
-	ah = out2;
+	uint8 digit1, digit2;
+	twodigitnum(al, cl, digit1, digit2);
+	ah = digit1;
+	al = digit2;
 }
 
 } /*namespace dreamgen */
