@@ -87,7 +87,6 @@ public:
 	static const uint16 addr_allpointer = 0xcaa4;
 	static const uint16 addr_blank = 0xcaa0;
 	static const uint16 addr_worktoscreenm = 0xca9c;
-	static const uint16 addr_zoomicon = 0xca90;
 	static const uint16 addr_gettime = 0xca8c;
 	static const uint16 addr_panelicons1 = 0xca84;
 	static const uint16 addr_showexit = 0xca80;
@@ -1787,7 +1786,7 @@ public:
 	void restorereels();
 	void setwalk();
 	//void useroutine();
-	void zoomicon();
+	//void zoomicon();
 	//void findlen();
 	void findpathofpoint();
 	void issetobonmap();

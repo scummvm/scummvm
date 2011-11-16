@@ -266,5 +266,5 @@
 	void paltoendpal();
 	void fadecalculation();
 	void watchcount();
-
+	void zoomicon();
 

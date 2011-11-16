@@ -14299,19 +14299,6 @@ zoomisoff:
 	showwatch();
 }
 
-void DreamGenContext::zoomicon() {
-	STACK_CHECK;
-	_cmp(data.byte(kZoomon), 0);
-	if (flags.z())
-		return /* (nozoom1) */;
-	ds = data.word(kIcons1);
-	di = (8);
-	bx = (132)-1;
-	al = 8;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::worktoscreenm() {
 	STACK_CHECK;
 	animpointer();
@@ -16509,7 +16496,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showexit: showexit(); break;
 		case addr_panelicons1: panelicons1(); break;
 		case addr_gettime: gettime(); break;
-		case addr_zoomicon: zoomicon(); break;
 		case addr_worktoscreenm: worktoscreenm(); break;
 		case addr_blank: blank(); break;
 		case addr_allpointer: allpointer(); break;

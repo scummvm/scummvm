@@ -1990,5 +1990,11 @@ void DreamGenContext::roomname() {
 	usecharset1();
 }
 
+void DreamGenContext::zoomicon() {
+	if (data.byte(kZoomon) == 0)
+		return;
+	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
+}
+
 } /*namespace dreamgen */
 
