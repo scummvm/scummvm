@@ -31,6 +31,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 
@@ -154,6 +155,90 @@ public:
 	void setDetails(int resNum, int lineNum);
 	void stop();
 	Common::String parseMessage(const Common::String &msg);
+};
+
+class Scene300: public SceneExt {
+	/* Actions */
+	class Action1: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action2: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action3: public Action {
+	public:
+		virtual void signal();
+	};
+	class Action4: public Action {
+	public:
+		virtual void signal();
+	};
+
+	/* Items */
+	class QuinnWorkstation: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class MirandaWorkstation: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class SeekerWorkstation: public NamedHotspot {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Objects */
+	class Miranda: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Seeker: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Quinn: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+public:
+	SequenceManager _sequenceManager1, _sequenceManager2, _sequenceManager3, _sequenceManager4;
+	ASoundExt _sound1;
+	SpeakerMiranda300 _mirandaSpeaker;
+	SpeakerSeeker300 _seekerSpeaker;
+	SpeakerSeekerL _seekerLSpeaker;
+	SpeakerQuinn300 _quinnSpeaker;
+	SpeakerQuinnL _quinnLSpeaker;
+	SpeakerTeal300 _tealSpeaker;
+	SpeakerSoldier300 _soldierSpeaker;
+
+	NamedHotspot _background, _hull, _statusDisplays, _damageControl, _manualOverrides;
+	NamedHotspot _scanners1, _scanners2, _indirectLighting1, _indirectLighting2, _lighting;
+	QuinnWorkstation _quinnWorkstation1, _quinnWorkstation2;
+	SeekerWorkstation _seekerWorkstation;
+	MirandaWorkstation _mirandaWorkstation1, _mirandaWorkstation2;
+	SceneActor _object1, _object2, _object3, _object4, _protocolDisplay;
+	SceneActor _object6, _object7, _object8, _object9;
+	SceneActor _teal, _soldier, _object12, _doorway;
+	Miranda _miranda;
+	Seeker _seeker;
+	Quinn _quinn;
+	Action1 _action1;
+	Action2 _action2;
+	Action3 _action3;
+	Action4 _action4;
+	PaletteRotation *_rotation;
+	int _field412;
+
+	Scene300();
+	void signal309();
+
+	virtual void synchronize(Serializer &s);
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
 };
 
 } // End of namespace Ringworld2

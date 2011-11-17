@@ -380,7 +380,21 @@ void Ringworld2Globals::reset() {
 	_v57C2C = 0;
 	_v58CE2 = 0;
 	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
+	_speechSubtitles = 0;
 	_insetUp = 0;
+
+	Common::fill(&_v565F1[0], &_v565F1[MAX_CHARACTERS], 0);
+	Common::fill(&_stripManager_lookupList[0], &_stripManager_lookupList[12], 0);
+	_stripManager_lookupList[0] = 1;
+	_stripManager_lookupList[1] = 1;
+	_stripManager_lookupList[2] = 1;
+	_stripManager_lookupList[3] = 1;
+	_stripManager_lookupList[4] = 1;
+	_stripManager_lookupList[5] = 1;
+	_stripManager_lookupList[8] = 1;
+	_stripManager_lookupList[9] = 1;
+	_stripManager_lookupList[10] = 1;
+	_stripManager_lookupList[11] = 1;
 
 	// Reset fields stored in the player class
 	_player._characterIndex = 1;
@@ -391,13 +405,19 @@ void Ringworld2Globals::reset() {
 
 void Ringworld2Globals::synchronize(Serializer &s) {
 	TsAGE2Globals::synchronize(s);
+	int i;
 
 	s.syncAsSint16LE(_v5657C);
 	s.syncAsSint16LE(_v565F5);
 	s.syncAsSint16LE(_v57C2C);
 	s.syncAsSint16LE(_v58CE2);
-	for (int i = 0; i < MAX_CHARACTERS; ++i)
+	s.syncAsSint16LE(_speechSubtitles);
+
+	for (i = 0; i < MAX_CHARACTERS; ++i)
 		s.syncAsSint16LE(_v565F1[i]);
+	for (i = 0; i < 12; ++i)
+		s.syncAsByte(_stripManager_lookupList[i]);
+
 	s.syncAsSint16LE(_insetUp);
 }
 
