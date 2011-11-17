@@ -2067,24 +2067,12 @@ void DreamGenContext::loadroomssample() {
 }
 
 void DreamGenContext::readsetdata() {
-	dx = kCharacterset1;
-	standardload();
-	data.word(kCharset1) = ax;
-	dx = kIcongraphics0;
-	standardload();
-	data.word(kIcons1) = ax;
-	dx = kIcongraphics1;
-	standardload();
-	data.word(kIcons2) = ax;
-	dx = kSpritename1;
-	standardload();
-	data.word(kMainsprites) = ax;
-	dx = kPuzzletextname;
-	standardload();
-	data.word(kPuzzletext) = ax;
-	dx = kCommandtextname;
-	standardload();
-	data.word(kCommandtext) = ax;
+	data.word(kCharset1) = standardload((const char *)cs.ptr(kCharacterset1, 0));
+	data.word(kIcons1) = standardload((const char *)cs.ptr(kIcongraphics0, 0));
+	data.word(kIcons2) = standardload((const char *)cs.ptr(kIcongraphics1, 0));
+	data.word(kMainsprites) = standardload((const char *)cs.ptr(kSpritename1, 0));
+	data.word(kPuzzletext) = standardload((const char *)cs.ptr(kPuzzletextname, 0));
+	data.word(kCommandtext) = standardload((const char *)cs.ptr(kCommandtextname, 0));
 	ax = data.word(kCharset1);
 	data.word(kCurrentset) = ax;
 	if (data.byte(kSoundint) == 0xff)
