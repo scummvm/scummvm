@@ -12,7 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      in the case the user did not have a contiguous save slot usage.
 
  SCI:
-   - Fixed racing condition in SCI1.1 palette changes. This fixes an error in
+   - Fixed race condition in SCI1.1 palette changes. This fixes an error in
      QFG1VGA, when sleeping at Erana's place.
 
 1.4.0 (2011-11-11)
