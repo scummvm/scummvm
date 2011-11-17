@@ -11,6 +11,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed bug in the original Lands of Lore GUI which made ScummVM error out
      in the case the user did not have a contiguous save slot usage.
 
+ SCI:
+   - Fixed racing condition in SCI1.1 palette changes. This fixes an error in
+     QFG1VGA, when sleeping at Erana's place.
+
 1.4.0 (2011-11-11)
  New Games:
    - Added support for Lands of Lore: The Throne of Chaos.
