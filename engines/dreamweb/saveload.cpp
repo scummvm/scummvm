@@ -352,5 +352,12 @@ void DreamGenContext::savegame() {
 	}
 }
 
+void DreamGenContext::namestoold() {
+	memcpy(segRef(data.word(kBuffers)).ptr(kZoomspace, 0), cs.ptr(kSavenames, 0), 17*4);
+}
+
+void DreamGenContext::oldtonames() {
+	memcpy(cs.ptr(kSavenames, 0), segRef(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
+}
 
 } /*namespace dreamgen */

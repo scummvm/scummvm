@@ -169,8 +169,6 @@ public:
 	static const uint16 addr_saveposition = 0xc898;
 	static const uint16 addr_savefileread = 0xc894;
 	static const uint16 addr_savefilewrite = 0xc890;
-	static const uint16 addr_oldtonames = 0xc88c;
-	static const uint16 addr_namestoold = 0xc888;
 	static const uint16 addr_error = 0xc884;
 	static const uint16 addr_generalerror = 0xcbbc;
 	static const uint16 addr_dosreturn = 0xc880;
@@ -1295,7 +1293,7 @@ public:
 	void showsaveops();
 	void intromonks1();
 	void resetlocation();
-	void oldtonames();
+	//void oldtonames();
 	void showdiscops();
 	void advisor();
 	void additionaltext();
@@ -1358,7 +1356,7 @@ public:
 	void showsymbol();
 	void endgameseq();
 	//void cancelch0();
-	void setbotleft();
+	void turnonpower();
 	void findfirstpath();
 	//void cancelch1();
 	void loadold();
@@ -1368,7 +1366,7 @@ public:
 	//void aboutturn();
 	void usealtar();
 	void createpanel2();
-	void turnonpower();
+	void setbotleft();
 	void manasleep2();
 	void moretalk();
 	//void printslow();
@@ -1648,7 +1646,7 @@ public:
 	void deleverything();
 	void fadescreendown();
 	//void findxyfrompath();
-	void namestoold();
+	void poolguard();
 	//void getxad();
 	void openinv();
 	void lookatplace();
@@ -1668,7 +1666,7 @@ public:
 	void loadintotemp3();
 	void loadintotemp2();
 	void gamer();
-	void poolguard();
+	//void namestoold();
 	void readfromfile();
 	void initialinv();
 	void quitsymbol();

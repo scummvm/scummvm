@@ -12217,26 +12217,6 @@ afterprintname:
 		goto shownameloop;
 }
 
-void DreamGenContext::namestoold() {
-	STACK_CHECK;
-	ds = cs;
-	si = 8579;
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	es = data.word(kBuffers);
-	cx = 17*4;
-	_movsb(cx, true);
-}
-
-void DreamGenContext::oldtonames() {
-	STACK_CHECK;
-	es = cs;
-	di = 8579;
-	si = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5));
-	ds = data.word(kBuffers);
-	cx = 17*4;
-	_movsb(cx, true);
-}
-
 void DreamGenContext::saveposition() {
 	STACK_CHECK;
 	makeheader();
@@ -16061,8 +16041,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_shownames: shownames(); break;
 		case addr_dosreturn: dosreturn(); break;
 		case addr_error: error(); break;
-		case addr_namestoold: namestoold(); break;
-		case addr_oldtonames: oldtonames(); break;
 		case addr_savefilewrite: savefilewrite(); break;
 		case addr_savefileread: savefileread(); break;
 		case addr_saveposition: saveposition(); break;
