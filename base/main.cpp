@@ -288,7 +288,7 @@ static void setupKeymapper(OSystem &system) {
 
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global");
+	mapper->pushKeymap("global", true);
 #endif
 
 }

@@ -34,8 +34,13 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/keymapper.h"
 
 namespace Kyra {
+
+const char *const LoLEngine::kKeymapName = "lol";
 
 LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags) {
 	_screen = 0;
@@ -245,6 +250,10 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
+
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->cleanupGameKeymaps();
+#endif
 
 	delete[] _landsFile;
 	delete[] _levelLangFile;
@@ -541,7 +550,65 @@ Common::Error LoLEngine::init() {
 	_debugger = new Debugger_LoL(this);
 	assert(_debugger);
 
+	initKeymap();
+
 	return Common::kNoError;
+}
+
+void LoLEngine::initKeymap() {
+#ifdef ENABLE_KEYMAPPER
+
+	bool tmp;
+	Common::Keymapper *mapper = _eventMan->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kKeymapName, tmp) != 0)
+		return;
+
+	Common::Action *act;
+	Common::Keymap *engineKeyMap = new Common::Keymap(kKeymapName);
+
+	act = new Common::Action(engineKeyMap, "AT1", _("Attack 1"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1 , 0));
+
+	act = new Common::Action(engineKeyMap, "AT2", _("Attack 2"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2 , 0));
+
+	act = new Common::Action(engineKeyMap, "AT3", _("Attack 3"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3 , 0));
+
+	act = new Common::Action(engineKeyMap, "MVF", _("Move Forward"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_UP));
+
+	act = new Common::Action(engineKeyMap, "MVB", _("Move Back"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_DOWN));
+
+	act = new Common::Action(engineKeyMap, "SLL", _("Slide Left"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_LEFT));
+
+	act = new Common::Action(engineKeyMap, "SLR", _("Slide Right"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_RIGHT));
+
+	act = new Common::Action(engineKeyMap, "TL", _("Turn Left"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_HOME));
+
+	act = new Common::Action(engineKeyMap, "TR", _("Turn Right"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_PAGEUP));
+
+	act = new Common::Action(engineKeyMap, "RST", _("Rest"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_r));
+
+	act = new Common::Action(engineKeyMap, "OPT", _("Options"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_o));
+
+	act = new Common::Action(engineKeyMap, "SPL", _("Choose Spell"), Common::kGenericActionType, Common::kActionKeyType);
+	act->addKeyEvent(Common::KeyState(Common::KEYCODE_SLASH));
+
+	mapper->addGameKeymap(engineKeyMap);
+
+	mapper->pushKeymap(kKeymapName, true);
+
+#endif
 }
 
 Common::Error LoLEngine::go() {

@@ -192,10 +192,10 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
-
+			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
 			action = mr.keymap->getMappedAction(key);
 
-			if (action || mr.inherit == false)
+			if (action || !mr.inherit)
 				break;
 		}
 
