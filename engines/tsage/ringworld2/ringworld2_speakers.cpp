@@ -301,7 +301,7 @@ SpeakerSeekerL::SpeakerSeekerL(): VisualSpeaker() {
 	_displayMode = 1;
 	_numFrames = 0;
 	_fontNumber = 10;
-};
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -316,7 +316,7 @@ SpeakerQuinnL::SpeakerQuinnL(): VisualSpeaker() {
 	_displayMode = 1;
 	_numFrames = 0;
 	_fontNumber = 10;
-};
+}
 
 /*--------------------------------------------------------------------------*/
 
