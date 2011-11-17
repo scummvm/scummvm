@@ -711,7 +711,9 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 void GfxPalette::palVaryInstallTimer() {
 	// Remove any possible leftover palVary timer callbacks.
 	// This happens for example in QFG1VGA, when sleeping at Erana's place
-	// (bug #3439240).
+	// (bug #3439240) - the nighttime to daytime effect clashes with the
+	// scene transition effect, as we load scene images too quickly for
+	// the SCI scripts in that case (also refer to kernelPalVaryInit).
 	palVaryRemoveTimer();
 
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
