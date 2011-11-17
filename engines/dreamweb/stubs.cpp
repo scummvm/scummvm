@@ -246,6 +246,14 @@ void DreamGenContext::loadintotemp3(const char *fileName) {
 	data.word(kTempgraphics3) = standardload(fileName);
 }
 
+void DreamGenContext::loadtempcharset() {
+	loadtempcharset((const char *)cs.ptr(dx, 0));
+}
+
+void DreamGenContext::loadtempcharset(const char *fileName) {
+	data.word(kTempcharset) = standardload(fileName);
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;

@@ -14098,12 +14098,6 @@ void DreamGenContext::loadtraveltext() {
 	data.word(kTraveltext) = ax;
 }
 
-void DreamGenContext::loadtempcharset() {
-	STACK_CHECK;
-	standardload();
-	data.word(kTempcharset) = ax;
-}
-
 void DreamGenContext::loadtemptext() {
 	STACK_CHECK;
 	standardload();
@@ -16027,7 +16021,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_randomnum1: randomnum1(); break;
 		case addr_randomnum2: randomnum2(); break;
 		case addr_loadtraveltext: loadtraveltext(); break;
-		case addr_loadtempcharset: loadtempcharset(); break;
 		case addr_loadtemptext: loadtemptext(); break;
 		case addr_getridofreels: getridofreels(); break;
 		case addr_getridofall: getridofall(); break;

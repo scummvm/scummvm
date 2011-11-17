@@ -64,7 +64,6 @@ public:
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
 	static const uint16 addr_loadtemptext = 0xcb2c;
-	static const uint16 addr_loadtempcharset = 0xcb24;
 	static const uint16 addr_loadtraveltext = 0xcb14;
 	static const uint16 addr_randomnum2 = 0xcb08;
 	static const uint16 addr_randomnum1 = 0xcb04;
@@ -1354,7 +1353,7 @@ public:
 	void findfirstpath();
 	//void cancelch1();
 	void loadold();
-	void loadtempcharset();
+	//void loadtempcharset();
 	void useslab();
 	void dumpzoom();
 	//void aboutturn();
