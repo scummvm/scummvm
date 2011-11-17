@@ -49,7 +49,6 @@ public:
 	static const uint16 addr_openfilefromc = 0xcb94;
 	static const uint16 addr_openfile = 0xcb90;
 	static const uint16 addr_createfile = 0xcb8c;
-	static const uint16 addr_readsetdata = 0xcb88;
 	static const uint16 addr_getridoftempsp = 0xcb84;
 	static const uint16 addr_getridoftempcharset = 0xcb80;
 	static const uint16 addr_getridoftemp3 = 0xcb7c;
@@ -1268,7 +1267,6 @@ public:
 	//void getexpos();
 	void fadedos();
 	//void fillspace();
-	void selectlocation();
 	//void multiget();
 	//void autosetwalk();
 	void fadeupmonfirst();
@@ -1625,6 +1623,7 @@ public:
 	void findopenpos();
 	void describeob();
 	void deleteexframe();
+	//void readsetdata();
 	void folderexit();
 	void dosreturn();
 	void wheelsound();
@@ -1768,7 +1767,7 @@ public:
 	void calledensdlift();
 	void checkinside();
 	void gates();
-	void newgame();
+	void selectlocation();
 	//void showwatch();
 	//void turnanypathon();
 	void restorereels();
@@ -1923,7 +1922,7 @@ public:
 	void getridoftempsp();
 	void scanfornames();
 	//void setallchanges();
-	void readsetdata();
+	void newgame();
 	//void printboth();
 	void standardload();
 	void undertextline();

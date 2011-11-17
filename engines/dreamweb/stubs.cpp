@@ -2052,5 +2052,37 @@ void DreamGenContext::loadroomssample() {
 	loadsecondsample();
 }
 
+void DreamGenContext::readsetdata() {
+	dx = kCharacterset1;
+	standardload();
+	data.word(kCharset1) = ax;
+	dx = kIcongraphics0;
+	standardload();
+	data.word(kIcons1) = ax;
+	dx = kIcongraphics1;
+	standardload();
+	data.word(kIcons2) = ax;
+	dx = kSpritename1;
+	standardload();
+	data.word(kMainsprites) = ax;
+	dx = kPuzzletextname;
+	standardload();
+	data.word(kPuzzletext) = ax;
+	dx = kCommandtextname;
+	standardload();
+	data.word(kCommandtext) = ax;
+	ax = data.word(kCharset1);
+	data.word(kCurrentset) = ax;
+	if (data.byte(kSoundint) == 0xff)
+		return;
+	dx = kVolumetabname;
+	openfile();
+	cx = 2048-256;
+	ds = data.word(kSoundbuffer);
+	dx = 16384;
+	readfromfile();
+	closefile();
+}
+
 } /*namespace dreamgen */
 

@@ -275,5 +275,6 @@
 	void putundermenu();
 	void textformonk();
 	void textforend();
+	void readsetdata();
 	void loadroomssample();
 

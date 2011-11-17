@@ -14403,40 +14403,6 @@ void DreamGenContext::getridoftempsp() {
 	deallocatemem();
 }
 
-void DreamGenContext::readsetdata() {
-	STACK_CHECK;
-	dx = 1857;
-	standardload();
-	data.word(kCharset1) = ax;
-	dx = 1922;
-	standardload();
-	data.word(kIcons1) = ax;
-	dx = 1935;
-	standardload();
-	data.word(kIcons2) = ax;
-	dx = 1819;
-	standardload();
-	data.word(kMainsprites) = ax;
-	dx = 2221;
-	standardload();
-	data.word(kPuzzletext) = ax;
-	dx = 2273;
-	standardload();
-	data.word(kCommandtext) = ax;
-	ax = data.word(kCharset1);
-	data.word(kCurrentset) = ax;
-	_cmp(data.byte(kSoundint), 255);
-	if (flags.z())
-		return /* (novolumeload) */;
-	dx = 2286;
-	openfile();
-	cx = 2048-256;
-	ds = data.word(kSoundbuffer);
-	dx = 16384;
-	readfromfile();
-	closefile();
-}
-
 
 
 void DreamGenContext::__start() { 
@@ -16120,7 +16086,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getridoftemp3: getridoftemp3(); break;
 		case addr_getridoftempcharset: getridoftempcharset(); break;
 		case addr_getridoftempsp: getridoftempsp(); break;
-		case addr_readsetdata: readsetdata(); break;
 		case addr_createfile: createfile(); break;
 		case addr_openfile: openfile(); break;
 		case addr_openfilefromc: openfilefromc(); break;
