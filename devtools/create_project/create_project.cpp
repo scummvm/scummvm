@@ -411,6 +411,12 @@ int main(int argc, char *argv[]) {
 		// 4310 (cast truncates constant value)
 		//   used in some engines
 		//
+		// 4345 (behavior change: an object of POD type constructed with an
+		// initializer of the form () will be default-initialized)
+		//   used in Common::Array(), and it basically means that newer VS
+		//   versions adhere to the standard in this case. Can be safely
+		//   disabled.
+		//
 		// 4351 (new behavior: elements of array 'array' will be default initialized)
 		//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
 		//
@@ -460,6 +466,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
 		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
 		globalWarnings.push_back("4702");
@@ -476,6 +483,8 @@ int main(int argc, char *argv[]) {
 
 		projectWarnings["agos"].push_back("4511");
 
+		projectWarnings["dreamweb"].push_back("4355");
+		
 		projectWarnings["lure"].push_back("4189");
 		projectWarnings["lure"].push_back("4355");
 
