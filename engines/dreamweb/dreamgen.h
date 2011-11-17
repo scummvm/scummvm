@@ -343,7 +343,6 @@ public:
 	static const uint16 addr_wheelsound = 0xc588;
 	static const uint16 addr_useobject = 0xc580;
 	static const uint16 addr_delcurs = 0xc57c;
-	static const uint16 addr_printcurs = 0xc578;
 	static const uint16 addr_triggermessage = 0xc574;
 	static const uint16 addr_processtrigger = 0xc570;
 	static const uint16 addr_monmessage = 0xc56c;
@@ -1338,7 +1337,7 @@ public:
 	void hangoncurs();
 	//void getblockofpixel();
 	//void kernchars();
-	void printcurs();
+	//void printcurs();
 	//void convertkey();
 	void outofopen();
 	//void dealwithspecial();
@@ -1934,7 +1933,7 @@ public:
 	void quitkey();
 	void processtrigger();
 	void monmessage();
-	void readdesticon();
+	void volumeadjust();
 	void randomnum2();
 	void loadsecondsample();
 	void transfercontoex();
@@ -1952,7 +1951,7 @@ public:
 	void accesslightoff();
 	void usehole();
 	void useobject();
-	void volumeadjust();
+	void readdesticon();
 	//void watchcount();
 };
 }

@@ -7294,63 +7294,6 @@ void DreamGenContext::triggermessage() {
 	data.byte(kLasttrigger) = 0;
 }
 
-void DreamGenContext::printcurs() {
-	STACK_CHECK;
-	push(si);
-	push(di);
-	push(ds);
-	push(dx);
-	push(bx);
-	push(es);
-	di = data.word(kCurslocx);
-	bx = data.word(kCurslocy);
-	cl = 6;
-	ch = 8;
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-	ch = 11;
-_tmp1:
-	ds = data.word(kBuffers);
-	si = (0);
-	push(di);
-	push(bx);
-	multiget();
-	bx = pop();
-	di = pop();
-	push(bx);
-	push(di);
-	_inc(data.word(kMaintimer));
-	ax = data.word(kMaintimer);
-	_and(al, 16);
-	if (!flags.z())
-		goto flashcurs;
-	al = '/';
-	_sub(al, 32);
-	ah = 0;
-	ds = data.word(kTempcharset);
-	showframe();
-flashcurs:
-	di = pop();
-	bx = pop();
-	_sub(di, 6);
-	cl = 12;
-	ch = 8;
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp2;
-	ch = 11;
-_tmp2:
-	multidump();
-	es = pop();
-	bx = pop();
-	dx = pop();
-	ds = pop();
-	di = pop();
-	si = pop();
-}
-
 void DreamGenContext::delcurs() {
 	STACK_CHECK;
 	push(es);
@@ -15742,7 +15685,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_monmessage: monmessage(); break;
 		case addr_processtrigger: processtrigger(); break;
 		case addr_triggermessage: triggermessage(); break;
-		case addr_printcurs: printcurs(); break;
 		case addr_delcurs: delcurs(); break;
 		case addr_useobject: useobject(); break;
 		case addr_wheelsound: wheelsound(); break;

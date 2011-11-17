@@ -254,6 +254,22 @@ void DreamGenContext::loadtempcharset(const char *fileName) {
 	data.word(kTempcharset) = standardload(fileName);
 }
 
+void DreamGenContext::printcurs() {
+	uint16 x = data.word(kCurslocx);
+	uint16 y = data.word(kCurslocy);
+	uint16 height;
+	if (data.byte(kForeignrelease)) {
+		y -= 3;
+		height = 11;
+	} else
+		height = 8;
+	multiget(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, 6, height);
+	++data.word(kMaintimer);
+	if ((data.word(kMaintimer) & 16) == 0)
+		showframe((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), x, y, '/' - 32, 0);
+	multidump(x - 6, y, 12, height);
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;
