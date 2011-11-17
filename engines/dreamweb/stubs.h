@@ -63,6 +63,7 @@
 	uint8 getnumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void getroomdata();
+	Room *getroomdata(uint8 room);
 	void readheader();
 	void fillspace();
 	void startloading();

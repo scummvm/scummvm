@@ -747,7 +747,12 @@ void DreamGenContext::makebackob(SetObject *objData) {
 }
 
 void DreamGenContext::getroomdata() {
-	bx = kRoomdata + sizeof(Room) * al;
+	Room *room = getroomdata(al);
+	bx = (uint8 *)room - cs.ptr(0, 0);
+}
+
+Room *DreamGenContext::getroomdata(uint8 room) {
+	return (Room *)cs.ptr(kRoomdata, 0) + room;
 }
 
 void DreamGenContext::startloading() {
