@@ -709,6 +709,11 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 }
 
 void GfxPalette::palVaryInstallTimer() {
+	// Remove any possible leftover palVary timer callbacks.
+	// This happens for example in QFG1VGA, when sleeping at Erana's place
+	// (bug #3439240).
+	palVaryRemoveTimer();
+
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
 	// Call signal increase every [ticks]
 	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this, "sciPalette");
