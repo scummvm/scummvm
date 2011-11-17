@@ -2467,6 +2467,7 @@ case $_backend in
 		DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 		CXXFLAGS="$CXXFLAGS -Wa,--noexecstack"
 		LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+		INCLUDES="$INCLUDES -I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	bada)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
