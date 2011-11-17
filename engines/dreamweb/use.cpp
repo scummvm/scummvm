@@ -27,10 +27,14 @@ namespace DreamGen {
 
 typedef void (DreamGenContext::*UseCallback)(void);
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 struct UseListEntry {
 	uint8  id[5]; // 0-terminal because it is easier syntatically to initialize the array
 	UseCallback callback;
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 void DreamGenContext::useroutine() {
 
