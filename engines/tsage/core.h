@@ -322,6 +322,8 @@ public:
 	int _end;
 	int _rotationMode;
 	int _duration;
+	int _idxChange;
+	int _countdown;
 public:
 	PaletteRotation();
 
@@ -630,6 +632,7 @@ public:
 	// Return to Ringworld specific fields
 	int _characterIndex;
 	int _oldSceneNumber;
+	int _fieldBC;
 	int _characterScene[MAX_CHARACTERS];
 	Common::Point _characterPos[MAX_CHARACTERS];
 	int _characterStrip[MAX_CHARACTERS];

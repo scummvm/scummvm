@@ -185,6 +185,9 @@ public:
 	int _field2[OBJ44_LIST_SIZE];
 	Obj0A _list[OBJ44_LIST_SIZE];
 	uint _speakerOffset;
+
+	// Return to Ringworld specific field
+	int _mode;
 public:
 	void load(const byte *dataP);
 	virtual void synchronize(Serializer &s);
@@ -215,6 +218,9 @@ public:
 	Common::Array<byte> _script;
 	StripProc _onBegin;
 	StripProc _onEnd;
+
+	// Ringworld 2 specific fields
+	byte *_lookupList;
 public:
 	StripManager();
 	virtual ~StripManager();
@@ -225,6 +231,7 @@ public:
 	virtual void process(Event &event);
 
 	void start(int stripNum, EventHandler *owner, StripCallback *callback = NULL);
+	void start3(int stripNum, EventHandler *owner, byte *lookupList);
 	void setCallback(StripCallback *callback) { _callbackObject = callback; }
 	void setColors(int stdColor, int highlightColor) { _choiceDialog.setColors(stdColor, highlightColor); }
 	void setFontNumber(int fontNum) { _choiceDialog.setFontNumber(fontNum); }

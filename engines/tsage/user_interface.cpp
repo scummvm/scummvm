@@ -286,7 +286,6 @@ UIElements::UIElements(): UICollection() {
 	else
 		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
-	_characterIndex = 0;
 }
 
 void UIElements::synchronize(Serializer &s) {
@@ -314,9 +313,6 @@ void UIElements::synchronize(Serializer &s) {
 			s.syncAsSint16LE(itemId);
 		}
 	}
-
-	if (g_vm->getGameID() == GType_Ringworld2)
-		s.syncAsSint16LE(_characterIndex);
 }
 
 void UIElements::process(Event &event) {
@@ -427,7 +423,7 @@ void UIElements::setup(const Common::Point &pt) {
 		break;
 	case GType_Ringworld2:
 		// Set up the character display
-		_character.setup(1, 5, _characterIndex, 285, 11, 255);
+		_character.setup(1, 5, R2_GLOBALS._player._characterIndex, 285, 11, 255);
 		add(&_character);
 		break;
 	default:

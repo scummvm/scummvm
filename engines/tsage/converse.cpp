@@ -551,6 +551,9 @@ void Obj44::synchronize(Serializer &s) {
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
 		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
+
+	if (g_vm->getGameID() == GType_Ringworld2)
+		s.syncAsSint16LE(_mode);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -579,6 +582,11 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 
 	assert(owner);
 	owner->setAction(this, owner);
+}
+
+void StripManager::start3(int stripNum, EventHandler *owner, byte *lookupList) {
+	_lookupList = lookupList;
+	start(stripNum, owner, NULL);
 }
 
 void StripManager::reset() {
@@ -703,7 +711,12 @@ void StripManager::signal() {
 		return;
 	} else if (_obj44Index == 10000) {
 		// Reached end of strip
+		EventHandler *endHandler = _endHandler;
 		remove();
+
+		 if ((g_vm->getGameID() == GType_Ringworld2) && endHandler)
+			 endHandler->signal();
+
 		return;
 	}
 
@@ -714,7 +727,19 @@ void StripManager::signal() {
 		load();
 
 	Obj44 &obj44 = _obj44List[_obj44Index];
-	_field2E8 = obj44._id;
+
+	if (g_vm->getGameID() != GType_Ringworld2) {
+		_field2E8 = obj44._id;
+	} else {
+		if (obj44._id)
+			_field2E8 = obj44._id;
+
+		switch (obj44._mode) {
+		case 1:
+			break;
+		}
+	}
+
 	Common::StringArray choiceList;
 
 	// Build up a list of script entries

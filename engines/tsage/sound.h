@@ -419,7 +419,7 @@ public:
 	Sound _sound;
 
 	void setFile(const Common::String &filename) {}
-	void play(int soundNum, EventHandler *endAction) {}
+	bool play(int soundNum, EventHandler *endAction) { return false; }
 	void stop() {}
 	void proc1() {}
 	bool isPlaying() const { return false; }

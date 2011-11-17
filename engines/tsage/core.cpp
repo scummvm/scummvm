@@ -1061,6 +1061,8 @@ PaletteRotation::PaletteRotation() : PaletteModifierCached() {
 	_percent = 0;
 	_delayCtr = 0;
 	_frameNumber = g_globals->_events.getFrameNumber();
+	_idxChange = 1;
+	_countdown = 0;
 }
 
 void PaletteRotation::synchronize(Serializer &s) {
@@ -1074,9 +1076,19 @@ void PaletteRotation::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_rotationMode);
 	s.syncAsSint32LE(_duration);
 	s.syncBytes(&_palette[0], 256 * 3);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_idxChange);
+		s.syncAsSint16LE(_countdown);
+	}
 }
 
 void PaletteRotation::signal() {
+	if (_countdown > 0) {
+		--_countdown;
+		return;
+	}
+
 	if (_delayCtr) {
 		uint32 frameNumber = g_globals->_events.getFrameNumber();
 
@@ -1098,21 +1110,24 @@ void PaletteRotation::signal() {
 	bool flag = true;
 	switch (_rotationMode) {
 	case -1:
-		if (--_currIndex < _start) {
+		_currIndex -= _idxChange;
+		if (_currIndex < _start) {
 			flag = decDuration();
 			if (flag)
 				_currIndex = _end - 1;
 		}
 		break;
 	case 1:
-		if (++_currIndex >= _end) {
+		_currIndex += _idxChange;
+		if (_currIndex >= _end) {
 			flag = decDuration();
 			if (flag)
 				_currIndex = _start;
 		}
 		break;
 	case 2:
-		if (++_currIndex >= _end) {
+		_currIndex += _idxChange;
+		if (_currIndex >= _end) {
 			flag = decDuration();
 			if (flag) {
 				_currIndex = _end - 2;
@@ -1121,7 +1136,8 @@ void PaletteRotation::signal() {
 		}
 		break;
 	case 3:
-		if (--_currIndex < _start) {
+		_currIndex -= _idxChange;
+		if (_currIndex < _start) {
 			flag = decDuration();
 			if (flag) {
 				_currIndex = _start + 1;
@@ -1144,7 +1160,9 @@ void PaletteRotation::signal() {
 
 void PaletteRotation::remove() {
 	Action *action = _action;
-	g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start, _end - _start);
+
+	if (_idxChange)
+		g_system->getPaletteManager()->setPalette((const byte *)&_palette[_start * 3], _start, _end - _start);
 
 	_scenePalette->_listeners.remove(this);
 
@@ -2961,6 +2979,7 @@ Player::Player(): SceneObject() {
 	// Return to Ringworld specific fields
 	_characterIndex = 0;
 	_oldSceneNumber = 0;
+	_fieldBC = 0;
 
 	for (int i = 0; i < MAX_CHARACTERS; ++i) {
 		_characterScene[i] = 0;
@@ -3064,6 +3083,7 @@ void Player::synchronize(Serializer &s) {
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_characterIndex);
 		s.syncAsSint16LE(_oldSceneNumber);
+		s.syncAsSint16LE(_fieldBC);
 
 		for (int i = 0; i < MAX_CHARACTERS; ++i) {
 			s.syncAsSint16LE(_characterScene[i]);
