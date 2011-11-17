@@ -38,6 +38,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <assert.h>
+#include <new>
 
 #include <pspkernel.h>
 #include <pspdebug.h>

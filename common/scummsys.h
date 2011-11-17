@@ -130,6 +130,15 @@
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 
+	// FIXME: We sadly can't assume standard C++ headers to be present on every
+	// system we support, so we should get rid of this. The solution should be to
+	// write a simple placement new on our own. It might be noteworthy we can't
+	// easily do that for systems which do have a <new>, since it might clash with
+	// the default definition otherwise!
+	// Symbian does not have <new> but the new operator
+	#if !defined(__SYMBIAN32__)
+	#include <new>
+	#endif
 #endif
 
 

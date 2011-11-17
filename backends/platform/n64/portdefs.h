@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <new>
 
 #undef assert
 #define assert(x)  ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n\n("#x")\n%s\nline: %d", __FILE__, __LINE__)))

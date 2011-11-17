@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+#include <new>
 
 #define M_PI 3.14159265358979323846
 
