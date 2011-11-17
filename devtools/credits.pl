@@ -550,7 +550,7 @@ begin_credits("Credits");
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
-				add_person("Vladimir Menshakov", "whoozle", "");
+				add_person("Vladimir Menshakov", "whoozle", "(retired)");
 			end_section();
 
 			begin_section("Gob");
@@ -668,7 +668,7 @@ begin_credits("Credits");
 
 			begin_section("TeenAgent");
 				add_person("Robert Megone", "sanguine", "Help with callback rewriting");
-				add_person("Vladimir Menshakov", "whoozle", "");
+				add_person("Vladimir Menshakov", "whoozle", "(retired)");
 			end_section();
 
 			begin_section("Tinsel");
