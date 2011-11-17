@@ -14125,24 +14125,6 @@ void DreamGenContext::loadtempcharset() {
 	data.word(kTempcharset) = ax;
 }
 
-void DreamGenContext::standardload() {
-	STACK_CHECK;
-	openfile();
-	readheader();
-	bx = es.word(di);
-	push(bx);
-	cl = 4;
-	_shr(bx, cl);
-	allocatemem();
-	ds = ax;
-	cx = pop();
-	push(ax);
-	dx = 0;
-	readfromfile();
-	closefile();
-	ax = pop();
-}
-
 void DreamGenContext::loadtemptext() {
 	STACK_CHECK;
 	standardload();
@@ -16070,7 +16052,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadintotemp2: loadintotemp2(); break;
 		case addr_loadintotemp3: loadintotemp3(); break;
 		case addr_loadtempcharset: loadtempcharset(); break;
-		case addr_standardload: standardload(); break;
 		case addr_loadtemptext: loadtemptext(); break;
 		case addr_getridofreels: getridofreels(); break;
 		case addr_getridofall: getridofall(); break;

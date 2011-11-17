@@ -64,7 +64,6 @@ public:
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
 	static const uint16 addr_loadtemptext = 0xcb2c;
-	static const uint16 addr_standardload = 0xcb28;
 	static const uint16 addr_loadtempcharset = 0xcb24;
 	static const uint16 addr_loadintotemp3 = 0xcb20;
 	static const uint16 addr_loadintotemp2 = 0xcb1c;
@@ -1924,7 +1923,7 @@ public:
 	//void setallchanges();
 	void newgame();
 	//void printboth();
-	void standardload();
+	//void standardload();
 	void undertextline();
 	void findroominloc();
 	void sitdowninbar();

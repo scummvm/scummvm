@@ -231,6 +231,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showoutermenu',
 	'textforend',
 	'textformonk',
+	'standardload',
 	'twodigitnum',
 	'readsetdata',
 	'loadroomssample',

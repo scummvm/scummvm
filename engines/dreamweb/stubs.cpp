@@ -208,6 +208,20 @@ static Common::String getFilename(Context &context) {
 	return Common::String(name);
 }
 
+uint16 DreamGenContext::standardload(const char *fileName) {
+	engine->openFile(fileName);
+	engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+	uint16 sizeInBytes = cs.word(kFiledata);
+	uint16 result = allocatemem((sizeInBytes + 15) / 16);
+	engine->readFromFile(segRef(result).ptr(0, 0), sizeInBytes);
+	engine->closeFile();
+	return result;
+}
+
+void DreamGenContext::standardload() {
+	ax = standardload((const char *)cs.ptr(dx, 0));
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;
