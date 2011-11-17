@@ -3,8 +3,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.4.1 (????-??-??)
  AGOS:
-   - Fixed loading data directly from InstallShield cabinets in The Feeble
-     Files and Simon the Sorcerer's Puzzle Pack.
+   - Fixed loading videos directly from InstallShield cabinets in the Windows
+     version of the The Feeble Files.
 
  KYRA:
    - Fixed bug in the original Lands of Lore GUI which made ScummVM error out
