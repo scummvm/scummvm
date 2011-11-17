@@ -307,6 +307,8 @@ public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
 
+	virtual void initKeymap();
+
 	Screen *screen();
 	GUI *gui() const;
 
@@ -332,6 +334,8 @@ private:
 	void registerDefaultSettings();
 	void writeSettings();
 	void readSettings();
+
+	static const char *const kKeymapName;
 
 	const char *const *_pakFileList;
 	int _pakFileListSize;

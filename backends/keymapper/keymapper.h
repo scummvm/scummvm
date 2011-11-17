@@ -36,6 +36,8 @@
 
 namespace Common {
 
+const char *const kGuiKeymapName = "gui";
+
 class Keymapper : public Common::EventMapper, private Common::ArtificialEventSource {
 public:
 
