@@ -66,7 +66,6 @@
 	Room *getroomdata(uint8 room);
 	void readheader();
 	void fillspace();
-	void startloading();
 	void startloading(const Room *room);
 	Sprite *spritetable();
 	void showframe();

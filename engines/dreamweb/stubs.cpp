@@ -755,11 +755,6 @@ Room *DreamGenContext::getroomdata(uint8 room) {
 	return (Room *)cs.ptr(kRoomdata, 0) + room;
 }
 
-void DreamGenContext::startloading() {
-	const Room *room = (Room *)cs.ptr(bx, sizeof(Room));
-	startloading(room);
-}
-
 void DreamGenContext::readheader() {
 	ax = engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
 	es = cs;
