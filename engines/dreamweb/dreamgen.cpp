@@ -2232,45 +2232,6 @@ bigroom:
 	_add(data.byte(kMapysize), 8);
 }
 
-void DreamGenContext::loadpalfromiff() {
-	STACK_CHECK;
-	dx = 2481;
-	openfile();
-	cx = 2000;
-	ds = data.word(kMapstore);
-	dx = 0;
-	readfromfile();
-	closefile();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768);
-	ds = data.word(kMapstore);
-	si = 0x30;
-	cx = 768;
-palloop:
-	_lodsb();
-	_shr(al, 1);
-	_shr(al, 1);
-	_cmp(data.byte(kBrightness), 1);
-	if (!flags.z())
-		goto nought;
-	_cmp(al, 0);
-	if (flags.z())
-		goto nought;
-	ah = al;
-	_shr(ah, 1);
-	_add(al, ah);
-	_shr(ah, 1);
-	_add(al, ah);
-	_cmp(al, 64);
-	if (flags.c())
-		goto nought;
-	al = 63;
-nought:
-	_stosb();
-	if (--cx)
-		goto palloop;
-}
-
 void DreamGenContext::createpanel() {
 	STACK_CHECK;
 	di = 0;
@@ -15699,7 +15660,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_reconstruct: reconstruct(); break;
 		case addr_deleverything: deleverything(); break;
 		case addr_showpcx: showpcx(); break;
-		case addr_loadpalfromiff: loadpalfromiff(); break;
 		case addr_setmode: setmode(); break;
 		case addr_createpanel: createpanel(); break;
 		case addr_createpanel2: createpanel2(); break;

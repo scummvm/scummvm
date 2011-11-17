@@ -464,5 +464,29 @@ bool DreamGenContext::pixelcheckset(const ObjPos *pos, uint8 x, uint8 y) {
 	return *ptr != 0;
 }
 
+void DreamGenContext::loadpalfromiff() {
+	dx = kPalettescreen;
+	openfile();
+	cx = 2000;
+	ds = data.word(kMapstore);
+	dx = 0;
+	readfromfile();
+	closefile();
+
+	const uint8 *src = segRef(data.word(kMapstore)).ptr(0x30, 0);
+	uint8 *dst = mainPalette();
+	for (size_t i = 0; i < 256*3; ++i) {
+		uint8 c = src[i] / 4;
+		if (data.byte(kBrightness) == 1) {
+			if (c) {
+				c = c + c / 2 + c / 4;
+				if (c > 63)
+					c = 63;
+			}
+		}
+		dst[i] = c;
+	}
+}
+
 } /*namespace dreamgen */
 

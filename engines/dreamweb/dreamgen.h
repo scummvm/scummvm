@@ -511,7 +511,6 @@ public:
 	static const uint16 addr_createpanel2 = 0xc200;
 	static const uint16 addr_createpanel = 0xc1fc;
 	static const uint16 addr_setmode = 0xc1dc;
-	static const uint16 addr_loadpalfromiff = 0xc1d8;
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_deleverything = 0xc1c0;
 	static const uint16 addr_reconstruct = 0xc1ac;
@@ -1792,7 +1791,7 @@ public:
 	void fadescreenups();
 	//void checkdest();
 	//void hangon();
-	void loadpalfromiff();
+	//void loadpalfromiff();
 	//void facerightway();
 	void startup1();
 	void hotelcontrol();

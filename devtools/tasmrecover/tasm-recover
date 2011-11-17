@@ -67,6 +67,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'eraseoldobs',
 	'oldtonames',
 	'namestoold',
+	'loadpalfromiff',
 	'clearsprites',
 	'makesprite',
 	'showframe',

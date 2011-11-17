@@ -64,6 +64,7 @@
 	uint8 kernchars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void oldtonames();
 	void namestoold();
+	void loadpalfromiff();
 	void getroomdata();
 	Room *getroomdata(uint8 room);
 	void readheader();
