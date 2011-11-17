@@ -528,6 +528,10 @@ begin_credits("Credits");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
+			begin_section("Composer");
+				add_person("Alyssa Milburn", "fuzzie", "");
+			end_section();
+
 			begin_section("CruisE");
 				add_person("Paul Gilbert", "dreammaster", "");
 				add_person("Vincent Hamm", "yaz0r", "(retired)");
