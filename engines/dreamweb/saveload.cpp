@@ -162,8 +162,8 @@ void DreamGenContext::doload() {
 
 	dx = data;
 	es = dx;
-	bx = kMadeuproomdat;
-	startloading();
+	const Room *room = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+	startloading(room);
 	loadroomssample();
 	data.byte(kRoomloaded) = 1;
 	data.byte(kNewlocation) = 255;

@@ -182,7 +182,7 @@ struct People {
 };
 
 struct Room {
-	uint8 name[10];
+	char  name[10];
 	uint8 b10;
 	uint8 b11;
 	uint8 b12;
