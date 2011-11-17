@@ -65,9 +65,6 @@ public:
 	static const uint16 addr_getridofreels = 0xcb38;
 	static const uint16 addr_loadtemptext = 0xcb2c;
 	static const uint16 addr_loadtempcharset = 0xcb24;
-	static const uint16 addr_loadintotemp3 = 0xcb20;
-	static const uint16 addr_loadintotemp2 = 0xcb1c;
-	static const uint16 addr_loadintotemp = 0xcb18;
 	static const uint16 addr_loadtraveltext = 0xcb14;
 	static const uint16 addr_randomnum2 = 0xcb08;
 	static const uint16 addr_randomnum1 = 0xcb04;
@@ -1257,6 +1254,7 @@ public:
 	void mainscreen();
 	void watchreel();
 	void showfolder();
+	void dosreturn();
 	//void turnanypathoff();
 	void openfilefromc();
 	void gettime();
@@ -1322,7 +1320,7 @@ public:
 	void slabdoord();
 	void adjustup();
 	void slabdoorf();
-	void loadintotemp();
+	void findroominloc();
 	void loadintroroom();
 	void saveseg();
 	//void showblink();
@@ -1551,7 +1549,6 @@ public:
 	void transfertoex();
 	void playchannel1();
 	void playchannel0();
-	void usemon();
 	void steady();
 	//void pixelcheckset();
 	void reexfrominv();
@@ -1624,7 +1621,7 @@ public:
 	void deleteexframe();
 	//void readsetdata();
 	void folderexit();
-	void dosreturn();
+	void usemon();
 	void wheelsound();
 	void actualsave();
 	void autolook();
@@ -1660,8 +1657,8 @@ public:
 	//void printundermon();
 	void buttonnine();
 	void findallopen();
-	void loadintotemp3();
-	void loadintotemp2();
+	//void doorway();
+	//void loadintotemp2();
 	void gamer();
 	//void namestoold();
 	void readfromfile();
@@ -1694,7 +1691,7 @@ public:
 	void scrollmonitor();
 	void setsoundoff();
 	void setpickup();
-	//void doorway();
+	//void loadintotemp3();
 	void dropobject();
 	void isitright();
 	void reexfromopen();
@@ -1925,7 +1922,7 @@ public:
 	//void printboth();
 	//void standardload();
 	void undertextline();
-	void findroominloc();
+	//void loadintotemp();
 	void sitdowninbar();
 	void shownames();
 	void savefileread();

@@ -222,6 +222,30 @@ void DreamGenContext::standardload() {
 	ax = standardload((const char *)cs.ptr(dx, 0));
 }
 
+void DreamGenContext::loadintotemp() {
+	loadintotemp((const char *)cs.ptr(dx, 0));
+}
+
+void DreamGenContext::loadintotemp2() {
+	loadintotemp2((const char *)cs.ptr(dx, 0));
+}
+
+void DreamGenContext::loadintotemp3() {
+	loadintotemp3((const char *)cs.ptr(dx, 0));
+}
+
+void DreamGenContext::loadintotemp(const char *fileName) {
+	data.word(kTempgraphics) = standardload(fileName);
+}
+
+void DreamGenContext::loadintotemp2(const char *fileName) {
+	data.word(kTempgraphics2) = standardload(fileName);
+}
+
+void DreamGenContext::loadintotemp3(const char *fileName) {
+	data.word(kTempgraphics3) = standardload(fileName);
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;
