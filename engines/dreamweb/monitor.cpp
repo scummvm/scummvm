@@ -109,12 +109,7 @@ void DreamGenContext::input() {
 	char *inputLine = (char *)cs.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
-	ds = data.word(kTempcharset);
-	{
-		uint16 x = data.word(kMonadx);
-		uint8 width, height;
-		printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), &x, data.word(kMonady), '>', 0, &width, &height);
-	}
+	printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
 	multidump(data.word(kMonadx), data.word(kMonady), 6, 8);
 	data.word(kMonadx) += 6;
 	data.word(kCurslocx) = data.word(kMonadx);
@@ -146,11 +141,7 @@ void DreamGenContext::input() {
 			continue;
 		multiget(segRef(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
-		{
-			uint16 x = data.word(kMonadx);
-			uint8 height;
-			printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), &x, data.word(kMonady), currentKey, 0, &charWidth, &height);
-		}
+		printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
 		data.word(kMonadx) += charWidth;
 		++data.word(kCurpos);
