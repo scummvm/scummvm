@@ -518,37 +518,23 @@ const Frame *DreamGenContext::getreelframeax(uint16 frame) {
 }
 
 void DreamGenContext::showrain() {
+	Rain *rain = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
+
+	// Do nothing if there's no rain at all
+	if (rain->x == 255)
+		return;
+
 	ds = data.word(kMainsprites);
 	si = 6*58;
 	ax = ds.word(si+2);
 	si = ax + 2080;
-	Rain *rain = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
-	if (rain->x == 255)
-		return;
-	while (true) {
-		if (rain->x == 255) {
-			if (data.word(kCh1blockstocopy) != 0)
-				return;
-			if ((data.byte(kReallocation) == 2) && (data.byte(kBeenmugged) != 1))
-					return;
-			if (data.byte(kReallocation) == 55)
-				return;
-			randomnum1();
-			if (al >= 1)
-				return;
-			if (data.byte(kCh0playing) != 6)
-				al = 4;
-			else
-				al = 7;
-			playchannel1();
-			return;
-		}
+
+	for (; rain->x != 255; ++rain) {
 		uint16 y = rain->y + data.word(kMapady) + data.word(kMapystart);
 		uint16 x = rain->x + data.word(kMapadx) + data.word(kMapxstart);
 		uint16 size = rain->size;
 		ax = ((uint16)(rain->w3() - rain->b5)) & 511;
 		rain->setW3(ax);
-		++rain;
 		const uint8 *src = ds.ptr(si, 0) + ax;
 		uint8 *dst = workspace() + y * 320 + x;
 		for(uint16 i = 0; i < size; ++i) {
@@ -558,6 +544,21 @@ void DreamGenContext::showrain() {
 			dst += 320-1;
 		}
 	}
+
+	if (data.word(kCh1blockstocopy) != 0)
+		return;
+	if (data.byte(kReallocation) == 2 && data.byte(kBeenmugged) != 1)
+		return;
+	if (data.byte(kReallocation) == 55)
+		return;
+	randomnum1();
+	if (al >= 1)
+		return;
+	if (data.byte(kCh0playing) != 6)
+		al = 4;
+	else
+		al = 7;
+	playchannel1();
 }
 
 static void (DreamGenContext::*reelCallbacks[])() = {
