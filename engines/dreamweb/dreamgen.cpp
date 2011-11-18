@@ -3168,92 +3168,6 @@ realcreditsearly:
 	data.byte(kLasthardkey) =  0;
 }
 
-void DreamGenContext::monprint() {
-	STACK_CHECK;
-	data.byte(kKerning) = 1;
-	si = bx;
-	dl = 166;
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	ds = data.word(kTempcharset);
-printloop8:
-	push(bx);
-	push(di);
-	push(dx);
-	getnumber();
-	ch = 0;
-printloop7:
-	al = es.byte(si);
-	_inc(si);
-	_cmp(al, ':');
-	if (flags.z())
-		goto finishmon2;
-	_cmp(al, 0);
-	if (flags.z())
-		goto finishmon;
-	_cmp(al, 34);
-	if (flags.z())
-		goto finishmon;
-	_cmp(al, '=');
-	if (flags.z())
-		goto finishmon;
-	_cmp(al, '%');
-	if (!flags.z())
-		goto nottrigger;
-	ah = es.byte(si);
-	_inc(si);
-	_inc(si);
-	goto finishmon;
-nottrigger:
-	push(cx);
-	push(es);
-	modifychar();
-	printchar();
-	data.word(kCurslocx) = di;
-	data.word(kCurslocy) = bx;
-	data.word(kMaintimer) = 1;
-	printcurs();
-	vsync();
-	push(si);
-	push(dx);
-	push(ds);
-	push(es);
-	push(bx);
-	push(di);
-	lockmon();
-	di = pop();
-	bx = pop();
-	es = pop();
-	ds = pop();
-	dx = pop();
-	si = pop();
-	delcurs();
-	es = pop();
-	cx = pop();
-	if (--cx)
-		goto printloop7;
-finishmon2:
-	dx = pop();
-	di = pop();
-	bx = pop();
-	scrollmonitor();
-	data.word(kCurslocx) = di;
-	goto printloop8;
-finishmon:
-	dx = pop();
-	di = pop();
-	bx = pop();
-	_cmp(al, '%');
-	if (!flags.z())
-		goto nottrigger2;
-	data.byte(kLasttrigger) = ah;
-nottrigger2:
-	data.word(kCurslocx) = di;
-	scrollmonitor();
-	bx = si;
-	data.byte(kKerning) = 0;
-}
-
 void DreamGenContext::fillopen() {
 	STACK_CHECK;
 	deltextline();
@@ -15229,7 +15143,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_mode640x480: mode640x480(); break;
 		case addr_set16colpalette: set16colpalette(); break;
 		case addr_realcredits: realcredits(); break;
-		case addr_monprint: monprint(); break;
 		case addr_fillopen: fillopen(); break;
 		case addr_findallopen: findallopen(); break;
 		case addr_makemainscreen: makemainscreen(); break;

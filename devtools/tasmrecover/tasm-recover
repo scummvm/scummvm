@@ -249,6 +249,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'scrollmonitor',
 	'showcurrentfile',
 	'input',
+	'monprint',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

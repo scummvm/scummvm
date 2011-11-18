@@ -452,7 +452,6 @@ public:
 	static const uint16 addr_makemainscreen = 0xc340;
 	static const uint16 addr_findallopen = 0xc32c;
 	static const uint16 addr_fillopen = 0xc324;
-	static const uint16 addr_monprint = 0xc314;
 	static const uint16 addr_realcredits = 0xc2f8;
 	static const uint16 addr_set16colpalette = 0xc2f4;
 	static const uint16 addr_mode640x480 = 0xc2f0;
@@ -1357,7 +1356,7 @@ public:
 	void delchar();
 	void getanyad();
 	void endgame();
-	void monprint();
+	//void monprint();
 	void usepipe();
 	//void startloading();
 	void getunderzoom();

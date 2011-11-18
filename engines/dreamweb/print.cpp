@@ -234,5 +234,53 @@ uint16 DreamGenContext::waitframes() {
 	return data.word(kMousebutton);
 }
 
+void DreamGenContext::monprint() {
+	uint16 originalBx = bx;
+	const char *string = (const char *)es.ptr(bx, 0);
+	const char *nextString = monprint(string);
+	bx = originalBx + (nextString - string);
+}
+
+const char *DreamGenContext::monprint(const char *string) {
+	data.byte(kKerning) = 1;
+	uint16 x = data.word(kMonadx);
+	Frame *tempCharset = (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
+	const char *iterator = string;
+	while (true) {
+		uint16 count = getnumber(tempCharset, (const uint8 *)iterator, 166, false, &x);
+		do {
+			char c = *iterator++;
+			if (c == ':')
+				break;
+			if ((c == 0) || (c == 34) || (c == '='))
+				goto finishmon;
+			if (c == '%') {
+				data.byte(kLasttrigger) = *iterator;
+				iterator += 2;
+				goto finishmon;
+			}
+			c = engine->modifyChar(c);
+			printchar(tempCharset, &x, data.word(kMonady), c, 0, NULL, NULL);
+			data.word(kCurslocx) = x;
+			data.word(kCurslocy) = data.word(kMonady);
+			data.word(kMaintimer) = 1;
+			printcurs();
+			vsync();
+			lockmon();
+			delcurs();
+			--count;
+		}
+		while(count);
+		x = data.word(kMonadx);
+		scrollmonitor();
+		data.word(kCurslocx) = data.word(kMonadx);
+	}
+finishmon:
+	data.word(kCurslocx) = data.word(kMonadx);
+	scrollmonitor();
+	data.byte(kKerning) = 0;
+	return iterator;
+}
+
 } /*namespace dreamgen */
 

@@ -302,4 +302,6 @@
 	void scrollmonitor();
 	void showcurrentfile();
 	void input();
+	void monprint();
+	const char *monprint(const char *string);
 
