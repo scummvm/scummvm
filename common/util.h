@@ -148,6 +148,7 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HE_ISR,
+	HR_HRV,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,
