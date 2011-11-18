@@ -261,8 +261,10 @@ public:
 
 	SegmentRef getSegment(uint16 value) {
 		SegmentMap::iterator i = _segments.find(value);
-		assert(i != _segments.end());
-		return SegmentRef(this, value, i->_value);
+		if (i != _segments.end())
+			return SegmentRef(this, value, i->_value);
+		else
+			return SegmentRef(this, value);
 	}
 
 	SegmentRef allocateSegment(uint size) {
