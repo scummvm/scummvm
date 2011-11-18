@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	dreamweb.o \
 	dreamgen.o \
 	keypad.o \
+	monitor.o \
 	object.o \
 	pathfind.o \
 	print.o \
