@@ -165,7 +165,7 @@ void DreamGenContext::mainman(Sprite *sprite) {
 			if (data.byte(kLinepointer) != 254) {
 				if ((data.byte(kFacing) & 1) == 0)
 					walking(sprite);
-				else if ((sprite->walkFrame != 2) && (sprite->walkframe != 7))
+				else if ((sprite->walkFrame != 2) && (sprite->walkFrame != 7))
 					walking(sprite);
 			}
 			if (data.byte(kLinepointer) == 254) {
