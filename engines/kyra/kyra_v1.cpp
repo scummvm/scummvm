@@ -183,6 +183,7 @@ Common::Error KyraEngine_v1::init() {
 	assert(_staticres);
 	if (!_staticres->init())
 		error("_staticres->init() failed");
+	assert(screen());
 	if (!screen()->init())
 		error("screen()->init() failed");
 	_timer = new TimerManager(this, _system);
