@@ -94,5 +94,20 @@ void DreamGenContext::fadeupyellows() {
 	hangon(128);
 }
 
+void DreamGenContext::fadeupmonfirst() {
+	paltostartpal();
+	paltoendpal();
+	memset(startPalette() + 231*3, 0, 8*3);
+	memset(startPalette() + 246*3, 0, 1*3);
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangon(64);
+	al = 26;
+	playchannel1();
+	hangon(64);
+}
+
 } /*namespace dreamgen */
 

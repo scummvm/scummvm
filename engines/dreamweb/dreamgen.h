@@ -473,7 +473,6 @@ public:
 	static const uint16 addr_endgame = 0xc2c4;
 	static const uint16 addr_titles = 0xc2c0;
 	static const uint16 addr_initialmoncols = 0xc2bc;
-	static const uint16 addr_fadeupmonfirst = 0xc2b4;
 	static const uint16 addr_fadeupmon = 0xc2b0;
 	static const uint16 addr_fadedownmon = 0xc2ac;
 	static const uint16 addr_dumpcurrent = 0xc2a8;
@@ -1260,7 +1259,7 @@ public:
 	//void fillspace();
 	//void multiget();
 	//void autosetwalk();
-	void fadeupmonfirst();
+	//void fadeupmonfirst();
 	void drawfloor();
 	void loadkeypad();
 	//void findsource();

@@ -293,5 +293,6 @@
 	void readsetdata();
 	void loadroomssample();
 	void fadeupyellows();
+	void fadeupmonfirst();
 	void printlogo();
 
