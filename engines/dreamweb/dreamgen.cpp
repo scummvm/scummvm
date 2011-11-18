@@ -6905,34 +6905,6 @@ finishpars:
 	di = offset_operand1;
 }
 
-void DreamGenContext::scrollmonitor() {
-	STACK_CHECK;
-	push(ax);
-	push(bx);
-	push(cx);
-	push(dx);
-	push(di);
-	push(si);
-	push(es);
-	push(ds);
-	printlogo();
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	printundermon();
-	ax = data.word(kMonady);
-	worktoscreen();
-	al = 25;
-	playchannel1();
-	ds = pop();
-	es = pop();
-	si = pop();
-	di = pop();
-	dx = pop();
-	cx = pop();
-	bx = pop();
-	ax = pop();
-}
-
 void DreamGenContext::monitorlogo() {
 	STACK_CHECK;
 	al = data.byte(kLogonum);
@@ -15385,7 +15357,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_getkeyandlogo: getkeyandlogo(); break;
 		case addr_searchforstring: searchforstring(); break;
 		case addr_parser: parser(); break;
-		case addr_scrollmonitor: scrollmonitor(); break;
 		case addr_monitorlogo: monitorlogo(); break;
 		case addr_showcurrentfile: showcurrentfile(); break;
 		case addr_monmessage: monmessage(); break;

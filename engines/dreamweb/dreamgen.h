@@ -346,7 +346,6 @@ public:
 	static const uint16 addr_monmessage = 0xc56c;
 	static const uint16 addr_showcurrentfile = 0xc568;
 	static const uint16 addr_monitorlogo = 0xc560;
-	static const uint16 addr_scrollmonitor = 0xc558;
 	static const uint16 addr_parser = 0xc554;
 	static const uint16 addr_searchforstring = 0xc550;
 	static const uint16 addr_getkeyandlogo = 0xc54c;
@@ -1679,7 +1678,7 @@ public:
 	//void randomnumber();
 	void lookatcard();
 	void helicopter();
-	void scrollmonitor();
+	//void scrollmonitor();
 	void setsoundoff();
 	void setpickup();
 	//void loadintotemp3();

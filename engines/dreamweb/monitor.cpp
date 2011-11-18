@@ -187,5 +187,19 @@ void DreamGenContext::hangoncurs() {
 	hangoncurs(cx);
 }
 
+void DreamGenContext::scrollmonitor() {
+	push(bx); // The 3 push/pops are all needed for now
+	push(di);
+	push(si);
+	printlogo();
+	printundermon();
+	workToScreenCPP();
+	al = 25;
+	playchannel1();
+	si = pop();
+	di = pop();
+	bx = pop();
+}
+
 } /*namespace dreamgen */
 

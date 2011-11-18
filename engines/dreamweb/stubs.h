@@ -299,5 +299,6 @@
 	void fadeupmonfirst();
 	void printlogo();
 	void usemon();
+	void scrollmonitor();
 	void input();
 
