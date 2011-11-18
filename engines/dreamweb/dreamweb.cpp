@@ -377,9 +377,8 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 }
 
 void DreamWebEngine::printUnderMonitor() {
-	_context.es = _context.data.word(DreamGen::DreamGenContext::kWorkspace);
-	_context.di = DreamGen::DreamGenContext::kScreenwidth * 43 + 76;
-	_context.si = _context.di + 8 * DreamGen::DreamGenContext::kScreenwidth;
+	uint8 *workspace = _context.workspace();
+	uint8 *dst = workspace + DreamGen::DreamGenContext::kScreenwidth * 43 + 76;
 
 	Graphics::Surface *s = _system->lockScreen();
 	if (!s)
@@ -387,7 +386,6 @@ void DreamWebEngine::printUnderMonitor() {
 
 	for(uint y = 0; y < 104; ++y) {
 		uint8 *src = (uint8 *)s->getBasePtr(76, 43 + 8 + y);
-		uint8 *dst = _context.es.ptr(_context.di, 170);
 		for(uint x = 0; x < 170; ++x) {
 			if (*src < 231)
 				*dst++ = *src++;
@@ -395,10 +393,8 @@ void DreamWebEngine::printUnderMonitor() {
 				++dst; ++src;
 			}
 		}
-		_context._add(_context.di, DreamGen::DreamGenContext::kScreenwidth);
-		_context._add(_context.si, DreamGen::DreamGenContext::kScreenwidth);
+		dst += DreamGen::DreamGenContext::kScreenwidth;
 	}
-	_context.cx = 0;
 	_system->unlockScreen();
 }
 
