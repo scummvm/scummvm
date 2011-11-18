@@ -241,6 +241,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'printcurs',
 	'delcurs',
 	'hangoncurs',
+	'fadeupyellows',
 	'loadroomssample',
 	], skip_output = [
 	# These functions are processed but not output

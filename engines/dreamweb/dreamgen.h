@@ -474,7 +474,6 @@ public:
 	static const uint16 addr_endgame = 0xc2c4;
 	static const uint16 addr_titles = 0xc2c0;
 	static const uint16 addr_initialmoncols = 0xc2bc;
-	static const uint16 addr_fadeupyellows = 0xc2b8;
 	static const uint16 addr_fadeupmonfirst = 0xc2b4;
 	static const uint16 addr_fadeupmon = 0xc2b0;
 	static const uint16 addr_fadedownmon = 0xc2ac;
@@ -1309,7 +1308,7 @@ public:
 	//void showpanel();
 	void soundstartup();
 	void slabdoora();
-	void fadeupyellows();
+	//void fadeupyellows();
 	void slabdoorc();
 	void slabdoorb();
 	void slabdoore();

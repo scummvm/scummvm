@@ -292,4 +292,5 @@
 	void textforend();
 	void readsetdata();
 	void loadroomssample();
+	void fadeupyellows();
 

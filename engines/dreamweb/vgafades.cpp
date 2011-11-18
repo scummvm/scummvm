@@ -83,5 +83,16 @@ void DreamGenContext::fadecalculation() {
 	--data.byte(kFadecount);
 }
 
+void DreamGenContext::fadeupyellows() {
+	paltoendpal();
+	memset(endPalette() + 231*3, 0, 8*3);
+	memset(endPalette() + 246*3, 0, 1*3);
+	data.byte(kFadedirection) = 1;
+	data.byte(kFadecount) = 63;
+	data.byte(kColourpos) = 0;
+	data.byte(kNumtofade) = 128;
+	hangon(128);
+}
+
 } /*namespace dreamgen */
 

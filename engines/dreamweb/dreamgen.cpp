@@ -2769,25 +2769,6 @@ void DreamGenContext::fadeupmonfirst() {
 	hangon();
 }
 
-void DreamGenContext::fadeupyellows() {
-	STACK_CHECK;
-	paltoendpal();
-	es = data.word(kBuffers);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(231*3);
-	cx = 3*8;
-	ax = 0;
-	_stosb(cx, true);
-	di = (0+(228*13)+32+60+(32*32)+(11*10*3)+768)+(246*3);
-	_stosb();
-	_stosw();
-	data.byte(kFadedirection) = 1;
-	data.byte(kFadecount) = 63;
-	data.byte(kColourpos) = 0;
-	data.byte(kNumtofade) = 128;
-	cx = 128;
-	hangon();
-}
-
 void DreamGenContext::initialmoncols() {
 	STACK_CHECK;
 	paltostartpal();
@@ -15503,7 +15484,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_fadedownmon: fadedownmon(); break;
 		case addr_fadeupmon: fadeupmon(); break;
 		case addr_fadeupmonfirst: fadeupmonfirst(); break;
-		case addr_fadeupyellows: fadeupyellows(); break;
 		case addr_initialmoncols: initialmoncols(); break;
 		case addr_titles: titles(); break;
 		case addr_endgame: endgame(); break;
