@@ -37,20 +37,20 @@ struct Sprite {
 	uint8  y;
 	uint16 w12;
 	uint8  b14;
-	uint8  b15;
+	uint8  frameNumber;
 	uint8  b16;
 	uint8  b17;
 	uint8  delay;
-	uint8  frame;
+	uint8  animFrame; // index into SetObject::frames
 	uint16 _objData;
 	uint16 objData() const { return READ_LE_UINT16(&_objData); }
 	void setObjData(uint16 v) { WRITE_LE_UINT16(&_objData, v); }
-	uint8  b22;
+	uint8  speed;
 	uint8  priority;
 	uint16 w24;
 	uint16 w26;
 	uint8  b28;
-	uint8  b29;
+	uint8  walkFrame;
 	uint8  type;
 	uint8  hidden;
 };
@@ -83,7 +83,8 @@ struct SetObject {
 	uint8 name[4];
 	uint8 b16;
 	uint8 index;
-	uint8 b18[13]; // NB: Don't know the size yet
+	uint8 frames[13]; // Table mapping animFrame to sprite frame number
+	                  // NB: Don't know the size yet
 	uint8 b31;
 	uint8 b32;
 	uint8 b33;

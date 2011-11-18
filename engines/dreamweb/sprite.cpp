@@ -60,11 +60,11 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 	}
 	
 	uint8 c;
-	if (sprite->b29 != 0)
+	if (sprite->walkFrame != 0)
 		c = 8;
 	else
 		c = 0;
-	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->b15, c);
+	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
 }
 
 void DreamGenContext::clearsprites() {
@@ -73,7 +73,7 @@ void DreamGenContext::clearsprites() {
 
 Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
 	Sprite *sprite = spritetable();
-	while (sprite->b15 != 0xff) { // NB: No boundchecking in the original code either
+	while (sprite->frameNumber != 0xff) { // NB: No boundchecking in the original code either
 		++sprite;
 	}
 
@@ -83,7 +83,7 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	sprite->setFrameData(frameData);
 	WRITE_LE_UINT16(&sprite->w8, somethingInDi);
 	sprite->w2 = 0xffff;
-	sprite->b15 = 0;
+	sprite->frameNumber = 0;
 	sprite->delay = 0;
 	return sprite;
 }
@@ -114,8 +114,8 @@ void DreamGenContext::spriteupdate() {
 void DreamGenContext::initman() {
 	Sprite *sprite = makesprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, data.word(kMainsprites), 0);
 	sprite->priority = 4;
-	sprite->b22 = 0;
-	sprite->b29 = 0;
+	sprite->speed = 0;
+	sprite->walkFrame = 0;
 }
 
 void DreamGenContext::mainman() {
@@ -137,15 +137,15 @@ void DreamGenContext::mainman(Sprite *sprite) {
 		data.byte(kResetmanxy) = 0;
 		sprite->x = data.byte(kRyanx);
 		sprite->y = data.byte(kRyany);
-		sprite->b29 = 0;
+		sprite->walkFrame = 0;
 	}
-	--sprite->b22;
-	if (sprite->b22 != 0xff) {
+	--sprite->speed;
+	if (sprite->speed != 0xff) {
 		ds = pop();
 		es = pop();
 		return;
 	}
-	sprite->b22 = 0;
+	sprite->speed = 0;
 	if (data.byte(kTurntoface) != data.byte(kFacing)) {
 		aboutturn(sprite);
 	} else {
@@ -156,16 +156,16 @@ void DreamGenContext::mainman(Sprite *sprite) {
 		}
 		data.byte(kTurndirection) = 0;
 		if (data.byte(kLinepointer) == 254) {
-			sprite->b29 = 0;
+			sprite->walkFrame = 0;
 		} else {
-			++sprite->b29;
-			if (sprite->b29 == 11)
-				sprite->b29 = 1;
+			++sprite->walkFrame;
+			if (sprite->walkFrame == 11)
+				sprite->walkFrame = 1;
 			walking(sprite);
 			if (data.byte(kLinepointer) != 254) {
 				if ((data.byte(kFacing) & 1) == 0)
 					walking(sprite);
-				else if ((sprite->b29 != 2) && (sprite->b29 != 7))
+				else if ((sprite->walkFrame != 2) && (sprite->walkframe != 7))
 					walking(sprite);
 			}
 			if (data.byte(kLinepointer) == 254) {
@@ -178,7 +178,7 @@ void DreamGenContext::mainman(Sprite *sprite) {
 		}
 	}
 	static const uint8 facelist[] = { 0,60,33,71,11,82,22,93 };
-	sprite->b15 = sprite->b29 + facelist[data.byte(kFacing)];
+	sprite->frameNumber = sprite->walkFrame + facelist[data.byte(kFacing)];
 	data.byte(kRyanx) = sprite->x;
 	data.byte(kRyany) = sprite->y;
 
@@ -241,11 +241,11 @@ void DreamGenContext::aboutturn(Sprite *sprite) {
 	if (incdir) {
 		data.byte(kTurndirection) = 1;
 		data.byte(kFacing) = (data.byte(kFacing) + 1) & 7;
-		sprite->b29 = 0;
+		sprite->walkFrame = 0;
 	} else {
 		data.byte(kTurndirection) = (uint8)-1;
 		data.byte(kFacing) = (data.byte(kFacing) - 1) & 7;
-		sprite->b29 = 0;
+		sprite->walkFrame = 0;
 	}
 }
 
@@ -279,19 +279,19 @@ void DreamGenContext::backobject(Sprite *sprite) {
 }
 
 void DreamGenContext::constant(Sprite *sprite, SetObject *objData) {
-	++sprite->frame;
-	if (objData->b18[sprite->frame] == 255) {
-		sprite->frame = 0;
+	++sprite->animFrame;
+	if (objData->frames[sprite->animFrame] == 255) {
+		sprite->animFrame = 0;
 	}
-	uint8 b18 = objData->b18[sprite->frame];
-	objData->index = b18;
-	sprite->b15 = b18;
+	uint8 frame = objData->frames[sprite->animFrame];
+	objData->index = frame;
+	sprite->frameNumber = frame;
 }
 
 void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
 	randomnum1();
 	uint16 r = ax;
-	sprite->b15 = objData->b18[r&7];
+	sprite->frameNumber = objData->frames[r&7];
 }
 
 void DreamGenContext::doorway(Sprite *sprite, SetObject *objData) {
@@ -316,46 +316,46 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect ch
 
 	if (openDoor) {
 
-		if ((data.byte(kThroughdoor) == 1) && (sprite->frame == 0))
-			sprite->frame = 6;
+		if ((data.byte(kThroughdoor) == 1) && (sprite->animFrame == 0))
+			sprite->animFrame = 6;
 
-		++sprite->frame;
-		if (sprite->frame == 1) { // doorsound2
+		++sprite->animFrame;
+		if (sprite->animFrame == 1) { // doorsound2
 			if (data.byte(kReallocation) == 5) // hoteldoor2
 				al = 13;
 			else
 				al = 0;
 			playchannel1();
 		}
-		if (objData->b18[sprite->frame] == 255)
-			--sprite->frame;
+		if (objData->frames[sprite->animFrame] == 255)
+			--sprite->animFrame;
 
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 		data.byte(kThroughdoor) = 1;
 
 	} else {
 		// shut door
 
-		if (sprite->frame == 5) { // doorsound1;
+		if (sprite->animFrame == 5) { // doorsound1;
 			if (data.byte(kReallocation) == 5) // hoteldoor1
 				al = 13;
 			else
 				al = 1;
 			playchannel1();
 		}
-		if (sprite->frame != 0)
-			--sprite->frame;
+		if (sprite->animFrame != 0)
+			--sprite->animFrame;
 
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
-		if (sprite->frame == 5) // nearly
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
+		if (sprite->animFrame == 5) // nearly
 			data.byte(kThroughdoor) = 0;
 	}
 }
 
 void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {
-	uint8 b18 = objData->b18[0];
-	objData->index = b18;
-	sprite->b15 = b18;
+	uint8 frame = objData->frames[0];
+	objData->index = frame;
+	sprite->frameNumber = frame;
 }
 
 void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
@@ -372,40 +372,40 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 
 	if (openDoor) {
 
-		if (sprite->frame == 1) {
+		if (sprite->animFrame == 1) {
 			al = 0;
 			playchannel1();
 		}
 
-		if (sprite->frame == 6)
+		if (sprite->animFrame == 6)
 			turnpathon(data.byte(kDoorpath));
 
-		if (data.byte(kThroughdoor) == 1 && sprite->frame == 0)
-			sprite->frame = 6;
+		if (data.byte(kThroughdoor) == 1 && sprite->animFrame == 0)
+			sprite->animFrame = 6;
 
-		++sprite->frame;
-		if (objData->b18[sprite->frame] == 255)
-			--sprite->frame;
+		++sprite->animFrame;
+		if (objData->frames[sprite->animFrame] == 255)
+			--sprite->animFrame;
 
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
-		if (sprite->frame == 5)
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
+		if (sprite->animFrame == 5)
 			data.byte(kThroughdoor) = 1;
 
 	} else {
 		// shut door
 
-		if (sprite->frame == 5) {
+		if (sprite->animFrame == 5) {
 			al = 1;
 			playchannel1();
 		}
 
-		if (sprite->frame != 0)
-			--sprite->frame;
+		if (sprite->animFrame != 0)
+			--sprite->animFrame;
 	
 		data.byte(kThroughdoor) = 0;
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 
-		if (sprite->frame == 0) {
+		if (sprite->animFrame == 0) {
 			turnpathoff(data.byte(kDoorpath));
 			data.byte(kLockstatus) = 1;
 		}
@@ -422,8 +422,8 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 			if (data.byte(kCounttoopen) == 0)
 				data.byte(kLiftflag) = 3;
 		}
-		sprite->frame = 0;
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->animFrame = 0;
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
 	else if (liftFlag == 1) {  //liftopen
 		turnpathon(data.byte(kLiftpath));
@@ -433,32 +433,32 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 			if (data.byte(kCounttoclose) == 0)
 				data.byte(kLiftflag) = 2;
 		}
-		sprite->frame = 12;
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->animFrame = 12;
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}	
 	else if (liftFlag == 3) { //openlift
-		if (sprite->frame == 12) {
+		if (sprite->animFrame == 12) {
 			data.byte(kLiftflag) = 1;
 			return;
 		}
-		++sprite->frame;
-		if (sprite->frame == 1) {
+		++sprite->animFrame;
+		if (sprite->animFrame == 1) {
 			al = 2;
 			liftnoise();
 		}
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	} else { //closeLift
 		assert(liftFlag == 2);
-		if (sprite->frame == 0) {
+		if (sprite->animFrame == 0) {
 			data.byte(kLiftflag) = 0;
 			return;
 		}
-		--sprite->frame;
-		if (sprite->frame == 11) {
+		--sprite->animFrame;
+		if (sprite->animFrame == 11) {
 			al = 3;
 			liftnoise();
 		}
-		sprite->b15 = objData->index = objData->b18[sprite->frame];
+		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
 }
 
@@ -469,6 +469,10 @@ void DreamGenContext::facerightway() {
 	data.byte(kLeavedirection) = dir;
 }
 
+// Locate the reel segment (reel1, reel2, reel3) this frame is stored in.
+// The return value is a pointer to the start of the segment.
+// data.word(kCurrentframe) - data.word(kTakeoff) is the number of the frame
+// inside that segment
 Frame *DreamGenContext::findsource() {
 	uint16 currentFrame = data.word(kCurrentframe);
 	if (currentFrame < 160) {
@@ -525,8 +529,8 @@ void DreamGenContext::showrain() {
 		return;
 
 	ds = data.word(kMainsprites);
-	si = 6*58;
-	ax = ds.word(si+2);
+	si = 6*58; // Frame 58
+	ax = ds.word(si+2); // Frame::ptr
 	si = ax + 2080;
 
 	for (; rain->x != 255; ++rain) {
@@ -541,7 +545,7 @@ void DreamGenContext::showrain() {
 			uint8 v = src[i];
 			if (v != 0)
 				*dst = v;
-			dst += 320-1;
+			dst += 320-1; // advance diagonally
 		}
 	}
 
@@ -551,9 +555,10 @@ void DreamGenContext::showrain() {
 		return;
 	if (data.byte(kReallocation) == 55)
 		return;
-	randomnum1();
-	if (al >= 1)
+
+	if (engine->randomNumber() >= 1) // play thunder with 1 in 256 chance
 		return;
+
 	if (data.byte(kCh0playing) != 6)
 		al = 4;
 	else

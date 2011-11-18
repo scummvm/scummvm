@@ -804,7 +804,7 @@ void DreamGenContext::makebackob(SetObject *objData) {
 	sprite->type = type;
 	sprite->b16 = 0;
 	sprite->delay = 0;
-	sprite->frame = 0;
+	sprite->animFrame = 0;
 }
 
 void DreamGenContext::getroomdata() {

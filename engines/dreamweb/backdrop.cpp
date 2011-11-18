@@ -153,14 +153,14 @@ void DreamGenContext::showallobs() {
 		SetObject *setEntry = setEntries + i;
 		if (getmapad(setEntry->mapad) == 0)
 			continue;
-		uint8 currentFrame = setEntry->b18[0];
+		uint8 currentFrame = setEntry->frames[0];
 		data.word(kCurrentframe) = currentFrame;
 		if (currentFrame == 0xff)
 			continue;
 		calcfrframe();
 		uint16 x, y;
 		finalframe(&x, &y);
-		setEntry->index = setEntry->b18[0];
+		setEntry->index = setEntry->frames[0];
 		if ((setEntry->type == 0) && (setEntry->priority != 5) && (setEntry->priority != 6)) {
 			x += data.word(kMapadx);
 			y += data.word(kMapady);
