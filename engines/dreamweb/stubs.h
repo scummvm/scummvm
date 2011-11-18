@@ -297,5 +297,5 @@
 	void fadeupmonfirst();
 	void printlogo();
 	void usemon();
-
+	void input();
 

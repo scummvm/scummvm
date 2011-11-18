@@ -360,7 +360,6 @@ public:
 	static const uint16 addr_execcommand = 0xc52c;
 	static const uint16 addr_delchar = 0xc528;
 	static const uint16 addr_makecaps = 0xc524;
-	static const uint16 addr_input = 0xc520;
 	static const uint16 addr_locklightoff = 0xc51c;
 	static const uint16 addr_locklighton = 0xc518;
 	static const uint16 addr_accesslightoff = 0xc514;
@@ -1770,7 +1769,7 @@ public:
 	void getridoftemptext();
 	void setuptimeduse();
 	void grafittidoor();
-	void input();
+	//void input();
 	void nextdest();
 	//void getdimension();
 	void makecaps();

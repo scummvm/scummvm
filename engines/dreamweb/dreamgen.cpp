@@ -6306,102 +6306,6 @@ void DreamGenContext::locklightoff() {
 	multidump();
 }
 
-void DreamGenContext::input() {
-	STACK_CHECK;
-	es = cs;
-	di = 8045;
-	cx = 64;
-	al = 0;
-	_stosb(cx, true);
-	data.word(kCurpos) = 0;
-	al = '>';
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	ds = data.word(kTempcharset);
-	ah = 0;
-	printchar();
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	cl = 6;
-	ch = 8;
-	multidump();
-	_add(data.word(kMonadx), 6);
-	ax = data.word(kMonadx);
-	data.word(kCurslocx) = ax;
-	ax = data.word(kMonady);
-	data.word(kCurslocy) = ax;
-waitkey:
-	printcurs();
-	vsync();
-	delcurs();
-	readkey();
-	al = data.byte(kCurrentkey);
-	_cmp(al, 0);
-	if (flags.z())
-		goto waitkey;
-	_cmp(al, 13);
-	if (flags.z())
-		return /* (endofinput) */;
-	_cmp(al, 8);
-	if (!flags.z())
-		goto notdel;
-	_cmp(data.word(kCurpos), 0);
-	if (flags.z())
-		goto waitkey;
-	delchar();
-	goto waitkey;
-notdel:
-	_cmp(data.word(kCurpos), 28);
-	if (flags.z())
-		goto waitkey;
-	_cmp(data.byte(kCurrentkey), 32);
-	if (!flags.z())
-		goto notleadingspace;
-	_cmp(data.word(kCurpos), 0);
-	if (flags.z())
-		goto waitkey;
-notleadingspace:
-	makecaps();
-	es = cs;
-	si = data.word(kCurpos);
-	_add(si, si);
-	_add(si, 8045);
-	es.byte(si) = al;
-	_cmp(al, 'Z'+1);
-	if (!flags.c())
-		goto waitkey;
-	push(ax);
-	push(es);
-	push(si);
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	ds = data.word(kMapstore);
-	ax = data.word(kCurpos);
-	_xchg(al, ah);
-	si = ax;
-	cl = 8;
-	ch = 8;
-	multiget();
-	si = pop();
-	es = pop();
-	ax = pop();
-	push(es);
-	push(si);
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	ds = data.word(kTempcharset);
-	ah = 0;
-	printchar();
-	si = pop();
-	es = pop();
-	es.byte(si+1) = cl;
-	ch = 0;
-	_add(data.word(kMonadx), cx);
-	_inc(data.word(kCurpos));
-	_add(data.word(kCurslocx), cx);
-	goto waitkey;
-}
-
 void DreamGenContext::makecaps() {
 	STACK_CHECK;
 	_cmp(al, 'a');
@@ -15468,7 +15372,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_accesslightoff: accesslightoff(); break;
 		case addr_locklighton: locklighton(); break;
 		case addr_locklightoff: locklightoff(); break;
-		case addr_input: input(); break;
 		case addr_makecaps: makecaps(); break;
 		case addr_delchar: delchar(); break;
 		case addr_execcommand: execcommand(); break;
