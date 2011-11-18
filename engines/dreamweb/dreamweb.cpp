@@ -393,7 +393,7 @@ void DreamWebEngine::printUnderMonitor() {
 				++dst; ++src;
 			}
 		}
-		dst += DreamGen::DreamGenContext::kScreenwidth;
+		dst += DreamGen::DreamGenContext::kScreenwidth - 170;
 	}
 	_system->unlockScreen();
 }
