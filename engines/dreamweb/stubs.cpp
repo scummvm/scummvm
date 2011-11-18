@@ -2162,5 +2162,10 @@ void DreamGenContext::readsetdata() {
 	engine->closeFile();
 }
 
+void DreamGenContext::printlogo() {
+	showframe((Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0), 56, 32, 0, 0);
+	showcurrentfile();
+}
+
 } /*namespace dreamgen */
 

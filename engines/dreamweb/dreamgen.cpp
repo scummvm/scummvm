@@ -7165,17 +7165,6 @@ notnewlogo:
 	printlogo();
 }
 
-void DreamGenContext::printlogo() {
-	STACK_CHECK;
-	di = 56;
-	bx = 32;
-	ds = data.word(kTempgraphics);
-	al = 0;
-	ah = 0;
-	showframe();
-	showcurrentfile();
-}
-
 void DreamGenContext::showcurrentfile() {
 	STACK_CHECK;
 	di = 178;
@@ -15612,7 +15601,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_parser: parser(); break;
 		case addr_scrollmonitor: scrollmonitor(); break;
 		case addr_monitorlogo: monitorlogo(); break;
-		case addr_printlogo: printlogo(); break;
 		case addr_showcurrentfile: showcurrentfile(); break;
 		case addr_monmessage: monmessage(); break;
 		case addr_processtrigger: processtrigger(); break;

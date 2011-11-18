@@ -345,7 +345,6 @@ public:
 	static const uint16 addr_processtrigger = 0xc570;
 	static const uint16 addr_monmessage = 0xc56c;
 	static const uint16 addr_showcurrentfile = 0xc568;
-	static const uint16 addr_printlogo = 0xc564;
 	static const uint16 addr_monitorlogo = 0xc560;
 	static const uint16 addr_scrollmonitor = 0xc558;
 	static const uint16 addr_parser = 0xc554;
@@ -1893,7 +1892,7 @@ public:
 	void zoomonoff();
 	void updatesymboltop();
 	//void showryanpage();
-	void printlogo();
+	//void printlogo();
 	void allpointer();
 	void showseconduse();
 	void clearreels();
