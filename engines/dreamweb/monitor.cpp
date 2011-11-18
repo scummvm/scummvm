@@ -196,7 +196,7 @@ void DreamGenContext::scrollmonitor() {
 }
 
 void DreamGenContext::showcurrentfile() {
-	uint16 x = 178;
+	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
 	const char *currentFile = (const char *)cs.ptr(kCurrentfile+1, 0);
 	while (*currentFile) {
 		char c = *currentFile++;
