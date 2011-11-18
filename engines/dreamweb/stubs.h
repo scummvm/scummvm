@@ -20,6 +20,7 @@
  *
  */
 	uint16 allocatemem(uint16 paragraphs);
+	void deallocatemem(uint16 segment);
 	uint8 *workspace();
 	uint8 *textUnder();
 	void allocatework();

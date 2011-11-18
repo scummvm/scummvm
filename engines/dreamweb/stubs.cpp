@@ -583,9 +583,12 @@ uint16 DreamGenContext::allocatemem(uint16 paragraphs) {
 }
 
 void DreamGenContext::deallocatemem() {
-	uint16 id = (uint16)es;
-	debug(1, "deallocating segment %04x", id);
-	deallocateSegment(id);
+	deallocatemem((uint16)es);
+}
+
+void DreamGenContext::deallocatemem(uint16 segment) {
+	debug(1, "deallocating segment %04x", segment);
+	deallocateSegment(segment);
 
 	//fixing invalid entries in the sprite table
 	es = data;
@@ -599,7 +602,7 @@ void DreamGenContext::deallocatemem() {
 	for(uint i = 0; i < tsize; i += 32) {
 		uint16 seg = READ_LE_UINT16(ptr + i + 6);
 		//debug(1, "sprite segment = %04x", seg);
-		if (seg == id)
+		if (seg == segment)
 			memset(ptr + i, 0xff, 32);
 	}
 }
@@ -2230,12 +2233,9 @@ void DreamGenContext::usemon() {
 	} while (al == 0);
 	getridoftemp();
 	getridoftempcharset();
-	es = data.word(kTextfile1);
-	deallocatemem();
-	es = data.word(kTextfile2);
-	deallocatemem();
-	es = data.word(kTextfile3);
-	deallocatemem();
+	deallocatemem(data.word(kTextfile1));
+	deallocatemem(data.word(kTextfile2));
+	deallocatemem(data.word(kTextfile3));
 	data.byte(kGetback) = 1;
 	al = 26;
 	playchannel1();
