@@ -288,6 +288,18 @@ void DreamGenContext::delcurs() {
 	multidump(x, y, width, height);
 }
 
+void DreamGenContext::hangoncurs() {
+	hangoncurs(cx);
+}
+
+void DreamGenContext::hangoncurs(uint16 frameCount) {
+	for (uint16 i = 0; i < frameCount; ++i) {
+		printcurs();
+		vsync();
+		delcurs();
+	}
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;

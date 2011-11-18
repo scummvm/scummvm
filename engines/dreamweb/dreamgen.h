@@ -74,7 +74,6 @@ public:
 	static const uint16 addr_putunderzoom = 0xcabc;
 	static const uint16 addr_dumpzoom = 0xcab8;
 	static const uint16 addr_getunderzoom = 0xcab4;
-	static const uint16 addr_hangoncurs = 0xcab0;
 	static const uint16 addr_hangonw = 0xcaac;
 	static const uint16 addr_allpointer = 0xcaa4;
 	static const uint16 addr_blank = 0xcaa0;
@@ -1333,7 +1332,7 @@ public:
 	//void loadroomssample();
 	//void updatepeople();
 	//void addtopeoplelist();
-	void hangoncurs();
+	//void hangoncurs();
 	//void getblockofpixel();
 	//void kernchars();
 	//void printcurs();

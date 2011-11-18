@@ -13887,18 +13887,6 @@ hangloopw:
 		goto hangloopw;
 }
 
-void DreamGenContext::hangoncurs() {
-	STACK_CHECK;
-monloop1:
-	push(cx);
-	printcurs();
-	vsync();
-	delcurs();
-	cx = pop();
-	if (--cx)
-		goto monloop1;
-}
-
 void DreamGenContext::getunderzoom() {
 	STACK_CHECK;
 	di = (8)+5;
@@ -15915,7 +15903,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_blank: blank(); break;
 		case addr_allpointer: allpointer(); break;
 		case addr_hangonw: hangonw(); break;
-		case addr_hangoncurs: hangoncurs(); break;
 		case addr_getunderzoom: getunderzoom(); break;
 		case addr_dumpzoom: dumpzoom(); break;
 		case addr_putunderzoom: putunderzoom(); break;
