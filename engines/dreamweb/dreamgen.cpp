@@ -7294,42 +7294,6 @@ void DreamGenContext::triggermessage() {
 	data.byte(kLasttrigger) = 0;
 }
 
-void DreamGenContext::delcurs() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	push(di);
-	push(ds);
-	push(dx);
-	push(si);
-	di = data.word(kCurslocx);
-	bx = data.word(kCurslocy);
-	cl = 6;
-	ch = 8;
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto _tmp1;
-	_sub(bx, 3);
-	ch = 11;
-_tmp1:
-	push(di);
-	push(bx);
-	push(cx);
-	ds = data.word(kBuffers);
-	si = (0);
-	multiput();
-	cx = pop();
-	bx = pop();
-	di = pop();
-	multidump();
-	si = pop();
-	dx = pop();
-	ds = pop();
-	di = pop();
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::useobject() {
 	STACK_CHECK;
 	data.byte(kWithobject) = 255;
@@ -15685,7 +15649,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_monmessage: monmessage(); break;
 		case addr_processtrigger: processtrigger(); break;
 		case addr_triggermessage: triggermessage(); break;
-		case addr_delcurs: delcurs(); break;
 		case addr_useobject: useobject(); break;
 		case addr_wheelsound: wheelsound(); break;
 		case addr_runtap: runtap(); break;

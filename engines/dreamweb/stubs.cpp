@@ -270,6 +270,20 @@ void DreamGenContext::printcurs() {
 	multidump(x - 6, y, 12, height);
 }
 
+void DreamGenContext::delcurs() {
+	uint16 x = data.word(kCurslocx);
+	uint16 y = data.word(kCurslocy);
+	uint16 width = 6;
+	uint16 height;
+	if (data.byte(kForeignrelease)) {
+		y -= 3;
+		height = 11;
+	} else
+		height = 8;
+	multiput(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, width, height);
+	multidump(x, y, width, height);
+}
+
 void DreamGenContext::seecommandtail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;

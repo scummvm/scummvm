@@ -342,7 +342,6 @@ public:
 	static const uint16 addr_runtap = 0xc58c;
 	static const uint16 addr_wheelsound = 0xc588;
 	static const uint16 addr_useobject = 0xc580;
-	static const uint16 addr_delcurs = 0xc57c;
 	static const uint16 addr_triggermessage = 0xc574;
 	static const uint16 addr_processtrigger = 0xc570;
 	static const uint16 addr_monmessage = 0xc56c;
@@ -1848,7 +1847,7 @@ public:
 	void getexad();
 	void openforsave();
 	void closefile();
-	void delcurs();
+	//void delcurs();
 	void randomaccess();
 	//void calcfrframe();
 	//void checkifex();
