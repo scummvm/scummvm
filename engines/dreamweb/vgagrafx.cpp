@@ -94,9 +94,13 @@ void DreamGenContext::multidump() {
 	cx = 0;
 }
 
-void DreamGenContext::worktoscreen() {
-	uint size = 320 * 200;
+void DreamGenContext::workToScreenCPP() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
+}
+
+void DreamGenContext::worktoscreen() {
+	workToScreenCPP();
+	uint size = 320 * 200;
 	di = si = size;
 	cx = 0;
 }
