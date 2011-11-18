@@ -69,18 +69,23 @@ void DreamGenContext::printchar() {
 void DreamGenContext::printchar(const Frame *charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
 	if (c == 255)
 		return;
-	push(si);
-	push(di);
-	if (data.byte(kForeignrelease) != 0)
+
+	uint8 dummyWidth, dummyHeight;
+	if (width == NULL)
+		width = &dummyWidth;
+	if (height == NULL)
+		height = &dummyHeight;
+	if (data.byte(kForeignrelease))
 		y -= 3;
 	uint16 tmp = c - 32 + data.word(kCharshift);
 	showframe(charSet, *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);
-	di = pop();
-	si = pop();
-	_cmp(data.byte(kKerning), 0);
-	if (flags.z())
+	if (data.byte(kKerning), 0)
 		*width = kernchars(c, nextChar, *width);
 	(*x) += *width;
+}
+
+void DreamGenContext::printchar(const Frame *charSet, uint16 x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+	printchar(charSet, &x, y, c, nextChar, width, height);
 }
 
 void DreamGenContext::printslow() {
