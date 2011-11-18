@@ -6020,97 +6020,6 @@ void DreamGenContext::readcitypic() {
 	loadintotemp();
 }
 
-void DreamGenContext::usemon() {
-	STACK_CHECK;
-	data.byte(kLasttrigger) = 0;
-	es = cs;
-	di = 2970+1;
-	cx = 12;
-	al = 32;
-	_stosb(cx, true);
-	es = cs;
-	di = offset_operand1+1;
-	cx = 12;
-	al = 32;
-	_stosb(cx, true);
-	es = cs;
-	di = offset_keys;
-	es.byte(di) = 1;
-	_add(di, 26);
-	cx = 3;
-keyloop:
-	es.byte(di) = 0;
-	_add(di, 26);
-	if (--cx)
-		goto keyloop;
-	createpanel();
-	showpanel();
-	showicon();
-	drawfloor();
-	getridofall();
-	dx = 1974;
-	loadintotemp();
-	loadpersonal();
-	loadnews();
-	loadcart();
-	dx = 1870;
-	loadtempcharset();
-	printoutermon();
-	initialmoncols();
-	printlogo();
-	worktoscreen();
-	turnonpower();
-	fadeupyellows();
-	fadeupmonfirst();
-	data.word(kMonadx) = 76;
-	data.word(kMonady) = 141;
-	al = 1;
-	monmessage();
-	cx = 120;
-	hangoncurs();
-	al = 2;
-	monmessage();
-	cx = 60;
-	randomaccess();
-	al = 3;
-	monmessage();
-	cx = 100;
-	hangoncurs();
-	printlogo();
-	scrollmonitor();
-	data.word(kBufferin) = 0;
-	data.word(kBufferout) = 0;
-moreinput:
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	push(di);
-	push(bx);
-	input();
-	bx = pop();
-	di = pop();
-	data.word(kMonadx) = di;
-	data.word(kMonady) = bx;
-	execcommand();
-	_cmp(al, 0);
-	if (flags.z())
-		goto moreinput;
-	getridoftemp();
-	getridoftempcharset();
-	es = data.word(kTextfile1);
-	deallocatemem();
-	es = data.word(kTextfile2);
-	deallocatemem();
-	es = data.word(kTextfile3);
-	deallocatemem();
-	data.byte(kGetback) = 1;
-	al = 26;
-	playchannel1();
-	data.byte(kManisoffscreen) = 0;
-	restoreall();
-	redrawmainscrn();
-	worktoscreenm();
-}
-
 void DreamGenContext::printoutermon() {
 	STACK_CHECK;
 	di = 40;
@@ -15546,7 +15455,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_resetlocation: resetlocation(); break;
 		case addr_readdesticon: readdesticon(); break;
 		case addr_readcitypic: readcitypic(); break;
-		case addr_usemon: usemon(); break;
 		case addr_printoutermon: printoutermon(); break;
 		case addr_loadpersonal: loadpersonal(); break;
 		case addr_loadnews: loadnews(); break;

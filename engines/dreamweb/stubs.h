@@ -295,4 +295,6 @@
 	void fadeupyellows();
 	void fadeupmonfirst();
 	void printlogo();
+	void usemon();
+
 

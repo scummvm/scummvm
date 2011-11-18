@@ -2167,5 +2167,84 @@ void DreamGenContext::printlogo() {
 	showcurrentfile();
 }
 
+struct MonitorKeyEntry {
+	uint8 b0;
+	uint8 b1;
+	char  b2[24];
+};
+
+void DreamGenContext::usemon() {
+	data.byte(kLasttrigger) = 0;
+	memset(cs.ptr(kCurrentfile+1, 0), ' ', 12);
+	memset(cs.ptr(offset_operand1+1, 0), ' ', 12);
+
+	MonitorKeyEntry *monitorKeyEntries = (MonitorKeyEntry *)cs.ptr(offset_keys, 0);
+	monitorKeyEntries[0].b0 = 1;
+	monitorKeyEntries[1].b0 = 0;
+	monitorKeyEntries[2].b0 = 0;
+	monitorKeyEntries[3].b0 = 0;
+
+	createpanel();
+	showpanel();
+	showicon();
+	drawfloor();
+	getridofall();
+	loadintotemp("DREAMWEB.G03");
+	loadpersonal();
+	loadnews();
+	loadcart();
+	loadtempcharset("DREAMWEB.C01");
+	printoutermon();
+	initialmoncols();
+	printlogo();
+	worktoscreen();
+	turnonpower();
+	fadeupyellows();
+	fadeupmonfirst();
+	data.word(kMonadx) = 76;
+	data.word(kMonady) = 141;
+	al = 1;
+	monmessage();
+	hangoncurs(120);
+	al = 2;
+	monmessage();
+	cx = 60;
+	randomaccess();
+	al = 3;
+	monmessage();
+	hangoncurs(100);
+	printlogo();
+	scrollmonitor();
+	data.word(kBufferin) = 0;
+	data.word(kBufferout) = 0;
+	do {
+		di = data.word(kMonadx);
+		bx = data.word(kMonady);
+		push(di);
+		push(bx);
+		input();
+		bx = pop();
+		di = pop();
+		data.word(kMonadx) = di;
+		data.word(kMonady) = bx;
+		execcommand();
+	} while (al == 0);
+	getridoftemp();
+	getridoftempcharset();
+	es = data.word(kTextfile1);
+	deallocatemem();
+	es = data.word(kTextfile2);
+	deallocatemem();
+	es = data.word(kTextfile3);
+	deallocatemem();
+	data.byte(kGetback) = 1;
+	al = 26;
+	playchannel1();
+	data.byte(kManisoffscreen) = 0;
+	restoreall();
+	redrawmainscrn();
+	worktoscreenm();
+}
+
 } /*namespace dreamgen */
 

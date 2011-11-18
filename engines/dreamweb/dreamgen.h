@@ -374,7 +374,6 @@ public:
 	static const uint16 addr_loadnews = 0xc4f4;
 	static const uint16 addr_loadpersonal = 0xc4f0;
 	static const uint16 addr_printoutermon = 0xc4ec;
-	static const uint16 addr_usemon = 0xc4e8;
 	static const uint16 addr_readcitypic = 0xc4e4;
 	static const uint16 addr_readdesticon = 0xc4e0;
 	static const uint16 addr_resetlocation = 0xc4dc;
@@ -1247,7 +1246,6 @@ public:
 	void mainscreen();
 	void watchreel();
 	void showfolder();
-	void dosreturn();
 	//void turnanypathoff();
 	void openfilefromc();
 	void gettime();
@@ -1542,6 +1540,7 @@ public:
 	void transfertoex();
 	void playchannel1();
 	void playchannel0();
+	//void usemon();
 	void steady();
 	//void pixelcheckset();
 	void reexfrominv();
@@ -1614,7 +1613,7 @@ public:
 	void deleteexframe();
 	//void readsetdata();
 	void folderexit();
-	void usemon();
+	void dosreturn();
 	void wheelsound();
 	void actualsave();
 	void autolook();
