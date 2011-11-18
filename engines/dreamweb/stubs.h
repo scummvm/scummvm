@@ -21,6 +21,7 @@
  */
 	uint16 allocatemem(uint16 paragraphs);
 	uint8 *workspace();
+	uint8 *textUnder();
 	void allocatework();
 	void clearwork();
 	void standardload();

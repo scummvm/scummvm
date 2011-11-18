@@ -208,6 +208,10 @@ static Common::String getFilename(Context &context) {
 	return Common::String(name);
 }
 
+uint8 *DreamGenContext::textUnder() {
+	return segRef(data.word(kBuffers)).ptr(kTextunder, 0);
+}
+
 uint16 DreamGenContext::standardload(const char *fileName) {
 	engine->openFile(fileName);
 	engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
@@ -263,7 +267,7 @@ void DreamGenContext::printcurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiget(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, 6, height);
+	multiget(textUnder(), x, y, 6, height);
 	++data.word(kMaintimer);
 	if ((data.word(kMaintimer) & 16) == 0)
 		showframe((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), x, y, '/' - 32, 0);
@@ -280,7 +284,7 @@ void DreamGenContext::delcurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiput(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, width, height);
+	multiput(textUnder(), x, y, width, height);
 	multidump(x, y, width, height);
 }
 
@@ -1032,7 +1036,7 @@ void DreamGenContext::deltextline() {
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
-	multiput(segRef(data.word(kBuffers)).ptr(kTextunder, 0), x, y, kUndertextsizex, kUndertextsizey);
+	multiput(textUnder(), x, y, kUndertextsizex, kUndertextsizey);
 }
 
 void DreamGenContext::commandonly() {
