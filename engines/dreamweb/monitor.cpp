@@ -201,5 +201,15 @@ void DreamGenContext::scrollmonitor() {
 	bx = pop();
 }
 
+void DreamGenContext::showcurrentfile() {
+	uint16 x = 178;
+	const char *currentFile = (const char *)cs.ptr(kCurrentfile+1, 0);
+	while (*currentFile) {
+		char c = *currentFile++;
+		c = engine->modifyChar(c);
+		printchar((const Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), &x, 37, c, 0, NULL, NULL);
+	}
+}
+
 } /*namespace dreamgen */
 

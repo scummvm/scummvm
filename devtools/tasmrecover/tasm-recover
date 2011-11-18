@@ -247,6 +247,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'printlogo',
 	'usemon',
 	'scrollmonitor',
+	'showcurrentfile',
 	'input',
 	], skip_output = [
 	# These functions are processed but not output

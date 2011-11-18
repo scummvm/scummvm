@@ -300,5 +300,6 @@
 	void printlogo();
 	void usemon();
 	void scrollmonitor();
+	void showcurrentfile();
 	void input();
 

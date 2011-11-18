@@ -6926,26 +6926,6 @@ notnewlogo:
 	printlogo();
 }
 
-void DreamGenContext::showcurrentfile() {
-	STACK_CHECK;
-	di = 178;
-	bx = 37;
-	si = 2970+1;
-curfileloop:
-	al = cs.byte(si);
-	_cmp(al, 0);
-	if (flags.z())
-		return /* (finishfile) */;
-	_inc(si);
-	push(si);
-	modifychar();
-	ds = data.word(kTempcharset);
-	ah = 0;
-	printchar();
-	si = pop();
-	goto curfileloop;
-}
-
 void DreamGenContext::monmessage() {
 	STACK_CHECK;
 	es = data.word(kTextfile1);
@@ -15358,7 +15338,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_searchforstring: searchforstring(); break;
 		case addr_parser: parser(); break;
 		case addr_monitorlogo: monitorlogo(); break;
-		case addr_showcurrentfile: showcurrentfile(); break;
 		case addr_monmessage: monmessage(); break;
 		case addr_processtrigger: processtrigger(); break;
 		case addr_triggermessage: triggermessage(); break;
