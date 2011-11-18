@@ -85,8 +85,9 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 void KyraEngine_v1::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (_sound)
-		_sound->pause(pause);	
-	_timer->pause(pause);
+		_sound->pause(pause);
+	if (_timer)
+		_timer->pause(pause);
 }
 
 Common::Error KyraEngine_v1::init() {

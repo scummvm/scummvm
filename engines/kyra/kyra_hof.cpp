@@ -223,11 +223,12 @@ Common::Error KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
+	_debugger = new Debugger_HoF(this);
+	assert(_debugger);
+
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_debugger = new Debugger_HoF(this);
-	assert(_debugger);
 	_text = new TextDisplayer_HoF(this, _screen);
 	assert(_text);
 	_gui = new GUI_HoF(this);
@@ -455,6 +456,9 @@ void KyraEngine_HoF::startup() {
 }
 
 void KyraEngine_HoF::runLoop() {
+	// Initialize debugger since how it should be fully usable
+	_debugger->initialize();
+
 	_screen->updateScreen();
 
 	_runFlag = true;

@@ -174,6 +174,9 @@ Common::Error KyraEngine_LoK::init() {
 	assert(_screen);
 	_screen->setResolution();
 
+	_debugger = new Debugger_LoK(this);
+	assert(_debugger);
+
 	KyraEngine_v1::init();
 
 	_sprites = new Sprites(this, _system);
@@ -229,8 +232,6 @@ Common::Error KyraEngine_LoK::init() {
 	memset(&_scriptMain, 0, sizeof(EMCState));
 	memset(&_scriptClick, 0, sizeof(EMCState));
 
-	_debugger = new Debugger_LoK(this);
-	assert(_debugger);
 	memset(_shapes, 0, sizeof(_shapes));
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i)
@@ -436,6 +437,9 @@ void KyraEngine_LoK::startup() {
 }
 
 void KyraEngine_LoK::mainLoop() {
+	// Initialize debugger since how it should be fully usable
+	_debugger->initialize();
+
 	_eventList.clear();
 
 	while (!shouldQuit()) {

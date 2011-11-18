@@ -434,6 +434,9 @@ Common::Error LoLEngine::init() {
 	assert(_screen);
 	_screen->setResolution();
 
+	_debugger = new Debugger_LoL(this);
+	assert(_debugger);
+
 	KyraEngine_v1::init();
 	initStaticResource();
 
@@ -546,9 +549,6 @@ Common::Error LoLEngine::init() {
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
-
-	_debugger = new Debugger_LoL(this);
-	assert(_debugger);
 
 	initKeymap();
 
@@ -978,6 +978,9 @@ void LoLEngine::startupNew() {
 }
 
 void LoLEngine::runLoop() {
+	// Initialize debugger since how it should be fully usable
+	_debugger->initialize();
+
 	enableSysTimer(2);
 
 	bool _runFlag = true;
