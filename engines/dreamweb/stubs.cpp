@@ -2155,8 +2155,7 @@ void DreamGenContext::readsetdata() {
 	data.word(kCurrentset) = ax;
 	if (data.byte(kSoundint) == 0xff)
 		return;
-	Common::String name((const char*)cs.ptr(kVolumetabname, 0));
-	engine->openFile(name);
+	engine->openFile("DREAMWEB.VOL");
 	uint8 *volumeTab = segRef(data.word(kSoundbuffer)).ptr(16384, 0);
 	engine->readFromFile(volumeTab, 2048-256);
 	engine->closeFile();
