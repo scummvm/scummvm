@@ -64,7 +64,7 @@ public:
 	InvObject(int visage, int strip, int frame);
 	InvObject(int visage, int strip);
 
-	bool inInventory() const { return _sceneNumber == 1; }
+	bool inInventory() const;
 	void setCursor();
 
 	virtual Common::String getClassName() { return "InvObject"; }

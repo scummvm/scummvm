@@ -452,7 +452,16 @@ void UIElements::add(UIElement *obj) {
  * Handles updating the visual inventory in the user interface
  */
 void UIElements::updateInventory() {
-	_score.updateScore();
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		// Update the score
+		_score.updateScore();
+		break;
+	case GType_Ringworld2:
+		_character.setFrame(R2_GLOBALS._player._characterIndex);
+		break;
+	}
+
 	updateInvList();
 
 	// Enable scroll buttons if the player has more than four items

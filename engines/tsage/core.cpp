@@ -94,6 +94,10 @@ void InvObject::setCursor() {
 	}
 }
 
+bool InvObject::inInventory() const {
+	return _sceneNumber == ((g_vm->getGameID() != GType_Ringworld2) ? 1 : g_globals->_player._characterIndex);
+}
+
 /*--------------------------------------------------------------------------*/
 
 InvObjectList::InvObjectList() {
