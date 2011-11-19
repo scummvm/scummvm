@@ -246,18 +246,23 @@ const char *DreamGenContext::monprint(const char *string) {
 	uint16 x = data.word(kMonadx);
 	Frame *tempCharset = (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
 	const char *iterator = string;
-	while (true) {
+	bool done = false;
+	while (!done) {
+
 		uint16 count = getnumber(tempCharset, (const uint8 *)iterator, 166, false, &x);
-		do {
+		do {	
 			char c = *iterator++;
 			if (c == ':')
 				break;
-			if ((c == 0) || (c == 34) || (c == '='))
-				goto finishmon;
+			if ((c == 0) || (c == '"') || (c == '=')) {
+				done = true;
+				break;
+			}
 			if (c == '%') {
 				data.byte(kLasttrigger) = *iterator;
 				iterator += 2;
-				goto finishmon;
+				done = true;
+				break;
 			}
 			c = engine->modifyChar(c);
 			printchar(tempCharset, &x, data.word(kMonady), c, 0, NULL, NULL);
@@ -268,16 +273,13 @@ const char *DreamGenContext::monprint(const char *string) {
 			vsync();
 			lockmon();
 			delcurs();
-			--count;
-		}
-		while(count);
+		} while (--count);
+
 		x = data.word(kMonadx);
 		scrollmonitor();
 		data.word(kCurslocx) = data.word(kMonadx);
 	}
-finishmon:
-	data.word(kCurslocx) = data.word(kMonadx);
-	scrollmonitor();
+
 	data.byte(kKerning) = 0;
 	return iterator;
 }
