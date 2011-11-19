@@ -191,7 +191,6 @@ void Set::loadBinary(Common::MemoryReadStream *ms)
 	}
 }
 
-
 void Set::saveState(SaveGame *savedState) const {
 	savedState->writeString(_name);
 	savedState->writeLESint32(_numCmaps);
@@ -577,21 +576,6 @@ void Set::unshrinkBoxes() {
 	}
 }
 
-ObjectState *Set::findState(const char *filename) {
-	// Check the different state objects for the bitmap
-	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
-		const Common::String &file = (*i)->getBitmapFilename();
-
-		if (file == filename)
-			return *i;
-		if (file.compareToIgnoreCase(filename) == 0) {
-			Debug::warning(Debug::Sets, "State object request '%s' matches object '%s' but is the wrong case", filename, file.c_str());
-			return *i;
-		}
-	}
-	return NULL;
-}
-
 void Set::setLightsDirty() {
 	_lightsConfigured = false;
 }
@@ -700,6 +684,34 @@ void Set::getSoundParameters(int *minVolume, int *maxVolume) {
 
 void Set::addObjectState(const ObjectState::Ptr &s) {
 	_states.push_front(s);
+}
+
+ObjectState *Set::addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency) {
+	ObjectState *state = findState(bitmap);
+
+	if (state) {
+		return state;
+	}
+
+	state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
+	addObjectState(state);
+
+	return state;
+}
+
+ObjectState *Set::findState(const Common::String &filename) {
+	// Check the different state objects for the bitmap
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
+		const Common::String &file = (*i)->getBitmapFilename();
+
+		if (file == filename)
+			return *i;
+		if (file.compareToIgnoreCase(filename) == 0) {
+			Debug::warning(Debug::Sets, "State object request '%s' matches object '%s' but is the wrong case", filename.c_str(), file.c_str());
+			return *i;
+		}
+	}
+	return NULL;
 }
 
 void Set::moveObjectStateToFront(const ObjectState::Ptr &s) {

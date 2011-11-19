@@ -102,7 +102,8 @@ public:
 	void moveObjectStateToFront(const ObjectState::Ptr &s);
 	void moveObjectStateToBack(const ObjectState::Ptr &s);
 
-	ObjectState *findState(const char *filename);
+	ObjectState *addObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency);
+	ObjectState *findState(const Common::String &filename);
 
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);

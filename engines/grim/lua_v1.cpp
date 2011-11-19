@@ -818,8 +818,7 @@ void Lua_V1::NewObjectState() {
 		zbitmap = lua_getstring(lua_getparam(4));
 	bool transparency = getbool(5);
 
-	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, transparency);
-	g_grim->getCurrSet()->addObjectState(state);
+	ObjectState *state = g_grim->getCurrSet()->addObjectState(setupID, pos, bitmap, zbitmap, transparency);
 	lua_pushusertag(state->getId(), MKTAG('S','T','A','T'));
 }
 

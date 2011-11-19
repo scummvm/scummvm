@@ -60,8 +60,6 @@ private:
 	int _setupID;
 	Position _pos;
 	Bitmap::Ptr _bitmap, _zbitmap;
-
-	friend class GrimEngine;
 };
 
 } // end of namespace Grim
