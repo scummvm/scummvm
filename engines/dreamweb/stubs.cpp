@@ -1883,8 +1883,9 @@ void DreamGenContext::hangonp(uint16 count) {
 	showpointer();
 	vsync();
 	dumppointer();
-	uint32 counter = count;	// silence a signed/unsigned MSVC warning below
-	for (uint32 i = 0; i < counter * 3; ++i) {
+
+	count *= 3;
+	for (uint16 i = 0; i < count; ++i) {
 		delpointer();
 		readmouse();
 		animpointer();
@@ -1893,9 +1894,7 @@ void DreamGenContext::hangonp(uint16 count) {
 		dumppointer();
 		if (data.byte(kQuitrequested))
 			break;
-		if (data.word(kMousebutton) == 0)
-			continue;
-		if (data.word(kMousebutton) != data.word(kOldbutton))
+		if (data.word(kMousebutton) != 0 && data.word(kMousebutton) != data.word(kOldbutton))
 			break;
 	}
 
