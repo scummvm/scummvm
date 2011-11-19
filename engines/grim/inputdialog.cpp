@@ -31,8 +31,8 @@
 
 namespace Grim {
 
-InputDialog::InputDialog(const Common::String &message, const Common::String &string) :
-	GUI::Dialog(30, 20, 260, 124) {
+InputDialog::InputDialog(const Common::String &message, const Common::String &string, bool hasTextField) :
+	GUI::Dialog(30, 20, 260, 124), _hasTextField(hasTextField) {
 
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
@@ -74,16 +74,24 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 		height += kLineHeight;
 	}
 	height += 10;
-
-	m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, string, "input");
-	height += kLineHeight + 10;
+	if (_hasTextField) {
+		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, string, "input");
+		height += kLineHeight + 10;
+	}
 
 	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, "Ok", 0, GUI::kOKCmd, Common::ASCII_RETURN);	// Confirm dialog
 	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, "Cancel", 0, GUI::kCloseCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 }
 
 const Common::String &InputDialog::getString() const {
-	return m_text->getEditString();
+	if (_hasTextField) {
+		return m_text->getEditString();
+	} else {
+		// TextBox-less dialogs shouldn't need any getString, but
+		// this is needed for safety and to avoid warnings.
+		return _name;
+	}
+
 }
 
 void InputDialog::handleKeyDown(Common::KeyState state) {

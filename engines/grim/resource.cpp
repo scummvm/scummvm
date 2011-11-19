@@ -32,6 +32,8 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/model.h"
+#include "engines/grim/inputdialog.h"
+#include "engines/grim/debug.h"
 
 namespace Grim {
 
@@ -56,7 +58,15 @@ ResourceLoader::ResourceLoader() {
 		l = new Lab();
 
 		if (l->open(filename)) {
-			if (filename.equalsIgnoreCase("data005.lab") || filename.equalsIgnoreCase("datausr.lab"))
+			if (filename.equalsIgnoreCase("datausr.lab")) {
+				Grim::InputDialog d("User-patch detected, the Residual-team\n provides no support for using such patches.\n Click OK to load, or Cancel\n to skip the patch.", "OK", false);
+				int res = d.runModal();
+				if (res) {
+					warning("Loading %s",filename.c_str());
+					_labs.push_front(l);
+				}
+			}
+			else if (filename.equalsIgnoreCase("data005.lab"))
 				_labs.push_front(l);
 			else
 				_labs.push_back(l);

@@ -34,7 +34,7 @@ namespace Grim {
 
 class InputDialog : public GUI::Dialog {
 public:
-	InputDialog(const Common::String &message, const Common::String &string);
+	InputDialog(const Common::String &message, const Common::String &string, bool hasTextField = true);
 
 	const Common::String &getString() const;
 
@@ -43,8 +43,8 @@ protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 private:
+	bool _hasTextField;
 	GUI::EditTextWidget *m_text;
-
 };
 
 }
