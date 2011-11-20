@@ -6152,40 +6152,6 @@ void DreamGenContext::powerlightoff() {
 	multidump();
 }
 
-void DreamGenContext::accesslighton() {
-	STACK_CHECK;
-	di = 74;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 8;
-	ah = 0;
-	push(di);
-	push(bx);
-	showframe();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multidump();
-}
-
-void DreamGenContext::accesslightoff() {
-	STACK_CHECK;
-	di = 74;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 7;
-	ah = 0;
-	push(di);
-	push(bx);
-	showframe();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multidump();
-}
-
 void DreamGenContext::locklighton() {
 	STACK_CHECK;
 	di = 56;
@@ -15233,8 +15199,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_randomaccess: randomaccess(); break;
 		case addr_powerlighton: powerlighton(); break;
 		case addr_powerlightoff: powerlightoff(); break;
-		case addr_accesslighton: accesslighton(); break;
-		case addr_accesslightoff: accesslightoff(); break;
 		case addr_locklighton: locklighton(); break;
 		case addr_locklightoff: locklightoff(); break;
 		case addr_makecaps: makecaps(); break;

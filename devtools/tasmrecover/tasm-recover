@@ -250,6 +250,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showcurrentfile',
 	'input',
 	'monprint',
+	'accesslighton',
+	'accesslightoff',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

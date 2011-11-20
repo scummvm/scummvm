@@ -360,8 +360,6 @@ public:
 	static const uint16 addr_makecaps = 0xc524;
 	static const uint16 addr_locklightoff = 0xc51c;
 	static const uint16 addr_locklighton = 0xc518;
-	static const uint16 addr_accesslightoff = 0xc514;
-	static const uint16 addr_accesslighton = 0xc510;
 	static const uint16 addr_powerlightoff = 0xc50c;
 	static const uint16 addr_powerlighton = 0xc508;
 	static const uint16 addr_randomaccess = 0xc504;
@@ -1497,7 +1495,7 @@ public:
 	//void checkcoords();
 	//void usetext();
 	void chewy();
-	void accesslighton();
+	//void accesslighton();
 	void useplinth();
 	//void adjustlen();
 	//void quickquit();
@@ -1938,7 +1936,7 @@ public:
 	void openob();
 	void createfile();
 	void userailing();
-	void accesslightoff();
+	//void accesslightoff();
 	void usehole();
 	void useobject();
 	void readdesticon();

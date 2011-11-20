@@ -304,4 +304,6 @@
 	void input();
 	void monprint();
 	const char *monprint(const char *string);
+	void accesslighton();
+	void accesslightoff();
 
