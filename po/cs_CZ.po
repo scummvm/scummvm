@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-11-20 05:20+0100\n"
-"PO-Revision-Date: 2011-10-05 18:43+0100\n"
+"PO-Revision-Date: 2011-11-20 14:47+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
-"Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Cesky\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC\n"
-"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-SourceCharset: iso-8859-2\n"
 
 #: gui/about.cpp:91
 #, c-format
@@ -1984,57 +1984,51 @@ msgstr "Nelze ulo¾it hru."
 
 #: engines/kyra/lol.cpp:571
 msgid "Attack 1"
-msgstr ""
+msgstr "Útok 1"
 
 #: engines/kyra/lol.cpp:574
 msgid "Attack 2"
-msgstr ""
+msgstr "Útok 2"
 
 #: engines/kyra/lol.cpp:577
 msgid "Attack 3"
-msgstr ""
+msgstr "Útok 3"
 
 #: engines/kyra/lol.cpp:580
 msgid "Move Forward"
-msgstr ""
+msgstr "Vpøed"
 
 #: engines/kyra/lol.cpp:583
 msgid "Move Back"
-msgstr ""
+msgstr "Vzad"
 
 #: engines/kyra/lol.cpp:586
 msgid "Slide Left"
-msgstr ""
+msgstr "Pøesunout se Doleva"
 
 #: engines/kyra/lol.cpp:589
-#, fuzzy
 msgid "Slide Right"
-msgstr "Doprava"
+msgstr "Pøesunout se Doprava"
 
 #: engines/kyra/lol.cpp:592
-#, fuzzy
 msgid "Turn Left"
-msgstr "Vypnout"
+msgstr "Otoèit se doleva"
 
 #: engines/kyra/lol.cpp:595
-#, fuzzy
 msgid "Turn Right"
-msgstr "©ipka Doprava"
+msgstr "Otoèit se doprava"
 
 #: engines/kyra/lol.cpp:598
-#, fuzzy
 msgid "Rest"
-msgstr "Obnovit"
+msgstr "Odpoèinout si"
 
 #: engines/kyra/lol.cpp:601
-#, fuzzy
 msgid "Options"
-msgstr "~V~olby"
+msgstr "Volby"
 
 #: engines/kyra/lol.cpp:604
-#, fuzzy
 msgid "Choose Spell"
-msgstr "Zvolit"
+msgstr "Zvolit Kouzlo"
 
 #: engines/kyra/sound_midi.cpp:475
 msgid ""
