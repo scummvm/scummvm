@@ -411,8 +411,13 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
+	if test "${3}" != "" ; then
+		tmpopt_prefix="${3}"
+	else
+		tmpopt_prefix="--"
+	fi
 	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
 
@@ -474,9 +479,9 @@ engine_disable_all() {
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
-	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
-		eng=`echo $1 | cut -d '=' -f 1`
-		opt=`echo $1 | cut -d '=' -f 2`
+	if ( echo $1 | grep ':' ) 2> /dev/null > /dev/null ; then
+		eng=`echo $1 | cut -d ':' -f 1`
+		opt=`echo $1 | cut -d ':' -f 2`
 	else
 		eng=$1
 		opt=yes
@@ -518,15 +523,8 @@ engine_disable() {
 
 # Show the configure help line for a given engine
 show_engine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="don't "
-	else
-		option="enable"
-		do=""
-	fi
 	name=`get_engine_name $1`
-	option_help ${option}-${1} "${do}build the ${name} engine"
+	option_help "${1}" "${name} engine" "  "
 	for sub in `get_engine_subengines $1`; do
 		show_subengine_help $sub $1
 	done
@@ -534,16 +532,9 @@ show_engine_help() {
 
 # Show the configure help line for a given subengine
 show_subengine_help() {
-	if test `get_engine_build $1` = yes ; then
-		option="disable"
-		do="exclude"
-	else
-		option="enable"
-		do="include"
-	fi
 	name=`get_engine_name $1`
 	parent=`get_engine_name $2`
-	option_help ${option}-${1} "${do} the ${name} in ${parent} engine"
+	option_help "${1}" "${name} in ${parent} engine" "  "
 }
 
 # Prepare the strings about the engines to build
@@ -766,6 +757,13 @@ Game engines:
   --enable-all-engines     enable all engines, including those which are
                            broken or unsupported
   --disable-all-engines    disable all engines
+  --enable-engine=<engine name>[,<engine name>...] enable engine(s) listed
+  --disable-engine=<engine name>[,<engine name>...] disable engine(s) listed
+  --enable-engine-static=<engine name>[,<engine name>...] 
+      enable engine(s) listed as static builtin (when plugins are enabled)
+  --enable-engine-dynamic=<engine name>[,<engine name>...]
+      enable engine(s) listed as dynamic plugin (when plugins are enabled)
+    The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
@@ -1068,11 +1066,25 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
-	--enable-*)
-		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}"
+		done
 		;;
-	--disable-*)
-		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine-static=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:static"
+		done
+		;;
+	--enable-engine-dynamic=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:dynamic"
+		done
+		;;
+	--disable-engine=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+			engine_disable ${engine_name}
+		done
 		;;
 	*)
 		option_error
