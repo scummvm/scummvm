@@ -98,7 +98,6 @@ add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" yes
 add_engine lastexpress "The Last Express" no
 add_engine lure "Lure of the Temptress" yes
-add_engine m4 "M4/MADS" no
 add_engine made "MADE" yes
 add_engine mohawk "Mohawk" yes "cstime myst riven"
 add_engine cstime "Where in Time is Carmen Sandiego?" no
