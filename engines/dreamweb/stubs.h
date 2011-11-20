@@ -189,7 +189,6 @@
 	void *getanyad(uint8 *value1, uint8 *value2);
 	void *getanyaddir(uint8 index, uint8 flag);
 	void setallchanges();
-	void dochange();
 	void dochange(uint8 index, uint8 value, uint8 type);
 	void deletetaken();
 	bool isCD();

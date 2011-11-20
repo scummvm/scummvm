@@ -1277,10 +1277,6 @@ SetObject *DreamGenContext::getsetad(uint8 index) {
 	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
-void DreamGenContext::dochange() {
-	dochange(al, cl, ch);
-}
-
 void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
 		getsetad(index)->mapad[0] = value;
