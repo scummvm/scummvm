@@ -60,15 +60,11 @@ void DreamGenContext::usemon() {
 	fadeupmonfirst();
 	data.word(kMonadx) = 76;
 	data.word(kMonady) = 141;
-	al = 1;
-	monmessage();
+	monmessage(1);
 	hangoncurs(120);
-	al = 2;
-	monmessage();
-	cx = 60;
-	randomaccess();
-	al = 3;
-	monmessage();
+	monmessage(2);
+	randomaccess(60);
+	monmessage(3);
 	hangoncurs(100);
 	printlogo();
 	scrollmonitor();
@@ -230,6 +226,20 @@ void DreamGenContext::randomaccess(uint16 count) {
 			accesslighton();
 	}
 	accesslightoff();
+}
+
+void DreamGenContext::monmessage() {
+	monmessage(al);
+}
+
+void DreamGenContext::monmessage(uint8 index) {
+	assert(index > 0);
+	const char *string = (const char *)segRef(data.word(kTextfile1)).ptr(kTextstart, 0);
+	for (uint8 i = 0; i < index; ++i) {
+		while (*string++ != '+') {
+		}
+	}
+	monprint(string);
 }
 
 } /*namespace dreamgen */

@@ -6784,23 +6784,6 @@ notnewlogo:
 	printlogo();
 }
 
-void DreamGenContext::monmessage() {
-	STACK_CHECK;
-	es = data.word(kTextfile1);
-	bx = (66*2);
-	cl = al;
-	ch = 0;
-monmessageloop:
-	al = es.byte(bx);
-	_inc(bx);
-	_cmp(al, '+');
-	if (!flags.z())
-		goto monmessageloop;
-	if (--cx)
-		goto monmessageloop;
-	monprint();
-}
-
 void DreamGenContext::processtrigger() {
 	STACK_CHECK;
 	_cmp(data.byte(kLasttrigger), '1');
@@ -15192,7 +15175,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_searchforstring: searchforstring(); break;
 		case addr_parser: parser(); break;
 		case addr_monitorlogo: monitorlogo(); break;
-		case addr_monmessage: monmessage(); break;
 		case addr_processtrigger: processtrigger(); break;
 		case addr_triggermessage: triggermessage(); break;
 		case addr_useobject: useobject(); break;

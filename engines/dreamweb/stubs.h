@@ -312,5 +312,6 @@
 	void accesslightoff();
 	void randomaccess(uint16 count);
 	void randomaccess();
-
+	void monmessage(uint8 index);
+	void monmessage();
 

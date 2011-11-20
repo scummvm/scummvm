@@ -343,7 +343,6 @@ public:
 	static const uint16 addr_useobject = 0xc580;
 	static const uint16 addr_triggermessage = 0xc574;
 	static const uint16 addr_processtrigger = 0xc570;
-	static const uint16 addr_monmessage = 0xc56c;
 	static const uint16 addr_monitorlogo = 0xc560;
 	static const uint16 addr_parser = 0xc554;
 	static const uint16 addr_searchforstring = 0xc550;
@@ -1919,7 +1918,7 @@ public:
 	void intromusic();
 	void quitkey();
 	void processtrigger();
-	void monmessage();
+	//void monmessage();
 	void volumeadjust();
 	void randomnum2();
 	void loadsecondsample();
