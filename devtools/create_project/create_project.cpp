@@ -105,6 +105,30 @@ struct FSNode {
 };
 
 typedef std::list<FSNode> FileList;
+
+typedef StringList TokenList;
+
+/**
+ * Takes a given input line and creates a list of tokens out of it.
+ *
+ * A token in this context is separated by whitespaces. A special case
+ * are quotation marks though. A string inside quotation marks is treated
+ * as single token, even when it contains whitespaces.
+ *
+ * Thus for example the input:
+ * foo bar "1 2 3 4" ScummVM
+ * will create a list with the following entries:
+ * "foo", "bar", "1 2 3 4", "ScummVM"
+ * As you can see the quotation marks will get *removed* too.
+ *
+ * You can also use this with non-whitespace by passing another separator
+ * character (e.g. ',').
+ *
+ * @param input The text to be tokenized.
+ * @param separator The token separator.
+ * @return A list of tokens.
+ */
+TokenList tokenize(const std::string &input, char separator = ' ');
 } // End of anonymous namespace
 
 enum ProjectType {
@@ -201,6 +225,38 @@ int main(int argc, char *argv[]) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
+		} else if (!strncmp(argv[i], "--enable-engine=", 16)) {
+			const char *names = &argv[i][16];
+			if (!*names) {
+				std::cerr << "ERROR: Invalid command \"" << argv[i] << "\"\n";
+				return -1;
+			}
+
+			TokenList tokens = tokenize(names, ',');
+			TokenList::const_iterator token = tokens.begin();
+			while (token != tokens.end()) {
+				std::string name = *token++;
+				if (!setEngineBuildState(name, setup.engines, true)) {
+					std::cerr << "ERROR: \"" << name << "\" is not a known engine!\n";
+					return -1;
+				}
+			}
+		} else if (!strncmp(argv[i], "--disable-engine=", 17)) {
+			const char *names = &argv[i][17];
+			if (!*names) {
+				std::cerr << "ERROR: Invalid command \"" << argv[i] << "\"\n";
+				return -1;
+			}
+
+			TokenList tokens = tokenize(names, ',');
+			TokenList::const_iterator token = tokens.begin();
+			while (token != tokens.end()) {
+				std::string name = *token++;
+				if (!setEngineBuildState(name, setup.engines, false)) {
+					std::cerr << "ERROR: \"" << name << "\" is not a known engine!\n";
+					return -1;
+				}
+			}
 		} else if (!strncmp(argv[i], "--enable-", 9)) {
 			const char *name = &argv[i][9];
 			if (!*name) {
@@ -211,12 +267,9 @@ int main(int argc, char *argv[]) {
 			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = true;
-			} else if (!setEngineBuildState(name, setup.engines, true)) {
-				// If none found, we'll try the features list
-				if (!setFeatureBuildState(name, setup.features, true)) {
-					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
-					return -1;
-				}
+			} else if (!setFeatureBuildState(name, setup.features, true)) {
+				std::cerr << "ERROR: \"" << name << "\" is not a feature!\n";
+				return -1;
 			}
 		} else if (!strncmp(argv[i], "--disable-", 10)) {
 			const char *name = &argv[i][10];
@@ -228,12 +281,9 @@ int main(int argc, char *argv[]) {
 			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = false;
-			} else if (!setEngineBuildState(name, setup.engines, false)) {
-				// If none found, we'll try the features list
-				if (!setFeatureBuildState(name, setup.features, false)) {
-					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
-					return -1;
-				}
+			} else if (!setFeatureBuildState(name, setup.features, false)) {
+				std::cerr << "ERROR: \"" << name << "\" is not a feature!\n";
+				return -1;
 			}
 		} else if (!std::strcmp(argv[i], "--file-prefix")) {
 			if (i + 1 >= argc) {
@@ -620,26 +670,6 @@ void displayHelp(const char *exe) {
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 }
 
-typedef StringList TokenList;
-
-/**
- * Takes a given input line and creates a list of tokens out of it.
- *
- * A token in this context is separated by whitespaces. A special case
- * are quotation marks though. A string inside quotation marks is treated
- * as single token, even when it contains whitespaces.
- *
- * Thus for example the input:
- * foo bar "1 2 3 4" ScummVM
- * will create a list with the following entries:
- * "foo", "bar", "1 2 3 4", "ScummVM"
- * As you can see the quotation marks will get *removed* too.
- *
- * @param input The text to be tokenized.
- * @return A list of tokens.
- */
-TokenList tokenize(const std::string &input);
-
 /**
  * Try to parse a given line and create an engine definition
  * out of the result.
@@ -769,7 +799,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 	return true;
 }
 
-TokenList tokenize(const std::string &input) {
+TokenList tokenize(const std::string &input, char separator) {
 	TokenList result;
 
 	std::string::size_type sIdx = input.find_first_not_of(" \t");
@@ -783,12 +813,15 @@ TokenList tokenize(const std::string &input) {
 			++sIdx;
 			nIdx = input.find_first_of('\"', sIdx);
 		} else {
-			nIdx = input.find_first_of(' ', sIdx);
+			nIdx = input.find_first_of(separator, sIdx);
 		}
 
 		if (nIdx != std::string::npos) {
 			result.push_back(input.substr(sIdx, nIdx - sIdx));
-			sIdx = input.find_first_not_of(" \t", nIdx + 1);
+			if (separator == ' ')
+				sIdx = input.find_first_not_of(" \t", nIdx + 1);
+			else
+				sIdx = input.find_first_not_of(separator, nIdx + 1);
 		} else {
 			result.push_back(input.substr(sIdx));
 			break;
