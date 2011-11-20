@@ -310,4 +310,7 @@
 	Frame *tempGraphics3();
 	void accesslighton();
 	void accesslightoff();
+	void randomaccess(uint16 count);
+	void randomaccess();
+
 

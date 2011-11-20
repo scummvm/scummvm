@@ -215,5 +215,22 @@ void DreamGenContext::accesslightoff() {
 	multidump(74, 182, 12, 8);
 }
 
+void DreamGenContext::randomaccess() {
+	randomaccess(cx);
+}
+
+void DreamGenContext::randomaccess(uint16 count) {
+	for (uint16 i = 0; i < count; ++i) {
+		vsync();
+		vsync();
+		uint16 v = engine->randomNumber() & 15;
+		if (v < 10)
+			accesslightoff();
+		else
+			accesslighton();
+	}
+	accesslightoff();
+}
+
 } /*namespace dreamgen */
 

@@ -6096,28 +6096,6 @@ powerloop:
 	powerlighton();
 }
 
-void DreamGenContext::randomaccess() {
-	STACK_CHECK;
-accessloop:
-	push(cx);
-	vsync();
-	vsync();
-	randomnum1();
-	_and(al, 15);
-	_cmp(al, 10);
-	if (flags.c())
-		goto off;
-	accesslighton();
-	goto chosenaccess;
-off:
-	accesslightoff();
-chosenaccess:
-	cx = pop();
-	if (--cx)
-		goto accessloop;
-	accesslightoff();
-}
-
 void DreamGenContext::powerlighton() {
 	STACK_CHECK;
 	di = 257+4;
@@ -15196,7 +15174,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadcart: loadcart(); break;
 		case addr_lookininterface: lookininterface(); break;
 		case addr_turnonpower: turnonpower(); break;
-		case addr_randomaccess: randomaccess(); break;
 		case addr_powerlighton: powerlighton(); break;
 		case addr_powerlightoff: powerlightoff(); break;
 		case addr_locklighton: locklighton(); break;

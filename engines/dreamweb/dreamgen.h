@@ -362,7 +362,6 @@ public:
 	static const uint16 addr_locklighton = 0xc518;
 	static const uint16 addr_powerlightoff = 0xc50c;
 	static const uint16 addr_powerlighton = 0xc508;
-	static const uint16 addr_randomaccess = 0xc504;
 	static const uint16 addr_turnonpower = 0xc500;
 	static const uint16 addr_lookininterface = 0xc4fc;
 	static const uint16 addr_loadcart = 0xc4f8;
@@ -1837,7 +1836,7 @@ public:
 	void openforsave();
 	void closefile();
 	//void delcurs();
-	void randomaccess();
+	//void randomaccess();
 	//void calcfrframe();
 	//void checkifex();
 	//void findobname();
