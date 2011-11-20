@@ -1931,7 +1931,7 @@ LBItem::LBItem(MohawkEngine_LivingBooks *vm, LBPage *page, Common::Rect rect) : 
 	_controlMode = kLBControlNone;
 	_soundMode = 0;
 
-	_neverEnabled = true;
+	_loaded = false;
 	_enabled = false;
 	_visible = true;
 	_playing = false;
@@ -2365,25 +2365,27 @@ void LBItem::destroySelf() {
 }
 
 void LBItem::setEnabled(bool enabled) {
-	if (enabled && _neverEnabled && !_playing) {
+	if (enabled && !_loaded && !_playing) {
 		if (_timingMode == kLBAutoUserIdle) {
 			setNextTime(_periodMin, _periodMax);
 			debug(2, "Enable time startup");
 		}
 	}
 
-	_neverEnabled = false;
 	_enabled = enabled;
 }
 
 void LBItem::setGlobalEnabled(bool enabled) {
-	bool wasEnabled = !_neverEnabled && _enabled && _globalEnabled;
+	bool wasEnabled = _loaded && _enabled && _globalEnabled;
 	_globalEnabled = enabled;
-	if (wasEnabled != (!_neverEnabled && _enabled && _globalEnabled))
+	if (wasEnabled != (_loaded && _enabled && _globalEnabled))
 		setEnabled(enabled);
 }
 
 bool LBItem::contains(Common::Point point) {
+	if (!_loaded)
+		return false;
+
 	if (_playing && _loopMode == 0xFFFF)
 		stop();
 
@@ -2394,7 +2396,7 @@ bool LBItem::contains(Common::Point point) {
 }
 
 void LBItem::update() {
-	if (_phase != 0x7FFF && (_neverEnabled || !_enabled || !_globalEnabled))
+	if (_phase != 0x7FFF && (!_loaded || !_enabled || !_globalEnabled))
 		return;
 
 	if (_nextTime == 0 || _nextTime > (uint32)(_vm->_system->getMillis() / 16))
@@ -2409,7 +2411,7 @@ void LBItem::update() {
 }
 
 void LBItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return;
 
 	_vm->setFocus(this);
@@ -2432,7 +2434,7 @@ bool LBItem::togglePlaying(bool playing, bool restart) {
 		_vm->queueDelayedEvent(DelayedEvent(this, kLBDelayedEventDone));
 		return true;
 	}
-	if (((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) && !_playing) {
+	if (((_loaded && _enabled && _globalEnabled) || _phase == 0x7FFF) && !_playing) {
 		_playing = togglePlaying(true, restart);
 		if (_playing) {
 			_nextTime = 0;
@@ -2517,8 +2519,13 @@ void LBItem::setGlobalVisible(bool visible) {
 }
 
 void LBItem::startPhase(uint phase) {
-	if (_phase == phase)
-		setEnabled(true);
+	if (_phase == phase) {
+		if (_phase != 0x7fff) {
+			setEnabled(true);
+		}
+
+		load();
+	}
 
 	switch (phase) {
 	case 0xFFFE:
@@ -2577,6 +2584,24 @@ void LBItem::notify(uint16 data, uint16 from) {
 	}
 
 	runScript(kLBEventNotified, data, from);
+}
+
+void LBItem::load() {
+	if (_loaded)
+		return;
+
+	_loaded = true;
+
+	// FIXME: events etc
+}
+
+void LBItem::unload() {
+	if (!_loaded)
+		return;
+
+	_loaded = false;
+
+	// FIXME: stuff
 }
 
 void LBItem::runScript(uint event, uint16 data, uint16 from) {
@@ -2969,7 +2994,7 @@ bool LBSoundItem::togglePlaying(bool playing, bool restart) {
 		_vm->_sound->stopSound(_resourceId);
 	}
 
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return false;
 
 	_running = true;
@@ -3350,7 +3375,7 @@ void LBLiveTextItem::drawWord(uint word, uint yPos) {
 }
 
 void LBLiveTextItem::handleMouseDown(Common::Point pos) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || _playing)
+	if (!_loaded || !_enabled || !_globalEnabled || _playing)
 		return LBItem::handleMouseDown(pos);
 
 	pos.x -= _rect.left;
@@ -3381,7 +3406,7 @@ void LBLiveTextItem::handleMouseDown(Common::Point pos) {
 bool LBLiveTextItem::togglePlaying(bool playing, bool restart) {
 	if (!playing)
 		return LBItem::togglePlaying(playing, restart);
-	if (_neverEnabled || !_enabled || !_globalEnabled)
+	if (!_loaded || !_enabled || !_globalEnabled)
 		return _playing;
 
 	// TODO: handle this properly
@@ -3400,7 +3425,7 @@ void LBLiveTextItem::stop() {
 }
 
 void LBLiveTextItem::notify(uint16 data, uint16 from) {
-	if (_neverEnabled || !_enabled || !_globalEnabled || !_playing)
+	if (!_loaded || !_enabled || !_globalEnabled || !_playing)
 		return LBItem::notify(data, from);
 
 	if (_currentWord != 0xFFFF) {
@@ -3471,7 +3496,7 @@ void LBPictureItem::init() {
 }
 
 void LBPictureItem::draw() {
-	if (!_visible || !_globalVisible)
+	if (!_loaded || !_visible || !_globalVisible)
 		return;
 
 	_vm->_gfx->copyAnimImageToScreen(_resourceId, _rect.left, _rect.top);
@@ -3489,9 +3514,9 @@ LBAnimationItem::~LBAnimationItem() {
 
 void LBAnimationItem::setEnabled(bool enabled) {
 	if (_running) {
-		if (enabled && _globalEnabled && _neverEnabled)
+		if (enabled && _globalEnabled && !_loaded)
 			_anim->start();
-		else if (!_neverEnabled && !enabled && _enabled && _globalEnabled)
+		else if (_loaded && !enabled && _enabled && _globalEnabled)
 			_anim->stop();
 	}
 
@@ -3509,7 +3534,7 @@ bool LBAnimationItem::contains(Common::Point point) {
 }
 
 void LBAnimationItem::update() {
-	if (!_neverEnabled && _enabled && _globalEnabled && _running) {
+	if (_loaded && _enabled && _globalEnabled && _running) {
 		bool wasDone = _anim->update();
 		if (wasDone) {
 			_running = false;
@@ -3522,7 +3547,7 @@ void LBAnimationItem::update() {
 
 bool LBAnimationItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		if (!_neverEnabled && _enabled && _globalEnabled) {
+		if (_loaded && _enabled && _globalEnabled) {
 			if (restart)
 				seek(1);
 			_running = true;
@@ -3595,7 +3620,7 @@ void LBMovieItem::update() {
 
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
-		if ((!_neverEnabled && _enabled && _globalEnabled) || _phase == 0x7FFF) {
+		if ((_loaded && _enabled && _globalEnabled) || _phase == 0x7FFF) {
 			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;

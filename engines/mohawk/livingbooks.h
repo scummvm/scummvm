@@ -399,6 +399,8 @@ public:
 	virtual void startPhase(uint phase); // 0x18
 	virtual void stop(); // 0x19
 	virtual void notify(uint16 data, uint16 from); // 0x1A
+	virtual void load();
+	virtual void unload();
 
 	uint16 getId() { return _itemId; }
 	const Common::String &getName() { return _desc; }
@@ -420,7 +422,7 @@ protected:
 	uint16 _resourceId;
 	uint16 _itemId;
 
-	bool _visible, _globalVisible, _playing, _enabled, _neverEnabled, _globalEnabled;
+	bool _loaded, _visible, _globalVisible, _playing, _enabled, _globalEnabled;
 
 	uint32 _nextTime, _startTime;
 	uint16 _loops;
