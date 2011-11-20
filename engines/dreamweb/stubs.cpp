@@ -258,6 +258,10 @@ void DreamGenContext::loadtempcharset(const char *fileName) {
 	data.word(kTempcharset) = standardload(fileName);
 }
 
+Frame *DreamGenContext::tempCharset() {
+	return (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
+}
+
 void DreamGenContext::hangoncurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
 		printcurs();

@@ -244,12 +244,12 @@ void DreamGenContext::monprint() {
 const char *DreamGenContext::monprint(const char *string) {
 	data.byte(kKerning) = 1;
 	uint16 x = data.word(kMonadx);
-	Frame *tempCharset = (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
+	Frame *charset = tempCharset();
 	const char *iterator = string;
 	bool done = false;
 	while (!done) {
 
-		uint16 count = getnumber(tempCharset, (const uint8 *)iterator, 166, false, &x);
+		uint16 count = getnumber(charset, (const uint8 *)iterator, 166, false, &x);
 		do {	
 			char c = *iterator++;
 			if (c == ':')
@@ -265,7 +265,7 @@ const char *DreamGenContext::monprint(const char *string) {
 				break;
 			}
 			c = engine->modifyChar(c);
-			printchar(tempCharset, &x, data.word(kMonady), c, 0, NULL, NULL);
+			printchar(charset, &x, data.word(kMonady), c, 0, NULL, NULL);
 			data.word(kCurslocx) = x;
 			data.word(kCurslocy) = data.word(kMonady);
 			data.word(kMaintimer) = 1;

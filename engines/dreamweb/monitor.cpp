@@ -111,7 +111,7 @@ void DreamGenContext::input() {
 	char *inputLine = (char *)cs.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
-	printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
+	printchar(tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
 	multidump(data.word(kMonadx), data.word(kMonady), 6, 8);
 	data.word(kMonadx) += 6;
 	data.word(kCurslocx) = data.word(kMonadx);
@@ -145,7 +145,7 @@ void DreamGenContext::input() {
 			continue;
 		multiget(segRef(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
-		printchar((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
+		printchar(tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
 		data.word(kMonadx) += charWidth;
 		++data.word(kCurpos);
@@ -165,7 +165,7 @@ void DreamGenContext::printcurs() {
 	multiget(textUnder(), x, y, 6, height);
 	++data.word(kMaintimer);
 	if ((data.word(kMaintimer) & 16) == 0)
-		showframe((Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), x, y, '/' - 32, 0);
+		showframe(tempCharset(), x, y, '/' - 32, 0);
 	multidump(x - 6, y, 12, height);
 }
 
@@ -201,7 +201,7 @@ void DreamGenContext::showcurrentfile() {
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = engine->modifyChar(c);
-		printchar((const Frame *)segRef(data.word(kTempcharset)).ptr(0, 0), &x, 37, c, 0, NULL, NULL);
+		printchar(tempCharset(), &x, 37, c, 0, NULL, NULL);
 	}
 }
 
