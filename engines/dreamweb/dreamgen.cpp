@@ -6096,40 +6096,6 @@ powerloop:
 	powerlighton();
 }
 
-void DreamGenContext::powerlighton() {
-	STACK_CHECK;
-	di = 257+4;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 6;
-	ah = 0;
-	push(di);
-	push(bx);
-	showframe();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multidump();
-}
-
-void DreamGenContext::powerlightoff() {
-	STACK_CHECK;
-	di = 257+4;
-	bx = 182;
-	ds = data.word(kTempgraphics);
-	al = 5;
-	ah = 0;
-	push(di);
-	push(bx);
-	showframe();
-	bx = pop();
-	di = pop();
-	cl = 12;
-	ch = 8;
-	multidump();
-}
-
 void DreamGenContext::locklighton() {
 	STACK_CHECK;
 	di = 56;
@@ -15150,8 +15116,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadcart: loadcart(); break;
 		case addr_lookininterface: lookininterface(); break;
 		case addr_turnonpower: turnonpower(); break;
-		case addr_powerlighton: powerlighton(); break;
-		case addr_powerlightoff: powerlightoff(); break;
 		case addr_locklighton: locklighton(); break;
 		case addr_locklightoff: locklightoff(); break;
 		case addr_makecaps: makecaps(); break;

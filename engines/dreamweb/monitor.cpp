@@ -247,5 +247,15 @@ void DreamGenContext::neterror() {
 	scrollmonitor();
 }
 
+void DreamGenContext::powerlighton() {
+	showframe(tempGraphics(), 257+4, 182, 6, 0);
+	multidump(257+4, 182, 12, 8);
+}
+
+void DreamGenContext::powerlightoff() {
+	showframe(tempGraphics(), 257+4, 182, 5, 0);
+	multidump(257+4, 182, 12, 8);
+}
+
 } /*namespace dreamgen */
 

@@ -358,8 +358,6 @@ public:
 	static const uint16 addr_makecaps = 0xc524;
 	static const uint16 addr_locklightoff = 0xc51c;
 	static const uint16 addr_locklighton = 0xc518;
-	static const uint16 addr_powerlightoff = 0xc50c;
-	static const uint16 addr_powerlighton = 0xc508;
 	static const uint16 addr_turnonpower = 0xc500;
 	static const uint16 addr_lookininterface = 0xc4fc;
 	static const uint16 addr_loadcart = 0xc4f8;
@@ -1317,7 +1315,6 @@ public:
 	void showdiary();
 	//void loadroomssample();
 	//void updatepeople();
-	//void addtopeoplelist();
 	//void hangoncurs();
 	//void getblockofpixel();
 	//void kernchars();
@@ -1327,6 +1324,7 @@ public:
 	//void dealwithspecial();
 	//void eraseoldobs();
 	void dircom();
+	//void powerlighton();
 	//void liftsprite();
 	void dumpkeypad();
 	void showsymbol();
@@ -1587,7 +1585,7 @@ public:
 	void setkeyboardint();
 	void priest();
 	//void readmouse();
-	void powerlighton();
+	//void addtopeoplelist();
 	void savefilewrite();
 	void printmessage2();
 	//void showallfree();
@@ -1716,7 +1714,7 @@ public:
 	//void showrain();
 	void useopened();
 	void inventory();
-	void powerlightoff();
+	//void powerlightoff();
 	void fillopen();
 	//void showoutermenu();
 	void signon();
