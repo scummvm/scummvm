@@ -373,7 +373,6 @@ byte *Talk::loadDialogFile(const char *filename) {
 void Talk::load(const char *filename) {
 	int i;
 	byte *ptr = _fileData = loadDialogFile(filename);
-	bool canQuit; // FIXME: unused
 
 	// Load talk header
 
@@ -381,9 +380,9 @@ void Talk::load(const char *filename) {
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
-		canQuit = false;
+		_vm->input()->canQuit(false);
 	} else {
-		canQuit = true;
+		_vm->input()->canQuit(true);
 	}
 
 	_uniqueKey      = (int16)READ_BE_INT16(ptr); ptr += 2;
