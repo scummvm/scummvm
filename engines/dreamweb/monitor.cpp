@@ -81,7 +81,7 @@ void DreamGenContext::usemon() {
 		data.word(kMonadx) = di;
 		data.word(kMonady) = bx;
 		execcommand();
-		if (data.byte(kQuitrequested)) //TODO : Check why it crashes when put before the execcommand
+		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
 			break;
 	} while (al == 0);
 	getridoftemp();
@@ -117,7 +117,7 @@ void DreamGenContext::input() {
 		vsync();
 		delcurs();
 		readkey();
-		if (data.byte(kQuitrequested))
+		if (quitRequested())
 			return;
 		uint8 currentKey = data.byte(kCurrentkey);
 		if (currentKey == 0)

@@ -100,7 +100,7 @@ void DreamGenContext::dreamweb() {
 			cls();
 			setmode();
 			decide();
-			if (data.byte(kQuitrequested))
+			if (quitRequested())
 				return; // exit game
 
 			if (data.byte(kGetback) == 4)
@@ -114,11 +114,11 @@ void DreamGenContext::dreamweb() {
 			// "playgame"
 
 			titles();
-			if (data.byte(kQuitrequested))
+			if (quitRequested())
 				return; // exit game
 			credits();
 
-			if (data.byte(kQuitrequested))
+			if (quitRequested())
 				return; // exit game
 
 			clearchanges();
@@ -146,12 +146,12 @@ void DreamGenContext::dreamweb() {
 		// main loop
 		while (true) {
 
-			if (data.byte(kQuitrequested))
+			if (quitRequested())
 				return; // exit game
 
 			screenupdate();
 
-			if (data.byte(kQuitrequested))
+			if (quitRequested())
 				return; // exit game
 
 			if (data.byte(kWongame) != 0) {
@@ -203,10 +203,14 @@ void DreamGenContext::dreamweb() {
 	}
 }
 
+bool DreamGenContext::quitRequested() {
+	return data.byte(kQuitrequested);
+}
+
 void DreamGenContext::screenupdate() {
 	newplace();
 	mainscreen();
-	if (data.byte(kQuitrequested))
+	if (quitRequested())
 		return;
 	animpointer();
 	showpointer();
@@ -1949,7 +1953,7 @@ void DreamGenContext::hangon(uint16 frameCount) {
 	while (frameCount) {
 		vsync();
 		--frameCount;
-		if (data.byte(kQuitrequested))
+		if (quitRequested())
 			break;
 	}
 }
@@ -1979,7 +1983,7 @@ void DreamGenContext::hangonp(uint16 count) {
 		showpointer();
 		vsync();
 		dumppointer();
-		if (data.byte(kQuitrequested))
+		if (quitRequested())
 			break;
 		if (data.word(kMousebutton) != 0 && data.word(kMousebutton) != data.word(kOldbutton))
 			break;
