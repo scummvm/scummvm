@@ -1067,11 +1067,15 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
-	--enable-*)
-		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+	--enable-engine=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+			engine_enable ${engine_name}
+		done
 		;;
-	--disable-*)
-		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+	--disable-engine=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+			engine_disable ${engine_name}
+		done
 		;;
 	*)
 		option_error
