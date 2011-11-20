@@ -112,12 +112,97 @@ private:
 	uint32 _pos;
 };
 
+// CPU_CLOCK according to AppleWin
+static const double CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
+
+class SampleConverter {
+private:
+	void newSample(int sample) {
+		int16 value = _volume * sample / 255;
+		_buffer.write(&value, sizeof(value));
+	}
+
+public:
+	SampleConverter() : 
+		_cyclesPerSample(0),
+		_missingCycles(0),
+		_sampleCyclesSum(0),
+		_volume(255)
+	{}
+
+	void reset() {
+		_missingCycles = 0;
+		_sampleCyclesSum = 0;
+		_buffer.clear();	
+	}
+
+	uint32 availableSize() const {
+		return _buffer.availableSize();
+	}
+
+	void setMusicVolume(int vol) {
+		assert(vol >= 0 && vol <= 255);
+		_volume = vol;
+	}
+
+	void setSampleRate(int rate) {
+		_cyclesPerSample = CPU_CLOCK / (float)rate;
+		reset();
+	}
+
+	void addCycles(byte level, int cycles) {
+		// step 1: if cycles are left from the last call, process them first
+		if (_missingCycles > 0) {
+			int n = (_missingCycles < cycles) ? _missingCycles : cycles;
+			if (level)
+				_sampleCyclesSum += n;
+			cycles -= n;
+			_missingCycles -= n;
+			if (_missingCycles == 0) {
+				newSample(2*32767 * _sampleCyclesSum / _cyclesPerSample - 32767);
+			} else {
+				return;
+			}
+		}
+
+		_sampleCyclesSum = 0;
+
+		// step 2: process blocks of cycles fitting into a whole sample
+		while (cycles >= _cyclesPerSample) {
+			newSample(level ? 32767 : -32767);
+			cycles -= _cyclesPerSample;
+		}
+
+		// step 3: remember cycles left for next call
+		if (cycles > 0) {
+			_missingCycles = _cyclesPerSample - cycles;
+			if (level)
+				_sampleCyclesSum = cycles;
+		}
+	}
+
+	uint32 readSamples(void *buffer, int numSamples) {
+		return _buffer.read((byte*)buffer, numSamples * 2) / 2;
+	}
+
+private:
+	float _cyclesPerSample;
+	int _missingCycles;
+	int _sampleCyclesSum;
+	int _volume; /* 0 - 255 */
+	DynamicMemoryStream _buffer;
+};
+
 class Player_AppleII : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_AppleII();
 
-	virtual void setMusicVolume(int vol) { _maxvol = vol; }
+	virtual void setMusicVolume(int vol) { _sampleConverter.setMusicVolume(vol); }
+	void setSampleRate(int rate) {
+		_sampleRate = rate;
+		_sampleConverter.setSampleRate(rate); 
+	}
 	void startMusic(int songResIndex);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
@@ -132,17 +217,22 @@ public:
 	int getRate() const { return _sampleRate; }
 
 private:
+	struct state_t {
+		int type;
+		int loop;
+		const byte *params;
+	} _state;
+
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	int _maxvol;
 	int _sampleRate;
 	Common::Mutex _mutex;
 
 private:
 	byte _speakerState;
-	DynamicMemoryStream _buffer;
 	int _soundNr;
+	SampleConverter _sampleConverter;
 
 private:
 	void speakerToggle();
@@ -150,15 +240,15 @@ private:
 	void wait(int interval, int count);
 	byte noise();
 
-	void soundFunc1(const byte *params);
+	void soundFunc1();
 	void _soundFunc1(int interval, int count);
-	void soundFunc2(const byte *params);
+	void soundFunc2();
 	void _soundFunc2(int interval, int count);
-	void soundFunc3(const byte *params);
+	void soundFunc3();
 	void _soundFunc3(int interval, int count);
-	void soundFunc4(const byte *params);
+	void soundFunc4();
 	void _soundFunc4(byte param0, byte param1, byte param2);
-	void soundFunc5(const byte *params);
+	void soundFunc5();
 	void _soundFunc5(int interval, int count);
 };
 

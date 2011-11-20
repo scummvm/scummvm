@@ -25,9 +25,6 @@
 #include "scumm/player_appleII.h"
 #include "scumm/scumm.h"
 
-// CPU_CLOCK according to AppleWin
-static const double CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
-
 namespace Scumm {
 
 Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer) {
@@ -35,8 +32,9 @@ Player_AppleII::Player_AppleII(ScummEngine *scumm, Audio::Mixer *mixer) {
 	_soundNr = 0;
 
 	_mixer = mixer;
-	_sampleRate = _mixer->getOutputRate();
 	_vm = scumm;
+
+	setSampleRate(_mixer->getOutputRate());
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
@@ -73,60 +71,62 @@ void Player_AppleII::startSound(int nr) {
 	Common::StackLock lock(_mutex);
 
 	_soundNr = nr;
-	_buffer.clear();
+	_sampleConverter.reset();
 
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
 	byte *ptr1 = data + 4;
 
-	int type = ptr1[0];
-	if (type == 0)
+	_state.type = ptr1[0];
+	if (_state.type == 0)
 		return;
-	int loop = ptr1[1];
-	assert(loop > 0);
-	ptr1 += 2;
+	
+	_state.loop = ptr1[1];
+	assert(_state.loop > 0);
+
+	_state.params = &ptr1[2];
 
 	debug(4, "startSound %d: type %d, loop %d",
-		  nr, type, loop);
+		  nr, _state.type, _state.loop);
 	
 	do {
-		switch (type) {
+		switch (_state.type) {
 			case 1: // freq up/down
-				soundFunc1(ptr1);
+				soundFunc1();
 				break;
 			case 2: // symmetric wave (~)
-				soundFunc2(ptr1);
+				soundFunc2();
 				break;
 			case 3: // asymmetric wave (__-)
-				soundFunc3(ptr1);
+				soundFunc3();
 				break;
 			case 4: // polyphone (2 voices)
-				soundFunc4(ptr1);
+				soundFunc4();
 				break;
 			case 5:	// periodic noise
-				soundFunc5(ptr1);
+				soundFunc5();
 				break;
 		}
-		--loop;
-	} while (loop > 0);
+		--_state.loop;
+	} while (_state.loop > 0);
 }
 
 void Player_AppleII::stopAllSounds() {
 	Common::StackLock lock(_mutex);
-	_buffer.clear();
+	_sampleConverter.reset();
 }
 
 void Player_AppleII::stopSound(int nr) {
 	Common::StackLock lock(_mutex);
 	if (_soundNr == nr) {
-		_buffer.clear();
+		_sampleConverter.reset();
 	}
 }
 
 int Player_AppleII::getSoundStatus(int nr) const {
 	Common::StackLock lock(_mutex);
-	return (_buffer.availableSize() > 0 ? 1 : 0);
+	return (_sampleConverter.availableSize() > 0 ? 1 : 0);
 }
 
 int Player_AppleII::getMusicTimer() {
@@ -136,7 +136,7 @@ int Player_AppleII::getMusicTimer() {
 
 int Player_AppleII::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
-	return _buffer.read((byte*)buffer, numSamples * 2) / 2;
+	return _sampleConverter.readSamples(buffer, numSamples);
 }
 
 /************************************
@@ -149,16 +149,7 @@ void Player_AppleII::speakerToggle() {
 }
 
 void Player_AppleII::generateSamples(int cycles) {
-	// sampleDiff is used to compensate fractional samples
-	static double sampleDiff = 0;
-	double fSamples = (double)cycles / CPU_CLOCK * _sampleRate + sampleDiff;
-	int samples = (int)(fSamples + 0.5);
-	sampleDiff = fSamples - samples;
-
-	float vol = (float)_maxvol / 255;
-	int16 value = vol * (_speakerState ? 32767 :  -32767);
-	for (int i = 0; i < samples; ++i)
-		_buffer.write(&value, sizeof(value));
+	_sampleConverter.addCycles(_speakerState, cycles);
 }
 
 void Player_AppleII::wait(int interval, int count /*y*/) {
@@ -177,12 +168,12 @@ void Player_AppleII::_soundFunc1(int interval /*a*/, int count /*y*/) { // D076
 	}
 }
 
-void Player_AppleII::soundFunc1(const byte *params) { // D085
-	int delta = params[0];
-	int count = params[1];
-	byte interval = params[2]; // must be byte ("interval < delta" possible)
-	int limit = params[3];
-	bool decInterval = (params[4] >= 0x40);
+void Player_AppleII::soundFunc1() { // D085
+	const int delta = _state.params[0];
+	const int count = _state.params[1];
+	byte interval = _state.params[2]; // must be byte ("interval < delta" possible)
+	const int limit = _state.params[3];
+	const bool decInterval = (_state.params[4] >= 0x40);
 
 	if (decInterval) {
 		do {
@@ -215,12 +206,12 @@ void Player_AppleII::_soundFunc2(int interval /*a*/, int count) { // D0EF
 	}
 }
 
-void Player_AppleII::soundFunc2(const byte *params) { // D0D6
+void Player_AppleII::soundFunc2() { // D0D6
 	for (int pos = 1; pos < 256; ++pos) {
-		byte interval = params[pos];
+		byte interval = _state.params[pos];
 		if (interval == 0xFF)
 			return;
-		_soundFunc2(interval, params[0] /*, LD12F=interval*/);
+		_soundFunc2(interval, _state.params[0] /*, LD12F=interval*/);
 	}
 }
 
@@ -238,12 +229,12 @@ void Player_AppleII::_soundFunc3(int interval /*a*/, int count /*LD12D*/) { // D
 	}
 }
 
-void Player_AppleII::soundFunc3(const byte *params) { // D132
+void Player_AppleII::soundFunc3() { // D132
 	for (int pos = 1; pos < 256; ++pos) {
-		byte interval = params[pos];
+		byte interval = _state.params[pos];
 		if (interval == 0xFF)
 			return;
-		_soundFunc3(interval, params[0]);
+		_soundFunc3(interval, _state.params[0]);
 	}
 }
 
@@ -290,7 +281,7 @@ void Player_AppleII::_soundFunc4(byte param0, byte param1, byte param2) { // D1A
 		if (speakerShiftReg & 0x1)
 			speakerToggle();
 		speakerShiftReg >>= 1;
-		generateSamples(40);
+		generateSamples(42); /* actually 42.5 */
 
 		++count;
 		if (count == 0) {
@@ -299,7 +290,8 @@ void Player_AppleII::_soundFunc4(byte param0, byte param1, byte param2) { // D1A
 	}
 }
 
-void Player_AppleII::soundFunc4(const byte *params) { // D170
+void Player_AppleII::soundFunc4() { // D170
+	const byte *params = _state.params;
 	while (params[0] != 0x01) {
 		_soundFunc4(params[0], params[1], params[2]);
 		params += 3;
@@ -347,12 +339,12 @@ byte /*a*/ Player_AppleII::noise() { // D261
 	return result;
 }
 
-void Player_AppleII::soundFunc5(const byte *params) { // D222
+void Player_AppleII::soundFunc5() { // D222
 	const byte noiseMask[] = {
 		0x3F, 0x3F, 0x7F, 0x7F, 0x7F, 0x7F, 0xFF, 0xFF, 0xFF, 0x0F, 0x0F
 	};
 
-	int param0 = params[0];
+	int param0 = _state.params[0];
 	assert(param0 > 0);
 	for (int i = 0; i < 10; ++i) {
 		int count = param0;
