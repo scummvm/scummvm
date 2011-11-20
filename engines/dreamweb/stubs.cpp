@@ -237,6 +237,14 @@ void DreamGenContext::startup1() {
 	fadescreenup();
 }
 
+void DreamGenContext::switchryanon() {
+	data.byte(kRyanon) = 255;
+}
+
+void DreamGenContext::switchryanoff() {
+	data.byte(kRyanon) = 1;
+}
+
 static Common::String getFilename(Context &context) {
 	const char *name = (const char *)context.cs.ptr(context.dx, 0);
 	return Common::String(name);

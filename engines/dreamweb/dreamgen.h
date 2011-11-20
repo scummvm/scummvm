@@ -247,8 +247,6 @@ public:
 	static const uint16 addr_edenscdplayer = 0xc728;
 	static const uint16 addr_setuptimeduse = 0xc71c;
 	static const uint16 addr_autoappear = 0xc70c;
-	static const uint16 addr_switchryanoff = 0xc700;
-	static const uint16 addr_switchryanon = 0xc6fc;
 	static const uint16 addr_removefreeobject = 0xc6f4;
 	static const uint16 addr_placefreeobject = 0xc6f0;
 	static const uint16 addr_issetobonmap = 0xc6ec;
@@ -1720,7 +1718,7 @@ public:
 	void showloadops();
 	void examicon();
 	void showgun();
-	void switchryanon();
+	//void switchryanon();
 	//void personnametext();
 	void louischair();
 	void saveems();
@@ -1919,7 +1917,7 @@ public:
 	//void multiput();
 	//void printmessage();
 	void businessman();
-	void switchryanoff();
+	//void switchryanoff();
 	//void commandwithob();
 	void panelicons1();
 	void adjustdown();

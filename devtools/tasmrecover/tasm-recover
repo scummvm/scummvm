@@ -33,6 +33,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'randomnumber',
 	'startup',
 	'startup1',
+	'switchryanon',
+	'switchryanoff',
 	'quickquit',
 	'quickquit2',
 	'seecommandtail',

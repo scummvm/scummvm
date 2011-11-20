@@ -9024,16 +9024,6 @@ void DreamGenContext::removefreeobject() {
 	es = pop();
 }
 
-void DreamGenContext::switchryanon() {
-	STACK_CHECK;
-	data.byte(kRyanon) = 255;
-}
-
-void DreamGenContext::switchryanoff() {
-	STACK_CHECK;
-	data.byte(kRyanon) = 1;
-}
-
 void DreamGenContext::autoappear() {
 	STACK_CHECK;
 	_cmp(data.byte(kLocation), 32);
@@ -15155,8 +15145,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_issetobonmap: issetobonmap(); break;
 		case addr_placefreeobject: placefreeobject(); break;
 		case addr_removefreeobject: removefreeobject(); break;
-		case addr_switchryanon: switchryanon(); break;
-		case addr_switchryanoff: switchryanoff(); break;
 		case addr_autoappear: autoappear(); break;
 		case addr_setuptimeduse: setuptimeduse(); break;
 		case addr_edenscdplayer: edenscdplayer(); break;
