@@ -253,6 +253,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'monmessage',
 	'neterror',
 	'randomaccess',
+	'turnonpower',
 	'powerlighton',
 	'powerlightoff',
 	'accesslighton',

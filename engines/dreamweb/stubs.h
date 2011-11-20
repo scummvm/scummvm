@@ -315,6 +315,7 @@
 	void monmessage(uint8 index);
 	void monmessage();
 	void neterror();
+	void turnonpower();
 	void powerlighton();
 	void powerlightoff();
 

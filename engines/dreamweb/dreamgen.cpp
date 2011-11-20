@@ -6079,23 +6079,6 @@ emptyinterface:
 	al = 0;
 }
 
-void DreamGenContext::turnonpower() {
-	STACK_CHECK;
-	cx = 3;
-powerloop:
-	push(cx);
-	powerlighton();
-	cx = 30;
-	hangon();
-	powerlightoff();
-	cx = 30;
-	hangon();
-	cx = pop();
-	if (--cx)
-		goto powerloop;
-	powerlighton();
-}
-
 void DreamGenContext::locklighton() {
 	STACK_CHECK;
 	di = 56;
@@ -15115,7 +15098,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_loadnews: loadnews(); break;
 		case addr_loadcart: loadcart(); break;
 		case addr_lookininterface: lookininterface(); break;
-		case addr_turnonpower: turnonpower(); break;
 		case addr_locklighton: locklighton(); break;
 		case addr_locklightoff: locklightoff(); break;
 		case addr_makecaps: makecaps(); break;

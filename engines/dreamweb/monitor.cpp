@@ -257,5 +257,16 @@ void DreamGenContext::powerlightoff() {
 	multidump(257+4, 182, 12, 8);
 }
 
+void DreamGenContext::turnonpower() {
+	for (size_t i = 0; i < 3; ++i) {
+		powerlighton();
+		hangon(30);
+		powerlightoff();
+		hangon(30);
+	}
+	powerlighton();
+}
+
+
 } /*namespace dreamgen */
 

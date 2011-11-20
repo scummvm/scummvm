@@ -358,7 +358,6 @@ public:
 	static const uint16 addr_makecaps = 0xc524;
 	static const uint16 addr_locklightoff = 0xc51c;
 	static const uint16 addr_locklighton = 0xc518;
-	static const uint16 addr_turnonpower = 0xc500;
 	static const uint16 addr_lookininterface = 0xc4fc;
 	static const uint16 addr_loadcart = 0xc4f8;
 	static const uint16 addr_loadnews = 0xc4f4;
@@ -1330,7 +1329,7 @@ public:
 	void showsymbol();
 	void endgameseq();
 	//void cancelch0();
-	void turnonpower();
+	void setbotleft();
 	void findfirstpath();
 	//void cancelch1();
 	void loadold();
@@ -1340,7 +1339,7 @@ public:
 	//void aboutturn();
 	void usealtar();
 	void createpanel2();
-	void setbotleft();
+	//void turnonpower();
 	void manasleep2();
 	void moretalk();
 	//void printslow();
