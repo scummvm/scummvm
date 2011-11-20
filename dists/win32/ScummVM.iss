@@ -95,7 +95,6 @@ Source: drascula.dat; DestDir: {app}; Flags: ignoreversion
 Source: hugo.dat; DestDir: {app}; Flags: ignoreversion
 Source: kyra.dat; DestDir: {app}; Flags: ignoreversion
 Source: lure.dat; DestDir: {app}; Flags: ignoreversion
-Source: m4.dat; DestDir: {app}; Flags: ignoreversion
 Source: pred.dic; DestDir: {app}; Flags: ignoreversion
 Source: queen.tbl; DestDir: {app}; Flags: ignoreversion
 Source: sky.cpt; DestDir: {app}; Flags: ignoreversion

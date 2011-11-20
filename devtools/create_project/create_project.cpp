@@ -829,7 +829,6 @@ const Tool s_tools[] = {
 	{ "create_hugo",         true},
 	{ "create_kyradat",      true},
 	{ "create_lure",         true},
-	{ "create_mads",         true},
 	{ "create_teenagent",    true},
 	{ "create_toon",         true},
 	{ "create_translations", true},

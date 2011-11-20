@@ -265,7 +265,6 @@ Section "ScummVM" SecMain
 	File "${engine_data}\hugo.dat"
 	File "${engine_data}\kyra.dat"
 	File "${engine_data}\lure.dat"
-	File "${engine_data}\m4.dat"
 	File "${engine_data}\queen.tbl"
 	File "${engine_data}\sky.cpt"
 	File "${engine_data}\teenagent.dat"
@@ -352,7 +351,6 @@ Section -un.Main SecUninstall
 	Delete /REBOOTOK $INSTDIR\hugo.dat
 	Delete /REBOOTOK $INSTDIR\kyra.dat
 	Delete /REBOOTOK $INSTDIR\lure.dat
-	Delete /REBOOTOK $INSTDIR\m4.dat
 	Delete /REBOOTOK $INSTDIR\queen.tbl
 	Delete /REBOOTOK $INSTDIR\sky.cpt
 	Delete /REBOOTOK $INSTDIR\teenagent.dat

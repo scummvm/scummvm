@@ -31,9 +31,6 @@ kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #if ENABLE_LURE      == STATIC_PLUGIN
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
-#if ENABLE_M4        == STATIC_PLUGIN
-m4.dat                 FILE    "dists/engine-data/m4.dat"
-#endif
 #if ENABLE_QUEEN     == STATIC_PLUGIN
 queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #endif

@@ -448,7 +448,6 @@ void XCodeProvider::setupResourcesBuildPhase() {
 	properties["sky.cpt"]          = FileProperty("file", "", "sky.cpt", "\"<group>\"");
 	properties["drascula.dat"]     = FileProperty("file", "", "drascula.dat", "\"<group>\"");
 	properties["hugo.dat"]         = FileProperty("file", "", "hugo.dat", "\"<group>\"");
-	properties["m4.dat"]           = FileProperty("file", "", "m4.dat", "\"<group>\"");
 	properties["teenagent.dat"]    = FileProperty("file", "", "teenagent.dat", "\"<group>\"");
 	properties["toon.dat"]         = FileProperty("file", "", "toon.dat", "\"<group>\"");
 
@@ -481,7 +480,6 @@ void XCodeProvider::setupResourcesBuildPhase() {
 		files_list.push_back("icon4.png");
 		files_list.push_back("drascula.dat");
 		files_list.push_back("hugo.dat");
-		files_list.push_back("m4.dat");
 		files_list.push_back("teenagent.dat");
 		files_list.push_back("toon.dat");
 
