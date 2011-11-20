@@ -104,8 +104,6 @@ public:
 	static const uint16 addr_checkforshake = 0xc9a4;
 	static const uint16 addr_watchreel = 0xc9a0;
 	static const uint16 addr_screenupdate = 0xc99c;
-	static const uint16 addr_startup1 = 0xc998;
-	static const uint16 addr_startup = 0xc994;
 	static const uint16 addr_allocatemem = 0xc988;
 	static const uint16 addr_deallocatemem = 0xc984;
 	static const uint16 addr_clearrest = 0xc980;
@@ -1591,7 +1589,7 @@ public:
 	void rollem();
 	//void makeworn();
 	void hangonpq();
-	void startup();
+	//void startup();
 	void savegame();
 	//void startpaltoend();
 	//void showicon();
@@ -1767,7 +1765,7 @@ public:
 	//void hangon();
 	//void loadpalfromiff();
 	//void facerightway();
-	void startup1();
+	//void startup1();
 	void hotelcontrol();
 	void mugger();
 	void atmospheres();

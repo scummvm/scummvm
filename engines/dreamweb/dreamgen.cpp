@@ -12458,42 +12458,6 @@ void DreamGenContext::clearrest() {
 	deallocatemem();
 }
 
-void DreamGenContext::startup() {
-	STACK_CHECK;
-	data.byte(kCurrentkey) = 0;
-	data.byte(kMainmode) = 0;
-	createpanel();
-	data.byte(kNewobs) = 1;
-	drawfloor();
-	showicon();
-	getunderzoom();
-	spriteupdate();
-	printsprites();
-	undertextline();
-	reelsonscreen();
-	atmospheres();
-}
-
-void DreamGenContext::startup1() {
-	STACK_CHECK;
-	clearpalette();
-	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
-	createpanel();
-	data.byte(kNewobs) = 1;
-	drawfloor();
-	showicon();
-	getunderzoom();
-	spriteupdate();
-	printsprites();
-	undertextline();
-	reelsonscreen();
-	atmospheres();
-	worktoscreen();
-	fadescreenup();
-}
-
 void DreamGenContext::screenupdate() {
 	STACK_CHECK;
 	newplace();
@@ -15335,8 +15299,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_clearrest: clearrest(); break;
 		case addr_deallocatemem: deallocatemem(); break;
 		case addr_allocatemem: allocatemem(); break;
-		case addr_startup: startup(); break;
-		case addr_startup1: startup1(); break;
 		case addr_screenupdate: screenupdate(); break;
 		case addr_watchreel: watchreel(); break;
 		case addr_checkforshake: checkforshake(); break;

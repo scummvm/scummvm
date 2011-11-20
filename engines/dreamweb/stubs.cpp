@@ -203,6 +203,40 @@ void DreamGenContext::dreamweb() {
 	}
 }
 
+void DreamGenContext::startup() {
+	data.byte(kCurrentkey) = 0;
+	data.byte(kMainmode) = 0;
+	createpanel();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	showicon();
+	getunderzoom();
+	spriteupdate();
+	printsprites();
+	undertextline();
+	reelsonscreen();
+	atmospheres();
+}
+
+void DreamGenContext::startup1() {
+	clearpalette();
+	data.byte(kThroughdoor) = 0;
+	data.byte(kCurrentkey) = '0';
+	data.byte(kMainmode) = 0;
+	createpanel();
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	showicon();
+	getunderzoom();
+	spriteupdate();
+	printsprites();
+	undertextline();
+	reelsonscreen();
+	atmospheres();
+	worktoscreen();
+	fadescreenup();
+}
+
 static Common::String getFilename(Context &context) {
 	const char *name = (const char *)context.cs.ptr(context.dx, 0);
 	return Common::String(name);

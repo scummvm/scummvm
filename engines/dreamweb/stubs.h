@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+	void startup();
+	void startup1();
 	uint16 allocatemem(uint16 paragraphs);
 	void deallocatemem(uint16 segment);
 	uint8 *workspace();
