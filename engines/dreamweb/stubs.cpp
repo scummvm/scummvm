@@ -2018,6 +2018,13 @@ void DreamGenContext::showwatch() {
 	}
 }
 
+void DreamGenContext::dumpwatch() {
+	if (data.byte(kWatchdump) != 1)
+		return;
+	multidump(256, 21, 40, 12);
+	data.byte(kWatchdump) = 0;
+}
+
 void DreamGenContext::showtime() {
 	if (data.byte(kWatchon) == 0)
 		return;

@@ -101,7 +101,6 @@ public:
 	static const uint16 addr_showword = 0xc9c0;
 	static const uint16 addr_onedigit = 0xc9b8;
 	static const uint16 addr_showbyte = 0xc9b4;
-	static const uint16 addr_dumpwatch = 0xc9b0;
 	static const uint16 addr_checkforshake = 0xc9a4;
 	static const uint16 addr_watchreel = 0xc9a0;
 	static const uint16 addr_screenupdate = 0xc99c;
@@ -1424,7 +1423,7 @@ public:
 	//void delthisone();
 	//void makebackob();
 	void middlepanel();
-	void dumpwatch();
+	//void dumpwatch();
 	void saveload();
 	void monitorlogo();
 	void loadposition();

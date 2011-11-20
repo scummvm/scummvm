@@ -12640,19 +12640,6 @@ void DreamGenContext::checkforshake() {
 	data.byte(kShakecounter) = -1;
 }
 
-void DreamGenContext::dumpwatch() {
-	STACK_CHECK;
-	_cmp(data.byte(kWatchdump), 1);
-	if (!flags.z())
-		return /* (nodumpwatch) */;
-	di = 256;
-	bx = 21;
-	cl = 40;
-	ch = 12;
-	multidump();
-	data.byte(kWatchdump) = 0;
-}
-
 void DreamGenContext::showbyte() {
 	STACK_CHECK;
 	dl = al;
@@ -15353,7 +15340,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_screenupdate: screenupdate(); break;
 		case addr_watchreel: watchreel(); break;
 		case addr_checkforshake: checkforshake(); break;
-		case addr_dumpwatch: dumpwatch(); break;
 		case addr_showbyte: showbyte(); break;
 		case addr_onedigit: onedigit(); break;
 		case addr_showword: showword(); break;

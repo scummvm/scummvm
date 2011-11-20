@@ -272,6 +272,7 @@
 	void convicons();
 	void examineob(bool examineAgain = true);
 	void showwatch();
+	void dumpwatch();
 	void showtime();
 	void roomname();
 	void transfertext();
