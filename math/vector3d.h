@@ -48,7 +48,7 @@ public:
 	Matrix();
 	Matrix(float lx, float ly, float lz);
 	Matrix(const MatrixBase<3, 1> &m);
-	Matrix(float *data);
+	Matrix(const float *data);
 
 	void set(float lx, float ly, float lz);
 

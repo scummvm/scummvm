@@ -53,7 +53,7 @@ public:
 
 protected:
 	MatrixType() : MatrixBase<dim, 1>() { }
-	MatrixType(float *data) : MatrixBase<dim, 1>(data) { }
+	MatrixType(const float *data) : MatrixBase<dim, 1>(data) { }
 	MatrixType(const MatrixBase<dim, 1> &m) : MatrixBase<dim, 1>(m) { }
 
 	inline float &value(int i) { return this->operator()(i, 0); }

@@ -44,7 +44,7 @@ Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
 
 }
 
-Vector2d::Matrix(float *data) :
+Vector2d::Matrix(const float *data) :
 	MatrixType<2, 1>(data) {
 }
 
