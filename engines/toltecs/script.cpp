@@ -183,6 +183,7 @@ void ScriptInterpreter::setMainScript(uint slotIndex) {
 }
 
 void ScriptInterpreter::runScript() {
+	uint32 lastScreenUpdate = 0;
 
 	while (!_vm->shouldQuit()) {
 
@@ -217,9 +218,13 @@ void ScriptInterpreter::runScript() {
 		byte opcode = readByte();
 		execOpcode(opcode);
 
-		// Call updateScreen roughly every 10ms else the mouse cursor will be jerky
-		if (_vm->_system->getMillis() % 10 == 0)
+		// Update the screen at semi-regular intervals, else the mouse
+		// cursor will be jerky.
+		uint32 now = _vm->_system->getMillis();
+		if (now < lastScreenUpdate || now - lastScreenUpdate > 10) {
 			_vm->_system->updateScreen();
+			lastScreenUpdate = _vm->_system->getMillis();
+		}
 
 	}
 
