@@ -2844,9 +2844,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpLoad:
-			// FIXME
-			warning("ignoring kLBOpLoad (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			target->load();
 			break;
 
 		case kLBOpPreload:
@@ -2856,9 +2854,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 			break;
 
 		case kLBOpUnload:
-			// FIXME
-			warning("ignoring kLBOpUnload (event 0x%04x, param 0x%04x, target '%s')",
-				entry->event, entry->param, target->_desc.c_str());
+			target->unload();
 			break;
 
 		case kLBOpSeekToPrev:
