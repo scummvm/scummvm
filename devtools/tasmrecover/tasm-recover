@@ -31,6 +31,7 @@ p.link()
 generator = cpp(context, "DreamGen", blacklist = [
 	# These functions are not processed
 	'randomnumber',
+	'screenupdate',
 	'startup',
 	'startup1',
 	'switchryanon',

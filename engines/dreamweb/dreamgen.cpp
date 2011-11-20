@@ -12448,59 +12448,6 @@ void DreamGenContext::clearrest() {
 	deallocatemem();
 }
 
-void DreamGenContext::screenupdate() {
-	STACK_CHECK;
-	newplace();
-	mainscreen();
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (finishearly) */;
-	animpointer();
-	showpointer();
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		goto iswatchingmode;
-	_cmp(data.byte(kNewlocation), 255);
-	if (!flags.z())
-		return /* (finishearly) */;
-iswatchingmode:
-	vsync();
-	readmouse1();
-	dumppointer();
-	dumptextline();
-	delpointer();
-	autolook();
-	spriteupdate();
-	watchcount();
-	zoom();
-	showpointer();
-	_cmp(data.byte(kWongame), 0);
-	if (!flags.z())
-		return /* (finishearly) */;
-	vsync();
-	readmouse2();
-	dumppointer();
-	dumpzoom();
-	delpointer();
-	deleverything();
-	printsprites();
-	reelsonscreen();
-	afternewroom();
-	showpointer();
-	vsync();
-	readmouse3();
-	dumppointer();
-	dumpmap();
-	dumptimedtext();
-	delpointer();
-	showpointer();
-	vsync();
-	readmouse4();
-	dumppointer();
-	dumpwatch();
-	delpointer();
-}
-
 void DreamGenContext::watchreel() {
 	STACK_CHECK;
 	_cmp(data.word(kReeltowatch), -1);
@@ -15287,7 +15234,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_clearrest: clearrest(); break;
 		case addr_deallocatemem: deallocatemem(); break;
 		case addr_allocatemem: allocatemem(); break;
-		case addr_screenupdate: screenupdate(); break;
 		case addr_watchreel: watchreel(); break;
 		case addr_checkforshake: checkforshake(); break;
 		case addr_showbyte: showbyte(); break;

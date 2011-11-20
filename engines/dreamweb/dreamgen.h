@@ -103,7 +103,6 @@ public:
 	static const uint16 addr_showbyte = 0xc9b4;
 	static const uint16 addr_checkforshake = 0xc9a4;
 	static const uint16 addr_watchreel = 0xc9a0;
-	static const uint16 addr_screenupdate = 0xc99c;
 	static const uint16 addr_allocatemem = 0xc988;
 	static const uint16 addr_deallocatemem = 0xc984;
 	static const uint16 addr_clearrest = 0xc980;
@@ -1218,7 +1217,7 @@ public:
 	void getbackfromops();
 	//void frameoutv();
 	void showbyte();
-	void screenupdate();
+	//void screenupdate();
 	//void addlength();
 	//void usetimedtext();
 	void putundercentre();
@@ -1356,7 +1355,7 @@ public:
 	//void domix();
 	//void paneltomap();
 	//void obname();
-	void getridoftemp3();
+	void talk();
 	void getridoftemp2();
 	void usebalcony();
 	void runendseq();
@@ -1528,7 +1527,7 @@ public:
 	//void pixelcheckset();
 	void reexfrominv();
 	void examinventory();
-	void talk();
+	void getridoftemp3();
 	void usedryer();
 	//void dumpeverything();
 	//void readmouse2();

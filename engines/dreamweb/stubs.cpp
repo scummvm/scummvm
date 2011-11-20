@@ -203,6 +203,51 @@ void DreamGenContext::dreamweb() {
 	}
 }
 
+void DreamGenContext::screenupdate() {
+	newplace();
+	mainscreen();
+	if (data.byte(kQuitrequested))
+		return;
+	animpointer();
+	showpointer();
+	if ((data.word(kWatchingtime) == 0) && (data.byte(kNewlocation) != 0xff))
+		return;
+	vsync();
+	readmouse1();
+	dumppointer();
+	dumptextline();
+	delpointer();
+	autolook();
+	spriteupdate();
+	watchcount();
+	zoom();
+	showpointer();
+	if (data.byte(kWongame))
+		return;
+	vsync();
+	readmouse2();
+	dumppointer();
+	dumpzoom();
+	delpointer();
+	deleverything();
+	printsprites();
+	reelsonscreen();
+	afternewroom();
+	showpointer();
+	vsync();
+	readmouse3();
+	dumppointer();
+	dumpmap();
+	dumptimedtext();
+	delpointer();
+	showpointer();
+	vsync();
+	readmouse4();
+	dumppointer();
+	dumpwatch();
+	delpointer();
+}
+
 void DreamGenContext::startup() {
 	data.byte(kCurrentkey) = 0;
 	data.byte(kMainmode) = 0;
