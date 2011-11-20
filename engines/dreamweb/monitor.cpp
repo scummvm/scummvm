@@ -103,7 +103,7 @@ void DreamGenContext::usemon() {
 }
 
 void DreamGenContext::printlogo() {
-	showframe((Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0), 56, 32, 0, 0);
+	showframe(tempGraphics(), 56, 32, 0, 0);
 	showcurrentfile();
 }
 
@@ -206,12 +206,12 @@ void DreamGenContext::showcurrentfile() {
 }
 
 void DreamGenContext::accesslighton() {
-	showframe((Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0), 74, 182, 8, 0);
+	showframe(tempGraphics(), 74, 182, 8, 0);
 	multidump(74, 182, 12, 8);
 }
 
 void DreamGenContext::accesslightoff() {
-	showframe((Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0), 74, 182, 7, 0);
+	showframe(tempGraphics(), 74, 182, 7, 0);
 	multidump(74, 182, 12, 8);
 }
 

@@ -1973,9 +1973,8 @@ void DreamGenContext::sortoutmap() {
 
 void DreamGenContext::showcity() {
 	clearwork();
-	Frame *tempGraphics = (Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0);
-	showframe(tempGraphics, 57, 32, 0, 0);
-	showframe(tempGraphics, 120+57, 32, 1, 0);
+	showframe(tempGraphics(), 57, 32, 0, 0);
+	showframe(tempGraphics(), 120+57, 32, 1, 0);
 }
 
 void DreamGenContext::mainscreen() {
@@ -2127,6 +2126,18 @@ void DreamGenContext::readsetdata() {
 	uint8 *volumeTab = segRef(data.word(kSoundbuffer)).ptr(16384, 0);
 	engine->readFromFile(volumeTab, 2048-256);
 	engine->closeFile();
+}
+
+Frame * DreamGenContext::tempGraphics() {
+	return (Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0);
+}
+
+Frame * DreamGenContext::tempGraphics2() {
+	return (Frame *)segRef(data.word(kTempgraphics2)).ptr(0, 0);
+}
+
+Frame * DreamGenContext::tempGraphics3() {
+	return (Frame *)segRef(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
 } /*namespace dreamgen */
