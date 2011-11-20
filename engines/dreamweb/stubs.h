@@ -222,10 +222,7 @@
 	void checkcoords();
 	void checkcoords(const RectWithCallback *rectWithCallbacks);
 	void readmouse();
-	void readmouse1();
-	void readmouse2();
-	void readmouse3();
-	void readmouse4();
+	uint16 readMouseState();
 	uint16 waitframes();
 	void drawflags();
 	void addtopeoplelist();

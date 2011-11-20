@@ -213,41 +213,52 @@ void DreamGenContext::screenupdate() {
 	if (quitRequested())
 		return;
 	animpointer();
+
 	showpointer();
 	if ((data.word(kWatchingtime) == 0) && (data.byte(kNewlocation) != 0xff))
 		return;
 	vsync();
-	readmouse1();
+	uint16 mouseState = 0;
+	mouseState |= readMouseState();
 	dumppointer();
+
 	dumptextline();
 	delpointer();
 	autolook();
 	spriteupdate();
 	watchcount();
 	zoom();
+
 	showpointer();
 	if (data.byte(kWongame))
 		return;
 	vsync();
-	readmouse2();
+	mouseState |= readMouseState();
 	dumppointer();
+
 	dumpzoom();
 	delpointer();
 	deleverything();
 	printsprites();
 	reelsonscreen();
 	afternewroom();
+
 	showpointer();
 	vsync();
-	readmouse3();
+	mouseState |= readMouseState();
 	dumppointer();
+
 	dumpmap();
 	dumptimedtext();
 	delpointer();
+
 	showpointer();
 	vsync();
-	readmouse4();
+	data.word(kOldbutton) = data.word(kMousebutton);
+	mouseState |= readMouseState();
+	data.word(kMousebutton) = mouseState;
 	dumppointer();
+
 	dumpwatch();
 	delpointer();
 }
@@ -270,18 +281,9 @@ void DreamGenContext::startup() {
 void DreamGenContext::startup1() {
 	clearpalette();
 	data.byte(kThroughdoor) = 0;
-	data.byte(kCurrentkey) = '0';
-	data.byte(kMainmode) = 0;
-	createpanel();
-	data.byte(kNewobs) = 1;
-	drawfloor();
-	showicon();
-	getunderzoom();
-	spriteupdate();
-	printsprites();
-	undertextline();
-	reelsonscreen();
-	atmospheres();
+
+	startup();
+
 	worktoscreen();
 	fadescreenup();
 }
@@ -454,54 +456,18 @@ void DreamGenContext::mousecall() {
 
 void DreamGenContext::readmouse() {
 	data.word(kOldbutton) = data.word(kMousebutton);
-	data.word(kOldx) = data.word(kMousex);
-	data.word(kOldy) = data.word(kMousey);
-	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
-	data.word(kMousex) = x;
-	data.word(kMousey) = y;
+	uint16 state = readMouseState();
 	data.word(kMousebutton) = state;
 }
 
-void DreamGenContext::readmouse1() {
+uint16 DreamGenContext::readMouseState() {
 	data.word(kOldx) = data.word(kMousex);
 	data.word(kOldy) = data.word(kMousey);
 	uint16 x, y, state;
 	engine->mouseCall(&x, &y, &state);
 	data.word(kMousex) = x;
 	data.word(kMousey) = y;
-	data.word(kMousebutton1) = state;
-}
-
-void DreamGenContext::readmouse2() {
-	data.word(kOldx) = data.word(kMousex);
-	data.word(kOldy) = data.word(kMousey);
-	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
-	data.word(kMousex) = x;
-	data.word(kMousey) = y;
-	data.word(kMousebutton2) = state;
-}
-
-void DreamGenContext::readmouse3() {
-	data.word(kOldx) = data.word(kMousex);
-	data.word(kOldy) = data.word(kMousey);
-	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
-	data.word(kMousex) = x;
-	data.word(kMousey) = y;
-	data.word(kMousebutton3) = state;
-}
-
-void DreamGenContext::readmouse4() {
-	data.word(kOldbutton) = data.word(kMousebutton);
-	data.word(kOldx) = data.word(kMousex);
-	data.word(kOldy) = data.word(kMousey);
-	uint16 x, y, state;
-	engine->mouseCall(&x, &y, &state);
-	data.word(kMousex) = x;
-	data.word(kMousey) = y;
-	data.word(kMousebutton) = state | data.word(kMousebutton1) | data.word(kMousebutton2) | data.word(kMousebutton3);
+	return state;
 }
 
 void DreamGenContext::setmouse() {
