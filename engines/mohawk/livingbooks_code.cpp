@@ -692,7 +692,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "min", 0 },
 	{ "abs", 0 },
 	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
-	{ "makePt", 0 }, // also "makePair"
+	{ "makePt", &LBCode::cmdMakePoint }, // also "makePair"
 	{ "topLeft", &LBCode::cmdTopLeft },
 	{ "bottomRight", &LBCode::cmdBottomRight },
 	{ "mousePos", 0 },
@@ -897,6 +897,12 @@ void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
 		_stack.push(Common::Rect(params[0].toInt(), params[1].toInt(), params[2].toInt(), params[3].toInt()));
 	} else
 		error("incorrect number of parameters (%d) to getRect", params.size());
+}
+
+void LBCode::cmdMakePoint(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to makePoint", params.size());
+	_stack.push(Common::Point(params[0].toInt(), params[1].toInt()));
 }
 
 void LBCode::cmdTopLeft(const Common::Array<LBValue> &params) {
