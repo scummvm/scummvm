@@ -113,26 +113,28 @@ private:
 };
 
 // CPU_CLOCK according to AppleWin
-static const double CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
+static const double APPLEII_CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
 
 class SampleConverter {
 private:
-	void newSample(int sample) {
-		int16 value = _volume * sample / 255;
+	void addSampleToBuffer(int sample) {
+		int16 value = sample * _volume / _maxVolume;
 		_buffer.write(&value, sizeof(value));
 	}
 
 public:
 	SampleConverter() : 
-		_cyclesPerSample(0),
-		_missingCycles(0),
-		_sampleCyclesSum(0),
-		_volume(255)
+		_cyclesPerSampleFP(0),
+		_missingCyclesFP(0),
+		_sampleCyclesSumFP(0),
+		_volume(_maxVolume)
 	{}
 
+	~SampleConverter() {}
+
 	void reset() {
-		_missingCycles = 0;
-		_sampleCyclesSum = 0;
+		_missingCyclesFP = 0;
+		_sampleCyclesSumFP = 0;
 		_buffer.clear();	
 	}
 
@@ -141,43 +143,47 @@ public:
 	}
 
 	void setMusicVolume(int vol) {
-		assert(vol >= 0 && vol <= 255);
+		assert(vol >= 0 && vol <= _maxVolume);
 		_volume = vol;
 	}
 
 	void setSampleRate(int rate) {
-		_cyclesPerSample = CPU_CLOCK / (float)rate;
+		/* ~46 CPU cycles per sample @ 22.05kHz */
+		_cyclesPerSampleFP = APPLEII_CPU_CLOCK * (1 << PREC_SHIFT) / rate;
 		reset();
 	}
 
-	void addCycles(byte level, int cycles) {
+	void addCycles(byte level, const int cycles) {
+		/* convert to fixed precision floats */
+		int cyclesFP = cycles << PREC_SHIFT;
+
 		// step 1: if cycles are left from the last call, process them first
-		if (_missingCycles > 0) {
-			int n = (_missingCycles < cycles) ? _missingCycles : cycles;
+		if (_missingCyclesFP > 0) {
+			int n = (_missingCyclesFP < cyclesFP) ? _missingCyclesFP : cyclesFP;
 			if (level)
-				_sampleCyclesSum += n;
-			cycles -= n;
-			_missingCycles -= n;
-			if (_missingCycles == 0) {
-				newSample(2*32767 * _sampleCyclesSum / _cyclesPerSample - 32767);
+				_sampleCyclesSumFP += n;
+			cyclesFP -= n;
+			_missingCyclesFP -= n;
+			if (_missingCyclesFP == 0) {
+				addSampleToBuffer(2*32767 * _sampleCyclesSumFP / _cyclesPerSampleFP - 32767);
 			} else {
 				return;
 			}
 		}
 
-		_sampleCyclesSum = 0;
+		_sampleCyclesSumFP = 0;
 
 		// step 2: process blocks of cycles fitting into a whole sample
-		while (cycles >= _cyclesPerSample) {
-			newSample(level ? 32767 : -32767);
-			cycles -= _cyclesPerSample;
+		while (cyclesFP >= _cyclesPerSampleFP) {
+			addSampleToBuffer(level ? 32767 : -32767);
+			cyclesFP -= _cyclesPerSampleFP;
 		}
 
 		// step 3: remember cycles left for next call
-		if (cycles > 0) {
-			_missingCycles = _cyclesPerSample - cycles;
+		if (cyclesFP > 0) {
+			_missingCyclesFP = _cyclesPerSampleFP - cyclesFP;
 			if (level)
-				_sampleCyclesSum = cycles;
+				_sampleCyclesSumFP = cyclesFP;
 		}
 	}
 
@@ -185,11 +191,29 @@ public:
 		return _buffer.read((byte*)buffer, numSamples * 2) / 2;
 	}
 
+#if 0
+	void logToFile(Common::String fileName) {
+		FILE *f;
+		byte buffer[512];
+		int n;
+
+		f = fopen(fileName.c_str(), "wb");
+		while ((n = _buffer.read(buffer, 512)) != 0) {
+			fwrite(buffer, 1, n, f);
+		}
+		fclose(f);
+	}
+#endif
+
 private:
-	float _cyclesPerSample;
-	int _missingCycles;
-	int _sampleCyclesSum;
-	int _volume; /* 0 - 255 */
+	static const int PREC_SHIFT = 7;
+
+private:
+	int _cyclesPerSampleFP;   /* (fixed precision) */
+	int _missingCyclesFP;     /* (fixed precision) */
+	int _sampleCyclesSumFP;   /* (fixed precision) */
+	int _volume; /* 0 - 256 */
+	static const int _maxVolume = 256;
 	DynamicMemoryStream _buffer;
 };
 
