@@ -314,4 +314,5 @@
 	void randomaccess();
 	void monmessage(uint8 index);
 	void monmessage();
+	void neterror();
 

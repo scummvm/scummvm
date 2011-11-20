@@ -251,6 +251,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'input',
 	'monprint',
 	'monmessage',
+	'neterror',
 	'randomaccess',
 	'accesslighton',
 	'accesslightoff',

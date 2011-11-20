@@ -6282,13 +6282,6 @@ quitcom:
 	al = 1;
 }
 
-void DreamGenContext::neterror() {
-	STACK_CHECK;
-	al = 5;
-	monmessage();
-	scrollmonitor();
-}
-
 void DreamGenContext::dircom() {
 	STACK_CHECK;
 	cx = 30;
@@ -15164,7 +15157,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_makecaps: makecaps(); break;
 		case addr_delchar: delchar(); break;
 		case addr_execcommand: execcommand(); break;
-		case addr_neterror: neterror(); break;
 		case addr_dircom: dircom(); break;
 		case addr_searchforfiles: searchforfiles(); break;
 		case addr_signon: signon(); break;

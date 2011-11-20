@@ -353,7 +353,6 @@ public:
 	static const uint16 addr_signon = 0xc53c;
 	static const uint16 addr_searchforfiles = 0xc538;
 	static const uint16 addr_dircom = 0xc534;
-	static const uint16 addr_neterror = 0xc530;
 	static const uint16 addr_execcommand = 0xc52c;
 	static const uint16 addr_delchar = 0xc528;
 	static const uint16 addr_makecaps = 0xc524;
@@ -1198,7 +1197,7 @@ public:
 	void startdmablock();
 	void useopenbox();
 	void clearbuffers();
-	void neterror();
+	//void neterror();
 	void storeit();
 	//void lockeddoorway();
 	//void isitworn();

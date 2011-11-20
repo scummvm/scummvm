@@ -242,5 +242,10 @@ void DreamGenContext::monmessage(uint8 index) {
 	monprint(string);
 }
 
+void DreamGenContext::neterror() {
+	monmessage(5);
+	scrollmonitor();
+}
+
 } /*namespace dreamgen */
 
