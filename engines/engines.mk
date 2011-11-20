@@ -99,11 +99,6 @@ DEFINES += -DENABLE_LURE=$(ENABLE_LURE)
 MODULES += engines/lure
 endif
 
-ifdef ENABLE_M4
-DEFINES += -DENABLE_M4=$(ENABLE_M4)
-MODULES += engines/m4
-endif
-
 ifdef ENABLE_MADE
 DEFINES += -DENABLE_MADE=$(ENABLE_MADE)
 MODULES += engines/made
