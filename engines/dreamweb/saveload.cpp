@@ -31,8 +31,7 @@ namespace DreamGen {
 void DreamGenContext::loadgame() {
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
-		al = 41;
-		commandonly();
+		commandonly(41);
 	}
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return; // "noload"
@@ -62,8 +61,8 @@ void DreamGenContext::doload() {
 		data.byte(kGetback) = 0;
 
 		while (true) {
-			if (data.byte(kQuitrequested))
-				return; // "quitloaded"
+			if (quitRequested())
+				return;
 			delpointer();
 			readmouse();
 			showpointer();
@@ -185,8 +184,7 @@ void DreamGenContext::savegame() {
 
 	if (data.byte(kCommandtype) != 247) {
 		data.byte(kCommandtype) = 247;
-		al = 44;
-		commandonly();
+		commandonly(44);
 	}
 	if (data.word(kMousebutton) != 1)
 		return;
@@ -206,9 +204,8 @@ void DreamGenContext::savegame() {
 		data.byte(kGetback) = 0;
 
 		while (true) {
-			_cmp(data.byte(kQuitrequested),  0);
-			if (!flags.z())
-				return /* (quitsavegame) */;
+			if (quitRequested())
+				return;
 			delpointer();
 			checkinput();
 			readmouse();
