@@ -93,7 +93,6 @@ public:
 	virtual ~ToltecsEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual void syncSoundSettings();
 
 	Common::RandomSource *_rnd;
 	const ToltecsGameDescription *_gameDescription;

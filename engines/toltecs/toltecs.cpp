@@ -74,16 +74,6 @@ ToltecsEngine::~ToltecsEngine() {
 	delete _rnd;
 }
 
-void ToltecsEngine::syncSoundSettings() {
-	/*
-	_music->setVolume(ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	*/
-}
-
 Common::Error ToltecsEngine::run() {
 	initGraphics(640, 400, true);
 
