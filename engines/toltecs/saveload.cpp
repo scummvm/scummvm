@@ -30,6 +30,7 @@
 #include "toltecs/palette.h"
 #include "toltecs/script.h"
 #include "toltecs/screen.h"
+#include "toltecs/sound.h"
 
 namespace Toltecs {
 
@@ -39,7 +40,7 @@ namespace Toltecs {
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
-#define TOLTECS_SAVEGAME_VERSION 1
+#define TOLTECS_SAVEGAME_VERSION 2
 
 ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 
@@ -62,7 +63,7 @@ ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::Seekab
 	header.gameID = in->readByte();
 	header.flags = in->readUint32LE();
 
-	if (header.version > 0) {
+	if (header.version >= 1) {
 		header.saveDate = in->readUint32LE();
 		header.saveTime = in->readUint32LE();
 		header.playTime = in->readUint32LE();
@@ -131,6 +132,7 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	_script->saveState(out);
 	_anim->saveState(out);
 	_screen->saveState(out);
+	_sound->saveState(out);
 
 	out->finalize();
 	delete out;
@@ -153,6 +155,7 @@ void ToltecsEngine::loadgame(const char *filename) {
 		return;
 	}
 	
+	_sound->stopAll();
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
 	_cameraX = in->readUint16LE();
@@ -184,6 +187,8 @@ void ToltecsEngine::loadgame(const char *filename) {
 	_script->loadState(in);
 	_anim->loadState(in);
 	_screen->loadState(in);
+	if (header.version >= 2)
+		_sound->loadState(in);
 
 	delete in;
 

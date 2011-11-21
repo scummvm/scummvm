@@ -131,11 +131,12 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		
 		// If all channels are in use no new sound will be played
 		if (freeChannel >= 0) {
-
 			Resource *soundResource = _vm->_res->load(resIndex);
 
 			Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-								Audio::makeRawStream(soundResource->data, soundResource->size, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO),
+								Audio::makeRawStream(soundResource->data,
+								soundResource->size, 22050, Audio::FLAG_UNSIGNED,
+								DisposeAfterUse::NO),
 								type == kChannelTypeBackground ? 0 : 1);
 
 			channels[freeChannel].type = type;
@@ -149,7 +150,6 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 			_vm->_mixer->playStream(soundType, &channels[freeChannel].handle,
 				stream, -1, volume, panning);
-			
 		}
 
 	}
@@ -182,6 +182,42 @@ void Sound::stopAll() {
 		_vm->_screen->keepTalkTextItemsAlive();
 		channels[i].type = kChannelTypeEmpty;
 		channels[i].resIndex = -1;
+	}
+}
+
+void Sound::saveState(Common::WriteStream *out) {
+	for (int i = 0; i < kMaxChannels; i++) {
+		out->writeSint16LE(channels[i].type);
+		out->writeSint16LE(channels[i].resIndex);
+	}
+}
+
+void Sound::loadState(Common::ReadStream *in) {
+	for (int i = 0; i < kMaxChannels; i++) {
+		channels[i].type = in->readSint16LE();
+		channels[i].resIndex = in->readSint16LE();
+
+		if (channels[i].type != kChannelTypeEmpty) {
+			Resource *soundResource = _vm->_res->load(channels[i].resIndex);
+
+			Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+								Audio::makeRawStream(soundResource->data,
+								soundResource->size, 22050, Audio::FLAG_UNSIGNED,
+								DisposeAfterUse::NO),
+								channels[i].type == kChannelTypeBackground ? 0 : 1);
+
+			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+			/*
+			switch (type) {
+			}
+			*/
+
+			// TODO: Volume and panning
+			int16 volume = (channels[i].type == kChannelTypeBackground) ? 50 : 100;
+
+			_vm->_mixer->playStream(soundType, &channels[i].handle,
+				stream, -1, volume, /*panning*/0);
+		}
 	}
 }
 

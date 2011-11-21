@@ -59,6 +59,9 @@ public:
 	void stopSpeech();
 	void stopAll();
 
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
 protected:
 	ToltecsEngine *_vm;
 
