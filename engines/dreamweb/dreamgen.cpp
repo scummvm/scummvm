@@ -10979,31 +10979,6 @@ void DreamGenContext::findtext1() {
 	si = ax;
 }
 
-void DreamGenContext::saveload() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kPointermode), 2);
-	if (flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kCommandtype), 253);
-	if (flags.z())
-		goto alreadyops;
-	data.byte(kCommandtype) = 253;
-	al = 43;
-	commandonly();
-alreadyops:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (noops) */;
-	_and(ax, 1);
-	if (flags.z())
-		return /* (noops) */;
-	dosaveload();
-}
-
 void DreamGenContext::dosaveload() {
 	STACK_CHECK;
 	data.byte(kPointerframe) = 0;
@@ -15156,7 +15131,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_showdiarypage: showdiarypage(); break;
 		case addr_findtext1: findtext1(); break;
 		case addr_zoomonoff: zoomonoff(); break;
-		case addr_saveload: saveload(); break;
 		case addr_dosaveload: dosaveload(); break;
 		case addr_getbackfromops: getbackfromops(); break;
 		case addr_showmainops: showmainops(); break;

@@ -42,6 +42,7 @@
 	void loadtempcharset();
 	void loadtempcharset(const char *fileName);
 	Frame *tempCharset();
+	void saveload();
 	void printcurs();
 	void delcurs();
 	void hangoncurs(uint16 frameCount);

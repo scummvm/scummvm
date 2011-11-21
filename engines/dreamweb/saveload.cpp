@@ -360,4 +360,18 @@ void DreamGenContext::oldtonames() {
 	memcpy(cs.ptr(kSavenames, 0), segRef(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
 }
 
+void DreamGenContext::saveload() {
+	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
+		blank();
+		return;
+	}
+	if (data.byte(kCommandtype) != 253) {
+		data.byte(kCommandtype) = 253;
+		commandonly(43);
+	}
+	if ((data.word(kMousebutton) != data.word(kOldbutton)) && (data.word(kMousebutton) & 1))
+		dosaveload();
+}
+
 } /*namespace dreamgen */
+

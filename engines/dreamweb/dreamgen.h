@@ -181,7 +181,6 @@ public:
 	static const uint16 addr_showmainops = 0xc838;
 	static const uint16 addr_getbackfromops = 0xc834;
 	static const uint16 addr_dosaveload = 0xc830;
-	static const uint16 addr_saveload = 0xc82c;
 	static const uint16 addr_zoomonoff = 0xc828;
 	static const uint16 addr_findtext1 = 0xc824;
 	static const uint16 addr_showdiarypage = 0xc820;
@@ -1419,7 +1418,7 @@ public:
 	//void makebackob();
 	void middlepanel();
 	//void dumpwatch();
-	void saveload();
+	//void saveload();
 	void monitorlogo();
 	void loadposition();
 	//void wornerror();
