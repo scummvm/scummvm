@@ -45,11 +45,13 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 
+#include "common/foreach.h"
+
 namespace Grim {
 
 Actor::Actor(const Common::String &actorName) :
 		PoolObject<Actor, MKTAG('A', 'C', 'T', 'R')>(), _name(actorName), _setName(""),
-		_talkColor(PoolColor::getPool()->getObject(2)), _pos(0, 0, 0),
+		_talkColor(PoolColor::getPool().getObject(2)), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk and
@@ -240,7 +242,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_name = savedState->readString();
 	_setName = savedState->readString();
 
-	_talkColor = PoolColor::getPool()->getObject(savedState->readLEUint32());
+	_talkColor = PoolColor::getPool().getObject(savedState->readLEUint32());
 
 	_pos                = savedState->readVector3d();
 	_pitch              = savedState->readFloat();
@@ -564,8 +566,7 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 	}
 
 	Math::Vector3d v = pos - _pos;
-	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
+	foreach (Actor *a, Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			handleCollisionWith(a, mode, &v);
 		}
@@ -815,7 +816,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 	g_grim->setTalkingActor(this);
 
 	if (_sayLineText) {
-		delete TextObject::getPool()->getObject(_sayLineText);
+		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 
@@ -825,7 +826,7 @@ void Actor::sayLine(const char *msgId, bool background) {
 			return;
 
 		if (g_grim->getMode() == GrimEngine::SmushMode)
-			TextObject::getPool()->deleteObjects();
+			TextObject::getPool().deleteObjects();
 
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
@@ -856,7 +857,7 @@ bool Actor::isTalking() {
 	GrimEngine::SpeechMode m = g_grim->getSpeechMode();
 	TextObject *textObject = NULL;
 	if (_sayLineText)
-		textObject = TextObject::getPool()->getObject(_sayLineText);
+		textObject = TextObject::getPool().getObject(_sayLineText);
 	if ((m == GrimEngine::TextOnly && (!textObject || textObject->getDisabled())) ||
 			(m != GrimEngine::TextOnly && (strlen(_talkSoundName.c_str()) == 0 || !g_imuse->getSoundStatus(_talkSoundName.c_str())))) {
 		return false;
@@ -884,7 +885,7 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		delete TextObject::getPool()->getObject(_sayLineText);
+		delete TextObject::getPool().getObject(_sayLineText);
 		_sayLineText = 0;
 	}
 	if (g_grim->getTalkingActor() == this) {
@@ -1218,7 +1219,7 @@ void Actor::draw() {
 	}
 
 	if (_mustPlaceText) {
-		TextObject *textObject = TextObject::getPool()->getObject(_sayLineText);
+		TextObject *textObject = TextObject::getPool().getObject(_sayLineText);
 		if (textObject) {
 			if (x1 == 1000 || x2 == -1000 || y2 == -1000) {
 				textObject->setX(640 / 2);
@@ -1373,8 +1374,7 @@ Math::Vector3d Actor::handleCollisionTo(const Math::Vector3d &from, const Math::
 	}
 
 	Math::Vector3d p = pos;
-	for (Actor::Pool::Iterator i = getPool()->getBegin(); i != getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
+	foreach (Actor *a, Actor::getPool()) {
 		if (a != this && a->isInSet(_setName) && a->isVisible()) {
 			p = a->getTangentPos(from, p);
 		}

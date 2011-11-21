@@ -1419,14 +1419,13 @@ void Lua_V1::GetVisibleThings() {
 	lua_Object result = lua_createtable();
 
 	// TODO verify code below
-	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
-		if (!i->_value->isInSet(g_grim->getSetName()))
+	foreach (Actor *a, Actor::getPool()) {
+		if (!a->isInSet(g_grim->getSetName()))
 			continue;
 		// Consider the active actor visible
 		if (actor == a || actor->getYawTo(a) < 90) {
 			lua_pushobject(result);
-			lua_pushusertag(i->_key, MKTAG('A','C','T','R'));
+			lua_pushusertag(a->getId(), MKTAG('A','C','T','R'));
 			lua_pushnumber(1);
 			lua_settable();
 		}

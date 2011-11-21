@@ -177,14 +177,14 @@ GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	Set::getPool()->deleteObjects();
-	Actor::getPool()->deleteObjects();
-	PrimitiveObject::getPool()->deleteObjects();
-	TextObject::getPool()->deleteObjects();
-	Bitmap::getPool()->deleteObjects();
-	Font::getPool()->deleteObjects();
-	ObjectState::getPool()->deleteObjects();
-	PoolColor::getPool()->deleteObjects();
+	Set::getPool().deleteObjects();
+	Actor::getPool().deleteObjects();
+	PrimitiveObject::getPool().deleteObjects();
+	TextObject::getPool().deleteObjects();
+	Bitmap::getPool().deleteObjects();
+	Font::getPool().deleteObjects();
+	ObjectState::getPool().deleteObjects();
+	PoolColor::getPool().deleteObjects();
 
 	delete LuaBase::instance();
 	if (g_registry) {
@@ -415,9 +415,8 @@ void GrimEngine::drawPrimitives() {
 	_iris->draw();
 
 	// Draw text
-	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
-		 i != TextObject::getPool()->getEnd(); ++i) {
-		i->_value->draw();
+	foreach (TextObject *t, TextObject::getPool()) {
+		t->draw();
 	}
 }
 
@@ -447,9 +446,7 @@ void GrimEngine::luaUpdate() {
 	if (_currSet && (_mode == NormalMode || _mode == SmushMode)) {
 		// Update the actors. Do it here so that we are sure to react asap to any change
 		// in the actors state caused by lua.
-		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
-			Actor *a = i->_value;
-
+		foreach (Actor *a, Actor::getPool()) {
 			// Note that the actor need not be visible to update chores, for example:
 			// when Manny has just brought Meche back he is offscreen several times
 			// when he needs to perform certain chores
@@ -460,9 +457,8 @@ void GrimEngine::luaUpdate() {
 		_iris->update(_frameTime);
 	}
 
-	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
-		 i != TextObject::getPool()->getEnd(); i++) {
-		i->_value->update();
+	foreach (TextObject *t, TextObject::getPool()) {
+		t->update();
 	}
 }
 
@@ -489,9 +485,8 @@ void GrimEngine::updateDisplayScene() {
 				g_driver->releaseMovieFrame();
 		}
 		// Draw Primitives
-		for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
-			i != PrimitiveObject::getPool()->getEnd(); ++i) {
-			i->_value->draw();
+		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+			p->draw();
 		}
 		drawPrimitives();
 	} else if (_mode == NormalMode) {
@@ -538,9 +533,8 @@ void GrimEngine::updateDisplayScene() {
 		}
 
 		// Draw Primitives
-		for (PrimitiveObject::Pool::Iterator i = PrimitiveObject::getPool()->getBegin();
-			 i != PrimitiveObject::getPool()->getEnd(); ++i) {
-			i->_value->draw();
+		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+			p->draw();
 		}
 
 		_currSet->setupCamera();
@@ -550,8 +544,7 @@ void GrimEngine::updateDisplayScene() {
 		_currSet->setupLights();
 
 		// Draw actors
-		for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
-			Actor *a = i->_value;
+		foreach (Actor *a, Actor::getPool()) {
 			if (a->isInSet(_currSet->getName()) && a->isVisible())
 				a->draw();
 			a->undraw(a->isInSet(_currSet->getName()) && a->isVisible());
@@ -708,28 +701,28 @@ void GrimEngine::savegameRestore() {
 	delete _currSet;
 	_currSet = NULL;
 
-	PoolColor::getPool()->restoreObjects(_savedState);
+	PoolColor::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Colors restored succesfully.");
 
-	Bitmap::getPool()->restoreObjects(_savedState);
+	Bitmap::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps restored succesfully.");
 
-	Font::getPool()->restoreObjects(_savedState);
+	Font::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Fonts restored succesfully.");
 
-	ObjectState::getPool()->restoreObjects(_savedState);
+	ObjectState::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "ObjectStates restored succesfully.");
 
-	Set::getPool()->restoreObjects(_savedState);
+	Set::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Sets restored succesfully.");
 
-	TextObject::getPool()->restoreObjects(_savedState);
+	TextObject::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "TextObjects restored succesfully.");
 
-	PrimitiveObject::getPool()->restoreObjects(_savedState);
+	PrimitiveObject::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "PrimitiveObjects restored succesfully.");
 
-	Actor::getPool()->restoreObjects(_savedState);
+	Actor::getPool().restoreObjects(_savedState);
 	Debug::debug(Debug::Engine, "Actors restored succesfully.");
 
 	restoreGRIM();
@@ -770,14 +763,14 @@ void GrimEngine::restoreGRIM() {
 	// Actor stuff
 	int32 id = _savedState->readLEUint32();
 	if (id != 0) {
-		_selectedActor = Actor::getPool()->getObject(id);
+		_selectedActor = Actor::getPool().getObject(id);
 	}
-	_talkingActor = Actor::getPool()->getObject(_savedState->readLEUint32());
+	_talkingActor = Actor::getPool().getObject(_savedState->readLEUint32());
 
 	//TextObject stuff
 	_sayLineDefaults.setDisabled(_savedState->readLESint32());
-	_sayLineDefaults.setFGColor(PoolColor::getPool()->getObject(_savedState->readLEUint32()));
-	_sayLineDefaults.setFont(Font::getPool()->getObject(_savedState->readLEUint32()));
+	_sayLineDefaults.setFGColor(PoolColor::getPool().getObject(_savedState->readLEUint32()));
+	_sayLineDefaults.setFont(Font::getPool().getObject(_savedState->readLEUint32()));
 	_sayLineDefaults.setHeight(_savedState->readLESint32());
 	_sayLineDefaults.setJustify(_savedState->readLESint32());
 	_sayLineDefaults.setWidth(_savedState->readLESint32());
@@ -786,7 +779,7 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
 
 	// Set stuff
-	_currSet = Set::getPool()->getObject(_savedState->readLEUint32());
+	_currSet = Set::getPool().getObject(_savedState->readLEUint32());
 
 	_savedState->endSection();
 }
@@ -842,28 +835,28 @@ void GrimEngine::savegameSave() {
 
 	savegameCallback();
 
-	PoolColor::getPool()->saveObjects(_savedState);
+	PoolColor::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Colors saved succesfully.");
 
-	Bitmap::getPool()->saveObjects(_savedState);
+	Bitmap::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Bitmaps saved succesfully.");
 
-	Font::getPool()->saveObjects(_savedState);
+	Font::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Fonts saved succesfully.");
 
-	ObjectState::getPool()->saveObjects(_savedState);
+	ObjectState::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "ObjectStates saved succesfully.");
 
-	Set::getPool()->saveObjects(_savedState);
+	Set::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Sets saved succesfully.");
 
-	TextObject::getPool()->saveObjects(_savedState);
+	TextObject::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "TextObjects saved succesfully.");
 
-	PrimitiveObject::getPool()->saveObjects(_savedState);
+	PrimitiveObject::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "PrimitiveObjects saved succesfully.");
 
-	Actor::getPool()->saveObjects(_savedState);
+	Actor::getPool().saveObjects(_savedState);
 	Debug::debug(Debug::Engine, "Actors saved succesfully.");
 
 	saveGRIM();
@@ -930,9 +923,9 @@ void GrimEngine::saveGRIM() {
 
 Set *GrimEngine::findSet(const Common::String &name) {
 	// Find scene object
-	for (Set::Pool::Iterator i = Set::getPool()->getBegin(); i != Set::getPool()->getEnd(); ++i) {
-		if (i->_value->getName() == name)
-			return i->_value;
+	foreach (Set *s, Set::getPool()) {
+		if (s->getName() == name)
+			return s;
 	}
 	return NULL;
 }
@@ -978,8 +971,7 @@ void GrimEngine::setSet(Set *scene) {
 	// Stop the actors. This fixes bug #289 (https://github.com/residual/residual/issues/289)
 	// and it makes sense too, since when changing set the directions
 	// and coords change too.
-	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i) {
-		Actor *a = i->_value;
+	foreach (Actor *a, Actor::getPool()) {
 		a->stopWalking();
 	}
 

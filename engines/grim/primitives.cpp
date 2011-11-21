@@ -68,11 +68,11 @@ void PrimitiveObject::saveState(SaveGame *savedState) const {
 bool PrimitiveObject::restoreState(SaveGame *savedState) {
 	_type = savedState->readLESint32();
 
-	_color = PoolColor::getPool()->getObject(savedState->readLEUint32());
+	_color = PoolColor::getPool().getObject(savedState->readLEUint32());
 
 	_filled = savedState->readLEUint32();
 
-	_bitmap = Bitmap::getPool()->getObject(savedState->readLEUint32());
+	_bitmap = Bitmap::getPool().getObject(savedState->readLEUint32());
 
 	_p1.x = savedState->readLEUint32();
 	_p1.y = savedState->readLEUint32();

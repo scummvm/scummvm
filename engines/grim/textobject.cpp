@@ -86,7 +86,7 @@ void TextObject::saveState(SaveGame *state) const {
 }
 
 bool TextObject::restoreState(SaveGame *state) {
-	_fgColor = PoolColor::getPool()->getObject(state->readLEUint32());
+	_fgColor = PoolColor::getPool().getObject(state->readLEUint32());
 
 	_x            = state->readLESint32();
 	_y            = state->readLESint32();
@@ -101,7 +101,7 @@ bool TextObject::restoreState(SaveGame *state) {
 	_isSpeech     = state->readLESint32();
 	_elapsedTime  = state->readLESint32();
 
-	_font = Font::getPool()->getObject(state->readLEUint32());
+	_font = Font::getPool().getObject(state->readLEUint32());
 
 	_textID = state->readString();
 

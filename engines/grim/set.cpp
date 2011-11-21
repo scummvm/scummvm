@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
 #include "common/memstream.h"
+#include "common/foreach.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
@@ -70,8 +71,8 @@ Set::~Set() {
 			delete _sectors[i];
 		}
 		delete[] _sectors;
-		for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
-			delete (*i);
+		foreach (ObjectState *s, _states)
+			delete s;
 	}
 }
 
@@ -286,7 +287,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	_states.clear();
 	for (int i = 0; i < _numObjectStates; ++i) {
 		int32 id = savedState->readLEUint32();
-		ObjectState *o = ObjectState::getPool()->getObject(id);
+		ObjectState *o = ObjectState::getPool().getObject(id);
 		_states.push_back(o);
 	}
 
@@ -299,8 +300,8 @@ bool Set::restoreState(SaveGame *savedState) {
 
 		set._name = savedState->readString();
 
-		set._bkgndBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
-		set._bkgndZBm = Bitmap::getPool()->getObject(savedState->readLEUint32());
+		set._bkgndBm = Bitmap::getPool().getObject(savedState->readLEUint32());
+		set._bkgndZBm = Bitmap::getPool().getObject(savedState->readLEUint32());
 
 		set._pos      = savedState->readVector3d();
 		set._interest = savedState->readVector3d();

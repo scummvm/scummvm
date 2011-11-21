@@ -137,13 +137,14 @@ void Lua_V1::GetTextObjectDimensions() {
 
 void Lua_V1::ExpireText() {
 	// Expire all the text objects
-	for (TextObject::Pool::Iterator i = TextObject::getPool()->getBegin();
-		 i != TextObject::getPool()->getEnd(); ++i)
-		i->_value->setDisabled(true);
+	foreach (TextObject *t, TextObject::getPool()) {
+		t->setDisabled(true);
+	}
 
 	// Cleanup actor references to deleted text objects
-	for (Actor::Pool::Iterator i = Actor::getPool()->getBegin(); i != Actor::getPool()->getEnd(); ++i)
-		i->_value->lineCleanup();
+	foreach (Actor *a, Actor::getPool()) {
+		a->lineCleanup();
+	}
 }
 
 void Lua_V1::GetTextCharPosition() {

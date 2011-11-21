@@ -377,27 +377,31 @@ void LuaBase::pushobject(const PoolObjectBase *o) {
 }
 
 Actor *LuaBase::getactor(lua_Object obj) {
-	return Actor::getPool()->getObject(lua_getuserdata(obj));
+	return Actor::getPool().getObject(lua_getuserdata(obj));
+}
+
+Bitmap *LuaBase::getbitmap(lua_Object obj) {
+	return Bitmap::getPool().getObject(lua_getuserdata(obj));
 }
 
 TextObject *LuaBase::gettextobject(lua_Object obj) {
-	return TextObject::getPool()->getObject(lua_getuserdata(obj));
+	return TextObject::getPool().getObject(lua_getuserdata(obj));
 }
 
 Font *LuaBase::getfont(lua_Object obj) {
-	return Font::getPool()->getObject(lua_getuserdata(obj));
+	return Font::getPool().getObject(lua_getuserdata(obj));
 }
 
 PoolColor *LuaBase::getcolor(lua_Object obj) {
-	return PoolColor::getPool()->getObject(lua_getuserdata(obj));
+	return PoolColor::getPool().getObject(lua_getuserdata(obj));
 }
 
 PrimitiveObject *LuaBase::getprimitive(lua_Object obj) {
-	return PrimitiveObject::getPool()->getObject(lua_getuserdata(obj));
+	return PrimitiveObject::getPool().getObject(lua_getuserdata(obj));
 }
 
 ObjectState *LuaBase::getobjectstate(lua_Object obj) {
-	return ObjectState::getPool()->getObject(lua_getuserdata(obj));
+	return ObjectState::getPool().getObject(lua_getuserdata(obj));
 }
 
 void LuaBase::dummyHandler() {

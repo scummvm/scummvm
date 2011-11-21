@@ -31,6 +31,7 @@ namespace Grim {
 typedef uint32 lua_Object; // from lua/lua.h
 
 class Actor;
+class Bitmap;
 class PoolColor;
 class Costume;
 class Font;
@@ -142,6 +143,7 @@ protected:
 	void pushobject(const PoolObjectBase *o);
 	int getobject(lua_Object obj);
 	Actor *getactor(lua_Object obj);
+	Bitmap *getbitmap(lua_Object obj);
 	TextObject *gettextobject(lua_Object obj);
 	Font *getfont(lua_Object obj);
 	PoolColor *getcolor(lua_Object obj);

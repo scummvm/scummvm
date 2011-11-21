@@ -4,6 +4,7 @@
 
 #include "common/hashmap.h"
 #include "common/list.h"
+#include "common/foreach.h"
 
 #include "engines/grim/savegame.h"
 
@@ -23,7 +24,34 @@ class PoolObject : public PoolObjectBase {
 public:
 	class Pool {
 	public:
-		typedef typename Common::HashMap<int32, T *>::iterator Iterator;
+		template<class it, class Type>
+		class Iterator {
+		public:
+			Iterator(const Iterator &i) : _i(i._i) { }
+			Iterator(const it &i) : _i(i) { }
+
+			int32 getId() const { return _i->_key; }
+			Type &getValue() const { return _i->_value; }
+
+			Type &operator*() const { return _i->_value; }
+
+			Iterator &operator=(const Iterator &i) { _i = i._i; return *this; }
+
+			bool operator==(const Iterator i) const { return _i == i._i; }
+			bool operator!=(const Iterator i) const { return _i != i._i; }
+
+			Iterator &operator++() { ++_i; return *this; }
+			Iterator operator++(int) { Iterator iter = *this; ++_i; return iter; }
+
+			Iterator &operator--() { --_i; return *this; }
+			Iterator operator--(int) { Iterator iter = *this; --_i; return iter; }
+
+		private:
+			it _i;
+		};
+
+		typedef Iterator<typename Common::HashMap<int32, T *>::iterator, T *> iterator;
+		typedef Iterator<typename Common::HashMap<int32, T *>::const_iterator, T *const> const_iterator;
 
 		Pool();
 		~Pool();
@@ -32,8 +60,10 @@ public:
 		void removeObject(int32 id);
 
 		T *getObject(int32 id);
-		Iterator getBegin();
-		Iterator getEnd();
+		iterator begin();
+		const_iterator begin() const;
+		iterator end();
+		const_iterator end() const;
 		int getSize() const;
 		void deleteObjects();
 		void saveObjects(SaveGame *save);
@@ -92,7 +122,7 @@ public:
 	int32 getTag() const;
 	static int32 getTagStatic();
 
-	static Pool *getPool();
+	static Pool &getPool();
 
 protected:
 	PoolObject();
@@ -162,11 +192,11 @@ int PoolObject<T, tag>::getId() const {
 }
 
 template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool *PoolObject<T, tag>::getPool() {
+typename PoolObject<T, tag>::Pool &PoolObject<T, tag>::getPool() {
 	if (!s_pool) {
 		s_pool = new Pool();
 	}
-	return s_pool;
+	return *s_pool;
 }
 
 template <class T, int32 tag>
@@ -212,13 +242,23 @@ T *PoolObject<T, tag>::Pool::getObject(int32 id) {
 }
 
 template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool::Iterator PoolObject<T, tag>::Pool::getBegin() {
-	return _map.begin();
+typename PoolObject<T, tag>::Pool::iterator PoolObject<T, tag>::Pool::begin() {
+	return iterator(_map.begin());
 }
 
 template <class T, int32 tag>
-typename PoolObject<T, tag>::Pool::Iterator PoolObject<T, tag>::Pool::getEnd() {
-	return _map.end();
+typename PoolObject<T, tag>::Pool::const_iterator PoolObject<T, tag>::Pool::begin() const {
+	return const_iterator(_map.begin());
+}
+
+template <class T, int32 tag>
+typename PoolObject<T, tag>::Pool::iterator PoolObject<T, tag>::Pool::end() {
+	return iterator(_map.end());
+}
+
+template <class T, int32 tag>
+typename PoolObject<T, tag>::Pool::const_iterator PoolObject<T, tag>::Pool::end() const {
+	return const_iterator(_map.end());
 }
 
 template <class T, int32 tag>
@@ -229,7 +269,7 @@ int PoolObject<T, tag>::Pool::getSize() const {
 template <class T, int32 tag>
 void PoolObject<T, tag>::Pool::deleteObjects() {
 	while (!_map.empty()) {
-		delete getBegin()->_value;
+		delete *begin();
 	}
 	delete this;
 }
@@ -239,9 +279,9 @@ void PoolObject<T, tag>::Pool::saveObjects(SaveGame *state) {
 	state->beginSection(tag);
 
 	state->writeLEUint32(_map.size());
-	for (Iterator i = getBegin(); i != getEnd(); ++i) {
-		T *a = i->_value;
-		state->writeLESint32(i->_key);
+	for (iterator i = begin(); i != end(); ++i) {
+		T *a = *i;
+		state->writeLESint32(i.getId());
 
 		a->saveState(state);
 	}
@@ -267,8 +307,8 @@ void PoolObject<T, tag>::Pool::restoreObjects(SaveGame *state) {
 		tempMap[id] = t;
 		t->restoreState(state);
 	}
-	for (Iterator i = getBegin(); i != getEnd(); i++) {
-		delete i->_value;
+	for (iterator i = begin(); i != end(); i++) {
+		delete *i;
 	}
 	_map = tempMap;
 	_restoring = false;

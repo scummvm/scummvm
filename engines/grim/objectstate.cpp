@@ -100,8 +100,8 @@ bool ObjectState::restoreState(SaveGame *savedState) {
 	_setupID    = savedState->readLEUint32();
 	_pos        = (Position) savedState->readLEUint32();
 
-	_bitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
-	_zbitmap = Bitmap::getPool()->getObject(savedState->readLESint32());
+	_bitmap = Bitmap::getPool().getObject(savedState->readLESint32());
+	_zbitmap = Bitmap::getPool().getObject(savedState->readLESint32());
 
 	return true;
 }
