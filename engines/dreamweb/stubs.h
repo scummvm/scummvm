@@ -324,4 +324,5 @@
 	void powerlightoff();
 	void playchannel0(uint8 index);
 	void playchannel1(uint8 index);
+	void showmainops();
 

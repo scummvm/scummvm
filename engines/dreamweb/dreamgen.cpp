@@ -11045,28 +11045,6 @@ opsblock1:
 	blank();
 }
 
-void DreamGenContext::showmainops() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics);
-	di = (60)+10;
-	bx = (52)+10;
-	al = 8;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = (60)+59;
-	bx = (52)+30;
-	al = 7;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = (60)+128+4;
-	bx = (52)+12;
-	al = 1;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::showdiscops() {
 	STACK_CHECK;
 	ds = data.word(kTempgraphics);
@@ -15133,7 +15111,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_zoomonoff: zoomonoff(); break;
 		case addr_dosaveload: dosaveload(); break;
 		case addr_getbackfromops: getbackfromops(); break;
-		case addr_showmainops: showmainops(); break;
 		case addr_showdiscops: showdiscops(); break;
 		case addr_loadsavebox: loadsavebox(); break;
 		case addr_loadgame: loadgame(); break;

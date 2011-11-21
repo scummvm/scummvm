@@ -178,7 +178,6 @@ public:
 	static const uint16 addr_loadgame = 0xc844;
 	static const uint16 addr_loadsavebox = 0xc840;
 	static const uint16 addr_showdiscops = 0xc83c;
-	static const uint16 addr_showmainops = 0xc838;
 	static const uint16 addr_getbackfromops = 0xc834;
 	static const uint16 addr_dosaveload = 0xc830;
 	static const uint16 addr_zoomonoff = 0xc828;
@@ -1184,6 +1183,7 @@ public:
 	void uselighter();
 	void showmenu();
 	void usepoolreader();
+	//void showmainops();
 	void startdmablock();
 	void useopenbox();
 	void clearbuffers();
@@ -1481,7 +1481,6 @@ public:
 	void selectob();
 	//void checkcoords();
 	//void usetext();
-	void chewy();
 	//void accesslighton();
 	void useplinth();
 	//void adjustlen();
@@ -1553,7 +1552,7 @@ public:
 	void madman();
 	void createpanel();
 	//void turnpathon();
-	void enablesoundint();
+	void chewy();
 	void madmanstelly();
 	void constant();
 	void purgealocation();
@@ -1601,7 +1600,7 @@ public:
 	void playguitar();
 	//void showreelframe();
 	void searchforsame();
-	void showmainops();
+	void enablesoundint();
 	void getback1();
 	void setlocation();
 	void fadefromwhite();

@@ -367,5 +367,11 @@ void DreamGenContext::saveload() {
 		dosaveload();
 }
 
+void DreamGenContext::showmainops() {
+	showframe(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
+	showframe(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
+	showframe(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
+}
+
 } /*namespace dreamgen */
 
