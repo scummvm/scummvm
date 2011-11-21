@@ -290,6 +290,7 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	::createThumbnail(thumb, (const byte *)s.pixels, SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	g_globals->_screenSurface.unlockSurface();
+	thumb->free();
 	delete thumb;
 
 	// Write out the save date/time
