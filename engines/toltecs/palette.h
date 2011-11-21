@@ -41,7 +41,7 @@ public:
 
 	void setFullPalette(byte *palette);
 	void getFullPalette(byte *palette);
-	void setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex);
+	void setDeltaPalette(byte *palette, byte mask, int8 deltaValue, int16 count, int16 startIndex);
 
 	void loadAddPalette(uint resIndex, byte startIndex);
 	void loadAddPaletteFrom(byte *source, byte startIndex, byte count);
@@ -50,8 +50,8 @@ public:
 	uint16 findFragment(int16 id);
 	void clearFragments();
 
-	void buildColorTransTable(byte limit, char deltaValue, byte mask);
-	void buildColorTransTable2(byte limit, char deltaValue, byte mask);
+	void buildColorTransTable(byte limit, int8 deltaValue, byte mask);
+	void buildColorTransTable2(byte limit, int8 deltaValue, byte mask);
 	byte getColorTransPixel(byte pixel) const { return _colorTransTable[pixel]; }
 
 	byte *getMainPalette() { return _mainPalette; }

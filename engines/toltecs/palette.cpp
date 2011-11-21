@@ -59,7 +59,7 @@ void Palette::getFullPalette(byte *palette) {
 	}
 }
 
-void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 count, int16 startIndex) {
+void Palette::setDeltaPalette(byte *palette, byte mask, int8 deltaValue, int16 count, int16 startIndex) {
 	byte colors[768];
 
 	byte *palPtr = palette + startIndex * 3;
@@ -138,7 +138,7 @@ void Palette::clearFragments() {
 	_fragments.clear();
 }
 
-void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
+void Palette::buildColorTransTable(byte limit, int8 deltaValue, byte mask) {
 	byte r = 0, g = 0, b = 0;
 	
 	mask &= 7;
@@ -180,7 +180,7 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 	}
 }
 
-void Palette::buildColorTransTable2(byte limit, char deltaValue, byte mask) {
+void Palette::buildColorTransTable2(byte limit, int8 deltaValue, byte mask) {
 	// TODO
 }
 
