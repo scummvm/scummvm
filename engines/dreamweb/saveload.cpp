@@ -29,7 +29,6 @@
 namespace DreamGen {
 
 void DreamGenContext::loadgame() {
-	STACK_CHECK;
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
 		al = 41;
@@ -47,7 +46,6 @@ void DreamGenContext::loadgame() {
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
 void DreamGenContext::doload() {
-	STACK_CHECK;
 	int savegameId = (int16)ax;
 
 	data.byte(kLoadingorsave) = 1;
@@ -180,7 +178,6 @@ void DreamGenContext::doload() {
 
 
 void DreamGenContext::savegame() {
-	STACK_CHECK;
 	if (data.byte(kMandead) == 2) {
 		blank();
 		return;
