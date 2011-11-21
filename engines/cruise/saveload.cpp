@@ -84,6 +84,7 @@ void writeSavegameHeader(Common::OutSaveFile *out, CruiseSavegameHeader &header)
 	Graphics::Surface *thumb = new Graphics::Surface();
 	::createThumbnail(thumb, globalScreen, 320, 200, workpal);
 	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
 	delete thumb;
 }
 
