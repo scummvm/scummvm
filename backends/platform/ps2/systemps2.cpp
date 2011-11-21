@@ -558,11 +558,6 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 
-bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
-	_screen->grabScreen(surf);
-	return true;
-}
-
 void OSystem_PS2::updateScreen(void) {
 	if (_msgClearTime && (_msgClearTime < getMillis())) {
 		_screen->clearPrintfOverlay();

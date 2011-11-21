@@ -437,14 +437,6 @@ void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) {
 	}
 }
 
-void Gs2dScreen::grabScreen(Graphics::Surface *surf) {
-	assert(surf);
-	WaitSema(g_DmacSema);
-	surf->create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
-	memcpy(surf->pixels, _screenBuf, _width * _height);
-	SignalSema(g_DmacSema);
-}
-
 void Gs2dScreen::uploadToVram(void) {
 	if (_clutChanged) {
 		_clutChanged = false;
