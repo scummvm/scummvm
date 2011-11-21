@@ -189,6 +189,9 @@ public:
 		uint32 version;
 		byte gameID;
 		uint32 flags;
+		uint32 saveDate;
+		uint32 saveTime;
+		uint32 playTime;
 		Graphics::Surface *thumbnail;
 	};
 

@@ -166,9 +166,11 @@ bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-//		(f == kSupportsDeleteSave) ||
-	   	(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
@@ -220,10 +222,6 @@ int ToltecsMetaEngine::getMaximumSaveSlot() const {
 }
 
 void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
-	// Slot 0 can't be deleted, it's for restarting the game(s)
-	if (slot == 0)
-		return;
-
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String filename = Toltecs::ToltecsEngine::getSavegameFilename(target, slot);
 
@@ -240,19 +238,11 @@ void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
 		// Rename every slot greater than the deleted slot,
-		// Also do not rename quicksaves.
-		if (slotNum > slot && slotNum < 990) {
-			// FIXME: Our savefile renaming done here is inconsitent with what we do in
-			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
-			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
-			// we only rename the following slots in GUI_v2::deleteMenu until a slot
-			// is missing.
+		if (slotNum > slot) {
 			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
-
 			filename = Toltecs::ToltecsEngine::getSavegameFilename(target, ++slot);
 		}
 	}
-
 }
 
 SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
@@ -269,9 +259,24 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 		if (error == Toltecs::ToltecsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 
-			desc.setDeletableFlag(false);
+			desc.setDeletableFlag(true);
 			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);
+
+			if (header.version > 0) {
+				int day = (header.saveDate >> 24) & 0xFF;
+				int month = (header.saveDate >> 16) & 0xFF;
+				int year = header.saveDate & 0xFFFF;
+
+				desc.setSaveDate(year, month, day);
+
+				int hour = (header.saveTime >> 16) & 0xFF;
+				int minutes = (header.saveTime >> 8) & 0xFF;
+
+				desc.setSaveTime(hour, minutes);
+
+				desc.setPlayTime(header.playTime * 1000);
+			}
 
 			return desc;
 		}

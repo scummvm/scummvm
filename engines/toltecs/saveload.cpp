@@ -39,12 +39,12 @@ namespace Toltecs {
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
-#define TOLTECS_SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
+#define TOLTECS_SAVEGAME_VERSION 1
 
 ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 
 	header.version = in->readUint32LE();
-	if (header.version != TOLTECS_SAVEGAME_VERSION)
+	if (header.version > TOLTECS_SAVEGAME_VERSION)
 		return kRSHEInvalidVersion;
 
 	byte descriptionLen = in->readByte();
@@ -62,17 +62,30 @@ ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::Seekab
 	header.gameID = in->readByte();
 	header.flags = in->readUint32LE();
 
+	if (header.version > 0) {
+		header.saveDate = in->readUint32LE();
+		header.saveTime = in->readUint32LE();
+		header.playTime = in->readUint32LE();
+	} else {
+		header.saveDate = 0;
+		header.saveTime = 0;
+		header.playTime = 0;
+	}
+
 	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
 }
 
 void ToltecsEngine::savegame(const char *filename, const char *description) {
-
 	Common::OutSaveFile *out;
 	if (!(out = g_system->getSavefileManager()->openForSaving(filename))) {
 		warning("Can't create file '%s', game not saved", filename);
 		return;
 	}
 
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	// Header start
 	out->writeUint32LE(TOLTECS_SAVEGAME_VERSION);
 
 	byte descriptionLen = strlen(description);
@@ -84,6 +97,13 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	// Not used yet, reserved for future usage
 	out->writeByte(0);
 	out->writeUint32LE(0);
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint32 saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+	out->writeUint32LE(saveDate);
+	out->writeUint32LE(saveTime);
+	out->writeUint32LE(playTime);
+	// Header end
 
 	out->writeUint16LE(_cameraX);
 	out->writeUint16LE(_cameraY);
@@ -114,11 +134,9 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 
 	out->finalize();
 	delete out;
-
 }
 
 void ToltecsEngine::loadgame(const char *filename) {
-
 	Common::InSaveFile *in;
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		warning("Can't open file '%s', game not loaded", filename);
@@ -135,6 +153,8 @@ void ToltecsEngine::loadgame(const char *filename) {
 		return;
 	}
 	
+	g_engine->setTotalPlayTime(header.playTime * 1000);
+
 	_cameraX = in->readUint16LE();
 	_cameraY = in->readUint16LE();
 	_cameraHeight = in->readUint16LE();
@@ -171,7 +191,6 @@ void ToltecsEngine::loadgame(const char *filename) {
 
 	_newCameraX = _cameraX;
 	_newCameraY = _cameraY;
-
 }
 
 Common::Error ToltecsEngine::loadGameState(int slot) {

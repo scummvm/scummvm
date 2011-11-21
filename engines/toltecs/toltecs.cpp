@@ -166,6 +166,7 @@ Common::Error ToltecsEngine::run() {
 #endif
 
 	// Start main game loop
+	setTotalPlayTime(0);
 	_script->loadScript(0, 0);
 	_script->setMainScript(0);
 	if (ConfMan.hasKey("save_slot")) {
@@ -297,7 +298,6 @@ void ToltecsEngine::updateScreen() {
 }
 
 void ToltecsEngine::drawScreen() {
-
 	// FIXME: Quick hack, sometimes cameraY was negative (the code in updateCamera was at fault)
 	if (_cameraY < 0) _cameraY = 0;
 
@@ -318,7 +318,6 @@ void ToltecsEngine::drawScreen() {
 	_system->updateScreen();
 
 	updateCamera();
-
 }
 
 void ToltecsEngine::updateInput() {
@@ -430,7 +429,6 @@ void ToltecsEngine::setGuiHeight(int16 guiHeight) {
 }
 
 void ToltecsEngine::setCamera(int16 x, int16 y) {
-
 	_screen->finishTalkTextItems();
 
 	_screen->clearSprites();
@@ -440,7 +438,6 @@ void ToltecsEngine::setCamera(int16 x, int16 y) {
 
 	_cameraY = y;
 	_newCameraY = y;
-
 }
 
 bool ToltecsEngine::getCameraChanged() {
