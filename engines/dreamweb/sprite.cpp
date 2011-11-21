@@ -321,11 +321,12 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect ch
 
 		++sprite->animFrame;
 		if (sprite->animFrame == 1) { // doorsound2
+			uint8 soundIndex;
 			if (data.byte(kReallocation) == 5) // hoteldoor2
-				al = 13;
+				soundIndex = 13;
 			else
-				al = 0;
-			playchannel1();
+				soundIndex = 0;
+			playchannel1(soundIndex);
 		}
 		if (objData->frames[sprite->animFrame] == 255)
 			--sprite->animFrame;
@@ -337,11 +338,12 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect ch
 		// shut door
 
 		if (sprite->animFrame == 5) { // doorsound1;
+			uint8 soundIndex;
 			if (data.byte(kReallocation) == 5) // hoteldoor1
-				al = 13;
+				soundIndex = 13;
 			else
-				al = 1;
-			playchannel1();
+				soundIndex = 1;
+			playchannel1(soundIndex);
 		}
 		if (sprite->animFrame != 0)
 			--sprite->animFrame;
@@ -373,8 +375,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 	if (openDoor) {
 
 		if (sprite->animFrame == 1) {
-			al = 0;
-			playchannel1();
+			playchannel1(0);
 		}
 
 		if (sprite->animFrame == 6)
@@ -395,8 +396,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 		// shut door
 
 		if (sprite->animFrame == 5) {
-			al = 1;
-			playchannel1();
+			playchannel1(1);
 		}
 
 		if (sprite->animFrame != 0)
@@ -559,11 +559,12 @@ void DreamGenContext::showrain() {
 	if (engine->randomNumber() >= 1) // play thunder with 1 in 256 chance
 		return;
 
+	uint8 soundIndex;
 	if (data.byte(kCh0playing) != 6)
-		al = 4;
+		soundIndex = 4;
 	else
-		al = 7;
-	playchannel1();
+		soundIndex = 7;
+	playchannel1(soundIndex);
 }
 
 static void (DreamGenContext::*reelCallbacks[])() = {

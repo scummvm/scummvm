@@ -104,8 +104,7 @@ void DreamGenContext::fadeupmonfirst() {
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 128;
 	hangon(64);
-	al = 26;
-	playchannel1();
+	playchannel1(26);
 	hangon(64);
 }
 

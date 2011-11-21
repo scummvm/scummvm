@@ -90,8 +90,7 @@ void DreamGenContext::usemon() {
 	deallocatemem(data.word(kTextfile2));
 	deallocatemem(data.word(kTextfile3));
 	data.byte(kGetback) = 1;
-	al = 26;
-	playchannel1();
+	playchannel1(26);
 	data.byte(kManisoffscreen) = 0;
 	restoreall();
 	redrawmainscrn();
@@ -187,8 +186,7 @@ void DreamGenContext::scrollmonitor() {
 	printlogo();
 	printundermon();
 	workToScreenCPP();
-	al = 25;
-	playchannel1();
+	playchannel1(25);
 }
 
 void DreamGenContext::showcurrentfile() {

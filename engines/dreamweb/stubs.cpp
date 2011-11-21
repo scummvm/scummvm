@@ -544,8 +544,7 @@ void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 		al = textIndex;
 		loadspeech();
 		if (data.byte(kSpeechloaded) == 1) {
-			al = 50+12;
-			playchannel1();
+			playchannel1(50+12);
 		}
 		dx = pop();
 		cx = pop();
@@ -2202,6 +2201,16 @@ Frame * DreamGenContext::tempGraphics2() {
 
 Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)segRef(data.word(kTempgraphics3)).ptr(0, 0);
+}
+
+void DreamGenContext::playchannel0(uint8 index) {
+	al = index;
+	playchannel0();
+}
+
+void DreamGenContext::playchannel1(uint8 index) {
+	al = index;
+	playchannel1();
 }
 
 } /*namespace dreamgen */
