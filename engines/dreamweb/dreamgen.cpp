@@ -2232,51 +2232,6 @@ bigroom:
 	_add(data.byte(kMapysize), 8);
 }
 
-void DreamGenContext::createpanel() {
-	STACK_CHECK;
-	di = 0;
-	bx = 8;
-	ds = data.word(kIcons2);
-	al = 0;
-	ah = 2;
-	showframe();
-	di = 160;
-	bx = 8;
-	ds = data.word(kIcons2);
-	al = 0;
-	ah = 2;
-	showframe();
-	di = 0;
-	bx = 104;
-	ds = data.word(kIcons2);
-	al = 0;
-	ah = 2;
-	showframe();
-	di = 160;
-	bx = 104;
-	ds = data.word(kIcons2);
-	al = 0;
-	ah = 2;
-	showframe();
-}
-
-void DreamGenContext::createpanel2() {
-	STACK_CHECK;
-	createpanel();
-	di = 0;
-	bx = 0;
-	ds = data.word(kIcons2);
-	al = 5;
-	ah = 2;
-	showframe();
-	di = 160;
-	bx = 0;
-	ds = data.word(kIcons2);
-	al = 5;
-	ah = 2;
-	showframe();
-}
-
 void DreamGenContext::transfermap() {
 	STACK_CHECK;
 	di = data.word(kExframepos);
@@ -14812,8 +14767,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_deleverything: deleverything(); break;
 		case addr_showpcx: showpcx(); break;
 		case addr_setmode: setmode(); break;
-		case addr_createpanel: createpanel(); break;
-		case addr_createpanel2: createpanel2(); break;
 		case addr_vsync: vsync(); break;
 		case addr_doshake: doshake(); break;
 		case addr_transfermap: transfermap(); break;

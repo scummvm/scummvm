@@ -266,6 +266,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'powerlightoff',
 	'accesslighton',
 	'accesslightoff',
+	'createpanel',
+	'createpanel2',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

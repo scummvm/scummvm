@@ -492,5 +492,20 @@ void DreamGenContext::loadpalfromiff() {
 	}
 }
 
+void DreamGenContext::createpanel() {
+	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
+	showframe(icons, 0, 8, 0, 2);
+	showframe(icons, 160, 8, 0, 2);
+	showframe(icons, 0, 104, 0, 2);
+	showframe(icons, 160, 104, 0, 2);
+}
+
+void DreamGenContext::createpanel2() {
+	createpanel();
+	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
+	showframe(icons, 0, 0, 5, 2);
+	showframe(icons, 160, 0, 5, 2);
+}
+
 } /*namespace dreamgen */
 

@@ -475,8 +475,6 @@ public:
 	static const uint16 addr_transfermap = 0xc244;
 	static const uint16 addr_doshake = 0xc20c;
 	static const uint16 addr_vsync = 0xc208;
-	static const uint16 addr_createpanel2 = 0xc200;
-	static const uint16 addr_createpanel = 0xc1fc;
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_deleverything = 0xc1c0;
@@ -1331,7 +1329,7 @@ public:
 	void dumpzoom();
 	//void aboutturn();
 	void usealtar();
-	void createpanel2();
+	//void createpanel2();
 	//void turnonpower();
 	void manasleep2();
 	void moretalk();
@@ -1550,7 +1548,7 @@ public:
 	void interviewer();
 	void purgeanitem();
 	void madman();
-	void createpanel();
+	//void createpanel();
 	//void turnpathon();
 	void chewy();
 	void madmanstelly();
