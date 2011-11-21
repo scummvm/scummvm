@@ -30,11 +30,9 @@
 namespace Toltecs {
 
 Palette::Palette(ToltecsEngine *vm) : _vm(vm) {
-
 	clearFragments();
 	
 	memset(_colorTransTable, 0, sizeof(_colorTransTable));
-	
 }
 
 Palette::~Palette() {
@@ -115,7 +113,6 @@ void Palette::addFragment(uint resIndex, int16 id) {
 	debug(0, "Palette::addFragment() index = %02X; count = %02X", fragment.index, fragment.count);
 
 	_fragmentIndex += count;
-
 }
 
 uint16 Palette::findFragment(int16 id) {
@@ -142,9 +139,6 @@ void Palette::clearFragments() {
 }
 
 void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
-
-	// TODO
-
 	byte r = 0, g = 0, b = 0;
 	
 	mask &= 7;
@@ -152,7 +146,7 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 	for (int i = 0; i < 256; i++) {
 
 		if (deltaValue < 0) {
-			// TODO
+			// TODO (probably unused)
 			warning("Palette::buildColorTransTable(%d, %d, %02X) not yet implemented!", limit, deltaValue, mask);
 		} else {
 			r = _mainPalette[i * 3 + 0];
@@ -184,17 +178,13 @@ void Palette::buildColorTransTable(byte limit, char deltaValue, byte mask) {
 		_colorTransTable[i] = bestIndex;
 
 	}
-
 }
 
 void Palette::buildColorTransTable2(byte limit, char deltaValue, byte mask) {
-
 	// TODO
-
 }
 
 void Palette::saveState(Common::WriteStream *out) {
-
 	// Save currently active palette
 	byte palette[768];
 	getFullPalette(palette);
@@ -213,11 +203,9 @@ void Palette::saveState(Common::WriteStream *out) {
 		out->writeByte(fragment.count);
 	}
 	out->writeByte(_fragmentIndex);
-
 }
 
 void Palette::loadState(Common::ReadStream *in) {
-
 	// Save currently active palette
 	byte palette[768];
 	in->read(palette, 768);
@@ -237,7 +225,6 @@ void Palette::loadState(Common::ReadStream *in) {
 		_fragments.push_back(fragment);
 	}
 	_fragmentIndex = in->readByte();
-
 }
 
 
