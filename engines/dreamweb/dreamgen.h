@@ -129,8 +129,6 @@ public:
 	static const uint16 addr_channel1only = 0xc91c;
 	static const uint16 addr_channel0only = 0xc918;
 	static const uint16 addr_volumeadjust = 0xc908;
-	static const uint16 addr_playchannel1 = 0xc900;
-	static const uint16 addr_playchannel0 = 0xc8fc;
 	static const uint16 addr_out22c = 0xc8f8;
 	static const uint16 addr_soundend = 0xc8f4;
 	static const uint16 addr_interupttest = 0xc8f0;
@@ -1516,8 +1514,8 @@ public:
 	void rollendcredits();
 	void intro1text();
 	void transfertoex();
-	void playchannel1();
-	void playchannel0();
+	//void playchannel1();
+	//void playchannel0();
 	//void usemon();
 	void steady();
 	//void pixelcheckset();

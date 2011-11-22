@@ -11831,98 +11831,6 @@ soundfail:
 	deallocatemem();
 }
 
-void DreamGenContext::playchannel0() {
-	STACK_CHECK;
-	_cmp(data.byte(kSoundint), 255);
-	if (flags.z())
-		return /* (dontbother4) */;
-	push(es);
-	push(ds);
-	push(bx);
-	push(cx);
-	push(di);
-	push(si);
-	data.byte(kCh0playing) = al;
-	es = data.word(kSounddata);
-	_cmp(al, 12);
-	if (flags.c())
-		goto notsecondbank;
-	es = data.word(kSounddata2);
-	_sub(al, 12);
-notsecondbank:
-	data.byte(kCh0repeat) = ah;
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	data.word(kCh0emmpage) = ax;
-	ax = es.word(bx+1);
-	data.word(kCh0offset) = ax;
-	ax = es.word(bx+3);
-	data.word(kCh0blockstocopy) = ax;
-	_cmp(data.byte(kCh0repeat), 0);
-	if (flags.z())
-		goto nosetloop;
-	ax = data.word(kCh0emmpage);
-	data.word(kCh0oldemmpage) = ax;
-	ax = data.word(kCh0offset);
-	data.word(kCh0oldoffset) = ax;
-	ax = data.word(kCh0blockstocopy);
-	data.word(kCh0oldblockstocopy) = ax;
-nosetloop:
-	si = pop();
-	di = pop();
-	cx = pop();
-	bx = pop();
-	ds = pop();
-	es = pop();
-}
-
-void DreamGenContext::playchannel1() {
-	STACK_CHECK;
-	_cmp(data.byte(kSoundint), 255);
-	if (flags.z())
-		return /* (dontbother5) */;
-	_cmp(data.byte(kCh1playing), 7);
-	if (flags.z())
-		return /* (dontbother5) */;
-	push(es);
-	push(ds);
-	push(bx);
-	push(cx);
-	push(di);
-	push(si);
-	data.byte(kCh1playing) = al;
-	es = data.word(kSounddata);
-	_cmp(al, 12);
-	if (flags.c())
-		goto notsecondbank1;
-	es = data.word(kSounddata2);
-	_sub(al, 12);
-notsecondbank1:
-	ah = 0;
-	_add(ax, ax);
-	bx = ax;
-	_add(ax, ax);
-	_add(bx, ax);
-	al = es.byte(bx);
-	ah = 0;
-	data.word(kCh1emmpage) = ax;
-	ax = es.word(bx+1);
-	data.word(kCh1offset) = ax;
-	ax = es.word(bx+3);
-	data.word(kCh1blockstocopy) = ax;
-	si = pop();
-	di = pop();
-	cx = pop();
-	bx = pop();
-	ds = pop();
-	es = pop();
-}
-
 void DreamGenContext::volumeadjust() {
 	STACK_CHECK;
 	al = data.byte(kVolumedirection);
@@ -15109,8 +15017,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_interupttest: interupttest(); break;
 		case addr_soundend: soundend(); break;
 		case addr_out22c: out22c(); break;
-		case addr_playchannel0: playchannel0(); break;
-		case addr_playchannel1: playchannel1(); break;
 		case addr_volumeadjust: volumeadjust(); break;
 		case addr_channel0only: channel0only(); break;
 		case addr_channel1only: channel1only(); break;

@@ -322,7 +322,9 @@
 	void turnonpower();
 	void powerlighton();
 	void powerlightoff();
-	void playchannel0(uint8 index);
+	void playchannel0();
+	void playchannel0(uint8 index, uint8 repeat);
+	void playchannel1();
 	void playchannel1(uint8 index);
 	void showmainops();
 	void createpanel();

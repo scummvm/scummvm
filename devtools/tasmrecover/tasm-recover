@@ -266,6 +266,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'powerlightoff',
 	'accesslighton',
 	'accesslightoff',
+	'playchannel0',
+	'playchannel1',
 	'createpanel',
 	'createpanel2',
 	], skip_output = [
