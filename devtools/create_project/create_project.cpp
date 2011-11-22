@@ -125,6 +125,7 @@ typedef StringList TokenList;
  * character (e.g. ',').
  *
  * @param input The text to be tokenized.
+ * @param separator The token separator..
  * @return A list of tokens.
  */
 TokenList tokenize(const std::string &input, char separator = ' ');
