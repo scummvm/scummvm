@@ -844,7 +844,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 			scene->_stripManager.start(9103 + BF_GLOBALS._v4CEE6, &BF_GLOBALS._stripProxy);
 		return true;
 		break;
-	case 1:
+	case INV_COLT45:
 		if (BF_GLOBALS._v4CEE2 > 1) {
 			if (BF_GLOBALS._v4CEE2 != 4) {
 				if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(fGunLoaded)) && (BF_GLOBALS.getHasBullets())) {
@@ -876,8 +876,8 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 			return NamedObject::startAction(action, event);
 		}
 		break;
-	case 39:
-	case 53:
+	case INV_BADGE:
+	case INV_ID:
 		if (BF_GLOBALS._v4CEE2 >= 4)
 			return NamedObject::startAction(action, event);
 
@@ -892,7 +892,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 
 		return true;
 		break;
-	case 57:
+	case INV_YELLOW_CORD:
 		if (BF_GLOBALS._v4CEE2 < 4) {
 			BF_GLOBALS._player.disableControl();
 			scene->_yellowCord.fixPriority(121);
@@ -914,7 +914,7 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 			return true;
 		}
 		break;
-	case 58:
+	case INV_HALF_YELLOW_CORD:
 		if (BF_GLOBALS._v4CECC == 1)
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
@@ -929,8 +929,8 @@ bool Scene910::Nico::startAction(CursorType action, Event &event) {
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 		break;
-	case 59:
-	case 61:
+	case INV_BLACK_CORD:
+	case INV_HALF_BLACK_CORD:
 		SceneItem::display(910, 83, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
@@ -965,7 +965,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 		scene->_stripManager.start(9107 + BF_GLOBALS._v4CEE8, &BF_GLOBALS._stripProxy);
 		return true;
 		break;
-	case 1:
+	case INV_COLT45:
 		if ((BF_GLOBALS.getFlag(gunDrawn)) && (BF_GLOBALS.getFlag(fGunLoaded)) && (BF_GLOBALS.getHasBullets())){
 			BF_GLOBALS._player.disableControl();
 			if (BF_GLOBALS._v4CEE4 == 2) {
@@ -983,7 +983,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 		} else
 			return NamedObject::startAction(action, event);
 		break;
-	case 57:
+	case INV_YELLOW_CORD:
 		if (BF_GLOBALS._v4CECC == 1) {
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
@@ -1012,7 +1012,7 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 			}
 		}
 		break;
-	case 58:
+	case INV_HALF_YELLOW_CORD:
 		if (BF_GLOBALS._v4CECC == 1) {
 			SceneItem::display(910, 84, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
@@ -1031,8 +1031,8 @@ bool Scene910::Stuart::startAction(CursorType action, Event &event) {
 			return true;
 		}
 		break;
-	case 59:
-	case 61:
+	case INV_BLACK_CORD:
+	case INV_HALF_BLACK_CORD:
 		SceneItem::display(910, 83, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
