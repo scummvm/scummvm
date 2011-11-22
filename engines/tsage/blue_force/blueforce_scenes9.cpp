@@ -797,7 +797,7 @@ bool Scene910::Lyle::startAction(CursorType action, Event &event) {
 		else
 			return false;
 	} else if (action == CURSOR_TALK) {
-		if ((BF_GLOBALS._v4CEE0 != 0) || (BF_GLOBALS._v4CEE2 != 0)) {
+		if ((BF_GLOBALS._hiddenDoorStatus != 0) || (BF_GLOBALS._v4CEE2 != 0)) {
 			scene->_stripManager.start(9100 + _field90, &BF_GLOBALS._stripProxy);
 			if (_field90 < 1)
 				_field90++;
@@ -1074,12 +1074,12 @@ bool Scene910::PowerCord::startAction(CursorType action, Event &event) {
 	if ((action == CURSOR_LOOK) || (action == CURSOR_TALK) || (action < CURSOR_WALK)) {
 		if (_field90 == 1)
 			return false;
-		if ((_field92 != 1) || (BF_GLOBALS._v4CEE0 == 0 ))
+		if ((_field92 != 1) || (BF_GLOBALS._hiddenDoorStatus == 0 ))
 			return NamedObject::startAction(action, event);
 		return false;
 	} else if (action == CURSOR_USE) {
 		if (_field90 == 0) {
-			if ((BF_GLOBALS._v4CEE0 == 0) || (_field92 != 1)) {
+			if ((BF_GLOBALS._hiddenDoorStatus == 0) || (_field92 != 1)) {
 				BF_GLOBALS._player.disableControl();
 				if (_field92 == 1) {
 					scene->_sceneSubMode = 8;
@@ -1239,7 +1239,7 @@ void Scene910::BreakerBoxInset::remove() {
 
 void Scene910::Object13::synchronize(Serializer &s) {
 	NamedObject::synchronize(s);
-	s.syncAsSint16LE(_field90);
+	s.syncAsSint16LE(_state);
 	s.syncAsSint16LE(_mode);
 }
 
@@ -1283,11 +1283,11 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 		}
 
 		if (_mode != 1)
-			BF_GLOBALS._breakerBoxStatusArr[_field90 - 1] = (_field90 + 251) % 256;
+			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = (_state + 251) % 256;
 		else
-			BF_GLOBALS._breakerBoxStatusArr[_field90 - 1] = _field90;
+			BF_GLOBALS._breakerBoxStatusArr[_state - 1] = _state;
 
-		switch (_field90) {
+		switch (_state) {
 		case 1:
 			if (BF_GLOBALS._v4CEE2 < 1) {
 				if (_frame == 2) {
@@ -1374,9 +1374,9 @@ bool Scene910::Object13::startAction(CursorType action, Event &event) {
 		case 15:
 			if ((BF_GLOBALS._v4CECA == 2) && (BF_GLOBALS._breakerBoxStatusArr[17] == 1)) {
 				if (_frame == 7)
-					scene->subE83E1();
+					scene->closeHiddenDoor();
 				else
-					scene->subE82BD();
+					scene->openHiddenDoor();
 			}
 			return true;
 		default:
@@ -1399,7 +1399,7 @@ void Scene910::Object13::setupBreaker(int x, int y, int mode, int8 frameNumber) 
 	NamedObject::postInit();
 	_mode = mode;
 	scene->_breakerButtonCtr++;
-	_field90 = scene->_breakerButtonCtr;
+	_state = scene->_breakerButtonCtr;
 	setVisage(910);
 
 	if (mode == 1) {
@@ -1529,7 +1529,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case CURSOR_USE:
-		switch (_frame - _field90 - 2) {
+		switch (_frame - _state - 2) {
 		case 0:
 			SceneItem::display(910, 15, SET_WIDTH, 312,
 					SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
@@ -1544,11 +1544,11 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, 910);
 			} else if (BF_GLOBALS._v4CECA == 2) {
 				BF_GLOBALS._v4CECA = 1;
-				BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 3 - _field90);
+				BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 3 - _state);
 				BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, 1);
 				scene->_blackCord.setPosition(Common::Point(540, 100));
 			}
-			setFrame(_field90 + 2);
+			setFrame(_state + 2);
 			break;
 		case 2:
 			if (BF_GLOBALS._v4CECC == 1) {
@@ -1557,14 +1557,14 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 910);
 			} else if (BF_GLOBALS._v4CECC == 2) {
 				BF_GLOBALS._v4CECC = 1;
-				BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 3 - _field90);
+				BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 3 - _state);
 				BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 1);
 				scene->_yellowCord.setPosition(Common::Point(540, 100));
 			}
-			setFrame(_field90 + 2);
+			setFrame(_state + 2);
 			break;
 		case 3:
-			if ((_position.x - 12) - (5 * _field90) < event.mousePos.x) {
+			if ((_position.x - 12) - (5 * _state) < event.mousePos.x) {
 				if (BF_GLOBALS._v4CECA == 1) {
 					BF_GLOBALS._v4CECA = 0;
 					BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 1);
@@ -1572,11 +1572,11 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 					scene->_blackCord.setPosition(Common::Point(540, 100));
 				} else if (BF_GLOBALS._v4CECA == 2) {
 					BF_GLOBALS._v4CECA = 1;
-					BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 3 - _field90);
+					BF_INVENTORY.setObjectScene(INV_BLACK_CORD, 3 - _state);
 					BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, 1);
 					scene->_blackCord.setPosition(Common::Point(540, 100));
 				}
-				setFrame(_field90 + 4);
+				setFrame(_state + 4);
 			} else {
 				if (BF_GLOBALS._v4CECC == 1) {
 					BF_GLOBALS._v4CECC = 0;
@@ -1584,17 +1584,17 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 					BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 910);
 				} else if (BF_GLOBALS._v4CECC == 2) {
 					BF_GLOBALS._v4CECC = 1;
-					BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 3 - _field90);
+					BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, 3 - _state);
 					BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 1);
 					scene->_yellowCord.setPosition(Common::Point(540, 100));
 				}
-				setFrame(_field90 + 3);
+				setFrame(_state + 3);
 			}
 		default:
 			break;
 		}
-		BF_GLOBALS._breakerBoxStatusArr[_field90 + 15] = _frame;
-		if (_field90 == 0) {
+		BF_GLOBALS._breakerBoxStatusArr[_state + 15] = _frame;
+		if (_state == 0) {
 			if (_frame == 2)
 				BF_GLOBALS._breakerBoxStatusArr[13] = 2;
 			else
@@ -1602,7 +1602,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_HALF_YELLOW_CORD:
-		if (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == _field90 + 2) {
+		if (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == _state + 2) {
 			SceneItem::display(910, 85, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
@@ -1622,22 +1622,22 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 	case INV_YELLOW_CORD:
 		if (BF_GLOBALS._v4CECC == 0) {
 			BF_GLOBALS._v4CECC = 1;
-			BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, _field90 + 2);
+			BF_INVENTORY.setObjectScene(INV_YELLOW_CORD, _state + 2);
 			BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, 1);
 		} else if (BF_GLOBALS._v4CECC == 1) {
 			BF_GLOBALS._v4CECC = 2;
-			BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, _field90 + 2);
+			BF_INVENTORY.setObjectScene(INV_HALF_YELLOW_CORD, _state + 2);
 			scene->_yellowCord.setStrip(4);
 			scene->_yellowCord.setFrame(2);
 			scene->_yellowCord.setPosition(Common::Point(135, 93));
 			scene->_yellowCord.fixPriority(50);
 		}
-		if (_frame - _field90 == 2)
-			setFrame(_field90 + 4);
-		else if (_frame - _field90 == 3)
-			setFrame(_field90 + 5);
-		BF_GLOBALS._breakerBoxStatusArr[_field90 + 15] = _frame;
-		if (_field90 == 0) {
+		if (_frame - _state == 2)
+			setFrame(_state + 4);
+		else if (_frame - _state == 3)
+			setFrame(_state + 5);
+		BF_GLOBALS._breakerBoxStatusArr[_state + 15] = _frame;
+		if (_state == 0) {
 			if (_frame == 2)
 				BF_GLOBALS._breakerBoxStatusArr[13] = 2;
 			else
@@ -1645,7 +1645,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 		}
 		return true;
 	case INV_HALF_BLACK_CORD:
-		if (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == _field90 + 2) {
+		if (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == _state + 2) {
 			SceneItem::display(910, 85, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
@@ -1656,7 +1656,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 	//No break on purpose
 	case INV_BLACK_CORD:
 		if (BF_GLOBALS._v4CECA == 0) {
-			if (_field90 == 1) {
+			if (_state == 1) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForBlackCord)) {
 					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForBlackCord);
@@ -1668,10 +1668,10 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				}
 			}
 			BF_GLOBALS._v4CECA = 1;
-			BF_INVENTORY.setObjectScene(INV_BLACK_CORD, _field90 + 2);
+			BF_INVENTORY.setObjectScene(INV_BLACK_CORD, _state + 2);
 			BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, 1);
 		} else if (BF_GLOBALS._v4CECA == 1) {
-			if (_field90 == 1) {
+			if (_state == 1) {
 				if (!BF_GLOBALS.getFlag(fGotPointsForBlackCord)) {
 					T2_GLOBALS._uiElements.addScore(30);
 					BF_GLOBALS.setFlag(fGotPointsForBlackCord);
@@ -1683,7 +1683,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				}
 			}
 			BF_GLOBALS._v4CECA = 2;
-			BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, _field90 + 2);
+			BF_INVENTORY.setObjectScene(INV_HALF_BLACK_CORD, _state + 2);
 			scene->_blackCord.setStrip(4);
 			scene->_blackCord.setFrame(1);
 			scene->_blackCord.setPosition(Common::Point(135, 93));
@@ -1692,17 +1692,17 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 			scene->_blackCord._field90 = 1;
 			if (BF_GLOBALS._breakerBoxStatusArr[17] == 1) {
 				if (BF_GLOBALS._breakerBoxStatusArr[14] == 2)
-					scene->subE83E1();
+					scene->closeHiddenDoor();
 				else
-					scene->subE82BD();
+					scene->openHiddenDoor();
 			}
 		}
-		if (_frame - _field90 == 2)
-			setFrame(_field90 + 3);
-		else if (_frame - _field90 == 4)
-			setFrame(_field90 + 5);
-		BF_GLOBALS._breakerBoxStatusArr[_field90 + 15] = _frame;
-		if (_field90 == 0) {
+		if (_frame - _state == 2)
+			setFrame(_state + 3);
+		else if (_frame - _state == 4)
+			setFrame(_state + 5);
+		BF_GLOBALS._breakerBoxStatusArr[_state + 15] = _frame;
+		if (_state == 0) {
 			if (_frame == 2)
 				BF_GLOBALS._breakerBoxStatusArr[13] = 2;
 			else
@@ -1716,10 +1716,10 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 
 void Scene910::BlackPlug::init(int x, int y, int arg8, int8 argA) {
 	NamedObject::postInit();
-	_field90 = arg8;
+	_state = arg8;
 	_mode = argA;
 	setVisage(910);
-	if (_field90 == 0)
+	if (_state == 0)
 		setStrip(7);
 	else
 		setStrip(3);
@@ -1776,9 +1776,9 @@ bool Scene910::PowerButton::startAction(CursorType action, Event &event) {
 			_object32.setFrame(7);
 			if (BF_GLOBALS._v4CECA == 2) {
 				if (BF_GLOBALS._breakerBoxStatusArr[14] == 2)
-					scene->subE83E1();
+					scene->closeHiddenDoor();
 				else
-					scene->subE82BD();
+					scene->openHiddenDoor();
 			}
 		} else {
 			scene->_sound1.release();
@@ -1878,7 +1878,7 @@ bool Scene910::Item3::startAction(CursorType action, Event &event) {
 }
 
 bool Scene910::Item9::startAction(CursorType action, Event &event) {
-	if (BF_GLOBALS._v4CEE0 == 0)
+	if (BF_GLOBALS._hiddenDoorStatus == 0)
 		return NamedHotspot::startAction(action, event);
 	else
 		return false;
@@ -1905,7 +1905,7 @@ bool Scene910::Item15::startAction(CursorType action, Event &event) {
 bool Scene910::Item16::startAction(CursorType action, Event &event) {
 	Scene910 *scene = (Scene910 *)BF_GLOBALS._sceneManager._scene;
 
-	if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0))
+	if ((BF_GLOBALS._hiddenDoorStatus == 0) || (BF_GLOBALS._v4CEE2 != 0))
 		return false;
 
 	if (BF_GLOBALS._player._visage == 1911) {
@@ -2077,7 +2077,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._breakerBoxStatusArr[16] = 4;
 		BF_GLOBALS._breakerBoxStatusArr[17] = 1;
 		BF_GLOBALS._v4CECA = 2;
-		BF_GLOBALS._v4CEE0 = 1;
+		BF_GLOBALS._hiddenDoorStatus = 1;
 		_yellowCord.setPosition(Common::Point(291, -30));
 		BF_GLOBALS._v4CECC = 0;
 	}
@@ -2195,7 +2195,7 @@ void Scene910::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._v4CEC8 == 0)
 		_object5.hide();
 
-	if (BF_GLOBALS._v4CEE0 == 0) {
+	if (BF_GLOBALS._hiddenDoorStatus == 0) {
 		_object5.setFrame(1);
 		_fakeWall.setPosition(Common::Point(292, 107));
 		if (BF_GLOBALS._v4CECC != 2)
@@ -2377,7 +2377,7 @@ void Scene910::signal() {
 		BF_GLOBALS._player.enableControl();
 		break;
 	case 9101:
-		if ((BF_GLOBALS._v4CEE0 == 0) && (BF_GLOBALS._v4CEC8 != 0) && (BF_GLOBALS._breakerBoxStatusArr[17] == 0) && (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 910) && (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == 910))
+		if ((BF_GLOBALS._hiddenDoorStatus == 0) && (BF_GLOBALS._v4CEC8 != 0) && (BF_GLOBALS._breakerBoxStatusArr[17] == 0) && (BF_INVENTORY.getObjectScene(INV_YELLOW_CORD) == 910) && (BF_INVENTORY.getObjectScene(INV_BLACK_CORD) == 910))
 			BF_GLOBALS.clearFlag(fGotPointsForSearchingDA);
 		else
 			BF_GLOBALS.setFlag(fGotPointsForSearchingDA);
@@ -2621,7 +2621,7 @@ void Scene910::signal() {
 	case 9130:
 		_lyle.setAction(&_sequenceManager2, NULL, 9133, &_lyle, NULL);
 		BF_GLOBALS._breakerBoxStatusArr[14] = 3;
-		subE82BD();
+		openHiddenDoor();
 		BF_GLOBALS._walkRegions.disableRegion(15);
 		break;
 	case 9132:
@@ -2728,7 +2728,7 @@ void Scene910::process(Event &event) {
 		if (_item17._bounds.contains(event.mousePos)) {
 				GfxSurface surface = _cursorVisage.getFrame(EXITFRAME_SW);
 				BF_GLOBALS._events.setCursor(surface);
-		} else if ((BF_GLOBALS._v4CEE0 == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
+		} else if ((BF_GLOBALS._hiddenDoorStatus == 0) || (BF_GLOBALS._v4CEE2 != 0)) {
 			CursorType cursorId = BF_GLOBALS._events.getCursor();
 			BF_GLOBALS._events.setCursor(cursorId);
 		} else if (!_item16._bounds.contains(event.mousePos)) {
@@ -2811,14 +2811,14 @@ void Scene910::dispatch() {
 			setAction(&_sequenceManager1, this, 9101, &BF_GLOBALS._player, NULL);
 		} else {
 			_sceneMode = 9146;
-			if (BF_GLOBALS._v4CEE0 == 0)
+			if (BF_GLOBALS._hiddenDoorStatus == 0)
 				setAction(&_sequenceManager1, this, 9146, &BF_GLOBALS._player, NULL);
 			else
 				setAction(&_sequenceManager1, this, 9145, &BF_GLOBALS._player, NULL);
 		}
 	}
 
-	if ((BF_GLOBALS._player._position.x > 265) && (BF_GLOBALS._player._position.y < 102) && (BF_GLOBALS._v4CEE0 != 0) && (_sceneMode != 9143)) {
+	if ((BF_GLOBALS._player._position.x > 265) && (BF_GLOBALS._player._position.y < 102) && (BF_GLOBALS._hiddenDoorStatus != 0) && (_sceneMode != 9143)) {
 		BF_GLOBALS._player.disableControl();
 		if (BF_GLOBALS.getFlag(gunDrawn)) {
 			_sceneSubMode = 3;
@@ -2838,7 +2838,7 @@ void Scene910::dispatch() {
 		}
 	}
 
-	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._player._position.x > 250) && (_sceneMode != 9135) && (_sceneMode != 11) && (BF_GLOBALS._v4CEE0 != 0) && (BF_GLOBALS._v4CEE2 == 0)) {
+	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._player._position.x > 250) && (_sceneMode != 9135) && (_sceneMode != 11) && (BF_GLOBALS._hiddenDoorStatus != 0) && (BF_GLOBALS._v4CEE2 == 0)) {
 		BF_GLOBALS._player.disableControl();
 		_shadow.remove();
 		_nico.remove();
@@ -2851,7 +2851,7 @@ void Scene910::dispatch() {
 }
 
 void Scene910::checkGun() {
-	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._v4CEE2 == 0) && (BF_GLOBALS._v4CEE0 != 0))
+	if ((BF_GLOBALS._dayNumber == 5) && (BF_GLOBALS._v4CEE2 == 0) && (BF_GLOBALS._hiddenDoorStatus != 0))
 		SceneItem::display(910, 70, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
@@ -2861,15 +2861,15 @@ void Scene910::checkGun() {
 		SceneExt::checkGun();
 }
 
-void Scene910::subE82BD() {
-	if (BF_GLOBALS._v4CEE0 != 0)
+void Scene910::openHiddenDoor() {
+	if (BF_GLOBALS._hiddenDoorStatus != 0)
 		return;
 
 	if (! BF_GLOBALS.getFlag(fGotPointsForLightsOn)) {
 		T2_GLOBALS._uiElements.addScore(50);
 		BF_GLOBALS.setFlag(fGotPointsForLightsOn);
 	}
-	BF_GLOBALS._v4CEE0 = 1;
+	BF_GLOBALS._hiddenDoorStatus = 1;
 	BF_GLOBALS._player.disableControl();
 	BF_GLOBALS._walkRegions.enableRegion(10);
 	_sceneMode = 9114;
@@ -2880,14 +2880,14 @@ void Scene910::subE82BD() {
 		setAction(&_sequenceManager1, this, 9114, &_fakeWall, &_object5, NULL);
 }
 
-void Scene910::subE83E1() {
-	if (BF_GLOBALS._v4CEE0 != 0) {
+void Scene910::closeHiddenDoor() {
+	if (BF_GLOBALS._hiddenDoorStatus != 0) {
 		_fakeWall.show();
 		if ((BF_GLOBALS._bookmark == bEndDayThree) && (!BF_GLOBALS.getFlag(fGotPointsForOpeningDoor))) {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForOpeningDoor);
 		}
-		BF_GLOBALS._v4CEE0 = 0;
+		BF_GLOBALS._hiddenDoorStatus = 0;
 		BF_GLOBALS._walkRegions.disableRegion(10);
 		BF_GLOBALS._player.disableControl();
 		_sceneMode = 9115;

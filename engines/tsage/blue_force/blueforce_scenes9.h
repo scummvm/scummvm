@@ -170,7 +170,7 @@ class Scene910: public PalettedScene {
 
 	class Object13: public NamedObject {
 	protected:
-		int _field90, _mode;
+		int _state, _mode;
 	public:
 		void setupBreaker(int x, int y, int mode, int8 frameNumber);
 		virtual void synchronize(Serializer &s);
@@ -295,8 +295,8 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void checkGun();
-	void subE82BD();
-	void subE83E1();
+	void openHiddenDoor();
+	void closeHiddenDoor();
 };
 
 class Scene920: public SceneExt {

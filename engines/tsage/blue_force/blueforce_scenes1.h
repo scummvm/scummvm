@@ -177,7 +177,7 @@ class Scene115: public SceneExt {
 	};
 	class Tony: public NamedObject {
 	public:
-		int _field15F8;
+		int _talkToTonyCtr2;
 		virtual bool startAction(CursorType action, Event &event);
 	};
 	class Object3: public NamedObject {
@@ -420,7 +420,7 @@ public:
 	GarageExit _garageExit;
 	ASoundExt _sound1;
 	SceneMessage _sceneMessage;
-	int _fieldC56;
+	int _dispatchMode;
 
 	Scene180();
 	virtual void synchronize(Serializer &s);
@@ -476,10 +476,7 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void dispatch();
-	virtual void synchronize(Serializer &s) {
-		SceneExt::synchronize(s);
-		s.syncAsSint16LE(_fieldB52);
-	}
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace BlueForce

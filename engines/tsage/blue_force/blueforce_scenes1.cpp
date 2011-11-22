@@ -1082,8 +1082,8 @@ bool Scene115::Tony::startAction(CursorType action, Event &event) {
 					BF_GLOBALS.setFlag(fTalkedToTony);
 				} else
 					scene->_sceneMode = 1151;
-			} else if (_field15F8 == 0) {
-				_field15F8++;
+			} else if (_talkToTonyCtr2 == 0) {
+				_talkToTonyCtr2++;
 				scene->_sceneMode = 1171;
 			} else
 				scene->_sceneMode = 1172;
@@ -1140,8 +1140,8 @@ bool Scene115::Tony::startAction(CursorType action, Event &event) {
 					scene->setAction(&scene->_action2);
 				}
 			}
-		} else if (_field15F8 == 0) {
-			_field15F8++;
+		} else if (_talkToTonyCtr2 == 0) {
+			_talkToTonyCtr2++;
 			if (BF_GLOBALS.getFlag(onDuty)) {
 				scene->_sceneMode = 1182;
 				scene->setAction(&scene->_action9);
@@ -1628,7 +1628,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	_tony.fixPriority(95);
 	_tony.animate(ANIM_MODE_2, NULL);
 	_tony._numFrames = 5;
-	_tony._field15F8 = 0;
+	_tony._talkToTonyCtr2 = 0;
 	_talkToTonyCtr = 0;
 
 	//Neon sign
@@ -2764,12 +2764,12 @@ bool Scene180::GarageExit::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene180::Scene180(): SceneExt() {
-	_fieldC56 = 0;
+	_dispatchMode = 0;
 }
 
 void Scene180::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_fieldC56);
+	s.syncAsSint16LE(_dispatchMode);
 }
 
 void Scene180::postInit(SceneObjectList *OwnerList) {
@@ -2784,7 +2784,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	_garageExit.setDetails(Rect(243, 93, 275, 122), 180, -1, -1, -1, 1, NULL);
 	_gameTextSpeaker._textPos.y = 180;
 	_stripManager.addSpeaker(&_gameTextSpeaker);
-	_fieldC56 = 0;
+	_dispatchMode = 0;
 	setZoomPercents(121, 60, 125, 70);
 
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
@@ -2874,7 +2874,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 			_vechile._moveDiff = Common::Point(40, 5);
 			_vechile.setPosition(Common::Point(-25, 171));
 
-			_fieldC56 = 1;
+			_dispatchMode = 1;
 
 			BF_GLOBALS._sound1.play(29);
 			_sceneMode = 1;
@@ -2896,14 +2896,14 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 				_vechile._frame = 5;
 				_vechile.changeZoom(75);
 				
-				_fieldC56 = 1;
+				_dispatchMode = 1;
 				_vechile._moveDiff.x = 45;
 			} else {
 				_vechile.setVisage(444);
 				_vechile.setStrip(2);
 				_vechile.changeZoom(85);
 
-				_fieldC56 = 3;
+				_dispatchMode = 3;
 				_vechile._moveDiff.x = 30;
 			}
 
@@ -2935,7 +2935,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 void Scene180::signal() {
 	switch (_sceneMode) {
 	case 1:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		switch (BF_GLOBALS._bookmark) {
 		case bFlashBackThree:
 			BF_GLOBALS._bookmark = bDroppedOffLyle;
@@ -2953,12 +2953,12 @@ void Scene180::signal() {
 		setAction(&_sequenceManager, this, 1802, &_vechile, &_object1, NULL);
 		break;
 	case 2:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._driveToScene);
 		break;
 	case 3:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		BF_GLOBALS._sound1.stop();
 		_stripManager.start(1800, this);
 		_sceneMode = 4;
@@ -3040,7 +3040,7 @@ void Scene180::signal() {
 		}
 		break;
 	case 1800:
-		_fieldC56 = 2;
+		_dispatchMode = 2;
 		_vechile._moveDiff.x = 10;
 		_sceneMode = 2;
 		ADD_MOVER(_vechile, -25, 171);
@@ -3079,7 +3079,7 @@ void Scene180::process(Event &event) {
 }
 
 void Scene180::dispatch() {
-	switch (_fieldC56) {
+	switch (_dispatchMode) {
 	case 1:
 		if (_vechile._mover && (_vechile._percent > 50))
 			_vechile.changeZoom(_vechile._percent - 1);
@@ -3400,6 +3400,11 @@ void Scene190::dispatch() {
 
 		ADD_MOVER(BF_GLOBALS._player, 330, BF_GLOBALS._player._position.y);
 	}
+}
+
+void Scene190::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_fieldB52);
 }
 
 } // End of namespace BlueForce
