@@ -123,7 +123,8 @@ void MusicBase::loadNewMusic() {
 	if (stream) {
 		// not all tracks should loop
 		bool loops = true;
-		if ((section == 1 && song == 1) || (section == 1 && song == 4)
+		if ((section == 0 && song == 1)
+		 || (section == 1 && song == 1) || (section == 1 && song == 4)
 		 || (section == 2 && song == 1) || (section == 2 && song == 4)
 		 || (section == 4 && song == 2) || (section == 4 && song == 3)
 		 || (section == 4 && song == 5) || (section == 4 && song == 6)
