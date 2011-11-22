@@ -478,9 +478,9 @@ engine_disable_all() {
 # Enable the given engine
 engine_enable() {
 	# Get the parameter
-	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
-		eng=`echo $1 | cut -d '=' -f 1`
-		opt=`echo $1 | cut -d '=' -f 2`
+	if ( echo $1 | grep ':' ) 2> /dev/null > /dev/null ; then
+		eng=`echo $1 | cut -d ':' -f 1`
+		opt=`echo $1 | cut -d ':' -f 2`
 	else
 		eng=$1
 		opt=yes
