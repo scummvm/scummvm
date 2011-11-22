@@ -3115,6 +3115,7 @@ bool Scene930::Object1::startAction(CursorType action, Event &event) {
 }
 
 bool Scene930::Object2::startAction(CursorType action, Event &event) {
+// Small box Inset
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 
 	if (action != CURSOR_USE)
@@ -3136,13 +3137,13 @@ bool Scene930::Object3::startAction(CursorType action, Event &event) {
 	if (action != CURSOR_USE)
 		return NamedObject::startAction(action, event);
 
-	if (scene->_v141C == 0)
+	if (!scene->_bootInsetDisplayed)
 		scene->setAction(&scene->_action1);
 	return true;
 }
 
 bool Scene930::Object4::startAction(CursorType action, Event &event) {
-// Boot window
+// Boot inset
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -3165,7 +3166,7 @@ bool Scene930::Object4::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._bookmark >= bFlashBackTwo) {
 			_lookLineNum = 71;
 			NamedObject::startAction(action, event);
-			scene->subF3D6F();
+			scene->ShowSoleInset();
 			remove();
 		} else
 			NamedObject::startAction(action, event);
@@ -3177,9 +3178,10 @@ bool Scene930::Object4::startAction(CursorType action, Event &event) {
 }
 
 void Scene930::Object4::remove() {
+// Boots inset
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 
-	if (scene->_v141C && !BF_GLOBALS._sceneObjects->contains(&scene->_object5)) {
+	if (scene->_bootInsetDisplayed && !BF_GLOBALS._sceneObjects->contains(&scene->_soleInset)) {
 		scene->_boots.setAction(&scene->_action3);
 	}
 
@@ -3187,6 +3189,7 @@ void Scene930::Object4::remove() {
 }
 
 bool Scene930::Object5::startAction(CursorType action, Event &event) {
+// Boots sole inset
 	Scene930 *scene = (Scene930 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -3195,9 +3198,9 @@ bool Scene930::Object5::startAction(CursorType action, Event &event) {
 	case CURSOR_USE:
 		if (BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1)
 			return NamedObject::startAction(action, event);
-		if (scene->_v141A == 0) {
+		if (!scene->_soleOpened) {
 			animate(ANIM_MODE_4, getFrameCount() - 1, 1, NULL);
-			scene->_v141A = 1;
+			scene->_soleOpened = 1;
 			_lookLineNum = 76;
 			_useLineNum = 78;
 		} else {
@@ -3242,7 +3245,7 @@ void Scene930::Action1::signal() {
 	case 0:
 		setDelay(10);
 		BF_GLOBALS._player.disableControl();
-		scene->_v141C = 1;
+		scene->_bootInsetDisplayed = 1;
 		break;
 	case 1: {
 		Common::Point pt(50, 142);
@@ -3266,7 +3269,7 @@ void Scene930::Action1::signal() {
 		BF_GLOBALS._player.animate(ANIM_MODE_5, this);
 		break;
 	case 5:
-		scene->showBootWindow();
+		scene->showBootInset();
 		if (!BF_GLOBALS.getFlag(fGotPointsForCPU)) {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_GLOBALS.setFlag(fGotPointsForCPU);
@@ -3302,7 +3305,7 @@ void Scene930::Action2::signal() {
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		scene->subF3C07();
+		scene->ShowBoxInset();
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -3328,7 +3331,7 @@ void Scene930::Action3::signal() {
 		BF_GLOBALS._player.setVisage(368);
 		BF_GLOBALS._player.setStrip(6);
 		BF_GLOBALS._player.setFrame(1);
-		scene->_v141C = 0;
+		scene->_bootInsetDisplayed = 0;
 		remove();
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		BF_GLOBALS._player.enableControl();
@@ -3346,8 +3349,8 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 	if (BF_GLOBALS._dayNumber == 0)
 		BF_GLOBALS._dayNumber = 1;
 	setZoomPercents(83, 75, 140, 100);
-	_v141A = 0;
-	_v141C = 0;
+	_soleOpened = 0;
+	_bootInsetDisplayed = 0;
 	if (BF_INVENTORY.getObjectScene(INV_9MM_BULLETS) != 1) {
 		_box.postInit();
 		_box.setVisage(930);
@@ -3398,7 +3401,8 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 		_sceneMode = 0;
 		setAction(&_sequenceManager1, this, 9300, &BF_GLOBALS._player, NULL);
 	} else {
-		_v141C = 1;
+		// After flashback
+		_bootInsetDisplayed = 1;
 		BF_GLOBALS._player.animate(ANIM_MODE_NONE);
 		BF_GLOBALS._player.setPosition(Common::Point(50, 142));
 		BF_GLOBALS._player.setVisage(931);
@@ -3408,7 +3412,7 @@ void Scene930::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._player.changeZoom(110);
 		_boots.setFrame(2);
-		showBootWindow();
+		showBootInset();
 	}
 
 }
@@ -3446,49 +3450,49 @@ void Scene930::dispatch() {
 	SceneExt::dispatch();
 }
 
-void Scene930::showBootWindow() {
-	_bootsWindow.postInit();
-	_bootsWindow.setVisage(930);
-	_bootsWindow.setStrip(3);
-	_bootsWindow.setFrame2(1);
-	_bootsWindow.fixPriority(260);
-	_bootsWindow.setPosition(Common::Point(147, 128));
-	_bootsWindow.setDetails(930, 69, 70, 93);
+void Scene930::showBootInset() {
+	_bootsInset.postInit();
+	_bootsInset.setVisage(930);
+	_bootsInset.setStrip(3);
+	_bootsInset.setFrame2(1);
+	_bootsInset.fixPriority(260);
+	_bootsInset.setPosition(Common::Point(147, 128));
+	_bootsInset.setDetails(930, 69, 70, 93);
 }
 
-void Scene930::subF3C07() {
-	_object2.postInit();
-	_object2.setVisage(930);
-	_object2.setStrip(1);
-	_object2.setFrame2(2);
-	_object2.fixPriority(260);
-	_object2.setPosition(Common::Point(147, 128));
-	_object2.setDetails(930, 73, 74, 75);
+void Scene930::ShowBoxInset() {
+	_boxInset.postInit();
+	_boxInset.setVisage(930);
+	_boxInset.setStrip(1);
+	_boxInset.setFrame2(2);
+	_boxInset.fixPriority(260);
+	_boxInset.setPosition(Common::Point(147, 128));
+	_boxInset.setDetails(930, 73, 74, 75);
 }
 
-void Scene930::subF3D6F() {
-	_object5.postInit();
-	_object5.setVisage(930);
-	_object5.setStrip(3);
+void Scene930::ShowSoleInset() {
+	_soleInset.postInit();
+	_soleInset.setVisage(930);
+	_soleInset.setStrip(3);
 	if (BF_INVENTORY.getObjectScene(INV_SCHEDULE) == 1) {
-		_object5.setFrame(_object5.getFrameCount());
-		_object5.setDetails(930, 92, 77, -1);
-	} else if (_v141A == 0) {
-		_object5.setFrame(2);
-		_object5.setDetails(930, 93, 77, -1);
+		_soleInset.setFrame(_soleInset.getFrameCount());
+		_soleInset.setDetails(930, 92, 77, -1);
+	} else if (!_soleOpened) {
+		_soleInset.setFrame(2);
+		_soleInset.setDetails(930, 93, 77, -1);
 	} else {
-		_object5.setFrame(_object5.getFrameCount());
-		_object5.setDetails(930, 76, 77, 78);
+		_soleInset.setFrame(_soleInset.getFrameCount());
+		_soleInset.setDetails(930, 76, 77, 78);
 	}
 
-	_object5.fixPriority(260);
-	_object5.setPosition(Common::Point(147, 128));
+	_soleInset.fixPriority(260);
+	_soleInset.setPosition(Common::Point(147, 128));
 }
 
 void Scene930::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_v141A);
-	s.syncAsSint16LE(_v141C);
+	s.syncAsSint16LE(_soleOpened);
+	s.syncAsSint16LE(_bootInsetDisplayed);
 }
 
 /*--------------------------------------------------------------------------

@@ -378,16 +378,16 @@ class Scene930: public PalettedScene {
 		virtual void signal();
 	};
 
-	void showBootWindow();
-	void subF3C07();
-	void subF3D6F();
+	void showBootInset();
+	void ShowBoxInset();
+	void ShowSoleInset();
 public:
 	SequenceManager _sequenceManager1;
 	Object1 _box;
-	Object2 _object2;
+	Object2 _boxInset;
 	Object3 _boots;
-	Object4 _bootsWindow;
-	Object5 _object5;
+	Object4 _bootsInset;
+	Object5 _soleInset;
 
 	Item1 _item1;
 	NamedHotspot _item2;
@@ -417,8 +417,8 @@ public:
 
 	SpeakerGameText gameTextSpeaker;
 
-	int _v141A;
-	int _v141C;
+	bool _soleOpened;
+	int _bootInsetDisplayed;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
