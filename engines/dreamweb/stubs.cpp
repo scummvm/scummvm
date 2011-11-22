@@ -2206,27 +2206,24 @@ Frame * DreamGenContext::tempGraphics3() {
 void DreamGenContext::playchannel0(uint8 index, uint8 repeat) {
 	if (data.byte(kSoundint) == 255)
 		return;
-	push(es);
-	push(bx);
+
 	data.byte(kCh0playing) = index;
+	Sound *soundBank;
 	if (index >= 12) {
-		es = data.word(kSounddata2);
+		soundBank = (Sound *)segRef(data.word(kSounddata2)).ptr(0, 0);
 		index -= 12;
 	} else
-		es = data.word(kSounddata);
+		soundBank = (Sound *)segRef(data.word(kSounddata)).ptr(0, 0);
 
 	data.byte(kCh0repeat) = repeat;
-	bx = index * 6;
-	data.word(kCh0emmpage) = es.byte(bx);
-	data.word(kCh0offset) = es.word(bx+1);
-	data.word(kCh0blockstocopy) = es.word(bx+3);
+	data.word(kCh0emmpage) = soundBank[index].emmPage;
+	data.word(kCh0offset) = soundBank[index].offset();
+	data.word(kCh0blockstocopy) = soundBank[index].blockCount();
 	if (repeat) {
 		data.word(kCh0oldemmpage) = data.word(kCh0emmpage);
 		data.word(kCh0oldoffset) = data.word(kCh0offset);
 		data.word(kCh0oldblockstocopy) = data.word(kCh0blockstocopy);
 	}
-	bx = pop();
-	es = pop();
 }
 
 void DreamGenContext::playchannel0() {
@@ -2238,21 +2235,18 @@ void DreamGenContext::playchannel1(uint8 index) {
 		return;
 	if (data.byte(kCh1playing) == 7)
 		return;
-	push(es);
-	push(bx);
+
 	data.byte(kCh1playing) = index;
+	Sound *soundBank;
 	if (index >= 12) {
-		es = data.word(kSounddata2);
+		soundBank = (Sound *)segRef(data.word(kSounddata2)).ptr(0, 0);
 		index -= 12;
 	} else
-		es = data.word(kSounddata);
+		soundBank = (Sound *)segRef(data.word(kSounddata)).ptr(0, 0);
 
-	bx = index * 6;
-	data.word(kCh1emmpage) = es.byte(bx);
-	data.word(kCh1offset) = es.word(bx+1);
-	data.word(kCh1blockstocopy) = es.word(bx+3);
-	bx = pop();
-	es = pop();
+	data.word(kCh1emmpage) = soundBank[index].emmPage;
+	data.word(kCh1offset) = soundBank[index].offset();
+	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
 }
 
 void DreamGenContext::playchannel1() {
