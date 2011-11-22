@@ -1062,7 +1062,7 @@ for ac_option in $@; do
 		engine_disable_all
 		;;
 	--enable-engine=*)
-		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable ${engine_name}
 		done
 		;;
