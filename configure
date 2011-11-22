@@ -1063,7 +1063,17 @@ for ac_option in $@; do
 		;;
 	--enable-engine=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
-			engine_enable ${engine_name}
+			engine_enable "${engine_name}"
+		done
+		;;
+	--enable-engine-static=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:static"
+		done
+		;;
+	--enable-engine-dynamic=*)
+		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
+			engine_enable "${engine_name}:dynamic"
 		done
 		;;
 	--disable-engine=*)
