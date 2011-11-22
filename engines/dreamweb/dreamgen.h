@@ -57,7 +57,6 @@ public:
 	static const uint16 addr_getridoftemp = 0xcb70;
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
-	static const uint16 addr_findroominloc = 0xcb58;
 	static const uint16 addr_disablepath = 0xcb50;
 	static const uint16 addr_restoreall = 0xcb44;
 	static const uint16 addr_restorereels = 0xcb40;
@@ -1288,7 +1287,7 @@ public:
 	void slabdoord();
 	void adjustup();
 	void slabdoorf();
-	void findroominloc();
+	//void loadintotemp();
 	void loadintroroom();
 	void saveseg();
 	//void showblink();
@@ -1603,8 +1602,8 @@ public:
 	void checksoundint();
 	void usewindow();
 	void wearshades();
-	void onedigit();
 	void pitinterupt();
+	void onedigit();
 	void deleverything();
 	void fadescreendown();
 	//void findxyfrompath();
@@ -1890,7 +1889,7 @@ public:
 	//void printboth();
 	//void standardload();
 	void undertextline();
-	//void loadintotemp();
+	//void findroominloc();
 	void sitdowninbar();
 	void shownames();
 	void savefileread();

@@ -2253,5 +2253,12 @@ void DreamGenContext::playchannel1() {
 	playchannel1(al);
 }
 
+void DreamGenContext::findroominloc() {
+	uint8 x = data.byte(kMapx) / 11;
+	uint8 y = data.byte(kMapy) / 10;
+	uint8 roomNum = y * 6 + x;
+	data.byte(kRoomnum) = roomNum;
+}
+
 } /*namespace dreamgen */
 

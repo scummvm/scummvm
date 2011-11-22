@@ -13384,25 +13384,6 @@ lookx2:
 	es.byte(bx+6) = al;
 }
 
-void DreamGenContext::findroominloc() {
-	STACK_CHECK;
-	al = data.byte(kMapy);
-	cx = -6;
-looky:
-	_add(cx, 6);
-	_sub(al, 10);
-	if (!flags.c())
-		goto looky;
-	al = data.byte(kMapx);
-	_dec(cx);
-lookx:
-	_inc(cx);
-	_sub(al, 11);
-	if (!flags.c())
-		goto lookx;
-	data.byte(kRoomnum) = cl;
-}
-
 void DreamGenContext::allocateload() {
 	STACK_CHECK;
 	push(es);
@@ -15089,7 +15070,6 @@ void DreamGenContext::__dispatch_call(uint16 addr) {
 		case addr_restorereels: restorereels(); break;
 		case addr_restoreall: restoreall(); break;
 		case addr_disablepath: disablepath(); break;
-		case addr_findroominloc: findroominloc(); break;
 		case addr_dontloadseg: dontloadseg(); break;
 		case addr_allocateload: allocateload(); break;
 		case addr_getridoftemp: getridoftemp(); break;

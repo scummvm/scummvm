@@ -329,4 +329,5 @@
 	void showmainops();
 	void createpanel();
 	void createpanel2();
+	void findroominloc();
 
