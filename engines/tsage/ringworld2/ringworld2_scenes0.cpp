@@ -579,7 +579,7 @@ bool Scene125::Item4::startAction(CursorType action, Event &event) {
 	Scene125 *scene = (Scene125 *)R2_GLOBALS._sceneManager._scene;
 	switch (action) {
 	case CURSOR_USE:
-		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldSceneNumber) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 126;
 			scene->setAction(&scene->_sequenceManager, scene, 126, &scene->_object7, NULL);
@@ -621,13 +621,13 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 
 	if (R2_GLOBALS._sceneManager._previousScene != 125) 
 		// Save the prior scene to return to when the console is turned off
-		R2_GLOBALS._player._oldSceneNumber = R2_GLOBALS._sceneManager._previousScene;
+		R2_GLOBALS._player._oldCharacterScene[1] = R2_GLOBALS._sceneManager._previousScene;
 
 	R2_GLOBALS._player.postInit();
 	R2_GLOBALS._player.hide();
 	R2_GLOBALS._player.disableControl();
 
-	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldSceneNumber) {
+	if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) == R2_GLOBALS._player._oldCharacterScene[1]) {
 		_object7.postInit();
 		_object7.setup(160, 3, 5);
 		_object7.setPosition(Common::Point(47, 167));
@@ -783,7 +783,7 @@ void Scene125::signal() {
 		}
 		break;
 	case 125:
-		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldSceneNumber);
+		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, R2_GLOBALS._player._oldCharacterScene[1]);
 		break;
 	case 126:
 		R2_INVENTORY.setObjectScene(R2_OPTO_DISK, 1);
@@ -884,7 +884,7 @@ void Scene125::consoleAction(int id) {
 		_icon2.setIcon(23);
 		break;
 	case 6:
-		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldSceneNumber);
+		R2_GLOBALS._sceneManager.changeScene(R2_GLOBALS._player._oldCharacterScene[1]);
 		break;
 	case 7:
 		if (_consoleMode == 11)
@@ -947,7 +947,7 @@ void Scene125::consoleAction(int id) {
 		break;
 	case 13:
 		consoleAction(2);
-		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != R2_GLOBALS._player._oldSceneNumber) {
+		if (R2_INVENTORY.getObjectScene(R2_OPTO_DISK) != R2_GLOBALS._player._oldCharacterScene[1]) {
 			SceneItem::display2(126, 17);
 		} else {
 			R2_GLOBALS._player.disableControl();
@@ -1852,7 +1852,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 
 	case 3:
 		if (R2_GLOBALS._sceneManager._previousScene == 1500) {
-			R2_GLOBALS._player._fieldBC = 3150;
+			R2_GLOBALS._player._oldCharacterScene[3] = 3150;
 			R2_GLOBALS._player._characterScene[3] = 3150;
 			R2_GLOBALS._player._effect = 0;
 			R2_GLOBALS._player.setAction(NULL);

@@ -2982,13 +2982,12 @@ Player::Player(): SceneObject() {
 
 	// Return to Ringworld specific fields
 	_characterIndex = 0;
-	_oldSceneNumber = 0;
-	_fieldBC = 0;
 
 	for (int i = 0; i < MAX_CHARACTERS; ++i) {
 		_characterScene[i] = 0;
 		_characterStrip[i] = 0;
 		_characterFrame[i] = 0;
+		_oldCharacterScene[i] = 0;
 	}
 }
 
@@ -3086,11 +3085,9 @@ void Player::synchronize(Serializer &s) {
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
 		s.syncAsSint16LE(_characterIndex);
-		s.syncAsSint16LE(_oldSceneNumber);
-		s.syncAsSint16LE(_fieldBC);
-
 		for (int i = 0; i < MAX_CHARACTERS; ++i) {
 			s.syncAsSint16LE(_characterScene[i]);
+			s.syncAsSint16LE(_oldCharacterScene[i]);
 			s.syncAsSint16LE(_characterPos[i].x);
 			s.syncAsSint16LE(_characterPos[i].y);
 			s.syncAsSint16LE(_characterStrip[i]);
