@@ -110,7 +110,7 @@ public:
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	int _field1974;
+	int _lyleDialogCtr;
 	int _field1976;
 
 	Scene900();

@@ -180,6 +180,7 @@ bool Scene900::Lyle::startAction(CursorType action, Event &event) {
 	if (action == CURSOR_TALK) {
 		if (!_action) {
 			if (scene->_dog._flag) {
+				// Dog is no longer there
 				if (BF_GLOBALS._gateStatus == 0)
 					scene->_stripManager.start(9004, &BF_GLOBALS._stripProxy);
 				else {
@@ -192,10 +193,11 @@ bool Scene900::Lyle::startAction(CursorType action, Event &event) {
 						scene->_stripManager.start(9001, &BF_GLOBALS._stripProxy);
 				}
 			} else {
-				if (scene->_field1974)
+				// Dog is there
+				if (scene->_lyleDialogCtr)
 					scene->_stripManager.start(9003, &BF_GLOBALS._stripProxy);
 				else {
-					++scene->_field1974;
+					++scene->_lyleDialogCtr;
 					scene->_stripManager.start(9002, &BF_GLOBALS._stripProxy);
 				}
 			}
@@ -416,7 +418,7 @@ void Scene900::Action4::signal() {
 /*--------------------------------------------------------------------------*/
 
 Scene900::Scene900(): PalettedScene() {
-	_field1974 = _field1976 = 0;
+	_lyleDialogCtr = _field1976 = 0;
 }
 
 void Scene900::postInit(SceneObjectList *OwnerList) {
@@ -425,7 +427,7 @@ void Scene900::postInit(SceneObjectList *OwnerList) {
 
 	if (BF_GLOBALS._sceneManager._previousScene == 910)
 		BF_GLOBALS._sound1.changeSound(91);
-	_field1974 = 0;
+	_lyleDialogCtr = 0;
 	_field1976 = 0;
 	T2_GLOBALS._uiElements._active = true;
 	BF_GLOBALS.clearFlag(fCanDrawGun);
@@ -718,7 +720,7 @@ void Scene900::dispatch() {
 
 void Scene900::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field1974);
+	s.syncAsSint16LE(_lyleDialogCtr);
 	s.syncAsSint16LE(_field1976);
 }
 
