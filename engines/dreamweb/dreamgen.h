@@ -474,7 +474,6 @@ public:
 	static const uint16 addr_setmode = 0xc1dc;
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_deleverything = 0xc1c0;
-	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
 	static const uint16 addr_constant = 0xc184;
 	static const uint16 addr_steady = 0xc180;
@@ -1558,7 +1557,7 @@ public:
 	//void readheader();
 	void getsetad();
 	//void getyad();
-	void reconstruct();
+	//void reconstruct();
 	void soldier1();
 	//void animpointer();
 	void getundercentre();

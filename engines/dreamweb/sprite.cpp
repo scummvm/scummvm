@@ -1020,5 +1020,17 @@ void DreamGenContext::reelsonscreen() {
 	usetimedtext();
 }
 
+void DreamGenContext::reconstruct() {
+	if (data.byte(kHavedoneobs) == 0)
+		return;
+	data.byte(kNewobs) = 1;
+	drawfloor();
+	spriteupdate();
+	printsprites();
+	if ((data.byte(kForeignrelease) != 0) && (data.byte(kReallocation) == 20))
+		undertextline();
+	data.byte(kHavedoneobs) = 0;
+}
+
 } /*namespace dreamgen */
 

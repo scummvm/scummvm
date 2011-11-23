@@ -2187,26 +2187,6 @@ endreelsound:
 	data.word(kLastsoundreel) = -1;
 }
 
-void DreamGenContext::reconstruct() {
-	STACK_CHECK;
-	_cmp(data.byte(kHavedoneobs), 0);
-	if (flags.z())
-		return /* (noneedtorecon) */;
-	data.byte(kNewobs) = 1;
-	drawfloor();
-	spriteupdate();
-	printsprites();
-	_cmp(data.byte(kForeignrelease),  0);
-	if (flags.z())
-		goto notfudge;
-	_cmp(data.byte(kReallocation), 20);
-	if (!flags.z())
-		goto notfudge;
-	undertextline();
-notfudge:
-	data.byte(kHavedoneobs) = 0;
-}
-
 void DreamGenContext::deleverything() {
 	STACK_CHECK;
 	al = data.byte(kMapysize);
