@@ -476,7 +476,6 @@ public:
 	static const uint16 addr_deleverything = 0xc1c0;
 	static const uint16 addr_reconstruct = 0xc1ac;
 	static const uint16 addr_soundonreels = 0xc1a8;
-	static const uint16 addr_reelsonscreen = 0xc1a0;
 	static const uint16 addr_constant = 0xc184;
 	static const uint16 addr_steady = 0xc180;
 	static const uint16 addr_random = 0xc17c;
@@ -1183,6 +1182,7 @@ public:
 	void clearbuffers();
 	//void neterror();
 	void storeit();
+	//void lockeddoorway();
 	//void isitworn();
 	//void putundertimed();
 	//void dumpmap();
@@ -1196,7 +1196,7 @@ public:
 	void loadfolder();
 	void dumpdiarykeys();
 	//void dumppointer();
-	void reelsonscreen();
+	void bossman();
 	void getridofreels();
 	void readkey();
 	void louis();
@@ -1466,6 +1466,7 @@ public:
 	//void showcity();
 	void dumpsymbol();
 	void disablepath();
+	//void convicons();
 	void buttonsix();
 	void intro2text();
 	void showouterpad();
@@ -1550,7 +1551,6 @@ public:
 	void purgealocation();
 	void sparkydrip();
 	//void paltostartpal();
-	void bossman();
 	void getridofpit();
 	void convnum();
 	//void checkifset();
@@ -1772,6 +1772,7 @@ public:
 	void usegun();
 	void autoappear();
 	//void findnextcolon();
+	//void reelsonscreen();
 	//void readmouse4();
 	void openryan();
 	void callhotellift();
@@ -1837,14 +1838,12 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
-	//void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void showgroup();
 	//void findallryan();
-	//void lockeddoorway();
 	//void channel0tran();
 	void buttonpress();
 	//void parseblaster();

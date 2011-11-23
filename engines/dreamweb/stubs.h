@@ -330,4 +330,5 @@
 	void createpanel();
 	void createpanel2();
 	void findroominloc();
+	void reelsonscreen();
 

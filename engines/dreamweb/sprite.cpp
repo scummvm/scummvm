@@ -1012,5 +1012,13 @@ void DreamGenContext::textformonk() {
 	setuptimedtemp();
 }
 
+void DreamGenContext::reelsonscreen() {
+	reconstruct();
+	updatepeople();
+	watchreel();
+	showrain();
+	usetimedtext();
+}
+
 } /*namespace dreamgen */
 

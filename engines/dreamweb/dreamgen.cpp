@@ -2142,15 +2142,6 @@ gotconst:
 	ds.byte(di+17) = al;
 }
 
-void DreamGenContext::reelsonscreen() {
-	STACK_CHECK;
-	reconstruct();
-	updatepeople();
-	watchreel();
-	showrain();
-	usetimedtext();
-}
-
 void DreamGenContext::soundonreels() {
 	STACK_CHECK;
 	bl = data.byte(kReallocation);

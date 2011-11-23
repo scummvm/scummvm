@@ -271,6 +271,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'createpanel',
 	'createpanel2',
 	'findroominloc',
+	'reelsonscreen',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
