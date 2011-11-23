@@ -4894,29 +4894,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::autolook() {
-	STACK_CHECK;
-	ax = data.word(kMousex);
-	_cmp(ax, data.word(kOldx));
-	if (!flags.z())
-		goto diffmouse;
-	ax = data.word(kMousey);
-	_cmp(ax, data.word(kOldy));
-	if (!flags.z())
-		goto diffmouse;
-	_dec(data.word(kLookcounter));
-	_cmp(data.word(kLookcounter), 0);
-	if (!flags.z())
-		return /* (noautolook) */;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		return /* (noautolook) */;
-	dolook();
-	return;
-diffmouse:
-	data.word(kLookcounter) = 1000;
-}
-
 void DreamGenContext::look() {
 	STACK_CHECK;
 	_cmp(data.word(kWatchingtime), 0);

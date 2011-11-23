@@ -2260,5 +2260,19 @@ void DreamGenContext::findroominloc() {
 	data.byte(kRoomnum) = roomNum;
 }
 
+void DreamGenContext::autolook() {
+	if ((data.word(kMousex) != data.word(kOldx)) || (data.word(kMousey) != data.word(kOldy))) {
+		data.word(kLookcounter) = 1000;
+		return;
+	}
+
+	--data.word(kLookcounter);
+	if (data.word(kLookcounter))
+		return;
+	if (data.word(kWatchingtime))
+		return;
+	dolook();
+}
+
 } /*namespace dreamgen */
 

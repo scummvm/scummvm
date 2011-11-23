@@ -378,7 +378,6 @@ public:
 	static const uint16 addr_redrawmainscrn = 0xc478;
 	static const uint16 addr_dolook = 0xc474;
 	static const uint16 addr_look = 0xc470;
-	static const uint16 addr_autolook = 0xc46c;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_deleteextext = 0xc420;
 	static const uint16 addr_deleteexframe = 0xc41c;
@@ -1586,7 +1585,7 @@ public:
 	void dosreturn();
 	void wheelsound();
 	void actualsave();
-	void autolook();
+	//void autolook();
 	void playguitar();
 	//void showreelframe();
 	void searchforsame();

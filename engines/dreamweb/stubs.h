@@ -332,4 +332,5 @@
 	void findroominloc();
 	void reelsonscreen();
 	void reconstruct();
+	void autolook();
 
