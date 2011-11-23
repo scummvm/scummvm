@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = []):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -80,6 +80,7 @@ class cpp:
 		self.blacklist = blacklist
 		self.failed = list(blacklist)
 		self.skip_output = skip_output
+		self.skip_dispatch_call = skip_dispatch_call
 		self.translated = []
 		self.proc_addr = []
 		self.used_data_offsets = set()
@@ -596,6 +597,7 @@ namespace %s {
 			elif (n & 0x3) == 0:
 				comment += " "
 		data_impl += "};\n\tds.assign(src, src + sizeof(src));\n"
+
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
 
@@ -604,11 +606,16 @@ namespace %s {
 class %sContext : public Context {
 public:
 	void __start();
-	void __dispatch_call(uint16 addr);
-#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
-
-""" 
+"""
 %(self.namespace, self.namespace))
+		if self.skip_dispatch_call == False:
+			self.hd.write(
+"""	void __dispatch_call(uint16 addr);
+""")
+		self.hd.write(
+"""#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
+
+""")
 
 		for name,addr in self.proc_addr:
 			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
@@ -639,11 +646,13 @@ public:
 		
 		self.fd.write("\nvoid %sContext::__start() { %s%s(); \n}\n" %(self.namespace, data_impl, start))
 		
-		self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
-		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
-		for name,addr in self.proc_addr:
-			self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
-		self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
-		self.fd.write("\n\t}\n}\n\n} /*namespace*/\n")
-
+		if self.skip_dispatch_call == False:
+			self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
+			self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
+			for name,addr in self.proc_addr:
+				self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
+			self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
+			self.fd.write("\n\t}\n}")
+		
+		self.fd.write("\n\n} /*namespace*/\n")
 		self.fd.close()
