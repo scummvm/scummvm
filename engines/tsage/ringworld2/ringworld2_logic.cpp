@@ -937,7 +937,7 @@ void SceneArea::process(Event &event) {
 				R2_GLOBALS._events.setCursor(_cursorNum);
 			}
 			_insideArea = true;
-		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum != cursor) &&
+		} else if ((event.mousePos.y < 171) && _insideArea && (_cursorNum == cursor) &&
 				(_savedCursorNum != CURSOR_NONE)) {
 			// Cursor moved outside bounded area
 			R2_GLOBALS._events.setCursor(_savedCursorNum);
@@ -980,21 +980,26 @@ void SceneExit::process(Event &event) {
 	if (!R2_GLOBALS._insetUp) {
 		SceneArea::process(event);
 
-		if (_enabled && (event.eventType == EVENT_BUTTON_DOWN)) {
-			if (!_bounds.contains(event.mousePos))
-				_moving = 0;
-			else if (!R2_GLOBALS._player._canWalk) {
-				_moving = 0;
-				changeScene();
-				event.handled = true;
-			} else {
-				Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
-					(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
-				ADD_PLAYER_MOVER(dest.x, dest.y);
+		if (_enabled) {
+			if (event.eventType == EVENT_BUTTON_DOWN) {
+				if (!_bounds.contains(event.mousePos))
+					_moving = false;
+				else if (!R2_GLOBALS._player._canWalk) {
+					_moving = false;
+					changeScene();
+					event.handled = true;
+				} else {
+					Common::Point dest((_destPos.x == -1) ? event.mousePos.x : _destPos.x,
+						(_destPos.y == -1) ? event.mousePos.y : _destPos.y);
+					ADD_PLAYER_MOVER(dest.x, dest.y);
 
-				_moving = true;
-				event.handled = true;
+					_moving = true;
+					event.handled = true;
+				}
 			}
+
+			if (_moving && (_bounds.contains(R2_GLOBALS._player._position) || (R2_GLOBALS._player._position == _destPos)))
+				changeScene();
 		}
 	}
 }

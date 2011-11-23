@@ -66,9 +66,9 @@ public:
 	Common::Point _destPos;
 public:
 	SceneExit();
-	void setDetails(const Rect &bounds, CursorType cursor, int sceneNumber);
-	void setDest(const Common::Point &p) { _destPos = p; }
-	void changeScene();
+	virtual void setDetails(const Rect &bounds, CursorType cursor, int sceneNumber);
+	virtual void setDest(const Common::Point &p) { _destPos = p; }
+	virtual void changeScene();
 
 	virtual void synchronize(Serializer &s);
 	virtual void process(Event &event);
