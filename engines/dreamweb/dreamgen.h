@@ -35,7 +35,6 @@ namespace DreamGen {
 class DreamGenContext : public Context {
 public:
 	void __start();
-	void __dispatch_call(uint16 addr);
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	static const uint16 addr_dreamweb = 0xc948;
@@ -1184,7 +1183,6 @@ public:
 	void clearbuffers();
 	//void neterror();
 	void storeit();
-	//void lockeddoorway();
 	//void isitworn();
 	//void putundertimed();
 	//void dumpmap();
@@ -1468,7 +1466,6 @@ public:
 	//void showcity();
 	void dumpsymbol();
 	void disablepath();
-	//void convicons();
 	void buttonsix();
 	void intro2text();
 	void showouterpad();
@@ -1840,12 +1837,14 @@ public:
 	void usechurchgate();
 	void monkandryan();
 	void allocatebuffers();
+	//void convicons();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
 	void redrawmainscrn();
 	void showgroup();
 	//void findallryan();
+	//void lockeddoorway();
 	//void channel0tran();
 	void buttonpress();
 	//void parseblaster();
