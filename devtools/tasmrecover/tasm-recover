@@ -176,6 +176,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'readmouse4',
 	'waitframes',
 	'drawflags',
+	'blockget',
 	'addtopeoplelist',
 	'getexpos',
 	'paneltomap',

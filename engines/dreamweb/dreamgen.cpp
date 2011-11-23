@@ -4876,15 +4876,6 @@ beforethistext:
 		goto shuffletextads;
 }
 
-void DreamGenContext::blockget() {
-	STACK_CHECK;
-	ah = al;
-	al = 0;
-	ds = data.word(kBackdrop);
-	si = (0+192);
-	_add(si, ax);
-}
-
 void DreamGenContext::drawfloor() {
 	STACK_CHECK;
 	push(es);
