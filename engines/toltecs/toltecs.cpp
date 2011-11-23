@@ -124,7 +124,7 @@ Common::Error ToltecsEngine::run() {
 	_palette = new Palette(this);
 	_segmap = new SegmentMap(this);
 	_moviePlayer = new MoviePlayer(this);
-	_musicPlayer = new MusicPlayer();
+	_music = new Music(_arc);
 	_menuSystem = new MenuSystem(this);
 	
 	_sound = new Sound(this);
@@ -168,7 +168,7 @@ Common::Error ToltecsEngine::run() {
 	}
 	_script->runScript();
 
-	_musicPlayer->stopAndClear();
+	_music->stopSequence();
 	_sound->stopAll();
 
 	delete _arc;
@@ -178,7 +178,7 @@ Common::Error ToltecsEngine::run() {
 	delete _anim;
 	delete _palette;
 	delete _segmap;
-	delete _musicPlayer;
+	delete _music;
 	delete _moviePlayer;
 	delete _menuSystem;
 	

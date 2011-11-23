@@ -1009,27 +1009,13 @@ void ScriptInterpreter::sfStartSequence() {
 	if (sequenceResIndex >= 0) {
 		//_vm->_arc->dump(sequenceResIndex, "music");	// DEBUG: Dump music so we know what's in there
 
-		int32 resourceSize = _vm->_arc->getResourceSize(sequenceResIndex);
-		byte *data = new byte[resourceSize];
-		_vm->_arc->openResource(sequenceResIndex);
-		_vm->_arc->read(data, resourceSize);
-		_vm->_arc->closeResource();
-
-		if (!memcmp(data, "FORM", 4)) {
-			// TODO: It seems that music is always looping?
-			_vm->_musicPlayer->playMIDI(data, resourceSize, true);
-		} else {
-			// Sanity check: this should never occur
-			error("sfStartSequence: resource %d isn't XMIDI", sequenceResIndex);
-		}
-
-		delete[] data;
+		_vm->_music->playSequence(sequenceResIndex);
 	}
 }
 
 void ScriptInterpreter::sfEndSequence() {
 	//debug("ScriptInterpreter::sfEndSequence");
-	_vm->_musicPlayer->stopAndClear();
+	_vm->_music->stopSequence();
 }
 
 void ScriptInterpreter::sfSetSequenceVolume() {

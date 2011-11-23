@@ -22,9 +22,12 @@
 
 // FIXME: This code is taken from SAGA and needs more work (e.g. setVolume).
 
+#include "toltecs/toltecs.h"
 #include "toltecs/music.h"
+#include "toltecs/resource.h"
 
 #include "audio/midiparser.h"
+#include "common/textconsole.h"
 
 namespace Toltecs {
 
@@ -99,6 +102,44 @@ void MusicPlayer::stopAndClear() {
 
 	delete[] _buffer;
 	_buffer = NULL;
+}
+
+Music::Music(ArchiveReader *arc) : MusicPlayer(true), _arc(arc) {
+	_sequenceResIndex = -1;
+}
+
+void Music::playSequence(int16 sequenceResIndex) {
+	_sequenceResIndex = sequenceResIndex;
+
+	int32 resourceSize = _arc->getResourceSize(sequenceResIndex);
+	byte *data = new byte[resourceSize];
+	_arc->openResource(sequenceResIndex);
+	_arc->read(data, resourceSize);
+	_arc->closeResource();
+
+	if (!memcmp(data, "FORM", 4))
+		playMIDI(data, resourceSize, true);	// music tracks are always looping
+	else
+		// Sanity check: this should never occur
+		error("playSequence: resource %d isn't XMIDI", sequenceResIndex);
+
+	delete[] data;
+}
+
+void Music::stopSequence() {
+	_sequenceResIndex = -1;
+	stopAndClear();
+}
+
+void Music::saveState(Common::WriteStream *out) {
+	out->writeSint16LE(_sequenceResIndex);
+}
+
+void Music::loadState(Common::ReadStream *in) {
+	_sequenceResIndex = in->readSint16LE();
+
+	if (_sequenceResIndex >= 0)
+		playSequence(_sequenceResIndex);
 }
 
 } // End of namespace Made

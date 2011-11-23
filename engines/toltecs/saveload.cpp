@@ -27,6 +27,7 @@
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
+#include "toltecs/music.h"
 #include "toltecs/palette.h"
 #include "toltecs/script.h"
 #include "toltecs/screen.h"
@@ -40,7 +41,7 @@ namespace Toltecs {
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
-#define TOLTECS_SAVEGAME_VERSION 2
+#define TOLTECS_SAVEGAME_VERSION 3
 
 ToltecsEngine::kReadSaveHeaderError ToltecsEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 
@@ -133,6 +134,7 @@ void ToltecsEngine::savegame(const char *filename, const char *description) {
 	_anim->saveState(out);
 	_screen->saveState(out);
 	_sound->saveState(out);
+	_music->saveState(out);
 
 	out->finalize();
 	delete out;
@@ -156,6 +158,7 @@ void ToltecsEngine::loadgame(const char *filename) {
 	}
 	
 	_sound->stopAll();
+	_music->stopSequence();
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
 	_cameraX = in->readUint16LE();
@@ -189,6 +192,8 @@ void ToltecsEngine::loadgame(const char *filename) {
 	_screen->loadState(in);
 	if (header.version >= 2)
 		_sound->loadState(in);
+	if (header.version >= 3)
+		_music->loadState(in);
 
 	delete in;
 

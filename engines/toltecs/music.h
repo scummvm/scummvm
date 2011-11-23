@@ -26,8 +26,11 @@
 #define MADE_MUSIC_H
 
 #include "audio/midiplayer.h"
+#include "common/stream.h"
 
 namespace Toltecs {
+
+class ArchiveReader;
 
 class MusicPlayer : public Audio::MidiPlayer {
 public:
@@ -48,6 +51,23 @@ private:
 	byte *_buffer;
 };
 
-} // End of namespace Made
+class Music : public MusicPlayer {
+public:
+
+	Music(ArchiveReader *arc);
+	~Music() {}
+
+	void playSequence(int16 sequenceResIndex);
+	void stopSequence();
+
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
+private:
+	int16 _sequenceResIndex;
+	ArchiveReader *_arc;
+};
+
+} // End of namespace Toltecs
 
 #endif
