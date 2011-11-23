@@ -4894,44 +4894,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::dolook() {
-	STACK_CHECK;
-	createpanel();
-	showicon();
-	undertextline();
-	worktoscreenm();
-	data.byte(kCommandtype) = 255;
-	dumptextline();
-	bl = data.byte(kRoomnum);
-	_and(bl, 31);
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kRoomdesc);
-	_add(bx, (0));
-	si = es.word(bx);
-	_add(si, (0+(38*2)));
-	findnextcolon();
-	di = 66;
-	_cmp(data.byte(kReallocation), 50);
-	if (flags.c())
-		goto notdream3;
-	di = 40;
-notdream3:
-	bx = 80;
-	dl = 241;
-	printslow();
-	_cmp(al, 1);
-	if (flags.z())
-		goto afterlook;
-	cx = 400;
-	hangonp();
-afterlook:
-	data.byte(kPointermode) = 0;
-	data.byte(kCommandtype) = 0;
-	redrawmainscrn();
-	worktoscreenm();
-}
-
 void DreamGenContext::redrawmainscrn() {
 	STACK_CHECK;
 	data.word(kTimecount) = 0;

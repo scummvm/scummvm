@@ -2287,5 +2287,30 @@ void DreamGenContext::look() {
 		dolook();
 }
 
+void DreamGenContext::dolook() {
+	createpanel();
+	showicon();
+	undertextline();
+	worktoscreenm();
+	data.byte(kCommandtype) = 255;
+	dumptextline();
+	uint8 index = data.byte(kRoomnum) & 31;
+	uint16 offset = segRef(data.word(kRoomdesc)).word(kIntextdat + index * 2);
+	uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
+	findnextcolon(&string);
+	uint16 x;
+	if (data.byte(kReallocation) < 50)
+		x = 66;
+	else
+		x = 40;
+	if (printslow(string, x, 80, 241, true) != 1)
+		hangonp(400);
+
+	data.byte(kPointermode) = 0;
+	data.byte(kCommandtype) = 0;
+	redrawmainscrn();
+	worktoscreenm();
+}
+
 } /*namespace dreamgen */
 

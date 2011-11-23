@@ -376,7 +376,6 @@ public:
 	static const uint16 addr_talk = 0xc480;
 	static const uint16 addr_getback1 = 0xc47c;
 	static const uint16 addr_redrawmainscrn = 0xc478;
-	static const uint16 addr_dolook = 0xc474;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_deleteextext = 0xc420;
 	static const uint16 addr_deleteexframe = 0xc41c;
@@ -1709,7 +1708,7 @@ public:
 	void saveems();
 	void locationpic();
 	//void getflagunderp();
-	void dolook();
+	//void dolook();
 	void opentvdoor();
 	void triggermessage();
 	void smallcandle();

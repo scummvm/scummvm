@@ -334,4 +334,5 @@
 	void reconstruct();
 	void look();
 	void autolook();
+	void dolook();
 

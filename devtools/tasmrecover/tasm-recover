@@ -274,6 +274,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'findroominloc',
 	'look',
 	'autolook',
+	'dolook',
 	'reelsonscreen',
 	'reconstruct',
 	], skip_output = [
