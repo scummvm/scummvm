@@ -4894,31 +4894,6 @@ void DreamGenContext::drawfloor() {
 	es = pop();
 }
 
-void DreamGenContext::look() {
-	STACK_CHECK;
-	_cmp(data.word(kWatchingtime), 0);
-	if (!flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kPointermode), 2);
-	if (flags.z())
-		{ blank(); return; };
-	_cmp(data.byte(kCommandtype), 241);
-	if (flags.z())
-		goto alreadylook;
-	data.byte(kCommandtype) = 241;
-	al = 25;
-	commandonly();
-alreadylook:
-	_cmp(data.word(kMousebutton), 1);
-	if (!flags.z())
-		return /* (nolook) */;
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (nolook) */;
-	dolook();
-}
-
 void DreamGenContext::dolook() {
 	STACK_CHECK;
 	createpanel();

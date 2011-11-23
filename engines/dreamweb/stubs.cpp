@@ -2274,5 +2274,18 @@ void DreamGenContext::autolook() {
 	dolook();
 }
 
+void DreamGenContext::look() {
+	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
+		blank();
+		return;
+	}
+	if (data.byte(kCommandtype) != 241) {
+		data.byte(kCommandtype) = 241;
+		commandonly(25);
+	}
+	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton)))
+		dolook();
+}
+
 } /*namespace dreamgen */
 

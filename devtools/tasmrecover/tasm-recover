@@ -272,6 +272,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'createpanel',
 	'createpanel2',
 	'findroominloc',
+	'look',
 	'autolook',
 	'reelsonscreen',
 	'reconstruct',

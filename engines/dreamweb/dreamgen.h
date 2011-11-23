@@ -377,7 +377,6 @@ public:
 	static const uint16 addr_getback1 = 0xc47c;
 	static const uint16 addr_redrawmainscrn = 0xc478;
 	static const uint16 addr_dolook = 0xc474;
-	static const uint16 addr_look = 0xc470;
 	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_deleteextext = 0xc420;
 	static const uint16 addr_deleteexframe = 0xc41c;
@@ -1477,6 +1476,7 @@ public:
 	//void quickquit();
 	//void showpointer();
 	void usecooker();
+	//void look();
 	void loadmenu();
 	void checkforemm();
 	//void checkifpathison();
@@ -1662,7 +1662,7 @@ public:
 	//void showcurrentfile();
 	//void turnpathoff();
 	//void copyname();
-	void look();
+	//void madmantext();
 	void setmouse();
 	//void checkone();
 	//void transferinv();
@@ -1682,7 +1682,6 @@ public:
 	void dmaend();
 	//void quickquit2();
 	//void twodigitnum();
-	//void madmantext();
 	void dumpcurrent();
 	//void textforend();
 	void showdiarykeys();
