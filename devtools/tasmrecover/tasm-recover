@@ -283,5 +283,5 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'inventory',
 	'mainscreen',
 	'doload',
-	])
+	], skip_dispatch_call = True)
 generator.generate('dreamweb') #start routine
