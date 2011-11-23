@@ -243,6 +243,35 @@ win32setup: $(EXECUTABLE)
 	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
 	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/scummvm.nsi
 
+
+#
+# Special target to generate project files for various IDEs
+# Mainly Win32-specific
+#
+CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
+
+ideprojects: devtools/create_project
+ifneq ($(VER_DIRTY), -dirty)
+	$(error You have uncommitted changes) 
+endif 
+ifeq "$(CUR_BRANCH)" "heads/master"
+	$(error You cannot do it on master) 
+else ifeq "$(CUR_BRANCH)" ""
+	$(error You must be on a release branch) 
+endif
+	@echo Creating Code::Blocks project files...
+	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f *.workspace *.cbp
+	@echo Creating MSVC8 project files...
+	@cd $(srcdir)/dists/msvc8 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 8 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC9 project files...
+	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC10 project files...
+	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo
+	@echo All is done.
+	@echo Now run
+	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
+
 #
 # AmigaOS specific
 #
