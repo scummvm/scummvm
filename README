@@ -956,6 +956,7 @@ arguments -- see the next section.
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
   -e, --music-driver=MODE  Select music driver (see also section 7.0)
+  --list-audio-devices     List all available audio devices
   -q, --language=LANG      Select game's language (see also section 5.2)
   -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)
   -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)

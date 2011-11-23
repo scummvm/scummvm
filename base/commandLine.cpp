@@ -39,6 +39,8 @@
 
 #include "gui/ThemeEngine.h"
 
+#include "audio/musicplugin.h"
+
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
 
@@ -81,6 +83,7 @@ static const char HELP_STRING[] =
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
+	"  --list-audio-devices     List all available audio devices\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
@@ -379,6 +382,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
+			END_OPTION
+
+			DO_LONG_COMMAND("list-audio-devices")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
@@ -689,6 +695,21 @@ static void listThemes() {
 		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
 }
 
+/** Lists all output devices */
+static void listAudioDevices() {
+	MusicPlugin::List pluginList = MusicMan.getPlugins();
+
+	printf("ID                             Description\n");
+	printf("------------------------------ ------------------------------------------------\n");
+
+	for (MusicPlugin::List::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
+		MusicDevices deviceList = (**i)->getDevices();
+		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
+			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
+		}
+	}
+}
+
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -905,6 +926,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "list-themes") {
 		listThemes();
+		return true;
+	} else if (command == "list-audio-devices") {
+		listAudioDevices();
 		return true;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
