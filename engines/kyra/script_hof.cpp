@@ -1405,7 +1405,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	_screen->updateScreen();
 
 	_eventList.clear();
-	while (!skipFlag())
+	while (!skipFlag() && !shouldQuit())
 		delay(10);
 
 	_sound->beginFadeOut();
