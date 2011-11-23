@@ -248,10 +248,13 @@ win32setup: $(EXECUTABLE)
 # Special target to generate project files for various IDEs
 # Mainly Win32-specific
 #
+
+# The release branch is in form 'heads/branch-1-4-1', for this case
+# $CUR_BRANCH will be equal to '1', for the rest cases it will be empty
 CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
 
 ideprojects: devtools/create_project
-ifneq ($(VER_DIRTY), -dirty)
+ifeq ($(VER_DIRTY), -dirty)
 	$(error You have uncommitted changes) 
 endif 
 ifeq "$(CUR_BRANCH)" "heads/master"
