@@ -157,6 +157,43 @@ public:
 	Common::String parseMessage(const Common::String &msg);
 };
 
+class Scene200: public SceneExt {
+	/* Objects */
+	class NorthDoor: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class EastDoor: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class WestDoor: public SceneActor {
+	public:
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	/* Scene Exits */
+	class EastExit: public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+	class WestExit: public SceneExit {
+	public:
+		virtual void changeScene();
+	};
+public:
+	NamedHotspot _background, _compartment, _westDoorDisplay, _eastDoorDisplay;
+	NorthDoor _northDoor;
+	EastDoor _eastDoor;
+	WestDoor _westDoor;
+	EastExit _eastExit;
+	WestExit _westExit;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void signal();
+};
+
 class Scene300: public SceneExt {
 	/* Actions */
 	class Action1: public Action {

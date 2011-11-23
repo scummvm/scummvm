@@ -1199,6 +1199,160 @@ Common::String Scene125::parseMessage(const Common::String &msg) {
 }
 
 /*--------------------------------------------------------------------------
+ * Scene 200 - Ship Corridor
+ *
+ *--------------------------------------------------------------------------*/
+
+bool Scene200::NorthDoor::startAction(CursorType action, Event &event) {
+	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 202;
+		scene->setAction(&scene->_sequenceManager, scene, 202, &R2_GLOBALS._player, this, NULL);
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene200::EastDoor::startAction(CursorType action, Event &event) {
+	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 200;
+		scene->setAction(&scene->_sequenceManager, scene, 200, &R2_GLOBALS._player, this, NULL);
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+bool Scene200::WestDoor::startAction(CursorType action, Event &event) {
+	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
+
+	if (action == CURSOR_USE) {
+		R2_GLOBALS._player.disableControl();
+		scene->_sceneMode = 204;
+		scene->setAction(&scene->_sequenceManager, scene, 204, &R2_GLOBALS._player, this, NULL);
+		return true;
+	} else {
+		return SceneActor::startAction(action, event);
+	}
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene200::EastExit::changeScene() {
+	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 206;
+	scene->setAction(&scene->_sequenceManager, scene, 206, &R2_GLOBALS._player, NULL);
+}
+
+void Scene200::WestExit::changeScene() {
+	Scene200 *scene = (Scene200 *)R2_GLOBALS._sceneManager._scene;
+
+	_enabled = false;
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 208;
+	scene->setAction(&scene->_sequenceManager, scene, 208, &R2_GLOBALS._player, NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene200::postInit(SceneObjectList *OwnerList) {
+	SceneExt::postInit();
+	loadScene(200);
+
+	_westExit.setDetails(Rect(94, 0, 123, 58), CURSOR_9, 175);
+	_westExit.setDest(Common::Point(125, 52));
+	_eastExit.setDetails(Rect(133, 0, 167, 58), CURSOR_10, 150);
+	_eastExit.setDest(Common::Point(135, 52));
+
+	_northDoor.postInit();
+	_northDoor.setVisage(200);
+	_northDoor.setPosition(Common::Point(188, 79));
+	_northDoor.setDetails(200, 3, -1, -1, 1, NULL);
+
+	_eastDoor.postInit();
+	_eastDoor.setVisage(200);
+	_eastDoor.setStrip(2);
+	_eastDoor.setPosition(Common::Point(305, 124));
+	_eastDoor.setDetails(200, 6, -1, -1, 1, NULL);
+
+	_westDoor.postInit();
+	_westDoor.setVisage(200);
+	_westDoor.setStrip(3);
+	_westDoor.setPosition(Common::Point(62, 84));
+	_westDoor.setDetails(200, 9, -1, -1, 1, NULL);
+
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.setVisage(10);
+	R2_GLOBALS._player.animate(ANIM_MODE_1, NULL);
+	R2_GLOBALS._player.disableControl();
+
+	_compartment.setDetails(Rect(4, 88, 153, 167), 200, 12, -1, -1, 1, NULL);
+	_westDoorDisplay.setDetails(Rect(41, 51, 48, 61), 200, 15, -1, -1, 1, NULL);
+	_eastDoorDisplay.setDetails(Rect(279, 67, 286, 78), 200, 18, -1, -1, 1, NULL);
+	_background.setDetails(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 200, 0, -1, -1, 1, NULL);
+
+	switch (R2_GLOBALS._sceneManager._previousScene) {
+	case 100:
+		_sceneMode = 201;
+		setAction(&_sequenceManager, this, 201, &R2_GLOBALS._player, &_eastDoor, NULL);
+		break;
+	case 150:
+		_sceneMode = 207;
+		setAction(&_sequenceManager, this, 207, &R2_GLOBALS._player, NULL);
+		break;
+	case 175:
+		_sceneMode = 209;
+		setAction(&_sequenceManager, this, 209, &R2_GLOBALS._player, NULL);
+		break;
+	case 250:
+		_sceneMode = 203;
+		setAction(&_sequenceManager, this, 203, &R2_GLOBALS._player, &_northDoor, NULL);
+		break;
+	case 400:
+		_sceneMode = 205;
+		setAction(&_sequenceManager, this, 205, &R2_GLOBALS._player, &_westDoor, NULL);
+		break;
+	default:
+		R2_GLOBALS._player.setStrip(3);
+		R2_GLOBALS._player.setPosition(Common::Point(215, 115));
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+void Scene200::signal() {
+	switch (_sceneMode) {
+	case 200:
+		R2_GLOBALS._sceneManager.changeScene(100);
+		break;
+	case 202:
+		R2_GLOBALS._sceneManager.changeScene(250);
+		break;
+	case 204:
+		R2_GLOBALS._sceneManager.changeScene(400);
+		break;
+	case 206:
+		R2_GLOBALS._sceneManager.changeScene(150);
+		break;
+	case 208:
+		R2_GLOBALS._sceneManager.changeScene(175);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
+/*--------------------------------------------------------------------------
  * Scene 300 - Bridge
  *
  *--------------------------------------------------------------------------*/

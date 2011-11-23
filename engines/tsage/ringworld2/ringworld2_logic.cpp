@@ -46,7 +46,10 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 	case 160:
 	case 175:
 	case 180:
+		error("Missing scene %d from group 0", sceneNumber);
 	case 200:
+		// Ship Corridor
+		return new Scene200();
 	case 205:
 	case 250:
 		error("Missing scene %d from group 0", sceneNumber);
