@@ -365,10 +365,6 @@ void VocStream::preProcess() {
 						_blocks.erase(lastBlock);
 					}
 				}
-
-				// Check whether we found a new highest rate
-				if (_rate < block.sampleBlock.rate)
-					_rate = block.sampleBlock.rate;
 			} else {
 				block.sampleBlock.rate = _stream->readUint32LE();
 				int bitsPerSample = _stream->readByte();
@@ -381,7 +377,7 @@ void VocStream::preProcess() {
 					warning("Unhandled channel count %d in VOC file", channels);
 					return;
 				}
-				int codec = _stream->readByte();
+				int codec = _stream->readUint16LE();
 				// We only support 8bit PCM
 				if (codec != 0) {
 					warning("Unhandled codec %d in VOC file", codec);
@@ -391,6 +387,10 @@ void VocStream::preProcess() {
 				block.sampleBlock.offset = _stream->pos();
 				block.sampleBlock.samples = skip = block.length - 12;
 			}
+
+			// Check whether we found a new highest rate
+			if (_rate < block.sampleBlock.rate)
+				_rate = block.sampleBlock.rate;
 			break;
 
 		// Silence
