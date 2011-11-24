@@ -148,9 +148,11 @@ Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 	case 2207:
 	case 5378:
 	case 7220:
-	case 9119: 	// Elevator engine sound in mechanical age is looping.
-	case 9120:
-	case 9327:
+		// Mechanical age elevator engine.
+	case 9119:		 	// Up from bottom.
+	case 9120:			// Down from top.
+	case 9327:			// Up/down from middle.
+	case 14156:			// Middle-->top from outside the cabin.
 		loop = true;
 		break;
 	}
