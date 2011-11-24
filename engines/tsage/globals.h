@@ -247,6 +247,7 @@ public:
 	int _insetUp;
 	int _v565F5;
 	int _v5657C;
+	byte _v56605[14];
 	int _v57C2C;
 	int _v58CE2;
 	int _speechSubtitles;

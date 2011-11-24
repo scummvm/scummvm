@@ -93,7 +93,7 @@ enum CursorType {
 	R2_50 = 50, R2_51 = 51, R2_52 = 52,
 
 	// Ringworld 2 cursors
-	CURSOR_3 = 3, CURSOR_9 = 9, CURSOR_10 = 10,
+	CURSOR_3 = 3, CURSOR_7 = 7, CURSOR_8 = 8, CURSOR_9 = 9, CURSOR_10 = 10,
 
 	// Cursors
 	CURSOR_WALK = 0x100, CURSOR_LOOK = 0x200, CURSOR_700 = 700, CURSOR_USE = 0x400, CURSOR_TALK = 0x800,
