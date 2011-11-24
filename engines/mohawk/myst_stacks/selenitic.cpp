@@ -1072,7 +1072,7 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
 
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
-		if (_vm->_resources[i]->type == kMystSlider) {
+		if (_vm->_resources[i]->_type == kMystSlider) {
 			switch (_vm->_resources[i]->getType8Var()) {
 			case 20:
 				_soundLockSlider1 = static_cast<MystResourceType10 *>(_vm->_resources[i]);
@@ -1095,7 +1095,7 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 				_soundLockSlider5->setStep(_state.soundLockSliderPositions[4]);
 				break;
 			}
-		} else if (_vm->_resources[i]->type == kMystConditionalImage && _vm->_resources[i]->getType8Var() == 28) {
+		} else if (_vm->_resources[i]->_type == kMystConditionalImage && _vm->_resources[i]->getType8Var() == 28) {
 			_soundLockButton = static_cast<MystResourceType8 *>(_vm->_resources[i]);
 		}
 	}

@@ -98,7 +98,7 @@ void MystResource::setEnabled(bool enabled) {
 
 const Common::String MystResource::describe() {
 	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
-			type, _rect.left, _rect.top, _rect.width(), _rect.height());
+			_type, _rect.left, _rect.top, _rect.width(), _rect.height());
 
 	if (_dest != 0)
 		desc += Common::String::format(" dest: %4d", _dest);

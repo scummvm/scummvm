@@ -2253,7 +2253,7 @@ void Myst::o_rocketPianoMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	if (piano.contains(mouse)) {
 		MystResource *resource = _vm->updateCurrentResource();
-		if (resource && resource->type == kMystDragArea) {
+		if (resource && resource->_type == kMystDragArea) {
 			// Press new key
 			key = static_cast<MystResourceType11 *>(resource);
 			src = key->_subImages[1].rect;

@@ -403,7 +403,7 @@ void Stoneship::o_pumpTurnOff(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 
 		for (uint i = 0; i < _vm->_resources.size(); i++) {
 			MystResource *resource = _vm->_resources[i];
-			if (resource->type == kMystConditionalImage && resource->getType8Var() == buttonVar) {
+			if (resource->_type == kMystConditionalImage && resource->getType8Var() == buttonVar) {
 				static_cast<MystResourceType8 *>(resource)->drawConditionalDataToScreen(0, true);
 				break;
 			}

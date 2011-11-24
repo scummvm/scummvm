@@ -62,7 +62,7 @@ public:
 	void drawBoundingRect();
 
 	MystResource *_parent;
-	ResourceType type;
+	ResourceType _type;
 
 	bool contains(Common::Point point) { return _rect.contains(point); }
 	virtual void drawDataToScreen() {}

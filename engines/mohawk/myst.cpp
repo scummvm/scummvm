@@ -698,7 +698,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 
 	for (uint16 i = 0; i < _resources.size(); i++)
 		if (_resources[i]->contains(mouse)) {
-			if (_hoverResource != _resources[i] && _resources[i]->type == kMystHoverArea) {
+			if (_hoverResource != _resources[i] && _resources[i]->_type == kMystHoverArea) {
 				_hoverResource = static_cast<MystResourceType13 *>(_resources[i]);
 				_hoverResource->handleMouseEnter();
 			}
@@ -1104,7 +1104,7 @@ void MohawkEngine_Myst::redrawResource(MystResourceType8 *resource, bool update)
 
 void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->type == kMystConditionalImage && _resources[i]->getType8Var() == var)
+		if (_resources[i]->_type == kMystConditionalImage && _resources[i]->getType8Var() == var)
 			redrawResource(static_cast<MystResourceType8 *>(_resources[i]), update);
 }
 
@@ -1145,7 +1145,7 @@ MystResource *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstSt
 		break;
 	}
 
-	resource->type = type;
+	resource->_type = type;
 
 	return resource;
 }
