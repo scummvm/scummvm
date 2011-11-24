@@ -83,9 +83,11 @@ private:
 	MystResourceType8 *_soundReceiverSources[5]; // 92 -> 108
 	MystResourceType8 *_soundReceiverCurrentSource; // 112
 	uint16 *_soundReceiverPosition; // 116
-	uint16 _soundReceiverDirection; // 120
-	uint16 _soundReceiverSpeed; // 122
+	int16 _soundReceiverDirection; // 120
+	uint16 _soundReceiverSpeedIndex; // 122
 	uint32 _soundReceiverStartTime; //124
+	MystResourceType8 *_soundReceiverCurrentButton;
+	uint32 _soundReceiverUpdateTime;
 	MystResourceType8 *_soundReceiverViewer; // 128
 	MystResourceType8 *_soundReceiverRightButton; // 132
 	MystResourceType8 *_soundReceiverLeftButton; // 136
@@ -115,11 +117,11 @@ private:
 	MystResourceType10 *_soundLockSlider5; // 180
 	MystResourceType8 *_soundLockButton; // 184
 
-	void soundReceiverLeftRight(uint direction);
+	void soundReceiverLeftRight(MystResourceType8 *button, int direction);
 	void soundReceiverUpdate();
 	void soundReceiverDrawView();
 	void soundReceiverDrawAngle();
-	void soundReceiverIncreaseSpeed();
+	uint16 soundReceiverSpeed();
 	void soundReceiverUpdateSound();
 	uint16 soundReceiverCurrentSound(uint16 source, uint16 position);
 	void soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled);
