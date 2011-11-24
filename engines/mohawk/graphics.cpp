@@ -455,6 +455,42 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	_vm->_system->copyRectToScreen((byte *)surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
 
+void MystGraphics::copyClippedImageToScreen(uint16 image, Common::Point dest, Common::Rect clipArea, Common::Rect src) {
+	Common::Rect destRect;
+	Common::Rect clippedDest;
+
+	if (src.isEmpty()) {
+		//  Source area unknown, extend it to the image size.
+
+		Graphics::Surface *surface = findImage(image)->getSurface();
+
+		if (src.right <= src.left)
+			src.right = surface->w;
+
+		if (src.bottom <= src.top)
+			src.bottom = surface->h;
+		}
+
+	// Build the corresponding destination area and clip it.
+
+	destRect = Common::Rect(dest.x, dest.y,
+	    dest.x + src.right - src.left, dest.y + src.bottom - src.top);
+	clippedDest = destRect;
+	clippedDest.clip(clipArea);
+
+	// Adjust source area according to destination clipping.
+
+	src.left -= destRect.left - clippedDest.left;
+	src.top -= destRect.top - clippedDest.top;
+	src.right -= destRect.right - clippedDest.right;
+	src.bottom -= destRect.bottom - clippedDest.bottom;
+
+	// Draw now.
+
+	if (!src.isEmpty() && !clippedDest.isEmpty())
+		copyImageSectionToScreen(image, src, clippedDest);
+}
+
 void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
 	Graphics::Surface *surface = findImage(image)->getSurface();
 

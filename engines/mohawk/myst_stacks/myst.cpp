@@ -57,7 +57,8 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_treeStopped = false;
 	_treeMinPosition = 0;
 	_imagerValidationStep = 0;
-	_observatoryCurrentSlider = 0;
+	_observatoryIsDDMMMYYYY2400 = false;	// Until we enter observatory.
+	_observatoryCurrentControl = 0;
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 }
@@ -94,17 +95,10 @@ void Myst::setupOpcodes() {
 	OPCODE(126, o_clockLeverStartMove);
 	OPCODE(127, o_clockLeverEndMove);
 	OPCODE(128, o_treePressureReleaseStart);
-	if (!observatoryIsDDMMYYYY2400()) {
-		OPCODE(129, o_observatoryMonthChangeStart);
-		OPCODE(130, o_observatoryMonthChangeStart);
-		OPCODE(131, o_observatoryDayChangeStart);
-		OPCODE(132, o_observatoryDayChangeStart);
-	} else {
-		OPCODE(129, o_observatoryDayChangeStart);
-		OPCODE(130, o_observatoryDayChangeStart);
-		OPCODE(131, o_observatoryMonthChangeStart);
-		OPCODE(132, o_observatoryMonthChangeStart);
-	}
+	OPCODE(129, o_observatoryControl1DecreaseStart);
+	OPCODE(130, o_observatoryControl1IncreaseStart);
+	OPCODE(131, o_observatoryControl2DecreaseStart);
+	OPCODE(132, o_observatoryControl2IncreaseStart);
 	OPCODE(133, o_observatoryGoButton);
 	OPCODE(134, o_observatoryMonthSliderMove);
 	OPCODE(135, o_observatoryDaySliderMove);
@@ -162,12 +156,12 @@ void Myst::setupOpcodes() {
 	OPCODE(189, o_clockHourWheelStartTurn);
 	OPCODE(190, o_libraryCombinationBookStartRight);
 	OPCODE(191, o_libraryCombinationBookStartLeft);
-	OPCODE(192, o_observatoryTimeChangeStart);
+	OPCODE(192, o_observatoryControl4DecreaseStart);
 	OPCODE(193, NOP);
 	OPCODE(194, o_observatoryChangeSettingStop);
-	OPCODE(195, o_observatoryTimeChangeStart);
-	OPCODE(196, o_observatoryYearChangeStart);
-	OPCODE(197, o_observatoryYearChangeStart);
+	OPCODE(195, o_observatoryControl4IncreaseStart);
+	OPCODE(196, o_observatoryControl3DecreaseStart);
+	OPCODE(197, o_observatoryControl3IncreaseStart);
 	OPCODE(198, o_dockVaultForceClose);
 	OPCODE(199, o_imagerEraseStop);
 
@@ -278,17 +272,8 @@ void Myst::runPersistentScripts() {
 	if (_observatoryRunning)
 		observatory_run();
 
-	if (_observatoryMonthChanging)
-		observatoryMonthChange_run();
-
-	if (_observatoryDayChanging)
-		observatoryDayChange_run();
-
-	if (_observatoryYearChanging)
-		observatoryYearChange_run();
-
-	if (_observatoryTimeChanging)
-		observatoryTimeChange_run();
+	if (_observatoryCurrentControl)
+		observatoryControlChange_run();
 
 	if (_greenBookRunning)
 		greenBook_run();
@@ -540,7 +525,7 @@ uint16 Myst::getVar(uint16 var) {
 	case 79: // Stellar Observatory Date - Year #4 (Right)
 		return (_state.observatoryYearSetting / 1) % 10;
 	case 80: // Stellar Observatory Hour #1 - Left ( Number 1 (0) or Blank (10))
-		if (!observatoryIsDDMMYYYY2400()) {
+		if (!_observatoryIsDDMMMYYYY2400) {
 			if (_state.observatoryTimeSetting % (12 * 60) < (10 * 60))
 				return 10;
 			else
@@ -554,7 +539,7 @@ uint16 Myst::getVar(uint16 var) {
 				return 2;
 		}
 	case 81: // Stellar Observatory Hour #2 - Right
-		if (!observatoryIsDDMMYYYY2400())
+		if (!_observatoryIsDDMMMYYYY2400)
 			return ((_state.observatoryTimeSetting % (12 * 60)) / 60) % 10;
 		else
 			return (_state.observatoryTimeSetting / 60) % 10;
@@ -1493,236 +1478,184 @@ void Myst::o_cabinSafeHandleEndMove(uint16 op, uint16 var, uint16 argc, uint16 *
 	_vm->checkCursorHints();
 }
 
-void Myst::o_observatoryMonthChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Observatory month change start", op);
 
-	_vm->_sound->pauseBackgroundMyst();
+// Observatory controls.
 
-	if (op == 129 || op == 131) {
-		// Increase
-		if (observatoryIsDDMMYYYY2400())
-			_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(36, 0, 48, 9), Common::Rect(351, 70, 363, 79));
-		else
-			_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(0, 0, 12, 9), Common::Rect(315, 70, 327, 79));
+Myst::ObservatoryControl::ObservatoryControl() {
+	memset(this, 0, sizeof *this);
+}
 
-		_observatoryIncrement = -1;
-	} else {
-		// Decrease
-		if (observatoryIsDDMMYYYY2400())
-			_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(36, 0, 48, 9), Common::Rect(351, 204, 363, 213));
-		else
-			_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(0, 0, 12, 9), Common::Rect(315, 204, 327, 213));
+void Myst::ObservatoryControl::initialize(Myst *parser) {
+	_display.clear();
+	memset(this, 0, sizeof *this);
+	_parser = parser;
+}
 
-		_observatoryIncrement = 1;
-	}
+void Myst::ObservatoryControl::setControls(MystResource *decrease, MystResource *slider, MystResource *increase) {
+	_buttonDecrease = static_cast<MystResourceType11 *>(decrease);
+	_slider = static_cast<MystResourceType10 *>(slider);
+	_buttonIncrease = static_cast<MystResourceType11 *>(increase);
+
+	// Set date selection slider position.
+	if (_sliderPosition)
+		_slider->setPosition(*_sliderPosition);
+}
+
+void Myst::ObservatoryControl::setValueParameters(uint16 *pValue, uint16 min, uint16 max, uint16 *sliderPosition) {
+	_setting = pValue;
+	_minSetting = min;
+	_maxSetting = max;
+	_sliderPosition = sliderPosition;
+
+	// Set date selection slider position.
+	if (_slider)
+		_slider->setPosition(*_sliderPosition);
+}
+
+void Myst::ObservatoryControl::addDisplay(uint16 displayVar) {
+	_display.push_back(displayVar);
+}
+
+void Myst::ObservatoryControl::preset() {
+	_parser->_vm->_sound->stopSound();
+	_parser->_vm->_sound->replaceSoundMyst(8500);
+	_slider->drawConditionalDataToScreen(2);
+	_parser->_vm->_system->delayMillis(200);
+	_parser->_vm->redrawResource(_slider);
+}
+
+void Myst::ObservatoryControl::startIncrease() {
+	_parser->_vm->_gfx->copyClippedImageToScreen(11097, Common::Point(315, 205), _buttonIncrease->getRect());
+	startChange(1);
+}
+
+void Myst::ObservatoryControl::startDecrease() {
+	_parser->_vm->_gfx->copyClippedImageToScreen(11098, Common::Point(315, 71), _buttonDecrease->getRect());
+	startChange(-1);
+}
+
+void Myst::ObservatoryControl::startChange(int16 dir) {
+	_currentIncrement = dir;
+	_parser->_vm->_sound->pauseBackgroundMyst();
 
 	// Highlight slider
-	_observatoryMonthSlider->drawConditionalDataToScreen(2);
-	_observatoryCurrentSlider = _observatoryMonthSlider;
+	_slider->drawConditionalDataToScreen(2);
 
 	// First increment
-	observatoryIncrementMonth(_observatoryIncrement);
+	increment();
 
 	// Start persistent script
-	_startTime = _vm->_system->getMillis();
-	_observatoryMonthChanging = true;
+	_parser->_startTime = _parser->_vm->_system->getMillis();
+	_parser->_observatoryCurrentControl = this;
 }
 
-void Myst::observatoryIncrementMonth(int16 increment) {
-	int16 newMonth = _state.observatoryMonthSetting + increment;
+bool Myst::ObservatoryControl::update(int16 newSetting) {
+	uint16 i;
 
-	if (newMonth >= 0 && newMonth <= 11) {
-		_state.observatoryMonthSetting = newMonth;
+	if (newSetting == *_setting ||
+	    newSetting < _minSetting || newSetting > _maxSetting)
+		return false;
 
-		// Redraw digits
-		_vm->redrawArea(73);
+	*_setting = newSetting;
+
+	// Redraw digits
+	for (i = 0; i < _display.size(); i++)
+		_parser->_vm->redrawArea(_display[i]);
+
+	return true;
+}
+
+void Myst::ObservatoryControl::increment() {
+	if (update(*_setting + _currentIncrement)) {
 
 		// Update slider
-		_observatoryMonthSlider->setPosition(94 + 94 * _state.observatoryMonthSetting / 11);
-		_observatoryMonthSlider->restoreBackground();
-		_observatoryMonthSlider->drawConditionalDataToScreen(2);
-		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
+		_slider->setPosition(94 + 94 * *_setting / (_maxSetting - _minSetting));
+		_slider->restoreBackground();
+		_slider->drawConditionalDataToScreen(2);
+		*_sliderPosition = _slider->_pos.y;
 	}
 
-	_vm->_sound->replaceSoundMyst(8500);
+	_parser->_vm->_sound->replaceSoundMyst(8500);
 }
 
-void Myst::observatoryMonthChange_run() {
+void Myst::ObservatoryControl::stopChange() {
+	// Stop persistent script
+	_parser->_observatoryCurrentControl = 0;
+	_currentIncrement = 0;
+
+	// Restore button and slider
+	_parser->_vm->_gfx->copyBackBufferToScreen(_buttonDecrease->getRect());
+	_parser->_vm->_gfx->copyBackBufferToScreen(_buttonIncrease->getRect());
+	_parser->_vm->redrawResource(_slider);
+	_parser->_vm->_sound->resumeBackgroundMyst();
+}
+
+void Myst::ObservatoryControl::sliderMove() {
+	if (update(_minSetting + (_slider->_pos.y - 94) *
+	    (_maxSetting - _minSetting) / 94)) {
+		*_sliderPosition = _slider->_pos.y;
+		_parser->_vm->_sound->replaceSoundMyst(8500);
+	}
+}
+
+void Myst::ObservatoryControl::sliderStart() {
+	_parser->_vm->_cursor->setCursor(700);
+	_parser->_vm->_sound->pauseBackgroundMyst();
+	sliderMove();
+}
+
+void Myst::ObservatoryControl::sliderStop() {
+	_parser->_vm->checkCursorHints();
+	_parser->_vm->_sound->resumeBackgroundMyst();
+	sliderMove();
+}
+
+// End of Observatory controls.
+
+
+void Myst::observatoryControlChange_run() {
 	if (_startTime + 500 < _vm->_system->getMillis())
-		observatoryIncrementMonth(_observatoryIncrement);
+		_observatoryCurrentControl->increment();
 }
 
-void Myst::o_observatoryDayChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Observatory day change start", op);
-
-	_vm->_sound->pauseBackgroundMyst();
-
-	if (op == 129 || op == 131) {
-		// Increase
-		if (observatoryIsDDMMYYYY2400())
-			_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(0, 0, 12, 9), Common::Rect(315, 70, 327, 79));
-		else
-			_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(36, 0, 48, 9), Common::Rect(351, 70, 363, 79));
-
-		_observatoryIncrement = -1;
-	} else {
-		// Decrease
-		if (observatoryIsDDMMYYYY2400())
-			_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(0, 0, 12, 9), Common::Rect(315, 204, 327, 213));
-		else
-			_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(36, 0, 48, 9), Common::Rect(351, 204, 363, 213));
-
-		_observatoryIncrement = 1;
-	}
-
-	// Highlight slider
-	_observatoryDaySlider->drawConditionalDataToScreen(2);
-	_observatoryCurrentSlider = _observatoryDaySlider;
-
-	// First increment
-	observatoryIncrementDay(_observatoryIncrement);
-
-	// Start persistent script
-	_startTime = _vm->_system->getMillis();
-	_observatoryDayChanging = true;
+void Myst::o_observatoryControl1IncreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #1 increase start", op);
+	_observatoryControl[0].startIncrease();
 }
 
-void Myst::observatoryIncrementDay(int16 increment) {
-	int16 newDay = _state.observatoryDaySetting + increment;
-
-	if (newDay >= 1 && newDay <= 31) {
-		_state.observatoryDaySetting = newDay;
-
-		// Redraw digits
-		_vm->redrawArea(75);
-		_vm->redrawArea(74);
-
-		// Update slider
-		_observatoryDaySlider->setPosition(91 + 3 * _state.observatoryDaySetting);
-		_observatoryDaySlider->restoreBackground();
-		_observatoryDaySlider->drawConditionalDataToScreen(2);
-		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
-	}
-
-	_vm->_sound->replaceSoundMyst(8500);
+void Myst::o_observatoryControl1DecreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #1 decrease start", op);
+	_observatoryControl[0].startDecrease();
 }
 
-void Myst::observatoryDayChange_run() {
-	if (_startTime + 500 < _vm->_system->getMillis())
-		observatoryIncrementDay(_observatoryIncrement);
+void Myst::o_observatoryControl2IncreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #2 increase start", op);
+	_observatoryControl[1].startIncrease();
 }
 
-void Myst::o_observatoryYearChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Observatory year change start", op);
-
-	_vm->_sound->pauseBackgroundMyst();
-
-	if (op == 196) {
-		// Increase
-		_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(72, 0, 84, 9), Common::Rect(387, 70, 399, 79));
-		_observatoryIncrement = -1;
-	} else {
-		// Decrease
-		_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(72, 0, 84, 9), Common::Rect(387, 204, 399, 213));
-		_observatoryIncrement = 1;
-	}
-
-	// Highlight slider
-	_observatoryYearSlider->drawConditionalDataToScreen(2);
-	_observatoryCurrentSlider = _observatoryYearSlider;
-
-	// First increment
-	observatoryIncrementYear(_observatoryIncrement);
-
-	// Start persistent script
-	_startTime = _vm->_system->getMillis();
-	_observatoryYearChanging = true;
+void Myst::o_observatoryControl2DecreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #2 decrease start", op);
+	_observatoryControl[1].startDecrease();
 }
 
-void Myst::observatoryIncrementYear(int16 increment) {
-	int16 newYear = _state.observatoryYearSetting + increment;
-
-	if (newYear >= 0 && newYear <= 9999) {
-		_state.observatoryYearSetting = newYear;
-
-		// Redraw digits
-		_vm->redrawArea(79);
-		_vm->redrawArea(78);
-		_vm->redrawArea(77);
-		_vm->redrawArea(76);
-
-		// Update slider
-		_observatoryYearSlider->setPosition(94 + 94 * _state.observatoryYearSetting / 9999);
-		_observatoryYearSlider->restoreBackground();
-		_observatoryYearSlider->drawConditionalDataToScreen(2);
-		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
-	}
-
-	_vm->_sound->replaceSoundMyst(8500);
+void Myst::o_observatoryControl3IncreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #3 increase start", op);
+	_observatoryControl[2].startIncrease();
 }
 
-void Myst::observatoryYearChange_run() {
-	if (_startTime + 500 < _vm->_system->getMillis())
-		observatoryIncrementYear(_observatoryIncrement);
+void Myst::o_observatoryControl3DecreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #3 decrease start", op);
+	_observatoryControl[2].startDecrease();
 }
 
-void Myst::o_observatoryTimeChangeStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Observatory time change start", op);
-
-	_vm->_sound->pauseBackgroundMyst();
-
-	if (op == 192) {
-		// Increase
-		_vm->_gfx->copyImageSectionToScreen(11098, Common::Rect(109, 0, 121, 9), Common::Rect(424, 70, 436, 79));
-		_observatoryIncrement = -1;
-	} else {
-		// Decrease
-		_vm->_gfx->copyImageSectionToScreen(11097, Common::Rect(109, 0, 121, 9), Common::Rect(424, 204, 436, 213));
-		_observatoryIncrement = 1;
-	}
-
-	// Highlight slider
-	_observatoryTimeSlider->drawConditionalDataToScreen(2);
-	_observatoryCurrentSlider = _observatoryTimeSlider;
-
-	// First increment
-	observatoryIncrementTime(_observatoryIncrement);
-
-	// Start persistent script
-	_startTime = _vm->_system->getMillis();
-	_observatoryTimeChanging = true;
+void Myst::o_observatoryControl4IncreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #4 increase start", op);
+	_observatoryControl[3].startIncrease();
 }
 
-void Myst::observatoryIncrementTime(int16 increment) {
-	int16 newTime = _state.observatoryTimeSetting + increment;
-
-	if (newTime >= 0 && newTime <= 1439) {
-		_state.observatoryTimeSetting = newTime;
-
-		// Redraw digits
-		_vm->redrawArea(80);
-		_vm->redrawArea(81);
-		_vm->redrawArea(82);
-		_vm->redrawArea(83);
-
-		// Draw AM/PM
-		if (!observatoryIsDDMMYYYY2400()) {
-			_vm->redrawArea(88);
-		}
-
-		// Update slider
-		_observatoryTimeSlider->setPosition(94 + 94 * _state.observatoryTimeSetting / 1439);
-		_observatoryTimeSlider->restoreBackground();
-		_observatoryTimeSlider->drawConditionalDataToScreen(2);
-		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
-	}
-
-	_vm->_sound->replaceSoundMyst(8500);
-}
-
-void Myst::observatoryTimeChange_run() {
-	if (_startTime + 500 < _vm->_system->getMillis())
-		observatoryIncrementTime(_observatoryIncrement);
+void Myst::o_observatoryControl4DecreaseStart(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Observatory control #4 decrease start", op);
+	_observatoryControl[3].startDecrease();
 }
 
 void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1734,7 +1667,7 @@ void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			|| _state.observatoryYearTarget != _state.observatoryYearSetting
 			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
 		uint16 soundId = argv[0];
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
 
 		int16 distance = _state.observatoryYearTarget - _state.observatoryYearSetting;
 		uint32 end = _vm->_system->getMillis() + 32 * ABS(distance) / 50 + 800;
@@ -1747,7 +1680,7 @@ void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			_vm->redrawResource(_observatoryVisualizer);
 		}
 
-		_vm->_sound->resumeBackgroundMyst();
+		_vm->_sound->stopSound();
 
 		// Redraw visualizer
 		observatorySetTargetToSetting();
@@ -1756,31 +1689,31 @@ void Myst::o_observatoryGoButton(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		// Redraw button
 		_tempVar = 0;
 		_vm->redrawArea(105);
-	}
+	} else {
+		// Let button be lighted off after a small delay.
+		_tempVar = 1;
+		_observatoryLastTime = _vm->_system->getMillis();
+ 	}
 }
 
 void Myst::o_observatoryMonthSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider move", op);
-
-	observatoryUpdateMonth();
+	_observatoryMonthControl->sliderMove();
 }
 
 void Myst::o_observatoryDaySliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider move", op);
-
-	observatoryUpdateDay();
+	_observatoryDayControl->sliderMove();
 }
 
 void Myst::o_observatoryYearSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider move", op);
-
-	observatoryUpdateYear();
+	_observatoryYearControl->sliderMove();
 }
 
 void Myst::o_observatoryTimeSliderMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider move", op);
-
-	observatoryUpdateTime();
+	_observatoryTimeControl->sliderMove();
 }
 
 void Myst::o_circuitBreakerStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2399,137 +2332,42 @@ void Myst::o_treePressureReleaseStop(uint16 op, uint16 var, uint16 argc, uint16 
 
 void Myst::o_observatoryMonthSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider start move", op);
-
-	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
-
-	observatoryUpdateMonth();
+	_observatoryMonthControl->sliderStart();
 }
 
 void Myst::o_observatoryMonthSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Month slider end move", op);
-
-	_vm->checkCursorHints();
-	_vm->_sound->resumeBackgroundMyst();
-
-	observatoryUpdateMonth();
-}
-
-void Myst::observatoryUpdateMonth() {
-	int16 month = (_observatoryMonthSlider->_pos.y - 94) / 8;
-
-	if (month != _state.observatoryMonthSetting) {
-		_state.observatoryMonthSetting = month;
-		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
-		_vm->_sound->replaceSoundMyst(8500);
-
-		// Redraw digits
-		_vm->redrawArea(73);
-	}
+	_observatoryMonthControl->sliderStop();
 }
 
 void Myst::o_observatoryDaySliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider start move", op);
-
-	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
-
-	observatoryUpdateDay();
+	_observatoryDayControl->sliderStart();
 }
 
 void Myst::o_observatoryDaySliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Day slider end move", op);
-
-	_vm->checkCursorHints();
-	_vm->_sound->resumeBackgroundMyst();
-
-	observatoryUpdateDay();
-}
-
-void Myst::observatoryUpdateDay() {
-	int16 day = (_observatoryDaySlider->_pos.y - 94) * 30 / 94 + 1;
-
-	if (day != _state.observatoryDaySetting) {
-		_state.observatoryDaySetting = day;
-		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
-		_vm->_sound->replaceSoundMyst(8500);
-
-		// Redraw digits
-		_vm->redrawArea(75);
-		_vm->redrawArea(74);
-	}
+	_observatoryDayControl->sliderStop();
 }
 
 void Myst::o_observatoryYearSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider start move", op);
-
-	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
-
-	observatoryUpdateYear();
+	_observatoryYearControl->sliderStart();
 }
 
 void Myst::o_observatoryYearSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Year slider end move", op);
-
-	_vm->checkCursorHints();
-	_vm->_sound->resumeBackgroundMyst();
-
-	observatoryUpdateYear();
-}
-
-void Myst::observatoryUpdateYear() {
-	int16 year = (_observatoryYearSlider->_pos.y - 94) * 9999 / 94;
-
-	if (year != _state.observatoryYearSetting) {
-		_state.observatoryYearSetting = year;
-		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
-		_vm->_sound->replaceSoundMyst(8500);
-
-		// Redraw digits
-		_vm->redrawArea(79);
-		_vm->redrawArea(78);
-		_vm->redrawArea(77);
-		_vm->redrawArea(76);
-	}
+	_observatoryYearControl->sliderStop();
 }
 
 void Myst::o_observatoryTimeSliderStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider start move", op);
-
-	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
-
-	observatoryUpdateTime();
+	_observatoryTimeControl->sliderStart();
 }
 
 void Myst::o_observatoryTimeSliderEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Time slider end move", op);
-
-	_vm->checkCursorHints();
-	_vm->_sound->resumeBackgroundMyst();
-
-	observatoryUpdateTime();
-}
-
-void Myst::observatoryUpdateTime() {
-	int16 time = (_observatoryTimeSlider->_pos.y - 94) * 1439 / 94;
-
-	if (time != _state.observatoryTimeSetting) {
-		_state.observatoryTimeSetting = time;
-		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
-		_vm->_sound->replaceSoundMyst(8500);
-
-		// Redraw digits
-		_vm->redrawArea(80);
-		_vm->redrawArea(81);
-		_vm->redrawArea(82);
-		_vm->redrawArea(83);
-
-		// Draw AM/PM
-		if (!observatoryIsDDMMYYYY2400())
-			_vm->redrawArea(88);
-	}
+	_observatoryTimeControl->sliderStop();
 }
 
 void Myst::o_libraryCombinationBookStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -2742,20 +2580,9 @@ void Myst::libraryCombinationBook_run() {
 void Myst::o_observatoryChangeSettingStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Observatory change setting stop", op);
 
-	// Stop persistent scripts
-	_observatoryMonthChanging = false;
-	_observatoryDayChanging = false;
-	_observatoryYearChanging = false;
-	_observatoryTimeChanging = false;
-	_observatoryIncrement = 0;
-
 	// Restore button and slider
-	_vm->_gfx->copyBackBufferToScreen(_invokingResource->getRect());
-	if (_observatoryCurrentSlider) {
-		_vm->redrawResource(_observatoryCurrentSlider);
-		_observatoryCurrentSlider = 0;
-	}
-	_vm->_sound->resumeBackgroundMyst();
+	if (_observatoryCurrentControl)
+		_observatoryCurrentControl->stopChange();
 }
 
 void Myst::o_dockVaultForceClose(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3348,40 +3175,143 @@ void Myst::gullsFly1_run() {
 	}
 }
 
+int Myst::observatoryResourceCompare(const void *p1, const void *p2) {
+	MystResource *r1 = *static_cast<MystResource * const *>(p1);
+	Common::Rect rect1 = r1->getRect();
+	MystResource *r2 = *static_cast<MystResource * const *>(p2);
+	Common::Rect rect2 = r2->getRect();
+	int i = rect1.left - rect2.left;
+
+	if (i < -5 || i > 5)
+		return i;
+
+	i = rect1.top - rect2.top;
+
+	if (i < -2 || i > 2)
+		return i;
+
+	return 0;
+}
+
 void Myst::o_observatory_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	Common::Array<MystResource *> controls;
+	Common::Array<MystResource *> displays;
+	MystResource *r;
+
 	debugC(kDebugScript, "Opcode %d: Stellar observatory init", op);
 
 	_tempVar = 0;
 	_observatoryNotInitialized = true;
+
+	// Identify resources.
+
+	for (uint16 i = 0; i < _vm->_resources.size(); i++) {
+		r = _vm->_resources[i];
+
+		switch (r->_type) {
+
+		case kMystSlider:		// Slider.
+		case kMystDragArea:		// Button.
+			controls.push_back(r);
+			break;
+
+		case kMystConditionalImage:	// Display.
+			switch ((static_cast<MystResourceType8 *>(r))->getType8Var()) {
+
+			case 73:		// Month.
+			case 74:		// Day MS digit.
+			case 75:		// Day LS digit.
+			case 76:		// Year digit 1.
+			case 77:		// Year digit 2.
+			case 78:		// Year digit 3.
+			case 79:		// Year digit 4.
+			case 80:		// Hour MS digit.
+			case 81:		// Hour LS digit.
+			case 82:		// Minute MS digit.
+			case 83:		// Minute LS digit.
+			case 88:		// AM/PM.
+				displays.push_back(r);
+				break;
+			}
+
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (controls.size() != 12 || displays.size() == 0)
+		error("Resources(s) missing in observatory");
+
+	// Now sort the controls and displays by top/left corner, column major.
+	// This is a "fuzzy" sort to accomodate a few pixels offset
+	//  between items.
+
+	qsort(&controls.front(), controls.size(), sizeof(MystResource *),
+	    observatoryResourceCompare);
+	qsort(&displays.front(), displays.size(), sizeof(MystResource *),
+	    observatoryResourceCompare);
+
+	// The timestamp format is DDMMMYYYYHHMM if the month display is
+	//  not the leftmost.
+
+	_observatoryIsDDMMMYYYY2400 = displays.front()->getType8Var() != 73;
+
+	// Now fill-in the four controls.
+
+	for (uint16 i = 0; i < 4; i++) {
+		_observatoryControl[i].initialize(this);
+		_observatoryControl[i].setControls(controls[3 * i],
+		    controls[3 * i + 1], controls[3 * i + 2]);
+	}
+
+	// Assign controls according to date format.
+
+	_observatoryYearControl = &_observatoryControl[2];
+	_observatoryTimeControl = &_observatoryControl[3];
+
+	if (_observatoryIsDDMMMYYYY2400) {
+		_observatoryDayControl = &_observatoryControl[0];
+		_observatoryMonthControl = &_observatoryControl[1];
+		}
+	else {
+		_observatoryMonthControl = &_observatoryControl[0];
+		_observatoryDayControl = &_observatoryControl[1];
+		_observatoryTimeControl->addDisplay(88);	// AM/PM.
+		}
+
+	// Associate displays and control value.
+
+	_observatoryDayControl->addDisplay(74);		// Day MS digit.
+	_observatoryDayControl->addDisplay(75);		// Day LS digit.
+	_observatoryDayControl->setValueParameters(&_state.observatoryDaySetting,
+	    1, 31, &_state.observatoryDaySlider);
+
+	_observatoryMonthControl->addDisplay(73);	// Month.
+	_observatoryMonthControl->setValueParameters(&_state.observatoryMonthSetting,
+	    0, 11, &_state.observatoryMonthSlider);
+
+	_observatoryYearControl->addDisplay(76);	// Year digit 1.
+	_observatoryYearControl->addDisplay(77);	// Year digit 2.
+	_observatoryYearControl->addDisplay(78);	// Year digit 3.
+	_observatoryYearControl->addDisplay(79);	// Year digit 4.
+	_observatoryYearControl->setValueParameters(&_state.observatoryYearSetting,
+	    0, 9999, &_state.observatoryMonthSlider);
+
+	_observatoryTimeControl->addDisplay(80);	// Hour MS digit.
+	_observatoryTimeControl->addDisplay(81);	// Hour LS digit.
+	_observatoryTimeControl->addDisplay(82);	// Minute MS digit.
+	_observatoryTimeControl->addDisplay(83);	// Minute LS digit.
+	_observatoryTimeControl->setValueParameters(&_state.observatoryTimeSetting,
+	    0, 24 * 60 - 1, &_state.observatoryTimeSlider);
+
 	_observatoryVisualizer = static_cast<MystResourceType8 *>(_invokingResource);
 	_observatoryGoButton = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
-	if (observatoryIsDDMMYYYY2400()) {
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
-	} else {
-		_observatoryMonthSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[1]]);
-		_observatoryDaySlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[2]]);
-	}
-	_observatoryYearSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[3]]);
-	_observatoryTimeSlider = static_cast<MystResourceType10 *>(_vm->_resources[argv[4]]);
-
-	// Set date selection sliders position
-	_observatoryDaySlider->setPosition(_state.observatoryDaySlider);
-	_observatoryMonthSlider->setPosition(_state.observatoryMonthSlider);
-	_observatoryYearSlider->setPosition(_state.observatoryYearSlider);
-	_observatoryTimeSlider->setPosition(_state.observatoryTimeSlider);
 
 	_observatoryLastTime = _vm->_system->getMillis();
-
 	observatorySetTargetToSetting();
-
 	_observatoryRunning = true;
-}
-
-bool Myst::observatoryIsDDMMYYYY2400() {
-	// TODO: Auto-detect based on the month rect position
-	return !(_vm->getFeatures() & GF_ME) && (_vm->getLanguage() == Common::FR_FRA
-			|| _vm->getLanguage() == Common::DE_DEU);
 }
 
 void Myst::observatoryUpdateVisualizer(uint16 x, uint16 y) {
@@ -3417,57 +3347,32 @@ void Myst::observatory_run() {
 	if (_observatoryNotInitialized) {
 		_observatoryNotInitialized = false;
 
+		// Make sliders "initialize"
 		_vm->_cursor->hideCursor();
 
-		// Make sliders "initialize"
-		if (observatoryIsDDMMYYYY2400()) {
-			_vm->_sound->replaceSoundMyst(8500);
-			_observatoryDaySlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
-			_vm->redrawResource(_observatoryDaySlider);
-
-			_vm->_sound->replaceSoundMyst(8500);
-			_observatoryMonthSlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
-			_vm->redrawResource(_observatoryMonthSlider);
-		} else {
-			_vm->_sound->replaceSoundMyst(8500);
-			_observatoryMonthSlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
-			_vm->redrawResource(_observatoryMonthSlider);
-
-			_vm->_sound->replaceSoundMyst(8500);
-			_observatoryDaySlider->drawConditionalDataToScreen(2);
-			_vm->_system->delayMillis(200);
-			_vm->redrawResource(_observatoryDaySlider);
-		}
-
-		_vm->_sound->replaceSoundMyst(8500);
-		_observatoryYearSlider->drawConditionalDataToScreen(2);
-		_vm->_system->delayMillis(200);
-		_vm->redrawResource(_observatoryYearSlider);
-
-		_vm->_sound->replaceSoundMyst(8500);
-		_observatoryTimeSlider->drawConditionalDataToScreen(2);
-		_vm->_system->delayMillis(200);
-		_vm->redrawResource(_observatoryTimeSlider);
+		for (uint16 i = 0; i < 4; i++)
+			_observatoryControl[i].preset();
 
 		_vm->_cursor->showCursor();
 	}
 
-	// Setting not at target
-	if (_state.observatoryDayTarget != _state.observatoryDaySetting
-			|| _state.observatoryMonthTarget != _state.observatoryMonthSetting
-			|| _state.observatoryYearTarget != _state.observatoryYearSetting
-			|| _state.observatoryTimeTarget != _state.observatoryTimeSetting) {
+	// Blink the go button
+	uint32 time = _vm->_system->getMillis();
+	if (time > _observatoryLastTime + 250) {
+		int16 newstate = 0;
+		// Stop blinking if setting at target.
+		if (_state.observatoryDayTarget != _state.observatoryDaySetting ||
+		    _state.observatoryMonthTarget != _state.observatoryMonthSetting ||
+		    _state.observatoryYearTarget != _state.observatoryYearSetting ||
+		    _state.observatoryTimeTarget != _state.observatoryTimeSetting)
+			newstate = (_tempVar + 1) % 2;
 
-		// Blink the go button
-		uint32 time = _vm->_system->getMillis();
-		if (time > _observatoryLastTime + 250) {
-			_tempVar = (_tempVar + 1) % 2;
+		if (newstate != _tempVar) {
+			_tempVar = newstate;
 			_observatoryGoButton->drawConditionalDataToScreen(_tempVar);
 			_observatoryLastTime = time;
-		}
+			}
+
 	}
 }
 
