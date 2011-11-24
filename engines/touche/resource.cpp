@@ -590,8 +590,14 @@ void ToucheEngine::res_loadSound(int priority, int num) {
 	if (priority >= 0) {
 		uint32 size;
 		const uint32 offs = res_getDataOffset(kResourceTypeSound, num, &size);
-		_fData.seek(offs);
-		Audio::AudioStream *stream = Audio::makeVOCStream(&_fData, Audio::FLAG_UNSIGNED);
+		Common::SeekableReadStream *datastream = SearchMan.createReadStreamForMember("TOUCHE.DAT");
+		if (!datastream) {
+			warning("res_loadSound: Could not open TOUCHE.DAT");
+			return;
+		}
+
+		datastream->seek(offs);
+		Audio::AudioStream *stream = Audio::makeVOCStream(datastream, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		if (stream) {
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
