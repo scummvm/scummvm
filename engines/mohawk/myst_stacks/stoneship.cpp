@@ -48,6 +48,7 @@ Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 	_siriusDrawerDrugsOpen = 0;
 	_chestDrawersOpen = 0;
 	_chestAchenarBottomDrawerClosed = 1;
+	_telescopePosition = 0;
 
 	// Drop key
 	if (_state.trapdoorKeyState == 1)
@@ -922,22 +923,29 @@ void Stoneship::o_telescope_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	_telescopePanorama = argv[0];
 	_telescopeLighthouseOff = argv[1];
 	_telescopeLighthouseOn = argv[2];
-	_telescopePosition = 0;
 
+	if (!_globals.extensions)
+		_telescopePosition = 0;
+
+	_telescopeInitialized = false;
 	_telescopeRunning = true;
-	_telescopeLighthouseState = false;
-	_telescopeNexTime = _vm->_system->getMillis() + 1000;
+	_telescopeLighthouseState = true;
 }
 
 void Stoneship::telescope_run() {
 	uint32 time = _vm->_system->getMillis();
 
-	if (time > _telescopeNexTime) {
+	if (!_telescopeInitialized) {
+		MystResourceType11 *display = static_cast<MystResourceType11 *>(_invokingResource);
+		Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
+		_vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
+	}
 
+	if (!_telescopeInitialized || time > _telescopeNexTime) {
 		_telescopeNexTime = time + 1000;
 		_telescopeLighthouseState = !_telescopeLighthouseState;
-
 		telescopeLighthouseDraw();
+		_telescopeInitialized = true;
 		_vm->_system->updateScreen();
 	}
 }

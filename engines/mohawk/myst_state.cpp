@@ -50,6 +50,7 @@ MystGameState::MystGameState(MohawkEngine_Myst *vm, Common::SaveFileManager *sav
 	// Current Age / Stack - Start in Myst
 	_globals.currentAge = 7;
 	_globals.u1 = 1;
+	_globals.extensions = 1;
 
 	// Library Bookcase Door - Default to Up
 	_myst.libraryBookcaseDoor = 1;
@@ -146,6 +147,7 @@ void MystGameState::syncGameState(Common::Serializer &s, bool isME) {
 	s.syncAsUint16LE(_globals.zipMode);
 	s.syncAsUint16LE(_globals.redPagesInBook);
 	s.syncAsUint16LE(_globals.bluePagesInBook);
+	s.syncAsUint16LE(_globals.extensions);
 
 	// Onto Myst
 	if (isME) {
