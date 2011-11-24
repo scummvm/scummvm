@@ -275,8 +275,6 @@ void plotProc(int x, int y, int color, void *data) {
 
 void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 sourceX, int16 sourceY) {
 
-	// TODO: Writes to pointsArray aren't endian-safe yet
-
 	int16 currentRectIndex, destRectIndex;
 	int16 pointsCount;
 
@@ -309,30 +307,32 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 				currentRectIndex = _closedPathRects[--_closedPathRectsCount];
 			}
 			for (int16 i = 0; i < _pathNodesCount; i++) {
-				pointsArray[pointsCount++] = _pathNodes[i].y;
-				pointsArray[pointsCount++] = _pathNodes[i].x;
+				pointsArray[pointsCount++] = TO_LE_16(_pathNodes[i].y);
+				pointsArray[pointsCount++] = TO_LE_16(_pathNodes[i].x);
 			}
 		}
 
-		pointsArray[pointsCount++] = destY;
-		pointsArray[pointsCount++] = destX;
+		pointsArray[pointsCount++] = TO_LE_16(destY);
+		pointsArray[pointsCount++] = TO_LE_16(destX);
 
 		pointsArray[0] = 0;
-		pointsArray[1] = _pathNodesCount + 1;
+		pointsArray[1] = TO_LE_16(_pathNodesCount + 1);
 	}
 	
-	debug(0, "SegmentMap::findPath() count = %d", pointsArray[1]);
+	debug(0, "SegmentMap::findPath() count = %d", FROM_LE_16(pointsArray[1]));
 
 #if 0 // DEBUG: Draw the path we found
 	int sx = sourceX, sy = sourceY;
 	LineData ld;
 	ld.pitch = _vm->_sceneWidth;
 	ld.surf = _vm->_screen->_backScreen;
-	for (int16 i = 0; i < pointsArray[1] * 2; i+=2) {
-		debug(0, "x = %d; y = %d", pointsArray[3+i], pointsArray[2+i]);
-		Graphics::drawLine(sx, sy, pointsArray[3+i], pointsArray[2+i], 0xFF, plotProc, &ld);
-		sx = pointsArray[3+i];
-		sy = pointsArray[2+i];
+	for (int16 i = 0; i < FROM_LE_16(pointsArray[1]) * 2; i+=2) {
+		const int x = FROM_LE_16(pointsArray[3+i]);
+		const int y = FROM_LE_16(pointsArray[2+1]);
+		debug(0, "x = %d; y = %d", x, y);
+		Graphics::drawLine(sx, sy, x, y, 0xFF, plotProc, &ld);
+		sx = x;
+		sy = y;
 	}
 #endif
 	
