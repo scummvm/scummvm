@@ -2338,6 +2338,22 @@ void LBItem::readData(uint16 type, uint16 size, Common::MemoryReadStreamEndian *
 		}
 		break;
 
+	case kLBSetRolloverData:
+		{
+		assert(size == 2);
+		uint16 flag = stream->readUint16();
+		warning("ignoring kLBSetRolloverData: item %s, flag %d", _desc.c_str(), flag);
+		}
+		break;
+
+	case kLBSetParent:
+		{
+		assert(size == 2);
+		uint16 parent = stream->readUint16();
+		warning("ignoring kLBSetParent: item %s, parent id %d", _desc.c_str(), parent);
+		}
+		break;
+
 	case kLBUnknown194:
 		{
 		assert(size == 4);

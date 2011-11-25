@@ -178,10 +178,10 @@ enum {
 	kLBGlobalSetNotVisible = 0x79,
 	kLBGlobalSetVisible = 0x7a, // unused?
 	kLBSetAmbient = 0x7b,
-	kLBUnknown7C = 0x7c,     // unused?
+	kLBSetDragParams = 0x7c,
 	kLBSetKeyEvent = 0x7d,
-	kLBUnknown7E = 0x7e,     // unused? (rect flag)
-	kLBSetParent = 0x7f,     // unused?
+	kLBSetRolloverData = 0x7e,
+	kLBSetParent = 0x7f,
 	kLBSetHitTest = 0x80,
 	// from here, rugrats
 	kLBUnknown194 = 0x194
