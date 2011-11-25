@@ -108,6 +108,12 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 	return *model;
 }
 
+void OSystem_SDL_Maemo::setupIcon() {
+	// no Maemo version needs setupIcon
+	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
+	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+}
+
 } //namespace Maemo
 
 #endif
