@@ -135,6 +135,20 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// 3 Skulls of the Toltecs Hungarian version
+		// From bug #3440641
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "69a5572e75409d8c6230b787faa353af", 337647960),
+			Common::HU_HUN,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
