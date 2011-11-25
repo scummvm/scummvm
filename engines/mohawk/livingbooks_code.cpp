@@ -105,6 +105,8 @@ Common::Point LBValue::toPoint() const {
 		return Common::Point(integer, integer);
 	case kLBValuePoint:
 		return point;
+	case kLBValueRect:
+		return Common::Point(rect.left, rect.top);
 	default:
 		error("failed to convert to point");
 	}
@@ -117,6 +119,8 @@ Common::Rect LBValue::toRect() const {
 		return Common::Rect();
 	case kLBValueInteger:
 		return Common::Rect(integer, integer, integer, integer);
+	case kLBValuePoint:
+		return Common::Rect(point.x, point.y, point.x, point.y);
 	case kLBValueRect:
 		return rect;
 	case kLBValueItemPtr:
