@@ -38,6 +38,7 @@ public:
 	virtual void quit();
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
+	virtual void setupIcon();
 
 	Model getModel() { return _model; }
 
