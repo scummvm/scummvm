@@ -597,7 +597,8 @@ public:
 	LBProxyItem(MohawkEngine_LivingBooks *_vm, LBPage *page, Common::Rect rect);
 	~LBProxyItem();
 
-	void init();
+	void load();
+	void unload();
 
 protected:
 	class LBPage *_page;

@@ -3671,7 +3671,10 @@ LBProxyItem::~LBProxyItem() {
 	delete _page;
 }
 
-void LBProxyItem::init() {
+void LBProxyItem::load() {
+	if (_loaded)
+		return;
+
 	Common::String leftover;
 	Common::String filename = _vm->getFileNameFromConfig("Proxies", _desc.c_str(), leftover);
 	if (!leftover.empty())
@@ -3690,6 +3693,15 @@ void LBProxyItem::init() {
 		error("failed to open archive '%s' (for proxy '%s')", filename.c_str(), _desc.c_str());
 	_page = new LBPage(_vm);
 	_page->open(pageArchive, baseId);
+
+	LBItem::load();
+}
+
+void LBProxyItem::unload() {
+	delete _page;
+	_page = NULL;
+
+	LBItem::unload();
 }
 
 } // End of namespace Mohawk
