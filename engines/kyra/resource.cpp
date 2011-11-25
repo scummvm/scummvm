@@ -84,7 +84,7 @@ bool Resource::reset() {
 				name.toUppercase();
 
 				// No PAK file
-				if (name == "TWMUSIC.PAK")
+				if (name == "TWMUSIC.PAK" || name == "EYE.PAK")
 					continue;
 
 				// We need to only load the script archive for the language the user specified
