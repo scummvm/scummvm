@@ -206,6 +206,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'useroutine',
 	'hangon',
 	'hangonp',
+	'hangonw',
 	'findnextcolon',
 	'usetext',
 	'bresenhams',

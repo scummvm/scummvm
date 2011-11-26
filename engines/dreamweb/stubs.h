@@ -257,6 +257,8 @@
 	void useroutine();
 	void hangon();
 	void hangon(uint16 frameCount);
+	void hangonw();
+	void hangonw(uint16 frameCount);
 	void hangonp();
 	void hangonp(uint16 count);
 	void showicon();

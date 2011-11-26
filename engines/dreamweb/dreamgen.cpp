@@ -12832,21 +12832,6 @@ void DreamGenContext::allpointer() {
 	dumppointer();
 }
 
-void DreamGenContext::hangonw() {
-	STACK_CHECK;
-hangloopw:
-	push(cx);
-	delpointer();
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
-	cx = pop();
-	if (--cx)
-		goto hangloopw;
-}
-
 void DreamGenContext::getunderzoom() {
 	STACK_CHECK;
 	di = (8)+5;

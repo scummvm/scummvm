@@ -1919,6 +1919,25 @@ void DreamGenContext::hangon(uint16 frameCount) {
 	}
 }
 
+
+void DreamGenContext::hangonw() {
+	hangonw(cx);
+}
+
+void DreamGenContext::hangonw(uint16 frameCount) {
+	while (frameCount) {
+		delpointer();
+		readmouse();
+		animpointer();
+		showpointer();
+		vsync();
+		dumppointer();
+		--frameCount;
+		if (quitRequested())
+			break;
+	}
+}
+
 void DreamGenContext::hangonp() {
 	hangonp(cx);
 }
