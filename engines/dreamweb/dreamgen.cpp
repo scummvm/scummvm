@@ -11199,25 +11199,6 @@ afterprintname:
 		goto shownameloop;
 }
 
-void DreamGenContext::makeheader() {
-	STACK_CHECK;
-	dx = data;
-	es = dx;
-	di = 6141;
-	ax = 17;
-	storeit();
-	ax = (68-0);
-	storeit();
-	ax = (0+2080+30000+(16*114)+((114+2)*2)+18000);
-	storeit();
-	ax = (250)*4;
-	storeit();
-	ax = 48;
-	storeit();
-	ax = (991-534);
-	storeit();
-}
-
 void DreamGenContext::storeit() {
 	STACK_CHECK;
 	_cmp(ax, 0);

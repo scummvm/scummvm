@@ -43,7 +43,6 @@ public:
 	static const uint16 addr_setkeyboardint = 0xcbac;
 	static const uint16 addr_readfromfile = 0xcba8;
 	static const uint16 addr_closefile = 0xcba4;
-	static const uint16 addr_openforsave = 0xcba0;
 	static const uint16 addr_openfilenocheck = 0xcb9c;
 	static const uint16 addr_openfilefromc = 0xcb94;
 	static const uint16 addr_openfile = 0xcb90;
@@ -138,12 +137,9 @@ public:
 	static const uint16 addr_showdecisions = 0xc8bc;
 	static const uint16 addr_decide = 0xc8b8;
 	static const uint16 addr_scanfornames = 0xc8b4;
-	static const uint16 addr_saveseg = 0xc8ac;
 	static const uint16 addr_storeit = 0xc8a8;
-	static const uint16 addr_makeheader = 0xc8a4;
 	static const uint16 addr_loadseg = 0xc8a0;
 	static const uint16 addr_savefileread = 0xc894;
-	static const uint16 addr_savefilewrite = 0xc890;
 	static const uint16 addr_error = 0xc884;
 	static const uint16 addr_generalerror = 0xcbbc;
 	static const uint16 addr_dosreturn = 0xc880;
@@ -1265,7 +1261,7 @@ public:
 	void slabdoorf();
 	//void loadintotemp();
 	void loadintroroom();
-	void saveseg();
+	//void saveseg();
 	//void showblink();
 	void mousecall();
 	void train();
@@ -1377,7 +1373,7 @@ public:
 	void getridoftempcharset();
 	void heavy();
 	//void endpaltostart();
-	void showkeys();
+	//void makeheader();
 	void usekey();
 	void locklighton();
 	void useladderb();
@@ -1398,7 +1394,7 @@ public:
 	//void showword();
 	void dirfile();
 	//void bresenhams();
-	//void walktotext();
+	//void savefilewrite();
 	void pickupconts();
 	void locklightoff();
 	void wearwatch();
@@ -1546,12 +1542,12 @@ public:
 	void getundercentre();
 	void checkforexit();
 	void loadseg();
-	void makeheader();
+	void showkeys();
 	void setkeyboardint();
 	void priest();
 	//void readmouse();
 	//void addtopeoplelist();
-	void savefilewrite();
+	//void walktotext();
 	void printmessage2();
 	//void showallfree();
 	void loadnews();
@@ -1794,7 +1790,7 @@ public:
 	void keeper();
 	void afternewroom();
 	void getexad();
-	void openforsave();
+	//void openforsave();
 	void closefile();
 	//void delcurs();
 	//void randomaccess();

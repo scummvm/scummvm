@@ -406,10 +406,11 @@ void DreamGenContext::closefile() {
 	data.byte(kHandle) = 0;
 }
 
-void DreamGenContext::openforsave() {
-	const char *name = (const char *)ds.ptr(dx, 13);
-	debug(1, "openforsave(%s)", name);
-	engine->openSaveFileForWriting(name);
+void DreamGenContext::openforsave(unsigned int slot) {
+	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
+	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
+	debug(1, "openforsave(%s)", filename.c_str());
+	engine->openSaveFileForWriting(filename);
 }
 
 void DreamGenContext::openfilenocheck() {
@@ -719,16 +720,6 @@ void DreamGenContext::loadspeech() {
 	//warning("name = %s", name);
 	if (engine->loadSpeech(name))
 		data.byte(kSpeechloaded) = 1;
-}
-
-void DreamGenContext::saveseg() {
-	cx = es.word(di);
-	_add(di, 2);
-	savefilewrite();
-}
-
-void DreamGenContext::savefilewrite() {
-	ax = engine->writeToSaveFile(ds.ptr(dx, cx), cx);
 }
 
 void DreamGenContext::savefileread() {

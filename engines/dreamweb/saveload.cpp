@@ -261,22 +261,15 @@ void DreamGenContext::savegame() {
 		madeUpRoom->b27 = 255;
 
 		// TODO: The below is copied from saveposition
-		makeheader();
 
-		//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
-		Common::String filename = Common::String::format("DREAMWEB.D%02d", savegameId);
-		debug(1, "Saving to filename: %s (%s)", filename.c_str(), game_description.c_str());
 
-		engine->openSaveFileForWriting(filename.c_str());
-
-		dx = data;
-		ds = dx;
-		dx = kFileheader;
-		cx = kHeaderlen;
-		savefilewrite();
-		dx = data;
-		es = dx;
-		di = kFiledata;
+		openforsave(savegameId);
+		// fill length fields in savegame file header
+		uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
+		                  4*kNumchanges, 48, kLenofreelrouts };
+		for (int i = 0; i < 6; ++i)
+			data.word(kFiledata + 2*i) = len[i];
+		engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
 
 		// TODO: Check if this 2 is a constant
 		uint8 descbuf[17] = { 2, 0 };
@@ -288,38 +281,14 @@ void DreamGenContext::savegame() {
 		descbuf[++desclen] = 0;
 		while (desclen < 17)
 			descbuf[++desclen] = 1;
-		if (savegameId < 7) {
-			ax = savegameId;
-			cx = 17;
-			_mul(cx);
-			ds = data;
-			dx = kSavenames;
-			_add(dx, ax);
-			memcpy(data.ptr(dx,17), descbuf, 17);
-			saveseg();
-		} else {
-			// savenames only has room for descriptions for 7 slots
-			uint16 len = es.word(di);
-			_add(di, 2);
-			assert(len == 17);
-			engine->writeToSaveFile(descbuf, len);
-		}
-
-		ds = data;
-		dx = kStartvars;
-		saveseg();
-		ds = data.word(kExtras);
-		dx = kExframedata;
-		saveseg();
-		ds = data.word(kBuffers);
-		dx = kListofchanges;
-		saveseg();
-		ds = data;
-		dx = kMadeuproomdat;
-		saveseg();
-		ds = data;
-		dx = kReelroutines;
-		saveseg();
+		if (savegameId < 7)
+			memcpy(data.ptr(kSavenames + 17*savegameId, 17), descbuf, 17);
+		engine->writeToSaveFile(descbuf, len[0]);
+		engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
+		engine->writeToSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+		engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+		engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+		engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 		closefile();
 
 		getridoftemp();
@@ -428,52 +397,23 @@ void DreamGenContext::actualload() {
 }
 
 void DreamGenContext::saveposition() {
-	STACK_CHECK;
-	makeheader();
-	al = data.byte(kCurrentslot);
-	ah = 0;
-	push(ax);
-	cx = 13;
-	_mul(cx);
-	dx = data;
-	ds = dx;
-	dx = 8698;
-	_add(dx, ax);
-	openforsave();
-	dx = data;
-	ds = dx;
-	dx = 6091;
-	cx = (6187-6091);
-	savefilewrite();
-	dx = data;
-	es = dx;
-	di = 6141;
-	ax = pop();
-	cx = 17;
-	_mul(cx);
-	dx = data;
-	ds = dx;
-	dx = 8579;
-	_add(dx, ax);
-	saveseg();
-	dx = data;
-	ds = dx;
-	dx = 0;
-	saveseg();
-	ds = data.word(kExtras);
-	dx = (0);
-	saveseg();
-	ds = data.word(kBuffers);
-	dx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	saveseg();
-	dx = data;
-	ds = dx;
-	dx = 7979;
-	saveseg();
-	dx = data;
-	ds = dx;
-	dx = 534;
-	saveseg();
+	unsigned int slot = data.byte(kCurrentslot);
+
+	openforsave(slot);
+
+	// fill length fields in savegame file header
+	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
+	                  4*kNumchanges, 48, kLenofreelrouts };
+	for (int i = 0; i < 6; ++i)
+		data.word(kFiledata + 2*i) = len[i];
+
+	engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
+	engine->writeToSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
+	engine->writeToSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 	closefile();
 }
 
