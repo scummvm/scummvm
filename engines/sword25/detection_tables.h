@@ -104,6 +104,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
+	// Hungarian "psylog" version.
+	// Submitted by goodoldgeorg in bug report #3428644.
+	{
+		"sword25",
+		"psylog version",
+		AD_ENTRY1s("lang_hu.b25c", "7de51a3b4926a192549e75b1a7d81667", 1864915),
+		Common::HU_HUN,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
 
 	// Extracted version
 	{
