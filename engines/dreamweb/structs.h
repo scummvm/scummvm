@@ -183,10 +183,7 @@ struct People {
 };
 
 struct Room {
-	char  name[10];
-	uint8 b10;
-	uint8 b11;
-	uint8 b12;
+	char  name[13];
 	uint8 roomsSample;
 	uint8 b14;
 	uint8 mapX;
