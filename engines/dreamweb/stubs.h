@@ -345,8 +345,8 @@
 	void showseconduse();
 	void actualsave();
 	void actualload();
-	void loadposition();
-	void saveposition();
+	void loadposition(unsigned int slot);
+	void saveposition(unsigned int slot, const uint8 *descbuf);
 	void openforsave(unsigned int slot);
 	void openforload(unsigned int slot);
 

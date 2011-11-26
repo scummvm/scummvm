@@ -101,37 +101,8 @@ void DreamGenContext::doload() {
 			return;
 		}
 
+		loadposition(savegameId);
 
-		// TODO: The below is duplicated from Loadposition
-		data.word(kTimecount) = 0;
-		clearchanges();
-
-		openforload(savegameId);
-
-		engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
-
-		// read segment lengths from savegame file header
-		int len[6];
-		for (int i = 0; i < 6; ++i)
-			len[i] = cs.word(kFiledata + 2*i);
-		if (len[0] != 17)
-			::error("Error loading save: description buffer isn't 17 bytes");
-
-		if (savegameId < 7) {
-			engine->readFromSaveFile(data.ptr(kSavenames + 17*savegameId, len[0]), len[0]);
-		} else {
-			// For support of more than 7 savegame slots,
-			// loading into the savenames buffer isn't always possible
-			uint8 namebuf[17];
-			engine->readFromSaveFile(namebuf, 17);
-		}
-		engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-		engine->readFromSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-		engine->readFromSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
-		engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
-		engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
-
-		closefile();
 		data.byte(kGetback) = 1;
 	}
 
@@ -227,32 +198,6 @@ void DreamGenContext::savegame() {
 			return;
 		}
 
-		// TODO: The below is copied from actualsave
-		const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
-		Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
-
-		*madeUpRoom = *currentRoom;
-		bx = kMadeuproomdat;
-		es = cs;
-		madeUpRoom->roomsSample = data.byte(kRoomssample);
-		madeUpRoom->mapX = data.byte(kMapx);
-		madeUpRoom->mapY = data.byte(kMapy);
-		madeUpRoom->liftFlag = data.byte(kLiftflag);
-		madeUpRoom->b21 = data.byte(kManspath);
-		madeUpRoom->facing = data.byte(kFacing);
-		madeUpRoom->b27 = 255;
-
-		// TODO: The below is copied from saveposition
-
-
-		openforsave(savegameId);
-		// fill length fields in savegame file header
-		uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
-		                  4*kNumchanges, 48, kLenofreelrouts };
-		for (int i = 0; i < 6; ++i)
-			data.word(kFiledata + 2*i) = len[i];
-		engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
-
 		// TODO: Check if this 2 is a constant
 		uint8 descbuf[17] = { 2, 0 };
 		strncpy((char*)descbuf+1, game_description.c_str(), 16);
@@ -265,16 +210,12 @@ void DreamGenContext::savegame() {
 			descbuf[++desclen] = 1;
 		if (savegameId < 7)
 			memcpy(data.ptr(kSavenames + 17*savegameId, 17), descbuf, 17);
-		engine->writeToSaveFile(descbuf, len[0]);
-		engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-		engine->writeToSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-		engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
-		engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
-		engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
-		closefile();
 
+		saveposition(savegameId, descbuf);
+
+		// TODO: The below is copied from actualsave
 		getridoftemp();
-		restoreall();
+		restoreall(); // reels
 		data.word(kTextaddressx) = 13;
 		data.word(kTextaddressy) = 182;
 		data.byte(kTextlen) = 240;
@@ -329,25 +270,11 @@ void DreamGenContext::actualsave() {
 
 	unsigned int slot = data.byte(kCurrentslot);
 
-	const char *desc = (const char *)data.ptr(kSavenames + 17*slot + 1, 16);
-	if (desc[0] == 0)
+	const uint8 *desc = data.ptr(kSavenames + 17*slot, 16);
+	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
-	Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
-
-	*madeUpRoom = *currentRoom;
-	bx = kMadeuproomdat;
-	es = cs;
-	madeUpRoom->roomsSample = data.byte(kRoomssample);
-	madeUpRoom->mapX = data.byte(kMapx);
-	madeUpRoom->mapY = data.byte(kMapy);
-	madeUpRoom->liftFlag = data.byte(kLiftflag);
-	madeUpRoom->b21 = data.byte(kManspath);
-	madeUpRoom->facing = data.byte(kFacing);
-	madeUpRoom->b27 = 255;
-
-	saveposition();
+	saveposition(slot, desc);
 
 	getridoftemp();
 	restoreall(); // reels
@@ -370,16 +297,28 @@ void DreamGenContext::actualload() {
 
 	unsigned int slot = data.byte(kCurrentslot);
 
-	const char *desc = (const char *)data.ptr(kSavenames + 17*slot + 1, 16);
-	if (desc[0] == 0)
+	const uint8 *desc = data.ptr(kSavenames + 17*slot, 16);
+	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	loadposition();
+	loadposition(data.byte(kCurrentslot));
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::saveposition() {
-	unsigned int slot = data.byte(kCurrentslot);
+void DreamGenContext::saveposition(unsigned int slot, const uint8 *descbuf) {
+
+	const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
+	Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+
+	*madeUpRoom = *currentRoom;
+	madeUpRoom->roomsSample = data.byte(kRoomssample);
+	madeUpRoom->mapX = data.byte(kMapx);
+	madeUpRoom->mapY = data.byte(kMapy);
+	madeUpRoom->liftFlag = data.byte(kLiftflag);
+	madeUpRoom->b21 = data.byte(kManspath);
+	madeUpRoom->facing = data.byte(kFacing);
+	madeUpRoom->b27 = 255;
+
 
 	openforsave(slot);
 
@@ -390,20 +329,20 @@ void DreamGenContext::saveposition() {
 		data.word(kFiledata + 2*i) = len[i];
 
 	engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
-	engine->writeToSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+	engine->writeToSaveFile(descbuf, len[0]);
 	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->writeToSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
 	engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 	engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
 	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 	closefile();
+
+
 }
 
-void DreamGenContext::loadposition() {
+void DreamGenContext::loadposition(unsigned int slot) {
 	data.word(kTimecount) = 0;
 	clearchanges();
-
-	unsigned int slot = data.byte(kCurrentslot);
 
 	openforload(slot);
 
@@ -416,7 +355,13 @@ void DreamGenContext::loadposition() {
 	if (len[0] != 17)
 		::error("Error loading save: description buffer isn't 17 bytes");
 
-	engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+	if (slot < 7) {
+		engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+	} else {
+		// The savenames buffer only has room for 7 descriptions
+		uint8 namebuf[17];
+		engine->readFromSaveFile(namebuf, 17);
+	}
 	engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->readFromSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
 	engine->readFromSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
