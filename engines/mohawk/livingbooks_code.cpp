@@ -21,6 +21,7 @@
  */
 
 #include "mohawk/livingbooks.h"
+#include "mohawk/livingbooks_lbx.h"
 #include "mohawk/resource.h"
 
 #include "common/system.h"
@@ -830,8 +831,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "setDisplay", &LBCode::cmdUnimplemented },
 	{ "getDisplay", 0 },
 	{ 0, 0 },
-	{ "lbxCreate", 0 },
-	{ "lbxFunc", 0 },
+	{ "lbxCreate", &LBCode::cmdLBXCreate },
+	{ "lbxFunc", &LBCode::cmdLBXFunc },
 	{ "waitCursor", 0 },
 	{ "debugBreak", 0 },
 	{ "menuItemEnable", 0 },
@@ -1084,6 +1085,32 @@ void LBCode::cmdSetHitTest(const Common::Array<LBValue> &params) {
 	if (params.size() > 2)
 		error("incorrect number of parameters (%d) to setHitTest", params.size());
 	warning("ignoring setHitTest");
+}
+
+void LBCode::cmdLBXCreate(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to lbxCreate", params.size());
+
+	_stack.push(createLBXObject(_vm, params[0].toInt()));
+}
+
+void LBCode::cmdLBXFunc(const Common::Array<LBValue> &params) {
+	if (params.size() < 2)
+		error("incorrect number of parameters (%d) to lbxFunc", params.size());
+
+	if (params[0].type != kLBValueLBX || !params[0].lbx)
+		error("invalid lbx object passed to lbxFunc");
+
+	Common::SharedPtr<LBXObject> lbx = params[0].lbx;
+	uint callId = params[1].toInt();
+
+	Common::Array<LBValue> callParams;
+	for (uint i = 0; i < params.size() - 2; i++)
+		callParams.push_back(params[i + 2]);
+
+	LBValue result;
+	if (lbx->call(callId, callParams, result))
+		_stack.push(result);
 }
 
 void LBCode::cmdKey(const Common::Array<LBValue> &params) {

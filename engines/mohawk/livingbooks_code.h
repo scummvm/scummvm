@@ -32,6 +32,7 @@ namespace Mohawk {
 
 class MohawkEngine_LivingBooks;
 class LBItem;
+class LBXObject;
 struct LBList;
 
 enum LBValueType {
@@ -41,6 +42,7 @@ enum LBValueType {
 	kLBValuePoint,
 	kLBValueRect,
 	kLBValueItemPtr,
+	kLBValueLBX,
 	kLBValueList
 };
 
@@ -69,6 +71,10 @@ struct LBValue {
 		type = kLBValueItemPtr;
 		item = itm;
 	}
+	LBValue(Common::SharedPtr<LBXObject> l) {
+		type = kLBValueLBX;
+		lbx = l;
+	}
 	LBValue(Common::SharedPtr<LBList> l) {
 		type = kLBValueList;
 		list = l;
@@ -94,6 +100,9 @@ struct LBValue {
 		case kLBValueItemPtr:
 			item = val.item;
 			break;
+		case kLBValueLBX:
+			lbx = val.lbx;
+			break;
 		case kLBValueList:
 			list = val.list;
 			break;
@@ -107,6 +116,7 @@ struct LBValue {
 	Common::Point point;
 	Common::Rect rect;
 	LBItem *item;
+	Common::SharedPtr<LBXObject> lbx;
 	Common::SharedPtr<LBList> list;
 
 	bool operator==(const LBValue &x) const;
@@ -255,6 +265,8 @@ public:
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
+	void cmdLBXCreate(const Common::Array<LBValue> &params);
+	void cmdLBXFunc(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
 	void itemIsPlaying(const Common::Array<LBValue> &params);

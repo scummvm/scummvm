@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	installer_archive.o \
 	livingbooks.o \
 	livingbooks_code.o \
+	livingbooks_lbx.o \
 	mohawk.o \
 	resource.o \
 	sound.o \
