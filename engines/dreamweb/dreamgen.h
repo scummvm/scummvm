@@ -95,10 +95,6 @@ public:
 	static const uint16 addr_identifyob = 0xc9d4;
 	static const uint16 addr_madmanrun = 0xc9cc;
 	static const uint16 addr_mainscreen = 0xc9c8;
-	static const uint16 addr_convnum = 0xc9c4;
-	static const uint16 addr_showword = 0xc9c0;
-	static const uint16 addr_onedigit = 0xc9b8;
-	static const uint16 addr_showbyte = 0xc9b4;
 	static const uint16 addr_checkforshake = 0xc9a4;
 	static const uint16 addr_watchreel = 0xc9a0;
 	static const uint16 addr_allocatemem = 0xc988;
@@ -1203,7 +1199,7 @@ public:
 	void setmode();
 	void getbackfromops();
 	//void frameoutv();
-	void showbyte();
+	void opensarters();
 	//void screenupdate();
 	//void addlength();
 	//void usetimedtext();
@@ -1239,7 +1235,7 @@ public:
 	void opentomb();
 	//void makename();
 	void buttonfour();
-	void restoreall();
+	void dosometalk();
 	//void lockmon();
 	//void dochange();
 	void getanyaddir();
@@ -1315,6 +1311,7 @@ public:
 	//void cancelch1();
 	void loadold();
 	//void loadtempcharset();
+	//void showbyte();
 	void useslab();
 	void dumpzoom();
 	//void aboutturn();
@@ -1411,7 +1408,7 @@ public:
 	void loadposition();
 	//void wornerror();
 	void entersymbol();
-	void showword();
+	//void showword();
 	void dirfile();
 	//void bresenhams();
 	//void walktotext();
@@ -1420,7 +1417,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	//void doblocks();
-	void opensarters();
+	void restoreall();
 	//void delpointer();
 	void attendant();
 	void nextsymbol();
@@ -1548,7 +1545,7 @@ public:
 	void sparkydrip();
 	//void paltostartpal();
 	void getridofpit();
-	void convnum();
+	//void convnum();
 	//void checkifset();
 	void nothelderror();
 	//void readheader();
@@ -1595,8 +1592,8 @@ public:
 	void checksoundint();
 	void usewindow();
 	void wearshades();
+	//void onedigit();
 	void pitinterupt();
-	void onedigit();
 	void deleverything();
 	void fadescreendown();
 	//void findxyfrompath();
@@ -1722,7 +1719,7 @@ public:
 	void calledensdlift();
 	void checkinside();
 	void gates();
-	void selectlocation();
+	void newgame();
 	//void showwatch();
 	//void turnanypathon();
 	void restorereels();
@@ -1878,7 +1875,7 @@ public:
 	void getridoftempsp();
 	void scanfornames();
 	//void setallchanges();
-	void newgame();
+	void selectlocation();
 	//void printboth();
 	//void standardload();
 	void undertextline();
@@ -1889,7 +1886,6 @@ public:
 	void emergencypurge();
 	void usemenu();
 	void alleybarksound();
-	void dosometalk();
 	void usecart();
 	void intromusic();
 	void quitkey();
