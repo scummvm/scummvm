@@ -480,26 +480,66 @@ void LBCode::parseMain() {
 			if (_currToken == kTokenAssign)
 				error("attempted assignment to self");
 			break;
-		} else if (_currToken == kTokenAssign) {
+		}
+		bool indexing = false;
+		LBValue index;
+		if (_currToken == kTokenListStart) {
+			debugN("[");
+			nextToken();
+			parseStatement();
+			if (_currToken != kTokenListEnd)
+				error("expected list end");
+			debugN("]");
+			nextToken();
+			if (!_stack.size())
+				error("index failed");
+			indexing = true;
+			index = _stack.pop();
+		}
+		if (_currToken == kTokenAssign) {
 			debugN(" = ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
 				error("assignment failed");
-			LBValue *val = &_vm->_variables[varname];
-			*val = _stack.pop();
+			LBValue *val;
+			if (indexing)
+				val = getIndexedVar(varname, index);
+			else
+				val = &_vm->_variables[varname];
+			if (val)
+				*val = _stack.pop();
+			else
+				*val = LBValue();
 			_stack.push(*val);
 		} else {
-			_stack.push(_vm->_variables[varname]);
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					_stack.push(*val);
+				else
+					_stack.push(LBValue());
+			} else
+				_stack.push(_vm->_variables[varname]);
 		}
 		// FIXME: pre/postincrement for non-integers
 		if (_currToken == kTokenPlusPlus) {
 			debugN("++");
-			_vm->_variables[varname].integer++;
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					val->integer++;
+			} else
+				_vm->_variables[varname].integer++;
 			nextToken();
 		} else if (_currToken == kTokenMinusMinus) {
 			debugN("--");
-			_vm->_variables[varname].integer--;
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					val->integer--;
+			} else
+				_vm->_variables[varname].integer--;
 			nextToken();
 		}
 		}
@@ -609,6 +649,17 @@ void LBCode::parseMain() {
 			val.integer++;
 		_stack.push(val);
 	}
+}
+
+LBValue *LBCode::getIndexedVar(Common::String varname, const LBValue &index) {
+	LBValue &var = _vm->_variables[varname];
+	if (var.type != kLBValueList)
+		error("variable '%s' was indexed, but isn't a list", varname.c_str());
+	if (index.type != kLBValueInteger)
+		error("index wasn't an integer");
+	if (index.integer < 1 || index.integer > (int)var.list->array.size())
+		return NULL;
+	return &var.list->array[index.integer - 1];
 }
 
 LBItem *LBCode::resolveItem(const LBValue &value) {
@@ -731,7 +782,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "getPage", 0 },
 	{ "getWorldRect", 0 },
 	{ "isWorldWrap", 0 },
-	{ "newList", 0 },
+	{ "newList", &LBCode::cmdNewList },
 	{ "deleteList", 0 },
 	{ "add", 0 },
 	{ 0, 0 },
@@ -741,9 +792,9 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ 0, 0 },
 	{ "getIndex", 0 },
 	{ "setAt", 0 },
-	{ "listLen", 0 },
-	{ "deleteAt", 0 },
-	{ "clearList", 0 },
+	{ "listLen", &LBCode::cmdListLen },
+	{ "deleteAt", &LBCode::cmdDeleteAt },
+	{ "clearList", &LBCode::cmdUnimplemented },
 	{ "setWorld", 0 },
 	{ "setProperty", 0 },
 	{ "getProperty", 0 },
@@ -959,6 +1010,37 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 
 void LBCode::cmdSetDragParams(const Common::Array<LBValue> &params) {
 	warning("ignoring setDragParams");
+}
+
+void LBCode::cmdNewList(const Common::Array<LBValue> &params) {
+	if (params.size() != 0)
+		error("incorrect number of parameters (%d) to newList", params.size());
+
+	_stack.push(Common::SharedPtr<LBList>(new LBList));
+}
+
+void LBCode::cmdListLen(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to listLen", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to lbxFunc");
+
+	_stack.push(params[0].list->array.size());
+}
+
+void LBCode::cmdDeleteAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to deleteAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to deleteAt");
+
+	if (params[1].type != kLBValueInteger)
+		error("invalid index passed to deleteAt");
+	if (params[1].integer < 1 || params[1].integer > (int)params[0].list->array.size())
+		return;
+	params[0].list->array.remove_at(params[1].integer - 1);
 }
 
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {

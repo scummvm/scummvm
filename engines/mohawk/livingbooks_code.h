@@ -23,6 +23,7 @@
 #ifndef MOHAWK_LIVINGBOOKS_CODE_H
 #define MOHAWK_LIVINGBOOKS_CODE_H
 
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stack.h"
 #include "common/substream.h"
@@ -31,6 +32,7 @@ namespace Mohawk {
 
 class MohawkEngine_LivingBooks;
 class LBItem;
+struct LBList;
 
 enum LBValueType {
 	kLBValueString,
@@ -38,7 +40,8 @@ enum LBValueType {
 	kLBValueReal,
 	kLBValuePoint,
 	kLBValueRect,
-	kLBValueItemPtr
+	kLBValueItemPtr,
+	kLBValueList
 };
 
 struct LBValue {
@@ -66,6 +69,10 @@ struct LBValue {
 		type = kLBValueItemPtr;
 		item = itm;
 	}
+	LBValue(Common::SharedPtr<LBList> l) {
+		type = kLBValueList;
+		list = l;
+	}
 	LBValue(const LBValue &val) {
 		type = val.type;
 		switch (type) {
@@ -87,6 +94,9 @@ struct LBValue {
 		case kLBValueItemPtr:
 			item = val.item;
 			break;
+		case kLBValueList:
+			list = val.list;
+			break;
 		}
 	}
 
@@ -97,6 +107,7 @@ struct LBValue {
 	Common::Point point;
 	Common::Rect rect;
 	LBItem *item;
+	Common::SharedPtr<LBList> list;
 
 	bool operator==(const LBValue &x) const;
 	bool operator!=(const LBValue &x) const;
@@ -109,6 +120,10 @@ struct LBValue {
 	double toDouble() const;
 	Common::Point toPoint() const;
 	Common::Rect toRect() const;
+};
+
+struct LBList {
+	Common::Array<LBValue> array;
 };
 
 enum {
@@ -207,6 +222,7 @@ protected:
 	void parseArithmetic2();
 	void parseMain();
 
+	LBValue *getIndexedVar(Common::String varname, const LBValue &index);
 	LBItem *resolveItem(const LBValue &value);
 	Common::Array<LBValue> readParams();
 	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
@@ -233,6 +249,9 @@ public:
 	void cmdBottom(const Common::Array<LBValue> &params);
 	void cmdRight(const Common::Array<LBValue> &params);
 	void cmdSetDragParams(const Common::Array<LBValue> &params);
+	void cmdNewList(const Common::Array<LBValue> &params);
+	void cmdListLen(const Common::Array<LBValue> &params);
+	void cmdDeleteAt(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
