@@ -185,5 +185,14 @@ void DreamGenContext::showfirstuse() {
 	hangonp(400);
 }
 
+void DreamGenContext::showseconduse() {
+	uint8 *obText = getobtextstartCPP();
+	findnextcolon(&obText);
+	findnextcolon(&obText);
+	findnextcolon(&obText);
+	usetext(obText);
+	hangonp(400);
+}
+
 } /*namespace dreamgen */
 

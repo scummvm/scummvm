@@ -341,4 +341,5 @@
 	void usecharset1();
 	void getbackfromob();
 	void showfirstuse();
+	void showseconduse();
 

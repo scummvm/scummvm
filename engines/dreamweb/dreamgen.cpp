@@ -7782,17 +7782,6 @@ cigarette:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::showseconduse() {
-	STACK_CHECK;
-	getobtextstart();
-	nextcolon();
-	nextcolon();
-	nextcolon();
-	usetext();
-	cx = 400;
-	hangonp();
-}
-
 void DreamGenContext::usecardreader1() {
 	STACK_CHECK;
 	_cmp(data.byte(kWithobject), 255);

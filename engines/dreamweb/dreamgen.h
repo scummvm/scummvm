@@ -264,7 +264,6 @@ public:
 	static const uint16 addr_usecardreader3 = 0xc66c;
 	static const uint16 addr_usecardreader2 = 0xc668;
 	static const uint16 addr_usecardreader1 = 0xc664;
-	static const uint16 addr_showseconduse = 0xc660;
 	static const uint16 addr_uselighter = 0xc65c;
 	static const uint16 addr_usepoolreader = 0xc658;
 	static const uint16 addr_calledensdlift = 0xc654;
@@ -1437,6 +1436,7 @@ public:
 	void adjustright();
 	void putunderzoom();
 	void vsync();
+	//void showseconduse();
 	//void finishedwalking();
 	void findinvpos();
 	void dumpmenu();
@@ -1547,7 +1547,6 @@ public:
 	//void getyad();
 	//void reconstruct();
 	void soldier1();
-	//void animpointer();
 	void getundercentre();
 	void checkforexit();
 	void loadseg();
@@ -1583,7 +1582,7 @@ public:
 	void getback1();
 	void setlocation();
 	void fadefromwhite();
-	void checksoundint();
+	//void animpointer();
 	void usewindow();
 	void wearshades();
 	//void onedigit();
@@ -1851,7 +1850,7 @@ public:
 	//void showryanpage();
 	//void printlogo();
 	void allpointer();
-	void showseconduse();
+	void checksoundint();
 	void clearreels();
 	void malefan();
 	void dosaveload();

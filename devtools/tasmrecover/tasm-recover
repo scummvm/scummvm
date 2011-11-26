@@ -287,6 +287,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'disablepath',
 	'getbackfromob',
 	'showfirstuse',
+	'showseconduse',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
