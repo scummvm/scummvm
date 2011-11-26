@@ -2334,5 +2334,85 @@ void DreamGenContext::usetempcharset() {
 	data.word(kCurrentset) = data.word(kTempcharset);
 }
 
+void DreamGenContext::restoreall() {
+	STACK_CHECK;
+	al = data.byte(kLocation);
+	getroomdata();
+	dx = bx;
+	openfile();
+	readheader();
+	allocateload();
+	ds = ax;
+	data.word(kBackdrop) = ax;
+	dx = (0);
+	loadseg();
+	ds = data.word(kWorkspace);
+	dx = (0);
+	cx = 132*66;
+	al = 0;
+	fillspace();
+	loadseg();
+	sortoutmap();
+	allocateload();
+	data.word(kSetframes) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	dontloadseg();
+	allocateload();
+	data.word(kReel1) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel2) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReel3) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kReels) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kPeople) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kSetdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kBlockdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kRoomdesc) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	allocateload();
+	data.word(kFreeframes) = ax;
+	ds = ax;
+	dx = 0;
+	loadseg();
+	dontloadseg();
+	allocateload();
+	data.word(kFreedesc) = ax;
+	ds = ax;
+	dx = (0);
+	loadseg();
+	closefile();
+	setallchanges();
+}
+
 } /*namespace dreamgen */
 

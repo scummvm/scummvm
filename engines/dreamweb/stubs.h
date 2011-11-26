@@ -349,4 +349,5 @@
 	void saveposition(unsigned int slot, const uint8 *descbuf);
 	void openforsave(unsigned int slot);
 	void openforload(unsigned int slot);
+	void restoreall();
 

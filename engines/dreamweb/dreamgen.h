@@ -55,7 +55,6 @@ public:
 	static const uint16 addr_getridoftemp = 0xcb70;
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
-	static const uint16 addr_restoreall = 0xcb44;
 	static const uint16 addr_restorereels = 0xcb40;
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
@@ -1399,7 +1398,7 @@ public:
 	void wearwatch();
 	void runintroseq();
 	//void doblocks();
-	void restoreall();
+	void nextcolon();
 	//void delpointer();
 	void attendant();
 	void nextsymbol();
@@ -1417,7 +1416,6 @@ public:
 	//void frameoutfx();
 	void blank();
 	void drinker();
-	void nextcolon();
 	void placefreeobject();
 	void allpalette();
 	//void loopchannel0();
@@ -1836,6 +1834,7 @@ public:
 	//void placesetobject();
 	//void drawflags();
 	void zoomonoff();
+	//void restoreall();
 	void updatesymboltop();
 	//void showryanpage();
 	//void printlogo();
