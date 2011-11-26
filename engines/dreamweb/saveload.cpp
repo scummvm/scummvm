@@ -246,32 +246,19 @@ void DreamGenContext::savegame() {
 		}
 
 		// TODO: The below is copied from actualsave
-		al = data.byte(kLocation);
-		ah = 0;
-		cx = 32;
-		_mul(cx);
-		ds = cs;
-		si = kRoomdata;
-		_add(si, ax);
-		di = kMadeuproomdat;
-		bx = di;
+		const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
+		Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+
+		*madeUpRoom = *currentRoom;
+		bx = kMadeuproomdat;
 		es = cs;
-		cx = 16;
-		_movsw(cx, true);
-		al = data.byte(kRoomssample);
-		es.byte(bx+13) = al;
-		al = data.byte(kMapx);
-		es.byte(bx+15) = al;
-		al = data.byte(kMapy);
-		es.byte(bx+16) = al;
-		al = data.byte(kLiftflag);
-		es.byte(bx+20) = al;
-		al = data.byte(kManspath);
-		es.byte(bx+21) = al;
-		al = data.byte(kFacing);
-		es.byte(bx+22) = al;
-		al = 255;
-		es.byte(bx+27) = al;
+		madeUpRoom->roomsSample = data.byte(kRoomssample);
+		madeUpRoom->mapX = data.byte(kMapx);
+		madeUpRoom->mapY = data.byte(kMapy);
+		madeUpRoom->liftFlag = data.byte(kLiftflag);
+		madeUpRoom->b21 = data.byte(kManspath);
+		madeUpRoom->facing = data.byte(kFacing);
+		madeUpRoom->b27 = 255;
 
 		// TODO: The below is copied from saveposition
 		makeheader();
@@ -381,59 +368,38 @@ void DreamGenContext::showdiscops() {
 }
 
 void DreamGenContext::actualsave() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 222);
-	if (flags.z())
-		goto alreadyactsave;
-	data.byte(kCommandtype) = 222;
-	al = 44;
-	commandonly();
-alreadyactsave:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return /* (noactsave) */;
-	dx = data;
-	ds = dx;
-	si = 8579;
-	al = data.byte(kCurrentslot);
-	ah = 0;
-	cx = 17;
-	_mul(cx);
-	_add(si, ax);
-	_inc(si);
-	_cmp(ds.byte(si), 0);
-	if (flags.z())
-		return /* (noactsave) */;
-	al = data.byte(kLocation);
-	ah = 0;
-	cx = 32;
-	_mul(cx);
-	ds = cs;
-	si = 6187;
-	_add(si, ax);
-	di = 7979;
-	bx = di;
+	if (data.byte(kCommandtype) != 222) {
+		data.byte(kCommandtype) = 222;
+		commandonly(44);
+	}
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	unsigned int slot = data.byte(kCurrentslot);
+
+	const char *desc = (const char *)data.ptr(kSavenames + 17*slot + 1, 16);
+	if (desc[0] == 0)
+		return;
+
+	const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
+	Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+
+	*madeUpRoom = *currentRoom;
+	bx = kMadeuproomdat;
 	es = cs;
-	cx = 16;
-	_movsw(cx, true);
-	al = data.byte(kRoomssample);
-	es.byte(bx+13) = al;
-	al = data.byte(kMapx);
-	es.byte(bx+15) = al;
-	al = data.byte(kMapy);
-	es.byte(bx+16) = al;
-	al = data.byte(kLiftflag);
-	es.byte(bx+20) = al;
-	al = data.byte(kManspath);
-	es.byte(bx+21) = al;
-	al = data.byte(kFacing);
-	es.byte(bx+22) = al;
-	al = 255;
-	es.byte(bx+27) = al;
+	madeUpRoom->roomsSample = data.byte(kRoomssample);
+	madeUpRoom->mapX = data.byte(kMapx);
+	madeUpRoom->mapY = data.byte(kMapy);
+	madeUpRoom->liftFlag = data.byte(kLiftflag);
+	madeUpRoom->b21 = data.byte(kManspath);
+	madeUpRoom->facing = data.byte(kFacing);
+	madeUpRoom->b27 = 255;
+
 	saveposition();
+
 	getridoftemp();
-	restoreall();
+	restoreall(); // reels
 	data.word(kTextaddressx) = 13;
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
