@@ -1,14 +1,24 @@
 MODULE := audio/softsynth/mt32
 
 MODULE_OBJS := \
-	mt32_file.o \
-	i386.o \
-	part.o \
-	partial.o \
-	partialManager.o \
-	synth.o \
-	tables.o \
-	freeverb.o
+	AReverbModel.o \
+	DelayReverb.o \
+	File.o \
+	FreeverbModel.o \
+	LA32Ramp.o \
+	Part.o \
+	Partial.o \
+	PartialManager.o \
+	Poly.o \
+	ScummVMFile.o \
+	Synth.o \
+	Tables.o \
+	TVA.o \
+	TVF.o \
+	TVP.o \
+	freeverb\allpass.o \
+	freeverb\comb.o \
+	freeverb\revmodel.o
 
 # Include common rules
 include $(srcdir)/rules.mk
