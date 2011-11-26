@@ -33,6 +33,239 @@ namespace Ringworld2 {
  * Scene 2000 - 
  *
  *--------------------------------------------------------------------------*/
+void Scene2000::initExits() {
+
+	_exit1._enabled = true;
+	_exit2._enabled = true;
+	_exit3._enabled = false;
+	_exit4._enabled = false;
+	_exit5._enabled = false;
+
+	_exit1._insideArea = false;
+	_exit2._insideArea = false;
+	_exit3._insideArea = false;
+	_exit4._insideArea = false;
+	_exit5._insideArea = false;
+
+	_exit1._moving = false;
+	_exit2._moving = false;
+	_exit3._moving = false;
+	_exit4._moving = false;
+	_exit5._moving = false;
+
+	for (int i = 0; i < 11; i++) {
+		_objList1[i].hide();
+	}
+
+	_object1.remove();
+
+	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
+	case 3:
+	case 10:
+	case 16:
+	case 21:
+		_exit5._enabled = true;
+		_exit5._bounds.set(61, 68, 90, 125);
+		_exit5.setDest(Common::Point(92, 129));
+		_exit5._cursorNum = CURSOR_9;
+		break;
+	case 4:
+	case 12:
+	case 25:
+	case 34:
+		_exit5._enabled = true;
+		_exit5._bounds.set(230, 68, 259, 125);
+		_exit5.setDest(Common::Point(244, 129));
+		_exit5._cursorNum = CURSOR_10;
+		break;
+	default:
+		break;
+	}
+
+	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] - 1) {
+	case 0:
+	case 6:
+	case 13:
+	case 18:
+	case 22:
+	case 27:
+	case 30:
+		_exit1._enabled = false;
+		loadScene(2225);
+		R2_GLOBALS._walkRegions.load(2225);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	case 1:
+	case 19:
+		_exit3._enabled = true;
+		_exit3._bounds.set(71, 130, 154, 168);
+		_exit3.setDest(Common::Point(94, 129));
+		_exit3._cursorNum = CURSOR_14;
+		loadScene(2300);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._walkRegions.load(2000);
+		break;
+	case 2:
+	case 9:
+	case 15:
+	case 20:
+		loadScene(2150);
+		R2_GLOBALS._walkRegions.load(2000);
+		switch(R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) {
+		case 2400:
+			_field414 = 1;
+			break;
+		case 2425:
+		case 2430:
+		case 2435:
+		case 2450:
+			_field414 = 3;
+			break;
+		default:
+			if (_field412 == 0)
+				_field414 = 0;
+			break;
+		}
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 3:
+	case 11:
+	case 24:
+	case 33:
+		loadScene(2175);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
+			if (_field412 == 0)
+				_field414 = 0;
+		} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
+			_field414 = 1;
+		else 
+			_field414 = 10;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 4:
+	case 8:
+		loadScene(2000);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1900)
+			_field414 = 1;
+		else if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 5:
+	case 12:
+	case 17:
+	case 21:
+	case 26:
+		loadScene(2200);
+		R2_GLOBALS._walkRegions.load(2000);
+		_exit2._enabled = false;
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1900)
+			_field414 = 2;
+		else if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 7:
+	case 29:
+		_exit4._enabled = true;
+		_exit4._bounds.set(138, 83, 211, 125);
+		_exit4.setDest(Common::Point(129, 188));
+		_exit4._cursorNum = CURSOR_16;
+		loadScene(2250);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2500)
+			_field414 = 1;
+		else if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 10:
+	case 25:
+		_exit3._enabled = true;
+		_exit3._bounds.set(78, 130, 148, 168);
+		_exit3.setDest(Common::Point(100, 129));
+		_exit3._cursorNum = CURSOR_14;
+		loadScene(2075);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	case 14:
+		_exit3._enabled = true;
+		_exit3._bounds.set(160, 130, 248, 168);
+		_exit3.setDest(Common::Point(225, 129));
+		_exit3._cursorNum = CURSOR_15;
+		loadScene(2325);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	case 16:
+	case 31:
+		_exit4._enabled = true;
+		_exit4._bounds.set(122, 83, 207, 125);
+		_exit4.setDest(Common::Point(210, 129));
+		_exit4._cursorNum = CURSOR_16;
+		loadScene(2125);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2400)
+			_field414 = 2;
+		else if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		R2_GLOBALS._sceneManager._previousScene = 2000;
+		break;
+	case 23:
+		_exit4._enabled = true;
+		_exit4._bounds.set(108, 83, 128, 184);
+		_exit4.setDest(Common::Point(135, 129));
+		_exit4._cursorNum = CURSOR_13;
+		loadScene(2275);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	case 28:
+		_exit3._enabled = true;
+		_exit3._bounds.set(171, 130, 241, 168);
+		_exit3.setDest(Common::Point(218, 129));
+		_exit3._cursorNum = CURSOR_15;
+		loadScene(2050);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
+			_field414 = 11;
+		else if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	case 32:
+		loadScene(2025);
+		R2_GLOBALS._walkRegions.load(2000);
+		if (_field412 == 0)
+			_field414 = 0;
+		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
+		break;
+	default:
+		break;
+	}
+	_field412 = 0;
+	R2_GLOBALS._uiElements.show();
+}
+
 void Scene2000::Action1::signal() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
 
@@ -443,7 +676,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_exit5.setDest(Common::Point(92, 129));
 
 	R2_GLOBALS._sound1.play(200);
-	warning("STUB: sub_D2676");
+	initExits();
 	g_globals->_sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 	
 	R2_GLOBALS._player.postInit();
@@ -594,7 +827,7 @@ void Scene2000::signal() {
 		else {
 			_field414 = 1;
 			--R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
-			warning("STUB: sub_D2676");
+			initExits();
 			warning("STUB: sub_D2FBA");
 		}
 	break;
@@ -612,14 +845,14 @@ void Scene2000::signal() {
 		default:
 			_field414 = 2;
 			++R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
-			warning("STUB: sub_D2676");
+			initExits();
 			warning("STUB: sub_D2FBA");
 			break;
 		}
 		break;
 	case 12:
 	case 13:
-		warning("STUB: sub_D2676");
+		initExits();
 		warning("STUB: sub_D2FBA");
 		break;
 	case 14:

@@ -79,6 +79,8 @@ public:
 	virtual void signal();
 	virtual void process(Event &event);
 	virtual void synchronize(Serializer &s);
+
+	void initExits();
 };
 
 
