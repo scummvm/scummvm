@@ -129,7 +129,7 @@ public:
 	virtual void dispatch();
 	virtual void setAction(Action *action) { setAction(action, NULL); }
 	virtual void setAction(Action *action, EventHandler *endHandler, ...);
-	virtual void destroy() {};
+	virtual void destroy() {}
 };
 
 class Action : public EventHandler {

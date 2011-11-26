@@ -37,7 +37,7 @@ public:
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
 protected:
-	PSPFilesystemFactory() {};
+	PSPFilesystemFactory() {}
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

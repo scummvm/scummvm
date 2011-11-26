@@ -96,7 +96,7 @@ public:
 	virtual void updateTimers(int32 relativeAdd);
 	virtual void setTalking(bool talking) { _isTalking = talking; }
 	virtual bool isTalking() { return _isTalking; }
-	virtual void resetScale() { };
+	virtual void resetScale() {}
 	virtual void plotPath(Graphics::Surface& surface);
 
 	int32 getFacingFromDirection(int32 dx, int32 dy);

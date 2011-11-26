@@ -87,7 +87,7 @@ public:
 	int _driverResID;
 public:
 	SoundDriver();
-	virtual ~SoundDriver() {};
+	virtual ~SoundDriver() {}
 
 	const Common::String &getShortDriverDescription() { return _shortDescription; }
 	const Common::String &getLongDriverDescription() { return _longDescription; }
