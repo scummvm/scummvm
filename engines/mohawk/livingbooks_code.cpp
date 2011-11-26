@@ -1419,7 +1419,13 @@ uint LBCode::parseCode(const Common::String &source) {
 						break;
 					tempString += source[pos++];
 				}
-				wasFunction = parseCodeSymbol(tempString, pos, code);
+				if (tempString.equalsIgnoreCase("true")) {
+					code.push_back(kTokenTrue);
+				} else if (tempString.equalsIgnoreCase("false")) {
+					code.push_back(kTokenFalse);
+				} else {
+					wasFunction = parseCodeSymbol(tempString, pos, code);
+				}
 			} else {
 				error("while parsing script '%s', couldn't parse '%c'", source.c_str(), token);
 			}
