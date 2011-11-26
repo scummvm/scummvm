@@ -428,6 +428,21 @@ Try \`$0 --help' for more information." >&2
 	exit 1
 }
 
+# Show an error about an unknown engine
+engine_option_error() {
+	echo "error: unrecognised engine: $1
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
+# Show an error about an invalid subengine option
+subengine_option_error() {
+	echo "error: this option is invalid for the subengine $1: $ac_option
+Try \`$0 --help' for more information." >&2
+	exit 1
+}
+
+
 
 #
 # Engine handling functions
@@ -490,7 +505,7 @@ engine_enable() {
 
 	# Filter the parameter for the subengines
 	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
-		option_error
+		subengine_option_error ${engine}
 		return
 	fi
 
@@ -498,7 +513,7 @@ engine_enable() {
 		if test "`get_engine_name ${engine}`" != "" ; then
 			set_var _engine_${engine}_build "$opt"
 		else
-			option_error
+			engine_option_error ${engine}
 		fi
 	else
 		option_error
@@ -517,7 +532,7 @@ engine_disable() {
 	if test "`get_engine_name ${engine}`" != "" ; then
 		set_var _engine_${engine}_build "no"
 	else
-		option_error
+		engine_option_error ${engine}
 	fi
 }
 
