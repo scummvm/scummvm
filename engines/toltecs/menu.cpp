@@ -230,7 +230,6 @@ void MenuSystem::setItemCaption(Item *item, const char *caption) {
 }
 
 void MenuSystem::initMenu(MenuID menuID) {
-
 	int newSlotNum;
 
 	_items.clear();
@@ -253,13 +252,10 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
 		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
 		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
-		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, "SAVEGAME 1", 231, 234);
-		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, "SAVEGAME 2", 231, 234);
-		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, "SAVEGAME 3", 231, 234);
-		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, "SAVEGAME 4", 231, 234);
-		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
-		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
-		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
+		for (int i = 1; i <= 7; i++) {
+			const char *saveDesc = Common::String::format("SAVEGAME %d", i).c_str();
+			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc, 231, 234);
+		}
 		loadSavegamesList();
 		setSavegameCaptions();
 		break;
@@ -268,13 +264,10 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
 		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
 		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
-		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, "SAVEGAME 1", 231, 234);
-		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, "SAVEGAME 2", 231, 234);
-		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, "SAVEGAME 3", 231, 234);
-		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, "SAVEGAME 4", 231, 234);
-		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, "SAVEGAME 5", 231, 234);
-		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, "SAVEGAME 6", 231, 234);
-		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, "SAVEGAME 7", 231, 234);
+		for (int i = 1; i <= 7; i++) {
+			const char *saveDesc = Common::String::format("SAVEGAME %d", i).c_str();
+			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc, 231, 234);
+		}
 		newSlotNum = loadSavegamesList() + 1;
 		_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
 		setSavegameCaptions();
@@ -486,29 +479,16 @@ int MenuSystem::loadSavegamesList() {
 }
 
 MenuSystem::SavegameItem *MenuSystem::getSavegameItemByID(ItemID id) {
-	switch (id) {
-	case kItemIdSavegame1:
-	case kItemIdSavegame2:
-	case kItemIdSavegame3:
-	case kItemIdSavegame4:
-	case kItemIdSavegame5:
-	case kItemIdSavegame6:
-	case kItemIdSavegame7:
+	if (id >= kItemIdSavegame1 && id <= kItemIdSavegame7)
 		return &_savegames[_savegameListTopIndex + id - kItemIdSavegame1];
-	default:
+	else
 		return NULL;
-	}
 }
 
 void MenuSystem::setSavegameCaptions() {
 	uint index = _savegameListTopIndex;
-	setItemCaption(getItem(kItemIdSavegame1), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame2), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame3), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame4), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame5), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame6), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
-	setItemCaption(getItem(kItemIdSavegame7), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+	for (int i = 1; i <= 7; i++)
+		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
 }
 
 void MenuSystem::scrollSavegames(int delta) {
@@ -516,13 +496,8 @@ void MenuSystem::scrollSavegames(int delta) {
 	_savegameListTopIndex = newPos;
 	restoreRect(80, 92, 440, 140);
 	setSavegameCaptions();
-	drawItem(kItemIdSavegame1, false);
-	drawItem(kItemIdSavegame2, false);
-	drawItem(kItemIdSavegame3, false);
-	drawItem(kItemIdSavegame4, false);
-	drawItem(kItemIdSavegame5, false);
-	drawItem(kItemIdSavegame6, false);
-	drawItem(kItemIdSavegame7, false);
+	for (int i = 1; i <= 7; i++)
+		drawItem((ItemID)(kItemIdSavegame1 + i - 1), false);
 }
 
 void MenuSystem::clickSavegameItem(ItemID id) {
