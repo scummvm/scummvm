@@ -158,8 +158,6 @@ public:
 	static const uint16 addr_getnamepos = 0xc864;
 	static const uint16 addr_checkinput = 0xc860;
 	static const uint16 addr_selectslot2 = 0xc85c;
-	static const uint16 addr_actualload = 0xc858;
-	static const uint16 addr_actualsave = 0xc854;
 	static const uint16 addr_savegame = 0xc850;
 	static const uint16 addr_discops = 0xc84c;
 	static const uint16 addr_getbacktoops = 0xc848;
@@ -1573,7 +1571,7 @@ public:
 	void folderexit();
 	void dosreturn();
 	void wheelsound();
-	void actualsave();
+	//void actualsave();
 	//void autolook();
 	void playguitar();
 	//void showreelframe();
@@ -1810,7 +1808,7 @@ public:
 	void fadescreenup();
 	//void getnextword();
 	void generalerror();
-	void actualload();
+	//void actualload();
 	void allocateload();
 	void saveposition();
 	void mode640x480();

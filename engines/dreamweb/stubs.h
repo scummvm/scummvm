@@ -343,4 +343,6 @@
 	void getbackfromob();
 	void showfirstuse();
 	void showseconduse();
+	void actualsave();
+	void actualload();
 

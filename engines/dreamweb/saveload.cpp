@@ -380,5 +380,99 @@ void DreamGenContext::showdiscops() {
 	showframe(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
+void DreamGenContext::actualsave() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 222);
+	if (flags.z())
+		goto alreadyactsave;
+	data.byte(kCommandtype) = 222;
+	al = 44;
+	commandonly();
+alreadyactsave:
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
+		return /* (noactsave) */;
+	dx = data;
+	ds = dx;
+	si = 8579;
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	cx = 17;
+	_mul(cx);
+	_add(si, ax);
+	_inc(si);
+	_cmp(ds.byte(si), 0);
+	if (flags.z())
+		return /* (noactsave) */;
+	al = data.byte(kLocation);
+	ah = 0;
+	cx = 32;
+	_mul(cx);
+	ds = cs;
+	si = 6187;
+	_add(si, ax);
+	di = 7979;
+	bx = di;
+	es = cs;
+	cx = 16;
+	_movsw(cx, true);
+	al = data.byte(kRoomssample);
+	es.byte(bx+13) = al;
+	al = data.byte(kMapx);
+	es.byte(bx+15) = al;
+	al = data.byte(kMapy);
+	es.byte(bx+16) = al;
+	al = data.byte(kLiftflag);
+	es.byte(bx+20) = al;
+	al = data.byte(kManspath);
+	es.byte(bx+21) = al;
+	al = data.byte(kFacing);
+	es.byte(bx+22) = al;
+	al = 255;
+	es.byte(bx+27) = al;
+	saveposition();
+	getridoftemp();
+	restoreall();
+	data.word(kTextaddressx) = 13;
+	data.word(kTextaddressy) = 182;
+	data.byte(kTextlen) = 240;
+	redrawmainscrn();
+	worktoscreenm();
+	data.byte(kGetback) = 4;
+}
+
+void DreamGenContext::actualload() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 221);
+	if (flags.z())
+		goto alreadyactload;
+	data.byte(kCommandtype) = 221;
+	al = 41;
+	commandonly();
+alreadyactload:
+	ax = data.word(kMousebutton);
+	_cmp(ax, data.word(kOldbutton));
+	if (flags.z())
+		return /* (notactload) */;
+	_cmp(ax, 1);
+	if (!flags.z())
+		return /* (notactload) */;
+	dx = data;
+	ds = dx;
+	si = 8579;
+	al = data.byte(kCurrentslot);
+	ah = 0;
+	cx = 17;
+	_mul(cx);
+	_add(si, ax);
+	_inc(si);
+	_cmp(ds.byte(si), 0);
+	if (flags.z())
+		return /* (notactload) */;
+	loadposition();
+	data.byte(kGetback) = 1;
+}
+
 } /*namespace dreamgen */
 
