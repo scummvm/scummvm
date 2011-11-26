@@ -283,6 +283,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'convnum',
 	'usecharset1',
 	'usetempcharset',
+	'disablepath',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

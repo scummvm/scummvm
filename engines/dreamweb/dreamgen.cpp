@@ -13123,40 +13123,6 @@ void DreamGenContext::restoreall() {
 	setallchanges();
 }
 
-void DreamGenContext::disablepath() {
-	STACK_CHECK;
-	push(cx);
-	_xchg(al, ah);
-	cx = -6;
-looky2:
-	_add(cx, 6);
-	_sub(al, 10);
-	if (!flags.c())
-		goto looky2;
-	al = ah;
-	_dec(cx);
-lookx2:
-	_inc(cx);
-	_sub(al, 11);
-	if (!flags.c())
-		goto lookx2;
-	al = cl;
-	ah = 0;
-	cx = 144;
-	_mul(cx);
-	es = data.word(kReels);
-	bx = (0);
-	_add(bx, ax);
-	ax = pop();
-	ah = 0;
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(ax, ax);
-	_add(bx, ax);
-	al = 0;
-	es.byte(bx+6) = al;
-}
-
 void DreamGenContext::allocateload() {
 	STACK_CHECK;
 	push(es);

@@ -56,7 +56,6 @@ public:
 	static const uint16 addr_getridoftemp = 0xcb70;
 	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
-	static const uint16 addr_disablepath = 0xcb50;
 	static const uint16 addr_restoreall = 0xcb44;
 	static const uint16 addr_restorereels = 0xcb40;
 	static const uint16 addr_getridofall = 0xcb3c;
@@ -1209,7 +1208,7 @@ public:
 	void mainscreen();
 	void watchreel();
 	void showfolder();
-	//void turnanypathoff();
+	void showslots();
 	void openfilefromc();
 	void gettime();
 	//void clearwork();
@@ -1227,7 +1226,7 @@ public:
 	//void clearendpal();
 	void findtext1();
 	void isryanholding();
-	void showslots();
+	void interupttest();
 	void usecashcard();
 	void usewall();
 	void opentomb();
@@ -1358,7 +1357,6 @@ public:
 	//void isitdescribed();
 	void hotelbell();
 	void loadspeech();
-	void interupttest();
 	//void cls();
 	//void printsprites();
 	//void checkifperson();
@@ -1455,7 +1453,7 @@ public:
 	void getridoftemp();
 	//void showcity();
 	void dumpsymbol();
-	void disablepath();
+	//void disablepath();
 	//void convicons();
 	void buttonsix();
 	void intro2text();
@@ -1486,6 +1484,7 @@ public:
 	void loadsavebox();
 	void soundend();
 	void redes();
+	//void turnanypathoff();
 	void errormessage1();
 	void clearchanges();
 	void errormessage3();
