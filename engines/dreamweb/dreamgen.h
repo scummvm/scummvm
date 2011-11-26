@@ -253,7 +253,6 @@ public:
 	static const uint16 addr_useelevator2 = 0xc69c;
 	static const uint16 addr_useelevator4 = 0xc698;
 	static const uint16 addr_useelevator3 = 0xc694;
-	static const uint16 addr_showfirstuse = 0xc690;
 	static const uint16 addr_useelevator1 = 0xc68c;
 	static const uint16 addr_usehandle = 0xc688;
 	static const uint16 addr_usewire = 0xc684;
@@ -1168,7 +1167,6 @@ public:
 	void clearbuffers();
 	//void neterror();
 	void storeit();
-	//void lockeddoorway();
 	//void isitworn();
 	//void putundertimed();
 	//void dumpmap();
@@ -1520,6 +1518,7 @@ public:
 	void random();
 	void mainman();
 	void mansatstill();
+	//void showfirstuse();
 	void channel1only();
 	//void checkbasemem();
 	void lastfolder();
@@ -1839,7 +1838,7 @@ public:
 	void usewinch();
 	void setbotright();
 	//void readmouse3();
-	void showfirstuse();
+	//void lockeddoorway();
 	void setupemm();
 	void aide();
 	//void getmapad();

@@ -177,5 +177,13 @@ void DreamGenContext::usetext(const uint8 *string) {
 	worktoscreenm();
 }
 
+void DreamGenContext::showfirstuse() {
+	uint8 *obText = getobtextstartCPP();
+	findnextcolon(&obText);
+	findnextcolon(&obText);
+	usetext(obText);
+	hangonp(400);
+}
+
 } /*namespace dreamgen */
 

@@ -8287,16 +8287,6 @@ void DreamGenContext::useelevator1() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::showfirstuse() {
-	STACK_CHECK;
-	getobtextstart();
-	findnextcolon();
-	findnextcolon();
-	usetext();
-	cx = 400;
-	hangonp();
-}
-
 void DreamGenContext::useelevator3() {
 	STACK_CHECK;
 	showfirstuse();
