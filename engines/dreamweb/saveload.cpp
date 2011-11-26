@@ -409,33 +409,20 @@ void DreamGenContext::actualsave() {
 }
 
 void DreamGenContext::actualload() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 221);
-	if (flags.z())
-		goto alreadyactload;
-	data.byte(kCommandtype) = 221;
-	al = 41;
-	commandonly();
-alreadyactload:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notactload) */;
-	_cmp(ax, 1);
-	if (!flags.z())
-		return /* (notactload) */;
-	dx = data;
-	ds = dx;
-	si = 8579;
-	al = data.byte(kCurrentslot);
-	ah = 0;
-	cx = 17;
-	_mul(cx);
-	_add(si, ax);
-	_inc(si);
-	_cmp(ds.byte(si), 0);
-	if (flags.z())
-		return /* (notactload) */;
+	if (data.byte(kCommandtype) != 221) {
+		data.byte(kCommandtype) = 221;
+		commandonly(41);
+	}
+
+	if (data.word(kMousebutton) == data.word(kOldbutton) || data.word(kMousebutton) != 1)
+		return;
+
+	unsigned int slot = data.byte(kCurrentslot);
+
+	const char *desc = (const char *)data.ptr(kSavenames + 17*slot + 1, 16);
+	if (desc[0] == 0)
+		return;
+
 	loadposition();
 	data.byte(kGetback) = 1;
 }
