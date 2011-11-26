@@ -250,6 +250,9 @@ public:
 	void cmdRandom(const Common::Array<LBValue> &params);
 	void cmdStringLen(const Common::Array<LBValue> &params);
 	void cmdSubstring(const Common::Array<LBValue> &params);
+	void cmdMax(const Common::Array<LBValue> &params);
+	void cmdMin(const Common::Array<LBValue> &params);
+	void cmdAbs(const Common::Array<LBValue> &params);
 	void cmdGetRect(const Common::Array<LBValue> &params);
 	void cmdMakePoint(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);

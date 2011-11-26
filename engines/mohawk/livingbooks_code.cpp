@@ -744,9 +744,9 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "random", &LBCode::cmdRandom },
 	{ "stringLen", &LBCode::cmdStringLen },
 	{ "substring", &LBCode::cmdSubstring },
-	{ "max", 0 },
-	{ "min", 0 },
-	{ "abs", 0 },
+	{ "max", &LBCode::cmdMax },
+	{ "min", &LBCode::cmdMin },
+	{ "abs", &LBCode::cmdAbs },
 	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
 	{ "makePt", &LBCode::cmdMakePoint }, // also "makePair"
 	{ "topLeft", &LBCode::cmdTopLeft },
@@ -940,6 +940,35 @@ void LBCode::cmdSubstring(const Common::Array<LBValue> &params) {
 	}
 	Common::String substring(string.c_str() + (begin - 1), end - begin + 1);
 	_stack.push(substring);
+}
+
+void LBCode::cmdMax(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to max", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	int b = params[1].toInt();
+	_stack.push(MAX(a, b));
+}
+
+void LBCode::cmdMin(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to min", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	int b = params[1].toInt();
+	_stack.push(MIN(a, b));
+}
+
+void LBCode::cmdAbs(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to abs", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	_stack.push(ABS(a));
 }
 
 void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
