@@ -142,8 +142,6 @@ public:
 	static const uint16 addr_storeit = 0xc8a8;
 	static const uint16 addr_makeheader = 0xc8a4;
 	static const uint16 addr_loadseg = 0xc8a0;
-	static const uint16 addr_loadposition = 0xc89c;
-	static const uint16 addr_saveposition = 0xc898;
 	static const uint16 addr_savefileread = 0xc894;
 	static const uint16 addr_savefilewrite = 0xc890;
 	static const uint16 addr_error = 0xc884;
@@ -1394,7 +1392,7 @@ public:
 	//void dumpwatch();
 	//void saveload();
 	void monitorlogo();
-	void loadposition();
+	//void loadposition();
 	//void wornerror();
 	void entersymbol();
 	//void showword();
@@ -1810,7 +1808,7 @@ public:
 	void generalerror();
 	//void actualload();
 	void allocateload();
-	void saveposition();
+	//void saveposition();
 	void mode640x480();
 	void openeden();
 	void execcommand();

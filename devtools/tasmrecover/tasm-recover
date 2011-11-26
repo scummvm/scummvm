@@ -291,6 +291,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showseconduse',
 	'actualload',
 	'actualsave',
+	'loadposition',
+	'saveposition',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

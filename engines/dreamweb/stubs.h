@@ -345,4 +345,6 @@
 	void showseconduse();
 	void actualsave();
 	void actualload();
+	void loadposition();
+	void saveposition();
 
