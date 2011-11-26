@@ -102,6 +102,9 @@ void LBPage::open(Archive *mhk, uint16 baseId) {
 
 	for (uint32 i = 0; i < _items.size(); i++)
 		_items[i]->init();
+
+	for (uint32 i = 0; i < _items.size(); i++)
+		_items[i]->startPhase(0xFFFE);
 }
 
 void LBPage::itemDestroyed(LBItem *item) {
@@ -437,9 +440,6 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 void MohawkEngine_LivingBooks::updatePage() {
 	switch (_phase) {
 	case 0:
-		for (uint32 i = 0; i < _items.size(); i++)
-			_items[i]->startPhase(0xFFFE);
-
 		for (uint32 i = 0; i < _items.size(); i++)
 			_items[i]->startPhase(0xFFFF);
 
