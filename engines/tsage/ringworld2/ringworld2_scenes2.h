@@ -81,6 +81,7 @@ public:
 	virtual void synchronize(Serializer &s);
 
 	void initExits();
+	void initPlayer();
 };
 
 

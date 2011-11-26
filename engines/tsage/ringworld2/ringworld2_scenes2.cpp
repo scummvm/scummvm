@@ -33,8 +33,128 @@ namespace Ringworld2 {
  * Scene 2000 - 
  *
  *--------------------------------------------------------------------------*/
-void Scene2000::initExits() {
+void Scene2000::initPlayer() {
+	R2_GLOBALS._player.disableControl();
+	warning("DisableControl, with argements?");
 
+	switch (_field414) {
+	case 0:
+		R2_GLOBALS._player.setStrip(5);
+		if (_exit1._enabled) {
+			if (_exit2._enabled)
+				R2_GLOBALS._player.setPosition(Common::Point(140, 129));
+			else
+				R2_GLOBALS._player.setPosition(Common::Point(20, 129));
+		} else
+			R2_GLOBALS._player.setPosition(Common::Point(245, 129));
+		R2_GLOBALS._player.enableControl();
+		warning("EnableControl, with 2 arguments?");
+		break;
+	case 1:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2001;
+		else
+			_sceneMode = 2021;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 2:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2002;
+		else
+			_sceneMode = 2022;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 3:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2000;
+		else
+			_sceneMode = 2020;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 4:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2005;
+		else
+			_sceneMode = 2025;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 5:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2004;
+		else
+			_sceneMode = 2024;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 6:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2009;
+		else
+			_sceneMode = 2029;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 7:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2008;
+		else
+			_sceneMode = 2028;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 8:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2013;
+		else
+			_sceneMode = 2033;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 9:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2012;
+		else
+			_sceneMode = 2032;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 10:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2016;
+		else
+			_sceneMode = 2036;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	case 11:
+		if (R2_GLOBALS._player._characterIndex == 1)
+			_sceneMode = 2038;
+		else
+			_sceneMode = 2040;
+		setAction(&_sequenceManager, this, _sceneMode, &R2_GLOBALS._player, NULL);
+		break;
+	default:
+		break;
+	}
+	for (int i = 0; i < 11; i++) {
+		if (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] == R2_GLOBALS._v56605[3 + i])
+			_objList1[i].show();
+	}
+
+	if ((R2_GLOBALS._player._characterScene[1] == R2_GLOBALS._player._characterScene[2]) && (R2_GLOBALS._v56605[1] == R2_GLOBALS._v56605[2])) {
+		_object1.postInit();
+		if (R2_GLOBALS._player._characterIndex == 1) {
+			_object1.setup(20, 5, 1);
+			_object1.setDetails(9002, 0, 4, 3, 1, NULL);
+		} else {
+			_object1.setup(2008, 5, 1);
+			_object1.setDetails(9001, 0, 5, 3, 1, NULL);
+		}
+		if (_exit1._enabled) {
+			if (_exit2._enabled)
+				_object1.setPosition(Common::Point(180, 128));
+			else
+				_object1.setPosition(Common::Point(75, 128));
+		} else
+			_object1.setPosition(Common::Point(300, 128));
+	}
+}
+
+void Scene2000::initExits() {
 	_exit1._enabled = true;
 	_exit2._enabled = true;
 	_exit3._enabled = false;
@@ -53,9 +173,8 @@ void Scene2000::initExits() {
 	_exit4._moving = false;
 	_exit5._moving = false;
 
-	for (int i = 0; i < 11; i++) {
+	for (int i = 0; i < 11; i++)
 		_objList1[i].hide();
-	}
 
 	_object1.remove();
 
@@ -809,7 +928,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	_objList1[5].setAction(&_action4);
 	_objList1[8].setAction(&_action1);
 
-	warning("STUB: sub_D2FBA");
+	initPlayer();
 
 	_item1.setDetails(Rect(0, 0, 320, 200), 2000, 0, -1, 23, 1, NULL);
 }
@@ -828,7 +947,7 @@ void Scene2000::signal() {
 			_field414 = 1;
 			--R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
 			initExits();
-			warning("STUB: sub_D2FBA");
+			initPlayer();
 		}
 	break;
 	case 11:
@@ -846,14 +965,14 @@ void Scene2000::signal() {
 			_field414 = 2;
 			++R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
 			initExits();
-			warning("STUB: sub_D2FBA");
+			initPlayer();
 			break;
 		}
 		break;
 	case 12:
 	case 13:
 		initExits();
-		warning("STUB: sub_D2FBA");
+		initPlayer();
 		break;
 	case 14:
 		switch (_field414 - 1) {
