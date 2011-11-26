@@ -1066,22 +1066,22 @@ for ac_option in $@; do
 	--disable-all-engines)
 		engine_disable_all
 		;;
-	--enable-engine=*)
+	--enable-engine=* | --enable-engines=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable "${engine_name}"
 		done
 		;;
-	--enable-engine-static=*)
+	--enable-engine-static=* | --enable-engines-static=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable "${engine_name}:static"
 		done
 		;;
-	--enable-engine-dynamic=*)
+	--enable-engine-dynamic=* | --enable-engines-dynamic=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2- | tr ',' '\n'`; do
 			engine_enable "${engine_name}:dynamic"
 		done
 		;;
-	--disable-engine=*)
+	--disable-engine=* | --disable-engines=*)
 		for engine_name in `echo $ac_option | cut -d '=' -f 2 | tr ',' '\n'`; do
 			engine_disable ${engine_name}
 		done
