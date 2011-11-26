@@ -348,4 +348,5 @@
 	void loadposition();
 	void saveposition();
 	void openforsave(unsigned int slot);
+	void openforload(unsigned int slot);
 

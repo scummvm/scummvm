@@ -102,53 +102,35 @@ void DreamGenContext::doload() {
 		}
 
 
-		// TODO: proper scheme for filename, in a separate function
-		//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
-		Common::String filename = Common::String::format("DREAMWEB.D%02d", savegameId);
-		debug(1, "Loading from filename: %s", filename.c_str());
-		engine->openSaveFileForReading(filename);
-
 		// TODO: The below is duplicated from Loadposition
 		data.word(kTimecount) = 0;
 		clearchanges();
 
-		ds = cs;
-		dx = kFileheader;
-		cx = kHeaderlen;
-		savefileread();
-		es = cs;
-		di = kFiledata;
-		ax = savegameId;
+		openforload(savegameId);
+
+		engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+
+		// read segment lengths from savegame file header
+		int len[6];
+		for (int i = 0; i < 6; ++i)
+			len[i] = cs.word(kFiledata + 2*i);
+		if (len[0] != 17)
+			::error("Error loading save: description buffer isn't 17 bytes");
+
 		if (savegameId < 7) {
-			cx = 17;
-			_mul(cx);
-			ds = data;
-			dx = kSavenames;
-			_add(dx, ax);
-			loadseg();
+			engine->readFromSaveFile(data.ptr(kSavenames + 17*savegameId, len[0]), len[0]);
 		} else {
-			// For potential support of more than 7 savegame slots,
+			// For support of more than 7 savegame slots,
 			// loading into the savenames buffer isn't always possible
-			// Emulate a loadseg call:
 			uint8 namebuf[17];
-			engine->readFromFile(namebuf, 17);
-			_add(di, 2);
+			engine->readFromSaveFile(namebuf, 17);
 		}
-		ds = data; 
-		dx = kStartvars;
-		loadseg();
-		ds = data.word(kExtras);
-		dx = kExframedata;
-		loadseg();
-		ds = data.word(kBuffers);
-		dx = kListofchanges;
-		loadseg();
-		ds = data;
-		dx = kMadeuproomdat;
-		loadseg();
-		ds = cs;
-		dx = kReelroutines;
-		loadseg();
+		engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
+		engine->readFromSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+		engine->readFromSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+		engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+		engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
+
 		closefile();
 		data.byte(kGetback) = 1;
 	}
@@ -418,50 +400,29 @@ void DreamGenContext::saveposition() {
 }
 
 void DreamGenContext::loadposition() {
-	STACK_CHECK;
 	data.word(kTimecount) = 0;
 	clearchanges();
-	al = data.byte(kCurrentslot);
-	ah = 0;
-	push(ax);
-	cx = 13;
-	_mul(cx);
-	dx = data;
-	ds = dx;
-	dx = 8698;
-	_add(dx, ax);
-	openfilefromc();
-	ds = cs;
-	dx = 6091;
-	cx = (6187-6091);
-	savefileread();
-	es = cs;
-	di = 6141;
-	ax = pop();
-	cx = 17;
-	_mul(cx);
-	dx = data;
-	ds = dx;
-	dx = 8579;
-	_add(dx, ax);
-	loadseg();
-	dx = data;
-	ds = dx;
-	dx = 0;
-	loadseg();
-	ds = data.word(kExtras);
-	dx = (0);
-	loadseg();
-	ds = data.word(kBuffers);
-	dx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80));
-	loadseg();
-	dx = data;
-	ds = dx;
-	dx = 7979;
-	loadseg();
-	ds = cs;
-	dx = 534;
-	loadseg();
+
+	unsigned int slot = data.byte(kCurrentslot);
+
+	openforload(slot);
+
+	engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+
+	// read segment lengths from savegame file header
+	int len[6];
+	for (int i = 0; i < 6; ++i)
+		len[i] = cs.word(kFiledata + 2*i);
+	if (len[0] != 17)
+		::error("Error loading save: description buffer isn't 17 bytes");
+
+	engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, len[0]), len[0]);
+	engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
+	engine->readFromSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	engine->readFromSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
+
 	closefile();
 }
 

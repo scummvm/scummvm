@@ -413,6 +413,14 @@ void DreamGenContext::openforsave(unsigned int slot) {
 	engine->openSaveFileForWriting(filename);
 }
 
+void DreamGenContext::openforload(unsigned int slot) {
+	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
+	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
+	debug(1, "openforload(%s)", filename.c_str());
+	engine->openSaveFileForReading(filename);
+}
+
+
 void DreamGenContext::openfilenocheck() {
 	const char *name = (const char *)ds.ptr(dx, 13);
 	debug(1, "checksavefile(%s)", name);
