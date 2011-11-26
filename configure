@@ -423,14 +423,14 @@ option_help() {
 
 # Show an error about an unknown option
 option_error() {
-	echo "error: unrecognised option: $ac_option
+	echo "error: unrecognized option: $ac_option
 Try \`$0 --help' for more information." >&2
 	exit 1
 }
 
 # Show an error about an unknown engine
 engine_option_error() {
-	echo "error: unrecognised engine: $1
+	echo "error: unrecognized engine: $1
 Try \`$0 --help' for more information." >&2
 	exit 1
 }

@@ -255,7 +255,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 				// Replace code offset with an index
 				params[0] = index;
 			else {
-				printf("\nEncountered unrecognised NPC code jump point: %xh\n", params[0]);
+				printf("\nEncountered unrecognized NPC code jump point: %xh\n", params[0]);
 				exit(1);
 			}
 			break;
