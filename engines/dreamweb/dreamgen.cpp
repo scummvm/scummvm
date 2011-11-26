@@ -12715,38 +12715,6 @@ void DreamGenContext::getridofall() {
 	deallocatemem();
 }
 
-void DreamGenContext::restorereels() {
-	STACK_CHECK;
-	_cmp(data.byte(kRoomloaded), 0);
-	if (flags.z())
-		return /* (dontrestore) */;
-	al = data.byte(kReallocation);
-	getroomdata();
-	dx = bx;
-	openfile();
-	readheader();
-	dontloadseg();
-	dontloadseg();
-	dontloadseg();
-	dontloadseg();
-	allocateload();
-	data.word(kReel1) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel2) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel3) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	closefile();
-}
-
 void DreamGenContext::allocateload() {
 	STACK_CHECK;
 	push(es);

@@ -353,4 +353,5 @@
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void loadRoomData(const Room* room, bool skipDat);
 	void restoreall();
+	void restorereels();
 
