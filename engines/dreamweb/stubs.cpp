@@ -891,17 +891,14 @@ void DreamGenContext::startloading(const Room *room) {
 	data.byte(kManspath) = room->b21;
 	data.byte(kDestination) = room->b21;
 	data.byte(kFinaldest) = room->b21;
-	data.byte(kFacing) = room->b22;
-	data.byte(kTurntoface) = room->b22;
+	data.byte(kFacing) = room->facing;
+	data.byte(kTurntoface) = room->facing;
 	data.byte(kCounttoopen) = room->countToOpen;
 	data.byte(kLiftpath) = room->liftPath;
 	data.byte(kDoorpath) = room->doorPath;
 	data.byte(kLastweapon) = (uint8)-1;
-	al = room->b27;
-	push(ax);
-	al = room->b31;
 	ah = data.byte(kReallocation);
-	data.byte(kReallocation) = al;
+	data.byte(kReallocation) = room->realLocation;
 	Common::String name = room->name;
 	engine->openFile(name);
 	cs.word(kHandle) = 1; //only one handle
@@ -998,9 +995,8 @@ void DreamGenContext::startloading(const Room *room) {
 	data.word(kLookcounter) = 160;
 	data.byte(kNewlocation) = 255;
 	data.byte(kLinepointer) = 254;
-	ax = pop();
-	if (al != 255) {
-		data.byte(kManspath) = al;
+	if (room->b27 != 255) {
+		data.byte(kManspath) = room->b27;
 		push(bx);
 		autosetwalk();
 		bx = pop();

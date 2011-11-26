@@ -196,7 +196,7 @@ struct Room {
 	uint8 b19;
 	uint8 liftFlag;
 	uint8 b21;
-	uint8 b22;
+	uint8 facing;
 	uint8 countToOpen;
 	uint8 liftPath;
 	uint8 doorPath;
@@ -205,7 +205,7 @@ struct Room {
 	uint8 b28;
 	uint8 b29;
 	uint8 b30;
-	uint8 b31;
+	uint8 realLocation;
 };
 
 struct Rain {
