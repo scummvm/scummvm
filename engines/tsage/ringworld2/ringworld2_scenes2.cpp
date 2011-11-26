@@ -30,14 +30,15 @@ namespace TsAGE {
 namespace Ringworld2 {
 
 /*--------------------------------------------------------------------------
- * Scene 2000 - 
+ * Scene 2000 - Maze
  *
  *--------------------------------------------------------------------------*/
 void Scene2000::initPlayer() {
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 
-	switch (_field414) {
+	warning("initPlayer: %d", _mazePlayerMode);
+	switch (_mazePlayerMode) {
 	case 0:
 		R2_GLOBALS._player.setStrip(5);
 		if (_exit1._enabled) {
@@ -178,6 +179,8 @@ void Scene2000::initExits() {
 
 	_object1.remove();
 
+	warning("initExits: %d", R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]);
+
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
 	case 3:
 	case 10:
@@ -212,8 +215,8 @@ void Scene2000::initExits() {
 		_exit1._enabled = false;
 		loadScene(2225);
 		R2_GLOBALS._walkRegions.load(2225);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	case 1:
@@ -223,8 +226,8 @@ void Scene2000::initExits() {
 		_exit3.setDest(Common::Point(94, 129));
 		_exit3._cursorNum = CURSOR_14;
 		loadScene(2300);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._walkRegions.load(2000);
 		break;
@@ -236,17 +239,17 @@ void Scene2000::initExits() {
 		R2_GLOBALS._walkRegions.load(2000);
 		switch(R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) {
 		case 2400:
-			_field414 = 1;
+			_mazePlayerMode = 1;
 			break;
 		case 2425:
 		case 2430:
 		case 2435:
 		case 2450:
-			_field414 = 3;
+			_mazePlayerMode = 3;
 			break;
 		default:
-			if (_field412 == 0)
-				_field414 = 0;
+			if (!_exitingFlag)
+				_mazePlayerMode = 0;
 			break;
 		}
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
@@ -259,12 +262,12 @@ void Scene2000::initExits() {
 		loadScene(2175);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2000) {
-			if (_field412 == 0)
-				_field414 = 0;
+			if (!_exitingFlag)
+				_mazePlayerMode = 0;
 		} else if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
-			_field414 = 1;
+			_mazePlayerMode = 1;
 		else 
-			_field414 = 10;
+			_mazePlayerMode = 10;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 		break;
@@ -273,9 +276,9 @@ void Scene2000::initExits() {
 		loadScene(2000);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1900)
-			_field414 = 1;
-		else if (_field412 == 0)
-			_field414 = 0;
+			_mazePlayerMode = 1;
+		else if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 		break;
@@ -288,9 +291,9 @@ void Scene2000::initExits() {
 		R2_GLOBALS._walkRegions.load(2000);
 		_exit2._enabled = false;
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 1900)
-			_field414 = 2;
-		else if (_field412 == 0)
-			_field414 = 0;
+			_mazePlayerMode = 2;
+		else if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 		break;
@@ -303,9 +306,9 @@ void Scene2000::initExits() {
 		loadScene(2250);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2500)
-			_field414 = 1;
-		else if (_field412 == 0)
-			_field414 = 0;
+			_mazePlayerMode = 1;
+		else if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 		break;
@@ -317,8 +320,8 @@ void Scene2000::initExits() {
 		_exit3._cursorNum = CURSOR_14;
 		loadScene(2075);
 		R2_GLOBALS._walkRegions.load(2000);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	case 14:
@@ -328,8 +331,8 @@ void Scene2000::initExits() {
 		_exit3._cursorNum = CURSOR_15;
 		loadScene(2325);
 		R2_GLOBALS._walkRegions.load(2000);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	case 16:
@@ -341,9 +344,9 @@ void Scene2000::initExits() {
 		loadScene(2125);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2400)
-			_field414 = 2;
-		else if (_field412 == 0)
-			_field414 = 0;
+			_mazePlayerMode = 2;
+		else if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		R2_GLOBALS._sceneManager._previousScene = 2000;
 		break;
@@ -354,8 +357,8 @@ void Scene2000::initExits() {
 		_exit4._cursorNum = CURSOR_13;
 		loadScene(2275);
 		R2_GLOBALS._walkRegions.load(2000);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	case 28:
@@ -366,22 +369,22 @@ void Scene2000::initExits() {
 		loadScene(2050);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
-			_field414 = 11;
-		else if (_field412 == 0)
-			_field414 = 0;
+			_mazePlayerMode = 11;
+		else if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	case 32:
 		loadScene(2025);
 		R2_GLOBALS._walkRegions.load(2000);
-		if (_field412 == 0)
-			_field414 = 0;
+		if (!_exitingFlag)
+			_mazePlayerMode = 0;
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 2000;
 		break;
 	default:
 		break;
 	}
-	_field412 = 0;
+	_exitingFlag = false;
 	R2_GLOBALS._uiElements.show();
 }
 
@@ -543,11 +546,12 @@ void Scene2000::Action1::signal() {
 
 void Scene2000::Exit1::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
+	warning("exit1");
 
-	scene->_field412 = 1;
+	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 	scene->_sceneMode = 10;
 
 	warning("TODO: Check sub_22D26");
@@ -560,11 +564,12 @@ void Scene2000::Exit1::changeScene() {
 
 void Scene2000::Exit2::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
+	warning("exit2");
 
-	scene->_field412 = 1;
+	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 	scene->_sceneMode = 11;
 
 	warning("TODO: Check sub_22D26");
@@ -575,43 +580,44 @@ void Scene2000::Exit2::changeScene() {
 
 void Scene2000::Exit3::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
+	warning("exit13");
 
-	scene->_field412 = 1;
+	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 	scene->_sceneMode = 12;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
 	case 2:
-		scene->_field414 = 4;
+		scene->_mazePlayerMode = 4;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 8;
 		break;
 	case 11:
-		scene->_field414 = 6;
+		scene->_mazePlayerMode = 6;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 17;
 		break;
 	case 15:
-		scene->_field414 = 8;
+		scene->_mazePlayerMode = 8;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 24;
 		break;
 	case 20:
-		scene->_field414 = 4;
+		scene->_mazePlayerMode = 4;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 30;
 		break;
 	case 26:
-		scene->_field414 = 6;
+		scene->_mazePlayerMode = 6;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 32;
 		break;
 	case 29:
-		scene->_field414 = 11;
+		scene->_mazePlayerMode = 11;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 29;
 		break;
 	default:
 		break;
 	}
 
-	switch (scene->_field414) {
+	switch (scene->_mazePlayerMode) {
 	case 4:
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2003, &R2_GLOBALS._player, NULL);
@@ -644,39 +650,40 @@ void Scene2000::Exit3::changeScene() {
 }
 void Scene2000::Exit4::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
+	warning("exit4");
 
-	scene->_field412 = 1;
+	scene->_exitingFlag = true;
 	scene->_sceneMode = 0;
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 	scene->_sceneMode = 13;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
 	case 8:
-		scene->_field414 = 5;
+		scene->_mazePlayerMode = 5;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 2;
 		break;
 	case 17:
-		scene->_field414 = 7;
+		scene->_mazePlayerMode = 7;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 11;
 		break;
 	case 24:
-		scene->_field414 = 9;
+		scene->_mazePlayerMode = 9;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 15;
 		break;
 	case 30:
-		scene->_field414 = 5;
+		scene->_mazePlayerMode = 5;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 20;
 		break;
 	case 32:
-		scene->_field414 = 7;
+		scene->_mazePlayerMode = 7;
 		R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] = 26;
 		break;
 	default:
 		break;
 	}
 
-	switch (scene->_field414) {
+	switch (scene->_mazePlayerMode) {
 	case 5:
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2006, &R2_GLOBALS._player, NULL);
@@ -702,64 +709,65 @@ void Scene2000::Exit4::changeScene() {
 
 void Scene2000::Exit5::changeScene() {
 	Scene2000 *scene = (Scene2000 *)R2_GLOBALS._sceneManager._scene;
+	warning("exit5");
 
 	scene->_sceneMode = 0;
 	R2_GLOBALS._player.disableControl();
-	warning("DisableControl, with argements?");
+	warning("DisableControl, with arguments?");
 	scene->_sceneMode = 14;
 
 	switch (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex]) {
 	case 3:
-		scene->_field414 = 1;
+		scene->_mazePlayerMode = 1;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 4:
-		scene->_field414 = 7;
+		scene->_mazePlayerMode = 7;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 10:
-		scene->_field414 = 8;
+		scene->_mazePlayerMode = 8;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 12:
-		scene->_field414 = 3;
+		scene->_mazePlayerMode = 3;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 16:
-		scene->_field414 = 4;
+		scene->_mazePlayerMode = 4;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 21:
-		scene->_field414 = 5;
+		scene->_mazePlayerMode = 5;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2015, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2035, &R2_GLOBALS._player, NULL);
 		break;
 	case 25:
-		scene->_field414 = 2;
+		scene->_mazePlayerMode = 2;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
 			scene->setAction(&scene->_sequenceManager, scene, 2037, &R2_GLOBALS._player, NULL);
 		break;
 	case 34:
-		scene->_field414 = 6;
+		scene->_mazePlayerMode = 6;
 		if (R2_GLOBALS._player._characterIndex == 1)
 			scene->setAction(&scene->_sequenceManager, scene, 2017, &R2_GLOBALS._player, NULL);
 		else
@@ -781,7 +789,7 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	if ((R2_GLOBALS._player._characterScene[R2_GLOBALS._player._characterIndex] != R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex]) && (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] != 2350)) {
 		R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] = 0;
 	}
-	_field412 = 0;
+	_exitingFlag = false;
 
 	_exit1.setDetails(Rect(0, 100, 14, 140), CURSOR_9, 2000);
 	_exit1.setDest(Common::Point(14, 129));
@@ -944,7 +952,7 @@ void Scene2000::signal() {
 		if (R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex] == 6)
 			g_globals->_sceneManager.changeScene(1900);
 		else {
-			_field414 = 1;
+			_mazePlayerMode = 1;
 			--R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
 			initExits();
 			initPlayer();
@@ -962,7 +970,7 @@ void Scene2000::signal() {
 			g_globals->_sceneManager.changeScene(2350);
 			break;
 		default:
-			_field414 = 2;
+			_mazePlayerMode = 2;
 			++R2_GLOBALS._v56605[R2_GLOBALS._player._characterIndex];
 			initExits();
 			initPlayer();
@@ -975,7 +983,7 @@ void Scene2000::signal() {
 		initPlayer();
 		break;
 	case 14:
-		switch (_field414 - 1) {
+		switch (_mazePlayerMode - 1) {
 		case 0:
 			g_globals->_sceneManager.changeScene(2450);
 			break;
@@ -1029,8 +1037,8 @@ void Scene2000::process(Event &event) {
 void Scene2000::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 
-	s.syncAsSint16LE(_field412);
-	s.syncAsSint16LE(_field414);
+	s.syncAsByte(_exitingFlag);
+	s.syncAsSint16LE(_mazePlayerMode);
 }
 
 

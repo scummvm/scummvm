@@ -60,8 +60,8 @@ class Scene2000: public SceneExt {
 		virtual void changeScene();
 	};
 public:
-	int _field412;
-	int _field414;
+	bool _exitingFlag;
+	int _mazePlayerMode;
 
 	NamedHotspot _item1;
 	SceneActor _object1;
