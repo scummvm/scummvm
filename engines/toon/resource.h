@@ -37,10 +37,10 @@ public:
 	PakFile();
 	~PakFile();
 
-	void open(Common::SeekableReadStream *rs, Common::String packName);
-	uint8 *getFileData(Common::String fileName, uint32 *fileSize);
+	void open(Common::SeekableReadStream *rs, const Common::String &packName);
+	uint8 *getFileData(const Common::String &fileName, uint32 *fileSize);
 	Common::String getPackName() { return _packName; }
-	Common::SeekableReadStream *createReadStream(Common::String fileName);
+	Common::SeekableReadStream *createReadStream(const Common::String &fileName);
 	void close();
 
 protected:
@@ -76,10 +76,10 @@ class Resources {
 public:
 	Resources(ToonEngine *vm);
 	~Resources();
-	void openPackage(Common::String file);
-	void closePackage(Common::String fileName);
-	Common::SeekableReadStream *openFile(Common::String file);
-	uint8 *getFileData(Common::String fileName, uint32 *fileSize); // this memory must be copied to your own structures!
+	void openPackage(const Common::String &file);
+	void closePackage(const Common::String &fileName);
+	Common::SeekableReadStream *openFile(const Common::String &file);
+	uint8 *getFileData(const Common::String &fileName, uint32 *fileSize); // this memory must be copied to your own structures!
 	void purgeFileData();
 
 protected:
@@ -89,9 +89,9 @@ protected:
 	uint32 _cacheSize;
 	Common::Array<CacheEntry *> _resourceCache;
 
-	void removePackageFromCache(Common::String packName);
-	bool getFromCache(Common::String fileName, uint32 *fileSize, uint8 **fileData);
-	void addToCache(Common::String packName, Common::String fileName, uint32 fileSize, uint8 *fileData);
+	void removePackageFromCache(const Common::String &packName);
+	bool getFromCache(const Common::String &fileName, uint32 *fileSize, uint8 **fileData);
+	void addToCache(const Common::String &packName, const Common::String &fileName, uint32 fileSize, uint8 *fileData);
 };
 
 } // End of namespace Toon

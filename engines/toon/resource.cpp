@@ -50,13 +50,13 @@ Resources::~Resources() {
 	purgeFileData();
 }
 
-void Resources::removePackageFromCache(Common::String packName) {
+void Resources::removePackageFromCache(const Common::String &packName) {
 	// I'm not sure what's a good strategy here. It seems unnecessary to
 	// actually remove the cached resources, because the player may be
 	// wandering back and forth between rooms. So for now, do nothing.
 }
 
-bool Resources::getFromCache(Common::String fileName, uint32 *fileSize, uint8 **fileData) {
+bool Resources::getFromCache(const Common::String &fileName, uint32 *fileSize, uint8 **fileData) {
 	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
 		if ((*entry)->_data && (*entry)->_fileName.compareToIgnoreCase(fileName) == 0) {
 			debugC(5, kDebugResource, "getFromCache(%s) - Got %d bytes from %s", fileName.c_str(), (*entry)->_size, (*entry)->_packName.c_str());
@@ -69,7 +69,7 @@ bool Resources::getFromCache(Common::String fileName, uint32 *fileSize, uint8 **
 	return false;
 }
 
-void Resources::addToCache(Common::String packName, Common::String fileName, uint32 fileSize, uint8 *fileData) {
+void Resources::addToCache(const Common::String &packName, const Common::String &fileName, uint32 fileSize, uint8 *fileData) {
 	debugC(5, kDebugResource, "addToCache(%s, %s, %d) - Total Size: %d", packName.c_str(), fileName.c_str(), fileSize, _cacheSize + fileSize);
 	for (Common::Array<CacheEntry *>::iterator entry = _resourceCache.begin(); entry != _resourceCache.end(); ++entry) {
 		if ((*entry)->_data) {
@@ -115,7 +115,7 @@ void Resources::addToCache(Common::String packName, Common::String fileName, uin
 	_resourceCache.push_back(entry);
 }
 
-void Resources::openPackage(Common::String fileName) {
+void Resources::openPackage(const Common::String &fileName) {
 	debugC(1, kDebugResource, "openPackage(%s)", fileName.c_str());
 
 	Common::File file;
@@ -132,7 +132,7 @@ void Resources::openPackage(Common::String fileName) {
 	_pakFiles.push_back(pakFile);
 }
 
-void Resources::closePackage(Common::String fileName) {
+void Resources::closePackage(const Common::String &fileName) {
 
 	removePackageFromCache(fileName);
 	for (uint32 i = 0; i < _pakFiles.size(); i++) {
@@ -144,7 +144,7 @@ void Resources::closePackage(Common::String fileName) {
 	}
 }
 
-uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
+uint8 *Resources::getFileData(const Common::String &fileName, uint32 *fileSize) {
 	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.c_str());
 
 	// first try to find files outside of .pak
@@ -184,7 +184,7 @@ uint8 *Resources::getFileData(Common::String fileName, uint32 *fileSize) {
 	}
 }
 
-Common::SeekableReadStream *Resources::openFile(Common::String fileName) {
+Common::SeekableReadStream *Resources::openFile(const Common::String &fileName) {
 	debugC(1, kDebugResource, "openFile(%s)", fileName.c_str());
 
 	// first try to find files outside of .pak
@@ -216,7 +216,7 @@ void Resources::purgeFileData() {
 	_allocatedFileData.clear();
 }
 
-Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
+Common::SeekableReadStream *PakFile::createReadStream(const Common::String &fileName) {
 	debugC(1, kDebugResource, "createReadStream(%s)", fileName.c_str());
 
 	uint32 fileSize = 0;
@@ -227,7 +227,7 @@ Common::SeekableReadStream *PakFile::createReadStream(Common::String fileName) {
 		return 0;
 }
 
-uint8 *PakFile::getFileData(Common::String fileName, uint32 *fileSize) {
+uint8 *PakFile::getFileData(const Common::String &fileName, uint32 *fileSize) {
 	debugC(4, kDebugResource, "getFileData(%s, fileSize)", fileName.c_str());
 
 	for (uint32 i = 0; i < _numFiles; i++) {
@@ -250,7 +250,7 @@ uint8 *PakFile::getFileData(Common::String fileName, uint32 *fileSize) {
 	return 0;
 }
 
-void PakFile::open(Common::SeekableReadStream *rs, Common::String packName) {
+void PakFile::open(Common::SeekableReadStream *rs, const Common::String &packName) {
 	debugC(1, kDebugResource, "open(rs)");
 
 	char buffer[64];

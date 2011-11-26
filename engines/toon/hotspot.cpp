@@ -96,7 +96,7 @@ int32 Hotspots::Find(int32 x, int32 y) {
 	return foundId;
 }
 
-bool Hotspots::LoadRif(Common::String rifName, Common::String additionalRifName) {
+bool Hotspots::LoadRif(const Common::String &rifName, const Common::String &additionalRifName) {
 	debugC(1, kDebugHotspot, "LoadRif(%s, %s)", rifName.c_str(), additionalRifName.c_str());
 
 	uint32 size = 0;

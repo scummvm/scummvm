@@ -35,7 +35,7 @@ TextResource::~TextResource(void) {
 	delete[] _textData;
 }
 
-bool TextResource::loadTextResource(Common::String fileName) {
+bool TextResource::loadTextResource(const Common::String &fileName) {
 	debugC(1, kDebugText, "loadTextResource(%s)", fileName.c_str());
 
 	uint32 fileSize = 0;
