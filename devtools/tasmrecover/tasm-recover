@@ -297,6 +297,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'openforsave',
 	'makeheader',
 	'savefilewrite',
+	'storeit',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

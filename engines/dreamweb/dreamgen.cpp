@@ -11199,16 +11199,6 @@ afterprintname:
 		goto shownameloop;
 }
 
-void DreamGenContext::storeit() {
-	STACK_CHECK;
-	_cmp(ax, 0);
-	if (!flags.z())
-		goto isntblank;
-	_inc(ax);
-isntblank:
-	_stosw();
-}
-
 void DreamGenContext::scanfornames() {
 	STACK_CHECK;
 	dx = data;

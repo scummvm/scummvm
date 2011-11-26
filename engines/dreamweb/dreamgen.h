@@ -137,7 +137,6 @@ public:
 	static const uint16 addr_showdecisions = 0xc8bc;
 	static const uint16 addr_decide = 0xc8b8;
 	static const uint16 addr_scanfornames = 0xc8b4;
-	static const uint16 addr_storeit = 0xc8a8;
 	static const uint16 addr_loadseg = 0xc8a0;
 	static const uint16 addr_savefileread = 0xc894;
 	static const uint16 addr_error = 0xc884;
@@ -1156,7 +1155,7 @@ public:
 	void useopenbox();
 	void clearbuffers();
 	//void neterror();
-	void storeit();
+	//void storeit();
 	//void isitworn();
 	//void putundertimed();
 	//void dumpmap();
