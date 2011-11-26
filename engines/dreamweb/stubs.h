@@ -329,6 +329,7 @@
 	void playchannel1();
 	void playchannel1(uint8 index);
 	void showmainops();
+	void showdiscops();
 	void createpanel();
 	void createpanel2();
 	void findroominloc();

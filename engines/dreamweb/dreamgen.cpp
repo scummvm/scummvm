@@ -10844,34 +10844,6 @@ opsblock1:
 	blank();
 }
 
-void DreamGenContext::showdiscops() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics);
-	di = (60)+128+4;
-	bx = (52)+12;
-	al = 1;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = (60)+10;
-	bx = (52)+10;
-	al = 9;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = (60)+59;
-	bx = (52)+30;
-	al = 10;
-	ah = 0;
-	showframe();
-	ds = data.word(kTempgraphics);
-	di = (60)+176+2;
-	bx = (52)+60-4;
-	al = 5;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::loadsavebox() {
 	STACK_CHECK;
 	dx = 1961;

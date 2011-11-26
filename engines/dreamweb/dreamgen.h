@@ -165,7 +165,6 @@ public:
 	static const uint16 addr_getbacktoops = 0xc848;
 	static const uint16 addr_loadgame = 0xc844;
 	static const uint16 addr_loadsavebox = 0xc840;
-	static const uint16 addr_showdiscops = 0xc83c;
 	static const uint16 addr_getbackfromops = 0xc834;
 	static const uint16 addr_dosaveload = 0xc830;
 	static const uint16 addr_zoomonoff = 0xc828;
@@ -1236,7 +1235,7 @@ public:
 	void intromonks1();
 	void resetlocation();
 	//void oldtonames();
-	void showdiscops();
+	void intromonks2();
 	void advisor();
 	void additionaltext();
 	//void compare();
@@ -1389,6 +1388,7 @@ public:
 	//void spriteupdate();
 	//void usetempcharset();
 	void discops();
+	//void showdiscops();
 	//void printdirect();
 	//void delthisone();
 	//void makebackob();
@@ -1482,11 +1482,11 @@ public:
 	void redes();
 	//void turnanypathoff();
 	void errormessage1();
-	void clearchanges();
+	void errormessage2();
 	void errormessage3();
 	//void deletetaken();
 	//void putundermenu();
-	void intromonks2();
+	//void checkifex();
 	void intromagic2();
 	void intromagic3();
 	void edeninbath();
@@ -1782,7 +1782,7 @@ public:
 	void greyscalesum();
 	void buttoneight();
 	void findexobject();
-	void errormessage2();
+	void clearchanges();
 	void usechurchhole();
 	void searchforfiles();
 	void monkspeaking();
@@ -1803,7 +1803,6 @@ public:
 	//void delcurs();
 	//void randomaccess();
 	//void calcfrframe();
-	//void checkifex();
 	//void findobname();
 	void initialmoncols();
 	void checkforshake();

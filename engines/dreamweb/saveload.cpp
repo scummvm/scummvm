@@ -373,5 +373,12 @@ void DreamGenContext::showmainops() {
 	showframe(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
+void DreamGenContext::showdiscops() {
+	showframe(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
+	showframe(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
+	showframe(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
+	showframe(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
+}
+
 } /*namespace dreamgen */
 
