@@ -257,6 +257,12 @@ void DreamGenContext::transfertext() {
 	data.word(kExtextpos) += len + 1;
 }
 
+void DreamGenContext::getbackfromob() {
+	if (data.byte(kPickup) != 1)
+		getback1();
+	else
+		blank();
+}
 
 } /*namespace dreamgen */
 

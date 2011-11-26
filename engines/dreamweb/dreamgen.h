@@ -417,7 +417,6 @@ public:
 	static const uint16 addr_openob = 0xc354;
 	static const uint16 addr_openinv = 0xc34c;
 	static const uint16 addr_incryanpage = 0xc348;
-	static const uint16 addr_getbackfromob = 0xc344;
 	static const uint16 addr_makemainscreen = 0xc340;
 	static const uint16 addr_findallopen = 0xc32c;
 	static const uint16 addr_fillopen = 0xc324;
@@ -1447,7 +1446,7 @@ public:
 	//void examineobtext();
 	void liftnoise();
 	void workoutframes();
-	void getbackfromob();
+	//void getbackfromob();
 	void dumpsymbox();
 	void loadgame();
 	void getridoftemp();

@@ -3229,17 +3229,6 @@ void DreamGenContext::makemainscreen() {
 	data.byte(kManisoffscreen) = 0;
 }
 
-void DreamGenContext::getbackfromob() {
-	STACK_CHECK;
-	_cmp(data.byte(kPickup), 1);
-	if (!flags.z())
-		goto notheldob;
-	blank();
-	return;
-notheldob:
-	getback1();
-}
-
 void DreamGenContext::incryanpage() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 222);

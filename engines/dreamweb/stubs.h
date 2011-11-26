@@ -337,5 +337,5 @@
 	void dolook();
 	void usetempcharset();
 	void usecharset1();
-
+	void getbackfromob();
 
