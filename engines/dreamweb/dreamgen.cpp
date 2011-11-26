@@ -12775,18 +12775,6 @@ void DreamGenContext::showman() {
 	showframe();
 }
 
-void DreamGenContext::usecharset1() {
-	STACK_CHECK;
-	ax = data.word(kCharset1);
-	data.word(kCurrentset) = ax;
-}
-
-void DreamGenContext::usetempcharset() {
-	STACK_CHECK;
-	ax = data.word(kTempcharset);
-	data.word(kCurrentset) = ax;
-}
-
 void DreamGenContext::showexit() {
 	STACK_CHECK;
 	ds = data.word(kIcons1);

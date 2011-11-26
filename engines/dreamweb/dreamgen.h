@@ -79,8 +79,6 @@ public:
 	static const uint16 addr_gettime = 0xca8c;
 	static const uint16 addr_panelicons1 = 0xca84;
 	static const uint16 addr_showexit = 0xca80;
-	static const uint16 addr_usetempcharset = 0xca7c;
-	static const uint16 addr_usecharset1 = 0xca78;
 	static const uint16 addr_showman = 0xca6c;
 	static const uint16 addr_middlepanel = 0xca68;
 	static const uint16 addr_workoutframes = 0xca54;
@@ -1396,7 +1394,7 @@ public:
 	void locklighton();
 	void useladderb();
 	//void spriteupdate();
-	void usetempcharset();
+	//void usetempcharset();
 	void discops();
 	//void printdirect();
 	//void delthisone();
@@ -1779,7 +1777,7 @@ public:
 	void tattooman();
 	void usehandle();
 	void openfile();
-	void usecharset1();
+	//void usecharset1();
 	//void makenextblock();
 	void showpuztext();
 	//void addalong();

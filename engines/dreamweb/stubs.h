@@ -335,4 +335,7 @@
 	void look();
 	void autolook();
 	void dolook();
+	void usetempcharset();
+	void usecharset1();
+
 

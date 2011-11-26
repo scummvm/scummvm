@@ -281,6 +281,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'onedigit',
 	'showword',
 	'convnum',
+	'usecharset1',
+	'usetempcharset',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

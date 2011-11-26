@@ -2308,5 +2308,13 @@ void DreamGenContext::dolook() {
 	worktoscreenm();
 }
 
+void DreamGenContext::usecharset1() {
+	data.word(kCurrentset) = data.word(kCharset1);
+}
+
+void DreamGenContext::usetempcharset() {
+	data.word(kCurrentset) = data.word(kTempcharset);
+}
+
 } /*namespace dreamgen */
 
