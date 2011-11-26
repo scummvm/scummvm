@@ -2520,6 +2520,10 @@ void LBItem::done(bool onlyNotify) {
 	notify(0xFFFF, _itemId);
 }
 
+void LBItem::init() {
+	runScript(kLBEventInit);
+}
+
 void LBItem::setVisible(bool visible) {
 	if (visible == _visible)
 		return;
@@ -3506,6 +3510,8 @@ bool LBPictureItem::contains(Common::Point point) {
 
 void LBPictureItem::init() {
 	_vm->_gfx->preloadImage(_resourceId);
+
+	LBItem::init();
 }
 
 void LBPictureItem::draw() {
@@ -3583,6 +3589,8 @@ void LBAnimationItem::done(bool onlyNotify) {
 
 void LBAnimationItem::init() {
 	_anim = new LBAnimation(_vm, this, _resourceId);
+
+	LBItem::init();
 }
 
 void LBAnimationItem::stop() {

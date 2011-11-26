@@ -391,7 +391,7 @@ public:
 	virtual void handleMouseUp(Common::Point pos); // 0xD
 	virtual bool togglePlaying(bool playing, bool restart = false); // 0xF
 	virtual void done(bool onlyNotify); // 0x10
-	virtual void init() { } // 0x11
+	virtual void init(); // 0x11
 	virtual void seek(uint16 pos) { } // 0x13
 	virtual void setFocused(bool focused) { } // 0x14
 	virtual void setVisible(bool visible); // 0x17
