@@ -2315,34 +2315,29 @@ void DreamGenContext::restoreall() {
 }
 
 void DreamGenContext::restorereels() {
-	STACK_CHECK;
-	_cmp(data.byte(kRoomloaded), 0);
-	if (flags.z())
-		return /* (dontrestore) */;
-	al = data.byte(kReallocation);
-	getroomdata();
-	dx = bx;
-	openfile();
+	if (data.byte(kRoomloaded) == 0)
+		return;
+
+	const Room *room = getroomdata(data.byte(kReallocation));
+
+	engine->openFile(room->name);
+	cs.word(kHandle) = 1; //only one handle
+	flags._c = false;
 	readheader();
-	dontloadseg();
-	dontloadseg();
-	dontloadseg();
-	dontloadseg();
-	allocateload();
-	data.word(kReel1) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel2) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel3) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
+
+	// read segment lengths from room file header
+	int len[15];
+	for (int i = 0; i < 15; ++i)
+		len[i] = cs.word(kFiledata + 2*i);
+
+	engine->skipBytes(len[0]);
+	engine->skipBytes(len[1]);
+	engine->skipBytes(len[2]);
+	engine->skipBytes(len[3]);
+	data.word(kReel1) = allocateAndLoad(len[4]);
+	data.word(kReel2) = allocateAndLoad(len[5]);
+	data.word(kReel3) = allocateAndLoad(len[6]);
+
 	closefile();
 }
 

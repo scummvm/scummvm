@@ -53,7 +53,6 @@ public:
 	static const uint16 addr_getridoftemp2 = 0xcb78;
 	static const uint16 addr_getridoftemptext = 0xcb74;
 	static const uint16 addr_getridoftemp = 0xcb70;
-	static const uint16 addr_allocateload = 0xcb68;
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
@@ -1799,7 +1798,7 @@ public:
 	//void getnextword();
 	void generalerror();
 	//void actualload();
-	void allocateload();
+	//void allocateload();
 	//void saveposition();
 	void mode640x480();
 	void openeden();

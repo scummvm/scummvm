@@ -12715,18 +12715,6 @@ void DreamGenContext::getridofall() {
 	deallocatemem();
 }
 
-void DreamGenContext::allocateload() {
-	STACK_CHECK;
-	push(es);
-	push(di);
-	bx = es.word(di);
-	cl = 4;
-	_shr(bx, cl);
-	allocatemem();
-	di = pop();
-	es = pop();
-}
-
 void DreamGenContext::getridoftemp() {
 	STACK_CHECK;
 	es = data.word(kTempgraphics);
