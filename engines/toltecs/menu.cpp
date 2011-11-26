@@ -253,8 +253,8 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
 		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
 		for (int i = 1; i <= 7; i++) {
-			const char *saveDesc = Common::String::format("SAVEGAME %d", i).c_str();
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc, 231, 234);
+			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
 		}
 		loadSavegamesList();
 		setSavegameCaptions();
@@ -265,8 +265,8 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
 		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
 		for (int i = 1; i <= 7; i++) {
-			const char *saveDesc = Common::String::format("SAVEGAME %d", i).c_str();
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc, 231, 234);
+			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
 		}
 		newSlotNum = loadSavegamesList() + 1;
 		_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
