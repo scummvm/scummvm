@@ -881,6 +881,21 @@ void DreamGenContext::readheader() {
 	di = kFiledata;
 }
 
+uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
+	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
+	uint16 result = allocatemem(size / 16);
+	engine->readFromFile(segRef(result).ptr(0, size), size);
+	return result;
+}
+
+void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
+                                   unsigned int size, unsigned int maxSize) {
+	assert(size <= maxSize);
+	uint8 *buf = segRef(seg).ptr(0, maxSize);
+	memset(buf, c, maxSize);
+	engine->readFromFile(buf, size);
+}
+
 void DreamGenContext::startloading(const Room *room) {
 	data.byte(kCombatcount) = 0;
 	data.byte(kRoomssample) = room->roomsSample;
@@ -898,91 +913,9 @@ void DreamGenContext::startloading(const Room *room) {
 	data.byte(kLastweapon) = (uint8)-1;
 	ah = data.byte(kReallocation);
 	data.byte(kReallocation) = room->realLocation;
-	Common::String name = room->name;
-	engine->openFile(name);
-	cs.word(kHandle) = 1; //only one handle
-	flags._c = false;
-	readheader();
-	allocateload();
-	ds = ax;
-	data.word(kBackdrop) = ax;
-	dx = kFlags;
-	loadseg();
-	ds = data.word(kWorkspace);
-	dx = kMap;
-	cx = 132*66;
-	al = 0;
-	fillspace();
-	loadseg();
-	sortoutmap();
-	allocateload();
-	data.word(kSetframes) = ax;
-	ds = ax;
-	dx = kFramedata;
-	loadseg();
-	ds = data.word(kSetdat);
-	dx = 0;
-	cx = kSetdatlen;
-	al = 255;
-	fillspace();
-	loadseg();
-	allocateload();
-	data.word(kReel1) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel2) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel3) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReels) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kPeople) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kSetdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kBlockdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kRoomdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kFreeframes) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	ds = data.word(kFreedat);
-	dx = 0;
-	cx = kFreedatlen;
-	al = 255;
-	fillspace();
-	loadseg();
-	allocateload();
-	data.word(kFreedesc) = ax;
-	ds = ax;
-	dx = kFreetextdat;
-	loadseg();
-	closefile();
+
+	loadRoomData(room, false);
+
 	findroominloc();
 	deletetaken();
 	setallchanges();
@@ -2334,83 +2267,50 @@ void DreamGenContext::usetempcharset() {
 	data.word(kCurrentset) = data.word(kTempcharset);
 }
 
-void DreamGenContext::restoreall() {
-	STACK_CHECK;
-	al = data.byte(kLocation);
-	getroomdata();
-	dx = bx;
-	openfile();
+// if skipDat, skip clearing and loading Setdat and Freedat
+void DreamGenContext::loadRoomData(const Room* room, bool skipDat) {
+	engine->openFile(room->name);
+	cs.word(kHandle) = 1; //only one handle
+	flags._c = false;
 	readheader();
-	allocateload();
-	ds = ax;
-	data.word(kBackdrop) = ax;
-	dx = (0);
-	loadseg();
-	ds = data.word(kWorkspace);
-	dx = (0);
-	cx = 132*66;
-	al = 0;
-	fillspace();
-	loadseg();
+
+	// read segment lengths from room file header
+	int len[15];
+	for (int i = 0; i < 15; ++i)
+		len[i] = cs.word(kFiledata + 2*i);
+
+	data.word(kBackdrop) = allocateAndLoad(len[0]);
+	clearAndLoad(data.word(kWorkspace), 0, len[1], 132*66); // 132*66 = maplen
 	sortoutmap();
-	allocateload();
-	data.word(kSetframes) = ax;
-	ds = ax;
-	dx = (0);
-	loadseg();
-	dontloadseg();
-	allocateload();
-	data.word(kReel1) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel2) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReel3) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kReels) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kPeople) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kSetdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kBlockdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kRoomdesc) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	allocateload();
-	data.word(kFreeframes) = ax;
-	ds = ax;
-	dx = 0;
-	loadseg();
-	dontloadseg();
-	allocateload();
-	data.word(kFreedesc) = ax;
-	ds = ax;
-	dx = (0);
-	loadseg();
+	data.word(kSetframes) = allocateAndLoad(len[2]);
+	if (!skipDat)
+		clearAndLoad(data.word(kSetdat), 255, len[3], kSetdatlen);
+	else
+		engine->skipBytes(len[3]);
+	// NB: The skipDat version of this function as called by restoreall
+	// had a 'call bloc' instead of 'call loadseg' for reel1,
+	// but 'bloc' was not defined.
+	data.word(kReel1) = allocateAndLoad(len[4]);
+	data.word(kReel2) = allocateAndLoad(len[5]);
+	data.word(kReel3) = allocateAndLoad(len[6]);
+	data.word(kReels) = allocateAndLoad(len[7]);
+	data.word(kPeople) = allocateAndLoad(len[8]);
+	data.word(kSetdesc) = allocateAndLoad(len[9]);
+	data.word(kBlockdesc) = allocateAndLoad(len[10]);
+	data.word(kRoomdesc) = allocateAndLoad(len[11]);
+	data.word(kFreeframes) = allocateAndLoad(len[12]);
+	if (!skipDat)
+		clearAndLoad(data.word(kFreedat), 255, len[13], kFreedatlen);
+	else
+		engine->skipBytes(len[13]);
+	data.word(kFreedesc) = allocateAndLoad(len[14]);
+
 	closefile();
+}
+
+void DreamGenContext::restoreall() {
+	const Room *room = getroomdata(data.byte(kLocation));
+	loadRoomData(room, true);
 	setallchanges();
 }
 

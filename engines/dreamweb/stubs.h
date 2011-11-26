@@ -349,5 +349,8 @@
 	void saveposition(unsigned int slot, const uint8 *descbuf);
 	void openforsave(unsigned int slot);
 	void openforload(unsigned int slot);
+	uint16 allocateAndLoad(unsigned int size);
+	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
+	void loadRoomData(const Room* room, bool skipDat);
 	void restoreall();
 
