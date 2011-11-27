@@ -115,13 +115,6 @@ BitmapPtr *Sprite::setShapeList(BitmapPtr *shpP) {
 	return r;
 }
 
-void Sprite::moveShapes(uint8 *buf) {
-	BitmapPtr *p;
-	for (p = _ext->_shpList; *p; p++) {
-		buf += (*p)->moveVmap(buf);
-	}
-}
-
 bool Sprite::works(Sprite *spr) {
 	if (!spr || !spr->_ext)
 		return false;

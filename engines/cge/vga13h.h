@@ -128,7 +128,6 @@ public:
 	virtual ~Sprite();
 	BitmapPtr shp();
 	BitmapPtr *setShapeList(BitmapPtr *shp);
-	void moveShapes(uint8 *buf);
 	Sprite *expand();
 	Sprite *contract();
 	Sprite *backShow(bool fast = false);

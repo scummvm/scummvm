@@ -154,20 +154,6 @@ char *Bitmap::forceExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-uint16 Bitmap::moveVmap(uint8 *buf) {
-	debugC(1, kCGEDebugBitmap, "Bitmap::moveVmap(buf)");
-
-	if (!_v)
-		return 0;
-
-	uint16 vsiz = (uint8 *)_b - (uint8 *)_v;
-	uint16 siz = vsiz + _h * sizeof(HideDesc);
-	memcpy(buf, _v, siz);
-	delete[] _v;
-	_b = (HideDesc *)((_v = buf) + vsiz);
-	return siz;
-}
-
 BitmapPtr Bitmap::code() {
 	debugC(1, kCGEDebugBitmap, "Bitmap::code()");
 
