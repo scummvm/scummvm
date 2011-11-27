@@ -150,8 +150,8 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 		return false;
 	} else if ((keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
 		// Start the debugger
-		_vm->_console->attach();
-		_vm->_console->onFrame();
+		_vm->getDebugger()->attach();
+		_vm->getDebugger()->onFrame();
 		return false;
 	}
 
