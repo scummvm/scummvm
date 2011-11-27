@@ -292,6 +292,7 @@ Common::Error CGEEngine::loadGameState(int slot) {
 
 void CGEEngine::resetGame() {
 	_vga->_spareQ->clear();
+	_commandHandler->reset();
 }
 
 Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {

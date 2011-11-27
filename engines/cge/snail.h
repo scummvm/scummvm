@@ -70,6 +70,7 @@ public:
 	void addCallback(CommandType com, int ref, int val, CallbackType cbType);
 	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
+	void reset();
 private:
 	CGEEngine *_vm;
 	bool _turbo;

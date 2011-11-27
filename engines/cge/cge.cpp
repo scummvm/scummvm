@@ -208,8 +208,7 @@ bool CGEEngine::hasFeature(EngineFeature f) const {
 }
 
 bool CGEEngine::canLoadGameStateCurrently() {
-	return (_startupMode == 0) && _mouse->_active &&
-				_commandHandler->idle() && !_hero->_flags._hide;
+	return (_startupMode == 0) && _mouse->_active;
 }
 
 bool CGEEngine::canSaveGameStateCurrently() {

@@ -375,6 +375,10 @@ bool CommandHandler::idle() {
 	return (_head == _tail);
 }
 
+void CommandHandler::reset() {
+	_tail = _head;
+}
+
 /**
  * Handles mini-Games logic
  * @param com			Command
