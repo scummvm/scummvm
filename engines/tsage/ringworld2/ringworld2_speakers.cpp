@@ -455,6 +455,33 @@ void SpeakerSoldier300::proc15() {
 		_object1.animate(ANIM_MODE_5, this);
 	}
 }
+
+/*--------------------------------------------------------------------------*/
+
+SpeakerQuinn2350::SpeakerQuinn2350(): VisualSpeaker() {
+	_speakerName = "QUINN";
+	_color1 = 60;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
+SpeakerPharisha2350::SpeakerPharisha2350(): VisualSpeaker() {
+	_speakerName = "PHARISHA";
+	_color1 = 151;
+	_color2 = 0;
+	_fieldF6 = 0;
+	_textWidth = 300;
+	_hideObjects = false;
+	_object2 = NULL;
+	_displayMode = 1;
+	_numFrames = 0;
+}
+
 } // End of namespace Ringworld2
 
 } // End of namespace TsAGE
