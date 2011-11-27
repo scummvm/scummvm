@@ -1064,15 +1064,7 @@ bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
 	const ObjPos *freeList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
 	for (size_t i = 0; i < 80; ++i) {
 		const ObjPos *objPos = freeList + 79 - i;
-		if (objPos->index == 0xff)
-			continue;
-		if (x < objPos->xMin)
-			continue;
-		if (x >= objPos->xMax)
-			continue;
-		if (y < objPos->yMin)
-			continue;
-		if (y >= objPos->yMax)
+		if (objPos->index == 0xff || !objPos->contains(x,y))
 			continue;
 		obname(objPos->index, 2);
 		return true;
@@ -1088,15 +1080,7 @@ bool DreamGenContext::checkifex(uint8 x, uint8 y) {
 	const ObjPos *exList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
 	for (size_t i = 0; i < 100; ++i) {
 		const ObjPos *objPos = exList + 99 - i;
-		if (objPos->index == 0xff)
-			continue;
-		if (x < objPos->xMin)
-			continue;
-		if (x >= objPos->xMax)
-			continue;
-		if (y < objPos->yMin)
-			continue;
-		if (y >= objPos->yMax)
+		if (objPos->index == 0xff || !objPos->contains(x,y))
 			continue;
 		obname(objPos->index, 4);
 		return true;
@@ -1793,15 +1777,7 @@ bool DreamGenContext::checkifset(uint8 x, uint8 y) {
 	const ObjPos *setList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
 	for (size_t i = 0; i < 128; ++i) {
 		const ObjPos *pos = setList + 127 - i;
-		if (pos->index == 0xff)
-			continue;
-		if (x < pos->xMin)
-			continue;
-		if (x >= pos->xMax)
-			continue;
-		if (y < pos->yMin)
-			continue;
-		if (y >= pos->yMax)
+		if (pos->index == 0xff || !pos->contains(x,y))
 			continue;
 		if (! pixelcheckset(pos, x, y))
 			continue;

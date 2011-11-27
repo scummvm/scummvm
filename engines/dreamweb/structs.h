@@ -134,6 +134,9 @@ struct ObjPos {
 	uint8 xMax;
 	uint8 yMax;
 	uint8 index;
+	bool contains(uint8 x, uint8 y) const {
+		return (x >= xMin) && (x < xMax) && (y >= yMin) && (y < yMax);
+	}
 };
 
 struct Frame {
