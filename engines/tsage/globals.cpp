@@ -230,7 +230,7 @@ void BlueForceGlobals::synchronize(Serializer &s) {
 
 	s.syncAsSint16LE(_dayNumber);
 	if (s.getVersion() < 9) {
-		int tmpVar;
+		int tmpVar = 0;
 		s.syncAsSint16LE(tmpVar);
 	}
 	s.syncAsSint16LE(_tonyDialogCtr);

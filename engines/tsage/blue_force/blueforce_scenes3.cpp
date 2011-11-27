@@ -4350,7 +4350,7 @@ void Scene360::Action1::signal() {
 void Scene360::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
 	if (s.getVersion() < 9) {
-		int tmpVar;
+		int tmpVar = 0;
 		s.syncAsSint16LE(tmpVar);
 	}
 }
