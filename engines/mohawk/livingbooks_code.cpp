@@ -1177,7 +1177,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "mute", 0 },
 	{ "play", 0 },
 	{ "seek", &LBCode::itemSeek },
-	{ "seekToFrame", 0 },
+	{ "seekToFrame", &LBCode::itemSeekToFrame },
 	{ "setParent", &LBCode::itemSetParent },
 	{ "setZOrder", 0 },
 	{ "setText", 0 },
@@ -1219,6 +1219,17 @@ void LBCode::itemSeek(const Common::Array<LBValue> &params) {
 	LBItem *item = resolveItem(params[0]);
 	if (!item)
 		error("attempted seek on invalid item (%s)", params[0].toString().c_str());
+	uint seekTo = params[1].toInt();
+	item->seekToTime(seekTo);
+}
+
+void LBCode::itemSeekToFrame(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to seekToFrame", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item)
+		error("attempted seekToFrame on invalid item (%s)", params[0].toString().c_str());
 	uint seekTo = params[1].toInt();
 	item->seek(seekTo);
 }

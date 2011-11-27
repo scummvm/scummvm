@@ -1859,6 +1859,35 @@ void LBAnimation::seek(uint16 pos) {
 	}
 }
 
+void LBAnimation::seekToTime(uint32 time) {
+	_lastTime = 0;
+	_currentFrame = 0;
+
+	if (_currentSound != 0xffff) {
+		_vm->_sound->stopSound(_currentSound);
+		_currentSound = 0xffff;
+	}
+
+	for (uint32 i = 0; i < _nodes.size(); i++)
+		_nodes[i]->reset();
+
+	uint32 elapsed = 0;
+	while (elapsed <= time) {
+		bool ranSomething = false;
+		// nodes don't wait while seeking
+		for (uint32 i = 0; i < _nodes.size(); i++)
+			ranSomething |= (_nodes[i]->update(true) != kLBNodeDone);
+
+		elapsed += _tempo;
+		_currentFrame++;
+
+		if (!ranSomething) {
+			_running = false;
+			break;
+		}
+	}
+}
+
 void LBAnimation::stop() {
 	_running = false;
 	if (_currentSound != 0xffff) {
@@ -3610,6 +3639,10 @@ void LBAnimationItem::stop() {
 
 void LBAnimationItem::seek(uint16 pos) {
 	_anim->seek(pos);
+}
+
+void LBAnimationItem::seekToTime(uint32 time) {
+	_anim->seekToTime(time);
 }
 
 void LBAnimationItem::startPhase(uint phase) {

@@ -331,6 +331,7 @@ public:
 
 	void start();
 	void seek(uint16 pos);
+	void seekToTime(uint32 time);
 	void stop();
 
 	void playSound(uint16 resourceId);
@@ -393,6 +394,7 @@ public:
 	virtual void done(bool onlyNotify); // 0x10
 	virtual void init(); // 0x11
 	virtual void seek(uint16 pos) { } // 0x13
+	virtual void seekToTime(uint32 time) { }
 	virtual void setFocused(bool focused) { } // 0x14
 	virtual void setVisible(bool visible); // 0x17
 	virtual void setGlobalVisible(bool enabled);
@@ -567,6 +569,7 @@ public:
 	void done(bool onlyNotify);
 	void init();
 	void seek(uint16 pos);
+	void seekToTime(uint32 time);
 	void startPhase(uint phase);
 	void stop();
 

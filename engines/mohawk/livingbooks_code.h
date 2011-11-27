@@ -275,6 +275,7 @@ public:
 	void itemIsPlaying(const Common::Array<LBValue> &params);
 	void itemMoveTo(const Common::Array<LBValue> &params);
 	void itemSeek(const Common::Array<LBValue> &params);
+	void itemSeekToFrame(const Common::Array<LBValue> &params);
 	void itemSetParent(const Common::Array<LBValue> &params);
 };
 
