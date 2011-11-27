@@ -45,7 +45,7 @@ enum CommandType {
 	kCmdSetX,   kCmdSetY,   kCmdSetZ,        kCmdTrans,       kCmdPort,
 	kCmdNext,   kCmdNNext,  kCmdTNext,       kCmdRNNext,      kCmdRTNext,
 	kCmdRMNear, kCmdRmTake, kCmdFlag,        kCmdSetRef,      kCmdBackPt,
-	kCmdFlash,  kCmdLight,  kCmdSetHBarrier, kCmdSetVBarrier, kCmdWalk,
+	kCmdFlash,  kCmdLight,  kCmdSetVBarrier, kCmdSetHBarrier, kCmdWalk,
 	kCmdReach,  kCmdCover,  kCmdUncover,     kCmdClear,       kCmdTalk,
 	kCmdMouse,  kCmdSound,  kCmdCount,       kCmdExec,        kCmdStep,
 	kCmdZTrim,  kCmdGhost
