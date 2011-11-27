@@ -148,6 +148,11 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 				_vm->loadGameState(savegameId);
 		}
 		return false;
+	} else if ((keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+		// Start the debugger
+		_vm->_console->attach();
+		_vm->_console->onFrame();
+		return false;
 	}
 
 	// Scan through the ScummVM mapping list
