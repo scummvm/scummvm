@@ -240,7 +240,7 @@ endif
 	unix2dos $(WIN32PATH)/doc/fr/*.txt
 	unix2dos $(WIN32PATH)/doc/it/*.txt
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
-        unix2dos $(WIN32PATH)/doc/se/*.txt
+	unix2dos $(WIN32PATH)/doc/se/*.txt
 
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
