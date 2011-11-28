@@ -2354,7 +2354,7 @@ void DreamGenContext::showleftpage() {
 	data.word(kCharshift) = 91;
 	data.byte(kKerning) = 1;
 	uint8 pageIndex = data.byte(kFolderpage) - 2;
-	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + 66*2;
+	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + kTextstart;
 	const uint8 *string = segRef(data.word(kTextfile1)).ptr(offset, 0);
 	y = 48;
 	for (size_t i = 0; i < 2; ++i) {
@@ -2388,7 +2388,7 @@ void DreamGenContext::showrightpage() {
 	data.word(kLinespacing) = 8;
 	data.byte(kKerning) = 1;
 	uint8 pageIndex = data.byte(kFolderpage) - 1;
-	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + 66*2;
+	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + kTextstart;
 	const uint8 *string = segRef(data.word(kTextfile1)).ptr(offset, 0);
 	y = 48;
 	for (size_t i = 0; i < 2; ++i) {
