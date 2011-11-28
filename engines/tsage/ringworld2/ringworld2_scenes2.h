@@ -31,6 +31,7 @@
 #include "tsage/globals.h"
 #include "tsage/sound.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
+#include "tsage/ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 
@@ -38,25 +39,30 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
-class Scene2000: public SceneExt {
+class Scene2000 : public SceneExt {
 	class Action1 : public ActionExt {
 	public:
 		virtual void signal();
 	};
 
 	class Exit1 : public SceneExit {
+	public:
 		virtual void changeScene();
 	};
 	class Exit2 : public SceneExit {
+	public:
 		virtual void changeScene();
 	};
 	class Exit3 : public SceneExit {
+	public:
 		virtual void changeScene();
 	};
 	class Exit4 : public SceneExit {
+	public:
 		virtual void changeScene();
 	};
 	class Exit5 : public SceneExit {
+	public:
 		virtual void changeScene();
 	};
 public:
@@ -84,6 +90,39 @@ public:
 	void initPlayer();
 };
 
+class Scene2350 : public SceneExt {
+	class Actor2 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+	class Actor3 : public SceneActor {
+		virtual bool startAction(CursorType action, Event &event);
+	};
+
+	class ExitUp : public SceneExit {
+		virtual void changeScene();
+	};
+	class ExitWest : public SceneExit {
+		virtual void changeScene();
+	};
+public:
+
+	SpeakerQuinn2350 _quinnSpeaker;
+	SpeakerPharisha2350 _pharishaSpeaker;
+	NamedHotspot _item1;
+	SceneActor _actor1;
+	Actor2 _actor2;
+	Actor3 _actor3;
+	Actor3 _actor4;
+	ExitUp _exitUp;
+	ExitWest _exitWest;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	virtual void remove();
+	virtual void signal();
+	virtual void process(Event &event);
+//	virtual void synchronize(Serializer &s);
+};
 
 } // End of namespace Ringworld2
 } // End of namespace TsAGE
