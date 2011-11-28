@@ -102,17 +102,7 @@ private:
 	const uint8 *_npcSubShpIndex1;
 	const uint8 *_npcSubShpIndex2;
 	const uint8 *_npcSubShpY;
-	const char *const *_npc0Strings;
-	const char *const *_npc11Strings;
-	const char *const *_npc12Strings;
-	const char *const *_npc21Strings;
-	const char *const *_npc22Strings;
-	const char *const *_npc31Strings;
-	const char *const *_npc32Strings;
-	const char *const *_npc4Strings;
-	const char *const *_npc5Strings;
-	const char *const *_npc6Strings;
-	const char *const *_npc7Strings;
+	const char *const *_npcStrings[11];
 
 	// items
 	void updateUsedCharacterHandItem(int charIndex, int slot);

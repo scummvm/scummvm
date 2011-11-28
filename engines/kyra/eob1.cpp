@@ -33,8 +33,8 @@ EobEngine::EobEngine(OSystem *system, const GameFlags &flags) : EobCoreEngine(sy
 	_menuChoiceInit = 4;
 
 	_turnUndeadString = _introFilesOpening = _introFilesTower = _introFilesOrb = _introFilesWdEntry	= _introFilesKing = _introFilesHands = _introFilesWdExit =
-		_introFilesTunnel = _finBonusStrings = _npc11Strings = _npc12Strings = _npc21Strings = _npc22Strings = _npc31Strings = _npc32Strings = _npc4Strings	=
-		_npc5Strings = _npc6Strings	= _npc7Strings = 0;
+		_introFilesTunnel = _finBonusStrings = _npcStrings[1] = _npcStrings[2] = _npcStrings[3] = _npcStrings[4] = _npcStrings[5] = _npcStrings[6] = _npcStrings[7]	=
+		_npcStrings[8] = _npcStrings[9]	= _npcStrings[10] = 0;
 	_introOpeningFrmDelay = _introWdEncodeX	= _introWdEncodeY = _introWdEncodeWH = _npcShpData = _npcSubShpIndex1 = _npcSubShpIndex2 = _npcSubShpY = _introWdDsY =
 		_introTvlX1 = _introTvlY1 = _introTvlX2	= _introTvlY2 = _introTvlW = _introTvlH = _dscDoorScaleMult4 = _dscDoorScaleMult5 = _dscDoorScaleMult6 =
 		_dscDoorY3 = _dscDoorY4 = _dscDoorY5 = _dscDoorY6 = _dscDoorY7 = _doorShapeEncodeDefs = _doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
@@ -164,8 +164,8 @@ void EobEngine::encodeDrawNpcSeqShape(int npcIndex, int drawX, int drawY) {
 	delete[] shp;
 }
 
-#define DLG2(txt, buttonstr) (runDialogue(txt, 0, _npc##buttonstr##Strings[0], _npc##buttonstr##Strings[1], 0) - 1)
-#define DLG3(txt, buttonstr) (runDialogue(txt, 1, _npc##buttonstr##Strings[0], _npc##buttonstr##Strings[1], _npc##buttonstr##Strings[2], 0) - 1)
+#define DLG2(txt, buttonstr) (runDialogue(txt, 2, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1]) - 1)
+#define DLG3(txt, buttonstr) (runDialogue(txt, 3, _npcStrings[buttonstr][0], _npcStrings[buttonstr][1], _npcStrings[buttonstr][2]) - 1)
 #define DLG2A3(cond, txt, buttonstr1, buttonstr2) ((cond) ? (DLG2(txt, buttonstr1) ? 2 : 0) : DLG3(txt, buttonstr2))
 #define TXT(txt) _txt->printDialogueText(txt, _moreStrings[0])
 
@@ -178,7 +178,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 	case 0:
 		for (r = 1; r == 1; ) {
 			gui_drawDialogueBox();
-			r = DLG2A3(checkScriptFlags(0x2000), 8, 12, 11);
+			r = DLG2A3(checkScriptFlags(0x2000), 8, 2, 1);
 			if (r == 1) {
 				TXT(1);
 				setScriptFlags(0x2000);
@@ -195,10 +195,10 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 				a = 1;
 			} else {
 				setScriptFlags(0x8000);
-				r = DLG2(3, 21);
+				r = DLG2(3, 3);
 			}
 			if (!r)
-				r = DLG2(a ? 13 : 4, 22);
+				r = DLG2(a ? 13 : 4, 4);
 			
 			if (!r) {
 				for (a = 0; a < 6; a++)
@@ -238,7 +238,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		}
 
 		if (!r)
-			 _txt->printDialogueText(_npc0Strings[0], true);
+			 _txt->printDialogueText(_npcStrings[0][0], true);
 
 		break;
 
@@ -247,7 +247,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 			if (checkScriptFlags(0x20000)) {
 				TXT(11);
 			} else {
-				r = DLG2A3(!countResurrectionCandidates(), 9, 31, 32);
+				r = DLG2A3(!countResurrectionCandidates(), 9, 5, 6);
 				if (r < 2) {
 					if (r == 0)
 						healParty();
@@ -262,7 +262,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 3:
-		if (!DLG2(18, 4)) {
+		if (!DLG2(18, 7)) {
 			setScriptFlags(0x8400000);
 			for (a = 0; a < 30; a++) {
 				if (_monsters[a].mode == 8)
@@ -277,7 +277,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 4:
-		r = DLG3(14, 5);
+		r = DLG3(14, 8);
 		if (r == 0)
 			setScriptFlags(0x200000);
 		else if (r == 1)
@@ -286,7 +286,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 5:
-		if (!DLG2(16, 6)) {
+		if (!DLG2(16, 9)) {
 			TXT(17);
 			for (a = 0; a < 6; a++) {
 				for (r = 0; r < 2; r++) {
@@ -307,7 +307,7 @@ void EobEngine::runNpcDialogue(int npcIndex) {
 		break;
 
 	case 7:
-		r = DLG3(22, 7);
+		r = DLG3(22, 10);
 		if (r  < 2) {
 			if (r == 0)
 				npcJoinDialogue(8, 27, 44, 45);
@@ -531,9 +531,9 @@ bool EobEngine::checkPartyStatusExtra() {
 
 int EobEngine::resurrectionSelectDialogue() {
 	gui_drawDialogueBox();
-	_txt->printDialogueText(_npc0Strings[1]);
+	_txt->printDialogueText(_npcStrings[0][1]);
 
-	int r = _rrId[runDialogue(-1, 1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+	int r = _rrId[runDialogue(-1, 9, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
 
 	if (r < 0) {
 		r = -r;

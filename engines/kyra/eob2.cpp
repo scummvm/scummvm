@@ -35,7 +35,7 @@ DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EobCor
 	_numSpells = 70;
 	_menuChoiceInit = 4;
 
-	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npc1Strings = _npc2Strings = _hornStrings = 0;
+	_introStrings = _cpsFilesIntro = _cpsFilesFinale = _finaleStrings = _kheldranStrings = _npcStrings[0] = _npcStrings[1] = _hornStrings = 0;
 	_seqIntro = _seqFinale = 0;
 	_shapesIntro = _shapesFinale = 0;
 	_creditsData = _npcShpData = _dscDoorType5Offs = _hornSounds = 0;
@@ -118,7 +118,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(4, 0);
-		int r = runDialogue(-1, 0, _npc1Strings[0], _npc1Strings[1], 0) - 1;
+		int r = runDialogue(-1, 2, _npcStrings[0][0], _npcStrings[0][1]) - 1;
 
 		if (r == 0) {
 			snd_stopSound();
@@ -134,7 +134,7 @@ void DarkMoonEngine::runNpcDialogue(int npcIndex) {
 		gui_drawDialogueBox();
 
 		_txt->printDialogueText(8, 0);
-		int r = runDialogue(-1, 0, _npc2Strings[0], _npc2Strings[1], 0) - 1;
+		int r = runDialogue(-1, 2, _npcStrings[1][0], _npcStrings[1][1]) - 1;
 
 		if (r == 0) {
 			if (rollDice(1, 2, -1))
@@ -422,7 +422,7 @@ int DarkMoonEngine::resurrectionSelectDialogue() {
 	_rrNames[_rrCount] = _abortStrings[0];
 	_rrId[_rrCount++] = 99;
 
-	int r = _rrId[runDialogue(-1, 1, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
+	int r = _rrId[runDialogue(-1, 9, _rrNames[0], _rrNames[1], _rrNames[2], _rrNames[3], _rrNames[4], _rrNames[5], _rrNames[6], _rrNames[7], _rrNames[8]) - 1];
 	if (r == 99)
 		return 0;
 
@@ -450,7 +450,7 @@ int DarkMoonEngine::charSelectDialogue() {
 
 	namesList[cnt++] = _abortStrings[0];
 
-	int r = runDialogue(-1, 1, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6], 0) - 1;
+	int r = runDialogue(-1, 7, namesList[0], namesList[1], namesList[2], namesList[3], namesList[4], namesList[5], namesList[6]) - 1;
 	if (r == cnt - 1)
 		return 99;
 

@@ -427,11 +427,8 @@ void EobCoreEngine::initStaticResource() {
 	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEobBaseCharStatusStrings132 : kEobBaseCharStatusStrings131, temp);
 
 	_levelGainStrings = _staticres->loadStrings(kEobBaseLevelGainStrings, temp);
-	_expRequirementTables[0] = _staticres->loadRawDataBe32(kEobBaseExperienceTable0, temp);
-	_expRequirementTables[1] = _staticres->loadRawDataBe32(kEobBaseExperienceTable1, temp);
-	_expRequirementTables[2] = _staticres->loadRawDataBe32(kEobBaseExperienceTable2, temp);
-	_expRequirementTables[3] = _staticres->loadRawDataBe32(kEobBaseExperienceTable3, temp);
-	_expRequirementTables[4] = _staticres->loadRawDataBe32(kEobBaseExperienceTable4, temp);
+	for (int i = 0; i < 5; i++)
+		_expRequirementTables[i] = _staticres->loadRawDataBe32(kEobBaseExperienceTable0 + i, temp);
 	_expRequirementTables[5] = _staticres->loadRawDataBe32(kEobBaseExperienceTable4, temp);
 
 	_classModifierFlags = _staticres->loadRawData(kEobBaseClassModifierFlags, temp);
@@ -1153,17 +1150,8 @@ void EobEngine::initStaticResource() {
 	_npcSubShpIndex1 = _staticres->loadRawData(kEob1NpcSubShpIndex1, temp);
 	_npcSubShpIndex2 = _staticres->loadRawData(kEob1NpcSubShpIndex2, temp);
 	_npcSubShpY = _staticres->loadRawData(kEob1NpcSubShpY, temp);
-	_npc0Strings = _staticres->loadStrings(kEob1Npc0Strings, temp);
-	_npc11Strings = _staticres->loadStrings(kEob1Npc11Strings, temp);
-	_npc12Strings = _staticres->loadStrings(kEob1Npc12Strings, temp);
-	_npc21Strings = _staticres->loadStrings(kEob1Npc21Strings, temp);
-	_npc22Strings = _staticres->loadStrings(kEob1Npc22Strings, temp);
-	_npc31Strings = _staticres->loadStrings(kEob1Npc31Strings, temp);
-	_npc32Strings = _staticres->loadStrings(kEob1Npc32Strings, temp);
-	_npc4Strings = _staticres->loadStrings(kEob1Npc4Strings, temp);
-	_npc5Strings = _staticres->loadStrings(kEob1Npc5Strings, temp);
-	_npc6Strings = _staticres->loadStrings(kEob1Npc6Strings, temp);
-	_npc7Strings = _staticres->loadStrings(kEob1Npc7Strings, temp);
+	for (int i = 0; i < 11; i++)
+		_npcStrings[i] = _staticres->loadStrings(kEob1Npc0Strings + i, temp);
 
 	const uint8 *ps = _staticres->loadRawData(kEob1MonsterProperties, temp);
 	temp /= 27;
@@ -1321,8 +1309,8 @@ void DarkMoonEngine::initStaticResource() {
 	_dscDoorType5Offs = _staticres->loadRawData(kEobBaseDscDoorType5Offs, temp);
 
 	_npcShpData = _staticres->loadRawData(kEob2NpcShapeData, temp);
-	_npc1Strings = _staticres->loadStrings(kEob2Npc1Strings, temp);
-	_npc2Strings = _staticres->loadStrings(kEob2Npc2Strings, temp);
+	_npcStrings[0] = _staticres->loadStrings(kEob2Npc1Strings, temp);
+	_npcStrings[1] = _staticres->loadStrings(kEob2Npc2Strings, temp);
 	_monsterDustStrings = _staticres->loadStrings(kEob2MonsterDustStrings, temp);
 	_dreamSteps = (const int8*)_staticres->loadRawData(kEob2DreamSteps, temp);
 	_kheldranStrings = _staticres->loadStrings(kEob2KheldranStrings, temp);

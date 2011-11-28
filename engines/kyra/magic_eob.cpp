@@ -919,7 +919,7 @@ bool EobCoreEngine::spellCallback_end_holdPerson(void *obj) {
 	if (_flags.gameID == GI_EOB2 && fo->curBlock == _currentBlock) {
 		// party hit
 		int numChar = rollDice(1, 4, 0);
-		int charIndex = rollDice(1, 6, 0);
+		int charIndex = rollDice(1, 6, -1);
 		for (int i = 0; i < 6 && numChar; i++) {
 			if (testCharacter(charIndex, 3)) {
 				statusAttack(charIndex, 4, _magicStrings8[1], 4, 5, 9, 1);
@@ -1010,7 +1010,7 @@ void EobCoreEngine::spellCallback_start_removeCurse() {
 }
 
 void EobCoreEngine::spellCallback_start_coneOfCold() {
-	static const int8 *dirTables[] = { _coneOfColdDest1, _coneOfColdDest2, _coneOfColdDest3, _coneOfColdDest4 };
+	const int8 *dirTables[] = { _coneOfColdDest1, _coneOfColdDest2, _coneOfColdDest3, _coneOfColdDest4 };
 	
 	int cl = getMageLevel(_openBookChar);
 
