@@ -203,6 +203,8 @@ void DreamGenContext::viewfolder() {
 	worktoscreenm();
 	data.byte(kGetback) = 0;
 	do {
+		if (quitRequested())
+			break;
 		delpointer();
 		readmouse();
 		showpointer();
