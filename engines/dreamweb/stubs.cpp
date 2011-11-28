@@ -2402,5 +2402,22 @@ void DreamGenContext::showrightpage() {
 	data.word(kLinespacing) = 10;
 }
 
+
+uint8 DreamGenContext::getlocation(uint8 index) {
+	return data.byte(kRoomscango + index);
+}
+
+void DreamGenContext::getlocation() {
+	al = getlocation(al);
+}
+
+void DreamGenContext::setlocation(uint8 index) {
+	data.byte(kRoomscango + index) = 1;
+}
+
+void DreamGenContext::setlocation() {
+	setlocation(al);
+}
+
 } /*namespace dreamgen */
 

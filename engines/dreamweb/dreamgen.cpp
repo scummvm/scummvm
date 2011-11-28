@@ -5667,26 +5667,6 @@ alreadytrav:
 	data.byte(kNewlocation) = al;
 }
 
-void DreamGenContext::getlocation() {
-	STACK_CHECK;
-	ah = 0;
-	bx = ax;
-	dx = data;
-	es = dx;
-	_add(bx, 8011);
-	al = es.byte(bx);
-}
-
-void DreamGenContext::setlocation() {
-	STACK_CHECK;
-	ah = 0;
-	bx = ax;
-	dx = data;
-	es = dx;
-	_add(bx, 8011);
-	es.byte(bx) = 1;
-}
-
 void DreamGenContext::resetlocation() {
 	STACK_CHECK;
 	push(ax);

@@ -327,8 +327,6 @@ public:
 	static const uint16 addr_readcitypic = 0xc4e4;
 	static const uint16 addr_readdesticon = 0xc4e0;
 	static const uint16 addr_resetlocation = 0xc4dc;
-	static const uint16 addr_setlocation = 0xc4d8;
-	static const uint16 addr_getlocation = 0xc4d4;
 	static const uint16 addr_destselect = 0xc4d0;
 	static const uint16 addr_lastdest = 0xc4cc;
 	static const uint16 addr_nextdest = 0xc4c8;
@@ -1563,7 +1561,7 @@ public:
 	void searchforsame();
 	void enablesoundint();
 	void getback1();
-	void setlocation();
+	//void setlocation();
 	void fadefromwhite();
 	//void animpointer();
 	void usewindow();
@@ -1823,7 +1821,7 @@ public:
 	void setupemm();
 	void aide();
 	//void getmapad();
-	void getlocation();
+	//void getlocation();
 	void geteitherad();
 	//void placesetobject();
 	//void drawflags();
