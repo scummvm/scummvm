@@ -196,6 +196,20 @@ EobCoreEngine::EobCoreEngine(OSystem *system, const GameFlags &flags) : LolEobBa
 	memset(_scriptTimers, 0, sizeof(_scriptTimers));
 	memset(_monsterBlockPosArray, 0, sizeof(_monsterBlockPosArray));
 	memset(_foundMonstersArray, 0, sizeof(_foundMonstersArray));
+
+#define DWM0 _dscWallMapping.push_back(0)
+#define DWM(x) _dscWallMapping.push_back(&_sceneDrawVar##x)
+	DWM0;		DWM0;		DWM(Down);	DWM(Right);
+	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
+	DWM(Down);	DWM(Left);	DWM(Down);	DWM(Left);
+	DWM0;		DWM0;		DWM(Down);	DWM(Right);
+	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
+	DWM(Down);	DWM(Left);	DWM(Down);	DWM(Left);
+	DWM(Down);	DWM(Right);	DWM(Down);	DWM0;
+	DWM(Down);	DWM(Left);	DWM0;		DWM(Right);
+	DWM(Down);	DWM0;		DWM0;		DWM(Left);
+#undef DWM
+#undef DWM0
 }
 
 EobCoreEngine::~EobCoreEngine() {
@@ -254,6 +268,7 @@ EobCoreEngine::~EobCoreEngine() {
 
 	releaseDecorations();
 	delete[] _levelDecorationRects;
+	_dscWallMapping.clear();
 
 	delete[] _spells;
 	delete[] _spellAnimBuffer;
@@ -757,8 +772,7 @@ void EobCoreEngine::setHandItem(Item itemIndex) {
 }
 
 int EobCoreEngine::getDexterityArmorClassModifier(int dexterity) {
-	static const int mod[] = { 5, 5, 5, 4, 3, 2, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, -1, -2, -3, -4, -4, -5, -5, -5, -6, -6 };
+	static const int8 mod[] = { 5, 5, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -3, -4, -4, -5, -5, -5, -6, -6 };
 	return mod[dexterity];
 }
 
@@ -1111,7 +1125,7 @@ int EobCoreEngine::npcJoinDialogue(int npcIndex, int queryJoinTextId, int confir
 	gui_drawDialogueBox();
 	_txt->printDialogueText(queryJoinTextId, 0);
 
-	int r = runDialogue(-1, 0, _yesNoStrings[0], _yesNoStrings[1], 0) - 1;
+	int r = runDialogue(-1, 2, _yesNoStrings[0], _yesNoStrings[1]) - 1;
 	if (r == 0) {
 		if (confirmJoinTextId == -1) {
 			Common::String tmp = Common::String::format(_npcJoinStrings[0], _npcPreset[npcIndex].name);
@@ -1140,8 +1154,8 @@ int EobCoreEngine::prepareForNewPartyMember(int16 itemType, int16 itemValue) {
 	} else {
 		gui_drawDialogueBox();
 		_txt->printDialogueText(_npcMaxStrings[0]);
-		int r = runDialogue(-1, 1, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
-			_characters[4].name, _characters[5].name, _abortStrings[0], 0, 0) - 1;
+		int r = runDialogue(-1, 7, _characters[0].name, _characters[1].name, _characters[2].name, _characters[3].name,
+			_characters[4].name, _characters[5].name, _abortStrings[0]) - 1;
 
 		if (r == 6)
 			return 0;
@@ -1264,16 +1278,14 @@ void EobCoreEngine::setWeaponSlotStatus(int charIndex, int mode, int slot) {
 	gui_drawCharPortraitWithStats(charIndex);
 }
 
-void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, const char *str1, va_list &args) {
+void EobCoreEngine::setupDialogueButtons(int presetfirst, int numStr, va_list &args) {
 	_dialogueNumButtons = numStr;
-	_dialogueButtonString[0] = str1;
 	_dialogueHighlightedButton = 0;
-	const char *tmp = 0;
 
-	for (int i = 1; i < numStr; i++) {
-		tmp = va_arg(args, const char*);
-		if (tmp)
-			_dialogueButtonString[i] = tmp;
+	for (int i = 0; i < numStr; i++) {
+		const char *s = va_arg(args, const char*);
+		if (s)
+			_dialogueButtonString[i] = s;
 		else
 			_dialogueNumButtons = numStr = i;
 	}
@@ -1364,16 +1376,16 @@ void EobCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	_screen->updateScreen();
 }
 
-int EobCoreEngine::runDialogue(int dialogueTextId, int style, const char *button1, ...) {
+int EobCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 	if (dialogueTextId != -1)
 		txt()->printDialogueText(dialogueTextId, 0);
 
 	va_list args;
-	va_start(args, button1);
-	if (style)
-		setupDialogueButtons(2, 9, button1, args);
+	va_start(args, numStr);
+	if (numStr > 2)
+		setupDialogueButtons(2, numStr, args);
 	else
-		setupDialogueButtons(0, 2, button1, args);
+		setupDialogueButtons(0, numStr, args);
 	va_end(args);
 
 	int res = 0;

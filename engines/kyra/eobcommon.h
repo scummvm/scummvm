@@ -620,6 +620,7 @@ protected:
 	uint32 _envAudioTimer;
 	uint16 _teleporterPulse;
 
+	Common::Array<const int16*> _dscWallMapping;
 	const int16 *_dscShapeCoords;
 
 	const uint8 *_dscItemPosIndex;
@@ -756,11 +757,11 @@ protected:
 	bool _configHpBarGraphs;
 
 	// text
-	void setupDialogueButtons(int presetfirst, int numStr, const char *str1, va_list &args);
+	void setupDialogueButtons(int presetfirst, int numStr, va_list &args);
 	void initDialogueSequence();
 	void restoreAfterDialogueSequence();
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);
-	int runDialogue(int dialogueTextId, int style, const char *button1, ...);
+	int runDialogue(int dialogueTextId, int numStr, ...);
 
 	char _dialogueLastBitmap[13];
 	int _moveCounter;

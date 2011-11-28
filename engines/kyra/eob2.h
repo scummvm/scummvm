@@ -99,8 +99,7 @@ private:
 	void runNpcDialogue(int npcIndex);
 
 	const uint8 *_npcShpData;
-	const char *const *_npc1Strings;
-	const char *const *_npc2Strings;
+	const char *const *_npcStrings[2];
 
 	// items
 	void updateUsedCharacterHandItem(int charIndex, int slot);

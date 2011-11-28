@@ -896,6 +896,7 @@ void EobCoreEngine::loadDecorations(const char *cpsFile, const char *decFile) {
 	_levelDecorationDataSize = s->readUint16LE();
 	delete[] _levelDecorationData;
 	_levelDecorationData = new LevelDecorationProperty[_levelDecorationDataSize];
+	memset(_levelDecorationData, 0, _levelDecorationDataSize * sizeof(LevelDecorationProperty));
 
 	for (int i = 0; i < _levelDecorationDataSize; i++) {
 		LevelDecorationProperty *l = &_levelDecorationData[i];
@@ -944,6 +945,7 @@ void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 	}
 
 	do {
+		assert(decIndex < _levelDecorationDataSize);
 		memcpy(&_levelDecorationProperties[_mappedDecorationsCount], &_levelDecorationData[decIndex], sizeof(LevelDecorationProperty));
 
 		for (int i = 0; i < 10; i++) {
@@ -956,7 +958,7 @@ void EobCoreEngine::assignWallsAndDecorations(int wallIndex, int vmpIndex, int d
 
 			EobRect8 *r = &_levelDecorationRects[t];
 			if (r->w == 0 || r->h == 0)
-				error("Error trying to make decoration %d	x: %d y:%d w:%d h:%d", decIndex, r->x, r->y, r->w, r->h);
+				error("Error trying to make decoration %d (x: %d, y: %d, w: %d, h: %d)", decIndex, r->x, r->y, r->w, r->h);
 
 			_levelDecorationShapes[t] = _screen->encodeShape(r->x, r->y, r->w, r->h);
 		}
@@ -1095,22 +1097,10 @@ void EobCoreEngine::drawSceneShapes(int start) {
 }
 
 void EobCoreEngine::drawDecorations(int index) {
-	static const int16 *dscWalls[] =  { 
-		0,					0,						&_sceneDrawVarDown, &_sceneDrawVarRight,
-		&_sceneDrawVarDown,	&_sceneDrawVarRight,	&_sceneDrawVarDown, 0,
-		&_sceneDrawVarDown, &_sceneDrawVarLeft,		&_sceneDrawVarDown,	&_sceneDrawVarLeft,
-		0,					0,						&_sceneDrawVarDown, &_sceneDrawVarRight,
-		&_sceneDrawVarDown, &_sceneDrawVarRight,	&_sceneDrawVarDown,	0,
-		&_sceneDrawVarDown, &_sceneDrawVarLeft,		&_sceneDrawVarDown, &_sceneDrawVarLeft,
-		&_sceneDrawVarDown,	&_sceneDrawVarRight,	&_sceneDrawVarDown, 0,
-		&_sceneDrawVarDown, &_sceneDrawVarLeft,		0,					&_sceneDrawVarRight,
-		&_sceneDrawVarDown, 0,						0,					&_sceneDrawVarLeft
-	};
-
 	for (int i = 1; i >= 0; i--) {
 		int s = index * 2 + i;
-		if (dscWalls[s]) {
-			int16 d = *dscWalls[s];
+		if (_dscWallMapping[s]) {
+			int16 d = *_dscWallMapping[s];
 			int8 l = _wllShapeMap[_visibleBlocks[index]->walls[d]];
 
 			uint8 *shapeData = 0;
