@@ -138,16 +138,16 @@ void DreamGenContext::printdirect() {
 	uint16 initialSi = si;
 	const uint8 *initialString = es.ptr(si, 0);
 	const uint8 *string = initialString;
-	printdirect(&string, di, &y, dl, (bool)(dl & 1));
+	al = printdirect(&string, di, &y, dl, (bool)(dl & 1));
 	si = initialSi + (string - initialString);
 	bx = y;
 }
 
-void DreamGenContext::printdirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
-	printdirect(&string, x, &y, maxWidth, centered);
+uint8 DreamGenContext::printdirect(const uint8* string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
+	return printdirect(&string, x, &y, maxWidth, centered);
 }
 
-void DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+uint8 DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
 	const Frame *charSet = (const Frame *)segRef(data.word(kCurrentset)).ptr(0, 0);
 	while (true) {
@@ -159,7 +159,7 @@ void DreamGenContext::printdirect(const uint8** string, uint16 x, uint16 *y, uin
 			uint8 nextChar = (*string)[1];
 			++(*string);
 			if ((c == 0) || (c == ':')) {
-				return;
+				return c;
 			}
 			c = engine->modifyChar(c);
 			uint8 width, height;
