@@ -625,7 +625,7 @@ Sprite *Queue::locate(int ref) {
 	return NULL;
 }
 
-Vga::Vga() : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0) {
+Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _mono(0), _vm(vm) {
 	_oldColors = NULL;
 	_newColors = NULL;
 	_showQ = new Queue(true);
@@ -821,6 +821,19 @@ void Vga::update() {
 	if (_setPal) {
 		updateColors();
 		_setPal = false;
+	}
+	if (_vm->_showBoundariesFl) {
+		Vga::_page[0]->hLine(0, 200 - kPanHeight, 320, 0xee);
+		if (_vm->_barriers[_vm->_now]._horz != 255) {
+			warning("hBar %d", _vm->_barriers[_vm->_now]._horz);
+			for (int i = 0; i < 8; i++)
+				Vga::_page[0]->vLine((_vm->_barriers[_vm->_now]._horz * 8) + i, 0, 200, 0xff);
+		}
+		if (_vm->_barriers[_vm->_now]._vert != 255) {
+			warning("vBar %d", _vm->_barriers[_vm->_now]._vert);
+			for (int i = 0; i < 4; i++)
+				Vga::_page[0]->hLine(0, 80 + (_vm->_barriers[_vm->_now]._vert * 4) + i, 320, 0xff);
+		}
 	}
 
 	g_system->copyRectToScreen((const byte *)Vga::_page[0]->getBasePtr(0, 0), kScrWidth, 0, 0, kScrWidth, kScrHeight);

@@ -177,6 +177,7 @@ public:
 };
 
 class Vga {
+	CGEEngine *_vm;
 	bool _setPal;
 	Dac *_oldColors;
 	Dac *_newColors;
@@ -196,7 +197,7 @@ public:
 	Graphics::Surface *_page[4];
 	Dac *_sysPal;
 
-	Vga();
+	Vga(CGEEngine *vm);
 	~Vga();
 
 	uint8 *glass(Dac *pal, const uint8 colR, const uint8 colG, const uint8 colB);

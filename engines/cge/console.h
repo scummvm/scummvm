@@ -36,6 +36,7 @@ public:
 
 private:
 	CGEEngine *_vm;
+	bool Cmd_boundaries(int argc, const char **argv);
 };
 
 } // End of namespace CGE

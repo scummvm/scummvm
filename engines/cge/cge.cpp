@@ -54,6 +54,7 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_pocPtr      = 0;
 	_bitmapPalette = NULL;
 	_quitFlag = false;
+	_showBoundariesFl = false;
 }
 
 void CGEEngine::initSceneValues() {
@@ -89,7 +90,7 @@ void CGEEngine::init() {
 	_font = new Font(this, "CGE");
 	_text = new Text(this, "CGE");
 	_talk = NULL;
-	_vga = new Vga();
+	_vga = new Vga(this);
 	_sys = new System(this);
 	_pocLight = new PocLight(this);
 	for (int i = 0; i < kPocketNX; i++)
