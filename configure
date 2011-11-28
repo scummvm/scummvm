@@ -2297,6 +2297,7 @@ if test -n "$_host"; then
 			
 			_backend="maemo"
 			_vkeybd=yes
+			_keymapper=yes
 			_build_hq_scalers=no
 			_mt32emu=no
 			_alsa=no
