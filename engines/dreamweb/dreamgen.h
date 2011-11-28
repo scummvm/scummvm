@@ -179,7 +179,6 @@ public:
 	static const uint16 addr_showrightpage = 0xc7d4;
 	static const uint16 addr_showleftpage = 0xc7d0;
 	static const uint16 addr_folderexit = 0xc7cc;
-	static const uint16 addr_showfolder = 0xc7c8;
 	static const uint16 addr_loadfolder = 0xc7c4;
 	static const uint16 addr_lastfolder = 0xc7c0;
 	static const uint16 addr_folderhints = 0xc7bc;
@@ -1188,7 +1187,7 @@ public:
 	void deallocatemem();
 	void mainscreen();
 	void watchreel();
-	void showfolder();
+	//void showfolder();
 	void showslots();
 	void openfilefromc();
 	void gettime();

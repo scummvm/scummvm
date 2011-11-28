@@ -2317,5 +2317,30 @@ void DreamGenContext::restorereels() {
 	closefile();
 }
 
+void DreamGenContext::showfolder() {
+	data.byte(kCommandtype) = 255;
+	if (data.byte(kFolderpage)) {
+		usetempcharset();
+		createpanel2();
+		showframe(tempGraphics(), 0, 0, 0, 0);
+		showframe(tempGraphics(), 143, 0, 1, 0);
+		showframe(tempGraphics(), 0, 92, 2, 0);
+		showframe(tempGraphics(), 143, 92, 3, 0);
+		folderexit();
+		if (data.byte(kFolderpage) != 1)
+			showleftpage();
+		if (data.byte(kFolderpage) != 12)
+			showrightpage();
+		usecharset1();
+		undertextline();
+	} else {
+		createpanel2();
+		showframe(tempGraphics3(), 143-28, 0, 0, 0);
+		showframe(tempGraphics3(), 143-28, 92, 1, 0);
+		folderexit();
+		undertextline();
+	}
+}
+
 } /*namespace dreamgen */
 

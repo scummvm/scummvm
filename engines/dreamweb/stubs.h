@@ -355,4 +355,5 @@
 	void restoreall();
 	void restorereels();
 	void viewfolder();
+	void showfolder();
 
