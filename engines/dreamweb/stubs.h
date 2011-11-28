@@ -362,4 +362,5 @@
 	void getlocation();
 	void setlocation(uint8 index);
 	void setlocation();
+	const uint8 *getTextInFile1(uint16 index);
 
