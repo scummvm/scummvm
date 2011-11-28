@@ -184,7 +184,6 @@ public:
 	static const uint16 addr_lastfolder = 0xc7c0;
 	static const uint16 addr_folderhints = 0xc7bc;
 	static const uint16 addr_nextfolder = 0xc7b8;
-	static const uint16 addr_viewfolder = 0xc7b4;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
 	static const uint16 addr_dumpmenu = 0xc79c;
@@ -1273,7 +1272,6 @@ public:
 	//void hangoncurs();
 	//void getblockofpixel();
 	//void kernchars();
-	//void printcurs();
 	//void convertkey();
 	void outofopen();
 	//void dealwithspecial();
@@ -1497,7 +1495,7 @@ public:
 	//void readmouse2();
 	//void zoom();
 	void outofinv();
-	void viewfolder();
+	//void printcurs();
 	//void walking();
 	void diarykeyp();
 	//void readabyte();
@@ -1525,6 +1523,7 @@ public:
 	void purgealocation();
 	void sparkydrip();
 	//void paltostartpal();
+	//void viewfolder();
 	void getridofpit();
 	//void convnum();
 	//void checkifset();

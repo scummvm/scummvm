@@ -9760,37 +9760,6 @@ void DreamGenContext::loadmenu() {
 	loadintotemp2();
 }
 
-void DreamGenContext::viewfolder() {
-	STACK_CHECK;
-	data.byte(kManisoffscreen) = 1;
-	getridofall();
-	loadfolder();
-	data.byte(kFolderpage) = 0;
-	showfolder();
-	worktoscreenm();
-	data.byte(kGetback) = 0;
-folderloop:
-	delpointer();
-	readmouse();
-	showpointer();
-	vsync();
-	dumppointer();
-	dumptextline();
-	bx = offset_folderlist;
-	checkcoords();
-	_cmp(data.byte(kGetback), 0);
-	if (flags.z())
-		goto folderloop;
-	data.byte(kManisoffscreen) = 0;
-	getridoftemp();
-	getridoftemp2();
-	getridoftemp3();
-	getridoftempcharset();
-	restoreall();
-	redrawmainscrn();
-	worktoscreenm();
-}
-
 void DreamGenContext::nextfolder() {
 	STACK_CHECK;
 	_cmp(data.byte(kFolderpage), 12);

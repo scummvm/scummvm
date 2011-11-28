@@ -354,4 +354,5 @@
 	void loadRoomData(const Room* room, bool skipDat);
 	void restoreall();
 	void restorereels();
+	void viewfolder();
 

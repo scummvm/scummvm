@@ -194,5 +194,39 @@ void DreamGenContext::showseconduse() {
 	hangonp(400);
 }
 
+void DreamGenContext::viewfolder() {
+	data.byte(kManisoffscreen) = 1;
+	getridofall();
+	loadfolder();
+	data.byte(kFolderpage) = 0;
+	showfolder();
+	worktoscreenm();
+	data.byte(kGetback) = 0;
+	do {
+		delpointer();
+		readmouse();
+		showpointer();
+		vsync();
+		dumppointer();
+		dumptextline();
+		RectWithCallback folderlist[] = {
+			{ 280,320,160,200,&DreamGenContext::quitkey },
+			{ 143,300,6,194,&DreamGenContext::nextfolder },
+			{ 0,143,6,194,&DreamGenContext::lastfolder },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkcoords(folderlist);
+	} while (data.byte(kGetback) == 0);
+	data.byte(kManisoffscreen) = 0;
+	getridoftemp();
+	getridoftemp2();
+	getridoftemp3();
+	getridoftempcharset();
+	restoreall();
+	redrawmainscrn();
+	worktoscreenm();
+}
+
 } /*namespace dreamgen */
 
