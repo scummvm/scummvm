@@ -96,7 +96,7 @@ bool RightClickDialog::process(Event &event) {
 	case EVENT_MOUSE_MOVE: {
 		// Check whether a button is highlighted
 		int buttonIndex;
-		for (buttonIndex = 6; buttonIndex >= 0; --buttonIndex) {
+		for (buttonIndex = 5; buttonIndex >= 0; --buttonIndex) {
 			Rect tempRect(0, 0, 28, 29);
 			tempRect.moveTo(_btnList[buttonIndex].x, _btnList[buttonIndex].y);
 
