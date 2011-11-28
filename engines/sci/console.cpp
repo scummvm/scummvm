@@ -2978,7 +2978,8 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 					// there is a jump after a ret, we don't stop processing
 					if (opcode == op_bt || opcode == op_bnt || opcode == op_jmp) {
 						uint16 curJmpOffset = offset + (uint16)opparams[0];
-						if (curJmpOffset > maxJmpOffset)
+						// QFG2 has invalid jumps outside the script buffer in script 260
+						if (curJmpOffset > maxJmpOffset && curJmpOffset < script->getScriptSize())
 							maxJmpOffset = curJmpOffset;
 					}
 

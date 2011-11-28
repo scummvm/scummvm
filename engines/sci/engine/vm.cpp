@@ -764,16 +764,28 @@ void run_vm(EngineState *s) {
 			// Branch relative if true
 			if (s->r_acc.offset || s->r_acc.segment)
 				s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_bt: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_bnt: // 0x18 (24)
 			// Branch relative if not true
 			if (!(s->r_acc.offset || s->r_acc.segment))
 				s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_bnt: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_jmp: // 0x19 (25)
 			s->xs->addr.pc.offset += opparams[0];
+
+			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+				error("[VM] op_jmp: request to jump past the end of script %d (offset %d, script is %d bytes)",
+					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
 			break;
 
 		case op_ldi: // 0x1a (26)

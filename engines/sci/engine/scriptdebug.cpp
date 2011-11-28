@@ -296,7 +296,7 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 	Script *script_entity = (Script *)mobj;
 
 	const byte *scr = script_entity->getBuf();
-	int scr_size = script_entity->getBufSize();
+	int scr_size = script_entity->getScriptSize();
 
 	if (pos.offset >= scr_size)
 		return false;
@@ -310,7 +310,13 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 	case op_bt:
 	case op_bnt:
 	case op_jmp:
-		jumpTarget = pos + bytecount + opparams[0];
+		{
+		reg_t jmpTarget = pos + bytecount + opparams[0];
+		// QFG2 has invalid jumps outside the script buffer in script 260
+		if (jmpTarget.offset >= scr_size)
+			return false;
+		jumpTarget = jmpTarget;
+		}
 		return true;
 	default:
 		return false;
