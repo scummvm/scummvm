@@ -37,7 +37,7 @@ namespace Ringworld2 {
 
 using namespace TsAGE;
 
-class VisualSpeaker: public Speaker {
+class VisualSpeaker : public Speaker {
 public:
 	SceneActor _object1;
 	SceneObject *_object2;
@@ -61,7 +61,7 @@ public:
 	virtual void proc16();
 };
 
-class SpeakerMiranda300: public VisualSpeaker {
+class SpeakerMiranda300 : public VisualSpeaker {
 public:
 	SpeakerMiranda300();
 
@@ -69,7 +69,7 @@ public:
 	virtual void proc15();
 };
 
-class SpeakerSeeker300: public VisualSpeaker {
+class SpeakerSeeker300 : public VisualSpeaker {
 public:
 	SpeakerSeeker300();
 
@@ -77,21 +77,21 @@ public:
 	virtual void proc15();
 };
 
-class SpeakerSeekerL: public VisualSpeaker {
+class SpeakerSeekerL : public VisualSpeaker {
 public:
 	SpeakerSeekerL();
 
 	virtual Common::String getClassName() { return "SpeakerSeekerL"; }
 };
 
-class SpeakerQuinnL: public VisualSpeaker {
+class SpeakerQuinnL : public VisualSpeaker {
 public:
 	SpeakerQuinnL();
 
 	virtual Common::String getClassName() { return "SpeakerQuinnL"; }
 };
 
-class SpeakerQuinn300: public VisualSpeaker {
+class SpeakerQuinn300 : public VisualSpeaker {
 public:
 	SpeakerQuinn300();
 
@@ -99,7 +99,7 @@ public:
 	virtual void proc15();
 };
 
-class SpeakerTeal300: public VisualSpeaker {
+class SpeakerTeal300 : public VisualSpeaker {
 public:
 	SpeakerTeal300();
 
@@ -107,7 +107,7 @@ public:
 	virtual void proc15();
 };
 
-class SpeakerSoldier300: public VisualSpeaker {
+class SpeakerSoldier300 : public VisualSpeaker {
 public:
 	SpeakerSoldier300();
 
@@ -115,14 +115,14 @@ public:
 	virtual void proc15();
 };
 
-class SpeakerQuinn2350: public VisualSpeaker {
+class SpeakerQuinn2350 : public VisualSpeaker {
 public:
 	SpeakerQuinn2350();
 
 	virtual Common::String getClassName() { return "SpeakerQuinn2350"; }
 };
 
-class SpeakerPharisha2350: public VisualSpeaker {
+class SpeakerPharisha2350 : public VisualSpeaker {
 public:
 	SpeakerPharisha2350();
 
