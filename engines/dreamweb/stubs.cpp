@@ -2376,5 +2376,31 @@ void DreamGenContext::showleftpage() {
 	}
 }
 
+void DreamGenContext::showrightpage() {
+	showframe(tempGraphics2(), 143, 12, 0, 0);
+	uint16 y = 12+37;
+	for (size_t i = 0; i < 7; ++i) {
+		showframe(tempGraphics2(), 143, y, 1, 0);
+		y += 16;
+	}
+
+	showframe(tempGraphics2(), 143, y, 2, 0);
+	data.word(kLinespacing) = 8;
+	data.byte(kKerning) = 1;
+	uint8 pageIndex = data.byte(kFolderpage) - 1;
+	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + 66*2;
+	const uint8 *string = segRef(data.word(kTextfile1)).ptr(offset, 0);
+	y = 48;
+	for (size_t i = 0; i < 2; ++i) {
+		uint8 lastChar;
+		do {
+			lastChar = printdirect(&string, 152, &y, 140, false);
+			y += data.word(kLinespacing);
+		} while (lastChar != '\0');
+	}
+	data.byte(kKerning) = 0;
+	data.word(kLinespacing) = 10;
+}
+
 } /*namespace dreamgen */
 

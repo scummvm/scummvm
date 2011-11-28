@@ -9905,63 +9905,6 @@ void DreamGenContext::folderexit() {
 	showframe();
 }
 
-void DreamGenContext::showrightpage() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics2);
-	di = 143;
-	bx = 12;
-	al = 0;
-	ah = 0;
-	showframe();
-	bx = 12+37;
-	cx = 7;
-rightpageloop:
-	push(cx);
-	push(bx);
-	ds = data.word(kTempgraphics2);
-	di = 143;
-	al = 1;
-	ah = 0;
-	showframe();
-	bx = pop();
-	cx = pop();
-	_add(bx, 16);
-	if (--cx)
-		goto rightpageloop;
-	ds = data.word(kTempgraphics2);
-	di = 143;
-	al = 2;
-	ah = 0;
-	showframe();
-	data.word(kLinespacing) = 8;
-	data.byte(kKerning) = 1;
-	bl = data.byte(kFolderpage);
-	_dec(bl);
-	_add(bl, bl);
-	bh = 0;
-	_add(bx, bx);
-	es = data.word(kTextfile1);
-	si = es.word(bx);
-	_add(si, 66*2);
-	di = 152;
-	bx = 48;
-	dl = 140;
-	cx = 2;
-twolotsright:
-	push(cx);
-contrightpage:
-	printdirect();
-	_add(bx, data.word(kLinespacing));
-	_cmp(al, 0);
-	if (!flags.z())
-		goto contrightpage;
-	cx = pop();
-	if (--cx)
-		goto twolotsright;
-	data.byte(kKerning) = 0;
-	data.word(kLinespacing) = 10;
-}
-
 void DreamGenContext::entersymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

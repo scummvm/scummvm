@@ -176,7 +176,6 @@ public:
 	static const uint16 addr_settopleft = 0xc7e0;
 	static const uint16 addr_quitsymbol = 0xc7dc;
 	static const uint16 addr_entersymbol = 0xc7d8;
-	static const uint16 addr_showrightpage = 0xc7d4;
 	static const uint16 addr_folderexit = 0xc7cc;
 	static const uint16 addr_loadfolder = 0xc7c4;
 	static const uint16 addr_lastfolder = 0xc7c0;
@@ -1383,7 +1382,7 @@ public:
 	//void loadposition();
 	//void wornerror();
 	void entersymbol();
-	//void showword();
+	//void showrightpage();
 	void dirfile();
 	//void bresenhams();
 	//void savefilewrite();
@@ -1672,7 +1671,7 @@ public:
 	void signon();
 	void deleteextext();
 	void foghornsound();
-	void showrightpage();
+	//void showword();
 	void showloadops();
 	void examicon();
 	void showgun();

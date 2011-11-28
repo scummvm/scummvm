@@ -304,6 +304,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'viewfolder',
 	'showfolder',
 	'showleftpage',
+	'showrightpage',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

@@ -357,4 +357,5 @@
 	void viewfolder();
 	void showfolder();
 	void showleftpage();
+	void showrightpage();
 
