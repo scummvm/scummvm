@@ -20,7 +20,6 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
