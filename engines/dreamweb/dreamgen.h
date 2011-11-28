@@ -177,7 +177,6 @@ public:
 	static const uint16 addr_quitsymbol = 0xc7dc;
 	static const uint16 addr_entersymbol = 0xc7d8;
 	static const uint16 addr_showrightpage = 0xc7d4;
-	static const uint16 addr_showleftpage = 0xc7d0;
 	static const uint16 addr_folderexit = 0xc7cc;
 	static const uint16 addr_loadfolder = 0xc7c4;
 	static const uint16 addr_lastfolder = 0xc7c0;
@@ -1415,7 +1414,7 @@ public:
 	void allpalette();
 	//void loopchannel0();
 	//void initrain();
-	void showleftpage();
+	//void showleftpage();
 	void rockstar();
 	void adjustright();
 	void putunderzoom();

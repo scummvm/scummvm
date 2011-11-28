@@ -2342,5 +2342,39 @@ void DreamGenContext::showfolder() {
 	}
 }
 
+void DreamGenContext::showleftpage() {
+	showframe(tempGraphics2(), 0, 12, 3, 0);
+	uint16 y = 12+5;
+	for (size_t i = 0; i < 9; ++i) {
+		showframe(tempGraphics2(), 0, y, 4, 0);
+		y += 16;
+	}
+	showframe(tempGraphics2(), 0, y, 5, 0);
+	data.word(kLinespacing) = 8;
+	data.word(kCharshift) = 91;
+	data.byte(kKerning) = 1;
+	uint8 pageIndex = data.byte(kFolderpage) - 2;
+	uint16 offset = segRef(data.word(kTextfile1)).word(pageIndex * 4) + 66*2;
+	const uint8 *string = segRef(data.word(kTextfile1)).ptr(offset, 0);
+	y = 48;
+	for (size_t i = 0; i < 2; ++i) {
+		uint8 lastChar;
+		do {
+			lastChar = printdirect(&string, 2, &y, 140, false);
+			y += data.word(kLinespacing);
+		} while (lastChar != '\0');
+	}
+	data.byte(kKerning) = 0;
+	data.word(kCharshift) = 0;
+	data.word(kLinespacing) = 10;
+	uint8 *bufferToSwap = workspace() + (48*320)+2;
+	for (size_t i = 0; i < 120; ++i) {
+		for (size_t j = 0; j < 65; ++j) {
+			SWAP(bufferToSwap[j], bufferToSwap[130 - j]);
+		}
+		bufferToSwap += 320;
+	}
+}
+
 } /*namespace dreamgen */
 

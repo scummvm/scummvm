@@ -356,4 +356,5 @@
 	void restorereels();
 	void viewfolder();
 	void showfolder();
+	void showleftpage();
 
