@@ -330,6 +330,8 @@ public:
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 
+	opcode_format (*_opcode_formats)[4];
+
 	DebugState _debugState;
 
 	Common::MacResManager *getMacExecutable() { return &_macExecutable; }

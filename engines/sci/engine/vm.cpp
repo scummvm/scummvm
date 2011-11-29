@@ -462,10 +462,10 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 
 	memset(opparams, 0, 4*sizeof(int16));
 
-	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
+	for (int i = 0; g_sci->_opcode_formats[opcode][i]; ++i) {
 		//debugN("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
 		assert(i < 3);
-		switch (g_opcode_formats[opcode][i]) {
+		switch (g_sci->_opcode_formats[opcode][i]) {
 
 		case Script_Byte:
 			opparams[i] = src[offset++];
