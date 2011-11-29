@@ -913,6 +913,8 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 
 // TODO: script_adjust_opcode_formats should probably be part of the
 // constructor (?) of a VirtualMachine or a ScriptManager class.
+//
+// FIXME: This function breaks return to launcher because its effects persist
 void script_adjust_opcode_formats() {
 	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
