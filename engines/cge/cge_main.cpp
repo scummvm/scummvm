@@ -757,7 +757,8 @@ void System::touch(uint16 mask, int x, int y) {
 	funTouch();
 
 	if (mask & kEventKeyb) {
-		_vm->keyClick();
+		// The original was calling keyClick() 
+		// The sound is uselessly annoying and noisy, so it has been removed
 		_vm->killText();
 		if (_vm->_startupMode == 1) {
 			_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
