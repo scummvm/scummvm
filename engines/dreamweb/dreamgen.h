@@ -178,7 +178,6 @@ public:
 	static const uint16 addr_entersymbol = 0xc7d8;
 	static const uint16 addr_folderexit = 0xc7cc;
 	static const uint16 addr_loadfolder = 0xc7c4;
-	static const uint16 addr_lastfolder = 0xc7c0;
 	static const uint16 addr_folderhints = 0xc7bc;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
@@ -555,7 +554,6 @@ public:
 	static const uint16 offset_diarylist = 0x0e9c;
 	static const uint16 offset_decidelist = 0x13c1;
 	static const uint16 offset_symbollist = 0x0e5e;
-	static const uint16 offset_folderlist = 0x0e34;
 	static const uint16 offset_operand1 = 0x0b7e;
 	static const uint16 offset_keypadlist = 0x0d9a;
 	static const uint16 kStartvars = 0;
@@ -1500,7 +1498,7 @@ public:
 	//void showfirstuse();
 	void channel1only();
 	//void checkbasemem();
-	void lastfolder();
+	//void lastfolder();
 	void transfermap();
 	void showmonk();
 	void diarykeyn();

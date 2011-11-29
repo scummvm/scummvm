@@ -360,6 +360,7 @@
 	void showleftpage();
 	void showrightpage();
 	void nextfolder();
+	void lastfolder();
 	uint8 getlocation(uint8 index);
 	void getlocation();
 	void setlocation(uint8 index);

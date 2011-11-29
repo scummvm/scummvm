@@ -9791,42 +9791,6 @@ notaideadd:
 	hangonp();
 }
 
-void DreamGenContext::lastfolder() {
-	STACK_CHECK;
-	_cmp(data.byte(kFolderpage), 0);
-	if (!flags.z())
-		goto canlastf;
-	blank();
-	return;
-canlastf:
-	_cmp(data.byte(kCommandtype), 202);
-	if (flags.z())
-		goto alreadylastf;
-	data.byte(kCommandtype) = 202;
-	al = 17;
-	commandonly();
-alreadylastf:
-	_cmp(data.byte(kFolderpage), 0);
-	if (flags.z())
-		return /* (notlastf) */;
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notlastf) */;
-	_cmp(ax, 1);
-	if (flags.z())
-		goto dolastf;
-	return;
-dolastf:
-	_dec(data.byte(kFolderpage));
-	delpointer();
-	showfolder();
-	data.word(kMousebutton) = 0;
-	bx = offset_folderlist;
-	checkcoords();
-	worktoscreenm();
-}
-
 void DreamGenContext::loadfolder() {
 	STACK_CHECK;
 	dx = 2299;

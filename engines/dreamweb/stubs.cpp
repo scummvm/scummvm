@@ -1524,17 +1524,6 @@ void DreamGenContext::checkcoords() {
 		checkcoords(menulist);
 		break;
 	}
-	case offset_folderlist: {
-		RectWithCallback folderlist[] = {
-			{ 280,320,160,200,&DreamGenContext::quitkey },
-			{ 143,300,6,194,&DreamGenContext::nextfolder },
-			{ 0,143,6,194,&DreamGenContext::lastfolder },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkcoords(folderlist);
-		break;
-	}
 	case offset_symbollist: {
 		RectWithCallback symbollist[] = {
 			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitsymbol },
@@ -2446,6 +2435,26 @@ void DreamGenContext::nextfolder() {
 	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
 		++data.byte(kFolderpage);
 		folderhints();
+		delpointer();
+		showfolder();
+		data.word(kMousebutton) = 0;
+		checkFolderCoords();
+		worktoscreenm();
+	}
+}
+
+void DreamGenContext::lastfolder() {
+	if (data.byte(kFolderpage) == 0) {
+		blank();
+		return;
+	}
+	if (data.byte(kCommandtype) != 202) {
+		data.byte(kCommandtype) = 202;
+		commandonly(17);
+	}
+
+	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
+		--data.byte(kFolderpage);
 		delpointer();
 		showfolder();
 		data.word(kMousebutton) = 0;

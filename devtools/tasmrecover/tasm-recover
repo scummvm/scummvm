@@ -306,6 +306,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showleftpage',
 	'showrightpage',
 	'nextfolder',
+	'lastfolder',
 	'getlocation',
 	'setlocation',
 	], skip_output = [
