@@ -149,7 +149,8 @@ endif
 
 ifeq ($(BACKEND),maemo)
 MODULE_OBJS += \
-	events/maemosdl/maemosdl-events.o
+	events/maemosdl/maemosdl-events.o \
+	graphics/maemosdl/maemosdl-graphics.o
 endif
 
 ifeq ($(BACKEND),n64)
