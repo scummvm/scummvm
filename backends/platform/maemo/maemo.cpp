@@ -29,6 +29,7 @@
 
 #include "backends/platform/maemo/maemo.h"
 #include "backends/events/maemosdl/maemosdl-events.h"
+#include "backends/graphics/maemosdl/maemosdl-graphics.h"
 #include "common/textconsole.h"
 
 
@@ -46,6 +47,9 @@ void OSystem_SDL_Maemo::initBackend() {
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new MaemoSdlEventSource();
+
+	if (_graphicsManager == 0)
+		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
 
 	ConfMan.set("vkeybdpath", DATA_PATH);
 
