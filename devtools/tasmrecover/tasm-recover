@@ -302,6 +302,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'restorereels',
 	'allocateload',
 	'viewfolder',
+	'loadfolder',
 	'showfolder',
 	'showleftpage',
 	'showrightpage',

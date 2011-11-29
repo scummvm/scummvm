@@ -9740,20 +9740,6 @@ void DreamGenContext::loadmenu() {
 	loadintotemp2();
 }
 
-void DreamGenContext::loadfolder() {
-	STACK_CHECK;
-	dx = 2299;
-	loadintotemp();
-	dx = 2312;
-	loadintotemp2();
-	dx = 2325;
-	loadintotemp3();
-	dx = 1883;
-	loadtempcharset();
-	dx = 2195;
-	loadtemptext();
-}
-
 void DreamGenContext::entersymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

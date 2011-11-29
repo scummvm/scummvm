@@ -356,6 +356,7 @@
 	void restorereels();
 	void viewfolder();
 	void checkFolderCoords();
+	void loadfolder();
 	void showfolder();
 	void showleftpage();
 	void showrightpage();

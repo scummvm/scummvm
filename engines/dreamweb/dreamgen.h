@@ -176,7 +176,6 @@ public:
 	static const uint16 addr_settopleft = 0xc7e0;
 	static const uint16 addr_quitsymbol = 0xc7dc;
 	static const uint16 addr_entersymbol = 0xc7d8;
-	static const uint16 addr_loadfolder = 0xc7c4;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
 	static const uint16 addr_dumpmenu = 0xc79c;
@@ -1152,7 +1151,7 @@ public:
 	void removeemm();
 	//void frameoutbh();
 	void getobtextstart();
-	void loadfolder();
+	//void loadfolder();
 	void dumpdiarykeys();
 	//void dumppointer();
 	//void look();

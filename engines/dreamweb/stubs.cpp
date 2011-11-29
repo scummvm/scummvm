@@ -2306,6 +2306,15 @@ void DreamGenContext::restorereels() {
 	closefile();
 }
 
+void DreamGenContext::loadfolder() {
+	loadintotemp("DREAMWEB.G09");
+	loadintotemp2("DREAMWEB.G10");
+	loadintotemp3("DREAMWEB.G11");
+	loadtempcharset("DREAMWEB.C02");
+	dx = kFoldertext; // "DREAMWEB.T50"
+	loadtemptext();
+}
+
 void DreamGenContext::showfolder() {
 	data.byte(kCommandtype) = 255;
 	if (data.byte(kFolderpage)) {
