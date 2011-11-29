@@ -9740,40 +9740,6 @@ void DreamGenContext::loadmenu() {
 	loadintotemp2();
 }
 
-void DreamGenContext::nextfolder() {
-	STACK_CHECK;
-	_cmp(data.byte(kFolderpage), 12);
-	if (!flags.z())
-		goto cannextf;
-	blank();
-	return;
-cannextf:
-	_cmp(data.byte(kCommandtype), 201);
-	if (flags.z())
-		goto alreadynextf;
-	data.byte(kCommandtype) = 201;
-	al = 16;
-	commandonly();
-alreadynextf:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notnextf) */;
-	_cmp(ax, 1);
-	if (flags.z())
-		goto donextf;
-	return;
-donextf:
-	_inc(data.byte(kFolderpage));
-	folderhints();
-	delpointer();
-	showfolder();
-	data.word(kMousebutton) = 0;
-	bx = offset_folderlist;
-	checkcoords();
-	worktoscreenm();
-}
-
 void DreamGenContext::folderhints() {
 	STACK_CHECK;
 	_cmp(data.byte(kFolderpage), 5);

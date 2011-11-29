@@ -2423,5 +2423,36 @@ const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
 	return string;
 }
 
+void DreamGenContext::checkFolderCoords() {
+	RectWithCallback folderlist[] = {
+		{ 280,320,160,200,&DreamGenContext::quitkey },
+		{ 143,300,6,194,&DreamGenContext::nextfolder },
+		{ 0,143,6,194,&DreamGenContext::lastfolder },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+	checkcoords(folderlist);
+}
+
+void DreamGenContext::nextfolder() {
+	if (data.byte(kFolderpage) == 12) {
+		blank();
+		return;
+	}
+	if (data.byte(kCommandtype) != 201) {
+		data.byte(kCommandtype) = 201;
+		commandonly(16);
+	}
+	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
+		++data.byte(kFolderpage);
+		folderhints();
+		delpointer();
+		showfolder();
+		data.word(kMousebutton) = 0;
+		checkFolderCoords();
+		worktoscreenm();
+	}
+}
+
 } /*namespace dreamgen */
 

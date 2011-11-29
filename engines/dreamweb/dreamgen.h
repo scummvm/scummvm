@@ -180,7 +180,6 @@ public:
 	static const uint16 addr_loadfolder = 0xc7c4;
 	static const uint16 addr_lastfolder = 0xc7c0;
 	static const uint16 addr_folderhints = 0xc7bc;
-	static const uint16 addr_nextfolder = 0xc7b8;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
 	static const uint16 addr_dumpmenu = 0xc79c;
@@ -1341,7 +1340,7 @@ public:
 	void calledenslift();
 	void useclearbox();
 	void entryanims();
-	void nextfolder();
+	//void nextfolder();
 	void getfreead();
 	void showarrows();
 	void walkintoroom();

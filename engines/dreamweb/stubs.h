@@ -355,9 +355,11 @@
 	void restoreall();
 	void restorereels();
 	void viewfolder();
+	void checkFolderCoords();
 	void showfolder();
 	void showleftpage();
 	void showrightpage();
+	void nextfolder();
 	uint8 getlocation(uint8 index);
 	void getlocation();
 	void setlocation(uint8 index);

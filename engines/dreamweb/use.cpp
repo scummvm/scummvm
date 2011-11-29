@@ -211,14 +211,7 @@ void DreamGenContext::viewfolder() {
 		vsync();
 		dumppointer();
 		dumptextline();
-		RectWithCallback folderlist[] = {
-			{ 280,320,160,200,&DreamGenContext::quitkey },
-			{ 143,300,6,194,&DreamGenContext::nextfolder },
-			{ 0,143,6,194,&DreamGenContext::lastfolder },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkcoords(folderlist);
+		checkFolderCoords();
 	} while (data.byte(kGetback) == 0);
 	data.byte(kManisoffscreen) = 0;
 	getridoftemp();
