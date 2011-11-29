@@ -47,7 +47,11 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 
 	switch (ev.type) {
 		case SDL_KEYDOWN:{
-			if (ev.key.keysym.sym == SDLK_F4) {
+			if (ev.key.keysym.sym == SDLK_F4
+			    || (model.modelType == kModelTypeN900
+			        && ev.key.keysym.sym == SDLK_m
+			        && (ev.key.keysym.mod & KMOD_CTRL)
+			        && (ev.key.keysym.mod & KMOD_SHIFT))) {
 				event.type = Common::EVENT_MAINMENU;
 				debug(9, "remapping to main menu");
 				return true;
@@ -83,7 +87,11 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			break;
 		}
 		case SDL_KEYUP: {
-			if (ev.key.keysym.sym == SDLK_F4) {
+			if (ev.key.keysym.sym == SDLK_F4
+			    || (model.modelType == kModelTypeN900
+			        && ev.key.keysym.sym == SDLK_m
+			        && (ev.key.keysym.mod & KMOD_CTRL)
+			        && (ev.key.keysym.mod & KMOD_SHIFT))) {
 				event.type = Common::EVENT_MAINMENU;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F6) {
