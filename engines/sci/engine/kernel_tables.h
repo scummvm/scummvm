@@ -24,7 +24,7 @@
 #define SCI_ENGINE_KERNEL_TABLES_H
 
 #include "sci/engine/workarounds.h"
-#include "sci/engine/vm.h"	// for opcode_formats
+#include "sci/engine/vm_types.h" // for opcode_formats
 
 namespace Sci {
 
@@ -1116,7 +1116,9 @@ static const char *const sci21_default_knames[] = {
 
 #endif
 
-opcode_format g_opcode_formats[128][4] = {
+// Base set of opcode formats. They're copied and adjusted slightly in
+// script_adjust_opcode_format depending on SCI version.
+static const opcode_format g_base_opcode_formats[128][4] = {
 	/*00*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
 	/*04*/

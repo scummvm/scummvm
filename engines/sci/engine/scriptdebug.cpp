@@ -122,8 +122,8 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 #endif
 
 	i = 0;
-	while (g_opcode_formats[opcode][i]) {
-		switch (g_opcode_formats[opcode][i++]) {
+	while (g_sci->_opcode_formats[opcode][i]) {
+		switch (g_sci->_opcode_formats[opcode][i++]) {
 		case Script_Invalid:
 			warning("-Invalid operation-");
 			break;

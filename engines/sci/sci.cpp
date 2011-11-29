@@ -90,6 +90,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_vocabularyLanguage = 1; // we load english vocabulary on startup
 	_eventMan = 0;
 	_console = 0;
+	_opcode_formats = 0;
 
 	// Set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -176,6 +177,9 @@ SciEngine::~SciEngine() {
 	delete _eventMan;
 	delete _gamestate->_segMan;
 	delete _gamestate;
+
+	delete[] _opcode_formats;
+
 	delete _resMan;	// should be deleted last
 	g_sci = 0;
 }
