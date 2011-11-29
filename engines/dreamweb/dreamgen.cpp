@@ -9754,16 +9754,6 @@ void DreamGenContext::loadfolder() {
 	loadtemptext();
 }
 
-void DreamGenContext::folderexit() {
-	STACK_CHECK;
-	ds = data.word(kTempgraphics2);
-	di = 296;
-	bx = 178;
-	al = 6;
-	ah = 0;
-	showframe();
-}
-
 void DreamGenContext::entersymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

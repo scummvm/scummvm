@@ -2485,5 +2485,9 @@ void DreamGenContext::folderhints() {
 	}
 }
 
+void DreamGenContext::folderexit() {
+	showframe(tempGraphics2(), 296, 178, 6, 0);
+}
+
 } /*namespace dreamgen */
 
