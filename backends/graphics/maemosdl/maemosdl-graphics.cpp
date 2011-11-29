@@ -21,6 +21,8 @@
  */
 #if defined(MAEMO)
 
+#include "SDL_syswm.h"
+
 #include "common/scummsys.h"
 
 #include "backends/platform/maemo/maemo.h"
@@ -29,6 +31,30 @@
 
 MaemoSdlGraphicsManager::MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource)
 	: SurfaceSdlGraphicsManager(sdlEventSource) {
+}
+
+bool MaemoSdlGraphicsManager::loadGFXMode() {
+	bool success = SurfaceSdlGraphicsManager::loadGFXMode();
+
+	// fix the problematic zoom key capture in Maemo5/N900
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if (SDL_GetWMInfo(&info)) {
+		Display *dpy = info.info.x11.display;
+		Window win;
+		unsigned long val = 1;
+		Atom atom_zoom = XInternAtom(dpy, "_HILDON_ZOOM_KEY_ATOM", 0);
+		info.info.x11.lock_func();
+		win = info.info.x11.fswindow;
+		if (win)
+			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *) &val, 1); // grab zoom keys
+		win = info.info.x11.wmwindow;
+		if (win)
+			XChangeProperty(dpy, win, atom_zoom, XA_INTEGER, 32, PropModeReplace, (unsigned char *) &val, 1); // grab zoom keys
+		info.info.x11.unlock_func();
+	}
+
+	return success;
 }
 
 #endif
