@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, header_omit_blacklisted = False):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -81,6 +81,7 @@ class cpp:
 		self.failed = list(blacklist)
 		self.skip_output = skip_output
 		self.skip_dispatch_call = skip_dispatch_call
+		self.header_omit_blacklisted = header_omit_blacklisted
 		self.translated = []
 		self.proc_addr = []
 		self.used_data_offsets = set()
@@ -637,7 +638,8 @@ public:
 		self.hd.write("\n")
 		for p in set(self.methods):
 			if p in self.blacklist:
-				self.hd.write("\t//void %s();\n" %p)
+				if self.header_omit_blacklisted == False:
+					self.hd.write("\t//void %s();\n" %p)
 			else:
 				self.hd.write("\tvoid %s();\n" %p)
 
