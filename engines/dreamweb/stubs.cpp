@@ -2463,5 +2463,27 @@ void DreamGenContext::lastfolder() {
 	}
 }
 
+void DreamGenContext::folderhints() {
+	if (data.byte(kFolderpage) == 5) {
+		if ((data.byte(kAidedead) != 1) && (getlocation(13) != 1)) {
+			setlocation(13);
+			showfolder();
+			const uint8 *string = getTextInFile1(30);
+			printdirect(string, 0, 86, 141, true);
+			worktoscreenm();
+			hangonp(200);
+		}
+	} else if (data.byte(kFolderpage) == 9) {
+		if (getlocation(7) != 1) {
+			setlocation(7);
+			showfolder();
+			const uint8 *string = getTextInFile1(31);
+			printdirect(string, 0, 86, 141, true);
+			worktoscreenm();
+			hangonp(200);
+		}
+	}
+}
+
 } /*namespace dreamgen */
 

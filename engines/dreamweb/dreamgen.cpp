@@ -9740,57 +9740,6 @@ void DreamGenContext::loadmenu() {
 	loadintotemp2();
 }
 
-void DreamGenContext::folderhints() {
-	STACK_CHECK;
-	_cmp(data.byte(kFolderpage), 5);
-	if (!flags.z())
-		goto notaideadd;
-	_cmp(data.byte(kAidedead), 1);
-	if (flags.z())
-		goto notaideadd;
-	al = 13;
-	getlocation();
-	_cmp(al, 1);
-	if (flags.z())
-		goto notaideadd;
-	al = 13;
-	setlocation();
-	showfolder();
-	al = 30;
-	findtext1();
-	di = 0;
-	bx = 86;
-	dl = 141;
-	ah = 16;
-	printdirect();
-	worktoscreenm();
-	cx = 200;
-	hangonp();
-	return;
-notaideadd:
-	_cmp(data.byte(kFolderpage), 9);
-	if (!flags.z())
-		return /* (notaristoadd) */;
-	al = 7;
-	getlocation();
-	_cmp(al, 1);
-	if (flags.z())
-		return /* (notaristoadd) */;
-	al = 7;
-	setlocation();
-	showfolder();
-	al = 31;
-	findtext1();
-	di = 0;
-	bx = 86;
-	dl = 141;
-	ah = 16;
-	printdirect();
-	worktoscreenm();
-	cx = 200;
-	hangonp();
-}
-
 void DreamGenContext::loadfolder() {
 	STACK_CHECK;
 	dx = 2299;

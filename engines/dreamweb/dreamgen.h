@@ -178,7 +178,6 @@ public:
 	static const uint16 addr_entersymbol = 0xc7d8;
 	static const uint16 addr_folderexit = 0xc7cc;
 	static const uint16 addr_loadfolder = 0xc7c4;
-	static const uint16 addr_folderhints = 0xc7bc;
 	static const uint16 addr_loadmenu = 0xc7b0;
 	static const uint16 addr_showmenu = 0xc7ac;
 	static const uint16 addr_dumpmenu = 0xc79c;
@@ -1319,7 +1318,7 @@ public:
 	void openpoolboss();
 	void buttontwo();
 	//void delsprite();
-	//void getroomspaths();
+	//void folderhints();
 	//void dumptextline();
 	void fadescreendownhalf();
 	void useplate();
@@ -1397,7 +1396,7 @@ public:
 	//void calcmapad();
 	void getridofall();
 	void copper();
-	void folderhints();
+	//void getroomspaths();
 	void openhoteldoor();
 	//void removesetobject();
 	//void dumptimedtext();
