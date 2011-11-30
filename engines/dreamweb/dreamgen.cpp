@@ -10934,39 +10934,6 @@ tensc:
 	cs.byte(di+7) = al;
 }
 
-void DreamGenContext::trysoundalloc() {
-	STACK_CHECK;
-	_cmp(data.byte(kNeedsoundbuff), 1);
-	if (flags.z())
-		return /* (gotsoundbuff) */;
-	_inc(data.byte(kSoundtimes));
-	bx = (16384+2048)/16;
-	allocatemem();
-	data.word(kSoundbuffer) = ax;
-	push(ax);
-	al = ah;
-	cl = 4;
-	_shr(al, cl);
-	data.byte(kSoundbufferpage) = al;
-	ax = pop();
-	cl = 4;
-	_shl(ax, cl);
-	data.word(kSoundbufferad) = ax;
-	_cmp(ax, 0x0b7ff);
-	if (!flags.c())
-		goto soundfail;
-	es = data.word(kSoundbuffer);
-	di = 0;
-	cx = 16384/2;
-	ax = 0x7f7f;
-	_stosw(cx, true);
-	data.byte(kNeedsoundbuff) = 1;
-	return;
-soundfail:
-	es = data.word(kSoundbuffer);
-	deallocatemem();
-}
-
 void DreamGenContext::volumeadjust() {
 	STACK_CHECK;
 	al = data.byte(kVolumedirection);

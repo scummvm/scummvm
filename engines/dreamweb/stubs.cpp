@@ -43,7 +43,6 @@ void DreamGenContext::dreamweb() {
 	seecommandtail();
 	soundstartup();
 	setkeyboardint();
-	setupemm();
 	allocatebuffers();
 	setmouse();
 	fadedos();
@@ -640,57 +639,6 @@ void DreamGenContext::deallocatemem(uint16 segment) {
 		if (seg == segment)
 			memset(ptr + i, 0xff, 32);
 	}
-}
-
-void DreamGenContext::removeemm() {
-	::error("removeemm");
-}
-
-void DreamGenContext::setupemm() {
-}
-
-void DreamGenContext::pitinterupt() {
-	::error("pitinterupt");
-}
-
-void DreamGenContext::getridofpit() {
-	::error("getridofpit");
-}
-
-void DreamGenContext::setuppit() {
-	::error("setuppit");
-}
-
-void DreamGenContext::startdmablock() {
-	::error("startdmablock");
-}
-
-void DreamGenContext::dmaend() {
-	::error("dmaend");
-}
-
-void DreamGenContext::restoreems() {
-	::error("restoreems");
-}
-
-void DreamGenContext::saveems() {
-	::error("saveems");
-}
-
-void DreamGenContext::bothchannels() {
-	::error("bothchannels");
-}
-
-void DreamGenContext::channel1only() {
-	::error("channel1only");
-}
-
-void DreamGenContext::channel0only() {
-	::error("channel0only");
-}
-
-void DreamGenContext::out22c() {
-	::error("out22c");
 }
 
 void DreamGenContext::soundstartup() {}
@@ -2097,10 +2045,11 @@ void DreamGenContext::readsetdata() {
 	data.word(kCurrentset) = ax;
 	if (data.byte(kSoundint) == 0xff)
 		return;
-	engine->openFile("DREAMWEB.VOL");
-	uint8 *volumeTab = segRef(data.word(kSoundbuffer)).ptr(16384, 0);
-	engine->readFromFile(volumeTab, 2048-256);
-	engine->closeFile();
+
+	//engine->openFile("DREAMWEB.VOL");
+	//uint8 *volumeTab = segRef(data.word(kSoundbuffer)).ptr(16384, 0);
+	//engine->readFromFile(volumeTab, 2048-256);
+	//engine->closeFile();
 }
 
 Frame * DreamGenContext::tempGraphics() {
@@ -2524,15 +2473,10 @@ void DreamGenContext::drawfloor() {
 
 void DreamGenContext::allocatebuffers() {
 	data.word(kExtras) = allocatemem(kLengthofextra/16);
-	trysoundalloc();
 	data.word(kMapdata) = allocatemem(kLengthofmap/16);
-	trysoundalloc();
 	data.word(kBuffers) = allocatemem(kLengthofbuffer/16);
-	trysoundalloc();
 	data.word(kFreedat) = allocatemem(kFreedatlen/16);
-	trysoundalloc();
 	data.word(kSetdat) = allocatemem(kSetdatlen/16);
-	trysoundalloc();
 	data.word(kMapstore) = allocatemem(kLenofmapstore/16);
 	allocatework();
 	data.word(kSounddata) = allocatemem(2048/16);

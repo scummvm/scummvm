@@ -319,6 +319,20 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'random',
 	'drawfloor',
 	'allocatebuffers',
+	'startdmablock',
+	'dmaend',
+	'bothchannels',
+	'channel1only',
+	'channel0only',
+	'restoreems',
+	'saveems',
+	'out22c',
+	'pitinterupt',
+	'getridofpit'
+	'setuppit',
+	'removeemm',
+	'setupemm',
+	'trysoundalloc',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
