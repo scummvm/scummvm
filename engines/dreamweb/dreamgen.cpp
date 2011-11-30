@@ -2104,44 +2104,6 @@ hissnoise:
 	playchannel1();
 }
 
-void DreamGenContext::random() {
-	STACK_CHECK;
-	randomnum1();
-	push(di);
-	_and(ax, 7);
-	_add(di, 18);
-	_add(di, ax);
-	al = ds.byte(di);
-	di = pop();
-	es.byte(bx+15) = al;
-}
-
-void DreamGenContext::steady() {
-	STACK_CHECK;
-	al = ds.byte(di+18);
-	ds.byte(di+17) = al;
-	es.byte(bx+15) = al;
-}
-
-void DreamGenContext::constant() {
-	STACK_CHECK;
-	_inc(es.byte(bx+19));
-	cl = es.byte(bx+19);
-	ch = 0;
-	_add(di, cx);
-	_cmp(ds.byte(di+18), 255);
-	if (!flags.z())
-		goto gotconst;
-	_sub(di, cx);
-	cx = 0;
-	es.byte(bx+19) = cl;
-gotconst:
-	al = ds.byte(di+18);
-	_sub(di, cx);
-	es.byte(bx+15) = al;
-	ds.byte(di+17) = al;
-}
-
 void DreamGenContext::soundonreels() {
 	STACK_CHECK;
 	bl = data.byte(kReallocation);

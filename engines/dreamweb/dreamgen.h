@@ -434,9 +434,6 @@ public:
 	static const uint16 addr_showpcx = 0xc1cc;
 	static const uint16 addr_deleverything = 0xc1c0;
 	static const uint16 addr_soundonreels = 0xc1a8;
-	static const uint16 addr_constant = 0xc184;
-	static const uint16 addr_steady = 0xc180;
-	static const uint16 addr_random = 0xc17c;
 	static const uint16 addr_liftnoise = 0xc178;
 	static const uint16 addr_backobject = 0xc170;
 	static const uint16 addr_reminders = 0xc15c;
@@ -1331,14 +1328,12 @@ public:
 	void rollendcredits();
 	void intro1text();
 	void transfertoex();
-	void steady();
 	void reexfrominv();
 	void examinventory();
 	void getridoftemp3();
 	void usedryer();
 	void outofinv();
 	void diarykeyp();
-	void random();
 	void mainman();
 	void mansatstill();
 	void channel1only();
@@ -1352,7 +1347,6 @@ public:
 	void madman();
 	void enablesoundint();
 	void madmanstelly();
-	void constant();
 	void purgealocation();
 	void sparkydrip();
 	void getridofpit();
