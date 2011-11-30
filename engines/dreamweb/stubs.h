@@ -374,4 +374,5 @@
 	void loadtraveltext();
 	void drawfloor();
 	void allocatebuffers();
+	void worktoscreenm();
 

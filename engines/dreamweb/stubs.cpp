@@ -2483,5 +2483,14 @@ void DreamGenContext::allocatebuffers() {
 	data.word(kSounddata2) = allocatemem(2048/16);
 }
 
+void DreamGenContext::worktoscreenm() {
+	animpointer();
+	readmouse();
+	showpointer();
+	vsync();
+	worktoscreen();
+	delpointer();
+}
+
 } /*namespace dreamgen */
 

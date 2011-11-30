@@ -12009,16 +12009,6 @@ zoomisoff:
 	showwatch();
 }
 
-void DreamGenContext::worktoscreenm() {
-	STACK_CHECK;
-	animpointer();
-	readmouse();
-	showpointer();
-	vsync();
-	worktoscreen();
-	delpointer();
-}
-
 void DreamGenContext::blank() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 199);

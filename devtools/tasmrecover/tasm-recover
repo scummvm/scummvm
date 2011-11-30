@@ -333,6 +333,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'removeemm',
 	'setupemm',
 	'trysoundalloc',
+	'worktoscreenm',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
