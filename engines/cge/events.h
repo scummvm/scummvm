@@ -37,8 +37,6 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-#define kKeyCtrl    29
-#define kKeyAlt     56
 #define kEventMax   256
 
 enum EventMask {
@@ -51,31 +49,15 @@ enum EventMask {
 	kEventKeyb      = 1 << 7
 };
 
-enum Keys {
-    BSp         = 8, Tab,
-    Enter       = 13,
-	Esc         = 27,
-    F11         = 256 + 87, F12,
-    F1          = 256 + 59, F2, F3, F4, F5, F6, F7, F8, F9, F10,
-    Home        = 256 + 71, Up, PgUp,
-    Left        = 256 + 75, Ctr, Right,
-    End         = 256 + 79, Down, PgDn, Ins, Del
-};
-
 class Keyboard {
 private:
-	bool getKey(Common::Event &event, int &cgeCode);
-	uint16 _current;
+	bool getKey(Common::Event &event);
 	CGEEngine *_vm;
 public:
-	static const uint16 _code[0x60];
-	static const uint16 _scummVmCodes[0x60];
-
 	Sprite *_client;
-	bool _key[0x60];
+	bool _keyAlt;
 
 	void newKeyboard(Common::Event &event);
-	uint16 lastKey();
 	Sprite *setClient(Sprite *spr);
 
 	Keyboard(CGEEngine *vm);
@@ -100,7 +82,6 @@ public:
 	bool _exist;
 	int _buttons;
 	Sprite *_busy;
-	//Sprite *Touched;
 	Mouse(CGEEngine *vm);
 	~Mouse();
 	void on();

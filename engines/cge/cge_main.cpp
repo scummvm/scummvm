@@ -764,22 +764,6 @@ void System::touch(uint16 mask, int x, int y) {
 			_vm->_commandHandler->addCommand(kCmdClear, -1, 0, NULL);
 			return;
 		}
-		switch (x) {
-		case 'X':
-			if (_vm->_keyboard->_key[kKeyAlt])
-				_vm->quit();
-			break;
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-			if (_vm->_keyboard->_key[kKeyAlt]) {
-				_vm->_commandHandler->addCommand(kCmdLevel, -1, x - '0', NULL);
-				break;
-			}
-			break;
-		}
 	} else {
 		if (_vm->_startupMode)
 			return;
