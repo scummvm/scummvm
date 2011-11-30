@@ -2522,5 +2522,22 @@ void DreamGenContext::drawfloor() {
 	data.byte(kNewobs) = 0;
 }
 
+void DreamGenContext::allocatebuffers() {
+	data.word(kExtras) = allocatemem(kLengthofextra/16);
+	trysoundalloc();
+	data.word(kMapdata) = allocatemem(kLengthofmap/16);
+	trysoundalloc();
+	data.word(kBuffers) = allocatemem(kLengthofbuffer/16);
+	trysoundalloc();
+	data.word(kFreedat) = allocatemem(kFreedatlen/16);
+	trysoundalloc();
+	data.word(kSetdat) = allocatemem(kSetdatlen/16);
+	trysoundalloc();
+	data.word(kMapstore) = allocatemem(kLenofmapstore/16);
+	allocatework();
+	data.word(kSounddata) = allocatemem(2048/16);
+	data.word(kSounddata2) = allocatemem(2048/16);
+}
+
 } /*namespace dreamgen */
 

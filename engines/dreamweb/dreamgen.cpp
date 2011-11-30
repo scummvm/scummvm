@@ -11252,40 +11252,6 @@ void DreamGenContext::checkforemm() {
 	STACK_CHECK;
 }
 
-void DreamGenContext::allocatebuffers() {
-	STACK_CHECK;
-	bx = (0+2080+30000+(16*114)+((114+2)*2)+18000)/16;
-	allocatemem();
-	data.word(kExtras) = ax;
-	trysoundalloc();
-	bx = (0+(66*60))/16;
-	allocatemem();
-	data.word(kMapdata) = ax;
-	trysoundalloc();
-	bx = (0+(228*13)+32+60+(32*32)+(11*10*3)+768+768+768+(32*32)+(128*5)+(80*5)+(100*5)+(12*5)+(46*40)+(5*80)+(250*4)+(256*30)+(6*64)+991-534+68-0)/16;
-	allocatemem();
-	data.word(kBuffers) = ax;
-	trysoundalloc();
-	bx = (16*80)/16;
-	allocatemem();
-	data.word(kFreedat) = ax;
-	trysoundalloc();
-	bx = (64*128)/16;
-	allocatemem();
-	data.word(kSetdat) = ax;
-	trysoundalloc();
-	bx = (22*8*20*8)/16;
-	allocatemem();
-	data.word(kMapstore) = ax;
-	allocatework();
-	bx = 2048/16;
-	allocatemem();
-	data.word(kSounddata) = ax;
-	bx = 2048/16;
-	allocatemem();
-	data.word(kSounddata2) = ax;
-}
-
 void DreamGenContext::clearbuffers() {
 	STACK_CHECK;
 	es = data.word(kBuffers);

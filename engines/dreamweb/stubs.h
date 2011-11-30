@@ -373,4 +373,5 @@
 	void loadtemptext(const char *fileName);
 	void loadtraveltext();
 	void drawfloor();
+	void allocatebuffers();
 

@@ -318,6 +318,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'constant',
 	'random',
 	'drawfloor',
+	'allocatebuffers',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

@@ -94,7 +94,6 @@ public:
 	static const uint16 addr_clearbeforeload = 0xc978;
 	static const uint16 addr_clearchanges = 0xc974;
 	static const uint16 addr_clearbuffers = 0xc970;
-	static const uint16 addr_allocatebuffers = 0xc96c;
 	static const uint16 addr_checkforemm = 0xc964;
 	static const uint16 addr_removeemm = 0xc960;
 	static const uint16 addr_setupemm = 0xc95c;
@@ -1528,7 +1527,6 @@ public:
 	void findpuztext();
 	void usechurchgate();
 	void monkandryan();
-	void allocatebuffers();
 	void swapwithinv();
 	void usecontrol();
 	void buttonseven();
