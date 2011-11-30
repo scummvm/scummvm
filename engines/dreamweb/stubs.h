@@ -369,4 +369,7 @@
 	void setlocation(uint8 index);
 	void setlocation();
 	const uint8 *getTextInFile1(uint16 index);
+	void loadtemptext();
+	void loadtemptext(const char *fileName);
+	void loadtraveltext();
 

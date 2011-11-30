@@ -12258,19 +12258,6 @@ void DreamGenContext::randomnum2() {
 	ds = pop();
 }
 
-void DreamGenContext::loadtraveltext() {
-	STACK_CHECK;
-	dx = 2234;
-	standardload();
-	data.word(kTraveltext) = ax;
-}
-
-void DreamGenContext::loadtemptext() {
-	STACK_CHECK;
-	standardload();
-	data.word(kTextfile1) = ax;
-}
-
 void DreamGenContext::getridofreels() {
 	STACK_CHECK;
 	_cmp(data.byte(kRoomloaded), 0);

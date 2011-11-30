@@ -312,6 +312,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'folderexit',
 	'getlocation',
 	'setlocation',
+	'loadtemptext',
+	'loadtraveltext',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

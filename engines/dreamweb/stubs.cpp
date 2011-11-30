@@ -2311,8 +2311,7 @@ void DreamGenContext::loadfolder() {
 	loadintotemp2("DREAMWEB.G10");
 	loadintotemp3("DREAMWEB.G11");
 	loadtempcharset("DREAMWEB.C02");
-	dx = kFoldertext; // "DREAMWEB.T50"
-	loadtemptext();
+	loadtemptext("DREAMWEB.T50");
 }
 
 void DreamGenContext::showfolder() {
@@ -2496,6 +2495,18 @@ void DreamGenContext::folderhints() {
 
 void DreamGenContext::folderexit() {
 	showframe(tempGraphics2(), 296, 178, 6, 0);
+}
+
+void DreamGenContext::loadtraveltext() {
+	data.word(kTraveltext) = standardload("DREAMWEB.T81");
+}
+
+void DreamGenContext::loadtemptext() {
+	loadtemptext((const char *)cs.ptr(dx, 0));
+}
+
+void DreamGenContext::loadtemptext(const char *fileName) {
+	data.word(kTextfile1) = standardload(fileName);
 }
 
 } /*namespace dreamgen */

@@ -56,8 +56,6 @@ public:
 	static const uint16 addr_dontloadseg = 0xcb64;
 	static const uint16 addr_getridofall = 0xcb3c;
 	static const uint16 addr_getridofreels = 0xcb38;
-	static const uint16 addr_loadtemptext = 0xcb2c;
-	static const uint16 addr_loadtraveltext = 0xcb14;
 	static const uint16 addr_randomnum2 = 0xcb08;
 	static const uint16 addr_randomnum1 = 0xcb04;
 	static const uint16 addr_readkey = 0xcafc;
@@ -1126,7 +1124,6 @@ public:
 	void bothchannels();
 	void usewire();
 	void getnamepos();
-	void loadtemptext();
 	void femalefan();
 	void identifyob();
 	void trysoundalloc();
@@ -1159,7 +1156,7 @@ public:
 	void showslots();
 	void openfilefromc();
 	void gettime();
-	void loadtraveltext();
+	void candles1();
 	void fadedos();
 	void drawfloor();
 	void loadkeypad();
@@ -1243,7 +1240,6 @@ public:
 	void buttontwo();
 	void fadescreendownhalf();
 	void useplate();
-	void candles1();
 	void lookininterface();
 	void manasleep();
 	void hotelbell();
@@ -1354,7 +1350,7 @@ public:
 	void interviewer();
 	void purgeanitem();
 	void madman();
-	void chewy();
+	void enablesoundint();
 	void madmanstelly();
 	void constant();
 	void purgealocation();
@@ -1382,7 +1378,7 @@ public:
 	void wheelsound();
 	void playguitar();
 	void searchforsame();
-	void enablesoundint();
+	void chewy();
 	void getback1();
 	void fadefromwhite();
 	void usewindow();
