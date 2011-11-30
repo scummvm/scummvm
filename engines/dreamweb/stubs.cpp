@@ -2513,11 +2513,7 @@ void DreamGenContext::drawfloor() {
 	eraseoldobs();
 	drawflags();
 	calcmapad();
-	push(es);
-	push(bx);
 	doblocks();
-	bx = pop();
-	es = pop();
 	showallobs();
 	showallfree();
 	showallex();

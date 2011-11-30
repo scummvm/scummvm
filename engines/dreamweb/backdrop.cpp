@@ -27,12 +27,9 @@ namespace DreamGen {
 void DreamGenContext::doblocks() {
 	uint16 dstOffset = data.word(kMapady) * 320 + data.word(kMapadx);
 	uint16 mapOffset = kMap + data.byte(kMapy) * kMapwidth + data.byte(kMapx);
-	ds = data.word(kMapdata);
-	const uint8 *mapData = ds.ptr(mapOffset, 0);
-	ds = data.word(kBackdrop);
-	const uint8 *blocks = ds.ptr(kBlocks, 0);
-	es = data.word(kWorkspace);
-	uint8 *dstBuffer = es.ptr(dstOffset, 0);
+	const uint8 *mapData = segRef(data.word(kMapdata)).ptr(mapOffset, 0);
+	const uint8 *blocks = segRef(data.word(kBackdrop)).ptr(kBlocks, 0);
+	uint8 *dstBuffer = workspace() + dstOffset;
 
 	for (size_t i = 0; i < 10; ++i) {
 		for (size_t j = 0; j < 11; ++j) {
