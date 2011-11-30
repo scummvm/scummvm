@@ -340,7 +340,6 @@ public:
 	static const uint16 addr_talk = 0xc480;
 	static const uint16 addr_getback1 = 0xc47c;
 	static const uint16 addr_redrawmainscrn = 0xc478;
-	static const uint16 addr_drawfloor = 0xc428;
 	static const uint16 addr_deleteextext = 0xc420;
 	static const uint16 addr_deleteexframe = 0xc41c;
 	static const uint16 addr_deleteexobject = 0xc418;
@@ -1155,7 +1154,7 @@ public:
 	void gettime();
 	void candles1();
 	void fadedos();
-	void drawfloor();
+	void runendseq();
 	void loadkeypad();
 	void findtext1();
 	void isryanholding();
@@ -1229,7 +1228,6 @@ public:
 	void talk();
 	void getridoftemp2();
 	void usebalcony();
-	void runendseq();
 	void decide();
 	void disablesoundint();
 	void priesttext();

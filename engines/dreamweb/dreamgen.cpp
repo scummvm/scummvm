@@ -4827,24 +4827,6 @@ beforethistext:
 		goto shuffletextads;
 }
 
-void DreamGenContext::drawfloor() {
-	STACK_CHECK;
-	push(es);
-	push(bx);
-	eraseoldobs();
-	drawflags();
-	calcmapad();
-	doblocks();
-	showallobs();
-	showallfree();
-	showallex();
-	paneltomap();
-	initrain();
-	data.byte(kNewobs) = 0;
-	bx = pop();
-	es = pop();
-}
-
 void DreamGenContext::redrawmainscrn() {
 	STACK_CHECK;
 	data.word(kTimecount) = 0;

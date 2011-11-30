@@ -2509,5 +2509,22 @@ void DreamGenContext::loadtemptext(const char *fileName) {
 	data.word(kTextfile1) = standardload(fileName);
 }
 
+void DreamGenContext::drawfloor() {
+	eraseoldobs();
+	drawflags();
+	calcmapad();
+	push(es);
+	push(bx);
+	doblocks();
+	bx = pop();
+	es = pop();
+	showallobs();
+	showallfree();
+	showallex();
+	paneltomap();
+	initrain();
+	data.byte(kNewobs) = 0;
+}
+
 } /*namespace dreamgen */
 
