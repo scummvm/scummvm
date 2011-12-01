@@ -63,6 +63,11 @@ void Animation::play(RepeatMode repeatMode) {
 	if (_repeatMode != Looping)
 		_time = -1;
 	_paused = false;
+	// Reset the fading, so that a fading out a chore and playing another one with an animation in common
+	// results in the animation being actually played. (You can check that with Olivia by the car in set me,
+	// when jumping with j+ts; me.olivia_search_idles() in me.lua)
+	if (_fadeMode == FadeOut)
+		_fadeMode = None;
 	activate();
 }
 
