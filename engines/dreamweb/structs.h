@@ -167,8 +167,8 @@ struct ReelRoutine {
 	uint8 b4;
 	uint16 reelPointer() const { return READ_LE_UINT16(&b3); }
 	void setReelPointer(uint16 v) { WRITE_LE_UINT16(&b3, v); }
-	uint8 b5;
-	uint8 b6;
+	uint8 period;
+	uint8 counter;
 	uint8 b7;
 };
 
