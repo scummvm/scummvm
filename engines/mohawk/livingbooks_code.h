@@ -257,6 +257,7 @@ public:
 	void cmdMakePoint(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);
 	void cmdBottomRight(const Common::Array<LBValue> &params);
+	void cmdMousePos(const Common::Array<LBValue> &params);
 	void cmdTop(const Common::Array<LBValue> &params);
 	void cmdLeft(const Common::Array<LBValue> &params);
 	void cmdBottom(const Common::Array<LBValue> &params);

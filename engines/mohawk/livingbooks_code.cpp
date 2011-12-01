@@ -24,6 +24,7 @@
 #include "mohawk/livingbooks_lbx.h"
 #include "mohawk/resource.h"
 
+#include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -751,7 +752,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "makePt", &LBCode::cmdMakePoint }, // also "makePair"
 	{ "topLeft", &LBCode::cmdTopLeft },
 	{ "bottomRight", &LBCode::cmdBottomRight },
-	{ "mousePos", 0 },
+	{ "mousePos", &LBCode::cmdMousePos },
 	{ "top", &LBCode::cmdTop },
 	{ "left", &LBCode::cmdLeft },
 	{ "bottom", &LBCode::cmdBottom },
@@ -1004,6 +1005,14 @@ void LBCode::cmdBottomRight(const Common::Array<LBValue> &params) {
 
 	Common::Rect rect = getRectFromParams(params);
 	_stack.push(Common::Point(rect.bottom, rect.right));
+}
+
+void LBCode::cmdMousePos(const Common::Array<LBValue> &params) {
+	if (params.size() != 0)
+		error("too many parameters (%d) to mousePos", params.size());
+
+	Common::Point pt = _vm->_system->getEventManager()->getMousePos();
+	_stack.push(pt);
 }
 
 void LBCode::cmdTop(const Common::Array<LBValue> &params) {
