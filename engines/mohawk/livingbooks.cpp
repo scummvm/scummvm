@@ -2958,6 +2958,7 @@ int LBItem::runScriptEntry(LBScriptEntry *entry) {
 				case kLBOpBreakExpression:
 					debug(2, "BreakExpression");
 					i = entry->subentries.size();
+					break;
 				case kLBOpJumpToExpression:
 					debug(2, "JumpToExpression got %d (on %d, of %d)", e, i, entry->subentries.size());
 					i = e - 1;
