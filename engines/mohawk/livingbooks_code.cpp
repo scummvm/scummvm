@@ -682,7 +682,7 @@ Common::Array<LBValue> LBCode::readParams() {
 	byte numParams = _data[_currOffset++];
 
 	if (!numParams) {
-		debugN("()\n");
+		debugN("()");
 		nextToken();
 		return params;
 	}
@@ -1486,6 +1486,8 @@ uint LBCode::parseCode(const Common::String &source) {
 			break;
 		// open bracket
 		case '(':
+			bool parameterless;
+			parameterless = false;
 			if (wasFunction) {
 				// function call parameters
 				wasFunction = false;
@@ -1501,6 +1503,7 @@ uint LBCode::parseCode(const Common::String &source) {
 						continue;
 					if (source[i] != ')')
 						break;
+					parameterless = true;
 					code[code.size() - 1] = 0;
 					break;
 				}
@@ -1508,14 +1511,20 @@ uint LBCode::parseCode(const Common::String &source) {
 				// brackets around expression
 				counterPositions.push_back(0);
 			}
-			code.push_back(kTokenOpenBracket);
+			if (!parameterless)
+				code.push_back(kTokenOpenBracket);
 			break;
 		// close bracket
 		case ')':
 			if (counterPositions.empty())
 				error("while parsing script '%s', encountered unmatched )", source.c_str());
+
+			// don't push a kTokenCloseBracket for a parameterless function call
+			uint counterPos2;
+			counterPos2 = counterPositions.back();
+			if (!counterPos2 || code[counterPos2])
+				code.push_back(kTokenCloseBracket);
 			counterPositions.pop_back();
-			code.push_back(kTokenCloseBracket);
 			break;
 		// comma (seperating function params)
 		case ',':
