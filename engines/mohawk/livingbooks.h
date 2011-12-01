@@ -410,6 +410,7 @@ public:
 	const Common::String &getName() { return _desc; }
 	const Common::Rect &getRect() { return _rect; }
 	uint16 getSoundPriority() { return _soundMode; }
+	bool isLoaded() { return _loaded; }
 	bool isAmbient() { return _isAmbient; }
 
 	Common::List<LBItem *>::iterator _iterator;

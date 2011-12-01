@@ -1246,7 +1246,7 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "isMuted", 0 },
 	{ "isPlaying", &LBCode::itemIsPlaying },
 	{ "isVisible", 0 },
-	{ "isLoaded", 0 },
+	{ "isLoaded", &LBCode::itemIsLoaded },
 	{ "isDragging", 0 },
 	{ "load", 0 },
 	{ "moveTo", &LBCode::itemMoveTo },
@@ -1282,6 +1282,17 @@ void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 	// TODO
 	warning("ignoring isPlaying");
 	_stack.push(0);
+}
+
+void LBCode::itemIsLoaded(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to isLoaded", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item || !item->isLoaded())
+		_stack.push(0);
+	else
+		_stack.push(1);
 }
 
 void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
