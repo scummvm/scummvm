@@ -378,4 +378,5 @@
 	bool checkspeed(ReelRoutine *routine);
 	void checkspeed();
 	void sparkydrip(ReelRoutine &routine);
+	void othersmoker(ReelRoutine &routine);
 

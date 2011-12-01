@@ -469,8 +469,6 @@ public:
 	static const uint16 addr_rockstar = 0xc058;
 	static const uint16 addr_soldier1 = 0xc054;
 	static const uint16 addr_interviewer = 0xc050;
-	static const uint16 addr_barwoman = 0xc04c;
-	static const uint16 addr_othersmoker = 0xc048;
 	static const uint16 addr_bartender = 0xc044;
 	static const uint16 addr_drinker = 0xc040;
 	static const uint16 addr_tattooman = 0xc03c;
@@ -1150,7 +1148,6 @@ public:
 	void intromonks2();
 	void advisor();
 	void additionaltext();
-	void othersmoker();
 	void dofade();
 	void useelevator5();
 	void useelevator4();
@@ -1477,7 +1474,6 @@ public:
 	void searchforfiles();
 	void monkspeaking();
 	void clearrest();
-	void barwoman();
 	void credits();
 	void madmanrun();
 	void randomnum1();

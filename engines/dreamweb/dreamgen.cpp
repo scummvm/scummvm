@@ -322,18 +322,6 @@ notgotgun:
 	addtopeoplelist();
 }
 
-void DreamGenContext::othersmoker() {
-	STACK_CHECK;
-	showgamereel();
-	addtopeoplelist();
-}
-
-void DreamGenContext::barwoman() {
-	STACK_CHECK;
-	showgamereel();
-	addtopeoplelist();
-}
-
 void DreamGenContext::interviewer() {
 	STACK_CHECK;
 	_cmp(data.word(kReeltowatch), 68);

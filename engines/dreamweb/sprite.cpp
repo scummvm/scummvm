@@ -578,7 +578,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::bossman, &DreamGenContext::interviewer,
 	&DreamGenContext::heavy, &DreamGenContext::manasleep2,
 	&DreamGenContext::mansatstill, &DreamGenContext::drinker,
-	&DreamGenContext::bartender, &DreamGenContext::othersmoker,
+	&DreamGenContext::bartender, NULL,
 	&DreamGenContext::tattooman, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallcandle, &DreamGenContext::security,
@@ -600,35 +600,35 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 };
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
-	NULL, &DreamGenContext::sparkydrip,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL, NULL,
-	NULL
+	/*&DreamGenContext::gamer*/NULL, &DreamGenContext::sparkydrip,
+	/*&DreamGenContext::eden*/NULL, /*&DreamGenContext::edeninbath*/NULL,
+	/*&DreamGenContext::sparky*/NULL, /*&DreamGenContext::smokebloke*/NULL,
+	/*&DreamGenContext::manasleep*/NULL, /*&DreamGenContext::drunk*/NULL,
+	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::malefan*/NULL,
+	/*&DreamGenContext::femalefan*/NULL, /*&DreamGenContext::louis*/NULL,
+	/*&DreamGenContext::louischair*/NULL, /*&DreamGenContext::soldier1*/NULL,
+	/*&DreamGenContext::bossman*/NULL, /*&DreamGenContext::interviewer*/NULL,
+	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manasleep2*/NULL,
+	/*&DreamGenContext::mansatstill*/NULL, /*&DreamGenContext::drinker*/NULL,
+	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::othersmoker,
+	/*&DreamGenContext::tattooman*/NULL, /*&DreamGenContext::attendant*/NULL,
+	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
+	/*&DreamGenContext::smallcandle*/NULL, /*&DreamGenContext::security*/NULL,
+	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolguard*/NULL,
+	/*&DreamGenContext::rockstar*/NULL, /*&DreamGenContext::businessman*/NULL,
+	/*&DreamGenContext::train*/NULL, /*&DreamGenContext::aide*/NULL,
+	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
+	/*&DreamGenContext::intromagic1*/NULL, /*&DreamGenContext::intromusic*/NULL,
+	/*&DreamGenContext::intromagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
+	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::intromagic3*/NULL,
+	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
+	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handclap*/NULL,
+	/*&DreamGenContext::monkandryan*/NULL, /*&DreamGenContext::endgameseq*/NULL,
+	/*&DreamGenContext::priest*/NULL, /*&DreamGenContext::madman*/NULL,
+	/*&DreamGenContext::madmanstelly*/NULL, /*&DreamGenContext::alleybarksound*/NULL,
+	/*&DreamGenContext::foghornsound*/NULL, /*&DreamGenContext::carparkdrip*/NULL,
+	/*&DreamGenContext::carparkdrip*/NULL, /*&DreamGenContext::carparkdrip*/NULL,
+	/*&DreamGenContext::carparkdrip*/NULL
 };
 
 void DreamGenContext::updatepeople() {
@@ -1080,6 +1080,11 @@ bool DreamGenContext::checkspeed(ReelRoutine *routine) {
 void DreamGenContext::sparkydrip(ReelRoutine &routine) {
 	if (checkspeed(&routine))
 		playchannel0(14, 0);
+}
+
+void DreamGenContext::othersmoker(ReelRoutine &routine) {
+	showgamereel(&routine);
+	addtopeoplelist(&routine);
 }
 
 } /*namespace dreamgen */
