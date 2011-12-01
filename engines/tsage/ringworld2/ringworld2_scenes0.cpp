@@ -1528,10 +1528,10 @@ bool Scene300::Miranda::startAction(CursorType action, Event &event) {
 	switch (action) {
 	case CURSOR_TALK:
 		if (R2_GLOBALS._player._characterIndex == 1) {
-			
+			warning("TODO: talk sequence");
 		} else {
 			scene->_sceneMode = 10;
-			R2_GLOBALS._events.setCursor(CURSOR_WALK); // TODO: Determine correct cursor
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 			if (!R2_GLOBALS.getFlag(44))
 				scene->_field412 = 174 + R2_GLOBALS._randomSource.getRandomNumber(2);
@@ -1782,7 +1782,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 				if (R2_GLOBALS.getFlag(55)) {
 					if (R2_GLOBALS.getFlag(57)) {
 						R2_GLOBALS.clearFlag(60);
-						R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Find correct cursor
+						R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 						_sceneMode = 16;
 						_stripManager.start(404, this);
 					} else {
@@ -1792,7 +1792,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 				} else {
 					if (R2_GLOBALS.getFlag(45)) {
 						R2_GLOBALS.clearFlag(60);
-						R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Find correct cursor
+						R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 						_sceneMode = 12;
 						_stripManager.start3(204, this, R2_GLOBALS._stripManager_lookupList);
 					} else {
@@ -1806,7 +1806,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS.setFlag(60);
 			R2_GLOBALS._player.setup(302, 3, 1);
 			R2_GLOBALS._player.setPosition(Common::Point(271, 150));
-			R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor #2
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 			if (R2_GLOBALS.getFlag(51)) {
 				_sceneMode = 13;
@@ -1830,7 +1830,7 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 			R2_GLOBALS._player.setup(302, 3, 1);
 			R2_GLOBALS._player.setPosition(Common::Point(271, 150));
 			_sceneMode = 17;
-			R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor #2
+			R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 			_stripManager.start(413, this);
 			break;
 
@@ -1966,7 +1966,7 @@ void Scene300::signal() {
 		R2_GLOBALS.setFlag(38);
 		R2_GLOBALS.setFlag(44);
 		R2_GLOBALS.setFlag(51);
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_sceneMode = 16;
 		_stripManager.start3(401, this, R2_GLOBALS._stripManager_lookupList);
 		break;
@@ -2021,7 +2021,7 @@ void Scene300::signal() {
 
 	case 308:
 		_sceneMode = 18;
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(418, this);
 		break;
 
@@ -2030,7 +2030,7 @@ void Scene300::signal() {
 		// Deliberate fall-through
 	case 309:
 		signal309();
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_sceneMode = 10;
 		_stripManager.start3(_field412, this, R2_GLOBALS._stripManager_lookupList);
 		break;
@@ -2039,7 +2039,7 @@ void Scene300::signal() {
 		_sceneMode = 14;
 		R2_GLOBALS._player._effect = 0;
 		_seeker.setAction(&_sequenceManager3, this, 314, &_seeker, &_doorway, NULL);
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(301, this);
 		break;
 
@@ -2057,18 +2057,18 @@ void Scene300::signal() {
 	case 316:
 		R2_GLOBALS._player._characterScene[2] = 500;
 		_seeker.remove();
-		R2_GLOBALS._player.enableControl(/* TODO: Cursor #3 */);
+		R2_GLOBALS._player.enableControl(CURSOR_CROSSHAIRS);
 		break;
 
 	case 317:
 		_sceneMode = 19;
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(419, this);
 		break;
 
 	case 318:
 		_sceneMode = 20;
-		R2_GLOBALS._events.setCursor(CURSOR_USE);	// TODO: Cursor 2
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(420, this);
 		break;
 
