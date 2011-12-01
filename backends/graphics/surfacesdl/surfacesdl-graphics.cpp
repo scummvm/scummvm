@@ -110,11 +110,15 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 
 #ifdef USE_OPENGL
 	_opengl = accel3d;
+	_antialiasing = 0;
 #endif
 	_fullscreen = fullscreen;
 
 #ifdef USE_OPENGL
 	if (_opengl) {
+		if (ConfMan.hasKey("antialiasing"))
+			_antialiasing = ConfMan.getInt("antialiasing");
+
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -122,15 +126,7 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-		if (ConfMan.hasKey("antialiasing") && ConfMan.getInt("antialiasing")) {
-			// Antialiasing works without setting MULTISAMPLEBUFFERS, but as SDL's official
-			// tests set both values, this seems to be the standard way to do it. It could
-			// just be that in current OpenGL implementations setting SDL_GL_MULTISAMPLESAMPLES
-			// implicitly sets SDL_GL_MULTISAMPLEBUFFERS as well.
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, ConfMan.getInt("antialiasing"));
-		}
+		setAntialiasing(true);
 
 		sdlflags = SDL_OPENGL;
 		bpp = 24;
@@ -147,12 +143,28 @@ byte *SurfaceSdlGraphicsManager::setupScreen(int screenW, int screenH, bool full
 	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
 
 #ifdef USE_OPENGL
+	// If 32-bit with antialiasing failed, try 32-bit without antialiasing
+	if (!_screen && _opengl && _antialiasing) {
+		warning("Couldn't create 32-bit visual with AA, trying 32-bit without AA");
+		setAntialiasing(false);
+		_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
+	}
+
+	// If 32-bit failed, try 16-bit
 	if (!_screen && _opengl) {
 		warning("Couldn't create 32-bit visual, trying 16-bit");
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+		setAntialiasing(true);
+		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+	}
+
+	// If 16-bit with antialiasing failed, try 16-bit without antialiasing
+	if (!_screen && _opengl && _antialiasing) {
+		warning("Couldn't create 16-bit visual with AA, trying 16-bit without AA");
+		setAntialiasing(false);
 		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
 	}
 #endif
@@ -521,5 +533,21 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	return false;
 }
+
+#ifdef USE_OPENGL
+void SurfaceSdlGraphicsManager::setAntialiasing(bool enable) {
+	// Antialiasing works without setting MULTISAMPLEBUFFERS, but as SDL's official
+	// tests set both values, this seems to be the standard way to do it. It could
+	// just be that in current OpenGL implementations setting SDL_GL_MULTISAMPLESAMPLES
+	// implicitly sets SDL_GL_MULTISAMPLEBUFFERS as well.
+	if (_antialiasing && enable) {
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _antialiasing);
+	} else {
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+	}
+}
+#endif
 
 #endif
