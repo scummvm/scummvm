@@ -569,7 +569,7 @@ void DreamGenContext::showrain() {
 
 static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
-	&DreamGenContext::eden, &DreamGenContext::edeninbath,
+	NULL, &DreamGenContext::edeninbath,
 	&DreamGenContext::sparky, &DreamGenContext::smokebloke,
 	&DreamGenContext::manasleep, &DreamGenContext::drunk,
 	&DreamGenContext::receptionist, &DreamGenContext::malefan,
@@ -601,7 +601,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkydrip,
-	/*&DreamGenContext::eden*/NULL, /*&DreamGenContext::edeninbath*/NULL,
+	&DreamGenContext::eden, /*&DreamGenContext::edeninbath*/NULL,
 	/*&DreamGenContext::sparky*/NULL, /*&DreamGenContext::smokebloke*/NULL,
 	/*&DreamGenContext::manasleep*/NULL, /*&DreamGenContext::drunk*/NULL,
 	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::malefan*/NULL,
@@ -1096,6 +1096,13 @@ void DreamGenContext::gamer(ReelRoutine &routine) {
 		routine.setReelPointer(v);
 	}
 
+	showgamereel(&routine);
+	addtopeoplelist(&routine);
+}
+
+void DreamGenContext::eden(ReelRoutine &routine) {
+	if (data.byte(kGeneraldead))
+		return;
 	showgamereel(&routine);
 	addtopeoplelist(&routine);
 }

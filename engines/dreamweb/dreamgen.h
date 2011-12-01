@@ -478,7 +478,6 @@ public:
 	static const uint16 addr_femalefan = 0xc028;
 	static const uint16 addr_malefan = 0xc024;
 	static const uint16 addr_edeninbath = 0xc020;
-	static const uint16 addr_eden = 0xc01c;
 	static const uint16 addr_manasleep = 0xc018;
 	static const uint16 addr_attendant = 0xc014;
 	static const uint16 addr_smokebloke = 0xc010;
@@ -1173,7 +1172,6 @@ public:
 	void fadedownmon();
 	void loadcart();
 	void bartender();
-	void eden();
 	void showdiary();
 	void outofopen();
 	void dircom();

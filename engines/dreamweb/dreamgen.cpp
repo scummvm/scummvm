@@ -170,15 +170,6 @@ void DreamGenContext::manasleep() {
 	addtopeoplelist();
 }
 
-void DreamGenContext::eden() {
-	STACK_CHECK;
-	_cmp(data.byte(kGeneraldead), 0);
-	if (!flags.z())
-		return /* (notinbed) */;
-	showgamereel();
-	addtopeoplelist();
-}
-
 void DreamGenContext::edeninbath() {
 	STACK_CHECK;
 	_cmp(data.byte(kGeneraldead), 0);
