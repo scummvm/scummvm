@@ -118,12 +118,12 @@ void MoviePlayer::init() {
 void MoviePlayer::deinit() {
 	_frameMutex.unlock();
 	g_system->getTimerManager()->removeTimerProc(&timerCallback);
-	
+
 	if (_videoDecoder)
 		_videoDecoder->close();
-	
+
 	_internalSurface = NULL;
-	
+
 	if (_externalSurface)
 		_externalSurface->free();
 
@@ -184,7 +184,7 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	int x = state->readLESint32();
 	int y = state->readLESint32();
 
-	if (!videoFinished) {
+	if (!videoFinished && !_fname.empty()) {
 		play(_fname.c_str(), videoLooping, x, y);
 	}
 	_frame = frame;
