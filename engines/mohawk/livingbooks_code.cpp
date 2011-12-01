@@ -101,8 +101,11 @@ double LBValue::toDouble() const {
 Common::Point LBValue::toPoint() const {
 	switch (type) {
 	case kLBValueString:
-		// FIXME
-		return Common::Point();
+		{
+		Common::Point ret;
+		sscanf(string.c_str(), "%hd , %hd", &ret.x, &ret.y);
+		return ret;
+		}
 	case kLBValueInteger:
 		return Common::Point(integer, integer);
 	case kLBValuePoint:
@@ -117,8 +120,11 @@ Common::Point LBValue::toPoint() const {
 Common::Rect LBValue::toRect() const {
 	switch (type) {
 	case kLBValueString:
-		// FIXME
-		return Common::Rect();
+		{
+		Common::Rect ret;
+		sscanf(string.c_str(), "%hd , %hd , %hd , %hd", &ret.left, &ret.top, &ret.right, &ret.bottom);
+		return ret;
+		}
 	case kLBValueInteger:
 		return Common::Rect(integer, integer, integer, integer);
 	case kLBValuePoint:
