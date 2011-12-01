@@ -679,24 +679,18 @@ void DreamGenContext::madmantext() {
 }
 
 void DreamGenContext::madman() {
+	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, 0);
 	data.word(kWatchingtime) = 2;
 	checkspeed();
 	if (flags.z()) {
-		ax = es.word(bx+3);
+		ax = routine->reelPointer();
 		if (ax >= 364) {
 			data.byte(kMandead) = 2;
-			showgamereel();
+			showgamereel(routine);
 			return;
 		}
 		if (ax == 10) {
-			push(es);
-			push(bx);
-			push(ax);
-			dx = kIntrotextname;
-			loadtemptext();
-			ax = pop();
-			bx = pop();
-			es = pop();
+			loadtemptext("DREAMWEB.T82");
 			data.byte(kCombatcount) = (uint8)-1;
 			data.byte(kSpeechcount) = 0;
 		}
@@ -733,10 +727,10 @@ void DreamGenContext::madman() {
 				}
 			}
 		}
-		es.word(bx+3) = ax;
+		routine->setReelPointer(ax);
 	}
-	showgamereel();
-	es.byte(bx+1) = data.byte(kMapx);
+	showgamereel(routine);
+	routine->mapX = data.byte(kMapx);
 	madmode();
 }
 
