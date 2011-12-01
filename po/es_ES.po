@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2011-10-19 13:42+0100\n"
-"PO-Revision-Date: 2011-10-23 21:53+0100\n"
+"PO-Revision-Date: 2011-11-30 19:16+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -682,7 +682,7 @@ msgstr "No usar música General MIDI"
 
 #: gui/options.cpp:810 gui/options.cpp:871
 msgid "Use first available device"
-msgstr "Utilizar el primer dispositivo disponible"
+msgstr "Usar el primer dispositivo disponible"
 
 #: gui/options.cpp:822
 msgid "SoundFont:"
@@ -894,7 +894,7 @@ msgstr "Idioma de la interfaz de ScummVM"
 
 #: gui/options.cpp:1295
 msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "Tienes que reiniciar ScummVM para que los cambios surjan efecto."
+msgstr "Tienes que reiniciar ScummVM para aplicar los cambios."
 
 #: gui/options.cpp:1308
 msgid "Select directory for savegames"
@@ -1241,8 +1241,8 @@ msgid ""
 "not work in future versions of ScummVM."
 msgstr ""
 "AVISO: El juego que vas a ejecutar aún no es totalmente compatible con "
-"ScummVM. Por lo tanto, puede que sea inestable, y que las partidas que "
-"guardes no funcionen en versiones futuras de ScummVM."
+"ScummVM. Por lo tanto, puede que sea inestable y que las partidas que "
+"guardes no funcionen en futuras versiones de ScummVM."
 
 #: engines/engine.cpp:436
 msgid "Start anyway"
@@ -2106,7 +2106,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:326
 msgid "ScummVM successfully converted all your savefiles."
-msgstr "ScummVM ha convertido todas las partidas guardadas correctamente."
+msgstr "ScummVM ha convertido correctamente todas las partidas guardadas."
 
 #: engines/parallaction/saveload.cpp:328
 msgid ""
@@ -2315,7 +2315,7 @@ msgstr "Modo Touchpad desactivado."
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:67
 msgid "Hide ScummVM"
-msgstr "Oculta ScummVM"
+msgstr "Ocultar ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:70
 msgid "Hide Others"
@@ -2760,7 +2760,7 @@ msgstr "Bajando el volumen"
 
 #: backends/updates/macosx/macosx-updates.mm:65
 msgid "Check for Updates..."
-msgstr "Comprobando las actualizaciones..."
+msgstr "Comprobar las actualizaciones..."
 
 #: backends/platform/bada/form.cpp:269
 msgid "Right Click Once"
