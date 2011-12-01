@@ -268,6 +268,7 @@ void EventsClass::setCursor(CursorType cursorType) {
 	case SHADECURSOR_UP:
 	case SHADECURSOR_DOWN:
 	case SHADECURSOR_HAND:
+		_currentCursor = cursorType;
 		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
 		break;
 	}
