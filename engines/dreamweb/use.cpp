@@ -35,90 +35,90 @@ struct UseListEntry {
 	const char *id;
 };
 
-void DreamGenContext::useroutine() {
+void DreamGenContext::useRoutine() {
 
 	static const UseListEntry kUseList[] = {
-		{ &DreamGenContext::usemon,            "NETW" },
-		{ &DreamGenContext::useelevator1,      "ELVA" },
-		{ &DreamGenContext::useelevator2,      "ELVB" },
-		{ &DreamGenContext::useelevator3,      "ELVC" },
-		{ &DreamGenContext::useelevator4,      "ELVE" },
-		{ &DreamGenContext::useelevator5,      "ELVF" },
-		{ &DreamGenContext::usechurchgate,     "CGAT" },
-		{ &DreamGenContext::usestereo,         "REMO" },
-		{ &DreamGenContext::usebuttona,        "BUTA" },
-		{ &DreamGenContext::usewinch,          "CBOX" },
-		{ &DreamGenContext::uselighter,        "LITE" },
-		{ &DreamGenContext::useplate,          "PLAT" },
-		{ &DreamGenContext::usecontrol,        "LIFT" },
-		{ &DreamGenContext::usewire,           "WIRE" },
-		{ &DreamGenContext::usehandle,         "HNDL" },
-		{ &DreamGenContext::usehatch,          "HACH" },
-		{ &DreamGenContext::useelvdoor,        "DOOR" },
-		{ &DreamGenContext::usecashcard,       "CSHR" },
-		{ &DreamGenContext::usegun,            "GUNA" },
-		{ &DreamGenContext::usecardreader1,    "CRAA" },
-		{ &DreamGenContext::usecardreader2,    "CRBB" },
-		{ &DreamGenContext::usecardreader3,    "CRCC" },
-		{ &DreamGenContext::sitdowninbar,      "SEAT" },
-		{ &DreamGenContext::usemenu,           "MENU" },
-		{ &DreamGenContext::usecooker,         "COOK" },
-		{ &DreamGenContext::callhotellift,     "ELCA" },
-		{ &DreamGenContext::calledenslift,     "EDCA" },
-		{ &DreamGenContext::calledensdlift,    "DDCA" },
-		{ &DreamGenContext::usealtar,          "ALTR" },
-		{ &DreamGenContext::openhoteldoor,     "LOKA" },
-		{ &DreamGenContext::openhoteldoor2,    "LOKB" },
-		{ &DreamGenContext::openlouis,         "ENTA" },
-		{ &DreamGenContext::openryan,          "ENTB" },
-		{ &DreamGenContext::openpoolboss,      "ENTE" },
-		{ &DreamGenContext::openyourneighbour, "ENTC" },
-		{ &DreamGenContext::openeden,          "ENTD" },
-		{ &DreamGenContext::opensarters,       "ENTH" },
-		{ &DreamGenContext::wearwatch,         "WWAT" },
-		{ &DreamGenContext::usepoolreader,     "POOL" },
-		{ &DreamGenContext::wearshades,        "WSHD" },
-		{ &DreamGenContext::grafittidoor,      "GRAF" },
-		{ &DreamGenContext::trapdoor,          "TRAP" },
-		{ &DreamGenContext::edenscdplayer,     "CDPE" },
-		{ &DreamGenContext::opentvdoor,        "DLOK" },
-		{ &DreamGenContext::usehole,           "HOLE" },
-		{ &DreamGenContext::usedryer,          "DRYR" },
-		{ &DreamGenContext::usechurchhole,     "HOLY" },
-		{ &DreamGenContext::usewall,           "WALL" },
-		{ &DreamGenContext::usediary,          "BOOK" },
-		{ &DreamGenContext::useaxe,            "AXED" },
-		{ &DreamGenContext::useshield,         "SHLD" },
-		{ &DreamGenContext::userailing,        "BCNY" },
-		{ &DreamGenContext::usecoveredbox,     "LIDC" },
-		{ &DreamGenContext::useclearbox,       "LIDU" },
-		{ &DreamGenContext::useopenbox,        "LIDO" },
-		{ &DreamGenContext::usepipe,           "PIPE" },
-		{ &DreamGenContext::usebalcony,        "BALC" },
-		{ &DreamGenContext::usewindow,         "WIND" },
-		{ &DreamGenContext::viewfolder,        "PAPR" },
-		{ &DreamGenContext::usetrainer,        "UWTA" },
-		{ &DreamGenContext::usetrainer,        "UWTB" },
-		{ &DreamGenContext::entersymbol,       "STAT" },
-		{ &DreamGenContext::opentomb,          "TLID" },
-		{ &DreamGenContext::useslab,           "SLAB" },
-		{ &DreamGenContext::usecart,           "CART" },
-		{ &DreamGenContext::usefullcart,       "FCAR" },
-		{ &DreamGenContext::slabdoora,         "SLBA" },
-		{ &DreamGenContext::slabdoorb,         "SLBB" },
-		{ &DreamGenContext::slabdoorc,         "SLBC" },
-		{ &DreamGenContext::slabdoord,         "SLBD" },
-		{ &DreamGenContext::slabdoore,         "SLBE" },
-		{ &DreamGenContext::slabdoorf,         "SLBF" },
-		{ &DreamGenContext::useplinth,         "PLIN" },
-		{ &DreamGenContext::useladder,         "LADD" },
-		{ &DreamGenContext::useladderb,        "LADB" },
+		{ &DreamGenContext::useMon,            "NETW" },
+		{ &DreamGenContext::useElevator1,      "ELVA" },
+		{ &DreamGenContext::useElevator2,      "ELVB" },
+		{ &DreamGenContext::useElevator3,      "ELVC" },
+		{ &DreamGenContext::useElevator4,      "ELVE" },
+		{ &DreamGenContext::useElevator5,      "ELVF" },
+		{ &DreamGenContext::useChurchGate,     "CGAT" },
+		{ &DreamGenContext::useStereo,         "REMO" },
+		{ &DreamGenContext::useButtonA,        "BUTA" },
+		{ &DreamGenContext::useWinch,          "CBOX" },
+		{ &DreamGenContext::useLighter,        "LITE" },
+		{ &DreamGenContext::usePlate,          "PLAT" },
+		{ &DreamGenContext::useControl,        "LIFT" },
+		{ &DreamGenContext::useWire,           "WIRE" },
+		{ &DreamGenContext::useHandle,         "HNDL" },
+		{ &DreamGenContext::useHatch,          "HACH" },
+		{ &DreamGenContext::useElvDoor,        "DOOR" },
+		{ &DreamGenContext::useCashCard,       "CSHR" },
+		{ &DreamGenContext::useGun,            "GUNA" },
+		{ &DreamGenContext::useCardReader1,    "CRAA" },
+		{ &DreamGenContext::useCardReader2,    "CRBB" },
+		{ &DreamGenContext::useCardReader3,    "CRCC" },
+		{ &DreamGenContext::sitDownInBar,      "SEAT" },
+		{ &DreamGenContext::useMenu,           "MENU" },
+		{ &DreamGenContext::useCooker,         "COOK" },
+		{ &DreamGenContext::callHotelLift,     "ELCA" },
+		{ &DreamGenContext::callEdensLift,     "EDCA" },
+		{ &DreamGenContext::callEdensDLift,    "DDCA" },
+		{ &DreamGenContext::useAltar,          "ALTR" },
+		{ &DreamGenContext::openHotelDoor,     "LOKA" },
+		{ &DreamGenContext::openHotelDoor2,    "LOKB" },
+		{ &DreamGenContext::openLouis,         "ENTA" },
+		{ &DreamGenContext::openRyan,          "ENTB" },
+		{ &DreamGenContext::openPoolBoss,      "ENTE" },
+		{ &DreamGenContext::openYourNeighbour, "ENTC" },
+		{ &DreamGenContext::openEden,          "ENTD" },
+		{ &DreamGenContext::openSarters,       "ENTH" },
+		{ &DreamGenContext::wearWatch,         "WWAT" },
+		{ &DreamGenContext::usePoolReader,     "POOL" },
+		{ &DreamGenContext::wearShades,        "WSHD" },
+		{ &DreamGenContext::grafittiDoor,      "GRAF" },
+		{ &DreamGenContext::trapDoor,          "TRAP" },
+		{ &DreamGenContext::edensCDPlayer,     "CDPE" },
+		{ &DreamGenContext::openTVDoor,        "DLOK" },
+		{ &DreamGenContext::useHole,           "HOLE" },
+		{ &DreamGenContext::useDryer,          "DRYR" },
+		{ &DreamGenContext::useChurchHole,     "HOLY" },
+		{ &DreamGenContext::useWall,           "WALL" },
+		{ &DreamGenContext::useDiary,          "BOOK" },
+		{ &DreamGenContext::useAxe,            "AXED" },
+		{ &DreamGenContext::useShield,         "SHLD" },
+		{ &DreamGenContext::useRailing,        "BCNY" },
+		{ &DreamGenContext::useCoveredBox,     "LIDC" },
+		{ &DreamGenContext::useClearBox,       "LIDU" },
+		{ &DreamGenContext::useOpenBox,        "LIDO" },
+		{ &DreamGenContext::usePipe,           "PIPE" },
+		{ &DreamGenContext::useBalcony,        "BALC" },
+		{ &DreamGenContext::useWindow,         "WIND" },
+		{ &DreamGenContext::viewFolder,        "PAPR" },
+		{ &DreamGenContext::useTrainer,        "UWTA" },
+		{ &DreamGenContext::useTrainer,        "UWTB" },
+		{ &DreamGenContext::enterSymbol,       "STAT" },
+		{ &DreamGenContext::openTomb,          "TLID" },
+		{ &DreamGenContext::useSLab,           "SLAB" },
+		{ &DreamGenContext::useCart,           "CART" },
+		{ &DreamGenContext::useFullCart,       "FCAR" },
+		{ &DreamGenContext::sLabDoorA,         "SLBA" },
+		{ &DreamGenContext::sLabDoorB,         "SLBB" },
+		{ &DreamGenContext::sLabDoorC,         "SLBC" },
+		{ &DreamGenContext::sLabDoorD,         "SLBD" },
+		{ &DreamGenContext::sLabDoorE,         "SLBE" },
+		{ &DreamGenContext::sLabDoorF,         "SLBF" },
+		{ &DreamGenContext::usePlinth,         "PLIN" },
+		{ &DreamGenContext::useLadder,         "LADD" },
+		{ &DreamGenContext::useLadderB,        "LADB" },
 		{ &DreamGenContext::chewy,             "GUMA" },
-		{ &DreamGenContext::wheelsound,        "SQEE" },
-		{ &DreamGenContext::runtap,            "TAPP" },
-		{ &DreamGenContext::playguitar,        "GUIT" },
-		{ &DreamGenContext::hotelcontrol,      "CONT" },
-		{ &DreamGenContext::hotelbell,         "BELL" },
+		{ &DreamGenContext::wheelSound,        "SQEE" },
+		{ &DreamGenContext::runTap,            "TAPP" },
+		{ &DreamGenContext::playGuitar,        "GUIT" },
+		{ &DreamGenContext::hotelControl,      "CONT" },
+		{ &DreamGenContext::hotelBell,         "BELL" },
 	};
 
 	if (data.byte(kReallocation) >= 50) {
@@ -127,7 +127,7 @@ void DreamGenContext::useroutine() {
 		data.byte(kPointerpower) = 0;
 	}
 
-	getanyad();
+	getAnyAd();
 	const uint8 *id = es.ptr(bx + 12, 4);
 
 	for (size_t i = 0; i < sizeof(kUseList)/sizeof(UseListEntry); ++i) {
@@ -138,89 +138,89 @@ void DreamGenContext::useroutine() {
 		}
 	}
 
-	delpointer();
-	uint8 *obText = getobtextstartCPP();
-	if (findnextcolon(&obText) != 0) {
-		if (findnextcolon(&obText) != 0) {
+	delPointer();
+	uint8 *obText = getObTextStartCPP();
+	if (findNextColon(&obText) != 0) {
+		if (findNextColon(&obText) != 0) {
 			if (*obText != 0) {
-				usetext(obText);
-				hangonp(400);
-				putbackobstuff();
+				useText(obText);
+				hangOnP(400);
+				putBackObStuff();
 				return;
 			}
 		}
 	}
 
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	printmessage(33, 100, 63, 241, true);
-	worktoscreenm();
-	hangonp(50);
-	putbackobstuff();
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	obIcons();
+	printMessage(33, 100, 63, 241, true);
+	workToScreenM();
+	hangOnP(50);
+	putBackObStuff();
 	data.byte(kCommandtype) = 255;
 }
 
-void DreamGenContext::usetext() {
-	usetext(es.ptr(si, 0));
+void DreamGenContext::useText() {
+	useText(es.ptr(si, 0));
 }
 
-void DreamGenContext::usetext(const uint8 *string) {
-	createpanel();
-	showpanel();
-	showman();
-	showexit();
-	obicons();
-	printdirect(string, 36, 104, 241, true);
-	worktoscreenm();
+void DreamGenContext::useText(const uint8 *string) {
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	obIcons();
+	printDirect(string, 36, 104, 241, true);
+	workToScreenM();
 }
 
-void DreamGenContext::showfirstuse() {
-	uint8 *obText = getobtextstartCPP();
-	findnextcolon(&obText);
-	findnextcolon(&obText);
-	usetext(obText);
-	hangonp(400);
+void DreamGenContext::showFirstUse() {
+	uint8 *obText = getObTextStartCPP();
+	findNextColon(&obText);
+	findNextColon(&obText);
+	useText(obText);
+	hangOnP(400);
 }
 
-void DreamGenContext::showseconduse() {
-	uint8 *obText = getobtextstartCPP();
-	findnextcolon(&obText);
-	findnextcolon(&obText);
-	findnextcolon(&obText);
-	usetext(obText);
-	hangonp(400);
+void DreamGenContext::showSecondUse() {
+	uint8 *obText = getObTextStartCPP();
+	findNextColon(&obText);
+	findNextColon(&obText);
+	findNextColon(&obText);
+	useText(obText);
+	hangOnP(400);
 }
 
-void DreamGenContext::viewfolder() {
+void DreamGenContext::viewFolder() {
 	data.byte(kManisoffscreen) = 1;
-	getridofall();
-	loadfolder();
+	getRidOfAll();
+	loadFolder();
 	data.byte(kFolderpage) = 0;
-	showfolder();
-	worktoscreenm();
+	showFolder();
+	workToScreenM();
 	data.byte(kGetback) = 0;
 	do {
 		if (quitRequested())
 			break;
-		delpointer();
-		readmouse();
-		showpointer();
-		vsync();
-		dumppointer();
-		dumptextline();
+		delPointer();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
 		checkFolderCoords();
 	} while (data.byte(kGetback) == 0);
 	data.byte(kManisoffscreen) = 0;
-	getridoftemp();
-	getridoftemp2();
-	getridoftemp3();
-	getridoftempcharset();
-	restoreall();
-	redrawmainscrn();
-	worktoscreenm();
+	getRidOfTemp();
+	getRidOfTemp2();
+	getRidOfTemp3();
+	getRidOfTempCharset();
+	restoreAll();
+	redrawMainScrn();
+	workToScreenM();
 }
 
 } /*namespace dreamgen */
