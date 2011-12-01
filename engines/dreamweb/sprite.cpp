@@ -24,14 +24,14 @@
 
 namespace DreamGen {
 
-Sprite *DreamGenContext::spritetable() {
+Sprite *DreamGenContext::spriteTable() {
 	Sprite *sprite = (Sprite *)segRef(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
 	return sprite;
 }
 
-void DreamGenContext::printsprites() {
+void DreamGenContext::printSprites() {
 	for (size_t priority = 0; priority < 7; ++priority) {
-		Sprite *sprites = spritetable();
+		Sprite *sprites = spriteTable();
 		for (size_t j = 0; j < 16; ++j) {
 			const Sprite &sprite = sprites[j];
 			if (sprite.updateCallback() == 0x0ffff)
@@ -40,12 +40,12 @@ void DreamGenContext::printsprites() {
 				continue;
 			if (sprite.hidden == 1)
 				continue;
-			printasprite(&sprite);
+			printASprite(&sprite);
 		}
 	}
 }
 
-void DreamGenContext::printasprite(const Sprite *sprite) {
+void DreamGenContext::printASprite(const Sprite *sprite) {
 	uint16 x, y;
 	if (sprite->y >= 220) {
 		y = data.word(kMapady) - (256 - sprite->y);
@@ -64,15 +64,15 @@ void DreamGenContext::printasprite(const Sprite *sprite) {
 		c = 8;
 	else
 		c = 0;
-	showframe((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
+	showFrame((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
 }
 
-void DreamGenContext::clearsprites() {
-	memset(spritetable(), 0xff, sizeof(Sprite) * 16);
+void DreamGenContext::clearSprites() {
+	memset(spriteTable(), 0xff, sizeof(Sprite) * 16);
 }
 
-Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
-	Sprite *sprite = spritetable();
+Sprite *DreamGenContext::makeSprite(uint8 x, uint8 y, uint16 updateCallback, uint16 frameData, uint16 somethingInDi) {
+	Sprite *sprite = spriteTable();
 	while (sprite->frameNumber != 0xff) { // NB: No boundchecking in the original code either
 		++sprite;
 	}
@@ -88,8 +88,8 @@ Sprite *DreamGenContext::makesprite(uint8 x, uint8 y, uint16 updateCallback, uin
 	return sprite;
 }
 
-void DreamGenContext::spriteupdate() {
-	Sprite *sprites = spritetable();
+void DreamGenContext::spriteUpdate() {
+	Sprite *sprites = spriteTable();
 	sprites[0].hidden = data.byte(kRyanon);
 
 	Sprite *sprite = sprites;
@@ -98,10 +98,10 @@ void DreamGenContext::spriteupdate() {
 		if (updateCallback != 0xffff) {
 			sprite->w24 = sprite->w2;
 			if (updateCallback == addr_mainman) // NB : Let's consider the callback as an enum while more code is not ported to C++
-				mainman(sprite);
+				mainMan(sprite);
 			else {
 				assert(updateCallback == addr_backobject);
-				backobject(sprite);
+				backObject(sprite);
 			}
 		}
 	
@@ -111,18 +111,18 @@ void DreamGenContext::spriteupdate() {
 	}
 }
 
-void DreamGenContext::initman() {
-	Sprite *sprite = makesprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, data.word(kMainsprites), 0);
+void DreamGenContext::initMan() {
+	Sprite *sprite = makeSprite(data.byte(kRyanx), data.byte(kRyany), addr_mainman, data.word(kMainsprites), 0);
 	sprite->priority = 4;
 	sprite->speed = 0;
 	sprite->walkFrame = 0;
 }
 
-void DreamGenContext::mainman() {
+void DreamGenContext::mainMan() {
 	assert(false);
 }
 
-void DreamGenContext::mainman(Sprite *sprite) {
+void DreamGenContext::mainMan(Sprite *sprite) {
 	push(es);
 	push(ds);
 
@@ -147,12 +147,12 @@ void DreamGenContext::mainman(Sprite *sprite) {
 	}
 	sprite->speed = 0;
 	if (data.byte(kTurntoface) != data.byte(kFacing)) {
-		aboutturn(sprite);
+		aboutTurn(sprite);
 	} else {
 		if ((data.byte(kTurndirection) != 0) && (data.byte(kLinepointer) == 254)) {
 			data.byte(kReasseschanges) = 1;
 			if (data.byte(kFacing) == data.byte(kLeavedirection))
-				checkforexit();
+				checkForExit();
 		}
 		data.byte(kTurndirection) = 0;
 		if (data.byte(kLinepointer) == 254) {
@@ -172,7 +172,7 @@ void DreamGenContext::mainman(Sprite *sprite) {
 				if (data.byte(kTurntoface) == data.byte(kFacing)) {
 					data.byte(kReasseschanges) = 1;
 					if (data.byte(kFacing) == data.byte(kLeavedirection))
-						checkforexit();
+						checkForExit();
 				}
 			}
 		}
@@ -204,18 +204,18 @@ void DreamGenContext::walking(Sprite *sprite) {
 	data.byte(kLinepointer) = 254;
 	data.byte(kManspath) = data.byte(kDestination);
 	if (data.byte(kDestination) == data.byte(kFinaldest)) {
-		facerightway();
+		faceRightWay();
 		return;
 	}
 	data.byte(kDestination) = data.byte(kFinaldest);
 	push(es);
 	push(bx);
-	autosetwalk();
+	autoSetWalk();
 	bx = pop();
 	es = pop();
 }
 
-void DreamGenContext::aboutturn(Sprite *sprite) {
+void DreamGenContext::aboutTurn(Sprite *sprite) {
 	bool incdir = true;
 
 	if (data.byte(kTurndirection) == 1)
@@ -249,11 +249,11 @@ void DreamGenContext::aboutturn(Sprite *sprite) {
 	}
 }
 
-void DreamGenContext::backobject() {
+void DreamGenContext::backObject() {
 	assert(false);
 }
 
-void DreamGenContext::backobject(Sprite *sprite) {
+void DreamGenContext::backObject(Sprite *sprite) {
 	SetObject *objData = (SetObject *)segRef(data.word(kSetdat)).ptr(sprite->objData(), 0);
 
 	if (sprite->delay != 0) {
@@ -263,13 +263,13 @@ void DreamGenContext::backobject(Sprite *sprite) {
 
 	sprite->delay = objData->delay;
 	if (objData->type == 6)
-		widedoor(sprite, objData);
+		wideDoor(sprite, objData);
 	else if (objData->type == 5)
 		random(sprite, objData);
 	else if (objData->type == 4)
-		lockeddoorway(sprite, objData);
+		lockedDoorway(sprite, objData);
 	else if (objData->type == 3)
-		liftsprite(sprite, objData);
+		liftSprite(sprite, objData);
 	else if (objData->type == 2)
 		doorway(sprite, objData);
 	else if (objData->type == 1)
@@ -289,23 +289,22 @@ void DreamGenContext::constant(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
-	randomnum1();
+	randomNum1();
 	uint16 r = ax;
 	sprite->frameNumber = objData->frames[r&7];
 }
 
 void DreamGenContext::doorway(Sprite *sprite, SetObject *objData) {
 	Common::Rect check(-24, -30, 10, 10);
-	dodoor(sprite, objData, check);
+	doDoor(sprite, objData, check);
 }
 
-void DreamGenContext::widedoor(Sprite *sprite, SetObject *objData) {
+void DreamGenContext::wideDoor(Sprite *sprite, SetObject *objData) {
 	Common::Rect check(-24, -30, 24, 24);
-	dodoor(sprite, objData, check);
+	doDoor(sprite, objData, check);
 }
 
-void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
-
+void DreamGenContext::doDoor(Sprite *sprite, SetObject *objData, Common::Rect check) {
 	int ryanx = data.byte(kRyanx);
 	int ryany = data.byte(kRyany);
 
@@ -326,7 +325,7 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect ch
 				soundIndex = 13;
 			else
 				soundIndex = 0;
-			playchannel1(soundIndex);
+			playChannel1(soundIndex);
 		}
 		if (objData->frames[sprite->animFrame] == 255)
 			--sprite->animFrame;
@@ -343,7 +342,7 @@ void DreamGenContext::dodoor(Sprite *sprite, SetObject *objData, Common::Rect ch
 				soundIndex = 13;
 			else
 				soundIndex = 1;
-			playchannel1(soundIndex);
+			playChannel1(soundIndex);
 		}
 		if (sprite->animFrame != 0)
 			--sprite->animFrame;
@@ -360,8 +359,7 @@ void DreamGenContext::steady(Sprite *sprite, SetObject *objData) {
 	sprite->frameNumber = frame;
 }
 
-void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
-
+void DreamGenContext::lockedDoorway(Sprite *sprite, SetObject *objData) {
 	int ryanx = data.byte(kRyanx);
 	int ryany = data.byte(kRyany);
 
@@ -375,11 +373,11 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 	if (openDoor) {
 
 		if (sprite->animFrame == 1) {
-			playchannel1(0);
+			playChannel1(0);
 		}
 
 		if (sprite->animFrame == 6)
-			turnpathon(data.byte(kDoorpath));
+			turnPathOn(data.byte(kDoorpath));
 
 		if (data.byte(kThroughdoor) == 1 && sprite->animFrame == 0)
 			sprite->animFrame = 6;
@@ -396,7 +394,7 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 		// shut door
 
 		if (sprite->animFrame == 5) {
-			playchannel1(1);
+			playChannel1(1);
 		}
 
 		if (sprite->animFrame != 0)
@@ -406,16 +404,16 @@ void DreamGenContext::lockeddoorway(Sprite *sprite, SetObject *objData) {
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 
 		if (sprite->animFrame == 0) {
-			turnpathoff(data.byte(kDoorpath));
+			turnPathOff(data.byte(kDoorpath));
 			data.byte(kLockstatus) = 1;
 		}
 	}
 }
 
-void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
+void DreamGenContext::liftSprite(Sprite *sprite, SetObject *objData) {
 	uint8 liftFlag = data.byte(kLiftflag);
 	if (liftFlag == 0) { //liftclosed
-		turnpathoff(data.byte(kLiftpath));
+		turnPathOff(data.byte(kLiftpath));
 
 		if (data.byte(kCounttoopen) != 0) {
 			_dec(data.byte(kCounttoopen));
@@ -426,7 +424,7 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
 	else if (liftFlag == 1) {  //liftopen
-		turnpathon(data.byte(kLiftpath));
+		turnPathOn(data.byte(kLiftpath));
 
 		if (data.byte(kCounttoclose) != 0) {
 			_dec(data.byte(kCounttoclose));
@@ -444,7 +442,7 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 		++sprite->animFrame;
 		if (sprite->animFrame == 1) {
 			al = 2;
-			liftnoise();
+			liftNoise();
 		}
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	} else { //closeLift
@@ -456,14 +454,14 @@ void DreamGenContext::liftsprite(Sprite *sprite, SetObject *objData) {
 		--sprite->animFrame;
 		if (sprite->animFrame == 11) {
 			al = 3;
-			liftnoise();
+			liftNoise();
 		}
 		sprite->frameNumber = objData->index = objData->frames[sprite->animFrame];
 	}
 }
 
-void DreamGenContext::facerightway() {
-	PathNode *paths = getroomspaths()->nodes;
+void DreamGenContext::faceRightWay() {
+	PathNode *paths = getRoomsPaths()->nodes;
 	uint8 dir = paths[data.byte(kManspath)].dir;
 	data.byte(kTurntoface) = dir;
 	data.byte(kLeavedirection) = dir;
@@ -473,7 +471,7 @@ void DreamGenContext::facerightway() {
 // The return value is a pointer to the start of the segment.
 // data.word(kCurrentframe) - data.word(kTakeoff) is the number of the frame
 // inside that segment
-Frame *DreamGenContext::findsource() {
+Frame *DreamGenContext::findSource() {
 	uint16 currentFrame = data.word(kCurrentframe);
 	if (currentFrame < 160) {
 		data.word(kTakeoff) = 0;
@@ -487,41 +485,41 @@ Frame *DreamGenContext::findsource() {
 	}
 }
 
-Reel *DreamGenContext::getreelstart() {
+Reel *DreamGenContext::getReelStart() {
 	Reel *reel = (Reel *)segRef(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
 
-void DreamGenContext::showreelframe(Reel *reel) {
+void DreamGenContext::showReelFrame(Reel *reel) {
 	uint16 x = reel->x + data.word(kMapadx);
 	uint16 y = reel->y + data.word(kMapady);
 	data.word(kCurrentframe) = reel->frame();
-	Frame *source = findsource();
+	Frame *source = findSource();
 	uint16 frame = data.word(kCurrentframe) - data.word(kTakeoff);
-	showframe(source, x, y, frame, 8);
+	showFrame(source, x, y, frame, 8);
 }
 
-void DreamGenContext::showgamereel() {
-	showgamereel((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+void DreamGenContext::showGameReel() {
+	showGameReel((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
 }
 
-void DreamGenContext::showgamereel(ReelRoutine *routine) {
-	uint16 reelpointer = routine->reelPointer();
-	if (reelpointer >= 512)
+void DreamGenContext::showGameReel(ReelRoutine *routine) {
+	uint16 reelPointer = routine->reelPointer();
+	if (reelPointer >= 512)
 		return;
-	data.word(kReelpointer) = reelpointer;
-	plotreel();
+	data.word(kReelpointer) = reelPointer;
+	plotReel();
 	routine->setReelPointer(data.word(kReelpointer));
 }
 
-const Frame *DreamGenContext::getreelframeax(uint16 frame) {
+const Frame *DreamGenContext::getReelFrameAX(uint16 frame) {
 	data.word(kCurrentframe) = frame;
-	Frame *source = findsource();
+	Frame *source = findSource();
 	uint16 offset = data.word(kCurrentframe) - data.word(kTakeoff);
 	return source + offset;
 }
 
-void DreamGenContext::showrain() {
+void DreamGenContext::showRain() {
 	Rain *rain = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
 
 	// Do nothing if there's no rain at all
@@ -564,74 +562,74 @@ void DreamGenContext::showrain() {
 		soundIndex = 4;
 	else
 		soundIndex = 7;
-	playchannel1(soundIndex);
+	playChannel1(soundIndex);
 }
 
 static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
-	NULL, &DreamGenContext::edeninbath,
-	NULL, &DreamGenContext::smokebloke,
-	&DreamGenContext::manasleep, &DreamGenContext::drunk,
-	&DreamGenContext::receptionist, &DreamGenContext::malefan,
-	&DreamGenContext::femalefan, &DreamGenContext::louis,
-	&DreamGenContext::louischair, &DreamGenContext::soldier1,
-	&DreamGenContext::bossman, &DreamGenContext::interviewer,
-	&DreamGenContext::heavy, &DreamGenContext::manasleep2,
-	&DreamGenContext::mansatstill, &DreamGenContext::drinker,
+	NULL, &DreamGenContext::edenInBath,
+	NULL, &DreamGenContext::smokeBloke,
+	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
+	&DreamGenContext::receptionist, &DreamGenContext::maleFan,
+	&DreamGenContext::femaleFan, &DreamGenContext::louis,
+	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
+	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
+	&DreamGenContext::heavy, &DreamGenContext::manAsleep2,
+	&DreamGenContext::manSatStill, &DreamGenContext::drinker,
 	&DreamGenContext::bartender, NULL,
-	&DreamGenContext::tattooman, &DreamGenContext::attendant,
+	&DreamGenContext::tattooMan, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
-	&DreamGenContext::smallcandle, &DreamGenContext::security,
-	&DreamGenContext::copper, &DreamGenContext::poolguard,
-	&DreamGenContext::rockstar, &DreamGenContext::businessman,
+	&DreamGenContext::smallCandle, &DreamGenContext::security,
+	&DreamGenContext::copper, &DreamGenContext::poolGuard,
+	&DreamGenContext::rockstar, &DreamGenContext::businessMan,
 	&DreamGenContext::train, &DreamGenContext::aide,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
-	&DreamGenContext::intromagic1, &DreamGenContext::intromusic,
-	&DreamGenContext::intromagic2, &DreamGenContext::candles2,
-	&DreamGenContext::gates, &DreamGenContext::intromagic3,
-	&DreamGenContext::intromonks1, &DreamGenContext::candles,
-	&DreamGenContext::intromonks2, &DreamGenContext::handclap,
-	&DreamGenContext::monkandryan, &DreamGenContext::endgameseq,
+	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
+	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
+	&DreamGenContext::gates, &DreamGenContext::introMagic3,
+	&DreamGenContext::introMonks1, &DreamGenContext::candles,
+	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
+	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, &DreamGenContext::madman,
-	&DreamGenContext::madmanstelly, &DreamGenContext::alleybarksound,
-	&DreamGenContext::foghornsound, &DreamGenContext::carparkdrip,
-	&DreamGenContext::carparkdrip, &DreamGenContext::carparkdrip,
-	&DreamGenContext::carparkdrip
+	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
+	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
+	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
+	&DreamGenContext::carParkDrip
 };
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
-	&DreamGenContext::gamer, &DreamGenContext::sparkydrip,
-	&DreamGenContext::eden, /*&DreamGenContext::edeninbath*/NULL,
-	&DreamGenContext::sparky, /*&DreamGenContext::smokebloke*/NULL,
-	/*&DreamGenContext::manasleep*/NULL, /*&DreamGenContext::drunk*/NULL,
-	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::malefan*/NULL,
-	/*&DreamGenContext::femalefan*/NULL, /*&DreamGenContext::louis*/NULL,
-	/*&DreamGenContext::louischair*/NULL, /*&DreamGenContext::soldier1*/NULL,
-	/*&DreamGenContext::bossman*/NULL, /*&DreamGenContext::interviewer*/NULL,
-	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manasleep2*/NULL,
-	/*&DreamGenContext::mansatstill*/NULL, /*&DreamGenContext::drinker*/NULL,
-	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::othersmoker,
-	/*&DreamGenContext::tattooman*/NULL, /*&DreamGenContext::attendant*/NULL,
+	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
+	&DreamGenContext::eden, /*&DreamGenContext::edenInBath*/NULL,
+	&DreamGenContext::sparky, /*&DreamGenContext::smokeBloke*/NULL,
+	/*&DreamGenContext::manAsleep*/NULL, /*&DreamGenContext::drunk*/NULL,
+	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::maleFan*/NULL,
+	/*&DreamGenContext::femaleFan*/NULL, /*&DreamGenContext::louis*/NULL,
+	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
+	/*&DreamGenContext::bossMan*/NULL, /*&DreamGenContext::interviewer*/NULL,
+	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manAsleep2*/NULL,
+	/*&DreamGenContext::manSatStill*/NULL, /*&DreamGenContext::drinker*/NULL,
+	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::otherSmoker,
+	/*&DreamGenContext::tattooMan*/NULL, /*&DreamGenContext::attendant*/NULL,
 	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
 	/*&DreamGenContext::smallcandle*/NULL, /*&DreamGenContext::security*/NULL,
-	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolguard*/NULL,
-	/*&DreamGenContext::rockstar*/NULL, /*&DreamGenContext::businessman*/NULL,
+	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
+	/*&DreamGenContext::rockstar*/NULL, /*&DreamGenContext::businessMan*/NULL,
 	/*&DreamGenContext::train*/NULL, /*&DreamGenContext::aide*/NULL,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
-	/*&DreamGenContext::intromagic1*/NULL, /*&DreamGenContext::intromusic*/NULL,
-	/*&DreamGenContext::intromagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
-	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::intromagic3*/NULL,
+	/*&DreamGenContext::introMagic1*/NULL, /*&DreamGenContext::introMusic*/NULL,
+	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
+	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::introMagic3*/NULL,
 	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
-	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handclap*/NULL,
-	/*&DreamGenContext::monkandryan*/NULL, /*&DreamGenContext::endgameseq*/NULL,
+	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
+	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, /*&DreamGenContext::madman*/NULL,
-	/*&DreamGenContext::madmanstelly*/NULL, /*&DreamGenContext::alleybarksound*/NULL,
-	/*&DreamGenContext::foghornsound*/NULL, /*&DreamGenContext::carparkdrip*/NULL,
-	/*&DreamGenContext::carparkdrip*/NULL, /*&DreamGenContext::carparkdrip*/NULL,
-	/*&DreamGenContext::carparkdrip*/NULL
+	/*&DreamGenContext::madmansTelly*/NULL, /*&DreamGenContext::alleyBarkSound*/NULL,
+	/*&DreamGenContext::foghornSound*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
+	/*&DreamGenContext::carParkDrip*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
+	/*&DreamGenContext::carParkDrip*/NULL
 };
 
-void DreamGenContext::updatepeople() {
+void DreamGenContext::updatePeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(segRef(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
@@ -658,7 +656,7 @@ void DreamGenContext::updatepeople() {
 	}
 }
 
-void DreamGenContext::madmantext() {
+void DreamGenContext::madmanText() {
 	if (isCD()) {
 		if (data.byte(kSpeechcount) >= 63)
 			return;
@@ -675,21 +673,21 @@ void DreamGenContext::madmantext() {
 			return;
 		al = data.byte(kCombatcount) / 4;
 	}
-	setuptimedtemp(47 + al, 82, 72, 80, 90, 1);
+	setupTimedTemp(47 + al, 82, 72, 80, 90, 1);
 }
 
 void DreamGenContext::madman() {
 	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, 0);
 	data.word(kWatchingtime) = 2;
-	if (checkspeed(routine)) {
+	if (checkSpeed(routine)) {
 		ax = routine->reelPointer();
 		if (ax >= 364) {
 			data.byte(kMandead) = 2;
-			showgamereel(routine);
+			showGameReel(routine);
 			return;
 		}
 		if (ax == 10) {
-			loadtemptext("DREAMWEB.T82");
+			loadTempText("DREAMWEB.T82");
 			data.byte(kCombatcount) = (uint8)-1;
 			data.byte(kSpeechcount) = 0;
 		}
@@ -700,7 +698,7 @@ void DreamGenContext::madman() {
 			data.byte(kWongame) = 1;
 			push(es);
 			push(bx);
-			getridoftemptext();
+			getRidOfTempText();
 			bx = pop();
 			es = pop();
 			return;
@@ -709,7 +707,7 @@ void DreamGenContext::madman() {
 			++data.byte(kCombatcount);
 			push(es);
 			push(bx);
-			madmantext();
+			madmanText();
 			bx = pop();
 			es = pop();
 			ax = 53;
@@ -728,12 +726,12 @@ void DreamGenContext::madman() {
 		}
 		routine->setReelPointer(ax);
 	}
-	showgamereel(routine);
+	showGameReel(routine);
 	routine->mapX = data.byte(kMapx);
-	madmode();
+	madMode();
 }
 
-void DreamGenContext::madmode() {
+void DreamGenContext::madMode() {
 	data.word(kWatchingtime) = 2;
 	data.byte(kPointermode) = 0;
 	if (data.byte(kCombatcount) < (isCD() ? 65 : 63))
@@ -743,7 +741,7 @@ void DreamGenContext::madmode() {
 	data.byte(kPointermode) = 2;
 }
 
-void DreamGenContext::movemap(uint8 param) {
+void DreamGenContext::moveMap(uint8 param) {
 	switch (param) {
 	case 32:
 		data.byte(kMapy) -= 20;
@@ -764,9 +762,9 @@ void DreamGenContext::movemap(uint8 param) {
 	data.byte(kNowinnewroom) = 1;
 }
 
-void DreamGenContext::checkone() {
+void DreamGenContext::checkOne() {
 	uint8 flag, flagEx, type, flagX, flagY;
-	checkone(cl, ch, &flag, &flagEx, &type, &flagX, &flagY);
+	checkOne(cl, ch, &flag, &flagEx, &type, &flagX, &flagY);
 
 	cl = flag;
 	ch = flagEx;
@@ -775,7 +773,7 @@ void DreamGenContext::checkone() {
 	al = type;
 }
 
-void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
+void DreamGenContext::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;
 	const uint8 *tileData = segRef(data.word(kBuffers)).ptr(kMapflags + (*flagY * 11 + *flagX) * 3, 3);
@@ -784,24 +782,24 @@ void DreamGenContext::checkone(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uin
 	*type = tileData[2];
 }
 
-void DreamGenContext::getblockofpixel() {
-	al = getblockofpixel(cl, ch);
+void DreamGenContext::getBlockOfPixel() {
+	al = getBlockOfPixel(cl, ch);
 }
 
-uint8 DreamGenContext::getblockofpixel(uint8 x, uint8 y) {
+uint8 DreamGenContext::getBlockOfPixel(uint8 x, uint8 y) {
 	uint8 flag, flagEx, type, flagX, flagY;
-	checkone(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
+	checkOne(x + data.word(kMapxstart), y + data.word(kMapystart), &flag, &flagEx, &type, &flagX, &flagY);
 	if (flag & 1)
 		return 0;
 	else
 		return type;
 }
 
-void DreamGenContext::addtopeoplelist() {
-	addtopeoplelist((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
+void DreamGenContext::addToPeopleList() {
+	addToPeopleList((ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine)));
 }
 
-void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
+void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
 	uint16 routinePointer = (const uint8 *)routine - cs.ptr(0, 0);
 
 	People *people = (People *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
@@ -811,10 +809,10 @@ void DreamGenContext::addtopeoplelist(ReelRoutine *routine) {
 	data.word(kListpos) += sizeof(People);
 }
 
-Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
+Rain *DreamGenContext::splitIntoLines(uint8 x, uint8 y, Rain *rain) {
 	do {
 		// Look for line start
-		while (!getblockofpixel(x, y)) {
+		while (!getBlockOfPixel(x, y)) {
 			--x;
 			++y;
 			if (x == 0 || y >= data.byte(kMapysize))
@@ -827,7 +825,7 @@ Rain *DreamGenContext::splitintolines(uint8 x, uint8 y, Rain *rain) {
 		uint8 length = 1;
 
 		// Look for line end
-		while (getblockofpixel(x, y)) {
+		while (getBlockOfPixel(x, y)) {
 			--x;
 			++y;
 			if (x == 0 || y >= data.byte(kMapysize))
@@ -882,7 +880,7 @@ static const RainLocation rainLocationList[] = {
 	{ 255,0,0,0 }
 };
 
-void DreamGenContext::initrain() {
+void DreamGenContext::initRain() {
 	const RainLocation *r = rainLocationList;
 	Rain *rainList = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
 	Rain *rain = rainList;
@@ -916,7 +914,7 @@ void DreamGenContext::initrain() {
 		if (x >= data.byte(kMapxsize))
 			break;
 
-		rain = splitintolines(x, 0, rain);
+		rain = splitIntoLines(x, 0, rain);
 	} while (true);
 
 	// start lines of rain from side of screen
@@ -931,13 +929,13 @@ void DreamGenContext::initrain() {
 		if (y >= data.byte(kMapysize))
 			break;
 
-		rain = splitintolines(data.byte(kMapxsize) - 1, y, rain);
+		rain = splitIntoLines(data.byte(kMapxsize) - 1, y, rain);
 	} while (true);
 
 	rain->x = 0xff;
 }
 
-void DreamGenContext::textforend() {
+void DreamGenContext::textForEnd() {
 	if (data.byte(kIntrocount) == 20)
 		al = 0;
 	else if (data.byte(kIntrocount) == (isCD() ? 50 : 65))
@@ -952,10 +950,10 @@ void DreamGenContext::textforend() {
 	cx = 60;
 	dx = 1;
 	ah = 83;
-	setuptimedtemp();
+	setupTimedTemp();
 }
 
-void DreamGenContext::textformonk() {
+void DreamGenContext::textForMonk() {
 	if (data.byte(kIntrocount) == 1) {
 		al = 19;
 		bl = 68;
@@ -1022,7 +1020,7 @@ void DreamGenContext::textformonk() {
 		bh = 154;
 		cx = 220;
 	} else if (data.byte(kIntrocount) == 53) {
-		fadescreendowns();
+		fadeScreenDowns();
 		if (isCD()) {
 			data.byte(kVolumeto) = 7;
 			data.byte(kVolumedirection) = 1;
@@ -1039,35 +1037,35 @@ void DreamGenContext::textformonk() {
 		return;
 	}
 
-	setuptimedtemp();
+	setupTimedTemp();
 }
 
-void DreamGenContext::reelsonscreen() {
+void DreamGenContext::reelsOnScreen() {
 	reconstruct();
-	updatepeople();
-	watchreel();
-	showrain();
-	usetimedtext();
+	updatePeople();
+	watchReel();
+	showRain();
+	useTimedText();
 }
 
 void DreamGenContext::reconstruct() {
 	if (data.byte(kHavedoneobs) == 0)
 		return;
 	data.byte(kNewobs) = 1;
-	drawfloor();
-	spriteupdate();
-	printsprites();
+	drawFloor();
+	spriteUpdate();
+	printSprites();
 	if ((data.byte(kForeignrelease) != 0) && (data.byte(kReallocation) == 20))
-		undertextline();
+		underTextLine();
 	data.byte(kHavedoneobs) = 0;
 }
 
-void DreamGenContext::checkspeed() {
+void DreamGenContext::checkSpeed() {
 	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine));
-	flags._z = checkspeed(routine);
+	flags._z = checkSpeed(routine);
 }
 
-bool DreamGenContext::checkspeed(ReelRoutine *routine) {
+bool DreamGenContext::checkSpeed(ReelRoutine *routine) {
 	if (data.byte(kLastweapon) != (uint8)-1)
 		return true;
 	++routine->counter;
@@ -1077,18 +1075,18 @@ bool DreamGenContext::checkspeed(ReelRoutine *routine) {
 	return true;
 }
 
-void DreamGenContext::sparkydrip(ReelRoutine &routine) {
-	if (checkspeed(&routine))
-		playchannel0(14, 0);
+void DreamGenContext::sparkyDrip(ReelRoutine &routine) {
+	if (checkSpeed(&routine))
+		playChannel0(14, 0);
 }
 
-void DreamGenContext::othersmoker(ReelRoutine &routine) {
-	showgamereel(&routine);
-	addtopeoplelist(&routine);
+void DreamGenContext::otherSmoker(ReelRoutine &routine) {
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 void DreamGenContext::gamer(ReelRoutine &routine) {
-	if (checkspeed(&routine)) {
+	if (checkSpeed(&routine)) {
 		uint8 v;
 		do {
 			v = 20 + engine->randomNumber() % 5;
@@ -1096,21 +1094,21 @@ void DreamGenContext::gamer(ReelRoutine &routine) {
 		routine.setReelPointer(v);
 	}
 
-	showgamereel(&routine);
-	addtopeoplelist(&routine);
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 void DreamGenContext::eden(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
-	showgamereel(&routine);
-	addtopeoplelist(&routine);
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 }
 
 void DreamGenContext::sparky(ReelRoutine &routine) {
 	if (data.word(kCard1money))
 		routine.b7 = 3;
-	if (checkspeed(&routine)) {
+	if (checkSpeed(&routine)) {
 		if (routine.reelPointer() != 34) {
 			if (engine->randomNumber() < 30)
 				routine.incReelPointer();
@@ -1123,8 +1121,8 @@ void DreamGenContext::sparky(ReelRoutine &routine) {
 				routine.setReelPointer(27);
 		}
 	}
-	showgamereel(&routine);
-	addtopeoplelist(&routine);
+	showGameReel(&routine);
+	addToPeopleList(&routine);
 	if (routine.b7 & 128)
 		data.byte(kTalkedtosparky) = 1;
 }

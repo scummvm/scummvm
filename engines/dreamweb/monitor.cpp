@@ -30,7 +30,7 @@ struct MonitorKeyEntry {
 	char  b2[24];
 };
 
-void DreamGenContext::usemon() {
+void DreamGenContext::useMon() {
 	data.byte(kLasttrigger) = 0;
 	memset(cs.ptr(kCurrentfile+1, 0), ' ', 12);
 	memset(cs.ptr(offset_operand1+1, 0), ' ', 12);
@@ -41,33 +41,33 @@ void DreamGenContext::usemon() {
 	monitorKeyEntries[2].b0 = 0;
 	monitorKeyEntries[3].b0 = 0;
 
-	createpanel();
-	showpanel();
-	showicon();
-	drawfloor();
-	getridofall();
-	loadintotemp("DREAMWEB.G03");
-	loadpersonal();
-	loadnews();
-	loadcart();
-	loadtempcharset("DREAMWEB.C01");
-	printoutermon();
-	initialmoncols();
-	printlogo();
-	worktoscreen();
-	turnonpower();
-	fadeupyellows();
-	fadeupmonfirst();
+	createPanel();
+	showPanel();
+	showIcon();
+	drawFloor();
+	getRidOfAll();
+	loadIntoTemp("DREAMWEB.G03");
+	loadPersonal();
+	loadNews();
+	loadCart();
+	loadTempCharset("DREAMWEB.C01");
+	printOuterMon();
+	initialMonCols();
+	printLogo();
+	workToScreen();
+	turnOnPower();
+	fadeupYellows();
+	fadeupMonFirst();
 	data.word(kMonadx) = 76;
 	data.word(kMonady) = 141;
-	monmessage(1);
-	hangoncurs(120);
-	monmessage(2);
-	randomaccess(60);
-	monmessage(3);
-	hangoncurs(100);
-	printlogo();
-	scrollmonitor();
+	monMessage(1);
+	hangOnCurs(120);
+	monMessage(2);
+	randomAccess(60);
+	monMessage(3);
+	hangOnCurs(100);
+	printLogo();
+	scrollMonitor();
 	data.word(kBufferin) = 0;
 	data.word(kBufferout) = 0;
 	do {
@@ -80,42 +80,42 @@ void DreamGenContext::usemon() {
 		di = pop();
 		data.word(kMonadx) = di;
 		data.word(kMonady) = bx;
-		execcommand();
+		execCommand();
 		if (quitRequested()) //TODO : Check why it crashes when put before the execcommand
 			break;
 	} while (al == 0);
-	getridoftemp();
-	getridoftempcharset();
-	deallocatemem(data.word(kTextfile1));
-	deallocatemem(data.word(kTextfile2));
-	deallocatemem(data.word(kTextfile3));
+	getRidOfTemp();
+	getRidOfTempCharset();
+	deallocateMem(data.word(kTextfile1));
+	deallocateMem(data.word(kTextfile2));
+	deallocateMem(data.word(kTextfile3));
 	data.byte(kGetback) = 1;
-	playchannel1(26);
+	playChannel1(26);
 	data.byte(kManisoffscreen) = 0;
-	restoreall();
-	redrawmainscrn();
-	worktoscreenm();
+	restoreAll();
+	redrawMainScrn();
+	workToScreenM();
 }
 
-void DreamGenContext::printlogo() {
-	showframe(tempGraphics(), 56, 32, 0, 0);
-	showcurrentfile();
+void DreamGenContext::printLogo() {
+	showFrame(tempGraphics(), 56, 32, 0, 0);
+	showCurrentFile();
 }
 
 void DreamGenContext::input() {
 	char *inputLine = (char *)cs.ptr(kInputline, 64);
 	memset(inputLine, 0, 64);
 	data.word(kCurpos) = 0;
-	printchar(tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
-	multidump(data.word(kMonadx), data.word(kMonady), 6, 8);
+	printChar(tempCharset(), data.word(kMonadx), data.word(kMonady), '>', 0, NULL, NULL);
+	multiDump(data.word(kMonadx), data.word(kMonady), 6, 8);
 	data.word(kMonadx) += 6;
 	data.word(kCurslocx) = data.word(kMonadx);
 	data.word(kCurslocy) = data.word(kMonady);
 	while (true) {
-		printcurs();
-		vsync();
-		delcurs();
-		readkey();
+		printCurs();
+		vSync();
+		delCurs();
+		readKey();
 		if (quitRequested())
 			return;
 		uint8 currentKey = data.byte(kCurrentkey);
@@ -125,7 +125,7 @@ void DreamGenContext::input() {
 			return;
 		if (currentKey == 8) {
 			if (data.word(kCurpos) > 0)
-				delchar();
+				delChar();
 			continue;
 		}
 		if (data.word(kCurpos) == 28)
@@ -133,14 +133,14 @@ void DreamGenContext::input() {
 		if ((currentKey == 32) && (data.word(kCurpos) == 0))
 			continue;
 		al = currentKey;
-		makecaps();
+		makeCaps();
 		currentKey = al;
 		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
-		multiget(segRef(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
+		multiGet(segRef(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
-		printchar(tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
+		printChar(tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
 		data.word(kMonadx) += charWidth;
 		++data.word(kCurpos);
@@ -148,7 +148,7 @@ void DreamGenContext::input() {
 	}
 }
 
-void DreamGenContext::printcurs() {
+void DreamGenContext::printCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);
 	uint16 height;
@@ -157,14 +157,14 @@ void DreamGenContext::printcurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiget(textUnder(), x, y, 6, height);
+	multiGet(textUnder(), x, y, 6, height);
 	++data.word(kMaintimer);
 	if ((data.word(kMaintimer) & 16) == 0)
-		showframe(tempCharset(), x, y, '/' - 32, 0);
-	multidump(x - 6, y, 12, height);
+		showFrame(tempCharset(), x, y, '/' - 32, 0);
+	multiDump(x - 6, y, 12, height);
 }
 
-void DreamGenContext::delcurs() {
+void DreamGenContext::delCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);
 	uint16 width = 6;
@@ -174,95 +174,95 @@ void DreamGenContext::delcurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiput(textUnder(), x, y, width, height);
-	multidump(x, y, width, height);
+	multiPut(textUnder(), x, y, width, height);
+	multiDump(x, y, width, height);
 }
 
-void DreamGenContext::hangoncurs() {
-	hangoncurs(cx);
+void DreamGenContext::hangOnCurs() {
+	hangOnCurs(cx);
 }
 
-void DreamGenContext::scrollmonitor() {
-	printlogo();
-	printundermon();
+void DreamGenContext::scrollMonitor() {
+	printLogo();
+	printUnderMon();
 	workToScreenCPP();
-	playchannel1(25);
+	playChannel1(25);
 }
 
-void DreamGenContext::showcurrentfile() {
+void DreamGenContext::showCurrentFile() {
 	uint16 x = 178; // TODO: Looks like this hardcoded constant in the asm doesn't match the frame
 	const char *currentFile = (const char *)cs.ptr(kCurrentfile+1, 0);
 	while (*currentFile) {
 		char c = *currentFile++;
 		c = engine->modifyChar(c);
-		printchar(tempCharset(), &x, 37, c, 0, NULL, NULL);
+		printChar(tempCharset(), &x, 37, c, 0, NULL, NULL);
 	}
 }
 
-void DreamGenContext::accesslighton() {
-	showframe(tempGraphics(), 74, 182, 8, 0);
-	multidump(74, 182, 12, 8);
+void DreamGenContext::accessLightOn() {
+	showFrame(tempGraphics(), 74, 182, 8, 0);
+	multiDump(74, 182, 12, 8);
 }
 
-void DreamGenContext::accesslightoff() {
-	showframe(tempGraphics(), 74, 182, 7, 0);
-	multidump(74, 182, 12, 8);
+void DreamGenContext::accessLightOff() {
+	showFrame(tempGraphics(), 74, 182, 7, 0);
+	multiDump(74, 182, 12, 8);
 }
 
-void DreamGenContext::randomaccess() {
-	randomaccess(cx);
+void DreamGenContext::randomAccess() {
+	randomAccess(cx);
 }
 
-void DreamGenContext::randomaccess(uint16 count) {
+void DreamGenContext::randomAccess(uint16 count) {
 	for (uint16 i = 0; i < count; ++i) {
-		vsync();
-		vsync();
+		vSync();
+		vSync();
 		uint16 v = engine->randomNumber() & 15;
 		if (v < 10)
-			accesslightoff();
+			accessLightOff();
 		else
-			accesslighton();
+			accessLightOn();
 	}
-	accesslightoff();
+	accessLightOff();
 }
 
-void DreamGenContext::monmessage() {
-	monmessage(al);
+void DreamGenContext::monMessage() {
+	monMessage(al);
 }
 
-void DreamGenContext::monmessage(uint8 index) {
+void DreamGenContext::monMessage(uint8 index) {
 	assert(index > 0);
 	const char *string = (const char *)segRef(data.word(kTextfile1)).ptr(kTextstart, 0);
 	for (uint8 i = 0; i < index; ++i) {
 		while (*string++ != '+') {
 		}
 	}
-	monprint(string);
+	monPrint(string);
 }
 
-void DreamGenContext::neterror() {
-	monmessage(5);
-	scrollmonitor();
+void DreamGenContext::netError() {
+	monMessage(5);
+	scrollMonitor();
 }
 
-void DreamGenContext::powerlighton() {
-	showframe(tempGraphics(), 257+4, 182, 6, 0);
-	multidump(257+4, 182, 12, 8);
+void DreamGenContext::powerLightOn() {
+	showFrame(tempGraphics(), 257+4, 182, 6, 0);
+	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamGenContext::powerlightoff() {
-	showframe(tempGraphics(), 257+4, 182, 5, 0);
-	multidump(257+4, 182, 12, 8);
+void DreamGenContext::powerLightOff() {
+	showFrame(tempGraphics(), 257+4, 182, 5, 0);
+	multiDump(257+4, 182, 12, 8);
 }
 
-void DreamGenContext::turnonpower() {
+void DreamGenContext::turnOnPower() {
 	for (size_t i = 0; i < 3; ++i) {
-		powerlighton();
-		hangon(30);
-		powerlightoff();
-		hangon(30);
+		powerLightOn();
+		hangOn(30);
+		powerLightOff();
+		hangOn(30);
 	}
-	powerlighton();
+	powerLightOn();
 }
 
 
