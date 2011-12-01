@@ -942,16 +942,6 @@ gamerfin:
 	addtopeoplelist();
 }
 
-void DreamGenContext::sparkydrip() {
-	STACK_CHECK;
-	checkspeed();
-	if (!flags.z())
-		return /* (cantdrip) */;
-	al = 14;
-	ah = 0;
-	playchannel0();
-}
-
 void DreamGenContext::carparkdrip() {
 	STACK_CHECK;
 	checkspeed();

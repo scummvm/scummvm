@@ -568,7 +568,7 @@ void DreamGenContext::showrain() {
 }
 
 static void (DreamGenContext::*reelCallbacks[57])() = {
-	&DreamGenContext::gamer, &DreamGenContext::sparkydrip,
+	&DreamGenContext::gamer, NULL,
 	&DreamGenContext::eden, &DreamGenContext::edeninbath,
 	&DreamGenContext::sparky, &DreamGenContext::smokebloke,
 	&DreamGenContext::manasleep, &DreamGenContext::drunk,
@@ -600,7 +600,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 };
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
-	NULL, NULL,
+	NULL, &DreamGenContext::sparkydrip,
 	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
@@ -1075,6 +1075,11 @@ bool DreamGenContext::checkspeed(ReelRoutine *routine) {
 		return false;
 	routine->b6 = 0;
 	return true;
+}
+
+void DreamGenContext::sparkydrip(ReelRoutine &routine) {
+	if (checkspeed(&routine))
+		playchannel0(14, 0);
 }
 
 } /*namespace dreamgen */

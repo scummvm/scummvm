@@ -457,7 +457,6 @@ public:
 	static const uint16 addr_candles1 = 0xc08c;
 	static const uint16 addr_keeper = 0xc088;
 	static const uint16 addr_carparkdrip = 0xc084;
-	static const uint16 addr_sparkydrip = 0xc080;
 	static const uint16 addr_gamer = 0xc07c;
 	static const uint16 addr_bossman = 0xc078;
 	static const uint16 addr_heavy = 0xc074;
@@ -1323,7 +1322,6 @@ public:
 	void enablesoundint();
 	void madmanstelly();
 	void purgealocation();
-	void sparkydrip();
 	void getridofpit();
 	void nothelderror();
 	void getsetad();

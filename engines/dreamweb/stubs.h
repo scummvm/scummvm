@@ -377,4 +377,5 @@
 	void worktoscreenm();
 	bool checkspeed(ReelRoutine *routine);
 	void checkspeed();
+	void sparkydrip(ReelRoutine &routine);
 
