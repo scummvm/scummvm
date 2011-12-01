@@ -358,7 +358,7 @@ void SceneHandlerExt::process(Event &event) {
 	}
 
 	SceneExt *scene = static_cast<SceneExt *>(R2_GLOBALS._sceneManager._scene);
-	if (scene) {
+	if (scene && R2_GLOBALS._player._uiEnabled) {
 		// Handle any scene areas that have been registered
 		SynchronizedList<SceneArea *>::iterator saIter;
 		for (saIter = scene->_sceneAreas.begin(); saIter != scene->_sceneAreas.end() && !event.handled; ++saIter) {
