@@ -1063,5 +1063,20 @@ void DreamGenContext::reconstruct() {
 	data.byte(kHavedoneobs) = 0;
 }
 
+void DreamGenContext::checkspeed() {
+	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine));
+	flags._z = checkspeed(routine);
+}
+
+bool DreamGenContext::checkspeed(ReelRoutine *routine) {
+	if (data.byte(kLastweapon) != (uint8)-1)
+		return true;
+	++routine->b6;
+	if (routine->b6 != routine->b5)
+		return false;
+	routine->b6 = 0;
+	return true;
+}
+
 } /*namespace dreamgen */
 

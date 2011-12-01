@@ -375,4 +375,6 @@
 	void drawfloor();
 	void allocatebuffers();
 	void worktoscreenm();
+	bool checkspeed(ReelRoutine *routine);
+	void checkspeed();
 

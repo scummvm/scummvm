@@ -428,7 +428,6 @@ public:
 	static const uint16 addr_adjustdown = 0xc14c;
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_mainman = 0xc138;
-	static const uint16 addr_checkspeed = 0xc110;
 	static const uint16 addr_train = 0xc104;
 	static const uint16 addr_sparky = 0xc100;
 	static const uint16 addr_copper = 0xc0fc;
@@ -1231,7 +1230,6 @@ public:
 	void setuppit();
 	void showpcx();
 	void showdecisions();
-	void checkspeed();
 	void showkeypad();
 	void removeobfrominv();
 	void usecoveredbox();

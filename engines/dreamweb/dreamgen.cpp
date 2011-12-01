@@ -1859,24 +1859,6 @@ gottrainframe:
 	showgamereel();
 }
 
-void DreamGenContext::checkspeed() {
-	STACK_CHECK;
-	_cmp(data.byte(kLastweapon), -1);
-	if (!flags.z())
-		goto forcenext;
-	_inc(es.byte(bx+6));
-	al = es.byte(bx+6);
-	_cmp(al, es.byte(bx+5));
-	if (!flags.z())
-		return /* (notspeed) */;
-	al = 0;
-	es.byte(bx+6) = al;
-	_cmp(al, al);
-	return;
-forcenext:
-	_cmp(al, al);
-}
-
 void DreamGenContext::checkforexit() {
 	STACK_CHECK;
 	cl = data.byte(kRyanx);
