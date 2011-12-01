@@ -570,7 +570,7 @@ void DreamGenContext::showrain() {
 static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, &DreamGenContext::edeninbath,
-	&DreamGenContext::sparky, &DreamGenContext::smokebloke,
+	NULL, &DreamGenContext::smokebloke,
 	&DreamGenContext::manasleep, &DreamGenContext::drunk,
 	&DreamGenContext::receptionist, &DreamGenContext::malefan,
 	&DreamGenContext::femalefan, &DreamGenContext::louis,
@@ -602,7 +602,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkydrip,
 	&DreamGenContext::eden, /*&DreamGenContext::edeninbath*/NULL,
-	/*&DreamGenContext::sparky*/NULL, /*&DreamGenContext::smokebloke*/NULL,
+	&DreamGenContext::sparky, /*&DreamGenContext::smokebloke*/NULL,
 	/*&DreamGenContext::manasleep*/NULL, /*&DreamGenContext::drunk*/NULL,
 	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::malefan*/NULL,
 	/*&DreamGenContext::femalefan*/NULL, /*&DreamGenContext::louis*/NULL,
@@ -1105,6 +1105,28 @@ void DreamGenContext::eden(ReelRoutine &routine) {
 		return;
 	showgamereel(&routine);
 	addtopeoplelist(&routine);
+}
+
+void DreamGenContext::sparky(ReelRoutine &routine) {
+	if (data.word(kCard1money))
+		routine.b7 = 3;
+	if (checkspeed(&routine)) {
+		if (routine.reelPointer() != 34) {
+			if (engine->randomNumber() < 30)
+				routine.incReelPointer();
+			else
+				routine.setReelPointer(27);
+		} else {
+			if (routine.reelPointer() != 48)
+				routine.incReelPointer();
+			else
+				routine.setReelPointer(27);
+		}
+	}
+	showgamereel(&routine);
+	addtopeoplelist(&routine);
+	if (routine.b7 & 128)
+		data.byte(kTalkedtosparky) = 1;
 }
 
 } /*namespace dreamgen */

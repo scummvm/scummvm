@@ -429,7 +429,6 @@ public:
 	static const uint16 addr_checkforexit = 0xc148;
 	static const uint16 addr_mainman = 0xc138;
 	static const uint16 addr_train = 0xc104;
-	static const uint16 addr_sparky = 0xc100;
 	static const uint16 addr_copper = 0xc0fc;
 	static const uint16 addr_advisor = 0xc0f8;
 	static const uint16 addr_drunk = 0xc0f4;
@@ -1309,7 +1308,6 @@ public:
 	void showmonk();
 	void diarykeyn();
 	void set16colpalette();
-	void sparky();
 	void interviewer();
 	void purgeanitem();
 	void madman();

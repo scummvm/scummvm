@@ -1742,44 +1742,6 @@ nocopper:
 	addtopeoplelist();
 }
 
-void DreamGenContext::sparky() {
-	STACK_CHECK;
-	_cmp(data.word(kCard1money), 0);
-	if (flags.z())
-		goto animsparky;
-	es.byte(bx+7) = 3;
-	goto animsparky;
-animsparky:
-	checkspeed();
-	if (!flags.z())
-		goto finishsparky;
-	_cmp(es.word(bx+3), 34);
-	if (!flags.z())
-		goto notsparky1;
-	randomnumber();
-	_cmp(al, 30);
-	if (flags.c())
-		goto dosparky;
-	es.word(bx+3) = 27;
-	goto finishsparky;
-notsparky1:
-	_cmp(es.word(bx+3), 48);
-	if (!flags.z())
-		goto dosparky;
-	es.word(bx+3) = 27;
-	goto finishsparky;
-dosparky:
-	_inc(es.word(bx+3));
-finishsparky:
-	showgamereel();
-	addtopeoplelist();
-	al = es.byte(bx+7);
-	_and(al, 128);
-	if (flags.z())
-		return /* (nottalkedsparky) */;
-	data.byte(kTalkedtosparky) = 1;
-}
-
 void DreamGenContext::train() {
 	STACK_CHECK;
 	return;

@@ -381,4 +381,5 @@
 	void othersmoker(ReelRoutine &routine);
 	void gamer(ReelRoutine &routine);
 	void eden(ReelRoutine &routine);
+	void sparky(ReelRoutine &routine);
 
