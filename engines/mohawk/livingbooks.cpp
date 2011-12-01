@@ -2583,10 +2583,7 @@ void LBItem::startPhase(uint phase) {
 
 	switch (phase) {
 	case 0xFFFE:
-		if (_timingMode == kLBAutoLoad) {
-			debug(2, "Phase load: time startup");
-			setNextTime(_periodMin, _periodMax);
-		}
+		runScript(kLBEventListLoad);
 		break;
 	case 0xFFFF:
 		runScript(kLBEventPhaseCreate);
@@ -2647,6 +2644,10 @@ void LBItem::load() {
 	_loaded = true;
 
 	// FIXME: events etc
+	if (_timingMode == kLBAutoLoad) {
+		debug(2, "Load: time startup");
+		setNextTime(_periodMin, _periodMax);
+	}
 }
 
 void LBItem::unload() {
