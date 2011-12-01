@@ -40,22 +40,22 @@ void DreamGenContext::dreamweb() {
 		break;
 	}
 
-	seecommandtail();
-	soundstartup();
-	setkeyboardint();
-	allocatebuffers();
-	setmouse();
-	fadedos();
-	gettime();
-	clearbuffers();
-	clearpalette();
-	set16colpalette();
-	readsetdata();
+	seeCommandTail();
+	soundStartup();
+	setKeyboardInt();
+	allocateBuffers();
+	setMouse();
+	fadeDOS();
+	getTime();
+	clearBuffers();
+	clearPalette();
+	set16ColPalette();
+	readSetData();
 	data.byte(kWongame) = 0;
 
 	dx = 1909;
-	loadsample();
-	setsoundoff();
+	loadSample();
+	setSoundOff();
 
 	bool firstLoop = true;
 
@@ -63,7 +63,7 @@ void DreamGenContext::dreamweb() {
 
 	while (true) {
 
-		scanfornames();
+		scanForNames();
 
 		bool startNewGame = true;
 
@@ -72,32 +72,32 @@ void DreamGenContext::dreamweb() {
 			// loading a savegame requested from launcher/command line
 
 			cls();
-			setmode();
-			loadpalfromiff();
-			clearpalette();
+			setMode();
+			loadPalFromIFF();
+			clearPalette();
 
 			ax = savegameId;
-			doload();
-			worktoscreen();
-			fadescreenup();
+			doLoad();
+			workToScreen();
+			fadeScreenUp();
 			startNewGame = false;
 
 		} else if (al == 0 && firstLoop) {
 
 			// no savegames found, and we're not restarting.
 
-			setmode();
-			loadpalfromiff();
+			setMode();
+			loadPalFromIFF();
 
 		} else {
-			// "dodecisions"
+			// "doDecisions"
 
 			// Savegames found, so ask if we should load one.
 			// (If we're restarting after game over, we also always show these
 			// options.)
 
 			cls();
-			setmode();
+			setMode();
 			decide();
 			if (quitRequested())
 				return; // exit game
@@ -110,7 +110,7 @@ void DreamGenContext::dreamweb() {
 		firstLoop = false;
 
 		if (startNewGame) {
-			// "playgame"
+			// "playGame"
 
 			titles();
 			if (quitRequested())
@@ -120,20 +120,20 @@ void DreamGenContext::dreamweb() {
 			if (quitRequested())
 				return; // exit game
 
-			clearchanges();
-			setmode();
-			loadpalfromiff();
+			clearChanges();
+			setMode();
+			loadPalFromIFF();
 			data.byte(kLocation) = 255;
 			data.byte(kRoomafterdream) = 1;
 			data.byte(kNewlocation) = 35;
 			data.byte(kVolume) = 7;
-			loadroom();
-			clearsprites();
-			initman();
-			entrytexts();
-			entryanims();
+			loadRoom();
+			clearSprites();
+			initMan();
+			entryTexts();
+			entryAnims();
 			data.byte(kDestpos) = 3;
-			initialinv();
+			initialInv();
 			data.byte(kLastflag) = 32;
 			startup1();
 			data.byte(kVolumeto) = 0;
@@ -148,18 +148,18 @@ void DreamGenContext::dreamweb() {
 			if (quitRequested())
 				return; // exit game
 
-			screenupdate();
+			screenUpdate();
 
 			if (quitRequested())
 				return; // exit game
 
 			if (data.byte(kWongame) != 0) {
 				// "endofgame"
-				clearbeforeload();
-				fadescreendowns();
-				hangon(200);
-				endgame();
-				quickquit2();
+				clearBeforeLoad();
+				fadeScreenDowns();
+				hangOn(200);
+				endGame();
+				quickQuit2();
 				return;
 			}
 
@@ -172,32 +172,32 @@ void DreamGenContext::dreamweb() {
 			}
 
 			if (data.word(kWatchingtime) == 0) {
-				// "notwatching"
+				// "notWatching"
 
 				if (data.byte(kMandead) == 4)
 					break;
 
 				if (data.byte(kNewlocation) != 255) {
-					// "loadnew"
-					clearbeforeload();
-					loadroom();
-					clearsprites();
-					initman();
-					entrytexts();
-					entryanims();
+					// "loadNew"
+					clearBeforeLoad();
+					loadRoom();
+					clearSprites();
+					initMan();
+					entryTexts();
+					entryAnims();
 					data.byte(kNewlocation) = 255;
 					startup();
 					data.byte(kCommandtype) = 255;
-					worktoscreenm();
+					workToScreenM();
 				}
 			}
 		}
 
-		// "gameover"
-		clearbeforeload();
-		showgun();
-		fadescreendown();
-		hangon(100);
+		// "gameOver"
+		clearBeforeLoad();
+		showGun();
+		fadeScreenDown();
+		hangOn(100);
 
 	}
 }
@@ -206,92 +206,92 @@ bool DreamGenContext::quitRequested() {
 	return data.byte(kQuitrequested);
 }
 
-void DreamGenContext::screenupdate() {
-	newplace();
-	mainscreen();
+void DreamGenContext::screenUpdate() {
+	newPlace();
+	mainScreen();
 	if (quitRequested())
 		return;
-	animpointer();
+	animPointer();
 
-	showpointer();
+	showPointer();
 	if ((data.word(kWatchingtime) == 0) && (data.byte(kNewlocation) != 0xff))
 		return;
-	vsync();
+	vSync();
 	uint16 mouseState = 0;
 	mouseState |= readMouseState();
-	dumppointer();
+	dumpPointer();
 
-	dumptextline();
-	delpointer();
-	autolook();
-	spriteupdate();
-	watchcount();
+	dumpTextLine();
+	delPointer();
+	autoLook();
+	spriteUpdate();
+	watchCount();
 	zoom();
 
-	showpointer();
+	showPointer();
 	if (data.byte(kWongame))
 		return;
-	vsync();
+	vSync();
 	mouseState |= readMouseState();
-	dumppointer();
+	dumpPointer();
 
-	dumpzoom();
-	delpointer();
-	deleverything();
-	printsprites();
-	reelsonscreen();
-	afternewroom();
+	dumpZoom();
+	delPointer();
+	delEverything();
+	printSprites();
+	reelsOnScreen();
+	afterNewRoom();
 
-	showpointer();
-	vsync();
+	showPointer();
+	vSync();
 	mouseState |= readMouseState();
-	dumppointer();
+	dumpPointer();
 
-	dumpmap();
-	dumptimedtext();
-	delpointer();
+	dumpMap();
+	dumpTimedText();
+	delPointer();
 
-	showpointer();
-	vsync();
+	showPointer();
+	vSync();
 	data.word(kOldbutton) = data.word(kMousebutton);
 	mouseState |= readMouseState();
 	data.word(kMousebutton) = mouseState;
-	dumppointer();
+	dumpPointer();
 
-	dumpwatch();
-	delpointer();
+	dumpWatch();
+	delPointer();
 }
 
 void DreamGenContext::startup() {
 	data.byte(kCurrentkey) = 0;
 	data.byte(kMainmode) = 0;
-	createpanel();
+	createPanel();
 	data.byte(kNewobs) = 1;
-	drawfloor();
-	showicon();
-	getunderzoom();
-	spriteupdate();
-	printsprites();
-	undertextline();
-	reelsonscreen();
+	drawFloor();
+	showIcon();
+	getUnderZoom();
+	spriteUpdate();
+	printSprites();
+	underTextLine();
+	reelsOnScreen();
 	atmospheres();
 }
 
 void DreamGenContext::startup1() {
-	clearpalette();
+	clearPalette();
 	data.byte(kThroughdoor) = 0;
 
 	startup();
 
-	worktoscreen();
-	fadescreenup();
+	workToScreen();
+	fadeScreenUp();
 }
 
-void DreamGenContext::switchryanon() {
+void DreamGenContext::switchRyanOn() {
 	data.byte(kRyanon) = 255;
 }
 
-void DreamGenContext::switchryanoff() {
+void DreamGenContext::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
@@ -304,65 +304,65 @@ uint8 *DreamGenContext::textUnder() {
 	return segRef(data.word(kBuffers)).ptr(kTextunder, 0);
 }
 
-uint16 DreamGenContext::standardload(const char *fileName) {
+uint16 DreamGenContext::standardLoad(const char *fileName) {
 	engine->openFile(fileName);
 	engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
 	uint16 sizeInBytes = cs.word(kFiledata);
-	uint16 result = allocatemem((sizeInBytes + 15) / 16);
+	uint16 result = allocateMem((sizeInBytes + 15) / 16);
 	engine->readFromFile(segRef(result).ptr(0, 0), sizeInBytes);
 	engine->closeFile();
 	return result;
 }
 
-void DreamGenContext::standardload() {
-	ax = standardload((const char *)cs.ptr(dx, 0));
+void DreamGenContext::standardLoad() {
+	ax = standardLoad((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadintotemp() {
-	loadintotemp((const char *)cs.ptr(dx, 0));
+void DreamGenContext::loadIntoTemp() {
+	loadIntoTemp((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadintotemp2() {
-	loadintotemp2((const char *)cs.ptr(dx, 0));
+void DreamGenContext::loadIntoTemp2() {
+	loadIntoTemp2((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadintotemp3() {
-	loadintotemp3((const char *)cs.ptr(dx, 0));
+void DreamGenContext::loadIntoTemp3() {
+	loadIntoTemp3((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadintotemp(const char *fileName) {
-	data.word(kTempgraphics) = standardload(fileName);
+void DreamGenContext::loadIntoTemp(const char *fileName) {
+	data.word(kTempgraphics) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadintotemp2(const char *fileName) {
-	data.word(kTempgraphics2) = standardload(fileName);
+void DreamGenContext::loadIntoTemp2(const char *fileName) {
+	data.word(kTempgraphics2) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadintotemp3(const char *fileName) {
-	data.word(kTempgraphics3) = standardload(fileName);
+void DreamGenContext::loadIntoTemp3(const char *fileName) {
+	data.word(kTempgraphics3) = standardLoad(fileName);
 }
 
-void DreamGenContext::loadtempcharset() {
-	loadtempcharset((const char *)cs.ptr(dx, 0));
+void DreamGenContext::loadTempCharset() {
+	loadTempCharset((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadtempcharset(const char *fileName) {
-	data.word(kTempcharset) = standardload(fileName);
+void DreamGenContext::loadTempCharset(const char *fileName) {
+	data.word(kTempcharset) = standardLoad(fileName);
 }
 
 Frame *DreamGenContext::tempCharset() {
 	return (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
 }
 
-void DreamGenContext::hangoncurs(uint16 frameCount) {
+void DreamGenContext::hangOnCurs(uint16 frameCount) {
 	for (uint16 i = 0; i < frameCount; ++i) {
-		printcurs();
-		vsync();
-		delcurs();
+		printCurs();
+		vSync();
+		delCurs();
 	}
 }
 
-void DreamGenContext::seecommandtail() {
+void DreamGenContext::seeCommandTail() {
 	data.word(kSoundbaseadd) = 0x220;
 	data.byte(kSoundint) = 5;
 	data.byte(kSounddmachannel) = 1;
@@ -370,29 +370,29 @@ void DreamGenContext::seecommandtail() {
 	data.word(kHowmuchalloc) = 0x9360;
 }
 
-void DreamGenContext::randomnumber() {
+void DreamGenContext::randomNumber() {
 	al = engine->randomNumber();
 }
 
-void DreamGenContext::quickquit() {
+void DreamGenContext::quickQuit() {
 	engine->quit();
 }
 
-void DreamGenContext::quickquit2() {
+void DreamGenContext::quickQuit2() {
 	engine->quit();
 }
 
-void DreamGenContext::keyboardread() {
+void DreamGenContext::keyboardRead() {
 	::error("keyboardread"); //this keyboard int handler, must never be called
 }
 
-void DreamGenContext::resetkeyboard() {
+void DreamGenContext::resetKeyboard() {
 }
 
-void DreamGenContext::setkeyboardint() {
+void DreamGenContext::setKeyboardInt() {
 }
 
-void DreamGenContext::readfromfile() {
+void DreamGenContext::readFromFile() {
 	uint16 dst_offset = dx;
 	uint16 size = cx;
 	debug(1, "readfromfile(%04x:%u, %u)", (uint16)ds, dst_offset, size);
@@ -400,38 +400,37 @@ void DreamGenContext::readfromfile() {
 	flags._c = false;
 }
 
-void DreamGenContext::closefile() {
+void DreamGenContext::closeFile() {
 	engine->closeFile();
 	data.byte(kHandle) = 0;
 }
 
-void DreamGenContext::openforsave(unsigned int slot) {
+void DreamGenContext::openForSave(unsigned int slot) {
 	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
-	debug(1, "openforsave(%s)", filename.c_str());
+	debug(1, "openForSave(%s)", filename.c_str());
 	engine->openSaveFileForWriting(filename);
 }
 
-void DreamGenContext::openforload(unsigned int slot) {
+void DreamGenContext::openForLoad(unsigned int slot) {
 	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
-	debug(1, "openforload(%s)", filename.c_str());
+	debug(1, "openForLoad(%s)", filename.c_str());
 	engine->openSaveFileForReading(filename);
 }
 
-
-void DreamGenContext::openfilenocheck() {
+void DreamGenContext::openFileNoCheck() {
 	const char *name = (const char *)ds.ptr(dx, 13);
-	debug(1, "checksavefile(%s)", name);
+	debug(1, "checkSaveFile(%s)", name);
 	bool ok = engine->openSaveFileForReading(name);
 	flags._c = !ok;
 }
 
-void DreamGenContext::openfilefromc() {
-	openfilenocheck();
+void DreamGenContext::openFileFromC() {
+	openFileNoCheck();
 }
 
-void DreamGenContext::openfile() {
+void DreamGenContext::openFile() {
 	Common::String name = getFilename(*this);
 	debug(1, "opening file: %s", name.c_str());
 	engine->openFile(name);
@@ -439,11 +438,11 @@ void DreamGenContext::openfile() {
 	flags._c = false;
 }
 
-void DreamGenContext::createfile() {
+void DreamGenContext::createFile() {
 	::error("createfile");
 }
 
-void DreamGenContext::dontloadseg() {
+void DreamGenContext::dontLoadSeg() {
 	ax = es.word(di);
 	_add(di, 2);
 	dx = ax;
@@ -454,7 +453,7 @@ void DreamGenContext::dontloadseg() {
 	flags._c = false;
 }
 
-void DreamGenContext::mousecall() {
+void DreamGenContext::mouseCall() {
 	uint16 x, y, state;
 	engine->mouseCall(&x, &y, &state);
 	cx = x;
@@ -462,7 +461,7 @@ void DreamGenContext::mousecall() {
 	bx = state;
 }
 
-void DreamGenContext::readmouse() {
+void DreamGenContext::readMouse() {
 	data.word(kOldbutton) = data.word(kMousebutton);
 	uint16 state = readMouseState();
 	data.word(kMousebutton) = state;
@@ -478,11 +477,11 @@ uint16 DreamGenContext::readMouseState() {
 	return state;
 }
 
-void DreamGenContext::setmouse() {
+void DreamGenContext::setMouse() {
 	data.word(kOldpointerx) = 0xffff;
 }
 
-void DreamGenContext::dumptextline() {
+void DreamGenContext::dumpTextLine() {
 	if (data.byte(kNewtextline) != 1)
 		return;
 	data.byte(kNewtextline) = 0;
@@ -490,39 +489,39 @@ void DreamGenContext::dumptextline() {
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
-	multidump(x, y, 228, 13);
+	multiDump(x, y, 228, 13);
 }
 
-void DreamGenContext::getundertimed() {
+void DreamGenContext::getUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
 	ds = data.word(kBuffers);
 	si = kUndertimedtext;
-	multiget(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiGet(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamGenContext::putundertimed() {
+void DreamGenContext::putUnderTimed() {
 	uint16 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease))
 		y -= 3;
 	ds = data.word(kBuffers);
 	si = kUndertimedtext;
-	multiput(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiPut(ds.ptr(si, 0), data.byte(kTimedx), y, 240, kUndertimedysize);
 }
 
-void DreamGenContext::usetimedtext() {
+void DreamGenContext::useTimedText() {
 	if (data.word(kTimecount) == 0)
 		return;
 	--data.word(kTimecount);
 	if (data.word(kTimecount) == 0) {
-		putundertimed();
+		putUnderTimed();
 		data.byte(kNeedtodumptimed) = 1;
 		return;
 	}
 
 	if (data.word(kTimecount) == data.word(kCounttotimed))
-		getundertimed();
+		getUnderTimed();
 	else if (data.word(kTimecount) > data.word(kCounttotimed))
 		return;
 
@@ -530,15 +529,15 @@ void DreamGenContext::usetimedtext() {
 	si = data.word(kTimedoffset);
 	const uint8 *string = es.ptr(si, 0);
 	uint16 y = data.byte(kTimedy);
-	printdirect(&string, data.byte(kTimedx), &y, 237, true);
+	printDirect(&string, data.byte(kTimedx), &y, 237, true);
 	data.byte(kNeedtodumptimed) = 1;
 }
 
-void DreamGenContext::setuptimedtemp() {
-	setuptimedtemp(al, ah, bl, bh, cx, dx);
+void DreamGenContext::setupTimedTemp() {
+	setupTimedTemp(al, ah, bl, bh, cx, dx);
 }
 
-void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
+void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
 #if 1 // if cd
 	if (voiceIndex != 0) {
 		push(ax);
@@ -550,9 +549,9 @@ void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 		cl = 'T';
 		ah = 0;
 		al = textIndex;
-		loadspeech();
+		loadSpeech();
 		if (data.byte(kSpeechloaded) == 1) {
-			playchannel1(50+12);
+			playChannel1(50+12);
 		}
 		dx = pop();
 		cx = pop();
@@ -576,21 +575,21 @@ void DreamGenContext::setuptimedtemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 	data.word(kTimedseg) = data.word(kTextfile1);
 	data.word(kTimedoffset) = kTextstart + segRef(data.word(kTextfile1)).word(textIndex * 2);
 	const uint8 *string = segRef(data.word(kTextfile1)).ptr(data.word(kTimedoffset), 0);
-	debug(1, "setuptimedtemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
+	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
 }
 
-void DreamGenContext::dumptimedtext() {
+void DreamGenContext::dumpTimedText() {
 	if (data.byte(kNeedtodumptimed) != 1)
 		return;
 	uint8 y = data.byte(kTimedy);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
 
-	multidump(data.byte(kTimedx), y, 240, kUndertimedysize);
+	multiDump(data.byte(kTimedx), y, 240, kUndertimedysize);
 	data.byte(kNeedtodumptimed) = 0;
 }
 
-void DreamGenContext::gettime() {
+void DreamGenContext::getTime() {
 	TimeDate t;
 	g_system->getTimeAndDate(t);
 	debug(1, "\tgettime: %02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
@@ -602,11 +601,11 @@ void DreamGenContext::gettime() {
 	data.byte(kHourcount) = ch;
 }
 
-void DreamGenContext::allocatemem() {
-	ax = allocatemem(bx);
+void DreamGenContext::allocateMem() {
+	ax = allocateMem(bx);
 }
 
-uint16 DreamGenContext::allocatemem(uint16 paragraphs) {
+uint16 DreamGenContext::allocateMem(uint16 paragraphs) {
 	uint size = (paragraphs + 2) * 16;
 	debug(1, "allocate mem, %u bytes", size);
 	flags._c = false;
@@ -616,11 +615,11 @@ uint16 DreamGenContext::allocatemem(uint16 paragraphs) {
 	return result;
 }
 
-void DreamGenContext::deallocatemem() {
-	deallocatemem((uint16)es);
+void DreamGenContext::deallocateMem() {
+	deallocateMem((uint16)es);
 }
 
-void DreamGenContext::deallocatemem(uint16 segment) {
+void DreamGenContext::deallocateMem(uint16 segment) {
 	debug(1, "deallocating segment %04x", segment);
 	deallocateSegment(segment);
 
@@ -641,48 +640,48 @@ void DreamGenContext::deallocatemem(uint16 segment) {
 	}
 }
 
-void DreamGenContext::soundstartup() {}
-void DreamGenContext::soundend() {}
-void DreamGenContext::interupttest() {}
-void DreamGenContext::disablesoundint() {}
-void DreamGenContext::enablesoundint() {}
-void DreamGenContext::checksoundint() {
+void DreamGenContext::soundStartup() {}
+void DreamGenContext::soundEnd() {}
+void DreamGenContext::interruptTest() {}
+void DreamGenContext::disableSoundInt() {}
+void DreamGenContext::enableSoundInt() {}
+void DreamGenContext::checkSoundInt() {
 	data.byte(kTestresult) = 1;
 }
 
-void DreamGenContext::setsoundoff() {
+void DreamGenContext::setSoundOff() {
 	warning("setsoundoff: STUB");
 }
 
-void DreamGenContext::loadsample() {
+void DreamGenContext::loadSample() {
 	engine->loadSounds(0, (const char *)data.ptr(dx, 13));
 }
 
-void DreamGenContext::loadsecondsample() {
+void DreamGenContext::loadSecondSample() {
 	uint8 ch0 = data.byte(kCh0playing);
 	if (ch0 >= 12 && ch0 != 255)
-		cancelch0();
+		cancelCh0();
 	uint8 ch1 = data.byte(kCh1playing);
 	if (ch1 >= 12)
-		cancelch1();
+		cancelCh1();
 	engine->loadSounds(1, (const char *)data.ptr(dx, 13));
 }
 
-void DreamGenContext::loadspeech() {
-	cancelch1();
+void DreamGenContext::loadSpeech() {
+	cancelCh1();
 	data.byte(kSpeechloaded) = 0;
-	createname();
+	createName();
 	const char *name = (const char *)data.ptr(di, 13);
 	//warning("name = %s", name);
 	if (engine->loadSpeech(name))
 		data.byte(kSpeechloaded) = 1;
 }
 
-void DreamGenContext::savefileread() {
+void DreamGenContext::saveFileRead() {
 	ax = engine->readFromSaveFile(ds.ptr(dx, cx), cx);
 }
 
-void DreamGenContext::loadseg() {
+void DreamGenContext::loadSeg() {
 	ax = es.word(di);
 	di += 2;
 
@@ -698,17 +697,16 @@ void DreamGenContext::error() {
 	::error("error");
 }
 
-void DreamGenContext::generalerror() {
-	::error("generalerror");
+void DreamGenContext::generalError() {
+	::error("generalError");
 }
 
-void DreamGenContext::dosreturn() {
-
+void DreamGenContext::DOSReturn() {
 	_cmp(data.byte(kCommandtype), 250);
 	if (!flags.z()) {
 		data.byte(kCommandtype) = 250;
 		al = 46;
-		commandonly();
+		commandOnly();
 	}
 
 	ax = data.word(kMousebutton);
@@ -720,7 +718,7 @@ void DreamGenContext::dosreturn() {
 	engine->quit();
 }
 
-void DreamGenContext::set16colpalette() {
+void DreamGenContext::set16ColPalette() {
 }
 
 void DreamGenContext::mode640x480() {
@@ -730,19 +728,19 @@ void DreamGenContext::mode640x480() {
 	initGraphics(640, 480, true);
 }
 
-void DreamGenContext::showgroup() {
+void DreamGenContext::showGroup() {
 	engine->setPalette();
 }
 
-void DreamGenContext::fadedos() {
+void DreamGenContext::fadeDOS() {
 	engine->fadeDos();
 }
 
-void DreamGenContext::eraseoldobs() {
+void DreamGenContext::eraseOldObs() {
 	if (data.byte(kNewobs) == 0)
 		return;
 
-	Sprite *sprites = spritetable();
+	Sprite *sprites = spriteTable();
 	for (size_t i = 0; i < 16; ++i) {
 		Sprite &sprite = sprites[i];
 		if (sprite.objData() != 0xffff) {
@@ -751,11 +749,11 @@ void DreamGenContext::eraseoldobs() {
 	}
 }
 
-void DreamGenContext::modifychar() {
+void DreamGenContext::modifyChar() {
 	al = engine->modifyChar(al);
 }
 
-void DreamGenContext::lockmon() {
+void DreamGenContext::lockMon() {
 	// Pressing space pauses text output in the monitor. We use the "hard"
 	// key because calling readkey() drains characters from the input
 	// buffer, we we want the user to be able to type ahead while the text
@@ -764,42 +762,42 @@ void DreamGenContext::lockmon() {
 		// Clear the keyboard buffer. Otherwise the space that caused
 		// the pause will be read immediately unpause the game.
 		do {
-			readkey();
+			readKey();
 		} while (data.byte(kCurrentkey) != 0);
 
-		locklighton();
+		lockLightOn();
 		while (!engine->shouldQuit()) {
 			engine->waitForVSync();
-			readkey();
+			readKey();
 			if (data.byte(kCurrentkey) == ' ')
 				break;
 		}
 		// Forget the last "hard" key, otherwise the space that caused
 		// the unpausing will immediately re-pause the game.
 		data.byte(kLasthardkey) = 0;
-		locklightoff();
+		lockLightOff();
 	}
 }
 
-void DreamGenContext::cancelch0() {
+void DreamGenContext::cancelCh0() {
 	data.byte(kCh0repeat) = 0;
 	data.word(kCh0blockstocopy) = 0;
 	data.byte(kCh0playing) = 255;
 	engine->stopSound(0);
 }
 
-void DreamGenContext::cancelch1() {
+void DreamGenContext::cancelCh1() {
 	data.word(kCh1blockstocopy) = 0;
 	data.byte(kCh1playing) = 255;
 	engine->stopSound(1);
 }
 
-void DreamGenContext::makebackob(SetObject *objData) {
+void DreamGenContext::makeBackOb(SetObject *objData) {
 	if (data.byte(kNewobs) == 0)
 		return;
 	uint8 priority = objData->priority;
 	uint8 type = objData->type;
-	Sprite *sprite = makesprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
+	Sprite *sprite = makeSprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
 
 	uint16 objDataOffset = (uint8 *)objData - segRef(data.word(kSetdat)).ptr(0, 0);
 	assert(objDataOffset % sizeof(SetObject) == 0);
@@ -814,16 +812,16 @@ void DreamGenContext::makebackob(SetObject *objData) {
 	sprite->animFrame = 0;
 }
 
-void DreamGenContext::getroomdata() {
-	Room *room = getroomdata(al);
+void DreamGenContext::getRoomData() {
+	Room *room = getRoomData(al);
 	bx = (uint8 *)room - cs.ptr(0, 0);
 }
 
-Room *DreamGenContext::getroomdata(uint8 room) {
+Room *DreamGenContext::getRoomData(uint8 room) {
 	return (Room *)cs.ptr(kRoomdata, 0) + room;
 }
 
-void DreamGenContext::readheader() {
+void DreamGenContext::readHeader() {
 	ax = engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
 	es = cs;
 	di = kFiledata;
@@ -831,7 +829,7 @@ void DreamGenContext::readheader() {
 
 uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
 	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
-	uint16 result = allocatemem(size / 16);
+	uint16 result = allocateMem(size / 16);
 	engine->readFromFile(segRef(result).ptr(0, size), size);
 	return result;
 }
@@ -844,7 +842,7 @@ void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
 	engine->readFromFile(buf, size);
 }
 
-void DreamGenContext::startloading(const Room *room) {
+void DreamGenContext::startLoading(const Room *room) {
 	data.byte(kCombatcount) = 0;
 	data.byte(kRoomssample) = room->roomsSample;
 	data.byte(kMapx) = room->mapX;
@@ -864,11 +862,11 @@ void DreamGenContext::startloading(const Room *room) {
 
 	loadRoomData(room, false);
 
-	findroominloc();
-	deletetaken();
-	setallchanges();
-	autoappear();
-	Room *newRoom = getroomdata(data.byte(kNewlocation));
+	findRoomInLoc();
+	deleteTaken();
+	setAllChanges();
+	autoAppear();
+	Room *newRoom = getRoomData(data.byte(kNewlocation));
 	bx = (uint8 *)newRoom - cs.ptr(0, 0);
 	data.byte(kLastweapon) = (uint8)-1;
 	data.byte(kMandead) = 0;
@@ -878,61 +876,61 @@ void DreamGenContext::startloading(const Room *room) {
 	if (room->b27 != 255) {
 		data.byte(kManspath) = room->b27;
 		push(bx);
-		autosetwalk();
+		autoSetWalk();
 		bx = pop();
 	}
-	findxyfrompath();
+	findXYFromPath();
 }
 
-void DreamGenContext::fillspace() {
+void DreamGenContext::fillSpace() {
 	memset(ds.ptr(dx, cx), al, cx);
 }
 
-void DreamGenContext::dealwithspecial(uint8 firstParam, uint8 secondParam) {
+void DreamGenContext::dealWithSpecial(uint8 firstParam, uint8 secondParam) {
 	uint8 type = firstParam - 220;
 	if (type == 0) {
-		placesetobject(secondParam);
+		placeSetObject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 1) {
-		removesetobject(secondParam);
+		removeSetObject(secondParam);
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 2) {
 		al = secondParam;
-		placefreeobject();
+		placeFreeObject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 3) {
 		al = secondParam;
-		removefreeobject();
+		removeFreeObject();
 		data.byte(kHavedoneobs) = 1;
 	} else if (type == 4) {
-		switchryanoff();
+		switchRyanOff();
 	} else if (type == 5) {
 		data.byte(kTurntoface) = secondParam;
 		data.byte(kFacing) = secondParam;
-		switchryanon();
+		switchRyanOn();
 	} else if (type == 6) {
 		data.byte(kNewlocation) = secondParam;
 	} else {
-		movemap(secondParam);
+		moveMap(secondParam);
 	}
 }
 
-void DreamGenContext::plotreel() {
-	Reel *reel = getreelstart();
+void DreamGenContext::plotReel() {
+	Reel *reel = getReelStart();
 	while (reel->x >= 220 && reel->x != 255) {
-		dealwithspecial(reel->x, reel->y);
+		dealWithSpecial(reel->x, reel->y);
 		++data.word(kReelpointer);
 		reel += 8;
 	}
 
 	for (size_t i = 0; i < 8; ++i) {
 		if (reel->frame() != 0xffff)
-			showreelframe(reel);
+			showReelFrame(reel);
 		++reel;
 	}
 	push(es);
 	push(bx);
-	soundonreels();
+	soundOnReels();
 	bx = pop();
 	es = pop();
 }
@@ -945,46 +943,46 @@ void DreamGenContext::crosshair() {
 		frame = 29;
 	}
 	const Frame *src = (const Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
-	showframe(src, kZoomx + 24, kZoomy + 19, frame, 0);
+	showFrame(src, kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
-void DreamGenContext::deltextline() {
+void DreamGenContext::delTextLine() {
 	uint16 x = data.word(kTextaddressx);
 	uint16 y = data.word(kTextaddressy);
 	if (data.byte(kForeignrelease) != 0)
 		y -= 3;
-	multiput(textUnder(), x, y, kUndertextsizex, kUndertextsizey);
+	multiPut(textUnder(), x, y, kUndertextsizex, kUndertextsizey);
 }
 
-void DreamGenContext::commandonly() {
-	commandonly(al);	
+void DreamGenContext::commandOnly() {
+	commandOnly(al);	
 }
 
-void DreamGenContext::commandonly(uint8 command) {
-	deltextline();
+void DreamGenContext::commandOnly(uint8 command) {
+	delTextLine();
 	uint16 index = command * 2;
 	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index);
 	uint16 y = data.word(kTextaddressy);
 	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
-	printdirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
+	printDirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
 	data.byte(kNewtextline) = 1;
 }
 
-void DreamGenContext::checkifperson() {
-	flags._z = !checkifperson(al, ah);
+void DreamGenContext::checkIfPerson() {
+	flags._z = !checkIfPerson(al, ah);
 }
 
-bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
+bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
 	People *people = (People *)segRef(data.word(kBuffers)).ptr(kPeoplelist, 0);
 
 	for (size_t i = 0; i < 12; ++i, ++people) {
 		if (people->b4 == 255)
 			continue;
 		data.word(kReelpointer) = people->reelPointer();
-		Reel *reel = getreelstart();
+		Reel *reel = getReelStart();
 		if (reel->frame() == 0xffff)
 			++reel;
-		const Frame *frame = getreelframeax(reel->frame());
+		const Frame *frame = getReelFrameAX(reel->frame());
 		uint8 xmin = reel->x + frame->x;
 		uint8 ymin = reel->y + frame->y;
 		uint8 xmax = xmin + frame->width;
@@ -998,45 +996,45 @@ bool DreamGenContext::checkifperson(uint8 x, uint8 y) {
 		if (y >= ymax)
 			continue;
 		data.word(kPersondata) = people->routinePointer();
-		obname(people->b4, 5);
+		obName(people->b4, 5);
 		return true;
 	}
 	return false;
 }
 
-void DreamGenContext::checkiffree() {
-	flags._z = !checkiffree(al, ah);
+void DreamGenContext::checkIfFree() {
+	flags._z = !checkIfFree(al, ah);
 }
 
-bool DreamGenContext::checkiffree(uint8 x, uint8 y) {
+bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
 	const ObjPos *freeList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
 	for (size_t i = 0; i < 80; ++i) {
 		const ObjPos *objPos = freeList + 79 - i;
 		if (objPos->index == 0xff || !objPos->contains(x,y))
 			continue;
-		obname(objPos->index, 2);
+		obName(objPos->index, 2);
 		return true;
 	}
 	return false;
 }
 
-void DreamGenContext::checkifex() {
-	flags._z = !checkifex(al, ah);
+void DreamGenContext::checkIfEx() {
+	flags._z = !checkIfEx(al, ah);
 }
 
-bool DreamGenContext::checkifex(uint8 x, uint8 y) {
+bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
 	const ObjPos *exList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
 	for (size_t i = 0; i < 100; ++i) {
 		const ObjPos *objPos = exList + 99 - i;
 		if (objPos->index == 0xff || !objPos->contains(x,y))
 			continue;
-		obname(objPos->index, 4);
+		obName(objPos->index, 4);
 		return true;
 	}
 	return false;
 }
 
-const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
+const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * 2 * (index & 127);
 		uint16 offset = segRef(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
@@ -1056,12 +1054,12 @@ const uint8 *DreamGenContext::findobname(uint8 type, uint8 index) {
 	}
 }
 
-void DreamGenContext::copyname() {
-	copyname(ah, al, cs.ptr(di, 0));
+void DreamGenContext::copyName() {
+	copyName(ah, al, cs.ptr(di, 0));
 }
 
-void DreamGenContext::copyname(uint8 type, uint8 index, uint8 *dst) {
-	const uint8 *src = findobname(type, index);
+void DreamGenContext::copyName(uint8 type, uint8 index, uint8 *dst) {
+	const uint8 *src = findObName(type, index);
 	size_t i;
 	for (i = 0; i < 28; ++i) { 
 		char c = src[i];
@@ -1074,57 +1072,57 @@ void DreamGenContext::copyname(uint8 type, uint8 index, uint8 *dst) {
 	dst[i] = 0;
 }
 
-void DreamGenContext::commandwithob() {
-	commandwithob(al, bh, bl); 
+void DreamGenContext::commandWithOb() {
+	commandWithOb(al, bh, bl); 
 }
 
-void DreamGenContext::commandwithob(uint8 command, uint8 type, uint8 index) {
+void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
-	deltextline();
+	delTextLine();
 	uint16 commandText = kTextstart + segRef(data.word(kCommandtext)).word(command * 2);
 	uint8 textLen = data.byte(kTextlen);
 	{
 		const uint8 *string = segRef(data.word(kCommandtext)).ptr(commandText, 0);
-		printdirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
+		printDirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
 	}
-	copyname(type, index, commandLine);
+	copyName(type, index, commandLine);
 	uint16 x = data.word(kLastxpos);
 	if (command != 0)
 		x += 5;
-	printdirect(commandLine, x, data.word(kTextaddressy), textLen, (bool)(textLen & 1));
+	printDirect(commandLine, x, data.word(kTextaddressy), textLen, (bool)(textLen & 1));
 	data.byte(kNewtextline) = 1;
 }
 
-void DreamGenContext::examineobtext() {
-	commandwithob(1, data.byte(kCommandtype), data.byte(kCommand));
+void DreamGenContext::examineObText() {
+	commandWithOb(1, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::showpanel() {
+void DreamGenContext::showPanel() {
 	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
-	showframe(frame, 72, 0, 19, 0);
-	showframe(frame, 192, 0, 19, 0);
+	showFrame(frame, 72, 0, 19, 0);
+	showFrame(frame, 192, 0, 19, 0);
 }
 
-void DreamGenContext::blocknametext() {
-	commandwithob(0, data.byte(kCommandtype), data.byte(kCommand));
+void DreamGenContext::blockNameText() {
+	commandWithOb(0, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::personnametext() {
-	commandwithob(2, data.byte(kCommandtype), data.byte(kCommand) & 127);
+void DreamGenContext::personNameText() {
+	commandWithOb(2, data.byte(kCommandtype), data.byte(kCommand) & 127);
 }
 
-void DreamGenContext::walktotext() {
-	commandwithob(3, data.byte(kCommandtype), data.byte(kCommand));
+void DreamGenContext::walkToText() {
+	commandWithOb(3, data.byte(kCommandtype), data.byte(kCommand));
 }
 
-void DreamGenContext::findormake() {
+void DreamGenContext::findOrMake() {
 	uint8 b0 = al;
 	uint8 b2 = cl;
 	uint8 b3 = ch;
-	findormake(b0, b2, b3);
+	findOrMake(b0, b2, b3);
 }
 
-void DreamGenContext::findormake(uint8 index, uint8 value, uint8 type) {
+void DreamGenContext::findOrMake(uint8 index, uint8 value, uint8 type) {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change) {
 		if (index == change->index && data.byte(kReallocation) == change->location && type == change->type) {
@@ -1139,65 +1137,65 @@ void DreamGenContext::findormake(uint8 index, uint8 value, uint8 type) {
 	change->type = type;
 }
 
-void DreamGenContext::setallchanges() {
+void DreamGenContext::setAllChanges() {
 	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change)
 		if (change->location == data.byte(kReallocation))
-			dochange(change->index, change->value, change->type);
+			doChange(change->index, change->value, change->type);
 }
 
-DynObject *DreamGenContext::getfreead(uint8 index) {
+DynObject *DreamGenContext::getFreeAd(uint8 index) {
 	return (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
 }
 
-DynObject *DreamGenContext::getexad(uint8 index) {
+DynObject *DreamGenContext::getExAd(uint8 index) {
 	return (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
 }
 
-DynObject *DreamGenContext::geteitheradCPP() {
+DynObject *DreamGenContext::getEitherAdCPP() {
 	if (data.byte(kObjecttype) == 4)
-		return getexad(data.byte(kItemframe));
+		return getExAd(data.byte(kItemframe));
 	else
-		return getfreead(data.byte(kItemframe));
+		return getFreeAd(data.byte(kItemframe));
 }
 
-void *DreamGenContext::getanyad(uint8 *value1, uint8 *value2) {
+void *DreamGenContext::getAnyAd(uint8 *value1, uint8 *value2) {
 	if (data.byte(kObjecttype) == 4) {
-		DynObject *exObject = getexad(data.byte(kCommand));
+		DynObject *exObject = getExAd(data.byte(kCommand));
 		*value1 = exObject->b7;
 		*value2 = exObject->b8;
 		return exObject;
 	} else if (data.byte(kObjecttype) == 2) {
-		DynObject *freeObject = getfreead(data.byte(kCommand));
+		DynObject *freeObject = getFreeAd(data.byte(kCommand));
 		*value1 = freeObject->b7;
 		*value2 = freeObject->b8;
 		return freeObject;
 	} else {
-		SetObject *setObject = getsetad(data.byte(kCommand));
+		SetObject *setObject = getSetAd(data.byte(kCommand));
 		*value1 = setObject->b4;
 		*value2 = setObject->priority;
 		return setObject;
 	}
 }
 
-void *DreamGenContext::getanyaddir(uint8 index, uint8 flag) {
+void *DreamGenContext::getAnyAdDir(uint8 index, uint8 flag) {
 	if (flag == 4)
-		return getexad(index);
+		return getExAd(index);
 	else if (flag == 2)
-		return getfreead(index);
+		return getFreeAd(index);
 	else
-		return getsetad(index);
+		return getSetAd(index);
 }
 
-SetObject *DreamGenContext::getsetad(uint8 index) {
+SetObject *DreamGenContext::getSetAd(uint8 index) {
 	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
-void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
+void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
 	if (type == 0) { //object
-		getsetad(index)->mapad[0] = value;
-	} else if (type == 1) { //freeobject
-		DynObject *freeObject = getfreead(index);
+		getSetAd(index)->mapad[0] = value;
+	} else if (type == 1) { //freeObject
+		DynObject *freeObject = getFreeAd(index);
 		if (freeObject->mapad[0] == 0xff)
 			freeObject->mapad[0] = value;
 	} else { //path
@@ -1207,7 +1205,7 @@ void DreamGenContext::dochange(uint8 index, uint8 value, uint8 type) {
 	}
 }
 
-void DreamGenContext::deletetaken() {
+void DreamGenContext::deleteTaken() {
 	const DynObject *extraObjects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0);
 	DynObject *freeObjects = (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < kNumexobjects; ++i) {
@@ -1219,7 +1217,7 @@ void DreamGenContext::deletetaken() {
 	}
 }
 
-void DreamGenContext::getexpos() {
+void DreamGenContext::getExPos() {
 	es = data.word(kExtras);
 	const DynObject *objects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
@@ -1233,75 +1231,75 @@ void DreamGenContext::getexpos() {
 	di = kExdata + kNumexobjects * sizeof(DynObject);
 }
 
-void DreamGenContext::placesetobject() {
-	placesetobject(al);
+void DreamGenContext::placeSetObject() {
+	placeSetObject(al);
 }
 
-void DreamGenContext::placesetobject(uint8 index) {
-	findormake(index, 0, 0);
-	getsetad(index)->mapad[0] = 0;
+void DreamGenContext::placeSetObject(uint8 index) {
+	findOrMake(index, 0, 0);
+	getSetAd(index)->mapad[0] = 0;
 }
 
-void DreamGenContext::removesetobject() {
-	removesetobject(al);
+void DreamGenContext::removeSetObject() {
+	removeSetObject(al);
 }
 
-void DreamGenContext::removesetobject(uint8 index) {
-	findormake(index, 0xff, 0);
-	getsetad(index)->mapad[0] = 0xff;
+void DreamGenContext::removeSetObject(uint8 index) {
+	findOrMake(index, 0xff, 0);
+	getSetAd(index)->mapad[0] = 0xff;
 }
 
-void DreamGenContext::finishedwalking() {
-	flags._z = finishedwalkingCPP();
+void DreamGenContext::finishedWalking() {
+	flags._z = finishedWalkingCPP();
 }
 
-bool DreamGenContext::finishedwalkingCPP() {
+bool DreamGenContext::finishedWalkingCPP() {
 	return (data.byte(kLinepointer) == 254) && (data.byte(kFacing) == data.byte(kTurntoface));
 }
 
-void DreamGenContext::getflagunderp() {
+void DreamGenContext::getFlagUnderP() {
 	uint8 flag, flagEx;
-	getflagunderp(&flag, &flagEx);
+	getFlagUnderP(&flag, &flagEx);
 	cl = flag;
 	ch = flagEx;
 }
 
-void DreamGenContext::getflagunderp(uint8 *flag, uint8 *flagEx) {
+void DreamGenContext::getFlagUnderP(uint8 *flag, uint8 *flagEx) {
 	uint8 type, flagX, flagY;
-	checkone(data.word(kMousex) - data.word(kMapadx), data.word(kMousey) - data.word(kMapady), flag, flagEx, &type, &flagX, &flagY);
+	checkOne(data.word(kMousex) - data.word(kMapadx), data.word(kMousey) - data.word(kMapady), flag, flagEx, &type, &flagX, &flagY);
 	cl = data.byte(kLastflag) = *flag;
 	ch = data.byte(kLastflagex) = *flagEx;
 }
 
-void DreamGenContext::walkandexamine() {
-	if (!finishedwalkingCPP())
+void DreamGenContext::walkAndExamine() {
+	if (!finishedWalkingCPP())
 		return;
 	data.byte(kCommandtype) = data.byte(kWalkexamtype);
 	data.byte(kCommand) = data.byte(kWalkexamnum);
 	data.byte(kWalkandexam) = 0;
 	if (data.byte(kCommandtype) != 5)
-		examineob();
+		examineOb();
 }
 
-void DreamGenContext::obname() {
-	obname(al, ah);
+void DreamGenContext::obName() {
+	obName(al, ah);
 }
 
-void DreamGenContext::obname(uint8 command, uint8 commandType) {
+void DreamGenContext::obName(uint8 command, uint8 commandType) {
 	if (data.byte(kReasseschanges) == 0) {
 		if ((commandType == data.byte(kCommandtype)) && (command == data.byte(kCommand))) {
 			if (data.byte(kWalkandexam) == 1) {
-				walkandexamine();
+				walkAndExamine();
 				return;
 			} else if (data.word(kMousebutton) == 0)
 				return;
 			else if ((data.byte(kCommandtype) == 3) && (data.byte(kLastflag) < 2))
 				return;
 			else if ((data.byte(kManspath) != data.byte(kPointerspath)) || (data.byte(kCommandtype) == 3)) {
-				setwalk();
+				setWalk();
 				data.byte(kReasseschanges) = 1;
 				return;
-			} else if (! finishedwalkingCPP())
+			} else if (! finishedWalkingCPP())
 				return;
 			else if (data.byte(kCommandtype) == 5) {
 				if (data.word(kWatchingtime) == 0)
@@ -1309,7 +1307,7 @@ void DreamGenContext::obname(uint8 command, uint8 commandType) {
 				return;
 			} else {
 				if (data.word(kWatchingtime) == 0)
-					examineob();
+					examineOb();
 				return;
 			}
 		}
@@ -1319,56 +1317,56 @@ void DreamGenContext::obname(uint8 command, uint8 commandType) {
 	data.byte(kCommand) = command;
 	data.byte(kCommandtype) = commandType;
 	if ((data.byte(kLinepointer) != 254) || (data.word(kWatchingtime) != 0) || (data.byte(kFacing) != data.byte(kTurntoface))) {
-		blocknametext();
+		blockNameText();
 		return;
 	} else if (data.byte(kCommandtype) != 3) {
 		if (data.byte(kManspath) != data.byte(kPointerspath)) {
-			walktotext();
+			walkToText();
 			return;
 		} else if (data.byte(kCommandtype) == 3) {
-			blocknametext();
+			blockNameText();
 			return;
 		} else if (data.byte(kCommandtype) == 5) {
-			personnametext();
+			personNameText();
 			return;
 		} else {
-			examineobtext();
+			examineObText();
 			return;
 		}
 	}
 	if (data.byte(kManspath) == data.byte(kPointerspath)) {
 		uint8 flag, flagEx, type, flagX, flagY;
-		checkone(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
+		checkOne(data.byte(kRyanx) + 12, data.byte(kRyany) + 12, &flag, &flagEx, &type, &flagX, &flagY);
 		if (flag < 2) {
-			blocknametext();
+			blockNameText();
 			return;
 		}
 	}
 
-	getflagunderp();
+	getFlagUnderP();
 	if (data.byte(kLastflag) < 2) {
-		blocknametext();
+		blockNameText();
 		return;
 	} else if (data.byte(kLastflag) >= 128) {
-		blocknametext();
+		blockNameText();
 		return;
 	} else {
-		walktotext();
+		walkToText();
 		return;
 	}
 }
 
-void DreamGenContext::delpointer() {
+void DreamGenContext::delPointer() {
 	if (data.word(kOldpointerx) == 0xffff)
 		return;
 	data.word(kDelherex) = data.word(kOldpointerx);
 	data.word(kDelherey) = data.word(kOldpointery);
 	data.byte(kDelxs) = data.byte(kPointerxs);
 	data.byte(kDelys) = data.byte(kPointerys);
-	multiput(segRef(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
+	multiPut(segRef(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::showblink() {
+void DreamGenContext::showBlink() {
 	if (data.byte(kManisoffscreen) == 1)
 		return;
 	++data.byte(kBlinkcount);
@@ -1386,148 +1384,148 @@ void DreamGenContext::showblink() {
 		blinkFrame = 6;
 	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
 	uint8 width, height;
-	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
+	showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
-void DreamGenContext::dumpblink() {
+void DreamGenContext::dumpBlink() {
 	if (data.byte(kShadeson) != 0)
 		return;
 	if (data.byte(kBlinkcount) != 0)
 		return;
 	if (data.byte(kBlinkframe) >= 6)
 		return;
-	multidump(44, 32, 16, 12);
+	multiDump(44, 32, 16, 12);
 }
 
-void DreamGenContext::dumppointer() {
-	dumpblink();
-	multidump(data.word(kDelherex), data.word(kDelherey), data.byte(kDelxs), data.byte(kDelys));
+void DreamGenContext::dumpPointer() {
+	dumpBlink();
+	multiDump(data.word(kDelherex), data.word(kDelherey), data.byte(kDelxs), data.byte(kDelys));
 	if ((data.word(kOldpointerx) != data.word(kDelherex)) || (data.word(kOldpointery) != data.word(kDelherey)))
-		multidump(data.word(kOldpointerx), data.word(kOldpointery), data.byte(kPointerxs), data.byte(kPointerys));
+		multiDump(data.word(kOldpointerx), data.word(kOldpointery), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
-void DreamGenContext::checkcoords() {
+void DreamGenContext::checkCoords() {
 
 	// FIXME: Move all these lists to the callers
 
 	switch ((uint16)bx) {
 	case offset_talklist: {
-		RectWithCallback talklist[] = {
-			{ 273,320,157,198,&DreamGenContext::getback1 },
-			{ 240,290,2,44,&DreamGenContext::moretalk },
+		RectWithCallback talkList[] = {
+			{ 273,320,157,198,&DreamGenContext::getBack1 },
+			{ 240,290,2,44,&DreamGenContext::moreTalk },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(talklist);
+		checkCoords(talkList);
 		break;
 	}
 	case offset_quitlist: {
-		RectWithCallback quitlist[] = {
-			{ 273,320,157,198,&DreamGenContext::getback1 },
+		RectWithCallback quitList[] = {
+			{ 273,320,157,198,&DreamGenContext::getBack1 },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(quitlist);
+		checkCoords(quitList);
 		break;
 	}
 	case offset_destlist: {
-		RectWithCallback destlist[] = {
-			{ 238,258,4,44,&DreamGenContext::nextdest },
-			{ 104,124,4,44,&DreamGenContext::lastdest },
-			{ 280,308,4,44,&DreamGenContext::lookatplace },
-			{ 104,216,138,192,&DreamGenContext::destselect },
-			{ 273,320,157,198,&DreamGenContext::getback1 },
+		RectWithCallback destList[] = {
+			{ 238,258,4,44,&DreamGenContext::nextDest },
+			{ 104,124,4,44,&DreamGenContext::lastDest },
+			{ 280,308,4,44,&DreamGenContext::lookAtPlace },
+			{ 104,216,138,192,&DreamGenContext::destSelect },
+			{ 273,320,157,198,&DreamGenContext::getBack1 },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(destlist);
+		checkCoords(destList);
 		break;
 	}
 	case offset_keypadlist: {
-		RectWithCallback keypadlist[] = {
-			{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonone },
-			{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttontwo },
-			{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonthree },
-			{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonfour },
-			{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonfive },
-			{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonsix },
-			{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonseven },
-			{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttoneight },
-			{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonnine },
-			{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonnought },
-			{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonenter },
-			{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitkey },
+		RectWithCallback keypadList[] = {
+			{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttonTwo },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonThree },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFour },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFive },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonSix },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonSeven },
+			{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttonEight },
+			{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonNine },
+			{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonNought },
+			{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonEnter },
+			{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitKey },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(keypadlist);
+		checkCoords(keypadList);
 		break;
 	}
 	case offset_menulist: {
-		RectWithCallback menulist[] = {
-			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitkey },
+		RectWithCallback menuList[] = {
+			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitKey },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(menulist);
+		checkCoords(menuList);
 		break;
 	}
 	case offset_symbollist: {
-		RectWithCallback symbollist[] = {
-			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitsymbol },
-			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::settopleft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::settopright },
-			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setbotleft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setbotright },
+		RectWithCallback symbolList[] = {
+			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitSymbol },
+			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::setTopLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::setTopRight },
+			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setBotLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setBotRight },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(symbollist);
+		checkCoords(symbolList);
 
 		break;
 	}
 	case offset_diarylist: {
-		RectWithCallback diarylist[] = {
-			{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diarykeyn },
-			{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diarykeyp },
-			{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitkey },
+		RectWithCallback diaryList[] = {
+			{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diaryKeyN },
+			{ kDiaryx+151,kDiaryx+167,kDiaryy+71,kDiaryy+87,&DreamGenContext::diaryKeyP },
+			{ kDiaryx+176,kDiaryx+192,kDiaryy+108,kDiaryy+124,&DreamGenContext::quitKey },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(diarylist);
+		checkCoords(diaryList);
 		break;
 	}
 	case offset_opslist: {
-		RectWithCallback opslist[] = {
-			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getbackfromops },
-			{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::dosreturn },
-			{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discops },
+		RectWithCallback opsList[] = {
+			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::getBackFromOps },
+			{ kOpsx+10,kOpsx+77,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
+			{ kOpsx+128,kOpsx+190,kOpsy+16,kOpsy+100,&DreamGenContext::discOps },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(opslist);
+		checkCoords(opsList);
 		break;
 	}
 	case offset_discopslist: {
-		RectWithCallback discopslist[] = {
-			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadgame },
-			{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::savegame },
-			{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
+		RectWithCallback discOpsList[] = {
+			{ kOpsx+59,kOpsx+114,kOpsy+30,kOpsy+76,&DreamGenContext::loadGame },
+			{ kOpsx+10,kOpsx+79,kOpsy+10,kOpsy+59,&DreamGenContext::saveGame },
+			{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(discopslist);
+		checkCoords(discOpsList);
 		break;
 	}
 	case offset_decidelist: {
-		RectWithCallback decidelist[] = {
-			{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newgame },
-			{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::dosreturn },
-			{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadold },
+		RectWithCallback decideList[] = {
+			{ kOpsx+69,kOpsx+124,kOpsy+30,kOpsy+76,&DreamGenContext::newGame },
+			{ kOpsx+20,kOpsx+87,kOpsy+10,kOpsy+59,&DreamGenContext::DOSReturn },
+			{ kOpsx+123,kOpsx+190,kOpsy+10,kOpsy+59,&DreamGenContext::loadOld },
 			{ 0,320,0,200,&DreamGenContext::blank },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(decidelist);
+		checkCoords(decideList);
 		break;
 	}
 	default:
@@ -1535,8 +1533,7 @@ void DreamGenContext::checkcoords() {
 	}
 }
 
-
-void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
+void DreamGenContext::checkCoords(const RectWithCallback *rectWithCallbacks) {
 	if (data.byte(kNewlocation) != 0xff)
 		return;
 
@@ -1549,9 +1546,8 @@ void DreamGenContext::checkcoords(const RectWithCallback *rectWithCallbacks) {
 	}
 }
 
-
-void DreamGenContext::showpointer() {
-	showblink();
+void DreamGenContext::showPointer() {
+	showBlink();
 	const Frame *icons1 = ((const Frame *)segRef(data.word(kIcons1)).ptr(0, 0));
 	uint16 x = data.word(kMousex);
 	data.word(kOldpointerx) = data.word(kMousex);
@@ -1576,9 +1572,9 @@ void DreamGenContext::showpointer() {
 		uint16 yMin = (y >= height / 2) ? y - height / 2 : 0;
 		data.word(kOldpointerx) = xMin;
 		data.word(kOldpointery) = yMin;
-		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
-		showframe(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
-		showframe(icons1, x, y, 3, 128);
+		multiGet(segRef(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
+		showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
+		showFrame(icons1, x, y, 3, 128);
 	} else {
 		const Frame *frame = icons1 + (data.byte(kPointerframe) + 20);
 		uint8 width = frame->width;
@@ -1589,12 +1585,12 @@ void DreamGenContext::showpointer() {
 			height = 12;
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
-		multiget(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
-		showframe(icons1, x, y, data.byte(kPointerframe) + 20, 0);
+		multiGet(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
+		showFrame(icons1, x, y, data.byte(kPointerframe) + 20, 0);
 	}
 }
 
-void DreamGenContext::animpointer() {
+void DreamGenContext::animPointer() {
 
 	if (data.byte(kPointermode) == 2) {
 		data.byte(kPointerframe) = 0;
@@ -1624,7 +1620,7 @@ void DreamGenContext::animpointer() {
 	if (data.byte(kPointerfirstpath) == 0)
 		return;
 	uint8 flag, flagEx;
-	getflagunderp(&flag, &flagEx);
+	getFlagUnderP(&flag, &flagEx);
 	if (flag < 2)
 		return;
 	if (flag >= 128)
@@ -1648,14 +1644,14 @@ void DreamGenContext::animpointer() {
 	data.byte(kPointerframe) = 8;
 }
 
-void DreamGenContext::printmessage() {
-	printmessage(di, bx, al, dl, (bool)(dl & 1));
+void DreamGenContext::printMessage() {
+	printMessage(di, bx, al, dl, (bool)(dl & 1));
 }
 
-void DreamGenContext::printmessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
+void DreamGenContext::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
 	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index * 2);
 	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
-	printdirect(&string, x, &y, maxWidth, centered);
+	printDirect(&string, x, &y, maxWidth, centered);
 }
 
 void DreamGenContext::compare() {
@@ -1664,7 +1660,7 @@ void DreamGenContext::compare() {
 }
 
 bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
-	void *ptr = getanyaddir(index, flag);
+	void *ptr = getAnyAdDir(index, flag);
 	const char *objId = (const char *)(((const uint8 *)ptr) + 12); // whether it is a DynObject or a SetObject
 	for (size_t i = 0; i < 4; ++i) {
 		if(id[i] != objId[i] + 'A')
@@ -1673,7 +1669,7 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 	return true;
 }
 
-bool DreamGenContext::isitdescribed(const ObjPos *pos) {
+bool DreamGenContext::isItDescribed(const ObjPos *pos) {
 	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
 	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
 	return result != 0;
@@ -1687,59 +1683,59 @@ bool DreamGenContext::isCD() {
 	return (data.byte(kSpeechloaded) == 1);
 }
 
-void DreamGenContext::showicon() {
+void DreamGenContext::showIcon() {
 	if (data.byte(kReallocation) < 50) {
-		showpanel();
-		showman();
-		roomname();
-		panelicons1();
-		zoomicon();
+		showPanel();
+		showMan();
+		roomName();
+		panelIcons1();
+		zoomIcon();
 	} else {
 		Frame *tempSprites = (Frame *)segRef(data.word(kTempsprites)).ptr(0, 0);
-		showframe(tempSprites, 72, 2, 45, 0);
-		showframe(tempSprites, 72+47, 2, 46, 0);
-		showframe(tempSprites, 69-10, 21, 49, 0);
-		showframe(tempSprites, 160+88, 2, 45, 4 & 0xfe);
-		showframe(tempSprites, 160+43, 2, 46, 4 & 0xfe);
-		showframe(tempSprites, 160+101, 21, 49, 4 & 0xfe);
-		middlepanel();
+		showFrame(tempSprites, 72, 2, 45, 0);
+		showFrame(tempSprites, 72+47, 2, 46, 0);
+		showFrame(tempSprites, 69-10, 21, 49, 0);
+		showFrame(tempSprites, 160+88, 2, 45, 4 & 0xfe);
+		showFrame(tempSprites, 160+43, 2, 46, 4 & 0xfe);
+		showFrame(tempSprites, 160+101, 21, 49, 4 & 0xfe);
+		middlePanel();
 	}
 }
 
-void DreamGenContext::checkifset() {
-	flags._z = !checkifset(al, ah);
+void DreamGenContext::checkIfSet() {
+	flags._z = !checkIfSet(al, ah);
 }
 
-bool DreamGenContext::checkifset(uint8 x, uint8 y) {
+bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 	const ObjPos *setList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
 	for (size_t i = 0; i < 128; ++i) {
 		const ObjPos *pos = setList + 127 - i;
 		if (pos->index == 0xff || !pos->contains(x,y))
 			continue;
-		if (! pixelcheckset(pos, x, y))
+		if (! pixelCheckSet(pos, x, y))
 			continue;
-		if (! isitdescribed(pos))
+		if (! isItDescribed(pos))
 			continue;
-		obname(pos->index, 1);
+		obName(pos->index, 1);
 		return true;
 	}
 	return false;
 }
 
-void DreamGenContext::showryanpage() {
+void DreamGenContext::showRyanPage() {
 	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
-	showframe(icons1, kInventx + 167, kInventy - 12, 12, 0);
-	showframe(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+	showFrame(icons1, kInventx + 167, kInventy - 12, 12, 0);
+	showFrame(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
 
-void DreamGenContext::findallryan() {
-	findallryan(es.ptr(di, 60));
+void DreamGenContext::findAllRyan() {
+	findAllRyan(es.ptr(di, 60));
 }
 
-void DreamGenContext::findallryan(uint8 *inv) {
+void DreamGenContext::findAllRyan(uint8 *inv) {
 	memset(inv, 0xff, 60);
 	for (size_t i = 0; i < kNumexobjects; ++i) {
-		DynObject *extra = getexad(i);
+		DynObject *extra = getExAd(i);
 		if (extra->mapad[0] != 4)
 			continue;
 		if (extra->mapad[1] != 0xff)
@@ -1751,83 +1747,82 @@ void DreamGenContext::findallryan(uint8 *inv) {
 	}
 }
 
-void DreamGenContext::hangon() {
-	hangon(cx);
+void DreamGenContext::hangOn() {
+	hangOn(cx);
 }
 
-void DreamGenContext::hangon(uint16 frameCount) {
+void DreamGenContext::hangOn(uint16 frameCount) {
 	while (frameCount) {
-		vsync();
+		vSync();
 		--frameCount;
 		if (quitRequested())
 			break;
 	}
 }
 
-
-void DreamGenContext::hangonw() {
-	hangonw(cx);
+void DreamGenContext::hangOnW() {
+	hangOnW(cx);
 }
 
-void DreamGenContext::hangonw(uint16 frameCount) {
+void DreamGenContext::hangOnW(uint16 frameCount) {
 	while (frameCount) {
-		delpointer();
-		readmouse();
-		animpointer();
-		showpointer();
-		vsync();
-		dumppointer();
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
 		--frameCount;
 		if (quitRequested())
 			break;
 	}
 }
 
-void DreamGenContext::hangonp() {
-	hangonp(cx);
+void DreamGenContext::hangOnP() {
+	hangOnP(cx);
 }
 
-void DreamGenContext::hangonp(uint16 count) {
+void DreamGenContext::hangOnP(uint16 count) {
 	data.word(kMaintimer) = 0;
 	uint8 pointerFrame = data.byte(kPointerframe);
 	uint8 pickup = data.byte(kPickup);
 	data.byte(kPointermode) = 3;
 	data.byte(kPickup) = 0;
 	data.byte(kCommandtype) = 255;
-	readmouse();
-	animpointer();
-	showpointer();
-	vsync();
-	dumppointer();
+	readMouse();
+	animPointer();
+	showPointer();
+	vSync();
+	dumpPointer();
 
 	count *= 3;
 	for (uint16 i = 0; i < count; ++i) {
-		delpointer();
-		readmouse();
-		animpointer();
-		showpointer();
-		vsync();
-		dumppointer();
+		delPointer();
+		readMouse();
+		animPointer();
+		showPointer();
+		vSync();
+		dumpPointer();
 		if (quitRequested())
 			break;
 		if (data.word(kMousebutton) != 0 && data.word(kMousebutton) != data.word(kOldbutton))
 			break;
 	}
 
-	delpointer();
+	delPointer();
 	data.byte(kPointerframe) = pointerFrame;
 	data.byte(kPickup) = pickup;
 	data.byte(kPointermode) = 0;
 }
 
-void DreamGenContext::findnextcolon() {
+void DreamGenContext::findNextColon() {
 	uint8 *initialString = es.ptr(si, 0);
 	uint8 *string = initialString;
-	al = findnextcolon(&string);
+	al = findNextColon(&string);
 	si += (string - initialString);
 }
 
-uint8 DreamGenContext::findnextcolon(uint8 **string) {
+uint8 DreamGenContext::findNextColon(uint8 **string) {
 	uint8 c;
 	do {
 		c = **string;
@@ -1836,17 +1831,17 @@ uint8 DreamGenContext::findnextcolon(uint8 **string) {
 	return c;
 }
 
-uint8 *DreamGenContext::getobtextstartCPP() {
+uint8 *DreamGenContext::getObTextStartCPP() {
 	push(es);
 	push(si);
-	getobtextstart();
+	getObTextStart();
 	uint8 *result = es.ptr(si, 0);
 	si = pop();
 	es = pop();
 	return result;
 }
 
-void DreamGenContext::zoomonoff() {
+void DreamGenContext::zoomOnOff() {
 	if (data.word(kWatchingtime) != 0) {
 		blank();
 		return;
@@ -1857,27 +1852,27 @@ void DreamGenContext::zoomonoff() {
 	}
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
-		commandonly(39);
+		commandOnly(39);
 	}
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return;
 	if ((data.word(kMousebutton) & 1) == 0)
 		return;
 	data.byte(kZoomon) ^= 1;
-	createpanel();
+	createPanel();
 	data.byte(kNewobs) = 0;
-	drawfloor();
-	printsprites();
-	reelsonscreen();
-	showicon();
-	getunderzoom();
-	undertextline();
-	commandonly(39);
-	readmouse();
-	worktoscreenm();
+	drawFloor();
+	printSprites();
+	reelsOnScreen();
+	showIcon();
+	getUnderZoom();
+	underTextLine();
+	commandOnly(39);
+	readMouse();
+	workToScreenM();
 }
 
-void DreamGenContext::sortoutmap() {
+void DreamGenContext::sortOutMap() {
 	const uint8 *src = workspace();
 	uint8 *dst = (uint8 *)segRef(data.word(kMapdata)).ptr(0, 0);
 	for (uint16 y = 0; y < kMaplength; ++y) {
@@ -1887,57 +1882,57 @@ void DreamGenContext::sortoutmap() {
 	}
 }
 
-void DreamGenContext::showcity() {
-	clearwork();
-	showframe(tempGraphics(), 57, 32, 0, 0);
-	showframe(tempGraphics(), 120+57, 32, 1, 0);
+void DreamGenContext::showCity() {
+	clearWork();
+	showFrame(tempGraphics(), 57, 32, 0, 0);
+	showFrame(tempGraphics(), 120+57, 32, 1, 0);
 }
 
-void DreamGenContext::mainscreen() {
+void DreamGenContext::mainScreen() {
 	data.byte(kInmaparea) = 0;
 	if (data.byte(kWatchon) == 1) {
-		RectWithCallback mainlist[] = {
+		RectWithCallback mainList[] = {
 			{ 44,70,32,46,&DreamGenContext::look },
 			{ 0,50,0,180,&DreamGenContext::inventory },
-			{ 226,244,10,26,&DreamGenContext::zoomonoff },
-			{ 226,244,26,40,&DreamGenContext::saveload },
-			{ 240,260,100,124,&DreamGenContext::madmanrun },
-			{ 0,320,0,200,&DreamGenContext::identifyob },
+			{ 226,244,10,26,&DreamGenContext::zoomOnOff },
+			{ 226,244,26,40,&DreamGenContext::saveLoad },
+			{ 240,260,100,124,&DreamGenContext::madmanRun },
+			{ 0,320,0,200,&DreamGenContext::identifyOb },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(mainlist);
+		checkCoords(mainList);
 	} else {
-		RectWithCallback mainlist2[] = {
+		RectWithCallback mainList2[] = {
 			{ 44,70,32,46,&DreamGenContext::look },
 			{ 0,50,0,180,&DreamGenContext::inventory },
-			{ 226+48,244+48,10,26,&DreamGenContext::zoomonoff },
-			{ 226+48,244+48,26,40,&DreamGenContext::saveload },
-			{ 240,260,100,124,&DreamGenContext::madmanrun },
-			{ 0,320,0,200,&DreamGenContext::identifyob },
+			{ 226+48,244+48,10,26,&DreamGenContext::zoomOnOff },
+			{ 226+48,244+48,26,40,&DreamGenContext::saveLoad },
+			{ 240,260,100,124,&DreamGenContext::madmanRun },
+			{ 0,320,0,200,&DreamGenContext::identifyOb },
 			{ 0xFFFF,0,0,0,0 }
 		};
-		checkcoords(mainlist2);
+		checkCoords(mainList2);
 	}
 
 	if (data.byte(kWalkandexam) != 0)
-		walkandexamine();
+		walkAndExamine();
 }
 
-void DreamGenContext::showwatch() {
+void DreamGenContext::showWatch() {
 	if (data.byte(kWatchon)) {
-		showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 250, 1, 6, 0);
-		showtime();
+		showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 250, 1, 6, 0);
+		showTime();
 	}
 }
 
-void DreamGenContext::dumpwatch() {
+void DreamGenContext::dumpWatch() {
 	if (data.byte(kWatchdump) != 1)
 		return;
-	multidump(256, 21, 40, 12);
+	multiDump(256, 21, 40, 12);
 	data.byte(kWatchdump) = 0;
 }
 
-void DreamGenContext::showtime() {
+void DreamGenContext::showTime() {
 	if (data.byte(kWatchon) == 0)
 		return;
 	Frame *charset = (Frame *)segRef(data.word(kCharset1)).ptr(0, 0);
@@ -1946,24 +1941,24 @@ void DreamGenContext::showtime() {
 	int minutes = data.byte(kMinutecount);
 	int hours = data.byte(kHourcount);
 
-	showframe(charset, 282+5, 21, 91*3+10 + seconds / 10, 0);
-	showframe(charset, 282+9, 21, 91*3+10 + seconds % 10, 0);
+	showFrame(charset, 282+5, 21, 91*3+10 + seconds / 10, 0);
+	showFrame(charset, 282+9, 21, 91*3+10 + seconds % 10, 0);
 
-	showframe(charset, 270+5, 21, 91*3 + minutes / 10, 0);
-	showframe(charset, 270+11, 21, 91*3 + minutes % 10, 0);
+	showFrame(charset, 270+5, 21, 91*3 + minutes / 10, 0);
+	showFrame(charset, 270+11, 21, 91*3 + minutes % 10, 0);
 
-	showframe(charset, 256+5, 21, 91*3 + hours / 10, 0);
-	showframe(charset, 256+11, 21, 91*3 + hours % 10, 0);
+	showFrame(charset, 256+5, 21, 91*3 + hours / 10, 0);
+	showFrame(charset, 256+11, 21, 91*3 + hours % 10, 0);
 
-	showframe(charset, 267+5, 21, 91*3+20, 0);
+	showFrame(charset, 267+5, 21, 91*3+20, 0);
 }
 
-void DreamGenContext::watchcount() {
+void DreamGenContext::watchCount() {
 	if (data.byte(kWatchon) == 0)
 		return;
 	++data.byte(kTimercount);
 	if (data.byte(kTimercount) == 9) {
-		showframe((Frame *)segRef(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
+		showFrame((Frame *)segRef(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
 		data.byte(kWatchdump) = 1;
 	} else if (data.byte(kTimercount) == 18) {
 		data.byte(kTimercount) = 0;
@@ -1978,13 +1973,13 @@ void DreamGenContext::watchcount() {
 					data.byte(kHourcount) = 0;
 			}
 		}
-		showtime();
+		showTime();
 		data.byte(kWatchdump) = 1;
 	}
 }
 
-void DreamGenContext::roomname() {
-	printmessage(88, 18, 53, 240, false);
+void DreamGenContext::roomName() {
+	printMessage(88, 18, 53, 240, false);
 	uint16 textIndex = data.byte(kRoomnum);
 	if (textIndex >= 32)
 		textIndex -= 32;
@@ -1992,18 +1987,18 @@ void DreamGenContext::roomname() {
 	uint8 maxWidth = (data.byte(kWatchon) == 1) ? 120 : 160;
 	uint16 descOffset = segRef(data.word(kRoomdesc)).word(kIntextdat + textIndex * 2);
 	const uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext + descOffset, 0);
-	printdirect(string, 88, 25, maxWidth, false);
+	printDirect(string, 88, 25, maxWidth, false);
 	data.word(kLinespacing) = 10;
-	usecharset1();
+	useCharset1();
 }
 
-void DreamGenContext::zoomicon() {
+void DreamGenContext::zoomIcon() {
 	if (data.byte(kZoomon) == 0)
 		return;
-	showframe((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
+	showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
 }
 
-void DreamGenContext::loadroom() {
+void DreamGenContext::loadRoom() {
 	data.byte(kRoomloaded) = 1;
 	data.word(kTimecount) = 0;
 	data.word(kMaintimer) = 0;
@@ -2013,15 +2008,15 @@ void DreamGenContext::loadroom() {
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
 	data.byte(kLocation) = data.byte(kNewlocation);
-	Room *room = getroomdata(data.byte(kNewlocation));
-	startloading(room);
-	loadroomssample();
-	switchryanon();
-	drawflags();
-	getdimension();
+	Room *room = getRoomData(data.byte(kNewlocation));
+	startLoading(room);
+	loadRoomsSample();
+	switchRyanOn();
+	drawFlags();
+	getDimension();
 }
 
-void DreamGenContext::loadroomssample() {
+void DreamGenContext::loadRoomsSample() {
 	uint8 sample = data.byte(kRoomssample);
 
 	if (sample == 255 || data.byte(kCurrentsample) == sample)
@@ -2031,16 +2026,16 @@ void DreamGenContext::loadroomssample() {
 	cs.byte(kSamplename+10) = '0' + sample / 10;
 	cs.byte(kSamplename+11) = '0' + sample % 10;
 	dx = kSamplename;
-	loadsecondsample();
+	loadSecondSample();
 }
 
-void DreamGenContext::readsetdata() {
-	data.word(kCharset1) = standardload((const char *)cs.ptr(kCharacterset1, 0));
-	data.word(kIcons1) = standardload((const char *)cs.ptr(kIcongraphics0, 0));
-	data.word(kIcons2) = standardload((const char *)cs.ptr(kIcongraphics1, 0));
-	data.word(kMainsprites) = standardload((const char *)cs.ptr(kSpritename1, 0));
-	data.word(kPuzzletext) = standardload((const char *)cs.ptr(kPuzzletextname, 0));
-	data.word(kCommandtext) = standardload((const char *)cs.ptr(kCommandtextname, 0));
+void DreamGenContext::readSetData() {
+	data.word(kCharset1) = standardLoad((const char *)cs.ptr(kCharacterset1, 0));
+	data.word(kIcons1) = standardLoad((const char *)cs.ptr(kIcongraphics0, 0));
+	data.word(kIcons2) = standardLoad((const char *)cs.ptr(kIcongraphics1, 0));
+	data.word(kMainsprites) = standardLoad((const char *)cs.ptr(kSpritename1, 0));
+	data.word(kPuzzletext) = standardLoad((const char *)cs.ptr(kPuzzletextname, 0));
+	data.word(kCommandtext) = standardLoad((const char *)cs.ptr(kCommandtextname, 0));
 	ax = data.word(kCharset1);
 	data.word(kCurrentset) = ax;
 	if (data.byte(kSoundint) == 0xff)
@@ -2064,7 +2059,7 @@ Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)segRef(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
-void DreamGenContext::playchannel0(uint8 index, uint8 repeat) {
+void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
 	if (data.byte(kSoundint) == 255)
 		return;
 
@@ -2087,11 +2082,11 @@ void DreamGenContext::playchannel0(uint8 index, uint8 repeat) {
 	}
 }
 
-void DreamGenContext::playchannel0() {
-	playchannel0(al, ah);
+void DreamGenContext::playChannel0() {
+	playChannel0(al, ah);
 }
 
-void DreamGenContext::playchannel1(uint8 index) {
+void DreamGenContext::playChannel1(uint8 index) {
 	if (data.byte(kSoundint) == 255)
 		return;
 	if (data.byte(kCh1playing) == 7)
@@ -2110,18 +2105,18 @@ void DreamGenContext::playchannel1(uint8 index) {
 	data.word(kCh1blockstocopy) = soundBank[index].blockCount();
 }
 
-void DreamGenContext::playchannel1() {
-	playchannel1(al);
+void DreamGenContext::playChannel1() {
+	playChannel1(al);
 }
 
-void DreamGenContext::findroominloc() {
+void DreamGenContext::findRoomInLoc() {
 	uint8 x = data.byte(kMapx) / 11;
 	uint8 y = data.byte(kMapy) / 10;
 	uint8 roomNum = y * 6 + x;
 	data.byte(kRoomnum) = roomNum;
 }
 
-void DreamGenContext::autolook() {
+void DreamGenContext::autoLook() {
 	if ((data.word(kMousex) != data.word(kOldx)) || (data.word(kMousey) != data.word(kOldy))) {
 		data.word(kLookcounter) = 1000;
 		return;
@@ -2132,7 +2127,7 @@ void DreamGenContext::autolook() {
 		return;
 	if (data.word(kWatchingtime))
 		return;
-	dolook();
+	doLook();
 }
 
 void DreamGenContext::look() {
@@ -2142,42 +2137,42 @@ void DreamGenContext::look() {
 	}
 	if (data.byte(kCommandtype) != 241) {
 		data.byte(kCommandtype) = 241;
-		commandonly(25);
+		commandOnly(25);
 	}
 	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton)))
-		dolook();
+		doLook();
 }
 
-void DreamGenContext::dolook() {
-	createpanel();
-	showicon();
-	undertextline();
-	worktoscreenm();
+void DreamGenContext::doLook() {
+	createPanel();
+	showIcon();
+	underTextLine();
+	workToScreenM();
 	data.byte(kCommandtype) = 255;
-	dumptextline();
+	dumpTextLine();
 	uint8 index = data.byte(kRoomnum) & 31;
 	uint16 offset = segRef(data.word(kRoomdesc)).word(kIntextdat + index * 2);
 	uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
-	findnextcolon(&string);
+	findNextColon(&string);
 	uint16 x;
 	if (data.byte(kReallocation) < 50)
 		x = 66;
 	else
 		x = 40;
-	if (printslow(string, x, 80, 241, true) != 1)
-		hangonp(400);
+	if (printSlow(string, x, 80, 241, true) != 1)
+		hangOnP(400);
 
 	data.byte(kPointermode) = 0;
 	data.byte(kCommandtype) = 0;
-	redrawmainscrn();
-	worktoscreenm();
+	redrawMainScrn();
+	workToScreenM();
 }
 
-void DreamGenContext::usecharset1() {
+void DreamGenContext::useCharset1() {
 	data.word(kCurrentset) = data.word(kCharset1);
 }
 
-void DreamGenContext::usetempcharset() {
+void DreamGenContext::useTempCharset() {
 	data.word(kCurrentset) = data.word(kTempcharset);
 }
 
@@ -2186,7 +2181,7 @@ void DreamGenContext::loadRoomData(const Room* room, bool skipDat) {
 	engine->openFile(room->name);
 	cs.word(kHandle) = 1; //only one handle
 	flags._c = false;
-	readheader();
+	readHeader();
 
 	// read segment lengths from room file header
 	int len[15];
@@ -2195,7 +2190,7 @@ void DreamGenContext::loadRoomData(const Room* room, bool skipDat) {
 
 	data.word(kBackdrop) = allocateAndLoad(len[0]);
 	clearAndLoad(data.word(kWorkspace), 0, len[1], 132*66); // 132*66 = maplen
-	sortoutmap();
+	sortOutMap();
 	data.word(kSetframes) = allocateAndLoad(len[2]);
 	if (!skipDat)
 		clearAndLoad(data.word(kSetdat), 255, len[3], kSetdatlen);
@@ -2219,25 +2214,25 @@ void DreamGenContext::loadRoomData(const Room* room, bool skipDat) {
 		engine->skipBytes(len[13]);
 	data.word(kFreedesc) = allocateAndLoad(len[14]);
 
-	closefile();
+	closeFile();
 }
 
-void DreamGenContext::restoreall() {
-	const Room *room = getroomdata(data.byte(kLocation));
+void DreamGenContext::restoreAll() {
+	const Room *room = getRoomData(data.byte(kLocation));
 	loadRoomData(room, true);
-	setallchanges();
+	setAllChanges();
 }
 
-void DreamGenContext::restorereels() {
+void DreamGenContext::restoreReels() {
 	if (data.byte(kRoomloaded) == 0)
 		return;
 
-	const Room *room = getroomdata(data.byte(kReallocation));
+	const Room *room = getRoomData(data.byte(kReallocation));
 
 	engine->openFile(room->name);
 	cs.word(kHandle) = 1; //only one handle
 	flags._c = false;
-	readheader();
+	readHeader();
 
 	// read segment lengths from room file header
 	int len[15];
@@ -2252,50 +2247,50 @@ void DreamGenContext::restorereels() {
 	data.word(kReel2) = allocateAndLoad(len[5]);
 	data.word(kReel3) = allocateAndLoad(len[6]);
 
-	closefile();
+	closeFile();
 }
 
-void DreamGenContext::loadfolder() {
-	loadintotemp("DREAMWEB.G09");
-	loadintotemp2("DREAMWEB.G10");
-	loadintotemp3("DREAMWEB.G11");
-	loadtempcharset("DREAMWEB.C02");
-	loadtemptext("DREAMWEB.T50");
+void DreamGenContext::loadFolder() {
+	loadIntoTemp("DREAMWEB.G09");
+	loadIntoTemp2("DREAMWEB.G10");
+	loadIntoTemp3("DREAMWEB.G11");
+	loadTempCharset("DREAMWEB.C02");
+	loadTempText("DREAMWEB.T50");
 }
 
-void DreamGenContext::showfolder() {
+void DreamGenContext::showFolder() {
 	data.byte(kCommandtype) = 255;
 	if (data.byte(kFolderpage)) {
-		usetempcharset();
-		createpanel2();
-		showframe(tempGraphics(), 0, 0, 0, 0);
-		showframe(tempGraphics(), 143, 0, 1, 0);
-		showframe(tempGraphics(), 0, 92, 2, 0);
-		showframe(tempGraphics(), 143, 92, 3, 0);
-		folderexit();
+		useTempCharset();
+		createPanel2();
+		showFrame(tempGraphics(), 0, 0, 0, 0);
+		showFrame(tempGraphics(), 143, 0, 1, 0);
+		showFrame(tempGraphics(), 0, 92, 2, 0);
+		showFrame(tempGraphics(), 143, 92, 3, 0);
+		folderExit();
 		if (data.byte(kFolderpage) != 1)
-			showleftpage();
+			showLeftPage();
 		if (data.byte(kFolderpage) != 12)
-			showrightpage();
-		usecharset1();
-		undertextline();
+			showRightPage();
+		useCharset1();
+		underTextLine();
 	} else {
-		createpanel2();
-		showframe(tempGraphics3(), 143-28, 0, 0, 0);
-		showframe(tempGraphics3(), 143-28, 92, 1, 0);
-		folderexit();
-		undertextline();
+		createPanel2();
+		showFrame(tempGraphics3(), 143-28, 0, 0, 0);
+		showFrame(tempGraphics3(), 143-28, 92, 1, 0);
+		folderExit();
+		underTextLine();
 	}
 }
 
-void DreamGenContext::showleftpage() {
-	showframe(tempGraphics2(), 0, 12, 3, 0);
+void DreamGenContext::showLeftPage() {
+	showFrame(tempGraphics2(), 0, 12, 3, 0);
 	uint16 y = 12+5;
 	for (size_t i = 0; i < 9; ++i) {
-		showframe(tempGraphics2(), 0, y, 4, 0);
+		showFrame(tempGraphics2(), 0, y, 4, 0);
 		y += 16;
 	}
-	showframe(tempGraphics2(), 0, y, 5, 0);
+	showFrame(tempGraphics2(), 0, y, 5, 0);
 	data.word(kLinespacing) = 8;
 	data.word(kCharshift) = 91;
 	data.byte(kKerning) = 1;
@@ -2305,7 +2300,7 @@ void DreamGenContext::showleftpage() {
 	for (size_t i = 0; i < 2; ++i) {
 		uint8 lastChar;
 		do {
-			lastChar = printdirect(&string, 2, &y, 140, false);
+			lastChar = printDirect(&string, 2, &y, 140, false);
 			y += data.word(kLinespacing);
 		} while (lastChar != '\0');
 	}
@@ -2321,15 +2316,15 @@ void DreamGenContext::showleftpage() {
 	}
 }
 
-void DreamGenContext::showrightpage() {
-	showframe(tempGraphics2(), 143, 12, 0, 0);
+void DreamGenContext::showRightPage() {
+	showFrame(tempGraphics2(), 143, 12, 0, 0);
 	uint16 y = 12+37;
 	for (size_t i = 0; i < 7; ++i) {
-		showframe(tempGraphics2(), 143, y, 1, 0);
+		showFrame(tempGraphics2(), 143, y, 1, 0);
 		y += 16;
 	}
 
-	showframe(tempGraphics2(), 143, y, 2, 0);
+	showFrame(tempGraphics2(), 143, y, 2, 0);
 	data.word(kLinespacing) = 8;
 	data.byte(kKerning) = 1;
 	uint8 pageIndex = data.byte(kFolderpage) - 1;
@@ -2338,7 +2333,7 @@ void DreamGenContext::showrightpage() {
 	for (size_t i = 0; i < 2; ++i) {
 		uint8 lastChar;
 		do {
-			lastChar = printdirect(&string, 152, &y, 140, false);
+			lastChar = printDirect(&string, 152, &y, 140, false);
 			y += data.word(kLinespacing);
 		} while (lastChar != '\0');
 	}
@@ -2346,21 +2341,20 @@ void DreamGenContext::showrightpage() {
 	data.word(kLinespacing) = 10;
 }
 
-
-uint8 DreamGenContext::getlocation(uint8 index) {
+uint8 DreamGenContext::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }
 
-void DreamGenContext::getlocation() {
-	al = getlocation(al);
+void DreamGenContext::getLocation() {
+	al = getLocation(al);
 }
 
-void DreamGenContext::setlocation(uint8 index) {
+void DreamGenContext::setLocation(uint8 index) {
 	data.byte(kRoomscango + index) = 1;
 }
 
-void DreamGenContext::setlocation() {
-	setlocation(al);
+void DreamGenContext::setLocation() {
+	setLocation(al);
 }
 
 const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
@@ -2370,126 +2364,126 @@ const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
 }
 
 void DreamGenContext::checkFolderCoords() {
-	RectWithCallback folderlist[] = {
-		{ 280,320,160,200,&DreamGenContext::quitkey },
-		{ 143,300,6,194,&DreamGenContext::nextfolder },
-		{ 0,143,6,194,&DreamGenContext::lastfolder },
-		{ 0,320,0,200,&DreamGenContext::blank },
-		{ 0xFFFF,0,0,0,0 }
+	RectWithCallback folderList[] = {
+		{ 280,320,160,200, &DreamGenContext::quitKey },
+		{ 143,300,6,194, &DreamGenContext::nextFolder },
+		{ 0,143,6,194, &DreamGenContext::lastFolder },
+		{ 0,320,0,200, &DreamGenContext::blank },
+		{ 0xFFFF,0,0,0, 0 }
 	};
-	checkcoords(folderlist);
+	checkCoords(folderList);
 }
 
-void DreamGenContext::nextfolder() {
+void DreamGenContext::nextFolder() {
 	if (data.byte(kFolderpage) == 12) {
 		blank();
 		return;
 	}
 	if (data.byte(kCommandtype) != 201) {
 		data.byte(kCommandtype) = 201;
-		commandonly(16);
+		commandOnly(16);
 	}
 	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
 		++data.byte(kFolderpage);
-		folderhints();
-		delpointer();
-		showfolder();
+		folderHints();
+		delPointer();
+		showFolder();
 		data.word(kMousebutton) = 0;
 		checkFolderCoords();
-		worktoscreenm();
+		workToScreenM();
 	}
 }
 
-void DreamGenContext::lastfolder() {
+void DreamGenContext::lastFolder() {
 	if (data.byte(kFolderpage) == 0) {
 		blank();
 		return;
 	}
 	if (data.byte(kCommandtype) != 202) {
 		data.byte(kCommandtype) = 202;
-		commandonly(17);
+		commandOnly(17);
 	}
 
 	if ((data.word(kMousebutton) == 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
 		--data.byte(kFolderpage);
-		delpointer();
-		showfolder();
+		delPointer();
+		showFolder();
 		data.word(kMousebutton) = 0;
 		checkFolderCoords();
-		worktoscreenm();
+		workToScreenM();
 	}
 }
 
-void DreamGenContext::folderhints() {
+void DreamGenContext::folderHints() {
 	if (data.byte(kFolderpage) == 5) {
-		if ((data.byte(kAidedead) != 1) && (getlocation(13) != 1)) {
-			setlocation(13);
-			showfolder();
+		if ((data.byte(kAidedead) != 1) && (getLocation(13) != 1)) {
+			setLocation(13);
+			showFolder();
 			const uint8 *string = getTextInFile1(30);
-			printdirect(string, 0, 86, 141, true);
-			worktoscreenm();
-			hangonp(200);
+			printDirect(string, 0, 86, 141, true);
+			workToScreenM();
+			hangOnP(200);
 		}
 	} else if (data.byte(kFolderpage) == 9) {
-		if (getlocation(7) != 1) {
-			setlocation(7);
-			showfolder();
+		if (getLocation(7) != 1) {
+			setLocation(7);
+			showFolder();
 			const uint8 *string = getTextInFile1(31);
-			printdirect(string, 0, 86, 141, true);
-			worktoscreenm();
-			hangonp(200);
+			printDirect(string, 0, 86, 141, true);
+			workToScreenM();
+			hangOnP(200);
 		}
 	}
 }
 
-void DreamGenContext::folderexit() {
-	showframe(tempGraphics2(), 296, 178, 6, 0);
+void DreamGenContext::folderExit() {
+	showFrame(tempGraphics2(), 296, 178, 6, 0);
 }
 
-void DreamGenContext::loadtraveltext() {
-	data.word(kTraveltext) = standardload("DREAMWEB.T81");
+void DreamGenContext::loadTravelText() {
+	data.word(kTraveltext) = standardLoad("DREAMWEB.T81");
 }
 
-void DreamGenContext::loadtemptext() {
-	loadtemptext((const char *)cs.ptr(dx, 0));
+void DreamGenContext::loadTempText() {
+	loadTempText((const char *)cs.ptr(dx, 0));
 }
 
-void DreamGenContext::loadtemptext(const char *fileName) {
-	data.word(kTextfile1) = standardload(fileName);
+void DreamGenContext::loadTempText(const char *fileName) {
+	data.word(kTextfile1) = standardLoad(fileName);
 }
 
-void DreamGenContext::drawfloor() {
-	eraseoldobs();
-	drawflags();
-	calcmapad();
-	doblocks();
-	showallobs();
-	showallfree();
-	showallex();
-	paneltomap();
-	initrain();
+void DreamGenContext::drawFloor() {
+	eraseOldObs();
+	drawFlags();
+	calcMapAd();
+	doBlocks();
+	showAllObs();
+	showAllFree();
+	showAllEx();
+	panelToMap();
+	initRain();
 	data.byte(kNewobs) = 0;
 }
 
-void DreamGenContext::allocatebuffers() {
-	data.word(kExtras) = allocatemem(kLengthofextra/16);
-	data.word(kMapdata) = allocatemem(kLengthofmap/16);
-	data.word(kBuffers) = allocatemem(kLengthofbuffer/16);
-	data.word(kFreedat) = allocatemem(kFreedatlen/16);
-	data.word(kSetdat) = allocatemem(kSetdatlen/16);
-	data.word(kMapstore) = allocatemem(kLenofmapstore/16);
-	allocatework();
-	data.word(kSounddata) = allocatemem(2048/16);
-	data.word(kSounddata2) = allocatemem(2048/16);
+void DreamGenContext::allocateBuffers() {
+	data.word(kExtras) = allocateMem(kLengthofextra/16);
+	data.word(kMapdata) = allocateMem(kLengthofmap/16);
+	data.word(kBuffers) = allocateMem(kLengthofbuffer/16);
+	data.word(kFreedat) = allocateMem(kFreedatlen/16);
+	data.word(kSetdat) = allocateMem(kSetdatlen/16);
+	data.word(kMapstore) = allocateMem(kLenofmapstore/16);
+	allocateWork();
+	data.word(kSounddata) = allocateMem(2048/16);
+	data.word(kSounddata2) = allocateMem(2048/16);
 }
 
-void DreamGenContext::worktoscreenm() {
-	animpointer();
-	readmouse();
-	showpointer();
-	vsync();
-	worktoscreen();
-	delpointer();
+void DreamGenContext::workToScreenM() {
+	animPointer();
+	readMouse();
+	showPointer();
+	vSync();
+	workToScreen();
+	delPointer();
 }
 
 } /*namespace dreamgen */

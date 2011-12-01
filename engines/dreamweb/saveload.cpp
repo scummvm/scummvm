@@ -28,55 +28,55 @@
 
 namespace DreamGen {
 
-void DreamGenContext::loadgame() {
+void DreamGenContext::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
-		commandonly(41);
+		commandOnly(41);
 	}
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return; // "noload"
 	if (data.word(kMousebutton) == 1) {
 		ax = 0xFFFF;
-		doload();
+		doLoad();
 	}
 }
 
 // input: ax = savegameId
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
-void DreamGenContext::doload() {
+void DreamGenContext::doLoad() {
 	int savegameId = (int16)ax;
 
 	data.byte(kLoadingorsave) = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
-		showopbox();
-		showloadops();
+		showOpBox();
+		showLoadOps();
 		data.byte(kCurrentslot) = 0;
-		showslots();
-		shownames();
+		showSlots();
+		showNames();
 		data.byte(kPointerframe) = 0;
-		worktoscreenm();
-		namestoold();
+		workToScreenM();
+		namesToOld();
 		data.byte(kGetback) = 0;
 
 		while (true) {
 			if (quitRequested())
 				return;
-			delpointer();
-			readmouse();
-			showpointer();
-			vsync();
-			dumppointer();
-			dumptextline();
+			delPointer();
+			readMouse();
+			showPointer();
+			vSync();
+			dumpPointer();
+			dumpTextLine();
 			RectWithCallback loadlist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualload },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectslot },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualLoad },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
 				{ 0,320,0,200,&DreamGenContext::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
-			checkcoords(loadlist);
+			checkCoords(loadlist);
 			if (data.byte(kGetback) == 1)
 				break;
 			if (data.byte(kGetback) == 2)
@@ -101,35 +101,35 @@ void DreamGenContext::doload() {
 			return;
 		}
 
-		loadposition(savegameId);
+		loadPosition(savegameId);
 
 		data.byte(kGetback) = 1;
 	}
 
 	// kTempgraphics might not have been allocated if we bypassed all menus
 	if (data.word(kTempgraphics) != 0xFFFF)
-		getridoftemp();
+		getRidOfTemp();
 
 	dx = data;
 	es = dx;
 	const Room *room = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
-	startloading(room);
-	loadroomssample();
+	startLoading(room);
+	loadRoomsSample();
 	data.byte(kRoomloaded) = 1;
 	data.byte(kNewlocation) = 255;
-	clearsprites();
-	initman();
-	initrain();
+	clearSprites();
+	initMan();
+	initRain();
 	data.word(kTextaddressx) = 13;
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
 	startup();
-	worktoscreen();
+	workToScreen();
 	data.byte(kGetback) = 4;
 }
 
 
-void DreamGenContext::savegame() {
+void DreamGenContext::saveGame() {
 	if (data.byte(kMandead) == 2) {
 		blank();
 		return;
@@ -137,7 +137,7 @@ void DreamGenContext::savegame() {
 
 	if (data.byte(kCommandtype) != 247) {
 		data.byte(kCommandtype) = 247;
-		commandonly(44);
+		commandOnly(44);
 	}
 	if (data.word(kMousebutton) != 1)
 		return;
@@ -145,13 +145,13 @@ void DreamGenContext::savegame() {
 	data.byte(kLoadingorsave) = 2;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload")) {
-		showopbox();
-		showsaveops();
+		showOpBox();
+		showSaveOps();
 		data.byte(kCurrentslot) = 0;
-		showslots();
-		shownames();
-		worktoscreenm();
-		namestoold();
+		showSlots();
+		showNames();
+		workToScreenM();
+		namesToOld();
 		data.word(kBufferin) = 0;
 		data.word(kBufferout) = 0;
 		data.byte(kGetback) = 0;
@@ -159,22 +159,22 @@ void DreamGenContext::savegame() {
 		while (true) {
 			if (quitRequested())
 				return;
-			delpointer();
-			checkinput();
-			readmouse();
-			showpointer();
-			vsync();
-			dumppointer();
-			dumptextline();
+			delPointer();
+			checkInput();
+			readMouse();
+			showPointer();
+			vSync();
+			dumpPointer();
+			dumpTextLine();
 
 			RectWithCallback savelist[] = {
-				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getbacktoops },
-				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualsave },
-				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectslot },
+				{ kOpsx+176,kOpsx+192,kOpsy+60,kOpsy+76,&DreamGenContext::getBackToOps },
+				{ kOpsx+128,kOpsx+190,kOpsy+12,kOpsy+100,&DreamGenContext::actualSave },
+				{ kOpsx+2,kOpsx+92,kOpsy+4,kOpsy+81,&DreamGenContext::selectSlot },
 				{ 0,320,0,200,&DreamGenContext::blank },
 				{ 0xFFFF,0,0,0,0 }
 			};
-			checkcoords(savelist);
+			checkCoords(savelist);
 			_cmp(data.byte(kGetback), 0);
 			if (flags.z())
 				continue;
@@ -211,58 +211,58 @@ void DreamGenContext::savegame() {
 		if (savegameId < 7)
 			memcpy(data.ptr(kSavenames + 17*savegameId, 17), descbuf, 17);
 
-		saveposition(savegameId, descbuf);
+		savePosition(savegameId, descbuf);
 
 		// TODO: The below is copied from actualsave
-		getridoftemp();
-		restoreall(); // reels
+		getRidOfTemp();
+		restoreAll(); // reels
 		data.word(kTextaddressx) = 13;
 		data.word(kTextaddressy) = 182;
 		data.byte(kTextlen) = 240;
-		redrawmainscrn();
-		worktoscreenm();
+		redrawMainScrn();
+		workToScreenM();
 		data.byte(kGetback) = 4;
 	}
 }
 
-void DreamGenContext::namestoold() {
+void DreamGenContext::namesToOld() {
 	memcpy(segRef(data.word(kBuffers)).ptr(kZoomspace, 0), cs.ptr(kSavenames, 0), 17*4);
 }
 
-void DreamGenContext::oldtonames() {
+void DreamGenContext::oldToNames() {
 	memcpy(cs.ptr(kSavenames, 0), segRef(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
 }
 
-void DreamGenContext::saveload() {
+void DreamGenContext::saveLoad() {
 	if (data.word(kWatchingtime) || (data.byte(kPointermode) == 2)) {
 		blank();
 		return;
 	}
 	if (data.byte(kCommandtype) != 253) {
 		data.byte(kCommandtype) = 253;
-		commandonly(43);
+		commandOnly(43);
 	}
 	if ((data.word(kMousebutton) != data.word(kOldbutton)) && (data.word(kMousebutton) & 1))
-		dosaveload();
+		doSaveLoad();
 }
 
-void DreamGenContext::showmainops() {
-	showframe(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
-	showframe(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
-	showframe(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
+void DreamGenContext::showMainOps() {
+	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 8, 0);
+	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 7, 0);
+	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
 }
 
-void DreamGenContext::showdiscops() {
-	showframe(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
-	showframe(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
-	showframe(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
-	showframe(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
+void DreamGenContext::showDiscOps() {
+	showFrame(tempGraphics(), kOpsx+128+4, kOpsy+12, 1, 0);
+	showFrame(tempGraphics(), kOpsx+10, kOpsy+10, 9, 0);
+	showFrame(tempGraphics(), kOpsx+59, kOpsy+30, 10, 0);
+	showFrame(tempGraphics(), kOpsx+176+2, kOpsy+60-4, 5, 0);
 }
 
-void DreamGenContext::actualsave() {
+void DreamGenContext::actualSave() {
 	if (data.byte(kCommandtype) != 222) {
 		data.byte(kCommandtype) = 222;
-		commandonly(44);
+		commandOnly(44);
 	}
 
 	if (!(data.word(kMousebutton) & 1))
@@ -274,22 +274,22 @@ void DreamGenContext::actualsave() {
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	saveposition(slot, desc);
+	savePosition(slot, desc);
 
-	getridoftemp();
-	restoreall(); // reels
+	getRidOfTemp();
+	restoreAll(); // reels
 	data.word(kTextaddressx) = 13;
 	data.word(kTextaddressy) = 182;
 	data.byte(kTextlen) = 240;
-	redrawmainscrn();
-	worktoscreenm();
+	redrawMainScrn();
+	workToScreenM();
 	data.byte(kGetback) = 4;
 }
 
-void DreamGenContext::actualload() {
+void DreamGenContext::actualLoad() {
 	if (data.byte(kCommandtype) != 221) {
 		data.byte(kCommandtype) = 221;
-		commandonly(41);
+		commandOnly(41);
 	}
 
 	if (data.word(kMousebutton) == data.word(kOldbutton) || data.word(kMousebutton) != 1)
@@ -301,11 +301,11 @@ void DreamGenContext::actualload() {
 	if (desc[1] == 0) // The actual description string starts at desc[1]
 		return;
 
-	loadposition(data.byte(kCurrentslot));
+	loadPosition(data.byte(kCurrentslot));
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::saveposition(unsigned int slot, const uint8 *descbuf) {
+void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 
 	const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
 	Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
@@ -319,8 +319,7 @@ void DreamGenContext::saveposition(unsigned int slot, const uint8 *descbuf) {
 	madeUpRoom->facing = data.byte(kFacing);
 	madeUpRoom->b27 = 255;
 
-
-	openforsave(slot);
+	openForSave(slot);
 
 	// fill length fields in savegame file header
 	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
@@ -335,16 +334,14 @@ void DreamGenContext::saveposition(unsigned int slot, const uint8 *descbuf) {
 	engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 	engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
 	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
-	closefile();
-
-
+	closeFile();
 }
 
-void DreamGenContext::loadposition(unsigned int slot) {
+void DreamGenContext::loadPosition(unsigned int slot) {
 	data.word(kTimecount) = 0;
-	clearchanges();
+	clearChanges();
 
-	openforload(slot);
+	openForLoad(slot);
 
 	engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
 
@@ -368,7 +365,7 @@ void DreamGenContext::loadposition(unsigned int slot) {
 	engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
 	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
 
-	closefile();
+	closeFile();
 }
 
 } /*namespace dreamgen */

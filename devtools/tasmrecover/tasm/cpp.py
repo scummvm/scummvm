@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, header_omit_blacklisted = False):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, header_omit_blacklisted = False, function_name_remapping = { }):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -82,6 +82,7 @@ class cpp:
 		self.skip_output = skip_output
 		self.skip_dispatch_call = skip_dispatch_call
 		self.header_omit_blacklisted = header_omit_blacklisted
+		self.function_name_remapping = function_name_remapping
 		self.translated = []
 		self.proc_addr = []
 		self.used_data_offsets = set()
@@ -288,7 +289,10 @@ namespace %s {
 				jump_proc = True
 		
 		if jump_proc:
-			return "{ %s(); return; }" %name
+			if name in self.function_name_remapping:
+				return "{ %s(); return; }" %self.function_name_remapping[name]
+			else:
+				return "{ %s(); return; }" %name
 		else:
 			# TODO: name or self.resolve_label(name) or self.mangle_label(name)??
 			if name in self.proc.retlabels:
@@ -310,7 +314,10 @@ namespace %s {
 		if name == 'ax':
 			self.body += "\t__dispatch_call(%s);\n" %self.expand('ax', 2)
 			return
-		self.body += "\t%s();\n" %name
+		if name in self.function_name_remapping:
+			self.body += "\t%s();\n" %self.function_name_remapping[name]
+		else:
+			self.body += "\t%s();\n" %name
 		self.schedule(name)
 
 	def _ret(self):
@@ -501,7 +508,10 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, name);
+			if name in self.function_name_remapping:
+				self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, self.function_name_remapping[name]);
+			else:
+				self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, name);
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)
@@ -552,7 +562,10 @@ namespace %s {
 		fd = open(fname, "wt")
 		fd.write("namespace %s {\n" %self.namespace)
 		for p in procs:
-			fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, p, p))
+			if p in self.function_name_remapping:
+				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, self.function_name_remapping[p], self.function_name_remapping[p]))
+			else:
+				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, p, p))
 		fd.write("} /*namespace %s */\n" %self.namespace)
 		fd.close()
 
@@ -641,7 +654,10 @@ public:
 				if self.header_omit_blacklisted == False:
 					self.hd.write("\t//void %s();\n" %p)
 			else:
-				self.hd.write("\tvoid %s();\n" %p)
+				if p in self.function_name_remapping:
+					self.hd.write("\tvoid %s();\n" %self.function_name_remapping[p])
+				else:
+					self.hd.write("\tvoid %s();\n" %p)
 
 		self.hd.write("};\n}\n\n#endif\n")
 		self.hd.close()

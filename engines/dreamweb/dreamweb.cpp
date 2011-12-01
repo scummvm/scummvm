@@ -93,8 +93,8 @@ void DreamWebEngine::waitForVSync() {
 		setVSyncInterrupt(false);
 	}
 
-	_context.doshake();
-	_context.dofade();
+	_context.doShake();
+	_context.doFade();
 	_system->updateScreen();
 }
 
@@ -203,7 +203,6 @@ void DreamWebEngine::processEvents() {
 	}
 }
 
-
 Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
@@ -289,7 +288,6 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 	return _inSaveFile->read(data, size);
 }
 
-
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
 	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
@@ -364,7 +362,6 @@ void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 	}
 	_system->getPaletteManager()->setPalette(fixed, start, count);
 }
-
 
 void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int h) {
 	if (y + h > 200)
@@ -485,11 +482,10 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 	return true;
 }
 
-
 void DreamWebEngine::soundHandler() {
 	_context.data.byte(_context.kSubtitles) = ConfMan.getBool("subtitles");
 	_context.push(_context.ax);
-	_context.volumeadjust();
+	_context.volumeAdjust();
 	_context.ax = _context.pop();
 
 	uint volume = _context.data.byte(DreamGen::DreamGenContext::kVolume);

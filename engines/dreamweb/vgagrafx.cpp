@@ -31,18 +31,18 @@ uint8 *DreamGenContext::workspace() {
 	return result;
 }
 
-void DreamGenContext::allocatework() {
-	data.word(kWorkspace) = allocatemem(0x1000);
+void DreamGenContext::allocateWork() {
+	data.word(kWorkspace) = allocateMem(0x1000);
 }
 
-void DreamGenContext::multiget() {
-	multiget(ds.ptr(si, 0), di, bx, cl, ch);
+void DreamGenContext::multiGet() {
+	multiGet(ds.ptr(si, 0), di, bx, cl, ch);
 	si += cl * ch;
 	di += bx * kScreenwidth + kScreenwidth * ch;
 	cx = 0;
 }
 
-void DreamGenContext::multiget(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamGenContext::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	const uint8 *src = workspace() + x + y * kScreenwidth;
@@ -50,7 +50,7 @@ void DreamGenContext::multiget(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h)
 		h = 200 - y;
 	if (x + w > 320)
 		w = 320 - x;
-	//debug(1, "multiget %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
+	//debug(1, "multiGet %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + kScreenwidth * l;
 		uint8 *dst_p = dst + w * l;
@@ -58,14 +58,14 @@ void DreamGenContext::multiget(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h)
 	}
 }
 
-void DreamGenContext::multiput() {
-	multiput(ds.ptr(si, 0), di, bx, cl, ch);
+void DreamGenContext::multiPut() {
+	multiPut(ds.ptr(si, 0), di, bx, cl, ch);
 	si += cl * ch;
 	di += bx * kScreenwidth + kScreenwidth * ch;
 	cx = 0;
 }
 
-void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
+void DreamGenContext::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
 	assert(x < 320);
 	assert(y < 200);
 	uint8 *dst = workspace() + x + y * kScreenwidth;
@@ -73,7 +73,7 @@ void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, ui
 		h = 200 - y;
 	if (x + w > 320)
 		w = 320 - x;
-	//debug(1, "multiput %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
+	//debug(1, "multiPut %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
 	for(unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + w * l;
 		uint8 *dst_p = dst + kScreenwidth * l;
@@ -81,14 +81,14 @@ void DreamGenContext::multiput(const uint8 *src, uint16 x, uint16 y, uint8 w, ui
 	}
 }
 
-void DreamGenContext::multidump(uint16 x, uint16 y, uint8 width, uint8 height) {
+void DreamGenContext::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	unsigned offset = x + y * kScreenwidth;
-	//debug(1, "multidump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
+	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
 	engine->blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
-void DreamGenContext::multidump() {
-	multidump(di, bx, cl, ch);
+void DreamGenContext::multiDump() {
+	multiDump(di, bx, cl, ch);
 	unsigned offset = di + bx * kScreenwidth;
 	si = di = offset + ch * kScreenwidth;
 	cx = 0;
@@ -98,14 +98,14 @@ void DreamGenContext::workToScreenCPP() {
 	engine->blit(workspace(), 320, 0, 0, 320, 200);
 }
 
-void DreamGenContext::worktoscreen() {
+void DreamGenContext::workToScreen() {
 	workToScreenCPP();
 	uint size = 320 * 200;
 	di = si = size;
 	cx = 0;
 }
 
-void DreamGenContext::printundermon() {
+void DreamGenContext::printUnderMon() {
 	engine->printUnderMonitor();
 }
 
@@ -113,7 +113,7 @@ void DreamGenContext::cls() {
 	engine->cls();
 }
 
-void DreamGenContext::frameoutnm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	dst += pitch * y + x;
 
 	for (uint16 j = 0; j < height; ++j) {
@@ -123,7 +123,7 @@ void DreamGenContext::frameoutnm(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameoutbh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameOutBh(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 
@@ -139,7 +139,7 @@ void DreamGenContext::frameoutbh(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
+void DreamGenContext::frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
 	uint16 stride = pitch - width;
 	dst += y * pitch + x;
 	dst -= width;
@@ -156,7 +156,7 @@ void DreamGenContext::frameoutfx(uint8 *dst, const uint8 *src, uint16 pitch, uin
 	}
 }
 
-void DreamGenContext::doshake() {
+void DreamGenContext::doShake() {
 	uint8 &counter = data.byte(kShakecounter);
 	if (counter == 48)
 		return;
@@ -185,7 +185,7 @@ void DreamGenContext::doshake() {
 	engine->setShakePos(offset >= 0 ? offset : -offset);
 }
 
-void DreamGenContext::vsync() {
+void DreamGenContext::vSync() {
 	push(ax);
 	push(bx);
 	push(cx);
@@ -205,8 +205,8 @@ void DreamGenContext::vsync() {
 	ax = pop();
 }
 
-void DreamGenContext::setmode() {
-	vsync();
+void DreamGenContext::setMode() {
+	vSync();
 	initGraphics(320, 200, false);
 }
 
@@ -219,7 +219,7 @@ static Common::String getFilename(Context &context) {
 	return name;
 }
 
-void DreamGenContext::showpcx() {
+void DreamGenContext::showPCX() {
 	Common::String name = getFilename(*this);
 	Common::File pcxFile;
 
@@ -228,7 +228,7 @@ void DreamGenContext::showpcx() {
 		return;
 	}
 
-	uint8 *maingamepal;
+	uint8 *mainGamePal;
 	int i, j;
 
 	// Read the 16-color palette into the 'maingamepal' buffer. Note that
@@ -236,12 +236,12 @@ void DreamGenContext::showpcx() {
 
 	pcxFile.seek(16, SEEK_SET);
 	es = data.word(kBuffers);
-	maingamepal = es.ptr(kMaingamepal, 768);
-	pcxFile.read(maingamepal, 48);
+	mainGamePal = es.ptr(kMaingamepal, 768);
+	pcxFile.read(mainGamePal, 48);
 
-	memset(maingamepal + 48, 0xff, 720);
+	memset(mainGamePal + 48, 0xff, 720);
 	for (i = 0; i < 48; i++) {
-		maingamepal[i] >>= 2;
+		mainGamePal[i] >>= 2;
 	}
 
 	// Decode the image data.
@@ -289,7 +289,7 @@ void DreamGenContext::showpcx() {
 	pcxFile.close();
 }
 
-void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
+void DreamGenContext::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
 	assert(pitch == 320);
@@ -331,12 +331,12 @@ void DreamGenContext::frameoutv(uint8 *dst, const uint8 *src, uint16 pitch, uint
 	}
 }
 
-void DreamGenContext::showframe(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
+void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag) {
 	uint8 width, height;
-	showframe(frameData, x, y, frameNumber, effectsFlag, &width, &height);
+	showFrame(frameData, x, y, frameNumber, effectsFlag, &width, &height);
 }
 
-void DreamGenContext::showframe(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
+void DreamGenContext::showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
 	const Frame *frame = frameData + frameNumber;
 	if ((frame->width == 0) && (frame->height == 0)) {
 		*width = 0;
@@ -344,12 +344,12 @@ void DreamGenContext::showframe(const Frame *frameData, uint16 x, uint16 y, uint
 		return;
 	}
 
-//notblankshow:
+//notBlankShow:
 	if ((effectsFlag & 128) == 0) {
 		x += frame->x;
 		y += frame->y;
 	}
-//skipoffsets:
+//skipOffsets:
 
 	*width = frame->width;
 	*height = frame->height;
@@ -360,45 +360,45 @@ void DreamGenContext::showframe(const Frame *frameData, uint16 x, uint16 y, uint
 			x -= *width / 2;
 			y -= *height / 2;
 		}
-		if (effectsFlag & 64) { //diffdest
-			frameoutfx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
+		if (effectsFlag & 64) { //diffDest
+			frameOutFx(es.ptr(0, dx * *height), pSrc, dx, *width, *height, x, y);
 			return;
 		}
-		if (effectsFlag & 8) { //printlist
+		if (effectsFlag & 8) { //printList
 			/*
 			push(ax);
 			al = x - data.word(kMapadx);
 			ah = y - data.word(kMapady);
-			//addtoprintlist(); // NB: Commented in the original asm
+			//addToPrintList(); // NB: Commented in the original asm
 			ax = pop();
 			*/
 		}
-		if (effectsFlag & 4) { //flippedx
-			frameoutfx(workspace(), pSrc, 320, *width, *height, x, y);
+		if (effectsFlag & 4) { //flippedX
+			frameOutFx(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
-		if (effectsFlag & 2) { //nomask
-			frameoutnm(workspace(), pSrc, 320, *width, *height, x, y);
+		if (effectsFlag & 2) { //noMask
+			frameOutNm(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
 		if (effectsFlag & 32) {
-			frameoutbh(workspace(), pSrc, 320, *width, *height, x, y);
+			frameOutBh(workspace(), pSrc, 320, *width, *height, x, y);
 			return;
 		}
 	}
-//noeffects:
-	frameoutv(workspace(), pSrc, 320, *width, *height, x, y);
+//noEffects:
+	frameOutV(workspace(), pSrc, 320, *width, *height, x, y);
 	return;
 }
 
-void DreamGenContext::showframe() {
+void DreamGenContext::showFrame() {
 	uint8 width, height;
-	showframe((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
+	showFrame((Frame *)ds.ptr(0, 0), di, bx, ax & 0x1ff, ah & 0xfe, &width, &height);
 	cl = width;
 	ch = height;
 }
 
-void DreamGenContext::clearwork() {
+void DreamGenContext::clearWork() {
 	memset(workspace(), 0, 320*200);
 }
 
@@ -408,7 +408,7 @@ void DreamGenContext::zoom() {
 	if (data.byte(kZoomon) != 1)
 		return;
 	if (data.byte(kCommandtype) >= 199) {
-		putunderzoom();
+		putUnderZoom();
 		return;
 	}
 	uint16 srcOffset = (data.word(kOldpointery) - 9) * 320 + (data.word(kOldpointerx) - 11);
@@ -430,19 +430,19 @@ void DreamGenContext::zoom() {
 	data.byte(kDidzoom) = 1;
 }
 
-void DreamGenContext::paneltomap() {
-	multiget(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+void DreamGenContext::panelToMap() {
+	multiGet(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::maptopanel() {
-	multiput(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+void DreamGenContext::mapToPanel() {
+	multiPut(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::dumpmap() {
-	multidump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+void DreamGenContext::dumpMap() {
+	multiDump(data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
-void DreamGenContext::transferinv() {
+void DreamGenContext::transferInv() {
 	const Frame *freeFrames = (const Frame *)segRef(data.word(kFreeframes)).ptr(kFrframedata, 0);
 	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
 	Frame *exFrames = (Frame *)segRef(data.word(kExtras)).ptr(kExframedata, 0);
@@ -459,23 +459,23 @@ void DreamGenContext::transferinv() {
 	data.word(kExframepos) += byteCount;
 }
 
-bool DreamGenContext::pixelcheckset(const ObjPos *pos, uint8 x, uint8 y) {
+bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
-	SetObject *setObject = getsetad(pos->index);
+	SetObject *setObject = getSetAd(pos->index);
 	Frame *frame = (Frame *)segRef(data.word(kSetframes)).ptr(kFramedata, 0) + setObject->index;
 	const uint8 *ptr = segRef(data.word(kSetframes)).ptr(kFrames, 0) + frame->ptr() + y * frame->width + x;
 	return *ptr != 0;
 }
 
-void DreamGenContext::loadpalfromiff() {
+void DreamGenContext::loadPalFromIFF() {
 	dx = kPalettescreen;
-	openfile();
+	openFile();
 	cx = 2000;
 	ds = data.word(kMapstore);
 	dx = 0;
-	readfromfile();
-	closefile();
+	readFromFile();
+	closeFile();
 
 	const uint8 *src = segRef(data.word(kMapstore)).ptr(0x30, 0);
 	uint8 *dst = mainPalette();
@@ -492,19 +492,19 @@ void DreamGenContext::loadpalfromiff() {
 	}
 }
 
-void DreamGenContext::createpanel() {
+void DreamGenContext::createPanel() {
 	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
-	showframe(icons, 0, 8, 0, 2);
-	showframe(icons, 160, 8, 0, 2);
-	showframe(icons, 0, 104, 0, 2);
-	showframe(icons, 160, 104, 0, 2);
+	showFrame(icons, 0, 8, 0, 2);
+	showFrame(icons, 160, 8, 0, 2);
+	showFrame(icons, 0, 104, 0, 2);
+	showFrame(icons, 160, 104, 0, 2);
 }
 
-void DreamGenContext::createpanel2() {
-	createpanel();
+void DreamGenContext::createPanel2() {
+	createPanel();
 	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
-	showframe(icons, 0, 0, 5, 2);
-	showframe(icons, 160, 0, 5, 2);
+	showFrame(icons, 0, 0, 5, 2);
+	showFrame(icons, 160, 0, 5, 2);
 }
 
 } /*namespace dreamgen */

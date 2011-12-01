@@ -36,31 +36,31 @@ uint8 *DreamGenContext::endPalette() {
 	return segRef(data.word(kBuffers)).ptr(kEndpal, 256*3);
 }
 
-void DreamGenContext::clearstartpal() {
+void DreamGenContext::clearStartPal() {
 	memset(startPalette(), 0, 256*3);
 }
 
-void DreamGenContext::clearendpal() {
+void DreamGenContext::clearEndPal() {
 	memset(endPalette(), 0, 256*3);
 }
 
-void DreamGenContext::paltostartpal() {
+void DreamGenContext::palToStartPal() {
 	memcpy(startPalette(), mainPalette(), 256*3);
 }
 
-void DreamGenContext::endpaltostart() {
+void DreamGenContext::endPalToStart() {
 	memcpy(startPalette(), endPalette(), 256*3);
 }
 
-void DreamGenContext::startpaltoend() {
+void DreamGenContext::startPalToEnd() {
 	memcpy(endPalette(), startPalette(), 256*3);
 }
 
-void DreamGenContext::paltoendpal() {
+void DreamGenContext::palToEndPal() {
 	memcpy(endPalette(), mainPalette(), 256*3);
 }
 
-void DreamGenContext::fadecalculation() {
+void DreamGenContext::fadeCalculation() {
 	if (data.byte(kFadecount) == 0) {
 		data.byte(kFadedirection) = 0;
 		return;
@@ -83,29 +83,29 @@ void DreamGenContext::fadecalculation() {
 	--data.byte(kFadecount);
 }
 
-void DreamGenContext::fadeupyellows() {
-	paltoendpal();
+void DreamGenContext::fadeupYellows() {
+	palToEndPal();
 	memset(endPalette() + 231*3, 0, 8*3);
 	memset(endPalette() + 246*3, 0, 1*3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 128;
-	hangon(128);
+	hangOn(128);
 }
 
-void DreamGenContext::fadeupmonfirst() {
-	paltostartpal();
-	paltoendpal();
+void DreamGenContext::fadeupMonFirst() {
+	palToStartPal();
+	palToEndPal();
 	memset(startPalette() + 231*3, 0, 8*3);
 	memset(startPalette() + 246*3, 0, 1*3);
 	data.byte(kFadedirection) = 1;
 	data.byte(kFadecount) = 63;
 	data.byte(kColourpos) = 0;
 	data.byte(kNumtofade) = 128;
-	hangon(64);
-	playchannel1(26);
-	hangon(64);
+	hangOn(64);
+	playChannel1(26);
+	hangOn(64);
 }
 
 } /*namespace dreamgen */
