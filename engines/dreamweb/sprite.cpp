@@ -681,8 +681,7 @@ void DreamGenContext::madmantext() {
 void DreamGenContext::madman() {
 	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, 0);
 	data.word(kWatchingtime) = 2;
-	checkspeed();
-	if (flags.z()) {
+	if (checkspeed(routine)) {
 		ax = routine->reelPointer();
 		if (ax >= 364) {
 			data.byte(kMandead) = 2;
