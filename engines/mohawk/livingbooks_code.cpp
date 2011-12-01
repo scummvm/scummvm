@@ -490,8 +490,8 @@ void LBCode::parseMain() {
 			break;
 		}
 		bool indexing = false;
-		LBValue index;
-		if (_currToken == kTokenListStart) {
+		Common::Array<LBValue> index;
+		while (_currToken == kTokenListStart) {
 			debugN("[");
 			nextToken();
 			parseStatement();
@@ -502,7 +502,7 @@ void LBCode::parseMain() {
 			if (!_stack.size())
 				error("index failed");
 			indexing = true;
-			index = _stack.pop();
+			index.push_back(_stack.pop());
 		}
 		if (_currToken == kTokenAssign) {
 			debugN(" = ");
@@ -515,11 +515,29 @@ void LBCode::parseMain() {
 				val = getIndexedVar(varname, index);
 			else
 				val = &_vm->_variables[varname];
-			if (val)
+			if (val) {
 				*val = _stack.pop();
+				_stack.push(*val);
+			} else
+				_stack.push(LBValue());
+		} else if (_currToken == kTokenAndEquals) {
+			debugN(" &= ");
+			nextToken();
+			parseStatement();
+			if (!_stack.size())
+				error("assignment failed");
+			LBValue *val;
+			if (indexing)
+				val = getIndexedVar(varname, index);
 			else
-				*val = LBValue();
-			_stack.push(*val);
+				val = &_vm->_variables[varname];
+			if (val) {
+				if (val->type != kLBValueString)
+					error("operator &= used on non-string");
+				val->string = val->string + _stack.pop().toString();
+				_stack.push(*val);
+			} else
+				_stack.push(LBValue());
 		} else {
 			if (indexing) {
 				LBValue *val = getIndexedVar(varname, index);
@@ -619,6 +637,28 @@ void LBCode::parseMain() {
 		nextToken();
 		break;
 
+	case kTokenListStart:
+		debugN("[");
+		nextToken();
+		{
+		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
+		while (_currToken != kTokenListEnd) {
+			parseStatement();
+			if (!_stack.size())
+				error("unexpected empty stack during literal list evaluation");
+			list->array.push_back(_stack.pop());
+			if (_currToken == kTokenComma) {
+				debugN(", ");
+				nextToken();
+			} else if (_currToken != kTokenListEnd)
+				error("encountered unexpected token %02x during literal list", _currToken);
+		}
+		debugN("]");
+		nextToken();
+		_stack.push(list);
+		}
+		break;
+
 	case kTokenNot:
 		debugN("!");
 		nextToken();
@@ -659,15 +699,18 @@ void LBCode::parseMain() {
 	}
 }
 
-LBValue *LBCode::getIndexedVar(Common::String varname, const LBValue &index) {
-	LBValue &var = _vm->_variables[varname];
-	if (var.type != kLBValueList)
-		error("variable '%s' was indexed, but isn't a list", varname.c_str());
-	if (index.type != kLBValueInteger)
-		error("index wasn't an integer");
-	if (index.integer < 1 || index.integer > (int)var.list->array.size())
-		return NULL;
-	return &var.list->array[index.integer - 1];
+LBValue *LBCode::getIndexedVar(Common::String varname, const Common::Array<LBValue> &index) {
+	LBValue *var = &_vm->_variables[varname];
+	for (uint i = 0; i < index.size(); i++) {
+		if (var->type != kLBValueList)
+			error("variable '%s' was indexed, but isn't a list after %d indexes", varname.c_str(), i);
+		if (index[i].type != kLBValueInteger)
+			error("index %d wasn't an integer", i);
+		if (index[i].integer < 1 || index[i].integer > (int)var->list->array.size())
+			return NULL;
+		var = &var->list->array[index[i].integer - 1];
+	}
+	return var;
 }
 
 LBItem *LBCode::resolveItem(const LBValue &value) {

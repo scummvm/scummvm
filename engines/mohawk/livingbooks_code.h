@@ -232,7 +232,7 @@ protected:
 	void parseArithmetic2();
 	void parseMain();
 
-	LBValue *getIndexedVar(Common::String varname, const LBValue &index);
+	LBValue *getIndexedVar(Common::String varname, const Common::Array<LBValue> &index);
 	LBItem *resolveItem(const LBValue &value);
 	Common::Array<LBValue> readParams();
 	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
