@@ -379,4 +379,5 @@
 	void checkspeed();
 	void sparkydrip(ReelRoutine &routine);
 	void othersmoker(ReelRoutine &routine);
+	void gamer(ReelRoutine &routine);
 

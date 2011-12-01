@@ -908,28 +908,6 @@ notboss:
 	data.byte(kTalkedtoboss) = 1;
 }
 
-void DreamGenContext::gamer() {
-	STACK_CHECK;
-	checkspeed();
-	if (!flags.z())
-		goto gamerfin;
-gameragain:
-	randomnum1();
-	_and(al, 7);
-	_cmp(al, 5);
-	if (!flags.c())
-		goto gameragain;
-	_add(al, 20);
-	_cmp(al, es.byte(bx+3));
-	if (flags.z())
-		goto gameragain;
-	ah = 0;
-	es.word(bx+3) = ax;
-gamerfin:
-	showgamereel();
-	addtopeoplelist();
-}
-
 void DreamGenContext::carparkdrip() {
 	STACK_CHECK;
 	checkspeed();
