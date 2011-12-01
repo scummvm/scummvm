@@ -2659,6 +2659,14 @@ void LBItem::unload() {
 	// FIXME: stuff
 }
 
+void LBItem::moveBy(const Common::Point &pos) {
+	_rect.translate(pos.x, pos.y);
+}
+
+void LBItem::moveTo(const Common::Point &pos) {
+	_rect.moveTo(pos);
+}
+
 void LBItem::runScript(uint event, uint16 data, uint16 from) {
 	for (uint i = 0; i < _scriptEntries.size(); i++) {
 		LBScriptEntry *entry = _scriptEntries[i];
@@ -3176,6 +3184,38 @@ void LBGroupItem::stop() {
 		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
 		if (item)
 			item->stop();
+	}
+}
+
+void LBGroupItem::load() {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->load();
+	}
+}
+
+void LBGroupItem::unload() {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->unload();
+	}
+}
+
+void LBGroupItem::moveBy(const Common::Point &pos) {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->moveBy(pos);
+	}
+}
+
+void LBGroupItem::moveTo(const Common::Point &pos) {
+	for (uint i = 0; i < _groupEntries.size(); i++) {
+		LBItem *item = _vm->getItemById(_groupEntries[i].entryId);
+		if (item)
+			item->moveTo(pos);
 	}
 }
 

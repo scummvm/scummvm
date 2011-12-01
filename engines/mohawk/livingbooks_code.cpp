@@ -767,7 +767,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "xpos", 0 },
 	{ "ypos", 0 },
 	{ "playFrom", 0 },
-	{ "move", 0 },
+	{ "move", &LBCode::cmdMove },
 	{ 0, 0 },
 	{ 0, 0 },
 	{ "setDragParams", &LBCode::cmdSetDragParams },
@@ -1053,6 +1053,24 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 	_stack.push(rect.right);
 }
 
+void LBCode::cmdMove(const Common::Array<LBValue> &params) {
+	if (params.size() != 1 && params.size() != 2)
+		error("incorrect number of parameters (%d) to move", params.size());
+
+	LBItem *target = _currSource;
+	Common::Point pt;
+	if (params.size() == 1) {
+		pt = params[0].toPoint();
+	} else {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted move on invalid item (%s)", params[0].toString().c_str());
+		pt = params[1].toPoint();
+	}
+
+	target->moveBy(pt);
+}
+
 void LBCode::cmdSetDragParams(const Common::Array<LBValue> &params) {
 	warning("ignoring setDragParams");
 }
@@ -1224,7 +1242,21 @@ void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 }
 
 void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
-	warning("ignoring moveTo");
+	if (params.size() != 1 && params.size() != 2)
+		error("incorrect number of parameters (%d) to moveTo", params.size());
+
+	LBItem *target = _currSource;
+	Common::Point pt;
+	if (params.size() == 1) {
+		pt = params[0].toPoint();
+	} else {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted moveTo on invalid item (%s)", params[0].toString().c_str());
+		pt = params[1].toPoint();
+	}
+
+	target->moveTo(pt);
 }
 
 void LBCode::itemSeek(const Common::Array<LBValue> &params) {

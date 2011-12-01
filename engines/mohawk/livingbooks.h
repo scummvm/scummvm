@@ -403,6 +403,8 @@ public:
 	virtual void notify(uint16 data, uint16 from); // 0x1A
 	virtual void load();
 	virtual void unload();
+	virtual void moveBy(const Common::Point &pos);
+	virtual void moveTo(const Common::Point &pos);
 
 	uint16 getId() { return _itemId; }
 	const Common::String &getName() { return _desc; }
@@ -482,6 +484,10 @@ public:
 	void setGlobalVisible(bool visible);
 	void startPhase(uint phase);
 	void stop();
+	void load();
+	void unload();
+	void moveBy(const Common::Point &pos);
+	void moveTo(const Common::Point &pos);
 
 protected:
 	bool _starting;
