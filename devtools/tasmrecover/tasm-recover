@@ -353,5 +353,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'inventory',
 	'mainscreen',
 	'doload',
-	], skip_dispatch_call = True, header_omit_blacklisted = True)
+	], skip_dispatch_call = True, header_omit_blacklisted = True,
+	function_name_remapping = {
+	# This remaps the function naming at output for readability
+	})
 generator.generate('dreamweb') #start routine
