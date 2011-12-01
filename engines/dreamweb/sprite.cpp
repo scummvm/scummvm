@@ -567,7 +567,7 @@ void DreamGenContext::showrain() {
 	playchannel1(soundIndex);
 }
 
-static void (DreamGenContext::*reelCallbacks[])() = {
+static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkydrip,
 	&DreamGenContext::eden, &DreamGenContext::edeninbath,
 	&DreamGenContext::sparky, &DreamGenContext::smokebloke,
@@ -599,24 +599,61 @@ static void (DreamGenContext::*reelCallbacks[])() = {
 	&DreamGenContext::carparkdrip
 };
 
+static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL, NULL,
+	NULL
+};
 
 void DreamGenContext::updatepeople() {
 	data.word(kListpos) = kPeoplelist;
 	memset(segRef(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
 
-	// The callbacks are called with es:bx pointing to their reelRoutine entry.
-	// They use some of the fields in it to store state.
+	// The original callbacks are called with es:bx pointing to their reelRoutine entry.
+	// The new callbacks take a mutable ReelRoutine parameter.
 
 	es = cs;
-	const ReelRoutine *r = (const ReelRoutine *)cs.ptr(kReelroutines, 0);
+	ReelRoutine *r = (ReelRoutine *)cs.ptr(kReelroutines, 0);
 
 	for (int i = 0; r[i].reallocation != 255; ++i) {
 		bx = kReelroutines + 8*i;
 		if (r[i].reallocation == data.byte(kReallocation) &&
 		        r[i].mapX == data.byte(kMapx) &&
 		        r[i].mapY == data.byte(kMapy)) {
-			(this->*(reelCallbacks[i]))();
+			if (reelCallbacks[i]) {
+				assert(!reelCallbacksCPP[i]);
+				(this->*(reelCallbacks[i]))();
+			} else {
+				assert(reelCallbacksCPP[i]);
+				(this->*(reelCallbacksCPP[i]))(r[i]);
+			}
 		}
 	}
 }
