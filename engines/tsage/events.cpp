@@ -253,6 +253,23 @@ void EventsClass::setCursor(CursorType cursorType) {
 			break;
 		}
 		break;
+
+	// Ringworld 2 specific cursors
+	case EXITCURSOR_N:
+	case EXITCURSOR_S:
+	case EXITCURSOR_W:
+	case EXITCURSOR_E:
+	case EXITCURSOR_LEFT_HAND:
+	case CURSOR_INVALID:
+	case EXITCURSOR_NE:
+	case EXITCURSOR_SE:
+	case EXITCURSOR_SW:
+	case EXITCURSOR_NW:
+	case SHADECURSOR_UP:
+	case SHADECURSOR_DOWN:
+	case SHADECURSOR_HAND:
+		cursor = g_resourceManager->getSubResource(5, 1, cursorType - R2CURSORS_START, &size);
+		break;
 	}
 
 	// Decode the cursor

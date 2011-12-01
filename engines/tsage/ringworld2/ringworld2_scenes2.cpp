@@ -189,7 +189,7 @@ void Scene2000::initExits() {
 		_exit5._enabled = true;
 		_exit5._bounds.set(61, 68, 90, 125);
 		_exit5.setDest(Common::Point(92, 129));
-		_exit5._cursorNum = CURSOR_9;
+		_exit5._cursorNum = EXITCURSOR_W;
 		break;
 	case 4:
 	case 12:
@@ -198,7 +198,7 @@ void Scene2000::initExits() {
 		_exit5._enabled = true;
 		_exit5._bounds.set(230, 68, 259, 125);
 		_exit5.setDest(Common::Point(244, 129));
-		_exit5._cursorNum = CURSOR_10;
+		_exit5._cursorNum = EXITCURSOR_E;
 		break;
 	default:
 		break;
@@ -224,7 +224,7 @@ void Scene2000::initExits() {
 		_exit3._enabled = true;
 		_exit3._bounds.set(71, 130, 154, 168);
 		_exit3.setDest(Common::Point(94, 129));
-		_exit3._cursorNum = CURSOR_14;
+		_exit3._cursorNum = EXITCURSOR_SE;
 		loadScene(2300);
 		if (!_exitingFlag)
 			_mazePlayerMode = 0;
@@ -302,7 +302,7 @@ void Scene2000::initExits() {
 		_exit4._enabled = true;
 		_exit4._bounds.set(138, 83, 211, 125);
 		_exit4.setDest(Common::Point(129, 188));
-		_exit4._cursorNum = CURSOR_16;
+		_exit4._cursorNum = EXITCURSOR_NW;
 		loadScene(2250);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2500)
@@ -317,7 +317,7 @@ void Scene2000::initExits() {
 		_exit3._enabled = true;
 		_exit3._bounds.set(78, 130, 148, 168);
 		_exit3.setDest(Common::Point(100, 129));
-		_exit3._cursorNum = CURSOR_14;
+		_exit3._cursorNum = EXITCURSOR_SE;
 		loadScene(2075);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (!_exitingFlag)
@@ -328,7 +328,7 @@ void Scene2000::initExits() {
 		_exit3._enabled = true;
 		_exit3._bounds.set(160, 130, 248, 168);
 		_exit3.setDest(Common::Point(225, 129));
-		_exit3._cursorNum = CURSOR_15;
+		_exit3._cursorNum = EXITCURSOR_SW;
 		loadScene(2325);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (!_exitingFlag)
@@ -340,7 +340,7 @@ void Scene2000::initExits() {
 		_exit4._enabled = true;
 		_exit4._bounds.set(122, 83, 207, 125);
 		_exit4.setDest(Common::Point(210, 129));
-		_exit4._cursorNum = CURSOR_16;
+		_exit4._cursorNum = EXITCURSOR_NW;
 		loadScene(2125);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2400)
@@ -354,7 +354,7 @@ void Scene2000::initExits() {
 		_exit4._enabled = true;
 		_exit4._bounds.set(108, 83, 128, 184);
 		_exit4.setDest(Common::Point(135, 129));
-		_exit4._cursorNum = CURSOR_13;
+		_exit4._cursorNum = CURSOR_INVALID;
 		loadScene(2275);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (!_exitingFlag)
@@ -365,7 +365,7 @@ void Scene2000::initExits() {
 		_exit3._enabled = true;
 		_exit3._bounds.set(171, 130, 241, 168);
 		_exit3.setDest(Common::Point(218, 129));
-		_exit3._cursorNum = CURSOR_15;
+		_exit3._cursorNum = EXITCURSOR_SW;
 		loadScene(2050);
 		R2_GLOBALS._walkRegions.load(2000);
 		if (R2_GLOBALS._player._oldCharacterScene[R2_GLOBALS._player._characterIndex] == 2350)
@@ -791,15 +791,15 @@ void Scene2000::postInit(SceneObjectList *OwnerList) {
 	}
 	_exitingFlag = false;
 
-	_exit1.setDetails(Rect(0, 100, 14, 140), CURSOR_9, 2000);
+	_exit1.setDetails(Rect(0, 100, 14, 140), EXITCURSOR_W, 2000);
 	_exit1.setDest(Common::Point(14, 129));
-	_exit2.setDetails(Rect(305, 100, 320, 140), CURSOR_10, 2000);
+	_exit2.setDetails(Rect(305, 100, 320, 140), EXITCURSOR_E, 2000);
 	_exit2.setDest(Common::Point(315, 129));
-	_exit3.setDetails(Rect(71, 130, 154, 168), CURSOR_8, 2000);
+	_exit3.setDetails(Rect(71, 130, 154, 168), EXITCURSOR_S, 2000);
 	_exit3.setDest(Common::Point(94, 129));
-	_exit4.setDetails(Rect(138, 83, 211, 125), CURSOR_7, 2000);
+	_exit4.setDetails(Rect(138, 83, 211, 125), EXITCURSOR_N, 2000);
 	_exit4.setDest(Common::Point(188, 128));
-	_exit5.setDetails(Rect(61, 68, 90, 125), CURSOR_9, 2000);
+	_exit5.setDetails(Rect(61, 68, 90, 125), EXITCURSOR_W, 2000);
 	_exit5.setDest(Common::Point(92, 129));
 
 	R2_GLOBALS._sound1.play(200);
@@ -1022,7 +1022,8 @@ void Scene2000::signal() {
 }
 
 void Scene2000::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_3)) {
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType == EVENT_BUTTON_DOWN) && 
+			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)) {
 		warning("TODO: Check sub_22D26");
 		
 		Common::Point pt(event.mousePos.x, 129);
@@ -1099,9 +1100,9 @@ void Scene2350::postInit(SceneObjectList *OwnerList) {
 	if (R2_GLOBALS._sceneManager._previousScene == -1)
 		R2_GLOBALS._player._characterScene[2] = 2350;
 
-	_exitUp.setDetails(Rect(25, 83, 93, 125), CURSOR_16, 2350);
+	_exitUp.setDetails(Rect(25, 83, 93, 125), EXITCURSOR_NW, 2350);
 	_exitUp.setDest(Common::Point(80, 129));
-	_exitWest.setDetails(Rect(0, 100, 14, 140), CURSOR_9, 2350);
+	_exitWest.setDetails(Rect(0, 100, 14, 140), EXITCURSOR_W, 2350);
 	_exitWest.setDest(Common::Point(14, 129));
 
 	R2_GLOBALS._player.postInit();
@@ -1200,7 +1201,7 @@ void Scene2350::signal() {
 		break;
 	case 2355:
 		_sceneMode = 20;
-		R2_GLOBALS._events.setCursor(CURSOR_2);
+		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 		_stripManager.start(711, this);
 		break;
 	default:
@@ -1210,7 +1211,8 @@ void Scene2350::signal() {
 }
 
 void Scene2350::process(Event &event) {
-	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) && (R2_GLOBALS._events.getCursor() == CURSOR_3)){
+	if ((R2_GLOBALS._player._canWalk) && (event.eventType != EVENT_BUTTON_DOWN) && 
+			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)){
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
 		BF_GLOBALS._player.addMover(mover, &pt);

@@ -1268,9 +1268,9 @@ void Scene200::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	loadScene(200);
 
-	_westExit.setDetails(Rect(94, 0, 123, 58), CURSOR_9, 175);
+	_westExit.setDetails(Rect(94, 0, 123, 58), EXITCURSOR_W, 175);
 	_westExit.setDest(Common::Point(125, 52));
-	_eastExit.setDetails(Rect(133, 0, 167, 58), CURSOR_10, 150);
+	_eastExit.setDetails(Rect(133, 0, 167, 58), EXITCURSOR_E, 150);
 	_eastExit.setDest(Common::Point(135, 52));
 
 	_northDoor.postInit();
