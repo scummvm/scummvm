@@ -270,6 +270,8 @@ public:
 	void cmdSetAt(const Common::Array<LBValue> &params);
 	void cmdListLen(const Common::Array<LBValue> &params);
 	void cmdDeleteAt(const Common::Array<LBValue> &params);
+	void cmdExec(const Common::Array<LBValue> &params);
+	void cmdReturn(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
 	void cmdSetKeyEvent(const Common::Array<LBValue> &params);
 	void cmdSetHitTest(const Common::Array<LBValue> &params);

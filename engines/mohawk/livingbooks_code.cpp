@@ -851,8 +851,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "getProperty", 0 },
 	{ "copyList", 0 },
 	{ "invoke", 0 },
-	{ "exec", 0 },
-	{ "return", 0 },
+	{ "exec", &LBCode::cmdExec },
+	{ "return", &LBCode::cmdReturn },
 	{ "sendSync", 0 },
 	{ "moveViewOrigin", 0 },
 	{ "addToGroup", 0 },
@@ -1187,6 +1187,38 @@ void LBCode::cmdDeleteAt(const Common::Array<LBValue> &params) {
 	if (params[1].integer < 1 || params[1].integer > (int)params[0].list->array.size())
 		return;
 	params[0].list->array.remove_at(params[1].integer - 1);
+}
+
+void LBCode::cmdExec(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to exec", params.size());
+	if (params[0].type != kLBValueInteger || params[0].integer < 0)
+		error("invalid offset passed to exec");
+	uint offset = (uint)params[0].integer;
+
+	uint32 oldOffset = _currOffset;
+	byte oldToken = _currToken;
+	LBValue val = runCode(_currSource, offset);
+	_currOffset = oldOffset;
+	_currToken = oldToken;
+
+	_stack.push(val);
+	_stack.push(val);
+}
+
+void LBCode::cmdReturn(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to return", params.size());
+
+	if (!_stack.size())
+		error("empty stack on entry to return");
+
+	if (params[0] == _stack.top()) {
+		_stack.pop();
+		_stack.push(params[1]);
+		_currToken = kTokenEndOfFile;
+	} else
+		_stack.push(_stack.top());
 }
 
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {
