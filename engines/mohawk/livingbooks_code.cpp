@@ -835,14 +835,14 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "isWorldWrap", 0 },
 	{ "newList", &LBCode::cmdNewList },
 	{ "deleteList", 0 },
-	{ "add", 0 },
+	{ "add", &LBCode::cmdAdd },
 	{ 0, 0 },
-	{ "addAt", 0 },
+	{ "addAt", &LBCode::cmdAddAt },
 	{ "getAt", 0 },
 	// 0x30
 	{ 0, 0 },
 	{ "getIndex", 0 },
-	{ "setAt", 0 },
+	{ "setAt", &LBCode::cmdSetAt },
 	{ "listLen", &LBCode::cmdListLen },
 	{ "deleteAt", &LBCode::cmdDeleteAt },
 	{ "clearList", &LBCode::cmdUnimplemented },
@@ -1123,6 +1123,46 @@ void LBCode::cmdNewList(const Common::Array<LBValue> &params) {
 		error("incorrect number of parameters (%d) to newList", params.size());
 
 	_stack.push(Common::SharedPtr<LBList>(new LBList));
+}
+
+void LBCode::cmdAdd(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to add", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to add");
+
+	params[0].list->array.push_back(params[1]);
+}
+
+void LBCode::cmdAddAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to addAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to addAt");
+
+	if (params[1].type != kLBValueInteger || params[1].integer < 1)
+		error("invalid index passed to addAt");
+
+	if ((uint)params[1].integer > params[0].list->array.size())
+		params[0].list->array.resize(params[1].integer);
+	params[0].list->array.insert_at(params[1].integer - 1, params[2]);
+}
+
+void LBCode::cmdSetAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to setAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to setAt");
+
+	if (params[1].type != kLBValueInteger || params[1].integer < 1)
+		error("invalid index passed to setAt");
+
+	if ((uint)params[1].integer > params[0].list->array.size())
+		params[0].list->array.resize(params[1].integer);
+	params[0].list->array[params[1].integer - 1] =  params[2];
 }
 
 void LBCode::cmdListLen(const Common::Array<LBValue> &params) {

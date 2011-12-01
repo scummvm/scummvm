@@ -265,6 +265,9 @@ public:
 	void cmdMove(const Common::Array<LBValue> &params);
 	void cmdSetDragParams(const Common::Array<LBValue> &params);
 	void cmdNewList(const Common::Array<LBValue> &params);
+	void cmdAdd(const Common::Array<LBValue> &params);
+	void cmdAddAt(const Common::Array<LBValue> &params);
+	void cmdSetAt(const Common::Array<LBValue> &params);
 	void cmdListLen(const Common::Array<LBValue> &params);
 	void cmdDeleteAt(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
