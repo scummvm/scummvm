@@ -632,7 +632,7 @@ void DreamGenContext::deallocateMem(uint16 segment) {
 	uint16 bseg = data.word(kBuffers);
 	if (!bseg)
 		return;
-	SegmentRef buffers(this);
+	MutableSegmentRef buffers(this);
 	buffers = bseg;
 	uint8 *ptr = buffers.ptr(kSpritetable, tsize);
 	for(uint i = 0; i < tsize; i += 32) {
