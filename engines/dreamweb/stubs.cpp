@@ -115,7 +115,10 @@ void DreamGenContext::dreamweb() {
 			titles();
 			if (quitRequested())
 				return; // exit game
-			credits();
+
+			// "credits"
+			clearPalette();
+			realCredits();
 
 			if (quitRequested())
 				return; // exit game

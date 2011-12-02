@@ -1018,7 +1018,6 @@ public:
 	void searchForFiles();
 	void monkSpeaking();
 	void clearRest();
-	void credits();
 	void madmanRun();
 	void randomNum1();
 	void keeper();

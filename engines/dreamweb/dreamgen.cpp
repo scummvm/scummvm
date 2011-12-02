@@ -2631,12 +2631,6 @@ void DreamGenContext::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamGenContext::credits() {
-	STACK_CHECK;
-	clearPalette();
-	realCredits();
-}
-
 void DreamGenContext::bibleQuote() {
 	STACK_CHECK;
 	mode640x480();
