@@ -7358,23 +7358,6 @@ void DreamGenContext::openSarters() {
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::isItRight() {
-	STACK_CHECK;
-	bx = data;
-	es = bx;
-	bx = 8573;
-	_cmp(es.byte(bx+0), al);
-	if (!flags.z())
-		return /* (notright) */;
-	_cmp(es.byte(bx+1), ah);
-	if (!flags.z())
-		return /* (notright) */;
-	_cmp(es.byte(bx+2), cl);
-	if (!flags.z())
-		return /* (notright) */;
-	_cmp(es.byte(bx+3), ch);
-}
-
 void DreamGenContext::drawItAll() {
 	STACK_CHECK;
 	createPanel();

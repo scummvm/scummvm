@@ -75,6 +75,12 @@ void DreamGenContext::enterCode() {
 	enterCode(al, ah, cl, ch);
 }
 
+bool DreamGenContext::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
+	
+	return digit0 == data.byte(kPresslist+0) && digit1 == data.byte(kPresslist+1)
+		&& digit2 == data.byte(kPresslist+2) && digit3 == data.byte(kPresslist+3);
+}
+
 void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	RectWithCallback keypadList[] = {
 		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
@@ -93,10 +99,6 @@ void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 		{ 0xFFFF,0,0,0,0 }
 	};
 
-	data.byte(kKeypadax+0) = digit0;
-	data.byte(kKeypadax+1) = digit1;
-	data.byte(kKeypadcx+0) = digit2;
-	data.byte(kKeypadcx+1) = digit3;
 	getRidOfReels();
 	loadKeypad();
 	createPanel();
@@ -135,10 +137,7 @@ void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 			if (data.byte(kPresscount) == 40) {
 				addToPressList();
 				if (data.byte(kPressed) == 11) {
-					ax = data.word(kKeypadax);
-					cx = data.word(kKeypadcx);
-					isItRight();
-					if (flags.z())
+					if (isItRight(digit0, digit1, digit2, digit3))
 						data.byte(kLockstatus) = 0;
 					playChannel1(11);
 					data.byte(kLightcount) = 120;

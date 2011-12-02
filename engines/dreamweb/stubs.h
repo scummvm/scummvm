@@ -396,6 +396,7 @@
 	void buttonNought();
 	void buttonEnter();
 	void buttonPress(uint8 buttonId);
+	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode();
 

@@ -919,7 +919,6 @@ public:
 	void setSoundOff();
 	void setPickup();
 	void dropObject();
-	void isItRight();
 	void openOb();
 	void drawItAll();
 	void useStereo();
