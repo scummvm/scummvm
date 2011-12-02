@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, header_omit_blacklisted = False, function_name_remapping = { }):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -81,6 +81,7 @@ class cpp:
 		self.failed = list(blacklist)
 		self.skip_output = skip_output
 		self.skip_dispatch_call = skip_dispatch_call
+		self.skip_addr_constants = skip_addr_constants
 		self.header_omit_blacklisted = header_omit_blacklisted
 		self.function_name_remapping = function_name_remapping
 		self.translated = []
@@ -631,8 +632,9 @@ public:
 
 """)
 
-		for name,addr in self.proc_addr:
-			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+		if self.skip_addr_constants == False:
+			for name,addr in self.proc_addr:
+				self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
 
 
 		for name,addr in self.used_data_offsets:
