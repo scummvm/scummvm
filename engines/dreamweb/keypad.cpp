@@ -42,8 +42,33 @@ void DreamGenContext::singleKey(uint8 key, uint16 x, uint16 y) {
 	showFrame(tempGraphics(), x, y, key, 0);
 }
 
-void DreamGenContext::singleKey() {
-	singleKey(al, di, bx);
+void DreamGenContext::showKeypad() {
+	singleKey(22, kKeypadx+9,  kKeypady+5);
+	singleKey(23, kKeypadx+31, kKeypady+5);
+	singleKey(24, kKeypadx+53, kKeypady+5);
+	singleKey(25, kKeypadx+9,  kKeypady+23);
+	singleKey(26, kKeypadx+31, kKeypady+23);
+	singleKey(27, kKeypadx+53, kKeypady+23);
+	singleKey(28, kKeypadx+9,  kKeypady+41);
+	singleKey(29, kKeypadx+31, kKeypady+41);
+	singleKey(30, kKeypadx+53, kKeypady+41);
+	singleKey(31, kKeypadx+9,  kKeypady+59);
+	singleKey(32, kKeypadx+31, kKeypady+59);
+	if (data.byte(kLightcount)) {
+		--data.byte(kLightcount);
+		uint8 frameIndex;
+		uint16 y;
+		if (data.byte(kLockstatus)) {
+			frameIndex = 36;
+			y = kKeypady-1+63;
+		} else {
+			frameIndex = 41;
+			y = kKeypady+4+63;
+		}
+		if ((data.byte(kLightcount) >= 60) && (data.byte(kLightcount) < 100))
+			--frameIndex;
+		showFrame(tempGraphics(), kKeypadx+60, y, frameIndex, 0);
+	}
 }
 
 } /*namespace dreamgen */

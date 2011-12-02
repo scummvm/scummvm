@@ -774,7 +774,6 @@ public:
 	void setupPit();
 	void showPCX();
 	void showDecisions();
-	void showKeypad();
 	void removeObFromInv();
 	void useCoveredBox();
 	void openYourNeighbour();
