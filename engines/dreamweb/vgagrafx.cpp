@@ -27,7 +27,7 @@
 namespace DreamGen {
 
 uint8 *DreamGenContext::workspace() {
-	uint8 *result = segRef(data.word(kWorkspace)).ptr(0, 0);
+	uint8 *result = getSegment(data.word(kWorkspace)).ptr(0, 0);
 	return result;
 }
 
@@ -431,11 +431,11 @@ void DreamGenContext::zoom() {
 }
 
 void DreamGenContext::panelToMap() {
-	multiGet(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiGet(getSegment(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamGenContext::mapToPanel() {
-	multiPut(segRef(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiPut(getSegment(data.word(kMapstore)).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamGenContext::dumpMap() {
@@ -443,17 +443,17 @@ void DreamGenContext::dumpMap() {
 }
 
 void DreamGenContext::transferInv() {
-	const Frame *freeFrames = (const Frame *)segRef(data.word(kFreeframes)).ptr(kFrframedata, 0);
+	const Frame *freeFrames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(kFrframedata, 0);
 	const Frame *freeFrame = freeFrames + (3 * data.byte(kItemtotran) + 1);
-	Frame *exFrames = (Frame *)segRef(data.word(kExtras)).ptr(kExframedata, 0);
+	Frame *exFrames = (Frame *)getSegment(data.word(kExtras)).ptr(kExframedata, 0);
 	Frame *exFrame = exFrames + (3 * data.byte(kExpos) + 1);
 	exFrame->width = freeFrame->width;
 	exFrame->height = freeFrame->height;
 	exFrame->x = freeFrame->x;
 	exFrame->y = freeFrame->y;
 	uint16 byteCount = freeFrame->width * freeFrame->height;
-	const uint8 *src = segRef(data.word(kFreeframes)).ptr(kFrframes + freeFrame->ptr(), byteCount);
-	uint8 *dst = segRef(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
+	const uint8 *src = getSegment(data.word(kFreeframes)).ptr(kFrframes + freeFrame->ptr(), byteCount);
+	uint8 *dst = getSegment(data.word(kExtras)).ptr(kExframes + data.word(kExframepos), byteCount);
 	memcpy(dst, src, byteCount);
 	exFrame->setPtr(data.word(kExframepos));
 	data.word(kExframepos) += byteCount;
@@ -463,8 +463,8 @@ bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 	x -= pos->xMin;
 	y -= pos->yMin;
 	SetObject *setObject = getSetAd(pos->index);
-	Frame *frame = (Frame *)segRef(data.word(kSetframes)).ptr(kFramedata, 0) + setObject->index;
-	const uint8 *ptr = segRef(data.word(kSetframes)).ptr(kFrames, 0) + frame->ptr() + y * frame->width + x;
+	Frame *frame = (Frame *)getSegment(data.word(kSetframes)).ptr(kFramedata, 0) + setObject->index;
+	const uint8 *ptr = getSegment(data.word(kSetframes)).ptr(kFrames, 0) + frame->ptr() + y * frame->width + x;
 	return *ptr != 0;
 }
 
@@ -477,7 +477,7 @@ void DreamGenContext::loadPalFromIFF() {
 	readFromFile();
 	closeFile();
 
-	const uint8 *src = segRef(data.word(kMapstore)).ptr(0x30, 0);
+	const uint8 *src = getSegment(data.word(kMapstore)).ptr(0x30, 0);
 	uint8 *dst = mainPalette();
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
@@ -493,7 +493,7 @@ void DreamGenContext::loadPalFromIFF() {
 }
 
 void DreamGenContext::createPanel() {
-	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
+	Frame *icons = (Frame *)getSegment(data.word(kIcons2)).ptr(0, 0);
 	showFrame(icons, 0, 8, 0, 2);
 	showFrame(icons, 160, 8, 0, 2);
 	showFrame(icons, 0, 104, 0, 2);
@@ -502,7 +502,7 @@ void DreamGenContext::createPanel() {
 
 void DreamGenContext::createPanel2() {
 	createPanel();
-	Frame *icons = (Frame *)segRef(data.word(kIcons2)).ptr(0, 0);
+	Frame *icons = (Frame *)getSegment(data.word(kIcons2)).ptr(0, 0);
 	showFrame(icons, 0, 0, 5, 2);
 	showFrame(icons, 160, 0, 5, 2);
 }

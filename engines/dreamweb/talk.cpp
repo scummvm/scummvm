@@ -25,7 +25,7 @@
 namespace DreamGen {
 
 uint16 DreamGenContext::getPersFrame(uint8 index) {
-	return segRef(data.word(kPeople)).word(kPersonframes + index * 2);
+	return getSegment(data.word(kPeople)).word(kPersonframes + index * 2);
 }
 
 void DreamGenContext::convIcons() {

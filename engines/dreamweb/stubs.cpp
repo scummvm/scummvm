@@ -304,7 +304,7 @@ static Common::String getFilename(Context &context) {
 }
 
 uint8 *DreamGenContext::textUnder() {
-	return segRef(data.word(kBuffers)).ptr(kTextunder, 0);
+	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
 
 uint16 DreamGenContext::standardLoad(const char *fileName) {
@@ -312,7 +312,7 @@ uint16 DreamGenContext::standardLoad(const char *fileName) {
 	engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
 	uint16 sizeInBytes = cs.word(kFiledata);
 	uint16 result = allocateMem((sizeInBytes + 15) / 16);
-	engine->readFromFile(segRef(result).ptr(0, 0), sizeInBytes);
+	engine->readFromFile(getSegment(result).ptr(0, 0), sizeInBytes);
 	engine->closeFile();
 	return result;
 }
@@ -354,7 +354,7 @@ void DreamGenContext::loadTempCharset(const char *fileName) {
 }
 
 Frame *DreamGenContext::tempCharset() {
-	return (Frame *)segRef(data.word(kTempcharset)).ptr(0, 0);
+	return (Frame *)getSegment(data.word(kTempcharset)).ptr(0, 0);
 }
 
 void DreamGenContext::hangOnCurs(uint16 frameCount) {
@@ -576,8 +576,8 @@ void DreamGenContext::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x,
 	data.word(kCounttotimed) = countToTimed;
 	data.word(kTimecount) = timeCount + countToTimed;
 	data.word(kTimedseg) = data.word(kTextfile1);
-	data.word(kTimedoffset) = kTextstart + segRef(data.word(kTextfile1)).word(textIndex * 2);
-	const uint8 *string = segRef(data.word(kTextfile1)).ptr(data.word(kTimedoffset), 0);
+	data.word(kTimedoffset) = kTextstart + getSegment(data.word(kTextfile1)).word(textIndex * 2);
+	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(data.word(kTimedoffset), 0);
 	debug(1, "setupTimedTemp: (%d, %d) => '%s'", textIndex, voiceIndex, string);
 }
 
@@ -802,7 +802,7 @@ void DreamGenContext::makeBackOb(SetObject *objData) {
 	uint8 type = objData->type;
 	Sprite *sprite = makeSprite(data.word(kObjectx), data.word(kObjecty), addr_backobject, data.word(kSetframes), 0);
 
-	uint16 objDataOffset = (uint8 *)objData - segRef(data.word(kSetdat)).ptr(0, 0);
+	uint16 objDataOffset = (uint8 *)objData - getSegment(data.word(kSetdat)).ptr(0, 0);
 	assert(objDataOffset % sizeof(SetObject) == 0);
 	assert(objDataOffset < 128 * sizeof(SetObject));
 	sprite->setObjData(objDataOffset);
@@ -833,14 +833,14 @@ void DreamGenContext::readHeader() {
 uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
 	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
 	uint16 result = allocateMem(size / 16);
-	engine->readFromFile(segRef(result).ptr(0, size), size);
+	engine->readFromFile(getSegment(result).ptr(0, size), size);
 	return result;
 }
 
 void DreamGenContext::clearAndLoad(uint16 seg, uint8 c,
                                    unsigned int size, unsigned int maxSize) {
 	assert(size <= maxSize);
-	uint8 *buf = segRef(seg).ptr(0, maxSize);
+	uint8 *buf = getSegment(seg).ptr(0, maxSize);
 	memset(buf, c, maxSize);
 	engine->readFromFile(buf, size);
 }
@@ -945,7 +945,7 @@ void DreamGenContext::crosshair() {
 	} else {
 		frame = 29;
 	}
-	const Frame *src = (const Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	const Frame *src = (const Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
 	showFrame(src, kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
@@ -964,9 +964,9 @@ void DreamGenContext::commandOnly() {
 void DreamGenContext::commandOnly(uint8 command) {
 	delTextLine();
 	uint16 index = command * 2;
-	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index);
+	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index);
 	uint16 y = data.word(kTextaddressy);
-	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
+	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	printDirect(&string, data.word(kTextaddressx), &y, data.byte(kTextlen), (bool)(data.byte(kTextlen) & 1));
 	data.byte(kNewtextline) = 1;
 }
@@ -976,7 +976,7 @@ void DreamGenContext::checkIfPerson() {
 }
 
 bool DreamGenContext::checkIfPerson(uint8 x, uint8 y) {
-	People *people = (People *)segRef(data.word(kBuffers)).ptr(kPeoplelist, 0);
+	People *people = (People *)getSegment(data.word(kBuffers)).ptr(kPeoplelist, 0);
 
 	for (size_t i = 0; i < 12; ++i, ++people) {
 		if (people->b4 == 255)
@@ -1010,7 +1010,7 @@ void DreamGenContext::checkIfFree() {
 }
 
 bool DreamGenContext::checkIfFree(uint8 x, uint8 y) {
-	const ObjPos *freeList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
+	const ObjPos *freeList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kFreelist, 80 * sizeof(ObjPos));
 	for (size_t i = 0; i < 80; ++i) {
 		const ObjPos *objPos = freeList + 79 - i;
 		if (objPos->index == 0xff || !objPos->contains(x,y))
@@ -1026,7 +1026,7 @@ void DreamGenContext::checkIfEx() {
 }
 
 bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
-	const ObjPos *exList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
+	const ObjPos *exList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kExlist, 100 * sizeof(ObjPos));
 	for (size_t i = 0; i < 100; ++i) {
 		const ObjPos *objPos = exList + 99 - i;
 		if (objPos->index == 0xff || !objPos->contains(x,y))
@@ -1040,20 +1040,20 @@ bool DreamGenContext::checkIfEx(uint8 x, uint8 y) {
 const uint8 *DreamGenContext::findObName(uint8 type, uint8 index) {
 	if (type == 5) {
 		uint16 i = 64 * 2 * (index & 127);
-		uint16 offset = segRef(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
-		return segRef(data.word(kPeople)).ptr(offset, 0);
+		uint16 offset = getSegment(data.word(kPeople)).word(kPersontxtdat + i) + kPersontext;
+		return getSegment(data.word(kPeople)).ptr(offset, 0);
 	} else if (type == 4) {
-		uint16 offset = segRef(data.word(kExtras)).word(kExtextdat + index * 2) + kExtext;
-		return segRef(data.word(kExtras)).ptr(offset, 0);
+		uint16 offset = getSegment(data.word(kExtras)).word(kExtextdat + index * 2) + kExtext;
+		return getSegment(data.word(kExtras)).ptr(offset, 0);
 	} else if (type == 2) {
-		uint16 offset = segRef(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
-		return segRef(data.word(kFreedesc)).ptr(offset, 0);
+		uint16 offset = getSegment(data.word(kFreedesc)).word(kFreetextdat + index * 2) + kFreetext;
+		return getSegment(data.word(kFreedesc)).ptr(offset, 0);
 	} else if (type == 1) {
-		uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + index * 2) + kSettext;
-		return segRef(data.word(kSetdesc)).ptr(offset, 0);
+		uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + index * 2) + kSettext;
+		return getSegment(data.word(kSetdesc)).ptr(offset, 0);
 	} else {
-		uint16 offset = segRef(data.word(kBlockdesc)).word(kBlocktextdat + index * 2) + kBlocktext;
-		return segRef(data.word(kBlockdesc)).ptr(offset, 0);
+		uint16 offset = getSegment(data.word(kBlockdesc)).word(kBlocktextdat + index * 2) + kBlocktext;
+		return getSegment(data.word(kBlockdesc)).ptr(offset, 0);
 	}
 }
 
@@ -1082,10 +1082,10 @@ void DreamGenContext::commandWithOb() {
 void DreamGenContext::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
 	delTextLine();
-	uint16 commandText = kTextstart + segRef(data.word(kCommandtext)).word(command * 2);
+	uint16 commandText = kTextstart + getSegment(data.word(kCommandtext)).word(command * 2);
 	uint8 textLen = data.byte(kTextlen);
 	{
-		const uint8 *string = segRef(data.word(kCommandtext)).ptr(commandText, 0);
+		const uint8 *string = getSegment(data.word(kCommandtext)).ptr(commandText, 0);
 		printDirect(string, data.word(kTextaddressx), data.word(kTextaddressy), textLen, (bool)(textLen & 1));
 	}
 	copyName(type, index, commandLine);
@@ -1101,7 +1101,7 @@ void DreamGenContext::examineObText() {
 }
 
 void DreamGenContext::showPanel() {
-	Frame *frame = (Frame *)segRef(data.word(kIcons1)).ptr(0, sizeof(Frame));
+	Frame *frame = (Frame *)getSegment(data.word(kIcons1)).ptr(0, sizeof(Frame));
 	showFrame(frame, 72, 0, 19, 0);
 	showFrame(frame, 192, 0, 19, 0);
 }
@@ -1126,7 +1126,7 @@ void DreamGenContext::findOrMake() {
 }
 
 void DreamGenContext::findOrMake(uint8 index, uint8 value, uint8 type) {
-	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change) {
 		if (index == change->index && data.byte(kReallocation) == change->location && type == change->type) {
 			change->value = value;
@@ -1141,18 +1141,18 @@ void DreamGenContext::findOrMake(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamGenContext::setAllChanges() {
-	Change *change = (Change *)segRef(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
+	Change *change = (Change *)getSegment(data.word(kBuffers)).ptr(kListofchanges, sizeof(Change));
 	for (; change->index != 0xff; ++change)
 		if (change->location == data.byte(kReallocation))
 			doChange(change->index, change->value, change->type);
 }
 
 DynObject *DreamGenContext::getFreeAd(uint8 index) {
-	return (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0) + index;
+	return (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0) + index;
 }
 
 DynObject *DreamGenContext::getExAd(uint8 index) {
-	return (DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0) + index;
+	return (DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0) + index;
 }
 
 DynObject *DreamGenContext::getEitherAdCPP() {
@@ -1191,7 +1191,7 @@ void *DreamGenContext::getAnyAdDir(uint8 index, uint8 flag) {
 }
 
 SetObject *DreamGenContext::getSetAd(uint8 index) {
-	return (SetObject *)segRef(data.word(kSetdat)).ptr(0, 0) + index;
+	return (SetObject *)getSegment(data.word(kSetdat)).ptr(0, 0) + index;
 }
 
 void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
@@ -1209,8 +1209,8 @@ void DreamGenContext::doChange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamGenContext::deleteTaken() {
-	const DynObject *extraObjects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, 0);
-	DynObject *freeObjects = (DynObject *)segRef(data.word(kFreedat)).ptr(0, 0);
+	const DynObject *extraObjects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, 0);
+	DynObject *freeObjects = (DynObject *)getSegment(data.word(kFreedat)).ptr(0, 0);
 	for(size_t i = 0; i < kNumexobjects; ++i) {
 		uint8 location = extraObjects[i].initialLocation;
 		if (location == data.byte(kReallocation)) {
@@ -1222,7 +1222,7 @@ void DreamGenContext::deleteTaken() {
 
 void DreamGenContext::getExPos() {
 	es = data.word(kExtras);
-	const DynObject *objects = (const DynObject *)segRef(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
+	const DynObject *objects = (const DynObject *)getSegment(data.word(kExtras)).ptr(kExdata, sizeof(DynObject));
 	for (size_t i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff) {
 			data.byte(kExpos) = i;
@@ -1366,7 +1366,7 @@ void DreamGenContext::delPointer() {
 	data.word(kDelherey) = data.word(kOldpointery);
 	data.byte(kDelxs) = data.byte(kPointerxs);
 	data.byte(kDelys) = data.byte(kPointerys);
-	multiPut(segRef(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
+	multiPut(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), data.word(kDelherex), data.word(kDelherey), data.byte(kPointerxs), data.byte(kPointerys));
 }
 
 void DreamGenContext::showBlink() {
@@ -1387,7 +1387,7 @@ void DreamGenContext::showBlink() {
 		blinkFrame = 6;
 	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
 	uint8 width, height;
-	showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
+	showFrame((Frame *)getSegment(data.word(kIcons1)).ptr(0, 0), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
 void DreamGenContext::dumpBlink() {
@@ -1531,7 +1531,7 @@ void DreamGenContext::checkCoords(const RectWithCallback *rectWithCallbacks) {
 
 void DreamGenContext::showPointer() {
 	showBlink();
-	const Frame *icons1 = ((const Frame *)segRef(data.word(kIcons1)).ptr(0, 0));
+	const Frame *icons1 = ((const Frame *)getSegment(data.word(kIcons1)).ptr(0, 0));
 	uint16 x = data.word(kMousex);
 	data.word(kOldpointerx) = data.word(kMousex);
 	uint16 y = data.word(kMousey);
@@ -1539,9 +1539,9 @@ void DreamGenContext::showPointer() {
 	if (data.byte(kPickup) == 1) {
 		const Frame *frames;
 		if (data.byte(kObjecttype) != 4)
-			frames = (const Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+			frames = (const Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 		else
-			frames = (const Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+			frames = (const Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
 		const Frame *frame = frames + (3 * data.byte(kItemframe) + 1);
 		uint8 width = frame->width;
 		uint8 height = frame->height;
@@ -1555,7 +1555,7 @@ void DreamGenContext::showPointer() {
 		uint16 yMin = (y >= height / 2) ? y - height / 2 : 0;
 		data.word(kOldpointerx) = xMin;
 		data.word(kOldpointery) = yMin;
-		multiGet(segRef(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
+		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
 		showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
 		showFrame(icons1, x, y, 3, 128);
 	} else {
@@ -1568,7 +1568,7 @@ void DreamGenContext::showPointer() {
 			height = 12;
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
-		multiGet(segRef(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
+		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
 		showFrame(icons1, x, y, data.byte(kPointerframe) + 20, 0);
 	}
 }
@@ -1632,8 +1632,8 @@ void DreamGenContext::printMessage() {
 }
 
 void DreamGenContext::printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered) {
-	uint16 offset = kTextstart + segRef(data.word(kCommandtext)).word(index * 2);
-	const uint8 *string = segRef(data.word(kCommandtext)).ptr(offset, 0);
+	uint16 offset = kTextstart + getSegment(data.word(kCommandtext)).word(index * 2);
+	const uint8 *string = getSegment(data.word(kCommandtext)).ptr(offset, 0);
 	printDirect(&string, x, &y, maxWidth, centered);
 }
 
@@ -1653,8 +1653,8 @@ bool DreamGenContext::compare(uint8 index, uint8 flag, const char id[4]) {
 }
 
 bool DreamGenContext::isItDescribed(const ObjPos *pos) {
-	uint16 offset = segRef(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
-	uint8 result = segRef(data.word(kSetdesc)).byte(kSettext + offset);
+	uint16 offset = getSegment(data.word(kSetdesc)).word(kSettextdat + pos->index * 2);
+	uint8 result = getSegment(data.word(kSetdesc)).byte(kSettext + offset);
 	return result != 0;
 }
 
@@ -1674,7 +1674,7 @@ void DreamGenContext::showIcon() {
 		panelIcons1();
 		zoomIcon();
 	} else {
-		Frame *tempSprites = (Frame *)segRef(data.word(kTempsprites)).ptr(0, 0);
+		Frame *tempSprites = (Frame *)getSegment(data.word(kTempsprites)).ptr(0, 0);
 		showFrame(tempSprites, 72, 2, 45, 0);
 		showFrame(tempSprites, 72+47, 2, 46, 0);
 		showFrame(tempSprites, 69-10, 21, 49, 0);
@@ -1690,7 +1690,7 @@ void DreamGenContext::checkIfSet() {
 }
 
 bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
-	const ObjPos *setList = (const ObjPos *)segRef(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
+	const ObjPos *setList = (const ObjPos *)getSegment(data.word(kBuffers)).ptr(kSetlist, sizeof(ObjPos) * 128);
 	for (size_t i = 0; i < 128; ++i) {
 		const ObjPos *pos = setList + 127 - i;
 		if (pos->index == 0xff || !pos->contains(x,y))
@@ -1706,7 +1706,7 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 }
 
 void DreamGenContext::showRyanPage() {
-	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	Frame *icons1 = (Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
 	showFrame(icons1, kInventx + 167, kInventy - 12, 12, 0);
 	showFrame(icons1, kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
@@ -1857,7 +1857,7 @@ void DreamGenContext::zoomOnOff() {
 
 void DreamGenContext::sortOutMap() {
 	const uint8 *src = workspace();
-	uint8 *dst = (uint8 *)segRef(data.word(kMapdata)).ptr(0, 0);
+	uint8 *dst = (uint8 *)getSegment(data.word(kMapdata)).ptr(0, 0);
 	for (uint16 y = 0; y < kMaplength; ++y) {
 		memcpy(dst, src, kMapwidth);
 		dst += kMapwidth;
@@ -1903,7 +1903,7 @@ void DreamGenContext::mainScreen() {
 
 void DreamGenContext::showWatch() {
 	if (data.byte(kWatchon)) {
-		showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), 250, 1, 6, 0);
+		showFrame((Frame *)getSegment(data.word(kIcons1)).ptr(0, 0), 250, 1, 6, 0);
 		showTime();
 	}
 }
@@ -1918,7 +1918,7 @@ void DreamGenContext::dumpWatch() {
 void DreamGenContext::showTime() {
 	if (data.byte(kWatchon) == 0)
 		return;
-	Frame *charset = (Frame *)segRef(data.word(kCharset1)).ptr(0, 0);
+	Frame *charset = (Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
 
 	int seconds = data.byte(kSecondcount);
 	int minutes = data.byte(kMinutecount);
@@ -1941,7 +1941,7 @@ void DreamGenContext::watchCount() {
 		return;
 	++data.byte(kTimercount);
 	if (data.byte(kTimercount) == 9) {
-		showFrame((Frame *)segRef(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
+		showFrame((Frame *)getSegment(data.word(kCharset1)).ptr(0, 0), 268+4, 21, 91*3+21, 0);
 		data.byte(kWatchdump) = 1;
 	} else if (data.byte(kTimercount) == 18) {
 		data.byte(kTimercount) = 0;
@@ -1968,8 +1968,8 @@ void DreamGenContext::roomName() {
 		textIndex -= 32;
 	data.word(kLinespacing) = 7;
 	uint8 maxWidth = (data.byte(kWatchon) == 1) ? 120 : 160;
-	uint16 descOffset = segRef(data.word(kRoomdesc)).word(kIntextdat + textIndex * 2);
-	const uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext + descOffset, 0);
+	uint16 descOffset = getSegment(data.word(kRoomdesc)).word(kIntextdat + textIndex * 2);
+	const uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext + descOffset, 0);
 	printDirect(string, 88, 25, maxWidth, false);
 	data.word(kLinespacing) = 10;
 	useCharset1();
@@ -1978,7 +1978,7 @@ void DreamGenContext::roomName() {
 void DreamGenContext::zoomIcon() {
 	if (data.byte(kZoomon) == 0)
 		return;
-	showFrame((Frame *)segRef(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
+	showFrame((Frame *)getSegment(data.word(kIcons1)).ptr(0, 0), kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamGenContext::loadRoom() {
@@ -2025,21 +2025,21 @@ void DreamGenContext::readSetData() {
 		return;
 
 	//engine->openFile("DREAMWEB.VOL");
-	//uint8 *volumeTab = segRef(data.word(kSoundbuffer)).ptr(16384, 0);
+	//uint8 *volumeTab = getSegment(data.word(kSoundbuffer)).ptr(16384, 0);
 	//engine->readFromFile(volumeTab, 2048-256);
 	//engine->closeFile();
 }
 
 Frame * DreamGenContext::tempGraphics() {
-	return (Frame *)segRef(data.word(kTempgraphics)).ptr(0, 0);
+	return (Frame *)getSegment(data.word(kTempgraphics)).ptr(0, 0);
 }
 
 Frame * DreamGenContext::tempGraphics2() {
-	return (Frame *)segRef(data.word(kTempgraphics2)).ptr(0, 0);
+	return (Frame *)getSegment(data.word(kTempgraphics2)).ptr(0, 0);
 }
 
 Frame * DreamGenContext::tempGraphics3() {
-	return (Frame *)segRef(data.word(kTempgraphics3)).ptr(0, 0);
+	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
 }
 
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
@@ -2049,10 +2049,10 @@ void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
 	data.byte(kCh0playing) = index;
 	Sound *soundBank;
 	if (index >= 12) {
-		soundBank = (Sound *)segRef(data.word(kSounddata2)).ptr(0, 0);
+		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
 		index -= 12;
 	} else
-		soundBank = (Sound *)segRef(data.word(kSounddata)).ptr(0, 0);
+		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
 	data.byte(kCh0repeat) = repeat;
 	data.word(kCh0emmpage) = soundBank[index].emmPage;
@@ -2078,10 +2078,10 @@ void DreamGenContext::playChannel1(uint8 index) {
 	data.byte(kCh1playing) = index;
 	Sound *soundBank;
 	if (index >= 12) {
-		soundBank = (Sound *)segRef(data.word(kSounddata2)).ptr(0, 0);
+		soundBank = (Sound *)getSegment(data.word(kSounddata2)).ptr(0, 0);
 		index -= 12;
 	} else
-		soundBank = (Sound *)segRef(data.word(kSounddata)).ptr(0, 0);
+		soundBank = (Sound *)getSegment(data.word(kSounddata)).ptr(0, 0);
 
 	data.word(kCh1emmpage) = soundBank[index].emmPage;
 	data.word(kCh1offset) = soundBank[index].offset();
@@ -2134,8 +2134,8 @@ void DreamGenContext::doLook() {
 	data.byte(kCommandtype) = 255;
 	dumpTextLine();
 	uint8 index = data.byte(kRoomnum) & 31;
-	uint16 offset = segRef(data.word(kRoomdesc)).word(kIntextdat + index * 2);
-	uint8 *string = segRef(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
+	uint16 offset = getSegment(data.word(kRoomdesc)).word(kIntextdat + index * 2);
+	uint8 *string = getSegment(data.word(kRoomdesc)).ptr(kIntext, 0) + offset;
 	findNextColon(&string);
 	uint16 x;
 	if (data.byte(kReallocation) < 50)
@@ -2341,8 +2341,8 @@ void DreamGenContext::setLocation() {
 }
 
 const uint8 *DreamGenContext::getTextInFile1(uint16 index) {
-	uint16 offset = segRef(data.word(kTextfile1)).word(index * 2) + kTextstart;
-	const uint8 *string = segRef(data.word(kTextfile1)).ptr(offset, 0);
+	uint16 offset = getSegment(data.word(kTextfile1)).word(index * 2) + kTextstart;
+	const uint8 *string = getSegment(data.word(kTextfile1)).ptr(offset, 0);
 	return string;
 }
 

@@ -95,7 +95,7 @@ void DreamGenContext::printSlow() {
 uint8 DreamGenContext::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered) {
 	data.byte(kPointerframe) = 1;
 	data.byte(kPointermode) = 3;
-	const Frame* charSet = (const Frame *)segRef(data.word(kCharset1)).ptr(0, 0);
+	const Frame* charSet = (const Frame *)getSegment(data.word(kCharset1)).ptr(0, 0);
 	do {
 		uint16 offset = x;
 		uint16 charCount = getNumber(charSet, string, maxWidth, centered, &offset);
@@ -149,7 +149,7 @@ uint8 DreamGenContext::printDirect(const uint8* string, uint16 x, uint16 y, uint
 
 uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
-	const Frame *charSet = (const Frame *)segRef(data.word(kCurrentset)).ptr(0, 0);
+	const Frame *charSet = (const Frame *)getSegment(data.word(kCurrentset)).ptr(0, 0);
 	while (true) {
 		uint16 offset = x;
 		uint8 charCount = getNumber(charSet, *string, maxWidth, centered, &offset);

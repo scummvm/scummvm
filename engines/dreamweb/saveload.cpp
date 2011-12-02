@@ -226,11 +226,11 @@ void DreamGenContext::saveGame() {
 }
 
 void DreamGenContext::namesToOld() {
-	memcpy(segRef(data.word(kBuffers)).ptr(kZoomspace, 0), cs.ptr(kSavenames, 0), 17*4);
+	memcpy(getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), cs.ptr(kSavenames, 0), 17*4);
 }
 
 void DreamGenContext::oldToNames() {
-	memcpy(cs.ptr(kSavenames, 0), segRef(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
+	memcpy(cs.ptr(kSavenames, 0), getSegment(data.word(kBuffers)).ptr(kZoomspace, 0), 17*4);
 }
 
 void DreamGenContext::saveLoad() {
@@ -330,8 +330,8 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
 	engine->writeToSaveFile(descbuf, len[0]);
 	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-	engine->writeToSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	engine->writeToSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	engine->writeToSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	engine->writeToSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 	engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
 	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 	closeFile();
@@ -360,8 +360,8 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 		engine->readFromSaveFile(namebuf, 17);
 	}
 	engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
-	engine->readFromSaveFile(segRef(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
-	engine->readFromSaveFile(segRef(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
+	engine->readFromSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
+	engine->readFromSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 	engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
 	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
 

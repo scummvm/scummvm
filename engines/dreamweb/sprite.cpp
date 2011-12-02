@@ -25,7 +25,7 @@
 namespace DreamGen {
 
 Sprite *DreamGenContext::spriteTable() {
-	Sprite *sprite = (Sprite *)segRef(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
+	Sprite *sprite = (Sprite *)getSegment(data.word(kBuffers)).ptr(kSpritetable, 16 * sizeof(Sprite));
 	return sprite;
 }
 
@@ -64,7 +64,7 @@ void DreamGenContext::printASprite(const Sprite *sprite) {
 		c = 8;
 	else
 		c = 0;
-	showFrame((const Frame *)segRef(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
+	showFrame((const Frame *)getSegment(sprite->frameData()).ptr(0, 0), x, y, sprite->frameNumber, c);
 }
 
 void DreamGenContext::clearSprites() {
@@ -254,7 +254,7 @@ void DreamGenContext::backObject() {
 }
 
 void DreamGenContext::backObject(Sprite *sprite) {
-	SetObject *objData = (SetObject *)segRef(data.word(kSetdat)).ptr(sprite->objData(), 0);
+	SetObject *objData = (SetObject *)getSegment(data.word(kSetdat)).ptr(sprite->objData(), 0);
 
 	if (sprite->delay != 0) {
 		--sprite->delay;
@@ -475,18 +475,18 @@ Frame *DreamGenContext::findSource() {
 	uint16 currentFrame = data.word(kCurrentframe);
 	if (currentFrame < 160) {
 		data.word(kTakeoff) = 0;
-		return (Frame *)segRef(data.word(kReel1)).ptr(0, 0);
+		return (Frame *)getSegment(data.word(kReel1)).ptr(0, 0);
 	} else if (currentFrame < 320) {
 		data.word(kTakeoff) = 160;
-		return (Frame *)segRef(data.word(kReel2)).ptr(0, 0);
+		return (Frame *)getSegment(data.word(kReel2)).ptr(0, 0);
 	} else {
 		data.word(kTakeoff) = 320;
-		return (Frame *)segRef(data.word(kReel3)).ptr(0, 0);
+		return (Frame *)getSegment(data.word(kReel3)).ptr(0, 0);
 	}
 }
 
 Reel *DreamGenContext::getReelStart() {
-	Reel *reel = (Reel *)segRef(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
+	Reel *reel = (Reel *)getSegment(data.word(kReels)).ptr(kReellist + data.word(kReelpointer) * sizeof(Reel) * 8, sizeof(Reel));
 	return reel;
 }
 
@@ -520,7 +520,7 @@ const Frame *DreamGenContext::getReelFrameAX(uint16 frame) {
 }
 
 void DreamGenContext::showRain() {
-	Rain *rain = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
+	Rain *rain = (Rain *)getSegment(data.word(kBuffers)).ptr(kRainlist, 0);
 
 	// Do nothing if there's no rain at all
 	if (rain->x == 255)
@@ -631,7 +631,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 
 void DreamGenContext::updatePeople() {
 	data.word(kListpos) = kPeoplelist;
-	memset(segRef(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
+	memset(getSegment(data.word(kBuffers)).ptr(kPeoplelist, 12 * sizeof(People)), 0xff, 12 * sizeof(People));
 	++data.word(kMaintimer);
 
 	// The original callbacks are called with es:bx pointing to their reelRoutine entry.
@@ -776,7 +776,7 @@ void DreamGenContext::checkOne() {
 void DreamGenContext::checkOne(uint8 x, uint8 y, uint8 *flag, uint8 *flagEx, uint8 *type, uint8 *flagX, uint8 *flagY) {
 	*flagX = x / 16;
 	*flagY = y / 16;
-	const uint8 *tileData = segRef(data.word(kBuffers)).ptr(kMapflags + (*flagY * 11 + *flagX) * 3, 3);
+	const uint8 *tileData = getSegment(data.word(kBuffers)).ptr(kMapflags + (*flagY * 11 + *flagX) * 3, 3);
 	*flag = tileData[0];
 	*flagEx = tileData[1];
 	*type = tileData[2];
@@ -802,7 +802,7 @@ void DreamGenContext::addToPeopleList() {
 void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
 	uint16 routinePointer = (const uint8 *)routine - cs.ptr(0, 0);
 
-	People *people = (People *)segRef(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
+	People *people = (People *)getSegment(data.word(kBuffers)).ptr(data.word(kListpos), sizeof(People));
 	people->setReelPointer(routine->reelPointer());
 	people->setRoutinePointer(routinePointer);
 	people->b4 = routine->b7;
@@ -882,7 +882,7 @@ static const RainLocation rainLocationList[] = {
 
 void DreamGenContext::initRain() {
 	const RainLocation *r = rainLocationList;
-	Rain *rainList = (Rain *)segRef(data.word(kBuffers)).ptr(kRainlist, 0);
+	Rain *rainList = (Rain *)getSegment(data.word(kBuffers)).ptr(kRainlist, 0);
 	Rain *rain = rainList;
 
 	uint8 rainSpacing = 0;

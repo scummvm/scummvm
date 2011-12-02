@@ -25,7 +25,7 @@
 namespace DreamGen {
 
 void DreamGenContext::fillRyan() {
-	uint8 *inv = segRef(data.word(kBuffers)).ptr(kRyaninvlist, 60);
+	uint8 *inv = getSegment(data.word(kBuffers)).ptr(kRyaninvlist, 60);
 	findAllRyan(inv);
 	inv += data.byte(kRyanpage) * 2 * 10;
 	for (size_t i = 0; i < 2; ++i) {
@@ -73,13 +73,13 @@ void DreamGenContext::obToInv() {
 }
 
 void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
-	Frame *icons1 = (Frame *)segRef(data.word(kIcons1)).ptr(0, 0);
+	Frame *icons1 = (Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
 	showFrame(icons1, x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
 
-	Frame *extras = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
-	Frame *frees = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+	Frame *extras = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
+	Frame *frees = (Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 	Frame *frames = (flag == 4) ? extras : frees;
 	showFrame(frames, x + 18, y + 19, 3 * index + 1, 128);
 	const DynObject *object = (const DynObject *)getAnyAdDir(index, flag);
@@ -93,9 +93,9 @@ void DreamGenContext::obPicture() {
 		return;
 	Frame *frames;
 	if (data.byte(kObjecttype) == 4)
-		frames = (Frame *)segRef(data.word(kExtras)).ptr(0, 0);
+		frames = (Frame *)getSegment(data.word(kExtras)).ptr(0, 0);
 	else
-		frames = (Frame *)segRef(data.word(kFreeframes)).ptr(0, 0);
+		frames = (Frame *)getSegment(data.word(kFreeframes)).ptr(0, 0);
 	uint8 frame = 3 * data.byte(kCommand) + 1;
 	showFrame(frames, 160, 68, frame, 0x80);
 }
@@ -105,10 +105,10 @@ void DreamGenContext::obIcons() {
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {
 		// can open it
-		showFrame((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
+		showFrame((Frame *)getSegment(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
 	}
 
-	showFrame((Frame *)segRef(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
+	showFrame((Frame *)getSegment(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
 }
 
 void DreamGenContext::examineOb(bool examineAgain) {
@@ -246,11 +246,11 @@ void DreamGenContext::inventory() {
 }
 
 void DreamGenContext::transferText() {
-	segRef(data.word(kExtras)).word(kExtextdat + data.byte(kExpos) * 2) = data.word(kExtextpos);
+	getSegment(data.word(kExtras)).word(kExtextdat + data.byte(kExpos) * 2) = data.word(kExtextpos);
 	uint16 freeTextOffset = data.byte(kItemtotran) * 2;
-	uint16 srcOffset = segRef(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
-	const char *src = (const char *)segRef(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
-	char *dst = (char *)segRef(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
+	uint16 srcOffset = getSegment(data.word(kFreedesc)).word(kFreetextdat + freeTextOffset);
+	const char *src = (const char *)getSegment(data.word(kFreedesc)).ptr(kFreetext + srcOffset, 0);
+	char *dst = (char *)getSegment(data.word(kExtras)).ptr(kExtext + data.word(kExtextpos), 0);
 
 	size_t len = strlen(src);
 	memcpy(dst, src, len + 1);

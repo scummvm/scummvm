@@ -50,7 +50,7 @@ void DreamGenContext::turnPathOff(uint8 param) {
 
 void DreamGenContext::turnAnyPathOn(uint8 param, uint8 room) {
 	findOrMake(param, 0xff, room + 100);
-	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].on = 0xff;
 }
 
@@ -60,7 +60,7 @@ void DreamGenContext::turnAnyPathOn() {
 
 void DreamGenContext::turnAnyPathOff(uint8 param, uint8 room) {
 	findOrMake(param, 0x00, room + 100);
-	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
+	PathNode *paths = (PathNode *)getSegment(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
 	paths[param].on = 0x00;
 }
 
@@ -69,7 +69,7 @@ void DreamGenContext::turnAnyPathOff() {
 }
 
 RoomPaths *DreamGenContext::getRoomsPaths() {
-	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
+	void *result = getSegment(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
 	return (RoomPaths *)result;
 }
 

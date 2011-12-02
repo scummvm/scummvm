@@ -138,7 +138,7 @@ void DreamGenContext::input() {
 		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
-		multiGet(segRef(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
+		multiGet(getSegment(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
 		printChar(tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
@@ -232,7 +232,7 @@ void DreamGenContext::monMessage() {
 
 void DreamGenContext::monMessage(uint8 index) {
 	assert(index > 0);
-	const char *string = (const char *)segRef(data.word(kTextfile1)).ptr(kTextstart, 0);
+	const char *string = (const char *)getSegment(data.word(kTextfile1)).ptr(kTextstart, 0);
 	for (uint8 i = 0; i < index; ++i) {
 		while (*string++ != '+') {
 		}

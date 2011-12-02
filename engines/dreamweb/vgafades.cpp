@@ -25,15 +25,15 @@
 namespace DreamGen {
 
 uint8 *DreamGenContext::mainPalette() {
-	return segRef(data.word(kBuffers)).ptr(kMaingamepal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kMaingamepal, 256*3);
 }
 
 uint8 *DreamGenContext::startPalette() {
-	return segRef(data.word(kBuffers)).ptr(kStartpal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kStartpal, 256*3);
 }
 
 uint8 *DreamGenContext::endPalette() {
-	return segRef(data.word(kBuffers)).ptr(kEndpal, 256*3);
+	return getSegment(data.word(kBuffers)).ptr(kEndpal, 256*3);
 }
 
 void DreamGenContext::clearStartPal() {
