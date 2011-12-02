@@ -353,7 +353,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'inventory',
 	'mainscreen',
 	'doload',
-	], skip_dispatch_call = True, skip_addr_constants = False,
+	], skip_dispatch_call = True, skip_addr_constants = True,
 	header_omit_blacklisted = True,
 	function_name_remapping = {
 	# This remaps the function naming at output for readability

@@ -40,6 +40,16 @@
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
+namespace DreamGen {
+
+// TODO: Unsure if these values are constant or
+// should be replaced with &backObject() and &mainMan()
+// or some kind of enum...
+const uint16 addr_backobject = 0xc170;
+const uint16 addr_mainman = 0xc138;
+
+}
+
 namespace DreamWeb {
 
 // Engine Debug Flags
