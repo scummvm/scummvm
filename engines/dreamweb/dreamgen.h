@@ -915,7 +915,6 @@ public:
 	void quitSymbol();
 	void setTopRight();
 	void findSetObject();
-	void singleKey();
 	void hangOne();
 	void carParkDrip();
 	void useDiary();

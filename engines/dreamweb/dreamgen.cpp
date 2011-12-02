@@ -9465,23 +9465,6 @@ gotlight:
 	showFrame();
 }
 
-void DreamGenContext::singleKey() {
-	STACK_CHECK;
-	_cmp(data.byte(kGraphicpress), al);
-	if (!flags.z())
-		goto gotkey;
-	_add(al, 11);
-	_cmp(data.byte(kPresscount), 8);
-	if (!flags.c())
-		goto gotkey;
-	_sub(al, 11);
-gotkey:
-	ds = data.word(kTempgraphics);
-	_sub(al, 20);
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::dumpKeypad() {
 	STACK_CHECK;
 	di = (36+112)-3;

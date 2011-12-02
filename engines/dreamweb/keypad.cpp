@@ -32,5 +32,19 @@ void DreamGenContext::putUnderMenu() {
 	multiPut(segRef(data.word(kBuffers)).ptr(kUndertimedtext, 0), kMenux, kMenuy, 48, 48);
 }
 
+void DreamGenContext::singleKey(uint8 key, uint16 x, uint16 y) {
+	if (key == data.byte(kGraphicpress)) {
+		key += 11;
+		if (data.byte(kPresscount) < 8)
+			key -= 11;
+	}
+	key -= 20;
+	showFrame(tempGraphics(), x, y, key, 0);
+}
+
+void DreamGenContext::singleKey() {
+	singleKey(al, di, bx);
+}
+
 } /*namespace dreamgen */
 

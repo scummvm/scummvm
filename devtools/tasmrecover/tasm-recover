@@ -341,6 +341,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'gamer',
 	'eden',
 	'sparky',
+	'singlekey',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
