@@ -158,19 +158,7 @@ public:
 	SegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr()): _context(ctx), _value(value), _segment(segment) {
 	}
 
-	inline void reset(uint16 value);
-
-	inline SegmentRef& operator=(const uint16 id) {
-		reset(id);
-		return *this;
-	}
-
-	inline SegmentRef& operator=(const SegmentRef &ref) {
-		_context = ref._context;
-		_value = ref._value;
-		_segment = ref._segment;
-		return *this;
-	}
+	inline SegmentRef& operator=(const uint16 id);
 
 	inline uint8 &byte(unsigned index) {
 		assert(_segment != 0);
@@ -259,10 +247,10 @@ public:
 	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
 		cs(this), ds(this), es(this), data(this) {
 		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
-		cs.reset(kDefaultDataSegment);
-		ds.reset(kDefaultDataSegment);
-		es.reset(kDefaultDataSegment);
-		data.reset(kDefaultDataSegment);
+		cs = kDefaultDataSegment;
+		ds = kDefaultDataSegment;
+		es = kDefaultDataSegment;
+		data = kDefaultDataSegment;
 	}
 
 	SegmentRef getSegment(uint16 value) {
@@ -565,8 +553,9 @@ public:
 	}
 };
 
-inline void SegmentRef::reset(uint16 value) {
-	*this = _context->getSegment(value);
+inline SegmentRef& SegmentRef::operator=(const uint16 id) {
+	*this = _context->getSegment(id);
+	return *this;
 }
 
 class StackChecker {
