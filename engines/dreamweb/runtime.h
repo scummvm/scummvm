@@ -150,15 +150,13 @@ typedef Common::SharedPtr<Segment> SegmentPtr;
 class Context;
 
 class SegmentRef {
-	Context		*_context;
 	uint16		_value;
 	SegmentPtr	_segment;
 
 public:
-	SegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr()): _context(ctx), _value(value), _segment(segment) {
+	SegmentRef(uint16 value = 0, SegmentPtr segment = SegmentPtr())
+	: _value(value), _segment(segment) {
 	}
-
-	inline SegmentRef& operator=(const uint16 id);
 
 	inline uint8 &byte(unsigned index) {
 		assert(_segment != 0);
@@ -184,6 +182,19 @@ public:
 		assert(_segment != 0);
 		return _segment->ptr(index, size);
 	}
+};
+
+class MutableSegmentRef : public SegmentRef {
+protected:
+	Context		*_context;
+
+public:
+	MutableSegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr())
+	: _context(ctx), SegmentRef(value, segment) {
+	}
+
+	inline MutableSegmentRef& operator=(const uint16 id);
+
 };
 
 struct Flags {
@@ -240,25 +251,29 @@ public:
 	LowPartOfRegister	dl;
 	HighPartOfRegister	dh;
 
-	SegmentRef cs, ds, es, data;
-	//data == fake segment register always pointing to data segment
+	SegmentPtr _realData;	///< the primary data segment, points to a huge blob of binary data
+	SegmentRef cs;
+	MutableSegmentRef ds;
+	MutableSegmentRef es;
+	SegmentRef data;	///< fake segment register always pointing to data segment
 	Flags flags;
 
 	inline Context(): engine(0), al(ax), ah(ax), bl(bx), bh(bx), cl(cx), ch(cx), dl(dx), dh(dx),
-		cs(this), ds(this), es(this), data(this) {
-		_segments[kDefaultDataSegment] = SegmentPtr(new Segment());
-		cs = kDefaultDataSegment;
-		ds = kDefaultDataSegment;
-		es = kDefaultDataSegment;
-		data = kDefaultDataSegment;
+		_realData(new Segment()),
+		cs(kDefaultDataSegment, _realData),
+		ds(this, kDefaultDataSegment, _realData),
+		es(this, kDefaultDataSegment, _realData),
+		data(kDefaultDataSegment, _realData) {
+
+		_segments[kDefaultDataSegment] = _realData;
 	}
 
 	SegmentRef getSegment(uint16 value) {
 		SegmentMap::iterator i = _segments.find(value);
 		if (i != _segments.end())
-			return SegmentRef(this, value, i->_value);
+			return SegmentRef(value, i->_value);
 		else
-			return SegmentRef(this, value);
+			return SegmentRef(value);
 	}
 
 	SegmentRef allocateSegment(uint size) {
@@ -272,7 +287,7 @@ public:
 		assert(!_segments.contains(id));
 		SegmentPtr seg(new Segment(size));
 		_segments[id] = seg;
-		return SegmentRef(this, id, seg);
+		return SegmentRef(id, seg);
 	}
 
 	void deallocateSegment(uint16 id) {
@@ -553,8 +568,8 @@ public:
 	}
 };
 
-inline SegmentRef& SegmentRef::operator=(const uint16 id) {
-	*this = _context->getSegment(id);
+inline MutableSegmentRef& MutableSegmentRef::operator=(const uint16 id) {
+	SegmentRef::operator=(_context->getSegment(id));
 	return *this;
 }
 
