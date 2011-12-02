@@ -2998,8 +2998,25 @@ void Player::postInit(SceneObjectList *OwnerList) {
 	_uiEnabled = true;
 	_percent = 100;
 	_field8C = 10;
-	_moveDiff.x = 4;
-	_moveDiff.y = 2;
+
+	if  (g_vm->getGameID() != GType_Ringworld2)
+	{
+		_moveDiff.x = 4;
+		_moveDiff.y = 2;
+	}
+	else
+	{
+		_moveDiff.x = 3;
+		_moveDiff.y = 2;
+		_effect = 1;
+		_shade = 0;
+
+		setObjectWrapper(new SceneObjectWrapper());
+		setPosition(_characterPos[_characterIndex]);
+		setStrip(_characterStrip[_characterIndex]);
+		setFrame(_characterFrame[_characterIndex]);
+		_characterScene[_characterIndex] = GLOBALS._sceneManager._sceneNumber;
+	}
 }
 
 void Player::disableControl() {
