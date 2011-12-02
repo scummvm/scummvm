@@ -38,7 +38,14 @@ TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) 
 		_gameDescription(gameDesc) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
-	_debugger = new Debugger();
+	if (g_vm->getFeatures() & GF_DEMO)
+		_debugger = new DemoDebugger();
+	else if (g_vm->getGameID() == GType_Ringworld)
+		_debugger = new RingworldDebugger();
+	else if (g_vm->getGameID() == GType_BlueForce)
+		_debugger = new BlueForceDebugger();
+	else if (g_vm->getGameID() == GType_Ringworld2)
+		_debugger = new Ringworld2Debugger();	
 }
 
 Common::Error TSageEngine::init() {
