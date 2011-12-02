@@ -72,10 +72,10 @@ void DreamGenContext::showKeypad() {
 }
 
 void DreamGenContext::enterCode() {
-	enterCode(ax, cx);
+	enterCode(al, ah, cl, ch);
 }
 
-void DreamGenContext::enterCode(uint16 keypadAx, uint16 keypadCx) {
+void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	RectWithCallback keypadList[] = {
 		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
 		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttonTwo },
@@ -93,8 +93,10 @@ void DreamGenContext::enterCode(uint16 keypadAx, uint16 keypadCx) {
 		{ 0xFFFF,0,0,0,0 }
 	};
 
-	data.word(kKeypadax) = keypadAx;
-	data.word(kKeypadcx) = keypadCx;
+	data.byte(kKeypadax+0) = digit0;
+	data.byte(kKeypadax+1) = digit1;
+	data.byte(kKeypadcx+0) = digit2;
+	data.byte(kKeypadcx+1) = digit3;
 	getRidOfReels();
 	loadKeypad();
 	createPanel();
