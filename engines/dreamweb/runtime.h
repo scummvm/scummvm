@@ -117,8 +117,14 @@ public:
 	}
 };
 
-struct Segment {
+class Segment {
 	Common::Array<uint8> data;
+
+public:
+	Segment(uint size = 0) {
+		if (size > 0)
+			data.resize(size);
+	}
 
 	inline void assign(const uint8 *b, const uint8 *e) {
 		data.assign(b, e);
@@ -276,8 +282,7 @@ public:
 			_freeSegments.pop_front();
 		}
 		assert(!_segments.contains(id));
-		SegmentPtr seg(new Segment());
-		seg->data.resize(size);
+		SegmentPtr seg(new Segment(size));
 		_segments[id] = seg;
 		return SegmentRef(this, id, seg);
 	}
