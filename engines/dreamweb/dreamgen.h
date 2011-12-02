@@ -25,13 +25,12 @@
  *
  */
 
-
-
-
 #include "dreamweb/runtime.h"
 
 namespace DreamGen {
+
 #include "structs.h"
+
 class DreamGenContext : public Context {
 public:
 	void __start();

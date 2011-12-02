@@ -22,8 +22,6 @@
  *
  */
 
-
-
 #include "dreamgen.h"
 
 namespace DreamGen {
@@ -12093,8 +12091,6 @@ void DreamGenContext::getRidOfTempsP() {
 	deallocateMem();
 }
 
-
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -13231,8 +13227,7 @@ void DreamGenContext::__start() {
 		//0x2350: .... .... .... ....
 		0x00, 0x00, 0x00, 0x00, 0x00, };
 	ds.assign(src, src + sizeof(src));
-dreamweb(); 
+	dreamweb(); 
 }
-
 
 } /*namespace*/

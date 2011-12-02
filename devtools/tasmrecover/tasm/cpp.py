@@ -60,7 +60,6 @@ class cpp:
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
 """
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
@@ -68,9 +67,7 @@ class cpp:
 		self.hd.write("""#ifndef %s
 #define %s
 
-%s
-
-""" %(hid, hid, banner))
+%s""" %(hid, hid, banner))
 		self.context = context
 		self.data_seg = context.binary_data
 		self.procs = context.proc_list
@@ -89,7 +86,6 @@ class cpp:
 		self.used_data_offsets = set()
 		self.methods = []
 		self.fd.write("""%s
-
 #include \"%s\"
 
 namespace %s {
@@ -594,7 +590,7 @@ namespace %s {
 
 		self.fd.write("\n")
 		self.fd.write("\n".join(self.translated))
-		self.fd.write("\n\n")
+		self.fd.write("\n")
 		print "%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed))
 		print "\n".join(self.failed)
 		data_bin = self.data_seg
@@ -617,7 +613,9 @@ namespace %s {
 """\n#include "dreamweb/runtime.h"
 
 namespace %s {
+
 #include "structs.h"
+
 class %sContext : public Context {
 public:
 	void __start();
@@ -664,7 +662,7 @@ public:
 		self.hd.write("};\n}\n\n#endif\n")
 		self.hd.close()
 		
-		self.fd.write("\nvoid %sContext::__start() { %s%s(); \n}\n" %(self.namespace, data_impl, start))
+		self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
 		
 		if self.skip_dispatch_call == False:
 			self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
@@ -674,5 +672,5 @@ public:
 			self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
 			self.fd.write("\n\t}\n}")
 		
-		self.fd.write("\n\n} /*namespace*/\n")
+		self.fd.write("\n} /*namespace*/\n")
 		self.fd.close()
