@@ -395,6 +395,7 @@
 	void buttonNine();
 	void buttonNought();
 	void buttonEnter();
+	void buttonPress(uint8 buttonId);
 	void enterCode(uint16 keypadAx, uint16 keypadCx);
 	void enterCode();
 

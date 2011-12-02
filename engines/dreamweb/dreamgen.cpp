@@ -9188,40 +9188,6 @@ not10:
 	_inc(data.word(kPresspointer));
 }
 
-void DreamGenContext::buttonPress() {
-	STACK_CHECK;
-	ch = cl;
-	_add(ch, 100);
-	_cmp(data.byte(kCommandtype), ch);
-	if (flags.z())
-		goto alreadyb;
-	data.byte(kCommandtype) = ch;
-	al = cl;
-	_add(al, 4);
-	push(cx);
-	commandOnly();
-	cx = pop();
-alreadyb:
-	ax = data.word(kMousebutton);
-	_cmp(ax, data.word(kOldbutton));
-	if (flags.z())
-		return /* (notb) */;
-	_and(ax, 1);
-	if (!flags.z())
-		goto dob;
-	return;
-dob:
-	data.byte(kPressed) = cl;
-	_add(cl, 21);
-	data.byte(kGraphicpress) = cl;
-	data.byte(kPresscount) = 40;
-	_cmp(cl, 32);
-	if (flags.z())
-		return /* (nonoise) */;
-	al = 10;
-	playChannel1();
-}
-
 void DreamGenContext::showOuterPad() {
 	STACK_CHECK;
 	di = (36+112)-3;

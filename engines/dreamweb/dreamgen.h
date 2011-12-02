@@ -1029,7 +1029,6 @@ public:
 	void useControl();
 	void redrawMainScrn();
 	void showGroup();
-	void buttonPress();
 	void makeMainScreen();
 	void useWinch();
 	void setBotRight();

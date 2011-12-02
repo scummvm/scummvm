@@ -153,58 +153,62 @@ void DreamGenContext::enterCode(uint16 keypadAx, uint16 keypadCx) {
 }
 
 void DreamGenContext::buttonOne() {
-	cl = 1;
-	buttonPress();
+	buttonPress(1);
 }
 
 void DreamGenContext::buttonTwo() {
-	cl = 2;
-	buttonPress();
+	buttonPress(2);
 }
 
 void DreamGenContext::buttonThree() {
-	cl = 3;
-	buttonPress();
+	buttonPress(3);
 }
 
 void DreamGenContext::buttonFour() {
-	cl = 4;
-	buttonPress();
+	buttonPress(4);
 }
 
 void DreamGenContext::buttonFive() {
-	cl = 5;
-	buttonPress();
+	buttonPress(5);
 }
 
 void DreamGenContext::buttonSix() {
-	cl = 6;
-	buttonPress();
+	buttonPress(6);
 }
 
 void DreamGenContext::buttonSeven() {
-	cl = 7;
-	buttonPress();
+	buttonPress(7);
 }
 
 void DreamGenContext::buttonEight() {
-	cl = 8;
-	buttonPress();
+	buttonPress(8);
 }
 
 void DreamGenContext::buttonNine() {
-	cl = 9;
-	buttonPress();
+	buttonPress(9);
 }
 
 void DreamGenContext::buttonNought() {
-	cl = 10;
-	buttonPress();
+	buttonPress(10);
 }
 
 void DreamGenContext::buttonEnter() {
-	cl = 11;
-	buttonPress();
+	buttonPress(11);
+}
+
+void DreamGenContext::buttonPress(uint8 buttonId) {
+	uint8 commandType = 100 + buttonId;
+	if (data.byte(kCommandtype) != commandType) {
+		data.byte(kCommandtype) = commandType;
+		commandOnly(buttonId + 4);
+	}
+	if ((data.word(kMousebutton) & 1) && (data.word(kMousebutton) != data.word(kOldbutton))) {
+		data.byte(kPressed) = buttonId;
+		data.byte(kGraphicpress) = buttonId + 21;
+		data.byte(kPresscount) = 40;
+		if (buttonId != 11)
+			playChannel1(10);
+	}
 }
 
 } /*namespace dreamgen */

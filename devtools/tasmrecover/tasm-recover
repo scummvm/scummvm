@@ -354,6 +354,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'buttonnine',
 	'buttonnought',
 	'buttonenter',
+	'buttonpress',
 	'credits',
 	'entercode',
 	], skip_output = [
