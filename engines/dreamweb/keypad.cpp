@@ -152,5 +152,60 @@ void DreamGenContext::enterCode(uint16 keypadAx, uint16 keypadCx) {
 	workToScreenM();
 }
 
+void DreamGenContext::buttonOne() {
+	cl = 1;
+	buttonPress();
+}
+
+void DreamGenContext::buttonTwo() {
+	cl = 2;
+	buttonPress();
+}
+
+void DreamGenContext::buttonThree() {
+	cl = 3;
+	buttonPress();
+}
+
+void DreamGenContext::buttonFour() {
+	cl = 4;
+	buttonPress();
+}
+
+void DreamGenContext::buttonFive() {
+	cl = 5;
+	buttonPress();
+}
+
+void DreamGenContext::buttonSix() {
+	cl = 6;
+	buttonPress();
+}
+
+void DreamGenContext::buttonSeven() {
+	cl = 7;
+	buttonPress();
+}
+
+void DreamGenContext::buttonEight() {
+	cl = 8;
+	buttonPress();
+}
+
+void DreamGenContext::buttonNine() {
+	cl = 9;
+	buttonPress();
+}
+
+void DreamGenContext::buttonNought() {
+	cl = 10;
+	buttonPress();
+}
+
+void DreamGenContext::buttonEnter() {
+	cl = 11;
+	buttonPress();
+}
+
 } /*namespace dreamgen */
 

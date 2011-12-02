@@ -663,7 +663,6 @@ public:
 	void readKey();
 	void louis();
 	void entryTexts();
-	void buttonEnter();
 	void checkInput();
 	void setMode();
 	void getBackFromOps();
@@ -674,7 +673,6 @@ public:
 	void deallocateMem();
 	void mainScreen();
 	void watchReel();
-	void showSlots();
 	void openFileFromC();
 	void getTime();
 	void candles1();
@@ -687,7 +685,6 @@ public:
 	void useCashCard();
 	void useWall();
 	void openTomb();
-	void buttonFour();
 	void doSomeTalk();
 	void getAnyAdDir();
 	void showSaveOps();
@@ -702,7 +699,6 @@ public:
 	void useElevator1();
 	void useElevator3();
 	void useElevator2();
-	void buttonOne();
 	void keyboardRead();
 	void getOpenedSize();
 	void doShake();
@@ -753,7 +749,6 @@ public:
 	void disableSoundInt();
 	void priestText();
 	void openPoolBoss();
-	void buttonTwo();
 	void fadeScreenDownHalf();
 	void usePlate();
 	void lookInInterface();
@@ -815,7 +810,6 @@ public:
 	void loadGame();
 	void getRidOfTemp();
 	void dumpSymbol();
-	void buttonSix();
 	void intro2Text();
 	void showOuterPad();
 	void getKeyAndLogo();
@@ -897,7 +891,6 @@ public:
 	void openInv();
 	void lookAtPlace();
 	void useAxe();
-	void buttonNought();
 	void useElvDoor();
 	void putBackObStuff();
 	void useLadder();
@@ -905,14 +898,13 @@ public:
 	void handClap();
 	void smokeBloke();
 	void afterIntroRoom();
-	void buttonNine();
 	void findAllOpen();
 	void readFromFile();
 	void initialInv();
 	void quitSymbol();
 	void setTopRight();
 	void findSetObject();
-	void hangOne();
+	void getPersonText();
 	void carParkDrip();
 	void useDiary();
 	void deleteExObject();
@@ -922,7 +914,6 @@ public:
 	void removeFreeObject();
 	void trapDoor();
 	void openLouis();
-	void buttonThree();
 	void lookAtCard();
 	void helicopter();
 	void setSoundOff();
@@ -990,7 +981,7 @@ public:
 	void searchForString();
 	void selectOpenOb();
 	void security();
-	void buttonFive();
+	void showSlots();
 	void soundOnReels();
 	void useGun();
 	void autoAppear();
@@ -1009,7 +1000,6 @@ public:
 	void showPuzText();
 	void incRyanPage();
 	void greyscaleSum();
-	void buttonEight();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();
@@ -1037,7 +1027,6 @@ public:
 	void monkAndRyan();
 	void swapWithInv();
 	void useControl();
-	void buttonSeven();
 	void redrawMainScrn();
 	void showGroup();
 	void buttonPress();
@@ -1056,7 +1045,7 @@ public:
 	void doSaveLoad();
 	void createName();
 	void readCityPic();
-	void getPersonText();
+	void hangOne();
 	void inToInv();
 	void parser();
 	void setMouse();
