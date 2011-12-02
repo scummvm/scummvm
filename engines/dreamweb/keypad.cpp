@@ -71,5 +71,86 @@ void DreamGenContext::showKeypad() {
 	}
 }
 
+void DreamGenContext::enterCode() {
+	enterCode(ax, cx);
+}
+
+void DreamGenContext::enterCode(uint16 keypadAx, uint16 keypadCx) {
+	RectWithCallback keypadList[] = {
+		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+9,kKeypady+22,&DreamGenContext::buttonTwo },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+9,kKeypady+22,&DreamGenContext::buttonThree },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFour },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+23,kKeypady+40,&DreamGenContext::buttonFive },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+23,kKeypady+40,&DreamGenContext::buttonSix },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+41,kKeypady+58,&DreamGenContext::buttonSeven },
+		{ kKeypadx+31,kKeypadx+52,kKeypady+41,kKeypady+58,&DreamGenContext::buttonEight },
+		{ kKeypadx+53,kKeypadx+74,kKeypady+41,kKeypady+58,&DreamGenContext::buttonNine },
+		{ kKeypadx+9,kKeypadx+30,kKeypady+59,kKeypady+73,&DreamGenContext::buttonNought },
+		{ kKeypadx+31,kKeypadx+74,kKeypady+59,kKeypady+73,&DreamGenContext::buttonEnter },
+		{ kKeypadx+72,kKeypadx+86,kKeypady+80,kKeypady+94,&DreamGenContext::quitKey },
+		{ 0,320,0,200,&DreamGenContext::blank },
+		{ 0xFFFF,0,0,0,0 }
+	};
+
+	data.word(kKeypadax) = keypadAx;
+	data.word(kKeypadcx) = keypadCx;
+	getRidOfReels();
+	loadKeypad();
+	createPanel();
+	showIcon();
+	showOuterPad();
+	showKeypad();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+	data.word(kPresspointer) = 0;
+	data.byte(kGetback) = 0;
+	while (true) {
+		delPointer();
+		readMouse();
+		showKeypad();
+		showPointer();
+		vSync();
+		if (data.byte(kPresscount) == 0) {
+			data.byte(kPressed) = 255;
+			data.byte(kGraphicpress) = 255;
+			vSync();
+		} else
+			--data.byte(kPresscount);
+
+		dumpPointer();
+		dumpKeypad();
+		dumpTextLine();
+		checkCoords(keypadList);
+		if (quitRequested() || (data.byte(kGetback) == 1))
+			break;
+		if (data.byte(kLightcount) == 1) {
+			if (data.byte(kLockstatus) == 0)
+				break;
+		} else {
+			if (data.byte(kPresscount) == 40) {
+				addToPressList();
+				if (data.byte(kPressed) == 11) {
+					ax = data.word(kKeypadax);
+					cx = data.word(kKeypadcx);
+					isItRight();
+					if (flags.z())
+						data.byte(kLockstatus) = 0;
+					playChannel1(11);
+					data.byte(kLightcount) = 120;
+					data.word(kPresspointer) = 0;
+				}
+			}
+		}
+	}
+	data.byte(kManisoffscreen) = 0;
+	getRidOfTemp();
+	restoreReels();
+	redrawMainScrn();
+	workToScreenM();
+}
+
 } /*namespace dreamgen */
 

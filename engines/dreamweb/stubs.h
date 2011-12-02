@@ -384,4 +384,6 @@
 	void sparky(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void showKeypad();
+	void enterCode(uint16 keypadAx, uint16 keypadCx);
+	void enterCode();
 

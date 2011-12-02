@@ -77,7 +77,6 @@ public:
 	static const uint16 offset_decidelist = 0x13c1;
 	static const uint16 offset_symbollist = 0x0e5e;
 	static const uint16 offset_operand1 = 0x0b7e;
-	static const uint16 offset_keypadlist = 0x0d9a;
 	static const uint16 kStartvars = 0;
 	static const uint16 kProgresspoints = 1;
 	static const uint16 kWatchon = 2;
@@ -705,7 +704,6 @@ public:
 	void useElevator2();
 	void buttonOne();
 	void keyboardRead();
-	void enterCode();
 	void getOpenedSize();
 	void doShake();
 	void resetKeyboard();

@@ -344,6 +344,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'singlekey',
 	'showkeypad',
 	'credits',
+	'entercode',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',
