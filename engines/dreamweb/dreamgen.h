@@ -931,7 +931,6 @@ public:
 	void doLoad();
 	void showExit();
 	void useTrainer();
-	void addToPressList();
 	void dumpCurrent();
 	void showDiaryKeys();
 	void dontLoadSeg();

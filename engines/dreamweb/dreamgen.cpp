@@ -9152,25 +9152,6 @@ doqk:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::addToPressList() {
-	STACK_CHECK;
-	_cmp(data.word(kPresspointer), 5);
-	if (flags.z())
-		return /* (nomorekeys) */;
-	al = data.byte(kPressed);
-	_cmp(al, 10);
-	if (!flags.z())
-		goto not10;
-	al = 0;
-not10:
-	bx = data.word(kPresspointer);
-	dx = data;
-	es = dx;
-	_add(bx, 8573);
-	es.byte(bx) = al;
-	_inc(data.word(kPresspointer));
-}
-
 void DreamGenContext::showOuterPad() {
 	STACK_CHECK;
 	di = (36+112)-3;

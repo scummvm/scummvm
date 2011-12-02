@@ -81,6 +81,17 @@ bool DreamGenContext::isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 
 		&& digit2 == data.byte(kPresslist+2) && digit3 == data.byte(kPresslist+3);
 }
 
+void DreamGenContext::addToPressList() {
+	if (data.word(kPresspointer) == 5)
+		return;
+	uint8 pressed = data.byte(kPressed);
+	if (pressed == 10)
+		pressed = 0;
+
+	data.byte(kPresslist + data.word(kPresspointer)) = pressed;
+	++data.word(kPresspointer);
+}
+
 void DreamGenContext::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3) {
 	RectWithCallback keypadList[] = {
 		{ kKeypadx+9,kKeypadx+30,kKeypady+9,kKeypady+22,&DreamGenContext::buttonOne },
