@@ -10217,56 +10217,6 @@ afterprintname:
 		goto shownameloop;
 }
 
-void DreamGenContext::scanForNames() {
-	STACK_CHECK;
-	dx = data;
-	es = dx;
-	di = 8579;
-	dx = data;
-	ds = dx;
-	dx = 8698;
-	cx = 7;
-scanloop:
-	push(es);
-	push(ds);
-	push(di);
-	push(dx);
-	push(cx);
-	openFileFromC();
-	if (flags.c())
-		goto notexist;
-	cx = pop();
-	_inc(ch);
-	push(cx);
-	push(di);
-	push(es);
-	dx = data;
-	ds = dx;
-	dx = 6091;
-	cx = (6187-6091);
-	saveFileRead();
-	dx = data;
-	es = dx;
-	di = 6141;
-	ds = pop();
-	dx = pop();
-	loadSeg();
-	bx = data.word(kHandle);
-	closeFile();
-notexist:
-	cx = pop();
-	dx = pop();
-	di = pop();
-	ds = pop();
-	es = pop();
-	_add(dx, 13);
-	_add(di, 17);
-	_dec(cl);
-	if (!flags.z())
-		goto scanloop;
-	al = ch;
-}
-
 void DreamGenContext::decide() {
 	STACK_CHECK;
 	setMode();

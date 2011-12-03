@@ -881,7 +881,7 @@ public:
 	void useWindow();
 	void wearShades();
 	void delEverything();
-	void fadeScreenDown();
+	void clearReels();
 	void poolGuard();
 	void openInv();
 	void lookAtPlace();
@@ -1032,7 +1032,7 @@ public:
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();
-	void clearReels();
+	void fadeScreenDown();
 	void maleFan();
 	void doSaveLoad();
 	void createName();
@@ -1045,7 +1045,6 @@ public:
 	void fadeScreenDowns();
 	void openHotelDoor2();
 	void getRidOfTempsP();
-	void scanForNames();
 	void selectLocation();
 	void underTextLine();
 	void sitDownInBar();
