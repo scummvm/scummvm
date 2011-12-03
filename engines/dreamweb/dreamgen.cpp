@@ -1555,19 +1555,6 @@ void DreamGenContext::priest() {
 	es = pop();
 }
 
-void DreamGenContext::madmansTelly() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 307);
-	if (!flags.z())
-		goto notendtelly;
-	ax = 300;
-notendtelly:
-	es.word(bx+3) = ax;
-	showGameReel();
-}
-
 void DreamGenContext::priestText() {
 	STACK_CHECK;
 	_cmp(es.word(bx+3), 2);

@@ -822,7 +822,6 @@ public:
 	void purgeAnItem();
 	void enableSoundInt();
 	void volumeAdjust();
-	void madmansTelly();
 	void purgeALocation();
 	void notHeldError();
 	void getSetAd();

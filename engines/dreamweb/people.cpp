@@ -50,7 +50,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
-	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
+	NULL, &DreamGenContext::alleyBarkSound,
 	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip
@@ -82,7 +82,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
-	/*&DreamGenContext::madmansTelly*/NULL, /*&DreamGenContext::alleyBarkSound*/NULL,
+	&DreamGenContext::madmansTelly, /*&DreamGenContext::alleyBarkSound*/NULL,
 	/*&DreamGenContext::foghornSound*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
 	/*&DreamGenContext::carParkDrip*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
 	/*&DreamGenContext::carParkDrip*/NULL
@@ -317,6 +317,14 @@ void DreamGenContext::rockstar(ReelRoutine &routine) {
 		data.byte(kPointermode) = 0;
 		routine.mapY = data.byte(kMapy);
 	}
+}
+
+void DreamGenContext::madmansTelly(ReelRoutine &routine) {
+	uint16 nextReelPointer = routine.reelPointer() + 1;
+	if (nextReelPointer == 307)
+		nextReelPointer = 300;
+	routine.setReelPointer(nextReelPointer);
+	showGameReel(&routine);
 }
 
 } /*namespace dreamgen */

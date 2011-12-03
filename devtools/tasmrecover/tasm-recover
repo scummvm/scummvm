@@ -245,6 +245,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'look',
 	'loopchannel0',
 	'madman',
+	'madmanstelly',
 	'madmantext',
 	'madmode',
 	'mainman',
