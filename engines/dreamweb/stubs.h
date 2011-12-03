@@ -164,6 +164,7 @@
 	void commandWithOb(uint8 command, uint8 type, uint8 index);
 	void showPanel();
 	void updatePeople();
+	void madman();
 	void madmanText();
 	void madMode();
 	void moveMap(uint8 param);

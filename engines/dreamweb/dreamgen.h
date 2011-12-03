@@ -842,7 +842,6 @@ public:
 	void diaryKeyN();
 	void set16ColPalette();
 	void purgeAnItem();
-	void madman();
 	void enableSoundInt();
 	void volumeAdjust();
 	void madmansTelly();
