@@ -737,7 +737,7 @@ public:
 	void getUnderZoom();
 	void candles();
 	void backObject();
-	void rollEndCredits2();
+	void allocateMem();
 	void reminders();
 	void selectSlot2();
 	void runTap();
@@ -815,7 +815,6 @@ public:
 	void selectOb();
 	void usePlinth();
 	void useCooker();
-	void loadMenu();
 	void checkForEMM();
 	void receptionist();
 	void selectSlot();
@@ -933,7 +932,7 @@ public:
 	void showDiaryKeys();
 	void dontLoadSeg();
 	void intro3Text();
-	void allocateMem();
+	void rollEndCredits2();
 	void useOpened();
 	void inventory();
 	void fillOpen();

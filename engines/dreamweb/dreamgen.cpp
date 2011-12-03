@@ -9187,14 +9187,6 @@ menuframeok:
 	showFrame();
 }
 
-void DreamGenContext::loadMenu() {
-	STACK_CHECK;
-	dx = 1832;
-	loadIntoTemp();
-	dx = 1987;
-	loadIntoTemp2();
-}
-
 void DreamGenContext::enterSymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

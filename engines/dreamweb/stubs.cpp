@@ -2726,6 +2726,11 @@ void DreamGenContext::workToScreenM() {
 	delPointer();
 }
 
+void DreamGenContext::loadMenu() {
+	loadIntoTemp("DREAMWEB.S02");
+	loadIntoTemp2("DREAMWEB.G07");
+}
+
 void DreamGenContext::useMenu() {
 	getRidOfReels();
 	loadMenu();

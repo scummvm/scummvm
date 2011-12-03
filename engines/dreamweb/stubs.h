@@ -303,6 +303,7 @@
 	void fadeupYellows();
 	void fadeupMonFirst();
 	void printLogo();
+	void loadMenu();
 	void useMenu();
 	void useMon();
 	void scrollMonitor();
