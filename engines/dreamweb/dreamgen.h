@@ -760,7 +760,6 @@ public:
 	void walkIntoRoom();
 	void useHatch();
 	void printOuterMon();
-	void setupPit();
 	void showPCX();
 	void showDecisions();
 	void removeObFromInv();
@@ -814,7 +813,6 @@ public:
 	void selectSlot();
 	void openFileNoCheck();
 	void fadeUpMon();
-	void fadeToWhite();
 	void loadSaveBox();
 	void soundEnd();
 	void redes();
@@ -846,9 +844,9 @@ public:
 	void purgeAnItem();
 	void madman();
 	void enableSoundInt();
+	void volumeAdjust();
 	void madmansTelly();
 	void purgeALocation();
-	void getRidOfPit();
 	void notHeldError();
 	void getSetAd();
 	void soldier1();
@@ -877,7 +875,7 @@ public:
 	void useWindow();
 	void wearShades();
 	void delEverything();
-	void clearReels();
+	void fadeScreenDown();
 	void poolGuard();
 	void openInv();
 	void lookAtPlace();
@@ -1027,7 +1025,7 @@ public:
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();
-	void fadeScreenDown();
+	void clearReels();
 	void doSaveLoad();
 	void createName();
 	void readCityPic();
@@ -1050,7 +1048,7 @@ public:
 	void introMusic();
 	void quitKey();
 	void processTrigger();
-	void volumeAdjust();
+	void readDestIcon();
 	void randomNum2();
 	void loadSecondSample();
 	void transferConToEx();
@@ -1062,7 +1060,7 @@ public:
 	void useRailing();
 	void useHole();
 	void useObject();
-	void readDestIcon();
+	void fadeToWhite();
 };
 }
 
