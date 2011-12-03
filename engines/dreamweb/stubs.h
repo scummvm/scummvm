@@ -429,4 +429,5 @@
 	void loadPersonal();
 	void loadNews();
 	void loadCart();
+	void soundOnReels();
 

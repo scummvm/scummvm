@@ -1909,51 +1909,6 @@ hissnoise:
 	playChannel1();
 }
 
-void DreamGenContext::soundOnReels() {
-	STACK_CHECK;
-	bl = data.byte(kReallocation);
-	_add(bl, bl);
-	_xor(bh, bh);
-	_add(bx, 991);
-	si = cs.word(bx);
-reelsoundloop:
-	al = cs.byte(si);
-	_cmp(al, 255);
-	if (flags.z())
-		goto endreelsound;
-	ax = cs.word(si+1);
-	_cmp(ax, data.word(kReelpointer));
-	if (!flags.z())
-		goto skipreelsound;
-	_cmp(ax, data.word(kLastsoundreel));
-	if (flags.z())
-		goto skipreelsound;
-	data.word(kLastsoundreel) = ax;
-	al = cs.byte(si);
-	_cmp(al, 64);
-	if (flags.c())
-		{ playChannel1(); return; };
-	_cmp(al, 128);
-	if (flags.c())
-		goto channel0once;
-	_and(al, 63);
-	ah = 255;
-	{ playChannel0(); return; };
-channel0once:
-	_and(al, 63);
-	ah = 0;
-	{ playChannel0(); return; };
-skipreelsound:
-	_add(si, 3);
-	goto reelsoundloop;
-endreelsound:
-	ax = data.word(kLastsoundreel);
-	_cmp(ax, data.word(kReelpointer));
-	if (flags.z())
-		return /* (nochange2) */;
-	data.word(kLastsoundreel) = -1;
-}
-
 void DreamGenContext::delEverything() {
 	STACK_CHECK;
 	al = data.byte(kMapysize);

@@ -420,6 +420,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showword',
 	'singlekey',
 	'sortoutmap',
+	'soundonreels',
 	'sparky',
 	'sparkydrip',
 	'splitintolines',

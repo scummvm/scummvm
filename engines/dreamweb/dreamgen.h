@@ -895,7 +895,6 @@ public:
 	void selectOpenOb();
 	void security();
 	void showSlots();
-	void soundOnReels();
 	void useGun();
 	void autoAppear();
 	void openRyan();
