@@ -24,7 +24,8 @@
 from tasm.parser import parser
 from tasm.cpp import cpp
 
-p = parser()
+p = parser(skip_binary_data = [
+	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
 p.link()
@@ -387,8 +388,8 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'zoomicon',
 	'zoomonoff',
 	], skip_output = [
-	'dreamweb',
 	# These functions are processed but not output
+	'dreamweb',
 	], skip_dispatch_call = True, skip_addr_constants = True,
 	header_omit_blacklisted = True,
 	function_name_remapping = {
