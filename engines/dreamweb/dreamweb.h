@@ -42,9 +42,7 @@
 
 namespace DreamGen {
 
-// TODO: Unsure if these values are constant or
-// should be replaced with &backObject() and &mainMan()
-// or some kind of enum...
+// These are for ReelRoutine::reelPointer, which is a callback field.
 const uint16 addr_backobject = 0xc170;
 const uint16 addr_mainman = 0xc138;
 

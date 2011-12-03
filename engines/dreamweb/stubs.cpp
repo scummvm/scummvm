@@ -580,9 +580,11 @@ uint8 *DreamGenContext::textUnder() {
 }
 
 uint16 DreamGenContext::standardLoad(const char *fileName) {
+	FileHeader header;
+
 	engine->openFile(fileName);
-	engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
-	uint16 sizeInBytes = cs.word(kFiledata);
+	engine->readFromFile((uint8 *)&header, kHeaderlen);
+	uint16 sizeInBytes = header.len(0);
 	uint16 result = allocateMem((sizeInBytes + 15) / 16);
 	engine->readFromFile(getSegment(result).ptr(0, 0), sizeInBytes);
 	engine->closeFile();
@@ -2421,12 +2423,14 @@ void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
 	cs.word(kHandle) = 1; //only one handle
 	flags._c = false;
-	readHeader();
+
+	FileHeader header;
+	engine->readFromFile((uint8 *)&header, kHeaderlen);
 
 	// read segment lengths from room file header
 	int len[15];
 	for (int i = 0; i < 15; ++i)
-		len[i] = cs.word(kFiledata + 2*i);
+		len[i] = header.len(i);
 
 	data.word(kBackdrop) = allocateAndLoad(len[0]);
 	clearAndLoad(data.word(kWorkspace), 0, len[1], 132*66); // 132*66 = maplen

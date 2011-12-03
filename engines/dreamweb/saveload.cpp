@@ -321,13 +321,23 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 
 	openForSave(slot);
 
+	// Initialize new header
+	FileHeader header;
+
+	// Note: _desc is not zero-terminated
+	const char *desc = "DREAMWEB DATA FILE COPYRIGHT 1992 CREATIVE REALITY";
+	assert(strlen(desc) == sizeof(header._desc));
+	memcpy(header._desc, desc, sizeof(header._desc));
+	memset(&header._len[0], 0, sizeof(header._len));
+	memset(&header._padding[0], 0, sizeof(header._padding));
+
 	// fill length fields in savegame file header
 	uint16 len[6] = { 17, kLengthofvars, kLengthofextra,
 	                  4*kNumchanges, 48, kLenofreelrouts };
 	for (int i = 0; i < 6; ++i)
-		data.word(kFiledata + 2*i) = len[i];
+		header.setLen(i, len[i]);
 
-	engine->writeToSaveFile(data.ptr(kFileheader, kHeaderlen), kHeaderlen);
+	engine->writeToSaveFile((const uint8 *)&header, kHeaderlen);
 	engine->writeToSaveFile(descbuf, len[0]);
 	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->writeToSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
@@ -343,12 +353,14 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 	openForLoad(slot);
 
-	engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+	FileHeader header;
+
+	engine->readFromSaveFile((uint8 *)&header, kHeaderlen);
 
 	// read segment lengths from savegame file header
 	int len[6];
 	for (int i = 0; i < 6; ++i)
-		len[i] = cs.word(kFiledata + 2*i);
+		len[i] = header.len(i);
 	if (len[0] != 17)
 		::error("Error loading save: description buffer isn't 17 bytes");
 
@@ -372,15 +384,17 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 unsigned int DreamGenContext::scanForNames() {
 	unsigned int count = 0;
 
+	FileHeader header;
+
 	for (unsigned int slot = 0; slot < 7; ++slot) {
 
 		if (!openForLoad(slot)) continue;
 
 		++count;
 
-		engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+		engine->readFromSaveFile((uint8 *)&header, kHeaderlen);
 
-		if (cs.word(kFiledata) != 17) {
+		if (header.len(0) != 17) {
 			::warning("Error loading save: description buffer isn't 17 bytes");
 			closeFile();
 			continue;

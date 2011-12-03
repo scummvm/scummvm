@@ -262,3 +262,17 @@ struct Sound {
 	uint8 b5;
 };
 
+struct FileHeader {
+	char _desc[50];
+	uint16 _len[20];
+	uint8 _padding[6];
+
+	uint16 len(unsigned int i) const {
+		assert(i < 20);
+		return READ_LE_UINT16(&_len[i]);
+	}
+	void setLen(unsigned int i, uint16 length) {
+		assert(i < 20);
+		WRITE_LE_UINT16(&_len[i], length);
+	}
+};
