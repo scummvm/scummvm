@@ -28,6 +28,10 @@
 
 namespace DreamGen {
 
+// Temporary storage for loading the room from a savegame
+Room g_madeUpRoomDat;
+
+
 void DreamGenContext::loadGame() {
 	if (data.byte(kCommandtype) != 246) {
 		data.byte(kCommandtype) = 246;
@@ -100,15 +104,13 @@ void DreamGenContext::doLoad(int savegameId) {
 	}
 
 	// If we reach this point, loadPosition() has just been called.
-	// Note: Among other things, it will have filled kMadeuproomdat.
-
+	// Among other things, it will have filled g_MadeUpRoomDat.
 
 	// kTempgraphics might not have been allocated if we bypassed all menus
 	if (data.word(kTempgraphics) != 0xFFFF)
 		getRidOfTemp();
 
-	const Room *room = (const Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
-	startLoading(*room);
+	startLoading(g_madeUpRoomDat);
 	loadRoomsSample();
 	data.byte(kRoomloaded) = 1;
 	data.byte(kNewlocation) = 255;
@@ -370,9 +372,9 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	engine->readFromSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
-	// Note: the values read into Madeuproomdat are only used in actualLoad,
+	// Note: the values read into g_madeUpRoomDat are only used in actualLoad,
 	// which is (almost) immediately called after this function
-	engine->readFromSaveFile(data.ptr(kMadeuproomdat, sizeof(Room)), sizeof(Room));
+	engine->readFromSaveFile((uint8 *)&g_madeUpRoomDat, sizeof(Room));
 	engine->readFromSaveFile(data.ptr(kRoomscango, 16), 16);
 
 	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);

@@ -36,6 +36,8 @@ p = parser(skip_binary_data = [
 	'keyconverttab',
 	'atmospherelist',
 	'linedata',
+	'madeuproomdat',
+	'recname',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
