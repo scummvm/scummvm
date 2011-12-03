@@ -305,6 +305,7 @@
 	void printLogo();
 	void loadMenu();
 	void showMenu();
+	void dumpMenu();
 	void useMenu();
 	void useMon();
 	void scrollMonitor();

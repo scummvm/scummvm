@@ -9161,15 +9161,6 @@ void DreamGenContext::dumpKeypad() {
 	multiDump();
 }
 
-void DreamGenContext::dumpMenu() {
-	STACK_CHECK;
-	di = (80+40);
-	bx = (60);
-	cl = 48;
-	ch = 48;
-	multiDump();
-}
-
 void DreamGenContext::enterSymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

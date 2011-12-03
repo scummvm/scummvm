@@ -801,7 +801,6 @@ public:
 	void putUnderZoom();
 	void vSync();
 	void findInvPos();
-	void dumpMenu();
 	void liftNoise();
 	void workoutFrames();
 	void dumpSymBox();

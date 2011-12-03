@@ -2738,6 +2738,10 @@ void DreamGenContext::showMenu() {
 	showFrame(tempGraphics(), kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
 }
 
+void DreamGenContext::dumpMenu() {
+	multiDump(kMenux, kMenuy, 48, 48);
+}
+
 void DreamGenContext::useMenu() {
 	getRidOfReels();
 	loadMenu();
