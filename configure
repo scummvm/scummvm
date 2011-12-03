@@ -2293,6 +2293,7 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
 			INCLUDES="$INCLUDES -I/usr/X11R6/include"
 			LIBS="$LIBS -lpthread"
+			LIBS="$LIBS -lX11"
 			LIBS="$LIBS -L/usr/lib"
 			
 			_backend="maemo"
