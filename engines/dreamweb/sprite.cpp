@@ -289,8 +289,7 @@ void DreamGenContext::constant(Sprite *sprite, SetObject *objData) {
 }
 
 void DreamGenContext::random(Sprite *sprite, SetObject *objData) {
-	randomNum1();
-	uint16 r = ax;
+	uint8 r = engine->randomNumber();
 	sprite->frameNumber = objData->frames[r&7];
 }
 

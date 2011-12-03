@@ -1124,14 +1124,6 @@ void DreamGenContext::loadSeg() {
 	flags._c = false;
 }
 
-void DreamGenContext::error() {
-	::error("error");
-}
-
-void DreamGenContext::generalError() {
-	::error("generalError");
-}
-
 void DreamGenContext::DOSReturn() {
 	_cmp(data.byte(kCommandtype), 250);
 	if (!flags.z()) {
