@@ -60,7 +60,7 @@ void DreamGenContext::doLoad() {
 		namesToOld();
 		data.byte(kGetback) = 0;
 
-		while (true) {
+		while (data.byte(kGetback) == 0) {
 			if (quitRequested())
 				return;
 			delPointer();
@@ -77,8 +77,6 @@ void DreamGenContext::doLoad() {
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(loadlist);
-			if (data.byte(kGetback) == 1)
-				break; // This signalled that actualLoad loaded a game
 			if (data.byte(kGetback) == 2)
 				return; // "quitloaded"
 		}
@@ -114,8 +112,6 @@ void DreamGenContext::doLoad() {
 	if (data.word(kTempgraphics) != 0xFFFF)
 		getRidOfTemp();
 
-	dx = data;
-	es = dx;
 	const Room *room = (const Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
 	startLoading(*room);
 	loadRoomsSample();
@@ -160,7 +156,7 @@ void DreamGenContext::saveGame() {
 		data.word(kBufferout) = 0;
 		data.byte(kGetback) = 0;
 
-		while (true) {
+		while (data.byte(kGetback) == 0) {
 			if (quitRequested())
 				return;
 			delPointer();
@@ -179,10 +175,6 @@ void DreamGenContext::saveGame() {
 				{ 0xFFFF,0,0,0,0 }
 			};
 			checkCoords(savelist);
-			_cmp(data.byte(kGetback), 0);
-			if (flags.z())
-				continue;
-			break;
 		}
 		return;
 	} else {
@@ -340,7 +332,7 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	for (int i = 0; i < 6; ++i)
 		header.setLen(i, len[i]);
 
-	engine->writeToSaveFile((const uint8 *)&header, kHeaderlen);
+	engine->writeToSaveFile((const uint8 *)&header, sizeof(FileHeader));
 	engine->writeToSaveFile(descbuf, len[0]);
 	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->writeToSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
@@ -362,7 +354,7 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 
 	FileHeader header;
 
-	engine->readFromSaveFile((uint8 *)&header, kHeaderlen);
+	engine->readFromSaveFile((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from savegame file header
 	int len[6];
@@ -383,6 +375,8 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	engine->readFromSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
 
 	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
+	// Note: the values read into Madeuproomdat are only used in actualLoad,
+	// which is (almost) immediately called after this function
 	engine->readFromSaveFile(data.ptr(kMadeuproomdat, sizeof(Room)), sizeof(Room));
 	engine->readFromSaveFile(data.ptr(kRoomscango, 16), 16);
 
@@ -403,7 +397,7 @@ unsigned int DreamGenContext::scanForNames() {
 
 		++count;
 
-		engine->readFromSaveFile((uint8 *)&header, kHeaderlen);
+		engine->readFromSaveFile((uint8 *)&header, sizeof(FileHeader));
 
 		if (header.len(0) != 17) {
 			::warning("Error loading save: description buffer isn't 17 bytes");

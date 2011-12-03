@@ -583,7 +583,7 @@ uint16 DreamGenContext::standardLoad(const char *fileName) {
 	FileHeader header;
 
 	engine->openFile(fileName);
-	engine->readFromFile((uint8 *)&header, kHeaderlen);
+	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
 	uint16 sizeInBytes = header.len(0);
 	uint16 result = allocateMem((sizeInBytes + 15) / 16);
 	engine->readFromFile(getSegment(result).ptr(0, 0), sizeInBytes);
@@ -2425,7 +2425,7 @@ void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	flags._c = false;
 
 	FileHeader header;
-	engine->readFromFile((uint8 *)&header, kHeaderlen);
+	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
