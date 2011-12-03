@@ -49,7 +49,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::introMonks1, &DreamGenContext::candles,
 	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
-	&DreamGenContext::priest, &DreamGenContext::madman,
+	&DreamGenContext::priest, NULL,
 	&DreamGenContext::madmansTelly, &DreamGenContext::alleyBarkSound,
 	&DreamGenContext::foghornSound, &DreamGenContext::carParkDrip,
 	&DreamGenContext::carParkDrip, &DreamGenContext::carParkDrip,
@@ -81,7 +81,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
 	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
-	/*&DreamGenContext::priest*/NULL, /*&DreamGenContext::madman*/NULL,
+	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
 	/*&DreamGenContext::madmansTelly*/NULL, /*&DreamGenContext::alleyBarkSound*/NULL,
 	/*&DreamGenContext::foghornSound*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
 	/*&DreamGenContext::carParkDrip*/NULL, /*&DreamGenContext::carParkDrip*/NULL,
@@ -135,58 +135,49 @@ void DreamGenContext::madmanText() {
 	setupTimedTemp(47 + al, 82, 72, 80, 90, 1);
 }
 
-void DreamGenContext::madman() {
-	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, 0);
+void DreamGenContext::madman(ReelRoutine &routine) {
 	data.word(kWatchingtime) = 2;
-	if (checkSpeed(routine)) {
-		ax = routine->reelPointer();
-		if (ax >= 364) {
+	if (checkSpeed(&routine)) {
+		uint16 newReelPointer = routine.reelPointer();
+		if (newReelPointer >= 364) {
 			data.byte(kMandead) = 2;
-			showGameReel(routine);
+			showGameReel(&routine);
 			return;
 		}
-		if (ax == 10) {
+		if (newReelPointer == 10) {
 			loadTempText("DREAMWEB.T82");
 			data.byte(kCombatcount) = (uint8)-1;
 			data.byte(kSpeechcount) = 0;
 		}
-		++ax;
-		if (ax == 294) {
-			if (data.byte(kWongame) == 1)
-				return;
-			data.byte(kWongame) = 1;
-			push(es);
-			push(bx);
-			getRidOfTempText();
-			bx = pop();
-			es = pop();
+		++newReelPointer;
+		if (newReelPointer == 294) {
+			if (data.byte(kWongame) != 1) {
+				data.byte(kWongame) = 1;
+				getRidOfTempText();
+			}
 			return;
 		}
-		if (ax == 66) {
+		if (newReelPointer == 66) {
 			++data.byte(kCombatcount);
-			push(es);
-			push(bx);
 			madmanText();
-			bx = pop();
-			es = pop();
-			ax = 53;
+			newReelPointer = 53;
 			if (data.byte(kCombatcount) >= (isCD() ? 64 : 62)) {
 				if (data.byte(kCombatcount) == (isCD() ? 70 : 68))
-					ax = 310;
+					newReelPointer = 310;
 				else {
 					if (data.byte(kLastweapon) == 8) {
 						data.byte(kCombatcount) = isCD() ? 72 : 70;
 						data.byte(kLastweapon) = (uint8)-1;
 						data.byte(kMadmanflag) = 1;
-						ax = 67;
+						newReelPointer = 67;
 					}
 				}
 			}
 		}
-		routine->setReelPointer(ax);
+		routine.setReelPointer(newReelPointer);
 	}
-	showGameReel(routine);
-	routine->mapX = data.byte(kMapx);
+	showGameReel(&routine);
+	routine.mapX = data.byte(kMapx);
 	madMode();
 }
 
