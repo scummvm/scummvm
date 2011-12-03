@@ -773,6 +773,7 @@ private:
 	const FileType *getFiletype(int type);
 	const void *getData(int id, int requesttype, int &size);
 
+	bool loadDummy(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadStringTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadRawData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadShapeTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
@@ -798,6 +799,7 @@ private:
 	bool loadEobNpcData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #endif // ENABLE_EOB
 
+	void freeDummy(void *&ptr, int &size);
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
 	void freeShapeTable(void *&ptr, int &size);
