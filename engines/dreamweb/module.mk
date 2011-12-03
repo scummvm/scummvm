@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	monitor.o \
 	object.o \
 	pathfind.o \
+	people.o \
 	print.o \
 	saveload.o \
 	sprite.o \
