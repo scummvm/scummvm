@@ -688,7 +688,8 @@ void CGEEngine::xScene() {
 	debugC(6, kCGEDebugEngine, "CGEEngine::xScene()");
 
 	sceneDown();
-	_commandHandler->addCommand(kCmdLevel, -1, _lev, &_sceneLight);
+	if (_lev != -1)
+		_commandHandler->addCommand(kCmdLevel, -1, _lev, &_sceneLight);
 	sceneUp();
 }
 
