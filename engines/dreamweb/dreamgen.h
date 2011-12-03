@@ -697,7 +697,7 @@ public:
 	void useElevator5();
 	void useElevator4();
 	void useElevator1();
-	void useElevator3();
+	void greyscaleSum();
 	void useElevator2();
 	void keyboardRead();
 	void getOpenedSize();
@@ -811,7 +811,7 @@ public:
 	void getRidOfTemp();
 	void dumpSymbol();
 	void intro2Text();
-	void showOuterPad();
+	void interviewer();
 	void getKeyAndLogo();
 	void selectOb();
 	void usePlinth();
@@ -851,7 +851,6 @@ public:
 	void showMonk();
 	void diaryKeyN();
 	void set16ColPalette();
-	void interviewer();
 	void purgeAnItem();
 	void madman();
 	void enableSoundInt();
@@ -997,7 +996,7 @@ public:
 	void openFile();
 	void showPuzText();
 	void incRyanPage();
-	void greyscaleSum();
+	void useElevator3();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();

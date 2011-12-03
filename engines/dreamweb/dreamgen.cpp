@@ -9152,22 +9152,6 @@ doqk:
 	data.byte(kGetback) = 1;
 }
 
-void DreamGenContext::showOuterPad() {
-	STACK_CHECK;
-	di = (36+112)-3;
-	bx = (72)-4;
-	ds = data.word(kTempgraphics);
-	al = 1;
-	ah = 0;
-	showFrame();
-	di = (36+112)+74;
-	bx = (72)+76;
-	ds = data.word(kTempgraphics);
-	al = 37;
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::dumpKeypad() {
 	STACK_CHECK;
 	di = (36+112)-3;

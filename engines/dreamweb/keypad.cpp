@@ -223,5 +223,10 @@ void DreamGenContext::buttonPress(uint8 buttonId) {
 	}
 }
 
+void DreamGenContext::showOuterPad() {
+	showFrame(tempGraphics(), kKeypadx-3, kKeypady-4, 1, 0);
+	showFrame(tempGraphics(), kKeypadx+74, kKeypady+76, 37, 0);
+}
+
 } /*namespace dreamgen */
 
