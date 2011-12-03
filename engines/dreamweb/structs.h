@@ -277,3 +277,11 @@ struct FileHeader {
 	}
 };
 
+struct Atmosphere {
+	uint8 _location;
+	uint8 _mapX;
+	uint8 _mapY;
+	uint8 _sound;
+	uint8 _repeat;
+};
+

@@ -425,4 +425,5 @@
 	void saveGame();
 	void zoomOnOff();
 	void doShake();
+	void atmospheres();
 

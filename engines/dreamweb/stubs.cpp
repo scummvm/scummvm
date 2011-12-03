@@ -298,6 +298,161 @@ const Room g_roomData[] = {
 	  0,0,255,255,255,255,255,255,255,255,55 }
 };
 
+static const Atmosphere g_atmosphereList[] = {
+	// location,map x,y,sound,repeat
+	{ 0,33,10,15,255 },
+	{ 0,22,10,15,255 },
+	{ 0,22,0,15,255 },
+	{ 0,11,0,15,255 },
+	{ 0,11,10,15,255 },
+	{ 0,0,10,15,255 },
+
+	{ 1,44,10,6,255	},
+	{ 1,44,0,13,255 },
+
+	{ 2,33,0,6,255 },
+	{ 2,22,0,5,255 },
+	{ 2,22,10,16,255 },
+	{ 2,11,10,16,255 },
+
+	{ 3,44,0,15,255 },
+	{ 3,33,10,6,255 },
+	{ 3,33,0,5,255 },
+
+	{ 4,11,30,6,255 },
+	{ 4,22,30,5,255 },
+	{ 4,22,20,13,255 },
+
+	{ 10,33,30,6,255 },
+	{ 10,22,30,6,255 },
+	
+	{ 9,22,10,6,255 },
+	{ 9,22,20,16,255 },
+	{ 9,22,30,16,255 },
+	{ 9,22,40,16,255 },
+	{ 9,22,50,16,255 },
+	
+	{ 6,11,30,6,255 },
+	{ 6,0,10,15,255 },
+	{ 6,0,20,15,255 },
+	{ 6,11,20,15,255 },
+	{ 6,22,20,15,255 },
+	
+	{ 7,11,20,6,255 },
+	{ 7,0,20,6,255 },
+	{ 7,0,30,6,255 },
+	
+	{ 55,44,0,5,255 },
+	{ 55,44,10,5,255 },
+
+	{ 5,22,30,6,255 },
+	{ 5,22,20,15,255 }, // if demo: { 5,22,20,16,255 },
+	{ 5,22,10,15,255 }, // if demo: { 5,22,10,16,255 },
+
+	{ 24,22,0,15,255 },
+	{ 24,33,0,15,255 },
+	{ 24,44,0,15,255 },
+	{ 24,33,10,15,255 },
+
+	{ 8,0,10,6,255 },
+	{ 8,11,10,6,255 },
+	{ 8,22,10,6,255 },
+	{ 8,33,10,6,255 },
+	{ 8,33,20,6,255 },
+	{ 8,33,30,6,255 },
+	{ 8,33,40,6,255 },
+	{ 8,22,40,6,255 },
+	{ 8,11,40,6,255 },
+    
+	{ 11,11,20,12,255 },
+	{ 11,11,30,12,255 },
+	{ 11,22,20,12,255 },
+	{ 11,22,30,12,255 },
+	
+	{ 12,22,20,12,255 },
+	{ 13,22,20,12,255 },
+	{ 13,33,20,12,255 },
+
+	{ 14,44,20,12,255 },
+	{ 14,33,0,12,255 },
+	{ 14,33,10,12,255 },
+	{ 14,33,20,12,255 },
+	{ 14,33,30,12,255 },
+	{ 14,33,40,12,255 },
+	{ 14,22,0,16,255 },
+	
+	{ 19,0,0,12,255 },
+
+	{ 20,0,20,16,255 },
+	{ 20,0,30,16,255 },
+	{ 20,11,30,16,255 },
+	{ 20,0,40,16,255 },
+	{ 20,11,40,16,255 },
+
+	{ 21,11,10,15,255 }, // if demo: { 21,11,10,16,255 },
+	{ 21,11,20,15,255 }, // if demo: { 21,11,20,16,255 },
+	{ 21, 0,20,15,255 }, // if demo: { 21,0,20,16,255 },
+	{ 21,22,20,15,255 }, // if demo: { 21,22,20,16,255 },
+	{ 21,33,20,15,255 }, // if demo: { 21,33,20,16,255 },
+	{ 21,44,20,15,255 }, // if demo: { 21,44,20,16,255 },
+	{ 21,44,10,15,255 }, // if demo: { 21,44,10,16,255 },
+
+	{ 22,22,10,16,255 },
+	{ 22,22,20,16,255 },
+
+	{ 23,22,30,13,255 },
+	{ 23,22,40,13,255 },
+	{ 23,33,40,13,255 },
+	{ 23,11,40,13,255 },
+	{ 23,0,40,13,255 },
+	{ 23,0,50,13,255 },
+
+	{ 25,11,40,16,255 },
+	{ 25,11,50,16,255 },
+	{ 25,0,50,16,255 },
+
+	{ 27,11,20,16,255 },
+	{ 27,11,30,16,255 },
+
+	{ 29,11,10,16,255 },
+
+	{ 45,22,30,12,255 },
+	{ 45,22,40,12,255 },
+	{ 45,22,50,12,255 },
+
+	{ 46,22,40,12,255 },
+	{ 46,11,50,12,255 },
+	{ 46,22,50,12,255 },
+	{ 46,33,50,12,255 },
+
+	{ 47,0,0,12,255 },
+
+	{ 26,22,20,16,255 },
+	{ 26,33,10,16,255 },
+	{ 26,33,20,16,255 },
+	{ 26,33,30,16,255 },
+	{ 26,44,30,16,255 },
+	{ 26,22,30,16,255 },
+	{ 26,11,30,16,255 },
+	{ 26,11,20,16,255 },
+	{ 26,0,20,16,255 },
+	{ 26,11,40,16,255 },
+	{ 26,0,40,16,255 },
+	{ 26,22,40,16,255 },
+	{ 26,11,50,16,255 },
+
+	{ 28,0,30,15,255 },
+	{ 28,0,20,15,255 },
+	{ 28,0,40,15,255 },
+	{ 28,11,30,15,255 },
+	{ 28,11,20,15,255 },
+	{ 28,22,30,15,255 },
+	{ 28,22,20,15,255 },
+
+	{ 255,255,255,255,255 }
+
+};
+
 void DreamGenContext::dreamweb() {
 	STACK_CHECK;
 
@@ -2852,83 +3007,64 @@ void DreamGenContext::useMenu() {
 }
 
 void DreamGenContext::atmospheres() {
-	STACK_CHECK;
-	cl = data.byte(kMapx);
-	ch = data.byte(kMapy);
-	bx = offset_atmospherelist;
-nextatmos:
-	al = cs.byte(bx);
-	_cmp(al, 255);
-	if (flags.z())
-		goto nomoreatmos;
-	_cmp(al, data.byte(kReallocation));
-	if (!flags.z())
-		goto wrongatmos;
-	ax = cs.word(bx+1);
-	_cmp(ax, cx);
-	if (!flags.z())
-		goto wrongatmos;
-	ax = cs.word(bx+3);
-	_cmp(al, data.byte(kCh0playing));
-	if (flags.z())
-		goto playingalready;
-	_cmp(data.byte(kLocation), 45);
-	if (!flags.z())
-		goto notweb;
-	_cmp(data.word(kReeltowatch), 45);
-	if (flags.z())
-		goto wrongatmos;
-notweb:
-	playChannel0();
-	_cmp(data.byte(kReallocation), 2);
-	_cmp(data.byte(kMapy), 0);
-	if (flags.z())
-		goto fullvol;
-	if (!flags.z())
-		goto notlouisvol;
-	_cmp(data.byte(kMapy), 10);
-	if (!flags.z())
-		goto notlouisvol;
-	_cmp(data.byte(kMapx), 22);
-	if (!flags.z())
-		goto notlouisvol;
-	data.byte(kVolume) = 5;
-notlouisvol:
-	_cmp(data.byte(kReallocation), 14);
-	if (!flags.z())
-		goto notmad1;
-	_cmp(data.byte(kMapx), 33);
-	if (flags.z())
-		goto ismad2;
-	_cmp(data.byte(kMapx), 22);
-	if (!flags.z())
-		goto notmad1;
-	data.byte(kVolume) = 5;
-	return;
-ismad2:
-	data.byte(kVolume) = 0;
-	return;
-notmad1:
-playingalready:
-	_cmp(data.byte(kReallocation), 2);
-	if (!flags.z())
-		return /* (notlouisvol2) */;
-	_cmp(data.byte(kMapx), 22);
-	if (flags.z())
-		goto louisvol;
-	_cmp(data.byte(kMapx), 11);
-	if (!flags.z())
-		return /* (notlouisvol2) */;
-fullvol:
-	data.byte(kVolume) = 0;
-	return;
-louisvol:
-	data.byte(kVolume) = 5;
-	return;
-wrongatmos:
-	_add(bx, 5);
-	goto nextatmos;
-nomoreatmos:
+
+	const Atmosphere *a = &g_atmosphereList[0];
+
+	for (; a->_location != 255; ++a) {
+		if (a->_location != data.byte(kReallocation))
+			continue;
+		if (a->_mapX != data.byte(kMapx) || a->_mapY != data.byte(kMapy))
+			continue;
+		if (a->_sound != data.byte(kCh0playing)) {
+
+			if (data.byte(kLocation) == 45 && data.word(kReeltowatch) == 45)
+				continue; // "web"
+
+			playChannel0(a->_sound, a->_repeat);
+
+			// NB: The asm here reads
+			//	cmp reallocation,2
+			//  cmp mapy,0
+			//  jz fullvol
+			//  jnz notlouisvol
+			//  I'm interpreting this as if the cmp reallocation is below the jz
+
+			if (data.byte(kMapy) == 0) {
+					data.byte(kVolume) = 0; // "fullvol"
+					return;
+			}
+
+			if (data.byte(kReallocation) == 2 && data.byte(kMapx) == 22 && data.byte(kMapy) == 10)
+				data.byte(kVolume) = 5; // "louisvol"
+
+			if (isCD() && data.byte(kReallocation) == 14) {
+				if (data.byte(kMapx) == 33) {
+					data.byte(kVolume) = 0; // "ismad2"
+					return;
+				}
+
+				if (data.byte(kMapx) == 22) {
+					data.byte(kVolume) = 5;
+					return;
+				}
+
+			}
+		}
+
+		if (data.byte(kReallocation) == 2) {
+			if (data.byte(kMapx) == 22) {
+				data.byte(kVolume) = 5; // "louisvol"
+				return;
+			}
+
+			if (data.byte(kMapx) == 11) {
+				data.byte(kVolume) = 0; // "fullvol"
+				return;
+			}
+		}
+		return;
+	}
+
 	cancelCh0();
 }
 
