@@ -794,7 +794,6 @@ public:
 	void drinker();
 	void placeFreeObject();
 	void allPalette();
-	void rockstar();
 	void adjustRight();
 	void putUnderZoom();
 	void vSync();

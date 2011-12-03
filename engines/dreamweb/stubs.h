@@ -386,6 +386,7 @@
 	void sparky(ReelRoutine &routine);
 	void femaleFan(ReelRoutine &routine);
 	void maleFan(ReelRoutine &routine);
+	void rockstar(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void showKeypad();
 	void showOuterPad();

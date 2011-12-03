@@ -126,6 +126,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'updatepeople',
 	'malefan',
 	'femalefan',
+	'rockstar',
 	'madmantext',
 	'madmode',
 	'movemap',

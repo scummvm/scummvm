@@ -360,65 +360,6 @@ gotsoldframe:
 	addToPeopleList();
 }
 
-void DreamGenContext::rockstar() {
-	STACK_CHECK;
-	ax = es.word(bx+3);
-	_cmp(ax, 303);
-	if (flags.z())
-		goto rockcombatend;
-	_cmp(ax, 118);
-	if (flags.z())
-		goto rockcombatend;
-	checkSpeed();
-	if (!flags.z())
-		goto rockspeed;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 118);
-	if (!flags.z())
-		goto notbeforedead;
-	data.byte(kMandead) = 2;
-	goto gotrockframe;
-notbeforedead:
-	_cmp(ax, 79);
-	if (!flags.z())
-		goto gotrockframe;
-	_dec(ax);
-	_cmp(data.byte(kLastweapon), 1);
-	if (!flags.z())
-		goto notgunonrock;
-	data.byte(kLastweapon) = -1;
-	ax = 123;
-	goto gotrockframe;
-notgunonrock:
-	_inc(data.byte(kCombatcount));
-	_cmp(data.byte(kCombatcount), 40);
-	if (!flags.z())
-		goto gotrockframe;
-	data.byte(kCombatcount) = 0;
-	ax = 79;
-gotrockframe:
-	es.word(bx+3) = ax;
-rockspeed:
-	showGameReel();
-	_cmp(es.word(bx+3), 78);
-	if (!flags.z())
-		goto notalkrock;
-	addToPeopleList();
-	data.byte(kPointermode) = 2;
-	data.word(kWatchingtime) = 0;
-	return;
-notalkrock:
-	data.word(kWatchingtime) = 2;
-	data.byte(kPointermode) = 0;
-	al = data.byte(kMapy);
-	es.byte(bx+2) = al;
-	return;
-rockcombatend:
-	data.byte(kNewlocation) = 45;
-	showGameReel();
-}
-
 void DreamGenContext::helicopter() {
 	STACK_CHECK;
 	ax = es.word(bx+3);

@@ -581,7 +581,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
 	&DreamGenContext::smallCandle, &DreamGenContext::security,
 	&DreamGenContext::copper, &DreamGenContext::poolGuard,
-	&DreamGenContext::rockstar, &DreamGenContext::businessMan,
+	NULL, &DreamGenContext::businessMan,
 	&DreamGenContext::train, &DreamGenContext::aide,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
@@ -613,7 +613,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
 	/*&DreamGenContext::smallcandle*/NULL, /*&DreamGenContext::security*/NULL,
 	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
-	/*&DreamGenContext::rockstar*/NULL, /*&DreamGenContext::businessMan*/NULL,
+	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	/*&DreamGenContext::train*/NULL, /*&DreamGenContext::aide*/NULL,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
 	/*&DreamGenContext::introMagic1*/NULL, /*&DreamGenContext::introMusic*/NULL,
@@ -1135,6 +1135,43 @@ void DreamGenContext::sparky(ReelRoutine &routine) {
 	addToPeopleList(&routine);
 	if (routine.b7 & 128)
 		data.byte(kTalkedtosparky) = 1;
+}
+
+void DreamGenContext::rockstar(ReelRoutine &routine) {
+	if ((routine.reelPointer() == 303) || (routine.reelPointer() == 118)) {
+		data.byte(kNewlocation) = 45;
+		showGameReel(&routine);
+		return;
+	}
+	if (checkSpeed(&routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 118) {
+			data.byte(kMandead) = 2;
+		} else if (nextReelPointer == 79) {
+			--nextReelPointer;
+			if (data.byte(kLastweapon) != 1) {
+				++data.byte(kCombatcount);
+				if (data.byte(kCombatcount) == 40) {
+					data.byte(kCombatcount) = 0;
+					nextReelPointer = 79;
+				}
+			} else {
+				data.byte(kLastweapon) = -1;
+				nextReelPointer = 123;
+			}
+		}
+		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
+	if (routine.reelPointer() == 78) {
+		addToPeopleList(&routine);
+		data.byte(kPointermode) = 2;
+		data.word(kWatchingtime) = 0;
+	} else {
+		data.word(kWatchingtime) = 2;
+		data.byte(kPointermode) = 0;
+		routine.mapY = data.byte(kMapy);
+	}
 }
 
 } /*namespace dreamgen */
