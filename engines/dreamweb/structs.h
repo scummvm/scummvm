@@ -208,7 +208,7 @@ struct Room {
 	uint8 b30;
 	uint8 realLocation;
 };
-extern const Room g_RoomData[];
+extern const Room g_roomData[];
 
 struct Rain {
 	uint8 x;

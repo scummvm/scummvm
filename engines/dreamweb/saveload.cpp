@@ -78,7 +78,7 @@ void DreamGenContext::doLoad() {
 			};
 			checkCoords(loadlist);
 			if (data.byte(kGetback) == 1)
-				break;
+				break; // This signalled that actualLoad loaded a game
 			if (data.byte(kGetback) == 2)
 				return; // "quitloaded"
 		}
@@ -105,6 +105,10 @@ void DreamGenContext::doLoad() {
 
 		data.byte(kGetback) = 1;
 	}
+
+	// If we reach this point, loadPosition() has just been called.
+	// Note: Among other things, it will have filled kMadeuproomdat.
+
 
 	// kTempgraphics might not have been allocated if we bypassed all menus
 	if (data.word(kTempgraphics) != 0xFFFF)
@@ -307,17 +311,16 @@ void DreamGenContext::actualLoad() {
 
 void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 
-	const Room *currentRoom = (const Room *)cs.ptr(kRoomdata + sizeof(Room)*data.byte(kLocation), sizeof(Room));
-	Room *madeUpRoom = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+	const Room &currentRoom = g_roomData[data.byte(kLocation)];
 
-	*madeUpRoom = *currentRoom;
-	madeUpRoom->roomsSample = data.byte(kRoomssample);
-	madeUpRoom->mapX = data.byte(kMapx);
-	madeUpRoom->mapY = data.byte(kMapy);
-	madeUpRoom->liftFlag = data.byte(kLiftflag);
-	madeUpRoom->b21 = data.byte(kManspath);
-	madeUpRoom->facing = data.byte(kFacing);
-	madeUpRoom->b27 = 255;
+	Room madeUpRoom = currentRoom;
+	madeUpRoom.roomsSample = data.byte(kRoomssample);
+	madeUpRoom.mapX = data.byte(kMapx);
+	madeUpRoom.mapY = data.byte(kMapy);
+	madeUpRoom.liftFlag = data.byte(kLiftflag);
+	madeUpRoom.b21 = data.byte(kManspath);
+	madeUpRoom.facing = data.byte(kFacing);
+	madeUpRoom.b27 = 255;
 
 	openForSave(slot);
 
@@ -342,7 +345,11 @@ void DreamGenContext::savePosition(unsigned int slot, const uint8 *descbuf) {
 	engine->writeToSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->writeToSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
 	engine->writeToSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
-	engine->writeToSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+
+	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
+	engine->writeToSaveFile((const uint8 *)&madeUpRoom, sizeof(Room));
+	engine->writeToSaveFile(data.ptr(kRoomscango, 16), 16);
+
 	engine->writeToSaveFile(data.ptr(kReelroutines, len[5]), len[5]);
 	closeFile();
 }
@@ -374,7 +381,11 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	engine->readFromSaveFile(data.ptr(kStartvars, len[1]), len[1]);
 	engine->readFromSaveFile(getSegment(data.word(kExtras)).ptr(kExframedata, len[2]), len[2]);
 	engine->readFromSaveFile(getSegment(data.word(kBuffers)).ptr(kListofchanges, len[3]), len[3]);
-	engine->readFromSaveFile(data.ptr(kMadeuproomdat, len[4]), len[4]);
+
+	// len[4] == 48, which is sizeof(Room) plus 16 for 'Roomscango'
+	engine->readFromSaveFile(data.ptr(kMadeuproomdat, sizeof(Room)), sizeof(Room));
+	engine->readFromSaveFile(data.ptr(kRoomscango, 16), 16);
+
 	engine->readFromSaveFile(cs.ptr(kReelroutines, len[5]), len[5]);
 
 	closeFile();
