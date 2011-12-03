@@ -91,11 +91,9 @@
 	void oldToNames();
 	void namesToOld();
 	void loadPalFromIFF();
-	void getRoomData();
-	Room *getRoomData(uint8 room);
 	void readHeader();
 	void fillSpace();
-	void startLoading(const Room *room);
+	void startLoading(const Room &room);
 	Sprite *spriteTable();
 	void showFrame();
 	void showFrame(const Frame *frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height);
@@ -351,7 +349,7 @@
 	void openForLoad(unsigned int slot);
 	uint16 allocateAndLoad(unsigned int size);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
-	void loadRoomData(const Room* room, bool skipDat);
+	void loadRoomData(const Room &room, bool skipDat);
 	void restoreAll();
 	void restoreReels();
 	void viewFolder();

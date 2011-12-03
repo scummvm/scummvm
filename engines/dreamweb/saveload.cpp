@@ -112,8 +112,8 @@ void DreamGenContext::doLoad() {
 
 	dx = data;
 	es = dx;
-	const Room *room = (Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
-	startLoading(room);
+	const Room *room = (const Room *)cs.ptr(kMadeuproomdat, sizeof(Room));
+	startLoading(*room);
 	loadRoomsSample();
 	data.byte(kRoomloaded) = 1;
 	data.byte(kNewlocation) = 255;
