@@ -688,6 +688,7 @@ void CGEEngine::xScene() {
 	debugC(6, kCGEDebugEngine, "CGEEngine::xScene()");
 
 	sceneDown();
+	_commandHandler->addCommand(kCmdLevel, -1, _lev, &_sceneLight);
 	sceneUp();
 }
 
@@ -729,6 +730,7 @@ void CGEEngine::switchScene(int newScene) {
 			keyClick();
 		_commandHandler->addCommand(kCmdLabel, -1, 0, NULL);  // wait for repaint
 		_commandHandler->addCallback(kCmdExec,  0, 0, kXScene); // switch scene
+
 	}
 }
 
@@ -821,7 +823,7 @@ void System::tick() {
 			if (_vm->_commandHandler->idle()) {
 				if (_vm->_flag[0]) // Pain flag
 					_vm->heroCover(9);
-				else { // CHECKME: Before, was: if (Startup::_core >= CORE_MID) {
+				else {
 					int n = _vm->newRandom(100);
 					if (n > 96)
 						_vm->heroCover(6 + (_vm->_hero->_x + _vm->_hero->_w / 2 < kScrWidth / 2));
