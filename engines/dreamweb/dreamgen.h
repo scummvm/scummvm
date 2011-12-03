@@ -812,7 +812,6 @@ public:
 	void selectOb();
 	void usePlinth();
 	void useCooker();
-	void checkForEMM();
 	void receptionist();
 	void selectSlot();
 	void openFileNoCheck();

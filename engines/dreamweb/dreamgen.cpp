@@ -10630,10 +10630,6 @@ void DreamGenContext::pickupOb() {
 	transferToEx();
 }
 
-void DreamGenContext::checkForEMM() {
-	STACK_CHECK;
-}
-
 void DreamGenContext::clearBuffers() {
 	STACK_CHECK;
 	es = data.word(kBuffers);
