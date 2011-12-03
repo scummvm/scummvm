@@ -426,4 +426,7 @@
 	void zoomOnOff();
 	void doShake();
 	void atmospheres();
+	void loadPersonal();
+	void loadNews();
+	void loadCart();
 

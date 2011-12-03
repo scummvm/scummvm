@@ -671,7 +671,6 @@ public:
 	void mouseCall();
 	void train();
 	void fadeDownMon();
-	void loadCart();
 	void bartender();
 	void showDiary();
 	void sLabDoorF();
@@ -806,7 +805,6 @@ public:
 	void setKeyboardInt();
 	void priest();
 	void printmessage2();
-	void loadNews();
 	void wearShades();
 	void hangOnPQ();
 	void findOpenPos();
@@ -905,7 +903,6 @@ public:
 	void fadeScreenUps();
 	void hotelControl();
 	void mugger();
-	void loadPersonal();
 	void gettingShot();
 	void setTopLeft();
 	void searchForString();
