@@ -80,6 +80,17 @@ p = parser(skip_binary_data = [
 	'spritename3',
 	'mongraphicname',
 	'characterset2',
+	'monitorfile1',
+	'monitorfile2',
+	'monitorfile10',
+	'monitorfile11',
+	'monitorfile12',
+	'monitorfile13',
+	'monitorfile20',
+	'monitorfile21',
+	'monitorfile22',
+	'monitorfile23',
+	'monitorfile24',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')

@@ -266,101 +266,37 @@ void DreamGenContext::turnOnPower() {
 }
 
 void DreamGenContext::loadPersonal() {
-	STACK_CHECK;
-	al = data.byte(kLocation);
-	dx = 1669;
-	_cmp(al, 0);
-	if (flags.z())
-		goto foundpersonal;
-	_cmp(al, 42);
-	if (flags.z())
-		goto foundpersonal;
-	dx = 1682;
-	_cmp(al, 2);
-	if (flags.z())
-		goto foundpersonal;
-foundpersonal:
-	openFile();
-	readHeader();
-	bx = es.word(di);
-	push(bx);
-	cl = 4;
-	_shr(bx, cl);
-	allocateMem();
-	data.word(kTextfile1) = ax;
-	ds = ax;
-	cx = pop();
-	dx = 0;
-	readFromFile();
-	closeFile();
+	if (data.byte(kLocation) == 0 || data.byte(kLocation) == 42)
+		data.word(kTextfile1) = standardLoad("DREAMWEB.T01"); // monitor file 1
+	else
+		data.word(kTextfile1) = standardLoad("DREAMWEB.T02"); // monitor file 2
 }
 
 void DreamGenContext::loadNews() {
-	STACK_CHECK;
-	al = data.byte(kNewsitem);
-	dx = 1695;
-	_cmp(al, 0);
-	if (flags.z())
-		goto foundnews;
-	dx = 1708;
-	_cmp(al, 1);
-	if (flags.z())
-		goto foundnews;
-	dx = 1721;
-	_cmp(al, 2);
-	if (flags.z())
-		goto foundnews;
-	dx = 1734;
-foundnews:
-	openFile();
-	readHeader();
-	bx = es.word(di);
-	push(bx);
-	cl = 4;
-	_shr(bx, cl);
-	allocateMem();
-	data.word(kTextfile2) = ax;
-	ds = ax;
-	cx = pop();
-	dx = 0;
-	readFromFile();
-	closeFile();
+	// textfile2 holds information accessible by anyone
+	if (data.byte(kNewsitem) == 0)
+		data.word(kTextfile2) = standardLoad("DREAMWEB.T10"); // monitor file 10
+	else if (data.byte(kNewsitem) == 1)
+		data.word(kTextfile2) = standardLoad("DREAMWEB.T11"); // monitor file 11
+	else if (data.byte(kNewsitem) == 2)
+		data.word(kTextfile2) = standardLoad("DREAMWEB.T12"); // monitor file 12
+	else
+		data.word(kTextfile2) = standardLoad("DREAMWEB.T13"); // monitor file 13
 }
 
 void DreamGenContext::loadCart() {
-	STACK_CHECK;
 	lookInInterface();
-	dx = 1747;
-	_cmp(al, 0);
-	if (flags.z())
-		goto gotcart;
-	dx = 1760;
-	_cmp(al, 1);
-	if (flags.z())
-		goto gotcart;
-	dx = 1773;
-	_cmp(al, 2);
-	if (flags.z())
-		goto gotcart;
-	dx = 1786;
-	_cmp(al, 3);
-	if (flags.z())
-		goto gotcart;
-	dx = 1799;
-gotcart:
-	openFile();
-	readHeader();
-	bx = es.word(di);
-	push(bx);
-	cl = 4;
-	_shr(bx, cl);
-	allocateMem();
-	data.word(kTextfile3) = ax;
-	ds = ax;
-	cx = pop();
-	dx = 0;
-	readFromFile();
-	closeFile();
+
+	if (al == 0)
+		data.word(kTextfile3) = standardLoad("DREAMWEB.T20"); // monitor file 20
+	else if (al == 1)
+		data.word(kTextfile3) = standardLoad("DREAMWEB.T21"); // monitor file 21
+	else if (al == 2)
+		data.word(kTextfile3) = standardLoad("DREAMWEB.T22"); // monitor file 22
+	else if (al == 3)
+		data.word(kTextfile3) = standardLoad("DREAMWEB.T23"); // monitor file 23
+	else
+		data.word(kTextfile3) = standardLoad("DREAMWEB.T24"); // monitor file 24
 }
 
 } /*namespace dreamgen */
