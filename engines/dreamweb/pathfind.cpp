@@ -24,6 +24,10 @@
 
 namespace DreamGen {
 
+// Output of Bresenham
+Common::Point g_lineData[200];
+
+
 void DreamGenContext::turnPathOn() {
 	turnPathOn(al);
 }
@@ -131,7 +135,7 @@ bool DreamGenContext::checkIfPathIsOn(uint8 index) {
 
 void DreamGenContext::bresenhams() {
 	workoutFrames();
-	int8 *lineData = (int8 *)data.ptr(kLinedata, 0);
+	Common::Point *lineData = &g_lineData[0];
 	int16 startX = (int16)data.word(kLinestartx);
 	int16 startY = (int16)data.word(kLinestarty);
 	int16 endX = (int16)data.word(kLineendx);
@@ -152,13 +156,12 @@ void DreamGenContext::bresenhams() {
 		++deltaY;
 		int8 x = (int8)startX;
 		data.byte(kLinelength) = deltaY;
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		for (; deltaY; --deltaY) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++y;
-			--deltaY;
-		} while (deltaY);
+		}
 		return;
 	}
 	uint16 deltaX;
@@ -182,13 +185,12 @@ void DreamGenContext::bresenhams() {
 		int8 y = (int8)startY;
 		++deltaX;
 		data.byte(kLinelength) = deltaX;
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		for (; deltaX; --deltaX) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++x;
-			--deltaX;
-		} while (deltaX);
+		}
 		return;
 	}
 	uint16 deltaY;
@@ -219,10 +221,10 @@ void DreamGenContext::bresenhams() {
 	int8 y = (int8)startY;
 	data.byte(kLinelength) = delta1;
 	if (data.byte(kLineroutine) != 1) {
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		for (; delta1; --delta1) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++x;
 			if (remainder < 0) {
 				remainder += data.word(kIncrement1);
@@ -230,13 +232,12 @@ void DreamGenContext::bresenhams() {
 				remainder += data.word(kIncrement2);
 				y += increment;
 			}
-			--delta1;
-		} while (delta1);
+		}
 	} else {
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		for (; delta1; --delta1) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			y += increment;
 			if (remainder < 0) {
 				remainder += data.word(kIncrement1);
@@ -244,7 +245,6 @@ void DreamGenContext::bresenhams() {
 				remainder += data.word(kIncrement2);
 				++x;
 			}
-			--delta1;
 		} while (delta1);
 	}
 }

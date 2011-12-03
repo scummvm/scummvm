@@ -35,6 +35,7 @@ p = parser(skip_binary_data = [
 	'stak',
 	'keyconverttab',
 	'atmospherelist',
+	'linedata',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',

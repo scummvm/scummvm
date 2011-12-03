@@ -46,6 +46,9 @@ namespace DreamGen {
 const uint16 addr_backobject = 0xc170;
 const uint16 addr_mainman = 0xc138;
 
+// Output of Bresenham
+extern Common::Point g_lineData[200];
+
 }
 
 namespace DreamWeb {

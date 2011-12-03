@@ -196,8 +196,8 @@ void DreamGenContext::walking(Sprite *sprite) {
 		comp = data.byte(kLinelength);
 	}
 	if (data.byte(kLinepointer) < comp) {
-		sprite->x = data.byte(kLinedata + data.byte(kLinepointer) * 2 + 0);
-		sprite->y = data.byte(kLinedata + data.byte(kLinepointer) * 2 + 1);
+		sprite->x = (uint8)g_lineData[data.byte(kLinepointer)].x;
+		sprite->y = (uint8)g_lineData[data.byte(kLinepointer)].y;
 		return;
 	}
 
