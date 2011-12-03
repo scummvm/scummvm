@@ -721,7 +721,7 @@ void CGEEngine::switchScene(int newScene) {
 		if (_hero) {
 			_hero->park();
 			_hero->step(0);
-			_vga->_spareQ->_show = 0;
+			_vga->_spareQ->_show = false;
 		}
 		_sceneLight->gotoxy(kSceneX + ((_now - 1) % kSceneNx) * kSceneDx + kSceneSX,
 		                  kSceneY + ((_now - 1) / kSceneNx) * kSceneDy + kSceneSY);

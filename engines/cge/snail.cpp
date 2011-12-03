@@ -447,7 +447,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[2]);               // Get Away (Her)
 				_commandHandler->addCommand(kCmdSetXY, -1, 182 + kScrWidth * 62, dup[2]);
 				_commandHandler->addCommand(kCmdSetZ, -1, 9, dup[2]);
-				_game = 0;
+				_game = false;
 				return;
 			} else {
 				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[0]);               // reset animation sequence
