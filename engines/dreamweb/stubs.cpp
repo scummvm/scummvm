@@ -325,7 +325,7 @@ void DreamGenContext::dreamweb() {
 	readSetData();
 	data.byte(kWongame) = 0;
 
-	dx = 1909;
+	dx = kBasicsample;
 	loadSample();
 	setSoundOff();
 
