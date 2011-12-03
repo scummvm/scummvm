@@ -9170,23 +9170,6 @@ void DreamGenContext::dumpMenu() {
 	multiDump();
 }
 
-void DreamGenContext::showMenu() {
-	STACK_CHECK;
-	_inc(data.byte(kMenucount));
-	_cmp(data.byte(kMenucount), 37*2);
-	if (!flags.z())
-		goto menuframeok;
-	data.byte(kMenucount) = 0;
-menuframeok:
-	al = data.byte(kMenucount);
-	_shr(al, 1);
-	ah = 0;
-	di = (80+40);
-	bx = (60);
-	ds = data.word(kTempgraphics);
-	showFrame();
-}
-
 void DreamGenContext::enterSymbol() {
 	STACK_CHECK;
 	data.byte(kManisoffscreen) = 1;

@@ -2731,6 +2731,13 @@ void DreamGenContext::loadMenu() {
 	loadIntoTemp2("DREAMWEB.G07");
 }
 
+void DreamGenContext::showMenu() {
+	++data.byte(kMenucount);
+	if (data.byte(kMenucount) == 37*2)
+		data.byte(kMenucount) = 0;
+	showFrame(tempGraphics(), kMenux, kMenuy, data.byte(kMenucount) / 2, 0);
+}
+
 void DreamGenContext::useMenu() {
 	getRidOfReels();
 	loadMenu();

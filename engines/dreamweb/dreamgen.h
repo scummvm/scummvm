@@ -651,7 +651,7 @@ public:
 	void femaleFan();
 	void identifyOb();
 	void useLighter();
-	void showMenu();
+	void runEndSeq();
 	void usePoolReader();
 	void useOpenBox();
 	void clearBuffers();
@@ -676,7 +676,6 @@ public:
 	void getTime();
 	void candles1();
 	void fadeDOS();
-	void runEndSeq();
 	void loadKeypad();
 	void findText1();
 	void isRyanHolding();
