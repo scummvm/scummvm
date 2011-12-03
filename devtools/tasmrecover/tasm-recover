@@ -67,6 +67,16 @@ p = parser(skip_binary_data = [
 	'uselist',
 	# vgagrafx.asm
 	'shaketable',
+	'symbolgraphic',
+	'foldergraphic1',
+	'foldergraphic2',
+	'foldergraphic3',
+	'foldertext',
+	'traveltextname',
+	'mongraphics2',
+	'spritename3',
+	'mongraphicname',
+	'characterset2',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')

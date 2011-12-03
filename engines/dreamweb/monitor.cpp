@@ -46,11 +46,11 @@ void DreamGenContext::useMon() {
 	showIcon();
 	drawFloor();
 	getRidOfAll();
-	loadIntoTemp("DREAMWEB.G03");
+	loadIntoTemp("DREAMWEB.G03"); // mon. graphic name
 	loadPersonal();
 	loadNews();
 	loadCart();
-	loadTempCharset("DREAMWEB.C01");
+	loadTempCharset("DREAMWEB.C01"); // character set 2
 	printOuterMon();
 	initialMonCols();
 	printLogo();

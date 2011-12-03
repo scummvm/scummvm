@@ -2218,7 +2218,7 @@ uint8 *DreamGenContext::getObTextStartCPP() {
 void DreamGenContext::enterSymbol() {
 	data.byte(kManisoffscreen) = 1;
 	getRidOfReels();
-	loadIntoTemp("DREAMWEB.G12");
+	loadIntoTemp("DREAMWEB.G12"); // symbol graphics
 	data.byte(kSymboltopx) = 24;
 	data.byte(kSymboltopdir) = 0;
 	data.byte(kSymbolbotx) = 24;
@@ -2708,11 +2708,11 @@ void DreamGenContext::restoreReels() {
 }
 
 void DreamGenContext::loadFolder() {
-	loadIntoTemp("DREAMWEB.G09");
-	loadIntoTemp2("DREAMWEB.G10");
-	loadIntoTemp3("DREAMWEB.G11");
-	loadTempCharset("DREAMWEB.C02");
-	loadTempText("DREAMWEB.T50");
+	loadIntoTemp("DREAMWEB.G09"); // folder graphics 1
+	loadIntoTemp2("DREAMWEB.G10"); // folder graphics 2
+	loadIntoTemp3("DREAMWEB.G11"); // folder graphics 3
+	loadTempCharset("DREAMWEB.C02"); // character set 3
+	loadTempText("DREAMWEB.T50"); // folder text
 }
 
 void DreamGenContext::showFolder() {
@@ -2898,7 +2898,7 @@ void DreamGenContext::folderExit() {
 }
 
 void DreamGenContext::loadTravelText() {
-	data.word(kTraveltext) = standardLoad("DREAMWEB.T81");
+	data.word(kTraveltext) = standardLoad("DREAMWEB.T81"); // location descs
 }
 
 void DreamGenContext::loadTempText() {
@@ -2944,8 +2944,8 @@ void DreamGenContext::workToScreenM() {
 }
 
 void DreamGenContext::loadMenu() {
-	loadIntoTemp("DREAMWEB.S02");
-	loadIntoTemp2("DREAMWEB.G07");
+	loadIntoTemp("DREAMWEB.S02"); // sprite name 3
+	loadIntoTemp2("DREAMWEB.G07"); // mon. graphics 2
 }
 
 void DreamGenContext::showMenu() {
