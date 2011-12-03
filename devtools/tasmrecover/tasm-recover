@@ -160,6 +160,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'eden',
 	'endpaltostart',
 	'entercode',
+	'entersymbol',
 	'eraseoldobs',
 	'examineob',
 	'examineobtext',

@@ -364,6 +364,7 @@
 	void loadRoomData(const Room &room, bool skipDat);
 	void restoreAll();
 	void restoreReels();
+	void enterSymbol();
 	void viewFolder();
 	void checkFolderCoords();
 	void loadFolder();

@@ -57,7 +57,6 @@ public:
 	static const uint16 offset_gameerror1 = 0x0a7d;
 	static const uint16 offset_gameerror3 = 0x0b12;
 	static const uint16 offset_gameerror7 = 0x0c13;
-	static const uint16 offset_symbollist = 0x09c1;
 	static const uint16 offset_speechfilename = 0x0ec9;
 	static const uint16 offset_discopslist = 0x0a53;
 	static const uint16 offset_atmospherelist = 0x0edc;
@@ -756,7 +755,6 @@ public:
 	void discOps();
 	void middlePanel();
 	void monitorLogo();
-	void enterSymbol();
 	void dirFile();
 	void pickupConts();
 	void lockLightOff();
@@ -834,7 +832,7 @@ public:
 	void priest();
 	void printmessage2();
 	void loadNews();
-	void rollEm();
+	void wearShades();
 	void hangOnPQ();
 	void findOpenPos();
 	void describeOb();
@@ -848,7 +846,7 @@ public:
 	void getBack1();
 	void fadeFromWhite();
 	void useWindow();
-	void wearShades();
+	void rollEm();
 	void delEverything();
 	void fadeScreenDown();
 	void poolGuard();

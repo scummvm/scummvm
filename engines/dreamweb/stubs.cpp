@@ -1711,20 +1711,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(destList);
 		break;
 	}
-	case offset_symbollist: {
-		RectWithCallback symbolList[] = {
-			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitSymbol },
-			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::setTopLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::setTopRight },
-			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setBotLeft },
-			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setBotRight },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(symbolList);
-
-		break;
-	}
 	case offset_diarylist: {
 		RectWithCallback diaryList[] = {
 			{ kDiaryx+94,kDiaryx+110,kDiaryy+97,kDiaryy+113,&DreamGenContext::diaryKeyN },
@@ -2080,6 +2066,63 @@ uint8 *DreamGenContext::getObTextStartCPP() {
 	si = pop();
 	es = pop();
 	return result;
+}
+
+void DreamGenContext::enterSymbol() {
+	data.byte(kManisoffscreen) = 1;
+	getRidOfReels();
+	loadIntoTemp("DREAMWEB.G12");
+	data.byte(kSymboltopx) = 24;
+	data.byte(kSymboltopdir) = 0;
+	data.byte(kSymbolbotx) = 24;
+	data.byte(kSymbolbotdir) = 0;
+	redrawMainScrn();
+	showSymbol();
+	underTextLine();
+	workToScreenM();
+	data.byte(kGetback) = 0;
+	do {
+		delPointer();
+		updateSymbolTop();
+		updateSymbolBot();
+		showSymbol();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpTextLine();
+		dumpSymbol();
+		RectWithCallback symbolList[] = {
+			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitSymbol },
+			{ kSymbolx,kSymbolx+52,kSymboly+20,kSymboly+50,&DreamGenContext::setTopLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+20,kSymboly+50,&DreamGenContext::setTopRight },
+			{ kSymbolx,kSymbolx+52,kSymboly+50,kSymboly+80,&DreamGenContext::setBotLeft },
+			{ kSymbolx+52,kSymbolx+104,kSymboly+50,kSymboly+80,&DreamGenContext::setBotRight },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkCoords(symbolList);
+	} while (data.byte(kGetback) == 0);
+	if ((data.byte(kSymbolbotnum) == 3) && (data.byte(kSymboltopnum) == 5)) {
+		removeSetObject(43);
+		placeSetObject(46);
+		turnAnyPathOn(0, data.byte(kRoomnum) + 12);
+		data.byte(kManisoffscreen) = 0;
+		redrawMainScrn();
+		getRidOfTemp();
+		restoreReels();
+		workToScreenM();
+		playChannel1(13);
+	} else {
+		removeSetObject(46);
+		placeSetObject(43);
+		turnAnyPathOff(0, data.byte(kRoomnum) + 12);
+		data.byte(kManisoffscreen) = 0;
+		redrawMainScrn();
+		getRidOfTemp();
+		restoreReels();
+		workToScreenM();
+	}
 }
 
 void DreamGenContext::zoomOnOff() {
