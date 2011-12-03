@@ -2417,6 +2417,30 @@ void DreamGenContext::useTempCharset() {
 	data.word(kCurrentset) = data.word(kTempcharset);
 }
 
+void DreamGenContext::getRidOfTemp() {
+	deallocateMem(data.word(kTempgraphics));
+}
+
+void DreamGenContext::getRidOfTempText() {
+	deallocateMem(data.word(kTextfile1));
+}
+
+void DreamGenContext::getRidOfTemp2() {
+	deallocateMem(data.word(kTempgraphics2));
+}
+
+void DreamGenContext::getRidOfTemp3() {
+	deallocateMem(data.word(kTempgraphics3));
+}
+
+void DreamGenContext::getRidOfTempCharset() {
+	deallocateMem(data.word(kTempcharset));
+}
+
+void DreamGenContext::getRidOfTempsP() {
+	deallocateMem(data.word(kTempsprites));
+}
+
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);

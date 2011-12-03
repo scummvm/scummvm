@@ -344,6 +344,12 @@
 	void useTempCharset();
 	void useCharset1();
 	void getBackFromOb();
+	void getRidOfTemp();
+	void getRidOfTempText();
+	void getRidOfTemp2();
+	void getRidOfTemp3();
+	void getRidOfTempCharset();
+	void getRidOfTempsP();
 	void showFirstUse();
 	void showSecondUse();
 	void actualSave();

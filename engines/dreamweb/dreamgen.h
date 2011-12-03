@@ -690,7 +690,6 @@ public:
 	void introMonks2();
 	void advisor();
 	void additionalText();
-	void doFade();
 	void useElevator5();
 	void useElevator4();
 	void useElevator1();
@@ -735,12 +734,11 @@ public:
 	void getUnderZoom();
 	void candles();
 	void backObject();
-	void allocateMem();
+	void rollEndCredits2();
 	void reminders();
 	void selectSlot2();
 	void runTap();
 	void talk();
-	void getRidOfTemp2();
 	void useBalcony();
 	void decide();
 	void disableSoundInt();
@@ -766,7 +764,6 @@ public:
 	void useCoveredBox();
 	void openYourNeighbour();
 	void fadeScreenUpHalf();
-	void getRidOfTempCharset();
 	void heavy();
 	void useKey();
 	void lockLightOn();
@@ -801,7 +798,6 @@ public:
 	void workoutFrames();
 	void dumpSymBox();
 	void loadGame();
-	void getRidOfTemp();
 	void dumpSymbol();
 	void intro2Text();
 	void interviewer();
@@ -831,7 +827,6 @@ public:
 	void transferToEx();
 	void reExFromInv();
 	void examineInventory();
-	void getRidOfTemp3();
 	void useDryer();
 	void outOfInv();
 	void diaryKeyP();
@@ -916,13 +911,13 @@ public:
 	void showOpBox();
 	void clearBeforeLoad();
 	void bibleQuote();
-	void showExit();
+	void doFade();
 	void useTrainer();
 	void dumpCurrent();
 	void showDiaryKeys();
 	void dontLoadSeg();
 	void intro3Text();
-	void rollEndCredits2();
+	void allocateMem();
 	void useOpened();
 	void inventory();
 	void fillOpen();
@@ -950,7 +945,6 @@ public:
 	void isSetObOnMap();
 	void getDestInfo();
 	void drunk();
-	void getRidOfTempText();
 	void setupTimedUse();
 	void grafittiDoor();
 	void nextDest();
@@ -985,6 +979,7 @@ public:
 	void showPuzText();
 	void incRyanPage();
 	void useElevator3();
+	void showExit();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();
@@ -1035,7 +1030,6 @@ public:
 	void intro();
 	void fadeScreenDowns();
 	void openHotelDoor2();
-	void getRidOfTempsP();
 	void selectLocation();
 	void underTextLine();
 	void sitDownInBar();

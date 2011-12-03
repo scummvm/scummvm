@@ -11492,42 +11492,6 @@ void DreamGenContext::getRidOfAll() {
 	deallocateMem();
 }
 
-void DreamGenContext::getRidOfTemp() {
-	STACK_CHECK;
-	es = data.word(kTempgraphics);
-	deallocateMem();
-}
-
-void DreamGenContext::getRidOfTempText() {
-	STACK_CHECK;
-	es = data.word(kTextfile1);
-	deallocateMem();
-}
-
-void DreamGenContext::getRidOfTemp2() {
-	STACK_CHECK;
-	es = data.word(kTempgraphics2);
-	deallocateMem();
-}
-
-void DreamGenContext::getRidOfTemp3() {
-	STACK_CHECK;
-	es = data.word(kTempgraphics3);
-	deallocateMem();
-}
-
-void DreamGenContext::getRidOfTempCharset() {
-	STACK_CHECK;
-	es = data.word(kTempcharset);
-	deallocateMem();
-}
-
-void DreamGenContext::getRidOfTempsP() {
-	STACK_CHECK;
-	es = data.word(kTempsprites);
-	deallocateMem();
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
