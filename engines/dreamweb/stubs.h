@@ -350,7 +350,7 @@
 	void loadPosition(unsigned int slot);
 	void savePosition(unsigned int slot, const uint8 *descbuf);
 	void openForSave(unsigned int slot);
-	void openForLoad(unsigned int slot);
+	bool openForLoad(unsigned int slot);
 	uint16 allocateAndLoad(unsigned int size);
 	void clearAndLoad(uint16 seg, uint8 c, unsigned int size, unsigned int maxSize);
 	void loadRoomData(const Room &room, bool skipDat);
@@ -403,5 +403,5 @@
 	bool isItRight(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode();
-	void scanForNames();
+	unsigned int scanForNames();
 

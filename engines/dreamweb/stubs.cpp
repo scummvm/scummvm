@@ -335,7 +335,7 @@ void DreamGenContext::dreamweb() {
 
 	while (true) {
 
-		scanForNames();
+		unsigned int count = scanForNames();
 
 		bool startNewGame = true;
 
@@ -354,7 +354,7 @@ void DreamGenContext::dreamweb() {
 			fadeScreenUp();
 			startNewGame = false;
 
-		} else if (al == 0 && firstLoop) {
+		} else if (count == 0 && firstLoop) {
 
 			// no savegames found, and we're not restarting.
 
@@ -687,11 +687,11 @@ void DreamGenContext::openForSave(unsigned int slot) {
 	engine->openSaveFileForWriting(filename);
 }
 
-void DreamGenContext::openForLoad(unsigned int slot) {
+bool DreamGenContext::openForLoad(unsigned int slot) {
 	//Common::String filename = ConfMan.getActiveDomainName() + Common::String::format(".d%02d", savegameId);
 	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
 	debug(1, "openForLoad(%s)", filename.c_str());
-	engine->openSaveFileForReading(filename);
+	return engine->openSaveFileForReading(filename);
 }
 
 void DreamGenContext::openFileNoCheck() {

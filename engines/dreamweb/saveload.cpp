@@ -368,54 +368,33 @@ void DreamGenContext::loadPosition(unsigned int slot) {
 	closeFile();
 }
 
-void DreamGenContext::scanForNames() {
-	STACK_CHECK;
-	dx = data;
-	es = dx;
-	di = 8579;
-	dx = data;
-	ds = dx;
-	dx = 8698;
-	cx = 7;
-scanloop:
-	push(es);
-	push(ds);
-	push(di);
-	push(dx);
-	push(cx);
-	openFileFromC();
-	if (flags.c())
-		goto notexist;
-	cx = pop();
-	_inc(ch);
-	push(cx);
-	push(di);
-	push(es);
-	dx = data;
-	ds = dx;
-	dx = 6091;
-	cx = (6187-6091);
-	saveFileRead();
-	dx = data;
-	es = dx;
-	di = 6141;
-	ds = pop();
-	dx = pop();
-	loadSeg();
-	bx = data.word(kHandle);
-	closeFile();
-notexist:
-	cx = pop();
-	dx = pop();
-	di = pop();
-	ds = pop();
-	es = pop();
-	_add(dx, 13);
-	_add(di, 17);
-	_dec(cl);
-	if (!flags.z())
-		goto scanloop;
-	al = ch;
+// Count number of save files, and load their descriptions into kSavenames
+unsigned int DreamGenContext::scanForNames() {
+	unsigned int count = 0;
+
+	for (unsigned int slot = 0; slot < 7; ++slot) {
+
+		if (!openForLoad(slot)) continue;
+
+		++count;
+
+		engine->readFromSaveFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
+
+		if (cs.word(kFiledata) != 17) {
+			::warning("Error loading save: description buffer isn't 17 bytes");
+			closeFile();
+			continue;
+		}
+
+		// NB: Only possible if slot < 7
+		engine->readFromSaveFile(data.ptr(kSavenames + 17*slot, 17), 17);
+
+		closeFile();
+	}
+
+	al = (uint8)count;
+
+	return count;
 }
 
 } /*namespace dreamgen */
