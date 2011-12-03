@@ -348,8 +348,7 @@ void DreamGenContext::dreamweb() {
 			loadPalFromIFF();
 			clearPalette();
 
-			ax = savegameId;
-			doLoad();
+			doLoad(savegameId);
 			workToScreen();
 			fadeScreenUp();
 			startNewGame = false;

@@ -35,18 +35,13 @@ void DreamGenContext::loadGame() {
 	}
 	if (data.word(kMousebutton) == data.word(kOldbutton))
 		return; // "noload"
-	if (data.word(kMousebutton) == 1) {
-		ax = 0xFFFF;
-		doLoad();
-	}
+	if (data.word(kMousebutton) == 1)
+		doLoad(-1);
 }
 
-// input: ax = savegameId
 // if -1, open menu to ask for slot to load
 // if >= 0, directly load from that slot
-void DreamGenContext::doLoad() {
-	int savegameId = (int16)ax;
-
+void DreamGenContext::doLoad(int savegameId) {
 	data.byte(kLoadingorsave) = 1;
 
 	if (ConfMan.getBool("dreamweb_originalsaveload") && savegameId == -1) {
@@ -417,26 +412,19 @@ unsigned int DreamGenContext::scanForNames() {
 }
 
 void DreamGenContext::loadOld() {
-	STACK_CHECK;
-	_cmp(data.byte(kCommandtype), 252);
-	if (flags.z())
-		goto alreadyloadold;
-	data.byte(kCommandtype) = 252;
-	al = 48;
-	commandOnly();
-alreadyloadold:
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return /* (noloadold) */;
-	ax = 0x0ffff;
-	doLoad();
-	_cmp(data.byte(kGetback), 4);
-	if (flags.z())
-		return /* (noloadold) */;
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (noloadold) */;
+	if (data.byte(kCommandtype) != 252) {
+		data.byte(kCommandtype) = 252;
+		commandOnly(48);
+	}
+
+	if (!(data.word(kMousebutton) & 1))
+		return;
+
+	doLoad(-1);
+
+	if (data.byte(kGetback) == 4 || quitRequested())
+		return;
+
 	showDecisions();
 	workToScreenM();
 	data.byte(kGetback) = 0;

@@ -406,6 +406,6 @@
 	void enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 digit3);
 	void enterCode();
 	unsigned int scanForNames();
-	void doLoad();
+	void doLoad(int slot);
 	void loadOld();
 
