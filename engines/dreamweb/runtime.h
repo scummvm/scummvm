@@ -205,6 +205,19 @@ public:
 
 };
 
+class MutableSegmentRef : public SegmentRef {
+protected:
+	Context		*_context;
+
+public:
+	MutableSegmentRef(Context *ctx, uint16 value = 0, SegmentPtr segment = SegmentPtr())
+	: _context(ctx), SegmentRef(value, segment) {
+	}
+
+	inline MutableSegmentRef& operator=(const uint16 id);
+
+};
+
 struct Flags {
 	bool _z, _c, _s, _o;
 	inline Flags(): _z(true), _c(false), _s(false), _o(false) {}
