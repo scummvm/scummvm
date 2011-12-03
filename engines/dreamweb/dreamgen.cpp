@@ -9161,54 +9161,6 @@ void DreamGenContext::dumpKeypad() {
 	multiDump();
 }
 
-void DreamGenContext::useMenu() {
-	STACK_CHECK;
-	getRidOfReels();
-	loadMenu();
-	createPanel();
-	showPanel();
-	showIcon();
-	data.byte(kNewobs) = 0;
-	drawFloor();
-	printSprites();
-	al = 4;
-	ah = 0;
-	di = (80+40)-48;
-	bx = (60)-4;
-	ds = data.word(kTempgraphics2);
-	showFrame();
-	getUnderMenu();
-	al = 5;
-	ah = 0;
-	di = (80+40)+54;
-	bx = (60)+72;
-	ds = data.word(kTempgraphics2);
-	showFrame();
-	workToScreenM();
-	data.byte(kGetback) = 0;
-menuloop:
-	delPointer();
-	putUnderMenu();
-	showMenu();
-	readMouse();
-	showPointer();
-	vSync();
-	dumpPointer();
-	dumpMenu();
-	dumpTextLine();
-	bx = offset_menulist;
-	checkCoords();
-	_cmp(data.byte(kGetback), 1);
-	if (!flags.z())
-		goto menuloop;
-	data.byte(kManisoffscreen) = 0;
-	redrawMainScrn();
-	getRidOfTemp();
-	getRidOfTemp2();
-	restoreReels();
-	workToScreenM();
-}
-
 void DreamGenContext::dumpMenu() {
 	STACK_CHECK;
 	di = (80+40);

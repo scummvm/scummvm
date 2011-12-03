@@ -58,7 +58,6 @@ public:
 	static const uint16 offset_invlist1 = 0x09fc;
 	static const uint16 offset_money2poke = 0x0d97;
 	static const uint16 offset_talklist = 0x0a64;
-	static const uint16 offset_menulist = 0x0e1e;
 	static const uint16 offset_comlist = 0x0ad8;
 	static const uint16 offset_withlist1 = 0x0a3a;
 	static const uint16 offset_money1poke = 0x0d92;
@@ -1056,7 +1055,6 @@ public:
 	void showNames();
 	void saveFileRead();
 	void emergencyPurge();
-	void useMenu();
 	void alleyBarkSound();
 	void useCart();
 	void introMusic();

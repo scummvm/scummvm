@@ -1710,15 +1710,6 @@ void DreamGenContext::checkCoords() {
 		checkCoords(destList);
 		break;
 	}
-	case offset_menulist: {
-		RectWithCallback menuList[] = {
-			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitKey },
-			{ 0,320,0,200,&DreamGenContext::blank },
-			{ 0xFFFF,0,0,0,0 }
-		};
-		checkCoords(menuList);
-		break;
-	}
 	case offset_symbollist: {
 		RectWithCallback symbolList[] = {
 			{ kSymbolx+40,kSymbolx+64,kSymboly+2,kSymboly+16,&DreamGenContext::quitSymbol },
@@ -2735,5 +2726,43 @@ void DreamGenContext::workToScreenM() {
 	delPointer();
 }
 
+void DreamGenContext::useMenu() {
+	getRidOfReels();
+	loadMenu();
+	createPanel();
+	showPanel();
+	showIcon();
+	data.byte(kNewobs) = 0;
+	drawFloor();
+	printSprites();
+	showFrame(tempGraphics2(), kMenux-48, kMenuy-4, 4, 0);
+	getUnderMenu();
+	showFrame(tempGraphics2(), kMenux+54, kMenuy+72, 5, 0);
+	workToScreenM();
+	data.byte(kGetback) = 0;
+	do {
+		delPointer();
+		putUnderMenu();
+		showMenu();
+		readMouse();
+		showPointer();
+		vSync();
+		dumpPointer();
+		dumpMenu();
+		dumpTextLine();
+		RectWithCallback menuList[] = {
+			{ kMenux+54,kMenux+68,kMenuy+72,kMenuy+88,&DreamGenContext::quitKey },
+			{ 0,320,0,200,&DreamGenContext::blank },
+			{ 0xFFFF,0,0,0,0 }
+		};
+		checkCoords(menuList);
+	} while ((data.byte(kGetback) != 1) && !quitRequested());
+	data.byte(kManisoffscreen) = 0;
+	redrawMainScrn();
+	getRidOfTemp();
+	getRidOfTemp2();
+	restoreReels();
+	workToScreenM();
+}
 } /*namespace dreamgen */
 

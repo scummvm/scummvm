@@ -254,6 +254,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'fadeupmonfirst',
 	'loadroomssample',
 	'printlogo',
+	'usemenu',
 	'usemon',
 	'scrollmonitor',
 	'showcurrentfile',
