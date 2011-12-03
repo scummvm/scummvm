@@ -182,6 +182,14 @@ public:
 		assert(_segment != 0);
 		return _segment->ptr(index, size);
 	}
+
+protected:
+	SegmentRef &operator=(const SegmentRef &seg) {
+		_value = seg._value;
+		_segment = seg._segment;
+		return *this;
+	}
+
 };
 
 class MutableSegmentRef : public SegmentRef {
