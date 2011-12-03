@@ -37,29 +37,22 @@ public:
 #include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 	static const uint16 offset_quitlist = 0x0a84;
-	static const uint16 offset_savelist = 0x0f44;
-	static const uint16 offset_mainlist = 0x1402;
 	static const uint16 offset_gameerror8 = 0x113f;
 	static const uint16 offset_gameerror5 = 0x1074;
 	static const uint16 offset_error2patch = 0x0ff6;
 	static const uint16 offset_openchangesize = 0x0a1c;
 	static const uint16 offset_keys = 0x0b14;
-	static const uint16 offset_mainlist2 = 0x1440;
 	static const uint16 offset_gameerror2 = 0x0fb2;
-	static const uint16 offset_loadlist = 0x0ef0;
 	static const uint16 offset_gameerror6 = 0x10be;
 	static const uint16 offset_speechfile = 0x13f1;
 	static const uint16 offset_atmospherelist = 0x147e;
 	static const uint16 offset_gameerror4 = 0x1037;
 	static const uint16 offset_gameerror1 = 0x0f6e;
-	static const uint16 offset_examlist = 0x09be;
 	static const uint16 offset_gameinfo = 0x1170;
 	static const uint16 offset_opslist = 0x0ec6;
-	static const uint16 offset_invlist1 = 0x09fc;
 	static const uint16 offset_money2poke = 0x0d97;
 	static const uint16 offset_talklist = 0x0a64;
 	static const uint16 offset_comlist = 0x0ad8;
-	static const uint16 offset_withlist1 = 0x0a3a;
 	static const uint16 offset_money1poke = 0x0d92;
 	static const uint16 offset_gameerror7 = 0x1104;
 	static const uint16 offset_discopslist = 0x0f1a;
@@ -71,7 +64,6 @@ public:
 	static const uint16 offset_speechfilename = 0x13eb;
 	static const uint16 offset_rootdir = 0x0b8c;
 	static const uint16 offset_gameerror3 = 0x1003;
-	static const uint16 offset_facelist = 0x0451;
 	static const uint16 offset_diarylist = 0x0e9c;
 	static const uint16 offset_decidelist = 0x13c1;
 	static const uint16 offset_symbollist = 0x0e5e;
@@ -669,7 +661,7 @@ public:
 	void checkObjectSize();
 	void titles();
 	void deallocateMem();
-	void mainScreen();
+	void showGroup();
 	void watchReel();
 	void openFileFromC();
 	void getTime();
@@ -733,7 +725,6 @@ public:
 	void usePipe();
 	void getUnderZoom();
 	void candles();
-	void backObject();
 	void rollEndCredits2();
 	void reminders();
 	void selectSlot2();
@@ -797,7 +788,6 @@ public:
 	void liftNoise();
 	void workoutFrames();
 	void dumpSymBox();
-	void loadGame();
 	void dumpSymbol();
 	void intro2Text();
 	void interviewer();
@@ -854,7 +844,6 @@ public:
 	void loadNews();
 	void rollEm();
 	void hangOnPQ();
-	void saveGame();
 	void findOpenPos();
 	void describeOb();
 	void deleteExFrame();
@@ -919,7 +908,6 @@ public:
 	void intro3Text();
 	void allocateMem();
 	void useOpened();
-	void inventory();
 	void fillOpen();
 	void signOn();
 	void deleteExText();
@@ -1008,14 +996,11 @@ public:
 	void swapWithInv();
 	void useControl();
 	void redrawMainScrn();
-	void showGroup();
 	void makeMainScreen();
 	void useWinch();
 	void setBotRight();
-	void mainMan();
 	void aide();
 	void getEitherAd();
-	void zoomOnOff();
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();

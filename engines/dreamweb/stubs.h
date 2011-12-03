@@ -108,12 +108,14 @@
 	void spriteUpdate();
 	void initMan();
 	void mainMan(Sprite *sprite);
+	void mainMan();
 	void faceRightWay();
 	void walking(Sprite *sprite);
 	void autoSetWalk();
 	void checkDest(const RoomPaths *roomsPaths);
 	void aboutTurn(Sprite *sprite);
 	void backObject(Sprite *sprite);
+	void backObject();
 	void constant(Sprite *sprite, SetObject *objData);
 	void steady(Sprite *sprite, SetObject *objData);
 	void random(Sprite *sprite, SetObject *objData);
@@ -416,4 +418,9 @@
 	unsigned int scanForNames();
 	void doLoad(int slot);
 	void loadOld();
+	void inventory();
+	void mainScreen();
+	void loadGame();
+	void saveGame();
+	void zoomOnOff();
 
