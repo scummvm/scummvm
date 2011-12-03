@@ -869,49 +869,283 @@ void DreamGenContext::reconstruct() {
 	data.byte(kHavedoneobs) = 0;
 }
 
+
+
+struct ReelSound {
+	uint8 _sample;
+	uint16 _reelPointer;
+};
+
+static const ReelSound g_roomSound0[] = {
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound1[] = {
+	{ 15, 257 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound2[] = {
+	{ 12, 5 },
+	{ 13, 21 },
+	{ 15, 35 }, // hitting floor?
+	{ 17, 50 },
+	{ 18, 103 },
+	{ 19, 108 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound6[] = {
+	{ 18, 19 },
+	{ 19, 23 },
+	{ 255,0 }
+};
+static const ReelSound g_roomSound8[] = {
+	
+	{ 12, 51 },
+	{ 13, 53 },
+	{ 14, 14 },
+	{ 15, 20 },
+	{ 0, 78 },
+	{ 255,0 }
+};
+static const ReelSound g_roomSound9[] = {
+
+	{ 12, 119 },
+	{ 12, 145 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound10[] = {
+	{ 13, 16 },
+	{ 255,0 }
+};
+	
+static const ReelSound g_roomSound11[] = {
+	{ 13, 20 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound12[] = {
+	{ 14, 16 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound13[] = {
+	{ 15, 4 },
+	{ 16, 8 },
+	{ 17, 134 },
+	{ 18, 153 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound14[] = {
+	{ 13, 108 },
+	{ 15, 326 },
+	{ 15, 331 },
+	{ 15, 336 },
+	{ 15, 342 },
+	{ 15, 348 },
+	{ 15, 354 },
+	{ 18, 159 },
+	{ 18, 178 },
+	{ 19+128, 217 },
+	{ 20+64, 228 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound20[] = {
+	{ 13, 20 },
+	{ 13, 21 },
+	{ 15, 34 },
+	{ 13, 52 },
+	{ 13, 55 },
+	{ 25, 57 },
+	{ 21, 73 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound22[] = {
+	{ 13, 196 },
+	{ 13, 234 },
+	{ 13, 156 },
+	{ 14, 129 },
+	{ 13, 124 },
+	{ 15, 162 },
+	{ 15, 200 },
+	{ 15, 239 },
+	{ 17, 99 },
+	{ 12, 52 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound23[] = {
+	{ 15, 56 },
+	{ 16, 64 },
+	{ 19, 22 },
+	{ 20, 33 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound25[] = {
+	{ 20, 11 },
+	{ 20, 15 },
+	{ 15, 28 },
+	{ 13, 80 },
+	{ 21, 82 },
+	{ 19+128, 87 },
+	{ 23+64, 128 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound26[] = {
+	{ 12, 13 },
+	{ 14, 39 },
+	{ 12, 67 },
+	{ 12, 75 },
+	{ 12, 83 },
+	{ 12, 91 },
+	{ 15, 102 }, // was 90, should be mine cart
+	{ 255,0 }
+};
+	
+static const ReelSound g_roomSound27[] = {
+	{ 22, 36 },
+	{ 13, 125 },
+	{ 18, 88 },
+	{ 15, 107 },
+	{ 14, 127 },
+	{ 14, 154 },
+	{ 19+128, 170 },
+	{ 23+64, 232 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound28[] = {
+	{ 21, 16 },
+	{ 21, 72 },
+	{ 21, 205 },
+	{ 22, 63 }, // 65
+	{ 23+128, 99 },
+	{ 24+64, 158 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound29[] = {
+	{ 13, 21 },
+	{ 14, 24 },
+	{ 19+128, 50 },
+	{ 23+64, 75 },
+	{ 24, 128 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound29_German[] = {
+	{ 13, 21 },
+	{ 14, 24 },
+	{ 19+128, 50 },
+	{ 23+64, 75 },
+	{ 255,0 }
+};
+
+
+static const ReelSound g_roomSound45[] = {
+	{ 19+64, 46 },
+	{ 16, 167 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound46[] = {
+	{ 16, 19 },
+	{ 14, 36 },
+	{ 16, 50 },
+	{ 14, 65 },
+	{ 16, 81 },
+	{ 14, 96 },
+	{ 16, 114 },
+	{ 14, 129 },
+	{ 16, 147 },
+	{ 14, 162 },
+	{ 16, 177 },
+	{ 14, 191 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound47[] = {
+	{ 13, 48 },
+	{ 14, 41 },
+	{ 15, 78 },
+	{ 16, 92 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound52[] = {
+	{ 16, 115 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound53[] = {
+	{ 21, 103 },
+	{ 20, 199 },
+	{ 255,0 }
+};
+
+static const ReelSound g_roomSound55[] = {
+	{ 17, 53 },
+	{ 17, 54 },
+	{ 17, 55 },
+	{ 17, 56 },
+	{ 17, 57 },
+	{ 17, 58 },
+	{ 17, 59 },
+	{ 17, 61 },
+	{ 17, 63 },
+	{ 17, 64 },
+	{ 17, 65 },
+	{ 255,0 }
+};
+
+static const ReelSound *g_roomByRoom[] = {
+	g_roomSound0,g_roomSound1,g_roomSound2,g_roomSound0,g_roomSound0,
+	g_roomSound0,g_roomSound6,g_roomSound0,g_roomSound8,g_roomSound9,
+	g_roomSound10,g_roomSound11,g_roomSound12,g_roomSound13,g_roomSound14,
+	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
+	g_roomSound20,g_roomSound0,g_roomSound22,g_roomSound23,g_roomSound0,
+	g_roomSound25,g_roomSound26,g_roomSound27,g_roomSound28,g_roomSound29,
+	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
+	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
+	g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,g_roomSound0,
+	g_roomSound45,g_roomSound46,g_roomSound47,g_roomSound0,g_roomSound0,
+	g_roomSound0,g_roomSound0,g_roomSound52,g_roomSound53,g_roomSound0,
+	g_roomSound55
+};
+
+
 void DreamGenContext::soundOnReels() {
-	STACK_CHECK;
-	bl = data.byte(kReallocation);
-	_add(bl, bl);
-	_xor(bh, bh);
-	_add(bx, 991);
-	si = cs.word(bx);
-reelsoundloop:
-	al = cs.byte(si);
-	_cmp(al, 255);
-	if (flags.z())
-		goto endreelsound;
-	ax = cs.word(si+1);
-	_cmp(ax, data.word(kReelpointer));
-	if (!flags.z())
-		goto skipreelsound;
-	_cmp(ax, data.word(kLastsoundreel));
-	if (flags.z())
-		goto skipreelsound;
-	data.word(kLastsoundreel) = ax;
-	al = cs.byte(si);
-	_cmp(al, 64);
-	if (flags.c())
-		{ playChannel1(); return; };
-	_cmp(al, 128);
-	if (flags.c())
-		goto channel0once;
-	_and(al, 63);
-	ah = 255;
-	{ playChannel0(); return; };
-channel0once:
-	_and(al, 63);
-	ah = 0;
-	{ playChannel0(); return; };
-skipreelsound:
-	_add(si, 3);
-	goto reelsoundloop;
-endreelsound:
-	ax = data.word(kLastsoundreel);
-	_cmp(ax, data.word(kReelpointer));
-	if (flags.z())
-		return /* (nochange2) */;
-	data.word(kLastsoundreel) = -1;
+	const ReelSound *r = g_roomByRoom[data.byte(kReallocation)];
+
+	if (data.byte(kForeignrelease) && r == g_roomSound29)
+		r = g_roomSound29_German;
+
+	for (; r->_sample != 255; ++r) {
+		if (r->_reelPointer != data.word(kReelpointer))
+			continue;
+		if (r->_reelPointer == data.word(kLastsoundreel))
+			continue;
+		data.word(kLastsoundreel) = r->_reelPointer;
+		if (r->_sample < 64) {
+			playChannel1(r->_sample);
+			return;
+		}
+		if (r->_sample < 128) {
+			playChannel0(r->_sample & 63, 0);
+			return;
+		}
+		playChannel0(r->_sample & 63, 255);
+	}
+
+	if (data.word(kReelpointer) != data.word(kLastsoundreel))
+		data.word(kLastsoundreel) = -1;
 }
 
 } /*namespace dreamgen */
