@@ -570,8 +570,8 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::edenInBath,
 	NULL, &DreamGenContext::smokeBloke,
 	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
-	&DreamGenContext::receptionist, &DreamGenContext::maleFan,
-	&DreamGenContext::femaleFan, &DreamGenContext::louis,
+	&DreamGenContext::receptionist, NULL,
+	NULL, &DreamGenContext::louis,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
 	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
 	&DreamGenContext::heavy, &DreamGenContext::manAsleep2,
@@ -602,8 +602,8 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::eden, /*&DreamGenContext::edenInBath*/NULL,
 	&DreamGenContext::sparky, /*&DreamGenContext::smokeBloke*/NULL,
 	/*&DreamGenContext::manAsleep*/NULL, /*&DreamGenContext::drunk*/NULL,
-	/*&DreamGenContext::receptionist*/NULL, /*&DreamGenContext::maleFan*/NULL,
-	/*&DreamGenContext::femaleFan*/NULL, /*&DreamGenContext::louis*/NULL,
+	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::maleFan,
+	&DreamGenContext::femaleFan, /*&DreamGenContext::louis*/NULL,
 	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
 	/*&DreamGenContext::bossMan*/NULL, /*&DreamGenContext::interviewer*/NULL,
 	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manAsleep2*/NULL,
@@ -1101,6 +1101,16 @@ void DreamGenContext::gamer(ReelRoutine &routine) {
 void DreamGenContext::eden(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::femaleFan(ReelRoutine &routine) {
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::maleFan(ReelRoutine &routine) {
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }

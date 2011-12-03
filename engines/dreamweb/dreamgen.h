@@ -648,7 +648,6 @@ public:
 
 	void useWire();
 	void getNamePos();
-	void femaleFan();
 	void identifyOb();
 	void useLighter();
 	void runEndSeq();
@@ -1033,7 +1032,6 @@ public:
 	void allPointer();
 	void checkSoundInt();
 	void fadeScreenDown();
-	void maleFan();
 	void doSaveLoad();
 	void createName();
 	void readCityPic();

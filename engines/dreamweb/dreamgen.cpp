@@ -180,18 +180,6 @@ void DreamGenContext::edenInBath() {
 	addToPeopleList();
 }
 
-void DreamGenContext::maleFan() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
-}
-
-void DreamGenContext::femaleFan() {
-	STACK_CHECK;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::louis() {
 	STACK_CHECK;
 	_cmp(data.byte(kRockstardead), 0);
