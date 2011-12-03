@@ -1235,12 +1235,6 @@ void DreamGenContext::makeBackOb(SetObject *objData) {
 	sprite->animFrame = 0;
 }
 
-void DreamGenContext::readHeader() {
-	ax = engine->readFromFile(cs.ptr(kFileheader, kHeaderlen), kHeaderlen);
-	es = cs;
-	di = kFiledata;
-}
-
 uint16 DreamGenContext::allocateAndLoad(unsigned int size) {
 	// allocatemem adds 32 bytes, so it doesn't matter that size/16 rounds down
 	uint16 result = allocateMem(size / 16);
@@ -2689,12 +2683,14 @@ void DreamGenContext::restoreReels() {
 	engine->openFile(room.name);
 	cs.word(kHandle) = 1; //only one handle
 	flags._c = false;
-	readHeader();
+
+	FileHeader header;
+	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
 
 	// read segment lengths from room file header
 	int len[15];
 	for (int i = 0; i < 15; ++i)
-		len[i] = cs.word(kFiledata + 2*i);
+		len[i] = header.len(i);
 
 	engine->skipBytes(len[0]);
 	engine->skipBytes(len[1]);

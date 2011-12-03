@@ -490,19 +490,16 @@ public:
 	static const uint16 kTitle7graphics = 1864;
 	static const uint16 kPalettescreen = 1877;
 	static const uint16 kCurrentfile = 2202;
-	static const uint16 kFileheader = 2529;
-	static const uint16 kFiledata = 2579;
-	static const uint16 kExtradata = 2619;
-	static const uint16 kRoomscango = 2625;
-	static const uint16 kRoompics = 2641;
-	static const uint16 kOplist = 2656;
-	static const uint16 kInputline = 2659;
-	static const uint16 kPresslist = 2787;
-	static const uint16 kSavenames = 2793;
-	static const uint16 kSavefiles = 2912;
-	static const uint16 kQuitrequested = 3003;
-	static const uint16 kSubtitles = 3004;
-	static const uint16 kForeignrelease = 3005;
+	static const uint16 kRoomscango = 2529;
+	static const uint16 kRoompics = 2545;
+	static const uint16 kOplist = 2560;
+	static const uint16 kInputline = 2563;
+	static const uint16 kPresslist = 2691;
+	static const uint16 kSavenames = 2697;
+	static const uint16 kSavefiles = 2816;
+	static const uint16 kQuitrequested = 2907;
+	static const uint16 kSubtitles = 2908;
+	static const uint16 kForeignrelease = 2909;
 	static const uint16 kBlocktextdat = (0);
 	static const uint16 kPersonframes = (0);
 	static const uint16 kDebuglevel1 = (0);
@@ -569,7 +566,6 @@ public:
 	static const uint16 kLenofmapstore = (22*8*20*8);
 	static const uint16 kUndertextsizex = (228);
 	static const uint16 kNumchanges = (250);
-	static const uint16 kHeaderlen = (2625-2529);
 	static const uint16 kUndertimedysize = (30);
 	static const uint16 kExframeslen = (30000);
 	static const uint16 kTablesize = (32);
@@ -594,6 +590,7 @@ public:
 	static const uint16 kZoomx = (8);
 	static const uint16 kInventx = (80);
 	static const uint16 kMenux = (80+40);
+	static const uint16 kHeaderlen = (96);
 	static const uint16 kLenofreelrouts = (991-534);
 
 	void useWire();

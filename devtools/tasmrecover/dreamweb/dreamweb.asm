@@ -5916,7 +5916,7 @@ Fileheader	db	"DREAMWEB DATA FILE "
 	db	"CREATIVE REALITY"
 Filedata	dw	20 dup (0)
 Extradata	db	6 dup (0)
-Headerlen	equ	$-Fileheader
+Headerlen	equ	96   ; $-Fileheader
 
 
 Roomdata	db	"DREAMWEB.R00",0	;Ryan's apartment

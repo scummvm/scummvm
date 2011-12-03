@@ -38,6 +38,9 @@ p = parser(skip_binary_data = [
 	'linedata',
 	'madeuproomdat',
 	'recname',
+	'fileheader',
+	'filedata',
+	'extradata',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
