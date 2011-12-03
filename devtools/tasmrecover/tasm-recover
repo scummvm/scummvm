@@ -37,6 +37,7 @@ p = parser(skip_binary_data = [
 	'atmospherelist',
 	# keypad.asm
 	'keypadlist',
+	'symbollist',
 	# object.asm
 	'invlist1', 'invlist1continued',
 	'examlist',
