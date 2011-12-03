@@ -57,7 +57,6 @@
 	void workToScreenCPP();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
-	void convertKey();
 	void cls();
 	void printSprites();
 	void quickQuit();
@@ -423,4 +422,5 @@
 	void loadGame();
 	void saveGame();
 	void zoomOnOff();
+	void doShake();
 

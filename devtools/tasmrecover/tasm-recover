@@ -25,6 +25,35 @@ from tasm.parser import parser
 from tasm.cpp import cpp
 
 p = parser(skip_binary_data = [
+	# These data blobs are not output
+	# dreamweb.asm
+	'roomdata',
+	'mainlist',
+	'mainlist2',
+	'menulist',
+	'folderlist',
+	'stak',
+	'keyconverttab',
+	# keypad.asm
+	'keypadlist',
+	# object.asm
+	'invlist1', 'invlist1continued',
+	'examlist',
+	'withlist1',
+	# saveload.asm
+	'loadlist',
+	'savelist',
+	'endgametext1',
+	# sblaster.asm
+	'dmaaddresses',
+	# sprite.asm
+	'reelcalls',
+	'facelist',
+	'rainlocations',
+	# use.asm
+	'uselist',
+	# vgagrafx.asm
+	'shaketable',
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
@@ -117,6 +146,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'dolook',
 	'domix',
 	'doorway',
+	'doshake',
 	'drawflags',
 	'drawfloor',
 	'dumpblink',
