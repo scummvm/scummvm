@@ -368,6 +368,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'entercode',
 	'scanfornames',
 	'checkforemm',
+	'loadold',
 	], skip_output = [
 	# These functions are processed but not output
 	'dreamweb',

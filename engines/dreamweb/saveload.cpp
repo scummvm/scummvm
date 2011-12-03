@@ -416,5 +416,32 @@ unsigned int DreamGenContext::scanForNames() {
 	return count;
 }
 
+void DreamGenContext::loadOld() {
+	STACK_CHECK;
+	_cmp(data.byte(kCommandtype), 252);
+	if (flags.z())
+		goto alreadyloadold;
+	data.byte(kCommandtype) = 252;
+	al = 48;
+	commandOnly();
+alreadyloadold:
+	ax = data.word(kMousebutton);
+	_and(ax, 1);
+	if (flags.z())
+		return /* (noloadold) */;
+	ax = 0x0ffff;
+	doLoad();
+	_cmp(data.byte(kGetback), 4);
+	if (flags.z())
+		return /* (noloadold) */;
+	_cmp(data.byte(kQuitrequested),  0);
+	if (!flags.z())
+		return /* (noloadold) */;
+	showDecisions();
+	workToScreenM();
+	data.byte(kGetback) = 0;
+}
+
+
 } /*namespace dreamgen */
 

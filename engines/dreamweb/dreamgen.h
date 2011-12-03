@@ -707,7 +707,7 @@ public:
 	void sLabDoorE();
 	void sLabDoorD();
 	void adjustUp();
-	void sLabDoorF();
+	void fadeScreenDownHalf();
 	void loadIntroRoom();
 	void mouseCall();
 	void train();
@@ -715,6 +715,7 @@ public:
 	void loadCart();
 	void bartender();
 	void showDiary();
+	void sLabDoorF();
 	void outOfOpen();
 	void dirCom();
 	void dumpKeypad();
@@ -722,7 +723,6 @@ public:
 	void endGameSeq();
 	void setBotLeft();
 	void findFirstPath();
-	void loadOld();
 	void useSLab();
 	void useAltar();
 	void manAsleep2();
@@ -746,7 +746,6 @@ public:
 	void disableSoundInt();
 	void priestText();
 	void openPoolBoss();
-	void fadeScreenDownHalf();
 	void usePlate();
 	void lookInInterface();
 	void manAsleep();
@@ -921,7 +920,6 @@ public:
 	void showOpBox();
 	void clearBeforeLoad();
 	void bibleQuote();
-	void doLoad();
 	void showExit();
 	void useTrainer();
 	void dumpCurrent();
