@@ -257,6 +257,14 @@ bool StaticResource::init() {
 		{ kLolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
 		{ kLolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
 		{ kLolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
+#else
+		{ kLolCharData, proc(loadDummy), proc(freeDummy) },
+		{ kLolSpellData, proc(loadDummy), proc(freeDummy) },
+		{ kLolCompassData, proc(loadDummy), proc(freeDummy) },
+		{ kLolFlightShpData, proc(loadDummy), proc(freeDummy) },
+		{ kLolRawDataBe16, proc(loadDummy), proc(freeDummy) },
+		{ kLolRawDataBe32, proc(loadDummy), proc(freeDummy) },
+		{ kLolButtonData, proc(loadDummy), proc(freeDummy) },
 #endif // ENABLE_LOL
 
 #ifdef ENABLE_EOB
@@ -409,6 +417,10 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 	}
 
 	return 0;
+}
+
+bool StaticResource::loadDummy(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	return true;
 }
 
 bool StaticResource::loadStringTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
@@ -613,6 +625,9 @@ bool StaticResource::loadShapeAnimData_v2(Common::SeekableReadStream &stream, vo
 
 	ptr = loadTo;
 	return true;
+}
+
+void StaticResource::freeDummy(void *&ptr, int &size) {
 }
 
 void StaticResource::freeRawData(void *&ptr, int &size) {
