@@ -2102,7 +2102,7 @@ void DreamGenContext::enterSymbol() {
 			{ 0xFFFF,0,0,0,0 }
 		};
 		checkCoords(symbolList);
-	} while (data.byte(kGetback) == 0);
+	} while ((data.byte(kGetback) == 0) && !quitRequested());
 	if ((data.byte(kSymbolbotnum) == 3) && (data.byte(kSymboltopnum) == 5)) {
 		removeSetObject(43);
 		placeSetObject(46);
