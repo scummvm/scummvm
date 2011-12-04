@@ -542,7 +542,12 @@ void DreamGenContext::dreamweb() {
 		if (startNewGame) {
 			// "playGame"
 
-			titles();
+			// "titles"
+			clearPalette();
+			bibleQuote();
+			if (!quitRequested()) // "titlesearly"
+				intro();
+
 			if (quitRequested())
 				goto done;
 

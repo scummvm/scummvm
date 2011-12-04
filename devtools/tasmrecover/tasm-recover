@@ -459,6 +459,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'switchryanon',
 	'textforend',
 	'textformonk',
+	'titles',
 	'transferinv',
 	'transfertext',
 	'trysoundalloc',

@@ -2315,16 +2315,6 @@ void DreamGenContext::initialMonCols() {
 	showGroup();
 }
 
-void DreamGenContext::titles() {
-	STACK_CHECK;
-	clearPalette();
-	bibleQuote();
-	_cmp(data.byte(kQuitrequested),  0);
-	if (!flags.z())
-		return /* (titlesearly) */;
-	intro();
-}
-
 void DreamGenContext::endGame() {
 	STACK_CHECK;
 	dx = 1146;

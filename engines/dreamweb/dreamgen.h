@@ -580,7 +580,6 @@ public:
 	void openSarters();
 	void putUnderCentre();
 	void checkObjectSize();
-	void titles();
 	void deallocateMem();
 	void showGroup();
 	void watchReel();
@@ -601,7 +600,6 @@ public:
 	void introMonks1();
 	void resetLocation();
 	void introMonks2();
-	void advisor();
 	void additionalText();
 	void useElevator5();
 	void useElevator4();
@@ -685,7 +683,7 @@ public:
 	void lockLightOff();
 	void wearWatch();
 	void runIntroSeq();
-	void nextColon();
+	void advisor();
 	void attendant();
 	void nextSymbol();
 	void monks2text();
@@ -695,6 +693,7 @@ public:
 	void openHotelDoor();
 	void blank();
 	void drinker();
+	void nextColon();
 	void placeFreeObject();
 	void allPalette();
 	void adjustRight();
