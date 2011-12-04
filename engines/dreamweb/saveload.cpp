@@ -432,6 +432,9 @@ void DreamGenContext::loadOld() {
 	data.byte(kGetback) = 0;
 }
 
+void DreamGenContext::loadSaveBox() {
+	loadIntoTemp("DREAMWEB.G08");
+}
 
 } /*namespace dreamgen */
 
