@@ -104,10 +104,10 @@ void DreamGenContext::obIcons() {
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {
 		// can open it
-		showFrame((Frame *)getSegment(data.word(kIcons2)).ptr(0, 0), 210, 1, 4, 0);
+		showFrame(icons2(), 210, 1, 4, 0);
 	}
 
-	showFrame((Frame *)getSegment(data.word(kIcons2)).ptr(0, 0), 260, 1, 1, 0);
+	showFrame(icons2(), 260, 1, 1, 0);
 }
 
 void DreamGenContext::examineOb(bool examineAgain) {
