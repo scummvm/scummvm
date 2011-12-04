@@ -171,6 +171,12 @@ uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, ui
 	}
 }
 
+void DreamGenContext::getNumber() {
+	uint16 offset = di;
+	cl = getNumber((Frame *)ds.ptr(0, 0), es.ptr(si, 0), dl, (bool)(dl & 1), &offset);
+	di = offset;
+}
+
 uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
@@ -179,30 +185,31 @@ uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint
 		uint8 done = getNextWord(charSet, string, &wordTotalWidth, &wordCharCount);
 		string += wordCharCount;
 
-		uint16 tmp = totalWidth + wordTotalWidth - 10;
 		if (done == 1) { //endoftext
-			if (tmp < maxWidth) {
+			ax = totalWidth + wordTotalWidth - 10;
+			if (ax < maxWidth) {
 				totalWidth += wordTotalWidth;
 				charCount += wordCharCount;
 			}
 
 			if (centered) {
-				tmp = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
-				tmp /= 2;
+				ax = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
+				ax /= 2;
 			} else {
-				tmp = 0;
+				ax = 0;
 			}
 			*offset += ax;
 			return charCount;
 		}
-		if (tmp >= maxWidth) { //gotoverend
+		ax = totalWidth + wordTotalWidth - 10;
+		if (ax >= maxWidth) { //gotoverend
 			if (centered) {
-				tmp = (maxWidth & 0xfe) - totalWidth + 20;
-				tmp /= 2;
+				ax = (maxWidth & 0xfe) - totalWidth + 20;
+				ax /= 2;
 			} else {
-				tmp = 0;
+				ax = 0;
 			}
-			*offset += tmp;
+			*offset += ax;
 			return charCount;
 		}
 		totalWidth += wordTotalWidth;
