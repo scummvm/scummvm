@@ -137,7 +137,7 @@ void DreamGenContext::madmanText() {
 
 void DreamGenContext::madman(ReelRoutine &routine) {
 	data.word(kWatchingtime) = 2;
-	if (checkSpeed(&routine)) {
+	if (checkSpeed(routine)) {
 		uint16 newReelPointer = routine.reelPointer();
 		if (newReelPointer >= 364) {
 			data.byte(kMandead) = 2;
@@ -207,21 +207,21 @@ void DreamGenContext::addToPeopleList(ReelRoutine *routine) {
 
 void DreamGenContext::checkSpeed() {
 	ReelRoutine *routine = (ReelRoutine *)es.ptr(bx, sizeof(ReelRoutine));
-	flags._z = checkSpeed(routine);
+	flags._z = checkSpeed(*routine);
 }
 
-bool DreamGenContext::checkSpeed(ReelRoutine *routine) {
+bool DreamGenContext::checkSpeed(ReelRoutine &routine) {
 	if (data.byte(kLastweapon) != (uint8)-1)
 		return true;
-	++routine->counter;
-	if (routine->counter != routine->period)
+	++routine.counter;
+	if (routine.counter != routine.period)
 		return false;
-	routine->counter = 0;
+	routine.counter = 0;
 	return true;
 }
 
 void DreamGenContext::sparkyDrip(ReelRoutine &routine) {
-	if (checkSpeed(&routine))
+	if (checkSpeed(routine))
 		playChannel0(14, 0);
 }
 
@@ -231,7 +231,7 @@ void DreamGenContext::otherSmoker(ReelRoutine &routine) {
 }
 
 void DreamGenContext::gamer(ReelRoutine &routine) {
-	if (checkSpeed(&routine)) {
+	if (checkSpeed(routine)) {
 		uint8 v;
 		do {
 			v = 20 + engine->randomNumber() % 5;
@@ -263,7 +263,7 @@ void DreamGenContext::maleFan(ReelRoutine &routine) {
 void DreamGenContext::sparky(ReelRoutine &routine) {
 	if (data.word(kCard1money))
 		routine.b7 = 3;
-	if (checkSpeed(&routine)) {
+	if (checkSpeed(routine)) {
 		if (routine.reelPointer() != 34) {
 			if (engine->randomNumber() < 30)
 				routine.incReelPointer();
@@ -288,7 +288,7 @@ void DreamGenContext::rockstar(ReelRoutine &routine) {
 		showGameReel(&routine);
 		return;
 	}
-	if (checkSpeed(&routine)) {
+	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
 		if (nextReelPointer == 118) {
 			data.byte(kMandead) = 2;
@@ -333,7 +333,7 @@ void DreamGenContext::smokeBloke(ReelRoutine &routine) {
 		if (routine.b7 & 128)
 			setLocation(5);
 	}
-	if (checkSpeed(&routine)) {
+	if (checkSpeed(routine)) {
 		if (routine.reelPointer() == 100) {
 			if (engine->randomNumber() < 30)
 				routine.incReelPointer();

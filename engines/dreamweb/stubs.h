@@ -386,7 +386,7 @@
 	void drawFloor();
 	void allocateBuffers();
 	void workToScreenM();
-	bool checkSpeed(ReelRoutine *routine);
+	bool checkSpeed(ReelRoutine &routine);
 	void checkSpeed();
 	void sparkyDrip(ReelRoutine &routine);
 	void otherSmoker(ReelRoutine &routine);
