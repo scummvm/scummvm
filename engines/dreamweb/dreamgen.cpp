@@ -5405,34 +5405,6 @@ void DreamGenContext::makeCaps() {
 	_sub(al, 32);
 }
 
-void DreamGenContext::delChar() {
-	STACK_CHECK;
-	_dec(data.word(kCurpos));
-	si = data.word(kCurpos);
-	_add(si, si);
-	es = cs;
-	_add(si, 1964);
-	es.byte(si) = 0;
-	al = es.byte(si+1);
-	ah = 0;
-	_sub(data.word(kMonadx), ax);
-	_sub(data.word(kCurslocx), ax);
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	ds = data.word(kMapstore);
-	ax = data.word(kCurpos);
-	_xchg(al, ah);
-	si = ax;
-	cl = 8;
-	ch = 8;
-	multiPut();
-	di = data.word(kMonadx);
-	bx = data.word(kMonady);
-	cl = al;
-	ch = 8;
-	multiDump();
-}
-
 void DreamGenContext::execCommand() {
 	STACK_CHECK;
 	es = cs;

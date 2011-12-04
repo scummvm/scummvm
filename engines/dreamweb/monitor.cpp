@@ -148,6 +148,19 @@ void DreamGenContext::input() {
 	}
 }
 
+void DreamGenContext::delChar() {
+	char *inputLine = (char *)cs.ptr(kInputline, 0);
+	--data.word(kCurpos);
+	inputLine[data.word(kCurpos) * 2] = 0;
+	uint8 width = inputLine[data.word(kCurpos) * 2 + 1];
+	data.word(kMonadx) -= width;
+	data.word(kCurslocx) -= width;
+	uint16 offset = data.word(kCurpos);
+	offset = ((offset & 0x00ff) << 8) | ((offset & 0xff00) >> 8);
+	multiPut(getSegment(data.word(kMapstore)).ptr(offset, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
+	multiDump(data.word(kMonadx), data.word(kMonady), al, 8);
+}
+
 void DreamGenContext::printCurs() {
 	uint16 x = data.word(kCurslocx);
 	uint16 y = data.word(kCurslocy);

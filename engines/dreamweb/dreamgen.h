@@ -633,7 +633,6 @@ public:
 	void manAsleep2();
 	void moreTalk();
 	void startTalk();
-	void delChar();
 	void getAnyAd();
 	void endGame();
 	void usePipe();

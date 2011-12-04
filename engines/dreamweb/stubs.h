@@ -45,6 +45,7 @@
 	void saveLoad();
 	void printCurs();
 	void delCurs();
+	void delChar();
 	void hangOnCurs(uint16 frameCount);
 	void hangOnCurs();
 	void multiDump();
