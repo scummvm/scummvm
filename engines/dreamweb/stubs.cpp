@@ -2825,6 +2825,10 @@ void DreamGenContext::panelIcons1() {
 	showWatch();
 }
 
+void DreamGenContext::examIcon() {
+	showFrame(icons2(), 254, 5, 3, 0);
+}
+
 uint8 DreamGenContext::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }

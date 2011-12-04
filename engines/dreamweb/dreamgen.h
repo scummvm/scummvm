@@ -831,7 +831,6 @@ public:
 	void deleteExText();
 	void foghornSound();
 	void liftNoise();
-	void examIcon();
 	void showGun();
 	void louisChair();
 	void locationPic();

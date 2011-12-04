@@ -211,6 +211,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'entersymbol',
 	'eraseoldobs',
 	'error',
+	'examicon',
 	'examineob',
 	'examineobtext',
 	'facerightway',

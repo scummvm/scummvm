@@ -2926,16 +2926,6 @@ void DreamGenContext::openOb() {
 	cs.word(bx) = ax;
 }
 
-void DreamGenContext::examIcon() {
-	STACK_CHECK;
-	ds = data.word(kIcons2);
-	di = 254;
-	bx = 5;
-	al = 3;
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::describeOb() {
 	STACK_CHECK;
 	getObTextStart();
