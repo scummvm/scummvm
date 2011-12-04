@@ -11096,24 +11096,6 @@ _tmp1:
 	multiGet();
 }
 
-void DreamGenContext::readKey() {
-	STACK_CHECK;
-	bx = data.word(kBufferout);
-	_cmp(bx, data.word(kBufferin));
-	if (flags.z())
-		goto nokey;
-	_inc(bx);
-	_and(bx, 15);
-	data.word(kBufferout) = bx;
-	di = offset_keybuffer;
-	_add(di, bx);
-	al = cs.byte(di);
-	data.byte(kCurrentkey) = al;
-	return;
-nokey:
-	data.byte(kCurrentkey) = 0;
-}
-
 void DreamGenContext::getRidOfReels() {
 	STACK_CHECK;
 	_cmp(data.byte(kRoomloaded), 0);
