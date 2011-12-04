@@ -37,9 +37,6 @@ namespace DreamWeb {
 
 namespace DreamGen {
 
-//fixme: name clash
-#undef random
-
 struct Register {
 	union {
 		uint16 _value;

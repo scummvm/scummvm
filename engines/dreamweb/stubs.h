@@ -118,7 +118,7 @@
 	void backObject();
 	void constant(Sprite *sprite, SetObject *objData);
 	void steady(Sprite *sprite, SetObject *objData);
-	void random(Sprite *sprite, SetObject *objData);
+	void randomSprite(Sprite *sprite, SetObject *objData);
 	void doDoor(Sprite *sprite, SetObject *objData, Common::Rect check);
 	void doorway(Sprite *sprite, SetObject *objData);
 	void wideDoor(Sprite *sprite, SetObject *objData);
