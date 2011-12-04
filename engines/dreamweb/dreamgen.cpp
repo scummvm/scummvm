@@ -10867,37 +10867,6 @@ void DreamGenContext::middlePanel() {
 	showFrame();
 }
 
-void DreamGenContext::panelIcons1() {
-	STACK_CHECK;
-	di = 0;
-	_cmp(data.byte(kWatchon), 1);
-	if (flags.z())
-		goto watchison;
-	di = 48;
-watchison:
-	push(di);
-	ds = data.word(kIcons2);
-	_add(di, 204);
-	bx = 4;
-	al = 2;
-	ah = 0;
-	showFrame();
-	di = pop();
-	push(di);
-	_cmp(data.byte(kZoomon), 1);
-	if (flags.z())
-		goto zoomisoff;
-	ds = data.word(kIcons1);
-	_add(di, 228);
-	bx = 8;
-	al = 5;
-	ah = 0;
-	showFrame();
-zoomisoff:
-	di = pop();
-	showWatch();
-}
-
 void DreamGenContext::blank() {
 	STACK_CHECK;
 	_cmp(data.byte(kCommandtype), 199);

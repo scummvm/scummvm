@@ -334,6 +334,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'out22c',
 	'paltoendpal',
 	'paltostartpal',
+	'panelicons1',
 	'paneltomap',
 	'parseblaster',
 	'personnametext',

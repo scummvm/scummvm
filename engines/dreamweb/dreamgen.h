@@ -939,7 +939,6 @@ public:
 	void loadSecondSample();
 	void transferConToEx();
 	void businessMan();
-	void panelIcons1();
 	void adjustDown();
 	void withWhat();
 	void createFile();

@@ -408,6 +408,7 @@
 	void showOuterPad();
 	void showExit();
 	void showMan();
+	void panelIcons1();
 	void buttonOne();
 	void buttonTwo();
 	void buttonThree();

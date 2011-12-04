@@ -2813,6 +2813,18 @@ void DreamGenContext::showMan() {
 		showFrame(icons1(), 28, 25, 2, 0);
 }
 
+void DreamGenContext::panelIcons1() {
+	uint16 x;
+	if (data.byte(kWatchon) != 1)
+		x = 48;
+	else
+		x = 0;
+	showFrame(icons2(), 204 + x, 4, 2, 0);
+	if (data.byte(kZoomon) != 1)
+		showFrame(icons1(), 228 + x, 8, 5, 0);
+	showWatch();
+}
+
 uint8 DreamGenContext::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }
