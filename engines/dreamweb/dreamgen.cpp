@@ -107,47 +107,6 @@ gotrecep:
 	data.byte(kTalkedtorecep) = 1;
 }
 
-void DreamGenContext::smokeBloke() {
-	STACK_CHECK;
-	_cmp(data.byte(kRockstardead), 0);
-	if (!flags.z())
-		goto notspokento;
-	al = es.byte(bx+7);
-	_and(al, 128);
-	if (flags.z())
-		goto notspokento;
-	push(es);
-	push(bx);
-	al = 5;
-	setLocation();
-	bx = pop();
-	es = pop();
-notspokento:
-	checkSpeed();
-	if (!flags.z())
-		goto gotsmokeb;
-	_cmp(es.word(bx+3), 100);
-	if (!flags.z())
-		goto notsmokeb1;
-	randomNumber();
-	_cmp(al, 30);
-	if (flags.c())
-		goto notsmokeb2;
-	es.word(bx+3) = 96;
-	goto gotsmokeb;
-notsmokeb1:
-	_cmp(es.word(bx+3), 117);
-	if (!flags.z())
-		goto notsmokeb2;
-	es.word(bx+3) = 96;
-	goto gotsmokeb;
-notsmokeb2:
-	_inc(es.word(bx+3));
-gotsmokeb:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::attendant() {
 	STACK_CHECK;
 	showGameReel();

@@ -789,7 +789,6 @@ public:
 	void useLadder();
 	void realCredits();
 	void handClap();
-	void smokeBloke();
 	void afterIntroRoom();
 	void findAllOpen();
 	void readFromFile();
