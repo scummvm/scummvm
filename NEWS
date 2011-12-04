@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Broken Sword 1:
    - Fixed incorrect sound effects in the DOS/Windows demo.
 
+ SCUMM:
+   - Added support for the Macintosh version of SPY Fox in Hold the Mustard.
+
 1.4.1 (????-??-??)
  AGOS:
    - Fixed loading videos directly from InstallShield cabinets in the Windows
