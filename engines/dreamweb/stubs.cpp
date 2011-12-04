@@ -2455,12 +2455,12 @@ void DreamGenContext::loadRoomsSample() {
 }
 
 void DreamGenContext::readSetData() {
-	data.word(kCharset1) = standardLoad((const char *)cs.ptr(kCharacterset1, 0));
-	data.word(kIcons1) = standardLoad((const char *)cs.ptr(kIcongraphics0, 0));
-	data.word(kIcons2) = standardLoad((const char *)cs.ptr(kIcongraphics1, 0));
-	data.word(kMainsprites) = standardLoad((const char *)cs.ptr(kSpritename1, 0));
-	data.word(kPuzzletext) = standardLoad((const char *)cs.ptr(kPuzzletextname, 0));
-	data.word(kCommandtext) = standardLoad((const char *)cs.ptr(kCommandtextname, 0));
+	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
+	data.word(kIcons1) = standardLoad("DREAMWEB.G00");
+	data.word(kIcons2) = standardLoad("DREAMWEB.G01");
+	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
+	data.word(kPuzzletext) = standardLoad("DREAMWEB.T80");
+	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
 	ax = data.word(kCharset1);
 	data.word(kCurrentset) = ax;
 	if (data.byte(kSoundint) == 0xff)

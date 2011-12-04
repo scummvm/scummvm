@@ -27,6 +27,7 @@ from tasm.cpp import cpp
 p = parser(skip_binary_data = [
 	# These data blobs are not output
 	# dreamweb.asm
+	'characterset1',
 	'roomdata',
 	'mainlist',
 	'mainlist2',
@@ -42,6 +43,9 @@ p = parser(skip_binary_data = [
 	'filedata',
 	'extradata',
 	'keybuffer',
+	'spritename1',
+	'icongraphics0',
+	'icongraphics1',
 	# keypad.asm
 	'keypadlist',
 	'symbollist',
@@ -87,6 +91,8 @@ p = parser(skip_binary_data = [
 	'mongraphics2',
 	'spritename3',
 	'mongraphicname',
+	'puzzletextname',
+	'commandtextname',
 	'characterset2',
 	'monitorfile1',
 	'monitorfile2',
