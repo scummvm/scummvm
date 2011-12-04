@@ -73,8 +73,7 @@ void DreamGenContext::obToInv() {
 }
 
 void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
-	Frame *icons1 = (Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
-	showFrame(icons1, x - 2, y - 1, 10, 0);
+	showFrame(icons1(), x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
 
@@ -85,7 +84,7 @@ void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	const DynObject *object = (const DynObject *)getAnyAdDir(index, flag);
 	bool worn = isItWorn(object);
 	if (worn)
-		showFrame(icons1, x - 3, y - 2, 7, 0);
+		showFrame(icons1(), x - 3, y - 2, 7, 0);
 }
 
 void DreamGenContext::obPicture() {
