@@ -10937,34 +10937,6 @@ void DreamGenContext::getRidOfReels() {
 	deallocateMem();
 }
 
-void DreamGenContext::getRidOfAll() {
-	STACK_CHECK;
-	es = data.word(kBackdrop);
-	deallocateMem();
-	es = data.word(kSetframes);
-	deallocateMem();
-	es = data.word(kReel1);
-	deallocateMem();
-	es = data.word(kReel2);
-	deallocateMem();
-	es = data.word(kReel3);
-	deallocateMem();
-	es = data.word(kReels);
-	deallocateMem();
-	es = data.word(kPeople);
-	deallocateMem();
-	es = data.word(kSetdesc);
-	deallocateMem();
-	es = data.word(kBlockdesc);
-	deallocateMem();
-	es = data.word(kRoomdesc);
-	deallocateMem();
-	es = data.word(kFreeframes);
-	deallocateMem();
-	es = data.word(kFreedesc);
-	deallocateMem();
-}
-
 void DreamGenContext::__start() { 
 	static const uint8 src[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

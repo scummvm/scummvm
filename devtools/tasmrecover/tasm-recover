@@ -257,6 +257,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'getpersframe',
 	'getreelframeax',
 	'getreelstart',
+	'getridofall',
 	'getridofpit',
 	'getridoftemp',
 	'getridoftemp2',

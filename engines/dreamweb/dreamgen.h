@@ -691,7 +691,6 @@ public:
 	void monks2text();
 	void clearPalette();
 	void cantDrop();
-	void getRidOfAll();
 	void copper();
 	void openHotelDoor();
 	void blank();

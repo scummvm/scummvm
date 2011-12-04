@@ -347,6 +347,7 @@
 	void useTempCharset();
 	void useCharset1();
 	void getBackFromOb();
+	void getRidOfAll();
 	void getRidOfTemp();
 	void getRidOfTempText();
 	void getRidOfTemp2();

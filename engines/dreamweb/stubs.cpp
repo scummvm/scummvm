@@ -2633,6 +2633,21 @@ void DreamGenContext::getRidOfTempsP() {
 	deallocateMem(data.word(kTempsprites));
 }
 
+void DreamGenContext::getRidOfAll() {
+	deallocateMem(data.word(kBackdrop));
+	deallocateMem(data.word(kSetframes));
+	deallocateMem(data.word(kReel1));
+	deallocateMem(data.word(kReel2));
+	deallocateMem(data.word(kReel3));
+	deallocateMem(data.word(kReels));
+	deallocateMem(data.word(kPeople));
+	deallocateMem(data.word(kSetdesc));
+	deallocateMem(data.word(kBlockdesc));
+	deallocateMem(data.word(kRoomdesc));
+	deallocateMem(data.word(kFreeframes));
+	deallocateMem(data.word(kFreedesc));
+}
+
 // if skipDat, skip clearing and loading Setdat and Freedat
 void DreamGenContext::loadRoomData(const Room &room, bool skipDat) {
 	engine->openFile(room.name);
