@@ -87,19 +87,19 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #define GUIO_NOLAUNCHLOAD	"\006"
 
 #define GUIO_MIDIPCSPK		"\007"
-#define GUIO_MIDICMS		"\008"
-#define GUIO_MIDIPCJR		"\010"
-#define GUIO_MIDIADLIB		"\011"
-#define GUIO_MIDIC64        "\012"
-#define GUIO_MIDIAMIGA      "\013"
-#define GUIO_MIDIAPPLEIIGS  "\014"
-#define GUIO_MIDITOWNS		"\015"
-#define GUIO_MIDIPC98		"\016"
-#define GUIO_MIDIMT32		"\017"
-#define GUIO_MIDIGM			"\020"
+#define GUIO_MIDICMS		"\010"
+#define GUIO_MIDIPCJR		"\011"
+#define GUIO_MIDIADLIB		"\012"
+#define GUIO_MIDIC64        "\013"
+#define GUIO_MIDIAMIGA      "\014"
+#define GUIO_MIDIAPPLEIIGS  "\015"
+#define GUIO_MIDITOWNS		"\016"
+#define GUIO_MIDIPC98		"\017"
+#define GUIO_MIDIMT32		"\020"
+#define GUIO_MIDIGM			"\021"
 
-#define GUIO_NOASPECT		"\021"
-#define GUIO_EGAUNDITHER	"\022"
+#define GUIO_NOASPECT		"\022"
+#define GUIO_EGAUNDITHER	"\023"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
