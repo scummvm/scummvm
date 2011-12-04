@@ -1143,20 +1143,15 @@ void DreamGenContext::loadSeg() {
 }
 
 void DreamGenContext::DOSReturn() {
-	_cmp(data.byte(kCommandtype), 250);
-	if (!flags.z()) {
+	if (data.byte(kCommandtype) != 250) {
 		data.byte(kCommandtype) = 250;
-		al = 46;
-		commandOnly();
+		commandOnly(46);
 	}
 
-	ax = data.word(kMousebutton);
-	_and(ax, 1);
-	if (flags.z())
-		return;
-
-	data.word(kMousebutton) = 0;
-	engine->quit();
+	if (data.word(kMousebutton) & 1) {
+		data.word(kMousebutton) = 0;
+		engine->quit();
+	}
 }
 
 void DreamGenContext::set16ColPalette() {
