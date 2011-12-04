@@ -91,7 +91,6 @@
 	void oldToNames();
 	void namesToOld();
 	void loadPalFromIFF();
-	void readHeader();
 	void fillSpace();
 	void startLoading(const Room &room);
 	Sprite *spriteTable();

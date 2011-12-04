@@ -845,14 +845,6 @@ void DreamGenContext::resetKeyboard() {
 void DreamGenContext::setKeyboardInt() {
 }
 
-void DreamGenContext::readFromFile() {
-	uint16 dst_offset = dx;
-	uint16 size = cx;
-	debug(1, "readfromfile(%04x:%u, %u)", (uint16)ds, dst_offset, size);
-	ax = engine->readFromFile(ds.ptr(dst_offset, size), size);
-	flags._c = false;
-}
-
 void DreamGenContext::closeFile() {
 	engine->closeFile();
 	data.byte(kHandle) = 0;

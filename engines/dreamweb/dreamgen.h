@@ -777,7 +777,6 @@ public:
 	void handClap();
 	void afterIntroRoom();
 	void findAllOpen();
-	void readFromFile();
 	void initialInv();
 	void quitSymbol();
 	void setTopRight();
