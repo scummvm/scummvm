@@ -318,6 +318,7 @@
 	Frame *tempGraphics();
 	Frame *tempGraphics2();
 	Frame *tempGraphics3();
+	Frame *icons1();
 	void accessLightOn();
 	void accessLightOff();
 	void randomAccess(uint16 count);
