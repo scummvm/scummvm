@@ -149,7 +149,7 @@ uint8 DreamGenContext::printDirect(const uint8* string, uint16 x, uint16 y, uint
 
 uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
 	data.word(kLastxpos) = x;
-	const Frame *charSet = (const Frame *)getSegment(data.word(kCurrentset)).ptr(0, 0);
+	const Frame *charSet = engine->currentCharset();
 	while (true) {
 		uint16 offset = x;
 		uint8 charCount = getNumber(charSet, *string, maxWidth, centered, &offset);
@@ -244,7 +244,7 @@ void DreamGenContext::monPrint() {
 const char *DreamGenContext::monPrint(const char *string) {
 	data.byte(kKerning) = 1;
 	uint16 x = data.word(kMonadx);
-	Frame *charset = tempCharset();
+	Frame *charset = engine->tempCharset();
 	const char *iterator = string;
 	bool done = false;
 	while (!done) {

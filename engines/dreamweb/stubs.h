@@ -42,7 +42,6 @@
 	void loadIntoTemp3(const char *fileName);
 	void loadTempCharset();
 	void loadTempCharset(const char *fileName);
-	Frame *tempCharset();
 	void saveLoad();
 	void printCurs();
 	void delCurs();

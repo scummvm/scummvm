@@ -804,11 +804,7 @@ void DreamGenContext::loadTempCharset() {
 }
 
 void DreamGenContext::loadTempCharset(const char *fileName) {
-	data.word(kTempcharset) = standardLoad(fileName);
-}
-
-Frame *DreamGenContext::tempCharset() {
-	return (Frame *)getSegment(data.word(kTempcharset)).ptr(0, 0);
+	engine->setTempCharset(standardLoadCPP(fileName));
 }
 
 void DreamGenContext::hangOnCurs(uint16 frameCount) {
@@ -2487,8 +2483,7 @@ void DreamGenContext::readSetData() {
 	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
 	data.word(kPuzzletext) = standardLoad("DREAMWEB.T80");
 	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
-	ax = data.word(kCharset1);
-	data.word(kCurrentset) = ax;
+	useCharset1();
 	if (data.byte(kSoundint) == 0xff)
 		return;
 
@@ -2620,11 +2615,11 @@ void DreamGenContext::doLook() {
 }
 
 void DreamGenContext::useCharset1() {
-	data.word(kCurrentset) = data.word(kCharset1);
+	engine->setCurrentCharset((Frame *)getSegment(data.word(kCharset1)).ptr(0, 0));
 }
 
 void DreamGenContext::useTempCharset() {
-	data.word(kCurrentset) = data.word(kTempcharset);
+	engine->setCurrentCharset(engine->tempCharset());
 }
 
 void DreamGenContext::getRidOfTemp() {
@@ -2644,7 +2639,7 @@ void DreamGenContext::getRidOfTemp3() {
 }
 
 void DreamGenContext::getRidOfTempCharset() {
-	deallocateMem(data.word(kTempcharset));
+	engine->freeTempCharset();
 }
 
 void DreamGenContext::getRidOfTempsP() {

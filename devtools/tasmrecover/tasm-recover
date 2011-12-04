@@ -81,8 +81,10 @@ p = parser(skip_binary_data = [
 	# use.asm
 	'uselist',
 	# vars.asm
+	'currentset',
 	'icons1',
 	'icons2',
+	'tempcharset',
 	# vgagrafx.asm
 	'shaketable',
 	'symbolgraphic',

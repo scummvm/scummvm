@@ -65,6 +65,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 	_icons1 = NULL;
 	_icons2 = NULL;
+	_tempCharset = NULL;
 
 	_language = gameDesc->desc.language;
 }
@@ -72,6 +73,7 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 DreamWebEngine::~DreamWebEngine() {
 	assert(_icons1 == NULL);
 	assert(_icons2 == NULL);
+	assert(_tempCharset == NULL);
 
 	DebugMan.clearAllDebugChannels();
 	delete _console;

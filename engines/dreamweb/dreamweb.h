@@ -137,6 +137,13 @@ public:
 	void freeIcons1() { free(_icons1); _icons1 = NULL; }
 	void freeIcons2() { free(_icons2); _icons2 = NULL; }
 
+	DreamGen::Frame *tempCharset() const { return (DreamGen::Frame *)_tempCharset; }
+	void setTempCharset(void *frames) { assert(_tempCharset == NULL); _tempCharset = frames; }
+	void freeTempCharset() { free(_tempCharset); _tempCharset = NULL; }
+
+	DreamGen::Frame *currentCharset() const { return _currentCharset; }
+	void setCurrentCharset(DreamGen::Frame *charset) { _currentCharset = charset; }
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -174,6 +181,8 @@ private:
 
 	void *_icons1;
 	void *_icons2;
+	void *_tempCharset;
+	DreamGen::Frame *_currentCharset;
 
 	DreamGen::DreamGenContext _context;
 };
