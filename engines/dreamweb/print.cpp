@@ -218,7 +218,7 @@ uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint
 }
 
 uint8 DreamGenContext::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
-	if ((firstChar == 'a') || (al == 'u')) {
+	if ((firstChar == 'a') || (firstChar == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
 			return width-1;
 	}
