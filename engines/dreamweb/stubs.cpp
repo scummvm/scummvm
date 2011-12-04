@@ -26,6 +26,10 @@
 
 namespace DreamGen {
 
+// Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
+// into this, making it a ring buffer
+uint8 g_keyBuffer[16];
+
 const Room g_roomData[] = {
 	{ "DREAMWEB.R00", // Ryan's apartment
 	  5,255,33,10,
@@ -3057,21 +3061,17 @@ void DreamGenContext::atmospheres() {
 }
 
 void DreamGenContext::readKey() {
-	STACK_CHECK;
-	bx = data.word(kBufferout);
-	_cmp(bx, data.word(kBufferin));
-	if (flags.z())
-		goto nokey;
-	_inc(bx);
-	_and(bx, 15);
-	data.word(kBufferout) = bx;
-	di = offset_keybuffer;
-	_add(di, bx);
-	al = cs.byte(di);
-	data.byte(kCurrentkey) = al;
-	return;
-nokey:
-	data.byte(kCurrentkey) = 0;
+	uint16 bufOut = data.word(kBufferout);
+
+	if (bufOut == data.word(kBufferin)) {
+		// empty buffer
+		data.byte(kCurrentkey) = 0;
+		return;
+	}
+
+	bufOut = (bufOut + 1) & 15; // The buffer has size 16
+	data.byte(kCurrentkey) = g_keyBuffer[bufOut];
+	data.word(kBufferout) = bufOut;
 }
 
 

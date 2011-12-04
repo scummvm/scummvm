@@ -49,6 +49,10 @@ const uint16 addr_mainman = 0xc138;
 // Output of Bresenham
 extern Common::Point g_lineData[200];
 
+// Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
+// into this, making it a ring buffer
+extern uint8 g_keyBuffer[16];
+
 }
 
 namespace DreamWeb {

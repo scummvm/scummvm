@@ -430,4 +430,5 @@
 	void loadNews();
 	void loadCart();
 	void soundOnReels();
+	void readKey();
 

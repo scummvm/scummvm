@@ -290,7 +290,6 @@ uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint8* keybuf = _context.data.ptr(DreamGen::DreamGenContext::offset_keybuffer, 16);
 	uint16 in = (_context.data.word(DreamGen::DreamGenContext::kBufferin) + 1) & 0x0f;
 	uint16 out = _context.data.word(DreamGen::DreamGenContext::kBufferout);
 	if (in == out) {
@@ -298,7 +297,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 		return;
 	}
 	_context.data.word(DreamGen::DreamGenContext::kBufferin) = in;
-	keybuf[in] = ascii;
+	DreamGen::g_keyBuffer[in] = ascii;
 }
 
 void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
