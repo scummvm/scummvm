@@ -493,16 +493,16 @@ void DreamGenContext::loadPalFromIFF() {
 }
 
 void DreamGenContext::createPanel() {
-	showFrame(icons2(), 0, 8, 0, 2);
-	showFrame(icons2(), 160, 8, 0, 2);
-	showFrame(icons2(), 0, 104, 0, 2);
-	showFrame(icons2(), 160, 104, 0, 2);
+	showFrame(engine->icons2(), 0, 8, 0, 2);
+	showFrame(engine->icons2(), 160, 8, 0, 2);
+	showFrame(engine->icons2(), 0, 104, 0, 2);
+	showFrame(engine->icons2(), 160, 104, 0, 2);
 }
 
 void DreamGenContext::createPanel2() {
 	createPanel();
-	showFrame(icons2(), 0, 0, 5, 2);
-	showFrame(icons2(), 160, 0, 5, 2);
+	showFrame(engine->icons2(), 0, 0, 5, 2);
+	showFrame(engine->icons2(), 160, 0, 5, 2);
 }
 
 } /*namespace dreamgen */

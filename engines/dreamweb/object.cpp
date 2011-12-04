@@ -73,7 +73,7 @@ void DreamGenContext::obToInv() {
 }
 
 void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
-	showFrame(icons1(), x - 2, y - 1, 10, 0);
+	showFrame(engine->icons1(), x - 2, y - 1, 10, 0);
 	if (index == 0xff)
 		return;
 
@@ -84,7 +84,7 @@ void DreamGenContext::obToInv(uint8 index, uint8 flag, uint16 x, uint16 y) {
 	const DynObject *object = (const DynObject *)getAnyAdDir(index, flag);
 	bool worn = isItWorn(object);
 	if (worn)
-		showFrame(icons1(), x - 3, y - 2, 7, 0);
+		showFrame(engine->icons1(), x - 3, y - 2, 7, 0);
 }
 
 void DreamGenContext::obPicture() {
@@ -104,10 +104,10 @@ void DreamGenContext::obIcons() {
 	getAnyAd(&value1, &value2);
 	if (value1 != 0xff) {
 		// can open it
-		showFrame(icons2(), 210, 1, 4, 0);
+		showFrame(engine->icons2(), 210, 1, 4, 0);
 	}
 
-	showFrame(icons2(), 260, 1, 1, 0);
+	showFrame(engine->icons2(), 260, 1, 1, 0);
 }
 
 void DreamGenContext::examineOb(bool examineAgain) {

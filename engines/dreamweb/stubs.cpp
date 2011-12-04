@@ -1379,7 +1379,7 @@ void DreamGenContext::crosshair() {
 	} else {
 		frame = 29;
 	}
-	showFrame(icons1(), kZoomx + 24, kZoomy + 19, frame, 0);
+	showFrame(engine->icons1(), kZoomx + 24, kZoomy + 19, frame, 0);
 }
 
 void DreamGenContext::delTextLine() {
@@ -1534,8 +1534,8 @@ void DreamGenContext::examineObText() {
 }
 
 void DreamGenContext::showPanel() {
-	showFrame(icons1(), 72, 0, 19, 0);
-	showFrame(icons1(), 192, 0, 19, 0);
+	showFrame(engine->icons1(), 72, 0, 19, 0);
+	showFrame(engine->icons1(), 192, 0, 19, 0);
 }
 
 void DreamGenContext::blockNameText() {
@@ -1819,7 +1819,7 @@ void DreamGenContext::showBlink() {
 		blinkFrame = 6;
 	static const uint8 blinkTab[] = { 16,18,18,17,16,16,16 };
 	uint8 width, height;
-	showFrame(icons1(), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
+	showFrame(engine->icons1(), 44, 32, blinkTab[blinkFrame], 0, &width, &height);
 }
 
 void DreamGenContext::dumpBlink() {
@@ -1965,9 +1965,9 @@ void DreamGenContext::showPointer() {
 		data.word(kOldpointery) = yMin;
 		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), xMin, yMin, width, height);
 		showFrame(frames, x, y, 3 * data.byte(kItemframe) + 1, 128);
-		showFrame(icons1(), x, y, 3, 128);
+		showFrame(engine->icons1(), x, y, 3, 128);
 	} else {
-		const Frame *frame = icons1() + (data.byte(kPointerframe) + 20);
+		const Frame *frame = engine->icons1() + (data.byte(kPointerframe) + 20);
 		uint8 width = frame->width;
 		uint8 height = frame->height;
 		if (width < 12)
@@ -1977,7 +1977,7 @@ void DreamGenContext::showPointer() {
 		data.byte(kPointerxs) = width;
 		data.byte(kPointerys) = height;
 		multiGet(getSegment(data.word(kBuffers)).ptr(kPointerback, 0), x, y, width, height);
-		showFrame(icons1(), x, y, data.byte(kPointerframe) + 20, 0);
+		showFrame(engine->icons1(), x, y, data.byte(kPointerframe) + 20, 0);
 	}
 }
 
@@ -2114,8 +2114,8 @@ bool DreamGenContext::checkIfSet(uint8 x, uint8 y) {
 }
 
 void DreamGenContext::showRyanPage() {
-	showFrame(icons1(), kInventx + 167, kInventy - 12, 12, 0);
-	showFrame(icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
+	showFrame(engine->icons1(), kInventx + 167, kInventy - 12, 12, 0);
+	showFrame(engine->icons1(), kInventx + 167 + 18 * data.byte(kRyanpage), kInventy - 12, 13 + data.byte(kRyanpage), 0);
 }
 
 void DreamGenContext::findAllRyan() {
@@ -2367,7 +2367,7 @@ void DreamGenContext::mainScreen() {
 
 void DreamGenContext::showWatch() {
 	if (data.byte(kWatchon)) {
-		showFrame(icons1(), 250, 1, 6, 0);
+		showFrame(engine->icons1(), 250, 1, 6, 0);
 		showTime();
 	}
 }
@@ -2442,7 +2442,7 @@ void DreamGenContext::roomName() {
 void DreamGenContext::zoomIcon() {
 	if (data.byte(kZoomon) == 0)
 		return;
-	showFrame(icons1(), kZoomx, kZoomy-1, 8, 0);
+	showFrame(engine->icons1(), kZoomx, kZoomy-1, 8, 0);
 }
 
 void DreamGenContext::loadRoom() {
@@ -2508,14 +2508,6 @@ Frame * DreamGenContext::tempGraphics2() {
 
 Frame * DreamGenContext::tempGraphics3() {
 	return (Frame *)getSegment(data.word(kTempgraphics3)).ptr(0, 0);
-}
-
-Frame * DreamGenContext::icons1() {
-	return engine->icons1();
-}
-
-Frame * DreamGenContext::icons2() {
-	return engine->icons2();
 }
 
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
@@ -2844,14 +2836,14 @@ void DreamGenContext::showRightPage() {
 }
 
 void DreamGenContext::showExit() {
-	showFrame(icons1(), 274, 154, 11, 0);
+	showFrame(engine->icons1(), 274, 154, 11, 0);
 }
 
 void DreamGenContext::showMan() {
-	showFrame(icons1(), 0, 0, 0, 0);
-	showFrame(icons1(), 0, 114, 1, 0);
+	showFrame(engine->icons1(), 0, 0, 0, 0);
+	showFrame(engine->icons1(), 0, 114, 1, 0);
 	if (data.byte(kShadeson))
-		showFrame(icons1(), 28, 25, 2, 0);
+		showFrame(engine->icons1(), 28, 25, 2, 0);
 }
 
 void DreamGenContext::panelIcons1() {
@@ -2860,14 +2852,14 @@ void DreamGenContext::panelIcons1() {
 		x = 48;
 	else
 		x = 0;
-	showFrame(icons2(), 204 + x, 4, 2, 0);
+	showFrame(engine->icons2(), 204 + x, 4, 2, 0);
 	if (data.byte(kZoomon) != 1)
-		showFrame(icons1(), 228 + x, 8, 5, 0);
+		showFrame(engine->icons1(), 228 + x, 8, 5, 0);
 	showWatch();
 }
 
 void DreamGenContext::examIcon() {
-	showFrame(icons2(), 254, 5, 3, 0);
+	showFrame(engine->icons2(), 254, 5, 3, 0);
 }
 
 uint8 DreamGenContext::getLocation(uint8 index) {
