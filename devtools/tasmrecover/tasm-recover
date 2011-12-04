@@ -80,6 +80,9 @@ p = parser(skip_binary_data = [
 	'r45','r46','r47','r52','r53','r55',
 	# use.asm
 	'uselist',
+	# vars.asm
+	'icons1',
+	'icons2',
 	# vgagrafx.asm
 	'shaketable',
 	'symbolgraphic',

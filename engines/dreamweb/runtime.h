@@ -300,9 +300,12 @@ public:
 
 	void deallocateSegment(uint16 id) {
 		SegmentMap::iterator i = _segments.find(id);
-		assert(i != _segments.end());
-		_segments.erase(i);
-		_freeSegments.push_back(id);
+		if(i != _segments.end()) {
+			_segments.erase(i);
+			_freeSegments.push_back(id);
+		} else {
+			debug("Deallocating non existent segment! Client code should be fixed.");
+		}
 	}
 
 	inline void _cmp(uint8 a, uint8 b) {

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef DREAMWEB_STRUCTS_H
+#define DREAMWEB_STRUCTS_H
+
 #include "common/endian.h"
 #include "common/rect.h"
 
@@ -284,4 +287,6 @@ struct Atmosphere {
 	uint8 _sound;
 	uint8 _repeat;
 };
+
+#endif
 

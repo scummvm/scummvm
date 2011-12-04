@@ -63,10 +63,16 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_channel0 = 0;
 	_channel1 = 0;
 
+	_icons1 = NULL;
+	_icons2 = NULL;
+
 	_language = gameDesc->desc.language;
 }
 
 DreamWebEngine::~DreamWebEngine() {
+	assert(_icons1 == NULL);
+	assert(_icons2 == NULL);
+
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 }

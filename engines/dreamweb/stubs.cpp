@@ -640,8 +640,8 @@ void DreamGenContext::dreamweb() {
 	}
 done: // The engine will need some cleaner finalization, let's put it here for now
 	getRidOfAll();
-	deallocateMem(data.word(kIcons1));
-	deallocateMem(data.word(kIcons2));
+	engine->freeIcons1();
+	engine->freeIcons2();
 }
 
 bool DreamGenContext::quitRequested() {
@@ -746,12 +746,14 @@ uint8 *DreamGenContext::textUnder() {
 	return getSegment(data.word(kBuffers)).ptr(kTextunder, 0);
 }
 
-uint16 DreamGenContext::standardLoad(const char *fileName) {
+uint16 DreamGenContext::standardLoad(const char *fileName, uint16 *outSizeInBytes) {
 	FileHeader header;
 
 	engine->openFile(fileName);
 	engine->readFromFile((uint8 *)&header, sizeof(FileHeader));
 	uint16 sizeInBytes = header.len(0);
+	if (outSizeInBytes)
+		*outSizeInBytes = sizeInBytes;
 	uint16 result = allocateMem((sizeInBytes + 15) / 16);
 	engine->readFromFile(getSegment(result).ptr(0, 0), sizeInBytes);
 	engine->closeFile();
@@ -759,7 +761,7 @@ uint16 DreamGenContext::standardLoad(const char *fileName) {
 }
 
 void DreamGenContext::standardLoad() {
-	ax = standardLoad((const char *)cs.ptr(dx, 0));
+	ax = standardLoad((const char *)cs.ptr(dx, 0), NULL);
 }
 
 void DreamGenContext::loadIntoTemp() {
@@ -2465,8 +2467,21 @@ void DreamGenContext::loadRoomsSample() {
 
 void DreamGenContext::readSetData() {
 	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
-	data.word(kIcons1) = standardLoad("DREAMWEB.G00");
-	data.word(kIcons2) = standardLoad("DREAMWEB.G01");
+
+	uint16 icons1SizeInBytes;
+	uint16 tempIcons1 = standardLoad("DREAMWEB.G00", &icons1SizeInBytes);
+	void *icons1Buffer = malloc(icons1SizeInBytes);
+	memcpy(icons1Buffer, getSegment(tempIcons1).ptr(0, 0), icons1SizeInBytes);
+	deallocateMem(tempIcons1);
+	engine->setIcons1(icons1Buffer);
+
+	uint16 icons2SizeInBytes;
+	uint16 tempIcons2 = standardLoad("DREAMWEB.G01", &icons2SizeInBytes);
+	void *icons2Buffer = malloc(icons2SizeInBytes);
+	memcpy(icons2Buffer, getSegment(tempIcons2).ptr(0, 0), icons2SizeInBytes);
+	deallocateMem(tempIcons2);
+	engine->setIcons2(icons2Buffer);
+
 	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
 	data.word(kPuzzletext) = standardLoad("DREAMWEB.T80");
 	data.word(kCommandtext) = standardLoad("DREAMWEB.T84");
@@ -2494,11 +2509,11 @@ Frame * DreamGenContext::tempGraphics3() {
 }
 
 Frame * DreamGenContext::icons1() {
-	return (Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
+	return engine->icons1();
 }
 
 Frame * DreamGenContext::icons2() {
-	return (Frame *)getSegment(data.word(kIcons2)).ptr(0, 0);
+	return engine->icons2();
 }
 
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {

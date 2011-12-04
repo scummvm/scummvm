@@ -42,6 +42,8 @@
 
 namespace DreamGen {
 
+#include "dreamweb/structs.h"
+
 // These are for ReelRoutine::reelPointer, which is a callback field.
 const uint16 addr_backobject = 0xc170;
 const uint16 addr_mainman = 0xc138;
@@ -128,6 +130,13 @@ public:
 
 	void stopSound(uint8 channel);
 
+	DreamGen::Frame *icons1() const { return (DreamGen::Frame *)_icons1; }
+	DreamGen::Frame *icons2() const { return (DreamGen::Frame *)_icons2; }
+	void setIcons1(void *frames) { assert(_icons1 == NULL); _icons1 = frames; }
+	void setIcons2(void *frames) { assert(_icons2 == NULL); _icons2 = frames; }
+	void freeIcons1() { free(_icons1); _icons1 = NULL; }
+	void freeIcons2() { free(_icons2); _icons2 = NULL; }
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -162,6 +171,9 @@ private:
 
 	Audio::SoundHandle _channelHandle[2];
 	uint8 _channel0, _channel1;
+
+	void *_icons1;
+	void *_icons2;
 
 	DreamGen::DreamGenContext _context;
 };
