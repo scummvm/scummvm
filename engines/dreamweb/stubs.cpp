@@ -760,6 +760,17 @@ uint16 DreamGenContext::standardLoad(const char *fileName, uint16 *outSizeInByte
 	return result;
 }
 
+void *DreamGenContext::standardLoadCPP(const char *fileName, uint16 *outSizeInBytes) {
+	uint16 sizeInBytes;
+	uint16 seg = standardLoad(fileName, &sizeInBytes);
+	void *buffer = malloc(sizeInBytes);
+	memcpy(buffer, getSegment(seg).ptr(0, 0), sizeInBytes);
+	deallocateMem(seg);
+	if (outSizeInBytes)
+		*outSizeInBytes = sizeInBytes;
+	return buffer;
+}
+
 void DreamGenContext::standardLoad() {
 	ax = standardLoad((const char *)cs.ptr(dx, 0), NULL);
 }
@@ -2468,18 +2479,9 @@ void DreamGenContext::loadRoomsSample() {
 void DreamGenContext::readSetData() {
 	data.word(kCharset1) = standardLoad("DREAMWEB.C00");
 
-	uint16 icons1SizeInBytes;
-	uint16 tempIcons1 = standardLoad("DREAMWEB.G00", &icons1SizeInBytes);
-	void *icons1Buffer = malloc(icons1SizeInBytes);
-	memcpy(icons1Buffer, getSegment(tempIcons1).ptr(0, 0), icons1SizeInBytes);
-	deallocateMem(tempIcons1);
+	void *icons1Buffer = standardLoadCPP("DREAMWEB.G00");
 	engine->setIcons1(icons1Buffer);
-
-	uint16 icons2SizeInBytes;
-	uint16 tempIcons2 = standardLoad("DREAMWEB.G01", &icons2SizeInBytes);
-	void *icons2Buffer = malloc(icons2SizeInBytes);
-	memcpy(icons2Buffer, getSegment(tempIcons2).ptr(0, 0), icons2SizeInBytes);
-	deallocateMem(tempIcons2);
+	void *icons2Buffer = standardLoadCPP("DREAMWEB.G01");
 	engine->setIcons2(icons2Buffer);
 
 	data.word(kMainsprites) = standardLoad("DREAMWEB.S00");
