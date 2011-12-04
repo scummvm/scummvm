@@ -245,7 +245,7 @@ void DreamGenContext::bresenhams() {
 				remainder += data.word(kIncrement2);
 				++x;
 			}
-		} while (delta1);
+		}
 	}
 }
 
