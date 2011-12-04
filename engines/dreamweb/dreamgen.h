@@ -850,7 +850,6 @@ public:
 	void findPathOfPoint();
 	void isSetObOnMap();
 	void getDestInfo();
-	void drunk();
 	void setupTimedUse();
 	void grafittiDoor();
 	void nextDest();

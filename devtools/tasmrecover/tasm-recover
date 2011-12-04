@@ -196,6 +196,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'doshake',
 	'drawflags',
 	'drawfloor',
+	'drunk',
 	'dumpblink',
 	'dumpeverything',
 	'dumpmap',

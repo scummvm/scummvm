@@ -1527,18 +1527,6 @@ void DreamGenContext::priestText() {
 	setupTimedUse();
 }
 
-void DreamGenContext::drunk() {
-	STACK_CHECK;
-	_cmp(data.byte(kGeneraldead), 0);
-	if (!flags.z())
-		return /* (trampgone) */;
-	al = es.byte(bx+7);
-	_and(al, 127);
-	es.byte(bx+7) = al;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::advisor() {
 	STACK_CHECK;
 	checkSpeed();

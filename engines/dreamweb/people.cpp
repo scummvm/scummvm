@@ -28,7 +28,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	NULL, &DreamGenContext::edenInBath,
 	NULL, NULL,
-	NULL, &DreamGenContext::drunk,
+	NULL, NULL,
 	&DreamGenContext::receptionist, NULL,
 	NULL, &DreamGenContext::louis,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
@@ -60,7 +60,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
 	&DreamGenContext::eden, /*&DreamGenContext::edenInBath*/NULL,
 	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
-	&DreamGenContext::manAsleep, /*&DreamGenContext::drunk*/NULL,
+	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
 	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::maleFan,
 	&DreamGenContext::femaleFan, /*&DreamGenContext::louis*/NULL,
 	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
@@ -349,6 +349,16 @@ void DreamGenContext::smokeBloke(ReelRoutine &routine) {
 }
 
 void DreamGenContext::manAsleep(ReelRoutine &routine) {
+	routine.b7 &= 127;
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+
+void DreamGenContext::drunk(ReelRoutine &routine) {
+	_cmp(data.byte(kGeneraldead), 0);
+	if (data.byte(kGeneraldead))
+		return;
 	routine.b7 &= 127;
 	showGameReel(&routine);
 	addToPeopleList(&routine);

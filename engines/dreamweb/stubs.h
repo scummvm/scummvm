@@ -399,6 +399,7 @@
 	void madmansTelly(ReelRoutine &routine);
 	void smokeBloke(ReelRoutine &routine);
 	void manAsleep(ReelRoutine &routine);
+	void drunk(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void showKeypad();
 	void showOuterPad();
