@@ -88,7 +88,6 @@
 	uint8 printSlow(const uint8 *string, uint16 x, uint16 y, uint8 maxWidth, bool centered);
 	void printSlow();
 	void dumpTextLine();
-	void getNumber();
 	uint8 getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16 *offset);
 	uint8 kernChars(uint8 firstChar, uint8 secondChar, uint8 width);
 	void oldToNames();
