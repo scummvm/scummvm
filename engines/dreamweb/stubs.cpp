@@ -530,7 +530,7 @@ void DreamGenContext::dreamweb() {
 			setMode();
 			decide();
 			if (quitRequested())
-				return; // exit game
+				goto done;
 
 			if (data.byte(kGetback) == 4)
 				startNewGame = false; // savegame has been loaded
@@ -544,14 +544,14 @@ void DreamGenContext::dreamweb() {
 
 			titles();
 			if (quitRequested())
-				return; // exit game
+				goto done;
 
 			// "credits"
 			clearPalette();
 			realCredits();
 
 			if (quitRequested())
-				return; // exit game
+				goto done;
 
 			clearChanges();
 			setMode();
@@ -579,12 +579,12 @@ void DreamGenContext::dreamweb() {
 		while (true) {
 
 			if (quitRequested())
-				return; // exit game
+				goto done;
 
 			screenUpdate();
 
 			if (quitRequested())
-				return; // exit game
+				goto done;
 
 			if (data.byte(kWongame) != 0) {
 				// "endofgame"
@@ -593,7 +593,7 @@ void DreamGenContext::dreamweb() {
 				hangOn(200);
 				endGame();
 				quickQuit2();
-				return;
+				goto done;
 			}
 
 			if (data.byte(kMandead) == 1 || data.byte(kMandead) == 2)
@@ -633,6 +633,10 @@ void DreamGenContext::dreamweb() {
 		hangOn(100);
 
 	}
+done: // The engine will need some cleaner finalization, let's put it here for now
+	getRidOfAll();
+	deallocateMem(data.word(kIcons1));
+	deallocateMem(data.word(kIcons2));
 }
 
 bool DreamGenContext::quitRequested() {
