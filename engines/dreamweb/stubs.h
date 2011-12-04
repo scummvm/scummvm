@@ -404,6 +404,7 @@
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void showKeypad();
 	void showOuterPad();
+	void showExit();
 	void buttonOne();
 	void buttonTwo();
 	void buttonThree();

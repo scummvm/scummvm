@@ -710,7 +710,7 @@ public:
 	void findInvPos();
 	void workoutFrames();
 	void dumpSymBox();
-	void dumpSymbol();
+	void rollEndCredits();
 	void intro2Text();
 	void interviewer();
 	void getKeyAndLogo();
@@ -734,7 +734,7 @@ public:
 	void showDiaryPage();
 	void useShield();
 	void getBackToOps();
-	void rollEndCredits();
+	void dumpSymbol();
 	void intro1Text();
 	void transferToEx();
 	void reExFromInv();
@@ -880,7 +880,6 @@ public:
 	void showPuzText();
 	void incRyanPage();
 	void useElevator3();
-	void showExit();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();

@@ -407,6 +407,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'showcity',
 	'showcurrentfile',
 	'showdiscops',
+	'showexit',
 	'showfirstuse',
 	'showfolder',
 	'showframe',

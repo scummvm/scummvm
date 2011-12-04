@@ -10892,16 +10892,6 @@ void DreamGenContext::showMan() {
 	showFrame();
 }
 
-void DreamGenContext::showExit() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = 274;
-	bx = 154;
-	al = 11;
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::panelIcons1() {
 	STACK_CHECK;
 	di = 0;

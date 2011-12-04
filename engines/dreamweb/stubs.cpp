@@ -2798,6 +2798,11 @@ void DreamGenContext::showRightPage() {
 	data.word(kLinespacing) = 10;
 }
 
+void DreamGenContext::showExit() {
+	const Frame *frame = (const Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
+	showFrame(frame, 274, 154, 11, 0);
+}
+
 uint8 DreamGenContext::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }
