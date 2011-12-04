@@ -42,6 +42,10 @@ void DreamGenContext::singleKey(uint8 key, uint16 x, uint16 y) {
 	showFrame(tempGraphics(), x, y, key, 0);
 }
 
+void DreamGenContext::loadKeypad() {
+	loadIntoTemp("DREAMWEB.G02");
+}
+
 void DreamGenContext::showKeypad() {
 	singleKey(22, kKeypadx+9,  kKeypady+5);
 	singleKey(23, kKeypadx+31, kKeypady+5);

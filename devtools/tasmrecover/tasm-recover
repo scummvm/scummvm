@@ -87,6 +87,7 @@ p = parser(skip_binary_data = [
 	'tempcharset',
 	# vgagrafx.asm
 	'cityname',
+	'extragraphics1',
 	'shaketable',
 	'symbolgraphic',
 	'travelgraphic1',
@@ -300,6 +301,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'loadintotemp',
 	'loadintotemp2',
 	'loadintotemp3',
+	'loadkeypad',
 	'loadmenu',
 	'loadnews',
 	'loadold',

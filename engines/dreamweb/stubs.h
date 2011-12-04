@@ -405,6 +405,7 @@
 	void drunk(ReelRoutine &routine);
 	void security(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
+	void loadKeypad();
 	void showKeypad();
 	void showOuterPad();
 	void showExit();
