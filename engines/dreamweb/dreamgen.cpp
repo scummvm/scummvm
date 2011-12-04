@@ -10867,31 +10867,6 @@ void DreamGenContext::middlePanel() {
 	showFrame();
 }
 
-void DreamGenContext::showMan() {
-	STACK_CHECK;
-	ds = data.word(kIcons1);
-	di = 0;
-	bx = 0;
-	al = 0;
-	ah = 0;
-	showFrame();
-	ds = data.word(kIcons1);
-	di = 0;
-	bx = 114;
-	al = 1;
-	ah = 0;
-	showFrame();
-	_cmp(data.byte(kShadeson), 0);
-	if (flags.z())
-		return /* (notverycool) */;
-	ds = data.word(kIcons1);
-	di = 28;
-	bx = 25;
-	al = 2;
-	ah = 0;
-	showFrame();
-}
-
 void DreamGenContext::panelIcons1() {
 	STACK_CHECK;
 	di = 0;

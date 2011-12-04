@@ -2802,6 +2802,13 @@ void DreamGenContext::showExit() {
 	showFrame(icons1(), 274, 154, 11, 0);
 }
 
+void DreamGenContext::showMan() {
+	showFrame(icons1(), 0, 0, 0, 0);
+	showFrame(icons1(), 0, 114, 1, 0);
+	if (data.byte(kShadeson))
+		showFrame(icons1(), 28, 25, 2, 0);
+}
+
 uint8 DreamGenContext::getLocation(uint8 index) {
 	return data.byte(kRoomscango + index);
 }

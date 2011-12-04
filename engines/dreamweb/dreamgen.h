@@ -582,7 +582,7 @@ public:
 	void entryTexts();
 	void checkInput();
 	void setMode();
-	void getBackFromOps();
+	void showDiary();
 	void openSarters();
 	void putUnderCentre();
 	void checkObjectSize();
@@ -630,7 +630,7 @@ public:
 	void train();
 	void fadeDownMon();
 	void bartender();
-	void showDiary();
+	void getBackFromOps();
 	void sLabDoorF();
 	void outOfOpen();
 	void dirCom();
@@ -867,7 +867,6 @@ public:
 	void autoAppear();
 	void openRyan();
 	void callHotelLift();
-	void showMan();
 	void useFullCart();
 	void newPlace();
 	void loadSample();

@@ -406,6 +406,7 @@
 	void showKeypad();
 	void showOuterPad();
 	void showExit();
+	void showMan();
 	void buttonOne();
 	void buttonTwo();
 	void buttonThree();
