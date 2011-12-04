@@ -87,7 +87,6 @@ p = parser(skip_binary_data = [
 	'tempcharset',
 	# vgagrafx.asm
 	'cityname',
-	'Icongraphics8',
 	'shaketable',
 	'symbolgraphic',
 	'travelgraphic1',
