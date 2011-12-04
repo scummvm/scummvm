@@ -171,12 +171,6 @@ uint8 DreamGenContext::printDirect(const uint8** string, uint16 x, uint16 *y, ui
 	}
 }
 
-void DreamGenContext::getNumber() {
-	uint16 offset = di;
-	cl = getNumber((Frame *)ds.ptr(0, 0), es.ptr(si, 0), dl, (bool)(dl & 1), &offset);
-	di = offset;
-}
-
 uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint16 maxWidth, bool centered, uint16* offset) {
 	uint8 totalWidth = 0;
 	uint8 charCount = 0;
