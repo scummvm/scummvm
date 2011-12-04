@@ -2488,6 +2488,10 @@ Frame * DreamGenContext::icons1() {
 	return (Frame *)getSegment(data.word(kIcons1)).ptr(0, 0);
 }
 
+Frame * DreamGenContext::icons2() {
+	return (Frame *)getSegment(data.word(kIcons2)).ptr(0, 0);
+}
+
 void DreamGenContext::playChannel0(uint8 index, uint8 repeat) {
 	if (data.byte(kSoundint) == 255)
 		return;
