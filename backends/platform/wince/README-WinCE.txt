@@ -1,10 +1,17 @@
 ScummVM Windows CE FAQ
-Last updated: 2011-10-15
-Release version: 1.4.0
+Last updated: 2011-12-05
+Release version: x.x.x
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
+x.x.x:
+- Removed FLAC support for audio datafiles (now for real, this was originally
+  announced for 1.0.0, but the library was still included until now). This is
+  done because of size constrains of the executable and also FLAC on a mobile
+  device isn't really recommended - so please use MP3 or Ogg for your audio
+  datafiles.
+
 1.4.0:
 - Changed the memory management so that it is finally possible to break the
   32MB per process barrier on Windows CE. It should be possible now (finally)
@@ -18,6 +25,8 @@ New in this version
 - Discworld 2 is now playable (works now because of the new memory management)
 - Replaced the game mass-adding functionality with the functionality used on
   all other platforms. It now shows progress while searching for games.
+- Mapped "Skip" button to F10 for AGI games
+- Mapped "Multi Function" to F10 in Simon 1 & 2 (enables hotspot highlighting)
 
 1.3.1:
 - Fix for Normal2xAspect scaler which was causing screen update issues in some
@@ -60,7 +69,7 @@ scummvm2.exe:
  - agos, cine, drascula, gob, groovie, kyra, made, parallaction, saga,
    teenagent, tucker
 scummvm3.exe:
- - hugo, mohawk, sci, sword2, toon
+ - hugo, mohawk, sci, sword2, toon, tsage
 
 There are no other port specific changes.
 
