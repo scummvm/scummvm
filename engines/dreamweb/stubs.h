@@ -409,6 +409,7 @@
 	void loadKeypad();
 	void showKeypad();
 	void showOuterPad();
+	void showSymbol();
 	void showExit();
 	void showMan();
 	void panelIcons1();

@@ -559,7 +559,6 @@ public:
 	void usePoolReader();
 	void useOpenBox();
 	void clearBuffers();
-	void showSymbol();
 	void getObTextStart();
 	void decide();
 	void getRidOfReels();
