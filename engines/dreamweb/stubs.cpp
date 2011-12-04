@@ -3110,6 +3110,10 @@ void DreamGenContext::atmospheres() {
 	cancelCh0();
 }
 
+void DreamGenContext::readCityPic() {
+	loadIntoTemp("DREAMWEB.G04");
+}
+
 void DreamGenContext::readKey() {
 	uint16 bufOut = data.word(kBufferout);
 

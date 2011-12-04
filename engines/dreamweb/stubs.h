@@ -63,6 +63,7 @@
 	void printSprites();
 	void quickQuit();
 	void readOneBlock();
+	void readCityPic();
 	void printUnderMon();
 	void seeCommandTail();
 	void randomNumber();
