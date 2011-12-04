@@ -356,7 +356,6 @@ void DreamGenContext::manAsleep(ReelRoutine &routine) {
 
 
 void DreamGenContext::drunk(ReelRoutine &routine) {
-	_cmp(data.byte(kGeneraldead), 0);
 	if (data.byte(kGeneraldead))
 		return;
 	routine.b7 &= 127;
