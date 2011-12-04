@@ -179,31 +179,30 @@ uint8 DreamGenContext::getNumber(const Frame *charSet, const uint8 *string, uint
 		uint8 done = getNextWord(charSet, string, &wordTotalWidth, &wordCharCount);
 		string += wordCharCount;
 
+		uint16 tmp = totalWidth + wordTotalWidth - 10;
 		if (done == 1) { //endoftext
-			ax = totalWidth + wordTotalWidth - 10;
-			if (ax < maxWidth) {
+			if (tmp < maxWidth) {
 				totalWidth += wordTotalWidth;
 				charCount += wordCharCount;
 			}
 
 			if (centered) {
-				ax = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
-				ax /= 2;
+				tmp = (maxWidth & 0xfe) + 2 + 20 - totalWidth;
+				tmp /= 2;
 			} else {
-				ax = 0;
+				tmp = 0;
 			}
-			*offset += ax;
+			*offset += tmp;
 			return charCount;
 		}
-		ax = totalWidth + wordTotalWidth - 10;
-		if (ax >= maxWidth) { //gotoverend
+		if (tmp >= maxWidth) { //gotoverend
 			if (centered) {
-				ax = (maxWidth & 0xfe) - totalWidth + 20;
-				ax /= 2;
+				tmp = (maxWidth & 0xfe) - totalWidth + 20;
+				tmp /= 2;
 			} else {
-				ax = 0;
+				tmp = 0;
 			}
-			*offset += ax;
+			*offset += tmp;
 			return charCount;
 		}
 		totalWidth += wordTotalWidth;
