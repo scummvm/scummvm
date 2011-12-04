@@ -301,7 +301,7 @@ void DreamGenContext::rockstar(ReelRoutine &routine) {
 					nextReelPointer = 79;
 				}
 			} else {
-				data.byte(kLastweapon) = -1;
+				data.byte(kLastweapon) = (uint8)-1;
 				nextReelPointer = 123;
 			}
 		}
@@ -368,7 +368,7 @@ void DreamGenContext::security(ReelRoutine &routine) {
 		if (data.byte(kLastweapon) == 1) {
 			data.word(kWatchingtime) = 10;
 			if ((data.byte(kManspath) == 9) && (data.byte(kFacing) == 0)) {
-				data.byte(kLastweapon) = -1;
+				data.byte(kLastweapon) = (uint8)-1;
 				routine.incReelPointer();
 			}
 		}
