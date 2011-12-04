@@ -64,6 +64,7 @@
 	void quickQuit();
 	void readOneBlock();
 	void readCityPic();
+	void readDestIcon();
 	void printUnderMon();
 	void seeCommandTail();
 	void randomNumber();

@@ -3114,6 +3114,12 @@ void DreamGenContext::readCityPic() {
 	loadIntoTemp("DREAMWEB.G04");
 }
 
+void DreamGenContext::readDestIcon() {
+	loadIntoTemp("DREAMWEB.G05");
+	loadIntoTemp2("DREAMWEB.G06");
+	loadIntoTemp3("DREAMWEB.G08");
+}
+
 void DreamGenContext::readKey() {
 	uint16 bufOut = data.word(kBufferout);
 
