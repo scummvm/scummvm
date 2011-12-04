@@ -431,13 +431,11 @@ void DreamGenContext::zoom() {
 }
 
 void DreamGenContext::panelToMap() {
-	SegmentRef mapstore = getSegment(data.word(kMapstore));
-	multiGet(getSegment(mapstore).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiGet(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamGenContext::mapToPanel() {
-	SegmentRef mapstore = getSegment(data.word(kMapstore));
-	multiPut(getSegment(mapstore).ptr(0, 0), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
+	multiPut(mapStore(), data.word(kMapxstart) + data.word(kMapadx), data.word(kMapystart) + data.word(kMapady), data.byte(kMapxsize), data.byte(kMapysize));
 }
 
 void DreamGenContext::dumpMap() {
@@ -471,14 +469,12 @@ bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 }
 
 void DreamGenContext::loadPalFromIFF() {
-	SegmentRef mapstore = getSegment(data.word(kMapstore));
-
 	// TODO: Get rid of data blob position kPalettescreen;
 	engine->openFile("DREAMWEB.PAL");
-	engine->readFromFile(mapstore.ptr(0, 2000), 2000);
+	engine->readFromFile(mapStore(), 2000);
 	engine->closeFile();
 
-	const uint8 *src = mapstore.ptr(0x30, 0);
+	const uint8 *src = mapStore() + 0x30;
 	uint8 *dst = mainPalette();
 	for (size_t i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;

@@ -138,7 +138,7 @@ void DreamGenContext::input() {
 		inputLine[data.word(kCurpos) * 2 + 0] = currentKey;
 		if (currentKey > 'Z')
 			continue;
-		multiGet(getSegment(data.word(kMapstore)).ptr(data.word(kCurpos) * 256, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
+		multiGet(mapStore() + data.word(kCurpos) * 256, data.word(kMonadx), data.word(kMonady), 8, 8);
 		uint8 charWidth;
 		printChar(engine->tempCharset(), data.word(kMonadx), data.word(kMonady), currentKey, 0, &charWidth, NULL);
 		inputLine[data.word(kCurpos) * 2 + 1] = charWidth;
@@ -157,7 +157,7 @@ void DreamGenContext::delChar() {
 	data.word(kCurslocx) -= width;
 	uint16 offset = data.word(kCurpos);
 	offset = ((offset & 0x00ff) << 8) | ((offset & 0xff00) >> 8);
-	multiPut(getSegment(data.word(kMapstore)).ptr(offset, 0), data.word(kMonadx), data.word(kMonady), 8, 8);
+	multiPut(mapStore() + offset, data.word(kMonadx), data.word(kMonady), 8, 8);
 	multiDump(data.word(kMonadx), data.word(kMonady), al, 8);
 }
 

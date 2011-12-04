@@ -56,6 +56,7 @@
 	void frameOutFx(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y);
 	void workToScreen();
 	void workToScreenCPP();
+	uint8 *mapStore();
 	void multiGet();
 	void multiGet(uint8 *dst, uint16 x, uint16 y, uint8 width, uint8 height);
 	void cls();
