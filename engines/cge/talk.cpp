@@ -271,7 +271,15 @@ void InfoLine::update(const char *text) {
 			uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];
 			uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
-			for (uint16 i = 0; i < cw; i++) {
+			// This hack compensates the font modification done to fix the display 
+			// of the 'F1' text. Specifically, it reduces the width of the space
+			// character when it has been enlarged.
+			// This hack fixes bug #3450423.
+			int8 hackStart = 0;
+			if ((*text == 0x20) && (cw > 4))
+				hackStart = 2;
+
+			for (uint16 i = hackStart; i < cw; i++) {
 				uint16 b = fp[i];
 				for (uint16 n = 0; n < kFontHigh; n++) {
 					if (b & 1)
