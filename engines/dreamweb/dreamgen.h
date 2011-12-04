@@ -862,7 +862,6 @@ public:
 	void setTopLeft();
 	void searchForString();
 	void selectOpenOb();
-	void security();
 	void showSlots();
 	void useGun();
 	void autoAppear();

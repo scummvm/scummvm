@@ -38,7 +38,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	&DreamGenContext::bartender, NULL,
 	&DreamGenContext::tattooMan, &DreamGenContext::attendant,
 	&DreamGenContext::keeper, &DreamGenContext::candles1,
-	&DreamGenContext::smallCandle, &DreamGenContext::security,
+	&DreamGenContext::smallCandle, NULL,
 	&DreamGenContext::copper, &DreamGenContext::poolGuard,
 	NULL, &DreamGenContext::businessMan,
 	&DreamGenContext::train, &DreamGenContext::aide,
@@ -70,7 +70,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	/*&DreamGenContext::bartender*/NULL, &DreamGenContext::otherSmoker,
 	/*&DreamGenContext::tattooMan*/NULL, /*&DreamGenContext::attendant*/NULL,
 	/*&DreamGenContext::keeper*/NULL, /*&DreamGenContext::candles1*/NULL,
-	/*&DreamGenContext::smallcandle*/NULL, /*&DreamGenContext::security*/NULL,
+	/*&DreamGenContext::smallcandle*/NULL, &DreamGenContext::security,
 	/*&DreamGenContext::copper*/NULL, /*&DreamGenContext::poolGuard*/NULL,
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	/*&DreamGenContext::train*/NULL, /*&DreamGenContext::aide*/NULL,
@@ -360,6 +360,26 @@ void DreamGenContext::drunk(ReelRoutine &routine) {
 	if (data.byte(kGeneraldead))
 		return;
 	routine.b7 &= 127;
+	showGameReel(&routine);
+	addToPeopleList(&routine);
+}
+
+void DreamGenContext::security(ReelRoutine &routine) {
+	if (routine.reelPointer() == 32) {
+		if (data.byte(kLastweapon) == 1) {
+			data.word(kWatchingtime) = 10;
+			if ((data.byte(kManspath) == 9) && (data.byte(kFacing) == 0)) {
+				data.byte(kLastweapon) = -1;
+				routine.incReelPointer();
+			}
+		}
+	} else if (routine.reelPointer() == 69)
+		return;
+	else {
+		data.word(kWatchingtime) = 10;
+		if (checkSpeed(routine))
+			routine.incReelPointer();
+	}
 	showGameReel(&routine);
 	addToPeopleList(&routine);
 }

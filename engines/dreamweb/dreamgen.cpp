@@ -650,40 +650,6 @@ combatover2:
 	data.byte(kMandead) = 2;
 }
 
-void DreamGenContext::security() {
-	STACK_CHECK;
-	_cmp(es.word(bx+3), 32);
-	if (flags.z())
-		goto securwait;
-	_cmp(es.word(bx+3), 69);
-	if (!flags.z())
-		goto notaftersec;
-	return;
-notaftersec:
-	data.word(kWatchingtime) = 10;
-	checkSpeed();
-	if (!flags.z())
-		goto gotsecurframe;
-	_inc(es.word(bx+3));
-	goto gotsecurframe;
-securwait:
-	_cmp(data.byte(kLastweapon), 1);
-	if (!flags.z())
-		goto gotsecurframe;
-	data.word(kWatchingtime) = 10;
-	_cmp(data.byte(kManspath), 9);
-	if (!flags.z())
-		goto gotsecurframe;
-	_cmp(data.byte(kFacing), 0);
-	if (!flags.z())
-		goto gotsecurframe;
-	data.byte(kLastweapon) = -1;
-	_inc(es.word(bx+3));
-gotsecurframe:
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::heavy() {
 	STACK_CHECK;
 	al = es.byte(bx+7);
