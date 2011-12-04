@@ -310,6 +310,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'makesprite',
 	'makeworn',
 	'malefan',
+	'manasleep',
 	'maptopanel',
 	'modifychar',
 	'monmessage',

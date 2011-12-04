@@ -662,7 +662,6 @@ public:
 	void openPoolBoss();
 	void usePlate();
 	void lookInInterface();
-	void manAsleep();
 	void hotelBell();
 	void loadSpeech();
 	void adjustLeft();

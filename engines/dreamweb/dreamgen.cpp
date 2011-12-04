@@ -118,15 +118,6 @@ void DreamGenContext::attendant() {
 	data.byte(kTalkedtoattendant) = 1;
 }
 
-void DreamGenContext::manAsleep() {
-	STACK_CHECK;
-	al = es.byte(bx+7);
-	_and(al, 127);
-	es.byte(bx+7) = al;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::edenInBath() {
 	STACK_CHECK;
 	_cmp(data.byte(kGeneraldead), 0);
