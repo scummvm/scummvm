@@ -469,7 +469,6 @@ bool DreamGenContext::pixelCheckSet(const ObjPos *pos, uint8 x, uint8 y) {
 }
 
 void DreamGenContext::loadPalFromIFF() {
-	// TODO: Get rid of data blob position kPalettescreen;
 	engine->openFile("DREAMWEB.PAL");
 	engine->readFromFile(mapStore(), 2000);
 	engine->closeFile();

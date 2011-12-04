@@ -68,6 +68,7 @@ p = parser(skip_binary_data = [
 	'error6patch',
 	'gameinfo',
 	'endgametext1',
+	'savefiles',
 	# sblaster.asm
 	'dmaaddresses',
 	# sprite.asm
@@ -116,6 +117,10 @@ p = parser(skip_binary_data = [
 	'monitorfile23',
 	'monitorfile24',
 	'introtextfile',
+	'palettescreen',
+	'idname',
+	'samplename',
+	# 'basicsample', # This can't be removed due to tasm-recover limitations
 	])
 p.strip_path = 3
 context = p.parse('dreamweb/dreamweb.asm')
@@ -311,7 +316,9 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'loadposition',
 	'loadroom',
 	'loadroomssample',
+	'loadsample',
 	'loadsavebox',
+	'loadsecondsample',
 	'loadtempcharset',
 	'loadtemptext',
 	'loadtraveltext',

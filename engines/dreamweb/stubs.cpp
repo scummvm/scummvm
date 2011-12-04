@@ -484,8 +484,7 @@ void DreamGenContext::dreamweb() {
 	readSetData();
 	data.byte(kWongame) = 0;
 
-	dx = kBasicsample;
-	loadSample();
+	engine->loadSounds(0, "DREAMWEB.V99"); // basic sample
 	setSoundOff();
 
 	bool firstLoop = true;
@@ -1100,20 +1099,6 @@ void DreamGenContext::checkSoundInt() {
 
 void DreamGenContext::setSoundOff() {
 	warning("setsoundoff: STUB");
-}
-
-void DreamGenContext::loadSample() {
-	engine->loadSounds(0, (const char *)data.ptr(dx, 13));
-}
-
-void DreamGenContext::loadSecondSample() {
-	uint8 ch0 = data.byte(kCh0playing);
-	if (ch0 >= 12 && ch0 != 255)
-		cancelCh0();
-	uint8 ch1 = data.byte(kCh1playing);
-	if (ch1 >= 12)
-		cancelCh1();
-	engine->loadSounds(1, (const char *)data.ptr(dx, 13));
 }
 
 void DreamGenContext::loadSpeech() {
@@ -2456,11 +2441,16 @@ void DreamGenContext::loadRoomsSample() {
 	if (sample == 255 || data.byte(kCurrentsample) == sample)
 		return; // loaded already
 
-	data.byte(kCurrentsample) = sample;
-	cs.byte(kSamplename+10) = '0' + sample / 10;
-	cs.byte(kSamplename+11) = '0' + sample % 10;
-	dx = kSamplename;
-	loadSecondSample();
+	assert(sample < 100);
+	Common::String sampleName = Common::String::format("DREAMWEB.V%02d", sample);
+
+	uint8 ch0 = data.byte(kCh0playing);
+	if (ch0 >= 12 && ch0 != 255)
+		cancelCh0();
+	uint8 ch1 = data.byte(kCh1playing);
+	if (ch1 >= 12)
+		cancelCh1();
+	engine->loadSounds(1, sampleName.c_str());
 }
 
 void DreamGenContext::readSetData() {
