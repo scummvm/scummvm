@@ -80,6 +80,7 @@ p = parser(skip_binary_data = [
 	'r20','r22','r23','r25','r26','r27','r28','r29',
 	'r45','r46','r47','r52','r53','r55',
 	# titles.asm
+	'introtextname',
 	'title0graphics',
 	'title1graphics',
 	'title2graphics',
