@@ -3148,5 +3148,36 @@ void DreamGenContext::hangOne() {
 	hangOne(cx);
 }
 
+void DreamGenContext::bibleQuote() {
+	mode640x480();
+
+	showPCX("DREAMWEB.I00");
+	fadeScreenUps();
+
+	hangOne(80);
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) = 0;
+		return; // "biblequotearly"
+	}
+
+	hangOne(560);
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) = 0;
+		return; // "biblequotearly"
+	}
+
+	fadeScreenDowns();
+
+	hangOne(200);
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) = 0;
+		return; // "biblequotearly"
+	}
+
+	cancelCh0();
+
+	data.byte(kLasthardkey) = 0;
+}
+
 } /*namespace dreamgen */
 

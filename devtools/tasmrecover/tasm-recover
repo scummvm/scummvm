@@ -147,6 +147,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'autosetwalk',
 	'backobject',
 	'barwoman',
+	'biblequote',
 	'blockget',
 	'blocknametext',
 	'bothchannels',

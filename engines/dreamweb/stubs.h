@@ -451,5 +451,6 @@
 	void hangOne();
 	void showPCX(const ::Common::String &name);
 	void showPCX();
+	void bibleQuote();
 
 #endif

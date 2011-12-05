@@ -787,7 +787,6 @@ public:
 	void candles1();
 	void showOpBox();
 	void clearBeforeLoad();
-	void bibleQuote();
 	void doFade();
 	void useTrainer();
 	void dumpCurrent();

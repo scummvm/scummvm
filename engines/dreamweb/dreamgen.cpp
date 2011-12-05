@@ -2396,33 +2396,6 @@ void DreamGenContext::gettingShot() {
 	clearBeforeLoad();
 }
 
-void DreamGenContext::bibleQuote() {
-	STACK_CHECK;
-	mode640x480();
-	dx = 1100;
-	showPCX();
-	fadeScreenUps();
-	cx = 80;
-	hangOne();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto biblequotearly;
-	cx = 560;
-	hangOne();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto biblequotearly;
-	fadeScreenDowns();
-	cx = 200;
-	hangOne();
-	_cmp(data.byte(kLasthardkey), 1);
-	if (flags.z())
-		goto biblequotearly;
-	cancelCh0();
-biblequotearly:
-	data.byte(kLasthardkey) = 0;
-}
-
 void DreamGenContext::intro() {
 	STACK_CHECK;
 	dx = 1035;
