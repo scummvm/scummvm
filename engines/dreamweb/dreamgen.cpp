@@ -8877,23 +8877,6 @@ void DreamGenContext::dumpSymbol() {
 	multiDump();
 }
 
-void DreamGenContext::nextSymbol() {
-	STACK_CHECK;
-	_inc(al);
-	_cmp(al, 6);
-	if (flags.z())
-		goto topwrap;
-	_cmp(al, 12);
-	if (flags.z())
-		goto botwrap;
-	return;
-topwrap:
-	al = 0;
-	return;
-botwrap:
-	al = 6;
-}
-
 void DreamGenContext::updateSymbolTop() {
 	STACK_CHECK;
 	_cmp(data.byte(kSymboltopdir), 0);

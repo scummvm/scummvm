@@ -344,6 +344,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'namestoold',
 	'neterror',
 	'nextfolder',
+	'nextsymbol',
 	'obicons',
 	'obname',
 	'obpicture',

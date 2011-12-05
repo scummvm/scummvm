@@ -674,7 +674,6 @@ public:
 	void runIntroSeq();
 	void nextColon();
 	void attendant();
-	void nextSymbol();
 	void monks2text();
 	void clearPalette();
 	void cantDrop();

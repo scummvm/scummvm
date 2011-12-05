@@ -409,6 +409,7 @@
 	void loadKeypad();
 	void showKeypad();
 	void showOuterPad();
+	uint8 nextSymbol(uint8 symbol);
 	void showSymbol();
 	void showExit();
 	void showMan();

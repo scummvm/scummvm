@@ -3120,25 +3120,28 @@ void DreamGenContext::readDestIcon() {
 	loadIntoTemp3("DREAMWEB.G08");
 }
 
+uint8 DreamGenContext::nextSymbol(uint8 symbol) {
+	uint8 result = symbol + 1;
+	if (result == 6)
+		return 0;
+	if (result == 12)
+		return 6;
+	return result;
+}
+
 void DreamGenContext::showSymbol() {
 	showFrame(tempGraphics(), kSymbolx, kSymboly, 12, 0);
 
 	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx-44, kSymboly+20, data.byte(kSymboltopnum), 32);
-	al = data.byte(kSymboltopnum);
-	nextSymbol();
-	uint8 nextTopSymbol = al;
+	uint8 nextTopSymbol = nextSymbol(data.byte(kSymboltopnum));
 	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx+5, kSymboly+20, nextTopSymbol, 32);
-	nextSymbol();
-	uint8 nextNextTopSymbol = al;
+	uint8 nextNextTopSymbol = nextSymbol(nextTopSymbol);
 	showFrame(tempGraphics(), data.byte(kSymboltopx) + kSymbolx+54, kSymboly+20, nextNextTopSymbol, 32);
 
 	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx-44, kSymboly+49, 6 + data.byte(kSymbolbotnum), 32);
-	al = data.byte(kSymbolbotnum);
-	nextSymbol();
-	uint8 nextBotSymbol = al;
+	uint8 nextBotSymbol = nextSymbol(data.byte(kSymbolbotnum));
 	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx+5, kSymboly+49, 6 + nextBotSymbol, 32);
-	nextSymbol();
-	uint8 nextNextBotSymbol = al;
+	uint8 nextNextBotSymbol = nextSymbol(nextBotSymbol);
 	showFrame(tempGraphics(), data.byte(kSymbolbotx) + kSymbolx+54, kSymboly+49, 6 + nextNextBotSymbol, 32);
 }
 
