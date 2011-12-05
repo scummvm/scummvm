@@ -550,7 +550,6 @@ public:
 	void clearBuffers();
 	void getObTextStart();
 	void decide();
-	void getRidOfReels();
 	void entryTexts();
 	void checkInput();
 	void setMode();
@@ -763,7 +762,6 @@ public:
 	void candles2();
 	void candles1();
 	void showOpBox();
-	void clearBeforeLoad();
 	void doFade();
 	void useTrainer();
 	void dumpCurrent();
@@ -848,7 +846,6 @@ public:
 	void updateSymbolTop();
 	void allPointer();
 	void checkSoundInt();
-	void clearReels();
 	void doSaveLoad();
 	void createName();
 	void getPersonText();

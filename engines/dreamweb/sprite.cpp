@@ -1148,5 +1148,29 @@ void DreamGenContext::soundOnReels() {
 		data.word(kLastsoundreel) = -1;
 }
 
+void DreamGenContext::clearBeforeLoad() {
+	if (data.byte(kRoomloaded) != 1)
+		return /* (noclear) */;
+
+	clearReels();
+	clearRest();
+	data.byte(kRoomloaded) = 0;
+}
+
+void DreamGenContext::clearReels() {
+	deallocateMem(data.word(kReel1));
+	deallocateMem(data.word(kReel2));
+	deallocateMem(data.word(kReel3));
+}
+
+void DreamGenContext::getRidOfReels() {
+	if (data.byte(kRoomloaded) == 0)
+		return /* (dontgetrid) */;
+
+	deallocateMem(data.word(kReel1));
+	deallocateMem(data.word(kReel2));
+	deallocateMem(data.word(kReel3));
+}
+
 } /*namespace dreamgen */
 

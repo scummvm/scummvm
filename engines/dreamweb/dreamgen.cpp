@@ -9636,26 +9636,6 @@ void DreamGenContext::clearChanges() {
 	_stosw(cx, true);
 }
 
-void DreamGenContext::clearBeforeLoad() {
-	STACK_CHECK;
-	_cmp(data.byte(kRoomloaded), 1);
-	if (!flags.z())
-		return /* (noclear) */;
-	clearReels();
-	clearRest();
-	data.byte(kRoomloaded) = 0;
-}
-
-void DreamGenContext::clearReels() {
-	STACK_CHECK;
-	es = data.word(kReel1);
-	deallocateMem();
-	es = data.word(kReel2);
-	deallocateMem();
-	es = data.word(kReel3);
-	deallocateMem();
-}
-
 void DreamGenContext::clearRest() {
 	STACK_CHECK;
 	es = data.word(kMapdata);
@@ -10277,19 +10257,6 @@ _tmp1:
 	cl = (228);
 	ch = (13);
 	multiGet();
-}
-
-void DreamGenContext::getRidOfReels() {
-	STACK_CHECK;
-	_cmp(data.byte(kRoomloaded), 0);
-	if (flags.z())
-		return /* (dontgetrid) */;
-	es = data.word(kReel1);
-	deallocateMem();
-	es = data.word(kReel2);
-	deallocateMem();
-	es = data.word(kReel3);
-	deallocateMem();
 }
 
 void DreamGenContext::__start() { 

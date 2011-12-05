@@ -473,5 +473,8 @@
 	void fadeScreenUpHalf();
 	void fadeScreenDown();
 	void fadeScreenDowns();
+	void clearBeforeLoad();
+	void clearReels();
+	void getRidOfReels();
 
 #endif
