@@ -43,7 +43,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, &DreamGenContext::businessMan,
 	&DreamGenContext::train, NULL,
 	&DreamGenContext::mugger, &DreamGenContext::helicopter,
-	NULL, &DreamGenContext::introMusic,
+	NULL, NULL,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
 	&DreamGenContext::introMonks1, &DreamGenContext::candles,
@@ -75,7 +75,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::rockstar, /*&DreamGenContext::businessMan*/NULL,
 	/*&DreamGenContext::train*/NULL, &DreamGenContext::genericPerson /*aide*/,
 	/*&DreamGenContext::mugger*/NULL, /*&DreamGenContext::helicopter*/NULL,
-	&DreamGenContext::introMagic1, /*&DreamGenContext::introMusic*/NULL,
+	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
 	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::introMagic3*/NULL,
 	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
@@ -373,6 +373,9 @@ void DreamGenContext::introMagic1(ReelRoutine &routine) {
 		}
 	}
 	showGameReel(&routine);
+}
+
+void DreamGenContext::introMusic(ReelRoutine &routine) {
 }
 
 void DreamGenContext::security(ReelRoutine &routine) {

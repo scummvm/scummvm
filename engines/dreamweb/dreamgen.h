@@ -690,7 +690,6 @@ public:
 	void errorMessage3();
 	void introMagic2();
 	void introMagic3();
-	void edenInBath();
 	void showDiaryPage();
 	void useShield();
 	void getBackToOps();
@@ -699,7 +698,7 @@ public:
 	void transferToEx();
 	void reExFromInv();
 	void examineInventory();
-	void useDryer();
+	void businessMan();
 	void outOfInv();
 	void diaryKeyP();
 	void transferMap();
@@ -826,6 +825,7 @@ public:
 	void openFile();
 	void showPuzText();
 	void incRyanPage();
+	void edenInBath();
 	void findExObject();
 	void clearChanges();
 	void useChurchHole();
@@ -875,12 +875,11 @@ public:
 	void emergencyPurge();
 	void alleyBarkSound();
 	void useCart();
-	void introMusic();
 	void quitKey();
 	void processTrigger();
 	void volumeAdjust();
 	void transferConToEx();
-	void businessMan();
+	void useDryer();
 	void adjustDown();
 	void withWhat();
 	void openOb();

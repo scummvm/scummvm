@@ -44,10 +44,6 @@ nobark:
 	es.word(bx+3) = ax;
 }
 
-void DreamGenContext::introMusic() {
-	STACK_CHECK;
-}
-
 void DreamGenContext::foghornSound() {
 	STACK_CHECK;
 	randomNumber();
