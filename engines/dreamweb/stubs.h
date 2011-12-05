@@ -414,6 +414,8 @@
 	void introMusic(ReelRoutine &routine);
 	void candles(ReelRoutine &routine);
 	void security(ReelRoutine &routine);
+	void edenInBath(ReelRoutine &routine);
+	void louis(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();
 	void loadKeypad();

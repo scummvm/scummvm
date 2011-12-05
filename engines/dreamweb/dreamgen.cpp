@@ -114,27 +114,6 @@ void DreamGenContext::attendant() {
 	data.byte(kTalkedtoattendant) = 1;
 }
 
-void DreamGenContext::edenInBath() {
-	STACK_CHECK;
-	_cmp(data.byte(kGeneraldead), 0);
-	if (flags.z())
-		return /* (notinbath) */;
-	_cmp(data.byte(kSartaindead), 0);
-	if (!flags.z())
-		return /* (notinbath) */;
-	showGameReel();
-	addToPeopleList();
-}
-
-void DreamGenContext::louis() {
-	STACK_CHECK;
-	_cmp(data.byte(kRockstardead), 0);
-	if (!flags.z())
-		return /* (notlouis1) */;
-	showGameReel();
-	addToPeopleList();
-}
-
 void DreamGenContext::louisChair() {
 	STACK_CHECK;
 	_cmp(data.byte(kRockstardead), 0);

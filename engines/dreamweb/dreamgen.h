@@ -551,7 +551,6 @@ public:
 	void getObTextStart();
 	void decide();
 	void getRidOfReels();
-	void louis();
 	void entryTexts();
 	void checkInput();
 	void setMode();
@@ -823,7 +822,6 @@ public:
 	void useHandle();
 	void showPuzText();
 	void incRyanPage();
-	void edenInBath();
 	void findExObject();
 	void manAsleep2();
 	void useChurchHole();

@@ -26,11 +26,11 @@ namespace DreamGen {
 
 static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
-	NULL, &DreamGenContext::edenInBath,
+	NULL, NULL,
 	NULL, NULL,
 	NULL, NULL,
 	&DreamGenContext::receptionist, NULL,
-	NULL, &DreamGenContext::louis,
+	NULL, NULL,
 	&DreamGenContext::louisChair, &DreamGenContext::soldier1,
 	&DreamGenContext::bossMan, &DreamGenContext::interviewer,
 	&DreamGenContext::heavy, &DreamGenContext::manAsleep2,
@@ -58,11 +58,11 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 
 static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::gamer, &DreamGenContext::sparkyDrip,
-	&DreamGenContext::eden, /*&DreamGenContext::edenInBath*/NULL,
+	&DreamGenContext::eden, &DreamGenContext::edenInBath,
 	&DreamGenContext::sparky, &DreamGenContext::smokeBloke,
 	&DreamGenContext::manAsleep, &DreamGenContext::drunk,
 	/*&DreamGenContext::receptionist*/NULL, &DreamGenContext::genericPerson /*maleFan*/,
-	&DreamGenContext::genericPerson /*femaleFan*/, /*&DreamGenContext::louis*/NULL,
+	&DreamGenContext::genericPerson /*femaleFan*/, &DreamGenContext::louis,
 	/*&DreamGenContext::louisChair*/NULL, /*&DreamGenContext::soldier1*/NULL,
 	/*&DreamGenContext::bossMan*/NULL, /*&DreamGenContext::interviewer*/NULL,
 	/*&DreamGenContext::heavy*/NULL, /*&DreamGenContext::manAsleep2*/NULL,
@@ -406,6 +406,22 @@ void DreamGenContext::security(ReelRoutine &routine) {
 	}
 	showGameReel(&routine);
 	addToPeopleList(&routine);
+}
+
+void DreamGenContext::edenInBath(ReelRoutine &routine) {
+	if (data.byte(kGeneraldead) == 0 || data.byte(kSartaindead) != 0)
+		return;
+
+	showGameReel();
+	addToPeopleList();
+}
+
+void DreamGenContext::louis(ReelRoutine &routine) {
+	if (data.byte(kRockstardead) != 0)
+		return;
+
+	showGameReel();
+	addToPeopleList();
 }
 
 } /*namespace dreamgen */
