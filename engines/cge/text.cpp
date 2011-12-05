@@ -182,7 +182,7 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_vga->_showQ->insert(speaker, _vm->_vga->_showQ->last());
 }
 
-void CGEEngine::inf(const char *text) {
+void CGEEngine::inf(const char *text, bool wideSpace) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
 	if (!text)
 		return;
@@ -191,7 +191,7 @@ void CGEEngine::inf(const char *text) {
 		return;
 
 	killText();
-	_talk = new Talk(this, text, kTBRect);
+	_talk = new Talk(this, text, kTBRect, wideSpace);
 	if (!_talk)
 		return;
 

@@ -194,7 +194,7 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdInf:
 			if (_talkEnable) {
-				_vm->inf(_vm->_text->getText(tailCmd->_val));
+				_vm->inf(_vm->_text->getText(tailCmd->_val), true);
 				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;

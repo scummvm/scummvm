@@ -73,8 +73,8 @@ uint16 Font::width(const char *text) {
 	return w;
 }
 
-Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode)
-	: Sprite(vm, NULL), _mode(mode), _vm(vm) {
+Talk::Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace)
+	: Sprite(vm, NULL), _mode(mode), _wideSpace(wideSpace), _vm(vm) {
 	_ts = NULL;
 	_flags._syst = true;
 	update(text);
@@ -85,6 +85,7 @@ Talk::Talk(CGEEngine *vm)
 	: Sprite(vm, NULL), _mode(kTBPure), _vm(vm) {
 	_ts = NULL;
 	_flags._syst = true;
+	_wideSpace = false;
 }
 
 void Talk::update(const char *text) {
@@ -103,7 +104,9 @@ void Talk::update(const char *text) {
 				if (k > mw)
 					mw = k;
 				k = 2 * hmarg;
-			} else
+			} else if ((*p == 0x20) && (_vm->_font->_widthArr[(unsigned char)*p] > 4) && (!_wideSpace))
+				k += _vm->_font->_widthArr[(unsigned char)*p] - 2;
+			else
 				k += _vm->_font->_widthArr[(unsigned char)*p];
 		}
 		if (k > mw)
@@ -122,7 +125,14 @@ void Talk::update(const char *text) {
 		} else {
 			int cw = _vm->_font->_widthArr[(unsigned char)*text];
 			uint8 *f = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
-			for (int i = 0; i < cw; i++) {
+
+			// Handle properly space size, after it was enlarged to display properly
+			// 'F1' text.
+			int8 fontStart = 0;
+			if ((*text == 0x20) && (cw > 4) && (!_wideSpace))
+				fontStart = 2;
+
+			for (int i = fontStart; i < cw; i++) {
 				uint8 *pp = m;
 				uint16 n;
 				uint16 b = *(f++);
@@ -211,10 +221,16 @@ void Talk::putLine(int line, const char *text) {
 	uint8 *q = v + size;
 
 	while (*text) {
-		uint16 cw = _vm->_font->_widthArr[(unsigned char)*text], i;
+		uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];
 		uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
-		for (i = 0; i < cw; i++) {
+		// Handle properly space size, after it was enlarged to display properly
+		// 'F1' text.
+		int8 fontStart = 0;
+		if ((*text == 0x20) && (cw > 4) && (!_wideSpace))
+			fontStart = 2;
+
+		for (int i = fontStart; i < cw; i++) {
 			uint16 b = fp[i];
 			uint16 n;
 			for (n = 0; n < kFontHigh; n++) {
@@ -271,15 +287,13 @@ void InfoLine::update(const char *text) {
 			uint16 cw = _vm->_font->_widthArr[(unsigned char)*text];
 			uint8 *fp = _vm->_font->_map + _vm->_font->_pos[(unsigned char)*text];
 
-			// This hack compensates the font modification done to fix the display 
-			// of the 'F1' text. Specifically, it reduces the width of the space
-			// character when it has been enlarged.
-			// This hack fixes bug #3450423.
-			int8 hackStart = 0;
-			if ((*text == 0x20) && (cw > 4))
-				hackStart = 2;
+			// Handle properly space size, after it was enlarged to display properly
+			// 'F1' text.
+			int8 fontStart = 0;
+			if ((*text == 0x20) && (cw > 4) && (!_wideSpace))
+				fontStart = 2;
 
-			for (uint16 i = hackStart; i < cw; i++) {
+			for (int i = fontStart; i < cw; i++) {
 				uint16 b = fp[i];
 				for (uint16 n = 0; n < kFontHigh; n++) {
 					if (b & 1)

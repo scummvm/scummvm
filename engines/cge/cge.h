@@ -225,7 +225,7 @@ public:
 	void runGame();
 	bool showTitle(const char *name);
 	void movie(const char *ext);
-	void inf(const char *text);
+	void inf(const char *text, bool wideSpace = false);
 	void selectSound();
 	void dummy() {}
 	void NONE();
