@@ -463,5 +463,6 @@
 	void bibleQuote();
 	void realCredits();
 	void intro();
+	Common::String getFilename(Context &context);
 
 #endif

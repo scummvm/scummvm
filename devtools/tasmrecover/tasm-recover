@@ -377,6 +377,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'obtoinv',
 	'oldtonames',
 	'onedigit',
+	'openfile',
 	'openforsave',
 	'othersmoker',
 	'out22c',

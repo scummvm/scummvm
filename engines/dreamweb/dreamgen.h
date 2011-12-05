@@ -821,7 +821,6 @@ public:
 	void useCardReader2();
 	void useCardReader3();
 	void useHandle();
-	void openFile();
 	void showPuzText();
 	void incRyanPage();
 	void edenInBath();

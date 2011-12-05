@@ -735,7 +735,7 @@ void DreamGenContext::switchRyanOff() {
 	data.byte(kRyanon) = 1;
 }
 
-static Common::String getFilename(Context &context) {
+Common::String DreamGenContext::getFilename(Context &context) {
 	const char *name = (const char *)context.cs.ptr(context.dx, 0);
 	return Common::String(name);
 }
@@ -863,14 +863,6 @@ void DreamGenContext::openFileNoCheck() {
 
 void DreamGenContext::openFileFromC() {
 	openFileNoCheck();
-}
-
-void DreamGenContext::openFile() {
-	Common::String name = getFilename(*this);
-	debug(1, "opening file: %s", name.c_str());
-	engine->openFile(name);
-	cs.word(kHandle) = 1; //only one handle
-	flags._c = false;
 }
 
 void DreamGenContext::createFile() {

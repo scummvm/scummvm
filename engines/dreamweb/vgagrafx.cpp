@@ -21,6 +21,7 @@
  */
 
 #include "dreamweb/dreamweb.h"
+#include "dreamweb/stubs.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 
@@ -208,15 +209,6 @@ void DreamGenContext::vSync() {
 void DreamGenContext::setMode() {
 	vSync();
 	initGraphics(320, 200, false);
-}
-
-static Common::String getFilename(Context &context) {
-	uint16 name_ptr = context.dx;
-	Common::String name;
-	uint8 c;
-	while((c = context.cs.byte(name_ptr++)) != 0)
-		name += (char)c;
-	return name;
 }
 
 void DreamGenContext::showPCX(const Common::String &name) {
