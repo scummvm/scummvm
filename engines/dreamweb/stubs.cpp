@@ -3179,5 +3179,162 @@ void DreamGenContext::bibleQuote() {
 	data.byte(kLasthardkey) = 0;
 }
 
+void DreamGenContext::realCredits() {
+	data.byte(kRoomssample) = 33;
+	loadRoomsSample();
+	data.byte(kVolume) = 0;
+
+	mode640x480();
+	hangOn(35);
+
+	showPCX("DREAMWEB.I01");
+	playChannel0(12, 0);
+
+	hangOne(2);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	allPalette();
+	hangOne(80);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	showPCX("DREAMWEB.I02");
+	playChannel0(12, 0);
+	hangOne(2);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	allPalette();
+	hangOne(80);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	showPCX("DREAMWEB.I03");
+	playChannel0(12, 0);
+	hangOne(2);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	allPalette();
+	hangOne(80);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	showPCX("DREAMWEB.I04");
+	playChannel0(12, 0);
+	hangOne(2);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	allPalette();
+	hangOne(80);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	showPCX("DREAMWEB.I05");
+	playChannel0(12, 0);
+	hangOne(2);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	allPalette();
+	hangOne(80);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	showPCX("DREAMWEB.I06");
+	fadeScreenUps();
+	hangOne(60);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	playChannel0(13, 0);
+	hangOne(350);
+
+	if (data.byte(kLasthardkey) == 1) {
+		data.byte(kLasthardkey) =  0;
+		return; // "realcreditsearly"
+	}
+
+	fadeScreenDowns();
+	hangOne(256);
+
+	data.byte(kLasthardkey) =  0;
+}
+
 } /*namespace dreamgen */
 

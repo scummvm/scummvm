@@ -408,6 +408,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'readmouse4',
 	'readoneblock',
 	'readsetdata',
+	'realcredits',
 	'reconstruct',
 	'reelsonscreen',
 	'removeemm',

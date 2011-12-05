@@ -452,5 +452,6 @@
 	void showPCX(const ::Common::String &name);
 	void showPCX();
 	void bibleQuote();
+	void realCredits();
 
 #endif

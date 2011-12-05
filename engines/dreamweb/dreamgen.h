@@ -757,7 +757,6 @@ public:
 	void useElvDoor();
 	void putBackObStuff();
 	void useLadder();
-	void realCredits();
 	void handClap();
 	void afterIntroRoom();
 	void findAllOpen();
