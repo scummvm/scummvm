@@ -1221,5 +1221,67 @@ void Scene2350::process(Event &event) {
 	Scene::process(event);
 }
 
+/*--------------------------------------------------------------------------
+ * Scene 2400 - 
+ *
+ *--------------------------------------------------------------------------*/
+void Scene2400::Exit1::changeScene() {
+	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
+	
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 10;
+
+	Common::Point pt(-10, 150);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+
+}
+	
+void Scene2400::Exit2::changeScene() {
+	Scene2400 *scene = (Scene2400 *)R2_GLOBALS._sceneManager._scene;
+
+	R2_GLOBALS._player.disableControl();
+	scene->_sceneMode = 11;
+
+	Common::Point pt(330, 150);
+	NpcMover *mover = new NpcMover();
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
+}
+
+void Scene2400::postInit(SceneObjectList *OwnerList) {
+	loadScene(2400);
+	SceneExt::postInit();
+	_exit1.setDetails(Rect(0, 125, 14, 165), EXITCURSOR_W, 2000);
+	_exit1.setDest(Common::Point(14, 150));
+	_exit2.setDetails(Rect(305, 125, 320, 165), EXITCURSOR_E, 2000);
+	_exit2.setDest(Common::Point(315, 150));
+	R2_GLOBALS._player.postInit();
+	R2_GLOBALS._player.disableControl();
+
+	if (R2_GLOBALS._v56605[1] == 16) {
+		_sceneMode = 2400;
+		setAction(&_sequenceManager, this, 2400, &R2_GLOBALS._player, NULL);
+	} else {
+		_sceneMode = 2401;
+		setAction(&_sequenceManager, this, 2401, &R2_GLOBALS._player, NULL);
+	}
+}
+	
+void Scene2400::signal() {
+	switch (_sceneMode) {
+	case 10:
+		R2_GLOBALS._v56605[1] = 16;
+		g_globals->_sceneManager.changeScene(2000);
+		break;
+	case 11:
+		R2_GLOBALS._v56605[1] = 17;
+		g_globals->_sceneManager.changeScene(2000);
+		break;
+	default:
+		R2_GLOBALS._player.enableControl();
+		break;
+	}
+}
+
 } // End of namespace Ringworld2
 } // End of namespace TsAGE

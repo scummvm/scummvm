@@ -101,6 +101,7 @@ Scene *Ringworld2Game::createScene(int sceneNumber) {
 		// Balloon Launch Platform
 		return new Scene2350();
 	case 2400:
+		return new Scene2400();
 	case 2425:
 	case 2430:
 	case 2435:

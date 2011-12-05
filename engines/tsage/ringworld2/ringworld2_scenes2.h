@@ -121,7 +121,24 @@ public:
 	virtual void remove();
 	virtual void signal();
 	virtual void process(Event &event);
-//	virtual void synchronize(Serializer &s);
+};
+
+class Scene2400 : public SceneExt {
+	class Exit1 : public SceneExit {
+		virtual void changeScene();
+	};
+	class Exit2 : public SceneExit {
+		virtual void changeScene();
+	};
+public:
+	Exit1 _exit1;
+	Exit2 _exit2;
+	SequenceManager _sequenceManager;
+
+	virtual void postInit(SceneObjectList *OwnerList = NULL);
+//	virtual void remove();
+	virtual void signal();
+//	virtual void process(Event &event);
 };
 
 } // End of namespace Ringworld2
