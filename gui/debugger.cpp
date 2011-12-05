@@ -251,7 +251,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					if (Common::parseBool(param[1], *(bool *)_dvars[i].variable))
 						DebugPrintf("(bool)%s = %s\n", param[0], *(bool *)_dvars[i].variable ? "true" : "false");
 					else
-						DebugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"");
+						DebugPrintf("Invalid value for boolean variable. Valid values are \"true\", \"false\", \"1\", \"0\", \"yes\", \"no\"\n");
 					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
