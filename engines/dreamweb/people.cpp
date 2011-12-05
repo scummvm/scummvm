@@ -46,7 +46,7 @@ static void (DreamGenContext::*reelCallbacks[57])() = {
 	NULL, NULL,
 	&DreamGenContext::introMagic2, &DreamGenContext::candles2,
 	&DreamGenContext::gates, &DreamGenContext::introMagic3,
-	&DreamGenContext::introMonks1, &DreamGenContext::candles,
+	&DreamGenContext::introMonks1, NULL,
 	&DreamGenContext::introMonks2, &DreamGenContext::handClap,
 	&DreamGenContext::monkAndRyan, &DreamGenContext::endGameSeq,
 	&DreamGenContext::priest, NULL,
@@ -78,7 +78,7 @@ static void (DreamGenContext::*reelCallbacksCPP[57])(ReelRoutine &) = {
 	&DreamGenContext::introMagic1, &DreamGenContext::introMusic,
 	/*&DreamGenContext::introMagic2*/NULL, /*&DreamGenContext::candles2*/NULL,
 	/*&DreamGenContext::gates*/NULL, /*&DreamGenContext::introMagic3*/NULL,
-	/*&DreamGenContext::intromonks1*/NULL, /*&DreamGenContext::candles*/NULL,
+	/*&DreamGenContext::intromonks1*/NULL, &DreamGenContext::candles,
 	/*&DreamGenContext::intromonks2*/NULL, /*&DreamGenContext::handClap*/NULL,
 	/*&DreamGenContext::monkAndRyan*/NULL, /*&DreamGenContext::endGameSeq*/NULL,
 	/*&DreamGenContext::priest*/NULL, &DreamGenContext::madman,
@@ -376,6 +376,16 @@ void DreamGenContext::introMagic1(ReelRoutine &routine) {
 }
 
 void DreamGenContext::introMusic(ReelRoutine &routine) {
+}
+
+void DreamGenContext::candles(ReelRoutine &routine) {
+	if (checkSpeed(routine)) {
+		uint16 nextReelPointer = routine.reelPointer() + 1;
+		if (nextReelPointer == 167)
+			nextReelPointer = 162;
+		routine.setReelPointer(nextReelPointer);
+	}
+	showGameReel(&routine);
 }
 
 void DreamGenContext::security(ReelRoutine &routine) {

@@ -412,6 +412,7 @@
 	void drunk(ReelRoutine &routine);
 	void introMagic1(ReelRoutine &routine);
 	void introMusic(ReelRoutine &routine);
+	void candles(ReelRoutine &routine);
 	void security(ReelRoutine &routine);
 	void singleKey(uint8 key, uint16 x, uint16 y);
 	void loadSaveBox();

@@ -541,6 +541,7 @@ public:
 
 	void useWire();
 	void getNamePos();
+	void clearChanges();
 	void identifyOb();
 	void useLighter();
 	void runEndSeq();
@@ -609,14 +610,12 @@ public:
 	void findFirstPath();
 	void useSLab();
 	void useAltar();
-	void manAsleep2();
 	void moreTalk();
 	void startTalk();
 	void getAnyAd();
 	void endGame();
 	void usePipe();
 	void getUnderZoom();
-	void candles();
 	void rollEndCredits2();
 	void reminders();
 	void selectSlot2();
@@ -827,7 +826,7 @@ public:
 	void incRyanPage();
 	void edenInBath();
 	void findExObject();
-	void clearChanges();
+	void manAsleep2();
 	void useChurchHole();
 	void searchForFiles();
 	void monkSpeaking();

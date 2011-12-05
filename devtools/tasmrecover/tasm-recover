@@ -178,6 +178,7 @@ generator = cpp(context, "DreamGen", blacklist = [
 	'calcmapad',
 	'cancelch0',
 	'cancelch1',
+	'candles',
 	'channel0only',
 	'channel0tran',
 	'channel1only',

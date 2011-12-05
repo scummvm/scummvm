@@ -785,23 +785,6 @@ smallcandlef:
 	showGameReel();
 }
 
-void DreamGenContext::candles() {
-	STACK_CHECK;
-	checkSpeed();
-	if (!flags.z())
-		goto candlesfin;
-	ax = es.word(bx+3);
-	_inc(ax);
-	_cmp(ax, 167);
-	if (!flags.z())
-		goto gotcandles;
-	ax = 162;
-gotcandles:
-	es.word(bx+3) = ax;
-candlesfin:
-	showGameReel();
-}
-
 void DreamGenContext::candles2() {
 	STACK_CHECK;
 	checkSpeed();
