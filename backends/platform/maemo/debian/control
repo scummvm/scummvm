@@ -7,7 +7,7 @@ Build-Depends: debhelper (>> 4.0.0), libsdl1.2-dev, libmad0-dev, libasound2-dev,
 Standards-Version: 3.6.1.1
 Package: scummvm
 Depends: ${shlibs:Depends}
-Architecture: i386 armel
+Architecture: armel
 Section: user/games
 Description: interpreter that will play graphic adventure games
  written for LucasArts' SCUMM virtual machine, Sierra's AGI adventures,
