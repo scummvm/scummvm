@@ -557,7 +557,7 @@ void Scene2000::Exit1::changeScene() {
 	warning("TODO: Check sub_22D26");
 	Common::Point pt(-10, 129);
 	NpcMover *mover = new NpcMover();
-	BF_GLOBALS._player.addMover(mover, &pt, scene);
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
 
 	scene->setAction(&scene->_sequenceManager, scene, 206, &R2_GLOBALS._player, NULL);
 }
@@ -575,7 +575,7 @@ void Scene2000::Exit2::changeScene() {
 	warning("TODO: Check sub_22D26");
 	Common::Point pt(330, 129);
 	NpcMover *mover = new NpcMover();
-	BF_GLOBALS._player.addMover(mover, &pt, scene);
+	R2_GLOBALS._player.addMover(mover, &pt, scene);
 }
 
 void Scene2000::Exit3::changeScene() {
@@ -1028,7 +1028,7 @@ void Scene2000::process(Event &event) {
 		
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
-		BF_GLOBALS._player.addMover(mover, &pt, this);
+		R2_GLOBALS._player.addMover(mover, &pt, this);
 
 		event.handled = true;
 	}
@@ -1215,7 +1215,7 @@ void Scene2350::process(Event &event) {
 			(R2_GLOBALS._events.getCursor() == CURSOR_CROSSHAIRS)){
 		Common::Point pt(event.mousePos.x, 129);
 		PlayerMover *mover = new PlayerMover();
-		BF_GLOBALS._player.addMover(mover, &pt);
+		R2_GLOBALS._player.addMover(mover, &pt);
 		event.handled = true;
 	}
 	Scene::process(event);

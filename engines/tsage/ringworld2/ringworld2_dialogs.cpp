@@ -50,7 +50,7 @@ RightClickDialog::RightClickDialog() : GfxDialog() {
 	_btnList[5] = Common::Point(83, 47);
 
 	// Set the palette and change the cursor
-	BF_GLOBALS._events.setCursor(CURSOR_ARROW);
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	setPalette();
 
@@ -185,7 +185,7 @@ void RightClickDialog::execute() {
 	}
 
 	if (cursorNum != CURSOR_NONE)
-		BF_GLOBALS._events.setCursor(cursorNum);
+		R2_GLOBALS._events.setCursor(cursorNum);
 
 	_gfxManager.deactivate();
 }
@@ -345,7 +345,7 @@ CharacterDialog::CharacterDialog() {
 
 void HelpDialog::show() {
 	// Set the palette and change the cursor
-	BF_GLOBALS._events.setCursor(CURSOR_ARROW);
+	R2_GLOBALS._events.setCursor(CURSOR_ARROW);
 
 	// Create the dialog and draw it
 	HelpDialog *dlg = new HelpDialog();
